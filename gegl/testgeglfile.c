@@ -11,6 +11,7 @@
 #include "gegl-image-buffer.h"
 #include "gegl-image-iterator.h"
 #include "gegl-composite-op.h"
+#include "gegl-composite-premult-op.h"
 #include "gegl-utils.h"
 #include "gegl-fill-op.h"
 #include "gegl-color-model.h"
@@ -94,141 +95,243 @@ display_image(GtkWidget *window,
     
 }       
 
+void
+test_composite_ops( GeglImageBuffer ** src_image_buffer,
+                    guint * src_width,
+                    guint * src_height,
+                    GeglRect *src_rect )
+{
+  GeglRect               dest_rect;
+  GeglImageBuffer       *dest_image_buffer;
+  GeglColorModel        *dest_color_model;
+  GeglOp 		*op;
+  gint                   num_chans;
+  gint                   i;
+  gint                   width, height;
+  GtkWidget       	*dest_window[6];
+  GtkWidget       	*dest_preview[6];
+  gchar	          	*mode_names[] = {"REPLACE", "OVER", 
+                                         "IN", "OUT", 
+                                         "ATOP", "XOR"};
+
+
+  /* create the destination , same size as src 1 for now */
+  width = src_width[0];
+  height = src_height[0];
+  dest_color_model = gegl_image_buffer_color_model (src_image_buffer[0]);  
+
+  dest_image_buffer = gegl_image_buffer_new (dest_color_model, 
+                                            width, height);
+  num_chans = gegl_color_model_num_channels (dest_color_model);
+  gegl_rect_set (&dest_rect, 0,0, width, height);
+
+  for (i = 0; i< 6; i++) 
+    {
+      op = GEGL_OP(gegl_composite_premult_op_new (dest_image_buffer, 
+					  src_image_buffer[0], 
+					  src_image_buffer[1], 
+					  &dest_rect, 
+					  &src_rect[0], 
+					  &src_rect[1], 
+					  i));
+      gegl_op_apply (op);   
+
+      /* display the destination */ 
+      create_preview (&dest_window[i], &dest_preview[i], width, height, mode_names[i]);
+      display_image (dest_window[i], dest_preview[i], dest_image_buffer, dest_rect);
+      gegl_object_destroy (GEGL_OBJECT(op));
+    }
+
+  gegl_object_destroy (GEGL_OBJECT (dest_image_buffer));
+  gegl_object_destroy (GEGL_OBJECT (dest_color_model));
+}
+
+typedef enum
+{
+  POINT_OP_MIN,
+  POINT_OP_MAX,
+  POINT_OP_MULT,
+  POINT_OP_SUBTRACT,
+  POINT_OP_DIFF,
+  POINT_OP_SCREEN,
+  POINT_OP_DARK,
+  POINT_OP_LIGHT
+}PointOpType;
+
+GeglOp *
+point_op_factory (GeglImageBuffer * dest,
+                  GeglImageBuffer **srcs,
+                  GeglRect *dest_rect,
+                  GeglRect *src_rect,
+                  PointOpType type)
+{
+  switch (type)
+    {
+    case POINT_OP_MIN:
+       return GEGL_OP(gegl_min_op_new (dest, srcs[0], srcs[1], 
+                    dest_rect, &src_rect[0], &src_rect[1]));
+    case POINT_OP_MAX:
+       return GEGL_OP(gegl_max_op_new (dest, srcs[0], srcs[1], 
+                    dest_rect, &src_rect[0], &src_rect[1]));
+    case POINT_OP_MULT:
+       return GEGL_OP(gegl_mult_op_new (dest, srcs[0], srcs[1], 
+                    dest_rect, &src_rect[0], &src_rect[1]));
+    case POINT_OP_SUBTRACT:
+       return GEGL_OP(gegl_subtract_op_new (dest, srcs[0], srcs[1], 
+                    dest_rect, &src_rect[0], &src_rect[1]));
+    case POINT_OP_DIFF:
+       return GEGL_OP(gegl_diff_op_new (dest, srcs[0], srcs[1], 
+                    dest_rect, &src_rect[0], &src_rect[1]));
+    case POINT_OP_SCREEN:
+       return GEGL_OP(gegl_screen_op_new (dest, srcs[0], srcs[1], 
+                    dest_rect, &src_rect[0], &src_rect[1]));
+    case POINT_OP_DARK:
+       return GEGL_OP(gegl_dark_op_new (dest, srcs[0], srcs[1], 
+                    dest_rect, &src_rect[0], &src_rect[1]));
+    case POINT_OP_LIGHT:
+       return GEGL_OP(gegl_light_op_new (dest, srcs[0], srcs[1], 
+                    dest_rect, &src_rect[0], &src_rect[1]));
+    default:
+       return NULL;
+    }
+}
+
+void
+test_point_ops( GeglImageBuffer ** src_image_buffer,
+                    guint * src_width,
+                    guint * src_height,
+                    GeglRect *src_rect)
+{
+  GeglRect               dest_rect;
+  GeglImageBuffer       *dest_image_buffer;
+  GeglColorModel        *dest_color_model;
+  GeglOp 		*op;
+  gint                   num_chans;
+  gint                   i;
+  gint                   width, height;
+  GtkWidget       	*dest_window[8];
+  GtkWidget       	*dest_preview[8];
+  gchar                 *point_op_names[] = {"MIN", "MAX", "MULT", 
+                                             "SUB", "DIFF", "SCREEN", 
+                                             "DARK", "LIGHT"};        
+
+  width = src_width[0];
+  height = src_height[0];
+  dest_color_model = gegl_image_buffer_color_model (src_image_buffer[0]);  
+
+  dest_image_buffer = gegl_image_buffer_new (dest_color_model, 
+                                            width, height);
+  num_chans = gegl_color_model_num_channels (dest_color_model);
+  gegl_rect_set (&dest_rect, 0,0, width, height);
+
+  for (i = 0; i < 8; i++) 
+    {
+      op = point_op_factory (dest_image_buffer, src_image_buffer, 
+                            &dest_rect, src_rect, (PointOpType)i); 
+      gegl_op_apply (op);   
+
+      /* display the destination */ 
+      create_preview (&dest_window[i], &dest_preview[i], width, height, point_op_names[i]);
+      display_image (dest_window[i], dest_preview[i], dest_image_buffer, dest_rect);
+      gegl_object_destroy (GEGL_OBJECT(op));
+    }
+
+  gegl_object_destroy (GEGL_OBJECT (dest_image_buffer));
+  gegl_object_destroy (GEGL_OBJECT (dest_color_model));
+}
+
+
 int
 main(int argc, 
      char *argv[])
 {
-  GeglColorModel  	*color_model[3]; /* 0 = dest, 1 = src1, 2 = src2 */
-  GeglImageBuffer 	*image_buffer[3];
-  GtkWidget       	*window[3];
-  GtkWidget       	*preview[3];
+  GeglColorModel  	*src_color_model[2];  /* 0 = src1, 1 = src2 */
+  GeglImageBuffer 	*src_image_buffer[2]; /* 0 = src1, 1 = src2 */
+  GtkWidget       	*src_window[2];
+  GtkWidget       	*src_preview[2];
+  guint          	src_width[2], src_height[2];
+  GeglRect        	src_rect[2];
+
   int             	i, j, k;
-  GeglRect        	rect[3];
   gint            	num_chans;
   float           	*t;
-  uint32          	width[3], height[3];
-  GeglOp 		*op;
-#if 0
-  gchar	          	*composite_mode_names[] = {"REPLACE", "OVER", "IN",
-				"OUT", "ATOP", "XOR"};
-  gchar                 *point_ops_names[] = {"MIN", "MAX", "MULT", "SUB", "DIFF",
-				"SCREEN", "DARK", "LIGHT"};        
-#endif
 
   /* stuff for reading a tiff */
   guchar          *image_data;
   TIFF            *tif;   
   uint32          *image;
   guchar          img[4];
+  gint            plane_size;
 
   gtk_init (&argc, &argv);
 
   /* read in the 2 sources, src1 and src2 */ 
 
-  for(k=1; k<=2; k++)
+  for(k=0; k<=1; k++)
     {             
       /* open the file */
-      tif = TIFFOpen(argv[k], "r");
+      tif = TIFFOpen(argv[k+1], "r");
 
       /* get width and height */
-      TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width[k]);
-      TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height[k]);
+      TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &src_width[k]);
+      TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &src_height[k]);
       
-      /* create the display window */
-      create_preview(&window[k], &preview[k], width[k], height[k], 
-                    (k==1)?"Src 1":"Src 2");
-
       /* create the gegl image buffer */
-      color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
-      image_buffer[k] = gegl_image_buffer_new(color_model[k], width[k], height[k]);
-      num_chans = gegl_color_model_num_channels(color_model[k]);
-      gegl_rect_set (&rect[k], 0,0, width[k], height[k]);
+      src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+      src_image_buffer[k] = gegl_image_buffer_new(src_color_model[k], src_width[k], src_height[k]);
+      num_chans = gegl_color_model_num_channels(src_color_model[k]);
+      gegl_rect_set (&src_rect[k], 0,0, src_width[k], src_height[k]);
 	      
       /* put the data from the image into image_data and make sure it is
       in the right format rrr ggg bbb */
-      image = (uint32*) _TIFFmalloc(width[k] * height[k] * sizeof(uint32));
-      image_data = (guchar*) g_malloc(sizeof(guchar) * width[k] * height[k] *
+      image = (uint32*) _TIFFmalloc(src_width[k] * src_height[k] * sizeof(uint32));
+      image_data = (guchar*) g_malloc(sizeof(guchar) * src_width[k] * src_height[k] *
 			      sizeof(float) * num_chans);
-      t = (float*) g_malloc(sizeof(float) * width[k] * height[k] * 4);
+      t = (float*) g_malloc(sizeof(float) * src_width[k] * src_height[k] * 4);
 
-      TIFFReadRGBAImage(tif, width[k], height[k], image, 0);
+      TIFFReadRGBAImage(tif, src_width[k], src_height[k], image, 0);
       j=0;
-      for(i=0; i<width[k]*height[k]; i++)
+      plane_size = src_width[k] * src_height[k];
+      for(i=0; i<plane_size; i++)
         {
 	  memcpy(img, &image[i], 4);
 	  t[j                     ] = ((float)img[0]) / 255.0;
-	  t[j+width[k]*height[k]  ] = ((float)img[1]) / 255.0;
-	  t[j+width[k]*height[k]*2] = ((float)img[2]) / 255.0;
-	  t[j+width[k]*height[k]*3] = ((float)img[3]) / 255.0;
+	  t[j+plane_size  ] = ((float)img[1]) / 255.0;
+	  t[j+plane_size*2] = ((float)img[2]) / 255.0;
+	  t[j+plane_size*3] = ((float)img[3]) / 255.0;
 	  j++;  
         }
 
-      memcpy(image_data, t, width[k] * height[k] * sizeof(float) * num_chans);
+      memcpy(image_data, t, src_width[k] * src_height[k] * sizeof(float) * num_chans);
       _TIFFfree(image);
       TIFFClose(tif); 
       g_free(t);
 
       /* give the data to the gegl image buff */
-      gegl_image_buffer_set_data(image_buffer[k], image_data);
- 
-      
-      if(!k) g_free(image_data);
+      gegl_image_buffer_set_data(src_image_buffer[k], image_data);
+      g_free(image_data);
+
+      /* create the display window */
+      create_preview(&src_window[k], &src_preview[k], src_width[k], src_height[k], 
+                    (k==0)?"src1":"src2");
+      display_image(src_window[k], src_preview[k], src_image_buffer[k], src_rect[k]);
     } 
+     
+  test_composite_ops (src_image_buffer, src_width, src_height, src_rect);
+  /*test_point_ops (src_image_buffer, src_width, src_height, src_rect);*/
 
-  display_image(window[1], preview[1], image_buffer[1], rect[1]);
-  display_image(window[2], preview[2], image_buffer[2], rect[2]);
- 
-  /* create the destination , same size as src 1 for now*/
-  
-  width[0] = width[1];
-  height[0] = height[1];
-  color_model[0] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
-  image_buffer[0] = gegl_image_buffer_new(color_model[0], width[0], height[0]);
-  num_chans = gegl_color_model_num_channels(color_model[0]);
-  gegl_rect_set (&rect[0], 0,0, width[0], height[0]);
-
-#if 1  
-    /* testing the composite ops */ 
-
-	op = GEGL_OP(gegl_composite_op_new (image_buffer[0], 
-					    image_buffer[1], 
-					    image_buffer[2], 
-					    &rect[0], 
-					    &rect[1], 
-					    &rect[2], 
-					    COMPOSITE_OVER));
-	gegl_op_apply (op);   
-
-
-	   /* display the destination */ 
-	create_preview(&window[0], &preview[0], width[0], height[0], "dest");
-	display_image(window[0], preview[0], image_buffer[0], rect[0]);
-#endif
-
-#if 0 
-      op = GEGL_OP(gegl_min_op_new (image_buffer[0], 
-                                    image_buffer[1], 
-                                    image_buffer[2],
-                                    &(rect[0]), 
-                                    &(rect[1]), 
-                                    &(rect[2])));
-      gegl_op_apply (op);
-		    
-      /* display the destination */ 
-      create_preview(&window[0], &preview[0], width[0], height[0], "dest");
-      display_image(window[0], preview[0], image_buffer[0], rect[0]);
-#endif
-
-  gegl_object_destroy(GEGL_OBJECT(op));
-  for (k = 0; k < 3; k++)
+  for (k = 0; k < 2; k++)
     {
-      gegl_object_destroy(GEGL_OBJECT(color_model[k]));
-      gegl_object_destroy(GEGL_OBJECT(image_buffer[k]));
+      gegl_object_destroy(GEGL_OBJECT(src_image_buffer[k]));
+      gegl_object_destroy(GEGL_OBJECT(src_color_model[k]));
     }  
   gtk_main();
 
   return 0;
 }
+
+
+
 
 
 

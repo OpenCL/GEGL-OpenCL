@@ -1,13 +1,19 @@
+Sat Mar 18 18:56:30 EST 2000 calvinw@mindspring.com
+
+	* testgeglfile.c - more improvements.   Added back the tests for 
+          the composite ops and the other point ops. 
+
 Sat Mar 18 12:31:14 EST 2000 calvinw@mindspring.com
 
-	* Made some fixes and simplificatons to testgeglfile.c. It
+	* testgeglfile.c - some fixes and simplificatons. It
           was reading r,g,b,a in the wrong order, so it displays 
           correctly now. 
 
-	* command line args are just two equal size RGBA source tiffs now: 
+	* testgeglfile.c - command line args are just two equal 
+          size RGBA source tiffs now: 
           >testgeglfile src1.tiff src2.tiff       
 
-        * Removed extraneous iterator code in testgeglfile.c, and so 
+        * testgeglfile.c - removed extraneous iterator code, and so 
           dont really need get_current_rect in gegl-image-iterator constructor. 
           (However, the iterator class will need more design work for sure.) 
 
