@@ -107,12 +107,12 @@ rm			[\t \n]*
 <GENERIC_IMAGE_DECL>"Pixel"		{
 					strcpy(yylval.elem.string, DATATYPE_STR);
 					yylval.elem.dtype = TYPE_CHANNEL;
-					return(VectorChan);
+					return(Pixel);
 					}
 <GENERIC_IMAGE_DECL>"Channel"		{
     					strcpy(yylval.elem.string, DATATYPE_STR);
 					yylval.elem.dtype = TYPE_CHANNEL;
-					return(Chan);
+					return(Channel);
 					}
 
 <GENERIC_IMAGE_DECL>{integer}		{ 
@@ -306,13 +306,11 @@ rm			[\t \n]*
 
 
 {rm}"$" 				{BEGIN 0; return 0;} 
-"$"					{BEGIN 0; return 0;} 
 <GENERIC_IMAGE_DECL>.			return yytext[0];
 <GENERIC_IMAGE_BLOCK>.			return yytext[0];
 <COMMENT>.				ECHO;
 <DATA_TYPE>.				;
 <ARGUMENTS>.				;
-<DEFINITION>.				;
 
 .					ECHO; 	
 

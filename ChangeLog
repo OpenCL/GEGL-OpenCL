@@ -1,3 +1,25 @@
+Tue Apr  4 17:59:14 PDT 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* I changed the varible VectorCHan to Pixel and
+	Chan to Channel
+
+	* I changed the channel data files so that they dont use the 
+	MULT macro
+
+	* check in for gegl
+
+	* I added the following files
+		- gegl-color-convert-to-gray-u16-op.gob 
+		- gegl-color-convert-to-gray-u16_4-op.gob
+		- gegl-color-convert-to-rgb-u16-op.gob
+		- gegl-color-convert-to-rgb-u16_4-op.gob
+		- gegl-color-model-gray-u16.gob 
+		- gegl-color-model-gray-u16_4.gob
+	
+	* I fixed some display bugs in testgeglfile.c
+
 Tue Apr  4 12:40:36 PDT 2000 caro@rhythm.com
 
 	* check in for gegl

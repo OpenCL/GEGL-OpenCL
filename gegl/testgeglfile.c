@@ -6,6 +6,8 @@
 
 #include "gegl-color-model-rgb-float.h"
 #include "gegl-color-model-rgb-u8.h"
+#include "gegl-color-model-rgb-u16.h"
+#include "gegl-color-model-rgb-u16_4.h"
 #include "gegl-color-model-gray-float.h"
 #include "gegl-color-model-gray-u8.h"
 #include "gegl-image-buffer.h"
@@ -60,8 +62,8 @@ display_image(GtkWidget *window,
   gint            w, h, num_chans;
   gfloat          **data_ptrs1;
   guint8          **data_ptrs2;
-  gfloat          **data_ptrs3;
-  gfloat          **data_ptrs4;
+  guint16         **data_ptrs3;
+  guint16         **data_ptrs4;
   int             i, j;
   guchar          *tmp;
   GeglRect        current_rect;
@@ -69,8 +71,8 @@ display_image(GtkWidget *window,
                 gegl_image_buffer_color_model(image_buffer));
   data_ptrs1 = (gfloat**) g_malloc(sizeof(gfloat*) * num_chans);
   data_ptrs2 = (guint8**) g_malloc(sizeof(guint8*) * num_chans);
-  data_ptrs3 = (gfloat**) g_malloc(sizeof(gfloat*) * num_chans);
-  data_ptrs4 = (gfloat**) g_malloc(sizeof(gfloat*) * num_chans);
+  data_ptrs3 = (guint16**) g_malloc(sizeof(guint16*) * num_chans);
+  data_ptrs4 = (guint16**) g_malloc(sizeof(guint16*) * num_chans);
   h = rect.h;
   w = rect.w;
   tmp = g_new(char, 3*w);
@@ -115,9 +117,9 @@ display_image(GtkWidget *window,
 	    /* convert the data from float -> unsigned 8bit */   
 	    for(j=0; j<w; j++)
 	      {
-		tmp[0 + 3*j] = data_ptrs3[0][j] * 255;
-		tmp[1 + 3*j] = data_ptrs3[1][j] * 255;
-		tmp[2 + 3*j] = data_ptrs3[2][j] * 255;
+		tmp[0 + 3*j] = data_ptrs3[0][j] * 255 / 65535.0;
+		tmp[1 + 3*j] = data_ptrs3[1][j] * 255 / 65535.0;
+		tmp[2 + 3*j] = data_ptrs3[2][j] * 255 / 65535.0;
 	      }
 	    break;
 	  case U16_4:
@@ -127,9 +129,9 @@ display_image(GtkWidget *window,
 	    /* convert the data from float -> unsigned 8bit */   
 	    for(j=0; j<w; j++)
 	      {
-		tmp[0 + 3*j] = data_ptrs4[0][j] * 255;
-		tmp[1 + 3*j] = data_ptrs4[1][j] * 255;
-		tmp[2 + 3*j] = data_ptrs4[2][j] * 255;
+		tmp[0 + 3*j] = data_ptrs4[0][j] * 255 / 4095.0;
+		tmp[1 + 3*j] = data_ptrs4[1][j] * 255 / 4095.0;
+		tmp[2 + 3*j] = data_ptrs4[2][j] * 255 / 4095.0;
 	      }
 	    break;  
 	  default:
@@ -195,7 +197,7 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
       gegl_op_apply (op);   
       gegl_object_destroy (GEGL_OBJECT(op));
 
-#if 0 
+#if 1 
       op = GEGL_OP(gegl_premult_op_new(dest_image_buffer, 
                                        dest_image_buffer,
                                        &dest_rect,
@@ -328,10 +330,10 @@ main(int argc,
 
   int             	i, j, k;
   gint            	num_chans;
-  float           	*t1=NULL;
+  gfloat           	*t1=NULL;
   guint8           	*t2=NULL;
-  float           	*t3=NULL;
-  float           	*t4=NULL;
+  guint16           	*t3=NULL;
+  guint16           	*t4=NULL;
 
   /* stuff for reading a tiff */
   guchar          *image_data;
@@ -386,10 +388,10 @@ main(int argc,
 	  src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_u8_new(TRUE, TRUE));
 	  break;
 	case U16:
-	  src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+	  src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_u16_new(TRUE, TRUE));
 	  break;
 	case U16_4:
-	  src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+	  src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_u16_4_new(TRUE, TRUE));
 	  break;
 	default:
 	  break;
@@ -413,10 +415,10 @@ main(int argc,
 	  t2 = (guint8*) g_malloc(sizeof(guint8) * src_width[k] * src_height[k] * 4);
 	  break;
 	case U16:
-	  t3 = (float*) g_malloc(sizeof(float) * src_width[k] * src_height[k] * 4);
+	  t3 = (guint16*) g_malloc(sizeof(guint16) * src_width[k] * src_height[k] * 4);
 	  break;
 	case U16_4:
-	  t4 = (float*) g_malloc(sizeof(float) * src_width[k] * src_height[k] * 4);
+	  t4 = (guint16*) g_malloc(sizeof(guint16) * src_width[k] * src_height[k] * 4);
 	  break;
 	default:
 	  break; 
@@ -448,17 +450,17 @@ main(int argc,
 	      j++;
 	      break; 
 	    case U16:
-	      t3[j             ] = ((float)r) / 255.0;
-	      t3[j+plane_size  ] = ((float)g) / 255.0;
-	      t3[j+plane_size*2] = ((float)b) / 255.0;
-	      t3[j+plane_size*3] = ((float)a) / 255.0;
+	      t3[j             ] = ((float)r) * 65535 / 255.0;
+	      t3[j+plane_size  ] = ((float)g) * 65535 / 255.0;
+	      t3[j+plane_size*2] = ((float)b) * 65535 / 255.0;
+	      t3[j+plane_size*3] = ((float)a) * 65535 / 255.0;
 	      j++;
 	      break; 
 	    case U16_4:
-	      t4[j             ] = ((float)r) / 255.0;
-	      t4[j+plane_size  ] = ((float)g) / 255.0;
-	      t4[j+plane_size*2] = ((float)b) / 255.0;
-	      t4[j+plane_size*3] = ((float)a) / 255.0;
+	      t4[j             ] = ((float)r) * 4095 / 255.0;
+	      t4[j+plane_size  ] = ((float)g) * 4095 / 255.0;
+	      t4[j+plane_size*2] = ((float)b) * 4095 / 255.0;
+	      t4[j+plane_size*3] = ((float)a) * 4095 / 255.0;
 	      j++;
 	      break;
 	    default:
@@ -477,10 +479,10 @@ main(int argc,
 	  memcpy(image_data, t2, src_width[k] * src_height[k] * sizeof(guint8) * num_chans);
 	  break;
 	case U16:
-	  memcpy(image_data, t3, src_width[k] * src_height[k] * sizeof(float) * num_chans);
+	  memcpy(image_data, t3, src_width[k] * src_height[k] * sizeof(guint16) * num_chans);
 	  break;
 	case U16_4:
-	  memcpy(image_data, t4, src_width[k] * src_height[k] * sizeof(float) * num_chans);
+	  memcpy(image_data, t4, src_width[k] * src_height[k] * sizeof(guint16) * num_chans);
 	  break;
 	default:
 	  break; 

@@ -92,8 +92,8 @@ int     cur_nsyms=0;
 %token	<elem> INT
 %token  <elem> WP 
 %token  <elem> ZERO  
-%token  <elem> VectorChan
-%token  <elem> Chan
+%token  <elem> Pixel
+%token  <elem> Channel
 %token  <elem> INDENT
 %token  <elem> POUND
 %token  <elem> INDENT_CURLY  
@@ -128,8 +128,8 @@ int     cur_nsyms=0;
 %type   <elem> Definition
 %type   <elem> Int_List
 %type   <elem> Float_List
-%type   <elem> Chan_List
-%type   <elem> VectorChan_List
+%type   <elem> Channel_List
+%type   <elem> Pixel_List
 
 /* tokens for data types */
 %token  DT_DATATYPE  DT_WP  DT_WP_NORM  DT_MIN_CHANNEL DT_MAX_CHANNEL
@@ -798,14 +798,14 @@ Expression:
 	;
 
 Definition:
-	  Chan Chan_List		
+	  Channel Channel_List		
 		{ 
 		char tmp[256]; 
 		$$=$2; 
 		sprintf (tmp,"%s %s", $1.string, $2.string);
                 strcpy($$.string, tmp); 
 		}
-	| VectorChan VectorChan_List
+	| Pixel Pixel_List
                 {
                 char tmp[256];
                 $$=$2;
@@ -836,8 +836,8 @@ Definition:
 	;
 
 
-Chan_List:
-	  Chan_List ',' Chan_List
+Channel_List:
+	  Channel_List ',' Channel_List
 		{
 		char tmp[256];
 		sprintf(tmp, "%s, %s", $1.string, $3.string);
@@ -981,8 +981,8 @@ Float_List:
 		}	
         ;
 
-VectorChan_List:
-          VectorChan_List ',' VectorChan_List            
+Pixel_List:
+          Pixel_List ',' Pixel_List            
 		{ 
 		char tmp[256]; 
 		$$=$3;
