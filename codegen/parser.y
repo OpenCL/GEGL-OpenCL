@@ -588,6 +588,7 @@ Line:
 	| INDENT NAME EQUAL Expression ';'  	
 		{
 	        char tmp[256];
+		int i; 
 		elem_t e; 	
 		print_name (&e, $2, NOT_DEFINE); 
 		do_op_three (&e, e, $4, OP_EQUAL); 
@@ -600,7 +601,24 @@ Line:
 		  }
 		sprintf (tmp, "%s%s;", $1.string, e.string);   
 		strcpy (e.string, tmp); 
-		print_line (e); 
+		print_line (e);
+	           
+	 	if (get_sym ($2.string)->type == TYPE_C_A_VECTOR && 
+		  !strcmp (get_sym ($2.string)->string, $2.string))
+		    {
+		      i = strlen (tmp);
+		      while (i != 1)
+			{
+			  i--;
+			  if (tmp[i] == 'c' && tmp[i-1] == '$')
+			    tmp[i] = 'a'; 
+			}
+		      sprintf (e.string, "%sif (%s_has_%s)\n  %s", $1.string, 
+			  $2.string, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL], &tmp[1]); 
+		      e.num = 1;
+		      print_line (e);
+		    }
+		
 		} 
 	| INDENT NAME PLUS_EQUAL Expression ';'  	
 		{ 

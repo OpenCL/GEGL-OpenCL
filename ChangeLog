@@ -1,3 +1,13 @@
+Wed May  3 17:23:02 PDT 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* i have changed it so when you do 
+	pixel = ... and pixel might has an alpha
+	it will write out the if (has_alpha).
+
+	* changed test_files/test
+
 Wed May  3 15:41:31 PDT 2000 caro@rhythm.com
 
 	* check in for gegl
