@@ -1,3 +1,9 @@
+Tue Mar 21 09:44:35 PST 2000 caro@rhythm.com
+
+	* in do_op_three for the case of OP_EQUAL, it
+	was using the CHAN_MULT_STR instead of
+	ROUND_STR
+
 Mon Mar 20 17:04:58 PST 2000 caro@rhythm.com
 	
 	* changed the lexer and the parser so that it will

@@ -1293,7 +1293,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      break;
 	    case TYPE_FLOAT:
 	      t[0] = src2.string;
-	      print (tmp, CHAN_MULT_STR, t, 1); 
+	      print (tmp, ROUND_STR, t, 1); 
 	      strcpy (dest->string, tmp);
 	      sprintf (tmp, "%s = %s", src1.string, dest->string);
 	      break;
@@ -1302,7 +1302,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      break;
 	    case TYPE_CHANFLOAT:
 	      t[0] = src2.string;
-	      print (tmp, CHAN_MULT_STR, t, 1); 
+	      print (tmp, ROUND_STR, t, 1); 
 	      strcpy (dest->string, tmp);
 	      sprintf (tmp, "%s = %s", src1.string, dest->string);
 	      break;
