@@ -16,8 +16,7 @@ GIL_FILES = \
 	gegl-dark-op.gil 				\
 	gegl-light-op.gil 				\
 	gegl-subtract-op.gil				\
-	gegl-print-op.gil				\
-	gegl-fill-op.gil
+	gegl-print-op.gil
 
 GIL_GEN_GOB = \
 	gegl-composite-op.gob				\
@@ -33,8 +32,7 @@ GIL_GEN_GOB = \
 	gegl-dark-op.gob				\
 	gegl-light-op.gob				\
 	gegl-subtract-op.gob				\
-	gegl-print-op.gob				\
-	gegl-fill-op.gob
+	gegl-print-op.gob
 
 NONGEN_GOB = \
 	gegl-object.gob					\
@@ -68,6 +66,7 @@ NONGEN_GOB = \
 	gegl-color-convert-to-rgb-u16_4-op.gob		\
 	gegl-color-convert-to-rgb-float-op.gob		\
 	gegl-copy-chan-op.gob				\
+	gegl-fill-op.gob				\
 	gegl-image-iterator.gob
 
 GOB_FILES = $(GIL_GEN_GOB) $(NONGEN_GOB)
