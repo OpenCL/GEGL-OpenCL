@@ -26,19 +26,20 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 Name			[A-Z][_A-Z0-9]*
 string			[^\t].*	
 space			[]*[\t]+
+rm			[\t \n]*
 %%
 
-"DATATYPE_BEGIN"			BEGIN DATA_TYPE;  
-"GENERIC_IMAGE_DECL_BEGIN"		BEGIN GENERIC_IMAGE_DECL;
-"GENERIC_IMAGE_BLOCK_BEGIN"		BEGIN GENERIC_IMAGE_BLOCK;
+{rm}"DATATYPE_BEGIN"			BEGIN DATA_TYPE;  
+{rm}"GENERIC_IMAGE_DECL_BEGIN"		BEGIN GENERIC_IMAGE_DECL;
+{rm}"GENERIC_IMAGE_BLOCK_BEGIN"		BEGIN GENERIC_IMAGE_BLOCK;
 {indent}"GENERIC_IMAGE_IMAGE_DATA_INIT" {
   					char tmp[255];
 					strcpy (tmp, yytext);
 					tmp[strlen (tmp) - strlen ("GENERIC_IMAGE_IMAGE_DATA_INIT")] = '\0'; 
   					init_image_data (tmp);
 					}	
-
-<DATA_TYPE>"DATATYPE_END"		BEGIN 0;
+<DATA_TYPE>{indent}			;         	
+<DATA_TYPE>"DATATYPE_END""\n"		{BEGIN 0;} 
 <DATA_TYPE>"DATATYPE"			return DT_DATATYPE;
 <DATA_TYPE>"WP"				return DT_WP;
 <DATA_TYPE>"WP_NORM"			return DT_WP_NORM;
@@ -68,7 +69,6 @@ space			[]*[\t]+
 					return INDENT;
 					}
 
-<DATA_TYPE>{indent}			;         	
 			    	 	
 <GENERIC_IMAGE_DECL>{white} 		; 
 <GENERIC_IMAGE_BLOCK>{white} 		; 
@@ -277,12 +277,12 @@ space			[]*[\t]+
 					}
 
 
-"$" 					return 0; 
+{indent}"$" 				return 0; 
 <GENERIC_IMAGE_DECL>.			return yytext[0];
 <GENERIC_IMAGE_BLOCK>.			return yytext[0];
 <COMMENT>.				ECHO;
 <DATA_TYPE>.				; 
-.					ECHO;
+.					ECHO; 	
 
 
 %%

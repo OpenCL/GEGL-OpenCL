@@ -1,3 +1,9 @@
+Thu Mar 23 11:26:39 PST 2000 caro@rhythm.com
+	
+	* codegen/lexer.l. Made sure that the lexer ate 
+	up all the useless spaces that were left from
+	reading the key words.
+
 Wed Mar 22 18:07:30 PST 2000 caro@rhythm.com
 
 	* codegen. I have changed parer.y and lexer.l so
