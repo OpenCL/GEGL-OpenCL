@@ -43,7 +43,20 @@ static void set_property(GObject *object,
                          guint property_id,
                          const GValue *value,
                          GParamSpec *pspec);
-                       
+static gdouble*
+get_pixel_double_default(const GeglSampleModel* self,
+                         gint x,
+                         gint y,
+                         gdouble* dArray,
+                         const GeglBuffer* buffer);
+static void
+set_pixel_double_default(const GeglSampleModel* self,
+                         gint x,
+                         gint y,
+                         const gdouble* dArray,
+                         GeglBuffer* buffer);
+
+
 GType
 gegl_sample_model_get_type (void)
 {
@@ -90,8 +103,11 @@ instance_init(GTypeInstance *instance, gpointer g_class) {
 
 static void
 class_init(gpointer g_class, gpointer class_data) {
-    //GeglSampleModelClass* sm_class=(GeglSampleModelClass*)g_class;
+    GeglSampleModelClass* sm_class=(GeglSampleModelClass*)g_class;
     GObjectClass* object_class=(GObjectClass*)g_class;
+    
+    sm_class->get_pixel_double=get_pixel_double_default;
+    sm_class->set_pixel_double=set_pixel_double_default;
     
     object_class->get_property=get_property;
     object_class->set_property=set_property;
@@ -169,56 +185,110 @@ set_property(GObject *object, guint property_id, const GValue *value, GParamSpec
 }
 
 gint
-gegl_sample_model_get_num_bands(GeglSampleModel* self) {
+gegl_sample_model_get_num_bands(const GeglSampleModel* self) {
     g_return_val_if_fail(GEGL_IS_SAMPLE_MODEL(self),0);
     
     return self->num_bands;
 }
 
-gint gegl_sample_model_get_width(GeglSampleModel* self) {
+gint gegl_sample_model_get_width(const GeglSampleModel* self) {
     g_return_val_if_fail(GEGL_IS_SAMPLE_MODEL(self),0);
     
     return self->width;
 }
 
-gint gegl_sample_model_get_height(GeglSampleModel* self) {
+gint gegl_sample_model_get_height(const GeglSampleModel* self) {
     g_return_val_if_fail(GEGL_IS_SAMPLE_MODEL(self),0);
     
     return self->height;
 }
 
-gdouble* gegl_sample_model_get_pixel_double(GeglSampleModel* self,
+gdouble* gegl_sample_model_get_pixel_double(const GeglSampleModel* self,
                                             gint x,
                                             gint y,
                                             gdouble* dArray,
-                                            GeglBuffer* buffer) {
+                                            const GeglBuffer* buffer) {
     g_return_val_if_fail(GEGL_IS_SAMPLE_MODEL(self),NULL);
+    g_return_val_if_fail(dArray != NULL, NULL);
+    g_return_val_if_fail(GEGL_IS_BUFFER(buffer),NULL);
+    g_return_val_if_fail(x < (self->width),NULL);
+    g_return_val_if_fail(x >= 0, NULL);
+    g_return_val_if_fail(y < (self->height),NULL);
+    g_return_val_if_fail(y >= 0, NULL);
+    
     GeglSampleModelClass* klass=GEGL_SAMPLE_MODEL_GET_CLASS(self);
     
     g_return_val_if_fail(klass->get_pixel_double,NULL);
     
     return klass->get_pixel_double(self,x,y,dArray,buffer);
 }
-    
-void gegl_sample_model_set_pixel_double(GeglSampleModel* self,
-                                        gint x,
-                                        gint y,
-                                        gdouble* dArray,
-                                        GeglBuffer* buffer) {
+
+static gdouble*
+get_pixel_double_default(const GeglSampleModel* self,
+                         gint x,
+                         gint y,
+                         gdouble* dArray,
+                         const GeglBuffer* buffer) {
+    int i=0;
+    gdouble* dArray_pos=dArray;
+    for (i=0;i<self->num_bands;i++) {
+        *dArray_pos = gegl_sample_model_get_sample_double(self,x,y,i,buffer);
+        dArray_pos++;
+    }
+    return dArray;
+}
+
+void
+gegl_sample_model_set_pixel_double(const GeglSampleModel* self,
+                                   gint x,
+                                   gint y,
+                                   const gdouble* dArray,
+                                   GeglBuffer* buffer) {
     g_return_if_fail(GEGL_IS_SAMPLE_MODEL(self));
+    g_return_if_fail(dArray != NULL);
+    g_return_if_fail(GEGL_IS_BUFFER(buffer));
+    g_return_if_fail(x < (self->width));
+    g_return_if_fail(x >= 0);
+    g_return_if_fail(y < (self->height));
+    g_return_if_fail(y >= 0);
+
     GeglSampleModelClass* klass=GEGL_SAMPLE_MODEL_GET_CLASS(self);
-    
+        
     g_return_if_fail(klass->get_pixel_double);
     
     klass->set_pixel_double(self,x,y,dArray,buffer);
 }
+
+static void
+set_pixel_double_default(const GeglSampleModel* self,
+                         gint x,
+                         gint y,
+                         const gdouble* dArray,
+                         GeglBuffer* buffer) {
+    //already bounds check the arguments in the non-static accessor.
+    int i=0;
+    for (i=0;i<self->num_bands;i++) {
+        gegl_sample_model_set_sample_double(self,x,y,i,*dArray,buffer);
+        dArray++;
+    }
+    return;
+}
+
 gdouble
-gegl_sample_model_get_sample_double(GeglSampleModel* self,
+gegl_sample_model_get_sample_double(const GeglSampleModel* self,
                                     gint x,
                                     gint y,
                                     gint band,
-                                    GeglBuffer* buffer) {
+                                    const GeglBuffer* buffer) {
     g_return_val_if_fail(GEGL_IS_SAMPLE_MODEL(self),0.0);
+    g_return_val_if_fail(GEGL_IS_BUFFER(buffer),0.0);
+    g_return_val_if_fail(x < (self->width),0.0);
+    g_return_val_if_fail(x >= 0, 0.0);
+    g_return_val_if_fail(y < (self->height),0.0);
+    g_return_val_if_fail(y >= 0, 0.0);
+    g_return_val_if_fail(band < (self->num_bands) , 0.0);
+    g_return_val_if_fail(band >= 0, 0.0);
+
     GeglSampleModelClass* klass=GEGL_SAMPLE_MODEL_GET_CLASS(self);
     
     g_return_val_if_fail(klass->get_pixel_double,0.0);
@@ -226,13 +296,21 @@ gegl_sample_model_get_sample_double(GeglSampleModel* self,
     return klass->get_sample_double(self,x,y,band,buffer);
 }
 void
-gegl_sample_model_set_sample_double(GeglSampleModel* self,
+gegl_sample_model_set_sample_double(const GeglSampleModel* self,
                                     gint x,
                                     gint y,
                                     gint band,
                                     gdouble sample,
                                     GeglBuffer* buffer) {
     g_return_if_fail(GEGL_IS_SAMPLE_MODEL(self));
+    g_return_if_fail(GEGL_IS_BUFFER(buffer));
+    g_return_if_fail(x < (self->width));
+    g_return_if_fail(x >= 0);
+    g_return_if_fail(y < (self->height));
+    g_return_if_fail(y >= 0);
+    g_return_if_fail(band < (self->num_bands));
+    g_return_if_fail(band >= 0);
+
     GeglSampleModelClass* klass=GEGL_SAMPLE_MODEL_GET_CLASS(self);
     
     g_return_if_fail(klass->get_pixel_double);
@@ -241,9 +319,18 @@ gegl_sample_model_set_sample_double(GeglSampleModel* self,
 }
 
 GeglBuffer*
-gegl_sample_model_create_buffer(GeglSampleModel* self,
+gegl_sample_model_create_buffer(const GeglSampleModel* self,
                                 TransferType type) {
 
-    //TODO unimplemented
-    return NULL;
+    g_return_val_if_fail(GEGL_IS_SAMPLE_MODEL(self),NULL);
+    
+    GeglSampleModelClass* class=GEGL_SAMPLE_MODEL_GET_CLASS(self);
+    
+    g_return_val_if_fail(class->create_buffer != NULL,NULL);
+    
+    GeglBuffer* new_buffer=class->create_buffer(self,type);
+    
+    g_return_val_if_fail(new_buffer!=NULL,NULL);
+    
+    return new_buffer;
 }

@@ -47,58 +47,65 @@ struct _GeglSampleModel
 typedef struct _GeglSampleModelClass GeglSampleModelClass;
 struct _GeglSampleModelClass
 {
-	GeglObjectClass parent_class;
-    gdouble* (*get_pixel_double)(GeglSampleModel* self,
-                                 gint x, 
-                                 gint y, 
-                                 gdouble* dArray, 
-                                 GeglBuffer* buffer);
-    void (*set_pixel_double)(GeglSampleModel* self,
-                             gint x, 
-                             gint y, 
-                             gdouble* dArray, 
-                             GeglBuffer* buffer);
+  //these virutal functions have a default implementation
+  GeglObjectClass parent_class;
+  gdouble* (*get_pixel_double)(const GeglSampleModel* self,
+			       gint x, 
+			       gint y, 
+			       gdouble* dArray, 
+			       const GeglBuffer* buffer);
+  void (*set_pixel_double)(const GeglSampleModel* self,
+			   gint x, 
+			   gint y, 
+			   const gdouble* dArray, 
+			   GeglBuffer* buffer);
+  
+  //pure virtual functions (i.e. you _must_ provide an implementation)
+  gdouble (*get_sample_double)(const GeglSampleModel* self,
+			       gint x, 
+			       gint y, 
+			       gint band, 
+			       const GeglBuffer* buffer);
+  void (*set_sample_double)(const GeglSampleModel* self,
+			    gint x, 
+			    gint y, 
+			    gint band,
+			    gdouble sample, 
+			    GeglBuffer* buffer);
 
-// virtual functions (i.e. you _must_ provide an implementation
-    gdouble (*get_sample_double)(GeglSampleModel* self,
-                                 gint x, 
-                                 gint y, 
-                                 gint band, 
-                                 GeglBuffer* buffer);
-    void (*set_sample_double)(GeglSampleModel* self,
-                             gint x, 
-                             gint y, 
-                             gint band,
-                             gdouble sample, 
-                             GeglBuffer* buffer);
-    void (*create_buffer)(GeglSampleModel* self,
-                          TransferType type);
+  GeglBuffer* (*create_buffer)(const GeglSampleModel* self,
+			       TransferType type);
+  gboolean (*check_buffer)(const GeglSampleModel* self,
+			   const GeglBuffer* buffer);
 };
 
-gint gegl_sample_model_get_num_bands(GeglSampleModel* self);
-gint gegl_sample_model_get_width(GeglSampleModel* self);
-gint gegl_sample_model_get_height(GeglSampleModel* self);
-gdouble* gegl_sample_model_get_pixel_double(GeglSampleModel* self,
+gint gegl_sample_model_get_num_bands(const GeglSampleModel* self);
+gint gegl_sample_model_get_width(const GeglSampleModel* self);
+gint gegl_sample_model_get_height(const GeglSampleModel* self);
+gdouble* gegl_sample_model_get_pixel_double(const GeglSampleModel* self,
                                             gint x,
                                             gint y,
                                             gdouble* dArray,
-                                            GeglBuffer* buffer);
-void gegl_sample_model_set_pixel_double(GeglSampleModel* self,
+                                            const GeglBuffer* buffer);
+void gegl_sample_model_set_pixel_double(const GeglSampleModel* self,
                                         gint x,
                                         gint y,
-                                        gdouble* dArray,
+                                        const gdouble* dArray,
                                         GeglBuffer* buffer);
-gdouble gegl_sample_model_get_sample_double(GeglSampleModel* self,
+gdouble gegl_sample_model_get_sample_double(const GeglSampleModel* self,
                                             gint x,
                                             gint y,
                                             gint band,
-                                            GeglBuffer* buffer);
-void gegl_sample_model_set_sample_double(GeglSampleModel* self,
+                                            const GeglBuffer* buffer);
+void gegl_sample_model_set_sample_double(const GeglSampleModel* self,
                                          gint x,
                                          gint y,
                                          gint band,
                                          gdouble sample,
                                          GeglBuffer* buffer);
-GeglBuffer* gegl_sample_model_create_buffer(GeglSampleModel* self,
+GeglBuffer* gegl_sample_model_create_buffer(const GeglSampleModel* self,
                                             TransferType type);
+gboolean gegl_sample_model_check_buffer(const GeglSampleModel* self,
+					const GeglBuffer* buffer);
+
 #endif // GEGL_SAMPLE_MODEL_H

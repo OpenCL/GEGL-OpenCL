@@ -21,6 +21,10 @@
 
 #include "gegl-buffer.h"
 
+#include <stdarg.h>
+
+//these are needed for the factory method
+#include "gegl-buffer-double.h"
 enum
 {
   PROP_0, 
@@ -220,7 +224,7 @@ free_banks (GeglBuffer * self)
  * Returns: number of elements per bank. 
  **/
 gint 
-gegl_buffer_get_elements_per_bank (GeglBuffer * self)
+gegl_buffer_get_elements_per_bank (const GeglBuffer * self)
 {
   g_return_val_if_fail (self != NULL, 0);
   g_return_val_if_fail (GEGL_IS_BUFFER (self), 0);
@@ -237,7 +241,7 @@ gegl_buffer_get_elements_per_bank (GeglBuffer * self)
  * Returns: number of banks. 
  **/
 gint 
-gegl_buffer_get_num_banks (GeglBuffer * self)
+gegl_buffer_get_num_banks (const GeglBuffer * self)
 {
   g_return_val_if_fail (self != NULL, 0);
   g_return_val_if_fail (GEGL_IS_BUFFER (self), 0);
@@ -254,7 +258,7 @@ gegl_buffer_get_num_banks (GeglBuffer * self)
  * Returns: pointers to the buffers. 
  **/
 gpointer * 
-gegl_buffer_get_banks(GeglBuffer * self)
+gegl_buffer_get_banks(const GeglBuffer * self)
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_BUFFER (self), NULL);
@@ -263,7 +267,7 @@ gegl_buffer_get_banks(GeglBuffer * self)
 }
 
 gdouble
-gegl_buffer_get_element_double(GeglBuffer* self,gint bank,gint index){
+gegl_buffer_get_element_double(const GeglBuffer* self,gint bank,gint index){
     g_return_val_if_fail(GEGL_IS_BUFFER(self),0);   
     GeglBufferClass* klass=GEGL_BUFFER_GET_CLASS(self);
     g_return_val_if_fail(klass->get_element_double != NULL, 0.0);
@@ -284,8 +288,24 @@ gegl_buffer_set_element_double(GeglBuffer* self,
 }
 
 TransferType
-gegl_buffer_get_transfer_type(GeglBuffer* self) {
+gegl_buffer_get_transfer_type(const GeglBuffer* self) {
     g_return_val_if_fail(GEGL_IS_BUFFER(self),TYPE_UNKNOWN);
     
     return self->transfer_type;
+}
+
+GeglBuffer* gegl_buffer_create(TransferType type, const gchar* first_property_name, ...) {
+    GeglBuffer* buff=NULL;
+    va_list args;
+    
+    va_start(args,first_property_name);
+    switch(type) {
+        case TYPE_DOUBLE:
+            buff = (GeglBuffer*)g_object_new_valist(GEGL_TYPE_BUFFER_DOUBLE,first_property_name,args);
+            break;
+        default:
+            g_error("Can not create GeglBuffer subclass of type %d",type);
+    }
+    va_end(args);
+    return buff;
 }

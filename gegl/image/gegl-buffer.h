@@ -65,18 +65,19 @@ typedef struct _GeglBufferClass GeglBufferClass;
 struct _GeglBufferClass 
 {
     GeglObjectClass object_class;
-    gdouble (*get_element_double)(GeglBuffer* self, gint bank,gint index);
+    gdouble (*get_element_double)(const GeglBuffer* self, gint bank,gint index);
     void (*set_element_double)(GeglBuffer* self, gint bank,gint index,gdouble elem);
 };
 
-TransferType    gegl_buffer_get_transfer_type(GeglBuffer* self);
-gint            gegl_buffer_get_num_banks     (GeglBuffer * self);
-gint            gegl_buffer_get_elements_per_bank(GeglBuffer * self);
-gpointer *  gegl_buffer_get_banks     (GeglBuffer * self);
+TransferType    gegl_buffer_get_transfer_type(const GeglBuffer* self);
+gint            gegl_buffer_get_num_banks     (const GeglBuffer * self);
+gint            gegl_buffer_get_elements_per_bank(const GeglBuffer * self);
+gpointer *  gegl_buffer_get_banks     (const GeglBuffer * self);
 
-gdouble  gegl_buffer_get_element_double(GeglBuffer* self,gint bank,gint index);
+gdouble  gegl_buffer_get_element_double(const GeglBuffer* self,gint bank,gint index);
 void  gegl_buffer_set_element_double(GeglBuffer* self,gint bank,gint index,gdouble elem);
 
+GeglBuffer* gegl_buffer_create(TransferType type, const gchar* first_property_name, ...);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -25,6 +25,7 @@ IMAGE_SRC = \
   gegl-buffer.c \
   gegl-buffer-double.c \
   gegl-sample-model.c \
+  gegl-component-sample-model.c \
   gegl-object.c \
   gegl-utils.c \
   gegl-init.c

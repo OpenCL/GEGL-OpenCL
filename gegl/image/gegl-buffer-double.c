@@ -26,7 +26,7 @@ static void class_init (gpointer g_class, gpointer class_data);
 static GObject* constructor(GType type,
                             guint n_construct_properties,
                             GObjectConstructParam *construct_properties);
-static gdouble get_element_double (GeglBuffer* self, gint bank,gint index);
+static gdouble get_element_double (const GeglBuffer* self, gint bank,gint index);
 static void set_element_double(GeglBuffer* self, gint bank,gint index, gdouble elem);
 
 static gpointer parent_class;
@@ -93,7 +93,7 @@ static void set_element_double(GeglBuffer* self, gint bank,gint index,gdouble el
     ((gdouble**)self->banks)[bank][index]=elem;
 }
 
-static gdouble get_element_double(GeglBuffer* self, gint bank, gint index) {
+static gdouble get_element_double(const GeglBuffer* self, gint bank, gint index) {
     
     g_return_val_if_fail(GEGL_IS_BUFFER_DOUBLE(self),0.0);
     g_return_val_if_fail(self->num_banks > bank,0.0);
