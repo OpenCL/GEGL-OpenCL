@@ -20,8 +20,6 @@ typedef struct _GeglImageIterator  GeglImageIterator;
 
 class Gegl:Point:Op from Gegl:Op {
 
-  private gint unused;
-
   protected 
   gboolean 
   constructor(self, 
@@ -45,39 +43,39 @@ class Gegl:Point:Op from Gegl:Op {
     PARENT_HANDLER (object)
   }
 
-  override (Gegl:Op) 
+  override (Gegl:Image) 
   void 
-  compute_need_rect (GeglOp *self_op, 
+  compute_need_rect (GeglImage *self_image, 
                      GeglRect *need_rect, 
                      gint i) 
   {
+    GeglOp *self_op = GEGL_OP(self_image); 
     /* 
        Need rect of children is same size as for point op,
        just translated back to childrens coordinate system
     */ 
-    gegl_rect_copy (need_rect, &self_op->need_rect);
+    gegl_rect_copy (need_rect, &self_image->need_rect);
  
     need_rect->x -= self_op->input_offsets[i].x;
     need_rect->y -= self_op->input_offsets[i].y;
 
   }
 
-  override (Gegl:Op) 
+  override (Gegl:Image) 
   void 
-  compute_result_rect (GeglOp *self_op) 
+  compute_result_rect (GeglImage *self_image) 
   {
-    GeglImage *self_image = GEGL_IMAGE(self_op);
-    gegl_rect_intersect (&self_op->result_rect, 
-                         &self_op->need_rect,
+    gegl_rect_intersect (&self_image->result_rect, 
+                         &self_image->need_rect,
                          &self_image->have_rect);
   }
 
-  override (Gegl:Op) 
+  override (Gegl:Image) 
   void 
-  compute_have_rect (GeglOp *self_op) 
+  compute_have_rect (GeglImage *self_image) 
   {
-    GeglImage *self_image = GEGL_IMAGE(self_op);
-    GeglNode *self_node = GEGL_NODE(self_op);
+    GeglNode *self_node = GEGL_NODE(self_image);
+    GeglOp *self_op = GEGL_OP(self_image);
     gint num_inputs = gegl_node_num_inputs(self_node);
     GeglRect have_rect;
     GeglRect intersection;
@@ -115,6 +113,7 @@ class Gegl:Point:Op from Gegl:Op {
     GeglPointOp *self =  GEGL_POINT_OP(self_op);
     GeglPointOpClass *self_class = 
       GEGL_POINT_OP_CLASS (GTK_OBJECT(self_op)->klass);
+    GeglImage *self_image = GEGL_IMAGE(self_op);
     GeglNode *self_node = GEGL_NODE(self_op);
     gint num_inputs = gegl_node_num_inputs(self_node);
     GeglImage *input;
@@ -127,7 +126,7 @@ class Gegl:Point:Op from Gegl:Op {
     /* Set up the source and dest iterators */
     for (i = 0; i < num_inputs; i++)
       {
-        gegl_rect_copy (&rect, &self_op->result_rect);  
+        gegl_rect_copy (&rect, &self_image->result_rect);  
 
         rect.x -= self_op->input_offsets[i].x;
         rect.y -= self_op->input_offsets[i].y;

@@ -27,7 +27,10 @@ class Gegl:Image from Gegl:Node {
 
   private guchar **data;           /* actual channel data pointers  */
   protected GeglRect data_rect;    /* data represents this sub rect */
+
   protected GeglRect have_rect;    /* ie the domain of definition   */
+  protected GeglRect need_rect;    /*roi info passed down from root */
+  protected GeglRect result_rect;  /*result - based on needRect,haveRect */
 
   protected 
   gboolean 
@@ -45,6 +48,10 @@ class Gegl:Image from Gegl:Node {
     self->height = 0;
     self->_priv->color_model = NULL;
     self->_priv->data = NULL;
+
+    gegl_rect_set (&self->have_rect,0,0,0,0);
+    gegl_rect_set (&self->need_rect,0,0,0,0);
+    gegl_rect_set (&self->result_rect,0,0,0,0);
 
     return TRUE;
   }
@@ -200,7 +207,8 @@ class Gegl:Image from Gegl:Node {
     gegl_object_ref(GEGL_OBJECT(cm));
   }
 
-  virtual 
-  GeglImage * 
-  get_pixels (self, GeglImage *dest, GeglRect *dest_roi);
+  virtual public GeglImage * get_pixels (self, GeglImage *dest, GeglRect *dest_roi);
+  virtual protected void compute_have_rect (self); 
+  virtual protected void compute_need_rect (self, GeglRect *need_rect, gint index); 
+  virtual protected void compute_result_rect (self); 
 }

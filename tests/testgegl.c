@@ -227,41 +227,41 @@ composite_op_factory (CompositeOpType type,
     {
     case COMP_ATOP:
        *type_name = g_strdup("atop");
-       return GEGL_IMAGE(gegl_composite_op_new (s0, s1, COMPOSITE_ATOP)); 
+       return GEGL_IMAGE(gegl_composite_op_new (s0, s1, GEGL_COMPOSITE_ATOP)); 
        
     case COMP_IN:
        *type_name = g_strdup("in");
-       return GEGL_IMAGE(gegl_composite_op_new (s0, s1, COMPOSITE_IN)); 
+       return GEGL_IMAGE(gegl_composite_op_new (s0, s1, GEGL_COMPOSITE_IN)); 
     case COMP_OUT:
        *type_name = g_strdup("out");
-       return GEGL_IMAGE(gegl_composite_op_new (s0, s1, COMPOSITE_OUT)); 
+       return GEGL_IMAGE(gegl_composite_op_new (s0, s1, GEGL_COMPOSITE_OUT)); 
     case COMP_OVER:
        *type_name = g_strdup("over");
-       return GEGL_IMAGE(gegl_composite_op_new (s0, s1, COMPOSITE_OVER)); 
+       return GEGL_IMAGE(gegl_composite_op_new (s0, s1, GEGL_COMPOSITE_OVER)); 
     case COMP_REPLACE:
        *type_name = g_strdup("replace");
-       return GEGL_IMAGE(gegl_composite_op_new (s0, s1, COMPOSITE_REPLACE)); 
+       return GEGL_IMAGE(gegl_composite_op_new (s0, s1, GEGL_COMPOSITE_REPLACE)); 
     case COMP_XOR:
        *type_name = g_strdup("xor");
-       return GEGL_IMAGE(gegl_composite_op_new (s0, s1, COMPOSITE_XOR)); 
+       return GEGL_IMAGE(gegl_composite_op_new (s0, s1, GEGL_COMPOSITE_XOR)); 
     case COMP_PREMULT_ATOP:
        *type_name = g_strdup("atop");
-       return GEGL_IMAGE(gegl_composite_premult_op_new (s0, s1, COMPOSITE_ATOP)); 
+       return GEGL_IMAGE(gegl_composite_premult_op_new (s0, s1, GEGL_COMPOSITE_ATOP)); 
     case COMP_PREMULT_IN:
        *type_name = g_strdup("in");
-       return GEGL_IMAGE(gegl_composite_premult_op_new (s0, s1, COMPOSITE_IN)); 
+       return GEGL_IMAGE(gegl_composite_premult_op_new (s0, s1, GEGL_COMPOSITE_IN)); 
     case COMP_PREMULT_OUT:
        *type_name = g_strdup("out");
-       return GEGL_IMAGE(gegl_composite_premult_op_new (s0, s1, COMPOSITE_OUT)); 
+       return GEGL_IMAGE(gegl_composite_premult_op_new (s0, s1, GEGL_COMPOSITE_OUT)); 
     case COMP_PREMULT_OVER:
        *type_name = g_strdup("over");
-       return GEGL_IMAGE(gegl_composite_premult_op_new (s0, s1, COMPOSITE_OVER)); 
+       return GEGL_IMAGE(gegl_composite_premult_op_new (s0, s1, GEGL_COMPOSITE_OVER)); 
     case COMP_PREMULT_REPLACE:
        *type_name = g_strdup("replace");
-       return GEGL_IMAGE(gegl_composite_premult_op_new (s0, s1, COMPOSITE_REPLACE)); 
+       return GEGL_IMAGE(gegl_composite_premult_op_new (s0, s1, GEGL_COMPOSITE_REPLACE)); 
     case COMP_PREMULT_XOR:
        *type_name = g_strdup("xor");
-       return GEGL_IMAGE(gegl_composite_premult_op_new (s0, s1, COMPOSITE_XOR)); 
+       return GEGL_IMAGE(gegl_composite_premult_op_new (s0, s1, GEGL_COMPOSITE_XOR)); 
     default:
        return NULL;
     }
@@ -433,7 +433,7 @@ point_ops_and_chains (void)
       */
 
       /* Note: B over A is given by (1-alphaB)*cA + cB */
-      op1 = GEGL_IMAGE(gegl_composite_premult_op_new (A,B,COMPOSITE_OVER)); 
+      op1 = GEGL_IMAGE(gegl_composite_premult_op_new (A,B,GEGL_COMPOSITE_OVER)); 
       op2 = GEGL_IMAGE(gegl_test_op_new (op1)); 
       gegl_rect_set (&roi, 0,0,2,2);
       gegl_image_get_pixels (op2, C, &roi);

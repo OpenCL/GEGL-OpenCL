@@ -91,7 +91,7 @@ display_image(GtkWidget *window,
       {
 	switch (data_type)
 	  {
-	  case FLOAT:
+	  case GEGL_FLOAT:
 	    gegl_image_iterator_get_scanline_data(iterator, 
 		(guchar**)data_ptrs1);
 
@@ -103,7 +103,7 @@ display_image(GtkWidget *window,
 		tmp[2 + 3*j] = ROUND(CLAMP(data_ptrs1[2][j],0.0,1.0) * 255);
 	      }
 	    break;
-	  case U8:
+	  case GEGL_U8:
 	    gegl_image_iterator_get_scanline_data(iterator, 
 		(guchar**)data_ptrs2);
 
@@ -115,7 +115,7 @@ display_image(GtkWidget *window,
 		tmp[2 + 3*j] = data_ptrs2[2][j];
 	      }
 	    break;
-	  case U16:
+	  case GEGL_U16:
 	    gegl_image_iterator_get_scanline_data(iterator, 
 		(guchar**)data_ptrs3);
 
@@ -127,7 +127,7 @@ display_image(GtkWidget *window,
 		tmp[2 + 3*j] = ROUND((data_ptrs3[2][j]/65535.0) * 255);
 	      }
 	    break;
-	  case U16_4:
+	  case GEGL_U16_4:
 	    gegl_image_iterator_get_scanline_data(iterator, 
 		(guchar**)data_ptrs4);
 
@@ -493,16 +493,16 @@ read_tiff_image_data (TIFF *tif,
   /* Create an appropriate image_data for passing to gegl_image_buffer */  
   switch (data_type) 
     {
-    case FLOAT:
+    case GEGL_FLOAT:
       channel_bytes = sizeof(float);
       break;
-    case U8:
+    case GEGL_U8:
       channel_bytes = sizeof(guint8);
       break;
-    case U16:
+    case GEGL_U16:
       channel_bytes = sizeof(guint16);
       break;
-    case U16_4:
+    case GEGL_U16_4:
       channel_bytes = sizeof(guint16);
       break;
     default:
@@ -514,16 +514,16 @@ read_tiff_image_data (TIFF *tif,
   /* Initialize some data pointers */
   switch (data_type) 
     {
-    case FLOAT:
+    case GEGL_FLOAT:
       t1 = (gfloat *)image_data;
       break;
-    case U8:
+    case GEGL_U8:
       t2 = (guint8 *)image_data;
       break;
-    case U16:
+    case GEGL_U16:
       t3 = (guint16 *)image_data;
       break;
-    case U16_4:
+    case GEGL_U16_4:
       t4 = (guint16 *)image_data;
       break;
     default:
@@ -549,7 +549,7 @@ read_tiff_image_data (TIFF *tif,
 
       switch (data_type)
 	{
-	case FLOAT:
+	case GEGL_FLOAT:
 	  t1[j             ] = r / 255.0;
 	  t1[j+plane_size  ] = g / 255.0;
 	  t1[j+plane_size*2] = b / 255.0;
@@ -557,7 +557,7 @@ read_tiff_image_data (TIFF *tif,
 	    t1[j+plane_size*3] = a / 255.0;
 	  j++;
 	  break; 
-	case U8:
+	case GEGL_U8:
 	  t2[j             ] = r;
 	  t2[j+plane_size  ] = g;
 	  t2[j+plane_size*2] = b;
@@ -565,7 +565,7 @@ read_tiff_image_data (TIFF *tif,
 	    t2[j+plane_size*3] = a;
 	  j++;
 	  break; 
-	case U16:
+	case GEGL_U16:
 	  t3[j             ] = (r / 255.0) * 65535;
 	  t3[j+plane_size  ] = (g / 255.0) * 65535;
 	  t3[j+plane_size*2] = (b / 255.0) * 65535;
@@ -573,7 +573,7 @@ read_tiff_image_data (TIFF *tif,
 	    t3[j+plane_size*3] = (a / 255.0) * 65535;
 	  j++;
 	  break; 
-	case U16_4:
+	case GEGL_U16_4:
 	  t4[j             ] = (r / 255.0) * 4095;
 	  t4[j+plane_size  ] = (g / 255.0) * 4095;
 	  t4[j+plane_size*2] = (b / 255.0) * 4095;
@@ -605,7 +605,7 @@ main(int argc,
   TIFF                  *tif;   
   guchar                *image_data = NULL;
   guint16               samples_per_pixel;
-  GeglChannelDataType   data_type = FLOAT;
+  GeglChannelDataType   data_type = GEGL_FLOAT;
   gboolean              has_alpha = FALSE;
 
   gtk_init (&argc, &argv);
@@ -615,19 +615,19 @@ main(int argc,
     {
       if (!strcmp (argv[3], "float"))
 	{
-	  data_type = FLOAT;
+	  data_type = GEGL_FLOAT;
 	}
       else if (!strcmp (argv[3], "u8"))
 	{
-	  data_type = U8;
+	  data_type = GEGL_U8;
 	}
       else if (!strcmp (argv[3], "u16"))
 	{
-	  data_type = U16;
+	  data_type = GEGL_U16;
 	}
       else if (!strcmp (argv[3], "u16_4"))
 	{
-	  data_type = U16_4;
+	  data_type = GEGL_U16_4;
 	}
     }
 
@@ -659,7 +659,7 @@ main(int argc,
       TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &src_height[k]);
       
       /* create the src GeglColorModel */
-      src_color_model[k] = gegl_color_model_factory (RGB, 
+      src_color_model[k] = gegl_color_model_factory (GEGL_RGB, 
                                                     data_type, 
                                                     has_alpha);
 

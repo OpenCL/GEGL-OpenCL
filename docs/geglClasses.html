@@ -51,15 +51,12 @@ CLASS="TOC"
 <dt>
 These classes currently have implementations in gegl:</dt>
 
-<dt>
-</dt>
-
 <br><b><tt><a href="#GeglObject">GeglObject</a></tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; <a href="#GeglNode">GeglNode</a></tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; <a href="#GeglImage">GeglImage</a></tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#GeglImageBuffer">GeglImageBuffer</a></tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#GeglOp">GeglOp</a></tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 <a href="#GeglPointOp">GeglPointOp</a></tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 GeglSingleSrcOp</tt></b>
@@ -482,7 +479,7 @@ with an appropriate color model and data type, etc.
 <br><b><tt>&nbsp;&nbsp;&nbsp; guint16 u16;</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; gfloat f;</tt></b>
 <br><b><tt>}GeglChannelValue;</tt></b>
-<p><b><tt>class Gegl:Color from Gegl:Object {</tt></b><b><tt></tt></b>
+<p><b><tt>class Gegl:Color from Gegl:Object {</tt></b>
 <p><b><tt>&nbsp; private GeglColorModel *color_model;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 /* The color model */</tt></b>
 <br><b><tt>&nbsp; private GeglChannelValue *channel_values;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -580,7 +577,7 @@ Part of the (only partially implemented) color model tree:
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelU8Hsv</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorModelMultiChannel</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelFloatMultiChannel</tt></b>
-<p>The matching Color conversion operators:<b><tt></tt></b>
+<p>The matching Color conversion operators:
 <p><b><tt>GeglColorConvertOp</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorConvertOpToIndexed</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorConvertOpToGray</tt></b>
@@ -609,20 +606,77 @@ CLASS="FORMALPARA"
 
 <div 
 CLASS="SECT1"
->&nbsp;
+>
+<div 
+CLASS="TOC"
+>
+<dl 
+>
+<h1>
+<a NAME="GeglNode"></a><b><font size=+2>Blend ops for Gegl</font></b></h1>
+</dl>
+</div>
+
+<div 
+CLASS="SECT1"
+>Suppose we have three images and some op and we wish
+to find <b><tt>C = B op A</tt></b>.
+<p>The basic formula for Blend modes (including Porter-Duff compositing)
+are as follows
+<p>Let the images be given by <b><tt>(A,aA) (B,aB) (C,aC) </tt></b>all
+premultiplied. Then:
+<p><b><tt>aC * C = (1-aB) * aA * A + (1-aA) * aB * B + aA * aB * f(A,B)</tt></b>
+<br><b><tt>aC =&nbsp; aA + aB - aA * aB</tt></b>
+<p><b><tt>1)Normal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B</tt></b>
+<br><b><tt>2)Multiply&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A*B</tt></b>
+<br><b><tt>3)Screen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1-(1-A)*(1-B)</tt></b>
+<br><b><tt>4)Overlay&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2*A*B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+A&lt;.5</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1-2*(1-A)*(1-B)&nbsp;&nbsp;&nbsp; A>=.5</tt></b>
+<br><b><tt>5)HardLight&nbsp;&nbsp;&nbsp;&nbsp; 2*A*B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+B&lt;.5</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1-2*(1-A)*(1-B)&nbsp;&nbsp;&nbsp; B>=.5</tt></b>
+<br><b><tt>6)SoftLight&nbsp;&nbsp;&nbsp;&nbsp; 2*remap(A,.25,.75)*B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+B&lt;.5</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1-2*(1-remap(A,.25,.75))(1-B)&nbsp;&nbsp; B>=.5</tt></b>
+<br><b><tt>7)ColorDodge&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+A=0</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+A>=(1-B)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+A/(1-B)</tt></b>
+<br><b><tt>8)ColorBurn&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+A=0</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(1-A)>=B</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+1 - (1-A)/B</tt></b>
+<br><b><tt>9)Darken&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; min(A,B)</tt></b>
+<br><b><tt>10)Lighten&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; max(A,B)</tt></b>
+<br><b><tt>11)Difference&nbsp;&nbsp; |A-B|</tt></b><b><tt></tt></b>
+<p>Some of these might not be quite right (eg SoftLight). Compare versions
+from recent Ghostscript cvs <a href="http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi/gs/src/gxblend.c?rev=1.2&content-type=text/x-cvsweb-markup&cvsroot=ghostscript">here.
+</a>Also compare the descriptions in <a href="http://partners.adobe.com/asn/developer/technotes/acrobatpdf.html">Adobe
+PDF&nbsp; spec</a>, and the <a href="http://www.w3.org/TR/SVG/filters.html#feBlend">SVG
+spec</a> as well.</div>
+
 <h1 CLASS="SECT1">
 <a NAME="References"></a><font size=+2>References</font></h1>
 
 <ul 
 ><a href="http://techpubs.sgi.com/library/dynaweb_bin/ebt-bin/0650/nph-infosrch.cgi/infosrchtpl/SGI_Developer/IL_PG/@InfoSearch__BookTextView/44">SGI
 Image Vision Library </a>.
-<br><a href="http://java.sun.com/products/java-media/2D/">Java2d API</a>.
 <br><a href="http://java.sun.com/products/java-media/jai/">Java Advanced
 Imaging API</a>.
-<br>A Model for Effecient and Flexible Image Computing
-<p><a href="http://www.color.org/">ICC Home Page.</a>
-<br><a href="http://techpubs.sgi.com/library/dynaweb_bin/ebt-bin/0650/nph-infosrch.cgi/infosrchtpl/SGI_Developer/ClrMgmntSys/@InfoSearch__BookTextView/37">SGI
-coloratura library.</a>
+<br><a href="http://dev.acm.org/pubs/citations/proceedings/graph/192161/p147-shantzis/">A
+Model for Effecient and Flexible Image Computing</a>
+<br><a href="http://www.ddj.com/articles/1997/9707/9707b/9707b.htm">A Memory
+Constrained Image Processing Architecture</a>
 <p><a href="http://www.5z.com/jirka/gob.html">Gtk+ Object Builder</a></ul>
 </div>
 </div>

@@ -23,9 +23,6 @@ class Gegl:Op from Gegl:Image {
   protected gboolean *input_has_alpha;
   protected gboolean has_alpha;
 
-  protected GeglRect need_rect;         /*roi info passed down from root */
-  protected GeglRect result_rect;       /*result - based on needRect,haveRect */
-
   protected 
   gboolean 
   constructor(self, 
@@ -44,8 +41,6 @@ class Gegl:Op from Gegl:Image {
 
       self->input_has_alpha = g_new(gboolean, num_inputs);
       self->input_offsets = g_new (GeglPoint, num_inputs);
-      gegl_rect_set (&self->need_rect,0,0,0,0);
-      gegl_rect_set (&self->result_rect,0,0,0,0);
 
       for (i = 0; i < num_inputs; i++)
       {
@@ -94,7 +89,7 @@ class Gegl:Op from Gegl:Image {
       }
 
     /* The roi becomes our need_rect */
-    gegl_rect_copy (&self->need_rect, roi); 
+    gegl_rect_copy (&self_image->need_rect, roi); 
 
     /* Ready each source input */ 
     for (i = 0; i < num_inputs; i++)    
@@ -102,7 +97,7 @@ class Gegl:Op from Gegl:Image {
         GeglRect need_rect;
 
         /* Compute the need_rect of the ith input */
-        compute_need_rect (self, &need_rect, i);
+        gegl_image_compute_need_rect (self_image, &need_rect, i);
 
 #ifdef DEBUG_GET_PIXELS 
         g_print("Calling source %d\n", i);
@@ -121,14 +116,14 @@ class Gegl:Op from Gegl:Image {
     compute_color_model (self, dest);
 
     /* Compute the have rect and result rect */
-    compute_have_rect (self);
-    compute_result_rect (self);
+    gegl_image_compute_have_rect (self_image);
+    gegl_image_compute_result_rect (self_image);
 
     /* Allocate a buffer for result if necessary */
     if (!dest)
       {
-         gint w = self->result_rect.w;
-         gint h = self->result_rect.h;
+         gint w = self_image->result_rect.w;
+         gint h = self_image->result_rect.h;
 
          if(!gegl_image_alloc (self_image, w, h))
            {
@@ -146,13 +141,13 @@ class Gegl:Op from Gegl:Image {
 #ifdef DEBUG_GET_PIXELS 
     g_print("Call prepare\n");
 #endif
-    prepare (self,dest,&self->result_rect);
+    prepare (self,dest,&self_image->result_rect);
 
     /* Everything is ready, actually do the op */
 #ifdef DEBUG_GET_PIXELS 
     g_print("Call apply\n");
 #endif
-    apply (self, dest, &self->result_rect); 
+    apply (self, dest, &self_image->result_rect); 
 
     /* Everything is done, free the inputs */
     for (i = 0; i < num_inputs; i++)    
@@ -241,7 +236,4 @@ class Gegl:Op from Gegl:Image {
 
   virtual protected void prepare (self, GeglImage *dest, GeglRect *result_rect);
   virtual protected void apply (self, GeglImage *dest, GeglRect *result_rect);
-  virtual protected void compute_have_rect (self); 
-  virtual protected void compute_need_rect (self, GeglRect *need_rect, gint index); 
-  virtual protected void compute_result_rect (self); 
 }

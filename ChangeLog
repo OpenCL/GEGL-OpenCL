@@ -1,3 +1,25 @@
+Mon Feb 12 01:18:47 EST 2001 calvinw@mindspring.com
+
+    *docs/geglClasses.html
+    *gegl/gegl-add-op.gil
+    *gegl/gegl-dark-op.gil
+    *gegl/gegl-diff-op.gil
+    *gegl/gegl-image.gob
+    *gegl/gegl-light-op.gil
+    *gegl/gegl-max-op.gil
+    *gegl/gegl-min-op.gil
+    *gegl/gegl-mult-op.gil
+    *gegl/gegl-op.gob
+    *gegl/gegl-point-op.gob
+    *gegl/gegl-screen-op.gil
+    *gegl/gegl-subtract-op.gil
+    *gegl/gegl-test-op.gil
+    moved the have_rect, need_rect, result_rect all to GeglImage.
+
+    *tests/testgegl.c
+    *tests/testgeglfile.c
+    updated these to work the GEGL_ prefixes
+
 2001-02-10  Jay Cox  <jaycox@gimp.org>
 
 	* codegen/test_files/gegl-print-op.gil

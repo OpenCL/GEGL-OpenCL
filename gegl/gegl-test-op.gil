@@ -74,21 +74,22 @@ class Gegl:Test:Op from Gegl:Single:Src:Op {
                                 GeglImageIterator *dest_iter, 
                                 GeglImageIterator **src_iters)
   {
-    GeglOp *self_op = GEGL_OP(self_point_op);
     guint width = gegl_image_iterator_scanline_width (dest_iter);
+    GeglImage *dest = gegl_image_iterator_get_image(dest_iter);
+    GeglImage *src = gegl_image_iterator_get_image(src_iters[0]);
 
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color,alpha,has_alpha);
     Pixel src(color,alpha,has_alpha);
     GENERIC_IMAGE_DECL_END
 
-    dest_has_alpha = self_op->has_alpha; 
-    src_has_alpha = self_op->input_has_alpha[0]; 
+    dest_has_alpha = gegl_image_has_alpha(dest); 
+    src_has_alpha = gegl_image_has_alpha(src); 
 
-    gegl_image_iterator_get_scanline_data (dest_iter,
-                (guchar**)dest_data);
-    gegl_image_iterator_get_scanline_data (src_iters[0],
-                (guchar**)src_data);
+    gegl_image_iterator_get_scanline_data (
+        dest_iter, (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data (
+        src_iters[0], (guchar**)src_data);
 
     GENERIC_IMAGE_IMAGE_DATA_INIT
     
