@@ -1,3 +1,11 @@
+Mon Jun 26 15:35:34 PDT 2000 caro@rhythm.com
+
+	* changed links in docs/gegl.html and codegen.html
+
+	* added copychan to gegl/Makefil.am
+
+	* made gegl-copychan-op.gob compadible with the new class structure.
+
 Fri Jun 23 11:33:26 EDT 2000 calvinw@mindspring.com
 
         *docs/gegl.html-added description of documents
