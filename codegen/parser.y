@@ -436,7 +436,6 @@ DT_Line:
 		if (tmp[j-1] == '\\') tmp[j-1] = '\0'; 
 		tmp[j] = '\0'; 
 		CHANNEL_ROUND_STR = (char *) strdup (tmp); 
-		printf ("%s\n", CHANNEL_ROUND_STR);
 		}
 	| DT_PRINT LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
