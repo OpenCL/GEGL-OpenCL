@@ -6,7 +6,8 @@
 #include "common.h"
 #include <string.h> 
 #include <stdlib.h>
-
+   
+    
 void do_op_one (elem_t *dest, FUNCTION op);
 void do_op_two (elem_t *dest, elem_t src, FUNCTION op);
 void do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op);
@@ -27,7 +28,9 @@ int yyerror (char *s);
 elem_t  symtab[NSYMS];
 int     cur_nsyms=0;
 
-keyword_t keyword_tab[] = {
+int 	flag =0;
+
+  keyword_t keyword_tab[] = {
 {"break",      BREAK},
 {"boolean",    BOOLEAN}, 
 {"case",       CASE},
@@ -82,6 +85,7 @@ keyword_t keyword_tab[] = {
 %token  <elem> FloatChan 
 %token  <elem> INDENT
 %token  <elem> POUND
+%token  <elem> INDENT_CURLY  
 
 /* keywords */
 %token	BOOLEAN BREAK  CASE  CHAR CONST  CONTINUE  DEFAULT  DO	
@@ -136,6 +140,10 @@ Line:
 		{
 		printf("%s", $1.string); 
 		}
+	| INDENT_CURLY
+		{
+		printf("%s", $1.string); 
+		}
 	| VOID				
 		{ 
 		printf("void "); 
@@ -143,58 +151,171 @@ Line:
 	| POUND PoundInclDef 		
 		{ 
 		printf("#%s ", $2.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		}
 	| INDENT LT_CURLY			
 		{ 
 		printf("%s{", $1.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		}
 	| INDENT RT_CURLY                      
 		{ 
 		printf("%s}", $1.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		} 
 	| INDENT BREAK ';'  			
 		{ 
 		printf("%sbreak;", $1.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		} 			
 	| INDENT CASE NAME ':'  		
 		{ 
 		printf("%scase %s:", $1.string, $3.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		}
        	| INDENT DEFAULT ':' 	 		
 		{ 
 		printf("%sdefault:", $1.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
+		}
+	| INDENT ELSE INDENT_CURLY 				
+		{ 
+		printf("%selse \n%s", $1.string, $3.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		}
 	| INDENT ELSE  				
 		{ 
-		printf("%selse \n", $1.string); 
+		printf("%selse %s  {", $1.string,$1.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
+		flag = 1; 
 		}
 	| INDENT FOR LT_PARENTHESIS Expression ';' Expression ';' Expression RT_PARENTHESIS
 		{ 
 		printf("%sfor (%s; %s; %s)", $1.string, $4.string, $6.string, $8.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
+		}
+	| INDENT IF LT_PARENTHESIS Expression RT_PARENTHESIS INDENT_CURLY
+                { 
+		printf("%sif (%s)%s", $1.string, $4.string, $6.string);
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		}
 	| INDENT IF LT_PARENTHESIS Expression RT_PARENTHESIS
+		{
+		printf("%sif (%s)", $1.string, $4.string);
+		printf("%s  {", $1.string);
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
+		flag = 1; 
+		}                	
+	| INDENT ELSE IF LT_PARENTHESIS Expression RT_PARENTHESIS INDENT_CURLY
                 { 
-		printf("%sif (%s)", $1.string, $4.string); 
-		}	
+		printf("%selse if (%s)%s", $1.string, $5.string, $7.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
+		}
 	| INDENT ELSE IF LT_PARENTHESIS Expression RT_PARENTHESIS
                 { 
-		printf("%selse if (%s)", $1.string, $5.string); 
+		printf("%selse if (%s)", $1.string, $5.string);
+		printf("%s  {", $1.string);
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
+		flag=1; 
 		}	
  	| INDENT RETURN Expression ';'		
 		{ 
 		printf("%sreturn (%s);", $1.string, $3.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		}	
 	| INDENT SWITCH LT_PARENTHESIS Expression RT_PARENTHESIS
                 { 
 		printf("%sswitch (%s)", $1.string, $4.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		}
-	| INDENT WHILE LT_PARENTHESIS Expression RT_PARENTHESIS
+	| INDENT WHILE LT_PARENTHESIS Expression RT_PARENTHESIS INDENT_CURLY
                 { 
 		printf("%swhile (%s)", $1.string, $4.string); 
+		printf("%s", $6.string);
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
+		} 	
+	| INDENT WHILE LT_PARENTHESIS Expression RT_PARENTHESIS
+                { 
+		printf("%swhile (%s)%s  {", $1.string, $4.string, $1.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
+		flag = 1; 
 		} 	
 	| INDENT Definition ';' 		
 		{ 
 		printf("%s%s;", $1.string, $2.string); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		} 
 	| INDENT Star NAME EQUAL Expression ';'  	
 		{
@@ -211,6 +332,11 @@ Line:
 		sprintf (tmp, "%s%s;", $1.string, e.string);   
 		strcpy ($3.string, tmp); 
 		print_line ($3); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		} 
 	| INDENT Star NAME PLUS_EQUAL Expression ';'  	
 		{ 
@@ -222,6 +348,11 @@ Line:
 		sprintf (t, "%s%s%s;", $1.string, $2.string, $3.string);   
 	        strcpy ($3.string, t);	
 		print_line ($3); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		} 
 	| INDENT Star NAME MINUS_EQUAL Expression ';'  	
 		{ 
@@ -233,6 +364,11 @@ Line:
 		sprintf (t, "%s%s%s;", $1.string, $2.string, $3.string);   
 	        strcpy ($3.string, t);	
 		print_line ($3); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		} 
 	| INDENT Star NAME TIMES_EQUAL Expression ';'  	
 		{ 
@@ -244,6 +380,11 @@ Line:
 		sprintf (t, "%s%s%s;", $1.string, $2.string, $3.string);   
 	        strcpy ($3.string, t);	
 		print_line ($3); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		} 
 	| INDENT Star NAME DIVIDE_EQUAL Expression ';'  	
 		{ 
@@ -255,6 +396,11 @@ Line:
 		sprintf (t, "%s%s%s;", $1.string, $2.string, $3.string);   
 	        strcpy ($3.string, t);	
 		print_line ($3); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		} 
 	| INDENT Expression ';'   		
 		{
@@ -262,6 +408,11 @@ Line:
 		sprintf (tmp, "%s%s;", $1.string, $2.string);   
 	 	strcpy ($2.string, tmp); 	
 		print_line($2); 
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		}
 	| INDENT ITERATOR_X LT_PARENTHESIS Star2 NAME ',' INT RT_PARENTHESIS ';'
 		{
@@ -292,6 +443,11 @@ Line:
 		    }
 		strcpy ($5.string, tmp);
 		print_line($5); 	
+		if (flag)
+		  {
+		  flag = 0;
+		  printf("%s}", $1.string);
+		  }
 		}
 	| INDENT ITERATOR_XY LT_PARENTHESIS Star2 NAME ',' INT ',' INT RT_PARENTHESIS ';' 
 		{
@@ -1419,9 +1575,9 @@ read_data_types (char *data_type)
      _datatype_         = (char *) strdup ("float"); 
      _WP_               = (char *) strdup ("1.0");
      _WP_NORM_          = (char *) strdup ("1.0");
-     _VectorChan_       = (char *) strdup ("float");
-     _Chan_             = (char *) strdup ("float");
-     _FloatChan_        = (char *) strdup ("float");
+     _VectorChan_       = (char *) strdup ("gfloat");
+     _Chan_             = (char *) strdup ("gfloat");
+     _FloatChan_        = (char *) strdup ("gfloat");
      _MIN_CHAN_         = (char *) strdup ("0");
      _MAX_CHAN_         = (char *) strdup ("1.0");
      _ZERO_CHAN_        = (char *) strdup ("0");

@@ -85,5 +85,8 @@ void	init_image_data (char *indent);
 int 	get_keyword (char *s); 
 int	yylex (); 
 void    rm_varibles (char scope); 
+
+void	add_newline(); 
+
 #endif
 

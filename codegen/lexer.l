@@ -33,6 +33,10 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 "Datatype"		        printf ("%s", _Datatype_);
 "datatype"                      printf ("%s", _datatype_); 
 
+<CODEGEN_BLOCK>{indent}"{"	{
+    				strcpy(yylval.elem.string, yytext);
+				return INDENT_CURLY;
+				}
 <CODEGEN_DECL>{indent}          {
                             	strcpy(yylval.elem.string, yytext);
 			        return INDENT;
@@ -206,4 +210,8 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 
 %%
 
-
+void
+add_newline ()
+{
+ unput ('\n');  
+}
