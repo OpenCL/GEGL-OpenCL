@@ -1,3 +1,13 @@
+Sat Sep  2 18:16:30 EDT 2000 calvinw@mindspring.com
+	* gegl/Makefile.am
+	Removed some duplicate lines in Makefile.am for
+	gegl-fill-op.h
+	gegl-print-op.h
+	gegl-fill-op-private.h
+	gegl-print-op-private.h
+	gegl-fill-op.c
+	gegl-print-op.c
+
 Tue Aug 29 21:57:46 EDT 2000 calvinw@mindspring.com	
 	* gegl/gegl-add-op.gil
 	* gegl/gegl-color-convert-op.gob

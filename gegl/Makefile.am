@@ -86,8 +86,6 @@ GOB_GEN_PUBLIC_HDRS = \
   gegl-point-op.h \
   gegl-single-src-op.h \
   gegl-dual-src-op.h \
-  gegl-fill-op.h \
-  gegl-print-op.h \
   gegl-mult-op.h \
   gegl-add-op.h \
   gegl-diff-op.h \
@@ -129,8 +127,6 @@ GOB_GEN_PRIVATE_HDRS = \
   gegl-point-op-private.h \
   gegl-single-src-op-private.h \
   gegl-dual-src-op-private.h \
-  gegl-fill-op-private.h \
-  gegl-print-op-private.h \
   gegl-mult-op-private.h \
   gegl-add-op-private.h \
   gegl-diff-op-private.h \
@@ -172,8 +168,6 @@ GOB_GEN_SRC = \
   gegl-point-op.c \
   gegl-single-src-op.c \
   gegl-dual-src-op.c \
-  gegl-fill-op.c \
-  gegl-print-op.c \
   gegl-mult-op.c \
   gegl-add-op.c \
   gegl-diff-op.c \

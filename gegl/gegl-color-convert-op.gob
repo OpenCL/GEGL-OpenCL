@@ -12,7 +12,6 @@
 #include "gegl-single-src-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
-#include "gegl-image-buffer.h"
 #include "gegl-image-iterator.h"
 #include "gegl-color.h"
 #include "gegl-utils.h"
