@@ -26,27 +26,6 @@ AM_PROG_LIBTOOL
 
 AM_MAINTAINER_MODE
 
-changequote(,)dnl
-if test "x$GCC" = "xyes"; then
-  case " $CFLAGS " in
-  *[\ \	]-Wall[\ \	]*) ;;
-  *) CFLAGS="$CFLAGS -Wall" ;;
-  esac
-
-  if test "x$enable_ansi" = "xyes"; then
-    case " $CFLAGS " in
-    *[\ \	]-ansi[\ \	]*) ;;
-    *) CFLAGS="$CFLAGS -ansi" ;;
-    esac
-
-    case " $CFLAGS " in
-    *[\ \	]-pedantic[\ \	]*) ;;
-    *) CFLAGS="$CFLAGS -pedantic" ;;
-    esac
-  fi
-fi
-changequote([,])dnl
-
 dnl Check for GTK+
 AM_PATH_GTK(1.2.6,,
   AC_MSG_ERROR(Test for GTK failed. See the file 'INSTALL' for help.))
@@ -82,6 +61,14 @@ if eval "test x$GCC = xyes"; then
 fi
 
 changequote([,])dnl
+
+AC_PATH_PROGS(GOB, gob, :)
+
+if test "x$GOB" = "x"; then
+    AC_MSG_ERROR(No gob.)
+fi
+
+AC_SUBST(GOB)
 
 GEGL_LIBDIR='-L${libdir}'
 GEGL_INCLUDEDIR='-I${includedir}'

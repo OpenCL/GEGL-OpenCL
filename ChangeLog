@@ -1,94 +1,104 @@
+Fri Jan 28 16:37:57 PST 2000 Manish Singh <yosh@gimp.org>
+
+	* configure.in: autodetect gob and error out if not there
+
+	* Makefile.am: revamp the build process to automatically care for
+	gob stuff
+
+	* reformatted the ChangeLog to be consistent with other projects
+
 Fri Jan 28 18:42:26 EST 2000 calvinw@mindspring.com
 
-    * Added the gegl-color-convert-op.gob 
-    * Added the gegl-color-convert-to-rgb-float-op.gob 
-    * Added the gegl-color-convert-to-rgb-u8-op.gob 
-    * Added the gegl-color-convert-to-gray-float-op.gob 
-    * Added the gegl-color-convert-to-gray-u8-op.gob 
-    * removed gegl-convert-rgb-op.gob
-    * removed gegl-convert-gray-op.gob
+	* Added the gegl-color-convert-op.gob 
+	* Added the gegl-color-convert-to-rgb-float-op.gob 
+	* Added the gegl-color-convert-to-rgb-u8-op.gob 
+	* Added the gegl-color-convert-to-gray-float-op.gob 
+	* Added the gegl-color-convert-to-gray-u8-op.gob 
+	* removed gegl-convert-rgb-op.gob
+	* removed gegl-convert-gray-op.gob
 
 Fri Jan 28 14:12:37 PST 2000 caro@rhythm.com
-    
-    * Simplified the gegl-composite-op.pregob
+	
+	* Simplified the gegl-composite-op.pregob
 
 Thu Jan 27 13:05:25 PST 2000 caro@rhythm.com
 
-    * Changed varible names in gegl-composite-op
+	* Changed varible names in gegl-composite-op
 
-    * Created a gegl-composite-op.pregob
+	* Created a gegl-composite-op.pregob
 
 Wed Jan 26 14:05:54 PST 2000 caro@rhythm.com
 
-    * Fixed some bugs in gegl-color_model-gray
-      and gegl-convert-rgb/gray-op 
+	* Fixed some bugs in gegl-color_model-gray
+	  and gegl-convert-rgb/gray-op 
 
 Wed Jan 26 13:42:07 PST 2000 caro@rhythm.com
 
-    * Forgot to add gegl-convert-gray.gob
+	* Forgot to add gegl-convert-gray.gob
 
 Wed Jan 26 13:03:51 PST 2000  caro@rhythm.com
 
-    * Fixed some bugs in gegl-composite-op.gob
+	* Fixed some bugs in gegl-composite-op.gob
 
-    * Added gegl-color-model-gray, gegl-color-model-gray-float
-      gegl-color-model-gray-u8
+	* Added gegl-color-model-gray, gegl-color-model-gray-float
+	  gegl-color-model-gray-u8
 
-    * Added some function to take care of most of the cases in
-      gegl-composite-op.gobi for unpremult and premult with or
-      without alpha
+	* Added some function to take care of most of the cases in
+	  gegl-composite-op.gobi for unpremult and premult with or
+	  without alpha
 
-    * Added suport for the color_models to convert from and to
-      XYZ space.
+	* Added suport for the color_models to convert from and to
+	  XYZ space.
 
 Tue Jan 25 10:51:05 EST 2000 calvinw@mindspring.com
 
-    *More details for GeglDrawable class.  
+	* More details for GeglDrawable class.  
 
-    *Fixed a bunch of gegl_destroys to be correct.
+	* Fixed a bunch of gegl_destroys to be correct.
 
-    *Straightened out some of the forward header problems
-     by updating to gob-0.92.2. No gob patch is necessary
-     now.
+	* Straightened out some of the forward header problems
+	  by updating to gob-0.92.2. No gob patch is necessary
+	  now.
 
 Mon Jan 24 11:27:03 EST 2000  calvinw@mindspring.com
 
-    *Fixed the GOB_PUBLIC_HEADER in Makefile.am for
-     gegl-composite-op.h gegl-premult-op.h gegl-unpremult-op.h
+	* Fixed the GOB_PUBLIC_HEADER in Makefile.am for
+	  gegl-composite-op.h gegl-premult-op.h gegl-unpremult-op.h
 
-    *Fixed some of set_color for GeglColorModelRgbU8.
-     channels[i].u8 is how to get 8bit version of a GeglColor.
+	* Fixed some of set_color for GeglColorModelRgbU8.
+	  channels[i].u8 is how to get 8bit version of a GeglColor.
 
-    *Use guint8 not guchar for 8bit data type code.
+	* Use guint8 not guchar for 8bit data type code.
 
-    *Added more to GeglDrawable class.
+	* Added more to GeglDrawable class.
 
 Sun Jan 23 13:13:18 EST 2000  calvinw@mindspring.com 
-    
-    * added caros testgeglfile --which opens 2 tiffs
-      to test the composite ops. 
-    * made a bunch of code more readable. 
+	
+	* added caros testgeglfile --which opens 2 tiffs
+	  to test the composite ops. 
+
+	* made a bunch of code more readable. 
 
 Fri Jan 21 17:59:49 PST 2000  caro@rhythm.com
-    * added some U8 support
-    * implemented part of convert, composite ops
-    
+
+	* added some U8 support
+	* implemented part of convert, composite ops
 
 Thu Jan 20 09:20:48 PST 2000  calvinw@mindspring.com  
 
-    * initial import  
+	* initial import  
 
-    * The following classes have initial versions:
+	* The following classes have initial versions:
 
-      GeglObject -- base class for gegl classes  
-      GeglOp -- class for operators  
-      GeglPointOp  -- operators that only need (x,y) to compute pixel (x,y)
-      GeglFillOp -- fills images with a color
-      GeglPrintOp -- prints out the pixel values of an image (floats only now)
-      GeglImageBuffers -- buffers for image data and pointers to data 
-      GeglColorModel -- ColorSpace, color channels, alpha info, data type 
-      GeglColorModelRgb -- subclass of RGB color models
-      GeglColorModelRgbFloat -- floating pt channels RGB color model 
-      GeglColor -- stores channels for a single color 
+	  GeglObject -- base class for gegl classes  
+	  GeglOp -- class for operators  
+	  GeglPointOp  -- operators that only need (x,y) to compute pixel (x,y)
+	  GeglFillOp -- fills images with a color
+	  GeglPrintOp -- prints out the pixel values of an image (floats only now)
+	  GeglImageBuffers -- buffers for image data and pointers to data 
+	  GeglColorModel -- ColorSpace, color channels, alpha info, data type 
+	  GeglColorModelRgb -- subclass of RGB color models
+	  GeglColorModelRgbFloat -- floating pt channels RGB color model 
+	  GeglColor -- stores channels for a single color 
 
-    * There is a small test program -- testgegl
+	* There is a small test program -- testgegl

@@ -59,7 +59,7 @@ do
 done
 
 cd $THISDIR
-$srcdir/configure "$@"
+$srcdir/configure --enable-maintainer-mode "$@"
 
 echo 
 echo "Now type 'make' to compile $PROJECT."
