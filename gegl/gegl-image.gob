@@ -1,0 +1,98 @@
+%h{
+#include "gegl-object.h"
+#ifndef __TYPEDEF_GEGL_COLOR__
+#define __TYPEDEF_GEGL_COLOR__
+typedef struct _GeglColor  GeglColor;
+#endif
+#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
+#define __TYPEDEF_GEGL_COLOR_MODEL__
+typedef struct _GeglColorModel  GeglColorModel;
+#endif
+%}
+%{
+#include "gegl-image.h"
+#include "gegl-image-private.h"
+#include "gegl-object-private.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+%}
+
+class Gegl:Image from Gegl:Object {
+
+  private GeglColorModel *color_model;
+  private gint width;
+  private gint height;
+
+  protected 
+  gboolean 
+  constructor(self)
+  {
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+       
+    /* Chain up */
+    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+      return FALSE;
+
+    self->_priv->width = 0;
+    self->_priv->height = 0;
+    self->_priv->color_model = NULL;
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  public 
+  gint 
+  get_width (self)
+  {
+    return self->_priv->width;
+  }
+
+  public 
+  gint 
+  get_height (self)
+  {
+    return self->_priv->height;
+  }
+
+  public
+  GeglColorModel * 
+  color_model(self) 
+  { 
+    return self->_priv->color_model; 
+  }
+
+  public
+  gboolean 
+  has_alpha(self) 
+  {
+    return gegl_color_model_has_alpha (
+	self->_priv->color_model); 
+  }
+
+  public
+  void
+  set_color_model(self,
+                  GeglColorModel *cm) 
+  { 
+    self->_priv->color_model = cm; 
+  }
+
+
+  /* get pixels -- read from inputs, write to dest */
+  virtual GeglImage * get_pixels (self, GeglImage *dest, GeglRect *dest_roi);
+
+  /* copy pixels to me from src */
+  virtual void copy_pixels (self, GeglRect *self_rect, GeglImage *src, GeglRect  *src_rect);
+
+  /* Can we write to this image */ 
+  virtual gboolean is_writable(self);
+}
