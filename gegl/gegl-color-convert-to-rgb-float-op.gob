@@ -92,6 +92,10 @@ class Gegl:Color:Convert:To:Rgb:Float:Op from Gegl:Color:Convert:Op {
       self->_priv->src_num_channels = src_num_channels;
       self->_priv->last_width = 0;
 
+      /* make these null in case we dont need them */
+      self->_priv->src_float_data = NULL;
+      self->_priv->src_float_cm = NULL;
+
       /* 
 	If we have to convert src to float first will need float buffers
 	with num channels of the source.
@@ -131,11 +135,15 @@ class Gegl:Color:Convert:To:Rgb:Float:Op from Gegl:Color:Convert:Op {
     GeglColorConvertToRgbFloatOp *self = 
       GEGL_COLOR_CONVERT_TO_RGB_FLOAT_OP (object); 
 	
-    free_float_data(self);
-    g_free (self->_priv->src_float_data);  
+    if (self->_priv->src_float_data)
+      { 
+        free_float_data(self);
+        g_free (self->_priv->src_float_data);  
+      }
 
     /* Free the float cm */
-    gegl_object_destroy (GEGL_OBJECT (self->_priv->src_float_cm));
+    if (self->_priv->src_float_cm)
+      gegl_object_destroy (GEGL_OBJECT (self->_priv->src_float_cm));
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)

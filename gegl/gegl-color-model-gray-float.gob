@@ -193,19 +193,19 @@ class Gegl:Color:Model:Gray:Float from Gegl:Color:Model:Gray {
     /*
       __  __      __                               __  __  __
       | R  |      | 3.240479   -1.537150   -0.498535 | | X  |
-      | G  |   =  |-0.969256    1.875992    0.041556 | | Y  |
+      | G  |   =  |-0.969256    1.875991    0.041556 | | Y  |
       | B  |      | 0.055648   -0.204043    1.057311 | | Z  |
       --  --      ---                             ---- --  --
     */
-    gfloat m00 = 3.240479;
-    gfloat m10 = -1.53715;
+    gfloat m00 =  3.240479;
+    gfloat m10 = -1.537150;
     gfloat m20 = -0.498535;
     gfloat m01 = -0.969256;
-    gfloat m11 = 1.875991;      /* FIXME: last digit off */
-    gfloat m21 = 0.041556;
-    gfloat m02 = 0.055648;
+    gfloat m11 =  1.875991;
+    gfloat m21 =  0.041556;
+    gfloat m02 =  0.055648;
     gfloat m12 = -0.204043;
-    gfloat m22 = 1.057311;
+    gfloat m22 =  1.057311;
 
     gfloat R, G, B, *dest_g; 
     gfloat *dest_a = NULL;

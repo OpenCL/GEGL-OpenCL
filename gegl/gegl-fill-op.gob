@@ -46,6 +46,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   {
 
     GeglChannelDataType data_type;
+    GeglColorSpace color_space;
     GeglColorModel *cm; 
     GeglPointOp *point_op = GEGL_POINT_OP (self);
     GeglPointOpClass *point_op_class = 
@@ -67,20 +68,45 @@ class Gegl:Fill:Op from Gegl:Point:Op {
 
     cm = gegl_image_buffer_color_model (dest);
     data_type = gegl_color_model_data_type (cm);
-    switch (data_type)
-    {
-      case FLOAT:
-        point_op_class->scanline_func = gegl_fill_op_RGB_FLOAT; 	
-        break;
-      case U8:
-        point_op_class->scanline_func = gegl_fill_op_RGB_U8;
-        break;
-      default:
-        g_warning("FillOp: Color Model data type none or unknown\n");
-        point_op_class->scanline_func = NULL; 	
-        return FALSE;
-    }
+    color_space = gegl_color_model_color_space (cm);
 
+    switch (color_space)
+      {
+      case GRAY:
+	switch (data_type)
+	  {
+	  case U8:
+	    point_op_class->scanline_func = gegl_fill_op_GRAY_U8;
+	    break;
+	  case FLOAT:
+	    point_op_class->scanline_func = gegl_fill_op_GRAY_FLOAT; 	
+	    break;
+	  default:
+	    g_warning("FillOp: Color Model data type none or unknown\n");
+	    point_op_class->scanline_func = NULL; 	
+	    return FALSE;
+	  } 
+	break;
+      case RGB:
+	switch (data_type)
+	  {
+	  case U8:
+	    point_op_class->scanline_func = gegl_fill_op_RGB_U8;
+	    break;
+	  case FLOAT:
+	    point_op_class->scanline_func = gegl_fill_op_RGB_FLOAT; 	
+	    break;
+	  default:
+	    g_warning("FillOp: Color Model data type none or unknown\n");
+	    point_op_class->scanline_func = NULL; 	
+	    return FALSE;
+	  } 
+	break;
+      default:
+	g_warning("FillOp: Color Model data type none or unknown\n");
+	point_op_class->scanline_func = NULL; 	
+	return FALSE;
+      } 
 
     /* Allocate a color and set its channels to the passed one */  
     {
@@ -190,6 +216,81 @@ class Gegl:Fill:Op from Gegl:Point:Op {
       *r++ = color_r;
       *g++ = color_g;
       *b++ = color_b;
+    }
+  } 
+
+  private 
+  void
+  GRAY_FLOAT (GeglPointOp *point_op)
+  {
+    /*
+      Whats the algorithm for this code?	
+      DEST = CONST
+
+    */ 
+    guint width;
+    gfloat * dest_data[1]; 
+    gfloat *g;
+    gfloat color_g; 
+    GeglFillOp *self = GEGL_FILL_OP (point_op);
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv); 
+
+    GeglChannelValue *fill_values = gegl_color_get_channel_values( 
+                                   self->_priv->fill_color);
+    color_g = fill_values[0].f;
+
+    width = point_opP->scanline_width;
+
+    /* image_buffers[0] is the dest here */
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
+                                      (guchar**)dest_data);
+
+    /* Make g point to the dest image data */
+    g = dest_data[0];
+
+    /* Fill the dest with the fill color */
+    while (width--)
+    {
+      *g++ = color_g;
+    }
+  }
+
+  private
+  void
+  GRAY_U8 (GeglPointOp *point_op)
+  {
+    /*
+        Whats the algorithm for this code?
+        DEST = CONST
+
+    */
+    guint width;
+    guint8 *dest_data[1];
+    guint8 *g;
+    guint8 color_g;
+    GeglFillOp *self = GEGL_FILL_OP (point_op);
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
+    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
+
+    GeglChannelValue *fill_values = gegl_color_get_channel_values(
+                                   self->_priv->fill_color);
+    /* Get the fill color g */
+    color_g = fill_values[0].u8;
+
+    width = point_opP->scanline_width;
+
+    /* image_buffers[0] is the dest here */
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[0],
+                (guchar**)dest_data);
+
+    /* Make g point to the dest image data */
+    g = dest_data[0];
+
+    /* Fill the dest with the fill color */
+    while (width--)
+    {
+      *g++ = color_g;
     }
   } 
 }

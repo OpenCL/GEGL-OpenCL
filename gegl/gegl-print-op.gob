@@ -8,6 +8,7 @@
 #include "gegl-print-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
+#include "gegl-color-model.h"
 #include "gegl-utils.h"
 %}
 
@@ -57,25 +58,51 @@ class Gegl:Print:Op from Gegl:Point:Op {
       This is where some "autogeneration" happens.
     */ 
 
-   {
+    {
       GeglColorModel *cm;
+      GeglColorSpace color_space;
       GeglChannelDataType data_type;
       cm = gegl_image_buffer_color_model (dest);
       data_type = gegl_color_model_data_type (cm);
+      color_space = gegl_color_model_color_space (cm);
 
-      switch (data_type)
-      {
-        case FLOAT:
-          point_op_class->scanline_func = gegl_print_op_RGB_FLOAT; 	
-          break;
-        case U8:
-          point_op_class->scanline_func = gegl_print_op_RGB_U8;
-          break;
-        default:
-          g_warning("PrintOp: Color Model data type none or unknown\n");
-          point_op_class->scanline_func = NULL; 	
-          return FALSE;
-      }
+      switch (color_space)
+	{
+	case GRAY:
+	  switch (data_type)
+	    {
+	    case U8:
+	      point_op_class->scanline_func = gegl_print_op_GRAY_U8;
+	      break;
+	    case FLOAT:
+	      point_op_class->scanline_func = gegl_print_op_GRAY_FLOAT; 	
+	      break;
+	    default:
+	      g_warning("PrintOp: Color Model data type none or unknown\n");
+	      point_op_class->scanline_func = NULL; 	
+	      return FALSE;
+	    } 
+	  break;
+	case RGB:
+	  switch (data_type)
+	    {
+	    case U8:
+	      point_op_class->scanline_func = gegl_print_op_RGB_U8;
+	      break;
+	    case FLOAT:
+	      point_op_class->scanline_func = gegl_print_op_RGB_FLOAT; 	
+	      break;
+	    default:
+	      g_warning("PrintOp: Color Model data type none or unknown\n");
+	      point_op_class->scanline_func = NULL; 	
+	      return FALSE;
+	    } 
+	  break;
+	default:
+	  g_warning("PrintOp: Color Model data type none or unknown\n");
+	  point_op_class->scanline_func = NULL; 	
+	  return FALSE;
+	} 
     }
 
     return TRUE;
@@ -151,6 +178,76 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
     while (width--)
       printf("(%d %d %d) "  , *r++, *g++, *b++);
+
+    printf("\n");
+  }
+
+  private 
+  void
+  GRAY_FLOAT (GeglPointOp *point_op)
+  {
+     /*
+        Whats the algorithm for this code?	
+        PRINT DEST 
+
+     */
+
+    guint width;
+    gfloat * channels[1]; 
+    gfloat *g;
+	
+    GeglPointOpPrivate *point_opP = 
+      (GeglPointOpPrivate *)(point_op->_priv); 
+    GeglOpPrivate *opP = 
+      (GeglOpPrivate *)(GEGL_OP(point_op)->_priv); 
+
+    width = point_opP->scanline_width;
+
+    /* image_buffers[0] is the dest here */
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
+       (guchar**)channels);
+
+    /* Make g point to the dest image data */
+
+    g = channels[0];
+
+    while (width--)
+      printf("(%0.2f) ", *g++);
+
+    printf("\n");
+  }
+
+  private
+  void
+  GRAY_U8 (GeglPointOp *point_op)
+  {
+     /*
+        Whats the algorithm for this code?
+        PRINT DEST
+
+     */
+
+    guint width;
+    guint8 *channels[1];
+    guint8 *g;
+
+    GeglPointOpPrivate *point_opP =
+        (GeglPointOpPrivate *)(point_op->_priv);
+    GeglOpPrivate *opP =
+        (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
+
+    width = point_opP->scanline_width;
+
+    /* image_buffers[0] is the dest here */
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[0],
+                                        (guchar**)channels);
+
+    /* Make g point to the dest image data */
+
+    g = channels[0];
+
+    while (width--)
+      printf("(%d) ", *g++);
 
     printf("\n");
   }

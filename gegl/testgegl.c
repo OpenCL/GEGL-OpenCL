@@ -3,7 +3,15 @@
 #include <stdio.h>
 
 #include "gegl-color.h"
+#include "gegl-color-model-rgb-u8.h"
 #include "gegl-color-model-rgb-float.h"
+#include "gegl-color-model-gray-u8.h"
+#include "gegl-color-model-gray-float.h"
+#include "gegl-color-convert-to-rgb-float-op.h"
+#include "gegl-color-convert-to-gray-float-op.h"
+#include "gegl-color-convert-to-rgb-u8-op.h"
+#include "gegl-color-convert-to-gray-u8-op.h"
+#include "gegl-color-convert-connection-op.h"
 #include "gegl-drawable.h"
 #include "gegl-graphics-state.h"
 #include "gegl-image-buffer.h"
@@ -18,44 +26,8 @@ int
 main (int argc, char *argv[])
 {  
   gtk_init (&argc, &argv);
-
-#if 0      /*This uses the GeglDrawable class */ 
-  {
-
-	GeglColorModel *cm = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(FALSE,FALSE));
-	GeglDrawable *d = GEGL_DRAWABLE(gegl_drawable_new(cm,"myDrawable",5,5));
-	GeglGraphicsState *state = gegl_drawable_get_graphics_state (d);
-	GeglRect r;
-
-	gegl_rect_set (&r, 0,0,5,5);
-        gegl_color_set_constant (state->fg_color, COLOR_RED);
-        gegl_drawable_fill(d, &r); 
-
-	gegl_rect_set (&r, 1,1,4,4);
-        gegl_color_set_constant (state->fg_color, COLOR_GREEN);
-        gegl_drawable_fill(d, &r); 
-
-
-        /* Print out the image values using the 
-	   print operator 
-        */
-        {
-          GeglOp *op;
-	  GeglRect r;
-	  gegl_rect_set (&r, 0,0,5,5);
-	  op = GEGL_OP (gegl_print_op_new (gegl_drawable_get_image_buffer(d), &r));
-          gegl_op_apply (op);
-	  gegl_object_destroy (GEGL_OBJECT(op)); 
-
-	}
-
-	gegl_object_destroy (GEGL_OBJECT(d)); 
-	gegl_object_destroy (GEGL_OBJECT(cm)); 
-
-  }
-#endif
-
-#if 1   /* This one uses the GeglImageBuffer and GeglOp directly */ 
+  
+#if 0   /* This one uses the GeglImageBuffer and GeglOp directly */ 
   {
 
 	GeglColorModel *cm = GEGL_COLOR_MODEL(
@@ -135,6 +107,193 @@ main (int argc, char *argv[])
 
         gegl_object_destroy (GEGL_OBJECT(image_buffer)); 
         gegl_object_destroy (GEGL_OBJECT(cm)); 
+  }
+#endif
+
+#if 0      /*This uses the GeglDrawable class */ 
+  {
+
+	GeglColorModel *cm = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(FALSE,FALSE));
+	GeglDrawable *d = GEGL_DRAWABLE(gegl_drawable_new(cm,"myDrawable",5,5));
+	GeglGraphicsState *state = gegl_drawable_get_graphics_state (d);
+	GeglRect r;
+
+	gegl_rect_set (&r, 0,0,5,5);
+        gegl_color_set_constant (state->fg_color, COLOR_RED);
+        gegl_drawable_fill(d, &r); 
+
+	gegl_rect_set (&r, 1,1,4,4);
+        gegl_color_set_constant (state->fg_color, COLOR_GREEN);
+        gegl_drawable_fill(d, &r); 
+
+
+        /* Print out the image values using the 
+	   print operator 
+        */
+        {
+          GeglOp *op;
+	  GeglRect r;
+	  gegl_rect_set (&r, 0,0,5,5);
+	  op = GEGL_OP (gegl_print_op_new (gegl_drawable_get_image_buffer(d), &r));
+          gegl_op_apply (op);
+	  gegl_object_destroy (GEGL_OBJECT(op)); 
+
+	}
+
+	gegl_object_destroy (GEGL_OBJECT(d)); 
+	gegl_object_destroy (GEGL_OBJECT(cm)); 
+
+  }
+#endif
+
+#if 0  /*This illustrates a color conversion from rgb float to gray float*/ 
+  {
+    GeglColorModel *from_cm = GEGL_COLOR_MODEL(
+                              gegl_color_model_rgb_float_new(FALSE,FALSE));
+    GeglImageBuffer *from_image = gegl_image_buffer_new(from_cm,2,2);
+    GeglColorModel *to_cm = GEGL_COLOR_MODEL(
+                            gegl_color_model_gray_float_new(FALSE,FALSE));
+    GeglImageBuffer *to_image = gegl_image_buffer_new(to_cm,2,2);
+
+
+    GeglRect to_rect;
+    GeglRect from_rect;
+
+    gegl_rect_set (&to_rect, 0,0,2,2);
+    gegl_rect_set (&from_rect, 0,0,2,2);
+
+    /* Fill the 2 x 2 from image with GREEN */
+    {
+      GeglColor *c = gegl_color_new (from_cm);
+      GeglOp *op;
+      GeglRect fill_rect;
+      gegl_rect_set (&fill_rect, 0,0,2,2);
+      gegl_color_set_constant (c, COLOR_GREEN);
+      op = GEGL_OP (gegl_fill_op_new (from_image, &fill_rect, c));
+
+      gegl_op_apply (op);
+
+      gegl_object_destroy (GEGL_OBJECT(op)); 
+      gegl_object_destroy (GEGL_OBJECT(c)); 
+    }
+
+    /* Fill the 1 x 1 rect at (1,1) from image with RED */
+    {
+      GeglColor *c = gegl_color_new (from_cm);
+      GeglOp *op;
+      GeglRect fill_rect;
+      gegl_rect_set (&fill_rect, 1,1,1,1);
+      gegl_color_set_constant (c, COLOR_RED);
+      op = GEGL_OP (gegl_fill_op_new (from_image, &fill_rect, c));
+
+      gegl_op_apply (op);
+
+      gegl_object_destroy (GEGL_OBJECT(op)); 
+      gegl_object_destroy (GEGL_OBJECT(c)); 
+    }
+
+    /* Convert */
+    {
+      GeglOp* op = GEGL_OP (gegl_color_convert_to_gray_float_op_new( 
+                     to_image, from_image, &to_rect, &from_rect));
+      gegl_op_apply (op);
+      gegl_object_destroy (GEGL_OBJECT(op)); 
+    }
+
+    printf("The from image:\n");
+    {
+      GeglOp *op = GEGL_OP (gegl_print_op_new (from_image, &from_rect));
+      gegl_op_apply (op);
+      gegl_object_destroy (GEGL_OBJECT(op)); 
+
+    }
+    printf("The to image:\n");
+    {
+      GeglOp *op = GEGL_OP (gegl_print_op_new (to_image, &to_rect));
+      gegl_op_apply (op);
+      gegl_object_destroy (GEGL_OBJECT(op)); 
+    }
+
+    gegl_object_destroy (GEGL_OBJECT(from_image)); 
+    gegl_object_destroy (GEGL_OBJECT(to_image)); 
+    gegl_object_destroy (GEGL_OBJECT(from_cm)); 
+    gegl_object_destroy (GEGL_OBJECT(to_cm)); 
+  }
+#endif
+
+#if 1  /*This illustrates a color conversion using XYZ connection space */ 
+  {
+    GeglColorModel *from_cm = GEGL_COLOR_MODEL(
+                              gegl_color_model_rgb_float_new(FALSE,FALSE));
+    GeglImageBuffer *from_image = gegl_image_buffer_new(from_cm,2,2);
+    GeglColorModel *to_cm = GEGL_COLOR_MODEL(
+                            gegl_color_model_gray_float_new(FALSE,FALSE));
+    GeglImageBuffer *to_image = gegl_image_buffer_new(to_cm,2,2);
+
+    GeglRect to_rect;
+    GeglRect from_rect;
+
+    gegl_rect_set (&to_rect, 0,0,2,2);
+    gegl_rect_set (&from_rect, 0,0,2,2);
+
+    /* Fill the 2 x 2 from image with GREEN */
+    {
+      GeglColor *c = gegl_color_new (from_cm);
+      GeglOp *op;
+      GeglRect fill_rect;
+      gegl_rect_set (&fill_rect, 0,0,2,2);
+      gegl_color_set_constant (c, COLOR_GREEN);
+      op = GEGL_OP (gegl_fill_op_new (from_image, &fill_rect, c));
+
+      gegl_op_apply (op);
+
+      gegl_object_destroy (GEGL_OBJECT(op)); 
+      gegl_object_destroy (GEGL_OBJECT(c)); 
+    }
+
+    /* Fill the 1 x 1 rect at (1,1) from image with RED */
+    {
+      GeglColor *c = gegl_color_new (from_cm);
+      GeglOp *op;
+      GeglRect fill_rect;
+      gegl_rect_set (&fill_rect, 1,1,1,1);
+      gegl_color_set_constant (c, COLOR_RED);
+      op = GEGL_OP (gegl_fill_op_new (from_image, &fill_rect, c));
+
+      gegl_op_apply (op);
+
+      gegl_object_destroy (GEGL_OBJECT(op)); 
+      gegl_object_destroy (GEGL_OBJECT(c)); 
+    }
+
+    /* Convert */
+    {
+      GeglOp* op = GEGL_OP (gegl_color_convert_connection_op_new( 
+                     to_image, from_image, &to_rect, &from_rect));
+      gegl_op_apply (op);
+      gegl_object_destroy (GEGL_OBJECT(op)); 
+    }
+
+
+    printf("The from image:\n");
+    {
+      GeglOp *op = GEGL_OP (gegl_print_op_new (from_image, &from_rect));
+      gegl_op_apply (op);
+      gegl_object_destroy (GEGL_OBJECT(op)); 
+
+    }
+    printf("The to image:\n");
+    {
+      GeglOp *op = GEGL_OP (gegl_print_op_new (to_image, &to_rect));
+      gegl_op_apply (op);
+      gegl_object_destroy (GEGL_OBJECT(op)); 
+    }
+
+    gegl_object_destroy (GEGL_OBJECT(from_image)); 
+    gegl_object_destroy (GEGL_OBJECT(to_image)); 
+    gegl_object_destroy (GEGL_OBJECT(from_cm)); 
+    gegl_object_destroy (GEGL_OBJECT(to_cm)); 
+
   }
 #endif
 

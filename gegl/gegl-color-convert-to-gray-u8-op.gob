@@ -92,6 +92,10 @@ class Gegl:Color:Convert:To:Gray:U8:Op from Gegl:Color:Convert:Op {
       self->_priv->src_num_channels = src_num_channels;
       self->_priv->last_width = 0;
 
+      /* Set these to null, since we may not need them */
+      self->_priv->src_u8_data = NULL;
+      self->_priv->src_u8_cm = NULL;
+
       /* 
 	If we have to convert src to u8 first will need u8 buffers
 	with num channels of the source.
@@ -130,12 +134,16 @@ class Gegl:Color:Convert:To:Gray:U8:Op from Gegl:Color:Convert:Op {
   {
     GeglColorConvertToGrayU8Op *self = 
       GEGL_COLOR_CONVERT_TO_GRAY_U8_OP (object); 
-	
-    free_u8_data(self);
-    g_free (self->_priv->src_u8_data);  
+
+    if (self->_priv->src_u8_data)
+      {
+	free_u8_data(self);
+	g_free (self->_priv->src_u8_data);  
+      }
 
     /* Free the u8 cm */
-    gegl_object_destroy (GEGL_OBJECT (self->_priv->src_u8_cm));
+    if (self->_priv->src_u8_cm)
+      gegl_object_destroy (GEGL_OBJECT (self->_priv->src_u8_cm));
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)

@@ -1,3 +1,16 @@
+Mon Jan 31 14:11:17 EST 2000 calvinw@mindspring.com
+
+	*fixed bugs in destroy methods of all convert-ops:  
+         gegl-color-convert-to-rgb-float-op.gob
+         gegl-color-convert-to-rgb-u8-op.gob
+         gegl-color-convert-to-gray-float-op.gob
+         gegl-color-convert-to-gray-u8-op.gob
+         gegl-color-convert-connection-op.gob
+
+	*updated the PrintOp and FillOp to handle u8 and gray cases. 
+
+	*updated testgegl to test the color conversion routines. 
+
 Sun Jan 30 16:03:20 EST 2000 calvinw@mindspring.com
 
 	*added ColorConvertConnectionOp class  

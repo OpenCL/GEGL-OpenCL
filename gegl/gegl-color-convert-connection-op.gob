@@ -84,12 +84,8 @@ class Gegl:Color:Convert:Connection:Op from Gegl:Color:Convert:Op {
   destroy (GtkObject *object)
   {
     GeglColorConvertConnectionOp *self = GEGL_COLOR_CONVERT_CONNECTION_OP (object); 
-    GeglColorConvertOpPrivate *color_convert_opP = 
-        (GeglColorConvertOpPrivate*)(GEGL_COLOR_CONVERT_OP (object)->_priv);
 	
     free_xyz_data(self);
-    g_free (color_convert_opP->dest_data);  
-    g_free (color_convert_opP->src_data);  
     g_free (self->_priv->xyz_data);  
 
     /* Chain up on destroy */
