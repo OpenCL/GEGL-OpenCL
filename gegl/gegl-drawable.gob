@@ -1,0 +1,140 @@
+%h{
+#include "gegl-object.h"
+%}
+%{
+#include "gegl-drawable.h"
+#include "gegl-drawable-private.h"
+#include "gegl-object-private.h"
+#include "gegl-image-buffer.h"
+#include "gegl-utils.h"
+%}
+
+class Gegl:Drawable from Gegl:Object {
+
+  private GeglGraphicsState *graphics_state;
+  private GeglImageBuffer *image_buffer;
+  private gchar *name; 
+  private gint width;
+  private gint height;
+
+  public
+  GeglDrawable *	
+  new(GeglColorModel *cm,  
+      GimpDataStorage *storage_info,  /*passed on to ImageBuffer*/
+	gint w,
+	gint h)
+  {
+    GeglDrawable * self = GEGL_DRAWABLE(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, cm, storage_info, w, h))
+	return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self,
+	      GeglColorModel *cm,  
+              GimpDataStorage *storage_info,
+	      char *name,
+	      gint w,
+	      gint h)
+  {
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+	
+    /* Chain up */
+    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+      return FALSE;
+
+    /* Eventually we will want to pass the storage info here too */
+    if (!self->_priv->image_buffer = gegl_image_buffer_new(cm, w, h)); 
+     {
+	g_warning ("Couldnt allocate GeglDrawable image buffer\n");
+        return FALSE;
+     }
+    if (!self->_priv->graphics_state = gegl_graphics_state_new(cm)); 
+     {
+	g_warning ("Couldnt allocate GeglDrawable graphics state\n");
+        return FALSE;
+     }
+    self->_priv->name = g_strdup (name); 
+    self->_priv->width = w; 
+    self->_priv->height = h; 
+  	
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    GeglDrawable *self = GEGL_Drawable(object); 
+
+    /* Dispose of pointer arrays for images and rects */
+    g_free(self->_priv->image_buffer);
+    g_free(self->_priv->graphics_state);
+    g_free(self->_priv->name);
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  public 
+  char * 
+  get_name(self)
+  {
+    return self->_priv->name; 
+  }
+
+  public 
+  GeglGraphicsState * 
+  get_graphics_state(self)
+  {
+    return self->_priv->graphics_state; 
+  }
+
+  protected 
+  GeglImageBuffer * 
+  get_image_buffer(self)
+  {
+    return self->_priv->image_buffer; 
+  }
+
+  public 
+  void
+  fill(self)
+  {
+    /* Set up and do a fill on the image buffer using the forground color */
+  }
+
+  public 
+  void
+  apply_image(self)
+  {
+    /* Set up and do a composite or copy of the passed image buffer */
+  }
+
+  public 
+  void
+  apply_operation(self)
+  {
+    /* Set up and do a a specified image operation on the image buffer */
+  }
+
+  public 
+  void
+  bogus_for_comments(self) 
+  {
+#if 0
+   /* Probably plenty of other operations too. */
+   draw_text 
+   draw_shape
+#endif
+  }
+}

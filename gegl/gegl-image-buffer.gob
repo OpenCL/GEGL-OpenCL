@@ -1,0 +1,238 @@
+%h{
+#include "gegl-object.h"
+#ifndef __GEGL_COLOR_F_H__
+#define __GEGL_COLOR_F_H__
+typedef struct _GeglColor  GeglColor;
+#endif
+#include "gegl-color-model.h"
+%}
+%{
+#include "gegl-image-buffer.h"
+#include "gegl-image-buffer-private.h"
+#include "gegl-object-private.h"
+#include "gegl-utils.h"
+%}
+
+class Gegl:Image:Buffer from Gegl:Object {
+
+  private GeglColorModel *color_model;
+  private gint width;
+  private gint height;
+
+  private guchar *data;                    /* The data */    
+
+  private GeglRect request_rect;           /* The requested data rect*/
+
+  private GeglRect current_rect;           /* The actual data rect */ 
+  private gint scanline;      	           /* in [0, current_rect.h-1] */ 
+  private guchar **scanline_data;          /* data pointers to scanline */
+
+  public
+  GeglImageBuffer *	
+  new(GeglColorModel *cm, gint w, gint h)
+  {
+    GeglImageBuffer * self = GEGL_IMAGE_BUFFER(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, cm, w, h))
+	return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self, GeglColorModel *cm, gint w, gint h)
+  {
+    gint bytes_per_channel;  
+    gint num_channels;
+    guint total_bytes;
+
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+	
+    /* Chain up */
+    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+      return FALSE;
+
+    gegl_rect_set (&(self->_priv->request_rect),0,0,0,0);
+    gegl_rect_set (&(self->_priv->current_rect),0,0,0,0);
+
+    self->_priv->scanline = 0;
+    self->_priv->data = NULL; 
+
+    bytes_per_channel = gegl_color_model_bytes_per_channel(cm);  
+    num_channels = gegl_color_model_num_channels(cm);
+    total_bytes = num_channels * bytes_per_channel * w * h;
+
+    self->_priv->data = g_new (guchar, total_bytes); 
+    if (!self->_priv->data) 
+      {
+        g_warning ("Couldnt allocate in %s: %d bytes\n", 
+			gtk_type_name(GEGL_TYPE_IMAGE_BUFFER), total_bytes); 
+	self->_priv->scanline_data = NULL;
+	self->_priv->color_model = NULL;
+	self->_priv->width = 0;
+	self->_priv->height = 0;
+	return FALSE;
+      }
+
+    self->_priv->scanline_data = g_new(guchar*, num_channels);
+    self->_priv->color_model = cm;
+    self->_priv->width = w;
+    self->_priv->height = h;
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+
+    GeglImageBuffer *self = GEGL_IMAGE_BUFFER (object);
+
+    /* Dispose of image memory and scanline pointer array*/
+    g_free(self->_priv->data);
+    g_free(self->_priv->scanline_data);
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  public
+  void
+  request_rect (self, GeglRect *request_rect)
+  {
+    gegl_rect_copy (&(self->_priv->request_rect), 
+		request_rect);
+		
+  /* 
+     Heres where we set the current rect based on the 
+     request rect. The data storage right now is simple 
+     and the request rect = current rect.
+  */
+
+    gegl_rect_copy (&(self->_priv->current_rect), 
+		&(self->_priv->request_rect));
+  }
+
+  public
+  void
+  get_current_rect (self, GeglRect *current_rect)
+  {
+    /* Means we are about to start processing the current rect of image */
+    gint  i;
+    gint  x;
+    gint  y;
+
+    gint num_channels = gegl_color_model_num_channels(
+				self->_priv->color_model);
+    gint bytes_per_channel = gegl_color_model_bytes_per_channel(
+				self->_priv->color_model); 
+    gint channel_row_bytes = bytes_per_channel * 
+				self->_priv->width; 
+    gint plane_bytes = bytes_per_channel * 
+			self->_priv->width * 
+			self->_priv->height;   
+
+
+    /* Copy our private current rect to the one passed in */ 
+    gegl_rect_copy (current_rect, &(self->_priv->current_rect));
+
+    /* This also sets the scanline index to first scanline of rect */ 
+    self->_priv->scanline = 0;
+ 
+    x = self->_priv->current_rect.x;
+    y = self->_priv->current_rect.y;
+
+    /* 
+       and then sets the data channel pointers 
+       to first pixel of first scanline of that rect
+    */
+
+    /* first channel */
+    self->_priv->scanline_data[0] = self->_priv->data + 
+					y * channel_row_bytes + 
+					x * bytes_per_channel;   
+
+    /* and any other channels */
+    for (i=1; i < num_channels; i++)
+     self->_priv->scanline_data[i] = self->_priv->scanline_data[i-1] + 
+					plane_bytes;
+    
+  }
+
+  public
+  void
+  next_scanline (self)
+  {
+    /* Means we are advancing to the next scanline */
+    gint i;
+    gint num_channels = gegl_color_model_num_channels(
+			self->_priv->color_model); 
+    gint bytes_per_channel = gegl_color_model_bytes_per_channel(
+				self->_priv->color_model); 
+    gint channel_row_bytes = bytes_per_channel * self->_priv->width; 
+
+    /* advance the current scanline index */
+    self->_priv->scanline++;
+
+    /* 
+       Update our private scanline data pointers to point 
+       to next scanline. 
+    */
+    for (i=0; i < num_channels; i++)
+      self->_priv->scanline_data[i] += channel_row_bytes; 
+  }
+
+  public
+  void
+  get_scanline_data (self, guchar **data_ptrs)
+  {
+    gint i;
+    gint num_channels = gegl_color_model_num_channels (
+			self->_priv->color_model); 
+
+    /* 
+       Set the passed in data pointers 
+       equal to our private data pointers which 
+       should already point to the beginning of the
+       current scanline. 
+       
+     */
+
+    for (i=0; i < num_channels; i++)
+      data_ptrs[i] = self->_priv->scanline_data[i];   
+
+  }
+
+  public
+  GeglColorModel * 
+  color_model(self) 
+  { 
+    return self->_priv->color_model; 
+  }
+
+  public
+  void
+  set_data(self, guchar *data)
+  {
+    guint                       i, num;
+    GeglImageBufferPrivate      *selfP;
+
+    selfP = (GeglImageBufferPrivate *)(self->_priv);
+    num  = gegl_color_model_num_channels(selfP->color_model);
+    num *= gegl_color_model_bytes_per_channel(selfP->color_model);
+    num *= selfP->width;
+    num *= selfP->height;
+
+    for(i=0; i<num; i++)
+      selfP->data[i] = data[i];
+
+  }
+
+}

@@ -1,0 +1,147 @@
+%h{
+#include "gegl-color-model-rgb.h"
+%}
+%{
+#include "gegl-color-model-rgb-float.h"
+#include "gegl-color-model-rgb-float-private.h"
+#include "gegl-color-model-rgb-private.h"
+#include "gegl-color-model-private.h"
+#include "gegl-color.h"
+#if 0
+extern GeglChannelValue *gegl_color_get_channel_values(GeglColor *); 
+#endif
+%}
+
+class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
+
+  public
+  GeglColorModelRgbFloat *	
+  new(gboolean has_alpha)
+  {
+    GeglColorModelRgbFloat * self = GEGL_COLOR_MODEL_RGB_FLOAT(GET_NEW);
+  
+    /*Call the constructor */
+    if (!constructor(self, has_alpha))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+  
+  protected
+  gboolean 
+  constructor(self, gboolean has_alpha)
+  {
+    GeglColorModelPrivate *color_modelP = (GeglColorModelPrivate*)
+	(GEGL_COLOR_MODEL (self)->_priv);
+
+    if (GEGL_OBJECT(self)->constructed) 
+        return FALSE;
+    
+    /* Chain up to superclass*/
+    if (!gegl_color_model_rgb_constructor (
+		GEGL_COLOR_MODEL_RGB(self), has_alpha))
+        return FALSE;
+
+    color_modelP->data_type = FLOAT;
+    color_modelP->channel_data_type_name = NULL;
+    color_modelP->bytes_per_channel = 4;
+    color_modelP->bytes_per_pixel = 
+		color_modelP->bytes_per_channel * 
+		color_modelP->num_channels;
+    return TRUE;
+  }
+  
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    /* Dispose of the data type string here */
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  override (Gegl:Color:Model) 
+  void 
+  set_color (GeglColorModel *cm, 
+		      GeglColor *color, 
+		      GeglColorConstant constant)
+  {
+    GeglChannelValue * channel_values = 
+	gegl_color_get_channel_values(color); 
+    gboolean has_alpha = gegl_color_model_has_alpha (cm); 
+    GeglColorModelRgb * cm_rgb = GEGL_COLOR_MODEL_RGB(cm);
+    
+    gint r = gegl_color_model_rgb_get_red_index (cm_rgb);
+    gint g = gegl_color_model_rgb_get_green_index (cm_rgb);
+    gint b = gegl_color_model_rgb_get_blue_index (cm_rgb);
+    gint a = gegl_color_model_alpha_channel (GEGL_COLOR_MODEL(cm_rgb));
+
+    switch (constant) 
+      { 
+	case COLOR_WHITE:
+	  channel_values[r].f = 1.0;
+	  channel_values[g].f = 1.0;
+	  channel_values[b].f = 1.0;
+	  if (has_alpha)
+	    channel_values[a].f = 1.0;
+	  break;
+	case COLOR_BLACK:
+	  channel_values[r].f = 0.0;
+	  channel_values[g].f = 0.0;
+	  channel_values[b].f = 0.0;
+	  if (has_alpha)
+	    channel_values[a].f = 1.0;
+	  break;
+	case COLOR_RED:
+	  channel_values[r].f = 1.0;
+	  channel_values[g].f = 0.0;
+	  channel_values[b].f = 0.0;
+	  if (has_alpha)
+	    channel_values[a].f = 1.0;
+	  break;
+	case COLOR_GREEN:
+	  channel_values[r].f = 0.0;
+	  channel_values[g].f = 1.0;
+	  channel_values[b].f = 0.0;
+	  if (has_alpha)
+	    channel_values[a].f = 1.0;
+	  break;
+	case COLOR_BLUE:
+	  channel_values[r].f = 0.0;
+	  channel_values[g].f = 0.0;
+	  channel_values[b].f = 1.0;
+	  if (has_alpha)
+	    channel_values[a].f = 1.0;
+	  break;
+	case COLOR_GRAY:
+	case COLOR_HALF_WHITE:
+	  channel_values[r].f = 0.5;
+	  channel_values[g].f = 0.5;
+	  channel_values[b].f = 0.5;
+	  if (has_alpha)
+	    channel_values[a].f = 1.0;
+	  break;
+	case COLOR_WHITE_TRANSPARENT:
+	  channel_values[r].f = 1.0;
+	  channel_values[g].f = 1.0;
+	  channel_values[b].f = 1.0;
+
+	  if (!has_alpha)
+	    channel_values[a].f = 0.0;
+	  break;
+	case COLOR_TRANSPARENT:
+	case COLOR_BLACK_TRANSPARENT:
+	  channel_values[r].f = 0.0;
+	  channel_values[g].f = 0.0;
+	  channel_values[b].f = 0.0;
+	  if (has_alpha)
+	    channel_values[a].f = 0.0;
+	  break;
+      }
+   }
+}
+

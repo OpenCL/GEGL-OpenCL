@@ -1,0 +1,101 @@
+AC_INIT(gegl/gegl-object.gob)
+AM_CONFIG_HEADER(config.h)
+
+GEGL_MAJOR_VERSION=0
+GEGL_MINOR_VERSION=0
+GEGL_MICRO_VERSION=2
+GEGL_VERSION=$GEGL_MAJOR_VERSION.$GEGL_MINOR_VERSION.$GEGL_MICRO_VERSION
+GEGL_VERSION_INFO=`expr $GEGL_MAJOR_VERSION + $GEGL_MINOR_VERSION`:$GEGL_MICRO_VERSION:$GEGL_MINOR_VERSION
+
+AC_SUBST(GEGL_MAJOR_VERSION)
+AC_SUBST(GEGL_MINOR_VERSION)
+AC_SUBST(GEGL_MICRO_VERSION)
+AC_SUBST(GEGL_VERSION)
+AC_SUBST(GEGL_VERSION_INFO)
+
+VERSION=$GEGL_VERSION
+
+AM_INIT_AUTOMAKE(libgegl, $VERSION)
+
+AC_ARG_ENABLE(ansi, [  --enable-ansi           turn on strict ansi [default=no]],
+		    , enable_ansi=no)
+
+AC_PROG_CC
+AC_PROG_CPP
+AM_PROG_LIBTOOL
+
+AM_MAINTAINER_MODE
+
+changequote(,)dnl
+if test "x$GCC" = "xyes"; then
+  case " $CFLAGS " in
+  *[\ \	]-Wall[\ \	]*) ;;
+  *) CFLAGS="$CFLAGS -Wall" ;;
+  esac
+
+  if test "x$enable_ansi" = "xyes"; then
+    case " $CFLAGS " in
+    *[\ \	]-ansi[\ \	]*) ;;
+    *) CFLAGS="$CFLAGS -ansi" ;;
+    esac
+
+    case " $CFLAGS " in
+    *[\ \	]-pedantic[\ \	]*) ;;
+    *) CFLAGS="$CFLAGS -pedantic" ;;
+    esac
+  fi
+fi
+changequote([,])dnl
+
+dnl Check for GTK+
+AM_PATH_GTK(1.2.6,,
+  AC_MSG_ERROR(Test for GTK failed. See the file 'INSTALL' for help.))
+
+changequote(,)dnl
+
+dnl Evil stuff to extract GLIB stuff from gtk-config output
+dnl (we want to make sure it matches with the gtk we're using)
+GLIB_CFLAGS=`echo $GTK_CFLAGS | sed 's/^.*\(-I[^ ]*glib[^ ]*  *-I[^ ]*\).*$/\1/'`
+GLIB_LDFLAGS=`echo $GTK_LIBS | sed -e 's/^.*-lgdk[^ ]* *\(-L[^ ]*\).*$/\1/' -e 's/^.* -lgdk[^ ]* .*$//'`
+if test -z "$GLIB_LDFLAGS" ; then
+  GLIB_LDFLAGS=`echo $GTK_LIBS | sed 's/^ *\(-L[^ ]*\) .*$/\1/'`
+fi 
+GLIB_LIBS="$GLIB_LDFLAGS `echo $GTK_LIBS | sed 's/^.*\(-lglib[^ ]*\).*$/\1/'`"
+
+if eval "test x$GCC = xyes"; then
+  case " $CFLAGS " in
+  *[\ \	]-Wall[\ \	]*) ;;
+  *) CFLAGS="$CFLAGS -Wall" ;;
+  esac
+
+  if test "x$enable_ansi" = "xyes"; then
+    case " $CFLAGS " in
+    *[\ \	]-ansi[\ \	]*) ;;
+    *) CFLAGS="$CFLAGS -ansi" ;;
+    esac
+
+    case " $CFLAGS " in
+    *[\ \	]-pedantic[\ \	]*) ;;
+    *) CFLAGS="$CFLAGS -pedantic" ;;
+    esac
+  fi
+fi
+
+changequote([,])dnl
+
+GEGL_LIBDIR='-L${libdir}'
+GEGL_INCLUDEDIR='-I${includedir}'
+GEGL_LIBS='-lgegl'
+
+CPPFLAGS="$CPPFLAGS $GTK_CFLAGS"
+LDFLAGS="$LDFLAGS `echo $GTK_LIBS | sed 's/\(.*\)\(-lgtk.*\)/\1/'`"
+LIBS="$LIBS $GTK_LIBS"
+
+AC_SUBST(GEGL_LIBDIR)
+AC_SUBST(GEGL_INCLUDEDIR)
+AC_SUBST(GEGL_LIBS)
+
+AC_OUTPUT([
+Makefile
+gegl/Makefile
+gegl-config], [case "$CONFIG_FILES" in *gegl-config*) chmod +x gegl-config;; esac])

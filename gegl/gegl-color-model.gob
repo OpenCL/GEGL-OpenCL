@@ -1,0 +1,131 @@
+%h{
+#include "gegl-object.h"
+#if 1 
+#ifndef __GEGL_COLOR_F_H__
+#define __GEGL_COLOR_F_H__
+typedef struct _GeglColor GeglColor;
+#endif
+#endif
+%}
+%{
+
+/* Need some .F.h type action here */
+#if 1 
+#ifndef __GEGL_COLOR_MODEL_F_H__
+#define __GEGL_COLOR_MODEL_F_H__
+typedef struct _GeglColorModel GeglColorModel;
+#endif
+#endif
+#include "gegl-color.h"
+#include "gegl-color-model.h"
+#include "gegl-color-model-private.h"
+#include "gegl-object-private.h"
+%}
+
+class Gegl:Color:Model from Gegl:Object {
+
+  private GeglColorSpace  colorspace;       /*RGB, GRAY, CMYK, etc*/
+ 
+  private GeglChannelDataType data_type;    /*FLOAT, U8, U16, etc*/
+
+  private gint       bytes_per_channel;
+  private gint       bytes_per_pixel;  
+  private gint       num_channels;     /* total number of channels */
+  private gint       num_colors;       /* number of color channels */
+  private gboolean   has_alpha;        /* is there an alpha   */ 
+  private gint       alpha_channel;    /* alpha channel index */
+  private gboolean   premultiplied;    /* model represents premultiplied*/
+
+  private gboolean   is_additive;      /* bigger is brighter  */
+  private gboolean   is_subtractive;   /* bigger is darker    */
+  private guint      ID;               /* a unique id */
+
+  private const char**channel_names;   /* name of each channel */
+  private const char *color_space_name;/* name of this color space */
+  private const char *alpha_string;    /* "Alpha" or "\0"          */
+  private const char *channel_data_type_name;  /*name of channel data type*/
+
+  protected 
+  gboolean 
+  constructor(self, gboolean has_alpha)
+  {
+    if (GEGL_OBJECT(self)->constructed) 
+       return FALSE;
+    
+    /* Chain up */
+    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+       return FALSE;
+	
+    self->_priv->colorspace = COLORSPACE_NONE;
+    self->_priv->data_type = DATATYPE_NONE;
+    self->_priv->bytes_per_channel = -1;
+    self->_priv->bytes_per_pixel = -1; 
+    self->_priv->num_channels = -1; 
+    self->_priv->num_colors = -1;
+    self->_priv->has_alpha = has_alpha;
+    self->_priv->alpha_channel = -1;
+    self->_priv->premultiplied = FALSE; 
+
+    self->_priv->is_additive = FALSE;
+    self->_priv->is_subtractive = FALSE;
+
+    self->_priv->channel_names = NULL;
+    self->_priv->color_space_name = NULL;
+    self->_priv->alpha_string = NULL;
+    self->_priv->channel_data_type_name = NULL;
+    self->_priv->ID = -1;
+
+    return TRUE;
+  }
+
+  public 
+  GeglColorSpace 
+  color_space(self) 
+  { return self->_priv->colorspace; } 
+
+  public
+  GeglChannelDataType	
+  data_type(self) 
+  { return self->_priv->data_type; }
+
+  public
+  gint	
+  bytes_per_channel(self) 
+  { return self->_priv->bytes_per_channel; }
+
+  public
+  gint	
+  bytes_per_pixel(self) 
+  { return self->_priv->bytes_per_pixel; }
+
+  public
+  gint	
+  num_channels(self) 
+  { return self->_priv->num_channels; }
+
+  public
+  gint	
+  num_colors(self) 
+  { return self->_priv->num_colors; }
+
+  public 
+  gboolean	
+  has_alpha(self) 
+  { return self->_priv->has_alpha; }
+
+  public 
+  gint	
+  alpha_channel(self) 
+  { return self->_priv->alpha_channel; }
+
+  public 
+  gint	
+  is_premultiplied(self) 
+  { return self->_priv->premultiplied; }
+
+  virtual 
+  void 
+  set_color (self, GeglColor *c, 
+ 		GeglColorConstant constant);
+
+}

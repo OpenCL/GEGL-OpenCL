@@ -1,0 +1,125 @@
+%h{
+#include "gegl-object.h"
+#include "gegl-color-model.h"
+#if 0
+#ifndef __GEGL_COLOR_MODEL_F_H__
+#define __GEGL_COLOR_MODEL_F_H__
+typedef struct _GeglColorModel  GeglColorModel;
+#endif
+#endif
+%}
+%{
+#if 0
+#ifndef __GEGL_COLOR_F_H__
+#define __GEGL_COLOR_F_H__
+typedef struct _GeglColor  GeglColor;
+#endif
+#endif
+#include "gegl-color.h"
+
+#include "gegl-color-model.h"
+#include "gegl-color.h"
+#include "gegl-color-private.h"
+#include "gegl-object-private.h"
+#include "gegl-utils.h"
+%}
+
+class Gegl:Color from Gegl:Object {
+
+  private GeglColorModel *color_model;          /* The color model */
+  private GeglChannelValue *channel_values;     /* array of channel data */
+  private gint num_channels;                    /* number of channels*/
+
+  public
+  GeglColor *	
+  new(GeglColorModel *cm)
+  {
+    GeglColor * self = GEGL_COLOR(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self,cm))
+	return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self, GeglColorModel *cm)
+  {
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+	
+    /* Chain up */
+    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+      return FALSE;
+
+    self->_priv->color_model = cm;
+    self->_priv->num_channels = gegl_color_model_num_channels(cm);
+    self->_priv->channel_values = 
+	g_new (GeglChannelValue, self->_priv->num_channels);
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    GeglColor * self = GEGL_COLOR(object); 
+
+    /* Dispose of channels values array*/
+    g_free(self->_priv->channel_values);
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  public
+  GeglChannelValue * 
+  get_channel_values(self)
+  {
+    return self->_priv->channel_values;
+  }
+
+  public
+  GeglColorModel * 
+  get_color_model(self)
+  {
+    return self->_priv->color_model;
+  }
+
+  public
+  int 
+  get_num_channels(self)
+  {
+    return self->_priv->num_channels;
+  }
+
+  public
+  void
+  set_channel_values (self, GeglChannelValue *channel_values)
+  {
+    gint i = self->_priv->num_channels;
+    while (i--)
+      self->_priv->channel_values[i] = channel_values[i]; 
+  }
+
+  public
+  void 
+  set (self, GeglColor * color)
+  {
+    GeglChannelValue *channel_values = get_channel_values(color); 
+    set_channel_values (self, channel_values);
+  }
+
+  public
+  void 
+  set_constant (self, GeglColorConstant constant)
+  {
+    gegl_color_model_set_color(self->_priv->color_model, self, constant);
+  }
+}

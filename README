@@ -1,0 +1,24 @@
+You must use Gob 0.92.1 with gegl-0.0.2 and you should apply the patch
+patch_for_gob-0.92.1 that is in this directory to the main.c of gob when you
+build it. 
+
+This has to do with a fix for circular headers created by gob in some cases,
+but which isnt completely worked out yet (or which I dont understand how to
+make gob do yet). 
+
+There is some support for remaking generated .c and .h files automatically.
+Look in src directory gegl/Makefile.am for rules at the bottom.
+
+>make clean      only removes *.o's but not .h's or .c's or .gobs 
+>make gobclean   removes the generated .c and .h files by gob, and leaves .gobs 
+>make gobs       builds all generated .c and .h files from .gobs
+
+Dependencies more or less work so if you edit a gob file, the make will pick up
+that depend and rerun gob for you before compiling, but the very first build
+seems to have trouble sometimes. (.deps files problem somehow). Just cd to
+the gegl dir and do a make gobs for the first time. 
+
+The testgegl file just creates some operators and runs them. There is a PrintOp
+for debugging. See testgegl.c for details.
+
+calvinw@mindspring.com

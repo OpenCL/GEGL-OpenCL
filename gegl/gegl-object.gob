@@ -1,0 +1,33 @@
+%h{
+#include <gtk/gtk.h>
+#include "gegl-types.h"
+%}
+%{
+#include "gegl-object.h"
+#include "gegl-object-private.h"
+%}
+
+
+class Gegl:Object from Gtk:Object {
+
+  public gboolean constructed;
+
+  init(object)
+  {
+    object->constructed = FALSE;
+  }
+
+  protected
+  gboolean	
+  constructor(self)
+  {
+    return TRUE;
+  }
+
+  public
+  void 
+  destroy (self)
+  {
+    gtk_object_destroy(GTK_OBJECT(self));
+  }
+}

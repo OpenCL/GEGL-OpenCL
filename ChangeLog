@@ -1,0 +1,20 @@
+Thu Jan 20 09:20:48 PST 2000  calvinw@mindspring.com  
+
+    * initial import  
+
+    * The following classes have initial versions:
+
+      GeglObject -- base class for gegl classes  
+      GeglOp -- class for operators  
+      GeglPointOp  -- operators that only need (x,y) to compute pixel (x,y)
+      GeglFillOp -- fills images with a color
+      GeglPrintOp -- prints out the pixel values of an image (floats only now)
+      GeglImageBuffers -- buffers for image data and pointers to data 
+      GeglColorModel -- ColorSpace, color channels, alpha info, data type 
+      GeglColorModelRgb -- subclass of RGB color models
+      GeglColorModelRgbFloat -- floating pt channels RGB color model 
+      GeglColor -- stores channels for a single color 
+
+    * There is a small test program -- testgegl
+
+

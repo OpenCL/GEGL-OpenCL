@@ -1,0 +1,63 @@
+%h{
+#include "gegl-object.h"
+#include "gegl-image-buffer.h"
+%}
+%{
+#include "gegl-op.h"
+#include "gegl-op-private.h"
+#include "gegl-object-private.h"
+#include "gegl-utils.h"
+%}
+
+class Gegl:Op from Gegl:Object {
+
+  private GeglImageBuffer **image_buffers;/* dest, then sources */
+  private GeglRect *rects;                /* dest rect, then sources rects */
+  private gint num_images;                /* total dest + source images */
+
+  protected 
+  gboolean 
+  constructor(self, 
+	      GeglImageBuffer **image_buffers, 
+	      GeglRect *rects,
+	      gint num_images)
+  {
+    gint i;
+
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+	
+    /* Chain up */
+    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+      return FALSE;
+
+    self->_priv->image_buffers = g_new(GeglImageBuffer*,num_images);
+    self->_priv->rects = g_new(GeglRect,num_images);
+    self->_priv->num_images = num_images;
+   
+    for(i = 0; i < num_images; i++)
+      {
+	self->_priv->image_buffers[i] = image_buffers[i];
+	self->_priv->rects[i] = rects[i];
+      }
+	
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    GeglOp *self = GEGL_OP(object); 
+
+    /* Dispose of pointer arrays for images and rects */
+    g_free(self->_priv->image_buffers);
+    g_free(self->_priv->rects);
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  virtual void apply (self);
+
+}
