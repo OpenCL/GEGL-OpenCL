@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.61 [en] (X11; I; Linux 2.2.12-20 i686) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (X11; U; IRIX64 6.2 IP28) [Netscape]">
    <title>Gegl Tasks</title>
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -62,14 +62,6 @@ testgeglfile -Make gegl test programs use the new Image class structure.</b>
 should return an error on copy_pixels since they are not writable and copy_pixels
 is supposed to copy from a passed Image to the Image represented by this
 (or self in GOB-speak)</td>
-</tr>
-
-<tr>
-<td><a NAME="7 Remove Drawable, GraphicsState classes"></a><b>#7 Remove
-Drawable, GraphicsState classes- Remove these classes from the tree.</b>
-<br>Owner: caro@rhythm.com
-<br>Gegl doesnt need these classes at present. This might be useful in
-some future version of gegl, but these are higher level classes.</td>
 </tr>
 
 <tr>
@@ -151,27 +143,31 @@ pixel.green, pixel.blue for rgb. This is needed for Ops that will write
 GIL code and will want a standard way to refer to the color channels.&nbsp;</td>
 </tr>
 </table>
-<br>
 
+<p>
 <hr WIDTH="100%">
 <div CLASS="TITLE"><a NAME="Finished Tasks"></a><b><font size=+2>Finished
 Tasks</font></b></div>
 
-<div CLASS="TITLE"><b><font size=+2></font></b></div>
+<div CLASS="TITLE">Tasks should be moved here with a completion date when
+removed from Current tasks list.</div>
 
-
-<p CLASS="TITLE">Tasks should be moved here with a completion date when
-removed from Current tasks list.
 <table BORDER COLS=1 WIDTH="100%" NOSAVE >
 <tr>
 <td><a NAME="16 GIL support for accessing channels"></a><b>#5 Update to
-latest GOB - Check that the new gob 1.0 and later works for gegl.&nbsp;&nbsp;</b>
+latest GOB - Check that the new gob 1.0 and later works for gegl.&nbsp;</b>
 <br>Owner<b>: </b>caro@rhythm.com
 <br>Finished: Tue Jun 20 16:39:33 EDT 2000</td>
 </tr>
-</table>
 
-<div CLASS="TITLE"><b><font size=+2></font></b></div>
+<tr>
+<td><a NAME="7 Remove Drawable, GraphicsState classes"></a><b>#7 Remove
+Drawable, GraphicsState classes- Remove these classes from the tree.</b>
+<br>Owner: caro@rhythm.com
+<br>Gegl doesnt need these classes at present. This might be useful in
+some future version of gegl, but these are higher level classes.</td>
+</tr>
+</table>
 </div>
 </div>
 
