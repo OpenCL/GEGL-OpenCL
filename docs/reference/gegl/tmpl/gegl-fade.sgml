@@ -26,31 +26,6 @@ multiplier * A
 </para>
 
 
-<!-- ##### STRUCT GeglFadeClass ##### -->
-<para>
-
-</para>
-
-@unary_class: 
-
-<!-- ##### FUNCTION gegl_fade_get_multiplier ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_fade_set_multiplier ##### -->
-<para>
-
-</para>
-
-@self: 
-@multiplier: 
-
-
 <!-- ##### ARG GeglFade:multiplier ##### -->
 <para>
 

@@ -26,6 +26,7 @@ struct _GeglColorModel
    /*< private >*/
    GeglColorSpace * color_space;
    GeglChannelSpace *  channel_space;
+   GType pixel_type;
 
    gint num_channels;                    
    gint num_colors;                     
@@ -60,6 +61,9 @@ GeglColorModel *  gegl_color_model_instance       (gchar * color_model_name);
 
 GeglColorSpace* gegl_color_model_color_space    (GeglColorModel * self);
 GeglChannelSpace*  gegl_color_model_channel_space     (GeglColorModel * self);
+
+GType           gegl_color_model_channel_type   (GeglColorModel *self);
+GType           gegl_color_model_pixel_type     (GeglColorModel *self);
 
 gint            gegl_color_model_num_channels   (GeglColorModel * self);
 gint            gegl_color_model_num_colors     (GeglColorModel * self);

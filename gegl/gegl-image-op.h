@@ -22,7 +22,6 @@ struct _GeglImageOp
    GeglFilter filter;
 
    /*< private >*/
-   GeglImage * image;
 };
 
 typedef struct _GeglImageOpClass GeglImageOpClass;
@@ -30,42 +29,17 @@ struct _GeglImageOpClass
 {
    GeglFilterClass filter_class;
 
-   void (* compute_need_rect)       (GeglImageOp *self,
-                                     GeglRect *input_need_rect,
-                                     GeglRect *need_rect,
-                                     gint i);
-   void (* compute_have_rect)       (GeglImageOp *self,
-                                     GeglRect *have_rect,
-                                     GList * data_inputs); 
-   GeglColorModel* 
-        (* compute_color_model)     (GeglImageOp *self,
-                                     GList * data_inputs); 
+   void (* compute_need_rects)   (GeglImageOp *self);
+   void (* compute_have_rect)    (GeglImageOp *self);
+   void (* compute_color_model)  (GeglImageOp *self);
 
 };
 
 GType           gegl_image_op_get_type             (void);
 
-void            gegl_image_op_set_image (GeglImageOp * self, 
-                                         GeglImage *image);
-GeglImage *     gegl_image_op_get_image (GeglImageOp * self);
-
-
-void            gegl_image_op_compute_need_rect   (GeglImageOp * self,
-                                                   GeglRect * input_need_rect,
-                                                   GeglRect * need_rect,
-                                                   gint i);
-void            gegl_image_op_compute_have_rect   (GeglImageOp * self,
-                                                   GeglRect *have_rect,
-                                                   GList * data_inputs);
-GeglColorModel* gegl_image_op_compute_color_model (GeglImageOp * self, 
-                                                   GList * data_inputs);
-
-void            gegl_image_op_evaluate_need_rects   (GeglImageOp *self, 
-                                                     GList *data_inputs);
-void            gegl_image_op_evaluate_have_rect    (GeglImageOp * self,
-                                                     GList * data_inputs);
-void            gegl_image_op_evaluate_color_model  (GeglImageOp * self, 
-                                                     GList * data_inputs);
+void            gegl_image_op_compute_need_rects (GeglImageOp * self);
+void            gegl_image_op_compute_have_rect  (GeglImageOp * self);
+void            gegl_image_op_compute_color_model(GeglImageOp * self);
 
 #ifdef __cplusplus
 }

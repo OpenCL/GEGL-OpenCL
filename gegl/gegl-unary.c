@@ -22,8 +22,10 @@ static void init (GeglUnary * self, GeglUnaryClass * klass);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void prepare (GeglFilter * filter, GList *data_outputs, GList *data_inputs);
-static void validate_inputs  (GeglFilter *filter, GList *data_inputs);
+static void prepare (GeglFilter * filter);
+static void validate_inputs  (GeglFilter *filter, GList *collected_input_data_list);
+
+static void compute_color_model (GeglImageOp * self);
 
 static gpointer parent_class = NULL;
 
@@ -59,8 +61,8 @@ static void
 class_init (GeglUnaryClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
   GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
+  GeglImageOpClass *image_op_class = GEGL_IMAGE_OP_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
@@ -70,22 +72,16 @@ class_init (GeglUnaryClass * klass)
   filter_class->prepare = prepare;
   filter_class->validate_inputs = validate_inputs;
 
+  image_op_class->compute_color_model = compute_color_model;
+
   klass->get_scanline_func = NULL;
- 
-  /* op properties */
-  gegl_op_class_install_data_input_property (op_class, 
-                                        gegl_param_spec_image("input-image", 
-                                                                   "InputImage",
-                                                                   "The input image",
-                                                                   G_PARAM_PRIVATE));
 }
 
 static void 
 init (GeglUnary * self, 
       GeglUnaryClass * klass)
 {
-  /* Add the image input */
-  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image");
 }
 
 static void
@@ -116,20 +112,40 @@ set_property (GObject      *gobject,
 
 static void 
 validate_inputs  (GeglFilter *filter, 
-                  GList *data_inputs)
+                  GList *collected_input_data_list)
 {
-  GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, data_inputs);
+  GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_input_data_list);
+  {
+    gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "input-image");
+    GeglData * data = g_list_nth_data(collected_input_data_list, index);
+    GValue *value = gegl_data_get_value(data);
+    gegl_op_set_input_data_value(GEGL_OP(filter), "input-image", value);
+  }
+}
+
+static void
+compute_color_model (GeglImageOp * self) 
+{
+  GeglColorModel *color_model;
+
+  GeglData *output_data = gegl_op_get_output_data(GEGL_OP(self), "output-image");
+  GeglData *input_data = gegl_op_get_input_data(GEGL_OP(self), "input-image");
+
+  g_return_if_fail(GEGL_IS_IMAGE_DATA(output_data));
+  g_return_if_fail(GEGL_IS_IMAGE_DATA(input_data));
+
+  color_model = gegl_color_data_get_color_model(GEGL_COLOR_DATA(input_data));
+  gegl_color_data_set_color_model(GEGL_COLOR_DATA(output_data), color_model);
 }
 
 static void 
-prepare (GeglFilter * filter, 
-         GList * data_outputs,
-         GList * data_inputs)
+prepare (GeglFilter * filter) 
 {
   GeglPointOp *point_op = GEGL_POINT_OP(filter);
   GeglUnary *self = GEGL_UNARY(filter);
+  GList * output_data_list = gegl_op_get_output_data_list(GEGL_OP(self));
 
-  GeglData *dest_data = g_list_nth_data(data_outputs, 0);
+  GeglData *dest_data = g_list_nth_data(output_data_list, 0);
   GValue *dest_value = gegl_data_get_value(dest_data);
   GeglImage *dest = (GeglImage*)g_value_get_object(dest_value);
   GeglColorModel * dest_cm = gegl_image_get_color_model (dest);

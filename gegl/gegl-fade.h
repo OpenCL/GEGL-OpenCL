@@ -20,7 +20,6 @@ struct _GeglFade
    GeglUnary unary;
 
    /*< private >*/
-   gfloat multiplier;
 };
 
 typedef struct _GeglFadeClass GeglFadeClass;
@@ -30,10 +29,6 @@ struct _GeglFadeClass
 };
 
 GType            gegl_fade_get_type         (void);
-
-gfloat gegl_fade_get_multiplier (GeglFade * self);
-void gegl_fade_set_multiplier   (GeglFade * self, 
-                                 gfloat multiplier);
 
 #ifdef __cplusplus
 }

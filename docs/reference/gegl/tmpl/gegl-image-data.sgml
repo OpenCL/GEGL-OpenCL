@@ -20,13 +20,6 @@ GeglImageData
 </para>
 
 
-<!-- ##### STRUCT GeglImageDataClass ##### -->
-<para>
-
-</para>
-
-@data_class: 
-
 <!-- ##### FUNCTION gegl_image_data_get_rect ##### -->
 <para>
 

@@ -22,6 +22,7 @@ struct _GeglData
     /*< private >*/
     GValue *value;
     GParamSpec *param_spec;
+    gchar *name;
 };
 
 typedef struct _GeglDataClass GeglDataClass;
@@ -32,10 +33,12 @@ struct _GeglDataClass
 
 GType           gegl_data_get_type              (void);
 GValue*         gegl_data_get_value             (GeglData * self);
-GParamSpec*     gegl_data_get_param_spec        (GeglData * self);
-void            gegl_data_set_param_spec        (GeglData * self,
-                                                 GParamSpec *param_spec);
 
+void            gegl_data_copy_value            (GeglData * self, const GValue* value);
+
+void            gegl_data_set_name              (GeglData * self, const gchar * name);
+G_CONST_RETURN gchar* 
+                gegl_data_get_name              (GeglData * self);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

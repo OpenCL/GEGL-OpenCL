@@ -119,7 +119,6 @@ fg_multiply_bg_float (GeglFilter * filter,
                 case 3: *d2++ = *f2++ * *b2++; 
                 case 2: *d1++ = *f1++ * *b1++;
                 case 1: *d0++ = *f0++ * *b0++;
-                case 0:        
               }
           }
         break;
@@ -134,7 +133,6 @@ fg_multiply_bg_float (GeglFilter * filter,
                     case 3: *d2++ = (a  + *f2++) * *b2++;   
                     case 2: *d1++ = (a  + *f1++) * *b1++;   
                     case 1: *d0++ = (a  + *f0++) * *b0++;   
-                    case 0:        
                   }
 
                 *da++ = 1.0; 
@@ -152,7 +150,6 @@ fg_multiply_bg_float (GeglFilter * filter,
                     case 3: *d2++ = (b  + *b2++) * *f2++;   
                     case 2: *d1++ = (b  + *b1++) * *f1++;   
                     case 1: *d0++ = (b  + *b0++) * *f0++;   
-                    case 0:        
                   }
 
                 *da++ = 1.0; 
@@ -169,13 +166,20 @@ fg_multiply_bg_float (GeglFilter * filter,
                 b = 1.0 - *ba;                                               
                 switch(d_color_chans)
                   {
-                    case 3: *d2++ = a * *b2 + b * *f2 + *b2++ * *f2++;   
-                    case 2: *d1++ = a * *b1 + b * *f1 + *b1++ * *f1++;
-                    case 1: *d0++ = a * *b0 + b * *f0 + *b0++ * *f0++;
-                    case 0:        
+                    case 3: *d2++ = a * *b2 + b * *f2 + *b2 * *f2;   
+                             b2++;
+                             f2++;
+                    case 2: *d1++ = a * *b1 + b * *f1 + *b1 * *f1;
+                             b1++;
+                             f1++;
+                    case 1: *d0++ = a * *b0 + b * *f0 + *b0 * *f0;
+                             b0++;
+                             f0++;
                   }
 
-                *da++ = *fa + *ba - *ba++ * *fa++; 
+                *da++ = *fa + *ba - *ba * *fa; 
+                 ba++;
+                 fa++;
               }
           }
         break;

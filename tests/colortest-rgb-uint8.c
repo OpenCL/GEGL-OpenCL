@@ -1,6 +1,5 @@
 #include <glib-object.h>
 #include "gegl.h"
-#include "gegl-check.h"
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
@@ -49,8 +48,11 @@ test_color_g_object_properties(Test *test)
                                  "pixel-rgb-uint8",1, 2, 3, 
                                  NULL); 
 
-    gint width = gegl_color_get_width(op);
-    gint height = gegl_color_get_height(op);
+    gint width;
+    gint height;
+
+    g_object_get(op, "width", &width, NULL);
+    g_object_get(op, "height", &height, NULL);
 
     ct_test(test, IMAGE_OP_WIDTH == width);
     ct_test(test, IMAGE_OP_HEIGHT == height);

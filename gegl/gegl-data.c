@@ -6,16 +6,15 @@
 enum
 {
   PROP_0, 
-  PROP_PARAM_SPEC,
+  PROP_DATA_NAME,
   PROP_LAST 
 };
 
 static void class_init (GeglDataClass * klass);
 static void init (GeglData *self, GeglDataClass * klass);
 static void finalize(GObject * gobject);
-
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
+static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 
 static gpointer parent_class = NULL;
 
@@ -55,17 +54,18 @@ class_init (GeglDataClass * klass)
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
   parent_class = g_type_class_peek_parent(klass);
 
+  gobject_class->finalize = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-  gobject_class->finalize = finalize;
 
-  g_object_class_install_property (gobject_class, PROP_PARAM_SPEC,
-                                   g_param_spec_param ("param-spec",
-                                                       "ParamSpec",
-                                                       "The Param's param spec.",
-                                                        G_TYPE_PARAM,
+  g_object_class_install_property (gobject_class, PROP_DATA_NAME,
+                                   g_param_spec_string ("data_name",
+                                                        "DataName",
+                                                        "The GeglData's name",
+                                                        "", 
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE));
+
 }
 
 static void 
@@ -73,7 +73,6 @@ init (GeglData * self,
       GeglDataClass * klass)
 {
   self->value = g_new0(GValue, 1); 
-  self->param_spec = NULL;
 }
 
 static void
@@ -87,25 +86,9 @@ finalize(GObject *gobject)
       g_free(self->value);
     }
 
-  G_OBJECT_CLASS(parent_class)->finalize(gobject);
-}
+  g_free(self->name);
 
-static void
-get_property (GObject      *gobject,
-              guint         prop_id,
-              GValue       *value,
-              GParamSpec   *pspec)
-{
-  GeglData *self = GEGL_DATA(gobject);
-  switch (prop_id)
-  {
-    case PROP_PARAM_SPEC:
-      g_value_set_param (value, gegl_data_get_param_spec(self));
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
-      break;
-  }
+  G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
 static void
@@ -114,17 +97,34 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglData *self = GEGL_DATA(gobject);
+  GeglData * data = GEGL_DATA(gobject);
   switch (prop_id)
   {
-    case PROP_PARAM_SPEC:
-      gegl_data_set_param_spec(self,g_value_get_param (value));
+    case PROP_DATA_NAME:
+      gegl_data_set_name(data, g_value_get_string(value));  
       break;
     default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
   }
 }
+
+static void
+get_property (GObject      *gobject,
+              guint         prop_id,
+              GValue       *value,
+              GParamSpec   *pspec)
+{
+  GeglData * data = GEGL_DATA(gobject);
+  switch (prop_id)
+  {
+    case PROP_DATA_NAME:
+      g_value_set_string(value, gegl_data_get_name(data));  
+      break;
+    default:
+      break;
+  }
+}
+
 
 /**
  * gegl_data_get_value:
@@ -143,21 +143,58 @@ gegl_data_get_value (GeglData * self)
   return self->value;
 }
 
-GParamSpec * 
-gegl_data_get_param_spec (GeglData * self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (GEGL_IS_DATA (self), NULL);
-   
-  return self->param_spec;
-}
-
+/**
+ * gegl_data_copy_value:
+ * @self: a #GeglData
+ * @value: the value to copy.
+ *
+ * Copy the value for this data.  
+ *
+ **/
 void
-gegl_data_set_param_spec (GeglData * self,
-                          GParamSpec *param_spec)
+gegl_data_copy_value (GeglData * self, 
+                      const GValue *value)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_DATA (self));
-   
-  self->param_spec = param_spec;
+  g_return_if_fail (G_IS_VALUE(value));
+
+  g_value_unset(self->value);
+  g_value_init(self->value, value->g_type);
+  g_value_copy(value, self->value);
+}
+
+/**
+ * gegl_data_set_name:
+ * @self: a #GeglData.
+ * @name: a string 
+ *
+ * Sets the name for this data.
+ *
+ **/
+void 
+gegl_data_set_name (GeglData * self, 
+                    const gchar * name)
+{
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_DATA (self));
+
+  self->name = g_strdup(name);
+}
+
+/**
+ * gegl_data_get_name:
+ * @self: a #GeglData.
+ *
+ * Gets the name for this data.
+ *
+ * Returns: a string for the name of this data.
+ **/
+G_CONST_RETURN gchar*
+gegl_data_get_name (GeglData * self)
+{
+  g_return_val_if_fail (self, NULL);
+  g_return_val_if_fail (GEGL_IS_DATA (self), NULL);
+
+  return self->name;
 }

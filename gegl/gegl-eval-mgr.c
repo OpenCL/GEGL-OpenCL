@@ -243,12 +243,11 @@ static void
 evaluate (GeglEvalMgr * self) 
 {
   /* Get the root and set roi on it */
-  GeglData * data = gegl_op_get_data_output(GEGL_OP(self->root), 0);
+  GeglData * data = gegl_op_get_output_data(GEGL_OP(self->root), "output-image");
   if(data && GEGL_IS_IMAGE_DATA(data))
     {
       GeglImageData *image_data = GEGL_IMAGE_DATA(data);
       gegl_image_data_set_rect(image_data, &self->roi);
-      //gegl_rect_copy(&image_data->rect, &self->roi);
     }
 
   /* This part computes need rects, breadth first. */

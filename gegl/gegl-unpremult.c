@@ -104,7 +104,6 @@ unpremult_float (GeglFilter * filter,
                 case 3: *d2++ = *a2++;
                 case 2: *d1++ = *a1++;
                 case 1: *d0++ = *a0++;
-                case 0:        
               }
 
             *da++ = *aa++;
@@ -119,7 +118,6 @@ unpremult_float (GeglFilter * filter,
                         a1++;
                 case 1: *d0++ = 0.0;
                         a0++;
-                case 0:        
               }
             *da++ = *aa++;
           }
@@ -130,7 +128,6 @@ unpremult_float (GeglFilter * filter,
                 case 3: *d2++ = *a2++ / *aa;
                 case 2: *d1++ = *a1++ / *aa;
                 case 1: *d0++ = *a0++ / *aa;
-                case 0:        
               }
 
             *da++ = *aa++;

@@ -39,19 +39,15 @@ implement the appropriate virtual get_scanline_func(), and the
 </para>
 
 
-<!-- ##### STRUCT GeglScanlineProcessorClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-
 <!-- ##### FUNCTION gegl_scanline_processor_process ##### -->
 <para>
 
 </para>
 
 @self: 
+@output_data_list: 
+@input_data_list: 
+<!-- # Unused Parameters # -->
 @data_outputs: 
 @data_inputs: 
 

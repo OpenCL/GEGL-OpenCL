@@ -1,10 +1,5 @@
 #include "gegl-channel-data.h"
-
-enum
-{
-  PROP_0, 
-  PROP_LAST 
-};
+#include "gegl-channel-value-types.h"
 
 static void class_init (GeglChannelDataClass * klass);
 static void init (GeglChannelData *self, GeglChannelDataClass * klass);
@@ -51,7 +46,9 @@ static void
 init (GeglChannelData * self, 
       GeglChannelDataClass * klass)
 {
+  GeglData * data = GEGL_DATA(self);
   self->channel_space = NULL;
+  g_value_init(data->value, GEGL_TYPE_CHANNEL_FLOAT);
 }
 
 GeglChannelSpace * 

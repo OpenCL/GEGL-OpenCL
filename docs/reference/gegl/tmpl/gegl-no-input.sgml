@@ -22,11 +22,3 @@ procedurally defined operations.
 </para>
 
 
-<!-- ##### STRUCT GeglNoInputClass ##### -->
-<para>
-
-</para>
-
-@point_op_class: 
-@get_scanline_func: 
-

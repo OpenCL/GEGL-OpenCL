@@ -20,8 +20,6 @@ struct _GeglMult
    GeglUnary unary;
 
    /*< private >*/
-
-   gfloat mult[4];
 };
 
 typedef struct _GeglMultClass GeglMultClass;

@@ -22,32 +22,6 @@ multiplier that can be applied to the first input.
 </para>
 
 
-<!-- ##### STRUCT GeglBinaryClass ##### -->
-<para>
-
-</para>
-
-@point_op_class: 
-@get_scanline_func: 
-
-<!-- ##### FUNCTION gegl_binary_get_fade ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_binary_set_fade ##### -->
-<para>
-
-</para>
-
-@self: 
-@fade: 
-
-
 <!-- ##### ARG GeglBinary:fade ##### -->
 <para>
 

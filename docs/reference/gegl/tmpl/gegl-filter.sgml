@@ -76,24 +76,13 @@ visitors during graph traversal. None of them should be called otherwise.
 </para>
 
 
-<!-- ##### STRUCT GeglFilterClass ##### -->
-<para>
-
-</para>
-
-@op_class: 
-@prepare: 
-@process: 
-@finish: 
-@validate_inputs: 
-@validate_outputs: 
-
 <!-- ##### FUNCTION gegl_filter_evaluate ##### -->
 <para>
 
 </para>
 
 @self: 
+<!-- # Unused Parameters # -->
 @data_outputs: 
 @data_inputs: 
 
@@ -104,6 +93,9 @@ visitors during graph traversal. None of them should be called otherwise.
 </para>
 
 @self: 
+@collected_input_data_list: 
+<!-- # Unused Parameters # -->
+@collected_data_outputs: 
 @data_inputs: 
 
 
@@ -113,6 +105,7 @@ visitors during graph traversal. None of them should be called otherwise.
 </para>
 
 @self: 
+<!-- # Unused Parameters # -->
 @data_outputs: 
 
 

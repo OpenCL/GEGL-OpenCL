@@ -65,14 +65,6 @@ nodes in a graph that have no source for a particular input.
 </para>
 
 
-<!-- ##### STRUCT GeglEvalMgrClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-@evaluate: 
-
 <!-- ##### FUNCTION gegl_eval_mgr_get_root ##### -->
 <para>
 

@@ -13,6 +13,9 @@ LDADDS = @STRIP_BEGIN@ \
 	$(top_builddir)/gegl/@gegltargetlib@ \
 @STRIP_END@
 
+TEST_DEPS = \
+	$(top_builddir)/gegl/@gegltargetlib@
+
 MOCK_OBJECT_SRC = \
    gegl-mock-bfs-visitor.c \
    gegl-mock-bfs-visitor.h \
@@ -30,12 +33,14 @@ MOCK_OBJECT_SRC = \
    gegl-mock-op.h \
    gegl-mock-point-op.c \
    gegl-mock-point-op.h \
+   gegl-mock-properties-filter.c \
+   gegl-mock-properties-filter.h \
    gegl-mock-visitor.c \
    gegl-mock-visitor.h
 
 EXTRA_SRC = \
-   gegl-check.c \
-   gegl-check.h
+   gegl-check-op.c \
+   gegl-check-op.h
 
 testgegl_SOURCES = \
    $(MOCK_OBJECT_SRC) \
@@ -48,7 +53,7 @@ testgegl_SOURCES = \
    channelspacetest.c \
    channeluint8valuetest.c \
    channelvaluetest.c \
-   checktest.c \
+   checkoptest.c \
    colormodeltest.c \
    colorspacetest.c \
    colortest-rgb-float.c \
@@ -69,6 +74,7 @@ testgegl_SOURCES = \
    imageiteratortest.c \
    imageoptest.c \
    imagetest.c \
+   mockpropertiesfiltertest.c \
    multiplytest-rgb-float.c \
    multtest-rgb-float.c \
    multtest-rgb-uint8.c \
@@ -100,3 +106,6 @@ EXTRA_PROGRAMS = $(TESTS)
   
 all: check
 
+dummy:
+	cd $(top_builddir)/gegl \
+	&& $(MAKE) $(AM_MAKEFLAGS)

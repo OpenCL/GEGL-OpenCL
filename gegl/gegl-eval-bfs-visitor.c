@@ -1,6 +1,7 @@
 #include "gegl-eval-bfs-visitor.h"
 #include "gegl-filter.h"
 #include "gegl-image-op.h"
+#include "gegl-image-data.h"
 #include "gegl-graph.h"
 
 static void class_init (GeglEvalBfsVisitorClass * klass);
@@ -9,6 +10,8 @@ static void finalize(GObject *gobject);
 
 static void visit_filter (GeglVisitor *visitor, GeglFilter * filter);
 static void visit_graph (GeglVisitor *visitor, GeglGraph * graph);
+
+static void validate_need_rect(GeglData *input_data, GeglData *collected_input_data);
 
 static gpointer parent_class = NULL;
 
@@ -66,6 +69,21 @@ finalize(GObject *gobject)
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
+static void
+validate_need_rect(GeglData *input_data,
+                   GeglData *collected_input_data)
+{
+  if(GEGL_IS_IMAGE_DATA(input_data))
+    {
+      GeglRect need_rect; 
+
+      g_return_if_fail(GEGL_IS_IMAGE_DATA(collected_input_data));
+
+      gegl_image_data_get_rect(GEGL_IMAGE_DATA(input_data), &need_rect);
+      gegl_image_data_set_rect(GEGL_IMAGE_DATA(collected_input_data), &need_rect);
+    }
+}
+
 static void      
 visit_filter(GeglVisitor * visitor,
              GeglFilter *filter)
@@ -78,9 +96,17 @@ visit_filter(GeglVisitor * visitor,
 
   if(GEGL_IS_IMAGE_OP(filter))
   {
-    GList * data_inputs = gegl_visitor_collect_data_inputs(visitor, GEGL_NODE(filter));
-    gegl_image_op_evaluate_need_rects(GEGL_IMAGE_OP(filter), data_inputs);
-    g_list_free(data_inputs);
+    gegl_image_op_compute_need_rects(GEGL_IMAGE_OP(filter));
+
+    /* Copy the need rect from input data to collected input data */
+    GList *collected_input_data_list = 
+        gegl_visitor_collect_input_data_list(visitor, GEGL_NODE(filter));
+
+    gegl_op_validate_input_data(GEGL_OP(filter), 
+                                collected_input_data_list, 
+                                &validate_need_rect);
+  
+    g_list_free(collected_input_data_list);
   }
 }
 

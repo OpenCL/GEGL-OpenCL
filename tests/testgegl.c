@@ -11,7 +11,7 @@ extern Test * create_bfs_visitor_test();
 extern Test * create_channel_value_test();
 extern Test * create_channel_float_value_test();
 extern Test * create_channel_uint8_value_test();
-extern Test * create_check_test();
+extern Test * create_check_op_test();
 extern Test * create_color_model_test();
 extern Test * create_color_space_test();
 extern Test * create_color_test_rgb_float();
@@ -34,6 +34,7 @@ extern Test * create_i_mult_test_rgb_uint8();
 extern Test * create_image_op_test();
 extern Test * create_image_iterator_test();
 extern Test * create_image_test();
+extern Test * create_mock_properties_filter_test();
 extern Test * create_mult_test_rgb_float();
 extern Test * create_mult_test_rgb_uint8();
 extern Test * create_multiply_test_rgb_float();
@@ -64,6 +65,8 @@ main (int argc, char *argv[])
 
   gegl_init(&argc, &argv);
 
+  LOG_DIRECT("Hello there");
+
   {
     Suite *suite = cs_create("GeglTestSuite");
 
@@ -74,7 +77,7 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_channel_value_test());
     cs_addTest(suite, create_channel_float_value_test());
     cs_addTest(suite, create_channel_uint8_value_test());
-    cs_addTest(suite, create_check_test());
+    cs_addTest(suite, create_check_op_test());
     cs_addTest(suite, create_color_test_rgb_uint8());
     cs_addTest(suite, create_color_test_rgb_float());
     cs_addTest(suite, create_color_model_test());
@@ -97,6 +100,7 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_image_op_test());
     cs_addTest(suite, create_image_iterator_test());
     cs_addTest(suite, create_image_test());
+    cs_addTest(suite, create_mock_properties_filter_test());
     cs_addTest(suite, create_mult_test_rgb_float());
     cs_addTest(suite, create_mult_test_rgb_uint8());
     cs_addTest(suite, create_multiply_test_rgb_float());

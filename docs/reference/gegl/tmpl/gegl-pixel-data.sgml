@@ -20,10 +20,3 @@ GeglPixelData
 </para>
 
 
-<!-- ##### STRUCT GeglPixelDataClass ##### -->
-<para>
-
-</para>
-
-@data_class: 
-

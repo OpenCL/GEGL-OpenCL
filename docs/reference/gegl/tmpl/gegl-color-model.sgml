@@ -20,14 +20,6 @@ GeglColorModel
 </para>
 
 
-<!-- ##### STRUCT GeglColorModelClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-@create_storage: 
-
 <!-- ##### FUNCTION gegl_color_model_register ##### -->
 <para>
 
@@ -56,6 +48,24 @@ GeglColorModel
 
 
 <!-- ##### FUNCTION gegl_color_model_channel_space ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_channel_type ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_pixel_type ##### -->
 <para>
 
 </para>

@@ -20,7 +20,6 @@ struct _GeglBlend
     GeglComp comp;
 
     /*< private >*/
-    gfloat opacity;
 };
 
 typedef struct _GeglBlendClass GeglBlendClass;
@@ -30,10 +29,6 @@ struct _GeglBlendClass
 };
 
 GType           gegl_blend_get_type          (void);
-
-gfloat          gegl_blend_get_opacity       (GeglBlend * self);
-void            gegl_blend_set_opacity       (GeglBlend * self, 
-                                              gfloat opacity);
 
 #ifdef __cplusplus
 }

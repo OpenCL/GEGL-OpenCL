@@ -119,7 +119,6 @@ copy_general (GeglFilter * filter,
           case 3: memcpy(d2,a2,byte_width);
           case 2: memcpy(d1,a1,byte_width);
           case 1: memcpy(d0,a0,byte_width);
-          case 0: 
       }
 
     if(alpha_mask == GEGL_A_ALPHA)

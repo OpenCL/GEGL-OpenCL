@@ -21,7 +21,6 @@ struct _GeglComp
     GeglPointOp point_op;
 
     /*< private >*/
-    gboolean premultiply;
 };
 
 typedef struct _GeglCompClass GeglCompClass;
@@ -35,9 +34,6 @@ struct _GeglCompClass
 };
 
 GType           gegl_comp_get_type          (void);
-gboolean        gegl_comp_get_premultiply    (GeglComp * self);
-void            gegl_comp_set_premultiply    (GeglComp * self, 
-                                              gboolean premultiply);
 
 #ifdef __cplusplus
 }

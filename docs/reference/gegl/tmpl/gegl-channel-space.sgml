@@ -20,17 +20,6 @@ GeglChannelSpace
 </para>
 
 
-<!-- ##### STRUCT GeglChannelSpaceClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-@convert_to_float: 
-@convert_from_float: 
-@convert_value_to_float: 
-@convert_value_from_float: 
-
 <!-- ##### FUNCTION gegl_channel_space_register ##### -->
 <para>
 

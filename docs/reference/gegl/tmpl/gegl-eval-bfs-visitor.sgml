@@ -24,10 +24,3 @@ of each of its inputs. This visitor is only used by #GeglEvalMgr.
 </para>
 
 
-<!-- ##### STRUCT GeglEvalBfsVisitorClass ##### -->
-<para>
-
-</para>
-
-@bfs_visitor_class: 
-

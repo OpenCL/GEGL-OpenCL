@@ -58,20 +58,12 @@ static void
 class_init (GeglMockFilterClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
   gobject_class->finalize = finalize;
-
-  /* op properties */
-  gegl_op_class_install_data_output_property(op_class, 
-                                gegl_param_spec_image("output-image", 
-                                                            "OutputImage",
-                                                            "ImageOp",
-                                                            G_PARAM_PRIVATE));
 
   g_object_class_install_property (gobject_class, PROP_GLIB_FLOAT,
                                    g_param_spec_float ("glib-float",
@@ -145,7 +137,7 @@ static void
 init (GeglMockFilter * self, 
       GeglMockFilterClass * klass)
 {
-  gegl_op_append_output(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "output-image_op");
+  gegl_op_add_output_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "output-image_op");
 
   self->channel = g_new0(GValue, 1); 
   g_value_init(self->channel, GEGL_TYPE_CHANNEL_FLOAT);

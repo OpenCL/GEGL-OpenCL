@@ -1,4 +1,5 @@
-#include "gegl-check.h"
+#include "gegl-check-op.h"
+#include "gegl-op.h"
 #include "gegl.h"
 
 enum
@@ -8,26 +9,27 @@ enum
   PROP_PIXEL_RGB_UINT8,
   PROP_X,
   PROP_Y,
-  PROP_IMAGE,
+  PROP_IMAGE_OP,
   PROP_LAST 
 };
 
-static void class_init (GeglCheckClass * klass);
-static void init (GeglCheck * self, GeglCheckClass * klass);
+static void class_init (GeglCheckOpClass * klass);
+static void init (GeglCheckOp * self, GeglCheckOpClass * klass);
 static void finalize (GObject * gobject);
 
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
+static void validate_inputs(GeglFilter *filter, GList *collected_input_data_list);
 
-static void process (GeglFilter * filter, GList  * output_params, GList * input_params);
+static void process (GeglFilter * filter);
 
-static void check_float(GeglCheck *self, GeglImageIterator *iter, gint x);
-static void check_uint8(GeglCheck *self, GeglImageIterator *iter, gint x);
+static void check_op_float(GeglCheckOp *self, GeglImageIterator *iter, gint x);
+static void check_op_uint8(GeglCheckOp *self, GeglImageIterator *iter, gint x);
 
 static gpointer parent_class = NULL;
 
 GType
-gegl_check_get_type (void)
+gegl_check_op_get_type (void)
 {
   static GType type = 0;
 
@@ -35,19 +37,19 @@ gegl_check_get_type (void)
     {
       static const GTypeInfo typeInfo =
       {
-        sizeof (GeglCheckClass),
+        sizeof (GeglCheckOpClass),
         (GBaseInitFunc) NULL,
         (GBaseFinalizeFunc) NULL,
         (GClassInitFunc) class_init,
         (GClassFinalizeFunc) NULL,
         NULL,
-        sizeof (GeglCheck),
+        sizeof (GeglCheckOp),
         0,
         (GInstanceInitFunc) init,
       };
 
       type = g_type_register_static (GEGL_TYPE_FILTER, 
-                                     "GeglCheck", 
+                                     "GeglCheckOp", 
                                      &typeInfo, 
                                      0);
     }
@@ -55,7 +57,7 @@ gegl_check_get_type (void)
 }
 
 static void 
-class_init (GeglCheckClass * klass)
+class_init (GeglCheckOpClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
@@ -67,6 +69,7 @@ class_init (GeglCheckClass * klass)
   gobject_class->finalize = finalize;
 
   filter_class->process = process;
+  filter_class->validate_inputs = validate_inputs;
 
   g_object_class_install_property (gobject_class, PROP_PIXEL_RGB_FLOAT,
                                    gegl_param_spec_pixel_rgb_float ("pixel-rgb-float",
@@ -91,54 +94,51 @@ class_init (GeglCheckClass * klass)
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x",
                                                       "X",
-                                                      "x to check pixel of",
+                                                      "x to check_op pixel of",
                                                       G_MININT,
                                                       G_MAXINT,
                                                       0,
+                                                      G_PARAM_CONSTRUCT |
                                                       G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_Y,
                                    g_param_spec_int ("y",
                                                       "Y",
-                                                      "y to check pixel of",
+                                                      "y to check_op pixel of",
                                                       G_MININT,
                                                       G_MAXINT,
                                                       0,
+                                                      G_PARAM_CONSTRUCT |
                                                       G_PARAM_READWRITE));
 
-  g_object_class_install_property (gobject_class, PROP_IMAGE,
-                                   g_param_spec_object ("image",
-                                                        "Image",
-                                                        "The image",
-                                                         GEGL_TYPE_IMAGE,
+  g_object_class_install_property (gobject_class, PROP_IMAGE_OP,
+                                   g_param_spec_object ("image-op",
+                                                        "ImageOp",
+                                                        "The image op",
+                                                         GEGL_TYPE_IMAGE_OP,
                                                          G_PARAM_CONSTRUCT |
                                                          G_PARAM_READWRITE));
 
 }
 
 static void 
-init (GeglCheck * self, 
-      GeglCheckClass * klass)
+init (GeglCheckOp * self, 
+      GeglCheckOpClass * klass)
 {
-  self->x = 0;
-  self->y = 0;
-  self->image = NULL;
+  self->image_op = NULL;
 
-  self->pixel = g_new0(GValue, 1); 
-  g_value_init(self->pixel, GEGL_TYPE_PIXEL_RGB_FLOAT);
-  g_value_set_pixel_rgb_float(self->pixel, 0.0, 0.0, 0.0);
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_PIXEL_DATA, "pixel");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "x");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "y");
 }
 
 static void
 finalize(GObject *gobject)
 {
-  GeglCheck *self = GEGL_CHECK (gobject);
+  GeglCheckOp *self = GEGL_CHECK_OP(gobject);
 
-  /* Delete the reference to the pixel*/
-  g_free(self->pixel);
-
-  if(self->image)
-   g_object_unref(self->image);
+  if(self->image_op)
+   g_object_unref(self->image_op);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
@@ -149,21 +149,30 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglCheck *self = GEGL_CHECK(gobject);
+  GeglCheckOp *self = GEGL_CHECK_OP(gobject);
   switch (prop_id)
   {
     case PROP_X:
-      g_value_set_int (value, self->x);
+      {
+        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "x");
+        g_value_set_int(value, g_value_get_int(data_value));  
+      }
       break;
     case PROP_Y:
-      g_value_set_int (value, self->y);
+      {
+        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "y");
+        g_value_set_int(value, g_value_get_int(data_value));  
+      }
       break;
     case PROP_PIXEL_RGB_FLOAT:
     case PROP_PIXEL_RGB_UINT8:
-      gegl_check_get_pixel(self, value); 
+      {
+        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
+        g_param_value_convert(pspec, data_value, value, TRUE);
+      }
       break;
-    case PROP_IMAGE:
-      g_value_set_object (value, gegl_check_get_image(self));
+    case PROP_IMAGE_OP:
+      g_value_set_object (value, (GObject*)(self->image_op));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
@@ -177,21 +186,23 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglCheck *self = GEGL_CHECK(gobject);
+  GeglCheckOp *self = GEGL_CHECK_OP(gobject);
   switch (prop_id)
   {
     case PROP_X:
-      self->x = g_value_get_int (value);
+      gegl_op_set_input_data_value(GEGL_OP(self), "x", value);
       break;
     case PROP_Y:
-      self->y = g_value_get_int (value);
+      gegl_op_set_input_data_value(GEGL_OP(self), "y", value);
       break;
     case PROP_PIXEL_RGB_FLOAT:
     case PROP_PIXEL_RGB_UINT8:
-      gegl_check_set_pixel(self, (GValue*)value); 
+      gegl_op_set_input_data_value(GEGL_OP(self), "pixel", value);
       break;
-    case PROP_IMAGE:
-      gegl_check_set_image(self, (GeglImage*)g_value_get_object(value));
+    case PROP_IMAGE_OP:
+      self->image_op = (GeglImageOp*)g_value_get_object(value);
+      if(self->image_op)
+        g_object_ref(self->image_op);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
@@ -200,116 +211,95 @@ set_property (GObject      *gobject,
 }
 
 gboolean 
-gegl_check_get_success(GeglCheck *self)
+gegl_check_op_get_success(GeglCheckOp *self)
 {
   g_return_val_if_fail (self != NULL, FALSE);
-  g_return_val_if_fail (GEGL_IS_CHECK (self), FALSE);
+  g_return_val_if_fail (GEGL_IS_CHECK_OP (self), FALSE);
 
   return self->success;
 }
 
-void
-gegl_check_get_pixel (GeglCheck * self,
-                      GValue *pixel)
+static void
+validate_inputs(GeglFilter *filter,
+                GList *collected_input_data_list)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_CHECK (self));
-  g_return_if_fail (g_value_type_compatible(G_VALUE_TYPE(self->pixel), G_VALUE_TYPE(pixel)));
+  GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_input_data_list);
+#if 0 
+  /* Check that the pixel is the same color model as image op */
+  {
+    GeglData *pixel_data = 
+      gegl_op_get_input_data(GEGL_OP(filter), "pixel"); 
+    GeglData *image_data = 
+      gegl_op_get_output_data(GEGL_OP(self->image_op), "output-image"); 
 
-  /* Dont transform the return, just copy */
-  g_value_copy(self->pixel, pixel); 
-}
+    GeglColorModel *pixel_color_model = 
+      gegl_color_data_get_color_model(GEGL_COLOR_DATA(pixel_data));
 
-void
-gegl_check_set_pixel (GeglCheck * self, 
-                      GValue *pixel)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_CHECK (self));
+    GeglColorModel *image_color_model = 
+      gegl_color_data_get_color_model(GEGL_COLOR_DATA(image_data));
 
-  g_value_unset(self->pixel);
-  g_value_init(self->pixel, G_VALUE_TYPE(pixel));
-  g_value_copy(pixel, self->pixel); 
-}
-
-void
-gegl_check_set_image (GeglCheck * self,
-                           GeglImage *image)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_CHECK (self));
-
-  if(image)
-   g_object_ref(image);
-
-  if(self->image)
-   g_object_unref(self->image);
-
-  self->image = image;
-}
-
-GeglImage *
-gegl_check_get_image (GeglCheck * self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (GEGL_IS_CHECK (self), NULL);
-
-  return self->image;
+    if(image_color_model != pixel_color_model)
+      {
+        LOG_DIRECT("Color models dont match. Expected: %s Found %s", 
+                   gegl_color_model_name(pixel_color_model), 
+                   gegl_color_model_name(image_color_model));
+        self->success = FALSE;
+        g_error("Color models are different for pixel and image op data\n");
+      }
+  }
+#endif
 }
 
 static void 
-process (GeglFilter * filter, 
-         GList * output_params,
-         GList * input_params)
+process (GeglFilter * filter)
 {
-  GeglCheck *self =  GEGL_CHECK(filter);
-  GeglColorModel *color_model = gegl_image_get_color_model(self->image);
-  GeglColorModel *pixel_color_model = g_value_pixel_get_color_model(self->pixel);
-  /* Shouldnt be accessing tile directly*/
-  GeglTile * tile = gegl_image_get_tile(self->image);
-  GeglChannelSpace *channel_space = gegl_color_model_channel_space(color_model);
+  GeglCheckOp *self =  GEGL_CHECK_OP(filter);
   GeglRect rect;
-  GeglImageIterator *iter;
-  gint x;
 
-  if(color_model != pixel_color_model)
-    {
-      self->success = FALSE;
-      LOG_DIRECT("Color models dont match. Expected: %s Found %s", 
-                 gegl_color_model_name(pixel_color_model), 
-                 gegl_color_model_name(color_model));
-      return;
-    }
-    
-  gegl_tile_get_area(tile, &rect);
+  GValue *x_value = gegl_op_get_input_data_value(GEGL_OP(self), "x");
+  GValue *y_value = gegl_op_get_input_data_value(GEGL_OP(self), "y");
+  gint x = g_value_get_int(x_value); 
+  gint y = g_value_get_int(y_value); 
+
+  GeglData *image_op_data = 
+        gegl_op_get_output_data(GEGL_OP(self->image_op), "output-image"); 
+  GValue *image_value = gegl_data_get_value(image_op_data);
+  GeglImage *image = g_value_get_object(image_value);
+  GeglColorModel *color_model = 
+    gegl_color_data_get_color_model(GEGL_COLOR_DATA(image_op_data));
+  GeglChannelSpace *channel_space = gegl_color_model_channel_space(color_model);
+  GeglImageIterator *iter;
+
+  gegl_image_data_get_rect(GEGL_IMAGE_DATA(image_op_data), &rect);
+
   iter = g_object_new (GEGL_TYPE_IMAGE_ITERATOR, 
-                       "image", self->image,
+                       "image", image,
                        "area", &rect,
                        NULL);  
 
-  gegl_image_iterator_set_scanline(iter, self->y);
-  x = self->x - rect.x;
+  gegl_image_iterator_set_scanline(iter, y);
 
   if(channel_space == gegl_channel_space_instance("float"))
     {
-      check_float(self, iter, self->x - rect.x);
+      check_op_float(self, iter, x - rect.x);
     }
   else if(channel_space == gegl_channel_space_instance("uint8"))
     {
-      check_uint8(self, iter, self->x - rect.x);
+      check_op_uint8(self, iter, x - rect.x);
     }
   else 
-    g_warning("Cant find check for data space");
+    g_warning("Cant find check_op for data space");
 
   g_object_unref(iter);
 }
 
 static void
-check_float(GeglCheck *self,
-            GeglImageIterator *iter,
-            gint x)
+check_op_float(GeglCheckOp *self,
+               GeglImageIterator *iter,
+               gint x)
 {
-  gfloat *data = (gfloat*)g_value_pixel_get_data(self->pixel);
+  GValue *pixel_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
+  gfloat *data = (gfloat*)g_value_pixel_get_data(pixel_value);
   gfloat **a = (gfloat**)gegl_image_iterator_color_channels(iter);
   gfloat *aa = (gfloat*)gegl_image_iterator_alpha_channel(iter);
   gint a_color_chans = gegl_image_iterator_get_num_colors(iter);
@@ -344,7 +334,6 @@ check_float(GeglCheck *self,
               if(!self->success)
                 g_warning("Expected %f but found %f in channel %d\n", 
                            expected, found, 0);
-      case 0:  
     }
 
   if(aa)
@@ -361,11 +350,12 @@ check_float(GeglCheck *self,
 }
 
 static void
-check_uint8(GeglCheck *self,
+check_op_uint8(GeglCheckOp *self,
             GeglImageIterator *iter,
             gint x)
 {
-  guint8 *data = (guint8*)g_value_pixel_get_data(self->pixel);
+  GValue *pixel_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
+  guint8 *data = (guint8*)g_value_pixel_get_data(pixel_value);
   guint8 **a = (guint8**)gegl_image_iterator_color_channels(iter);
   guint8 *aa = (guint8*)gegl_image_iterator_alpha_channel(iter);
   gint a_color_chans = gegl_image_iterator_get_num_colors(iter);
@@ -400,7 +390,6 @@ check_uint8(GeglCheck *self,
               if(!self->success)
                 g_warning("Expected %d but found %d in channel %d\n", 
                            expected, found, 0);
-      case 0:  
     }
 
   if(aa)

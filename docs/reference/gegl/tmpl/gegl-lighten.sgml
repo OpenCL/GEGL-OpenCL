@@ -20,10 +20,3 @@ Lighten blend mode
 </para>
 
 
-<!-- ##### STRUCT GeglLightenClass ##### -->
-<para>
-
-</para>
-
-@blend_class: 
-

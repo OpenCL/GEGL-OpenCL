@@ -27,30 +27,20 @@ struct _GeglFilterClass
 {
    GeglOpClass op_class;
                                     
-   void (* prepare)                 (GeglFilter * self, 
-                                     GList * data_outputs,
-                                     GList * data_inputs);
-   void (* process)                 (GeglFilter * self, 
-                                     GList * data_outputs,
-                                     GList * data_inputs);
-   void (* finish)                  (GeglFilter * self, 
-                                     GList * data_outputs,
-                                     GList * data_inputs);
+   void (* prepare)                 (GeglFilter * self); 
+   void (* process)                 (GeglFilter * self); 
+   void (* finish)                  (GeglFilter * self); 
 
    void (* validate_inputs)         (GeglFilter *self,
-                                     GList *data_inputs);
-   void (* validate_outputs)        (GeglFilter *self,
-                                     GList *data_outputs);
+                                     GList *collected_input_data_list);
+   void (* validate_outputs)        (GeglFilter *self);
 };
 
 GType           gegl_filter_get_type            (void);
-void            gegl_filter_evaluate            (GeglFilter * self, 
-                                                 GList * data_outputs,
-                                                 GList * data_inputs);
+void            gegl_filter_evaluate            (GeglFilter * self); 
 void            gegl_filter_validate_inputs     (GeglFilter * self, 
-                                                 GList * data_inputs);
-void            gegl_filter_validate_outputs    (GeglFilter * self, 
-                                                 GList * data_outputs);
+                                                 GList * collected_input_data_list);
+void            gegl_filter_validate_outputs    (GeglFilter * self);
 
 
 #ifdef __cplusplus

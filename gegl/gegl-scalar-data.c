@@ -61,6 +61,8 @@ static void
 init (GeglScalarData * self, 
       GeglScalarDataClass * klass)
 {
+  GeglData * data = GEGL_DATA(self);
+  g_value_init(data->value, G_TYPE_FLOAT);
 }
 
 static void

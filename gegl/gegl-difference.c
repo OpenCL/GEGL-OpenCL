@@ -127,7 +127,6 @@ fg_difference_bg_float (GeglFilter * filter,
                             *d1++ = (diff1 >= 0.0) ? diff1 : -diff1;
                     case 1: diff0 = *b0++ - *f0++;
                             *d0++ = (diff0 >= 0.0) ? diff0 : -diff0;
-                    case 0:        
                   }
               }
           }
@@ -160,10 +159,11 @@ fg_difference_bg_float (GeglFilter * filter,
                             *d1++ = (diff1 >= 0.0) ? *b1 + a * *f1 : *f1++ + b * *b1++;
                     case 1: diff0 = *fa * *b0 - *ba * *f0;
                             *d0++ = (diff0 >= 0.0) ? *b0 + a * *f0 : *f0++ + b * *b0++;
-                    case 0:        
                   }
 
-                *da++ = *fa + *ba - *ba++ * *fa++; 
+                *da++ = *fa + *ba - *ba * *fa; 
+                 fa++;
+                 ba++;
               }
           }
         break;

@@ -37,13 +37,6 @@ eval_dfs_visitor(GeglEvalMgr *self)
 </para>
 
 
-<!-- ##### STRUCT GeglDfsVisitorClass ##### -->
-<para>
-
-</para>
-
-@visitor_class: 
-
 <!-- ##### FUNCTION gegl_dfs_visitor_traverse ##### -->
 <para>
 

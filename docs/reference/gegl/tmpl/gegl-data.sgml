@@ -35,13 +35,6 @@ data inputs and outputs in #GeglOp.
 </para>
 
 
-<!-- ##### STRUCT GeglDataClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-
 <!-- ##### FUNCTION gegl_data_get_value ##### -->
 <para>
 
@@ -51,7 +44,25 @@ data inputs and outputs in #GeglOp.
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_data_get_param_spec ##### -->
+<!-- ##### FUNCTION gegl_data_copy_value ##### -->
+<para>
+
+</para>
+
+@self: 
+@value: 
+
+
+<!-- ##### FUNCTION gegl_data_set_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@name: 
+
+
+<!-- ##### FUNCTION gegl_data_get_name ##### -->
 <para>
 
 </para>
@@ -60,16 +71,7 @@ data inputs and outputs in #GeglOp.
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_data_set_param_spec ##### -->
-<para>
-
-</para>
-
-@self: 
-@param_spec: 
-
-
-<!-- ##### ARG GeglData:param-spec ##### -->
+<!-- ##### ARG GeglData:data-name ##### -->
 <para>
 
 </para>

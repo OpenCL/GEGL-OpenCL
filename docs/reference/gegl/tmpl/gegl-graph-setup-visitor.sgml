@@ -23,10 +23,3 @@ graph have no sources, and exposes these interior node inputs as inputs of the
 </para>
 
 
-<!-- ##### STRUCT GeglGraphSetupVisitorClass ##### -->
-<para>
-
-</para>
-
-@dfs_visitor_class: 
-

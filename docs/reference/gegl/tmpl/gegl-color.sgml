@@ -20,67 +20,6 @@ This op creates a constant color image.
 </para>
 
 
-<!-- ##### STRUCT GeglColorClass ##### -->
-<para>
-
-</para>
-
-@no_input_class: 
-
-<!-- ##### FUNCTION gegl_color_get_pixel ##### -->
-<para>
-
-</para>
-
-@self: 
-@pixel: 
-
-
-<!-- ##### FUNCTION gegl_color_set_pixel ##### -->
-<para>
-
-</para>
-
-@self: 
-@pixel: 
-
-
-<!-- ##### FUNCTION gegl_color_get_width ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_get_height ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_set_width ##### -->
-<para>
-
-</para>
-
-@self: 
-@width: 
-
-
-<!-- ##### FUNCTION gegl_color_set_height ##### -->
-<para>
-
-</para>
-
-@self: 
-@height: 
-
-
 <!-- ##### ARG GeglColor:height ##### -->
 <para>
 

@@ -22,6 +22,7 @@ struct _GeglChannelSpace
 
    /*< private >*/
    GeglChannelSpaceType channel_space_type;
+   GType channel_type;
    gboolean is_channel_data;
    gint bits;
    gchar *name;

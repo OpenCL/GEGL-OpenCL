@@ -23,32 +23,6 @@ can be set if the first image should be premultiplied before the operation.
 </para>
 
 
-<!-- ##### STRUCT GeglCompClass ##### -->
-<para>
-
-</para>
-
-@point_op_class: 
-@get_scanline_func: 
-
-<!-- ##### FUNCTION gegl_comp_get_premultiply ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_comp_set_premultiply ##### -->
-<para>
-
-</para>
-
-@self: 
-@premultiply: 
-
-
 <!-- ##### ARG GeglComp:premultiply ##### -->
 <para>
 

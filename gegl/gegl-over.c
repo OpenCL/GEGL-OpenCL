@@ -120,7 +120,6 @@ fg_over_bg_float (GeglFilter * filter,
                     case 3: *d2++ = *f2++;
                     case 2: *d1++ = *f1++;
                     case 1: *d0++ = *f0++;
-                    case 0:        
                   }
               }
           }
@@ -136,7 +135,6 @@ fg_over_bg_float (GeglFilter * filter,
                     case 3: *d2++ = a * *b2++ + *f2++;
                     case 2: *d1++ = a * *b1++ + *f1++;
                     case 1: *d0++ = a * *b0++ + *f0++;
-                    case 0:        
                   }
 
                 *da++ = 1.0; 
@@ -152,7 +150,6 @@ fg_over_bg_float (GeglFilter * filter,
                     case 3: *d2++ = *f2++;
                     case 2: *d1++ = *f1++;
                     case 1: *d0++ = *f0++;
-                    case 0:        
                   }
 
                 *da++ = 1.0; 
@@ -170,7 +167,6 @@ fg_over_bg_float (GeglFilter * filter,
                     case 3: *d2++ = a * *b2++ + *f2++;
                     case 2: *d1++ = a * *b1++ + *f1++;
                     case 1: *d0++ = a * *b0++ + *f0++;
-                    case 0:        
                   }
 
                 *da++ = a * *ba++ + *fa++; 

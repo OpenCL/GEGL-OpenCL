@@ -1,4 +1,5 @@
 #include "gegl-image-data.h"
+#include "gegl-image.h"
 #include "gegl-utils.h"
 
 static void class_init (GeglImageDataClass * klass);
@@ -46,7 +47,9 @@ static void
 init (GeglImageData * self, 
       GeglImageDataClass * klass)
 {
+  GeglData * data = GEGL_DATA(self);
   gegl_rect_set(&self->rect, 0,0,0,0);
+  g_value_init(data->value, GEGL_TYPE_IMAGE);
 }
 
 void 

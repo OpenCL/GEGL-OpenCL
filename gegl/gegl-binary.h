@@ -21,7 +21,6 @@ struct _GeglBinary
     GeglPointOp point_op;
 
     /*< private >*/
-    gfloat fade;
 };
 
 typedef struct _GeglBinaryClass GeglBinaryClass;
@@ -35,10 +34,6 @@ struct _GeglBinaryClass
 };
 
 GType           gegl_binary_get_type          (void);
-
-gfloat          gegl_binary_get_fade         (GeglBinary * self);
-void            gegl_binary_set_fade         (GeglBinary * self, 
-                                              gfloat fade);
 
 #ifdef __cplusplus
 }

@@ -5,31 +5,21 @@
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
 #include "gegl-eval-mgr.h"
-
-enum
-{
-  PROP_0, 
-  PROP_LAST 
-};
+#include <string.h>
 
 static void class_init (GeglOpClass * klass);
 static void init (GeglOp * self, GeglOpClass * klass);
-static GObject* constructor (GType type, guint n_props, GObjectConstructParam *props);
 static void finalize(GObject * gobject);
-
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 
 static void free_data(GeglOp *self, GList *list);
 static GList * add_data(GeglOp *self, GList *list, GeglData *data);
-static GeglData* get_data(GeglOp *self, GList *list, gint n);
+static GeglData* get_nth_data(GeglOp *self, GList *list, gint n);
+static GeglData* get_data(GeglOp *self, GList *list, gchar* name);
+static gint get_data_index(GeglOp *self, GList * list, gchar * name);
 
 static void accept (GeglNode * node, GeglVisitor * visitor);
 
 static gpointer parent_class = NULL;
-
-static GParamSpecPool      *input_pspec_pool = NULL;
-static GParamSpecPool      *output_pspec_pool = NULL;
 
 GType
 gegl_op_get_type (void)
@@ -68,31 +58,16 @@ class_init (GeglOpClass * klass)
   parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->finalize = finalize;
-  gobject_class->constructor = constructor;
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
 
   node_class->accept = accept;
-
-  input_pspec_pool = g_param_spec_pool_new (FALSE);
-  output_pspec_pool = g_param_spec_pool_new (FALSE);
 }
 
 static void 
 init (GeglOp * self, 
       GeglOpClass * klass)
 {
-  self->data_inputs = NULL;
-  self->data_outputs = NULL;
-}
-
-static GObject*        
-constructor (GType                  type,
-             guint                  n_props,
-             GObjectConstructParam *props)
-{
-  GObject *gobject = G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
-  return gobject;
+  self->input_data_list = NULL;
+  self->output_data_list = NULL;
 }
 
 static void
@@ -100,38 +75,11 @@ finalize(GObject *gobject)
 {
   GeglOp *self = GEGL_OP(gobject);
 
-  gegl_op_free_data_inputs(self);
-  gegl_op_free_data_outputs(self);
+  gegl_op_free_input_data_list(self);
+  gegl_op_free_output_data_list(self);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
-
-static void
-set_property (GObject      *gobject,
-              guint         prop_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
-  switch (prop_id)
-  {
-    default:
-      break;
-  }
-}
-
-static void
-get_property (GObject      *gobject,
-              guint         prop_id,
-              GValue       *value,
-              GParamSpec   *pspec)
-{
-  switch (prop_id)
-  {
-    default:
-      break;
-  }
-}
-
 
 /**
  * gegl_op_apply:
@@ -172,7 +120,7 @@ gegl_op_apply_roi(GeglOp * self,
 }
 
 /**
- * gegl_op_get_data_input
+ * gegl_op_get_nth_input_data
  * @self: a #GeglOp.
  * @n: which data.
  *
@@ -181,14 +129,14 @@ gegl_op_apply_roi(GeglOp * self,
  * Returns: a #GeglData.
  **/
 GeglData*
-gegl_op_get_data_input(GeglOp *self,
-                       gint n)
+gegl_op_get_nth_input_data(GeglOp *self,
+                           gint n)
 {
-  return get_data(self, self->data_inputs, n);
+  return get_nth_data(self, self->input_data_list, n);
 }
 
 /**
- * gegl_op_get_data_output
+ * gegl_op_get_nth_output_data
  * @self: a #GeglOp.
  * @n: which data.
  *
@@ -197,16 +145,16 @@ gegl_op_get_data_input(GeglOp *self,
  * Returns: a #GeglData.
  **/
 GeglData*
-gegl_op_get_data_output(GeglOp *self,
-                        gint n)
+gegl_op_get_nth_output_data(GeglOp *self,
+                            gint n)
 {
-  return get_data(self, self->data_outputs, n);
+  return get_nth_data(self, self->output_data_list, n);
 }
 
 static GeglData*
-get_data(GeglOp *self,
-         GList *list,
-         gint n)
+get_nth_data(GeglOp *self,
+             GList *list,
+             gint n)
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_OP (self), NULL);
@@ -216,9 +164,64 @@ get_data(GeglOp *self,
 
   return NULL;
 }
+
+/**
+ * gegl_op_get_input_data
+ * @self: a #GeglOp.
+ * @name: name of input data.
+ *
+ * Gets the input data. 
+ *
+ * Returns: a #GeglData.
+ **/
+GeglData*
+gegl_op_get_input_data(GeglOp *self,
+                       gchar * name)
+{
+  return get_data(self, self->input_data_list, name);
+}
+
+/**
+ * gegl_op_get_output_data
+ * @self: a #GeglOp.
+ * @name: name of output data.
+ *
+ * Gets the output data. 
+ *
+ * Returns: a #GeglData.
+ **/
+GeglData*
+gegl_op_get_output_data(GeglOp *self,
+                        gchar * name)
+{
+  return get_data(self, self->output_data_list, name);
+}
+
+static GeglData*
+get_data(GeglOp *self,
+         GList *list,
+         gchar * name)
+{
+  GList *llink;
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (GEGL_IS_OP (self), NULL);
+
+  llink = list;
+  while (llink)
+    {
+      GeglData *data = llink->data;
+      const gchar * data_name = gegl_data_get_name(data);
+      if (!strcmp(data_name, name))
+        return data;
+
+      llink = llink->next;
+    }
+
+  return NULL;
+}
            
 /**
- * gegl_op_get_data_inputs
+ * gegl_op_get_input_data_list
  * @self: a #GeglOp.
  *
  * Get the inputs data list. 
@@ -226,16 +229,16 @@ get_data(GeglOp *self,
  * Returns: a #GeglData.
  **/
 GList*
-gegl_op_get_data_inputs(GeglOp *self)
+gegl_op_get_input_data_list(GeglOp *self)
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_OP (self), NULL);
 
-  return self->data_inputs; 
+  return self->input_data_list; 
 }
 
 /**
- * gegl_op_get_data_outputs
+ * gegl_op_get_output_data_list
  * @self: a #GeglOp.
  *
  * Get the outputs data list. 
@@ -243,37 +246,214 @@ gegl_op_get_data_inputs(GeglOp *self)
  * Returns: a #GeglData.
  **/
 GList*
-gegl_op_get_data_outputs(GeglOp *self)
+gegl_op_get_output_data_list(GeglOp *self)
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_OP (self), NULL);
 
-  return self->data_outputs; 
+  return self->output_data_list; 
 }
 
 /**
- * gegl_op_append_input
+ * gegl_op_get_input_data_index
+ * @self: a #GeglOp.
+ * @name: name of input data.
+ *
+ * Get the input data index. 
+ *
+ * Returns: a integer.
+ **/
+gint
+gegl_op_get_input_data_index(GeglOp *self,
+                             gchar *name)
+{
+  g_return_val_if_fail (self != NULL, -1);
+  g_return_val_if_fail (GEGL_IS_OP (self), -1);
+
+  return get_data_index(self, self->input_data_list, name);
+}
+
+/**
+ * gegl_op_get_output_data_index
+ * @self: a #GeglOp.
+ * @name: name of output data.
+ *
+ * Get the output data index. 
+ *
+ * Returns: a integer.
+ **/
+gint
+gegl_op_get_output_data_index(GeglOp *self,
+                              gchar *name)
+{
+  g_return_val_if_fail (self != NULL, -1);
+  g_return_val_if_fail (GEGL_IS_OP (self), -1);
+
+  return get_data_index(self, self->output_data_list, name);
+}
+
+static gint
+get_data_index(GeglOp *self,
+               GList * list,
+               gchar * name)
+{
+  g_return_val_if_fail (self != NULL, -1);
+  g_return_val_if_fail (GEGL_IS_OP (self), -1);
+
+  GeglData * data = get_data(self, list, name);
+  GList *llink = g_list_find(list, data);
+  return g_list_position(list, llink); 
+}
+
+/**
+ * gegl_op_get_input_value
+ * @self: a #GeglOp.
+ *
+ * Get the input data's value. 
+ *
+ * Returns: a #GValue.
+ **/
+GValue*
+gegl_op_get_input_data_value(GeglOp *self,
+                             gchar *name)
+{
+  GeglData * data;
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (GEGL_IS_OP (self), NULL);
+
+  data = get_data(self, self->input_data_list, name);
+
+  if(!data) 
+    return NULL;
+
+  return gegl_data_get_value(data);
+}
+
+
+/**
+ * gegl_op_set_input_data_value
+ * @self: a #GeglOp.
+ * @name: input data name 
+ * @value: value to copy 
+ *
+ * Set the input data's value to this. 
+ *
+ **/
+void
+gegl_op_set_input_data_value(GeglOp *self,
+                             gchar *name,
+                             const GValue *value)
+{
+  GeglData * data;
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_OP (self));
+
+  data = get_data(self, self->input_data_list, name);
+
+  if(!data) 
+    {
+       g_warning("Couldnt find input data value %s\n", name);
+       return;
+    }
+
+  gegl_data_copy_value(data, value); 
+}
+
+/**
+ * gegl_op_get_output_value
+ * @self: a #GeglOp.
+ *
+ * Get the output data's value. 
+ *
+ * Returns: a #GValue.
+ **/
+GValue*
+gegl_op_get_output_data_value(GeglOp *self,
+                              gchar *name)
+{
+  GeglData * data;
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (GEGL_IS_OP (self), NULL);
+
+  data = get_data(self, self->output_data_list, name);
+
+  if(!data) 
+    return NULL;
+
+  return gegl_data_get_value(data);
+}
+
+
+/**
+ * gegl_op_set_output_data_value
+ * @self: a #GeglOp.
+ * @name: output data name 
+ * @value: value to copy 
+ *
+ * Set the output data's value to this. 
+ *
+ **/
+void
+gegl_op_set_output_data_value(GeglOp *self,
+                              gchar *name,
+                              const GValue *value)
+{
+
+  GeglData * data;
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_OP (self));
+
+  data = get_data(self, self->output_data_list, name);
+
+  if(!data) 
+    {
+       g_warning("Couldnt find output data value %s\n", name);
+       return;
+    }
+
+  gegl_data_copy_value(data, value); 
+}
+
+/**
+ * gegl_op_add_input_data
  * @self: a #GeglOp.
  * @data_type: the type of the data to create.
  * @name: the name of the data.
  *
- * Append an input with the passed data type and name. 
+ * Add an input with the passed data type and name. 
  *
  **/
 void
-gegl_op_append_input(GeglOp *self,
+gegl_op_add_input_data(GeglOp *self,
                      GType data_type,
                      gchar *name)
 {
-  GeglOpClass *op_class = GEGL_OP_GET_CLASS(self);
-  GParamSpec *pspec = gegl_op_class_find_data_input_property(op_class, name);
-  GeglData *data = g_object_new(data_type, "param-spec", pspec, NULL);
-  gegl_op_append_data_input(self, data);
+  GeglData *data = g_object_new(data_type,"data_name", name, NULL);
+  gegl_op_append_input_data(self, data);
   g_object_unref(data);
 }
 
 /**
- * gegl_op_append_data_input
+ * gegl_op_add_output_data
+ * @self: a #GeglOp.
+ * @data_type: the type of the data to create.
+ * @name: the name of the data.
+ *
+ * Add an output with the passed data type and name. 
+ *
+ **/
+void
+gegl_op_add_output_data(GeglOp *self,
+                      GType data_type,
+                      gchar *name)
+{
+  GeglData *data = g_object_new(data_type,"data_name", name, NULL);
+  gegl_op_append_output_data(self, data);
+  g_object_unref(data);
+}
+
+/**
+ * gegl_op_append_input_data
  * @self: a #GeglOp.
  * @data: the #GeglData to append.
  *
@@ -281,36 +461,15 @@ gegl_op_append_input(GeglOp *self,
  *
  **/
 void
-gegl_op_append_data_input(GeglOp *self,
+gegl_op_append_input_data(GeglOp *self,
                           GeglData *data)
 {
-  gegl_node_add_input(GEGL_NODE(self), g_list_length(self->data_inputs));
-  self->data_inputs = add_data(self, self->data_inputs, data);
+  gegl_node_add_input(GEGL_NODE(self), g_list_length(self->input_data_list));
+  self->input_data_list = add_data(self, self->input_data_list, data);
 }
 
 /**
- * gegl_op_append_output
- * @self: a #GeglOp.
- * @data_type: the type of the data to create.
- * @name: the name of the data.
- *
- * Append an output with the passed data type and name. 
- *
- **/
-void
-gegl_op_append_output(GeglOp *self,
-                      GType data_type,
-                      gchar *name)
-{
-  GeglOpClass *op_class = GEGL_OP_GET_CLASS(self);
-  GParamSpec *pspec = gegl_op_class_find_data_output_property(op_class, name);
-  GeglData *data = g_object_new(data_type, "param-spec", pspec, NULL);
-  gegl_op_append_data_output(self, data);
-  g_object_unref(data);
-}
-
-/**
- * gegl_op_append_data_output
+ * gegl_op_append_output_data
  * @self: a #GeglOp.
  * @data: the #GeglData to append.
  *
@@ -318,11 +477,11 @@ gegl_op_append_output(GeglOp *self,
  *
  **/
 void
-gegl_op_append_data_output(GeglOp *self,
+gegl_op_append_output_data(GeglOp *self,
                            GeglData *data)
 {
-  gegl_node_add_output(GEGL_NODE(self), g_list_length(self->data_outputs));
-  self->data_outputs = add_data(self, self->data_outputs, data);
+  gegl_node_add_output(GEGL_NODE(self), g_list_length(self->output_data_list));
+  self->output_data_list = add_data(self, self->output_data_list, data);
 }
 
 static GList *
@@ -339,31 +498,31 @@ add_data(GeglOp *self,
 }
 
 /**
- * gegl_op_free_data_inputs
+ * gegl_op_free_input_data_list
  * @self: a #GeglOp.
  *
  * Free the list of input data. 
  *
  **/
 void
-gegl_op_free_data_inputs(GeglOp * self)
+gegl_op_free_input_data_list(GeglOp * self)
 {
-  free_data(self, self->data_inputs);
-  self->data_inputs = NULL;
+  free_data(self, self->input_data_list);
+  self->input_data_list = NULL;
 }
 
 /**
- * gegl_op_free_data_outputs
+ * gegl_op_free_output_data_list
  * @self: a #GeglOp.
  *
  * Free the list of output data. 
  *
  **/
 void
-gegl_op_free_data_outputs(GeglOp * self)
+gegl_op_free_output_data_list(GeglOp * self)
 {
-  free_data(self, self->data_outputs);
-  self->data_outputs = NULL;
+  free_data(self, self->output_data_list);
+  self->output_data_list = NULL;
 }
 
 static void 
@@ -387,165 +546,40 @@ free_data(GeglOp *self,
   g_list_free(list);
 }
 
+void
+gegl_op_validate_input_data(GeglOp *op,
+                            GList *collected_input_data_list,
+                            GeglValidateDataFunc func)
+{
+  GList *collected_input_data_llink = collected_input_data_list;
+  GList *input_data_llink = gegl_op_get_input_data_list(op);
+
+   /* 
+     Traverse through the input data, calling 
+     the passed function back with the input data
+     and the corresponding collected input data. 
+   */
+
+  while(input_data_llink)
+    {
+      GeglData *collected_input_data;
+      GeglData *input_data;
+
+      g_return_if_fail(collected_input_data_llink);
+
+      collected_input_data = collected_input_data_llink->data;
+      input_data = input_data_llink->data;
+
+      (*func)(input_data, collected_input_data);
+
+      input_data_llink = input_data_llink->next;
+      collected_input_data_llink = collected_input_data_llink->next;
+    }
+}
+
 static void              
 accept (GeglNode * node, 
         GeglVisitor * visitor)
 {
   gegl_visitor_visit_op(visitor, GEGL_OP(node));
-}
-
-/**
- * gegl_op_class_install_data_input_property
- * @class: the #GeglOpClass.
- * @pspec: the #GParamSpec that describes this property.
- *
- * Install an input data property. 
- *
- **/
-void
-gegl_op_class_install_data_input_property (GeglOpClass *class,
-                                      GParamSpec   *pspec)
-{
-  g_return_if_fail (GEGL_IS_OP_CLASS (class));
-  g_return_if_fail (G_IS_PARAM_SPEC (pspec));
-
-  if (g_param_spec_pool_lookup (input_pspec_pool, pspec->name, G_OBJECT_CLASS_TYPE (class), FALSE))
-    {
-      g_warning (G_STRLOC ": class `%s' already contains an input property named `%s'",
-		 G_OBJECT_CLASS_NAME (class),
-		 pspec->name);
-      return;
-    }
-
-  g_param_spec_ref (pspec);
-  g_param_spec_sink (pspec);
-  g_param_spec_pool_insert (input_pspec_pool, pspec, G_OBJECT_CLASS_TYPE (class));
-}
-
-/**
- * gegl_op_class_find_data_input_property
- * @class: the #GeglOpClass.
- * @property_name: the name of this property.
- *
- * Find an input data property. 
- *
- * Returns: the #GParamSpec for the input data property
- **/
-GParamSpec*
-gegl_op_class_find_data_input_property (GeglOpClass *class,
-                                        const gchar  *property_name)
-{
-  g_return_val_if_fail (GEGL_IS_OP_CLASS (class), NULL);
-  g_return_val_if_fail (property_name != NULL, NULL);
-  
-  return g_param_spec_pool_lookup (input_pspec_pool,
-				   property_name,
-				   G_OBJECT_CLASS_TYPE (class),
-				   TRUE);
-}
-
-/**
- * gegl_op_class_list_data_input_properties
- * @class: the #GeglOpClass.
- * @n_properties_p: returns the number of properties found.
- *
- * List the input data properties. The returned array
- * should be freed when finished. 
- *
- * Returns: the #GParamSpec array of input data properties.
- **/
-GParamSpec** /* free result */
-gegl_op_class_list_data_input_properties (GeglOpClass *class,
-                                          guint *n_properties_p)
-{
-  GParamSpec **pspecs;
-  guint n;
-
-  g_return_val_if_fail (GEGL_IS_OP_CLASS (class), NULL);
-
-  pspecs = g_param_spec_pool_list (input_pspec_pool,
-				   G_OBJECT_CLASS_TYPE (class),
-				   &n);
-  if (n_properties_p)
-    *n_properties_p = n;
-
-  return pspecs;
-}
-
-/**
- * gegl_op_class_install_data_output_property
- * @class: the #GeglOpClass.
- * @pspec: the #GParamSpec that describes this property.
- *
- * Install a output data property. 
- *
- **/
-void
-gegl_op_class_install_data_output_property (GeglOpClass *class,
-                                            GParamSpec   *pspec)
-{
-  g_return_if_fail (GEGL_IS_OP_CLASS (class));
-  g_return_if_fail (G_IS_PARAM_SPEC (pspec));
-
-  if (g_param_spec_pool_lookup (output_pspec_pool, pspec->name, G_OBJECT_CLASS_TYPE (class), FALSE))
-    {
-      g_warning (G_STRLOC ": class `%s' already contains an output property named `%s'",
-		 G_OBJECT_CLASS_NAME (class),
-		 pspec->name);
-      return;
-    }
-
-  g_param_spec_ref (pspec);
-  g_param_spec_sink (pspec);
-  g_param_spec_pool_insert (output_pspec_pool, pspec, G_OBJECT_CLASS_TYPE (class));
-}
-
-/**
- * gegl_op_class_find_data_output_property
- * @class: the #GeglOpClass.
- * @property_name: the name of this property.
- *
- * Find an output data property. 
- *
- * Returns: the #GParamSpec for the output data property
- **/
-GParamSpec*
-gegl_op_class_find_data_output_property (GeglOpClass *class,
-                                         const gchar  *property_name)
-{
-  g_return_val_if_fail (GEGL_IS_OP_CLASS (class), NULL);
-  g_return_val_if_fail (property_name != NULL, NULL);
-  
-  return g_param_spec_pool_lookup (output_pspec_pool,
-				   property_name,
-				   G_OBJECT_CLASS_TYPE (class),
-				   TRUE);
-}
-
-/**
- * gegl_op_class_list_data_output_properties
- * @class: the #GeglOpClass.
- * @n_properties_p: returns the number of properties found.
- *
- * List the output data properties. The returned array
- * should be freed when finished. 
- *
- * Returns: the #GParamSpec array of output data properties.
- **/
-GParamSpec** /* free result */
-gegl_op_class_list_data_output_properties (GeglOpClass *class,
-                                           guint *n_properties_p)
-{
-  GParamSpec **pspecs;
-  guint n;
-
-  g_return_val_if_fail (GEGL_IS_OP_CLASS (class), NULL);
-
-  pspecs = g_param_spec_pool_list (output_pspec_pool,
-				   G_OBJECT_CLASS_TYPE (class),
-				   &n);
-  if (n_properties_p)
-    *n_properties_p = n;
-
-  return pspecs;
 }

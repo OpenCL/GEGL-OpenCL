@@ -22,8 +22,9 @@ static void class_init (GeglCompClass * klass);
 static void init (GeglComp * self, GeglCompClass * klass);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
+static void validate_inputs  (GeglFilter *filter, GList *collected_input_data_list);
 
-static void prepare (GeglFilter * filter, GList * data_outputs, GList *data_inputs);
+static void prepare (GeglFilter * filter);
 
 static gpointer parent_class = NULL;
 
@@ -59,7 +60,6 @@ static void
 class_init (GeglCompClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
   GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
@@ -67,48 +67,27 @@ class_init (GeglCompClass * klass)
   klass->get_scanline_func = NULL;
 
   filter_class->prepare = prepare;
+  filter_class->validate_inputs = validate_inputs;
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  /* op properties */
-  gegl_op_class_install_data_input_property (op_class, 
-                            gegl_param_spec_image("input-image-a", 
-                                                       "InputImageA",
-                                                       "Input Image A",
-                                                       G_PARAM_PRIVATE));
-  gegl_op_class_install_data_input_property (op_class, 
-                            gegl_param_spec_image("input-image-b", 
-                                                       "InputImageB",
-                                                       "Input Image B",
-                                                       G_PARAM_PRIVATE));
-  gegl_op_class_install_data_input_property (op_class, 
-                            g_param_spec_boolean ("premultiply",
-                                                   "Premultiply",
-                                                   "Premultiply the foreground.",
-                                                   FALSE,
-                                                   G_PARAM_PRIVATE));
-
-  /* gobject properties */
   g_object_class_install_property (gobject_class, PROP_PREMULTIPLY,
-                                   g_param_spec_boolean ("premultiply",
-                                                         "Premultiply",
-                                                         "Premultiply the foreground.",
-                                                         FALSE,
-                                                         G_PARAM_CONSTRUCT | 
-                                                         G_PARAM_READWRITE));
-
+             g_param_spec_boolean ("premultiply",
+                                   "Premultiply",
+                                   "Premultiply the foreground.",
+                                   FALSE,
+                                   G_PARAM_CONSTRUCT | 
+                                   G_PARAM_READWRITE));
 }
 
 static void 
 init (GeglComp * self, 
       GeglCompClass * klass)
 {
-  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image-a");
-  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image-b");
-  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "premultiply");
-
-  self->premultiply = FALSE;
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image-a");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image-b");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "premultiply");
 }
 
 static void
@@ -121,7 +100,10 @@ get_property (GObject      *gobject,
   switch (prop_id)
   {
     case PROP_PREMULTIPLY:
-      g_value_set_boolean(value, gegl_comp_get_premultiply(comp));  
+      {
+        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(comp), "premultiply");
+        g_param_value_convert(pspec, data_value, value, TRUE);
+      }
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
@@ -139,7 +121,7 @@ set_property (GObject      *gobject,
   switch (prop_id)
   {
     case PROP_PREMULTIPLY:
-      gegl_comp_set_premultiply(comp, g_value_get_boolean(value));  
+      gegl_op_set_input_data_value(GEGL_OP(comp), "premultiply", value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
@@ -147,53 +129,36 @@ set_property (GObject      *gobject,
   }
 }
 
-
-/**
- * gegl_comp_get_premultiply:
- * @self: a #GeglComp.
- *
- * Gets the premultiply flag.
- *
- * Returns: premultiply flag. 
- **/
-gboolean
-gegl_comp_get_premultiply (GeglComp * self)
+static void 
+validate_inputs  (GeglFilter *filter, 
+                  GList *collected_input_data_list)
 {
-  g_return_val_if_fail (self != NULL, FALSE);
-  g_return_val_if_fail (GEGL_IS_COMP (self), FALSE);
+  GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_input_data_list);
 
-  return self->premultiply;
+  {
+    gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "input-image-a");
+    GeglData * data = g_list_nth_data(collected_input_data_list, index);
+    GValue *value = gegl_data_get_value(data);
+    gegl_op_set_input_data_value(GEGL_OP(filter), "input-image-a", value);
+  }
+
+  {
+    gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "input-image-b");
+    GeglData * data = g_list_nth_data(collected_input_data_list, index);
+    GValue *value = gegl_data_get_value(data);
+    gegl_op_set_input_data_value(GEGL_OP(filter), "input-image-b", value);
+  }
 }
 
-
-/**
- * gegl_comp_set_premultiply:
- * @self: a #GeglComp.
- * @premultiply: the premultiply flag. 
- *
- * Sets the premultiply flag. 
- *
- **/
-void 
-gegl_comp_set_premultiply (GeglComp * self, 
-                           gboolean premultiply)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_COMP (self));
-
-  self->premultiply = premultiply;
-}
 
 static void 
-prepare (GeglFilter * filter, 
-         GList * data_outputs,
-         GList * data_inputs)
+prepare (GeglFilter * filter) 
 {
   GeglPointOp *point_op = GEGL_POINT_OP(filter);
   GeglComp *self = GEGL_COMP(filter);
-
-  GeglData *data_output = g_list_nth_data(data_outputs, 0);
-  GeglImage *dest = (GeglImage*)g_value_get_object(data_output->value);
+  GList * output_data_list = gegl_op_get_output_data_list(GEGL_OP(self));
+  GeglData *output_data = g_list_nth_data(output_data_list, 0);
+  GeglImage *dest = (GeglImage*)g_value_get_object(output_data->value);
   GeglColorModel * dest_cm = gegl_image_get_color_model (dest);
   GeglColorSpace * dest_color_space = gegl_color_model_color_space(dest_cm);
   GeglChannelSpace * dest_channel_space = gegl_color_model_channel_space(dest_cm);

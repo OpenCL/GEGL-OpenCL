@@ -60,7 +60,6 @@ static void
 class_init (GeglMultClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
   GeglUnaryClass *unary_class = GEGL_UNARY_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
@@ -70,87 +69,51 @@ class_init (GeglMultClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  /* op properties */
-  gegl_op_class_install_data_input_property (op_class,
-                                        g_param_spec_float ("mult0",
-                                                      "Mult0",
-                                                      "The multiplier of channel 0",
-                                                      -G_MAXFLOAT, G_MAXFLOAT,
-                                                      1.0,
-                                                      G_PARAM_PRIVATE));
-
-  gegl_op_class_install_data_input_property (op_class,
-                                        g_param_spec_float ("mult1",
-                                                       "Mult1",
-                                                       "The multiplier of channel 1",
-                                                       -G_MAXFLOAT, G_MAXFLOAT,
-                                                       1.0,
-                                                       G_PARAM_PRIVATE));
-
-  gegl_op_class_install_data_input_property (op_class,
-                                        g_param_spec_float ("mult2",
-                                                       "Mult2",
-                                                       "The multiplier of channel 2",
-                                                       -G_MAXFLOAT, G_MAXFLOAT,
-                                                       1.0,
-                                                       G_PARAM_PRIVATE));
-
-  gegl_op_class_install_data_input_property (op_class,
-                                        g_param_spec_float ("mult3",
-                                                       "Mult3",
-                                                       "The multiplier of channel 3",
-                                                       -G_MAXFLOAT, G_MAXFLOAT,
-                                                       1.0,
-                                                       G_PARAM_PRIVATE));
-
-  /* gobject properties */
   g_object_class_install_property (gobject_class, PROP_MULT0,
-                                   g_param_spec_float ("mult0",
-                                                       "Mult0",
-                                                       "The multiplier of channel 0",
-                                                       -G_MAXFLOAT, G_MAXFLOAT,
-                                                       1.0,
-                                                       G_PARAM_READWRITE));
+               g_param_spec_float ("mult0",
+                                   "Mult0",
+                                   "The multiplier of channel 0",
+                                   -G_MAXFLOAT, G_MAXFLOAT,
+                                   1.0,
+                                   G_PARAM_CONSTRUCT |
+                                   G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_MULT1,
-                                   g_param_spec_float ("mult1",
-                                                       "Mult1",
-                                                       "The multiplier of channel 1",
-                                                       -G_MAXFLOAT, G_MAXFLOAT,
-                                                       1.0,
-                                                       G_PARAM_READWRITE));
+               g_param_spec_float ("mult1",
+                                   "Mult1",
+                                   "The multiplier of channel 1",
+                                   -G_MAXFLOAT, G_MAXFLOAT,
+                                   1.0,
+                                   G_PARAM_CONSTRUCT |
+                                   G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_MULT2,
-                                   g_param_spec_float ("mult2",
-                                                       "Mult2",
-                                                       "The multiplier of channel 2",
-                                                       -G_MAXFLOAT, G_MAXFLOAT,
-                                                       1.0,
-                                                       G_PARAM_READWRITE));
+               g_param_spec_float ("mult2",
+                                   "Mult2",
+                                   "The multiplier of channel 2",
+                                   -G_MAXFLOAT, G_MAXFLOAT,
+                                   1.0,
+                                   G_PARAM_CONSTRUCT |
+                                   G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_MULT3,
-                                   g_param_spec_float ("mult3",
-                                                       "Mult3",
-                                                       "The multiplier of channel 3",
-                                                       -G_MAXFLOAT, G_MAXFLOAT,
-                                                       1.0,
-                                                       G_PARAM_READWRITE));
+               g_param_spec_float ("mult3",
+                                   "Mult3",
+                                   "The multiplier of channel 3",
+                                   -G_MAXFLOAT, G_MAXFLOAT,
+                                   1.0,
+                                   G_PARAM_CONSTRUCT |
+                                   G_PARAM_READWRITE));
 }
 
 static void 
 init (GeglMult * self, 
       GeglMultClass * klass)
 {
-  /* Add the multiplier inputs */ 
-  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult0");
-  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult1");
-  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult2");
-  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult3");
-
-  self->mult[0] = 1.0; 
-  self->mult[1] = 1.0; 
-  self->mult[2] = 1.0; 
-  self->mult[3] = 1.0; 
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult0");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult1");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult2");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult3");
 }
 
 static void
@@ -163,16 +126,28 @@ get_property (GObject      *gobject,
   switch (prop_id)
   {
     case PROP_MULT0:
-      g_value_set_float(value, self->mult[0]);
+      {
+        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult0");
+        g_value_set_float(value, g_value_get_float(data_value));  
+      }
       break;
     case PROP_MULT1:
-      g_value_set_float(value, self->mult[1]);
+      {
+        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult1");
+        g_value_set_float(value, g_value_get_float(data_value));  
+      }
       break;
     case PROP_MULT2:
-      g_value_set_float(value, self->mult[2]);
+      {
+        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult2");
+        g_value_set_float(value, g_value_get_float(data_value));  
+      }
       break;
     case PROP_MULT3:
-      g_value_set_float(value, self->mult[3]);
+      {
+        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult3");
+        g_value_set_float(value, g_value_get_float(data_value));  
+      }
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
@@ -190,16 +165,16 @@ set_property (GObject      *gobject,
   switch (prop_id)
   {
     case PROP_MULT0:
-      self->mult[0] = g_value_get_float(value);
+      gegl_op_set_input_data_value(GEGL_OP(self), "mult0", value);
       break;
     case PROP_MULT1:
-      self->mult[1] = g_value_get_float(value);
+      gegl_op_set_input_data_value(GEGL_OP(self), "mult1", value);
       break;
     case PROP_MULT2:
-      self->mult[2] = g_value_get_float(value);
+      gegl_op_set_input_data_value(GEGL_OP(self), "mult2", value);
       break;
     case PROP_MULT3:
-      self->mult[3]= g_value_get_float(value);
+      gegl_op_set_input_data_value(GEGL_OP(self), "mult3", value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
@@ -231,8 +206,6 @@ mult_float (GeglFilter * filter,
 {                                                                       
   GeglMult * self = GEGL_MULT(filter);
 
-  gfloat mult[4] = { self->mult[0], self->mult[1], self->mult[2], self->mult[3] };
-
   gfloat **d = (gfloat**)gegl_image_iterator_color_channels(iters[0]);
   gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(iters[0]);
   gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
@@ -240,6 +213,18 @@ mult_float (GeglFilter * filter,
   gfloat **a = (gfloat**)gegl_image_iterator_color_channels(iters[1]);
   gfloat *aa = (gfloat*)gegl_image_iterator_alpha_channel(iters[1]);
   gint a_color_chans = gegl_image_iterator_get_num_colors(iters[1]);
+
+  GValue *mult0_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult0");
+  GValue *mult1_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult1");
+  GValue *mult2_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult2");
+  GValue *mult3_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult3");
+
+  gfloat mult[4];
+
+  mult[0] = g_value_get_float(mult0_value); 
+  mult[1] = g_value_get_float(mult1_value); 
+  mult[2] = g_value_get_float(mult2_value); 
+  mult[3] = g_value_get_float(mult3_value); 
 
   gint alpha_mask = 0x0;
 
@@ -264,7 +249,6 @@ mult_float (GeglFilter * filter,
             case 3: *d2++ = mult[2] * *a2++;
             case 2: *d1++ = mult[1] * *a1++;
             case 1: *d0++ = mult[0] * *a0++;
-            case 0:        
           }
 
         if(alpha_mask == GEGL_A_ALPHA)
@@ -285,8 +269,6 @@ mult_uint8 (GeglFilter * filter,
 {                                                                       
   GeglMult * self = GEGL_MULT(filter);
 
-  gfloat mult[4] = {self->mult[0], self->mult[1], self->mult[2], self->mult[3]};
-
   guint8 **d = (guint8**)gegl_image_iterator_color_channels(iters[0]);
   guint8 *da = (guint8*)gegl_image_iterator_alpha_channel(iters[0]);
   gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
@@ -296,6 +278,18 @@ mult_uint8 (GeglFilter * filter,
   gint a_color_chans = gegl_image_iterator_get_num_colors(iters[1]);
 
   gint alpha_mask = 0x0;
+
+  GValue *mult0_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult0");
+  GValue *mult1_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult1");
+  GValue *mult2_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult2");
+  GValue *mult3_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult3");
+
+  gfloat mult[4];
+
+  mult[0] = g_value_get_float(mult0_value); 
+  mult[1] = g_value_get_float(mult1_value); 
+  mult[2] = g_value_get_float(mult2_value); 
+  mult[3] = g_value_get_float(mult3_value); 
 
   if(aa)
     alpha_mask |= GEGL_A_ALPHA; 
@@ -321,7 +315,6 @@ mult_uint8 (GeglFilter * filter,
                     a1++;
             case 1: *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255);
                     a0++;
-            case 0:        
           }
 
         if(alpha_mask == GEGL_A_ALPHA)

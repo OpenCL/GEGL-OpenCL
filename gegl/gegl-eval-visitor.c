@@ -77,23 +77,21 @@ static void
 visit_filter(GeglVisitor * visitor,
              GeglFilter *filter)
 {
-  GList * data_outputs;
-  GList * data_inputs;
+  GList * collected_input_data_list;
 
   GEGL_VISITOR_CLASS(parent_class)->visit_filter(visitor, filter);
 
+  /* Validate the inputs of op */
+  collected_input_data_list = 
+    gegl_visitor_collect_input_data_list(visitor, GEGL_NODE(filter));
+  gegl_filter_validate_inputs(filter, collected_input_data_list);
+  g_list_free(collected_input_data_list);
 
-  /* Construct and validate the data_inputs of op */
-  data_inputs = gegl_visitor_collect_data_inputs(visitor, GEGL_NODE(filter));
-  gegl_filter_validate_inputs(filter, data_inputs);
+  /* Validate the outputs of op */
+  gegl_filter_validate_outputs(filter);
 
-  /* Validate the data_outputs of op*/
-  data_outputs = gegl_op_get_data_outputs(GEGL_OP(filter));
-  gegl_filter_validate_outputs(filter, data_outputs);
-
-  gegl_filter_evaluate(filter, data_outputs, data_inputs);
-
-  g_list_free(data_inputs);
+  /* Do the operation */
+  gegl_filter_evaluate(filter);
 }
 
 static void      

@@ -20,13 +20,6 @@ GeglBuffer
 </para>
 
 
-<!-- ##### STRUCT GeglBufferClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-
 <!-- ##### FUNCTION gegl_buffer_num_banks ##### -->
 <para>
 

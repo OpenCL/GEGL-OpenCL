@@ -22,11 +22,8 @@ do image statistics or some other operation that doesnt affect the image data.
 </para>
 
 
-<!-- ##### STRUCT GeglPipeClass ##### -->
+<!-- ##### ARG GeglPipe:input-image ##### -->
 <para>
 
 </para>
-
-@image_op_class: 
-@get_scanline_func: 
 

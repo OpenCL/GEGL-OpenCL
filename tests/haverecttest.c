@@ -19,65 +19,70 @@
 static void
 test_haverect_color_default_size(Test *t)
 {
-  GeglRect have_rect;
   GeglRect default_rect = {0,0,GEGL_DEFAULT_WIDTH, GEGL_DEFAULT_HEIGHT};
 
-  GeglFilter * source = g_object_new(GEGL_TYPE_COLOR, 
-                                     "pixel-rgb-float", R0, G0, B0, 
-                                     NULL); 
+  GeglRect have_rect;
+  GeglData *output_data;
 
-  gegl_image_op_compute_have_rect(GEGL_IMAGE_OP(source), &have_rect, NULL); 
+  GeglOp * op = g_object_new(GEGL_TYPE_COLOR, 
+                             "pixel-rgb-float", R0, G0, B0, 
+                             NULL); 
+
+  gegl_image_op_compute_have_rect(GEGL_IMAGE_OP(op)); 
+
+  output_data = gegl_op_get_nth_output_data(op, 0);
+  gegl_image_data_get_rect(GEGL_IMAGE_DATA(output_data), &have_rect);
 
   ct_test(t, gegl_rect_equal(&have_rect, &default_rect));  
 
-  g_object_unref(source);
+  g_object_unref(op);
 }
 
 static void
 test_haverect_color(Test *t)
 {
   GeglRect have_rect;
-  GeglFilter * source = g_object_new(GEGL_TYPE_COLOR, 
-                                     "width", IMAGE_OP_WIDTH, 
-                                     "height", IMAGE_OP_HEIGHT, 
-                                     "pixel-rgb-float", R0, G0, B0, 
-                                     NULL); 
+  GeglData *output_data;
 
-  gegl_image_op_compute_have_rect(GEGL_IMAGE_OP(source), &have_rect, NULL); 
+  GeglOp * op = g_object_new(GEGL_TYPE_COLOR, 
+                             "width", IMAGE_OP_WIDTH, 
+                             "height", IMAGE_OP_HEIGHT, 
+                             "pixel-rgb-float", R0, G0, B0, 
+                             NULL); 
+
+  gegl_image_op_compute_have_rect(GEGL_IMAGE_OP(op)); 
+
+  output_data = gegl_op_get_nth_output_data(op, 0);
+  gegl_image_data_get_rect(GEGL_IMAGE_DATA(output_data), &have_rect);
 
   ct_test(t, gegl_rect_equal_coords(&have_rect, 0,0, IMAGE_OP_WIDTH, IMAGE_OP_HEIGHT));  
 
-  g_object_unref(source);
+  g_object_unref(op);
 }
 
 static void
 test_haverect_op(Test *t)
 {
   GeglRect have_rect;
-  GeglRect have_rect1 = {0,0,2,2};
-  GeglRect have_rect2 = {1,1,2,2};
+  GeglRect have_rect0 = {0,0,2,2};
+  GeglRect have_rect1 = {1,1,2,2};
+  GeglOp * op = g_object_new (GEGL_TYPE_I_ADD, NULL);  
 
-  GeglData *image_data1 = g_object_new(GEGL_TYPE_IMAGE_DATA, NULL);
-  GeglData *image_data2 = g_object_new(GEGL_TYPE_IMAGE_DATA, NULL);
+  GeglData *input0_data = gegl_op_get_nth_input_data(op, 0);
+  GeglData *input1_data = gegl_op_get_nth_input_data(op, 1);
+  GeglData *output_data;
 
-  GeglOp * source = g_object_new (GEGL_TYPE_I_ADD, NULL);  
+  gegl_image_data_set_rect(GEGL_IMAGE_DATA(input0_data), &have_rect0);
+  gegl_image_data_set_rect(GEGL_IMAGE_DATA(input1_data), &have_rect1);
 
-  GList * data_inputs = NULL;
-  data_inputs = g_list_append(data_inputs, image_data1);
-  data_inputs = g_list_append(data_inputs, image_data2);
+  gegl_image_op_compute_have_rect(GEGL_IMAGE_OP(op)); 
 
-  gegl_image_data_set_rect(GEGL_IMAGE_DATA(image_data1), &have_rect1);
-  gegl_image_data_set_rect(GEGL_IMAGE_DATA(image_data2), &have_rect2);
-
-  gegl_image_op_compute_have_rect(GEGL_IMAGE_OP(source), &have_rect, data_inputs); 
+  output_data = gegl_op_get_nth_output_data(op, 0);
+  gegl_image_data_get_rect(GEGL_IMAGE_DATA(output_data), &have_rect);
 
   ct_test(t, gegl_rect_equal_coords(&have_rect, 0,0,3,3));  
 
-  g_object_unref(source);
-  g_object_unref(image_data1);
-  g_object_unref(image_data2);
-
-  g_list_free(data_inputs);
+  g_object_unref(op);
 }
 
 static void

@@ -1,3 +1,692 @@
+<!-- ##### STRUCT GeglAddClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
+
+<!-- ##### STRUCT GeglAtopClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
+
+<!-- ##### STRUCT GeglBfsVisitorClass ##### -->
+<para>
+
+</para>
+
+@visitor_class: 
+
+<!-- ##### ARG GeglBinary:input-image-a ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglBinary:input-image-b ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglBinaryClass ##### -->
+<para>
+
+</para>
+
+@point_op_class: 
+@get_scanline_func: 
+
+<!-- ##### STRUCT GeglBlendClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
+
+<!-- ##### STRUCT GeglBufferClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+
+<!-- ##### ARG GeglChannelData:float ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglChannelData:uint8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglChannelDataClass ##### -->
+<para>
+
+</para>
+
+@data_class: 
+
+<!-- ##### STRUCT GeglChannelSpaceClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@convert_to_float: 
+@convert_from_float: 
+@convert_value_to_float: 
+@convert_value_from_float: 
+
+<!-- ##### STRUCT GeglChannelSpaceFloatClass ##### -->
+<para>
+
+</para>
+
+@channel_space_class: 
+
+<!-- ##### STRUCT GeglChannelSpaceU8Class ##### -->
+<para>
+
+</para>
+
+@channel_space_class: 
+
+<!-- ##### STRUCT GeglColorClass ##### -->
+<para>
+
+</para>
+
+@no_input_class: 
+
+<!-- ##### STRUCT GeglColorDataClass ##### -->
+<para>
+
+</para>
+
+@data_class: 
+
+<!-- ##### STRUCT GeglColorModelClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@create_storage: 
+
+<!-- ##### STRUCT GeglColorSpaceClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@convert_to_xyz: 
+@convert_from_xyz: 
+
+<!-- ##### STRUCT GeglColorSpaceGrayClass ##### -->
+<para>
+
+</para>
+
+@color_space_class: 
+
+<!-- ##### STRUCT GeglColorSpaceRgbClass ##### -->
+<para>
+
+</para>
+
+@color_space_class: 
+
+<!-- ##### ARG GeglComp:input-image-a ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglComp:input-image-b ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglCompClass ##### -->
+<para>
+
+</para>
+
+@point_op_class: 
+@get_scanline_func: 
+
+<!-- ##### STRUCT GeglComponentColorModelClass ##### -->
+<para>
+
+</para>
+
+@color_model_class: 
+
+<!-- ##### STRUCT GeglComponentStorageClass ##### -->
+<para>
+
+</para>
+
+@storage_class: 
+
+<!-- ##### STRUCT GeglCopyClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
+
+<!-- ##### STRUCT GeglDarkenClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
+
+<!-- ##### ARG GeglData:param-spec ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglDataClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+
+<!-- ##### STRUCT GeglDfsVisitorClass ##### -->
+<para>
+
+</para>
+
+@visitor_class: 
+
+<!-- ##### STRUCT GeglDifferenceClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
+
+<!-- ##### STRUCT GeglDumpVisitorClass ##### -->
+<para>
+
+</para>
+
+@visitor_class: 
+
+<!-- ##### STRUCT GeglEvalBfsVisitorClass ##### -->
+<para>
+
+</para>
+
+@bfs_visitor_class: 
+
+<!-- ##### STRUCT GeglEvalDfsVisitorClass ##### -->
+<para>
+
+</para>
+
+@dfs_visitor_class: 
+
+<!-- ##### STRUCT GeglEvalMgrClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@evaluate: 
+
+<!-- ##### STRUCT GeglEvalVisitorClass ##### -->
+<para>
+
+</para>
+
+@dfs_visitor_class: 
+
+<!-- ##### STRUCT GeglFadeClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
+
+<!-- ##### STRUCT GeglFilterClass ##### -->
+<para>
+
+</para>
+
+@op_class: 
+@prepare: 
+@process: 
+@finish: 
+@validate_inputs: 
+@validate_outputs: 
+
+<!-- ##### STRUCT GeglGraphClass ##### -->
+<para>
+
+</para>
+
+@op_class: 
+
+<!-- ##### STRUCT GeglGraphSetupVisitorClass ##### -->
+<para>
+
+</para>
+
+@dfs_visitor_class: 
+
+<!-- ##### STRUCT GeglIAddClass ##### -->
+<para>
+
+</para>
+
+@binary_class: 
+
+<!-- ##### STRUCT GeglIMultClass ##### -->
+<para>
+
+</para>
+
+@binary_class: 
+
+<!-- ##### STRUCT GeglImageClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+
+<!-- ##### STRUCT GeglImageDataClass ##### -->
+<para>
+
+</para>
+
+@data_class: 
+
+<!-- ##### STRUCT GeglImageIteratorClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+
+<!-- ##### STRUCT GeglImageOpClass ##### -->
+<para>
+
+</para>
+
+@filter_class: 
+@compute_need_rects: 
+@compute_have_rect: 
+@compute_color_model: 
+
+<!-- ##### STRUCT GeglInsideClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
+
+<!-- ##### STRUCT GeglLightenClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
+
+<!-- ##### STRUCT GeglMaxClass ##### -->
+<para>
+
+</para>
+
+@binary_class: 
+
+<!-- ##### STRUCT GeglMinClass ##### -->
+<para>
+
+</para>
+
+@binary_class: 
+
+<!-- ##### STRUCT GeglMultClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
+
+<!-- ##### STRUCT GeglMultiplyClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
+
+<!-- ##### STRUCT GeglNoInputClass ##### -->
+<para>
+
+</para>
+
+@point_op_class: 
+@get_scanline_func: 
+
+<!-- ##### STRUCT GeglNodeClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@accept: 
+
+<!-- ##### STRUCT GeglObjectClass ##### -->
+<para>
+
+</para>
+
+@gobject_class: 
+
+<!-- ##### STRUCT GeglOpClass ##### -->
+<para>
+
+</para>
+
+@node_class: 
+
+<!-- ##### STRUCT GeglOutsideClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
+
+<!-- ##### STRUCT GeglOverClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
+
+<!-- ##### STRUCT GeglPipeClass ##### -->
+<para>
+
+</para>
+
+@image_op_class: 
+@get_scanline_func: 
+
+<!-- ##### ARG GeglPixelData:rgb-float ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglPixelData:rgb-uint8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglPixelData:rgba-float ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglPixelData:rgba-uint8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglPixelDataClass ##### -->
+<para>
+
+</para>
+
+@data_class: 
+
+<!-- ##### STRUCT GeglPointOpClass ##### -->
+<para>
+
+</para>
+
+@image_op_class: 
+
+<!-- ##### STRUCT GeglPremultClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
+
+<!-- ##### STRUCT GeglPrintClass ##### -->
+<para>
+
+</para>
+
+@pipe_class: 
+
+<!-- ##### STRUCT GeglScalarDataClass ##### -->
+<para>
+
+</para>
+
+@data_class: 
+
+<!-- ##### STRUCT GeglScanlineProcessorClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+
+<!-- ##### STRUCT GeglScreenClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
+
+<!-- ##### STRUCT GeglStorageClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@create_buffer: 
+
+<!-- ##### STRUCT GeglSubtractClass ##### -->
+<para>
+
+</para>
+
+@binary_class: 
+
+<!-- ##### STRUCT GeglTileClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+
+<!-- ##### ARG GeglUnary:input-image ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglUnaryClass ##### -->
+<para>
+
+</para>
+
+@point_op_class: 
+@get_scanline_func: 
+
+<!-- ##### STRUCT GeglUnpremultClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
+
+<!-- ##### STRUCT GeglVisitorClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@visit_node: 
+@visit_op: 
+@visit_filter: 
+@visit_graph: 
+
+<!-- ##### STRUCT GeglXorClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
+
+<!-- ##### FUNCTION gegl_add_get_constant ##### -->
+<para>
+
+</para>
+
+@self: 
+@constant: 
+
+<!-- ##### FUNCTION gegl_add_set_constant ##### -->
+<para>
+
+</para>
+
+@self: 
+@constant: 
+
+<!-- ##### FUNCTION gegl_binary_get_fade ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_binary_set_fade ##### -->
+<para>
+
+</para>
+
+@self: 
+@fade: 
+
+<!-- ##### FUNCTION gegl_blend_get_opacity ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_blend_set_opacity ##### -->
+<para>
+
+</para>
+
+@self: 
+@opacity: 
+
+<!-- ##### FUNCTION gegl_color_get_height ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_get_pixel ##### -->
+<para>
+
+</para>
+
+@self: 
+@pixel: 
+
+<!-- ##### FUNCTION gegl_color_get_width ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_set_height ##### -->
+<para>
+
+</para>
+
+@self: 
+@height: 
+
+<!-- ##### FUNCTION gegl_color_set_pixel ##### -->
+<para>
+
+</para>
+
+@self: 
+@pixel: 
+
+<!-- ##### FUNCTION gegl_color_set_width ##### -->
+<para>
+
+</para>
+
+@self: 
+@width: 
+
+<!-- ##### FUNCTION gegl_comp_get_premultiply ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_comp_set_premultiply ##### -->
+<para>
+
+</para>
+
+@self: 
+@premultiply: 
+
+<!-- ##### FUNCTION gegl_data_get_param_spec ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_data_set_param_spec ##### -->
+<para>
+
+</para>
+
+@self: 
+@param_spec: 
+
 <!-- ##### FUNCTION gegl_dump_graph ##### -->
 <para>
 
@@ -12,6 +701,72 @@
 
 @msg: 
 @root: 
+
+<!-- ##### FUNCTION gegl_fade_get_multiplier ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_fade_set_multiplier ##### -->
+<para>
+
+</para>
+
+@self: 
+@multiplier: 
+
+<!-- ##### FUNCTION gegl_image_op_compute_need_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@input_need_rect: 
+@need_rect: 
+@i: 
+
+<!-- ##### FUNCTION gegl_image_op_evaluate_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@data_inputs: 
+
+<!-- ##### FUNCTION gegl_image_op_evaluate_have_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@data_inputs: 
+
+<!-- ##### FUNCTION gegl_image_op_evaluate_need_rects ##### -->
+<para>
+
+</para>
+
+@self: 
+@data_inputs: 
+
+<!-- ##### FUNCTION gegl_image_op_get_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_image_op_set_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@image: 
 
 <!-- ##### FUNCTION gegl_object_add_interface ##### -->
 <para>
@@ -29,5 +784,148 @@
 
 @self: 
 @interface_name: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_append_data_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@data: 
+
+<!-- ##### FUNCTION gegl_op_append_data_output ##### -->
+<para>
+
+</para>
+
+@self: 
+@data: 
+
+<!-- ##### FUNCTION gegl_op_append_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@data_type: 
+@name: 
+
+<!-- ##### FUNCTION gegl_op_append_output ##### -->
+<para>
+
+</para>
+
+@self: 
+@data_type: 
+@name: 
+
+<!-- ##### FUNCTION gegl_op_class_find_data_input_property ##### -->
+<para>
+
+</para>
+
+@class: 
+@property_name: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_class_find_data_output_property ##### -->
+<para>
+
+</para>
+
+@class: 
+@property_name: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_class_install_data_input_property ##### -->
+<para>
+
+</para>
+
+@class: 
+@pspec: 
+
+<!-- ##### FUNCTION gegl_op_class_install_data_output_property ##### -->
+<para>
+
+</para>
+
+@class: 
+@pspec: 
+
+<!-- ##### FUNCTION gegl_op_class_list_data_input_properties ##### -->
+<para>
+
+</para>
+
+@class: 
+@n_properties_p: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_class_list_data_output_properties ##### -->
+<para>
+
+</para>
+
+@class: 
+@n_properties_p: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_free_data_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+
+<!-- ##### FUNCTION gegl_op_free_data_outputs ##### -->
+<para>
+
+</para>
+
+@self: 
+
+<!-- ##### FUNCTION gegl_op_get_data_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@n: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_get_data_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_get_data_output ##### -->
+<para>
+
+</para>
+
+@self: 
+@n: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_get_data_outputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_visitor_collect_data_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
 @Returns: 
 

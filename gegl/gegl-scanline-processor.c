@@ -9,6 +9,7 @@
 
 static void class_init (GeglScanlineProcessorClass * klass);
 static gpointer parent_class = NULL;
+static GList * get_image_data_list(GeglScanlineProcessor *self, GList *list);
 
 GType
 gegl_scanline_processor_get_type (void)
@@ -45,27 +46,51 @@ class_init (GeglScanlineProcessorClass * klass)
   return;
 }
 
+static
+GList *
+get_image_data_list(GeglScanlineProcessor *self,
+                    GList *list)
+{
+  GList *data_llink = list;
+  GList *llink = NULL;
+
+  while(data_llink)
+    {
+      GeglData *data = data_llink->data;
+
+      if(GEGL_IS_IMAGE_DATA(data))
+        llink = g_list_append(llink, data);
+
+      data_llink = data_llink->next;
+    }
+
+  return llink;
+}
+                                            
+
 /**
  * gegl_scanline_processor_process:
  * @self: a #GeglScanlineProcessor.
- * @data_outputs: A list of #GeglData outputs. 
- * @data_inputs: A list of #GeglData inputs. 
+ * @output_data_list: A list of #GeglData outputs. 
+ * @input_data_list: A list of #GeglData inputs. 
  *
  * Process scanlines.
  *
  **/
 void 
 gegl_scanline_processor_process (GeglScanlineProcessor * self, 
-                                 GList  *data_outputs,
-                                 GList  *data_inputs)
+                                 GList  *output_data_list,
+                                 GList  *input_data_list)
 {
   gint i,j;
   GeglRect rect;
   GeglImage *image;
   gint width, height;
-  gint num_inputs = g_list_length(data_inputs);
-  gint num_outputs = g_list_length(data_outputs);
-  GeglData *data = g_list_nth_data(data_outputs,0);
+  GList *image_output_data_list = get_image_data_list(self, output_data_list); 
+  GList *image_input_data_list = get_image_data_list(self, input_data_list); 
+  gint num_inputs = g_list_length(image_input_data_list);
+  gint num_outputs = g_list_length(image_output_data_list);
+  GeglData *data = g_list_nth_data(image_output_data_list,0);
   GValue *value = gegl_data_get_value(data);
   GeglImageData *image_data = GEGL_IMAGE_DATA(data);
   GeglImageIterator **iters = g_new (GeglImageIterator*, num_inputs + num_outputs);
@@ -116,11 +141,11 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
       */
 
 
-       GeglData *data_input = (GeglData*)g_list_nth_data(data_inputs,i); 
-       GeglImageData *image_data_input = GEGL_IMAGE_DATA(data_input);
-       GValue *data_input_value = gegl_data_get_value(data_input);
-       image = (GeglImage*)g_value_get_object(data_input_value);
-       gegl_image_data_get_rect(image_data_input, &rect);
+       GeglData *input_data = (GeglData*)g_list_nth_data(image_input_data_list,i); 
+       GeglImageData *image_input_data = GEGL_IMAGE_DATA(input_data);
+       GValue *input_data_value = gegl_data_get_value(input_data);
+       image = (GeglImage*)g_value_get_object(input_data_value);
+       gegl_image_data_get_rect(image_input_data, &rect);
 
        /* Get the image, if it is not NULL */ 
        if(image)
@@ -180,4 +205,6 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
 
   /* Free the array of iterator pointers */
   g_free (iters);
+  g_list_free(image_output_data_list); 
+  g_list_free(image_input_data_list); 
 }

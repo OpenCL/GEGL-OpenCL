@@ -21,13 +21,6 @@ traverses the graph.
 </para>
 
 
-<!-- ##### STRUCT GeglDumpVisitorClass ##### -->
-<para>
-
-</para>
-
-@visitor_class: 
-
 <!-- ##### FUNCTION gegl_dump_visitor_traverse ##### -->
 <para>
 

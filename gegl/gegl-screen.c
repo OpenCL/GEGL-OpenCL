@@ -113,17 +113,25 @@ fg_screen_bg_float (GeglFilter * filter,
       {                                                                   
         switch(d_color_chans)
           {
-            case 3: *d2++ = *b2 + *f2 + *b2++ * *f2++;   
-            case 2: *d1++ = *b1 + *f1 + *b1++ * *f1++;
-            case 1: *d0++ = *b0 + *f0 + *b0++ * *f0++;
-            case 0:        
+            case 3: *d2++ = *b2 + *f2 + *b2 * *f2;   
+                    b2++;
+                    f2++;
+            case 2: *d1++ = *b1 + *f1 + *b1 * *f1;
+                    b1++;
+                    f1++;
+            case 1: *d0++ = *b0 + *f0 + *b0 * *f0;
+                    b0++;
+                    f0++;
           }
 
         if(alpha_mask == GEGL_FG_ALPHA || alpha_mask == GEGL_BG_ALPHA)
           *da++ = 1; 
         else if (alpha_mask == GEGL_FG_BG_ALPHA)
-          *da++ = *fa + *ba - *ba++ * *fa++; 
-
+          {
+            *da++ = *fa + *ba - *ba * *fa; 
+             fa++;
+             ba++;
+          }
       }
   }
 

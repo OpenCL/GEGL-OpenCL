@@ -22,8 +22,6 @@ struct _GeglAdd
    GeglUnary unary;
 
    /*< private >*/
-
-   GValue *constant;
 };
 
 struct _GeglAddClass 
@@ -32,9 +30,6 @@ struct _GeglAddClass
 };
 
 GType           gegl_add_get_type         (void);
-
-void gegl_add_get_constant (GeglAdd * self, GValue *constant);
-void gegl_add_set_constant (GeglAdd * self, GValue *constant);
 
 #ifdef __cplusplus
 }

@@ -38,31 +38,6 @@ For example Multiply defines Blend(x,y) = x*y.
 </para>
 
 
-<!-- ##### STRUCT GeglBlendClass ##### -->
-<para>
-
-</para>
-
-@comp_class: 
-
-<!-- ##### FUNCTION gegl_blend_get_opacity ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_blend_set_opacity ##### -->
-<para>
-
-</para>
-
-@self: 
-@opacity: 
-
-
 <!-- ##### ARG GeglBlend:opacity ##### -->
 <para>
 

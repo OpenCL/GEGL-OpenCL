@@ -125,7 +125,6 @@ fg_darken_bg_float (GeglFilter * filter,
                 case 1: *d0++ = MIN(*f0, *b0); 
                         f0++; 
                         b0++;
-                case 0:        
               }
           }
         break;
@@ -154,10 +153,11 @@ fg_darken_bg_float (GeglFilter * filter,
                     case 1: *d0++ = MIN(a * *b0 + *f0, b * *f0 + *b0); 
                             f0++; 
                             b0++;
-                    case 0:        
                   }
 
-                *da++ = *fa + *ba - *ba++ * *fa++; 
+                *da++ = *fa + *ba - *ba * *fa; 
+                ba++;
+                fa++;
               }
           }
         break;

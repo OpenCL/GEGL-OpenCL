@@ -39,8 +39,8 @@ struct _GeglScanlineProcessorClass
 GType gegl_scanline_processor_get_type   (void);
 
 void gegl_scanline_processor_process(GeglScanlineProcessor  *self,
-                                     GList * data_outputs,
-                                     GList * data_inputs);
+                                     GList * output_data_list,
+                                     GList * input_data_list);
 
 #ifdef __cplusplus
 }

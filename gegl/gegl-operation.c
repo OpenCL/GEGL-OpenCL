@@ -18,8 +18,8 @@ static void init (GeglFilter * self, GeglFilterClass * klass);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 
-static void validate_inputs (GeglFilter * self, GList * data_inputs);
-static void validate_outputs (GeglFilter * self, GList * data_outputs);
+static void validate_inputs (GeglFilter * self, GList * collected_input_data_list);
+static void validate_outputs (GeglFilter * self);
 
 static void accept(GeglNode * node, GeglVisitor * visitor);
 
@@ -109,16 +109,12 @@ get_property (GObject      *gobject,
 /**
  * gegl_filter_evaluate:
  * @self: a #GeglFilter.
- * @data_outputs: List of output #GeglData.
- * @data_inputs: List of input #GeglData.
  *
  * Evaluate the filter.
  * 
  **/
 void      
-gegl_filter_evaluate (GeglFilter * self, 
-                      GList * data_outputs,
-                      GList * data_inputs)
+gegl_filter_evaluate (GeglFilter * self) 
 {
   GeglFilterClass *klass;
   g_return_if_fail (self != NULL);
@@ -126,26 +122,26 @@ gegl_filter_evaluate (GeglFilter * self,
   klass = GEGL_FILTER_GET_CLASS(self);
 
   if(klass->prepare)
-    (*klass->prepare)(self, data_outputs, data_inputs);
+    (*klass->prepare)(self);
 
   if(klass->process)
-    (*klass->process)(self, data_outputs, data_inputs);
+    (*klass->process)(self);
 
   if(klass->finish)
-    (*klass->finish)(self, data_outputs, data_inputs);
+    (*klass->finish)(self);
 }
 
 /**
  * gegl_filter_validate_inputs:
  * @self: a #GeglFilter.
- * @data_inputs: List of #GeglData to validate and convert.
+ * @collected_input_data_list: List of #GeglData to validate and convert.
  *
  * Validate and convert the inputs.
  * 
  **/
 void      
 gegl_filter_validate_inputs (GeglFilter * self, 
-                             GList * data_inputs)
+                             GList * collected_input_data_list)
 {
   GeglFilterClass *klass;
   g_return_if_fail (self != NULL);
@@ -153,26 +149,24 @@ gegl_filter_validate_inputs (GeglFilter * self,
   klass = GEGL_FILTER_GET_CLASS(self);
 
   if(klass->validate_inputs)
-    (*klass->validate_inputs)(self, data_inputs);
+    (*klass->validate_inputs)(self, collected_input_data_list);
 }
 
 static void
 validate_inputs(GeglFilter *self,
-                GList *data_inputs)
+                GList *collected_input_data_list)
 {
 }
 
 /**
  * gegl_filter_validate_outputs:
  * @self: a #GeglFilter.
- * @data_outputs: List of #GeglData to validate.
  *
  * Validate the outputs.
  * 
  **/
 void      
-gegl_filter_validate_outputs (GeglFilter * self, 
-                              GList * data_outputs)
+gegl_filter_validate_outputs (GeglFilter * self)
 {
   GeglFilterClass *klass;
   g_return_if_fail (self != NULL);
@@ -180,12 +174,11 @@ gegl_filter_validate_outputs (GeglFilter * self,
   klass = GEGL_FILTER_GET_CLASS(self);
 
   if(klass->validate_outputs)
-    (*klass->validate_outputs)(self, data_outputs);
+    (*klass->validate_outputs)(self);
 }
 
 static void
-validate_outputs(GeglFilter *self,
-                 GList *data_outputs)
+validate_outputs(GeglFilter *self)
 {
 }
 

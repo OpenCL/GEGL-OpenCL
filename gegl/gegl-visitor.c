@@ -390,20 +390,20 @@ visit_graph(GeglVisitor * self,
 }
 
 /**
- * gegl_visitor_collect_data_inputs
+ * gegl_visitor_collect_input_data_list
  * @self: a #GeglVisitor.
  * @node: a #GeglNode.
  *
- * This routine finds the data inputs for a given node.
- * The returned list should be freed when finished.
+ * This routine finds the data outputs to be delivered to a node.  The returned
+ * list should be freed when finished.
  *
- * Returns: a list of data inputs.
+ * Returns: a list of data outputs.
  **/
 GList * 
-gegl_visitor_collect_data_inputs(GeglVisitor *self,
-                                 GeglNode *node)
+gegl_visitor_collect_input_data_list(GeglVisitor *self,
+                                  GeglNode *node)
 {
-  GList * data_inputs = NULL;
+  GList * input_data_list = NULL;
   gint i;
   gint num_inputs = gegl_node_get_num_inputs(node);
 
@@ -422,10 +422,13 @@ gegl_visitor_collect_data_inputs(GeglVisitor *self,
 
       if(source) 
         {
-          GeglData *data_input = gegl_op_get_data_output(GEGL_OP(source), 0); 
-          data_inputs = g_list_append(data_inputs, data_input);
+          GeglData *input_data = gegl_op_get_nth_output_data(GEGL_OP(source), 0); 
+          input_data_list = g_list_append(input_data_list, input_data);
         }
+      else
+          input_data_list = g_list_append(input_data_list, NULL);
+
     }
 
-  return data_inputs;
+  return input_data_list;
 }

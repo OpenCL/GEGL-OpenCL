@@ -20,13 +20,6 @@ GeglChannelData
 </para>
 
 
-<!-- ##### STRUCT GeglChannelDataClass ##### -->
-<para>
-
-</para>
-
-@data_class: 
-
 <!-- ##### FUNCTION gegl_channel_data_get_channel_space ##### -->
 <para>
 

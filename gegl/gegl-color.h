@@ -20,9 +20,6 @@ struct _GeglColor
    GeglNoInput no_input;
 
    /*< private >*/
-   GValue * pixel;
-   gint  width;
-   gint  height;
 };
 
 typedef struct _GeglColorClass GeglColorClass;
@@ -32,15 +29,6 @@ struct _GeglColorClass
 };
 
 GType           gegl_color_get_type         (void);
-
-void            gegl_color_get_pixel        (GeglColor * self, 
-                                             GValue *pixel);
-void            gegl_color_set_pixel        (GeglColor * self, 
-                                             GValue *pixel);
-gint            gegl_color_get_width    (GeglColor * self);
-gint            gegl_color_get_height   (GeglColor * self);
-void            gegl_color_set_width    (GeglColor * self, gint width);
-void            gegl_color_set_height   (GeglColor * self, gint height);
 
 #ifdef __cplusplus
 }

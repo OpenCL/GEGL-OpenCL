@@ -88,8 +88,8 @@ init (GeglGraph * self,
 static void
 root_changed(GeglGraph * self)
 {
-  gegl_op_free_data_outputs(GEGL_OP(self));
-  gegl_op_free_data_inputs(GEGL_OP(self));
+  gegl_op_free_output_data_list(GEGL_OP(self));
+  gegl_op_free_input_data_list(GEGL_OP(self));
 
   if(self->root)
     {
@@ -230,9 +230,9 @@ reset_inputs(GeglGraph *self)
       GeglData *data = NULL;
 
       if(GEGL_IS_OP(graph_input->node))
-          data = gegl_op_get_data_input(GEGL_OP(graph_input->node), 
+          data = gegl_op_get_nth_input_data(GEGL_OP(graph_input->node), 
                                           graph_input->node_input);
-      gegl_op_append_data_input(GEGL_OP(self), data);
+      gegl_op_append_input_data(GEGL_OP(self), data);
     }
 }
 
@@ -246,8 +246,8 @@ reset_outputs(GeglGraph *self)
     {
       GeglData *data = NULL;
       if(GEGL_IS_OP(self->root))
-        data = gegl_op_get_data_output(GEGL_OP(self->root), i);
-      gegl_op_append_data_output(GEGL_OP(self), data);
+        data = gegl_op_get_nth_output_data(GEGL_OP(self->root), i);
+      gegl_op_append_output_data(GEGL_OP(self), data);
     }
 }
 

@@ -125,7 +125,6 @@ fg_lighten_bg_float (GeglFilter * filter,
                 case 1: *d0++ = MAX(*f0, *b0); 
                         f0++; 
                         b0++;
-                case 0:        
               }
           }
         break;
@@ -154,10 +153,11 @@ fg_lighten_bg_float (GeglFilter * filter,
                     case 1: *d0++ = MAX(a * *b0 + *f0, b * *f0 + *b0); 
                             f0++; 
                             b0++;
-                    case 0:        
                   }
 
-                *da++ = *fa + *ba - *ba++ * *fa++; 
+                *da++ = *fa + *ba - *ba * *fa; 
+                 fa++;
+                 ba++;
               }
           }
         break;

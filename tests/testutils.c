@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "gegl.h"
-#include "gegl-check.h"
+#include "gegl-check-op.h"
 #include "testutils.h"
 
 gboolean
@@ -20,17 +20,16 @@ testutils_check_pixel_rgb_float_xy(GeglImageOp *image_op,
 {
   gboolean success;
 
-  GeglImage * image = gegl_image_op_get_image(image_op);
-  GeglOp * check = g_object_new(GEGL_TYPE_CHECK, 
-                                "pixel-rgb-float", a, b, c, 
-                                "x", x, "y", y,
-                                "image", image,
-                                NULL);
-  gegl_op_apply(check); 
+  GeglOp * check_op = g_object_new(GEGL_TYPE_CHECK_OP, 
+                                   "pixel-rgb-float", a, b, c, 
+                                   "x", x, "y", y,
+                                   "image-op", image_op,
+                                   NULL);
+  gegl_op_apply(check_op); 
 
-  success = gegl_check_get_success(GEGL_CHECK(check)); 
+  success = gegl_check_op_get_success(GEGL_CHECK_OP(check_op)); 
 
-  g_object_unref(check);
+  g_object_unref(check_op);
 
   return success;
 }
@@ -51,17 +50,16 @@ testutils_check_rgb_uint8_xy(GeglImageOp *image_op,
 {
   gboolean success;
 
-  GeglImage * image = gegl_image_op_get_image(image_op);
-  GeglOp * check = g_object_new(GEGL_TYPE_CHECK, 
-                                "pixel-rgb-uint8", a, b, c, 
-                                "x", x, "y", y,
-                                "image", image,
-                                NULL);
-  gegl_op_apply(check); 
+  GeglOp * check_op = g_object_new(GEGL_TYPE_CHECK_OP, 
+                                   "pixel-rgb-uint8", a, b, c, 
+                                   "x", x, "y", y,
+                                   "image-op", image_op,
+                                   NULL);
+  gegl_op_apply(check_op); 
 
-  success = gegl_check_get_success(GEGL_CHECK(check)); 
+  success = gegl_check_op_get_success(GEGL_CHECK_OP(check_op)); 
 
-  g_object_unref(check);
+  g_object_unref(check_op);
 
   return success;
 }

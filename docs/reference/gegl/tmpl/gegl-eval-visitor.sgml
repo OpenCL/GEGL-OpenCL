@@ -29,10 +29,3 @@ is done if the inputs don't match the needs of the #GeglFilter.
 </para>
 
 
-<!-- ##### STRUCT GeglEvalVisitorClass ##### -->
-<para>
-
-</para>
-
-@dfs_visitor_class: 
-

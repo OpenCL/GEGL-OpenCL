@@ -20,13 +20,6 @@ GeglTile
 </para>
 
 
-<!-- ##### STRUCT GeglTileClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-
 <!-- ##### FUNCTION gegl_tile_get_buffer ##### -->
 <para>
 

@@ -102,7 +102,6 @@ premult_float (GeglFilter * filter,
             case 3: *d2++ = *aa * *a2++;
             case 2: *d1++ = *aa * *a1++;
             case 1: *d0++ = *aa * *a0++;
-            case 0:        
           }
 
         *da++ = *aa++;

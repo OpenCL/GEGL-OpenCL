@@ -7,7 +7,7 @@ static void class_init (GeglPointOpClass * klass);
 static void init (GeglPointOp * self, GeglPointOpClass * klass);
 static void finalize (GObject * gobject);
 
-static void process (GeglFilter * self_op, GList * data_outputs, GList * data_inputs);
+static void process (GeglFilter * filter);
 
 static gpointer parent_class = NULL;
 
@@ -73,12 +73,14 @@ finalize (GObject * gobject)
 }
 
 static void 
-process (GeglFilter * filter, 
-         GList * data_outputs,
-         GList * data_inputs)
+process (GeglFilter * filter) 
 {
   GeglPointOp *self =  GEGL_POINT_OP(filter);
+
+  GList * output_data_list = gegl_op_get_output_data_list(GEGL_OP(self));
+  GList * input_data_list = gegl_op_get_input_data_list(GEGL_OP(self));
+
   gegl_scanline_processor_process(self->scanline_processor, 
-                                  data_outputs,
-                                  data_inputs);
+                                  output_data_list,
+                                  input_data_list);
 }

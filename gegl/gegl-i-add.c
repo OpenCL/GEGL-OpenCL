@@ -10,7 +10,6 @@ static GeglScanlineFunc get_scanline_func(GeglBinary * binary, GeglColorSpaceTyp
 
 static void a_iadd_b_float (GeglFilter * filter, GeglImageIterator ** iters, gint width);
 static void a_iadd_b_uint8 (GeglFilter * filter, GeglImageIterator ** iters, gint width);                       
-
 static gpointer parent_class = NULL;
 
 GType
@@ -77,8 +76,6 @@ a_iadd_b_float (GeglFilter * filter,
                GeglImageIterator ** iters,        
                gint width)                       
 {                                                                       
-  GeglBinary * binary = GEGL_BINARY(filter);
-
   gfloat **d = (gfloat**)gegl_image_iterator_color_channels(iters[0]);
   gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(iters[0]);
   gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
@@ -92,7 +89,8 @@ a_iadd_b_float (GeglFilter * filter,
   gint a_color_chans = gegl_image_iterator_get_num_colors(iters[2]);
 
   gint alpha_mask = 0x0;
-  gfloat fade = binary->fade;
+  GValue *value = gegl_op_get_input_data_value(GEGL_OP(filter), "fade"); 
+  gfloat fade = g_value_get_float(value);
 
   if(ba) 
     alpha_mask |= GEGL_B_ALPHA; 
@@ -119,7 +117,6 @@ a_iadd_b_float (GeglFilter * filter,
             case 3: *d2++ = fade * *a2++ + *b2++; 
             case 2: *d1++ = fade * *a1++ + *b1++;
             case 1: *d0++ = fade * *a0++ + *b0++;
-            case 0:        
           }
 
         if(alpha_mask == GEGL_A_B_ALPHA)
@@ -139,8 +136,6 @@ a_iadd_b_uint8 (GeglFilter * filter,
                 GeglImageIterator ** iters,        
                 gint width)                       
 {                                                                       
-  GeglBinary * binary = GEGL_BINARY(filter);
-
   guint8 **d = (guint8**)gegl_image_iterator_color_channels(iters[0]);
   guint8 *da = (guint8*)gegl_image_iterator_alpha_channel(iters[0]);
   gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
@@ -154,7 +149,8 @@ a_iadd_b_uint8 (GeglFilter * filter,
   gint a_color_chans = gegl_image_iterator_get_num_colors(iters[2]);
 
   gint alpha_mask = 0x0;
-  gfloat fade = binary->fade;
+  GValue *value = gegl_op_get_input_data_value(GEGL_OP(filter), "fade"); 
+  gfloat fade = g_value_get_float(value);
 
   if(ba) 
     alpha_mask |= GEGL_B_ALPHA; 
@@ -187,7 +183,6 @@ a_iadd_b_uint8 (GeglFilter * filter,
             case 1: *d0++ = CLAMP((gint)(fade * *a0 + *b0 + .5), 0, 255);
                     a0++; 
                     b0++;
-            case 0:        
           }
 
         if(alpha_mask == GEGL_A_B_ALPHA)
@@ -202,4 +197,4 @@ a_iadd_b_uint8 (GeglFilter * filter,
   g_free(d);
   g_free(b);
   g_free(a);
-}                                                                       
+}

@@ -20,13 +20,6 @@ GeglComponentStorage
 </para>
 
 
-<!-- ##### STRUCT GeglComponentStorageClass ##### -->
-<para>
-
-</para>
-
-@storage_class: 
-
 <!-- ##### FUNCTION gegl_component_storage_num_banks ##### -->
 <para>
 

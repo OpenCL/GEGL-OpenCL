@@ -90,43 +90,12 @@ tiles.
 </para>
 
 
-<!-- ##### STRUCT GeglImageOpClass ##### -->
-<para>
-
-</para>
-
-@filter_class: 
-@compute_need_rect: 
-@compute_have_rect: 
-@compute_color_model: 
-
-<!-- ##### FUNCTION gegl_image_op_set_image ##### -->
+<!-- ##### FUNCTION gegl_image_op_compute_need_rects ##### -->
 <para>
 
 </para>
 
 @self: 
-@image: 
-
-
-<!-- ##### FUNCTION gegl_image_op_get_image ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_image_op_compute_need_rect ##### -->
-<para>
-
-</para>
-
-@self: 
-@input_need_rect: 
-@need_rect: 
-@i: 
 
 
 <!-- ##### FUNCTION gegl_image_op_compute_have_rect ##### -->
@@ -135,6 +104,7 @@ tiles.
 </para>
 
 @self: 
+<!-- # Unused Parameters # -->
 @have_rect: 
 @data_inputs: 
 
@@ -145,34 +115,8 @@ tiles.
 </para>
 
 @self: 
+<!-- # Unused Parameters # -->
 @data_inputs: 
 @Returns: 
-
-
-<!-- ##### FUNCTION gegl_image_op_evaluate_need_rects ##### -->
-<para>
-
-</para>
-
-@self: 
-@data_inputs: 
-
-
-<!-- ##### FUNCTION gegl_image_op_evaluate_have_rect ##### -->
-<para>
-
-</para>
-
-@self: 
-@data_inputs: 
-
-
-<!-- ##### FUNCTION gegl_image_op_evaluate_color_model ##### -->
-<para>
-
-</para>
-
-@self: 
-@data_inputs: 
 
 

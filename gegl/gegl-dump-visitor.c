@@ -93,7 +93,7 @@ data_string(GeglOp *op)
   GeglRect rect = {0,0,0,0};
   char *color_model_name = "None";
   GObject* image_value = NULL;
-  GeglData * data_output = gegl_op_get_data_output(op, 0); 
+  GeglData * output_data = gegl_op_get_nth_output_data(op, 0); 
 
   /*
       data addr [value (x,y,w,h) cm] 
@@ -101,20 +101,20 @@ data_string(GeglOp *op)
 
   GString *string = g_string_new("");
 
-  if(GEGL_IS_IMAGE_DATA(data_output))
+  if(GEGL_IS_IMAGE_DATA(output_data))
     {
       GeglColorModel *color_model = 
-        gegl_color_data_get_color_model(GEGL_COLOR_DATA(data_output));
+        gegl_color_data_get_color_model(GEGL_COLOR_DATA(output_data));
 
-      image_value = g_value_get_object(data_output->value);
-      gegl_rect_copy(&rect, &GEGL_IMAGE_DATA(data_output)->rect);
+      image_value = g_value_get_object(output_data->value);
+      gegl_rect_copy(&rect, &GEGL_IMAGE_DATA(output_data)->rect);
       if(color_model)
         color_model_name = gegl_color_model_name(color_model);
     }
 
   g_string_printf(string, 
                   "data %p [%p (%d,%d,%d,%d) %s]",
-                  data_output,
+                  output_data,
                   image_value,
                   rect.x, rect.y, rect.w, rect.h,
                   color_model_name);
@@ -190,7 +190,10 @@ visit_filter(GeglVisitor * visitor,
 
   if(GEGL_IS_IMAGE_OP(filter)) 
   {
-    GeglImage * image = gegl_image_op_get_image(GEGL_IMAGE_OP(filter));
+    GValue *value = gegl_op_get_output_data_value(GEGL_OP(filter), 
+                                                  "output-image");
+
+    GeglImage *image = (GeglImage*)g_value_get_object(value);
     GeglColorModel * image_colormodel = image ? gegl_image_get_color_model(image) : NULL;
     gchar * image_colormodel_name = image_colormodel ? 
        g_strdup(gegl_color_model_name(image_colormodel)):

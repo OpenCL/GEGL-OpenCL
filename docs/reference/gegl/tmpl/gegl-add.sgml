@@ -25,31 +25,6 @@ B + B0
 </para>
 
 
-<!-- ##### STRUCT GeglAddClass ##### -->
-<para>
-
-</para>
-
-@unary_class: 
-
-<!-- ##### FUNCTION gegl_add_get_constant ##### -->
-<para>
-
-</para>
-
-@self: 
-@constant: 
-
-
-<!-- ##### FUNCTION gegl_add_set_constant ##### -->
-<para>
-
-</para>
-
-@self: 
-@constant: 
-
-
 <!-- ##### ARG GeglAdd:constant-rgb-float ##### -->
 <para>
 

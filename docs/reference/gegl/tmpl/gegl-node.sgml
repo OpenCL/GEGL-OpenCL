@@ -109,14 +109,6 @@ its second input (input 1).
 </para>
 
 
-<!-- ##### STRUCT GeglNodeClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-@accept: 
-
 <!-- ##### FUNCTION gegl_node_get_num_inputs ##### -->
 <para>
 
