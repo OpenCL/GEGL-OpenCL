@@ -31,7 +31,7 @@ class Gegl:Print:Op from Gegl:Point:Op {
     GEGL_OBJECT(self)->constructed = TRUE;
 
     /* Ref and sink it */
-    gtk_object_ref(GTK_OBJECT(self));
+    gegl_object_ref(GEGL_OBJECT(self));
     gtk_object_sink(GTK_OBJECT(self));
 
     return self;
@@ -53,85 +53,85 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
   override(Gegl:Op)
   void
-  prepare(GeglOp *op,
+  prepare(GeglOp *self_op,
           GeglImage *dest,
-	  GeglRect *dest_rect)
+          GeglRect *dest_rect)
   {
     /* Save has alphas so we can get quickly in scanline function */
-    gegl_op_save_alphas(op);
+    gegl_op_save_alphas(self_op);
 
     {
-      GeglPointOp *point_op = GEGL_POINT_OP (op);
+      GeglPointOp *point_op = GEGL_POINT_OP (self_op);
       GeglPointOpClass *point_op_class = 
-	GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+        GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
       GeglColorModel * dest_cm = gegl_image_color_model (dest);
       GeglColorSpace colorspace = gegl_color_model_color_space(dest_cm);
       GeglChannelDataType data_type = gegl_color_model_data_type (dest_cm);
 
       switch (colorspace)
-	{
-	case RGB:
-	  switch (data_type)
-	    {
-	    case U8:
-	      point_op_class->scanline_func = gegl_print_op_scanline_rgb_u8;
-	      break;
-	    case FLOAT:
-	      point_op_class->scanline_func = gegl_print_op_scanline_rgb_float;
-	      break;
-	    case U16:
-	      point_op_class->scanline_func = gegl_print_op_scanline_rgb_u16;
-	      break;
-	    case U16_4:
-	      point_op_class->scanline_func = gegl_print_op_scanline_rgb_u16_4;
-	      break;
-	    default:
-	      g_warning("gegl_print_op_prepare: Can't find data_type\n");    
-	      break;
+        {
+          case RGB:
+            switch (data_type)
+              {
+              case U8:
+                point_op_class->scanline_func = gegl_print_op_scanline_rgb_u8;
+                break;
+              case FLOAT:
+                point_op_class->scanline_func = gegl_print_op_scanline_rgb_float;
+                break;
+              case U16:
+                point_op_class->scanline_func = gegl_print_op_scanline_rgb_u16;
+                break;
+              case U16_4:
+                point_op_class->scanline_func = gegl_print_op_scanline_rgb_u16_4;
+                break;
+              default:
+                g_warning("gegl_print_op_prepare: Can't find data_type\n");    
+                break;
 
-	    }
-	  break;
-	case GRAY:
-	  switch (data_type)
-	    {
-	    case U8:
-	      point_op_class->scanline_func = gegl_print_op_scanline_gray_u8;
-	      break;
-	    case FLOAT:
-	      point_op_class->scanline_func = gegl_print_op_scanline_gray_float;
-	      break;
-	    case U16:
-	      point_op_class->scanline_func = gegl_print_op_scanline_gray_u16;
-	      break;
-	    case U16_4:
-	      point_op_class->scanline_func = gegl_print_op_scanline_gray_u16_4;
-	      break;
-	    default:
-	      g_warning("gegl_print_op_prepare: Can't find data_type\n");    
-	      break;
-	    }
-	  break;
-	default:
-	  g_warning("gegl_print_op_prepare: Can't find colorspace\n");    
-	  break;
-	}
-    }
+              }
+            break;
+          case GRAY:
+            switch (data_type)
+              {
+              case U8:
+                point_op_class->scanline_func = gegl_print_op_scanline_gray_u8;
+                break;
+              case FLOAT:
+                point_op_class->scanline_func = gegl_print_op_scanline_gray_float;
+                break;
+              case U16:
+                point_op_class->scanline_func = gegl_print_op_scanline_gray_u16;
+                break;
+              case U16_4:
+                point_op_class->scanline_func = gegl_print_op_scanline_gray_u16_4;
+                break;
+              default:
+                g_warning("gegl_print_op_prepare: Can't find data_type\n");    
+                break;
+              }
+            break;
+          default:
+            g_warning("gegl_print_op_prepare: Can't find colorspace\n");    
+            break;
+          }
+        }
   } 
 
   private
   void
-  scanline_rgb_u8 (GeglPointOp *point_op,
-                       GeglImageIterator *dest_iter, 
-		       GeglImageIterator **src_iters)
+  scanline_rgb_u8 (GeglPointOp *self_point_op,
+                   GeglImageIterator *dest_iter, 
+                   GeglImageIterator **src_iters)
   {
-    GeglOp *op = GEGL_OP(point_op);
+    GeglOp *op = GEGL_OP(self_point_op);
     guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     guint8 *dest_data[4];
     gboolean dest_has_alpha;
     guint8 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
 
-    dest_has_alpha = op->_priv->has_alpha; 
+    dest_has_alpha = op->has_alpha; 
 
     gegl_image_iterator_get_scanline_data (dest_iter,
                 (guchar**)dest_data);
@@ -145,19 +145,19 @@ class Gegl:Print:Op from Gegl:Point:Op {
     
     while (width--)
       {
- 	printf("(");
-	printf ("%d ", *dest_r) ;
-	printf ("%d ", *dest_g) ;
-	printf ("%d ", *dest_b) ;
-	if (dest_has_alpha)
-	  printf ("%d ", *dest_alpha) ;
-	dest_r++;
-	dest_g++;
-	dest_b++;
-	if (dest_has_alpha)
-	  dest_alpha++;
+        printf("(");
+        printf ("%d ", *dest_r) ;
+        printf ("%d ", *dest_g) ;
+        printf ("%d ", *dest_b) ;
+        if (dest_has_alpha)
+          printf ("%d ", *dest_alpha) ;
+        dest_r++;
+        dest_g++;
+        dest_b++;
+        if (dest_has_alpha)
+          dest_alpha++;
 
- 	printf(")");
+        printf(")");
 
       }
       printf("\n");
@@ -165,18 +165,18 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
   private
   void
-  scanline_rgb_float (GeglPointOp *point_op,
-                       GeglImageIterator *dest_iter, 
-		       GeglImageIterator **src_iters)
+  scanline_rgb_float (GeglPointOp *self_point_op,
+                      GeglImageIterator *dest_iter, 
+                      GeglImageIterator **src_iters)
   {
-    GeglOp *op = GEGL_OP(point_op);
+    GeglOp *op = GEGL_OP(self_point_op);
     guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     gfloat *dest_data[4];
     gboolean dest_has_alpha;
     gfloat *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
 
-    dest_has_alpha = op->_priv->has_alpha; 
+    dest_has_alpha = op->has_alpha; 
 
     gegl_image_iterator_get_scanline_data (dest_iter,
                 (guchar**)dest_data);
@@ -190,19 +190,19 @@ class Gegl:Print:Op from Gegl:Point:Op {
     
     while (width--)
       {
- 	printf("(");
-	printf ("%.3f ", *dest_r) ;
-	printf ("%.3f ", *dest_g) ;
-	printf ("%.3f ", *dest_b) ;
-	if (dest_has_alpha)
-	  printf ("%.3f ", *dest_alpha) ;
-	dest_r++;
-	dest_g++;
-	dest_b++;
-	if (dest_has_alpha)
-	  dest_alpha++;
+        printf("(");
+        printf ("%.3f ", *dest_r) ;
+        printf ("%.3f ", *dest_g) ;
+        printf ("%.3f ", *dest_b) ;
+        if (dest_has_alpha)
+          printf ("%.3f ", *dest_alpha) ;
+        dest_r++;
+        dest_g++;
+        dest_b++;
+        if (dest_has_alpha)
+          dest_alpha++;
 
- 	printf(")");
+        printf(")");
 
       }
       printf("\n");
@@ -210,18 +210,18 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
   private
   void
-  scanline_rgb_u16 (GeglPointOp *point_op,
-                       GeglImageIterator *dest_iter, 
-		       GeglImageIterator **src_iters)
+  scanline_rgb_u16 (GeglPointOp *self_point_op,
+                    GeglImageIterator *dest_iter, 
+                    GeglImageIterator **src_iters)
   {
-    GeglOp *op = GEGL_OP(point_op);
+    GeglOp *op = GEGL_OP(self_point_op);
     guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     guint16 *dest_data[4];
     gboolean dest_has_alpha;
     guint16 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
 
-    dest_has_alpha = op->_priv->has_alpha; 
+    dest_has_alpha = op->has_alpha; 
 
     gegl_image_iterator_get_scanline_data (dest_iter,
                 (guchar**)dest_data);
@@ -255,18 +255,18 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
   private
   void
-  scanline_rgb_u16_4 (GeglPointOp *point_op,
-                       GeglImageIterator *dest_iter, 
-		       GeglImageIterator **src_iters)
+  scanline_rgb_u16_4 (GeglPointOp *self_point_op,
+                      GeglImageIterator *dest_iter, 
+                      GeglImageIterator **src_iters)
   {
-    GeglOp *op = GEGL_OP(point_op);
+    GeglOp *op = GEGL_OP(self_point_op);
     guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     guint16 *dest_data[4];
     gboolean dest_has_alpha;
     guint16 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
 
-    dest_has_alpha = op->_priv->has_alpha; 
+    dest_has_alpha = op->has_alpha; 
 
     gegl_image_iterator_get_scanline_data (dest_iter,
                 (guchar**)dest_data);
@@ -300,18 +300,18 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
   private
   void
-  scanline_gray_u8 (GeglPointOp *point_op,
-                       GeglImageIterator *dest_iter, 
-		       GeglImageIterator **src_iters)
+  scanline_gray_u8 (GeglPointOp *self_point_op,
+                    GeglImageIterator *dest_iter, 
+                    GeglImageIterator **src_iters)
   {
-    GeglOp *op = GEGL_OP(point_op);
+    GeglOp *op = GEGL_OP(self_point_op);
     guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     guint8 *dest_data[2];
     gboolean dest_has_alpha;
     guint8 *dest_gray, *dest_alpha=NULL;
 
-    dest_has_alpha = op->_priv->has_alpha; 
+    dest_has_alpha = op->has_alpha; 
 
     gegl_image_iterator_get_scanline_data (dest_iter,
                 (guchar**)dest_data);
@@ -339,18 +339,18 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
   private
   void
-  scanline_gray_float (GeglPointOp *point_op,
+  scanline_gray_float (GeglPointOp *self_point_op,
                        GeglImageIterator *dest_iter, 
-		       GeglImageIterator **src_iters)
+                       GeglImageIterator **src_iters)
   {
-    GeglOp *op = GEGL_OP(point_op);
+    GeglOp *op = GEGL_OP(self_point_op);
     guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     gfloat *dest_data[2];
     gboolean dest_has_alpha;
     gfloat *dest_gray, *dest_alpha=NULL;
 
-    dest_has_alpha = op->_priv->has_alpha; 
+    dest_has_alpha = op->has_alpha; 
 
     gegl_image_iterator_get_scanline_data (dest_iter,
                 (guchar**)dest_data);
@@ -378,18 +378,18 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
   private
   void
-  scanline_gray_u16 (GeglPointOp *point_op,
-                       GeglImageIterator *dest_iter, 
-		       GeglImageIterator **src_iters)
+  scanline_gray_u16 (GeglPointOp *self_point_op,
+                     GeglImageIterator *dest_iter, 
+                     GeglImageIterator **src_iters)
   {
-    GeglOp *op = GEGL_OP(point_op);
+    GeglOp *op = GEGL_OP(self_point_op);
     guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     guint16 *dest_data[2];
     gboolean dest_has_alpha;
     guint16 *dest_gray, *dest_alpha=NULL;
 
-    dest_has_alpha = op->_priv->has_alpha; 
+    dest_has_alpha = op->has_alpha; 
 
     gegl_image_iterator_get_scanline_data (dest_iter,
                 (guchar**)dest_data);
@@ -417,18 +417,18 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
   private
   void
-  scanline_gray_u16_4 (GeglPointOp *point_op,
+  scanline_gray_u16_4 (GeglPointOp *self_point_op,
                        GeglImageIterator *dest_iter, 
-		       GeglImageIterator **src_iters)
+                       GeglImageIterator **src_iters)
   {
-    GeglOp *op = GEGL_OP(point_op);
+    GeglOp *op = GEGL_OP(self_point_op);
     guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     guint16 *dest_data[2];
     gboolean dest_has_alpha;
     guint16 *dest_gray, *dest_alpha=NULL;
 
-    dest_has_alpha = op->_priv->has_alpha; 
+    dest_has_alpha = op->has_alpha; 
 
     gegl_image_iterator_get_scanline_data (dest_iter,
                 (guchar**)dest_data);
@@ -453,5 +453,4 @@ class Gegl:Print:Op from Gegl:Point:Op {
       }
       printf("\n");
   }
-
 }

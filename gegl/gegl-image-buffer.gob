@@ -38,7 +38,7 @@ class Gegl:Image:Buffer from Gegl:Image {
     GEGL_OBJECT(self)->constructed = TRUE;
 
     /* Ref and sink it */
-    gtk_object_ref(GTK_OBJECT(self));
+    gegl_object_ref(GEGL_OBJECT(self));
     gtk_object_sink(GTK_OBJECT(self));
 
     return self;
@@ -77,33 +77,33 @@ class Gegl:Image:Buffer from Gegl:Image {
   set_data(self, 
            guchar *data)
   {
-    GeglImage *image  = GEGL_IMAGE(self);
-    GeglColorModel *cm = image->_priv->color_model;
+    GeglImage *self_image  = GEGL_IMAGE(self);
+    GeglColorModel *cm = gegl_image_color_model(self_image);
 
     gint bpc = gegl_color_model_bytes_per_channel(cm);  
-    gint w = image->_priv->width;  
-    gint h = image->_priv->height;  
+    gint w = self_image->width;  
+    gint h = self_image->height;  
     gint num_channels = gegl_color_model_bytes_per_channel(cm);
     gint channel_bytes = bpc * w * h;
 
-    guchar *s;
-    guchar *d;
+    guchar *s, *d;
     gint i,j;
+    guchar **data_ptrs = gegl_image_get_data(self_image);
 
     for(i = 0; i < num_channels; i++)
       {
-        d = image->_priv->data[i];
-	s = data + i * channel_bytes;
+        d = data_ptrs[i];
+        s = data + i * channel_bytes;
 
-	/* copy in the channel */
-	for(j = 0; j < channel_bytes; j++)
-	  *d++ = *s++;
+        /* copy in the channel */
+        for(j = 0; j < channel_bytes; j++)
+	      *d++ = *s++;
       }
   }
 
   override (Gegl:Image)
   GeglImage * 
-  get_pixels (GeglImage *image,
+  get_pixels (GeglImage *self_image,
               GeglImage *dest,
               GeglRect *roi)
   {
@@ -114,11 +114,11 @@ class Gegl:Image:Buffer from Gegl:Image {
       }
     else if (!dest)  /* just a leaf of a tree */
       {
-        return image;
+        return self_image;
       }
     else
       copy_pixels (GEGL_IMAGE_BUFFER(dest), roi, 
-                   GEGL_IMAGE_BUFFER(image), roi);   
+                   GEGL_IMAGE_BUFFER(self_image), roi);   
   
    return dest;
   }

@@ -1,4 +1,4 @@
-noinst_PROGRAMS = testgegl
+noinst_PROGRAMS = testgegl testgeglfile
 
 lib_LTLIBRARIES = libgegl.la
 
@@ -234,6 +234,11 @@ testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(DEPS)
 testgegl_LDADD = $(LDADDS) -lm
 
+testgeglfile_SOURCES = testgeglfile.c
+testgeglfile_LDFLAGS = -g
+testgeglfile_DEPENDENCIES = $(DEPS)
+testgeglfile_LDADD = $(LDADDS) -ltiff -lm
+
 tests:
 
 %.c %.h: %.gob
@@ -243,9 +248,6 @@ tests:
 	../codegen/codegen --channel-names r,g,b --channel-data-file ../codegen/channel_data/float $< > $@ 
 
 distclean-local: gilclean
-
-hello:
-	echo "hello"
 
 gilclean: clean gobclean
 	rm -f $(GIL_GEN_GOB)

@@ -14,15 +14,14 @@ typedef struct _GeglColor GeglColor;
 
 class Gegl:Color:Model:Gray from Gegl:Color:Model {
 
-  private gint gray_index;
+  protected gint gray_index;
 
   protected 
   gboolean 
   constructor(self, 
               gboolean has_alpha)
   {
-    GeglColorModelPrivate *color_modelP = 
-              (GeglColorModelPrivate*)(GEGL_COLOR_MODEL (self)->_priv);
+    GeglColorModel *self_color_model = GEGL_COLOR_MODEL (self);
 
     if (GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -31,29 +30,29 @@ class Gegl:Color:Model:Gray from Gegl:Color:Model {
     if (!gegl_color_model_constructor (GEGL_COLOR_MODEL(self), has_alpha))
       return FALSE;
 
-    if (color_modelP->has_alpha)
+    if (self_color_model->has_alpha)
      {
-       color_modelP->alpha_channel = 1;
-       color_modelP->num_channels = 2;
+       self_color_model->alpha_channel = 1;
+       self_color_model->num_channels = 2;
      }
     else
      {
-       color_modelP->alpha_channel = -1;
-       color_modelP->num_channels = 1;
+       self_color_model->alpha_channel = -1;
+       self_color_model->num_channels = 1;
      }
 
     /* We can set these here */
-    color_modelP->colorspace = GRAY;
-    color_modelP->is_additive = TRUE;
-    color_modelP->color_space_name = NULL;
+    self_color_model->colorspace = GRAY;
+    self_color_model->is_additive = TRUE;
+    self_color_model->color_space_name = NULL;
     
     /* Allocate memory for these then --will need a destroy then */
-    color_modelP->channel_names = NULL;
-    color_modelP->color_space_name = NULL;
+    self_color_model->channel_names = NULL;
+    self_color_model->color_space_name = NULL;
 
     /* Right now just do the typical gray */ 
 
-    self->_priv->gray_index = 0;
+    self->gray_index = 0;
 
     return TRUE;
   }
@@ -72,6 +71,6 @@ class Gegl:Color:Model:Gray from Gegl:Color:Model {
   gint 
   get_gray_index (self) 
   { 
-    return self->_priv->gray_index; 
+    return self->gray_index; 
   }
 }

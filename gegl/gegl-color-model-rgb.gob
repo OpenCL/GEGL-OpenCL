@@ -14,16 +14,16 @@ typedef struct _GeglColor GeglColor;
 
 class Gegl:Color:Model:Rgb from Gegl:Color:Model {
 
-  private gint red_index;
-  private gint green_index;
-  private gint blue_index;
+  protected gint red_index;
+  protected gint green_index;
+  protected gint blue_index;
 
   protected 
   gboolean 
-  constructor(self, gboolean has_alpha)
+  constructor(self, 
+              gboolean has_alpha)
   {
-    GeglColorModelPrivate *color_modelP = 
-              (GeglColorModelPrivate*)(GEGL_COLOR_MODEL (self)->_priv);
+    GeglColorModel*self_color_model = GEGL_COLOR_MODEL (self);
 
     if (GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -32,31 +32,31 @@ class Gegl:Color:Model:Rgb from Gegl:Color:Model {
     if (!gegl_color_model_constructor (GEGL_COLOR_MODEL(self), has_alpha))
       return FALSE;
 
-    if (color_modelP->has_alpha)
+    if (self_color_model->has_alpha)
      {
-       color_modelP->alpha_channel = 3;
-       color_modelP->num_channels = 4;
+       self_color_model->alpha_channel = 3;
+       self_color_model->num_channels = 4;
      }
     else
      {
-       color_modelP->alpha_channel = -1;
-       color_modelP->num_channels = 3;
+       self_color_model->alpha_channel = -1;
+       self_color_model->num_channels = 3;
      }
 
     /* We can set these here */
-    color_modelP->colorspace = RGB;
-    color_modelP->is_additive = TRUE;
-    color_modelP->color_space_name = NULL;
+    self_color_model->colorspace = RGB;
+    self_color_model->is_additive = TRUE;
+    self_color_model->color_space_name = NULL;
     
     /* Allocate memory for these then --will need a destroy then */
-    color_modelP->channel_names = NULL;
-    color_modelP->color_space_name = NULL;
+    self_color_model->channel_names = NULL;
+    self_color_model->color_space_name = NULL;
 
     /* Right now just do the typical rgb */ 
 
-    self->_priv->red_index = 0;
-    self->_priv->green_index = 1;
-    self->_priv->blue_index = 2;
+    self->red_index = 0;
+    self->green_index = 1;
+    self->blue_index = 2;
 
     return TRUE;
   }
@@ -75,20 +75,20 @@ class Gegl:Color:Model:Rgb from Gegl:Color:Model {
   gint 
   get_red_index (self) 
   { 
-    return self->_priv->red_index; 
+    return self->red_index; 
   }
 
   public 
   gint 
   get_green_index (self)
   { 
-    return self->_priv->green_index; 
+    return self->green_index; 
   }
 
   public
   gint 
   get_blue_index (self)
   { 
-    return self->_priv->blue_index; 
+    return self->blue_index; 
   }
 }

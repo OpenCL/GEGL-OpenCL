@@ -55,10 +55,10 @@ class Gegl:Point:Op from Gegl:Op {
        Need rect of children is same size as for point op,
        just translated back to childrens coordinate system
     */ 
-    gegl_rect_copy (need_rect, &self_op->_priv->need_rect);
+    gegl_rect_copy (need_rect, &self_op->need_rect);
  
-    need_rect->x -= self_op->_priv->input_offsets[i].x;
-    need_rect->y -= self_op->_priv->input_offsets[i].y;
+    need_rect->x -= self_op->input_offsets[i].x;
+    need_rect->y -= self_op->input_offsets[i].y;
 
   }
 
@@ -67,9 +67,9 @@ class Gegl:Point:Op from Gegl:Op {
   compute_result_rect (GeglOp *self_op) 
   {
     GeglImage *self_image = GEGL_IMAGE(self_op);
-    gegl_rect_intersect (&self_op->_priv->result_rect, 
-                         &self_op->_priv->need_rect,
-                         &self_image->_priv->have_rect);
+    gegl_rect_intersect (&self_op->result_rect, 
+                         &self_op->need_rect,
+                         &self_image->have_rect);
   }
 
   override (Gegl:Op) 
@@ -84,7 +84,7 @@ class Gegl:Point:Op from Gegl:Op {
     GeglImage *input;
     gint i;
 
-    gegl_rect_set(&self_image->_priv->have_rect, 0, 0, G_MAXINT, G_MAXINT);
+    gegl_rect_set(&self_image->have_rect, 0, 0, G_MAXINT, G_MAXINT);
 
     /* Lets take the intersection of all the have_rects,
        though this isnt ideal, it covers some important cases. */ 
@@ -95,13 +95,13 @@ class Gegl:Point:Op from Gegl:Op {
         gegl_image_get_have_rect (input, &have_rect);
 
         /* Put in the offsets for this op */
-        have_rect.x += self_op->_priv->input_offsets[i].x;
-        have_rect.y += self_op->_priv->input_offsets[i].y;
+        have_rect.x += self_op->input_offsets[i].x;
+        have_rect.y += self_op->input_offsets[i].y;
 
         gegl_rect_intersect (&intersection, 
-            &self_image->_priv->have_rect, &have_rect); 
+            &self_image->have_rect, &have_rect); 
 
-        gegl_rect_copy(&self_image->_priv->have_rect, &intersection);
+        gegl_rect_copy(&self_image->have_rect, &intersection);
 
       }
   }
@@ -127,10 +127,10 @@ class Gegl:Point:Op from Gegl:Op {
     /* Set up the source and dest iterators */
     for (i = 0; i < num_inputs; i++)
       {
-        gegl_rect_copy (&rect, &self_op->_priv->result_rect);  
+        gegl_rect_copy (&rect, &self_op->result_rect);  
 
-        rect.x -= self_op->_priv->input_offsets[i].x;
-        rect.y -= self_op->_priv->input_offsets[i].y;
+        rect.x -= self_op->input_offsets[i].x;
+        rect.y -= self_op->input_offsets[i].y;
 
         input = GEGL_IMAGE(gegl_node_get_nth_input(self_node,i));
         src_iters[i] = gegl_image_iterator_new (input, &rect);
@@ -156,8 +156,7 @@ class Gegl:Point:Op from Gegl:Op {
     /* Free the source and dest iterators */
     for (i = 0; i < num_inputs; i++)
       gtk_object_unref (GTK_OBJECT (src_iters[i])); 
-
-    gtk_object_unref(GTK_OBJECT (dest_iter));
+    gegl_object_unref(GEGL_OBJECT (dest_iter));
 
     /* Free the arrays of iters and rects */
     g_free (src_iters);

@@ -22,12 +22,12 @@ class Gegl:Image from Gegl:Node {
 
   private GeglColorModel *color_model;
 
-  private gint width;
-  private gint height;
+  protected gint width;
+  protected gint height;
 
-  private guchar **data;         /* actual channel data pointers  */
-  private GeglRect data_rect;    /* data represents this sub rect */
-  private GeglRect have_rect;    /* ie the domain of definition   */
+  private guchar **data;           /* actual channel data pointers  */
+  protected GeglRect data_rect;    /* data represents this sub rect */
+  protected GeglRect have_rect;    /* ie the domain of definition   */
 
   protected 
   gboolean 
@@ -42,8 +42,8 @@ class Gegl:Image from Gegl:Node {
     if (!gegl_node_constructor (GEGL_NODE(self), name, inputs))
       return FALSE;
 
-    self->_priv->width = 0;
-    self->_priv->height = 0;
+    self->width = 0;
+    self->height = 0;
     self->_priv->color_model = NULL;
     self->_priv->data = NULL;
 
@@ -56,6 +56,11 @@ class Gegl:Image from Gegl:Node {
   {
     GeglImage *self = GEGL_IMAGE(object);
     free_data (self);
+
+    if(self->_priv->color_model)
+      gegl_object_unref(GEGL_OBJECT(self->_priv->color_model));
+
+    self->_priv->color_model = NULL;
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)
@@ -99,11 +104,11 @@ class Gegl:Image from Gegl:Node {
             }
         }
 
-      self->_priv->width = w;
-      self->_priv->height = h;
+      self->width = w;
+      self->height = h;
 
       /* The domain of definition by default is the whole thing */
-      gegl_rect_set (&self->_priv->have_rect,0,0,w,h);
+      gegl_rect_set (&self->have_rect,0,0,w,h);
     }
 
     return TRUE;
@@ -128,23 +133,23 @@ class Gegl:Image from Gegl:Node {
       }
 
     self->_priv->data = NULL;
-    self->_priv->width = 0;
-    self->_priv->height = 0;
-    gegl_rect_set (&self->_priv->have_rect,0,0,0,0);
+    self->width = 0;
+    self->height = 0;
+    gegl_rect_set (&self->have_rect,0,0,0,0);
   }
 
   public
   void 
   get_have_rect(self, GeglRect *have_rect)
   {
-    gegl_rect_copy (have_rect, &self->_priv->have_rect);
+    gegl_rect_copy (have_rect, &self->have_rect);
   }
 
   public
   void 
   set_have_rect(self, GeglRect *have_rect)
   {
-    gegl_rect_copy (&self->_priv->have_rect, have_rect);
+    gegl_rect_copy (&self->have_rect, have_rect);
   }
 
   public
@@ -158,14 +163,14 @@ class Gegl:Image from Gegl:Node {
   gint 
   get_width (self)
   {
-    return self->_priv->width;
+    return self->width;
   }
 
   public 
   gint 
   get_height (self)
   {
-    return self->_priv->height;
+    return self->height;
   }
 
   public
@@ -187,7 +192,13 @@ class Gegl:Image from Gegl:Node {
   set_color_model(self,
                   GeglColorModel *cm) 
   { 
+    /* Unref any old one */
+    if(self->_priv->color_model)
+      gegl_object_unref(GEGL_OBJECT(self->_priv->color_model)); 
+
+    /* Set and ref the new one */
     self->_priv->color_model = cm; 
+    gegl_object_ref(GEGL_OBJECT(cm));
   }
 
   virtual 

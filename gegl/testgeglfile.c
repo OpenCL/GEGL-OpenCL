@@ -146,7 +146,7 @@ display_image(GtkWidget *window,
 	gtk_preview_draw_row(GTK_PREVIEW(preview), tmp, 0, h-1-i, w);
 	gegl_image_iterator_next_scanline(iterator);  
       }
-    gegl_object_destroy (GEGL_OBJECT(iterator));
+    gegl_object_unref (GEGL_OBJECT(iterator));
   }
 
   g_free(data_ptrs1); 
@@ -167,7 +167,7 @@ premultiply_buffer(GeglImageBuffer *buffer,
   GeglImage *image = GEGL_IMAGE(buffer);
   GeglImage *op = GEGL_IMAGE(gegl_premult_op_new(image));
   gegl_image_get_pixels(op, image, rect);
-  gegl_object_destroy (GEGL_OBJECT(op));
+  gegl_object_unref (GEGL_OBJECT(op));
 }
 
 
@@ -178,7 +178,7 @@ unpremultiply_buffer(GeglImageBuffer *buffer,
   GeglImage *image = GEGL_IMAGE(buffer);
   GeglImage *op = GEGL_IMAGE(gegl_unpremult_op_new(image));
   gegl_image_get_pixels(op, image,rect);
-  gegl_object_destroy (GEGL_OBJECT(op));
+  gegl_object_unref (GEGL_OBJECT(op));
 }
 
 void
@@ -221,7 +221,7 @@ test_copy_op (GeglImageBuffer ** src_image_buffer,
   op = GEGL_IMAGE (gegl_copy_op_new (s));
 
   gegl_image_get_pixels (op, d, &dest_rect);   
-  gegl_object_destroy (GEGL_OBJECT(op));
+  gegl_object_unref (GEGL_OBJECT(op));
 
   /* display the destination */ 
   create_preview (&dest_window, &dest_preview, 
@@ -274,7 +274,7 @@ test_copychan_op (GeglImageBuffer ** src_image_buffer,
   op = GEGL_IMAGE (gegl_copychan_op_new (index, 4));
 
   gegl_image_get_pixels (op, s1, &src_rect[0]);   
-  gegl_object_destroy (GEGL_OBJECT(op));
+  gegl_object_unref (GEGL_OBJECT(op));
 
   /* display the destination */ 
   create_preview (&dest_window, &dest_preview, 
@@ -332,7 +332,7 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
       op = GEGL_IMAGE (gegl_composite_premult_op_new (s1, s2,i));
 
       gegl_image_get_pixels (op, d, &dest_rect);   
-      gegl_object_destroy (GEGL_OBJECT(op));
+      gegl_object_unref (GEGL_OBJECT(op));
 
       /* display the destination */ 
       create_preview (&dest_window[i], &dest_preview[i], 
@@ -354,7 +354,7 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
 
       op = GEGL_IMAGE(gegl_composite_op_new (s1,s2,i));
       gegl_image_get_pixels (op,d,&dest_rect);   
-      gegl_object_destroy (GEGL_OBJECT(op));
+      gegl_object_unref (GEGL_OBJECT(op));
 
       /* unpremultiplied dest, so premultiply on display */
       if (has_alpha)
@@ -370,8 +370,7 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
     }
 #endif
 
-  gegl_object_destroy (GEGL_OBJECT (dest_image_buffer));
-  gegl_object_destroy (GEGL_OBJECT (dest_color_model));
+  gegl_object_unref (GEGL_OBJECT (dest_image_buffer));
 }
 
 typedef enum
@@ -472,12 +471,12 @@ test_point_ops( GeglImageBuffer ** src_image_buffer,
 	              width, height, point_op_names[i]);
       display_image (dest_window[i], dest_preview[i], 
 	             dest_image_buffer, dest_rect, data_type);
-      gegl_object_destroy (GEGL_OBJECT(op));
+      gegl_object_unref (GEGL_OBJECT(op));
     }
 
 
-  gegl_object_destroy (GEGL_OBJECT (dest_image_buffer));
-  gegl_object_destroy (GEGL_OBJECT (dest_color_model));
+  gegl_object_unref (GEGL_OBJECT (dest_image_buffer));
+  gegl_object_unref (GEGL_OBJECT (dest_color_model));
 #endif
 }
 
@@ -697,11 +696,12 @@ main(int argc,
 #endif 
     } 
 
-  test_copy_op (src_image_buffer, src_width, src_height, src_rect);
+  test_composite_ops (src_image_buffer, src_width, src_height, src_rect);
 #if 0
   /* Test some of the GeglOps */  
+  test_copy_op (src_image_buffer, src_width, src_height, src_rect);
   test_composite_ops (src_image_buffer, src_width, src_height, src_rect);
-  /*test_point_ops (src_image_buffer, src_width, src_height, src_rect);*/ 
+  test_point_ops (src_image_buffer, src_width, src_height, src_rect); 
 #endif
 
   /* display the sources ie src1 and src2 */
@@ -726,8 +726,8 @@ main(int argc,
 
   for (k = 0; k < 2; k++)
     {
-      gegl_object_destroy(GEGL_OBJECT(src_image_buffer[k]));
-      gegl_object_destroy(GEGL_OBJECT(src_color_model[k]));
+      gegl_object_unref(GEGL_OBJECT(src_image_buffer[k]));
+      gegl_object_unref(GEGL_OBJECT(src_color_model[k]));
     }  
 
   gtk_main();

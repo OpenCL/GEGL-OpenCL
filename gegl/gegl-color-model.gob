@@ -24,25 +24,25 @@ typedef void (*ConvertFunc)(GeglColorModel *,
 
 class Gegl:Color:Model from Gegl:Object {
 
-  private GeglColorSpace  colorspace;       /*RGB, GRAY, CMYK, etc*/
-  private GeglChannelDataType data_type;    /*FLOAT, U8, U16, etc*/
+  protected GeglColorSpace  colorspace;       /*RGB, GRAY, CMYK, etc*/
+  protected GeglChannelDataType data_type;    /*FLOAT, U8, U16, etc*/
 
-  private gint       bytes_per_channel;
-  private gint       bytes_per_pixel;  
-  private gint       num_channels;     /* total number of channels */
-  private gint       num_colors;       /* number of color channels */
-  private gboolean   has_alpha;        /* is there an alpha   */ 
-  private gint       alpha_channel;    /* alpha channel index */
-  private gboolean   is_premultiplied; /* model represents premultiplied*/
+  protected gint       bytes_per_channel;
+  protected gint       bytes_per_pixel;  
+  protected gint       num_channels;     /* total number of channels */
+  protected gint       num_colors;       /* number of color channels */
+  protected gboolean   has_alpha;        /* is there an alpha   */ 
+  protected gint       alpha_channel;    /* alpha channel index */
+  protected gboolean   is_premultiplied; /* model represents premultiplied*/
 
-  private gboolean   is_additive;      /* bigger is brighter  */
-  private gboolean   is_subtractive;   /* bigger is darker    */
-  private guint      ID;               /* a unique id */
+  protected gboolean   is_additive;      /* bigger is brighter  */
+  protected gboolean   is_subtractive;   /* bigger is darker    */
+  protected guint      ID;               /* a unique id */
 
-  private const char**channel_names;   /* name of each channel */
-  private const char *color_space_name;/* name of this color space */
-  private const char *alpha_string;    /* "Alpha" or "\0"          */
-  private const char *channel_data_type_name;  /*name of channel data type*/
+  protected const char**channel_names;   /* name of each channel */
+  protected const char *color_space_name;/* name of this color space */
+  protected const char *alpha_string;    /* "Alpha" or "\0"          */
+  protected const char *channel_data_type_name;  /*name of channel data type*/
 
   protected 
   gboolean 
@@ -55,24 +55,24 @@ class Gegl:Color:Model from Gegl:Object {
     if (!gegl_object_constructor (GEGL_OBJECT(self)))
        return FALSE;
        
-    self->_priv->colorspace = COLORSPACE_NONE;
-    self->_priv->data_type = DATATYPE_NONE;
-    self->_priv->bytes_per_channel = -1;
-    self->_priv->bytes_per_pixel = -1; 
-    self->_priv->num_channels = -1; 
-    self->_priv->num_colors = -1;
-    self->_priv->has_alpha = has_alpha;
-    self->_priv->alpha_channel = -1;
-    self->_priv->is_premultiplied = FALSE; 
+    self->colorspace = COLORSPACE_NONE;
+    self->data_type = DATATYPE_NONE;
+    self->bytes_per_channel = -1;
+    self->bytes_per_pixel = -1; 
+    self->num_channels = -1; 
+    self->num_colors = -1;
+    self->has_alpha = has_alpha;
+    self->alpha_channel = -1;
+    self->is_premultiplied = FALSE; 
 
-    self->_priv->is_additive = FALSE;
-    self->_priv->is_subtractive = FALSE;
+    self->is_additive = FALSE;
+    self->is_subtractive = FALSE;
 
-    self->_priv->channel_names = NULL;
-    self->_priv->color_space_name = NULL;
-    self->_priv->alpha_string = NULL;
-    self->_priv->channel_data_type_name = NULL;
-    self->_priv->ID = -1;
+    self->channel_names = NULL;
+    self->color_space_name = NULL;
+    self->alpha_string = NULL;
+    self->channel_data_type_name = NULL;
+    self->ID = -1;
 
     return TRUE;
   }
@@ -80,53 +80,53 @@ class Gegl:Color:Model from Gegl:Object {
   public 
   GeglColorSpace 
   color_space(self) 
-  { return self->_priv->colorspace; } 
+  { return self->colorspace; } 
 
   public
   GeglChannelDataType       
   data_type(self) 
-  { return self->_priv->data_type; }
+  { return self->data_type; }
 
   public
   gint       
   bytes_per_channel(self) 
-  { return self->_priv->bytes_per_channel; }
+  { return self->bytes_per_channel; }
 
   public
   gint       
   bytes_per_pixel(self) 
-  { return self->_priv->bytes_per_pixel; }
+  { return self->bytes_per_pixel; }
 
   public
   gint       
   num_channels(self) 
-  { return self->_priv->num_channels; }
+  { return self->num_channels; }
 
   public
   gint       
   num_colors(self) 
-  { return self->_priv->num_colors; }
+  { return self->num_colors; }
 
   public 
   gboolean       
   has_alpha(self) 
-  { return self->_priv->has_alpha; }
+  { return self->has_alpha; }
 
   public 
   gint       
   alpha_channel(self) 
-  { return self->_priv->alpha_channel; }
+  { return self->alpha_channel; }
 
   public 
   gboolean        
   is_premultiplied(self) 
-  { return self->_priv->is_premultiplied; }
+  { return self->is_premultiplied; }
 
   public 
   void
   set_is_premultiplied(self, 
                        gboolean is_premultiplied) 
-  { self->_priv->is_premultiplied = is_premultiplied ; }
+  { self->is_premultiplied = is_premultiplied ; }
 
   virtual 
   void 

@@ -1,6 +1,11 @@
 %h{
+#include <stdio.h>
 #include <gtk/gtk.h>
 #include "gegl-types.h"
+
+#define gegl_object_ref(o) gegl_object_ref_debug(o,__FILE__,__LINE__)
+#define gegl_object_unref(o) gegl_object_unref_debug(o,__FILE__,__LINE__)
+
 %}
 %{
 #include "gegl-object.h"
@@ -10,7 +15,8 @@
 
 class Gegl:Object from Gtk:Object {
 
-  public gboolean constructed;
+  protected gboolean constructed;
+  private gboolean trace_refs;
 
   init(object)
   {
@@ -21,6 +27,7 @@ class Gegl:Object from Gtk:Object {
   gboolean       
   constructor(self)
   {
+    self->_priv->trace_refs = FALSE;
     return TRUE;
   }
 
@@ -32,6 +39,68 @@ class Gegl:Object from Gtk:Object {
     PARENT_HANDLER (object)
   }
 
+  public 
+  void 
+  set_trace_refs (self,
+                  gboolean trace)
+  {
+    self->_priv->trace_refs = trace;
+  }
+
+  public 
+  gboolean 
+  get_trace_refs (self,
+                  gboolean trace)
+  {
+    return self->_priv->trace_refs;
+  }
+
+  public 
+  void 
+  ref_debug (self,
+             const gchar *func,
+             guint line)
+  {
+    if (self->_priv->trace_refs)
+      trace_referencing(self, func, line, TRUE);
+    else
+      gtk_object_ref(GTK_OBJECT(self));
+  }
+
+  public 
+  void 
+  unref_debug (self,
+               const gchar *func,
+               guint line)
+  {
+    if (self->_priv->trace_refs)
+      trace_referencing(self, func, line, FALSE);
+    else
+      gtk_object_unref(GTK_OBJECT(self));
+  }
+
+  private 
+  void
+  trace_referencing(self,
+                    const gchar *func,
+                    guint line, 
+                    gboolean do_ref)
+  {
+    fprintf (stdout, "trace: object_%s: (%s:%p)->ref_count=%d %s (%s:%d)\n",
+            do_ref ? "ref" : "unref",
+            gtk_type_name (GTK_OBJECT_TYPE (self)),
+            self,
+            GTK_OBJECT(self)->ref_count,
+            do_ref ? "+ 1" : "- 1",
+            func,
+            line);
+
+     if (do_ref) 
+       gtk_object_ref(GTK_OBJECT(self));
+     else
+       gtk_object_unref(GTK_OBJECT(self));
+  }
+                        
   public
   void 
   add_interface(GeglObject * obj, 

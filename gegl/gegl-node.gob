@@ -49,7 +49,7 @@ class Gegl:Node from Gegl:Object {
     GEGL_OBJECT(self)->constructed = TRUE;
 
     /* ref and sink it */
-    gtk_object_ref(GTK_OBJECT(self));
+    gegl_object_ref(GEGL_OBJECT(self));
     gtk_object_sink(GTK_OBJECT(self));
 
     return self;
@@ -69,7 +69,9 @@ class Gegl:Node from Gegl:Object {
 
     self->_priv->inputs = NULL;
 
-    /* Copy the list of inputs and data pointers */
+    /* Copy the list of inputs and data pointers,
+       then ref the inputs */
+
     add_inputs(self,inputs);
     self->_priv->num_inputs = g_list_length(self->_priv->inputs);
     self->_priv->outputs = NULL;
@@ -150,7 +152,7 @@ class Gegl:Node from Gegl:Object {
       ll->data = NULL;
 
       /* Unref me */
-      gtk_object_unref(GTK_OBJECT(self));
+      gegl_object_unref(GEGL_OBJECT(self));
 
       llink = g_list_next(llink);
     }
@@ -293,7 +295,7 @@ class Gegl:Node from Gegl:Object {
                                          (gpointer)output);
 
     /* ref me, since I am gaining an output */
-    gtk_object_ref(GTK_OBJECT(self));
+    gegl_object_ref(GEGL_OBJECT(self));
 
     return output;
   } 
@@ -312,7 +314,7 @@ class Gegl:Node from Gegl:Object {
                                          (gpointer)output);
 
     /* unref me, since I am losing an output */
-    gtk_object_unref(GTK_OBJECT(self));
+    gegl_object_unref(GEGL_OBJECT(self));
   }
 
   private 

@@ -36,7 +36,7 @@ class Gegl:Color from Gegl:Object {
     GEGL_OBJECT(self)->constructed = TRUE;
 
     /* Ref and sink it */
-    gtk_object_ref(GTK_OBJECT(self));
+    gegl_object_ref(GEGL_OBJECT(self));
     gtk_object_sink(GTK_OBJECT(self));
 
     return self;
@@ -54,9 +54,10 @@ class Gegl:Color from Gegl:Object {
       return FALSE;
 
     self->_priv->color_model = cm;
+    gegl_object_ref(GEGL_OBJECT(cm));
     self->_priv->num_channels = gegl_color_model_num_channels(cm);
-    self->_priv->channel_values = 
-                 g_new (GeglChannelValue, self->_priv->num_channels);
+    self->_priv->channel_values = g_new (GeglChannelValue, 
+                                         self->_priv->num_channels);
 
     return TRUE;
   }
@@ -69,6 +70,9 @@ class Gegl:Color from Gegl:Object {
 
     /* Dispose of channels values array*/
     g_free(self->_priv->channel_values);
+
+    /* Unref the color model */
+    gegl_object_unref(GEGL_OBJECT(self->_priv->color_model));
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)

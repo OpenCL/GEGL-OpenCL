@@ -33,7 +33,7 @@ class Gegl:Min:Op from Gegl:Dual:Src:Op {
     GEGL_OBJECT(self)->constructed = TRUE;
 
     /* ref and sink it */
-    gtk_object_ref(GTK_OBJECT(self));
+    gegl_object_ref(GEGL_OBJECT(self));
     gtk_object_sink(GTK_OBJECT(self));
 
     return self;
@@ -59,30 +59,30 @@ class Gegl:Min:Op from Gegl:Dual:Src:Op {
 
   override(Gegl:Op)
   void
-  prepare(GeglOp *op,
+  prepare(GeglOp *self_op,
           GeglImage *dest,
-	  GeglRect *dest_rect)
+          GeglRect *dest_rect)
   {
-    GeglPointOp *point_op = GEGL_POINT_OP (op);
-    GeglPointOpClass *point_op_class = 
-      GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+    GeglPointOp *self_point_op = GEGL_POINT_OP (self_op);
+    GeglPointOpClass *self_point_op_class = 
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_point_op)->klass);
 
     /* Save the alphas so we can get them quickly in 
        in the scanline func */
-    gegl_op_save_alphas(op);
+    gegl_op_save_alphas(self_op);
 
     /* Now make sure the correct scanline func is installed */
-    point_op_class->scanline_func = 
+    self_point_op_class->scanline_func = 
       gegl_min_op_scanline_COLORSPACE_DATATYPE;        
   } 
 
   private 
   void
-  scanline_COLORSPACE_DATATYPE (GeglPointOp *point_op,
-                       GeglImageIterator *dest_iter, 
-		       GeglImageIterator **src_iters)
+  scanline_COLORSPACE_DATATYPE (GeglPointOp *self_point_op,
+                                GeglImageIterator *dest_iter, 
+                                GeglImageIterator **src_iters)
   {
-    GeglOp *op = GEGL_OP(point_op);
+    GeglOp *self_op = GEGL_OP(self_point_op);
     guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     GENERIC_IMAGE_DECL_BEGIN
@@ -91,9 +91,9 @@ class Gegl:Min:Op from Gegl:Dual:Src:Op {
     Pixel src2(color,alpha,has_alpha);
     GENERIC_IMAGE_DECL_END
 
-    dest_has_alpha = op->_priv->has_alpha; 
-    src1_has_alpha = op->_priv->input_has_alpha[0]; 
-    src2_has_alpha = op->_priv->input_has_alpha[1]; 
+    dest_has_alpha = self_op->has_alpha; 
+    src1_has_alpha = self_op->input_has_alpha[0]; 
+    src2_has_alpha = self_op->input_has_alpha[1]; 
 
     gegl_image_iterator_get_scanline_data (
 	dest_iter, (guchar**)dest_data);
