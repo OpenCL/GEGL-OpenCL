@@ -1,3 +1,18 @@
+Thu May  4 16:29:11 PDT 2000 caro@rhythm.com
+
+	* check in for docs
+
+	* changed MIN/MAX_CHANNEL to CHANNEL_MIN/MAX
+
+	* check in for codegen
+
+	* The varible macro is now called EXTERNAL_INIT.
+	you define this macro in the channel files.
+
+	* I have changes the channel files
+
+	* the pixel data file is gone.
+
 Thu May  4 10:06:06 PDT 2000 caro@rhythm.com
 
 	* check in for codegen

@@ -21,8 +21,8 @@ EXTERN char  *PROMOTE_TYPE_STR;
 EXTERN char  *SIGNED_PROMOTE_TYPE_STR;      
 EXTERN char  *WP_STR;   
 EXTERN char  *WP_NORM_STR;       
-EXTERN char  *MIN_CHANNEL_STR;   
-EXTERN char  *MAX_CHANNEL_STR;      
+EXTERN char  *CHANNEL_MIN_STR;   
+EXTERN char  *CHANNEL_MAX_STR;      
 EXTERN char  *ZERO_STR; 
 
 EXTERN char  *CHANNEL_CLAMP_STR;		
@@ -34,6 +34,7 @@ EXTERN char  *CHANNEL_MULT_STR;
 EXTERN char  *CHANNEL_ROUND_STR;	
 
 EXTERN char  *PRINT_STR;	
+EXTERN char  *EXTERNAL_INIT_STR;      
 
 /* these are related to the color space */
 EXTERN int    NUM_COLOR_CHANNEL;

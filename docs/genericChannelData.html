@@ -85,19 +85,19 @@ chars
 <b><tt>Channel
 </tt></b>would just be <b><tt>uint8</tt></b> as usual,&nbsp;
 and for floating point channel images it would be <b><tt>float</tt></b>.
-This channel math data type has a <b><tt>MIN_CHANNEL</tt></b> and<b><tt>
-MAX_CHANNEL </tt></b>which are the max and min values the data type can
+This channel math data type has a <b><tt>CHANNEL_MIN</tt></b> and<b><tt>
+CHANNEL_MAX </tt></b>which are the max and min values the data type can
 obtain. These are not to be confused with the colormodel white point interval,
 <b><tt>[0,WP]</tt></b>,
 which characterises a "black" to "white" range. We require that <b><tt>[0,WP]</tt></b>
 be contained within
-<b><tt>[MIN_CHANNEL, MAX_CHANNEL] </tt></b>though.
+<b><tt>[CHANNEL_MIN, CHANNEL_MAX] </tt></b>though.
 <p>Here are some important channel data type expressions involved with
 generic coding:
 <p><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt></b>channel
-data&nbsp; in <b><tt>[MIN_CHANNEL, MAX_CHANNEL]</tt></b>
+data&nbsp; in <b><tt>[CHANNEL_MIN, CHANNEL_MAX]</tt></b>
 <br><b><tt>FloatChannel&nbsp;&nbsp;&nbsp; </tt></b>float channel data in<b><tt>
-[MIN_CHANNEL, MAX_CHANNEL]</tt></b>
+[CHANNEL_MIN, CHANNEL_MAX]</tt></b>
 <p>In addition we will have occasion to refer to these restrictions of
 the above:
 <p><b><tt>Channel0W&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt></b>channel
@@ -107,14 +107,14 @@ WP]</tt></b>
 <h4>
 <u>examples:</u></h4>
 <b>1) <tt>uint8 </tt></b>with <b><tt>WP= 255</tt></b>:
-<blockquote><b><tt>[MIN_CHANNEL, MAX_CHANNEL] </tt></b>is<b><tt> [0,255]</tt></b>
+<blockquote><b><tt>[CHANNEL_MIN, CHANNEL_MAX] </tt></b>is<b><tt> [0,255]</tt></b>
 <br><b><tt>Channel </tt></b>is integer channel data in <b><tt>[0, 255]</tt></b>
 <br><b><tt>FloatChannel </tt></b>is float channel data in <b><tt>[0.0,
 255.0]</tt></b>
 <br><b><tt>Channel0W </tt></b>is same as <b><tt>Channel</tt></b>
 <br><b><tt>FloatChannel0W </tt></b>is same as <b><tt>FloatChannel</tt></b></blockquote>
 <b>2)</b> <b><tt>uint16</tt></b> with <b><tt>WP= 4095</tt></b>:
-<blockquote><b><tt>[MIN_CHANNEL, MAX_CHANNEL] </tt></b>is<b><tt> [0,65535]</tt></b>
+<blockquote><b><tt>[CHANNEL_MIN, CHANNEL_MAX] </tt></b>is<b><tt> [0,65535]</tt></b>
 <br><b><tt>Channel </tt></b>is integer channel data in <b><tt>[0, 65535]</tt></b>
 <br><b><tt>FloatChannel </tt></b>is float channel data in <b><tt>[0.0,
 65535.0]</tt></b>
@@ -122,7 +122,7 @@ WP]</tt></b>
 <br><b><tt>FloatChannel0W </tt></b>is float channel data in <b><tt>[0.0,
 4095.0]</tt></b></blockquote>
 <b>3)<tt> float </tt></b>with <b><tt>WP = 1.0</tt></b>:
-<blockquote><tt><b>[MIN_CHANNEL, MAX_CHANNEL]</b> </tt>is<tt> <b>[FLT_MIN,
+<blockquote><tt><b>[CHANNEL_MIN, CHANNEL_MAX]</b> </tt>is<tt> <b>[FLT_MIN,
 FLT_MAX]</b></tt>
 <br><b><tt>Channel </tt></b>is float channel data in <b><tt>[FLT_MIN, FLT_MAX]</tt></b>
 <br><b><tt>FloatChannel </tt></b>is same as <b><tt>Channel</tt></b>
@@ -157,9 +157,9 @@ we denote the <b><tt>Channel</tt></b> zero element by <b><tt>ZERO</tt></b>.
 <p><b><tt>WP_CLAMP: int, uint -> Channel0W</tt></b>
 <br><b><tt>WP_CLAMP: float ->FloatChannel0W</tt></b>
 <p>Finally we also need a way to "clamp" values to the channel interval
-<b><tt>[MIN_CHANNEL,
-MAX_CHANNEL]</tt></b>:
-<p><b><tt>CHANNEL_CLAMP: value -> [MIN_CHANNEL, MAX_CHANNEL]</tt></b>
+<b><tt>[CHANNEL_MIN,
+CHANNEL_MAX]</tt></b>:
+<p><b><tt>CHANNEL_CLAMP: value -> [CHANNEL_MIN, CHANNEL_MAX]</tt></b>
 <p>where value could be any type: <b><tt>int</tt></b>, <b><tt>uint</tt></b>,
 <b><tt>float</tt></b>,
 etc. Specifically we get this:

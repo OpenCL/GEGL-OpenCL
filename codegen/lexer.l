@@ -22,8 +22,7 @@ int PREV;
 %s			DATA_TYPE 
 %s			ARGUMENTS
 %s			DEFINITION
-%s 			VARIABLE_SCALER 
-%s 			VARIABLE_VECTOR 
+%s 			EXTERNAL_VARIABLE 
 white   		[ \t]+
 indent			[\n][ \t]*
 cont			("\\""\n")    
@@ -172,8 +171,7 @@ rm			[\t \n]*
     					strcpy (yylval.tok.string, yytext); 
     					return (MIN_MAX);
 					}
-<GENERIC_IMAGE_BLOCK>"PIXEL_INIT"	BEGIN VARIABLE_VECTOR; 	
-<GENERIC_IMAGE_BLOCK>"CHANNEL_INIT"	BEGIN VARIABLE_SCALER; 	
+<GENERIC_IMAGE_BLOCK>"EXTERNAL_INIT"	BEGIN EXTERNAL_VARIABLE; 	
 
 <GENERIC_IMAGE_BLOCK>"(Promote)"	return(PROMOTE_TYPE); 
 <GENERIC_IMAGE_BLOCK>"(SignedPromote)"	return(SIGNED_PROMOTE_TYPE); 
@@ -191,10 +189,8 @@ rm			[\t \n]*
 <GENERIC_IMAGE_BLOCK>"^"		return(POWER);
 <GENERIC_IMAGE_BLOCK>"("		return(LT_PARENTHESIS);
 <GENERIC_IMAGE_BLOCK>")"		return(RT_PARENTHESIS);
-<VARIABLE_VECTOR>"("			;
-<VARIABLE_VECTOR>")"			BEGIN GENERIC_IMAGE_BLOCK;
-<VARIABLE_SCALER>"("			;
-<VARIABLE_SCALER>")"			BEGIN GENERIC_IMAGE_BLOCK;
+<EXTERNAL_VARIABLE>"("			;
+<EXTERNAL_VARIABLE>")"			BEGIN GENERIC_IMAGE_BLOCK;
 <GENERIC_IMAGE_BLOCK>"{"		{SCOPE ++; return(LT_CURLY);}
 <GENERIC_IMAGE_BLOCK>"}"		{SCOPE --; rm_varibles (SCOPE); return(RT_CURLY); } 
 <GENERIC_IMAGE_DECL>"{"			{SCOPE ++; ECHO;}
@@ -313,37 +309,12 @@ rm			[\t \n]*
 					  BEGIN DEFINITION;
 					return keywd.token;
 					}
-<VARIABLE_SCALER>{name}" "*{name}*	{
-      					char *varible;
-					char *type; 
-					varible  = (char*) strtok (yytext, " ");
-					type 	 = (char*) strtok (NULL, " "); 					
-      					yylval.elem.num = 0;
-					yylval.elem.dtype = TYPE_CHANNEL;
-					yylval.elem.type = TYPE_SCALER;
-					if (type)
-					  sprintf (yylval.elem.string, "%s%s", 
-					      varible, get_sufix (type));
-					else
-					  sprintf (yylval.elem.string, "%s%s", 
-					      varible, get_sufix ("DATATYPE"));
-					return VARIABLE; 	
-					}
-<VARIABLE_VECTOR>{name}" "*{name}*	{
-      					char *varible;
-					char *type;
-					varible  = (char*) strtok (yytext, " ");
-					type     = (char*) strtok (NULL, " ");
-
+<EXTERNAL_VARIABLE>{name}		{
     					yylval.elem.num = 0;
 					yylval.elem.dtype = TYPE_CHANNEL;
 					yylval.elem.type = TYPE_VECTOR;
-      					if (type)
-					  sprintf (yylval.elem.string, "%s$v%s", 
-					       varible, get_sufix (type));
-					else
-					  sprintf (yylval.elem.string, "%s$v%s", 
-					      varible, get_sufix ("DATATYPE"));
+					sprintf (yylval.elem.string, "%s$e.%s", 
+					      yytext, EXTERNAL_INIT_STR);
 				       	return VARIABLE; 	
       					}
 <DEFINITION>{string}			{

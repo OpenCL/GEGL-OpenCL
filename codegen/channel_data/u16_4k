@@ -4,12 +4,13 @@ PROMOTE_TYPE		    (guint32)
 SIGNED_PROMOTE_TYPE		    (gint32)  
 WP                  4095UL
 WP_NORM             (1/4095.0)
-MIN_CHANNEL         0
-MAX_CHANNEL         65535
+CHANNEL_MIN         0
+CHANNEL_MAX         65535
 ZERO                0UL
 CHANNEL_CLAMP (x)   CLAMP (x,0,65535)
 WP_CLAMP (x)        CLAMP (x,0,4095)
 CHANNEL_MULT (x,y)  (x * y)/4095UL
 CHANNEL_ROUND (x)   ROUND (x)
 PRINT (x)          printf (" %uh", x);
+EXTERNAL_INIT (x)  x.u16_k 
 DATATYPE_END

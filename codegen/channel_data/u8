@@ -4,12 +4,13 @@ PROMOTE_TYPE		   (guint32)
 SIGNED_PROMOTE_TYPE		   (gint32)
 WP                 255L
 WP_NORM            (1/255.0)
-MIN_CHANNEL        0
-MAX_CHANNEL        255
+CHANNEL_MIN        0
+CHANNEL_MAX        255
 ZERO               0	
 CHANNEL_CLAMP (x)  CLAMP (x,0,255)
 WP_CLAMP (x)       CLAMP (x,0,255)
 CHANNEL_MULT (x,y) (x * y) / 255L   
 CHANNEL_ROUND (x)  ROUND (x)
 PRINT (x)	   printf (" %d", x); 
+EXTERNAL_INIT (x)  x.u8
 DATATYPE_END

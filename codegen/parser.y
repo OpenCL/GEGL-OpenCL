@@ -69,14 +69,15 @@ int     cur_nsyms=0;
 	{"SIGNED_PROMOTE_TYPE", 0, DT_SIGNED_PROMOTE_TYPE},
 	{"WP", 0, DT_WP},
 	{"WP_NORM", 0, DT_WP_NORM},
-	{"MIN_CHANNEL", 0, DT_MIN_CHANNEL},
-	{"MAX_CHANNEL", 0, DT_MAX_CHANNEL},
+	{"CHANNEL_MIN", 0, DT_CHANNEL_MIN},
+	{"CHANNEL_MAX", 0, DT_CHANNEL_MAX},
 	{"ZERO", 0, DT_ZERO},
 	{"CHANNEL_CLAMP", 1, DT_CHANNEL_CLAMP},
 	{"WP_CLAMP", 1, DT_WP_CLAMP},
 	{"CHANNEL_MULT", 1, DT_CHANNEL_MULT},
 	{"CHANNEL_ROUND", 1, DT_CHANNEL_ROUND}, 
 	{"PRINT", 1, DT_PRINT}, 
+	{"EXTERNAL_INIT", 1, DT_EXTERNAL_INIT},
 	{"", 0, -1}
   }; 
 
@@ -138,7 +139,7 @@ int     cur_nsyms=0;
 
 /* tokens for data types */
 %token  DT_DATATYPE  DT_PROMOTE_TYPE  DT_SIGNED_PROMOTE_TYPE  DT_WP  DT_WP_NORM  
-%token  DT_MIN_CHANNEL DT_MAX_CHANNEL  DT_PRINT 
+%token  DT_CHANNEL_MIN DT_CHANNEL_MAX  DT_PRINT  DT_EXTERNAL_INIT  
 %token  DT_ZERO  DT_CHANNEL_CLAMP  DT_WP_CLAMP  DT_CHANNEL_MULT  DT_CHANNEL_ROUND DT_COMMA 
 %token  <tok> DT_NAME
 %token  <tok> DT_STRING
@@ -196,21 +197,21 @@ DT_Line:
 		WP_NORM_STR = (char *) strdup (&($2.string[i]));
 		WP_NORM_STR[strlen (WP_NORM_STR)] = '\0';   
 		}
-	| DT_MIN_CHANNEL DT_STRING
+	| DT_CHANNEL_MIN DT_STRING
 		{
 		int i=0;
 		while ($2.string[i] == '\t' || $2.string[i] == ' ')
 		  i++; 
-		MIN_CHANNEL_STR = (char *) strdup (&($2.string[i]));
-		MIN_CHANNEL_STR[strlen (MIN_CHANNEL_STR)] = '\0';   
+		CHANNEL_MIN_STR = (char *) strdup (&($2.string[i]));
+		CHANNEL_MIN_STR[strlen (CHANNEL_MIN_STR)] = '\0';   
 		}
-	| DT_MAX_CHANNEL DT_STRING
+	| DT_CHANNEL_MAX DT_STRING
 		{
 		int i=0;
 		while ($2.string[i] == '\t' || $2.string[i] == ' ')
 		  i++; 
-		MAX_CHANNEL_STR = (char *) strdup (&($2.string[i]));
-		MAX_CHANNEL_STR[strlen (MAX_CHANNEL_STR)] = '\0';   
+		CHANNEL_MAX_STR = (char *) strdup (&($2.string[i]));
+		CHANNEL_MAX_STR[strlen (CHANNEL_MAX_STR)] = '\0';   
 		}
 	| DT_ZERO DT_STRING
 		{
@@ -495,6 +496,14 @@ DT_Line:
 		if (tmp[j-1] == '\\') tmp[j-1] = '\0'; 
 		tmp[j] = '\0'; 
 		PRINT_STR = (char *) strdup (tmp); 
+		}
+	| DT_EXTERNAL_INIT LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING   
+		{
+		int i=0;
+		while ($5.string[i] != '.')
+		  i++; 
+		EXTERNAL_INIT_STR = (char *) strdup (&($5.string[i+1]));
+		EXTERNAL_INIT_STR[strlen (EXTERNAL_INIT_STR)] = '\0';   
 		}
 	;
 
@@ -1448,7 +1457,11 @@ print_line (elem_t src)
 	  is_alpha = 0; 
 	  for(j=0; j<l; j++)
 	    {
-	      if (j < l-2 && src.string[j] == '$' && src.string[j+1] == 'c' && src.string[j+2] == 'a')
+	      if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'e')
+		{
+		  src.string[j+1] = 'v'; 
+		}
+      	      if (j < l-2 && src.string[j] == '$' && src.string[j+1] == 'c' && src.string[j+2] == 'a')
 		{
 		  
 		  printf("_%s", NAME_COLOR_CHANNEL[i]);
@@ -1491,6 +1504,10 @@ print_line (elem_t src)
       {
 	for(j=0; j<l; j++)
 	  {
+	    if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'e')
+		{
+		  j += 2; 	  
+		}
 	    if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'v')
 	      {
 		printf("[%d]", i);
@@ -1513,6 +1530,10 @@ print_line (elem_t src)
 	{
 	  for(j=0; j<l; j++)
 	    {
+	      if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'e')
+		{
+		  j += 2; 	  
+		}
 	      if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'v')
 		{
 		  printf("[%d]", i);
@@ -2025,7 +2046,7 @@ main (int argc, char **argv)
 {
   int i=1;
   /* uncomment this to see lexer and parser debug info */
-  /* yydebug = 1; */   
+  /* yydebug = 1; */    
   
   if (argc < 7)
     {
