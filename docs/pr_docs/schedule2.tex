@@ -1,0 +1,97 @@
+
+The schedule for achieving GIMP 2.0 is broken into three main parts. 
+
+The first part involves the development of GEGL. Since GEGL is a low-level
+library to be used by GIMP, work for it can proceed somewhat independent of
+GIMP.    
+
+Once GEGL is far enough along, a simple skeleton of imaging and painting tools
+will be developed using GEGL. This stripped down version is called MicroGIMP
+and will include some simple paint, retouch and editing tools, enough to
+provide first tests of each of the major areas of functionality for GIMP:
+painting, editing, compositing, color conversions. 
+
+After MicroGIMP is built and tested as a small production tool, the rest of the
+major GIMP libraries will be built. These libraries include the various GIMP UI
+libs and the core code for GIMP's graphics objects (Images, Layers, Channels,
+Drawables). GIMPs task management (rendering pipeline), libraries for plugin
+communication  as well as GIMPs component for scripting (PDB, Procedural Data
+Base) are all included here.  
+
+\begin{flushleft}		
+\begin{tabular}{|p{2cm}|p{5cm}|p{2cm}|l|}\hline
+\multicolumn{4}{|c|}{\rule[-3mm]{0mm}{8mm} \large \bf Schedule for GIMP 2.0}\\  
+\hline
+Task & Description & Library & Cost\\ 
+\hline 
+
+\multicolumn{4}{|c|}{\bf MicroGIMP}\\
+\hline
+MicroGimp-skeleton & Create stripped down GIMP with basic simple toolbox ui. & gimpcore & 40h\\
+\hline
+MicroGimp-basic classes & Write initial simple versions of Image, Layer, Drawable classes for stripped down GIMP. & gimpcore & 40h\\
+\hline
+MicroGimp-paint core & Write the initial paint core code for microgimp using GEGL. & gimpcore & 80h\\
+\hline
+MicroGimp-tools & Write first test tools: paint, clone, simple edit tools  & gimpcore & 120h\\
+\hline
+
+\multicolumn{4}{|c|}{\bf GEGL}\\
+\hline
+Area Operation & Classes for common area operations in GEGL (convolve, kernel ops) & gegl & 120h\\
+\hline
+\raggedright{Geometric\\ Operations} & Classes for common geometric operations such as scaling, transformation. & gegl & 120h\\
+\hline
+GIL Specialization & Mechanism for allowing partial specialization in GIL code & gegl & 120h\\
+\hline
+Point Operations & Classes for LUT operations & gegl & 120h\\
+\hline
+\raggedright{Preprocessor for\\ codegen} & Generates colormodel and data type code from GIL specifications & gegl & 80h\\
+\hline
+\raggedright{Memory \\Management} & \raggedright{Cache and virtual memory management classes} & gegl & 300h\\
+\hline
+\raggedright{Multi-thread \\support} & \raggedright{Multi-threaded support for image operations.} & gegl & 200h\\  
+\hline
+
+\multicolumn{4}{|c|}{\bf GIMP}\\
+\hline 
+Image, Drawable, Layer, Channel & Complete Image, Drawable, Layer, Channel classes. The basic core classes used in gimp & gimpcore & 160h\\
+\hline 
+Widgets UI & Build utility widgets for use in other UI libs  & gimpwidgets & 200h\\
+\hline
+Core UI & Private widgets not shared with plugins & gimpcoreui & 120h\\
+\hline
+Gimp UI & Widgets shared with plugins & gimpui & 200h\\
+\hline 
+Painting tools & Paint, Airbrush, Erase, Blur... etc & gimpcore, gimpui & 120h \\
+\hline 
+Editing tools & Rect Select, Free select, Bezier... & gimpcore, gimpui & 120h \\
+\hline 
+\end{tabular}
+
+\begin{tabular}{|p{2cm}|p{5cm}|p{2cm}|l|}\hline
+\multicolumn{4}{|c|}{\rule[-3mm]{0mm}{8mm} \large \bf Schedule for GIMP 2.0}\\  
+\hline
+Task & Description & Library & Cost\\ 
+\hline 
+\multicolumn{4}{|c|}{\bf GIMP(cont)}\\
+\hline 
+Resize tools & Scale, Resize, Transform... & gimpcore, gimpui & 80h \\
+\hline 
+Image Adjustment tools & Brightness, Levels, Histogram & gimpcore, gimpui & 120h\\
+\hline
+Gimp Render Pipeline & Gimp task management code to manage calls to gegl, ui tasks, io & gimpcore, ggegl & 120h \\
+\hline 
+Generic UI & Widgets for multiple data types & gimpwidgets, gimpcoreui, gimpui & 120h\\
+\hline
+Undo & Build undo history mechanism & gimpcore & 100h\\
+\hline
+Plugin libraries & Corba based design for communication between plugins and gimp & gimpext, gimpiface & 300h\\
+\hline
+
+\multicolumn{3}{|r|}{Total man-hours} & \\
+\hline
+\end{tabular}
+\end{flushleft}
+
+	
