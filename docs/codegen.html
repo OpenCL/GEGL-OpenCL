@@ -4,316 +4,281 @@
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="Author" content="Caroline Dahllof">
    <meta name="GENERATOR" content="Mozilla/4.7 [en] (X11; U; IRIX64 6.2 IP28) [Netscape]">
-   <meta name="Keywords" content="GEGL CODEGEN GIMP">
-   <title>GEGL:CODEGEN</title>
+   <meta name="Keywords" content="Codegen GEGL GIMP">
+   <title>Codegen</title>
 </head>
-<body text="#003300" bgcolor="#FFCC99" link="#993300" vlink="#551A8B" alink="#FF0000">
-&nbsp;
-<center><table COLS=1 WIDTH="90%" NOSAVE >
-<tr>
-<td>
-<center><b><font face="Courier New,Courier"><font color="#FF6600"><font size=+4>CODEGEN</font></font></font></b>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+<b><font size=+4>CODEGEN</font></b>
+<p>Caroline Dahllof &lt;<a href="mailto: caro@rhythm.com">caro@rhythm.com</a>>
+<br>Calvin Williamson &lt;<a href="mailto:calvinw@mindspring.com">calvinw@mindspring.com</a>>
+<p><a href="#Introduction">Introduction</a>
+<br><a href="#run">How to run Codegen</a>
+<br><a href="#color channel names">Color Channel Names</a>
+<br><a href="#the lexer">The Lexer</a>
+<br><a href="#state diagram">Lexer: State Diagram</a>
+<br><a href="#l:dt_macros">Lexer: DT_MACORS</a>
+<br><a href="#l: arguments">Lexer: ARGUMENTS</a>
+<br><a href="#l: definitions">Lexer: DEFINITION</a>
+<br><a href="#p: dt macros">Parser: DT MACORS</a>
+<br><a href="#dt_keyword">dt_keyword</a>
+<br><a href="#l: generic_image_decl">Lexer: GENERIC_IMAGE_DECL</a>
+<br><a href="#p: declaration block">Parser: Declaration Block</a>
+<br><a href="#l: generic_image_code">Lexer: GENERIC_IMAGE_CODE</a>
+<br><a href="#p: code block">Parser: Code Block</a>
+<br><a href="#l:comment">Lexer: COMMENT</a>
+<br><a href="#l: external_variable">Lexer: EXTERNAL_VARIABLE</a>
+<br><a href="#reference">Reference</a>
+<br>
+<hr WIDTH="100%">
+<br><a NAME="Introduction"></a><b>Introduction</b>
+<p>Codegen is a part of GEGL, its purpose is to convert Generic Image Language
+(GIL) code into data type and color model specific code. Codegen is written
+in Flex and Bison. This document will give an overview of the implementation
+of Codegen, you should have a good understanding of the GIL before reading
+this document.
+<br>
+<hr WIDTH="100%">
+<br><a NAME="run"></a><b>How to run Codegen</b>
+<p>> codegen --channel-names COLOR_CHANNEL_NAMES --channel-data-file CHANNEL_DATA_FILE
+<p><i>--channel-names</i> Codegen expects a string that contains the channel
+names separated by commas after this flag . The first name will be the
+name of the first channel, the second name will be for the second channels
+and so on. Don't include the alpha channel in this string, Codegen will
+add this channel automatically. The alpha channel will be the last channel
+and it will be called alpha.
+<p><i>--channel-data-file</i> Channel data file contains the definition
+of the DT Macros and it specified with this flag. These channel data files
+are in the sub directory called channel_data.
+<p>The fifth argument can be a .gil file, if no file is supplied Codegen
+will assume the input will come from stdin. The result of Codegen is printed
+to stdout.
+<br>
+<hr WIDTH="100%">
+<br><a NAME="color channel names"></a><b>Color Channel Names</b>
+<p>This string gets parser in the parer.y:read_channel_names. It stores
+the channel name in NAME_COLOR_CHANNEL and the number of channels is stored
+in NUM_COLOR_CHANNEL (not including alpha). Remember that Codegen will
+add an extra channel called alpha and Codegen will assume this channel
+to be the alpha channel. These two variables are defined in data_type.h.
+<br>
+<hr WIDTH="100%">
+<br><a NAME="the lexer"></a><b>The Lexer.</b>
+<p>The lexer has eight states, and these states can further be divided
+into two types of states. The first type of states is used to parse the
+channel data file and the second type of states is used to parse the .gil
+files.
+<br>&nbsp;
+<br>&nbsp;
+<p>The channel data states are:
+<ul>
+<li>
+DT_MACROS</li>
+
+<li>
+ARGUMENTS</li>
+
+<li>
+DEFINITION</li>
+</ul>
+The DT_MACROS state will parse the name of the macros, ARGUMENTS will parse
+the arguments to the macro if there are any, and the DEFINITION will parse
+the definition of the macro.
+<p>The .gil file states are:
+<ul>
+<li>
+GENERIC_IMAGE_DECL</li>
+
+<li>
+GENERIC_IMAGE_CODE</li>
+
+<li>
+COMMENT</li>
+
+<li>
+EXTERNAL_VARIABLE</li>
+</ul>
+GENERIC_IMAGE_DECL will parse the declaration block of GIL, the GENERIC_IMAGE_CODE
+will parse the code block of GIL. The COMMENT state will parse any comments
+in the declaration or code block. The EXTERNAL_VARIABLE will parse any
+external variables in the code block of GIL.
+<p>Most time the lexer will either return a simple token or a token that
+contains a elem_t struct (defined in common.h) when it is the .gil file
+states.
+<p>In the initial state the lexer will just echo everything it reads.
+<br>
+<hr WIDTH="100%">
+<br><a NAME="state diagram"></a><b>Lexer: STATE DIAGRAM</b><b></b>
+<p><img SRC="file.gif" NOSAVE height=515 width=774>
 <p>
 <hr WIDTH="100%">
-<br><font size=-1>Caroline Dahllof &lt;caro@rhythm.com>&nbsp; ---&nbsp;
-Calvin Williamson &lt;calvinw@mindspring.com</font></center>
-
-<hr WIDTH="100%"></td>
-</tr>
-
-<tr NOSAVE>
-<td NOSAVE><b><font face="Courier New,Courier">Introduction.</font></b>
-<p><font face="Courier New,Courier">Codegen is a part of GEGL, its purpose
-is to convert Generic Image Language (GIL) code into data type and color
-model specific code. Codegen is written in Flex and Bison. This document
-will give an overview of the implementation of Codegen, you should have
-a good understanding of the GIL before reading this document.</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">How to run Codegen.</font></b>
-<p><font face="Courier New,Courier">> codegen --channel-names COLOR_CHANNEL_NAMES
---channel-data-file CHANNEL_DATA_FILE</font>
-<p><font face="Courier New,Courier"><i>--channel-names</i> Codegen expects
-a string that contains the channel names separated by commas after this
-flag . The first name will be the name of the first channel, the second
-name will be for the second channels and so on. Don't include the alpha
-channel in this string, Codegen will add this channel automatically. The
-alpha channel will be the last channel and it will be called alpha.&nbsp;</font>
-<p><font face="Courier New,Courier"><i>--channel-data-file</i> Channel
-data file contains the definition of the DT Macros and it specified with
-this flag. These channel data files are in the sub directory called channel_data.</font>
-<p><font face="Courier New,Courier">The fifth argument can be a .gil file,
-if no file is supplied Codegen will assume the input will come from stdin.
-The result of Codegen is printed to stdout.</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">Color Channel Names.</font></b>
-<p><font face="Courier New,Courier">This string gets parser in the parer.y:read_channel_names.
-It stores the channel name in NAME_COLOR_CHANNEL and the number of channels
-is stored in NUM_COLOR_CHANNEL (not including alpha). Remember that Codegen
-will add an extra channel called alpha and Codegen will assume this channel
-to be the alpha channel. These two variables are defined in data_type.h.</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">The Lexer.</font></b>
-<p><font face="Courier New,Courier">The lexer has eight states, and these
-states can further be divided into two types of states. The first type
-of states is used to parse the channel data file and the second type of
-states is used to parse the .gil files.</font>
-<p><font face="Courier New,Courier">The channel data states are:</font>
-<ul>
-<li>
-<font face="Courier New,Courier">DT_MACROS</font></li>
-
-<li>
-<font face="Courier New,Courier">ARGUMENTS</font></li>
-
-<li>
-<font face="Courier New,Courier">DEFINITION</font></li>
-</ul>
-<font face="Courier New,Courier">The DT_MACROS state will parse the name
-of the macros, ARGUMENTS will parse the arguments to the macro if there
-are any, and the DEFINITION will parse the definition of the macro.</font>
-<p><font face="Courier New,Courier">The .gil file states are:</font>
-<ul>
-<li>
-<font face="Courier New,Courier">GENERIC_IMAGE_DECL</font></li>
-
-<li>
-<font face="Courier New,Courier">GENERIC_IMAGE_CODE</font></li>
-
-<li>
-<font face="Courier New,Courier">COMMENT</font></li>
-
-<li>
-<font face="Courier New,Courier">EXTERNAL_VARIABLE</font></li>
-</ul>
-<font face="Courier New,Courier">GENERIC_IMAGE_DECL will parse the declaration
-block of GIL, the GENERIC_IMAGE_CODE will parse the code block of GIL.
-The COMMENT state will parse any comments in the declaration or code block.
-The EXTERNAL_VARIABLE will parse any external variables in the code block
-of GIL.&nbsp;</font>
-<p><font face="Courier New,Courier">Most time the lexer will either return
-a simple token or a token that contains a elem_t struct (defined in common.h)
-when it is the .gil file states.</font>
-<p><font face="Courier New,Courier">In the initial state the lexer will
-just echo everything it reads.</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">LEXER: STATE DIAGRAM</font></b>
-<p><img SRC="file.gif" NOSAVE height=515 width=774>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">LEXER: DT_MACROS</font></b>
-<p><font face="Courier New,Courier">When the lexer parses the string DT_MACROS_BEGIN
-in initial state, it will switch to its DT_MACROS state. In the DT_MACROS
-state it will parse upper case strings. When it finds a string it will
-check if it is a name of a macros it knows by calling parser.y:dt_get_keyword.
-This function will return a dt_keyword struct. The arg field will tell
-the lexer weather the macro has arguments or not. If the struct has arguments
-(arg==1) it will switch to ARGUMENTS and if it doesn't (arg==0) it will
-switch to DEFINITIONS. When it reads the string DT_MACROS_END it will switch
-back to the initial state.</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">LEXER: ARGUMENTS</font></b>
-<p><font face="Courier New,Courier">In this state the lexer will read all
-the arguments of the DT Macros. It will parse the parenthesis, the arguments,
-and the commas separating the arguments. After it has read the closing
-parenthesis it will switch state to DEFINITION.</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">LEXER: DEFINITION</font></b>
-<p><font face="Courier New,Courier">In this state the lexer will read a
-string that can include new line characters, spaces, parenthesis, numbers,
-and characters. After it has read the string it will switch back to the
-DT_MACROS state.&nbsp;</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">PARSER: DT MACROS</font></b>
-<p><font face="Courier New,Courier">The lexer will parse the channel data
-file and return tokens to the parser. The parser's grammar expects a dt_keyword.token
-and a DT_STRING (in the case of no arguments) or dt_keyword.token LT_PARENTHESIS
-DT_NAME (',' DT_NAME)* RT_PARENTHESIS DT_STRING. Once the parser has made
-sure that the grammar is correct it will assigned the corresponding string
-to the right global variable. These global variables are defined in data_type.h.
+<br><a NAME="l:dt_macros"></a><b>Lexer: DT_MACROS</b>
+<p>When the lexer parses the string DT_MACROS_BEGIN in initial state, it
+will switch to its DT_MACROS state. In the DT_MACROS state it will parse
+upper case strings. When it finds a string it will check if it is a name
+of a macros it knows by calling parser.y:dt_get_keyword. This function
+will return a dt_keyword struct. The arg field will tell the lexer weather
+the macro has arguments or not. If the struct has arguments (arg==1) it
+will switch to ARGUMENTS and if it doesn't (arg==0) it will switch to DEFINITIONS.
+When it reads the string DT_MACROS_END it will switch back to the initial
+state.
+<p>
+<hr WIDTH="100%">
+<br><a NAME="l: definitions"></a><b>Lexer: DEFINITION</b>
+<p>In this state the lexer will read a string that can include new line
+characters, spaces, parenthesis, numbers, and characters. After it has
+read the string it will switch back to the DT_MACROS state.
+<br>&nbsp;
+<br>
+<hr WIDTH="100%">
+<br><a NAME="l: arguments"></a><b>Lexer: ARGUMENTS</b>
+<p>In this state the lexer will read all the arguments of the DT Macros.
+It will parse the parenthesis, the arguments, and the commas separating
+the arguments. After it has read the closing parenthesis it will switch
+state to DEFINITION.
+<p>
+<hr WIDTH="100%">
+<br><a NAME="p: dt macros"></a><b>Parser: DT MACROS</b>
+<p>The lexer will parse the channel data file and return tokens to the
+parser. The parser's grammar expects a dt_keyword.token and a DT_STRING
+(in the case of no arguments) or dt_keyword.token LT_PARENTHESIS DT_NAME
+(',' DT_NAME)* RT_PARENTHESIS DT_STRING. Once the parser has made sure
+that the grammar is correct it will assigned the corresponding string to
+the right global variable. These global variables are defined in data_type.h.
 In the case of a macro with arguments, it will replace the name argument
 in the DT_STRING with the string $number-of-the-argument. For example,
-if it is the first argument it will be replaced by $1.&nbsp;</font>
-<p><font face="Courier New,Courier">The parser contains a dt_keyword_tab
-that is an array of dt_keyword struct.</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">dt_keyword</font></b>
-<p><font face="Courier New,Courier">This is a struct that contains the
-name of the macro, the field that tells the lexer weather or not the struct
-has arguments, and the token of the macro. All the allowed DT macros are
-stores in dt_keyword_tab.&nbsp;</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">LEXER: GENERIC_IMAGE_DECL</font></b>
-<p><font face="Courier New,Courier">When the lexer, in its initial state,
-finds the string GENERIC_IMAGE_DECL_BEGIN, it will switch to the GENERIC_IMAGE_DECL
-state. In this state the lexer will read all the variables that will be
-used in the code block. The lexer in this state reads indentations, data
-types, and the variable names. When it reads the GENERIC_IMAGE_DECL_END,
-it will switch back to the initial state. During the GENERIC_IMAGE_DECL
-state, if the lexer reads a /* it will switch to the COMMENT state and
-it will return form this state when it has read a */.</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">PARSER: DECLARATION BLOCK</font></b>
-<p><font face="Courier New,Courier">The parser expects first an indentation,
-then the data type, and finally the variable names. The grammars allows
-a list of variables names separated by ','.&nbsp;</font>
-<p><font face="Courier New,Courier">Pixel and Channel will be substituted
-by DATATYPE_STR. Depending on the arguments that is passed to Pixel, parser
-will defined some aux variables.&nbsp;</font>
-<p><font face="Courier New,Courier">All the variables are a elem_t struct
-(common.h) and when defined in the declaration block are added to the symtab
-(parser.y). elem_t has a field called scope which is assigned when a variable
-is defined. When a variable goes out of scope the variable is removed from
-the symtab. Remember that variables that are out of scope cannot be used
-in the code block.</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">LEXER: GENERIC_IMAGE_CODE</font></b>
-<p><font face="Courier New,Courier">When the lexer, in its initial state,
-reads the string GENERIC_IMAGE_CODE_BEGIN it will switch to the GENERIC_IMAGE_CODE
-state. In this state it will read the generic code. All the variables that
-it reads must have been defined in the declaration block first. When the
-lexer reads EXTERNAL_VARIABLE it will switch to the EXTERNAL_VARIABLE state
-and read the variable and then switch back. It will switch to the COMMENT
-state when it reads comments and the switch back. When it finally read
-GENERIC_IMAGE_CODE_END it will switch back to its initial state.</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">PARSER: GENERIC_IMAGE_CODE</font></b>
-<p><font face="Courier New,Courier">The parser will make sure that the
-generic code has the right grammar, if it does not, it will simple give
-an error and exit. The parser also makes sure that the variables that are
-in a function represent the same number of channels. For example, if you
-try to assign a rgb channels to an alpha channel (variable_alpha = variable_color),
-parser would give an error and exit.&nbsp;</font>
-<p><font face="Courier New,Courier">Parser will expand functions depending
-on the color channel names and variable used. For example, for the r,g,b
-channel color names:</font>
+if it is the first argument it will be replaced by $1.
+<p>The parser contains a dt_keyword_tab that is an array of dt_keyword
+struct.
+<p>
+<hr WIDTH="100%">
+<br><a NAME="dt_keyword"></a><b>dt_keyword</b>
+<p>This is a struct that contains the name of the macro, the field that
+tells the lexer weather or not the struct has arguments, and the token
+of the macro. All the allowed DT macros are stores in dt_keyword_tab.
+<p>
+<hr WIDTH="100%">
+<br><a NAME="l: generic_image_decl"></a><b>Lexer: GENERIC_IMAGE_DECL</b>
+<p>When the lexer, in its initial state, finds the string GENERIC_IMAGE_DECL_BEGIN,
+it will switch to the GENERIC_IMAGE_DECL state. In this state the lexer
+will read all the variables that will be used in the code block. The lexer
+in this state reads indentations, data types, and the variable names. When
+it reads the GENERIC_IMAGE_DECL_END, it will switch back to the initial
+state. During the GENERIC_IMAGE_DECL state, if the lexer reads a /* it
+will switch to the COMMENT state and it will return form this state when
+it has read a */.
+<p>
+<hr WIDTH="100%">
+<br><a NAME="p: declaration block"></a><b>Parser: Declaration block</b>
+<p>The parser expects first an indentation, then the data type, and finally
+the variable names. The grammars allows a list of variables names separated
+by ','.
+<p>Pixel and Channel will be substituted by DATATYPE_STR. Depending on
+the arguments that is passed to Pixel, parser will defined some aux variables.
+<p>All the variables are a elem_t struct (common.h) and when defined in
+the declaration block are added to the symtab (parser.y). elem_t has a
+field called scope which is assigned when a variable is defined. When a
+variable goes out of scope the variable is removed from the symtab. Remember
+that variables that are out of scope cannot be used in the code block.
+<p>
+<hr WIDTH="100%">
+<br><a NAME="l: generic_image_code"></a><b>Lexer: GENERIC_IMAGE_CODE</b>
+<p>When the lexer, in its initial state, reads the string GENERIC_IMAGE_CODE_BEGIN
+it will switch to the GENERIC_IMAGE_CODE state. In this state it will read
+the generic code. All the variables that it reads must have been defined
+in the declaration block first. When the lexer reads EXTERNAL_VARIABLE
+it will switch to the EXTERNAL_VARIABLE state and read the variable and
+then switch back. It will switch to the COMMENT state when it reads comments
+and the switch back. When it finally read GENERIC_IMAGE_CODE_END it will
+switch back to its initial state.
+<p>
+<hr WIDTH="100%">
+<br><a NAME="p: code block"></a><b>Parser: Code block</b>
+<p>The parser will make sure that the generic code has the right grammar,
+if it does not, it will simple give an error and exit. The parser also
+makes sure that the variables that are in a function represent the same
+number of channels. For example, if you try to assign a rgb channels to
+an alpha channel (variable_alpha = variable_color), parser would give an
+error and exit.
+<p>Parser will expand functions depending on the color channel names and
+variable used. For example, for the r,g,b channel color names:
 <br>&nbsp;
 <br>&nbsp;
 <table BORDER COLS=2 WIDTH="100%" NOSAVE >
 <tr>
-<td><u><font face="Courier New,Courier">GIL CODE</font></u></td>
+<td><u>GIL CODE</u></td>
 
-<td><u><font face="Courier New,Courier">EXPANDED CODE</font></u></td>
+<td><u>EXPANDED CODE</u></td>
 </tr>
 
 <tr>
-<td><font face="Courier New,Courier">dest_color = src_color;</font></td>
+<td>dest_color = src_color;</td>
 
-<td><font face="Courier New,Courier">dest_r = src_r;</font>
-<br><font face="Courier New,Courier">dest_g = src_g;</font>
-<br><font face="Courier New,Courier">dest_b = src_b;</font></td>
+<td>dest_r = src_r;
+<br>dest_g = src_g;
+<br>dest_b = src_b;</td>
 </tr>
 
 <tr>
-<td><font face="Courier New,Courier">dest_alpha = src_alpha;&nbsp;</font></td>
+<td>dest_alpha = src_alpha;&nbsp;</td>
 
-<td><font face="Courier New,Courier">dest_alpha = src_alpha</font></td>
+<td>dest_alpha = src_alpha</td>
 </tr>
 
 <tr NOSAVE>
-<td><font face="Courier New,Courier">dest = src;</font></td>
+<td>dest = src;</td>
 
-<td NOSAVE><font face="Courier New,Courier">Pixel dest(color,alpha), src(color,alpha);</font>
-<br><font face="Courier New,Courier">dest_r = src_r;</font>
-<br><font face="Courier New,Courier">dest_g = src_g;</font>
-<br><font face="Courier New,Courier">dest_b = src_b;</font>
-<br><font face="Courier New,Courier">dest_alpha = src_alpha;</font>
-<br><font face="Courier New,Courier">Pixel dest(color), src(color);</font>
-<br><font face="Courier New,Courier">dest_r = src_r;</font>
-<br><font face="Courier New,Courier">dest_g = src_g;</font>
-<br><font face="Courier New,Courier">dest_b = src_b;</font>
-<br><font face="Courier New,Courier">Pixel dest(color,alpha,has_alpha),
-src(color,alpha);</font>
-<br><font face="Courier New,Courier">dest_r = src_r;</font>
-<br><font face="Courier New,Courier">dest_g = src_g;</font>
-<br><font face="Courier New,Courier">dest_b = src_b;</font>
-<br><font face="Courier New,Courier">if (dest_has_alpha)</font>
-<br><font face="Courier New,Courier">&nbsp; dest_alpha = src_alpha;</font></td>
+<td NOSAVE>Pixel dest(color,alpha), src(color,alpha);
+<br>dest_r = src_r;
+<br>dest_g = src_g;
+<br>dest_b = src_b;
+<br>dest_alpha = src_alpha;
+<br>Pixel dest(color), src(color);
+<br>dest_r = src_r;
+<br>dest_g = src_g;
+<br>dest_b = src_b;
+<br>Pixel dest(color,alpha,has_alpha), src(color,alpha);
+<br>dest_r = src_r;
+<br>dest_g = src_g;
+<br>dest_b = src_b;
+<br>if (dest_has_alpha)
+<br>&nbsp; dest_alpha = src_alpha;</td>
 </tr>
 
 <tr>
-<td><font face="Courier New,Courier">dest = src_color;</font></td>
+<td>dest = src_color;</td>
 
-<td><font face="Courier New,Courier">Pixel dest(color), src(color,alpha);</font>
-<br><font face="Courier New,Courier">dest_r = src_r;</font>
-<br><font face="Courier New,Courier">dest_g = src_g;</font>
-<br><font face="Courier New,Courier">dest_b = src_b;</font></td>
+<td>Pixel dest(color), src(color,alpha);
+<br>dest_r = src_r;
+<br>dest_g = src_g;
+<br>dest_b = src_b;</td>
 </tr>
 </table>
 
-<p><font face="Courier New,Courier">All the DT Macros are substituted with
-their definitions.&nbsp;</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">LEXER: COMMENT</font></b>
-<p><font face="Courier New,Courier">The comment state is reach from either
-the GENERIC_IMAGE_DECL or GENERIC_IMAGE_CODE state when the lexer reads
-a /*. When the lexer is in the COMMENT state it will echo everything it
-reads. When it reads */, it will switch back to its previous state.</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">LEXER: EXTERNAL_VARIABLE</font></b>
-<p><font face="Courier New,Courier">When the lexer in the GENERIC_IMAGE_CODE
-state reads EXTERNAL_VARIABLE it will switch to the EXTERNAL_VARIABLE state.
-The lexer will add the $e.EXTERNAL_INIT_STRING to the variable and return
-it in the elem_t to the parser and then switch back to the GENERIC_IMAGE_CODE
-when it reads ')'.&nbsp;</font>
-<br>&nbsp;</td>
-</tr>
-
-<tr>
-<td><b><font face="Courier New,Courier">REFERENCE</font></b>
-<p><font face="Courier New,Courier"><a href="http://www.mindspring.com/~calvinw/geglClasses.html">http://www.mindspring.com/~calvinw/geglClasses.html</a></font>
-<br><font face="Courier New,Courier"><a href="http://www.mindspring.com/~calvinw/geglImageAndOp.html">http://www.mindspring.com/~calvinw/geglImageAndOp.html</a></font>
-<br><font face="Courier New,Courier"><a href="http://www.mindspring.com/~calvinw/genericChannelData.html">http://www.mindspring.com/~calvinw/genericChannelData.html</a></font>
-<br>&nbsp;</td>
-</tr>
-</table></center>
-
+<p>All the DT Macros are substituted with their definitions.
+<p>
 <hr WIDTH="100%">
-<center><font face="Courier New,Courier"><font size=-1>Caroline Dahllof
-&lt;<a href="mailto: caro@rhythm.com">caro@rhythm.com</a>></font></font></center>
+<br><a NAME="l:comment"></a><b>Lexer: COMMENT</b>
+<p>The comment state is reach from either the GENERIC_IMAGE_DECL or GENERIC_IMAGE_CODE
+state when the lexer reads a /*. When the lexer is in the COMMENT state
+it will echo everything it reads. When it reads */, it will switch back
+to its previous state.
+<p>
+<hr WIDTH="100%">
+<br><a NAME="l: external_variable"></a><b>Lexer: EXTERNAL_VARIABLE</b>
+<p>When the lexer in the GENERIC_IMAGE_CODE state reads EXTERNAL_VARIABLE
+it will switch to the EXTERNAL_VARIABLE state. The lexer will add the $e.EXTERNAL_INIT_STRING
+to the variable and return it in the elem_t to the parser and then switch
+back to the GENERIC_IMAGE_CODE when it reads ')'.
+<p>
+<hr WIDTH="100%">
+<br><a NAME="reference"></a><b>Reference</b>
+<p><a href="http://www.mindspring.com/~calvinw/geglClasses.html">http://www.mindspring.com/~calvinw/geglClasses.html</a>
+<br><a href="http://www.mindspring.com/~calvinw/geglImageAndOp.html">http://www.mindspring.com/~calvinw/geglImageAndOp.html</a>
+<br><a href="http://www.mindspring.com/~calvinw/genericChannelData.html">http://www.mindspring.com/~calvinw/genericChannelData.html</a>
+<br>&nbsp;
+<hr WIDTH="100%">
+<center><font size=-1>Caroline Dahllof &lt;caro@rhythm.com></font></center>
 
+<p><br>
 </body>
 </html>
