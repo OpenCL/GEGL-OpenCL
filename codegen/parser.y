@@ -1066,14 +1066,14 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
         sprintf (tmp, "%s * %s", src1.string, src2.string);
       else if ( src1.dtype == TYPE_CHAN || src2.dtype == TYPE_CHAN)
 	{	
-      	if (src1.dtype < TYPE_CHAN && src2.dtype < TYPE_CHAN)
+      	if (src1.dtype >= TYPE_CHAN && src2.dtype >= TYPE_CHAN)
 	  sprintf (tmp, "%s%s%s%s%s", _TIMES_VV_PRE_, src1.string, _TIMES_VV_MID_, src2.string, _TIMES_VV_SUF_);
 	else
 	  sprintf (tmp, "%s%s%s%s%s", _TIMES_VS_PRE_, src1.string, _TIMES_VS_MID_, src2.string, _TIMES_VS_SUF_);
 	}
       else
 	{	
-       	if (src1.dtype < TYPE_CHAN && src2.dtype < TYPE_CHAN)
+       	if (src1.dtype >= TYPE_CHAN && src2.dtype >= TYPE_CHAN)
 	  sprintf (tmp, "%s * %s * %s", src1.string, src2.string, _WP_NORM_); 
 	else
 	  sprintf (tmp, "%s * %s", src1.string, src2.string);
