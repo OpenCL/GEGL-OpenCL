@@ -1036,17 +1036,17 @@ void
 rm_varibles (char scope)
 {
   int i;
-  
+
   for (i=0; i<cur_nsyms; i++)
     {
-    if (symtab[i].scope > scope)
-      {
-      symtab[i] = symtab[cur_nsyms-1];
-      cur_nsyms--; 
-      i--; 
-      }
+      if (symtab[i].scope > scope)
+	{
+	  symtab[i] = symtab[cur_nsyms-1];
+	  cur_nsyms--; 
+	  i--; 
+	}
     }
-  
+
 }
 
 void 
@@ -1055,45 +1055,45 @@ init_image_data (char *indent)
   int i;
   elem_t e;
   char tmp[256]; 
- 
+
   /* go through all the symbols find all the color and color alpha vectors */
   for (i=0; i<cur_nsyms; i++)
     {
-    if (symtab[i].type == TYPE_CA_VECTOR && !symtab[i].inited) 
-      {
-      e = symtab[i];
-      symtab[i].inited = 1;
-      sprintf (tmp, "%s%s_ca = %s_data_v;", indent, symtab[i].string, symtab[i].string);
-      strcpy (e.string, tmp); 
-      print_line (e);  
-      printf ("\n"); 
-      }
-    if (symtab[i].type == TYPE_C_A_VECTOR && !symtab[i].inited) 
-      {
-      e = symtab[i];
-      symtab[i].inited = 1;
-      sprintf (tmp, "%s%s_c = %s_data_v;", indent, symtab[i].string, symtab[i].string);
-      strcpy (e.string, tmp); 
-      print_line (e); 
-      sprintf (tmp, "%sif (%s_has_a)%s  %s_a = %s_data[%d];", 
-	  indent, symtab[i].string, indent, symtab[i].string, symtab[i].string, NUM_COLOR_CHANNEL);
-      strcpy (e.string, tmp);
-      print_line (e); 
-      printf ("\n"); 
-      }
-    if (symtab[i].type == TYPE_C_VECTOR && !symtab[i].inited)
-      {
-      e = symtab[i];
-      symtab[i].inited = 1;
-      sprintf (tmp, "%s%s_c = %s_data_v;", indent, symtab[i].string, symtab[i].string);
-      strcpy (e.string, tmp);
-      print_line (e);
-      printf ("\n"); 
-      }
+      if (symtab[i].type == TYPE_CA_VECTOR && !symtab[i].inited) 
+	{
+	  e = symtab[i];
+	  symtab[i].inited = 1;
+	  sprintf (tmp, "%s%s_ca = %s_data_v;", indent, symtab[i].string, symtab[i].string);
+	  strcpy (e.string, tmp); 
+	  print_line (e);  
+	  printf ("\n"); 
+	}
+      if (symtab[i].type == TYPE_C_A_VECTOR && !symtab[i].inited) 
+	{
+	  e = symtab[i];
+	  symtab[i].inited = 1;
+	  sprintf (tmp, "%s%s_c = %s_data_v;", indent, symtab[i].string, symtab[i].string);
+	  strcpy (e.string, tmp); 
+	  print_line (e); 
+	  sprintf (tmp, "%sif (%s_has_a)%s  %s_a = %s_data[%d];", 
+	      indent, symtab[i].string, indent, symtab[i].string, symtab[i].string, NUM_COLOR_CHANNEL);
+	  strcpy (e.string, tmp);
+	  print_line (e); 
+	  printf ("\n"); 
+	}
+      if (symtab[i].type == TYPE_C_VECTOR && !symtab[i].inited)
+	{
+	  e = symtab[i];
+	  symtab[i].inited = 1;
+	  sprintf (tmp, "%s%s_c = %s_data_v;", indent, symtab[i].string, symtab[i].string);
+	  strcpy (e.string, tmp);
+	  print_line (e);
+	  printf ("\n"); 
+	}
     }
-  
+
 }
- 
+
 
 void
 init_data_varible (char *s)
@@ -1101,23 +1101,23 @@ init_data_varible (char *s)
   int i; 
   char tmp[20], name[20]; 
   elem_t *e = get_sym (s); 
- 
+
   for (i=0; i<SCOPE; i++)
     {
-    tmp[i*2  ] = ' ';
-    tmp[i*2+1] = ' ';
+      tmp[i*2  ] = ' ';
+      tmp[i*2+1] = ' ';
     }
   tmp[i*2  ] = '\0'; 
   printf ("\n%s%s *%s_data[%d];", tmp, DATATYPE_STR, s, e->num);
   if (e->type == TYPE_C_A_VECTOR)
     {  
-    elem_t e; 
-    sprintf (name, "%s_has_%s", s, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
-    e = add_sym (name, SCOPE);
-    set_dtype (e, TYPE_INT);
-    set_type (e, TYPE_SCALER);
-    set_num (e, 1);  
-    printf ("\n%sgboolean %s;", tmp, name); 
+      elem_t e; 
+      sprintf (name, "%s_has_%s", s, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
+      e = add_sym (name, SCOPE);
+      set_dtype (e, TYPE_INT);
+      set_type (e, TYPE_SCALER);
+      set_num (e, 1);  
+      printf ("\n%sgboolean %s;", tmp, name); 
 
     }
 }
@@ -1132,35 +1132,35 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
   dest->num = 1; 
   if (is_define && get_sym (src.string)->type == TYPE_C_VECTOR)
     {
-    dest->num = NUM_COLOR_CHANNEL;
-    sprintf (tmp, "%s_c", get_sym (src.string)->string);
+      dest->num = NUM_COLOR_CHANNEL;
+      sprintf (tmp, "%s_c", get_sym (src.string)->string);
     }
   else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR ||
 	get_sym (src.string)->type == TYPE_C_A_VECTOR) && 
       !strcmp (src.string, get_sym (src.string)->string))
     {
-    dest->num = NUM_COLOR_CHANNEL + 1;
-    sprintf (tmp, "%s_ca", get_sym (src.string)->string);
+      dest->num = NUM_COLOR_CHANNEL + 1;
+      sprintf (tmp, "%s_ca", get_sym (src.string)->string);
     }
   else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR ||
 	get_sym (src.string)->type == TYPE_C_A_VECTOR))
     {
-    int l = strlen (src.string);
-    if (src.string[l-1] == 'a' && src.string[l-2] == '_')
-      {
-      dest->num = 1;
-      sprintf (tmp, "%s", src.string);
-      }
-    if (src.string[l-1] == 'c' && src.string[l-2] == '_')
-      {
-      dest->num = NUM_COLOR_CHANNEL; 
-      sprintf (tmp, "%s", src.string);
-      }
+      int l = strlen (src.string);
+      if (src.string[l-1] == 'a' && src.string[l-2] == '_')
+	{
+	  dest->num = 1;
+	  sprintf (tmp, "%s", src.string);
+	}
+      if (src.string[l-1] == 'c' && src.string[l-2] == '_')
+	{
+	  dest->num = NUM_COLOR_CHANNEL; 
+	  sprintf (tmp, "%s", src.string);
+	}
     }
   else if (is_define && get_sym (src.string)->type == TYPE_VECTOR)
     {
-    dest->num = get_sym (src.string)->num; 
-    sprintf (tmp, "%s_v", src.string);
+      dest->num = get_sym (src.string)->num; 
+      sprintf (tmp, "%s_v", src.string);
     }
   else if (!is_define && get_sym (src.string)->type == TYPE_VECTOR)
     sprintf (tmp, "%s[%d]", src.string, get_sym (src.string)->num);
@@ -1186,33 +1186,33 @@ print_repeat (elem_t *dest, elem_t src, char *string)
 
   if (get_sym (src.string)->type == TYPE_C_VECTOR)
     {
-    for (i=0; i<NUM_COLOR_CHANNEL-1; i++)
-      {
-      sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHANNEL[i]);
-      strcpy(t, tmp); 
-      }
-    sprintf (tmp, "%s %s_%s", t, string, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL-1]); 
+      for (i=0; i<NUM_COLOR_CHANNEL-1; i++)
+	{
+	  sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHANNEL[i]);
+	  strcpy(t, tmp); 
+	}
+      sprintf (tmp, "%s %s_%s", t, string, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL-1]); 
     }
   else if (get_sym (src.string)->type == TYPE_CA_VECTOR)
     {
-    for (i=0; i<NUM_COLOR_CHANNEL; i++)
-      {
-      sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHANNEL[i]);
-      strcpy(t, tmp);
-      }
-    sprintf (tmp, "%s %s_%s", t, string, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]); 
+      for (i=0; i<NUM_COLOR_CHANNEL; i++)
+	{
+	  sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHANNEL[i]);
+	  strcpy(t, tmp);
+	}
+      sprintf (tmp, "%s %s_%s", t, string, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]); 
     }
   else
     {
-    for (i=0; i<NUM_COLOR_CHANNEL; i++)
-      {
-      sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHANNEL[i]);
-      strcpy(t, tmp);
-      }
-    sprintf (tmp, "%s %s_%s=NULL", t, string, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
+      for (i=0; i<NUM_COLOR_CHANNEL; i++)
+	{
+	  sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHANNEL[i]);
+	  strcpy(t, tmp);
+	}
+      sprintf (tmp, "%s %s_%s=NULL", t, string, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
     }
   strcpy (dest->string, tmp);
-  
+
 }
 void
 print_line (elem_t src)
@@ -1220,68 +1220,91 @@ print_line (elem_t src)
 
   int i,j,k=1;
   int l = strlen (src.string);
- 
+
   if (src.type>1 || (src.type && src.num == NUM_COLOR_CHANNEL)) /* if it is a vector */ 
     {
-    for (i=0; i<k; i++)
-    {
-    for(j=0; j<l; j++)
-      {
-      if (j < l-2 && src.string[j] == '_' && src.string[j+1] == 'c' && src.string[j+2] == 'a')
+      for (i=0; i<k; i++)
 	{
-	printf("_%s", NAME_COLOR_CHANNEL[i]);
-	k = NUM_COLOR_CHANNEL + 1;
-	j += 2;
+	  for(j=0; j<l; j++)
+	    {
+	      if (j < l-2 && src.string[j] == '_' && src.string[j+1] == 'c' && src.string[j+2] == 'a')
+		{
+		  printf("_%s", NAME_COLOR_CHANNEL[i]);
+		  k = NUM_COLOR_CHANNEL + 1;
+		  j += 2;
+		}
+	      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'c')
+		{
+		  printf("_%s", NAME_COLOR_CHANNEL[i]);
+		  k = NUM_COLOR_CHANNEL; 	
+		  j++;
+		}
+	      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
+		{
+		  printf("[%d]", i);
+		  if (src.type != TYPE_C_A_VECTOR)
+		    k = src.num; 
+		  j++;
+		}
+	      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
+		{
+		  printf("_%s", NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
+		  j++; 	
+		}
+	      else
+		{
+		  printf("%c", src.string[j]);
+		}
+	    }
 	}
-      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'c')
-	{
-	printf("_%s", NAME_COLOR_CHANNEL[i]);
-	k = NUM_COLOR_CHANNEL; 	
-	j++;
-	}
-      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
-	{
-	printf("[%d]", i);
-	if (src.type != TYPE_C_A_VECTOR)
-	  k = src.num; 
-	j++;
-	}
-      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
-	{
-	printf("_%s", NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
-        j++; 	
-	}
-      else
-	{
-	printf("%c", src.string[j]);
-	}
-      }
-    }
     }
   else if (src.type)
     for (i=0; i<src.num; i++)
       {
-      for(j=0; j<l; j++)
-	{
-	if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
+	for(j=0; j<l; j++)
 	  {
-	  printf("[%d]", i);
-	  j++;
+	    if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
+	      {
+		printf("[%d]", i);
+		j++;
+	      }
+	    else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
+	      {
+		printf("_%s", NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
+		j++;
+	      }
+	    else
+	      {
+		printf("%c", src.string[j]); 
+	      }
 	  }
-	else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
-	  {
-	  printf("_%s", NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
-	  j++;
-	  }
-	else
-	  {
-	  printf("%c", src.string[j]); 
-	  }
-	}
       }
+  else if (src.dtype == TYPE_CHANNEL)
+    {
+      for (i=0; i<src.num; i++)
+	{
+	  for(j=0; j<l; j++)
+	    {
+	      if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
+		{
+		  printf("[%d]", i);
+		  j++;
+		}
+	      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
+		{
+		  printf("_%s", NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
+		  j++;
+		}
+	      else
+		{
+		  printf("%c", src.string[j]); 	
+		}
+	    } 
+	}
+    }
   else
     printf("%s", src.string); 
-  
+
 }
 
 void
@@ -1296,31 +1319,31 @@ print_value (elem_t *dest, elem_t src)
 void
 print (char *string, char *template, char *varible[], int num)
 {
- 
+
   int i, j=0, k, len, *len_varible;
   len = strlen (template);
 
   len_varible = (int*) malloc (sizeof(int)*num);
-  
+
   for (i=0; i<num; i++)
     {
-    len_varible[i] = strlen (varible[i]); 
+      len_varible[i] = strlen (varible[i]); 
     }
-  
+
   for (i=0; i<len-1; i++)
     {
-    if (template[i] == '$' && isdigit ((int) template[i+1]))
-      {
-      k = (int) atoi (&(template[i+1]))-1; 
-      strcpy (&(string[j]), varible[k]);
-      j += len_varible[k];
-      i ++; 
-      }
-    else 
-      {
-      string[j] = template[i];
-      j ++; 
-      }
+      if (template[i] == '$' && isdigit ((int) template[i+1]))
+	{
+	  k = (int) atoi (&(template[i+1]))-1; 
+	  strcpy (&(string[j]), varible[k]);
+	  j += len_varible[k];
+	  i ++; 
+	}
+      else 
+	{
+	  string[j] = template[i];
+	  j ++; 
+	}
     }
   string[j] = template[i];  
   string[j+1] = '\0';  
@@ -1331,27 +1354,27 @@ do_op_two (elem_t *dest, elem_t src, FUNCTION op)
   char tmp[256];
   char *t[1]; 
   switch (op)
-  {
-  case OP_NEG:
-    sprintf (tmp, "-%s", src.string);
-    break;
-  case OP_CHANNEL_CLAMP:
-    t[0] = src.string; 
-    print (tmp, CHANNEL_CLAMP_STR, t, 1); 
-    break; 
-  case OP_WP_CLAMP:
-    t[0] = src.string; 
-    print (tmp, WP_CLAMP_STR, t, 1); 
-    break;
-  default:
-    break; 
-  }
+    {
+    case OP_NEG:
+      sprintf (tmp, "-%s", src.string);
+      break;
+    case OP_CHANNEL_CLAMP:
+      t[0] = src.string; 
+      print (tmp, CHANNEL_CLAMP_STR, t, 1); 
+      break; 
+    case OP_WP_CLAMP:
+      t[0] = src.string; 
+      print (tmp, WP_CLAMP_STR, t, 1); 
+      break;
+    default:
+      break; 
+    }
 
   dest->dtype = src.dtype; 
   dest->type  = src.type;
   dest->num   = src.num;  
   strcpy (dest->string, tmp);
-  
+
 }
 
 void
@@ -1363,79 +1386,79 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
   /* error checking */
   if (src1.num != src2.num && src1.num && src2.num && src1.num != 1 && src2.num != 1)
     {
-    yyerror("ERROR: you are trying to preform an operation on vector variables
-	that dont have the same number of channels");
-    exit(1); 
+      yyerror("ERROR: you are trying to preform an operation on vector variables
+	  that dont have the same number of channels");
+	exit(1); 
     }
 
   switch (op)
     {
     case OP_PLUS:
       if (src1.num != src2.num && src1.num && src2.num)
-       	{
-	yyerror("ERROR: you are trying to preform an operation on vector variables
-	    that dont have the same number of channels");
-	  exit(1);
+	{
+	  yyerror("ERROR: you are trying to preform an operation on vector variables
+	      that dont have the same number of channels");
+	    exit(1);
 	}
       sprintf (tmp, "%s + %s", src1.string, src2.string);
       break;
     case OP_MINUS:
       if (src1.num != src2.num && src1.num && src2.num)
 	{
-	yyerror("ERROR: you are trying to preform an operation on vector variables
-	    that dont have the same number of channels");
-	  exit(1);
+	  yyerror("ERROR: you are trying to preform an operation on vector variables
+	      that dont have the same number of channels");
+	    exit(1);
 	}
       sprintf (tmp, "%s - %s", src1.string, src2.string);
       break;
     case OP_TIMES:
       if (src1.dtype < TYPE_CHANNEL && src2.dtype < TYPE_CHANNEL)
-        sprintf (tmp, "%s * %s", src1.string, src2.string);
+	sprintf (tmp, "%s * %s", src1.string, src2.string);
       else if ( src1.dtype == TYPE_CHANNEL || src2.dtype == TYPE_CHANNEL)
 	{	
-      	if (src1.dtype >= TYPE_CHANNEL && src2.dtype >= TYPE_CHANNEL)
-	  {	
-      	  t[0] = src1.string;
-	  t[1] = src2.string;
-	  print (tmp, CHANNEL_MULT_STR, t, 2); 
-	  }
-	else
-	  sprintf (tmp, "%s * %s", src1.string, src2.string);
+	  if (src1.dtype >= TYPE_CHANNEL && src2.dtype >= TYPE_CHANNEL)
+	    {	
+	      t[0] = src1.string;
+	      t[1] = src2.string;
+	      print (tmp, CHANNEL_MULT_STR, t, 2); 
+	    }
+	  else
+	    sprintf (tmp, "%s * %s", src1.string, src2.string);
 	}
       else
 	{	
-       	if (src1.dtype >= TYPE_CHANNEL && src2.dtype >= TYPE_CHANNEL)
-	  sprintf (tmp, "%s * %s * %s", src1.string, src2.string, WP_NORM_STR); 
-	else
-	  sprintf (tmp, "%s * %s", src1.string, src2.string);
+	  if (src1.dtype >= TYPE_CHANNEL && src2.dtype >= TYPE_CHANNEL)
+	    sprintf (tmp, "%s * %s * %s", src1.string, src2.string, WP_NORM_STR); 
+	  else
+	    sprintf (tmp, "%s * %s", src1.string, src2.string);
 	}
       break;
     case OP_DIVIDE:
       if (src1.dtype < TYPE_CHANNEL && src2.dtype < TYPE_CHANNEL)
-      	sprintf (tmp, "%s / %s", src1.string, src2.string);
+	sprintf (tmp, "%s / %s", src1.string, src2.string);
       else if ( src1.dtype == TYPE_CHANNEL || src2.dtype == TYPE_CHANNEL)
 	{
-	if (src1.dtype >= TYPE_CHANNEL &&  src2.dtype >= TYPE_CHANNEL)
-      	  sprintf (tmp, "(%s * %s) / %s", src1.string, WP_STR, src2.string);
-	else
-	  sprintf (tmp, "%s / %s", src1.string, src2.string);
+	  if (src1.dtype >= TYPE_CHANNEL &&  src2.dtype >= TYPE_CHANNEL)
+	    sprintf (tmp, "(%s * %s) / %s", src1.string, WP_STR, src2.string);
+	  else
+	    sprintf (tmp, "%s / %s", src1.string, src2.string);
 	}
       else
 	{	
-       	if (src1.dtype >= TYPE_CHANNEL &&  src2.dtype >= TYPE_CHANNEL)
-	  sprintf (tmp, "(%s * %s) / %s", src1.string, WP_STR, src2.string); 
-	else
-	  sprintf (tmp, "%s / %s", src1.string, src2.string);
+	  if (src1.dtype >= TYPE_CHANNEL &&  src2.dtype >= TYPE_CHANNEL)
+	    sprintf (tmp, "(%s * %s) / %s", src1.string, WP_STR, src2.string); 
+	  else
+	    sprintf (tmp, "%s / %s", src1.string, src2.string);
 	}
       break;
     case OP_EQUAL:
-  	
+
       /* error checking */
       if (src1.num != src2.num && !(src1.num > src2.num && src2.num < 2))
 	{
-	yyerror("ERROR: You trying to assign a varible to another varible
-	    and they have different number of channels");
-	exit(1); 
+	  yyerror("ERROR: You trying to assign a varible to another varible
+	      and they have different number of channels");
+	    exit(1); 
 	}
       switch (src1.dtype)
 	{
@@ -1453,7 +1476,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      break;
 	    case TYPE_CHANNELFLOAT:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
-	     break;  
+	      break;  
 	    default:
 	      yyerror("ERROR: op_EQUAL");
 	      exit(1);
@@ -1479,8 +1502,8 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      yyerror("ERROR: programming error");
 	      exit(1);
 	      break;
-	   }			     
-          break;
+	    }			     
+	  break;
 	case TYPE_CHANNEL:
 	  switch (src2.dtype)
 	    {
@@ -1502,23 +1525,23 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      strcpy (dest->string, tmp);
 	      sprintf (tmp, "%s = %s", src1.string, dest->string);
 	      break;
-	   }			     
-          break;
+	    }			     
+	  break;
 	case TYPE_CHANNELFLOAT:
-           sprintf (tmp, "%s = %s", src1.string, src2.string);
-           break;
+	  sprintf (tmp, "%s = %s", src1.string, src2.string);
+	  break;
 	}   
     default:
       break; 
     }
- 
+
   if (src1.dtype == src2.dtype)
-   dest->dtype = TYPE_CHANNEL;
+    dest->dtype = TYPE_CHANNEL;
   else if (op == OP_EQUAL)
     dest->dtype = src1.dtype; 
   else 
     dest->dtype = (src1.dtype + src2.dtype) > TYPE_CHANNELFLOAT? TYPE_CHANNELFLOAT: 
-      	(src1.dtype + src2.dtype); 
+      (src1.dtype + src2.dtype); 
   dest->type  = (src1.type > src2.type)?src1.type:src2.type;
   dest->num   = (src1.num > src2.num)?src1.num:src2.num;
   strcpy (dest->string, tmp);
@@ -1532,29 +1555,29 @@ set_dtype (elem_t e, DATA_TYPE dtype)
   char *s = strdup(e.string); 
   i = strlen(s);
   if (i>2)
-  if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
-  {
-    s[i-1] = '\0';
-    s[i-2] = '\0'; 
-  } 
+    if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
+      {
+	s[i-1] = '\0';
+	s[i-2] = '\0'; 
+      } 
 
   for (i=0; i<cur_nsyms; i++)
-  {
-    /* is it already here? */
-    if(!strcmp(symtab[i].string, s))
-      {
-        symtab[i].dtype = dtype;
-  	return;
-      }
-  }
+    {
+      /* is it already here? */
+      if(!strcmp(symtab[i].string, s))
+	{
+	  symtab[i].dtype = dtype;
+	  return;
+	}
+    }
 
   if (cur_nsyms == NSYMS)
-  {
-    yyerror("Error: the sysmble was not defined");
-    exit(1);      /* cannot continue */
-  }
+    {
+      yyerror("Error: the sysmble was not defined");
+      exit(1);      /* cannot continue */
+    }
 
-   
+
 }
 
 void
@@ -1564,50 +1587,50 @@ set_type (elem_t e, SV_TYPE type)
   char *s = strdup(e.string); 
   i = strlen(s);
   if (i>2)
-  if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
-  {
-    s[i-1] = '\0';
-    s[i-2] = '\0'; 
-  } 
+    if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
+      {
+	s[i-1] = '\0';
+	s[i-2] = '\0'; 
+      } 
 
   for (i=0; i<cur_nsyms; i++)
-  {
-    /* is it already here? */
-    if(!strcmp(symtab[i].string, e.string))
-      {
-        symtab[i].type = type;
-	return;
-      }
-  }
+    {
+      /* is it already here? */
+      if(!strcmp(symtab[i].string, e.string))
+	{
+	  symtab[i].type = type;
+	  return;
+	}
+    }
 
   if (cur_nsyms == NSYMS)
-  {
-    yyerror("Error: the symbol was not define");
-    exit(1);      /* cannot continue */
-  }
+    {
+      yyerror("Error: the symbol was not define");
+      exit(1);      /* cannot continue */
+    }
 
-   
+
 }
 
 void
 set_num (elem_t e, int n)
 {
   int   i;
-      
+
   for (i=0; i<cur_nsyms; i++)
     {
-    /* is it already here? */
-    if(!strcmp(symtab[i].string, e.string))
-      {
-      symtab[i].num = n;
-      return;
-      }
+      /* is it already here? */
+      if(!strcmp(symtab[i].string, e.string))
+	{
+	  symtab[i].num = n;
+	  return;
+	}
     }
-  
+
   if (cur_nsyms == NSYMS)
     {
-    yyerror("Error: the symbol was not define");
-    exit(1);      /* cannot continue */
+      yyerror("Error: the symbol was not define");
+      exit(1);      /* cannot continue */
     }
 }
 
@@ -1620,22 +1643,22 @@ add_sym (char *ss, char scope)
   char *s = strdup(ss);
 
   for (i=0; i<cur_nsyms; i++) 
-  {
-    /* is it already here? */
-    if(!strcmp(symtab[i].string, s)){
- 	printf ("\n%s\n", s); 
-	yyerror("Error: Varible already declared");
-	exit(1);
-	
+    {
+      /* is it already here? */
+      if(!strcmp(symtab[i].string, s)){
+	    printf ("\n%s\n", s); 
+	    yyerror("Error: Varible already declared");
+	    exit(1);
+
+      }
     }
-  }
 
   if (cur_nsyms == NSYMS) 
-  {
-    yyerror("Too many symbols");
-    exit(1);      /* cannot continue */
-  }
-  
+    {
+      yyerror("Too many symbols");
+      exit(1);      /* cannot continue */
+    }
+
   strcpy(symtab[cur_nsyms].string, ss);
   symtab[cur_nsyms].scope = scope;  
   symtab[cur_nsyms].inited = 0; 
@@ -1650,48 +1673,48 @@ get_sym (char *ss)
 
   int   i;
   char s[255];
- 
+
   strcpy (s, ss);
 
   for (i=0; i<cur_nsyms; i++)
-  {
-    /* is it already here? */
-    if(!strcmp(symtab[i].string, s))
-            return &(symtab[i]);
-  }
+    {
+      /* is it already here? */
+      if(!strcmp(symtab[i].string, s))
+	return &(symtab[i]);
+    }
 
   i = strlen(s);
   if (i>10)
-  if (!strcmp ("_has_alpha", &(s[i-10])))  
-    {
-    ss[i-6] = '\0'; 
-    sprintf (s, "%s_%s", ss, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);  
-    strcpy (ss, s); 
-    goto find;
-    }
-     
+    if (!strcmp ("_has_alpha", &(s[i-10])))  
+      {
+	ss[i-6] = '\0'; 
+	sprintf (s, "%s_%s", ss, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);  
+	strcpy (ss, s); 
+	goto find;
+      }
+
   if (i>6)
-  if (!strcmp ("_color", &(s[i-6])) || !strcmp ("_alpha", &(s[i-6])))
-    {
-      s[i-6] = '\0';
-      ss[i-4] = '\0';
-      goto find;
-    }
+    if (!strcmp ("_color", &(s[i-6])) || !strcmp ("_alpha", &(s[i-6])))
+      {
+	s[i-6] = '\0';
+	ss[i-4] = '\0';
+	goto find;
+      }
 
   if (i>2)
-  if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
-  {
-    s[i-2] = '\0';
-  } 
+    if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
+      {
+	s[i-2] = '\0';
+      } 
 
 find:
   for (i=0; i<cur_nsyms; i++)
-  {
-    /* is it already here? */
-    if(!strcmp(symtab[i].string, s))
-            return &(symtab[i]);
-  
-  }
+    {
+      /* is it already here? */
+      if(!strcmp(symtab[i].string, s))
+	return &(symtab[i]);
+
+    }
 
   yyerror("Error: you have not defined the varible");
   exit(1);      /* cannot continue */
@@ -1706,10 +1729,10 @@ get_keyword (char *keywd)
 
   while (keyword_tab[i].token != -1)
     {
-    if (!strcmp (keyword_tab[i].word, keywd))
-      return keyword_tab[i].token;
-    else
-      i ++;
+      if (!strcmp (keyword_tab[i].word, keywd))
+	return keyword_tab[i].token;
+      else
+	i ++;
     }
 
   return -1; 
@@ -1725,15 +1748,15 @@ get_dt_keyword (char *keywd)
 
   while (dt_keyword_tab[i].arg != 9)
     {
-    if (!strcmp (dt_keyword_tab[i].word, keywd))
-      return dt_keyword_tab[i];
-    else
-      i ++;
+      if (!strcmp (dt_keyword_tab[i].word, keywd))
+	return dt_keyword_tab[i];
+      else
+	i ++;
     }
 
   return e; 
 }
-  
+
 
 void
 read_channel_names (char *chan_names)
@@ -1744,17 +1767,17 @@ read_channel_names (char *chan_names)
 
   if (!(tmp = (char*) strtok (chan_names, ",")))
     {
-    exit (0);
+      exit (0);
     }
 
   NAME_COLOR_CHANNEL[i] = tmp;
 
   while ((tmp = (char*) strtok (NULL, ",")))
     {
-    i++;
-    NAME_COLOR_CHANNEL[i] = tmp; 
+      i++;
+      NAME_COLOR_CHANNEL[i] = tmp; 
     }
-  
+
   NUM_COLOR_CHANNEL = i+1;
   NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL] = (char*) strdup ("alpha"); 
 }
@@ -1771,38 +1794,38 @@ int
 main (int argc, char **argv)
 {
   int i=1;
-/* uncomment this to see lexer and parser debug info 
-  yydebug = 1; 
-*/
+  /* uncomment this to see lexer and parser debug info 
+     yydebug = 1; 
+   */
   if (argc < 5)
     {
-    printf ("ERROR: need to specify a file and channel names\n");
-    return -1; 
+      printf ("ERROR: need to specify a file and channel names\n");
+      return -1; 
     }
- 
+
   while (i<argc)
     {
-    if (!strcmp (argv[i], "--channel-data-file"))
-      {
-      i++;
-      open_file (argv[i]);
-      yyparse ();
-      close_file ();  
-      }
-    if (!strcmp (argv[i], "--channel-names"))
-      {
-      i++;
-      read_channel_names (argv[i]); 
-      }
-    i++; 
+      if (!strcmp (argv[i], "--channel-data-file"))
+	{
+	  i++;
+	  open_file (argv[i]);
+	  yyparse ();
+	  close_file ();  
+	}
+      if (!strcmp (argv[i], "--channel-names"))
+	{
+	  i++;
+	  read_channel_names (argv[i]); 
+	}
+      i++; 
     }
 
   if (argc == 6) 
     open_file (argv[5]);  
- 
+
   else 
     open_file ("stdin");
-  
+
   yyparse();
   close_file (); 
 

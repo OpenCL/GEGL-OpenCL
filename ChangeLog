@@ -1,3 +1,11 @@
+Mon Apr  3 11:02:12 PDT 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* fixed a bug in parser.y in the function print line. The 
+	problem was that it did not do the right think with scaler
+	lines that had alpha varibles in them.
+
 Wed Mar 29 18:37:56 PST 2000 caro@rhythm.com
 
 	* check in for codegen
