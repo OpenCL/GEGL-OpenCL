@@ -131,7 +131,11 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     while (width--)
     {
       GENERIC_IMAGE_BLOCK_BEGIN
-      dest = VECTOR_VARIABLE (fill_values DATATYPE);
+      dest_color = VECTOR_VARIABLE (fill_values DATATYPE);
+      if (dest_has_alpha)
+	{
+	  dest_alpha = VECTOR_VARIABLE (fill_values DATATYPE);
+        }
       dX(dest,1); 
       GENERIC_IMAGE_BLOCK_END
     }

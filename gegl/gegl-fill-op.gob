@@ -138,6 +138,10 @@ class Gegl:Fill:Op from Gegl:Point:Op {
       *dest_r = fill_values[0].f;
       *dest_g = fill_values[1].f;
       *dest_b = fill_values[2].f;
+      if (dest_has_alpha)
+	{ 
+	  *dest_alpha = fill_values[0].f;
+        }
       dest_r++;
       dest_g++;
       dest_b++;

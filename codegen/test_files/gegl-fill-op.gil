@@ -72,43 +72,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     data_type = gegl_color_model_data_type (cm);
     color_space = gegl_color_model_color_space (cm);
 
-    switch (color_space)
-      {
-      case GRAY:
-       switch (data_type)
-         {
-         case U8:
-           point_op_class->scanline_func = gegl_fill_op_GRAY_U8;
-           break;
-         case FLOAT:
-           point_op_class->scanline_func = gegl_fill_op_GRAY_FLOAT;        
-           break;
-         default:
-           g_warning("FillOp: Color Model data type none or unknown\n");
-           point_op_class->scanline_func = NULL;        
-           return FALSE;
-         } 
-       break;
-      case RGB:
-       switch (data_type)
-         {
-         case U8:
-           point_op_class->scanline_func = gegl_fill_op_RGB_U8;
-           break;
-         case FLOAT:
-           point_op_class->scanline_func = gegl_fill_op_RGB_FLOAT;        
-           break;
-         default:
-           g_warning("FillOp: Color Model data type none or unknown\n");
-           point_op_class->scanline_func = NULL;        
-           return FALSE;
-         } 
-       break;
-      default:
-       g_warning("FillOp: Color Model data type none or unknown\n");
-       point_op_class->scanline_func = NULL;        
-       return FALSE;
-      } 
+    point_op_class->scanline_func = gegl_fill_op_COLORSPACE_DATATYPE;
 
     /* Allocate a color and set its channels to the passed one */  
     {
@@ -145,7 +109,6 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     guint width;
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color,alpha,has_alpha);
-    Pixel color(color,alpha,has_alpha);
     GENERIC_IMAGE_DECL_END
 
     GeglFillOp *self = GEGL_FILL_OP (point_op);
@@ -154,13 +117,6 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     GeglChannelValue *fill_values = gegl_color_get_channel_values(
                                    self->_priv->fill_color);
  
-    /* Make g point to the dest image data */
-    GENERIC_IMAGE_IMAGE_DATA_INIT
-
-    /* Get the fill color g */
-    GENERIC_IMAGE_BLOCK_BEGIN
-    color = VECTOR_VARIABLE (fill_values DATATYPE);
-    GENERIC_IMAGE_BLOCK_END
 
     width = point_opP->scanline_width;
 
@@ -168,12 +124,18 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     gegl_image_iterator_get_scanline_data (point_opP->iterators[0],
                 (guchar**)dest_data);
 
+    /* Make g point to the dest image data */
+    GENERIC_IMAGE_IMAGE_DATA_INIT
 
     /* Fill the dest with the fill color */
     while (width--)
     {
       GENERIC_IMAGE_BLOCK_BEGIN
-      dest = color;
+      dest_color = VECTOR_VARIABLE (fill_values DATATYPE);
+      if (dest_has_alpha)
+	{
+	  dest_alpha = VECTOR_VARIABLE (fill_values DATATYPE);
+        }
       dX(dest,1); 
       GENERIC_IMAGE_BLOCK_END
     }

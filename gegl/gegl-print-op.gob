@@ -111,7 +111,7 @@ class Gegl:Print:Op from Gegl:Point:Op {
 	printf ("%f", *src_g); 
 	printf ("%f", *src_b); 
 	if (src_has_alpha)
-	printf ("%f", *src_alpha); 
+	  printf ("%f", *src_alpha); 
  	printf("\n");
       }
 

@@ -1,3 +1,11 @@
+Wed Apr 19 13:54:30 PDT 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* i have changed parser.y so that now it
+	handels print_line better. for the has_alpha
+	case with vectors.
+
 Wed Apr 19 10:51:13 PDT 2000 caro@rhythm.com
 	
 	* check in for gegl

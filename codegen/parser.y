@@ -599,8 +599,8 @@ Line:
 		  strcpy(e.string, tmp); 
 		  }
 		sprintf (tmp, "%s%s;", $1.string, e.string);   
-		strcpy ($2.string, tmp); 
-		print_line ($2); 
+		strcpy (e.string, tmp); 
+		print_line (e); 
 		} 
 	| INDENT NAME PLUS_EQUAL Expression ';'  	
 		{ 
@@ -763,7 +763,7 @@ Line:
 		  print_line ($4);
 		  if (get_sym (t2)->type == TYPE_C_A_VECTOR)
 		    {
-		      printf ("%sif (%s_has_%s)%s", $1.string, t2,
+		      printf ("%sif (%s_has_%s)%s  ", $1.string, t2,
 			       NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
 			       $1.string);
 		      sprintf (tmp, "%s$a", t2);
@@ -1240,10 +1240,9 @@ void
 print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
 {
   char tmp[256],t[256];
-
   t[0] = '\0';
-
   dest->num = 1; 
+
   if (is_define && (get_sym (src.string)->type == TYPE_C_VECTOR ||
 	(get_sym (src.string)->type == TYPE_C_A_VECTOR &&
 	!strcmp (src.string, get_sym (src.string)->string)))) 
@@ -1334,19 +1333,23 @@ print_line (elem_t src)
 {
 
   int i,j,k=1;
+  int is_alpha; 
   int l = strlen (src.string);
 
   if (src.type>1 || (src.type && src.num == NUM_COLOR_CHANNEL)) /* if it is a vector */ 
     {
       for (i=0; i<k; i++)
 	{
+	  is_alpha = 0; 
 	  for(j=0; j<l; j++)
 	    {
 	      if (j < l-2 && src.string[j] == '$' && src.string[j+1] == 'c' && src.string[j+2] == 'a')
 		{
+		  
 		  printf("_%s", NAME_COLOR_CHANNEL[i]);
 		  k = NUM_COLOR_CHANNEL + 1;
 		  j += 2;
+		
 		}
 	      else if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'c')
 		{
@@ -1356,13 +1359,18 @@ print_line (elem_t src)
 		}
 	      else if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'v')
 		{
-		  printf("[%d]", i);
+		  if (src.type == TYPE_C_A_VECTOR && is_alpha == 1)
+		    printf("[%d]", NUM_COLOR_CHANNEL);
+		  else 
+		    printf("[%d]", i);
+
 		  if (src.type != TYPE_C_A_VECTOR)
 		    k = src.num; 
 		  j++;
 		}
 	      else if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'a')
 		{
+		  is_alpha = 1; 
 		  printf("_%s", NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
 		  j++; 	
 		}
