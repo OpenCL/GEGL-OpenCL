@@ -611,21 +611,25 @@ Expression:
 		}
 	| FLOAT				
 		{ 
+		$1.num = 1;
 		$$=$1; 
 		print_value(&$$, $1); 
 		}
 	| INT				
-		{ 
+		{
+		$1.num = 1;
 		$$=$1; 
 		print_value(&$$, $1); 
 		} 
 	| WP				
 		{ 
+		$1.num = 0;
 		$$=$1; 
 		print_value(&$$, $1); 
 		}
 	| ZERO
 		{
+		$1.num = 0;
 		$$=$1;
 		print_value(&$$, $1); 
 		}	
@@ -1145,7 +1149,7 @@ print_value (elem_t *dest, elem_t src)
   char tmp[256];
   sprintf (dest->string, "%s", src.string);
   dest->dtype = src.dtype;
-  dest->num = 1;
+  dest->num = src.num;
   dest->inited = 0;
 }
 
@@ -1217,9 +1221,9 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
   char *t[9]; 
 
   /* error checking */
-  if (src1.num != src2.num  && src1.num != 1 && src2.num != 1)
+  if (src1.num != src2.num  && src1.num && src2.num)
     {
-    yyerror("ERROR: you are trying to preform an operation on varibles
+    yyerror("ERROR: you are trying to preform an operation on vector variables
 	that dont have the same number of channels");
     exit(1); 
     }
@@ -1417,7 +1421,7 @@ set_type (elem_t e, SV_TYPE type)
   for (i=0; i<cur_nsyms; i++)
   {
     /* is it already here? */
-    if(!strcmp(symtab[i].string, s))
+    if(!strcmp(symtab[i].string, e.string))
       {
         symtab[i].type = type;
 	return;

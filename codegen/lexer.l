@@ -80,7 +80,7 @@ string			\".*\"
 <GENERIC_IMAGE_BLOCK>"WP"		{
 					strcpy(yylval.elem.string, WP_STR);
                 			yylval.elem.dtype = TYPE_CHAN;
-					yylval.elem.type = TYPE_SCALER;
+					yylval.elem.type = TYPE_VECTOR;
 					return(WP); 
 					}
 <GENERIC_IMAGE_BLOCK>"ZERO"		{

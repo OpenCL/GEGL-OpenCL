@@ -1,216 +1,154 @@
+/* For testing comments */
 
-{
-  VectorChan dest(_c_,_a_), src(_c_._a_);
-  gint comp_mode;
-  gint A,B;
+GENERIC_IMAGE_DECL_BEGIN
+int i;
+float f;
+Chan a; 
+VectorChan d(color,alpha,has_alpha);
+VectorChan s(color,alpha,has_alpha);
+VectorChan s1(color,alpha), s2(color,alpha);
+VectorChan s3(color,alpha,has_alpha); /*a comment*/
 
-  switch (comp_mode)
-  {
-    case REPLACE:
-      dest_c = src_c;
-    case OVER:
-      dest_c = src_c;
-    case IN:
-      dest_c = src_c;
-    case OUT:
-      dest_c = 0;
-    case ATOP:
-      dest_c = src_c;
-    case XOR:
-      dest_c = 0;
-    case PLUS:
-      dest_c = src_c + dest_c;
-  }
-}
+GENERIC_IMAGE_DECL_END
+
+GENERIC_IMAGE_IMAGE_DATA_INIT
 
 
-{
+/* d = s1 * s2; */
+GENERIC_IMAGE_BLOCK_BEGIN
+d = s1 * s2;
+GENERIC_IMAGE_BLOCK_END
 
-  switch (comp_mode)
-  {
-    case REPLACE:
-      dest = src;
-    case OVER:
-      dest = src + dest * (1-src_a);
-    case IN:
-      dest = src * dest_a;
-    case OUT:
-      dest = src * (1-dest_a);
-    case ATOP:
-      dest = src * dest_a + dest * (1-src_a);
-    case XOR:
-      dest = src * (1-dest_a) + dest * (1-src_a);
-    case PLUS:
-      dest = src + dest;
-  }
-}
 
-{
+/* d = CHAN_CLAMP(s1 + s2); */
+GENERIC_IMAGE_BLOCK_BEGIN
+d = CHAN_CLAMP(s1 + s2);
+GENERIC_IMAGE_BLOCK_END
 
-  switch (comp_mode)
-  {
-    case REPLACE:
-      dest_a = 1; 
-      dest = src;
-    case OVER:
-      dest_a = 1;
-      dest_c = src_c;
-    case IN:
-      dest = src * dest_a;
-    case OUT:
-      dest_a = (1-dest_a);
-      dest_c = src_c * (1-dest_a);
-    case ATOP:
-      dest = src * dest_a;
-    case XOR:
-      dest_a = (1-dest_a);
-      dest_c = src_c * (1-dest_a) + dest_c;
-    case PLUS:
-      dest_a = 1 + dest_a;
-      dest_c = src_c + dest_c;
-  }
-}
 
-{
+/* d = CHAN_CLAMP (5 *s); */
+GENERIC_IMAGE_BLOCK_BEGIN
+d = CHAN_CLAMP (5 *s);
+GENERIC_IMAGE_BLOCK_END
 
-  switch (comp_mode)
-  {
-    case REPLACE:
-      dest = src;
-    case OVER:
-      dest = src + dest * (1-src_a);
-    case IN:
-      dest = src;
-    case OUT:
-      dest = 0;
-    case ATOP:
-      dest = src + dest * (1-src_a);
-    case XOR:
-      dest = dest * (1-src_a);
-    case PLUS:
-      dest = src + dest;
-  }
-}
+/* d = (s1 + s2 + s3)/3; */
+GENERIC_IMAGE_BLOCK_BEGIN
+d = (s1 + s2 + s3)/3;
+GENERIC_IMAGE_BLOCK_END
 
-{
 
-  switch (comp_mode)
-  {
-    case REPLACE:
-      dest_a = src_a;
-      dest_c = src_c;
-    case OVER:
-      A = src_a;
-      B =  dest_a * (1-src_a);
-      dest_a = A + B;
-      if (dest_a)
-             dest = (src * A + dest * B) / dest_a;
-      else
-       dest = 0;       
-    case IN:
-      dest_a = src_a * dest_a;
-      if (dest_a)
-       dest = src;
-      else
-       dest = 0;                                                            
-    case OUT:
-      dest_a = src_a * (1-dest_a);
-      if (dest_a)
-       dest = src;
-      else
-       dest = 0;
-    case ATOP:
-      A = src_a * dest_a;
-      B = dest_a * (1-src_a); 
-      dest_a = A + B;
-      if (dest_a)
-             dest = src * A + dest * B;
-      else
-       dest = 0;
-    case XOR:
-      A = src_a * (1-dest_a);
-      B = dest_a * (1-src_a); 
-      dest_a = A + B;
-      if(dest_a)
-             dest = (src * A + dest * B) / dest_a;
-      else
-       dest = 0;
-    case PLUS:
-      A = src_a;
-      B = dest_a; 
-      dest_a = A + B;
-      if (dest_a)
-             dest = (src * A + dest * B) / dest_a;
-       else
-       dest = 0;
-  }
-}
+/* d = s * s1 + (WP-s) * s2; */
+GENERIC_IMAGE_BLOCK_BEGIN
+d = s * s1 + (WP-s) * s2;
+GENERIC_IMAGE_BLOCK_END
 
-{
 
-  switch (comp_mode)
-  {
-    case REPLACE:
-      dest_a = 1;
-      dest = src;
-    case OVER:
-      dest_a = src_a;
-      if (dest_a)
-        dest = src;
-      else
-        dest = 0;
-    case IN:
-      if (dest_a)
-        dest = src;
-      else
-        dest = 0;
-    case OUT:
-      dest_a = (1-dest_a);
-      if (dest_a)
-        dest = src;
-      else
-        dest = 0;
-    case ATOP:
-      if (dest_a)
-        dest = src;
-      else
-        dest = 0;
-    case XOR:
-      dest_a = 1-dest_a;
-      if(dest_a)
-        dest = src * A;
-      else
-        dest = 0;
-    case PLUS:
-      if (dest_a)
-        dest = (src + dest * B) / dest_a;
-        else
-        dest = 0;
-  }
-}
+/*d = .333 * (s1 + s2 + s3);*/ 
+GENERIC_IMAGE_BLOCK_BEGIN
+d = .333 * (s1 + s2 + s3); 
+GENERIC_IMAGE_BLOCK_END
 
-{
 
-  switch (comp_mode)
-  {
-    case REPLACE:
-      dest = src;
-    case OVER:
-      A = src_a;
-      B =  (1-src_a);
-      dest = src * A + dest * B;
-    case IN:
-      dest = src;
-    case OUT:
-      dest = src;
-    case ATOP:
-      A = src_a;
-      B = 1-src_a;
-      dest = (src * A + dest * B);
-    case XOR:
-      dest = dest * (1-src_a);
-    case PLUS:
-      dest = (src * src_a + dest);
-  }
-}
+/* d = CHAN_CLAMP(s1 * s2 + s3); */
+GENERIC_IMAGE_BLOCK_BEGIN
+d = CHAN_CLAMP(s1 * s2 + s3);
+GENERIC_IMAGE_BLOCK_END
+
+
+/* d = WP - ((WP - s1) * (WP - s2)); */
+GENERIC_IMAGE_BLOCK_BEGIN
+d = WP - ((WP - s1) * (WP - s2));
+GENERIC_IMAGE_BLOCK_END
+
+
+/* d = MAX(s1, s2); */
+GENERIC_IMAGE_BLOCK_BEGIN
+d = MAX(s1, s2);
+GENERIC_IMAGE_BLOCK_END
+
+
+/* d = CHAN_CLAMP(s1 - s2) */;
+GENERIC_IMAGE_BLOCK_BEGIN
+d = CHAN_CLAMP(s1 - s2);
+GENERIC_IMAGE_BLOCK_END
+
+
+/* d = ABS(s1 - s2); */
+GENERIC_IMAGE_BLOCK_BEGIN
+d = ABS(s1 - s2);
+GENERIC_IMAGE_BLOCK_END
+
+
+/* d = MIN(s1, s2); */
+GENERIC_IMAGE_BLOCK_BEGIN
+d = MIN(s1, s2);
+GENERIC_IMAGE_BLOCK_END
+
+
+/*
+d_color = CHAN_CLAMP(s1_color + s2_color);
+d_alpha = s1_alpha;
+*/
+GENERIC_IMAGE_BLOCK_BEGIN
+d_color = CHAN_CLAMP(s1_color + s2_color);
+d_alpha = WP;
+GENERIC_IMAGE_BLOCK_END
+
+
+/* d_color = d_alpha * d_color; */
+GENERIC_IMAGE_BLOCK_BEGIN
+d_color = d_alpha * d_color;
+GENERIC_IMAGE_BLOCK_END
+
+/* d_color = d_color / d_alpha; */
+GENERIC_IMAGE_BLOCK_BEGIN
+d_color = d_color / d_alpha;
+GENERIC_IMAGE_BLOCK_END
+
+/*
+d = d / 5.0;
+d_color = d_color / 5;
+d_color / a;
+d = d / a;
+*/
+GENERIC_IMAGE_BLOCK_BEGIN
+d = d / 5.0;
+d_color = d_color / 5;
+d_color / a;
+d = d / a;
+GENERIC_IMAGE_BLOCK_END
+
+/*
+d_color / a;
+d = d / a;
+*/
+GENERIC_IMAGE_BLOCK_BEGIN
+d_color / a;
+d = d / a;
+GENERIC_IMAGE_BLOCK_END
+
+/* d = d + 5.0; */
+GENERIC_IMAGE_BLOCK_BEGIN
+d = d + 5.0;
+GENERIC_IMAGE_BLOCK_END
+
+/* d = ZERO */
+GENERIC_IMAGE_BLOCK_BEGIN
+d = ZERO;
+GENERIC_IMAGE_BLOCK_END
+
+/* 
+dX(d,1);
+dX(s,1);
+dX(s1,1);
+dX(s2,2);
+dX(s3,3);
+*/
+GENERIC_IMAGE_BLOCK_BEGIN
+dX(d,1);
+dX(s,1);
+dX(s1,1);
+dX(s2,2);
+dX(s3,3);
+GENERIC_IMAGE_BLOCK_END
 

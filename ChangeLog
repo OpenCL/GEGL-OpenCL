@@ -1,3 +1,20 @@
+Wed Mar 22 14:28:56 PST 2000 caro@rhythm.com
+
+	* codegen/parser.y I have changed it so that
+	you can only preform operations if the .num
+	varible is the same or that one of the variables
+	is either a ZERO or a WP. The .num varible value
+	for ZERO and WP is 0.
+
+Wed Mar 22 10:23:14 PST 2000 caro@rhythm.com
+
+	* fixed the problem of the varible has_alpha
+	not showing up in the decleration
+
+	* changed how datatype read the string in
+	parser.y
+
+
 Tue Mar 21 18:11:07 PST 2000 caro@rhythm.com
 
 	* fixed the rpoblem with has_alpha. In the 
