@@ -115,25 +115,25 @@ class Gegl:Light:Op from Gegl:Dual:Src:Op {
       
     while (width--)
       {
-        GENERIC_IMAGE_BLOCK_BEGIN  
+      GENERIC_IMAGE_BLOCK_BEGIN  
 
-	dest_color = MAX(src1_color, src2_color);
+      dest_color = MAX(src1_color, src2_color);
 
-	if (dest_has_alpha)
-	 {
-	   if (src1_has_alpha && src2_has_alpha)
-	     {
-	       dest_alpha = MIN(src1_alpha, src2_alpha);
-	     }       
-	   else if (src1_has_alpha)
-	     {
-	       dest_alpha = src1_alpha;
-	     }
-	   else if (src2_has_alpha)
-	     {
-	       dest_alpha = src2_alpha; 
-	     } 
-	 }
+      if (dest_has_alpha)
+	{
+	if (src1_has_alpha && src2_has_alpha)
+	  {
+	  dest_alpha = MIN(src1_alpha, src2_alpha);
+	  }       
+	else if (src1_has_alpha)
+	  {
+	  dest_alpha = src1_alpha;
+	  }
+	else if (src2_has_alpha)
+	  {
+	  dest_alpha = src2_alpha; 
+	  } 
+	}
 
 	dX(dest,1);
 	dX(src1,1);

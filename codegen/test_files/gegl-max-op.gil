@@ -121,18 +121,18 @@ class Gegl:Max:Op from Gegl:Dual:Src:Op {
 
 	if (dest_has_alpha)
 	  {
-	    if (src1_has_alpha && src2_has_alpha)
-	      {
-	        dest_alpha = MAX(src1_alpha, src2_alpha);
-	      }       
-	    else if (src1_has_alpha)
-	      {
-	        dest_alpha = WP;
-	      } 
-	    else if (src2_has_alpha)
-	      {   
-	        dest_alpha = WP; 
-	      }
+      	  if (src1_has_alpha && src2_has_alpha)
+	    {
+	    dest_alpha = MAX(src1_alpha, src2_alpha);
+	    }       
+	  else if (src1_has_alpha)
+	    {
+	    dest_alpha = WP;
+	    } 
+	  else if (src2_has_alpha)
+	    {   
+	    dest_alpha = WP; 
+	    }
 	  }
 
 	dX(dest,1);

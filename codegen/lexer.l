@@ -10,6 +10,7 @@
 #include <ctype.h>
 #include <stdio.h>
 
+void print_info (char *line); 
 int PREV;  
 %}
 
@@ -30,10 +31,17 @@ rm			[\t \n]*
 %%
 
 {rm}"DATATYPE_BEGIN"			BEGIN DATA_TYPE;  
-{indent}"GENERIC_IMAGE_DECL_BEGIN"		BEGIN GENERIC_IMAGE_DECL;
-{indent}"GENERIC_IMAGE_BLOCK_BEGIN"		BEGIN GENERIC_IMAGE_BLOCK;
+{indent}"GENERIC_IMAGE_DECL_BEGIN"	{
+  					print_info ("\n/* Generic Image Decl Begin */");
+					BEGIN GENERIC_IMAGE_DECL;
+					}
+{indent}"GENERIC_IMAGE_BLOCK_BEGIN"	{
+					print_info ("\n/* Generic Image Block Begin */"); 
+					BEGIN GENERIC_IMAGE_BLOCK;
+					}
 {indent}"GENERIC_IMAGE_IMAGE_DATA_INIT" {
   					char tmp[255];
+  					print_info ("\n/* Generic Image Image Data Init */"); 
 					strcpy (tmp, yytext);
 					tmp[strlen (tmp) - strlen ("GENERIC_IMAGE_IMAGE_DATA_INIT")] = '\0'; 
   					init_image_data (tmp);
@@ -73,8 +81,14 @@ rm			[\t \n]*
 <GENERIC_IMAGE_DECL>{white} 		; 
 <GENERIC_IMAGE_BLOCK>{white} 		; 
 
-<GENERIC_IMAGE_DECL>{indent}"GENERIC_IMAGE_DECL_END" 	BEGIN 0;
-<GENERIC_IMAGE_BLOCK>{indent}"GENERIC_IMAGE_BLOCK_END" 	BEGIN 0;
+<GENERIC_IMAGE_DECL>{indent}"GENERIC_IMAGE_DECL_END" 	{
+    							print_info ("\n/*Generic Image Decl End */\n");
+							BEGIN 0;
+							}
+<GENERIC_IMAGE_BLOCK>{indent}"GENERIC_IMAGE_BLOCK_END" 	{
+    							print_info ("\n/*Generic Image Block End */\n");
+							BEGIN 0;
+							}
 
 <GENERIC_IMAGE_BLOCK>"WP"		{
 					strcpy(yylval.elem.string, WP_STR);
@@ -300,4 +314,10 @@ void
 close_file ()
 {
  fclose (yyin); 
+}
+
+void 
+print_info (char *line)
+{
+ printf ("%s", line); 
 }

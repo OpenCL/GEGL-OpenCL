@@ -8,6 +8,10 @@
 
 #include "data_type.h"
 
+#ifndef DEBUG
+#define DEBUG 1  
+#endif
+
 typedef enum
 {
   DEFINE,

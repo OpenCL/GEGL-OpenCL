@@ -1695,7 +1695,7 @@ main (int argc, char **argv)
       }
     i++; 
     }
- 
+
   if (argc == 6) 
     open_file (argv[5]);  
  

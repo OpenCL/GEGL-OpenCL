@@ -7,6 +7,6 @@ MAX_CHAN		FLOAT_MAX
 ZERO			0.0
 CHAN_CLAMP (x)		x
 WP_CLAMP (x)		x
-CHAN_MULT (x,y)		x*y
+CHAN_MULT (x,y)		x * y
 ROUND (x)		x
 DATATYPE_END

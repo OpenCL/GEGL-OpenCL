@@ -111,10 +111,9 @@ class Gegl:Add:Op from Gegl:Dual:Src:Op {
     VectorChan dest(color,alpha,has_alpha);
     VectorChan src1(color,alpha,has_alpha);
     VectorChan src2(color,alpha,has_alpha);
-    int width;
     GENERIC_IMAGE_DECL_END 
 
-    width = point_opP->scanline_width;
+    int width = point_opP->scanline_width;
     
     dest_has_alpha = 
        gegl_color_model_has_alpha(dual_src_opP->dest_cm); 
@@ -135,30 +134,33 @@ class Gegl:Add:Op from Gegl:Dual:Src:Op {
     
     GENERIC_IMAGE_IMAGE_DATA_INIT
 
-    GENERIC_IMAGE_BLOCK_BEGIN 
     while (width--)
-    {
+      {
+      GENERIC_IMAGE_BLOCK_BEGIN 
+
       dest_color = src1_color + src2_color;
 
       if (dest_has_alpha)
-       {
-         if (src1_has_alpha && src2_has_alpha)
-           {
-           dest_alpha = src1_alpha + src2_alpha;
-           } 
-         else if (src1_has_alpha)
-           {
-           dest_alpha = WP;
-           }
-         else if (src2_has_alpha)
-           {
-           dest_alpha = WP; 
-           } 
-       }
+ 	{
+	if (src1_has_alpha && src2_has_alpha)
+	  {
+	  dest_alpha = src1_alpha + src2_alpha;
+	  } 
+	else if (src1_has_alpha)
+	  {
+	  dest_alpha = WP;
+	  }
+	else if (src2_has_alpha)
+	  {
+	  dest_alpha = WP; 
+	  } 
+ 	}
+      
      dX(dest,1);
      dX(src1,1);
      dX(src2,1);  
+
+     GENERIC_IMAGE_BLOCK_END                
     }
-    GENERIC_IMAGE_BLOCK_END                
   }
 }

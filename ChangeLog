@@ -1,3 +1,15 @@
+Mon Mar 27 13:48:11 PST 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* print_info is added to lexer.l. This function will write out debug
+	info in the code that is generated if DEBUG flag is set. This flag is
+	defined in common.h
+
+	* I added some ' ' to the data_files
+
+	* I re-indented some of the test_files/gegl*
+
 Mon Mar 27 15:07:24 EST 2000 calvinw@mindspring.com
 
 	* check in for codegen
