@@ -18,14 +18,17 @@ int PREV;
 %s			GENERIC_IMAGE_BLOCK
 %s			COMMENT 
 %s			DATA_TYPE 
+%s			ARGUMENTS
+%s			DEFINITION
 white   		[ \t]+
 indent			[\n][ \t]*
+cont			("\\""\n")    
 digit   		[0-9]
 integer 		{digit}+
 float   		{digit}*\.{integer}
 name    		[a-zA-Z][A-Z_a-z0-9]*
 Name			[A-Z][_A-Z0-9]*
-string			[^\t].*	
+string			(.*{cont}*)* 	
 space			[]*[\t]+
 rm			[\t \n]* 
 %%
@@ -48,19 +51,19 @@ rm			[\t \n]*
 					}	
 <DATA_TYPE>{indent}			;         	
 <DATA_TYPE>"DATATYPE_END""\n"		{BEGIN 0;} 
-<DATA_TYPE>"DATATYPE"			return DT_DATATYPE;
-<DATA_TYPE>"WP"				return DT_WP;
-<DATA_TYPE>"WP_NORM"			return DT_WP_NORM;
-<DATA_TYPE>"MIN_CHANNEL"		return DT_MIN_CHANNEL;
-<DATA_TYPE>"MAX_CHANNEL"                return DT_MAX_CHANNEL;
-<DATA_TYPE>"ZERO"			return DT_ZERO; 
-<DATA_TYPE>"CHANNEL_CLAMP"		return DT_CHANNEL_CLAMP;
-<DATA_TYPE>"WP_CLAMP"			return DT_WP_CLAMP;
-<DATA_TYPE>"CHANNEL_MULT"		return DT_CHANNEL_MULT;
-<DATA_TYPE>"CHANNEL_ROUND"		return DT_CHANNEL_ROUND;
-<DATA_TYPE>","				return DT_COMMA; 
-<DATA_TYPE>"("				return LT_PARENTHESIS;
-<DATA_TYPE>")"				return RT_PARENTHESIS; 
+<DATA_TYPE>"DATATYPE"			{BEGIN DEFINITION; return DT_DATATYPE;}
+<DATA_TYPE>"WP"				{BEGIN DEFINITION; return DT_WP;}
+<DATA_TYPE>"WP_NORM"			{BEGIN DEFINITION; return DT_WP_NORM;}
+<DATA_TYPE>"MIN_CHANNEL"		{BEGIN DEFINITION; return DT_MIN_CHANNEL;}
+<DATA_TYPE>"MAX_CHANNEL"                {BEGIN DEFINITION; return DT_MAX_CHANNEL;}
+<DATA_TYPE>"ZERO"			{BEGIN DEFINITION; return DT_ZERO;}
+<DATA_TYPE>"CHANNEL_CLAMP"		{BEGIN ARGUMENTS; return DT_CHANNEL_CLAMP;}
+<DATA_TYPE>"WP_CLAMP"			{BEGIN ARGUMENTS; return DT_WP_CLAMP;} 
+<DATA_TYPE>"CHANNEL_MULT"		{BEGIN ARGUMENTS; return DT_CHANNEL_MULT;} 
+<DATA_TYPE>"CHANNEL_ROUND"		{BEGIN ARGUMENTS; return DT_CHANNEL_ROUND;} 
+<ARGUMENTS>","				return DT_COMMA; 
+<ARGUMENTS>"("				return LT_PARENTHESIS;
+<ARGUMENTS>")"				{BEGIN DEFINITION; return RT_PARENTHESIS;}  
 
 
 <GENERIC_IMAGE_BLOCK>{indent}"{"	{
@@ -281,17 +284,19 @@ rm			[\t \n]*
 			    		break; 		  
 			  		}
           				}
-<DATA_TYPE>{name}			{
+<ARGUMENTS>{name}			{
     					strcpy (yylval.tok.string, yytext);
 					return DT_NAME;
 					}
-<DATA_TYPE>{space}{string}			{
+<DEFINITION>{string}			{
     					strcpy (yylval.tok.string, yytext);
+					BEGIN DATA_TYPE; 
 					return DT_STRING;
 					}
 
 
-{indent}"$" 				return 0; 
+{indent}"$" 				{BEGIN 0; return 0;} 
+"$"					{BEGIN 0; return 0;} 
 <GENERIC_IMAGE_DECL>.			return yytext[0];
 <GENERIC_IMAGE_BLOCK>.			return yytext[0];
 <COMMENT>.				ECHO;

@@ -63,6 +63,21 @@ int     cur_nsyms=0;
 {"",		-1}
   };
 
+  dt_keyword_t dt_keyword_tab[] = {
+	{"DATATYPE", 0},
+	{"WP", 0},
+	{"WP_NORM", 0},
+	{"MIN_CHANNEL", 0},
+	{"MAX_CHANNEL", 0},
+	{"ZERO", 0},
+	{"CHANNEL_CLAMP", 1},
+	{"WP_CLAMP", 1},
+	{"CHANNEL_MULT", 1},
+	{"CHANNEL_ROUND", 1}, 
+	{"",		9}
+  }; 
+
+
 %}
 
 %union
@@ -193,10 +208,25 @@ DT_Line:
 
 		while ($5.string[i] == '\t' || $5.string[i] == ' ')
 		  i++;
+		while ($5.string[i] == '\\' && $5.string[i+1] == '\n')
+		  i += 2;
 
 		for(i=i; i<len; i++)
 		  {
 		  flag = 0;
+		  loop1:
+		 
+		  if (i<=len-2)
+		    {
+		      if ($5.string[i] == '\\' && $5.string[i+1] == '\n')
+			{
+			  i += 2;
+		    
+			  while ($5.string[i] == '\t' || $5.string[i] == ' ')
+			    i++;
+			  goto loop1;
+			} 
+		    } 
 		  
 		  if (i<=len-sublen)
 		    {
@@ -228,11 +258,27 @@ DT_Line:
 
 		while ($5.string[i] == '\t' || $5.string[i] == ' ')
 		  i++;
+		while ($5.string[i] == '\\' && $5.string[i+1] == '\n')
+		  i += 2;
 
 		for(i=i; i<len; i++)
 		  {
 		  flag = 0;
 		  
+		  loop2:
+		 
+		  if (i<=len-2)
+		    {
+		      if ($5.string[i] == '\\' && $5.string[i+1] == '\n')
+			{
+			  i += 2;
+		    
+			  while ($5.string[i] == '\t' || $5.string[i] == ' ')
+			    i++;
+			  goto loop2;
+			} 
+		    } 
+
 		  if (i<=len-sublen)
 		    { 
 		    strncpy (sub, &($5.string[i]), sublen); 
@@ -265,10 +311,26 @@ DT_Line:
 
 		while ($7.string[i] == '\t' || $7.string[i] == ' ')
 		  i++;
+		while ($7.string[i] == '\\' && $7.string[i+1] == '\n')
+		  i += 2;
 
 		for(i=i; i<len; i++)
 		  {
 		  flag1 = flag2 = 0;
+
+		  loop3:
+		 
+		  if (i<=len-2)
+		    {
+		      if ($7.string[i] == '\\' && $7.string[i+1] == '\n')
+			{
+			  i += 2;
+		    
+			  while ($7.string[i] == '\t' || $7.string[i] == ' ')
+			    i++;
+			  goto loop3;
+			} 
+		    } 
 
 		  if (i<=len-sublen1)
 		    {
@@ -313,12 +375,29 @@ DT_Line:
 		sublen = strlen ($3.string);
 
 		while ($5.string[i] == '\t' || $5.string[i] == ' ')
-		  i++;
+		 i++;
+		while ($5.string[i] == '\\' && $5.string[i+1] == '\n')
+		  i += 2;
+
 
 		for(i=i; i<len; i++)
 		  {
 		  flag = 0;
-		  
+
+		  loop4:
+		 
+		  if (i<=len-2)
+		    {
+		      if ($5.string[i] == '\\' && $5.string[i+1] == '\n')
+			{
+			  i += 2;
+		    
+			  while ($5.string[i] == '\t' || $5.string[i] == ' ')
+			    i++;
+			  goto loop4;
+			} 
+		    } 
+
 		  if (i<=len-sublen)
 		    {
 		    strncpy (sub, &($5.string[i]), sublen); 
@@ -337,6 +416,7 @@ DT_Line:
 		    j++; 
 		    }
 		  }
+		if (tmp[j-1] == '\\') tmp[j-1] = '\0'; 
 		tmp[j] = '\0'; 
 		CHANNEL_ROUND_STR = (char *) strdup (tmp); 
 		}
@@ -1628,6 +1708,23 @@ get_keyword (char *keywd)
     {
     if (!strcmp (keyword_tab[i].word, keywd))
       return keyword_tab[i].token;
+    else
+      i ++;
+    }
+
+  return -1; 
+}
+
+int
+get_dt_keyword (char *keywd)
+{
+
+  int i=0; 
+
+  while (dt_keyword_tab[i].arg != 9)
+    {
+    if (!strcmp (dt_keyword_tab[i].word, keywd))
+      return dt_keyword_tab[i].arg;
     else
       i ++;
     }

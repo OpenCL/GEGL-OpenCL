@@ -72,6 +72,12 @@ typedef struct
   char	string[20];
 }token_t;
 
+typedef struct
+{
+  char  word[20];
+  char	arg;
+}dt_keyword_t;
+
 #ifdef  _LEXER_C_
 int SCOPE = 0;
 #undef  _LEXER_C_
