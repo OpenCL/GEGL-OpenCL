@@ -1,0 +1,24 @@
+_WP_ 			1
+_WP_NORM_		1
+_VectorChan_		float
+_Chan_			float
+_FloatChan_		float
+_MIN_CHAN_		0
+_MAX_CHAN_		1
+_ZERO_CHAN_		0
+_ZERO_			0
+_CHAN_CLAMP_PRE_	""
+_CHAN_CLAMP_SUF_	""
+_WP_CLAMP_PRE_		""
+_WP_CLAMP_SUF_		""
+_TIMES_VS_PRE_		""
+_TIMES_VS_MID_		""
+_TIMES_VS_SUF_		""
+_TIMES_VV_PRE_		""
+_TIMES_VV_MID_		""
+_TIMES_VV_SUF_		""
+_EQUAL_CFC_PRE_		""
+_EQUAL_CFC_SUF_		"" 
+
+	
+

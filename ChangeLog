@@ -1,3 +1,7 @@
+Tue Mar 14 17:51:45 PST 2000 caro@rhythm.com
+
+	* codegen now takes a file, I have added an example file called FLOAT
+
 Tue Mar 14 14:23:29 PST 2000 caro@rhythm.com
 
 	* fixed problem

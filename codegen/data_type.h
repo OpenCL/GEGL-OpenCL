@@ -32,12 +32,6 @@ EXTERN char  *_CHAN_CLAMP_SUF_;
 EXTERN char  *_WP_CLAMP_PRE_;
 EXTERN char  *_WP_CLAMP_SUF_;
 
-EXTERN char  *_PLUS_PRE_;
-EXTERN char  *_PLUS_SUF_; 
-
-EXTERN char  *_MINUS_PRE_;        
-EXTERN char  *_MINUS_SUF_;       
-
 EXTERN char  *_TIMES_VS_PRE_;	
 EXTERN char  *_TIMES_VS_MID_;
 EXTERN char  *_TIMES_VS_SUF_;

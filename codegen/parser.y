@@ -18,7 +18,7 @@ void print_line (elem_t src);
 void set_dtype (elem_t e, DATA_TYPE dtype);
 void set_type (elem_t e, DATA_TYPE dtype);
 void set_num (elem_t e, int n);
-void read_data_types (char *data_type);
+void read_data_types (char *filename);
 void read_channel_names (int argc, char **argv); 
 void init_data_varible (char *s);
 
@@ -836,9 +836,17 @@ init_image_data (char *indent)
 void
 init_data_varible (char *s)
 {
+  int i; 
+  char tmp[20]; 
   elem_t *e = get_sym (s); 
-
-  printf ("\n       %s *%s_data[%d];", _Chan_, s, e->num); 
+ 
+  for (i=0; i<SCOPE; i++)
+    {
+    tmp[i*2  ] = ' ';
+    tmp[i*2+1] = ' ';
+    }
+  tmp[i*2  ] = '\0'; 
+  printf ("\n%s%s *%s_data[%d];", tmp, _Chan_, s, e->num); 
 }
 
 void
@@ -1356,127 +1364,125 @@ get_keyword (char *keywd)
   
 
 void
-read_data_types (char *data_type)
+read_data_types (char *filename)
 {
 
+  char value[255], token[255]; 
+  FILE *file;
+  
+  file = fopen (filename, "r"); 
 
-/*
-        UINT8
-*/
-   if (!strcmp (data_type, "UINT8"))
-     {
-     _WP_         	= (char *) strdup ("255");
-     _WP_NORM_      	= (char *) strdup ("(1.0/255.0)");
-     _VectorChan_       = (char *) strdup ("guint8");
-     _Chan_         	= (char *) strdup ("guint8");
-     _FloatChan_    	= (char *) strdup ("float");
-     _MIN_CHAN_     	= (char *) strdup ("0");
-
-     _MAX_CHAN_    	= (char *) strdup ("255");
-     _ZERO_CHAN_  	= (char *) strdup ("0");
-     _ZERO_	  	= (char *) strdup ("0");
-
-     _CHAN_CLAMP_PRE_  	= (char *) strdup ("CLAMP (");
-     _CHAN_CLAMP_SUF_	= (char *) strdup (", 0, 255)");
-
-     _WP_CLAMP_PRE_   	= (char *) strdup ("CLAMP (");
-     _WP_CLAMP_SUF_   	= (char *) strdup (", 0, 255)");
-
-     _PLUS_PRE_      	= (char *) strdup ("");
-     _PLUS_SUF_      	= (char *) strdup ("");
-
-     _MINUS_PRE_    	= (char *) strdup ("");
-     _MINUS_SUF_    	= (char *) strdup ("");
-
-     _TIMES_VS_PRE_  	= (char *) strdup ("");
-     _TIMES_VS_MID_	= (char *) strdup ("*");
-     _TIMES_VS_SUF_  	= (char *) strdup ("");
-
-     _TIMES_VV_PRE_	= (char *) strdup ("INT_MULT(");
-     _TIMES_VV_MID_	= (char *) strdup (",");
-     _TIMES_VV_SUF_  	= (char *) strdup (")");
-
-     _EQUAL_CFC_PRE_ 	= (char *) strdup ("ROUND(");
-     _EQUAL_CFC_SUF_ 	= (char *) strdup (")");
-   }
-/*
-        UINT16
-*/
-   if (!strcmp(data_type, "UINT16"))
-     {
-
-     _WP_          	= (char *) strdup ("4095");
-     _WP_NORM_     	= (char *) strdup ("(1.0/4095.0)");
-     _VectorChan_       = (char *) strdup ("guint16");
-     _Chan_         	= (char *) strdup ("guint16");
-     _FloatChan_    	= (char *) strdup ("float");
-     _MIN_CHAN_      	= (char *) strdup ("0");
-     _MAX_CHAN_        	= (char *) strdup ("65535");
-     _ZERO_CHAN_      	= (char *) strdup ("0");
-     _ZERO_	  	= (char *) strdup ("0");
-
-     _CHAN_CLAMP_PRE_ 	= (char *) strdup ("CLAMP (");
-     _CHAN_CLAMP_SUF_  	= (char *) strdup (", 0, 65535)");
-
-     _WP_CLAMP_PRE_   	= (char *) strdup ("CLAMP (");
-     _WP_CLAMP_SUF_  	= (char *) strdup (", 0, 4095)");
-
-     _PLUS_PRE_     	= (char *) strdup ("");
-     _PLUS_SUF_     	= (char *) strdup ("");
-
-     _MINUS_PRE_     	= (char *) strdup ("");
-     _MINUS_SUF_        = (char *) strdup ("");
-
-     _TIMES_VS_PRE_  	= (char *) strdup ("");
-     _TIMES_VS_MID_	= (char *) strdup ("*");
-     _TIMES_VS_SUF_  	= (char *) strdup ("");
-
-     _TIMES_VV_PRE_    	= (char *) strdup ("INT_MULT16(");
-     _TIMES_VV_MID_    	= (char *) strdup (",");
-     _TIMES_VV_SUF_    	= (char *) strdup (")");
-
-     _EQUAL_CFC_PRE_   	= (char *) strdup ("ROUND(");
-     _EQUAL_CFC_SUF_   	= (char *) strdup (")");
-     }
-     
-/*
-        FLOAT
-*/
-   if (!strcmp(data_type, "FLOAT"))
-     {
-     _WP_               = (char *) strdup ("1.0");
-     _WP_NORM_          = (char *) strdup ("1.0");
-     _VectorChan_       = (char *) strdup ("gfloat");
-     _Chan_             = (char *) strdup ("gfloat");
-     _FloatChan_        = (char *) strdup ("gfloat");
-     _MIN_CHAN_         = (char *) strdup ("0");
-     _MAX_CHAN_         = (char *) strdup ("1.0");
-     _ZERO_CHAN_        = (char *) strdup ("0");
-     _ZERO_	  	= (char *) strdup ("0.0");
-
-     _CHAN_CLAMP_PRE_   = (char *) strdup ("");
-     _CHAN_CLAMP_SUF_   = (char *) strdup ("");
-
-     _WP_CLAMP_PRE_    	= (char *) strdup ("CLAMP (");
-     _WP_CLAMP_SUF_     = (char *) strdup (", 0, 1)");
-
-     _PLUS_PRE_         = (char *) strdup ("");
-     _PLUS_SUF_         = (char *) strdup ("");
-
-     _MINUS_PRE_       	= (char *) strdup ("");
-     _MINUS_SUF_        = (char *) strdup ("");
-
-     _TIMES_VS_PRE_     = (char *) strdup ("");
-     _TIMES_VS_MID_     = (char *) strdup ("*");
-     _TIMES_VS_SUF_     = (char *) strdup ("");
-
-     _TIMES_VV_PRE_     = (char *) strdup ("");
-     _TIMES_VV_MID_     = (char *) strdup ("*");
-     _TIMES_VV_SUF_     = (char *) strdup ("");
-
-     _EQUAL_CFC_PRE_    = (char *) strdup ("");
-     _EQUAL_CFC_SUF_    = (char *) strdup ("");
-   }
+  while (fscanf (file, "%s", &token) == 1)
+    {
+    if (!strcmp (token, "_WP_"))
+      {
+      fscanf (file, "%s", &value);
+      _WP_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_WP_NORM_"))
+      {
+      fscanf (file, "%s", &value);
+      _WP_NORM_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_VectorChan_"))
+      {
+      fscanf (file, "%s", &value);
+      _VectorChan_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_Chan_"))
+      {
+      fscanf (file, "%s", &value);
+      _Chan_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_FloatChan_"))
+      {
+      fscanf (file, "%s", &value);
+      _FloatChan_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_MIN_CHAN_"))
+      {
+      fscanf (file, "%s", &value);
+      _MIN_CHAN_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_MAX_CHAN_"))
+      {
+      fscanf (file, "%s", &value);
+      _MAX_CHAN_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_ZERO_CHAN_"))
+      {
+      fscanf (file, "%s", &value);
+      _ZERO_CHAN_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_ZERO_"))
+      {
+      fscanf (file, "%s", &value);
+      _ZERO_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_CHAN_CLAMP_PRE_"))
+      {
+      fscanf (file, "%s", &value);
+      _CHAN_CLAMP_PRE_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_CHAN_CLAMP_SUF_"))
+      {
+      fscanf (file, "%s", &value);
+      _CHAN_CLAMP_SUF_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_WP_CLAMP_PRE_"))
+      {
+      fscanf (file, "%s", &value);
+      _WP_CLAMP_PRE_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_WP_CLAMP_SUF_"))
+      {
+      fscanf (file, "%s", &value);
+      _WP_CLAMP_SUF_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_TIMES_VS_PRE_"))
+      {
+      fscanf (file, "%s", &value);
+      _TIMES_VS_PRE_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_TIMES_VS_MID_"))
+      {
+      fscanf (file, "%s", &value);
+      _TIMES_VS_MID_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_TIMES_VS_SUF_"))
+      {
+      fscanf (file, "%s", &value);
+      _TIMES_VS_SUF_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_TIMES_VV_PRE_"))
+      {
+      fscanf (file, "%s", &value);
+      _TIMES_VV_PRE_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_TIMES_VV_MID_"))
+      {
+      fscanf (file, "%s", &value);
+      _TIMES_VV_MID_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_TIMES_VV_SUF_"))
+      {
+      fscanf (file, "%s", &value);
+      _TIMES_VV_SUF_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_EQUAL_CFC_PRE_"))
+      {
+      fscanf (file, "%s", &value);
+      _EQUAL_CFC_PRE_ = (char *) strdup (value); 
+      }
+    else if (!strcmp (token, "_EQUAL_CFC_SUF_"))
+      {
+      fscanf (file, "%s", &value);
+      _EQUAL_CFC_SUF_ = (char *) strdup (value); 
+      }
+    token[0] = '\0';  
+    }
+	
+  fclose(file); 
 }
 
 void
