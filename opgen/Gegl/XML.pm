@@ -30,9 +30,10 @@ sub parse_file
     $query = new XML::XQL::Query (Expr => "PointOp");
     @result = $query->solve ($doc);
 
-    print "found ",  @result+0, " PointOp[s]!\n\n";
+#    print "found ",  @result+0, " PointOp[s]!\n\n";
     @ops = ();
     my $i = 0;
+    print "Warning, found no PointOps\n" unless @result;
     foreach (@result)
       {
 	$ops[$i] =  Gegl::XML::PointOp::parse($_);

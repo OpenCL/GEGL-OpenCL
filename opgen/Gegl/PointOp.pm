@@ -47,13 +47,16 @@ sub print_constructor
     my $op = shift;
     my $nargs = @{$op->{buffer_args}};
     my $chain_args = "";
+    my $args = $op->{arguments};
+
+    $args =~ s/IMAGE/GeglImage \*/g;
 
     foreach (@{$op->{buffer_args}})
       {
 	$chain_args = $chain_args  . ", " . $_;
       }
     print <<HERE;
-  protected gboolean constructor(self, $op->{arguments})
+  protected gboolean constructor(self, ${args})
   {
     GList *inputs = NULL;
 
@@ -149,16 +152,16 @@ sub print_class_specific
 
 sub get_handler
   {
-# need to look at precision also
 # need to handle multiple colormodels in a processor
-# how do we name the scanline func if it handles multiple?
+# how do we name the scanline func if it handles multiple options?
     my ($op, $cspace, $prec) = @_;
     my ($i, $j);
     foreach $i (@{%Gegl::colormodels->{$cspace}->{hierarchy}})
       {
         foreach $j (@{$op->{processors}})
 	  {
-	    if ($j->{colormodel} eq $i || $j->{colormodel} eq "all")
+	    if (($j->{colormodel} eq $i   || $j->{colormodel} eq "all") &&
+		($j->{precision} eq $prec || $j->{precision} eq "all"))
 	      {
 		return "scanline_${prec}_$j->{colormodel}";
 	      }

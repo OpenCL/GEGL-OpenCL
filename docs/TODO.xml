@@ -229,8 +229,7 @@
       <title>Opgen Issues</title>
       <description>
         <p>
-          Opgen generates gegl-operators from XML files.  The code it generates
-          isn't good enough to compile, but it is close.
+          Opgen generates gegl-operators from XML files.
         </p>
         <ul>
             <li>
@@ -240,17 +239,11 @@
               Add license entities for gpl, lgpl, bsd, etc?
             </li>
             <li>
-              Make the constants line up with the real gegl constants.
-            </li>
-            <li>
               Figure out how we tell GIL to generate multiple versions of the
               point processing functions
             </li>
             <li>
               Figure out how we code with specific colors (ie red, green, blue, cyan...)
-            </li>
-            <li>
-              Make the output actually compile.
             </li>
             <li>
               Automatic code indentation?

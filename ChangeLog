@@ -1,3 +1,21 @@
+2001-02-19  Jay Cox  <jaycox@gimp.org>
+
+	* opgen/test-op.xml: new test operator
+	
+	* opgen/blend.xml
+	* opgen/geglgen.pl
+	* opgen/Gegl/Config.pm
+	* opgen/Gegl/Op.pm
+	* opgen/Gegl/PointOp.pm
+	* opgen/Gegl/PointProcessor.pm
+	* opgen/Gegl/XML.pm
+	* opgen/Gegl/XML/PointProcessor.pm:  Updates to make
+	the output compile.
+
+	
+	* opgen/README
+	* docs/TODO.xml: update current status.
+
 Mon Feb 12 01:18:47 EST 2001 calvinw@mindspring.com
 
     *docs/geglClasses.html

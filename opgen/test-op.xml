@@ -3,12 +3,14 @@
 <!DOCTYPE PointOp SYSTEM "geglopgen.dtd">
 
 
-<PointOp name="testopgen"  arguments="const Buffer src1, const Buffer src2">
+<PointOp name="testopgen"  arguments="const IMAGE src1, const IMAGE src2">
   <description>
-The blend operator blends two pixel sources together based on their alpha channels. src1 over src2.
+The subtract function subtracts the values of each pixel in the second image
+buffer from the corosponding pixel value in the first image buffer placing
+the results in the dest image buffer.
   </description>
   <author>Jay Cox</author>
-  <copyright>2001, Jay Cox</copyright>
+  <copyright>2000, Jay Cox</copyright>
   <license>GPL</license>
 
   <variables>
@@ -18,7 +20,7 @@ The blend operator blends two pixel sources together based on their alpha channe
   </constructor>
   <destructor>
   </destructor>
-  <PointProcessor precision="all" colormodel="all">
+  <PointProcessor precision="FLOAT" colormodel="RGB">
     <variables>
     /* This function don't need no variables */
     </variables>
@@ -27,14 +29,12 @@ The blend operator blends two pixel sources together based on their alpha channe
     </per_pixel>
     <per_color>
 <![CDATA[
-    dest = (src1 * src1_alpha + 
-            src2 * ((WP - src1_alpha) * src2_alpha)) /
-          (WP - (WP - src1_alpha)*(WP - src2_alpha));
+       dest = CHANNEL_CLAMP((SignedPromote)src1 - src2);
 ]]>
     </per_color>
     <per_alpha>
 <![CDATA[
-      dest = src1 + (CHANNEL_MAX - src1) * src2;
+      dest = MIN(src1, src2);
 ]]>
     </per_alpha>
     <cleanup>

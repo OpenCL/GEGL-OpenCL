@@ -4,20 +4,14 @@ Requirements:
 
 
 Usage:
-  ./geglgen.pl subtract.xml
+  ./geglgen.pl test-op.xml
 
-Notes:
-  The output of this file is not yet compilable but it is pretty close.
 
 TODO:
-
-  Make the constants line up with the real gegl constants.
 
   Figure out how we tell GIL to generate multiple versions of the 
 point processing functions
 
   Figure out how we code with specific colors (ie red, green, blue, cyan...)
-
-  Make the output actually compile.
 
   Automatic code indentation?

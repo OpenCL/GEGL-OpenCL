@@ -19,8 +19,8 @@ sub parse
     # It may look like we are violating the encapsulation of the
     # Gegl::Point::Processor class, but we are "friends with privileges"
 
-    $processor->{precision}  = $tree->getAttributeNode ("precision" )->getValue;
-    $processor->{colormodel} = $tree->getAttributeNode ("colormodel")->getValue;
+    $processor->{precision}  = lc $tree->getAttributeNode ("precision" )->getValue;
+    $processor->{colormodel} = lc $tree->getAttributeNode ("colormodel")->getValue;
 
     foreach (qw/variables per_pixel per_color per_alpha cleanup/)
       {

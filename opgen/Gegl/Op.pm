@@ -55,7 +55,7 @@ sub setup
     foreach (@args) # get the argument names without type qualifiers
       {
 	${op}->{argnames}[$i] = (reverse (split /\s+/, $_))[0];
-	if ((grep "Buffer ", $_)) # store the names of all buffers
+	if ((grep "IMAGE ", $_)) # store the names of all buffers
 	  {
 	    push @{$op->{buffer_args}}, ${op}->{argnames}[$i];
 	  }
@@ -110,6 +110,7 @@ sub print_headers
 %}
 %{
 #include "gegl-n-src-op.h"
+#include "gegl-n-src-op-private.h"
 #include "gegl-$op->{name}-op.h"
 #include "gegl-$op->{name}-op-private.h"
 #include "gegl-image-iterator.h"
@@ -132,8 +133,12 @@ sub print_variables
 sub print_new
   {
     my $op = shift;
+    my $args = $op->{arguments};
+
+    $args =~ s/IMAGE/GeglImage \*/g;
+
     print <<HERE
-  public $op->{class_name} * new ($op->{arguments})
+  public $op->{class_name} * new (${args})
   {
     $op->{class_name} * self = $op->{class_cast}(GET_NEW);
 

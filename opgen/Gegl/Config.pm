@@ -32,7 +32,7 @@ package Gegl;
 			 additive  => 1,
 			 nchannels => 1,
 			 channels  => ["grey"],
-			 enum      => "GEGL_GREY"
+			 enum      => "GEGL_GRAY"
 			},
 		rgb  => {
 			 hierarchy => [ "rgb", "additive", "intensity" ],

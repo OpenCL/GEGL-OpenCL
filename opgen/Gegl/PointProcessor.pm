@@ -47,11 +47,12 @@ sub print_scanline_function
     print <<HERE;
   private
   void
-  scanline_$p->{colormodel}_DATATYPE (GeglPointOp *self_point_op,
+  scanline_$p->{precision}_$p->{colormodel} (GeglPointOp *self_point_op,
                        GeglImageIterator *dest_iter, 
 		       GeglImageIterator **src_iters)
   {
     GeglOp *self_op = GEGL_OP(self_point_op);
+    GeglNSrcOp *self_n_src_op = GEGL_N_SRC_OP(self_point_op);
     guint width = gegl_image_iterator_scanline_width (dest_iter);
     gulong mask_mask;
     /* --- User variables ---*/
@@ -61,12 +62,12 @@ sub print_scanline_function
     GENERIC_IMAGE_DECL_BEGIN
 HERE
 # Only compute the has_alpha variables if we are going to use them
-    if ($has_alpha)
+    if ($has_alpha || "true") # gil don't like it if we don't have_alpha
       {
-        print "    Pixel dest(color, alpha, has_alpha);";
+        print "    Pixel dest(color,alpha,has_alpha);\n";
         foreach (@{$op->{buffer_args}})
           {
-            print "    Pixel ${_}(color, alpha, has_alpha);\n";
+            print "    Pixel ${_}(color,alpha,has_alpha);\n";
           }
       }
     else
@@ -74,26 +75,27 @@ HERE
         print "    Pixel dest(color,alpha);";
         foreach (@{$op->{buffer_args}})
           {
-            print "    Pixel ${_}(color, alpha);\n";
+            print "    Pixel ${_}(color,alpha);\n";
           }
       }
     print <<HERE;
     GENERIC_IMAGE_DECL_END
 
 HERE
-    if ($has_alpha)
+    if ($has_alpha || "true") # gil don't like it if we don't have_alpha
       {
-        print "    dest_has_alpha = self_op->has_alpha;";
+        print "    dest_has_alpha = gegl_image_has_alpha(gegl_image_iterator_get_image(dest_iter));\n";
         $i = 0;
         foreach (@{$op->{buffer_args}})
           {
-            print "    ${_}_has_alpha = self_op->src_has_alpha[$i];\n";
+	    print "    ${_}_has_alpha = gegl_image_has_alpha(gegl_image_iterator_get_image(src_iters[$i]));\n";
+#            print "    ${_}_has_alpha = self_op->src_has_alpha[$i];\n";
             $i++;
           }
       }
 
+#####  moved gegl-n-src-op.gob #####
 # Calculate the mask_mask bitmask
-# moved gegl-n-src-op.gob
 #    print "\n";
 #    print "    mask_mask = 0;\n";
 #    foreach (0 .. $#{$op->{buffer_args}})
@@ -101,6 +103,7 @@ HERE
 #        my $i = $#{$op->{buffer_args}} - $_;
 #        $print "    mask_mask = (mask_mask << 1) | $op->{buffer_args}[$i]_has_alpha;\n";
 #      }
+
     print "\n";
     print "    mask_mask = self_n_src_op->_priv->mask_mask;\n";
     print "\n";
@@ -158,7 +161,8 @@ HERE
 
     }
 
-    print <<HERE;
+    print "        GENERIC_IMAGE_CODE_END\n";
+    print <<HERE unless $per_color_alpha;
 
         if (dest_has_alpha)
           {
@@ -177,6 +181,7 @@ HERE
         {
           $bits = $bits - 1;
           print "               case $bits:\n";
+          print "        GENERIC_IMAGE_CODE_BEGIN\n";
           if ($per_pixel_alpha)
             {
               print "                 " .
@@ -191,38 +196,50 @@ HERE
             }
           if ($p->{per_alpha})
             {
-              print "                 " .
+	      if ($per_color_alpha)
+		{
+		  print "            if (dest_has_alpha)\n";
+		  print "              {\n";
+                }
+		print "                 " .
                     my_bit_alpha(per_alphify($op, $p->{per_alpha}), $bits,
                                  [@{$op->{buffer_args}}]) . "\n";
+	      if ($per_color_alpha)
+		{ print "              }\n"; }
             }
-          print "               break:\n";
+          print "        GENERIC_IMAGE_CODE_END\n";
+          print "               break;\n";
         }
       print "               default:\n";
       print "                 g_error(\"Bad mask_mask value: %d\", mask_mask);\n";
-      print "               break:\n";
+      print "               break;\n";
       print "             }\n";
     }
     else
     {
       print "              default:\n";
+      print "               GENERIC_IMAGE_CODE_BEGIN\n";
       print "                dest_alpha = WP;\n";
+      print "               GENERIC_IMAGE_CODE_END\n";
     }
 
 print <<HERE;
 
           }
 
-        dX(dest, 1);
+       GENERIC_IMAGE_CODE_BEGIN
+
+        dX(dest,1);
 HERE
 
     foreach (@{$op->{buffer_args}})
       {
-	print "        dX($_, 1);\n";
+	print "        dX($_,1);\n";
       }
 
    print <<HERE
 
-        GENERIC_IMAGE_CODE_END
+       GENERIC_IMAGE_CODE_END
       }
       /* ----------  <user cleanup> ---------- */
       ${cleanup}

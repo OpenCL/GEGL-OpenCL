@@ -13,6 +13,6 @@ use Gegl::XML;
 @ops = Gegl::XML::parse_file($ARGV[0]);
 foreach (@ops)
   {
-    print "---------- printing an op --------------\n";
+#    print "---------- printing an op --------------\n";
     $_->print_class();
   }
