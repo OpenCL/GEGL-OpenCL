@@ -1,3 +1,13 @@
+2003-12-06 11:45 Daniel Rogers <daniel@phasevelocity.org>
+	* autogen.sh
+	Commented out call to glib-gettextize which GEGL is not using at
+	the moment.  Someone should check this, as I don't completely
+	understand the autofoo tools.
+	
+2003-12-06 09:04 Daniel Rogers <daniel@phasevelocity.org>
+	* autogen.sh
+	Updated autogen.sh to work with newer libtool/autofoo stuff.
+	
 2003-11-28 21:20 Daniel Rogers <daniel@phasevelocity.org>
 	* configure.in
 	I Added a check for lcms.
