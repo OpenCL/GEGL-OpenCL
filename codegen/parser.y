@@ -100,7 +100,7 @@ int     cur_nsyms=0;
 %token  <elem> INDENT
 %token  <elem> POUND
 %token  <elem> INDENT_CURLY  
-%token  <elem> UVARIBLE  
+%token  <elem> VARIABLE  
 %token  <tok>  COMPARE 
 %token  <tok>  MIN_MAX
 %token  <tok>  ADD_SUB
@@ -690,7 +690,7 @@ Line:
 		    {
 		    char t[20];
 		    strcpy (t, $4.string);  
-		    sprintf (tmp, "%s%s_c++;", $1.string, $4.string);  
+		    sprintf (tmp, "%s%s$c++;", $1.string, $4.string);  
 		    strcpy ($4.string, tmp);
 		    print_line($4);
 		    printf ("%sif (%s_has_%s)%s  %s_%s++;", $1.string, t,
@@ -701,14 +701,14 @@ Line:
 		    }
 		  else if (get_sym ($4.string)->type == TYPE_CA_VECTOR)
 		    {
-		    sprintf (tmp, "%s%s_ca++;", $1.string, $4.string);  
+		    sprintf (tmp, "%s%s$ca++;", $1.string, $4.string);  
 		    strcpy ($4.string, tmp);
 		    print_line($4); 
 		    printf ("\n"); 
 		    }
 		  else
                     {
-		    sprintf (tmp, "%s%s_c++;", $1.string, $4.string);
+		    sprintf (tmp, "%s%s$c++;", $1.string, $4.string);
 		    strcpy ($4.string, tmp);
 		    print_line($4); 
 		    printf ("\n");  
@@ -720,7 +720,7 @@ Line:
 		      {
 		      char t[20];
 		      strcpy (t, $4.string);  
-		      sprintf (tmp, "%s%s%s_c += %s;", $1.string, $4.string, $6.string); 
+		      sprintf (tmp, "%s%s%s$c += %s;", $1.string, $4.string, $6.string); 
 		      strcpy ($4.string, tmp);
 		      print_line($4); 
 		      printf ("%sif (%s_has_%s)%s  %s_%s += %s", $1.string, t,
@@ -732,14 +732,14 @@ Line:
 		      }
 		    else if (get_sym ($4.string)->type == TYPE_CA_VECTOR)
 		      {
-		      sprintf (tmp, "%s%s_ca += %s;", $1.string, $4.string, $6.string); 
+		      sprintf (tmp, "%s%s$ca += %s;", $1.string, $4.string, $6.string); 
 		      strcpy ($4.string, tmp);
 		      print_line($4); 
 		      printf ("\n"); 
 		      }
 		    else
 		      {
-		      sprintf (tmp, "%s%s_c += %s;", $1.string, $4.string, $6.string); 
+		      sprintf (tmp, "%s%s$c += %s;", $1.string, $4.string, $6.string); 
 		      strcpy ($4.string, tmp);
 		      print_line($4); 
 		      printf ("\n"); 
@@ -766,7 +766,7 @@ Line:
 		      printf ("%sif (%s_has_%s)%s", $1.string, t2,
 			       NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
 			       $1.string);
-		      sprintf (tmp, "%s_a", t2);
+		      sprintf (tmp, "%s$a", t2);
 		      t[0] = tmp; 
 		      print ($4.string, PRINT_STR, t, 1);  
 		      $4.num = 1; 
@@ -904,7 +904,7 @@ Expression:
 		$$=$1;
 		print_value(&$$, $1); 
 		}
-	| UVARIBLE  
+	| VARIABLE  
 		{
 		$$ = $1;
 		} 	  
@@ -1177,7 +1177,7 @@ init_image_data (char *indent)
 	{
 	  e = symtab[i];
 	  symtab[i].inited = 1;
-	  sprintf (tmp, "%s%s_ca = %s_data_v;", indent, symtab[i].string, symtab[i].string);
+	  sprintf (tmp, "%s%s$ca = %s_data$v;", indent, symtab[i].string, symtab[i].string);
 	  strcpy (e.string, tmp); 
 	  print_line (e);  
 	  printf ("\n"); 
@@ -1186,10 +1186,10 @@ init_image_data (char *indent)
 	{
 	  e = symtab[i];
 	  symtab[i].inited = 1;
-	  sprintf (tmp, "%s%s_c = %s_data_v;", indent, symtab[i].string, symtab[i].string);
+	  sprintf (tmp, "%s%s$c = %s_data$v;", indent, symtab[i].string, symtab[i].string);
 	  strcpy (e.string, tmp); 
 	  print_line (e); 
-	  sprintf (tmp, "%sif (%s_has_a)%s  %s_a = %s_data[%d];", 
+	  sprintf (tmp, "%sif (%s_has$a)%s  %s$a = %s_data[%d];", 
 	      indent, symtab[i].string, indent, symtab[i].string, symtab[i].string, NUM_COLOR_CHANNEL);
 	  strcpy (e.string, tmp);
 	  print_line (e); 
@@ -1199,7 +1199,7 @@ init_image_data (char *indent)
 	{
 	  e = symtab[i];
 	  symtab[i].inited = 1;
-	  sprintf (tmp, "%s%s_c = %s_data_v;", indent, symtab[i].string, symtab[i].string);
+	  sprintf (tmp, "%s%s$c = %s_data$v;", indent, symtab[i].string, symtab[i].string);
 	  strcpy (e.string, tmp);
 	  print_line (e);
 	  printf ("\n"); 
@@ -1249,24 +1249,24 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
 	!strcmp (src.string, get_sym (src.string)->string)))) 
     {
       dest->num = NUM_COLOR_CHANNEL;
-      sprintf (tmp, "%s_c", get_sym (src.string)->string);
+      sprintf (tmp, "%s$c", get_sym (src.string)->string);
     }
   else if (is_define && get_sym (src.string)->type == TYPE_CA_VECTOR &&
       !strcmp (src.string, get_sym (src.string)->string)) 
     {
       dest->num = NUM_COLOR_CHANNEL + 1;
-      sprintf (tmp, "%s_ca", get_sym (src.string)->string);
+      sprintf (tmp, "%s$ca", get_sym (src.string)->string);
     }
   else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR ||
 	get_sym (src.string)->type == TYPE_C_A_VECTOR))
     {
       int l = strlen (src.string);
-      if (src.string[l-1] == 'a' && src.string[l-2] == '_')
+      if (src.string[l-1] == 'a' && src.string[l-2] == '$')
 	{
 	  dest->num = 1;
 	  sprintf (tmp, "%s", src.string);
 	}
-      if (src.string[l-1] == 'c' && src.string[l-2] == '_')
+      if (src.string[l-1] == 'c' && src.string[l-2] == '$')
 	{
 	  dest->num = NUM_COLOR_CHANNEL; 
 	  sprintf (tmp, "%s", src.string);
@@ -1275,7 +1275,7 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
   else if (is_define && get_sym (src.string)->type == TYPE_VECTOR)
     {
       dest->num = get_sym (src.string)->num; 
-      sprintf (tmp, "%s_v", src.string);
+      sprintf (tmp, "%s$v", src.string);
     }
   else if (!is_define && get_sym (src.string)->type == TYPE_VECTOR)
     sprintf (tmp, "%s[%d]", src.string, get_sym (src.string)->num);
@@ -1342,26 +1342,26 @@ print_line (elem_t src)
 	{
 	  for(j=0; j<l; j++)
 	    {
-	      if (j < l-2 && src.string[j] == '_' && src.string[j+1] == 'c' && src.string[j+2] == 'a')
+	      if (j < l-2 && src.string[j] == '$' && src.string[j+1] == 'c' && src.string[j+2] == 'a')
 		{
 		  printf("_%s", NAME_COLOR_CHANNEL[i]);
 		  k = NUM_COLOR_CHANNEL + 1;
 		  j += 2;
 		}
-	      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'c')
+	      else if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'c')
 		{
 		  printf("_%s", NAME_COLOR_CHANNEL[i]);
 		  k = NUM_COLOR_CHANNEL; 	
 		  j++;
 		}
-	      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
+	      else if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'v')
 		{
 		  printf("[%d]", i);
 		  if (src.type != TYPE_C_A_VECTOR)
 		    k = src.num; 
 		  j++;
 		}
-	      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
+	      else if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'a')
 		{
 		  printf("_%s", NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
 		  j++; 	
@@ -1378,12 +1378,12 @@ print_line (elem_t src)
       {
 	for(j=0; j<l; j++)
 	  {
-	    if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
+	    if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'v')
 	      {
 		printf("[%d]", i);
 		j++;
 	      }
-	    else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
+	    else if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'a')
 	      {
 		printf("_%s", NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
 		j++;
@@ -1400,12 +1400,12 @@ print_line (elem_t src)
 	{
 	  for(j=0; j<l; j++)
 	    {
-	      if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
+	      if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'v')
 		{
 		  printf("[%d]", i);
 		  j++;
 		}
-	      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
+	      else if (j < l-1 && src.string[j] == '$' && src.string[j+1] == 'a')
 		{
 		  printf("_%s", NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
 		  j++;
@@ -1671,7 +1671,7 @@ set_dtype (elem_t e, DATA_TYPE dtype)
   char *s = strdup(e.string); 
   i = strlen(s);
   if (i>2)
-    if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
+    if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '$')
       {
 	s[i-1] = '\0';
 	s[i-2] = '\0'; 
@@ -1703,7 +1703,7 @@ set_type (elem_t e, SV_TYPE type)
   char *s = strdup(e.string); 
   i = strlen(s);
   if (i>2)
-    if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
+    if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '$')
       {
 	s[i-1] = '\0';
 	s[i-2] = '\0'; 
@@ -1804,7 +1804,7 @@ get_sym (char *ss)
     if (!strcmp ("_has_alpha", &(s[i-10])))  
       {
 	ss[i-6] = '\0'; 
-	sprintf (s, "%s_%s", ss, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);  
+	sprintf (s, "%s$%s", ss, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);  
 	strcpy (ss, s); 
 	goto find;
       }
@@ -1814,11 +1814,12 @@ get_sym (char *ss)
       {
 	s[i-6] = '\0';
 	ss[i-4] = '\0';
+	ss[i-6] = '$'; 
 	goto find;
       }
 
   if (i>2)
-    if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
+    if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '$')
       {
 	s[i-2] = '\0';
       } 

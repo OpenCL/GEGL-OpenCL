@@ -22,7 +22,8 @@ int PREV;
 %s			DATA_TYPE 
 %s			ARGUMENTS
 %s			DEFINITION
-%s 			VARIBLE_ARGS 
+%s 			VARIABLE_SCALER 
+%s 			VARIABLE_VECTOR 
 white   		[ \t]+
 indent			[\n][ \t]*
 cont			("\\""\n")    
@@ -85,7 +86,6 @@ rm			[\t \n]*
 			    	 	
 <GENERIC_IMAGE_DECL>{white} 		; 
 <GENERIC_IMAGE_BLOCK>{white} 		; 
-<VARIBLE_ARGS>{rm} 			; 
 
 <GENERIC_IMAGE_DECL>{rm}"GENERIC_IMAGE_DECL_END" 	{
     							print_info ("\n/*Generic Image Decl End */\n");
@@ -171,7 +171,9 @@ rm			[\t \n]*
     					strcpy (yylval.tok.string, yytext); 
     					return (MIN_MAX);
 					}
-<GENERIC_IMAGE_BLOCK>"Varible"		BEGIN VARIBLE_ARGS; 	
+<GENERIC_IMAGE_BLOCK>"Vector_Variable"	BEGIN VARIABLE_VECTOR; 	
+<GENERIC_IMAGE_BLOCK>"Scaler_Variable"	BEGIN VARIABLE_SCALER; 	
+
 <GENERIC_IMAGE_BLOCK>"(Promote)"	return(PROMOTE_TYPE); 
 <GENERIC_IMAGE_BLOCK>"(SignedPromote)"	return(SIGNED_PROMOTE_TYPE); 
 <GENERIC_IMAGE_BLOCK>"ABS"		return(ABS); 
@@ -188,8 +190,10 @@ rm			[\t \n]*
 <GENERIC_IMAGE_BLOCK>"^"		return(POWER);
 <GENERIC_IMAGE_BLOCK>"("		return(LT_PARENTHESIS);
 <GENERIC_IMAGE_BLOCK>")"		return(RT_PARENTHESIS);
-<VARIBLE_ARGS>"("			;
-<VARIBLE_ARGS>")"			BEGIN GENERIC_IMAGE_BLOCK;
+<VARIABLE_VECTOR>"("			;
+<VARIABLE_VECTOR>")"			BEGIN GENERIC_IMAGE_BLOCK;
+<VARIABLE_SCALER>"("			;
+<VARIABLE_SCALER>")"			BEGIN GENERIC_IMAGE_BLOCK;
 <GENERIC_IMAGE_BLOCK>"{"		{SCOPE ++; return(LT_CURLY);}
 <GENERIC_IMAGE_BLOCK>"}"		{SCOPE --; rm_varibles (SCOPE); return(RT_CURLY); } 
 <GENERIC_IMAGE_DECL>"{"			{SCOPE ++; ECHO;}
@@ -308,37 +312,37 @@ rm			[\t \n]*
 					  BEGIN DEFINITION;
 					return keywd.token;
 					}
-<VARIBLE_ARGS>"Scaler"" "*{name}" "*{name}*	{
-      						char *varible;
-						char *type; 
-						varible  = (char*) strtok (&(yytext[7]), " ");
-						type 	 = (char*) strtok (NULL, " "); 					
-      						yylval.elem.num = 0;
-						yylval.elem.dtype = TYPE_CHANNEL;
-						yylval.elem.type = TYPE_SCALER;
-						if (type)
-						  sprintf (yylval.elem.string, "%s%s", 
-						      varible, get_sufix (type));
-						else
-						  sprintf (yylval.elem.string, "%s", varible); 
-						return UVARIBLE; 	
-						}
-<VARIBLE_ARGS>"Vector"" "*{name}" "*{name}*	{
-      						char *varible;
-						char *type;
-						varible  = (char*) strtok (&(yytext[7]), " ");
-						type     = (char*) strtok (NULL, " ");
+<VARIABLE_SCALER>{name}" "*{name}*	{
+      					char *varible;
+					char *type; 
+					varible  = (char*) strtok (yytext, " ");
+					type 	 = (char*) strtok (NULL, " "); 					
+      					yylval.elem.num = 0;
+					yylval.elem.dtype = TYPE_CHANNEL;
+					yylval.elem.type = TYPE_SCALER;
+					if (type)
+					  sprintf (yylval.elem.string, "%s%s", 
+					      varible, get_sufix (type));
+					else
+					  sprintf (yylval.elem.string, "%s", varible); 
+					return VARIABLE; 	
+					}
+<VARIABLE_VECTOR>{name}" "*{name}*	{
+      					char *varible;
+					char *type;
+					varible  = (char*) strtok (yytext, " ");
+					type     = (char*) strtok (NULL, " ");
 
-      						yylval.elem.num = 0;
-						yylval.elem.dtype = TYPE_CHANNEL;
-						yylval.elem.type = TYPE_VECTOR;
-      						if (type)
-						  sprintf (yylval.elem.string, "%s_v%s", 
-						       varible, get_sufix (type));
-						 else
-						   sprintf (yylval.elem.string, "%s_v", varible);
-				       		return UVARIBLE; 	
-      						}
+    					yylval.elem.num = 0;
+					yylval.elem.dtype = TYPE_CHANNEL;
+					yylval.elem.type = TYPE_VECTOR;
+      					if (type)
+					  sprintf (yylval.elem.string, "%s$v%s", 
+					       varible, get_sufix (type));
+					 else
+					   sprintf (yylval.elem.string, "%s$v", varible);
+				       	return VARIABLE; 	
+      					}
 <DEFINITION>{string}			{
     					strcpy (yylval.tok.string, yytext);
 					BEGIN DATA_TYPE; 

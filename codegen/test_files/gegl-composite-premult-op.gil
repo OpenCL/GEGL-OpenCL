@@ -275,7 +275,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
           {
 	    GENERIC_IMAGE_BLOCK_BEGIN
 
-	    a = WP - src2_a;
+	    a = WP - src2_alpha;
 	    dest_color = a * src1_color + src2_color;
 
 	    dX(dest,1);
@@ -330,7 +330,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
           {
 	    GENERIC_IMAGE_BLOCK_BEGIN
 
-            a = WP - src2_a; 
+            a = WP - src2_alpha; 
             dest_color = a * src1_color;
 
             dX(dest,1);

@@ -1,3 +1,21 @@
+Wed Apr 12 17:03:42 PDT 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* I have split Variable into two variables; Vector_Variable and
+	Scaler_Variable. By doing this I have eliminated the first 
+	argument to the pervious Varible (Scale/Vector). Everything else
+	works the same.
+
+	* I have change a bit the internals of parser.y. Having _c, _v, _ca
+	be special strings caused some problem so I have changed _ to $. These
+	special string tokens are added to varibles when ther are added to a 
+	string so when I go to print the line (print_line) I know that I have
+	to add certain sufixes to these varible depending on what line I am printing.
+
+	* I have added the test_files/gegl-print-op.gil and
+	test_files/gegl-fill-op.gil
+
 Wed Apr 12 11:29:58 PDT 2000 caro@rhythm.com
 
 	* bug fix for my previous check in.
