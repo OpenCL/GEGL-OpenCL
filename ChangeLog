@@ -1,3 +1,8 @@
+Thu Jun 22 11:25:57 EDT 2000 calvinw@mindspring.com
+
+	*gegl/testgegl.c-removed gegl-graphics-state.h
+	since its no longer needed.
+
 Wed Jun 21 15:51:18 PDT 2000 caro@rhythm.com
 
 	* check in for docs

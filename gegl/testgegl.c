@@ -19,7 +19,6 @@
 #include "gegl-composite-premult-op.h"
 #include "gegl-composite-op.h"
 #include "gegl-test-op.h"
-#include "gegl-graphics-state.h"
 #include "gegl-utils.h"
 
 void
@@ -244,41 +243,6 @@ main (int argc, char *argv[])
         gegl_object_destroy (GEGL_OBJECT(src_cm)); 
         gegl_object_destroy (GEGL_OBJECT(dest)); 
         gegl_object_destroy (GEGL_OBJECT(dest_cm)); 
-  }
-#endif
-#if  0      /*This uses the GeglDrawable class */ 
-  {
-
-	GeglColorModel *cm = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(FALSE));
-	GeglDrawable *d = GEGL_DRAWABLE(gegl_drawable_new(cm,"myDrawable",5,5));
-	GeglGraphicsState *state = gegl_drawable_get_graphics_state (d);
-	GeglRect r;
-
-	gegl_rect_set (&r, 0,0,5,5);
-        gegl_color_set_constant (state->fg_color, COLOR_RED);
-        gegl_drawable_fill(d, &r); 
-
-	gegl_rect_set (&r, 1,1,4,4);
-        gegl_color_set_constant (state->fg_color, COLOR_GREEN);
-        gegl_drawable_fill(d, &r); 
-
-
-        /* Print out the image values using the 
-	   print operator 
-        */
-        {
-          GeglOp *op;
-	  GeglRect r;
-	  gegl_rect_set (&r, 0,0,5,5);
-	  op = GEGL_OP (gegl_print_op_new (gegl_drawable_get_image_buffer(d), &r));
-          gegl_op_apply (op);
-	  gegl_object_destroy (GEGL_OBJECT(op)); 
-
-	}
-
-	gegl_object_destroy (GEGL_OBJECT(d)); 
-	gegl_object_destroy (GEGL_OBJECT(cm)); 
-
   }
 #endif
 
