@@ -123,7 +123,8 @@ main(int argc, char *argv[])
       t[j                     ] = ((float)img[3]) / 255.0;
       t[j+width[k]*height[k]  ] = ((float)img[2]) / 255.0;
       t[j+width[k]*height[k]*2] = ((float)img[1]) / 255.0;
-      t[j+width[k]*height[k]*3] = ((float)img[0]) / 255.0;
+      if(k) t[j+width[k]*height[k]*3] = ((float)img[0]) / 255.0;
+      else t[j+width[k]*height[k]*3] = 0.5;  
       j++;  
     }
 
@@ -176,7 +177,7 @@ main(int argc, char *argv[])
  
   /* test the convert op */
   /* create a buffer with all possible colors */
-  {
+/*  {
      GeglColorModel *cm = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
      gfloat dest[4];
      gfloat **src, *s;
@@ -203,17 +204,17 @@ main(int argc, char *argv[])
        (src[1][0]) = J;
        (src[2][0]) = K;
        (src[3][0]) = A;
-       /*printf("(%.2f %.2f %.2f %.2f) ", src[0][0], src[1][0], src[2][0], src[3][0]);
-       */gegl_color_model_convert_to_xyz(cm, dest, (guchar**)src, w);
-       /*printf("(%.2f %.2f %.2f %.2f) ", dest[0], dest[1], dest[2], dest[3]);
-       */gegl_color_model_convert_from_xyz(cm, (guchar**)src, dest, w);
-       /*printf("(%.2f %.2f %.2f %.2f)\n", src[0][0], src[1][0], src[2][0], src[3][0]);
-       */sum += (src[0][0]-I)*(src[0][0]-I) + (src[1][0]-J)*(src[1][0]-J) + 
+       printf("(%.2f %.2f %.2f %.2f) ", src[0][0], src[1][0], src[2][0], src[3][0]);
+       gegl_color_model_convert_to_xyz(cm, dest, (guchar**)src, w);
+       printf("(%.2f %.2f %.2f %.2f) ", dest[0], dest[1], dest[2], dest[3]);
+       gegl_color_model_convert_from_xyz(cm, (guchar**)src, dest, w);
+       printf("(%.2f %.2f %.2f %.2f)\n", src[0][0], src[1][0], src[2][0], src[3][0]);
+       sum += (src[0][0]-I)*(src[0][0]-I) + (src[1][0]-J)*(src[1][0]-J) + 
               (src[2][0]-K)*(src[2][0]-K) + (src[3][0]-A)*(src[3][0]-A);
      }
      printf("\n %.2f\n", sum);
 
-  }  
+  }  */
   gtk_main();
 
   gtk_object_destroy (GTK_OBJECT(image_buffer)); 

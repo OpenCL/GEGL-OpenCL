@@ -608,8 +608,8 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       case COMPOSITE_ATOP:
       while (width--)
       {
-        a = 1.0 - *src_a++;
-        if(*dest_a++){
+        a = 1.0 - *dest_a;
+        if(*src_a){
           *dest_r++ = a * *dest_r + *dest_a * *src_r++;
           *dest_g++ = a * *dest_g + *dest_a * *src_g++;
           *dest_b++ = a * *dest_b + *dest_a * *src_b++;
@@ -621,6 +621,7 @@ class Gegl:Composite:Op from Gegl:Point:Op {
            src_g++;
            src_b++;
         } 
+        *dest_a++ = *src_a++; 
       }
       break;
       case COMPOSITE_PLUS:
@@ -737,7 +738,9 @@ class Gegl:Composite:Op from Gegl:Point:Op {
           *dest_r++ = *src_r++;
           *dest_g++ = *src_g++;
           *dest_b++ = *src_b++;
-        } else {
+        } 
+        else 
+        {
           *dest_r++ = 0;
           *dest_g++ = 0;
           *dest_b++ = 0;
@@ -751,18 +754,10 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       case COMPOSITE_ATOP:
       while (width--)
       {
-        if(*dest_a++){
           *dest_r++ = *dest_a * *src_r++;
           *dest_g++ = *dest_a * *src_g++;
           *dest_b++ = *dest_a * *src_b++;
-        } else {
-          *dest_r++ = 0;
-          *dest_g++ = 0;
-          *dest_b++ = 0;
-           src_r++;
-           src_g++;
-           src_b++;
-        } 
+          *dest_a++ = 1;
       }
       break;
       case COMPOSITE_PLUS:
@@ -772,11 +767,12 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         *dest_g++ += *src_g++;
         *dest_b++ += *src_b++;
       }
-    break;
-    default:
-    break;
+      break;
+      default:
+      break;
     }
   }
+  
   private
   void
   RGB_op_RGBA_FLOAT (GeglPointOp *point_op)
@@ -884,10 +880,18 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       case COMPOSITE_ATOP:
       while (width--)
       {
-        a = 1.0 - *src_a++;
-        *dest_r++ = a * *dest_r + *src_r++;
-        *dest_g++ = a * *dest_g + *src_g++;
-        *dest_b++ = a * *dest_b + *src_b++;
+        if(*src_a++){
+          *dest_r++ = *src_r++;
+          *dest_g++ = *src_g++;
+          *dest_b++ = *src_b++;
+        } else {
+          *dest_r++ = 0;
+          *dest_g++ = 0;
+          *dest_b++ = 0;
+           src_r++;
+           src_g++;
+           src_b++;
+        } 
       }
       break;
       case COMPOSITE_PLUS:

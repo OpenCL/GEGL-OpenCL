@@ -1,840 +1,241 @@
-%h{
-#include "gegl-point-op.h"
-#include "gegl-image-buffer.h"
-#include "gegl-types.h" 
-%}
-%{
-#include "gegl-composite-op.h"
-#include "gegl-composite-op-private.h"
-#include "gegl-point-op-private.h"
-#include "gegl-op-private.h"
-#include "gegl-color-model.h"
-#include "gegl-utils.h"
-#include <stdio.h> 
-%}
 
-class Gegl:Composite:Op from Gegl:Point:Op {
+I_op_I ()
+{
+  IMAGE DEST, SRC;
+  GeglCompositeMode comp_mode = self->_priv->comp_mode;
 
-  private GeglCompositeMode 	comp_mode;  			/* composite mode */
-
-  public 
-  GeglCompositeOp *
-  new  (GeglImageBuffer *dest,
-        GeglImageBuffer *src, 
-        GeglRect *dest_rect,
-        GeglRect *src_rect, 
-        GeglCompositeMode mode,
-        gboolean premult)
+  switch (comp_mode)
   {
-    GeglCompositeOp * self = GEGL_COMPOSITE_OP(GET_NEW);
-
-    /*Call the constructor */
-    if (!constructor(self, dest, src, dest_rect, src_rect, mode, premult))
-      return FALSE;
-    
-    /*Okay its constructed*/
-    GEGL_OBJECT(self)->constructed = TRUE;
-
-    return self;
-  }
-
-  protected 
-  gboolean 
-  constructor(self, 
-              GeglImageBuffer *dest,
-              GeglImageBuffer * src,  
-              GeglRect *dest_rect,
-              GeglRect * src_rect,
-              GeglCompositeMode mode,
-              gboolean premult)
-  {
-    GeglColorModel              *dest_cm, *src_cm;
-    gint                        dest_num_channels, src_num_channels;
-    gboolean                    dest_has_alpha, src_has_alpha;
-    gboolean                    dest_is_premult, src_is_premult;
-    GeglImageBuffer             *image_buffers[2];
-    GeglRect                    rects[2];
-	
-    GeglCompositeOpPrivate *selfP = 
-	(GeglCompositeOpPrivate *)(self->_priv); 
-    GeglPointOp *point_op = GEGL_POINT_OP (self);
-    GeglPointOpClass *point_op_class = GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
-    
-
-    if(GEGL_OBJECT(self)->constructed) 
-      return FALSE;
-    
-    image_buffers[0] = dest;
-    image_buffers[1] = src;
-    rects[0].x = dest_rect->x;
-    rects[0].y = dest_rect->y;
-    rects[0].w = dest_rect->w;
-    rects[0].h = dest_rect->h;
-    rects[1].x = src_rect->x;
-    rects[1].y = src_rect->y;
-    rects[1].w = src_rect->w;
-    rects[1].h = src_rect->h;
-
-    /* Chain up */
-    if (!gegl_point_op_constructor (GEGL_POINT_OP(self), image_buffers, rects, 2))
-      return FALSE;
-
-    /*
-      Now based on the image buffer(s) color model(s)/data storage
-      choose one of our scanline funcs to install
-      This is where some "autogeneration" happens.
-    */ 
-	
-    /*
-      Get memory for the dest and src pointer array
-      Plus set the scanline function depending on if the cm of dest and src
-      has alpha or not
-    */   
-    dest_cm = gegl_image_buffer_color_model (dest);
-    dest_num_channels =  gegl_color_model_num_channels (dest_cm);
-    dest_has_alpha = gegl_color_model_has_alpha (dest_cm);
-    dest_is_premult = gegl_color_model_is_premultiplied(dest_cm);
-
-    src_cm = gegl_image_buffer_color_model (src);
-    src_num_channels =  gegl_color_model_num_channels (src_cm);
-    src_has_alpha = gegl_color_model_has_alpha (src_cm);
-    src_is_premult = gegl_color_model_is_premultiplied(src_cm);
-
-    if ( premult){	
-
-      if ( dest_has_alpha && src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_premult_IA_op_premult_IA_FLOAT;
-      else if ( !dest_has_alpha && !src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_I_op_I_FLOAT;
-      else if ( dest_has_alpha && !src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_premult_IA_op_I_FLOAT;
-      else if ( !dest_has_alpha && src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_I_op_premult_IA_FLOAT;
-    }else{
-
-      if ( dest_has_alpha && src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_IA_op_IA_FLOAT;
-      else if ( !dest_has_alpha && !src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_I_op_I_FLOAT;
-      else if ( dest_has_alpha && !src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_IA_op_I_FLOAT;
-      else if ( !dest_has_alpha && src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_I_op_IA_FLOAT;
-    }
-    /* set comp mode */ 	
-    selfP->comp_mode = mode;
-
-    return TRUE;
-  }
-
-  override (Gtk:Object) 
-  void 
-  destroy (GtkObject *object)
-  {
-
-    /* Chain up on destroy */
-    PARENT_HANDLER (object)
-  }
-
-  private 
-  void
-  premult_IA_op_premult_IA_FLOAT (GeglPointOp *point_op)
-  {
-    guint               width;
-    GeglCompositeMode   comp_mode;
-    DATATYPE            *dest_i, *dest_a, *src_i, *src_a;
-    DATATYPE            a, b;
-    DATATYPE            *src_data[4], *dest_data[4];
-
-    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
-
-    GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
-    GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv); 
-
-    GeglOp *op = GEGL_OP (point_op); 
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv); 
-
-	
-    width = point_opP->scanline_width;
-    comp_mode = selfP->comp_mode;
-
-    /* Initialize the data pointers to the scanline */
-    /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                    opP->image_buffers[0],
-                    (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                    opP->image_buffers[1],
-                    (guchar**)src_data);
-
-    /* Make r,g,b point to the image data */
-    dest_i = (DATATYPE*) dest_data[0];
-    dest_a = (DATATYPE*) dest_data[3];
- 
-    src_i = (DATATYPE*) src_data[0];
-    src_a = (DATATYPE*) src_data[3];
-
-    switch(comp_mode){
-      case COMPOSITE_REPLACE:
-        while (width--)
-        {
-          *dest_i++ = *src_i++;
-          *dest_a++ = *src_a++;
-        }
-      break;
-      case COMPOSITE_OVER:
-        while (width--)
-        {
-          a = 1.0 - *src_a;
-          *dest_i++ = a * *dest_i + *src_i++;
-          *dest_a++ = a * *dest_a + *src_a++;
-        } 
-      break;
-      case COMPOSITE_IN:
-        while (width--)
-        {
-          *dest_i++ = *src_i++ * *dest_a;
-          *dest_a++ = *src_a++ * *dest_a;  
-        }
-      break;
-      case COMPOSITE_OUT:
-        while (width--)
-        {
-          a = 1.0 - *dest_a;
-          *dest_i++ = a * *src_i++;
-          *dest_a++ = a * *src_a++;  
-        }
-      break;
-      case COMPOSITE_XOR:
-        while (width--)
-        {
-          a = 1.0 - *dest_a;
-          b = 1.0 - *src_a; 
-          *dest_i++ = a * *src_i++ + b * *dest_i;
-          *dest_a++ = a * *src_a++ + b * *dest_a;
-        }
-      break;
-      case COMPOSITE_ATOP:
-        while (width--)
-        {
-          a = 1.0 - *src_a++; 
-          *dest_i++ = a * *dest_i + *dest_a * *src_i++;
-           dest_a++;
-        }
-      break;
-      case COMPOSITE_PLUS:
-        while (width--)
-        {
-          *dest_i++ += *src_i++;
-          *dest_a++ += *src_a++;
-        }
-      break;
-      default:
-      break;
-    }	
-  }
- 
-  private
-  void
-  premult_IA_op_I_FLOAT (GeglPointOp *point_op)
-  {
-    guint               width;
-    GeglCompositeMode   comp_mode;
-    DATATYPE              *dest_i, *dest_a, *src_i;
-    DATATYPE               a;
-    DATATYPE              *src_data[3], *dest_data[4];
-
-    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
-
-    GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
-    GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
-
-    GeglOp *op = GEGL_OP (point_op);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
-
-
-    width = point_opP->scanline_width;
-    comp_mode = selfP->comp_mode;
-
-    /* Initialize the data pointers to the scanline */
-    /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                    opP->image_buffers[0],
-                    (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                    opP->image_buffers[1],
-                    (guchar**)src_data);
-
-    /* Make r,g,b point to the image data */
-    dest_i = (DATATYPE*) dest_data[0];
-    dest_a = (DATATYPE*) dest_data[3];
-
-    src_i = (DATATYPE*) src_data[0];
-
-    switch(comp_mode){
-      case COMPOSITE_REPLACE:
-        while (width--)
-        {
-          *dest_i++ = *src_i++;
-          *dest_a++ = 1.0;
-        }
-      break;
-      case COMPOSITE_OVER:
-        while (width--)
-        {
-          *dest_i++ = *src_i++;
-          *dest_a++ = 1.0;
-        }
-      break;
-      case COMPOSITE_IN:
-        while (width--)
-        {
-          *dest_i++ = *src_i++ * *dest_a;
-        }
-      break;
-      case COMPOSITE_OUT:
-        while (width--)
-        {
-          a = 1.0 - *dest_a;
-          *dest_i++ = a * *src_i++;
-          *dest_a++ = a;
-        }
-      break;
-      case COMPOSITE_XOR:
-        while (width--)
-        {
-          a = 1.0 - *dest_a;
-          *dest_i++ = a * *src_i++;
-          *dest_a++ = a;
-        }
-      break;
-      case COMPOSITE_ATOP:
-        while (width--)
-        {
-          *dest_i++ = *dest_a * *src_i++;
-           dest_a++;
-        }
-      break;
-      case COMPOSITE_PLUS:
-        while (width--)
-        {
-          *dest_i++ += *src_i++;
-          *dest_a++ += 1.0;
-        }
-      break;
-      default:
-      break;
-    }  
-  }
-
-  private
-  void
-  I_op_premult_IA_FLOAT (GeglPointOp *point_op)
-  {
-    guint               width;
-    GeglCompositeMode   comp_mode;
-    DATATYPE              *dest_i, *src_i, *src_a;
-    DATATYPE               a, b;
-    DATATYPE              *src_data[4], *dest_data[3];
-
-    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
-
-    GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
-    GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
-
-    GeglOp *op = GEGL_OP (point_op);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
-
-
-    width = point_opP->scanline_width;
-    comp_mode = selfP->comp_mode;
-
-    /* Initialize the data pointers to the scanline */
-    /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                    opP->image_buffers[0],
-                    (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                    opP->image_buffers[1],
-                    (guchar**)src_data);
-
-    /* Make r,g,b point to the image data */
-    dest_i = (DATATYPE*) dest_data[0];
-
-    src_i = (DATATYPE*) src_data[0];
-    src_a = (DATATYPE*) src_data[3];
-
-    switch(comp_mode){
-      case COMPOSITE_REPLACE:
-        while (width--)
-        {
-          *dest_i++ = *src_i++;
-        }
-      break;
-      case COMPOSITE_OVER:
-        while (width--)
-        {
-          a = 1.0 - *src_a++;
-          *dest_i++ = a * *dest_i + *src_i++;
-        }
-      break;
-      case COMPOSITE_IN:
-        while (width--)
-        {
-          *dest_i++ = *src_i++;
-        }
-      break;
-      case COMPOSITE_OUT:
-        while (width--)
-        {
-          *dest_i++ = 0.0;
-        }
-      break;
-      case COMPOSITE_XOR:
-        while (width--)
-        {
-          b = 1.0 - *src_a++;
-          *dest_i++ *= b;
-        }
-      break;
-      case COMPOSITE_ATOP:
-        while (width--)
-        {
-          a = 1.0 - *src_a++;
-          *dest_i++ = a * *dest_i + *src_i++;
-        }
-      break;
-      case COMPOSITE_PLUS:
-        while (width--)
-        {
-          *dest_i++ += *src_i++;
-        }
-      break;
-      default:
-      break;
-    }  
-  }
-
-  private
-  void
-  IA_op_IA_FLOAT (GeglPointOp *point_op)
-  {
-    guint               width;
-    GeglCompositeMode   comp_mode;
-    DATATYPE              *dest_i, *dest_a, *src_i, *src_a;
-    DATATYPE              a, b, c;
-    DATATYPE              *src_data[4], *dest_data[4];
-
-    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
-
-    GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
-    GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
-
-    GeglOp *op = GEGL_OP (point_op);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
-
-
-    width = point_opP->scanline_width;
-    comp_mode = selfP->comp_mode;
-
-    /* Initialize the data pointers to the scanline */
-    /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[0],
-                  (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[1],
-                  (guchar**)src_data);
-
-    /* Make r,g,b point to the image data */
-    dest_i = (DATATYPE*) dest_data[0];
-    dest_a = (DATATYPE*) dest_data[3];
-
-    src_i = (DATATYPE*) src_data[0];
-    src_a = (DATATYPE*) src_data[3];
-
-    switch(comp_mode){
-      case COMPOSITE_REPLACE:
-        while (width--)
-        {
-          *dest_i++ = *src_i++;
-          *dest_a++ = *src_a++;
-        }
-      break;
-      case COMPOSITE_OVER:
-        while (width--)
-        {
-          a = (1.0 - *src_a) * *dest_a;
-          b = *src_a++;
-          *dest_a   = a + b;
-          if(*dest_a){
-            c = 1.0 / *dest_a++;
-            *dest_i++ = (a * *dest_i + b * *src_i++) * c;
-          }else{
-            *dest_i++ = 0;
-             dest_a++; 
-             src_i++;
-	  }
-        }
-      break;
-      case COMPOSITE_IN:
-        while (width--)
-        {
-          *dest_a *= *src_a++;
-          if(*dest_a++){
-            *dest_i++ = *src_i++;
-          }else{
-            *dest_i++ = 0;
-             src_i++;
-          }
-        }
-      break;
-      case COMPOSITE_OUT:
-      while (width--)
-        {
-          *dest_a = (1.0 - *dest_a) * *src_a++;
-          if(*dest_a++){
-            *dest_i++ = *src_i++;
-          } else {
-            *dest_i++ = 0;
-             src_i++;
-          }
-        }
-      break;
-      case COMPOSITE_XOR:
-      while (width--)
-      {
-        a = (1.0 - *dest_a) * *src_a;
-        b = (1.0 - *src_a++) * *dest_a;
-        *dest_a = a + b;
-        if(*dest_a){
-          c = 1.0 / *dest_a++;
-          *dest_i++ = (a * *src_i++ + b * *dest_i) * c;
-        } else {
-          *dest_i++ = 0;
-           dest_a++;
-           src_i++;
-        } 
-      }
-      break;
-      case COMPOSITE_ATOP:
-      while (width--)
-      {
-        a = 1.0 - *src_a++;
-        if(*dest_a++){
-          *dest_i++ = a * *dest_i + *dest_a * *src_i++;
-        } else {
-          *dest_i++ = 0;
-           src_i++;
-        } 
-      }
-      break;
-      case COMPOSITE_PLUS:
-      while (width--)
-      {
-        *dest_i++ += *src_i++;
-        *dest_a++ =  (*dest_a + *src_a++) * .5;
-      }
-    break;
-    default:
-    break;
-    }
-  }
-  private
-  void
-  IA_op_I_FLOAT (GeglPointOp *point_op)
-  {
-    guint               width;
-    GeglCompositeMode   comp_mode;
-    DATATYPE              *dest_i, dest_a, *src_i;
-    DATATYPE              *src_data[3], *dest_data[4];
-
-    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
-
-    GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
-    GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
-
-    GeglOp *op = GEGL_OP (point_op);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
-
-
-    width = point_opP->scanline_width;
-    comp_mode = selfP->comp_mode;
-
-    /* Initialize the data pointers to the scanline */
-    /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[0],
-                  (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[1],
-                  (guchar**)src_data);
-
-    /* Make r,g,b point to the image data */
-    dest_i = (DATATYPE*) dest_data[0];
-
-    src_i = (DATATYPE*) src_data[0];
-
-    switch(comp_mode){
-      case COMPOSITE_REPLACE:
-        while (width--)
-        {
-          *dest_i++ = *src_i++;
-        }
-      break;
-      case COMPOSITE_OVER:
-        while (width--)
-        {
-          *dest_a++ = 1.0;  
-          *dest_i++ = *src_i++;
-        }
-      break;
-      case COMPOSITE_IN:
-        while (width--)
-        {
-          if(*dest_a++){
-            *dest_i++ = *src_i++;
-          }else{
-            *dest_i++ = 0;
-            src_i++;
-          }
-        }
-      break;
-      case COMPOSITE_OUT:
-      while (width--)
-        {
-          *dest_a = (1.0 - *dest_a);
-          if(*dest_a++){
-            *dest_i++ = *src_i++;
-          } else {
-            *dest_i++ = 0;
-            src_i++;
-          }
-        }
-      break;
-      case COMPOSITE_XOR:
-      while (width--)
-      {
-        *dest_a = (1.0 - *dest_a);
-        if(*dest_a++){
-          *dest_i++ = *src_i++;
-        } else {
-          *dest_i++ = 0;
-           dest_a++;
-           src_i++;
-        } 
-      }
-      break;
-      case COMPOSITE_ATOP:
-      while (width--)
-      {
-        if(*dest_a++){
-          *dest_i++ = *dest_a * *src_i++;
-        } else {
-          *dest_i++ = 0;
-           src_i++;
-        } 
-      }
-      break;
-      case COMPOSITE_PLUS:
-      while (width--)
-      {
-        *dest_i++ += *src_i++;
-      }
-    break;
-    default:
-    break;
-    }
-  }
-  private
-  void
-  I_op_IA_FLOAT (GeglPointOp *point_op)
-  {
-    guint               width;
-    GeglCompositeMode   comp_mode;
-    DATATYPE            *dest_i, *src_i, *src_a;
-    DATATYPE            a, b;
-    DATATYPE            *src_data[NUMCHAN], *dest_data[NUMCHAN];
-
-    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
-
-    GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
-    GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
-
-    GeglOp *op = GEGL_OP (point_op);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
-
-
-    width = point_opP->scanline_width;
-    comp_mode = selfP->comp_mode;
-
-    /* Initialize the data pointers to the scanline */
-    /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[0],
-                  (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[1],
-                  (guchar**)src_data);
-
-    /* Make r,g,b point to the image data */
-    dest_i = (DATATYPE*) dest_data[0];
-
-    src_i = (DATATYPE*) src_data[0];
-    src_a = (DATATYPE*) src_data[3];
-
-    switch(comp_mode){
-      case COMPOSITE_REPLACE:
-        while (width--)
-        {
-          *dest_i++ = *src_i++;
-        }
-      break;
-      case COMPOSITE_OVER:
-        while (width--)
-        {
-          a = (1.0 - *src_a);
-          b = *src_a++;
-          *dest_i++ = a * *dest_i + b * *src_i++;
-        }
-      break;
-      case COMPOSITE_IN:
-        while (width--)
-        {
-           a = *src_a++;
-          if(a){
-            *dest_i++ = *src_i++;
-          }else{
-            *dest_i++ = 0;
-            src_i++;
-          }
-        }
-      break;
-      case COMPOSITE_OUT:
-      while (width--)
-        {
-          *dest_i++ = 0;
-        }
-      break;
-      case COMPOSITE_XOR:
-      while (width--)
-      {
-        b = (1.0 - *src_a++);
-        if(b){
-          *dest_i++ = *dest_i;
-        } else {
-          *dest_i++ = 0;
-           src_i++;
-        } 
-      }
-      break;
-      case COMPOSITE_ATOP:
-      while (width--)
-      {
-        a = 1.0 - *src_a++;
-        *dest_i++ = a * *dest_i + *src_i++;
-      }
-      break;
-      case COMPOSITE_PLUS:
-      while (width--)
-      {
-        *dest_i++ += *src_i++;
-      }
-    break;
-    default:
-    break;
-    }
-  }
-
-
-  private 
-  void
-  I_op_I_DATATYPE (GeglPointOp *point_op)
-  {
-    guint               i,width;
-    GeglCompositeMode   comp_mode;
-    DATATYPE            *dest_i[NUMCHAN], *src_i[NUMCHAN];
-    DATATYPE            *dest_data[NUMCHAN], *src_data[NUMCHAN];
-
-    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
-
-    GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
-    GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv); 
-
-    GeglOp *op = GEGL_OP (point_op); 
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv); 
-
-	
-    width = point_opP->scanline_width;
-    comp_mode = selfP->comp_mode;
-
-    /* Initialize the data pointers to the scanline */
-    /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[0],
-                  (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[1],
-                  (guchar**)src_data);
-
-    /* Make r,g,b point to the image data */
-    dest_i = (DATATYPE*) dest_data[0];
- 
-    src_i = (DATATYPE*) src_data[0];
-    
-    switch(comp_mode){
-      case COMPOSITE_REPLACE:
-        while (width--)
-        {
-          for(i=0; i<NUMCHAN; i++)
-            *(dest_i[i])++ = *(src_i[i])++;
-        }
-      break;
-      case COMPOSITE_OVER:
-        while (width--)
-        {
-          for(i=0; i<NUMCHAN; i++)
-            *(dest_i[i])++ = *(src_i[i])++;
-        } 
-      break;
-      case COMPOSITE_IN:
-        while (width--)
-        {
-          for(i=0; i<NUMCHAN; i++)
-            *(dest_i[i])++ = *(src_i[i])++;
-        }
-      break;
-      case COMPOSITE_OUT:
-        while (width--)
-        {
-          for(i=0; i<NUMCHAN; i++)
-            *(dest_i[i])++ = *(src_i[i])++;
-        }
-      break;
-      case COMPOSITE_XOR:
-        while (width--)
-        {
-          for(i=0; i<NUMCHAN; i++)
-            *(dest_i[i])++ = 0.0; 
-        }
-      break;
-      case COMPOSITE_ATOP:
-        while (width--)
-        {
-          for(i=0; i<NUMCHAN; i++)
-            *(dest_i[i])++ = *(src_i[i])++;
-        }
-      break;
-      case COMPOSITE_PLUS:
-        while (width--)
-        {
-          for(i=0; i<NUMCHAN; i++)
-            *(dest_i[i])++ += *(src_i[i])++;
-        }
-      break;
-      default:
-      break;
-    }	
-
+    case REPLACE:
+      DEST.I = SRC.I;
+    case OVER:
+      DEST.I = SRC.I;
+    case IN:
+      DEST.I = SRC.I;
+    case OUT:
+      DEST.I = 0;
+    case ATOP:
+      DEST.I = SRC.I;
+    case XOR:
+      DEST.I = 0;
+    case PLUS:
+      DEST.I = SRC.I + DEST.I;
   }
 }
+
+
+PREMULT_IA_op_PREMULT_IA()
+{
+  IMAGE DEST, SRC;
+  GeglCompositeMode comp_mode = self->_priv->comp_mode;
+
+  switch (comp_mode)
+  {
+    case REPLACE:
+      DEST.A = SRC.A;
+      DEST.I = SRC.I;
+    case OVER:
+      DEST.A = SRC.A + DEST.A * (1-SRC.A);  
+      DEST.I = SRC.I + DEST.I * (1-SRC.A);
+    case IN:
+      DEST.A = SRC.A * DEST.A;
+      DEST.I = SRC.I * DEST.A;
+    case OUT:
+      DEST.A = SRC.A * (1-DEST.A);
+      DEST.I = SRC.I * (1-DEST.A);
+    case ATOP:
+      DEST.A = SRC.A * DEST.A + DEST.A * (1-SRC.A);
+      DEST.I = SRC.I * DEST.A + DEST.I * (1-SRC.A);
+    case XOR:
+      DEST.A = SRC.A * (1-DEST.A) + DEST.A * (1-SRC.A);
+      DEST.I = SRC.I * (1-DEST.A) + DEST.I * (1-SRC.A);
+    case PLUS:
+      DEST.A = SRC.A + DEST.A; 
+      DEST.I = SRC.I + DEST.I;
+  }
+}
+
+PREMULT_IA_op_I()
+{
+  IMAGE DEST, SRC;
+  GeglCompositeMode comp_mode = self->_priv->comp_mode;
+
+  switch (comp_mode)
+  {
+    case REPLACE:
+      DEST.A = 1; 
+      DEST.I = SRC.I;
+    case OVER:
+      DEST.A = 1;
+      DEST.I = SRC.I;
+    case IN:
+      DEST.I = SRC.I * DEST.A;
+    case OUT:
+      DEST.A = (1-DEST.A);
+      DEST.I = SRC.I * (1-DEST.A);
+    case ATOP:
+      DEST.I = SRC.I * DEST.A;
+    case XOR:
+      DEST.A = (1-DEST.A);
+      DEST.I = SRC.I * (1-DEST.A) + DEST.I;
+    case PLUS:
+      DEST.A = 1 + DEST.A;
+      DEST.I = SRC.I + DEST.I;
+  }
+}
+
+I_op_PREMULT_IA()
+{
+  IMAGE DEST, SRC;
+  GeglCompositeMode comp_mode = self->_priv->comp_mode;
+
+  switch (comp_mode)
+  {
+    case REPLACE:
+      DEST.I = SRC.I;
+    case OVER:
+      DEST.I = SRC.I + DEST.I * (1-SRC.A);
+    case IN:
+      DEST.I = SRC.I;
+    case OUT:
+      DEST.I = 0;
+    case ATOP:
+      DEST.I = SRC.I + DEST.I * (1-SRC.A);
+    case XOR:
+      DEST.I = DEST.I * (1-SRC.A);
+    case PLUS:
+      DEST.I = SRC.I + DEST.I;
+  }
+}
+
+PREMULT_IA_op_PREMULT_IA()
+{
+  IMAGE DEST, SRC;
+  GeglCompositeMode comp_mode = self->_priv->comp_mode;
+
+  switch (comp_mode)
+  {
+    case REPLACE:
+      DEST.A = SRC.A;
+      DEST.I = SRC.I;
+    case OVER:
+      A = SRC.A;
+      B =  DEST.A * (1-SRC.A);
+      DEST.A = A + B;
+      if (DEST.A)
+      	DEST.I = (SRC.I * A + DEST.I * B) / DEST.A;
+      else
+	DEST.I = 0;	
+    case IN:
+      DEST.A = SRC.A * DEST.A;
+      if (DEST.A)
+	DEST.I = SRC.I;
+      else
+	DEST.I = 0;					 		   	
+    case OUT:
+      DEST.A = SRC.A * (1-DEST.A);
+      if (DEST.A)
+	DEST.I = SRC.I;
+      else
+	DEST.I = 0;
+    case ATOP:
+      A = SRC.A * DEST.A;
+      B = DEST.A * (1-SRC.A); 
+      DEST.A = A + B;
+      if (DEST.A)
+      	DEST.I = SRC.I * A + DEST.I * B;
+      else
+	DEST.I = 0;
+    case XOR:
+      A = SRC.A * (1-DEST.A);
+      B = DEST.A * (1-SRC.A); 
+      DEST.A = A + B;
+      if(DEST.A)
+      	DEST.I = (SRC.I * A + DEST.I * B) / DEST.A;
+      else
+	DEST.I = 0;
+    case PLUS:
+      A = SRC.A;
+      B = DEST.A; 
+      DEST.A = A + B;
+      if (DEST.A)
+      	DEST.I = (SRC.I * A + DEST.I * B) / DEST.A;
+	else
+	DEST.I = 0;
+  }
+}
+
+PREMULT_IA_op_PREMULT_I()
+{
+  IMAGE DEST, SRC;
+  GeglCompositeMode comp_mode = self->_priv->comp_mode;
+
+  switch (comp_mode)
+  {
+    case REPLACE:
+      DEST.A = 1;
+      DEST.I = SRC.I;
+    case OVER:
+      DEST.A = SRC.A;
+      if (DEST.A)
+        DEST.I = SRC.I;
+      else
+        DEST.I = 0;
+    case IN:
+      if (DEST.A)
+        DEST.I = SRC.I;
+      else
+        DEST.I = 0;
+    case OUT:
+      DEST.A = (1-DEST.A);
+      if (DEST.A)
+        DEST.I = SRC.I;
+      else
+        DEST.I = 0;
+    case ATOP:
+      if (DEST.A)
+        DEST.I = SRC.I;
+      else
+        DEST.I = 0;
+    case XOR:
+      DEST.A = 1-DEST.A;
+      if(DEST.A)
+        DEST.I = SRC.I * A;
+      else
+        DEST.I = 0;
+    case PLUS:
+      if (DEST.A)
+        DEST.I = (SRC.I + DEST.I * B) / DEST.A;
+        else
+        DEST.I = 0;
+  }
+}
+
+PREMULT_I_op_PREMULT_IA()
+{
+  IMAGE DEST, SRC;
+  GeglCompositeMode comp_mode = self->_priv->comp_mode;
+
+  switch (comp_mode)
+  {
+    case REPLACE:
+      DEST.I = SRC.I;
+    case OVER:
+      A = SRC.A;
+      B =  (1-SRC.A);
+      DEST.I = SRC.I * A + DEST.I * B;
+    case IN:
+      DEST.I = SRC.I;
+    case OUT:
+      DEST.I = SRC.I;
+    case ATOP:
+      A = SRC.A;
+      B = 1-SRC.A;
+      DEST.I = (SRC.I * A + DEST.I * B);
+    case XOR:
+      DEST.I = DEST.I * (1-SRC.A);
+    case PLUS:
+      DEST.I = (SRC.I * SRC.A + DEST.I;
+  }
+}
+

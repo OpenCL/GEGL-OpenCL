@@ -1,3 +1,7 @@
+Fri Jan 28 14:12:37 PST 2000 caro@rhythm.com
+    
+    * Simplified the gegl-composite-op.pregob
+
 Thu Jan 27 13:05:25 PST 2000 caro@rhythm.com
 
     * Changed varible names in gegl-composite-op
