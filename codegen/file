@@ -1,0 +1,10 @@
+
+Channel
+{
+
+gfloat .f
+guint8 .u8
+guint16 .u16
+
+
+}

@@ -1,3 +1,36 @@
+Wed Apr 12 10:39:26 PDT 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* I have added printing option for codegen. You have to
+	define PRINT (x) string in channel files, and you can now
+	print color varibles.
+
+	* I have added the notion of intorducing a varible into the 
+	G_I_BLOCK without having to define it in the G_I_DECL block.
+	The syntax is VARIBLE(Scaler/Vector name of varible name of type).
+	The varible needs to be define as a Scaler or a Vector. If it is defined
+	as a vector then [num] will be added to the varible. The number will depend
+	on the varibles that the varible is associated with. For example, if it is set
+	equal to a Pixel with 3 channels, then for the first channel it would be [0],
+	second channel it would be [1] and for the third channel it would be [3].
+	The name of the varible can be anything. With this there will be a file associated
+	right now it is called file. In file the user can define any sufixes that he or she
+	wants the varible to have. The syntax of this is
+		type_name
+		{
+		datatype sufix
+		...
+		}
+	When the lexer finds a type name (it is optional, you do not have to add a type name), it will
+	look in the file file for the type name and find the sufix depending on the datatyupe.
+
+	* I have updated the channel files with the PRINT string
+
+	* I have changed test_files_test to test the two new features
+
+	* I have added the file file
+ 
 Mon Apr 10 13:43:06 EDT 2000 calvinw@mindspring.com
 
 	* changed these files in gegl dir:

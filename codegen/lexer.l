@@ -11,6 +11,8 @@
 #include <stdio.h>
 
 void print_info (char *line); 
+char* get_sufix (char *type);
+
 int PREV;  
 %}
 
@@ -20,6 +22,7 @@ int PREV;
 %s			DATA_TYPE 
 %s			ARGUMENTS
 %s			DEFINITION
+%s 			VARIBLE_ARGS 
 white   		[ \t]+
 indent			[\n][ \t]*
 cont			("\\""\n")    
@@ -82,6 +85,7 @@ rm			[\t \n]*
 			    	 	
 <GENERIC_IMAGE_DECL>{white} 		; 
 <GENERIC_IMAGE_BLOCK>{white} 		; 
+<VARIBLE_ARGS>{rm} 			; 
 
 <GENERIC_IMAGE_DECL>{rm}"GENERIC_IMAGE_DECL_END" 	{
     							print_info ("\n/*Generic Image Decl End */\n");
@@ -167,9 +171,11 @@ rm			[\t \n]*
     					strcpy (yylval.tok.string, yytext); 
     					return (MIN_MAX);
 					}
+<GENERIC_IMAGE_BLOCK>"Varible"		BEGIN VARIBLE_ARGS; 	
 <GENERIC_IMAGE_BLOCK>"(Promote)"	return(PROMOTE_TYPE); 
 <GENERIC_IMAGE_BLOCK>"(SignedPromote)"	return(SIGNED_PROMOTE_TYPE); 
 <GENERIC_IMAGE_BLOCK>"ABS"		return(ABS); 
+<GENERIC_IMAGE_BLOCK>"PRINT"		return(PRINT); 
 <GENERIC_IMAGE_BLOCK>"CHANNEL_CLAMP"	return(CHANNEL_CLAMP);
 <GENERIC_IMAGE_BLOCK>"WP_CLAMP"    	return(WP_CLAMP);
 
@@ -182,6 +188,8 @@ rm			[\t \n]*
 <GENERIC_IMAGE_BLOCK>"^"		return(POWER);
 <GENERIC_IMAGE_BLOCK>"("		return(LT_PARENTHESIS);
 <GENERIC_IMAGE_BLOCK>")"		return(RT_PARENTHESIS);
+<VARIBLE_ARGS>"("			;
+<VARIBLE_ARGS>")"			BEGIN GENERIC_IMAGE_BLOCK;
 <GENERIC_IMAGE_BLOCK>"{"		{SCOPE ++; return(LT_CURLY);}
 <GENERIC_IMAGE_BLOCK>"}"		{SCOPE --; rm_varibles (SCOPE); return(RT_CURLY); } 
 <GENERIC_IMAGE_DECL>"{"			{SCOPE ++; ECHO;}
@@ -300,6 +308,37 @@ rm			[\t \n]*
 					  BEGIN DEFINITION;
 					return keywd.token;
 					}
+<VARIBLE_ARGS>"Scaler"" "*{name}" "*{name}*	{
+      						char *varible;
+						char *type; 
+						varible  = (char*) strtok (&(yytext[7]), " ");
+						type 	 = (char*) strtok (NULL, " "); 					
+      						yylval.elem.num = 0;
+						yylval.elem.dtype = TYPE_CHANNEL;
+						yylval.elem.type = TYPE_SCALER;
+						if (type)
+						  sprintf (yylval.elem.string, "%s%s", 
+						      varible, get_sufix (type));
+						else
+						  sprintf (yylval.elem.string, "%s", varible); 
+						return UVARIBLE; 	
+						}
+<VARIBLE_ARGS>"Vector"" "*{name}" "*{name}*	{
+      						char *varible;
+						char *type;
+						varible  = (char*) strtok (&(yytext[7]), " ");
+						type     = (char*) strtok (NULL, " ");
+
+      						yylval.elem.num = 0;
+						yylval.elem.dtype = TYPE_CHANNEL;
+						yylval.elem.type = TYPE_VECTOR;
+      						if (type)
+						  sprintf (yylval.elem.string, "%s_v%s", 
+						       varible, get_sufix (type));
+						 else
+						   sprintf (yylval.elem.string, "%s_v", varible);
+				       		return UVARIBLE; 	
+      						}
 <DEFINITION>{string}			{
     					strcpy (yylval.tok.string, yytext);
 					BEGIN DATA_TYPE; 
@@ -341,3 +380,47 @@ print_info (char *line)
   printf ("%s", line); 
 #endif 
 }
+
+char*
+get_sufix (char *type)
+{
+  FILE *file;
+  char datatype[30];
+  char name[10];
+  char tmp[30];
+
+  file = fopen ("file", "r");
+
+  fscanf (file, "%s", &tmp);
+  while (strcmp (tmp, type))
+    {
+      if (feof (file))
+	{
+	  fclose (file);
+	  return (char*) strdup ("");
+	}
+      fscanf (file, "%s", &tmp);
+    }
+
+  while (strcmp (tmp, "{"))
+    {
+      fscanf (file, "%s", &tmp); 
+    }
+
+  fscanf (file, "%s", &datatype);
+  while (strcmp (datatype, "}"))
+    {
+      fscanf (file, "%s", &name);
+      if (!strcmp (datatype, DATATYPE_STR))
+	{
+	  fclose (file); 
+	  return (char*) strdup (name);
+	} 
+      fscanf (file, "%s", &datatype);
+    }
+
+  fclose (file);
+  return (char*) strdup (""); 
+
+}
+

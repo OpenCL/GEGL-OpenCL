@@ -76,6 +76,7 @@ int     cur_nsyms=0;
 	{"WP_CLAMP", 1, DT_WP_CLAMP},
 	{"CHANNEL_MULT", 1, DT_CHANNEL_MULT},
 	{"CHANNEL_ROUND", 1, DT_CHANNEL_ROUND}, 
+	{"PRINT", 1, DT_PRINT}, 
 	{"",		9}
   }; 
 
@@ -99,6 +100,7 @@ int     cur_nsyms=0;
 %token  <elem> INDENT
 %token  <elem> POUND
 %token  <elem> INDENT_CURLY  
+%token  <elem> UVARIBLE  
 %token  <tok>  COMPARE 
 %token  <tok>  MIN_MAX
 %token  <tok>  ADD_SUB
@@ -110,7 +112,7 @@ int     cur_nsyms=0;
 %token  UNION  UNSIGNED  VOID  VOLATILE  WHILE
 
 /* operations */ 
-%token	MAX  MIN  ABS  CHANNEL_CLAMP  WP_CLAMP  
+%token	MAX  MIN  ABS  CHANNEL_CLAMP  WP_CLAMP  PRINT    
 %token  PLUS  MINUS  TIMES  DIVIDE  POWER  LT_PARENTHESIS RT_PARENTHESIS
 %token  LT_CURLY  RT_CURLY LT_SQUARE RT_SQUARE 
 %token  EQUAL PLUS_EQUAL MINUS_EQUAL TIMES_EQUAL DIVIDE_EQUAL
@@ -136,7 +138,7 @@ int     cur_nsyms=0;
 
 /* tokens for data types */
 %token  DT_DATATYPE  DT_PROMOTE_TYPE  DT_SIGNED_PROMOTE_TYPE  DT_WP  DT_WP_NORM  
-%token  DT_MIN_CHANNEL DT_MAX_CHANNEL
+%token  DT_MIN_CHANNEL DT_MAX_CHANNEL  DT_PRINT 
 %token  DT_ZERO  DT_CHANNEL_CLAMP  DT_WP_CLAMP  DT_CHANNEL_MULT  DT_CHANNEL_ROUND DT_COMMA 
 %token  <tok> DT_NAME
 %token  <tok> DT_STRING
@@ -440,6 +442,60 @@ DT_Line:
 		tmp[j] = '\0'; 
 		CHANNEL_ROUND_STR = (char *) strdup (tmp); 
 		}
+	| DT_PRINT LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
+		{
+		int i=0, j=0, len, sublen, flag;
+		char tmp[255];
+		char sub[255];
+		len = strlen ($5.string);
+		sublen = strlen ($3.string);
+
+		while ($5.string[i] == '\t' || $5.string[i] == ' ')
+		 i++;
+		while ($5.string[i] == '\\' && $5.string[i+1] == '\n')
+		  i += 2;
+
+
+		for(i=i; i<len; i++)
+		  {
+		  flag = 0;
+
+		  loop5:
+		 
+		  if (i<=len-2)
+		    {
+		      if ($5.string[i] == '\\' && $5.string[i+1] == '\n')
+			{
+			  i += 2;
+		    
+			  while ($5.string[i] == '\t' || $5.string[i] == ' ')
+			    i++;
+			  goto loop5;
+			} 
+		    } 
+
+		  if (i<=len-sublen)
+		    {
+		    strncpy (sub, &($5.string[i]), sublen); 
+		    flag = 1;
+		    }
+		  
+		  if (flag && !strcmp ($3.string, sub))
+		    {
+		    strcpy (&(tmp[j]), "$1");
+		    i += sublen-1;
+		    j += 2; 
+		    }
+		  else
+		    {
+		    tmp[j] = (char) ($5.string[i]); 
+		    j++; 
+		    }
+		  }
+		if (tmp[j-1] == '\\') tmp[j-1] = '\0'; 
+		tmp[j] = '\0'; 
+		PRINT_STR = (char *) strdup (tmp); 
+		}
 	;
 
 	
@@ -693,7 +749,30 @@ Line:
 	| INDENT ITERATOR_XY LT_PARENTHESIS NAME ',' INT ',' INT RT_PARENTHESIS ';' 
 		{
 	
-		}	
+		}
+	| INDENT PRINT LT_PARENTHESIS NAME RT_PARENTHESIS ';'
+		{
+		  char tmp[256];
+		  char t2[256];  
+		  char *t[1];
+		  strcpy (t2, $4.string);  
+		  print_name (&$4, $4, NOT_DEFINE); 
+		  t[0] = $4.string;
+		  print (tmp, PRINT_STR, t, 1);
+		  sprintf ($4.string, "%s%s", $1.string, tmp); 
+		  print_line ($4);
+		  if (get_sym (t2)->type == TYPE_C_A_VECTOR)
+		    {
+		      printf ("%sif (%s_has_%s)%s", $1.string, t2,
+			       NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
+			       $1.string);
+		      sprintf (tmp, "%s_a", t2);
+		      t[0] = tmp; 
+		      print ($4.string, PRINT_STR, t, 1);  
+		      $4.num = 1; 
+		      print_line ($4); 
+		    }
+		}	  
 	;
 
 	
@@ -824,9 +903,14 @@ Expression:
 		$1.num = 0;
 		$$=$1;
 		print_value(&$$, $1); 
-		}	
+		}
+	| UVARIBLE  
+		{
+		$$ = $1;
+		} 	  
 	;
 
+	
 Definition:
 	  Channel Channel_List		
 		{ 
@@ -1160,14 +1244,15 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
   t[0] = '\0';
 
   dest->num = 1; 
-  if (is_define && get_sym (src.string)->type == TYPE_C_VECTOR)
+  if (is_define && get_sym (src.string)->type == TYPE_C_VECTOR ||
+      (get_sym (src.string)->type == TYPE_C_A_VECTOR &&
+       !strcmp (src.string, get_sym (src.string)->string)))
     {
       dest->num = NUM_COLOR_CHANNEL;
       sprintf (tmp, "%s_c", get_sym (src.string)->string);
     }
-  else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR ||
-	get_sym (src.string)->type == TYPE_C_A_VECTOR) && 
-      !strcmp (src.string, get_sym (src.string)->string))
+  else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR &&
+      !strcmp (src.string, get_sym (src.string)->string))) 
     {
       dest->num = NUM_COLOR_CHANNEL + 1;
       sprintf (tmp, "%s_ca", get_sym (src.string)->string);
@@ -1378,6 +1463,7 @@ print (char *string, char *template, char *varible[], int num)
   string[j] = template[i];  
   string[j+1] = '\0';  
 }
+
 void
 do_op_two (elem_t *dest, elem_t src, FUNCTION op)
 {

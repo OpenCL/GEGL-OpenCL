@@ -14,6 +14,19 @@ GENERIC_IMAGE_DECL_END
 
 GENERIC_IMAGE_IMAGE_DATA_INIT
 
+/* print */
+GENERIC_IMAGE_BLOCK_BEGIN
+PRINT (d);
+PRINT (a);
+GENERIC_IMAGE_BLOCK_END 
+
+/* Varible */
+GENERIC_IMAGE_BLOCK_BEGIN
+d; 
+Varible (Scaler v Channel) * d;
+d = Varible (Vector v Channel); 
+GENERIC_IMAGE_BLOCK_END
+
 /* d = a * d  */
 GENERIC_IMAGE_BLOCK_BEGIN
 d = a * d;

@@ -220,7 +220,7 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
   gegl_rect_set (&dest_rect, 0, 0, width, height);
 
     /* premultiplied composite */
-#if 1 
+#if 0 
   for (i = 0; i< 6; i++) 
     {
       op = GEGL_OP(gegl_composite_premult_op_new (dest_image_buffer, 
@@ -244,7 +244,7 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
 #endif
 
     /* unpremultiplied composite */
-#if 0 
+#if 1 
   for (i = 0; i< 6; i++) 
     {
       op = GEGL_OP(gegl_composite_op_new (dest_image_buffer, 
@@ -539,7 +539,10 @@ main(int argc,
 
   /* read in the 2 sources, src1 and src2 */ 
   for(k=0; k<=1; k++)
-    {             
+    {            
+     
+      has_alpha = FALSE;
+
       /* open the file */
       tif = TIFFOpen(argv[k+1], "r");
 
@@ -551,6 +554,11 @@ main(int argc,
       /* heres a hack for has_alpha */
       if (samples_per_pixel == 2 || samples_per_pixel == 4)
 	has_alpha = TRUE;
+
+      if (has_alpha)
+	printf ("%d has alpha\n", k);
+      else
+	 printf ("%d does not have alpha\n", k);
 
       /* get width and height */
       TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &src_width[k]);

@@ -33,6 +33,8 @@ EXTERN char  *CHANNEL_MULT_STR;
 
 EXTERN char  *CHANNEL_ROUND_STR;	
 
+EXTERN char  *PRINT_STR;	
+
 /* these are related to the color space */
 EXTERN int    NUM_COLOR_CHANNEL;
 EXTERN char  *NAME_COLOR_CHANNEL[20];
