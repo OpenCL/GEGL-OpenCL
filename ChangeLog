@@ -1,3 +1,12 @@
+Sat Jul  1 11:43:41 PDT 2000 caro@rhythm.com
+
+	* added gegl/gegl-copy-op.gil
+
+	* added gegl/gegl-copy-op.gil to Makefile.am
+
+	* updated docs/gegl.html and docs/geglTasks.html
+
+
 Wed Jun 28 12:00:33 PDT 2000 caro@rhythm.com
 
 	* updated docs/geglTasks.html

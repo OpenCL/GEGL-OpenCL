@@ -7,6 +7,7 @@ GIL_FILES = \
   gegl-print-op.gil \
   gegl-mult-op.gil \
   gegl-add-op.gil \
+  gegl-copy-op.gil \
   gegl-diff-op.gil \
   gegl-subtract-op.gil \
   gegl-max-op.gil \
@@ -25,6 +26,7 @@ GIL_GEN_GOB = \
   gegl-print-op.gob \
   gegl-mult-op.gob \
   gegl-add-op.gob \
+  gegl-copy-op.gob \
   gegl-diff-op.gob \
   gegl-subtract-op.gob \
   gegl-max-op.gob \
@@ -86,6 +88,7 @@ GOB_GEN_PUBLIC_HDRS = \
   gegl-print-op.h \
   gegl-mult-op.h \
   gegl-add-op.h \
+  gegl-copy-op.h \
   gegl-diff-op.h \
   gegl-subtract-op.h \
   gegl-max-op.h \
@@ -126,6 +129,7 @@ GOB_GEN_PRIVATE_HDRS = \
   gegl-print-op-private.h \
   gegl-mult-op-private.h \
   gegl-add-op-private.h \
+  gegl-copy-op-private.h \
   gegl-diff-op-private.h \
   gegl-subtract-op-private.h \
   gegl-max-op-private.h \
@@ -165,6 +169,7 @@ GOB_GEN_SRC = \
   gegl-print-op.c \
   gegl-mult-op.c \
   gegl-add-op.c \
+  gegl-copy-op.c \
   gegl-diff-op.c \
   gegl-subtract-op.c \
   gegl-max-op.c \
