@@ -1,3 +1,15 @@
+Wed Jun 21 15:36:59 PDT 2000 caro@rhythm.com
+
+	* check in for gegl
+
+	* rm gfx-state and drawable .gob
+
+Wed Jun 14 16:06:22 PDT 2000 caro@rhythm.com
+
+	* check in for docs
+
+	* checked in gegl.html and gegl.jpg
+
 Tue Jun 20 20:40:09 EDT 2000 calvinw@mindspring.com
 
 	* updated docs/gegl.html to have a Getting Gegl, News, and 
