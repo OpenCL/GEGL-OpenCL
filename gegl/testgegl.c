@@ -572,6 +572,7 @@ copy_chan_ops(void)
 int
 main (int argc, char *argv[])
 {  
+  int *p = malloc(sizeof(int) * 2);
   gtk_init (&argc, &argv);
 
   /* some tests */

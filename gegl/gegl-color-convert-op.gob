@@ -125,28 +125,20 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
            GeglImageIterator **src_iters)
   {
     GeglColorConvertOp *self = GEGL_COLOR_CONVERT_OP (point_op);
-    GeglImageBuffer * dest_image_buffer = 
-      gegl_image_iterator_get_image_buffer(dest_iter);
-    GeglImageBuffer * src_image_buffer =
-      gegl_image_iterator_get_image_buffer(src_iters[0]);
-    GeglColorModel * dest_cm = 
-      gegl_image_color_model(GEGL_IMAGE(dest_image_buffer));
-    GeglColorModel * src_cm = 
-      gegl_image_color_model(GEGL_IMAGE(src_image_buffer));
-    guint dest_num_channels = 
-      gegl_color_model_num_channels (dest_cm);
-    guint src_num_channels = 
-      gegl_color_model_num_channels (src_cm);
+    GeglImage * dest_image = gegl_image_iterator_get_image (dest_iter);
+    GeglImage * src_image  = gegl_image_iterator_get_image (src_iters[0]);
+    GeglColorModel * dest_cm = gegl_image_color_model (dest_image);
+    GeglColorModel * src_cm = gegl_image_color_model (src_image);
+    guint dest_nchans = gegl_color_model_num_channels (dest_cm);
+    guint src_nchans = gegl_color_model_num_channels (src_cm);
 
     guint width = gegl_image_iterator_scanline_width (dest_iter);
 
-    guchar ** dest_data = g_malloc (sizeof(guchar*) * dest_num_channels);
-    guchar ** src_data = g_malloc (sizeof(guchar*) * src_num_channels);
+    guchar ** dest_data = g_malloc (sizeof(guchar*) * dest_nchans);
+    guchar ** src_data = g_malloc (sizeof(guchar*) * src_nchans);
 
-    gegl_image_iterator_get_scanline_data (
-	dest_iter, dest_data);
-    gegl_image_iterator_get_scanline_data (
-	src_iters[0], src_data);
+    gegl_image_iterator_get_scanline_data (dest_iter, dest_data);
+    gegl_image_iterator_get_scanline_data (src_iters[0], src_data);
 
     /* Call the converter if installed, else do XYZ conversion */ 
        

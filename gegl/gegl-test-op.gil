@@ -48,13 +48,6 @@ class Gegl:Test:Op from Gegl:Single:Src:Op {
 
   override(Gegl:Op)
   void
-  compute_source_rois (GeglOp *op, GeglRect *roi) 
-  {
-    gegl_rect_copy(&op->_priv->source_rois[0],roi);    
-  }
-
-  override(Gegl:Op)
-  void
   prepare(GeglOp *op,
           GeglImage *dest,
 	  GeglRect *dest_rect)

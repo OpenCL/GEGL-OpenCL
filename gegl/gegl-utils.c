@@ -20,6 +20,54 @@ gegl_rect_set (GeglRect *r,
 }
 
 void 
+gegl_rect_union (GeglRect *dest,
+                 GeglRect *src1,
+                 GeglRect *src2)
+{
+  gint x1 = MIN(src1->x, src2->x); 
+  gint x2 = MAX(src1->x + src1->w, src2->x + src2->w);  
+  gint y1 = MIN(src1->y, src2->y); 
+  gint y2 = MAX(src1->y + src1->h, src2->y + src2->h);  
+    
+  dest->x = x1;
+  dest->y = y1; 
+  dest->w = x2 - x1;
+  dest->h = y2 - y1;
+}
+
+gboolean 
+gegl_rect_intersect(GeglRect *dest,
+                    GeglRect *src1,
+                    GeglRect *src2)
+{
+  gint x1, x2, y1, y2; 
+    
+  x1 = MAX(src1->x, src2->x); 
+  x2 = MIN(src1->x + src1->w, src2->x + src2->w);  
+
+  if (x2 <= x1)
+    {
+      gegl_rect_set (dest,0,0,0,0);
+      return FALSE;
+    }
+
+  y1 = MAX(src1->y, src2->y); 
+  y2 = MIN(src1->y + src1->h, src2->y + src2->h);  
+
+  if (y2 <= y1)
+    {
+      gegl_rect_set (dest,0,0,0,0);
+      return FALSE;
+    }
+
+  dest->x = x1;
+  dest->y = y1; 
+  dest->w = x2 - x1;
+  dest->h = y2 - y1;
+  return TRUE;
+}
+
+void 
 gegl_rect_copy (GeglRect *to,
                 GeglRect *from)
 {

@@ -19,13 +19,14 @@ typedef struct _GeglImageBuffer  GeglImageBuffer;
 
 class Gegl:Op from Gegl:Image {
 
-  private GeglImage **sources;                /* input sources  (ops or images)*/
-  private GeglRect *source_rois;              /* rois of sources  */
-  private GeglPoint *source_offsets;          /* offsets of sources-relative to this op */ 
+  private GeglImage **sources;       /* input sources  (ops or images)*/
+  private GeglPoint *source_offsets; /* offsets of sources-relative to this op */ 
   private gint num_sources; 
-  private GeglImageBuffer **input_buffers;    /* actual data buffers for inputs */
-  private gboolean *src_has_alpha;            /*Do the sources have alphas*/ 
-  private gboolean has_alpha;                 /*Does this op have alpha*/ 
+  private gboolean *src_has_alpha;
+  private gboolean has_alpha;
+
+  private GeglRect need_rect;         /*roi info passed down from root */
+  private GeglRect result_rect;       /*result - based on needRect,haveRect */
 
   protected 
   gboolean 
@@ -44,17 +45,15 @@ class Gegl:Op from Gegl:Image {
       gint i;
 
       self->_priv->sources = g_new(GeglImage*,num_sources);
-      self->_priv->input_buffers = g_new(GeglImageBuffer*,num_sources);
       self->_priv->src_has_alpha = g_new(gboolean, num_sources);
-      self->_priv->source_rois = g_new (GeglRect, num_sources);
       self->_priv->source_offsets = g_new (GeglPoint, num_sources);
       self->_priv->num_sources = num_sources;
+      gegl_rect_set (&self->_priv->need_rect,0,0,0,0);
+      gegl_rect_set (&self->_priv->result_rect,0,0,0,0);
 
       for (i = 0; i < num_sources; i++)
 	{
           self->_priv->sources[i] = sources[i];
-          self->_priv->input_buffers[i] = NULL;
-          gegl_rect_set (&self->_priv->source_rois[i],0,0,0,0);
 	  self->_priv->source_offsets[i].x = 0;
 	  self->_priv->source_offsets[i].y = 0;
         }	  
@@ -70,16 +69,13 @@ class Gegl:Op from Gegl:Image {
     GeglOp *self = GEGL_OP(object);
 
     g_free (self->_priv->sources);
-    g_free (self->_priv->source_rois);
     g_free (self->_priv->source_offsets);
-    g_free (self->_priv->input_buffers);
     g_free (self->_priv->src_has_alpha);
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)
   }
 
-  /* Get pixels from input(s) and put in dest */
   override (Gegl:Image)
   GeglImage* 
   get_pixels (GeglImage *self, 
@@ -87,7 +83,6 @@ class Gegl:Op from Gegl:Image {
 	      GeglRect *roi)
   {
     GeglOp *self_op = GEGL_OP (self); 
-    GeglRect dest_rect;
     gint i;
 
 #ifdef DEBUG_GET_PIXELS 
@@ -96,26 +91,29 @@ class Gegl:Op from Gegl:Image {
 
     /* If dest exists but isnt an image buffer return NULL */ 
     if (dest && !GEGL_IS_IMAGE_BUFFER(dest))
-       {
+      {
 	 g_warning("gegl_op_get_pixels: dest not image buffer.\n");
          return NULL; 
-       }
+      }
 
-    /* Determine all the source rois, from the passed roi */ 
-    gegl_op_compute_source_rois (self_op, roi); 
+    /* The roi becomes our need_rect */
+    gegl_rect_copy (&self_op->_priv->need_rect, roi); 
 
     /* Ready each source input */ 
     for (i = 0; i < self_op->_priv->num_sources; i++)    
       {
+	GeglRect need_rect;
+
+	/* Compute the need_rect of the ith input */
+	compute_need_rect (self_op, &need_rect, i);
+
 #ifdef DEBUG_GET_PIXELS 
         g_print("Calling source %d\n", i);
 #endif
-
-        self_op->_priv->input_buffers[i] = GEGL_IMAGE_BUFFER(
-	                        gegl_image_get_pixels (
-				self_op->_priv->sources[i], 
-				NULL, 
-				&self_op->_priv->source_rois[i])); 
+	
+	/* Call the input's get_pixels, pass it its need_rect */
+        gegl_image_get_pixels (self_op->_priv->sources[i], 
+	    NULL, &need_rect); 
       }
 
 #ifdef DEBUG_GET_PIXELS 
@@ -125,39 +123,39 @@ class Gegl:Op from Gegl:Image {
     /* Set the color model of this op */
     compute_color_model (self_op, dest);
 
-    /* Allocate a temp dest buffer for result if needed */
+    /* Compute the have rect and result rect */
+    compute_have_rect (self_op);
+    compute_result_rect (self_op);
+
+    /* Allocate a buffer for result if necessary */
     if (!dest)
       {
-	 /* Allocate the dest (actually it is an ImageBuffer)*/  
-         dest = GEGL_IMAGE (gegl_image_buffer_new (
-		   self->_priv->color_model, 
-		   roi->w,
-		   roi->h));
+	 gint w = self_op->_priv->result_rect.w;
+	 gint h = self_op->_priv->result_rect.h;
 
-	 if(!dest)
+	 if(!gegl_image_alloc (self, w, h))
 	   {
-	     g_warning("gegl_op_get_pixels: Cant allocate temp data\n");
+	     g_warning("gegl_op_get_pixels: Cant allocate dest data\n");
 	     return NULL;
 	   }
 
+	 dest = self;
+
 #ifdef DEBUG_GET_PIXELS 
-         g_print("Allocated temp buffer %x\n", dest);
+         g_print("Allocated dest buffer size: %d, %d \n", w, h);
 #endif
-         gegl_rect_set (&dest_rect,0,0,roi->w,roi->h);
       }
-    else
-      gegl_rect_copy(&dest_rect, roi);
 
 #ifdef DEBUG_GET_PIXELS 
     g_print("Call prepare\n");
 #endif
-    gegl_op_prepare (self_op,dest,&dest_rect);
+    prepare (self_op,dest,&self_op->_priv->result_rect);
 
     /* Everything is ready, actually do the op */
 #ifdef DEBUG_GET_PIXELS 
     g_print("Call apply\n");
 #endif
-    gegl_op_apply (self_op, dest, &dest_rect); 
+    apply (self_op, dest, &self_op->_priv->result_rect); 
 
     /* Everything is done, free the inputs */
     for (i = 0; i < self_op->_priv->num_sources; i++)    
@@ -166,11 +164,9 @@ class Gegl:Op from Gegl:Image {
         if (!GEGL_IS_IMAGE_BUFFER(self_op->_priv->sources[i]))
 	  {
 #ifdef DEBUG_GET_PIXELS 
-            g_print("freeing input %d at %x\n", 
-	      i, self_op->_priv->input_buffers[i]);
+            g_print("freeing input %d \n", i); 
 #endif
-            gegl_object_destroy(GEGL_OBJECT(
-		self_op->_priv->input_buffers[i]));
+            gegl_image_free_data(self_op->_priv->sources[i]);
 	  }
       }
 
@@ -231,8 +227,9 @@ class Gegl:Op from Gegl:Image {
     self->_priv->source_offsets[index].y = y;
   }
 
-  /* routines subclasses may need to implement */
-  virtual protected void compute_source_rois (self, GeglRect *roi); 
-  virtual protected void prepare (self, GeglImage *dest, GeglRect *dest_rect);
-  virtual protected void apply (self, GeglImage *dest, GeglRect *dest_rect);
+  virtual protected void prepare (self, GeglImage *dest, GeglRect *result_rect);
+  virtual protected void apply (self, GeglImage *dest, GeglRect *result_rect);
+  virtual protected void compute_have_rect (self); 
+  virtual protected void compute_need_rect (self, GeglRect *need_rect, gint index); 
+  virtual protected void compute_result_rect (self); 
 }

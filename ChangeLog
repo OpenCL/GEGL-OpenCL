@@ -1,3 +1,43 @@
+Tue Aug 29 21:57:46 EDT 2000 calvinw@mindspring.com	
+	* gegl/gegl-add-op.gil
+	* gegl/gegl-color-convert-op.gob
+	* gegl/gegl-color-convert-to-gray-op.gob
+	* gegl/gegl-color-convert-to-rgb-op.gob
+	* gegl/gegl-composite-op.gil
+	* gegl/gegl-composite-premult-op.gil
+	* gegl/gegl-copy-op.gob
+	* gegl/gegl-copychan-op.gob
+	* gegl/gegl-dark-op.gil
+	* gegl/gegl-diff-op.gil
+	* gegl/gegl-image-buffer.gob
+	* gegl/gegl-image-iterator.gob
+	* gegl/gegl-image.gob
+	* gegl/gegl-light-op.gil
+	* gegl/gegl-max-op.gil
+	* gegl/gegl-min-op.gil
+	* gegl/gegl-mult-op.gil
+	* gegl/gegl-op.gob
+	* gegl/gegl-point-op.gob
+	* gegl/gegl-premult-op.gil
+	* gegl/gegl-screen-op.gil
+	* gegl/gegl-subtract-op.gil
+	* gegl/gegl-test-op.gil
+	* gegl/gegl-unpremult-op.gil
+	* gegl/gegl-utils.c
+	* gegl/gegl-utils.h
+	* gegl/testgegl.c
+	I changed the ImageBuffer class and moved the data for it to the Image
+	class. This allowed the Op class to be done without using the extra
+	ImageBuffers. Now the memory for Ops calculations is allocated and
+	stored in data field of the Image class only if it needs it during
+	get_pixels. This makes more sense and simplifies the Op class. Ops can
+	only have memory allocated during get_pixels.  ImageBuffers are
+	allocated when created though.	
+
+	Also introduced haveRects (domain of definitions), needRects (roi) and
+	resultRects fields and methods for Op, Images.(see Shantzis Siggraph94 for
+	these terms)  
+
 Mon Aug 21 08:28:38 EDT 2000 calvinw@mindspring.com
 	* gegl/gegl-color-model-rgb-float.gob
 	* gegl/gegl-color-model-rgb-u8.gob

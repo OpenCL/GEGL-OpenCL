@@ -7,7 +7,7 @@
 #include "gegl-copychan-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
-#include "gegl-image-private.h"
+#include "gegl-image.h"
 #include "gegl-image-iterator.h"
 #include "gegl-color.h"
 #include "gegl-color-model.h"
@@ -21,7 +21,6 @@ class Gegl:CopyChan:Op from Gegl:Point:Op {
   private gint *copychan_index;
   private gint num;
 
-  
   public 
   GeglCopyChanOp *
   new (gint *copychan_index, gint num)
@@ -94,7 +93,7 @@ class Gegl:CopyChan:Op from Gegl:Point:Op {
     gint i, j, k=0; 
     gchar *dest_data[4], *dest_indexed[4];
     GeglCopyChanOp *self = GEGL_COPYCHAN_OP (point_op);
-    GeglImage *dest = GEGL_IMAGE (gegl_image_iterator_get_image_buffer (dest_iter));
+    GeglImage *dest = gegl_image_iterator_get_image(dest_iter);
     GeglColorModel *dest_cm = gegl_image_color_model (dest);
     guint width = gegl_image_iterator_scanline_width (dest_iter);
 
@@ -128,5 +127,4 @@ class Gegl:CopyChan:Op from Gegl:Point:Op {
 	  }
     }
   }
-  
 }

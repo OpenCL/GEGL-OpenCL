@@ -85,7 +85,7 @@ display_image(GtkWidget *window,
 
   { 
     GeglImageIterator *iterator = 
-      gegl_image_iterator_new(image_buffer, &rect);
+      gegl_image_iterator_new(GEGL_IMAGE(image_buffer), &rect);
 
     for(i=0; i<h; i++)
       {

@@ -51,11 +51,4 @@ class Gegl:Color:Convert:To:Rgb:Op from Gegl:Color:Convert:Op {
     /* Chain up on destroy */
     PARENT_HANDLER (object)
   }
-
-  override (Gegl:Op)
-  void
-  compute_source_rois (GeglOp *op, GeglRect *roi) 
-  {
-    gegl_rect_copy(&op->_priv->source_rois[0],roi);    
-  }
 }

@@ -20,6 +20,15 @@ gegl_rect_set (GeglRect *r,
 void 
 gegl_rect_copy (GeglRect *to,
 	        GeglRect *from);
+void 
+gegl_rect_union (GeglRect *dest,
+                 GeglRect *src1,
+                 GeglRect *src2);
+
+gboolean 
+gegl_rect_intersect(GeglRect *dest,
+                    GeglRect *src1,
+                    GeglRect *src2);
 
 GeglColorModel *
 gegl_color_model_factory (GeglColorSpace space,

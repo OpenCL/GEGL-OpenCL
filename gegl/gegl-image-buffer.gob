@@ -22,8 +22,6 @@ typedef struct _GeglColorModel  GeglColorModel;
 
 class Gegl:Image:Buffer from Gegl:Image {
 
-  private guchar **data;         /* channel data pointers */
-
   public
   GeglImageBuffer *       
   new(GeglColorModel *cm, gint w, gint h)
@@ -51,92 +49,17 @@ class Gegl:Image:Buffer from Gegl:Image {
     if (!gegl_image_constructor (GEGL_IMAGE(self)))
       return FALSE;
 
-    /* ImageBuffers set color model and allocate data when created */
+    /* ImageBuffers set their color model and allocate data when created */
     gegl_image_set_color_model (GEGL_IMAGE(self),cm);
-    return alloc(self,w,h);
+    return gegl_image_alloc(GEGL_IMAGE(self),w,h);
   }
 
   override (Gtk:Object) 
   void 
   destroy (GtkObject *object)
   {
-    GeglImageBuffer *self_image_buffer = GEGL_IMAGE_BUFFER(object);
-
-    free_data (self_image_buffer);
-
     /* Chain up on destroy */
     PARENT_HANDLER (object)
-  }
-
-  private
-  gboolean 
-  alloc(self, 
-        gint w,
-        gint h)
-  {
-    GeglImage *image  = GEGL_IMAGE(self);
-    GeglColorModel *cm = image->_priv->color_model;
-    gint i;
-
-    if (!cm)
-      {
-        g_warning("gegl_image_buffer_alloc: color_model unknown\n");
-	return FALSE;
-      }
-
-    {
-      gint bpc = gegl_color_model_bytes_per_channel(cm);  
-      gint num_channels = gegl_color_model_num_channels(cm);
-      gint channel_bytes = bpc * w * h;
-
-      self->_priv->data = g_new(guchar *, num_channels);
-
-      for(i = 0; i < num_channels; i++)
-	{
-          self->_priv->data[i] = g_new (guchar, channel_bytes); 
-	  if (!self->_priv->data[i]) 
-	    {
-	      free_data(self);
-	      g_warning ("gegl_image_buffer_alloc: Cant alloc image data.\n"); 
-	      return FALSE;
-	    }
-	}
-
-      image->_priv->width = w;
-      image->_priv->height = h;
-    }
-
-    return TRUE;
-  }
-
-  private
-  void
-  free_data(self) 
-  {
-    GeglImage *image  = GEGL_IMAGE(self);
-    GeglColorModel *cm = image->_priv->color_model;
-    gint num_channels = gegl_color_model_num_channels(cm);
-    gint i;
-
-    for(i = 0; i < num_channels; i++)
-      {
-	if (self->_priv->data[i]) 
-	    g_free (self->_priv->data[i]);
-      }
-
-    if (self->_priv->data)
-      g_free (self->_priv->data); 
-
-    self->_priv->data = NULL;
-    image->_priv->width = 0;
-    image->_priv->height = 0;
-  }
-  
-  public
-  guchar ** 
-  get_data(self)
-  {
-    return self->_priv->data;
   }
 
   public
@@ -158,7 +81,7 @@ class Gegl:Image:Buffer from Gegl:Image {
 
     for(i = 0; i < num_channels; i++)
       {
-        d = self->_priv->data[i];
+        d = image->_priv->data[i];
 	s = data + i * channel_bytes;
 
 	/* copy in the channel */
@@ -169,26 +92,22 @@ class Gegl:Image:Buffer from Gegl:Image {
 
   override (Gegl:Image)
   GeglImage * 
-  get_pixels (GeglImage *self, 
-                   GeglImage *dest, 
-		   GeglRect *roi)
+  get_pixels (GeglImage *image,
+              GeglImage *dest,
+	      GeglRect *roi)
   {
-    /* check for leaf of chain, just return */
-    if (dest == NULL) 
-      {
-	/*g_print("Found an image node %x\n", self);*/
-        return self;
-      }
-
-    if (!GEGL_IS_IMAGE_BUFFER(dest))
+    if (dest && !GEGL_IS_IMAGE_BUFFER(dest))
       {
 	g_warning("gegl_image_buffer_get_pixels: dest not image buffer\n");
 	return NULL;
       }
-   
-   /* Just copy the pixels to the dest */ 
-   copy_pixels (GEGL_IMAGE_BUFFER(dest), roi, 
-                GEGL_IMAGE_BUFFER(self), roi);   
+    else if (!dest)  /* just a leaf of a tree */
+      {
+        return image;
+      }
+    else
+      copy_pixels (GEGL_IMAGE_BUFFER(dest), roi, 
+                   GEGL_IMAGE_BUFFER(image), roi);   
   
    return dest;
   }
@@ -200,13 +119,6 @@ class Gegl:Image:Buffer from Gegl:Image {
 		    GeglImageBuffer *src, 
 		    GeglRect  *src_rect)
   {
-
-    /* 
-       This routine will check the rects and do scaling if
-       self_rect and src_rect have different sizes. Of course
-       the CopyOp will trigger color conversions automatically.
-    */ 
-
     GeglImage * op = GEGL_IMAGE(gegl_copy_op_new (GEGL_IMAGE(src)));
     gegl_image_get_pixels (op, GEGL_IMAGE(self), self_rect);
     gegl_object_destroy (GEGL_OBJECT(op));
