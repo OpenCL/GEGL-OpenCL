@@ -1,9 +1,10 @@
 %h{
-#include "gegl-point-op.h"
+#include "gegl-single-src-op.h"
 %}
 %{
 #include "gegl-premult-op.h"
 #include "gegl-premult-op-private.h"
+#include "gegl-single-src-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
 #include "gegl-image-buffer.h"
@@ -14,18 +15,20 @@
 #include <stdio.h>
 %}
 
-class Gegl:Premult:Op from Gegl:Point:Op {
+class Gegl:Premult:Op from Gegl:Single:Src:Op {
 
   
   public 
   GeglPremultOp *
   new (GeglImageBuffer *dest,
-       GeglRect *dest_rect) 
+       GeglImageBuffer *src,
+       GeglRect *dest_rect,
+       GeglRect *src_rect)
   {
     GeglPremultOp * self = GEGL_PREMULT_OP(GET_NEW);
 
     /*Call the constructor */
-    if (!constructor(self, dest, dest_rect))
+    if (!constructor(self, dest, src, dest_rect, src_rect))
       return NULL;
     
     /*Okay its constructed*/
@@ -38,52 +41,31 @@ class Gegl:Premult:Op from Gegl:Point:Op {
   gboolean 
   constructor(self, 
               GeglImageBuffer *dest,
-              GeglRect *dest_rect) 
+              GeglImageBuffer *src,
+              GeglRect *dest_rect,
+	      GeglRect *src_rect) 
   {
-    gboolean	has_alpha;
-    GeglColorModel *cm;
-    GeglPointOp *point_op = GEGL_POINT_OP (self);
-    GeglPointOpClass *point_op_class = 
-      GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
-    
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
     
     /* Chain up */
-    if (!gegl_point_op_constructor (
-          GEGL_POINT_OP(self), &dest, dest_rect, 1))
+    if (!gegl_single_src_op_constructor (
+          GEGL_SINGLE_SRC_OP(self), dest, src, dest_rect, src_rect))
       return FALSE;
-
-    /*
-      Now based on the image buffers's color model(s)/data storage(s)
-      choose one of our scanline funcs to install
-      This is where some "autogeneration" happens.
-    */ 
-
-#if 0
-      GeglChannelDataType data_type;
-      cm = gegl_image_buffer_color_model (dest);
-      data_type = gegl_color_model_data_type (cm);
-      switch (data_type)
-      {
-        case FLOAT:
-          point_op_class->scanline_func = gegl_premult_op_RGB_FLOAT; 	
-          break;
-        default:
-          g_warning("PrintOp: Color Model data type none or unknown\n");
-          point_op_class->scanline_func = NULL; 	
-          return FALSE;
-      }
-#endif
-
-    /* Allocate a color and set its channels to the passed one */  
-    cm = gegl_image_buffer_color_model (dest);
-    has_alpha = gegl_color_model_has_alpha(cm);
-    
-    if(has_alpha)
-      point_op_class->scanline_func = gegl_premult_op_RGBA_FLOAT;
-    else
-      point_op_class->scanline_func = gegl_premult_op_RGB_FLOAT;
+   {
+     GeglPointOpClass *point_op_class = 
+       GEGL_POINT_OP_CLASS(GTK_OBJECT(self)->klass);
+     GeglColorModel *cm = gegl_image_buffer_color_model (dest);
+     gboolean has_alpha = gegl_color_model_has_alpha(cm);
+      
+     if(has_alpha)
+       point_op_class->scanline_func = gegl_premult_op_RGBA_FLOAT;
+     else
+       {
+	  g_warning("GeglPremultOp: dest has no alpha channel\n");
+	  return FALSE;
+       } 
+    }
 
     return TRUE;
   }
@@ -92,45 +74,84 @@ class Gegl:Premult:Op from Gegl:Point:Op {
   void 
   destroy (GtkObject *object)
   {
-
     /* Chain up on destroy */
     PARENT_HANDLER (object)
-  }
-
-  private
-  void
-  RGB_FLOAT (GeglPointOp *point_op)
-  {
-
   }
 
   private 
   void
   RGBA_FLOAT (GeglPointOp *point_op)
   {
-    guint width;
+     /*
+     Whats the algorithm for this code?	
+     {
+	Chan dest;
+	Chan src;
+
+         if (src_a == 0.0)
+	   {
+	     dest = CHAN_ZERO;
+           }
+         else if (src_a == WP);
+	   {
+             dest = src;
+           }
+         else
+	   {
+             dest = src_a * src;
+           }
+        dest_a = src_a;
+      }
+      */
+
+    GeglPointOpPrivate *point_opP = 
+        (GeglPointOpPrivate *)(point_op->_priv); 
+
+    guint width = point_opP->scanline_width;
     gfloat * dest_data[4]; 
-    gfloat *r, *g, *b, *a;
-    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+    gfloat * src_data[4]; 
+    gfloat *dest_r, *dest_g, *dest_b, *dest_a;
+    gfloat *src_r, *src_g, *src_b, *src_a;
 
-    width = point_opP->scanline_width;
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[0], 
+                      (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[1],
+                      (guchar**)src_data);
 
-    /* image_buffers[0] is the dest here */
-    gegl_image_iterator_get_scanline_data (point_opP->iterators[0], 
-                                        (guchar**)dest_data);
+    dest_r = dest_data[0];
+    dest_g = dest_data[1];
+    dest_b = dest_data[2];
+    dest_a = dest_data[3];
 
-    /* Make r,g,b point to the dest image data */
-    r = dest_data[0];
-    g = dest_data[1];
-    b = dest_data[2];
-    a = dest_data[3];
+    src_r = src_data[0];
+    src_g = src_data[1];
+    src_b = src_data[2];
+    src_a = src_data[3];
 
-    /* Premult the dest with the fill color */
     while (width--)
       {
-	*r++ *= *a;
-	*g++ *= *a;
-	*b++ *= *a++;
+         if (*src_a == 0.0)
+	   {
+	     *dest_r++ = 0.0;
+	     *dest_g++ = 0.0;
+	     *dest_b++ = 0.0;
+           }
+         else if (*src_a == 1.0)
+	   {
+	     *dest_r++ = *src_r++;
+	     *dest_g++ = *src_g++;
+	     *dest_b++ = *src_b++;
+           }
+         else
+	   {
+	     *dest_r++ = *src_a * *src_r++;
+	     *dest_g++ = *src_a * *src_g++;
+	     *dest_b++ = *src_a * *src_b++;
+           }
+
+        *dest_a++ = *src_a++; 
       }
   }
 }

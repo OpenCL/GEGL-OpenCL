@@ -16,11 +16,13 @@ GOB_SRC = \
 	gegl-op.gob					\
 	gegl-point-op.gob				\
 	gegl-dual-src-op.gob				\
+	gegl-single-src-op.gob				\
 	gegl-print-op.gob				\
 	gegl-color.gob					\
 	gegl-graphics-state.gob				\
 	gegl-fill-op.gob				\
 	gegl-composite-op.gob				\
+	gegl-composite-premult-op.gob			\
 	gegl-premult-op.gob				\
 	gegl-unpremult-op.gob				\
 	gegl-color-convert-op.gob			\
@@ -56,11 +58,13 @@ GOB_GEN_PUBLIC = \
 	gegl-op.h					\
 	gegl-point-op.h					\
 	gegl-dual-src-op.h				\
+	gegl-single-src-op.h				\
 	gegl-print-op.h					\
 	gegl-color.h					\
 	gegl-graphics-state.h				\
 	gegl-fill-op.h					\
 	gegl-composite-op.h				\
+	gegl-composite-premult-op.h			\
 	gegl-premult-op.h				\
 	gegl-unpremult-op.h				\
 	gegl-color-convert-op.h				\
@@ -110,6 +114,8 @@ GOB_GEN_SRC = \
 	gegl-point-op-private.h				\
 	gegl-dual-src-op.c				\
 	gegl-dual-src-op-private.h			\
+	gegl-single-src-op.c				\
+	gegl-single-src-op-private.h			\
 	gegl-print-op.c					\
 	gegl-print-op-private.h				\
 	gegl-color.c					\
@@ -120,6 +126,8 @@ GOB_GEN_SRC = \
 	gegl-fill-op-private.h				\
 	gegl-composite-op.c				\
 	gegl-composite-op-private.h			\
+	gegl-composite-premult-op.c			\
+	gegl-composite-premult-op-private.h		\
 	gegl-premult-op.c				\
 	gegl-premult-op-private.h			\
 	gegl-unpremult-op.c				\
@@ -141,6 +149,7 @@ GOB_GEN_SRC = \
 	gegl-copy-chan-op.c				\
 	gegl-copy-chan-op-private.h			\
 	gegl-add-op.c					\
+	gegl-add-op-private.h				\
 	gegl-min-op.c					\
 	gegl-min-op-private.h				\
 	gegl-max-op.c 					\

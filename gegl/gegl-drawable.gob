@@ -172,7 +172,6 @@ class Gegl:Drawable from Gegl:Object {
     gegl_rect_set (&src_rect, 0, 0, src_width, src_height);
     gegl_rect_set (&draw_rect, x, y, src_width, src_height);
 
-
     /* Disallow scaling and off the edge of drawable for now*/
     if (draw_rect.w != src_rect.w || draw_rect.h != src_rect.h)
       {
@@ -186,11 +185,17 @@ class Gegl:Drawable from Gegl:Object {
         g_warning ("gegl_drawable_apply_image: cant apply images outside drawable yet\n");
 	return;
       }
-
+    
+    /* dest = src2 op src1 , with src1 = dest as well */
     op = GEGL_OP(gegl_composite_op_new (self->_priv->image_buffer, 
-                      src_image_buffer, &draw_rect, &src_rect, comp_mode, FALSE));
+					self->_priv->image_buffer, 
+					src_image_buffer, 
+					&draw_rect, 
+					&draw_rect, 
+					&src_rect, 
+					comp_mode));
 
-    /* Apply the composite op */
+      /* Apply the composite op */
     gegl_op_apply (op);
     gegl_object_destroy(GEGL_OBJECT(op));
   }

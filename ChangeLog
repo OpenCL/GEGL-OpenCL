@@ -1,3 +1,13 @@
+Fri Feb 18 12:48:30 PST 2000 calvinw@mindspring.com
+
+        * Added CompositePremultOp ,SingleSrcOp class
+
+	* Updated the algorithms in CompositeOp ,CompositePremultOp
+	PremultOp, UnpremultOp.
+
+	* Made all the appropriate Ops subclasses of SingleSrcOp
+	or DualSrcOp
+  
 Feb 11 18:24:50 EST 2000 calvinw@mindspring.com
 
 	* removed the Iterator type routines from ImageBuffer. 

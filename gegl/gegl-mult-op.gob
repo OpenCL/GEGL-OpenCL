@@ -51,10 +51,6 @@ class Gegl:Mult:Op from Gegl:Dual:Src:Op {
               GeglRect *src1_rect,
               GeglRect *src2_rect) 	
   {
-    GeglPointOp *point_op = GEGL_POINT_OP (self);
-    GeglPointOpClass *point_op_class = 
-        GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
-    
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
     
@@ -65,6 +61,9 @@ class Gegl:Mult:Op from Gegl:Dual:Src:Op {
       return FALSE;
 
     {
+      GeglPointOpClass *point_op_class = 
+	  GEGL_POINT_OP_CLASS(GTK_OBJECT(self)->klass);
+
       point_op_class->scanline_func = gegl_mult_op_RGB_FLOAT; 	
     }
 
@@ -133,9 +132,11 @@ class Gegl:Mult:Op from Gegl:Dual:Src:Op {
     dest_r = dest_data[0];
     dest_g = dest_data[1];
     dest_b = dest_data[2];
+
     src1_r = src1_data[0];
     src1_g = src1_data[1];
     src1_b = src1_data[2];
+
     src2_r = src2_data[0];
     src2_g = src2_data[1];
     src2_b = src2_data[2];
@@ -151,16 +152,16 @@ class Gegl:Mult:Op from Gegl:Dual:Src:Op {
       *dest_b++ = *src1_b++ * *src2_b++;
       if (dest_has_alpha)
 	{
-	if (src1_has_alpha && src2_has_alpha)
-	  {
-	    *dest_a++ = MIN(*src1_a, *src2_a);
-	    src1_a++;
-	    src2_a++;
-	  }	
-    	else if (src1_has_alpha)
-	  *dest_a++ = *src1_a++;
-	else if (src2_has_alpha)
-	  *dest_a++ = *src2_a++; 
+	  if (src1_has_alpha && src2_has_alpha)
+	    {
+	      *dest_a++ = MIN(*src1_a, *src2_a);
+	      src1_a++;
+	      src2_a++;
+	    }	
+	  else if (src1_has_alpha)
+	    *dest_a++ = *src1_a++;
+	  else if (src2_has_alpha)
+	    *dest_a++ = *src2_a++; 
 	} 
     } 		
   }

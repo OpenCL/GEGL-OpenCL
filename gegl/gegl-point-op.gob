@@ -39,12 +39,6 @@ class Gegl:Point:Op from Gegl:Op {
           image_buffers, rects, num_images))
       return FALSE;
    
-    /*  
-      Now based on the color_models and data storage strategies,
-      we should install an appropriate point op apply function.
-      So far there is just one, since only one kind of data storage. 
-     */
-
     {
       gint i;
       self->_priv->iterators = NULL;
@@ -61,6 +55,12 @@ class Gegl:Point:Op from Gegl:Op {
       for (i = 0; i < num_images; i++)
 	self->_priv->iterators[i] = 
           gegl_image_iterator_new (image_buffers[i]);
+
+    /*  
+      Now based on the color_models and data storage strategies,
+      we should install an appropriate point op apply function.
+      So far there is just one, since only one kind of data storage. 
+     */
 
       /* Heres the apply for this kind of data storage */
       op_class->apply = gegl_point_op_apply;  
@@ -123,7 +123,7 @@ class Gegl:Point:Op from Gegl:Op {
 
     /* 
        We will have additional code here to decide
-       how to iterate for a particular storage strategy. 
+       how to iterate for a this type of storage strategy. 
        and so wind up with a loop over a bunch of
        rects whose union is the entire region we
        wish to process. Now we just do our one

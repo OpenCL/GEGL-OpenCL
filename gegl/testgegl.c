@@ -12,6 +12,7 @@
 #include "gegl-color-convert-to-rgb-u8-op.h"
 #include "gegl-color-convert-to-gray-u8-op.h"
 #include "gegl-color-convert-connection-op.h"
+#include "gegl-copy-chan-op.h"
 #include "gegl-drawable.h"
 #include "gegl-graphics-state.h"
 #include "gegl-image-buffer.h"
@@ -110,6 +111,89 @@ main (int argc, char *argv[])
   }
 #endif
 
+#if 0   /* This is a test of GeglCopyChanOp */ 
+  {
+
+	GeglColorModel *dest_cm = GEGL_COLOR_MODEL(
+				gegl_color_model_rgb_float_new(FALSE,FALSE));
+	GeglImageBuffer *dest = gegl_image_buffer_new(dest_cm,5,5);
+
+	GeglColorModel *src_cm = GEGL_COLOR_MODEL(
+				gegl_color_model_rgb_float_new(FALSE,FALSE));
+	GeglImageBuffer *src = gegl_image_buffer_new(src_cm,5,5);
+
+        /* Fill the whole 5 x 5 src image with RED */
+        {
+	  GeglOp *op;
+	  GeglRect r;
+	  GeglColor *c = gegl_color_new (dest_cm);
+          gegl_color_set_constant (c, COLOR_RED);
+
+	  gegl_rect_set (&r, 0,0,5,5);
+	  op = GEGL_OP (gegl_fill_op_new (src, &r, c));
+
+	  gegl_op_apply (op);
+
+	  gegl_object_destroy (GEGL_OBJECT(op)); 
+	  gegl_object_destroy (GEGL_OBJECT(c)); 
+        }
+
+        /* Fill the whole 5 x 5 dest image with GREEN */
+        {
+	  GeglOp *op;
+	  GeglRect r;
+	  GeglColor *c = gegl_color_new (dest_cm);
+          gegl_color_set_constant (c, COLOR_GREEN);
+
+	  gegl_rect_set (&r, 0,0,5,5);
+	  op = GEGL_OP (gegl_fill_op_new (dest, &r, c));
+
+	  gegl_op_apply (op);
+
+	  gegl_object_destroy (GEGL_OBJECT(op)); 
+	  gegl_object_destroy (GEGL_OBJECT(c)); 
+        }
+
+        /* Copy red src chan to green dest chan */
+        {
+	  GeglOp *op;
+	  GeglRect r;
+          gint channel_indices[4] = {0, 1, 0, -1};
+
+	  gegl_rect_set (&r, 0,0,5,5);
+	  op = GEGL_OP (gegl_copy_chan_op_new (dest, src, &r, &r, channel_indices));
+
+	  gegl_op_apply (op);
+
+	  gegl_object_destroy (GEGL_OBJECT(op)); 
+        }
+
+        /* Print out the image values for the src */
+        {
+          GeglOp *op;
+	  GeglRect r;
+	  gegl_rect_set (&r, 0,0,5,5);
+	  op =  GEGL_OP (gegl_print_op_new (src, &r));
+          gegl_op_apply (op);
+	  gegl_object_destroy (GEGL_OBJECT(op)); 
+	}
+
+        /* Print out the image values for the dest*/
+        {
+          GeglOp *op;
+	  GeglRect r;
+	  gegl_rect_set (&r, 0,0,5,5);
+	  op =  GEGL_OP (gegl_print_op_new (dest, &r));
+          gegl_op_apply (op);
+	  gegl_object_destroy (GEGL_OBJECT(op)); 
+	}
+
+        gegl_object_destroy (GEGL_OBJECT(src)); 
+        gegl_object_destroy (GEGL_OBJECT(src_cm)); 
+        gegl_object_destroy (GEGL_OBJECT(dest)); 
+        gegl_object_destroy (GEGL_OBJECT(dest_cm)); 
+  }
+#endif
 #if  0      /*This uses the GeglDrawable class */ 
   {
 

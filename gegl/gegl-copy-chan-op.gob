@@ -1,10 +1,11 @@
 %h{
-#include "gegl-point-op.h"
+#include "gegl-single-src-op.h"
 #define GEGL_COPY_CHAN_OP_CHANNEL_NONE -1
 %}
 %{
 #include "gegl-copy-chan-op.h"
 #include "gegl-copy-chan-op-private.h"
+#include "gegl-single-src-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
 #include "gegl-object-private.h"
@@ -17,16 +18,15 @@
 #include <stdio.h>
 %}
 
-class Gegl:Copy:Chan:Op from Gegl:Point:Op {
+class Gegl:Copy:Chan:Op from Gegl:Single:Src:Op {
 
-  private gint *chan_index;     /*chan_index[i] is index of the src channel 
-                                  to copy to ith dest channel*/ 
+  private gint *chan_index;                 /*chan_index[i] is index of the src channel 
+                                              to copy to ith dest channel*/ 
 
-  private guchar **dest_data;   /*generic data pointer array for dest */ 
-  private guchar **src_data;    /*generic data pointer array for src */
-
-  private GeglColorModel *dest_cm; 
-  private GeglColorModel *src_cm;
+  private guchar **dest_data;               /*generic data pointer array for dest */ 
+  private guchar **src_data;                /*generic data pointer array for src */
+  private guchar **src_data_indexed;        /*src_data_index[i] is pointer to src chan to
+                                              copy to ith dest channel*/
 
   public 
   GeglCopyChanOp *
@@ -58,26 +58,19 @@ class Gegl:Copy:Chan:Op from Gegl:Point:Op {
               GeglRect *src_rect,
               gint *chan_index)
   {
-    GeglImageBuffer *image_buffers[2];
-    GeglRect rects[2];
-    GeglPointOp *point_op = GEGL_POINT_OP(self);
-    GeglPointOpClass *point_op_class = 
-        GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
-    
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
     
-    image_buffers[0] = dest;
-    image_buffers[1] = src;
-    gegl_rect_copy(&(rects[0]), dest_rect);
-    gegl_rect_copy(&(rects[1]), src_rect);
- 
     /* Chain up */
-    if (!gegl_point_op_constructor(
-           GEGL_POINT_OP(self), image_buffers, rects, 2))
+    if (!gegl_single_src_op_constructor( 
+           GEGL_SINGLE_SRC_OP(self), dest, src, dest_rect, src_rect))
       return FALSE;
-
+   
     {
+      GeglPointOp *point_op = GEGL_POINT_OP(self);
+      GeglPointOpClass *point_op_class = 
+	  GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+
       gint i; 
       GeglChannelDataType dest_data_type, src_data_type;
       GeglColorModel *dest_cm, *src_cm; 
@@ -119,12 +112,11 @@ class Gegl:Copy:Chan:Op from Gegl:Point:Op {
       /* Get arrays of generic data pointers */
       self->_priv->dest_data = (guchar**) g_malloc(sizeof(guchar*) * dest_nchans);
       self->_priv->src_data  = (guchar**) g_malloc(sizeof(guchar*) * src_nchans);
+      self->_priv->src_data_indexed  = (guchar**) g_malloc(sizeof(guchar*) * src_nchans);
 
       /*store these values for scanline routine*/
       self->_priv->chan_index = chan_index; 
-      self->_priv->src_cm = src_cm; 
-      self->_priv->dest_cm = dest_cm; 
-     
+
       /* Set up the scanline function in point op*/
       point_op_class->scanline_func = gegl_copy_chan_op_scanline;   
     }
@@ -136,12 +128,11 @@ class Gegl:Copy:Chan:Op from Gegl:Point:Op {
   destroy (GtkObject *object)
   {
     GeglCopyChanOp *self = GEGL_COPY_CHAN_OP (object);
-    /* Free the generic data pointers arrays */
 
-    if (self->_priv->dest_data)
-      g_free(self->_priv->dest_data);
-    if (self->_priv->src_data)
-      g_free(self->_priv->src_data); 	
+    /* Free the generic data pointers arrays */
+    g_free(self->_priv->dest_data);
+    g_free(self->_priv->src_data); 	
+    g_free(self->_priv->src_data_indexed); 	
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)
@@ -157,40 +148,55 @@ class Gegl:Copy:Chan:Op from Gegl:Point:Op {
     gint dest_nchans;
     guchar **dest;
     guchar **src;
+    guchar **src_indexed;
     gint * index;
 
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
     GeglCopyChanOp *self = GEGL_COPY_CHAN_OP (point_op);
+    GeglSingleSrcOpPrivate *single_src_opP = (GeglSingleSrcOpPrivate *) 
+                                    (GEGL_SINGLE_SRC_OP(point_op)->_priv);
 
     dest = self->_priv->dest_data;
     src = self->_priv->src_data;
+    src_indexed = self->_priv->src_data_indexed;
+
     gegl_image_iterator_get_scanline_data (point_opP->iterators[0], dest); 
     gegl_image_iterator_get_scanline_data (point_opP->iterators[1], src);
     
     width = point_opP->scanline_width;
     index = self->_priv->chan_index;
-    bpc = gegl_color_model_bytes_per_channel(
-                         self->_priv->dest_cm);
-    dest_nchans = gegl_color_model_num_channels(
-                         self->_priv->dest_cm);
+    bpc = gegl_color_model_bytes_per_channel (single_src_opP->dest_cm);
+    dest_nchans = gegl_color_model_num_channels (single_src_opP->dest_cm);
 
-       
+    /* 
+       Make the indexed src data point to the channels to copy. 
+       eg If chan 0 of src is going to be copied to all three chans 
+       0,1,2 of dest, must make 2 copies of the data pointer to src chan 0 
+    */
+
+    for (i = 0; i < dest_nchans; i++)
+      { 
+	if (index[i] != GEGL_COPY_CHAN_OP_CHANNEL_NONE)
+	  src_indexed[i] = src[index[i]];  
+	else 
+	  src_indexed[i] = NULL;  
+      }
+     
     while (width--)
       {
 	/* 
-           For each channel in dest,  
-	   copy all the bytes in that channel for
-           this pixel, otherwise skip the channel. 
+           For each channel in dest,  copy all the bytes in that channel for
+           this pixel, or skip the channel. 
 
-           This depends on the planar data storage...assumes
+           This depends on the data storage...assumes and
            pixelstride == bpc for a channel data pointer, 
-           since channels are stored separately currently. 
+           Will need different code for other data storage types
         */ 
 	for (i = 0; i < dest_nchans; i++)
 	  {
 	    if (index[i] != GEGL_COPY_CHAN_OP_CHANNEL_NONE)
               for (j = 0; j < bpc; j++) 
-               *dest[i]++  = *src[index[i]]++;  
+               *dest[i]++  = *src_indexed[i]++;  
           }
       }
   }
