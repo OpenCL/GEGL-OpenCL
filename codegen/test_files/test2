@@ -1,3 +1,31 @@
-/* test file */
+CODEGEN_DECL_BEGIN
+VectorChan dest(color,alpha);
+VectorChan src1(color,alpha);
+VectorChan src2(color,alpha);
+int dest_has_alpha; 
+int src1_has_alpha; 
+int src2_has_alpha;
+CODEGEN_DECL_END
 
+CODEGEN_IMAGE_DATA_INIT
 
+CODEGEN_BLOCK_BEGIN
+dest_color = MIN(src1_color, src2_color);
+if (dest_has_alpha)
+  {
+    if (src1_has_alpha && src2_has_alpha)
+      dest_alpha = MIN(src1_alpha, src2_alpha);
+    else if (src1_has_alpha)
+      dest_alpha = src1_alpha;
+    else if (src2_has_alpha)
+      dest_alpha = src2_alpha; 
+  }
+CODEGEN_BLOCK_BEGIN
+
+CODEGEN_BLOCK_BEGIN
+if (src1_alpha == ZERO_CHAN || src1_alpha == WP)
+    dest_color = src1_color;
+else
+    dest_color = src1_color / src1_alpha;
+dest_alpha = src1_alpha;
+CODEGEN_BLOCK_BEGIN

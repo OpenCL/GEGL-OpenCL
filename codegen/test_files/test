@@ -1,54 +1,137 @@
-/* fldskjflksjd sdfjlskfjlsdkfjdslkjfsldkfjdlskf */
+/* For testing comments */
+
 CODEGEN_DECL_BEGIN
- Chan a ;
- VectorChan s(color,alpha); 
- VectorChan d(color,alpha), s1(color,alpha), s2(color,alpha), s3(color,alpha); 
- VectorChan dest(color,alpha);
- VectorChan src1(color,alpha);
- VectorChan src2(color,alpha);
- VectorChan c(color,alpha);
- Chan g[4], h[2];
- Chan f;
+int i;
+float f;
+Chan a; 
+VectorChan d(color,alpha);
+VectorChan s(color,alpha);
+VectorChan s1(color,alpha), s2(color,alpha);
+VectorChan s3(color,alpha); /*a comment*/
 CODEGEN_DECL_END
+
+CODEGEN_IMAGE_DATA_INIT
+
+
+/* d = s1 * s2; */
 CODEGEN_BLOCK_BEGIN
-  d = s1 * s2;
- d = CHAN_CLAMP(5 * s);
- d = (s1 + s2 + s3)/3;
- d = s * s1 + (WP-s) * s2;
- d = CHAN_CLAMP(s1 * s2 + s3);
- d = .333 * (s1 + s2 + s3); 
- dest = WP - ((WP - src1) * (WP - src2));
- dest = MAX(src1, src2);
- dest = MIN(src1, src2);
- dest = MAX(src1, src2);
- dest = src1 * src2;
- dest = CHAN_CLAMP(src1 - src2);
- dest = ABS(src1 - src2);
- dest = MIN(src1, src2);
- dest = CHAN_CLAMP(src1 + src2);
- dest_alpha = CHAN_CLAMP(src1_alpha + src2_alpha);
- dest = dest_alpha * dest; 
- c_color = c_color * c_color;
- f = f * f;
- c_color = c_color * f;
- c_color = c_color / c_color;
- f = f / f;
- c = f / c;
- c = c / f;
- c = 5.0 * c;
- c = 5 * c;
- f = 5.0 * f;
- f = 5.0 * f;
- c = c / 5.0;
- c_color = c_color / 5.0; 
- c_color = c_color / 5;
- c_color = c_color + c_color;
- f = f + c_alpha;
- c_color = c_color + f;
- c_color = c_color;
- c_color = f;
- g = c;
- g = h;
+d = s1 * s2;
 CODEGEN_BLOCK_END
 
 
+/* d = CHAN_CLAMP(s1 + s2); */
+CODEGEN_BLOCK_BEGIN
+d = CHAN_CLAMP(s1 + s2);
+CODEGEN_BLOCK_END
+
+
+/* d = CHAN_CLAMP (5 *s); */
+CODEGEN_BLOCK_BEGIN
+d = CHAN_CLAMP (5 *s);
+CODEGEN_BLOCK_END
+
+/* d = (s1 + s2 + s3)/3; */
+CODEGEN_BLOCK_BEGIN
+d = (s1 + s2 + s3)/3;
+CODEGEN_BLOCK_END
+
+
+/* d = s * s1 + (WP-s) * s2; */
+CODEGEN_BLOCK_BEGIN
+d = s * s1 + (WP-s) * s2;
+CODEGEN_BLOCK_END
+
+
+/*d = .333 * (s1 + s2 + s3);*/ 
+CODEGEN_BLOCK_BEGIN
+d = .333 * (s1 + s2 + s3); 
+CODEGEN_BLOCK_END
+
+
+/* d = CHAN_CLAMP(s1 * s2 + s3); */
+CODEGEN_BLOCK_BEGIN
+d = CHAN_CLAMP(s1 * s2 + s3);
+CODEGEN_BLOCK_END
+
+
+/* d = WP - ((WP - s1) * (WP - s2)); */
+CODEGEN_BLOCK_BEGIN
+d = WP - ((WP - s1) * (WP - s2));
+CODEGEN_BLOCK_END
+
+
+/* d = MAX(s1, s2); */
+CODEGEN_BLOCK_BEGIN
+d = MAX(s1, s2);
+CODEGEN_BLOCK_END
+
+
+/* d = CHAN_CLAMP(s1 - s2) */;
+CODEGEN_BLOCK_BEGIN
+d = CHAN_CLAMP(s1 - s2);
+CODEGEN_BLOCK_END
+
+
+/* d = ABS(s1 - s2); */
+CODEGEN_BLOCK_BEGIN
+d = ABS(s1 - s2);
+CODEGEN_BLOCK_END
+
+
+/* d = MIN(s1, s2); */
+CODEGEN_BLOCK_BEGIN
+d = MIN(s1, s2);
+CODEGEN_BLOCK_END
+
+
+/*
+d_color = CHAN_CLAMP(s1_color + s2_color);
+d_alpha = s1_alpha;
+*/
+CODEGEN_BLOCK_BEGIN
+d_color = CHAN_CLAMP(s1_color + s2_color);
+d_alpha = WP;
+CODEGEN_BLOCK_END
+
+
+/* d_color = d_alpha * d_color; */
+CODEGEN_BLOCK_BEGIN
+d_color = d_alpha * d_color;
+CODEGEN_BLOCK_END
+
+/* d_color = d_color / d_alpha; */
+CODEGEN_BLOCK_BEGIN
+d_color = d_color / d_alpha;
+CODEGEN_BLOCK_END
+
+/*
+d = d / 5.0;
+d = d_color / 5;
+d_color / a;
+d = d / a;
+*/
+CODEGEN_BLOCK_BEGIN
+d = d / 5.0;
+d = d_color / 5;
+d_color / a;
+d = d / a;
+CODEGEN_BLOCK_END
+
+/*
+d_color / a;
+d = d / a;
+*/
+CODEGEN_BLOCK_BEGIN
+d_color / a;
+d = d / a;
+CODEGEN_BLOCK_END
+
+/* d = d + 5.0; */
+CODEGEN_BLOCK_BEGIN
+d = d + 5.0;
+CODEGEN_BLOCK_END
+
+/* d = ZERO */
+CODEGEN_BLOCK_BEGIN
+d = ZERO;
+CODEGEN_BLOCK_END
