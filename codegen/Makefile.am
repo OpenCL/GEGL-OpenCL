@@ -1,0 +1,6 @@
+SUBDIRS = @SUBDIRS@
+DIST_SUBDIRS = src
+
+EXTRA_DIST = 
+
+dist-hook:
