@@ -208,12 +208,13 @@ a zero (or some other default fill value) as output.
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_op_get_input_values ##### -->
+<!-- ##### FUNCTION gegl_op_get_nth_input_value ##### -->
 <para>
 
 </para>
 
-@self: 
+@op: 
+@n: 
 @Returns: 
 
 

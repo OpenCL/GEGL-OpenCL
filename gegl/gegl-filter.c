@@ -2,8 +2,9 @@
 #include "gegl-node.h"
 #include "gegl-image.h"
 #include "gegl-visitor.h"
-#include "gegl-bfs-visitor.h"
-#include "gegl-dfs-visitor.h"
+#include "gegl-filter-bfs-visitor.h"
+#include "gegl-filter-dfs-visitor.h"
+#include "gegl-filter-inputs-visitor.h"
 #include "gegl-sampled-image.h"
 #include "gegl-tile-mgr.h"
 #include "gegl-utils.h"
@@ -25,8 +26,9 @@ static void finalize(GObject * gobject);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 
-static void apply (GeglOp*op);
+static void traverse (GeglOp*op);
 static void accept (GeglNode * node, GeglVisitor * visitor);
+static GValue *lookup_input_value(GeglFilter *self, GeglOp *op, gint index);
 
 static gpointer parent_class = NULL;
 
@@ -72,7 +74,7 @@ class_init (GeglFilterClass * klass)
   gobject_class->get_property = get_property;
 
   node_class->accept = accept;
-  op_class->apply = apply;
+  op_class->traverse = traverse;
 
   g_object_class_install_property (gobject_class, PROP_ROOT,
                                    g_param_spec_object ("root",
@@ -102,8 +104,10 @@ init (GeglFilter * self,
       GeglFilterClass * klass)
 {
   GeglOp *op = GEGL_OP(self);
+  GeglNode *node = GEGL_NODE(self);
   GValue * output_value;
 
+  gegl_node_set_num_outputs(node, 1);
   gegl_op_set_num_output_values(op, 1);
   output_value = gegl_op_get_nth_output_value(op,0);
   g_value_init(output_value, GEGL_TYPE_IMAGE_DATA);
@@ -117,6 +121,18 @@ init (GeglFilter * self,
 static void
 finalize(GObject *gobject)
 {  
+  GeglFilter *self = GEGL_FILTER(gobject);
+  GList *llink = self->filter_inputs;
+  while(llink)
+    {
+      GeglFilterInput * filter_input = (GeglFilterInput*)llink->data;
+      g_free(filter_input);
+      llink = g_list_next(llink);
+    }
+
+  g_list_free(self->filter_inputs);
+  self->filter_inputs = NULL;
+
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
@@ -183,6 +199,24 @@ gegl_filter_set_root (GeglFilter * self,
   g_return_if_fail (GEGL_IS_FILTER (self));
 
   self->root = root;
+
+  {
+    GeglFilterInputsVisitor * filter_inputs_visitor = 
+        g_object_new(GEGL_TYPE_FILTER_INPUTS_VISITOR, NULL); 
+
+    gegl_node_traverse_depth_first(GEGL_NODE(self->root), 
+                                   GEGL_VISITOR(filter_inputs_visitor),
+                                   TRUE);
+
+    self->filter_inputs = filter_inputs_visitor->filter_inputs;
+    g_object_unref(filter_inputs_visitor);
+
+    LOG_DEBUG("set_root", "found that num_inputs = %d", 
+               g_list_length(self->filter_inputs));
+
+    gegl_node_set_num_inputs(GEGL_NODE(self), 
+                             g_list_length(self->filter_inputs));
+  }
 }
 
 void
@@ -242,27 +276,65 @@ GList *
 gegl_filter_get_input_values(GeglFilter *self, 
                              GeglOp *op)
 {
-  gint i;
-  GeglInputInfo * input_infos = gegl_node_get_input_infos(GEGL_NODE(op));
-  GList * input_values = NULL;
-  gint num_inputs = gegl_node_get_num_inputs(GEGL_NODE(op));
-  for(i = 0; i < num_inputs; i++) 
-    {
-      GValue *input_value = NULL;
+  g_return_val_if_fail (self, NULL);
+  g_return_val_if_fail (GEGL_IS_FILTER (self), NULL);
+  g_return_val_if_fail (op, NULL);
+  g_return_val_if_fail (GEGL_IS_OP(op), NULL);
 
-      if(input_infos[i].input)
-        input_value = gegl_op_get_nth_output_value(GEGL_OP(input_infos[i].input),
-                                                   input_infos[i].index); 
+  {
+    gint i;
+    GList * input_values = NULL;
+    gint num_inputs = gegl_node_get_num_inputs(GEGL_NODE(op));
+    for(i = 0; i < num_inputs; i++) 
+      {
+        GValue *input_value = gegl_op_get_nth_input_value(op, i);
+        if(!input_value)
+          input_value = lookup_input_value(self, op, i); 
 
-      input_values = g_list_append(input_values, input_value); 
-    }
+        input_values = g_list_append(input_values, input_value); 
+      }
 
-  g_free(input_infos);
-  return input_values;
+    return input_values;
+  }
+}
+
+GValue *
+lookup_input_value(GeglFilter *self,
+                   GeglOp *op,
+                   gint index)
+{
+  g_return_val_if_fail (self, NULL);
+  g_return_val_if_fail (GEGL_IS_FILTER (self), NULL);
+  g_return_val_if_fail (op, NULL);
+  g_return_val_if_fail (GEGL_IS_OP(op), NULL);
+
+  {
+    GValue *input_value = NULL;
+    GeglInputInfo * filter_input_infos = gegl_node_get_input_infos(GEGL_NODE(self));
+    gint num_filter_inputs = g_list_length(self->filter_inputs);
+    gint j;
+
+    for(j=0; j < num_filter_inputs; j++) 
+      {
+         GeglFilterInput * filter_input = g_list_nth_data(self->filter_inputs,j); 
+
+         if(filter_input->input == GEGL_NODE(op) && 
+            filter_input->index == index) 
+           {
+             GeglOp *input = GEGL_OP(filter_input_infos[j].input);
+             gint input_index = filter_input_infos[j].index;
+             input_value = gegl_op_get_nth_output_value(input,input_index); 
+             break;
+           }
+      }
+
+    g_free(filter_input_infos);
+    return input_value; 
+  }
 }
 
 static void      
-apply (GeglOp * op)
+traverse (GeglOp * op)
 {
   GeglFilter *self = GEGL_FILTER(op);
   GValue *output_value = gegl_op_get_nth_output_value(op, 0);
@@ -274,16 +346,16 @@ apply (GeglOp * op)
      g_value_set_image_data_tile(output_value, GEGL_IMAGE(self->image)->tile);
     }
 
-  LOG_DEBUG("apply", "visit breadth first");
+  LOG_DEBUG("apply", "begin bfs for %s %x", G_OBJECT_TYPE_NAME(op), (guint)op);
   {
-    GeglVisitor * bfs_visitor = g_object_new(GEGL_TYPE_BFS_VISITOR, NULL); 
+    GeglVisitor * bfs_visitor = g_object_new(GEGL_TYPE_FILTER_BFS_VISITOR, NULL); 
     gegl_visitor_visit_filter(bfs_visitor, self);
     g_object_unref(bfs_visitor);
   }
 
-  LOG_DEBUG("apply", "visit depth first");
+  LOG_DEBUG("apply", "begin dfs for %s %x", G_OBJECT_TYPE_NAME(op), (guint)op);
   {
-    GeglVisitor * dfs_visitor = g_object_new(GEGL_TYPE_DFS_VISITOR, NULL); 
+    GeglVisitor * dfs_visitor = g_object_new(GEGL_TYPE_FILTER_DFS_VISITOR, NULL); 
     gegl_visitor_visit_filter(dfs_visitor, self);
     g_object_unref(dfs_visitor);
   }

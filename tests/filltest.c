@@ -76,7 +76,7 @@ test_fill_apply(Test *test)
 
     gegl_op_apply(op); 
 
-    ct_test(test, check_rgb_float_pixel(GEGL_IMAGE(op), .1, .2, .3));  
+    ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(op), .1, .2, .3));  
 
     g_object_unref(op);
     g_object_unref(color);
@@ -104,7 +104,7 @@ test_fill_apply_roi(Test *test)
 
     gegl_op_apply_roi(op, &roi); 
 
-    ct_test(test, check_rgb_float_pixel(GEGL_IMAGE(op), .1, .2, .3));  
+    ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(op), .1, .2, .3));  
 
     g_object_unref(op);
     g_object_unref(color);
@@ -132,7 +132,7 @@ test_fill_apply_image(Test *test)
 
     gegl_op_apply_image(op, GEGL_OP(dest), &roi); 
 
-    ct_test(test, check_rgb_float_pixel(GEGL_IMAGE(dest), .1, .2, .3));  
+    ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(dest), .1, .2, .3));  
 
     g_object_unref(op);
     g_object_unref(color);

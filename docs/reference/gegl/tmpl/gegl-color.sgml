@@ -24,6 +24,12 @@ appropriate color model and data type, etc.
 
 </para>
 
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### FUNCTION gegl_color_get_channel_values ##### -->
 <para>
 

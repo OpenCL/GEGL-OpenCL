@@ -41,9 +41,9 @@ static void
 print_test_setup(Test *test)
 {
   GeglColorModel *rgb_float = gegl_color_model_instance("RgbFloat");
-  source = make_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
-                                       SAMPLED_IMAGE_HEIGHT, 
-                                       .1, .2, .3);
+  source = testutils_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
+                                             SAMPLED_IMAGE_HEIGHT, 
+                                             .1, .2, .3);
 
   dest = g_object_new (GEGL_TYPE_SAMPLED_IMAGE,
                        "colormodel", rgb_float,

@@ -12,14 +12,14 @@ static GeglRect area = {0,0,AREA_WIDTH,AREA_HEIGHT};
 static GValue *value;
 
 static void
-value_test_new(Test *test)
+test_value_new(Test *test)
 {
   g_value_init(value, GEGL_TYPE_IMAGE_DATA);
   g_value_unset(value);
 }
 
 static void
-value_test_set_image_data(Test *test)
+test_value_set_image_data(Test *test)
 {
   g_value_init(value, GEGL_TYPE_IMAGE_DATA);
 
@@ -44,7 +44,7 @@ value_test_set_image_data(Test *test)
 }
 
 static void
-value_test_set_image_data_rect(Test *test)
+test_value_set_image_data_rect(Test *test)
 {
   g_value_init(value, GEGL_TYPE_IMAGE_DATA);
 
@@ -68,7 +68,7 @@ value_test_set_image_data_rect(Test *test)
 }
 
 static void
-value_test_set_image_data_tile(Test *test)
+test_value_set_image_data_tile(Test *test)
 {
   g_value_init(value, GEGL_TYPE_IMAGE_DATA);
 
@@ -111,10 +111,10 @@ create_value_test()
 
   g_assert(ct_addSetUp(t, value_test_setup));
   g_assert(ct_addTearDown(t, value_test_teardown));
-  g_assert(ct_addTestFun(t, value_test_new));
-  g_assert(ct_addTestFun(t, value_test_set_image_data));
-  g_assert(ct_addTestFun(t, value_test_set_image_data_rect));
-  g_assert(ct_addTestFun(t, value_test_set_image_data_tile));
+  g_assert(ct_addTestFun(t, test_value_new));
+  g_assert(ct_addTestFun(t, test_value_set_image_data));
+  g_assert(ct_addTestFun(t, test_value_set_image_data_rect));
+  g_assert(ct_addTestFun(t, test_value_set_image_data_tile));
 
   return t; 
 }

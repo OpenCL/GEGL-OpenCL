@@ -61,7 +61,7 @@ gegl_op_apply_roi
 gegl_op_compute_have_rect
 gegl_op_compute_need_rects
 gegl_op_evaluate
-gegl_op_get_input_values
+gegl_op_get_nth_input_value
 gegl_op_get_nth_output_value
 gegl_op_get_output_values
 gegl_param_spec_image_data

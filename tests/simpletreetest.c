@@ -8,33 +8,6 @@
 #define SAMPLED_IMAGE_HEIGHT 1 
 GeglSampledImage *dest;
 
-static GeglOp *
-make_rgb_fill(gfloat a, 
-              gfloat b, 
-              gfloat c)
-{
-  GeglOp * fill = NULL;
-  GeglColorModel *rgb_float = gegl_color_model_instance("RgbFloat");
-  GeglColor * color = g_object_new (GEGL_TYPE_COLOR, 
-                                    "colormodel", rgb_float,  
-                                    NULL);  
-
-  GeglChannelValue * chans = gegl_color_get_channel_values(color);
-
-  chans[0].f = a; 
-  chans[1].f = b; 
-  chans[2].f = c;
-
-  fill = g_object_new(GEGL_TYPE_FILL, 
-                      "fillcolor", color,
-                      NULL);
-
-  g_object_unref(rgb_float);
-  g_object_unref(color);
-
-  return fill;
-}
-
 static void
 test_simpletree_apply(Test *t)
 {
@@ -56,8 +29,8 @@ test_simpletree_apply(Test *t)
 
   */ 
 
-  GeglOp * fill1 = make_rgb_fill(.1,.2,.3); 
-  GeglOp * fill2 = make_rgb_fill(.5,.6,.7); 
+  GeglOp * fill1 = testutils_rgb_fill(.1,.2,.3); 
+  GeglOp * fill2 = testutils_rgb_fill(.5,.6,.7); 
 
   GeglOp * const_mult = g_object_new (GEGL_TYPE_CONST_MULT,
                                       "input", fill1,
@@ -71,7 +44,7 @@ test_simpletree_apply(Test *t)
 
   gegl_op_apply_image(add, GEGL_OP(dest), NULL); 
 
-  ct_test(t, check_rgb_float_pixel(GEGL_IMAGE(dest), .55, .7, .85));  
+  ct_test(t, testutils_check_rgb_float_pixel(GEGL_IMAGE(dest), .55, .7, .85));  
 
   g_object_unref(add);
   g_object_unref(const_mult);
@@ -104,12 +77,12 @@ test_simpletree_apply2(Test *t)
 
   */ 
 
-  GeglOp * fill1 = make_rgb_fill(.1,.2,.3); 
+  GeglOp * fill1 = testutils_rgb_fill(.1,.2,.3); 
   GeglOp * print1 = g_object_new(GEGL_TYPE_PRINT,
                                  "input", fill1,
                                  NULL);
 
-  GeglOp * fill2 = make_rgb_fill(.5,.6,.7); 
+  GeglOp * fill2 = testutils_rgb_fill(.5,.6,.7); 
 
   GeglOp * const_mult = g_object_new (GEGL_TYPE_CONST_MULT,
                                       "input", print1,
@@ -126,7 +99,7 @@ test_simpletree_apply2(Test *t)
 
   gegl_op_apply_image(add, GEGL_OP(dest), NULL); 
 
-  ct_test(t, check_rgb_float_pixel(GEGL_IMAGE(dest), .55, .7, .85));  
+  ct_test(t, testutils_check_rgb_float_pixel(GEGL_IMAGE(dest), .55, .7, .85));  
 
   g_object_unref(add);
   g_object_unref(const_mult);

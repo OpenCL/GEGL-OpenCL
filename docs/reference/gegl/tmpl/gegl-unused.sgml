@@ -18,6 +18,26 @@
 GeglAddImpl
 
 
+<!-- ##### SECTION ./tmpl/gegl-bfs-visitor.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-bfs-visitor.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-bfs-visitor.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-bfs-visitor.sgml:Title ##### -->
+GeglBfsVisitor
+
+
 <!-- ##### SECTION ./tmpl/gegl-comp-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -116,6 +136,26 @@ GeglCopyImpl
 
 <!-- ##### SECTION ./tmpl/gegl-dark-impl.sgml:Title ##### -->
 GeglDarkImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-dfs-visitor.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-dfs-visitor.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-dfs-visitor.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-dfs-visitor.sgml:Title ##### -->
+GeglDfsVisitor
 
 
 <!-- ##### SECTION ./tmpl/gegl-diff-impl.sgml:Long_Description ##### -->
@@ -540,7 +580,7 @@ GeglUnpremultImpl
 </para>
 
 
-<!-- ##### STRUCT GeglColorModel ##### -->
+<!-- ##### STRUCT GeglColor ##### -->
 <para>
 
 </para>
@@ -776,15 +816,11 @@ GeglUnpremultImpl
 </para>
 
 
-<!-- ##### USER_FUNCTION GeglScanlineFunc ##### -->
+<!-- ##### STRUCT GeglScanlineProcessor ##### -->
 <para>
 
 </para>
 
-@op: 
-@iters: 
-@width: 
-@op_impl: 
 
 <!-- ##### STRUCT GeglScreen ##### -->
 <para>
@@ -811,6 +847,12 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### STRUCT GeglTile ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### STRUCT GeglTileIterator ##### -->
 <para>
 
@@ -824,6 +866,12 @@ GeglUnpremultImpl
 
 
 <!-- ##### STRUCT GeglUnpremult ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglVisitor ##### -->
 <para>
 
 </para>
@@ -1153,6 +1201,14 @@ GeglUnpremultImpl
 @request_list: 
 
 <!-- ##### FUNCTION gegl_op_get_alt_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_get_input_values ##### -->
 <para>
 
 </para>

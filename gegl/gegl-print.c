@@ -232,11 +232,15 @@ prepare (GeglOp * op,
     gint x = dest_rect.x;
     gint y = dest_rect.y;
     gint width = dest_rect.w;
-    gint height = dest_rect.w;
+    gint height = dest_rect.h;
     
     /* Allocate a scanline char buffer for output */
     self->buffer_size = width * (num_channels + 1) * MAX_PRINTED_CHARS_PER_CHANNEL;
     self->buffer = g_new(gchar, self->buffer_size); 
+
+    /*
+    LOG_INFO("prepare", "buffer_size is %d", self->buffer_size); 
+    */
 
     if(self->use_log)
       LOG_INFO("prepare", 
@@ -288,6 +292,10 @@ print (GeglPrint * self,
     self->current += written; 
     self->left -= written;
   }
+
+/*
+  LOG_DEBUG("print", "total written : %d", self->buffer_size - self->left);
+*/
 }
 
 /**
@@ -384,9 +392,15 @@ scanline_rgb_float (GeglOp * op,
 
   self->current = self->buffer;
   self->left = self->buffer_size; 
+/*
+  LOG_INFO("scanline_rgb_float", "%d",width);
+*/
 
   while (width--)
     {
+      /*
+      LOG_INFO("scanline_rgb_float", "pixel num: %d",width);
+      */
       print(self, "(");
       print(self, "%.3f ", *dest_r); 
       print(self, "%.3f ", *dest_g); 

@@ -1,3 +1,79 @@
+Tue Apr  2 23:41:53 EST 2002 calvinw@mindspring.com
+
+	*gegl/Makefile.am
+	*gegl/gegl-filter.c
+	*gegl/gegl-filter.h
+	*gegl/gegl-op.c
+	*gegl/gegl-op.h
+	*gegl/gegl-print.c
+	*gegl/gegl-visitor.c
+	*gegl/gegl.h
+
+	Changed Op's apply so that it isnt overridden by subclasses, rather it sets
+	up a Filter with that op as the root and calls traverse which only Filter
+	classes implement.
+
+	*gegl/gegl-filter-bfs-visitor.c
+	*gegl/gegl-filter-bfs-visitor.h
+	*gegl/gegl-filter-dfs-visitor.c
+	*gegl/gegl-filter-dfs-visitor.h
+	*gegl/gegl-filter-inputs-visitor.c
+	*gegl/gegl-filter-inputs-visitor.h
+
+	Added an inputs visitor for Filter to match interior nodes that dont have
+	inputs to inputs to the Filter. Renamed the Dfs and Bfs visitors.	
+
+	*gegl/gegl-bfs-visitor.c
+	*gegl/gegl-bfs-visitor.h
+	*gegl/gegl-dfs-visitor.c
+	*gegl/gegl-dfs-visitor.h
+
+	Removed these.
+
+	*tests/Makefile.am
+	*tests/addtest.c
+	*tests/constmulttest.c
+	*tests/copytest.c
+	*tests/filltest.c
+	*tests/imagetest.c
+	*tests/optest.c
+	*tests/pointoptest.c
+	*tests/printtest.c
+	*tests/simpletreetest.c
+	*tests/testgegl.c
+	*tests/testutils.c
+	*tests/testutils.h
+	*tests/valuetest.c
+
+	Changed the teardown and setup routine names for these. Changed the name of
+	functions in testutils.
+
+	*tests/filtertest.c
+
+	Added filter tests.
+
+	*docs/reference/gegl/gegl-docs.sgml
+	*docs/reference/gegl/gegl-sections.txt
+	*docs/reference/gegl/gegl-undocumented.txt
+	*docs/reference/gegl/gegl.types
+	*docs/reference/gegl/tmpl/gegl-color-model-gray.sgml
+	*docs/reference/gegl/tmpl/gegl-color.sgml
+	*docs/reference/gegl/tmpl/gegl-filter.sgml
+	*docs/reference/gegl/tmpl/gegl-op.sgml
+	*docs/reference/gegl/tmpl/gegl-scanline-processor.sgml
+	*docs/reference/gegl/tmpl/gegl-stat-op.sgml
+	*docs/reference/gegl/tmpl/gegl-unused.sgml
+	*docs/reference/gegl/tmpl/gegl-value-types.sgml
+
+	*docs/reference/gegl/tmpl/gegl-filter-bfs-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-filter-dfs-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-filter-inputs-visitor.sgml
+
+	*docs/reference/gegl/tmpl/gegl-bfs-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-dfs-visitor.sgml
+
+	Updated docs.
+
 Wed Mar 27 22:53:38 EST 2002 calvinw@mindsping.com	
 
 	*gegl/gegl-bfs-visitor.c

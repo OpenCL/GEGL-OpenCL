@@ -4,11 +4,39 @@
 #include "testutils.h"
 
 GeglOp *
-make_rgb_float_sampled_image(gint width, 
-                             gint height, 
-                             gfloat a, 
-                             gfloat b, 
-                             gfloat c) 
+testutils_rgb_fill(gfloat a, 
+                   gfloat b, 
+                   gfloat c)
+{
+  GeglOp * fill = NULL;
+  GeglColorModel *rgb_float = gegl_color_model_instance("RgbFloat");
+  GeglColor * color = g_object_new (GEGL_TYPE_COLOR, 
+                                    "colormodel", rgb_float,  
+                                    NULL);  
+
+  GeglChannelValue * chans = gegl_color_get_channel_values(color);
+
+  chans[0].f = a; 
+  chans[1].f = b; 
+  chans[2].f = c;
+
+  fill = g_object_new(GEGL_TYPE_FILL, 
+                      "fillcolor", color,
+                      NULL);
+
+  g_object_unref(rgb_float);
+  g_object_unref(color);
+
+  return fill;
+}
+
+
+GeglOp *
+testutils_rgb_float_sampled_image(gint width, 
+                                  gint height, 
+                                  gfloat a, 
+                                  gfloat b, 
+                                  gfloat c) 
 {
   GeglColorModel *rgb_float = gegl_color_model_instance("RgbFloat");
 
@@ -42,9 +70,9 @@ make_rgb_float_sampled_image(gint width,
 }
 
 GeglOp *
-make_gray_float_sampled_image(gint width, 
-                             gint height, 
-                             gfloat a) 
+testutils_gray_float_sampled_image(gint width, 
+                                   gint height, 
+                                   gfloat a) 
 {
   GeglColorModel *gray_float = gegl_color_model_instance("GrayFloat");
 
@@ -76,15 +104,18 @@ make_gray_float_sampled_image(gint width,
 }
 
 gboolean
-check_rgb_float_pixel(GeglImage *dest, gfloat a, gfloat b, gfloat c)
+testutils_check_rgb_float_pixel(GeglImage *dest, 
+                                gfloat a, 
+                                gfloat b, 
+                                gfloat c)
 {
   gfloat *data[3];
   GeglTile *tile = dest->tile; 
 
   gegl_tile_get_data_at(tile, (gpointer*)data, 0,0);
 
-  LOG_DEBUG("check_rgb_float_pixel",  "data %f %f %f" ,*data[0], *data[1], *data[2]);
-  LOG_DEBUG("check_rgb_float_pixel",  "a,b,c %f %f %f" , a, b, c);
+  LOG_DEBUG("testutils_check_rgb_float_pixel",  "data %f %f %f" ,*data[0], *data[1], *data[2]);
+  LOG_DEBUG("testutils_check_rgb_float_pixel",  "a,b,c %f %f %f" , a, b, c);
 
   if (GEGL_FLOAT_EQUAL(*data[0] , a) &&
       GEGL_FLOAT_EQUAL(*data[1] , b) &&
@@ -95,7 +126,8 @@ check_rgb_float_pixel(GeglImage *dest, gfloat a, gfloat b, gfloat c)
 } 
 
 gboolean
-check_gray_float_pixel(GeglImage *dest, gfloat a)
+testutils_check_gray_float_pixel(GeglImage *dest, 
+                                 gfloat a)
 {
   gfloat *data[1];
   GeglTile *tile = dest->tile; 

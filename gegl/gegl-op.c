@@ -25,7 +25,6 @@ static void compute_need_rects(GeglOp *self, GList * input_value);
 static void accept(GeglNode * node, GeglVisitor * visitor);
 
 static void evaluate (GeglOp * self, GList * output_values, GList * input_values);
-static void apply (GeglOp * self);
 static void free_output_values(GeglOp * self);
 
 static gpointer parent_class = NULL;
@@ -72,7 +71,7 @@ class_init (GeglOpClass * klass)
 
   node_class->accept = accept;
 
-  klass->apply = apply;
+  klass->traverse = NULL;
 
   klass->compute_need_rects = compute_need_rects;
   klass->compute_have_rect = compute_have_rect;
@@ -365,7 +364,7 @@ compute_need_rects (GeglOp * self,
           g_value_get_image_data_rect(output_value, &image_data_rect);
           g_value_set_image_data_rect(input_value, &image_data_rect);
 
-          LOG_DEBUG("compute_need_rects", "need rect for %d is (x y w h) = (%d %d %d %d)", 
+          LOG_DEBUG("compute_need_rects", "need rect for input %d is (x y w h) = (%d %d %d %d)", 
                      i, 
                      image_data_rect.x, 
                      image_data_rect.y, 
@@ -389,76 +388,59 @@ gegl_op_get_nth_output_value(GeglOp *self,
   return g_list_nth_data(self->output_values, n);
 }
 
+GValue *
+gegl_op_get_nth_input_value(GeglOp * op,
+                            gint n)
+{
+  GeglInputInfo * input_infos = gegl_node_get_input_infos(GEGL_NODE(op));
+  GeglNode *input = input_infos[n].input; 
+  gint input_index = input_infos[n].index;
+  g_free(input_infos);
+
+  if(input)
+    return gegl_op_get_nth_output_value(GEGL_OP(input),input_index); 
+
+  return NULL;
+}
+
 void      
 gegl_op_apply(GeglOp * self)
 {
-  GeglOpClass *klass;
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_OP (self));
-  klass = GEGL_OP_GET_CLASS(self);
-
-  LOG_DEBUG("gegl_op_apply", "%s %x", 
-             G_OBJECT_TYPE_NAME(self), (guint)self); 
-
-  if(klass->apply)
-    (*klass->apply)(self);
-}
-
-static void 
-apply (GeglOp * self)
-{
-  GeglOp * filter;
-
-  LOG_DEBUG("apply", "Creating filter for %x", (guint)self); 
-
-  filter = g_object_new(gegl_utils_get_filter_type(),
-                        "root", self,
-                        NULL);
-
-
-  gegl_op_apply(filter);
-  g_object_unref(filter);
-}
-
-void      
-gegl_op_apply_image(GeglOp * self,
-                    GeglOp * image,
-                    GeglRect *roi)
-{
-  GeglOp * filter;
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_OP (self));
-
-  LOG_DEBUG("op_apply_image", "Creating filter for %s %x", 
-             G_OBJECT_TYPE_NAME(self), (guint)self); 
-
-  filter = g_object_new(gegl_utils_get_filter_type(),
-                        "root", self,
-                        "image", image,
-                        "roi", roi,
-                        NULL);
-
-  gegl_op_apply(filter);
-  g_object_unref(filter);
+  gegl_op_apply_image(self, NULL, NULL);
 }
 
 void      
 gegl_op_apply_roi(GeglOp * self, 
                   GeglRect *roi)
 {
-  GeglOp * filter;
+  gegl_op_apply_image(self, NULL, roi);
+}
+
+void 
+gegl_op_apply_image(GeglOp *self,
+                    GeglOp * image,
+                    GeglRect * roi)
+{
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_OP (self));
 
-  LOG_DEBUG("op_apply_roi", "Creating filter for %x", (guint)self); 
+  {
+    GeglOp * filter = g_object_new(gegl_utils_get_filter_type(),
+                                   "root", self,
+                                   "image", image,
+                                   "roi", roi,
+                                   NULL);
 
-  filter = g_object_new(gegl_utils_get_filter_type(),
-                        "root", self,
-                        "roi", roi,
-                        NULL);
+    GeglOpClass *klass = GEGL_OP_GET_CLASS(filter);
 
-  gegl_op_apply(filter);
-  g_object_unref(filter);
+    LOG_DEBUG("gegl_op_apply_image", "Creating filter for %s %x", 
+               G_OBJECT_TYPE_NAME(self), (guint)self); 
+
+    if(klass->traverse)
+        (*klass->traverse)(filter);
+
+    g_object_unref(filter);
+  }
 }
 
 static void              

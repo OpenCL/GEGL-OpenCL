@@ -75,7 +75,6 @@ GEGL_COLOR_MODEL_GRAY_U8_GET_CLASS
 
 <SECTION>
 <FILE>gegl-color-model-gray</FILE>
-GeglColor
 <TITLE>GeglColorModelGray</TITLE>
 gegl_color_model_gray_get_gray_index
 <SUBSECTION Standard>
@@ -176,6 +175,7 @@ GEGL_COLOR_MODEL_GET_CLASS
 
 <SECTION>
 <FILE>gegl-color</FILE>
+GeglColorModel
 <TITLE>GeglColor</TITLE>
 gegl_color_get_channel_values
 gegl_color_get_color_model
@@ -290,6 +290,7 @@ GEGL_FILL_GET_CLASS
 
 <SECTION>
 <FILE>gegl-filter</FILE>
+GeglFilterInput
 <TITLE>GeglFilter</TITLE>
 gegl_filter_get_root
 gegl_filter_set_root
@@ -447,7 +448,7 @@ gegl_op_compute_derived_color_model
 gegl_op_evaluate
 gegl_op_set_num_output_values
 gegl_op_get_nth_output_value
-gegl_op_get_input_values
+gegl_op_get_nth_input_value
 gegl_op_get_output_values
 <SUBSECTION Standard>
 GEGL_OP
@@ -532,6 +533,7 @@ GEGL_SAMPLED_IMAGE_GET_CLASS
 
 <SECTION>
 <FILE>gegl-scanline-processor</FILE>
+GeglScanlineFunc
 <TITLE>GeglScanlineProcessor</TITLE>
 gegl_scanline_processor_process
 <SUBSECTION Standard>
@@ -559,7 +561,6 @@ GEGL_SCREEN_GET_CLASS
 
 <SECTION>
 <FILE>gegl-stat-op</FILE>
-GeglScanlineProcessor
 <TITLE>GeglStatOp</TITLE>
 <SUBSECTION Standard>
 GEGL_STAT_OP
@@ -705,29 +706,42 @@ GEGL_VISITOR_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-bfs-visitor</FILE>
-<TITLE>GeglBfsVisitor</TITLE>
+<FILE>gegl-filter-bfs-visitor</FILE>
+<TITLE>GeglFilterBfsVisitor</TITLE>
 <SUBSECTION Standard>
-GEGL_BFS_VISITOR
-GEGL_IS_BFS_VISITOR
-GEGL_TYPE_BFS_VISITOR
-gegl_bfs_visitor_get_type
-GEGL_BFS_VISITOR_CLASS
-GEGL_IS_BFS_VISITOR_CLASS
-GEGL_BFS_VISITOR_GET_CLASS
+GEGL_FILTER_BFS_VISITOR
+GEGL_IS_FILTER_BFS_VISITOR
+GEGL_TYPE_FILTER_BFS_VISITOR
+gegl_filter_bfs_visitor_get_type
+GEGL_FILTER_BFS_VISITOR_CLASS
+GEGL_IS_FILTER_BFS_VISITOR_CLASS
+GEGL_FILTER_BFS_VISITOR_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-dfs-visitor</FILE>
-<TITLE>GeglDfsVisitor</TITLE>
+<FILE>gegl-filter-dfs-visitor</FILE>
+<TITLE>GeglFilterDfsVisitor</TITLE>
 <SUBSECTION Standard>
-GEGL_DFS_VISITOR
-GEGL_IS_DFS_VISITOR
-GEGL_TYPE_DFS_VISITOR
-gegl_dfs_visitor_get_type
-GEGL_DFS_VISITOR_CLASS
-GEGL_IS_DFS_VISITOR_CLASS
-GEGL_DFS_VISITOR_GET_CLASS
+GEGL_FILTER_DFS_VISITOR
+GEGL_IS_FILTER_DFS_VISITOR
+GEGL_TYPE_FILTER_DFS_VISITOR
+gegl_filter_dfs_visitor_get_type
+GEGL_FILTER_DFS_VISITOR_CLASS
+GEGL_IS_FILTER_DFS_VISITOR_CLASS
+GEGL_FILTER_DFS_VISITOR_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-filter-inputs-visitor</FILE>
+<TITLE>GeglFilterInputsVisitor</TITLE>
+<SUBSECTION Standard>
+GEGL_FILTER_INPUTS_VISITOR
+GEGL_IS_FILTER_INPUTS_VISITOR
+GEGL_TYPE_FILTER_INPUTS_VISITOR
+gegl_filter_inputs_visitor_get_type
+GEGL_FILTER_INPUTS_VISITOR_CLASS
+GEGL_IS_FILTER_INPUTS_VISITOR_CLASS
+GEGL_FILTER_INPUTS_VISITOR_GET_CLASS
 </SECTION>
 
 <SECTION>
@@ -749,7 +763,6 @@ ROUND
 
 <SECTION>
 <FILE>gegl-value-types</FILE>
-GeglTile
 G_VALUE_HOLDS_IMAGE_DATA
 GeglImageData
 g_value_get_image_data

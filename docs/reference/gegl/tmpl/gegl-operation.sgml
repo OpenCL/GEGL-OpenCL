@@ -14,6 +14,14 @@ GeglFilter
 
 </para>
 
+<!-- ##### STRUCT GeglFilterInput ##### -->
+<para>
+
+</para>
+
+@input: 
+@index: 
+
 <!-- ##### FUNCTION gegl_filter_get_root ##### -->
 <para>
 

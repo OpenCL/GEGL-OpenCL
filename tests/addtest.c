@@ -64,7 +64,7 @@ test_add_apply(Test *test)
 
   gegl_op_apply_image(add, dest, NULL); 
 
-  ct_test(test, check_rgb_float_pixel(GEGL_IMAGE(dest), .1 + .4, .2 + .5, .3 + .6));  
+  ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(dest), .1 + .4, .2 + .5, .3 + .6));  
 
   g_object_unref(add);
 }
@@ -75,11 +75,11 @@ add_test_setup(Test *test)
   GeglColorModel *rgb_float = gegl_color_model_instance("RgbFloat");
 
 
-  input0 = make_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
+  input0 = testutils_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
                                         SAMPLED_IMAGE_HEIGHT, 
                                         .1, .2, .3);
 
-  input1 = make_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
+  input1 = testutils_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
                                         SAMPLED_IMAGE_HEIGHT, 
                                         .4, .5, .6);
 

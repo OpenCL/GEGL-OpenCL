@@ -14,12 +14,6 @@ gegl-value-types
 
 </para>
 
-<!-- ##### STRUCT GeglTile ##### -->
-<para>
-
-</para>
-
-
 <!-- ##### MACRO G_VALUE_HOLDS_IMAGE_DATA ##### -->
 <para>
 

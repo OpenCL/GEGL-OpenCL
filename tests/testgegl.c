@@ -15,6 +15,7 @@ extern Test * create_color_model_rgb_float_test();
 extern Test * create_const_mult_test();
 extern Test * create_copy_test();
 extern Test * create_fill_test();
+extern Test * create_filter_test();
 extern Test * create_image_test();
 extern Test * create_mem_buffer_test();
 extern Test * create_mem_image_mgr_test();
@@ -45,7 +46,6 @@ main (int argc, char *argv[])
   {
     Suite *suite = cs_create("GeglTestSuite");
 
-
 #if 1 
     cs_addTest(suite, create_add_test());
     cs_addTest(suite, create_buffer_test());
@@ -56,6 +56,7 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_const_mult_test());
     cs_addTest(suite, create_copy_test());
     cs_addTest(suite, create_fill_test());
+    cs_addTest(suite, create_filter_test());
     cs_addTest(suite, create_image_test());
     cs_addTest(suite, create_mem_buffer_test());
     cs_addTest(suite, create_node_test());

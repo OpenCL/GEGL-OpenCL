@@ -20,6 +20,9 @@
 <!ENTITY GeglDiff SYSTEM "sgml/gegl-diff.sgml">
 <!ENTITY GeglFill SYSTEM "sgml/gegl-fill.sgml">
 <!ENTITY GeglFilter SYSTEM "sgml/gegl-filter.sgml">
+<!ENTITY GeglFilterBfsVisitor SYSTEM "sgml/gegl-filter-bfs-visitor.sgml">
+<!ENTITY GeglFilterDfsVisitor SYSTEM "sgml/gegl-filter-dfs-visitor.sgml">
+<!ENTITY GeglFilterInputsVisitor SYSTEM "sgml/gegl-filter-inputs-visitor.sgml">
 <!ENTITY GeglImage SYSTEM "sgml/gegl-image.sgml">
 <!ENTITY GeglLight SYSTEM "sgml/gegl-light.sgml">
 <!ENTITY GeglMax SYSTEM "sgml/gegl-max.sgml">
@@ -29,7 +32,6 @@
 <!ENTITY GeglNode SYSTEM "sgml/gegl-node.sgml">
 <!ENTITY GeglObject SYSTEM "sgml/gegl-object.sgml">
 <!ENTITY GeglOp SYSTEM "sgml/gegl-op.sgml">
-<!ENTITY gegl-gegl-param-specs SYSTEM "sgml/gegl-param-specs.sgml">
 <!ENTITY GeglPointOp SYSTEM "sgml/gegl-point-op.sgml">
 <!ENTITY GeglPremult SYSTEM "sgml/gegl-premult.sgml">
 <!ENTITY GeglPrint SYSTEM "sgml/gegl-print.sgml">
@@ -43,8 +45,7 @@
 <!ENTITY GeglTile SYSTEM "sgml/gegl-tile.sgml">
 <!ENTITY GeglUnpremult SYSTEM "sgml/gegl-unpremult.sgml">
 <!ENTITY GeglVisitor SYSTEM "sgml/gegl-visitor.sgml">
-<!ENTITY GeglBfsVisitor SYSTEM "sgml/gegl-bfs-visitor.sgml">
-<!ENTITY GeglDfsVisitor SYSTEM "sgml/gegl-dfs-visitor.sgml">
+<!ENTITY gegl-gegl-param-specs SYSTEM "sgml/gegl-param-specs.sgml">
 <!ENTITY gegl-gegl-utils SYSTEM "sgml/gegl-utils.sgml">
 <!ENTITY gegl-gegl-types SYSTEM "sgml/gegl-types.sgml">
 <!ENTITY gegl-gegl-value-types SYSTEM "sgml/gegl-value-types.sgml">
@@ -113,8 +114,9 @@
   <chapter id="visitors">
     <title>Visitors</title>
     &GeglVisitor;
-    &GeglBfsVisitor;
-    &GeglDfsVisitor;
+    &GeglFilterBfsVisitor;
+    &GeglFilterDfsVisitor;
+    &GeglFilterInputsVisitor;
   </chapter>
 
   <chapter id="tilemgrs">

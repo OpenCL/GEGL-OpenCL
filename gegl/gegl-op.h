@@ -32,8 +32,6 @@ struct _GeglOpClass
 {
    GeglNodeClass __parent__;
 
-   void (* apply)                  (GeglOp * self);
-
    void (* evaluate)               (GeglOp * self, 
                                     GList * output_values,
                                     GList * input_values);
@@ -47,6 +45,8 @@ struct _GeglOpClass
    void (* finish)                 (GeglOp * self, 
                                     GList * output_values,
                                     GList * input_values);
+
+   void (* traverse)               (GeglOp * self);
 
    void (* compute_need_rects)     (GeglOp *self,
                                     GList *input_values);
@@ -75,7 +75,7 @@ void      gegl_op_evaluate                 (GeglOp * self,
 void      gegl_op_set_num_output_values    (GeglOp * self, 
                                             gint num_output_values);
 GValue *  gegl_op_get_nth_output_value     (GeglOp *op, gint n); 
-GList *   gegl_op_get_input_values         (GeglOp *self);
+GValue *  gegl_op_get_nth_input_value      (GeglOp * op, gint n);
 GList *   gegl_op_get_output_values        (GeglOp *self);
 
 #ifdef __cplusplus

@@ -143,7 +143,7 @@ test_op_apply(Test *test)
 
 
 static void
-test_op_setup(Test *test)
+op_test_setup(Test *test)
 {
   GValue * value;
   color_model = gegl_color_model_instance("RgbFloat");
@@ -177,7 +177,7 @@ test_op_setup(Test *test)
 }
 
 static void
-test_op_teardown(Test *test)
+op_test_teardown(Test *test)
 {
   GValue * value;
   g_object_unref(color_model);
@@ -200,8 +200,8 @@ create_op_test()
 {
   Test* t = ct_create("GeglOpTest");
 
-  g_assert(ct_addSetUp(t, test_op_setup));
-  g_assert(ct_addTearDown(t, test_op_teardown));
+  g_assert(ct_addSetUp(t, op_test_setup));
+  g_assert(ct_addTearDown(t, op_test_teardown));
   g_assert(ct_addTestFun(t, test_op_g_object_new));
   g_assert(ct_addTestFun(t, test_op_compute_have_rect));
   g_assert(ct_addTestFun(t, test_op_compute_need_rect));

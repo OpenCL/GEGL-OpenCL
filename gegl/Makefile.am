@@ -35,7 +35,6 @@ GEGL_GEN_SRC = \
   gegl-unpremult.c
 
 GEGL_SRC = \
-  gegl-bfs-visitor.c \
   gegl-buffer.c \
   gegl-color.c \
   gegl-color-model.c \
@@ -48,9 +47,11 @@ GEGL_SRC = \
   gegl-color-model-rgb-u8.c \
   gegl-color-model-rgb-u16.c \
   gegl-copy.c \
-  gegl-dfs-visitor.c \
   gegl-fill.c \
   gegl-filter.c \
+  gegl-filter-bfs-visitor.c \
+  gegl-filter-dfs-visitor.c \
+  gegl-filter-inputs-visitor.c \
   gegl-image.c \
   gegl-mem-buffer.c \
   gegl-node.c \
@@ -71,7 +72,6 @@ GEGL_SRC = \
 
 GEGL_PUBLIC_HDRS = \
   gegl-add.h \
-  gegl-bfs-visitor.h \
   gegl-buffer.h \
   gegl-color.h \
   gegl-color-model.h \
@@ -89,9 +89,11 @@ GEGL_PUBLIC_HDRS = \
   gegl-copy.h \
   gegl-dark.h \
   gegl-diff.h \
-  gegl-dfs-visitor.h \
   gegl-fill.h \
   gegl-filter.h \
+  gegl-filter-bfs-visitor.h \
+  gegl-filter-dfs-visitor.h \
+  gegl-filter-inputs-visitor.h \
   gegl-image.h \
   gegl-light.h \
   gegl-max.h \

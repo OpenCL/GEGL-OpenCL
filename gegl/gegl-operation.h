@@ -19,10 +19,21 @@ typedef struct _GeglSampledImage GeglSampledImage;
 #define GEGL_IS_FILTER_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_FILTER))
 #define GEGL_FILTER_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_FILTER, GeglFilterClass))
 
+#ifndef __TYPEDEF_GEGL_FILTER_INPUT__
+#define __TYPEDEF_GEGL_FILTER_INPUT__
+typedef struct _GeglFilterInput GeglFilterInput;
+#endif
+struct _GeglFilterInput
+{
+  GeglNode * input;
+  gint index;
+};
+
 #ifndef __TYPEDEF_GEGL_FILTER__
 #define __TYPEDEF_GEGL_FILTER__
 typedef struct _GeglFilter GeglFilter;
 #endif
+
 struct _GeglFilter 
 {
    GeglOp __parent__;
@@ -31,6 +42,7 @@ struct _GeglFilter
    GeglOp * root;
    GeglRect roi;
    GeglSampledImage *image;
+   GList * filter_inputs;
 };
 
 typedef struct _GeglFilterClass GeglFilterClass;

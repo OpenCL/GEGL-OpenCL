@@ -14,12 +14,6 @@ GeglColorModelGray
 
 </para>
 
-<!-- ##### STRUCT GeglColor ##### -->
-<para>
-
-</para>
-
-
 <!-- ##### FUNCTION gegl_color_model_gray_get_gray_index ##### -->
 <para>
 

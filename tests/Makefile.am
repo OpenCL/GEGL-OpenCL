@@ -36,6 +36,7 @@ testgegl_SOURCES = \
    constmulttest.c \
    copytest.c \
    filltest.c \
+   filtertest.c \
    imagetest.c \
    membuffertest.c \
    nodetest.c \

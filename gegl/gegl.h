@@ -20,6 +20,9 @@
 #include <gegl-diff.h>
 #include <gegl-fill.h>
 #include <gegl-filter.h>
+#include <gegl-filter-bfs-visitor.h>
+#include <gegl-filter-dfs-visitor.h>
+#include <gegl-filter-inputs-visitor.h>
 #include <gegl-image.h>
 #include <gegl-light.h>
 #include <gegl-max.h>

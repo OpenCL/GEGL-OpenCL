@@ -59,13 +59,13 @@ test_point_op_apply(Test *test)
 }
 
 static void
-test_point_op_setup(Test *test)
+point_op_test_setup(Test *test)
 {
   color_model = gegl_color_model_instance("RgbFloat");
 }
 
 static void
-test_point_op_teardown(Test *test)
+point_op_test_teardown(Test *test)
 {
   g_object_unref(color_model);
 }
@@ -75,8 +75,8 @@ create_point_op_test()
 {
   Test* t = ct_create("GeglPointOpTest");
 
-  g_assert(ct_addSetUp(t, test_point_op_setup));
-  g_assert(ct_addTearDown(t, test_point_op_teardown));
+  g_assert(ct_addSetUp(t, point_op_test_setup));
+  g_assert(ct_addTearDown(t, point_op_test_teardown));
   g_assert(ct_addTestFun(t, test_point_op_g_object_new));
   g_assert(ct_addTestFun(t, test_point_op_apply));
 

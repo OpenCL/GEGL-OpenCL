@@ -53,13 +53,13 @@ test_image_inputs_outputs(Test *test)
 }
 
 static void
-test_image_setup(Test *test)
+image_test_setup(Test *test)
 {
   color_model = gegl_color_model_instance("RgbFloat");
 }
 
 static void
-test_image_teardown(Test *test)
+image_test_teardown(Test *test)
 {
   g_object_unref(color_model);
 }
@@ -69,8 +69,8 @@ create_image_test()
 {
   Test* t = ct_create("GeglImageTest");
 
-  g_assert(ct_addSetUp(t, test_image_setup));
-  g_assert(ct_addTearDown(t, test_image_teardown));
+  g_assert(ct_addSetUp(t, image_test_setup));
+  g_assert(ct_addTearDown(t, image_test_teardown));
   g_assert(ct_addTestFun(t, test_image_g_object_new));
   g_assert(ct_addTestFun(t, test_image_g_object_get));
   g_assert(ct_addTestFun(t, test_image_inputs_outputs));

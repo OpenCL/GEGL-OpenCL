@@ -8,6 +8,8 @@ static void init (GeglVisitor * self, GeglVisitorClass * klass);
 static void finalize(GObject *gobject);
 
 static void visit_node(GeglVisitor * self, GeglNode *node);
+static void visit_op(GeglVisitor * self, GeglOp *op);
+static void visit_filter(GeglVisitor * self, GeglFilter *op);
 
 static gpointer parent_class = NULL;
 
@@ -48,8 +50,8 @@ class_init (GeglVisitorClass * klass)
   gobject_class->finalize = finalize;
 
   klass->visit_node = visit_node; 
-  klass->visit_op = NULL; 
-  klass->visit_filter = NULL; 
+  klass->visit_op = visit_op; 
+  klass->visit_filter = visit_filter; 
 }
 
 static void 
@@ -123,6 +125,13 @@ gegl_visitor_visit_op(GeglVisitor * self,
     (*klass->visit_op)(self, op);
 }
 
+static void      
+visit_op(GeglVisitor * self,
+         GeglOp *op)
+{
+  visit_node(self, GEGL_NODE(op));
+}
+
 void      
 gegl_visitor_visit_filter(GeglVisitor * self,
                           GeglFilter *filter)
@@ -137,4 +146,11 @@ gegl_visitor_visit_filter(GeglVisitor * self,
 
   if(klass->visit_filter)
     (*klass->visit_filter)(self, filter);
+}
+
+static void      
+visit_filter(GeglVisitor * self,
+             GeglFilter *filter)
+{
+  visit_node(self, GEGL_NODE(filter));
 }

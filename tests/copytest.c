@@ -49,7 +49,7 @@ test_copy_rgb_to_rgb_apply(Test *t)
 
     gegl_op_apply_image(copy, GEGL_OP(rgb_dest), NULL); 
 
-    ct_test(t, check_rgb_float_pixel(GEGL_IMAGE(rgb_dest), 
+    ct_test(t, testutils_check_rgb_float_pixel(GEGL_IMAGE(rgb_dest), 
                                       .1 ,.2 ,.3));  
 
     g_object_unref(copy);
@@ -66,7 +66,7 @@ test_copy_rgb_to_null_dest_apply(Test *t)
 
     gegl_op_apply_image(copy, NULL, NULL); 
 
-    ct_test(t, check_rgb_float_pixel(GEGL_IMAGE(copy), 
+    ct_test(t, testutils_check_rgb_float_pixel(GEGL_IMAGE(copy), 
                                      .1 ,.2 ,.3));  
 
     g_object_unref(copy);
@@ -85,7 +85,7 @@ test_copy_rgb_to_gray_null_dest_apply(Test *t)
 
     gegl_op_apply_image(copy, NULL, NULL); 
 
-    ct_test(t, check_gray_float_pixel(GEGL_IMAGE(copy), 
+    ct_test(t, testutils_check_gray_float_pixel(GEGL_IMAGE(copy), 
                                      .3*.1 + .59*.2 + .11*.3));  
 
     g_object_unref(copy);
@@ -105,7 +105,7 @@ test_copy_rgb_to_gray_apply(Test *t)
     gegl_op_apply_image(copy, GEGL_OP(gray_dest), NULL); 
 
     /* .3*r + .59*g + .11*b */
-    ct_test(t, check_gray_float_pixel(GEGL_IMAGE(gray_dest), 
+    ct_test(t, testutils_check_gray_float_pixel(GEGL_IMAGE(gray_dest), 
                                       .3*.1 + .59*.2 + .11*.3));  
 
     g_object_unref(copy);
@@ -113,10 +113,10 @@ test_copy_rgb_to_gray_apply(Test *t)
 }
 
 static void
-test_copy_setup(Test *t)
+copy_test_setup(Test *t)
 {
   /* source is a rgb float image */
-  source = make_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
+  source = testutils_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
                                        SAMPLED_IMAGE_HEIGHT, 
                                        .1, .2, .3);
 
@@ -144,7 +144,7 @@ test_copy_setup(Test *t)
 }
 
 static void
-test_copy_teardown(Test *test)
+copy_test_teardown(Test *test)
 {
   g_object_unref(source);
   g_object_unref(gray_dest);
@@ -156,8 +156,8 @@ create_copy_test()
 {
   Test* t = ct_create("GeglCopyTest");
 
-  g_assert(ct_addSetUp(t, test_copy_setup));
-  g_assert(ct_addTearDown(t, test_copy_teardown));
+  g_assert(ct_addSetUp(t, copy_test_setup));
+  g_assert(ct_addTearDown(t, copy_test_teardown));
 
   g_assert(ct_addTestFun(t, test_copy_g_object_new));
   g_assert(ct_addTestFun(t, test_copy_rgb_to_rgb_apply));

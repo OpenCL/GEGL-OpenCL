@@ -1,4 +1,4 @@
-#include "gegl-dfs-visitor.h"
+#include "gegl-filter-dfs-visitor.h"
 #include "gegl-op.h"
 #include "gegl-filter.h"
 #include "gegl-value-types.h"
@@ -8,20 +8,20 @@
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
 
-static void class_init (GeglDfsVisitorClass * klass);
-static void init (GeglDfsVisitor * self, GeglDfsVisitorClass * klass);
+static void class_init (GeglFilterDfsVisitorClass * klass);
+static void init (GeglFilterDfsVisitor * self, GeglFilterDfsVisitorClass * klass);
 static void finalize(GObject *gobject);
 
 static void visit_op (GeglVisitor *visitor, GeglOp * op);
 static void visit_filter (GeglVisitor *visitor, GeglFilter * filter);
-static GList * get_input_values(GeglDfsVisitor * self, GeglOp *op);
-static void validate_input_values(GeglDfsVisitor *self, GeglOp * op, GList * input_values);
-static void validate_output_values(GeglDfsVisitor *self, GeglOp * op, GList * input_values);
+static GList * get_input_values(GeglFilterDfsVisitor * self, GeglOp *op);
+static void validate_input_values(GeglFilterDfsVisitor *self, GeglOp * op, GList * input_values);
+static void validate_output_values(GeglFilterDfsVisitor *self, GeglOp * op, GList * input_values);
 
 static gpointer parent_class = NULL;
 
 GType
-gegl_dfs_visitor_get_type (void)
+gegl_filter_dfs_visitor_get_type (void)
 {
   static GType type = 0;
 
@@ -29,19 +29,19 @@ gegl_dfs_visitor_get_type (void)
     {
       static const GTypeInfo typeInfo =
       {
-        sizeof (GeglDfsVisitorClass),
+        sizeof (GeglFilterDfsVisitorClass),
         (GBaseInitFunc) NULL,
         (GBaseFinalizeFunc) NULL,
         (GClassInitFunc) class_init,
         (GClassFinalizeFunc) NULL,
         NULL,
-        sizeof (GeglDfsVisitor),
+        sizeof (GeglFilterDfsVisitor),
         0,
         (GInstanceInitFunc) init,
       };
 
       type = g_type_register_static (GEGL_TYPE_VISITOR, 
-                                     "GeglDfsVisitor", 
+                                     "GeglFilterDfsVisitor", 
                                      &typeInfo, 
                                      0);
     }
@@ -49,7 +49,7 @@ gegl_dfs_visitor_get_type (void)
 }
 
 static void 
-class_init (GeglDfsVisitorClass * klass)
+class_init (GeglFilterDfsVisitorClass * klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
@@ -63,8 +63,8 @@ class_init (GeglDfsVisitorClass * klass)
 }
 
 static void 
-init (GeglDfsVisitor * self, 
-      GeglDfsVisitorClass * klass)
+init (GeglFilterDfsVisitor * self, 
+      GeglFilterDfsVisitorClass * klass)
 {
   self->input_values = NULL;
   self->filter = NULL;
@@ -73,7 +73,7 @@ init (GeglDfsVisitor * self,
 static void
 finalize(GObject *gobject)
 {  
-  GeglDfsVisitor * self = GEGL_DFS_VISITOR(gobject);
+  GeglFilterDfsVisitor * self = GEGL_FILTER_DFS_VISITOR(gobject);
 
   if(self->input_values)
     g_list_free(self->input_values);
@@ -85,10 +85,14 @@ static void
 visit_op(GeglVisitor * visitor,
          GeglOp *op)
 {
-  GeglDfsVisitor *self = GEGL_DFS_VISITOR(visitor); 
-  GList * input_values = get_input_values(self, op);
-  GList * output_values = gegl_op_get_output_values(op);
+  GeglFilterDfsVisitor *self = GEGL_FILTER_DFS_VISITOR(visitor); 
+  GList * input_values;
+  GList * output_values;
 
+  GEGL_VISITOR_CLASS(parent_class)->visit_op(visitor, op);
+
+  input_values = get_input_values(self, op);
+  output_values = gegl_op_get_output_values(op);
 
   LOG_DEBUG("visit_op", 
             "computing have rect for %s %x", 
@@ -110,24 +114,26 @@ static void
 visit_filter(GeglVisitor * visitor,
              GeglFilter *filter)
 {
-  GeglDfsVisitor *self = GEGL_DFS_VISITOR(visitor); 
-  GeglRect have_rect;
+  GeglFilterDfsVisitor *self = GEGL_FILTER_DFS_VISITOR(visitor); 
   GValue *filter_output_value;
   GValue *root_output_value;
+  GeglFilterDfsVisitor * filter_dfs_visitor; 
 
-  GeglDfsVisitor * dfs_visitor = g_object_new(GEGL_TYPE_DFS_VISITOR, NULL); 
-  dfs_visitor->input_values = get_input_values(self, GEGL_OP(filter));
-  dfs_visitor->filter = filter;
+  GEGL_VISITOR_CLASS(parent_class)->visit_filter(visitor, filter);
+
+  filter_dfs_visitor= g_object_new(GEGL_TYPE_FILTER_DFS_VISITOR, NULL); 
+  filter_dfs_visitor->input_values = get_input_values(self, GEGL_OP(filter));
+  filter_dfs_visitor->filter = filter;
 
   LOG_DEBUG("visit_filter", 
             "creating dfs visitor for filter %x",
              (guint)filter);
 
   gegl_node_traverse_depth_first(GEGL_NODE(filter->root), 
-                                 GEGL_VISITOR(dfs_visitor),
+                                 GEGL_VISITOR(filter_dfs_visitor),
                                  TRUE);
 
-  g_object_unref(dfs_visitor);
+  g_object_unref(filter_dfs_visitor);
 
   filter_output_value = gegl_op_get_nth_output_value(GEGL_OP(filter), 0);
   root_output_value = gegl_op_get_nth_output_value(filter->root, 0);
@@ -135,15 +141,14 @@ visit_filter(GeglVisitor * visitor,
   LOG_DEBUG("visit_filter", 
             "setting filter have rect from root have rect");
 
-  g_value_get_image_data_rect(root_output_value, &have_rect);
-  g_value_set_image_data_rect(filter_output_value, &have_rect);
+  g_value_copy(root_output_value, filter_output_value);
 
   g_value_print_image_data(root_output_value, "root");
   g_value_print_image_data(filter_output_value, "filter");
 }
 
 static GList *
-get_input_values(GeglDfsVisitor * self,
+get_input_values(GeglFilterDfsVisitor * self,
                  GeglOp *op)
 {
   GList * input_values;
@@ -157,7 +162,7 @@ get_input_values(GeglDfsVisitor * self,
 }
 
 static void
-validate_input_values(GeglDfsVisitor *self,
+validate_input_values(GeglFilterDfsVisitor *self,
                       GeglOp * op,
                       GList * input_values)
 {
@@ -199,7 +204,7 @@ validate_input_values(GeglDfsVisitor *self,
 }
 
 void
-validate_output_values(GeglDfsVisitor *self,
+validate_output_values(GeglFilterDfsVisitor *self,
                        GeglOp * op,
                        GList * output_values)
 {

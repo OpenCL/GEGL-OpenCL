@@ -99,7 +99,7 @@ test_const_mult_apply(Test *test)
 
     gegl_op_apply_image(const_mult, dest, NULL); 
 
-    ct_test(test, check_rgb_float_pixel(GEGL_IMAGE(dest), .1 * MULTIPLIER, 
+    ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(dest), .1 * MULTIPLIER, 
                                                              .2 * MULTIPLIER, 
                                                              .3 * MULTIPLIER));  
     g_object_unref(const_mult);
@@ -118,7 +118,7 @@ test_const_mult_apply(Test *test)
 
     gegl_op_apply_image(const_mult2, dest, NULL); 
 
-    ct_test(test, check_rgb_float_pixel(GEGL_IMAGE(dest), .1 * MULTIPLIER * MULTIPLIER, 
+    ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(dest), .1 * MULTIPLIER * MULTIPLIER, 
                                                              .2 * MULTIPLIER * MULTIPLIER, 
                                                              .3 * MULTIPLIER * MULTIPLIER));  
 
@@ -133,7 +133,7 @@ test_const_mult_apply(Test *test)
                                        NULL);
 
     gegl_op_apply_image(const_mult1, NULL, NULL); 
-    ct_test(test, check_rgb_float_pixel(GEGL_IMAGE(const_mult1), .1 * MULTIPLIER, 
+    ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(const_mult1), .1 * MULTIPLIER, 
                                                                     .2 * MULTIPLIER, 
                                                                     .3 * MULTIPLIER));  
 
@@ -145,11 +145,11 @@ static void
 const_mult_test_setup(Test *test)
 {
   GeglColorModel *rgb_float = gegl_color_model_instance("RgbFloat");
-  source = make_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
+  source = testutils_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
                                         SAMPLED_IMAGE_HEIGHT, 
                                        .1, .2, .3);
 
-  ct_test(test, check_rgb_float_pixel(GEGL_IMAGE(source), .1, .2, .3));  
+  ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(source), .1, .2, .3));  
   dest = g_object_new (GEGL_TYPE_SAMPLED_IMAGE,
                        "colormodel", rgb_float,
                        "width", SAMPLED_IMAGE_WIDTH, 
