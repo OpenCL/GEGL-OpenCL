@@ -19,7 +19,7 @@ void set_dtype (elem_t e, DATA_TYPE dtype);
 void set_type (elem_t e, DATA_TYPE dtype);
 void set_num (elem_t e, int n);
 void read_data_types (char *filename);
-void read_channel_names (int argc, char **argv); 
+void read_channel_names (char *chan_names); 
 void init_data_varible (char *s);
 
 int yyerror (char *s); 
@@ -1486,18 +1486,27 @@ read_data_types (char *filename)
 }
 
 void
-read_channel_names (int argc, char **argv)
+read_channel_names (char *chan_names)
 {
 
-  int i;
+  int i=0;
+  char *tmp; 
 
-  _NUM_COLOR_CHAN_ = argc - 3; 
-  _NAME_COLOR_CHAN_ = (char**) malloc (sizeof(char*) * (_NUM_COLOR_CHAN_ + 1));
-
-  for (i=0; i<_NUM_COLOR_CHAN_+1; i++)
+  if (!(tmp = (char*) strtok (chan_names, ",")))
     {
-    _NAME_COLOR_CHAN_[i] = (char*) strdup (argv[i+2]); 
+    exit (0);
     }
+
+  _NAME_COLOR_CHAN_[i] = tmp;
+
+  while ((tmp = (char*) strtok (NULL, ",")))
+    {
+    i++;
+    _NAME_COLOR_CHAN_[i] = tmp; 
+    }
+  
+  _NUM_COLOR_CHAN_ = i;
+
 }
 
 int
@@ -1511,9 +1520,28 @@ yyerror (char *s)
 int 
 main (int argc, char **argv)
 {
+  int i=1;
   yydebug = 1; 
-  read_data_types (argv[1]);
-  read_channel_names (argc, argv); 
+  if (argc != 5)
+    {
+    printf ("ERROR: need to specify a file and channel names\n");
+    return -1; 
+    }
+ 
+  while (i<argc)
+    {
+    if (!strcmp (argv[i], "--channel-data-file"))
+      {
+      i++;
+      read_data_types (argv[i]);
+      }
+    if (!strcmp (argv[i], "--channel-names"))
+      {
+      i++;
+      read_channel_names (argv[i]); 
+      }
+    i++; 
+    }  
   yyparse();
 
   return 0; 

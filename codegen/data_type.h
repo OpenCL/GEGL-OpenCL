@@ -45,7 +45,7 @@ EXTERN char  *_EQUAL_CFC_SUF_;
 
 /* these are related to the color space */
 EXTERN int    _NUM_COLOR_CHAN_;
-EXTERN char **_NAME_COLOR_CHAN_;
+EXTERN char *_NAME_COLOR_CHAN_[20];
 
 #undef  EXTERN
 
