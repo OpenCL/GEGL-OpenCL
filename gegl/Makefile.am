@@ -56,7 +56,6 @@ NONGEN_GOB = \
   gegl-single-src-op.gob \
   gegl-dual-src-op.gob \
   gegl-color.gob \
-  gegl-graphics-state.gob \
   gegl-image-iterator.gob
 
 GOB_FILES = $(GIL_GEN_GOB) $(NONGEN_GOB)
@@ -96,7 +95,6 @@ GOB_GEN_PUBLIC_HDRS = \
   gegl-composite-op.h \
   gegl-test-op.h \
   gegl-color.h \
-  gegl-graphics-state.h \
   gegl-image-iterator.h
 
 GOB_GEN_PRIVATE_HDRS = \
@@ -134,7 +132,6 @@ GOB_GEN_PRIVATE_HDRS = \
   gegl-composite-op-private.h \
   gegl-test-op-private.h \
   gegl-color-private.h \
-  gegl-graphics-state-private.h \
   gegl-image-iterator-private.h
 
 GOB_GEN_SRC = \
@@ -172,7 +169,6 @@ GOB_GEN_SRC = \
   gegl-composite-op.c \
   gegl-test-op.c \
   gegl-color.c \
-  gegl-graphics-state.c \
   gegl-image-iterator.c
 
 NONGOB_HDRS = \
