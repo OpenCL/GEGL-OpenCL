@@ -85,7 +85,7 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
             			/* found an int */
 				strcpy(yylval.elem.string, yytext);
                 		yylval.elem.type = TYPE_SCALER;
-				yylval.elem.dtype = TYPE_CHAN;
+				yylval.elem.dtype = TYPE_INT;
             			return INT;
 				}
 <CODEGEN_DECL>{float} 		{ 
@@ -99,7 +99,7 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
             			/* found an int */
 				strcpy(yylval.elem.string, yytext);
                 		yylval.elem.type = TYPE_SCALER;
-				yylval.elem.dtype = TYPE_CHAN;
+				yylval.elem.dtype = TYPE_INT;
             			return INT;
           			} 
 <CODEGEN_BLOCK>{float} 		{ 

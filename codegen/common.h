@@ -17,8 +17,10 @@ typedef enum
 /* DATA TYPES */
 typedef enum
 {
+  TYPE_INT,
+  TYPE_FLOAT,
   TYPE_CHAN,
-  TYPE_FLOAT
+  TYPE_CHANFLOAT
 }DATA_TYPE;
 
 typedef enum

@@ -24,7 +24,7 @@ void init_data_varible (char *s);
 
 int yyerror (char *s); 
     
-#define NSYMS 20           /* maximum number of symbols */
+#define NSYMS 100           /* maximum number of symbols */
 elem_t  symtab[NSYMS];
 int     cur_nsyms=0;
 
@@ -111,7 +111,8 @@ keyword_t keyword_tab[] = {
 
 %type   <elem> Expression
 %type   <elem> Definition
-%type   <elem> FloatChan_List
+%type   <elem> Int_List
+%type   <elem> Float_List
 %type   <elem> Chan_List
 %type   <elem> VectorChan_List
 %type   <elem> PoundInclDef
@@ -261,7 +262,7 @@ Line:
 	 	strcpy ($2.string, tmp); 	
 		print_line($2); 
 		}
-	| INDENT ITERATOR_X LT_PARENTHESIS Star NAME ',' INT RT_PARENTHESIS ';'
+	| INDENT ITERATOR_X LT_PARENTHESIS Star2 NAME ',' INT RT_PARENTHESIS ';'
 		{
 		char tmp[256];
 		if (!strcmp($7.string, "1"))
@@ -282,7 +283,7 @@ Line:
 		strcpy ($5.string, tmp);
 		print_line($5); 	
 		}
-	| INDENT ITERATOR_XY LT_PARENTHESIS Star NAME ',' INT ',' INT RT_PARENTHESIS ';' 
+	| INDENT ITERATOR_XY LT_PARENTHESIS Star2 NAME ',' INT ',' INT RT_PARENTHESIS ';' 
 		{
 	
 		}	
@@ -503,13 +504,6 @@ Definition:
 		sprintf (tmp,"%s %s", $1.string, $2.string);
                 strcpy($$.string, tmp); 
 		}
-	| FloatChan FloatChan_List 	
-		{ 
-		char tmp[256]; 
-		$$=$2; 
-		sprintf (tmp,"%s %s", $1.string, $2.string); 
-	  	strcpy($$.string, tmp); 
-		}
 	| VectorChan VectorChan_List
                 {
                 char tmp[256];
@@ -531,7 +525,7 @@ Definition:
 	        sprintf (tmp,"guint %s", $2.string);
 	        strcpy($$.string, tmp);
 	        }
-	| GFLOAT FloatChan_List
+	| GFLOAT Float_List
                 {
                 char tmp[256];
                 $$=$2;
@@ -594,8 +588,60 @@ Chan_List:
 		strcpy ($$.string, tmp); 
 		}	
         ;
-FloatChan_List:
-	FloatChan_List ',' FloatChan_List
+Int_List:
+	  Int_List ',' Int_List
+		{
+		char tmp[256];
+		sprintf(tmp, "%s, %s", $1.string, $3.string);
+		strcpy($$.string, tmp);
+		}
+        | Star2 NAME                          
+		{
+	        char tmp[256];	
+		set_dtype($2, TYPE_INT); 
+		set_type($2, TYPE_SCALER);
+	        set_num ($2, 1); 	
+	  	$$=$2; 
+		print_name (&$$, $2, NOT_DEFINE);
+		sprintf(tmp, "%s%s", $1.string, $$.string);
+		strcpy($$.string, tmp);
+		}
+        | Star2 NAME EQUAL FLOAT              
+		{ 
+		char tmp[256];
+		set_dtype($2, TYPE_INT);
+                set_type($2, TYPE_SCALER);
+	        set_num ($2, 1); 	
+		$$=$2; 
+		print_name (&$$, $2, NOT_DEFINE);
+		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+		strcpy($$.string, tmp);
+		}
+        | Star2 NAME EQUAL INT                
+		{ 
+		char tmp[256];
+		set_dtype($2, TYPE_INT);
+                set_type($2, TYPE_SCALER);
+	        set_num ($2, 1); 	
+		$$=$2; 
+		print_name (&$$, $2, NOT_DEFINE);
+		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+		strcpy($$.string, tmp);
+		}
+        | Star2 NAME LT_SQUARE INT RT_SQUARE
+		{
+		char tmp[256];
+		set_dtype($2, TYPE_INT); 
+		set_type($2, TYPE_VECTOR);
+		set_num($2, atoi ($4.string)); 
+	        $$=$2;
+		print_name (&$$, $2, DEFINE);
+		sprintf (tmp, "%s%s", $1.string, $$.string); 
+		strcpy ($$.string, tmp); 
+		}	
+        ;
+Float_List:
+	Float_List ',' Float_List
 		{
 		char tmp[256];
 		sprintf(tmp, "%s, %s", $1.string, $3.string);
@@ -925,26 +971,10 @@ do_op_two (elem_t *dest, elem_t src, FUNCTION op)
     sprintf (tmp, "-%s", src.string);
     break;
   case OP_CHAN_CLAMP:
-    switch (src.dtype)
-      {
-      case TYPE_FLOAT:
-	sprintf (tmp, "%s", src.string);
-	break;
-      case TYPE_CHAN:
-	sprintf (tmp, "%s%s%s", _CHAN_CLAMP_PRE_, src.string, _CHAN_CLAMP_SUF_);  
-	break; 
-      }
+    sprintf (tmp, "%s%s%s", _CHAN_CLAMP_PRE_, src.string, _CHAN_CLAMP_SUF_);  
     break; 
   case OP_WP_CLAMP:
-    switch (src.dtype)
-      {
-      case TYPE_FLOAT:
-	sprintf (tmp, "CLAMP (%s, %s, %s)", src.string, _MIN_CHAN_, _WP_);
-	break;
-      case TYPE_CHAN:
-	sprintf (tmp, "%s%s%s", _WP_CLAMP_PRE_, src.string, _WP_CLAMP_SUF_);
-	break;
-      }
+    sprintf (tmp, "%s%s%s", _WP_CLAMP_PRE_, src.string, _WP_CLAMP_SUF_);
     break;
   case OP_PARENTHESIS:
     sprintf (tmp, "(%s)", src.string);
@@ -982,59 +1012,45 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
   switch (op)
     {
     case OP_PLUS:
-      switch (src1.dtype)
-	{
-	case TYPE_FLOAT:
-	  sprintf (tmp, "%s + %s", src1.string, src2.string);
-	  break;
-	case TYPE_CHAN:
-	  sprintf (tmp, "%s%s + %s%s", _PLUS_PRE_, src1.string, src2.string, _PLUS_SUF_);
-	  break;
-	}
+      sprintf (tmp, "%s + %s", src1.string, src2.string);
       break;
     case OP_MINUS:
-      switch (src1.dtype)
-	{
-	case TYPE_FLOAT:
-	  sprintf (tmp, "%s - %s", src1.string, src2.string);
-	  break;
-	case TYPE_CHAN:
-	  sprintf (tmp, "%s%s - %s%s", _MINUS_PRE_, src1.string, src2.string, _MINUS_SUF_);
-	  break;
-	}
+      sprintf (tmp, "%s - %s", src1.string, src2.string);
       break;
     case OP_TIMES:
-      switch (src1.dtype|src2.dtype)
-	{
-	case TYPE_FLOAT:
-	  if (src1.type && src2.type)
-	    sprintf (tmp, "%s%s%s%s%s", _TIMES_VS_PRE_, src1.string, _TIMES_VS_MID_, src2.string, _TIMES_VS_SUF_);
-	  else
-	    sprintf (tmp, "%s * %s * %s", src1.string, src2.string, _WP_NORM_);
-	  break;
-	case TYPE_CHAN:
-	  if (src1.type && src2.type)
-	    sprintf (tmp, "%s%s%s%s%s", _TIMES_VV_PRE_, src1.string, _TIMES_VV_MID_, src2.string, _TIMES_VV_SUF_);
-	  else
-	    sprintf (tmp, "%s%s * %s%s", _TIMES_VS_PRE_, src1.string, src2.string, _TIMES_VS_SUF_);
-	  break;
+      if (src1.dtype < TYPE_CHAN && src2.dtype < TYPE_CHAN)
+        sprintf (tmp, "%s * %s", src1.string, src2.string);
+      else if ( src1.dtype == TYPE_CHAN || src2.dtype == TYPE_CHAN)
+	{	
+      	if (src1.type && src2.type)
+	  sprintf (tmp, "%s%s%s%s%s", _TIMES_VV_PRE_, src1.string, _TIMES_VV_MID_, src2.string, _TIMES_VV_SUF_);
+	else
+	  sprintf (tmp, "%s%s%s%s%s", _TIMES_VS_PRE_, src1.string, _TIMES_VS_MID_, src2.string, _TIMES_VS_SUF_);
+	}
+      else
+	{	
+       	if (src1.type && src2.type)
+	  sprintf (tmp, "%s * %s * %s", src1.string, src2.string, _WP_NORM_); 
+	else
+	  sprintf (tmp, "%s * %s", src1.string, src2.string);
 	}
       break;
     case OP_DIVIDE:
-      switch (src1.dtype)
+      if (src1.dtype < TYPE_CHAN && src2.dtype < TYPE_CHAN)
+      	sprintf (tmp, "%s / %s", src1.string, src2.string);
+      else if ( src1.dtype == TYPE_CHAN || src2.dtype == TYPE_CHAN)
 	{
-	case TYPE_FLOAT:
-	  if (src1.type && src2.type)
-	    sprintf (tmp, "%s * %s / %s", src1.string, _WP_, src2.string);
-	  else
-	    sprintf (tmp, "%s / %s", src1.string, src2.string);
-	  break;
-	case TYPE_CHAN:
-	  if (src1.type && src2.type)
-	    sprintf (tmp, "%s * %s / %s", src1.string, _WP_, src2.string);
-	  else
-	    sprintf (tmp, "%s / %s", src1.string, src2.string);
-	  break;
+	if (src1.type && src2.type)
+      	  sprintf (tmp, "%s * %s / %s", src1.string, _WP_, src2.string);
+	else
+	  sprintf (tmp, "%s / %s", src1.string, src2.string);
+	}
+      else
+	{	
+       	if (src1.type && src2.type)
+	  sprintf (tmp, "%s * %s / %s", src1.string, _WP_, src2.string); 
+	else
+	  sprintf (tmp, "%s / %s", src1.string, src2.string);
 	}
       break;
     case OP_AND:
@@ -1059,36 +1075,67 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	}
       switch (src1.dtype)
 	{
-	case TYPE_FLOAT:
+	case TYPE_INT:
 	  switch (src2.dtype)
 	    {
+	    case TYPE_INT:
+	      sprintf (tmp, "%s = %s", src1.string, src2.string);
+	      break;
 	    case TYPE_FLOAT:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
-	    case TYPE_CHAN:
-	      sprintf (tmp, "%s = %s", src1.string, src2.string);         
+	    default:
+	      yyerror("ERROR: op_EQUAL");
+	      exit(1);
 	      break;
-	    }   
+	    }
 	  break;
+	case TYPE_FLOAT:
+	  switch (src2.dtype)
+	    {
+	    case TYPE_INT:
+	      sprintf (tmp, "%s = %s", src1.string, src2.string);
+	      break;
+	    case TYPE_FLOAT:
+	      sprintf (tmp, "%s = %s", src1.string, src2.string);
+	      break;
+	    default:
+	      yyerror("ERROR: op_EQUAL");
+	      exit(1);
+	      break;
+	   }			     
+          break;
 	case TYPE_CHAN:
 	  switch (src2.dtype)
 	    {
+	    case TYPE_INT:
+	      sprintf (tmp, "%s = %s", src1.string, src2.string);
+	      break;
 	    case TYPE_FLOAT:
 	      sprintf (tmp, "%s = %s%s%s", src1.string, _EQUAL_CFC_PRE_, src2.string, _EQUAL_CFC_SUF_);
 	      break;
 	    case TYPE_CHAN:
-	      sprintf (tmp, "%s = %s", src1.string, src2.string);          
+	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
-	    } 
-	  break;
-	}
-      break; 
-
+	    case TYPE_CHANFLOAT:
+              sprintf (tmp, "%s = %s%s%s", src1.string, _EQUAL_CFC_PRE_, src2.string, _EQUAL_CFC_SUF_);	      
+	      break;
+	   }			     
+          break;
+	case TYPE_CHANFLOAT:
+           sprintf (tmp, "%s = %s", src1.string, src2.string);
+           break;
+	}   
     default:
       break; 
     }
-  
-  dest->dtype = src1.dtype | src2.dtype; 
+ 
+  if (src1.dtype == src2.dtype && src2.dtype == TYPE_CHAN)
+   dest->dtype = TYPE_CHAN;
+  else if (op == OP_EQUAL)
+    dest->dtype = src1.dtype; 
+  else 
+    dest->dtype = (src1.dtype + src2.dtype) > TYPE_CHANFLOAT? TYPE_CHANFLOAT: (src1.dtype + src2.dtype); 
   dest->type  = (src1.type > src2.type)?src1.type:src2.type;
   dest->num   = (src1.num > src2.num)?src1.num:src2.num;
   strcpy (dest->string, tmp);
@@ -1299,9 +1346,9 @@ read_data_types (char *data_type)
      _MINUS_PRE_    	= (char *) strdup ("");
      _MINUS_SUF_    	= (char *) strdup ("");
 
-     _TIMES_VS_PRE_  	= (char *) strdup ("INT_MULT(");
-     _TIMES_VS_MID_	= (char *) strdup (",");
-     _TIMES_VS_SUF_  	= (char *) strdup (")");
+     _TIMES_VS_PRE_  	= (char *) strdup ("");
+     _TIMES_VS_MID_	= (char *) strdup ("*");
+     _TIMES_VS_SUF_  	= (char *) strdup ("");
 
      _TIMES_VV_PRE_	= (char *) strdup ("INT_MULT(");
      _TIMES_VV_MID_	= (char *) strdup (",");
@@ -1341,9 +1388,9 @@ read_data_types (char *data_type)
      _MINUS_PRE_     	= (char *) strdup ("");
      _MINUS_SUF_        = (char *) strdup ("");
 
-     _TIMES_VS_PRE_  	= (char *) strdup ("INT_MULT16(");
-     _TIMES_VS_MID_	= (char *) strdup (",");
-     _TIMES_VS_SUF_  	= (char *) strdup (")");
+     _TIMES_VS_PRE_  	= (char *) strdup ("");
+     _TIMES_VS_MID_	= (char *) strdup ("*");
+     _TIMES_VS_SUF_  	= (char *) strdup ("");
 
      _TIMES_VV_PRE_    	= (char *) strdup ("INT_MULT16(");
      _TIMES_VV_MID_    	= (char *) strdup (",");

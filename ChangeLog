@@ -1,3 +1,8 @@
+Wed Mar  8 11:30:51 PST 2000 caro@rhythm.com
+	
+	* CHange the way it handled chan, floatchan, int, and float.
+	Hopefully it should work much better now.
+
 Tue Mar  7 15:03:42 PST 2000 caro@rhythm.com
 	
 	* This version will now parse files that have the

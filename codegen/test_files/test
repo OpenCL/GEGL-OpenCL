@@ -1,20 +1,22 @@
 /* fldskjflksjd sdfjlskfjlsdkfjdslkjfsldkfjdlskf */
-Chan a ;
- VectorChan s1(_c_,_a_), s2(_c_,_a_), d(_c_,_a_); /*ljfldkjfdl*/ 
+CODEGEN_DECL_BEGIN
+ Chan a ;
+ VectorChan s(color,alpha); 
+ VectorChan d(color,alpha), s1(color,alpha), s2(color,alpha), s3(color,alpha); 
+ VectorChan dest(color,alpha);
+ VectorChan src1(color,alpha);
+ VectorChan src2(color,alpha);
+ VectorChan c(color,alpha);
+ Chan g[4], h[2];
+ Chan f;
+CODEGEN_DECL_END
+CODEGEN_BLOCK_BEGIN
   d = s1 * s2;
- VectorChan s(_c_,_a_), d(_c_,_a_); 
  d = CHAN_CLAMP(5 * s);
- VectorChan d(_c_,_a_), s1(_c_,_a_), s2(_c_,_a_), s3(_c_,_a_); 
  d = (s1 + s2 + s3)/3;
- VectorChan d(_c_,_a_), s1(_c_,_a_), s2(_c_,_a_), s(_c_,_a_);
  d = s * s1 + (WP-s) * s2;
- VectorChan d(_c_,_a_), s1(_c_,_a_), s2(_c_,_a_), s3(_c_,_a_);
  d = CHAN_CLAMP(s1 * s2 + s3);
- VectorChan d(_c_,_a_), s1(_c_,_a_), s2(_c_,_a_), s3(_c_,_a_); 
  d = .333 * (s1 + s2 + s3); 
- VectorChan dest(_c_,_a_);
- VectorChan src1(_c_,_a_);
- VectorChan src2(_c_,_a_);
  dest = WP - ((WP - src1) * (WP - src2));
  dest = MAX(src1, src2);
  dest = MIN(src1, src2);
@@ -24,14 +26,12 @@ Chan a ;
  dest = ABS(src1 - src2);
  dest = MIN(src1, src2);
  dest = CHAN_CLAMP(src1 + src2);
- dest_a = CHAN_CLAMP(src1_a + src2_a);
- dest = dest_a * dest; 
- VectorChan c(_c_,_a_);
- FloatChan f;
- c_c = c_c * c_c;
+ dest_alpha = CHAN_CLAMP(src1_alpha + src2_alpha);
+ dest = dest_alpha * dest; 
+ c_color = c_color * c_color;
  f = f * f;
- c_c = c_c * f;
- c_c = c_c / c_c;
+ c_color = c_color * f;
+ c_color = c_color / c_color;
  f = f / f;
  c = f / c;
  c = c / f;
@@ -40,17 +40,15 @@ Chan a ;
  f = 5.0 * f;
  f = 5.0 * f;
  c = c / 5.0;
- c_c = c_c / 5.0; 
- c_c = c_c / 5;
- c_c = c_c + c_c;
- f = f + c_a;
- c_c = c_c + f;
- c_c = c_c;
- c_c = f;
-/* test vectors */
- VectorChan g[4], h[2];
+ c_color = c_color / 5.0; 
+ c_color = c_color / 5;
+ c_color = c_color + c_color;
+ f = f + c_alpha;
+ c_color = c_color + f;
+ c_color = c_color;
+ c_color = f;
  g = c;
  g = h;
-
+CODEGEN_BLOCK_END
 
 
