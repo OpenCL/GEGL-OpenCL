@@ -1,13 +1,13 @@
 %h{
 #include "gegl-point-op.h"
-#include "gegl-image-buffer.h"
-#include "gegl-types.h" 
 %}
 %{
 #include "gegl-composite-op.h"
 #include "gegl-composite-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-iterator.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
 #include <stdio.h> 
@@ -103,13 +103,13 @@ class Gegl:Composite:Op from Gegl:Point:Op {
     if ( premult)	
     {
       if ( dest_has_alpha && src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_premult_RGBA_op_premult_RGBA_FLOAT;
+        point_op_class->scanline_func = gegl_composite_op_premult_RGBA_op_RGBA_FLOAT;
       else if ( !dest_has_alpha && !src_has_alpha )
         point_op_class->scanline_func = gegl_composite_op_RGB_op_RGB_FLOAT;
       else if ( dest_has_alpha && !src_has_alpha )
         point_op_class->scanline_func = gegl_composite_op_premult_RGBA_op_RGB_FLOAT;
       else if ( !dest_has_alpha && src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_RGB_op_premult_RGBA_FLOAT;
+        point_op_class->scanline_func = gegl_composite_op_premult_RGB_op_RGBA_FLOAT;
     }
     else
     {
@@ -139,7 +139,7 @@ class Gegl:Composite:Op from Gegl:Point:Op {
 
   private 
   void
-  premult_RGBA_op_premult_RGBA_FLOAT (GeglPointOp *point_op)
+  premult_RGBA_op_RGBA_FLOAT (GeglPointOp *point_op)
   {
     guint               width;
     GeglCompositeMode   comp_mode;
@@ -152,20 +152,16 @@ class Gegl:Composite:Op from Gegl:Point:Op {
     GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
     GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv); 
 
-    GeglOp *op = GEGL_OP (point_op); 
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv); 
-
-	
     width = point_opP->scanline_width;
     comp_mode = selfP->comp_mode;
 
     /* Initialize the data pointers to the scanline */
     /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                    opP->image_buffers[0],
+    gegl_image_iterator_get_scanline_data (
+                    point_opP->iterators[0],
                     (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                    opP->image_buffers[1],
+    gegl_image_iterator_get_scanline_data (
+                    point_opP->iterators[1],
                     (guchar**)src_data);
 
     /* Make r,g,b point to the image data */
@@ -272,20 +268,16 @@ class Gegl:Composite:Op from Gegl:Point:Op {
     GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
     GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
 
-    GeglOp *op = GEGL_OP (point_op);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
-
-
     width = point_opP->scanline_width;
     comp_mode = selfP->comp_mode;
 
     /* Initialize the data pointers to the scanline */
     /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                    opP->image_buffers[0],
+    gegl_image_iterator_get_scanline_data (
+                    point_opP->iterators[0],
                     (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                    opP->image_buffers[1],
+    gegl_image_iterator_get_scanline_data (
+                    point_opP->iterators[1],
                     (guchar**)src_data);
 
     /* Make r,g,b point to the image data */
@@ -373,7 +365,7 @@ class Gegl:Composite:Op from Gegl:Point:Op {
 
   private
   void
-  RGB_op_premult_RGBA_FLOAT (GeglPointOp *point_op)
+  premult_RGB_op_RGBA_FLOAT (GeglPointOp *point_op)
   {
     guint               width;
     GeglCompositeMode   comp_mode;
@@ -386,20 +378,16 @@ class Gegl:Composite:Op from Gegl:Point:Op {
     GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
     GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
 
-    GeglOp *op = GEGL_OP (point_op);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
-
-
     width = point_opP->scanline_width;
     comp_mode = selfP->comp_mode;
 
     /* Initialize the data pointers to the scanline */
     /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                    opP->image_buffers[0],
+    gegl_image_iterator_get_scanline_data (
+                    point_opP->iterators[0],
                     (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                    opP->image_buffers[1],
+    gegl_image_iterator_get_scanline_data (
+                    point_opP->iterators[1],
                     (guchar**)src_data);
 
     /* Make r,g,b point to the image data */
@@ -495,20 +483,16 @@ class Gegl:Composite:Op from Gegl:Point:Op {
     GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
     GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
 
-    GeglOp *op = GEGL_OP (point_op);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
-
-
     width = point_opP->scanline_width;
     comp_mode = selfP->comp_mode;
 
     /* Initialize the data pointers to the scanline */
     /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[0],
+    gegl_image_iterator_get_scanline_data (
+                  point_opP->iterators[0],
                   (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[1],
+    gegl_image_iterator_get_scanline_data (
+                  point_opP->iterators[1],
                   (guchar**)src_data);
 
     /* Make r,g,b point to the image data */
@@ -664,20 +648,16 @@ class Gegl:Composite:Op from Gegl:Point:Op {
     GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
     GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
 
-    GeglOp *op = GEGL_OP (point_op);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
-
-
     width = point_opP->scanline_width;
     comp_mode = selfP->comp_mode;
 
     /* Initialize the data pointers to the scanline */
     /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[0],
+    gegl_image_iterator_get_scanline_data (
+                  point_opP->iterators[0],
                   (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[1],
+    gegl_image_iterator_get_scanline_data (
+                  point_opP->iterators[1],
                   (guchar**)src_data);
 
     /* Make r,g,b point to the image data */
@@ -814,20 +794,16 @@ class Gegl:Composite:Op from Gegl:Point:Op {
     GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
     GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
 
-    GeglOp *op = GEGL_OP (point_op);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
-
-
     width = point_opP->scanline_width;
     comp_mode = selfP->comp_mode;
 
     /* Initialize the data pointers to the scanline */
     /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[0],
+    gegl_image_iterator_get_scanline_data (
+                  point_opP->iterators[0],
                   (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[1],
+    gegl_image_iterator_get_scanline_data (
+                  point_opP->iterators[1],
                   (guchar**)src_data);
 
     /* Make r,g,b point to the image data */
@@ -943,20 +919,16 @@ class Gegl:Composite:Op from Gegl:Point:Op {
     GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
     GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv); 
 
-    GeglOp *op = GEGL_OP (point_op); 
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv); 
-
-	
     width = point_opP->scanline_width;
     comp_mode = selfP->comp_mode;
 
     /* Initialize the data pointers to the scanline */
     /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[0],
+    gegl_image_iterator_get_scanline_data (
+                  point_opP->iterators[0],
                   (guchar**)dest_data);
-    gegl_image_buffer_get_scanline_data (
-                  opP->image_buffers[1],
+    gegl_image_iterator_get_scanline_data (
+                  point_opP->iterators[1],
                   (guchar**)src_data);
 
     /* Make r,g,b point to the image data */

@@ -15,6 +15,7 @@ GOB_SRC = \
 	gegl-image-buffer.gob				\
 	gegl-op.gob					\
 	gegl-point-op.gob				\
+	gegl-dual-src-op.gob				\
 	gegl-print-op.gob				\
 	gegl-color.gob					\
 	gegl-graphics-state.gob				\
@@ -28,6 +29,9 @@ GOB_SRC = \
 	gegl-color-convert-to-gray-float-op.gob         \
 	gegl-color-convert-to-rgb-u8-op.gob             \
 	gegl-color-convert-to-rgb-float-op.gob		\
+	gegl-copy-chan-op.gob				\
+	gegl-image-iterator.gob				\
+	gegl-add-op.gob					\
 	gegl-min-op.gob					\
 	gegl-max-op.gob					\
 	gegl-mult-op.gob				\
@@ -51,6 +55,7 @@ GOB_GEN_PUBLIC = \
 	gegl-image-buffer.h				\
 	gegl-op.h					\
 	gegl-point-op.h					\
+	gegl-dual-src-op.h				\
 	gegl-print-op.h					\
 	gegl-color.h					\
 	gegl-graphics-state.h				\
@@ -64,6 +69,9 @@ GOB_GEN_PUBLIC = \
 	gegl-color-convert-to-gray-float-op.h           \
 	gegl-color-convert-to-rgb-u8-op.h               \
 	gegl-color-convert-to-rgb-float-op.h		\
+	gegl-image-iterator.h				\
+	gegl-copy-chan-op.h				\
+	gegl-add-op.h					\
 	gegl-min-op.h					\
 	gegl-max-op.h					\
 	gegl-mult-op.h					\
@@ -100,6 +108,8 @@ GOB_GEN_SRC = \
 	gegl-op-private.h				\
 	gegl-point-op.c					\
 	gegl-point-op-private.h				\
+	gegl-dual-src-op.c				\
+	gegl-dual-src-op-private.h			\
 	gegl-print-op.c					\
 	gegl-print-op-private.h				\
 	gegl-color.c					\
@@ -126,6 +136,11 @@ GOB_GEN_SRC = \
 	gegl-color-convert-to-rgb-u8-op-private.h       \
 	gegl-color-convert-to-rgb-float-op.c		\
 	gegl-color-convert-to-rgb-float-op-private.h	\
+	gegl-image-iterator.c				\
+	gegl-image-iterator-private.h			\
+	gegl-copy-chan-op.c				\
+	gegl-copy-chan-op-private.h			\
+	gegl-add-op.c					\
 	gegl-min-op.c					\
 	gegl-min-op-private.h				\
 	gegl-max-op.c 					\

@@ -1,4 +1,36 @@
+Fri Feb 11 17:38:13 EST 2000 calvinw@mindspring.com
+
+	* rm gegl-chancopy-op.gob (renamed it)
+
+	* added these files: 
+	  gegl-copy-chan-op.gob
+	  gegl-dual-src-op.gob
+	  gegl-image-iterator.gob
+
+	* updated all the ops to use the ImageIterator class
+
+	* updated README to say use gob-0.92.3 
+
+	* updated the generic algorithms for: 
+	  gegl-add-op.gob
+	  gegl-dark-op.gob
+	  gegl-diff-op.gob
+	  gegl-light-op.gob
+	  gegl-max-op.gob
+	  gegl-min-op.gob
+	  gegl-mult-op.gob
+	  gegl-screen-op.gob
+	  gegl-subtract-op.gob
+
+	* lots of little cleanups in most op classes 
+	
+
 Tue Feb  8 16:08:54 PST 2000 caro@rhythm.com
+
+	* added gegl-chancopy-op.gegl and gegl-add-op.gegl
+	
+	* fixed warnings 
+
 
 	* added gegl-chancopy-op.gegl and gegl-add-op.gegl
 	

@@ -1,6 +1,5 @@
 %h{
 #include "gegl-point-op.h"
-#include "gegl-image-buffer.h"
 %}
 %{
 #include "gegl-fill-op.h"
@@ -8,6 +7,9 @@
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
 #include "gegl-object-private.h"
+#include "gegl-point-op.h"
+#include "gegl-image-iterator.h"
+#include "gegl-image-buffer.h"
 #include "gegl-color.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
@@ -146,7 +148,6 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     gfloat color_r, color_g, color_b; 
     GeglFillOp *self = GEGL_FILL_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
-    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv); 
 
     GeglChannelValue *fill_values = gegl_color_get_channel_values( 
                                    self->_priv->fill_color);
@@ -158,7 +159,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     width = point_opP->scanline_width;
 
     /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
+    gegl_image_iterator_get_scanline_data (point_opP->iterators[0], 
                                       (guchar**)dest_data);
 
     /* Make r,g,b point to the dest image data */
@@ -190,7 +191,6 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     guint8 color_r, color_g, color_b;
     GeglFillOp *self = GEGL_FILL_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
 
     GeglChannelValue *fill_values = gegl_color_get_channel_values(
                                    self->_priv->fill_color);
@@ -202,7 +202,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     width = point_opP->scanline_width;
 
     /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (opP->image_buffers[0],
+    gegl_image_iterator_get_scanline_data (point_opP->iterators[0],
                 (guchar**)dest_data);
 
     /* Make r,g,b point to the dest image data */
@@ -234,7 +234,6 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     gfloat color_g; 
     GeglFillOp *self = GEGL_FILL_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
-    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv); 
 
     GeglChannelValue *fill_values = gegl_color_get_channel_values( 
                                    self->_priv->fill_color);
@@ -243,7 +242,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     width = point_opP->scanline_width;
 
     /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
+    gegl_image_iterator_get_scanline_data (point_opP->iterators[0], 
                                       (guchar**)dest_data);
 
     /* Make g point to the dest image data */
@@ -271,7 +270,6 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     guint8 color_g;
     GeglFillOp *self = GEGL_FILL_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
 
     GeglChannelValue *fill_values = gegl_color_get_channel_values(
                                    self->_priv->fill_color);
@@ -281,7 +279,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     width = point_opP->scanline_width;
 
     /* image_buffers[0] is the dest here */
-    gegl_image_buffer_get_scanline_data (opP->image_buffers[0],
+    gegl_image_iterator_get_scanline_data (point_opP->iterators[0],
                 (guchar**)dest_data);
 
     /* Make g point to the dest image data */

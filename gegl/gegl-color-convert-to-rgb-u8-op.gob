@@ -1,6 +1,5 @@
 %h{
 #include "gegl-color-convert-op.h"
-#include "gegl-image-buffer.h"
 %}
 %{
 #include "gegl-color-convert-to-rgb-u8-op.h"
@@ -8,6 +7,7 @@
 #include "gegl-color-convert-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
+#include "gegl-image-iterator.h"
 #include "gegl-color.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
@@ -177,7 +177,6 @@ class Gegl:Color:Convert:To:Rgb:U8:Op from Gegl:Color:Convert:Op {
     GeglColorConvertOpPrivate *color_convert_opP = 
       (GeglColorConvertOpPrivate*)(GEGL_COLOR_CONVERT_OP (point_op)->_priv);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
 
     gint width = point_opP->scanline_width;
 
@@ -185,10 +184,10 @@ class Gegl:Color:Convert:To:Rgb:U8:Op from Gegl:Color:Convert:Op {
     gboolean data_only = self->_priv->do_data && !self->_priv->do_color_space;
  
     /* Make the dest and src point to the data to convert */
-    gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
+    gegl_image_iterator_get_scanline_data (point_opP->iterators[0], 
                                          color_convert_opP->dest_data);
 
-    gegl_image_buffer_get_scanline_data (opP->image_buffers[1], 
+    gegl_image_iterator_get_scanline_data (point_opP->iterators[1], 
                                          color_convert_opP->src_data);
 
     if (color_space_only) 

@@ -234,6 +234,13 @@ class Gegl:Image:Buffer from Gegl:Object {
   }
 
   public
+  guchar * 
+  get_data (self)
+  {
+    return self->_priv->data;
+  }
+
+  public
   GeglColorModel * 
   color_model(self) 
   { 

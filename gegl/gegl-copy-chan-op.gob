@@ -1,0 +1,197 @@
+%h{
+#include "gegl-point-op.h"
+#define GEGL_COPY_CHAN_OP_CHANNEL_NONE -1
+%}
+%{
+#include "gegl-copy-chan-op.h"
+#include "gegl-copy-chan-op-private.h"
+#include "gegl-point-op-private.h"
+#include "gegl-op-private.h"
+#include "gegl-object-private.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-iterator.h"
+#include "gegl-color.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+#include "gegl-types.h" 
+#include <stdio.h>
+%}
+
+class Gegl:Copy:Chan:Op from Gegl:Point:Op {
+
+  private gint *chan_index;     /*chan_index[i] is index of the src channel 
+                                  to copy to ith dest channel*/ 
+
+  private guchar **dest_data;   /*generic data pointer array for dest */ 
+  private guchar **src_data;    /*generic data pointer array for src */
+
+  private GeglColorModel *dest_cm; 
+  private GeglColorModel *src_cm;
+
+  public 
+  GeglCopyChanOp *
+  new (GeglImageBuffer *dest, 
+       GeglImageBuffer *src,
+       GeglRect *dest_rect,
+       GeglRect *src_rect,
+       gint *chan_index)
+  {
+    GeglCopyChanOp * self = GEGL_COPY_CHAN_OP(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, dest, src, dest_rect, 
+           src_rect, chan_index))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self, 
+  	      GeglImageBuffer *dest,
+       	      GeglImageBuffer *src,
+              GeglRect *dest_rect,
+              GeglRect *src_rect,
+              gint *chan_index)
+  {
+    GeglImageBuffer *image_buffers[2];
+    GeglRect rects[2];
+    GeglPointOp *point_op = GEGL_POINT_OP(self);
+    GeglPointOpClass *point_op_class = 
+        GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+    
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+    
+    image_buffers[0] = dest;
+    image_buffers[1] = src;
+    gegl_rect_copy(&(rects[0]), dest_rect);
+    gegl_rect_copy(&(rects[1]), src_rect);
+ 
+    /* Chain up */
+    if (!gegl_point_op_constructor(
+           GEGL_POINT_OP(self), image_buffers, rects, 2))
+      return FALSE;
+
+    {
+      gint i; 
+      GeglChannelDataType dest_data_type, src_data_type;
+      GeglColorModel *dest_cm, *src_cm; 
+      gint dest_nchans, src_nchans;
+
+      dest_cm = gegl_image_buffer_color_model (dest);
+      dest_data_type = gegl_color_model_data_type (dest_cm);
+      dest_nchans =  gegl_color_model_num_channels (dest_cm);
+
+      src_cm = gegl_image_buffer_color_model (src);
+      src_data_type = gegl_color_model_data_type (src_cm);
+      src_nchans =  gegl_color_model_num_channels (src_cm);
+
+      if (dest == src)
+	{	
+	  g_warning("GeglCopyChanOp: cant copy dest and src same\n");
+	  point_op_class->scanline_func = NULL;   
+	  return FALSE;
+	}
+
+      if (dest_data_type != src_data_type)
+	{	
+	  g_warning("GeglCopyChanOp: data types dont match\n");
+	  point_op_class->scanline_func = NULL;   
+	  return FALSE;
+	}
+     
+      for (i=0; i < dest_nchans; i++)
+	{
+	  if (chan_index[i] >= src_nchans || 
+              chan_index[i] < GEGL_COPY_CHAN_OP_CHANNEL_NONE) 
+	    {
+	      g_warning("GeglCopyChanOp: src chan index out of range\n");
+	      point_op_class->scanline_func = NULL;
+	      return FALSE;
+	    }       
+	}
+
+      /* Get arrays of generic data pointers */
+      self->_priv->dest_data = (guchar**) g_malloc(sizeof(guchar*) * dest_nchans);
+      self->_priv->src_data  = (guchar**) g_malloc(sizeof(guchar*) * src_nchans);
+
+      /*store these values for scanline routine*/
+      self->_priv->chan_index = chan_index; 
+      self->_priv->src_cm = src_cm; 
+      self->_priv->dest_cm = dest_cm; 
+     
+      /* Set up the scanline function in point op*/
+      point_op_class->scanline_func = gegl_copy_chan_op_scanline;   
+    }
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    GeglCopyChanOp *self = GEGL_COPY_CHAN_OP (object);
+    /* Free the generic data pointers arrays */
+
+    if (self->_priv->dest_data)
+      g_free(self->_priv->dest_data);
+    if (self->_priv->src_data)
+      g_free(self->_priv->src_data); 	
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  private 
+  void
+  scanline (GeglPointOp *point_op)
+  {
+    guint width;
+    gint i,j; 
+    gint bpc;
+    gint dest_nchans;
+    guchar **dest;
+    guchar **src;
+    gint * index;
+
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+    GeglCopyChanOp *self = GEGL_COPY_CHAN_OP (point_op);
+
+    dest = self->_priv->dest_data;
+    src = self->_priv->src_data;
+    gegl_image_iterator_get_scanline_data (point_opP->iterators[0], dest); 
+    gegl_image_iterator_get_scanline_data (point_opP->iterators[1], src);
+    
+    width = point_opP->scanline_width;
+    index = self->_priv->chan_index;
+    bpc = gegl_color_model_bytes_per_channel(
+                         self->_priv->dest_cm);
+    dest_nchans = gegl_color_model_num_channels(
+                         self->_priv->dest_cm);
+
+       
+    while (width--)
+      {
+	/* 
+           For each channel in dest,  
+	   copy all the bytes in that channel for
+           this pixel, otherwise skip the channel. 
+
+           This depends on the planar data storage...assumes
+           pixelstride == bpc for a channel data pointer, 
+           since channels are stored separately currently. 
+        */ 
+	for (i = 0; i < dest_nchans; i++)
+	  {
+	    if (index[i] != GEGL_COPY_CHAN_OP_CHANNEL_NONE)
+              for (j = 0; j < bpc; j++) 
+               *dest[i]++  = *src[index[i]]++;  
+          }
+      }
+  }
+}

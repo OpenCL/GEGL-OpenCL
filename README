@@ -1,6 +1,11 @@
-You must use Gob 0.92.2 (in gnome cvs or from
-http://ftp.5z.com/pub/gob/) or later with gegl-0.0.2.  Earlier
-versions of Gob may not work with gegl.
+Webpages for Gegl:
+
+http://www.mindspring.com/~calvinw/geglClasses.html
+http://www.mindspring.com/~calvinw/geglChannelData.html
+
+If possible, you should use Gob 0.92.3 (in gnome cvs or from
+http://ftp.5z.com/pub/gob/) or later with gegl. Earlier
+versions of Gob may not work as well.
 
 For more information on gob see http://www.5z.com/jirka/gob.html. 
 

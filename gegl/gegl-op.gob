@@ -11,9 +11,9 @@
 
 class Gegl:Op from Gegl:Object {
 
-  private GeglImageBuffer **image_buffers;/* dest, then sources */
-  private GeglRect *rects;                /* dest rect, then sources rects */
-  private gint num_images;                /* total dest + source images */
+  private GeglImageBuffer    **image_buffers;  /* dest, then sources */
+  private GeglRect *rects;                     /* dest rect, then sources rects */
+  private gint num_images;                     /* total dest + source images */
 
   protected 
   gboolean 

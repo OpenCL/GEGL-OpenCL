@@ -27,7 +27,7 @@ main (int argc, char *argv[])
 {  
   gtk_init (&argc, &argv);
   
-#if 0   /* This one uses the GeglImageBuffer and GeglOp directly */ 
+#if 1   /* This one uses the GeglImageBuffer and GeglOp directly */ 
   {
 
 	GeglColorModel *cm = GEGL_COLOR_MODEL(
@@ -110,7 +110,7 @@ main (int argc, char *argv[])
   }
 #endif
 
-#if 0      /*This uses the GeglDrawable class */ 
+#if  0      /*This uses the GeglDrawable class */ 
   {
 
 	GeglColorModel *cm = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(FALSE,FALSE));
@@ -221,7 +221,7 @@ main (int argc, char *argv[])
   }
 #endif
 
-#if 1  /*This illustrates a color conversion using XYZ connection space */ 
+#if 0  /*This illustrates a color conversion using XYZ connection space */ 
   {
     GeglColorModel *from_cm = GEGL_COLOR_MODEL(
                               gegl_color_model_rgb_float_new(FALSE,FALSE));

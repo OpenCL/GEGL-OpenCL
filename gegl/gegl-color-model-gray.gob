@@ -18,7 +18,9 @@ class Gegl:Color:Model:Gray from Gegl:Color:Model {
 
   protected 
   gboolean 
-  constructor(self, gboolean has_alpha, gboolean is_premult)
+  constructor(self, 
+              gboolean has_alpha, 
+              gboolean is_premult)
   {
     GeglColorModelPrivate *color_modelP = 
               (GeglColorModelPrivate*)(GEGL_COLOR_MODEL (self)->_priv);

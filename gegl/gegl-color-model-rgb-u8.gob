@@ -266,7 +266,7 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
   override (Gegl:Color:Model)
   void
   convert_to_float (GeglColorModel *cm, 
-                    gfloat **dest_data, 
+                    guchar **dest_data, 
                     guchar **src_data,
                     gint width)
   {
@@ -285,9 +285,9 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
     if (has_alpha)
       src_a = (guint8*) src_data[3];
     
-    dest_r = dest_data[0];
-    dest_g = dest_data[1];
-    dest_b = dest_data[2];
+    dest_r = (gfloat*)dest_data[0];
+    dest_g = (gfloat*)dest_data[1];
+    dest_b = (gfloat*)dest_data[2];
     if (has_alpha)
       dest_a = (float*) dest_data[3];
 

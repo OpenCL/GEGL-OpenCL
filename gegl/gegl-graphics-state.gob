@@ -13,6 +13,7 @@ class Gegl:Graphics:State from Gegl:Object {
   public GeglColor *bg_color;              /* background color  */
   public GeglColor *fg_color;	           /* foreground color  */
   public GeglCompositeMode composite_mode; /* composite mode    */
+
   private void comments(self)
   {
 #if 0
