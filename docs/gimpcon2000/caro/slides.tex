@@ -102,8 +102,10 @@
 \begin{itemize}
 \item What is the problem? 
 \item How we solves it?
-\item How does Codegen work? 
-\item Future directions for Codegen 
+\item Assumptions we make
+\item Generic Image Language
+\item Codegen
+\item Limitation
 \end{itemize}
 
 \nfoil{What is the problem?}
@@ -113,16 +115,36 @@
 \item Overflow 
 \end{itemize}
 
-\nfoil{How we solves it?}
+
+\nfoil{How we solve it?}
 \begin{itemize}
 \item Generic Image Language (GIL) 
 \item Codegen
 \end{itemize}
 
+\nfoil{Assumptions we make}
+\begin{itemize}
+\item Channel data are pointers 
+\item Variables are assigned value outside GIL  
+\end{itemize}
+
+\nfoil{Overview}
+\begin{itemize}
+\item Generic Image Language
+\begin{itemize}
+\item Definition
+\item Example
+\item Declaration Block
+\item Initialization Block
+\item Code Block
+\item DT Macros
+\end{itemize}
+\end{itemize}
+
 \nfoil{Generic Image Language}
 \begin{itemize}
 \item Independent of data type and color model 
-\item Uses macros for data type or color model specific operations
+\item Uses macros for dependent operations
 \item Easy to read and write 
 \end{itemize}
 
@@ -153,29 +175,46 @@ if (dest\_has\_alpha)\\
 \hspace*{1.6cm} dest\_alpha = WP;\\
 \hspace*{1.2cm} \}\\
 \hspace*{.8cm} \}\\
-dX(dest,1);\\
-dX(src1,1);\\
-dX(src2,1);\\
+dX (dest,1);\\
+dX (src1,1);\\
+dX (src2,1);\\
 GENERIC\_IMAGE\_BLOCK\_END\\
 \end{flushleft}
+
+\nfoil{Overview}
+\begin{itemize}
+\item Codegen
+\begin{itemize}
+\item Definition
+\item How to run Codegen
+\item Color Channel names
+\item Channel data file
+\item Example
+\item Creating dependent code
+\item Implementation detail
+\item Flex
+\item Bison
+\end{itemize}
+\end{itemize}
 
 \nfoil{Declaration Block}
 \begin{itemize}
 \item GENERIC\_IMAGE\_DECL\_BEGIN\\ ... \\GENERIC\_IMAGE\_DECL\_END 
-\item Pixel variable-name (color,alpha,has\_alpha)
-\item Channel variable-name 
+\item Pixel name (color,alpha,has\_alpha)
+\item Channel name 
 \item int, float  
 \end{itemize}
 
 \nfoil{Initialization Block}
 \begin{itemize}
 \item GENERIC\_IMAGE\_IMAGE\_DATA\_INIT
+\item Sets Pixel variable equal to data value 
 \end{itemize}
 
 \nfoil{Code Block}
 \begin{itemize}
 \item GENERIC\_IMAGE\_CODE\_BEGIN\\ ... \\GENERIC\_IMAGE\_CODE\_END
-\item Pixel variables (variable-name[]/\_color/\_alpha)
+\item Pixel (name/name\_color/name\_alpha)
 \item DT Macros 
 \item Promotion  
 \end{itemize}
@@ -204,8 +243,8 @@ GENERIC\_IMAGE\_BLOCK\_END\\
 \end{itemize}
 \item Iterator operations
 \begin{itemize}
-\item dX(Pixel,x) 
-\item dY(Pixel,x) 
+\item dX (Pixel,x) 
+\item dY (Pixel,x) 
 \end{itemize}
 \item PRINT (x)
 \item EXTERNAL\_INIT (x)
@@ -233,7 +272,7 @@ codegen --channel-names COLOR\_CHANNEL\_NAMES\\
 
 \nfoil{Channel data file}
 \begin{itemize}
-\item Data type specific code for DT Macros
+\item Contains definition for DT Macros
 \item Example of 16bit 4K WP 
 \tt
 \small 
@@ -257,15 +296,134 @@ DT\_MACROS\_END
 \end{tabbing}
 \end{itemize}
 
+
+\nfoil{Example}
+\begin{flushleft}
+\tt
+\small
+guint16 *dest\_data[4];\\
+gboolean dest\_has\_alpha;\\
+guint16 *dest\_red, *dest\_green, *dest\_blue, *dest\_alpha=NULL;\\
+guint16 *src1\_data[4];\\
+gboolean src1\_has\_alpha;\\
+guint16 *src1\_red, *src1\_green, *src1\_blue, *src1\_alpha=NULL;\\
+guint16 *src2\_data[4];\\
+gboolean src2\_has\_alpha;\\
+guint16 *src2\_red, *src2\_green, *src2\_blue, *src2\_alpha=NULL;\\*[.5cm]
+
+dest\_red = dest\_data[0];\\
+dest\_green = dest\_data[1];\\
+dest\_blue = dest\_data[2];\\
+if (dest\_has\_alpha)\\
+\hspace*{.4cm} dest\_alpha = dest\_data[3];\\*[.5cm]
+
+src1\_red = src1\_data[0];\\
+src1\_green = src1\_data[1];\\
+src1\_blue = src1\_data[2];\\
+if (src1\_has\_alpha)\\
+\hspace*{.4cm} src1\_alpha = src1\_data[3];\\*[.5cm]
+
+src2\_red = src2\_data[0];\\
+src2\_green = src2\_data[1];\\
+src2\_blue = src2\_data[2];\\
+if (src2\_has\_alpha)\\
+\hspace*{.4cm} src2\_alpha = src2\_data[3];\\*[.5cm]
+
+*dest\_red = CLAMP ((guint32)   *src1\_red + *src2\_red,0,65535);\\*
+*dest\_green = CLAMP ((guint32)   *src1\_green + *src2\_green,0,65535);\\*
+*dest\_blue = CLAMP ((guint32)   *src1\_blue + *src2\_blue,0,65535);\\*[.5cm] 
+if (dest\_has\_alpha)\\
+\hspace*{.4cm} \{\\
+\hspace*{.8cm} if (src1\_has\_alpha \&\& src2\_has\_alpha)\\
+\hspace*{1.2cm} \{\\
+\hspace*{1.6cm} *dest\_alpha = CLAMP ((guint32)   *src1\_alpha + *src2\_alpha,0,65535);\\
+\hspace*{1.2cm} \}\\
+\hspace*{.8cm} else if (src1\_has\_alpha)\\
+\hspace*{1.2cm} \{\\
+\hspace*{1.6cm} *dest\_alpha = 4095UL;\\
+\hspace*{1.2cm} \}\\
+\hspace*{.8cm} else if (src2\_has\_alpha)\\
+\hspace*{1.2cm} \{\\
+\hspace*{1.6cm} *dest\_alpha = 4095UL;\\
+\hspace*{1.2cm} \}\\
+\hspace*{.4cm} \}\\*[.5cm]
+         
+dest\_red++;\\
+dest\_green++;\\
+dest\_blue++;\\
+if (dest\_has\_alpha)\\
+\hspace*{.4cm} dest\_alpha++;\\*[.5cm]
+
+src1\_red++;\\
+src1\_green++;\\
+src1\_blue++;\\
+if (src1\_has\_alpha)\\
+\hspace*{.4cm} src1\_alpha++;\\*[.5cm]
+
+src2\_red++;\\
+src2\_green++;\\
+src2\_blue++;\\
+if (src2\_has\_alpha)\\
+\hspace*{.4cm} src2\_alpha++;
+\end{flushleft} 
+
+\nfoil{Creating dependent code}
+\begin{itemize}
+\item Pixel a(color,alpha,has\_alpha)\\
+\small {\hspace*{.4cm} guint16 *a\_data[4];\\*[-.5cm]
+\hspace*{.4cm} gboolean a\_has\_alpha;\\*[-.5cm]
+\hspace*{.4cm} guint16 *a\_red, *a\_green, *a\_blue, *a\_alpha=NULL;}
+\Large
+\item Channel b;\\
+\small {\hspace*{.4cm} guint16 *b;}
+\Large
+\item PRINT (a);\\
+\small {\hspace*{.4cm} printf (" \%uh", *a\_red);\\*[-.5cm]
+\hspace*{.4cm} printf (" \%uh", *a\_green);\\*[-.5cm]
+\hspace*{.4cm} printf (" \%uh", *a\_blue);\\*[-.5cm]
+\hspace*{.4cm} if (a\_has\_alpha)\\*[-.5cm]
+\hspace*{.8cm} printf (" \%uh", *a\_alpha);}
+\Large
+\item a = b * a;\\
+\small {\hspace*{.4cm} *a\_red = (b * *a\_red)/4095UL;\\*[-.5cm]
+\hspace*{.4cm} *a\_green = (b * *a\_green)/4095UL;\\*[-.5cm]
+\hspace*{.4cm} *a\_blue = (b * *a\_blue)/4095UL;\\*[-.5cm]
+\hspace*{.4cm} if (a\_has\_alpha)\\*[-.5cm]
+\hspace*{.8cm} *a\_alpha = (b * *a\_alpha)/4095UL;}
+\Large
+\item a = EXTERNAL\_VARIBLE (v);\\
+\small {\hspace*{.4cm} *a\_red = v[0].u16\_k;\\*[-.5cm]
+\hspace*{.4cm} *a\_green = v[1].u16\_k;\\*[-.5cm]
+\hspace*{.4cm} *a\_blue = v[2].u16\_k;\\*[-.5cm]
+\hspace*{.4cm} if (d\_has\_alpha)\\*[-.5cm]
+\hspace*{.8cm} *a\_alpha = v[3].u16\_k;} 
+\Large
+\item a = a / 5.0;\\
+\small {\hspace*{.4cm} a\_red = ROUND (*a\_red / 5.0);\\*[-.5cm]
+\hspace*{.4cm} a\_green = ROUND (*a\_green / 5.0);\\*[-.5cm]
+\hspace*{.4cm} a\_blue = ROUND (*a\_blue / 5.0);\\*[-.5cm]
+\hspace*{.4cm} a\_alpha = ROUND (*a\_alpha / 5.0);} 
+\Large
+\item a\_color = CHANNEL\_CLAMP (a\_color + a\_color);\\
+\small {\hspace*{.4cm} *a\_red = CLAMP (*a\_red + *a\_red,0,255);\\*[-.5cm]
+\hspace*{.4cm} *a\_green = CLAMP (*a\_green + *a\_green,0,255);\\*[-.5cm]
+\hspace*{.4cm} *a\_blue = CLAMP (*a\_blue + *a\_blue,0,255);}
+\Large
+\item a\_alpha = WP - ((WP - a\_alpha) * (WP - a\_alpha));\\
+\small {\hspace*{.4cm} *a\_alpha = (*a\_alpha * *a\_alpha) / 255L + ((255L - *a\_alpha) * *a\_alpha) / 255L;}
+\Large 
+\end{itemize}
+
 \nfoil{Implementation detail}
 \begin{itemize}
 \item Written in Flex \& Bison 
 \end{itemize}
 
 \nfoil{Flex}
-\begin{itemize}
-\item State diagram  
-\end{itemize}
+\begin{figure}[tp]
+\centering
+\psfig{file=./file.ps, width=8in}
+\end{figure}
 
 \nfoil{Bison} 
 \begin{itemize}
@@ -273,6 +431,36 @@ DT\_MACROS\_END
 \item Expands Pixel to channels
 \item Converts DT Macros into specific code 
 \end{itemize}
+
+\nfoil{Limitations}
+\begin{itemize}
+\item Channel of different ranges 
+\end{itemize}
+
+\nfoil{More Information}
+\begin{itemize}
+\item Codegen, GIL and GEGL 
+\begin{itemize}
+\small
+\item http://film.gimp.org/geglCodegen.html
+\item http://www.mindspring.com/~calvinw/genericChannelData.html
+\item http://www.mindspring.com/~calvinw/genericImageLanguage.html
+\item http://www.mindspring.com/~calvinw/geglClasses.html
+\end{itemize}
+\item The 16 bit GIMP
+\begin{itemize}
+\small
+\item http://film.gimp.org/
+\end{itemize}
+\item The GIMP's SIGGRAPH meeting
+\begin{itemize}
+\small
+\item http://siggrahp.gimp.org 
+\end{itemize}
+\end{itemize}
+
+\nfoil{Thanks}
+Many thanks to Calvin Williamson, The Gimp community, Rhythm \& Hues, and a special thanks to our sponcers the Free Software Foundation, the Chaos Computer Club, and O'Reilly Germany 
 
 %%End of file label to make numbering work
 \label{'eof'}
