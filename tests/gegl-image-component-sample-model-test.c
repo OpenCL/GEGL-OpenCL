@@ -78,7 +78,7 @@ test_properties(Test* test) {
   g_object_get(object,"width",&width,"height",&height,"num_bands",&num_bands,
 	       "pixel_stride",&pixel_stride,"scanline_stride",
 	       &scanline_stride,"bank_offsets",&bank_offsets,"band_indices",
-	       &band_indices);
+	       &band_indices,NULL);
   ct_test(test,width==64);
   ct_test(test,height==128);
   ct_test(test,pixel_stride == 3);

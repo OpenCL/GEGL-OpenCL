@@ -1,3 +1,8 @@
+2003-12-22 Manish Singh <yosh@gimp.org>
+
+	* tests/gegl-image-component-sample-model-test.c 
+	terminate g_object_get call with NULL.
+
 2003-12-21 Calvin Williamson <calvinw@mindspring.com> 
 
 	Removed the following to make way for new classes in the image directory. 
