@@ -64,6 +64,7 @@ gegl_buffer_double_get_type (void)
     }
   return type;
 }
+
 static void
 class_init (gpointer g_class, gpointer class_data)
 {

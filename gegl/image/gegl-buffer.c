@@ -20,11 +20,22 @@
  */
 
 #include "gegl-buffer.h"
+#include "gegl-cache-entry.h"
 
 #include <stdarg.h>
+#include <string.h>
 
 /* these are needed for the factory method*/
 #include "gegl-buffer-double.h"
+
+
+#define GEGL_TYPE_BUFFER_CACHE_ENTRY               (cache_entry_get_type ())
+#define GEGL_BUFFER_CACHE_ENTRY(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER_CACHE_ENTRY, GeglBufferCacheEntry))
+#define GEGL_BUFFER_CACHE_ENTRY_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_BUFFER_CACHE_ENTRY, GeglBufferCacheEntryClass))
+#define GEGL_IS_BUFFER_CACHE_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_BUFFER_CACHE_ENTRY))
+#define GEGL_IS_BUFFER_CACHE_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_BUFFER_CACHE_ENTRY))
+#define GEGL_BUFFER_CACHE_ENTRY_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BUFFER_CACHE_ENTRY, GeglBufferCacheEntryClass))
+
 enum
 {
   PROP_0,
@@ -33,9 +44,33 @@ enum
   PROP_LAST
 };
 
+typedef struct _GeglBufferCacheEntry GeglBufferCacheEntry;
+struct _GeglBufferCacheEntry {
+  GeglCacheEntry parent;
+  gpointer * banks;
+  gsize num_banks;
+  gsize bank_length;
+};
+typedef struct _GeglBufferCacheEntryClass GeglBufferCacheEntryClass;
+struct _GeglBufferCacheEntryClass {
+  GeglCacheEntryClass parent;
+};
+
+static void cache_entry_class_init (gpointer g_class,
+				    gpointer class_data);
+static void cache_entry_init (GTypeInstance *instance,
+			      gpointer g_class);
+static gsize cache_entry_flattened_size (const GeglCacheEntry * self);
+static void cache_entry_flatten (GeglCacheEntry * self, gpointer buffer, gsize length);
+static void cache_entry_unflatten (GeglCacheEntry* self, gpointer buffer, gsize length);
+static GType cache_entry_get_type (void);
+static GeglBufferCacheEntry * cache_entry_new (GeglBuffer* buffer);
+
+static void finalize (GObject * object);
 static void class_init (GeglBufferClass * klass);
 static void init (GeglBuffer * self, GeglBufferClass * klass);
 static void finalize (GObject * gobject);
+static void dispose (GObject * gobject);
 static GObject *constructor (GType type, guint n_props,
 			     GObjectConstructParam * props);
 static void get_property (GObject * gobject, guint prop_id, GValue * value,
@@ -43,8 +78,8 @@ static void get_property (GObject * gobject, guint prop_id, GValue * value,
 static void set_property (GObject * gobject, guint prop_id,
 			  const GValue * value, GParamSpec * pspec);
 
-static void alloc_banks (GeglBuffer * self);
-static void free_banks (GeglBuffer * self);
+static gpointer *alloc_banks (gsize num_banks, gsize bank_length);
+static void free_banks (gpointer* banks, gsize num_banks, gsize bank_length);
 
 static gpointer parent_class = NULL;
 
@@ -73,6 +108,108 @@ gegl_buffer_get_type (void)
 				     &typeInfo, G_TYPE_FLAG_ABSTRACT);
     }
   return type;
+}
+
+static GType
+cache_entry_get_type (void)
+{
+  static GType type = 0;
+  if (!type)
+    {
+      static const GTypeInfo typeInfo = {
+	/* interface types, classed types, instantiated types */
+	sizeof (GeglBufferCacheEntryClass),
+	NULL,			/* base_init */
+	NULL,			/* base_finalize */
+
+	/* classed types, instantiated types */
+	cache_entry_class_init,		/* class_init */
+	NULL,			/* class_finalize */
+	NULL,			/* class_data */
+
+	/* instantiated types */
+	sizeof (GeglBufferCacheEntry),
+	0,			/* n_preallocs */
+	cache_entry_init,		/* instance_init */
+
+	/* value handling */
+	NULL			/* value_table */
+      };
+
+      type = g_type_register_static (GEGL_TYPE_CACHE_ENTRY,
+				     "GeglBufferCacheEntry", &typeInfo, 0);
+    }
+  return type;
+}
+
+static void
+cache_entry_class_init (gpointer g_class,
+			gpointer class_data)
+{
+  GeglCacheEntryClass *cache_entry_class= GEGL_CACHE_ENTRY_CLASS(g_class);
+  
+  cache_entry_class->flattened_size=cache_entry_flattened_size;
+  cache_entry_class->flatten=cache_entry_flatten;
+  cache_entry_class->unflatten=cache_entry_unflatten;
+  
+}
+
+static void
+cache_entry_init (GTypeInstance *instance,
+		  gpointer g_class)
+{
+  GeglBufferCacheEntry * self = GEGL_BUFFER_CACHE_ENTRY(instance);
+  GeglCacheEntry * entry = GEGL_CACHE_ENTRY(instance);
+  entry->hash_code=0;
+  entry->entry_id=0;
+  self->banks=NULL;
+  self->num_banks=0;
+  self->bank_length=0;
+}
+
+static gsize
+cache_entry_flattened_size (const GeglCacheEntry * entry) {
+  GeglBufferCacheEntry * self = GEGL_BUFFER_CACHE_ENTRY(entry);
+  return (self->num_banks) * (self->bank_length);
+}
+static void
+cache_entry_flatten (GeglCacheEntry * entry, gpointer buffer, gsize length) {
+  GeglBufferCacheEntry * self = GEGL_BUFFER_CACHE_ENTRY(entry);
+  g_return_if_fail(length >= cache_entry_flattened_size(entry));
+  g_return_if_fail(self->banks == NULL);
+  gsize i;
+  for (i=0;i<(self->num_banks);i++) {
+    memcpy(buffer,self->banks[i],self->bank_length);
+    buffer+=self->bank_length;
+  }
+  free_banks(self->banks,self->num_banks,self->bank_length);
+  self->banks=NULL;
+  
+}
+static void
+cache_entry_unflatten (GeglCacheEntry * entry, gpointer buffer, gsize length) {
+  g_return_if_fail(length >= cache_entry_flattened_size(entry));
+  GeglBufferCacheEntry * self = GEGL_BUFFER_CACHE_ENTRY(entry);
+  gsize i;
+  if (self->banks != NULL) {
+    free_banks(self->banks,self->num_banks,self->bank_length);
+  }
+  self->banks=alloc_banks(self->num_banks,self->bank_length);
+  for (i=0;i<(self->num_banks);i++) {
+    memcpy(self->banks[i],buffer,self->bank_length);
+    buffer+=self->bank_length;
+  }
+}
+
+static GeglBufferCacheEntry *
+cache_entry_new (GeglBuffer* buffer) {
+  GeglBufferCacheEntry * entry = g_object_new(GEGL_TYPE_BUFFER_CACHE_ENTRY,NULL);
+  GeglCacheEntry * cache_entry = GEGL_CACHE_ENTRY(cache_entry);
+  entry->banks=buffer->banks;
+  entry->num_banks=buffer->num_banks;
+  entry->bank_length=(buffer->elements_per_bank)*(buffer->bytes_per_element);
+  cache_entry->hash_code=GPOINTER_TO_INT(buffer);
+  return entry;
 }
 
 static void
@@ -115,6 +252,10 @@ init (GeglBuffer * self, GeglBufferClass * klass)
   self->banks = NULL;
   self->elements_per_bank = 0;
   self->num_banks = 0;
+  self->unique_id=0;
+  self->lock_count=0;
+  self->share_count=0;
+  self->cache=NULL;
 }
 
 static void
@@ -122,7 +263,7 @@ finalize (GObject * gobject)
 {
   GeglBuffer *self = GEGL_BUFFER (gobject);
 
-  free_banks (self);
+  free_banks (self->banks,self->num_banks,(self->bytes_per_element)*(self->elements_per_bank));
 
   G_OBJECT_CLASS (parent_class)->finalize (gobject);
 }
@@ -134,7 +275,7 @@ constructor (GType type, guint n_props, GObjectConstructParam * props)
     G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
   GeglBuffer *self = GEGL_BUFFER (gobject);
 
-  alloc_banks (self);
+  self->banks=alloc_banks (self->num_banks,(self->bytes_per_element)*(self->elements_per_bank));
 
   return gobject;
 }
@@ -179,35 +320,33 @@ get_property (GObject * gobject,
     }
 }
 
-static void
-alloc_banks (GeglBuffer * self)
+static gpointer *
+alloc_banks (gsize num_banks, gsize bank_length)
 {
   gpointer *banks = NULL;
   gint i;
 
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_BUFFER (self));
-  g_return_if_fail (self->bytes_per_element != 0);
+  g_return_val_if_fail (num_banks > 0, NULL);
+  g_return_val_if_fail (bank_length > 0, NULL);
 
-  banks = g_new (gpointer, self->num_banks);
+  banks = g_new (gpointer, num_banks);
 
-  for (i = 0; i < self->num_banks; i++)
+  for (i = 0; i < num_banks; i++)
     {
       banks[i] =
-	g_malloc ((self->elements_per_bank) * (self->bytes_per_element));
+	g_malloc (bank_length);
     }
-  self->banks = banks;
+  return banks;
 }
 
 static void
-free_banks (GeglBuffer * self)
+free_banks (gpointer* banks, gsize num_banks, gsize bank_length)
 {
   gint i;
-  for (i = 0; i < self->num_banks; i++)
-    g_free (self->banks[i]);
+  for (i = 0; i < num_banks; i++)
+    g_free (banks[i]);
 
-  g_free (self->banks);
-  self->banks = NULL;
+  g_free (banks);
 }
 
 
@@ -311,4 +450,59 @@ gegl_buffer_create (TransferType type, const gchar * first_property_name, ...)
     }
   va_end (args);
   return buff;
+}
+
+
+void
+gegl_buffer_acquire (GeglBuffer * self)
+{
+  /* FIXME: Implement this */
+}
+
+void
+gegl_buffer_release (GeglBuffer * self)
+{
+  /* FIXME: Implement this */
+}
+
+GeglBuffer *
+gegl_buffer_unshare (const GeglBuffer * source)
+{
+  return NULL;
+}
+
+gboolean
+gegl_buffer_is_finalized(const GeglBuffer * source)
+{
+  /* FIXME: Implement this */
+  return FALSE;
+}
+
+void
+gegl_buffer_lock(GeglBuffer* self)
+{
+  /* FIXME: Implement this */
+}
+
+void
+gegl_buffer_unlock(GeglBuffer* self, gboolean is_dirty)
+{
+}
+
+void
+gegl_buffer_attach(GeglBuffer * self, GeglCache * cache)
+{
+  /* FIXME: Implement this */
+}
+
+void
+gegl_buffer_detach(GeglBuffer * self)
+{
+}
+
+gsize
+gegl_buffer_get_unique_id (const GeglBuffer* self)
+{
+  /* FIXME: Implement this */
+  return 0;
 }

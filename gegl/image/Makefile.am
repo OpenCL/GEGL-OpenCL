@@ -22,18 +22,19 @@
 noinst_LTLIBRARIES = libimage.la
 
 IMAGE_SRC = \
-  gegl-buffer.c \
-  gegl-buffer-double.c \
-  gegl-normalizer.c \
-  gegl-normalizer-mult.c \
-  gegl-sample-model.c \
-  gegl-component-sample-model.c \
-  gegl-object.c \
-  gegl-utils.c \
-  gegl-init.c
+	gegl-buffer.c \
+	gegl-buffer-double.c \
+	gegl-cache-entry.c \
+	gegl-normalizer.c \
+	gegl-normalizer-mult.c \
+	gegl-sample-model.c \
+	gegl-component-sample-model.c \
+	gegl-object.c \
+	gegl-utils.c \
+	gegl-init.c
 
 libimage_la_SOURCES = \
-  $(IMAGE_SRC)
+	$(IMAGE_SRC)
 
 INCLUDES = \
 	-I$(top_srcdir)	\
