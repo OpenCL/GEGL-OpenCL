@@ -2,14 +2,18 @@
 GeglAtop
 
 <!-- ##### SECTION Short_Description ##### -->
-Composite B atop A
+Composite foreground atop background
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This composites B atop A.
+This composites foreground (f,fa) atop background (b,ba). The part of the
+foreground lying inside of the background is composited onto the background.
 </para>
 <para>
-(1-alphaB) * A + alphaA * B
+<literallayout>
+c  = f*ba + b*(1-fa)
+ca = ba 
+</literallayout>
 </para>
 
 <!-- ##### SECTION See_Also ##### -->

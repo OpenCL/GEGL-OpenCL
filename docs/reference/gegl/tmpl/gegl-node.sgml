@@ -261,11 +261,6 @@ its second input (input 1).
 @visitor: 
 
 
-<!-- ##### ARG GeglNode:input ##### -->
-<para>
-
-</para>
-
 <!-- ##### ARG GeglNode:num-inputs ##### -->
 <para>
 

@@ -64,17 +64,19 @@ class_init (GeglMockPointOpClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  g_object_class_install_property(gobject_class, PROP_INPUT_IMAGE_A, 
-            gegl_param_spec_image("input-image-a", 
-                                  "InputImageA",
-                                  "Input Image A",
-                                   G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class, PROP_INPUT_IMAGE_A,
+               g_param_spec_object ("input-image-a",
+                                    "InputImageA",
+                                    "The input image a",
+                                     GEGL_TYPE_OP,
+                                     G_PARAM_WRITABLE));
 
-  g_object_class_install_property(gobject_class, PROP_INPUT_IMAGE_B, 
-            gegl_param_spec_image("input-image-b", 
-                                  "InputImageB",
-                                  "Input Image B",
-                                   G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class, PROP_INPUT_IMAGE_B,
+               g_param_spec_object ("input-image-b",
+                                    "InputImageB",
+                                    "The input image b",
+                                     GEGL_TYPE_OP,
+                                     G_PARAM_WRITABLE));
 }
 
 static void 
@@ -105,8 +107,21 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
+  GeglMockPointOp *self = GEGL_MOCK_POINT_OP(gobject);
   switch (prop_id)
   {
+    case PROP_INPUT_IMAGE_A:
+      {
+        GeglNode *input = (GeglNode*)g_value_get_object(value);
+        gegl_node_set_source(GEGL_NODE(self), input, 0);  
+      }
+      break;
+    case PROP_INPUT_IMAGE_B:
+      {
+        GeglNode *input = (GeglNode*)g_value_get_object(value);
+        gegl_node_set_source(GEGL_NODE(self), input, 1);  
+      }
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;

@@ -48,6 +48,7 @@
 #include <gegl-multiply.h>
 #include <gegl-no-input.h>
 #include <gegl-node.h>
+#include <gegl-normal.h>
 #include <gegl-object.h>
 #include <gegl-op.h>
 #include <gegl-outside.h>

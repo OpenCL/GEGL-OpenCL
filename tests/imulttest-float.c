@@ -48,8 +48,8 @@ test_i_mult_properties(Test *test)
 {
   {
     GeglOp * i_mult = g_object_new (GEGL_TYPE_I_MULT, 
-                                   "input", 0, source0,
-                                   "input", 1, source1,
+                                   "input-image-a", source0,
+                                   "input-image-b", source1,
                                    NULL);  
 
     ct_test(test, source0 == (GeglOp*)gegl_node_get_source(GEGL_NODE(i_mult), 0));
@@ -69,8 +69,8 @@ test_i_mult_apply(Test *test)
     */
 
     GeglOp * i_mult = g_object_new (GEGL_TYPE_I_MULT, 
-                                   "input", 0, source0,
-                                   "input", 1, source1,
+                                   "input-image-a", source0,
+                                   "input-image-b", source1,
                                    NULL);  
 
     gegl_op_apply(i_mult); 
@@ -105,9 +105,9 @@ i_mult_test_teardown(Test *test)
 }
 
 Test *
-create_i_mult_test_rgb_float()
+create_i_mult_test_float()
 {
-  Test* t = ct_create("GeglIMultTestRgbFloat");
+  Test* t = ct_create("GeglIMultTestFloat");
 
   g_assert(ct_addSetUp(t, i_mult_test_setup));
   g_assert(ct_addTearDown(t, i_mult_test_teardown));

@@ -6,7 +6,14 @@ Difference blend mode
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+Subtracts the darker of the two constituent colors from the lighter. Painting
+with white inverts the destination color. Painting with black produces no
+change.
+<literallayout>
+c = ABS(b*fa - b*ba) + f*(1-ba) + b*(1-fa) 
+  = f + b - 2*MIN(f*ba,b*fa)
+ca = fa + ba - fa*ba
+</literallayout>
 </para>
 
 <!-- ##### SECTION See_Also ##### -->

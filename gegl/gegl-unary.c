@@ -14,6 +14,7 @@
 enum
 {
   PROP_0, 
+  PROP_INPUT_IMAGE,
   PROP_LAST 
 };
 
@@ -75,6 +76,14 @@ class_init (GeglUnaryClass * klass)
   image_op_class->compute_color_model = compute_color_model;
 
   klass->get_scanline_func = NULL;
+
+  g_object_class_install_property (gobject_class, PROP_INPUT_IMAGE,
+               g_param_spec_object ("input-image",
+                                    "InputImage",
+                                    "The input image",
+                                     GEGL_TYPE_OP,
+                                     G_PARAM_CONSTRUCT_ONLY | 
+                                     G_PARAM_WRITABLE));
 }
 
 static void 
@@ -103,9 +112,18 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
+  GeglUnary *unary = GEGL_UNARY (gobject);
   switch (prop_id)
   {
+    case PROP_INPUT_IMAGE:
+      {
+        GeglNode *input = (GeglNode*)g_value_get_object(value);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(unary), "input-image");
+        gegl_node_set_source(GEGL_NODE(unary), input, index);  
+      }
+      break;
     default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
   }
 }

@@ -59,8 +59,8 @@ test_node_g_object_new(Test *test)
 
     A = g_object_new (GEGL_TYPE_MOCK_NODE, 
                       "num_inputs", 2,
-                      "input", 0, B, 
-                      "input", 1, C, 
+                      "input-0", B, 
+                      "input-1", C, 
                       NULL);  
 
     ct_test(test, 0 == gegl_node_get_num_outputs(A)); 
@@ -94,7 +94,7 @@ test_node_g_object_new(Test *test)
     GeglNode *source0 = g_object_new(GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);
     GeglNode * node = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                     "num_inputs", 1,
-                                    "input", 0, source0, 
+                                    "input-0", source0, 
                                     NULL);  
 
     g_object_unref(source0);
@@ -171,8 +171,8 @@ test_node_g_object_set(Test *test)
     GeglNode * node = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 2, NULL);  
 
     g_object_set(node, 
-                 "input", 0, source0, 
-                 "input", 1, source1, 
+                 "input-0", source0, 
+                 "input-1", source1, 
                  NULL);
 
     ct_test(test, source0 == gegl_node_get_source(node, 0)); 
@@ -357,7 +357,7 @@ test_node_unlink(Test *test)
                        NULL);  
     n1 = g_object_new (GEGL_TYPE_MOCK_NODE, 
                        "num_inputs", 1, 
-                       "input", 0, n0, 
+                       "input-0", n0, 
                        NULL);  
 
     ct_test(test, 1 == gegl_node_get_num_sinks(n0)); 
@@ -391,11 +391,11 @@ test_node_unlink(Test *test)
     n1 = g_object_new (GEGL_TYPE_MOCK_NODE, 
                        "num_outputs", 1, 
                        "num_inputs", 1, 
-                       "input", 0, n0, 
+                       "input-0", n0, 
                        NULL);  
     n2 = g_object_new (GEGL_TYPE_MOCK_NODE, 
                        "num_inputs", 1, 
-                       "input", 0, n1, 
+                       "input-0", n1, 
                        NULL);  
 
     ct_test(test, 1 == gegl_node_get_num_sinks(n0)); 
@@ -438,11 +438,11 @@ test_node_remove_sources(Test *test)
     n1 = g_object_new (GEGL_TYPE_MOCK_NODE, 
                        "num_outputs", 1, 
                        "num_inputs", 1, 
-                       "input", 0, n0, 
+                       "input-0", n0, 
                        NULL);  
     n2 = g_object_new (GEGL_TYPE_MOCK_NODE, 
                        "num_inputs", 1, 
-                       "input", 0, n1, 
+                       "input-0", n1, 
                        NULL);  
 
     ct_test(test, 1 == gegl_node_get_num_sinks(n0)); 
@@ -483,11 +483,11 @@ test_node_remove_sinks(Test *test)
     n1 = g_object_new (GEGL_TYPE_MOCK_NODE, 
                        "num_outputs", 1, 
                        "num_inputs", 1, 
-                       "input", 0, n0, 
+                       "input-0", n0, 
                        NULL);  
     n2 = g_object_new (GEGL_TYPE_MOCK_NODE, 
                        "num_inputs", 1, 
-                       "input", 0, n1, 
+                       "input-0", n1, 
                        NULL);  
 
     ct_test(test, 1 == gegl_node_get_num_sinks(n0)); 
@@ -528,13 +528,13 @@ node_setup(Test *test)
 
   node2 = g_object_new (GEGL_TYPE_MOCK_NODE, 
                         "num_inputs", 2,
-                        "input", 0, node0,
-                        "input", 1, node1, 
+                        "input-0", node0,
+                        "input-1", node1, 
                         NULL);  
 
   node3 = g_object_new (GEGL_TYPE_MOCK_NODE, 
                         "num_inputs", 1,
-                        "input", 0, node0,
+                        "input-0", node0,
                         NULL);  
 }
 

@@ -5,13 +5,13 @@
 #include "testutils.h"
 #include <string.h>
 
-#define ADD0  40 
-#define ADD1  60 
-#define ADD2  80 
+#define ADD0 .5
+#define ADD1 .6
+#define ADD2 .7
 
-#define R0 80
-#define G0 160
-#define B0 240
+#define R0 .1 
+#define G0 .2
+#define B0 .3 
 
 #define IMAGE_OP_WIDTH 1 
 #define IMAGE_OP_HEIGHT 1 
@@ -38,7 +38,7 @@ test_add_g_object_properties(Test *test)
 {
   {
     GeglAdd * add = g_object_new (GEGL_TYPE_ADD, 
-                                  "input", 0, source,
+                                  "input-image", source,
                                   NULL);  
 
     ct_test(test, 2 == gegl_node_get_num_inputs(GEGL_NODE(add)));
@@ -48,17 +48,23 @@ test_add_g_object_properties(Test *test)
   }
 
   {
-    guint8 add0, add1, add2;
+    gfloat add0, add1, add2;
     GeglAdd * add = g_object_new (GEGL_TYPE_ADD, 
-                                  "input", 0, source,
-                                  "constant-rgb-uint8", ADD0, ADD1, ADD2,
+                                  "input-image", source,
+                                  "constant-rgb-float", ADD0, ADD1, ADD2,
                                   NULL);  
 
-    g_object_get(add, "constant-rgb-uint8", &add0, &add1, &add2, NULL);
+    g_object_get(add, "constant-rgb-float", &add0, &add1, &add2, NULL);
 
-    ct_test(test, ADD0 == add0); 
-    ct_test(test, ADD1 == add1); 
-    ct_test(test, ADD2 == add2); 
+    ct_test(test, GEGL_FLOAT_EQUAL(ADD0, add0)); 
+    ct_test(test, GEGL_FLOAT_EQUAL(ADD1, add1)); 
+    ct_test(test, GEGL_FLOAT_EQUAL(ADD2, add2)); 
+
+    {
+      guint8 add0, add1, add2;
+      g_object_get(add, "constant-rgb-uint8", &add0, &add1, &add2, NULL);
+      ct_test(test, 128 == add0); 
+    }
 
     g_object_unref(add);
   }
@@ -68,45 +74,35 @@ static void
 test_add_apply(Test *test)
 {
   {
-    guint8 r, g, b;
     GeglOp *add = g_object_new(GEGL_TYPE_ADD,
-                               "input", 0, source,
-                               "constant-rgb-uint8", ADD0, ADD1, ADD2,
+                               "input-image", source,
+                               "constant-rgb-float", ADD0, ADD1, ADD2,
                                NULL);
 
     gegl_op_apply(add); 
-
-    r = CLAMP(R0 + ADD0, 0, 255);
-    g = CLAMP(G0 + ADD1, 0, 255);
-    b = CLAMP(B0 + ADD2, 0, 255);
-
-    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(add), r, g, b)); 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(add), 
+                                            R0 + ADD0, 
+                                            G0 + ADD1, 
+                                            B0 + ADD2));  
     g_object_unref(add);
   }
 
   {
-    gint r, g, b;
     GeglOp *add1 = g_object_new(GEGL_TYPE_ADD,
-                                 "input", 0, source,
-                                 "constant-rgb-uint8", ADD0, ADD1, ADD2,
-                                 NULL);
+                                "input-image", source,
+                                "constant-rgb-float", ADD0, ADD1, ADD2,
+                                NULL);
 
     GeglOp *add2 = g_object_new(GEGL_TYPE_ADD,
-                                 "input", 0, add1,
-                                 "constant-rgb-uint8", ADD0, ADD1, ADD2,
-                                 NULL);
+                                "input-image", add1,
+                                "constant-rgb-float", ADD0, ADD1, ADD2,
+                                NULL);
 
     gegl_op_apply(add2); 
-
-    r = CLAMP(R0 + ADD0, 0, 255);
-    g = CLAMP(G0 + ADD1, 0, 255);
-    b = CLAMP(B0 + ADD2, 0, 255);
-
-    r = CLAMP(r + ADD0, 0, 255);
-    g = CLAMP(g + ADD1, 0, 255);
-    b = CLAMP(b + ADD2, 0, 255);
-
-    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(add2), r, g, b)); 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(add2), 
+                                            R0 + ADD0 + ADD0, 
+                                            G0 + ADD1 + ADD1, 
+                                            B0 + ADD2 + ADD2));  
 
     g_object_unref(add1);
     g_object_unref(add2);
@@ -119,7 +115,7 @@ add_test_setup(Test *test)
   source = g_object_new(GEGL_TYPE_COLOR, 
                         "width", IMAGE_OP_WIDTH, 
                         "height", IMAGE_OP_HEIGHT, 
-                        "pixel-rgb-uint8", R0, G0, B0, 
+                        "pixel-rgb-float", R0, G0, B0, 
                         NULL); 
 }
 
@@ -129,10 +125,11 @@ add_test_teardown(Test *test)
   g_object_unref(source);
 }
 
+
 Test *
-create_add_test_rgb_uint8()
+create_add_test_float()
 {
-  Test* t = ct_create("GeglAddTestRgbUint8");
+  Test* t = ct_create("GeglAddPixelFloat");
 
   g_assert(ct_addSetUp(t, add_test_setup));
   g_assert(ct_addTearDown(t, add_test_teardown));

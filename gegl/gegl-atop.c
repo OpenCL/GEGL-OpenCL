@@ -146,9 +146,10 @@ fg_atop_bg_float (GeglFilter * filter,
                 while(width--)                                                        
                   {                                                                   
                     a = 1.0 - *fa++;                                              
-                    *d0++ = a * *b0++ + *f0++;
-                    *d1++ = a * *b1++ + *f1++;
-                    *d2++ = a * *b2++ + *f2++;
+
+                    *d0++ = *f0++ + *b0++ * a;
+                    *d1++ = *f1++ + *b1++ * a;
+                    *d2++ = *f2++ + *b2++ * a;
                     *da++ = 1.0; 
                   }
                 break;
@@ -156,8 +157,8 @@ fg_atop_bg_float (GeglFilter * filter,
                 while(width--)                                                        
                   {                                                                   
                     a = 1.0 - *fa++;                                              
-                    *d0++ = a * *b0++ + *f0++;
-                    *d1++ = a * *b1++ + *f1++;
+                    *d0++ = *f0++ + *b0++ * a;
+                    *d1++ = *f1++ + *b1++ * a;
                     *da++ = 1.0; 
                   }
                 break;
@@ -165,7 +166,7 @@ fg_atop_bg_float (GeglFilter * filter,
                 while(width--)                                                        
                   {                                                                   
                     a = 1.0 - *fa++;                                              
-                    *d0++ = a * *b0++ + *f0++;
+                    *d0++ = *f0++ + *b0++ * a;
                     *da++ = 1.0; 
                   }
                break;
@@ -181,9 +182,9 @@ fg_atop_bg_float (GeglFilter * filter,
                   while(width--)                                                        
                     {                                                                   
                       b = *ba++;                                              
-                      *d0++ = b * *f0++;
-                      *d1++ = b * *f1++;
-                      *d2++ = b * *f2++;
+                      *d0++ = *f0++ * b;
+                      *d1++ = *f1++ * b;
+                      *d2++ = *f2++ * b;
                       *da++ = b; 
                     }
                   break;
@@ -191,8 +192,8 @@ fg_atop_bg_float (GeglFilter * filter,
                   while(width--)                                                        
                     {                                                                   
                       b = *ba++;                                              
-                      *d0++ = b * *f0++;
-                      *d1++ = b * *f1++;
+                      *d0++ = *f0++ * b;
+                      *d1++ = *f1++ * b;
                       *da++ = b; 
                     }
                   break;
@@ -200,7 +201,7 @@ fg_atop_bg_float (GeglFilter * filter,
                   while(width--)                                                        
                     {                                                                   
                       b = *ba++;                                              
-                      *d0++ = b * *f0++;
+                      *d0++ = *f0++ * b;
                       *da++ = b; 
                     }
                   break;
@@ -209,6 +210,15 @@ fg_atop_bg_float (GeglFilter * filter,
         break;
       case GEGL_FG_BG_ALPHA:
           {
+            /* 
+               Atop:
+               foreground (f,fa) 
+               background (b,ba) 
+               result (c,ca)
+
+               c = f*ba + b*(1-fa)
+               ca = ba 
+            */
             gfloat a;                                              
             gfloat b;                                              
             switch(d_color_chans)
@@ -218,9 +228,10 @@ fg_atop_bg_float (GeglFilter * filter,
                     {                                                                   
                       a = 1.0 - *fa++;                                              
                       b = *ba++;                                              
-                      *d0++ = a * *b0++ + b * *f0++;
-                      *d1++ = a * *b1++ + b * *f1++;
-                      *d2++ = a * *b2++ + b * *f2++;
+
+                      *d0++ = *f0++ * b + *b0++ * a;
+                      *d1++ = *f1++ * b + *b1++ * a;
+                      *d2++ = *f2++ * b + *b2++ * a;
                       *da++ = b; 
                     }
                   break;
@@ -229,8 +240,9 @@ fg_atop_bg_float (GeglFilter * filter,
                     {                                                                   
                       a = 1.0 - *fa++;                                              
                       b = *ba++;                                              
-                      *d0++ = a * *b0++ + b * *f0++;
-                      *d1++ = a * *b1++ + b * *f1++;
+
+                      *d0++ = *f0++ * b + *b0++ * a;
+                      *d1++ = *f1++ * b + *b1++ * a;
                       *da++ = b; 
                     }
                   break;
@@ -239,7 +251,8 @@ fg_atop_bg_float (GeglFilter * filter,
                     {                                                                   
                       a = 1.0 - *fa++;                                              
                       b = *ba++;                                              
-                      *d0++ = a * *b0++ + b * *f0++;
+
+                      *d0++ = *f0++ * b + *b0++ * a;
                       *da++ = b; 
                     }
                   break;

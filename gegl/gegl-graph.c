@@ -1,6 +1,8 @@
 #include "gegl-graph.h"
 #include "gegl-node.h"
 #include "gegl-visitor.h"
+#include "gegl-input-value-types.h"
+#include "gegl-input-param-specs.h"
 #include "gegl-graph-setup-visitor.h"
 #include "gegl-utils.h"
 
@@ -8,6 +10,7 @@ enum
 {
   PROP_0, 
   PROP_ROOT, 
+  PROP_INPUT,
   PROP_LAST 
 };
 
@@ -76,6 +79,13 @@ class_init (GeglGraphClass * klass)
                                                         "Root node for this graph",
                                                          GEGL_TYPE_NODE,
                                                          G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class, PROP_INPUT,
+                                   gegl_param_spec_input ("input",
+                                                          "Input",
+                                                          "Input for graph",
+                                                          G_PARAM_WRITABLE));
+
 }
 
 static void 
@@ -83,19 +93,6 @@ init (GeglGraph * self,
       GeglGraphClass * klass)
 {
   self->root = NULL;
-}
-
-static void
-root_changed(GeglGraph * self)
-{
-  gegl_op_free_output_data_list(GEGL_OP(self));
-  gegl_op_free_input_data_list(GEGL_OP(self));
-
-  if(self->root)
-    {
-      reset_inputs(self);
-      reset_outputs(self);
-    }
 }
 
 static void
@@ -112,31 +109,23 @@ finalize(GObject *gobject)
 }
 
 static void
-free_list(GeglGraph *self,
-          GList *list)
-{
-  GList *llink = list;
-  while(llink)
-    {
-      gpointer data = llink->data;
-      g_free(data);
-      llink = g_list_next(llink);
-    }
-
-  g_list_free(list);
-}
-
-static void
 set_property (GObject      *gobject,
               guint         prop_id,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglGraph * graph = GEGL_GRAPH(gobject);
+  GeglGraph * self = GEGL_GRAPH(gobject);
   switch (prop_id)
   {
     case PROP_ROOT:
-        gegl_graph_set_root(graph, (GeglNode*)g_value_get_object(value));  
+        gegl_graph_set_root(self, (GeglNode*)g_value_get_object(value));  
+      break;
+    case PROP_INPUT:
+      {
+        gint n;
+        GeglNode *source = g_value_get_input(value, &n); 
+        gegl_node_set_source(GEGL_NODE(self), source, n);  
+      }
       break;
     default:
       break;
@@ -149,15 +138,43 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglGraph * graph = GEGL_GRAPH(gobject);
+  GeglGraph * self = GEGL_GRAPH(gobject);
   switch (prop_id)
   {
     case PROP_ROOT:
-      g_value_set_object(value, (GObject*)gegl_graph_get_root(graph));  
+      g_value_set_object(value, (GObject*)gegl_graph_get_root(self));  
       break;
     default:
       break;
   }
+}
+
+static void
+root_changed(GeglGraph * self)
+{
+  gegl_op_free_output_data_list(GEGL_OP(self));
+  gegl_op_free_input_data_list(GEGL_OP(self));
+
+  if(self->root)
+    {
+      reset_inputs(self);
+      reset_outputs(self);
+    }
+}
+
+static void
+free_list(GeglGraph *self,
+          GList *list)
+{
+  GList *llink = list;
+  while(llink)
+    {
+      gpointer data = llink->data;
+      g_free(data);
+      llink = g_list_next(llink);
+    }
+
+  g_list_free(list);
 }
 
 /**

@@ -45,8 +45,8 @@ EXTRA_SRC = \
 testgegl_SOURCES = \
    $(MOCK_OBJECT_SRC) \
    $(EXTRA_SRC) \
-   addtest-rgb-float.c \
-   addtest-rgb-uint8.c \
+   addtest-float.c \
+   addtest-uint8.c \
    bfsvisitortest.c \
    buffertest.c \
    channelfloatvaluetest.c \
@@ -56,30 +56,31 @@ testgegl_SOURCES = \
    checkoptest.c \
    colormodeltest.c \
    colorspacetest.c \
-   colortest-rgb-float.c \
-   colortest-rgb-uint8.c \
-   copytest-rgb-float.c \
-   copytest-rgb-uint8.c \
+   colortest-float.c \
+   colortest-uint8.c \
+   copytest-float.c \
+   copytest-uint8.c \
    dfsvisitortest.c \
    dumpvisitortest.c \
-   fadetest-rgb-float.c \
-   fadetest-rgb-uint8.c \
-   graphapplytest-rgb-float.c \
+   fadetest-float.c \
+   fadetest-uint8.c \
+   graphapplytest-float.c \
    graphnodetest.c \
    haverecttest.c \
-   iaddtest-rgb-float.c \
-   iaddtest-rgb-uint8.c \
-   imulttest-rgb-float.c \
-   imulttest-rgb-uint8.c \
+   iaddtest-float.c \
+   iaddtest-uint8.c \
+   imulttest-float.c \
+   imulttest-uint8.c \
    imageiteratortest.c \
    imageoptest.c \
    imagetest.c \
    mockpropertiesfiltertest.c \
-   multiplytest-rgb-float.c \
-   multtest-rgb-float.c \
-   multtest-rgb-uint8.c \
+   multiplytest-float.c \
+   multtest-float.c \
+   multtest-uint8.c \
    needrecttest.c \
    nodetest.c \
+   normaltest-float.c \
    objecttest.c \
    optest.c \
    pipetest.c \
@@ -88,7 +89,7 @@ testgegl_SOURCES = \
    pixelrgbuint8valuetest.c \
    pointoptest.c \
    printtest.c \
-   simpletreetest-rgb-float.c \
+   simpletreetest-float.c \
    storagetest.c \
    testgegl.c \
    testutils.c \

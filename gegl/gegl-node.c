@@ -1,13 +1,10 @@
 #include "gegl-node.h"
 #include "gegl-visitor.h"
-#include "gegl-input-value-types.h"
-#include "gegl-input-param-specs.h"
 #include <stdio.h>
 
 enum
 {
   PROP_0, 
-  PROP_INPUT,
   PROP_NUM_INPUTS,
   PROP_NUM_OUTPUTS,
   PROP_LAST 
@@ -67,12 +64,6 @@ class_init (GeglNodeClass * klass)
 
   klass->accept = accept;
 
-  g_object_class_install_property (gobject_class, PROP_INPUT,
-                                   gegl_param_spec_input ("input",
-                                                          "Input",
-                                                          "Input for node",
-                                                          G_PARAM_WRITABLE));
-
   g_object_class_install_property (gobject_class, PROP_NUM_INPUTS,
                                    g_param_spec_int ("num_inputs",
                                                       "NumInputs",
@@ -127,13 +118,6 @@ set_property (GObject      *gobject,
 
   switch (prop_id)
   {
-    case PROP_INPUT:
-      {
-        gint n;
-        GeglNode *source = g_value_get_input(value, &n); 
-        gegl_node_set_source(node, source, n);  
-      }
-      break;
     case PROP_NUM_INPUTS:
       gegl_node_set_num_inputs(node, g_value_get_int(value));  
       break;

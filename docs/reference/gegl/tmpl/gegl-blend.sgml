@@ -2,29 +2,28 @@
 GeglBlend
 
 <!-- ##### SECTION Short_Description ##### -->
-Abstract class that represents common blend modes.
+Abstract class that represents blend modes.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This is the abstract class that represents GeglImageOps with two image data
-inputs, A, and B, combined in common blend modes. This class has a
-<literal>opacity</literal> property which is used as multiplier that can be
-applied to the second input (B).
+This is the abstract class that represents a foreground and background
+image combined in a blend mode. This class has an <literal>opacity</literal>
+property which is used as multiplier for the alpha channel of the foreground.
 </para>
 
 <para>
 Blend modes are described by the following formula for the case of 
-premultiplied images (A,aA), (B,aB), with result (C,aC).
+premultiplied images (f,fa), (b,ba), with result (c,ca).
 </para>
 
 <literallayout>
-C = (1-aB)*A + (1-aA)*B + aA*aB* Blend(A/aA, B/aB)
-alphaC = aA + aB - aA*aB
+c = (1-fa)*b + (1-ba)*f + fa*ba*blend(f/fa, b/ba)
+ca = fa + ba - fa*ba
 </literallayout>
 
 <para>
-Different blend modes define the function Blend differently. 
-For example Multiply defines Blend(x,y) = x*y.
+Different blend modes define the function blend differently. 
+For example the Multiply mode defines blend(x,y) = x*y.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->

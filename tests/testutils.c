@@ -14,6 +14,16 @@ testutils_check_pixel_rgb_float(GeglImageOp *image_op,
 }
 
 gboolean
+testutils_check_pixel_rgba_float(GeglImageOp *image_op, 
+                           gfloat a, 
+                           gfloat b, 
+                           gfloat c,
+                           gfloat d)
+{
+  return testutils_check_pixel_rgba_float_xy(image_op, 0, 0, a, b, c, d);
+}
+
+gboolean
 testutils_check_pixel_rgb_float_xy(GeglImageOp *image_op, 
                               gint x, gint y,
                               gfloat a, gfloat b, gfloat c)
@@ -22,6 +32,27 @@ testutils_check_pixel_rgb_float_xy(GeglImageOp *image_op,
 
   GeglOp * check_op = g_object_new(GEGL_TYPE_CHECK_OP, 
                                    "pixel-rgb-float", a, b, c, 
+                                   "x", x, "y", y,
+                                   "image-op", image_op,
+                                   NULL);
+  gegl_op_apply(check_op); 
+
+  success = gegl_check_op_get_success(GEGL_CHECK_OP(check_op)); 
+
+  g_object_unref(check_op);
+
+  return success;
+}
+
+gboolean
+testutils_check_pixel_rgba_float_xy(GeglImageOp *image_op, 
+                              gint x, gint y,
+                              gfloat a, gfloat b, gfloat c, gfloat d)
+{
+  gboolean success;
+
+  GeglOp * check_op = g_object_new(GEGL_TYPE_CHECK_OP, 
+                                   "pixel-rgba-float", a, b, c, d, 
                                    "x", x, "y", y,
                                    "image-op", image_op,
                                    NULL);

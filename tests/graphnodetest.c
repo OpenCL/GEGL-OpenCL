@@ -1,6 +1,7 @@
 #include <glib-object.h>
 #include "gegl.h"
 #include "gegl-mock-node.h"
+#include "gegl-mock-op.h"
 #include "gegl-mock-filter.h"
 #include "gegl-mock-dfs-visitor.h"
 #include "gegl-mock-bfs-visitor.h"
@@ -97,28 +98,33 @@ graph_node_setup(Test *test)
   */
 
   {
-    H = g_object_new (GEGL_TYPE_MOCK_FILTER, 
+    H = g_object_new (GEGL_TYPE_MOCK_NODE, 
                       "name", "H", 
+                      "num_outputs", 1,
                       NULL);  
-    I = g_object_new (GEGL_TYPE_MOCK_FILTER, 
+    I = g_object_new (GEGL_TYPE_MOCK_NODE, 
                       "name", "I", 
+                      "num_outputs", 1,
                       "num_inputs", 1,
                       NULL);  
-    J = g_object_new (GEGL_TYPE_MOCK_FILTER, 
+    J = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "num_outputs", 1,
                       "name", "J", 
                       NULL);  
-    K = g_object_new (GEGL_TYPE_MOCK_FILTER, 
+    K = g_object_new (GEGL_TYPE_MOCK_NODE, 
                       "name", "K", 
+                      "num_outputs", 1,
                       "num_inputs", 2,
-                      "input", 0, I,
-                      "input", 1, J,
+                      "input-0", I,
+                      "input-1", J,
                       NULL);  
-    M = g_object_new (GEGL_TYPE_MOCK_FILTER, 
+    M = g_object_new (GEGL_TYPE_MOCK_NODE, 
                       "name", "M", 
                       "num_inputs", 2, 
                       NULL);  
-    N = g_object_new (GEGL_TYPE_MOCK_FILTER, 
+    N = g_object_new (GEGL_TYPE_MOCK_NODE, 
                       "name", "N", 
+                      "num_outputs", 1,
                       NULL);  
 
     /*
@@ -150,26 +156,31 @@ graph_node_setup(Test *test)
   */
 
   {
-    B = g_object_new (GEGL_TYPE_MOCK_FILTER, 
+    B = g_object_new (GEGL_TYPE_MOCK_NODE, 
                       "name", "B", 
                       "num_inputs", 2,
                       NULL);  
-    C = g_object_new (GEGL_TYPE_MOCK_FILTER, 
+    C = g_object_new (GEGL_TYPE_MOCK_NODE, 
                       "name", "C", 
+                      "num_outputs", 1,
                       "num_inputs", 1,
                       NULL);  
-    D = g_object_new (GEGL_TYPE_MOCK_FILTER, 
+    D = g_object_new (GEGL_TYPE_MOCK_NODE, 
                       "name", "D", 
+                      "num_outputs", 1,
                       "num_inputs", 2,
                       NULL);  
-    E = g_object_new (GEGL_TYPE_MOCK_FILTER, 
+    E = g_object_new (GEGL_TYPE_MOCK_NODE, 
                       "name", "E", 
+                      "num_outputs", 1,
                       NULL);  
-    F = g_object_new (GEGL_TYPE_MOCK_FILTER, 
+    F = g_object_new (GEGL_TYPE_MOCK_NODE, 
                       "name", "F", 
+                      "num_outputs", 1,
                       NULL);  
-    G = g_object_new (GEGL_TYPE_MOCK_FILTER, 
+    G = g_object_new (GEGL_TYPE_MOCK_NODE, 
                       "name", "G", 
+                      "num_outputs", 1,
                       NULL);  
 
     gegl_node_set_source(B, C, 0);

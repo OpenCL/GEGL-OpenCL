@@ -2,12 +2,12 @@
 GeglUnary
 
 <!-- ##### SECTION Short_Description ##### -->
-Abstract class that has one image data input.
+Abstract class that has one image input.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This is the abstract class that represents GeglImageOps with a single
-image data input.
+This is the abstract class that represents an op with a single
+image input.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -20,4 +20,9 @@ image data input.
 
 </para>
 
+
+<!-- ##### ARG GeglUnary:input-image ##### -->
+<para>
+
+</para>
 

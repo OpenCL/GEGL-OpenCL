@@ -56,6 +56,7 @@
 <!ENTITY GeglMultiply SYSTEM "xml/gegl-multiply.xml">
 <!ENTITY GeglNoInput SYSTEM "xml/gegl-no-input.xml">
 <!ENTITY GeglNode SYSTEM "xml/gegl-node.xml">
+<!ENTITY GeglNormal SYSTEM "xml/gegl-normal.xml">
 <!ENTITY GeglObject SYSTEM "xml/gegl-object.xml">
 <!ENTITY GeglOp SYSTEM "xml/gegl-op.xml">
 <!ENTITY GeglOutside SYSTEM "xml/gegl-outside.xml">
@@ -214,6 +215,7 @@
       &GeglMin;
       &GeglMult;
       &GeglMultiply;
+      &GeglNormal;
       &GeglOutside;
       &GeglOver;
       &GeglPremult;

@@ -1,5 +1,5 @@
 #include <glib-object.h>
-#include "gegl-mock-filter.h"
+#include "gegl-mock-properties-filter.h"
 #include "gegl.h"
 #include "ctest.h"
 #include "csuite.h"
@@ -175,7 +175,7 @@ static void
 test_channel_float_collect_values(Test *test)
 {
   gfloat channel_float;
-  GeglOp * op = g_object_new(GEGL_TYPE_MOCK_FILTER,
+  GeglOp * op = g_object_new(GEGL_TYPE_MOCK_PROPERTIES_FILTER,
                              "channel-float", .5,
                              NULL);
 

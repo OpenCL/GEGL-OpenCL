@@ -2,14 +2,19 @@
 GeglInside
 
 <!-- ##### SECTION Short_Description ##### -->
-Composite B inside A
+Composite foreground inside background
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-Composite B inside A.
+Composite foreground (f,fa) inside background (b,ba).
+The part of the foreground lying inside of the background replaces the background.
 </para>
+
 <para>
-alphaA * B
+<literallayout>
+c = f * ba 
+ca = fa * ba
+</literallayout>
 </para>
 
 <!-- ##### SECTION See_Also ##### -->

@@ -6,10 +6,11 @@ Abstract class for composite operations
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This is the abstract class that represents composite operations. This includes
-operations like over, atop, in, out, xor, and more complicated blend modes as
-well. This class has a boolean <literal>premultiply</literal> property, which
-can be set if the first image should be premultiplied before the operation.
+This is the abstract class that represents composite operations of foreground
+and background images. This includes operations like over, atop, in, out, xor,
+and more complicated blend modes as well. This class has a boolean
+<literal>premultiply</literal> property, which can be set if the foreground
+image should be premultiplied before the operation.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -22,6 +23,16 @@ can be set if the first image should be premultiplied before the operation.
 
 </para>
 
+
+<!-- ##### ARG GeglComp:background ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglComp:foreground ##### -->
+<para>
+
+</para>
 
 <!-- ##### ARG GeglComp:premultiply ##### -->
 <para>

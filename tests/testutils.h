@@ -10,9 +10,19 @@ testutils_check_pixel_rgb_float(GeglImageOp *image_op,
                            gfloat b, 
                            gfloat c);
 gboolean
+testutils_check_pixel_rgba_float(GeglImageOp *image_op, 
+                           gfloat a, 
+                           gfloat b, 
+                           gfloat c,
+                           gfloat d);
+gboolean
 testutils_check_pixel_rgb_float_xy(GeglImageOp *image_op, 
                               gint x, gint y,
                               gfloat a, gfloat b, gfloat c);
+gboolean
+testutils_check_pixel_rgba_float_xy(GeglImageOp *image_op, 
+                              gint x, gint y,
+                              gfloat a, gfloat b, gfloat c, gfloat d);
 gboolean
 testutils_check_rgb_uint8(GeglImageOp *image_op, 
                            guint8 a, 

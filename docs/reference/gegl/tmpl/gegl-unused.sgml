@@ -19,18 +19,6 @@
 
 @visitor_class: 
 
-<!-- ##### ARG GeglBinary:input-image-a ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### ARG GeglBinary:input-image-b ##### -->
-<para>
-
-</para>
-
-
 <!-- ##### STRUCT GeglBinaryClass ##### -->
 <para>
 
@@ -381,6 +369,12 @@
 @point_op_class: 
 @get_scanline_func: 
 
+<!-- ##### ARG GeglNode:input ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### STRUCT GeglNodeClass ##### -->
 <para>
 
@@ -519,12 +513,6 @@
 </para>
 
 @object_class: 
-
-<!-- ##### ARG GeglUnary:input-image ##### -->
-<para>
-
-</para>
-
 
 <!-- ##### STRUCT GeglUnaryClass ##### -->
 <para>

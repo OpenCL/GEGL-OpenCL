@@ -35,6 +35,16 @@ This op creates a constant color image.
 
 </para>
 
+<!-- ##### ARG GeglColor:pixel-rgba-float ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglColor:pixel-rgba-uint8 ##### -->
+<para>
+
+</para>
+
 <!-- ##### ARG GeglColor:width ##### -->
 <para>
 

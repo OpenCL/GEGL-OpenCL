@@ -1,6 +1,6 @@
 34% symbol docs coverage.
 114 symbols documented.
-225 not documented.
+226 not documented.
 
 
 GEGL_DEFAULT_HEIGHT
@@ -102,6 +102,7 @@ GeglMultiply
 GeglNoInput
 GeglNode
 GeglNodeInfo
+GeglNormal
 GeglObject
 GeglOp
 GeglOutside

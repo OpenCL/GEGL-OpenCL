@@ -45,6 +45,7 @@ gegl_min_get_type
 gegl_mult_get_type 
 gegl_multiply_get_type 
 gegl_node_get_type 
+gegl_normal_get_type 
 gegl_no_input_get_type 
 gegl_object_get_type 
 gegl_op_get_type 

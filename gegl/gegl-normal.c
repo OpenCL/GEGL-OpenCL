@@ -1,19 +1,19 @@
-#include "gegl-over.h"
+#include "gegl-normal.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-image-iterator.h"
 #include "gegl-utils.h"
 
-static void class_init (GeglOverClass * klass);
-static void init (GeglOver * self, GeglOverClass * klass);
+static void class_init (GeglNormalClass * klass);
+static void init (GeglNormal * self, GeglNormalClass * klass);
 
 static GeglScanlineFunc get_scanline_func(GeglComp * comp, GeglColorSpaceType space, GeglChannelSpaceType type);
 
-static void fg_over_bg_float (GeglFilter * filter, GeglImageIterator ** iters, gint width);
+static void fg_normal_bg_float (GeglFilter * filter, GeglImageIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
 GType
-gegl_over_get_type (void)
+gegl_normal_get_type (void)
 {
   static GType type = 0;
 
@@ -21,19 +21,19 @@ gegl_over_get_type (void)
     {
       static const GTypeInfo typeInfo =
       {
-        sizeof (GeglOverClass),
+        sizeof (GeglNormalClass),
         (GBaseInitFunc) NULL,
         (GBaseFinalizeFunc) NULL,
         (GClassInitFunc) class_init,
         (GClassFinalizeFunc) NULL,
         NULL,
-        sizeof (GeglOver),
+        sizeof (GeglNormal),
         0,
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GEGL_TYPE_COMP, 
-                                     "GeglOver", 
+      type = g_type_register_static (GEGL_TYPE_BLEND, 
+                                     "GeglNormal", 
                                      &typeInfo, 
                                      0);
     }
@@ -41,7 +41,7 @@ gegl_over_get_type (void)
 }
 
 static void 
-class_init (GeglOverClass * klass)
+class_init (GeglNormalClass * klass)
 {
   GeglCompClass *comp_class = GEGL_COMP_CLASS(klass);
   parent_class = g_type_class_peek_parent(klass);
@@ -49,8 +49,8 @@ class_init (GeglOverClass * klass)
 }
 
 static void 
-init (GeglOver * self, 
-      GeglOverClass * klass)
+init (GeglNormal * self, 
+      GeglNormalClass * klass)
 {
 }
 
@@ -59,7 +59,7 @@ static GeglScanlineFunc scanline_funcs[] =
 { 
   NULL, 
   NULL, 
-  fg_over_bg_float, 
+  fg_normal_bg_float, 
   NULL 
 };
 
@@ -73,10 +73,13 @@ get_scanline_func(GeglComp * comp,
 
 
 static void                                                            
-fg_over_bg_float (GeglFilter * filter,              
+fg_normal_bg_float (GeglFilter * filter,              
                       GeglImageIterator ** iters,        
                       gint width)                       
 {                                                                       
+  GValue *value = gegl_op_get_input_data_value(GEGL_OP(filter), "opacity"); 
+  gfloat opacity = g_value_get_float(value);
+
   gfloat **d = (gfloat**)gegl_image_iterator_color_channels(iters[0]);
   gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(iters[0]);
   gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
@@ -109,112 +112,26 @@ fg_over_bg_float (GeglFilter * filter,
     gfloat *f1 = (f_color_chans > 1) ? f[1]: NULL;
     gfloat *f2 = (f_color_chans > 2) ? f[2]: NULL;
 
+    /* 
+       For normal mode, have:
+
+       c = (1-fa)*b + f
+       ca = fa + ba - fa*ba
+
+       and so a version weighted by opacity:
+
+       c = (1-opacity*fa)*b + opacity*f
+       ca = opacity*fa + ba - opacity*fa*ba
+     */ 
+
     switch(alpha_mask)
       {
       case GEGL_NO_ALPHA:
           {
-            switch(d_color_chans)
-              {
-                case 3: 
-                  while(width--)                                                        
-                    {                                                                   
-                      *d0++ = *f0++;
-                      *d1++ = *f1++;
-                      *d2++ = *f2++;
-                    }
-                  break;
-                case 2: 
-                  while(width--)                                                        
-                    {                                                                   
-                      *d0++ = *f0++;
-                      *d1++ = *f1++;
-                    }
-                  break;
-                case 1: 
-                  while(width--)                                                        
-                    {                                                                   
-                      *d0++ = *f0++;
-                    }
-                  break;
-              }
-          }
-        break;
-      case GEGL_FG_ALPHA:
-          {
-            gfloat a;                                              
-            switch(d_color_chans)
-              {
-                case 3: 
-                  while(width--)                                                        
-                    {                                                                   
-                      a = 1.0 - *fa++;                                              
-                      *d0++ = *f0++ + *b0++ * a;
-                      *d1++ = *f1++ + *b1++ * a;
-                      *d2++ = *f2++ + *b2++ * a;
-                      *da++ = 1.0; 
-                    }
-                  break;
-                case 2: 
-                  while(width--)                                                        
-                    {                                                                   
-                      a = 1.0 - *fa++;                                              
-                      *d0++ = *f0++ + *b0++ * a;
-                      *d1++ = *f1++ + *b1++ * a;
-                      *da++ = 1.0; 
-                    }
-                  break;
-                case 1: 
-                  while(width--)                                                        
-                    {                                                                   
-                      a = 1.0 - *fa++;                                              
-                      *d0++ = *f0++ + *b0++ * a;
-                      *da++ = 1.0; 
-                    }
-                  break;
-              }
-          }
-        break;
-      case GEGL_BG_ALPHA:
-          {
-            switch(d_color_chans)
-              {
-                case 3: 
-                  while(width--)                                                        
-                    {                                                                   
-                      *d0++ = *f0++;
-                      *d1++ = *f1++;
-                      *d2++ = *f2++;
-                      *da++ = 1.0; 
-                    }
-                  break;
-                case 2: 
-                  while(width--)                                                        
-                    {                                                                   
-                      *d0++ = *f0++;
-                      *d1++ = *f1++;
-                      *da++ = 1.0; 
-                    }
-                  break;
-                case 1: 
-                  while(width--)                                                        
-                    {                                                                   
-                      *d0++ = *f0++;
-                      *da++ = 1.0; 
-                    }
-                  break;
-              }
-          }
-        break;
-      case GEGL_FG_BG_ALPHA:
-          {
             /* 
-               Over:
-               foreground (f,fa) 
-               background (b,ba) 
-               result (c,ca)
-
-               c  = f + b*(1-fa)
-               ca = fa + ba*(1 - fa)
+              Here fa = ba = 1.0, so have
+              c = (1-opacity)*b + opacity*f
+              ca = opacity + 1.0 - opacity = 1.0 (we dont need this) 
             */
             gfloat a;                                              
             switch(d_color_chans)
@@ -222,29 +139,103 @@ fg_over_bg_float (GeglFilter * filter,
                 case 3: 
                   while(width--)                                                        
                     {                                                                   
-                      a = 1.0 - *fa;                                              
-                      *d0++ = *f0++ + *b0++ * a;
-                      *d1++ = *f1++ + *b1++ * a;
-                      *d2++ = *f2++ + *b2++ * a;
-                      *da++ = *fa++ + *ba++ * a; 
+                      a = 1.0 - opacity;                                              
+
+                      *d0++ = a * *b0++ + opacity * *f0++;
+                      *d1++ = a * *b1++ + opacity * *f1++;
+                      *d2++ = a * *b2++ + opacity * *f2++;
                     }
                   break;
                 case 2: 
+                case 1: 
+                  g_print("Case not implemented yet\n");
+                  break;
+              }
+          }
+        break;
+      case GEGL_FG_ALPHA:
+          {
+            /* 
+              Here ba = 1.0
+              c = (1-opacity*fa)*b + opacity*f
+              ca = opacity*fa + 1.0 - opacity*fa = 1.0 (unused)
+            */
+            gfloat a;                                              
+            switch(d_color_chans)
+              {
+                case 3: 
                   while(width--)                                                        
                     {                                                                   
-                      a = 1.0 - *fa;                                              
-                      *d0++ = *f0++ + *b0++ * a;
-                      *d1++ = *f1++ + *b1++ * a;
-                      *da++ = *fa++ + *ba++ * a; 
+                      a = 1.0 - opacity * *fa; 
+                      fa++;                                              
+
+                      *d0++ = a * *b0++ + opacity * *f0++;
+                      *d1++ = a * *b1++ + opacity * *f1++;
+                      *d2++ = a * *b2++ + opacity * *f2++;
                     }
                   break;
+                case 2: 
                 case 1: 
+                  g_print("Case not implemented yet\n");
+                  break;
+              }
+          }
+        break;
+      case GEGL_BG_ALPHA:
+          {
+            /* 
+              Here fa = 1.0, so
+              c = (1-opacity)*b + opacity*f
+              ca = opacity + ba - opacity*ba;
+            */
+
+            gfloat a;                                              
+            switch(d_color_chans)
+              {
+                case 3: 
                   while(width--)                                                        
                     {                                                                   
-                      a = 1.0 - *fa;                                              
-                      *d0++ = *f0++ + *b0++ * a;
-                      *da++ = *fa++ + *ba++ * a; 
+                      a = 1.0 - opacity;                                              
+
+                      *d0++ = a * *b0++ + opacity * *f0++; 
+                      *d1++ = a * *b1++ + opacity * *f1++; 
+                      *d2++ = a * *b2++ + opacity * *f2++;
+                      *da++ = a * *ba++ + opacity; 
                     }
+                  break;
+                case 2: 
+                case 1: 
+                  g_print("Case not implemented yet\n");
+                  break;
+              }
+          }
+        break;
+      case GEGL_FG_BG_ALPHA:
+          {
+            /* 
+              c = (1-opacity*fa)*b + opacity*f
+              ca = opacity*fa + ba - opacity*fa*ba
+            */
+
+            gfloat a;                                              
+            gfloat factor;
+            switch(d_color_chans)
+              {
+                case 3: 
+                  while(width--)                                                        
+                    {                                                                   
+                      factor = opacity * *fa++;
+                      a = 1.0 - factor;                                              
+
+                      *d0++ = a * *b0++ + opacity * *f0++;
+                      *d1++ = a * *b1++ + opacity * *f1++;
+                      *d2++ = a * *b2++ + opacity * *f2++;
+                      *da++ = a * *ba++ + factor;
+                    }
+                  break;
+                case 2: 
+                case 1: 
+                  g_print("Case not implemented yet\n");
                   break;
               }
           }

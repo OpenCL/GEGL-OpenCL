@@ -1,5 +1,5 @@
 #include <glib-object.h>
-#include "gegl-mock-filter.h"
+#include "gegl-mock-properties-filter.h"
 #include "gegl.h"
 #include "ctest.h"
 #include "csuite.h"
@@ -227,7 +227,7 @@ test_pixel_rgb_uint8_param_value_set_default(Test *test)
 static void
 test_pixel_rgb_uint8_collect_values(Test *test)
 {
-  GeglOp * op = g_object_new(GEGL_TYPE_MOCK_FILTER,
+  GeglOp * op = g_object_new(GEGL_TYPE_MOCK_PROPERTIES_FILTER,
                              "pixel-rgb-uint8", 128, 128, 128,
                              NULL);
   g_object_unref(op);

@@ -149,9 +149,9 @@ fg_xor_bg_float (GeglFilter * filter,
                     {                                                                   
                       a = 1.0 - *fa++;                                              
 
-                      *d0++ = a * *b0++;
-                      *d1++ = a * *b1++;
-                      *d2++ = a * *b2++;
+                      *d0++ = *b0++ * a;
+                      *d1++ = *b1++ * a;
+                      *d2++ = *b2++ * a;
                       *da++ = a; 
                     }
                   break;
@@ -160,8 +160,8 @@ fg_xor_bg_float (GeglFilter * filter,
                     {                                                                   
                       a = 1.0 - *fa++;                                              
 
-                      *d0++ = a * *b0++;
-                      *d1++ = a * *b1++;
+                      *d0++ = *b0++ * a;
+                      *d1++ = *b1++ * a;
                       *da++ = a; 
                     }
                   break;
@@ -170,7 +170,7 @@ fg_xor_bg_float (GeglFilter * filter,
                     {                                                                   
                       a = 1.0 - *fa++;                                              
 
-                      *d0++ = a * *b0++;
+                      *d0++ = *b0++ * a;
                       *da++ = a; 
                     }
                   break;
@@ -187,10 +187,10 @@ fg_xor_bg_float (GeglFilter * filter,
                     {                                                                   
                       b = 1.0 - *ba++;
 
-                      *d0++ = b * *f0++;
-                      *d1++ = b * *f1++;
-                      *d2++ = b * *f2++;
-                      *da++ = b * *fa++; 
+                      *d0++ = *f0++ * b;
+                      *d1++ = *f1++ * b;
+                      *d2++ = *f2++ * b;
+                      *da++ = *fa++ * b; 
                     }
                   break;
                 case 2: 
@@ -198,9 +198,9 @@ fg_xor_bg_float (GeglFilter * filter,
                     {                                                                   
                       b = 1.0 - *ba++;
 
-                      *d0++ = b * *f0++;
-                      *d1++ = b * *f1++;
-                      *da++ = b * *fa++; 
+                      *d0++ = *f0++ * b;
+                      *d1++ = *f1++ * b;
+                      *da++ = *fa++ * b; 
                     }
                   break;
                 case 1: 
@@ -208,8 +208,8 @@ fg_xor_bg_float (GeglFilter * filter,
                     {                                                                   
                       b = 1.0 - *ba++;
 
-                      *d0++ = b * *f0++;
-                      *da++ = b * *fa++; 
+                      *d0++ = *f0++ * b;
+                      *da++ = *fa++ * b; 
                     }
                   break;
               }
@@ -217,9 +217,17 @@ fg_xor_bg_float (GeglFilter * filter,
         break;
       case GEGL_FG_BG_ALPHA:
           {
+            /* 
+               Xor:
+               foreground (f,fa) 
+               background (b,ba) 
+               result (c,ca)
+
+               c = f*(1-ba) + b*(1-fa)  
+               ca = fa*(1-ba) + ba*(1-fa) 
+            */
             gfloat a;                                              
             gfloat b;
-
             switch(d_color_chans)
               {
                 case 3: 
@@ -228,10 +236,10 @@ fg_xor_bg_float (GeglFilter * filter,
                       a = 1.0 - *fa;                                              
                       b = 1.0 - *ba;
 
-                      *d0++ = a * *b0++ + b * *f0++;
-                      *d1++ = a * *b1++ + b * *f1++;
-                      *d2++ = a * *b2++ + b * *f2++;
-                      *da++ = a * *ba++ + b * *fa++; 
+                      *d0++ = *f0++ * b + *b0++ * a;
+                      *d1++ = *f1++ * b + *b1++ * a;
+                      *d2++ = *f2++ * b + *b2++ * a;
+                      *da++ = *fa++ * b + *ba++ * a; 
                     }
                   break;
                 case 2: 
@@ -240,9 +248,9 @@ fg_xor_bg_float (GeglFilter * filter,
                       a = 1.0 - *fa;                                              
                       b = 1.0 - *ba;
 
-                      *d0++ = a * *b0++ + b * *f0++;
-                      *d1++ = a * *b1++ + b * *f1++;
-                      *da++ = a * *ba++ + b * *fa++; 
+                      *d0++ = *f0++ * b + *b0++ * a;
+                      *d1++ = *f1++ * b + *b1++ * a;
+                      *da++ = *fa++ * b + *ba++ * a; 
                     }
                   break;
                 case 1: 
@@ -251,8 +259,8 @@ fg_xor_bg_float (GeglFilter * filter,
                       a = 1.0 - *fa;                                              
                       b = 1.0 - *ba;
 
-                      *d0++ = a * *b0++ + b * *f0++;
-                      *da++ = a * *ba++ + b * *fa++; 
+                      *d0++ = *f0++ * b + *b0++ * a;
+                      *da++ = *fa++ * b + *ba++ * a; 
                     }
                   break;
               }

@@ -2,14 +2,19 @@
 GeglXor
 
 <!-- ##### SECTION Short_Description ##### -->
-Composite B xor A
+Composite foreground xor background
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-Composite B exclusive or A.
+Composite foreground(f,fa) exclusive or background(b,ba). The part of the
+foreground that lies outside of the background is combined with the part of the
+background that lies outside of the foreground.
 </para>
 <para>
-(1-alphaB) * A + (1-alphaA) * B
+<literallayout>
+c = f*(1-ba) + b*(1-fa)  
+ca = fa*(1-ba) + ba*(1-fa)
+</literallayout>
 </para>
 
 <!-- ##### SECTION See_Also ##### -->

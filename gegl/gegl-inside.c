@@ -174,9 +174,9 @@ fg_inside_bg_float (GeglFilter * filter,
                   while(width--)                                                        
                     {                                                                   
                       b = *ba++;                                              
-                      *d0++ = b * *f0++;
-                      *d1++ = b * *f1++;
-                      *d2++ = b * *f2++;
+                      *d0++ = *f0++ * b;
+                      *d1++ = *f1++ * b;
+                      *d2++ = *f2++ * b;
                       *da++ = b; 
                     }
                   break;
@@ -184,8 +184,8 @@ fg_inside_bg_float (GeglFilter * filter,
                   while(width--)                                                        
                     {                                                                   
                       b = *ba++;                                              
-                      *d0++ = b * *f0++;
-                      *d1++ = b * *f1++;
+                      *d0++ = *f0++ * b;
+                      *d1++ = *f1++ * b;
                       *da++ = b; 
                     }
                   break;
@@ -193,7 +193,7 @@ fg_inside_bg_float (GeglFilter * filter,
                   while(width--)                                                        
                     {                                                                   
                       b = *ba++;                                              
-                      *d0++ = b * *f0++;
+                      *d0++ = *f0++ * b;
                       *da++ = b; 
                     }
                   break;
@@ -202,6 +202,14 @@ fg_inside_bg_float (GeglFilter * filter,
         break;
       case GEGL_FG_BG_ALPHA:
           {
+            /* 
+               Inside:
+               foreground (f,fa) 
+               background (b,ba) 
+               result (c,ca)
+               c = f * ba 
+               ca = fa * ba
+            */
             gfloat b;                                              
             switch(d_color_chans)
               {
@@ -209,27 +217,28 @@ fg_inside_bg_float (GeglFilter * filter,
                   while(width--)                                                        
                     {                                                                   
                       b = *ba++;                                              
-                      *d0++ = b * *f0++;
-                      *d1++ = b * *f1++;
-                      *d2++ = b * *f2++;
-                      *da++ = b * *fa++; 
+                      *d0++ = *f0++ * b;
+                      *d1++ = *f1++ * b;
+                      *d2++ = *f2++ * b;
+                      *da++ = *fa++ * b; 
                     }
                   break;
                 case 2: 
                   while(width--)                                                        
                     {                                                                   
                       b = *ba++;                                              
-                      *d0++ = b * *f0++;
-                      *d1++ = b * *f1++;
-                      *da++ = b * *fa++; 
+                      *d0++ = *f0++ * b;
+                      *d1++ = *f1++ * b;
+                      *da++ = *fa++ * b; 
                     }
                   break;
                 case 1: 
                   while(width--)                                                        
                     {                                                                   
                       b = *ba++;                                              
-                      *d0++ = b * *f0++;
-                      *da++ = b * *fa++; 
+                      *d0++ = *f0++ * b;
+                      *d1++ = *f1++ * b;
+                      *da++ = *fa++ * b; 
                     }
                   break;
               }

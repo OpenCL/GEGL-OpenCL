@@ -2,14 +2,18 @@
 GeglOutside
 
 <!-- ##### SECTION Short_Description ##### -->
-Composite B outside A
+Composite foreground outside background
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-Composite B outside A.
+Composite foreground(f,fa) outside background(b,ba).
+Part of the foreground outside of background replaces background.
 </para>
 <para>
-(1-alphaA) * B
+<literallayout>
+c = (1-ba) * f 
+ca = (1-ba) * fa 
+</literallayout>
 </para>
 
 <!-- ##### SECTION See_Also ##### -->

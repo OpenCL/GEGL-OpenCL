@@ -14,6 +14,8 @@
 enum
 {
   PROP_0, 
+  PROP_BACKGROUND,
+  PROP_FOREGROUND,
   PROP_PREMULTIPLY,
   PROP_LAST 
 };
@@ -72,6 +74,20 @@ class_init (GeglCompClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
+  g_object_class_install_property (gobject_class, PROP_BACKGROUND,
+               g_param_spec_object ("background",
+                                    "Background",
+                                    "The background",
+                                     GEGL_TYPE_OP,
+                                     G_PARAM_WRITABLE));
+
+  g_object_class_install_property (gobject_class, PROP_FOREGROUND,
+               g_param_spec_object ("foreground",
+                                    "Foreground",
+                                    "The foreground",
+                                     GEGL_TYPE_OP,
+                                     G_PARAM_WRITABLE));
+
   g_object_class_install_property (gobject_class, PROP_PREMULTIPLY,
              g_param_spec_boolean ("premultiply",
                                    "Premultiply",
@@ -85,8 +101,8 @@ static void
 init (GeglComp * self, 
       GeglCompClass * klass)
 {
-  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image-a");
-  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image-b");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "background");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "foreground");
   gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "premultiply");
 }
 
@@ -120,6 +136,20 @@ set_property (GObject      *gobject,
   GeglComp *comp = GEGL_COMP (gobject);
   switch (prop_id)
   {
+    case PROP_BACKGROUND:
+      {
+        GeglNode *background = (GeglNode*)g_value_get_object(value);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(comp), "background");
+        gegl_node_set_source(GEGL_NODE(comp), background, index);  
+      }
+      break;
+    case PROP_FOREGROUND:
+      {
+        GeglNode *foreground = (GeglNode*)g_value_get_object(value);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(comp), "foreground");
+        gegl_node_set_source(GEGL_NODE(comp), foreground, index);  
+      }
+      break;
     case PROP_PREMULTIPLY:
       gegl_op_set_input_data_value(GEGL_OP(comp), "premultiply", value);
       break;
@@ -136,17 +166,17 @@ validate_inputs  (GeglFilter *filter,
   GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_input_data_list);
 
   {
-    gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "input-image-a");
+    gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "background");
     GeglData * data = g_list_nth_data(collected_input_data_list, index);
     GValue *value = gegl_data_get_value(data);
-    gegl_op_set_input_data_value(GEGL_OP(filter), "input-image-a", value);
+    gegl_op_set_input_data_value(GEGL_OP(filter), "background", value);
   }
 
   {
-    gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "input-image-b");
+    gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "foreground");
     GeglData * data = g_list_nth_data(collected_input_data_list, index);
     GValue *value = gegl_data_get_value(data);
-    gegl_op_set_input_data_value(GEGL_OP(filter), "input-image-b", value);
+    gegl_op_set_input_data_value(GEGL_OP(filter), "foreground", value);
   }
 }
 

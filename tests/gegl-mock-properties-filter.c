@@ -167,21 +167,31 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
+  GeglMockPropertiesFilter *self = GEGL_MOCK_PROPERTIES_FILTER(gobject);
   switch (prop_id)
   {
     case PROP_SCALAR_FLOAT:
     case PROP_SCALAR_INT:
-    g_print("getting scalar property\n");
+      {
+        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "scalar");
+        g_param_value_convert(pspec, data_value, value, TRUE);
+      }
       break;
     case PROP_CHANNEL_FLOAT:
     case PROP_CHANNEL_UINT8:
-    g_print("getting channel property\n");
+      {
+        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "channel");
+        g_param_value_convert(pspec, data_value, value, TRUE);
+      }
       break;
     case PROP_PIXEL_RGB_FLOAT:
     case PROP_PIXEL_RGBA_FLOAT:
     case PROP_PIXEL_RGB_UINT8:
     case PROP_PIXEL_RGBA_UINT8:
-    g_print("getting pixel property\n");
+      {
+        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
+        g_param_value_convert(pspec, data_value, value, TRUE);
+      }
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);

@@ -1,27 +1,26 @@
 <!-- ##### SECTION Title ##### -->
-GeglOver
+GeglNormal
 
 <!-- ##### SECTION Short_Description ##### -->
-Composite foreground over background
+Composite foreground and background using normal blend mode.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This composites foreground (f,fa) over background (b,ba). The foreground is
-composited over the background.
-</para>
-<para>
+Composite foreground (f,fa) and background (b,ba) using normal
+blend mode, blend(x,y)=x.
 <literallayout>
-c  = f + b*(1-fa)
-ca = fa + ba*(1-fa)
+c = (1-fa)*b + f
+ca = fa + ba - fa*ba
 </literallayout>
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
+#GeglBlend
 
 </para>
 
-<!-- ##### STRUCT GeglOver ##### -->
+<!-- ##### STRUCT GeglNormal ##### -->
 <para>
 
 </para>

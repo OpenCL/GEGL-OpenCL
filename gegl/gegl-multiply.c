@@ -112,6 +112,22 @@ fg_multiply_bg_float (GeglFilter * filter,
     switch(alpha_mask)
       {
       case GEGL_NO_ALPHA:
+      /* 
+          (1-ba)*f + (1-fa)*b + ba*f 
+          = (1-fa)*b + f
+
+          fa->fa*op
+          f -> f * op
+
+          (1-op)b + op*f
+
+          b + (f-b)*op
+       */ 
+
+      /* 
+          (1-ba)*f + (1-fa)*b + f*b 
+          (1 - op)*b + op*f*b  
+       */ 
         switch(d_color_chans)
           {
             case 3: 
@@ -224,6 +240,11 @@ fg_multiply_bg_float (GeglFilter * filter,
                     {                                                                   
                       a = 1.0 - *fa;                                              
                       b = 1.0 - *ba;                                               
+
+                      /* 
+                          (1-ba)*f + (1-fa)*b + f*b 
+                          (1-ba)*op*f + (1 - op*fa)*b + op*f*b  
+                       */ 
 
                       *d0++ = a * *b0 + b * *f0 + *b0 * *f0; b0++; f0++;
                       *d1++ = a * *b1 + b * *f1 + *b1 * *f1; b1++; f1++;

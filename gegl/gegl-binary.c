@@ -8,7 +8,9 @@
 enum
 {
   PROP_0, 
-  PROP_FADE_FLOAT,
+  PROP_INPUT_IMAGE_A,
+  PROP_INPUT_IMAGE_B,
+  PROP_FADE,
   PROP_LAST 
 };
 
@@ -66,7 +68,21 @@ class_init (GeglBinaryClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  g_object_class_install_property(gobject_class, PROP_FADE_FLOAT, 
+  g_object_class_install_property (gobject_class, PROP_INPUT_IMAGE_A,
+               g_param_spec_object ("input-image-a",
+                                    "InputImageA",
+                                    "The input image a",
+                                     GEGL_TYPE_OP,
+                                     G_PARAM_WRITABLE));
+
+  g_object_class_install_property (gobject_class, PROP_INPUT_IMAGE_B,
+               g_param_spec_object ("input-image-b",
+                                    "InputImageB",
+                                    "The input image b",
+                                     GEGL_TYPE_OP,
+                                     G_PARAM_WRITABLE));
+
+  g_object_class_install_property(gobject_class, PROP_FADE, 
               g_param_spec_float ("fade",
                                   "Fade",
                                   "Fade on B.",
@@ -95,7 +111,7 @@ get_property (GObject      *gobject,
   GeglBinary *self = GEGL_BINARY(gobject);
   switch (prop_id)
   {
-    case PROP_FADE_FLOAT:
+    case PROP_FADE:
       {
         GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "fade");
         g_value_set_float(value, g_value_get_float(data_value));  
@@ -115,7 +131,21 @@ set_property (GObject      *gobject,
   GeglBinary *self = GEGL_BINARY(gobject);
   switch (prop_id)
   {
-    case PROP_FADE_FLOAT:
+    case PROP_INPUT_IMAGE_A:
+      {
+        GeglNode *input = (GeglNode*)g_value_get_object(value);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(self), "input-image-a");
+        gegl_node_set_source(GEGL_NODE(self), input, index);  
+      }
+      break;
+    case PROP_INPUT_IMAGE_B:
+      {
+        GeglNode *input = (GeglNode*)g_value_get_object(value);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(self), "input-image-b");
+        gegl_node_set_source(GEGL_NODE(self), input, index);  
+      }
+      break;
+    case PROP_FADE:
       gegl_op_set_input_data_value(GEGL_OP(self), "fade", value);
       break;
     default:

@@ -10,9 +10,18 @@
 #include "gegl-value-types.h"
 #include "gegl-param-specs.h"
 
+enum
+{
+  PROP_0, 
+  PROP_INPUT_IMAGE,
+  PROP_LAST 
+};
+
 static void class_init (GeglPipeClass * klass);
 static void init (GeglPipe * self, GeglPipeClass * klass);
 static void finalize(GObject * gobject);
+static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
+static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
 static void process (GeglFilter * filter);
 static void prepare (GeglFilter * filter);
@@ -58,12 +67,22 @@ class_init (GeglPipeClass * klass)
   parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->finalize = finalize;
+  gobject_class->set_property = set_property;
+  gobject_class->get_property = get_property;
 
   filter_class->process = process;
   filter_class->prepare = prepare;
 
   filter_class->validate_inputs = validate_inputs;
   filter_class->validate_outputs = validate_outputs;
+
+  g_object_class_install_property (gobject_class, PROP_INPUT_IMAGE,
+               g_param_spec_object ("input-image",
+                                    "InputImage",
+                                    "The input image",
+                                     GEGL_TYPE_OP,
+                                     G_PARAM_CONSTRUCT_ONLY | 
+                                     G_PARAM_WRITABLE));
 }
 
 
@@ -85,6 +104,41 @@ finalize(GObject *gobject)
   g_object_unref(self->scanline_processor);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
+}
+
+static void
+get_property (GObject      *gobject,
+              guint         prop_id,
+              GValue       *value,
+              GParamSpec   *pspec)
+{
+  switch (prop_id)
+  {
+    default:
+      break;
+  }
+}
+
+static void
+set_property (GObject      *gobject,
+              guint         prop_id,
+              const GValue *value,
+              GParamSpec   *pspec)
+{
+  GeglPipe *pipe = GEGL_PIPE (gobject);
+  switch (prop_id)
+  {
+    case PROP_INPUT_IMAGE:
+      {
+        GeglNode *input = (GeglNode*)g_value_get_object(value);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(pipe), "input-image");
+        gegl_node_set_source(GEGL_NODE(pipe), input, index);  
+      }
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
+      break;
+  }
 }
 
 static void 

@@ -117,22 +117,30 @@ fg_darken_bg_float (GeglFilter * filter,
             case 3: 
               while(width--)                                                        
                 {                                                                   
-                  *d0++ = MIN(*f0, *b0); f0++; b0++;
-                  *d1++ = MIN(*f1, *b1); f1++; b1++;
-                  *d2++ = MIN(*f2, *b2); f2++; b2++;
+                  *d0++ = MIN(*f0 , *b0);
+                  *d1++ = MIN(*f1 , *b1);
+                  *d2++ = MIN(*f2 , *b2);
+                  
+                  f0++; f1++; f2++;
+                  b0++; b1++; b2++;
                 }
               break;
             case 2: 
               while(width--)                                                        
                 {                                                                   
-                  *d0++ = MIN(*f0, *b0); f0++; b0++;
-                  *d1++ = MIN(*f1, *b1); f1++; b1++;
+                  *d0++ = MIN(*f0 , *b0);
+                  *d1++ = MIN(*f1 , *b1);
+                 
+                  f0++; f1++; 
+                  b0++; b1++;
                 }
               break;
             case 1: 
               while(width--)                                                        
                 {                                                                   
-                  *d0++ = MIN(*f0, *b0); f0++; b0++;
+                  *d0++ = MIN(*f0 , *b0);
+                  f0++; 
+                  b0++;
                 }
               break;
           }
@@ -145,41 +153,60 @@ fg_darken_bg_float (GeglFilter * filter,
         break;
       case GEGL_FG_BG_ALPHA:
           {
-            gfloat a;                                              
-            gfloat b;                                               
+            /*
+               Darken:
+               foreground (f,fa) 
+               background (b,ba) 
+               result (c,ca)
+
+               c = min(f*ba, b*fa) + f*(1-ba) + b*(1-fa) 
+               ca = fa + ba - fa*ba 
+            */
+
+            gfloat inv_fa;                                              
+            gfloat inv_ba;                                               
             switch(d_color_chans)
               {
                 case 3: 
                   while(width--)                                                        
                     {                                                                   
-                      a = 1.0 - *fa;                                              
-                      b = 1.0 - *ba;                                               
-                      *d0++ = MIN(a * *b0 + *f0, b * *f0 + *b0); f0++; b0++;
-                      *d1++ = MIN(a * *b1 + *f1, b * *f1 + *b1); f1++; b1++;
-                      *d2++ = MIN(a * *b2 + *f2, b * *f2 + *b2); f2++; b2++;
+                      inv_fa = 1.0 - *fa;                                              
+                      inv_ba = 1.0 - *ba;                                               
 
-                      *da++ = *fa + *ba - *ba * *fa; ba++; fa++;
+                      *d0++ = MIN(*f0 * *ba, *b0 * *fa) + *f0 * inv_ba + *b0 * inv_fa;
+                      *d1++ = MIN(*f1 * *ba, *b1 * *fa) + *f1 * inv_ba + *b1 * inv_fa;
+                      *d2++ = MIN(*f2 * *ba, *b2 * *fa) + *f2 * inv_ba + *b2 * inv_fa;
+                      *da++ = *fa + *ba - *ba * *fa; 
+
+                      f0++; f1++; f2++; fa++; 
+                      b0++; b1++; b2++; ba++;
                     }
                   break;
                 case 2: 
                   while(width--)                                                        
                     {                                                                   
-                      a = 1.0 - *fa;                                              
-                      b = 1.0 - *ba;                                               
-                      *d0++ = MIN(a * *b0 + *f0, b * *f0 + *b0); f0++; b0++;
-                      *d1++ = MIN(a * *b1 + *f1, b * *f1 + *b1); f1++; b1++;
+                      inv_fa = 1.0 - *fa;                                              
+                      inv_ba = 1.0 - *ba;                                               
 
-                      *da++ = *fa + *ba - *ba * *fa; ba++; fa++;
+                      *d0++ = MIN(*f0 * *ba, *b0 * *fa) + *f0 * inv_ba + *b0 * inv_fa;
+                      *d1++ = MIN(*f1 * *ba, *b1 * *fa) + *f1 * inv_ba + *b1 * inv_fa;
+                      *da++ = *fa + *ba - *ba * *fa; 
+
+                      f0++; f1++; fa++;
+                      b0++; b1++; ba++;
                     }
                   break;
                 case 1: 
                   while(width--)                                                        
                     {                                                                   
-                      a = 1.0 - *fa;                                              
-                      b = 1.0 - *ba;                                               
-                      *d0++ = MIN(a * *b0 + *f0, b * *f0 + *b0); f0++; b0++;
+                      inv_fa = 1.0 - *fa;                                              
+                      inv_ba = 1.0 - *ba;                                               
 
-                      *da++ = *fa + *ba - *ba * *fa; ba++; fa++;
+                      *d0++ = MIN(*f0 * *ba, *b0 * *fa) + *f0 * inv_ba + *b0 * inv_fa;
+                      *da++ = *fa + *ba - *ba * *fa; 
+
+                      f0++; fa++;
+                      b0++; ba++;
                     }
                   break;
               }

@@ -6,7 +6,9 @@ enum
 {
   PROP_0, 
   PROP_PIXEL_RGB_FLOAT,
+  PROP_PIXEL_RGBA_FLOAT,
   PROP_PIXEL_RGB_UINT8,
+  PROP_PIXEL_RGBA_UINT8,
   PROP_X,
   PROP_Y,
   PROP_IMAGE_OP,
@@ -74,21 +76,43 @@ class_init (GeglCheckOpClass * klass)
   g_object_class_install_property (gobject_class, PROP_PIXEL_RGB_FLOAT,
                                    gegl_param_spec_pixel_rgb_float ("pixel-rgb-float",
                                                                     "Pixel-Rgb-Float",
-                                                                    "The pixel as float",
+                                                                    "rgb float pixel",
                                                                     -G_MAXFLOAT, G_MAXFLOAT,
                                                                     -G_MAXFLOAT, G_MAXFLOAT,
                                                                     -G_MAXFLOAT, G_MAXFLOAT,
                                                                     0.0, 0.0, 0.0,
                                                                     G_PARAM_READWRITE));
 
+  g_object_class_install_property (gobject_class, PROP_PIXEL_RGBA_FLOAT,
+                                   gegl_param_spec_pixel_rgba_float ("pixel-rgba-float",
+                                                                    "Pixel-Rgba-Float",
+                                                                    "rgba float pixel",
+                                                                    -G_MAXFLOAT, G_MAXFLOAT,
+                                                                    -G_MAXFLOAT, G_MAXFLOAT,
+                                                                    -G_MAXFLOAT, G_MAXFLOAT,
+                                                                    0.0,1.0,
+                                                                    0.0, 0.0, 0.0, 0.0,
+                                                                    G_PARAM_READWRITE));
+
   g_object_class_install_property (gobject_class, PROP_PIXEL_RGB_UINT8,
                                    gegl_param_spec_pixel_rgb_uint8 ("pixel-rgb-uint8",
                                                                     "Pixel-Rgb-Uint8",
-                                                                    "The pixel as uint8",
+                                                                    "rgb uint8 pixel",
                                                                     0, 255,
                                                                     0, 255,
                                                                     0, 255,
                                                                     0, 0, 0,
+                                                                    G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class, PROP_PIXEL_RGBA_UINT8,
+                                   gegl_param_spec_pixel_rgba_uint8 ("pixel-rgba-uint8",
+                                                                     "Pixel-Rgba-Uint8",
+                                                                     "rgba uint8 pixel",
+                                                                     0, 255,
+                                                                     0, 255,
+                                                                     0, 255,
+                                                                     0, 255,
+                                                                     0, 0, 0, 0,
                                                                     G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_X,
@@ -165,7 +189,9 @@ get_property (GObject      *gobject,
       }
       break;
     case PROP_PIXEL_RGB_FLOAT:
+    case PROP_PIXEL_RGBA_FLOAT:
     case PROP_PIXEL_RGB_UINT8:
+    case PROP_PIXEL_RGBA_UINT8:
       {
         GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
         g_param_value_convert(pspec, data_value, value, TRUE);
@@ -196,7 +222,9 @@ set_property (GObject      *gobject,
       gegl_op_set_input_data_value(GEGL_OP(self), "y", value);
       break;
     case PROP_PIXEL_RGB_FLOAT:
+    case PROP_PIXEL_RGBA_FLOAT:
     case PROP_PIXEL_RGB_UINT8:
+    case PROP_PIXEL_RGBA_UINT8:
       gegl_op_set_input_data_value(GEGL_OP(self), "pixel", value);
       break;
     case PROP_IMAGE_OP:

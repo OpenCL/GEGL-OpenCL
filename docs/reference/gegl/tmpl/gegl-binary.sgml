@@ -2,13 +2,13 @@
 GeglBinary
 
 <!-- ##### SECTION Short_Description ##### -->
-Abstract class that has two image data inputs.
+Abstract class that has two image inputs.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This is the abstract class that represents GeglImageOps with a two image data
-inputs. This class has a <literal>fade</literal> property which is used as
-multiplier that can be applied to the first input.
+This is the abstract class that represents an op with two images, 
+a and b. This class has a <literal>fade</literal> property which 
+is used as multiplier applied to the first input, a.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -23,6 +23,16 @@ multiplier that can be applied to the first input.
 
 
 <!-- ##### ARG GeglBinary:fade ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglBinary:input-image-a ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglBinary:input-image-b ##### -->
 <para>
 
 </para>

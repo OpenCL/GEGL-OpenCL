@@ -6,6 +6,13 @@ Darken blend mode
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
+Selects the darker of the background and foreground colors. The background is
+replaced with the foreground when the foreground is darker, otherwise it is left
+unchanged.
+<literallayout>
+c = min(f*ba, b*fa) + f*(1-ba) + b*(1-fa) 
+ca = fa + ba - fa*ba 
+</literallayout>
 </para>
 
 <!-- ##### SECTION See_Also ##### -->

@@ -50,6 +50,7 @@ GEGL_SRC = \
   gegl-multiply.c \
   gegl-no-input.c \
   gegl-node.c \
+  gegl-normal.c \
   gegl-object.c \
   gegl-op.c \
   gegl-over.c \

@@ -1,3 +1,123 @@
+Fri Jul  4 03:07:49 EDT 2003 calvinw@mindspring.com
+
+	More properties work. Removed the "input" property of Node and moved it to Graph,
+	where it makes more sense. Added image input properties to Unary, Binary, Comp. 
+	Added a normal blend mode, and updated the tests and docs. 
+
+	*HACKING
+	*autogen.sh
+	*gegl/Makefile.am
+	*gegl/gegl-atop.c
+	*gegl/gegl-binary.c
+	*gegl/gegl-color.c
+	*gegl/gegl-comp.c
+	*gegl/gegl-darken.c
+	*gegl/gegl-graph.c
+	*gegl/gegl-inside.c
+	*gegl/gegl-multiply.c
+	*gegl/gegl-node.c
+	*gegl/gegl-outside.c
+	*gegl/gegl-over.c
+	*gegl/gegl-pipe.c
+	*gegl/gegl-unary.c
+	*gegl/gegl-xor.c
+	*gegl/gegl.h
+
+	Updated tests to match changes:
+
+	*tests/Makefile.am
+	*tests/bfsvisitormultouttest.c
+	*tests/bfsvisitortest.c
+	*tests/channelfloatvaluetest.c
+	*tests/channeluint8valuetest.c
+	*tests/dfsvisitormultouttest.c
+	*tests/dfsvisitortest.c
+	*tests/gegl-check-op.c
+	*tests/gegl-mock-node.c
+	*tests/gegl-mock-op.c
+	*tests/gegl-mock-point-op.c
+	*tests/gegl-mock-properties-filter.c
+	*tests/graphnodetest.c
+	*tests/nodetest.c
+	*tests/optest.c
+	*tests/pixelrgbafloatvaluetest.c
+	*tests/pixelrgbfloatvaluetest.c
+	*tests/pixelrgbuint8valuetest.c
+	*tests/pointoptest.c
+	*tests/printtest.c
+	*tests/testgegl.c
+	*tests/testutils.c
+	*tests/testutils.h
+
+	Update these docs:
+
+	*docs/reference/gegl/gegl-docs.sgml
+	*docs/reference/gegl/gegl-sections.txt
+	*docs/reference/gegl/gegl-undocumented.txt
+	*docs/reference/gegl/gegl.types
+	*docs/reference/gegl/tmpl/gegl-atop.sgml
+	*docs/reference/gegl/tmpl/gegl-binary.sgml
+	*docs/reference/gegl/tmpl/gegl-blend.sgml
+	*docs/reference/gegl/tmpl/gegl-color.sgml
+	*docs/reference/gegl/tmpl/gegl-comp.sgml
+	*docs/reference/gegl/tmpl/gegl-darken.sgml
+	*docs/reference/gegl/tmpl/gegl-difference.sgml
+	*docs/reference/gegl/tmpl/gegl-graph.sgml
+	*docs/reference/gegl/tmpl/gegl-inside.sgml
+	*docs/reference/gegl/tmpl/gegl-lighten.sgml
+	*docs/reference/gegl/tmpl/gegl-multiply.sgml
+	*docs/reference/gegl/tmpl/gegl-node.sgml
+	*docs/reference/gegl/tmpl/gegl-outside.sgml
+	*docs/reference/gegl/tmpl/gegl-over.sgml
+	*docs/reference/gegl/tmpl/gegl-screen.sgml
+	*docs/reference/gegl/tmpl/gegl-unary.sgml
+	*docs/reference/gegl/tmpl/gegl-unused.sgml
+	*docs/reference/gegl/tmpl/gegl-xor.sgml
+
+	Added these:
+
+	*docs/reference/gegl/tmpl/gegl-normal.sgml
+	*gegl/gegl-normal.c
+	*gegl/gegl-normal.h
+	*tests/addtest-float.c
+	*tests/addtest-uint8.c
+	*tests/colortest-float.c
+	*tests/colortest-uint8.c
+	*tests/copytest-float.c
+	*tests/copytest-uint8.c
+	*tests/fadetest-float.c
+	*tests/fadetest-uint8.c
+	*tests/graphapplytest-float.c
+	*tests/iaddtest-float.c
+	*tests/iaddtest-uint8.c
+	*tests/imulttest-float.c
+	*tests/imulttest-uint8.c
+	*tests/multiplytest-float.c
+	*tests/multtest-float.c
+	*tests/multtest-uint8.c
+	*tests/normaltest-float.c
+	*tests/simpletreetest-float.c
+
+	Removed these:
+
+	*tests/addtest-rgb-float.c
+	*tests/addtest-rgb-uint8.c
+	*tests/colortest-rgb-float.c
+	*tests/colortest-rgb-uint8.c
+	*tests/copytest-rgb-float.c
+	*tests/copytest-rgb-uint8.c
+	*tests/fadetest-rgb-float.c
+	*tests/fadetest-rgb-uint8.c
+	*tests/graphapplytest-rgb-float.c
+	*tests/iaddtest-rgb-float.c
+	*tests/iaddtest-rgb-uint8.c
+	*tests/imulttest-rgb-float.c
+	*tests/imulttest-rgb-uint8.c
+	*tests/multiplytest-rgb-float.c
+	*tests/multtest-rgb-float.c
+	*tests/multtest-rgb-uint8.c
+	*tests/simpletreetest-rgb-float.c
+
 Sun Jun 29 12:40:22 EDT 2003 calvinw@mindspring.com
 
 	Moved some switches and ifs outside the inner loops.

@@ -5,14 +5,9 @@
 #include "testutils.h"
 #include <string.h>
 
-#define MULT0 1.2 
-#define MULT1 1.3 
-#define MULT2 1.4 
-#define MULT3 1.5 
-
-#define R0  80
-#define G0 160
-#define B0 240
+#define MULT0 .5
+#define MULT1 .6
+#define MULT2 .7
 
 #define IMAGE_OP_WIDTH 1 
 #define IMAGE_OP_HEIGHT 1 
@@ -39,7 +34,7 @@ test_mult_g_object_properties(Test *test)
 {
   {
     GeglMult * mult = g_object_new (GEGL_TYPE_MULT, 
-                                    "input", 0, source,
+                                    "input-image", source,
                                     "mult0", MULT0, 
                                     "mult1", MULT1, 
                                     "mult2", MULT2, 
@@ -54,7 +49,7 @@ test_mult_g_object_properties(Test *test)
   {
     gfloat mult0, mult1, mult2;
     GeglMult * mult = g_object_new (GEGL_TYPE_MULT, 
-                                    "input", 0, source,
+                                    "input-image", source,
                                     "mult0", MULT0, 
                                     "mult1", MULT1, 
                                     "mult2", MULT2, 
@@ -78,52 +73,41 @@ static void
 test_mult_apply(Test *test)
 {
   {
-    guint8 r, g, b;
     GeglOp *mult = g_object_new(GEGL_TYPE_MULT,
-                                "input", 0, source,
+                                "input-image", source,
                                 "mult0", MULT0, 
                                 "mult1", MULT1, 
                                 "mult2", MULT2,
                                 NULL);
 
     gegl_op_apply(mult); 
-
-    r = CLAMP((gint)(R0 * MULT0 + .5), 0, 255); 
-    g = CLAMP((gint)(G0 * MULT1 + .5), 0, 255); 
-    b = CLAMP((gint)(B0 * MULT2 + .5), 0, 255); 
-
-    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(mult), r, g, b)); 
-
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(mult), 
+                                            .1 * MULT0, 
+                                            .2 * MULT1, 
+                                            .3 * MULT2));  
     g_object_unref(mult);
   }
 
   {
-    guint8 r, g, b;
     GeglOp *mult1 = g_object_new(GEGL_TYPE_MULT,
-                                 "input", 0, source,
+                                 "input-image", source,
                                  "mult0", MULT0, 
                                  "mult1", MULT1, 
                                  "mult2", MULT2,
                                  NULL);
 
     GeglOp *mult2 = g_object_new(GEGL_TYPE_MULT,
-                                 "input", 0, mult1,
+                                 "input-image", mult1,
                                  "mult0", MULT0, 
                                  "mult1", MULT1, 
                                  "mult2", MULT2,
                                  NULL);
 
     gegl_op_apply(mult2); 
-
-    r = CLAMP((gint)(R0 * MULT0 + .5), 0, 255); 
-    g = CLAMP((gint)(G0 * MULT1 + .5), 0, 255); 
-    b = CLAMP((gint)(B0 * MULT2 + .5), 0, 255); 
-
-    r = CLAMP((gint)(r * MULT0 + .5), 0, 255); 
-    g = CLAMP((gint)(g * MULT1 + .5), 0, 255); 
-    b = CLAMP((gint)(b * MULT2 + .5), 0, 255); 
-
-    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(mult2), r, g, b)); 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(mult2), 
+                                            .1 * MULT0 * MULT0, 
+                                            .2 * MULT1 * MULT1, 
+                                            .3 * MULT2 * MULT2));  
 
     g_object_unref(mult1);
     g_object_unref(mult2);
@@ -136,7 +120,7 @@ mult_test_setup(Test *test)
   source = g_object_new(GEGL_TYPE_COLOR, 
                         "width", IMAGE_OP_WIDTH, 
                         "height", IMAGE_OP_HEIGHT, 
-                        "pixel-rgb-uint8", R0, G0, B0, 
+                        "pixel-rgb-float",.1, .2, .3, 
                         NULL); 
 }
 
@@ -147,9 +131,9 @@ mult_test_teardown(Test *test)
 }
 
 Test *
-create_mult_test_rgb_uint8()
+create_mult_test_float()
 {
-  Test* t = ct_create("GeglMultTestRgbUint8");
+  Test* t = ct_create("GeglMultTestFloat");
 
   g_assert(ct_addSetUp(t, mult_test_setup));
   g_assert(ct_addTearDown(t, mult_test_teardown));
