@@ -12,7 +12,6 @@
 <!ENTITY GeglBfsVisitor SYSTEM "xml/gegl-bfs-visitor.xml">
 <!ENTITY GeglBinary SYSTEM "xml/gegl-binary.xml">
 <!ENTITY GeglBlend SYSTEM "xml/gegl-blend.xml">
-<!ENTITY GeglChannelData SYSTEM "xml/gegl-channel-data.xml">
 <!ENTITY gegl-gegl-channel-param-specs SYSTEM "xml/gegl-channel-param-specs.xml">
 <!ENTITY GeglColorData SYSTEM "xml/gegl-color-data.xml">
 <!ENTITY GeglColorModel SYSTEM "xml/gegl-color-model.xml">
@@ -25,9 +24,6 @@
 <!ENTITY GeglComponentStorage SYSTEM "xml/gegl-component-storage.xml">
 <!ENTITY GeglBuffer SYSTEM "xml/gegl-buffer.xml">
 <!ENTITY GeglChannels SYSTEM "xml/gegl-channels.xml">
-<!ENTITY GeglChannelSpaceFloat SYSTEM "xml/gegl-channel-space-float.xml">
-<!ENTITY GeglChannelSpace SYSTEM "xml/gegl-channel-space.xml">
-<!ENTITY GeglChannelSpaceU8 SYSTEM "xml/gegl-channel-space-uint8.xml">
 <!ENTITY GeglData SYSTEM "xml/gegl-data.xml">
 <!ENTITY GeglDfsVisitor SYSTEM "xml/gegl-dfs-visitor.xml">
 <!ENTITY GeglDifference SYSTEM "xml/gegl-difference.xml">
@@ -59,10 +55,8 @@
 <!ENTITY GeglOp SYSTEM "xml/gegl-op.xml">
 <!ENTITY GeglOver SYSTEM "xml/gegl-over.xml">
 <!ENTITY GeglPipe SYSTEM "xml/gegl-pipe.xml">
-<!ENTITY GeglPixelData SYSTEM "xml/gegl-pixel-data.xml">
 <!ENTITY gegl-gegl-pixel-param-specs SYSTEM "xml/gegl-pixel-param-specs.xml">
 <!ENTITY GeglPointOp SYSTEM "xml/gegl-point-op.xml">
-<!ENTITY GeglPremult SYSTEM "xml/gegl-premult.xml">
 <!ENTITY GeglPrint SYSTEM "xml/gegl-print.xml">
 <!ENTITY GeglScalarData SYSTEM "xml/gegl-scalar-data.xml">
 <!ENTITY GeglScanlineProcessor SYSTEM "xml/gegl-scanline-processor.xml">
@@ -205,7 +199,6 @@
       &GeglMult;
       &GeglMultiply;
       &GeglOver;
-      &GeglPremult;
       &GeglPrint;
     </chapter>
 
@@ -238,11 +231,9 @@
 
     <chapter id="data">
       <title>Data</title>
-      &GeglChannelData;
       &GeglColorData;
       &GeglData;
       &GeglImageData;
-      &GeglPixelData;
       &GeglScalarData;
       &GeglStringData;
     </chapter>
@@ -273,13 +264,6 @@
       &GeglColorSpace;
       &GeglColorModel;
       &GeglComponentColorModel;
-    </chapter>
-
-    <chapter id="channelspaces">
-      <title>Channel Spaces</title>
-      &GeglChannelSpaceFloat;
-      &GeglChannelSpace;
-      &GeglChannelSpaceU8;
     </chapter>
 
   </part>
