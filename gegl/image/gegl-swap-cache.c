@@ -19,7 +19,7 @@
  *
  */
 
-#include "gegl-memory-cache.h"
+#include "gegl-swap-cache.h"
 
 static void class_init(gpointer g_class,
 		       gpointer class_data);
@@ -41,28 +41,8 @@ static void mark_as_dirty (GeglCache * cache,
 static void flush (GeglCache * cache,
 		   gsize entry_id);
 
-typedef enum Status_ Status;
-enum Status_
-  {
-    STORED,
-    FETCHED,
-    DISCARDED
-  };
-
-typedef struct EntryRecord_ EntryRecord;
-struct EntryRecord_
-{
-  /*
-   * magic_number is used to help ensure that any random entry_id is
-   * contained in this cache.
-   */
-  GeglCache * magic_number;
-  Status status;
-  GeglCacheEntry * data;
-};
-
 GType
-gegl_memory_cache_get_type (void)
+gegl_swap_cache_get_type (void)
 {
   static GType type=0;
   if (!type)
@@ -70,7 +50,7 @@ gegl_memory_cache_get_type (void)
       static const GTypeInfo typeInfo =
 	{
 	  /* interface types, classed types, instantiated types */
-	  sizeof(GeglMemoryCacheClass),
+	  sizeof(GeglSwapCacheClass),
 	  NULL, /*base_init*/
 	  NULL, /* base_finalize */
 	  
@@ -80,7 +60,7 @@ gegl_memory_cache_get_type (void)
 	  NULL, /* class_data */
 	  
 	  /* instantiated types */
-	  sizeof(GeglMemoryCache),
+	  sizeof(GeglSwapCache),
 	  0, /* n_preallocs */
 	  instance_init, /* instance_init */
 	  
@@ -89,7 +69,7 @@ gegl_memory_cache_get_type (void)
 	};
       
       type = g_type_register_static (GEGL_TYPE_CACHE ,
-				     "GeglMemoryCache",
+				     "GeglSwapCache",
 				     &typeInfo,
 				     0);
     }
@@ -107,6 +87,8 @@ class_init(gpointer g_class,
   cache_class->fetch=fetch;
   cache_class->mark_as_dirty=mark_as_dirty;
   cache_class->flush=flush;
+
+  object_class->constructor = constructor;
   object_class->dispose = dispose;
   object_class->finalize=finalize;
 }
@@ -132,12 +114,19 @@ static void
 instance_init (GTypeInstance *instance,
 	       gpointer g_class)
 {
-  GeglMemoryCache* mem_cache=GEGL_MEMORY_CACHE(instance);
-  mem_cache->current_size=0;
-  mem_cache->stored_entries=NULL;
-  mem_cache->discarded_entries = NULL;
-  mem_cache->fetched_entries = NULL;
-  mem_cache->has_disposed = FALSE;
+  GeglSwapCache* swap_cache=GEGL_SWAP_CACHE(instance);
+
+  swap_cache->stored_entries=NULL;
+  swap_cache->discarded_entries = NULL;
+  swap_cache->fetched_entries = NULL;
+
+  swap_cache->filename = NULL;
+  swap_cache->gaps = NULL;
+  swap_cache->swap_file = NULL;
+  swap_cache->swap_file_length = 0;
+
+  swap_cache->current_size=0;
+  swap_cache->has_disposed = FALSE;
 }
 
 static void
@@ -161,6 +150,14 @@ static void dispose (GObject *object)
       self->fetched_entries = NULL;
       self->stored_entries = NULL;
       self->has_disposed = TRUE;
+      
+      if (self->filename != NULL)
+	{
+	  g_free (filename);
+	  filename = NULL;
+	}
+      
+
     }
   G_OBJECT_CLASS (g_type_class_peek_parent (GEGL_MEMORY_CACHE_GET_CLASS (object)))->dispose(object);
 }
@@ -170,10 +167,11 @@ try_put (GeglCache * cache,
 	 GeglCacheEntry * entry,
 	 gsize * entry_id)
 {
-  GeglMemoryCache* mem_cache=GEGL_MEMORY_CACHE(cache);
+  GeglSwapCache* swap_cache=GEGL_SWAP_CACHE(cache);
   gsize new_size=gegl_cache_entry_flattened_size (entry);
   if ((cache->persistent == TRUE) &&
-      (mem_cache->current_size + new_size > cache->hard_limit))
+      (swap_cache->hard_limit != 0) && 
+      (swap_cache->current_size + new_size > cache->hard_limit))
     {
       return GEGL_PUT_WOULD_BLOCK;
     }
@@ -185,12 +183,13 @@ put (GeglCache * cache,
      GeglCacheEntry * entry,
      gsize * entry_id)
 {
-  GeglMemoryCache* mem_cache=GEGL_MEMORY_CACHE(cache);
+  GeglSwapCache* swap_cache=GEGL_SWAP_CACHE(cache);
   gsize new_size=gegl_cache_entry_flattened_size (entry);
   GList *link,*old_link;
 
   if ((cache->persistent == TRUE) &&
-      (mem_cache->current_size + new_size > cache->hard_limit))
+      (swap_cache->hard_limit != 0) &&
+      (swap_cache->current_size + new_size > cache->hard_limit))
     {
 #ifdef GEGL_THREADS
 #else
@@ -206,13 +205,14 @@ put (GeglCache * cache,
       return GEGL_PUT_WOULD_BLOCK;
 #endif
     }
-  if (mem_cache->current_size + new_size > cache->hard_limit)
+  if ((cache->hard_limit != 0) &&
+      (swap_cache->current_size + new_size > cache->hard_limit))
     {
       link = g_list_last (mem_cache->stored_entries);
-      while ((mem_cache->current_size != 0) &&
+      while ((swap_cache->current_size != 0) &&
 	     
-	     ((mem_cache->current_size > cache->soft_limit) ||
-	      (mem_cache->current_size + new_size > cache->hard_limit)) &&
+	     ((swap_cache->current_size > cache->soft_limit) ||
+	      (swap_cache->current_size + new_size > cache->hard_limit)) &&
 	     (link != NULL))
 	{
 	  gsize entry_size;

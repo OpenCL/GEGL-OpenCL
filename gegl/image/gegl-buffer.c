@@ -57,6 +57,8 @@ struct _GeglBufferCacheEntryClass {
   GeglCacheEntryClass parent;
 };
 
+static gpointer cache_entry_parent_class;
+
 static void cache_entry_class_init (gpointer g_class,
 				    gpointer class_data);
 static void cache_entry_init (GTypeInstance *instance,
@@ -66,8 +68,9 @@ static gsize cache_entry_flattened_size (const GeglCacheEntry * self);
 static void cache_entry_flatten (GeglCacheEntry * self, gpointer buffer, gsize length);
 static void cache_entry_unflatten (GeglCacheEntry* self, gpointer buffer, gsize length);
 static GType cache_entry_get_type (void);
+static void cache_entry_discard (GeglCacheEntry * self);
 static GeglBufferCacheEntry * cache_entry_new (GeglBuffer* buffer);
-
+static void cache_entry_set (GeglBufferCacheEntry * self, GeglBuffer * buffer);
 static void class_init (GeglBufferClass * klass);
 static void init (GeglBuffer * self, GeglBufferClass * klass);
 static void finalize (GObject * gobject);
@@ -153,7 +156,9 @@ cache_entry_class_init (gpointer g_class,
   cache_entry_class->flattened_size=cache_entry_flattened_size;
   cache_entry_class->flatten=cache_entry_flatten;
   cache_entry_class->unflatten=cache_entry_unflatten;
+  cache_entry_class->discard = cache_entry_discard;
   
+  cache_entry_parent_class = g_type_class_peek_parent (g_class);
 }
 
 static void
@@ -164,6 +169,7 @@ cache_entry_finalize (GObject * gobject)
     {
       free_banks (self->banks, self->num_banks, self->bank_length);
     }
+  G_OBJECT_CLASS(cache_entry_parent_class)->finalize (gobject); 
 }
 
 static void
@@ -191,9 +197,7 @@ cache_entry_flatten (GeglCacheEntry * entry, gpointer buffer, gsize length) {
     memcpy(buffer,self->banks[i],self->bank_length);
     buffer+=self->bank_length;
   }
-  free_banks(self->banks,self->num_banks,self->bank_length);
-  self->banks=NULL;
-  
+  cache_entry_discard (entry);
 }
 static void
 cache_entry_unflatten (GeglCacheEntry * entry, gpointer buffer, gsize length) {
@@ -209,15 +213,27 @@ cache_entry_unflatten (GeglCacheEntry * entry, gpointer buffer, gsize length) {
     buffer+=self->bank_length;
   }
 }
-
+static void
+cache_entry_discard (GeglCacheEntry * entry)
+{
+  GeglBufferCacheEntry * self = GEGL_BUFFER_CACHE_ENTRY(entry);
+  free_banks(self->banks,self->num_banks,self->bank_length);
+  self->banks=NULL;
+}
 static GeglBufferCacheEntry *
 cache_entry_new (GeglBuffer* buffer) {
   GeglBufferCacheEntry * entry = g_object_new(GEGL_TYPE_BUFFER_CACHE_ENTRY,NULL);
   g_return_val_if_fail (buffer->banks != NULL, NULL);
-  entry->banks=buffer->banks;
-  entry->num_banks=buffer->num_banks;
-  entry->bank_length=(buffer->elements_per_bank)*(buffer->bytes_per_element);
+  cache_entry_set (entry, buffer);
   return entry;
+}
+
+static void
+cache_entry_set (GeglBufferCacheEntry * self, GeglBuffer * buffer)
+{
+  self->banks=buffer->banks;
+  self->num_banks=buffer->num_banks;
+  self->bank_length=(buffer->elements_per_bank)*(buffer->bytes_per_element);  
 }
 
 static void
@@ -271,6 +287,9 @@ init (GeglBuffer * self, GeglBufferClass * klass)
   self->lock_count=0;
   self->share_count=0;
   self->cache=NULL;
+  self->entry = NULL;
+  self->has_expired = FALSE;
+  self->has_disposed = FALSE;
 }
 
 static void
@@ -288,8 +307,8 @@ finalize (GObject * gobject)
 static void
 dispose (GObject * gobject)
 {
-  static gboolean has_disposed=FALSE;
-  if (!has_disposed)
+  GeglBuffer * self = GEGL_BUFFER (gobject);
+  if (!self->has_disposed)
     {
       GeglBuffer * buffer = GEGL_BUFFER (gobject);
       if (buffer->cache != NULL)
@@ -297,7 +316,12 @@ dispose (GObject * gobject)
 	  g_object_unref (buffer->cache);
 	  buffer->cache = NULL;
 	}
-      has_disposed = TRUE;
+      if (buffer->entry != NULL)
+	{
+	  g_object_unref (G_OBJECT(buffer->entry));
+	  buffer->entry = NULL;
+	}
+      self->has_disposed = TRUE;
     }
 }
 
@@ -558,17 +582,19 @@ gegl_buffer_lock(GeglBuffer* self)
   if ((self->banks == NULL) && (self->entry_id != 0))
     {
       g_return_if_fail (self->cache != NULL);
-      GeglCacheEntry * cache_entry;
-      gint fetch_results = gegl_cache_fetch (self->cache, self->entry_id, &cache_entry);
+      gint fetch_results = gegl_cache_fetch (self->cache, self->entry_id, &(self->entry));
       if (fetch_results == GEGL_FETCH_EXPIRED)
 	{
+	  gegl_cache_flush (self->cache, self->entry_id);
+	  self->entry_id = 0;
+	  self->has_expired = TRUE;
 	  return;
 	}
       g_return_if_fail (fetch_results == GEGL_FETCH_SUCCEEDED);
-      GeglBufferCacheEntry * bcache_entry = GEGL_BUFFER_CACHE_ENTRY (cache_entry);
+      GeglBufferCacheEntry * bcache_entry;
+      bcache_entry = GEGL_BUFFER_CACHE_ENTRY (self->entry);
       self->banks = bcache_entry->banks;
       bcache_entry->banks = NULL;
-      g_object_unref(G_OBJECT(bcache_entry));
     }
 }
 
@@ -582,26 +608,44 @@ gegl_buffer_unlock(GeglBuffer* self, gboolean is_dirty)
       g_warning ("GeglBuffer unlocked after final release");
       return;
     }
-  if (self->cache == NULL)
+  if (self->cache == NULL || self->has_expired)
     {
       return;
     }
-  if (is_dirty)
+  if (is_dirty && (self->entry_id != 0))
     {
       gegl_cache_mark_as_dirty (self->cache, self->entry_id);
     }
   if (self->lock_count == 0)
     {
-      if (self->banks != NULL)
+      if (self->entry == NULL)
 	{
-	  GeglBufferCacheEntry * buffer_cache_entry = cache_entry_new (self);
-	  self->banks=NULL;
+	  self->entry = GEGL_CACHE_ENTRY (cache_entry_new (self));
+	}
+      else
+	{
+	  GeglBufferCacheEntry * buffer_entry;
+	  buffer_entry = GEGL_BUFFER_CACHE_ENTRY(self->entry);
+	  cache_entry_set (buffer_entry, self);
+	}
+      self->banks = NULL;
+      if (self->entry_id == 0)
+	{
 	  gint put_results = gegl_cache_put (self->cache,
-					     GEGL_CACHE_ENTRY(buffer_cache_entry),
+					     self->entry,
 					     &(self->entry_id));
 	  g_return_if_fail (put_results == GEGL_PUT_SUCCEEDED);
-	  g_object_unref (G_OBJECT (buffer_cache_entry));
 	}
+      else
+	{
+	  GeglFetchResults fetch_results;
+	  fetch_results = gegl_cache_unfetch (self->cache,
+					      self->entry_id,
+					      self->entry);
+	  g_return_if_fail (fetch_results == GEGL_FETCH_SUCCEEDED);
+	}
+      g_object_unref (self->entry);
+      self->entry = NULL;
     }
 }
 
@@ -615,6 +659,7 @@ gegl_buffer_attach(GeglBuffer * self, GeglCache * cache)
     }
   g_object_ref (cache);
   self->cache=cache;
+  self->entry_id = 0;
   gegl_buffer_unlock (self, TRUE);
 }
 
@@ -622,12 +667,22 @@ void
 gegl_buffer_detach(GeglBuffer * self)
 {
   gegl_buffer_lock (self);
+  gegl_cache_flush (self->cache, self->entry_id);
+  if ( self->entry != NULL )
+    {
+      g_object_unref (self->entry);
+      self->entry = NULL;
+    }
   if (self->cache != NULL )
     {
       g_object_unref (self->cache);
+      self->cache=NULL;
     }
-  gegl_cache_flush (self->cache, self->entry_id);
-  self->cache=NULL;
+  if ( self->entry != NULL )
+    {
+      g_object_unref (self->entry);
+      self->entry = NULL;
+    }
   self->entry_id=0;
   gegl_buffer_unlock (self, FALSE);
 }

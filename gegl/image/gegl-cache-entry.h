@@ -23,6 +23,7 @@
 #define GEGL_CACHE_ENTRY_H
 
 #include "gegl-object.h"
+#include "gegl-entry-record.h"
 
 /* GeglCacheEntry
  *
@@ -42,16 +43,11 @@
 
 GType gegl_cache_entry_get_type (void);
 
-
 typedef struct _GeglCacheEntry GeglCacheEntry;
-typedef void (*GeglCacheExpireFunc) (GeglCacheEntry * entry, gpointer data);
 struct _GeglCacheEntry
 {
   GeglObject object;
-  /* a hint for the future */
   GHashTable* cache_hints;
-  GeglCacheExpireFunc expire_entry;
-  gpointer expire_data;
 };
 
 typedef struct _GeglCacheEntryClass GeglCacheEntryClass;
@@ -61,6 +57,7 @@ struct _GeglCacheEntryClass
   gsize (*flattened_size) (const GeglCacheEntry* self);
   void (*flatten) (GeglCacheEntry* self, gpointer buffer, gsize length);
   void (*unflatten) (GeglCacheEntry* self, const gpointer buffer, gsize length);
+  void (*discard) (GeglCacheEntry * self);
 };
 
 /*
@@ -77,26 +74,8 @@ void gegl_cache_entry_flatten (GeglCacheEntry* self, gpointer buffer, gsize leng
  */
 void gegl_cache_entry_unflatten (GeglCacheEntry* self, gpointer buffer, gsize length);
 /*
- * This sets the CacheEntry's expire_entry fuction and its arguments.
- *
- * If expire_entry is non-null, then it is passed this entry when it
- * expires from a cache.  This is so a cache container can do
- * something with expired entries (like pass it onto the next
- * cache).
- *
- * If expire_data is used (e.g. not NULL) then the caller has to
- * ensure that memory pointed to by expire_data remains around for as
- * long as expire_entry can get called (generally, until you call
- * set_expire_fuction with expire_entry set to NULL or the life of the
- * entry).
- *
- * The caller also has to ensure that expire_data is freed.
- *
- * If gegl is compiled with multithreading on, expire_entry _must_ be
- * thread safe.
+ * This function simply discard the cache entry data.  This is useful
+ * for swap that isn't dirty.
  */
-void gegl_cache_entry_set_expire_fuction(GeglCacheEntry * self,
-					 GeglCacheExpireFunc expire_entry,
-					 gpointer expire_data);
-
+void gegl_cache_entry_discard (GeglCacheEntry * self);
 #endif

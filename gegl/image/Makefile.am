@@ -25,8 +25,13 @@ IMAGE_SRC = \
 	gegl-buffer.c \
 	gegl-buffer-double.c \
 	gegl-cache-entry.c \
+	gegl-entry-record.c \
 	gegl-cache.c \
-	gegl-memory-cache.c \
+	gegl-cache-store.c \
+	gegl-null-cache-store.c \
+	gegl-heap-cache-store.c \
+	gegl-swap-cache-store.c \
+	gegl-heap-cache.c \
 	gegl-normalizer.c \
 	gegl-normalizer-mult.c \
 	gegl-sample-model.c \

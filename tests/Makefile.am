@@ -60,10 +60,14 @@ testgegl_SOURCES = \
 	propertyconnectionstest.c \
 	testgegl.c \
 	updatepropertytest.c \
-	gegl-image-memory-cache-test.c \
 	gegl-image-buffer-double-test.c \
 	gegl-image-component-sample-model-test.c \
 	gegl-image-mock-cache-entry-test.c \
+	gegl-image-entry-record-test.c \
+	gegl-image-cache-store-tests.c \
+	gegl-image-null-cache-store-test.c \
+	gegl-image-heap-cache-store-test.c \
+	gegl-image-swap-cache-store-test.c \
 	gegl-image-buffer-caching-test.c
 
 testgegl_LDFLAGS = -g

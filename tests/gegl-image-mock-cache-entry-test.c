@@ -48,7 +48,7 @@ test_mock_cache_entry_flatten_tests(Test *test)
   memcpy (mock_entry->data, test_array, 5 * sizeof(gint));
   gint * flattened = g_new (gint, 5);
   
-  ct_test(test, gegl_cache_entry_flattened_size(cache_entry) == 5);
+  ct_test(test, gegl_cache_entry_flattened_size(cache_entry) == 5 * sizeof(gint));
   gegl_cache_entry_flatten (cache_entry, flattened, sizeof(gint) * 5);
   for (i=0;i<5;i++)
     {
@@ -59,6 +59,9 @@ test_mock_cache_entry_flatten_tests(Test *test)
     {
       ct_test (test, (mock_entry->data)[i] == i);
     }
+
+  gegl_cache_entry_discard (cache_entry);
+  ct_test(test, mock_entry->data == NULL);
   g_object_unref (mock_entry);
 }
 

@@ -71,6 +71,9 @@ extern "C"
     gshort share_count;
     gshort lock_count;
     gsize entry_id;
+    GeglCacheEntry * entry;
+    gboolean has_expired;
+    gboolean has_disposed;
   };
 
   typedef struct _GeglBufferClass GeglBufferClass;

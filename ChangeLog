@@ -1,9 +1,199 @@
+2004-3-16 12:31 Daniel Rogers <daniel@phasevelocity.org>
+
+	* ChangeLog,
+	* gegl/image/Makefile.am
+	* gegl/image/gegl-buffer.c
+	* gegl/image/gegl-buffer.h
+	* gegl/image/gegl-cache-entry.c
+	* gegl/image/gegl-cache-entry.h
+	* gegl/image/gegl-cache-store.c
+	* gegl/image/gegl-cache-store.h
+	* gegl/image/gegl-cache.c
+	* gegl/image/gegl-cache.h
+	* gegl/image/gegl-entry-record.c
+	* gegl/image/gegl-entry-record.h
+	* gegl/image/gegl-heap-cache-store.c
+	* gegl/image/gegl-heap-cache-store.h
+	* gegl/image/gegl-heap-cache.c
+	* gegl/image/gegl-heap-cache.h
+	* gegl/image/gegl-memory-cache.c
+	* gegl/image/gegl-memory-cache.h
+	* gegl/image/gegl-null-cache-store.c
+	* gegl/image/gegl-null-cache-store.h
+	* gegl/image/gegl-swap-cache-store.c
+	* gegl/image/gegl-swap-cache-store.h
+	* gegl/image/gegl-swap-cache.c
+	* gegl/image/gegl-swap-cache.h
+	* tests/Makefile.am
+	* tests/gegl-image-buffer-caching-test.c
+	* tests/gegl-image-cache-store-tests.c
+	* tests/gegl-image-cache-store-tests.h
+	* tests/gegl-image-entry-record-test.c
+	* tests/gegl-image-heap-cache-store-test.c
+	* tests/gegl-image-mock-cache-entry-test.c
+	* tests/gegl-image-mock-cache-entry.c
+	* tests/gegl-image-null-cache-store-test.c
+	* tests/gegl-image-swap-cache-store-test.c
+	* tests/testgegl.c
+
+	Merge from NEW_CACHING, now that NEW_CACHING has all the
+	functionality of the old caching system.
+	
+2004-3-16 12:31 Daniel Rogers <daniel@phasevelocity.org>
+
+	* gegl/image/Makefile.am
+	* gegl/image/gegl-heap-cache.c
+	* gegl/image/gegl-heap-cache.h
+
+	Added a heap cache implementation.
+	
+	* gegl/image/gegl-memory-cache.c
+	* gegl/image/gegl-memory-cache.h
+
+	GeglHeapCache replaces GeglMemoryCache, so GeglMemoryCache has
+	been removed.
+	
+	* gegl/image/gegl-buffer.c
+	* gegl/image/gegl-buffer.h
+	* gegl/image/gegl-cache.c
+	* gegl/image/gegl-cache.h
+	* gegl/image/gegl-null-cache-store.c
+	* tests/Makefile.am
+	* tests/gegl-image-buffer-caching-test.c
+	* tests/testgegl.c
+
+	Added back the GeglBuffer caching test, using GeglHeapCache as the
+	cache that is tested.  Also, found and fixed some bugs in all the
+	classes mentioned.
+	
+2004-3-13 18:32 Daniel Rogers <daniel@phasevelocity.org>
+
+	* gegl/image/gegl-cache-entry.c
+	* gegl/image/gegl-entry-record.c
+	* gegl/image/gegl-swap-cache-store.c
+	* tests/Makefile.am
+	* tests/gegl-image-cache-store-tests.c
+	* tests/gegl-image-mock-cache-entry-test.c
+	* tests/gegl-image-mock-cache-entry.c
+	* tests/gegl-image-swap-cache-store-test.c
+	* tests/testgegl.c
+
+	Adds a test for GeglSwapCacheStore and fixes all the other bugs
+	discovered while writing the tests.  This means I finally have a
+	working swap file abstraction.  GeglSwapCache and GeglHeapCache
+	should be a piece of cake now.
+	
+2004-3-13 18:32 Daniel Rogers <daniel@phasevelocity.org>
+
+	* ChangeLog
+	* gegl/image/gegl-heap-cache-store.c
+	* tests/Makefile.am
+	* tests/gegl-image-heap-cache-store-test.c
+	* tests/testgegl.c
+
+	Adds a test for GeglHeapCacheStore
+	
+	* tests/gegl-image-null-cache-store-test.c
+
+	Fixes the name of the test.
+
+2004-3-13 18:19 Daniel Rogers <daniel@phasevelocity.org>
+
+	* gegl/image/gegl-cache-store.h
+	* gegl/image/gegl-entry-record.c
+	* gegl/image/gegl-null-cache-store.c
+	* tests/Makefile.am
+	* tests/gegl-image-cache-store-tests.c
+	* tests/gegl-image-cache-store-tests.h
+	* tests/gegl-image-entry-record-test.c
+	* tests/gegl-image-mock-cache-entry-test.c
+	* tests/gegl-image-mock-cache-entry.c
+	* tests/gegl-image-null-cache-store-test.c
+	* tests/testgegl.c
+
+	Provides tests for GeglNullCacheStore and GeglEntryRecord.
+	Fixes numerous bugs.
+
+2004-3-13 07:42 Daniel Rogers <daniel@phasevelocity.org>
+
+	* gegl/image/gegl-cache.c
+	* tests/Makefile.am
+	* tests/testgegl.c
+
+	Provides missing definition of gegl_cache_insert_record and
+	removes the brokens tests for gegl-memory-cache. (which doesn't
+	exist now anyway.
+
 2004-3-13 07:31 Daniel Rogers <daniel@phasevelocity.org>
 
 	* tests/gegl-image-mock-cache-entry.c
 
 	Fix chaining up in the finalizer for GeglMockCacheEntry.
 	Fixes bug #136997
+	
+2004-03-12 20:28 Daniel Rogers <daniel@phasevelocity.org>
+
+	* gegl/image/Makefile.am
+	* gegl/image/gegl-buffer.c
+	* gegl/image/gegl-cache-store.c
+	* gegl/image/gegl-entry-record.c
+	* gegl/image/gegl-heap-cache-store.c
+	* gegl/image/gegl-null-cache-store.c
+	* gegl/image/gegl-swap-cache-store.c
+	* gegl/image/gegl-swap-cache-store.h
+
+	This makes GeglSwapCacheStore compilable, and adds the source to
+	Makefile.am.  Still untested though.
+
+2004-03-11 23:04 Daniel Rogers <daniel@phasevelocity.org>
+
+	* gegl/image/gegl-buffer.c
+	* gegl/image/gegl-cache-entry.c
+	* gegl/image/gegl-cache-entry.h
+	* gegl/image/gegl-cache-store.c
+	* gegl/image/gegl-cache-store.h
+	* gegl/image/gegl-entry-record.c
+	* gegl/image/gegl-entry-record.h
+	* gegl/image/gegl-heap-cache-store.c
+	* gegl/image/gegl-null-cache-store.c
+	* gegl/image/gegl-swap-cache-store.c
+
+	This more or less implements GeglSwapCacheStore.  It is definatly
+	broken.  Next I will write some test cases.  Get everything up and
+	running, then write GeglHeapCache and GeglSwapCache.  They should
+	be more or less tivial at that point.
+
+2004-03-11 21:06 Daniel Rogers <daniel@phasevelocity.org>
+
+	* gegl/image/gegl-cache-store.c
+
+	Fixed the name of gegl_cache_store_get_type.
+	It was named gegl_cache_get_type.
+	
+2004-03-11 20:30 Daniel Rogers <daniel@phasevelocity.org>
+
+	* gegl/image/Makefile.am
+	* gegl/image/gegl-cache-entry.c
+	* gegl/image/gegl-cache-entry.h
+	* gegl/image/gegl-cache-store.c
+	* gegl/image/gegl-cache-store.h
+	* gegl/image/gegl-cache.c
+	* gegl/image/gegl-cache.h
+	* gegl/image/gegl-entry-record.c
+	* gegl/image/gegl-entry-record.h
+	* gegl/image/gegl-heap-cache-store.c
+	* gegl/image/gegl-heap-cache-store.h
+	* gegl/image/gegl-memory-cache.c
+	* gegl/image/gegl-null-cache-store.c
+	* gegl/image/gegl-null-cache-store.h
+	* gegl/image/gegl-swap-cache-store.c
+	* gegl/image/gegl-swap-cache-store.h
+	* gegl/image/gegl-swap-cache.c
+	* gegl/image/gegl-swap-cache.h
+
+	This is a partial implmentation of my new caching stuff.  It is
+	kept under the tag "NEW_CACHING".  It is spiffy.  Love it.  It
+	doesn't work.  Hate it.
 	
 2004-03-03  Sven Neumann  <sven@gimp.org>
 

@@ -20,7 +20,7 @@
  */
 
 #include "image/gegl-buffer-double.h"
-#include "image/gegl-memory-cache.h"
+#include "image/gegl-heap-cache.h"
 
 #include "ctest.h"
 #include "csuite.h"
@@ -65,11 +65,7 @@ test_buffer_caching(Test *test) {
    * 32768 bytes (32kB) is the size of a single BufferDouble with 4,
    * 1024 banks.
    */
-  cache = g_object_new (GEGL_TYPE_MEMORY_CACHE,
-			"soft_limit", G_GINT64_CONSTANT(32768),
-			"hard_limit", G_GINT64_CONSTANT(32768),
-			"persistent", FALSE,
-			NULL);
+  cache = GEGL_CACHE(gegl_heap_cache_new(32768, FALSE));
   gegl_buffer_attach (buffer, cache);
   gegl_buffer_detach (buffer);
 
