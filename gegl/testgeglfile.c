@@ -189,7 +189,7 @@ main(int argc, char *argv[])
     gegl_op_apply (op);
 
      
-  } */
+  } */ 
   gtk_main();
 
   gtk_object_destroy (GTK_OBJECT(image_buffer)); 

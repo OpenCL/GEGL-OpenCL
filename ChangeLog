@@ -1,3 +1,20 @@
+Wed Jan 26 13:42:07 PST 2000 caro@rhythm.com
+    * Forgot to add gegl-convert-gray.gob
+
+Wed Jan 26 13:03:51 PST 2000  caro@rhythm.com
+
+    * Fixed some bugs in gegl-composite-op.gob
+
+    * Added gegl-color-model-gray, gegl-color-model-gray-float
+      gegl-color-model-gray-u8
+
+    * Added some function to take care of most of the cases in
+      gegl-composite-op.gobi for unpremult and premult with or
+      without alpha
+
+    * Added suport for the color_models to convert from and to
+      XYZ space.
+
 Tue Jan 25 10:51:05 EST 2000 calvinw@mindspring.com
 
     *More details for GeglDrawable class.  
