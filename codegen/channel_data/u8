@@ -1,12 +1,12 @@
 DATATYPE_BEGIN
-DATATYPE          guint8
-WP                255
-WP_NORM           (1/255.0)
-MIN_CHANNEL       0
-MAX_CHANNEL       255
-ZERO              0	
-CHANNEL_CLAMP(x)  CLAMP(x,0,255)
-WP_CLAMP(x)       CLAMP(x,0,255)
-CHANNEL_MULT(x,y) INT_MULT8(x,y)
-CHANNEL_ROUND(x)  ROUND(x)
+DATATYPE           guint8
+WP                 255
+WP_NORM            (1/255.0)
+MIN_CHANNEL        0
+MAX_CHANNEL        255
+ZERO               0	
+CHANNEL_CLAMP (x)  CLAMP (x,0,255)
+WP_CLAMP (x)       CLAMP (x,0,255)
+CHANNEL_MULT (x,y) INT_MULT8 (x,y)
+CHANNEL_ROUND (x)  ROUND (x)
 DATATYPE_END

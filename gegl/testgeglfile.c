@@ -213,7 +213,7 @@ test_point_ops( GeglImageBuffer ** src_image_buffer,
   gint                   width, height;
   GtkWidget       	*dest_window[8];
   GtkWidget       	*dest_preview[8];
-  gchar                 *point_op_names[] = {"MIN", "MAX", "MULT", 
+  gchar                 *point_op_names[] = {"PLUS", "MIN", "MAX", "MULT", 
                                              "SUB", "DIFF", "SCREEN", 
                                              "DARK", "LIGHT"};        
 
@@ -320,8 +320,8 @@ main(int argc,
       display_image(src_window[k], src_preview[k], src_image_buffer[k], src_rect[k]);
     } 
      
-  test_composite_ops (src_image_buffer, src_width, src_height, src_rect);
-  /*test_point_ops (src_image_buffer, src_width, src_height, src_rect);*/
+  /*test_composite_ops (src_image_buffer, src_width, src_height, src_rect);*/
+  test_point_ops (src_image_buffer, src_width, src_height, src_rect);
 
   for (k = 0; k < 2; k++)
     {
