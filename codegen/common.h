@@ -8,22 +8,19 @@
 
 #include "data_type.h"
 
-/*#ifdef _LEXER_L_
-#include "parser.h"
-#undef _LEXER_L_
-#endif 
-*/
 /* DATA TYPES */
 typedef enum
 {
-  TYPE_INT,
-  TYPE_FLOAT,
+  TYPE_CHAN,
+  TYPE_FLOAT
 }DATA_TYPE;
 
 typedef enum
 { 
+  TYPE_SCALER,
   TYPE_VECTOR, 
-  TYPE_SCALER
+  TYPE_C_VECTOR,
+  TYPE_CA_VECTOR 
 }SV_TYPE;
 
 /* FUNCTIONS */

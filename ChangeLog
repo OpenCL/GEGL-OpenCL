@@ -1,3 +1,9 @@
+Wed Feb 23 19:25:25 PST 2000 caro@rhythm.com
+	
+	* Cleaned up codegen code
+	
+	* started to implement different kinds of Channels
+
 Wed Feb 23 17:45:55 PST 2000 caro@rhythm.com
 	
 	* Rm-ed compile errors

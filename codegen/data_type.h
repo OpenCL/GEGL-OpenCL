@@ -19,6 +19,8 @@
 
 EXTERN char *_WP_;   
 EXTERN char *_WP_NORM_;       
+EXTERN char *_ColorAlphaChan_;      
+EXTERN char *_ColorChan_;      
 EXTERN char *_Chan_;      
 EXTERN char *_FloatChan_;     	
 EXTERN char *_MIN_CHAN_;   

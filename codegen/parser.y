@@ -12,15 +12,10 @@ void do_op_two (elem_t *dest, elem_t src, FUNCTION op);
 void do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op);
 void print_value (elem_t *dest, elem_t src);
 void print_stuff (elem_t *dest, elem_t src);
-
 elem_t* get_sym (char *sym);
-
 void set_dtype (elem_t e, DATA_TYPE dtype);
 void set_type (elem_t e, DATA_TYPE dtype);
-void set_val (elem_t dest, elem_t src);
-
 void read_data_types (char *data_type);
-
 int yyerror (char *s); 
     
 #define NSYMS 20          /* maximum number of symbols */
@@ -78,6 +73,8 @@ keyword_t keyword_tab[] = {
 %token	<elem> INT
 %token  <elem> WP 
 %token  <elem> ZERO_CHAN  
+%token  <elem> ColorAlphaChan
+%token  <elem> ColorChan
 %token  <elem> Chan
 %token  <elem> FloatChan 
 %token  <elem> INDENT
@@ -106,6 +103,8 @@ keyword_t keyword_tab[] = {
 %type   <elem> Definition
 %type   <elem> FloatChan_List
 %type   <elem> Chan_List
+%type   <elem> ColorAlphaChan_List
+%type   <elem> ColorChan_List
 %type   <elem> GINT_List
 %type   <elem> PoundInclDef
 %type	<elem> Arguments
@@ -121,222 +120,600 @@ Input:
 
 Line:
 	  ;
-	| "\n" 				{ printf("\n"); }
-	| VOID				{ printf("void "); }
-	| POUND PoundInclDef 		{ printf("#%s ", $2.string); }
-	| INDENT			{ printf("%s", $1.string); } 
-	| LT_CURLY			{ printf("{"); }
-	| RT_CURLY                      { printf("}"); } 
-	| BREAK ';'  			{ printf("break;"); } 			
-	| CASE NAME ':'  		{ printf("case %s:", $2.string); }
-       	| DEFAULT ':' 	 		{ printf("default:"); }
-	| ELSE 				{ printf("else "); }
+	| "\n" 				
+		{ 
+		printf("\n"); 
+		}
+	| VOID				
+		{ 
+		printf("void "); 
+		}
+	| POUND PoundInclDef 		
+		{ 
+		printf("#%s ", $2.string); 
+		}
+	| INDENT			
+		{ 
+		printf("%s", $1.string); 
+		} 
+	| LT_CURLY			
+		{ 
+		printf("{"); 
+		}
+	| RT_CURLY                      
+		{ 
+		printf("}"); 
+		} 
+	| BREAK ';'  			
+		{ 
+		printf("break;"); 
+		} 			
+	| CASE NAME ':'  		
+		{ 
+		printf("case %s:", $2.string); 
+		}
+       	| DEFAULT ':' 	 		
+		{ 
+		printf("default:"); 
+		}
+	| ELSE 				
+		{ 
+		printf("else "); 
+		}
 	| FOR LT_PARENTHESIS Expression ';' Expression ';' Expression RT_PARENTHESIS
-					{ printf("for (%s; %s; %s)", $3.string, $5.string, $7.string); }
+		{ 
+		printf("for (%s; %s; %s)", $3.string, $5.string, $7.string); 
+		}
 	| IF LT_PARENTHESIS Expression RT_PARENTHESIS
-                                        { printf("if (%s)", $3.string); }	
- 	| RETURN Expression ';'		{ printf("return (%s)", $2.string); }	
+                { 
+		printf("if (%s)", $3.string); 
+		}	
+ 	| RETURN Expression ';'		
+		{ 
+		printf("return (%s)", $2.string); 
+		}	
 	| SWITCH LT_PARENTHESIS Expression RT_PARENTHESIS
-                                        { printf("switch (%s)", $3.string); }
+                { 
+		printf("switch (%s)", $3.string); 
+		}
 	| WHILE LT_PARENTHESIS Expression RT_PARENTHESIS
-                                        { printf("while (%s)", $3.string); } 	
-	| Definition ';' 		{ printf("%s;", $1.string); } 
-	| NAME EQUAL Expression ';'  	{ do_op_three (&$1, $1, $3, OP_EQUAL); printf("%s;", $1.string); } 
+                { 
+		printf("while (%s)", $3.string); 
+		} 	
+	| Definition ';' 		
+		{ 
+		printf("%s;", $1.string); 
+		} 
+	| NAME EQUAL Expression ';'  	
+		{ 
+		do_op_three (&$1, $1, $3, OP_EQUAL); 
+		printf("%s;", $1.string); 
+		} 
 	| NAME PLUS_EQUAL Expression ';'  	
-					{ elem_t tmp; do_op_three (&tmp, $1, $3, OP_PLUS); 
-					do_op_three (&$1, $1, tmp, OP_EQUAL); printf("%s;", $1.string); } 
+		{ 
+		elem_t tmp; do_op_three (&tmp, $1, $3, OP_PLUS); 
+		do_op_three (&$1, $1, tmp, OP_EQUAL); 
+		printf("%s;", $1.string); 
+		} 
 	| NAME MINUS_EQUAL Expression ';'  	
-					{ elem_t tmp; do_op_three (&tmp, $1, $3, OP_MINUS);
-					do_op_three (&$1, $1, tmp, OP_EQUAL); printf("%s;", $1.string); } 
+		{ 
+		elem_t tmp; 
+		do_op_three (&tmp, $1, $3, OP_MINUS);
+		do_op_three (&$1, $1, tmp, OP_EQUAL); 
+		printf("%s;", $1.string); 
+		} 
 	| NAME TIMES_EQUAL Expression ';'  	
-					{ elem_t tmp; do_op_three (&tmp, $1, $3, OP_TIMES);
-					do_op_three (&$1, $1, tmp, OP_EQUAL); printf("%s;", $1.string); } 
+		{ 
+		elem_t tmp; 
+		do_op_three (&tmp, $1, $3, OP_TIMES);
+		do_op_three (&$1, $1, tmp, OP_EQUAL); 
+		printf("%s;", $1.string); 
+		} 
 	| NAME DIVIDE_EQUAL Expression ';'  	
-					{ elem_t tmp; do_op_three (&tmp, $1, $3, OP_DIVIDE);
-					do_op_three (&$1, $1, tmp, OP_EQUAL); printf("%s;", $1.string); } 
-	| Expression ';'   		{ printf("%s;", $1.string); }
+		{ 
+		elem_t tmp; 
+		do_op_three (&tmp, $1, $3, OP_DIVIDE);
+		do_op_three (&$1, $1, tmp, OP_EQUAL); 
+		printf("%s;", $1.string); 
+		} 
+	| Expression ';'   		
+		{ 
+		printf("%s;", $1.string); 
+		}
 	| IF LT_PARENTHESIS Expression RT_PARENTHESIS
-					{ printf("if (%s)", $3.string); }
+		{ 
+		printf("if (%s)", $3.string); 
+		}
 	| NAME LT_PARENTHESIS Arguments RT_PARENTHESIS
-       					{ printf("%s (%s)", $1.string, $3.string); }	
+       		{ 
+		printf("%s (%s)", $1.string, $3.string); 
+		}	
 	;
 
 	
 PoundInclDef:
-	  INCLUDE '"' NAME '.' NAME '"' { char tmp[256]; $$=$3; sprintf (tmp,"include \"%s.%s\" ", $3.string, 
-	      				  $5.string);
-                                          strcpy($$.string, tmp); }
-	| INCLUDE '<' NAME '.' NAME '>' { char tmp[256]; $$=$3; sprintf (tmp,"include <%s.%s> ", $3.string,
-	    				  $5.string);
-	                                  strcpy($$.string, tmp); }
+	  INCLUDE '"' NAME '.' NAME '"' 
+		{ 
+		char tmp[256]; 
+		$$=$3; 
+		sprintf (tmp,"include \"%s.%s\" ", $3.string, 
+	      	$5.string);
+                strcpy($$.string, tmp); 
+		}
+	| INCLUDE '<' NAME '.' NAME '>' 
+		{ 
+		char tmp[256]; 
+		$$=$3; 
+		sprintf (tmp,"include <%s.%s> ", $3.string, $5.string);
+	        strcpy($$.string, tmp); 
+		}
 	;
 
 Expression:
-	  Expression PLUS Expression	{ $$=$1; do_op_three (&$$, $1, $3, OP_PLUS); }
-	| Expression MINUS Expression	{ $$=$1; do_op_three (&$$, $1, $3, OP_MINUS); }
-	| Expression TIMES Expression	{ $$=$1; do_op_three (&$$, $1, $3, OP_TIMES); }
-	| Expression DIVIDE Expression  { $$=$1; do_op_three (&$$, $1, $3, OP_DIVIDE); } 	 
-	| Expression AND Expression  	{ $$=$1; do_op_three (&$$, $1, $3, OP_AND); } 	 
-	| Expression OR Expression  	{ $$=$1; do_op_three (&$$, $1, $3, OP_OR); } 	 
-	| Expression EQUAL Expression   { $$=$1; do_op_three (&$$, $1, $3, OP_EQUAL); }
-	| MINUS Expression %prec NEG	{ $$=$2; do_op_two (&$$, $2, OP_NEG); } 
+	  Expression PLUS Expression	
+		{ 
+		$$=$1; 
+		do_op_three (&$$, $1, $3, OP_PLUS); 
+		}
+	| Expression MINUS Expression	
+		{ 
+		$$=$1; 
+		do_op_three (&$$, $1, $3, OP_MINUS); 
+		}
+	| Expression TIMES Expression	
+		{ 
+		$$=$1; 
+		do_op_three (&$$, $1, $3, OP_TIMES); 
+		}
+	| Expression DIVIDE Expression  
+		{ 
+		$$=$1; 
+		do_op_three (&$$, $1, $3, OP_DIVIDE); 
+		} 	 
+	| Expression AND Expression  	
+		{ 
+		$$=$1; 
+		do_op_three (&$$, $1, $3, OP_AND); 
+		} 	 
+	| Expression OR Expression  	
+		{ 
+		$$=$1; 
+		do_op_three (&$$, $1, $3, OP_OR); 
+		} 	 
+	| Expression EQUAL Expression   
+		{ 
+		$$=$1; 
+		do_op_three (&$$, $1, $3, OP_EQUAL); 
+		}
+	| MINUS Expression %prec NEG	
+		{ 
+		$$=$2; 
+		do_op_two (&$$, $2, OP_NEG); 
+		} 
 	| LT_PARENTHESIS Expression RT_PARENTHESIS
-					{ $$=$2; do_op_two (&$$, $2, OP_PARENTHESIS);} 
+		{ 
+		$$=$2; 
+		do_op_two (&$$, $2, OP_PARENTHESIS);
+		} 
 	| WP_CLAMP LT_PARENTHESIS Expression RT_PARENTHESIS
-					{ $$=$3; do_op_two (&$$, $3, OP_WP_CLAMP); }
+		{ 
+		$$=$3; 
+		do_op_two (&$$, $3, OP_WP_CLAMP); 
+		}
 	| CHAN_CLAMP LT_PARENTHESIS Expression RT_PARENTHESIS
-                                        { $$=$3; do_op_two (&$$, $3, OP_CHAN_CLAMP); } 
+                { 
+		$$=$3; 
+		do_op_two (&$$, $3, OP_CHAN_CLAMP); 
+		} 
 	| MIN LT_PARENTHESIS Expression ',' Expression RT_PARENTHESIS
-                                        { $$=$3; do_op_three (&$$, $3, $5, OP_MIN); }
+                { 
+		$$=$3; 
+		do_op_three (&$$, $3, $5, OP_MIN); 
+		}
 	| MAX LT_PARENTHESIS Expression ',' Expression RT_PARENTHESIS
-                                        { $$=$3; do_op_three (&$$, $3, $5, OP_MAX); }
+                { 
+		$$=$3; 
+		do_op_three (&$$, $3, $5, OP_MAX); 
+		}
 	| ABS LT_PARENTHESIS Expression RT_PARENTHESIS
-                                        { $$=$3; do_op_two (&$$, $3, OP_ABS); } 
-	| Expression EQ Expression	{ char tmp[256]; $$=$3; sprintf (tmp,"%s == %s", $1.string, $3.string);
-                                          strcpy($$.string, tmp); }
-	| Expression NOT_EQ Expression	{ char tmp[256]; $$=$3; sprintf (tmp,"%s != %s", $1.string, $3.string); 
-	                                  strcpy($$.string, tmp); }
-	| Expression SMALLER Expression	{ char tmp[256]; $$=$3; sprintf (tmp,"%s < %s", $1.string, $3.string); 
-                                          strcpy($$.string, tmp); }
-	| Expression GREATER Expression	{ char tmp[256]; $$=$3; sprintf (tmp,"%s > %s", $1.string, $3.string); 
-	                                  strcpy($$.string, tmp); }
+                { 
+		$$=$3; 
+		do_op_two (&$$, $3, OP_ABS); 
+		} 
+	| Expression EQ Expression	
+		{ 
+		char tmp[256]; 
+		$$=$3; 
+		sprintf (tmp,"%s == %s", $1.string, $3.string);
+                strcpy($$.string, tmp); 
+		}
+	| Expression NOT_EQ Expression	
+		{ 
+		char tmp[256]; 
+		$$=$3; 
+		sprintf (tmp,"%s != %s", $1.string, $3.string); 
+	        strcpy($$.string, tmp); 
+		}
+	| Expression SMALLER Expression	
+		{ 
+		char tmp[256]; 
+		$$=$3; 
+		sprintf (tmp,"%s < %s", $1.string, $3.string); 
+                strcpy($$.string, tmp); 
+		}
+	| Expression GREATER Expression	
+		{ 
+		char tmp[256]; 
+		$$=$3; 
+		sprintf (tmp,"%s > %s", $1.string, $3.string); 
+	        strcpy($$.string, tmp); 
+		}
 	| Expression SMALLER_EQ Expression	
-					{ char tmp[256]; $$=$3; sprintf (tmp,"%s <= %s", $1.string, $3.string); 
-					  strcpy($$.string, tmp); }
+		{ 
+		char tmp[256]; 
+		$$=$3; 
+		sprintf (tmp,"%s <= %s", $1.string, $3.string); 
+	  	strcpy($$.string, tmp); 
+		}
 	| Expression GREATER_EQ Expression	
-					{ char tmp[256]; $$=$3; sprintf (tmp,"%s >= %s", $1.string, $3.string);
-				          strcpy($$.string, tmp);	}
-	| NOT Expression		{ char tmp[256]; $$=$2; sprintf (tmp,"!%s", $2.string);
-	                                  strcpy($$.string, tmp); }
-	| Expression ADD		{ char tmp[256]; $$=$1; sprintf (tmp,"%s++", $1.string);
-	    				  strcpy($$.string, tmp); } 
-	| Expression SUBTRACT		{ char tmp[256]; $$=$1; sprintf (tmp,"%s--", $1.string);
-	                                  strcpy($$.string, tmp); } 
-	| NAME				{ $$=$1; print_value(&$$, $1); }
-	| FLOAT				{ $$=$1; print_stuff(&$$, $1); }
-	| INT				{ $$=$1; print_stuff(&$$, $1); } 
-	| WP				{ $$=$1; print_stuff(&$$, $1); }
-	| ZERO_CHAN			{ $$=$1; print_stuff(&$$, $1); } 
+		{ 
+		char tmp[256]; 
+		$$=$3; 
+		sprintf (tmp,"%s >= %s", $1.string, $3.string);
+	        strcpy($$.string, tmp);	
+		}
+	| NOT Expression		
+		{ 
+		char tmp[256]; 
+		$$=$2; 
+		sprintf (tmp,"!%s", $2.string);
+	        strcpy($$.string, tmp); 
+		}
+	| Expression ADD		
+		{ 
+		char tmp[256]; 
+		$$=$1; 
+		sprintf (tmp,"%s++", $1.string);
+	        strcpy($$.string, tmp); 
+		} 
+	| Expression SUBTRACT		
+		{ 
+		char tmp[256]; 
+		$$=$1; 
+		sprintf (tmp,"%s--", $1.string);
+	        strcpy($$.string, tmp); 
+		} 
+	| NAME				
+		{ 
+		$$=$1; 
+		print_value(&$$, $1); 
+		}
+	| FLOAT				
+		{ 
+		$$=$1; 
+		print_stuff(&$$, $1); 
+		}
+	| INT				
+		{ 
+		$$=$1; 
+		print_stuff(&$$, $1); 
+		} 
+	| WP				
+		{ 
+		$$=$1; 
+		print_stuff(&$$, $1); 
+		}
+	| ZERO_CHAN			
+		{ 
+		$$=$1; 
+		print_stuff(&$$, $1); 
+		} 
 	;
 
 Arguments:
 	  Arguments ',' Arguments	
-					{ char tmp[256]; $$=$3; sprintf (tmp," %s, %s", $1.string, $3.string);
-					  strcpy($$.string, tmp); }
-	| GCHAR TIMES NAME		{ char tmp[256]; $$=$3; sprintf (tmp,"gchar *%s", $3.string); 
-					  strcpy($$.string, tmp); }
+		{ 
+		char tmp[256]; 
+		$$=$3; 
+		sprintf (tmp," %s, %s", $1.string, $3.string);
+		strcpy($$.string, tmp); 
+		}
+	| GCHAR TIMES NAME		
+		{ 
+		char tmp[256]; 
+		$$=$3; 
+		sprintf (tmp,"gchar *%s", $3.string); 
+	  	strcpy($$.string, tmp); 
+		}
        	;
 	
 Definition:
-	  FloatChan FloatChan_List 	{ char tmp[256]; $$=$2; sprintf (tmp,"%s %s", $1.string, $2.string); 
-					  strcpy($$.string, tmp); }
-	| Chan Chan_List		{ char tmp[256]; $$=$2; sprintf (tmp,"%s %s", $1.string, $2.string);
-                                          strcpy($$.string, tmp); }
-	| GINT GINT_List		{ char tmp[256]; $$=$2; sprintf (tmp,"gint %s", $2.string);
-                                          strcpy($$.string, tmp); }
+	  FloatChan FloatChan_List 	
+		{ 
+		char tmp[256]; 
+		$$=$2; 
+		sprintf (tmp,"%s %s", $1.string, $2.string); 
+	  	strcpy($$.string, tmp); 
+		}
+	| Chan Chan_List		
+		{ 
+		char tmp[256]; 
+		$$=$2; 
+		sprintf (tmp,"%s %s", $1.string, $2.string);
+                strcpy($$.string, tmp); 
+		}
+	| ColorChan ColorChan_List
+                {
+                char tmp[256];
+                $$=$2;
+                sprintf (tmp,"%s %s", $1.string, $2.string);
+                strcpy($$.string, tmp);
+                }
+	| ColorAlphaChan ColorAlphaChan_List
+                {
+                char tmp[256];
+                $$=$2;
+                sprintf (tmp,"%s %s", $1.string, $2.string);
+                strcpy($$.string, tmp);
+                }
+	| GINT GINT_List		
+		{ 
+		char tmp[256]; 
+		$$=$2; 
+		sprintf (tmp,"gint %s", $2.string);
+                strcpy($$.string, tmp); 
+		}
 	;
 
 GINT_List:
-	 NAME ',' GINT_List             { char tmp[256]; $$=$3;
-                                          set_dtype($1, TYPE_INT);
-                                          set_type($1, TYPE_SCALER);
-                                          sprintf (tmp, "%s, %s", $1.string, $3.string);
-                                          strcpy($$.string, tmp); }
-        | NAME                          { set_dtype($1, TYPE_INT); set_type($1, TYPE_SCALER); 
-					  $$=$1; print_value (&$$, $1);}
-        | NAME EQUAL FLOAT              { set_dtype($1, TYPE_INT);
-                                          set_type($1, TYPE_SCALER);
-                                          set_val($1, $3);
-                                          sprintf ($$.string, "%s=%s", $1.string, $3.string);
-                                          $$.dtype = $1.dtype; }
-        | NAME EQUAL INT                { set_dtype($1, TYPE_INT);
-                                          set_type($1, TYPE_SCALER);
-                                          set_val($1, $3);
-                                          sprintf ($$.string, "%s=%s", $1.string, $3.string);
-                                          $$.dtype = $1.dtype; }
+	 NAME ',' GINT_List             
+		{ 
+		char tmp[256]; 
+		$$=$3;
+                set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_SCALER);
+                sprintf (tmp, "%s, %s", $1.string, $3.string);
+                strcpy($$.string, tmp); 
+		}
+        | NAME                          
+		{ 
+		set_dtype($1, TYPE_CHAN); set_type($1, TYPE_SCALER); 
+	  	$$=$1; print_value (&$$, $1);
+		}
+        | NAME EQUAL FLOAT              
+		{ 
+		set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_SCALER);
+                sprintf ($$.string, "%s=%s", $1.string, $3.string);
+                $$.dtype = $1.dtype; 
+		}
+        | NAME EQUAL INT                
+		{ 
+		set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_SCALER);
+                sprintf ($$.string, "%s=%s", $1.string, $3.string);
+                $$.dtype = $1.dtype; }
         | NAME EQUAL FLOAT ',' GINT_List
-                                        { char tmp[256]; $$=$5;
-                                          set_dtype($1, TYPE_INT);
-                                          set_type($1, TYPE_SCALER);
-                                          set_val($1, $3);
-                                          sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-                                          strcpy($$.string, tmp); }
+                { 
+		char tmp[256]; 
+		$$=$5;
+                set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_SCALER);
+                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
+                strcpy($$.string, tmp); 
+		}
         | NAME EQUAL INT ',' GINT_List
-                                        { char tmp[256]; $$=$5;
-                                          set_dtype($1, TYPE_INT);
-                                          set_type($1, TYPE_SCALER);
-                                          set_val($1, $3);
-                                          sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-                                          strcpy($$.string, tmp); }
+                { 
+		char tmp[256]; 
+		$$=$5;
+                set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_SCALER);
+                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
+                strcpy($$.string, tmp); 
+		}
         ;
 
 Chan_List:
-          NAME ',' Chan_List            { char tmp[256]; $$=$3;
-                                          set_dtype($1, TYPE_INT);
-                                          set_type($1, TYPE_VECTOR);
-                                          sprintf (tmp, "%s, %s", $1.string, $3.string);
-                                          strcpy($$.string, tmp); }
-        | NAME                          { set_dtype($1, TYPE_INT); set_type($1, TYPE_VECTOR);
-					  $$=$1; print_value (&$$, $1);}
-        | NAME EQUAL FLOAT              { set_dtype($1, TYPE_INT);
-                                          set_type($1, TYPE_VECTOR);
-                                          set_val($1, $3);
-                                          sprintf ($$.string, "%s=%s", $1.string, $3.string);
-                                          $$.dtype = $1.dtype; }
-        | NAME EQUAL INT                { set_dtype($1, TYPE_INT);
-                                          set_type($1, TYPE_VECTOR);
-                                          set_val($1, $3);
-                                          sprintf ($$.string, "%s=%s", $1.string, $3.string);
-                                          $$.dtype = $1.dtype; }
+          NAME ',' Chan_List            
+		{ 
+		char tmp[256]; 
+		$$=$3;
+                set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_VECTOR);
+                sprintf (tmp, "%s, %s", $1.string, $3.string);
+                strcpy($$.string, tmp); 
+		}
+        | NAME                          
+		{ 
+		set_dtype($1, TYPE_CHAN); 
+		set_type($1, TYPE_VECTOR);
+	  	$$=$1; 
+		print_value (&$$, $1);
+		}
+        | NAME EQUAL FLOAT              
+		{ 
+		set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_VECTOR);
+                sprintf ($$.string, "%s=%s", $1.string, $3.string);
+                $$.dtype = $1.dtype; 
+		}
+        | NAME EQUAL INT                
+		{ 
+		set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_VECTOR);
+                sprintf ($$.string, "%s=%s", $1.string, $3.string);
+                $$.dtype = $1.dtype; 
+		}
         | NAME EQUAL FLOAT ',' Chan_List
-                                        { char tmp[256]; $$=$5;
-                                          set_dtype($1, TYPE_INT);
-                                          set_type($1, TYPE_VECTOR);
-                                          set_val($1, $3);
-                                          sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-                                          strcpy($$.string, tmp); }
+                { 
+		char tmp[256]; 
+		$$=$5;
+                set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_VECTOR);
+                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
+                strcpy($$.string, tmp); 
+		}
         | NAME EQUAL INT ',' Chan_List
-                                        { char tmp[256]; $$=$5;
-                                          set_dtype($1, TYPE_INT);
-                                          set_type($1, TYPE_VECTOR);
-                                          set_val($1, $3);
-                                          sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-                                          strcpy($$.string, tmp); }
+                { 
+		char tmp[256]; 
+		$$=$5;
+                set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_VECTOR);
+                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
+                strcpy($$.string, tmp); 
+		}
+        ;
+
+ColorChan_List:
+          NAME ',' ColorChan_List            
+		{ 
+		char tmp[256]; 
+		$$=$3;
+                set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_C_VECTOR);
+                sprintf (tmp, "%s, %s", $1.string, $3.string);
+                strcpy($$.string, tmp); 
+		}
+        | NAME                          
+		{ 
+		set_dtype($1, TYPE_CHAN); 
+		set_type($1, TYPE_C_VECTOR);
+	  	$$=$1; 
+		print_value (&$$, $1);
+		}
+        | NAME EQUAL FLOAT              
+		{ 
+		set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_C_VECTOR);
+                sprintf ($$.string, "%s=%s", $1.string, $3.string);
+                $$.dtype = $1.dtype; 
+		}
+        | NAME EQUAL INT                
+		{ 
+		set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_C_VECTOR);
+                sprintf ($$.string, "%s=%s", $1.string, $3.string);
+                $$.dtype = $1.dtype; 
+		}
+        | NAME EQUAL FLOAT ',' ColorChan_List
+                { 
+		char tmp[256]; 
+		$$=$5;
+                set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_C_VECTOR);
+                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
+                strcpy($$.string, tmp); 
+		}
+        | NAME EQUAL INT ',' ColorChan_List
+                { 
+		char tmp[256]; 
+		$$=$5;
+                set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_C_VECTOR);
+                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
+                strcpy($$.string, tmp); 
+		}
+        ;
+ColorAlphaChan_List:
+          NAME ',' ColorAlphaChan_List            
+		{ 
+		char tmp[256]; 
+		$$=$3;
+                set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_CA_VECTOR);
+                sprintf (tmp, "%s, %s", $1.string, $3.string);
+                strcpy($$.string, tmp); 
+		}
+        | NAME                          
+		{ 
+		set_dtype($1, TYPE_CHAN); 
+		set_type($1, TYPE_CA_VECTOR);
+	  	$$=$1; 
+		print_value (&$$, $1);
+		}
+        | NAME EQUAL FLOAT              
+		{ 
+		set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_CA_VECTOR);
+                sprintf ($$.string, "%s=%s", $1.string, $3.string);
+                $$.dtype = $1.dtype; 
+		}
+        | NAME EQUAL INT                
+		{ 
+		set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_CA_VECTOR);
+                sprintf ($$.string, "%s=%s", $1.string, $3.string);
+                $$.dtype = $1.dtype; 
+		}
+        | NAME EQUAL FLOAT ',' ColorAlphaChan_List
+                { 
+		char tmp[256]; 
+		$$=$5;
+                set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_CA_VECTOR);
+                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
+                strcpy($$.string, tmp); 
+		}
+        | NAME EQUAL INT ',' ColorAlphaChan_List
+                { 
+		char tmp[256]; 
+		$$=$5;
+                set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_CA_VECTOR);
+                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
+                strcpy($$.string, tmp); 
+		}
         ;
 
 
 FloatChan_List:
-	  NAME ',' FloatChan_List	{ char tmp[256]; $$=$3; 
-					  set_dtype($1, TYPE_FLOAT); 
-					  set_type($1, TYPE_FLOAT); 
-					  sprintf (tmp, "%s, %s", $1.string, $3.string);
-					  strcpy($$.string, tmp); }	
-	| NAME  			{ set_dtype($1, TYPE_FLOAT); set_type($1, TYPE_FLOAT); 
-					  $$=$1; print_value (&$$, $1);}
-	| NAME EQUAL FLOAT 		{ set_dtype($1, TYPE_FLOAT); 
-					  set_type($1, TYPE_FLOAT); 
-					  set_val($1, $3); 
-					  sprintf ($$.string, "%s=%s", $1.string, $3.string);
-					  $$.dtype = $1.dtype; }
-	| NAME EQUAL INT		{ set_dtype($1, TYPE_FLOAT); 
-					  set_type($1, TYPE_FLOAT); 
-					  set_val($1, $3); 
-					  sprintf ($$.string, "%s=%s", $1.string, $3.string);
-                                          $$.dtype = $1.dtype; }
+	  NAME ',' FloatChan_List	
+		{ 
+		char tmp[256]; 
+		$$=$3; 
+	  	set_dtype($1, TYPE_FLOAT); 
+	  	set_type($1, TYPE_FLOAT); 
+		sprintf (tmp, "%s, %s", $1.string, $3.string);
+		strcpy($$.string, tmp); 
+		}	
+	| NAME  			
+		{ 
+		set_dtype($1, TYPE_FLOAT); 
+		set_type($1, TYPE_FLOAT); 
+	  	$$=$1; 
+		print_value (&$$, $1);
+		}
+	| NAME EQUAL FLOAT 		
+		{ 
+		set_dtype($1, TYPE_FLOAT); 
+	  	set_type($1, TYPE_FLOAT); 
+	  	sprintf ($$.string, "%s=%s", $1.string, $3.string);
+		$$.dtype = $1.dtype; 
+		}
+	| NAME EQUAL INT		
+		{ 
+		set_dtype($1, TYPE_FLOAT); 
+		set_type($1, TYPE_FLOAT); 
+		sprintf ($$.string, "%s=%s", $1.string, $3.string);
+		$$.dtype = $1.dtype; 
+		}
 	| NAME EQUAL FLOAT ',' FloatChan_List
-					{ char tmp[256]; $$=$5;
-					  set_dtype($1, TYPE_FLOAT);
-					  set_type($1, TYPE_FLOAT); 
-					  set_val($1, $3);
-					  sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-					  strcpy($$.string, tmp); }
+					
+		{ 
+		char tmp[256]; $$=$5;
+		set_dtype($1, TYPE_FLOAT);
+		set_type($1, TYPE_FLOAT); 
+		sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
+		strcpy($$.string, tmp); 
+		}
 	| NAME EQUAL INT ',' FloatChan_List
-                                        { char tmp[256]; $$=$5;
-                                          set_dtype($1, TYPE_FLOAT);
-					  set_type($1, TYPE_FLOAT); 
-                                          set_val($1, $3);
-                                          sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-                                          strcpy($$.string, tmp); }
+		{ 
+		char tmp[256]; $$=$5;
+		set_dtype($1, TYPE_FLOAT);
+		set_type($1, TYPE_FLOAT); 
+		sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
+		strcpy($$.string, tmp); 
+		}
 	;
 
 %%
@@ -358,13 +735,12 @@ print_value (elem_t *dest, elem_t src)
   sprintf (tmp, "%s", src.string);
   strcpy (dest->string, tmp);
   dest->dtype = get_sym(src.string)->dtype;
-
 }
 
 void
 do_op_two (elem_t *dest, elem_t src, FUNCTION op)
 {
-/*  char tmp[256];
+  char tmp[256];
   switch (op)
   {
   case OP_NEG:
@@ -376,7 +752,7 @@ do_op_two (elem_t *dest, elem_t src, FUNCTION op)
       case TYPE_FLOAT:
 	sprintf (tmp, "%s", src.string);
 	break;
-      case TYPE_INT:
+      case TYPE_CHAN:
 	sprintf (tmp, "%s%s%s", _CHAN_CLAMP_PRE_, src.string, _CHAN_CLAMP_SUF_);  
 	break; 
       }
@@ -387,7 +763,7 @@ do_op_two (elem_t *dest, elem_t src, FUNCTION op)
       case TYPE_FLOAT:
 	sprintf (tmp, "CLAMP (%s, %s, %s)", src.string, _MIN_CHAN_, _WP_);
 	break;
-      case TYPE_INT:
+      case TYPE_CHAN:
 	sprintf (tmp, "%s%s%s", _WP_CLAMP_PRE_, src.string, _WP_CLAMP_SUF_);
 	break;
       }
@@ -402,7 +778,7 @@ do_op_two (elem_t *dest, elem_t src, FUNCTION op)
     break; 
   }
   strcpy (dest->string, tmp);
-*/}
+}
 
 void
 do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
@@ -416,7 +792,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	case TYPE_FLOAT:
 	  sprintf (tmp, "%s + %s", src1.string, src2.string);
 	  break;
-	case TYPE_INT:
+	case TYPE_CHAN:
 	  sprintf (tmp, "%s%s + %s%s", _PLUS_PRE_, src1.string, src2.string, _PLUS_SUF_);
 	  break;
 	}
@@ -427,7 +803,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	case TYPE_FLOAT:
 	  sprintf (tmp, "%s - %s", src1.string, src2.string);
 	  break;
-	case TYPE_INT:
+	case TYPE_CHAN:
 	  sprintf (tmp, "%s%s - %s%s", _MINUS_PRE_, src1.string, src2.string, _MINUS_SUF_);
 	  break;
 	}
@@ -436,16 +812,16 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
       switch (src1.dtype|src2.dtype)
 	{
 	case TYPE_FLOAT:
-	  if (src1.type|src2.type)
+	  if (src1.type && src2.type)
 	    sprintf (tmp, "%s%s * %s%s", _TIMES_VS_PRE_, src1.string, src2.string, _TIMES_VS_SUF_);
 	  else
 	    sprintf (tmp, "%s * %s * %s", src1.string, src2.string, _WP_NORM_);
 	  break;
-	case TYPE_INT:
-	  if (src1.type|src2.type)
-	    sprintf (tmp, "%s%s * %s%s", _TIMES_VS_PRE_, src1.string, src2.string, _TIMES_VS_SUF_);
-	  else
+	case TYPE_CHAN:
+	  if (src1.type && src2.type)
 	    sprintf (tmp, "%s%s%s%s%s", _TIMES_VV_PRE_, src1.string, _TIMES_VV_MID_, src2.string, _TIMES_VV_SUF_);
+	  else
+	    sprintf (tmp, "%s%s * %s%s", _TIMES_VS_PRE_, src1.string, src2.string, _TIMES_VS_SUF_);
 	  break;
 	}
       break;
@@ -453,16 +829,16 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
       switch (src1.dtype)
 	{
 	case TYPE_FLOAT:
-	  if (src1.type|src2.type)
-	    sprintf (tmp, "%s / %s", src1.string, src2.string);
-	  else
+	  if (src1.type && src2.type)
 	    sprintf (tmp, "%s * %s / %s", src1.string, _WP_, src2.string);
+	  else
+	    sprintf (tmp, "%s / %s", src1.string, src2.string);
 	  break;
-	case TYPE_INT:
-	  if (src1.type|src2.type)
-	    sprintf (tmp, "%s / %s", src1.string, src2.string);
-	  else
+	case TYPE_CHAN:
+	  if (src1.type && src2.type)
 	    sprintf (tmp, "%s * %s / %s", src1.string, _WP_, src2.string);
+	  else
+	    sprintf (tmp, "%s / %s", src1.string, src2.string);
 	  break;
 	}
       break;
@@ -487,18 +863,18 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	    case TYPE_FLOAT:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
-	    case TYPE_INT:
+	    case TYPE_CHAN:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);         
 	      break;
 	    }   
 	  break;
-	case TYPE_INT:
+	case TYPE_CHAN:
 	  switch (src2.dtype)
 	    {
 	    case TYPE_FLOAT:
 	      sprintf (tmp, "%s = %s%s%s", src1.string, _EQUAL_CFC_PRE_, src2.string, _EQUAL_CFC_SUF_);
 	      break;
-	    case TYPE_INT:
+	    case TYPE_CHAN:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);          
 	      break;
 	    } 
@@ -511,29 +887,10 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
     }
   
   dest->dtype = src1.dtype | src2.dtype; 
-  dest->type = src1.type & src2.type;
+  dest->type = src1.type | src2.type;
   strcpy (dest->string, tmp);
 }
 
-void
-set_val (elem_t dest, elem_t src)
-{
-/*  int   i;
-  for (i=0; i<cur_nsyms; i++)
-  {
-    if(!strcmp(symtab[i].string, dest.string))
-            symtab[i].value = src.value; 
-  
-  }
-
-  if (cur_nsyms == NSYMS)
-  {
-    yyerror("Too many symbols");
-    exit(1);      
-  }
-*/
-   
-}
 
 void
 set_dtype (elem_t e, DATA_TYPE dtype)
@@ -685,6 +1042,8 @@ read_data_types (char *data_type)
      { 
      _WP_         	= (char *) strdup ("255");
      _WP_NORM_      	= (char *) strdup ("(1.0/255.0)");
+     _ColorAlphaChan_   = (char *) strdup ("guint8");
+     _ColorChan_        = (char *) strdup ("guint8");
      _Chan_         	= (char *) strdup ("guint8");
      _FloatChan_    	= (char *) strdup ("float");
      _MIN_CHAN_     	= (char *) strdup ("0");
@@ -722,6 +1081,8 @@ read_data_types (char *data_type)
 
      _WP_          	= (char *) strdup ("4095");
      _WP_NORM_     	= (char *) strdup ("(1.0/4095.0)");
+     _ColorAlphaChan_   = (char *) strdup ("guint16");
+     _ColorChan_        = (char *) strdup ("guint16");
      _Chan_         	= (char *) strdup ("guint16");
      _FloatChan_    	= (char *) strdup ("float");
      _MIN_CHAN_      	= (char *) strdup ("0");
@@ -758,6 +1119,8 @@ read_data_types (char *data_type)
      {
      _WP_               = (char *) strdup ("1.0");
      _WP_NORM_          = (char *) strdup ("1.0");
+     _ColorAlphaChan_   = (char *) strdup ("float");
+     _ColorChan_        = (char *) strdup ("float");
      _Chan_             = (char *) strdup ("float");
      _FloatChan_        = (char *) strdup ("float");
      _MIN_CHAN_         = (char *) strdup ("0");
