@@ -1,4 +1,7 @@
 /* fldskjflksjd sdfjlskfjlsdkfjdslkjfsldkfjdlskf */
+CODEGEN_BLOCK_BEGIN
+caro->caro
+CODEGEN_BLOCK_END 
 {
 	CODEGEN_DECL_BEGIN
  

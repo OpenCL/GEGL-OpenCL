@@ -29,7 +29,9 @@ int     cur_nsyms=0;
 
 keyword_t keyword_tab[] = {
 {"break",      BREAK},
+{"boolean",    BOOLEAN}, 
 {"case",       CASE},
+{"char",       CHAR},
 {"const",      CONST},
 {"continue",   CONTINUE},
 {"default",    DEFAULT},
@@ -37,16 +39,7 @@ keyword_t keyword_tab[] = {
 {"else",       ELSE},
 {"float",      FLOAT},
 {"for",        FOR},
-{"gchar",      GCHAR},
-{"gfloat",     GFLOAT},
-{"gint",       GINT},
 {"goto",       GOTO},
-{"gboolean",   GBOOLEAN}, 
-{"guchar",     GUCHAR},
-{"guint",      GUINT},
-{"guint8",     GUINT8},
-{"guint16",    GUINT16},
-{"gshort",     GSHORT},
 {"if",         IF},
 {"include",    INCLUDE}, 
 {"int",        INT},
@@ -54,6 +47,7 @@ keyword_t keyword_tab[] = {
 {"real",       REAL},
 {"register",   REGISTER},
 {"return",     RETURN},
+{"short",      SHORT},
 {"signed",     SIGNED},
 {"sizeof",     SIZEOF},
 {"static",     STATIC},
@@ -90,10 +84,10 @@ keyword_t keyword_tab[] = {
 %token  <elem> POUND
 
 /* keywords */
-%token	BREAK  CASE  CONST  CONTINUE  DEFAULT  DO	
-%token 	ELSE  FLOAT FOR  GBOOLEAN  GCHAR  GFLOAT  GINT  GOTO  GUCHAR  GUINT
-%token  GUINT8  GUINT16  GSHORT  IF  INCLUDE INT LONG  REAL  REGISTER
-%token  RETURN  SIGNED  SIZEOF  STATIC  STRUCT  SWITCH  TYPEDEF
+%token	BOOLEAN BREAK  CASE  CHAR CONST  CONTINUE  DEFAULT  DO	
+%token 	ELSE  FLOAT FOR GOTO 
+%token  IF  INCLUDE INT LONG  REAL  REGISTER
+%token  RETURN  SHORT SIGNED  SIZEOF  STATIC  STRUCT  SWITCH  TYPEDEF
 %token  UNION  UNSIGNED  VOID  VOLATILE  WHILE
 
 /* operations */ 
@@ -120,7 +114,6 @@ keyword_t keyword_tab[] = {
 %type   <elem> Chan_List
 %type   <elem> VectorChan_List
 %type   <elem> PoundInclDef
-%type	<elem> Arguments
 %type	<elem> Star 
 %type	<elem> Star2  
 
@@ -134,7 +127,7 @@ Input:
 	;
 
 Line:
-	  ;
+	; 
 	| "\n" 				
 		{ 
 		printf("\n"); 
@@ -277,7 +270,7 @@ Line:
 		  {
 		  if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
 		    {
-		    printf ("%sif (%s_a)%s  %s%s_a++", $1.string, $5.string,
+		    printf ("%sif (%s_a)%s  %s%s_a++;", $1.string, $5.string,
 			$1.string, $4.string, $5.string);
 		    sprintf (tmp, "%s%s%s_c++;", 
 		      $1.string, $4.string, $5.string);  
@@ -496,23 +489,6 @@ Expression:
 		}	
 	;
 
-Arguments:
-	  Arguments ',' Arguments	
-		{ 
-		char tmp[256]; 
-		$$=$3; 
-		sprintf (tmp," %s, %s", $1.string, $3.string);
-		strcpy($$.string, tmp); 
-		}
-	| GCHAR Star NAME		
-		{ 
-		char tmp[256]; 
-		$$=$3; 
-		sprintf (tmp,"gchar *%s", $3.string); 
-	  	strcpy($$.string, tmp); 
-		}
-       	;
-	
 Definition:
 	  Chan Chan_List		
 		{ 
@@ -528,13 +504,6 @@ Definition:
                 sprintf (tmp,"%s%s", $1.string, $2.string);
                 strcpy($$.string, tmp);
                 }
-	| GINT Int_List		
-		{ 
-		char tmp[256]; 
-		$$=$2; 
-		sprintf (tmp,"gint %s", $2.string);
-                strcpy($$.string, tmp); 
-		}
 	| INT Int_List
 		{
            	char tmp[256];
@@ -549,26 +518,11 @@ Definition:
                 sprintf (tmp,"float %s", $2.string);
                 strcpy($$.string, tmp);
                 }
-	| GUINT Chan_List
-		{
-           	char tmp[256];
-	        $$=$2;
-	        sprintf (tmp,"guint %s", $2.string);
-	        strcpy($$.string, tmp);
-	        }
-	| GFLOAT Float_List
+	| BOOLEAN Int_List
                 {
                 char tmp[256];
                 $$=$2;
-                sprintf (tmp,"gfloat %s", $2.string);
-                strcpy($$.string, tmp);
-                }
-
-	| GBOOLEAN Int_List
-                {
-                char tmp[256];
-                $$=$2;
-                sprintf (tmp,"int %s", $2.string);
+                sprintf (tmp,"boolean %s", $2.string);
                 strcpy($$.string, tmp);
                 }
 	;
@@ -1280,20 +1234,15 @@ add_sym (char *ss, char scope)
   int	i; 
   char *s = strdup(ss);
 
-  i = strlen(s);
-  if (i>6)
-  if ((s[i-5] == 'a' || s[i-5] == 'c') && s[i-6] == '_')
-  {
-    s[i-6] = '\0';
-    ss[i-4] = '\0';
-  } 
-  
   for (i=0; i<cur_nsyms; i++) 
   {
     /* is it already here? */
-    if(!strcmp(symtab[i].string, s))
-            return symtab[i];
-   
+    if(!strcmp(symtab[i].string, s)){
+
+	yyerror("Varible already declared");
+	exit(1);
+	
+    }
   }
 
   if (cur_nsyms == NSYMS) 
@@ -1315,6 +1264,13 @@ get_sym (char *ss)
 
   int   i;
   char *s = strdup(ss);
+
+  for (i=0; i<cur_nsyms; i++)
+  {
+    /* is it already here? */
+    if(!strcmp(symtab[i].string, s))
+            return &(symtab[i]);
+  }
 
   i = strlen(s);
   if (i>6)
