@@ -431,7 +431,7 @@ Line:
 		{ 
 		printf("%s%s;", $1.string, $2.string); 
 		} 
-	| INDENT PointerVecChan NAME EQUAL Expression ';'  	
+	| INDENT Pointer NAME EQUAL Expression ';'  	
 		{
 	        char tmp[256];
 		elem_t e; 	
@@ -441,6 +441,11 @@ Line:
 		    get_sym ($3.string)->type == TYPE_C_VECTOR ||
 		    get_sym ($3.string)->type == TYPE_C_A_VECTOR) 
 		  {
+		  sprintf(tmp, "*%s%s", $2.string, e.string); 
+		  strcpy(e.string, tmp); 
+		  }
+		else
+		  {
 		  sprintf(tmp, "%s%s", $2.string, e.string); 
 		  strcpy(e.string, tmp); 
 		  }
@@ -448,48 +453,96 @@ Line:
 		strcpy ($3.string, tmp); 
 		print_line ($3); 
 		} 
-	| INDENT PointerVecChan NAME PLUS_EQUAL Expression ';'  	
+	| INDENT Pointer NAME PLUS_EQUAL Expression ';'  	
 		{ 
-		elem_t tmp; 
-	        char t[256]; 	
-		do_op_three (&tmp, $3, $5, OP_PLUS); 
-		print_name (&$3, $3, NOT_DEFINE);
-		do_op_three (&$3, $3, tmp, OP_EQUAL); 
-		sprintf (t, "%s%s%s;", $1.string, $2.string, $3.string);   
-	        strcpy ($3.string, t);	
+	        char tmp[256];
+		elem_t e; 	
+		print_name (&e, $3, NOT_DEFINE); 
+		if (get_sym ($3.string)->type == TYPE_CA_VECTOR ||
+		    get_sym ($3.string)->type == TYPE_C_VECTOR ||
+		    get_sym ($3.string)->type == TYPE_C_A_VECTOR) 
+		  {
+		  sprintf(tmp, "*%s%s", $2.string, e.string); 
+		  strcpy(e.string, tmp); 
+		  }
+		else
+		  {
+		  sprintf(tmp, "%s%s", $2.string, e.string); 
+		  strcpy(e.string, tmp); 
+		  }
+		do_op_three (&$3, e, $5, OP_PLUS); 
+		do_op_three (&e, e, $3, OP_EQUAL); 
+		sprintf (tmp, "%s%s;", $1.string, e.string);   
+		strcpy ($3.string, tmp); 
 		print_line ($3); 
 		} 
-	| INDENT PointerVecChan NAME MINUS_EQUAL Expression ';'  	
+	| INDENT Pointer NAME MINUS_EQUAL Expression ';'  	
 		{ 
-		elem_t tmp; 
-	        char t[256]; 	
-		do_op_three (&tmp, $3, $5, OP_PLUS); 
-		print_name (&$3, $3, NOT_DEFINE);
-		do_op_three (&$3, $3, tmp, OP_EQUAL); 
-		sprintf (t, "%s%s%s;", $1.string, $2.string, $3.string);   
-	        strcpy ($3.string, t);	
+	        char tmp[256];
+		elem_t e; 	
+		print_name (&e, $3, NOT_DEFINE); 
+		if (get_sym ($3.string)->type == TYPE_CA_VECTOR ||
+		    get_sym ($3.string)->type == TYPE_C_VECTOR ||
+		    get_sym ($3.string)->type == TYPE_C_A_VECTOR) 
+		  {
+		  sprintf(tmp, "*%s%s", $2.string, e.string); 
+		  strcpy(e.string, tmp); 
+		  }
+		else
+		  {
+		  sprintf(tmp, "%s%s", $2.string, e.string); 
+		  strcpy(e.string, tmp); 
+		  }
+		do_op_three (&$3, e, $5, OP_PLUS); 
+		do_op_three (&e, e, $3, OP_EQUAL); 
+		sprintf (tmp, "%s%s;", $1.string, e.string);   
+		strcpy ($3.string, tmp); 
 		print_line ($3); 
 		} 
-	| INDENT PointerVecChan NAME TIMES_EQUAL Expression ';'  	
+	| INDENT Pointer NAME TIMES_EQUAL Expression ';'  	
 		{ 
-		elem_t tmp; 
-	        char t[256]; 	
-		do_op_three (&tmp, $3, $5, OP_PLUS); 
-		print_name (&$3, $3, NOT_DEFINE);
-		do_op_three (&$3, $3, tmp, OP_EQUAL); 
-		sprintf (t, "%s%s%s;", $1.string, $2.string, $3.string);   
-	        strcpy ($3.string, t);	
+	        char tmp[256];
+		elem_t e; 	
+		print_name (&e, $3, NOT_DEFINE); 
+		if (get_sym ($3.string)->type == TYPE_CA_VECTOR ||
+		    get_sym ($3.string)->type == TYPE_C_VECTOR ||
+		    get_sym ($3.string)->type == TYPE_C_A_VECTOR) 
+		  {
+		  sprintf(tmp, "*%s%s", $2.string, e.string); 
+		  strcpy(e.string, tmp); 
+		  }
+		else
+		  {
+		  sprintf(tmp, "%s%s", $2.string, e.string); 
+		  strcpy(e.string, tmp); 
+		  }
+		do_op_three (&$3, e, $5, OP_PLUS); 
+		do_op_three (&e, e, $3, OP_EQUAL); 
+		sprintf (tmp, "%s%s;", $1.string, e.string);   
+		strcpy ($3.string, tmp); 
 		print_line ($3); 
 		} 
-	| INDENT PointerVecChan NAME DIVIDE_EQUAL Expression ';'  	
+	| INDENT Pointer NAME DIVIDE_EQUAL Expression ';'  	
 		{ 
-		elem_t tmp; 
-	        char t[256]; 	
-		do_op_three (&tmp, $3, $5, OP_PLUS); 
-		print_name (&$3, $3, NOT_DEFINE);
-		do_op_three (&$3, $3, tmp, OP_EQUAL); 
-		sprintf (t, "%s%s%s;", $1.string, $2.string, $3.string);   
-	        strcpy ($3.string, t);	
+	        char tmp[256];
+		elem_t e; 	
+		print_name (&e, $3, NOT_DEFINE); 
+		if (get_sym ($3.string)->type == TYPE_CA_VECTOR ||
+		    get_sym ($3.string)->type == TYPE_C_VECTOR ||
+		    get_sym ($3.string)->type == TYPE_C_A_VECTOR) 
+		  {
+		  sprintf(tmp, "*%s%s", $2.string, e.string); 
+		  strcpy(e.string, tmp); 
+		  }
+		else
+		  {
+		  sprintf(tmp, "%s%s", $2.string, e.string); 
+		  strcpy(e.string, tmp); 
+		  }
+		do_op_three (&$3, e, $5, OP_PLUS); 
+		do_op_three (&e, e, $3, OP_EQUAL); 
+		sprintf (tmp, "%s%s;", $1.string, e.string);   
+		strcpy ($3.string, tmp); 
 		print_line ($3); 
 		} 
 	| INDENT Expression ';'   		
@@ -628,7 +681,7 @@ Expression:
 	        sprintf (tmp,"%s%s", $1.string,$2.string);
 	        strcpy($$.string, tmp);
 		} 
-	| PointerVecChan NAME				
+	| Pointer NAME				
 		{ 
 		char tmp[256];
 		$$=$2; 
@@ -637,7 +690,12 @@ Expression:
 		    get_sym ($2.string)->type == TYPE_C_VECTOR ||
 		    get_sym ($2.string)->type == TYPE_C_A_VECTOR) 
 		  {
-		  sprintf(tmp, "%s%s", $1.string, $$.string); 
+		  sprintf(tmp, "*%s%s", $1.string, $$.string); 
+		  strcpy($$.string, tmp); 
+		  }
+		else
+		  {
+		  sprintf(tmp, "%s%s", $1.string, $$.string);
 		  strcpy($$.string, tmp); 
 		  }
 		}
@@ -1029,15 +1087,15 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
   dest->num = 1; 
   if (is_define && get_sym (src.string)->type == TYPE_C_VECTOR)
     {
-    sprintf (tmp, "%s_c", get_sym (src.string)->string);
     dest->num = NUM_COLOR_CHAN;
+    sprintf (tmp, "%s_c", get_sym (src.string)->string);
     }
   else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR ||
 	get_sym (src.string)->type == TYPE_C_A_VECTOR) && 
       !strcmp (src.string, get_sym (src.string)->string))
     {
+    dest->num = NUM_COLOR_CHAN + 1;
     sprintf (tmp, "%s_ca", get_sym (src.string)->string);
-    dest->num = NUM_COLOR_CHAN +1;
     }
   else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR ||
 	get_sym (src.string)->type == TYPE_C_A_VECTOR))
@@ -1055,7 +1113,10 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
       }
     }
   else if (is_define && get_sym (src.string)->type == TYPE_VECTOR)
+    {
+    dest->num = get_sym (src.string)->num; 
     sprintf (tmp, "%s_v", src.string);
+    }
   else if (!is_define && get_sym (src.string)->type == TYPE_VECTOR)
     sprintf (tmp, "%s[%d]", src.string, get_sym (src.string)->num);
   else
@@ -1179,7 +1240,6 @@ print_line (elem_t src)
 void
 print_value (elem_t *dest, elem_t src)
 {
-  char tmp[256];
   sprintf (dest->string, "%s", src.string);
   dest->dtype = src.dtype;
   dest->num = src.num;
