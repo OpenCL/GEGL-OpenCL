@@ -254,6 +254,38 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
   }
 
   override (Gegl:Color:Model)
+  gboolean 
+  implements_color_conversion (GeglColorModel *cm,
+                               GeglColorSpace colorspace)
+  {
+    switch (colorspace)
+      {
+	case GRAY:
+	  return TRUE;
+	  break;
+	default:
+	  return FALSE;
+	  break;
+      }
+  }
+
+  override (Gegl:Color:Model)
+  gboolean 
+  implements_data_conversion (GeglColorModel *cm,
+                              GeglChannelDataType data_type)
+  {
+    switch (data_type)
+      {
+	case U8:
+	  return TRUE;
+	  break;
+	default:
+	  return FALSE;
+	  break;
+      }
+  }
+
+  override (Gegl:Color:Model)
   void
   convert_to_u8 (GeglColorModel *cm, 
                  guint8 **dest_data, 

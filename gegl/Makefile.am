@@ -3,8 +3,6 @@ noinst_PROGRAMS = testgegl testgeglfile
 lib_LTLIBRARIES = libgegl.la
 
 GIL_FILES = \
-  gegl-fill-op.gil \
-  gegl-print-op.gil \
   gegl-mult-op.gil \
   gegl-add-op.gil \
   gegl-copy-op.gil \
@@ -22,8 +20,6 @@ GIL_FILES = \
   gegl-test-op.gil
 
 GIL_GEN_GOB = \
-  gegl-fill-op.gob \
-  gegl-print-op.gob \
   gegl-mult-op.gob \
   gegl-add-op.gob \
   gegl-copy-op.gob \
@@ -41,18 +37,19 @@ GIL_GEN_GOB = \
   gegl-test-op.gob
 
 NONGEN_GOB = \
+  gegl-fill-op.gob \
+  gegl-print-op.gob \
   gegl-object.gob \
   gegl-color-model.gob \
   gegl-color-model-gray.gob \
   gegl-color-model-gray-u8.gob \
-  gegl-color-model-gray-u16.gob \
-  gegl-color-model-gray-u16_4.gob \
   gegl-color-model-gray-float.gob \
   gegl-color-model-rgb.gob \
   gegl-color-model-rgb-u8.gob \
-  gegl-color-model-rgb-u16.gob \
-  gegl-color-model-rgb-u16_4.gob \
   gegl-color-model-rgb-float.gob \
+  gegl-color-convert-to-rgb-op.gob \
+  gegl-color-convert-to-gray-op.gob \
+  gegl-color-convert-op.gob \
   gegl-image-buffer.gob \
   gegl-image.gob \
   gegl-op.gob \
@@ -66,18 +63,19 @@ NONGEN_GOB = \
 GOB_FILES = $(GIL_GEN_GOB) $(NONGEN_GOB)
 
 GOB_GEN_PUBLIC_HDRS = \
+  gegl-fill-op.h \
+  gegl-print-op.h \
   gegl-object.h \
   gegl-color-model.h \
   gegl-color-model-gray.h \
   gegl-color-model-gray-u8.h \
-  gegl-color-model-gray-u16.h \
-  gegl-color-model-gray-u16_4.h \
   gegl-color-model-gray-float.h \
   gegl-color-model-rgb.h \
   gegl-color-model-rgb-u8.h \
-  gegl-color-model-rgb-u16.h \
-  gegl-color-model-rgb-u16_4.h \
   gegl-color-model-rgb-float.h \
+  gegl-color-convert-to-rgb-op.h \
+  gegl-color-convert-to-gray-op.h \
+  gegl-color-convert-op.h \
   gegl-image-buffer.h \
   gegl-image.h \
   gegl-op.h \
@@ -107,18 +105,19 @@ GOB_GEN_PUBLIC_HDRS = \
 
 
 GOB_GEN_PRIVATE_HDRS = \
+  gegl-fill-op-private.h \
+  gegl-print-op-private.h \
   gegl-object-private.h \
   gegl-color-model-private.h \
   gegl-color-model-gray-private.h \
   gegl-color-model-gray-u8-private.h \
-  gegl-color-model-gray-u16-private.h \
-  gegl-color-model-gray-u16_4-private.h \
   gegl-color-model-gray-float-private.h \
   gegl-color-model-rgb-private.h \
   gegl-color-model-rgb-u8-private.h \
-  gegl-color-model-rgb-u16-private.h \
-  gegl-color-model-rgb-u16_4-private.h \
   gegl-color-model-rgb-float-private.h \
+  gegl-color-convert-to-rgb-op-private.h \
+  gegl-color-convert-to-gray-op-private.h \
+  gegl-color-convert-op-private.h \
   gegl-image-buffer-private.h \
   gegl-image-private.h \
   gegl-op-private.h \
@@ -147,18 +146,19 @@ GOB_GEN_PRIVATE_HDRS = \
   gegl-copychan-op-private.h 
 
 GOB_GEN_SRC = \
+  gegl-fill-op.c \
+  gegl-print-op.c \
   gegl-object.c \
   gegl-color-model.c \
   gegl-color-model-gray.c \
   gegl-color-model-gray-u8.c \
-  gegl-color-model-gray-u16.c \
-  gegl-color-model-gray-u16_4.c \
   gegl-color-model-gray-float.c \
   gegl-color-model-rgb.c \
   gegl-color-model-rgb-u8.c \
-  gegl-color-model-rgb-u16.c \
-  gegl-color-model-rgb-u16_4.c \
   gegl-color-model-rgb-float.c \
+  gegl-color-convert-to-rgb-op.c \
+  gegl-color-convert-to-gray-op.c \
+  gegl-color-convert-op.c \
   gegl-image-buffer.c \
   gegl-image.c \
   gegl-op.c \
@@ -249,9 +249,8 @@ distclean-local: gilclean
 hello:
 	echo "hello"
 
-gilclean:
+gilclean: clean gobclean
 	rm -f $(GIL_GEN_GOB)
-	rm -f $(GOB_GEN_SRC) $(GOB_GEN_PUBLIC_HDRS) $(GOB_GEN_PRIVATE_HDRS)
 
-gobclean:
+gobclean: clean
 	rm -f $(GOB_GEN_SRC) $(GOB_GEN_PUBLIC_HDRS) $(GOB_GEN_PRIVATE_HDRS)

@@ -139,33 +139,10 @@ class Gegl:Color:Model from Gegl:Object {
 		    gint width);
 
   virtual
-  void
-  convert_to_float (self, 
-                    guchar **dest_data, 
-		    guchar **src_data, 
-		    gint width);
-  
-  virtual
-  void
-  convert_to_u8 (self, 
-                 guchar **dest_data, 
-		 guchar **src_data, 
-		 gint width);
+  gboolean 
+  implements_color_conversion (self,
+                               GeglColorSpace colorspace);
 
-  virtual
-  void
-  convert_to_u16 (self, 
-                  guchar **dest_data, 
-		  guchar **src_data, 
-		  gint width);
-
-  virtual
-  void
-  convert_to_u16_4 (self, 
-                    guchar **dest_data, 
-		    guchar **src_data, 
-		    gint width);
-  
   virtual
   void
   convert_to_gray (self, 
@@ -180,4 +157,38 @@ class Gegl:Color:Model from Gegl:Object {
 		  guchar **src_data, 
 		  gint width);
 
+
+  virtual
+  gboolean 
+  implements_data_conversion (self,
+                              GeglChannelDataType data_type);
+
+  virtual
+  void
+  convert_to_u8 (self, 
+                 guchar **dest_data, 
+		 guchar **src_data, 
+		 gint width);
+
+  virtual
+  void
+  convert_to_float (self, 
+                    guchar **dest_data, 
+		    guchar **src_data, 
+		    gint width);
+  
+  virtual
+  void
+  convert_to_u16 (self, 
+                  guchar **dest_data, 
+		  guchar **src_data, 
+		  gint width);
+
+  virtual
+  void
+  convert_to_u16_4 (self, 
+                    guchar **dest_data, 
+		    guchar **src_data, 
+		    gint width);
+  
 }

@@ -1,9 +1,10 @@
 %h{
-#include "gegl-point-op.h"
+#include "gegl-single-src-op.h"
 %}
 %{
 #include "gegl-color-convert-op.h"
 #include "gegl-color-convert-op-private.h"
+#include "gegl-single-src-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
 #include "gegl-image-buffer.h"
@@ -11,55 +12,50 @@
 #include "gegl-color.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
-#include <stdio.h>
 %}
 
 
-class Gegl:Color:Convert:Op from Gegl:Point:Op {
+class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
 
-  private GeglColorModel *dest_cm; /* dest color model */
-  private GeglColorModel *src_cm;  /* src color model */
-  private guchar **dest_data;      /* generic data pointers to dest channels */
-  private guchar **src_data;       /* generic data pointers to src channels */
-  
+  private gfloat *float_xyz_data[4];
+  private gint scanline_width; 
+
+  public 
+  GeglColorConvertOp *
+  new (GeglImage *src)
+  {
+    GeglColorConvertOp * self = 
+       GEGL_COLOR_CONVERT_OP (GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, src))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
   protected 
   gboolean 
   constructor(self, 
-             GeglImageBuffer *dest,
-             GeglImageBuffer *src, 
-             GeglRect *dest_rect,
-             GeglRect *src_rect) 
+              GeglImage *src) 
   {
-    GeglImageBuffer *image_buffers[2];
-    GeglRect rects[2]; 
- 
-    if(GEGL_OBJECT (self)->constructed) 
+    if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
-  
-    /* Put rects and image buffers into suitable form for point op */ 
-    image_buffers[0] = dest;
-    image_buffers[1] = src;
-
-    gegl_rect_copy (&rects[0], dest_rect); 
-    gegl_rect_copy (&rects[1], src_rect); 
- 
+    
     /* Chain up */
-    if (!gegl_point_op_constructor ( 
-            GEGL_POINT_OP (self), image_buffers, rects, 2))
+    if (!gegl_single_src_op_constructor (
+          GEGL_SINGLE_SRC_OP(self), src))
       return FALSE;
 
     {
-      GeglColorModel * dest_cm = gegl_image_buffer_color_model (dest);
-      GeglColorModel * src_cm = gegl_image_buffer_color_model (src);
-      gint dest_num_chans = gegl_color_model_num_channels (dest_cm); 
-      gint src_num_chans = gegl_color_model_num_channels (src_cm); 
-
-      self->_priv->dest_cm = dest_cm;  
-      self->_priv->src_cm  = src_cm;  
-      self->_priv->dest_data = g_new (guchar*, dest_num_chans);  
-      self->_priv->src_data  = g_new (guchar*, src_num_chans);  
+      gint i;
+      for(i = 0; i < 4; i++)
+	self->_priv->float_xyz_data[i] = NULL;
     }
-  
+
     return TRUE;
   }
 
@@ -67,13 +63,121 @@ class Gegl:Color:Convert:Op from Gegl:Point:Op {
   void 
   destroy (GtkObject *object)
   {
-    GeglColorConvertOp *self = GEGL_COLOR_CONVERT_OP (object); 
-       
-    g_free (self->_priv->dest_data);  
-    g_free (self->_priv->src_data);  
+    free_xyz_data (GEGL_COLOR_CONVERT_OP(object));
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)
   }
 
+  private
+  void
+  allocate_xyz_data (self)
+  {
+    gint i;
+    for(i = 0; i < 4; i++)
+      self->_priv->float_xyz_data[i] = 
+	g_malloc (sizeof(float) * self->_priv->scanline_width); 
+  }
+
+  private
+  void
+  free_xyz_data (self)
+  {
+    gint i;
+    for(i = 0; i < 4; i++)
+      {
+	if (self->_priv->float_xyz_data[i]) 
+	  g_free (self->_priv->float_xyz_data[i]);
+
+        self->_priv->float_xyz_data[i] = NULL; 
+      }	
+  }
+
+  virtual
+  void
+  install_converter (self, 
+                     GeglImage *dest)
+  {
+    /* Default converter for CIE_XYZ is already installed */
+
+    /* Subclasses will install their converter if they can find one */
+
+    /* Allocate a scanline to hold intermediate XYZ float data */
+    free_xyz_data (self);
+    allocate_xyz_data (self); 
+  }
+
+  virtual 
+  protected
+  void
+  converter (self,
+	     GeglColorModel *src_cm, 
+	     GeglColorModel *dest_cm, 
+	     guchar **src_data,
+	     guchar **dest_data,
+	     gint width)
+  {
+    gegl_color_model_convert_to_xyz (src_cm, 
+	self->_priv->float_xyz_data, src_data, width);
+    gegl_color_model_convert_from_xyz (dest_cm, 
+	dest_data, self->_priv->float_xyz_data , width);
+  }
+
+  override (Gegl:Op) 
+  void
+  prepare(GeglOp *op,
+          GeglImage *dest,
+	  GeglRect *dest_rect)
+  {
+    GeglColorConvertOp *self = GEGL_COLOR_CONVERT_OP (op);
+    GeglPointOp *point_op = GEGL_POINT_OP (op);
+    GeglPointOpClass *point_op_class = 
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+
+    /* Save the width */
+    self->_priv->scanline_width = dest_rect->w;
+
+    /* Set the scanline version of this class to be called */
+    point_op_class->scanline_func = gegl_color_convert_op_scanline;
+
+    /* Let subclass install its converter, or use default */
+    install_converter (self,dest);
+  } 
+
+  private 
+  void
+  scanline(GeglPointOp *point_op,
+           GeglImageIterator *dest_iter, 
+           GeglImageIterator **src_iters)
+  {
+    GeglColorConvertOp *self = GEGL_COLOR_CONVERT_OP (point_op);
+    GeglImageBuffer * dest_image_buffer = 
+      gegl_image_iterator_get_image_buffer(dest_iter);
+    GeglImageBuffer * src_image_buffer =
+      gegl_image_iterator_get_image_buffer(src_iters[0]);
+    GeglColorModel * dest_cm = 
+      gegl_image_color_model(GEGL_IMAGE(dest_image_buffer));
+    GeglColorModel * src_cm = 
+      gegl_image_color_model(GEGL_IMAGE(src_image_buffer));
+    guint dest_num_channels = 
+      gegl_color_model_num_channels (dest_cm);
+    guint src_num_channels = 
+      gegl_color_model_num_channels (src_cm);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
+
+    guchar ** dest_data = g_malloc (sizeof(guchar*) * dest_num_channels);
+    guchar ** src_data = g_malloc (sizeof(guchar*) * src_num_channels);
+
+    gegl_image_iterator_get_scanline_data (
+	dest_iter, dest_data);
+    gegl_image_iterator_get_scanline_data (
+	src_iters[0], src_data);
+
+    /* Calls the subclass converter if installed, 
+       otherwise defaults to the converter in this class */
+    converter (self,src_cm,dest_cm,src_data,dest_data,width); 
+
+    g_free (dest_data);
+    g_free (src_data);
+  }
 }

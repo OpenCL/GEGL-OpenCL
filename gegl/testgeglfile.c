@@ -19,7 +19,6 @@
 #include "gegl-color-model.h"
 #include "gegl-color-model-rgb.h"
  
-/* These arent working yet. */
 #if 1
 #include "gegl-min-op.h"
 #include "gegl-max-op.h"
@@ -700,6 +699,7 @@ main(int argc,
 #endif 
     } 
 
+  test_copy_op (src_image_buffer, src_width, src_height, src_rect);
 #if 0
   /* Test some of the GeglOps */  
   test_composite_ops (src_image_buffer, src_width, src_height, src_rect);
@@ -725,7 +725,6 @@ main(int argc,
 	            src_image_buffer[k], src_rect[k],
 	            data_type);
     }  
-test_copy_op (src_image_buffer, src_width, src_height, src_rect);
 
   for (k = 0; k < 2; k++)
     {

@@ -7,12 +7,7 @@ typedef enum
 {
   COLORSPACE_NONE,
   GRAY,
-  RGB,
-  INDEXED,
-  CMYK,
-  SRGB,
-  CIE_XYZ, 
-  HSV 
+  RGB
 } GeglColorSpace;
 
 typedef enum
@@ -22,7 +17,7 @@ typedef enum
   COMPOSITE_IN,
   COMPOSITE_OUT,
   COMPOSITE_ATOP,
-  COMPOSITE_XOR,
+  COMPOSITE_XOR
 }GeglCompositeMode;
 
 typedef enum

@@ -1,3 +1,15 @@
+Mon Jul  3 18:24:31 EDT 2000 calvinw@mindspring.com 
+
+	* Redid ColorConvertOp to use the new Image,
+	Op,ImageBuffer class structures. 
+
+	* Added ColorConvertOpToRgb, ColorConvertOpToGray.
+
+        * ColorConvertOp does the XYZ conversion if a direct 
+	converter routine cant be found for the conversion.	
+
+	* Changed testgegl to have tests for these conversion routines.
+
 Sat Jul  1 17:39:57 PDT 2000 caro@rhythm.com
 
 	* updated www.gegl.org

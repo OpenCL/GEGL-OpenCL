@@ -45,10 +45,6 @@ gegl_color_model_factory (GeglColorSpace space,
          return GEGL_COLOR_MODEL(gegl_color_model_gray_u8_new(has_alpha));
        case FLOAT:
          return GEGL_COLOR_MODEL(gegl_color_model_gray_float_new(has_alpha));
-       case U16:
-         return GEGL_COLOR_MODEL(gegl_color_model_gray_u16_new(has_alpha));
-       case U16_4:
-         return GEGL_COLOR_MODEL(gegl_color_model_gray_u16_4_new(has_alpha));
        default:
          return NULL;
        } 
@@ -59,10 +55,6 @@ gegl_color_model_factory (GeglColorSpace space,
          return GEGL_COLOR_MODEL(gegl_color_model_rgb_u8_new(has_alpha));
        case FLOAT:
          return GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(has_alpha));
-       case U16:
-         return GEGL_COLOR_MODEL(gegl_color_model_rgb_u16_new(has_alpha));
-       case U16_4:
-         return GEGL_COLOR_MODEL(gegl_color_model_rgb_u16_4_new(has_alpha));
        default:
          return NULL;
        } 

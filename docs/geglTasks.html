@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.7 [en] (X11; U; IRIX64 6.2 IP28) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.61 [en] (X11; I; Linux 2.2.12-20 i686) [Netscape]">
    <title>Gegl Tasks</title>
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -31,7 +31,11 @@ as they finish them. These changes will be propagated to the website.</div>
 -Make the color color ops use new Image class structure.</b>
 <br>Owner: calvinw@mindspring.com
 <br>The new ColorConvertOps dont use the new Op class (Op and ImageBuffer
-inherit from Image now).</td>
+inherit from Image now).
+<p>ColorConvertOp will be the class that contains the conversions through
+the XYZ space if a simple converter from the the ColorModel class cant
+be found . Also we should have separate DataConvertOps. I added a task
+(#17) for this - Mon Jul&nbsp; 3 2000 cew</td>
 </tr>
 
 <tr>
@@ -128,6 +132,13 @@ channels.</b>
 pixel.green, pixel.blue for rgb. This is needed for Ops that will write
 GIL code and will want a standard way to refer to the color channels.&nbsp;</td>
 </tr>
+
+<tr>
+<td><a NAME="18 DataConvertOps"></a>#<b>18 DataConvertOps - Write data
+conversion ops similar to ColorConvertOps.</b>
+<br>Owner: calvin
+<br>Need DataConvertOps similar to ColorConvertOps.&nbsp;&nbsp;</td>
+</tr>
 </table>
 
 <p>
@@ -171,7 +182,7 @@ new Image class structure.</b>
 </tr>
 
 <tr>
-<td><b>#17 Impelement gegl-copy-op.gil</b>
+<td><b>#17 Implement gegl-copy-op.gil</b>
 <br>Owner: caro@rhythm.com
 <br>date done: 07/01/00</td>
 </tr>

@@ -156,7 +156,6 @@ main (int argc, char *argv[])
   }
 #endif
 
-
   /* 
     The rest of this stuff should be updated once gegl is 
     up to date. These examples are the old way now. 
@@ -243,81 +242,6 @@ main (int argc, char *argv[])
         gegl_object_destroy (GEGL_OBJECT(src_cm)); 
         gegl_object_destroy (GEGL_OBJECT(dest)); 
         gegl_object_destroy (GEGL_OBJECT(dest_cm)); 
-  }
-#endif
-
-#if 0  /*This illustrates a color conversion from rgb float to gray float*/ 
-  {
-    GeglColorModel *from_cm = GEGL_COLOR_MODEL(
-                              gegl_color_model_rgb_float_new(FALSE));
-    GeglImageBuffer *from_image = gegl_image_buffer_new(from_cm,2,2);
-    GeglColorModel *to_cm = GEGL_COLOR_MODEL(
-                            gegl_color_model_gray_float_new(FALSE));
-    GeglImageBuffer *to_image = gegl_image_buffer_new(to_cm,2,2);
-
-
-    GeglRect to_rect;
-    GeglRect from_rect;
-
-    gegl_rect_set (&to_rect, 0,0,2,2);
-    gegl_rect_set (&from_rect, 0,0,2,2);
-
-    /* Fill the 2 x 2 from image with GREEN */
-    {
-      GeglColor *c = gegl_color_new (from_cm);
-      GeglOp *op;
-      GeglRect fill_rect;
-      gegl_rect_set (&fill_rect, 0,0,2,2);
-      gegl_color_set_constant (c, COLOR_GREEN);
-      op = GEGL_OP (gegl_fill_op_new (from_image, &fill_rect, c));
-
-      gegl_op_apply (op);
-
-      gegl_object_destroy (GEGL_OBJECT(op)); 
-      gegl_object_destroy (GEGL_OBJECT(c)); 
-    }
-
-    /* Fill the 1 x 1 rect at (1,1) from image with RED */
-    {
-      GeglColor *c = gegl_color_new (from_cm);
-      GeglOp *op;
-      GeglRect fill_rect;
-      gegl_rect_set (&fill_rect, 1,1,1,1);
-      gegl_color_set_constant (c, COLOR_RED);
-      op = GEGL_OP (gegl_fill_op_new (from_image, &fill_rect, c));
-
-      gegl_op_apply (op);
-
-      gegl_object_destroy (GEGL_OBJECT(op)); 
-      gegl_object_destroy (GEGL_OBJECT(c)); 
-    }
-
-    /* Convert */
-    {
-      GeglOp* op = GEGL_OP (gegl_color_convert_to_gray_float_op_new( 
-                     to_image, from_image, &to_rect, &from_rect));
-      gegl_op_apply (op);
-      gegl_object_destroy (GEGL_OBJECT(op)); 
-    }
-
-    printf("The from image:\n");
-    {
-      GeglOp *op = GEGL_OP (gegl_print_op_new (from_image, &from_rect));
-      gegl_op_apply (op);
-      gegl_object_destroy (GEGL_OBJECT(op)); 
-
-    }
-    printf("The to image:\n");
-    {
-      GeglOp *op = GEGL_OP (gegl_print_op_new (to_image, &to_rect));
-      gegl_op_apply (op);
-      gegl_object_destroy (GEGL_OBJECT(op)); 
-    }
-
-    gegl_object_destroy (GEGL_OBJECT(from_image)); 
-    gegl_object_destroy (GEGL_OBJECT(to_image)); 
-    gegl_object_destroy (GEGL_OBJECT(from_cm)); 
-    gegl_object_destroy (GEGL_OBJECT(to_cm)); 
   }
 #endif
 

@@ -1,0 +1,101 @@
+%h{
+#include "gegl-color-convert-op.h"
+%}
+%{
+#include "gegl-color-convert-to-gray-op.h"
+#include "gegl-color-convert-to-gray-op-private.h"
+#include "gegl-color-convert-op-private.h"
+#include "gegl-point-op-private.h"
+#include "gegl-op-private.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-iterator.h"
+#include "gegl-color.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+#include <stdio.h>
+%}
+
+
+class Gegl:Color:Convert:To:Gray:Op from Gegl:Color:Convert:Op {
+
+  public 
+  GeglColorConvertToGrayOp *
+  new (GeglImage *src)
+  {
+    GeglColorConvertToGrayOp * self = 
+       GEGL_COLOR_CONVERT_TO_GRAY_OP (GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, src))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self, 
+              GeglImage *src) 
+  {
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+   
+    /* Chain up */
+    if (!gegl_color_convert_op_constructor ( 
+                   GEGL_COLOR_CONVERT_OP (self), 
+		   src))
+      return FALSE;
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  override (Gegl:Op)
+  void
+  compute_source_rois (GeglOp *op, GeglRect *roi) 
+  {
+    gegl_rect_copy(&op->_priv->source_rois[0],roi);    
+  }
+
+  override (Gegl:Color:Convert:Op) 
+  void
+  install_converter (GeglColorConvertOp *color_convert_op, 
+                     GeglImage *dest)
+  {
+    GeglOp *op = GEGL_OP(color_convert_op);
+    GeglImage *source = op->_priv->sources[0];
+    GeglColorModel *source_cm = gegl_image_color_model (source);
+
+    /* If can find a converter, use it, otherwise it will do the CIE_XYZ conversion */
+
+    if (gegl_color_model_implements_color_conversion(source_cm,GRAY))
+      {
+	GeglColorConvertOpClass *color_convert_op_class = 
+	  GEGL_COLOR_CONVERT_OP_CLASS(GTK_OBJECT(color_convert_op)->klass);
+        color_convert_op_class->converter = gegl_color_convert_to_gray_op_converter;
+      }
+    else
+      PARENT_HANDLER (color_convert_op,dest)
+  }
+
+  private 
+  void
+  converter (GeglColorConvertOp *color_convert_op,
+	     GeglColorModel *src_cm, 
+	     GeglColorModel *dest_cm, 
+	     guchar **src_data,
+	     guchar **dest_data,
+	     gint width)
+  {
+    gegl_color_model_convert_to_gray (src_cm, dest_data, src_data, width); 
+  }
+}
