@@ -5,7 +5,7 @@ WP_NORM			1.0
 MIN_CHAN		FLOAT_MIN
 MAX_CHAN		FLOAT_MAX
 ZERO			0.0
-CHAN_CLAMP (x)		x	
+CHAN_CLAMP (x)		x
 WP_CLAMP (x)		x
 CHAN_MULT (x,y)		x*y
 ROUND (x)		x

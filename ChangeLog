@@ -1,3 +1,23 @@
+Sat Mar 25 21:03:06 EST 2000 calvinw@mindspring.com
+	
+	* check in for codegen
+
+        * updated these files:
+          codegen/test_files/gegl-min-op.gil
+          codegen/test_files/gegl-max-op.gil
+          codegen/test_files/gegl-mult-op.gil
+          codegen/test_files/gegl-subtract-op.gil
+          codegen/test_files/gegl-diff-op.gil
+        
+          Put in the wrapper part of for the generic image
+          language programs
+          GENERIC_IMAGE_PROGRAM
+          GENERIC_IMAGE_CODEGEN_BEGIN
+          GENERIC_IMAGE_CODEGEN_END
+
+        * removed extra spaces from channel_data files:
+          u8,u16,u16_4k,float.   
+ 
 Sat Mar 25 17:57:43 PST 2000 caro@rhythm.com
 	
 	* check in for codegen
