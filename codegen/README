@@ -40,11 +40,21 @@ lexer.l has 4 states:
 2)GENERIC_IMAGE_DECL 
 3)GENERIC_IMAGE_BLOCK 
 4)COMMENT 
+5)DATA_TYPE
+6)ARGUMENTS
+7)DEFINITION
 
+inital state ---------DATATYPE_BEGIN-------------> DATA_TYPE
 inital state ---------GENERIC_IMAGE_DECL_BEGIN---> GENERIC_IMAGE_DECL
 inital state ---------GENERIC_IMAGE_BLOCK_BEGIN--> GENERIC_IMAGE_BLOCK
+DATA_TYPE ------------DATATYPE_END---------------> inital state 
 GENERIC_IMAGE_DECL ---GENERIC_IMAGE_DECL_END-----> inital state
 GENERIC_IMAGE_BLOCK---GENERIC_IMAGE_BLOCK_END----> inital state
+
+DATA_TYPE ------------dt_keyword.arg == 0 -------> DEFINITION
+DATA_TYPE ------------dt_keyword.arg == 1 -------> ARGUMENTS
+ARGUMENTS ---------------------------------------> DEFINITION
+DEFINITION --------------------------------------> DATA_TYPE  
 
 GENERIC_IMAGE_DECL ---/*-->COMMENT--*/-->GENERIC_IMAGE_DECL
 GENERIC_IMAGE_BLOCK --/*-->COMMENT--*/-->GENERIC_IMAGE_BLOCK

@@ -64,16 +64,16 @@ int     cur_nsyms=0;
   };
 
   dt_keyword_t dt_keyword_tab[] = {
-	{"DATATYPE", 0},
-	{"WP", 0},
-	{"WP_NORM", 0},
-	{"MIN_CHANNEL", 0},
-	{"MAX_CHANNEL", 0},
-	{"ZERO", 0},
-	{"CHANNEL_CLAMP", 1},
-	{"WP_CLAMP", 1},
-	{"CHANNEL_MULT", 1},
-	{"CHANNEL_ROUND", 1}, 
+	{"DATATYPE", 0, DT_DATATYPE},
+	{"WP", 0, DT_WP},
+	{"WP_NORM", 0, DT_WP_NORM},
+	{"MIN_CHANNEL", 0, DT_MIN_CHANNEL},
+	{"MAX_CHANNEL", 0, DT_MAX_CHANNEL},
+	{"ZERO", 0, DT_ZERO},
+	{"CHANNEL_CLAMP", 1, DT_CHANNEL_CLAMP},
+	{"WP_CLAMP", 1, DT_WP_CLAMP},
+	{"CHANNEL_MULT", 1, DT_CHANNEL_MULT},
+	{"CHANNEL_ROUND", 1, DT_CHANNEL_ROUND}, 
 	{"",		9}
   }; 
 
@@ -1715,21 +1715,23 @@ get_keyword (char *keywd)
   return -1; 
 }
 
-int
+dt_keyword_t
 get_dt_keyword (char *keywd)
 {
 
   int i=0; 
+  dt_keyword_t e;
+  e.arg = 9;
 
   while (dt_keyword_tab[i].arg != 9)
     {
     if (!strcmp (dt_keyword_tab[i].word, keywd))
-      return dt_keyword_tab[i].arg;
+      return dt_keyword_tab[i];
     else
       i ++;
     }
 
-  return -1; 
+  return e; 
 }
   
 

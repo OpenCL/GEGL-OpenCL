@@ -34,7 +34,7 @@ rm			[\t \n]*
 %%
 
 {rm}"DATATYPE_BEGIN"			BEGIN DATA_TYPE;  
-{indent}"GENERIC_IMAGE_DECL_BEGIN"	{
+"GENERIC_IMAGE_DECL_BEGIN"	{
   					print_info ("\n/* Generic Image Decl Begin */");
 					BEGIN GENERIC_IMAGE_DECL;
 					}
@@ -50,17 +50,8 @@ rm			[\t \n]*
   					init_image_data (tmp);
 					}	
 <DATA_TYPE>{indent}			;         	
-<DATA_TYPE>"DATATYPE_END""\n"		{BEGIN 0;} 
-<DATA_TYPE>"DATATYPE"			{BEGIN DEFINITION; return DT_DATATYPE;}
-<DATA_TYPE>"WP"				{BEGIN DEFINITION; return DT_WP;}
-<DATA_TYPE>"WP_NORM"			{BEGIN DEFINITION; return DT_WP_NORM;}
-<DATA_TYPE>"MIN_CHANNEL"		{BEGIN DEFINITION; return DT_MIN_CHANNEL;}
-<DATA_TYPE>"MAX_CHANNEL"                {BEGIN DEFINITION; return DT_MAX_CHANNEL;}
-<DATA_TYPE>"ZERO"			{BEGIN DEFINITION; return DT_ZERO;}
-<DATA_TYPE>"CHANNEL_CLAMP"		{BEGIN ARGUMENTS; return DT_CHANNEL_CLAMP;}
-<DATA_TYPE>"WP_CLAMP"			{BEGIN ARGUMENTS; return DT_WP_CLAMP;} 
-<DATA_TYPE>"CHANNEL_MULT"		{BEGIN ARGUMENTS; return DT_CHANNEL_MULT;} 
-<DATA_TYPE>"CHANNEL_ROUND"		{BEGIN ARGUMENTS; return DT_CHANNEL_ROUND;} 
+<DATA_TYPE>{rm}"DATATYPE_END""\n"	{BEGIN 0;} 
+      
 <ARGUMENTS>","				return DT_COMMA; 
 <ARGUMENTS>"("				return LT_PARENTHESIS;
 <ARGUMENTS>")"				{BEGIN DEFINITION; return RT_PARENTHESIS;}  
@@ -287,6 +278,17 @@ rm			[\t \n]*
 <ARGUMENTS>{name}			{
     					strcpy (yylval.tok.string, yytext);
 					return DT_NAME;
+					}
+<DATA_TYPE>{Name}			{
+      					dt_keyword_t keywd;
+      					keywd = get_dt_keyword (yytext);
+				        if (keywd.arg == 9) 	
+					  return 0;
+					if (keywd.arg)
+					  BEGIN ARGUMENTS;
+					else
+					  BEGIN DEFINITION;
+					return keywd.token;
 					}
 <DEFINITION>{string}			{
     					strcpy (yylval.tok.string, yytext);

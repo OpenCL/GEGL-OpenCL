@@ -76,6 +76,7 @@ typedef struct
 {
   char  word[20];
   char	arg;
+  int	token;
 }dt_keyword_t;
 
 #ifdef  _LEXER_C_
@@ -86,12 +87,13 @@ extern int SCOPE;
 #endif
 
 
-elem_t  add_sym (char *s, char scope);
-elem_t* get_sym (char *sym); 
-void	init_image_data (char *indent); 
-int 	get_keyword (char *s); 
-int	yylex (); 
-void    rm_varibles (char scope); 
+elem_t  	add_sym (char *s, char scope);
+elem_t*	 	get_sym (char *sym); 
+void		init_image_data (char *indent); 
+int 		get_keyword (char *s); 
+dt_keyword_t 	get_dt_keyword (char *s); 
+int		yylex (); 
+void    	rm_varibles (char scope); 
 
 void open_file (char *filename);
 void close_file ();
