@@ -23,24 +23,27 @@
 
 #include <stdarg.h>
 
-//these are needed for the factory method
+/* these are needed for the factory method*/
 #include "gegl-buffer-double.h"
 enum
 {
-  PROP_0, 
+  PROP_0,
   PROP_NUM_BANKS,
   PROP_ELEMENTS_PER_BANK,
-  PROP_LAST 
+  PROP_LAST
 };
 
 static void class_init (GeglBufferClass * klass);
 static void init (GeglBuffer * self, GeglBufferClass * klass);
 static void finalize (GObject * gobject);
-static GObject* constructor (GType type, guint n_props, GObjectConstructParam *props);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
+static GObject *constructor (GType type, guint n_props,
+			     GObjectConstructParam * props);
+static void get_property (GObject * gobject, guint prop_id, GValue * value,
+			  GParamSpec * pspec);
+static void set_property (GObject * gobject, guint prop_id,
+			  const GValue * value, GParamSpec * pspec);
 
-static void alloc_banks(GeglBuffer * self);
+static void alloc_banks (GeglBuffer * self);
 static void free_banks (GeglBuffer * self);
 
 static gpointer parent_class = NULL;
@@ -52,29 +55,27 @@ gegl_buffer_get_type (void)
 
   if (!type)
     {
-      static const GTypeInfo typeInfo =
-      {
-        sizeof (GeglBufferClass),
-        (GBaseInitFunc) NULL,
-        (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) class_init,
-        (GClassFinalizeFunc) NULL,
-        NULL,
-        sizeof (GeglBuffer),
-        0,
-        (GInstanceInitFunc) init,
-        NULL
+      static const GTypeInfo typeInfo = {
+	sizeof (GeglBufferClass),
+	(GBaseInitFunc) NULL,
+	(GBaseFinalizeFunc) NULL,
+	(GClassInitFunc) class_init,
+	(GClassFinalizeFunc) NULL,
+	NULL,
+	sizeof (GeglBuffer),
+	0,
+	(GInstanceInitFunc) init,
+	NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_OBJECT , 
-                                     "GeglBuffer", 
-                                     &typeInfo, 
-                                     G_TYPE_FLAG_ABSTRACT);
+      type = g_type_register_static (GEGL_TYPE_OBJECT,
+				     "GeglBuffer",
+				     &typeInfo, G_TYPE_FLAG_ABSTRACT);
     }
-    return type;
+  return type;
 }
 
-static void 
+static void
 class_init (GeglBufferClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -87,53 +88,51 @@ class_init (GeglBufferClass * klass)
   gobject_class->constructor = constructor;
 
   g_object_class_install_property (gobject_class, PROP_ELEMENTS_PER_BANK,
-                                   g_param_spec_int ("elements_per_bank",
-                                                      "Elements Per Bank",
-                                                      "GeglBuffer elements in each bank",
-                                                      0,
-                                                      G_MAXINT,
-                                                      0,
-                                                      G_PARAM_CONSTRUCT_ONLY |
-                                                      G_PARAM_READWRITE));
+				   g_param_spec_int ("elements_per_bank",
+						     "Elements Per Bank",
+						     "GeglBuffer elements in each bank",
+						     0,
+						     G_MAXINT,
+						     0,
+						     G_PARAM_CONSTRUCT_ONLY |
+						     G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_NUM_BANKS,
-                                   g_param_spec_int ("num_banks",
-                                                      "Number of Banks ",
-                                                      "GeglBuffer number of banks",
-                                                      0,
-                                                      G_MAXINT,
-                                                      0,
-                                                      G_PARAM_CONSTRUCT_ONLY | 
-                                                      G_PARAM_READWRITE));
+				   g_param_spec_int ("num_banks",
+						     "Number of Banks ",
+						     "GeglBuffer number of banks",
+						     0,
+						     G_MAXINT,
+						     0,
+						     G_PARAM_CONSTRUCT_ONLY |
+						     G_PARAM_READWRITE));
 
 }
 
-static void 
-init (GeglBuffer * self, 
-      GeglBufferClass * klass)
+static void
+init (GeglBuffer * self, GeglBufferClass * klass)
 {
   self->banks = NULL;
   self->elements_per_bank = 0;
   self->num_banks = 0;
 }
 
-static void 
+static void
 finalize (GObject * gobject)
 {
-  GeglBuffer *self = GEGL_BUFFER(gobject);
+  GeglBuffer *self = GEGL_BUFFER (gobject);
 
-  free_banks(self);
+  free_banks (self);
 
   G_OBJECT_CLASS (parent_class)->finalize (gobject);
 }
 
-static GObject*        
-constructor (GType                  type,
-             guint                  n_props,
-             GObjectConstructParam *props)
+static GObject *
+constructor (GType type, guint n_props, GObjectConstructParam * props)
 {
-  GObject *gobject = G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
-  GeglBuffer *self = GEGL_BUFFER(gobject);
+  GObject *gobject =
+    G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
+  GeglBuffer *self = GEGL_BUFFER (gobject);
 
   alloc_banks (self);
 
@@ -141,15 +140,13 @@ constructor (GType                  type,
 }
 
 static void
-set_property (GObject      *gobject,
-              guint         prop_id,
-              const GValue *value,
-              GParamSpec   *pspec)
+set_property (GObject * gobject,
+	      guint prop_id, const GValue * value, GParamSpec * pspec)
 {
   GeglBuffer *self = GEGL_BUFFER (gobject);
 
   switch (prop_id)
-  {
+    {
     case PROP_ELEMENTS_PER_BANK:
       self->elements_per_bank = g_value_get_int (value);
       break;
@@ -159,58 +156,57 @@ set_property (GObject      *gobject,
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
-  }
+    }
 }
 
 static void
-get_property (GObject      *gobject,
-              guint         prop_id,
-              GValue       *value,
-              GParamSpec   *pspec)
+get_property (GObject * gobject,
+	      guint prop_id, GValue * value, GParamSpec * pspec)
 {
   GeglBuffer *self = GEGL_BUFFER (gobject);
 
   switch (prop_id)
-  {
+    {
     case PROP_ELEMENTS_PER_BANK:
-      g_value_set_int (value, gegl_buffer_get_elements_per_bank(self));
+      g_value_set_int (value, gegl_buffer_get_elements_per_bank (self));
       break;
     case PROP_NUM_BANKS:
-      g_value_set_int (value, gegl_buffer_get_num_banks(self));
+      g_value_set_int (value, gegl_buffer_get_num_banks (self));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
-  }
+    }
 }
 
 static void
 alloc_banks (GeglBuffer * self)
 {
-    gpointer* banks = NULL;
-    gint i;
-  
-    g_return_if_fail (self != NULL);
-    g_return_if_fail (GEGL_IS_BUFFER (self));
-    g_return_if_fail(self->bytes_per_element != 0);
-    
-    banks = g_new(gpointer, self->num_banks);
+  gpointer *banks = NULL;
+  gint i;
 
-    for(i=0 ; i < self->num_banks; i++)
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_BUFFER (self));
+  g_return_if_fail (self->bytes_per_element != 0);
+
+  banks = g_new (gpointer, self->num_banks);
+
+  for (i = 0; i < self->num_banks; i++)
     {
-        banks[i] = g_malloc((self->elements_per_bank)*(self->bytes_per_element));
+      banks[i] =
+	g_malloc ((self->elements_per_bank) * (self->bytes_per_element));
     }
-    self->banks = banks;
+  self->banks = banks;
 }
 
-static void 
+static void
 free_banks (GeglBuffer * self)
 {
   gint i;
-  for(i = 0; i < self->num_banks; i++)
-    g_free(self->banks[i]);
+  for (i = 0; i < self->num_banks; i++)
+    g_free (self->banks[i]);
 
-  g_free(self->banks);
+  g_free (self->banks);
   self->banks = NULL;
 }
 
@@ -223,7 +219,7 @@ free_banks (GeglBuffer * self)
  *
  * Returns: number of elements per bank. 
  **/
-gint 
+gint
 gegl_buffer_get_elements_per_bank (const GeglBuffer * self)
 {
   g_return_val_if_fail (self != NULL, 0);
@@ -240,7 +236,7 @@ gegl_buffer_get_elements_per_bank (const GeglBuffer * self)
  *
  * Returns: number of banks. 
  **/
-gint 
+gint
 gegl_buffer_get_num_banks (const GeglBuffer * self)
 {
   g_return_val_if_fail (self != NULL, 0);
@@ -257,8 +253,8 @@ gegl_buffer_get_num_banks (const GeglBuffer * self)
  *
  * Returns: pointers to the buffers. 
  **/
-gpointer * 
-gegl_buffer_get_banks(const GeglBuffer * self)
+gpointer *
+gegl_buffer_get_banks (const GeglBuffer * self)
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_BUFFER (self), NULL);
@@ -267,45 +263,52 @@ gegl_buffer_get_banks(const GeglBuffer * self)
 }
 
 gdouble
-gegl_buffer_get_element_double(const GeglBuffer* self,gint bank,gint index){
-    g_return_val_if_fail(GEGL_IS_BUFFER(self),0);   
-    GeglBufferClass* klass=GEGL_BUFFER_GET_CLASS(self);
-    g_return_val_if_fail(klass->get_element_double != NULL, 0.0);
-    
-    return klass->get_element_double(self,bank,index);
+gegl_buffer_get_element_double (const GeglBuffer * self, gint bank,
+				gint index)
+{
+  g_return_val_if_fail (GEGL_IS_BUFFER (self), 0);
+  GeglBufferClass *klass = GEGL_BUFFER_GET_CLASS (self);
+  g_return_val_if_fail (klass->get_element_double != NULL, 0.0);
+
+  return klass->get_element_double (self, bank, index);
 }
 
 void
-gegl_buffer_set_element_double(GeglBuffer* self,
-                               gint bank,
-                               gint index,
-                               gdouble elem) {
-    g_return_if_fail(GEGL_IS_BUFFER(self));
-    GeglBufferClass* klass=GEGL_BUFFER_GET_CLASS(self);
-    g_return_if_fail(klass->set_element_double != NULL);
-    
-    return klass->set_element_double(self,bank,index,elem);
+gegl_buffer_set_element_double (GeglBuffer * self,
+				gint bank, gint index, gdouble elem)
+{
+  g_return_if_fail (GEGL_IS_BUFFER (self));
+  GeglBufferClass *klass = GEGL_BUFFER_GET_CLASS (self);
+  g_return_if_fail (klass->set_element_double != NULL);
+
+  return klass->set_element_double (self, bank, index, elem);
 }
 
 TransferType
-gegl_buffer_get_transfer_type(const GeglBuffer* self) {
-    g_return_val_if_fail(GEGL_IS_BUFFER(self),TYPE_UNKNOWN);
-    
-    return self->transfer_type;
+gegl_buffer_get_transfer_type (const GeglBuffer * self)
+{
+  g_return_val_if_fail (GEGL_IS_BUFFER (self), TYPE_UNKNOWN);
+
+  return self->transfer_type;
 }
 
-GeglBuffer* gegl_buffer_create(TransferType type, const gchar* first_property_name, ...) {
-    GeglBuffer* buff=NULL;
-    va_list args;
-    
-    va_start(args,first_property_name);
-    switch(type) {
-        case TYPE_DOUBLE:
-            buff = (GeglBuffer*)g_object_new_valist(GEGL_TYPE_BUFFER_DOUBLE,first_property_name,args);
-            break;
-        default:
-            g_error("Can not create GeglBuffer subclass of type %d",type);
+GeglBuffer *
+gegl_buffer_create (TransferType type, const gchar * first_property_name, ...)
+{
+  GeglBuffer *buff = NULL;
+  va_list args;
+
+  va_start (args, first_property_name);
+  switch (type)
+    {
+    case TYPE_DOUBLE:
+      buff =
+	(GeglBuffer *) g_object_new_valist (GEGL_TYPE_BUFFER_DOUBLE,
+					    first_property_name, args);
+      break;
+    default:
+      g_error ("Can not create GeglBuffer subclass of type %d", type);
     }
-    va_end(args);
-    return buff;
+  va_end (args);
+  return buff;
 }

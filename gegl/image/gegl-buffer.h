@@ -18,15 +18,16 @@
  *  Copyright 2003 Daniel S. Rogers
  *
  */
- 
+
 #ifndef __GEGL_BUFFER_H__
 #define __GEGL_BUFFER_H__
 
 #include "gegl-object.h"
 
 #ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+extern "C"
+{
+#endif				/* __cplusplus */
 
 #define GEGL_TYPE_BUFFER               (gegl_buffer_get_type ())
 #define GEGL_BUFFER(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER, GeglBuffer))
@@ -35,51 +36,57 @@ extern "C" {
 #define GEGL_IS_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_BUFFER))
 #define GEGL_BUFFER_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BUFFER, GeglBufferClass))
 
-GType  gegl_buffer_get_type(void);
+  GType gegl_buffer_get_type (void);
 
 /* I hate type enums.  This is what JAI does, and I just do what
  * they do for now, and try to figure out something better later.
  */
 
-typedef enum {
+  typedef enum
+  {
     TYPE_DOUBLE,
     TYPE_UNKNOWN
-} TransferType;
+  } TransferType;
 
 
-typedef struct _GeglBuffer  GeglBuffer;
-struct _GeglBuffer 
-{
+  typedef struct _GeglBuffer GeglBuffer;
+  struct _GeglBuffer
+  {
     GeglObject object;
 
-   /*< private >*/
-    
-    gpointer* banks;
-    gint elements_per_bank;     
+    gint elements_per_bank;
     gint num_banks;
     gint bytes_per_element;
     TransferType transfer_type;
-};
+    /* <private> */
+    gpointer *banks;
+    
+  };
 
-typedef struct _GeglBufferClass GeglBufferClass;
-struct _GeglBufferClass 
-{
+  typedef struct _GeglBufferClass GeglBufferClass;
+  struct _GeglBufferClass
+  {
     GeglObjectClass object_class;
-    gdouble (*get_element_double)(const GeglBuffer* self, gint bank,gint index);
-    void (*set_element_double)(GeglBuffer* self, gint bank,gint index,gdouble elem);
-};
+      gdouble (*get_element_double) (const GeglBuffer * self, gint bank,
+				     gint index);
+    void (*set_element_double) (GeglBuffer * self, gint bank, gint index,
+				gdouble elem);
+  };
 
-TransferType    gegl_buffer_get_transfer_type(const GeglBuffer* self);
-gint            gegl_buffer_get_num_banks     (const GeglBuffer * self);
-gint            gegl_buffer_get_elements_per_bank(const GeglBuffer * self);
-gpointer *  gegl_buffer_get_banks     (const GeglBuffer * self);
+  TransferType gegl_buffer_get_transfer_type (const GeglBuffer * self);
+  gint gegl_buffer_get_num_banks (const GeglBuffer * self);
+  gint gegl_buffer_get_elements_per_bank (const GeglBuffer * self);
+  gpointer *gegl_buffer_get_banks (const GeglBuffer * self);
 
-gdouble  gegl_buffer_get_element_double(const GeglBuffer* self,gint bank,gint index);
-void  gegl_buffer_set_element_double(GeglBuffer* self,gint bank,gint index,gdouble elem);
+  gdouble gegl_buffer_get_element_double (const GeglBuffer * self, gint bank,
+					  gint index);
+  void gegl_buffer_set_element_double (GeglBuffer * self, gint bank,
+				       gint index, gdouble elem);
 
-GeglBuffer* gegl_buffer_create(TransferType type, const gchar* first_property_name, ...);
+  GeglBuffer *gegl_buffer_create (TransferType type,
+				  const gchar * first_property_name, ...);
 #ifdef __cplusplus
 }
-#endif /* __cplusplus */
+#endif				/* __cplusplus */
 
 #endif

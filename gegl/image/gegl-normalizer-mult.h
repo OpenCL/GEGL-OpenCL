@@ -31,19 +31,19 @@
 #define GEGL_IS_NORMALIZER_MULT_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NORMALIZER_MULT))
 #define GEGL_NORMALIZER_MULT_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NORMALIZER_MULT, GeglNormalizerMultClass))
 
-GType gegl_normalizer_mult_get_type(void);
+GType gegl_normalizer_mult_get_type (void);
 
 typedef struct _GeglNormalizerMult GeglNormalizerMult;
 struct _GeglNormalizerMult
 {
-	GeglNormalizer parent;
-	gdouble alpha;
+  GeglNormalizer parent;
+  gdouble alpha;
 };
 
 typedef struct _GeglNormalizerMultClass GeglNormalizerMultClass;
 struct _GeglNormalizerMultClass
 {
-	GeglNormalizerClass parent_class;
+  GeglNormalizerClass parent_class;
 };
 
 #endif

@@ -31,18 +31,18 @@
 #define GEGL_IS_BUFFER_DOUBLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_BUFFER_DOUBLE))
 #define GEGL_BUFFER_DOUBLE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BUFFER_DOUBLE, GeglBufferDoubleClass))
 
-GType gegl_buffer_double_get_type(void);
+GType gegl_buffer_double_get_type (void);
 
 typedef struct _GeglBufferDouble GeglBufferDouble;
 struct _GeglBufferDouble
 {
-	GeglBuffer parent;
+  GeglBuffer parent;
 };
 
 typedef struct _GeglBufferDoubleClass GeglBufferDoubleClass;
 struct _GeglBufferDoubleClass
 {
-	GeglBufferClass parent_class;
+  GeglBufferClass parent_class;
 };
 
 

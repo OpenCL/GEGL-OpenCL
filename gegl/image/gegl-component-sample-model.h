@@ -31,7 +31,7 @@
 #define GEGL_IS_COMPONENT_SAMPLE_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_COMPONENT_SAMPLE_MODEL))
 #define GEGL_COMPONENT_SAMPLE_MODEL_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COMPONENT_SAMPLE_MODEL, GeglComponentSampleModelClass))
 
-GType gegl_component_sample_model_get_type(void);
+GType gegl_component_sample_model_get_type (void);
 
 typedef struct _GeglComponentSampleModel GeglComponentSampleModel;
 struct _GeglComponentSampleModel
@@ -40,11 +40,13 @@ struct _GeglComponentSampleModel
   /* protected */
   gint pixel_stride;
   gint scanline_stride;
-  GArray* bank_offsets;
-  GArray* band_indices;
+  GArray *bank_offsets;
+  GArray *band_indices;
   /* private */
-  //this class supports either chunky or planer, not something in between.
-  //this flag indicates chunky (all bands mapped to one bank) or planer (all bands mapped to different banks)
+  /*
+   * this class supports either chunky or planer, not something in between.
+   * this flag indicates chunky (all bands mapped to one bank) or planer (all bands mapped to different banks)
+   */
   gboolean all_to_one;
 };
 
@@ -54,12 +56,18 @@ struct _GeglComponentSampleModelClass
   GeglSampleModelClass parent_class;
 };
 
-gint gegl_component_sample_model_get_pixel_stride(const GeglComponentSampleModel* self);
-gint gegl_component_sample_model_get_scanline_stride(const GeglComponentSampleModel* self);
-gint gegl_component_sample_model_get_bank_offset(const GeglComponentSampleModel* self, gint bank);
-gint gegl_component_sample_model_get_band_index(const GeglComponentSampleModel* self, gint band);
+gint gegl_component_sample_model_get_pixel_stride (const
+						   GeglComponentSampleModel *
+						   self);
+gint gegl_component_sample_model_get_scanline_stride (const
+						      GeglComponentSampleModel
+						      * self);
+gint gegl_component_sample_model_get_bank_offset (const
+						  GeglComponentSampleModel *
+						  self, gint bank);
+gint gegl_component_sample_model_get_band_index (const
+						 GeglComponentSampleModel *
+						 self, gint band);
 
 
 #endif
-
-

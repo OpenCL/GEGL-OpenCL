@@ -31,25 +31,35 @@
 #define GEGL_IS_NORMALIZER_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NORMALIZER))
 #define GEGL_NORMALIZER_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NORMALIZER, GeglNormalizerClass))
 
-GType gegl_normalizer_get_type(void);
+GType gegl_normalizer_get_type (void);
 
 typedef struct _GeglNormalizer GeglNormalizer;
 struct _GeglNormalizer
 {
-	GeglObject parent;
-	
+  GeglObject parent;
+
 };
 
 typedef struct _GeglNormalizerClass GeglNormalizerClass;
 struct _GeglNormalizerClass
 {
-	GeglObjectClass parent_class;
-    gdouble* (*normalize)(const GeglNormalizer* self, const gdouble* unnor_data, gdouble* nor_data, gint length, gint stride);
-    gdouble* (*unnormalize)(const GeglNormalizer* self, const gdouble* nor_data, gdouble* unnor_data, gint length, gint stride);
+  GeglObjectClass parent_class;
+  gdouble *(*normalize) (const GeglNormalizer * self,
+			 const gdouble * unnor_data, gdouble * nor_data,
+			 gint length, gint stride);
+  gdouble *(*unnormalize) (const GeglNormalizer * self,
+			   const gdouble * nor_data, gdouble * unnor_data,
+			   gint length, gint stride);
 };
 
-gdouble* gegl_normalizer_normalize(const GeglNormalizer* self, const gdouble* unnor_data, gdouble* nor_data, gint length, gint stride);
-gdouble* gegl_normalizer_unnormalize(const GeglNormalizer* self, const gdouble* nor_data, gdouble* unnor_data, gint length, gint stride);
+gdouble *gegl_normalizer_normalize (const GeglNormalizer * self,
+				    const gdouble * unnor_data,
+				    gdouble * nor_data, gint length,
+				    gint stride);
+gdouble *gegl_normalizer_unnormalize (const GeglNormalizer * self,
+				      const gdouble * nor_data,
+				      gdouble * unnor_data, gint length,
+				      gint stride);
 
 
 #endif
