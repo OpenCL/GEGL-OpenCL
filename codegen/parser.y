@@ -19,7 +19,7 @@ void set_dtype (elem_t e, DATA_TYPE dtype);
 void set_type (elem_t e, DATA_TYPE dtype);
 void set_num (elem_t e, int n);
 void read_data_types (char *data_type);
-void read_color_space (char *color_space); 
+void read_channel_names (int argc, char **argv); 
 void init_data_varible (char *s);
 
 int yyerror (char *s); 
@@ -178,25 +178,36 @@ Line:
 		printf("%sfor (%s; %s; %s)", $1.string, $4.string, $6.string, $8.string); 
 		}
 	| INDENT IF LT_PARENTHESIS Expression RT_PARENTHESIS INDENT_CURLY
-                { 
-		printf("%sif (%s)%s", $1.string, $4.string, $6.string);
+                {
+	        char tmp[256];	
+		sprintf(tmp, "%sif (%s)%s", $1.string, $4.string, $6.string);
+		strcpy ($4.string, tmp);
+		print_line ($4); 
 		}
 	| INDENT ELSE IF LT_PARENTHESIS Expression RT_PARENTHESIS INDENT_CURLY
-                { 
-		printf("%selse if (%s)%s", $1.string, $5.string, $7.string); 
+                {
+	        char tmp[256]; 	
+		sprintf (tmp, "%selse if (%s)%s", $1.string, $5.string, $7.string); 
+		strcpy ($5.string, tmp);
+		print_line ($5); 
 		}
  	| INDENT RETURN Expression ';'		
 		{ 
-		printf("%sreturn (%s);", $1.string, $3.string); 
+		printf ("%sreturn (%s);", $1.string, $3.string); 
 		}	
 	| INDENT SWITCH LT_PARENTHESIS Expression RT_PARENTHESIS
                 { 
-		printf("%sswitch (%s)", $1.string, $4.string); 
+		char tmp[256];
+		sprintf (tmp, "%sswitch (%s)", $1.string, $4.string); 
+		strcpy ($4.string, tmp);
+		print_line ($4); 
 		}
 	| INDENT WHILE LT_PARENTHESIS Expression RT_PARENTHESIS INDENT_CURLY
                 { 
-		printf("%swhile (%s)", $1.string, $4.string); 
-		printf("%s", $6.string);
+		char tmp[256];
+		sprintf (tmp,"%swhile (%s)%s", $1.string, $4.string, $6.string); 
+		strcpy ($4.string, tmp);
+		print_line ($4);
 		} 	
 	| INDENT WHILE LT_PARENTHESIS Expression RT_PARENTHESIS
                 { 
@@ -280,8 +291,10 @@ Line:
 		  {
 		  if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
 		    {
-		    printf ("%sif (%s_a)%s  %s%s_a++;", $1.string, $5.string,
-			$1.string, $4.string, $5.string);
+		    printf ("%sif (%s_%s)%s  %s%s_%s++;", $1.string, $5.string,
+			_NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_],
+			$1.string, $4.string, $5.string,
+			_NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_]);
 		    sprintf (tmp, "%s%s%s_c++;", 
 		      $1.string, $4.string, $5.string);  
 		    }
@@ -293,8 +306,11 @@ Line:
 		    { 
 		    if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
 		      {
-		      printf ("%sif (%s_a)%s  %s%s_a += %s", $1.string, $5.string,
-			 $1.string, $4.string, $5.string, $7.string);
+		      printf ("%sif (%s_%s)%s  %s%s_%s += %s", $1.string, $5.string,
+			 _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_], 
+			 $1.string, $4.string, $5.string, 
+			 _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_],
+			 $7.string);
 		      sprintf (tmp, "%s%s%s_ca += %s;", $1.string, $4.string, $5.string, $7.string); 
 		      }
 		    else
@@ -885,19 +901,19 @@ print_repeat (elem_t *dest, elem_t src, char *string)
     {
     for (i=0; i<_NUM_COLOR_CHAN_-1; i++)
       {
-      sprintf (tmp, "%s %s_%c,", t, string, _NAME_COLOR_CHAN_[i]);
+      sprintf (tmp, "%s %s_%s,", t, string, _NAME_COLOR_CHAN_[i]);
       strcpy(t, tmp); 
       }
-    sprintf (tmp, "%s %s_%c", t, string, _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_-1]); 
+    sprintf (tmp, "%s %s_%s", t, string, _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_-1]); 
     }
   else if (get_sym (src.string)->type == TYPE_CA_VECTOR)
     {
     for (i=0; i<_NUM_COLOR_CHAN_; i++)
       {
-      sprintf (tmp, "%s %s_%c,", t, string, _NAME_COLOR_CHAN_[i]);
+      sprintf (tmp, "%s %s_%s,", t, string, _NAME_COLOR_CHAN_[i]);
       strcpy(t, tmp);
       }
-    sprintf (tmp, "%s %s_a", t, string); 
+    sprintf (tmp, "%s %s_%s", t, string, _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_]); 
     }
   strcpy (dest->string, tmp);
   
@@ -916,13 +932,13 @@ print_line (elem_t src)
       {
       if (j < l-2 && src.string[j] == '_' && src.string[j+1] == 'c' && src.string[j+2] == 'a')
 	{
-	printf("_%c", _NAME_COLOR_CHAN_[i]);
+	printf("_%s", _NAME_COLOR_CHAN_[i]);
 	k = _NUM_COLOR_CHAN_ + 1;
 	j += 2;
 	}
       else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'c')
 	{
-	printf("_%c", _NAME_COLOR_CHAN_[i]);
+	printf("_%s", _NAME_COLOR_CHAN_[i]);
 	k = _NUM_COLOR_CHAN_; 	
 	j++;
 	}
@@ -931,6 +947,11 @@ print_line (elem_t src)
 	printf("[%d]", i);
 	k = src.num; 
 	j++;
+	}
+      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
+	{
+	printf("_%s", _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_]);
+        j++; 	
 	}
       else
 	{
@@ -946,6 +967,11 @@ print_line (elem_t src)
 	if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
 	  {
 	  printf("[%d]", i);
+	  j++;
+	  }
+	else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
+	  {
+	  printf("_%s", _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_]);
 	  j++;
 	  }
 	else
@@ -1339,9 +1365,6 @@ read_data_types (char *data_type)
 */
    if (!strcmp (data_type, "UINT8"))
      {
-     _DATATYPE_		= (char *) strdup ("UINT8");
-     _Datatype_		= (char *) strdup ("Uint8");
-     _datatype_         = (char *) strdup ("uint8"); 
      _WP_         	= (char *) strdup ("255");
      _WP_NORM_      	= (char *) strdup ("(1.0/255.0)");
      _VectorChan_       = (char *) strdup ("guint8");
@@ -1382,9 +1405,6 @@ read_data_types (char *data_type)
    if (!strcmp(data_type, "UINT16"))
      {
 
-     _DATATYPE_		= (char *) strdup ("UINT16");
-     _Datatype_		= (char *) strdup ("Uint16");
-     _datatype_         = (char *) strdup ("uint16"); 
      _WP_          	= (char *) strdup ("4095");
      _WP_NORM_     	= (char *) strdup ("(1.0/4095.0)");
      _VectorChan_       = (char *) strdup ("guint16");
@@ -1424,9 +1444,6 @@ read_data_types (char *data_type)
 */
    if (!strcmp(data_type, "FLOAT"))
      {
-     _DATATYPE_		= (char *) strdup ("FLOAT");
-     _Datatype_		= (char *) strdup ("Float");
-     _datatype_         = (char *) strdup ("float"); 
      _WP_               = (char *) strdup ("1.0");
      _WP_NORM_          = (char *) strdup ("1.0");
      _VectorChan_       = (char *) strdup ("gfloat");
@@ -1463,28 +1480,18 @@ read_data_types (char *data_type)
 }
 
 void
-read_color_space (char *color_space)
+read_channel_names (int argc, char **argv)
 {
 
   int i;
-  char tmp1[20], tmp2[20], tmp3[20];
 
-  _NUM_COLOR_CHAN_ = strlen (color_space); 
-  _NAME_COLOR_CHAN_ = (char*) malloc (sizeof(char) * (_NUM_COLOR_CHAN_ + 1));
+  _NUM_COLOR_CHAN_ = argc - 3; 
+  _NAME_COLOR_CHAN_ = (char**) malloc (sizeof(char*) * (_NUM_COLOR_CHAN_ + 1));
 
-  for (i=0; i<_NUM_COLOR_CHAN_; i++)
+  for (i=0; i<_NUM_COLOR_CHAN_+1; i++)
     {
-    _NAME_COLOR_CHAN_[i] = color_space[i]; 
-    tmp1[i] = toupper (color_space[i]);
-    tmp2[i] = tolower (color_space[i]);
+    _NAME_COLOR_CHAN_[i] = (char*) strdup (argv[i+2]); 
     }
-  _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_] = 'a';
-  tmp1[_NUM_COLOR_CHAN_] = '\0';
-  tmp2[_NUM_COLOR_CHAN_] = '\0';
-  _COLORSPACE_ = (char *) strdup (tmp1);
-  _colorspace_ = (char *) strdup (tmp2);
-  tmp2[0] = tmp1[0];
-  _Colorspace_ = (char *) strdup (tmp2); 
 }
 
 int
@@ -1500,7 +1507,7 @@ main (int argc, char **argv)
 {
   yydebug = 1; 
   read_data_types (argv[1]);
-  read_color_space (argv[2]); 
+  read_channel_names (argc, argv); 
   yyparse();
 
   return 0; 

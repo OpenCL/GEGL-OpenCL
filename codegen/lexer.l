@@ -115,7 +115,11 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 
 <GENERIC_IMAGE_DECL>"/*"		{ECHO; PREV=0; BEGIN COMMENT;}
 <GENERIC_IMAGE_BLOCK>"/*"		{ECHO; PREV=1; BEGIN COMMENT;}
-<COMMENT>"*/"				{ECHO; if (PREV) BEGIN GENERIC_IMAGE_BLOCK; else GENERIC_IMAGE_DECL;} 
+<COMMENT>"*/"				{
+    					ECHO; 
+					if (PREV) BEGIN GENERIC_IMAGE_BLOCK; 
+    					else BEGIN GENERIC_IMAGE_DECL;
+					} 
 
 <GENERIC_IMAGE_DECL>"(color,alpha)"	return(COLOR_ALPHA);
 <GENERIC_IMAGE_DECL>"(color)"		return(COLOR);

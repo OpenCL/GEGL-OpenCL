@@ -16,49 +16,42 @@
 #undef  _PARSER_Y_
 #endif
 
-EXTERN char *_COLORSPACE_;
-EXTERN char *_Colorspace_;
-EXTERN char *_colorspace_;
-EXTERN char *_DATATYPE_;
-EXTERN char *_Datatype_;
-EXTERN char *_datatype_;
+EXTERN char  *_WP_;   
+EXTERN char  *_WP_NORM_;       
+EXTERN char  *_VectorChan_;      
+EXTERN char  *_Chan_;      
+EXTERN char  *_FloatChan_;     	
+EXTERN char  *_MIN_CHAN_;   
+EXTERN char  *_MAX_CHAN_;      
+EXTERN char  *_ZERO_CHAN_; 
+EXTERN char  *_ZERO_; 
 
-EXTERN char *_WP_;   
-EXTERN char *_WP_NORM_;       
-EXTERN char *_VectorChan_;      
-EXTERN char *_Chan_;      
-EXTERN char *_FloatChan_;     	
-EXTERN char *_MIN_CHAN_;   
-EXTERN char *_MAX_CHAN_;      
-EXTERN char *_ZERO_CHAN_; 
-EXTERN char *_ZERO_; 
+EXTERN char  *_CHAN_CLAMP_PRE_;		
+EXTERN char  *_CHAN_CLAMP_SUF_;	
 
-EXTERN char *_CHAN_CLAMP_PRE_;		
-EXTERN char *_CHAN_CLAMP_SUF_;	
+EXTERN char  *_WP_CLAMP_PRE_;
+EXTERN char  *_WP_CLAMP_SUF_;
 
-EXTERN char *_WP_CLAMP_PRE_;
-EXTERN char *_WP_CLAMP_SUF_;
+EXTERN char  *_PLUS_PRE_;
+EXTERN char  *_PLUS_SUF_; 
 
-EXTERN char *_PLUS_PRE_;
-EXTERN char *_PLUS_SUF_; 
+EXTERN char  *_MINUS_PRE_;        
+EXTERN char  *_MINUS_SUF_;       
 
-EXTERN char *_MINUS_PRE_;        
-EXTERN char *_MINUS_SUF_;       
+EXTERN char  *_TIMES_VS_PRE_;	
+EXTERN char  *_TIMES_VS_MID_;
+EXTERN char  *_TIMES_VS_SUF_;
 
-EXTERN char *_TIMES_VS_PRE_;	
-EXTERN char *_TIMES_VS_MID_;
-EXTERN char *_TIMES_VS_SUF_;
+EXTERN char  *_TIMES_VV_PRE_;        
+EXTERN char  *_TIMES_VV_MID_;       
+EXTERN char  *_TIMES_VV_SUF_;       
 
-EXTERN char *_TIMES_VV_PRE_;        
-EXTERN char *_TIMES_VV_MID_;       
-EXTERN char *_TIMES_VV_SUF_;       
-
-EXTERN char *_EQUAL_CFC_PRE_;	
-EXTERN char *_EQUAL_CFC_SUF_;
+EXTERN char  *_EQUAL_CFC_PRE_;	
+EXTERN char  *_EQUAL_CFC_SUF_;
 
 /* these are related to the color space */
-EXTERN int   _NUM_COLOR_CHAN_;
-EXTERN char *_NAME_COLOR_CHAN_;
+EXTERN int    _NUM_COLOR_CHAN_;
+EXTERN char **_NAME_COLOR_CHAN_;
 
 #undef  EXTERN
 

@@ -1,3 +1,9 @@
+Tue Mar 14 14:23:29 PST 2000 caro@rhythm.com
+
+	* fixed problem
+
+	* to run codegen now type
+	codegen datatype(FLOAT, UINT8, UINT16) nameofcolorchannels(red green blue alpha)
 Tue Mar 14 11:47:10 PST 2000 caro@rhythm.com
 
 	* fixed stuff
