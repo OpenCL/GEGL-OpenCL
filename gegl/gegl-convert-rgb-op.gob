@@ -14,7 +14,7 @@
 %}
 
 
-class Gegl:ConvertRGB:Op from Gegl:Point:Op {
+class Gegl:Convert:RGB:Op from Gegl:Point:Op {
 
   
   public 
@@ -52,14 +52,21 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
     GeglPointOp *point_op = GEGL_POINT_OP (self);
     GeglPointOpClass *point_op_class = 
         GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
-    
+    GeglColorSpace src_cs, dest_cs;
+ 
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
    
     image_buffers[0] = dest;
     image_buffers[1] = src;
-    rects[0] = dest_rect;
-    rects[1] = src_rect;
+    rects[0].x = dest_rect->x;
+    rects[0].y = dest_rect->y;
+    rects[0].w = dest_rect->w;
+    rects[0].h = dest_rect->h;
+    rects[1].x = src_rect->x;
+    rects[1].y = src_rect->y;
+    rects[1].w = src_rect->w;
+    rects[1].h = src_rect->h;
  
     /* Chain up */
     if (!gegl_point_op_constructor (
@@ -84,10 +91,10 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
 /* converting from rgb to rgb */
       switch(src_data_type){
         case FLOAT:
-          point_op_class->scanline_func = gegl_convert_op_RGB_FLOAT;
+          point_op_class->scanline_func = gegl_convert_rgb_op_RGB_FLOAT;
           break;
         case U8:
-          point_op_class->scanline_func = gegl_convert_op_RGB_U8;
+          point_op_class->scanline_func = gegl_convert_rgb_op_RGB_U8;
           break;
         default:
           break;
@@ -97,10 +104,10 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
       switch(src_data_type){
             /* confert from hsv to rgb */ 
         case FLOAT:
-          point_op_class->scanline_func = gegl_convert_op_HSV_FLOAT;
+          point_op_class->scanline_func = gegl_convert_rgb_op_HSV_FLOAT;
           break;  
         case U8:
-          point_op_class->scanline_func = gegl_convert_op_HSV_U8;
+          point_op_class->scanline_func = gegl_convert_rgb_op_HSV_U8;
           break;  
         default:
           break; 
@@ -110,10 +117,10 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
       switch(src_data_type){
             /* confert from gray to rgb */
         case FLOAT:
-          point_op_class->scanline_func = gegl_convert_op_GRAY_FLOAT;
+          point_op_class->scanline_func = gegl_convert_rgb_op_GRAY_FLOAT;
           break;
         case U8:
-          point_op_class->scanline_func = gegl_convert_op_GRAY_U8;
+          point_op_class->scanline_func = gegl_convert_rgb_op_GRAY_U8;
           break; 
         default:
           break;
@@ -121,7 +128,7 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
       break;
       default:
         /* convert from unknown to rgb */
-        point_op_class->scanline_func = gegl_convert_op_UNKNOWN;
+        point_op_class->scanline_func = gegl_convert_rgb_op_UNKNOWN;
       break;
     }
 
@@ -141,11 +148,6 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   void 
   destroy (GtkObject *object)
   {
-    GeglConvertRGBOp * self = GEGL_CONVERT_RGB_OP(object); 
-
-    /* Dispose of the convert-rgb color*/
-    g_free(self->_priv->convert-rgb_color);
-
     /* Chain up on destroy */
     PARENT_HANDLER (object)
   }
@@ -160,9 +162,11 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   guint width;
   guchar *dest_data[4], *src_data[4];
   guchar *dest_r, *dest_g, *dest_b, *dest_a, *src_r, *src_g, *src_b, *src_a;
-  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);  
+  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);  
   GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
   gboolean alpha;
+  GeglColorModel *dest_cm, *src_cm;
+  GeglChannelDataType dest_data_type;
 
   width = point_opP->scanline_width;
 
@@ -210,7 +214,7 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
     case U8:
       if(alpha){
         dest_a = dest_data[3];
-        src_a  = src_data[[3]];
+        src_a  = src_data[3];
 
 	while(width--){
 	  *dest_r++ = (float) *src_r++ / 255.0;
@@ -241,9 +245,11 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   guint width;
   guchar *dest_data[4], *src_data[4];
   guchar *dest_r, *dest_g, *dest_b, *dest_a, *src_r, *src_g, *src_b, *src_a;
-  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);
+  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
   GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
   gboolean alpha;
+  GeglColorModel *src_cm, *dest_cm;
+  GeglChannelDataType dest_data_type;
 
   gegl_image_buffer_get_scanline_data (opP->image_buffers[0],
                   (guchar**)dest_data);
@@ -293,7 +299,7 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
     case U8:
       if(alpha){
         dest_a = dest_data[3];
-        src_a  = src_data[[3]];
+        src_a  = src_data[3];
 
         while(width--){
           *dest_r++ = *src_r++;
@@ -324,8 +330,11 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   guint width;
   guchar *dest_data[4], *src_data[4];
   guchar *dest_r, *dest_g, *dest_b, *dest_a, *src_r, *src_g, *src_b, *src_a;
-  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);
+  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
   GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
+  gboolean alpha; 
+  GeglColorModel *src_cm, *dest_cm;
+  GeglChannelDataType dest_data_type;
 
   width = point_opP->scanline_width;
 
@@ -344,13 +353,17 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   /* find out what is the final data type */
   dest_cm = gegl_image_buffer_color_model (opP->image_buffers[0]);
   dest_data_type = gegl_color_model_data_type (dest_cm);
+ 
+  /* find out if there is alpha */
+  src_cm = gegl_image_buffer_color_model (opP->image_buffers[1]);
+  alpha = gegl_color_model_has_alpha(dest_cm) && gegl_color_model_has_alpha(src_cm);
 
   /* lets case on the dest data type */
   switch(dest_data_type){
     case FLOAT:
        if(alpha){
         dest_a = dest_data[3];
-        src_a  = src_data[[3]];
+        src_a  = src_data[3];
 
         while(width--){
           *dest_r++ = *src_r++;
@@ -358,6 +371,7 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
           *dest_b++ = *src_b++;
           *dest_a++ = *src_a++; 
         }
+      }	
       else
         while(width--){
           *dest_r++ = *src_r++;
@@ -399,9 +413,11 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   guint width;
   guchar *dest_data[4], *src_data[4];
   guchar *dest_r, *dest_g, *dest_b, *dest_a, *src_r, *src_g, *src_b, *src_a;
-  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);
+  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
   GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
   gboolean alpha; 
+  GeglColorModel *src_cm, *dest_cm;
+  GeglChannelDataType dest_data_type;
 
   width = point_opP->scanline_width;
 
@@ -483,9 +499,11 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   guint width;
   guchar *dest_data[4], *src_data[2];
   guchar *dest_r, *dest_g, *dest_b, *dest_a, *src_g, *src_a;
-  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);
+  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
   GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
   gboolean alpha;
+  GeglColorModel *src_cm, *dest_cm;
+  GeglChannelDataType dest_data_type;
 
   width = point_opP->scanline_width;
 
@@ -512,7 +530,7 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
     case FLOAT:
       if(alpha){
         dest_a = dest_data[3];
-        src_a  = src_data[[3]];
+        src_a  = src_data[3];
  
         while(width--){
           *dest_r++ = *src_g;
@@ -537,6 +555,7 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
           *dest_r++ = *src_g / 255.0;
           *dest_g++ = *src_g / 255.0;
           *dest_b++ = *src_g++ / 255.0;
+           *dest_a++ = *src_a++ / 255.0; 
         }
      }
      else
@@ -561,9 +580,11 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   guint width;
   guchar *dest_data[4], *src_data[2];
   guchar *dest_r, *dest_g, *dest_b, *dest_a, *src_g, *src_a;
-  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);
+  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
   GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
   gboolean alpha; 
+  GeglColorModel *src_cm, *dest_cm;
+  GeglChannelDataType dest_data_type;
 
   width = point_opP->scanline_width;
 
@@ -640,8 +661,10 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   guint width;
   guchar *dest_data[4], *src_data[4];
   gfloat *tmp_data; 
-  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);
+  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
   GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
+  GeglColorModel *src_cm, *dest_cm;
+  GeglChannelDataType dest_data_type;
 
   width = point_opP->scanline_width;
 
@@ -656,8 +679,8 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   dest_cm = gegl_image_buffer_color_model (opP->image_buffers[0]);
   src_cm = gegl_image_buffer_color_model (opP->image_buffers[1]);
 
-  gegl_color_model_convert_to_xyz (src_cm, tmp_data, src_data);
-  gegl_color_model_convert_from_xyz (dest_cm, dest_data, tmp_data);
+  gegl_color_model_convert_to_xyz (src_cm, tmp_data, src_data, width);
+  gegl_color_model_convert_from_xyz (dest_cm, dest_data, tmp_data, width);
 
   }
 

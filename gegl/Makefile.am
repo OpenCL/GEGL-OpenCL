@@ -24,6 +24,7 @@ GOB     = \
 	gegl-unpremult-op.gob \
 	gegl-convert-rgb-op.gob \
 	gegl-convert-gray-op.gob
+
 	
 
 GOB_SRC = \
@@ -49,6 +50,7 @@ GOB_SRC = \
 	gegl-convert-rgb-op.c \
         gegl-convert-gray-op.c
 
+
 GOB_PUBLIC_H = \
 	gegl-object.h \
         gegl-drawable.h \
@@ -70,7 +72,8 @@ GOB_PUBLIC_H = \
         gegl-premult-op.h \
         gegl-unpremult-op.h \
 	gegl-convert-rgb-op.h \
-        gegl-convert-gray-op.h 
+        gegl-convert-gray-op.h
+ 
 
 
 

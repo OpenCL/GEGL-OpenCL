@@ -11,7 +11,8 @@ typedef enum
   INDEXED,
   CMYK,
   SRGB,
-  CIE_XYZ
+  CIE_XYZ, 
+  HSV 
 } GeglColorSpace;
 
 typedef enum

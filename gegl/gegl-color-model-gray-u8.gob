@@ -72,7 +72,7 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
     gboolean has_alpha = gegl_color_model_has_alpha (cm); 
     GeglColorModelGray * cm_gray = GEGL_COLOR_MODEL_GRAY(cm);
     
-    gint g = gegl_color_model_gray_get_green_index (cm_gray);
+    gint g = gegl_color_model_gray_get_gray_index (cm_gray);
     gint a = gegl_color_model_alpha_channel (GEGL_COLOR_MODEL(cm_gray));
 
     switch (constant) 
@@ -109,18 +109,14 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
             channel_values[a].u8 = 255;
           break;
         case COLOR_WHITE_TRANSPARENT:
-          channel_values[r].u8 = 255;
           channel_values[g].u8 = 255;
-          channel_values[b].u8 = 255;
 
           if (!has_alpha)
             channel_values[a].u8 = 0;
           break;
         case COLOR_TRANSPARENT:
         case COLOR_BLACK_TRANSPARENT:
-          channel_values[r].u8 = 0;
           channel_values[g].u8 = 0;
-          channel_values[b].u8 = 0;
           if (has_alpha)
             channel_values[a].u8 = 0;
           break;
@@ -209,11 +205,9 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
 
     gboolean has_alpha = gegl_color_model_has_alpha(cm);
 
-    r = dest_data[0];
-    g = dest_data[1];
-    b = dest_data[2];
+    g = dest_data[0];
     if(has_alpha){
-    a = dest_data[3];
+    a = dest_data[1];
 
     while(width--)
     {
