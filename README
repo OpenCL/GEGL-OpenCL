@@ -1,24 +1,59 @@
-You must use Gob 0.92.1 with gegl-0.0.2 and you should apply the patch
-patch_for_gob-0.92.1 that is in this directory to the main.c of gob when you
-build it. 
+You must use Gob 0.92.2 (in gnome cvs or from
+http://ftp.5z.com/pub/gob/) or later with gegl-0.0.2.  Earlier
+versions of Gob may not work with gegl.
 
-This has to do with a fix for circular headers created by gob in some cases,
-but which isnt completely worked out yet (or which I dont understand how to
-make gob do yet). 
+For more information on gob see http://www.5z.com/jirka/gob.html. 
 
-There is some support for remaking generated .c and .h files automatically.
-Look in src directory gegl/Makefile.am for rules at the bottom.
+Gob allows "private", "protected" and "public" variables and
+methods.  In gegl we use these keywords as follows:
 
->make clean      only removes *.o's but not .h's or .c's or .gobs 
->make gobclean   removes the generated .c and .h files by gob, and leaves .gobs 
->make gobs       builds all generated .c and .h files from .gobs
+Variables:
 
-Dependencies more or less work so if you edit a gob file, the make will pick up
-that depend and rerun gob for you before compiling, but the very first build
-seems to have trouble sometimes. (.deps files problem somehow). Just cd to
-the gegl dir and do a make gobs for the first time. 
+1) "public" variables appear in the class struct in class.h,
+available to all.
 
-The testgegl file just creates some operators and runs them. There is a PrintOp
-for debugging. See testgegl.c for details.
+2) "protected" variables are not used in gegl for now.
+
+3) "private" variables in gegl class files are similar to
+C++-style "protected" variables, in that these gob "private"
+variables are made available to subclasses by including the
+gob-generated class's private header (class-private.h) in the
+subclass.
+
+Methods: 
+
+1)"public" methods are available to all through the class.h
+header.
+
+2)"protected" methods are available to subclasses by virtue of
+being included in the class's class-private.h header.
+
+3)"private" methods are available only to the class where they
+are defined  They are static functions in the class.c file.  
+
+In short, methods are like in C++. And for variables, gob
+"private" means C++-protected and there is no gob "protected"
+used in gegl.
+
+There is some support for remaking generated .c and .h files
+automatically.  Look in gegl/gegl/Makefile.am for rules at the
+bottom.
+
+>make clean    removes *.o's but not .h's or .c's or .gobs
+>make gobclean removes generated .c and .h files, leaves .gobs
+>make gobs     builds all generated .c and .h files from .gobs
+
+Dependencies more or less work so if you edit a .gob file, the
+make will pick up that depend and rerun gob for you before
+compiling, but the very first build seems to have trouble
+sometimes. (.deps files problem somehow). Just cd to the gegl dir
+and do a make gobs for the first time. 
+
+The testgegl program just creates some operators and runs them.
+There is a PrintOp for debugging. See testgegl.c for details.
+
+The testgeglfile program has code for reading tiffs and
+displaying images in a gtk window. You can use this for testing
+op classes as well.
 
 calvinw@mindspring.com

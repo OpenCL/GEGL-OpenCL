@@ -1,3 +1,13 @@
+Tue Jan 25 10:51:05 EST 2000 calvinw@mindspring.com
+
+    *More details for GeglDrawable class.  
+
+    *Fixed a bunch of gegl_destroys to be correct.
+
+    *Straightened out some of the forward header problems
+     by updating to gob-0.92.2. No gob patch is necessary
+     now.
+
 Mon Jan 24 11:27:03 EST 2000  calvinw@mindspring.com
 
     *Fixed the GOB_PUBLIC_HEADER in Makefile.am for

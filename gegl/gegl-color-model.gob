@@ -1,24 +1,14 @@
 %h{
 #include "gegl-object.h"
-#if 1 
-#ifndef __GEGL_COLOR_F_H__
-#define __GEGL_COLOR_F_H__
+#ifndef __TYPEDEF_GEGL_COLOR__
+#define __TYPEDEF_GEGL_COLOR__
 typedef struct _GeglColor GeglColor;
-#endif
 #endif
 %}
 %{
-
-/* Need some .F.h type action here */
-#if 1 
-#ifndef __GEGL_COLOR_MODEL_F_H__
-#define __GEGL_COLOR_MODEL_F_H__
-typedef struct _GeglColorModel GeglColorModel;
-#endif
-#endif
-#include "gegl-color.h"
 #include "gegl-color-model.h"
 #include "gegl-color-model-private.h"
+#include "gegl-color.h"
 #include "gegl-object-private.h"
 %}
 

@@ -1,16 +1,26 @@
 %h{
+
 #include "gegl-object.h"
-#ifndef __GEGL_COLOR_F_H__
-#define __GEGL_COLOR_F_H__
+
+#ifndef __TYPEDEF_GEGL_COLOR__
+#define __TYPEDEF_GEGL_COLOR__
 typedef struct _GeglColor  GeglColor;
 #endif
-#include "gegl-color-model.h"
+
+#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
+#define __TYPEDEF_GEGL_COLOR_MODEL__
+typedef struct _GeglColorModel  GeglColorModel;
+#endif
+
 %}
 %{
+
 #include "gegl-image-buffer.h"
 #include "gegl-image-buffer-private.h"
 #include "gegl-object-private.h"
+#include "gegl-color-model.h"
 #include "gegl-utils.h"
+
 %}
 
 class Gegl:Image:Buffer from Gegl:Object {
@@ -35,7 +45,7 @@ class Gegl:Image:Buffer from Gegl:Object {
 
     /*Call the constructor */
     if (!constructor(self, cm, w, h))
-	return NULL;
+      return NULL;
     
     /*Okay its constructed*/
     GEGL_OBJECT(self)->constructed = TRUE;

@@ -1,14 +1,15 @@
 %h{
-#ifndef __GEGL_COLOR_F_H__
-#define __GEGL_COLOR_F_H__
-typedef struct _GeglColor  GeglColor;
-#endif
 #include "gegl-color-model.h"
+#ifndef __TYPEDEF_GEGL_COLOR__
+#define __TYPEDEF_GEGL_COLOR__
+typedef struct _GeglColor GeglColor;
+#endif
 %}
 %{
 #include "gegl-color-model-rgb.h"
 #include "gegl-color-model-rgb-private.h"
 #include "gegl-color-model-private.h"
+#include "gegl-color.h"
 %}
 
 class Gegl:Color:Model:Rgb from Gegl:Color:Model {

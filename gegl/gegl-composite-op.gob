@@ -8,6 +8,7 @@
 #include "gegl-composite-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
+#include "gegl-color-model.h"
 #include "gegl-utils.h"
 %}
 
@@ -18,7 +19,7 @@ class Gegl:Composite:Op from Gegl:Point:Op {
   public 
   GeglCompositeOp *
   new  (GeglImageBuffer *bg,
-        GeglImageBuffer * fg, 
+        GeglImageBuffer *fg, 
         GeglRect *bg_rect,
         GeglRect *fg_rect, 
         GeglCompositeMode mode,

@@ -1,12 +1,34 @@
 %h{
+
 #include "gegl-object.h"
+#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
+#define __TYPEDEF_GEGL_COLOR_MODEL__
+typedef struct _GeglColorModel GeglColorModel;
+#endif
+
+#ifndef __TYPEDEF_GEGL_GRAPHICS_STATE__
+#define __TYPEDEF_GEGL_GRAPHICS_STATE__
+typedef struct _GeglGraphicsState GeglGraphicsState;
+#endif
+
+#ifndef __TYPEDEF_GEGL_IMAGE_BUFFER__
+#define __TYPEDEF_GEGL_IMAGE_BUFFER__
+typedef struct _GeglImageBuffer GeglImageBuffer;
+#endif
+
 %}
 %{
+
 #include "gegl-drawable.h"
 #include "gegl-drawable-private.h"
 #include "gegl-object-private.h"
+#include "gegl-color-model.h"
+#include "gegl-graphics-state.h"
 #include "gegl-image-buffer.h"
+#include "gegl-composite-op.h"
+#include "gegl-fill-op.h"
 #include "gegl-utils.h"
+
 %}
 
 class Gegl:Drawable from Gegl:Object {
@@ -20,14 +42,14 @@ class Gegl:Drawable from Gegl:Object {
   public
   GeglDrawable *	
   new(GeglColorModel *cm,     /* Also should pass storage info eventually*/ 
-      char *name,
+      gchar *name,
       gint w,
       gint h)
   {
     GeglDrawable * self = GEGL_DRAWABLE(GET_NEW);
 
     /*Call the constructor */
-    if (!constructor(self, cm, storage_info, w, h))
+    if (!constructor(self, cm, name, w, h))
       return NULL;
     
     /*Okay its constructed*/
@@ -40,7 +62,7 @@ class Gegl:Drawable from Gegl:Object {
   gboolean 
   constructor(self,
       GeglColorModel *cm,    /*Also should pass storage info eventually*/ 
-      char *name,
+      gchar *name,
       gint w,
       gint h)
   {
@@ -51,17 +73,27 @@ class Gegl:Drawable from Gegl:Object {
     if (!gegl_object_constructor (GEGL_OBJECT(self)))
       return FALSE;
 
+    self->_priv->image_buffer = NULL; 
+    self->_priv->graphics_state = NULL; 
+
     /* Eventually we will want to pass the storage info here too */
-    if (!self->_priv->image_buffer = gegl_image_buffer_new(cm, w, h)); 
+   {
+    self->_priv->image_buffer = gegl_image_buffer_new(cm, w, h); 
+
+    if (!self->_priv->image_buffer) 
      {
         g_warning ("Couldnt allocate GeglDrawable image buffer\n");
         return FALSE;
      }
-    if (!self->_priv->graphics_state = gegl_graphics_state_new(cm)); 
+
+    self->_priv->graphics_state = gegl_graphics_state_new(cm); 
+    if (!(self->_priv->graphics_state)) 
      {
         g_warning ("Couldnt allocate GeglDrawable graphics state\n");
         return FALSE;
      }
+   }
+
     self->_priv->name = g_strdup (name); 
     self->_priv->width = w; 
     self->_priv->height = h; 
@@ -73,10 +105,10 @@ class Gegl:Drawable from Gegl:Object {
   void 
   destroy (GtkObject *object)
   {
-    GeglDrawable *self = GEGL_Drawable(object); 
+    GeglDrawable *self = GEGL_DRAWABLE(object); 
 
-    gegl_destroy(self->_priv->image_buffer);
-    gegl_destroy(self->_priv->graphics_state);
+    gegl_object_destroy(GEGL_OBJECT(self->_priv->image_buffer));
+    gegl_object_destroy(GEGL_OBJECT(self->_priv->graphics_state));
     g_free(self->_priv->name);
 
     /* Chain up on destroy */
@@ -97,7 +129,7 @@ class Gegl:Drawable from Gegl:Object {
     return self->_priv->graphics_state; 
   }
 
-  protected 
+  public 
   GeglImageBuffer * 
   get_image_buffer(self)
   {
@@ -113,22 +145,23 @@ class Gegl:Drawable from Gegl:Object {
                             self->_priv->graphics_state);
     GeglOp *op = GEGL_OP(gegl_fill_op_new (
                            self->_priv->image_buffer, 
-                           rect, fill_color);
+                           rect, fill_color));
 
     /* Do the fill */
     gegl_op_apply (op);
+    gegl_object_destroy(GEGL_OBJECT(op));
   }
 
   public 
   void
   apply_image(self, 
               GeglImageBuffer *src_image_buffer,
-              gint x,     /* eventually change this to a rect */
-              gint y      /* once scaling is implemented */
+              gint x,          /* eventually change this to a rect */
+              gint y           /* once scaling is implemented */
               )
   {
-    gint src_width = gegl_image_buffer_width (src_imagea_buffer);
-    gint src_height = gegl_image_buffer_height (src_image_buffer);
+    gint src_width = gegl_image_buffer_get_width (src_image_buffer);
+    gint src_height = gegl_image_buffer_get_height (src_image_buffer);
     GeglCompositeMode comp_mode = gegl_graphics_state_get_composite_mode (
                              self->_priv->graphics_state);
     GeglRect src_rect;
@@ -136,29 +169,30 @@ class Gegl:Drawable from Gegl:Object {
     GeglOp *op; 
 
     /* Apply the image at (x,y) on the drawable*/
-    gegl_rect_set(&src_rect, 0,0,src_width, src_height);
-    gegl_rect_set(&draw_rect, x,y,src_width, src_height);
+    gegl_rect_set (&src_rect, 0, 0, src_width, src_height);
+    gegl_rect_set (&draw_rect, x, y, src_width, src_height);
 
 
     /* Disallow scaling and off the edge of drawable for now*/
-    if (draw_rect->w != src_rect.w || draw_rect->h != src_rect.h)
+    if (draw_rect.w != src_rect.w || draw_rect.h != src_rect.h)
       {
-        gwarning ("gegl_drawable_apply_image: cant scale images yet\n");
+        g_warning("gegl_drawable_apply_image: cant scale images yet\n");
 	return;
       }
 
     if (draw_rect.x + src_rect.w > self->_priv->width || 
         draw_rect.y + src_rect.h > self->_priv->height)
       {
-        gwarning ("gegl_drawable_apply_image: cant apply images outside drawable yet\n");
+        g_warning ("gegl_drawable_apply_image: cant apply images outside drawable yet\n");
 	return;
       }
 
     op = GEGL_OP(gegl_composite_op_new (self->_priv->image_buffer, 
-                      src_image_buffer, &draw_rect, &src_rect, comp_mode));
+                      src_image_buffer, &draw_rect, &src_rect, comp_mode, FALSE));
 
     /* Apply the composite op */
     gegl_op_apply (op);
+    gegl_object_destroy(GEGL_OBJECT(op));
   }
 
   public 

@@ -7,9 +7,6 @@
 #include "gegl-color-model-rgb-private.h"
 #include "gegl-color-model-private.h"
 #include "gegl-color.h"
-#if 0
-extern GeglChannelValue *gegl_color_get_channel_values(GeglColor *); 
-#endif
 %}
 
 class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {

@@ -4,6 +4,7 @@ lib_LTLIBRARIES = libgegl.la
 
 GOB     = \
         gegl-object.gob \
+        gegl-drawable.gob \
         gegl-color-model.gob \
         gegl-color-model-rgb.gob \
         gegl-color-model-rgb-float.gob \
@@ -22,6 +23,7 @@ GOB     = \
 
 GOB_SRC = \
         gegl-object.c \
+        gegl-drawable.c \
         gegl-color-model.c \
         gegl-color-model-rgb.c \
         gegl-color-model-rgb-float.c \
@@ -39,6 +41,7 @@ GOB_SRC = \
 
 GOB_PUBLIC_H = \
 	gegl-object.h \
+        gegl-drawable.h \
         gegl-color-model.h \
         gegl-color-model-rgb.h \
         gegl-color-model-rgb-float.h \
