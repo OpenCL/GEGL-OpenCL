@@ -1400,47 +1400,56 @@ read_data_types (char *filename)
     else if (!strcmp (token, "CHAN_CLAMP_PRE"))
       {
       fscanf (file, "%s", &value);
-      CHAN_CLAMP_PRE = (char *) strdup (value); 
+      if (strcmp (value, """"))  
+	CHAN_CLAMP_PRE = (char *) strdup (value); 
       }
     else if (!strcmp (token, "CHAN_CLAMP_SUF"))
       {
       fscanf (file, "%s", &value);
-      CHAN_CLAMP_SUF = (char *) strdup (value); 
+      if (strcmp (value, """"))  
+	CHAN_CLAMP_SUF = (char *) strdup (value); 
       }
     else if (!strcmp (token, "WP_CLAMP_PRE"))
       {
       fscanf (file, "%s", &value);
-      WP_CLAMP_PRE = (char *) strdup (value); 
+      if (strcmp (value, """"))  
+	WP_CLAMP_PRE = (char *) strdup (value); 
       }
     else if (!strcmp (token, "WP_CLAMP_SUF"))
       {
       fscanf (file, "%s", &value);
-      WP_CLAMP_SUF = (char *) strdup (value); 
+      if (strcmp (value, """"))  
+	WP_CLAMP_SUF = (char *) strdup (value); 
       }
     else if (!strcmp (token, "CHAN_MULT_PRE"))
       {
       fscanf (file, "%s", &value);
-      CHAN_MULT_PRE = (char *) strdup (value); 
+      if (strcmp (value, """"))  
+	CHAN_MULT_PRE = (char *) strdup (value); 
       }
     else if (!strcmp (token, "CHAN_MULT_MID"))
       {
       fscanf (file, "%s", &value);
-      CHAN_MULT_MID = (char *) strdup (value); 
+      if (strcmp (value, """"))  
+	CHAN_MULT_MID = (char *) strdup (value); 
       }
     else if (!strcmp (token, "CHAN_MULT_SUF"))
       {
       fscanf (file, "%s", &value);
-      CHAN_MULT_SUF = (char *) strdup (value); 
+      if (strcmp (value, """"))  
+	CHAN_MULT_SUF = (char *) strdup (value); 
       }
     else if (!strcmp (token, "ROUND_PRE"))
       {
       fscanf (file, "%s", &value);
-      ROUND_PRE = (char *) strdup (value); 
+      if (strcmp (value, """"))  
+	ROUND_PRE = (char *) strdup (value); 
       }
     else if (!strcmp (token, "ROUND_SUF"))
       {
       fscanf (file, "%s", &value);
-      ROUND_SUF = (char *) strdup (value); 
+      if (strcmp (value, """"))  
+	ROUND_SUF = (char *) strdup (value); 
       }
     token[0] = '\0';  
     }
