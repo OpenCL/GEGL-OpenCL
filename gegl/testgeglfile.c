@@ -30,6 +30,7 @@
 #include "gegl-add-op.h"
 #include "gegl-light-op.h"
 #include "gegl-copychan-op.h"
+#include "gegl-copy-op.h"
 #endif
 
 #include "gegl-mult-op.h"
@@ -184,6 +185,58 @@ unpremultiply_buffer(GeglImageBuffer *buffer,
 }
 
 void
+test_copy_op (GeglImageBuffer ** src_image_buffer,
+    		guint * src_width,
+   		guint * src_height,
+    		GeglRect *src_rect)
+{
+  GeglRect               dest_rect;
+  GeglImageBuffer       *dest_image_buffer;
+  GeglColorModel        *dest_color_model;
+  GeglChannelDataType    data_type;
+  GeglImage 		*op;
+  gint                   num_chans;
+  gboolean               has_alpha;
+  gint                   width, height;
+  GtkWidget       	*dest_window;
+  GtkWidget       	*dest_preview;
+  GeglImage 		*s;
+  GeglImage		*d;
+
+
+  /* create the destination , same size as src 1 for now */
+  width = src_width[0];
+  height = src_height[0];
+  dest_color_model = gegl_image_color_model (
+                     GEGL_IMAGE(src_image_buffer[0]));  
+
+  dest_image_buffer = gegl_image_buffer_new (dest_color_model, 
+                                            width, height);
+  data_type = gegl_color_model_data_type (dest_color_model);
+  num_chans = gegl_color_model_num_channels (dest_color_model);
+  has_alpha = gegl_color_model_has_alpha (dest_color_model);
+  gegl_rect_set (&dest_rect, 0, 0, width, height);
+
+  /* premultiplied composite */
+  s = GEGL_IMAGE (src_image_buffer[0]);
+  d =  GEGL_IMAGE (dest_image_buffer);
+
+  op = GEGL_IMAGE (gegl_copy_op_new (s));
+
+  gegl_image_get_pixels (op, d, &dest_rect);   
+  gegl_object_destroy (GEGL_OBJECT(op));
+
+  /* display the destination */ 
+  create_preview (&dest_window, &dest_preview, 
+      width, height, "copy");
+
+  display_image (dest_window, dest_preview, 
+      dest_image_buffer,  dest_rect,
+      data_type);
+}
+
+
+void
 test_copychan_op (GeglImageBuffer ** src_image_buffer,
     guint * src_width,
     guint * src_height,
@@ -233,9 +286,6 @@ test_copychan_op (GeglImageBuffer ** src_image_buffer,
   display_image (dest_window, dest_preview, 
       src_image_buffer[0],  src_rect[0],
       data_type);
-
-  
-  
 }
 
 
@@ -675,7 +725,7 @@ main(int argc,
 	            src_image_buffer[k], src_rect[k],
 	            data_type);
     }  
-test_copychan_op (src_image_buffer, src_width, src_height, src_rect);
+test_copy_op (src_image_buffer, src_width, src_height, src_rect);
 
   for (k = 0; k < 2; k++)
     {

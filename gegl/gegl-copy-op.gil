@@ -1,10 +1,10 @@
 %h{
-#include "gegl-point-op.h"
+#include "gegl-single-src-op.h"
 %}
 %{
 #include "gegl-copy-op.h"
 #include "gegl-copy-op-private.h"
-#include "gegl-point-op-private.h"
+#include "gegl-single-src-op-private.h"
 #include "gegl-op-private.h"
 #include "gegl-image-private.h"
 #include "gegl-image-iterator.h"
@@ -15,16 +15,16 @@
 %}
 
 
-class Gegl:Copy:Op from Gegl:Point:Op {
+class Gegl:Copy:Op from Gegl:Single:Src:Op {
   
   public 
   GeglCopyOp *
-  new (void)
+  new (GeglImage *src)
   {
     GeglCopyOp * self = GEGL_COPY_OP(GET_NEW);
 
     /*Call the constructor */
-    if (!constructor (self))
+    if (!constructor (self, src))
       return NULL;
     
     /*Okay its constructed*/
@@ -35,22 +35,22 @@ class Gegl:Copy:Op from Gegl:Point:Op {
 
   protected 
   gboolean 
-  constructor(self)
+  constructor(self, GeglImage *src)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
     
     /* Chain up */
-    if (!gegl_point_op_constructor (GEGL_POINT_OP(self), NULL, 0))
+    if (!gegl_single_src_op_constructor (GEGL_SINGLE_SRC_OP(self), src))
       return FALSE;
 
     {
-      GeglPointOp *point_op = GEGL_POINT_OP (self);
+/*      GeglPointOp *point_op = GEGL_POINT_OP (self);
       GeglPointOpClass *point_op_class = 
 	  GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
 
       point_op_class->scanline_func = gegl_copy_op_COLORSPACE_DATATYPE;
-
+*/
     }
 
     return TRUE;
@@ -65,6 +65,41 @@ class Gegl:Copy:Op from Gegl:Point:Op {
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)
+  }
+
+  override(Gegl:Op)
+  void
+  compute_source_rois (GeglOp *op, GeglRect *roi)
+  {
+    gegl_rect_copy(&op->_priv->source_rois[0],roi);
+  }
+
+  override(Gegl:Op)
+  void
+  prepare(GeglOp *op,
+	GeglImage *dest,
+	GeglRect *dest_rect)
+  {
+    GeglPointOp *point_op = GEGL_POINT_OP (op);
+    GeglPointOpClass *point_op_class =
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+
+    /* Save these so we can get them quickly in scanline func
+       below */
+    gegl_op_save_alphas(op);
+
+      {
+	gboolean src_has_alpha = op->_priv->src_has_alpha[0];
+
+	if(src_has_alpha)
+	  point_op_class->scanline_func =
+	    gegl_copy_op_COLORSPACE_DATATYPE;
+	else
+	  {
+	    point_op_class->scanline_func = NULL;
+	    g_warning("gegl_copy_op_prepare: dest has no alpha channel\n");
+	  }
+      }
   }
 
   private

@@ -1,3 +1,11 @@
+Sat Jul  1 17:39:57 PDT 2000 caro@rhythm.com
+
+	* updated www.gegl.org
+
+	* changed gegl-copy-op, gegl-image-buffer, testgeglfile
+	copy-op is now a single-op and image-buffer copy pixels
+	uses copy-op. i added test code for copy-op in testgelfile
+
 Sat Jul  1 11:43:41 PDT 2000 caro@rhythm.com
 
 	* added gegl/gegl-copy-op.gil
