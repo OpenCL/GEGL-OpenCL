@@ -6,7 +6,7 @@ int i;
 float f;
 Channel a; 
 Pixel d(color,alpha);
-Pixel c(color,alpha,has_alpha);
+Pixel c(color,alpha);
 Pixel s(color,alpha);
 Pixel s1(color,alpha), s2(color,alpha);
 Pixel s3(color,alpha); /*a comment*/

@@ -242,6 +242,7 @@ DT_Line:
 		  if (i<=len-sublen)
 		    {
 		      strncpy (sub, &($5.string[i]), sublen);
+		      sub[sublen] = '\0'; 
 		      if (!strcmp ($3.string, sub))
 			{
 			  strcpy (&(tmp[j]), "$1");
@@ -295,10 +296,11 @@ DT_Line:
 		  if (i<=len-sublen)
 		    { 
 		      strncpy (sub, &($5.string[i]), sublen); 
+		      sub[sublen] = '\0'; 
 		      if (!strcmp ($3.string, sub))
 			{
 			  strcpy (&(tmp[j]), "$1");
-			  i += sublen-1;
+			  i += sublen;
 			  j += 2; 
 			}
 		      else
@@ -388,7 +390,7 @@ DT_Line:
 		char sub[255];
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
-		
+
 		while ($5.string[i] == '\t' || $5.string[i] == ' ')
 		  i++;
 
@@ -411,6 +413,7 @@ DT_Line:
 		  if (i<=len-sublen)
 		    {
 		      strncpy (sub, &($5.string[i]), sublen); 
+		      sub[sublen] = '\0'; 
 		      if (!strcmp ($3.string, sub))
 			{
 			  strcpy (&(tmp[j]), "$1");
@@ -433,6 +436,7 @@ DT_Line:
 		if (tmp[j-1] == '\\') tmp[j-1] = '\0'; 
 		tmp[j] = '\0'; 
 		CHANNEL_ROUND_STR = (char *) strdup (tmp); 
+		printf ("%s\n", CHANNEL_ROUND_STR);
 		}
 	| DT_PRINT LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
@@ -464,6 +468,7 @@ DT_Line:
 		  if (i<=len-sublen)
 		    {
 		      strncpy (sub, &($5.string[i]), sublen); 
+		      sub[sublen] = '\0'; 
 		      if (!strcmp ($3.string, sub))
 			{
 			  strcpy (&(tmp[j]), "$1");
