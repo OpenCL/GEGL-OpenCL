@@ -1,3 +1,11 @@
+Tue Mar 21 10:24:30 PST 2000 caro@rhythm.com
+	
+	* CHanged the arguments so that the last arg can be the
+	input file. If this last arg is not present, the lexer will
+	use stdin
+
+	* rm print outs that was generated when reading the data file.
+
 Tue Mar 21 09:44:35 PST 2000 caro@rhythm.com
 
 	* in do_op_three for the case of OP_EQUAL, it

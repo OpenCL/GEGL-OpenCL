@@ -47,12 +47,10 @@ string			\".*\"
 <DATA_TYPE>"("				return LT_PARENTHESIS;
 <DATA_TYPE>")"				return RT_PARENTHESIS; 
 <DATA_TYPE>{name}			{
-    					ECHO; 
     					strcpy (yylval.tok.string, yytext);
 					return DT_NAME;
 					}
 <DATA_TYPE>{string}			{
-    					ECHO; 
     					strcpy (yylval.tok.string, yytext);
 					return DT_STRING;
 					}
@@ -270,7 +268,10 @@ string			\".*\"
 void
 open_file (char *filename)
 {
-  yyin = fopen (filename, "r"); 
+  if (!strcmp (filename, "stdin"))
+    yyin = stdin; 
+  else
+    yyin = fopen (filename, "r"); 
 }
 
 void

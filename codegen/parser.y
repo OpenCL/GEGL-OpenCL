@@ -198,7 +198,6 @@ DT_Line:
 		  }
 		tmp[j] = '\0'; 
 		CHAN_CLAMP_STR = (char *) strdup (tmp); 
-		printf ("%s", CHAN_CLAMP_STR); 	
 		}
 	| DT_WP_CLAMP LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
@@ -230,7 +229,6 @@ DT_Line:
 		  }
 		tmp[j] = '\0'; 
 		WP_CLAMP_STR = (char *) strdup (tmp); 
-		printf ("%s", WP_CLAMP_STR); 	
 		}
 	| DT_CHAN_MULT LT_PARENTHESIS DT_NAME DT_COMMA DT_NAME RT_PARENTHESIS DT_STRING    
 		{
@@ -279,7 +277,6 @@ DT_Line:
 		
 		tmp[j] = '\0'; 
 		CHAN_MULT_STR = (char *) strdup (tmp); 
-		printf ("%s", CHAN_MULT_STR); 	
 		}
 	| DT_ROUND LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
@@ -311,7 +308,6 @@ DT_Line:
 		  }
 		tmp[j] = '\0'; 
 		ROUND_STR = (char *) strdup (tmp); 
-		printf ("%s", ROUND_STR); 	
 		}
 	;
 
@@ -1550,7 +1546,7 @@ main (int argc, char **argv)
 {
   int i=1;
   yydebug = 1; 
-  if (argc != 6)
+  if (argc < 5)
     {
     printf ("ERROR: need to specify a file and channel names\n");
     return -1; 
@@ -1571,8 +1567,14 @@ main (int argc, char **argv)
       read_channel_names (argv[i]); 
       }
     i++; 
-    } 
-  open_file (argv[5]);  
+    }
+ 
+  if (argc == 6) 
+    open_file (argv[5]);  
+ 
+  else 
+    open_file ("stdin");
+  
   yyparse();
   close_file (); 
 
