@@ -1,3 +1,10 @@
+2002-11-11  Sven Neumann  <sven@gimp.org>
+
+	* docs/Makefile.am: fixed rule for TODO.html
+
+	* tests/Makefile.am: use the automake TESTS target to build testgegl.
+	Use 'make check' to run the tests.
+
 Tue Oct 15 21:06:05 EDT 2002 calvinw@mindspring.com
 
 	The ColorModel classes now have a ColorSpace (RGB, GRAY, etc) and a DataSpace

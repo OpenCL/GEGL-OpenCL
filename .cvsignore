@@ -15,6 +15,10 @@ config.log
 config.status
 config.sub
 configure
+gegl-config
+gegl-uninstalled.pc
+gegl.pc
+gegl.spec
 install-sh
 libtool
 ltconfig
@@ -23,5 +27,3 @@ missing
 mkinstalldirs
 stamp-h
 stamp-h.in
-testgegl
-gegl-config

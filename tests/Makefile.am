@@ -6,8 +6,6 @@ INCLUDES = \
 LDFLAGS =  \
 	@GEGL_LIBS@
 
-noinst_PROGRAMS = testgegl
-
 DEPS = ../gegl/libgegl.la ../tools/testsuite/libtestsuite.la
 LDADDS = ../gegl/libgegl.la ../tools/testsuite/libtestsuite.la
 
@@ -91,11 +89,6 @@ testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(DEPS)
 testgegl_LDADD = $(LDADDS) -lm
 
-tests: dummy testgegl
+TESTS = testgegl
 
-all: tests
-	testgegl
-
-dummy:
-	cd $(top_srcdir)/gegl \
-	  && $(MAKE) $(AM_MAKEFLAGS)
+EXTRA_PROGRAMS = $(TESTS)
