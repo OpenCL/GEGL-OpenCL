@@ -106,11 +106,11 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
 
     GeglPointOpPrivate *point_opP = 
         (GeglPointOpPrivate *)(point_op->_priv); 
-    CODEGEN_DECL_BEGIN
+    GENERIC_IMAGE_DECL_BEGIN
     int width;
     VectorChan dest(color,alpha);
     VectorChan src(color,alpha);
-    CODEGEN_DECL_END
+    GENERIC_IMAGE_DECL_END
 
     width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
@@ -121,9 +121,9 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
                       (guchar**)src_data);
 
 
-    CODEGEN_IMAGE_DATA_INIT 
+    GENERIC_IMAGE_IMAGE_DATA_INIT 
 
-    CODEGEN_BLOCK_BEGIN
+    GENERIC_IMAGE_BLOCK_BEGIN
     while (width--)
       {
          if (src_alpha == ZERO)
@@ -143,6 +143,6 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
         dX(dest,1);
         dX(src,1);  
       }
-   CODEGEN_BLOCK_END
+   GENERIC_IMAGE_BLOCK_END
   }
 }

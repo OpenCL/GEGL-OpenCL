@@ -140,10 +140,10 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 <GENERIC_IMAGE_BLOCK>")"		return(RT_PARENTHESIS);
 <GENERIC_IMAGE_BLOCK>"{"		{SCOPE ++; return(LT_CURLY);}
 <GENERIC_IMAGE_BLOCK>"}"		{SCOPE --; rm_varibles (SCOPE); return(RT_CURLY); } 
-<GENERIC_IMAGE_DECL>"{"			{SCOPE ++;}
-<GENERIC_IMAGE_DECL>"}"			{SCOPE --; rm_varibles (SCOPE);} 
-"{"					{SCOPE ++;}
-"}"					{SCOPE --; rm_varibles (SCOPE);} 
+<GENERIC_IMAGE_DECL>"{"			{SCOPE ++; ECHO;}
+<GENERIC_IMAGE_DECL>"}"			{SCOPE --; rm_varibles (SCOPE); ECHO;} 
+"{"					{SCOPE ++; ECHO;}
+"}"					{SCOPE --; rm_varibles (SCOPE); ECHO;} 
 <GENERIC_IMAGE_DECL>"["			return(LT_SQUARE);
 <GENERIC_IMAGE_BLOCK>"["		return(LT_SQUARE);
 <GENERIC_IMAGE_DECL>"]"			return(RT_SQUARE); 
