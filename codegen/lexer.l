@@ -161,6 +161,7 @@ rm			[\t \n]*
 <GENERIC_IMAGE_DECL>"(color)"			return(COLOR);
 
 <GENERIC_IMAGE_BLOCK>"dX"		return(ITERATOR_X);
+<GENERIC_IMAGE_BLOCK>"dY"		return(ITERATOR_Y);
 <GENERIC_IMAGE_BLOCK>"dXY"            	return(ITERATOR_XY);
 
 <GENERIC_IMAGE_BLOCK>"MAX"		{	
@@ -171,8 +172,8 @@ rm			[\t \n]*
     					strcpy (yylval.tok.string, yytext); 
     					return (MIN_MAX);
 					}
-<GENERIC_IMAGE_BLOCK>"VECTOR_VARIABLE"	BEGIN VARIABLE_VECTOR; 	
-<GENERIC_IMAGE_BLOCK>"SCALER_VARIABLE"	BEGIN VARIABLE_SCALER; 	
+<GENERIC_IMAGE_BLOCK>"PIXEL_INIT"	BEGIN VARIABLE_VECTOR; 	
+<GENERIC_IMAGE_BLOCK>"CHANNEL_INIT"	BEGIN VARIABLE_SCALER; 	
 
 <GENERIC_IMAGE_BLOCK>"(Promote)"	return(PROMOTE_TYPE); 
 <GENERIC_IMAGE_BLOCK>"(SignedPromote)"	return(SIGNED_PROMOTE_TYPE); 
@@ -304,7 +305,7 @@ rm			[\t \n]*
 <DATA_TYPE>{Name}			{
       					dt_keyword_t keywd;
       					keywd = get_dt_keyword (yytext);
-				        if (keywd.arg == 9) 	
+				        if (keywd.token == -1) 	
 					  return 0;
 					if (keywd.arg)
 					  BEGIN ARGUMENTS;
@@ -324,7 +325,8 @@ rm			[\t \n]*
 					  sprintf (yylval.elem.string, "%s%s", 
 					      varible, get_sufix (type));
 					else
-					  sprintf (yylval.elem.string, "%s", varible); 
+					  sprintf (yylval.elem.string, "%s%s", 
+					      varible, get_sufix ("DATATYPE"));
 					return VARIABLE; 	
 					}
 <VARIABLE_VECTOR>{name}" "*{name}*	{
@@ -339,8 +341,9 @@ rm			[\t \n]*
       					if (type)
 					  sprintf (yylval.elem.string, "%s$v%s", 
 					       varible, get_sufix (type));
-					 else
-					   sprintf (yylval.elem.string, "%s$v", varible);
+					else
+					  sprintf (yylval.elem.string, "%s$v%s", 
+					      varible, get_sufix ("DATATYPE"));
 				       	return VARIABLE; 	
       					}
 <DEFINITION>{string}			{
@@ -393,7 +396,7 @@ get_sufix (char *type)
   char name[10];
   char tmp[30];
 
-  file = fopen ("file", "r");
+  file = fopen (gegl_pixel, "r");
 
   fscanf (file, "%s", &tmp);
   while (strcmp (tmp, type))

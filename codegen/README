@@ -9,7 +9,8 @@ gegl/docs/genericChannelData.html
  
 To run the program:
 
->codegen --channel-names COLOR_CHANNEL_NAMES  --channel-data-file CHANNEL_DATA_FILE  
+>codegen --channel-names COLOR_CHANNEL_NAMES  --channel-data-file CHANNEL_DATA_FILE 
+ --pixel-data-file PIXEL_FILE 
 
 CHANNEL_DATA_FILE: a file that contains the data type
 specific information (see genericImageLanguage.html) . See
@@ -18,6 +19,8 @@ u8,u16,u16_4k,float.
 
 COLOR_CHANNEL_NAMES: a list of the color channel names. The
 names are comma-separated with no spaces.
+
+PIXEL_FILE: this file contains information for the PIXEL_INIT and CHANNEL_INIT.  
 
 Codegen is built from 4 files: 
 

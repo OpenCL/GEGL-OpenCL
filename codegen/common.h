@@ -81,9 +81,11 @@ typedef struct
 
 #ifdef  _LEXER_C_
 int SCOPE = 0;
+char gegl_pixel[256]; 
 #undef  _LEXER_C_
 #else
 extern int SCOPE;
+extern char gegl_pixel[]; 
 #endif
 
 

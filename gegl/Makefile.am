@@ -67,7 +67,7 @@ NONGEN_GOB = \
 	gegl-color-convert-to-rgb-float-op.gob		\
 	gegl-copy-chan-op.gob				\
 	gegl-fill-op.gob				\
-	gegl-image-iterator.gob
+	gegl-image-iterator.gob				
 
 GOB_FILES = $(GIL_GEN_GOB) $(NONGEN_GOB)
 
@@ -271,7 +271,7 @@ tests: testgegl testgeglfile
 	$(GOB) $<
 
 %.gob: %.gil
-	../codegen/codegen --channel-names r,g,b --channel-data-file ../codegen/channel_data/float $< > $@ 
+	../codegen/codegen --channel-names r,g,b --channel-data-file ../codegen/channel_data/float --pixel-data-file ../codegen/pixel_data/gegl_pixel $< > $@ 
 
 distclean-local: gilclean
 

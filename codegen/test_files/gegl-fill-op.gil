@@ -115,9 +115,13 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
 
     GeglChannelValue *fill_values = gegl_color_get_channel_values(
-                                   self->_priv->fill_color);
+                                   self->_priv->fill_color,
+				   &dest_pixelstride);
  
 
+    dest_has_alpha = gegl_color_model_has_alpha(
+	        gegl_image_buffer_color_model (((GeglOp*)point_op)->_priv->image_buffers[0]));
+    
     width = point_opP->scanline_width;
 
     /* image_buffers[0] is the dest here */
@@ -131,12 +135,12 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     while (width--)
     {
       GENERIC_IMAGE_BLOCK_BEGIN
-      dest_color = VECTOR_VARIABLE (fill_values DATATYPE);
+      dest_color = PIXEL_INIT (fill_values);
       if (dest_has_alpha)
 	{
-	  dest_alpha = VECTOR_VARIABLE (fill_values DATATYPE);
+	  dest_alpha = PIXEL_INIT (fill_values);
         }
-      dX(dest,1); 
+      dX(dest,dest_pixelstride); 
       GENERIC_IMAGE_BLOCK_END
     }
   } 

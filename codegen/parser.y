@@ -77,7 +77,7 @@ int     cur_nsyms=0;
 	{"CHANNEL_MULT", 1, DT_CHANNEL_MULT},
 	{"CHANNEL_ROUND", 1, DT_CHANNEL_ROUND}, 
 	{"PRINT", 1, DT_PRINT}, 
-	{"",		9}
+	{"", 0, -1}
   }; 
 
 
@@ -118,7 +118,7 @@ int     cur_nsyms=0;
 %token  EQUAL PLUS_EQUAL MINUS_EQUAL TIMES_EQUAL DIVIDE_EQUAL
 %token  AND OR EQ NOT_EQ SMALLER GREATER SMALLER_EQ GREATER_EQ NOT ADD SUBTRACT  
 
-%token  COLOR  COLOR_ALPHA  COLOR_MAYBE_ALPHA  ITERATOR_X  ITERATOR_XY 
+%token  COLOR  COLOR_ALPHA  COLOR_MAYBE_ALPHA  ITERATOR_X  ITERATOR_Y ITERATOR_XY 
 %token  PROMOTE_TYPE SIGNED_PROMOTE_TYPE 
 
 %left 		PLUS	MINUS
@@ -723,7 +723,7 @@ Line:
 		      sprintf (tmp, "%s%s%s$c += %s;", $1.string, $4.string, $6.string); 
 		      strcpy ($4.string, tmp);
 		      print_line($4); 
-		      printf ("%sif (%s_has_%s)%s  %s_%s += %s", $1.string, t,
+		      printf ("%sif (%s_has_%s)%s  %s_%s += %s;", $1.string, t,
 			 NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL], 
 			 $1.string, t,  
 			 NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
@@ -746,6 +746,74 @@ Line:
                       } 
 		    }
 		}
+	| INDENT ITERATOR_X LT_PARENTHESIS NAME ',' NAME RT_PARENTHESIS ';'
+		{
+		  char tmp[256];
+		  if (get_sym ($4.string)->type == TYPE_C_A_VECTOR)
+		    {
+		      char t[20];
+		      strcpy (t, $4.string);  
+		      sprintf (tmp, "%s%s$c += %s;", $1.string, $4.string, $6.string); 
+		      strcpy ($4.string, tmp);
+		      print_line($4); 
+		      printf ("%sif (%s_has_%s)%s  %s_%s += %s;", $1.string, t,
+			  NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL], 
+			  $1.string, t,  
+			  NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
+			  $6.string);
+		      printf ("\n"); 
+		    }
+		  else if (get_sym ($4.string)->type == TYPE_CA_VECTOR)
+		    {
+		      sprintf (tmp, "%s%s$ca += %s;", $1.string, $4.string, $6.string); 
+		      strcpy ($4.string, tmp);
+		      print_line($4); 
+		      printf ("\n"); 
+		    }
+		  else
+		    {
+		      sprintf (tmp, "%s%s$c += %s;", $1.string, $4.string, $6.string); 
+		      strcpy ($4.string, tmp);
+		      print_line($4); 
+		      printf ("\n"); 
+		    } 
+		}
+	| INDENT ITERATOR_Y LT_PARENTHESIS NAME ',' INT RT_PARENTHESIS ';'
+		{
+		char tmp[256];
+		if (get_sym ($4.string)->type == TYPE_C_A_VECTOR)
+		  {
+		    char t[20];
+		    strcpy (t, $4.string);  
+		    sprintf (tmp, "%s%s$c += %s * %s_rowstride$v;", $1.string, $4.string, 
+			$6.string, $4.string); 
+		    strcpy ($4.string, tmp);
+		    print_line($4); 
+		    printf ("%sif (%s_has_%s)%s  %s_%s += %s * %s_rowstride[%d];", 
+			$1.string, t,
+			NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL], 
+			$1.string, t,  
+			NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
+			$6.string, t, NUM_COLOR_CHANNEL);
+		    printf ("\n"); 
+		  }
+		else if (get_sym ($4.string)->type == TYPE_CA_VECTOR)
+		  {
+		    sprintf (tmp, "%s%s$ca += %s * %s_rowstride$v;", $1.string, $4.string, 
+			$6.string, $4.string); 
+		    strcpy ($4.string, tmp);
+		    print_line($4); 
+		    printf ("\n"); 
+		  }
+		else
+		  {
+		    sprintf (tmp, "%s%s$c += %s * %s_rowstride$v;", $1.string, $4.string, 
+			$6.string, $4.string); 
+		    strcpy ($4.string, tmp);
+		    print_line($4); 
+		    printf ("\n"); 
+		  } 
+		}
 	| INDENT ITERATOR_XY LT_PARENTHESIS NAME ',' INT ',' INT RT_PARENTHESIS ';' 
 		{
 	
@@ -755,7 +823,6 @@ Line:
 		  char tmp[256];
 		  char t2[256];
 		  char *t[1];
-
 		  strcpy (t2, $4.string);
 		  print_name (&$4, $4, NOT_DEFINE);
 		  if ($4.type > 1)
@@ -1233,6 +1300,16 @@ init_data_varible (char *s)
     }
   tmp[i*2  ] = '\0'; 
   printf ("\n%s%s *%s_data[%d];", tmp, DATATYPE_STR, s, e->num);
+    /*{
+     elem_t e;
+     sprintf (name, "%s_pixelstride", s);
+     e = add_sym (name, SCOPE);
+     set_dtype (e, TYPE_INT);
+     set_type (e, TYPE_SCALER);
+     set_num (e, 1);
+     printf ("\n%sgint %s;", tmp, name); 
+    }*/ 
+ /* printf ("\n%s%s *%s_rowstride[%d];", tmp, DATATYPE_STR, s, e->num);*/
   if (e->type == TYPE_C_A_VECTOR)
     {  
       elem_t e; 
@@ -1930,9 +2007,9 @@ main (int argc, char **argv)
 {
   int i=1;
   /* uncomment this to see lexer and parser debug info */
-  /* yydebug = 1;*/   
+  /* yydebug = 1; */   
   
-  if (argc < 5)
+  if (argc < 7)
     {
       printf ("ERROR: need to specify a file and channel names\n");
       return -1; 
@@ -1952,11 +2029,16 @@ main (int argc, char **argv)
 	  i++;
 	  read_channel_names (argv[i]); 
 	}
+      if (!strcmp (argv[i], "--pixel-data-file"))
+	{
+	  i++;
+	  strcpy (gegl_pixel, argv[i]); 
+	}
       i++; 
     }
 
-  if (argc == 6) 
-    open_file (argv[5]);  
+  if (argc == 8) 
+    open_file (argv[7]);  
 
   else 
     open_file ("stdin");

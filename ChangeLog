@@ -1,3 +1,16 @@
+Wed May  3 15:41:31 PDT 2000 caro@rhythm.com
+
+	* check in for gegl
+	
+	* changed its make file to handel the new codegen
+
+	* check in for codegen
+
+	* changed the way VARIBLES work, they are now called 
+	PIXEDL_INIT and CHANNEL_INIT
+
+	* i have added a pixel data file to assist the ove function
+
 Wed May  3 10:12:40 PDT 2000 caro@rhythm.com
 
 	* check in for codegen
