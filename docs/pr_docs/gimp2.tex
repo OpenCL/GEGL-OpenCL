@@ -13,73 +13,69 @@ GIMP 2.0 will consist of the following libraries:
 
 \subsection{GEGL}
 
-The actual pixel manipulation will be done using GEGL (generic graphics library
---see Chapter 3). GEGL abstracts from the color-space and color depth (8 bit,
-16 bit, float) and provides generic data types like channel or color.  The
-algorithms implemented using these abstract types are converted to the actual C
-code using a code-generator. That way it's easy to add additional data types
-and optimizations like support for MMX or AltiVec later without having to hack
-each and every operation by hand. 
+Pixel manipulation will be done using GEGL (Generic Graphics Library -- Chapter
+3). GEGL abstracts the color model and color depth (8 bit, 16 bit, float) and
+provides generic data types for channels or colors.  The algorithms implemented
+using these abstract types are converted to the actual C code using a
+code-generator. That way it's easier to add additional data types and color
+models and optimizations.   
 
 Chapter
 \ref{ch:GEGL} has been dedicated to a technical description of this library.
 
-\subsection{Layer Trees}
- 
-What used to be a simple layer stack in GIMP 1.x, which is combined using layer
-modes (Normal, Combine, Difference, ...) will, with the help of GEGL, become a
-rendering pipeline which can be thought of as a tree of layers which is viewed
-from its root. The nodes of the tree are operators with an arbitrary number of
-inputs and outputs. These inputs and outputs access rectangular regions of
-pixel-data, the edges of the tree. Each edge (comparable to the layers we have
-now) can hold its data internally as pixels, vectors, text or whatever and only
-needs to provide a well-defined interface so it can be plugged into the
-rendering pipeline. A similar approach will be used for the operators: Simple
-functions like color corrections or blur filters as well as affine
-transformations and more complex effects are possible.
-
 \subsection{GIMP Core and Plugin Interfaces}
 
-Build on top of this, the core will implement objects like images, tools,
-brushes etc. The interfaces of all these high level objects are defined in its
-own library and have different implementations at the core and the plug-in
-side. The relevant code to implement the objects in the plug-in library will be
-auto-generated from object descriptions. This will give plug-in developers an
-object-oriented interface instead of the simple procedural approach GIMP uses
-now.
+Built on top of this, the GIMP core will implement objects like images, tools,
+layers, channels, brushes etc. The interfaces of these high level objects will
+be defined in the appropriate library, and implementations of these objects
+will be provided for use by plug-ins as well. The relevant code to implement
+the objects for the plug-in library will be auto-generated from the object
+descriptions.  This will give plug-in developers an object-oriented interface
+instead of the simple procedural approach GIMP uses now.
 
+This architecture also allows reuse of UI-elements from the core ui libraries
+in plug-ins and provides a clean model-view separation. By exporting the
+internal object structure to the plug-ins it will become possible to implement
+operators, tools or complete layer-types as plug-ins. The design of layers and
+tools would allow the creation specific tools for special layer-types for
+example vector-tools and vector-layers.
 
-This architecture also allows to reuse UI-elements from the core in plug-ins
-and provides a clean model-view separation. By exporting the internal object
-structure to the plug-ins it will become possible to implement operators, tools
-or complete layer-types as plug-ins. The design of layers and tools allows to
-create specific tools for special layer-types (like for example vector-tools on
-vector-layers).
+\subsection{Layer Trees}
+ 
+The simple composite of layers into a projection from GIMP 1.x will become with
+the help of GEGL, a chain (or tree) of operations, allowing things like effect
+and vector layers to be part of the composite as well. 
+
+Each node (comparable to a layer in current gimp) may compute its data
+internally as pixels, vectors, text, or whatever is appropriate for that node,
+and  just needs to implement a well-defined interface so it can be plugged into
+the computation chain. In this way anything that does image processing
+can be used as part of the chain: color corrections, blur filters as well as
+affine transformations and more complex effects are all viewed in 
+the same way.
 
 \subsection{Common Object Resource Broker Architecture}
 
-The communication between the core application and the plug-ins is done using
-CORBA. The interface between the actual objects and the ORB will be generated
-using the object descriptions mentioned above. The developer will only see
-GTK+-objects and does not have to deal with the shoals of CORBA. The term
-plug-in becomes a historical meaning since GIMP 2.0 will use a
-network-transparent client-server system.
+The communication between the core application and the plug-ins will be done
+using CORBA. The interface between the actual objects and the ORB will be
+generated using the object descriptions mentioned above. The developer will
+only see GTK+-objects and will not have to deal with the shoals of CORBA.  GIMP
+2.0 will use a network-transparent client-server system.
 
-\subsection{Parallelization}
+\subsection{Multi-threading}
 
-Another highlight will be the parallelization of the actual computing.
-Eventually you will not only want to build up a nice rendering-pipeline but you
-want to see the projection (the view on the root of the tree). Whenever an
-update of the projection becomes necessary, the system locks the necessary
-resources and hands the operation to the batch-renderer which runs in its own
-thread. That way not only the user interface, but the whole object system stays
-responsive all the time.
+Another highlight will be multi-threading of image processing computations.
+This allows complicated composites and projections of the layers to be computed
+efficiently. When an update of the projection becomes necessary, the system
+locks the necessary resources and gives the operation to the batch-renderer to
+run in its own thread. This way the user interface, and object system stays
+responsive.
 
 \subsection{The Application}
-On top of all this sits the actual GIMP application and holds it all together.
-This design will make it possible to implement different GIMP interfaces like a
-video-editing system or to visualize the rendering pipeline as an edit-able
-graph as known from scientific image manipulation.
+The GIMP application is a small layer on top of all the libraries and just
+holds the libraries together.  This design will make it possible to implement
+other applications like video-editors or compositors with the same set of
+libraries.
 
-The planning website is at http://www.gimp.org/gimpcon/review.html.
+Most of this chapter is taken from http://www.gimp.org/gimpcon/review.html.
  
