@@ -185,12 +185,21 @@ put (GeglCache * cache,
   GeglMemoryCache* mem_cache=GEGL_MEMORY_CACHE(cache);
   gsize new_size=gegl_cache_entry_flattened_size (entry);
   GList *link,*old_link;
+
   if ((cache->persistent == TRUE) &&
       (mem_cache->current_size + new_size > cache->hard_limit))
     {
 #ifdef GEGL_THREADS
 #else
-      /* This is broken.  Something else, better, should be done here.*/
+      /* This is broken.  Something else, better, should be done here.
+       * Basically, In a single threaded application we can't make this
+       * block forever. That would be bad.  So if threads are not enabled
+       * then we cannot block here like I would like to.
+       * 
+       * So, some other reasonable action should be taken.  This may
+       * be as simple as providing a more reasonable named return
+       * value, but I have not thought about it deeply.
+       */
       return GEGL_PUT_WOULD_BLOCK;
 #endif
     }
@@ -198,7 +207,9 @@ put (GeglCache * cache,
     {
       link = g_list_last (mem_cache->stored_entries);
       while ((mem_cache->current_size != 0) &&
-	     (mem_cache->current_size > cache->soft_limit) &&
+	     
+	     ((mem_cache->current_size > cache->soft_limit) ||
+	      (mem_cache->current_size + new_size > cache->hard_limit)) &&
 	     (link != NULL))
 	{
 	  gsize entry_size;
@@ -223,9 +234,10 @@ put (GeglCache * cache,
     }
 
   g_object_ref(entry);
+  EntryRecord * record;
   if (*entry_id == 0)
     {
-      EntryRecord * record = g_new (EntryRecord, 1);
+      record = g_new (EntryRecord, 1);
       record->data = entry;
       record->status = STORED;
       record->magic_number = cache;
@@ -234,17 +246,29 @@ put (GeglCache * cache,
       link=g_list_last(mem_cache->stored_entries);
       *entry_id = GPOINTER_TO_SIZE(link);
     }
-  else
+  else 
     {
       link = GSIZE_TO_POINTER(*entry_id);
-      EntryRecord * record = (EntryRecord *) (link->data);
-      g_return_val_if_fail (record->status == FETCHED, GEGL_PUT_INVALID);
+      record = (EntryRecord *) (link->data);
       g_return_val_if_fail (record->magic_number == cache, GEGL_PUT_INVALID);
-      record->data = entry;
-      mem_cache->current_size += gegl_cache_entry_flattened_size (entry);
-      mem_cache->fetched_entries = g_list_remove_link (mem_cache->fetched_entries, link);
-      mem_cache->stored_entries = g_list_concat (link, mem_cache->stored_entries);
-      record->status = STORED;
+      if (record->status == DISCARDED)
+	{
+	  record->data = entry;
+	  mem_cache->current_size += gegl_cache_entry_flattened_size (entry);
+	  mem_cache->discarded_entries = g_list_remove_link (mem_cache->discarded_entries, link);
+	  mem_cache->stored_entries = g_list_concat (link, mem_cache->stored_entries);
+	  record->status = STORED;
+	  return GEGL_PUT_SUCCEEDED;
+	}
+      else
+	{
+	  g_return_val_if_fail (record->status == FETCHED, GEGL_PUT_INVALID);
+	  record->data = entry;
+	  mem_cache->current_size += gegl_cache_entry_flattened_size (entry);
+	  mem_cache->fetched_entries = g_list_remove_link (mem_cache->fetched_entries, link);
+	  mem_cache->stored_entries = g_list_concat (link, mem_cache->stored_entries);
+	  record->status = STORED;
+	}
     }
   return GEGL_PUT_SUCCEEDED;
 }
@@ -286,12 +310,13 @@ flush (GeglCache * cache,
   GList* link = GSIZE_TO_POINTER(entry_id);
   GeglMemoryCache* mem_cache = GEGL_MEMORY_CACHE(cache);
   EntryRecord * record = (EntryRecord *) link->data;
-  gsize entry_size=gegl_cache_entry_flattened_size (record->data);
   Status status = record->status;
-  free_entry_data(link->data,NULL);
+  gsize entry_size;
+
   switch (status)
     {
     case STORED:
+      entry_size=gegl_cache_entry_flattened_size (record->data);
       mem_cache->current_size -= entry_size;
       mem_cache->stored_entries = g_list_delete_link(mem_cache->stored_entries, link);
       break;
@@ -305,4 +330,6 @@ flush (GeglCache * cache,
       g_warning ("GeglMemoryCache: unhandled status type in flush()");
       break;
     }
+    free_entry_data(link->data,NULL);
+    g_list_free (link);
 }

@@ -22,6 +22,7 @@ extern Test * create_memory_cache_test();
 extern Test * create_buffer_double_test();
 extern Test * create_component_sample_model_test();
 extern Test * create_mock_cache_entry_test();
+extern Test * create_buffer_caching_test();
 
 int
 main (int argc, char *argv[])
@@ -56,7 +57,7 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_buffer_double_test());
     cs_addTest(suite, create_component_sample_model_test());
     cs_addTest(suite, create_mock_cache_entry_test());
-
+    cs_addTest(suite, create_buffer_caching_test());
     cs_setStream(suite, stdout);
     cs_run(suite);
     cs_report(suite);

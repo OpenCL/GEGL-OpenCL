@@ -213,7 +213,7 @@ cache_entry_unflatten (GeglCacheEntry * entry, gpointer buffer, gsize length) {
 static GeglBufferCacheEntry *
 cache_entry_new (GeglBuffer* buffer) {
   GeglBufferCacheEntry * entry = g_object_new(GEGL_TYPE_BUFFER_CACHE_ENTRY,NULL);
-  GeglCacheEntry * cache_entry = GEGL_CACHE_ENTRY(cache_entry);
+  g_return_val_if_fail (buffer->banks != NULL, NULL);
   entry->banks=buffer->banks;
   entry->num_banks=buffer->num_banks;
   entry->bank_length=(buffer->elements_per_bank)*(buffer->bytes_per_element);
@@ -277,9 +277,11 @@ static void
 finalize (GObject * gobject)
 {
   GeglBuffer *self = GEGL_BUFFER (gobject);
-
-  free_banks (self->banks,self->num_banks,(self->bytes_per_element)*(self->elements_per_bank));
-
+  
+  if (self->banks != NULL)
+    {
+      free_banks (self->banks,self->num_banks,(self->bytes_per_element)*(self->elements_per_bank));
+    }
   G_OBJECT_CLASS (parent_class)->finalize (gobject);
 }
 
@@ -503,7 +505,6 @@ gegl_buffer_release (GeglBuffer * self)
 {
   g_return_if_fail (self->share_count > 0);
   GObject * object = G_OBJECT(self);
-  g_object_unref(object);
   --(self->share_count);
   if (self->share_count == 0)
     {
@@ -515,12 +516,8 @@ gegl_buffer_release (GeglBuffer * self)
 	      self->entry_id=0;
 	    }
 	}
-      if (self->banks != NULL)
-	{
-	  free_banks(self->banks, self->num_banks, (self->bytes_per_element) * (self->elements_per_bank));
-	  self->banks = NULL;
-	}
     }
+  g_object_unref(object);
 }
 
 GeglBuffer *
@@ -528,7 +525,7 @@ gegl_buffer_unshare (GeglBuffer * source)
 {
   GeglBuffer * new_buffer;
   int i=0;
-  g_return_val_if_fail (source->share_count <=0,NULL);
+  g_return_val_if_fail (source->share_count >0,NULL);
   if (source->share_count == 1)
     {
       return source;
@@ -595,13 +592,16 @@ gegl_buffer_unlock(GeglBuffer* self, gboolean is_dirty)
     }
   if (self->lock_count == 0)
     {
-      GeglBufferCacheEntry * buffer_cache_entry = cache_entry_new (self);
-      self->banks=NULL;
-      gint put_results = gegl_cache_put (self->cache,
-					 GEGL_CACHE_ENTRY(buffer_cache_entry),
-					 &(self->entry_id));
-      g_return_if_fail (put_results == GEGL_PUT_SUCCEEDED);
-      g_object_unref (G_OBJECT (buffer_cache_entry));
+      if (self->banks != NULL)
+	{
+	  GeglBufferCacheEntry * buffer_cache_entry = cache_entry_new (self);
+	  self->banks=NULL;
+	  gint put_results = gegl_cache_put (self->cache,
+					     GEGL_CACHE_ENTRY(buffer_cache_entry),
+					     &(self->entry_id));
+	  g_return_if_fail (put_results == GEGL_PUT_SUCCEEDED);
+	  g_object_unref (G_OBJECT (buffer_cache_entry));
+	}
     }
 }
 
@@ -613,6 +613,7 @@ gegl_buffer_attach(GeglBuffer * self, GeglCache * cache)
     {
       g_object_unref (self->cache);
     }
+  g_object_ref (cache);
   self->cache=cache;
   gegl_buffer_unlock (self, TRUE);
 }

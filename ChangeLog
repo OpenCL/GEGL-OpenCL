@@ -1,3 +1,16 @@
+2004-1-3 19:49 Daniel Rogers <daniel@phasevelocity.org>
+
+	* gegl/image/gegl-buffer.c
+	* gegl/image/gegl-cache.h
+	* gegl/image/gegl-memory-cache.c
+	* tests/Makefile.am
+	* tests/gegl-image-buffer-caching-test.c
+	* tests/testgegl.c
+
+	Added the very beginings of a test of the GeglBuffer cache
+	interaction stuff.  Everything else are bug fixes discovered while
+	writing the test.
+
 2004-1-1 23:44 Daniel Rogers <daniel@phasevelocity.org>
 
 	* gegl/image/gegl-buffer-double.c

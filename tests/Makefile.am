@@ -63,7 +63,8 @@ testgegl_SOURCES = \
 	gegl-image-memory-cache-test.c \
 	gegl-image-buffer-double-test.c \
 	gegl-image-component-sample-model-test.c \
-	gegl-image-mock-cache-entry-test.c
+	gegl-image-mock-cache-entry-test.c \
+	gegl-image-buffer-caching-test.c
 
 testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(GEGLDEPS)

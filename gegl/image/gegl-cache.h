@@ -131,6 +131,10 @@ gint gegl_cache_try_put (GeglCache * cache,
  * Don't try to put() an entry_id that is already in the
  * cache.
  *
+ * Once fetch() tells you that an entry has expired from the cache,
+ * you may change that status by putting in another entry into the
+ * cache.
+ *
  * Also, don't put the same entry into more than one cache.  That
  * would be silly.
  *
@@ -145,7 +149,8 @@ gint gegl_cache_put (GeglCache * cache,
  * entry_id that was assigned by put().  If the entry has been expired
  * from the cache and no longer exists in any useable form, then this
  * will return GEGL_FETCH_EXPIRED.  Don't fetch() an entry that you
- * didn't put() into the cache.  That would be bad.
+ * didn't put() into the cache.  That would be bad.  Once an id is
+ * expired, you can unexpire it by putting in another cache entry.
  *
  * There is no need to call g_object_ref() after calling fetch(),
  * fetch() will do this for you.
