@@ -1,0 +1,491 @@
+%h{
+#include "gegl-point-op.h"
+%}
+%{
+#include "gegl-fill-op.h"
+#include "gegl-fill-op-private.h"
+#include "gegl-point-op-private.h"
+#include "gegl-op-private.h"
+#include "gegl-image-private.h"
+#include "gegl-image-iterator.h"
+#include "gegl-color.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+#include <stdio.h>
+%}
+
+
+class Gegl:Fill:Op from Gegl:Point:Op {
+
+  private GeglColor *fill_color;
+  
+  public 
+  GeglFillOp *
+  new (GeglColor *fill_color)
+  {
+    GeglFillOp * self = GEGL_FILL_OP(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor (self,fill_color))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self, 
+              GeglColor *color)
+  {
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+    
+    /* Chain up */
+    if (!gegl_point_op_constructor (GEGL_POINT_OP(self), NULL, 0))
+      return FALSE;
+
+    {
+      /* Allocate a color and set its channels to the passed one */  
+      GeglColorModel *color_cm = gegl_color_get_color_model (color);
+      self->_priv->fill_color = gegl_color_new (color_cm); 
+      gegl_color_set (self->_priv->fill_color, color);
+    }
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    GeglFillOp * self = GEGL_FILL_OP(object); 
+
+    /* Dispose of the fill color*/
+    gegl_object_destroy(GEGL_OBJECT(self->_priv->fill_color));
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  override(Gegl:Op)
+  void
+  prepare(GeglOp *op,
+          GeglImage *dest,
+	  GeglRect *dest_rect)
+  {
+    /* Save these so we can get them quickly in scanline func
+       below */
+    gegl_op_save_alphas(op);
+
+    {
+      GeglPointOp *point_op = GEGL_POINT_OP (op);
+      GeglPointOpClass *point_op_class = 
+	GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+      GeglColorModel * dest_cm = gegl_image_color_model (dest);
+      GeglColorSpace colorspace = gegl_color_model_color_space(dest_cm);
+      GeglChannelDataType data_type = gegl_color_model_data_type (dest_cm);
+
+      switch (colorspace)
+	{
+	case RGB:
+	  switch (data_type)
+	    {
+	    case U8:
+	      point_op_class->scanline_func = gegl_fill_op_scanline_rgb_u8;
+	      break;
+	    case FLOAT:
+	      point_op_class->scanline_func = gegl_fill_op_scanline_rgb_float;
+	      break;
+	    case U16:
+	      point_op_class->scanline_func = gegl_fill_op_scanline_rgb_u16;
+	      break;
+	    case U16_4:
+	      point_op_class->scanline_func = gegl_fill_op_scanline_rgb_u16_4;
+	      break;
+	    default:
+	      g_warning("gegl_fill_op_prepare: Can't find data_type\n");    
+	      break;
+
+	    }
+	  break;
+	case GRAY:
+	  switch (data_type)
+	    {
+	    case U8:
+	      point_op_class->scanline_func = gegl_fill_op_scanline_gray_u8;
+	      break;
+	    case FLOAT:
+	      point_op_class->scanline_func = gegl_fill_op_scanline_gray_float;
+	      break;
+	    case U16:
+	      point_op_class->scanline_func = gegl_fill_op_scanline_gray_u16;
+	      break;
+	    case U16_4:
+	      point_op_class->scanline_func = gegl_fill_op_scanline_gray_u16_4;
+	      break;
+	    default:
+	      g_warning("gegl_fill_op_prepare: Can't find data_type\n");    
+	      break;
+	    }
+	  break;
+	default:
+	  g_warning("gegl_fill_op_prepare: Can't find colorspace\n");    
+	  break;
+	}
+    }
+  } 
+
+  private
+  void
+  scanline_rgb_u8 (GeglPointOp *point_op,
+                       GeglImageIterator *dest_iter, 
+		       GeglImageIterator **src_iters)
+  {
+    GeglOp *op = GEGL_OP(point_op);
+    GeglFillOp *self = GEGL_FILL_OP (point_op);
+    GeglChannelValue *fill_values = 
+      gegl_color_get_channel_values (self->_priv->fill_color);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
+
+    guint8 *dest_data[4];
+    gboolean dest_has_alpha;
+    guint8 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
+ 
+    dest_has_alpha = op->_priv->has_alpha; 
+    
+    gegl_image_iterator_get_scanline_data (dest_iter,
+                (guchar**)dest_data);
+
+    dest_r = dest_data[0];
+    dest_g = dest_data[1];
+    dest_b = dest_data[2];
+    if (dest_has_alpha)
+      dest_alpha = dest_data[3];
+
+
+    /* Fill the dest with the fill color */
+    while (width--)
+    { 
+      *dest_r = fill_values[0].u8;
+      *dest_g = fill_values[1].u8;
+      *dest_b = fill_values[2].u8;
+      if (dest_has_alpha)
+	{ 
+	  *dest_alpha = fill_values[3].u8;
+        }
+      dest_r++;
+      dest_g++;
+      dest_b++;
+      if (dest_has_alpha)
+        dest_alpha++;
+
+    }
+  } 
+
+  private
+  void
+  scanline_rgb_float (GeglPointOp *point_op,
+                       GeglImageIterator *dest_iter, 
+		       GeglImageIterator **src_iters)
+  {
+    GeglOp *op = GEGL_OP(point_op);
+    GeglFillOp *self = GEGL_FILL_OP (point_op);
+    GeglChannelValue *fill_values = 
+      gegl_color_get_channel_values (self->_priv->fill_color);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
+
+    gfloat *dest_data[4];
+    gboolean dest_has_alpha;
+    gfloat *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
+ 
+    dest_has_alpha = op->_priv->has_alpha; 
+    
+    gegl_image_iterator_get_scanline_data (dest_iter,
+                (guchar**)dest_data);
+
+    dest_r = dest_data[0];
+    dest_g = dest_data[1];
+    dest_b = dest_data[2];
+    if (dest_has_alpha)
+      dest_alpha = dest_data[3];
+
+
+    /* Fill the dest with the fill color */
+    while (width--)
+    { 
+      *dest_r = fill_values[0].f;
+      *dest_g = fill_values[1].f;
+      *dest_b = fill_values[2].f;
+      if (dest_has_alpha)
+	{ 
+	  *dest_alpha = fill_values[3].f;
+        }
+      dest_r++;
+      dest_g++;
+      dest_b++;
+      if (dest_has_alpha)
+        dest_alpha++;
+
+    }
+  } 
+
+  private
+  void
+  scanline_rgb_u16 (GeglPointOp *point_op,
+                       GeglImageIterator *dest_iter, 
+		       GeglImageIterator **src_iters)
+  {
+    GeglOp *op = GEGL_OP(point_op);
+    GeglFillOp *self = GEGL_FILL_OP (point_op);
+    GeglChannelValue *fill_values = 
+      gegl_color_get_channel_values (self->_priv->fill_color);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
+
+    guint16 *dest_data[4];
+    gboolean dest_has_alpha;
+    guint16 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
+ 
+    dest_has_alpha = op->_priv->has_alpha; 
+    
+    gegl_image_iterator_get_scanline_data (dest_iter,
+                (guchar**)dest_data);
+
+    dest_r = dest_data[0];
+    dest_g = dest_data[1];
+    dest_b = dest_data[2];
+    if (dest_has_alpha)
+      dest_alpha = dest_data[3];
+
+
+    /* Fill the dest with the fill color */
+    while (width--)
+    { 
+      *dest_r = fill_values[0].u16;
+      *dest_g = fill_values[1].u16;
+      *dest_b = fill_values[2].u16;
+      if (dest_has_alpha)
+	{ 
+	  *dest_alpha = fill_values[3].u16;
+        }
+      dest_r++;
+      dest_g++;
+      dest_b++;
+      if (dest_has_alpha)
+        dest_alpha++;
+
+    }
+  } 
+
+  private
+  void
+  scanline_rgb_u16_4 (GeglPointOp *point_op,
+                       GeglImageIterator *dest_iter, 
+		       GeglImageIterator **src_iters)
+  {
+    GeglOp *op = GEGL_OP(point_op);
+    GeglFillOp *self = GEGL_FILL_OP (point_op);
+    GeglChannelValue *fill_values = 
+      gegl_color_get_channel_values (self->_priv->fill_color);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
+
+    guint16 *dest_data[4];
+    gboolean dest_has_alpha;
+    guint16 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
+ 
+    dest_has_alpha = op->_priv->has_alpha; 
+    
+    gegl_image_iterator_get_scanline_data (dest_iter,
+                (guchar**)dest_data);
+
+    dest_r = dest_data[0];
+    dest_g = dest_data[1];
+    dest_b = dest_data[2];
+    if (dest_has_alpha)
+      dest_alpha = dest_data[3];
+
+
+    /* Fill the dest with the fill color */
+    while (width--)
+    { 
+      *dest_r = fill_values[0].u16_4;
+      *dest_g = fill_values[1].u16_4;
+      *dest_b = fill_values[2].u16_4;
+      if (dest_has_alpha)
+	{ 
+	  *dest_alpha = fill_values[3].u16_4;
+        }
+      dest_r++;
+      dest_g++;
+      dest_b++;
+      if (dest_has_alpha)
+        dest_alpha++;
+
+    }
+  } 
+
+  private
+  void
+  scanline_gray_u8 (GeglPointOp *point_op,
+                       GeglImageIterator *dest_iter, 
+		       GeglImageIterator **src_iters)
+  {
+    GeglOp *op = GEGL_OP(point_op);
+    GeglFillOp *self = GEGL_FILL_OP (point_op);
+    GeglChannelValue *fill_values = 
+      gegl_color_get_channel_values (self->_priv->fill_color);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
+
+    guint8 *dest_data[2];
+    gboolean dest_has_alpha;
+    guint8 *dest_gray, *dest_alpha=NULL;
+ 
+    dest_has_alpha = op->_priv->has_alpha; 
+    
+    gegl_image_iterator_get_scanline_data (dest_iter,
+                (guchar**)dest_data);
+
+    dest_gray = dest_data[0];
+    if (dest_has_alpha)
+      dest_alpha = dest_data[1];
+
+
+    /* Fill the dest with the fill color */
+    while (width--)
+    { 
+      *dest_gray = fill_values[0].u8;
+      if (dest_has_alpha)
+	{ 
+	  *dest_alpha = fill_values[1].u8;
+        }
+      dest_gray++;
+      if (dest_has_alpha)
+        dest_alpha++;
+    }
+  } 
+
+  private
+  void
+  scanline_gray_float (GeglPointOp *point_op,
+                       GeglImageIterator *dest_iter, 
+		       GeglImageIterator **src_iters)
+  {
+    GeglOp *op = GEGL_OP(point_op);
+    GeglFillOp *self = GEGL_FILL_OP (point_op);
+    GeglChannelValue *fill_values = 
+      gegl_color_get_channel_values (self->_priv->fill_color);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
+
+    gfloat *dest_data[2];
+    gboolean dest_has_alpha;
+    gfloat *dest_gray, *dest_alpha=NULL;
+ 
+    dest_has_alpha = op->_priv->has_alpha; 
+    
+    gegl_image_iterator_get_scanline_data (dest_iter,
+                (guchar**)dest_data);
+
+    dest_gray = dest_data[0];
+    if (dest_has_alpha)
+      dest_alpha = dest_data[1];
+
+
+    /* Fill the dest with the fill color */
+    while (width--)
+    { 
+      *dest_gray = fill_values[0].f;
+      if (dest_has_alpha)
+	{ 
+	  *dest_alpha = fill_values[1].f;
+        }
+      dest_gray++;
+      if (dest_has_alpha)
+        dest_alpha++;
+
+    }
+  } 
+
+  private
+  void
+  scanline_gray_u16 (GeglPointOp *point_op,
+                       GeglImageIterator *dest_iter, 
+		       GeglImageIterator **src_iters)
+  {
+    GeglOp *op = GEGL_OP(point_op);
+    GeglFillOp *self = GEGL_FILL_OP (point_op);
+    GeglChannelValue *fill_values = 
+      gegl_color_get_channel_values (self->_priv->fill_color);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
+
+    guint16 *dest_data[2];
+    gboolean dest_has_alpha;
+    guint16 *dest_gray, *dest_alpha=NULL;
+ 
+    dest_has_alpha = op->_priv->has_alpha; 
+    
+    gegl_image_iterator_get_scanline_data (dest_iter,
+                (guchar**)dest_data);
+
+    dest_gray = dest_data[0];
+    if (dest_has_alpha)
+      dest_alpha = dest_data[1];
+
+
+    /* Fill the dest with the fill color */
+    while (width--)
+    { 
+      *dest_gray = fill_values[0].u16;
+      if (dest_has_alpha)
+	{ 
+	  *dest_alpha = fill_values[1].u16;
+        }
+      dest_gray++;
+      if (dest_has_alpha)
+        dest_alpha++;
+
+    }
+  } 
+
+  private
+  void
+  scanline_gray_u16_4 (GeglPointOp *point_op,
+                       GeglImageIterator *dest_iter, 
+		       GeglImageIterator **src_iters)
+  {
+    GeglOp *op = GEGL_OP(point_op);
+    GeglFillOp *self = GEGL_FILL_OP (point_op);
+    GeglChannelValue *fill_values = 
+      gegl_color_get_channel_values (self->_priv->fill_color);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
+
+    guint16 *dest_data[2];
+    gboolean dest_has_alpha;
+    guint16 *dest_gray, *dest_alpha=NULL;
+ 
+    dest_has_alpha = op->_priv->has_alpha; 
+    
+    gegl_image_iterator_get_scanline_data (dest_iter,
+                (guchar**)dest_data);
+
+    dest_gray = dest_data[0];
+    if (dest_has_alpha)
+      dest_alpha = dest_data[1];
+
+
+    /* Fill the dest with the fill color */
+    while (width--)
+    { 
+      *dest_gray = fill_values[0].u16_4;
+      if (dest_has_alpha)
+	{ 
+	  *dest_alpha = fill_values[1].u16_4;
+        }
+      dest_gray++;
+      if (dest_has_alpha)
+        dest_alpha++;
+
+    }
+  } 
+}
