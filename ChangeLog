@@ -1,3 +1,9 @@
+Fri May  5 13:03:31 EDT 2000 calvinw@mindspring.com
+
+        * updated codegen/test_files/init_test file 
+
+	* removed codegen/pixel_data/gegl_pixel file - this is no longer needed.
+
 Thu May  4 16:29:11 PDT 2000 caro@rhythm.com
 
 	* check in for docs
@@ -7,11 +13,9 @@ Thu May  4 16:29:11 PDT 2000 caro@rhythm.com
 	* check in for codegen
 
 	* The varible macro is now called EXTERNAL_INIT.
-	you define this macro in the channel files.
+	you define this macro in the channel_data file.
 
-	* I have changes the channel files
-
-	* the pixel data file is gone.
+	* I have changed the channel_data files
 
 Thu May  4 10:06:06 PDT 2000 caro@rhythm.com
 
