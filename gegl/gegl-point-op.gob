@@ -33,7 +33,7 @@ class Gegl:Point:Op from Gegl:Op {
 
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
-	
+       
     /* Chain up */
     if (!gegl_op_constructor (GEGL_OP(self), 
           image_buffers, rects, num_images))
@@ -49,11 +49,11 @@ class Gegl:Point:Op from Gegl:Op {
 
       /* Make them NULL to start with */
       for (i = 0; i < num_images; i++)
-	self->_priv->iterators[i] = NULL; 
+       self->_priv->iterators[i] = NULL; 
 
       /* Now get a new iterator for each image */
       for (i = 0; i < num_images; i++)
-	self->_priv->iterators[i] = 
+       self->_priv->iterators[i] = 
           gegl_image_iterator_new (image_buffers[i]);
 
     /*  
@@ -82,9 +82,9 @@ class Gegl:Point:Op from Gegl:Op {
     if (self->_priv->iterators)
       {
         /* Free the iterator objects */
-	for (i = 0; i < opP->num_images; i++)
-	  if (self->_priv->iterators[i])
-	   gegl_object_destroy(GEGL_OBJECT(self->_priv->iterators[i]));  
+       for (i = 0; i < opP->num_images; i++)
+         if (self->_priv->iterators[i])
+          gegl_object_destroy(GEGL_OBJECT(self->_priv->iterators[i]));  
         
         /* Free the array */
         g_free(self->_priv->iterators);
@@ -113,8 +113,8 @@ class Gegl:Point:Op from Gegl:Op {
     /* Tell each iterators what rect we plan to use*/
     for (i = 0; i < opP->num_images; i++)
       gegl_image_iterator_request_rect (
-	       self->_priv->iterators[i], 
-	       &(opP->rects[i]));
+              self->_priv->iterators[i], 
+              &(opP->rects[i]));
 
     /* Now find out what the actual rects we receive are  */
     for (i = 0; i < opP->num_images; i++)

@@ -18,7 +18,7 @@ class Gegl:Object from Gtk:Object {
   }
 
   protected
-  gboolean	
+  gboolean       
   constructor(self)
   {
     return TRUE;

@@ -44,12 +44,12 @@ class Gegl:Dark:Op from Gegl:Dual:Src:Op {
   protected 
   gboolean 
   constructor(self, 
-  	      GeglImageBuffer *dest,
-       	      GeglImageBuffer *src1,
+               GeglImageBuffer *dest,
+                    GeglImageBuffer *src1,
               GeglImageBuffer *src2,
               GeglRect *dest_rect,
               GeglRect *src1_rect,
-              GeglRect *src2_rect) 	
+              GeglRect *src2_rect)        
   {
     GeglPointOp *point_op = GEGL_POINT_OP (self);
     GeglPointOpClass *point_op_class = 
@@ -65,7 +65,7 @@ class Gegl:Dark:Op from Gegl:Dual:Src:Op {
       return FALSE;
 
     {
-      point_op_class->scanline_func = gegl_dark_op_RGB_FLOAT; 	
+      point_op_class->scanline_func = gegl_dark_op_RGB_FLOAT;        
     }
 
     return TRUE;
@@ -76,27 +76,27 @@ class Gegl:Dark:Op from Gegl:Dual:Src:Op {
   RGB_FLOAT (GeglPointOp *point_op)
   {
     /*
-      Whats the algorithm for this code?	
+      Whats the algorithm for this code?       
      
      {
-	int dest_has_alpha; 
-	int src1_has_alpha; 
-	int src2_has_alpha; 
+       int dest_has_alpha; 
+       int src1_has_alpha; 
+       int src2_has_alpha; 
 
-	Chan dest;
-	Chan src1;
-	Chan src2;
+       Chan dest;
+       Chan src1;
+       Chan src2;
 
-	dest = MIN(src1, src2);
-	if (dest_has_alpha)
-	  {
-	    if (src1_has_alpha && src2_has_alpha)
-	      dest_a = MIN(src1_a, src2_a);
-	    else if (src1_has_alpha)
-	      dest_a = src1_a;
-	    else if (src2_has_alpha)
-	      dest_a = src2_a; 
-	  } 
+       dest = MIN(src1, src2);
+       if (dest_has_alpha)
+         {
+           if (src1_has_alpha && src2_has_alpha)
+             dest_a = MIN(src1_a, src2_a);
+           else if (src1_has_alpha)
+             dest_a = src1_a;
+           else if (src2_has_alpha)
+             dest_a = src2_a; 
+         } 
      }
 
     */ 
@@ -161,18 +161,18 @@ class Gegl:Dark:Op from Gegl:Dual:Src:Op {
       src2_b++;
 
       if (dest_has_alpha)
-	{
-	  if (src1_has_alpha && src2_has_alpha)
-	    {
-	      *dest_a++ = MIN(*src1_a, *src2_a);
-	      src1_a++;
-	      src2_a++;
-	    }	
-	  else if (src1_has_alpha)
-	    *dest_a++ = *src1_a++;
-	  else if (src2_has_alpha)
-	    *dest_a++ = *src2_a++; 
-	} 
-    } 		
+       {
+         if (src1_has_alpha && src2_has_alpha)
+           {
+             *dest_a++ = MIN(*src1_a, *src2_a);
+             src1_a++;
+             src2_a++;
+           }       
+         else if (src1_has_alpha)
+           *dest_a++ = *src1_a++;
+         else if (src2_has_alpha)
+           *dest_a++ = *src2_a++; 
+       } 
+    }               
   }
 }

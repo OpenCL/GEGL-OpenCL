@@ -43,7 +43,7 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
               GeglImageBuffer *dest,
               GeglImageBuffer *src,
               GeglRect *dest_rect,
-	      GeglRect *src_rect) 
+             GeglRect *src_rect) 
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -62,8 +62,8 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
        point_op_class->scanline_func = gegl_unpremult_op_RGBA_FLOAT;
      else
        {
-	  g_warning("GeglPremultOp: dest has no alpha channel\n");
-	  return FALSE;
+         g_warning("GeglPremultOp: dest has no alpha channel\n");
+         return FALSE;
        } 
     }
 
@@ -83,20 +83,20 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
   RGBA_FLOAT (GeglPointOp *point_op)
   {
      /*
-     Whats the algorithm for this code?	
+     Whats the algorithm for this code?       
      {
-	Chan dest;
-	Chan src;
+       Chan dest;
+       Chan src;
 
-	if (src_a == CHAN_ZERO || src_a == WP)
-	  {
+       if (src_a == CHAN_ZERO || src_a == WP)
+         {
             dest = src;
-	  }
+         }
         else
-	  {
+         {
             dest = src / src_a;
           }
-	dest_a = src_a; 
+       dest_a = src_a; 
       }
       */
 
@@ -128,19 +128,19 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
 
     while (width--)
       {
-	if(*src_a == 0.0 || *src_a == 1.0)
-	  {
-	    *dest_r++ =  *src_r++;
-	    *dest_g++ =  *src_g++;
-	    *dest_b++ =  *src_b++;
-	  }
+       if(*src_a == 0.0 || *src_a == 1.0)
+         {
+           *dest_r++ =  *src_r++;
+           *dest_g++ =  *src_g++;
+           *dest_b++ =  *src_b++;
+         }
         else
-	  {
-	    *dest_r++ =  *src_r++ / *src_a;
-	    *dest_g++ =  *src_g++ / *src_a;
-	    *dest_b++ =  *src_b++ / *src_a;
-	  }
-	*dest_a++ = *src_a++; 
+         {
+           *dest_r++ =  *src_r++ / *src_a;
+           *dest_g++ =  *src_g++ / *src_a;
+           *dest_b++ =  *src_b++ / *src_a;
+         }
+       *dest_a++ = *src_a++; 
       }
   }
 }

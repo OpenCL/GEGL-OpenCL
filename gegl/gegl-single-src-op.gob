@@ -28,8 +28,8 @@ class Gegl:Single:Src:Op from Gegl:Point:Op {
   protected 
   gboolean 
   constructor(self, 
-  	      GeglImageBuffer *dest,
-       	      GeglImageBuffer *src,
+               GeglImageBuffer *dest,
+                    GeglImageBuffer *src,
               GeglRect *dest_rect,
               GeglRect *src_rect)
   {

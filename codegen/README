@@ -16,11 +16,13 @@ codegen [data type] [color space] < input file > output file
 
 We have various key words that represent data types. We have Chan, FloatChan, and VectorChan. Chan and VectorChan are the same data type as the passed in data type and FloatChan is a float.
 
-VectorChan can be defined as a normal vector (VectorChan a[some int]), a color vector with out alpha (VectorChan v(_c_)), or a color vector with alpha (VectorChan v(_c_,_a_)). 
+VectorChan can be defined as a color vector with out alpha (VectorChan v(_c_)), or a color vector with alpha (VectorChan v(_c_,_a_)). 
 
 To refer to only the color part of a color vector, one type vector_name_c, and to refer to the alpha part one type vector_name_a.
 
-Anything that is between /*codegen_copy codegen_copy*/ gets copied. Inside /*codegen_copy codegen_copy*/ the keyword CHAN gets substituted with the data type and the keyword HUE gets substitued with color space.
+Anything that is between /*codegen_copy codegen_copy*/ gets copied. Inside /*codegen_copy codegen_copy*/ the keyword CHAN gets substituted with the data type and the keyword HUE gets substitued with color space (all in upper case).
+
+*** note *** that indent does not quite work correctly. For the program to run correctly the first line must either be a empty line or a line with a comment. This is due to the fact that indent looks for a newline and then spaces. I tried making indent only look for spaces but then the program would not run if there was not a space.
  
 Caroline Dahllof <caro@rhythm.com>
 

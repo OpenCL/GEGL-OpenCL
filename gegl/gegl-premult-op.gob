@@ -43,7 +43,7 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
               GeglImageBuffer *dest,
               GeglImageBuffer *src,
               GeglRect *dest_rect,
-	      GeglRect *src_rect) 
+             GeglRect *src_rect) 
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -62,8 +62,8 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
        point_op_class->scanline_func = gegl_premult_op_RGBA_FLOAT;
      else
        {
-	  g_warning("GeglPremultOp: dest has no alpha channel\n");
-	  return FALSE;
+         g_warning("GeglPremultOp: dest has no alpha channel\n");
+         return FALSE;
        } 
     }
 
@@ -83,21 +83,21 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
   RGBA_FLOAT (GeglPointOp *point_op)
   {
      /*
-     Whats the algorithm for this code?	
+     Whats the algorithm for this code?       
      {
-	Chan dest;
-	Chan src;
+       Chan dest;
+       Chan src;
 
          if (src_a == 0.0)
-	   {
-	     dest = CHAN_ZERO;
+          {
+            dest = CHAN_ZERO;
            }
          else if (src_a == WP);
-	   {
+          {
              dest = src;
            }
          else
-	   {
+          {
              dest = src_a * src;
            }
         dest_a = src_a;
@@ -133,22 +133,22 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
     while (width--)
       {
          if (*src_a == 0.0)
-	   {
-	     *dest_r++ = 0.0;
-	     *dest_g++ = 0.0;
-	     *dest_b++ = 0.0;
+          {
+            *dest_r++ = 0.0;
+            *dest_g++ = 0.0;
+            *dest_b++ = 0.0;
            }
          else if (*src_a == 1.0)
-	   {
-	     *dest_r++ = *src_r++;
-	     *dest_g++ = *src_g++;
-	     *dest_b++ = *src_b++;
+          {
+            *dest_r++ = *src_r++;
+            *dest_g++ = *src_g++;
+            *dest_b++ = *src_b++;
            }
          else
-	   {
-	     *dest_r++ = *src_a * *src_r++;
-	     *dest_g++ = *src_a * *src_g++;
-	     *dest_b++ = *src_a * *src_b++;
+          {
+            *dest_r++ = *src_a * *src_r++;
+            *dest_g++ = *src_a * *src_g++;
+            *dest_b++ = *src_a * *src_b++;
            }
 
         *dest_a++ = *src_a++; 

@@ -45,7 +45,7 @@ class Gegl:Color:Model from Gegl:Object {
     /* Chain up */
     if (!gegl_object_constructor (GEGL_OBJECT(self)))
        return FALSE;
-	
+       
     self->_priv->colorspace = COLORSPACE_NONE;
     self->_priv->data_type = DATATYPE_NONE;
     self->_priv->bytes_per_channel = -1;
@@ -74,42 +74,42 @@ class Gegl:Color:Model from Gegl:Object {
   { return self->_priv->colorspace; } 
 
   public
-  GeglChannelDataType	
+  GeglChannelDataType       
   data_type(self) 
   { return self->_priv->data_type; }
 
   public
-  gint	
+  gint       
   bytes_per_channel(self) 
   { return self->_priv->bytes_per_channel; }
 
   public
-  gint	
+  gint       
   bytes_per_pixel(self) 
   { return self->_priv->bytes_per_pixel; }
 
   public
-  gint	
+  gint       
   num_channels(self) 
   { return self->_priv->num_channels; }
 
   public
-  gint	
+  gint       
   num_colors(self) 
   { return self->_priv->num_colors; }
 
   public 
-  gboolean	
+  gboolean       
   has_alpha(self) 
   { return self->_priv->has_alpha; }
 
   public 
-  gint	
+  gint       
   alpha_channel(self) 
   { return self->_priv->alpha_channel; }
 
   public 
-  gboolean 	
+  gboolean        
   is_premultiplied(self) 
   { return self->_priv->premultiplied; }
 

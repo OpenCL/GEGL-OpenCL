@@ -23,7 +23,7 @@ class Gegl:Color from Gegl:Object {
   private gint num_channels;                    /* number of channels*/
 
   public
-  GeglColor *	
+  GeglColor *       
   new(GeglColorModel *cm)
   {
     GeglColor * self = GEGL_COLOR(GET_NEW);
@@ -44,7 +44,7 @@ class Gegl:Color from Gegl:Object {
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
-	
+       
     /* Chain up */
     if (!gegl_object_constructor (GEGL_OBJECT(self)))
       return FALSE;

@@ -1,3 +1,16 @@
+Wed Mar  1 16:59:12 PST 2000 caro@rhythm.com
+	
+	* Added a tools dir that currently contain a 
+	program that takes an input files and substitute 
+	all the tabs with 8 spaces.
+
+	* Passes all the .gob files through the program I mention above.
+	This will hopefully rm the weired format that one sees on the
+	gnome site.
+
+	* Made some more changes to codegen, look in the README for more
+	specific information
+
 Tue Feb 29 19:33:03 PST 2000 caro@rhythm.com
 	
 	* Made more modifications to codegen, I am not

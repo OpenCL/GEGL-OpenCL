@@ -31,7 +31,7 @@ class Gegl:Image:Buffer from Gegl:Object {
   private guchar *data;                    /* The data */    
 
   public
-  GeglImageBuffer *	
+  GeglImageBuffer *       
   new(GeglColorModel *cm, gint w, gint h)
   {
     GeglImageBuffer * self = GEGL_IMAGE_BUFFER(GET_NEW);
@@ -56,7 +56,7 @@ class Gegl:Image:Buffer from Gegl:Object {
 
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
-	
+       
     /* Chain up */
     if (!gegl_object_constructor (GEGL_OBJECT(self)))
       return FALSE;

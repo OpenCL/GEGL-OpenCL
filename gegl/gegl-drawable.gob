@@ -40,7 +40,7 @@ class Gegl:Drawable from Gegl:Object {
   private gint height;
 
   public
-  GeglDrawable *	
+  GeglDrawable *       
   new(GeglColorModel *cm,     /* Also should pass storage info eventually*/ 
       gchar *name,
       gint w,
@@ -68,7 +68,7 @@ class Gegl:Drawable from Gegl:Object {
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
-	
+       
     /* Chain up */
     if (!gegl_object_constructor (GEGL_OBJECT(self)))
       return FALSE;
@@ -97,7 +97,7 @@ class Gegl:Drawable from Gegl:Object {
     self->_priv->name = g_strdup (name); 
     self->_priv->width = w; 
     self->_priv->height = h; 
-  	
+         
     return TRUE;
   }
 
@@ -176,24 +176,24 @@ class Gegl:Drawable from Gegl:Object {
     if (draw_rect.w != src_rect.w || draw_rect.h != src_rect.h)
       {
         g_warning("gegl_drawable_apply_image: cant scale images yet\n");
-	return;
+       return;
       }
 
     if (draw_rect.x + src_rect.w > self->_priv->width || 
         draw_rect.y + src_rect.h > self->_priv->height)
       {
         g_warning ("gegl_drawable_apply_image: cant apply images outside drawable yet\n");
-	return;
+       return;
       }
     
     /* dest = src2 op src1 , with src1 = dest as well */
     op = GEGL_OP(gegl_composite_op_new (self->_priv->image_buffer, 
-					self->_priv->image_buffer, 
-					src_image_buffer, 
-					&draw_rect, 
-					&draw_rect, 
-					&src_rect, 
-					comp_mode));
+                                   self->_priv->image_buffer, 
+                                   src_image_buffer, 
+                                   &draw_rect, 
+                                   &draw_rect, 
+                                   &src_rect, 
+                                   comp_mode));
 
       /* Apply the composite op */
     gegl_op_apply (op);

@@ -49,24 +49,24 @@ class Gegl:Color:Convert:To:Rgb:Float:Op from Gegl:Color:Convert:Op {
   protected 
   gboolean 
   constructor(self, 
-	GeglImageBuffer *dest,
-	GeglImageBuffer *src, 
-	GeglRect *dest_rect,
-	GeglRect *src_rect) 
+       GeglImageBuffer *dest,
+       GeglImageBuffer *src, 
+       GeglRect *dest_rect,
+       GeglRect *src_rect) 
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
    
     /* Chain up */
     if (!gegl_color_convert_op_constructor ( 
-		     GEGL_COLOR_CONVERT_OP (self), 
-		     dest,src,dest_rect,src_rect))
+                   GEGL_COLOR_CONVERT_OP (self), 
+                   dest,src,dest_rect,src_rect))
       return FALSE;
 
     {
       GeglPointOp *point_op = GEGL_POINT_OP (self);
       GeglPointOpClass *point_op_class = 
-	  GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+         GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
       GeglColorConvertOpPrivate *color_convert_opP = 
        (GeglColorConvertOpPrivate*)(GEGL_COLOR_CONVERT_OP (self)->_priv);
 
@@ -97,26 +97,26 @@ class Gegl:Color:Convert:To:Rgb:Float:Op from Gegl:Color:Convert:Op {
       self->_priv->src_float_cm = NULL;
 
       /* 
-	If we have to convert src to float first will need float buffers
-	with num channels of the source.
+       If we have to convert src to float first will need float buffers
+       with num channels of the source.
       */
 
       if (self->_priv->do_color_space && 
-	  self->_priv->do_data)
+         self->_priv->do_data)
         { 
           gint i;
 
           /* allocate the float pointers */
-	  self->_priv->src_float_data = g_new(gfloat*, src_num_channels);
+         self->_priv->src_float_data = g_new(gfloat*, src_num_channels);
 
           /* allocate the actual float data later*/
-	  for (i = 0; i < src_num_channels; i++)
-	    self->_priv->src_float_data[i] = NULL;
+         for (i = 0; i < src_num_channels; i++)
+           self->_priv->src_float_data[i] = NULL;
 
           
           
           /* This allocates a float color model with same color space as src*/
-	  self->_priv->src_float_cm = gegl_make_color_model (
+         self->_priv->src_float_cm = gegl_make_color_model (
                                             src_color_space, 
                                             FLOAT,
                                             src_has_alpha);
@@ -134,7 +134,7 @@ class Gegl:Color:Convert:To:Rgb:Float:Op from Gegl:Color:Convert:Op {
   {
     GeglColorConvertToRgbFloatOp *self = 
       GEGL_COLOR_CONVERT_TO_RGB_FLOAT_OP (object); 
-	
+       
     if (self->_priv->src_float_data)
       { 
         free_float_data(self);
@@ -208,9 +208,9 @@ class Gegl:Color:Convert:To:Rgb:Float:Op from Gegl:Color:Convert:Op {
       {
         if (self->_priv->last_width != width) 
           {
-	    free_float_data (self);
-	    alloc_float_data (self, width);
-	  }
+           free_float_data (self);
+           alloc_float_data (self, width);
+         }
 
         /* convert to a float src and then to float rgb */
         gegl_color_model_convert_to_float (color_convert_opP->src_cm, 
@@ -219,9 +219,9 @@ class Gegl:Color:Convert:To:Rgb:Float:Op from Gegl:Color:Convert:Op {
                                    width);
 
         gegl_color_model_convert_to_rgb (self->_priv->src_float_cm, 
-				  color_convert_opP->dest_data, 
-				  (guchar**)self->_priv->src_float_data,
-				  width);
+                              color_convert_opP->dest_data, 
+                              (guchar**)self->_priv->src_float_data,
+                              width);
       }
 
     self->_priv->last_width = width;

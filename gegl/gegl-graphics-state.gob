@@ -11,7 +11,7 @@
 class Gegl:Graphics:State from Gegl:Object {
 
   public GeglColor *bg_color;              /* background color  */
-  public GeglColor *fg_color;	           /* foreground color  */
+  public GeglColor *fg_color;                  /* foreground color  */
   public GeglCompositeMode composite_mode; /* composite mode    */
 
   private void comments(self)
@@ -25,14 +25,14 @@ class Gegl:Graphics:State from Gegl:Object {
   }
 
   public
-  GeglGraphicsState *	
+  GeglGraphicsState *       
   new(GeglColorModel *cm)
   {
     GeglGraphicsState * self = GEGL_GRAPHICS_STATE(GET_NEW);
 
     /*Call the constructor */
     if (!constructor(self,cm))
-	return NULL;
+       return NULL;
     
     /*Okay its constructed*/
     GEGL_OBJECT(self)->constructed = TRUE;
@@ -46,7 +46,7 @@ class Gegl:Graphics:State from Gegl:Object {
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
-	
+       
     /* Chain up */
     if (!gegl_object_constructor (GEGL_OBJECT(self)))
       return FALSE;

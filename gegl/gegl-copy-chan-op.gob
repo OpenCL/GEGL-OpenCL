@@ -52,8 +52,8 @@ class Gegl:Copy:Chan:Op from Gegl:Single:Src:Op {
   protected 
   gboolean 
   constructor(self, 
-  	      GeglImageBuffer *dest,
-       	      GeglImageBuffer *src,
+               GeglImageBuffer *dest,
+                    GeglImageBuffer *src,
               GeglRect *dest_rect,
               GeglRect *src_rect,
               gint *chan_index)
@@ -69,7 +69,7 @@ class Gegl:Copy:Chan:Op from Gegl:Single:Src:Op {
     {
       GeglPointOp *point_op = GEGL_POINT_OP(self);
       GeglPointOpClass *point_op_class = 
-	  GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+         GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
 
       gint i; 
       GeglChannelDataType dest_data_type, src_data_type;
@@ -85,29 +85,29 @@ class Gegl:Copy:Chan:Op from Gegl:Single:Src:Op {
       src_nchans =  gegl_color_model_num_channels (src_cm);
 
       if (dest == src)
-	{	
-	  g_warning("GeglCopyChanOp: cant copy dest and src same\n");
-	  point_op_class->scanline_func = NULL;   
-	  return FALSE;
-	}
+       {       
+         g_warning("GeglCopyChanOp: cant copy dest and src same\n");
+         point_op_class->scanline_func = NULL;   
+         return FALSE;
+       }
 
       if (dest_data_type != src_data_type)
-	{	
-	  g_warning("GeglCopyChanOp: data types dont match\n");
-	  point_op_class->scanline_func = NULL;   
-	  return FALSE;
-	}
+       {       
+         g_warning("GeglCopyChanOp: data types dont match\n");
+         point_op_class->scanline_func = NULL;   
+         return FALSE;
+       }
      
       for (i=0; i < dest_nchans; i++)
-	{
-	  if (chan_index[i] >= src_nchans || 
+       {
+         if (chan_index[i] >= src_nchans || 
               chan_index[i] < GEGL_COPY_CHAN_OP_CHANNEL_NONE) 
-	    {
-	      g_warning("GeglCopyChanOp: src chan index out of range\n");
-	      point_op_class->scanline_func = NULL;
-	      return FALSE;
-	    }       
-	}
+           {
+             g_warning("GeglCopyChanOp: src chan index out of range\n");
+             point_op_class->scanline_func = NULL;
+             return FALSE;
+           }       
+       }
 
       /* Get arrays of generic data pointers */
       self->_priv->dest_data = (guchar**) g_malloc(sizeof(guchar*) * dest_nchans);
@@ -131,8 +131,8 @@ class Gegl:Copy:Chan:Op from Gegl:Single:Src:Op {
 
     /* Free the generic data pointers arrays */
     g_free(self->_priv->dest_data);
-    g_free(self->_priv->src_data); 	
-    g_free(self->_priv->src_data_indexed); 	
+    g_free(self->_priv->src_data);        
+    g_free(self->_priv->src_data_indexed);        
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)
@@ -176,15 +176,15 @@ class Gegl:Copy:Chan:Op from Gegl:Single:Src:Op {
 
     for (i = 0; i < dest_nchans; i++)
       { 
-	if (index[i] != GEGL_COPY_CHAN_OP_CHANNEL_NONE)
-	  src_indexed[i] = src[index[i]];  
-	else 
-	  src_indexed[i] = NULL;  
+       if (index[i] != GEGL_COPY_CHAN_OP_CHANNEL_NONE)
+         src_indexed[i] = src[index[i]];  
+       else 
+         src_indexed[i] = NULL;  
       }
      
     while (width--)
       {
-	/* 
+       /* 
            For each channel in dest,  copy all the bytes in that channel for
            this pixel, or skip the channel. 
 
@@ -192,9 +192,9 @@ class Gegl:Copy:Chan:Op from Gegl:Single:Src:Op {
            pixelstride == bpc for a channel data pointer, 
            Will need different code for other data storage types
         */ 
-	for (i = 0; i < dest_nchans; i++)
-	  {
-	    if (index[i] != GEGL_COPY_CHAN_OP_CHANNEL_NONE)
+       for (i = 0; i < dest_nchans; i++)
+         {
+           if (index[i] != GEGL_COPY_CHAN_OP_CHANNEL_NONE)
               for (j = 0; j < bpc; j++) 
                *dest[i]++  = *src_indexed[i]++;  
           }

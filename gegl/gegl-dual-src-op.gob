@@ -29,12 +29,12 @@ class Gegl:Dual:Src:Op from Gegl:Point:Op {
   protected 
   gboolean 
   constructor(self, 
-  	      GeglImageBuffer *dest,
-       	      GeglImageBuffer *src1,
+               GeglImageBuffer *dest,
+                    GeglImageBuffer *src1,
               GeglImageBuffer *src2,
               GeglRect *dest_rect,
               GeglRect *src1_rect,
-              GeglRect *src2_rect) 	
+              GeglRect *src2_rect)        
   {
     GeglImageBuffer *image_buffers[3];
     GeglRect rects[3];

@@ -44,15 +44,15 @@ class Gegl:Color:Convert:Connection:Op from Gegl:Color:Convert:Op {
   protected 
   gboolean 
   constructor(self, 
-	      GeglImageBuffer *dest,
-	      GeglImageBuffer *src, 
-	      GeglRect *dest_rect,
-	      GeglRect *src_rect) 
+             GeglImageBuffer *dest,
+             GeglImageBuffer *src, 
+             GeglRect *dest_rect,
+             GeglRect *src_rect) 
   {
     int i;
     GeglPointOp *point_op = GEGL_POINT_OP (self);
     GeglPointOpClass *point_op_class = 
-	GEGL_POINT_OP_CLASS (GTK_OBJECT (point_op)->klass);
+       GEGL_POINT_OP_CLASS (GTK_OBJECT (point_op)->klass);
 
     if(GEGL_OBJECT (self)->constructed) 
       return FALSE;
@@ -69,7 +69,7 @@ class Gegl:Color:Convert:Connection:Op from Gegl:Color:Convert:Op {
       
       /* Allocate the xyz_data later--dont know width yet*/
       for (i = 0; i < 4; i++)
-	self->_priv->xyz_data[i] = NULL;
+       self->_priv->xyz_data[i] = NULL;
 
       self->_priv->last_width = 0;
 
@@ -85,7 +85,7 @@ class Gegl:Color:Convert:Connection:Op from Gegl:Color:Convert:Op {
   destroy (GtkObject *object)
   {
     GeglColorConvertConnectionOp *self = GEGL_COLOR_CONVERT_CONNECTION_OP (object); 
-	
+       
     free_xyz_data(self);
     g_free (self->_priv->xyz_data);  
 
@@ -135,7 +135,7 @@ class Gegl:Color:Convert:Connection:Op from Gegl:Color:Convert:Op {
         free_xyz_data (self);
         alloc_xyz_data (self, width);
       }
-	
+       
     /* Make the dest and src point to the data to convert */
     gegl_image_iterator_get_scanline_data (point_opP->iterators[0], 
                                          color_convert_opP->dest_data);

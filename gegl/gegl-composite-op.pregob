@@ -123,45 +123,45 @@ IA_op_IA()
       B =  DEST.A * (1-SRC.A);
       DEST.A = A + B;
       if (DEST.A)
-      	DEST.I = (src_c * A + DEST.I * B) / DEST.A;
+             DEST.I = (src_c * A + DEST.I * B) / DEST.A;
       else
-	DEST.I = 0;	
+       DEST.I = 0;       
     case IN:
       DEST.A = SRC.A * DEST.A;
       if (DEST.A)
-	DEST.I = src_c;
+       DEST.I = src_c;
       else
-	DEST.I = 0;					 		   	
+       DEST.I = 0;                                                            
     case OUT:
       DEST.A = SRC.A * (1-DEST.A);
       if (DEST.A)
-	DEST.I = src_c;
+       DEST.I = src_c;
       else
-	DEST.I = 0;
+       DEST.I = 0;
     case ATOP:
       A = SRC.A * DEST.A;
       B = DEST.A * (1-SRC.A); 
       DEST.A = A + B;
       if (DEST.A)
-      	DEST.I = src_c * A + DEST.I * B;
+             DEST.I = src_c * A + DEST.I * B;
       else
-	DEST.I = 0;
+       DEST.I = 0;
     case XOR:
       A = SRC.A * (1-DEST.A);
       B = DEST.A * (1-SRC.A); 
       DEST.A = A + B;
       if(DEST.A)
-      	DEST.I = (src_c * A + DEST.I * B) / DEST.A;
+             DEST.I = (src_c * A + DEST.I * B) / DEST.A;
       else
-	DEST.I = 0;
+       DEST.I = 0;
     case PLUS:
       A = SRC.A;
       B = DEST.A; 
       DEST.A = A + B;
       if (DEST.A)
-      	DEST.I = (src_c * A + DEST.I * B) / DEST.A;
-	else
-	DEST.I = 0;
+             DEST.I = (src_c * A + DEST.I * B) / DEST.A;
+       else
+       DEST.I = 0;
   }
 }
 

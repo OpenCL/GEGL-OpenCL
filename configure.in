@@ -88,4 +88,5 @@ AC_OUTPUT([
 Makefile
 gegl/Makefile
 codegen/Makefile
+tools/Makefile
 gegl-config], [case "$CONFIG_FILES" in *gegl-config*) chmod +x gegl-config;; esac])

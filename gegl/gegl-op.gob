@@ -26,7 +26,7 @@ class Gegl:Op from Gegl:Object {
 
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
-	
+       
     /* Chain up */
     if (!gegl_object_constructor (GEGL_OBJECT(self)))
       return FALSE;
@@ -40,7 +40,7 @@ class Gegl:Op from Gegl:Object {
         self->_priv->image_buffers[i] = image_buffers[i];
         self->_priv->rects[i] = rects[i];
       }
-	
+       
     return TRUE;
   }
 

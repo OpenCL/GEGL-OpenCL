@@ -111,9 +111,6 @@ keyword_t keyword_tab[] = {
 %type   <elem> FloatChan_List
 %type   <elem> Chan_List
 %type   <elem> VectorChan_List
-%type   <elem> GINT_List
-%type   <elem> GUINT_List
-%type   <elem> GFLOAT_List
 %type   <elem> PoundInclDef
 %type	<elem> Arguments
 %type	<elem> Star 
@@ -463,19 +460,19 @@ Arguments:
        	;
 	
 Definition:
-	  FloatChan FloatChan_List 	
-		{ 
-		char tmp[256]; 
-		$$=$2; 
-		sprintf (tmp,"%s %s", $1.string, $2.string); 
-	  	strcpy($$.string, tmp); 
-		}
-	| Chan Chan_List		
+	  Chan Chan_List		
 		{ 
 		char tmp[256]; 
 		$$=$2; 
 		sprintf (tmp,"%s %s", $1.string, $2.string);
                 strcpy($$.string, tmp); 
+		}
+	| FloatChan FloatChan_List 	
+		{ 
+		char tmp[256]; 
+		$$=$2; 
+		sprintf (tmp,"%s %s", $1.string, $2.string); 
+	  	strcpy($$.string, tmp); 
 		}
 	| VectorChan VectorChan_List
                 {
@@ -484,118 +481,32 @@ Definition:
                 sprintf (tmp,"%s %s", $1.string, $2.string);
                 strcpy($$.string, tmp);
                 }
-	| GINT GINT_List		
+	| GINT Chan_List		
 		{ 
 		char tmp[256]; 
 		$$=$2; 
 		sprintf (tmp,"gint %s", $2.string);
                 strcpy($$.string, tmp); 
 		}
-	| GFLOAT GFLOAT_List
-                {
-                char tmp[256];
-                $$=$2;
-                sprintf (tmp,"gfloat %s", $2.string);
-                strcpy($$.string, tmp);
-                }
-	| GUINT GUINT_List
+	| GUINT Chan_List
 		{
            	char tmp[256];
 	        $$=$2;
 	        sprintf (tmp,"guint %s", $2.string);
 	        strcpy($$.string, tmp);
 	        }
+	| GFLOAT FloatChan_List
+                {
+                char tmp[256];
+                $$=$2;
+                sprintf (tmp,"gfloat %s", $2.string);
+                strcpy($$.string, tmp);
+                }
 
 	;
 
-GINT_List:
-	 GINT_List ',' GINT_List             
-		{ 
-		char tmp[256]; 
-		$$=$3;
-                sprintf (tmp, "%s, %s", $1.string, $3.string);
-                strcpy($$.string, tmp); 
-		}
-        | Star NAME                          
-		{ 
-		char tmp[256]; 
-		set_dtype($2, TYPE_CHAN); 
-		set_type($2, TYPE_SCALER); 
-	        set_num ($2, 1); 	
-	  	$$=$2; 
-		print_name (&$$, $2, DEFINE);
-		sprintf (tmp, "%s%s", $1.string, $$.string); 
-                strcpy($$.string, tmp); 
-		}
-        | Star NAME EQUAL FLOAT              
-		{ 
-		char tmp[256]; 
-		set_dtype($2, TYPE_CHAN);
-                set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-                sprintf ($$.string, "%s=%s", $2.string, $4.string);
-                $$.dtype = $2.dtype; 
-		sprintf(tmp, "%s%s", $1.string, $$.string); 
-                strcpy($$.string, tmp); 
-		}
-        | Star NAME EQUAL INT                
-		{ 
-		char tmp[256]; 
-		set_dtype($2, TYPE_CHAN);
-                set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-                sprintf ($$.string, "%s=%s", $2.string, $4.string);
-                $$.dtype = $2.dtype; 
-		sprintf(tmp, "%s%s", $1.string, $$.string); 
-                strcpy($$.string, tmp); 
-		}
-        ;
-
-GUINT_List:
-	 GUINT_List ',' GUINT_List             
-		{ 
-		char tmp[256]; 
-		$$=$3;
-                sprintf (tmp, "%s, %s", $1.string, $3.string);
-                strcpy($$.string, tmp); 
-		}
-        | Star NAME                          
-		{ 
-		char tmp[256]; 
-		set_dtype($2, TYPE_CHAN); 
-		set_type($2, TYPE_SCALER); 
-	        set_num ($2, 1); 	
-	  	$$=$2; 
-		print_name (&$$, $2, DEFINE);
-		sprintf(tmp, "%s%s", $1.string, $$.string); 
-		strcpy($$.string, tmp); 
-		}
-        | Star NAME EQUAL FLOAT              
-		{ 
-		char tmp[256]; 
-		set_dtype($2, TYPE_CHAN);
-                set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-                sprintf ($$.string, "%s=%s", $2.string, $4.string);
-                $$.dtype = $2.dtype; 
-		sprintf(tmp, "%s%s", $1.string, $$.string); 
-		strcpy($$.string, tmp); 
-		}
-        | Star NAME EQUAL INT                
-		{ 
-		char tmp[256]; 
-		set_dtype($2, TYPE_CHAN);
-                set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-                sprintf ($$.string, "%s=%s", $2.string, $4.string);
-                $$.dtype = $2.dtype; 
-		sprintf(tmp, "%s%s", $1.string, $$.string); 
-		strcpy($$.string, tmp); 
-		}
-        ;
-	
-GFLOAT_List:
-	 GFLOAT_List ',' GFLOAT_List             
+FloatChan_List:
+	 FloatChan_List ',' FloatChan_List             
 		{ 
 		char tmp[256]; 
 		$$=$3;
@@ -635,6 +546,17 @@ GFLOAT_List:
 		sprintf(tmp, "%s%s", $1.string, $$.string); 
 		strcpy($$.string, tmp); 
 		}
+        | Star NAME LT_SQUARE INT RT_SQUARE
+		{
+		char tmp[256];
+		set_dtype($2, TYPE_FLOAT); 
+		set_type($2, TYPE_VECTOR);
+		set_num($2, atoi ($4.string)); 
+	        $$=$2;
+		print_name (&$$, $2, DEFINE);
+		sprintf (tmp, "%s%s", $1.string, $$.string); 
+		strcpy ($$.string, tmp); 
+		}	
         ;
 
 Chan_List:
@@ -678,6 +600,17 @@ Chan_List:
 		sprintf(tmp, "%s%s", $1.string, $$.string);
 		strcpy($$.string, tmp);
 		}
+        | Star NAME LT_SQUARE INT RT_SQUARE
+		{
+		char tmp[256];
+		set_dtype($2, TYPE_CHAN); 
+		set_type($2, TYPE_VECTOR);
+		set_num($2, atoi ($4.string)); 
+	        $$=$2;
+		print_name (&$$, $2, DEFINE);
+		sprintf (tmp, "%s%s", $1.string, $$.string); 
+		strcpy ($$.string, tmp); 
+		}	
         ;
 
 VectorChan_List:
@@ -709,52 +642,6 @@ VectorChan_List:
 		print_name (&$$, $2, DEFINE);
 		sprintf(tmp, "%s%s", $1.string, $$.string); 
 		print_repeat (&$$, $2, tmp); 
-		}
-        | Star NAME LT_SQUARE INT RT_SQUARE
-		{
-		char tmp[256];
-		set_dtype($2, TYPE_CHAN);
-		set_type($2, TYPE_VECTOR);
-		set_num($2, atoi ($4.string)); 
-	        $$=$2;
-		print_name (&$$, $2, DEFINE);
-		sprintf (tmp, "%s%s", $1.string, $$.string); 
-		strcpy ($$.string, tmp); 
-		}	
-	;
-
-
-FloatChan_List:
-	  FloatChan_List ',' FloatChan_List	
-		{ 
-		char tmp[256]; 
-		$$=$3; 
-		sprintf (tmp, "%s, %s", $1.string, $3.string);
-		strcpy($$.string, tmp); 
-		}	
-	| NAME  			
-		{ 
-		set_dtype ($1, TYPE_FLOAT); 
-		set_type ($1, TYPE_SCALER);
-	        set_num ($1, 1); 	
-	  	$$=$1; 
-		print_name (&$$, $1, DEFINE);
-		}
-	| NAME EQUAL FLOAT 		
-		{ 
-		set_dtype ($1, TYPE_FLOAT); 
-	  	set_type ($1, TYPE_SCALER); 
-	        set_num ($1, 1); 	
-	  	sprintf ($$.string, "%s=%s", $1.string, $3.string);
-		$$.dtype = $1.dtype; 
-		}
-	| NAME EQUAL INT		
-		{ 
-		set_dtype ($1, TYPE_FLOAT); 
-		set_type ($1, TYPE_SCALER); 
-	        set_num ($1, 1); 	
-		sprintf ($$.string, "%s=%s", $1.string, $3.string);
-		$$.dtype = $1.dtype; 
 		}
 	;
 

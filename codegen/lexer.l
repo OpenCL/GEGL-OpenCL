@@ -4,6 +4,7 @@
 #include "common.h"
 #include "parser.h" 
 #include <math.h>
+#include <ctype.h>
 
 void comment (); 
 void codegen_copy (); 
@@ -168,7 +169,7 @@ void
 codegen_copy ()
 {
  
-  int c, c1[14], i=0;
+  int c, c1[14], i=0, j;
   char word[]={'o','d','e','g','e','n','_','c','o','p','y','*','/'}; 
   char dt_word[]={'H','A','N'};  
   char cs_word[]={'U', 'E'};
@@ -201,6 +202,7 @@ loop:
   else if ((char)c == 'C')
 
     {
+    i = 0;
     while ((c1[i] = input()) == dt_word[i] && c != 0)
       {
       if (i == 2)
@@ -219,11 +221,15 @@ loop:
     }
   else 
     {
+    i=0; 
     while ((c1[i] = input()) == cs_word[i] && c != 0)
       {
       if (i == 1)
 	{
-	printf ("%s",_NAME_COLOR_CHAN_);
+	for (j=0; j<_NUM_COLOR_CHAN_; j++)
+	  {
+	  printf ("%c",(char) toupper ((int)_NAME_COLOR_CHAN_[j]));
+	  }
 	goto loop;
 	}
       i++;

@@ -25,10 +25,10 @@ class Gegl:Color:Convert:Op from Gegl:Point:Op {
   protected 
   gboolean 
   constructor(self, 
-	      GeglImageBuffer *dest,
-	      GeglImageBuffer *src, 
-	      GeglRect *dest_rect,
-	      GeglRect *src_rect) 
+             GeglImageBuffer *dest,
+             GeglImageBuffer *src, 
+             GeglRect *dest_rect,
+             GeglRect *src_rect) 
   {
     GeglImageBuffer *image_buffers[2];
     GeglRect rects[2]; 
@@ -68,7 +68,7 @@ class Gegl:Color:Convert:Op from Gegl:Point:Op {
   destroy (GtkObject *object)
   {
     GeglColorConvertOp *self = GEGL_COLOR_CONVERT_OP (object); 
-	
+       
     g_free (self->_priv->dest_data);  
     g_free (self->_priv->src_data);  
 

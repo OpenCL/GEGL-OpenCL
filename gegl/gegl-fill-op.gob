@@ -75,39 +75,39 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     switch (color_space)
       {
       case GRAY:
-	switch (data_type)
-	  {
-	  case U8:
-	    point_op_class->scanline_func = gegl_fill_op_GRAY_U8;
-	    break;
-	  case FLOAT:
-	    point_op_class->scanline_func = gegl_fill_op_GRAY_FLOAT; 	
-	    break;
-	  default:
-	    g_warning("FillOp: Color Model data type none or unknown\n");
-	    point_op_class->scanline_func = NULL; 	
-	    return FALSE;
-	  } 
-	break;
+       switch (data_type)
+         {
+         case U8:
+           point_op_class->scanline_func = gegl_fill_op_GRAY_U8;
+           break;
+         case FLOAT:
+           point_op_class->scanline_func = gegl_fill_op_GRAY_FLOAT;        
+           break;
+         default:
+           g_warning("FillOp: Color Model data type none or unknown\n");
+           point_op_class->scanline_func = NULL;        
+           return FALSE;
+         } 
+       break;
       case RGB:
-	switch (data_type)
-	  {
-	  case U8:
-	    point_op_class->scanline_func = gegl_fill_op_RGB_U8;
-	    break;
-	  case FLOAT:
-	    point_op_class->scanline_func = gegl_fill_op_RGB_FLOAT; 	
-	    break;
-	  default:
-	    g_warning("FillOp: Color Model data type none or unknown\n");
-	    point_op_class->scanline_func = NULL; 	
-	    return FALSE;
-	  } 
-	break;
+       switch (data_type)
+         {
+         case U8:
+           point_op_class->scanline_func = gegl_fill_op_RGB_U8;
+           break;
+         case FLOAT:
+           point_op_class->scanline_func = gegl_fill_op_RGB_FLOAT;        
+           break;
+         default:
+           g_warning("FillOp: Color Model data type none or unknown\n");
+           point_op_class->scanline_func = NULL;        
+           return FALSE;
+         } 
+       break;
       default:
-	g_warning("FillOp: Color Model data type none or unknown\n");
-	point_op_class->scanline_func = NULL; 	
-	return FALSE;
+       g_warning("FillOp: Color Model data type none or unknown\n");
+       point_op_class->scanline_func = NULL;        
+       return FALSE;
       } 
 
     /* Allocate a color and set its channels to the passed one */  
@@ -138,7 +138,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   RGB_FLOAT (GeglPointOp *point_op)
   {
     /*
-      Whats the algorithm for this code?	
+      Whats the algorithm for this code?       
       DEST = CONST
 
     */ 
@@ -224,7 +224,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   GRAY_FLOAT (GeglPointOp *point_op)
   {
     /*
-      Whats the algorithm for this code?	
+      Whats the algorithm for this code?       
       DEST = CONST
 
     */ 

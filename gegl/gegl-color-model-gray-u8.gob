@@ -12,7 +12,7 @@
 class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
 
   public
-  GeglColorModelGrayU8 *	
+  GeglColorModelGrayU8 *       
   new(gboolean has_alpha, 
       gboolean is_premult)
   {
@@ -143,7 +143,7 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
     gfloat m02 = 0.019334;
     gfloat m12 = 0.119193;
     gfloat m22 = 0.950227;
-				  
+                              
     guint8 *src_g; 
     guint8 *src_a = NULL;
     gfloat G;
@@ -160,18 +160,18 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
 
     if (has_alpha)
       {
-	src_a = (guint8*)src_data[1];
-	dest_a = dest_data[3];
+       src_a = (guint8*)src_data[1];
+       dest_a = dest_data[3];
       }
 
     while (width--)
       {
-	G = *src_g++ * tmp;
-	*dest_x++ = (m00 + m10 + m20) * G;
-	*dest_y++ = (m01 + m11 + m21) * G;
-	*dest_z++ = (m02 + m12 + m22) * G;
-	if (has_alpha)
-	  *dest_a++ = *src_a++ * tmp;
+       G = *src_g++ * tmp;
+       *dest_x++ = (m00 + m10 + m20) * G;
+       *dest_y++ = (m01 + m11 + m21) * G;
+       *dest_z++ = (m02 + m12 + m22) * G;
+       if (has_alpha)
+         *dest_a++ = *src_a++ * tmp;
       }
   }
 
@@ -200,7 +200,7 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
     gfloat m02 = 0.055648;
     gfloat m12 = -0.204043;
     gfloat m22 = 1.057311;
-				    
+                                
     guint8 *dest_g; 
     guint8 *dest_a = NULL;
     gfloat *src_x, *src_y, *src_z; 
@@ -215,17 +215,17 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
 
     if (has_alpha)
       {
-	dest_a = (guint8*)dest_data[1];
-	src_a = src_data[3];
+       dest_a = (guint8*)dest_data[1];
+       src_a = src_data[3];
       }
 
     while (width--)
       {
-	*dest_g    = CLAMP(ROUND((m00 * *src_x + m10 * *src_y + m20 * *src_z) * 255 * 0.3),0,255);
-	*dest_g   += CLAMP(ROUND((m01 * *src_x + m11 * *src_y + m21 * *src_z) * 255 * 0.6),0,255);
-	*dest_g++ += CLAMP(ROUND((m02 * *src_x++ + m12 * *src_y++ + m22 * *src_z++) * 255 * 0.1),0,255);
-	if (has_alpha)
-	  *dest_a++  = CLAMP(ROUND(*src_a++ * 255),0,255);
+       *dest_g    = CLAMP(ROUND((m00 * *src_x + m10 * *src_y + m20 * *src_z) * 255 * 0.3),0,255);
+       *dest_g   += CLAMP(ROUND((m01 * *src_x + m11 * *src_y + m21 * *src_z) * 255 * 0.6),0,255);
+       *dest_g++ += CLAMP(ROUND((m02 * *src_x++ + m12 * *src_y++ + m22 * *src_z++) * 255 * 0.1),0,255);
+       if (has_alpha)
+         *dest_a++  = CLAMP(ROUND(*src_a++ * 255),0,255);
       }
   }
 
@@ -239,11 +239,11 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
   {
     /* convert from u8 gray to float gray */
 
-    guint8	*src_g;
+    guint8       *src_g;
     guint8      *src_a = NULL;
-    gfloat	*dest_g; 
+    gfloat       *dest_g; 
     gfloat      *dest_a = NULL;
-    gboolean	has_alpha = gegl_color_model_has_alpha(cm);
+    gboolean       has_alpha = gegl_color_model_has_alpha(cm);
     
     src_g = (guint8*) src_data[0];
     if (has_alpha)
@@ -255,9 +255,9 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
 
     while(width--)
       {
-	*dest_g++ = *src_g++ / 255.0;
-	if (has_alpha)
-	  *dest_a++ = *src_a++ / 255.0;
+       *dest_g++ = *src_g++ / 255.0;
+       if (has_alpha)
+         *dest_a++ = *src_a++ / 255.0;
       } 
   }
 
@@ -288,11 +288,11 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
 
     while (width--)
       {
-	*dest_r++ = *src_g;
-	*dest_g++ = *src_g;
-	*dest_b++ = *src_g++;
-	if (has_alpha)
-	  *dest_a++ = *src_a++;
+       *dest_r++ = *src_g;
+       *dest_g++ = *src_g;
+       *dest_b++ = *src_g++;
+       if (has_alpha)
+         *dest_a++ = *src_a++;
       } 
    }
 }

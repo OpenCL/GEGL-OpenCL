@@ -19,11 +19,11 @@ class Gegl:Image:Iterator from Gegl:Object {
   private GeglImageBuffer *image_buffer;   /* The image we iterate over */
   private GeglRect request_rect;           /* The requested data rect*/
   private GeglRect current_rect;           /* The actual current data rect */ 
-  private gint scanline;      	           /* in [0, current_rect.h-1] */ 
+  private gint scanline;                        /* in [0, current_rect.h-1] */ 
   private guchar **scanline_data;          /* data pointers to current scanline */
 
   public
-  GeglImageIterator *	
+  GeglImageIterator *       
   new(GeglImageBuffer *image_buffer)
   {
     GeglImageIterator * self = GEGL_IMAGE_ITERATOR(GET_NEW);
@@ -45,7 +45,7 @@ class Gegl:Image:Iterator from Gegl:Object {
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
-	
+       
     /* Chain up */
     if (!gegl_object_constructor (GEGL_OBJECT(self)))
       return FALSE;
@@ -91,7 +91,7 @@ class Gegl:Image:Iterator from Gegl:Object {
   {
     gegl_rect_copy (&(self->_priv->request_rect), 
                     request_rect);
-		
+              
   /* 
      Heres where we set the current rect based on the 
      request rect. The data storage right now is simple 
