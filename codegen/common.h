@@ -71,5 +71,7 @@ typedef struct
 
 elem_t  add_sym (char *s);
 int 	get_keyword (char *s); 
+int	yylex (); 
+
 #endif
 

@@ -1,0 +1,46 @@
+gint dest_has_alpha; 
+        gint src1_has_alpha; 
+        gint src2_has_alpha;
+Chan dest;
+        Chan src1;
+        Chan src2;
+
+        dest = MIN(src1, src2);
+        if (dest_has_alpha)
+          {
+            if (src1_has_alpha && src2_has_alpha)
+              dest_a = MIN(src1_a, src2_a);
+            else if (src1_has_alpha)
+              dest_a = src1;
+            else if (src2_has_alpha)
+              dest_a = src2; 
+          }
+
+
+ Chan dest;
+        Chan src;
+
+        if (src_a == ZERO_CHAN || src_a == WP)
+          {
+            dest = src;
+          }
+        else
+          {
+            dest = src / src_a;
+          }
+        dest_a = src_a;
+
+Chan dest;
+        Chan src;
+
+        if (src_a == ZERO_CHAN || src_a == WP)
+          {
+            dest = src;
+          }
+        else
+          {
+            dest = src / src_a;
+          }
+        dest_a = src_a;
+
+

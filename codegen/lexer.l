@@ -10,12 +10,18 @@ void comment ();
 
 
 white   	[ \t]+
+indent		^[ ]+ 
 digit   	[0-9]
 integer 	{digit}+
-float   	{digit}*\.{integer}?
+float   	{digit}*\.{integer}
 name    	[a-zA-Z][A-Z_a-z0-9]*
 
 %%
+
+{indent}	{
+  		strcpy(yylval.elem.string, yytext);
+		return INDENT;
+		}
 
 {white} 	; /* ignore white space */
 
@@ -87,7 +93,10 @@ name    	[a-zA-Z][A-Z_a-z0-9]*
 "<="		return(SMALLER_EQ);
 ">="		return(GREATER_EQ);
 "!"		return(NOT);
-
+"/*"		{ comment (); } 
+"#"		return(POUND);
+"++"		return(ADD);
+"--"		return(SUBTRACT);
 
 {name}  	{
 		int keyword = get_keyword (yytext);
@@ -106,7 +115,6 @@ name    	[a-zA-Z][A-Z_a-z0-9]*
 
 "$"     	{ return 0; }
 
-"\n"		return(END);
 
 .       	return yytext[0];
 

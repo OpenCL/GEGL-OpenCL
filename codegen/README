@@ -1,7 +1,14 @@
 README
 ======
 
-This is the initial effort to create a parser that will parse generic code and from that generic data type specific code.
+This is a program that parses a file with generic code (not data type specific) and creates a file with data type specific code. 
+
+To run the program type:
+codegen [data type] < input file > output file
+
+	[data type] 	The current options are FLOAT, UINT8, and  UINT16.
+	input file  	The are various files in the dir test_files 
+
 
 Caroline Dahllof <caro@rhythm.com>
 

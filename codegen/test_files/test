@@ -1,0 +1,56 @@
+ /* fldskjflksjd 
+sdfjlskfjlsdkfjdslkjfsldkfjdlskf */
+Chan
+a
+;
+
+   Chan s1, s2, d; /*ljfldkjfdl*/ 
+  d = s1 * s2;
+ Chan s, d; 
+d = CHAN_CLAMP(5 * s);
+Chan d, s1, s2, s3; 
+d = (s1 + s2 + s3)/3;
+Chan d, s1, s2, s;
+d = s * s1 + (WP-s) * s2;
+Chan d, s1, s2, s3;
+d = CHAN_CLAMP(s1 * s2 + s3);
+Chan d, s1, s2, s3; 
+d = .333 * (s1 + s2 + s3); 
+Chan dest;
+Chan src1;
+Chan src2;
+dest = WP - ((WP - src1) * (WP - src2));
+dest = MAX(src1, src2);
+dest = MIN(src1, src2);
+dest = MAX(src1, src2);
+dest = src1 * src2;
+dest = CHAN_CLAMP(src1 - src2);
+dest = ABS(src1 - src2);
+dest = MIN(src1, src2);
+dest = CHAN_CLAMP(src1 + src2);
+dest_a = CHAN_CLAMP(src1_a + src2_a);
+dest_a = dest_a * dest; 
+Chan c;
+FloatChan f;
+c = c * c;
+f = f * f;
+f = c * f;
+c = c / c;
+f = f / f;
+f = f / c;
+f = c / f;
+f = 5.0 * c;
+c = 5 * c;
+f = 5.0 * f;
+f = 5.0 * f;
+f = c / 5.0;
+c = c / 5.0; 
+c = c / 5;
+c = c + c;
+f = f + f;
+f = c + f;
+c = c;
+c = f;
+
+
+

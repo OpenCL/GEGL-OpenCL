@@ -15,8 +15,8 @@ codegen_SOURCES = 	\
 
 codegen_LDADD = \
 	-lm \
-	@LEXLIB@
-
+	@LEXLIB@ \
+	-lfl
 
 BUILT_SOURCES = lexer.c parser.c parser.h
 

@@ -1,3 +1,11 @@
+Wed Feb 23 17:45:55 PST 2000 caro@rhythm.com
+	
+	* Rm-ed compile errors
+	
+	* Added more parse functionality
+
+	* included a dir with test files
+
 Wed Feb 23 12:13:42 EST 2000 calvinw@mindspring.com
 
 	* Cleaned up the initial codegen import.  

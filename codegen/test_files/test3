@@ -1,0 +1,223 @@
+
+{
+  Chan dest, src;
+  gint comp_mode;
+  gint A,B;
+
+  switch (comp_mode)
+  {
+    case REPLACE:
+      dest = src;
+    case OVER:
+      dest = src;
+    case IN:
+      dest = src;
+    case OUT:
+      dest = 0;
+    case ATOP:
+      dest = src;
+    case XOR:
+      dest = 0;
+    case PLUS:
+      dest = src + dest;
+  }
+}
+
+
+{
+
+  switch (comp_mode)
+  {
+    case REPLACE:
+      dest_a = src_a;
+      dest = src;
+    case OVER:
+      dest_a = src_a + dest_a * (1-src_a);  
+      dest = src + dest * (1-src_a);
+    case IN:
+      dest_a = src_a * dest_a;
+      dest = src * dest_a;
+    case OUT:
+      dest_a = src_a * (1-dest_a);
+      dest = src * (1-dest_a);
+    case ATOP:
+      dest_a = src_a * dest_a + dest_a * (1-src_a);
+      dest = src * dest_a + dest * (1-src_a);
+    case XOR:
+      dest_a = src_a * (1-dest_a) + dest_a * (1-src_a);
+      dest = src * (1-dest_a) + dest * (1-src_a);
+    case PLUS:
+      dest_a = src_a + dest_a; 
+      dest = src + dest;
+  }
+}
+
+{
+
+  switch (comp_mode)
+  {
+    case REPLACE:
+      dest_a = 1; 
+      dest = src;
+    case OVER:
+      dest_a = 1;
+      dest = src;
+    case IN:
+      dest = src * dest_a;
+    case OUT:
+      dest_a = (1-dest_a);
+      dest = src * (1-dest_a);
+    case ATOP:
+      dest = src * dest_a;
+    case XOR:
+      dest_a = (1-dest_a);
+      dest = src * (1-dest_a) + dest;
+    case PLUS:
+      dest_a = 1 + dest_a;
+      dest = src + dest;
+  }
+}
+
+{
+
+  switch (comp_mode)
+  {
+    case REPLACE:
+      dest = src;
+    case OVER:
+      dest = src + dest * (1-src_a);
+    case IN:
+      dest = src;
+    case OUT:
+      dest = 0;
+    case ATOP:
+      dest = src + dest * (1-src_a);
+    case XOR:
+      dest = dest * (1-src_a);
+    case PLUS:
+      dest = src + dest;
+  }
+}
+
+{
+
+  switch (comp_mode)
+  {
+    case REPLACE:
+      dest_a = src_a;
+      dest = src;
+    case OVER:
+      A = src_a;
+      B =  dest_a * (1-src_a);
+      dest_a = A + B;
+      if (dest_a)
+      	dest = (src * A + dest * B) / dest_a;
+      else
+	dest = 0;	
+    case IN:
+      dest_a = src_a * dest_a;
+      if (dest_a)
+	dest = src;
+      else
+	dest = 0;					 		   	
+    case OUT:
+      dest_a = src_a * (1-dest_a);
+      if (dest_a)
+	dest = src;
+      else
+	dest = 0;
+    case ATOP:
+      A = src_a * dest_a;
+      B = dest_a * (1-src_a); 
+      dest_a = A + B;
+      if (dest_a)
+      	dest = src * A + dest * B;
+      else
+	dest = 0;
+    case XOR:
+      A = src_a * (1-dest_a);
+      B = dest_a * (1-src_a); 
+      dest_a = A + B;
+      if(dest_a)
+      	dest = (src * A + dest * B) / dest_a;
+      else
+	dest = 0;
+    case PLUS:
+      A = src_a;
+      B = dest_a; 
+      dest_a = A + B;
+      if (dest_a)
+      	dest = (src * A + dest * B) / dest_a;
+	else
+	dest = 0;
+  }
+}
+
+{
+
+  switch (comp_mode)
+  {
+    case REPLACE:
+      dest_a = 1;
+      dest = src;
+    case OVER:
+      dest_a = src_a;
+      if (dest_a)
+        dest = src;
+      else
+        dest = 0;
+    case IN:
+      if (dest_a)
+        dest = src;
+      else
+        dest = 0;
+    case OUT:
+      dest_a = (1-dest_a);
+      if (dest_a)
+        dest = src;
+      else
+        dest = 0;
+    case ATOP:
+      if (dest_a)
+        dest = src;
+      else
+        dest = 0;
+    case XOR:
+      dest_a = 1-dest_a;
+      if(dest_a)
+        dest = src * A;
+      else
+        dest = 0;
+    case PLUS:
+      if (dest_a)
+        dest = (src + dest * B) / dest_a;
+        else
+        dest = 0;
+  }
+}
+
+{
+
+  switch (comp_mode)
+  {
+    case REPLACE:
+      dest = src;
+    case OVER:
+      A = src_a;
+      B =  (1-src_a);
+      dest = src * A + dest * B;
+    case IN:
+      dest = src;
+    case OUT:
+      dest = src;
+    case ATOP:
+      A = src_a;
+      B = 1-src_a;
+      dest = (src * A + dest * B);
+    case XOR:
+      dest = dest * (1-src_a);
+    case PLUS:
+      dest = (src * src_a + dest);
+  }
+}
+
