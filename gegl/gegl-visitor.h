@@ -27,11 +27,6 @@ typedef struct _GeglFilter GeglFilter;
 typedef struct _GeglGraph GeglGraph;
 #endif
 
-#ifndef __TYPEDEF_GEGL_CONNECTION__
-#define __TYPEDEF_GEGL_CONNECTION__
-typedef struct _GeglConnection GeglConnection;
-#endif
-
 #define GEGL_TYPE_VISITOR               (gegl_visitor_get_type ())
 #define GEGL_VISITOR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_VISITOR, GeglVisitor))
 #define GEGL_VISITOR_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_VISITOR, GeglVisitorClass))
@@ -60,6 +55,7 @@ struct _GeglVisitor
 
        GList * visits_list;
        GHashTable *nodes_hash;
+       GeglGraph * graph;
 };
 
 typedef struct _GeglVisitorClass GeglVisitorClass;
@@ -75,45 +71,42 @@ struct _GeglVisitorClass
                                     GeglFilter * filter);
    void (* visit_graph)            (GeglVisitor *self,
                                     GeglGraph * graph);
-   GeglConnection* (*get_inputs)   (GeglVisitor *self,
-                                    GeglNode * node);
 };
 
-GType         gegl_visitor_get_type          (void); 
+GType           gegl_visitor_get_type           (void); 
 
-void          gegl_visitor_visit_node        (GeglVisitor *self,
-                                              GeglNode * node);
-void          gegl_visitor_visit_filter      (GeglVisitor *self,
-                                              GeglFilter * filter);
-void          gegl_visitor_visit_op          (GeglVisitor *self,
-                                              GeglOp * op);
-void          gegl_visitor_visit_graph       (GeglVisitor *self,
-                                              GeglGraph * graph);
-GList *       gegl_visitor_get_visits_list   (GeglVisitor *self);
+void            gegl_visitor_visit_node         (GeglVisitor *self,
+                                                 GeglNode * node);
+void            gegl_visitor_visit_filter       (GeglVisitor *self,
+                                                 GeglFilter * filter);
+void            gegl_visitor_visit_op           (GeglVisitor *self,
+                                                 GeglOp * op);
+void            gegl_visitor_visit_graph        (GeglVisitor *self,
+                                                 GeglGraph * graph);
 
-GeglConnection* gegl_visitor_get_inputs      (GeglVisitor *self,
-                                              GeglNode *node);
+GList *         gegl_visitor_get_visits_list    (GeglVisitor *self);
 
-void          gegl_visitor_node_insert       (GeglVisitor *self, 
-                                              GeglNode *node);
-GeglNodeInfo* gegl_visitor_node_lookup       (GeglVisitor *self, 
-                                              GeglNode *node);
-
-gboolean      gegl_visitor_get_visited       (GeglVisitor *self, 
-                                              GeglNode *node);
-void          gegl_visitor_set_visited       (GeglVisitor *self,
-                                              GeglNode *node,
-                                              gboolean visited);
-gboolean      gegl_visitor_get_discovered    (GeglVisitor *self,
-                                              GeglNode *node);
-void          gegl_visitor_set_discovered    (GeglVisitor *self,
-                                              GeglNode *node,
-                                              gboolean discovered);
-gint          gegl_visitor_get_shared_count  (GeglVisitor *self,
-                                              GeglNode *node);
-void          gegl_visitor_set_shared_count  (GeglVisitor *self, 
-                                              GeglNode *node, 
-                                              gint shared_count);
+void            gegl_visitor_node_insert        (GeglVisitor *self, 
+                                                 GeglNode *node);
+GeglNodeInfo*   gegl_visitor_node_lookup        (GeglVisitor *self, 
+                                                 GeglNode *node);
+gboolean        gegl_visitor_get_visited        (GeglVisitor *self, 
+                                                 GeglNode *node);
+void            gegl_visitor_set_visited        (GeglVisitor *self,
+                                                 GeglNode *node,
+                                                 gboolean visited);
+gboolean        gegl_visitor_get_discovered     (GeglVisitor *self,
+                                                 GeglNode *node);
+void            gegl_visitor_set_discovered     (GeglVisitor *self,
+                                                 GeglNode *node,
+                                                 gboolean discovered);
+gint            gegl_visitor_get_shared_count   (GeglVisitor *self,
+                                                 GeglNode *node);
+void            gegl_visitor_set_shared_count   (GeglVisitor *self, 
+                                                 GeglNode *node, 
+                                                 gint shared_count);
+GList *        gegl_visitor_get_input_attributes(GeglVisitor *self,
+                                                 GeglNode *node);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

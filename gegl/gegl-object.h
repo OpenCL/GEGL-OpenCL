@@ -22,30 +22,30 @@ typedef struct _GeglObject GeglObject;
 #endif
 struct _GeglObject 
 {
-       GObject gobject;
+    GObject gobject;
 
-       /*< private >*/
-       gchar * name;
-       gboolean constructed;  
-       gint testflag; 
+    /*< private >*/
+    gchar * name;
+    gboolean constructed;  
+    gint testflag; 
 };
 
 typedef struct _GeglObjectClass GeglObjectClass;
 struct _GeglObjectClass 
 {
-       GObjectClass gobject_class;
+    GObjectClass gobject_class;
 };
 
-GType         gegl_object_get_type          (void); 
-void          gegl_object_add_interface     (GeglObject * self, 
-                                             const gchar * interface_name, 
-                                             gpointer interface);
-gpointer      gegl_object_query_interface   (GeglObject * self, 
-                                             const gchar * interface_name);
-void          gegl_object_set_name          (GeglObject * self, 
-                                             const gchar * name);
+GType           gegl_object_get_type            (void); 
+void            gegl_object_add_interface       (GeglObject * self, 
+                                                 const gchar * interface_name, 
+                                                 gpointer interface);
+gpointer        gegl_object_query_interface     (GeglObject * self, 
+                                                 const gchar * interface_name);
+void            gegl_object_set_name            (GeglObject * self, 
+                                                 const gchar * name);
 G_CONST_RETURN gchar* 
-              gegl_object_get_name          (GeglObject * self);
+                gegl_object_get_name            (GeglObject * self);
 
 #ifdef __cplusplus
 }

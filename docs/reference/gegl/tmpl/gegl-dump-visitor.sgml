@@ -4,7 +4,6 @@ GeglDumpVisitor
 <!-- ##### SECTION Short_Description ##### -->
 Visitor that prints out graph infomation.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 

@@ -1,0 +1,93 @@
+<!-- ##### SECTION Title ##### -->
+GeglEvalMgr
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_eval_mgr_get_root ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_eval_mgr_set_root ##### -->
+<para>
+
+</para>
+
+@self: 
+@root: 
+
+
+<!-- ##### FUNCTION gegl_eval_mgr_get_roi ##### -->
+<para>
+
+</para>
+
+@self: 
+@roi: 
+
+
+<!-- ##### FUNCTION gegl_eval_mgr_set_roi ##### -->
+<para>
+
+</para>
+
+@self: 
+@roi: 
+
+
+<!-- ##### FUNCTION gegl_eval_mgr_evaluate ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_eval_mgr_get_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_eval_mgr_set_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@image: 
+
+
+<!-- ##### ARG GeglEvalMgr:root ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglEvalMgr:image ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglEvalMgr:roi ##### -->
+<para>
+
+</para>
+

@@ -1,14 +1,56 @@
 #include    "gegl-param-specs.h"
+#include    "gegl-utils.h"
+#include    "gegl-color-model.h"
+#include    "gegl-tile.h"
+
+GType *gegl_param_spec_types = NULL;
 
 /* --- param spec functions --- */
+
 static void
-gegl_param_spec_int_init (GeglParamSpecInt *ispec)
+param_tile_init (GParamSpec *spec)
 {
-  ispec->increment = 1;
+  GeglParamSpecTile *tspec = GEGL_PARAM_SPEC_TILE(spec);
+  gegl_rect_set(&tspec->rect,0,0,0,0);
+  tspec->color_model = NULL;
 }
 
-/* --- type initialization --- */
-GType *gegl_param_spec_types = NULL;
+static void
+param_tile_set_default (GParamSpec *pspec,
+			            GValue     *value)
+{
+  value->data[0].v_pointer = NULL;
+}
+
+static gboolean
+param_tile_validate (GParamSpec *pspec,
+		       GValue     *value)
+{
+  GeglParamSpecTile *tspec = GEGL_PARAM_SPEC_TILE (pspec);
+  GeglTile *tile = value->data[0].v_pointer;
+  guint changed = 0;
+  
+  if (tile && !g_value_type_compatible (G_OBJECT_TYPE (tile), G_PARAM_SPEC_VALUE_TYPE (tspec)))
+    {
+      g_object_unref (tile);
+      value->data[0].v_pointer = NULL;
+      changed++;
+    }
+  
+  return changed;
+}
+
+static gint
+param_tile_values_cmp (GParamSpec   *pspec,
+                         const GValue *value1,
+                         const GValue *value2)
+{
+  guint8 *p1 = value1->data[0].v_pointer;
+  guint8 *p2 = value2->data[0].v_pointer;
+
+  return p1 < p2 ? -1 : p1 > p2;
+}
+
 
 void
 gegl_param_spec_types_init (void)
@@ -20,49 +62,42 @@ gegl_param_spec_types_init (void)
   spec_types = gegl_param_spec_types;
   spec_types_bound = gegl_param_spec_types + n_types;
 
-  { 
-    static const GTypeInfo info = 
-    {
-      sizeof (GParamSpecClass),   /* class_size */
-      NULL,                       /* base_init */
-      NULL,                       /* base_destroy */
-      NULL,                       /* class_init */
-      NULL,                       /* class_destroy */
-      NULL,                       /* class_data */
-      sizeof (GeglParamSpecInt),  /* instance_size */
-      8,                          /* n_preallocs */
-      (GInstanceInitFunc)gegl_param_spec_int_init,   /* instance_init */
-    };
+  {
+    static GParamSpecTypeInfo pspec_info = 
+      {
+        sizeof (GeglParamSpecTile),/* instance_size */
+        16,                        /* n_preallocs */
+        param_tile_init,           /* instance_init */
+        0x0,                       /* value_type */
+        NULL,                      /* finalize */
+        param_tile_set_default,    /* value_set_default */
+        param_tile_validate,       /* value_validate */
+        param_tile_values_cmp,     /* values_cmp */
+      };
 
-    type = g_type_register_static (G_TYPE_PARAM_INT, "GeglParamInt", &info, 0);
+    pspec_info.value_type = GEGL_TYPE_TILE;
+    type = g_param_type_register_static ("GeglParamTile", &pspec_info);
     *spec_types++ = type;
-    g_assert (type == g_type_from_name ("GeglParamInt"));
+    g_assert (type == GEGL_TYPE_PARAM_TILE);
   }
 
   g_assert (spec_types == spec_types_bound);
 }
 
-/* --- GParamSpec initialization --- */
 GParamSpec*
-gegl_param_spec_int (const gchar *name,
-                     const gchar *nick,
-                     const gchar *blurb,
-                     gint         minimum,
-                     gint         maximum,
-                     gint         default_value,
-                     gint         increment,
-                     GParamFlags  flags)
+gegl_param_spec_tile (const gchar *name,
+                      const gchar *nick,
+                      const gchar *blurb,
+                      GeglRect *rect,
+                      GeglColorModel *color_model,
+                      GParamFlags  flags)
 {
-  GeglParamSpecInt *ispec;
+  GeglParamSpecTile *tspec;
 
-  g_return_val_if_fail (default_value >= minimum && default_value <= maximum, NULL);
-
-  ispec = g_param_spec_internal (GEGL_TYPE_PARAM_INT, name, nick, blurb, flags);
+  tspec = g_param_spec_internal (GEGL_TYPE_PARAM_TILE, name, nick, blurb, flags);
   
-  G_PARAM_SPEC_INT(ispec)->minimum = minimum;
-  G_PARAM_SPEC_INT(ispec)->maximum = maximum;
-  G_PARAM_SPEC_INT(ispec)->default_value = minimum;
-  ispec->increment = increment;
+  gegl_rect_copy(&tspec->rect, rect);
+  tspec->color_model = color_model;
   
-  return G_PARAM_SPEC (ispec);
+  return G_PARAM_SPEC (tspec);
 }

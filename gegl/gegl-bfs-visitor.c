@@ -54,7 +54,6 @@ init_traversal (GeglBfsVisitor * self,
                 GeglNode * node) 
 {
   GeglVisitor * visitor;
-  GeglConnection *inputs;
   gint num_inputs;
   gint i;
 
@@ -67,32 +66,29 @@ init_traversal (GeglBfsVisitor * self,
 
   gegl_visitor_node_insert(visitor, node);
 
-  inputs = gegl_visitor_get_inputs(visitor, node);
   num_inputs = gegl_node_get_num_inputs(node);
 
   for(i = 0; i < num_inputs; i++)
     {
-      if(inputs[i].input)
+      gint output = -1;
+      GeglNode *source = gegl_node_get_source(node, &output, i);
+
+      if(source)
         {
           gint shared_count;
 
-          GeglNodeInfo * node_info =
-            gegl_visitor_node_lookup(visitor, 
-                                     inputs[i].input);
-
+          GeglNodeInfo * node_info = 
+            gegl_visitor_node_lookup(visitor, source); 
           if(!node_info)
-           init_traversal(self, inputs[i].input);
+           init_traversal(self, source);
 
-          shared_count = gegl_visitor_get_shared_count(visitor, 
-                                                       inputs[i].input); 
+          shared_count = gegl_visitor_get_shared_count(visitor, source); 
           shared_count++;
           gegl_visitor_set_shared_count(visitor, 
-                                        inputs[i].input, 
+                                        source, 
                                         shared_count);
         }
     }
-
-  g_free(inputs);
 }
 
 /**
@@ -146,44 +142,36 @@ gegl_bfs_visitor_traverse(GeglBfsVisitor *self,
           continue;
         }
 
-      /* Loop through node's inputs and examine them */
+      /* Loop through node's sources and examine them */
       {
         gint i;
         gint num_inputs = gegl_node_get_num_inputs(node);
-        GeglConnection * inputs = gegl_visitor_get_inputs(visitor, node);
 
         for(i = 0; i < num_inputs; i++)
           {
-            if(inputs[i].input) 
+            gint output = -1;
+            GeglNode *source = gegl_node_get_source(node, &output, i);
+            if(source) 
               {
-                shared_count = gegl_visitor_get_shared_count(visitor, 
-                                                             inputs[i].input);
+                shared_count = gegl_visitor_get_shared_count(visitor,source);
                 shared_count--;
-                gegl_visitor_set_shared_count(visitor, 
-                                              inputs[i].input, 
-                                              shared_count);
+                gegl_visitor_set_shared_count(visitor, source, shared_count);
               }
             
-            /* Add any undiscovered input to the queue at end,
+            /* Add any undiscovered source to the queue at end,
                but skip any null nodes */
-            if (inputs[i].input)
+            if (source)
               {
-                gint discovered = gegl_visitor_get_discovered(visitor, 
-                                                              inputs[i].input);
+                gint discovered = gegl_visitor_get_discovered(visitor, source);
                 if(!discovered) 
                   {
-                    queue = g_list_append(queue,
-                                          (gpointer)inputs[i].input);
+                    queue = g_list_append(queue, (gpointer)source);
 
                     /* Mark it as discovered */
-                    gegl_visitor_set_discovered(visitor, 
-                                                inputs[i].input, 
-                                                TRUE);
+                    gegl_visitor_set_discovered(visitor, source, TRUE);
                   }
               }
           }
-
-        g_free(inputs);
       }
 
       /* Visit the node */

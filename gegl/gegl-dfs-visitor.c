@@ -57,7 +57,6 @@ init_traversal (GeglDfsVisitor * self,
                 GeglNode * node)
 {
   GeglVisitor * visitor;
-  GeglConnection *inputs;
   gint num_inputs;
   gint i;
 
@@ -70,22 +69,21 @@ init_traversal (GeglDfsVisitor * self,
    
   gegl_visitor_node_insert(visitor, node);
 
-  inputs = gegl_visitor_get_inputs(visitor, node);
   num_inputs = gegl_node_get_num_inputs(node);
-
   for(i = 0; i < num_inputs; i++)
     {
-      if(inputs[i].input)
+      gint output;
+      GeglNode *source = gegl_node_get_source(node, &output, i);
+
+      if(source)
         {
           GeglNodeInfo * node_info = 
-            gegl_visitor_node_lookup(visitor, inputs[i].input);
+            gegl_visitor_node_lookup(visitor, source);
 
           if(!node_info)
-           init_traversal(self, inputs[i].input);
+           init_traversal(self, source);
         }
     }
-
-  g_free(inputs);
 }
 
 /**
@@ -115,7 +113,6 @@ dfs_visitor_traverse(GeglDfsVisitor * self,
 {
   GeglVisitor *visitor;
   gint i;
-  GeglConnection *inputs;
   gint num_inputs;
 
   g_return_if_fail (self != NULL);
@@ -124,21 +121,20 @@ dfs_visitor_traverse(GeglDfsVisitor * self,
   g_return_if_fail (GEGL_IS_NODE (node));
 
   visitor = GEGL_VISITOR(self);
-  inputs = gegl_visitor_get_inputs(visitor, node);
-  num_inputs = gegl_node_get_num_inputs(node);
 
+  num_inputs = gegl_node_get_num_inputs(node);
   for(i = 0; i < num_inputs; i++)
     {
-      if(inputs[i].input) 
+      gint output;
+      GeglNode *source = gegl_node_get_source(node, &output, i);
+      if(source) 
         {
-         gboolean visited = gegl_visitor_get_visited(visitor, inputs[i].input);
+         gboolean visited = gegl_visitor_get_visited(visitor, source);
 
          if(!visited) 
-          dfs_visitor_traverse(self, inputs[i].input);
+          dfs_visitor_traverse(self, source);
         }
     }
-
-  g_free(inputs);
 
   /* Visit this node last */
   gegl_node_accept(node, visitor);

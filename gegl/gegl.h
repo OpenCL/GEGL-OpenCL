@@ -22,13 +22,13 @@
 #include <gegl-dfs-visitor.h>
 #include <gegl-diff.h>
 #include <gegl-dump-visitor.h>
+#include <gegl-eval-bfs-visitor.h>
+#include <gegl-eval-dfs-visitor.h>
+#include <gegl-eval-mgr.h>
+#include <gegl-eval-visitor.h>
 #include <gegl-fill.h>
 #include <gegl-filter.h>
 #include <gegl-graph.h>
-#include <gegl-graph-bfs-visitor.h>
-#include <gegl-graph-dfs-visitor.h>
-#include <gegl-graph-evaluate-visitor.h>
-#include <gegl-graph-init-visitor.h>
 #include <gegl-graph-setup-visitor.h>
 #include <gegl-image.h>
 #include <gegl-light.h>

@@ -25,19 +25,19 @@ typedef struct _GeglGraphSetupVisitor GeglGraphSetupVisitor;
 #endif
 struct _GeglGraphSetupVisitor 
 {
-       GeglDfsVisitor dfs_visitor;
+    GeglDfsVisitor dfs_visitor;
 
-       GList * graph_inputs;
-       GeglGraph * graph;
+    GList * graph_inputs;
+    GeglGraph * graph;
 };
 
 typedef struct _GeglGraphSetupVisitorClass GeglGraphSetupVisitorClass;
 struct _GeglGraphSetupVisitorClass 
 {
-       GeglDfsVisitorClass dfs_visitor_class;
+    GeglDfsVisitorClass dfs_visitor_class;
 };
 
-GType         gegl_graph_setup_visitor_get_type          (void); 
+GType          gegl_graph_setup_visitor_get_type(void); 
 
 #ifdef __cplusplus
 }

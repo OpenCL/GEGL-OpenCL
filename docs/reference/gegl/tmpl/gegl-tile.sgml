@@ -22,14 +22,6 @@ process, and finish routines.
 
 </para>
 
-<!-- ##### STRUCT GeglOpRequest ##### -->
-<para>
-
-</para>
-
-@tile: 
-@rect: 
-
 <!-- ##### FUNCTION gegl_tile_get_buffer ##### -->
 <para>
 

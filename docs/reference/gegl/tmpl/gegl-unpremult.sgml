@@ -4,18 +4,12 @@ GeglUnpremult
 <!-- ##### SECTION Short_Description ##### -->
 Divide color by alpha for image.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglUnpremult:input ##### -->
 <para>
 
 </para>

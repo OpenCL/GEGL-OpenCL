@@ -4,18 +4,12 @@ GeglPrint
 <!-- ##### SECTION Short_Description ##### -->
 Print pixels of an image.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglPrint:input ##### -->
 <para>
 
 </para>

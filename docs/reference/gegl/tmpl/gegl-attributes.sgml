@@ -4,7 +4,6 @@ gegl-attributes
 <!-- ##### SECTION Short_Description ##### -->
 Attributes for an op.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
@@ -14,16 +13,6 @@ Attributes for an op.
 <para>
 
 </para>
-
-<!-- ##### STRUCT GeglAttributes ##### -->
-<para>
-
-</para>
-
-@value: 
-@param_spec: 
-@rect: 
-@color_model: 
 
 <!-- ##### FUNCTION gegl_attributes_new ##### -->
 <para>

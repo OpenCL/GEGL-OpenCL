@@ -1,6 +1,7 @@
 <!doctype book PUBLIC "-//Davenport//DTD DocBook V3.0//EN" [
 <!entity hash "#">
 <!ENTITY GeglAdd SYSTEM "sgml/gegl-add.sgml">
+<!ENTITY GeglBfsVisitor SYSTEM "sgml/gegl-bfs-visitor.sgml">
 <!ENTITY GeglBuffer SYSTEM "sgml/gegl-buffer.sgml">
 <!ENTITY GeglColorModelGrayFloat SYSTEM "sgml/gegl-color-model-gray-float.sgml">
 <!ENTITY GeglColorModelGrayU16 SYSTEM "sgml/gegl-color-model-gray-u16.sgml">
@@ -17,11 +18,16 @@
 <!ENTITY GeglConstMult SYSTEM "sgml/gegl-const-mult.sgml">
 <!ENTITY GeglCopy SYSTEM "sgml/gegl-copy.sgml">
 <!ENTITY GeglDark SYSTEM "sgml/gegl-dark.sgml">
+<!ENTITY GeglDfsVisitor SYSTEM "sgml/gegl-dfs-visitor.sgml">
 <!ENTITY GeglDiff SYSTEM "sgml/gegl-diff.sgml">
+<!ENTITY GeglDumpVisitor SYSTEM "sgml/gegl-dump-visitor.sgml">
+<!ENTITY GeglEvalBfsVisitor SYSTEM "sgml/gegl-eval-bfs-visitor.sgml">
+<!ENTITY GeglEvalDfsVisitor SYSTEM "sgml/gegl-eval-dfs-visitor.sgml">
+<!ENTITY GeglEvalMgr SYSTEM "sgml/gegl-eval-mgr.sgml">
+<!ENTITY GeglEvalVisitor SYSTEM "sgml/gegl-eval-visitor.sgml">
 <!ENTITY GeglFill SYSTEM "sgml/gegl-fill.sgml">
-<!ENTITY GeglGraphBfsVisitor SYSTEM "sgml/gegl-graph-bfs-visitor.sgml">
-<!ENTITY GeglGraphDfsVisitor SYSTEM "sgml/gegl-graph-dfs-visitor.sgml">
-<!ENTITY GeglGraphEvaluateVisitor SYSTEM "sgml/gegl-graph-evaluate-visitor.sgml">
+<!ENTITY GeglFilter SYSTEM "sgml/gegl-filter.sgml">
+<!ENTITY GeglGraphSetupVisitor SYSTEM "sgml/gegl-graph-setup-visitor.sgml">
 <!ENTITY GeglGraph SYSTEM "sgml/gegl-graph.sgml">
 <!ENTITY GeglImage SYSTEM "sgml/gegl-image.sgml">
 <!ENTITY GeglLight SYSTEM "sgml/gegl-light.sgml">
@@ -45,12 +51,6 @@
 <!ENTITY GeglTile SYSTEM "sgml/gegl-tile.sgml">
 <!ENTITY GeglUnpremult SYSTEM "sgml/gegl-unpremult.sgml">
 <!ENTITY GeglVisitor SYSTEM "sgml/gegl-visitor.sgml">
-<!ENTITY GeglDumpVisitor SYSTEM "sgml/gegl-dump-visitor.sgml">
-<!ENTITY GeglDfsVisitor SYSTEM "sgml/gegl-dfs-visitor.sgml">
-<!ENTITY GeglGraphInitVisitor SYSTEM "sgml/gegl-graph-init-visitor.sgml">
-<!ENTITY GeglGraphSetupVisitor SYSTEM "sgml/gegl-graph-setup-visitor.sgml">
-<!ENTITY GeglFilter SYSTEM "sgml/gegl-filter.sgml">
-<!ENTITY GeglBfsVisitor SYSTEM "sgml/gegl-bfs-visitor.sgml">
 <!ENTITY gegl-gegl-attributes SYSTEM "sgml/gegl-attributes.sgml">
 <!ENTITY gegl-gegl-param-specs SYSTEM "sgml/gegl-param-specs.sgml">
 <!ENTITY gegl-gegl-types SYSTEM "sgml/gegl-types.sgml">
@@ -83,6 +83,7 @@
     &GeglImage;
     &GeglOp;
     &GeglPointOp;
+    &GeglScanlineProcessor;
     &GeglStatOp;
   </chapter>
 
@@ -103,10 +104,17 @@
     &GeglPremult;
     &GeglPrint;
     &GeglSampledImage;
-    &GeglScanlineProcessor;
     &GeglScreen;
     &GeglSubtract;
     &GeglUnpremult;
+  </chapter>
+
+  <chapter id="evaluation">
+    <title>Evaluation</title>
+    &GeglEvalMgr;
+    &GeglEvalBfsVisitor;
+    &GeglEvalDfsVisitor;
+    &GeglEvalVisitor;
   </chapter>
 
   <chapter id="visitors">
@@ -114,10 +122,6 @@
     &GeglBfsVisitor;
     &GeglDfsVisitor;
     &GeglDumpVisitor;
-    &GeglGraphBfsVisitor;
-    &GeglGraphDfsVisitor;
-    &GeglGraphEvaluateVisitor;
-    &GeglGraphInitVisitor;
     &GeglGraphSetupVisitor;
     &GeglVisitor;
   </chapter>

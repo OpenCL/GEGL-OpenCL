@@ -1,3 +1,6 @@
+
+/* This file is not up to date, needs lots of work. */
+
 #include <gtk/gtk.h>
 #include <gdk/gdkprivate.h>
 #include <stdio.h>

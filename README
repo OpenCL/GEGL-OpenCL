@@ -2,45 +2,41 @@ Webpages for Gegl (also see the docs dir):
 
 http://www.gegl.org
 
-Building Gegl
+Building:
+
+Gegl
 -------------
 
 When you type make in the top dir, the following should occur:
 
 1)In the tools/testsuite subdir, a xUnit testing tool gets built. 
 
-2)In the codegen subdir, the code generating tool codegen is built. This will
-require flex/bison (or lex/yacc) installed somewhere.
+2)In the gegl subdir, regular C and header files get compiled into the gegl lib.
 
-3)In the gil subdir, the (experimental) code generating tool gil is built. This
-will require flex/bison (or lex/yacc) installed somewhere. NOTE: gil is
-currently not used, but will eventually replace codegen above. 
+3)In the tests subdir, gegl unit tests get built and run, using the testsuite
+tool built in step 1) above.
 
-4)In the gegl subdir, codegen runs on each .gil file and generates a
-corresponding .c file.
+gil (generic image language)
+-------------
 
-5)In the gegl subdir, regular C and header files get compiled to the gegl lib.
+This is the experimental new code generation tool.
 
-6)In the tests subdir, some tests get built and run, using the testsuite tool
-built in step 5 above.
+When you type make in the gil dir, the following should occur:
 
-codegen 
---------
+1)In the gil/gil subdir, the (experimental) libgil is built.  This requires
+flex/bison (or lex/yacc) installed somewhere. libgil is not used yet, but there
+are some unit tests in gil/tests that show how to build simple expression
+abstract syntax trees using it.
 
-Currently codegen is set to generate code for the floating point case by
-default. You can change this by altering the line 
+2)In gil/tests the unit tests for libgil are built and run. These use the
+testsuite library built above for Gegl.
 
-%.gob : %.gil 
-	../codegen/codegen ...blah blah...
+codegen
+-------------
 
-in gegl/Makefile.am to run the case you want. Soon codegen will be replaced by
-a new code generator (called gil, in the gegl/gil directory) which generates
-abstract syntax trees for the gil code, so will do more powerful code
-generation. 
-
-Eventually there will be a way to generate code for whichever types you are
-interested in, and those datatypes/colormodels will get compiled in. Currently
-codegen just generates one specified data type (8bit, 16bit(integer) or float)
-for each .gil file.  
+If you want use this old tool to generate code, see the file codegen/README,
+there is an example of its usage there. It is disabled right now and it is
+likely that early versions of gegl will not use any code generation. It will
+be replaced by gil in the future.
 
 calvinw@mindspring.com

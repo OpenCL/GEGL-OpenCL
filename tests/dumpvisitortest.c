@@ -40,7 +40,6 @@ test_dump_visitor_g_object_new(Test *test)
 static void
 test_dump_visitor_traverse(Test *test)
 {
-  g_print("test_dump_visitor_traverse\n");
   {
     GeglDumpVisitor *dump_visitor = g_object_new(GEGL_TYPE_DUMP_VISITOR, NULL);  
     gegl_dump_visitor_traverse(dump_visitor, E); 
@@ -69,7 +68,6 @@ test_dump_visitor_traverse(Test *test)
 static void
 test_dump_visitor_traverse_diamond(Test *test)
 {
-  g_print("test_dump_visitor_traverse_diamond\n");
   {
     GeglDumpVisitor *dump_visitor = g_object_new(GEGL_TYPE_DUMP_VISITOR, NULL);  
     gegl_dump_visitor_traverse (dump_visitor, O); 
@@ -97,7 +95,6 @@ test_dump_visitor_traverse_diamond(Test *test)
 static void
 test_dump_visitor_traverse_graph(Test *test)
 {
-  g_print("test_dump_visitor_traverse_graph\n");
   {
     GeglDumpVisitor *dump_visitor = g_object_new(GEGL_TYPE_DUMP_VISITOR, NULL);  
     gegl_dump_visitor_traverse(dump_visitor, M); 
@@ -155,13 +152,13 @@ dump_visitor_setup(Test *test)
                       NULL);  
 
 
-    gegl_node_set_nth_input(B, A, 0);
-    gegl_node_set_nth_input(C, A, 0);
-    gegl_node_set_nth_input(D, B, 0);
-    gegl_node_set_nth_input(D, C, 1);
-    gegl_node_set_nth_input(E, D, 0);
-    gegl_node_set_nth_input(E, F, 1);
-    gegl_node_set_nth_input(F, G, 0);
+    gegl_node_set_source_node(B, A, 0);
+    gegl_node_set_source_node(C, A, 0);
+    gegl_node_set_source_node(D, B, 0);
+    gegl_node_set_source_node(D, C, 1);
+    gegl_node_set_source_node(E, D, 0);
+    gegl_node_set_source_node(E, F, 1);
+    gegl_node_set_source_node(F, G, 0);
 
   }
 
@@ -210,16 +207,16 @@ dump_visitor_setup(Test *test)
                       "num_outputs", 1, 
                       NULL);  
 
-    gegl_node_set_nth_input(K, I, 0);
-    gegl_node_set_nth_input(K, J, 1);
+    gegl_node_set_source_node(K, I, 0);
+    gegl_node_set_source_node(K, J, 1);
     L = g_object_new (GEGL_TYPE_GRAPH, 
                       "name", "L", 
                       "root", K, 
                       NULL);  
 
-    gegl_node_set_nth_input(L, H, 0);
-    gegl_node_set_nth_input(M, L, 0);
-    gegl_node_set_nth_input(M, N, 1);
+    gegl_node_set_source_node(L, H, 0);
+    gegl_node_set_source_node(M, L, 0);
+    gegl_node_set_source_node(M, N, 1);
   }
 
 /**
@@ -263,12 +260,12 @@ dump_visitor_setup(Test *test)
                       "num_outputs", 1, 
                       NULL);  
 
-    gegl_node_set_nth_input(O, R, 0);
-    gegl_node_set_nth_input(O, P, 1);
+    gegl_node_set_source_node(O, R, 0);
+    gegl_node_set_source_node(O, P, 1);
 
-    gegl_node_set_nth_input(P, Q, 0);
-    gegl_node_set_nth_input(Q, R, 0);
-    gegl_node_set_nth_input(R, S, 0);
+    gegl_node_set_source_node(P, Q, 0);
+    gegl_node_set_source_node(Q, R, 0);
+    gegl_node_set_source_node(R, S, 0);
   }
 }
 

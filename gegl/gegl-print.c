@@ -13,16 +13,12 @@
 enum
 {
   PROP_0, 
-  PROP_INPUT,
   PROP_LAST 
 };
 
 static void class_init (GeglPrintClass * klass);
 static void init (GeglPrint * self, GeglPrintClass * klass);
 static void finalize (GObject * gobject);
-
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
 static void prepare (GeglFilter * filter, GList * attributes, GList *input_attributes);
 static void finish (GeglFilter * filter, GList * attributes, GList *input_attributes);
@@ -79,17 +75,6 @@ class_init (GeglPrintClass * klass)
   filter_class->prepare = prepare;
   filter_class->finish = finish;
 
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-   
-  g_object_class_install_property (gobject_class, PROP_INPUT,
-                                   g_param_spec_object ("input",
-                                                        "Input",
-                                                        "Input of GeglConstMult",
-                                                         GEGL_TYPE_OP,
-                                                         G_PARAM_CONSTRUCT |
-                                                         G_PARAM_READWRITE));
-
   return;
 }
 
@@ -97,62 +82,17 @@ static void
 init (GeglPrint * self, 
       GeglPrintClass * klass)
 {
-  GeglNode * node = GEGL_NODE(self); 
-  GeglOp *op = GEGL_OP(self);
-  GeglAttributes * attributes;
-
-  gegl_node_set_num_outputs(node, 1);
-  gegl_op_allocate_attributes(op);
-  attributes = gegl_op_get_nth_attributes(op,0);
-  g_value_init(attributes->value, GEGL_TYPE_OBJECT);
-
   self->buffer = NULL;
   self->use_log = TRUE;
-  gegl_node_set_num_inputs(node, 1);
 
-  return;
+  g_object_set(self, "num_outputs", 1, NULL);
+  g_object_set(self, "num_inputs", 1, NULL);
 }
 
 static void
 finalize(GObject *gobject)
 {
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
-}
-
-static void
-get_property (GObject      *gobject,
-              guint         prop_id,
-              GValue       *value,
-              GParamSpec   *pspec)
-{
-  GeglNode *node = GEGL_NODE (gobject);
-
-  switch (prop_id)
-  {
-    case PROP_INPUT:
-      g_value_set_object(value, (GObject*)gegl_node_get_nth_input(node, 0));  
-      break;
-    default:
-      break;
-  }
-}
-
-static void
-set_property (GObject      *gobject,
-              guint         prop_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
-  GeglNode *node = GEGL_NODE (gobject);
-
-  switch (prop_id)
-  {
-    case PROP_INPUT:
-      gegl_node_set_nth_input(node, (GeglNode*)g_value_get_object(value), 0);  
-      break;
-    default:
-      break;
-  }
 }
 
 static void 
@@ -173,7 +113,7 @@ prepare (GeglFilter * filter,
   GeglAttributes *dest_attributes = 
     (GeglAttributes*)g_list_nth_data(attributes, 0); 
   
-  g_value_set_object(dest_attributes->value, src);
+  g_value_set_tile(dest_attributes->value, src);
   gegl_rect_copy(&dest_rect, &dest_attributes->rect);
 
   dest = (GeglTile*)g_value_get_object(dest_attributes->value);

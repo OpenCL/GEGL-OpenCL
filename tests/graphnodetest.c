@@ -2,9 +2,12 @@
 #include "gegl.h"
 #include "gegl-mock-node.h"
 #include "gegl-mock-filter.h"
+#include "gegl-mock-dfs-visitor.h"
+#include "gegl-mock-bfs-visitor.h"
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
+#include <string.h>
 
 static GeglNode *A,*B,*C,*D,*E,*F,*G;
 static GeglNode *H,*I,*J,*K,*L,*M,*N;
@@ -21,21 +24,20 @@ static GeglNode *H,*I,*J,*K,*L,*M,*N;
            | I   J |   GeglGraphInput:
            | |     |
            |null   |   node is I 
-           ---------   node_input_index is 0
+           ---------   node_input is 0
                |       graph is L
-               H       graph_input_index is 0
+               H       graph_input is 0
 
 **/
 static void
-test_graph_node_lookup_input(Test *test)
+test_graph_node_lookup_source(Test *test)
 {
-  g_print("test_graph_node_lookup_input\n");
   {
-    GeglGraphInput * input = gegl_graph_lookup_input(GEGL_GRAPH(L), I, 0);
-    ct_test(test, input->node == (GeglNode*)I);
-    ct_test(test, input->node_input_index == 0);
-    ct_test(test, input->graph == (GeglGraph*)L);
-    ct_test(test, input->graph_input_index == 0);
+    GeglGraphInput * source = gegl_graph_lookup_input(GEGL_GRAPH(L), I, 0);
+    ct_test(test, source->node == (GeglNode*)I);
+    ct_test(test, source->node_input == 0);
+    ct_test(test, source->graph == (GeglGraph*)L);
+    ct_test(test, source->graph_input == 0);
   }
 }
 
@@ -51,101 +53,149 @@ test_graph_node_lookup_input(Test *test)
            | I   J |   GeglGraphOutput:
            | |     |   
            |null   |   node is K 
-           ---------   node_output_index is 0
+           ---------   node_output is 0
                |       graph is L
-               H       graph_output_index is 0
+               H       graph_output is 0
 
 **/
 static void
 test_graph_node_lookup_output(Test *test)
 {
-  g_print("test_graph_node_lookup_output\n");
   {
     GeglGraphOutput * output = gegl_graph_lookup_output(GEGL_GRAPH(L), 0);
     ct_test(test, output->node == (GeglNode*)K);
-    ct_test(test, output->node_output_index == 0);
+    ct_test(test, output->node_output == 0);
     ct_test(test, output->graph == (GeglGraph*)L);
-    ct_test(test, output->graph_output_index == 0);
+    ct_test(test, output->graph_output == 0);
   }
 }
 
 /**
   From setup: 
-                            two inputs:
+                            two sources:
            -------------    
    graph A |   B       |    GraphInput:
            |  / \      |    node is C  
-           | C   D     |    node_input_index is 0
+           | C   D     |    node_input is 0
            | |   |\    |    graph is A 
-           |null E null|    graph_input_index is 0 
+           |null E null|    graph_input is 0 
            -------------
                / \          GraphInput: 
               F   G         node is D 
-                            node_input_index is 1
+                            node_input is 1
                             graph is A
-                            graph_input_index is 1
+                            graph_input is 1
 **/
 static void
-test_graph_node_lookup_two_inputs(Test *test)
+test_graph_node_lookup_two_sources(Test *test)
 {
-  g_print("test_graph_node_lookup_two_inputs\n");
   {
-    GeglGraphInput * input = gegl_graph_lookup_input(GEGL_GRAPH(A), C, 0);
-    ct_test(test, input->node == (GeglNode*)C);
-    ct_test(test, input->node_input_index == 0);
-    ct_test(test, input->graph == (GeglGraph*)A);
-    ct_test(test, input->graph_input_index == 0);
+    GeglGraphInput * source = gegl_graph_lookup_input(GEGL_GRAPH(A), C, 0);
+    ct_test(test, source->node == (GeglNode*)C);
+    ct_test(test, source->node_input == 0);
+    ct_test(test, source->graph == (GeglGraph*)A);
+    ct_test(test, source->graph_input == 0);
   }
 
   {
-    GeglGraphInput * input = gegl_graph_lookup_input(GEGL_GRAPH(A), D, 1);
-    ct_test(test, input->node == (GeglNode*)D);
-    ct_test(test, input->node_input_index == 1);
-    ct_test(test, input->graph == (GeglGraph*)A);
-    ct_test(test, input->graph_input_index == 1);
+    GeglGraphInput * source = gegl_graph_lookup_input(GEGL_GRAPH(A), D, 1);
+    ct_test(test, source->node == (GeglNode*)D);
+    ct_test(test, source->node_input == 1);
+    ct_test(test, source->graph == (GeglGraph*)A);
+    ct_test(test, source->graph_input == 1);
   }
 }
 
-/**
-  From setup: 
-                            
-           -------------    
-   graph A |   B       |    
-           |  / \      |   
-           | C   D     |   
-           | |   |\    |    
-           |null E null|   
-           -------------
-               / \         
-              F   G         
-                            
-**/
 static void
-test_graph_init_visitor(Test *test)
+test_graph_node_mult_output(Test *test)
 {
-  {
-    GeglGraph *graph = g_object_new (GEGL_TYPE_GRAPH, 
-                                     "name", "Graph", 
-                                     "root", A, 
-                                     NULL);  
+ /*
 
-    GeglGraphInitVisitor * graph_init_visitor = 
-      g_object_new(GEGL_TYPE_GRAPH_INIT_VISITOR, NULL); 
+                 A    
+                 |   
+             +   +     <--outputs come from root C 
+           --------- 
+           |       |
+           |  + +  |
+   graph B |   C   |    
+           |   |   |
+           |  null | 
+           |       |
+           ---------
+               |
+               D 
+  */
 
-    graph_init_visitor->graph = graph;
+    GeglNode *A;
+    GeglNode *D = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                                "name", "D", 
+                                "num_outputs", 1, 
+                                NULL);  
 
-    gegl_dfs_visitor_traverse(GEGL_DFS_VISITOR(graph_init_visitor), 
-                              GEGL_NODE(graph));
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                                "name", "C", 
+                                "num_outputs", 2, 
+                                "num_inputs", 1, 
+                                NULL);  
 
+    GeglNode *B = g_object_new (GEGL_TYPE_GRAPH, 
+                                "name", "B", 
+                                "root", C,
+                                "source0", D, 
+                                NULL);  
+
+    A = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "A", 
+                      "num_inputs", 1,
+                      "source0", B,
+                      "source0_output", 1,
+                      NULL);  
     {
-      GeglDumpVisitor *dump_visitor = g_object_new(GEGL_TYPE_DUMP_VISITOR, NULL);  
-      gegl_dump_visitor_traverse(dump_visitor, GEGL_GRAPH(A)->root); 
-      g_object_unref(dump_visitor);
+      gint i;
+      gchar * visit_names[] = {"D", "C", "B", "A"};  
+      GeglMockDfsVisitor *mock_dfs_visitor = g_object_new(GEGL_TYPE_MOCK_DFS_VISITOR, NULL);  
+      GList * visits_list;
+
+      gegl_dfs_visitor_traverse(GEGL_DFS_VISITOR(mock_dfs_visitor), A); 
+      visits_list = gegl_visitor_get_visits_list(GEGL_VISITOR(mock_dfs_visitor));
+
+      
+      ct_test (test, 4 == g_list_length(visits_list));
+      for(i = 0; i < g_list_length(visits_list); i++)
+        {
+          GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);
+          const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));
+          ct_test (test, 0 == strcmp(name, visit_names[i]));
+        }
+
+      g_object_unref(mock_dfs_visitor);
     }
 
-    g_object_unref(graph_init_visitor);
-    g_object_unref(graph);
-  }
+    {
+      gint i;
+      gchar * visit_names[] = {"A", "B", "C", "D"};  
+      GeglMockBfsVisitor *mock_bfs_visitor = g_object_new(GEGL_TYPE_MOCK_BFS_VISITOR, NULL);  
+      GList * visits_list;
+
+      gegl_bfs_visitor_traverse(GEGL_BFS_VISITOR(mock_bfs_visitor), A); 
+      visits_list = gegl_visitor_get_visits_list(GEGL_VISITOR(mock_bfs_visitor));
+
+      
+      ct_test (test, 4 == g_list_length(visits_list));
+      for(i = 0; i < g_list_length(visits_list); i++)
+        {
+          GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);
+          const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));
+          ct_test (test, 0 == strcmp(name, visit_names[i]));
+        }
+
+      g_object_unref(mock_bfs_visitor);
+    }
+
+    g_object_unref(A);
+    g_object_unref(B);
+    g_object_unref(C);
+    g_object_unref(D);
 }
 
 static void
@@ -185,6 +235,8 @@ graph_node_setup(Test *test)
                       "name", "K", 
                       "num_inputs", 2,
                       "num_outputs", 1, 
+                      "source0", I,
+                      "source1", J,
                       NULL);  
     M = g_object_new (GEGL_TYPE_MOCK_FILTER, 
                       "name", "M", 
@@ -195,16 +247,19 @@ graph_node_setup(Test *test)
                       "num_outputs", 1, 
                       NULL);  
 
-    gegl_node_set_nth_input(K, I, 0);
-    gegl_node_set_nth_input(K, J, 1);
+    /*
+    gegl_node_set_source_node(K, I, 0);
+    gegl_node_set_source_node(K, J, 1);
+    */
+
     L = g_object_new (GEGL_TYPE_GRAPH, 
                       "name", "L", 
                       "root", K, 
                       NULL);  
 
-    gegl_node_set_nth_input(L, H, 0);
-    gegl_node_set_nth_input(M, L, 0);
-    gegl_node_set_nth_input(M, N, 1);
+    gegl_node_set_source_node(L, H, 0);
+    gegl_node_set_source_node(M, L, 0);
+    gegl_node_set_source_node(M, N, 1);
   }
 
   /*
@@ -249,17 +304,17 @@ graph_node_setup(Test *test)
                       "num_outputs", 1, 
                       NULL);  
 
-    gegl_node_set_nth_input(B, C, 0);
-    gegl_node_set_nth_input(B, D, 1);
-    gegl_node_set_nth_input(D, E, 0);
+    gegl_node_set_source_node(B, C, 0);
+    gegl_node_set_source_node(B, D, 1);
+    gegl_node_set_source_node(D, E, 0);
 
     A = g_object_new (GEGL_TYPE_GRAPH, 
                       "name", "A", 
                       "root", B, 
                       NULL);  
 
-    gegl_node_set_nth_input(A, F, 0);
-    gegl_node_set_nth_input(A, G, 1);
+    gegl_node_set_source_node(A, F, 0);
+    gegl_node_set_source_node(A, G, 1);
   }
 }
 
@@ -292,10 +347,11 @@ create_graph_node_test()
   g_assert(ct_addTearDown(t, graph_node_teardown));
 
 #if 1 
-  g_assert(ct_addTestFun(t, test_graph_init_visitor));
-  g_assert(ct_addTestFun(t, test_graph_node_lookup_input));
+  g_assert(ct_addTestFun(t, test_graph_node_lookup_source));
   g_assert(ct_addTestFun(t, test_graph_node_lookup_output));
-  g_assert(ct_addTestFun(t, test_graph_node_lookup_two_inputs));
+  g_assert(ct_addTestFun(t, test_graph_node_lookup_two_sources));
+  g_assert(ct_addTestFun(t, test_graph_node_mult_output));
+
 #endif
 
   return t;

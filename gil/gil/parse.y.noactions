@@ -1,0 +1,133 @@
+%{
+    /* simple C - no pointers, structs, enums, functions, storage */ 
+%}
+
+%token IDENTIFIER CONSTANT
+
+%token INT FLOAT
+
+%token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK 
+
+%start file
+%%
+
+primary_expr
+	: identifier
+	| CONSTANT
+	| '(' expr ')'
+	;
+
+unary_expr
+	: primary_expr
+	| unary_operator unary_expr
+	;
+
+unary_operator
+	: '+'
+	| '-'
+	| '!'
+	;
+
+multiplicative_expr
+	: unary_expr
+	| multiplicative_expr '*' unary_expr
+	| multiplicative_expr '/' unary_expr
+	;
+
+additive_expr
+	: multiplicative_expr
+	| additive_expr '+' multiplicative_expr
+	| additive_expr '-' multiplicative_expr
+	;
+
+assignment_expr
+	: additive_expr 
+	| unary_expr '=' assignment_expr
+	;
+
+expr
+	: assignment_expr
+	| expr ',' assignment_expr
+	;
+
+declaration
+	: declaration_specifiers ';'
+	| declaration_specifiers init_declarator_list ';'
+	;
+
+declaration_specifiers
+	: type_specifier
+	| type_specifier declaration_specifiers
+	;
+
+init_declarator_list
+	: init_declarator
+	| init_declarator_list ',' init_declarator
+	;
+
+init_declarator
+	: declarator
+	;
+
+type_specifier
+	: INT
+	| FLOAT 
+	;
+
+declarator
+	: identifier
+	;
+
+statement
+	: compound_statement
+	| expression_statement
+	;
+
+compound_statement
+	: '{' '}'
+	| '{' statement_list '}'
+	| '{' declaration_list '}'
+	| '{' declaration_list statement_list '}'
+	;
+
+declaration_list
+	: declaration
+	| declaration_list declaration
+	;
+
+statement_list
+	: statement
+	| statement_list statement
+	;
+
+expression_statement
+	: ';'
+	| expr ';'
+	;
+
+file
+	: compound_statement 
+	;
+
+identifier
+	: IDENTIFIER
+	;
+%%
+
+#include <stdio.h>
+
+extern char yytext[];
+extern int column;
+
+yyerror(s)
+char *s;
+{
+	fflush(stdout);
+	printf("\n%*s\n%*s\n", column, "^", column, s);
+}
+
+int main()
+{
+	int yyparse();
+	return(yyparse());
+}

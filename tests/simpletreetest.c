@@ -34,13 +34,13 @@ test_simpletree_apply(Test *t)
   GeglOp * fill2 = testutils_rgb_fill(.5,.6,.7); 
 
   GeglOp * const_mult = g_object_new (GEGL_TYPE_CONST_MULT,
-                                      "input", fill1,
+                                      "source", fill1,
                                       "multiplier", .5,
                                       NULL); 
 
   GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
-                               "input0", const_mult,
-                               "input1", fill2,
+                               "source0", const_mult,
+                               "source1", fill2,
                                NULL);  
 
 #if 0
@@ -86,22 +86,22 @@ test_simpletree_apply2(Test *t)
 
   GeglOp * fill1 = testutils_rgb_fill(.1,.2,.3); 
   GeglOp * print1 = g_object_new(GEGL_TYPE_PRINT,
-                                 "input", fill1,
+                                 "source", fill1,
                                  NULL);
 
   GeglOp * fill2 = testutils_rgb_fill(.5,.6,.7); 
 
   GeglOp * const_mult = g_object_new (GEGL_TYPE_CONST_MULT,
-                                      "input", print1,
+                                      "source", print1,
                                       "multiplier", .5,
                                       NULL); 
 
   GeglOp * print2 = g_object_new(GEGL_TYPE_PRINT,
-                                 "input", const_mult,
+                                 "source", const_mult,
                                  NULL);
   GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
-                               "input0", print2,
-                               "input1", fill2,
+                               "source0", print2,
+                               "source1", fill2,
                                NULL);  
 
   gegl_op_apply_image(add, GEGL_OP(dest), NULL); 
@@ -137,16 +137,16 @@ test_simple_diamond_apply(Test *t)
 
   GeglOp * fill = testutils_rgb_fill(.1,.2,.3); 
   GeglOp * cmult1 = g_object_new (GEGL_TYPE_CONST_MULT,
-                                      "input", fill,
-                                      "multiplier", .5,
-                                      NULL); 
+                                  "source", fill,
+                                  "multiplier", .5,
+                                  NULL); 
   GeglOp * cmult2 = g_object_new (GEGL_TYPE_CONST_MULT,
-                                      "input", fill,
-                                      "multiplier", 2.0,
-                                      NULL); 
+                                  "source", fill,
+                                  "multiplier", 2.0,
+                                  NULL); 
   GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
-                               "input0", cmult1,
-                               "input1", cmult2,
+                               "source0", cmult1,
+                               "source1", cmult2,
                                NULL);  
 
   gegl_op_apply(add); 
@@ -180,12 +180,12 @@ test_simple_chain_apply(Test *t)
   GeglOp * fill = testutils_rgb_fill(.1,.2,.3); 
 
   GeglOp * cmult1 = g_object_new (GEGL_TYPE_CONST_MULT,
-                                      "input", fill,
+                                      "source", fill,
                                       "multiplier", .5,
                                       NULL); 
 
   GeglOp * cmult2 = g_object_new (GEGL_TYPE_CONST_MULT,
-                                      "input", cmult1,
+                                      "source", cmult1,
                                       "multiplier", .5,
                                       NULL); 
 
@@ -217,7 +217,7 @@ test_simple_roi_change(Test *t)
   GeglRect roi = {0,0,1,1};
   GeglOp * fill = testutils_rgb_fill(.1,.2,.3); 
   GeglOp * cmult = g_object_new (GEGL_TYPE_CONST_MULT,
-                                      "input", fill,
+                                      "source", fill,
                                       "multiplier", .5,
                                       NULL); 
 

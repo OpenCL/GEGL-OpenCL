@@ -26,12 +26,11 @@ void                gegl_dump_graph(GeglNode * root);
 void                gegl_dump_graph_msg(gchar * msg, GeglNode * root); 
 gint                gegl_channel_data_type_bytes (GeglChannelDataType data);
 void                gegl_init (int *argc, char ***argv); 
-GeglColorAlphaSpace gegl_utils_derived_color_alpha_space(GList *inputs);
-GeglChannelDataType gegl_utils_derived_channel_data_type(GList *inputs);
-GeglColorSpace      gegl_utils_derived_color_space(GList *inputs);
+GeglColorAlphaSpace gegl_utils_derived_color_alpha_space(GList *sources);
+GeglChannelDataType gegl_utils_derived_channel_data_type(GList *sources);
+GeglColorSpace      gegl_utils_derived_color_space(GList *sources);
 GValue *            gegl_utils_construct_val (gchar *name, guint  n_props, GObjectConstructParam *props);
 
-void gegl_utils_execute_graph(GeglOp * root, GeglOp * image, GeglRect *roi);
 void gegl_log(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, ...);
 void gegl_logv(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, va_list args);
 void gegl_direct_log(GLogLevelFlags level, gchar *format, ...);

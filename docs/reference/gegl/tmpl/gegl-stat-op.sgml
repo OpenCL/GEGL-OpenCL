@@ -4,7 +4,6 @@ GeglStatOp
 <!-- ##### SECTION Short_Description ##### -->
 Abstract class for Filters without Image outputs
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
@@ -14,4 +13,10 @@ Abstract class for Filters without Image outputs
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglScanlineProcessor ##### -->
+<para>
+
+</para>
+
 

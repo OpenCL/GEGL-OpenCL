@@ -80,14 +80,7 @@ static void
 init (GeglImage * self, 
       GeglImageClass * klass)
 {
-  GeglOp *op = GEGL_OP(self);
-  GeglNode *node = GEGL_NODE(self);
-  GeglAttributes * attributes;
-
-  gegl_node_set_num_outputs(node, 1);
-  gegl_op_allocate_attributes(op);
-  attributes = gegl_op_get_nth_attributes(op,0);
-  g_value_init(attributes->value, GEGL_TYPE_OBJECT);
+  g_object_set(self, "num_outputs", 1, NULL);
 
   self->tile = NULL;
   self->color_model = NULL;

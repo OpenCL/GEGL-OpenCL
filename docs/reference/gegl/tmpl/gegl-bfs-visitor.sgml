@@ -4,7 +4,6 @@ GeglBfsVisitor
 <!-- ##### SECTION Short_Description ##### -->
 Abstract class for Breadth first visitors.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 

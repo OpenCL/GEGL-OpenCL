@@ -20,20 +20,19 @@ typedef struct _GeglDumpVisitor GeglDumpVisitor;
 #endif
 struct _GeglDumpVisitor 
 {
-       GeglVisitor visitor;
-       gint tabs;
-       GeglGraph * graph;
+    GeglVisitor visitor;
+    gint tabs;
 };
 
 typedef struct _GeglDumpVisitorClass GeglDumpVisitorClass;
 struct _GeglDumpVisitorClass 
 {
-       GeglVisitorClass visitor_class;
+    GeglVisitorClass visitor_class;
 };
 
-GType         gegl_dump_visitor_get_type          (void); 
-void          gegl_dump_visitor_traverse          (GeglDumpVisitor * self, 
-                                                   GeglNode * node);
+GType           gegl_dump_visitor_get_type      (void); 
+void            gegl_dump_visitor_traverse      (GeglDumpVisitor * self, 
+                                                 GeglNode * node);
 
 #ifdef __cplusplus
 }

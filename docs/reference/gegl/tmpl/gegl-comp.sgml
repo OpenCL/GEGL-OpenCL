@@ -4,7 +4,6 @@ GeglComp
 <!-- ##### SECTION Short_Description ##### -->
 Composite two unpremultiplied images.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
@@ -15,12 +14,7 @@ Composite two unpremultiplied images.
 
 </para>
 
-<!-- ##### ARG GeglComp:input0 ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglComp:input1 ##### -->
+<!-- ##### ARG GeglComp:composite-mode ##### -->
 <para>
 
 </para>

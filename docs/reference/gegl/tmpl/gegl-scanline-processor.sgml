@@ -4,7 +4,6 @@ GeglScanlineProcessor
 <!-- ##### SECTION Short_Description ##### -->
 Scanline processor helper class.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 

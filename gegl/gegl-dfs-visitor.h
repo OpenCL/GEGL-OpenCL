@@ -20,19 +20,18 @@ typedef struct _GeglDfsVisitor GeglDfsVisitor;
 #endif
 struct _GeglDfsVisitor 
 {
-       GeglVisitor visitor;
+    GeglVisitor visitor;
 };
 
 typedef struct _GeglDfsVisitorClass GeglDfsVisitorClass;
 struct _GeglDfsVisitorClass 
 {
-   GeglVisitorClass visitor_class;
+    GeglVisitorClass visitor_class;
 };
 
-GType         gegl_dfs_visitor_get_type          (void); 
-
-void          gegl_dfs_visitor_traverse          (GeglDfsVisitor * self, 
-                                                  GeglNode * node); 
+GType           gegl_dfs_visitor_get_type       (void); 
+void            gegl_dfs_visitor_traverse       (GeglDfsVisitor * self, 
+                                                 GeglNode * node); 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -10,7 +10,9 @@ static void
 test_op_g_object_new(Test *test)
 {
   {
-    GeglOp * op = g_object_new (GEGL_TYPE_MOCK_OP, NULL);  
+    GeglOp * op = g_object_new (GEGL_TYPE_MOCK_OP, 
+                                "num_inputs", 1,
+                                NULL);  
 
     ct_test(test, op != NULL);
 
@@ -23,6 +25,31 @@ test_op_g_object_new(Test *test)
     ct_test(test, !strcmp("GeglMockOp", g_type_name(GEGL_TYPE_MOCK_OP)));
 
     g_object_unref(op);
+  }
+}
+
+static void
+test_op_g_object_new_source0(Test *test)
+{
+  {
+    GeglNode *B, *A;
+    B = g_object_new (GEGL_TYPE_MOCK_OP, 
+                      "num_outputs", 1,
+                      NULL);  
+    A = g_object_new (GEGL_TYPE_MOCK_OP, 
+                      "num_inputs", 1,
+                      "source0", B, 
+                      NULL);  
+
+    ct_test(test, 1 == gegl_node_get_num_outputs(B)); 
+    ct_test(test, 0 == gegl_node_get_num_inputs(B)); 
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(B)); 
+    ct_test(test, 0 == gegl_node_get_num_outputs(A)); 
+    ct_test(test, 1 == gegl_node_get_num_inputs(A)); 
+
+
+    g_object_unref(A);
+    g_object_unref(B);
   }
 }
 
@@ -46,6 +73,7 @@ create_op_test()
 
 #if 1 
   g_assert(ct_addTestFun(t, test_op_g_object_new));
+  g_assert(ct_addTestFun(t, test_op_g_object_new_source0));
 #endif
                                      
   return t; 

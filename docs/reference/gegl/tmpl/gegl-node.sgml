@@ -6,26 +6,34 @@ Abstract node class.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This is the abstract node class for Gegl. Since we want to be able to share
-nodes, graphs in Gegl are directed acyclic graphs (DAGs). Nodes have both
-inputs and outputs. Usually the number of these is fixed for the duration of
-the Node's existence. If the nodes of a graph are all distinct, the graph is a
-tree.
+This is the abstract node class for Gegl. Nodes can have both inputs and
+outputs. Usually the number of these is fixed for the duration of the Node's
+existence.
 </para>
+<para>
+Heres a node with one input and two outputs:
+</para>
+<graphic fileref="../images/node_input_outputs.png"></graphic>
 
 <para>
 Each input of a Node has at most one Node attached to the other end of it
 upstream. There may be no Node upstream that is attached to a particular input
-for a Node if the graph is still being constructed. 
+for a Node. This can happen for example if the graph is still being constructed. 
 </para>
+<para>
+Below is a node with two inputs. Just the first input has a Node upstream of it.
+</para>
+<graphic fileref="../images/node_no_input_upstream.png"></graphic>
 
 <para>
 In contrast, each output of a Node can have multiple Nodes attached to it
 downstream. This is because more than one Node may be pulling data downstream
-from the same output of a Node. A Node with more than one Node attached
-downstream like this is called a shared node. We use GObject reference counting
-to keep track of shared nodes. 
+from the same output of a Node.
 </para>
+<para>
+Heres an example of two nodes upstream from the same output: 
+</para>
+<graphic fileref="../images/sharednode.png"></graphic>
 
 <para>
 A Node is called a leaf node if it has no inputs. A Node is called a root node
@@ -35,7 +43,7 @@ if there are no Nodes attached to the outputs of it.
 <para>
 Heres a simple example of an graph for Comp(Blur(A), Mult(A,B)):
 </para>
-<graphic fileref="../images/chain.png"></graphic>
+<graphic fileref="../images/simplegraph.png"></graphic>
 <para>
 Here Comp (composite over) is the root node, A and B are leaf SampledImage
 nodes. Blur has A as input and Comp as output and Mult has two inputs, A and B,
@@ -44,14 +52,13 @@ Comp is downstream from Blur, A and B are upstream from everything, etc.
 </para>
 
 <para>
-The Node class also manages adding and removing inputs as well as nodes
-attached to outputs.
+The Node class also manages adding or changing inputs as well outputs.
 </para>
 
 <para>
-The Node class keeps track of output-to-input information for each Node by
-using Connectors. An input Connector holds the information about which Node is
-an input to a given Node, and which output that input Node came from.
+The Node class keeps track of input information by using Connectors.  An input
+Connector holds the information about which Node is an input to a given Node,
+and which output that input Node came from.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -59,58 +66,15 @@ an input to a given Node, and which output that input Node came from.
 
 </para>
 
-<!-- ##### STRUCT GeglConnection ##### -->
+<!-- ##### STRUCT GeglConnector ##### -->
 <para>
 
 </para>
 
 @node: 
-@input_index: 
 @input: 
-@output_index: 
-
-<!-- ##### FUNCTION gegl_node_get_nth_input ##### -->
-<para>
-
-</para>
-
-@self: 
-@n: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_set_nth_input ##### -->
-<para>
-
-</para>
-
-@self: 
-@input: 
-@n: 
-<!-- # Unused Parameters # -->
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_set_nth_input_connection ##### -->
-<para>
-
-</para>
-
-@self: 
-@input: 
-@output_index: 
-@n: 
-
-
-<!-- ##### FUNCTION gegl_node_get_nth_input_connection ##### -->
-<para>
-
-</para>
-
-@self: 
-@n: 
-@Returns: 
-
+@source: 
+@output: 
 
 <!-- ##### FUNCTION gegl_node_get_num_inputs ##### -->
 <para>
@@ -128,28 +92,6 @@ an input to a given Node, and which output that input Node came from.
 
 @self: 
 @Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_get_input_connections ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_get_outputs ##### -->
-<para>
-
-</para>
-
-@self: 
-@output_index: 
-@Returns: 
-<!-- # Unused Parameters # -->
-@index_num_outputs: 
-@index: 
 
 
 <!-- ##### FUNCTION gegl_node_accept ##### -->
@@ -178,4 +120,44 @@ an input to a given Node, and which output that input Node came from.
 @self: 
 @num_outputs: 
 
+
+<!-- ##### ARG GeglNode:num-inputs ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglNode:num-outputs ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglNode:source ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglNode:source0 ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglNode:source1 ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglNode:source-output ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglNode:source0-output ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglNode:source1-output ##### -->
+<para>
+
+</para>
 

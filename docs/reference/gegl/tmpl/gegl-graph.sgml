@@ -4,7 +4,6 @@ GeglGraph
 <!-- ##### SECTION Short_Description ##### -->
 Class for container of Ops.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
@@ -21,9 +20,9 @@ Class for container of Ops.
 </para>
 
 @node: 
-@node_input_index: 
+@node_input: 
 @graph: 
-@graph_input_index: 
+@graph_input: 
 
 <!-- ##### STRUCT GeglGraphOutput ##### -->
 <para>
@@ -31,9 +30,9 @@ Class for container of Ops.
 </para>
 
 @node: 
-@node_output_index: 
+@node_output: 
 @graph: 
-@graph_output_index: 
+@graph_output: 
 
 <!-- ##### FUNCTION gegl_graph_get_root ##### -->
 <para>
@@ -53,50 +52,6 @@ Class for container of Ops.
 @root: 
 
 
-<!-- ##### FUNCTION gegl_graph_get_roi ##### -->
-<para>
-
-</para>
-
-@self: 
-@roi: 
-
-
-<!-- ##### FUNCTION gegl_graph_set_roi ##### -->
-<para>
-
-</para>
-
-@self: 
-@roi: 
-
-
-<!-- ##### FUNCTION gegl_graph_execute ##### -->
-<para>
-
-</para>
-
-@self: 
-
-
-<!-- ##### FUNCTION gegl_graph_get_image ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_graph_set_image ##### -->
-<para>
-
-</para>
-
-@self: 
-@image: 
-
-
 <!-- ##### FUNCTION gegl_graph_lookup_input ##### -->
 <para>
 
@@ -104,8 +59,10 @@ Class for container of Ops.
 
 @self: 
 @node: 
-@node_input_index: 
+@node_input: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@node_input_index: 
 
 
 <!-- ##### FUNCTION gegl_graph_lookup_output ##### -->
@@ -114,46 +71,13 @@ Class for container of Ops.
 </para>
 
 @self: 
+@graph_output: 
+@Returns: 
+<!-- # Unused Parameters # -->
 @graph_output_index: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_graph_find_input_connection ##### -->
-<para>
-
-</para>
-
-@self: 
-@node: 
-@index: 
-@Returns: 
-<!-- # Unused Parameters # -->
-@graph: 
-
-
-<!-- ##### FUNCTION gegl_graph_get_input_attributes ##### -->
-<para>
-
-</para>
-
-@self: 
-@node: 
-@Returns: 
-<!-- # Unused Parameters # -->
-@graph: 
 
 
 <!-- ##### ARG GeglGraph:root ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglGraph:image ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglGraph:roi ##### -->
 <para>
 
 </para>

@@ -17,13 +17,15 @@ but otherwise do nothing to the data.
 <para>
 Op is the common superclass of Filter and Graph. This forms a composite design
 pattern (GoF Design Patterns), with Filter as the "leaf" or atomic class, and
-Graph as the "composite" or container class. So Filters can be thought of as
-basic image processing objects and Graphs are chains and trees of these. Hence
-Graphs will contain other Filters and Graphs. A Graph will typically contain a
-root node that corresponds to its output as well as nodes that correspond to
-each of its inputs.
+Graph as the "composite" or container class. 
 </para>
-
+<graphic fileref="../images/composite.png"></graphic>
+<para>
+So Filters can be thought of as basic image processing objects and Graphs are
+chains and trees of these. Hence Graphs will contain other Filters and Graphs.
+A Graph will typically contain a root node that corresponds to its output as
+well as nodes that correspond to each of its inputs.
+</para>
 <para>
 The inputs and outputs of Ops are described and passed using Attribute
 structures. For each output an Op produces, there is a corresponding Attribute
@@ -142,14 +144,6 @@ Heres an example of setting up a Mult op and calling apply on it:
 
 @self: 
 @roi: 
-
-
-<!-- ##### FUNCTION gegl_op_allocate_attributes ##### -->
-<para>
-
-</para>
-
-@self: 
 
 
 <!-- ##### FUNCTION gegl_op_get_nth_attributes ##### -->

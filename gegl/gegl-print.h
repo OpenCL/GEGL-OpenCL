@@ -20,23 +20,23 @@ typedef struct _GeglPrint GeglPrint;
 #endif
 struct _GeglPrint 
 {
-   GeglStatOp stat_op;
+    GeglStatOp stat_op;
 
-   /*< private >*/
-   gchar * buffer;
-   gint buffer_size;
-   gchar * current;
-   gint left;
-   gboolean use_log;
+    /*< private >*/
+    gchar * buffer;
+    gint buffer_size;
+    gchar * current;
+    gint left;
+    gboolean use_log;
 };
 
 typedef struct _GeglPrintClass GeglPrintClass;
 struct _GeglPrintClass 
 {
-   GeglStatOpClass stat_op_class;
+    GeglStatOpClass stat_op_class;
 };
 
-GType       gegl_print_get_type       (void);
+GType           gegl_print_get_type             (void);
 
 #ifdef __cplusplus
 }

@@ -24,17 +24,17 @@ typedef struct _GeglVisitor  GeglVisitor;
 typedef struct _GeglNode  GeglNode;
 #endif
 
-#ifndef __TYPEDEF_GEGL_CONNECTION__
-#define __TYPEDEF_GEGL_CONNECTION__
-typedef struct _GeglConnection  GeglConnection;
+#ifndef __TYPEDEF_GEGL_CONNECTOR__
+#define __TYPEDEF_GEGL_CONNECTOR__
+typedef struct _GeglConnector  GeglConnector;
 #endif
-struct _GeglConnection
+struct _GeglConnector
 {
-  GeglNode * node;
-  gint input_index;
+    GeglNode * node;
+    gint input;
 
-  GeglNode * input;
-  gint output_index;
+    GeglNode * source;
+    gint output;
 };
 
 struct _GeglNode 
@@ -43,10 +43,10 @@ struct _GeglNode
 
     /*< private >*/
     gint     num_inputs;
-    GeglConnection   *input_connections;
+    GeglConnector   *connectors;
 
     gint     num_outputs;
-    GList  **outputs;
+    GList  **sinks;
 
     gboolean enabled;
 };
@@ -54,49 +54,63 @@ struct _GeglNode
 typedef struct _GeglNodeClass GeglNodeClass;
 struct _GeglNodeClass 
 {
-   GeglObjectClass object_class;
+    GeglObjectClass object_class;
 
-   void (* accept)                  (GeglNode * self, 
-                                     GeglVisitor * visitor);
+    void (* accept)                  (GeglNode * self, 
+                                      GeglVisitor * visitor);
 
 };
 
-GType             gegl_node_get_type                  (void);
+GType           gegl_node_get_type              (void);
+                                                
+gint            gegl_node_get_num_inputs        (GeglNode * self);
+gint            gegl_node_get_num_outputs       (GeglNode * self);
 
-GeglNode*         gegl_node_get_nth_input             (GeglNode * self, 
-                                                       gint n);
-void              gegl_node_set_nth_input             (GeglNode * self, 
-                                                       GeglNode * input,
-                                                       gint n);
+GeglNode *      gegl_node_get_source            (GeglNode * self, 
+                                                 gint * output,
+                                                 gint n);
+void            gegl_node_set_source            (GeglNode * self, 
+                                                 GeglNode * source,
+                                                 gint output,
+                                                 gint n);
+GeglNode*       gegl_node_get_source_node       (GeglNode * self, 
+                                                 gint n);
+void            gegl_node_set_source_node       (GeglNode * self, 
+                                                 GeglNode * source,
+                                                 gint n);
+void            gegl_node_set_source_output     (GeglNode * self, 
+                                                 gint output, 
+                                                 gint n);
+gint            gegl_node_get_source_output     (GeglNode * self, 
+                                                 gint n);
 
-void              gegl_node_set_nth_input_connection  (GeglNode * self, 
-                                                       GeglNode * input,
-                                                       gint output_index,
-                                                       gint n);
+gint            gegl_node_get_num_sinks         (GeglNode * self,
+                                                 gint output);
+gint            gegl_node_get_total_num_sinks   (GeglNode * self);
+GeglNode*       gegl_node_get_sink              (GeglNode * self,
+                                                 gint output,
+                                                 gint n);
+gint            gegl_node_get_sink_input        (GeglNode * self,
+                                                 gint output,
+                                                 gint n);
 
-GeglConnection*   gegl_node_get_nth_input_connection  (GeglNode * self, 
-                                                       gint n);
+void            gegl_node_unlink                (GeglNode * self);
+void            gegl_node_remove_sources        (GeglNode *self); 
+void            gegl_node_remove_sinks          (GeglNode *self); 
 
-
-gint              gegl_node_get_num_inputs            (GeglNode * self);
-
-gint              gegl_node_get_num_outputs           (GeglNode * self);
-
-GeglConnection*   gegl_node_get_input_connections     (GeglNode * self); 
-
-GList*            gegl_node_get_outputs               (GeglNode * self,
-                                                       gint output_index);
-
-void              gegl_node_accept                    (GeglNode * self, 
-                                                       GeglVisitor * visitor);
+void            gegl_node_accept                (GeglNode * self, 
+                                                 GeglVisitor * visitor);
 
 /* protected */
-void              gegl_node_set_num_inputs            (GeglNode * self,
-                                                       gint num_inputs);
-void              gegl_node_set_num_outputs           (GeglNode * self,
-                                                       gint num_outputs);
+GList*          gegl_node_get_sinks             (GeglNode * self,
+                                                 gint output);
+void            gegl_node_set_num_inputs        (GeglNode * self,
+                                                 gint num_inputs);
+void            gegl_node_set_num_outputs       (GeglNode * self,
+                                                 gint num_outputs);
+                                                                 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
+                
 #endif

@@ -4,104 +4,124 @@
 #include "csuite.h"
 #include "testutils.h"
 
-static GeglColorModel * color_model;
-static GeglTile *tile;
 #define AREA_WIDTH 10 
-#define AREA_HEIGHT 11 
-static GeglRect area = {0,0,AREA_WIDTH,AREA_HEIGHT};
-static GValue *value;
+#define AREA_HEIGHT 10 
 
 static void
-test_value_new(Test *test)
+test_value_tile_set(Test *test)
 {
-  g_value_init(value, GEGL_TYPE_IMAGE_DATA);
+  GeglRect area = {0,0,AREA_WIDTH,AREA_HEIGHT};
+  GeglColorModel *color_model = gegl_color_model_instance("RgbFloat");
+  GeglTile * tile = g_object_new (GEGL_TYPE_TILE, 
+                                  "area", &area, 
+                                  "colormodel", color_model,
+                                   NULL);  
+  GValue *value =  g_new0(GValue, 1); 
+
+  g_value_init(value, GEGL_TYPE_TILE);
+  g_value_set_tile(value, tile);
+  ct_test(test, tile == g_value_get_tile(value));
   g_value_unset(value);
+
+  g_free(value);
+
+  g_object_unref(color_model);
+  g_object_unref(tile);
 }
 
 static void
-test_value_set_image_data(Test *test)
+test_value_tile_copy(Test *test)
 {
-  g_value_init(value, GEGL_TYPE_IMAGE_DATA);
+  GeglRect area = {0,0,AREA_WIDTH,AREA_HEIGHT};
+  GeglColorModel *color_model = gegl_color_model_instance("RgbFloat");
+  GeglTile * tile = g_object_new (GEGL_TYPE_TILE, 
+                                  "area", &area, 
+                                  "colormodel", color_model,
+                                   NULL);  
 
-  {
-    GeglRect rect;
-    gegl_rect_set(&rect, 1,2,3,4);
-    g_value_set_image_data(value, tile, &rect); 
-  }
+  GValue * src_value =  g_new0(GValue, 1); 
+  GValue * dest_value =  g_new0(GValue, 1); 
 
-  {
-    GeglRect rect0;
-    GeglTile * tile0 = g_value_get_image_data(value, &rect0);
+  g_value_init(dest_value, GEGL_TYPE_TILE);
+  g_value_init(src_value, GEGL_TYPE_TILE);
 
-    ct_test(test, tile == tile0); 
-    ct_test(test, 1 == rect0.x); 
-    ct_test(test, 2 == rect0.y); 
-    ct_test(test, 3 == rect0.w); 
-    ct_test(test, 4 == rect0.h); 
-  }
+  g_value_set_tile(src_value, tile);
 
-  g_value_unset(value);
+  g_value_copy(src_value, dest_value);
+
+  ct_test(test, tile == g_value_get_tile(dest_value));
+
+  g_value_unset(dest_value);
+  g_value_unset(src_value);
+
+  g_free(dest_value);
+  g_free(src_value);
+
+  g_object_unref(color_model);
+  g_object_unref(tile);
 }
 
 static void
-test_value_set_image_data_rect(Test *test)
+test_value_tile_compatible(Test *test)
 {
-  g_value_init(value, GEGL_TYPE_IMAGE_DATA);
+  GeglRect area = {0,0,AREA_WIDTH,AREA_HEIGHT};
+  GeglColorModel *color_model = gegl_color_model_instance("RgbFloat");
+  GeglTile * src_tile = g_object_new (GEGL_TYPE_TILE, 
+                                  "area", &area, 
+                                  "colormodel", color_model,
+                                   NULL);  
+  GeglTile * dest_tile = g_object_new (GEGL_TYPE_TILE, 
+                                  "area", &area, 
+                                  "colormodel", color_model,
+                                   NULL);  
 
-  {
-    GeglRect rect;
-    gegl_rect_set(&rect, 1,2,3,4);
-    g_value_set_image_data_rect(value, &rect); 
-  }
+  GValue * src_value =  g_new0(GValue, 1); 
+  GValue * dest_value =  g_new0(GValue, 1); 
+  GValue * float_value = g_new0(GValue, 1);
+  GValue * int_value = g_new0(GValue, 1);
 
-  {
-    GeglRect rect0;
-    g_value_get_image_data_rect(value, &rect0);
+  g_value_init(dest_value, GEGL_TYPE_TILE);
+  g_value_init(src_value, GEGL_TYPE_TILE);
+  g_value_init(float_value, G_TYPE_FLOAT);
+  g_value_init(int_value, G_TYPE_INT);
 
-    ct_test(test, 1 == rect0.x); 
-    ct_test(test, 2 == rect0.y); 
-    ct_test(test, 3 == rect0.w); 
-    ct_test(test, 4 == rect0.h); 
-  }
+  g_value_set_tile(src_value, src_tile);
+  g_value_set_float(float_value, 3.4);
 
-  g_value_unset(value);
-}
+  ct_test(test, g_value_type_compatible(G_VALUE_TYPE(src_value), G_VALUE_TYPE(dest_value)));
+  ct_test(test, g_value_type_transformable(G_VALUE_TYPE(src_value), G_VALUE_TYPE(dest_value)));
+  ct_test(test, g_value_transform(src_value, dest_value));
+  ct_test(test, !g_value_type_compatible(G_VALUE_TYPE(src_value), G_VALUE_TYPE(float_value)));
+  ct_test(test, !g_value_type_transformable(G_VALUE_TYPE(src_value), G_VALUE_TYPE(float_value)));
+  ct_test(test, !g_value_transform(src_value, float_value));
 
-static void
-test_value_set_image_data_tile(Test *test)
-{
-  g_value_init(value, GEGL_TYPE_IMAGE_DATA);
+  ct_test(test, g_value_type_transformable(G_VALUE_TYPE(float_value), G_VALUE_TYPE(int_value)));
+  ct_test(test, g_value_transform(float_value, int_value));
 
-  {
-    g_value_set_image_data_tile(value, tile); 
-  }
+  /* float to int conversion just truncates */
+  ct_test(test, 3 == g_value_get_int(int_value));
 
-  {
-    GeglTile *tile0 = g_value_get_image_data_tile(value);
-    ct_test(test, tile == tile0); 
-  }
+  g_value_unset(dest_value);
+  g_value_unset(src_value);
+  g_value_unset(float_value);
 
-  g_value_unset(value);
+  g_free(dest_value);
+  g_free(src_value);
+  g_free(float_value);
+
+  g_object_unref(color_model);
+  g_object_unref(src_tile);
+  g_object_unref(dest_tile);
 }
 
 static void
 value_test_setup(Test *test)
 {
-  color_model = gegl_color_model_instance("RgbFloat");
-  tile = g_object_new (GEGL_TYPE_TILE, 
-                       "area", &area, 
-                       "colormodel", color_model,
-                        NULL);  
-
-  value =  g_new0(GValue, 1); 
 }
 
 static void
 value_test_teardown(Test *test)
 {
-  g_object_unref(color_model);
-  g_object_unref(tile);
-  g_free(value);
 }
 
 Test *
@@ -111,10 +131,10 @@ create_value_test()
 
   g_assert(ct_addSetUp(t, value_test_setup));
   g_assert(ct_addTearDown(t, value_test_teardown));
-  g_assert(ct_addTestFun(t, test_value_new));
-  g_assert(ct_addTestFun(t, test_value_set_image_data));
-  g_assert(ct_addTestFun(t, test_value_set_image_data_rect));
-  g_assert(ct_addTestFun(t, test_value_set_image_data_tile));
+  g_assert(ct_addTestFun(t, test_value_tile_set));
+  g_assert(ct_addTestFun(t, test_value_tile_copy));
+  g_assert(ct_addTestFun(t, test_value_tile_compatible));
+  g_assert(ct_addTestFun(t, test_value_tile_compatible));
 
   return t; 
 }

@@ -4,7 +4,6 @@ GeglDfsVisitor
 <!-- ##### SECTION Short_Description ##### -->
 Abstract class for Depth first visitors.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 

@@ -4,7 +4,6 @@ GeglFilter
 <!-- ##### SECTION Short_Description ##### -->
 Abstract class for basic image processing object.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 Filters are the basic image processing objects of Gegl. A Filter will have

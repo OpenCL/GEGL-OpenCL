@@ -4,7 +4,6 @@ GeglPointOp
 <!-- ##### SECTION Short_Description ##### -->
 Abstract class for Image Filters with inputs.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 The PointOp class implements the process routine for all ops that inherit from

@@ -1,3 +1,348 @@
+Mon Aug 26 00:28:20 EDT 2002 calvinw@mindspring.com	
+
+	Updated Node class to incorporate multi-output nodes. Now nodes have a
+	(usually) fixed number of outputs and inputs for their lifetime.  Changed
+	the terminology to use sinks for nodes attached to outputs, and sources for
+	nodes attached to inputs. Also made changes to properties and moved all of
+	the "num_inputs", "num_outputs", "source0", "source1", etc properties to
+	the Node class.
+
+	*gegl/gegl-add.c
+	*gegl/gegl-comp-premult.c
+	*gegl/gegl-comp.c
+	*gegl/gegl-const-mult.c
+	*gegl/gegl-dark.c
+	*gegl/gegl-diff.c
+	*gegl/gegl-eval-bfs-visitor.c
+	*gegl/gegl-eval-bfs-visitor.h
+	*gegl/gegl-eval-dfs-visitor.c
+	*gegl/gegl-eval-dfs-visitor.h
+	*gegl/gegl-eval-mgr.c
+	*gegl/gegl-eval-mgr.h
+	*gegl/gegl-eval-visitor.c
+	*gegl/gegl-eval-visitor.h
+	*gegl/gegl-light.c
+	*gegl/gegl-max.c
+	*gegl/gegl-min.c
+	*gegl/gegl-mult.c
+	*gegl/gegl-premult.c
+	*gegl/gegl-screen.c
+	*gegl/gegl-subtract.c
+	*gegl/gegl-unpremult.c
+
+	Added these to replace the removed .gil versions of these. Only add,
+	const-mult, mult, comp, comp-premult have more than just the float case
+	right now. The rest just have float data types.
+
+	*codegen/test_files/gegl-add.gil
+	*codegen/test_files/gegl-comp-premult.gil
+	*codegen/test_files/gegl-comp.gil
+	*codegen/test_files/gegl-const-mult.gil
+	*codegen/test_files/gegl-dark.gil
+	*codegen/test_files/gegl-diff.gil
+	*codegen/test_files/gegl-light.gil
+	*codegen/test_files/gegl-max.gil
+	*codegen/test_files/gegl-min.gil
+	*codegen/test_files/gegl-mult.gil
+	*codegen/test_files/gegl-premult.gil
+	*codegen/test_files/gegl-screen.gil
+	*codegen/test_files/gegl-subtract.gil
+	*codegen/test_files/gegl-unpremult.gil
+
+	Moved the .gil files to codegen test directory for now.  
+
+	*docs/dia/composite.dia
+	*docs/dia/node_no_input_upstream.dia
+	*docs/dia/ops.dia
+	*docs/dia/sharednode.dia
+	*docs/dia/simplegraph.dia
+
+	Some dias for diagrams for the gtk-docs.  
+
+	*docs/reference/gegl/images/composite.png
+	*docs/reference/gegl/images/node_input_outputs.png
+	*docs/reference/gegl/images/node_no_input_upstream.png
+	*docs/reference/gegl/images/sharednode.png
+	*docs/reference/gegl/images/simplegraph.png
+
+	Some pngs for diagrams for the gtk-docs.  
+
+	*docs/reference/gegl/tmpl/gegl-eval-bfs-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-eval-dfs-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-eval-mgr.sgml
+	*docs/reference/gegl/tmpl/gegl-eval-visitor.sgml
+
+	New documentation.	
+
+	*gil/gil/Makefile.am
+	*gil/gil/gil-bfs-visitor.c
+	*gil/gil/gil-bfs-visitor.h
+	*gil/gil/gil-binary-op.c
+	*gil/gil/gil-binary-op.h
+	*gil/gil/gil-block.c
+	*gil/gil/gil-block.h
+	*gil/gil/gil-constant.c
+	*gil/gil/gil-constant.h
+	*gil/gil/gil-dfs-visitor.c
+	*gil/gil/gil-dfs-visitor.h
+	*gil/gil/gil-expr-statement.c
+	*gil/gil/gil-expr-statement.h
+	*gil/gil/gil-expression.c
+	*gil/gil/gil-expression.h
+	*gil/gil/gil-node.c
+	*gil/gil/gil-node.h
+	*gil/gil/gil-statement.c
+	*gil/gil/gil-statement.h
+	*gil/gil/gil-types.h
+	*gil/gil/gil-unary-op.c
+	*gil/gil/gil-unary-op.h
+	*gil/gil/gil-variable.c
+	*gil/gil/gil-variable.h
+	*gil/gil/gil-visitor.c
+	*gil/gil/gil-visitor.h
+	*gil/gil/gil.h
+	*gil/gil/gilast.c
+	*gil/gil/gilast.h
+	*gil/gil/gilinterpret.c
+	*gil/gil/gilinterpret.h
+	*gil/gil/gilstatement.c
+	*gil/gil/gilstatement.h
+	*gil/gil/gilsymbol.c
+	*gil/gil/gilsymbol.h
+	*gil/gil/gilsymboltable.c
+	*gil/gil/gilsymboltable.h
+	*gil/gil/giltype.c
+	*gil/gil/giltype.h
+	*gil/gil/lexer.l
+	*gil/gil/parse.y
+	*gil/gil/parse.y.declonly
+	*gil/gil/parse.y.noactions
+	*gil/gil/parse.y.withdecl
+	*gil/gil/parse.y.withdeclsnoactions
+	*gil/gil/test-declarations.gil
+	*gil/gil/test-expressions.gil
+
+	Adding new gil code, uses GObjects and constructs parse trees so far.
+	See the unit tests added below for details (in gil/tests dir)
+
+	*gil/tests/Makefile.am
+	*gil/tests/bfsvisitortest.c
+	*gil/tests/binaryoptest.c
+	*gil/tests/blocktest.c
+	*gil/tests/constanttest.c
+	*gil/tests/dfsvisitortest.c
+	*gil/tests/exprstatementtest.c
+	*gil/tests/gil-mock-bfs-visitor.c
+	*gil/tests/gil-mock-bfs-visitor.h
+	*gil/tests/gil-mock-dfs-visitor.c
+	*gil/tests/gil-mock-dfs-visitor.h
+	*gil/tests/gil-mock-node.c
+	*gil/tests/gil-mock-node.h
+	*gil/tests/gil-mock-visitor.c
+	*gil/tests/gil-mock-visitor.h
+	*gil/tests/nodetest.c
+	*gil/tests/testgil.c
+	*gil/tests/unaryoptest.c
+	*gil/tests/variabletest.c
+
+	Adding new unit tests for gil code
+
+	*tests/bfsvisitormultouttest.c
+	*tests/dfsvisitormultouttest.c
+	*tests/nodemultouttest.c
+
+	Added these gegl unit tests, mostly for multi-output nodes.
+
+	*docs/reference/gegl/images/apply.png
+	*docs/reference/gegl/images/chain.png
+	*docs/reference/gegl/images/request.png
+	*docs/reference/gegl/tmpl/gegl-graph-bfs-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-graph-dfs-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-graph-evaluate-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-graph-init-visitor.sgml
+
+	Removed old reference docs.
+
+	*gegl/gegl-add.gil
+	*gegl/gegl-comp-premult.gil
+	*gegl/gegl-comp.gil
+	*gegl/gegl-const-mult.gil
+	*gegl/gegl-dark.gil
+	*gegl/gegl-diff.gil
+	*gegl/gegl-light.gil
+	*gegl/gegl-max.gil
+	*gegl/gegl-min.gil
+	*gegl/gegl-mult.gil
+	*gegl/gegl-premult.gil
+	*gegl/gegl-screen.gil
+	*gegl/gegl-subtract.gil
+	*gegl/gegl-unpremult.gil
+	*gegl/gegl-graph-bfs-visitor.c
+	*gegl/gegl-graph-bfs-visitor.h
+	*gegl/gegl-graph-dfs-visitor.c
+	*gegl/gegl-graph-dfs-visitor.h
+	*gegl/gegl-graph-evaluate-visitor.c
+	*gegl/gegl-graph-evaluate-visitor.h
+	*gegl/gegl-graph-init-visitor.c
+	*gegl/gegl-graph-init-visitor.h
+
+	The .gils got retired to codegen directory, and graph stuff got re-written
+	and moved in the Eval classes (EvalMgr, EvalDfsVisitor, etc)
+
+	*gil/gilast.c
+	*gil/gilast.h
+	*gil/gilinterpret.c
+	*gil/gilinterpret.h
+	*gil/gilsymbol.c
+	*gil/gilsymbol.h
+	*gil/gilsymboltable.c
+	*gil/gilsymboltable.h
+	*gil/giltype.c
+	*gil/giltype.h
+	*gil/lexer.l
+	*gil/parse.y
+	*gil/test.gil
+
+	This got moved to gil/gil directory. Eventually will be replaced completely
+	with new gil gobject code.
+
+	*docs/TODO.xml
+	*docs/reference/gegl/gegl-docs.sgml
+	*docs/reference/gegl/gegl-sections.txt
+	*docs/reference/gegl/gegl-undocumented.txt
+	*docs/reference/gegl/gegl.types
+	*docs/reference/gegl/tmpl/gegl-add.sgml
+	*docs/reference/gegl/tmpl/gegl-attributes.sgml
+	*docs/reference/gegl/tmpl/gegl-bfs-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-comp-premult.sgml
+	*docs/reference/gegl/tmpl/gegl-comp.sgml
+	*docs/reference/gegl/tmpl/gegl-const-mult.sgml
+	*docs/reference/gegl/tmpl/gegl-copy.sgml
+	*docs/reference/gegl/tmpl/gegl-dark.sgml
+	*docs/reference/gegl/tmpl/gegl-dfs-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-diff.sgml
+	*docs/reference/gegl/tmpl/gegl-dump-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-filter.sgml
+	*docs/reference/gegl/tmpl/gegl-graph-setup-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-graph.sgml
+	*docs/reference/gegl/tmpl/gegl-image.sgml
+	*docs/reference/gegl/tmpl/gegl-light.sgml
+	*docs/reference/gegl/tmpl/gegl-max.sgml
+	*docs/reference/gegl/tmpl/gegl-min.sgml
+	*docs/reference/gegl/tmpl/gegl-mult.sgml
+	*docs/reference/gegl/tmpl/gegl-node.sgml
+	*docs/reference/gegl/tmpl/gegl-op.sgml
+	*docs/reference/gegl/tmpl/gegl-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-point-op.sgml
+	*docs/reference/gegl/tmpl/gegl-premult.sgml
+	*docs/reference/gegl/tmpl/gegl-print.sgml
+	*docs/reference/gegl/tmpl/gegl-scanline-processor.sgml
+	*docs/reference/gegl/tmpl/gegl-screen.sgml
+	*docs/reference/gegl/tmpl/gegl-stat-op.sgml
+	*docs/reference/gegl/tmpl/gegl-subtract.sgml
+	*docs/reference/gegl/tmpl/gegl-tile.sgml
+	*docs/reference/gegl/tmpl/gegl-types.sgml
+	*docs/reference/gegl/tmpl/gegl-unpremult.sgml
+	*docs/reference/gegl/tmpl/gegl-unused.sgml
+	*docs/reference/gegl/tmpl/gegl-utils.sgml
+	*docs/reference/gegl/tmpl/gegl-value-types.sgml
+	*docs/reference/gegl/tmpl/gegl-visitor.sgml
+
+	Reference docs updated.
+
+	*gegl/Makefile.am
+	*gegl/gegl-bfs-visitor.c
+	*gegl/gegl-bfs-visitor.h
+	*gegl/gegl-buffer.h
+	*gegl/gegl-color-model.h
+	*gegl/gegl-color.h
+	*gegl/gegl-comp-premult.h
+	*gegl/gegl-comp.h
+	*gegl/gegl-copy.c
+	*gegl/gegl-dfs-visitor.c
+	*gegl/gegl-dfs-visitor.h
+	*gegl/gegl-dump-visitor.c
+	*gegl/gegl-dump-visitor.h
+	*gegl/gegl-fill.c
+	*gegl/gegl-fill.h
+	*gegl/gegl-filter.c
+	*gegl/gegl-filter.h
+	*gegl/gegl-graph-setup-visitor.c
+	*gegl/gegl-graph-setup-visitor.h
+	*gegl/gegl-graph.c
+	*gegl/gegl-graph.h
+	*gegl/gegl-image.c
+	*gegl/gegl-image.h
+	*gegl/gegl-mem-buffer.h
+	*gegl/gegl-node.c
+	*gegl/gegl-node.h
+	*gegl/gegl-object.h
+	*gegl/gegl-op.c
+	*gegl/gegl-op.h
+	*gegl/gegl-param-specs.c
+	*gegl/gegl-param-specs.h
+	*gegl/gegl-point-op.h
+	*gegl/gegl-print.c
+	*gegl/gegl-print.h
+	*gegl/gegl-sampled-image.c
+	*gegl/gegl-sampled-image.h
+	*gegl/gegl-stat-op.h
+	*gegl/gegl-tile-iterator.c
+	*gegl/gegl-tile-iterator.h
+	*gegl/gegl-tile-mgr.h
+	*gegl/gegl-tile.c
+	*gegl/gegl-tile.h
+	*gegl/gegl-types.h
+	*gegl/gegl-utils.c
+	*gegl/gegl-utils.h
+	*gegl/gegl-value-types.c
+	*gegl/gegl-value-types.h
+	*gegl/gegl-visitor.c
+	*gegl/gegl-visitor.h
+	*gegl/gegl.h
+
+	Most changes in Node, introducing Eval classes. Took out gil stuff from
+	Makefile.am
+
+	*ChangeLog
+	*HACKING
+	*Makefile.am
+	*README
+	*configure.in
+	*gil/Makefile.am
+	*gil/README
+
+	Miscellaneous changes.
+
+	*tests/Makefile.am
+	*tests/addtest.c
+	*tests/bfsvisitortest.c
+	*tests/constmulttest.c
+	*tests/copytest.c
+	*tests/dfsvisitortest.c
+	*tests/dumpvisitortest.c
+	*tests/gegl-mock-filter.c
+	*tests/gegl-mock-image.c
+	*tests/gegl-mock-node.c
+	*tests/gegl-mock-op.c
+	*tests/gegl-mock-point-op.c
+	*tests/graphapplytest.c
+	*tests/graphnodetest.c
+	*tests/imagetest.c
+	*tests/needrecttest.c
+	*tests/nodetest.c
+	*tests/optest.c
+	*tests/pointoptest.c
+	*tests/printtest.c
+	*tests/sampledimagetest.c
+	*tests/simpletreetest.c
+	*tests/testgegl.c
+	*tests/testgeglfile.c
+	*tests/valuetest.c
+
+	Updated lots of tests, mostly moving Properties around, updating for
+	multi-output nodes.
+
 Sun Aug 11 14:51:48 EDT 2002 calvinw@mindspring.com
 
 	Re-arranged the basic composite pattern again. Now we have Graphs as the

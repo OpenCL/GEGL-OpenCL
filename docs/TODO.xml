@@ -36,10 +36,10 @@
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
-      <title>GeglFilter</title>
+      <title>GeglGraph</title>
       <description>
         <p>
-           This class will extend from Node and allows one to group a
+           This class extend from Node and allows one to group a
            collection of nodes or a complete graph into a single Op. That way
            pre-defined graphs can be used as single nodes or ops in other
            graphs.   

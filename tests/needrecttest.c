@@ -13,8 +13,8 @@ static void
 test_needrect_op(Test *t)
 {
   GeglRect need_rect;
-  GeglRect input0_need_rect;
-  GeglRect input1_need_rect;
+  GeglRect source0_need_rect;
+  GeglRect source1_need_rect;
 
   GeglOp * op = g_object_new (GEGL_TYPE_MOCK_FILTER, 
                               "num_inputs", 2,
@@ -22,24 +22,24 @@ test_needrect_op(Test *t)
                               NULL);  
  
   gegl_rect_set(&need_rect, 0,0,5,5);
-  gegl_rect_set(&input0_need_rect, 0,0,0,0);
+  gegl_rect_set(&source0_need_rect, 0,0,0,0);
 
-  gegl_filter_compute_need_rect(GEGL_FILTER(op), &input0_need_rect, &need_rect, 0); 
-  ct_test(t, gegl_rect_equal_coords(&input0_need_rect, 0,0,5,5));  
+  gegl_filter_compute_need_rect(GEGL_FILTER(op), &source0_need_rect, &need_rect, 0); 
+  ct_test(t, gegl_rect_equal_coords(&source0_need_rect, 0,0,5,5));  
 
-  gegl_rect_set(&input1_need_rect, 0,0,0,0);
-  gegl_filter_compute_need_rect(GEGL_FILTER(op), &input1_need_rect, &need_rect, 1); 
-  ct_test(t, gegl_rect_equal_coords(&input1_need_rect, 0,0,5,5));  
+  gegl_rect_set(&source1_need_rect, 0,0,0,0);
+  gegl_filter_compute_need_rect(GEGL_FILTER(op), &source1_need_rect, &need_rect, 1); 
+  ct_test(t, gegl_rect_equal_coords(&source1_need_rect, 0,0,5,5));  
 
   g_object_unref(op);
 }
 
 static void
-test_needrect_op_input_needrect_set(Test *t)
+test_needrect_op_source_needrect_set(Test *t)
 {
   GeglRect need_rect;
-  GeglRect input0_need_rect;
-  GeglRect input1_need_rect;
+  GeglRect source0_need_rect;
+  GeglRect source1_need_rect;
 
   GeglOp * op = g_object_new (GEGL_TYPE_MOCK_FILTER, 
                               "num_inputs", 2,
@@ -47,14 +47,14 @@ test_needrect_op_input_needrect_set(Test *t)
                               NULL);  
  
   gegl_rect_set(&need_rect, 1,1,5,5);
-  gegl_rect_set(&input0_need_rect, 0,0,3,3);
+  gegl_rect_set(&source0_need_rect, 0,0,3,3);
 
-  gegl_filter_compute_need_rect(GEGL_FILTER(op), &input0_need_rect, &need_rect, 0); 
-  ct_test(t, gegl_rect_equal_coords(&input0_need_rect, 0,0,6,6));  
+  gegl_filter_compute_need_rect(GEGL_FILTER(op), &source0_need_rect, &need_rect, 0); 
+  ct_test(t, gegl_rect_equal_coords(&source0_need_rect, 0,0,6,6));  
 
-  gegl_rect_set(&input1_need_rect, 2,2,6,6);
-  gegl_filter_compute_need_rect(GEGL_FILTER(op), &input1_need_rect, &need_rect, 1); 
-  ct_test(t, gegl_rect_equal_coords(&input1_need_rect, 1,1,7,7));  
+  gegl_rect_set(&source1_need_rect, 2,2,6,6);
+  gegl_filter_compute_need_rect(GEGL_FILTER(op), &source1_need_rect, &need_rect, 1); 
+  ct_test(t, gegl_rect_equal_coords(&source1_need_rect, 1,1,7,7));  
 
   g_object_unref(op);
 }
@@ -89,7 +89,7 @@ create_needrect_test()
 
 #if 1 
   g_assert(ct_addTestFun(t, test_needrect_op));
-  g_assert(ct_addTestFun(t, test_needrect_op_input_needrect_set));
+  g_assert(ct_addTestFun(t, test_needrect_op_source_needrect_set));
 #endif
 
   return t; 

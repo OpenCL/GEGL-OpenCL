@@ -134,6 +134,8 @@ AC_SUBST(REBUILD)
 AC_OUTPUT([
 Makefile
 gil/Makefile
+gil/gil/Makefile
+gil/tests/Makefile
 codegen/Makefile
 gegl/Makefile
 tools/Makefile

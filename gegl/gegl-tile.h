@@ -12,11 +12,6 @@ extern "C" {
 typedef struct _GeglBuffer  GeglBuffer;
 #endif
 
-#ifndef __TYPEDEF_GEGL_IMAGE__
-#define __TYPEDEF_GEGL_IMAGE__
-typedef struct _GeglImage  GeglImage;
-#endif
-
 #ifndef __TYPEDEF_GEGL_COLOR_MODEL__
 #define __TYPEDEF_GEGL_COLOR_MODEL__
 typedef struct _GeglColorModel  GeglColorModel;
@@ -28,6 +23,7 @@ typedef struct _GeglColorModel  GeglColorModel;
 #define GEGL_IS_TILE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_TILE))
 #define GEGL_IS_TILE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE))
 #define GEGL_TILE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE, GeglTileClass))
+#define G_VALUE_HOLDS_TILE(value) (G_TYPE_CHECK_VALUE_TYPE ((value), GEGL_TYPE_TILE))
 
 #ifndef __TYPEDEF_GEGL_TILE__
 #define __TYPEDEF_GEGL_TILE__
@@ -35,51 +31,48 @@ typedef struct _GeglTile GeglTile;
 #endif
 struct _GeglTile 
 {
-   GeglObject object;
+    GeglObject object;
 
-   /*< private >*/
-   GeglBuffer * buffer;
-   GeglColorModel * color_model;
-   GeglRect area;
+    /*< private >*/
+    GeglBuffer * buffer;
+    GeglColorModel * color_model;
+    GeglRect area;
 };
 
 typedef struct _GeglTileClass GeglTileClass;
 struct _GeglTileClass 
 {
-   GeglObjectClass object_class;
+    GeglObjectClass object_class;
 };
 
-#ifndef __TYPEDEF_GEGL_OP_REQUEST__
-#define __TYPEDEF_GEGL_OP_REQUEST__
-typedef struct _GeglOpRequest  GeglOpRequest;
-#endif
-struct _GeglOpRequest
-{
-  GeglTile * tile;
-  GeglRect rect;
-};
-      
-GType           gegl_tile_get_type        (void);
-GeglBuffer *    gegl_tile_get_buffer      (GeglTile * self);
-void            gegl_tile_get_area        (GeglTile * self,
-                                           GeglRect * area);
-GeglColorModel* gegl_tile_get_color_model (GeglTile * self);
-void            gegl_tile_get_data        (GeglTile * self,
-                                           gpointer * data);
-void            gegl_tile_get_data_at     (GeglTile * self,
-                                           gpointer * data,
-                                           gint x,
-                                           gint y);
+GType           gegl_tile_get_type              (void);
+GeglBuffer *    gegl_tile_get_buffer            (GeglTile * self);
+void            gegl_tile_get_area              (GeglTile * self,
+                                                 GeglRect * area);
+GeglColorModel* gegl_tile_get_color_model       (GeglTile * self);
+void            gegl_tile_get_data              (GeglTile * self,
+                                                 gpointer * data);
+void            gegl_tile_get_data_at           (GeglTile * self,
+                                                 gpointer * data,
+                                                 gint x,
+                                                 gint y);
 
-gboolean        gegl_tile_alloc           (GeglTile * self,
-                                           GeglRect * area,
-                                           GeglColorModel * color_model);
-void            gegl_tile_validate_data   (GeglTile * self);
+gboolean        gegl_tile_alloc                 (GeglTile * self,
+                                                 GeglRect * area,
+                                                 GeglColorModel * color_model);
+void            gegl_tile_validate_data         (GeglTile * self);
 
-void           gegl_tile_set_area        (GeglTile * self,
-                                          GeglRect * area);
-void           gegl_tile_set_color_model (GeglTile * self,
-                                          GeglColorModel * color_model);
+void            gegl_tile_set_area              (GeglTile * self,
+                                                 GeglRect * area);
+void            gegl_tile_set_color_model       (GeglTile * self,
+                                                 GeglColorModel * color_model);
+
+void            g_value_set_tile                (GValue         *value,
+                                                 gpointer        v_object);
+gpointer        g_value_get_tile                (const GValue   *value);
+GeglTile*       g_value_dup_tile                (const GValue   *value);
+void            g_value_set_tile_take_ownership (GValue         *value,
+                                                 gpointer        v_object);
 
 #ifdef __cplusplus
 }

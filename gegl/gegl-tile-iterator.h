@@ -30,33 +30,36 @@ typedef struct _GeglTileIterator GeglTileIterator;
 #endif
 struct _GeglTileIterator 
 {
-   GeglObject object;
+    GeglObject object;
 
-   /*< private >*/
-   GeglTile * tile;
-   GeglRect rect;
-   gint current;
+    /*< private >*/
+    GeglTile * tile;
+    GeglRect rect;
+    gint current;
 };
 
 typedef struct _GeglTileIteratorClass GeglTileIteratorClass;
 struct _GeglTileIteratorClass 
 {
-   GeglObjectClass object_class;
+    GeglObjectClass object_class;
 };
 
-GType                 gegl_tile_iterator_get_type          (void);
-GeglTile *            gegl_tile_iterator_get_tile          (GeglTileIterator * self);
-void                  gegl_tile_iterator_get_rect          (GeglTileIterator * self, GeglRect * rect);
-GeglColorModel *      gegl_tile_iterator_get_color_model   (GeglTileIterator * self);
-void                  gegl_tile_iterator_first             (GeglTileIterator * self);
-void                  gegl_tile_iterator_next              (GeglTileIterator * self);
-gboolean              gegl_tile_iterator_is_done           (GeglTileIterator * self);
-void                  gegl_tile_iterator_get_current       (GeglTileIterator * self,
-                                                            gpointer * data_pointers);
+GType           gegl_tile_iterator_get_type     (void);
+GeglTile *      gegl_tile_iterator_get_tile     (GeglTileIterator * self);
+void            gegl_tile_iterator_get_rect     (GeglTileIterator * self, 
+                                                 GeglRect * rect);
+GeglColorModel *gegl_tile_iterator_get_color_model(GeglTileIterator * self);
+void            gegl_tile_iterator_first        (GeglTileIterator * self);
+void            gegl_tile_iterator_next         (GeglTileIterator * self);
+gboolean        gegl_tile_iterator_is_done      (GeglTileIterator * self);
+void            gegl_tile_iterator_get_current  (GeglTileIterator * self,
+                                                 gpointer * data_pointers);
 
 /* protected */
-void                  gegl_tile_iterator_set_rect (GeglTileIterator * self, GeglRect * rect);
-void                  gegl_tile_iterator_set_tile (GeglTileIterator * self, GeglTile * tile);
+void            gegl_tile_iterator_set_rect     (GeglTileIterator * self, 
+                                                 GeglRect * rect);
+void            gegl_tile_iterator_set_tile     (GeglTileIterator * self, 
+                                                 GeglTile * tile);
 
 #ifdef __cplusplus
 }

@@ -25,19 +25,19 @@ typedef struct _GeglStatOp GeglStatOp;
 #endif
 struct _GeglStatOp 
 {
-   GeglFilter filter;
+    GeglFilter filter;
 
-   /*< private >*/
-   GeglScanlineProcessor * scanline_processor;
+    /*< private >*/
+    GeglScanlineProcessor * scanline_processor;
 };
 
 typedef struct _GeglStatOpClass GeglStatOpClass;
 struct _GeglStatOpClass 
 {
-   GeglFilterClass filter_class;
+    GeglFilterClass filter_class;
 };
 
-GType            gegl_stat_op_get_type                     (void);
+GType           gegl_stat_op_get_type           (void);
 
 #ifdef __cplusplus
 }

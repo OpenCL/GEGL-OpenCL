@@ -4,18 +4,12 @@ GeglPremult
 <!-- ##### SECTION Short_Description ##### -->
 Multiply color by alpha for image.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglPremult:input ##### -->
 <para>
 
 </para>

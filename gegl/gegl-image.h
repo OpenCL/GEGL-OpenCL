@@ -46,13 +46,12 @@ struct _GeglImageClass
    GeglFilterClass filter_class;
 };
 
-GType gegl_image_get_type                     (void);
-
-GeglColorModel*  gegl_image_color_model                  (GeglImage * self);
-void             gegl_image_set_color_model              (GeglImage * self, 
-                                                          GeglColorModel * cm);
-void             gegl_image_set_derived_color_model      (GeglImage * self, 
-                                                          GeglColorModel * cm);
+GType           gegl_image_get_type             (void);
+GeglColorModel* gegl_image_color_model          (GeglImage * self);
+void            gegl_image_set_color_model      (GeglImage * self, 
+                                                 GeglColorModel * cm);
+void          gegl_image_set_derived_color_model(GeglImage * self, 
+                                                 GeglColorModel * cm);
 
 #ifdef __cplusplus
 }

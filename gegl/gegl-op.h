@@ -21,34 +21,33 @@ typedef struct _GeglOp GeglOp;
 #endif
 struct _GeglOp 
 {
-   GeglNode node;
-   /*< private >*/
+    GeglNode node;
 
-   GeglAttributes ** attributes;
+    /*< private >*/
+    GeglAttributes ** attributes;
 };
 
 typedef struct _GeglOpClass GeglOpClass;
 struct _GeglOpClass 
 {
-   GeglNodeClass node_class;
-   
-   void (*allocate_attributes) (GeglOp *self);
+    GeglNodeClass node_class;
+  
+    void (*init_attributes)      (GeglOp *self);
 
 };
+                 
+GType           gegl_op_get_type                (void);
+void            gegl_op_apply                   (GeglOp * self);
+void            gegl_op_apply_image             (GeglOp * self,
+                                                 GeglOp * image,
+                                                 GeglRect *roi);
+void            gegl_op_apply_roi               (GeglOp * self, 
+                                                 GeglRect *roi);
 
-GType     gegl_op_get_type                 (void);
-void      gegl_op_apply                    (GeglOp * self);
-void      gegl_op_apply_image              (GeglOp * self,
-                                            GeglOp * image,
-                                            GeglRect *roi);
-void      gegl_op_apply_roi                (GeglOp * self, 
-                                            GeglRect *roi);
-
-void      gegl_op_allocate_attributes      (GeglOp * self);
-
-GeglAttributes *  gegl_op_get_nth_attributes (GeglOp *self, 
-                                              gint n); 
-GList  *  gegl_op_get_attributes             (GeglOp *self);
+void            gegl_op_init_attributes         (GeglOp * self);
+GeglAttributes* gegl_op_get_nth_attributes      (GeglOp *self, 
+                                                 gint n); 
+GList  *        gegl_op_get_attributes          (GeglOp *self);
 
 #ifdef __cplusplus
 }

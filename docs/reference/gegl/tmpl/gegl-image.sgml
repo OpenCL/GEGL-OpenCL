@@ -2,8 +2,7 @@
 GeglImage
 
 <!-- ##### SECTION Short_Description ##### -->
-Abstract Class for Filters with image outputs.
-
+Abstract Class for filters with Image outputs.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
@@ -16,47 +15,6 @@ inputs (There are some Ops without image inputs though-for example Noise
 ops).  SampledImages are a special kind of Image. They have no inputs,
 and are just leaf nodes in image graphs.  They  "produce" their output by
 just returning their normal image data as output.
-</para>
-<para>
-Images have ColorModels which describe the color model of their output image.
-Subclasses of Image override compute_derived_color_model to calculate a
-ColorModel from the inputs when one has not been explicitly set.
-</para>
-<para>
-The Image class also stores information that makes image calculations more
-efficient. Domains of definitions (called have_rects) and regions of interest
-(called need_rects) are kept in this class. have_rects are defined for leaves
-and are passed towards the root, and need_rects are passed from the root
-towards the leaves. In compiler speak, have_rects are synthesized attributes,
-and need_rects are inherited attributes. Subclasses of Image implement
-compute_have_rect, compute_preimage and compute_result_rect to compute these
-rects during graph evaluation.
-</para>
-
-<para>
-The Tile corresponds to an area of image space and the Rect is
-the subportion of that Tile to use or process during the operation. Tiles used
-here are just thought of as "chunks of image data", and may be of any size.
-They might correspond to what is usually called "pages" or they might be the
-entire data of the Image. It depends on the way the ImageMgr in question
-organizes
-things.
-</para>
-
-<para>
-Here is a picture of an FilterRequest:
-</para>
-
-<graphic fileref="../images/request.png"></graphic>
-
-<para>
-Note that Image nodes may receive FilterRequests that correspond to any area of its
-image space, and do not have an intrinsic width and height. So it is legal to
-ask an Image to compute its result anywhere in the plane.  SampledImages though
-do have a width and height since they correspond to in-memory representations
-of image files. Of course if the area you request is outside of the have_rects
-(domain of definitions) of the inputs to an Image then you will likely just get
-a zero (or some other default fill value) as output.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->

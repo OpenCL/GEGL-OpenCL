@@ -20,16 +20,16 @@ typedef struct _GeglMemBuffer GeglMemBuffer;
 #endif
 struct _GeglMemBuffer 
 {
-   GeglBuffer mem_buffer;
+    GeglBuffer mem_buffer;
 };
 
 typedef struct _GeglMemBufferClass GeglMemBufferClass;
 struct _GeglMemBufferClass 
 {
-   GeglBufferClass mem_buffer_class;
+    GeglBufferClass mem_buffer_class;
 };
 
-GType              gegl_mem_buffer_get_type   (void);
+GType           gegl_mem_buffer_get_type        (void);
 
 #ifdef __cplusplus
 }

@@ -1,9 +1,11 @@
+#include  <gobject/gvaluecollector.h>
 #include "gegl-tile.h"
 #include "gegl-object.h"
 #include "gegl-color-model.h"
 #include "gegl-tile-mgr.h"
 #include "gegl-buffer.h"
 #include "gegl-utils.h"
+
 
 
 enum
@@ -22,6 +24,14 @@ static void set_property (GObject *gobject, guint prop_id, const GValue *value, 
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void unalloc (GeglTile * self);
 
+static void value_init_tile (GValue *value);
+static void value_free_tile (GValue *value);
+static void value_copy_tile(const GValue *src_value, GValue *dest_value);
+static void value_transform_tile (const GValue *src_value, GValue *dest_value);
+static gpointer value_peek_pointer_tile (const GValue *value); 
+static gchar *value_collect_value_tile (GValue*value, guint n_collect_values, GTypeCValue *collect_values, guint collect_flags);
+static gchar *value_lcopy_value_tile (const GValue*value, guint n_collect_values, GTypeCValue *collect_values, guint collect_flags);
+
 static gpointer parent_class = NULL;
 
 GType
@@ -31,6 +41,18 @@ gegl_tile_get_type (void)
 
   if (!type)
     {
+      static const GTypeValueTable value_table = 
+      {
+        value_init_tile,          /* value_init */
+        value_free_tile,          /* value_free */
+        value_copy_tile,          /* value_copy */
+        value_peek_pointer_tile,  /* value_peek_pointer */
+        "p",                      /* collect_format */
+        value_collect_value_tile, /* collect_value */
+        "p",                      /* lcopy_format */
+        value_lcopy_value_tile,   /* lcopy_value */
+      };
+
       static const GTypeInfo typeInfo =
       {
         sizeof (GeglTileClass),
@@ -38,14 +60,19 @@ gegl_tile_get_type (void)
         (GBaseFinalizeFunc) NULL,
         (GClassInitFunc) class_init,
         (GClassFinalizeFunc) NULL,
-        NULL,
+        NULL,                       
         sizeof (GeglTile),
         0,
         (GInstanceInitFunc) init,
+        &value_table,             /* value_table */
+        //NULL,             /* value_table */
       };
 
       type = g_type_register_static (GEGL_TYPE_OBJECT, "GeglTile", &typeInfo, 0);
+      g_value_register_transform_func (GEGL_TYPE_TILE, GEGL_TYPE_TILE, 
+                                       value_transform_tile);
     }
+
     return type;
 }
 
@@ -165,6 +192,157 @@ get_property (GObject      *gobject,
   }
 }
 
+static void
+value_init_tile (GValue *value)
+{
+  value->data[0].v_pointer = NULL;
+}
+
+static void
+value_free_tile (GValue *value)
+{
+  if (value->data[0].v_pointer)
+    g_object_unref (value->data[0].v_pointer);
+}
+
+static void
+value_copy_tile (const GValue *src_value,
+                 GValue *dest_value)
+{
+  if (src_value->data[0].v_pointer)
+    dest_value->data[0].v_pointer = g_object_ref (src_value->data[0].v_pointer);
+  else
+    dest_value->data[0].v_pointer = NULL;
+}
+
+static void
+value_transform_tile (const GValue *src_value,
+                      GValue       *dest_value)
+{
+  if (src_value->data[0].v_pointer && 
+      g_type_is_a (G_OBJECT_TYPE (src_value->data[0].v_pointer), G_VALUE_TYPE (dest_value)))
+    dest_value->data[0].v_pointer = g_object_ref (src_value->data[0].v_pointer);
+  else
+    dest_value->data[0].v_pointer = NULL;
+}
+
+static gpointer
+value_peek_pointer_tile (const GValue *value)
+{
+  return value->data[0].v_pointer;
+}
+
+static gchar*
+value_collect_value_tile (GValue          *value,
+                          guint        n_collect_values,
+                          GTypeCValue *collect_values,
+                          guint        collect_flags)
+{
+  if (collect_values[0].v_pointer)
+    {
+      GObject *object = collect_values[0].v_pointer;
+      
+      if (object->g_type_instance.g_class == NULL)
+        return g_strconcat ("invalid unclassed object pointer for value type `",
+                            G_VALUE_TYPE_NAME (value),
+                            "'",
+                            NULL);
+      else if (!g_value_type_compatible (G_OBJECT_TYPE(object), G_VALUE_TYPE (value)))
+        return g_strconcat ("invalid object type `",
+                            G_OBJECT_TYPE_NAME (object),
+                            "' for value type `",
+                            G_VALUE_TYPE_NAME (value),
+                            "'",
+                            NULL);
+      /* never honour G_VALUE_NOCOPY_CONTENTS for ref-counted types */
+      value->data[0].v_pointer = g_object_ref (object);
+    }
+  else
+    value->data[0].v_pointer = NULL;
+  
+  return NULL;
+}
+
+static gchar*
+value_lcopy_value_tile (const GValue *value,
+                        guint        n_collect_values,
+                        GTypeCValue *collect_values,
+                        guint        collect_flags)
+{
+  GeglTile **tile_p = collect_values[0].v_pointer;
+  
+  if (!tile_p)
+    return g_strdup_printf ("value location for `%s' passed as NULL", G_VALUE_TYPE_NAME (value));
+
+  if (!value->data[0].v_pointer)
+    *tile_p = NULL;
+  else if (collect_flags & G_VALUE_NOCOPY_CONTENTS)
+    *tile_p = value->data[0].v_pointer;
+  else
+    *tile_p = g_object_ref (value->data[0].v_pointer);
+  
+  return NULL;
+}
+
+void
+g_value_set_tile (GValue   *value,
+                  gpointer  v_object)
+{
+  g_return_if_fail (G_VALUE_HOLDS_TILE (value));
+  
+  if (value->data[0].v_pointer)
+    {
+      g_object_unref (value->data[0].v_pointer);
+      value->data[0].v_pointer = NULL;
+    }
+
+  if (v_object)
+    {
+      g_return_if_fail (GEGL_IS_TILE (v_object));
+      g_return_if_fail (g_value_type_compatible (G_OBJECT_TYPE (v_object), G_VALUE_TYPE (value)));
+
+      value->data[0].v_pointer = v_object;
+      g_object_ref (value->data[0].v_pointer);
+    }
+}
+
+void
+g_value_set_tile_take_ownership (GValue  *value,
+                                 gpointer v_object)
+{
+  g_return_if_fail (G_VALUE_HOLDS_TILE (value));
+
+  if (value->data[0].v_pointer)
+    {
+      g_object_unref (value->data[0].v_pointer);
+      value->data[0].v_pointer = NULL;
+    }
+
+  if (v_object)
+    {
+      g_return_if_fail (GEGL_IS_TILE (v_object));
+      g_return_if_fail (g_value_type_compatible (G_OBJECT_TYPE (v_object), G_VALUE_TYPE (value)));
+
+      value->data[0].v_pointer = v_object; /* we take over the reference count */
+    }
+}
+
+gpointer
+g_value_get_tile (const GValue *value)
+{
+  g_return_val_if_fail (G_VALUE_HOLDS_TILE (value), NULL);
+  
+  return value->data[0].v_pointer;
+}
+
+GeglTile*
+g_value_dup_tile (const GValue *value)
+{
+  g_return_val_if_fail (G_VALUE_HOLDS_TILE (value), NULL);
+  
+  return value->data[0].v_pointer ? g_object_ref (value->data[0].v_pointer) : NULL;
+}
+
 
 /**
  * gegl_tile_get_buffer:
@@ -251,7 +429,8 @@ gegl_tile_set_color_model (GeglTile * self,
  *
  **/
 void 
-gegl_tile_get_data (GeglTile * self, gpointer * data)
+gegl_tile_get_data (GeglTile * self, 
+                    gpointer * data)
 {
    g_return_if_fail (self != NULL);
    g_return_if_fail (GEGL_IS_TILE (self));
@@ -279,7 +458,10 @@ gegl_tile_get_data (GeglTile * self, gpointer * data)
  *
  **/
 void 
-gegl_tile_get_data_at (GeglTile * self, gpointer * data, gint x, gint y)
+gegl_tile_get_data_at (GeglTile * self, 
+                       gpointer * data, 
+                       gint x, 
+                       gint y)
 {
    g_return_if_fail (self != NULL);
    g_return_if_fail (GEGL_IS_TILE (self));

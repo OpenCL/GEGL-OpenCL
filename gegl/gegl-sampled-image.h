@@ -20,25 +20,24 @@ typedef struct _GeglSampledImage GeglSampledImage;
 #endif
 struct _GeglSampledImage 
 {
-   GeglImage image;
+    GeglImage image;
 
-   /*< private >*/
-   gint width;  
-   gint height;
+    /*< private >*/
+    gint width;  
+    gint height;
 };
 
 typedef struct _GeglSampledImageClass GeglSampledImageClass;
 struct _GeglSampledImageClass 
 {
-   GeglImageClass image_class;
+    GeglImageClass image_class;
 };
 
-GType                gegl_sampled_image_get_type    (void);
-gint                 gegl_sampled_image_get_width   (GeglSampledImage * self);
-gint                 gegl_sampled_image_get_height  (GeglSampledImage * self);
-
-void                 gegl_sampled_image_set_width   (GeglSampledImage * self, gint width);
-void                 gegl_sampled_image_set_height  (GeglSampledImage * self, gint height);
+GType           gegl_sampled_image_get_type     (void);
+gint            gegl_sampled_image_get_width    (GeglSampledImage * self);
+gint            gegl_sampled_image_get_height   (GeglSampledImage * self);
+void            gegl_sampled_image_set_width    (GeglSampledImage * self, gint width);
+void            gegl_sampled_image_set_height   (GeglSampledImage * self, gint height);
 
 #ifdef __cplusplus
 }

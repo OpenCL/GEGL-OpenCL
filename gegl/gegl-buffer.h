@@ -20,38 +20,40 @@ typedef struct _GeglBuffer  GeglBuffer;
 #endif
 struct _GeglBuffer 
 {
-   GeglObject object;
+    GeglObject object;
 
    /*< private >*/
-   gpointer * data_pointers; 
-   gint bytes_per_buffer;     
-   gint num_buffers;         
-   gint ref_count;       
+    gpointer * data_pointers; 
+    gint bytes_per_buffer;     
+    gint num_buffers;         
+    gint ref_count;       
 };
 
 typedef struct _GeglBufferClass GeglBufferClass;
 struct _GeglBufferClass 
 {
-   GeglObjectClass object_class;
+    GeglObjectClass object_class;
 
-   void (* unalloc_data) (GeglBuffer * self);
-   void (* alloc_data) (GeglBuffer * self);
-   void (* ref) (GeglBuffer * self);
-   void (* unref) (GeglBuffer * self);
+    void (* unalloc_data)            (GeglBuffer * self);
+    void (* alloc_data)              (GeglBuffer * self);
+    void (* ref)                     (GeglBuffer * self);
+    void (* unref)                   (GeglBuffer * self);
 };
 
-GType         gegl_buffer_get_type             (void);
-gint          gegl_buffer_get_bytes_per_buffer (GeglBuffer * self);
-gint          gegl_buffer_get_num_buffers      (GeglBuffer * self);
-gpointer *    gegl_buffer_get_data_pointers    (GeglBuffer * self);
-void          gegl_buffer_unalloc_data         (GeglBuffer * self);
-void          gegl_buffer_alloc_data           (GeglBuffer * self);
-void          gegl_buffer_ref                  (GeglBuffer * self);
-void          gegl_buffer_unref                (GeglBuffer * self);
-gint          gegl_buffer_get_ref_count        (GeglBuffer * self);
+GType           gegl_buffer_get_type            (void);
+gint            gegl_buffer_get_bytes_per_buffer(GeglBuffer * self);
+gint            gegl_buffer_get_num_buffers     (GeglBuffer * self);
+gpointer *      gegl_buffer_get_data_pointers   (GeglBuffer * self);
+void            gegl_buffer_unalloc_data        (GeglBuffer * self);
+void            gegl_buffer_alloc_data          (GeglBuffer * self);
+void            gegl_buffer_ref                 (GeglBuffer * self);
+void            gegl_buffer_unref               (GeglBuffer * self);
+gint            gegl_buffer_get_ref_count       (GeglBuffer * self);
 
-void          gegl_buffer_set_bytes_per_buffer (GeglBuffer * self, gint bytes_per_buffer);
-void          gegl_buffer_set_num_buffers      (GeglBuffer * self, gint num_buffers);
+void            gegl_buffer_set_bytes_per_buffer(GeglBuffer * self, 
+                                                 gint bytes_per_buffer);
+void            gegl_buffer_set_num_buffers     (GeglBuffer * self, 
+                                                 gint num_buffers);
 
 #ifdef __cplusplus
 }

@@ -4,7 +4,6 @@ GeglConstMult
 <!-- ##### SECTION Short_Description ##### -->
 Multiply image by constant.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
@@ -34,11 +33,6 @@ Multiply image by constant.
 
 
 <!-- ##### ARG GeglConstMult:multiplier ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglConstMult:input ##### -->
 <para>
 
 </para>

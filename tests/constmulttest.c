@@ -42,13 +42,13 @@ test_const_mult_g_object_new(Test *test)
   {
     GeglConstMult * const_mult = g_object_new (GEGL_TYPE_CONST_MULT, 
                                                "multiplier", MULTIPLIER, 
-                                               "input", source,
+                                               "source", source,
                                                NULL);  
 
     ct_test(test, const_mult != NULL);
     ct_test(test, 1 == gegl_node_get_num_inputs(GEGL_NODE(const_mult)));
     ct_test(test, MULTIPLIER == gegl_const_mult_get_multiplier(const_mult));
-    ct_test(test, source == (GeglOp*)gegl_node_get_nth_input(GEGL_NODE(const_mult), 0));
+    ct_test(test, source == (GeglOp*)gegl_node_get_source_node(GEGL_NODE(const_mult), 0));
 
     g_object_unref(const_mult);
   }
@@ -94,7 +94,7 @@ test_const_mult_apply(Test *test)
 {
   {
     GeglOp *const_mult = g_object_new(GEGL_TYPE_CONST_MULT,
-                                      "input", source,
+                                      "source", source,
                                       "multiplier", MULTIPLIER,
                                       NULL);
 
@@ -110,12 +110,12 @@ test_const_mult_apply(Test *test)
   {
     GeglOp *const_mult1 = g_object_new(GEGL_TYPE_CONST_MULT,
                                        "multiplier", MULTIPLIER,
-                                       "input", source,
+                                       "source", source,
                                        NULL);
 
     GeglOp *const_mult2 = g_object_new(GEGL_TYPE_CONST_MULT,
                                        "multiplier", MULTIPLIER,
-                                       "input", const_mult1,
+                                       "source", const_mult1,
                                        NULL);
 
     gegl_op_apply_image(const_mult2, dest, NULL); 
@@ -131,7 +131,7 @@ test_const_mult_apply(Test *test)
   {
     GeglOp *const_mult1 = g_object_new(GEGL_TYPE_CONST_MULT,
                                        "multiplier", MULTIPLIER,
-                                       "input", source,
+                                       "source", source,
                                        NULL);
 
     gegl_op_apply_image(const_mult1, NULL, NULL); 

@@ -50,7 +50,7 @@ test_sampled_image_g_object_get(Test *test)
 }
 
 static void
-test_sampled_image_input_apply(Test *test)
+test_sampled_image_source_apply(Test *test)
 {
   GeglRect roi = {0,0,10,10};
 
@@ -68,8 +68,9 @@ test_sampled_image_input_apply(Test *test)
 
   GeglOp * op = g_object_new (GEGL_TYPE_MOCK_FILTER, 
                               "num_inputs", 2, 
-                              "input0", image0,
-                              "input1", image1,
+                              "num_outputs", 1, 
+                              "source0", image0,
+                              "source1", image1,
                               NULL);  
 
   gegl_op_apply_roi(op, &roi);
@@ -98,7 +99,7 @@ create_sampled_image_test()
 
   g_assert(ct_addSetUp(t, sampled_image_test_setup));
   g_assert(ct_addTearDown(t, sampled_image_test_teardown));
-  g_assert(ct_addTestFun(t, test_sampled_image_input_apply));
+  g_assert(ct_addTestFun(t, test_sampled_image_source_apply));
   g_assert(ct_addTestFun(t, test_sampled_image_g_object_new));
   g_assert(ct_addTestFun(t, test_sampled_image_g_object_get));
 

@@ -8,7 +8,7 @@
 #define SAMPLED_IMAGE_WIDTH 1 
 #define SAMPLED_IMAGE_HEIGHT 1 
 
-static GeglOp *input0, *input1;
+static GeglOp *source0, *source1;
 static GeglOp *dest;
 
 
@@ -28,8 +28,8 @@ test_add_g_object_new(Test *test)
   {
     GeglOp * add =  g_object_new (GEGL_TYPE_ADD, NULL);  
 
-    ct_test(test, NULL == gegl_node_get_nth_input(GEGL_NODE(add), 0));
-    ct_test(test, NULL == gegl_node_get_nth_input(GEGL_NODE(add), 1));
+    ct_test(test, NULL == gegl_node_get_source_node(GEGL_NODE(add), 0));
+    ct_test(test, NULL == gegl_node_get_source_node(GEGL_NODE(add), 1));
     ct_test(test, 2 == gegl_node_get_num_inputs(GEGL_NODE(add)));
     ct_test(test, 1 == gegl_node_get_num_outputs(GEGL_NODE(add)));
 
@@ -38,12 +38,12 @@ test_add_g_object_new(Test *test)
 
   {
     GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
-                                 "input0", input0,
-                                 "input1", input1,
+                                 "source0", source0,
+                                 "source1", source1,
                                  NULL);  
 
-    ct_test(test, input0 == (GeglOp*)gegl_node_get_nth_input(GEGL_NODE(add), 0));
-    ct_test(test, input1 == (GeglOp*)gegl_node_get_nth_input(GEGL_NODE(add), 1));
+    ct_test(test, source0 == (GeglOp*)gegl_node_get_source_node(GEGL_NODE(add), 0));
+    ct_test(test, source1 == (GeglOp*)gegl_node_get_source_node(GEGL_NODE(add), 1));
 
     g_object_unref(add);
   }
@@ -54,13 +54,13 @@ test_add_apply(Test *test)
 {
   {
     /* 
-       add = input0 + input1 
+       add = source0 + source1 
        (.5,.7,.9) = (.1,.2,.3) + (.4,.5,.6)
     */
 
     GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
-                                "input0", input0,
-                                "input1", input1,
+                                "source0", source0,
+                                "source1", source1,
                                 NULL);  
 
     gegl_op_apply(add); 
@@ -74,13 +74,13 @@ static void
 test_add_apply_image(Test *test)
 {
     /* 
-       add = input0 + input1 
+       add = source0 + source1 
        (.5,.7,.9) = (.1,.2,.3) + (.4,.5,.6)
     */
 
     GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
-                                "input0", input0,
-                                "input1", input1,
+                                "source0", source0,
+                                "source1", source1,
                                 NULL);  
 
     gegl_op_apply_image(add, dest, NULL); 
@@ -96,11 +96,11 @@ add_test_setup(Test *test)
   GeglColorModel *rgb_float = gegl_color_model_instance("RgbFloat");
 
 
-  input0 = testutils_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
+  source0 = testutils_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
                                         SAMPLED_IMAGE_HEIGHT, 
                                         .1, .2, .3);
 
-  input1 = testutils_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
+  source1 = testutils_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
                                         SAMPLED_IMAGE_HEIGHT, 
                                         .4, .5, .6);
 
@@ -117,8 +117,8 @@ add_test_setup(Test *test)
 static void
 add_test_teardown(Test *test)
 {
-  g_object_unref(input0);
-  g_object_unref(input1);
+  g_object_unref(source0);
+  g_object_unref(source1);
   g_object_unref(dest);
 }
 

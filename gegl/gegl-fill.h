@@ -12,7 +12,6 @@ extern "C" {
 typedef struct _GeglColor  GeglColor;
 #endif
 
-
 #define GEGL_TYPE_FILL               (gegl_fill_get_type ())
 #define GEGL_FILL(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_FILL, GeglFill))
 #define GEGL_FILL_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_FILL, GeglFillClass))
@@ -26,22 +25,22 @@ typedef struct _GeglFill GeglFill;
 #endif
 struct _GeglFill 
 {
-   GeglPointOp point_op;
+    GeglPointOp point_op;
 
-   /*< private >*/
-   GeglColor * fill_color;
+    /*< private >*/
+    GeglColor * fill_color;
 };
 
 typedef struct _GeglFillClass GeglFillClass;
 struct _GeglFillClass 
 {
-   GeglPointOpClass point_op_class;
+    GeglPointOpClass point_op_class;
 };
 
-GType       gegl_fill_get_type       (void);
-GeglColor * gegl_fill_get_fill_color (GeglFill * self);
-void        gegl_fill_set_fill_color (GeglFill * self, 
-                                      GeglColor *fill_color);
+GType           gegl_fill_get_type              (void);
+GeglColor *     gegl_fill_get_fill_color        (GeglFill * self);
+void            gegl_fill_set_fill_color        (GeglFill * self, 
+                                                 GeglColor *fill_color);
 
 #ifdef __cplusplus
 }

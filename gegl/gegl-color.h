@@ -25,30 +25,30 @@ typedef struct _GeglColor GeglColor;
 #endif
 struct _GeglColor 
 {
-   GeglObject object;
+    GeglObject object;
 
-   /*< private >*/
-   GeglColorModel * color_model;
-   GeglChannelValue * channel_values;
-   gint num_channels;
+    /*< private >*/
+    GeglColorModel * color_model;
+    GeglChannelValue * channel_values;
+    gint num_channels;
 };
 
 typedef struct _GeglColorClass GeglColorClass;
 struct _GeglColorClass 
 {
-   GeglObjectClass object_class;
+    GeglObjectClass object_class;
 };
 
-GType                 gegl_color_get_type             (void);
-GeglChannelValue *    gegl_color_get_channel_values   (GeglColor * self);
-GeglColorModel *      gegl_color_get_color_model      (GeglColor * self);
-int                   gegl_color_get_num_channels     (GeglColor * self);
-void                  gegl_color_set_channel_values   (GeglColor * self,
-                                                       GeglChannelValue * channel_values);
-void                  gegl_color_set                  (GeglColor * self,
-                                                       GeglColor * color);
-void                  gegl_color_set_constant         (GeglColor * self,
-                                                       GeglColorConstant constant);
+GType           gegl_color_get_type              (void);
+GeglChannelValue*gegl_color_get_channel_values   (GeglColor * self);
+GeglColorModel *gegl_color_get_color_model       (GeglColor * self);
+int             gegl_color_get_num_channels      (GeglColor * self);
+void            gegl_color_set_channel_values    (GeglColor * self,
+                                                  GeglChannelValue * channel_values);
+void            gegl_color_set                   (GeglColor * self,
+                                                  GeglColor * color);
+void            gegl_color_set_constant          (GeglColor * self,
+                                                  GeglColorConstant constant);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

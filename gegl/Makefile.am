@@ -35,6 +35,7 @@ GEGL_GEN_SRC = \
   gegl-unpremult.c
 
 GEGL_SRC = \
+  GEGL_GEN_SRC \
   gegl-attributes.c \
   gegl-bfs-visitor.c \
   gegl-buffer.c \
@@ -51,13 +52,13 @@ GEGL_SRC = \
   gegl-copy.c \
   gegl-dfs-visitor.c \
   gegl-dump-visitor.c \
+  gegl-eval-bfs-visitor.c \
+  gegl-eval-dfs-visitor.c \
+  gegl-eval-mgr.c \
+  gegl-eval-visitor.c \
   gegl-fill.c \
   gegl-filter.c \
   gegl-graph.c \
-  gegl-graph-bfs-visitor.c \
-  gegl-graph-dfs-visitor.c \
-  gegl-graph-evaluate-visitor.c \
-  gegl-graph-init-visitor.c \
   gegl-graph-setup-visitor.c \
   gegl-image.c \
   gegl-mem-buffer.c \
@@ -92,44 +93,33 @@ GEGL_PUBLIC_HDRS = \
   gegl-color-model-rgb-float.h \
   gegl-color-model-rgb-u8.h \
   gegl-color-model-rgb-u16.h \
-  gegl-comp-premult.h \
-  gegl-comp.h \
   gegl-const-mult.h \
   gegl-copy.h \
-  gegl-dark.h \
   gegl-dfs-visitor.h \
-  gegl-diff.h \
   gegl-dump-visitor.h \
+  gegl-eval-bfs-visitor.h \
+  gegl-eval-dfs-visitor.h \
+  gegl-eval-mgr.h \
+  gegl-eval-visitor.h \
   gegl-fill.h \
   gegl-filter.h \
   gegl-graph.h \
-  gegl-graph-bfs-visitor.h \
-  gegl-graph-dfs-visitor.h \
-  gegl-graph-evaluate-visitor.h \
-  gegl-graph-init-visitor.h \
   gegl-graph-setup-visitor.h \
   gegl-image.h \
-  gegl-light.h \
-  gegl-max.h \
   gegl-mem-buffer.h \
-  gegl-min.h \
   gegl-mult.h \
   gegl-node.h \
   gegl-object.h \
   gegl-op.h \
   gegl-param-specs.h \
   gegl-point-op.h \
-  gegl-premult.h \
   gegl-print.h \
   gegl-sampled-image.h \
   gegl-scanline-processor.h \
-  gegl-screen.h \
   gegl-stat-op.h \
-  gegl-subtract.h \
   gegl-tile.h \
   gegl-tile-iterator.h \
   gegl-tile-mgr.h \
-  gegl-unpremult.h \
   gegl-value-types.h \
   gegl-visitor.h
 
@@ -161,12 +151,12 @@ LDFLAGS =  \
 libgeglincludedir=$(includedir)/gegl-1.0/gegl
 libgeglinclude_HEADERS = $(GEGL_NONCLASS_HDRS) $(GEGL_PUBLIC_HDRS) 
 
-%.c: %.gil
-	../codegen/codegen --channel-names r,g,b --channel-data-file ../codegen/channel_data/float $< > $@
+#%.c: %.gil
+#	../codegen/codegen --channel-names r,g,b --channel-data-file ../codegen/channel_data/float $< > $@
 
-distclean-local: gilclean
+#distclean-local: gilclean
 
-clean: clean-am gilclean
+#clean: clean-am gilclean
 
-gilclean:
-	rm -f $(GEGL_GEN_SRC)
+#gilclean:
+#	rm -f $(GEGL_GEN_SRC)

@@ -13,7 +13,8 @@ static void
 test_node_g_object_new(Test *test)
 {
   {
-    GeglNode * node = g_object_new (GEGL_TYPE_MOCK_NODE, NULL);  
+    GeglNode * node = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                                    NULL);  
 
     ct_test(test, node != NULL);
     ct_test(test, GEGL_IS_NODE(node));
@@ -29,7 +30,6 @@ test_node_g_object_new(Test *test)
     g_object_unref(node);
   }
 
-
   {
     GeglNode * node = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                     "num_inputs", 2,
@@ -40,6 +40,48 @@ test_node_g_object_new(Test *test)
     ct_test(test, 1 == gegl_node_get_num_outputs(node)); 
 
     g_object_unref(node);
+  }
+
+  {
+    /* 
+
+       A
+      / \
+     B   C
+
+    */
+    
+    GeglNode *C, *B, *A;
+    B = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "num_outputs", 1,
+                      NULL);  
+    C = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "num_outputs", 1,
+                      NULL);  
+
+    A = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "num_inputs", 2,
+                      "source0", B, 
+                      "source1", C, 
+                      NULL);  
+
+    ct_test(test, 0 == gegl_node_get_num_outputs(A)); 
+    ct_test(test, 2 == gegl_node_get_num_inputs(A)); 
+
+    ct_test(test, 1 == gegl_node_get_num_outputs(B)); 
+    ct_test(test, 0 == gegl_node_get_num_inputs(B)); 
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(B)); 
+
+    ct_test(test, 1 == gegl_node_get_num_outputs(C)); 
+    ct_test(test, 0 == gegl_node_get_num_inputs(C)); 
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(C)); 
+
+    ct_test(test, B == gegl_node_get_source_node(A, 0)); 
+    ct_test(test, C == gegl_node_get_source_node(A, 1)); 
+
+    g_object_unref(A);
+    g_object_unref(B);
+    g_object_unref(C);
   }
 
   {
@@ -47,68 +89,34 @@ test_node_g_object_new(Test *test)
                        
        node
         |   
-      input0 
+      source0 
 
     */
 
-    GeglNode *input0 = g_object_new(GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);
+    gint output = -1;
+
+    GeglNode *source0 = g_object_new(GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);
     GeglNode * node = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                     "num_inputs", 1,
-                                    "input0", input0, 
+                                    "source0", source0, 
                                     NULL);  
 
-    GList *outputs = gegl_node_get_outputs(input0, 0); 
+    g_object_unref(source0);
 
-    g_object_unref(input0);
+    /* node should still has a ref to source0 */
 
-
-    ct_test(test, input0 == gegl_node_get_nth_input(node, 0)); 
+    ct_test(test, source0 == gegl_node_get_source_node(node, 0)); 
 
     ct_test(test, 1 == gegl_node_get_num_inputs(node)); 
     ct_test(test, 0 == gegl_node_get_num_outputs(node)); 
 
-    ct_test(test, 0 == gegl_node_get_num_inputs(input0)); 
-    ct_test(test, 1 == gegl_node_get_num_outputs(input0)); 
+    ct_test(test, 0 == gegl_node_get_num_inputs(source0)); 
+    ct_test(test, 1 == gegl_node_get_num_outputs(source0)); 
 
-    ct_test(test, node == (GeglNode*)g_list_nth_data(outputs, 0)); 
-    ct_test(test, 1 == g_list_length(outputs)); 
+    ct_test(test, source0 == gegl_node_get_source(node, &output, 0)); 
+    ct_test(test, 0 == output); 
 
-    g_object_unref(node);
-  }
-
-  {
-    GeglNode *input0 = g_object_new(GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);
-    GeglNode *input1 = g_object_new(GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);
-
-    GeglNode * node = g_object_new (GEGL_TYPE_MOCK_NODE, 
-                                    "num_inputs", 2,
-                                    "num_outputs", 1,
-                                    "input0", input0, 
-                                    "input1", input1, 
-                                    NULL);  
-
-    g_object_unref(input0);
-    g_object_unref(input1);
-
-    /*
-
-         node
-        /   \
-     input0 input1
-
-    */
-
-    ct_test(test, input0 == gegl_node_get_nth_input(node, 0)); 
-    ct_test(test, input1 == gegl_node_get_nth_input(node, 1)); 
-
-    ct_test(test, 2 == gegl_node_get_num_inputs(node)); 
-    ct_test(test, 1 == gegl_node_get_num_outputs(node)); 
-
-    ct_test(test, 0 == gegl_node_get_num_inputs(input0)); 
-    ct_test(test, 1 == gegl_node_get_num_outputs(input0)); 
-
-    ct_test(test, 0 == gegl_node_get_num_inputs(input1)); 
-    ct_test(test, 1 == gegl_node_get_num_outputs(input1)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(source0, 0)); 
 
     g_object_unref(node);
   }
@@ -118,6 +126,7 @@ static void
 test_node_g_object_get(Test *test)
 {
   /*
+     from setup:
 
     node2 node3   node3 num_inputs = 1
      - -  -       node2 num_inputs = 2
@@ -142,17 +151,17 @@ test_node_g_object_get(Test *test)
 
 
   {
-    GeglNode * input0 = NULL; 
-    GeglNode * input1 = NULL; 
+    GeglNode * source0 = NULL; 
+    GeglNode * source1 = NULL; 
 
-    g_object_get(node2, "input0", &input0, NULL);
-    ct_test(test, input0 == node0);
+    g_object_get(node2, "source0", &source0, NULL);
+    ct_test(test, source0 == node0);
 
-    g_object_get(node2, "input1", &input1, NULL);
-    ct_test(test, input1 == node1);
+    g_object_get(node2, "source1", &source1, NULL);
+    ct_test(test, source1 == node1);
 
-    g_object_unref(input0);
-    g_object_unref(input1);
+    g_object_unref(source0);
+    g_object_unref(source1);
   }
 }
 
@@ -161,81 +170,87 @@ static void
 test_node_g_object_set(Test *test)
 {
   {
-    GeglNode *input0 = g_object_new(GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);
-    GeglNode *input1 = g_object_new(GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);
+    GeglNode *source0 = g_object_new(GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);
+    GeglNode *source1 = g_object_new(GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);
     GeglNode * node = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 2, NULL);  
 
     g_object_set(node, 
-                 "input0", input0, 
-                 "input1", input1, 
+                 "source0", source0, 
+                 "source1", source1, 
                  NULL);
 
-    ct_test(test, input0 == gegl_node_get_nth_input(node, 0)); 
-    ct_test(test, input1 == gegl_node_get_nth_input(node, 1)); 
+    ct_test(test, source0 == gegl_node_get_source_node(node, 0)); 
+    ct_test(test, source1 == gegl_node_get_source_node(node, 1)); 
 
     g_object_unref(node);
-    g_object_unref(input0);
-    g_object_unref(input1);
+    g_object_unref(source0);
+    g_object_unref(source1);
   }
 }
 
 static void
-test_node_get_inputs(Test *test)
+test_node_get_sources(Test *test)
 {
     /*
+     from setup:
 
       node2 node3   <---- node2 has 2 inputs, node3 has 1 input. 
        - -  -
        |  \/ 
        |  /\  
        | /  \  
-       +     +       <---- node0, node1 have one output index.
-      node0 node1   
+       +     +       <---- node0, node1 each have one output.
+      node0 node1     
 
     */
 
   {
-    GeglConnection *input_connections = gegl_node_get_input_connections(node2);
-    GeglNode * input0 = gegl_node_get_nth_input(node2, 0);
-    GeglNode * input1 = gegl_node_get_nth_input(node2, 1);
+    GeglNode *source0, *source1;
+    source0 = gegl_node_get_source_node(node2, 0);
+    ct_test(test, 0 == gegl_node_get_source_output(node2, 0));
+
+    source1 = gegl_node_get_source_node(node2, 1);
+    ct_test(test, 0 == gegl_node_get_source_output(node2, 1));
 
     ct_test(test, 2 == gegl_node_get_num_inputs(node2));
-
-    ct_test(test, input0 == input_connections[0].input);
-    ct_test(test, 0 == input_connections[0].output_index);
-
-    ct_test(test, input1 == input_connections[1].input);
-    ct_test(test, 0 == input_connections[1].output_index);
-
-    g_free(input_connections);
   }
 }
 
 static void
-test_node_get_outputs(Test *test)
+test_node_get_sinks(Test *test)
 {
     /*
+     from setup:
 
       node2 node3   <---- node2 has 2 inputs, node3 has 1 input. 
        - -  -
        |  \/ 
        |  /\  
        | /  \  
-       +     +       <---- node0, node1 have one output index.
+       +     +       <---- node0, node1 each have one output.
       node0 node1   
 
     */
   {
-    GList *outputs = gegl_node_get_outputs(node0, 0);
+    ct_test(test, 2 == gegl_node_get_total_num_sinks(node0)); 
+    ct_test(test, 2 == gegl_node_get_num_sinks(node0, 0)); 
 
-    ct_test(test, 2 == g_list_length(outputs)); 
-    ct_test(test, node2 == (GeglNode*)g_list_nth_data(outputs, 0)); 
-    ct_test(test, node3 == (GeglNode*)g_list_nth_data(outputs, 1)); 
+    ct_test(test, node2 == gegl_node_get_sink(node0, 0, 0)); 
+    ct_test(test, 0 == gegl_node_get_sink_input(node0, 0, 0)); 
+
+    ct_test(test, node3 == gegl_node_get_sink(node0, 0, 1)); 
+    ct_test(test, 0 == gegl_node_get_sink_input(node0, 0, 1)); 
+
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(node1)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(node1, 0)); 
+
+    ct_test(test, node2 == gegl_node_get_sink(node1, 0, 0)); 
+    ct_test(test, 1 == gegl_node_get_sink_input(node1, 0, 0)); 
   }
 }
 
 static void
-test_node_add_remove_nodes(Test *test)
+test_node_set_source_node(Test *test)
 {
   {
     /*
@@ -247,18 +262,17 @@ test_node_add_remove_nodes(Test *test)
     */
 
     GeglNode *n0, *n1, *n2, *n3;
-    GList *outputs;
 
     n0 = g_object_new (GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);  
     n1 = g_object_new (GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);  
     n2 = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 2, NULL);  
     n3 = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 2, NULL);  
 
-    gegl_node_set_nth_input(n2, n0, 0);
-    gegl_node_set_nth_input(n3, n0, 0);
+    gegl_node_set_source_node(n2, n0, 0);
+    gegl_node_set_source_node(n3, n0, 0);
 
-    gegl_node_set_nth_input(n2, n1, 1);
-    gegl_node_set_nth_input(n3, n1, 1);
+    gegl_node_set_source_node(n2, n1, 1);
+    gegl_node_set_source_node(n3, n1, 1);
 
     g_object_unref(n0); 
     g_object_unref(n1);
@@ -274,11 +288,8 @@ test_node_add_remove_nodes(Test *test)
 
     g_object_unref(n3);
 
-    outputs = gegl_node_get_outputs(n0, 0); 
-    ct_test(test, 1 == g_list_length(outputs)); 
-
-    outputs = gegl_node_get_outputs(n1, 0); 
-    ct_test(test, 1 == g_list_length(outputs)); 
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(n0)); 
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(n1)); 
 
     /*
        Remove n2 
@@ -303,11 +314,11 @@ test_node_add_remove_nodes(Test *test)
     n2 = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 2, NULL);  
     n3 = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 2, NULL);  
 
-    gegl_node_set_nth_input(n2, n0, 0);
-    gegl_node_set_nth_input(n3, n0, 0);
+    gegl_node_set_source_node(n2, n0, 0);
+    gegl_node_set_source_node(n3, n0, 0);
 
-    gegl_node_set_nth_input(n2, n1, 1);
-    gegl_node_set_nth_input(n3, n1, 1);
+    gegl_node_set_source_node(n2, n1, 1);
+    gegl_node_set_source_node(n3, n1, 1);
 
     g_object_unref(n0); 
     g_object_unref(n1);
@@ -321,16 +332,16 @@ test_node_add_remove_nodes(Test *test)
              n1 
     */
 
-    gegl_node_set_nth_input(n2, NULL, 0); 
-    gegl_node_set_nth_input(n3, NULL, 0); 
+    gegl_node_set_source_node(n2, NULL, 0); 
+    gegl_node_set_source_node(n3, NULL, 0); 
 
     ct_test(test, 2 == gegl_node_get_num_inputs(n2)); 
-    ct_test(test, NULL == gegl_node_get_nth_input(n2, 0)); 
-    ct_test(test, n1 == gegl_node_get_nth_input(n2, 1)); 
+    ct_test(test, NULL == gegl_node_get_source_node(n2, 0)); 
+    ct_test(test, n1 == gegl_node_get_source_node(n2, 1)); 
 
     ct_test(test, 2 == gegl_node_get_num_inputs(n3)); 
-    ct_test(test, NULL == gegl_node_get_nth_input(n3, 0)); 
-    ct_test(test, n1 == gegl_node_get_nth_input(n3, 1)); 
+    ct_test(test, NULL == gegl_node_get_source_node(n3, 0)); 
+    ct_test(test, n1 == gegl_node_get_source_node(n3, 1)); 
 
     g_object_unref(n2);
     g_object_unref(n3);
@@ -339,9 +350,144 @@ test_node_add_remove_nodes(Test *test)
 }
 
 static void
+test_node_unlink(Test *test)
+{
+  {
+    /*
+       n2
+       |
+       n1
+       |
+       n0
+    */
+
+    GeglNode *n0, *n1, *n2;
+
+    n0 = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                       "num_outputs", 1, 
+                       NULL);  
+    n1 = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                       "num_outputs", 1, 
+                       "num_inputs", 1, 
+                       "source0", n0, 
+                       NULL);  
+    n2 = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                       "num_inputs", 1, 
+                       "source0", n1, 
+                       NULL);  
+
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(n0)); 
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(n1)); 
+    ct_test(test, n1 == gegl_node_get_source_node(n2, 0)); 
+    ct_test(test, n0 == gegl_node_get_source_node(n1, 0)); 
+
+    gegl_node_unlink(n1);
+
+    ct_test(test, 0 == gegl_node_get_total_num_sinks(n0)); 
+    ct_test(test, 0 == gegl_node_get_total_num_sinks(n1)); 
+    ct_test(test, NULL == gegl_node_get_source_node(n2, 0)); 
+    ct_test(test, NULL == gegl_node_get_source_node(n1, 0)); 
+
+    g_object_unref(n1);
+
+    g_object_unref(n0); 
+    g_object_unref(n2);
+  }
+}
+
+static void
+test_node_remove_sources(Test *test)
+{
+  {
+    /*
+       n2
+       |
+       n1
+       |
+       n0
+    */
+
+    GeglNode *n0, *n1, *n2;
+
+    n0 = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                       "num_outputs", 1, 
+                       NULL);  
+    n1 = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                       "num_outputs", 1, 
+                       "num_inputs", 1, 
+                       "source0", n0, 
+                       NULL);  
+    n2 = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                       "num_inputs", 1, 
+                       "source0", n1, 
+                       NULL);  
+
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(n0)); 
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(n1)); 
+    ct_test(test, n1 == gegl_node_get_source_node(n2, 0)); 
+    ct_test(test, n0 == gegl_node_get_source_node(n1, 0)); 
+
+    gegl_node_remove_sources(n2);
+
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(n0)); 
+    ct_test(test, 0 == gegl_node_get_total_num_sinks(n1)); 
+    ct_test(test, NULL == gegl_node_get_source_node(n2, 0)); 
+    ct_test(test, n0 == gegl_node_get_source_node(n1, 0)); 
+
+    g_object_unref(n2);
+    g_object_unref(n1);
+    g_object_unref(n0); 
+  }
+}
+
+static void
+test_node_remove_sinks(Test *test)
+{
+  {
+    /*
+       n2
+       |
+       n1
+       |
+       n0
+    */
+
+    GeglNode *n0, *n1, *n2;
+
+    n0 = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                       "num_outputs", 1, 
+                       NULL);  
+    n1 = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                       "num_outputs", 1, 
+                       "num_inputs", 1, 
+                       "source0", n0, 
+                       NULL);  
+    n2 = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                       "num_inputs", 1, 
+                       "source0", n1, 
+                       NULL);  
+
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(n0)); 
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(n1)); 
+    ct_test(test, n1 == gegl_node_get_source_node(n2, 0)); 
+    ct_test(test, n0 == gegl_node_get_source_node(n1, 0)); 
+
+    gegl_node_remove_sinks(n1);
+
+    ct_test(test, 1 == gegl_node_get_total_num_sinks(n0)); 
+    ct_test(test, 0 == gegl_node_get_total_num_sinks(n1)); 
+    ct_test(test, NULL == gegl_node_get_source_node(n2, 0)); 
+    ct_test(test, n0 == gegl_node_get_source_node(n1, 0)); 
+
+    g_object_unref(n2);
+    g_object_unref(n1);
+    g_object_unref(n0); 
+  }
+}
+
+static void
 node_setup(Test *test)
 {
-
   /*
 
     node2 node3   <---- node2 has 2 inputs, node3 has 1 input. 
@@ -349,7 +495,7 @@ node_setup(Test *test)
      |  \/ 
      |  /\  
      | /  \  
-     +     +       <---- node0, node1 have one output index.
+     +     +      <---- node0, node1 each have one output.
     node0 node1   
 
   */
@@ -359,15 +505,14 @@ node_setup(Test *test)
 
   node2 = g_object_new (GEGL_TYPE_MOCK_NODE, 
                         "num_inputs", 2,
-                        "input0", node0,
-                        "input1", node1, 
+                        "source0", node0,
+                        "source1", node1, 
                         NULL);  
 
   node3 = g_object_new (GEGL_TYPE_MOCK_NODE, 
                         "num_inputs", 1,
-                        "input0", node0,
+                        "source0", node0,
                         NULL);  
-
 }
 
 static void
@@ -391,9 +536,12 @@ create_node_test()
   g_assert(ct_addTestFun(t, test_node_g_object_new));
   g_assert(ct_addTestFun(t, test_node_g_object_get));
   g_assert(ct_addTestFun(t, test_node_g_object_set));
-  g_assert(ct_addTestFun(t, test_node_get_inputs));
-  g_assert(ct_addTestFun(t, test_node_get_outputs));
-  g_assert(ct_addTestFun(t, test_node_add_remove_nodes));
+  g_assert(ct_addTestFun(t, test_node_get_sources));
+  g_assert(ct_addTestFun(t, test_node_get_sinks));
+  g_assert(ct_addTestFun(t, test_node_set_source_node));
+  g_assert(ct_addTestFun(t, test_node_unlink));
+  g_assert(ct_addTestFun(t, test_node_remove_sources));
+  g_assert(ct_addTestFun(t, test_node_remove_sinks));
 #endif
 
   return t;

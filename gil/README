@@ -1,10 +1,6 @@
-This toy version of gil just builds some abstract syntax trees
-for very simple expression statements with some C-like
-block structures. No variable declarations. See test.gil
-for an example.
+See the unit tests in the gil/test directory for illustration of how libgil is
+to be used. Currently there are just some parse trees that get built by hand.
+Once those are little farther, I will hook this back up to yacc/lex for parsing
+simple gil expressions.
 
-To run it just type:
-
->gil < test.gil 
-
-You should see the syntax tree printed out.
+The ast graph building code uses GObjects. 

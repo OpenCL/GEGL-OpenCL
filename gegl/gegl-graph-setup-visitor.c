@@ -72,24 +72,24 @@ visit_node(GeglVisitor * visitor,
 
   GEGL_VISITOR_CLASS(parent_class)->visit_node(visitor, node);
 
-  /* Check to see if this node is an graph input */
+  /* Check to see if this node is an graph source */
   {
     gint num_inputs = gegl_node_get_num_inputs(node); 
     gint i;
 
     for(i = 0; i < num_inputs; i++)
       {
-        GeglNode * input = gegl_node_get_nth_input(node, i);
+        GeglNode * source = gegl_node_get_source_node(node, i);
 
-        if(!input) 
+        if(!source) 
           {
             GeglGraphInput * graph_input = g_new(GeglGraphInput, 1);
 
             graph_input->node = node;
-            graph_input->node_input_index = i;
+            graph_input->node_input = i;
 
             graph_input->graph = self->graph; 
-            graph_input->graph_input_index = g_list_length(self->graph_inputs);
+            graph_input->graph_input = g_list_length(self->graph_inputs);
 
             self->graph_inputs = g_list_append(self->graph_inputs, graph_input);
           }

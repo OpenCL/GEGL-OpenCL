@@ -47,8 +47,8 @@ test_point_op_apply(Test *test)
                                              NULL);  
 
   GeglOp * op = g_object_new (GEGL_TYPE_MOCK_POINT_OP, 
-                              "input0", image0,
-                              "input1", image1,
+                              "source0", image0,
+                              "source1", image1,
                               NULL);  
 
   gegl_op_apply_roi(op, &roi);

@@ -4,7 +4,6 @@ GeglVisitor
 <!-- ##### SECTION Short_Description ##### -->
 Abstract class for all visitors.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
@@ -68,16 +67,6 @@ Abstract class for all visitors.
 </para>
 
 @self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_visitor_get_inputs ##### -->
-<para>
-
-</para>
-
-@self: 
-@node: 
 @Returns: 
 
 

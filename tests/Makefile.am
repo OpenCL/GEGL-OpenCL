@@ -34,6 +34,7 @@ MOCK_OBJECT_SRC = \
 testgegl_SOURCES = \
    $(MOCK_OBJECT_SRC) \
    addtest.c \
+   bfsvisitormultouttest.c \
    bfsvisitortest.c \
    buffertest.c \
    colortest.c \
@@ -42,6 +43,7 @@ testgegl_SOURCES = \
    colormodelrgbfloattest.c \
    constmulttest.c \
    copytest.c \
+   dfsvisitormultouttest.c \
    dfsvisitortest.c \
    dumpvisitortest.c \
    filltest.c \
@@ -52,6 +54,7 @@ testgegl_SOURCES = \
    membuffertest.c \
    needrecttest.c \
    nodetest.c \
+   nodemultouttest.c \
    optest.c \
    objecttest.c \
    pointoptest.c \
@@ -68,7 +71,7 @@ testgegl_SOURCES = \
 
 testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(DEPS)
-testgegl_LDADD = $(LDADDS) -lm -lefence
+testgegl_LDADD = $(LDADDS) -lm
 
 tests: dummy testgegl
 

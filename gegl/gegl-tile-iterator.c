@@ -99,10 +99,7 @@ set_property (GObject      *gobject,
   switch (prop_id)
   {
     case PROP_TILE:
-        {
-          GeglTile *tile = GEGL_TILE(g_value_get_object(value)); 
-          gegl_tile_iterator_set_tile (self,tile);
-        }
+        gegl_tile_iterator_set_tile (self, g_value_get_tile(value));
       break;
     case PROP_AREA:
         gegl_tile_iterator_set_rect (self, (GeglRect*)g_value_get_pointer (value));
@@ -123,7 +120,7 @@ get_property (GObject      *gobject,
   switch (prop_id)
   {
     case PROP_TILE:
-      g_value_set_object (value, G_OBJECT(gegl_tile_iterator_get_tile(self)));
+      g_value_set_tile (value, gegl_tile_iterator_get_tile(self));
       break;
     case PROP_AREA:
       gegl_tile_iterator_get_rect (self, (GeglRect*)g_value_get_pointer (value));

@@ -41,7 +41,7 @@ test_image_g_object_get(Test *test)
 }
 
 static void
-test_image_inputs_outputs(Test *test)
+test_image_sources_outputs(Test *test)
 {
   GeglImage * image = g_object_new (GEGL_TYPE_MOCK_IMAGE, 
                                     "colormodel", color_model,
@@ -74,7 +74,7 @@ create_image_test()
   g_assert(ct_addTearDown(t, image_test_teardown));
   g_assert(ct_addTestFun(t, test_image_g_object_new));
   g_assert(ct_addTestFun(t, test_image_g_object_get));
-  g_assert(ct_addTestFun(t, test_image_inputs_outputs));
+  g_assert(ct_addTestFun(t, test_image_sources_outputs));
 
   return t; 
 }

@@ -20,18 +20,18 @@ typedef struct _GeglBfsVisitor GeglBfsVisitor;
 #endif
 struct _GeglBfsVisitor 
 {
-       GeglVisitor visitor;
+    GeglVisitor visitor;
 };
 
 typedef struct _GeglBfsVisitorClass GeglBfsVisitorClass;
 struct _GeglBfsVisitorClass 
 {
-   GeglVisitorClass visitor_class;
+    GeglVisitorClass visitor_class;
 };
 
-GType         gegl_bfs_visitor_get_type          (void); 
-void          gegl_bfs_visitor_traverse          (GeglBfsVisitor *self, 
-                                                  GeglNode * node); 
+GType           gegl_bfs_visitor_get_type       (void); 
+void            gegl_bfs_visitor_traverse       (GeglBfsVisitor *self, 
+                                                 GeglNode * node); 
 
 #ifdef __cplusplus
 }

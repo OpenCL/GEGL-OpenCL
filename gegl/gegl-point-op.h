@@ -25,19 +25,19 @@ typedef struct _GeglPointOp GeglPointOp;
 #endif
 struct _GeglPointOp 
 {
-   GeglImage image;
+    GeglImage image;
 
-   /*< private >*/
-   GeglScanlineProcessor * scanline_processor;
+    /*< private >*/
+    GeglScanlineProcessor * scanline_processor;
 };
 
 typedef struct _GeglPointOpClass GeglPointOpClass;
 struct _GeglPointOpClass 
 {
-   GeglImageClass image_class;
+    GeglImageClass image_class;
 };
 
-GType            gegl_point_op_get_type              (void);
+GType           gegl_point_op_get_type          (void);
 
 #ifdef __cplusplus
 }

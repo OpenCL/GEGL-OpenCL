@@ -28,13 +28,13 @@ test_copy_g_object_new(Test *t)
 
   {
     GeglCopy * copy = g_object_new (GEGL_TYPE_COPY, 
-                                    "input", source,
+                                    "source", source,
                                     NULL);  
 
     ct_test(t, copy != NULL);
     ct_test(t, 1 == gegl_node_get_num_inputs(GEGL_NODE(copy)));
     ct_test(t, 1 == gegl_node_get_num_outputs(GEGL_NODE(copy)));
-    ct_test(t, source == (GeglOp*)gegl_node_get_nth_input(GEGL_NODE(copy),0));
+    ct_test(t, source == (GeglOp*)gegl_node_get_source_node(GEGL_NODE(copy),0));
 
     g_object_unref(copy);
   }
@@ -45,7 +45,7 @@ test_copy_rgb_to_rgb_apply(Test *t)
 {
   {
     GeglOp *copy = g_object_new(GEGL_TYPE_COPY,
-                                         "input", source,
+                                         "source", source,
                                          NULL);
 
     gegl_op_apply_image(copy, GEGL_OP(rgb_dest), NULL); 
@@ -62,7 +62,7 @@ test_copy_rgb_to_null_dest_apply(Test *t)
 {
   {
     GeglOp *copy = g_object_new(GEGL_TYPE_COPY,
-                                "input", source,
+                                "source", source,
                                 NULL);
 
     gegl_op_apply_image(copy, NULL, NULL); 
@@ -81,7 +81,7 @@ test_copy_rgb_to_gray_null_dest_apply(Test *t)
     GeglColorModel *gray_float = gegl_color_model_instance("GrayFloat");
     GeglOp *copy = g_object_new(GEGL_TYPE_COPY,
                                 "colormodel", gray_float,
-                                "input", source,
+                                "source", source,
                                 NULL);
 
     gegl_op_apply_image(copy, NULL, NULL); 
@@ -100,7 +100,7 @@ test_copy_rgb_to_gray_apply(Test *t)
 {
   {
     GeglOp *copy = g_object_new(GEGL_TYPE_COPY,
-                                "input", source,
+                                "source", source,
                                 NULL);
 
     gegl_op_apply_image(copy, GEGL_OP(gray_dest), NULL); 

@@ -11,7 +11,6 @@ static void visit_node(GeglVisitor * self, GeglNode *node);
 static void visit_op(GeglVisitor * self, GeglOp *op);
 static void visit_filter(GeglVisitor * self, GeglFilter *filter);
 static void visit_graph(GeglVisitor * self, GeglGraph *op);
-static GeglConnection *get_inputs(GeglVisitor * self, GeglNode *node);
 
 static void node_info_value_destroy(gpointer data);
 
@@ -57,14 +56,13 @@ class_init (GeglVisitorClass * klass)
   klass->visit_filter = visit_filter; 
   klass->visit_op = visit_op; 
   klass->visit_graph = visit_graph; 
-
-  klass->get_inputs = get_inputs;
 }
 
 static void 
 init (GeglVisitor * self, 
       GeglVisitorClass * klass)
 {
+  self->graph = NULL;
   self->visits_list = NULL;
   self->nodes_hash = g_hash_table_new_full(g_direct_hash,
                                            g_direct_equal,
@@ -295,8 +293,7 @@ static void
 visit_node(GeglVisitor * self,
            GeglNode *node)
 {
- gchar* name = (gchar*)gegl_object_get_name(GEGL_OBJECT(node));
- self->visits_list = g_list_append(self->visits_list, name);
+ self->visits_list = g_list_append(self->visits_list, node);
 }
 
 /**
@@ -392,36 +389,29 @@ visit_graph(GeglVisitor * self,
   visit_node(self, GEGL_NODE(graph));
 }
 
-/**
- * gegl_visitor_get_inputs
- * @self: a #GeglVisitor.
- * @node: a #GeglNode.
- *
- * Get the input connections for this node. Free after finishing.
- *
- * Returns: an array of #GeglConnection. 
- **/
-GeglConnection *
-gegl_visitor_get_inputs(GeglVisitor * self,
-                        GeglNode *node)
+GList * 
+gegl_visitor_get_input_attributes(GeglVisitor *self,
+                                  GeglNode *node)
 {
-  GeglVisitorClass *klass;
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (GEGL_IS_VISITOR (self), NULL);
-  g_return_val_if_fail (node != NULL, NULL);
-  g_return_val_if_fail (GEGL_IS_NODE(node), NULL);
+  GList * input_attributes_list = NULL;
+  gint i;
+  gint num_inputs = gegl_node_get_num_inputs(node);
 
-  klass = GEGL_VISITOR_GET_CLASS(self);
+  for(i = 0 ; i < num_inputs; i++) 
+    {
+      GeglAttributes *input_attributes;
+      gint output = -1;
+      GeglNode *source = gegl_node_get_source(node, &output, i);
 
-  if(klass->get_inputs)
-    return (*klass->get_inputs)(self, node);
-  else
-    return NULL;
-}
+      /* Try the graph instead. */
+      if(!source) 
+        source = gegl_graph_find_source(self->graph, &output, node, i); 
 
-static GeglConnection* 
-get_inputs (GeglVisitor *self,
-            GeglNode *node)
-{
-  return gegl_node_get_input_connections(node);
+      input_attributes = gegl_op_get_nth_attributes(GEGL_OP(source), output); 
+
+      input_attributes_list = 
+        g_list_append(input_attributes_list, input_attributes);
+    }
+
+  return input_attributes_list;
 }

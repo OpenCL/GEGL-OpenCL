@@ -52,7 +52,8 @@ test_bfs_visitor_traverse(Test *test)
 
     for(i = 0; i < g_list_length(visits_list); i++)
       {
-        gchar *name = (gchar*)g_list_nth_data(visits_list, i);
+        GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);  
+        const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));
         ct_test (test, 0 == strcmp(name, visit_names[i]));
       }
 
@@ -70,7 +71,8 @@ test_bfs_visitor_traverse(Test *test)
 
     for(i = 0; i < g_list_length(visits_list); i++)
       {
-        gchar *name = (gchar*)g_list_nth_data(visits_list, i);
+        GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);  
+        const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));
         ct_test (test, 0 == strcmp(name, visit_names[i]));
       }
 
@@ -104,7 +106,8 @@ test_bfs_visitor_traverse_diamond(Test *test)
 
     for(i = 0; i < g_list_length(visits_list); i++)
       {
-        gchar *name = (gchar*)g_list_nth_data(visits_list, i);
+        GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);  
+        const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));
         ct_test (test, 0 == strcmp(name, visit_names[i]));
       }
 
@@ -133,7 +136,6 @@ static void
 test_bfs_visitor_traverse_graph(Test *test)
 {
   {
-    gchar *name;
     gint i;
     gint length;
     gchar * visit_names[] = {"M", "L", "K", "I", "J", "N", "H"};  
@@ -146,11 +148,78 @@ test_bfs_visitor_traverse_graph(Test *test)
     length = g_list_length(visits_list);
     for(i = 0; i < g_list_length(visits_list); i++)
       {
-        name = (gchar*)g_list_nth_data(visits_list, i);
+        GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);  
+        const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));
         ct_test (test, 0 == strcmp(name, visit_names[i]));
       }
 
     g_object_unref(mock_bfs_visitor);
+  }
+}
+
+static void
+test_bfs_visitor_simple_shared(Test *test)
+{
+
+  /*
+     
+      D 
+     / \ 
+     | C 
+     \ / 
+      B
+      | 
+      A 
+
+  */
+
+  {
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                                "name", "A", 
+                                "num_outputs", 1, 
+                                NULL);  
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                                "name", "B", 
+                                "num_inputs", 1,
+                                "num_outputs", 1, 
+                                "source0", A,
+                                NULL);
+
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                                "name", "C", 
+                                "num_inputs", 1,
+                                "num_outputs", 1, 
+                                "source0", B,
+                                NULL);
+
+    GeglNode *D = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                                "name", "D", 
+                                "num_inputs", 2,
+                                "source0", B,
+                                "source1", C,
+                                NULL);  
+
+    gint i;
+    gchar * visit_names[] = {"D", "C", "B", "A"};  
+    GeglMockBfsVisitor *mock_bfs_visitor = g_object_new(GEGL_TYPE_MOCK_BFS_VISITOR, NULL);  
+    GList * visits_list;
+
+    gegl_bfs_visitor_traverse(GEGL_BFS_VISITOR(mock_bfs_visitor), D); 
+    visits_list = gegl_visitor_get_visits_list(GEGL_VISITOR(mock_bfs_visitor));
+
+    ct_test (test, 4 == g_list_length(visits_list));
+    for(i = 0; i < g_list_length(visits_list); i++)
+      {
+        GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);
+        const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));
+        ct_test (test, 0 == strcmp(name, visit_names[i]));
+      }
+
+    g_object_unref(mock_bfs_visitor);
+    g_object_unref(A);
+    g_object_unref(B);
+    g_object_unref(C);
+    g_object_unref(D);
   }
 }
 
@@ -204,13 +273,13 @@ bfs_visitor_setup(Test *test)
                       NULL);  
 
 
-    gegl_node_set_nth_input(B, A, 0);
-    gegl_node_set_nth_input(C, A, 0);
-    gegl_node_set_nth_input(D, B, 0);
-    gegl_node_set_nth_input(D, C, 1);
-    gegl_node_set_nth_input(E, D, 0);
-    gegl_node_set_nth_input(E, F, 1);
-    gegl_node_set_nth_input(F, G, 0);
+    gegl_node_set_source_node(B, A, 0);
+    gegl_node_set_source_node(C, A, 0);
+    gegl_node_set_source_node(D, B, 0);
+    gegl_node_set_source_node(D, C, 1);
+    gegl_node_set_source_node(E, D, 0);
+    gegl_node_set_source_node(E, F, 1);
+    gegl_node_set_source_node(F, G, 0);
 
   }
 
@@ -258,16 +327,16 @@ bfs_visitor_setup(Test *test)
                       "num_outputs", 1, 
                       NULL);  
 
-    gegl_node_set_nth_input(K, I, 0);
-    gegl_node_set_nth_input(K, J, 1);
+    gegl_node_set_source_node(K, I, 0);
+    gegl_node_set_source_node(K, J, 1);
     L = g_object_new (GEGL_TYPE_GRAPH, 
                       "name", "L", 
                       "root", K, 
                       NULL);  
 
-    gegl_node_set_nth_input(L, H, 0);
-    gegl_node_set_nth_input(M, L, 0);
-    gegl_node_set_nth_input(M, N, 1);
+    gegl_node_set_source_node(L, H, 0);
+    gegl_node_set_source_node(M, L, 0);
+    gegl_node_set_source_node(M, N, 1);
   }
 
 /**
@@ -311,12 +380,12 @@ bfs_visitor_setup(Test *test)
                       "num_outputs", 1, 
                       NULL);  
 
-    gegl_node_set_nth_input(O, R, 0);
-    gegl_node_set_nth_input(O, P, 1);
+    gegl_node_set_source_node(O, R, 0);
+    gegl_node_set_source_node(O, P, 1);
 
-    gegl_node_set_nth_input(P, Q, 0);
-    gegl_node_set_nth_input(Q, R, 0);
-    gegl_node_set_nth_input(R, S, 0);
+    gegl_node_set_source_node(P, Q, 0);
+    gegl_node_set_source_node(Q, R, 0);
+    gegl_node_set_source_node(R, S, 0);
   }
 }
 
@@ -357,6 +426,8 @@ create_bfs_visitor_test()
   g_assert(ct_addTestFun(t, test_bfs_visitor_traverse));
   g_assert(ct_addTestFun(t, test_bfs_visitor_traverse_diamond));
   g_assert(ct_addTestFun(t, test_bfs_visitor_traverse_graph));
+  g_assert(ct_addTestFun(t, test_bfs_visitor_simple_shared));
+
 #endif
 
   return t;

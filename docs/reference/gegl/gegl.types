@@ -23,11 +23,11 @@ gegl_diff_get_type
 gegl_dump_visitor_get_type           
 gegl_fill_get_type       
 gegl_filter_get_type                    
-gegl_graph_bfs_visitor_get_type           
-gegl_graph_dfs_visitor_get_type           
-gegl_graph_evaluate_visitor_get_type           
+gegl_eval_bfs_visitor_get_type           
+gegl_eval_dfs_visitor_get_type           
+gegl_eval_mgr_get_type           
+gegl_eval_visitor_get_type           
 gegl_graph_get_type         
-gegl_graph_init_visitor_get_type           
 gegl_graph_setup_visitor_get_type           
 gegl_image_get_type                     
 gegl_light_get_type         

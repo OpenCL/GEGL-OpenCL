@@ -35,31 +35,30 @@ typedef struct _GeglTileMgr GeglTileMgr;
 #endif
 struct _GeglTileMgr 
 {
-   GeglObject object;
+    GeglObject object;
 
-   /*< private >*/
+    /*< private >*/
 };
 
 typedef struct _GeglTileMgrClass GeglTileMgrClass;
 struct _GeglTileMgrClass 
 {
-   GeglObjectClass object_class;
+    GeglObjectClass object_class;
 };
 
-GeglTileMgr * gegl_tile_mgr_instance          (void);
-void          gegl_tile_mgr_install           (GeglTileMgr *tile_mgr);
+GType           gegl_tile_mgr_get_type          (void);
+GeglTileMgr *   gegl_tile_mgr_instance          (void);
+void            gegl_tile_mgr_install           (GeglTileMgr *tile_mgr);
 
-GType         gegl_tile_mgr_get_type            (void);
-
-GeglTile *    gegl_tile_mgr_validate_tile      (GeglTileMgr * self, 
-                                                GeglTile * tile, 
-                                                GeglRect * area,
-                                                GeglColorModel * color_model);
-void          gegl_tile_mgr_validate_data      (GeglTileMgr * self, 
-                                                GeglTile * tile);
-GeglBuffer *  gegl_tile_mgr_create_buffer       (GeglTileMgr * self, 
+GeglTile *      gegl_tile_mgr_validate_tile     (GeglTileMgr * self, 
+                                                 GeglTile * tile, 
+                                                 GeglRect * area,
+                                                 GeglColorModel * color_model);
+void            gegl_tile_mgr_validate_data     (GeglTileMgr * self, 
                                                  GeglTile * tile);
-GeglTile *    gegl_tile_mgr_create_tile         (GeglTileMgr * self, 
+GeglBuffer *    gegl_tile_mgr_create_buffer     (GeglTileMgr * self, 
+                                                 GeglTile * tile);
+GeglTile *      gegl_tile_mgr_create_tile       (GeglTileMgr * self, 
                                                  GeglColorModel * color_model, 
                                                  GeglRect * area);
 #ifdef __cplusplus

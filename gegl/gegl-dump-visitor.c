@@ -17,7 +17,6 @@ static GString* attributes_string(GeglOp *op);
 static void visit_node (GeglVisitor *visitor, GeglNode * node);
 static void visit_filter (GeglVisitor *visitor, GeglFilter * filter);
 static void visit_graph (GeglVisitor *visitor, GeglGraph * graph);
-static GeglConnection* get_inputs (GeglVisitor *self, GeglNode *node);
 
 static gpointer parent_class = NULL;
 
@@ -59,8 +58,6 @@ class_init (GeglDumpVisitorClass * klass)
   visitor_class->visit_node = visit_node;
   visitor_class->visit_filter = visit_filter;
   visitor_class->visit_graph = visit_graph;
-
-  visitor_class->get_inputs = get_inputs;
 }
 
 static void 
@@ -134,15 +131,15 @@ gegl_dump_visitor_traverse(GeglDumpVisitor * self,
   num_inputs = gegl_node_get_num_inputs(node);
   if(num_inputs > 0)
     {
-      GeglConnection * inputs = gegl_visitor_get_inputs(GEGL_VISITOR(self), node); 
       gint i;
       self->tabs++;
       for(i=0; i < num_inputs; i++)
         {
-          GeglNode *input = inputs[i].input;
+          gint output = -1;
+          GeglNode *source = gegl_node_get_source(node, &output, i);
 
-          if(input) 
-            gegl_dump_visitor_traverse(self, input);
+          if(source) 
+            gegl_dump_visitor_traverse(self, source);
           else
             {
               gchar * spaces = make_tabs(self->tabs);
@@ -152,7 +149,6 @@ gegl_dump_visitor_traverse(GeglDumpVisitor * self,
         }
 
       self->tabs--;
-      g_free(inputs);
     }
 }
 
@@ -207,7 +203,7 @@ visit_filter(GeglVisitor * visitor,
                tile, 
                tile_colormodel_name);
 
-    LOG_DIRECT("%s    (%s)",
+    LOG_DIRECT("%s        (%s)",
                spaces,   
                attrs_string->str);
 
@@ -239,35 +235,19 @@ visit_graph(GeglVisitor * visitor,
             GeglGraph *graph)
 {
   GeglDumpVisitor * self = GEGL_DUMP_VISITOR(visitor);
-  GeglGraph *prev_graph = self->graph;
+  GeglGraph *prev_graph = visitor->graph;
   gchar * spaces;
   GString *attrs_string = attributes_string(GEGL_OP(graph));
-  GeglTile * tile = NULL;
-  GeglColorModel * tile_colormodel = NULL;
-  gchar * tile_colormodel_name = "None";
 
   spaces = make_tabs(self->tabs);
 
-  if(graph->image)
-    {
-      tile = GEGL_IMAGE(graph->image)->tile;
-
-      if(tile) 
-        tile_colormodel = gegl_tile_get_color_model(tile);
-
-      if(tile_colormodel)
-        tile_colormodel_name = gegl_color_model_get_color_space_name(tile_colormodel); 
-    }  
-
-  LOG_DIRECT("%s%s %s %p graph->image: tile %p %s",
+  LOG_DIRECT("%s%s %s %p",
              spaces,   
              G_OBJECT_TYPE_NAME(graph), 
              gegl_object_get_name(GEGL_OBJECT(graph)), 
-             graph,
-             tile, 
-             tile_colormodel_name);
+             graph);
 
-  LOG_DIRECT("%s    (%s)",
+  LOG_DIRECT("%s        (%s)",
              spaces,   
              attrs_string->str);
 
@@ -275,21 +255,11 @@ visit_graph(GeglVisitor * visitor,
 
   LOG_DIRECT("%s{", spaces);
   self->tabs++;
-  self->graph = graph;
+  visitor->graph = graph;
   gegl_dump_visitor_traverse(self, GEGL_NODE(graph->root));
-  self->graph = prev_graph; 
+  visitor->graph = prev_graph; 
   self->tabs--;
   LOG_DIRECT("%s}", spaces);
 
   g_free(spaces);
-}
-
-static GeglConnection* 
-get_inputs (GeglVisitor *visitor,
-            GeglNode *node)
-{
-  g_return_val_if_fail (node != NULL, NULL);
-  g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
-
-  return gegl_node_get_input_connections(node);
 }

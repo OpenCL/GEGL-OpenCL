@@ -6,6 +6,7 @@
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
 #include "gegl-image.h"
+#include "gegl-tile.h"
 
 enum
 {
@@ -19,6 +20,9 @@ static void finalize(GObject * gobject);
 
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
+
+static void init_attributes(GeglOp *op);
+static void free_attributes(GeglFilter *self);
 
 static void evaluate (GeglFilter * self, GList * attributes, GList * input_attributes);
 
@@ -63,6 +67,7 @@ class_init (GeglFilterClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
   GeglNodeClass *node_class = GEGL_NODE_CLASS (klass);
+  GeglOpClass *op_class = GEGL_OP_CLASS (klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
@@ -71,6 +76,8 @@ class_init (GeglFilterClass * klass)
   gobject_class->get_property = get_property;
 
   node_class->accept = accept;
+
+  op_class->init_attributes = init_attributes;
 
   klass->compute_need_rect = compute_need_rect;
   klass->compute_have_rect = compute_have_rect;
@@ -95,6 +102,10 @@ init (GeglFilter * self,
 static void
 finalize(GObject *gobject)
 {
+  GeglFilter *self = GEGL_FILTER(gobject);
+
+  free_attributes(self);
+
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
@@ -122,6 +133,50 @@ get_property (GObject      *gobject,
     default:
       break;
   }
+}
+
+static void
+free_attributes(GeglFilter *self) 
+{
+  gint i;
+  GeglOp *op = GEGL_OP(self);
+  gint num_outputs = gegl_node_get_num_outputs(GEGL_NODE(op));
+
+  if(op->attributes)
+    {
+      for(i = 0; i < num_outputs; i++)
+        {
+           g_value_unset(op->attributes[i]->value);
+           g_free(op->attributes[i]->value);
+           g_free(op->attributes[i]);
+        }
+    }
+}
+
+static void
+init_attributes(GeglOp *op)
+{
+  GeglFilter *self = GEGL_FILTER(op);
+  gint i;
+  gint num_outputs = gegl_node_get_num_outputs(GEGL_NODE(op));
+
+  g_return_if_fail (op != NULL);
+  g_return_if_fail (GEGL_IS_FILTER(op));
+  g_return_if_fail (num_outputs >= 0);
+
+  /* Free any old attributes */
+  free_attributes(self);
+
+  /* Free and re-allocate the array of attributes */
+  GEGL_OP_CLASS(parent_class)->init_attributes(op);
+
+  /* Now allocate the individual attributes and init */
+  for(i = 0; i < num_outputs; i++)
+    {
+      op->attributes[i] = g_new0(GeglAttributes, 1);
+      op->attributes[i]->value = g_new0(GValue, 1);
+      g_value_init(op->attributes[i]->value, GEGL_TYPE_TILE);
+    }
 }
 
 /**

@@ -1,13 +1,13 @@
 The cvs version of Gegl is known to work with the following autotools:
 
-	- GNU autoconf 2.53
-	- GNU automake 1.4-p1
-	- GNU libtool 1.4
-    - GNU gettext 0.10.38
+- GNU autoconf 2.52
+- GNU automake 1.4-p1
+- GNU libtool 1.4
+- GNU gettext 0.10.40
 
 Some other versions of some tools may work, but the latest automake (eg 1.6)
-does not work for Gegl yet. I will try to keep autotools versions
-mostly in sync with those needed by glib, gtk+, gimp.
+does not work that well yet. I will try to keep autotools versions mostly in
+sync with those needed by glib, gtk+, gimp.
 
 To compile a CVS version of gegl on your system, you will need to take several
 steps to setup the tree for compilation.  You can do all these steps at once by
@@ -15,15 +15,14 @@ running:
 
 gegl> ./autogen.sh
    
-Basically this does the following for you:
+Basically this does the following for you (but see autogen.sh for exactly what
+is happening):
 
-gegl> aclocal; automake; autoconf
+gegl> aclocal; automake; autoconf; configure
 
-The above commands create the "configure" script.  Now you can run the
-configure script to create all the Makefiles.
+Before running autogen.sh, make sure you have libtool in your path.  
 
-Before running autogen.sh or configure, make sure you have libtool in your
-path.  
+Also configure is called with --disable-shared by default.
 
 Note that autogen.sh runs configure for you.  If you wish to pass options like
 --prefix=/usr to configure you can give those options to autogen.sh and they

@@ -35,46 +35,46 @@ typedef struct _GeglFilterClass GeglFilterClass;
 struct _GeglFilterClass 
 {
    GeglOpClass op_class;
+                                    
+   void (* evaluate)                (GeglFilter * self, 
+                                     GList * attributes,
+                                     GList * input_attributes);
+   void (* prepare)                 (GeglFilter * self, 
+                                     GList * attributes,
+                                     GList * input_attributes);
+   void (* process)                 (GeglFilter * self, 
+                                     GList * attributes,
+                                     GList * input_attributes);
+   void (* finish)                  (GeglFilter * self, 
+                                     GList * attributes,
+                                     GList * input_attributes);
 
-   void (* evaluate)          (GeglFilter * self, 
-                               GList * attributes,
-                               GList * input_attributes);
-   void (* prepare)           (GeglFilter * self, 
-                               GList * attributes,
-                               GList * input_attributes);
-   void (* process)           (GeglFilter * self, 
-                               GList * attributes,
-                               GList * input_attributes);
-   void (* finish)            (GeglFilter * self, 
-                               GList * attributes,
-                               GList * input_attributes);
-
-   void (* compute_need_rect)        (GeglFilter *self,
-                                      GeglRect *input_need_rect,
-                                      GeglRect *need_rect,
-                                      gint i);
-   void (* compute_have_rect)        (GeglFilter *self,
-                                      GeglRect *have_rect,
-                                      GList * input_have_rect); 
-   GeglColorModel* 
-     (* compute_derived_color_model) (GeglFilter *self,
-                                      GList * input_color_models); 
+   void (* compute_need_rect)       (GeglFilter *self,
+                                     GeglRect *input_need_rect,
+                                     GeglRect *need_rect,
+                                     gint i);
+   void (* compute_have_rect)       (GeglFilter *self,
+                                     GeglRect *have_rect,
+                                     GList * input_have_rect); 
+   GeglColorModel*
+     (* compute_derived_color_model)(GeglFilter *self,
+                                     GList * input_color_models); 
 };
 
-GType     gegl_filter_get_type                    (void);
-void      gegl_filter_compute_need_rect           (GeglFilter * self,
-                                                   GeglRect * input_need_rect,
-                                                   GeglRect * need_rect,
-                                                   gint i);
-void      gegl_filter_compute_have_rect           (GeglFilter * self,
-                                                   GeglRect *have_rect,
-                                                   GList * input_have_rects);
+GType           gegl_filter_get_type            (void);
+void            gegl_filter_compute_need_rect   (GeglFilter * self,
+                                                 GeglRect * input_need_rect,
+                                                 GeglRect * need_rect,
+                                                 gint i);
+void            gegl_filter_compute_have_rect   (GeglFilter * self,
+                                                 GeglRect *have_rect,
+                                                 GList * input_have_rects);
 GeglColorModel*  
-          gegl_filter_compute_derived_color_model (GeglFilter * self, 
-                                                   GList * input_color_models);
-void      gegl_filter_evaluate                    (GeglFilter * self, 
-                                                   GList * attributes,
-                                                   GList * input_attributes);
+         gegl_filter_compute_derived_color_model(GeglFilter * self, 
+                                                 GList * input_color_models);
+void            gegl_filter_evaluate            (GeglFilter * self, 
+                                                 GList * attributes,
+                                                 GList * input_attributes);
 
 #ifdef __cplusplus
 }

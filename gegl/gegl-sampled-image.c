@@ -97,9 +97,7 @@ static void
 init (GeglSampledImage * self, 
       GeglSampledImageClass * klass)
 {
-  GeglNode * node = GEGL_NODE(self);
-  gegl_node_set_num_inputs(node, 0);
-  return;
+  g_object_set(self, "num_inputs", 0, NULL);
 }
 
 static GObject*        

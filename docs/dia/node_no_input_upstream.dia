@@ -1,0 +1,512 @@
+<?xml version="1.0"?>
+<diagram xmlns:dia="http://www.lysator.liu.se/~alla/dia/">
+  <diagramdata>
+    <attribute name="background">
+      <color val="#ffffff"/>
+    </attribute>
+    <attribute name="paper">
+      <composite type="paper">
+        <attribute name="name">
+          <string>#A4#</string>
+        </attribute>
+        <attribute name="tmargin">
+          <real val="2.82"/>
+        </attribute>
+        <attribute name="bmargin">
+          <real val="2.82"/>
+        </attribute>
+        <attribute name="lmargin">
+          <real val="2.82"/>
+        </attribute>
+        <attribute name="rmargin">
+          <real val="2.82"/>
+        </attribute>
+        <attribute name="is_portrait">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="scaling">
+          <real val="1"/>
+        </attribute>
+        <attribute name="fitto">
+          <boolean val="false"/>
+        </attribute>
+      </composite>
+    </attribute>
+    <attribute name="grid">
+      <composite type="grid">
+        <attribute name="width_x">
+          <real val="0.5"/>
+        </attribute>
+        <attribute name="width_y">
+          <real val="0.5"/>
+        </attribute>
+        <attribute name="visible_x">
+          <int val="1"/>
+        </attribute>
+        <attribute name="visible_y">
+          <int val="1"/>
+        </attribute>
+      </composite>
+    </attribute>
+    <attribute name="guides">
+      <composite type="guides">
+        <attribute name="hguides"/>
+        <attribute name="vguides"/>
+      </composite>
+    </attribute>
+  </diagramdata>
+  <layer name="Background" visible="true">
+    <group>
+      <group>
+        <object type="Standard - Box" version="0" id="O0">
+          <attribute name="obj_pos">
+            <point val="10.05,9.1"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="10,9.05;13.75,12.1"/>
+          </attribute>
+          <attribute name="elem_corner">
+            <point val="10.05,9.1"/>
+          </attribute>
+          <attribute name="elem_width">
+            <real val="3.65"/>
+          </attribute>
+          <attribute name="elem_height">
+            <real val="2.95"/>
+          </attribute>
+          <attribute name="show_background">
+            <boolean val="true"/>
+          </attribute>
+        </object>
+        <object type="Standard - Line" version="0" id="O1">
+          <attribute name="obj_pos">
+            <point val="10.05,12.05"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="10,12;13.75,12.1"/>
+          </attribute>
+          <attribute name="conn_endpoints">
+            <point val="10.05,12.05"/>
+            <point val="13.7,12.05"/>
+          </attribute>
+          <attribute name="numcp">
+            <int val="7"/>
+          </attribute>
+          <connections>
+            <connection handle="0" to="O0" connection="5"/>
+            <connection handle="1" to="O0" connection="7"/>
+          </connections>
+        </object>
+        <object type="Standard - Line" version="0" id="O2">
+          <attribute name="obj_pos">
+            <point val="10.05,9.1"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="10,9.05;13.75,9.15"/>
+          </attribute>
+          <attribute name="conn_endpoints">
+            <point val="10.05,9.1"/>
+            <point val="13.7,9.1"/>
+          </attribute>
+          <attribute name="numcp">
+            <int val="7"/>
+          </attribute>
+          <connections>
+            <connection handle="0" to="O0" connection="0"/>
+            <connection handle="1" to="O0" connection="2"/>
+          </connections>
+        </object>
+        <object type="Standard - Line" version="0" id="O3">
+          <attribute name="obj_pos">
+            <point val="10.05,9.1"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="10,9.05;10.1,12.1"/>
+          </attribute>
+          <attribute name="conn_endpoints">
+            <point val="10.05,9.1"/>
+            <point val="10.05,12.05"/>
+          </attribute>
+          <attribute name="numcp">
+            <int val="2"/>
+          </attribute>
+          <connections>
+            <connection handle="0" to="O0" connection="0"/>
+            <connection handle="1" to="O0" connection="5"/>
+          </connections>
+        </object>
+        <object type="Standard - Line" version="0" id="O4">
+          <attribute name="obj_pos">
+            <point val="12.7875,9.1"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="12.7375,9.05;12.8375,12.1"/>
+          </attribute>
+          <attribute name="conn_endpoints">
+            <point val="12.7875,9.1"/>
+            <point val="12.7875,12.05"/>
+          </attribute>
+          <attribute name="numcp">
+            <int val="1"/>
+          </attribute>
+          <connections>
+            <connection handle="0" to="O2" connection="5"/>
+            <connection handle="1" to="O1" connection="5"/>
+          </connections>
+        </object>
+        <object type="Standard - Line" version="0" id="O5">
+          <attribute name="obj_pos">
+            <point val="13.7,12.05"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="13.65,9.05;13.75,12.1"/>
+          </attribute>
+          <attribute name="conn_endpoints">
+            <point val="13.7,12.05"/>
+            <point val="13.7,9.1"/>
+          </attribute>
+          <attribute name="numcp">
+            <int val="3"/>
+          </attribute>
+          <connections>
+            <connection handle="0" to="O0" connection="7"/>
+            <connection handle="1" to="O0" connection="2"/>
+          </connections>
+        </object>
+        <object type="Standard - Line" version="0" id="O6">
+          <attribute name="obj_pos">
+            <point val="10.9625,9.1"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="10.9125,9.05;11.0125,12.1"/>
+          </attribute>
+          <attribute name="conn_endpoints">
+            <point val="10.9625,9.1"/>
+            <point val="10.9625,12.05"/>
+          </attribute>
+          <attribute name="numcp">
+            <int val="1"/>
+          </attribute>
+          <connections>
+            <connection handle="0" to="O2" connection="1"/>
+            <connection handle="1" to="O1" connection="1"/>
+          </connections>
+        </object>
+      </group>
+      <object type="Electric - connpoint" version="0" id="O7">
+        <attribute name="obj_pos">
+          <point val="8.75,9.4"/>
+        </attribute>
+        <attribute name="obj_bb">
+          <rectangle val="8.7,9.35;12.2817,12.9317"/>
+        </attribute>
+        <attribute name="elem_corner">
+          <point val="8.75,9.4"/>
+        </attribute>
+        <attribute name="elem_width">
+          <real val="3.48168"/>
+        </attribute>
+        <attribute name="elem_height">
+          <real val="3.48168"/>
+        </attribute>
+        <attribute name="show_background">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="flip_horizontal">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="flip_vertical">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="padding">
+          <real val="0.353553"/>
+        </attribute>
+      </object>
+      <object type="Electric - connpoint" version="0" id="O8">
+        <attribute name="obj_pos">
+          <point val="11.5,8.8"/>
+        </attribute>
+        <attribute name="obj_bb">
+          <rectangle val="11.45,8.75;15.0317,12.3317"/>
+        </attribute>
+        <attribute name="elem_corner">
+          <point val="11.5,8.8"/>
+        </attribute>
+        <attribute name="elem_width">
+          <real val="3.48168"/>
+        </attribute>
+        <attribute name="elem_height">
+          <real val="3.48168"/>
+        </attribute>
+        <attribute name="show_background">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="flip_horizontal">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="flip_vertical">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="padding">
+          <real val="0.353553"/>
+        </attribute>
+      </object>
+      <object type="Electric - connpoint" version="0" id="O9">
+        <attribute name="obj_pos">
+          <point val="8.75,8.3"/>
+        </attribute>
+        <attribute name="obj_bb">
+          <rectangle val="8.7,8.25;12.2817,11.8317"/>
+        </attribute>
+        <attribute name="elem_corner">
+          <point val="8.75,8.3"/>
+        </attribute>
+        <attribute name="elem_width">
+          <real val="3.48168"/>
+        </attribute>
+        <attribute name="elem_height">
+          <real val="3.48168"/>
+        </attribute>
+        <attribute name="show_background">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="flip_horizontal">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="flip_vertical">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="padding">
+          <real val="0.353553"/>
+        </attribute>
+      </object>
+    </group>
+    <group>
+      <group>
+        <object type="Standard - Box" version="0" id="O10">
+          <attribute name="obj_pos">
+            <point val="3.33279,7.01558"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="3.28279,6.96558;7.03279,10.0156"/>
+          </attribute>
+          <attribute name="elem_corner">
+            <point val="3.33279,7.01558"/>
+          </attribute>
+          <attribute name="elem_width">
+            <real val="3.65"/>
+          </attribute>
+          <attribute name="elem_height">
+            <real val="2.95"/>
+          </attribute>
+          <attribute name="show_background">
+            <boolean val="true"/>
+          </attribute>
+        </object>
+        <object type="Standard - Line" version="0" id="O11">
+          <attribute name="obj_pos">
+            <point val="3.33279,9.96558"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="3.28279,9.91558;7.03279,10.0156"/>
+          </attribute>
+          <attribute name="conn_endpoints">
+            <point val="3.33279,9.96558"/>
+            <point val="6.98279,9.96558"/>
+          </attribute>
+          <attribute name="numcp">
+            <int val="7"/>
+          </attribute>
+          <connections>
+            <connection handle="0" to="O10" connection="5"/>
+            <connection handle="1" to="O10" connection="7"/>
+          </connections>
+        </object>
+        <object type="Standard - Line" version="0" id="O12">
+          <attribute name="obj_pos">
+            <point val="3.33279,7.01558"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="3.28279,6.96558;7.03279,7.06558"/>
+          </attribute>
+          <attribute name="conn_endpoints">
+            <point val="3.33279,7.01558"/>
+            <point val="6.98279,7.01558"/>
+          </attribute>
+          <attribute name="numcp">
+            <int val="7"/>
+          </attribute>
+          <connections>
+            <connection handle="0" to="O10" connection="0"/>
+            <connection handle="1" to="O10" connection="2"/>
+          </connections>
+        </object>
+        <object type="Standard - Line" version="0" id="O13">
+          <attribute name="obj_pos">
+            <point val="3.33279,7.01558"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="3.28279,6.96558;3.38279,10.0156"/>
+          </attribute>
+          <attribute name="conn_endpoints">
+            <point val="3.33279,7.01558"/>
+            <point val="3.33279,9.96558"/>
+          </attribute>
+          <attribute name="numcp">
+            <int val="2"/>
+          </attribute>
+          <connections>
+            <connection handle="0" to="O10" connection="0"/>
+            <connection handle="1" to="O10" connection="5"/>
+          </connections>
+        </object>
+        <object type="Standard - Line" version="0" id="O14">
+          <attribute name="obj_pos">
+            <point val="6.07029,7.01558"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="6.02029,6.96558;6.12029,10.0156"/>
+          </attribute>
+          <attribute name="conn_endpoints">
+            <point val="6.07029,7.01558"/>
+            <point val="6.07029,9.96558"/>
+          </attribute>
+          <attribute name="numcp">
+            <int val="1"/>
+          </attribute>
+          <connections>
+            <connection handle="0" to="O12" connection="5"/>
+            <connection handle="1" to="O11" connection="5"/>
+          </connections>
+        </object>
+        <object type="Standard - Line" version="0" id="O15">
+          <attribute name="obj_pos">
+            <point val="6.98279,9.96558"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="6.93279,6.96558;7.03279,10.0156"/>
+          </attribute>
+          <attribute name="conn_endpoints">
+            <point val="6.98279,9.96558"/>
+            <point val="6.98279,7.01558"/>
+          </attribute>
+          <attribute name="numcp">
+            <int val="3"/>
+          </attribute>
+          <connections>
+            <connection handle="0" to="O10" connection="7"/>
+            <connection handle="1" to="O10" connection="2"/>
+          </connections>
+        </object>
+        <object type="Standard - Line" version="0" id="O16">
+          <attribute name="obj_pos">
+            <point val="4.24529,7.01558"/>
+          </attribute>
+          <attribute name="obj_bb">
+            <rectangle val="4.19529,6.96558;4.29529,10.0156"/>
+          </attribute>
+          <attribute name="conn_endpoints">
+            <point val="4.24529,7.01558"/>
+            <point val="4.24529,9.96558"/>
+          </attribute>
+          <attribute name="numcp">
+            <int val="1"/>
+          </attribute>
+          <connections>
+            <connection handle="0" to="O12" connection="1"/>
+            <connection handle="1" to="O11" connection="1"/>
+          </connections>
+        </object>
+      </group>
+      <object type="Electric - connpoint" version="0" id="O17">
+        <attribute name="obj_pos">
+          <point val="4.78279,6.81558"/>
+        </attribute>
+        <attribute name="obj_bb">
+          <rectangle val="4.73279,6.76558;8.31447,10.3473"/>
+        </attribute>
+        <attribute name="elem_corner">
+          <point val="4.78279,6.81558"/>
+        </attribute>
+        <attribute name="elem_width">
+          <real val="3.48168"/>
+        </attribute>
+        <attribute name="elem_height">
+          <real val="3.48168"/>
+        </attribute>
+        <attribute name="show_background">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="flip_horizontal">
+          <boolean val="false"/>
+        </attribute>
+        <attribute name="flip_vertical">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="padding">
+          <real val="0.353553"/>
+        </attribute>
+      </object>
+      <object type="Electric - connpoint" version="0" id="O18">
+        <attribute name="obj_pos">
+          <point val="2,6.8"/>
+        </attribute>
+        <attribute name="obj_bb">
+          <rectangle val="1.95,6.75;5.53168,10.3317"/>
+        </attribute>
+        <attribute name="elem_corner">
+          <point val="2,6.8"/>
+        </attribute>
+        <attribute name="elem_width">
+          <real val="3.48168"/>
+        </attribute>
+        <attribute name="elem_height">
+          <real val="3.48168"/>
+        </attribute>
+        <attribute name="show_background">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="flip_horizontal">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="flip_vertical">
+          <boolean val="true"/>
+        </attribute>
+        <attribute name="padding">
+          <real val="0.353553"/>
+        </attribute>
+      </object>
+    </group>
+    <object type="Standard - Line" version="0" id="O19">
+      <attribute name="obj_pos">
+        <point val="6.52363,8.55642"/>
+      </attribute>
+      <attribute name="obj_bb">
+        <rectangle val="5.67363,7.70642;11.3408,10.8908"/>
+      </attribute>
+      <attribute name="conn_endpoints">
+        <point val="6.52363,8.55642"/>
+        <point val="10.4908,10.0408"/>
+      </attribute>
+      <attribute name="numcp">
+        <int val="1"/>
+      </attribute>
+      <attribute name="line_width">
+        <real val="0.1"/>
+      </attribute>
+      <attribute name="end_arrow">
+        <enum val="1"/>
+      </attribute>
+      <attribute name="end_arrow_length">
+        <real val="0.5"/>
+      </attribute>
+      <attribute name="end_arrow_width">
+        <real val="0.5"/>
+      </attribute>
+      <connections>
+        <connection handle="0" to="O17" connection="0"/>
+        <connection handle="1" to="O9" connection="0"/>
+      </connections>
+    </object>
+  </layer>
+</diagram>

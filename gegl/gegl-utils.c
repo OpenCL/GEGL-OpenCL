@@ -120,7 +120,6 @@ gegl_init (int *argc,
     return;
 
   gegl_param_spec_types_init ();
-  gegl_value_types_init ();
   gegl_init_color_models();
 
   {
@@ -131,21 +130,6 @@ gegl_init (int *argc,
   g_atexit(gegl_exit);
   gegl_initialized = TRUE;
   
-}
-
-void 
-gegl_utils_execute_graph(GeglOp * root,
-                         GeglOp * image,
-                         GeglRect *roi)
-{
-  GeglGraph * graph = g_object_new(GEGL_TYPE_GRAPH,
-                                   "root", root,
-                                   "image", image,
-                                   "roi", roi,
-                                   NULL);
-
-  gegl_graph_execute(graph);
-  g_object_unref(graph);
 }
 
 void 

@@ -1,30 +1,35 @@
-55% function docs coverage.
-98 functions documented.
-80 not documented.
+52% symbol docs coverage.
+90 symbols documented.
+82 not documented.
 
 
 GEGL_DEFAULT_HEIGHT
 GEGL_DEFAULT_WIDTH
 GEGL_FLOAT_EPSILON
 GEGL_FLOAT_EQUAL
-GEGL_IS_PARAM_SPEC_IMAGE_DATA
-GEGL_PARAM_SPEC_IMAGE_DATA
+GEGL_FLOAT_IS_ZERO
 GEGL_TYPE_IMAGE_DATA
-GEGL_TYPE_PARAM_IMAGE_DATA
-GEGL_TYPE_PARAM_INT
-G_VALUE_HOLDS_IMAGE_DATA
+GeglChannelDataType
+GeglColorAlphaSpace
+GeglColorConstant
+GeglColorModelType
+GeglColorSpace
+GeglCompositeMode
+GeglConnector
+GeglConvertFunc
+GeglDimension
+GeglGraphInput
+GeglGraphOutput
+GeglNodeInfo
+GeglPoint
+GeglRect
+GeglScanlineFunc
+GeglScanlineProcessor
 LOG_DEBUG
 LOG_DIRECT
 LOG_INFO
 LOG_MSG
 ROUND
-g_value_get_image_data
-g_value_get_image_data_rect
-g_value_get_image_data_tile
-g_value_print_image_data
-g_value_set_image_data
-g_value_set_image_data_rect
-g_value_set_image_data_tile
 gegl_attributes_get_color_model
 gegl_attributes_get_rect
 gegl_attributes_new
@@ -57,8 +62,6 @@ gegl_image_set_derived_color_model
 gegl_init
 gegl_log
 gegl_logv
-gegl_param_spec_image_data
-gegl_param_spec_int
 gegl_rect_bounding_box
 gegl_rect_contains
 gegl_rect_copy
@@ -81,5 +84,4 @@ gegl_utils_construct_val
 gegl_utils_derived_channel_data_type
 gegl_utils_derived_color_alpha_space
 gegl_utils_derived_color_space
-gegl_utils_execute_graph
 gegl_visitor_set_discovered

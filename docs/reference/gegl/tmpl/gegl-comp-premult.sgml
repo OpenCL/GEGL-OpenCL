@@ -4,7 +4,6 @@ GeglCompPremult
 <!-- ##### SECTION Short_Description ##### -->
 Composite two premultiplied images.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 
@@ -15,12 +14,7 @@ Composite two premultiplied images.
 
 </para>
 
-<!-- ##### ARG GeglCompPremult:input0 ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglCompPremult:input1 ##### -->
+<!-- ##### ARG GeglCompPremult:composite-mode ##### -->
 <para>
 
 </para>

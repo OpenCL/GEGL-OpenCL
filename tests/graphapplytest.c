@@ -36,7 +36,7 @@ test_graph_apply(Test *t)
 
   GeglOp * fill = testutils_rgb_fill(.1,.2,.3); 
   GeglOp * cmult1 = g_object_new (GEGL_TYPE_CONST_MULT,
-                                  "input", fill,
+                                  "source", fill,
                                   "multiplier", .5,
                                   NULL); 
 
@@ -45,7 +45,7 @@ test_graph_apply(Test *t)
                                 NULL);
 
   GeglOp * cmult2 = g_object_new (GEGL_TYPE_CONST_MULT,
-                                  "input", graph,
+                                  "source", graph,
                                   "multiplier", .5,
                                   NULL); 
                         
@@ -60,7 +60,7 @@ test_graph_apply(Test *t)
 }
 
 static void
-test_graph_apply_with_input(Test *t)
+test_graph_apply_with_source(Test *t)
 {
 
   /* 
@@ -92,9 +92,9 @@ test_graph_apply_with_input(Test *t)
                                  "root", cmult, 
                                  NULL);
 
-  gegl_node_set_nth_input(GEGL_NODE(graph), GEGL_NODE(fill), 0);
+  gegl_node_set_source_node(GEGL_NODE(graph), GEGL_NODE(fill), 0);
 
-  LOG_DEBUG("test_graph_apply_with_input", "calling apply");
+  LOG_DEBUG("test_graph_apply_with_source", "calling apply");
   gegl_op_apply_image(graph, GEGL_OP(dest), NULL); 
 
   ct_test(t, testutils_check_rgb_float_pixel(GEGL_IMAGE(dest), .05, .1, .15));  
@@ -105,7 +105,7 @@ test_graph_apply_with_input(Test *t)
 }
 
 static void
-test_graph_apply_with_input_and_output(Test *t)
+test_graph_apply_with_source_and_output(Test *t)
 {
   /* 
      cmult2
@@ -143,11 +143,11 @@ test_graph_apply_with_input_and_output(Test *t)
                                  NULL);
 
   GeglOp * cmult2 = g_object_new (GEGL_TYPE_CONST_MULT,
-                                  "input", graph,
+                                  "source", graph,
                                   "multiplier", .5,
                                   NULL); 
 
-  gegl_node_set_nth_input(GEGL_NODE(graph), GEGL_NODE(fill), 0);
+  gegl_node_set_source_node(GEGL_NODE(graph), GEGL_NODE(fill), 0);
 
   gegl_op_apply_image(cmult2, GEGL_OP(dest), NULL); 
 
@@ -160,7 +160,7 @@ test_graph_apply_with_input_and_output(Test *t)
 }
 
 static void
-test_graph_apply_with_2_ops_input_and_output(Test *t)
+test_graph_apply_with_2_ops_source_and_output(Test *t)
 {
   /* 
      cmult3
@@ -198,7 +198,7 @@ test_graph_apply_with_2_ops_input_and_output(Test *t)
                                  "multiplier", .5,
                                  NULL); 
   GeglOp * cmult2 = g_object_new (GEGL_TYPE_CONST_MULT,
-                                  "input", cmult1,
+                                  "source", cmult1,
                                   "multiplier", .5,
                                   NULL); 
 
@@ -207,11 +207,11 @@ test_graph_apply_with_2_ops_input_and_output(Test *t)
                                  NULL);
 
   GeglOp * cmult3 = g_object_new (GEGL_TYPE_CONST_MULT,
-                                  "input", graph,
+                                  "source", graph,
                                   "multiplier", .5,
                                   NULL); 
 
-  gegl_node_set_nth_input(GEGL_NODE(graph), GEGL_NODE(fill), 0);
+  gegl_node_set_source_node(GEGL_NODE(graph), GEGL_NODE(fill), 0);
   gegl_op_apply_image(cmult3, GEGL_OP(dest), NULL); 
 
   ct_test(t, testutils_check_rgb_float_pixel(GEGL_IMAGE(dest), .0125, .025, .0375));  
@@ -255,7 +255,7 @@ test_graph_apply_add_graph_and_fill(Test *t)
 
   GeglOp * fill1 = testutils_rgb_fill(.1,.2,.3); 
   GeglOp * cmult = g_object_new (GEGL_TYPE_CONST_MULT,
-                                 "input", fill1,
+                                 "source", fill1,
                                  "multiplier", .5,
                                  NULL); 
   GeglOp * graph = g_object_new(GEGL_TYPE_GRAPH,
@@ -264,8 +264,8 @@ test_graph_apply_add_graph_and_fill(Test *t)
 
   GeglOp * fill2 = testutils_rgb_fill(.4,.5,.6); 
   GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
-                              "input0", graph,
-                              "input1", fill2,
+                              "source0", graph,
+                              "source1", fill2,
                               NULL);  
                         
   gegl_op_apply(add); 
@@ -311,7 +311,7 @@ test_graph_apply_add_graph_and_graph(Test *t)
 
   GeglOp * fill1 = testutils_rgb_fill(.1,.2,.3); 
   GeglOp * cmult = g_object_new (GEGL_TYPE_CONST_MULT,
-                                 "input", fill1,
+                                 "source", fill1,
                                  "multiplier", .5,
                                  NULL); 
   GeglOp * graph1 = g_object_new(GEGL_TYPE_GRAPH,
@@ -321,16 +321,16 @@ test_graph_apply_add_graph_and_graph(Test *t)
   GeglOp * fill2 = testutils_rgb_fill(.4,.5,.6); 
   GeglOp * fill3 = testutils_rgb_fill(.7,.8,.9); 
   GeglOp * mult = g_object_new (GEGL_TYPE_MULT,
-                                "input0", fill2,
-                                "input1", fill3,
+                                "source0", fill2,
+                                "source1", fill3,
                                 NULL); 
   GeglOp * graph2 = g_object_new(GEGL_TYPE_GRAPH,
                                   "root", mult, 
                                   NULL);
 
   GeglOp * add = g_object_new (GEGL_TYPE_ADD,
-                                "input0", graph1,
-                                "input1", graph2,
+                                "source0", graph1,
+                                "source1", graph2,
                                 NULL); 
                         
   gegl_op_apply(add); 
@@ -348,7 +348,7 @@ test_graph_apply_add_graph_and_graph(Test *t)
 }
 
 static void
-test_graph_apply_with_2_inputs(Test *t)
+test_graph_apply_with_2_sources(Test *t)
 {
   /*        
              cmult1 
@@ -393,8 +393,8 @@ test_graph_apply_with_2_inputs(Test *t)
                                   NULL); 
 
   GeglOp * add = g_object_new (GEGL_TYPE_ADD,
-                               "input0", cmult2,
-                               "input1", cmult3,
+                               "source0", cmult2,
+                               "source1", cmult3,
                                NULL); 
 
   GeglOp * graph = g_object_new(GEGL_TYPE_GRAPH,
@@ -402,12 +402,12 @@ test_graph_apply_with_2_inputs(Test *t)
                                  NULL);
 
   GeglOp * cmult1 = g_object_new (GEGL_TYPE_CONST_MULT,
-                                  "input", graph,
+                                  "source", graph,
                                   "multiplier", .5,
                                   NULL); 
 
-  gegl_node_set_nth_input(GEGL_NODE(graph), GEGL_NODE(fill1), 0);
-  gegl_node_set_nth_input(GEGL_NODE(graph), GEGL_NODE(fill2), 1);
+  gegl_node_set_source_node(GEGL_NODE(graph), GEGL_NODE(fill1), 0);
+  gegl_node_set_source_node(GEGL_NODE(graph), GEGL_NODE(fill2), 1);
 
   gegl_op_apply(cmult1); 
 
@@ -452,12 +452,12 @@ create_graph_apply_test()
 
 #if 1 
   g_assert(ct_addTestFun(t, test_graph_apply));
-  g_assert(ct_addTestFun(t, test_graph_apply_with_input));
-  g_assert(ct_addTestFun(t, test_graph_apply_with_input_and_output));
-  g_assert(ct_addTestFun(t, test_graph_apply_with_2_ops_input_and_output));
+  g_assert(ct_addTestFun(t, test_graph_apply_with_source));
+  g_assert(ct_addTestFun(t, test_graph_apply_with_source_and_output));
+  g_assert(ct_addTestFun(t, test_graph_apply_with_2_ops_source_and_output));
   g_assert(ct_addTestFun(t, test_graph_apply_add_graph_and_fill));
   g_assert(ct_addTestFun(t, test_graph_apply_add_graph_and_graph));
-  g_assert(ct_addTestFun(t, test_graph_apply_with_2_inputs));
+  g_assert(ct_addTestFun(t, test_graph_apply_with_2_sources));
 #endif
 
   return t; 

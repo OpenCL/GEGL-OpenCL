@@ -7,6 +7,7 @@
 #include "testutils.h"
 
 extern Test * create_add_test();
+extern Test * create_bfs_visitor_mult_out_test();
 extern Test * create_bfs_visitor_test();
 extern Test * create_buffer_test();
 extern Test * create_color_test();
@@ -16,6 +17,7 @@ extern Test * create_color_model_rgb_float_test();
 extern Test * create_const_mult_test();
 extern Test * create_copy_test();
 extern Test * create_dfs_visitor_test();
+extern Test * create_dfs_visitor_mult_out_test();
 extern Test * create_dump_visitor_test();
 extern Test * create_fill_test();
 extern Test * create_graph_apply_test();
@@ -26,6 +28,7 @@ extern Test * create_mem_buffer_test();
 extern Test * create_mem_image_mgr_test();
 extern Test * create_needrect_test();
 extern Test * create_node_test();
+extern Test * create_node_mult_out_test();
 extern Test * create_object_test();
 extern Test * create_op_test();
 extern Test * create_point_op_test();
@@ -55,6 +58,7 @@ main (int argc, char *argv[])
 #if 1  
     cs_addTest(suite, create_add_test());
     cs_addTest(suite, create_bfs_visitor_test());
+    cs_addTest(suite, create_bfs_visitor_mult_out_test());
     cs_addTest(suite, create_buffer_test());
     cs_addTest(suite, create_color_test());
     cs_addTest(suite, create_color_model_test());
@@ -62,6 +66,7 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_color_model_rgb_float_test());
     cs_addTest(suite, create_const_mult_test());
     cs_addTest(suite, create_copy_test());
+    cs_addTest(suite, create_dfs_visitor_mult_out_test());
     cs_addTest(suite, create_dfs_visitor_test());
     cs_addTest(suite, create_dump_visitor_test());
     cs_addTest(suite, create_fill_test());
@@ -72,6 +77,7 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_mem_buffer_test());
     cs_addTest(suite, create_needrect_test());
     cs_addTest(suite, create_node_test());
+    cs_addTest(suite, create_node_mult_out_test());
     cs_addTest(suite, create_object_test());
     cs_addTest(suite, create_op_test());
     cs_addTest(suite, create_point_op_test());

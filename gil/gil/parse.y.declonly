@@ -1,0 +1,137 @@
+%{
+    /* This version has just statements, expressions, variables, blocks */ 
+#include "gilsymboltable.h"
+#include "gilast.h"
+#include "gilinterpret.h"
+#include "gil-node.h"
+#include <stdio.h>
+extern GilSymbolTable * table;
+/*#define DO_ACTIONS*/
+    
+%}
+
+%token <idVal> IDENTIFIER 
+%token <intVal> INT_CONSTANT
+%token <floatVal> FLOAT_CONSTANT
+%token FLOAT INT
+
+%type <nodeVal> compound_statement
+%type <nodeVal> identifier
+%type <nodeVal> declarator 
+%type <nodeVal> init_declarator 
+%type <nodeVal> declaration
+%type <nodeVal> type_specifier 
+%type <nodeVal> declaration_specifiers
+%type <nodeVal> declaration_list
+
+%union {
+  gint intVal;
+  gfloat floatVal;
+  gchar *idVal;
+  gint opVal;
+  GNode * nodeVal;
+};
+
+%start file
+%%
+
+declaration
+	: declaration_specifiers init_declarator ';'
+	;
+
+declaration_specifiers
+	: type_specifier
+	;
+
+type_specifier
+	: INT                              
+                                    { 
+                                    #ifdef DO_ACTIONS
+                                      GilNode * node = g_object_new(GIL_TYPE_NODE, NULL);
+                                    #endif
+                                    }
+	| FLOAT                             
+                                    { 
+                                    #ifdef DO_ACTIONS
+                                    #endif
+                                    }
+	;
+
+init_declarator
+	: declarator
+	;
+
+declarator
+	: identifier
+	;
+
+compound_statement
+	: '{' '}'                                 
+                                     { 
+                                     #ifdef DO_ACTIONS
+                                       $$ = gil_node_block_new(); 
+                                     #endif
+                                     }
+	| '{' declaration_list '}'          
+                                     { 
+                                     #ifdef DO_ACTIONS
+                                        GilNode * node = g_object_new(GIL_TYPE_NODE, NULL);
+                                        printf("hello");
+                                        $$ = gil_node_block_new(); 
+                                        g_node_append($$,$2); 
+                                     #endif
+                                     }
+	;
+
+declaration_list
+	: declaration
+                                     { 
+                                     #ifdef DO_ACTIONS
+                                        $$ = gil_node_declaration_list_new(); 
+                                        g_node_append($$,$1); 
+                                     #endif
+                                     }
+	| declaration_list declaration  
+                                     { 
+                                     #ifdef DO_ACTIONS
+                                       g_node_append($1,$2); $$ = $1; 
+                                     #endif
+                                     }
+	;
+
+file
+	: compound_statement  
+                                     { 
+                                     #ifdef DO_ACTIONS
+                                        printf("The parse tree is\n"); 
+                                     #endif
+                                     } 
+	;
+
+identifier
+	: IDENTIFIER          
+                                     { 
+                                     #ifdef DO_ACTIONS
+                                     #endif
+                                     } 
+	;
+
+%%
+
+extern char yytext[];
+extern int column;
+
+yyerror(s)
+char *s;
+{
+	fflush(stdout);
+	printf("\n%*s\n%*s\n", column, "^", column, s);
+}
+
+int main()
+{
+	int yyparse();
+    int val = yyparse();
+
+	return(val);
+}

@@ -23,7 +23,7 @@ struct _GeglCompPremult
    GeglPointOp point_op;
 
    /*< private >*/
-   GeglCompositeMode comp_mode; 
+   GeglCompositeMode composite_mode; 
 };
 
 typedef struct _GeglCompPremultClass GeglCompPremultClass;
@@ -33,7 +33,10 @@ struct _GeglCompPremultClass
 };
 
 GType            gegl_comp_premult_get_type         (void);
-
+GeglCompositeMode
+                gegl_comp_premult_get_composite_mode    (GeglCompPremult * self);
+void            gegl_comp_premult_set_composite_mode    (GeglCompPremult * self, 
+                                                         GeglCompositeMode mode);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -23,7 +23,7 @@ struct _GeglComp
    GeglPointOp point_op;
 
    /*< private >*/
-   GeglCompositeMode comp_mode; 
+   GeglCompositeMode composite_mode; 
 };
 
 typedef struct _GeglCompClass GeglCompClass;
@@ -32,7 +32,11 @@ struct _GeglCompClass
    GeglPointOpClass point_op_class;
 };
 
-GType            gegl_comp_get_type         (void);
+GType           gegl_comp_get_type              (void);
+GeglCompositeMode
+                gegl_comp_get_composite_mode    (GeglComp * self);
+void            gegl_comp_set_composite_mode    (GeglComp * self, 
+                                                 GeglCompositeMode mode);
 
 #ifdef __cplusplus
 }
