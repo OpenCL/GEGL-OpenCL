@@ -1,3 +1,21 @@
+Tue Feb  1 16:18:41 PST 2000 caro@rhythm.com
+
+	* added these files
+		gegl-mult-op.gob
+		gegl-min-op.gob
+		gegl-max-op.gob
+		gegl-subtract-op.gob
+		gegl-diff-op.gob
+		gegl-dark-op-.gob
+		gegl-light-op.gob
+		gegl-sceen-op.gob
+	
+	* rm CLAMP in gegl-type.h
+	
+	* Clamped the values i rounded  
+
+	* Changed testgeglfile.c so that it tests the new functions
+
 Mon Jan 31 17:48:34 PST 2000 caro@rhythm.com
 
         * fixed bugs in gegl-composite-op. It should work now.

@@ -63,8 +63,7 @@ struct _GeglRect
   guint h;
 };
 
-#define CLAMP(x,a,b) ((x) < (a) ? (a) : (x) > (b) ? (b): (x))
-#define ROUND(x) ((x)>0 ? (guint)((x)+.5) : (guint)((x)-.5))
+#define ROUND(x) ((x)>0 ? (gint)((x)+.5) : (gint)((x)-.5))
 
 
 #endif /* __GEGL_TYPES_H__ */

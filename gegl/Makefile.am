@@ -27,7 +27,16 @@ GOB_SRC = \
 	gegl-color-convert-to-gray-u8-op.gob            \
 	gegl-color-convert-to-gray-float-op.gob         \
 	gegl-color-convert-to-rgb-u8-op.gob             \
-	gegl-color-convert-to-rgb-float-op.gob
+	gegl-color-convert-to-rgb-float-op.gob		\
+	gegl-min-op.gob					\
+	gegl-max-op.gob					\
+	gegl-mult-op.gob				\
+	gegl-diff-op.gob				\
+	gegl-screen-op.gob				\
+	gegl-dark-op.gob				\
+	gegl-light-op.gob				\
+	gegl-subtract-op.gob
+
 
 GOB_GEN_PUBLIC = \
 	gegl-object.h					\
@@ -54,7 +63,17 @@ GOB_GEN_PUBLIC = \
 	gegl-color-convert-to-gray-u8-op.h              \
 	gegl-color-convert-to-gray-float-op.h           \
 	gegl-color-convert-to-rgb-u8-op.h               \
-	gegl-color-convert-to-rgb-float-op.h
+	gegl-color-convert-to-rgb-float-op.h		\
+	gegl-min-op.h					\
+	gegl-max-op.h					\
+	gegl-mult-op.h					\
+	gegl-diff-op.h					\
+	gegl-screen-op.h				\
+	gegl-dark-op.h					\
+	gegl-light-op.h					\
+	gegl-subtract-op.h 
+
+
 
 GOB_GEN_SRC = \
 	gegl-object.c					\
@@ -106,7 +125,24 @@ GOB_GEN_SRC = \
 	gegl-color-convert-to-rgb-u8-op.c		\
 	gegl-color-convert-to-rgb-u8-op-private.h       \
 	gegl-color-convert-to-rgb-float-op.c		\
-	gegl-color-convert-to-rgb-float-op-private.h
+	gegl-color-convert-to-rgb-float-op-private.h	\
+	gegl-min-op.c					\
+	gegl-min-op-private.h				\
+	gegl-max-op.c 					\
+	gegl-max-op-private.h				\
+	gegl-mult-op.c					\
+	gegl-mult-op-private.h 				\
+	gegl-diff-op.c					\
+	gegl-diff-op-private.h 				\
+	gegl-screen-op.c				\
+	gegl-screen-op-private.h 			\
+	gegl-dark-op.c					\
+	gegl-dark-op-private.h 				\
+	gegl-light-op.c					\
+	gegl-light-op-private.h				\
+	gegl-subtract-op.c				\
+	gegl-subtract-op-private.h 
+
 
 NONGOB_PUBLIC = \
 	gegl-types.h	\

@@ -255,11 +255,11 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
       
     while (width--)
       {
-        *dest_r++ = ROUND((m00 * *src_x + m10 * *src_y + m20 * *src_z) * 255);
-        *dest_g++ = ROUND((m01 * *src_x + m11 * *src_y + m21 * *src_z) * 255);
-        *dest_b++ = ROUND((m02 * *src_x++ + m12 * *src_y++ + m22 * *src_z++) * 255);
+        *dest_r++ = CLAMP(ROUND((m00 * *src_x + m10 * *src_y + m20 * *src_z) * 255),0,255);
+        *dest_g++ = CLAMP(ROUND((m01 * *src_x + m11 * *src_y + m21 * *src_z) * 255),0,255);
+        *dest_b++ = CLAMP(ROUND((m02 * *src_x++ + m12 * *src_y++ + m22 * *src_z++) * 255),0,255);
         if (has_alpha)
-          *dest_a++ = ROUND(*src_a++ * 255);
+          *dest_a++ = CLAMP(ROUND(*src_a++ * 255),0,255);
       }
   }
 
@@ -328,7 +328,7 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
 
     while (width--)
       {
-	*dest_g++ = ROUND(*src_r++ * 0.3 + *src_g++ * 0.6 + *src_b++ * 0.1);
+	*dest_g++ = CLAMP(ROUND(*src_r++ * 0.3 + *src_g++ * 0.6 + *src_b++ * 0.1),0,255);
 	if (has_alpha)
 	  *dest_a++ = *src_a++;
       } 

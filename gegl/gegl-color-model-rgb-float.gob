@@ -284,11 +284,11 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
 
     while (width--)
       {
-	*dest_r++ = ROUND(*src_r++ * 255);
-	*dest_g++ = ROUND(*src_g++ * 255);
-	*dest_b++ = ROUND(*src_b++ * 255);
+	*dest_r++ = CLAMP(ROUND(*src_r++ * 255),0,255);
+	*dest_g++ = CLAMP(ROUND(*src_g++ * 255),0,255);
+	*dest_b++ = CLAMP(ROUND(*src_b++ * 255),0,255);
 	if (has_alpha)
-	  *dest_a++ = ROUND(*src_a++ * 255);
+	  *dest_a++ = CLAMP(ROUND(*src_a++ * 255),0,255);
       } 
     
   }

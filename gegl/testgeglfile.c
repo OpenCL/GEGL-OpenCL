@@ -13,6 +13,14 @@
 #include "gegl-fill-op.h"
 #include "gegl-color-model.h"
 #include "gegl-color-model-rgb.h"
+#include "gegl-min-op.h"
+#include "gegl-max-op.h"
+#include "gegl-mult-op.h"
+#include "gegl-diff-op.h"
+#include "gegl-subtract-op.h"
+#include "gegl-screen-op.h"
+#include "gegl-dark-op.h"
+#include "gegl-light-op.h"
 
 static void
 create_preview(GtkWidget **window, GtkWidget **preview, int width, int height, gchar *name)
@@ -72,10 +80,10 @@ display_image(GtkWidget *window, GtkWidget *preview,
 int
 main(int argc, char *argv[])
 {
-  GeglColorModel  	*color_model[2];
-  GeglImageBuffer 	*image_buffer[2];
-  GtkWidget       	*window[9];
-  GtkWidget       	*preview[9];
+  GeglColorModel  	*color_model[3];
+  GeglImageBuffer 	*image_buffer[3];
+  GtkWidget       	*window[10];
+  GtkWidget       	*preview[10];
   int             	i, j, k;
   GeglRect        	requested_rect;
   GeglRect        	current_rect[3];
@@ -83,9 +91,13 @@ main(int argc, char *argv[])
   float           	*t;
   uint32          	width[3], height[3];
   GeglOp 		*op;
+#if 0
   gchar	          	*win_name[] = {"REPLACE", "OVER", "IN",
 				"OUT", "ATOP", "XOR", "PLUS"};
-	 
+#else
+  gchar                 *win_name[] = {"MIN", "MAX", "MULT", "SUB", "DIFF",
+				"SCREEN", "DARK", "LIGHT"};        
+#endif		
 
   /* stuff for reading a image */
   guchar          *image_data;
@@ -96,7 +108,7 @@ main(int argc, char *argv[])
   gtk_init (&argc, &argv);
  
   /* read in the two images */ 
-  for(k=0; k<2; k++){             
+  for(k=0; k<3; k++){             
     /* open the file */
     tif = TIFFOpen(argv[k+1], "r");
 
@@ -109,8 +121,8 @@ main(int argc, char *argv[])
 	(k==1)?"Background":"Foreground");
 
     /* create the gegl image buff */
-    if(k)color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(FALSE, FALSE));
-    else color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, FALSE)); 
+    if(k)color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+    else color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE)); 
     image_buffer[k] = gegl_image_buffer_new(color_model[k], width[k], height[k]);
     num_chans = gegl_color_model_num_channels(color_model[k]);
 	    
@@ -161,7 +173,8 @@ main(int argc, char *argv[])
   requested_rect.w = width[1];    requested_rect.h = height[1];
   gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
   gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
-  
+
+#if 0  
   /* test the comp ops :) */ 
   for(k=0; k<7; k++){
     op = GEGL_OP(gegl_composite_op_new (image_buffer[1], image_buffer[0], 
@@ -178,7 +191,120 @@ main(int argc, char *argv[])
     gegl_image_buffer_set_data(image_buffer[1], image_data);
 
   }
-  
+#endif
+#if 1
+  /* test the comp ops :) */
+      op = GEGL_OP(gegl_min_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
+                                    &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
+                                    ));
+      gegl_op_apply (op);
+		    
+      requested_rect.x = 0;           requested_rect.y = 0;
+      requested_rect.w = width[1];    requested_rect.h = height[1];
+      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
+      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      create_preview(&window[2], &preview[2], width[1], height[1], win_name[0]);
+      display_image(window[2], preview[2], image_buffer[1], current_rect[1]);
+      gegl_image_buffer_set_data(image_buffer[1], image_data);
+     
+      op = GEGL_OP(gegl_max_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
+                                    &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
+                                    ));
+      gegl_op_apply (op);
+                    
+      requested_rect.x = 0;           requested_rect.y = 0;
+      requested_rect.w = width[1];    requested_rect.h = height[1];
+      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
+      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      create_preview(&window[4], &preview[4], width[1], height[1], win_name[1]);
+      display_image(window[4], preview[4], image_buffer[1], current_rect[1]);
+      gegl_image_buffer_set_data(image_buffer[1], image_data);
+
+    
+      op = GEGL_OP(gegl_mult_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
+                                    &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
+                                    ));
+      gegl_op_apply (op);
+                    
+      requested_rect.x = 0;           requested_rect.y = 0;
+      requested_rect.w = width[1];    requested_rect.h = height[1];
+      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
+      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      create_preview(&window[5], &preview[5], width[1], height[1], win_name[2]);
+      display_image(window[5], preview[5], image_buffer[1], current_rect[1]);
+      gegl_image_buffer_set_data(image_buffer[1], image_data);
+
+
+      op = GEGL_OP(gegl_diff_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
+                                    &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
+                                    ));
+      gegl_op_apply (op);
+                    
+      requested_rect.x = 0;           requested_rect.y = 0;
+      requested_rect.w = width[1];    requested_rect.h = height[1];
+      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
+      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      create_preview(&window[6], &preview[6], width[1], height[1], win_name[3]);
+      display_image(window[6], preview[6], image_buffer[1], current_rect[1]);
+      gegl_image_buffer_set_data(image_buffer[1], image_data);
+
+
+      op = GEGL_OP(gegl_subtract_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
+                                    &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
+                                    ));
+      gegl_op_apply (op);
+                    
+      requested_rect.x = 0;           requested_rect.y = 0;
+      requested_rect.w = width[1];    requested_rect.h = height[1];
+      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
+      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      create_preview(&window[7], &preview[7], width[1], height[1], win_name[4]);
+      display_image(window[7], preview[7], image_buffer[1], current_rect[1]);
+      gegl_image_buffer_set_data(image_buffer[1], image_data);
+      
+
+      op = GEGL_OP(gegl_screen_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
+	                            &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
+		                    ));
+      gegl_op_apply (op);
+	                        
+      requested_rect.x = 0;           requested_rect.y = 0;
+      requested_rect.w = width[1];    requested_rect.h = height[1];
+      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
+      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      create_preview(&window[8], &preview[8], width[1], height[1], win_name[5]);
+      display_image(window[8], preview[8], image_buffer[1], current_rect[1]);
+      gegl_image_buffer_set_data(image_buffer[1], image_data);
+      						      
+      op = GEGL_OP(gegl_dark_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
+	                            &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
+		                    ));
+      gegl_op_apply (op);
+	                        
+      requested_rect.x = 0;           requested_rect.y = 0;
+      requested_rect.w = width[1];    requested_rect.h = height[1];
+      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
+      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      create_preview(&window[9], &preview[9], width[1], height[1], win_name[6]);
+      display_image(window[9], preview[9], image_buffer[1], current_rect[1]);
+      gegl_image_buffer_set_data(image_buffer[1], image_data);
+
+
+      op = GEGL_OP(gegl_light_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
+	                            &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
+		                    ));
+      gegl_op_apply (op);
+	                        
+      requested_rect.x = 0;           requested_rect.y = 0;
+      requested_rect.w = width[1];    requested_rect.h = height[1];
+      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
+      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      create_preview(&window[3], &preview[3], width[1], height[1], win_name[7]);
+      display_image(window[3], preview[3], image_buffer[1], current_rect[1]);
+      gegl_image_buffer_set_data(image_buffer[1], image_data);
+
+#endif  
+#if 0  
   /* create a buffer with all possible colors */
   {
 	
@@ -307,6 +433,8 @@ main(int argc, char *argv[])
      printf("\n %.2f %d %.2f %d %.2f %.2f %.2f %d\n", sum0, sum1, sum2, sum3, sum4, sum5, sum6, sum7);
 
   }  
+#endif
+  
   gtk_main();
 
   gtk_object_destroy (GTK_OBJECT(image_buffer)); 

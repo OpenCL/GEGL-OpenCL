@@ -91,17 +91,17 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
             channel_values[a].u8 = 255;
           break;
         case COLOR_RED:
-          channel_values[g].u8 = ROUND(0.3 * 255);
+          channel_values[g].u8 = CLAMP(ROUND(0.3 * 255),0,255);
           if (has_alpha)
             channel_values[a].f = 255;
           break;
         case COLOR_GREEN:
-          channel_values[g].u8 = ROUND(0.6 * 255);
+          channel_values[g].u8 = CLAMP(ROUND(0.6 * 255),0,255);
           if (has_alpha)
             channel_values[a].u8 = 255;
           break;
         case COLOR_BLUE:
-          channel_values[g].u8 = ROUND(0.1 * 255);
+          channel_values[g].u8 = CLAMP(ROUND(0.1 * 255),0,255);
           if (has_alpha)
             channel_values[a].u8 = 255;
           break;
@@ -221,11 +221,11 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
 
     while (width--)
       {
-	*dest_g    = ROUND((m00 * *src_x + m10 * *src_y + m20 * *src_z) * 255 * 0.3);
-	*dest_g   += ROUND((m01 * *src_x + m11 * *src_y + m21 * *src_z) * 255 * 0.6);
-	*dest_g++ += ROUND((m02 * *src_x++ + m12 * *src_y++ + m22 * *src_z++) * 255 * 0.1);
+	*dest_g    = CLAMP(ROUND((m00 * *src_x + m10 * *src_y + m20 * *src_z) * 255 * 0.3),0,255);
+	*dest_g   += CLAMP(ROUND((m01 * *src_x + m11 * *src_y + m21 * *src_z) * 255 * 0.6),0,255);
+	*dest_g++ += CLAMP(ROUND((m02 * *src_x++ + m12 * *src_y++ + m22 * *src_z++) * 255 * 0.1),0,255);
 	if (has_alpha)
-	  *dest_a++  = ROUND(*src_a++ * 255);
+	  *dest_a++  = CLAMP(ROUND(*src_a++ * 255),0,255);
       }
   }
 

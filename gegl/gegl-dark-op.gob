@@ -1,0 +1,289 @@
+%h{
+#include "gegl-point-op.h"
+#include "gegl-image-buffer.h"
+%}
+%{
+#include "gegl-dark-op.h"
+#include "gegl-dark-op-private.h"
+#include "gegl-point-op-private.h"
+#include "gegl-op-private.h"
+#include "gegl-object-private.h"
+#include "gegl-color.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+#include <stdio.h>
+%}
+
+
+class Gegl:Dark:Op from Gegl:Point:Op {
+
+  
+  public 
+  GeglDarkOp *
+  new (GeglImageBuffer *dest, 
+       GeglImageBuffer *src1,
+       GeglImageBuffer *src2,       
+       GeglRect *dest_rect,
+       GeglRect *src1_rect,
+       GeglRect *src2_rect)
+  {
+    GeglDarkOp * self = GEGL_DARK_OP(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, dest, src1, src2, dest_rect, src1_rect, src2_rect))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self, 
+  	      GeglImageBuffer *dest,
+       	      GeglImageBuffer *src1,
+              GeglImageBuffer *src2,
+              GeglRect *dest_rect,
+              GeglRect *src1_rect,
+              GeglRect *src2_rect) 	
+  {
+    GeglImageBuffer *image_buffers[3];
+    GeglRect rects[3];
+    GeglChannelDataType data_type;
+    GeglColorSpace color_space;
+    GeglColorModel *cm; 
+    GeglPointOp *point_op = GEGL_POINT_OP (self);
+    GeglPointOpClass *point_op_class = 
+        GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+    
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+    
+    image_buffers[0] = dest;
+    image_buffers[1] = src1;
+    image_buffers[2] = src2;
+    rects[0].x = dest_rect->x;
+    rects[0].y = dest_rect->y;
+    rects[0].w = dest_rect->w;
+    rects[0].h = dest_rect->h;
+    rects[1].x = src1_rect->x;
+    rects[1].y = src1_rect->y;
+    rects[1].w = src1_rect->w;
+    rects[1].h = src1_rect->h;
+    rects[2].x = src2_rect->x;
+    rects[2].y = src2_rect->y;
+    rects[2].w = src2_rect->w;
+    rects[2].h = src2_rect->h;
+ 
+    /* Chain up */
+    if (!gegl_point_op_constructor (
+         GEGL_POINT_OP(self), image_buffers, rects, 3))
+      return FALSE;
+
+    /*
+      Now based on the image buffers's color model(s)/data storage(s)
+      choose one of our scanline funcs to install
+      This is where some "autogeneration" happens.
+    */ 
+
+    cm = gegl_image_buffer_color_model (dest);
+    data_type = gegl_color_model_data_type (cm);
+    color_space = gegl_color_model_color_space (cm);
+
+    switch (color_space)
+      {
+      case GRAY:
+	switch (data_type)
+	  {
+	  case U8:
+	    point_op_class->scanline_func = gegl_dark_op_GRAY_U8;
+	    break;
+	  case FLOAT:
+	    point_op_class->scanline_func = gegl_dark_op_GRAY_FLOAT; 	
+	    break;
+	  default:
+	    g_warning("DarkOp: Color Model data type none or unknown\n");
+	    point_op_class->scanline_func = NULL; 	
+	    return FALSE;
+	  } 
+	break;
+      case RGB:
+	switch (data_type)
+	  {
+	  case U8:
+	    point_op_class->scanline_func = gegl_dark_op_RGB_U8;
+	    break;
+	  case FLOAT:
+	    point_op_class->scanline_func = gegl_dark_op_RGB_FLOAT; 	
+	    break;
+	  default:
+	    g_warning("DarkOp: Color Model data type none or unknown\n");
+	    point_op_class->scanline_func = NULL; 	
+	    return FALSE;
+	  } 
+	break;
+      default:
+	g_warning("DarkOp: Color Model data type none or unknown\n");
+	point_op_class->scanline_func = NULL; 	
+	return FALSE;
+      } 
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  private 
+  void
+  RGB_FLOAT (GeglPointOp *point_op)
+  {
+    /*
+      Whats the algorithm for this code?	
+      DEST = MIN(SRC1, SRC2)  
+
+    */ 
+    guint width;
+    gfloat *dest_data[4], *src1_data[4], *src2_data[4]; 
+    gfloat *dest_r, *dest_g, *dest_b, *dest_a;
+    gfloat *src1_r, *src1_g, *src1_b, *src1_a;
+    gfloat *src2_r, *src2_g, *src2_b, *src2_a;
+    gboolean dest_has_alpha, src1_has_alpha, src2_has_alpha; 
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv); 
+
+    dest_has_alpha = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[0]));
+    src1_has_alpha = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[1]));
+    src2_has_alpha = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[2]));
+
+    width = point_opP->scanline_width;
+
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
+                                      (guchar**)dest_data);
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[1],
+                                      (guchar**)src1_data);
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[2],
+                                      (guchar**)src2_data); 
+    
+    dest_r = dest_data[0];
+    dest_g = dest_data[1];
+    dest_b = dest_data[2];
+    src1_r = src1_data[0];
+    src1_g = src1_data[1];
+    src1_b = src1_data[2];
+    src2_r = src2_data[0];
+    src2_g = src2_data[1];
+    src2_b = src2_data[2];
+    if(dest_has_alpha) dest_a = dest_data[3];
+    if(src1_has_alpha) src1_a = src1_data[3];
+    if(src2_has_alpha) src2_a = src2_data[3];
+
+
+    /* Dark the dest with the dark color */
+    while (width--)
+    {
+      *dest_r++ = MIN(*src1_r, *src2_r);
+      *dest_g++ = MIN(*src1_g, *src2_g);
+      *dest_b++ = MIN(*src1_b, *src2_b);
+      src1_r++;
+      src1_g++;
+      src1_b++;
+      src2_r++;
+      src2_g++;
+      src2_b++;
+      if (dest_has_alpha)
+	{
+	if (src1_has_alpha && src2_has_alpha)
+	  {
+	  *dest_a++ = MIN(*src1_a, *src2_a);
+	  src1_a++;
+	  src2_a++;
+	  }	
+    	else if (src1_has_alpha)
+	  *dest_a++ = *src1_a++;
+	else if (src2_has_alpha)
+	  *dest_a++ = *src2_a++; 
+	} 
+    } 		
+  }
+
+  private
+  void
+  RGB_U8 (GeglPointOp *point_op)
+  {
+  } 
+
+  private 
+  void
+  GRAY_FLOAT (GeglPointOp *point_op)
+  {
+    /*
+      Whats the algorithm for this code?	
+      DEST = MIN(SRC1, SRC2)  
+
+    */ 
+    guint width;
+    gfloat *dest_data[4], *src1_data[4], *src2_data[4]; 
+    gfloat *dest_g, *dest_a;
+    gfloat *src1_g, *src1_a;
+    gfloat *src2_g, *src2_a;
+    gboolean dest_has_alpha, src1_has_alpha, src2_has_alpha; 
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv); 
+
+    dest_has_alpha = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[0]));
+    src1_has_alpha = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[1]));
+    src2_has_alpha = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[2]));
+
+    width = point_opP->scanline_width;
+
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
+                                      (guchar**)dest_data);
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[1],
+                                      (guchar**)src1_data);
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[2],
+                                      (guchar**)src2_data); 
+    
+    dest_g = dest_data[0];
+    src1_g = src1_data[0];
+    src2_g = src2_data[0];
+    if(dest_has_alpha) dest_a = dest_data[1];
+    if(src1_has_alpha) src1_a = src1_data[1];
+    if(src2_has_alpha) src2_a = src2_data[1];
+
+
+    /* Dark the dest with the dark color */
+    while (width--)
+    {
+      *dest_g++ = MIN(*src1_g, *src2_g);
+      src1_g++;
+      src2_g++;
+      if (dest_has_alpha)
+	{
+	if (src1_has_alpha && src2_has_alpha)
+	  {
+	  *dest_a++ = MIN(*src1_a, *src2_a);
+	  src1_a++;
+	  src2_a++;
+	  }	
+    	else if (src1_has_alpha)
+	  *dest_a++ = *src1_a++;
+	else if (src2_has_alpha)
+	  *dest_a++ = *src2_a++; 
+	} 
+    } 		
+  }
+
+  private
+  void
+  GRAY_U8 (GeglPointOp *point_op)
+  {
+  } 
+}
