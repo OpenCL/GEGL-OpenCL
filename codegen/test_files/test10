@@ -95,11 +95,11 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
          else if (src_a == WP);
           {
              dest = src;
-           }
+          }
          else
           {
              dest = src_a * src;
-           }
+          }
         dest_a = src_a;
       }
       */
@@ -107,7 +107,7 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
     GeglPointOpPrivate *point_opP = 
         (GeglPointOpPrivate *)(point_op->_priv); 
     CODEGEN_DECL_BEGIN
-    guint width;
+    int width;
     VectorChan dest(color,alpha);
     VectorChan src(color,alpha);
     CODEGEN_DECL_END
@@ -129,16 +129,15 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
          if (src_alpha == ZERO)
           {
             dest_color = ZERO;
-           }
-         else 
-         if (src_a == WP)
+          }
+         else if (src_alpha == WP)
           {
             dest_color = src_color;
-           }
+          }
          else
           {
             dest_color = src_alpha * src_color;
-           }
+          }
 
         dest_alpha = src_alpha;
         dX(dest,1);

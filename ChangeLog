@@ -1,3 +1,11 @@
+Tue Mar 14 10:25:59 PST 2000 caro@rhythm.com
+	
+	* More changes, rm-ed the ability of adding {} cuz
+	it did not work quite right. At this point it is
+	necessary to have {}
+
+	* CODEGEN has now become GENERIC_IMAGE 
+
 Mon Mar 13 14:28:43 PST 2000 caro@rhythm.com
 	
 	* This version will add {} when ever it is necessary.

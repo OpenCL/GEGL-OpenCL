@@ -156,7 +156,7 @@ CODEGEN_BLOCK_BEGIN
               dest_c = src1_c;
              }
          dX(dest,1);
-	 dX(src1,1);
+        dX(src1,1);
          dX(src2,1); 
          } 
        break;
@@ -176,7 +176,7 @@ CODEGEN_BLOCK_BEGIN
               dest_c = src1_c;
              } 
          dX(dest,1);
-	 dX(src1,1);
+        dX(src1,1);
          dX(src2,1); 
          }
        break;
@@ -196,7 +196,7 @@ CODEGEN_BLOCK_BEGIN
               dest_c = src1_c;
              }
          dX(dest,1);
-	 dX(src1,1);
+        dX(src1,1);
          dX(src2,1); 
          }
        break;
@@ -218,7 +218,7 @@ CODEGEN_BLOCK_BEGIN
               dest_c = src1_c;
              }
          dX(dest,1);
-	 dX(src1,1);
+        dX(src1,1);
          dX(src2,1); 
          }
        break;
@@ -242,7 +242,7 @@ CODEGEN_BLOCK_BEGIN
               dest_c = src1_c;
              }
          dX(dest,1);
-	 dX(src1,1);
+        dX(src1,1);
          dX(src2,1); 
          }
        break;

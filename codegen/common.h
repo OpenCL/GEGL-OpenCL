@@ -64,20 +64,19 @@ typedef struct
   char          scope; 
 }elem_t;
 
-typedef	struct node_s node_t; 
-
-struct node_s
-{
-   DATA_TYPE	dtype;   
-   char		string[50];
-   node_t	*next;  
-};
-
 typedef struct
 {
   char 	word[20];	
   int	token;
 }keyword_t;
+
+#ifdef  _LEXER_C_
+int SCOPE = 0;
+#undef  _LEXER_C_
+#else
+extern int SCOPE;
+#endif
+
 
 elem_t  add_sym (char *s, char scope);
 elem_t* get_sym (char *sym); 
@@ -86,7 +85,6 @@ int 	get_keyword (char *s);
 int	yylex (); 
 void    rm_varibles (char scope); 
 
-void	add_newline(); 
 
 #endif
 

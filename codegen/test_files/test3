@@ -104,45 +104,45 @@
       B =  dest_a * (1-src_a);
       dest_a = A + B;
       if (dest_a)
-      	dest = (src * A + dest * B) / dest_a;
+             dest = (src * A + dest * B) / dest_a;
       else
-	dest = 0;	
+       dest = 0;       
     case IN:
       dest_a = src_a * dest_a;
       if (dest_a)
-	dest = src;
+       dest = src;
       else
-	dest = 0;					 		   	
+       dest = 0;                                                            
     case OUT:
       dest_a = src_a * (1-dest_a);
       if (dest_a)
-	dest = src;
+       dest = src;
       else
-	dest = 0;
+       dest = 0;
     case ATOP:
       A = src_a * dest_a;
       B = dest_a * (1-src_a); 
       dest_a = A + B;
       if (dest_a)
-      	dest = src * A + dest * B;
+             dest = src * A + dest * B;
       else
-	dest = 0;
+       dest = 0;
     case XOR:
       A = src_a * (1-dest_a);
       B = dest_a * (1-src_a); 
       dest_a = A + B;
       if(dest_a)
-      	dest = (src * A + dest * B) / dest_a;
+             dest = (src * A + dest * B) / dest_a;
       else
-	dest = 0;
+       dest = 0;
     case PLUS:
       A = src_a;
       B = dest_a; 
       dest_a = A + B;
       if (dest_a)
-      	dest = (src * A + dest * B) / dest_a;
-	else
-	dest = 0;
+             dest = (src * A + dest * B) / dest_a;
+       else
+       dest = 0;
   }
 }
 
