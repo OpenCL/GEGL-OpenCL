@@ -47,6 +47,10 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
           GEGL_SINGLE_SRC_OP(self), src))
       return FALSE;
 
+    /* ref and sink it */
+    gtk_object_ref(GTK_OBJECT(self));
+    gtk_object_sink(GTK_OBJECT(self));
+
     return TRUE;
   }
 
@@ -73,7 +77,7 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
     gegl_op_save_alphas(op);
 
     {
-      gboolean src_has_alpha = op->_priv->src_has_alpha[0];
+      gboolean src_has_alpha = op->_priv->input_has_alpha[0];
 
       if(src_has_alpha)
 	point_op_class->scanline_func = 

@@ -11,6 +11,7 @@
 #include "gegl-copy-op-private.h"
 #include "gegl-single-src-op-private.h"
 #include "gegl-op-private.h"
+#include "gegl-node.h"
 #include "gegl-image-private.h"
 #include "gegl-image-iterator.h"
 #include "gegl-color.h"
@@ -37,18 +38,24 @@ class Gegl:Copy:Op from Gegl:Single:Src:Op {
     /*Okay its constructed*/
     GEGL_OBJECT(self)->constructed = TRUE;
 
+    /* Ref and sink it */
+    gtk_object_ref(GTK_OBJECT(self));
+    gtk_object_sink(GTK_OBJECT(self));
+
     return self;
   }
 
   protected 
   gboolean 
-  constructor(self, GeglImage *src)
+  constructor(self, 
+              GeglImage *src)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
     
     /* Chain up */
-    if (!gegl_single_src_op_constructor (GEGL_SINGLE_SRC_OP(self), src))
+    if (!gegl_single_src_op_constructor (
+          GEGL_SINGLE_SRC_OP(self), src))
       return FALSE;
 
     self->_priv->copy_func = NULL;
@@ -66,17 +73,19 @@ class Gegl:Copy:Op from Gegl:Single:Src:Op {
 
   override(Gegl:Op)
   void
-  prepare(GeglOp *op,
-	GeglImage *dest,
-	GeglRect *dest_rect)
+  prepare(GeglOp *self_op,
+          GeglImage *dest,
+          GeglRect *dest_rect)
   {
-    GeglCopyOp *self = SELF (op);
-    GeglPointOp *point_op = GEGL_POINT_OP (op);
-    GeglPointOpClass *point_op_class = 
-      GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+    GeglCopyOp *self = SELF (self_op);
+    GeglNode *self_node = GEGL_NODE(self_op);
+    GeglPointOpClass *self_point_op_class = 
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_op)->klass);
+
+    GeglImage *input0 = GEGL_IMAGE(gegl_node_get_nth_input(self_node,0));
 
     GeglColorModel * dest_cm = gegl_image_color_model (dest);
-    GeglColorModel * src_cm = gegl_image_color_model (op->_priv->sources[0]); 
+    GeglColorModel * src_cm = gegl_image_color_model (input0); 
 
     /* At this point the colormodels should match */
 
@@ -90,17 +99,17 @@ class Gegl:Copy:Op from Gegl:Single:Src:Op {
 						converter_name);   
     g_free (converter_name);
 
-      /* Set the scanline version of this class to be called */
-    point_op_class->scanline_func = gegl_copy_op_scanline;
+    /* Set the scanline version of this class to be called */
+    self_point_op_class->scanline_func = gegl_copy_op_scanline;
   }
 
   private 
   void
-  scanline(GeglPointOp *point_op,
+  scanline(GeglPointOp *self_point_op,
            GeglImageIterator *dest_iter, 
            GeglImageIterator **src_iters)
   {
-    GeglCopyOp *copy_op = SELF(point_op);
+    GeglCopyOp *self = SELF(self_point_op);
     GeglImage * dest_image = gegl_image_iterator_get_image(dest_iter);
     GeglImage * src_image = gegl_image_iterator_get_image(src_iters[0]);
     GeglColorModel * dest_cm = gegl_image_color_model(dest_image);
@@ -116,7 +125,7 @@ class Gegl:Copy:Op from Gegl:Single:Src:Op {
     gegl_image_iterator_get_scanline_data (dest_iter, dest_data);
     gegl_image_iterator_get_scanline_data (src_iters[0], src_data);
 
-    (copy_op->_priv->copy_func) (dest_cm, src_cm, dest_data, src_data, width); 
+    (self->_priv->copy_func) (dest_cm, src_cm, dest_data, src_data, width); 
 
     g_free (dest_data);
     g_free (src_data);

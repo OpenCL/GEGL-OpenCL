@@ -25,6 +25,10 @@ class Gegl:Color:Convert:To:Rgb:Op from Gegl:Color:Convert:Op {
     /*Okay its constructed*/
     GEGL_OBJECT(self)->constructed = TRUE;
 
+    /* ref and sink it */
+    gtk_object_ref(GTK_OBJECT(self));
+    gtk_object_sink(GTK_OBJECT(self));
+
     return self;
   }
 

@@ -32,6 +32,10 @@ class Gegl:Subtract:Op from Gegl:Dual:Src:Op {
     /*Okay its constructed*/
     GEGL_OBJECT(self)->constructed = TRUE;
 
+    /* ref and sink it */
+    gtk_object_ref(GTK_OBJECT(self));
+    gtk_object_sink(GTK_OBJECT(self));
+
     return self;
   }
 
@@ -88,8 +92,8 @@ class Gegl:Subtract:Op from Gegl:Dual:Src:Op {
     GENERIC_IMAGE_DECL_END
 
     dest_has_alpha = op->_priv->has_alpha; 
-    src1_has_alpha = op->_priv->src_has_alpha[0]; 
-    src2_has_alpha = op->_priv->src_has_alpha[1]; 
+    src1_has_alpha = op->_priv->input_has_alpha[0]; 
+    src2_has_alpha = op->_priv->input_has_alpha[1]; 
 
     gegl_image_iterator_get_scanline_data (
 	dest_iter, (guchar**)dest_data);

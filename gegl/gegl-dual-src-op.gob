@@ -13,24 +13,23 @@ class Gegl:Dual:Src:Op from Gegl:Point:Op {
   gboolean 
   constructor(self, 
               GeglImage *src1,
-	      GeglImage *src2)
+              GeglImage *src2)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
 
     {
-      GeglImage **sources = g_new(GeglImage*, 2);
-
-      sources[0] = src1;
-      sources[1] = src2;
+      GList *inputs = NULL;
+      inputs = g_list_append(inputs,src1);
+      inputs = g_list_append(inputs,src2);
 
       /* Chain up */
-      if (!gegl_point_op_constructor (
-	    GEGL_POINT_OP(self), sources, 2))
-	return FALSE;
+      if (!gegl_point_op_constructor (GEGL_POINT_OP(self), inputs))
+        return FALSE;
 
-      g_free(sources);
+      g_list_free(inputs);
     }
+
     return TRUE;
   }
 

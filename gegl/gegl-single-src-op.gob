@@ -12,23 +12,27 @@ class Gegl:Single:Src:Op from Gegl:Point:Op {
   protected 
   gboolean 
   constructor(self, 
-              GeglImage *src)
+              GeglImage *input)
   {
+    GList *inputs = NULL;
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
-    
+   
+    inputs = g_list_append (inputs,input);
+
     /* Chain up */
-    if (!gegl_point_op_constructor (GEGL_POINT_OP(self), &src, 1))
+    if (!gegl_point_op_constructor (GEGL_POINT_OP(self), inputs))
       return FALSE;
 
+    g_list_free(inputs);
     return TRUE;
   }
 
   override (Gtk:Object) 
   void 
-  destroy (GtkObject *object)
+  destroy (GtkObject *self_object)
   {
     /* Chain up on destroy */
-    PARENT_HANDLER (object)
+    PARENT_HANDLER (self_object)
   }
 }

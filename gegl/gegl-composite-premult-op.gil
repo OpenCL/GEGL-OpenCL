@@ -76,8 +76,8 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     gegl_op_save_alphas (op);
 
       {
-	gboolean  s1_has_alpha = op->_priv->src_has_alpha[0]; 
-	gboolean  s2_has_alpha = op->_priv->src_has_alpha[1]; 
+	gboolean  s1_has_alpha = op->_priv->input_has_alpha[0]; 
+	gboolean  s2_has_alpha = op->_priv->input_has_alpha[1]; 
        
         /* dest = src2 op src1 */ 
 

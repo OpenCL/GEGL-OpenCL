@@ -1,5 +1,5 @@
 %h{
-#include "gegl-object.h"
+#include "gegl-node.h"
 #ifndef __TYPEDEF_GEGL_COLOR__
 #define __TYPEDEF_GEGL_COLOR__
 typedef struct _GeglColor  GeglColor;
@@ -12,12 +12,13 @@ typedef struct _GeglColorModel  GeglColorModel;
 %{
 #include "gegl-image.h"
 #include "gegl-image-private.h"
+#include "gegl-node-private.h"
 #include "gegl-object-private.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
 %}
 
-class Gegl:Image from Gegl:Object {
+class Gegl:Image from Gegl:Node {
 
   private GeglColorModel *color_model;
 
@@ -30,13 +31,15 @@ class Gegl:Image from Gegl:Object {
 
   protected 
   gboolean 
-  constructor(self)
+  constructor(self,
+              gchar *name,
+              GList *inputs)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
        
     /* Chain up */
-    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+    if (!gegl_node_constructor (GEGL_NODE(self), name, inputs))
       return FALSE;
 
     self->_priv->width = 0;
@@ -69,13 +72,13 @@ class Gegl:Image from Gegl:Object {
 
     if (self->_priv->data)
       {
-	free_data(self);
+        free_data(self);
       }
 
     if (!cm)
       {
         g_warning("gegl_image_alloc: color_model unknown\n");
-	return FALSE;
+        return FALSE;
       }
 
     {
@@ -86,15 +89,15 @@ class Gegl:Image from Gegl:Object {
       self->_priv->data = g_new(guchar *, num_channels);
 
       for(i = 0; i < num_channels; i++)
-	{
+        {
           self->_priv->data[i] = g_new (guchar, channel_bytes); 
-	  if (!self->_priv->data[i]) 
-	    {
-	      free_data(self);
-	      g_warning ("gegl_image_alloc: Cant alloc image data.\n"); 
-	      return FALSE;
-	    }
-	}
+          if (!self->_priv->data[i]) 
+            {
+              free_data(self);
+              g_warning ("gegl_image_alloc: Cant alloc image data.\n"); 
+              return FALSE;
+            }
+        }
 
       self->_priv->width = w;
       self->_priv->height = h;
@@ -116,11 +119,11 @@ class Gegl:Image from Gegl:Object {
 
     if (self->_priv->data)
       {
-	for(i = 0; i < num_channels; i++)
-	  {
-	    if (self->_priv->data[i]) 
-		g_free (self->_priv->data[i]);
-	  }
+        for(i = 0; i < num_channels; i++)
+          {
+            if (self->_priv->data[i]) 
+            g_free (self->_priv->data[i]);
+          }
         g_free (self->_priv->data); 
       }
 
@@ -176,8 +179,7 @@ class Gegl:Image from Gegl:Object {
   gboolean 
   has_alpha(self) 
   {
-    return gegl_color_model_has_alpha (
-	self->_priv->color_model); 
+    return gegl_color_model_has_alpha (self->_priv->color_model); 
   }
 
   public
@@ -191,5 +193,4 @@ class Gegl:Image from Gegl:Object {
   virtual 
   GeglImage * 
   get_pixels (self, GeglImage *dest, GeglRect *dest_roi);
-
 }

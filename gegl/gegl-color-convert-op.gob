@@ -84,17 +84,19 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
 
   override (Gegl:Op) 
   void
-  prepare(GeglOp *op,
+  prepare(GeglOp *self_op,
           GeglImage *dest,
-	  GeglRect *dest_rect)
+          GeglRect *dest_rect)
   {
-    GeglColorConvertOp *self = SELF (op);
-    GeglPointOp *point_op = GEGL_POINT_OP (op);
-    GeglPointOpClass *point_op_class = 
-      GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+    GeglColorConvertOp *self = SELF (self_op);
+    GeglPointOp *self_point_op = GEGL_POINT_OP (self);
+    GeglNode * self_node = GEGL_NODE(self);
+    GeglPointOpClass *self_point_op_class = 
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_point_op)->klass);
 
+    GeglImage *input0 = GEGL_IMAGE(gegl_node_get_nth_input(self_node,0));
     GeglColorModel * dest_cm = gegl_image_color_model (dest);
-    GeglColorModel * src_cm = gegl_image_color_model (op->_priv->sources[0]); 
+    GeglColorModel * src_cm = gegl_image_color_model (input0); 
 
     /* Get the name of the interface that converts from src cm */ 
     gchar *converter_name = 
@@ -108,13 +110,13 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
 
     if (!self->_priv->convert_func)
       {
-	/* Allocate scanlines for the XYZ data */
-	free_xyz_data (self);
-	allocate_xyz_data (self, dest_rect->w); 
+        /* Allocate scanlines for the XYZ data */
+        free_xyz_data (self);
+        allocate_xyz_data (self, dest_rect->w); 
       }
 
     /* Set the scanline version of this class to be called */
-    point_op_class->scanline_func = gegl_color_convert_op_scanline;
+    self_point_op_class->scanline_func = gegl_color_convert_op_scanline;
   } 
 
   private 
@@ -145,11 +147,11 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
         (self->_priv->convert_func) (dest_cm, src_cm, dest_data, src_data, width); 
     else
       {
-	gegl_color_model_convert_to_xyz (src_cm, 
-	    self->_priv->float_xyz_data, src_data, width);
+        gegl_color_model_convert_to_xyz (src_cm, 
+           self->_priv->float_xyz_data, src_data, width);
 
-	gegl_color_model_convert_from_xyz (dest_cm, 
-	    dest_data, self->_priv->float_xyz_data , width);
+        gegl_color_model_convert_from_xyz (dest_cm, 
+           dest_data, self->_priv->float_xyz_data , width);
       }
 
     g_free (dest_data);

@@ -24,11 +24,12 @@ class Gegl:Object from Gtk:Object {
     return TRUE;
   }
 
-  public
+  override (Gtk:Object) 
   void 
-  destroy (self)
+  destroy (GtkObject *object)
   {
-    gtk_object_destroy(GTK_OBJECT(self));
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
   }
 
   public

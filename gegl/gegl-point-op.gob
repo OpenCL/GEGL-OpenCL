@@ -12,6 +12,7 @@ typedef struct _GeglImageIterator  GeglImageIterator;
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
 #include "gegl-image-private.h"
+#include "gegl-node.h"
 #include "gegl-image-iterator.h"
 #include "gegl-utils.h"
 #include "trace.h"
@@ -24,15 +25,13 @@ class Gegl:Point:Op from Gegl:Op {
   protected 
   gboolean 
   constructor(self, 
-              GeglImage **sources, 
-              gint num_sources)
+              GList *inputs)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
        
     /* Chain up */
-    if (!gegl_op_constructor (GEGL_OP(self), 
-          sources, num_sources))
+    if (!gegl_op_constructor (GEGL_OP(self), "point_op", inputs))
       return FALSE;
     
     return TRUE;
@@ -48,87 +47,93 @@ class Gegl:Point:Op from Gegl:Op {
 
   override (Gegl:Op) 
   void 
-  compute_need_rect (GeglOp *op, 
+  compute_need_rect (GeglOp *self_op, 
                      GeglRect *need_rect, 
-		     gint i) 
+                     gint i) 
   {
     /* 
        Need rect of children is same size as for point op,
        just translated back to childrens coordinate system
     */ 
-    gegl_rect_copy (need_rect, &op->_priv->need_rect);
+    gegl_rect_copy (need_rect, &self_op->_priv->need_rect);
  
-    need_rect->x -= op->_priv->source_offsets[i].x;
-    need_rect->y -= op->_priv->source_offsets[i].y;
+    need_rect->x -= self_op->_priv->input_offsets[i].x;
+    need_rect->y -= self_op->_priv->input_offsets[i].y;
+
   }
 
   override (Gegl:Op) 
   void 
-  compute_result_rect (GeglOp *op) 
+  compute_result_rect (GeglOp *self_op) 
   {
-    GeglImage *image = GEGL_IMAGE(op);
-    gegl_rect_intersect (&op->_priv->result_rect, 
-	                   &op->_priv->need_rect,
-                           &image->_priv->have_rect);
+    GeglImage *self_image = GEGL_IMAGE(self_op);
+    gegl_rect_intersect (&self_op->_priv->result_rect, 
+                         &self_op->_priv->need_rect,
+                         &self_image->_priv->have_rect);
   }
 
   override (Gegl:Op) 
   void 
-  compute_have_rect (GeglOp *op) 
+  compute_have_rect (GeglOp *self_op) 
   {
-    GeglImage *image = GEGL_IMAGE(op);
+    GeglImage *self_image = GEGL_IMAGE(self_op);
+    GeglNode *self_node = GEGL_NODE(self_op);
+    gint num_inputs = gegl_node_num_inputs(self_node);
     GeglRect have_rect;
     GeglRect intersection;
+    GeglImage *input;
     gint i;
 
-    gegl_rect_set(&image->_priv->have_rect, 0, 0, G_MAXINT, G_MAXINT);
+    gegl_rect_set(&self_image->_priv->have_rect, 0, 0, G_MAXINT, G_MAXINT);
 
     /* Lets take the intersection of all the have_rects,
        though this isnt ideal, it covers some important cases. */ 
-    for (i = 0; i < op->_priv->num_sources; i++)
+    for (i = 0; i < num_inputs; i++)
       {
-	/* Get the have_rect of source i, in its coords */
-        gegl_image_get_have_rect (op->_priv->sources[i], &have_rect);
+        /* Get the have_rect of source i, in its coords */
+        input = GEGL_IMAGE(gegl_node_get_nth_input(self_node,i));
+        gegl_image_get_have_rect (input, &have_rect);
 
-	/* Put in the offsets for this op */
-	have_rect.x += op->_priv->source_offsets[i].x;
-	have_rect.y += op->_priv->source_offsets[i].y;
+        /* Put in the offsets for this op */
+        have_rect.x += self_op->_priv->input_offsets[i].x;
+        have_rect.y += self_op->_priv->input_offsets[i].y;
 
-	gegl_rect_intersect (&intersection, 
-	    &image->_priv->have_rect, &have_rect); 
+        gegl_rect_intersect (&intersection, 
+            &self_image->_priv->have_rect, &have_rect); 
 
-	gegl_rect_copy(&image->_priv->have_rect, &intersection);
+        gegl_rect_copy(&self_image->_priv->have_rect, &intersection);
 
       }
   }
 
   override (Gegl:Op)
   void  
-  apply(GeglOp *op,
+  apply(GeglOp *self_op,
         GeglImage *dest,
         GeglRect *result_rect) 
   {
-    GeglPointOp *point_op =  GEGL_POINT_OP(op);
-    GeglPointOpClass *point_op_class = 
-      GEGL_POINT_OP_CLASS (GTK_OBJECT(op)->klass);
+    GeglPointOp *self =  GEGL_POINT_OP(self_op);
+    GeglPointOpClass *self_class = 
+      GEGL_POINT_OP_CLASS (GTK_OBJECT(self_op)->klass);
+    GeglNode *self_node = GEGL_NODE(self_op);
+    gint num_inputs = gegl_node_num_inputs(self_node);
+    GeglImage *input;
     GeglRect rect;
     gint i,j;
-    GeglImageIterator *dest_iter;
-    GeglImageIterator **src_iters = g_new (GeglImageIterator*, 
-	                              op->_priv->num_sources);
     gint height;
+    GeglImageIterator **src_iters = g_new (GeglImageIterator*, num_inputs);
+    GeglImageIterator *dest_iter;
 
     /* Set up the source and dest iterators */
-    for (i = 0; i < op->_priv->num_sources; i++)
+    for (i = 0; i < num_inputs; i++)
       {
-	gegl_rect_copy (&rect, &op->_priv->result_rect);  
+        gegl_rect_copy (&rect, &self_op->_priv->result_rect);  
 
-	rect.x -= op->_priv->source_offsets[i].x;
-	rect.y -= op->_priv->source_offsets[i].y;
+        rect.x -= self_op->_priv->input_offsets[i].x;
+        rect.y -= self_op->_priv->input_offsets[i].y;
 
-        src_iters[i] = gegl_image_iterator_new (
-	                 op->_priv->sources[i],
-                         &rect);
+        input = GEGL_IMAGE(gegl_node_get_nth_input(self_node,i));
+        src_iters[i] = gegl_image_iterator_new (input, &rect);
       }
 
     dest_iter = gegl_image_iterator_new (dest, result_rect);
@@ -138,12 +143,10 @@ class Gegl:Point:Op from Gegl:Op {
     for(j = 0; j < height; j++)  
       {
         /* Call the installed subclass scanline func */
-        (point_op_class->scanline_func)(point_op, 
-					dest_iter, 
-					src_iters);
+        (self_class->scanline_func)(self, dest_iter, src_iters);
           
         /* Advance all the source iterators */
-        for (i = 0; i < op->_priv->num_sources; i++)
+        for (i = 0; i < num_inputs; i++)
           gegl_image_iterator_next_scanline (src_iters[i]);
 
         /* Advance the dest iterator */
@@ -151,10 +154,10 @@ class Gegl:Point:Op from Gegl:Op {
       }
 
     /* Free the source and dest iterators */
-    for (i = 0; i < op->_priv->num_sources; i++)
-      gegl_object_destroy (GEGL_OBJECT (src_iters[i])); 
+    for (i = 0; i < num_inputs; i++)
+      gtk_object_unref (GTK_OBJECT (src_iters[i])); 
 
-    gegl_object_destroy(GEGL_OBJECT (dest_iter));
+    gtk_object_unref(GTK_OBJECT (dest_iter));
 
     /* Free the arrays of iters and rects */
     g_free (src_iters);
@@ -162,8 +165,8 @@ class Gegl:Point:Op from Gegl:Op {
 
   /* Subclasses install their own scanline funcs */
   virtual private void 
-  scanline_func (self, 
+  scanline_func (self,
                  GeglImageIterator *dest_iter, 
-		 GeglImageIterator **src_iters);
+                 GeglImageIterator **src_iters);
 }
 

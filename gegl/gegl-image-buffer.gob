@@ -24,7 +24,9 @@ class Gegl:Image:Buffer from Gegl:Image {
 
   public
   GeglImageBuffer *       
-  new(GeglColorModel *cm, gint w, gint h)
+  new(GeglColorModel *cm, 
+      gint w, 
+      gint h)
   {
     GeglImageBuffer * self = GEGL_IMAGE_BUFFER(GET_NEW);
 
@@ -35,22 +37,30 @@ class Gegl:Image:Buffer from Gegl:Image {
     /*Okay its constructed*/
     GEGL_OBJECT(self)->constructed = TRUE;
 
+    /* Ref and sink it */
+    gtk_object_ref(GTK_OBJECT(self));
+    gtk_object_sink(GTK_OBJECT(self));
+
     return self;
   }
 
   protected 
   gboolean 
-  constructor(self, GeglColorModel *cm, gint w, gint h)
+  constructor(self, 
+              GeglColorModel *cm,  
+              gint w, 
+              gint h)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
        
     /* Chain up */
-    if (!gegl_image_constructor (GEGL_IMAGE(self)))
+    if (!gegl_image_constructor (GEGL_IMAGE(self),"leaf",NULL))
       return FALSE;
 
     /* ImageBuffers set their color model and allocate data when created */
     gegl_image_set_color_model (GEGL_IMAGE(self),cm);
+
     return gegl_image_alloc(GEGL_IMAGE(self),w,h);
   }
 
@@ -64,7 +74,8 @@ class Gegl:Image:Buffer from Gegl:Image {
 
   public
   void
-  set_data(self, guchar *data)
+  set_data(self, 
+           guchar *data)
   {
     GeglImage *image  = GEGL_IMAGE(self);
     GeglColorModel *cm = image->_priv->color_model;
@@ -94,12 +105,12 @@ class Gegl:Image:Buffer from Gegl:Image {
   GeglImage * 
   get_pixels (GeglImage *image,
               GeglImage *dest,
-	      GeglRect *roi)
+              GeglRect *roi)
   {
     if (dest && !GEGL_IS_IMAGE_BUFFER(dest))
       {
-	g_warning("gegl_image_buffer_get_pixels: dest not image buffer\n");
-	return NULL;
+        g_warning("gegl_image_buffer_get_pixels: dest not image buffer\n");
+        return NULL;
       }
     else if (!dest)  /* just a leaf of a tree */
       {
@@ -115,12 +126,12 @@ class Gegl:Image:Buffer from Gegl:Image {
   public
   void 
   copy_pixels (GeglImageBuffer *self, 
-                    GeglRect *self_rect, 
-		    GeglImageBuffer *src, 
-		    GeglRect  *src_rect)
+               GeglRect *self_rect, 
+               GeglImageBuffer *src, 
+               GeglRect  *src_rect)
   {
     GeglImage * op = GEGL_IMAGE(gegl_copy_op_new (GEGL_IMAGE(src)));
     gegl_image_get_pixels (op, GEGL_IMAGE(self), self_rect);
-    gegl_object_destroy (GEGL_OBJECT(op));
+    gtk_object_unref (GTK_OBJECT(op));
   }
 }

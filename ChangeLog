@@ -1,3 +1,56 @@
+Fri Jan 19 01:08:12 EST 2001 calvinw@mindspring.com
+    *gegl/gegl-node.gob - added node class. This is
+     for management of image graphs (dags).  
+
+    *gegl/Makefile.am
+    *gegl/gegl-add-op.gil
+    *gegl/gegl-color-convert-op.gob
+    *gegl/gegl-color-convert-to-gray-op.gob
+    *gegl/gegl-color-convert-to-rgb-op.gob
+    *gegl/gegl-color-model-gray-float.gob
+    *gegl/gegl-color-model-gray-u16.gob
+    *gegl/gegl-color-model-gray-u16_4.gob
+    *gegl/gegl-color-model-gray-u8.gob
+    *gegl/gegl-color-model-rgb-float.gob
+    *gegl/gegl-color-model-rgb-u16.gob
+    *gegl/gegl-color-model-rgb-u16_4.gob
+    *gegl/gegl-color-model-rgb-u8.gob
+    *gegl/gegl-color.gob
+    *gegl/gegl-composite-op.gil
+    *gegl/gegl-composite-premult-op.gil
+    *gegl/gegl-copy-op.gob
+    *gegl/gegl-copychan-op.gob
+    *gegl/gegl-dark-op.gil
+    *gegl/gegl-diff-op.gil
+    *gegl/gegl-dual-src-op.gob
+    *gegl/gegl-fill-op.gob
+    *gegl/gegl-image-buffer.gob
+    *gegl/gegl-image-iterator.gob
+    *gegl/gegl-image.gob
+    *gegl/gegl-light-op.gil
+    *gegl/gegl-max-op.gil
+    *gegl/gegl-min-op.gil
+    *gegl/gegl-mult-op.gil
+    *gegl/gegl-object.gob
+    *gegl/gegl-op.gob
+    *gegl/gegl-point-op.gob
+    *gegl/gegl-premult-op.gil
+    *gegl/gegl-print-op.gob
+    *gegl/gegl-screen-op.gil
+    *gegl/gegl-single-src-op.gob
+    *gegl/gegl-subtract-op.gil
+    *gegl/gegl-test-op.gil
+    *gegl/gegl-unpremult-op.gil
+    *gegl/testgegl.c
+    *docs/gegl.html
+    *docs/geglTasks.html
+
+    Updated all of these to work with the Node class. 
+    Since this introduced ref counting on the graphs,
+    there are some ref bugs in testgegl.c now, Ill track 
+    these down soon. Run with GTK_DEBUG=objects on for
+    debugging. 
+    
 Mon Sep 18 15:30:00 Garry R. Osgood <gosgood@idt.net>
 	*gegl/docs/pr_docs/introduction.tex
 	*gegl/docs/pr_docs/gimp.tex

@@ -1,0 +1,491 @@
+%h{
+#include "gegl-object.h"
+
+#ifndef __TYPEDEF_GEGL_NODE__
+#define __TYPEDEF_GEGL_NODE__
+typedef struct _GeglNode  GeglNode;
+#endif
+
+typedef enum
+{
+   GEGL_NODES_LEAFS  = 1 << 0,
+   GEGL_NODES_NON_LEAFS  = 1 << 1,
+   GEGL_NODES_ALL    = GEGL_NODES_LEAFS | GEGL_NODES_NON_LEAFS,
+   GEGL_NODES_MASK   = 0x03
+} GeglNodesFlags;
+
+typedef gboolean 
+(*GeglNodeTraverseFunc)(GeglNode *node, gpointer data);
+
+%}
+%{
+#include "gegl-node.h"
+#include "gegl-node-private.h"
+#include "gegl-object-private.h"
+#include <stdio.h>
+%}
+
+class Gegl:Node from Gegl:Object {
+
+  private GList    *inputs;       /*inputs*/
+  private gint      num_inputs;   /*fixed for life of node, for now*/ 
+  private GList    *outputs;      /*outputs, varies depending on dags present*/
+  private gboolean  visited;      /*flag for traversals*/ 
+  private gboolean  discovered;   /*flag for traversals*/ 
+  private gchar    *name;         /*name for the node*/
+
+  public 
+  GeglNode * 
+  new(gchar * name,
+      gint num_inputs)
+  {
+    GeglNode * self = GEGL_NODE(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor1(self,name,num_inputs))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    /* ref and sink it */
+    gtk_object_ref(GTK_OBJECT(self));
+    gtk_object_sink(GTK_OBJECT(self));
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self,
+              gchar * name,
+              GList *inputs)
+  {
+    g_return_val_if_fail (!(GEGL_OBJECT(self)->constructed), FALSE);
+       
+    /* Chain up */
+    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+      return FALSE;
+
+    self->_priv->inputs = NULL;
+
+    /* Copy the list of inputs and data pointers */
+    add_inputs(self,inputs);
+    self->_priv->num_inputs = g_list_length(self->_priv->inputs);
+    self->_priv->outputs = NULL;
+    self->_priv->visited = TRUE;
+    self->_priv->discovered = TRUE;
+    self->_priv->name = g_strdup(name);
+
+    return TRUE;
+  }
+
+  protected 
+  gboolean 
+  constructor1(self,
+              gchar * name,
+              gint num_inputs)
+  {
+    g_return_val_if_fail (num_inputs >= 0, FALSE);
+    g_return_val_if_fail (!(GEGL_OBJECT(self)->constructed), FALSE);
+
+    /* Chain up */
+    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+      return FALSE;
+
+    {
+      gint i;   
+      self->_priv->outputs = NULL;
+      self->_priv->inputs = NULL;
+
+      /* Set up an inputs list with empty data pointers. */
+      i = num_inputs;
+      while(i--)
+      {
+        self->_priv->inputs = 
+          g_list_prepend(self->_priv->inputs, NULL);
+      }
+
+      self->_priv->num_inputs = num_inputs;
+      self->_priv->visited = TRUE;
+      self->_priv->discovered = TRUE;
+      self->_priv->name = g_strdup(name);
+    }
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    GeglNode *self = GEGL_NODE(object);
+    g_return_if_fail (object != NULL);
+
+    /* Free inputs list and name, outputs should
+       be free already */
+    remove_inputs(self);
+    g_free(self->_priv->name);
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  public 
+  void
+  unlink(self)
+  {
+    GList *llink;
+
+    /* Loop through my outputs */
+    llink = self->_priv->outputs;
+    while(llink)
+    {
+      GeglNode *output = (GeglNode *)(llink->data);
+
+      /* Find me in this output's input list */
+      GList *ll = g_list_find(output->_priv->inputs, self);
+
+      /* Set that data to NULL */
+      ll->data = NULL;
+
+      /* Unref me */
+      gtk_object_unref(GTK_OBJECT(self));
+
+      llink = g_list_next(llink);
+    }
+
+    /* Free output list links now */
+    g_list_free(self->_priv->outputs);
+    self->_priv->outputs = NULL;
+  }
+
+  public 
+  gchar * 
+  get_name(self)
+  {
+    return self->_priv->name;
+  }
+
+  protected 
+  GList * 
+  get_inputs(self)
+  {
+    return self->_priv->inputs;
+  }
+
+  protected 
+  GList * 
+  get_outputs(self)
+  {
+    return self->_priv->outputs;
+  }
+
+  public
+  GeglNode *
+  set_nth_input(self,
+                GeglNode * input,
+                gint n)
+  {
+    GList *llink;
+    GeglNode *old_input; 
+    g_return_val_if_fail (n >=0 && n < self->_priv->num_inputs, NULL);
+
+    /* Get the nth link and the old input */
+    llink = g_list_nth(self->_priv->inputs, n);
+    old_input = (GeglNode *)llink->data; 
+
+    /* Remove the old input */
+    /*llink->data = NULL;*/ 
+
+    /* Remove ref of the old input, fix its output list */
+    if(old_input)
+      remove_output(old_input,self);
+
+    /* Put the new input in this link */
+    llink->data = (gpointer)input; 
+
+    /* Ref the new input, fix its output list */
+    if(input)
+      add_output(input,self);
+
+    return input;
+  } 
+
+  public
+  GeglNode *
+  get_nth_input(self,
+                gint n)
+  {
+    g_return_val_if_fail (n >=0 && n < self->_priv->num_inputs, NULL);
+    return (GeglNode *)g_list_nth_data(self->_priv->inputs,n);
+  } 
+
+  public
+  GeglNode *
+  get_nth_output(self,
+                 guint n)
+  {
+    g_return_val_if_fail (n >=0 && n < num_outputs(self), NULL);
+    return (GeglNode *)g_list_nth_data(self->_priv->outputs,n);
+  }
+         
+  private
+  void
+  add_inputs(self,
+             GList *list)
+  {
+    GList *llink;
+
+    if(self->_priv->inputs)
+      remove_inputs(self);
+
+    /* Allocates links and copies data pointers */
+    self->_priv->inputs = g_list_copy(list);
+
+    /* Loop through the inputs, add me as an output */
+    llink = self->_priv->inputs;
+    while(llink)
+      {
+        GeglNode *input = (GeglNode*)(llink->data);
+
+        /* Add me to the outputs list of this input */
+        if(input)
+          add_output(input,self);
+
+        llink = g_list_next(llink);
+      }
+  }
+
+  private
+  void
+  remove_inputs(self)
+  {
+    GList *llink = self->_priv->inputs;
+    while(llink)
+      {
+        GeglNode *input = (GeglNode*)(llink->data);
+
+        /* Remove me as an output of this input */
+        if(input)
+          remove_output(input,self);
+
+        llink = g_list_next(llink);
+      }
+
+    /* Remove the list of inputs */
+    g_list_free(self->_priv->inputs);
+
+    self->_priv->inputs = NULL;
+  }
+
+  private 
+  GeglNode *
+  add_output(self,
+             GeglNode *output)
+  {
+    g_return_val_if_fail (output != NULL, NULL);
+    g_return_val_if_fail ((output_multiplicity(self,output)+1 == 
+                       input_multiplicity(output,self)), NULL);
+
+    /* Add the output to the list */
+    self->_priv->outputs = g_list_prepend(self->_priv->outputs,
+                                         (gpointer)output);
+
+    /* ref me, since I am gaining an output */
+    gtk_object_ref(GTK_OBJECT(self));
+
+    return output;
+  } 
+
+  private 
+  void
+  remove_output(self,
+                GeglNode *output)
+  {
+    g_return_if_fail (output != NULL);
+    g_return_if_fail ((output_multiplicity(self,output) == 
+                       input_multiplicity(output,self)));
+
+    /* Remove one occurence of this output */
+    self->_priv->outputs = g_list_remove(self->_priv->outputs, 
+                                         (gpointer)output);
+
+    /* unref me, since I am losing an output */
+    gtk_object_unref(GTK_OBJECT(self));
+  }
+
+  private 
+  gint 
+  node_multiplicity(self,
+                    GList *list,
+                    GeglNode *node)
+  {
+    GList * occurence = list;
+    gint multiplicity = 0;
+
+    while (occurence != NULL) 
+    {
+      occurence = g_list_find(occurence, (gpointer)node);
+      if(occurence != NULL)  
+      {
+         multiplicity++;
+         occurence = occurence->next;
+      }
+    } 
+
+    return multiplicity;
+  }
+
+  public
+  gint  
+  input_multiplicity(self,
+                     GeglNode *input)
+  {
+    return node_multiplicity(self, self->_priv->inputs, input);
+  }
+
+  public 
+  gint  
+  output_multiplicity(self,
+                      GeglNode *output)
+  {
+    return node_multiplicity(self, self->_priv->outputs, output);
+  }
+
+  public
+  gboolean
+  is_leaf(self) 
+  {
+    return (num_inputs(self) == 0) ? TRUE: FALSE;
+  }
+
+  public
+  gboolean
+  is_root(self)
+  {
+    return (num_outputs(self) == 0) ? TRUE: FALSE;
+  }
+
+  public
+  gint 
+  num_inputs(self)
+  {
+    g_return_val_if_fail (self != NULL, -1);
+    return self->_priv->num_inputs;
+  }
+
+  public
+  gint 
+  num_outputs(self)
+  {
+    return g_list_length(self->_priv->outputs);
+  }
+
+  private 
+  void
+  init_traversal(self)
+  {
+    GList *llink;
+
+    /* Set the visited and discovered flags false */
+    self->_priv->visited = FALSE; 
+    self->_priv->discovered = FALSE; 
+
+    llink = self->_priv->inputs;
+
+    /* Call init_traversal on my inputs */
+    while(llink)
+      {
+        GeglNode *node = (GeglNode *)llink->data;
+        if(node)
+          init_traversal(node);
+        llink = g_list_next(llink);
+      }
+  } 
+
+  public 
+  void
+  traverse_depth_first(self,
+                       GeglNodeTraverseFunc visit_func,
+                       gpointer data,
+                       gboolean init)
+  {
+    GeglNode *node;
+    GList *llink;
+
+    /* If its the first node, init everything below it */
+    if(init)
+      init_traversal(self);
+
+    /* Then visit all the inputs first */
+    llink = self->_priv->inputs;
+    while(llink)
+      {
+        node = (GeglNode *)llink->data;
+        if(node && !node->_priv->visited)
+            traverse_depth_first(node,visit_func,data,FALSE);
+
+        llink = g_list_next(llink);
+      }
+
+    /* Visit me last */
+    visit_func(self,data);
+    self->_priv->visited = TRUE;
+  } 
+
+  public
+  void
+  traverse_breadth_first(self,
+                         GeglNodeTraverseFunc visit_func,
+                         gpointer data)
+  {
+    GList *queue = NULL; 
+    GList *first;
+
+    /* Init all nodes under this one to unvisited */
+    init_traversal(self);  
+
+    /* Initialize the queue with me */
+    queue = g_list_append(queue,(gpointer)self);
+    
+    /* Mark me as "discovered" */
+    self->_priv->discovered = TRUE;
+
+    /* Pop the top of the queue*/
+    while((first = g_list_first(queue)))
+      {
+        /* Get the inputs of this node */
+        GeglNode * node = (GeglNode *)(first->data);
+        GList * llink = node->_priv->inputs;
+
+        /* Delete this one from top of queue */
+        queue = g_list_remove_link(queue,first);
+        g_list_free_1(first);
+
+        /* Loop through inputs and add to end of 
+           queue if not discovered */
+        while(llink)
+          {
+            GeglNode * input = (GeglNode *)llink->data;
+            
+            /* Add any undiscovered input to the queue at end,
+               but skip any null nodes */
+            if (input && !input->_priv->discovered)
+              {
+                queue = g_list_append(queue,(gpointer)input);
+
+                /* Mark it as discovered */
+                input->_priv->discovered = TRUE;
+              }
+
+            /* Next input */
+            llink = g_list_next(llink);
+          }
+
+        /* Visit the node */
+        visit_func(node,data);
+        node->_priv->visited = TRUE;
+      }
+  }
+}

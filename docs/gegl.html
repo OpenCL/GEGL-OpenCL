@@ -10,8 +10,8 @@
 
 <hr WIDTH="100%">
 <br><font color="#62A2A1"><font size=-1><a href="http://www.gegl.org">HOME</a>&nbsp;&nbsp;
+<a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#news">NEWS</a>&nbsp;
 
-<a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#news">NEWS</a>&nbsp;&nbsp;
 <a href="#mailing lists">MAILING LISTS&nbsp;</a>&nbsp;&nbsp;&nbsp; <a href="#tasks">CURRENT
 TASKS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#authors">AUTHORS&nbsp;&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#reference">
 REFERENCES</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#getting gegl">GETTING
@@ -78,6 +78,19 @@ code for the Generic Image Language.</li>
 mostly on how to encourage studios to become involved with gimp in a more
 fundamental way.&nbsp;</td>
 </tr>
+
+<tr>
+<td>12/25/2000</td>
+
+<td>Gimp1.2 ships. gtkobject-ifying of Gimp1.4 begins. Future of gimp <a href="http://www.mail-archive.com/gimp-developer%40scam.xcf.berkeley.edu/msg03656.html">discussed.</a></td>
+</tr>
+
+<tr>
+<td>1/18/2001</td>
+
+<td>&nbsp;<a href="http://www.linux.conf.au/papers">Work-in-progress</a>
+talk on Gegl by Manish Singh at linux.conf.au.</td>
+</tr>
 </table>
 
 <p>
@@ -93,56 +106,20 @@ developers mailing list and a users mailing list</a>.
 with details</a>)</font>
 <table BORDER COLS=1 WIDTH="100%" NOSAVE >
 <tr>
-<td><a href="geglTasks.html#4 Preprocessor for codegen">#4 Preprocessor
-for codegen</a> - Need preprocessor that finds gil program and runs codegen
-with them.</td>
+<td><a href="geglTasks.html#22 Abstract Syntax Trees for gil">#22 Abstract
+Syntax Trees for gil </a>- Built asts so can improve code-generation, type-checking,
+for gil.&nbsp;</td>
 </tr>
 
 <tr>
-<td><a href="geglTasks.html#6 copy_pixels, get_pixels">#6 copy_pixels,
-get_pixels</a> - Implement these for ImageBuffer and Op classes.
-<br>owner: caro@rhythm.com</td>
+<td><a href="geglTasks.html#21 Gtk-doc setup">#21 Support for gtk-doc in
+gegl</a> - Setup gtk-doc style (DocBook) documentation for gegl.</td>
 </tr>
 
 <tr>
-<td><a href="geglTasks.html#8 Multi-threading support">#8 Multi-threading
-support</a> - Provide basics of multi-threading for gegl.&nbsp;</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#9 Roi classes - Write basic Roi class.">#9
-Roi classes</a> - Write basic Roi class.</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#10 AreaOp - Write basic AreaOp class.">#10
-AreaOp</a> - Write basic AreaOp class.&nbsp;</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#11 GIL support for AreaOp">#11 GIL support
-for AreaOp</a> - Extend GIL to handle AreaOps. .</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#12 ConvolveOp">#12 ConvolveOp</a> - Write basic
-ConvolveOp class.&nbsp;</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#13 Iterator classes">#13 Iterator classes</a>
-- Write basics Iterator classes</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#14 Memory Management classes">#14 Memory Management
-classes</a> - Write basic memory management classes</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#15 Additional Data Storage classes/types for ImageBuffer">#15
-Additional Data Storage classes/types for ImageBuffer</a> - Write ImageBuffer
-subclasses for these</td>
+<td><a href="geglTasks.html#20 Nod class for Directed Acyclic Graphs">#20
+Node class for Directed Acyclic Graphs</a> - Support for dag image graphs,
+traversals, ref counting nodes.</td>
 </tr>
 
 <tr>
@@ -152,10 +129,44 @@ individual color channels.</td>
 </tr>
 
 <tr>
-<td><a href="geglTasks.html#19 Domain of definition and roi regions for Image chains">#19
-Domain of definition and roi regions for Image chains</a> - For effcient
-computing of image chains.
-<br>owner: calvinw@mindspring.com</td>
+<td><a href="geglTasks.html#15 Additional Data Storage classes/types for ImageBuffer">#15
+Additional Data Storage classes/types for ImageBuffer</a> - Write ImageBuffer
+subclasses for these</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#14 Memory Management classes">#14 Memory Management
+classes</a> - Write basic memory management classes</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#13 Iterator classes">#13 Iterator classes</a>
+- Write basics Iterator classes</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#12 ConvolveOp">#12 ConvolveOp</a> - Write basic
+ConvolveOp class.</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#11 GIL support for AreaOp">#11 GIL support
+for AreaOp</a> - Extend GIL to handle AreaOps. .</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#10 AreaOp - Write basic AreaOp class.">#10
+AreaOp</a> - Write basic AreaOp class.&nbsp;</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#9 Roi classes - Write basic Roi class.">#9
+Roi classes</a> - Write basic Roi class.</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#8 Multi-threading support">#8 Multi-threading
+support</a> - Provide basics of multi-threading for gegl.&nbsp;</td>
 </tr>
 </table>
 
