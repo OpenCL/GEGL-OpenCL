@@ -104,7 +104,6 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
 
 CODEGEN_DECL_BEGIN    
-    Chan *dest_data[4], *src1_data[4], *src2_data[4]; 
     VectorChan *dest(color,alpha);
     VectorChan *src1(color,alpha);
     VectorChan *src2(color,alpha);
@@ -124,11 +123,7 @@ CODEGEN_DECL_END
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
 
-    dest = dest_data;
-
-    src1 = src1_data;
-
-    src2 = src2_data;
+CODEGEN_IMAGE_DATA_INIT
 
     switch(self->_priv->comp_mode)
       {
@@ -271,7 +266,6 @@ CODEGEN_BLOCK_END
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
 CODEGEN_DECL_BEGIN
-    Chan *dest_data[3], *src1_data[3], *src2_data[4]; 
     VectorChan *dest(color,alpha); 
     VectorChan *src1(color);
     VectorChan *src2(color,alpha);
@@ -373,7 +367,6 @@ CODEGEN_BLOCK_END
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
 
 CODEGEN_DECL_BEGIN
-    Chan *dest_data[4], *src1_data[4], *src2_data[3]; 
     VectorChan *dest(color,alpha);
     VectorChan *src1(color,alpha);
     VectorChan *src2(color);
@@ -514,7 +507,6 @@ CODEGEN_BLOCK_END
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)
                                     (point_op->_priv); 
 CODEGEN_DECL_BEGIN
-    Chan *dest_data[3], *src1_data[3], *src2_data[3]; 
     VectorChan *dest(color);
     VectorChan *src1(color);
     VectorChan *src2(color);

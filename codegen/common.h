@@ -76,6 +76,7 @@ typedef struct
 }keyword_t;
 
 elem_t  add_sym (char *s);
+void	init_image_data (); 
 int 	get_keyword (char *s); 
 int	yylex (); 
 

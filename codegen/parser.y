@@ -20,6 +20,8 @@ void set_type (elem_t e, DATA_TYPE dtype);
 void set_num (elem_t e, int n);
 void read_data_types (char *data_type);
 void read_color_space (char *color_space); 
+void init_data_varible (char *s);
+
 int yyerror (char *s); 
     
 #define NSYMS 20           /* maximum number of symbols */
@@ -730,6 +732,7 @@ VectorChan_List:
 		print_name (&$$, $2, DEFINE);
 		sprintf(tmp, "%s%s", $1.string, $$.string); 
 		print_repeat (&$$, $2, tmp); 
+		init_data_varible ($2.string); 
 		}
 	| Star NAME COLOR_ALPHA
 		{
@@ -741,6 +744,7 @@ VectorChan_List:
 		print_name (&$$, $2, DEFINE);
 		sprintf(tmp, "%s%s", $1.string, $$.string); 
 		print_repeat (&$$, $2, tmp); 
+		init_data_varible ($2.string); 
 		}
 	| Star NAME
 		{
@@ -752,6 +756,7 @@ VectorChan_List:
 		print_name (&$$, $2, DEFINE);
 		sprintf(tmp, "%s%s", $1.string, $$.string);
 		print_repeat (&$$, $2, tmp);
+		init_data_varible ($2.string); 
 		}
 	;
 
@@ -771,6 +776,58 @@ Star:
 %%
 
 #include <stdio.h>
+
+void 
+init_image_data ()
+{
+  int i;
+  elem_t e;
+  char tmp[256]; 
+ 
+  /* go through all the symbols find all the color and color alpha vectors */
+  for (i=0; i<cur_nsyms; i++)
+    {
+    if (symtab[i].type == TYPE_CA_VECTOR) 
+      {
+      e = symtab[i];
+      sprintf (tmp, "%s_ca = %s_data_v;\n", symtab[i].string, symtab[i].string);
+      strcpy (e.string, tmp); 
+      print_line (e);  
+      }
+    if (symtab[i].type == TYPE_C_VECTOR)
+      {
+      e = symtab[i];
+      sprintf (tmp, "%s_c = %s_data_v;\n", symtab[i].string, symtab[i].string);
+      strcpy (e.string, tmp);
+      print_line (e);
+      }
+    }
+  
+}
+ 
+
+void
+init_data_varible (char *s)
+{
+ 
+  int i;
+  char string[256];
+ 
+  elem_t *e, tmp;  
+ 
+  e = get_sym (s); 
+  
+  sprintf (string, "%s_data", s);
+  tmp = add_sym (string);
+  
+  set_dtype(tmp, TYPE_CHAN);
+  set_type(tmp, TYPE_VECTOR);
+  set_num(tmp, e->num);
+
+  printf ("\n    %s %s[%d];", _Chan_, string, e->num); 
+  
+}
+
 void
 print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
 {

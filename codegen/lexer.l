@@ -23,7 +23,7 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 "CODEGEN_DECL_BEGIN"		BEGIN CODEGEN_DECL;
 				
 "CODEGEN_BLOCK_BEGIN"		BEGIN CODEGEN_BLOCK;
-"CODEGEN_IMAGE_DATA_INIT"	{}
+"CODEGEN_IMAGE_DATA_INIT" 	init_image_data (); 	
 "COLORSPACE"			printf ("%s", _COLORSPACE_);
 "Colorspace"			printf ("%s", _Colorspace_);
 "colorspace"                    printf ("%s", _colorspace_);

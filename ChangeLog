@@ -1,3 +1,9 @@
+Mon Mar  6 12:22:44 PST 2000 caro@rhythm.com
+
+	* started to add the INIT_PIXEL_DATA
+
+	* extra varibles are added
+
 Fri Mar  3 19:02:36 PST 2000 caro@rhythm.com
 	
 	* made more changes to codegen, there are now states
