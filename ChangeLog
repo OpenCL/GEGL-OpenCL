@@ -1,3 +1,7 @@
+2000-05-22  Jay Cox  <jaycox@gimp.org>
+
+	* doc/geglImageAndOp.html: additions and changes.
+
 Mon May 22 03:26:24 EDT 2000 calvinw@mindspring.com
 
         * checking in doc/geglImageAndOp.html 
@@ -863,7 +867,7 @@ Sat Mar 18 12:31:14 EST 2000 calvinw@mindspring.com
           dont really need get_current_rect in gegl-image-iterator constructor. 
           (However, the iterator class will need more design work for sure.) 
 
-2000-03-16  Jay Cox  <jaycox@earthlink.net>
+2000-03-16  Jay Cox  <jaycox@gimp.org>
 
 	* gegl/gegl-image-iterator.gob: call get_current_rect in the
 	constructor so that the scanline_data is initialized properly.

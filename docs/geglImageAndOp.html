@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.61 [en] (X11; I; Linux 2.2.12-20 i686) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (X11; I; Linux 2.2.13 i686) [Netscape]">
    <title>Gegl Image Classes</title>
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -44,8 +44,9 @@ Also we illustrate things with an Op class that has only one source, but
 of course the same method works for multi-source Ops.&nbsp; This is just
 a rough sketch as well, and some issues are left out.
 <p>Most of this is just a simplified version of the <a href="http://techpubs.sgi.com/library/dynaweb_bin/ebt-bin/0650/nph-infosrch.cgi/infosrchtpl/SGI_Developer/IL_PG/@InfoSearch__BookTextView/44">ImageVision
-</a>model.&nbsp; The documentation for that library is a good source for
-motivation. Jay Cox suggested we try some of this approach in <a href="http://www.mindspring.com/~calvinw/geglClasses.html">gegl.</a></div>
+</a>model.&nbsp;
+The documentation for that library is a good source for motivation. Jay
+Cox suggested we try some of this approach in <a href="http://www.mindspring.com/~calvinw/geglClasses.html">gegl.</a></div>
 </div>
 </div>
 
@@ -57,9 +58,8 @@ CLASS="TOC"
 <dl 
 >
 <dt>
-<b>Gegl Image Classes</b></dt>
+<b>Gegl Image Classes</b><br></dt>
 
-<br>&nbsp;
 <dt>
 <a href="#GeglImage">GeglImage</a></dt>
 
@@ -91,8 +91,10 @@ method. Both Ops and ImageBuffers inherit from this class.
 <p><b><tt>abstract</tt></b>
 <br><b><tt>Class GeglImage from GeglObject</tt></b>
 <br><b><tt>{</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; virtual public void get_pixels(self, GeglImageBuffer
-*dest, GeglRect *r);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; virtual public GeglIterator* get_pixels(self,
+GeglIterator *dest, GeglRect *r);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; virtual public void release_pixels(self,
+GeglIterator *iter);</tt></b>
 <br><b><tt>};</tt></b>
 <p>The <b><tt>get_pixels</tt></b> routine is overridden by subclasses in
 different ways.&nbsp; Ops will implement <b><tt>get_pixels</tt></b> to
@@ -100,11 +102,14 @@ place the result of their operation in <b><tt>dest</tt></b>. ImageBuffers
 will implement <b><tt>get_pixels</tt></b> to just copy their image data
 to <b><tt>dest</tt></b>. If the user supplied ImageBuffer <b><tt>dest</tt></b>
 is <b><tt>NULL</tt></b> then Ops will allocate a temporary buffer&nbsp;
-for their results and pass this buffer back in the <b><tt>dest</tt></b>
-variable.&nbsp; Likewise for ImageBuffers if the user supplied <b><tt>dest</tt></b>
-is <b><tt>NULL</tt></b> the called ImageBuffer just sets <b><tt>dest</tt></b>
+for their results and pass this buffer back as it's return argument.&nbsp;
+Likewise for ImageBuffers if the user supplied <b><tt>dest</tt></b> is
+<b><tt>NULL</tt></b> the called ImageBuffer just sets <b><tt>dest</tt></b>
 equal to this (or self in GOB notation)&nbsp; The rect passed is a region
-of interest for the destination.</div>
+of interest for the destination.
+<p>The release_pixels routine tells the Image that a previously requested
+set of pixels is no longer being used and may be freed, swaped, recycled
+etc.</div>
 
 <div 
 CLASS="SECT1"
@@ -121,37 +126,28 @@ a number of sources (inputs) and parameters that determine its operation.&nbsp;
 The Op uses these together and during its operation places its result in
 a passed user-supplied <b><tt>dest</tt></b> (output) ImageBuffer or allocates
 a result buffer itself (if <b><tt>dest</tt></b> is <b><tt>NULL</tt></b>)
-and sets the <b><tt>dest</tt></b> pointer to point to this allocated result
-buffer. During a <b><tt>get_pixels</tt></b> call, it fills in the result
-buffer. It also calls each of its sources <b><tt>get_pixels </tt></b>routines
-to allow them to pull any data so that the inputs are ready for the operation.&nbsp;
-If any input buffers where allocated for the sources during these calls,
-the op frees these after it is done filling in the result.&nbsp; The example
-class&nbsp; ignores any cache or swapping issues for now, and doesnt reuse
-any temporary buffers. It simply deletes any input buffers when they are
-no longer needed.&nbsp; It also tries to do in-place processing where it
-can, which is potentially dangerous.
+and returns a pointer to the&nbsp; allocated result buffer. During a <b><tt>get_pixels</tt></b>
+call, it fills in the result buffer. It also calls each of its sources
+<b><tt>get_pixels </tt></b>routines to allow them to pull any data so that
+the inputs are ready for the operation.&nbsp;&nbsp; The input images PixelIterators
+are released before returning from get_pixels.&nbsp; It also tries to do
+in-place processing where it can, which is potentially dangerous.
 <br>&nbsp;
 <div CLASS="SECT1"><b><tt>abstract class GeglOp from GeglImage</tt></b>
 <br><b><tt>{</tt></b>
 <br><b><tt>&nbsp; private GeglImage * source;&nbsp; /* source input for
 the Op */</tt></b>
 <p><b><tt>&nbsp; /* other data for Op */</tt></b>
-<p><b><tt>&nbsp; public void</tt></b>
+<p><b><tt>&nbsp; public GeglIterator*</tt></b>
 <br><b><tt>&nbsp; get_pixels (self,</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglImageBuffer *dest,</tt></b>
+GeglIterator *dest,</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 GeglRect *rect)</tt></b>
 <br><b><tt>&nbsp; {</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; int height = rect.h;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; GeglImageBuffer *input = NULL;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; GeglImage *s;</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; GeglIterator *src_iter,</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; GeglIterator *dest_iter;</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp; /* See if we can operate in place */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; if (gegl_op_in_place(self))</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; input = dest;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglIterator *dest_iter = dest;</tt></b>
 <p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp; /*</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pull in the source. An
 input buffer</tt></b>
@@ -163,7 +159,11 @@ The passed pointer is then set to point to the</tt></b>
 op should use for its input data during</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; operation.</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp; */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; gegl_get_pixels(source, input, rect);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; src_iter =&nbsp; gegl_get_pixels(source,
+input, rect);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; if (!gegl_op_in_place(self) || dest)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dest_iter = gegl_tmp_iterator_new(colormodel,
+precision, rect);</tt></b><b><tt></tt></b>
 <p><b><tt>&nbsp;&nbsp;&nbsp; /* Have all the inputs, now allocate</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a dest buffer to hold result
 if necessary. */</tt></b>
@@ -172,26 +172,30 @@ if necessary. */</tt></b>
 (rect.w, rect.h,</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 source->colormodel);</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; /* Get an iterator to the source input buffer.
-*/</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; src_iter = gegl_iterator_new(input, rect);</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; /* Get an iterator to dest. */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; dest_iter = gegl_iterator_new(dest,rect);</tt></b>
 <p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (i = 0; i &lt; height; i++)</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* Call the subclass scanline function */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (self_class->scanline_func)(self);</tt></b>
+/* Call the subclass scanline function */</tt></b><b><tt></tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* do
+get pixel pointers from iterators here taking into account</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+gegl_op_in_place(self)&nbsp; */</tt></b><b><tt></tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (self_class->scanline_func)(self);</tt></b>
 <p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gegl_iterator_next_scanline(src_iter);</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gegl_iterator_next_scanline(dest_iter);</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; gegl_destroy(src_iter);</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; gegl_destroy(dest_iter);</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; /* Free any allocated input buffers*/</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; if(GEGL_IS_OP(source) &amp;&amp; !gegl_op_in_place(self))</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gegl_destroy (input);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (!gegl_op_in_place(self))</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+gegl_iterator_next_scanline(dest_iter);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt></b><b><tt></tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; source->release_pixels(src_iter);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; return(dest_iter);</tt></b>
+<br><b><tt>&nbsp; }</tt></b><b><tt></tt></b>
+<p><b><tt>&nbsp; public void</tt></b>
+<br><b><tt>&nbsp; release_pixels(GeglIterator *iterator)</tt></b>
+<br><b><tt>&nbsp; {</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; gegl_destroy(iterator);</tt></b>
 <br><b><tt>&nbsp; }</tt></b>
-<p><b><tt>&nbsp;&nbsp; /*A subclass implements this for their particular
+<br>&nbsp;
+<br><b><tt>&nbsp;&nbsp; /*A subclass implements this for their particular
 operation. */</tt></b>
 <br><b><tt>&nbsp;&nbsp; virtual private void scanline_func (self);</tt></b>
 <br><b><tt>}</tt></b>
@@ -266,7 +270,8 @@ to the current line in that rectangle. The pointers are advanced to the
 next scanline with <b><tt>next_scanline</tt></b>.&nbsp; Since ImageBuffers
 are currently just data pointers to separate channels,
 <b><tt>get_data
-</tt></b>returns an array of pointers to the channels for the current scanline.</div>
+</tt></b>returns
+an array of pointers to the channels for the current scanline.</div>
 
 <div CLASS="SECT2">&nbsp;
 <br><b><tt>GeglIterator</tt></b>
@@ -349,6 +354,65 @@ the root node will cause the whole graph to be computed.</div>
 </div>
 </div>
 
+<hr>
+<h2>Revised Class structure:</h2>
+<pre>
+GeglImage
+    GeglImageBuffer
+    GeglOperatorCache
+    GeglConstantImage
+    GeglOperator
+        GeglAreaOp 
+            GeglConvolveOp 
+                GeglBlurOp 
+                GeglSharpenOp 
+                GeglLaplaceOp 
+                GeglSobelOp 
+                GeglRobertsonOp 
+            GeglKernalOp 
+                GeglKernalMedianOp 
+                GeglKernalMaxOp 
+                GeglKernalMinOp 
+        GeglPointOp
+            GeglSingleSrcOp
+                GeglThresholdOp 
+                GeglEqualizeOp 
+                GeglBrightnessOp 
+                GeglEqualizeOp 
+                GeglContrastOp 
+                GeglPosterizeOp 
+                GeglInvertOp 
+                GeglSaturationOp 
+            GeglColorConvertOp 
+                GeglColorConvertOpToRgb 
+                GeglColorConvertOpToCmyk 
+                GeglColorConvertOpToHsv 
+                GeglColorConvertOpToCiexyz 
+                GeglChannelSelect
+            GeglMultiSrcOp 
+                GeglAddOp 
+                GeglSubtractOp 
+                GeglMultOp 
+                GeglMinOp 
+                GeglMaxOp 
+                GeglDivOp 
+                GeglAbsDiffOp 
+                GeglCompositeOp
+        GeglGeometricOp 
+            GeglAffineTransformOp 
+            GeglWarpOp 
+        GeglStatisticsOp 
+            GeglHistogramOp 
+            GeglMeanOp
+        GeglPassthroughOp
+            GeglTranslateOp
+            GeglRoiOp
+
+GeglIterator
+    GeglImageBufferIterator
+    GeglConstantImageIterator
+    GeglTmpIterator
+</pre>
 <div 
 CLASS="SECT1"
 >
@@ -360,17 +424,42 @@ CLASS="FORMALPARA"
 </div>
 </div>
 
+  <h3>Similarities between gegl++ and SGI's ImageVision Library</h3>
+  <ul>
+    <li>Image Operators may be used interchangably with ImageBuffers.</li>
+    <li>Complete trees of operations may be created by passing one operator as
+      input into another operator.</li>
+    <li>The results of one filter may be passes as an input to another.</li>
+    <li>No destination Image is specified until  the call to copy_image (or
+      similar function)</li>
+    <li>Processing is demand driven.</li>
+  </ul>
+  <br>
+  <h3>Ideas we can borrow from ImageVision</h3>
+  <ul>
+    <li>The Region Of Interest is just another Operator</li>
+    <li>Automatic conversion of mismatched colormodels</li>
+    <li>The ability to reconfigure an operator chain via a set_input method</li>
+  </ul>
+
+<hr>
+
 <div 
 CLASS="SECT1"
 >&nbsp;
 <h1 CLASS="SECT1">
 <a NAME="References"></a><font size=+2>References</font></h1>
 
-<ul 
-><a href="http://techpubs.sgi.com/library/dynaweb_bin/ebt-bin/0650/nph-infosrch.cgi/infosrchtpl/SGI_Developer/IL_PG/@InfoSearch__BookTextView/44">SGI
-Image Vision Library </a>.
-<br><a href="http://www.ddj.com/articles/1997/9707/9707b/9707b.html">A
-Memory-Constrained Image Processing Architecture</a></ul>
+<ul>
+<li>
+<a href="http://techpubs.sgi.com/library/dynaweb_bin/ebt-bin/0650/nph-infosrch.cgi/infosrchtpl/SGI_Developer/IL_PG/@InfoSearch__BookTextView/44">SGI
+Image Vision Library </a>.</li>
+
+<li>
+<a href="http://www.ddj.com/articles/1997/9707/9707b/9707b.html">A
+Memory-Constrained Image Processing Architecture</a>
+</li>
+</ul>
 </div>
 </div>
 
