@@ -4,13 +4,11 @@
 #include "csuite.h"
 #include "testutils.h"
 
-#define SAMPLED_IMAGE_WIDTH 1 
-#define SAMPLED_IMAGE_HEIGHT 1 
+#define SAMPLED_IMAGE_WIDTH 5 
+#define SAMPLED_IMAGE_HEIGHT 5 
 
-static GeglSampledImage * source;
-static GeglSampledImage * dest;
-
-static GeglSimpleImageMgr *simple_image_man; 
+static GeglOp * source;
+static GeglOp * dest;
 
 static void
 test_print_g_object_new(Test *test)
@@ -31,10 +29,10 @@ static void
 test_print_apply(Test *test)
 {
   GeglOp *print = g_object_new(GEGL_TYPE_PRINT,
-                               "source0", source,
+                               "input", source,
                                NULL);
 
-  gegl_op_apply(print, NULL, NULL); 
+  gegl_op_apply(print); 
 
   g_object_unref(print);
 }
@@ -53,8 +51,6 @@ print_test_setup(Test *test)
                        "height", SAMPLED_IMAGE_HEIGHT,
                        NULL);  
 
-  simple_image_man = GEGL_SIMPLE_IMAGE_MGR(gegl_image_mgr_instance());
-
   g_object_unref(rgb_float);
 }
 
@@ -63,7 +59,6 @@ print_test_teardown(Test *test)
 {
   g_object_unref(source);
   g_object_unref(dest);
-  g_object_unref(simple_image_man);
 }
 
 Test *

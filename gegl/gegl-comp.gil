@@ -4,15 +4,27 @@
 #include "gegl-tile.h"
 #include "gegl-tile-iterator.h"
 #include "gegl-utils.h"
+#include "gegl-value-types.h"
+
+enum
+{
+  PROP_0, 
+  PROP_INPUT0,
+  PROP_INPUT1,
+  PROP_LAST 
+};
 
 static void class_init (GeglCompClass * klass);
 static void init (GeglComp * self, GeglCompClass * klass);
-static void prepare (GeglOp * self_op, GList * requests);
+static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
+static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void scanline_ca_op_ca (GeglOp * self_op, GeglTileIterator ** iters, gint width);
-static void scanline_ca_op_c (GeglOp * self_op, GeglTileIterator ** iters, gint width);
-static void scanline_c_op_ca (GeglOp * self_op, GeglTileIterator ** iters, gint width);
-static void scanline_c_op_c (GeglOp * self_op, GeglTileIterator ** iters, gint width);
+static void prepare (GeglOp * op, GList * output_values, GList *input_values);
+
+static void scanline_ca_op_ca (GeglOp * op, GeglTileIterator ** iters, gint width);
+static void scanline_ca_op_c (GeglOp * op, GeglTileIterator ** iters, gint width);
+static void scanline_c_op_ca (GeglOp * op, GeglTileIterator ** iters, gint width);
+static void scanline_c_op_c (GeglOp * op, GeglTileIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -47,11 +59,31 @@ gegl_comp_get_type (void)
 static void 
 class_init (GeglCompClass * klass)
 {
+  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GeglOpClass *op_class = GEGL_OP_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
   op_class->prepare = prepare;
+
+  gobject_class->set_property = set_property;
+  gobject_class->get_property = get_property;
+
+  g_object_class_install_property (gobject_class, PROP_INPUT0,
+                                   g_param_spec_object ("input0",
+                                                        "Input0",
+                                                        "Input 0 of GeglComp",
+                                                         GEGL_TYPE_OBJECT,
+                                                         G_PARAM_CONSTRUCT |
+                                                         G_PARAM_READWRITE));
+   
+  g_object_class_install_property (gobject_class, PROP_INPUT1,
+                                   g_param_spec_object ("input1",
+                                                        "Input1",
+                                                        "Input 1 of GeglComp",
+                                                         GEGL_TYPE_OBJECT,
+                                                         G_PARAM_CONSTRUCT |
+                                                         G_PARAM_READWRITE));
   return;
 }
 
@@ -59,61 +91,103 @@ static void
 init (GeglComp * self, 
       GeglCompClass * klass)
 {
+  GeglNode * node = GEGL_NODE(self); 
+
   self->comp_mode = GEGL_COMPOSITE_OVER;
 
-  {
-    GeglNode * self_node = GEGL_NODE(self); 
-    GList * inputs = g_list_append(NULL, NULL);
-    inputs = g_list_append(inputs, NULL);
-    self_node->num_inputs = 2;
-    gegl_node_set_inputs(self_node, inputs);
-    g_list_free(inputs);
-  }
+  gegl_node_set_num_outputs(node, 1);
+  gegl_node_set_num_inputs(node, 2);
   return;
 }
 
-static void 
-prepare (GeglOp * self_op, 
-         GList * requests)
+static void
+get_property (GObject      *gobject,
+              guint         prop_id,
+              GValue       *value,
+              GParamSpec   *pspec)
 {
-  GeglPointOp *self_point_op = GEGL_POINT_OP(self_op);
+  GeglNode *node = GEGL_NODE (gobject);
 
-  GeglOpRequest *dest_request = (GeglOpRequest*)g_list_nth_data(requests,0); 
-  GeglTile *dest = dest_request->tile;
+  switch (prop_id)
+  {
+    case PROP_INPUT0:
+      g_value_set_object(value, (GObject*)gegl_node_get_nth_input(node, 0));  
+      break;
+    case PROP_INPUT1:
+      g_value_set_object(value, (GObject*)gegl_node_get_nth_input(node, 1));  
+      break;
+    default:
+      break;
+  }
+}
+
+static void
+set_property (GObject      *gobject,
+              guint         prop_id,
+              const GValue *value,
+              GParamSpec   *pspec)
+{
+  GeglNode *node = GEGL_NODE (gobject);
+
+  switch (prop_id)
+  {
+    case PROP_INPUT0:
+      gegl_node_set_nth_input(node, (GeglNode*)g_value_get_object(value), 0);  
+      break;
+    case PROP_INPUT1:
+      gegl_node_set_nth_input(node, (GeglNode*)g_value_get_object(value), 1);  
+      break;
+    default:
+      break;
+  }
+}
+
+
+static void 
+prepare (GeglOp * op, 
+         GList * output_values,
+         GList * input_values)
+{
+  GeglPointOp *point_op = GEGL_POINT_OP(op);
+
+  GValue *dest_value = g_list_nth_data(output_values, 0); 
+  GeglTile *dest = g_value_get_image_data_tile(dest_value);
   GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
 
-  GeglOpRequest *s1_request = (GeglOpRequest*)g_list_nth_data(requests,1); 
-  GeglTile *s1 = s1_request->tile;
-  GeglColorModel * s1_cm = gegl_tile_get_color_model (s1);
+  GValue *src1_value = g_list_nth_data(input_values, 0); 
+  GeglTile *src1 = g_value_get_image_data_tile(src1_value);
+  GeglColorModel * src1_cm = gegl_tile_get_color_model (src1);
 
-  GeglOpRequest *s2_request = (GeglOpRequest*)g_list_nth_data(requests,2); 
-  GeglTile *s2 = s2_request->tile;
-  GeglColorModel * s2_cm = gegl_tile_get_color_model (s2);
+  GValue *src2_value = g_list_nth_data(input_values, 1); 
+  GeglTile *src2 = g_value_get_image_data_tile(src2_value);
+  GeglColorModel * src2_cm = gegl_tile_get_color_model (src2);
 
   g_return_if_fail (dest_cm);
-  g_return_if_fail (s1_cm);
-  g_return_if_fail (s2_cm);
+  g_return_if_fail (src1_cm);
+  g_return_if_fail (src2_cm);
 
   {
-    gboolean  s1_has_alpha = gegl_color_model_has_alpha(s1_cm);
-    gboolean  s2_has_alpha = gegl_color_model_has_alpha(s2_cm); 
+    gboolean  s1_has_alpha = gegl_color_model_has_alpha(src1_cm);
+    gboolean  s2_has_alpha = gegl_color_model_has_alpha(src2_cm); 
 
     /* dest = src2 op src1 */ 
 
     if ( s2_has_alpha && s1_has_alpha)
-      self_point_op->scanline_processor->func = scanline_ca_op_ca;
+      point_op->scanline_processor->func = scanline_ca_op_ca;
     else if ( s2_has_alpha && !s1_has_alpha )
-      self_point_op->scanline_processor->func = scanline_ca_op_c;
+      point_op->scanline_processor->func = scanline_ca_op_c;
     else if ( !s2_has_alpha && s1_has_alpha )
-      self_point_op->scanline_processor->func = scanline_c_op_ca;
+      point_op->scanline_processor->func = scanline_c_op_ca;
     else if ( !s2_has_alpha && !s1_has_alpha )
-      self_point_op->scanline_processor->func = scanline_c_op_c;
+      point_op->scanline_processor->func = scanline_c_op_c;
   }
 }
 
+
+
 /**
  * scanline_ca_op_ca:
- * @self_op: #a GeglOp. 
+ * @op: #a GeglOp. 
  * @iters: array of TileIterators. 
  * @width: width of scanline. 
  *
@@ -121,11 +195,11 @@ prepare (GeglOp * self_op,
  *
  **/
 static void 
-scanline_ca_op_ca (GeglOp * self_op, 
+scanline_ca_op_ca (GeglOp * op, 
                    GeglTileIterator ** iters, 
                    gint width)
 {
-    GeglComp *self = GEGL_COMP(self_op);
+    GeglComp *self = GEGL_COMP(op);
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color,alpha);
     Pixel src1(color,alpha);
@@ -303,7 +377,7 @@ scanline_ca_op_ca (GeglOp * self_op,
 
 /**
  * scanline_ca_op_c:
- * @self_op: #a GeglOp. 
+ * @op: #a GeglOp. 
  * @iters: array of TileIterators. 
  * @width: width of scanline. 
  *
@@ -311,11 +385,11 @@ scanline_ca_op_ca (GeglOp * self_op,
  *
  **/
 static void 
-scanline_ca_op_c (GeglOp * self_op, 
+scanline_ca_op_c (GeglOp * op, 
                   GeglTileIterator ** iters, 
                   gint width)
 {
-    GeglComp *self = GEGL_COMP(self_op);
+    GeglComp *self = GEGL_COMP(op);
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color); 
     Pixel src1(color);
@@ -430,7 +504,7 @@ scanline_ca_op_c (GeglOp * self_op,
 
 /**
  * scanline_c_op_ca:
- * @self_op: #a GeglOp. 
+ * @op: #a GeglOp. 
  * @iters: array of TileIterators. 
  * @width: width of scanline. 
  *
@@ -438,11 +512,11 @@ scanline_ca_op_c (GeglOp * self_op,
  *
  **/
 static void 
-scanline_c_op_ca (GeglOp * self_op, 
+scanline_c_op_ca (GeglOp * op, 
                   GeglTileIterator ** iters, 
                   gint width)
 {
-    GeglComp *self = GEGL_COMP(self_op);
+    GeglComp *self = GEGL_COMP(op);
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color,alpha);
     Pixel src1(color,alpha);
@@ -591,7 +665,7 @@ scanline_c_op_ca (GeglOp * self_op,
 
 /**
  * scanline_c_op_c:
- * @self_op: #a GeglOp. 
+ * @op: #a GeglOp. 
  * @iters: array of TileIterators. 
  * @width: width of scanline. 
  *
@@ -599,11 +673,11 @@ scanline_c_op_ca (GeglOp * self_op,
  *
  **/
 static void 
-scanline_c_op_c (GeglOp * self_op, 
+scanline_c_op_c (GeglOp * op, 
                  GeglTileIterator ** iters, 
                  gint width)
 {
-  GeglComp *self = GEGL_COMP(self_op);
+  GeglComp *self = GEGL_COMP(op);
   GENERIC_IMAGE_DECL_BEGIN
   Pixel dest(color);
   Pixel src1(color);

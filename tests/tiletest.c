@@ -4,10 +4,10 @@
 #include "csuite.h"
 #include "testutils.h"
 
-GeglColorModel * color_model;
+static GeglColorModel * color_model;
 #define AREA_WIDTH 5 
 #define AREA_HEIGHT 4 
-GeglRect area = {0,0,AREA_WIDTH,AREA_HEIGHT};
+static GeglRect area = {0,0,AREA_WIDTH,AREA_HEIGHT};
 
 static void
 test_tile_g_object_new(Test *test)

@@ -48,21 +48,23 @@ GEGL_SRC = \
   gegl-color-model-rgb-u16.c \
   gegl-copy.c \
   gegl-fill.c \
+  gegl-filter.c \
   gegl-image.c \
-  gegl-image-mgr.c \
   gegl-mem-buffer.c \
   gegl-node.c \
   gegl-object.c \
   gegl-op.c \
-  gegl-point-op.c \
   gegl-print.c \
+  gegl-param-specs.c \
+  gegl-point-op.c \
   gegl-sampled-image.c \
   gegl-scanline-processor.c \
-  gegl-simple-image-mgr.c \
   gegl-stat-op.c \
   gegl-tile.c \
   gegl-tile-iterator.c \
-  gegl-tile-mgr.c
+  gegl-tile-mgr.c \
+  gegl-value-types.c
+
 
 GEGL_PUBLIC_HDRS = \
   gegl-add.h \
@@ -77,36 +79,37 @@ GEGL_PUBLIC_HDRS = \
   gegl-color-model-rgb-float.h \
   gegl-color-model-rgb-u8.h \
   gegl-color-model-rgb-u16.h \
-  gegl-comp.h \
   gegl-comp-premult.h \
+  gegl-comp.h \
   gegl-const-mult.h \
   gegl-copy.h \
   gegl-dark.h \
   gegl-diff.h \
   gegl-fill.h \
+  gegl-filter.h \
   gegl-image.h \
-  gegl-image-mgr.h \
   gegl-light.h \
   gegl-max.h \
+  gegl-mem-buffer.h \
   gegl-min.h \
   gegl-mult.h \
-  gegl-mem-buffer.h \
   gegl-node.h \
   gegl-object.h \
   gegl-op.h \
+  gegl-param-specs.h \
   gegl-point-op.h \
   gegl-premult.h \
   gegl-print.h \
   gegl-sampled-image.h \
   gegl-scanline-processor.h \
   gegl-screen.h \
-  gegl-simple-image-mgr.h \
   gegl-stat-op.h \
   gegl-subtract.h \
   gegl-tile.h \
   gegl-tile-iterator.h \
   gegl-tile-mgr.h \
-  gegl-unpremult.h
+  gegl-unpremult.h \
+  gegl-value-types.h
 
 GEGL_NONCLASS_HDRS = \
   gegl-types.h \

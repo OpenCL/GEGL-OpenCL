@@ -7,7 +7,7 @@
 void     gegl_rect_set          (GeglRect *r, gint x, gint y, guint w, guint h);
 gboolean gegl_rect_equal        (GeglRect *r, GeglRect *s); 
 void     gegl_rect_copy         (GeglRect *to, GeglRect *from);
-void     gegl_rect_union        (GeglRect *dest, GeglRect *src1, GeglRect *src2);
+void     gegl_rect_bounding_box (GeglRect *dest, GeglRect *src1, GeglRect *src2);
 gboolean gegl_rect_intersect    (GeglRect *dest, GeglRect *src1, GeglRect *src2);
 gboolean gegl_rect_contains     (GeglRect *r, GeglRect *s); 
 
@@ -18,6 +18,7 @@ GeglChannelDataType gegl_utils_derived_channel_data_type(GList *inputs);
 GeglColorSpace      gegl_utils_derived_color_space(GList *inputs);
 GValue *            gegl_utils_construct_val (gchar *name, guint  n_props, GObjectConstructParam *props);
 
+GType gegl_utils_get_filter_type();
 void gegl_log(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, ...);
 void gegl_logv(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, va_list args);
 

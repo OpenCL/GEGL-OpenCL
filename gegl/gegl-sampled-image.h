@@ -18,7 +18,8 @@ extern "C" {
 #define __TYPEDEF_GEGL_SAMPLED_IMAGE__
 typedef struct _GeglSampledImage GeglSampledImage;
 #endif
-struct _GeglSampledImage {
+struct _GeglSampledImage 
+{
    GeglImage __parent__;
 
    /*< private >*/
@@ -27,7 +28,8 @@ struct _GeglSampledImage {
 };
 
 typedef struct _GeglSampledImageClass GeglSampledImageClass;
-struct _GeglSampledImageClass {
+struct _GeglSampledImageClass 
+{
    GeglImageClass __parent__;
 };
 

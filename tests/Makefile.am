@@ -11,7 +11,20 @@ noinst_PROGRAMS = testgegl
 DEPS = ../gegl/libgegl.la ../tools/testsuite/libtestsuite.la
 LDADDS = ../gegl/libgegl.la ../tools/testsuite/libtestsuite.la
 
+MOCK_OBJECT_SRC = \
+   gegl-mock-image.c \
+   gegl-mock-image.h \
+   gegl-mock-node.c \
+   gegl-mock-node.h \
+   gegl-mock-object.c \
+   gegl-mock-object.h \
+   gegl-mock-op.c \
+   gegl-mock-op.h \
+   gegl-mock-point-op.c \
+   gegl-mock-point-op.h
+
 testgegl_SOURCES = \
+   $(MOCK_OBJECT_SRC) \
    addtest.c \
    buffertest.c \
    colortest.c \
@@ -21,27 +34,26 @@ testgegl_SOURCES = \
    constmulttest.c \
    copytest.c \
    filltest.c \
-   imagemgrtest.c \
    imagetest.c \
    membuffertest.c \
    nodetest.c \
-   objecttest.c \
    optest.c \
+   objecttest.c \
    pointoptest.c \
    printtest.c \
    sampledimagetest.c \
-   simpleimagemgrtest.c \
    simpletreetest.c \
    statoptest.c \
    testgegl.c \
    testutils.c \
+   tiletest.c \
    tileiteratortest.c \
    tilemgrtest.c \
-   tiletest.c
+   valuetest.c
 
 testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(DEPS)
-testgegl_LDADD = $(LDADDS) -lm
+testgegl_LDADD = $(LDADDS) -lm -lefence
 
 tests: dummy testgegl
 

@@ -24,9 +24,9 @@
 <!ENTITY gegl-GeglMin SYSTEM "sgml/gegl-min.sgml">
 <!ENTITY gegl-GeglMult SYSTEM "sgml/gegl-mult.sgml">
 <!ENTITY gegl-GeglFill SYSTEM "sgml/gegl-fill.sgml">
+<!ENTITY gegl-GeglFilter SYSTEM "sgml/gegl-filter.sgml">
 <!ENTITY gegl-GeglPremult SYSTEM "sgml/gegl-premult.sgml">
 <!ENTITY gegl-GeglScreen SYSTEM "sgml/gegl-screen.sgml">
-<!ENTITY gegl-GeglImageMgr SYSTEM "sgml/gegl-image-mgr.sgml">
 <!ENTITY gegl-GeglImage SYSTEM "sgml/gegl-image.sgml">
 <!ENTITY gegl-GeglSubtract SYSTEM "sgml/gegl-subtract.sgml">
 <!ENTITY gegl-GeglUnpremult SYSTEM "sgml/gegl-unpremult.sgml">
@@ -78,6 +78,7 @@
     &gegl-GeglMin;
     &gegl-GeglMult;
     &gegl-GeglFill;
+    &gegl-GeglFilter;
     &gegl-GeglPremult;
     &gegl-GeglScreen;
     &gegl-GeglImage;
@@ -107,8 +108,6 @@
 
   <chapter id="imagemgrs">
     <title>Image and Tile Managers</title>
-    &gegl-GeglImageMgr;
-    &gegl-GeglSimpleImageMgr;
     &gegl-GeglTileMgr;
   </chapter>
 

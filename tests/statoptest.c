@@ -8,7 +8,7 @@ static void
 test_stat_op_g_object_new(Test *test)
 {
   {
-    GeglStatOp * stat_op = g_object_new (GEGL_TYPE_PRINT, NULL);  
+    GeglStatOp * stat_op = g_object_new (GEGL_TYPE_STAT_OP, NULL);  
 
     ct_test(test, stat_op != NULL);
     ct_test(test, GEGL_IS_STAT_OP(stat_op));

@@ -14,7 +14,7 @@ static void class_init (GeglStatOpClass * klass);
 static void init (GeglStatOp * self, GeglStatOpClass * klass);
 static void finalize(GObject * gobject);
 
-static void process (GeglOp * self_op, GList * requests);
+static void process (GeglOp * self, GList *output_values, GList * input_values);
 
 static gpointer parent_class = NULL;
 
@@ -79,9 +79,15 @@ finalize(GObject *gobject)
 }
 
 static void 
-process (GeglOp * self_impl, 
-         GList * requests)
+process (GeglOp * self_op, 
+         GList * output_values,
+         GList * input_values)
 {
-  GeglStatOp *self =  GEGL_STAT_OP(self_impl);
-  gegl_scanline_processor_process(self->scanline_processor, requests);
+  GeglStatOp *self =  GEGL_STAT_OP(self_op);
+  /*
+  LOG_DEBUG("process", "calling scanline processor"); 
+  */
+  gegl_scanline_processor_process(self->scanline_processor, 
+                                  output_values,
+                                  input_values);
 }

@@ -1,15 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <glib-object.h>
 #include "gegl.h"
 #include "testutils.h"
 
-GeglSampledImage *
+GeglOp *
 make_rgb_float_sampled_image(gint width, 
-                            gint height, 
-                            gfloat a, 
-                            gfloat b, 
-                            gfloat c) 
+                             gint height, 
+                             gfloat a, 
+                             gfloat b, 
+                             gfloat c) 
 {
   GeglColorModel *rgb_float = gegl_color_model_instance("RgbFloat");
 
@@ -19,11 +18,11 @@ make_rgb_float_sampled_image(gint width,
 
   GeglChannelValue * chans = gegl_color_get_channel_values(color);
 
-  GeglSampledImage * sampled_image = g_object_new (GEGL_TYPE_SAMPLED_IMAGE,
-                                                 "colormodel", rgb_float,
-                                                 "width", width, 
-                                                 "height", height,
-                                                 NULL);  
+  GeglOp * sampled_image = g_object_new (GEGL_TYPE_SAMPLED_IMAGE,
+                                         "colormodel", rgb_float,
+                                         "width", width, 
+                                         "height", height,
+                                         NULL);  
 
   GeglOp *fill = g_object_new(GEGL_TYPE_FILL, 
                               "fillcolor", color, 
@@ -33,7 +32,7 @@ make_rgb_float_sampled_image(gint width,
   chans[1].f = b;
   chans[2].f = c;
 
-  gegl_op_apply(fill, sampled_image, NULL); 
+  gegl_op_apply_image(fill, sampled_image, NULL); 
 
   g_object_unref(fill);
   g_object_unref(color);
@@ -42,7 +41,7 @@ make_rgb_float_sampled_image(gint width,
   return sampled_image;
 }
 
-GeglSampledImage *
+GeglOp *
 make_gray_float_sampled_image(gint width, 
                              gint height, 
                              gfloat a) 
@@ -55,11 +54,11 @@ make_gray_float_sampled_image(gint width,
 
   GeglChannelValue * chans = gegl_color_get_channel_values(color);
 
-  GeglSampledImage * sampled_image = g_object_new (GEGL_TYPE_SAMPLED_IMAGE,
-                                                 "colormodel", gray_float,
-                                                 "width", width, 
-                                                 "height", height,
-                                                 NULL);  
+  GeglOp * sampled_image = g_object_new (GEGL_TYPE_SAMPLED_IMAGE,
+                                         "colormodel", gray_float,
+                                         "width", width, 
+                                         "height", height,
+                                         NULL);  
 
   GeglOp *fill = g_object_new(GEGL_TYPE_FILL, 
                             "fillcolor", color, 
@@ -67,7 +66,7 @@ make_gray_float_sampled_image(gint width,
 
   chans[0].f = a;
 
-  gegl_op_apply(fill, sampled_image, NULL); 
+  gegl_op_apply_image(fill, sampled_image, NULL); 
 
   g_object_unref(fill);
   g_object_unref(color);
@@ -80,10 +79,12 @@ gboolean
 check_rgb_float_pixel(GeglImage *dest, gfloat a, gfloat b, gfloat c)
 {
   gfloat *data[3];
-  GeglImageMgr *image_mgr = gegl_image_mgr_instance();
-  GeglTile *tile = gegl_simple_image_mgr_get_tile(GEGL_SIMPLE_IMAGE_MGR(image_mgr), dest); 
-  g_object_unref(image_mgr);
+  GeglTile *tile = dest->tile; 
+
   gegl_tile_get_data_at(tile, (gpointer*)data, 0,0);
+
+  LOG_DEBUG("check_rgb_float_pixel",  "data %f %f %f" ,*data[0], *data[1], *data[2]);
+  LOG_DEBUG("check_rgb_float_pixel",  "a,b,c %f %f %f" , a, b, c);
 
   if (GEGL_FLOAT_EQUAL(*data[0] , a) &&
       GEGL_FLOAT_EQUAL(*data[1] , b) &&
@@ -97,9 +98,7 @@ gboolean
 check_gray_float_pixel(GeglImage *dest, gfloat a)
 {
   gfloat *data[1];
-  GeglImageMgr *image_mgr = gegl_image_mgr_instance();
-  GeglTile *tile = gegl_simple_image_mgr_get_tile(GEGL_SIMPLE_IMAGE_MGR(image_mgr), dest); 
-  g_object_unref(image_mgr);
+  GeglTile *tile = dest->tile; 
   gegl_tile_get_data_at(tile, (gpointer*)data, 0,0);
 
   if (GEGL_FLOAT_EQUAL(*data[0] , a))

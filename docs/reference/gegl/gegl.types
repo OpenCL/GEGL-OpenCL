@@ -19,7 +19,7 @@ gegl_copy_get_type
 gegl_dark_get_type
 gegl_diff_get_type
 gegl_fill_get_type
-gegl_image_mgr_get_type
+gegl_filter_get_type
 gegl_image_get_type
 gegl_light_get_type
 gegl_max_get_type
@@ -35,7 +35,6 @@ gegl_print_get_type
 gegl_sampled_image_get_type
 gegl_scanline_processor_get_type
 gegl_screen_get_type
-gegl_simple_image_mgr_get_type
 gegl_stat_op_get_type
 gegl_subtract_get_type
 gegl_tile_iterator_get_type

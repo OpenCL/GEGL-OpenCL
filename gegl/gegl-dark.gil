@@ -4,11 +4,23 @@
 #include "gegl-tile.h"
 #include "gegl-tile-iterator.h"
 #include "gegl-utils.h"
+#include "gegl-value-types.h"
+
+enum
+{
+  PROP_0, 
+  PROP_INPUT0,
+  PROP_INPUT1,
+  PROP_LAST 
+};
 
 static void class_init (GeglDarkClass * klass);
 static void init (GeglDark * self, GeglDarkClass * klass);
-static void prepare (GeglOp * self_op, GList * requests);
-static void scanline (GeglOp * self_op, GeglTileIterator ** iters, gint width);
+static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
+static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
+
+static void prepare (GeglOp * op, GList * output_values, GList *input_values);
+static void scanline (GeglOp * op, GeglTileIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -43,11 +55,31 @@ gegl_dark_get_type (void)
 static void 
 class_init (GeglDarkClass * klass)
 {
+  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GeglOpClass *op_class = GEGL_OP_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
   op_class->prepare = prepare;
+
+  gobject_class->set_property = set_property;
+  gobject_class->get_property = get_property;
+
+  g_object_class_install_property (gobject_class, PROP_INPUT0,
+                                   g_param_spec_object ("input0",
+                                                        "Input0",
+                                                        "Input 0 of GeglDark",
+                                                         GEGL_TYPE_OBJECT,
+                                                         G_PARAM_CONSTRUCT |
+                                                         G_PARAM_READWRITE));
+   
+  g_object_class_install_property (gobject_class, PROP_INPUT1,
+                                   g_param_spec_object ("input1",
+                                                        "Input1",
+                                                        "Input 1 of GeglDark",
+                                                         GEGL_TYPE_OBJECT,
+                                                         G_PARAM_CONSTRUCT |
+                                                         G_PARAM_READWRITE));
   return;
 }
 
@@ -55,36 +87,74 @@ static void
 init (GeglDark * self, 
       GeglDarkClass * klass)
 {
-  GeglOp * self_op = GEGL_OP(self);
-
-  {
-    GeglNode * self_node = GEGL_NODE(self); 
-    GList * inputs = g_list_append(NULL, NULL);
-    inputs = g_list_append(inputs, NULL);
-    self_node->num_inputs = 2;
-    gegl_node_set_inputs(self_node, inputs);
-    g_list_free(inputs);
-  }
-  return;
+  GeglNode * node = GEGL_NODE(self); 
+  gegl_node_set_num_outputs(node, 1);
+  gegl_node_set_num_inputs(node, 2);
 }
 
-static void 
-prepare (GeglOp * self_op, 
-         GList * requests)
+static void
+get_property (GObject      *gobject,
+              guint         prop_id,
+              GValue       *value,
+              GParamSpec   *pspec)
 {
-  GeglPointOp *self_point_op = GEGL_POINT_OP(self_op);
-  GeglOpRequest *dest_request = (GeglOpRequest*)g_list_nth_data(requests,0); 
-  GeglTile *dest = dest_request->tile;
-  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
-  g_return_if_fail (dest_cm);
+  GeglNode *node = GEGL_NODE (gobject);
 
-  /* Now make sure the correct scanline func is installed */
-  self_point_op->scanline_processor->func = scanline;
+  switch (prop_id)
+  {
+    case PROP_INPUT0:
+      g_value_set_object(value, (GObject*)gegl_node_get_nth_input(node, 0));  
+      break;
+    case PROP_INPUT1:
+      g_value_set_object(value, (GObject*)gegl_node_get_nth_input(node, 1));  
+      break;
+    default:
+      break;
+  }
+}
+
+static void
+set_property (GObject      *gobject,
+              guint         prop_id,
+              const GValue *value,
+              GParamSpec   *pspec)
+{
+  GeglNode *node = GEGL_NODE (gobject);
+
+  switch (prop_id)
+  {
+    case PROP_INPUT0:
+      gegl_node_set_nth_input(node, (GeglNode*)g_value_get_object(value), 0);  
+      break;
+    case PROP_INPUT1:
+      gegl_node_set_nth_input(node, (GeglNode*)g_value_get_object(value), 1);  
+      break;
+    default:
+      break;
+  }
+}
+
+
+static void 
+prepare (GeglOp * op, 
+         GList * output_values,
+         GList * input_values)
+{
+  GeglPointOp *point_op = GEGL_POINT_OP(op); 
+
+  GValue *dest_value = g_list_nth_data(output_values, 0); 
+  GeglTile *dest = g_value_get_image_data_tile(dest_value);
+  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
+
+  g_return_if_fail(dest_cm);
+
+  /* Get correct scanline func for this color model */
+  point_op->scanline_processor->func = scanline;        
 }
 
 /**
  * scanline:
- * @self_op: a #GeglOp
+ * @op: a #GeglOp
  * @iters: #GeglTileIterators array. 
  * @width: width of scanline.
  *
@@ -92,7 +162,7 @@ prepare (GeglOp * self_op,
  *
  **/
 static void 
-scanline (GeglOp * self_op, 
+scanline (GeglOp * op, 
           GeglTileIterator ** iters, 
           gint width)
 {

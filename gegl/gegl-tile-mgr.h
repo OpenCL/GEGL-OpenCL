@@ -12,19 +12,14 @@ extern "C" {
 typedef struct _GeglTile GeglTile;
 #endif
 
-#ifndef __TYPEDEF_GEGL_OP__
-#define __TYPEDEF_GEGL_OP__
-typedef struct _GeglOp GeglOp;
-#endif
-
 #ifndef __TYPEDEF_GEGL_BUFFER__
 #define __TYPEDEF_GEGL_BUFFER__
 typedef struct _GeglBuffer GeglBuffer;
 #endif
 
-#ifndef __TYPEDEF_GEGL_IMAGE__
-#define __TYPEDEF_GEGL_IMAGE__
-typedef struct _GeglImage GeglImage;
+#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
+#define __TYPEDEF_GEGL_COLOR_MODEL__
+typedef struct _GeglColorModel  GeglColorModel;
 #endif
 
 #define GEGL_TYPE_TILE_MGR               (gegl_tile_mgr_get_type ())
@@ -38,51 +33,33 @@ typedef struct _GeglImage GeglImage;
 #define __TYPEDEF_GEGL_TILE_MGR__
 typedef struct _GeglTileMgr GeglTileMgr;
 #endif
-struct _GeglTileMgr {
+struct _GeglTileMgr 
+{
    GeglObject __parent__;
 
    /*< private >*/
 };
 
 typedef struct _GeglTileMgrClass GeglTileMgrClass;
-struct _GeglTileMgrClass {
+struct _GeglTileMgrClass 
+{
    GeglObjectClass __parent__;
-
-   GeglTile * (* fetch_output_tile)  (GeglTileMgr * self,  
-                                      GeglOp * op, 
-                                      GeglImage * dest, 
-                                      GeglRect * area);
-   GeglTile * (* fetch_input_tile)   (GeglTileMgr * self, 
-                                      GeglImage * input, 
-                                      GeglRect * area);
-   void       (* release_tiles)       (GeglTileMgr * self, 
-                                       GList * request_list);
-   GeglTile * (* get_tile)           (GeglTileMgr * self, 
-                                      GeglImage* image);
-   GeglBuffer * (* create_buffer)    (GeglTileMgr * self, 
-                                      GeglTile * tile);
-   GeglTile * (*make_tile)           (GeglTileMgr * self, 
-                                      GeglImage* image, 
-                                      GeglRect * area);
 };
 
+GeglTileMgr * gegl_tile_mgr_instance          (void);
+void          gegl_tile_mgr_install           (GeglTileMgr *tile_mgr);
 
 GType         gegl_tile_mgr_get_type            (void);
-GeglTile *    gegl_tile_mgr_fetch_output_tile   (GeglTileMgr * self, 
-                                                GeglOp * op, 
-                                                GeglImage * dest, 
+
+GeglTile *    gegl_tile_mgr_validate_tile      (GeglTileMgr * self, 
+                                                GeglTile * tile, 
                                                 GeglRect * area);
-GeglTile *    gegl_tile_mgr_fetch_input_tile    (GeglTileMgr * self, 
-                                                GeglImage * input, 
-                                                GeglRect * area);
-void          gegl_tile_mgr_release_tiles        (GeglTileMgr * self, 
-                                                  GList * request_list);
+void          gegl_tile_mgr_validate_data      (GeglTileMgr * self, 
+                                                GeglTile * tile);
 GeglBuffer *  gegl_tile_mgr_create_buffer       (GeglTileMgr * self, 
                                                  GeglTile * tile);
-GeglTile *    gegl_tile_mgr_get_tile            (GeglTileMgr * self, 
-                                                GeglImage * image);
-GeglTile *    gegl_tile_mgr_make_tile           (GeglTileMgr * self, 
-                                                 GeglImage* image, 
+GeglTile *    gegl_tile_mgr_create_tile         (GeglTileMgr * self, 
+                                                 GeglColorModel * color_model, 
                                                  GeglRect * area);
 #ifdef __cplusplus
 }

@@ -1,5 +1,6 @@
 #include <glib-object.h>
 #include "gegl.h"
+#include "gegl-mock-object.h"
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
@@ -13,6 +14,10 @@ test_object_g_object_new(Test *test)
   ct_test(test, GEGL_IS_OBJECT(object));
   ct_test(test, g_type_parent(GEGL_TYPE_OBJECT) == G_TYPE_OBJECT);
   ct_test(test, !strcmp("GeglObject", g_type_name(GEGL_TYPE_OBJECT)));
+
+  ct_test(test, GEGL_IS_MOCK_OBJECT(object));
+  ct_test(test, g_type_parent(GEGL_TYPE_MOCK_OBJECT) == GEGL_TYPE_OBJECT);
+  ct_test(test, !strcmp("GeglMockObject", g_type_name(GEGL_TYPE_MOCK_OBJECT)));
 }
 
 static void
@@ -27,7 +32,7 @@ test_object_add_interface(Test *test)
 static void
 object_test_setup(Test *test)
 {
-  object = g_object_new (GEGL_TYPE_OBJECT, NULL);  
+  object = g_object_new (GEGL_TYPE_MOCK_OBJECT, NULL);  
 }
 
 static void

@@ -2,6 +2,9 @@
 #define __GEGL_TYPES_H__
 
 #include <glib.h>
+#include <glib-object.h>
+
+#define GEGL_TYPE_IMAGE_DATA   G_TYPE_MAKE_FUNDAMENTAL(G_TYPE_RESERVED_USER_FIRST + 1) 
 
 typedef enum
 {

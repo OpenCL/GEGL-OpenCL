@@ -23,27 +23,21 @@ typedef struct _GeglScanlineProcessor  GeglScanlineProcessor;
 #define __TYPEDEF_GEGL_POINT_OP__
 typedef struct _GeglPointOp GeglPointOp;
 #endif
-struct _GeglPointOp {
+struct _GeglPointOp 
+{
    GeglImage __parent__;
 
    /*< private >*/
-   GeglPoint * input_offsets;
    GeglScanlineProcessor * scanline_processor;
 };
 
 typedef struct _GeglPointOpClass GeglPointOpClass;
-struct _GeglPointOpClass {
+struct _GeglPointOpClass 
+{
    GeglImageClass __parent__;
 };
 
 GType            gegl_point_op_get_type              (void);
-
-void             gegl_point_op_get_nth_input_offset  (GeglPointOp * self, 
-                                                      gint i,
-                                                      GeglPoint * point);
-void             gegl_point_op_set_nth_input_offset  (GeglPointOp * self, 
-                                                      gint i,
-                                                      GeglPoint * point);
 
 #ifdef __cplusplus
 }

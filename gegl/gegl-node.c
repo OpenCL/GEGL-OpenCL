@@ -5,20 +5,20 @@
 enum
 {
   PROP_0, 
-  PROP_INPUTS,
   PROP_LAST 
 };
 
 static void class_init (GeglNodeClass * klass);
 static void init(GeglNode *self, GeglNodeClass *klass);
 static void finalize(GObject * self_object);
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
-static void remove_inputs (GeglNode * self);
-static GeglNode * add_output (GeglNode * self, GeglNode * output);
-static void remove_output (GeglNode * self, GeglNode * output);
-static gint node_multiplicity (GeglNode * self, GList * list, GeglNode * node);
-static void init_traversal (GeglNode * self);
+
+static GList* allocate_input_infos_list(GeglNode * self, gint num_inputs);
+static void free_input_infos_list(GeglNode * self);
+static GList* allocate_output_list(GeglNode * self, gint num_outputs);
+static void free_output_list(GeglNode * self);
+
+static void add_output(GeglNode * self, GeglNode * node, gint index);
+static void remove_output (GeglNode * self, GeglNode * node, gint index);
 
 static gpointer parent_class = NULL;
 
@@ -42,7 +42,10 @@ gegl_node_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GEGL_TYPE_OBJECT, "GeglNode", &typeInfo, 0);
+      type = g_type_register_static (GEGL_TYPE_OBJECT, 
+                                     "GeglNode", 
+                                     &typeInfo, 
+                                     G_TYPE_FLAG_ABSTRACT);
     }
     return type;
 }
@@ -56,15 +59,6 @@ class_init (GeglNodeClass * klass)
 
   gobject_class->finalize = finalize;
 
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-
-  g_object_class_install_property (gobject_class, PROP_INPUTS,
-                                   g_param_spec_pointer ("inputs",
-                                                        "Inputs",
-                                                        "The GeglNode's inputs",
-                                                         G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
-
   return;
 }
 
@@ -72,14 +66,15 @@ static void
 init (GeglNode * self, 
       GeglNodeClass * klass)
 {
+  self->num_inputs = 0;
+  self->input_infos = NULL;
+  self->num_outputs = 0;
   self->outputs = NULL;
-  self->inputs = NULL;
+
+  self->enabled = TRUE;
   self->visited = TRUE;
   self->discovered = TRUE;
   self->shared_count = 0;
-  self->num_inputs = -1;
-  self->enabled = TRUE;
-  self->inheriting_input = 0;
   return;
 }
 
@@ -88,85 +83,59 @@ finalize(GObject *gobject)
 {
   GeglNode *self = GEGL_NODE (gobject);
 
-  /* Free inputs list and name, outputs should
-    be free already */
-  remove_inputs(self);
+  free_input_infos_list(self);
+  free_output_list(self);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
-static void
-set_property (GObject      *gobject,
-              guint         prop_id,
-              const GValue *value,
-              GParamSpec   *pspec)
+/**
+ * gegl_node_get_nth_input:
+ * @self: a #GeglNode.
+ * @n: which input.
+ *
+ * Gets the nth input.
+ *
+ * Returns: a #GeglNode, the nth input of this node.
+ **/
+GeglNode * 
+gegl_node_get_nth_input (GeglNode * self, 
+                         gint n)
 {
-  GeglNode *self = GEGL_NODE (gobject);
+  GeglInputInfo * input_info = gegl_node_get_nth_input_info(self,n);
 
-  switch (prop_id)
-  {
-    case PROP_INPUTS:
-      {
-        GList *inputs = (GList*)g_value_get_pointer(value);
-        if(inputs)
-          gegl_node_set_inputs(self, inputs);
-      }
-      break;
-    default:
-      break;
-  }
-}
-
-static void
-get_property (GObject      *gobject,
-              guint         prop_id,
-              GValue       *value,
-              GParamSpec   *pspec)
-{
-  GeglNode *self = GEGL_NODE (gobject);
-
-  switch (prop_id)
-  {
-    case PROP_INPUTS:
-      g_value_set_pointer (value, (gpointer)gegl_node_get_inputs (self));
-      break;
-    default:
-      break;
-  }
+  if(!input_info)
+    return NULL;
+  else 
+    return input_info->input;
 }
 
 /**
- * gegl_node_get_inputs:
+ * gegl_node_get_nth_input_info:
  * @self: a #GeglNode.
+ * @n: which input.
  *
- * Gets a copy of the inputs list of the node.
+ * Allocates and returns an input info for nth input.
  *
- * Returns: #GeglNode list of inputs.
+ * Returns: an allocated #GeglInputInfo. 
  **/
-GList * 
-gegl_node_get_inputs (GeglNode * self)
+GeglInputInfo * 
+gegl_node_get_nth_input_info (GeglNode * self, 
+                              gint n)
 {
-  g_return_val_if_fail (self != NULL, (GList * )0);
-  g_return_val_if_fail (GEGL_IS_NODE (self), (GList * )0);
+  GeglInputInfo * info;
+  GeglInputInfo * input_info;
 
-  return g_list_copy(self->inputs);
-}
+  if(n < 0 || n >= self->num_inputs)
+      return NULL;
 
-/**
- * gegl_node_get_outputs:
- * @self: a #GeglNode.
- *
- * Gets the outputs list of the node.
- *
- * Returns: #GeglNode list of outputs. 
- **/
-GList * 
-gegl_node_get_outputs (GeglNode * self)
-{
-  g_return_val_if_fail (self != NULL, (GList * )0);
-  g_return_val_if_fail (GEGL_IS_NODE (self), (GList * )0);
+  info = (GeglInputInfo*)g_list_nth_data(self->input_infos, n);
+  input_info = g_new(GeglInputInfo, 1);
 
-  return g_list_copy(self->outputs);
+  input_info->input = info->input; 
+  input_info->index = info->index; 
+
+  return input_info;
 }
 
 /**
@@ -175,333 +144,114 @@ gegl_node_get_outputs (GeglNode * self)
  * @input: the node to make the nth input.
  * @n: which input.
  *
- * Sets the nth input of the node.
+ * Sets the nth input of this node.
  *
- * Returns: the #GeglNode that was set.
  **/
-GeglNode * 
-gegl_node_set_nth_input (GeglNode * self, 
-                         GeglNode * input, 
-                         gint n)
+void
+gegl_node_set_nth_input(GeglNode * self, 
+                        GeglNode * input, 
+                        gint n)
 {
-  GList *llink;
-  GeglNode *old_input; 
+  GeglInputInfo input_info;
 
-  g_return_val_if_fail (self != NULL, (GeglNode * )0);
-  g_return_val_if_fail (GEGL_IS_NODE (self), (GeglNode * )0);
+  g_return_if_fail(self != NULL);
+  g_return_if_fail(n >= 0 && n < self->num_inputs); 
 
-  if( n < 0 || n >= gegl_node_num_inputs(self) )
-    {
-      g_warning( "Cant set input %d\n", n);
-      return NULL;
-    }
+  input_info.input = input;
+  input_info.index = 0;
 
-  /* Get the nth link and the old input */
-  llink = g_list_nth(self->inputs, n);
-  old_input = (GeglNode *)llink->data; 
-
-  /* Remove the old input */
-  /*llink->data = NULL;*/ 
-
-  /* Remove ref of the old input, fix its output list */
-  if(old_input)
-    remove_output(old_input,self);
-
-  /* Put the new input in this link */
-  llink->data = (gpointer)input; 
-
-  /* Ref the new input, fix its output list */
-  if(input)
-    add_output(input,self);
-
-  return input;
+  gegl_node_set_nth_input_info(self, &input_info, n); 
 }
 
+
 /**
- * gegl_node_get_nth_input:
+ * gegl_node_set_nth_input_info:
  * @self: a #GeglNode.
+ * @input_info: the node and index for the nth input.
  * @n: which input.
  *
- * Gets the nth input of the node.
- *
- * Returns: a #GeglNode, the nth input of this node.
- **/
-GeglNode * 
-gegl_node_get_nth_input (GeglNode * self, 
-                         gint n)
-{
-   g_return_val_if_fail (self != NULL, (GeglNode * )0);
-   g_return_val_if_fail (GEGL_IS_NODE (self), (GeglNode * )0);
-   return (GeglNode *)g_list_nth_data(self->inputs,n);
-}
-
-/**
- * gegl_node_get_nth_output:
- * @self: a #GeglNode.
- * @n: which output.
- *
- * Gets the nth output of the node.
- *
- * Returns: a #GeglNode, the nth input of this node.
- **/
-GeglNode * 
-gegl_node_get_nth_output (GeglNode * self, 
-                          guint n)
-{
-   g_return_val_if_fail (self != NULL, (GeglNode * )0);
-   g_return_val_if_fail (GEGL_IS_NODE (self), (GeglNode * )0);
-   return (GeglNode *)g_list_nth_data(self->outputs,n);
-}
-
-/**
- * gegl_node_set_inputs:
- * @self: a #GeglNode.
- * @list: list of inputs.
- *
- * Makes a copy of @list and installs this as the inputs 
- * list.
+ * Sets the nth input info of this node.
  *
  **/
-void 
-gegl_node_set_inputs (GeglNode * self, 
-                      GList * list)
+void
+gegl_node_set_nth_input_info(GeglNode * self, 
+                             GeglInputInfo * input_info, 
+                             gint n)
 {
-  GList *llink;
+  GeglInputInfo * info = NULL;
 
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail(self != NULL);
+  g_return_if_fail(n >= 0 && n < self->num_inputs); 
 
-  /* If its not the right number of inputs return */
-  if((self->num_inputs >= 0  && g_list_length(list) != self->num_inputs)) 
+  info = (GeglInputInfo*)g_list_nth_data(self->input_infos, n);
+
+  if(info->input)
     {
-      g_warning("Wrong number of inputs: %d\n", g_list_length(list));
-      return;
+      remove_output(info->input, self, info->index); 
+
+      /* I lose a reference to old_input. */
+      /*
+      LOG_DEBUG("set_nth_input",  
+                "unreffing %x", (guint)info->input);
+      */
+      g_object_unref(info->input);
     }
 
-  if(self->inputs)
-   remove_inputs(self);
+  info->input = input_info->input;
+  info->index = input_info->index;
 
-  self->inputs = g_list_copy(list);
-
-  /* Loop through the inputs, add me as an output */
-  llink = self->inputs;
-
-  while(llink)
+  /* Add me as an output with index. */ 
+  if(info->input)
     {
-      GeglNode *input = (GeglNode*)(llink->data);
+      add_output(info->input, self, input_info->index); 
 
-      /* Add me to the outputs list of this input */
-      if(input)
-        add_output(input,self);
-
-      llink = g_list_next(llink);
+      /* I gain a reference to source. */
+      /*
+      LOG_DEBUG("set_nth_input",  
+                "reffing %x", (guint)info->input);
+      */
+      g_object_ref(info->input);
     }
 }
 
-/**
- * remove_inputs:
- * @self: a #GeglNode.
- *
- * Removes the current inputs list.
- *
- **/
 static void 
-remove_inputs (GeglNode * self)
+add_output(GeglNode * self,
+           GeglNode * node,
+           gint index)
 {
-  GList *llink;
-  gint count;
+  GList * llink = NULL;
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_NODE (self));
 
-  llink = self->inputs;
+  g_return_if_fail (node != NULL);
+  g_return_if_fail (GEGL_IS_NODE (node));
 
-  count = 0;
- 
-  while(llink)
-    {
-      GeglNode *input = (GeglNode*)(llink->data);
-
-      /* Remove me as an output of this input */
-      if(input)
-        remove_output(input,self);
-
-      llink = g_list_next(llink);
-      count++;
-    }
-
-  /* Remove the list of inputs, not data though. */
-  g_list_free(self->inputs);
-
-  self->inputs = NULL;
+  g_return_if_fail (index >= 0 && index < self->num_outputs);
+  
+  llink = g_list_nth(self->outputs, index);
+  llink->data = (gpointer)g_list_append((GList*)llink->data, node);
 }
 
-/**
- * add_output:
- * @self: a #GeglNode.
- * @output: a #GeglNode to add to output list.
- *
- * Adds @output to the node's outputs list. 
- *
- * Returns: the added #GeglNode. 
- **/
-static GeglNode * 
-add_output (GeglNode * self, 
-            GeglNode * output)
-{
-  g_return_val_if_fail (self != NULL, (GeglNode * )0);
-  g_return_val_if_fail (GEGL_IS_NODE (self), (GeglNode * )0);
-   
-  g_return_val_if_fail (output != NULL, NULL);
-  g_return_val_if_fail ((gegl_node_output_multiplicity(self,output)+1 == 
-                         gegl_node_input_multiplicity(output,self)), NULL);
-
-  /* Add the output to the list */
-  self->outputs = g_list_append(self->outputs,
-                                        (gpointer)output);
-
-  /* ref me, since I am gaining an output */
-  g_object_ref(self);
-
-  return output;
-}
-
-/**
- * remove_output:
- * @self: a #GeglNode.
- * @output: a #GeglNode to remove from outputs list.
- *
- * Removes @output from the node's outputs list.
- *
- **/
 static void 
 remove_output (GeglNode * self, 
-               GeglNode * output)
+               GeglNode * node,
+               gint index)
 {
+  GList *llink = NULL; 
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_NODE (self));
 
-  g_return_if_fail (output != NULL);
-  g_return_if_fail ((gegl_node_output_multiplicity(self,output) == 
-                    gegl_node_input_multiplicity(output,self)));
+  g_return_if_fail (node != NULL);
+  g_return_if_fail (GEGL_IS_NODE (node));
 
-  /* Remove one occurence of this output */
-  self->outputs = g_list_remove(self->outputs, (gpointer)output);
+  g_return_if_fail (index >= 0 && index < self->num_outputs);
 
-  /* unref me, since I am losing an output */
-  g_object_unref(self);
+  llink = g_list_nth(self->outputs, index); 
+  llink->data = (gpointer)g_list_remove((GList*)llink->data, node);
 }
 
 /**
- * node_multiplicity:
- * @self: a #GeglNode.
- * @list: list to use.
- * @node: a #GeglNode to look for on @list.
- *
- * Finds the multiplicity of @node on @list. That is, how many times @node
- * appears on @list.
- *
- * Returns: Number of times @node is on @list. 
- **/
-static gint 
-node_multiplicity (GeglNode * self, 
-                   GList * list, 
-                   GeglNode * node)
-{
-  GList * occurence = list;
-  gint multiplicity = 0;
-
-  g_return_val_if_fail (self != NULL, (gint )0);
-  g_return_val_if_fail (GEGL_IS_NODE (self), (gint )0);
-     
-  while (occurence != NULL) 
-  {
-    occurence = g_list_find(occurence, (gpointer)node);
-    if(occurence != NULL)  
-    {
-       multiplicity++;
-       occurence = occurence->next;
-    }
-  } 
-
-  return multiplicity;
-}
-
-/**
- * gegl_node_input_multiplicity:
- * @self: a #GeglNode.
- * @input: a #GeglNode to look for.
- *
- * Finds the multiplicity of @input on the node's inputs list.  That is, how
- * many times @input appears on the inputs list.
- *
- * Returns: How many times @input is on the inputs list. 
- **/
-gint 
-gegl_node_input_multiplicity (GeglNode * self, 
-                              GeglNode * input)
-{
-  g_return_val_if_fail (self != NULL, (gint )0);
-  g_return_val_if_fail (GEGL_IS_NODE (self), (gint )0);
-
-  return node_multiplicity(self, self->inputs, input);
-}
-
-/**
- * gegl_node_output_multiplicity:
- * @self: a #GeglNode.
- * @output: a #GeglNode to look for.
- *
- * Finds the multiplicity of @input on the node's outputs list.  That is, how
- * many times @output appears on the outputs list.
- *
- * Returns: How many times @output is on the outputs list. 
- **/
-gint 
-gegl_node_output_multiplicity (GeglNode * self, 
-                               GeglNode * output)
-{
-  g_return_val_if_fail (self != NULL, -1);
-  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
-
-  return node_multiplicity(self, self->outputs, output);
-}
-
-/**
- * gegl_node_is_leaf:
- * @self: a #GeglNode.
- *
- * Tests to see if the node is a leaf node. A leaf node has no inputs. 
- *
- * Returns: TRUE if is a leaf. 
- **/
-gboolean 
-gegl_node_is_leaf (GeglNode * self)
-{
-  g_return_val_if_fail (self != NULL, (gboolean )0);
-  g_return_val_if_fail (GEGL_IS_NODE (self), (gboolean )0);
-   
-  return (gegl_node_num_inputs(self) == 0) ? TRUE: FALSE;
-}
-
-/**
- * gegl_node_is_root:
- * @self: a #GeglNode.
- *
- * Tests to see if the node is a root node. A root node has no outputs.
- *
- * Returns: TRUE if it is a root. 
- **/
-gboolean 
-gegl_node_is_root (GeglNode * self)
-{
-  g_return_val_if_fail (self != NULL, (gboolean )0);
-  g_return_val_if_fail (GEGL_IS_NODE (self), (gboolean )0);
-   
-  return (gegl_node_num_outputs(self) == 0) ? TRUE: FALSE;
-}
-
-/**
- * gegl_node_num_inputs:
+ * gegl_node_get_num_inputs:
  * @self: a #GeglNode.
  *
  * Gets the number of inputs.
@@ -509,99 +259,228 @@ gegl_node_is_root (GeglNode * self)
  * Returns: number of inputs. 
  **/
 gint 
-gegl_node_num_inputs (GeglNode * self)
+gegl_node_get_num_inputs (GeglNode * self)
 {
   g_return_val_if_fail (self != NULL, -1);
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
-  return g_list_length(self->inputs);
+  return self->num_inputs;
 }
 
 /**
- * gegl_node_inheriting_input:
+ * gegl_node_set_num_inputs:
  * @self: a #GeglNode.
  *
- * Gets the inheriting input of this node. Allows navigating down graph in
- * direction of leaves. 
- *
- * Returns: index of the inheriting input. 
- **/
-gint 
-gegl_node_inheriting_input (GeglNode * self)
-{
-  g_return_val_if_fail (self != NULL, -1);
-  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
-
-  return self->inheriting_input;
-}
-
-/**
- * gegl_node_get_enabled:
- * @self: a #GeglNode.
- *
- * Gets whether this node is enabled. 
- *
- * Returns: TRUE if this node is enabled. 
- **/
-gboolean 
-gegl_node_get_enabled (GeglNode * self)
-{
-  g_return_val_if_fail (self != NULL, (gboolean )0);
-  g_return_val_if_fail (GEGL_IS_NODE (self), (gboolean )0);
-
-  return self->enabled;
-}
-
-/**
- * gegl_node_set_enabled:
- * @self: a #GeglNode.
- *
- * Sets whether this node is enabled. 
+ * Sets the number of inputs.
  *
  **/
 void 
-gegl_node_set_enabled (GeglNode * self, gboolean enabled)
+gegl_node_set_num_inputs (GeglNode * self, 
+                          gint num_inputs)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_NODE (self));
-   
-  self->enabled = enabled;
+  g_return_if_fail (num_inputs >= 0);
+
+  self->num_inputs = num_inputs;
+
+  if(self->num_inputs > 0)
+    self->input_infos = allocate_input_infos_list(self, self->num_inputs);
+}
+
+static GList* 
+allocate_input_infos_list(GeglNode * self, 
+                          gint num_inputs)
+{
+  gint i;
+  GList * llink = NULL;
+
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+  g_return_val_if_fail (num_inputs >= 0, NULL);
+
+  for(i = 0; i < num_inputs; i++)
+    {
+      GeglInputInfo * input_info = g_new(GeglInputInfo, 1);
+      input_info->input = NULL;
+      input_info->index = 0;
+      llink = g_list_append(llink, input_info);
+    }
+
+  return llink;
+}
+
+static void
+free_input_infos_list(GeglNode * self)
+{
+  GList * llink;
+
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_NODE (self));
+
+  llink = self->input_infos;
+
+  while(llink)
+    {
+      GeglInputInfo * input_info = (GeglInputInfo*)llink->data;
+
+      if(input_info->input)
+        {
+          remove_output(input_info->input, self, input_info->index); 
+          /*
+          LOG_DEBUG("free_input_infos_list",  
+                    "unreffing %x", (guint)input_info->input);
+          */
+          g_object_unref(input_info->input);
+
+        }
+
+      input_info->input = NULL;
+
+      g_free(input_info);
+
+      llink = g_list_next(llink);
+    }
+
+  g_list_free(self->input_infos);
+  self->input_infos = NULL;
 }
 
 /**
- * gegl_node_num_outputs:
+ * gegl_node_get_num_outputs:
  * @self: a #GeglNode.
  *
- * Gets the number of outputs.
+ * Gets the number of output indexs.
  *
  * Returns: number of outputs. 
  **/
 gint 
-gegl_node_num_outputs (GeglNode * self)
+gegl_node_get_num_outputs (GeglNode * self)
 {
-  g_return_val_if_fail (self != NULL, (gint )0);
-  g_return_val_if_fail (GEGL_IS_NODE (self), (gint )0);
-   
-  return g_list_length(self->outputs);
+  g_return_val_if_fail (self != NULL, -1);
+  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
+
+  return self->num_outputs;
 }
 
 /**
- * gegl_node_shared_count:
+ * gegl_node_set_num_outputs:
  * @self: a #GeglNode.
  *
- * Gets the shared count. This is set during a breadth-first search and
- * indicates the number of times a particular node appears as an input to
- * nodes in the graph defined by that breadth-first search.
+ * Sets the number of outputs.
  *
- * Returns: shared count for a particular breadth-first defined graph. 
  **/
-gint 
-gegl_node_shared_count (GeglNode * self)
+void 
+gegl_node_set_num_outputs (GeglNode * self, 
+                           gint num_outputs)
 {
-  g_return_val_if_fail (self != NULL, (gint )0);
-  g_return_val_if_fail (GEGL_IS_NODE (self), (gint )0);
-   
-  return self->shared_count;
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (num_outputs >= 0);
+
+  self->num_outputs = num_outputs;
+
+  if(self->num_outputs > 0)
+    self->outputs = allocate_output_list(self, self->num_outputs);
+}
+
+static GList * 
+allocate_output_list(GeglNode * self,
+                     gint num_outputs)
+{
+  gint i;
+  GList * llink = NULL;
+
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+  g_return_val_if_fail (num_outputs >= 0, NULL);
+
+  for(i = 0; i < num_outputs; i++)
+    llink = g_list_append(llink, NULL);
+
+  return llink;
+}
+
+static void
+free_output_list(GeglNode * self)
+{
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_NODE (self));
+
+  /* All contents should be gone from each index*/
+  g_list_free(self->outputs);
+  self->outputs = NULL;
+}
+
+/**
+ * gegl_node_get_outputs:
+ * @self: a #GeglNode.
+ * @index_num_outputs: number of outputs for this output index.
+ * @index: which output index.
+ *
+ * Allocates and returns an array of outputs for the
+ * passed index number. 
+ *
+ * Returns: array of GeglNode pointers for the given index. 
+ **/
+GeglNode **
+gegl_node_get_outputs (GeglNode * self, 
+                       gint *index_num_outputs,
+                       gint index)
+{
+  GList *outputs_list = NULL;
+  GeglNode **outputs = NULL;
+  gint i;
+
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+
+  g_return_val_if_fail (index >= 0 || index < self->num_outputs, NULL);
+
+  outputs_list = (GList*)g_list_nth_data(self->outputs, index);
+  *index_num_outputs = g_list_length(outputs_list);
+
+  if(*index_num_outputs)
+    {
+      outputs = g_new(GeglNode*, *index_num_outputs);
+
+      for(i =0 ; i < *index_num_outputs; i++) 
+        outputs[i] = (GeglNode*)g_list_nth_data(outputs_list, i);
+    }
+
+  return outputs;
+}
+
+/**
+ * gegl_node_get_input_infos:
+ * @self: a #GeglNode.
+ *
+ * Allocates and returns an array of input infos.
+ *
+ * Returns: array of input infos. 
+ **/
+GeglInputInfo*
+gegl_node_get_input_infos (GeglNode * self)
+{
+  GeglInputInfo *input_infos = NULL;
+
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+
+  if(self->num_inputs > 0)
+    {
+      gint i;
+      input_infos = g_new(GeglInputInfo, self->num_inputs);
+
+      for(i =0 ; i < self->num_inputs; i++) 
+        {
+          GeglInputInfo *input_info = (GeglInputInfo*)g_list_nth_data(self->input_infos, i); 
+          input_infos[i].input = input_info->input; 
+          input_infos[i].index = input_info->index; 
+        }
+    }
+
+  return input_infos;
 }
 
 /**
@@ -624,14 +503,16 @@ init_traversal (GeglNode * self)
   self->discovered = FALSE; 
   self->shared_count = 0; 
 
-  llink = self->inputs;
+  llink = self->input_infos;
 
   /* Call init_traversal on my inputs */
   while(llink)
     {
-      GeglNode *node = (GeglNode *)llink->data;
-      if(node)
-        init_traversal(node);
+      GeglInputInfo *input_info = (GeglInputInfo *)llink->data;
+
+      if(input_info->input)
+        init_traversal(input_info->input);
+
       llink = g_list_next(llink);
     }
 }
@@ -652,23 +533,21 @@ gegl_node_traverse_depth_first (GeglNode * self,
                                 gpointer data, 
                                 gboolean init)
 {
-  GeglNode *node;
   GList *llink;
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_NODE (self));
-   
 
   /* If its the first node, init everything below it */
   if(init)
     init_traversal(self);
 
   /* Then visit all the inputs first */
-  llink = self->inputs;
+  llink = self->input_infos;
   while(llink)
     {
-      node = (GeglNode *)llink->data;
-      if(node && !node->visited)
-          gegl_node_traverse_depth_first(node, visit_func, data, FALSE);
+      GeglInputInfo *input_info = (GeglInputInfo *)llink->data;
+      if(input_info->input && !input_info->input->visited) 
+          gegl_node_traverse_depth_first(input_info->input, visit_func, data, FALSE);
 
       llink = g_list_next(llink);
     }
@@ -711,7 +590,7 @@ gegl_node_traverse_breadth_first (GeglNode * self,
     {
       /* Get the inputs of this node */
       GeglNode * node = (GeglNode *)(first->data);
-      GList * llink = node->inputs;
+      GList * llink = node->input_infos;
 
       /* Delete this one from top of queue */
       queue = g_list_remove_link(queue,first);
@@ -721,21 +600,17 @@ gegl_node_traverse_breadth_first (GeglNode * self,
          queue if not discovered */
       while(llink)
         {
-          GeglNode * input = (GeglNode *)llink->data;
+          GeglInputInfo * input_info = (GeglInputInfo *)llink->data;
           
           /* Add any undiscovered input to the queue at end,
              but skip any null nodes */
-          if (input && !input->discovered)
+          if (input_info->input && !input_info->input->discovered)
             {
-              queue = g_list_append(queue,(gpointer)input);
+              queue = g_list_append(queue,(gpointer)input_info->input);
 
               /* Mark it as discovered */
-              input->discovered = TRUE;
+              input_info->input->discovered = TRUE;
             }
-
-          /* Increase the shared count for this input */
-          if(input)
-            input->shared_count++;
 
           /* Next input */
           llink = g_list_next(llink);

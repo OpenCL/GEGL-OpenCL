@@ -5,25 +5,36 @@
 #include "gegl-color.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
+#include "gegl-value-types.h"
 #include <stdio.h>
 
 #define MAX_PRINTED_CHARS_PER_CHANNEL 20
+
+enum
+{
+  PROP_0, 
+  PROP_INPUT,
+  PROP_LAST 
+};
 
 static void class_init (GeglPrintClass * klass);
 static void init (GeglPrint * self, GeglPrintClass * klass);
 static void finalize (GObject * gobject);
 
-static void prepare (GeglOp * self_op, GList * requests);
-static void finish (GeglOp * self_op, GList * requests);
+static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
+static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
+
+static void prepare (GeglOp * op, GList * output_values, GList *input_values);
+static void finish (GeglOp * op, GList * output_values, GList *input_values);
 
 static void print (GeglPrint * self, gchar * format, ...);
 
-static void scanline_rgb_u8 (GeglOp * self_op, GeglTileIterator ** iters, gint width);
-static void scanline_rgb_float (GeglOp * self_op, GeglTileIterator ** iters, gint width);
-static void scanline_rgb_u16 (GeglOp * self_op, GeglTileIterator ** iters, gint width);
-static void scanline_gray_u8 (GeglOp * self_op, GeglTileIterator ** iters, gint width);
-static void scanline_gray_float (GeglOp * self_op, GeglTileIterator ** iters, gint width);
-static void scanline_gray_u16 (GeglOp * self_op, GeglTileIterator ** iters, gint width);
+static void scanline_rgb_u8 (GeglOp * op, GeglTileIterator ** iters, gint width);
+static void scanline_rgb_float (GeglOp * op, GeglTileIterator ** iters, gint width);
+static void scanline_rgb_u16 (GeglOp * op, GeglTileIterator ** iters, gint width);
+static void scanline_gray_u8 (GeglOp * op, GeglTileIterator ** iters, gint width);
+static void scanline_gray_float (GeglOp * op, GeglTileIterator ** iters, gint width);
+static void scanline_gray_u16 (GeglOp * op, GeglTileIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -68,6 +79,17 @@ class_init (GeglPrintClass * klass)
   op_class->prepare = prepare;
   op_class->finish = finish;
 
+  gobject_class->set_property = set_property;
+  gobject_class->get_property = get_property;
+   
+  g_object_class_install_property (gobject_class, PROP_INPUT,
+                                   g_param_spec_object ("input",
+                                                        "Input",
+                                                        "Input of GeglConstMult",
+                                                         GEGL_TYPE_OBJECT,
+                                                         G_PARAM_CONSTRUCT |
+                                                         G_PARAM_READWRITE));
+
   return;
 }
 
@@ -75,16 +97,12 @@ static void
 init (GeglPrint * self, 
       GeglPrintClass * klass)
 {
+  GeglNode * node = GEGL_NODE(self); 
   self->buffer = NULL;
   self->use_log = TRUE;
+  gegl_node_set_num_outputs(node, 1);
+  gegl_node_set_num_inputs(node, 1);
 
-  {
-    GeglNode * self_node = GEGL_NODE(self); 
-    GList * inputs = g_list_append(NULL, NULL);
-    self_node->num_inputs = 1;
-    gegl_node_set_inputs(self_node, inputs);
-    g_list_free(inputs);
-  }
   return;
 }
 
@@ -94,20 +112,69 @@ finalize(GObject *gobject)
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
-static void 
-prepare (GeglOp * self_op, 
-         GList * requests)
+static void
+get_property (GObject      *gobject,
+              guint         prop_id,
+              GValue       *value,
+              GParamSpec   *pspec)
 {
-  GeglPrint *self = GEGL_PRINT(self_op);
-  GeglStatOp *stat_op = GEGL_STAT_OP(self_op);
+  GeglNode *node = GEGL_NODE (gobject);
 
-  GeglOpRequest *src_request = (GeglOpRequest*)g_list_nth_data(requests,0); 
-  GeglColorModel * src_cm = gegl_tile_get_color_model (src_request->tile);
-  g_return_if_fail (src_cm);
+  switch (prop_id)
+  {
+    case PROP_INPUT:
+      g_value_set_object(value, (GObject*)gegl_node_get_nth_input(node, 0));  
+      break;
+    default:
+      break;
+  }
+}
+
+static void
+set_property (GObject      *gobject,
+              guint         prop_id,
+              const GValue *value,
+              GParamSpec   *pspec)
+{
+  GeglNode *node = GEGL_NODE (gobject);
+
+  switch (prop_id)
+  {
+    case PROP_INPUT:
+      gegl_node_set_nth_input(node, (GeglNode*)g_value_get_object(value), 0);  
+      break;
+    default:
+      break;
+  }
+}
+
+static void 
+prepare (GeglOp * op, 
+         GList * output_values,
+         GList * input_values)
+{
+  GeglPrint *self = GEGL_PRINT(op);
+  GeglStatOp *stat_op = GEGL_STAT_OP(op);
+
+  GValue *src_value = (GValue*)g_list_nth_data(input_values, 0); 
+  GeglTile *src = g_value_get_image_data_tile(src_value);
+
+  GeglRect dest_rect;
+  GeglTile *dest;
+  GeglColorModel * dest_cm;
+  GValue *dest_value = (GValue*)g_list_nth_data(output_values, 0); 
+  
+  g_value_set_image_data_tile(dest_value, src);
+
+  g_value_get_image_data_rect(dest_value, &dest_rect);
+  dest = g_value_get_image_data_tile(dest_value);
+  dest_cm = gegl_tile_get_color_model (dest);
+
+  g_return_if_fail (dest_cm);
 
   {
-    GeglColorSpace colorspace = gegl_color_model_color_space(src_cm);
-    GeglChannelDataType data_type = gegl_color_model_data_type (src_cm);
+    GeglColorSpace colorspace = gegl_color_model_color_space(dest_cm);
+    GeglChannelDataType data_type = gegl_color_model_data_type (dest_cm);
 
     switch (colorspace)
       {
@@ -153,11 +220,12 @@ prepare (GeglOp * self_op,
   }
 
   {
-    gint num_channels = gegl_color_model_num_channels(src_cm);
-    gint x = src_request->rect.x;
-    gint y = src_request->rect.y;
-    gint width = src_request->rect.w;
-    gint height = src_request->rect.w;
+    gint num_channels = gegl_color_model_num_channels(dest_cm);
+
+    gint x = dest_rect.x;
+    gint y = dest_rect.y;
+    gint width = dest_rect.w;
+    gint height = dest_rect.w;
     
     /* Allocate a scanline char buffer for output */
     self->buffer_size = width * (num_channels + 1) * MAX_PRINTED_CHARS_PER_CHANNEL;
@@ -166,18 +234,19 @@ prepare (GeglOp * self_op,
     if(self->use_log)
       LOG_INFO("prepare", 
                "Printing GeglTile: %x area (x,y,w,h) = (%d,%d,%d,%d)",
-               (guint)(src_request->tile),x,y,width,height);
+               (guint)dest,x,y,width,height);
     else
       printf("Printing GeglTile: %x area (x,y,w,h) = (%d,%d,%d,%d)", 
-               (guint)(src_request->tile),x,y,width,height);
+               (guint)dest,x,y,width,height);
   }
 }
 
 static void 
-finish (GeglOp * self_op, 
-        GList * requests)
+finish (GeglOp * op, 
+        GList * output_values,
+        GList * input_values)
 {
-  GeglPrint *self = GEGL_PRINT(self_op);
+  GeglPrint *self = GEGL_PRINT(op);
 
   /* Delete the scanline char buffer used for output */ 
   g_free(self->buffer); 
@@ -216,7 +285,7 @@ print (GeglPrint * self,
 
 /**
  * scanline_rgb_u8:
- * @self_op: a #GeglOp.
+ * @op: a #GeglOp.
  * @iters: #GeglTileIterators array. 
  * @width: width of scanline. 
  *
@@ -224,26 +293,26 @@ print (GeglPrint * self,
  *
  **/
 static void 
-scanline_rgb_u8 (GeglOp * self_op, 
+scanline_rgb_u8 (GeglOp * op, 
                  GeglTileIterator ** iters, 
                  gint width)
 {
-  GeglPrint *self = GEGL_PRINT(self_op);
-  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[1]);
+  GeglPrint *self = GEGL_PRINT(op);
+  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
 
-  guint8 *src_data[4];
-  gboolean src_has_alpha;
-  guint8 *src_r, *src_g, *src_b, *src_alpha=NULL;
+  guint8 *dest_data[4];
+  gboolean dest_has_alpha;
+  guint8 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
 
-  src_has_alpha = gegl_color_model_has_alpha(src_cm); 
+  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
 
-  gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
+  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
 
-  src_r = src_data[0];
-  src_g = src_data[1];
-  src_b = src_data[2];
-  if (src_has_alpha)
-    src_alpha = src_data[3];
+  dest_r = dest_data[0];
+  dest_g = dest_data[1];
+  dest_b = dest_data[2];
+  if (dest_has_alpha)
+    dest_alpha = dest_data[3];
 
   self->current = self->buffer;
   self->left = self->buffer_size; 
@@ -251,16 +320,16 @@ scanline_rgb_u8 (GeglOp * self_op,
   while (width--)
     {
       print (self, "(");
-      print (self, "%d ", *src_r) ;
-      print (self, "%d ", *src_g) ;
-      print (self, "%d ", *src_b) ;
-      if (src_has_alpha)
-        print (self, "%d ", *src_alpha) ;
-      src_r++;
-      src_g++;
-      src_b++;
-      if (src_has_alpha)
-        src_alpha++;
+      print (self, "%d ", *dest_r) ;
+      print (self, "%d ", *dest_g) ;
+      print (self, "%d ", *dest_b) ;
+      if (dest_has_alpha)
+        print (self, "%d ", *dest_alpha) ;
+      dest_r++;
+      dest_g++;
+      dest_b++;
+      if (dest_has_alpha)
+        dest_alpha++;
 
       print (self, ")");
 
@@ -276,7 +345,7 @@ scanline_rgb_u8 (GeglOp * self_op,
 
 /**
  * scanline_rgb_float:
- * @self_op: a #GeglOp.
+ * @op: a #GeglOp.
  * @iters: #GeglTileIterators array. 
  * @width: width of scanline. 
  *
@@ -284,27 +353,27 @@ scanline_rgb_u8 (GeglOp * self_op,
  *
  **/
 static void 
-scanline_rgb_float (GeglOp * self_op, 
+scanline_rgb_float (GeglOp * op, 
                     GeglTileIterator ** iters, 
                     gint width)
 {
-  GeglPrint *self = GEGL_PRINT(self_op);
-  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[0]);
+  GeglPrint *self = GEGL_PRINT(op);
+  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
 
-  gfloat *src_data[4];
-  gboolean src_has_alpha;
-  gfloat *src_r, *src_g, *src_b, *src_alpha=NULL;
+  gfloat *dest_data[4];
+  gboolean dest_has_alpha;
+  gfloat *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
 
-  src_has_alpha = gegl_color_model_has_alpha(src_cm); 
+  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
 
   gegl_tile_iterator_get_current (iters[0],
-                                   (gpointer*)src_data);
+                                   (gpointer*)dest_data);
 
-  src_r = src_data[0];
-  src_g = src_data[1];
-  src_b = src_data[2];
-  if (src_has_alpha)
-    src_alpha = src_data[3];
+  dest_r = dest_data[0];
+  dest_g = dest_data[1];
+  dest_b = dest_data[2];
+  if (dest_has_alpha)
+    dest_alpha = dest_data[3];
 
   self->current = self->buffer;
   self->left = self->buffer_size; 
@@ -312,21 +381,21 @@ scanline_rgb_float (GeglOp * self_op,
   while (width--)
     {
       print(self, "(");
-      print(self, "%.3f ", *src_r); 
-      print(self, "%.3f ", *src_g); 
-      print(self, "%.3f ", *src_b); 
+      print(self, "%.3f ", *dest_r); 
+      print(self, "%.3f ", *dest_g); 
+      print(self, "%.3f ", *dest_b); 
 
-      if (src_has_alpha)
+      if (dest_has_alpha)
         {
-          print(self, "%.3f ", *src_alpha); 
+          print(self, "%.3f ", *dest_alpha); 
         }
 
-      src_r++;
-      src_g++;
-      src_b++;
+      dest_r++;
+      dest_g++;
+      dest_b++;
 
-      if (src_has_alpha)
-        src_alpha++;
+      if (dest_has_alpha)
+        dest_alpha++;
 
       print(self, ")"); 
     }
@@ -341,7 +410,7 @@ scanline_rgb_float (GeglOp * self_op,
 
 /**
  * scanline_rgb_u16:
- * @self_op: a #GeglOp.
+ * @op: a #GeglOp.
  * @iters: #GeglTileIterators array. 
  * @width: width of scanline. 
  *
@@ -349,26 +418,26 @@ scanline_rgb_float (GeglOp * self_op,
  *
  **/
 static void 
-scanline_rgb_u16 (GeglOp * self_op, 
+scanline_rgb_u16 (GeglOp * op, 
                   GeglTileIterator ** iters, 
                   gint width)
 {
-  GeglPrint *self = GEGL_PRINT(self_op);
-  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[0]);
+  GeglPrint *self = GEGL_PRINT(op);
+  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
 
-  guint16 *src_data[4];
-  gboolean src_has_alpha;
-  guint16 *src_r, *src_g, *src_b, *src_alpha=NULL;
+  guint16 *dest_data[4];
+  gboolean dest_has_alpha;
+  guint16 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
 
-  src_has_alpha = gegl_color_model_has_alpha(src_cm); 
+  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
 
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)src_data);
+  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
 
-  src_r = src_data[0];
-  src_g = src_data[1];
-  src_b = src_data[2];
-  if (src_has_alpha)
-    src_alpha = src_data[3];
+  dest_r = dest_data[0];
+  dest_g = dest_data[1];
+  dest_b = dest_data[2];
+  if (dest_has_alpha)
+    dest_alpha = dest_data[3];
 
   self->current = self->buffer;
   self->left = self->buffer_size; 
@@ -377,16 +446,16 @@ scanline_rgb_u16 (GeglOp * self_op,
   while (width--)
     {
       print (self, "(");
-      print (self, "%d ", *src_r) ;
-      print (self, "%d ", *src_g) ;
-      print (self, "%d ", *src_b) ;
-      if (src_has_alpha)
-        print (self, "%d ", *src_alpha) ;
-      src_r++;
-      src_g++;
-      src_b++;
-      if (src_has_alpha)
-        src_alpha++;
+      print (self, "%d ", *dest_r) ;
+      print (self, "%d ", *dest_g) ;
+      print (self, "%d ", *dest_b) ;
+      if (dest_has_alpha)
+        print (self, "%d ", *dest_alpha) ;
+      dest_r++;
+      dest_g++;
+      dest_b++;
+      if (dest_has_alpha)
+        dest_alpha++;
 
       print (self, ")");
 
@@ -401,24 +470,24 @@ scanline_rgb_u16 (GeglOp * self_op,
 }
 
 static void 
-scanline_gray_u8 (GeglOp * self_op, 
+scanline_gray_u8 (GeglOp * op, 
                   GeglTileIterator ** iters, 
                   gint width)
 {
-  GeglPrint *self = GEGL_PRINT(self_op);
-  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[0]);
+  GeglPrint *self = GEGL_PRINT(op);
+  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
 
-  guint8 *src_data[2];
-  gboolean src_has_alpha;
-  guint8 *src_gray, *src_alpha=NULL;
+  guint8 *dest_data[2];
+  gboolean dest_has_alpha;
+  guint8 *dest_gray, *dest_alpha=NULL;
 
-  src_has_alpha = gegl_color_model_has_alpha(src_cm); 
+  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
 
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)src_data);
+  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
 
-  src_gray = src_data[0];
-  if (src_has_alpha)
-    src_alpha = src_data[1];
+  dest_gray = dest_data[0];
+  if (dest_has_alpha)
+    dest_alpha = dest_data[1];
 
   self->current = self->buffer;
   self->left = self->buffer_size; 
@@ -427,12 +496,12 @@ scanline_gray_u8 (GeglOp * self_op,
   while (width--)
     {
       print (self, "(");
-      print (self, "%d ", *src_gray) ;
-      if (src_has_alpha)
-        print (self, "%d ", *src_alpha) ;
-      src_gray++;
-      if (src_has_alpha)
-        src_alpha++;
+      print (self, "%d ", *dest_gray) ;
+      if (dest_has_alpha)
+        print (self, "%d ", *dest_alpha) ;
+      dest_gray++;
+      if (dest_has_alpha)
+        dest_alpha++;
 
       print (self, ")");
     }
@@ -446,7 +515,7 @@ scanline_gray_u8 (GeglOp * self_op,
 
 /**
  * scanline_gray_float:
- * @self_op: a #GeglOp.
+ * @op: a #GeglOp.
  * @iters: #GeglTileIterators array. 
  * @width: width of scanline. 
  *
@@ -454,24 +523,24 @@ scanline_gray_u8 (GeglOp * self_op,
  *
  **/
 static void 
-scanline_gray_float (GeglOp * self_op, 
+scanline_gray_float (GeglOp * op, 
                      GeglTileIterator ** iters, 
                      gint width)
 {
-  GeglPrint *self = GEGL_PRINT(self_op);
-  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[0]);
+  GeglPrint *self = GEGL_PRINT(op);
+  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
 
-  gfloat *src_data[2];
-  gboolean src_has_alpha;
-  gfloat *src_gray, *src_alpha=NULL;
+  gfloat *dest_data[2];
+  gboolean dest_has_alpha;
+  gfloat *dest_gray, *dest_alpha=NULL;
 
-  src_has_alpha = gegl_color_model_has_alpha(src_cm); 
+  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
 
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)src_data);
+  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
 
-  src_gray = src_data[0];
-  if (src_has_alpha)
-    src_alpha = src_data[1];
+  dest_gray = dest_data[0];
+  if (dest_has_alpha)
+    dest_alpha = dest_data[1];
 
   self->current = self->buffer;
   self->left = self->buffer_size; 
@@ -480,12 +549,12 @@ scanline_gray_float (GeglOp * self_op,
   while (width--)
     {
       print (self, "(");
-      print (self, "%.3f ", *src_gray) ;
-      if (src_has_alpha)
-        print (self, "%.3f ", *src_alpha) ;
-      src_gray++;
-      if (src_has_alpha)
-        src_alpha++;
+      print (self, "%.3f ", *dest_gray) ;
+      if (dest_has_alpha)
+        print (self, "%.3f ", *dest_alpha) ;
+      dest_gray++;
+      if (dest_has_alpha)
+        dest_alpha++;
 
       print (self, ")");
 
@@ -500,7 +569,7 @@ scanline_gray_float (GeglOp * self_op,
 
 /**
  * scanline_gray_u16:
- * @self_op: a #GeglOp.
+ * @op: a #GeglOp.
  * @iters: #GeglTileIterators array. 
  * @width: width of scanline. 
  *
@@ -508,24 +577,24 @@ scanline_gray_float (GeglOp * self_op,
  *
  **/
 static void 
-scanline_gray_u16 (GeglOp * self_op, 
+scanline_gray_u16 (GeglOp * op, 
                    GeglTileIterator ** iters, 
                    gint width)
 {
-  GeglPrint *self = GEGL_PRINT(self_op);
-  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[0]);
+  GeglPrint *self = GEGL_PRINT(op);
+  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
 
-  guint16 *src_data[2];
-  gboolean src_has_alpha;
-  guint16 *src_gray, *src_alpha=NULL;
+  guint16 *dest_data[2];
+  gboolean dest_has_alpha;
+  guint16 *dest_gray, *dest_alpha=NULL;
 
-  src_has_alpha = gegl_color_model_has_alpha(src_cm); 
+  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
 
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)src_data);
+  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
 
-  src_gray = src_data[0];
-  if (src_has_alpha)
-    src_alpha = src_data[1];
+  dest_gray = dest_data[0];
+  if (dest_has_alpha)
+    dest_alpha = dest_data[1];
 
   self->current = self->buffer;
   self->left = self->buffer_size; 
@@ -534,12 +603,12 @@ scanline_gray_u16 (GeglOp * self_op,
   while (width--)
     {
       print (self, "(");
-      print (self, "%d ", *src_gray) ;
-      if (src_has_alpha)
-        print (self, "%d ", *src_alpha) ;
-      src_gray++;
-      if (src_has_alpha)
-        src_alpha++;
+      print (self, "%d ", *dest_gray) ;
+      if (dest_has_alpha)
+        print (self, "%d ", *dest_alpha) ;
+      dest_gray++;
+      if (dest_has_alpha)
+        dest_alpha++;
 
       print (self, ")");
 

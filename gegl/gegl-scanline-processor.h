@@ -26,7 +26,8 @@ typedef void (*GeglScanlineFunc)(GeglOp *op,
 typedef struct _GeglScanlineProcessor GeglScanlineProcessor;
 #endif
 
-struct _GeglScanlineProcessor {
+struct _GeglScanlineProcessor 
+{
    GeglObject __parent__;
 
    /*< private >*/
@@ -35,14 +36,16 @@ struct _GeglScanlineProcessor {
 };
 
 typedef struct _GeglScanlineProcessorClass GeglScanlineProcessorClass;
-struct _GeglScanlineProcessorClass {
+struct _GeglScanlineProcessorClass 
+{
    GeglObjectClass __parent__;
 };
 
 GType gegl_scanline_processor_get_type   (void);
 
 void gegl_scanline_processor_process(GeglScanlineProcessor  *self,
-                                     GList * request_list);
+                                     GList * output_values,
+                                     GList * input_values);
 
 #ifdef __cplusplus
 }

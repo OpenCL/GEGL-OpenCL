@@ -19,7 +19,7 @@
 #include <gegl-dark.h>
 #include <gegl-diff.h>
 #include <gegl-fill.h>
-#include <gegl-image-mgr.h>
+#include <gegl-filter.h>
 #include <gegl-image.h>
 #include <gegl-light.h>
 #include <gegl-max.h>
@@ -29,17 +29,18 @@
 #include <gegl-node.h>
 #include <gegl-object.h>
 #include <gegl-op.h>
+#include <gegl-param-specs.h>
 #include <gegl-point-op.h>
 #include <gegl-premult.h>
 #include <gegl-print.h>
 #include <gegl-sampled-image.h>
 #include <gegl-scanline-processor.h>
 #include <gegl-screen.h>
-#include <gegl-simple-image-mgr.h>
 #include <gegl-stat-op.h>
 #include <gegl-subtract.h>
 #include <gegl-tile-iterator.h>
 #include <gegl-tile-mgr.h>
 #include <gegl-tile.h>
 #include <gegl-unpremult.h>
+#include <gegl-value-types.h>
 #endif

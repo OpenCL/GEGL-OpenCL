@@ -1,3 +1,161 @@
+Sat Mar 16 23:38:25 EST 2002 calvinw@mindspring.com
+
+	*gegl/Makefile.am
+	*gegl/gegl-add.gil
+	*gegl/gegl-comp-premult.gil
+	*gegl/gegl-comp.gil
+	*gegl/gegl-const-mult.gil
+	*gegl/gegl-copy.c
+	*gegl/gegl-dark.gil
+	*gegl/gegl-diff.gil
+	*gegl/gegl-fill.c
+	*gegl/gegl-fill.h
+	*gegl/gegl-image.c
+	*gegl/gegl-image.h
+	*gegl/gegl-light.gil
+	*gegl/gegl-max.gil
+	*gegl/gegl-min.gil
+	*gegl/gegl-mult.gil
+	*gegl/gegl-node.c
+	*gegl/gegl-node.h
+	*gegl/gegl-object.c
+	*gegl/gegl-op.c
+	*gegl/gegl-op.h
+	*gegl/gegl-point-op.c
+	*gegl/gegl-point-op.h
+	*gegl/gegl-premult.gil
+	*gegl/gegl-print.c
+	*gegl/gegl-sampled-image.c
+	*gegl/gegl-sampled-image.h
+	*gegl/gegl-scanline-processor.c
+	*gegl/gegl-scanline-processor.h
+	*gegl/gegl-screen.gil
+	*gegl/gegl-stat-op.c
+	*gegl/gegl-subtract.gil
+	*gegl/gegl-tile-mgr.c
+	*gegl/gegl-tile-mgr.h
+	*gegl/gegl-tile.c
+	*gegl/gegl-types.h
+	*gegl/gegl-unpremult.gil
+	*gegl/gegl-utils.c
+	*gegl/gegl-utils.h
+	*gegl/gegl.h
+
+	Updated these. Changed GeglNode to support multiple outputs. This means
+	that every op specifies a num_inputs and a num_outputs when created. (in
+	instance init mostly). Then there can be a list of output nodes
+	attached to each output.  (So Node's outputs field is a list of lists).
+	With this the inputs for each node now give their corresponding output
+	index.
+
+	Also changed the Op so that outputs and inputs of ops correspond to
+	GValues, so that the basic evaluate routine in Op now takes a list of
+	output values and input values to process. Got rid of OpRequests. 
+
+	*gegl/gegl-filter.c
+	*gegl/gegl-filter.h
+	*gegl/gegl-param-specs.c
+	*gegl/gegl-param-specs.h
+	*gegl/gegl-value-transform.c
+	*gegl/gegl-value-types.c
+	*gegl/gegl-value-types.h
+
+	Added these. Added GValues for passing output and input data. Introduced a
+	GeglImageData (see value-types.h) which replaces the old GeglOpRequests. 
+
+	There is a new "container" op type, which is called Filter. This is the
+	composite piece of the pattern and replaces the ImageMgr (now gone), handling
+	graph traversal of the op children that it contains.
+
+	*gegl/gegl-image-mgr.c
+	*gegl/gegl-image-mgr.h
+	*gegl/gegl-simple-image-mgr.c
+	*gegl/gegl-simple-image-mgr.h
+
+	Removed. Moved the code in these to Filter now. Filter talks directly
+	to the TileMgr instead.
+
+	*tests/Makefile.am
+	*tests/addtest.c
+	*tests/constmulttest.c
+	*tests/copytest.c
+	*tests/filltest.c
+	*tests/imagetest.c
+	*tests/nodetest.c
+	*tests/objecttest.c
+	*tests/optest.c
+	*tests/pointoptest.c
+	*tests/printtest.c
+	*tests/sampledimagetest.c
+	*tests/simpletreetest.c
+	*tests/statoptest.c
+	*tests/testgegl.c
+	*tests/testutils.c
+	*tests/testutils.h
+	*tests/tiletest.c
+
+	Updated these to reflect changes above.
+
+	*tests/gegl-mock-image.c
+	*tests/gegl-mock-image.h
+	*tests/gegl-mock-node.c
+	*tests/gegl-mock-node.h
+	*tests/gegl-mock-object.c
+	*tests/gegl-mock-object.h
+	*tests/gegl-mock-op.c
+	*tests/gegl-mock-op.h
+	*tests/gegl-mock-point-op.c
+	*tests/gegl-mock-point-op.h
+	*tests/valuetest.c
+
+	Added some mock objects to test things in abstract classes (Node, Op,
+	etc).
+
+	*tests/imagemgrtest.c
+	*tests/simpleimagemgrtest.c
+
+	Removed the old ImageMgr tests.
+
+	*docs/reference/gegl/gegl-docs.sgml
+	*docs/reference/gegl/gegl-sections.txt
+	*docs/reference/gegl/gegl-undocumented.txt
+	*docs/reference/gegl/gegl.types
+	*docs/reference/gegl/tmpl/gegl-add.sgml
+	*docs/reference/gegl/tmpl/gegl-comp-premult.sgml
+	*docs/reference/gegl/tmpl/gegl-comp.sgml
+	*docs/reference/gegl/tmpl/gegl-const-mult.sgml
+	*docs/reference/gegl/tmpl/gegl-copy.sgml
+	*docs/reference/gegl/tmpl/gegl-dark.sgml
+	*docs/reference/gegl/tmpl/gegl-diff.sgml
+	*docs/reference/gegl/tmpl/gegl-image.sgml
+	*docs/reference/gegl/tmpl/gegl-light.sgml
+	*docs/reference/gegl/tmpl/gegl-max.sgml
+	*docs/reference/gegl/tmpl/gegl-min.sgml
+	*docs/reference/gegl/tmpl/gegl-mult.sgml
+	*docs/reference/gegl/tmpl/gegl-node.sgml
+	*docs/reference/gegl/tmpl/gegl-op.sgml
+	*docs/reference/gegl/tmpl/gegl-point-op.sgml
+	*docs/reference/gegl/tmpl/gegl-premult.sgml
+	*docs/reference/gegl/tmpl/gegl-print.sgml
+	*docs/reference/gegl/tmpl/gegl-scanline-processor.sgml
+	*docs/reference/gegl/tmpl/gegl-screen.sgml
+	*docs/reference/gegl/tmpl/gegl-subtract.sgml
+	*docs/reference/gegl/tmpl/gegl-tile-mgr.sgml
+	*docs/reference/gegl/tmpl/gegl-unpremult.sgml
+	*docs/reference/gegl/tmpl/gegl-unused.sgml
+	*docs/reference/gegl/tmpl/gegl-utils.sgml
+
+	Updated the docs some.
+
+	*docs/reference/gegl/tmpl/gegl-image-mgr.sgml
+	*docs/reference/gegl/tmpl/gegl-simple-image-mgr.sgml
+
+	Removed these.
+
+	*docs/reference/gegl/tmpl/gegl-filter.sgml
+
+	Added
+
 Sat Dec 22 01:31:12 EST 2001 calvinw@mindspring.com
 
 	*docs/reference/gegl/tmpl/gegl-add-impl.sgml

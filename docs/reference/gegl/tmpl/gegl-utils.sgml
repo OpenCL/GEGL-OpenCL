@@ -45,16 +45,6 @@ gegl-utils
 @from: 
 
 
-<!-- ##### FUNCTION gegl_rect_union ##### -->
-<para>
-
-</para>
-
-@dest: 
-@src1: 
-@src2: 
-
-
 <!-- ##### FUNCTION gegl_rect_intersect ##### -->
 <para>
 

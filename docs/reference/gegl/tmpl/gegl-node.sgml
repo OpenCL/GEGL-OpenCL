@@ -43,16 +43,6 @@ B) and Comp as output. A is shared by both its outputs Blur and Mult.
 </para>
 
 
-<!-- ##### ENUM GeglNodeVisitFlags ##### -->
-<para>
-
-</para>
-
-@GEGL_NODE_VISIT_ENABLED: 
-@GEGL_NODE_VISIT_DISABLED: 
-@GEGL_NODE_VISIT_ALL: 
-@GEGL_NODE_VISIT_MASK: 
-
 <!-- ##### USER_FUNCTION GeglNodeTraverseFunc ##### -->
 <para>
 
@@ -71,6 +61,7 @@ B) and Comp as output. A is shared by both its outputs Blur and Mult.
 @self: 
 @input: 
 @n: 
+<!-- # Unused Parameters # -->
 @Returns: 
 
 
@@ -81,99 +72,6 @@ B) and Comp as output. A is shared by both its outputs Blur and Mult.
 
 @self: 
 @n: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_get_nth_output ##### -->
-<para>
-
-</para>
-
-@self: 
-@n: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_input_multiplicity ##### -->
-<para>
-
-</para>
-
-@self: 
-@input: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_output_multiplicity ##### -->
-<para>
-
-</para>
-
-@self: 
-@output: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_is_leaf ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_is_root ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_num_inputs ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_get_enabled ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_set_enabled ##### -->
-<para>
-
-</para>
-
-@self: 
-@enabled: 
-
-
-<!-- ##### FUNCTION gegl_node_num_outputs ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_shared_count ##### -->
-<para>
-
-</para>
-
-@self: 
 @Returns: 
 
 
@@ -204,38 +102,8 @@ B) and Comp as output. A is shared by both its outputs Blur and Mult.
 </para>
 
 @self: 
+@index_num_outputs: 
+@index: 
 @Returns: 
 
-
-<!-- ##### FUNCTION gegl_node_get_inputs ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_set_inputs ##### -->
-<para>
-
-</para>
-
-@self: 
-@list: 
-
-
-<!-- ##### FUNCTION gegl_node_inheriting_input ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### ARG GeglNode:inputs ##### -->
-<para>
-
-</para>
 

@@ -128,95 +128,14 @@ a zero (or some other default fill value) as output.
 </para>
 
 
-<!-- ##### FUNCTION gegl_op_prepare ##### -->
-<para>
-
-</para>
-
-@self: 
-@request_list: 
-
-
-<!-- ##### FUNCTION gegl_op_process ##### -->
-<para>
-
-</para>
-
-@self: 
-@request_list: 
-
-
-<!-- ##### FUNCTION gegl_op_finish ##### -->
-<para>
-
-</para>
-
-@self: 
-@request_list: 
-
-
-<!-- ##### FUNCTION gegl_op_get_alt_input ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
 <!-- ##### FUNCTION gegl_op_apply ##### -->
 <para>
 
 </para>
 
 @self: 
+<!-- # Unused Parameters # -->
 @dest: 
 @roi: 
 
-
-<!-- ##### FUNCTION gegl_op_get_source0 ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_op_set_source0 ##### -->
-<para>
-
-</para>
-
-@op: 
-@source0: 
-
-
-<!-- ##### FUNCTION gegl_op_get_source1 ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_op_set_source1 ##### -->
-<para>
-
-</para>
-
-@op: 
-@source1: 
-
-
-<!-- ##### ARG GeglOp:source0 ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglOp:source1 ##### -->
-<para>
-
-</para>
 

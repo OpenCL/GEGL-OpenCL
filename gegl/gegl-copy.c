@@ -3,16 +3,26 @@
 #include "gegl-tile.h"
 #include "gegl-tile-iterator.h"
 #include "gegl-utils.h"
+#include "gegl-value-types.h"
+
+enum
+{
+  PROP_0, 
+  PROP_INPUT,
+  PROP_LAST 
+};
 
 static void class_init (GeglCopyClass * klass);
 static void init (GeglCopy * self, GeglCopyClass * klass);
+static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
+static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void finalize (GObject *gobject);
 
 static void allocate_xyz_data (GeglCopy * self, gint width);
 static void free_xyz_data (GeglCopy * self);
 
-static void prepare (GeglOp * self_op, GList * requests);
-static void scanline (GeglOp * self_op, GeglTileIterator ** iters, gint width);
+static void prepare (GeglOp * op, GList * output_values, GList *input_values);
+static void scanline (GeglOp * op, GeglTileIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -47,16 +57,27 @@ gegl_copy_get_type (void)
 static void 
 class_init (GeglCopyClass * klass)
 {
-   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-   GeglOpClass *op_class = GEGL_OP_CLASS (klass);
+  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GeglOpClass *op_class = GEGL_OP_CLASS (klass);
 
-   parent_class = g_type_class_peek_parent(klass);
+  parent_class = g_type_class_peek_parent(klass);
 
-   gobject_class->finalize = finalize;
+  gobject_class->finalize = finalize;
 
-   op_class->prepare = prepare;
+  op_class->prepare = prepare;
 
-   return;
+  gobject_class->set_property = set_property;
+  gobject_class->get_property = get_property;
+
+  g_object_class_install_property (gobject_class, PROP_INPUT,
+                                   g_param_spec_object ("input",
+                                                        "Input",
+                                                        "Input of GeglCopy",
+                                                         GEGL_TYPE_OBJECT,
+                                                         G_PARAM_CONSTRUCT |
+                                                         G_PARAM_READWRITE));
+
+  return;
 }
 
 static void 
@@ -64,19 +85,15 @@ init (GeglCopy * self,
       GeglCopyClass * klass)
 {
   gint i;
-  GeglOp * self_op = GEGL_OP(self);
+  GeglNode * node = GEGL_NODE(self);
 
   self->convert_func = NULL;
   for(i = 0; i < 4; i++)
     self->float_xyz_data[i] = NULL;
 
-  {
-    GeglNode * self_node = GEGL_NODE(self); 
-    GList * inputs = g_list_append(NULL, NULL);
-    self_node->num_inputs = 1;
-    gegl_node_set_inputs(self_node, inputs);
-    g_list_free(inputs);
-  }
+
+  gegl_node_set_num_outputs(node, 1);
+  gegl_node_set_num_inputs(node, 1);
 
   return;
 }
@@ -89,6 +106,42 @@ finalize(GObject *gobject)
    free_xyz_data (self);
 
    G_OBJECT_CLASS(parent_class)->finalize(gobject);
+}
+
+static void
+get_property (GObject      *gobject,
+              guint         prop_id,
+              GValue       *value,
+              GParamSpec   *pspec)
+{
+  GeglNode *node = GEGL_NODE (gobject);
+
+  switch (prop_id)
+  {
+    case PROP_INPUT:
+      g_value_set_object(value, (GObject*)gegl_node_get_nth_input(node, 0));  
+      break;
+    default:
+      break;
+  }
+}
+
+static void
+set_property (GObject      *gobject,
+              guint         prop_id,
+              const GValue *value,
+              GParamSpec   *pspec)
+{
+  GeglNode *node = GEGL_NODE (gobject);
+
+  switch (prop_id)
+  {
+    case PROP_INPUT:
+      gegl_node_set_nth_input(node, (GeglNode*)g_value_get_object(value), 0);  
+      break;
+    default:
+      break;
+  }
 }
 
 /**
@@ -138,15 +191,23 @@ free_xyz_data (GeglCopy * self)
 }
 
 static void 
-prepare (GeglOp * self_op, 
-         GList * requests)
+prepare (GeglOp * op, 
+         GList * output_values,
+         GList * input_values)
 {
-  GeglCopy *self = GEGL_COPY(self_op);
-  GeglPointOp *self_point_op = GEGL_POINT_OP(self_op);
-  GeglOpRequest *dest_request = (GeglOpRequest*)g_list_nth_data(requests,0); 
-  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest_request->tile);
-  GeglOpRequest *src_request = (GeglOpRequest*)g_list_nth_data(requests,1);
-  GeglColorModel * src_cm = gegl_tile_get_color_model (src_request->tile);
+  GeglPointOp *point_op = GEGL_POINT_OP(op); 
+  GeglCopy *self = GEGL_COPY(op); 
+
+  GValue *dest_value = g_list_nth_data(output_values, 0); 
+  GeglTile *dest = g_value_get_image_data_tile(dest_value);
+  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
+  GeglRect dest_rect;
+
+  GValue *src_value = g_list_nth_data(input_values, 0); 
+  GeglTile *src = g_value_get_image_data_tile(src_value);
+  GeglColorModel * src_cm = gegl_tile_get_color_model (src);
+
+  g_value_get_image_data_rect(dest_value, &dest_rect);
 
   g_return_if_fail(dest_cm);
   g_return_if_fail(src_cm);
@@ -166,11 +227,11 @@ prepare (GeglOp * self_op,
       {
         /* Allocate scanlines for the XYZ data */
         free_xyz_data (self);
-        allocate_xyz_data (self, dest_request->rect.w);
+        allocate_xyz_data (self, dest_rect.w);
       }
 
     /* Set the scanline version of this class to be called */
-    self_point_op->scanline_processor->func = scanline;
+    point_op->scanline_processor->func = scanline;
   }
 }
 
@@ -184,11 +245,11 @@ prepare (GeglOp * self_op,
  *
  **/
 static void 
-scanline (GeglOp * self_op, 
+scanline (GeglOp * op, 
           GeglTileIterator ** iters, 
           gint width)
 {
-  GeglCopy *self = GEGL_COPY (self_op);
+  GeglCopy *self = GEGL_COPY (op);
   GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
   GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[1]);
   guint dest_nchans = gegl_color_model_num_channels (dest_cm);

@@ -1,9 +1,10 @@
 #include "gegl-image.h"
 #include "gegl-op.h"
-#include "gegl-image-mgr.h"
+#include "gegl-tile.h"
 #include "gegl-object.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
+#include "gegl-value-types.h"
 
 enum
 {
@@ -15,11 +16,12 @@ enum
 static void class_init (GeglImageClass * klass);
 static void init (GeglImage * self, GeglImageClass * klass);
 static void finalize(GObject * gobject);
+static GObject* constructor (GType type, guint n_props, GObjectConstructParam *props);
 
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void compute_derived_color_model (GeglImage * self, GList * input_color_models);
+static void compute_derived_color_model (GeglImage * self, GList * input_values);
 
 static gpointer parent_class = NULL;
 
@@ -46,7 +48,7 @@ gegl_image_get_type (void)
       type = g_type_register_static (GEGL_TYPE_OP , 
                                      "GeglImage", 
                                      &typeInfo, 
-                                     0);
+                                     G_TYPE_FLAG_ABSTRACT);
     }
     return type;
 }
@@ -60,11 +62,9 @@ class_init (GeglImageClass * klass)
   gobject_class->finalize = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
+  gobject_class->constructor = constructor;
 
   klass->compute_derived_color_model = compute_derived_color_model;
-  klass->compute_have_rect = NULL;
-  klass->compute_result_rect = NULL;
-  klass->compute_preimage = NULL;
 
   g_object_class_install_property (gobject_class, PROP_COLOR_MODEL,
                                    g_param_spec_object ("colormodel",
@@ -82,10 +82,17 @@ init (GeglImage * self,
       GeglImageClass * klass)
 {
   self->color_model = NULL;
-
   self->derived_color_model = NULL;
-  self->dest = NULL;
   return;
+}
+
+static GObject*        
+constructor (GType                  type,
+             guint                  n_props,
+             GObjectConstructParam *props)
+{
+  GObject *gobject = G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
+  return gobject;
 }
 
 static void
@@ -101,9 +108,6 @@ finalize(GObject *gobject)
 
   if(self->derived_color_model)
     g_object_unref(self->derived_color_model);
-
-  if(self->dest) 
-    g_object_unref(self->dest);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
@@ -200,35 +204,41 @@ gegl_image_set_color_model (GeglImage * self,
 /**
  * gegl_image_compute_derived_color_model:
  * @self: a #GeglImage
- * @input_color_models: a #GeglColorModel list.
+ * @input_values: a list of input GValues.
  *
- * Computes a derived #GeglColorModel for this image op.  Called by
- * #GeglImageMgr during graph evaluation.
+ * Computes a derived #GeglColorModel for this Image.
  *
  **/
 void
 gegl_image_compute_derived_color_model (GeglImage * self, 
-                                        GList * input_color_models)
+                                        GList * input_values)
 {
+   GeglImageClass *klass = GEGL_IMAGE_GET_CLASS(self);
    g_return_if_fail (self != NULL);
    g_return_if_fail (GEGL_IS_IMAGE (self));
 
-   {
-     GeglImageClass *klass = GEGL_IMAGE_GET_CLASS(self);
+   klass = GEGL_IMAGE_GET_CLASS(self);
 
-     if(klass->compute_derived_color_model)
-        return (*klass->compute_derived_color_model)(self, input_color_models);
-   }
+   if(klass->compute_derived_color_model)
+      return (*klass->compute_derived_color_model)(self, input_values);
 }
 
 static void 
 compute_derived_color_model (GeglImage * self, 
-                             GList * input_color_models)
+                             GList * input_values)
 {
-  if(input_color_models)
+  gint num_inputs = g_list_length(input_values);
+
+  if(num_inputs > 0)
     {
-      GeglColorModel * cm = (GeglColorModel*)(input_color_models->data);
-      gegl_image_set_derived_color_model(self, cm);
+      GValue * input_value = g_list_nth_data(input_values, 0);
+
+      if(G_VALUE_HOLDS_IMAGE_DATA(input_value))
+        {
+          GeglTile * tile =  g_value_get_image_data_tile(input_value);
+          GeglColorModel *cm = gegl_tile_get_color_model(tile);
+          gegl_image_set_derived_color_model(self, cm);
+        }
     }
 }
 
@@ -248,223 +258,4 @@ gegl_image_set_derived_color_model (GeglImage * self,
 
   if(self->derived_color_model)
     g_object_ref(self->derived_color_model);
-}
-
-
-/**
- * gegl_image_get_have_rect:
- * @self: a #GeglImage
- * @have_rect: returned rect.
- *
- * Gets the domain of definition.
- *
- **/
-void 
-gegl_image_get_have_rect (GeglImage * self, 
-                          GeglRect * have_rect)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_IMAGE (self));
-   
-  gegl_rect_copy (have_rect, &self->have_rect); 
-}
-
-/**
- * gegl_image_set_have_rect:
- * @self: a #GeglImage.
- * @have_rect: set to this.
- *
- * Sets the have rect of the image.
- *
- **/
-void 
-gegl_image_set_have_rect (GeglImage * self, 
-                          GeglRect * have_rect)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_IMAGE (self));
-   
-  gegl_rect_copy (&self->have_rect, have_rect);
-}
-
-/**
- * gegl_image_get_result_rect:
- * @self: a #GeglImage.
- * @result_rect: returned rect.   
- *
- * Gets the result region.
- *
- **/
-void 
-gegl_image_get_result_rect (GeglImage * self, 
-                            GeglRect * result_rect)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_IMAGE (self));
-   
-  gegl_rect_copy (result_rect, &self->result_rect);
-}
-
-/**
- * gegl_image_set_result_rect:
- * @self: a #GeglImage.
- * @result_rect: set to this.
- *
- * Sets the result rect of the image.
- *
- **/
-void 
-gegl_image_set_result_rect (GeglImage * self, 
-                            GeglRect * result_rect)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_IMAGE (self));
-   
-  gegl_rect_copy (&self->result_rect, result_rect);
-}
-
-
-/**
- * gegl_image_compute_have_rect:
- * @self: a #GeglImage.
- * @have_rect: the #GeglRect to compute.
- * @inputs: a list of the input #GeglRects.
- *
- * Computes a have_rect based on the inputs' have_rects.
- *
- **/
-void 
-gegl_image_compute_have_rect (GeglImage * self, 
-                              GeglRect * have_rect, 
-                              GList * inputs_have_rects)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_IMAGE (self));
-
-  {
-    GeglImageClass *klass = GEGL_IMAGE_GET_CLASS(self);
-
-    if(klass->compute_have_rect)
-      (*klass->compute_have_rect)(self,have_rect,inputs_have_rects);
-  }
-}
-
-/**
- * gegl_image_compute_result_rect:
- * @self: a #GeglImage.
- * @result_rect: the #GeglRect to compute.
- * @need_rect: a #GeglRect.
- * @have_rect: a #GeglRect.
- *
- * Computes the result_rect based on a passed need rect and have rects.  Called
- * by #GeglImageMgr during graph evaluation. 
- *
- **/
-void 
-gegl_image_compute_result_rect (GeglImage * self, 
-                                GeglRect * result_rect, 
-                                GeglRect * need_rect, 
-                                GeglRect * have_rect)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_IMAGE (self));
-
-  {
-    GeglImageClass *klass = GEGL_IMAGE_GET_CLASS(self);
-
-    if(klass->compute_result_rect)
-      (*klass->compute_result_rect)(self,result_rect,need_rect,have_rect);
-  }
-}
-
-/**
- * gegl_image_get_need_rect:
- * @self: a #GeglImage.
- * @need_rect: returned rect.   
- *
- * Gets the region of interest.
- *
- **/
-void 
-gegl_image_get_need_rect (GeglImage * self, 
-                          GeglRect * need_rect)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_IMAGE(self));
-   
-  gegl_rect_copy (need_rect, &self->need_rect);
-}
-
-/**
- * gegl_image_set_need_rect:
- * @self: a #GeglImage.
- * @need_rect: set to this.
- *
- * Sets the need rect of the image.
- *
- **/
-void 
-gegl_image_set_need_rect (GeglImage * self, 
-                          GeglRect * need_rect)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_IMAGE (self));
-   
-  gegl_rect_copy (&self->need_rect, need_rect);
-}
-
-/**
- * gegl_image_compute_preimage:
- * @self: a #GeglImage.
- * @preimage: returned preimage rect on ith input. 
- * @rect: a rect on the #GeglImage.
- * @i: which input.
- *
- * Computes the @preimage of @rect on the ith input. This is the inverse map
- * of @rect on the ith input. This routine is used to compute need rects.
- *
- **/
-void 
-gegl_image_compute_preimage (GeglImage * self, 
-                             GeglRect * preimage, 
-                             GeglRect * rect, 
-                             gint i)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_IMAGE (self));
-
-  {
-    GeglImageClass *klass = GEGL_IMAGE_GET_CLASS(self);
-
-    if(klass->compute_preimage)
-      (*klass->compute_preimage)(self,preimage,rect,i);
-  }
-}
-
-GeglImage* 
-gegl_image_get_dest (GeglImage *self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (GEGL_IS_IMAGE (self), NULL);
-
-  if(self->dest)
-    g_object_ref(self->dest);
-
-  return self->dest;
-} 
-
-void             
-gegl_image_set_dest (GeglImage *self,
-                     GeglImage *dest)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_IMAGE (self));
-
-  if (self->dest)
-    g_object_unref(self->dest);
-
-  self->dest = dest;
-
-  if (dest)
-    g_object_ref(dest);
 }

@@ -1,0 +1,91 @@
+<!-- ##### SECTION Title ##### -->
+GeglFilter
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglFilter ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_filter_get_root ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_filter_set_root ##### -->
+<para>
+
+</para>
+
+@self: 
+@root: 
+
+
+<!-- ##### FUNCTION gegl_filter_get_roi ##### -->
+<para>
+
+</para>
+
+@self: 
+@roi: 
+
+
+<!-- ##### FUNCTION gegl_filter_set_roi ##### -->
+<para>
+
+</para>
+
+@self: 
+@roi: 
+
+
+<!-- ##### FUNCTION gegl_filter_get_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_filter_set_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@image: 
+
+
+<!-- ##### ARG GeglFilter:root ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglFilter:image ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglFilter:roi ##### -->
+<para>
+
+</para>
+

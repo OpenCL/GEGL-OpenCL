@@ -7,11 +7,9 @@
 #define SAMPLED_IMAGE_WIDTH 1 
 #define SAMPLED_IMAGE_HEIGHT 1 
 
-static GeglSampledImage * source;
-static GeglSampledImage * gray_dest;
-static GeglSampledImage * rgb_dest;
-
-static GeglSimpleImageMgr *simple_image_man; 
+static GeglOp * source;
+static GeglOp * gray_dest;
+static GeglOp * rgb_dest;
 
 static void
 test_copy_g_object_new(Test *t)
@@ -29,12 +27,13 @@ test_copy_g_object_new(Test *t)
 
   {
     GeglCopy * copy = g_object_new (GEGL_TYPE_COPY, 
-                                    "source0", source,
+                                    "input", source,
                                     NULL);  
 
     ct_test(t, copy != NULL);
-    ct_test(t, 1 == gegl_node_num_inputs(GEGL_NODE(copy)));
-    ct_test(t, (GeglOp*)source == gegl_op_get_source0(GEGL_OP(copy)));
+    ct_test(t, 1 == gegl_node_get_num_inputs(GEGL_NODE(copy)));
+    ct_test(t, 1 == gegl_node_get_num_outputs(GEGL_NODE(copy)));
+    ct_test(t, source == (GeglOp*)gegl_node_get_nth_input(GEGL_NODE(copy),0));
 
     g_object_unref(copy);
   }
@@ -45,10 +44,10 @@ test_copy_rgb_to_rgb_apply(Test *t)
 {
   {
     GeglOp *copy = g_object_new(GEGL_TYPE_COPY,
-                                         "source0", source,
+                                         "input", source,
                                          NULL);
 
-    gegl_op_apply(copy, rgb_dest, NULL); 
+    gegl_op_apply_image(copy, GEGL_OP(rgb_dest), NULL); 
 
     ct_test(t, check_rgb_float_pixel(GEGL_IMAGE(rgb_dest), 
                                       .1 ,.2 ,.3));  
@@ -62,10 +61,10 @@ test_copy_rgb_to_null_dest_apply(Test *t)
 {
   {
     GeglOp *copy = g_object_new(GEGL_TYPE_COPY,
-                                "source0", source,
+                                "input", source,
                                 NULL);
 
-    gegl_op_apply(copy, NULL, NULL); 
+    gegl_op_apply_image(copy, NULL, NULL); 
 
     ct_test(t, check_rgb_float_pixel(GEGL_IMAGE(copy), 
                                      .1 ,.2 ,.3));  
@@ -81,10 +80,10 @@ test_copy_rgb_to_gray_null_dest_apply(Test *t)
     GeglColorModel *gray_float = gegl_color_model_instance("GrayFloat");
     GeglOp *copy = g_object_new(GEGL_TYPE_COPY,
                                 "colormodel", gray_float,
-                                "source0", source,
+                                "input", source,
                                 NULL);
 
-    gegl_op_apply(copy, NULL, NULL); 
+    gegl_op_apply_image(copy, NULL, NULL); 
 
     ct_test(t, check_gray_float_pixel(GEGL_IMAGE(copy), 
                                      .3*.1 + .59*.2 + .11*.3));  
@@ -100,10 +99,10 @@ test_copy_rgb_to_gray_apply(Test *t)
 {
   {
     GeglOp *copy = g_object_new(GEGL_TYPE_COPY,
-                                "source0", source,
+                                "input", source,
                                 NULL);
 
-    gegl_op_apply(copy, gray_dest, NULL); 
+    gegl_op_apply_image(copy, GEGL_OP(gray_dest), NULL); 
 
     /* .3*r + .59*g + .11*b */
     ct_test(t, check_gray_float_pixel(GEGL_IMAGE(gray_dest), 
@@ -142,8 +141,6 @@ test_copy_setup(Test *t)
                              NULL);  
     g_object_unref(rgb_float);
   }
-
-  simple_image_man = GEGL_SIMPLE_IMAGE_MGR(gegl_image_mgr_instance());
 }
 
 static void
@@ -152,7 +149,6 @@ test_copy_teardown(Test *test)
   g_object_unref(source);
   g_object_unref(gray_dest);
   g_object_unref(rgb_dest);
-  g_object_unref(simple_image_man);
 }
 
 Test *

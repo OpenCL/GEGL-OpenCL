@@ -178,6 +178,56 @@ GeglFillImpl
 GeglImageImpl
 
 
+<!-- ##### SECTION ./tmpl/gegl-image-mgr.sgml:Long_Description ##### -->
+<para>
+This class handles details of computing the graph. When the root Op's apply
+method is called, it retrieves the singleton ImageMgr instance and calls the
+ImageMgr's apply routine, passing itself along as the root of the graph to
+evaluate.  The ImageMgr sets up the graph for traversal, fetches input image
+data for each Op to use (ie in the form of Tiles) and passes the Op a dest
+output as well. Decoupling the details of the graph traversal and data
+management from the actual image processing classes lets us extend image
+operations and graph/memory management implementations separately. We can
+subclass ImageMgr to provide different memory management schemes or arrange for
+data to be delivered to the Ops in different ways. For example, a
+PagingImageMgr subclass or ImageMgr might present requests to the Ops in pages
+of a certain size.
+</para>
+<para>
+The ImageManager decides how to traverse the graph, and also if any preliminary
+passes over the graph are necessary. For example the TileImageManager computes
+the region of interest (or need_rect) and domains of definition (have_rects) on
+nodes in preliminary breadth-first and depth-first traversals. Also ColorModels
+and data types are derived on Images which do not have these explicitly set.
+Eventually the ImageManager calls all the nodes in the image graph (through the
+Op's prepare , process, and finish routines) and passes image data for use
+as output and inputs. When an operation for a node is complete the ImageManager
+decides what to do with the output.  For example it could cache it in memory or
+swap it to disk.
+</para>
+<para>
+Below is a picture of the Op and ImageMgr classes. The design of is an example
+of a bridge (from GoF Design Patterns).
+</para>
+<graphic fileref="../images/apply.png"></graphic>
+<para>
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-image-mgr.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-image-mgr.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-image-mgr.sgml:Title ##### -->
+GeglImageMgr
+
+
 <!-- ##### SECTION ./tmpl/gegl-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -398,6 +448,26 @@ GeglSampledImageImpl
 GeglScreenImpl
 
 
+<!-- ##### SECTION ./tmpl/gegl-simple-image-mgr.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-simple-image-mgr.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-simple-image-mgr.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-simple-image-mgr.sgml:Title ##### -->
+GeglSimpleImageMgr
+
+
 <!-- ##### SECTION ./tmpl/gegl-stat-op-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -464,11 +534,53 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### STRUCT GeglImageMgr ##### -->
+<para>
+
+</para>
+
+@__parent__: 
+
+<!-- ##### ARG GeglNode:inputs ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ENUM GeglNodeVisitFlags ##### -->
+<para>
+
+</para>
+
+@GEGL_NODE_VISIT_ENABLED: 
+@GEGL_NODE_VISIT_DISABLED: 
+@GEGL_NODE_VISIT_ALL: 
+@GEGL_NODE_VISIT_MASK: 
+
+<!-- ##### ARG GeglOp:source0 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglOp:source1 ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### STRUCT GeglOpImpl ##### -->
 <para>
 
 </para>
 
+
+<!-- ##### STRUCT GeglSimpleImageMgr ##### -->
+<para>
+
+</para>
+
+@__parent__: 
 
 <!-- ##### FUNCTION gegl_const_mult_impl_get_multiplier ##### -->
 <para>
@@ -502,6 +614,35 @@ GeglUnpremultImpl
 @self: 
 @fill_color: 
 
+<!-- ##### FUNCTION gegl_image_compute_have_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@have_rect: 
+@inputs_have_rects: 
+
+<!-- ##### FUNCTION gegl_image_compute_preimage ##### -->
+<para>
+
+</para>
+
+@self: 
+@preimage: 
+@rect: 
+@i: 
+
+<!-- ##### FUNCTION gegl_image_compute_result_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@result_rect: 
+@need_rect: 
+@have_rect: 
+
 <!-- ##### FUNCTION gegl_image_derived_color_model ##### -->
 <para>
 
@@ -509,6 +650,38 @@ GeglUnpremultImpl
 
 @self: 
 @Returns: 
+
+<!-- ##### FUNCTION gegl_image_get_dest ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_image_get_have_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@have_rect: 
+
+<!-- ##### FUNCTION gegl_image_get_need_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@need_rect: 
+
+<!-- ##### FUNCTION gegl_image_get_result_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@result_rect: 
 
 <!-- ##### FUNCTION gegl_image_impl_color_model ##### -->
 <para>
@@ -526,7 +699,228 @@ GeglUnpremultImpl
 @self: 
 @cm: 
 
+<!-- ##### FUNCTION gegl_image_mgr_add_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@image: 
+@image_impl: 
+
+<!-- ##### FUNCTION gegl_image_mgr_apply ##### -->
+<para>
+
+</para>
+
+@self: 
+@root: 
+@dest: 
+@roi: 
+
+<!-- ##### FUNCTION gegl_image_mgr_delete_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@image: 
+@image_impl: 
+
+<!-- ##### FUNCTION gegl_image_mgr_get_tile_mgr ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_image_mgr_install ##### -->
+<para>
+
+</para>
+
+@image_mgr: 
+
+<!-- ##### FUNCTION gegl_image_mgr_instance ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+<!-- ##### FUNCTION gegl_image_set_dest ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest: 
+
+<!-- ##### FUNCTION gegl_image_set_have_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@have_rect: 
+
+<!-- ##### FUNCTION gegl_image_set_need_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@need_rect: 
+
+<!-- ##### FUNCTION gegl_image_set_result_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@result_rect: 
+
+<!-- ##### FUNCTION gegl_node_get_enabled ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_node_get_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_node_get_nth_output ##### -->
+<para>
+
+</para>
+
+@self: 
+@n: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_node_inheriting_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_node_input_multiplicity ##### -->
+<para>
+
+</para>
+
+@self: 
+@input: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_node_is_leaf ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_node_is_root ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_node_num_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_node_num_outputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_node_output_multiplicity ##### -->
+<para>
+
+</para>
+
+@self: 
+@output: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_node_set_enabled ##### -->
+<para>
+
+</para>
+
+@self: 
+@enabled: 
+
+<!-- ##### FUNCTION gegl_node_set_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@list: 
+
+<!-- ##### FUNCTION gegl_node_shared_count ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_finish ##### -->
+<para>
+
+</para>
+
+@self: 
+@request_list: 
+
+<!-- ##### FUNCTION gegl_op_get_alt_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
 <!-- ##### FUNCTION gegl_op_get_op_impl ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_get_source0 ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_get_source1 ##### -->
 <para>
 
 </para>
@@ -566,6 +960,22 @@ GeglUnpremultImpl
 @self: 
 @request_list: 
 
+<!-- ##### FUNCTION gegl_op_prepare ##### -->
+<para>
+
+</para>
+
+@self: 
+@request_list: 
+
+<!-- ##### FUNCTION gegl_op_process ##### -->
+<para>
+
+</para>
+
+@self: 
+@request_list: 
+
 <!-- ##### FUNCTION gegl_op_set_op_impl ##### -->
 <para>
 
@@ -573,6 +983,31 @@ GeglUnpremultImpl
 
 @self: 
 @op_impl: 
+
+<!-- ##### FUNCTION gegl_op_set_source0 ##### -->
+<para>
+
+</para>
+
+@op: 
+@source0: 
+
+<!-- ##### FUNCTION gegl_op_set_source1 ##### -->
+<para>
+
+</para>
+
+@op: 
+@source1: 
+
+<!-- ##### FUNCTION gegl_point_op_get_nth_input_offset ##### -->
+<para>
+
+</para>
+
+@self: 
+@i: 
+@point: 
 
 <!-- ##### FUNCTION gegl_point_op_impl_get_nth_input_offset ##### -->
 <para>
@@ -591,6 +1026,24 @@ GeglUnpremultImpl
 @self: 
 @i: 
 @point: 
+
+<!-- ##### FUNCTION gegl_point_op_set_nth_input_offset ##### -->
+<para>
+
+</para>
+
+@self: 
+@i: 
+@point: 
+
+<!-- ##### FUNCTION gegl_rect_union ##### -->
+<para>
+
+</para>
+
+@dest: 
+@src1: 
+@src2: 
 
 <!-- ##### FUNCTION gegl_sampled_image_impl_get_height ##### -->
 <para>
@@ -623,4 +1076,64 @@ GeglUnpremultImpl
 
 @self: 
 @width: 
+
+<!-- ##### FUNCTION gegl_simple_image_mgr_get_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@image: 
+@Returns: 
+@image_impl: 
+
+<!-- ##### FUNCTION gegl_tile_mgr_fetch_input_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@input: 
+@area: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tile_mgr_fetch_output_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@op: 
+@dest: 
+@area: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tile_mgr_get_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@image: 
+@Returns: 
+@image_impl: 
+
+<!-- ##### FUNCTION gegl_tile_mgr_make_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@image: 
+@area: 
+@Returns: 
+@image_impl: 
+
+<!-- ##### FUNCTION gegl_tile_mgr_release_tiles ##### -->
+<para>
+
+</para>
+
+@self: 
+@request_list: 
 

@@ -1,22 +1,23 @@
 #include <glib-object.h>
 #include "gegl.h"
+#include "gegl-mock-op.h"
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
 
 GeglColorModel * color_model;
 #define SAMPLED_IMAGE_WIDTH 10 
-#define SAMPLED_IMAGE_HEIGHT 20 
+#define SAMPLED_IMAGE_HEIGHT 5 
 
 static void
 test_sampled_image_g_object_new(Test *test)
 {
   {
     GeglSampledImage * sampled_image = g_object_new (GEGL_TYPE_SAMPLED_IMAGE, 
-                                                   "width", SAMPLED_IMAGE_WIDTH, 
-                                                   "height", SAMPLED_IMAGE_HEIGHT, 
-                                                   "colormodel", color_model,
-                                                    NULL);  
+                                                     "width", SAMPLED_IMAGE_WIDTH, 
+                                                     "height", SAMPLED_IMAGE_HEIGHT, 
+                                                     "colormodel", color_model,
+                                                      NULL);  
 
     ct_test(test, sampled_image != NULL);
     ct_test(test, GEGL_IS_SAMPLED_IMAGE(sampled_image));
@@ -32,10 +33,10 @@ test_sampled_image_g_object_get(Test *test)
 {
   gint width, height;
   GeglSampledImage * sampled_image = g_object_new (GEGL_TYPE_SAMPLED_IMAGE, 
-                                                 "width", SAMPLED_IMAGE_WIDTH, 
-                                                 "height", SAMPLED_IMAGE_HEIGHT, 
-                                                 "colormodel", color_model,
-                                                  NULL);  
+                                                   "width", SAMPLED_IMAGE_WIDTH, 
+                                                   "height", SAMPLED_IMAGE_HEIGHT, 
+                                                   "colormodel", color_model,
+                                                    NULL);  
   g_object_get(sampled_image, 
                "width", &width, 
                "height", &height, 
@@ -50,57 +51,70 @@ test_sampled_image_g_object_get(Test *test)
 static void
 test_sampled_image_compute_have_rect(Test *test)
 {
+  GValue *output_value;
+  GeglRect result_rect;
+  GeglRect need_rect = {0,0,5,10};
   GeglSampledImage * sampled_image = g_object_new (GEGL_TYPE_SAMPLED_IMAGE, 
-                                                 "width", SAMPLED_IMAGE_WIDTH, 
-                                                 "height", SAMPLED_IMAGE_HEIGHT, 
-                                                 "colormodel", color_model,
-                                                  NULL);  
-  {
-    GeglRect have_rect;
-    gegl_image_compute_have_rect(GEGL_IMAGE(sampled_image),
-                                    &have_rect,
-                                    NULL);
+                                                   "width", SAMPLED_IMAGE_WIDTH, 
+                                                   "height", SAMPLED_IMAGE_HEIGHT, 
+                                                   "colormodel", color_model,
+                                                    NULL);  
 
-    ct_test(test, SAMPLED_IMAGE_WIDTH == have_rect.w);
-    ct_test(test, SAMPLED_IMAGE_HEIGHT == have_rect.h);
-    ct_test(test, 0 == have_rect.x);
-    ct_test(test, 0 == have_rect.y);
-  }
+  /* Set the initial need rect in the output value */
+  output_value = gegl_op_get_output_value(GEGL_OP(sampled_image));
+  g_value_set_image_data_rect(output_value, &need_rect);
+
+  /* Bounding box of inputs have rects, intersected with need rect */
+  gegl_op_compute_have_rect(GEGL_OP(sampled_image), NULL);
+
+  output_value = gegl_op_get_output_value(GEGL_OP(sampled_image));
+  g_value_get_image_data_rect(output_value, &result_rect);
+
+  /*                    
+    result_rect = have_rect  intersect  need_rect 
+                = [0,10]x[0,5] intersect [0,5]x[0,10]
+                = [0,5]x[0,5]
+     or
+    result_rect = {0,0,5,5}           
+
+  */
+
+  ct_test(test, 0 == result_rect.x);
+  ct_test(test, 0 == result_rect.y);
+  ct_test(test, 5 == result_rect.w);
+  ct_test(test, 5 == result_rect.h);
 
   g_object_unref(sampled_image);
 }
 
 static void
-test_sampled_image_compute_result_rect(Test *test)
+test_sampled_image_input_apply(Test *test)
 {
-  GeglSampledImage * sampled_image = g_object_new (GEGL_TYPE_SAMPLED_IMAGE, 
-                                                 "width", SAMPLED_IMAGE_WIDTH, 
-                                                 "height", SAMPLED_IMAGE_HEIGHT, 
-                                                 "colormodel", color_model,
-                                                  NULL);  
-  {
-    GeglRect have_rect;
-    GeglRect need_rect;
-    GeglRect result_rect;
+  GeglRect roi = {0,0,10,10};
 
-    gegl_rect_set(&have_rect, 0,0,SAMPLED_IMAGE_WIDTH, SAMPLED_IMAGE_HEIGHT);
-    gegl_rect_set(&need_rect, SAMPLED_IMAGE_WIDTH /4,
-                               SAMPLED_IMAGE_HEIGHT/4,
-                               SAMPLED_IMAGE_WIDTH /2, 
-                               SAMPLED_IMAGE_HEIGHT/2);
+  GeglSampledImage * image0 = g_object_new (GEGL_TYPE_SAMPLED_IMAGE, 
+                                            "width", SAMPLED_IMAGE_WIDTH, 
+                                            "height", SAMPLED_IMAGE_HEIGHT, 
+                                            "colormodel", color_model,
+                                             NULL);  
 
-    gegl_image_compute_result_rect(GEGL_IMAGE(sampled_image),
-                                      &result_rect,
-                                      &need_rect,
-                                      &have_rect);
+  GeglSampledImage * image1 = g_object_new (GEGL_TYPE_SAMPLED_IMAGE, 
+                                            "width", SAMPLED_IMAGE_WIDTH, 
+                                            "height", SAMPLED_IMAGE_HEIGHT, 
+                                            "colormodel", color_model,
+                                             NULL);  
 
-    ct_test(test, (SAMPLED_IMAGE_WIDTH/2) == result_rect.w);
-    ct_test(test, (SAMPLED_IMAGE_HEIGHT/2) == result_rect.h);
-    ct_test(test, (SAMPLED_IMAGE_WIDTH/4) == result_rect.x);
-    ct_test(test, (SAMPLED_IMAGE_HEIGHT/4) == result_rect.y);
-  }
+  GeglOp * op = g_object_new (GEGL_TYPE_MOCK_OP, 
+                              "num_inputs", 2, 
+                              "input0", image0,
+                              "input1", image1,
+                              NULL);  
 
-  g_object_unref(sampled_image);
+  gegl_op_apply_roi(op, &roi);
+
+  g_object_unref(op);
+  g_object_unref(image0);
+  g_object_unref(image1);
 }
 
 static void
@@ -122,10 +136,10 @@ create_sampled_image_test()
 
   g_assert(ct_addSetUp(t, sampled_image_test_setup));
   g_assert(ct_addTearDown(t, sampled_image_test_teardown));
+  g_assert(ct_addTestFun(t, test_sampled_image_input_apply));
   g_assert(ct_addTestFun(t, test_sampled_image_g_object_new));
   g_assert(ct_addTestFun(t, test_sampled_image_g_object_get));
   g_assert(ct_addTestFun(t, test_sampled_image_compute_have_rect));
-  g_assert(ct_addTestFun(t, test_sampled_image_compute_result_rect));
 
   return t; 
 }

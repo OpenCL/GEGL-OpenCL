@@ -5,30 +5,15 @@
 #include "gegl-color-model-gray-float.h"
 #include "gegl-color-model-rgb-u8.h"
 #include "gegl-color-model-gray-u8.h"
-#include "gegl-simple-image-mgr.h"
+#include "gegl-param-specs.h"
+#include "gegl-value-types.h"
+#include "gegl-tile-mgr.h"
+#include "gegl-filter.h"
 
 static gboolean gegl_initialized = FALSE;
 
-GeglColorAlphaSpace
-gegl_utils_derived_color_alpha_space(GList *inputs)
-{
-  g_warning("gegl_utils_derived_color_alpha_space not implemented\n");
-  return 0; 
-}
-
-GeglChannelDataType
-gegl_utils_derived_channel_data_type(GList *inputs)
-{
-  g_warning("gegl_utils_derived_channel_data_type not implemented\n");
-  return 0;
-}
-
-GeglColorSpace
-gegl_utils_derived_color_space(GList *inputs)
-{
-  g_warning("gegl_utils_derived_color_space not implemented\n");
-  return 0;
-}
+extern void gegl_param_spec_types_init(void);
+extern void gegl_value_types_init(void);
 
 static
 void
@@ -119,9 +104,10 @@ static
 void
 gegl_exit(void)
 {
-  GeglImageMgr *mgr = gegl_image_mgr_instance();
+  GeglTileMgr *mgr = gegl_tile_mgr_instance();
   g_object_unref(mgr);
   g_object_unref(mgr);
+
   gegl_free_color_models();
 }
 
@@ -132,15 +118,24 @@ gegl_init (int *argc,
   if (gegl_initialized)
     return;
 
+  gegl_param_spec_types_init ();
+  gegl_value_types_init ();
+  gegl_init_color_models();
+
   {
-    GeglImageMgr *mgr = g_object_new(GEGL_TYPE_SIMPLE_IMAGE_MGR, NULL);
-    gegl_image_mgr_install(mgr);
+    GeglTileMgr *mgr = g_object_new(GEGL_TYPE_TILE_MGR, NULL);
+    gegl_tile_mgr_install(mgr);
   }
 
-  gegl_init_color_models();
   g_atexit(gegl_exit);
   gegl_initialized = TRUE;
   
+}
+
+GType
+gegl_utils_get_filter_type()
+{
+  return GEGL_TYPE_FILTER; 
 }
 
 void 
@@ -157,9 +152,9 @@ gegl_rect_set (GeglRect *r,
 }
 
 void 
-gegl_rect_union (GeglRect *dest,
-                 GeglRect *src1,
-                 GeglRect *src2)
+gegl_rect_bounding_box (GeglRect *dest,
+                        GeglRect *src1,
+                        GeglRect *src2)
 {
   gint x1 = MIN(src1->x, src2->x); 
   gint x2 = MAX(src1->x + src1->w, src2->x + src2->w);  
@@ -241,6 +236,7 @@ gegl_rect_equal (GeglRect *r,
 }
 
 #define GEGL_LOG_DOMAIN "Gegl"
+
 
 void
 gegl_log(GLogLevelFlags level,

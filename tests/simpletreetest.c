@@ -7,7 +7,6 @@
 #define SAMPLED_IMAGE_WIDTH 1 
 #define SAMPLED_IMAGE_HEIGHT 1 
 GeglSampledImage *dest;
-GeglSimpleImageMgr *simple_image_man; 
 
 static GeglOp *
 make_rgb_fill(gfloat a, 
@@ -61,16 +60,16 @@ test_simpletree_apply(Test *t)
   GeglOp * fill2 = make_rgb_fill(.5,.6,.7); 
 
   GeglOp * const_mult = g_object_new (GEGL_TYPE_CONST_MULT,
-                                      "source0", fill1,
+                                      "input", fill1,
                                       "multiplier", .5,
                                       NULL); 
 
   GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
-                               "source0", const_mult,
-                               "source1", fill2,
+                               "input0", const_mult,
+                               "input1", fill2,
                                NULL);  
 
-  gegl_op_apply(add, dest, NULL); 
+  gegl_op_apply_image(add, GEGL_OP(dest), NULL); 
 
   ct_test(t, check_rgb_float_pixel(GEGL_IMAGE(dest), .55, .7, .85));  
 
@@ -107,22 +106,25 @@ test_simpletree_apply2(Test *t)
 
   GeglOp * fill1 = make_rgb_fill(.1,.2,.3); 
   GeglOp * print1 = g_object_new(GEGL_TYPE_PRINT,
-                                 "source0", fill1,
+                                 "input", fill1,
                                  NULL);
+
   GeglOp * fill2 = make_rgb_fill(.5,.6,.7); 
+
   GeglOp * const_mult = g_object_new (GEGL_TYPE_CONST_MULT,
-                                      "source0", print1,
+                                      "input", print1,
                                       "multiplier", .5,
                                       NULL); 
+
   GeglOp * print2 = g_object_new(GEGL_TYPE_PRINT,
-                                 "source0", const_mult,
+                                 "input", const_mult,
                                  NULL);
   GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
-                               "source0", print2,
-                               "source1", fill2,
+                               "input0", print2,
+                               "input1", fill2,
                                NULL);  
 
-  gegl_op_apply(add, dest, NULL); 
+  gegl_op_apply_image(add, GEGL_OP(dest), NULL); 
 
   ct_test(t, check_rgb_float_pixel(GEGL_IMAGE(dest), .55, .7, .85));  
 
@@ -146,14 +148,12 @@ simpletree_test_setup(Test *test)
                        NULL);  
 
   g_object_unref(rgb_float);
-  simple_image_man = GEGL_SIMPLE_IMAGE_MGR(gegl_image_mgr_instance());
 }
 
 static void
 simpletree_test_teardown(Test *test)
 {
   g_object_unref(dest);
-  g_object_unref(simple_image_man);
 }
 
 Test *

@@ -20,38 +20,6 @@ GeglTileMgr
 </para>
 
 
-<!-- ##### FUNCTION gegl_tile_mgr_fetch_output_tile ##### -->
-<para>
-
-</para>
-
-@self: 
-@op: 
-@dest: 
-@area: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_tile_mgr_fetch_input_tile ##### -->
-<para>
-
-</para>
-
-@self: 
-@input: 
-@area: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_tile_mgr_release_tiles ##### -->
-<para>
-
-</para>
-
-@self: 
-@request_list: 
-
-
 <!-- ##### FUNCTION gegl_tile_mgr_create_buffer ##### -->
 <para>
 
@@ -60,30 +28,5 @@ GeglTileMgr
 @self: 
 @tile: 
 @Returns: 
-
-
-<!-- ##### FUNCTION gegl_tile_mgr_get_tile ##### -->
-<para>
-
-</para>
-
-@self: 
-@image: 
-@Returns: 
-<!-- # Unused Parameters # -->
-@image_impl: 
-
-
-<!-- ##### FUNCTION gegl_tile_mgr_make_tile ##### -->
-<para>
-
-</para>
-
-@self: 
-@image: 
-@area: 
-@Returns: 
-<!-- # Unused Parameters # -->
-@image_impl: 
 
 

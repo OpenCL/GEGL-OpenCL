@@ -205,21 +205,6 @@ GEGL_COLOR_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-simple-image-mgr</FILE>
-<TITLE>GeglSimpleImageMgr</TITLE>
-GeglSimpleImageMgr
-gegl_simple_image_mgr_get_tile
-<SUBSECTION Standard>
-GEGL_SIMPLE_IMAGE_MGR
-GEGL_IS_SIMPLE_IMAGE_MGR
-GEGL_TYPE_SIMPLE_IMAGE_MGR
-gegl_simple_image_mgr_get_type
-GEGL_SIMPLE_IMAGE_MGR_CLASS
-GEGL_IS_SIMPLE_IMAGE_MGR_CLASS
-GEGL_SIMPLE_IMAGE_MGR_GET_CLASS
-</SECTION>
-
-<SECTION>
 <FILE>gegl-copy</FILE>
 <TITLE>GeglCopy</TITLE>
 GeglCopy
@@ -303,6 +288,26 @@ gegl_diff_get_type
 GEGL_DIFF_CLASS
 GEGL_IS_DIFF_CLASS
 GEGL_DIFF_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-filter</FILE>
+<TITLE>GeglFilter</TITLE>
+GeglFilter
+gegl_filter_get_root
+gegl_filter_set_root
+gegl_filter_get_roi
+gegl_filter_set_roi
+gegl_filter_get_image
+gegl_filter_set_image
+<SUBSECTION Standard>
+GEGL_FILTER
+GEGL_IS_FILTER
+GEGL_TYPE_FILTER
+gegl_filter_get_type
+GEGL_FILTER_CLASS
+GEGL_IS_FILTER_CLASS
+GEGL_FILTER_GET_CLASS
 </SECTION>
 
 <SECTION>
@@ -403,26 +408,6 @@ gegl_screen_get_type
 GEGL_SCREEN_CLASS
 GEGL_IS_SCREEN_CLASS
 GEGL_SCREEN_GET_CLASS
-</SECTION>
-
-<SECTION>
-<FILE>gegl-image-mgr</FILE>
-<TITLE>GeglImageMgr</TITLE>
-GeglImageMgr
-gegl_image_mgr_install
-gegl_image_mgr_instance
-gegl_image_mgr_apply
-gegl_image_mgr_delete_image
-gegl_image_mgr_add_image
-gegl_image_mgr_get_tile_mgr
-<SUBSECTION Standard>
-GEGL_IMAGE_MGR
-GEGL_IS_IMAGE_MGR
-GEGL_TYPE_IMAGE_MGR
-gegl_image_mgr_get_type
-GEGL_IMAGE_MGR_CLASS
-GEGL_IS_IMAGE_MGR_CLASS
-GEGL_IMAGE_MGR_GET_CLASS
 </SECTION>
 
 <SECTION>

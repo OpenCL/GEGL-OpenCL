@@ -7,11 +7,6 @@ extern "C" {
 
 #include "gegl-node.h"
 
-#ifndef __TYPEDEF_GEGL_SAMPLED_IMAGE__
-#define __TYPEDEF_GEGL_SAMPLED_IMAGE__
-typedef struct _GeglSampledImage  GeglSampledImage;
-#endif
-
 #define GEGL_TYPE_OP               (gegl_op_get_type ())
 #define GEGL_OP(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OP, GeglOp))
 #define GEGL_OP_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_OP, GeglOpClass))
@@ -23,44 +18,66 @@ typedef struct _GeglSampledImage  GeglSampledImage;
 #define __TYPEDEF_GEGL_OP__
 typedef struct _GeglOp GeglOp;
 #endif
-struct _GeglOp {
+struct _GeglOp 
+{
    GeglNode __parent__;
 
    /*< private >*/
-   gint alt_input;
+
+   GValue *output_value;
+   GParamSpec *output_param_spec;
+
+   GList *input_param_specs;
 };
 
 typedef struct _GeglOpClass GeglOpClass;
-struct _GeglOpClass {
+struct _GeglOpClass 
+{
    GeglNodeClass __parent__;
 
+   void (* apply)                  (GeglOp * self);
+
+   void (* evaluate)               (GeglOp * self, 
+                                    GList * output_values,
+                                    GList * input_values);
    void (* prepare)                (GeglOp * self, 
-                                    GList * request_list);
+                                    GList * output_values,
+                                    GList * input_values);
    void (* process)                (GeglOp * self, 
-                                    GList * request_list);
+                                    GList * output_values,
+                                    GList * input_values);
    void (* finish)                 (GeglOp * self, 
-                                    GList * request_list);
+                                    GList * output_values,
+                                    GList * input_values);
+
+   void (* compute_need_rect)      (GeglOp *self,
+                                    GValue *input_value,
+                                    gint i); 
+   void (* compute_have_rect)      (GeglOp *self,
+                                    GList * input_values); 
 };
 
-void      gegl_op_prepare              (GeglOp * self, 
-                                        GList * request_list);
-void      gegl_op_process              (GeglOp * self, 
-                                        GList * request_list);
-void      gegl_op_finish               (GeglOp * self, 
-                                        GList * request_list);
+GType     gegl_op_get_type                 (void);
 
-GType            gegl_op_get_type         (void);
-gint             gegl_op_get_alt_input    (GeglOp * self);
-void             gegl_op_apply            (GeglOp * self, 
-                                           GeglSampledImage * dest, 
-                                           GeglRect * roi);
+void      gegl_op_apply                    (GeglOp * self);
+void      gegl_op_apply_image              (GeglOp * self,
+                                            GeglOp * image,
+                                            GeglRect *roi);
+void      gegl_op_apply_roi                (GeglOp * self, 
+                                            GeglRect *roi);
 
-GeglOp*          gegl_op_get_source0      (GeglOp *self);
-void             gegl_op_set_source0      (GeglOp *op, 
-                                           GeglOp *source0);
-GeglOp*          gegl_op_get_source1      (GeglOp *self);
-void             gegl_op_set_source1      (GeglOp *op, 
-                                           GeglOp *source1);
+void      gegl_op_compute_need_rects       (GeglOp * self,
+                                            GList *input_values);
+void      gegl_op_compute_have_rect        (GeglOp * self,
+                                            GList *input_values);
+void      gegl_op_compute_need_rect        (GeglOp * self,
+                                            GValue * input_value,
+                                            gint i);
+
+void      gegl_op_evaluate                 (GeglOp * self, 
+                                            GList * output_values,
+                                            GList * input_values);
+GValue *  gegl_op_get_output_value         (GeglOp *op); 
 
 #ifdef __cplusplus
 }

@@ -1,7 +1,6 @@
 #include "gegl-tile.h"
 #include "gegl-object.h"
 #include "gegl-color-model.h"
-#include "gegl-image-mgr.h"
 #include "gegl-tile-mgr.h"
 #include "gegl-buffer.h"
 #include "gegl-utils.h"
@@ -335,8 +334,9 @@ gegl_tile_alloc (GeglTile * self,
   g_return_val_if_fail (GEGL_IS_TILE (self), (gboolean )0);
 
   {
-    GeglImageMgr * image_mgr = gegl_image_mgr_instance();
-    GeglTileMgr * tile_mgr = gegl_image_mgr_get_tile_mgr(image_mgr);
+    GeglTileMgr * tile_mgr = gegl_tile_mgr_instance();
+
+    g_assert(tile_mgr != NULL);
 
     /* Get rid of any old data and color model. */
     unalloc(self);
@@ -347,7 +347,7 @@ gegl_tile_alloc (GeglTile * self,
 
     self->buffer = gegl_tile_mgr_create_buffer(tile_mgr, self); 
                                                      
-    g_object_unref(image_mgr);
+    g_object_unref(tile_mgr);
 
     if(!self->buffer)
       return FALSE;
