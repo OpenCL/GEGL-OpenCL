@@ -47,7 +47,7 @@ struct _GeglEntryRecord
   GHashTable * store_data;
 };
 
-typedef void (*GeglStoreDataFunc) (struct _GeglCacheStore *, gpointer data);
+typedef void (*GeglStoreDataFunc) (struct _GeglCacheStore *, gpointer entry_record, gpointer data);
 GeglEntryRecord * gegl_entry_record_new (struct _GeglCache * cache, struct _GeglCacheEntry * entry);
 void gegl_entry_record_free (GeglEntryRecord * record);
 void gegl_entry_record_set_cache (GeglEntryRecord * record,

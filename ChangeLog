@@ -1,3 +1,23 @@
+2004-3-25 19:36 Daniel Rogers <daniel@phasevelocity.org>
+
+	* gegl/image/Makefile.am
+	* gegl/image/gegl-entry-record.c
+	* gegl/image/gegl-entry-record.h
+	* gegl/image/gegl-heap-cache.c
+	* gegl/image/gegl-swap-cache-store.c
+	* gegl/image/gegl-swap-cache.c
+	* gegl/image/gegl-swap-cache.h
+	* tests/Makefile.am
+	* tests/gegl-image-cache-tests.c
+	* tests/gegl-image-cache-tests.h
+	* tests/gegl-image-cache-tests.o
+	* tests/gegl-image-heap-cache-tests.c
+	* tests/gegl-image-swap-cache-test.c
+
+	Added a swap cache implementation and test.  I also altered some
+	of the heap cache tests so they could be used with the swap cache
+	as well.
+
 2004-3-18 17:48 Daniel Rogers <daniel@phasevelocity.org>
 
 	* docs/reference/gegl/gegl-undocumented.txt

@@ -23,6 +23,8 @@
 #define GEGL_SWAP_CACHE_H
 
 #include "gegl-cache.h"
+#include "gegl-swap-cache-store.h"
+#include "gegl-heap-cache-store.h"
 
 #define GEGL_TYPE_SWAP_CACHE               (gegl_swap_cache_get_type ())
 #define GEGL_SWAP_CACHE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SWAP_CACHE, GeglSwapCache))
@@ -37,16 +39,9 @@ typedef struct _GeglSwapCache GeglSwapCache;
 struct _GeglSwapCache
 {
   GeglCache parent;
-  GList* stored_entries;
-  GList* fetched_entries;
-  GList* discarded_entries;
-  
-  gchar* filename;
-  GList* gaps;
-  GIOChannel* swap_file;
-  gint64 swap_file_length;
-
-  guint64 current_size;
+  GeglSwapCacheStore * stored;
+  GeglHeapCacheStore * heap_stored;
+  gsize heap_capacity;
   gboolean has_disposed;
 };
 
@@ -56,6 +51,6 @@ struct _GeglSwapCacheClass
   GeglCacheClass parent_class;
 };
 
-GeglSwapCache* gegl_swap_cache_new (gchar* filename, guint64 hard_limit, guint64 soft_limit, gboolean persistent);
+GeglSwapCache* gegl_swap_cache_new (gchar* filename_template, gint64 heap_capacity);
 
 #endif

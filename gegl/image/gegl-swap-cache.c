@@ -25,21 +25,19 @@ static void class_init(gpointer g_class,
 		       gpointer class_data);
 static void instance_init(GTypeInstance *instance,
                           gpointer g_class);
-static void finalize(GObject *object);
-static void dispose (GObject *object);
-static gint try_put (GeglCache * cache,
-		     GeglCacheEntry * entry,
-		     gsize * entry_id);
-static gint put (GeglCache * cache,
-		 GeglCacheEntry * entry,
-		 gsize * entry_id);
-static gint fetch (GeglCache * cache,
-		   gsize entry_id,
-		   GeglCacheEntry ** entry);
-static void mark_as_dirty (GeglCache * cache,
-			   gsize entry_id);
-static void flush (GeglCache * cache,
-		   gsize entry_id);
+
+static void finalize (GObject * object);
+static void dispose (GObject * object);
+static void insert_record (GeglCache* cache,
+			   GeglEntryRecord* record);
+static gboolean check_room_for (GeglCache* cache, gint64 size);
+static gint64 size (GeglCache* cache);
+static gint64 capacity (GeglCache* cache);
+static gboolean is_persistent (GeglCache* cache);
+static void flush_internal (GeglCache * cache,
+			    GeglEntryRecord * record);
+
+static gpointer parent_class;
 
 GType
 gegl_swap_cache_get_type (void)
@@ -82,257 +80,125 @@ class_init(gpointer g_class,
 {
   GeglCacheClass* cache_class = GEGL_CACHE_CLASS(g_class);
   GObjectClass* object_class = G_OBJECT_CLASS(g_class);
-  cache_class->try_put=try_put;
-  cache_class->put=put;
-  cache_class->fetch=fetch;
-  cache_class->mark_as_dirty=mark_as_dirty;
-  cache_class->flush=flush;
+  
+  cache_class->insert_record = insert_record;
+  cache_class->check_room_for = check_room_for;
+  cache_class->size = size;
+  cache_class->capacity = capacity;
+  cache_class->is_persistent = is_persistent;
+  cache_class->flush_internal = flush_internal;
 
-  object_class->constructor = constructor;
   object_class->dispose = dispose;
   object_class->finalize=finalize;
+
+  parent_class = g_type_class_peek_parent (g_class);
 }
 
 static void
-free_entry_data (gpointer data, gpointer user_data)
+instance_init(GTypeInstance *instance,
+	      gpointer g_class)
 {
-  if (data == NULL)
-    {
-      return;
-    }
-  EntryRecord * record = (EntryRecord *) data;
-  if (record->data != NULL)
-    {
-      g_object_unref(record->data);
-    }
-  g_free (record);
-  /* g_message ("EntryRecord %d freed.", GPOINTER_TO_SIZE(record)); */
-}
-
-
-static void
-instance_init (GTypeInstance *instance,
-	       gpointer g_class)
-{
-  GeglSwapCache* swap_cache=GEGL_SWAP_CACHE(instance);
-
-  swap_cache->stored_entries=NULL;
-  swap_cache->discarded_entries = NULL;
-  swap_cache->fetched_entries = NULL;
-
-  swap_cache->filename = NULL;
-  swap_cache->gaps = NULL;
-  swap_cache->swap_file = NULL;
-  swap_cache->swap_file_length = 0;
-
-  swap_cache->current_size=0;
-  swap_cache->has_disposed = FALSE;
+  GeglSwapCache * self = GEGL_SWAP_CACHE (instance);
+  
+  self->heap_capacity = 0;
+  self->has_disposed = FALSE;
+  self->heap_stored = gegl_heap_cache_store_new ();
+  self->stored = NULL;
 }
 
 static void
-finalize(GObject *object)
+dispose (GObject * object)
 {
-  G_OBJECT_CLASS (g_type_class_peek_parent (GEGL_MEMORY_CACHE_GET_CLASS (object)))->finalize(object);
-}
-
-static void dispose (GObject *object)
-{
-  GeglMemoryCache* self=GEGL_MEMORY_CACHE(object);
-  if (!self->has_disposed)
-    {
-      g_list_foreach(self->discarded_entries,free_entry_data,NULL);
-      g_list_free(self->discarded_entries);
-      g_list_foreach(self->fetched_entries,free_entry_data,NULL);
-      g_list_free(self->fetched_entries);
-      g_list_foreach(self->stored_entries,free_entry_data,NULL);
-      g_list_free(self->stored_entries);
-      self->discarded_entries = NULL;
-      self->fetched_entries = NULL;
-      self->stored_entries = NULL;
-      self->has_disposed = TRUE;
-      
-      if (self->filename != NULL)
-	{
-	  g_free (filename);
-	  filename = NULL;
-	}
-      
-
-    }
-  G_OBJECT_CLASS (g_type_class_peek_parent (GEGL_MEMORY_CACHE_GET_CLASS (object)))->dispose(object);
-}
-
-static gint
-try_put (GeglCache * cache,
-	 GeglCacheEntry * entry,
-	 gsize * entry_id)
-{
-  GeglSwapCache* swap_cache=GEGL_SWAP_CACHE(cache);
-  gsize new_size=gegl_cache_entry_flattened_size (entry);
-  if ((cache->persistent == TRUE) &&
-      (swap_cache->hard_limit != 0) && 
-      (swap_cache->current_size + new_size > cache->hard_limit))
-    {
-      return GEGL_PUT_WOULD_BLOCK;
-    }
-  return put(cache,entry,entry_id);
-}
-
-static gint
-put (GeglCache * cache,
-     GeglCacheEntry * entry,
-     gsize * entry_id)
-{
-  GeglSwapCache* swap_cache=GEGL_SWAP_CACHE(cache);
-  gsize new_size=gegl_cache_entry_flattened_size (entry);
-  GList *link,*old_link;
-
-  if ((cache->persistent == TRUE) &&
-      (swap_cache->hard_limit != 0) &&
-      (swap_cache->current_size + new_size > cache->hard_limit))
-    {
-#ifdef GEGL_THREADS
-#else
-      /* This is broken.  Something else, better, should be done here.
-       * Basically, In a single threaded application we can't make this
-       * block forever. That would be bad.  So if threads are not enabled
-       * then we cannot block here like I would like to.
-       * 
-       * So, some other reasonable action should be taken.  This may
-       * be as simple as providing a more reasonable named return
-       * value, but I have not thought about it deeply.
-       */
-      return GEGL_PUT_WOULD_BLOCK;
-#endif
-    }
-  if ((cache->hard_limit != 0) &&
-      (swap_cache->current_size + new_size > cache->hard_limit))
-    {
-      link = g_list_last (mem_cache->stored_entries);
-      while ((swap_cache->current_size != 0) &&
-	     
-	     ((swap_cache->current_size > cache->soft_limit) ||
-	      (swap_cache->current_size + new_size > cache->hard_limit)) &&
-	     (link != NULL))
-	{
-	  gsize entry_size;
-	  EntryRecord * record = (EntryRecord *) (link->data);
-	  entry_size=gegl_cache_entry_flattened_size (record->data);
-	  g_return_val_if_fail (record->data != NULL, GEGL_PUT_INVALID);
-	  g_return_val_if_fail (record->status == STORED, GEGL_PUT_INVALID);
-	  g_return_val_if_fail (record->magic_number == cache, GEGL_PUT_INVALID);
-	  g_object_unref(record->data);
-	  /*
-	   * Might want to keep weak references to the old entries
-	   * here.
-	   */
-	  record->data = NULL;
-	  mem_cache->current_size -= entry_size;
-	  old_link = link;
-	  link=g_list_previous(link);
-	  mem_cache->stored_entries = g_list_remove_link (mem_cache->stored_entries, old_link);
-	  mem_cache->discarded_entries = g_list_concat (old_link, mem_cache->discarded_entries);
-	  record->status = DISCARDED;
-	}
-    }
-
-  g_object_ref(entry);
-  EntryRecord * record;
-  if (*entry_id == 0)
-    {
-      record = g_new (EntryRecord, 1);
-      /* g_message ("EntryRecord %d allocated.", GPOINTER_TO_SIZE(record)); */
-      record->data = entry;
-      record->status = STORED;
-      record->magic_number = cache;
-      mem_cache->stored_entries=g_list_append(mem_cache->stored_entries, record);
-      mem_cache->current_size += gegl_cache_entry_flattened_size (entry);
-      link=g_list_last(mem_cache->stored_entries);
-      *entry_id = GPOINTER_TO_SIZE(link);
-    }
-  else 
-    {
-      link = GSIZE_TO_POINTER(*entry_id);
-      record = (EntryRecord *) (link->data);
-      g_return_val_if_fail (record->magic_number == cache, GEGL_PUT_INVALID);
-      if (record->status == DISCARDED)
-	{
-	  record->data = entry;
-	  mem_cache->current_size += gegl_cache_entry_flattened_size (entry);
-	  mem_cache->discarded_entries = g_list_remove_link (mem_cache->discarded_entries, link);
-	  mem_cache->stored_entries = g_list_concat (link, mem_cache->stored_entries);
-	  record->status = STORED;
-	  return GEGL_PUT_SUCCEEDED;
-	}
-      else
-	{
-	  g_return_val_if_fail (record->status == FETCHED, GEGL_PUT_INVALID);
-	  record->data = entry;
-	  mem_cache->current_size += gegl_cache_entry_flattened_size (entry);
-	  mem_cache->fetched_entries = g_list_remove_link (mem_cache->fetched_entries, link);
-	  mem_cache->stored_entries = g_list_concat (link, mem_cache->stored_entries);
-	  record->status = STORED;
-	}
-    }
-  return GEGL_PUT_SUCCEEDED;
-}
-
-static gint
-fetch (GeglCache * cache,
-       gsize entry_id,
-       GeglCacheEntry ** entry_handle)
-{
-  GeglMemoryCache* mem_cache=GEGL_MEMORY_CACHE(cache);
-  GList* link = GSIZE_TO_POINTER(entry_id);
-  EntryRecord * record = (EntryRecord *) (link->data);
-  GeglCacheEntry* entry = GEGL_CACHE_ENTRY(record->data);
-  g_return_val_if_fail (record->magic_number == cache,GEGL_FETCH_INVALID);
-  if (record->status == DISCARDED)
-    {
-      return GEGL_FETCH_EXPIRED;
-    }
-  g_return_val_if_fail (entry != NULL, GEGL_FETCH_INVALID);
-  record->data = NULL;
-  mem_cache->stored_entries = g_list_remove_link (mem_cache->stored_entries, link);
-  mem_cache->fetched_entries = g_list_concat (link, mem_cache->fetched_entries);
-  record->status = FETCHED;
-  mem_cache->current_size -= gegl_cache_entry_flattened_size (entry);
-  *entry_handle=entry;
-  return GEGL_FETCH_SUCCEEDED;
+  GeglSwapCache * self = GEGL_SWAP_CACHE (object);
+  if (!self->has_disposed) {
+    self->has_disposed = TRUE;
+    g_object_unref (G_OBJECT(self->stored));
+    g_object_unref (G_OBJECT(self->heap_stored));
+  }
+  G_OBJECT_CLASS(parent_class)->dispose(object);
 }
 
 static void
-mark_as_dirty (GeglCache * cache,
-	       gsize entry_id)
-{
+finalize (GObject * object) {
+  G_OBJECT_CLASS(parent_class)->finalize(object);
+  
 }
 
-static void
-flush (GeglCache * cache,
-       gsize entry_id)
+GeglSwapCache*
+gegl_swap_cache_new (gchar* filename_template,
+		     gint64 heap_size)
 {
-  GList* link = GSIZE_TO_POINTER(entry_id);
-  GeglMemoryCache* mem_cache = GEGL_MEMORY_CACHE(cache);
-  EntryRecord * record = (EntryRecord *) link->data;
-  Status status = record->status;
-  gsize entry_size;
+  GeglSwapCache * self = g_object_new(GEGL_TYPE_SWAP_CACHE, NULL);
+  self->stored = gegl_swap_cache_store_new (filename_template);
+  self->heap_capacity = heap_size;
+  return self;
+}
 
-  switch (status)
+void
+insert_record (GeglCache* cache,
+	       GeglEntryRecord* record)
+{
+  /* 
+   * We are garenteed, at this point, that either the heap cache can
+   * hold the item and room in it has been made
+   */
+
+  GeglSwapCache * self = GEGL_SWAP_CACHE (cache);
+  gegl_cache_store_add(GEGL_CACHE_STORE(self->heap_stored), record);
+}
+
+gboolean
+check_room_for (GeglCache* cache, gint64 size)
+{
+  GeglSwapCache * self = GEGL_SWAP_CACHE (cache);
+  /*
+   * The conditions I need to check for is:
+   * 1. size unable to fit in the heap_stored cache.
+   * 2. heap_stored full.
+   * 3. heap_stored not full.
+   * 
+   * I assume that the swap cache store can never be full.  This is,
+   * to say the least, a simplification, though not so bad in the land
+   * of huge disks.
+   */
+  if (size > self->heap_capacity)
     {
-    case STORED:
-      entry_size=gegl_cache_entry_flattened_size (record->data);
-      mem_cache->current_size -= entry_size;
-      mem_cache->stored_entries = g_list_delete_link(mem_cache->stored_entries, link);
-      break;
-    case FETCHED:
-      mem_cache->fetched_entries = g_list_delete_link(mem_cache->fetched_entries, link);
-      break;
-    case DISCARDED:
-      mem_cache->discarded_entries = g_list_delete_link(mem_cache->discarded_entries, link);
-      break;
-    default:
-      g_warning ("GeglMemoryCache: unhandled status type in flush()");
-      break;
+      /* condition 1 */
+      return FALSE;
     }
-  free_entry_data(record,NULL);
+  gint64 cache_size = gegl_cache_store_size (GEGL_CACHE_STORE(self->heap_stored));
+  while (cache_size + size > self->heap_capacity)
+    {
+      GeglEntryRecord * record;
+      record = gegl_cache_store_peek (GEGL_CACHE_STORE(self->heap_stored));
+      gegl_cache_store_remove (GEGL_CACHE_STORE(self->heap_stored), record);
+      gegl_cache_store_add(GEGL_CACHE_STORE(self->stored), record);
+      cache_size = gegl_cache_store_size (GEGL_CACHE_STORE(self->heap_stored));
+    }
+  /* condition 2 and 3 */
+  return TRUE;
+}
+gint64
+size (GeglCache* cache)
+{
+  GeglSwapCache * self = GEGL_SWAP_CACHE (cache);
+  return gegl_cache_store_size (GEGL_CACHE_STORE(self->stored));
+  
+}
+
+gint64
+capacity (GeglCache* cache)
+{
+  return 0;
+}
+
+gboolean
+is_persistent (GeglCache* cache)
+{
+  return TRUE;
+}
+void
+flush_internal (GeglCache * cache,
+		GeglEntryRecord * record)
+{
 }

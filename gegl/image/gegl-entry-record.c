@@ -34,7 +34,7 @@ struct _GeglStoreData
 static GeglStoreData * gegl_store_data_new (void * data,
 					    GeglStoreDataFunc free,
 					    GeglStoreDataFunc dirty);
-static void gegl_store_data_free (GeglStoreData * sdata, GeglCacheStore * cache_store,  gboolean free_data);
+static void gegl_store_data_free (GeglStoreData * sdata, GeglEntryRecord* record, GeglCacheStore * cache_store,  gboolean free_data);
 static void store_weak_notify (gpointer data, GObject * where_the_object_was);
 static gboolean
 free_and_remove (gpointer key, gpointer value, gpointer user_data)
@@ -45,7 +45,7 @@ free_and_remove (gpointer key, gpointer value, gpointer user_data)
   g_object_weak_unref (G_OBJECT(cache_store), store_weak_notify, record);
   if (sdata != NULL)
     {
-      gegl_store_data_free(sdata, cache_store, TRUE);
+      gegl_store_data_free(sdata, record, cache_store, TRUE);
     }
   return TRUE;
 }
@@ -138,11 +138,11 @@ gegl_store_data_new (void * data,
 }
 
 static void
-gegl_store_data_free (GeglStoreData * sdata, GeglCacheStore * cache_store, gboolean free_data)
+gegl_store_data_free (GeglStoreData * sdata, GeglEntryRecord * record, GeglCacheStore * cache_store, gboolean free_data)
 {
   if (free_data && sdata->free != NULL)
     {
-      sdata->free (cache_store, sdata->data);
+      sdata->free (cache_store, record, sdata->data);
     }
   g_free (sdata);
 }
@@ -175,7 +175,7 @@ gegl_entry_record_remove_store_data (GeglEntryRecord * record,
   GeglStoreData * data;
   data = g_hash_table_lookup (record->store_data, store);
   g_object_weak_unref (G_OBJECT(store), store_weak_notify, record);
-  gegl_store_data_free (data, store, free_data);
+  gegl_store_data_free (data, record, store, free_data);
   g_hash_table_steal (record->store_data, store);
 }
 
@@ -197,16 +197,17 @@ void foreach_dirty (gpointer key, gpointer value, gpointer user_data)
 {
   struct _GeglCacheStore * store = (struct _GeglCacheStore *) key;
   GeglStoreData * sdata = (GeglStoreData *)value;
+  GeglEntryRecord * record = (GeglEntryRecord*)user_data;
   if (sdata->dirty != NULL)
     {
-      sdata->dirty (store, sdata->data);
+      sdata->dirty (store, record, sdata->data);
     }
 }
 
 void
 gegl_entry_record_dirty (GeglEntryRecord * record)
 {
-  g_hash_table_foreach (record->store_data, foreach_dirty, NULL);
+  g_hash_table_foreach (record->store_data, foreach_dirty, record);
 }
 
 static void
@@ -218,6 +219,6 @@ store_weak_notify (gpointer data, GObject * where_the_object_was)
   sdata = g_hash_table_lookup (record->store_data, where_the_object_was);
   if (sdata != NULL)
     {
-      gegl_store_data_free (sdata, finalized_store, TRUE);
+      gegl_store_data_free (sdata, record, finalized_store, TRUE);
     }
 }

@@ -32,6 +32,7 @@ IMAGE_SRC = \
 	gegl-heap-cache-store.c \
 	gegl-swap-cache-store.c \
 	gegl-heap-cache.c \
+	gegl-swap-cache.c \
 	gegl-normalizer.c \
 	gegl-normalizer-mult.c \
 	gegl-sample-model.c \

@@ -19,48 +19,50 @@
  *
  */
 
-#include "image/gegl-heap-cache.h"
-#include "gegl-image-cache-tests.h"
+#include "image/gegl-swap-cache.h"
 #include "gegl-image-mock-cache-entry.h"
-#include "image/gegl-cache.h"
+#include "gegl-image-cache-tests.h"
 #include "ctest.h"
-#include "string.h"
-
+#include <string.h>
 static void
-gegl_heap_cache_new_test (Test * test)
+gegl_swap_cache_new_test (Test * test)
 {
-  GeglHeapCache* heap_cache = gegl_heap_cache_new (1024*1024*32, FALSE);
-  ct_test(test,heap_cache!=NULL);
-  ct_test(test, GEGL_IS_HEAP_CACHE(heap_cache));
-  ct_test(test, g_type_parent(GEGL_TYPE_HEAP_CACHE) == GEGL_TYPE_CACHE);
-  ct_test(test, !strcmp("GeglHeapCache", g_type_name(GEGL_TYPE_HEAP_CACHE)));
+
+  GeglSwapCache* swap_cache = gegl_swap_cache_new ("swap_cache_test.XXXXXX", 50000);
+  ct_test(test,swap_cache!=NULL);
+  ct_test(test, GEGL_IS_SWAP_CACHE(swap_cache));
+  ct_test(test, g_type_parent(GEGL_TYPE_SWAP_CACHE) == GEGL_TYPE_CACHE);
+  ct_test(test, !strcmp("GeglSwapCache", g_type_name(GEGL_TYPE_SWAP_CACHE)));
   
-  g_object_unref(heap_cache);
+  g_object_unref(swap_cache);
+
 }
 
 static void
-setup_const (Test * test)
+setup_prime (Test * test)
 {
-  GeglCache * cache = GEGL_CACHE(gegl_heap_cache_new (min_cache_size, FALSE));
+
+  GeglCache * cache = GEGL_CACHE(gegl_swap_cache_new ("swap_cache_test.XXXXXX", 50000));
   setup_cache_leaks(cache);
-  setup_const_entries();
-}
+  setup_prime_entries();
 
+}
 static void
-teardown_const (Test * test)
+teardown_prime(Test * test)
 {
+
   teardown_cache_leaks();
-  teardown_const_entries();
+  teardown_prime_entries();
+
 }
-
 Test *
-create_heap_cache_mem_leaks_test()
+create_swap_cache_mem_leaks_test()
 {
-  Test* t = ct_create("GegHeapCache Test");
-  g_assert(ct_addSetUp(t, setup_const));
-  g_assert(ct_addTearDown(t, teardown_const));
+  Test* t = ct_create("GegSwapCache Test");
+  g_assert(ct_addSetUp(t, setup_prime));
+  g_assert(ct_addTearDown(t, teardown_prime));
 
-  g_assert(ct_addTestFun(t, gegl_heap_cache_new_test));
+  g_assert(ct_addTestFun(t, gegl_swap_cache_new_test));
   g_assert(ct_addTestFun(t, gegl_cache_leak_test1));
   g_assert(ct_addTestFun(t, gegl_cache_leak_test3));
   g_assert(ct_addTestFun(t, gegl_cache_leak_test4));

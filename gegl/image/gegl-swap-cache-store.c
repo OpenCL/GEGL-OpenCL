@@ -58,8 +58,8 @@ static void zap (GeglCacheStore * store, GeglEntryRecord * record);
 static gint64 size (GeglCacheStore* self);
 static GeglEntryRecord * pop (GeglCacheStore * self);
 static GeglEntryRecord * peek (GeglCacheStore * self);
-static void swap_data_free (GeglCacheStore * store, SwapStoreData * store_data);
-static void swap_data_dirty (GeglCacheStore * store, void * data);
+static void swap_data_free (GeglCacheStore * store, GeglEntryRecord * record, SwapStoreData * store_data);
+static void swap_data_dirty (GeglCacheStore * store, GeglEntryRecord * record, void * data);
 static SwapStoreData * swap_data_new (void);
 static void swap_in (GeglSwapCacheStore * self, GeglCacheEntry * entry, SwapStoreData * store_data);
 static void swap_out (GeglSwapCacheStore * self, GeglCacheEntry * entry, SwapStoreData * store_data);
@@ -199,7 +199,7 @@ add (GeglCacheStore * store, GeglEntryRecord * record)
   SwapStoreData * store_data = NULL;
   
   store_data = attach_record (self, record);
-
+  g_return_if_fail (store_data != NULL);
   swap_in (self, record->entry, store_data);
 
 }
@@ -256,16 +256,15 @@ peek (GeglCacheStore * store)
   return record;
 }
 static void
-swap_data_free (GeglCacheStore * store, SwapStoreData * store_data)
+swap_data_free (GeglCacheStore * store, GeglEntryRecord * record, SwapStoreData * store_data)
 {
   g_free (store_data);
 }
 static void
-swap_data_dirty (GeglCacheStore * store, void * data)
+swap_data_dirty (GeglCacheStore * store, GeglEntryRecord * record, void * data)
 {
   GeglSwapCacheStore * self = GEGL_SWAP_CACHE_STORE(store);
   SwapStoreData * store_data = (SwapStoreData *)data;
-  GeglEntryRecord * record = (GeglEntryRecord*)store_data->record_list->data;
   /*
    * If we are here, and record->cache_store is not equal to the store
    * that added this SwapStoreData, it means that this swap store data
@@ -404,7 +403,7 @@ attach_record(GeglSwapCacheStore * self, GeglEntryRecord * record)
   self->record_head = g_list_concat(self->record_head, record_list);
   self->size += gegl_cache_entry_flattened_size (record->entry);
   store_data->record_list = record_list;
-  gegl_entry_record_add_store_data_full (record, store, store_data, (GeglStoreDataFunc)swap_data_free, swap_data_dirty);
+  gegl_entry_record_add_store_data_full (record, store, store_data, (GeglStoreDataFunc)swap_data_free, (GeglStoreDataFunc)swap_data_dirty);
   record->status = GEGL_STORED;
   return store_data;
 }
