@@ -6,12 +6,18 @@ the Linux desk top; the Windows community is finding GIMP an
 inexpensive alternative to consumer paint programs.
 
 With the unstable future of many of the current 16-bit off-the-shelf paint
-programs, GIMP is also an attractive option for the film industry -- adapted,
-of course, to the special needs of that industry. 
+programs, GIMP ((is)) [has] also [become] an attractive option for the film industry ((-- adapted,
+of course, to the special needs of that industry)). 
 
 \begin{enumerate}
 
-\item because it is an open source paint program, GIMP is free in the sense of
+\item Because GIMP is open source, its future can be directely controled by users by allocating programmers to the project.
+
+\item Because it is open source, GIMP can be changed to handle different data types and color models -- it can be customized to a specific need. With every paint program and studio having their own way of represanting image data being able to have the paint program match perfectly their own format it very imaortant.   
+
+\item Rhythm \& Hues Studios together with GIMP developers prove that GIMP could be used in film production with the film version of GIMP. They ported a version of GIMP 1.0.4 to use floating point and 16-bit data types. This film version of GIMP, although lacking in many ways, prove that GIMP could become a serious paint tool for film production.  
+
+\item ((Because it is an open source paint program, GIMP is free in the sense of
 intellectual freedom. Permission does not need to be sought to modify
 the program to fulfill particular purposes. Recently, GIMP and Rhythm
 \& Hues developers ported a version of GIMP 1.0.4 to use floating
@@ -21,44 +27,44 @@ vendors. They understood their needs and commenced exploratory
 development. This film version is currently used
 in production at Rhythm \& Hues. Appendix \ref{ch:GIMP_at_Rhythm_Hues} 
 ``GIMP at Rhythm \& Hues Studios'' describes the program's
-current and projected use.
+current and projected use.))
 
 \item GIMP is among one of the most actively maintained open source projects
-on the planet. There are ongoing mailing lists and chat channels
+((on the planet)). There are ongoing mailing lists and chat channels
 dedicated to GIMP users and developers. There are a dozen GIMP book
 titles that support the rank beginner and the graphics professional,
-and more titles are due. This constitutes a virtual support
+and more titles are due. ((This constitutes a virtual support
 organization which makes no annual support contract demands. Competent
 support from a core GIMP developer or power user is typically one
-e-mail away.
+e-mail away.))
 
 \end{enumerate}
 
-But GIMP is not free in a monetary sense. 
+((But GIMP is not free in a monetary sense.)) 
 
-Rhythm \& Hues invested programmer talent, floor space, and equipment,
+((Rhythm \& Hues invested programmer talent, floor space, and equipment,
 all costs to its business. Further, at some juncture it deployed its
 experimental GIMP on a project; that program had to add value before
 deadline arrival, so, to some degree, R \& H put a production schedule
-at risk.
+at risk.))
 
-More generally, every individual involved in the support of GIMP
+((More generally, every individual involved in the support of GIMP
 contribute time and talent. This expenditure is not without cost to
 these individuals. Peculiar to the Open Source community, should these
 individuals determine that their personal costs are outweighing a
 (largely psychological) return, they lose interest in the project,
 slowing the pace of development and putting the user base at risk.
 Combating that risk is important, but we think it is beatable and
-we'll address it at the end of this introduction.
+we'll address it at the end of this introduction.))
 
-Obviously, costs distribute themselves differently in an Open Source
+((Obviously, costs distribute themselves differently in an Open Source
 project, challenging current bean counting and project management
 customs, but costs clearly exist, and there is no reason to believe
 they cannot become substantial. As with any effort, costs associated
 with Open Source projects have to be identified as containable, their
-magnitudes have to be estimated and weighed against benefits.
+magnitudes have to be estimated and weighed against benefits.))
 
-This document advocates that GIMP can deliver benefits that exceeds
+((This document advocates that GIMP can deliver benefits that exceeds
 costs. First, the benefits can be optimized to meet particular aims,
 for in the Open Source community, aims are specified by those who
 participate most vigorously in the project and who demonstrate
@@ -68,9 +74,9 @@ the costs are identifiable. These include traditional time costs to
 develop code (estimated in Chapter \ref{ch:Schedule}), and the
 less-traditional costs of integrating with an Open Source community
 (Discussed in Appendix \ref{ch:Contributing_to_GIMP}, ``Contributing
-to GIMP.'')
+to GIMP.'')))
 
-The greatest risk facing any Open Source project -- the risk
+((The greatest risk facing any Open Source project -- the risk
 that determines if anyone benefits at all -- is the risk of malaise.
 Participants in Open Source projects are not primarily motivated by
 money. Many are already richly compensated (thank you); they 
@@ -82,17 +88,17 @@ unreachable is not quite like any elixir that money can buy, and
 once imbibed is addictive. The sense that a project is 
 done, that there is no room anymore for neat hacks -- that The
 Game is Over -- dissipates Open Source teams faster than any
-other effect.
+other effect.))
 
-This risk, while grave, is beatable. As this document describes,
+((This risk, while grave, is beatable. As this document describes,
 GIMP 2.0 has room for a lot of neat hacks. Its emphasis on modular
 design makes not only technical but social sense, because
 the pieces can be ``owned'' by particular people. Contrast
 this to the current GIMP 1.2 code base, where changes in certain 
 areas are unpredictably global, bringing the perpetrator angry
-e-mail and disapproval, often discouraging further participation. 
+e-mail and disapproval, often discouraging further participation.)) 
 
-To the extent that GIMP will benefit anyone sooner or later depends
+((To the extent that GIMP will benefit anyone sooner or later depends
 very much on furnishing a point of nucleation just as the good people
 are hovering around, wondering ``What's next?'' GIMP 1.2 is done; GIMP
 2.0 is in the wings. Our goal with this document is to attract the
@@ -104,51 +110,60 @@ hard problems are also the most attractive, and those who will benefit
 first will be those who frame the hunt. There are risks involved, many
 beyond the somewhat murky crystal ball of this document, but the very
 worse one somehow goes away when people are just too damn busy to
-notice.
+notice.))
 
-So, are you game?  
+((So, are you game?))  
 
-If so, then here are our best guesses as to the problems,
-and what needs to be done.
+((If so, then here are our best guesses as to the problems,
+and what needs to be done.))
 
-\begin{enumerate}
+[In this document we will cover the following items.]
+\begin{itemize}
 
 \item Chapter \ref{ch:GIMP_2.0} ``GIMP 2.0 Design Concepts'' reviews the 1.2 
 release and discusses why it is not the ``out-of-box'' GIMP for either
 the film industry or future GIMP development.  Reviews the basic architecture 
-of GIMP 2,0.
+of GIMP 2.0.
 
 \item Chapter \ref{ch:GEGL} ``GEGL'' reviews the most concretely realized 
 component of GIMP 2.0, the GEGL library. GEGL will be the heart of
 the GIMP 2.0 rendering pipeline.
 
-\item Chapter \ref{ch:Schedule} ``Schedule'' reviews what we think GIMP 2.0
-will cost in terms of man-hours. We may be missing scaling factors
-here, but we think we have the relative proportions correct.
+\item Chapter \ref{ch:Schedule} ``Schedule'' [contain estimate cost] ((reviews what we think)) for GIMP 2.0
+((will cost in terms of man-hours.)) We are ((may be)) missing scaling factors
+((here)), but ((we think)) we have the relative proportions correct.
 
-\item Chapter \ref{ch:Conclusion}, ``Conclusion'' is where we 
-summarize what we think we've said.
+\item ((Chapter \ref{ch:Conclusion}, ``Conclusion'' is where we 
+summarize what we think we've said.))
 
-\end{enumerate}
+\end{itemize}
 
-For background, we offer a number of appendices:
+((For background , we offer a number of appendices:))
 
-\begin{enumerate}
+[Background information is included in the appendix.] 
+
+\begin{itemize}
 
 \item Appendix  \ref{ch:GIMP_Versions_Licences} ``History of GIMP'' from
 0.54 to 2.0, Also notes on the GNU General Public License, which
 control's GIMP's distribution.
 
 \item Appendix  \ref{ch:GIMP_at_Rhythm_Hues}  ``GIMP at Rhythm \& Hues Studios''
-goes into greater detail of the use of HOLLYWOOD GIMP in a production
-setting. GIMP did not meet all needs of all people, it was found unable to
+goes into ((greater)) detail of the use of HOLLYWOOD GIMP in a production
+setting --- the pros and cons. ((GIMP did not meet all needs of all people, it was found unable to
 slice bread, but it did remove wires and more. It's the experiment that gave the 
-authors the courage to write this document.
+authors the courage to write this document.))
 
 \item Appendix \ref{ch:Contributing_to_GIMP} ``Contributing to GIMP''
 Anyone who has managed a software development team in a traditional sense
 can find Open Source strange. The compensation is rich, but it isn't always
 money. Notes on how things get done in Open Source projects.
 
-\item Appendix \ref{ch:More_Information} ``More Information'' is an
-edited version of our favorite links page ;) \end{enumerate}
+\item Appendix \ref{ch:More_Information} ``More Information'' contains URLs to
+webpages with more information.
+((is an
+edited version of our favorite links page ;))) 
+
+\end{itemize}
+
+

@@ -1,11 +1,24 @@
-GIMP 2.0 will consist of a number of libraries providing the different
+GIMP 2.0 will consist of numerous library, making GIMP modular and easy to maintain.   
+\begin{itemize}
+\item {\em gegl} Graphics kernel used by GIMP.
+\item {\em libgimpjunk} Various stuff (Junk yoU Need Kommonly)
+\item {\em libgimpcore} Contains all non-UI logic
+\item {\em libgimpcoreui} Core UI widget not usable by plug-ins such as canvas widget
+\item {\em libgimpapp} GIMP application kernel
+\item {\em libui} UI widget used to build plug-in and application UI
+\item {\em libgimpext} Communication library between plug-ins and application
+\item {\em libgimpwidget} core-independent widget use such as building libui widget
+\item {\em libgimpiface} contains the interfaces for libgimpui and libgimpcoreui
+\end{itemize}
+
+((GIMP 2.0 will consist of a number of libraries providing the different
 functionalities of the core, the Portable Database (PDB) interface and
 the plug-in communication layer. The actual GIMP application will only
-glue this together and provide a nice user interface.
+glue this together and provide a nice user interface.))
 
-\section{GEGL}
+\subsection{GEGL}
 
-The actual pixel manipulation will be done using GEGL, the Gimp
+The actual pixel manipulation will be done using GEGL, the GEneral
 Graphics Library. GEGL abstracts from the color-space and color depth
 (8 bit, 16 bit, float, double) and provides generic data types like
 channel or color. The algorithms implemented using these abstract
@@ -17,7 +30,7 @@ architecture, GEGL is the furthest along the development cycle.
 Chapter \ref{ch:GEGL} has been dedicated to a technical description
 of this library.
 
-\section{Layer Trees}
+\subsection{Layer Trees}
  
 What used to be a simple layer stack in GIMP 1.x, which is combined
 using layer modes (Normal, Combine, Difference, ...) will, with the
@@ -32,7 +45,7 @@ the rendering pipeline. A similar approach will be used for the
 operators: Simple functions like color corrections or blur filters as
 well as affine transformations and more complex effects are possible.
 
-\section{GIMP Core and Plugin Interfaces}
+\subsection{GIMP Core and Plugin Interfaces}
 
 Build on top of this, the core will implement objects like images,
 tools, brushes etc. The interfaces of all these high level objects are
@@ -50,7 +63,7 @@ implement operators, tools or complete layer-types as plug-ins. The
 design of layers and tools allows to create specific tools for special
 layer-types (like for example vector-tools on vector-layers).
 
-\section{Common Object Resource Broker Architecture}
+\subsection{Common Object Resource Broker Architecture}
 
 The communication between the core application and the plug-ins is
 done using CORBA. The interface between the actual objects and the ORB
@@ -59,7 +72,7 @@ developer will only see GTK+-objects and does not have to deal with
 the shoals of CORBA. The term plug-in becomes a historical meaning
 since GIMP 2.0 will use a network-transparent client-server system.
 
-\section{Parallelization}
+\subsection{Parallelization}
 
 Another highlight will be the parallelization of the actual computing.
 Eventually you will not only want to build up a nice
@@ -70,7 +83,7 @@ operation to the batch-renderer which runs in its own thread. That way
 not only the user interface, but the whole object system stays
 responsive all the time.
 
-\section{The Application}
+\subsection{The Application}
 On top of all this sits the actual GIMP application and holds it all
 together.  This design will make it possible to implement different
 GIMP interfaces like a video-editing system or to visualize the

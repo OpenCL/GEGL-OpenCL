@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (C version 6.1) (format=latex 98.4.2)  18 SEP 2000 15:43
+This is TeX, Version 3.14159 (C version 6.1) (format=latex 98.4.2)  20 SEP 2000 15:28
 **gimp
 (gimp.tex
 LaTeX2e <1996/12/01> patch level 1
@@ -73,116 +73,130 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <7> on input line 3.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 3.
-)
+[1
+
+])
 \tf@toc=\write3
- [1
+ [2]
+Chapter 1.
+(introduction.tex [3
 
 ]
-Chapter 1.
-(introduction.tex [2
+Overfull \hbox (3.16727pt too wide) in paragraph at lines 60--66
+[]\OT1/cmr/m/n/10 ((Obviously, costs dis-tribute them-selves dif-fer-ently in a
+n Open Source project,
+ []
 
-] [3]) [4]
+[4]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 123.
+
+ (/usr/local/lib/texmf/tex/latex/base/omscmr.fd
+File: omscmr.fd 1997/01/14 v2.5a Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 123.
+ [5]) [6]
 Chapter 2.
-(intro_gimp.tex) (gimp_future.tex) (gimp2.tex [5
+(intro_gimp.tex [7
 
-] [6]) [7]
+]) (gimp_future.tex) [8] (gimp2.tex [9] [10]) [11]
 Chapter 3.
 (intro_gegl.tex) (higher_level_design_gegl.tex) (lower_level_design_gegl.tex
-[8
+[12
 
-]) (current_state_gegl.tex) (future_gegl.tex) [9]
+]) (current_state_gegl.tex) (future_gegl.tex) [13]
 Chapter 4.
 (schedule.tex
-Underfull \hbox (badness 6268) in paragraph at lines 12--12
+Underfull \hbox (badness 6268) in paragraph at lines 17--17
 []\OT1/cmr/m/n/10 Geometric Op-er-a-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14--14
+Underfull \hbox (badness 10000) in paragraph at lines 19--19
 []\OT1/cmr/m/n/10 Basic Im-age
  []
 
 
-Underfull \hbox (badness 2027) in paragraph at lines 14--14
+Underfull \hbox (badness 2027) in paragraph at lines 19--19
 []\OT1/cmr/m/n/10 Write classes for GimpIm-age,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 14--14
+Underfull \hbox (badness 10000) in paragraph at lines 19--19
 \OT1/cmr/m/n/10 Gim-p-Draw-able, Gim-pLayer,
  []
 
 
-Overfull \hbox (4.99738pt too wide) in paragraph at lines 17--17
+Overfull \hbox (4.99738pt too wide) in paragraph at lines 22--22
 []\OT1/cmr/m/n/10 GIMPCoreUI,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 17--17
+Underfull \hbox (badness 10000) in paragraph at lines 22--22
 \OT1/cmr/m/n/10 GIM-PUI,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 17--17
+Underfull \hbox (badness 10000) in paragraph at lines 22--22
 \OT1/cmr/m/n/10 GIM-P-Wid-
  []
 
 
-Overfull \hbox (5.2474pt too wide) in paragraph at lines 26--26
+Overfull \hbox (5.2474pt too wide) in paragraph at lines 31--31
 []\OT1/cmr/m/n/10 GIMPWidget,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 32--32
-[]\OT1/cmr/m/n/10 Preprocesor for
+Underfull \hbox (badness 10000) in paragraph at lines 37--37
+[]\OT1/cmr/m/n/10 Preprocessor for
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 34--34
+Underfull \hbox (badness 10000) in paragraph at lines 39--39
 []\OT1/cmr/m/n/10 Memory Man-age-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 34--34
+Underfull \hbox (badness 10000) in paragraph at lines 39--39
 []\OT1/cmr/m/n/10 Investigate trade-offs among
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 34--34
+Underfull \hbox (badness 10000) in paragraph at lines 39--39
 \OT1/cmr/m/n/10 conquer memory-management
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 36--36
+Underfull \hbox (badness 10000) in paragraph at lines 41--41
 []\OT1/cmr/m/n/10 Multi-thread sup-
  []
 
 
-Underfull \hbox (badness 2221) in paragraph at lines 36--36
+Underfull \hbox (badness 2221) in paragraph at lines 41--41
 \OT1/cmr/m/n/10 op-er-a-tions multi-threaded and
  []
 
 
-Underfull \hbox (badness 1028) in paragraph at lines 36--36
+Underfull \hbox (badness 1028) in paragraph at lines 41--41
 \OT1/cmr/m/n/10 as-sure that all op-er-a-tions are
  []
 
 
-Overfull \hbox (50.69437pt too wide) in paragraph at lines 3--46
+Overfull \hbox (50.69437pt too wide) in paragraph at lines 8--51
 []  
  []
 
-[10
+[14
 
 ]
 Overfull \vbox (39.76207pt too high) has occurred while \output is active []
 
 
-[11])
+[15])
 Chapter 5.
-(conclution.tex) [12
+(conclution.tex [16
 
-]
+]) [17]
 Appendix A.
 (history_gimp.tex) (gimp1.2.tex)
 Overfull \hbox (1.1302pt too wide) in paragraph at lines 1--102
@@ -190,35 +204,32 @@ Overfull \hbox (1.1302pt too wide) in paragraph at lines 1--102
 new tools (dodge/burn,
  []
 
-(gimp_film.tex [13
+(gimp_film.tex [18
 
-]) (gimp_license.tex) [14]
+]) (gimp_license.tex) [19]
 Appendix B.
-(intro_rnh.tex) (rnh_why.tex) [15
+(intro_rnh.tex) (rnh_why.tex) [20
 
 ] (rnh_what.tex
 Underfull \hbox (badness 10000) in paragraph at lines 1--5
 
  []
 
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 8.
-(/usr/local/lib/texmf/tex/latex/base/omscmr.fd
-File: omscmr.fd 1997/01/14 v2.5a Standard LaTeX font definitions
-)
-LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 8.
-) (rnh_fail.tex [16])
-(rnh_dir.tex) [17]
+) (rnh_fail.tex [21]) (rnh_dir.tex) [22]
 Appendix C.
-(cooperation.tex) [18
+(cooperation.tex) [23
 
 ]
 Appendix D.
 (more_info.tex)
 No file gimp.bbl.
-[19
+[24
 
-] (gimp.aux) ) 
+] (gimp.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
 Here is how much of TeX's memory you used:
  756 strings out of 10906
  8024 string characters out of 72188
@@ -226,6 +237,6 @@ Here is how much of TeX's memory you used:
  3541 multiletter control sequences out of 9500
  9752 words of font info for 34 fonts, out of 150000 for 255
  14 hyphenation exceptions out of 607
- 32i,8n,21p,848b,270s stack positions out of 300i,40n,60p,3000b,4000s
+ 32i,8n,21p,665b,259s stack positions out of 300i,40n,60p,3000b,4000s
 
-Output written on gimp.dvi (20 pages, 46208 bytes).
+Output written on gimp.dvi (25 pages, 64756 bytes).
