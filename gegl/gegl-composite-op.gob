@@ -241,7 +241,7 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       break;
       default:
       break;
-  }	
+    }	
   }
 
   private
@@ -387,11 +387,11 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         *bg_b++ += *fg_b++;
         *bg_a++ =  (*bg_a + *fg_a++) * .5;
       }
-            break;
-            default:
-            break;
-          }
-        }
+    break;
+    default:
+    break;
+    }
+  }
 
 
   private 

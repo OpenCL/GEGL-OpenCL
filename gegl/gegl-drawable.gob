@@ -19,8 +19,8 @@ class Gegl:Drawable from Gegl:Object {
 
   public
   GeglDrawable *	
-  new(GeglColorModel *cm,  
-      GimpDataStorage *storage_info,  /*passed on to ImageBuffer*/
+  new(GeglColorModel *cm,     /* Also should pass storage info eventually*/ 
+      char *name,
       gint w,
       gint h)
   {
@@ -39,8 +39,7 @@ class Gegl:Drawable from Gegl:Object {
   protected 
   gboolean 
   constructor(self,
-      GeglColorModel *cm,  
-      GimpDataStorage *storage_info,
+      GeglColorModel *cm,    /*Also should pass storage info eventually*/ 
       char *name,
       gint w,
       gint h)
@@ -76,9 +75,8 @@ class Gegl:Drawable from Gegl:Object {
   {
     GeglDrawable *self = GEGL_Drawable(object); 
 
-    /* Dispose of pointer arrays for images and rects */
-    g_free(self->_priv->image_buffer);
-    g_free(self->_priv->graphics_state);
+    gegl_destroy(self->_priv->image_buffer);
+    gegl_destroy(self->_priv->graphics_state);
     g_free(self->_priv->name);
 
     /* Chain up on destroy */
@@ -108,23 +106,65 @@ class Gegl:Drawable from Gegl:Object {
 
   public 
   void
-  fill(self)
+  fill(self, 
+       GeglRect *rect)
   {
-    /* Set up and do a fill on the image buffer using the forground color */
+    GeglColor *fill_color = gegl_graphics_state_get_fg_color (
+                            self->_priv->graphics_state);
+    GeglOp *op = GEGL_OP(gegl_fill_op_new (
+                           self->_priv->image_buffer, 
+                           rect, fill_color);
+
+    /* Do the fill */
+    gegl_op_apply (op);
   }
 
   public 
   void
-  apply_image(self)
+  apply_image(self, 
+              GeglImageBuffer *src_image_buffer,
+              gint x,     /* eventually change this to a rect */
+              gint y      /* once scaling is implemented */
+              )
   {
-    /* Set up and do a composite or copy of the passed image buffer */
+    gint src_width = gegl_image_buffer_width (src_imagea_buffer);
+    gint src_height = gegl_image_buffer_height (src_image_buffer);
+    GeglCompositeMode comp_mode = gegl_graphics_state_get_composite_mode (
+                             self->_priv->graphics_state);
+    GeglRect src_rect;
+    GeglRect draw_rect;
+    GeglOp *op; 
+
+    /* Apply the image at (x,y) on the drawable*/
+    gegl_rect_set(&src_rect, 0,0,src_width, src_height);
+    gegl_rect_set(&draw_rect, x,y,src_width, src_height);
+
+
+    /* Disallow scaling and off the edge of drawable for now*/
+    if (draw_rect->w != src_rect.w || draw_rect->h != src_rect.h)
+      {
+        gwarning ("gegl_drawable_apply_image: cant scale images yet\n");
+	return;
+      }
+
+    if (draw_rect.x + src_rect.w > self->_priv->width || 
+        draw_rect.y + src_rect.h > self->_priv->height)
+      {
+        gwarning ("gegl_drawable_apply_image: cant apply images outside drawable yet\n");
+	return;
+      }
+
+    op = GEGL_OP(gegl_composite_op_new (self->_priv->image_buffer, 
+                      src_image_buffer, &draw_rect, &src_rect, comp_mode));
+
+    /* Apply the composite op */
+    gegl_op_apply (op);
   }
 
   public 
   void
   apply_operation(self)
   {
-    /* Set up and do a a specified image operation on the image buffer */
   }
 
   public 

@@ -58,8 +58,6 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
   void 
   destroy (GtkObject *object)
   {
-    /* Dispose of the data type string here */
-
     /* Chain up on destroy */
     PARENT_HANDLER (object)
   }
@@ -129,7 +127,6 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
           channel_values[r].f = 1.0;
           channel_values[g].f = 1.0;
           channel_values[b].f = 1.0;
-
           if (!has_alpha)
             channel_values[a].f = 0.0;
           break;

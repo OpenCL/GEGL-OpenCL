@@ -129,8 +129,8 @@ class Gegl:Print:Op from Gegl:Point:Op {
      */
 
     guint width;
-    guchar *channels[3];
-    guchar *r, *g, *b;
+    guint8 *channels[3];
+    guint8 *r, *g, *b;
 
     GeglPointOpPrivate *point_opP =
         (GeglPointOpPrivate *)(point_op->_priv);

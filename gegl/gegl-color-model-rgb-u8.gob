@@ -47,7 +47,7 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
 
     color_modelP->data_type = U8;
     color_modelP->channel_data_type_name = NULL;
-    color_modelP->bytes_per_channel = sizeof(guchar);
+    color_modelP->bytes_per_channel = sizeof(guint8);
     color_modelP->bytes_per_pixel = 
                   color_modelP->bytes_per_channel * 
                   color_modelP->num_channels;
@@ -83,63 +83,63 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
     switch (constant) 
       { 
         case COLOR_WHITE:
-          channel_values[r].f = 255;
-          channel_values[g].f = 255;
-          channel_values[b].f = 255;
+          channel_values[r].u8 = 255;
+          channel_values[g].u8 = 255;
+          channel_values[b].u8 = 255;
           if (has_alpha)
-            channel_values[a].f = 255;
+            channel_values[a].u8 = 255;
           break;
         case COLOR_BLACK:
-          channel_values[r].f = 0;
-          channel_values[g].f = 0;
-          channel_values[b].f = 0;
+          channel_values[r].u8 = 0;
+          channel_values[g].u8 = 0;
+          channel_values[b].u8 = 0;
           if (has_alpha)
-            channel_values[a].f = 255;
+            channel_values[a].u8 = 255;
           break;
         case COLOR_RED:
-          channel_values[r].f = 255;
-          channel_values[g].f = 0;
-          channel_values[b].f = 0;
+          channel_values[r].u8 = 255;
+          channel_values[g].u8 = 0;
+          channel_values[b].u8 = 0;
           if (has_alpha)
             channel_values[a].f = 255;
           break;
         case COLOR_GREEN:
-          channel_values[r].f = 0;
-          channel_values[g].f = 255;
-          channel_values[b].f = 0;
+          channel_values[r].u8 = 0;
+          channel_values[g].u8 = 255;
+          channel_values[b].u8 = 0;
           if (has_alpha)
-            channel_values[a].f = 255;
+            channel_values[a].u8 = 255;
           break;
         case COLOR_BLUE:
-          channel_values[r].f = 0;
-          channel_values[g].f = 0;
-          channel_values[b].f = 255;
+          channel_values[r].u8 = 0;
+          channel_values[g].u8 = 0;
+          channel_values[b].u8 = 255;
           if (has_alpha)
-            channel_values[a].f = 255;
+            channel_values[a].u8 = 255;
           break;
         case COLOR_GRAY:
         case COLOR_HALF_WHITE:
-          channel_values[r].f = 127;
-          channel_values[g].f = 127;
-          channel_values[b].f = 127;
+          channel_values[r].u8 = 127;
+          channel_values[g].u8 = 127;
+          channel_values[b].u8 = 127;
           if (has_alpha)
-            channel_values[a].f = 255;
+            channel_values[a].u8 = 255;
           break;
         case COLOR_WHITE_TRANSPARENT:
-          channel_values[r].f = 255;
-          channel_values[g].f = 255;
-          channel_values[b].f = 255;
+          channel_values[r].u8 = 255;
+          channel_values[g].u8 = 255;
+          channel_values[b].u8 = 255;
 
           if (!has_alpha)
-            channel_values[a].f = 0;
+            channel_values[a].u8 = 0;
           break;
         case COLOR_TRANSPARENT:
         case COLOR_BLACK_TRANSPARENT:
-          channel_values[r].f = 0;
-          channel_values[g].f = 0;
-          channel_values[b].f = 0;
+          channel_values[r].u8 = 0;
+          channel_values[g].u8 = 0;
+          channel_values[b].u8 = 0;
           if (has_alpha)
-            channel_values[a].f = 0;
+            channel_values[a].u8 = 0;
           break;
       }
    }

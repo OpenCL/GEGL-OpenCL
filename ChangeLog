@@ -1,3 +1,15 @@
+Mon Jan 24 11:27:03 EST 2000  calvinw@mindspring.com
+
+    *Fixed the GOB_PUBLIC_HEADER in Makefile.am for
+     gegl-composite-op.h gegl-premult-op.h gegl-unpremult-op.h
+
+    *Fixed some of set_color for GeglColorModelRgbU8.
+     channels[i].u8 is how to get 8bit version of a GeglColor.
+
+    *Use guint8 not guchar for 8bit data type code.
+
+    *Added more to GeglDrawable class.
+
 Sun Jan 23 13:13:18 EST 2000  calvinw@mindspring.com 
     
     * added caros testgeglfile --which opens 2 tiffs

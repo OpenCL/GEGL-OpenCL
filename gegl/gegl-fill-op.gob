@@ -7,6 +7,7 @@
 #include "gegl-fill-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
+#include "gegl-object-private.h"
 #include "gegl-color.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
@@ -75,7 +76,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
         point_op_class->scanline_func = gegl_fill_op_RGB_U8;
         break;
       default:
-        g_warning("PrintOp: Color Model data type none or unknown\n");
+        g_warning("FillOp: Color Model data type none or unknown\n");
         point_op_class->scanline_func = NULL; 	
         return FALSE;
     }
@@ -98,7 +99,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     GeglFillOp * self = GEGL_FILL_OP(object); 
 
     /* Dispose of the fill color*/
-    g_free(self->_priv->fill_color);
+    gegl_object_destroy(GEGL_OBJECT(self->_priv->fill_color));
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)
@@ -158,9 +159,9 @@ class Gegl:Fill:Op from Gegl:Point:Op {
 
     */
     guint width;
-    guchar *dest_data[3];
-    guchar *r, *g, *b;
-    guchar color_r, color_g, color_b;
+    guint8 *dest_data[3];
+    guint8 *r, *g, *b;
+    guint8 color_r, color_g, color_b;
     GeglFillOp *self = GEGL_FILL_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
     GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
@@ -168,9 +169,9 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     GeglChannelValue *fill_values = gegl_color_get_channel_values(
                                    self->_priv->fill_color);
     /* Get the fill color r,g,b */
-    color_r = fill_values[0].f;
-    color_g = fill_values[1].f;
-    color_b = fill_values[2].f;
+    color_r = fill_values[0].u8;
+    color_g = fill_values[1].u8;
+    color_b = fill_values[2].u8;
 
     width = point_opP->scanline_width;
 

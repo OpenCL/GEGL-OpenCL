@@ -114,9 +114,11 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
 
     /* Allocate a color and set its channels to the passed one */  
     {
+#if 0
       GeglColorModel *cm = gegl_color_get_color_model (color);
-      self->_priv->convert-rgb_color = gegl_color_new (cm); 
+      self->_priv->convert->rgb_color = gegl_color_new (cm); 
       gegl_color_set (self->_priv->convert-rgb_color, color);
+#endif
     }
 
     return TRUE;

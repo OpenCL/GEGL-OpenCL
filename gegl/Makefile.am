@@ -50,9 +50,9 @@ GOB_PUBLIC_H = \
         gegl-color.h \
         gegl-graphics-state.h \
         gegl-fill-op.h \
-	gegl-composite-op.c \
-        gegl-premult-op.c \
-        gegl-unpremult-op.c
+	gegl-composite-op.h \
+        gegl-premult-op.h \
+        gegl-unpremult-op.h
 
 
 

@@ -103,6 +103,20 @@ class Gegl:Image:Buffer from Gegl:Object {
     PARENT_HANDLER (object)
   }
 
+  public 
+  gint 
+  get_width (self)
+  {
+    return self->_priv->width;
+  }
+
+  public 
+  gint 
+  get_height (self)
+  {
+    return self->_priv->height;
+  }
+
   public
   void
   request_rect (self, GeglRect *request_rect)

@@ -75,7 +75,6 @@ class Gegl:Unpremult:Op from Gegl:Point:Op {
       }
 #endif
 
-    /* Allocate a color and set its channels to the passed one */  
     cm = gegl_image_buffer_color_model (dest);
     has_alpha = gegl_color_model_has_alpha(cm);
     
