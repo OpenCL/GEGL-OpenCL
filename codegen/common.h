@@ -9,7 +9,7 @@
 #include "data_type.h"
 
 #ifndef DEBUG
-#define DEBUG 1  
+#define DEBUG 0  
 #endif
 
 typedef enum
@@ -23,8 +23,8 @@ typedef enum
 {
   TYPE_INT,
   TYPE_FLOAT,
-  TYPE_CHAN,
-  TYPE_CHANFLOAT
+  TYPE_CHANNEL,
+  TYPE_CHANNELFLOAT
 }DATA_TYPE;
 
 typedef enum
@@ -45,7 +45,7 @@ typedef enum
   OP_DIVIDE,
   OP_NEG, 
   OP_WP_CLAMP,
-  OP_CHAN_CLAMP, 
+  OP_CHANNEL_CLAMP, 
   OP_EQUAL,
 }FUNCTION;
 

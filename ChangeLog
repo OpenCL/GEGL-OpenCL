@@ -1,3 +1,17 @@
+Tue Mar 28 11:21:30 PST 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* I have made the following change to parser.y, lexer.l,common.h
+	data_file.h, and the the files in channel_data
+	CHAN_MULT to be CHANNEL_MULT
+	MIN_CHAN to be MIN_CHANNEL
+	MAX_CHAN to be MAX_CHANNEL
+	CHAN_CLAMP to be CHANNEL_CLAMP
+	ROUND to be CHANNEL_ROUND
+        in other words i have changed CHAN to CHANNEL 
+
+
 Tue Mar 28 12:33:51 EST 2000 calvinw@mindspring.com
 
 	* check in for codegen

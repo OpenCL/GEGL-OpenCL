@@ -93,7 +93,7 @@ int     cur_nsyms=0;
 %token  UNION  UNSIGNED  VOID  VOLATILE  WHILE
 
 /* operations */ 
-%token	MAX  MIN  ABS  CHAN_CLAMP  WP_CLAMP  
+%token	MAX  MIN  ABS  CHANNEL_CLAMP  WP_CLAMP  
 %token  PLUS  MINUS  TIMES  DIVIDE  POWER  LT_PARENTHESIS RT_PARENTHESIS
 %token  LT_CURLY  RT_CURLY LT_SQUARE RT_SQUARE 
 %token  EQUAL PLUS_EQUAL MINUS_EQUAL TIMES_EQUAL DIVIDE_EQUAL
@@ -117,8 +117,8 @@ int     cur_nsyms=0;
 %type   <elem> VectorChan_List
 
 /* tokens for data types */
-%token  DT_DATATYPE  DT_WP  DT_WP_NORM  DT_MIN_CHAN DT_MAX_CHAN
-%token  DT_ZERO  DT_CHAN_CLAMP  DT_WP_CLAMP  DT_CHAN_MULT  DT_ROUND DT_COMMA 
+%token  DT_DATATYPE  DT_WP  DT_WP_NORM  DT_MIN_CHANNEL DT_MAX_CHANNEL
+%token  DT_ZERO  DT_CHANNEL_CLAMP  DT_WP_CLAMP  DT_CHANNEL_MULT  DT_ROUND_CHANNEL DT_COMMA 
 %token  <tok> DT_NAME
 %token  <tok> DT_STRING
 
@@ -159,21 +159,21 @@ DT_Line:
 		WP_NORM_STR = (char *) strdup (&($2.string[i]));
 		WP_NORM_STR[strlen (WP_NORM_STR)] = '\0';   
 		}
-	| DT_MIN_CHAN DT_STRING
+	| DT_MIN_CHANNEL DT_STRING
 		{
 		int i=0;
 		while ($2.string[i] == '\t' || $2.string[i] == ' ')
 		  i++; 
-		MIN_CHAN_STR = (char *) strdup (&($2.string[i]));
-		MIN_CHAN_STR[strlen (MIN_CHAN_STR)] = '\0';   
+		MIN_CHANNEL_STR = (char *) strdup (&($2.string[i]));
+		MIN_CHANNEL_STR[strlen (MIN_CHANNEL_STR)] = '\0';   
 		}
-	| DT_MAX_CHAN DT_STRING
+	| DT_MAX_CHANNEL DT_STRING
 		{
 		int i=0;
 		while ($2.string[i] == '\t' || $2.string[i] == ' ')
 		  i++; 
-		MAX_CHAN_STR = (char *) strdup (&($2.string[i]));
-		MAX_CHAN_STR[strlen (MAX_CHAN_STR)] = '\0';   
+		MAX_CHANNEL_STR = (char *) strdup (&($2.string[i]));
+		MAX_CHANNEL_STR[strlen (MAX_CHANNEL_STR)] = '\0';   
 		}
 	| DT_ZERO DT_STRING
 		{
@@ -183,7 +183,7 @@ DT_Line:
 		ZERO_STR = (char *) strdup (&($2.string[i]));
 		ZERO_STR[strlen (ZERO_STR)] = '\0';   
 		}
-	| DT_CHAN_CLAMP LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
+	| DT_CHANNEL_CLAMP LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
 		int i=0, j=0, len, sublen, flag;
 		char tmp[255];
@@ -216,7 +216,7 @@ DT_Line:
 		    }
 		  }
 		tmp[j] = '\0'; 
-		CHAN_CLAMP_STR = (char *) strdup (tmp); 
+		CHANNEL_CLAMP_STR = (char *) strdup (tmp); 
 		}
 	| DT_WP_CLAMP LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
@@ -253,7 +253,7 @@ DT_Line:
 		tmp[j] = '\0'; 
 		WP_CLAMP_STR = (char *) strdup (tmp); 
 		}
-	| DT_CHAN_MULT LT_PARENTHESIS DT_NAME DT_COMMA DT_NAME RT_PARENTHESIS DT_STRING    
+	| DT_CHANNEL_MULT LT_PARENTHESIS DT_NAME DT_COMMA DT_NAME RT_PARENTHESIS DT_STRING    
 		{
 		int i=0,j=0, len, sublen1, sublen2, flag1, flag2;
 		char tmp[255];
@@ -302,9 +302,9 @@ DT_Line:
 		  }
 		
 		tmp[j] = '\0'; 
-		CHAN_MULT_STR = (char *) strdup (tmp); 
+		CHANNEL_MULT_STR = (char *) strdup (tmp); 
 		}
-	| DT_ROUND LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
+	| DT_ROUND_CHANNEL LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
 		int i=0, j=0, len, sublen, flag;
 		char tmp[255];
@@ -338,7 +338,7 @@ DT_Line:
 		    }
 		  }
 		tmp[j] = '\0'; 
-		ROUND_STR = (char *) strdup (tmp); 
+		ROUND_CHANNEL_STR = (char *) strdup (tmp); 
 		}
 	;
 
@@ -538,9 +538,9 @@ Line:
 		    strcpy ($4.string, tmp);
 		    print_line($4);
 		    printf ("%sif (%s_has_%s)%s  %s_%s++;", $1.string, t,
-			NAME_COLOR_CHAN[NUM_COLOR_CHAN],
+			NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
 			$1.string, t,
-			NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
+			NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
 		    printf ("\n"); 
 		    }
 		  else if (get_sym ($4.string)->type == TYPE_CA_VECTOR)
@@ -568,9 +568,9 @@ Line:
 		      strcpy ($4.string, tmp);
 		      print_line($4); 
 		      printf ("%sif (%s_has_%s)%s  %s_%s += %s", $1.string, t,
-			 NAME_COLOR_CHAN[NUM_COLOR_CHAN], 
+			 NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL], 
 			 $1.string, t,  
-			 NAME_COLOR_CHAN[NUM_COLOR_CHAN],
+			 NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
 			 $6.string);
 		      printf ("\n"); 
 		      }
@@ -645,10 +645,10 @@ Expression:
 		$$=$3; 
 		do_op_two (&$$, $3, OP_WP_CLAMP); 
 		}
-	| CHAN_CLAMP LT_PARENTHESIS Expression RT_PARENTHESIS
+	| CHANNEL_CLAMP LT_PARENTHESIS Expression RT_PARENTHESIS
                 { 
 		$$=$3; 
-		do_op_two (&$$, $3, OP_CHAN_CLAMP); 
+		do_op_two (&$$, $3, OP_CHANNEL_CLAMP); 
 		} 
 	| ABS LT_PARENTHESIS Expression RT_PARENTHESIS
                 {
@@ -765,7 +765,7 @@ Chan_List:
 		}
         | NAME                          
 		{
-		set_dtype($1, TYPE_CHAN); 
+		set_dtype($1, TYPE_CHANNEL); 
 		set_type($1, TYPE_SCALER);
 	        set_num ($1, 1); 	
 	  	$$=$1; 
@@ -774,7 +774,7 @@ Chan_List:
         | NAME EQUAL FLOAT              
 		{ 
 		char tmp[256];
-		set_dtype($1, TYPE_CHAN);
+		set_dtype($1, TYPE_CHANNEL);
                 set_type($1, TYPE_SCALER);
 	        set_num ($1, 1); 	
 		$$=$1; 
@@ -785,7 +785,7 @@ Chan_List:
         | NAME EQUAL INT                
 		{ 
 		char tmp[256];
-		set_dtype($1, TYPE_CHAN);
+		set_dtype($1, TYPE_CHANNEL);
                 set_type($1, TYPE_SCALER);
 	        set_num ($1, 1); 	
 		$$=$1; 
@@ -796,7 +796,7 @@ Chan_List:
         | NAME LT_SQUARE INT RT_SQUARE
 		{
 		char tmp[256];
-		set_dtype($1, TYPE_CHAN); 
+		set_dtype($1, TYPE_CHANNEL); 
 		set_type($1, TYPE_VECTOR);
 		set_num($1, atoi ($3.string)); 
 	        $$=$1;
@@ -912,9 +912,9 @@ VectorChan_List:
         | NAME COLOR                         
 		{ 
 		char tmp[256];
-		set_dtype($1, TYPE_CHAN); 
+		set_dtype($1, TYPE_CHANNEL); 
 		set_type($1, TYPE_C_VECTOR);
-		set_num($1, NUM_COLOR_CHAN);
+		set_num($1, NUM_COLOR_CHANNEL);
 	  	$$=$1; 
 		print_name (&$$, $1, DEFINE);
 		sprintf(tmp, "*%s", $$.string); 
@@ -924,9 +924,9 @@ VectorChan_List:
 	| NAME COLOR_ALPHA
 		{
 		char tmp[256];
-		set_dtype($1, TYPE_CHAN);
+		set_dtype($1, TYPE_CHANNEL);
 		set_type($1, TYPE_CA_VECTOR);
-		set_num($1, NUM_COLOR_CHAN+1); 
+		set_num($1, NUM_COLOR_CHANNEL+1); 
 		$$=$1;
 		print_name (&$$, $1, DEFINE);
 		sprintf(tmp, "*%s", $$.string); 
@@ -936,9 +936,9 @@ VectorChan_List:
 	| NAME COLOR_MAYBE_ALPHA
 		{
 		char tmp[256];
-		set_dtype($1, TYPE_CHAN);
+		set_dtype($1, TYPE_CHANNEL);
 		set_type($1, TYPE_C_A_VECTOR);
-		set_num($1, NUM_COLOR_CHAN+1);
+		set_num($1, NUM_COLOR_CHANNEL+1);
 		$$=$1;
 		print_name (&$$, $1, DEFINE);
 		sprintf(tmp, "*%s", $$.string);
@@ -996,7 +996,7 @@ init_image_data (char *indent)
       strcpy (e.string, tmp); 
       print_line (e); 
       sprintf (tmp, "%sif (%s_has_a)%s  %s_a = %s_data[%d];", 
-	  indent, symtab[i].string, indent, symtab[i].string, symtab[i].string, NUM_COLOR_CHAN);
+	  indent, symtab[i].string, indent, symtab[i].string, symtab[i].string, NUM_COLOR_CHANNEL);
       strcpy (e.string, tmp);
       print_line (e); 
       printf ("\n"); 
@@ -1032,7 +1032,7 @@ init_data_varible (char *s)
   if (e->type == TYPE_C_A_VECTOR)
     {  
     elem_t e; 
-    sprintf (name, "%s_has_%s", s, NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
+    sprintf (name, "%s_has_%s", s, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
     e = add_sym (name, SCOPE);
     set_dtype (e, TYPE_INT);
     set_type (e, TYPE_SCALER);
@@ -1052,14 +1052,14 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
   dest->num = 1; 
   if (is_define && get_sym (src.string)->type == TYPE_C_VECTOR)
     {
-    dest->num = NUM_COLOR_CHAN;
+    dest->num = NUM_COLOR_CHANNEL;
     sprintf (tmp, "%s_c", get_sym (src.string)->string);
     }
   else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR ||
 	get_sym (src.string)->type == TYPE_C_A_VECTOR) && 
       !strcmp (src.string, get_sym (src.string)->string))
     {
-    dest->num = NUM_COLOR_CHAN + 1;
+    dest->num = NUM_COLOR_CHANNEL + 1;
     sprintf (tmp, "%s_ca", get_sym (src.string)->string);
     }
   else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR ||
@@ -1073,7 +1073,7 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
       }
     if (src.string[l-1] == 'c' && src.string[l-2] == '_')
       {
-      dest->num = NUM_COLOR_CHAN; 
+      dest->num = NUM_COLOR_CHANNEL; 
       sprintf (tmp, "%s", src.string);
       }
     }
@@ -1106,30 +1106,30 @@ print_repeat (elem_t *dest, elem_t src, char *string)
 
   if (get_sym (src.string)->type == TYPE_C_VECTOR)
     {
-    for (i=0; i<NUM_COLOR_CHAN-1; i++)
+    for (i=0; i<NUM_COLOR_CHANNEL-1; i++)
       {
-      sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHAN[i]);
+      sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHANNEL[i]);
       strcpy(t, tmp); 
       }
-    sprintf (tmp, "%s %s_%s", t, string, NAME_COLOR_CHAN[NUM_COLOR_CHAN-1]); 
+    sprintf (tmp, "%s %s_%s", t, string, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL-1]); 
     }
   else if (get_sym (src.string)->type == TYPE_CA_VECTOR)
     {
-    for (i=0; i<NUM_COLOR_CHAN; i++)
+    for (i=0; i<NUM_COLOR_CHANNEL; i++)
       {
-      sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHAN[i]);
+      sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHANNEL[i]);
       strcpy(t, tmp);
       }
-    sprintf (tmp, "%s %s_%s", t, string, NAME_COLOR_CHAN[NUM_COLOR_CHAN]); 
+    sprintf (tmp, "%s %s_%s", t, string, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]); 
     }
   else
     {
-    for (i=0; i<NUM_COLOR_CHAN; i++)
+    for (i=0; i<NUM_COLOR_CHANNEL; i++)
       {
-      sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHAN[i]);
+      sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHANNEL[i]);
       strcpy(t, tmp);
       }
-    sprintf (tmp, "%s %s_%s=NULL", t, string, NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
+    sprintf (tmp, "%s %s_%s=NULL", t, string, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
     }
   strcpy (dest->string, tmp);
   
@@ -1141,7 +1141,7 @@ print_line (elem_t src)
   int i,j,k=1;
   int l = strlen (src.string);
  
-  if (src.type>1 || (src.type && src.num == NUM_COLOR_CHAN)) /* if it is a vector */ 
+  if (src.type>1 || (src.type && src.num == NUM_COLOR_CHANNEL)) /* if it is a vector */ 
     {
     for (i=0; i<k; i++)
     {
@@ -1149,14 +1149,14 @@ print_line (elem_t src)
       {
       if (j < l-2 && src.string[j] == '_' && src.string[j+1] == 'c' && src.string[j+2] == 'a')
 	{
-	printf("_%s", NAME_COLOR_CHAN[i]);
-	k = NUM_COLOR_CHAN + 1;
+	printf("_%s", NAME_COLOR_CHANNEL[i]);
+	k = NUM_COLOR_CHANNEL + 1;
 	j += 2;
 	}
       else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'c')
 	{
-	printf("_%s", NAME_COLOR_CHAN[i]);
-	k = NUM_COLOR_CHAN; 	
+	printf("_%s", NAME_COLOR_CHANNEL[i]);
+	k = NUM_COLOR_CHANNEL; 	
 	j++;
 	}
       else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
@@ -1168,7 +1168,7 @@ print_line (elem_t src)
 	}
       else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
 	{
-	printf("_%s", NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
+	printf("_%s", NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
         j++; 	
 	}
       else
@@ -1190,7 +1190,7 @@ print_line (elem_t src)
 	  }
 	else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
 	  {
-	  printf("_%s", NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
+	  printf("_%s", NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
 	  j++;
 	  }
 	else
@@ -1255,9 +1255,9 @@ do_op_two (elem_t *dest, elem_t src, FUNCTION op)
   case OP_NEG:
     sprintf (tmp, "-%s", src.string);
     break;
-  case OP_CHAN_CLAMP:
+  case OP_CHANNEL_CLAMP:
     t[0] = src.string; 
-    print (tmp, CHAN_CLAMP_STR, t, 1); 
+    print (tmp, CHANNEL_CLAMP_STR, t, 1); 
     break; 
   case OP_WP_CLAMP:
     t[0] = src.string; 
@@ -1309,40 +1309,40 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
       sprintf (tmp, "%s - %s", src1.string, src2.string);
       break;
     case OP_TIMES:
-      if (src1.dtype < TYPE_CHAN && src2.dtype < TYPE_CHAN)
+      if (src1.dtype < TYPE_CHANNEL && src2.dtype < TYPE_CHANNEL)
         sprintf (tmp, "%s * %s", src1.string, src2.string);
-      else if ( src1.dtype == TYPE_CHAN || src2.dtype == TYPE_CHAN)
+      else if ( src1.dtype == TYPE_CHANNEL || src2.dtype == TYPE_CHANNEL)
 	{	
-      	if (src1.dtype >= TYPE_CHAN && src2.dtype >= TYPE_CHAN)
+      	if (src1.dtype >= TYPE_CHANNEL && src2.dtype >= TYPE_CHANNEL)
 	  {	
       	  t[0] = src1.string;
 	  t[1] = src2.string;
-	  print (tmp, CHAN_MULT_STR, t, 2); 
+	  print (tmp, CHANNEL_MULT_STR, t, 2); 
 	  }
 	else
 	  sprintf (tmp, "%s * %s", src1.string, src2.string);
 	}
       else
 	{	
-       	if (src1.dtype >= TYPE_CHAN && src2.dtype >= TYPE_CHAN)
+       	if (src1.dtype >= TYPE_CHANNEL && src2.dtype >= TYPE_CHANNEL)
 	  sprintf (tmp, "%s * %s * %s", src1.string, src2.string, WP_NORM_STR); 
 	else
 	  sprintf (tmp, "%s * %s", src1.string, src2.string);
 	}
       break;
     case OP_DIVIDE:
-      if (src1.dtype < TYPE_CHAN && src2.dtype < TYPE_CHAN)
+      if (src1.dtype < TYPE_CHANNEL && src2.dtype < TYPE_CHANNEL)
       	sprintf (tmp, "%s / %s", src1.string, src2.string);
-      else if ( src1.dtype == TYPE_CHAN || src2.dtype == TYPE_CHAN)
+      else if ( src1.dtype == TYPE_CHANNEL || src2.dtype == TYPE_CHANNEL)
 	{
-	if (src1.dtype >= TYPE_CHAN &&  src2.dtype >= TYPE_CHAN)
+	if (src1.dtype >= TYPE_CHANNEL &&  src2.dtype >= TYPE_CHANNEL)
       	  sprintf (tmp, "(%s * %s) / %s", src1.string, WP_STR, src2.string);
 	else
 	  sprintf (tmp, "%s / %s", src1.string, src2.string);
 	}
       else
 	{	
-       	if (src1.dtype >= TYPE_CHAN &&  src2.dtype >= TYPE_CHAN)
+       	if (src1.dtype >= TYPE_CHANNEL &&  src2.dtype >= TYPE_CHANNEL)
 	  sprintf (tmp, "(%s * %s) / %s", src1.string, WP_STR, src2.string); 
 	else
 	  sprintf (tmp, "%s / %s", src1.string, src2.string);
@@ -1368,10 +1368,10 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	    case TYPE_FLOAT:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
-	    case TYPE_CHAN:
+	    case TYPE_CHANNEL:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
-	    case TYPE_CHANFLOAT:
+	    case TYPE_CHANNELFLOAT:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	     break;  
 	    default:
@@ -1389,10 +1389,10 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	    case TYPE_FLOAT:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
-	    case TYPE_CHAN:
+	    case TYPE_CHANNEL:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
-	    case TYPE_CHANFLOAT:
+	    case TYPE_CHANNELFLOAT:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break; 
 	    default:
@@ -1401,7 +1401,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      break;
 	   }			     
           break;
-	case TYPE_CHAN:
+	case TYPE_CHANNEL:
 	  switch (src2.dtype)
 	    {
 	    case TYPE_INT:
@@ -1409,22 +1409,22 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      break;
 	    case TYPE_FLOAT:
 	      t[0] = src2.string;
-	      print (tmp, ROUND_STR, t, 1); 
+	      print (tmp, ROUND_CHANNEL_STR, t, 1); 
 	      strcpy (dest->string, tmp);
 	      sprintf (tmp, "%s = %s", src1.string, dest->string);
 	      break;
-	    case TYPE_CHAN:
+	    case TYPE_CHANNEL:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
-	    case TYPE_CHANFLOAT:
+	    case TYPE_CHANNELFLOAT:
 	      t[0] = src2.string;
-	      print (tmp, ROUND_STR, t, 1); 
+	      print (tmp, ROUND_CHANNEL_STR, t, 1); 
 	      strcpy (dest->string, tmp);
 	      sprintf (tmp, "%s = %s", src1.string, dest->string);
 	      break;
 	   }			     
           break;
-	case TYPE_CHANFLOAT:
+	case TYPE_CHANNELFLOAT:
            sprintf (tmp, "%s = %s", src1.string, src2.string);
            break;
 	}   
@@ -1433,11 +1433,11 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
     }
  
   if (src1.dtype == src2.dtype)
-   dest->dtype = TYPE_CHAN;
+   dest->dtype = TYPE_CHANNEL;
   else if (op == OP_EQUAL)
     dest->dtype = src1.dtype; 
   else 
-    dest->dtype = (src1.dtype + src2.dtype) > TYPE_CHANFLOAT? TYPE_CHANFLOAT: 
+    dest->dtype = (src1.dtype + src2.dtype) > TYPE_CHANNELFLOAT? TYPE_CHANNELFLOAT: 
       	(src1.dtype + src2.dtype); 
   dest->type  = (src1.type > src2.type)?src1.type:src2.type;
   dest->num   = (src1.num > src2.num)?src1.num:src2.num;
@@ -1585,7 +1585,7 @@ get_sym (char *ss)
   if (!strcmp ("_has_alpha", &(s[i-10])))  
     {
     ss[i-6] = '\0'; 
-    sprintf (s, "%s_%s", ss, NAME_COLOR_CHAN[NUM_COLOR_CHAN]);  
+    sprintf (s, "%s_%s", ss, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);  
     strcpy (ss, s); 
     goto find;
     }
@@ -1648,16 +1648,16 @@ read_channel_names (char *chan_names)
     exit (0);
     }
 
-  NAME_COLOR_CHAN[i] = tmp;
+  NAME_COLOR_CHANNEL[i] = tmp;
 
   while ((tmp = (char*) strtok (NULL, ",")))
     {
     i++;
-    NAME_COLOR_CHAN[i] = tmp; 
+    NAME_COLOR_CHANNEL[i] = tmp; 
     }
   
-  NUM_COLOR_CHAN = i+1;
-  NAME_COLOR_CHAN[NUM_COLOR_CHAN] = (char*) strdup ("alpha"); 
+  NUM_COLOR_CHANNEL = i+1;
+  NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL] = (char*) strdup ("alpha"); 
 }
 
 int

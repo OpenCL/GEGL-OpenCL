@@ -520,7 +520,6 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
         while (width--)
           {
 	    GENERIC_IMAGE_BLOCK_BEGIN
-
 	    dest_color = src2_color;
 
 	    dX(dest,1);
@@ -535,7 +534,6 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
         while (width--)
           {
 	    GENERIC_IMAGE_BLOCK_BEGIN
-
             dest_color = ZERO; 
 
 	    dX(dest,1);

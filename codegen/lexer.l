@@ -51,13 +51,13 @@ rm			[\t \n]*
 <DATA_TYPE>"DATATYPE"			return DT_DATATYPE;
 <DATA_TYPE>"WP"				return DT_WP;
 <DATA_TYPE>"WP_NORM"			return DT_WP_NORM;
-<DATA_TYPE>"MIN_CHAN"			return DT_MIN_CHAN;
-<DATA_TYPE>"MAX_CHAN"                   return DT_MAX_CHAN;
+<DATA_TYPE>"MIN_CHANNEL"		return DT_MIN_CHANNEL;
+<DATA_TYPE>"MAX_CHANNEL"                return DT_MAX_CHANNEL;
 <DATA_TYPE>"ZERO"			return DT_ZERO; 
-<DATA_TYPE>"CHAN_CLAMP"			return DT_CHAN_CLAMP;
+<DATA_TYPE>"CHANNEL_CLAMP"		return DT_CHANNEL_CLAMP;
 <DATA_TYPE>"WP_CLAMP"			return DT_WP_CLAMP;
-<DATA_TYPE>"CHAN_MULT"			return DT_CHAN_MULT;
-<DATA_TYPE>"ROUND"			return DT_ROUND;
+<DATA_TYPE>"CHANNEL_MULT"		return DT_CHANNEL_MULT;
+<DATA_TYPE>"ROUND_CHANNEL"		return DT_ROUND_CHANNEL;
 <DATA_TYPE>","				return DT_COMMA; 
 <DATA_TYPE>"("				return LT_PARENTHESIS;
 <DATA_TYPE>")"				return RT_PARENTHESIS; 
@@ -92,24 +92,24 @@ rm			[\t \n]*
 
 <GENERIC_IMAGE_BLOCK>"WP"		{
 					strcpy(yylval.elem.string, WP_STR);
-                			yylval.elem.dtype = TYPE_CHAN;
+                			yylval.elem.dtype = TYPE_CHANNEL;
 					yylval.elem.type = TYPE_VECTOR;
 					return(WP); 
 					}
 <GENERIC_IMAGE_BLOCK>"ZERO"		{
     					strcpy(yylval.elem.string, ZERO_STR);
-					yylval.elem.dtype = TYPE_CHAN;
+					yylval.elem.dtype = TYPE_CHANNEL;
 			        	yylval.elem.type = TYPE_VECTOR;
 					return ZERO; 	
 					} 
 <GENERIC_IMAGE_DECL>"VectorChan"	{
 					strcpy(yylval.elem.string, DATATYPE_STR);
-					yylval.elem.dtype = TYPE_CHAN;
+					yylval.elem.dtype = TYPE_CHANNEL;
 					return(VectorChan);
 					}
 <GENERIC_IMAGE_DECL>"Chan"		{
     					strcpy(yylval.elem.string, DATATYPE_STR);
-					yylval.elem.dtype = TYPE_CHAN;
+					yylval.elem.dtype = TYPE_CHANNEL;
 					return(Chan);
 					}
 
@@ -166,7 +166,7 @@ rm			[\t \n]*
     					return (MIN_MAX);
 					}
 <GENERIC_IMAGE_BLOCK>"ABS"		return(ABS); 
-<GENERIC_IMAGE_BLOCK>"CHAN_CLAMP"	return(CHAN_CLAMP);
+<GENERIC_IMAGE_BLOCK>"CHANNEL_CLAMP"	return(CHANNEL_CLAMP);
 <GENERIC_IMAGE_BLOCK>"WP_CLAMP"    	return(WP_CLAMP);
 
 
@@ -319,5 +319,7 @@ close_file ()
 void 
 print_info (char *line)
 {
- printf ("%s", line); 
+#if DEBUG
+  printf ("%s", line); 
+#endif 
 }

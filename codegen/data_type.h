@@ -19,21 +19,21 @@
 EXTERN char  *DATATYPE_STR;      
 EXTERN char  *WP_STR;   
 EXTERN char  *WP_NORM_STR;       
-EXTERN char  *MIN_CHAN_STR;   
-EXTERN char  *MAX_CHAN_STR;      
+EXTERN char  *MIN_CHANNEL_STR;   
+EXTERN char  *MAX_CHANNEL_STR;      
 EXTERN char  *ZERO_STR; 
 
-EXTERN char  *CHAN_CLAMP_STR;		
+EXTERN char  *CHANNEL_CLAMP_STR;		
 
 EXTERN char  *WP_CLAMP_STR;
 
-EXTERN char  *CHAN_MULT_STR;        
+EXTERN char  *CHANNEL_MULT_STR;        
 
-EXTERN char  *ROUND_STR;	
+EXTERN char  *ROUND_CHANNEL_STR;	
 
 /* these are related to the color space */
-EXTERN int    NUM_COLOR_CHAN;
-EXTERN char  *NAME_COLOR_CHAN[20];
+EXTERN int    NUM_COLOR_CHANNEL;
+EXTERN char  *NAME_COLOR_CHANNEL[20];
 
 #undef  EXTERN
 
