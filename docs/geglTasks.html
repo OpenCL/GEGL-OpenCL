@@ -21,95 +21,97 @@ Tasks</font></b></div>
 <div 
 CLASS="ABSTRACT"
 >This page contains current tasks and notes about
-these.&nbsp; Programmers should update these in cvs (gegl/docs/gegl.html
+these.&nbsp; Programmers should update this doc in cvs (gegl/docs/gegl.html
 and gegl/docs/geglTasks.html) and move current tasks to Finished Tasks
 as they finish them. These changes will be propagated to the website.</div>
 
 <table BORDER COLS=1 WIDTH="100%" NOSAVE >
 <tr>
-<td><a NAME="1 Update GeglColorConvertOp"></a><b>#1 Update GeglColorConvertOp
--Make the color color ops use new Image class structure.</b>
-<br>Owner: calvinw@mindspring.com
-<br>The new ColorConvertOps dont use the new Op class (Op and ImageBuffer
-inherit from Image now).
-<p>ColorConvertOp will be the class that contains the conversions through
-the XYZ space if a simple converter from the the ColorModel class cant
-be found . Also we should have separate DataConvertOps. I added a task
-(#17) for this - Mon Jul&nbsp; 3 2000 cew</td>
-</tr>
-
-<tr>
 <td><a NAME="4 Preprocessor for codegen"></a><b>#4 Preprocessor for codegen
 - Need preprocessor that finds gil program and runs codegen with them.</b>
-<br>Owner: none</td>
+<br>Owner: none
+<br>Suggested: 6/21/2000
+<br>Description:</td>
 </tr>
 
 <tr>
 <td><a NAME="6 copy_pixels, get_pixels"></a><b>#6 copy_pixels, get_pixels
 - Implement these for ImageBuffer and Op classes.</b>
 <br>Owner: caro@rhythm.com
-<br>Some of these routines need to be finished. In particular the Op classes
-should return an error on copy_pixels since they are not writable and copy_pixels
-is supposed to copy from a passed Image to the Image represented by this
-(or self in GOB-speak)</td>
+<br>Suggested: 6/21/2000
+<br>Description: Some of these routines need to be finished. In particular
+the Op classes should return an error on copy_pixels since they are not
+writable and copy_pixels is supposed to copy from a passed Image to the
+Image represented by this (or self in GOB-speak)</td>
 </tr>
 
 <tr>
 <td><a NAME="8 Multi-threading support"></a><b>#8 Multi-threading support
 - Provide basics of multi-threading for gegl.&nbsp;</b>
-<br>Owner: none</td>
+<br>Owner: none
+<br>Suggested: 6/21/2000
+<br>Description:&nbsp;</td>
 </tr>
 
 <tr>
 <td><a NAME="9 Roi classes - Write basic Roi class."></a><b>#9 Roi classes
 - Write basic Roi class.</b>
 <br>Owner: none
-<br>See the ImageVision and JAI descriptions of these classes for some
-idea of how to make these classes work.</td>
+<br>Suggested: 6/21/2000
+<br>Description: See the ImageVision and JAI descriptions of these classes
+for some idea of how to make these classes work.
+<br>8/6/2000 calvinw@mindspring.com - This is somewhat related to #17 below.&nbsp;</td>
 </tr>
 
 <tr>
 <td><a NAME="10 AreaOp - Write basic AreaOp class."></a><b>#10 AreaOp -
 Write basic AreaOp class.&nbsp;</b>
 <br>Owner: none
-<br>This abstract class is the next basic class needed to test the GIL
-for these operations. This class will have to decide navigate the image
-based on the storage details of the image (tiled vs non-tiled). So this
-is somewhat dependent on #15, #14</td>
+<br>Suggested: 6/21/2000
+<br>Description: This abstract class is the next basic class needed to
+test the GIL for these operations. This class will have to decide navigate
+the image based on the storage details of the image (tiled vs non-tiled).
+So this is somewhat dependent on #15, #14</td>
 </tr>
 
 <tr>
 <td><a NAME="11 GIL support for AreaOp"></a><b>#11 GIL support for AreaOp
 - Extend GIL to handle AreaOps.&nbsp;</b>
 <br>Owner: none
-<br>GIL will need to understand how to get rowstrides and access pixels.
-This involves making sure GIL can interpret dY calls.</td>
+<br>Suggested: 6/21/2000
+<br>Description: GIL will need to understand how to get rowstrides and
+access pixels. This involves making sure GIL can interpret dY calls.</td>
 </tr>
 
 <tr>
 <td><a NAME="12 ConvolveOp"></a><b>#12 ConvolveOp - Write basic ConvolveOp
 class.&nbsp;</b>
 <br>Owner: none
-<br>The ConvolveOp classes can be written once AreaOps are done. This will
-involve writing details of handling the kernals and computations from these
-(maybe need way of passing generic kernals).&nbsp;</td>
+<br>Suggested: 6/21/2000
+<br>Description: The ConvolveOp classes can be written once AreaOps are
+done. This will involve writing details of handling the kernals and computations
+from these (maybe need way of passing generic kernals).&nbsp;</td>
 </tr>
 
 <tr>
-<td><a NAME="13 Iterator classes"></a><b>#13 Iterator classes - Write basics
+<td><a NAME="13 Iterator classes"></a><b>#13 Iterator classes - Write basic
 Iterator classes</b>
-<br>Owner: none</td>
+<br>Owner: none<br>
+Suggested:6/21/2000
+<br>Description:&nbsp;</td>
 </tr>
 
 <tr>
 <td><a NAME="14 Memory Management classes"></a><b>#14 Memory Management
 classes - Write basic memory management classes</b>
 <br>Owner: none
-<br>Gegl will need support for a cache to hold buffers as it computes operations.
-So we need to support swapping unneeded/unused buffers to disk, and controlling
-the cache. This is similar to gimps current tile scheme/memory management.
-Not sure if gimp will use this gegl memory management or its own somehow,
-but gegl still needs these classes to be a complete library.</td>
+<br>Suggested: 6/21/2000
+<br>Description: Gegl will need support for a cache to hold buffers as
+it computes operations. So we need to support swapping unneeded/unused
+buffers to disk, and controlling the cache. This is similar to gimps current
+tile scheme/memory management. Not sure if gimp will use this gegl memory
+management or its own somehow, but gegl still needs these classes to be
+a complete library.</td>
 </tr>
 
 <tr>
@@ -117,10 +119,11 @@ but gegl still needs these classes to be a complete library.</td>
 Additional Data Storage classes/types for ImageBuffer - Write ImageBuffer
 subclasses for these?</b>
 <br>Owner: none
-<br>Gegl will have a standard (as yet undecided) ImageBuffer storage type.
-This subclass(?) needs to be written. Right now the basic ImageBuffer has
-pointers to each channel of image data and the entire image data resides
-in memory.</td>
+<br>Suggested:6/21/2000
+<br>Description: Gegl will have a standard (as yet undecided) ImageBuffer
+storage type. This subclass(?) needs to be written. Right now the basic
+ImageBuffer has pointers to each channel of image data and the entire image
+data resides in memory.</td>
 </tr>
 
 <tr>
@@ -128,16 +131,30 @@ in memory.</td>
 for accessing channels - Write GIL support for accessing individual color
 channels.</b>
 <br>Owner: none
-<br>GIL currently has no way to reference the color channnels ie pixel.red
-pixel.green, pixel.blue for rgb. This is needed for Ops that will write
-GIL code and will want a standard way to refer to the color channels.&nbsp;</td>
+<br>Suggested:6/21/2000
+<br>Description: GIL currently has no way to reference the color channnels
+ie pixel.red pixel.green, pixel.blue for rgb. This is needed for Ops that
+will write GIL code and will want a standard way to refer to the color
+channels.&nbsp;</td>
 </tr>
 
 <tr>
-<td><a NAME="18 DataConvertOps"></a>#<b>18 DataConvertOps - Write data
-conversion ops similar to ColorConvertOps.</b>
-<br>Owner: calvin
-<br>Need DataConvertOps similar to ColorConvertOps.&nbsp;&nbsp;</td>
+<td><a NAME="19 Domain of definition and roi regions for Image chains"></a>#<b>19
+Domain of definition and roi regions for Image chains- each Op must calculate/set
+these.</b>
+<br>Owner: calvinw@mindspring.com
+<br>Suggested: 8/6/2000
+<br>Description:&nbsp; The roi region is passed to the root node of the
+tree, and passed up the tree to in the direction of the leaves. (the inputs).
+Each node must calculate the rois to pass to each of its inputs (children)
+during a get_pixels call. The domain of definition is passed the other
+direction from the leaves to the root. The domain of definition is where
+the image is defined (or its alpha is nonzero). Each node determines its
+domain of definition from the domain of definitions of its inputs. The
+region an op will need to calculate is roughly the intersection of its
+roi and domain of definition (at least of point ops, others are slightly
+more complicated). See Shantsiz Siggraph94 paper for details.&nbsp;
+<br><b></b>&nbsp;</td>
 </tr>
 </table>
 
@@ -151,40 +168,90 @@ removed from Current tasks list.</div>
 
 <table BORDER COLS=1 WIDTH="100%" NOSAVE >
 <tr>
-<td><a NAME="16 GIL support for accessing channels"></a><b>#5 Update to
-latest GOB - Check that the new gob 1.0 and later works for gegl.&nbsp;</b>
+<td><a NAME="5 Update to latest GOB - Check that the new gob 1.0 and later works for gegl. "></a><b>#5
+Update to latest GOB - Check that the new gob 1.0 and later works for gegl.&nbsp;</b>
 <br>Owner<b>: </b>caro@rhythm.com
-<br>Finished: Tue Jun 20 16:39:33 EDT 2000</td>
+<br>Suggested:6/21/2000
+<br>Finished: 6/20/2000
+<br>Description:</td>
 </tr>
 
 <tr>
 <td><a NAME="7 Remove Drawable, GraphicsState classes"></a><b>#7 Remove
 Drawable, GraphicsState classes- Remove these classes from the tree.</b>
 <br>Owner: caro@rhythm.com
-<br>Gegl doesnt need these classes at present. This might be useful in
-some future version of gegl, but these are higher level classes.</td>
+<br>Suggested:6/21/2000
+<br>Finished: 06/27/00
+<br>Description: Gegl doesnt need these classes at present. This might
+be useful in some future version of gegl, but these are higher level classes.</td>
 </tr>
 
 <tr>
 <td><a NAME="2 Update GeglCopyChanOp"></a><b>#2 Update GeglCopyChanOp -
 Make CopyChanOp use the new Image class structure.</b>
 <br>Owner: caro@rhythm.com
-<br>The new CopyChanOp doesnt use the new Op class (Op and ImageBuffer
-inherit from Image now).
-<br>date done: 06/27/00</td>
+<br>Suggested:6/21/2000
+<br>Finished: 06/27/00
+<br>Description: The new CopyChanOp doesnt use the new Op class (Op and
+ImageBuffer inherit from Image now).</td>
 </tr>
 
 <tr>
-<td><b>#3 Update testgegl, testgeglfile -Make gegl test programs use the
-new Image class structure.</b>
+<td><a NAME="3 Update testgegl, testgeglfilep"></a><b>#3 Update testgegl,
+testgeglfile -Make gegl test programs use the new Image class structure.</b>
 <br>Owner: caro@rhythm.com
-<br>date done: 06/27/00</td>
+<br>Suggested:6/21/2000
+<br>Finished: 06/27/00
+<br>Description:</td>
 </tr>
 
 <tr>
-<td><b>#17 Implement gegl-copy-op.gil</b>
+<td><a NAME="17 Implement gegl-copy-op.gil"></a><b>#17 Implement gegl-copy-op.gil</b>
 <br>Owner: caro@rhythm.com
-<br>date done: 07/01/00</td>
+<br>Suggested:6/21/2000
+<br>Finished: 06/27/00:
+<br>Description
+<br>Finished: 07/01/00</td>
+</tr>
+
+<tr>
+<td><a NAME="1 Update GeglColorConvertOp"></a><b>#1 Update GeglColorConvertOp
+-Make the color color ops use new Image class structure.</b>
+<br>Owner: calvinw@mindspring.com
+<br>Suggested:6/21/2000
+<br>Finished: 8/6/2000
+<br>Description: The new ColorConvertOps dont use the new Op class (Op
+and ImageBuffer inherit from Image now). ColorConvertOp will be the class
+that contains the conversions through the XYZ space if a simple converter
+from the the ColorModel class cant be found .&nbsp;
+<p>7/3/2000 calvinw@mindspring.com -Also we should have separate DataConvertOps.&nbsp;&nbsp;
+I added a task (#18) for this.
+<p>8/6/2000 calvinw@mindspring.com - These are finished now, for the most
+part. u16_4k model is not done, but rgb_u8, gray_u8, rgb_float, gray_float,
+rgb_u16, gray_u16 are finished. Now all color models must implement convert_to_XYZ
+and convert_from_XYZ routines (see GeglColorModel). Also each colormodel
+is free to implement other conversions from known color models (for example
+rgb_u8 implements conversions from rgb_float and gray_u8). These are implemented
+as interfaces through the routines gegl_object_add_interface and gegl_object_query_interface.
+The GeglColorConvertOp looks for a converter interface when it has to perform
+a conversion. If it finds one it calls the routine directly, otherwise
+it uses the XYZ conversion routines to do the conversion. This means that
+data conversions are taken care of as well. So I removed task #18. GeglColorConvertToRgbOp
+and GeglColorConvertToGrayOp are the actual convert ops, and these will
+do error checking on the color models eventually. (they dont do checking
+yet, that should be put in when color model checking goes in for all ops)</td>
+</tr>
+
+<tr>
+<td><a NAME="18 DataConvertOps"></a>#<b>18 DataConvertOps - Write data
+conversion ops similar to ColorConvertOps.</b>
+<br>Owner: calvinw@mindspring.com
+<br>Suggested:6/21/2000
+<br>Finished: 8/6/2000&nbsp;
+<br>Description: Need DataConvertOps similar to ColorConvertOps.&nbsp;
+<p>8/6/2000&nbsp; calvinw@mindspring.com - I removed this task, since it
+is actually covered by finished task #1 above. ColorConvertOps cover data
+conversions too.</td>
 </tr>
 </table>
 </div>

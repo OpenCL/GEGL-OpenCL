@@ -74,5 +74,4 @@ class Gegl:Color:Model:Gray from Gegl:Color:Model {
   { 
     return self->_priv->gray_index; 
   }
-
 }

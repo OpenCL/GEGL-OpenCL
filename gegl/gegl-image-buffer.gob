@@ -86,7 +86,7 @@ class Gegl:Image:Buffer from Gegl:Image {
 
     {
       gint bpc = gegl_color_model_bytes_per_channel(cm);  
-      gint num_channels = gegl_color_model_bytes_per_channel(cm);
+      gint num_channels = gegl_color_model_num_channels(cm);
       gint channel_bytes = bpc * w * h;
 
       self->_priv->data = g_new(guchar *, num_channels);
@@ -115,7 +115,7 @@ class Gegl:Image:Buffer from Gegl:Image {
   {
     GeglImage *image  = GEGL_IMAGE(self);
     GeglColorModel *cm = image->_priv->color_model;
-    gint num_channels = gegl_color_model_bytes_per_channel(cm);
+    gint num_channels = gegl_color_model_num_channels(cm);
     gint i;
 
     for(i = 0; i < num_channels; i++)

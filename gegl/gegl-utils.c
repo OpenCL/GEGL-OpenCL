@@ -6,11 +6,12 @@
 #include "gegl-color-model-rgb-u8.h"
 #include "gegl-color-model-rgb-float.h"
 
-void gegl_rect_set (GeglRect *r,
-                  gint x,
-                  gint y,
-                  guint w,
-                  guint h)
+void 
+gegl_rect_set (GeglRect *r,
+               gint x,
+               gint y,
+               guint w,
+               guint h)
 {
   r->x = x;
   r->y = y;
@@ -18,8 +19,9 @@ void gegl_rect_set (GeglRect *r,
   r->h = h;
 }
 
-void gegl_rect_copy (GeglRect *to,
-                   GeglRect *from)
+void 
+gegl_rect_copy (GeglRect *to,
+                GeglRect *from)
 {
   to->x = from->x;
   to->y = from->y;

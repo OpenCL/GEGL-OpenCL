@@ -30,4 +30,21 @@ class Gegl:Object from Gtk:Object {
   {
     gtk_object_destroy(GTK_OBJECT(self));
   }
+
+  public
+  void 
+  add_interface(GeglObject * obj, 
+		const gchar* interface_name, 
+		gpointer interface) 
+  {
+    gtk_object_set_data((GtkObject*)obj, interface_name, interface);
+  }
+							                    
+  public
+  gpointer 
+  query_interface(GeglObject* obj, 
+		  const gchar* interface_name)
+  {       
+    return gtk_object_get_data((GtkObject*)obj, interface_name);
+  }
 }

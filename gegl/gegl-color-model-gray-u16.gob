@@ -32,9 +32,6 @@ class Gegl:Color:Model:Gray:U16 from Gegl:Color:Model:Gray {
   constructor(self, 
               gboolean has_alpha)
   {
-    GeglColorModelPrivate *color_modelP = (GeglColorModelPrivate*)
-                                  (GEGL_COLOR_MODEL (self)->_priv);
-
     if (GEGL_OBJECT(self)->constructed) 
         return FALSE;
     
@@ -43,12 +40,22 @@ class Gegl:Color:Model:Gray:U16 from Gegl:Color:Model:Gray {
          GEGL_COLOR_MODEL_GRAY(self), has_alpha))
         return FALSE;
 
-    color_modelP->data_type = U16;
-    color_modelP->channel_data_type_name = NULL;
-    color_modelP->bytes_per_channel = sizeof(guint16);
-    color_modelP->bytes_per_pixel = 
-                  color_modelP->bytes_per_channel * 
-                  color_modelP->num_channels;
+    {
+      GeglColorModel *cm = GEGL_COLOR_MODEL (self);
+      cm->_priv->data_type = U16;
+      cm->_priv->channel_data_type_name = NULL;
+      cm->_priv->bytes_per_channel = sizeof(guint16);
+      cm->_priv->bytes_per_pixel = cm->_priv->bytes_per_channel * 
+		    cm->_priv->num_channels;
+
+      /* These are the color models we can convert from directly */
+      gegl_object_add_interface (GEGL_OBJECT(self), "FromGrayFloat", 
+				 gegl_color_model_gray_u16_from_gray_float);
+      gegl_object_add_interface (GEGL_OBJECT(self), "FromGrayU8", 
+				 gegl_color_model_gray_u16_from_gray_u8);
+      gegl_object_add_interface (GEGL_OBJECT(self), "FromRgbU16", 
+				 gegl_color_model_gray_u16_from_rgb_u16);
+    }
     return TRUE;
   }
   
@@ -56,8 +63,6 @@ class Gegl:Color:Model:Gray:U16 from Gegl:Color:Model:Gray {
   void 
   destroy (GtkObject *object)
   {
-    /* Dispose of the data type string here */
-
     /* Chain up on destroy */
     PARENT_HANDLER (object)
   }
@@ -94,12 +99,12 @@ class Gegl:Color:Model:Gray:U16 from Gegl:Color:Model:Gray {
             channel_values[a].f = 65535;
           break;
         case COLOR_GREEN:
-          channel_values[g].u16 = CLAMP(ROUND(0.6 * 65535),0,65535);
+          channel_values[g].u16 = CLAMP(ROUND(0.59 * 65535),0,65535);
           if (has_alpha)
             channel_values[a].u16 = 65535;
           break;
         case COLOR_BLUE:
-          channel_values[g].u16 = CLAMP(ROUND(0.1 * 65535),0,65535);
+          channel_values[g].u16 = CLAMP(ROUND(0.11 * 65535),0,65535);
           if (has_alpha)
             channel_values[a].u16 = 65535;
           break;
@@ -220,78 +225,133 @@ class Gegl:Color:Model:Gray:U16 from Gegl:Color:Model:Gray {
     while (width--)
       {
        *dest_g    = CLAMP(ROUND((m00 * *src_x + m10 * *src_y + m20 * *src_z) * 65535 * 0.3),0,65535);
-       *dest_g   += CLAMP(ROUND((m01 * *src_x + m11 * *src_y + m21 * *src_z) * 65535 * 0.6),0,65535);
-       *dest_g++ += CLAMP(ROUND((m02 * *src_x++ + m12 * *src_y++ + m22 * *src_z++) * 65535 * 0.1),0,65535);
+       *dest_g   += CLAMP(ROUND((m01 * *src_x + m11 * *src_y + m21 * *src_z) * 65535 * 0.59),0,65535);
+       *dest_g++ += CLAMP(ROUND((m02 * *src_x + m12 * *src_y + m22 * *src_z) * 65535 * 0.11),0,65535);
+
+       src_x++;
+       src_y++;
+       src_z++;
+
        if (has_alpha)
-         *dest_a++  = CLAMP(ROUND(*src_a++ * 65535),0,65535);
+         {
+           *dest_a++  = CLAMP(ROUND(*src_a * 65535),0,65535);
+            src_a++;
+         }
       }
   }
 
-
-  override (Gegl:Color:Model)
-  void
-  convert_to_float (GeglColorModel *cm, 
-                    guchar **dest_data, 
-                    guchar **src_data, 
-                    gint width)
+  override (Gegl:Color:Model) 
+  gchar * 
+  get_converter_interface_name (GeglColorModel *cm) 
   {
-    /* convert from u16 gray to float gray */
-
-    guint16       *src_g;
-    guint16      *src_a = NULL;
-    gfloat       *dest_g; 
-    gfloat      *dest_a = NULL;
-    gboolean       has_alpha = gegl_color_model_has_alpha(cm);
-    
-    src_g = (guint16*) src_data[0];
-    if (has_alpha)
-      src_a = (guint16*) src_data[1];
-    
-    dest_g = (gfloat *)dest_data[0];
-    if (has_alpha)
-      dest_a = (gfloat *)dest_data[1];
-
-    while(width--)
-      {
-       *dest_g++ = *src_g++ / 65535.0;
-       if (has_alpha)
-         *dest_a++ = *src_a++ / 65535.0;
-      } 
+    return g_strdup ("FromGrayU16"); 
   }
 
-  override (Gegl:Color:Model)
+  private
   void
-  convert_to_rgb (GeglColorModel *cm, 
-                  guchar **dest_data, 
-                  guchar **src_data, 
-                  gint width)
+  from_gray_float (GeglColorModel *dest_cm, 
+                   GeglColorModel *src_cm,
+	           guchar **dest_data, 
+	           guchar **src_data, 
+	           gint width)
   {
-   /* convert from u16 gray to u16 rgb */
+    guint16          *dest_g;
+    guint16          *dest_a = NULL;
+    gfloat          *src_g; 
+    gfloat          *src_a = NULL;
+    gboolean         dest_has_alpha = gegl_color_model_has_alpha(dest_cm);
+    gboolean         src_has_alpha = gegl_color_model_has_alpha(src_cm);
+    
+    dest_g = (guint16*)dest_data[0];
+    if (dest_has_alpha)
+      dest_a = (guint16*)dest_data[1];
 
-    guint16         *dest_r, *dest_g, *dest_b; 
-    guint16         *dest_a = NULL;
-    guint16          *src_g; 
-    guint16          *src_a = NULL;
-    gboolean        has_alpha = gegl_color_model_has_alpha(cm);
-
-    src_g = (guint16*) src_data[0];
-    if (has_alpha)
-      src_a = (guint16*) src_data[1];
-
-    dest_r = (guint16*) dest_data[0];
-    dest_g = (guint16*) dest_data[1];
-    dest_b = (guint16*) dest_data[2];
-    if (has_alpha)
-      dest_a = (guint16*) dest_data[3];
+    src_g = (gfloat*)src_data[0];
+    if (src_has_alpha)
+      src_a = (gfloat*)src_data[1];
 
     while (width--)
       {
-       *dest_r++ = *src_g;
-       *dest_g++ = *src_g;
-       *dest_b++ = *src_g++;
-       if (has_alpha)
-         *dest_a++ = *src_a++;
-      } 
-   }
-}
+       *dest_g++ = CLAMP(ROUND(*src_g * 65535),0,65535);
+        src_g++;
 
+       if (src_has_alpha && dest_has_alpha)
+         {
+           *dest_a++ = CLAMP(ROUND(*src_a * 65535),0,65535);
+            src_a++;
+         }
+       else if (dest_has_alpha) 
+         *dest_a++ = 65535;
+      } 
+  }
+
+  private
+  void
+  from_gray_u8 (GeglColorModel *dest_cm, 
+               GeglColorModel *src_cm,
+               guchar **dest_data, 
+	       guchar **src_data, 
+	       gint width)
+  {
+    guint16    *dest_g;
+    guint16    *dest_a = NULL;
+    guint8    *src_g; 
+    guint8    *src_a = NULL;
+    gboolean   dest_has_alpha = gegl_color_model_has_alpha(dest_cm);
+    gboolean   src_has_alpha = gegl_color_model_has_alpha(src_cm);
+    
+    dest_g = (guint16*)dest_data[0];
+    if (dest_has_alpha)
+      dest_a = (guint16*)dest_data[1];
+    
+    src_g = (guint8*) src_data[0];
+    if (src_has_alpha)
+      src_a = (guint8*) src_data[1];
+    
+    while (width--)
+      {
+       *dest_g++ = ROUND((*src_g++/255.0) * 65535);
+
+       if (src_has_alpha && dest_has_alpha)
+         *dest_a++ = ROUND((*src_a++/255.0) * 65535);
+       else if (dest_has_alpha) 
+         *dest_a++ = 65535;
+      } 
+  }
+
+  private
+  void
+  from_rgb_u16 (GeglColorModel *dest_cm, 
+               GeglColorModel *src_cm,
+               guchar **dest_data, 
+	       guchar **src_data, 
+	       gint width)
+  {
+    guint16    *dest_g;
+    guint16    *dest_a = NULL;
+    guint16    *src_r, *src_g, *src_b; 
+    guint16    *src_a = NULL;
+    gboolean   dest_has_alpha = gegl_color_model_has_alpha(dest_cm);
+    gboolean   src_has_alpha = gegl_color_model_has_alpha(src_cm);
+    
+    dest_g = (guint16*)dest_data[0];
+    if (dest_has_alpha)
+      dest_a = (guint16*)dest_data[1];
+    
+    src_r = (guint16*) src_data[0];
+    src_g = (guint16*) src_data[1];
+    src_b = (guint16*) src_data[2];
+    if (src_has_alpha)
+      src_a = (guint16*) src_data[3];
+    
+    while (width--)
+      {
+       *dest_g++ = ROUND(.30 * *src_r++ + .59 * *src_g++ + .11 * *src_b++);
+
+       if (src_has_alpha && dest_has_alpha)
+         *dest_a++ = *src_a++;
+       else if (dest_has_alpha) 
+         *dest_a++ = 65535;
+      } 
+  }
+}

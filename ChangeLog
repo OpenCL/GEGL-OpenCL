@@ -1,3 +1,41 @@
+Mon Aug  7 00:33:52 EDT 2000 calvinw@mindspring.com
+
+	* gegl/gegl-color-convert-op.gob
+	* gegl/gegl-color-convert-to-rgb-op.gob
+	* gegl/gegl-color-convert-to-gray-op.gob
+	* gegl/gegl-color-model.gob
+	* gegl/gegl-color-model-rgb-float.gob
+	* gegl/gegl-color-model-rgb-u8.gob
+	* gegl/gegl-color-model-rgb-u16-.gob
+	* gegl/gegl-color-model-gray-float.gob
+	* gegl/gegl-color-model-gray-u8.gob:
+	* gegl/gegl-color-model-gray-u16.gob
+	* gegl/Makefile.am:
+	Finished the ColorConvertOps. ColorConvertOp now looks for
+	a converter to use to convert from a passed source color model.  If it
+	cant find a converter then it uses a conversion through XYZ space. See
+	ColorConvertOp and ColorModel for details. The color models implement
+	their converters as "interfaces" (see gegl_object_add_interface) Also
+	see the constructor of any of the specific ColorModel classes for
+	details.
+
+	* gegl/gegl-color-convert-to-rgb-float-op.gob 
+	* gegl/gegl-color-convert-to-gray-float-op.gob 
+	* gegl/gegl-color-convert-to-rgb-u8-op.gob 
+	* gegl/gegl-color-convert-to-gray-u8-op.gob 
+	* gegl/gegl-color-convert-to-rgb-u16-op.gob 
+	* gegl/gegl-color-convert-to-gray-u16-op.gob 
+	* gegl/gegl-color-convert-to-rgb-u16_4-op.gob 
+	* gegl/gegl-color-convert-to-gray-u16_4-op.gob: 
+	Removed these. Only need ColorConvertToRgbOp, ColorConvertToGrayOp
+	for these. It converts to whatever data type the dest has.
+
+	* gegl/testgegl.c:
+	Cleaned up testgegl to reflect the above changes.
+
+	* gegl/gegl-image-iterator.gob:
+	fixed bug where num_channels was calculated wrong. 
+
 Mon Jul  3 18:24:31 EDT 2000 calvinw@mindspring.com 
 
 	* Redid ColorConvertOp to use the new Image,

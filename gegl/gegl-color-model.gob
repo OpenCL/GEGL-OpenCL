@@ -4,6 +4,16 @@
 #define __TYPEDEF_GEGL_COLOR__
 typedef struct _GeglColor GeglColor;
 #endif
+
+#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
+#define __TYPEDEF_GEGL_COLOR_MODEL__
+typedef struct _GeglColorModel  GeglColorModel;
+#endif
+typedef void (*ConvertFunc)(GeglColorModel *, 
+                    GeglColorModel *, 
+                    guchar **,
+                    guchar **,
+                    gint);
 %}
 %{
 #include "gegl-color-model.h"
@@ -137,58 +147,7 @@ class Gegl:Color:Model from Gegl:Object {
                     guchar **dest_data, 
 		    gfloat **src_data, 
 		    gint width);
-
-  virtual
-  gboolean 
-  implements_color_conversion (self,
-                               GeglColorSpace colorspace);
-
-  virtual
-  void
-  convert_to_gray (self, 
-                   guchar **dest_data, 
-		   guchar **src_data, 
-		   gint width);
-  
-  virtual
-  void
-  convert_to_rgb (self, 
-                  guchar **dest_data, 
-		  guchar **src_data, 
-		  gint width);
-
-
-  virtual
-  gboolean 
-  implements_data_conversion (self,
-                              GeglChannelDataType data_type);
-
-  virtual
-  void
-  convert_to_u8 (self, 
-                 guchar **dest_data, 
-		 guchar **src_data, 
-		 gint width);
-
-  virtual
-  void
-  convert_to_float (self, 
-                    guchar **dest_data, 
-		    guchar **src_data, 
-		    gint width);
-  
-  virtual
-  void
-  convert_to_u16 (self, 
-                  guchar **dest_data, 
-		  guchar **src_data, 
-		  gint width);
-
-  virtual
-  void
-  convert_to_u16_4 (self, 
-                    guchar **dest_data, 
-		    guchar **src_data, 
-		    gint width);
-  
+  virtual 
+  gchar * 
+  get_converter_interface_name (self); 
 }

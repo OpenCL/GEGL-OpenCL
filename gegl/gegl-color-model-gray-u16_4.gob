@@ -94,12 +94,12 @@ class Gegl:Color:Model:Gray:U16_4 from Gegl:Color:Model:Gray {
             channel_values[a].f = 4095;
           break;
         case COLOR_GREEN:
-          channel_values[g].u16_4 = CLAMP(ROUND(0.6 * 4095),0,4095);
+          channel_values[g].u16_4 = CLAMP(ROUND(0.59 * 4095),0,4095);
           if (has_alpha)
             channel_values[a].u16_4 = 4095;
           break;
         case COLOR_BLUE:
-          channel_values[g].u16_4 = CLAMP(ROUND(0.1 * 4095),0,4095);
+          channel_values[g].u16_4 = CLAMP(ROUND(0.11 * 4095),0,4095);
           if (has_alpha)
             channel_values[a].u16_4 = 4095;
           break;
@@ -220,10 +220,17 @@ class Gegl:Color:Model:Gray:U16_4 from Gegl:Color:Model:Gray {
     while (width--)
       {
        *dest_g    = CLAMP(ROUND((m00 * *src_x + m10 * *src_y + m20 * *src_z) * 4095 * 0.3),0,4095);
-       *dest_g   += CLAMP(ROUND((m01 * *src_x + m11 * *src_y + m21 * *src_z) * 4095 * 0.6),0,4095);
-       *dest_g++ += CLAMP(ROUND((m02 * *src_x++ + m12 * *src_y++ + m22 * *src_z++) * 4095 * 0.1),0,4095);
+       *dest_g   += CLAMP(ROUND((m01 * *src_x + m11 * *src_y + m21 * *src_z) * 4095 * 0.59),0,4095);
+       *dest_g++ += CLAMP(ROUND((m02 * *src_x + m12 * *src_y + m22 * *src_z) * 4095 * 0.11),0,4095);
+
+       src_x++;
+       src_y++;
+       src_z++;
        if (has_alpha)
-         *dest_a++  = CLAMP(ROUND(*src_a++ * 4095),0,4095);
+	 {
+           *dest_a++  = CLAMP(ROUND(*src_a * 4095),0,4095);
+	   src_a++;
+	 }
       }
   }
 

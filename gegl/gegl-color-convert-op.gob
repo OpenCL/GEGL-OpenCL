@@ -1,6 +1,11 @@
 %h{
 #include "gegl-single-src-op.h"
 %}
+
+%privateheader{
+#include "gegl-color-model.h"
+%}
+
 %{
 #include "gegl-color-convert-op.h"
 #include "gegl-color-convert-op-private.h"
@@ -10,33 +15,15 @@
 #include "gegl-image-buffer.h"
 #include "gegl-image-iterator.h"
 #include "gegl-color.h"
-#include "gegl-color-model.h"
 #include "gegl-utils.h"
+#include <stdio.h>
 %}
-
 
 class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
 
   private gfloat *float_xyz_data[4];
-  private gint scanline_width; 
-
-  public 
-  GeglColorConvertOp *
-  new (GeglImage *src)
-  {
-    GeglColorConvertOp * self = 
-       GEGL_COLOR_CONVERT_OP (GET_NEW);
-
-    /*Call the constructor */
-    if (!constructor(self, src))
-      return NULL;
-    
-    /*Okay its constructed*/
-    GEGL_OBJECT(self)->constructed = TRUE;
-
-    return self;
-  }
-
+  private ConvertFunc convert_func;
+  
   protected 
   gboolean 
   constructor(self, 
@@ -52,6 +39,8 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
 
     {
       gint i;
+      self->_priv->convert_func = NULL;
+
       for(i = 0; i < 4; i++)
 	self->_priv->float_xyz_data[i] = NULL;
     }
@@ -71,12 +60,13 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
 
   private
   void
-  allocate_xyz_data (self)
+  allocate_xyz_data (self,
+      		     gint width)
   {
     gint i;
     for(i = 0; i < 4; i++)
       self->_priv->float_xyz_data[i] = 
-	g_malloc (sizeof(float) * self->_priv->scanline_width); 
+	g_malloc (sizeof(gfloat) * width); 
   }
 
   private
@@ -93,55 +83,39 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
       }	
   }
 
-  virtual
-  void
-  install_converter (self, 
-                     GeglImage *dest)
-  {
-    /* Default converter for CIE_XYZ is already installed */
-
-    /* Subclasses will install their converter if they can find one */
-
-    /* Allocate a scanline to hold intermediate XYZ float data */
-    free_xyz_data (self);
-    allocate_xyz_data (self); 
-  }
-
-  virtual 
-  protected
-  void
-  converter (self,
-	     GeglColorModel *src_cm, 
-	     GeglColorModel *dest_cm, 
-	     guchar **src_data,
-	     guchar **dest_data,
-	     gint width)
-  {
-    gegl_color_model_convert_to_xyz (src_cm, 
-	self->_priv->float_xyz_data, src_data, width);
-    gegl_color_model_convert_from_xyz (dest_cm, 
-	dest_data, self->_priv->float_xyz_data , width);
-  }
-
   override (Gegl:Op) 
   void
   prepare(GeglOp *op,
           GeglImage *dest,
 	  GeglRect *dest_rect)
   {
-    GeglColorConvertOp *self = GEGL_COLOR_CONVERT_OP (op);
+    GeglColorConvertOp *self = SELF (op);
     GeglPointOp *point_op = GEGL_POINT_OP (op);
     GeglPointOpClass *point_op_class = 
       GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
 
-    /* Save the width */
-    self->_priv->scanline_width = dest_rect->w;
+    GeglColorModel * dest_cm = gegl_image_color_model (dest);
+    GeglColorModel * src_cm = gegl_image_color_model (op->_priv->sources[0]); 
+
+    /* Get the name of the interface that converts from src cm */ 
+    gchar *converter_name = 
+      gegl_color_model_get_converter_interface_name (src_cm); 
+
+    /* Check to see if the dest cm implements this conversion*/ 
+    self->_priv->convert_func = 
+      (ConvertFunc)gegl_object_query_interface (GEGL_OBJECT(dest_cm), 
+						converter_name);   
+    g_free (converter_name);
+
+    if (!self->_priv->convert_func)
+      {
+	/* Allocate scanlines for the XYZ data */
+	free_xyz_data (self);
+	allocate_xyz_data (self, dest_rect->w); 
+      }
 
     /* Set the scanline version of this class to be called */
     point_op_class->scanline_func = gegl_color_convert_op_scanline;
-
-    /* Let subclass install its converter, or use default */
-    install_converter (self,dest);
   } 
 
   private 
@@ -163,6 +137,7 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
       gegl_color_model_num_channels (dest_cm);
     guint src_num_channels = 
       gegl_color_model_num_channels (src_cm);
+
     guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     guchar ** dest_data = g_malloc (sizeof(guchar*) * dest_num_channels);
@@ -173,9 +148,18 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
     gegl_image_iterator_get_scanline_data (
 	src_iters[0], src_data);
 
-    /* Calls the subclass converter if installed, 
-       otherwise defaults to the converter in this class */
-    converter (self,src_cm,dest_cm,src_data,dest_data,width); 
+    /* Call the converter if installed, else do XYZ conversion */ 
+       
+    if (self->_priv->convert_func)
+        (self->_priv->convert_func) (dest_cm, src_cm, dest_data, src_data, width); 
+    else
+      {
+	gegl_color_model_convert_to_xyz (src_cm, 
+	    self->_priv->float_xyz_data, src_data, width);
+
+	gegl_color_model_convert_from_xyz (dest_cm, 
+	    dest_data, self->_priv->float_xyz_data , width);
+      }
 
     g_free (dest_data);
     g_free (src_data);

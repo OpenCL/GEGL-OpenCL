@@ -5,16 +5,9 @@
 #include "gegl-color-convert-to-rgb-op.h"
 #include "gegl-color-convert-to-rgb-op-private.h"
 #include "gegl-color-convert-op-private.h"
-#include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
-#include "gegl-image-buffer.h"
-#include "gegl-image-iterator.h"
-#include "gegl-color.h"
-#include "gegl-color-model.h"
 #include "gegl-utils.h"
-#include <stdio.h>
 %}
-
 
 class Gegl:Color:Convert:To:Rgb:Op from Gegl:Color:Convert:Op {
 
@@ -35,7 +28,7 @@ class Gegl:Color:Convert:To:Rgb:Op from Gegl:Color:Convert:Op {
     return self;
   }
 
-  protected 
+  protected
   gboolean 
   constructor(self, 
               GeglImage *src) 
@@ -64,39 +57,5 @@ class Gegl:Color:Convert:To:Rgb:Op from Gegl:Color:Convert:Op {
   compute_source_rois (GeglOp *op, GeglRect *roi) 
   {
     gegl_rect_copy(&op->_priv->source_rois[0],roi);    
-  }
-
-  override (Gegl:Color:Convert:Op) 
-  void
-  install_converter (GeglColorConvertOp *color_convert_op, 
-                     GeglImage *dest)
-  {
-    GeglOp *op = GEGL_OP(color_convert_op);
-    GeglImage *source = op->_priv->sources[0];
-    GeglColorModel *source_cm = gegl_image_color_model (source);
-
-    /* If can find a converter, use it, otherwise it will do the CIE_XYZ conversion */
-
-    if (gegl_color_model_implements_color_conversion(source_cm,RGB))
-      {
-	GeglColorConvertOpClass *color_convert_op_class = 
-	  GEGL_COLOR_CONVERT_OP_CLASS(GTK_OBJECT(color_convert_op)->klass);
-        	
-        color_convert_op_class->converter = gegl_color_convert_to_rgb_op_converter;
-      }
-    else
-      PARENT_HANDLER (color_convert_op,dest)
-  }
-
-  private 
-  void
-  converter (GeglColorConvertOp *color_convert_op,
-	     GeglColorModel *src_cm, 
-	     GeglColorModel *dest_cm, 
-	     guchar **src_data,
-	     guchar **dest_data,
-	     gint width)
-  {
-    gegl_color_model_convert_to_rgb (src_cm, dest_data, src_data, width); 
   }
 }

@@ -44,9 +44,11 @@ NONGEN_GOB = \
   gegl-color-model-gray.gob \
   gegl-color-model-gray-u8.gob \
   gegl-color-model-gray-float.gob \
+  gegl-color-model-gray-u16.gob \
   gegl-color-model-rgb.gob \
   gegl-color-model-rgb-u8.gob \
   gegl-color-model-rgb-float.gob \
+  gegl-color-model-rgb-u16.gob \
   gegl-color-convert-to-rgb-op.gob \
   gegl-color-convert-to-gray-op.gob \
   gegl-color-convert-op.gob \
@@ -70,9 +72,11 @@ GOB_GEN_PUBLIC_HDRS = \
   gegl-color-model-gray.h \
   gegl-color-model-gray-u8.h \
   gegl-color-model-gray-float.h \
+  gegl-color-model-gray-u16.h \
   gegl-color-model-rgb.h \
   gegl-color-model-rgb-u8.h \
   gegl-color-model-rgb-float.h \
+  gegl-color-model-rgb-u16.h \
   gegl-color-convert-to-rgb-op.h \
   gegl-color-convert-to-gray-op.h \
   gegl-color-convert-op.h \
@@ -112,9 +116,11 @@ GOB_GEN_PRIVATE_HDRS = \
   gegl-color-model-gray-private.h \
   gegl-color-model-gray-u8-private.h \
   gegl-color-model-gray-float-private.h \
+  gegl-color-model-gray-u16-private.h \
   gegl-color-model-rgb-private.h \
   gegl-color-model-rgb-u8-private.h \
   gegl-color-model-rgb-float-private.h \
+  gegl-color-model-rgb-u16-private.h \
   gegl-color-convert-to-rgb-op-private.h \
   gegl-color-convert-to-gray-op-private.h \
   gegl-color-convert-op-private.h \
@@ -153,9 +159,11 @@ GOB_GEN_SRC = \
   gegl-color-model-gray.c \
   gegl-color-model-gray-u8.c \
   gegl-color-model-gray-float.c \
+  gegl-color-model-gray-u16.c \
   gegl-color-model-rgb.c \
   gegl-color-model-rgb-u8.c \
   gegl-color-model-rgb-float.c \
+  gegl-color-model-rgb-u16.c \
   gegl-color-convert-to-rgb-op.c \
   gegl-color-convert-to-gray-op.c \
   gegl-color-convert-op.c \
