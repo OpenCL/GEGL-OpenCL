@@ -1,0 +1,24 @@
+GIMP 2.0 will not any longer be a monolithic application with a small plug-in library wrapped around it, but a number of libraries providing the different functionalities of the core, the interface and the plug-in communication layer. The actual GIMP application will only have to put all this together and provide a nice user interface. 
+
+
+The actual pixel manipulation will be done using GEGL, the Gimp Graphics Library. GEGL abstracts from the color-space and color depth (8 bit, 16 bit, float, double) and provides generic data types like channel or color. The algorithms implemented using these abstract types are converted to the actual C code using a code-generator. That way it's easy to add additional data types and optimizations like support for MMX or AltiVec later without having to hack each and every operation by hand. 
+
+ 
+What used to be a simple layer stack in GIMP 1.x, which is combined using layer modes (Normal, Combine, Difference, ...) will, with the help of GEGL, become a rendering pipeline which can be thought of as a tree of layers which is viewed from its root. The nodes of the tree are operators with an arbitrary number of inputs and outputs. These inputs and outputs access rectangular regions of pixel-data, the edges of the tree. Each edge (comparable to the layers we have now) can hold its data internally as pixels, vectors, text or whatever and only needs to provide a well-defined interface so it can be plugged into the rendering pipeline. A similar approach will be used for the operators: Simple functions like color corrections or blur filters as well as affine transformations and more complex effects are possible. 
+
+ 
+Build on top of this, the core will implement objects like images, tools, brushes etc. The interfaces of all these high level objects are defined in its own library and have different implementations at the core and the plug-in side. The relevant code to implement the objects in the plug-in library will be auto-generated from object descriptions. This will give plug-in developers an object-oriented interface instead of the simple procedural approach GIMP uses now. 
+
+
+This architecture also allows to reuse UI-elements from the core in plug-ins and provides a clean model-view separation. By exporting the internal object structure to the plug-ins it will become possible to implement operators, tools or complete layer-types as plug-ins. The design of layers and tools allows to create specific tools for special layer-types (like for example vector-tools on vector-layers). 
+
+
+The communication between the core application and the plug-ins is done using CORBA. The interface between the actual objects and the ORB will be generated using the object descriptions mentioned above. The developer will only see GTK+-objects and does not have to deal with the shoals of CORBA. The term plug-in becomes a historical meaning since GIMP 2.0 will use a network-transparent client-server system. 
+
+
+Another highlight will be the parallelization of the actual computing.  Eventually you will not only want to build up a nice rendering-pipeline but you want to see the projection (the view on the root of the tree). Whenever an update of the projection becomes necessary, the system locks the necessary resources and hands the operation to the batch-renderer which runs in its own thread. That way not only the user interface, but the whole object system stays responsive all the time. 
+
+
+On top of all this sits the actual GIMP application and holds it all together.  This design will make it possible to implement different GIMP interfaces like a video-editing system or to visualize the rendering pipeline as an edit-able graph as known from scientific image manipulation.
+
+ 
