@@ -1,3 +1,9 @@
+Wed May  3 10:12:40 PDT 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* I have fixed PRINT, I have also change the float channel file
+
 Wed May  3 12:04:13 EDT 2000 calvinw@mindspring.com
 
 	*fixed a problem with gegl/gegl-print-op.gil. Made it inherit from 

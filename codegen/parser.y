@@ -753,24 +753,34 @@ Line:
 	| INDENT PRINT LT_PARENTHESIS NAME RT_PARENTHESIS ';'
 		{
 		  char tmp[256];
-		  char t2[256];  
+		  char t2[256];
 		  char *t[1];
-		  strcpy (t2, $4.string);  
-		  print_name (&$4, $4, NOT_DEFINE); 
+
+		  strcpy (t2, $4.string);
+		  print_name (&$4, $4, NOT_DEFINE);
+		  if ($4.type > 1)
+		    {
+		      sprintf (tmp, "*%s", $4.string);
+		      strcpy ($4.string, tmp);
+		    }
 		  t[0] = $4.string;
 		  print (tmp, PRINT_STR, t, 1);
-		  sprintf ($4.string, "%s%s", $1.string, tmp); 
+		  sprintf ($4.string, "%s%s;", $1.string, tmp);
 		  print_line ($4);
 		  if (get_sym (t2)->type == TYPE_C_A_VECTOR)
 		    {
 		      printf ("%sif (%s_has_%s)%s  ", $1.string, t2,
-			       NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
-			       $1.string);
-		      sprintf (tmp, "%s$a", t2);
-		      t[0] = tmp; 
-		      print ($4.string, PRINT_STR, t, 1);  
-		      $4.num = 1; 
-		      print_line ($4); 
+			  NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
+			  $1.string);
+		      if ($4.type > 1)
+			sprintf (tmp, "*%s$a", t2);
+		      else
+			sprintf (tmp, "%s$a", t2);
+		      t[0] = tmp;
+		      print (t2, PRINT_STR, t, 1);
+		      sprintf ($4.string, "%s;", t2);
+		      $4.num = 1;
+		      print_line ($4);
 		    }
 		}	  
 	;
