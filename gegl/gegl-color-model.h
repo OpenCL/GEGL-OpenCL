@@ -7,22 +7,20 @@ extern "C" {
 
 #include "gegl-object.h"
 
-#ifndef __TYPEDEF_GEGL_COLOR__
-#define __TYPEDEF_GEGL_COLOR__
-typedef struct _GeglColor GeglColor;
+#ifndef __TYPEDEF_GEGL_COLOR_SPACE__
+#define __TYPEDEF_GEGL_COLOR_SPACE__
+typedef struct _GeglColorSpace  GeglColorSpace;
 #endif
 
-#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
-#define __TYPEDEF_GEGL_COLOR_MODEL__
-typedef struct _GeglColorModel  GeglColorModel;
+#ifndef __TYPEDEF_GEGL_DATA_SPACE__
+#define __TYPEDEF_GEGL_DATA_SPACE__
+typedef struct _GeglDataSpace  GeglDataSpace;
 #endif
 
-typedef void (*GeglConvertFunc)(GeglColorModel *,
-                    GeglColorModel *,
-                    guchar **,
-                    guchar **,
-                    gint);
-
+#ifndef __TYPEDEF_GEGL_STORAGE__
+#define __TYPEDEF_GEGL_STORAGE__
+typedef struct _GeglStorage  GeglStorage;
+#endif
 
 #define GEGL_TYPE_COLOR_MODEL               (gegl_color_model_get_type ())
 #define GEGL_COLOR_MODEL(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR_MODEL, GeglColorModel))
@@ -32,26 +30,32 @@ typedef void (*GeglConvertFunc)(GeglColorModel *,
 #define GEGL_COLOR_MODEL_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COLOR_MODEL, GeglColorModelClass))
 
 
+#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
+#define __TYPEDEF_GEGL_COLOR_MODEL__
+typedef struct _GeglColorModel  GeglColorModel;
+#endif
 struct _GeglColorModel 
 {
    GeglObject object;
 
    /*< private >*/
-   GeglColorSpace colorspace;            /*  */
-   GeglChannelDataType data_type;        /*  */
-   gint bytes_per_channel;               /*  */
-   gint bytes_per_pixel;                 /*  */
-   gint num_channels;                    /*  */
-   gint num_colors;                      /*  */
-   gboolean has_alpha;                   /*  */
-   gint alpha_channel;                   /*  */
-   gboolean is_premultiplied;            /*  */
-   gboolean is_additive;                 /*  */
-   gboolean is_subtractive;              /*  */
-   gchar ** channel_names;          /*  */
-   gchar * color_space_name;        /*  */
-   gchar * alpha_string;            /*  */
-   gchar * channel_data_type_name;  /*  */
+   GeglColorSpace * color_space;
+   GeglDataSpace *  data_space;
+
+   gint num_channels;                    
+   gint num_colors;                     
+
+   gint *bits_per_channel;
+   gint bits_per_pixel;
+
+   gchar * name;       
+   gchar ** channel_names;
+
+   gboolean has_alpha;                   
+   gint alpha_channel;
+
+   gboolean has_z;
+   gint z_channel;
 };
 
 
@@ -59,60 +63,42 @@ typedef struct _GeglColorModelClass GeglColorModelClass;
 struct _GeglColorModelClass 
 {
    GeglObjectClass object_class;
-
-   GeglColorAlphaSpace (* color_alpha_space)              (GeglColorModel * self);
-   GeglColorModelType  (* color_model_type)               (GeglColorModel * self);
-   void                (* set_color)                      (GeglColorModel * self, 
-                                                           GeglColor * color, 
-                                                           GeglColorConstant constant);
-   void                (* convert_to_xyz)                 (GeglColorModel * self, 
-                                                           gfloat ** dest_data, 
-                                                           guchar ** src_data, 
-                                                           gint width);
-   void                (* convert_from_xyz)               (GeglColorModel * self, 
-                                                           guchar ** dest_data, 
-                                                           gfloat ** src_data, 
-                                                           gint width);
-   gchar *             (* get_convert_interface_name)     (GeglColorModel * self);
+   
+   GeglStorage* (*create_storage)(GeglColorModel *self, gint w, gint h);
 };
 
 
-gboolean        gegl_color_model_register       (gchar * color_model_name, 
-                                                 GeglColorModel *color_model);
-GeglColorModel *gegl_color_model_instance       (gchar * color_model_name);
-
-
 GType           gegl_color_model_get_type       (void);
-GeglColorSpace  gegl_color_model_color_space    (GeglColorModel * self);
-GeglChannelDataType
-                gegl_color_model_data_type      (GeglColorModel * self);
-gint            gegl_color_model_bytes_per_channel  (GeglColorModel * self);
-gint            gegl_color_model_bytes_per_pixel(GeglColorModel * self);
+
+gboolean        gegl_color_model_register       (GeglColorModel *color_model);
+GeglColorModel *  gegl_color_model_instance       (gchar * color_model_name);
+
+GeglColorSpace* gegl_color_model_color_space    (GeglColorModel * self);
+GeglDataSpace*  gegl_color_model_data_space     (GeglColorModel * self);
+
 gint            gegl_color_model_num_channels   (GeglColorModel * self);
 gint            gegl_color_model_num_colors     (GeglColorModel * self);
+
+gint*           gegl_color_model_bits_per_channel (GeglColorModel * self);
+gint            gegl_color_model_bits_per_pixel (GeglColorModel * self);
+
+gchar*          gegl_color_model_name            (GeglColorModel * self);
+gchar**         gegl_color_model_channel_names   (GeglColorModel * self);
+
 gboolean        gegl_color_model_has_alpha      (GeglColorModel * self);
+void            gegl_color_model_set_has_alpha  (GeglColorModel * self, 
+                                               gboolean has_alpha);
 gint            gegl_color_model_alpha_channel  (GeglColorModel * self);
-GeglColorAlphaSpace 
-                gegl_color_model_color_alpha_space (GeglColorModel * self);
-GeglColorModelType 
-                gegl_color_model_color_model_type (GeglColorModel * self);
-void            gegl_color_model_set_color      (GeglColorModel * self,
-                                                 GeglColor * color,
-                                                 GeglColorConstant constant);
-void            gegl_color_model_convert_to_xyz (GeglColorModel * self,
-                                                 gfloat ** dest_data,
-                                                 guchar ** src_data,
-                                                 gint width);
-void            gegl_color_model_convert_from_xyz (GeglColorModel * self,
-                                                 guchar ** dest_data,
-                                                 gfloat ** src_data,
-                                                 gint width);
-gchar *         gegl_color_model_get_convert_interface_name (GeglColorModel * self);
-void            gegl_color_model_set_has_alpha   (GeglColorModel * self, 
-                                                  gboolean has_alpha);
-void            gegl_color_model_set_color_space_name (GeglColorModel * self, 
-                                                  gchar *name);
-gchar *         gegl_color_model_get_color_space_name (GeglColorModel * self);
+
+gboolean        gegl_color_model_has_z          (GeglColorModel * self);
+void            gegl_color_model_set_has_z      (GeglColorModel * self, 
+                                               gboolean has_z);
+gint            gegl_color_model_z_channel      (GeglColorModel * self);
+
+GeglStorage*    gegl_color_model_create_storage (GeglColorModel * self, 
+                                               gint width, 
+                                               gint height);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

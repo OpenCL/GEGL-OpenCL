@@ -8,20 +8,18 @@ GEGL_SRC = \
   gegl-bfs-visitor.c \
   gegl-binary.c \
   gegl-blend.c \
-  gegl-buffer.c \
   gegl-color.c \
   gegl-color-model.c \
-  gegl-color-model-gray.c \
-  gegl-color-model-gray-float.c \
-  gegl-color-model-gray-u8.c \
-  gegl-color-model-gray-u16.c \
-  gegl-color-model-rgb.c \
-  gegl-color-model-rgb-float.c \
-  gegl-color-model-rgb-u8.c \
-  gegl-color-model-rgb-u16.c \
-  gegl-const-mult.c \
+  gegl-color-space.c \
+  gegl-color-space-rgb.c \
+  gegl-color-space-gray.c \
   gegl-comp.c \
-  gegl-copy.c \
+  gegl-component-color-model.c \
+  gegl-component-storage.c \
+  gegl-data-buffer.c \
+  gegl-data-space.c \
+  gegl-data-space-float.c \
+  gegl-data-space-u8.c \
   gegl-darken.c \
   gegl-dfs-visitor.c \
   gegl-difference.c \
@@ -31,16 +29,19 @@ GEGL_SRC = \
   gegl-eval-mgr.c \
   gegl-eval-visitor.c \
   gegl-fade.c \
-  gegl-fill.c \
   gegl-filter.c \
   gegl-graph.c \
   gegl-graph-setup-visitor.c \
+  gegl-i-add.c \
+  gegl-i-mult.c \
   gegl-image.c \
+  gegl-image-data.c \
+  gegl-image-data-iterator.c \
   gegl-inside.c \
   gegl-lighten.c \
   gegl-max.c \
-  gegl-mem-buffer.c \
   gegl-min.c \
+  gegl-mult.c \
   gegl-multiply.c \
   gegl-node.c \
   gegl-no-input.c \
@@ -52,14 +53,11 @@ GEGL_SRC = \
   gegl-premult.c \
   gegl-print.c \
   gegl-point-op.c \
-  gegl-sampled-image.c \
   gegl-scanline-processor.c \
   gegl-screen.c \
+  gegl-storage.c \
   gegl-subtract.c \
-  gegl-tiled-image.c \
   gegl-tile.c \
-  gegl-tile-iterator.c \
-  gegl-tile-mgr.c \
   gegl-unpremult.c \
   gegl-unary.c \
   gegl-visitor.c \

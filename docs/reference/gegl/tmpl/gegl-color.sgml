@@ -24,7 +24,25 @@ appropriate color model and data type, etc.
 
 </para>
 
-<!-- ##### FUNCTION gegl_color_get_channel_values ##### -->
+<!-- ##### FUNCTION gegl_color_get_pixel ##### -->
+<para>
+
+</para>
+
+@self: 
+@pixel: 
+
+
+<!-- ##### FUNCTION gegl_color_set_pixel ##### -->
+<para>
+
+</para>
+
+@self: 
+@pixel: 
+
+
+<!-- ##### FUNCTION gegl_color_get_width ##### -->
 <para>
 
 </para>
@@ -33,7 +51,7 @@ appropriate color model and data type, etc.
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_get_color_model ##### -->
+<!-- ##### FUNCTION gegl_color_get_height ##### -->
 <para>
 
 </para>
@@ -42,43 +60,40 @@ appropriate color model and data type, etc.
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_get_num_channels ##### -->
+<!-- ##### FUNCTION gegl_color_set_width ##### -->
 <para>
 
 </para>
 
 @self: 
-@Returns: 
+@width: 
 
 
-<!-- ##### FUNCTION gegl_color_set_channel_values ##### -->
+<!-- ##### FUNCTION gegl_color_set_height ##### -->
 <para>
 
 </para>
 
 @self: 
-@channel_values: 
+@height: 
 
 
-<!-- ##### FUNCTION gegl_color_set ##### -->
+<!-- ##### ARG GeglColor:width ##### -->
 <para>
 
 </para>
 
-@self: 
-@color: 
-
-
-<!-- ##### FUNCTION gegl_color_set_constant ##### -->
+<!-- ##### ARG GeglColor:height ##### -->
 <para>
 
 </para>
 
-@self: 
-@constant: 
+<!-- ##### ARG GeglColor:pixel-rgb-float ##### -->
+<para>
 
+</para>
 
-<!-- ##### ARG GeglColor:colormodel ##### -->
+<!-- ##### ARG GeglColor:pixel-rgb-uint8 ##### -->
 <para>
 
 </para>

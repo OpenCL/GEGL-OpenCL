@@ -2,8 +2,10 @@
 #include "gegl-attributes.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
-#include "gegl-tile.h"
-#include "gegl-tile-iterator.h"
+#include "gegl-color-space.h"
+#include "gegl-data-space.h"
+#include "gegl-image-data.h"
+#include "gegl-image-data-iterator.h"
 #include "gegl-utils.h"
 
 enum
@@ -107,14 +109,16 @@ prepare (GeglFilter * filter,
   GeglUnary *self = GEGL_UNARY(filter);
 
   GeglAttributes *dest_attr = g_list_nth_data(output_attributes, 0);
-  GeglTile *dest = (GeglTile*)g_value_get_object(dest_attr->value);
-  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
+  GeglImageData *dest = (GeglImageData*)g_value_get_object(dest_attr->value);
+  GeglColorModel * dest_cm = gegl_image_data_get_color_model (dest);
+  GeglColorSpace * dest_cs = gegl_color_model_color_space(dest_cm);
+  GeglDataSpace * dest_ds = gegl_color_model_data_space(dest_cm);
 
   g_return_if_fail (dest_cm);
 
   {
-    GeglChannelDataType type = gegl_color_model_data_type(dest_cm);
-    GeglColorSpace space = gegl_color_model_color_space(dest_cm);
+    GeglDataSpaceType type = gegl_data_space_data_space_type(dest_ds);
+    GeglColorSpaceType space = gegl_color_space_color_space_type(dest_cs);
     GeglUnaryClass *klass = GEGL_UNARY_GET_CLASS(self);
 
     /* Get the appropriate scanline func from subclass */

@@ -33,8 +33,8 @@ struct _GeglPipeClass
     GeglFilterClass filter_class;
 
     GeglScanlineFunc (*get_scanline_func)   (GeglPipe *self,
-                                             GeglColorSpace space,
-                                             GeglChannelDataType type);
+                                             GeglColorSpaceType space,
+                                             GeglDataSpaceType type);
 };
 
 GType           gegl_pipe_get_type           (void);

@@ -1,6 +1,228 @@
-	Fri Sep 13 00:05:33 EDT 2002 calvinw@mindspring.com
+Tue Oct 15 21:06:05 EDT 2002 calvinw@mindspring.com
 
-    Removed the composite nodes and broke these into Over, Atop, Inside,
+	The ColorModel classes now have a ColorSpace (RGB, GRAY, etc) and a DataSpace
+	(8bit, 16bit, float).  DataSpaces describe channel data or indexed data. 
+
+	Introduced ImageData objects to describe image output from Filters.  Each
+	ImageData has an area, a ColorModel and a Tile (eventually Tile system or
+	manager).  Each Tile in turn has a DataBuffer and Storage object.  The
+	DataBuffer has pointers to banks of data and the Storage object has info that
+	describes the samples in each bank. 
+
+	The ComponentColorModel and ComponentStorage subclasses of ColorModel and
+	Storage describe the regular separated channels component color models (R,G,B
+	stored in separate banks in the DataBuffer)
+
+	ImageDataIterator allows getting pixels for an area of ImageData object.  
+
+	Also began introducing some gegl value types for CHANNEL, PIXEL, FLOAT, UINT8,
+	etc. These will let us use GValue techniques for passing all inputs to ops, and
+	describing/validating them with param specs. (see gegl-value-types.c,
+	gegl-param-specs.c) For tests for these see valuetest.c floatvaluetest.c,etc
+	in the unit tests. 
+
+	*gegl/gegl-color-space.c
+	*gegl/gegl-color-space-gray.c
+	*gegl/gegl-color-space-gray.h
+	*gegl/gegl-color-space.h
+	*gegl/gegl-color-space-rgb.c
+	*gegl/gegl-color-space-rgb.h
+	*gegl/gegl-component-color-model.c
+	*gegl/gegl-component-color-model.h
+	*gegl/gegl-component-storage.c
+	*gegl/gegl-component-storage.h
+	*gegl/gegl-data-buffer.c
+	*gegl/gegl-data-buffer.h
+	*gegl/gegl-data-space.c
+	*gegl/gegl-data-space-float.c
+	*gegl/gegl-data-space-float.h
+	*gegl/gegl-data-space.h
+	*gegl/gegl-data-space-u8.c
+	*gegl/gegl-data-space-u8.h
+	*gegl/gegl-i-add.c
+	*gegl/gegl-i-add.h
+	*gegl/gegl-image-data.c
+	*gegl/gegl-image-data.h
+	*gegl/gegl-image-data-iterator.c
+	*gegl/gegl-image-data-iterator.h
+	*gegl/gegl-i-mult.c
+	*gegl/gegl-i-mult.h
+	*gegl/gegl-mult.c
+	*gegl/gegl-mult.h
+	*gegl/gegl-storage.c
+	*gegl/gegl-storage.h
+	*tests/addtest-rgb-float.c
+	*tests/addtest-rgb-uint8.c
+	*tests/checktest.c
+	*tests/colorspacetest.c
+	*tests/colortest-rgb-float.c
+	*tests/colortest-rgb-uint8.c
+	*tests/databuffertest.c
+	*tests/dataspacetest.c
+	*tests/fadetest-rgb-float.c
+	*tests/fadetest-rgb-uint8.c
+	*tests/floatvaluetest.c
+	*tests/gegl-check.c
+	*tests/gegl-check.h
+	*tests/graphapplytest-rgb-float.c
+	*tests/iaddtest-rgb-float.c
+	*tests/iaddtest-rgb-uint8.c
+	*tests/imagedataiteratortest.c
+	*tests/imagedatatest.c
+	*tests/imulttest-rgb-float.c
+	*tests/imulttest-rgb-uint8.c
+	*tests/multiplytest-rgb-float.c
+	*tests/multtest-rgb-float.c
+	*tests/multtest-rgb-uint8.c
+	*tests/paramtest.c
+	*tests/rgbfloatvaluetest.c
+	*tests/rgbuint8valuetest.c
+	*tests/simpletreetest-rgb-float.c
+	*tests/storagetest.c
+	*tests/uint8valuetest.c
+	*tests/valueimagedatatest.c
+	*tests/valuetest.c
+
+	Added these.
+
+	*gegl/gegl-add.c
+	*gegl/gegl-add.h
+	*gegl/gegl-atop.c
+	*gegl/gegl-binary.c
+	*gegl/gegl-binary.h
+	*gegl/gegl-blend.c
+	*gegl/gegl-color.c
+	*gegl/gegl-color.h
+	*gegl/gegl-color-model.c
+	*gegl/gegl-color-model.h
+	*gegl/gegl-comp.c
+	*gegl/gegl-comp.h
+	*gegl/gegl-darken.c
+	*gegl/gegl-difference.c
+	*gegl/gegl-dump-visitor.c
+	*gegl/gegl-eval-dfs-visitor.c
+	*gegl/gegl-eval-mgr.c
+	*gegl/gegl-eval-mgr.h
+	*gegl/gegl-eval-visitor.c
+	*gegl/gegl-fade.c
+	*gegl/gegl-fade.h
+	*gegl/gegl-filter.c
+	*gegl/gegl-filter.h
+	*gegl/gegl-graph.c
+	*gegl/gegl.h
+	*gegl/gegl-image.c
+	*gegl/gegl-image.h
+	*gegl/gegl-inside.c
+	*gegl/gegl-lighten.c
+	*gegl/gegl-max.c
+	*gegl/gegl-min.c
+	*gegl/gegl-multiply.c
+	*gegl/gegl-no-input.c
+	*gegl/gegl-no-input.h
+	*gegl/gegl-op.c
+	*gegl/gegl-op.h
+	*gegl/gegl-outside.c
+	*gegl/gegl-over.c
+	*gegl/gegl-param-specs.c
+	*gegl/gegl-param-specs.h
+	*gegl/gegl-pipe.c
+	*gegl/gegl-pipe.h
+	*gegl/gegl-point-op.c
+	*gegl/gegl-premult.c
+	*gegl/gegl-print.c
+	*gegl/gegl-scanline-processor.c
+	*gegl/gegl-scanline-processor.h
+	*gegl/gegl-screen.c
+	*gegl/gegl-subtract.c
+	*gegl/gegl-tile.c
+	*gegl/gegl-tile.h
+	*gegl/gegl-types.h
+	*gegl/gegl-unary.c
+	*gegl/gegl-unary.h
+	*gegl/gegl-unpremult.c
+	*gegl/gegl-utils.c
+	*gegl/gegl-utils.h
+	*gegl/gegl-value-types.c
+	*gegl/gegl-value-types.h
+	*gegl/gegl-xor.c
+	*gegl/Makefile.am
+	*tests/colormodeltest.c
+	*tests/gegl-mock-filter.c
+	*tests/gegl-mock-filter.h
+	*tests/gegl-mock-point-op.c
+	*tests/haverecttest.c
+	*tests/imagetest.c
+	*tests/Makefile.am
+	*tests/needrecttest.c
+	*tests/pointoptest.c
+	*tests/printtest.c
+	*tests/testgegl.c
+	*tests/testutils.c
+	*tests/testutils.h
+	*tests/tiletest.c
+
+	Modified.
+
+	*gegl/gegl-buffer.c
+	*gegl/gegl-buffer.h
+	*gegl/gegl-color-model-gray.c
+	*gegl/gegl-color-model-gray-float.c
+	*gegl/gegl-color-model-gray-float.h
+	*gegl/gegl-color-model-gray.h
+	*gegl/gegl-color-model-gray-u16.c
+	*gegl/gegl-color-model-gray-u16.h
+	*gegl/gegl-color-model-gray-u8.c
+	*gegl/gegl-color-model-gray-u8.h
+	*gegl/gegl-color-model-rgb.c
+	*gegl/gegl-color-model-rgb-float.c
+	*gegl/gegl-color-model-rgb-float.h
+	*gegl/gegl-color-model-rgb.h
+	*gegl/gegl-color-model-rgb-u16.c
+	*gegl/gegl-color-model-rgb-u16.h
+	*gegl/gegl-color-model-rgb-u8.c
+	*gegl/gegl-color-model-rgb-u8.h
+	*gegl/gegl-const-mult.c
+	*gegl/gegl-const-mult.h
+	*gegl/gegl-copy.c
+	*gegl/gegl-copy.h
+	*gegl/gegl-fill.c
+	*gegl/gegl-fill.h
+	*gegl/gegl-mem-buffer.c
+	*gegl/gegl-mem-buffer.h
+	*gegl/gegl-sampled-image.c
+	*gegl/gegl-sampled-image.h
+	*gegl/gegl-tiled-image.c
+	*gegl/gegl-tiled-image.h
+	*gegl/gegl-tile-iterator.c
+	*gegl/gegl-tile-iterator.h
+	*gegl/gegl-tile-mgr.c
+	*gegl/gegl-tile-mgr.h
+	*gegl/gegl-value-transform.c
+	*tests/addtest.c
+	*tests/buffertest.c
+	*tests/colormodelrgbfloattest.c
+	*tests/colormodelrgbtest.c
+	*tests/colortest.c
+	*tests/constmulttest.c
+	*tests/copytest.c
+	*tests/fadetest.c
+	*tests/filltest.c
+	*tests/graphapplytest.c
+	*tests/membuffertest.c
+	*tests/multiplytest.c
+	*tests/sampledimagetest.c
+	*tests/simpletreetest.c
+	*tests/statoptest.c
+	*tests/tiledimagetest.c
+	*tests/tileiteratortest.c
+	*tests/tilemgrtest.c
+	*tests/valuetiletest.c
+	
+	Removed these.
+
+Fri Sep 13 00:05:33 EDT 2002 calvinw@mindspring.com
+
+	Removed the composite nodes and broke these into Over, Atop, Inside,
 	Outside and Xor.  These all inherit from the Comp class. You can pass a
 	boolean to these to say whether the fg should be premultiplied before the
 	operation. 
@@ -151,56 +373,6 @@
 
 	New tests.
 
-	*docs/reference/gegl/gegl-docs.sgml
-	*docs/reference/gegl/gegl-sections.txt
-	*docs/reference/gegl/gegl-undocumented.txt
-	*docs/reference/gegl/gegl.types
-	*docs/reference/gegl/tmpl/gegl-attributes.sgml
-	*docs/reference/gegl/tmpl/gegl-buffer.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray.sgml
-	*docs/reference/gegl/tmpl/gegl-comp.sgml
-	*docs/reference/gegl/tmpl/gegl-const-mult.sgml
-	*docs/reference/gegl/tmpl/gegl-graph.sgml
-	*docs/reference/gegl/tmpl/gegl-image.sgml
-	*docs/reference/gegl/tmpl/gegl-node.sgml
-	*docs/reference/gegl/tmpl/gegl-op.sgml
-	*docs/reference/gegl/tmpl/gegl-param-specs.sgml
-	*docs/reference/gegl/tmpl/gegl-stat-op.sgml
-	*docs/reference/gegl/tmpl/gegl-tile-iterator.sgml
-	*docs/reference/gegl/tmpl/gegl-tile.sgml
-	*docs/reference/gegl/tmpl/gegl-types.sgml
-	*docs/reference/gegl/tmpl/gegl-unused.sgml
-	*docs/reference/gegl/tmpl/gegl-visitor.sgml
-
-	Updated.
-
-	*docs/reference/gegl/tmpl/gegl-atop.sgml
-	*docs/reference/gegl/tmpl/gegl-binary.sgml
-	*docs/reference/gegl/tmpl/gegl-blend.sgml
-	*docs/reference/gegl/tmpl/gegl-darken.sgml
-	*docs/reference/gegl/tmpl/gegl-difference.sgml
-	*docs/reference/gegl/tmpl/gegl-fade.sgml
-	*docs/reference/gegl/tmpl/gegl-inside.sgml
-	*docs/reference/gegl/tmpl/gegl-lighten.sgml
-	*docs/reference/gegl/tmpl/gegl-multiply.sgml
-	*docs/reference/gegl/tmpl/gegl-no-input.sgml
-	*docs/reference/gegl/tmpl/gegl-outside.sgml
-	*docs/reference/gegl/tmpl/gegl-over.sgml
-	*docs/reference/gegl/tmpl/gegl-pipe.sgml
-	*docs/reference/gegl/tmpl/gegl-tiled-image.sgml
-	*docs/reference/gegl/tmpl/gegl-unary.sgml
-	*docs/reference/gegl/tmpl/gegl-xor.sgml
-
-	New docs.
-
-	*docs/reference/gegl/tmpl/gegl-comp-premult.sgml
-	*docs/reference/gegl/tmpl/gegl-dark.sgml
-	*docs/reference/gegl/tmpl/gegl-diff.sgml
-	*docs/reference/gegl/tmpl/gegl-light.sgml
-	*docs/reference/gegl/tmpl/gegl-mult.sgml
-
-	Removed old docs.    
-
 Mon Aug 26 00:28:20 EDT 2002 calvinw@mindspring.com	
 
 	Updated Node class to incorporate multi-output nodes. Now nodes have a
@@ -253,29 +425,6 @@ Mon Aug 26 00:28:20 EDT 2002 calvinw@mindspring.com
 	*codegen/test_files/gegl-unpremult.gil
 
 	Moved the .gil files to codegen test directory for now.  
-
-	*docs/dia/composite.dia
-	*docs/dia/node_no_input_upstream.dia
-	*docs/dia/ops.dia
-	*docs/dia/sharednode.dia
-	*docs/dia/simplegraph.dia
-
-	Some dias for diagrams for the gtk-docs.  
-
-	*docs/reference/gegl/images/composite.png
-	*docs/reference/gegl/images/node_input_outputs.png
-	*docs/reference/gegl/images/node_no_input_upstream.png
-	*docs/reference/gegl/images/sharednode.png
-	*docs/reference/gegl/images/simplegraph.png
-
-	Some pngs for diagrams for the gtk-docs.  
-
-	*docs/reference/gegl/tmpl/gegl-eval-bfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-eval-dfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-eval-mgr.sgml
-	*docs/reference/gegl/tmpl/gegl-eval-visitor.sgml
-
-	New documentation.	
 
 	*gil/gil/Makefile.am
 	*gil/gil/gil-bfs-visitor.c
@@ -356,16 +505,6 @@ Mon Aug 26 00:28:20 EDT 2002 calvinw@mindspring.com
 
 	Added these gegl unit tests, mostly for multi-output nodes.
 
-	*docs/reference/gegl/images/apply.png
-	*docs/reference/gegl/images/chain.png
-	*docs/reference/gegl/images/request.png
-	*docs/reference/gegl/tmpl/gegl-graph-bfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-graph-dfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-graph-evaluate-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-graph-init-visitor.sgml
-
-	Removed old reference docs.
-
 	*gegl/gegl-add.gil
 	*gegl/gegl-comp-premult.gil
 	*gegl/gegl-comp.gil
@@ -408,50 +547,6 @@ Mon Aug 26 00:28:20 EDT 2002 calvinw@mindspring.com
 
 	This got moved to gil/gil directory. Eventually will be replaced completely
 	with new gil gobject code.
-
-	*docs/TODO.xml
-	*docs/reference/gegl/gegl-docs.sgml
-	*docs/reference/gegl/gegl-sections.txt
-	*docs/reference/gegl/gegl-undocumented.txt
-	*docs/reference/gegl/gegl.types
-	*docs/reference/gegl/tmpl/gegl-add.sgml
-	*docs/reference/gegl/tmpl/gegl-attributes.sgml
-	*docs/reference/gegl/tmpl/gegl-bfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-comp-premult.sgml
-	*docs/reference/gegl/tmpl/gegl-comp.sgml
-	*docs/reference/gegl/tmpl/gegl-const-mult.sgml
-	*docs/reference/gegl/tmpl/gegl-copy.sgml
-	*docs/reference/gegl/tmpl/gegl-dark.sgml
-	*docs/reference/gegl/tmpl/gegl-dfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-diff.sgml
-	*docs/reference/gegl/tmpl/gegl-dump-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-filter.sgml
-	*docs/reference/gegl/tmpl/gegl-graph-setup-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-graph.sgml
-	*docs/reference/gegl/tmpl/gegl-image.sgml
-	*docs/reference/gegl/tmpl/gegl-light.sgml
-	*docs/reference/gegl/tmpl/gegl-max.sgml
-	*docs/reference/gegl/tmpl/gegl-min.sgml
-	*docs/reference/gegl/tmpl/gegl-mult.sgml
-	*docs/reference/gegl/tmpl/gegl-node.sgml
-	*docs/reference/gegl/tmpl/gegl-op.sgml
-	*docs/reference/gegl/tmpl/gegl-param-specs.sgml
-	*docs/reference/gegl/tmpl/gegl-point-op.sgml
-	*docs/reference/gegl/tmpl/gegl-premult.sgml
-	*docs/reference/gegl/tmpl/gegl-print.sgml
-	*docs/reference/gegl/tmpl/gegl-scanline-processor.sgml
-	*docs/reference/gegl/tmpl/gegl-screen.sgml
-	*docs/reference/gegl/tmpl/gegl-stat-op.sgml
-	*docs/reference/gegl/tmpl/gegl-subtract.sgml
-	*docs/reference/gegl/tmpl/gegl-tile.sgml
-	*docs/reference/gegl/tmpl/gegl-types.sgml
-	*docs/reference/gegl/tmpl/gegl-unpremult.sgml
-	*docs/reference/gegl/tmpl/gegl-unused.sgml
-	*docs/reference/gegl/tmpl/gegl-utils.sgml
-	*docs/reference/gegl/tmpl/gegl-value-types.sgml
-	*docs/reference/gegl/tmpl/gegl-visitor.sgml
-
-	Reference docs updated.
 
 	*gegl/Makefile.am
 	*gegl/gegl-bfs-visitor.c
@@ -581,19 +676,6 @@ Sun Aug 11 14:51:48 EDT 2002 calvinw@mindspring.com
 
 	Added files. 
     
-	*docs/reference/gegl/tmpl/gegl-graph.sgml
-	*docs/reference/gegl/tmpl/gegl-graph-bfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-graph-evaluate-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-graph-dfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-graph-init-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-dump-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-dfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-graph-setup-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-bfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-attributes.sgml
-
-	Added these new documents.
-
 	*tests/dumpvisitortest.c
 	*tests/dfsvisitortest.c
 	*tests/bfsvisitortest.c
@@ -747,41 +829,6 @@ Sun Aug 11 14:51:48 EDT 2002 calvinw@mindspring.com
 
 	Filled out the tests for the new Graph classes.
 
-	*docs/reference/gegl/images/chain.png
-	*docs/reference/gegl/gegl-docs.sgml
-	*docs/reference/gegl/gegl-sections.txt
-	*docs/reference/gegl/gegl-undocumented.txt
-	*docs/reference/gegl/gegl.types
-	*docs/reference/gegl/tmpl/gegl-add.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model.sgml
-	*docs/reference/gegl/tmpl/gegl-color.sgml
-	*docs/reference/gegl/tmpl/gegl-comp-premult.sgml
-	*docs/reference/gegl/tmpl/gegl-comp.sgml
-	*docs/reference/gegl/tmpl/gegl-const-mult.sgml
-	*docs/reference/gegl/tmpl/gegl-copy.sgml
-	*docs/reference/gegl/tmpl/gegl-filter.sgml
-	*docs/reference/gegl/tmpl/gegl-image.sgml
-	*docs/reference/gegl/tmpl/gegl-node.sgml
-	*docs/reference/gegl/tmpl/gegl-object.sgml
-	*docs/reference/gegl/tmpl/gegl-op.sgml
-	*docs/reference/gegl/tmpl/gegl-point-op.sgml
-	*docs/reference/gegl/tmpl/gegl-premult.sgml
-	*docs/reference/gegl/tmpl/gegl-print.sgml
-	*docs/reference/gegl/tmpl/gegl-sampled-image.sgml
-	*docs/reference/gegl/tmpl/gegl-scanline-processor.sgml
-	*docs/reference/gegl/tmpl/gegl-stat-op.sgml
-	*docs/reference/gegl/tmpl/gegl-tile-mgr.sgml
-	*docs/reference/gegl/tmpl/gegl-unpremult.sgml
-	*docs/reference/gegl/tmpl/gegl-unused.sgml
-	*docs/reference/gegl/tmpl/gegl-utils.sgml
-	*docs/reference/gegl/tmpl/gegl-value-types.sgml
-	*docs/reference/gegl/tmpl/gegl-visitor.sgml
-
-	Updated these docs.
-
-	*docs/reference/gegl/tmpl/gegl-filter-bfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-filter-dfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-filter-inputs-visitor.sgml
 	*gegl/gegl-filter-bfs-visitor.c
 	*gegl/gegl-filter-bfs-visitor.h
 	*gegl/gegl-filter-dfs-visitor.c
@@ -845,28 +892,6 @@ Tue Apr  2 23:41:53 EST 2002 calvinw@mindspring.com
 	*tests/filtertest.c
 
 	Added filter tests.
-
-	*docs/reference/gegl/gegl-docs.sgml
-	*docs/reference/gegl/gegl-sections.txt
-	*docs/reference/gegl/gegl-undocumented.txt
-	*docs/reference/gegl/gegl.types
-	*docs/reference/gegl/tmpl/gegl-color-model-gray.sgml
-	*docs/reference/gegl/tmpl/gegl-color.sgml
-	*docs/reference/gegl/tmpl/gegl-filter.sgml
-	*docs/reference/gegl/tmpl/gegl-op.sgml
-	*docs/reference/gegl/tmpl/gegl-scanline-processor.sgml
-	*docs/reference/gegl/tmpl/gegl-stat-op.sgml
-	*docs/reference/gegl/tmpl/gegl-unused.sgml
-	*docs/reference/gegl/tmpl/gegl-value-types.sgml
-
-	*docs/reference/gegl/tmpl/gegl-filter-bfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-filter-dfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-filter-inputs-visitor.sgml
-
-	*docs/reference/gegl/tmpl/gegl-bfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-dfs-visitor.sgml
-
-	Updated docs.
 
 Wed Mar 27 22:53:38 EST 2002 calvinw@mindsping.com	
 
@@ -936,66 +961,6 @@ Wed Mar 27 22:53:38 EST 2002 calvinw@mindsping.com
 	*tests/testgegl.c
 
 	Update tests for visitor changes.
-
-	*docs/reference/gegl/tmpl/gegl-bfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-dfs-visitor.sgml
-	*docs/reference/gegl/tmpl/gegl-param-specs.sgml
-	*docs/reference/gegl/tmpl/gegl-value-types.sgml
-	*docs/reference/gegl/tmpl/gegl-visitor.sgml
-
-	Added these.
-
-	*docs/reference/gegl/gegl-docs.sgml
-	*docs/reference/gegl/gegl-sections.txt
-	*docs/reference/gegl/gegl-undocumented.txt
-	*docs/reference/gegl/gegl.types
-	*docs/reference/gegl/tmpl/gegl-add.sgml
-	*docs/reference/gegl/tmpl/gegl-buffer.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray-float.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray-u16.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray-u8.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-rgb-float.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-rgb-u16.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-rgb-u8.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-rgb.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model.sgml
-	*docs/reference/gegl/tmpl/gegl-color.sgml
-	*docs/reference/gegl/tmpl/gegl-comp-premult.sgml
-	*docs/reference/gegl/tmpl/gegl-comp.sgml
-	*docs/reference/gegl/tmpl/gegl-const-mult.sgml
-	*docs/reference/gegl/tmpl/gegl-copy.sgml
-	*docs/reference/gegl/tmpl/gegl-dark.sgml
-	*docs/reference/gegl/tmpl/gegl-diff.sgml
-	*docs/reference/gegl/tmpl/gegl-fill.sgml
-	*docs/reference/gegl/tmpl/gegl-filter.sgml
-	*docs/reference/gegl/tmpl/gegl-image.sgml
-	*docs/reference/gegl/tmpl/gegl-light.sgml
-	*docs/reference/gegl/tmpl/gegl-max.sgml
-	*docs/reference/gegl/tmpl/gegl-mem-buffer.sgml
-	*docs/reference/gegl/tmpl/gegl-min.sgml
-	*docs/reference/gegl/tmpl/gegl-mult.sgml
-	*docs/reference/gegl/tmpl/gegl-node.sgml
-	*docs/reference/gegl/tmpl/gegl-object.sgml
-	*docs/reference/gegl/tmpl/gegl-op.sgml
-	*docs/reference/gegl/tmpl/gegl-point-op.sgml
-	*docs/reference/gegl/tmpl/gegl-premult.sgml
-	*docs/reference/gegl/tmpl/gegl-print.sgml
-	*docs/reference/gegl/tmpl/gegl-sampled-image.sgml
-	*docs/reference/gegl/tmpl/gegl-scanline-processor.sgml
-	*docs/reference/gegl/tmpl/gegl-screen.sgml
-	*docs/reference/gegl/tmpl/gegl-stat-op.sgml
-	*docs/reference/gegl/tmpl/gegl-subtract.sgml
-	*docs/reference/gegl/tmpl/gegl-tile-iterator.sgml
-	*docs/reference/gegl/tmpl/gegl-tile-mgr.sgml
-	*docs/reference/gegl/tmpl/gegl-tile.sgml
-	*docs/reference/gegl/tmpl/gegl-types.sgml
-	*docs/reference/gegl/tmpl/gegl-unpremult.sgml
-	*docs/reference/gegl/tmpl/gegl-unused.sgml
-	*docs/reference/gegl/tmpl/gegl-utils.sgml
-
-	Documentation updates.
-
 
 Sat Mar 16 23:38:25 EST 2002 calvinw@mindspring.com
 
@@ -1115,70 +1080,8 @@ Sat Mar 16 23:38:25 EST 2002 calvinw@mindspring.com
 
 	Removed the old ImageMgr tests.
 
-	*docs/reference/gegl/gegl-docs.sgml
-	*docs/reference/gegl/gegl-sections.txt
-	*docs/reference/gegl/gegl-undocumented.txt
-	*docs/reference/gegl/gegl.types
-	*docs/reference/gegl/tmpl/gegl-add.sgml
-	*docs/reference/gegl/tmpl/gegl-comp-premult.sgml
-	*docs/reference/gegl/tmpl/gegl-comp.sgml
-	*docs/reference/gegl/tmpl/gegl-const-mult.sgml
-	*docs/reference/gegl/tmpl/gegl-copy.sgml
-	*docs/reference/gegl/tmpl/gegl-dark.sgml
-	*docs/reference/gegl/tmpl/gegl-diff.sgml
-	*docs/reference/gegl/tmpl/gegl-image.sgml
-	*docs/reference/gegl/tmpl/gegl-light.sgml
-	*docs/reference/gegl/tmpl/gegl-max.sgml
-	*docs/reference/gegl/tmpl/gegl-min.sgml
-	*docs/reference/gegl/tmpl/gegl-mult.sgml
-	*docs/reference/gegl/tmpl/gegl-node.sgml
-	*docs/reference/gegl/tmpl/gegl-op.sgml
-	*docs/reference/gegl/tmpl/gegl-point-op.sgml
-	*docs/reference/gegl/tmpl/gegl-premult.sgml
-	*docs/reference/gegl/tmpl/gegl-print.sgml
-	*docs/reference/gegl/tmpl/gegl-scanline-processor.sgml
-	*docs/reference/gegl/tmpl/gegl-screen.sgml
-	*docs/reference/gegl/tmpl/gegl-subtract.sgml
-	*docs/reference/gegl/tmpl/gegl-tile-mgr.sgml
-	*docs/reference/gegl/tmpl/gegl-unpremult.sgml
-	*docs/reference/gegl/tmpl/gegl-unused.sgml
-	*docs/reference/gegl/tmpl/gegl-utils.sgml
-
-	Updated the docs some.
-
-	*docs/reference/gegl/tmpl/gegl-image-mgr.sgml
-	*docs/reference/gegl/tmpl/gegl-simple-image-mgr.sgml
-
-	Removed these.
-
-	*docs/reference/gegl/tmpl/gegl-filter.sgml
-
-	Added
-
 Sat Dec 22 01:31:12 EST 2001 calvinw@mindspring.com
 
-	*docs/reference/gegl/tmpl/gegl-add-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-comp-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-comp-premult-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-const-mult-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-copy-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-dark-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-diff-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-fill-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-image-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-light-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-max-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-min-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-mult-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-op-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-point-op-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-premult-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-print-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-sampled-image-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-screen-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-stat-op-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-subtract-impl.sgml
-	*docs/reference/gegl/tmpl/gegl-unpremult-impl.sgml
 	*gegl/gegl-add-impl.gil
 	*gegl/gegl-add-impl.h
 	*gegl/gegl-add.c
@@ -1248,11 +1151,6 @@ Sat Dec 22 01:31:12 EST 2001 calvinw@mindspring.com
 
 	Removed these. 
 
-	*docs/dia/apply.dia
-	*docs/images/request.png
-	*docs/reference/gegl/images/apply.png
-	*docs/reference/gegl/images/chain.png
-	*docs/reference/gegl/images/request.png
 	*gegl/gegl-add.gil
 	*gegl/gegl-comp-premult.gil
 	*gegl/gegl-comp.gil
@@ -1270,54 +1168,6 @@ Sat Dec 22 01:31:12 EST 2001 calvinw@mindspring.com
 
 	Added these. 
 
-	*docs/reference/gegl/Makefile.am
-	*docs/reference/gegl/gegl-docs.sgml
-	*docs/reference/gegl/gegl-sections.txt
-	*docs/reference/gegl/gegl-undocumented.txt
-	*docs/reference/gegl/gegl.types
-	*docs/reference/gegl/tmpl/gegl-add.sgml
-	*docs/reference/gegl/tmpl/gegl-buffer.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray-float.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray-u16.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray-u8.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-rgb-float.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-rgb-u16.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-rgb-u8.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-rgb.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model.sgml
-	*docs/reference/gegl/tmpl/gegl-color.sgml
-	*docs/reference/gegl/tmpl/gegl-comp-premult.sgml
-	*docs/reference/gegl/tmpl/gegl-comp.sgml
-	*docs/reference/gegl/tmpl/gegl-const-mult.sgml
-	*docs/reference/gegl/tmpl/gegl-copy.sgml
-	*docs/reference/gegl/tmpl/gegl-dark.sgml
-	*docs/reference/gegl/tmpl/gegl-diff.sgml
-	*docs/reference/gegl/tmpl/gegl-fill.sgml
-	*docs/reference/gegl/tmpl/gegl-image-mgr.sgml
-	*docs/reference/gegl/tmpl/gegl-image.sgml
-	*docs/reference/gegl/tmpl/gegl-light.sgml
-	*docs/reference/gegl/tmpl/gegl-max.sgml
-	*docs/reference/gegl/tmpl/gegl-mem-buffer.sgml
-	*docs/reference/gegl/tmpl/gegl-min.sgml
-	*docs/reference/gegl/tmpl/gegl-mult.sgml
-	*docs/reference/gegl/tmpl/gegl-node.sgml
-	*docs/reference/gegl/tmpl/gegl-object.sgml
-	*docs/reference/gegl/tmpl/gegl-op.sgml
-	*docs/reference/gegl/tmpl/gegl-point-op.sgml
-	*docs/reference/gegl/tmpl/gegl-premult.sgml
-	*docs/reference/gegl/tmpl/gegl-print.sgml
-	*docs/reference/gegl/tmpl/gegl-sampled-image.sgml
-	*docs/reference/gegl/tmpl/gegl-scanline-processor.sgml
-	*docs/reference/gegl/tmpl/gegl-screen.sgml
-	*docs/reference/gegl/tmpl/gegl-simple-image-mgr.sgml
-	*docs/reference/gegl/tmpl/gegl-stat-op.sgml
-	*docs/reference/gegl/tmpl/gegl-subtract.sgml
-	*docs/reference/gegl/tmpl/gegl-tile-iterator.sgml
-	*docs/reference/gegl/tmpl/gegl-tile-mgr.sgml
-	*docs/reference/gegl/tmpl/gegl-tile.sgml
-	*docs/reference/gegl/tmpl/gegl-unpremult.sgml
-	*docs/reference/gegl/tmpl/gegl-unused.sgml
 	*gegl/Makefile.am
 	*gegl/gegl-buffer.h
 	*gegl/gegl-comp-premult.h
@@ -1642,71 +1492,6 @@ Wed Jun  6 00:08:03 EDT 2001 calvinw@mindspring.com
 	tests/testgegl.c for examples. 
 
 	I'll try to update docs/geglClasses.html shortly with all this.
-
-	*docs/reference/ChangeLog
-	*docs/reference/Makefile.am
-	*docs/reference/gegl/Makefile.am
-	*docs/reference/gegl/gegl-docs.sgml
-	*docs/reference/gegl/gegl-overrides.txt
-	*docs/reference/gegl/gegl-sections.txt
-	*docs/reference/gegl/gegl.types
-	*docs/reference/gegl/tmpl/gegl-add-op.sgml
-	*docs/reference/gegl/tmpl/gegl-cache.sgml
-	*docs/reference/gegl/tmpl/gegl-color-convert-op.sgml
-	*docs/reference/gegl/tmpl/gegl-color-convert-to-gray-op.sgml
-	*docs/reference/gegl/tmpl/gegl-color-convert-to-rgb-op.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray-float.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray-u16.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray-u16_4.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray-u8.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-gray.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-rgb-float.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-rgb-u16.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-rgb-u16_4.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-rgb-u8.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model-rgb.sgml
-	*docs/reference/gegl/tmpl/gegl-color-model.sgml
-	*docs/reference/gegl/tmpl/gegl-color.sgml
-	*docs/reference/gegl/tmpl/gegl-composite-op.sgml
-	*docs/reference/gegl/tmpl/gegl-composite-premult-op.sgml
-	*docs/reference/gegl/tmpl/gegl-copy-op-private.sgml
-	*docs/reference/gegl/tmpl/gegl-copy-op.sgml
-	*docs/reference/gegl/tmpl/gegl-dark-op.sgml
-	*docs/reference/gegl/tmpl/gegl-data-buffer.sgml
-	*docs/reference/gegl/tmpl/gegl-diff-op.sgml
-	*docs/reference/gegl/tmpl/gegl-dual-src-op.sgml
-	*docs/reference/gegl/tmpl/gegl-fill-op.sgml
-	*docs/reference/gegl/tmpl/gegl-image-buffer.sgml
-	*docs/reference/gegl/tmpl/gegl-image-manager.sgml
-	*docs/reference/gegl/tmpl/gegl-image.sgml
-	*docs/reference/gegl/tmpl/gegl-light-op.sgml
-	*docs/reference/gegl/tmpl/gegl-max-op.sgml
-	*docs/reference/gegl/tmpl/gegl-min-op.sgml
-	*docs/reference/gegl/tmpl/gegl-mult-op.sgml
-	*docs/reference/gegl/tmpl/gegl-n-src-op.sgml
-	*docs/reference/gegl/tmpl/gegl-node.sgml
-	*docs/reference/gegl/tmpl/gegl-object.sgml
-	*docs/reference/gegl/tmpl/gegl-op.sgml
-	*docs/reference/gegl/tmpl/gegl-point-op.sgml
-	*docs/reference/gegl/tmpl/gegl-premult-op.sgml
-	*docs/reference/gegl/tmpl/gegl-print-op.sgml
-	*docs/reference/gegl/tmpl/gegl-screen-op.sgml
-	*docs/reference/gegl/tmpl/gegl-single-src-op-private.sgml
-	*docs/reference/gegl/tmpl/gegl-single-src-op.sgml
-	*docs/reference/gegl/tmpl/gegl-statistics-op.sgml
-	*docs/reference/gegl/tmpl/gegl-subtract-op.sgml
-	*docs/reference/gegl/tmpl/gegl-test-op.sgml
-	*docs/reference/gegl/tmpl/gegl-tile-image-manager.sgml
-	*docs/reference/gegl/tmpl/gegl-tile-iterator.sgml
-	*docs/reference/gegl/tmpl/gegl-tile.sgml
-	*docs/reference/gegl/tmpl/gegl-types.sgml
-	*docs/reference/gegl/tmpl/gegl-unpremult-op.sgml
-	*docs/reference/gegl/tmpl/gegl-unused.sgml
-	*docs/reference/gegl/tmpl/gegl-utils.sgml
-	*docs/reference/gegl/tmpl/trace.sgml
-
-	Added gtk-docs to all the source files. Set up gegl/docs/reference much
-	like the glib. 
 
 Sun May  6 21:16:42 EDT 2001 calvinw@mindspring.com
 

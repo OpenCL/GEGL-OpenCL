@@ -12,9 +12,9 @@ extern "C" {
 typedef struct _GeglColorModel  GeglColorModel;
 #endif
 
-#ifndef __TYPEDEF_GEGL_TILE__
-#define __TYPEDEF_GEGL_TILE__
-typedef struct _GeglTile  GeglTile;
+#ifndef __TYPEDEF_GEGL_IMAGE_DATA__
+#define __TYPEDEF_GEGL_IMAGE_DATA__
+typedef struct _GeglImageData  GeglImageData;
 #endif
 
 #define GEGL_TYPE_IMAGE               (gegl_image_get_type ())
@@ -35,7 +35,7 @@ struct _GeglImage
    /*< private >*/
 
    GeglColorModel * color_model;
-   GeglTile * tile;
+   GeglImageData * image_data;
 
    GeglColorModel * derived_color_model;
 };
@@ -55,8 +55,8 @@ void            gegl_image_set_derived_color_model(GeglImage * self,
 gint            gegl_image_set_channels_mask    (GeglImage *self, 
                                                  gpointer *data);
 
-void gegl_image_set_tile (GeglImage * self, GeglTile *tile);
-GeglTile * gegl_image_get_tile (GeglImage * self);
+void gegl_image_set_image_data (GeglImage * self, GeglImageData *image_data);
+GeglImageData * gegl_image_get_image_data (GeglImage * self);
 
 #ifdef __cplusplus
 }

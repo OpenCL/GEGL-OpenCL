@@ -1,14 +1,14 @@
 #include "gegl-premult.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-tile-iterator.h"
+#include "gegl-image-data-iterator.h"
 #include "gegl-utils.h"
 
 static void class_init (GeglPremultClass * klass);
 static void init (GeglPremult * self, GeglPremultClass * klass);
 
-static GeglScanlineFunc get_scanline_func(GeglUnary * unary, GeglColorSpace space, GeglChannelDataType type);
+static GeglScanlineFunc get_scanline_func(GeglUnary * unary, GeglColorSpaceType space, GeglDataSpaceType type);
 
-static void premult_float (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static void premult_float (GeglFilter * filter, GeglImageDataIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -67,24 +67,24 @@ static GeglScanlineFunc scanline_funcs[] =
 
 static GeglScanlineFunc
 get_scanline_func(GeglUnary * unary,
-                  GeglColorSpace space,
-                  GeglChannelDataType type)
+                  GeglColorSpaceType space,
+                  GeglDataSpaceType type)
 {
   return scanline_funcs[type];
 }
 
 static void                                                            
 premult_float (GeglFilter * filter,              
-               GeglTileIterator ** iters,        
+               GeglImageDataIterator ** iters,        
                gint width)                       
 {                                                                       
-  gfloat **d = (gfloat**)gegl_tile_iterator_color_channels(iters[0]);
-  gfloat *da = (gfloat*)gegl_tile_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_tile_iterator_get_num_colors(iters[0]);
+  gfloat **d = (gfloat**)gegl_image_data_iterator_color_channels(iters[0]);
+  gfloat *da = (gfloat*)gegl_image_data_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_image_data_iterator_get_num_colors(iters[0]);
 
-  gfloat **a = (gfloat**)gegl_tile_iterator_color_channels(iters[1]);
-  gfloat *aa = (gfloat*)gegl_tile_iterator_alpha_channel(iters[1]);
-  gint a_color_chans = gegl_tile_iterator_get_num_colors(iters[1]);
+  gfloat **a = (gfloat**)gegl_image_data_iterator_color_channels(iters[1]);
+  gfloat *aa = (gfloat*)gegl_image_data_iterator_alpha_channel(iters[1]);
+  gint a_color_chans = gegl_image_data_iterator_get_num_colors(iters[1]);
 
   {
     gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;   

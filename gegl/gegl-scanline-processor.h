@@ -7,10 +7,10 @@ extern "C" {
 
 #include "gegl-object.h"
 #include "gegl-filter.h"
-#include "gegl-tile-iterator.h"
+#include "gegl-image-data-iterator.h"
 
 typedef void (*GeglScanlineFunc)(GeglFilter *op,
-                                 GeglTileIterator ** iters, 
+                                 GeglImageDataIterator ** iters, 
                                  gint width);
 
 

@@ -1,0 +1,93 @@
+<!-- ##### SECTION Title ##### -->
+GeglColorSpace
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_color_space_register ##### -->
+<para>
+
+</para>
+
+@color_space: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_space_instance ##### -->
+<para>
+
+</para>
+
+@name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_space_color_space_type ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_space_num_components ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_space_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_space_component_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@n: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_space_convert_to_xyz ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest: 
+@src: 
+@num: 
+
+
+<!-- ##### FUNCTION gegl_color_space_convert_from_xyz ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest: 
+@src: 
+@num: 
+
+

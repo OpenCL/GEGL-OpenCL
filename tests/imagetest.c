@@ -59,7 +59,7 @@ test_image_sources_outputs(Test *test)
 static void
 image_test_setup(Test *test)
 {
-  color_model = gegl_color_model_instance("RgbFloat");
+  color_model = gegl_color_model_instance("rgb-float");
 }
 
 static void

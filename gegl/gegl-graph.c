@@ -1,14 +1,8 @@
 #include "gegl-graph.h"
 #include "gegl-node.h"
-#include "gegl-image.h"
 #include "gegl-visitor.h"
-#include "gegl-attributes.h"
-#include "gegl-color-model.h"
 #include "gegl-graph-setup-visitor.h"
-#include "gegl-sampled-image.h"
-#include "gegl-tile-mgr.h"
 #include "gegl-utils.h"
-#include "gegl-value-types.h"
 
 enum
 {
@@ -191,8 +185,6 @@ gegl_graph_set_root (GeglGraph * self,
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_GRAPH (self));
   g_return_if_fail (GEGL_IS_NODE (root));
-
-  LOG_DEBUG("set_root", "setting the root here");
 
   if(self->root)
     g_object_unref(self->root);

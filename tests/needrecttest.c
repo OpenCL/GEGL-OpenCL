@@ -5,10 +5,6 @@
 #include "csuite.h"
 #include "testutils.h"
 
-#define SAMPLED_IMAGE_WIDTH 5 
-#define SAMPLED_IMAGE_HEIGHT 5 
-GeglSampledImage *dest;
-
 static void
 test_needrect_op(Test *t)
 {
@@ -62,20 +58,11 @@ test_needrect_op_source_needrect_set(Test *t)
 static void
 needrect_test_setup(Test *test)
 {
-  GeglColorModel *rgb_float = gegl_color_model_instance("RgbFloat");
-
-  dest = g_object_new (GEGL_TYPE_SAMPLED_IMAGE,
-                       "colormodel", rgb_float,
-                       "width", SAMPLED_IMAGE_WIDTH, 
-                       "height", SAMPLED_IMAGE_HEIGHT,
-                       NULL);  
-
 }
 
 static void
 needrect_test_teardown(Test *test)
 {
-  g_object_unref(dest);
 }
 
 Test *

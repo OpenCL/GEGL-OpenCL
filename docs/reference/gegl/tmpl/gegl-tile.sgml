@@ -22,15 +22,7 @@ process, and finish routines.
 
 </para>
 
-<!-- ##### MACRO G_VALUE_HOLDS_TILE ##### -->
-<para>
-
-</para>
-
-@value: 
-
-
-<!-- ##### FUNCTION gegl_tile_get_buffer ##### -->
+<!-- ##### FUNCTION gegl_tile_get_data_buffer ##### -->
 <para>
 
 </para>
@@ -48,33 +40,13 @@ process, and finish routines.
 @area: 
 
 
-<!-- ##### FUNCTION gegl_tile_get_color_model ##### -->
+<!-- ##### FUNCTION gegl_tile_get_storage ##### -->
 <para>
 
 </para>
 
 @self: 
 @Returns: 
-
-
-<!-- ##### FUNCTION gegl_tile_get_data ##### -->
-<para>
-
-</para>
-
-@self: 
-@data: 
-
-
-<!-- ##### FUNCTION gegl_tile_get_data_at ##### -->
-<para>
-
-</para>
-
-@self: 
-@data: 
-@x: 
-@y: 
 
 
 <!-- ##### FUNCTION gegl_tile_data_pointers ##### -->
@@ -88,85 +60,63 @@ process, and finish routines.
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_tile_alloc ##### -->
+<!-- ##### FUNCTION gegl_tile_get_x ##### -->
 <para>
 
 </para>
 
 @self: 
-@area: 
-@color_model: 
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_tile_validate_data ##### -->
+<!-- ##### FUNCTION gegl_tile_get_y ##### -->
 <para>
 
 </para>
 
 @self: 
-
-
-<!-- ##### FUNCTION gegl_tile_set_area ##### -->
-<para>
-
-</para>
-
-@self: 
-@area: 
-
-
-<!-- ##### FUNCTION gegl_tile_set_color_model ##### -->
-<para>
-
-</para>
-
-@self: 
-@color_model: 
-
-
-<!-- ##### FUNCTION g_value_set_tile ##### -->
-<para>
-
-</para>
-
-@value: 
-@v_object: 
-
-
-<!-- ##### FUNCTION g_value_get_tile ##### -->
-<para>
-
-</para>
-
-@value: 
 @Returns: 
 
 
-<!-- ##### FUNCTION g_value_dup_tile ##### -->
+<!-- ##### FUNCTION gegl_tile_get_width ##### -->
 <para>
 
 </para>
 
-@value: 
+@self: 
 @Returns: 
 
 
-<!-- ##### FUNCTION g_value_set_tile_take_ownership ##### -->
+<!-- ##### FUNCTION gegl_tile_get_height ##### -->
 <para>
 
 </para>
 
-@value: 
-@v_object: 
+@self: 
+@Returns: 
 
 
-<!-- ##### ARG GeglTile:area ##### -->
+<!-- ##### ARG GeglTile:x ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglTile:colormodel ##### -->
+<!-- ##### ARG GeglTile:y ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglTile:width ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglTile:height ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglTile:storage ##### -->
 <para>
 
 </para>

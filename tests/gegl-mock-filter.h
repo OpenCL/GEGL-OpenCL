@@ -20,7 +20,9 @@ typedef struct _GeglMockFilter GeglMockFilter;
 #endif
 struct _GeglMockFilter 
 {
-       GeglFilter filter;
+   GeglFilter filter;
+   /*< private >*/
+   GValue * value;
 };
 
 typedef struct _GeglMockFilterClass GeglMockFilterClass;

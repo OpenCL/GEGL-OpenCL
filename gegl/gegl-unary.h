@@ -32,8 +32,8 @@ struct _GeglUnaryClass
     GeglPointOpClass point_op_class;
 
     GeglScanlineFunc (*get_scanline_func)   (GeglUnary *self,
-                                             GeglColorSpace space,
-                                             GeglChannelDataType type);
+                                             GeglColorSpaceType space,
+                                             GeglDataSpaceType type);
 };
 
 GType           gegl_unary_get_type          (void);

@@ -106,15 +106,6 @@ gegl-utils
 @root: 
 
 
-<!-- ##### FUNCTION gegl_channel_data_type_bytes ##### -->
-<para>
-
-</para>
-
-@data: 
-@Returns: 
-
-
 <!-- ##### FUNCTION gegl_init ##### -->
 <para>
 
@@ -122,50 +113,6 @@ gegl-utils
 
 @argc: 
 @argv: 
-
-
-<!-- ##### FUNCTION gegl_utils_derived_color_alpha_space ##### -->
-<para>
-
-</para>
-
-@sources: 
-@Returns: 
-<!-- # Unused Parameters # -->
-@inputs: 
-
-
-<!-- ##### FUNCTION gegl_utils_derived_channel_data_type ##### -->
-<para>
-
-</para>
-
-@sources: 
-@Returns: 
-<!-- # Unused Parameters # -->
-@inputs: 
-
-
-<!-- ##### FUNCTION gegl_utils_derived_color_space ##### -->
-<para>
-
-</para>
-
-@sources: 
-@Returns: 
-<!-- # Unused Parameters # -->
-@inputs: 
-
-
-<!-- ##### FUNCTION gegl_utils_construct_val ##### -->
-<para>
-
-</para>
-
-@name: 
-@n_props: 
-@props: 
-@Returns: 
 
 
 <!-- ##### FUNCTION gegl_log ##### -->
@@ -265,11 +212,13 @@ gegl-utils
 @v2: 
 
 
-<!-- ##### MACRO GEGL_FLOAT_IS_ZERO ##### -->
+<!-- ##### MACRO INT_MULT ##### -->
 <para>
 
 </para>
 
-@value: 
+@a: 
+@b: 
+@t: 
 
 

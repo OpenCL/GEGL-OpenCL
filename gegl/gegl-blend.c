@@ -2,8 +2,8 @@
 #include "gegl-attributes.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
-#include "gegl-tile.h"
-#include "gegl-tile-iterator.h"
+#include "gegl-image-data.h"
+#include "gegl-image-data-iterator.h"
 #include "gegl-utils.h"
 
 enum

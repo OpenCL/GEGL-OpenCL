@@ -14,20 +14,158 @@ gegl-param-specs
 
 </para>
 
-<!-- ##### STRUCT GeglColorModel ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### MACRO GEGL_TYPE_PARAM_TILE ##### -->
+<!-- ##### MACRO GEGL_TYPE_PARAM_UINT8 ##### -->
 <para>
 
 </para>
 
 
 
-<!-- ##### STRUCT GeglParamSpecTile ##### -->
+<!-- ##### MACRO GEGL_TYPE_PARAM_FLOAT ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_FLOAT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
+<!-- ##### MACRO GEGL_PARAM_SPEC_FLOAT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
+<!-- ##### MACRO GEGL_TYPE_PARAM_RGB_UINT8 ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_RGB_UINT8 ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
+<!-- ##### MACRO GEGL_PARAM_SPEC_RGB_UINT8 ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
+<!-- ##### MACRO GEGL_TYPE_PARAM_RGB_FLOAT ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_RGB_FLOAT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
+<!-- ##### MACRO GEGL_PARAM_SPEC_RGB_FLOAT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
+<!-- ##### MACRO GEGL_TYPE_PARAM_IMAGE_DATA ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_IMAGE_DATA ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
+<!-- ##### MACRO GEGL_PARAM_SPEC_IMAGE_DATA ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
+<!-- ##### STRUCT GeglParamSpecUInt8 ##### -->
+<para>
+
+</para>
+
+@pspec: 
+@minimum: 
+@maximum: 
+@default_value: 
+
+<!-- ##### STRUCT GeglParamSpecFloat ##### -->
+<para>
+
+</para>
+
+@pspec: 
+@minimum: 
+@maximum: 
+@default_value: 
+
+<!-- ##### STRUCT GeglParamSpecRgbUInt8 ##### -->
+<para>
+
+</para>
+
+@pspec: 
+@min_red: 
+@max_red: 
+@min_green: 
+@max_green: 
+@min_blue: 
+@max_blue: 
+@default_red: 
+@default_green: 
+@default_blue: 
+
+<!-- ##### STRUCT GeglParamSpecRgbFloat ##### -->
+<para>
+
+</para>
+
+@pspec: 
+@min_red: 
+@max_red: 
+@min_green: 
+@max_green: 
+@min_blue: 
+@max_blue: 
+@default_red: 
+@default_green: 
+@default_blue: 
+
+<!-- ##### STRUCT GeglParamSpecImageData ##### -->
 <para>
 
 </para>
@@ -36,7 +174,79 @@ gegl-param-specs
 @rect: 
 @color_model: 
 
-<!-- ##### FUNCTION gegl_param_spec_tile ##### -->
+<!-- ##### FUNCTION gegl_param_spec_uint8 ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@min: 
+@max: 
+@default_value: 
+@flags: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_param_spec_float ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@min: 
+@max: 
+@default_value: 
+@flags: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_param_spec_rgb_uint8 ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@min_red: 
+@max_red: 
+@min_green: 
+@max_green: 
+@min_blue: 
+@max_blue: 
+@default_red: 
+@default_green: 
+@default_blue: 
+@flags: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_param_spec_rgb_float ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@min_red: 
+@max_red: 
+@min_green: 
+@max_green: 
+@min_blue: 
+@max_blue: 
+@default_red: 
+@default_green: 
+@default_blue: 
+@flags: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_param_spec_image_data ##### -->
 <para>
 
 </para>
@@ -48,5 +258,12 @@ gegl-param-specs
 @color_model: 
 @flags: 
 @Returns: 
+
+
+<!-- ##### FUNCTION gegl_param_spec_types_init ##### -->
+<para>
+
+</para>
+
 
 

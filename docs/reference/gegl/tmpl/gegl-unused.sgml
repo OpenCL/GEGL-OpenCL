@@ -18,6 +18,192 @@
 GeglAddImpl
 
 
+<!-- ##### SECTION ./tmpl/gegl-buffer.sgml:Long_Description ##### -->
+<para>
+Buffers are the basic memory buffer objects for gegl.  Buffers have an array of
+pointers of data banks.  Each bank of a Buffer has a size in bytes. The number
+of banks is determined by the Tile and ColorModel that creates the Buffer. The
+Buffer has no knowledge of the type of data in the buffer, aside from the
+number of banks and the the number of bytes in each buffer. An ImageMgr
+implementing swapping would use a subclass of Buffer that can have its data
+banks swapped to and from secondary storage.
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-buffer.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-buffer.sgml:Short_Description ##### -->
+Abstract Base class for memory buffers.
+
+
+<!-- ##### SECTION ./tmpl/gegl-buffer.sgml:Title ##### -->
+GeglBuffer
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray-float.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray-float.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray-float.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray-float.sgml:Title ##### -->
+GeglColorModelGrayFloat
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray-u16.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray-u16.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray-u16.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray-u16.sgml:Title ##### -->
+GeglColorModelGrayU16
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray-u8.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray-u8.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray-u8.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray-u8.sgml:Title ##### -->
+GeglColorModelGrayU8
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-gray.sgml:Title ##### -->
+GeglColorModelGray
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb-float.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb-float.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb-float.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb-float.sgml:Title ##### -->
+GeglColorModelRgbFloat
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb-u16.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb-u16.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb-u16.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb-u16.sgml:Title ##### -->
+GeglColorModelRgbU16
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb-u8.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb-u8.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb-u8.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb-u8.sgml:Title ##### -->
+GeglColorModelRgbU8
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-model-rgb.sgml:Title ##### -->
+GeglColorModelRgb
+
+
 <!-- ##### SECTION ./tmpl/gegl-comp-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -118,6 +304,46 @@ GeglAtop
 GeglConstMultImpl
 
 
+<!-- ##### SECTION ./tmpl/gegl-const-mult.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-const-mult.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-const-mult.sgml:Short_Description ##### -->
+Multiply image by constant.
+
+
+<!-- ##### SECTION ./tmpl/gegl-const-mult.sgml:Title ##### -->
+GeglConstMult
+
+
+<!-- ##### SECTION ./tmpl/gegl-convert.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-convert.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-convert.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-convert.sgml:Title ##### -->
+GeglConvert
+
+
 <!-- ##### SECTION ./tmpl/gegl-copy-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -136,6 +362,26 @@ GeglConstMultImpl
 
 <!-- ##### SECTION ./tmpl/gegl-copy-impl.sgml:Title ##### -->
 GeglCopyImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-copy.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-copy.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-copy.sgml:Short_Description ##### -->
+Copy an Image.
+
+
+<!-- ##### SECTION ./tmpl/gegl-copy.sgml:Title ##### -->
+GeglCopy
 
 
 <!-- ##### SECTION ./tmpl/gegl-dark-impl.sgml:Long_Description ##### -->
@@ -236,6 +482,26 @@ GeglDiff
 
 <!-- ##### SECTION ./tmpl/gegl-fill-impl.sgml:Title ##### -->
 GeglFillImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-fill.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-fill.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-fill.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-fill.sgml:Title ##### -->
+GeglFill
 
 
 <!-- ##### SECTION ./tmpl/gegl-filter-bfs-visitor.sgml:Long_Description ##### -->
@@ -548,6 +814,26 @@ GeglLight
 GeglMaxImpl
 
 
+<!-- ##### SECTION ./tmpl/gegl-mem-buffer.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-mem-buffer.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-mem-buffer.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-mem-buffer.sgml:Title ##### -->
+GeglMemBuffer
+
+
 <!-- ##### SECTION ./tmpl/gegl-min-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -586,26 +872,6 @@ GeglMinImpl
 
 <!-- ##### SECTION ./tmpl/gegl-mult-impl.sgml:Title ##### -->
 GeglMultImpl
-
-
-<!-- ##### SECTION ./tmpl/gegl-mult.sgml:Long_Description ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### SECTION ./tmpl/gegl-mult.sgml:See_Also ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### SECTION ./tmpl/gegl-mult.sgml:Short_Description ##### -->
-
-
-
-<!-- ##### SECTION ./tmpl/gegl-mult.sgml:Title ##### -->
-GeglMult
 
 
 <!-- ##### SECTION ./tmpl/gegl-op-impl.sgml:Long_Description ##### -->
@@ -708,6 +974,37 @@ GeglPrintImpl
 GeglSampledImageImpl
 
 
+<!-- ##### SECTION ./tmpl/gegl-sampled-image.sgml:Long_Description ##### -->
+<para>
+This object describes what is usually thought of as normal image data.
+SampledImage is the basic image data object. SampledImages are usually leaf
+nodes in graphs and are used as inputs for Ops. An SampledImage sets its
+ColorModel when it is created and has a width and height. SampledImage doesnt
+actually have an operation to perform during apply, its output is basically
+just itself.  SampledImages may be passed to any apply routine as the
+destination buffer for an Op. This is how SampledImage are written to.  Since
+SampledImages have a width and height, this determines their domain of
+definition (have_rects).  During the evaluation of a graph, these have_rects
+are propagated back up the graph towards the root. Depending on the ImageMgr,
+image data for an SampledImage may be stored in different ways. This is left up
+to the ImageMgr implementation.  
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-sampled-image.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-sampled-image.sgml:Short_Description ##### -->
+Image object with fixed resolution.
+
+
+<!-- ##### SECTION ./tmpl/gegl-sampled-image.sgml:Title ##### -->
+GeglSampledImage
+
+
 <!-- ##### SECTION ./tmpl/gegl-screen-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -808,6 +1105,126 @@ GeglStatOp
 GeglSubtractImpl
 
 
+<!-- ##### SECTION ./tmpl/gegl-tile-iterator.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-tile-iterator.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-tile-iterator.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-tile-iterator.sgml:Title ##### -->
+GeglTileIterator
+
+
+<!-- ##### SECTION ./tmpl/gegl-tile-mgr.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-tile-mgr.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-tile-mgr.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-tile-mgr.sgml:Title ##### -->
+GeglTileMgr
+
+
+<!-- ##### SECTION ./tmpl/gegl-tiled-image.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-tiled-image.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-tiled-image.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-tiled-image.sgml:Title ##### -->
+GeglTiledImage
+
+
+<!-- ##### SECTION ./tmpl/gegl-to-float.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-to-float.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-to-float.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-to-float.sgml:Title ##### -->
+GeglToFloat
+
+
+<!-- ##### SECTION ./tmpl/gegl-to-rgb.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-to-rgb.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-to-rgb.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-to-rgb.sgml:Title ##### -->
+GeglToRgb
+
+
+<!-- ##### SECTION ./tmpl/gegl-u8.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-u8.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-u8.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-u8.sgml:Title ##### -->
+gegl-u8
+
+
 <!-- ##### SECTION ./tmpl/gegl-unpremult-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -828,27 +1245,20 @@ GeglSubtractImpl
 GeglUnpremultImpl
 
 
-<!-- ##### MACRO GEGL_IS_PARAM_SPEC_IMAGE_DATA ##### -->
+<!-- ##### MACRO GEGL_FLOAT_IS_ZERO ##### -->
 <para>
 
 </para>
 
-@pspec: 
+@value: 
 
-<!-- ##### MACRO GEGL_PARAM_SPEC_IMAGE_DATA ##### -->
+<!-- ##### MACRO GEGL_TYPE_CHANNEL_U8 ##### -->
 <para>
 
 </para>
 
-@pspec: 
 
 <!-- ##### MACRO GEGL_TYPE_IMAGE_DATA ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### MACRO GEGL_TYPE_PARAM_IMAGE_DATA ##### -->
 <para>
 
 </para>
@@ -860,7 +1270,20 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### MACRO GEGL_TYPE_PARAM_TILE ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### MACRO G_VALUE_HOLDS_IMAGE_DATA ##### -->
+<para>
+
+</para>
+
+@value: 
+
+<!-- ##### MACRO G_VALUE_HOLDS_TILE ##### -->
 <para>
 
 </para>
@@ -892,6 +1315,43 @@ GeglUnpremultImpl
 
 
 <!-- ##### STRUCT GeglBuffer ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglBuffer:bytesperbuffer ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglBuffer:numbuffers ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColor ##### -->
+<para>
+
+</para>
+
+@no_input: 
+
+<!-- ##### ARG GeglColor:colormodel ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglColorModel:hasalpha ##### -->
 <para>
 
 </para>
@@ -944,6 +1404,19 @@ GeglUnpremultImpl
 
 </para>
 
+
+<!-- ##### STRUCT GeglColorSpace ##### -->
+<para>
+
+</para>
+
+@object: 
+@color_space_type: 
+@num_components: 
+@is_additive: 
+@is_subtractive: 
+@name: 
+@component_names: 
 
 <!-- ##### STRUCT GeglComp ##### -->
 <para>
@@ -1028,11 +1501,52 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### ARG GeglConstMult:mult0 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglConstMult:mult1 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglConstMult:mult2 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglConstMult:mult3 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglConstMult:mult4 ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### ARG GeglConstMult:multiplier ##### -->
 <para>
 
 </para>
 
+
+<!-- ##### USER_FUNCTION GeglConvertFunc ##### -->
+<para>
+
+</para>
+
+@Param1: 
+@Param2: 
+@Param3: 
+@Param4: 
+@Param5: 
 
 <!-- ##### STRUCT GeglCopy ##### -->
 <para>
@@ -1064,6 +1578,24 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### STRUCT GeglDataBuffer ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### STRUCT GeglDataSpace ##### -->
+<para>
+
+</para>
+
+@object: 
+@data_space_type: 
+@is_channel_data: 
+@bits: 
+@name: 
+
 <!-- ##### STRUCT GeglDiff ##### -->
 <para>
 
@@ -1082,7 +1614,19 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### ARG GeglEvalMgr:image ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### STRUCT GeglFill ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglFill:fillcolor ##### -->
 <para>
 
 </para>
@@ -1125,6 +1669,7 @@ GeglUnpremultImpl
 
 </para>
 
+@op: 
 
 <!-- ##### ARG GeglGraph:image ##### -->
 <para>
@@ -1149,8 +1694,6 @@ GeglUnpremultImpl
 
 </para>
 
-@tile: 
-@rect: 
 
 <!-- ##### STRUCT GeglImageImpl ##### -->
 <para>
@@ -1288,6 +1831,12 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### STRUCT GeglOp ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### ARG GeglOp:source0 ##### -->
 <para>
 
@@ -1314,15 +1863,6 @@ GeglUnpremultImpl
 @tile: 
 @rect: 
 
-<!-- ##### STRUCT GeglParamSpecImageData ##### -->
-<para>
-
-</para>
-
-@pspec: 
-@rect: 
-@color_model: 
-
 <!-- ##### STRUCT GeglParamSpecInt ##### -->
 <para>
 
@@ -1330,6 +1870,15 @@ GeglUnpremultImpl
 
 @pspec: 
 @increment: 
+
+<!-- ##### STRUCT GeglParamSpecTile ##### -->
+<para>
+
+</para>
+
+@pspec: 
+@rect: 
+@color_model: 
 
 <!-- ##### STRUCT GeglPointOp ##### -->
 <para>
@@ -1367,11 +1916,24 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### ARG GeglSampledImage:height ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglSampledImage:width ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### STRUCT GeglScanlineProcessor ##### -->
 <para>
 
 </para>
 
+@object: 
 
 <!-- ##### STRUCT GeglScreen ##### -->
 <para>
@@ -1404,6 +1966,13 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### STRUCT GeglStorage ##### -->
+<para>
+
+</para>
+
+@object: 
+
 <!-- ##### STRUCT GeglSubtract ##### -->
 <para>
 
@@ -1427,6 +1996,19 @@ GeglUnpremultImpl
 
 </para>
 
+@object: 
+
+<!-- ##### ARG GeglTile:area ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglTile:colormodel ##### -->
+<para>
+
+</para>
+
 
 <!-- ##### STRUCT GeglTileIterator ##### -->
 <para>
@@ -1434,7 +2016,25 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### ARG GeglTileIterator:area ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglTileIterator:tile ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### STRUCT GeglTileMgr ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglTiledImage:tile ##### -->
 <para>
 
 </para>
@@ -1457,6 +2057,18 @@ GeglUnpremultImpl
 
 </para>
 
+@object: 
+@visits_list: 
+@nodes_hash: 
+@graph: 
+
+<!-- ##### FUNCTION g_value_dup_tile ##### -->
+<para>
+
+</para>
+
+@value: 
+@Returns: 
 
 <!-- ##### FUNCTION g_value_get_image_data ##### -->
 <para>
@@ -1476,6 +2088,14 @@ GeglUnpremultImpl
 @rect: 
 
 <!-- ##### FUNCTION g_value_get_image_data_tile ##### -->
+<para>
+
+</para>
+
+@value: 
+@Returns: 
+
+<!-- ##### FUNCTION g_value_get_tile ##### -->
 <para>
 
 </para>
@@ -1516,6 +2136,22 @@ GeglUnpremultImpl
 @value: 
 @tile: 
 
+<!-- ##### FUNCTION g_value_set_tile ##### -->
+<para>
+
+</para>
+
+@value: 
+@v_object: 
+
+<!-- ##### FUNCTION g_value_set_tile_take_ownership ##### -->
+<para>
+
+</para>
+
+@value: 
+@v_object: 
+
 <!-- ##### FUNCTION gegl_blend_get_premultiply ##### -->
 <para>
 
@@ -1531,6 +2167,278 @@ GeglUnpremultImpl
 
 @self: 
 @premultiply: 
+
+<!-- ##### FUNCTION gegl_buffer_alloc_data ##### -->
+<para>
+
+</para>
+
+@self: 
+
+<!-- ##### FUNCTION gegl_buffer_alloc_data_pointers ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_buffer_get_bytes_per_buffer ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_buffer_get_data_pointers ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_buffer_get_num_buffers ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_buffer_get_ref_count ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_buffer_ref ##### -->
+<para>
+
+</para>
+
+@self: 
+
+<!-- ##### FUNCTION gegl_buffer_set_bytes_per_buffer ##### -->
+<para>
+
+</para>
+
+@self: 
+@bytes_per_buffer: 
+
+<!-- ##### FUNCTION gegl_buffer_set_num_buffers ##### -->
+<para>
+
+</para>
+
+@self: 
+@num_buffers: 
+
+<!-- ##### FUNCTION gegl_buffer_unalloc_data ##### -->
+<para>
+
+</para>
+
+@self: 
+
+<!-- ##### FUNCTION gegl_buffer_unref ##### -->
+<para>
+
+</para>
+
+@self: 
+
+<!-- ##### FUNCTION gegl_channel_data_type_bytes ##### -->
+<para>
+
+</para>
+
+@data: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_channel_u8_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_get_channel_values ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_get_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_get_num_channels ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_bytes_per_channel ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_bytes_per_pixel ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_color_alpha_space ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_color_model_type ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_convert_from_xyz ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest_data: 
+@src_data: 
+@width: 
+
+<!-- ##### FUNCTION gegl_color_model_convert_to_xyz ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest_data: 
+@src_data: 
+@width: 
+
+<!-- ##### FUNCTION gegl_color_model_data_type ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_get_color_space_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_get_convert_interface_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_gray_get_gray_index ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_rgb_get_blue_index ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_rgb_get_green_index ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_rgb_get_red_index ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_set_color ##### -->
+<para>
+
+</para>
+
+@self: 
+@color: 
+@constant: 
+
+<!-- ##### FUNCTION gegl_color_model_set_color_space_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@name: 
+
+<!-- ##### FUNCTION gegl_color_set ##### -->
+<para>
+
+</para>
+
+@self: 
+@color: 
+
+<!-- ##### FUNCTION gegl_color_set_channel_values ##### -->
+<para>
+
+</para>
+
+@self: 
+@channel_values: 
+
+<!-- ##### FUNCTION gegl_color_set_constant ##### -->
+<para>
+
+</para>
+
+@self: 
+@constant: 
 
 <!-- ##### FUNCTION gegl_comp_get_composite_mode ##### -->
 <para>
@@ -1596,6 +2504,30 @@ GeglUnpremultImpl
 @self: 
 @multiplier: 
 
+<!-- ##### FUNCTION gegl_eval_mgr_get_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_eval_mgr_set_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@image: 
+
+<!-- ##### FUNCTION gegl_fill_get_fill_color ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
 <!-- ##### FUNCTION gegl_fill_impl_get_fill_color ##### -->
 <para>
 
@@ -1605,6 +2537,14 @@ GeglUnpremultImpl
 @Returns: 
 
 <!-- ##### FUNCTION gegl_fill_impl_set_fill_color ##### -->
+<para>
+
+</para>
+
+@self: 
+@fill_color: 
+
+<!-- ##### FUNCTION gegl_fill_set_fill_color ##### -->
 <para>
 
 </para>
@@ -1835,6 +2775,14 @@ GeglUnpremultImpl
 @self: 
 @result_rect: 
 
+<!-- ##### FUNCTION gegl_image_get_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
 <!-- ##### FUNCTION gegl_image_impl_color_model ##### -->
 <para>
 
@@ -1932,6 +2880,14 @@ GeglUnpremultImpl
 
 @self: 
 @result_rect: 
+
+<!-- ##### FUNCTION gegl_image_set_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@tile: 
 
 <!-- ##### FUNCTION gegl_node_get_enabled ##### -->
 <para>
@@ -2178,6 +3134,15 @@ GeglUnpremultImpl
 
 @self: 
 
+<!-- ##### FUNCTION gegl_op_apply_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@image: 
+@roi: 
+
 <!-- ##### FUNCTION gegl_op_compute_derived_color_model ##### -->
 <para>
 
@@ -2365,19 +3330,6 @@ GeglUnpremultImpl
 @op: 
 @source1: 
 
-<!-- ##### FUNCTION gegl_param_spec_image_data ##### -->
-<para>
-
-</para>
-
-@name: 
-@nick: 
-@blurb: 
-@rect: 
-@color_model: 
-@flags: 
-@Returns: 
-
 <!-- ##### FUNCTION gegl_param_spec_int ##### -->
 <para>
 
@@ -2390,6 +3342,19 @@ GeglUnpremultImpl
 @maximum: 
 @default_value: 
 @increment: 
+@flags: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_param_spec_tile ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@rect: 
+@color_model: 
 @flags: 
 @Returns: 
 
@@ -2438,6 +3403,22 @@ GeglUnpremultImpl
 @src1: 
 @src2: 
 
+<!-- ##### FUNCTION gegl_sampled_image_get_height ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_sampled_image_get_width ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
 <!-- ##### FUNCTION gegl_sampled_image_impl_get_height ##### -->
 <para>
 
@@ -2470,6 +3451,22 @@ GeglUnpremultImpl
 @self: 
 @width: 
 
+<!-- ##### FUNCTION gegl_sampled_image_set_height ##### -->
+<para>
+
+</para>
+
+@self: 
+@height: 
+
+<!-- ##### FUNCTION gegl_sampled_image_set_width ##### -->
+<para>
+
+</para>
+
+@self: 
+@width: 
+
 <!-- ##### FUNCTION gegl_simple_image_mgr_get_tile ##### -->
 <para>
 
@@ -2479,6 +3476,163 @@ GeglUnpremultImpl
 @image: 
 @Returns: 
 @image_impl: 
+
+<!-- ##### FUNCTION gegl_tile_alloc ##### -->
+<para>
+
+</para>
+
+@self: 
+@area: 
+@color_model: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tile_get_buffer ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tile_get_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tile_get_data ##### -->
+<para>
+
+</para>
+
+@self: 
+@data: 
+
+<!-- ##### FUNCTION gegl_tile_get_data_at ##### -->
+<para>
+
+</para>
+
+@self: 
+@data: 
+@x: 
+@y: 
+
+<!-- ##### FUNCTION gegl_tile_iterator_alpha_channel ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tile_iterator_color_channels ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tile_iterator_first ##### -->
+<para>
+
+</para>
+
+@self: 
+
+<!-- ##### FUNCTION gegl_tile_iterator_get_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tile_iterator_get_current ##### -->
+<para>
+
+</para>
+
+@self: 
+@data_pointers: 
+
+<!-- ##### FUNCTION gegl_tile_iterator_get_num_colors ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tile_iterator_get_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@rect: 
+
+<!-- ##### FUNCTION gegl_tile_iterator_get_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tile_iterator_is_done ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tile_iterator_next ##### -->
+<para>
+
+</para>
+
+@self: 
+
+<!-- ##### FUNCTION gegl_tile_iterator_set_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@rect: 
+
+<!-- ##### FUNCTION gegl_tile_iterator_set_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@tile: 
+
+<!-- ##### FUNCTION gegl_tile_mgr_create_buffer ##### -->
+<para>
+
+</para>
+
+@self: 
+@tile: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tile_mgr_create_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@color_model: 
+@area: 
+@Returns: 
 
 <!-- ##### FUNCTION gegl_tile_mgr_fetch_input_tile ##### -->
 <para>
@@ -2511,6 +3665,20 @@ GeglUnpremultImpl
 @Returns: 
 @image_impl: 
 
+<!-- ##### FUNCTION gegl_tile_mgr_install ##### -->
+<para>
+
+</para>
+
+@tile_mgr: 
+
+<!-- ##### FUNCTION gegl_tile_mgr_instance ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
 <!-- ##### FUNCTION gegl_tile_mgr_make_tile ##### -->
 <para>
 
@@ -2529,6 +3697,101 @@ GeglUnpremultImpl
 
 @self: 
 @request_list: 
+
+<!-- ##### FUNCTION gegl_tile_mgr_validate_data ##### -->
+<para>
+
+</para>
+
+@self: 
+@tile: 
+
+<!-- ##### FUNCTION gegl_tile_mgr_validate_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@tile: 
+@area: 
+@color_model: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tile_set_area ##### -->
+<para>
+
+</para>
+
+@self: 
+@area: 
+
+<!-- ##### FUNCTION gegl_tile_set_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@color_model: 
+
+<!-- ##### FUNCTION gegl_tile_validate_data ##### -->
+<para>
+
+</para>
+
+@self: 
+
+<!-- ##### FUNCTION gegl_tiled_image_get_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_tiled_image_set_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@tile: 
+
+<!-- ##### FUNCTION gegl_utils_construct_val ##### -->
+<para>
+
+</para>
+
+@name: 
+@n_props: 
+@props: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_utils_derived_channel_data_type ##### -->
+<para>
+
+</para>
+
+@sources: 
+@Returns: 
+@inputs: 
+
+<!-- ##### FUNCTION gegl_utils_derived_color_alpha_space ##### -->
+<para>
+
+</para>
+
+@sources: 
+@Returns: 
+@inputs: 
+
+<!-- ##### FUNCTION gegl_utils_derived_color_space ##### -->
+<para>
+
+</para>
+
+@sources: 
+@Returns: 
+@inputs: 
 
 <!-- ##### FUNCTION gegl_utils_execute_graph ##### -->
 <para>

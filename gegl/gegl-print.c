@@ -1,8 +1,7 @@
 #include "gegl-print.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-tile.h"
-#include "gegl-tile-iterator.h"
-#include "gegl-color.h"
+#include "gegl-image-data.h"
+#include "gegl-image-data-iterator.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
@@ -15,10 +14,10 @@ static void init (GeglPrint * self, GeglPrintClass * klass);
 static void prepare (GeglFilter * filter, GList * attributes, GList *input_attributes);
 static void finish (GeglFilter * filter, GList * attributes, GList *input_attributes);
 
-static GeglScanlineFunc get_scanline_func(GeglPipe * pipe, GeglColorSpace space, GeglChannelDataType type);
+static GeglScanlineFunc get_scanline_func(GeglPipe * pipe, GeglColorSpaceType space, GeglDataSpaceType type);
 static void print (GeglPrint * self, gchar * format, ...);
 
-static void print_float (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static void print_float (GeglFilter * filter, GeglImageDataIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -82,15 +81,15 @@ prepare (GeglFilter * filter,
   GeglPrint *self = GEGL_PRINT(filter);
   GeglAttributes *src_attributes; 
   GeglColorModel *src_cm;
-  GeglTile *src;
+  GeglImageData *src;
   GeglRect rect;
   gint num_channels;
 
   GEGL_FILTER_CLASS(parent_class)->prepare(filter, attributes, input_attributes);
 
   src_attributes = (GeglAttributes*)g_list_nth_data(input_attributes, 0); 
-  src = (GeglTile*)g_value_get_object(src_attributes->value);
-  src_cm = gegl_tile_get_color_model (src);
+  src = (GeglImageData*)g_value_get_object(src_attributes->value);
+  src_cm = gegl_image_data_get_color_model (src);
   num_channels = gegl_color_model_num_channels(src_cm);
 
   gegl_rect_copy(&rect, &src_attributes->rect);
@@ -111,10 +110,10 @@ prepare (GeglFilter * filter,
 
     if(self->use_log)
       LOG_INFO("prepare", 
-               "Printing GeglTile: %p area (x,y,w,h) = (%d,%d,%d,%d)",
+               "Printing GeglImageData: %p area (x,y,w,h) = (%d,%d,%d,%d)",
                src,x,y,width,height);
     else
-      printf("Printing GeglTile: %p area (x,y,w,h) = (%d,%d,%d,%d)", 
+      printf("Printing GeglImageData: %p area (x,y,w,h) = (%d,%d,%d,%d)", 
                src,x,y,width,height);
   }
 }
@@ -166,21 +165,21 @@ static GeglScanlineFunc scanline_funcs[] =
 
 static GeglScanlineFunc
 get_scanline_func(GeglPipe *pipe,
-                  GeglColorSpace space,
-                  GeglChannelDataType type)
+                  GeglColorSpaceType space,
+                  GeglDataSpaceType type)
 {
   return scanline_funcs[type];
 }
 
 static void 
 print_float (GeglFilter * filter, 
-             GeglTileIterator ** iters, 
+             GeglImageDataIterator ** iters, 
              gint width)
 {
   GeglPrint *self = GEGL_PRINT(filter);
-  gfloat **a = (gfloat**)gegl_tile_iterator_color_channels(iters[1]);
-  gfloat *aa = (gfloat*)gegl_tile_iterator_alpha_channel(iters[1]);
-  gint a_color_chans = gegl_tile_iterator_get_num_colors(iters[1]);
+  gfloat **a = (gfloat**)gegl_image_data_iterator_color_channels(iters[1]);
+  gfloat *aa = (gfloat*)gegl_image_data_iterator_alpha_channel(iters[1]);
+  gint a_color_chans = gegl_image_data_iterator_get_num_colors(iters[1]);
 
   gint alpha_mask = 0x0;
 
@@ -200,9 +199,18 @@ print_float (GeglFilter * filter,
         print(self, "(");
         switch(a_color_chans)
           {
-            case 3:  print(self, "%.3f ", *a2++); 
-            case 2:  print(self, "%.3f ", *a1++);
-            case 1:  print(self, "%.3f ", *a0++);
+            case 3:  
+              print(self, "%.3f ", *a0++);
+              print(self, "%.3f ", *a1++);
+              print(self, "%.3f ", *a2++); 
+              break;
+            case 2:  
+              print(self, "%.3f ", *a0++);
+              print(self, "%.3f ", *a1++);
+              break;
+            case 1:  
+              print(self, "%.3f ", *a0++);
+              break;
             case 0:        
           }
 

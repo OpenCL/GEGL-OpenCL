@@ -141,7 +141,7 @@ get_property (GObject      *gobject,
 void      
 gegl_op_apply(GeglOp * self)
 {
-  gegl_op_apply_image(self, NULL, NULL);
+  gegl_op_apply_roi(self, NULL);
 }
 
 /**
@@ -156,30 +156,12 @@ void
 gegl_op_apply_roi(GeglOp * self, 
                   GeglRect *roi)
 {
-  gegl_op_apply_image(self, NULL, roi);
-}
-
-/**
- * gegl_op_apply_image
- * @self: a #GeglOp.
- * @image: a #GeglOp.
- * @roi: a #GeglRect.
- *
- * Apply the op for the roi and place result in the image. 
- *
- **/
-void 
-gegl_op_apply_image(GeglOp *self,
-                    GeglOp * image,
-                    GeglRect * roi)
-{
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_OP (self));
 
   {
     GeglEvalMgr * eval_mgr = g_object_new(GEGL_TYPE_EVAL_MGR,
                                           "root", self,
-                                          "image", image,
                                           "roi", roi,
                                           NULL);
     gegl_eval_mgr_evaluate(eval_mgr);
@@ -275,7 +257,12 @@ gegl_op_get_nth_attributes(GeglOp *self,
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_OP (self), NULL);
-  g_return_val_if_fail (n >=0 && n < GEGL_NODE(self)->num_outputs, NULL);
+  g_return_val_if_fail (n >=0, NULL);
+
+  if(n == 0 && GEGL_NODE(self)->num_outputs == 0)
+    return NULL;
+  else
+    g_return_val_if_fail (n < GEGL_NODE(self)->num_outputs, NULL);
 
   return self->attributes[n];
 }

@@ -1,8 +1,10 @@
 #include "gegl-pipe.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
-#include "gegl-tile.h"
-#include "gegl-tile-iterator.h"
+#include "gegl-color-space.h"
+#include "gegl-data-space.h"
+#include "gegl-image-data.h"
+#include "gegl-image-data-iterator.h"
 #include "gegl-utils.h"
 
 enum
@@ -92,12 +94,17 @@ prepare (GeglFilter * filter,
   GeglPipe *self = GEGL_PIPE(filter);
 
   GeglAttributes *src_attributes = (GeglAttributes*)g_list_nth_data(input_attributes, 0); 
-  GeglTile *src = (GeglTile*)g_value_get_object(src_attributes->value);
-  GeglColorModel *src_cm = gegl_tile_get_color_model(src);
+  GeglImageData *src = (GeglImageData*)g_value_get_object(src_attributes->value);
+  GeglColorModel *src_cm = gegl_image_data_get_color_model(src);
+  GeglColorSpace * src_cs = gegl_color_model_color_space(src_cm);
+  GeglDataSpace * src_ds = gegl_color_model_data_space(src_cm);
+
+  GeglAttributes *dest_attributes = (GeglAttributes*)g_list_nth_data(attributes, 0); 
+  g_value_set_object(dest_attributes->value, src);
 
   {
-    GeglChannelDataType type = gegl_color_model_data_type(src_cm);
-    GeglColorSpace space = gegl_color_model_color_space(src_cm);
+    GeglDataSpaceType type = gegl_data_space_data_space_type(src_ds);
+    GeglColorSpaceType space = gegl_color_space_color_space_type(src_cs);
     GeglPipeClass *klass = GEGL_PIPE_GET_CLASS(self);
 
     /* Get the appropriate scanline func from subclass */

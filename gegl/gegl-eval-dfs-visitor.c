@@ -4,9 +4,7 @@
 #include "gegl-value-types.h"
 #include "gegl-image.h"
 #include "gegl-color-model.h"
-#include "gegl-sampled-image.h"
-#include "gegl-tile-mgr.h"
-#include "gegl-tile.h"
+#include "gegl-image-data.h"
 #include "gegl-attributes.h"
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
@@ -122,15 +120,19 @@ compute_have_rect(GeglEvalDfsVisitor * self,
       input_have_rects = g_list_append(input_have_rects, &input_attributes->rect); 
     }
 
-  /* Pass these and let node compute have rect */
-  gegl_filter_compute_have_rect(filter, &have_rect, input_have_rects); 
 
-  /* Intersect the have and the need rect to get the result rect */
-  gegl_attributes_get_rect(attributes, &need_rect);
-  gegl_rect_intersect(&result_rect, &need_rect, &have_rect);
+  if(attributes)
+    {
+      /* Pass these and let node compute have rect */
+      gegl_filter_compute_have_rect(filter, &have_rect, input_have_rects); 
 
-  /* Store this result rect */
-  gegl_attributes_set_rect(attributes, &result_rect);
+      /* Intersect the have and the need rect to get the result rect */
+      gegl_attributes_get_rect(attributes, &need_rect);
+      gegl_rect_intersect(&result_rect, &need_rect, &have_rect);
+
+      /* Store this result rect */
+      gegl_attributes_set_rect(attributes, &result_rect);
+    }
 
   g_list_free(input_have_rects);
   g_list_free(input_attributes_list);
@@ -163,8 +165,11 @@ compute_derived_color_model(GeglEvalDfsVisitor * self,
       input_color_models = g_list_append(input_color_models, input_color_model); 
     }
 
-  color_model = gegl_filter_compute_derived_color_model(filter, input_color_models); 
-  gegl_attributes_set_color_model(attributes, color_model);
+  if(attributes)
+    {
+      color_model = gegl_filter_compute_derived_color_model(filter, input_color_models); 
+      gegl_attributes_set_color_model(attributes, color_model);
+    }
 
   g_list_free(input_color_models);
   g_list_free(input_attributes_list);

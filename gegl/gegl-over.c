@@ -1,14 +1,14 @@
 #include "gegl-over.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-tile-iterator.h"
+#include "gegl-image-data-iterator.h"
 #include "gegl-utils.h"
 
 static void class_init (GeglOverClass * klass);
 static void init (GeglOver * self, GeglOverClass * klass);
 
-static GeglScanlineFunc get_scanline_func(GeglComp * comp, GeglColorSpace space, GeglChannelDataType type);
+static GeglScanlineFunc get_scanline_func(GeglComp * comp, GeglColorSpaceType space, GeglDataSpaceType type);
 
-static void fg_over_bg_float (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static void fg_over_bg_float (GeglFilter * filter, GeglImageDataIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -65,8 +65,8 @@ static GeglScanlineFunc scanline_funcs[] =
 
 static GeglScanlineFunc
 get_scanline_func(GeglComp * comp,
-                  GeglColorSpace space,
-                  GeglChannelDataType type)
+                  GeglColorSpaceType space,
+                  GeglDataSpaceType type)
 {
   return scanline_funcs[type];
 }
@@ -74,20 +74,20 @@ get_scanline_func(GeglComp * comp,
 
 static void                                                            
 fg_over_bg_float (GeglFilter * filter,              
-                      GeglTileIterator ** iters,        
+                      GeglImageDataIterator ** iters,        
                       gint width)                       
 {                                                                       
-  gfloat **d = (gfloat**)gegl_tile_iterator_color_channels(iters[0]);
-  gfloat *da = (gfloat*)gegl_tile_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_tile_iterator_get_num_colors(iters[0]);
+  gfloat **d = (gfloat**)gegl_image_data_iterator_color_channels(iters[0]);
+  gfloat *da = (gfloat*)gegl_image_data_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_image_data_iterator_get_num_colors(iters[0]);
 
-  gfloat **b = (gfloat**)gegl_tile_iterator_color_channels(iters[1]);
-  gfloat *ba = (gfloat*)gegl_tile_iterator_alpha_channel(iters[1]);
-  gint b_color_chans = gegl_tile_iterator_get_num_colors(iters[1]);
+  gfloat **b = (gfloat**)gegl_image_data_iterator_color_channels(iters[1]);
+  gfloat *ba = (gfloat*)gegl_image_data_iterator_alpha_channel(iters[1]);
+  gint b_color_chans = gegl_image_data_iterator_get_num_colors(iters[1]);
 
-  gfloat **f = (gfloat**)gegl_tile_iterator_color_channels(iters[2]);
-  gfloat * fa = (gfloat*)gegl_tile_iterator_alpha_channel(iters[2]);
-  gint f_color_chans = gegl_tile_iterator_get_num_colors(iters[2]);
+  gfloat **f = (gfloat**)gegl_image_data_iterator_color_channels(iters[2]);
+  gfloat * fa = (gfloat*)gegl_image_data_iterator_alpha_channel(iters[2]);
+  gint f_color_chans = gegl_image_data_iterator_get_num_colors(iters[2]);
 
   gint alpha_mask = 0x0;
 

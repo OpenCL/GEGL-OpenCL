@@ -32,8 +32,8 @@ struct _GeglNoInputClass
     GeglPointOpClass point_op_class;
 
     GeglScanlineFunc (*get_scanline_func)   (GeglNoInput *self,
-                                             GeglColorSpace space,
-                                             GeglChannelDataType type);
+                                             GeglColorSpaceType space,
+                                             GeglDataSpaceType type);
 };
 
 GType           gegl_no_input_get_type          (void);

@@ -1,9 +1,6 @@
 #include "gegl-point-op.h"
 #include "gegl-attributes.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-color-model.h"
-#include "gegl-tile.h"
-#include "gegl-tile-iterator.h"
 #include "gegl-utils.h"
 
 static void class_init (GeglPointOpClass * klass);

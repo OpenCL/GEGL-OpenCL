@@ -5,12 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-object.h"
-
-#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
-#define __TYPEDEF_GEGL_COLOR_MODEL__
-typedef struct _GeglColorModel  GeglColorModel;
-#endif
+#include "gegl-no-input.h"
 
 #define GEGL_TYPE_COLOR               (gegl_color_get_type ())
 #define GEGL_COLOR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR, GeglColor))
@@ -25,30 +20,31 @@ typedef struct _GeglColor GeglColor;
 #endif
 struct _GeglColor 
 {
-    GeglObject object;
+   GeglNoInput no_input;
 
-    /*< private >*/
-    GeglColorModel * color_model;
-    GeglChannelValue * channel_values;
-    gint num_channels;
+   /*< private >*/
+   GValue * pixel;
+   gint  width;
+   gint  height;
 };
 
 typedef struct _GeglColorClass GeglColorClass;
 struct _GeglColorClass 
 {
-    GeglObjectClass object_class;
+   GeglNoInputClass no_input_class;
 };
 
-GType           gegl_color_get_type              (void);
-GeglChannelValue*gegl_color_get_channel_values   (GeglColor * self);
-GeglColorModel *gegl_color_get_color_model       (GeglColor * self);
-int             gegl_color_get_num_channels      (GeglColor * self);
-void            gegl_color_set_channel_values    (GeglColor * self,
-                                                  GeglChannelValue * channel_values);
-void            gegl_color_set                   (GeglColor * self,
-                                                  GeglColor * color);
-void            gegl_color_set_constant          (GeglColor * self,
-                                                  GeglColorConstant constant);
+GType           gegl_color_get_type         (void);
+
+void            gegl_color_get_pixel        (GeglColor * self, 
+                                             GValue *pixel);
+void            gegl_color_set_pixel        (GeglColor * self, 
+                                             GValue *pixel);
+gint            gegl_color_get_width    (GeglColor * self);
+gint            gegl_color_get_height   (GeglColor * self);
+void            gegl_color_set_width    (GeglColor * self, gint width);
+void            gegl_color_set_height   (GeglColor * self, gint height);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -3,9 +3,11 @@
 #include "gegl-op.h"
 #include "gegl-filter.h"
 #include "gegl-graph.h"
-#include "gegl-tile.h"
+#include "gegl-image-data.h"
 #include "gegl-image.h"
 #include "gegl-color-model.h"
+#include "gegl-color-space.h"
+#include "gegl-data-space.h"
 #include <stdio.h> 
 
 static void class_init (GeglDumpVisitorClass * klass);
@@ -87,7 +89,7 @@ attributes_string(GeglOp *op)
 {
   GeglRect rect = {0,0,0,0};
   char *color_model_name = "None";
-  GObject* tile_value = NULL;
+  GObject* image_data_value = NULL;
 
   GeglAttributes * attributes = 
     gegl_op_get_nth_attributes(op,0); 
@@ -100,16 +102,16 @@ attributes_string(GeglOp *op)
 
   if(attributes)
     {
-      tile_value = g_value_get_object(attributes->value);
+      image_data_value = g_value_get_object(attributes->value);
       gegl_rect_copy(&rect, &attributes->rect);
       if(GEGL_IS_COLOR_MODEL(attributes->color_model))
-        color_model_name = gegl_color_model_get_color_space_name(attributes->color_model);
+        color_model_name = gegl_color_model_name(attributes->color_model);
     }
 
   g_string_printf(string, 
                   "attr %p [%p (%d,%d,%d,%d) %s]",
                   attributes,
-                  tile_value,
+                  image_data_value,
                   rect.x, rect.y, rect.w, rect.h,
                   color_model_name);
 
@@ -185,29 +187,29 @@ visit_filter(GeglVisitor * visitor,
 
   if(GEGL_IS_IMAGE(filter)) 
   {
-    GeglTile * tile = GEGL_IMAGE(filter)->tile;
-    GeglColorModel * tile_colormodel = tile ? gegl_tile_get_color_model(tile) : NULL;
-    gchar * tile_colormodel_name = tile_colormodel ? 
-       g_strdup(gegl_color_model_get_color_space_name(tile_colormodel)):
+    GeglImageData * image_data = gegl_image_get_image_data(GEGL_IMAGE(filter));
+    GeglColorModel * image_data_colormodel = image_data ? gegl_image_data_get_color_model(image_data) : NULL;
+    gchar * image_data_colormodel_name = image_data_colormodel ? 
+       g_strdup(gegl_color_model_name(image_data_colormodel)):
        g_strdup("None");
 
     /* 
-       name typename addr attr addr [value (x,y,w,h) cm] tile addr cm 
+       name typename addr attr addr [value (x,y,w,h) cm] image_data addr cm 
     */
 
-    LOG_DIRECT("%s%s %s %p tile %p colormodel %s",
+    LOG_DIRECT("%s%s %s %p image_data %p colormodel %s",
                spaces,   
                G_OBJECT_TYPE_NAME(filter), 
                gegl_object_get_name(GEGL_OBJECT(filter)), 
                filter,
-               tile, 
-               tile_colormodel_name);
+               image_data, 
+               image_data_colormodel_name);
 
     LOG_DIRECT("%s        (%s)",
                spaces,   
                attrs_string->str);
 
-    g_free(tile_colormodel_name);
+    g_free(image_data_colormodel_name);
   }
   else 
   {

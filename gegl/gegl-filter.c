@@ -6,7 +6,7 @@
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
 #include "gegl-image.h"
-#include "gegl-tile.h"
+#include "gegl-image-data.h"
 
 enum
 {
@@ -88,6 +88,9 @@ class_init (GeglFilterClass * klass)
   klass->prepare = NULL;
   klass->process = NULL;
   klass->finish = NULL;
+
+  klass->validate_inputs = NULL;
+  klass->validate_outputs = NULL;
 
   return;
 }
@@ -175,7 +178,7 @@ init_attributes(GeglOp *op)
     {
       op->attributes[i] = g_new0(GeglAttributes, 1);
       op->attributes[i]->value = g_new0(GValue, 1);
-      g_value_init(op->attributes[i]->value, GEGL_TYPE_TILE);
+      g_value_init(op->attributes[i]->value, GEGL_TYPE_IMAGE_DATA);
     }
 }
 
@@ -234,6 +237,32 @@ gegl_filter_evaluate (GeglFilter * self,
     (*klass->evaluate)(self, 
                        attributes, 
                        input_attributes);
+}
+
+void      
+gegl_filter_validate_inputs (GeglFilter * self, 
+                             GList * input_attributes)
+{
+  GeglFilterClass *klass;
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_FILTER (self));
+  klass = GEGL_FILTER_GET_CLASS(self);
+
+  if(klass->validate_inputs)
+    (*klass->validate_inputs)(self, input_attributes);
+}
+
+void      
+gegl_filter_validate_outputs (GeglFilter * self, 
+                              GList * attributes)
+{
+  GeglFilterClass *klass;
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_FILTER (self));
+  klass = GEGL_FILTER_GET_CLASS(self);
+
+  if(klass->validate_outputs)
+    (*klass->validate_outputs)(self, attributes);
 }
 
 static void      

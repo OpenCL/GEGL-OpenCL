@@ -85,3 +85,21 @@ code then chooses some Filter downstream and calls gegl_filter_evaluate on it.
 @input_attributes: 
 
 
+<!-- ##### FUNCTION gegl_filter_validate_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@input_attributes: 
+
+
+<!-- ##### FUNCTION gegl_filter_validate_outputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@output_attributes: 
+
+

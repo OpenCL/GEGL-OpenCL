@@ -14,3 +14,191 @@ gegl-value-types
 
 </para>
 
+<!-- ##### FUNCTION gegl_value_types_init ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION gegl_value_transform_init ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### VARIABLE GEGL_TYPE_CHANNEL ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_PIXEL ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_FLOAT ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_UINT8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_RGB_FLOAT ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_RGB_UINT8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO G_VALUE_HOLDS_GEGL_UINT8 ##### -->
+<para>
+
+</para>
+
+@value: 
+
+
+<!-- ##### MACRO G_VALUE_HOLDS_GEGL_FLOAT ##### -->
+<para>
+
+</para>
+
+@value: 
+
+
+<!-- ##### MACRO G_VALUE_HOLDS_GEGL_RGB_FLOAT ##### -->
+<para>
+
+</para>
+
+@value: 
+
+
+<!-- ##### MACRO G_VALUE_HOLDS_GEGL_RGB_UINT8 ##### -->
+<para>
+
+</para>
+
+@value: 
+
+
+<!-- ##### FUNCTION g_value_set_gegl_uint8 ##### -->
+<para>
+
+</para>
+
+@value: 
+@v_uint8: 
+
+
+<!-- ##### FUNCTION g_value_get_gegl_uint8 ##### -->
+<para>
+
+</para>
+
+@value: 
+@Returns: 
+
+
+<!-- ##### FUNCTION g_value_set_gegl_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@v_float: 
+
+
+<!-- ##### FUNCTION g_value_get_gegl_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@Returns: 
+
+
+<!-- ##### FUNCTION g_value_set_gegl_rgb_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@r: 
+@g: 
+@b: 
+
+
+<!-- ##### FUNCTION g_value_get_gegl_rgb_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@r: 
+@g: 
+@b: 
+
+
+<!-- ##### FUNCTION g_value_set_gegl_rgb_uint8 ##### -->
+<para>
+
+</para>
+
+@value: 
+@r: 
+@g: 
+@b: 
+
+
+<!-- ##### FUNCTION g_value_get_gegl_rgb_uint8 ##### -->
+<para>
+
+</para>
+
+@value: 
+@r: 
+@g: 
+@b: 
+
+
+<!-- ##### FUNCTION g_value_pixel_get_data ##### -->
+<para>
+
+</para>
+
+@value: 
+@Returns: 
+
+
+<!-- ##### FUNCTION g_value_pixel_get_color_model ##### -->
+<para>
+
+</para>
+
+@value: 
+@Returns: 
+
+
+<!-- ##### FUNCTION g_value_channel_print ##### -->
+<para>
+
+</para>
+
+@value: 
+
+

@@ -1,0 +1,67 @@
+<!-- ##### SECTION Title ##### -->
+GeglImageData
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_image_data_get_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_data_set_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@tile: 
+
+
+<!-- ##### FUNCTION gegl_image_data_get_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_data_set_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@color_model: 
+
+
+<!-- ##### FUNCTION gegl_image_data_create_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@color_model: 
+@area: 
+
+
+<!-- ##### ARG GeglImageData:color-model ##### -->
+<para>
+
+</para>
+

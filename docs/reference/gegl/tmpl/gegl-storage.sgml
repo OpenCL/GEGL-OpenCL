@@ -1,0 +1,81 @@
+<!-- ##### SECTION Title ##### -->
+GeglStorage
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_storage_data_type_bytes ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_storage_num_bands ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_storage_width ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_storage_height ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_storage_create_data_buffer ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### ARG GeglStorage:data-type-bytes ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglStorage:num-bands ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglStorage:width ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglStorage:height ##### -->
+<para>
+
+</para>
+

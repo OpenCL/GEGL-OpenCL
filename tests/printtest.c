@@ -5,11 +5,14 @@
 #include "testutils.h"
 #include <string.h>
 
-#define SAMPLED_IMAGE_WIDTH 5 
-#define SAMPLED_IMAGE_HEIGHT 5 
+#define IMAGE_WIDTH 5 
+#define IMAGE_HEIGHT 5 
+
+#define R0 .1 
+#define G0 .2
+#define B0 .3 
 
 static GeglOp * source;
-static GeglOp * dest;
 
 static void
 test_print_g_object_new(Test *test)
@@ -41,16 +44,11 @@ test_print_apply(Test *test)
 static void
 print_test_setup(Test *test)
 {
-  GeglColorModel *rgb_float = gegl_color_model_instance("RgbFloat");
-  source = testutils_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
-                                             SAMPLED_IMAGE_HEIGHT, 
-                                             .1, .2, .3);
-
-  dest = g_object_new (GEGL_TYPE_SAMPLED_IMAGE,
-                       "colormodel", rgb_float,
-                       "width", SAMPLED_IMAGE_WIDTH, 
-                       "height", SAMPLED_IMAGE_HEIGHT,
-                       NULL);  
+  source = g_object_new(GEGL_TYPE_COLOR, 
+                        "width", IMAGE_WIDTH, 
+                        "height", IMAGE_HEIGHT, 
+                        "pixel-rgb-float", R0, G0, B0, 
+                        NULL); 
 
 }
 
@@ -58,7 +56,6 @@ static void
 print_test_teardown(Test *test)
 {
   g_object_unref(source);
-  g_object_unref(dest);
 }
 
 Test *

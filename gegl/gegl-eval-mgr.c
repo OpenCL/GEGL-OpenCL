@@ -1,13 +1,12 @@
 #include "gegl-eval-mgr.h"
 #include "gegl-node.h"
 #include "gegl-image.h"
-#include "gegl-tile.h"
+#include "gegl-image-data.h"
 #include "gegl-attributes.h"
 #include "gegl-visitor.h"
 #include "gegl-eval-bfs-visitor.h"
 #include "gegl-eval-dfs-visitor.h"
 #include "gegl-eval-visitor.h"
-#include "gegl-sampled-image.h"
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
 
@@ -15,7 +14,6 @@ enum
 {
   PROP_0, 
   PROP_ROOT, 
-  PROP_IMAGE, 
   PROP_ROI, 
   PROP_LAST 
 };
@@ -82,13 +80,6 @@ class_init (GeglEvalMgrClass * klass)
                                                          GEGL_TYPE_NODE,
                                                          G_PARAM_READWRITE));
 
-  g_object_class_install_property (gobject_class, PROP_IMAGE,
-                                   g_param_spec_object ("image",
-                                                        "image",
-                                                        "A destination image for result",
-                                                         GEGL_TYPE_OP,
-                                                         G_PARAM_READWRITE));
-
   g_object_class_install_property (gobject_class, PROP_ROI,
                                    g_param_spec_pointer ("roi",
                                                         "roi",
@@ -102,7 +93,6 @@ static void
 init (GeglEvalMgr * self, 
       GeglEvalMgrClass * klass)
 {
-  self->image = NULL;
   self->root = NULL;
   gegl_rect_set(&self->roi,0,0,GEGL_DEFAULT_WIDTH,GEGL_DEFAULT_HEIGHT);
 
@@ -127,9 +117,6 @@ set_property (GObject      *gobject,
     case PROP_ROOT:
         gegl_eval_mgr_set_root(eval_mgr, (GeglNode*)g_value_get_object(value));  
       break;
-    case PROP_IMAGE:
-        gegl_eval_mgr_set_image(eval_mgr, (GeglSampledImage*)g_value_get_object(value));  
-      break;
     case PROP_ROI:
         gegl_eval_mgr_set_roi (eval_mgr, (GeglRect*)g_value_get_pointer (value));
       break;
@@ -149,9 +136,6 @@ get_property (GObject      *gobject,
   {
     case PROP_ROOT:
       g_value_set_object(value, (GObject*)gegl_eval_mgr_get_root(eval_mgr));  
-      break;
-    case PROP_IMAGE:
-      g_value_set_object(value, (GObject*)gegl_eval_mgr_get_image(eval_mgr));  
       break;
     case PROP_ROI:
       gegl_eval_mgr_get_roi (eval_mgr, (GeglRect*)g_value_get_pointer (value));
@@ -232,53 +216,7 @@ gegl_eval_mgr_set_roi(GeglEvalMgr *self,
   if(roi)
     gegl_rect_copy(&self->roi, roi);
   else
-    {
-      if(self->image && GEGL_IS_SAMPLED_IMAGE(self->image))
-        {
-          gint width = gegl_sampled_image_get_width(self->image);
-          gint height = gegl_sampled_image_get_height(self->image);
-          gegl_rect_set(&self->roi,0,0,width,height);
-        }
-      else
-        {
-          gegl_rect_set(&self->roi,0,0,720,486);
-        }
-    }
-}
-
-/**
- * gegl_eval_mgr_get_image:
- * @self: a #GeglEvalMgr.
- *
- * Gets the image of this eval_mgr.
- *
- * Returns: a #GeglSampledImage
- **/
-GeglSampledImage* 
-gegl_eval_mgr_get_image (GeglEvalMgr * self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (GEGL_IS_EVAL_MGR (self), NULL);
-
-  return self->image;
-}
-
-/**
- * gegl_eval_mgr_set_image:
- * @self: a #GeglEvalMgr.
- * @image: a #GeglSampledImage.
- *
- * Sets the roi of this eval_mgr.
- *
- **/
-void 
-gegl_eval_mgr_set_image (GeglEvalMgr * self,
-                      GeglSampledImage *image)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_EVAL_MGR (self));
-
-  self->image = image;
+    gegl_rect_set(&self->roi,0,0,GEGL_DEFAULT_WIDTH,GEGL_DEFAULT_HEIGHT);
 }
 
 /**
@@ -305,12 +243,11 @@ gegl_eval_mgr_evaluate(GeglEvalMgr *self)
 static void      
 evaluate (GeglEvalMgr * self) 
 {
-  /* Get the root and set roi and image on it */
+  /* Get the root and set roi on it */
   GeglAttributes * attr = gegl_op_get_nth_attributes(GEGL_OP(self->root),0);
-  gegl_attributes_set_rect(attr, &self->roi);
 
-  if(self->image)
-    g_value_set_tile(attr->value, GEGL_IMAGE(self->image)->tile);  
+  if(attr)
+    gegl_attributes_set_rect(attr, &self->roi);
 
   /* This part computes need rects, breadth-first setup */
   LOG_DEBUG("evaluate", 

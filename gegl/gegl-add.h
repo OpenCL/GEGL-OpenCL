@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-binary.h"
+#include "gegl-unary.h"
 
 #define GEGL_TYPE_ADD               (gegl_add_get_type ())
 #define GEGL_ADD(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_ADD, GeglAdd))
@@ -20,17 +20,23 @@ typedef struct _GeglAdd GeglAdd;
 #endif
 struct _GeglAdd 
 {
-   GeglBinary binary;
+   GeglUnary unary;
+
    /*< private >*/
+
+   GValue *constants;
 };
 
 typedef struct _GeglAddClass GeglAddClass;
 struct _GeglAddClass 
 {
-   GeglBinaryClass binary_class;
+   GeglUnaryClass unary_class;
 };
 
-GType            gegl_add_get_type         (void);
+GType           gegl_add_get_type         (void);
+
+void gegl_add_get_constants (GeglAdd * self, GValue *constants);
+void gegl_add_set_constants (GeglAdd * self, GValue *constants);
 
 #ifdef __cplusplus
 }

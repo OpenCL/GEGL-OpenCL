@@ -7,11 +7,6 @@ extern "C" {
 
 #include "gegl-object.h"
 
-#ifndef __TYPEDEF_GEGL_SAMPLED_IMAGE__
-#define __TYPEDEF_GEGL_SAMPLED_IMAGE__
-typedef struct _GeglSampledImage GeglSampledImage;
-#endif
-
 #ifndef __TYPEDEF_GEGL_NODE__
 #define __TYPEDEF_GEGL_NODE__
 typedef struct _GeglNode GeglNode;
@@ -36,7 +31,6 @@ struct _GeglEvalMgr
    /*< private >*/
    GeglNode * root;
    GeglRect roi;
-   GeglSampledImage *image;
 };
 
 typedef struct _GeglEvalMgrClass GeglEvalMgrClass;
@@ -58,10 +52,6 @@ void            gegl_eval_mgr_set_roi           (GeglEvalMgr *self,
 
 void            gegl_eval_mgr_evaluate          (GeglEvalMgr * self);
 
-GeglSampledImage*
-                gegl_eval_mgr_get_image         (GeglEvalMgr * self);
-void            gegl_eval_mgr_set_image         (GeglEvalMgr * self, 
-                                                 GeglSampledImage *image);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

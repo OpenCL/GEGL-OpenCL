@@ -38,9 +38,6 @@ struct _GeglOpClass
                  
 GType           gegl_op_get_type                (void);
 void            gegl_op_apply                   (GeglOp * self);
-void            gegl_op_apply_image             (GeglOp * self,
-                                                 GeglOp * image,
-                                                 GeglRect *roi);
 void            gegl_op_apply_roi               (GeglOp * self, 
                                                  GeglRect *roi);
 

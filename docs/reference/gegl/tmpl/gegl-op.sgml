@@ -127,16 +127,6 @@ Heres an example of setting up a Mult op and calling apply on it:
 @roi: 
 
 
-<!-- ##### FUNCTION gegl_op_apply_image ##### -->
-<para>
-
-</para>
-
-@self: 
-@image: 
-@roi: 
-
-
 <!-- ##### FUNCTION gegl_op_apply_roi ##### -->
 <para>
 

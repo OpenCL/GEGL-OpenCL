@@ -33,8 +33,8 @@ struct _GeglCompClass
     GeglPointOpClass point_op_class;
 
     GeglScanlineFunc (*get_scanline_func)   (GeglComp *self,
-                                             GeglColorSpace space,
-                                             GeglChannelDataType type);
+                                             GeglColorSpaceType space,
+                                             GeglDataSpaceType type);
 };
 
 GType           gegl_comp_get_type          (void);

@@ -14,26 +14,15 @@ GeglColorModel
 
 </para>
 
-<!-- ##### USER_FUNCTION GeglConvertFunc ##### -->
-<para>
-
-</para>
-
-@Param1: 
-@Param2: 
-@Param3: 
-@Param4: 
-@Param5: 
-
-
 <!-- ##### FUNCTION gegl_color_model_register ##### -->
 <para>
 
 </para>
 
-@color_model_name: 
 @color_model: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@color_model_name: 
 
 
 <!-- ##### FUNCTION gegl_color_model_instance ##### -->
@@ -54,25 +43,7 @@ GeglColorModel
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_model_data_type ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_bytes_per_channel ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_bytes_per_pixel ##### -->
+<!-- ##### FUNCTION gegl_color_model_data_space ##### -->
 <para>
 
 </para>
@@ -99,75 +70,43 @@ GeglColorModel
 @Returns: 
 
 
+<!-- ##### FUNCTION gegl_color_model_bits_per_channel ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_bits_per_pixel ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_channel_names ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
 <!-- ##### FUNCTION gegl_color_model_has_alpha ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_alpha_channel ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_color_alpha_space ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_color_model_type ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_set_color ##### -->
-<para>
-
-</para>
-
-@self: 
-@color: 
-@constant: 
-
-
-<!-- ##### FUNCTION gegl_color_model_convert_to_xyz ##### -->
-<para>
-
-</para>
-
-@self: 
-@dest_data: 
-@src_data: 
-@width: 
-
-
-<!-- ##### FUNCTION gegl_color_model_convert_from_xyz ##### -->
-<para>
-
-</para>
-
-@self: 
-@dest_data: 
-@src_data: 
-@width: 
-
-
-<!-- ##### FUNCTION gegl_color_model_get_convert_interface_name ##### -->
 <para>
 
 </para>
@@ -185,16 +124,7 @@ GeglColorModel
 @has_alpha: 
 
 
-<!-- ##### FUNCTION gegl_color_model_set_color_space_name ##### -->
-<para>
-
-</para>
-
-@self: 
-@name: 
-
-
-<!-- ##### FUNCTION gegl_color_model_get_color_space_name ##### -->
+<!-- ##### FUNCTION gegl_color_model_alpha_channel ##### -->
 <para>
 
 </para>
@@ -203,7 +133,60 @@ GeglColorModel
 @Returns: 
 
 
-<!-- ##### ARG GeglColorModel:hasalpha ##### -->
+<!-- ##### FUNCTION gegl_color_model_has_z ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_set_has_z ##### -->
+<para>
+
+</para>
+
+@self: 
+@has_z: 
+
+
+<!-- ##### FUNCTION gegl_color_model_z_channel ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_create_storage ##### -->
+<para>
+
+</para>
+
+@self: 
+@width: 
+@height: 
+@Returns: 
+
+
+<!-- ##### ARG GeglColorModel:color-space ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglColorModel:data-space ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglColorModel:has-alpha ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglColorModel:has-z ##### -->
 <para>
 
 </para>

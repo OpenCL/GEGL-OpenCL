@@ -58,30 +58,7 @@ GeglEvalMgr
 @self: 
 
 
-<!-- ##### FUNCTION gegl_eval_mgr_get_image ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_eval_mgr_set_image ##### -->
-<para>
-
-</para>
-
-@self: 
-@image: 
-
-
 <!-- ##### ARG GeglEvalMgr:root ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglEvalMgr:image ##### -->
 <para>
 
 </para>

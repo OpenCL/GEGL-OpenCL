@@ -1,10 +1,11 @@
 #include "gegl-image.h"
-#include "gegl-filter.h"
-#include "gegl-tile.h"
+#include "gegl-image-data.h"
+#include "gegl-attributes.h"
 #include "gegl-object.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
+#include "gegl-tile.h"
 
 enum
 {
@@ -20,7 +21,10 @@ static void finalize(GObject * gobject);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static GeglColorModel *compute_derived_color_model (GeglFilter * op, GList* input_color_models);
+static GeglColorModel *compute_derived_color_model (GeglFilter * filter, GList* input_color_models);
+
+static void validate_inputs  (GeglFilter *filter, GList *input_attributes);
+static void validate_outputs (GeglFilter *filter, GList *attributes);
 
 static gpointer parent_class = NULL;
 
@@ -64,6 +68,8 @@ class_init (GeglImageClass * klass)
   gobject_class->get_property = get_property;
 
   filter_class->compute_derived_color_model = compute_derived_color_model;
+  filter_class->validate_inputs = validate_inputs;
+  filter_class->validate_outputs = validate_outputs;
 
   g_object_class_install_property (gobject_class, PROP_COLOR_MODEL,
                                    g_param_spec_object ("colormodel",
@@ -82,7 +88,7 @@ init (GeglImage * self,
 {
   g_object_set(self, "num_outputs", 1, NULL);
 
-  self->tile = NULL;
+  self->image_data = g_object_new(GEGL_TYPE_IMAGE_DATA, NULL);
   self->color_model = NULL;
   self->derived_color_model = NULL;
   return;
@@ -93,8 +99,8 @@ finalize(GObject *gobject)
 {
   GeglImage *self = GEGL_IMAGE(gobject);
 
-  if(self->tile)
-    g_object_unref(self->tile);
+  if(self->image_data)
+    g_object_unref(self->image_data);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
@@ -142,28 +148,28 @@ get_property (GObject      *gobject,
 }
 
 void
-gegl_image_set_tile (GeglImage * self,
-                     GeglTile *tile)
+gegl_image_set_image_data (GeglImage * self,
+                     GeglImageData *image_data)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE (self));
 
-  if(tile)
-   g_object_ref(tile);
+  if(image_data)
+   g_object_ref(image_data);
 
-  if(self->tile)
-   g_object_unref(self->tile);
+  if(self->image_data)
+   g_object_unref(self->image_data);
 
-  self->tile = tile;
+  self->image_data = image_data;
 }
 
-GeglTile *
-gegl_image_get_tile (GeglImage * self)
+GeglImageData *
+gegl_image_get_image_data (GeglImage * self)
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_IMAGE (self), NULL);
 
-  return self->tile;
+  return self->image_data;
 }
 
 /**
@@ -217,11 +223,43 @@ gegl_image_set_channels_mask(GeglImage *self,
 
 static GeglColorModel * 
 compute_derived_color_model (GeglFilter * filter, 
-                             GList * input_color_models)
+                           GList * input_color_models)
 {
   GeglColorModel *cm = (GeglColorModel *)g_list_nth_data(input_color_models, 0);
   gegl_image_set_derived_color_model(GEGL_IMAGE(filter), cm);
   return cm; 
+}
+
+
+static void 
+validate_inputs (GeglFilter *filter,
+                 GList *input_attributes)
+{
+  /* Dont do anything right now */
+}
+
+static void 
+validate_outputs (GeglFilter *filter,
+                  GList *attributes)
+{
+  GeglImage *self = GEGL_IMAGE(filter);
+  GeglAttributes * attrs = (GeglAttributes*)g_list_nth_data(attributes, 0);
+  GeglImageData *image_data = g_value_get_object(attrs->value);
+
+  if(!image_data)
+    {
+      LOG_DIRECT("setting output image data %p", self->image_data);
+
+      g_value_set_object(attrs->value, self->image_data);
+      gegl_image_data_create_tile(self->image_data, 
+                                    attrs->color_model, 
+                                    &attrs->rect); 
+
+        {
+          gpointer *data = gegl_tile_data_pointers(self->image_data->tile, 0,0);
+          LOG_DIRECT("image data pointers %p", data[0]);
+        }
+    }
 }
 
 /**
