@@ -22,7 +22,7 @@ class Gegl:Color:Model:Rgb from Gegl:Color:Model {
   constructor(self, gboolean has_alpha, gboolean is_premult)
   {
     GeglColorModelPrivate *color_modelP = 
-	(GeglColorModelPrivate*)(GEGL_COLOR_MODEL (self)->_priv);
+              (GeglColorModelPrivate*)(GEGL_COLOR_MODEL (self)->_priv);
 
     if (GEGL_OBJECT(self)->constructed) 
       return FALSE;

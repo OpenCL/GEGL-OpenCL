@@ -16,9 +16,9 @@ class Gegl:Point:Op from Gegl:Op {
   protected 
   gboolean 
   constructor(self, 
-	      GeglImageBuffer **image_buffers, 
-	      GeglRect *rects, 
-	      gint num_images)
+              GeglImageBuffer **image_buffers, 
+              GeglRect *rects, 
+              gint num_images)
   {
     GeglOp *op = GEGL_OP (self);
     GeglOpClass *op_class = GEGL_OP_CLASS(GTK_OBJECT(op)->klass);
@@ -28,7 +28,7 @@ class Gegl:Point:Op from Gegl:Op {
 	
     /* Chain up */
     if (!gegl_op_constructor (GEGL_OP(self), 
-	image_buffers, rects, num_images))
+          image_buffers, rects, num_images))
       return FALSE;
    
     /* Dont know this yet till after we request a rect 
@@ -36,9 +36,9 @@ class Gegl:Point:Op from Gegl:Op {
     self->_priv->scanline_width = 0;
 
     /*  
-	Now based on the color_models and data storage strategies,
-	we should install an appropriate point op apply function.
-	So far there is just one, since only one kind of data storage. 
+      Now based on the color_models and data storage strategies,
+      we should install an appropriate point op apply function.
+      So far there is just one, since only one kind of data storage. 
      */
 
 #if 0
@@ -50,8 +50,8 @@ class Gegl:Point:Op from Gegl:Op {
       case DATA_BANKS_INTERLEAVED:
       case DATA_BANKS_PACKED:
         op_class->apply = NULL;  
-	g_warning("PointOp: Data Storage type none or unknown\n");
-	return FALSE;
+        g_warning("PointOp: Data Storage type none or unknown\n");
+        return FALSE;
     }
 #endif
     op_class->apply = gegl_point_op_apply;  
@@ -77,16 +77,16 @@ class Gegl:Point:Op from Gegl:Op {
     /* Request the rects to work with */
     for (i = 0; i < opP->num_images; i++)
       gegl_image_buffer_request_rect (
-	  opP->image_buffers[i], &(opP->rects[i]));
+        opP->image_buffers[i], &(opP->rects[i]));
 
     /* And get the current rects (the same as requested for now) */
     for (i = 0; i < opP->num_images; i++)
       gegl_image_buffer_get_current_rect ( 
-	opP->image_buffers[i], &rects[i]);
+        opP->image_buffers[i], &rects[i]);
 
     /* 
-	Set the scanline width (of the dest rect)
-	so our subclass(es) can retrieve it  
+      Set the scanline width (of the dest rect)
+      so our subclass(es) can retrieve it  
     */
     self->_priv->scanline_width = rects[0].w; 
 
@@ -94,12 +94,12 @@ class Gegl:Point:Op from Gegl:Op {
     /* Now iterate over the scanlines in the dest */
     for(j = 0; j < rects[0].h; j++)  
       {
-	 /* Call the installed scanline func of subclass */
-	 (self_class->scanline_func)(self);
-	  
-	 /* Advance the dest and sources scanline ptrs */
-	 for (i = 0; i < opP->num_images; i++)
-	  	gegl_image_buffer_next_scanline (opP->image_buffers[i]);
+        /* Call the installed scanline func of subclass */
+        (self_class->scanline_func)(self);
+          
+        /* Advance the dest and sources scanline ptrs */
+        for (i = 0; i < opP->num_images; i++)
+          gegl_image_buffer_next_scanline (opP->image_buffers[i]);
 
       }
 

@@ -72,12 +72,12 @@ class Gegl:Image:Buffer from Gegl:Object {
     if (!self->_priv->data) 
       {
         g_warning ("Couldnt allocate in %s: %d bytes\n", 
-			gtk_type_name(GEGL_TYPE_IMAGE_BUFFER), total_bytes); 
-	self->_priv->scanline_data = NULL;
-	self->_priv->color_model = NULL;
-	self->_priv->width = 0;
-	self->_priv->height = 0;
-	return FALSE;
+                   gtk_type_name(GEGL_TYPE_IMAGE_BUFFER), total_bytes); 
+        self->_priv->scanline_data = NULL;
+        self->_priv->color_model = NULL;
+        self->_priv->width = 0;
+        self->_priv->height = 0;
+        return FALSE;
       }
 
     self->_priv->scanline_data = g_new(guchar*, num_channels);
@@ -108,7 +108,7 @@ class Gegl:Image:Buffer from Gegl:Object {
   request_rect (self, GeglRect *request_rect)
   {
     gegl_rect_copy (&(self->_priv->request_rect), 
-		request_rect);
+                    request_rect);
 		
   /* 
      Heres where we set the current rect based on the 
@@ -117,7 +117,7 @@ class Gegl:Image:Buffer from Gegl:Object {
   */
 
     gegl_rect_copy (&(self->_priv->current_rect), 
-		&(self->_priv->request_rect));
+                    &(self->_priv->request_rect));
   }
 
   public
@@ -129,15 +129,14 @@ class Gegl:Image:Buffer from Gegl:Object {
     gint  x;
     gint  y;
 
-    gint num_channels = gegl_color_model_num_channels(
-				self->_priv->color_model);
-    gint bytes_per_channel = gegl_color_model_bytes_per_channel(
-				self->_priv->color_model); 
-    gint channel_row_bytes = bytes_per_channel * 
-				self->_priv->width; 
+    gint num_channels = gegl_color_model_num_channels( 
+                        self->_priv->color_model);
+    gint bytes_per_channel = gegl_color_model_bytes_per_channel( 
+                             self->_priv->color_model); 
+    gint channel_row_bytes = bytes_per_channel * self->_priv->width; 
     gint plane_bytes = bytes_per_channel * 
-			self->_priv->width * 
-			self->_priv->height;   
+                       self->_priv->width * 
+                       self->_priv->height;   
 
 
     /* Copy our private current rect to the one passed in */ 
@@ -156,13 +155,13 @@ class Gegl:Image:Buffer from Gegl:Object {
 
     /* first channel */
     self->_priv->scanline_data[0] = self->_priv->data + 
-					y * channel_row_bytes + 
-					x * bytes_per_channel;   
+                                    y * channel_row_bytes + 
+                                    x * bytes_per_channel;   
 
     /* and any other channels */
     for (i=1; i < num_channels; i++)
      self->_priv->scanline_data[i] = self->_priv->scanline_data[i-1] + 
-					plane_bytes;
+                                     plane_bytes;
     
   }
 
@@ -172,10 +171,10 @@ class Gegl:Image:Buffer from Gegl:Object {
   {
     /* Means we are advancing to the next scanline */
     gint i;
-    gint num_channels = gegl_color_model_num_channels(
-			self->_priv->color_model); 
-    gint bytes_per_channel = gegl_color_model_bytes_per_channel(
-				self->_priv->color_model); 
+    gint num_channels = gegl_color_model_num_channels( 
+                        self->_priv->color_model); 
+    gint bytes_per_channel = gegl_color_model_bytes_per_channel( 
+                             self->_priv->color_model); 
     gint channel_row_bytes = bytes_per_channel * self->_priv->width; 
 
     /* advance the current scanline index */
@@ -194,8 +193,8 @@ class Gegl:Image:Buffer from Gegl:Object {
   get_scanline_data (self, guchar **data_ptrs)
   {
     gint i;
-    gint num_channels = gegl_color_model_num_channels (
-			self->_priv->color_model); 
+    gint num_channels = gegl_color_model_num_channels ( 
+                        self->_priv->color_model); 
 
     /* 
        Set the passed in data pointers 

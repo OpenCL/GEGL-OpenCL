@@ -38,7 +38,7 @@ class Gegl:Color from Gegl:Object {
 
     /*Call the constructor */
     if (!constructor(self,cm))
-	return NULL;
+      return NULL;
     
     /*Okay its constructed*/
     GEGL_OBJECT(self)->constructed = TRUE;
@@ -60,7 +60,7 @@ class Gegl:Color from Gegl:Object {
     self->_priv->color_model = cm;
     self->_priv->num_channels = gegl_color_model_num_channels(cm);
     self->_priv->channel_values = 
-	g_new (GeglChannelValue, self->_priv->num_channels);
+                 g_new (GeglChannelValue, self->_priv->num_channels);
 
     return TRUE;
   }

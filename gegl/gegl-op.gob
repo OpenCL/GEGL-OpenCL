@@ -18,9 +18,9 @@ class Gegl:Op from Gegl:Object {
   protected 
   gboolean 
   constructor(self, 
-	      GeglImageBuffer **image_buffers, 
-	      GeglRect *rects,
-	      gint num_images)
+              GeglImageBuffer **image_buffers, 
+              GeglRect *rects,
+              gint num_images)
   {
     gint i;
 
@@ -37,8 +37,8 @@ class Gegl:Op from Gegl:Object {
    
     for(i = 0; i < num_images; i++)
       {
-	self->_priv->image_buffers[i] = image_buffers[i];
-	self->_priv->rects[i] = rects[i];
+        self->_priv->image_buffers[i] = image_buffers[i];
+        self->_priv->rects[i] = rects[i];
       }
 	
     return TRUE;

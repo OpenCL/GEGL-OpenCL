@@ -1,4 +1,4 @@
-noinst_PROGRAMS = testgegl
+noinst_PROGRAMS = testgegl testgeglfile
 
 lib_LTLIBRARIES = libgegl.la
 
@@ -69,14 +69,19 @@ libgeglinc_HEADERS = $(GOB_PUBLIC_H)
 INCLUDES = -I$(top_srcdir) -I$(top_builddir) -DGEGL_COMPILATION
 
 DEPS = libgegl.la
-LDADDS = libgegl.la -ltiff
+LDADDS = libgegl.la
 
 testgegl_SOURCES=testgegl.c
 testgegl_LDFLAGS =
 testgegl_DEPENDENCIES = $(DEPS)
 testgegl_LDADD = $(LDADDS) -lm
 
-tests: testgegl
+testgeglfile_SOURCES=testgeglfile.c
+testgeglfile_LDFLAGS =
+testgeglfile_DEPENDENCIES = $(DEPS)
+testgeglfile_LDADD = $(LDADDS) -ltiff -lm
+
+tests: testgegl testgeglfile
 
 %.c: %.gob
 	gob $<

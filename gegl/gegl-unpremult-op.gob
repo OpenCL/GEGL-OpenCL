@@ -11,15 +11,6 @@
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
 #include <stdio.h>
-
-
-#if 0
-extern GeglColorModel * gegl_color_get_color_model (GeglColor *);
-extern GeglColor * gegl_color_new (GeglColorModel *);
-extern void gegl_color_set (GeglColor *, GeglColor *);
-extern GeglChannelValue *gegl_color_get_channel_values(GeglColor *);
-#endif
-
 %}
 
 class Gegl:Unpremult:Op from Gegl:Point:Op {
@@ -45,27 +36,27 @@ class Gegl:Unpremult:Op from Gegl:Point:Op {
   protected 
   gboolean 
   constructor(self, 
-	GeglImageBuffer *dest,
-	GeglRect *dest_rect) 
+              GeglImageBuffer *dest,
+              GeglRect *dest_rect) 
   {
     gboolean	has_alpha;
     GeglColorModel *cm;
     GeglPointOp *point_op = GEGL_POINT_OP (self);
     GeglPointOpClass *point_op_class = 
-	GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
     
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
     
     /* Chain up */
     if (!gegl_point_op_constructor (
-	GEGL_POINT_OP(self), &dest, dest_rect, 1))
+         GEGL_POINT_OP(self), &dest, dest_rect, 1))
       return FALSE;
 
     /*
-	Now based on the image buffers's color model(s)/data storage(s)
-	choose one of our scanline funcs to install
-	This is where some "autogeneration" happens.
+      Now based on the image buffers's color model(s)/data storage(s)
+      choose one of our scanline funcs to install
+      This is where some "autogeneration" happens.
     */ 
 
 #if 0
@@ -74,13 +65,13 @@ class Gegl:Unpremult:Op from Gegl:Point:Op {
       data_type = gegl_color_model_data_type (cm);
       switch (data_type)
       {
-	case FLOAT:
-	  point_op_class->scanline_func = gegl_unpremult_op_RGB_FLOAT; 	
-	  break;
-	default:
-	  g_warning("PrintOp: Color Model data type none or unknown\n");
-	  point_op_class->scanline_func = NULL; 	
-	  return FALSE;
+        case FLOAT:
+          point_op_class->scanline_func = gegl_unpremult_op_RGB_FLOAT; 	
+          break;
+        default:
+          g_warning("PrintOp: Color Model data type none or unknown\n");
+          point_op_class->scanline_func = NULL; 	
+          return FALSE;
       }
 #endif
 
@@ -89,9 +80,9 @@ class Gegl:Unpremult:Op from Gegl:Point:Op {
     has_alpha = gegl_color_model_has_alpha(cm);
     
     if(has_alpha)
-	point_op_class->scanline_func = gegl_unpremult_op_RGBA_FLOAT;
+      point_op_class->scanline_func = gegl_unpremult_op_RGBA_FLOAT;
     else
-	point_op_class->scanline_func = gegl_unpremult_op_RGB_FLOAT;
+      point_op_class->scanline_func = gegl_unpremult_op_RGB_FLOAT;
 
     return TRUE;
   }
@@ -125,7 +116,7 @@ class Gegl:Unpremult:Op from Gegl:Point:Op {
 
     /* image_buffers[0] is the dest here */
     gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
-		(guchar**)dest_data);
+	(guchar**)dest_data);
 
     /* Make r,g,b point to the dest image data */
     r = dest_data[0];
@@ -137,15 +128,15 @@ class Gegl:Unpremult:Op from Gegl:Point:Op {
     while (width--)
     {
       if(*a){
-	t = 1.0 / *a++;
+        t = 1.0 / *a++;
         *r++ *= *a;
         *g++ *= *a;
         *b++ *= *a++;
       } else {
         *r++ = 0;
-	*g++ = 0;
-	*b++ = 0;
-	 a++; 
+        *g++ = 0;
+        *b++ = 0;
+         a++; 
       }
     }
   }

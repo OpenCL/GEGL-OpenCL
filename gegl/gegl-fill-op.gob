@@ -39,29 +39,29 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   protected 
   gboolean 
   constructor(self, 
-	GeglImageBuffer *dest, 
-	GeglRect *dest_rect,
-	GeglColor *color)
+              GeglImageBuffer *dest, 
+              GeglRect *dest_rect,
+              GeglColor *color)
   {
 
     GeglChannelDataType data_type;
     GeglColorModel *cm; 
     GeglPointOp *point_op = GEGL_POINT_OP (self);
     GeglPointOpClass *point_op_class = 
-	GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+        GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
     
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
     
     /* Chain up */
     if (!gegl_point_op_constructor (
-	GEGL_POINT_OP(self), &dest, dest_rect, 1))
+         GEGL_POINT_OP(self), &dest, dest_rect, 1))
       return FALSE;
 
     /*
-	Now based on the image buffers's color model(s)/data storage(s)
-	choose one of our scanline funcs to install
-	This is where some "autogeneration" happens.
+      Now based on the image buffers's color model(s)/data storage(s)
+      choose one of our scanline funcs to install
+      This is where some "autogeneration" happens.
     */ 
 
     cm = gegl_image_buffer_color_model (dest);
@@ -69,15 +69,15 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     switch (data_type)
     {
       case FLOAT:
-	point_op_class->scanline_func = gegl_fill_op_RGB_FLOAT; 	
-	break;
+        point_op_class->scanline_func = gegl_fill_op_RGB_FLOAT; 	
+        break;
       case U8:
-	point_op_class->scanline_func = gegl_fill_op_RGB_U8;
-	break;
+        point_op_class->scanline_func = gegl_fill_op_RGB_U8;
+        break;
       default:
-	g_warning("PrintOp: Color Model data type none or unknown\n");
-	point_op_class->scanline_func = NULL; 	
-	return FALSE;
+        g_warning("PrintOp: Color Model data type none or unknown\n");
+        point_op_class->scanline_func = NULL; 	
+        return FALSE;
     }
 
 
@@ -109,8 +109,8 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   RGB_FLOAT (GeglPointOp *point_op)
   {
     /*
-	Whats the algorithm for this code?	
-	DEST = CONST
+      Whats the algorithm for this code?	
+      DEST = CONST
 
     */ 
     guint width;
@@ -121,8 +121,8 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
     GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv); 
 
-    GeglChannelValue *fill_values = gegl_color_get_channel_values(
-					self->_priv->fill_color);
+    GeglChannelValue *fill_values = gegl_color_get_channel_values( 
+                                   self->_priv->fill_color);
     /* Get the fill color r,g,b */
     color_r = fill_values[0].f;
     color_g = fill_values[1].f;
@@ -132,7 +132,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
 
     /* image_buffers[0] is the dest here */
     gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
-		(guchar**)dest_data);
+                                      (guchar**)dest_data);
 
     /* Make r,g,b point to the dest image data */
     r = dest_data[0];
@@ -166,7 +166,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
 
     GeglChannelValue *fill_values = gegl_color_get_channel_values(
-                                        self->_priv->fill_color);
+                                   self->_priv->fill_color);
     /* Get the fill color r,g,b */
     color_r = fill_values[0].f;
     color_g = fill_values[1].f;

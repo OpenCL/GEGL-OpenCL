@@ -21,14 +21,14 @@ class Gegl:Drawable from Gegl:Object {
   GeglDrawable *	
   new(GeglColorModel *cm,  
       GimpDataStorage *storage_info,  /*passed on to ImageBuffer*/
-	gint w,
-	gint h)
+      gint w,
+      gint h)
   {
     GeglDrawable * self = GEGL_DRAWABLE(GET_NEW);
 
     /*Call the constructor */
     if (!constructor(self, cm, storage_info, w, h))
-	return NULL;
+      return NULL;
     
     /*Okay its constructed*/
     GEGL_OBJECT(self)->constructed = TRUE;
@@ -39,11 +39,11 @@ class Gegl:Drawable from Gegl:Object {
   protected 
   gboolean 
   constructor(self,
-	      GeglColorModel *cm,  
-              GimpDataStorage *storage_info,
-	      char *name,
-	      gint w,
-	      gint h)
+      GeglColorModel *cm,  
+      GimpDataStorage *storage_info,
+      char *name,
+      gint w,
+      gint h)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -55,12 +55,12 @@ class Gegl:Drawable from Gegl:Object {
     /* Eventually we will want to pass the storage info here too */
     if (!self->_priv->image_buffer = gegl_image_buffer_new(cm, w, h)); 
      {
-	g_warning ("Couldnt allocate GeglDrawable image buffer\n");
+        g_warning ("Couldnt allocate GeglDrawable image buffer\n");
         return FALSE;
      }
     if (!self->_priv->graphics_state = gegl_graphics_state_new(cm)); 
      {
-	g_warning ("Couldnt allocate GeglDrawable graphics state\n");
+        g_warning ("Couldnt allocate GeglDrawable graphics state\n");
         return FALSE;
      }
     self->_priv->name = g_strdup (name); 

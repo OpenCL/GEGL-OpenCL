@@ -1,3 +1,9 @@
+Sun Jan 23 13:13:18 EST 2000  calvinw@mindspring.com 
+    
+    * added caros testgeglfile --which opens 2 tiffs
+      to test the composite ops. 
+    * made a bunch of code more readable. 
+
 Fri Jan 21 17:59:49 PST 2000  caro@rhythm.com
     * added some U8 support
     * implemented part of convert, composite ops
@@ -21,5 +27,3 @@ Thu Jan 20 09:20:48 PST 2000  calvinw@mindspring.com
       GeglColor -- stores channels for a single color 
 
     * There is a small test program -- testgegl
-
-

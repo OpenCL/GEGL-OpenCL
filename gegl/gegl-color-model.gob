@@ -126,7 +126,7 @@ class Gegl:Color:Model from Gegl:Object {
   virtual 
   void 
   set_color (self, GeglColor *c, 
- 		GeglColorConstant constant);
+             GeglColorConstant constant);
 
 virtual
 void

@@ -51,7 +51,7 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
     GeglColorModel *dest_cm, *src_cm; 
     GeglPointOp *point_op = GEGL_POINT_OP (self);
     GeglPointOpClass *point_op_class = 
-	GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+        GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
     
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -63,13 +63,13 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
  
     /* Chain up */
     if (!gegl_point_op_constructor (
-	GEGL_POINT_OP(self), image_buffers, rects, 2))
+         GEGL_POINT_OP(self), image_buffers, rects, 2))
       return FALSE;
 
     /*
-	Now based on the image buffers's color model(s)/data storage(s)
-	choose one of our scanline funcs to install
-	This is where some "autogeneration" happens.
+      Now based on the image buffers's color model(s)/data storage(s)
+      choose one of our scanline funcs to install
+      This is where some "autogeneration" happens.
     */ 
 
     dest_cm = gegl_image_buffer_color_model (dest);
@@ -81,30 +81,30 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
 
     switch(src_cs){
       case RGB:
-	/* converting from rgb to rgb */
-	switch(src_data_type){
-	  case FLOAT:
-	    point_op_class->scanline_func = gegl_convert_op_RGB_FLOAT;
+/* converting from rgb to rgb */
+      switch(src_data_type){
+        case FLOAT:
+          point_op_class->scanline_func = gegl_convert_op_RGB_FLOAT;
           break;
-	  case U8:
-            point_op_class->scanline_func = gegl_convert_op_RGB_U8;
-	  break;
-	  default:
-	  break;
-	}
+        case U8:
+          point_op_class->scanline_func = gegl_convert_op_RGB_U8;
+          break;
+        default:
+          break;
+         }
       break;
       case HSV:
-	switch(src_data_type){
-	  /* confert from hsv to rgb */ 
-	  case FLOAT:
-            point_op_class->scanline_func = gegl_convert_op_HSV_FLOAT;
-	  break;  
-	  case U8:
-            point_op_class->scanline_func = gegl_convert_op_HSV_U8;
-	  break;  
-	  default:
-	  break; 
-	}
+      switch(src_data_type){
+            /* confert from hsv to rgb */ 
+        case FLOAT:
+          point_op_class->scanline_func = gegl_convert_op_HSV_FLOAT;
+          break;  
+        case U8:
+          point_op_class->scanline_func = gegl_convert_op_HSV_U8;
+          break;  
+        default:
+          break; 
+         }
       break;
       default:
         /* convert from unknown to rgb */
@@ -156,9 +156,9 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   width = point_opP->scanline_width;
 
   gegl_image_buffer_get_scanline_data (opP->image_buffers[0],
-		  (guchar**)dest_data);
+                                 (guchar**)dest_data);
   gegl_image_buffer_get_scanline_data (opP->image_buffers[1],
-		  (guchar**)src_data);
+                                 (guchar**)src_data);
 
   dest_r = dest_data[0];
   dest_g = dest_data[1];
@@ -176,18 +176,18 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
     case FLOAT:
       /* we done have to do anything, just put src into dest */
       while(width--){
-	*dest_r++ = *src_r++;
-	*dest_g++ = *src_g++;
-	*dest_b++ = *src_b++;
+                      *dest_r++ = *src_r++;
+                      *dest_g++ = *src_g++;
+                      *dest_b++ = *src_b++;
         if(has_alpha) *(dest_data[3])++ = *(src_data[3])++;
       }
     break;
     case U8:
       while(width--){
-	*dest_r++ = (float) *src_r++ / 255.0;
-	*dest_g++ = (float) *src_g++ / 255.0;
-	*dest_b++ = (float) *src_b++ / 255.0;
-	if(has_alpha) *(dest_data[3])++ = (float) *(src_data[3])++ / 255.0;
+                      *dest_r++ = (float) *src_r++ / 255.0;
+                      *dest_g++ = (float) *src_g++ / 255.0;
+                      *dest_b++ = (float) *src_b++ / 255.0;
+                      if(has_alpha) *(dest_data[3])++ = (float) *(src_data[3])++ / 255.0;
       }
     break;
     default:
