@@ -1,22 +1,23 @@
 \contentsline {chapter}{\numberline {1}Introduction}{2}
-\contentsline {chapter}{\numberline {2}The GIMP}{4}
-\contentsline {section}{\numberline {2.1}History of GIMP}{4}
-\contentsline {section}{\numberline {2.2}GIMP 1.2}{4}
-\contentsline {section}{\numberline {2.3}Film version of GIMP}{4}
-\contentsline {section}{\numberline {2.4}GIMP's License}{5}
-\contentsline {section}{\numberline {2.5}GIMP Developers}{5}
-\contentsline {section}{\numberline {2.6}Future of GIMP}{5}
-\contentsline {section}{\numberline {2.7}GIMP 2.0}{5}
-\contentsline {chapter}{\numberline {3}GEGL}{7}
-\contentsline {section}{\numberline {3.1}High Level Design}{7}
-\contentsline {section}{\numberline {3.2}Low Level Design}{7}
-\contentsline {section}{\numberline {3.3}Current state}{8}
-\contentsline {chapter}{\numberline {4}GIMP at Rhythm \& Hues Studios}{9}
-\contentsline {section}{\numberline {4.1}Why Rhythm \& Hues uses GIMP}{9}
-\contentsline {section}{\numberline {4.2}How GIMP is used at Rhythm \& Hues}{10}
-\contentsline {section}{\numberline {4.3}Where GIMP fails}{10}
-\contentsline {section}{\numberline {4.4}The future of GIMP at Rhythm \& Hues}{11}
-\contentsline {chapter}{\numberline {5}Schedule}{12}
-\contentsline {chapter}{\numberline {6}How the cooperation would work}{13}
-\contentsline {chapter}{\numberline {7}Conclusion}{14}
-\contentsline {section}{\numberline {7.1}More information}{14}
+\contentsline {chapter}{\numberline {2}GIMP 2.0 Design Concepts}{5}
+\contentsline {section}{\numberline {2.1}GimpCon}{5}
+\contentsline {section}{\numberline {2.2}GIMP 2.0 Design Features}{5}
+\contentsline {chapter}{\numberline {3}GEGL}{8}
+\contentsline {section}{\numberline {3.1}High Level Design}{8}
+\contentsline {section}{\numberline {3.2}Low Level Design}{8}
+\contentsline {section}{\numberline {3.3}Current State}{9}
+\contentsline {section}{\numberline {3.4}Future of GEGL}{9}
+\contentsline {chapter}{\numberline {4}Schedule}{10}
+\contentsline {chapter}{\numberline {5}Conclusion}{12}
+\contentsline {chapter}{\numberline {A}GIMP Versions, Licences}{13}
+\contentsline {section}{\numberline {A.1}History of GIMP}{13}
+\contentsline {section}{\numberline {A.2}GIMP 1.2}{13}
+\contentsline {section}{\numberline {A.3}Film Version of GIMP}{13}
+\contentsline {section}{\numberline {A.4}GIMP License}{14}
+\contentsline {chapter}{\numberline {B}GIMP at Rhythm \& Hues Studios}{15}
+\contentsline {section}{\numberline {B.1}Why Rhythm \& Hues uses GIMP}{15}
+\contentsline {section}{\numberline {B.2}How GIMP is used at Rhythm \& Hues}{16}
+\contentsline {section}{\numberline {B.3}Some GIMP Problems}{16}
+\contentsline {section}{\numberline {B.4}Future of GIMP at Rhythm \& Hues}{17}
+\contentsline {chapter}{\numberline {C}Contributing to Gimp}{18}
+\contentsline {chapter}{\numberline {D}More Information}{19}
