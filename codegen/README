@@ -10,8 +10,8 @@ codegen --channel-names NAME,NAME,NAME  --channel-data-file FILE_NAME
 	FILE_NAME: is a file that contains the data type specific information.
 	Look at FLOAT, UINT8, and UINT16
 	NAME,NAME,NAME: is a list of the channel names. The names are seperated by
-	',' and no spaces. You must always specify and alpha. If you only specify
-	one name it will assume that that is the name of the alpha channel. 
+	',' and no spaces. Alpha is always addded by the program, you should not
+	specify alpha.  
 
 
 This program has 4 files; lexer.l, parser.y, common.h, and data_type.h

@@ -532,42 +532,59 @@ Line:
 		  {
 		  if (get_sym ($4.string)->type == TYPE_C_A_VECTOR)
 		    {
+		    sprintf (tmp, "%s%s_c++;", $1.string, $4.string);  
+		    strcpy ($4.string, tmp);
+		    print_line($4);
 		    printf ("%sif (%s_has_%s)%s  %s_%s++;", $1.string, $4.string,
 			NAME_COLOR_CHAN[NUM_COLOR_CHAN],
 			$1.string, $4.string,
 			NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
-		    sprintf (tmp, "%s%s_c++;", 
-		      $1.string, $4.string);  
+		    printf ("\n"); 
 		    }
 		  else if (get_sym ($4.string)->type == TYPE_CA_VECTOR)
 		    {
-		    sprintf (tmp, "%s%s_ca++;", 
-		      $1.string, $4.string);  
+		    sprintf (tmp, "%s%s_ca++;", $1.string, $4.string);  
+		    strcpy ($4.string, tmp);
+		    print_line($4); 
+		    printf ("\n"); 
 		    }
 		  else
+                    {
 		    sprintf (tmp, "%s%s_c++;", $1.string, $4.string);
-		  
+		    strcpy ($4.string, tmp);
+		    print_line($4); 
+		    printf ("\n"); 
+		    }
 		  }
 		  else
 		    { 
 		    if (get_sym ($4.string)->type == TYPE_C_A_VECTOR)
 		      {
+		      sprintf (tmp, "%s%s%s_c += %s;", $1.string, $4.string, $6.string); 
+		      strcpy ($4.string, tmp);
+		      print_line($4); 
 		      printf ("%sif (%s_has_%s)%s  %s_%s += %s", $1.string, $4.string,
 			 NAME_COLOR_CHAN[NUM_COLOR_CHAN], 
 			 $1.string, $4.string,  
 			 NAME_COLOR_CHAN[NUM_COLOR_CHAN],
 			 $6.string);
-		      sprintf (tmp, "%s%s%s_c += %s;", $1.string, $4.string, $6.string); 
+		      printf ("\n"); 
 		      }
 		    else if (get_sym ($4.string)->type == TYPE_CA_VECTOR)
 		      {
 		      sprintf (tmp, "%s%s_ca += %s;", $1.string, $4.string, $6.string); 
+		      strcpy ($4.string, tmp);
+		      print_line($4); 
+		      printf ("\n"); 
 		      }
 		    else
+		      {
 		      sprintf (tmp, "%s%s_c += %s;", $1.string, $4.string, $6.string); 
+		      strcpy ($4.string, tmp);
+		      print_line($4); 
+		      printf ("\n"); 
+                      } 
 		    }
-		strcpy ($4.string, tmp);
-		print_line($4); 	
 		}
 	| INDENT ITERATOR_XY LT_PARENTHESIS NAME ',' INT ',' INT RT_PARENTHESIS ';' 
 		{
@@ -965,6 +982,7 @@ init_image_data (char *indent)
       sprintf (tmp, "%s%s_ca = %s_data_v;", indent, symtab[i].string, symtab[i].string);
       strcpy (e.string, tmp); 
       print_line (e);  
+      printf ("\n"); 
       }
     if (symtab[i].type == TYPE_C_A_VECTOR && !symtab[i].inited) 
       {
@@ -977,7 +995,7 @@ init_image_data (char *indent)
 	  indent, symtab[i].string, indent, symtab[i].string, symtab[i].string, NUM_COLOR_CHAN);
       strcpy (e.string, tmp);
       print_line (e); 
-	
+      printf ("\n"); 
       }
     if (symtab[i].type == TYPE_C_VECTOR && !symtab[i].inited)
       {
@@ -986,6 +1004,7 @@ init_image_data (char *indent)
       sprintf (tmp, "%s%s_c = %s_data_v;", indent, symtab[i].string, symtab[i].string);
       strcpy (e.string, tmp);
       print_line (e);
+      printf ("\n"); 
       }
     }
   
@@ -1154,7 +1173,6 @@ print_line (elem_t src)
 	}
       }
     }
-    printf("\n"); 
     }
   else if (src.type)
     for (i=0; i<src.num; i++)
@@ -1635,7 +1653,7 @@ read_channel_names (char *chan_names)
     }
   
   NUM_COLOR_CHAN = i+1;
-  NAME_COLOR_CHAN[i] = (char*) strdup ("alpha"); 
+  NAME_COLOR_CHAN[NUM_COLOR_CHAN] = (char*) strdup ("alpha"); 
 }
 
 int

@@ -1,3 +1,13 @@
+Sun Mar 26 14:41:12 PST 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* parser.y: Fixed the the function read_channel_names. It has an off by
+	one error. Changed when I put new lines. I know only put new lines after
+	each VectorCHan in iterator and init_image_data
+
+	* Updated README
+
 Sat Mar 25 21:03:06 EST 2000 calvinw@mindspring.com
 	
 	* check in for codegen
