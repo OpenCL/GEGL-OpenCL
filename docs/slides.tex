@@ -1,0 +1,263 @@
+\documentclass{foils}
+
+%\newfont{\cmrhuge}{cmr17 at 160.8pt}
+\newfont{\cmrhuge}{cmss17 at 160.8pt}
+%\newfont{\cmrhuge2}{cmss17 at 100.8pt}
+
+\topmargin=-65pt
+\textheight=7in
+\textwidth=10.5in
+%%\headsep=.25in
+%%\headheight=0in
+\oddsidemargin=-.75in
+\evensidemargin=-.75in
+\usepackage{color}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\special{header=gradient.h}
+
+\newcommand{\newcolor}[3]{\definecolor{#1}{#2}{#3}}
+
+%%%% text color definitions %%%%
+%%\newcolor{textcolor}{rgb}{0,0,0}
+%%\newcolor{titlecolor}{rgb}{0,0,.5}
+%%\newcolor{headingcolor}{rgb}{.5,0,0}
+%%\newcolor{bullet1color}{rgb}{0,0,.5}
+%%\newcolor{bullet2color}{rgb}{0,.5,0}
+%%\newcolor{bullet3color}{rgb}{.5,.5,.5}
+
+%%%% redefine colors for blue background %%%%
+\newcolor{textcolor}{rgb}{.9,.9,.9}
+\newcolor{titlecolor}{rgb}{.9,.9,.3}
+\newcolor{headingcolor}{rgb}{1,.5,.1}
+\newcolor{bullet1color}{rgb}{.9,.9,.3}
+\newcolor{bullet2color}{rgb}{0,.7,0}
+\newcolor{bullet3color}{rgb}{.7,.7,.7}
+
+\newcommand{\myfig}[2]{
+\begin{figure}[h]
+\color{textcolor}
+\centerline{\includegraphics{figs/#1.eps}}
+\caption{#2}
+\label{fig:#1}
+\end{figure}
+}
+
+%%%%% modify these %%%%%
+\newcommand{\talktitle}{\color{titlecolor}{\cmrhuge Codegen}}
+\newcommand{\talkdate}{\date{June 2000}}
+\MyLogo{\color{textcolor} 05/00} %%also date of talk
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newsavebox{\gradient}
+\sbox{\gradient}{
+        \includegraphics[width=15in,height=6.75in]{gradient.ps}
+        }
+
+\leftheader{
+        \vbox{
+        \vspace*{135pt}
+        \hskip -34.5pt
+        \usebox{\gradient}
+        }
+}
+\rightfooter{\color{textcolor} \arabic{page}/\pageref{'eof'}}
+\LogoOff
+\newcommand{\nextfoil}{ \foilhead[-.6in]}
+%{ \talktitle } }
+\newcommand{\ctitle}[1]{\begin{center}{\color{headingcolor}\Huge #1}\end{center}
+}
+%\newcommand{\nfoil}[1]{\nextfoil\ctitle{#1}}
+\newcommand{\nfoil}[1]{\foilhead[-.6in]{ \ctitle{#1}\vspace*{60pt}}}
+\renewcommand{\theenumi}{\color{bullet2color}\arabic{enumi}}
+\renewcommand{\theenumii}{\color{bullet2color}\arabic{enumii}}
+\renewcommand{\theenumiii}{\color{bullet2color}\arabic{enumiii}}
+\renewcommand{\labelitemi}{\color{bullet1color}$\bullet$}
+\renewcommand{\labelitemii}{\color{bullet2color}--}
+\renewcommand{\labelitemiii}{\color{bullet3color}$\triangleright$}
+
+\begin{document}
+
+\color{textcolor}
+\title{
+\hskip -84pt
+\vbox{
+        \vspace*{70pt}
+        \usebox{\gradient}
+        \vspace{-7.5in}
+}
+\\
+\talktitle\\*[1 in]
+}
+\author{
+\color{headingcolor}\LARGE Caroline Dahll\"{o}f <caro@rhythm.com>\\*[.5 in]}
+\talkdate
+\maketitle
+
+{\Large
+\nfoil{Overview}
+%%only the first foil needs to do \LogoOn
+\LogoOn
+\begin{itemize}
+\item What is the problem? 
+\item How we solves it?
+\item How does Codegen work? 
+\item Future directions for Codegen 
+\end{itemize}
+
+\nfoil{What is the problem?}
+\begin{itemize}
+\item Different datatypes and color models
+\item Promotion
+\item Overflow 
+\end{itemize}
+
+\nfoil{How we solves it?}
+\begin{itemize}
+\item Gimp Independent Language
+\item Codegen
+\end{itemize}
+
+\nfoil{Gimp Independent Language}
+\begin{itemize}
+\item Data type and color model independent
+\item Uses macros for data type or color model specific operations
+\item Easy to read and write 
+\end{itemize}
+
+\nfoil{Example}
+\begin{flushleft}
+\tt
+\small
+GENERIC\_IMAGE\_DECL\_BEGIN\\
+Pixel dest(color,alpha,has\_alpha);\\
+Pixel src1(color,alpha,has\_alpha);\\
+Pixel src2(color,alpha,has\_alpha);\\
+GENERIC\_IMAGE\_DECL\_END\\*[0.5cm]
+GENERIC\_IMAGE\_IMAGE\_DATA\_INIT\\*[0.5cm]
+GENERIC\_IMAGE\_CODE\_BEGIN\\
+dest\_color = CHANNEL\_CLAMP((Promote)src1\_color + src2\_color);\\
+if (dest\_has\_alpha)\\
+\hspace*{.4cm} \{\\
+\hspace*{.8cm} if (src1\_has\_alpha \&\& src2\_has\_alpha)\\
+\hspace*{1.2cm} \{\\
+\hspace*{1.6cm} dest\_alpha = CHANNEL\_CLAMP ((Promote)src1\_alpha + src2\_alpha);\\
+\hspace*{1.2cm} \}\\
+\hspace*{.8cm} else if (src1\_has\_alpha)\\
+\hspace*{1.2cm} \{\\
+\hspace*{1.6cm} dest\_alpha = WP;\\
+\hspace*{1.2cm} \}\\
+\hspace*{.8cm} else if (src2\_has\_alpha)\\
+\hspace*{1.2cm} \{\\
+\hspace*{1.6cm} dest\_alpha = WP;\\
+\hspace*{1.2cm} \}\\
+\hspace*{.8cm} \}\\
+dX(dest,1);\\
+dX(src1,1);\\
+dX(src2,1);\\
+GENERIC\_IMAGE\_BLOCK\_END\\
+\end{flushleft}
+
+\nfoil{Declaration Block}
+\begin{itemize}
+\item GENERIC\_IMAGE\_DECL\_BEGIN\\ ... \\GENERIC\_IMAGE\_DECL\_END 
+\item Pixel variable-name (color,alpha,has\_alpha)
+\item Channel variable-name 
+\item normal data types
+\end{itemize}
+
+\nfoil{Initialization Block}
+\begin{itemize}
+\item GENERIC\_IMAGE\_IMAGE\_DATA\_INIT
+\end{itemize}
+
+\nfoil{Code Block}
+\begin{itemize}
+\item GENERIC\_IMAGE\_CODE\_BEGIN\\ ... \\GENERIC\_IMAGE\_CODE\_END
+\item Pixel varibles (variable-name[]/\_color/\_alpha
+\item DT Macros  
+\end{itemize}
+
+\nfoil{DT Macros}
+\begin{itemize}
+\item DATATYPE
+\item PROMOTE\_TYPE
+\item SIGNED\_PROMOTE\_TYPE
+\item WP
+\item WP\_NORM
+\item CHANNEL\_MIN
+\item CHANNEL\_MAX
+\item CHANNEL\_CLAMP (x)
+\item WP\_CLAMP (x)
+\item CHANNEL\_MULT (x,y)
+\item CHANNEL\_ROUND (x)
+\item PRINT (x)
+\item EXTERNAL\_INIT (x)
+\item dX(Pixel,x) 
+\end{itemize}
+
+\nfoil{Codegen}
+\begin{itemize}
+\item Parses Gimp Independent Language
+\item Creates data type and color model specific code
+\item Independ of data type and color model 
+\end{itemize}
+
+\nfoil{How to run Codegen}
+\begin{flushleft}
+\tt
+codegen --channel-names COLOR\_CHANNEL\_NAMES\\  
+\hspace{4em}--channel-data-file CHANNEL\_DATA\_FILE 
+\end{flushleft}
+
+\nfoil{Channel names}
+\begin{itemize}
+\item Sepreated by ','
+\item Always adds an alpha channel
+\end{itemize}
+
+\nfoil{Channel data file}
+\begin{itemize}
+\item Data type specific code for DT Macros
+\item u16\_4k example:\\
+DT\_MACROS\_BEGIN
+DATATYPE\hfill guint16
+PROMOTE\_TYPE (guint32)  
+SIGNED\_PROMOTE\_TYPE (gint32)  
+WP 4095UL
+WP\_NORM (1/4095.0)
+CHANNEL\_MIN 0
+CHANNEL\_MAX 65535
+ZERO 0UL
+CHANNEL\_CLAMP (x) CLAMP (x,0,65535)
+WP\_CLAMP (x) CLAMP (x,0,4095)
+CHANNEL\_MULT (x,y) (x * y)/4095UL
+CHANNEL\_ROUND (x) ROUND (x)
+PRINT (x) printf (" %uh", x);
+EXTERNAL\_INIT (x) x.u16\_k 
+DT\_MACROS\_END
+\end{itemize}
+
+\nfoil{Implementation detail}
+\begin{itemize}
+\item Writen in Flex \& Bison 
+\end{itemize}
+
+\nfoil{Flex}
+\begin{itemize}
+\item State diagram  
+\end{itemize}
+
+\nfoil{Bison} 
+\begin{itemize}
+\item Defines GIL grammar
+\item Expands Pixel to channels
+\item Converts DT Macros into specific code 
+\end{itemize}
+
+%%End of file label to make numbering work
+\label{'eof'}
+\end{document}
+
+
