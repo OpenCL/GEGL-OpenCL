@@ -7,20 +7,26 @@ GENERIC_IMAGE_DECL_END
 
 GENERIC_IMAGE_IMAGE_DATA_INIT
 
-/* Pixel s1(color); */
-/* s1 = PIXEL_INIT (v); */
+/* Channel a */
+/* a = EXTERNAL_INIT (v); */
 GENERIC_IMAGE_BLOCK_BEGIN
-s1 = PIXEL_INIT (v); 
+s1 = EXTERNAL_INIT (v); 
+GENERIC_IMAGE_BLOCK_END
+
+/* Pixel s1(color); */
+/* s1 = EXTERNAL_INIT (v); */
+GENERIC_IMAGE_BLOCK_BEGIN
+s1 = EXTERNAL_INIT (v); 
 GENERIC_IMAGE_BLOCK_END
 
 /* Pixel s2(color,alpha); */
-/* s2 = PIXEL_INIT (v); */
+/* s2 = EXTERNAL_INIT (v); */
 GENERIC_IMAGE_BLOCK_BEGIN
-s2 = PIXEL_INIT (v); 
+s2 = EXTERNAL_INIT (v); 
 GENERIC_IMAGE_BLOCK_END
 
 /* Pixel s3(color,alpha,has_alpha); */
-/* s3 = PIXEL_INIT (v); */
+/* s3 = EXTERNAL_INIT (v); */
 GENERIC_IMAGE_BLOCK_BEGIN
-s3 = PIXEL_INIT (v); 
+s3 = EXTERNAL_INIT (v); 
 GENERIC_IMAGE_BLOCK_END
