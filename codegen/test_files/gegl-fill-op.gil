@@ -115,8 +115,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
 
     GeglChannelValue *fill_values = gegl_color_get_channel_values(
-                                   self->_priv->fill_color,
-				   &dest_pixelstride);
+                                   self->_priv->fill_color);
  
 
     dest_has_alpha = gegl_color_model_has_alpha(
