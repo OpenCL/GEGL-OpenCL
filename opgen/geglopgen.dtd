@@ -9,6 +9,7 @@
                    variables?,
                    constructor?,
                    destructor?,
+                   prepare?,
                    PointProcessor+)
 >
 
@@ -36,6 +37,7 @@
 <!ELEMENT license        (#PCDATA)*>
 <!ELEMENT constructor    (#PCDATA)*>
 <!ELEMENT destructor     (#PCDATA)*>
+<!ELEMENT prepare        (#PCDATA)*>
 <!ELEMENT setup          (#PCDATA)*>
 <!ELEMENT per_pixel      (#PCDATA)*>
 <!ELEMENT per_color      (#PCDATA)*>

@@ -75,14 +75,16 @@ HERE
       }
 
 # Calculate the mask_mask bitmask
+# moved gegl-n-src-op.gob
+#    print "\n";
+#    print "    mask_mask = 0;\n";
+#    foreach (0 .. $#{$op->{buffer_args}})
+#      {
+#        my $i = $#{$op->{buffer_args}} - $_;
+#        $print "    mask_mask = (mask_mask << 1) | $op->{buffer_args}[$i]_has_alpha;\n";
+#      }
     print "\n";
-    print "    mask_mask = 0;\n";
-    foreach (0 .. $#{$op->{buffer_args}})
-      {
-        my $i = $#{$op->{buffer_args}} - $_;
-	print "    mask_mask = (mask_mask << 1) || $op->{buffer_args}[$i]_has_alpha;\n";
-      }
-
+    print "    mask_mask = self_n_src_op->_priv->mask_mask;\n";
     print "\n";
 
     print <<HERE;
@@ -119,12 +121,12 @@ HERE
 
       # add the _color sufix to the buffer names
 
-      $tmp =~ s/dest(?=_)/dest_color/g;
+      $tmp =~ s/dest(?=[^_])/dest_color/g;
 
       foreach (@{$op->{buffer_args}})
       {
         my ($t2) = "$_" . "_color";
-        $tmp =~ s/$_(?=_)/$t2/g;
+        $tmp =~ s/$_(?=[^_])/$t2/g;
       }
 
       print "        /*-----------  <User per_color> -----------*/\n";
@@ -201,17 +203,17 @@ sub my_bit_alpha
     my $i = 1;
     my $first = 1;
 
-    $tmp =~ s/dest(?=_)/dest_alpha/g;
+    $tmp =~ s/dest(?=[^_])/dest_alpha/g;
     foreach (@buffs)
       {
         if ($i & $num)
         {
           my ($t2) = "$_" . "_alpha";
-          $tmp =~ s/$_(?=_)/$t2/g;
+          $tmp =~ s/$_(?=[^_])/$t2/g;
         }
         else
         {
-          $tmp =~ s/$_(?=_)/CHANNEL_MAX/g;
+          $tmp =~ s/$_(?=[^_])/CHANNEL_MAX/g;
         }
         $i = $i << 1;
       }
@@ -243,11 +245,11 @@ sub my_bit_alpha_old
           $first = 0;
           print $_ . "_has_alpha";
           my ($t2) = "$_" . "_alpha";
-          $tmp =~ s/$_(?=_)/$t2/g;
+          $tmp =~ s/$_(?=[^_])/$t2/g;
         }
         else
         {
-          $tmp =~ s/$_(?=_)/CHANNEL_MAX/g;
+          $tmp =~ s/$_(?=[^_])/CHANNEL_MAX/g;
         }
         $i = $i << 1;
       }

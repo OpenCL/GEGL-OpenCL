@@ -30,7 +30,8 @@ sub new
 sub print_variables
   {
     my $op = shift;
-    print "  classwide SCANLINE_FUNC_P scanline_funcs[" . (@Gegl::precisions + 0) . "][" . (@Gegl::colorspaces + 0) . "];\n";
+   #use precisions, colorspaces +1 because of COLORSPACE_NONE, PRECISION_NONE
+    print "  classwide SCANLINE_FUNC_P scanline_funcs[" . (@Gegl::precisions + 1) . "][" . (@Gegl::colorspaces + 1) . "];\n";
     print "\n";
     if ($op->{variables})
       {
@@ -53,15 +54,25 @@ sub print_constructor
     print <<HERE;
   protected gboolean constructor(self, $op->{arguments})
   {
+    GList *inputs = NULL;
+
     if(GEGL_OBJECT(self)->constructed)
       return FALSE;
+HERE
+    foreach (@{$op->{buffer_args}})
+      {
+        print "    inputs = g_list_append(inputs, $_);\n"
+      }
+
+    print <<HERE;
 
     /* Chain up */
-    if (!gegl_n_src_op_constructor (GEGL_N_SRC_OP(self), ${nargs} ${chain_args}))
+    if (!gegl_n_src_op_constructor (GEGL_N_SRC_OP(self), inputs)
       return FALSE;
 
     return TRUE;
   }
+
 HERE
   }
 
@@ -77,17 +88,15 @@ sub print_class_init
     print <<HERE;
   class_init(class)
   {
-   /* What is the real name for our current class type? */
-    SELF_CLASS *k = SELF_CLASS(GTK_OBJECT(self)->klass);
 HERE
 
     foreach $cspace (@Gegl::colorspaces)
       {
 	foreach $prec (@Gegl::precisions)
 	  {
-	    $var = "    k->scanline_funcs[" .
-	      pad_string($Gegl::precision{$prec}{enum}, 21) . "][" .
-		pad_string("$Gegl::colormodels{$cspace}{enum}", 20) . "]";
+	    $var = "    class->scanline_funcs[" .
+	      pad_string($Gegl::precision{$prec}{enum}, 11) . "][" .
+		pad_string("$Gegl::colormodels{$cspace}{enum}", 9) . "]";
 	    print $var;
 	    print " = ";
 	    $func = $op->get_handler($cspace, $prec);
@@ -101,12 +110,13 @@ HERE
 	      }
 	  }
       }
-    print "  }\n";
+    print "  }\n\n";
   }
 
 sub print_prepare
   {
     my $op = shift;
+    return unless $op->{prepare};
     print <<HERE;
   override(Gegl:N:Src:Op)
   void
@@ -114,20 +124,11 @@ sub print_prepare
           GeglImage *dest,
 	  GeglRect *dest_rect)
   {
-    GeglPointOp *self_point_op = GEGL_POINT_OP (self_op);
-    GeglPointOpClass *self_point_op_class = 
-      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_point_op)->klass);
+    $op->{prepare}
 
-    /* Save the alphas so we can get them quickly
-       in the scanline func */
-    gegl_op_save_alphas(op);
-
-    /* Now make sure the correct scanline func is installed */
-    if (!(point_op_class->scanline_func = point_op_class->scanline_funcs[DATATYPE][COLORSPACE]))
-    {
-      DO_SOME_ERROR_STUFF();
-    }
+    gegl_n_src_op_prepare(self_op, dest, dest_rect);
   }
+
 HERE
   }
 

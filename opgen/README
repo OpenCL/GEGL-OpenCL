@@ -4,7 +4,7 @@ Requirements:
 
 
 Usage:
-  ./opgen.pl subtract.xml
+  ./geglgen.pl subtract.xml
 
 Notes:
   The output of this file is not yet compilable but it is pretty close.
@@ -24,8 +24,6 @@ to do a big switch statement like in per_alpha.
 point processing functions
 
   Figure out how we code with specific colors (ie red, green, blue, cyan...)
-
-  Make an actuall Gegl::N::Src::Op to derive the point op stuff from.
 
   Make the output actually compile.
 

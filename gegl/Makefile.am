@@ -51,6 +51,7 @@ NONGEN_GOB = \
   gegl-copychan-op.gob \
   gegl-copy-op.gob \
   gegl-dual-src-op.gob \
+  gegl-n-src-op.gob \
   gegl-fill-op.gob \
   gegl-image.gob \
   gegl-image-buffer.gob \
@@ -81,6 +82,7 @@ GOB_GEN_PUBLIC_HDRS = \
   gegl-copychan-op.h \
   gegl-copy-op.h \
   gegl-dual-src-op.h \
+  gegl-n-src-op.h \
   gegl-fill-op.h \
   gegl-image.h \
   gegl-image-buffer.h \
@@ -123,6 +125,7 @@ GOB_GEN_PRIVATE_HDRS = \
   gegl-copychan-op-private.h \
   gegl-copy-op-private.h \
   gegl-dual-src-op-private.h \
+  gegl-n-src-op-private.h \
   gegl-fill-op-private.h \
   gegl-image-private.h \
   gegl-image-buffer-private.h \
@@ -165,6 +168,7 @@ GOB_GEN_SRC = \
   gegl-copychan-op.c \
   gegl-copy-op.c \
   gegl-dual-src-op.c \
+  gegl-n-src-op.c \
   gegl-fill-op.c \
   gegl-image.c \
   gegl-image-buffer.c \

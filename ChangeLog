@@ -1,6 +1,29 @@
 2001-02-04  Jay Cox  <jaycox@gimp.org>
 
 	* opgen/README
+	updated TODO section.
+	
+	* opgen/geglopgen.dtd
+	added prepare element.
+	
+	* opgen/Gegl/Config.pm
+	Changed enum names.
+	
+	* opgen/Gegl/XML/PointOp.pm
+	* opgen/Gegl/PointOp.pm
+	made the prepare function customizable
+	
+	* opgen/Gegl/PointProcessor.pm
+	removed the mask_mask calculation. fixed some bugs.
+
+	* gegl/Makefile.am
+	* gegl/gegl-n-src-op.gob
+	New file that operators created with opgen use as a base class.
+	
+	
+2001-02-04  Jay Cox  <jaycox@gimp.org>
+
+	* opgen/README
 	* opgen/geglopgen.dtd
 	* opgen/geglgen.pl
 	* opgen/subtract.xml

@@ -44,7 +44,7 @@ sub parse
       };
 
     foreach (qw/description author copyright license libraries 
-                constructor destructor variables/)
+                constructor destructor variables prepare/)
       {
 	if ($tmp = Gegl::XML::query_single($tree, $_))
 	  { $processor->{$_} = $tmp->xql_toString(); }
