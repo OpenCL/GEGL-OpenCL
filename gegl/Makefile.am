@@ -95,7 +95,7 @@ INCLUDES = \
 	-I$(top_srcdir)	\
 	@DEP_CFLAGS@
 
-LDFLAGS =  \
+libgegl_1_0_la_LDFLAGS =  \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)	\
 	-no-undefined \
 	@DEP_LIBS@

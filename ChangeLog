@@ -1,3 +1,14 @@
+2003-03-11  Sven Neumann  <sven@gimp.org>
+
+	* autogen.sh
+	* gegl/Makefile.am
+	* gil/gil/Makefile.am
+	* gil/tests/Makefile.am
+	* tests/Makefile.am
+	* tools/testsuite/Makefile.am: a couple of Makefile changes that
+	make the gegl build work with automake-1.7. It should still work
+	with automake-1.4 (and probably other versions).
+
 Mon Feb 24 23:58:36 EST 2003 calvinw@mindspring.com
 
 	Patch from Daniel Rogers (daniel@phasevelocity.org) for Copy op. 

@@ -74,7 +74,9 @@ fi
 
 aclocal $ACLOCAL_FLAGS
 
-automake -a $am_opt
+libtoolize --copy --force
+
+automake --add-missing $am_opt
 autoconf
 cd $ORIGDIR
 

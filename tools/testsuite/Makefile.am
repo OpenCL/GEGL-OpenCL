@@ -9,8 +9,6 @@ DEFS =
 
 INCLUDES =
 
-LDFLAGS =
-
 libtestsuiteincludedir=$(includedir)/testsuite
 
 libtestsuiteinclude_HEADERS = \

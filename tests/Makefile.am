@@ -4,8 +4,6 @@ INCLUDES = @STRIP_BEGIN@ \
 	@DEP_CFLAGS@ \
 @STRIP_END@
 
-LDFLAGS =
-
 DEPS = \
     $(top_builddir)/tools/testsuite/libtestsuite.la \
 	$(top_builddir)/gegl/@gegltargetlib@

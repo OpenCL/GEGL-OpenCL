@@ -1,11 +1,9 @@
 YFLAGS = -d -t -v
 SUBDIRS =
-CFLAGS = -g
+
+AM_CFLAGS = -g
 
 INCLUDES = @DEP_CFLAGS@
-LDFLAGS = \
-	-lm \
-	@DEP_LIBS@
 
 bin_PROGRAMS =
 
@@ -24,6 +22,10 @@ libgil_a_SOURCES = \
     gil-unary-op.c \
     gil-variable.c \
     gil-visitor.c
+
+LDADD = \
+	-lm \
+	@DEP_LIBS@
 
 #noinst_PROGRAMS = gil
 
