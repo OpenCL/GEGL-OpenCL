@@ -37,13 +37,15 @@ typedef struct _GeglComponentSampleModel GeglComponentSampleModel;
 struct _GeglComponentSampleModel
 {
   GeglSampleModel parent;
-  /* private */
+  /* protected */
   gint pixel_stride;
   gint scanline_stride;
   GArray* bank_offsets;
-  GArray* band_indicies;
-  
-  
+  GArray* band_indices;
+  /* private */
+  //this class supports either chunky or planer, not something in between.
+  //this flag indicates chunky (all bands mapped to one bank) or planer (all bands mapped to different banks)
+  gboolean all_to_one;
 };
 
 typedef struct _GeglComponentSampleModelClass GeglComponentSampleModelClass;

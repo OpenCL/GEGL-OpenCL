@@ -60,6 +60,7 @@ static gboolean check_buffer(const GeglSampleModel* self,
 
 static GArray* g_array_copy_gint(const GArray* src);
 inline static gint g_array_max_gint(GArray* array);
+static gint get_max_bands_per_bank(const GeglComponentSampleModel* csm);
 
 
 static gpointer parent_class;
@@ -69,7 +70,7 @@ enum {
   PROP_PIXEL_STRIDE,
   PROP_SCANLINE_STRIDE,
   PROP_BANK_OFFSETS,
-  PROP_BAND_INDICIES,
+  PROP_BAND_INDICES,
   PROP_LAST
 };
 
@@ -150,7 +151,7 @@ class_init(gpointer g_class,
 						       "A GArray* of gints containing the offsets in buffer elements from the begining of a bank, to the first sample in the bank.",
 						       G_PARAM_CONSTRUCT_ONLY|
 						       G_PARAM_READWRITE));
-  g_object_class_install_property(gob_class, PROP_BAND_INDICIES,
+  g_object_class_install_property(gob_class, PROP_BAND_INDICES,
 				  g_param_spec_pointer("band_indices",
 						       "Band Indices",
 						       "A GArray* of gints containing the indices of the bands that hold each bank.  There should be one for each band.",
@@ -166,7 +167,7 @@ instance_init(GTypeInstance *instance,
   csm->pixel_stride=0;
   csm->scanline_stride=0;
   csm->bank_offsets=NULL;
-  csm->band_indicies=NULL;
+  csm->band_indices=NULL;
 }
 
 static GObject*
@@ -178,27 +179,98 @@ constructor(GType type,
   GeglComponentSampleModel* csm=(GeglComponentSampleModel*)new_object;
   GeglSampleModel* sample_model=(GeglSampleModel*)new_object;
   
-  if (csm->band_indicies) {
-    gint num_indexed_bands=csm->band_indicies->len;
+  //check that there are at least enough band_indicies as the number of bands
+  if (csm->band_indices) {
+    gint num_indexed_bands=csm->band_indices->len;
     if (num_indexed_bands!=sample_model->num_bands) {
       goto LABEL_failure;
     }
   }
+  //now check that all banks are mapped to one bank or all bands are mapped to a single bank
+  //these affect how we access data
+  csm->all_to_one=TRUE;
+  if (csm->band_indices) {
+    gint i;
+    gint bi0=g_array_index(csm->band_indices,gint,0);
+    for (i=0;i<csm->band_indices->len;i++) {
+      if (g_array_index(csm->band_indices,gint,i) != bi0) {
+	csm->all_to_one=FALSE;
+	break;
+      }
+    }
+    if (csm->all_to_one == FALSE) {
+      if (get_max_bands_per_bank(csm) !=1 ) {
+	goto LABEL_failure;
+      }
+    }
+  }
+
+  //since we support row major order and column major order (depending on the length of pixel_stride
+  //and scanline_stride) we need to check that the smaller stride is as least as large as the number
+  //of bands mapped to any one bank
+  gint min_stride=(csm->scanline_stride < csm->pixel_stride) ? csm->scanline_stride : csm->pixel_stride;
+  gint max_bands_per_bank;
+  if (csm->band_indices) {
+    max_bands_per_bank=get_max_bands_per_bank(csm);
+  } else {
+    max_bands_per_bank=sample_model->num_bands;
+  }
+  if (max_bands_per_bank > min_stride) {
+    goto LABEL_failure;
+  }
+  //now we want to check that if pixel_stride<scanline_stride (e.g. row major order)
+  //then we want to make sure that the pixel_stride * smallerthan or equal to the scanline_stride
+  //and visa-versa for scanline_stride<pixel_stride
+  if (csm->pixel_stride < csm->scanline_stride) {
+    if ((sample_model->width)*(csm->pixel_stride) > csm->scanline_stride) {
+      goto LABEL_failure;
+    }
+  } else {
+    if ((sample_model->height)*(csm->scanline_stride) > csm->pixel_stride) {
+      goto LABEL_failure;
+    }
+  }
+  
   return new_object;
 
  LABEL_failure:
   g_object_unref(new_object);
-  g_warning("GeglComponentSampleModel: Inconsistant argument types in the constructor");
+  g_warning("GeglComponentSampleModel: Inconsistant arguments in the constructor");
   return NULL;
 }
 
+static gint
+get_max_bands_per_bank(const GeglComponentSampleModel* csm) {
+
+  gint max_bands_per_bank, i,start,bands_per_bank;
+  start=0;
+  max_bands_per_bank=0;
+  //this finds the maximum number of bands that are mapped to a single bank.
+  //it could be improved by skipping over indices already counted once, 
+  //but I don't care 'cause band_indices should be short
+  for (i=0;i<csm->band_indices->len;i++) {
+    gint j;
+    bands_per_bank=0;
+    for (j=start;j<csm->band_indices->len;j++) {
+      if (g_array_index(csm->band_indices,gint,j) == g_array_index(csm->band_indices,gint,start) ){
+	bands_per_bank++;
+      }
+    }
+    max_bands_per_bank=(bands_per_bank > max_bands_per_bank) ? bands_per_bank : max_bands_per_bank;
+    start++;
+    if ( ((csm->band_indices->len) - start) <= max_bands_per_bank) {
+      break;
+    }
+  }
+  return max_bands_per_bank;
+}
 static void finalize(GObject *object) {
   GeglComponentSampleModel* csm=(GeglComponentSampleModel*)object;
   if (csm->bank_offsets!=NULL) {
     g_array_free(csm->bank_offsets,FALSE);
   }
-  if (csm->band_indicies!=NULL) {
-    g_array_free(csm->band_indicies,FALSE);
+  if (csm->band_indices!=NULL) {
+    g_array_free(csm->band_indices,FALSE);
   }
 }
 
@@ -219,8 +291,8 @@ get_property(GObject *object,
     case PROP_BANK_OFFSETS:
       g_value_set_pointer(value,self->bank_offsets);
       break;
-    case PROP_BAND_INDICIES:
-      g_value_set_pointer(value,self->band_indicies);
+    case PROP_BAND_INDICES:
+      g_value_set_pointer(value,self->band_indices);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID(object,property_id,pspec);
@@ -244,8 +316,8 @@ static void set_property(GObject *object,
   case PROP_BANK_OFFSETS:
     self->bank_offsets=g_array_copy_gint((GArray*)g_value_get_pointer(value));
     break;
-  case PROP_BAND_INDICIES:
-    self->band_indicies=g_array_copy_gint((GArray*)g_value_get_pointer(value));
+  case PROP_BAND_INDICES:
+    self->band_indices=g_array_copy_gint((GArray*)g_value_get_pointer(value));
     break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID(object,property_id,pspec);
@@ -270,6 +342,9 @@ get_sample_double(const GeglSampleModel* sample_model,
   offset=gegl_component_sample_model_get_bank_offset(self,bank);
 
   index=offset+y*(self->scanline_stride)+x*(self->pixel_stride);
+  if (self->all_to_one) {
+    index+=band;
+  }
   return gegl_buffer_get_element_double(buffer,bank,index);
   
 }
@@ -290,8 +365,10 @@ set_sample_double(const GeglSampleModel* sample_model,
 
   bank=gegl_component_sample_model_get_band_index(self,band);
   offset=gegl_component_sample_model_get_bank_offset(self,bank);
-
   index=offset+y*(self->scanline_stride)+x*(self->pixel_stride);
+  if (self->all_to_one) {
+    index+=band;
+  }
   gegl_buffer_set_element_double(buffer,bank,index,sample);
 }
 
@@ -316,24 +393,24 @@ create_buffer(const GeglSampleModel* sample_model,
   GeglComponentSampleModel* self=GEGL_COMPONENT_SAMPLE_MODEL(sample_model);
   
   gint num_banks=0;
-  if (self->band_indicies) {
-    num_banks=g_array_max_gint(self->band_indicies) +1;
+  if (self->band_indices) {
+    num_banks=g_array_max_gint(self->band_indices) +1;
   } else {
     num_banks=1;
   }
 
   gint max_offset=0;
   if (self->bank_offsets) {
-    max_offset=g_array_max_gint(self->band_indicies);
+    max_offset=g_array_max_gint(self->band_indices);
   } else {
     max_offset=0;
   }
-  gint elements_per_bank=
-    max_offset+
-    (sample_model->width)*(self->pixel_stride)+
-    (sample_model->height)*(self->scanline_stride);
+  //like in the constructor we need to account for the fast that we have both
+  //row major and column major order
+  gint min_stride=(self->scanline_stride < self->pixel_stride) ? self->scanline_stride : self->pixel_stride;
+  gint elements_per_bank=max_offset+(sample_model->height)*(sample_model->width)*min_stride;
   
-  return gegl_buffer_create(type,"num_banks",num_banks,"elements_per_bank",elements_per_bank);
+  return gegl_buffer_create(type,"num_banks",num_banks,"elements_per_bank",elements_per_bank,NULL);
 }
 
 static gboolean
@@ -343,8 +420,8 @@ check_buffer(const GeglSampleModel* sample_model,
   
   gint max_bank;
   gint max_offset;
-  if (self->band_indicies) {
-    max_bank=g_array_max_gint(self->band_indicies);
+  if (self->band_indices) {
+    max_bank=g_array_max_gint(self->band_indices);
   } else {
     max_bank=0;
   }
@@ -353,11 +430,15 @@ check_buffer(const GeglSampleModel* sample_model,
   } else {
     max_offset=0;
   }
-
+  //it is max_bank + 1 'cause max_bank is the largest index
+  if (gegl_buffer_get_num_banks(buffer) < (max_bank+1)) {
+    return FALSE;
+  }
+  //like in the constructor we need to account for the fast that we have both
+  //row major and column major order
+  gint min_stride=(self->scanline_stride < self->pixel_stride) ? self->scanline_stride : self->pixel_stride;
   if ((max_offset+(sample_model->width)*
-       (self->pixel_stride)+
-       (sample_model->height)*
-       (self->scanline_stride))
+       (sample_model->height)*min_stride)
       >gegl_buffer_get_elements_per_bank(buffer)) {
     return FALSE;
   }
@@ -403,10 +484,10 @@ gegl_component_sample_model_get_bank_offset(const GeglComponentSampleModel* self
 gint
 gegl_component_sample_model_get_band_index(const GeglComponentSampleModel* self, gint band) {
     g_return_val_if_fail(GEGL_IS_COMPONENT_SAMPLE_MODEL(self),0);
-    if (self->band_indicies == NULL ) {
+    if (self->band_indices == NULL ) {
       return 0;
     }
 
-    g_return_val_if_fail(band < self->band_indicies->len,0);
-    return g_array_index(self->band_indicies,gint,band);
+    g_return_val_if_fail(band < self->band_indices->len,0);
+    return g_array_index(self->band_indices,gint,band);
 }

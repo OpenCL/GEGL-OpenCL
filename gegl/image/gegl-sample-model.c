@@ -335,3 +335,14 @@ gegl_sample_model_create_buffer(const GeglSampleModel* self,
     
     return new_buffer;
 }
+
+gboolean
+gegl_sample_model_check_buffer(const GeglSampleModel* self,
+			       const GeglBuffer* buffer) {
+  g_return_val_if_fail(GEGL_IS_SAMPLE_MODEL(self),FALSE);
+  GeglSampleModelClass* class=GEGL_SAMPLE_MODEL_GET_CLASS(self);
+  g_return_val_if_fail(class->check_buffer != NULL,FALSE);
+  
+  return class->check_buffer(self,buffer);
+}
+

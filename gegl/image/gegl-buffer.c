@@ -187,7 +187,7 @@ get_property (GObject      *gobject,
 static void
 alloc_banks (GeglBuffer * self)
 {
-    gpointer * banks = NULL;
+    gpointer* banks = NULL;
     gint i;
   
     g_return_if_fail (self != NULL);
