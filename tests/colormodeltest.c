@@ -252,7 +252,8 @@ test_color_model_rgba_uint8(Test *test)
   }
 }
 
-
+//defined but not used
+/*
 static void
 test_color_model_gray_uint8(Test *test)
 {
@@ -286,7 +287,10 @@ test_color_model_gray_uint8(Test *test)
     g_object_unref(color_model);
   }
 }
+*/
 
+//defined but not used
+/*
 static void
 test_color_model_graya_uint8(Test *test)
 {
@@ -321,6 +325,7 @@ test_color_model_graya_uint8(Test *test)
     g_object_unref(color_model);
   }
 }
+*/
 
 static void
 test_color_model_create_storage(Test *test)

@@ -111,7 +111,7 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglMockNode *self = GEGL_MOCK_NODE(gobject);
+  //GeglMockNode *self = GEGL_MOCK_NODE(gobject);
   switch (prop_id)
   {
     default:

@@ -53,6 +53,8 @@ test_color_properties(Test *test)
   }
 }
 
+//defined but not used
+/*
 static void
 test_color_properties_convert(Test *test)
 {
@@ -72,6 +74,7 @@ test_color_properties_convert(Test *test)
     g_object_unref(color);
   }
 }
+*/
 
 static void
 test_color_read_only_properties(Test *test)

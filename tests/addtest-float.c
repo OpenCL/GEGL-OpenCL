@@ -33,6 +33,8 @@ test_add_g_object_new(Test *test)
   }
 }
 
+//defined but not used.  Commented out for now.
+/*
 static void
 test_add_g_object_properties(Test *test)
 {
@@ -47,6 +49,7 @@ test_add_g_object_properties(Test *test)
     g_object_unref(add);
   }
 }
+*/
 
 static void
 test_add_apply(Test *test)

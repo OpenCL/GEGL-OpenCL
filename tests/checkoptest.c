@@ -183,43 +183,45 @@ test_check_op_testutils_rgb_uint8_xy(Test *test)
   }
 }
 
-static void
-test_check_op_testutils_color_models_match_failure(Test *test)
-{
-  {
-    GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
-                                    "rgb-float", 1/255.0, 2/255.0, 3/255.0, 
-                                    NULL);
-    GeglOp *constant = g_object_new(GEGL_TYPE_FILL, 
-                                    "fill-color", color, 
-                                    "image-data-type", "rgb-uint8",
-                                    NULL);
-    g_object_unref(color);
-    gegl_op_apply(constant); 
-
+//defined but not used
+//static void
+//test_check_op_testutils_color_models_match_failure(Test *test)
+//{
+//  {
+//    GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+//                                    "rgb-float", 1/255.0, 2/255.0, 3/255.0, 
+//                                    NULL);
+//    GeglOp *constant = g_object_new(GEGL_TYPE_FILL, 
+//                                    "fill-color", color, 
+//                                    "image-data-type", "rgb-uint8",
+//                                    NULL);
+//    g_object_unref(color);
+//    gegl_op_apply(constant); 
+//
     /* returns false since check_op fails */
-    ct_test(test, !testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(constant), .1, .2, .3));  
-
-    g_object_unref(constant);
-  }
-
-  {
-    GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
-                                    "rgb-float", .1, .2, .3, 
-                                    NULL);
-    GeglOp *constant = g_object_new(GEGL_TYPE_FILL, 
-                                    "fill-color", color, 
-                                    "image-data-type", "rgb-float",
-                                    NULL);
-    g_object_unref(color);
-    gegl_op_apply(constant); 
-
+//    ct_test(test, !testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(constant), .1, .2, .3));  
+//
+//    g_object_unref(constant);
+//  }
+//
+//  {
+//    GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+//                                    "rgb-float", .1, .2, .3, 
+//                                    NULL);
+//    GeglOp *constant = g_object_new(GEGL_TYPE_FILL, 
+//                                    "fill-color", color, 
+//                                    "image-data-type", "rgb-float",
+//                                    NULL);
+//    g_object_unref(color);
+//    gegl_op_apply(constant); 
+//
     /* returns false since check_op fails */
-    ct_test(test, !testutils_check_rgb_uint8(GEGL_IMAGE_OP(constant), 1, 2, 3));  
+//    ct_test(test, !testutils_check_rgb_uint8(GEGL_IMAGE_OP(constant), 1, 2, 3)); // 
+//
+//    g_object_unref(constant);
+//  }
+//}
 
-    g_object_unref(constant);
-  }
-}
 
 static void
 check_op_test_setup(Test *test)
