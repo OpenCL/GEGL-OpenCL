@@ -1,10 +1,11 @@
 %h{
-#include "gegl-point-op.h"
+#include "gegl-single-src-op.h"
 %}
 %{
 #include <stdio.h>
 #include "gegl-print-op.h"
 #include "gegl-print-op-private.h"
+#include "gegl-single-src-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
 #include "gegl-image-iterator.h"
@@ -13,18 +14,18 @@
 #include "gegl-utils.h"
 %}
 
-class Gegl:Print:Op from Gegl:Point:Op {
+class Gegl:Print:Op from Gegl:Single:Src:Op {
 
   public 
   GeglPrintOp *
-  new (GeglImageBuffer *dest, 
-       GeglRect *dest_rect
+  new (GeglImageBuffer *src, 
+       GeglRect *src_rect
        )
   {
     GeglPrintOp * self = GEGL_PRINT_OP(GET_NEW);
 
     /*Call the constructor */
-    if (!constructor(self, dest, dest_rect))
+    if (!constructor(self, src, src_rect))
       return NULL;
     
     /*Okay its constructed*/
@@ -36,34 +37,27 @@ class Gegl:Print:Op from Gegl:Point:Op {
   protected 
   gboolean 
   constructor(self, 
-              GeglImageBuffer *dest, 
-              GeglRect *dest_rect)
+              GeglImageBuffer *src, 
+              GeglRect *src_rect)
   {
-    GeglPointOp *point_op = GEGL_POINT_OP (self);
-    GeglPointOpClass *point_op_class = 
-      GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
-    
-
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
-    
+
     /* Chain up */
-    if (!gegl_point_op_constructor (
-          GEGL_POINT_OP(self), 
-          &dest, dest_rect, 1))
+    if (!gegl_single_src_op_constructor (
+          GEGL_SINGLE_SRC_OP(self), src, src, src_rect, src_rect))
       return FALSE;
 
-    /*
-      Now based on the image buffer color model(s)/data storage
-      choose one of our scanline funcs to install
-      This is where some "autogeneration" happens.
-    */ 
 
     {
+      GeglPointOp *point_op = GEGL_POINT_OP (self);
+      GeglPointOpClass *point_op_class = 
+	GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
       GeglColorModel *cm;
       GeglColorSpace color_space;
       GeglChannelDataType data_type;
-      cm = gegl_image_buffer_color_model (dest);
+
+      cm = gegl_image_buffer_color_model (src);
       data_type = gegl_color_model_data_type (cm);
       color_space = gegl_color_model_color_space (cm);
 
@@ -77,36 +71,37 @@ class Gegl:Print:Op from Gegl:Point:Op {
   void
   COLORSPACE_DATATYPE (GeglPointOp *point_op)
   {
-     /*
-        Whats the algorithm for this code?
-        PRINT DEST
-
-     */
+    GeglPointOpPrivate *point_opP =
+        (GeglPointOpPrivate *)(point_op->_priv);
+    GeglSingleSrcOp *single_src_op = GEGL_SINGLE_SRC_OP(point_op); 
+    GeglSingleSrcOpPrivate *single_src_opP = 
+        (GeglSingleSrcOpPrivate *)(single_src_op->_priv); 
 
     GENERIC_IMAGE_DECL_BEGIN
     Pixel src(color,alpha,has_alpha);
     GENERIC_IMAGE_DECL_END
-    guint width;
+    gint width = point_opP->scanline_width;
 
-    GeglPointOpPrivate *point_opP =
-        (GeglPointOpPrivate *)(point_op->_priv);
+    src_has_alpha = gegl_color_model_has_alpha(
+                       single_src_opP->src_cm); 
 
-    width = point_opP->scanline_width;
-
-    /* image_buffers[0] is the dest here */
-    gegl_image_iterator_get_scanline_data (point_opP->iterators[0],
+    /* image_buffers[1] is the src here */
+    gegl_image_iterator_get_scanline_data (point_opP->iterators[1],
                                         (guchar**)src_data);
 
-    /* Make r,g,b point to the dest image data */
     GENERIC_IMAGE_IMAGE_DATA_INIT
     
     while (width--)
       {
+ 	printf("(");
 	GENERIC_IMAGE_BLOCK_BEGIN
 	PRINT (src); 
+	dX(src,1);
         GENERIC_IMAGE_BLOCK_END
- 	printf("\n");
+ 	printf(")");
+
       }
+      printf("\n");
 
   }
 }

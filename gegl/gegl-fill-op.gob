@@ -20,6 +20,7 @@
 class Gegl:Fill:Op from Gegl:Point:Op {
 
   private GeglColor *fill_color;
+  private GeglColorModel *dest_cm;
   
   public 
   GeglFillOp *
@@ -47,9 +48,6 @@ class Gegl:Fill:Op from Gegl:Point:Op {
               GeglColor *color)
   {
 
-    GeglChannelDataType data_type;
-    GeglColorSpace color_space;
-    GeglColorModel *cm; 
     GeglPointOp *point_op = GEGL_POINT_OP (self);
     GeglPointOpClass *point_op_class = 
         GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
@@ -68,9 +66,13 @@ class Gegl:Fill:Op from Gegl:Point:Op {
       This is where some "autogeneration" happens.
     */ 
 
-    cm = gegl_image_buffer_color_model (dest);
-    data_type = gegl_color_model_data_type (cm);
-    color_space = gegl_color_model_color_space (cm);
+    {
+      GeglChannelDataType data_type;
+      GeglColorSpace color_space;
+      self->_priv->dest_cm = gegl_image_buffer_color_model (dest);
+      data_type = gegl_color_model_data_type (self->_priv->dest_cm);
+      color_space = gegl_color_model_color_space (self->_priv->dest_cm);
+    }
 
     point_op_class->scanline_func = gegl_fill_op_COLORSPACE_DATATYPE;
 
@@ -101,25 +103,18 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   void
   COLORSPACE_DATATYPE (GeglPointOp *point_op)
   {
-    /*
-        Whats the algorithm for this code?
-        DEST = CONST
-
-    */
-    guint width;
-    gfloat *dest_data[4];
-    gboolean dest_has_alpha;
-    gfloat *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
-
     GeglFillOp *self = GEGL_FILL_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
 
-    GeglChannelValue *fill_values = gegl_color_get_channel_values(
+    gfloat *dest_data[4];
+    gfloat *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
+
+    guint width = point_opP->scanline_width;
+    gboolean dest_has_alpha = gegl_color_model_has_alpha (
+	                           self->_priv->dest_cm);
+    GeglChannelValue *fill_values = gegl_color_get_channel_values (
                                    self->_priv->fill_color);
  
-
-    width = point_opP->scanline_width;
-
     /* image_buffers[0] is the dest here */
     gegl_image_iterator_get_scanline_data (point_opP->iterators[0],
                 (guchar**)dest_data);

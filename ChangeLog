@@ -1,3 +1,12 @@
+Wed May  3 12:04:13 EDT 2000 calvinw@mindspring.com
+
+	*fixed a problem with gegl/gegl-print-op.gil. Made it inherit from 
+	gegl-single-src-op.gob. We need a statistics op, which would be 
+	dest -less.  histogram ops, and similar ops will inherit from this. 	 
+
+	*updated the PRINT macros in codegen/channel_data/float, u8, u16, 
+	u16_4k files.
+
 Wed Apr 19 21:37:15 EDT 2000 calvinw@mindspring.com
 
 	* remove gegl-fill-op.gil till that is working better.

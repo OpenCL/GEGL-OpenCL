@@ -51,7 +51,7 @@ main (int argc, char *argv[])
 	  gegl_object_destroy (GEGL_OBJECT(c)); 
         }
 
-        /* Fill the subrect at (1,2) with size 2 x 2  with GREEN */
+        /* Fill the subrect at (1,2) with size 2 x 2  with BLUE */
         {
 	  GeglOp *op;
 	  GeglRect r;
@@ -59,7 +59,7 @@ main (int argc, char *argv[])
 	  GeglColor *c = gegl_color_new (cm);
           gegl_color_set_constant (c, COLOR_BLUE);
 
-	  gegl_rect_set (&r, 2,2,2,2);
+	  gegl_rect_set (&r, 1,2,2,2);
 	  op = GEGL_OP (gegl_fill_op_new (image_buffer, &r, c));
 
 	  gegl_op_apply (op);
