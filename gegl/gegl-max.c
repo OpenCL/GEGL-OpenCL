@@ -110,27 +110,53 @@ a_max_b_float (GeglFilter * filter,
     gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
     gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = MAX(*a2, fade * *b2); 
-                     a2++;
-                     b2++;
-            case 2: *d1++ = MAX(*a1, fade * *b1);
-                     a1++;
-                     b1++;
-            case 1: *d0++ = MAX(*a0, fade * *b0);
-                     a0++;
-                     b0++;
-          }
-
+    switch(d_color_chans)
+      {
+        case 3: 
           if(alpha_mask == GEGL_A_B_ALPHA)
-            {
-              *da++ = MAX(*aa, fade * *ba);
-               aa++;
-               ba++;
-            }
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = MAX(*a0, fade * *b0); a0++; b0++;
+                *d1++ = MAX(*a1, fade * *b1); a1++; b1++;
+                *d2++ = MAX(*a2, fade * *b2); a2++; b2++;
+                *da++ = MAX(*aa, fade * *ba); aa++; ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = MAX(*a0, fade * *b0); a0++; b0++;
+                *d1++ = MAX(*a1, fade * *b1); a1++; b1++;
+                *d2++ = MAX(*a2, fade * *b2); a2++; b2++;
+              }
+          break;
+        case 2: 
+          if(alpha_mask == GEGL_A_B_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = MAX(*a0, fade * *b0); a0++; b0++;
+                *d1++ = MAX(*a1, fade * *b1); a1++; b1++;
+                *da++ = MAX(*aa, fade * *ba); aa++; ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = MAX(*a0, fade * *b0); a0++; b0++;
+                *d1++ = MAX(*a1, fade * *b1); a1++; b1++;
+              }
+          break;
+        case 1: 
+          if(alpha_mask == GEGL_A_B_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = MAX(*a0, fade * *b0); a0++; b0++;
+                *da++ = MAX(*aa, fade * *ba); aa++; ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = MAX(*a0, fade * *b0); a0++; b0++;
+              }
+          break;
       }
   }
 

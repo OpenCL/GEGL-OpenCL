@@ -111,48 +111,99 @@ fg_atop_bg_float (GeglFilter * filter,
       {
       case GEGL_NO_ALPHA:
           {
-            while(width--)                                                        
-              {                                                                   
-                switch(d_color_chans)
-                  {
-                    case 3: *d2++ = *f2++;
-                    case 2: *d1++ = *f1++;
-                    case 1: *d0++ = *f0++;
+            switch(d_color_chans)
+              {
+              case 3: 
+                while(width--)                                                        
+                  {                                                                   
+                    *d0++ = *f0++;
+                    *d1++ = *f1++;
+                    *d2++ = *f2++;
                   }
+                break;
+              case 2: 
+                while(width--)                                                        
+                  {                                                                   
+                    *d0++ = *f0++;
+                    *d1++ = *f1++;
+                  }
+                break;
+              case 1:
+                while(width--)                                                        
+                  {                                                                   
+                    *d0++ = *f0++;
+                  }
+                break;
               }
           }
         break;
       case GEGL_FG_ALPHA:
           {
             gfloat a;                                              
-            while(width--)                                                        
-              {                                                                   
-                a = 1.0 - *fa++;                                              
-                switch(d_color_chans)
-                  {
-                    case 3: *d2++ = a * *b2++ + *f2++;
-                    case 2: *d1++ = a * *b1++ + *f1++;
-                    case 1: *d0++ = a * *b0++ + *f0++;
+            switch(d_color_chans)
+              {
+              case 3: 
+                while(width--)                                                        
+                  {                                                                   
+                    a = 1.0 - *fa++;                                              
+                    *d0++ = a * *b0++ + *f0++;
+                    *d1++ = a * *b1++ + *f1++;
+                    *d2++ = a * *b2++ + *f2++;
+                    *da++ = 1.0; 
                   }
-
-                *da++ = 1.0; 
+                break;
+              case 2: 
+                while(width--)                                                        
+                  {                                                                   
+                    a = 1.0 - *fa++;                                              
+                    *d0++ = a * *b0++ + *f0++;
+                    *d1++ = a * *b1++ + *f1++;
+                    *da++ = 1.0; 
+                  }
+                break;
+              case 1:
+                while(width--)                                                        
+                  {                                                                   
+                    a = 1.0 - *fa++;                                              
+                    *d0++ = a * *b0++ + *f0++;
+                    *da++ = 1.0; 
+                  }
+               break;
               }
           }
         break;
       case GEGL_BG_ALPHA:
           {
             gfloat b;                                              
-            while(width--)                                                        
-              {                                                                   
-                b = *ba++;                                              
-                switch(d_color_chans)
-                  {
-                    case 3: *d2++ = b * *f2++;
-                    case 2: *d1++ = b * *f1++;
-                    case 1: *d0++ = b * *f0++;
-                  }
-
-                *da++ = b; 
+            switch(d_color_chans)
+              {
+                case 3: 
+                  while(width--)                                                        
+                    {                                                                   
+                      b = *ba++;                                              
+                      *d0++ = b * *f0++;
+                      *d1++ = b * *f1++;
+                      *d2++ = b * *f2++;
+                      *da++ = b; 
+                    }
+                  break;
+                case 2:
+                  while(width--)                                                        
+                    {                                                                   
+                      b = *ba++;                                              
+                      *d0++ = b * *f0++;
+                      *d1++ = b * *f1++;
+                      *da++ = b; 
+                    }
+                  break;
+                case 1:
+                  while(width--)                                                        
+                    {                                                                   
+                      b = *ba++;                                              
+                      *d0++ = b * *f0++;
+                      *da++ = b; 
+                    }
+                  break;
               }
           }
         break;
@@ -160,18 +211,38 @@ fg_atop_bg_float (GeglFilter * filter,
           {
             gfloat a;                                              
             gfloat b;                                              
-            while(width--)                                                        
-              {                                                                   
-                a = 1.0 - *fa++;                                              
-                b = *ba++;                                              
-                switch(d_color_chans)
-                  {
-                    case 3: *d2++ = a * *b2++ + b * *f2++;
-                    case 2: *d1++ = a * *b1++ + b * *f1++;
-                    case 1: *d0++ = a * *b0++ + b * *f0++;
-                  }
-
-                *da++ = b; 
+            switch(d_color_chans)
+              {
+                case 3:
+                  while(width--)                                                        
+                    {                                                                   
+                      a = 1.0 - *fa++;                                              
+                      b = *ba++;                                              
+                      *d0++ = a * *b0++ + b * *f0++;
+                      *d1++ = a * *b1++ + b * *f1++;
+                      *d2++ = a * *b2++ + b * *f2++;
+                      *da++ = b; 
+                    }
+                  break;
+                case 2: 
+                  while(width--)                                                        
+                    {                                                                   
+                      a = 1.0 - *fa++;                                              
+                      b = *ba++;                                              
+                      *d0++ = a * *b0++ + b * *f0++;
+                      *d1++ = a * *b1++ + b * *f1++;
+                      *da++ = b; 
+                    }
+                  break;
+                case 1:
+                  while(width--)                                                        
+                    {                                                                   
+                      a = 1.0 - *fa++;                                              
+                      b = *ba++;                                              
+                      *d0++ = a * *b0++ + b * *f0++;
+                      *da++ = b; 
+                    }
+                  break;
               }
           }
         break;

@@ -277,17 +277,38 @@ color_float(GeglFilter * filter,
     g_print("color dest addresses are %p %p %p \n", d0, d1, d2);
 #endif
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = pixel[2];
-            case 2: *d1++ = pixel[1];
-            case 1: *d0++ = pixel[0];
-          }
+    switch(d_color_chans)
+      {
+        case 3: 
+          while(width--)                                                        
+            {                                                                   
+              *d0++ = pixel[0];
+              *d1++ = pixel[1];
+              *d2++ = pixel[2];
 
-        if(has_alpha)
-          *da++ = pixel[alpha];
+              if(has_alpha)
+                *da++ = pixel[alpha];
+            }
+          break;
+        case 2:
+          while(width--)                                                        
+            {                                                                   
+              *d0++ = pixel[0];
+              *d1++ = pixel[1];
+
+              if(has_alpha)
+                *da++ = pixel[alpha];
+            }
+          break;
+        case 1:
+          while(width--)                                                        
+            {                                                                   
+              *d0++ = pixel[0];
+
+              if(has_alpha)
+                *da++ = pixel[alpha];
+            }
+          break;
       }
   }
 
@@ -313,18 +334,40 @@ color_u16 (GeglFilter * filter,
     guint16 *d1 = (d_color_chans > 1) ? d[1]: NULL;
     guint16 *d2 = (d_color_chans > 2) ? d[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = pixel[2];
-            case 2: *d1++ = pixel[1];
-            case 1: *d0++ = pixel[0];
-          }
+    switch(d_color_chans)
+      {
+        case 3: 
+          while(width--)                                                        
+            {                                                                   
+              *d0++ = pixel[0];
+              *d1++ = pixel[1];
+              *d2++ = pixel[2];
 
-        if(has_alpha)
-          *da++ = pixel[alpha];
+              if(has_alpha)
+                *da++ = pixel[alpha];
+            }
+          break;
+        case 2: 
+          while(width--)                                                        
+            {                                                                   
+              *d0++ = pixel[0];
+              *d1++ = pixel[1];
+
+              if(has_alpha)
+                *da++ = pixel[alpha];
+            }
+          break;
+        case 1: 
+          while(width--)                                                        
+            {                                                                   
+              *d0++ = pixel[0];
+
+              if(has_alpha)
+                *da++ = pixel[alpha];
+            }
+          break;
       }
+
   }
 
   g_free(d);
@@ -349,18 +392,40 @@ color_uint8 (GeglFilter * filter,
     guint8 *d1 = (d_color_chans > 1) ? d[1]: NULL;
     guint8 *d2 = (d_color_chans > 2) ? d[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = pixel[2];
-            case 2: *d1++ = pixel[1];
-            case 1: *d0++ = pixel[0];
-          }
+    switch(d_color_chans)
+      {
+        case 3: 
+          while(width--)                                                        
+            {                                                                   
+              *d0++ = pixel[0];
+              *d1++ = pixel[1];
+              *d2++ = pixel[2];
 
-        if(has_alpha)
-          *da++ = pixel[alpha];
+              if(has_alpha)
+                *da++ = pixel[alpha];
+            }
+          break;
+        case 2: 
+          while(width--)                                                        
+            {                                                                   
+              *d0++ = pixel[0];
+              *d1++ = pixel[1];
+
+              if(has_alpha)
+                *da++ = pixel[alpha];
+            }
+          break;
+        case 1: 
+          while(width--)                                                        
+            {                                                                   
+              *d0++ = pixel[0];
+
+              if(has_alpha)
+                *da++ = pixel[alpha];
+            }
+          break;
       }
+
   }
 
   g_free(d);

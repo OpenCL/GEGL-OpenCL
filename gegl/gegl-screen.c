@@ -109,29 +109,94 @@ fg_screen_bg_float (GeglFilter * filter,
     gfloat *f1 = (f_color_chans > 1) ? f[1]: NULL;
     gfloat *f2 = (f_color_chans > 2) ? f[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
+    
+    switch(alpha_mask)
+      {
+      case GEGL_NO_ALPHA:
         switch(d_color_chans)
           {
-            case 3: *d2++ = *b2 + *f2 + *b2 * *f2;   
-                    b2++;
-                    f2++;
-            case 2: *d1++ = *b1 + *f1 + *b1 * *f1;
-                    b1++;
-                    f1++;
-            case 1: *d0++ = *b0 + *f0 + *b0 * *f0;
-                    b0++;
-                    f0++;
+            case 3: 
+              while(width--)                                                        
+                {                                                                   
+                  *d0++ = *b0 + *f0 + *b0 * *f0; b0++; f0++;
+                  *d1++ = *b1 + *f1 + *b1 * *f1; b1++; f1++;
+                  *d2++ = *b2 + *f2 + *b2 * *f2; b2++; f2++;
+                }
+              break;
+            case 2: 
+              while(width--)                                                        
+                {                                                                   
+                  *d0++ = *b0 + *f0 + *b0 * *f0; b0++; f0++;
+                  *d1++ = *b1 + *f1 + *b1 * *f1; b1++; f1++;
+                }
+              break;
+            case 1: 
+              while(width--)                                                        
+                {                                                                   
+                  *d0++ = *b0 + *f0 + *b0 * *f0; b0++; f0++;
+                }
+              break;
           }
-
-        if(alpha_mask == GEGL_FG_ALPHA || alpha_mask == GEGL_BG_ALPHA)
-          *da++ = 1; 
-        else if (alpha_mask == GEGL_FG_BG_ALPHA)
+        break;
+      case GEGL_FG_ALPHA:
+      case GEGL_BG_ALPHA:
+        switch(d_color_chans)
           {
-            *da++ = *fa + *ba - *ba * *fa; 
-             fa++;
-             ba++;
+            case 3: 
+              while(width--)                                                        
+                {                                                                   
+                  *d0++ = *b0 + *f0 + *b0 * *f0; b0++; f0++;
+                  *d1++ = *b1 + *f1 + *b1 * *f1; b1++; f1++;
+                  *d2++ = *b2 + *f2 + *b2 * *f2; b2++; f2++;
+                  *da++ = 1; 
+                }
+              break;
+            case 2: 
+              while(width--)                                                        
+                {                                                                   
+                  *d0++ = *b0 + *f0 + *b0 * *f0; b0++; f0++;
+                  *d1++ = *b1 + *f1 + *b1 * *f1; b1++; f1++;
+                  *da++ = 1; 
+                }
+              break;
+            case 1: 
+              while(width--)                                                        
+                {                                                                   
+                  *d0++ = *b0 + *f0 + *b0 * *f0; b0++; f0++;
+                  *da++ = 1; 
+                }
+              break;
           }
+        break;
+      case GEGL_FG_BG_ALPHA:
+        switch(d_color_chans)
+          {
+            case 3: 
+              while(width--)                                                        
+                {                                                                   
+                  *d0++ = *b0 + *f0 + *b0 * *f0; b0++; f0++;
+                  *d1++ = *b1 + *f1 + *b1 * *f1; b1++; f1++;
+                  *d2++ = *b2 + *f2 + *b2 * *f2; b2++; f2++;
+                  *da++ = *fa + *ba - *ba * *fa; fa++; ba++;
+                }
+              break;
+            case 2: 
+              while(width--)                                                        
+                {                                                                   
+                  *d0++ = *b0 + *f0 + *b0 * *f0; b0++; f0++;
+                  *d1++ = *b1 + *f1 + *b1 * *f1; b1++; f1++;
+                  *da++ = *fa + *ba - *ba * *fa; fa++; ba++;
+                }
+              break;
+            case 1: 
+              while(width--)                                                        
+                {                                                                   
+                  *d0++ = *b0 + *f0 + *b0 * *f0; b0++; f0++;
+                  *da++ = *fa + *ba - *ba * *fa; fa++; ba++;
+                }
+              break;
+          }
+        break;
       }
   }
 

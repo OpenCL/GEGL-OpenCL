@@ -117,17 +117,35 @@ fg_difference_bg_float (GeglFilter * filter,
             gfloat diff1;
             gfloat diff0;
 
-            while(width--)                                                        
-              {                                                                   
-                switch(d_color_chans)
-                  {
-                    case 3: diff2 = *b2++ - *f2++;
-                            *d2++ = (diff2 >= 0.0) ? diff2 : -diff2;
-                    case 2: diff1 = *b1++ - *f1++;
-                            *d1++ = (diff1 >= 0.0) ? diff1 : -diff1;
-                    case 1: diff0 = *b0++ - *f0++;
-                            *d0++ = (diff0 >= 0.0) ? diff0 : -diff0;
-                  }
+            switch(d_color_chans)
+              {
+                case 3: 
+                  while(width--)                                                        
+                    {                                                                   
+                      diff0 = *b0++ - *f0++;
+                      *d0++ = ABS(diff0);
+                      diff1 = *b1++ - *f1++;
+                      *d1++ = ABS(diff1);
+                      diff2 = *b2++ - *f2++;
+                      *d2++ = ABS(diff2);
+                    }
+                  break;
+                case 2: 
+                  while(width--)                                                        
+                    {                                                                   
+                      diff0 = *b0++ - *f0++;
+                      *d0++ = ABS(diff0);
+                      diff1 = *b1++ - *f1++;
+                      *d1++ = ABS(diff1);
+                    }
+                  break;
+                case 1: 
+                  while(width--)                                                        
+                    {                                                                   
+                      diff0 = *b0++ - *f0++;
+                      *d0++ = ABS(diff0);
+                    }
+                  break;
               }
           }
         break;
@@ -146,25 +164,52 @@ fg_difference_bg_float (GeglFilter * filter,
             gfloat a;
             gfloat b;
 
-            while(width--)                                                        
-              {                                                                   
-                a =  1.0 - 2.0 * *ba;
-                b =  1.0 - 2.0 * *fa;
+            switch(d_color_chans)
+              {
+                case 3: 
+                  while(width--)                                                        
+                    {                                                                   
+                      a =  1.0 - 2.0 * *ba;
+                      b =  1.0 - 2.0 * *fa;
 
-                switch(d_color_chans)
-                  {
-                    case 3: diff2 = *fa * *b2 - *ba * *f2;
-                            *d2++ = (diff2 >= 0.0) ? *b2 + a * *f2 : *f2++ + b * *b2++;
-                    case 2: diff1 = *fa * *b1 - *ba * *f1;
-                            *d1++ = (diff1 >= 0.0) ? *b1 + a * *f1 : *f1++ + b * *b1++;
-                    case 1: diff0 = *fa * *b0 - *ba * *f0;
-                            *d0++ = (diff0 >= 0.0) ? *b0 + a * *f0 : *f0++ + b * *b0++;
-                  }
+                      diff0 = *fa * *b0 - *ba * *f0;
+                      *d0++ = (diff0 >= 0.0) ? *b0 + a * *f0 : *f0 + b * *b0; f0++; b0++;
+                      diff1 = *fa * *b1 - *ba * *f1;
+                      *d1++ = (diff1 >= 0.0) ? *b1 + a * *f1 : *f1 + b * *b1; f1++; b1++;
+                      diff2 = *fa * *b2 - *ba * *f2;
+                      *d2++ = (diff2 >= 0.0) ? *b2 + a * *f2 : *f2 + b * *b2; f2++; b2++;
 
-                *da++ = *fa + *ba - *ba * *fa; 
-                 fa++;
-                 ba++;
+                      *da++ = *fa + *ba - *ba * *fa; fa++; ba++;
+                    }
+                  break;
+                case 2: 
+                  while(width--)                                                        
+                    {                                                                   
+                      a =  1.0 - 2.0 * *ba;
+                      b =  1.0 - 2.0 * *fa;
+
+                      diff0 = *fa * *b0 - *ba * *f0;
+                      *d0++ = (diff0 >= 0.0) ? *b0 + a * *f0 : *f0 + b * *b0; f0++; b0++;
+                      diff1 = *fa * *b1 - *ba * *f1;
+                      *d1++ = (diff1 >= 0.0) ? *b1 + a * *f1 : *f1 + b * *b1; f1++; b1++;
+
+                      *da++ = *fa + *ba - *ba * *fa; fa++; ba++;
+                    }
+                  break;
+                case 1: 
+                  while(width--)                                                        
+                    {                                                                   
+                      a =  1.0 - 2.0 * *ba;
+                      b =  1.0 - 2.0 * *fa;
+
+                      diff0 = *fa * *b0 - *ba * *f0;
+                      *d0++ = (diff0 >= 0.0) ? *b0 + a * *f0 : *f0 + b * *b0; f0++; b0++;
+
+                      *da++ = *fa + *ba - *ba * *fa; fa++; ba++;
+                    }
+                  break;
               }
+
           }
         break;
       }

@@ -10,18 +10,9 @@
 #include "gegl-value-types.h"
 #include "gegl-param-specs.h"
 
-enum
-{
-  PROP_0, 
-  PROP_INPUT_IMAGE,
-  PROP_LAST 
-};
-
 static void class_init (GeglPipeClass * klass);
 static void init (GeglPipe * self, GeglPipeClass * klass);
 static void finalize(GObject * gobject);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
 static void process (GeglFilter * filter);
 static void prepare (GeglFilter * filter);
@@ -71,17 +62,8 @@ class_init (GeglPipeClass * klass)
   filter_class->process = process;
   filter_class->prepare = prepare;
 
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-
   filter_class->validate_inputs = validate_inputs;
   filter_class->validate_outputs = validate_outputs;
-
-  g_object_class_install_property(gobject_class, PROP_INPUT_IMAGE, 
-            gegl_param_spec_image("input-image", 
-                                  "InputImage",
-                                  "Input Image",
-                                   G_PARAM_READWRITE));
 }
 
 
@@ -103,32 +85,6 @@ finalize(GObject *gobject)
   g_object_unref(self->scanline_processor);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
-}
-
-static void
-get_property (GObject      *gobject,
-              guint         prop_id,
-              GValue       *value,
-              GParamSpec   *pspec)
-{
-  switch (prop_id)
-  {
-    default:
-      break;
-  }
-}
-
-static void
-set_property (GObject      *gobject,
-              guint         prop_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
-  switch (prop_id)
-  {
-    default:
-      break;
-  }
 }
 
 static void 

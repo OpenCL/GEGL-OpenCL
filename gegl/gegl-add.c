@@ -221,6 +221,7 @@ add_float (GeglFilter * filter,
   if(aa)
     alpha_mask |= GEGL_A_ALPHA; 
 
+
   {
     gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;   
     gfloat *d1 = (d_color_chans > 1) ? d[1]: NULL;
@@ -230,19 +231,53 @@ add_float (GeglFilter * filter,
     gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
     gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = *a2++ + data[2];
-            case 2: *d1++ = *a1++ + data[1];
-            case 1: *d0++ = *a0++ + data[0];
-          }
-
-        if(alpha_mask == GEGL_A_ALPHA)
-          {
-              *da++ = *aa++ + data[3];
-          }
+    switch(d_color_chans)
+      {
+        case 3: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = *a0++ + data[0];
+                *d1++ = *a1++ + data[1];
+                *d2++ = *a2++ + data[2];
+                *da++ = *aa++ + data[3];
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = *a0++ + data[0];
+                *d1++ = *a1++ + data[1];
+                *d2++ = *a2++ + data[2];
+              }
+          break;
+        case 2: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = *a0++ + data[0];
+                *d1++ = *a1++ + data[1];
+                *da++ = *aa++ + data[3];
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = *a0++ + data[0];
+                *d1++ = *a1++ + data[1];
+              }
+          break;
+        case 1: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = *a0++ + data[0];
+                *da++ = *aa++ + data[3];
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = *a0++ + data[0];
+              }
+          break;
       }
   }
 
@@ -282,23 +317,54 @@ add_uint8 (GeglFilter * filter,
     guint8 *a1 = (a_color_chans > 1) ? a[1]: NULL;
     guint8 *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = CLAMP(*a2 + data[2], 0, 255);
-                    a2++;
-            case 2: *d1++ = CLAMP(*a1 + data[1], 0, 255);
-                    a1++;
-            case 1: *d0++ = CLAMP(*a0 + data[0], 0, 255);
-                    a0++;
-          }
+    switch(d_color_chans)
+      {
+        case 3: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP(*a0 + data[0], 0, 255); a0++;
+                *d1++ = CLAMP(*a1 + data[1], 0, 255); a1++;
+                *d2++ = CLAMP(*a2 + data[2], 0, 255); a2++;
+                *da++ = CLAMP(*aa + data[3], 0, 255); aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
 
-        if(alpha_mask == GEGL_A_ALPHA)
-          {
-              *da++ = CLAMP(*aa + data[3], 0, 255);
-              aa++;
-          }
+                *d0++ = CLAMP(*a0 + data[0], 0, 255); a0++;
+                *d1++ = CLAMP(*a1 + data[1], 0, 255); a1++;
+                *d2++ = CLAMP(*a2 + data[2], 0, 255); a2++;
+              }
+          break;
+        case 2:
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP(*a0 + data[0], 0, 255); a0++;
+                *d1++ = CLAMP(*a1 + data[1], 0, 255); a1++;
+                *da++ = CLAMP(*aa + data[3], 0, 255); aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP(*a0 + data[0], 0, 255); a0++;
+                *d1++ = CLAMP(*a1 + data[1], 0, 255); a1++;
+              }
+          break;
+        case 1:
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP(*a0 + data[0], 0, 255); a0++;
+                *da++ = CLAMP(*aa + data[3], 0, 255); aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP(*a0 + data[0], 0, 255); a0++;
+              }
+        break;
       }
   }
 

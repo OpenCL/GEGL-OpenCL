@@ -1,3 +1,31 @@
+Sun Jun 29 12:40:22 EDT 2003 calvinw@mindspring.com
+
+	Moved some switches and ifs outside the inner loops.
+
+	*gegl/gegl-add.c
+	*gegl/gegl-atop.c
+	*gegl/gegl-color.c
+	*gegl/gegl-darken.c
+	*gegl/gegl-difference.c
+	*gegl/gegl-fade.c
+	*gegl/gegl-i-add.c
+	*gegl/gegl-i-mult.c
+	*gegl/gegl-inside.c
+	*gegl/gegl-lighten.c
+	*gegl/gegl-max.c
+	*gegl/gegl-min.c
+	*gegl/gegl-mult.c
+	*gegl/gegl-multiply.c
+	*gegl/gegl-outside.c
+	*gegl/gegl-over.c
+	*gegl/gegl-pipe.c
+	*gegl/gegl-premult.c
+	*gegl/gegl-print.c
+	*gegl/gegl-screen.c
+	*gegl/gegl-subtract.c
+	*gegl/gegl-unpremult.c
+	*gegl/gegl-xor.c
+	
 Wed Jun 25 17:37:03 EDT 2003 calvinw@mindspring.com
 
 	Simplifications related to straightening out the Data classes and how ops

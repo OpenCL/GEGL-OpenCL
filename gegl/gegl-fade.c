@@ -173,19 +173,54 @@ fade_float (GeglFilter * filter,
     gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
     gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = multiplier * *a2++;
-            case 2: *d1++ = multiplier * *a1++;
-            case 1: *d0++ = multiplier * *a0++;
-          }
+    switch(d_color_chans)
+      {
+        case 3: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = multiplier * *a0++;
+                *d1++ = multiplier * *a1++;
+                *d2++ = multiplier * *a2++;
+                *da++ = multiplier * *aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = multiplier * *a0++;
+                *d1++ = multiplier * *a1++;
+                *d2++ = multiplier * *a2++;
+              }
+          break;
+        case 2: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = multiplier * *a0++;
+                *d1++ = multiplier * *a1++;
+                *da++ = multiplier * *aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = multiplier * *a0++;
+                *d1++ = multiplier * *a1++;
+              }
 
-        if(alpha_mask == GEGL_A_ALPHA)
-          {
-              *da++ = multiplier * *aa++;
-          }
+          break;
+        case 1: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = multiplier * *a0++;
+                *da++ = multiplier * *aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = multiplier * *a0++;
+              }
+          break;
       }
   }
 
@@ -225,23 +260,53 @@ fade_uint8 (GeglFilter * filter,
     guint8 *a1 = (a_color_chans > 1) ? a[1]: NULL;
     guint8 *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = CLAMP((gint)(multiplier * *a2 + .5), 0, 255);
-                    a2++;
-            case 2: *d1++ = CLAMP((gint)(multiplier * *a1 + .5), 0, 255);
-                    a1++;
-            case 1: *d0++ = CLAMP((gint)(multiplier * *a0 + .5), 0, 255);
-                    a0++;
-          }
-
-        if(alpha_mask == GEGL_A_ALPHA)
-          {
-              *da++ = CLAMP((gint)(multiplier * *aa + .5), 0, 255);
-              aa++;
-          }
+    switch(d_color_chans)
+      {
+        case 3: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(multiplier * *a0 + .5), 0, 255); a0++;
+                *d1++ = CLAMP((gint)(multiplier * *a1 + .5), 0, 255); a1++;
+                *d2++ = CLAMP((gint)(multiplier * *a2 + .5), 0, 255); a2++;
+                *da++ = CLAMP((gint)(multiplier * *aa + .5), 0, 255); aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(multiplier * *a0 + .5), 0, 255); a0++;
+                *d1++ = CLAMP((gint)(multiplier * *a1 + .5), 0, 255); a1++;
+                *d2++ = CLAMP((gint)(multiplier * *a2 + .5), 0, 255); a2++;
+              }
+          break;
+        case 2: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(multiplier * *a0 + .5), 0, 255); a0++;
+                *d1++ = CLAMP((gint)(multiplier * *a1 + .5), 0, 255); a1++;
+                *da++ = CLAMP((gint)(multiplier * *aa + .5), 0, 255); aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(multiplier * *a0 + .5), 0, 255); a0++;
+                *d1++ = CLAMP((gint)(multiplier * *a1 + .5), 0, 255); a1++;
+              }
+          break;
+        case 1: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(multiplier * *a0 + .5), 0, 255); a0++;
+                *da++ = CLAMP((gint)(multiplier * *aa + .5), 0, 255); aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(multiplier * *a0 + .5), 0, 255); a0++;
+              }
+          break;
       }
   }
 

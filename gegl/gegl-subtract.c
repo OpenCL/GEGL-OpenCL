@@ -91,7 +91,6 @@ a_subtract_b_float (GeglFilter * filter,
   gint alpha_mask = 0x0;
   GValue *value = gegl_op_get_input_data_value(GEGL_OP(filter), "fade"); 
   gfloat fade = g_value_get_float(value);
-  gfloat diff;
 
   if(ba) 
     alpha_mask |= GEGL_B_ALPHA; 
@@ -111,24 +110,66 @@ a_subtract_b_float (GeglFilter * filter,
     gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
     gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: diff = *a2++ - fade * *b2++; 
-                    *d2++ = diff < 0.0 ? 0.0 : diff;
-            case 2: diff = *a1++ - fade * *b1++; 
-                    *d1++ = diff < 0.0 ? 0.0 : diff;
-            case 1: diff = *a0++ - fade * *b0++; 
-                    *d0++ = diff < 0.0 ? 0.0 : diff;
-          }
-
+    gfloat diff;
+    switch(d_color_chans)
+      {
+        case 3: 
           if(alpha_mask == GEGL_A_B_ALPHA)
-            {
-              *da++ = CLAMP(*aa - fade * *ba, 0, 1);
-              aa++;
-              ba++;
-            }
+            while(width--)                                                        
+              {                                                                   
+                diff = *a0++ - fade * *b0++; 
+                *d0++ = diff < 0.0 ? 0.0 : diff;
+                diff = *a1++ - fade * *b1++; 
+                *d1++ = diff < 0.0 ? 0.0 : diff;
+                diff = *a2++ - fade * *b2++; 
+                *d2++ = diff < 0.0 ? 0.0 : diff;
+                *da++ = CLAMP(*aa - fade * *ba, 0, 1); aa++; ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                diff = *a0++ - fade * *b0++; 
+                *d0++ = diff < 0.0 ? 0.0 : diff;
+                diff = *a1++ - fade * *b1++; 
+                *d1++ = diff < 0.0 ? 0.0 : diff;
+                diff = *a2++ - fade * *b2++; 
+                *d2++ = diff < 0.0 ? 0.0 : diff;
+              }
+          break;
+        case 2: 
+          if(alpha_mask == GEGL_A_B_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                diff = *a0++ - fade * *b0++; 
+                *d0++ = diff < 0.0 ? 0.0 : diff;
+                diff = *a1++ - fade * *b1++; 
+                *d1++ = diff < 0.0 ? 0.0 : diff;
+                *da++ = CLAMP(*aa - fade * *ba, 0, 1); aa++; ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                diff = *a0++ - fade * *b0++; 
+                *d0++ = diff < 0.0 ? 0.0 : diff;
+                diff = *a1++ - fade * *b1++; 
+                *d1++ = diff < 0.0 ? 0.0 : diff;
+              }
+          break;
+        case 1: 
+          if(alpha_mask == GEGL_A_B_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                diff = *a0++ - fade * *b0++; 
+                *d0++ = diff < 0.0 ? 0.0 : diff;
+                *da++ = CLAMP(*aa - fade * *ba, 0, 1); aa++; ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                diff = *a0++ - fade * *b0++; 
+                *d0++ = diff < 0.0 ? 0.0 : diff;
+              }
+          break;
       }
   }
 

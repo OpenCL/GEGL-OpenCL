@@ -242,19 +242,53 @@ mult_float (GeglFilter * filter,
 
     /* This needs to actually match multipliers to channels returned */
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = mult[2] * *a2++;
-            case 2: *d1++ = mult[1] * *a1++;
-            case 1: *d0++ = mult[0] * *a0++;
-          }
-
-        if(alpha_mask == GEGL_A_ALPHA)
-          {
-              *da++ = mult[3] * *aa++;
-          }
+    switch(d_color_chans)
+      {
+        case 3: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = mult[0] * *a0++;
+                *d1++ = mult[1] * *a1++;
+                *d2++ = mult[2] * *a2++;
+                *da++ = mult[3] * *aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = mult[0] * *a0++;
+                *d1++ = mult[1] * *a1++;
+                *d2++ = mult[2] * *a2++;
+              }
+          break;
+        case 2: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = mult[0] * *a0++;
+                *d1++ = mult[1] * *a1++;
+                *da++ = mult[3] * *aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = mult[0] * *a0++;
+                *d1++ = mult[1] * *a1++;
+              }
+          break;
+        case 1: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = mult[0] * *a0++;
+                *da++ = mult[3] * *aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = mult[0] * *a0++;
+              }
+          break;
       }
   }
 
@@ -305,23 +339,53 @@ mult_uint8 (GeglFilter * filter,
 
     /* This needs to actually match multipliers to channels returned */
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = CLAMP((gint)(mult[2] * *a2 + .5), 0, 255);
-                    a2++;
-            case 2: *d1++ = CLAMP((gint)(mult[1] * *a1 + .5), 0, 255);
-                    a1++;
-            case 1: *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255);
-                    a0++;
-          }
-
-        if(alpha_mask == GEGL_A_ALPHA)
-          {
-              *da++ = CLAMP((gint)(mult[3] * *aa + .5), 0, 255);
-              aa++;
-          }
+    switch(d_color_chans)
+      {
+        case 3: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255); a0++;
+                *d1++ = CLAMP((gint)(mult[1] * *a1 + .5), 0, 255); a1++;
+                *d2++ = CLAMP((gint)(mult[2] * *a2 + .5), 0, 255); a2++;
+                *da++ = CLAMP((gint)(mult[3] * *aa + .5), 0, 255); aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255); a0++;
+                *d1++ = CLAMP((gint)(mult[1] * *a1 + .5), 0, 255); a1++;
+                *d2++ = CLAMP((gint)(mult[2] * *a2 + .5), 0, 255); a2++;
+              }
+          break;
+        case 2: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255); a0++;
+                *d1++ = CLAMP((gint)(mult[1] * *a1 + .5), 0, 255); a1++;
+                *da++ = CLAMP((gint)(mult[3] * *aa + .5), 0, 255); aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255); a0++;
+                *d1++ = CLAMP((gint)(mult[1] * *a1 + .5), 0, 255); a1++;
+              }
+          break;
+        case 1: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255); a0++;
+                *da++ = CLAMP((gint)(mult[3] * *aa + .5), 0, 255); aa++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255); a0++;
+              }
+          break;
       }
   }
 

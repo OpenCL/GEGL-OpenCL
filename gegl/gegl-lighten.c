@@ -112,20 +112,29 @@ fg_lighten_bg_float (GeglFilter * filter,
     switch(alpha_mask)
       {
       case GEGL_NO_ALPHA:
-        while(width--)                                                        
-          {                                                                   
-            switch(d_color_chans)
-              {
-                case 3: *d2++ = MAX(*f2, *b2); 
-                        f2++; 
-                        b2++;
-                case 2: *d1++ = MAX(*f1, *b1); 
-                        f1++; 
-                        b1++;
-                case 1: *d0++ = MAX(*f0, *b0); 
-                        f0++; 
-                        b0++;
-              }
+        switch(d_color_chans)
+          {
+            case 3: 
+              while(width--)                                                        
+                {                                                                   
+                  *d0++ = MAX(*f0, *b0); f0++; b0++;
+                  *d1++ = MAX(*f1, *b1); f1++; b1++;
+                  *d2++ = MAX(*f2, *b2); f2++; b2++;
+                }
+              break;
+            case 2: 
+              while(width--)                                                        
+                {                                                                   
+                  *d0++ = MAX(*f0, *b0); f0++; b0++;
+                  *d1++ = MAX(*f1, *b1); f1++; b1++;
+                }
+              break;
+            case 1: 
+              while(width--)                                                        
+                {                                                                   
+                  *d0++ = MAX(*f0, *b0); f0++; b0++;
+                }
+              break;
           }
         break;
       case GEGL_FG_ALPHA:
@@ -138,26 +147,38 @@ fg_lighten_bg_float (GeglFilter * filter,
           {
             gfloat a;                                              
             gfloat b;                                               
-            while(width--)                                                        
-              {                                                                   
-                a = 1.0 - *fa;                                              
-                b = 1.0 - *ba;                                               
-                switch(d_color_chans)
-                  {
-                    case 3: *d2++ = MAX(a * *b2 + *f2, b * *f2 + *b2); 
-                            f2++; 
-                            b2++;
-                    case 2: *d1++ = MAX(a * *b1 + *f1, b * *f1 + *b1); 
-                            f1++; 
-                            b1++;
-                    case 1: *d0++ = MAX(a * *b0 + *f0, b * *f0 + *b0); 
-                            f0++; 
-                            b0++;
-                  }
-
-                *da++ = *fa + *ba - *ba * *fa; 
-                 fa++;
-                 ba++;
+            switch(d_color_chans)
+              {
+                case 3: 
+                  while(width--)                                                        
+                    {                                                                   
+                      a = 1.0 - *fa;                                              
+                      b = 1.0 - *ba;                                               
+                     *d0++ = MAX(a * *b0 + *f0, b * *f0 + *b0); f0++; b0++;
+                     *d1++ = MAX(a * *b1 + *f1, b * *f1 + *b1); f1++; b1++;
+                     *d2++ = MAX(a * *b2 + *f2, b * *f2 + *b2); f2++; b2++;
+                     *da++ = *fa + *ba - *ba * *fa; fa++; ba++;
+                    }
+                  break;
+                case 2: 
+                  while(width--)                                                        
+                    {                                                                   
+                      a = 1.0 - *fa;                                              
+                      b = 1.0 - *ba;                                               
+                     *d0++ = MAX(a * *b0 + *f0, b * *f0 + *b0); f0++; b0++;
+                     *d1++ = MAX(a * *b1 + *f1, b * *f1 + *b1); f1++; b1++;
+                     *da++ = *fa + *ba - *ba * *fa; fa++; ba++;
+                    }
+                  break;
+                case 1: 
+                  while(width--)                                                        
+                    {                                                                   
+                      a = 1.0 - *fa;                                              
+                      b = 1.0 - *ba;                                               
+                     *d0++ = MAX(a * *b0 + *f0, b * *f0 + *b0); f0++; b0++;
+                     *da++ = *fa + *ba - *ba * *fa; fa++; ba++;
+                    }
+                  break;
               }
           }
         break;

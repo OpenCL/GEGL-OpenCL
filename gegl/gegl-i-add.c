@@ -110,19 +110,53 @@ a_iadd_b_float (GeglFilter * filter,
     gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
     gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = fade * *a2++ + *b2++; 
-            case 2: *d1++ = fade * *a1++ + *b1++;
-            case 1: *d0++ = fade * *a0++ + *b0++;
-          }
-
-        if(alpha_mask == GEGL_A_B_ALPHA)
-          {
-              *da++ = fade * *aa++ + *ba++;
-          }
+    switch(d_color_chans)
+      {
+        case 3: 
+          if(alpha_mask == GEGL_A_B_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = fade * *a0++ + *b0++;
+                *d1++ = fade * *a1++ + *b1++;
+                *d2++ = fade * *a2++ + *b2++; 
+                *da++ = fade * *aa++ + *ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = fade * *a0++ + *b0++;
+                *d1++ = fade * *a1++ + *b1++;
+                *d2++ = fade * *a2++ + *b2++; 
+              }
+          break;
+        case 2: 
+          if(alpha_mask == GEGL_A_B_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = fade * *a0++ + *b0++;
+                *d1++ = fade * *a1++ + *b1++;
+                *da++ = fade * *aa++ + *ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = fade * *a0++ + *b0++;
+                *d1++ = fade * *a1++ + *b1++;
+              }
+          break;
+        case 1: 
+          if(alpha_mask == GEGL_A_B_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = fade * *a0++ + *b0++;
+                *da++ = fade * *aa++ + *ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = fade * *a0++ + *b0++;
+              }
+          break;
       }
   }
 
@@ -170,27 +204,53 @@ a_iadd_b_uint8 (GeglFilter * filter,
     guint8 *a1 = (a_color_chans > 1) ? a[1]: NULL;
     guint8 *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = CLAMP((gint)(fade * *a2 + *b2 + .5), 0, 255); 
-                    a2++; 
-                    b2++;
-            case 2: *d1++ = CLAMP((gint)(fade * *a1 + *b1 + .5), 0, 255);
-                    a1++; 
-                    b1++;
-            case 1: *d0++ = CLAMP((gint)(fade * *a0 + *b0 + .5), 0, 255);
-                    a0++; 
-                    b0++;
-          }
-
-        if(alpha_mask == GEGL_A_B_ALPHA)
-          {
-              *da++ = CLAMP((gint)(fade * *aa + *ba + .5), 0, 255);
-               aa++;
-               ba++;
-          }
+    switch(d_color_chans)
+      {
+        case 3: 
+          if(alpha_mask == GEGL_A_B_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(fade * *a0 + *b0 + .5), 0, 255); a0++; b0++;
+                *d1++ = CLAMP((gint)(fade * *a1 + *b1 + .5), 0, 255); a1++; b1++;
+                *d2++ = CLAMP((gint)(fade * *a2 + *b2 + .5), 0, 255); a2++; b2++;
+                *da++ = CLAMP((gint)(fade * *aa + *ba + .5), 0, 255); aa++; ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(fade * *a0 + *b0 + .5), 0, 255); a0++; b0++;
+                *d1++ = CLAMP((gint)(fade * *a1 + *b1 + .5), 0, 255); a1++; b1++;
+                *d2++ = CLAMP((gint)(fade * *a2 + *b2 + .5), 0, 255); a2++; b2++;
+              }
+          break;
+        case 2: 
+          if(alpha_mask == GEGL_A_B_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(fade * *a0 + *b0 + .5), 0, 255); a0++; b0++;
+                *d1++ = CLAMP((gint)(fade * *a1 + *b1 + .5), 0, 255); a1++; b1++;
+                *da++ = CLAMP((gint)(fade * *aa + *ba + .5), 0, 255); aa++; ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(fade * *a0 + *b0 + .5), 0, 255); a0++; b0++;
+                *d1++ = CLAMP((gint)(fade * *a1 + *b1 + .5), 0, 255); a1++; b1++;
+              }
+          break;
+        case 1: 
+          if(alpha_mask == GEGL_A_B_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(fade * *a0 + *b0 + .5), 0, 255); a0++; b0++;
+                *da++ = CLAMP((gint)(fade * *aa + *ba + .5), 0, 255); aa++; ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = CLAMP((gint)(fade * *a0 + *b0 + .5), 0, 255); a0++; b0++;
+              }
+          break;
       }
   }
 

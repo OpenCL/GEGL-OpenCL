@@ -110,27 +110,53 @@ a_min_b_float (GeglFilter * filter,
     gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
     gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = MIN(*a2, fade * *b2); 
-                     a2++;
-                     b2++;
-            case 2: *d1++ = MIN(*a1, fade * *b1);
-                     a1++;
-                     b1++;
-            case 1: *d0++ = MIN(*a0, fade * *b0);
-                     a0++;
-                     b0++;
-          }
-
-        if(alpha_mask == GEGL_A_B_ALPHA)
-          {
-            *da++ = MIN(*aa, fade * *ba);
-             aa++;
-             ba++;
-          }
+    switch(d_color_chans)
+      {
+        case 3: 
+          if(alpha_mask == GEGL_A_B_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = MIN(*a0, fade * *b0); a0++; b0++;
+                *d1++ = MIN(*a1, fade * *b1); a1++; b1++;
+                *d2++ = MIN(*a2, fade * *b2); a2++; b2++;
+                *da++ = MIN(*aa, fade * *ba); aa++; ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = MIN(*a0, fade * *b0); a0++; b0++;
+                *d1++ = MIN(*a1, fade * *b1); a1++; b1++;
+                *d2++ = MIN(*a2, fade * *b2); a2++; b2++;
+              }
+          break;
+        case 2: 
+          if(alpha_mask == GEGL_A_B_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = MIN(*a0, fade * *b0); a0++; b0++;
+                *d1++ = MIN(*a1, fade * *b1); a1++; b1++;
+                *da++ = MIN(*aa, fade * *ba); aa++; ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = MIN(*a0, fade * *b0); a0++; b0++;
+                *d1++ = MIN(*a1, fade * *b1); a1++; b1++;
+              }
+          break;
+        case 1: 
+          if(alpha_mask == GEGL_A_B_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = MIN(*a0, fade * *b0); a0++; b0++;
+                *da++ = MIN(*aa, fade * *ba); aa++; ba++;
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                *d0++ = MIN(*a0, fade * *b0); a0++; b0++;
+              }
+          break;
       }
   }
 

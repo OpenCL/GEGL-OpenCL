@@ -95,16 +95,32 @@ premult_float (GeglFilter * filter,
     gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
     gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        switch(d_color_chans)
-          {
-            case 3: *d2++ = *aa * *a2++;
-            case 2: *d1++ = *aa * *a1++;
-            case 1: *d0++ = *aa * *a0++;
-          }
-
-        *da++ = *aa++;
+    switch(d_color_chans)
+      {
+        case 3: 
+          while(width--)                                                        
+            {                                                                   
+              *d0++ = *aa * *a0++;
+              *d1++ = *aa * *a1++;
+              *d2++ = *aa * *a2++;
+              *da++ = *aa++;
+            }
+          break;
+        case 2: 
+          while(width--)                                                        
+            {                                                                   
+              *d0++ = *aa * *a0++;
+              *d1++ = *aa * *a1++;
+              *da++ = *aa++;
+            }
+          break;
+        case 1: 
+          while(width--)                                                        
+            {                                                                   
+              *d0++ = *aa * *a0++;
+              *da++ = *aa++;
+            }
+          break;
       }
   }
 

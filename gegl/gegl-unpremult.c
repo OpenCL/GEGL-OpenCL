@@ -95,43 +95,77 @@ unpremult_float (GeglFilter * filter,
     gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
     gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        if(GEGL_FLOAT_EQUAL(*aa, 1.0))
-          {
-            switch(d_color_chans)
+    switch(d_color_chans)
+      {
+        case 3: 
+        while(width--)                                                        
+          {                                                                   
+            if(GEGL_FLOAT_EQUAL(*aa, 1.0))
               {
-                case 3: *d2++ = *a2++;
-                case 2: *d1++ = *a1++;
-                case 1: *d0++ = *a0++;
+                *d0++ = *a0++;
+                *d1++ = *a1++;
+                *d2++ = *a2++;
+                *da++ = *aa++;
               }
-
-            *da++ = *aa++;
-          }
-        else if(GEGL_FLOAT_EQUAL(*aa, 0.0))
-          {
-            switch(d_color_chans)
+            else if(GEGL_FLOAT_EQUAL(*aa, 0.0))
               {
-                case 3: *d2++ = 0.0;
-                        a2++;
-                case 2: *d1++ = 0.0;
-                        a1++;
-                case 1: *d0++ = 0.0;
-                        a0++;
+                *d0++ = 0.0; a0++;
+                *d1++ = 0.0; a1++;
+                *d2++ = 0.0; a2++;
+                *da++ = *aa++;
               }
-            *da++ = *aa++;
-          }
-        else 
-          {
-            switch(d_color_chans)
+            else 
               {
-                case 3: *d2++ = *a2++ / *aa;
-                case 2: *d1++ = *a1++ / *aa;
-                case 1: *d0++ = *a0++ / *aa;
+                *d0++ = *a0++ / *aa;
+                *d1++ = *a1++ / *aa;
+                *d2++ = *a2++ / *aa;
+                *da++ = *aa++;
               }
-
-            *da++ = *aa++;
           }
+          break;
+        case 2: 
+        while(width--)                                                        
+          {                                                                   
+            if(GEGL_FLOAT_EQUAL(*aa, 1.0))
+              {
+                *d0++ = *a0++;
+                *d1++ = *a1++;
+                *da++ = *aa++;
+              }
+            else if(GEGL_FLOAT_EQUAL(*aa, 0.0))
+              {
+                *d0++ = 0.0; a0++;
+                *d1++ = 0.0; a1++;
+                *da++ = *aa++;
+              }
+            else 
+              {
+                *d0++ = *a0++ / *aa;
+                *d1++ = *a1++ / *aa;
+                *da++ = *aa++;
+              }
+          }
+          break;
+        case 1: 
+        while(width--)                                                        
+          {                                                                   
+            if(GEGL_FLOAT_EQUAL(*aa, 1.0))
+              {
+                *d0++ = *a0++;
+                *da++ = *aa++;
+              }
+            else if(GEGL_FLOAT_EQUAL(*aa, 0.0))
+              {
+                *d0++ = 0.0; a0++;
+                *da++ = *aa++;
+              }
+            else 
+              {
+                *d0++ = *a0++ / *aa;
+                *da++ = *aa++;
+              }
+          }
+          break;
       }
   }
 

@@ -199,30 +199,65 @@ print_float (GeglFilter * filter,
     gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
     gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
-    while(width--)                                                        
-      {                                                                   
-        print(self, "(");
-        switch(a_color_chans)
-          {
-            case 3:  
-              print(self, "%.3f ", *a0++);
-              print(self, "%.3f ", *a1++);
-              print(self, "%.3f ", *a2++); 
-              break;
-            case 2:  
-              print(self, "%.3f ", *a0++);
-              print(self, "%.3f ", *a1++);
-              break;
-            case 1:  
-              print(self, "%.3f ", *a0++);
-              break;
-          }
-
-        if(alpha_mask == GEGL_A_ALPHA)
-          {
-            print(self, "%.3f ", *aa++); 
-          }
-        print(self, ")"); 
+    switch(a_color_chans)
+      {
+        case 3: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                print(self, "(");
+                print(self, "%.3f ", *a0++);
+                print(self, "%.3f ", *a1++);
+                print(self, "%.3f ", *a2++); 
+                print(self, "%.3f ", *aa++); 
+                print(self, ")"); 
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                print(self, "(");
+                print(self, "%.3f ", *a0++);
+                print(self, "%.3f ", *a1++);
+                print(self, "%.3f ", *a2++); 
+                print(self, ")"); 
+              }
+          break;
+        case 2: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                print(self, "(");
+                print(self, "%.3f ", *a0++);
+                print(self, "%.3f ", *a1++);
+                print(self, "%.3f ", *aa++); 
+                print(self, ")"); 
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                print(self, "(");
+                print(self, "%.3f ", *a0++);
+                print(self, "%.3f ", *a1++);
+                print(self, ")"); 
+              }
+          break;
+        case 1: 
+          if(alpha_mask == GEGL_A_ALPHA)
+            while(width--)                                                        
+              {                                                                   
+                print(self, "(");
+                print(self, "%.3f ", *a0++);
+                print(self, "%.3f ", *aa++); 
+                print(self, ")"); 
+              }
+          else
+            while(width--)                                                        
+              {                                                                   
+                print(self, "(");
+                print(self, "%.3f ", *a0++);
+                print(self, ")"); 
+              }
+          break;
       }
 
     print(self,"%c", (char)0);
