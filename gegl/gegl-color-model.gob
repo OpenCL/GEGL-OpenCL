@@ -47,7 +47,7 @@ class Gegl:Color:Model from Gegl:Object {
 
   protected 
   gboolean 
-  constructor(self, gboolean has_alpha)
+  constructor(self, gboolean has_alpha, gboolean is_premult)
   {
     if (GEGL_OBJECT(self)->constructed) 
        return FALSE;
@@ -64,7 +64,7 @@ class Gegl:Color:Model from Gegl:Object {
     self->_priv->num_colors = -1;
     self->_priv->has_alpha = has_alpha;
     self->_priv->alpha_channel = -1;
-    self->_priv->premultiplied = FALSE; 
+    self->_priv->premultiplied = is_premult; 
 
     self->_priv->is_additive = FALSE;
     self->_priv->is_subtractive = FALSE;
@@ -119,7 +119,7 @@ class Gegl:Color:Model from Gegl:Object {
   { return self->_priv->alpha_channel; }
 
   public 
-  gint	
+  gboolean 	
   is_premultiplied(self) 
   { return self->_priv->premultiplied; }
 
@@ -127,5 +127,14 @@ class Gegl:Color:Model from Gegl:Object {
   void 
   set_color (self, GeglColor *c, 
  		GeglColorConstant constant);
+
+virtual
+void
+convert_to_xyz (self, gfloat **dest_data, guchar **src_data);
+
+virtual
+void
+convert_from_xyz (self, gfloat **dest_data, guchar **src_data);
+
 
 }

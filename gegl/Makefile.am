@@ -7,13 +7,17 @@ GOB     = \
         gegl-color-model.gob \
         gegl-color-model-rgb.gob \
         gegl-color-model-rgb-float.gob \
-        gegl-image-buffer.gob \
+        gegl-color-model-rgb-u8.gob \
+	gegl-image-buffer.gob \
         gegl-op.gob \
         gegl-point-op.gob \
         gegl-print-op.gob \
         gegl-color.gob \
         gegl-graphics-state.gob \
-        gegl-fill-op.gob
+        gegl-fill-op.gob \
+	gegl-composite-op.gob \
+	gegl-premult-op.gob \
+	gegl-unpremult-op.gob
 	
 
 GOB_SRC = \
@@ -21,26 +25,34 @@ GOB_SRC = \
         gegl-color-model.c \
         gegl-color-model-rgb.c \
         gegl-color-model-rgb-float.c \
+	gegl-color-model-rgb-u8.c \
         gegl-image-buffer.c \
         gegl-op.c \
         gegl-point-op.c \
         gegl-print-op.c \
         gegl-color.c \
         gegl-graphics-state.c \
-        gegl-fill-op.c
+        gegl-fill-op.c \
+	gegl-composite-op.c \
+        gegl-premult-op.c \
+        gegl-unpremult-op.c
 
 GOB_PUBLIC_H = \
 	gegl-object.h \
         gegl-color-model.h \
         gegl-color-model-rgb.h \
         gegl-color-model-rgb-float.h \
+	gegl-color-model-rgb-u8.h \
         gegl-image-buffer.h \
         gegl-op.h \
         gegl-point-op.h \
         gegl-print-op.h \
         gegl-color.h \
         gegl-graphics-state.h \
-        gegl-fill-op.h
+        gegl-fill-op.h \
+	gegl-composite-op.c \
+        gegl-premult-op.c \
+        gegl-unpremult-op.c
 
 
 
@@ -57,7 +69,7 @@ libgeglinc_HEADERS = $(GOB_PUBLIC_H)
 INCLUDES = -I$(top_srcdir) -I$(top_builddir) -DGEGL_COMPILATION
 
 DEPS = libgegl.la
-LDADDS = libgegl.la
+LDADDS = libgegl.la -ltiff
 
 testgegl_SOURCES=testgegl.c
 testgegl_LDFLAGS =

@@ -57,7 +57,6 @@ class Gegl:Print:Op from Gegl:Point:Op {
 	This is where some "autogeneration" happens.
     */ 
 
-#if 0
    {
       GeglColorModel *cm;
       GeglChannelDataType data_type;
@@ -69,15 +68,15 @@ class Gegl:Print:Op from Gegl:Point:Op {
 	case FLOAT:
 	  point_op_class->scanline_func = gegl_print_op_RGB_FLOAT; 	
 	  break;
-	default:
+	case U8:
+          point_op_class->scanline_func = gegl_print_op_RGB_U8;
+          break;
+        default:
 	  g_warning("PrintOp: Color Model data type none or unknown\n");
 	  point_op_class->scanline_func = NULL; 	
 	  return FALSE;
       }
     }
-#endif
-
-    point_op_class->scanline_func = gegl_print_op_RGB_FLOAT; 	
 
     return TRUE;
   }
@@ -118,4 +117,42 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
     printf("\n");
   }
+
+  private
+  void
+  RGB_U8 (GeglPointOp *point_op)
+  {
+     /*
+        Whats the algorithm for this code?
+        PRINT DEST
+
+     */
+
+    guint width;
+    guchar *channels[3];
+    guchar *r, *g, *b;
+
+    GeglPointOpPrivate *point_opP =
+        (GeglPointOpPrivate *)(point_op->_priv);
+    GeglOpPrivate *opP =
+        (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
+
+    width = point_opP->scanline_width;
+
+    /* image_buffers[0] is the dest here */
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[0],
+                (guchar**)channels);
+
+    /* Make r,g,b point to the dest image data */
+
+    r = channels[0];
+    g = channels[1];
+    b = channels[2];
+
+    while (width--)
+      printf("(%d %d %d) "  , *r++, *g++, *b++);
+
+    printf("\n");
+  }
+
 }

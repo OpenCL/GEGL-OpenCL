@@ -1,104 +1,180 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkprivate.h>
 #include <stdio.h>
+#include <tiffio.h>
 
-#include "gegl-color.h"
 #include "gegl-color-model-rgb-float.h"
 #include "gegl-image-buffer.h"
-#include "gegl-fill-op.h"
-#include "gegl-print-op.h"
+#include "gegl-composite-op.h"
 #include "gegl-utils.h"
+#include "gegl-fill-op.h"
 
+static void
+create_preview(GtkWidget **window, GtkWidget **preview, int width, int height, gchar *name)
+{
+        
+  /* lets create the container window first */
+  *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_title(GTK_WINDOW(*window), name);
+  gtk_container_set_border_width(GTK_CONTAINER(*window), 10);
+  
+  /* now we can create the preview */
+  *preview = gtk_preview_new(GTK_PREVIEW_COLOR);
+  gtk_preview_size(GTK_PREVIEW(*preview), width, height); /*****/
+  gtk_container_add(GTK_CONTAINER(*window), *preview);
+
+}
+
+static void
+display_image(GtkWidget *window, GtkWidget *preview, 
+                GeglImageBuffer* image_buffer,
+                GeglRect current_rect)
+{
+  gint            w, h, num_chans;
+  gfloat          **data_ptrs;
+  int             i, j;
+  guchar          tmp[3];
+
+  num_chans = gegl_color_model_num_channels(gegl_image_buffer_color_model(image_buffer));
+  data_ptrs = (gfloat**) g_malloc(sizeof(gfloat*) * num_chans);
+  h = current_rect.h;
+  w = current_rect.w;
+  
+  
+  for(i=0; i<h; i++){
+    gegl_image_buffer_get_scanline_data(image_buffer, (guchar**)data_ptrs);
+    
+    /* convert the data_ptrs */
+    /* uchar -> float -> unsigned 8bit */   
+    for(j=0; j<w; j++){
+      tmp[0] = data_ptrs[0][j] * 255;
+      tmp[1] = data_ptrs[1][j] * 255;
+      tmp[2] = data_ptrs[2][j] * 255;
+
+      gtk_preview_draw_row(GTK_PREVIEW(preview), tmp, j, i, 1);
+    }       
+    gegl_image_buffer_next_scanline(image_buffer);  
+  }
+
+  g_free(data_ptrs); 
+  
+  /* display the window */
+  gtk_widget_show_all(window);
+    
+}       
 
 
 int
-main (int argc, char *argv[])
-{  
+main(int argc, char *argv[])
+{
+  GeglColorModel  	*color_model[2];
+  GeglImageBuffer 	*image_buffer[2];
+  GtkWidget       	*window[9];
+  GtkWidget       	*preview[9];
+  int             	i, j, k;
+  GeglRect        	requested_rect;
+  GeglRect        	current_rect[3];
+  gint            	num_chans;
+  float           	*t;
+  uint32          	width[3], height[3];
+  GeglOp 		*op;
+  gchar	          	*win_name[] = {"REPLACE", "OVER", "IN",
+				"OUT", "ATOP", "XOR", "PLUS"};
+	 
+
+  /* stuff for reading a image */
+  guchar          *image_data;
+  TIFF            *tif;   
+  uint32          *image;
+  guchar          img[4];
+
   gtk_init (&argc, &argv);
+ 
+  /* read in the two images */ 
+  for(k=0; k<2; k++){             
+    /* open the file */
+    tif = TIFFOpen(argv[k+1], "r");
 
-#if 1 
-  {
+    /* get width and height */
+    TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width[k]);
+    TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height[k]);
+    
+    /* create the display window */
+    create_preview(&window[k], &preview[k], width[k], height[k],
+	(k==0)?"Background":"Foreground");
 
-	GeglColorModel *cm = GEGL_COLOR_MODEL(
-				gegl_color_model_rgb_float_new(FALSE));
-	GeglImageBuffer *image_buffer = gegl_image_buffer_new(cm,5,5);
+    /* create the gegl image buff */
+    color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+    image_buffer[k] = gegl_image_buffer_new(color_model[k], width[k], height[k]);
+    num_chans = gegl_color_model_num_channels(color_model[k]);
+	    
+    /* put the data from the image into image_data and make sure it is
+    in the right formate rrr ggg bbb */
+    image = (uint32*) _TIFFmalloc(width[k] * height[k] * sizeof(uint32));
+    image_data = (guchar*) g_malloc(sizeof(guchar) * width[k] * height[k] *
+			    sizeof(float) * num_chans);
+    t = (float*) g_malloc(sizeof(float) * width[k] * height[k] * 4);
+    TIFFReadRGBAImage(tif, width[k], height[k], image, 0);
+    j=0;
+    for(i=0; i<width[k]*height[k]; i++){
+      memcpy(img, &image[i], 4);
+      t[j                     ] = ((float)img[3]) / 255.0;
+      t[j+width[k]*height[k]  ] = ((float)img[2]) / 255.0;
+      t[j+width[k]*height[k]*2] = ((float)img[1]) / 255.0;
+      t[j+width[k]*height[k]*3] = ((float)img[1]) / 255.0;
+      j++;  
+    }
 
+    memcpy(image_data, t, width[k] * height[k] * sizeof(float) * num_chans);
+    _TIFFfree(image);
+    TIFFClose(tif); 
+    g_free(t);
 
-        /* Fill the whole 5 x 5 float image with RED */
-        {
-	  GeglOp *op;
-	  GeglRect r;
-	  GeglColor *c = gegl_color_new (cm);
-          gegl_color_set_constant (c, COLOR_RED);
+    /* give the data to the gegl image buff */
+    gegl_image_buffer_set_data(image_buffer[k], image_data);
+    
+    g_free(image_data);
 
-	  gegl_rect_set (&r, 0,0,5,5);
-	  op = GEGL_OP (gegl_fill_op_new (image_buffer, &r, c));
-
-	  gegl_op_apply (op);
-
-	  gegl_object_destroy (GEGL_OBJECT(op)); 
-	  gegl_object_destroy (GEGL_OBJECT(c)); 
-        }
-
-        /* Fill the subrect at (1,2) with size 2 x 2  with GREEN */
-        {
-	  GeglOp *op;
-	  GeglRect r;
-
-	  GeglColor *c = gegl_color_new (cm);
-          gegl_color_set_constant (c, COLOR_BLUE);
-
-	  gegl_rect_set (&r, 2,2,2,2);
-	  op = GEGL_OP (gegl_fill_op_new (image_buffer, &r, c));
-
-	  gegl_op_apply (op);
-
-	  gegl_object_destroy (GEGL_OBJECT(op)); 
-	  gegl_object_destroy (GEGL_OBJECT(c)); 
-
-        }
-
-        /* Fill the subrect at (0,0) with size 2 x 2  custom color */
-        {
-	  GeglOp *op;
-	  GeglRect r;
-
-	  GeglColor *c = gegl_color_new (cm);
-	  GeglChannelValue * chans = gegl_color_get_channel_values(c);
-
-	  /* The channels are actually funny unions */	
-	  chans[0].f = .1;
-	  chans[1].f = .2;
-	  chans[2].f = .3;
-       
-	  gegl_rect_set (&r, 0,0,2,2);
-	  op = GEGL_OP (gegl_fill_op_new (image_buffer, &r, c));
-
-	  gegl_op_apply (op);
-
-	  gegl_object_destroy (GEGL_OBJECT(op)); 
-	  gegl_object_destroy (GEGL_OBJECT(c)); 
-
-        }
-
-
-        /* Print out the image values using the 
-	   print operator 
-        */
-        {
-          GeglOp *op;
-	  GeglRect r;
-	  gegl_rect_set (&r, 0,0,5,5);
-	  op =  GEGL_OP (gegl_print_op_new (image_buffer, &r));
-          gegl_op_apply (op);
-	  gegl_object_destroy (GEGL_OBJECT(op)); 
-
-	}
-
-        gegl_object_destroy (GEGL_OBJECT(image_buffer)); 
-        gegl_object_destroy (GEGL_OBJECT(cm)); 
+    /* init the rect */
+    requested_rect.x = 0;           requested_rect.y = 0;
+    requested_rect.w = width[k];    requested_rect.h = height[k];   
+    
+    gegl_image_buffer_request_rect(image_buffer[k], &requested_rect);
+    gegl_image_buffer_get_current_rect(image_buffer[k], &current_rect[k]);
+  } 
+  display_image(window[0], preview[0], image_buffer[0], current_rect[0]);
+  display_image(window[1], preview[1], image_buffer[1], current_rect[1]);
+ 
+  requested_rect.x = 0;           requested_rect.y = 0;
+  requested_rect.w = width[0];    requested_rect.h = height[0];
+  gegl_image_buffer_request_rect(image_buffer[0], &requested_rect);
+  gegl_image_buffer_get_current_rect(image_buffer[0], &current_rect[0]);
+  
+  requested_rect.x = 0;           requested_rect.y = 0;
+  requested_rect.w = width[1];    requested_rect.h = height[1];
+  gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
+  gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+  
+  /* test the comp ops :) */ 
+  for(k=0; k<7; k++){
+    op = GEGL_OP(gegl_composite_op_new (image_buffer[0], image_buffer[1], 
+					    &(current_rect[0]), &(current_rect[1]),
+					    k, TRUE));
+    gegl_op_apply (op);   
+    
+    requested_rect.x = 0;           requested_rect.y = 0;
+    requested_rect.w = width[1];    requested_rect.h = height[1];
+    gegl_image_buffer_request_rect(image_buffer[0], &requested_rect);
+    gegl_image_buffer_get_current_rect(image_buffer[0], &current_rect[0]);
+    create_preview(&window[2+k], &preview[2+k], width[0], height[0], win_name[k]);  
+    display_image(window[2+k], preview[2+k], image_buffer[0], current_rect[0]);
   }
-#endif
+
+  gtk_main();
+
+  gtk_object_destroy (GTK_OBJECT(image_buffer)); 
+  gtk_object_destroy (GTK_OBJECT(color_model)); 
 
   return 0;
 }
+

@@ -2,8 +2,8 @@
 #include "gegl-color-model-rgb.h"
 %}
 %{
-#include "gegl-color-model-rgb-float.h"
-#include "gegl-color-model-rgb-float-private.h"
+#include "gegl-color-model-rgb-u8.h"
+#include "gegl-color-model-rgb-u8-private.h"
 #include "gegl-color-model-rgb-private.h"
 #include "gegl-color-model-private.h"
 #include "gegl-color.h"
@@ -12,13 +12,13 @@ extern GeglChannelValue *gegl_color_get_channel_values(GeglColor *);
 #endif
 %}
 
-class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
+class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
 
   public
-  GeglColorModelRgbFloat *	
+  GeglColorModelRgbU8 *	
   new(gboolean has_alpha, gboolean is_premult)
   {
-    GeglColorModelRgbFloat * self = GEGL_COLOR_MODEL_RGB_FLOAT(GET_NEW);
+    GeglColorModelRgbU8 * self = GEGL_COLOR_MODEL_RGB_U8(GET_NEW);
   
     /*Call the constructor */
     if (!constructor(self, has_alpha, is_premult))
@@ -45,9 +45,9 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
 		GEGL_COLOR_MODEL_RGB(self), has_alpha, is_premult))
         return FALSE;
 
-    color_modelP->data_type = FLOAT;
+    color_modelP->data_type = U8;
     color_modelP->channel_data_type_name = NULL;
-    color_modelP->bytes_per_channel = sizeof(float);
+    color_modelP->bytes_per_channel = sizeof(guchar);
     color_modelP->bytes_per_pixel = 
 		color_modelP->bytes_per_channel * 
 		color_modelP->num_channels;
@@ -83,63 +83,63 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
     switch (constant) 
       { 
 	case COLOR_WHITE:
-	  channel_values[r].f = 1.0;
-	  channel_values[g].f = 1.0;
-	  channel_values[b].f = 1.0;
+	  channel_values[r].f = 255;
+	  channel_values[g].f = 255;
+	  channel_values[b].f = 255;
 	  if (has_alpha)
-	    channel_values[a].f = 1.0;
+	    channel_values[a].f = 255;
 	  break;
 	case COLOR_BLACK:
-	  channel_values[r].f = 0.0;
-	  channel_values[g].f = 0.0;
-	  channel_values[b].f = 0.0;
+	  channel_values[r].f = 0;
+	  channel_values[g].f = 0;
+	  channel_values[b].f = 0;
 	  if (has_alpha)
-	    channel_values[a].f = 1.0;
+	    channel_values[a].f = 255;
 	  break;
 	case COLOR_RED:
-	  channel_values[r].f = 1.0;
-	  channel_values[g].f = 0.0;
-	  channel_values[b].f = 0.0;
+	  channel_values[r].f = 255;
+	  channel_values[g].f = 0;
+	  channel_values[b].f = 0;
 	  if (has_alpha)
-	    channel_values[a].f = 1.0;
+	    channel_values[a].f = 255;
 	  break;
 	case COLOR_GREEN:
-	  channel_values[r].f = 0.0;
-	  channel_values[g].f = 1.0;
-	  channel_values[b].f = 0.0;
+	  channel_values[r].f = 0;
+	  channel_values[g].f = 255;
+	  channel_values[b].f = 0;
 	  if (has_alpha)
-	    channel_values[a].f = 1.0;
+	    channel_values[a].f = 255;
 	  break;
 	case COLOR_BLUE:
-	  channel_values[r].f = 0.0;
-	  channel_values[g].f = 0.0;
-	  channel_values[b].f = 1.0;
+	  channel_values[r].f = 0;
+	  channel_values[g].f = 0;
+	  channel_values[b].f = 255;
 	  if (has_alpha)
-	    channel_values[a].f = 1.0;
+	    channel_values[a].f = 255;
 	  break;
 	case COLOR_GRAY:
 	case COLOR_HALF_WHITE:
-	  channel_values[r].f = 0.5;
-	  channel_values[g].f = 0.5;
-	  channel_values[b].f = 0.5;
+	  channel_values[r].f = 127;
+	  channel_values[g].f = 127;
+	  channel_values[b].f = 127;
 	  if (has_alpha)
-	    channel_values[a].f = 1.0;
+	    channel_values[a].f = 255;
 	  break;
 	case COLOR_WHITE_TRANSPARENT:
-	  channel_values[r].f = 1.0;
-	  channel_values[g].f = 1.0;
-	  channel_values[b].f = 1.0;
+	  channel_values[r].f = 255;
+	  channel_values[g].f = 255;
+	  channel_values[b].f = 255;
 
 	  if (!has_alpha)
-	    channel_values[a].f = 0.0;
+	    channel_values[a].f = 0;
 	  break;
 	case COLOR_TRANSPARENT:
 	case COLOR_BLACK_TRANSPARENT:
-	  channel_values[r].f = 0.0;
-	  channel_values[g].f = 0.0;
-	  channel_values[b].f = 0.0;
+	  channel_values[r].f = 0;
+	  channel_values[g].f = 0;
+	  channel_values[b].f = 0;
 	  if (has_alpha)
-	    channel_values[a].f = 0.0;
+	    channel_values[a].f = 0;
 	  break;
       }
    }

@@ -1,0 +1,152 @@
+%h{
+#include "gegl-point-op.h"
+#include "gegl-image-buffer.h"
+%}
+%{
+#include "gegl-unpremult-op.h"
+#include "gegl-unpremult-op-private.h"
+#include "gegl-point-op-private.h"
+#include "gegl-op-private.h"
+#include "gegl-color.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+#include <stdio.h>
+
+
+#if 0
+extern GeglColorModel * gegl_color_get_color_model (GeglColor *);
+extern GeglColor * gegl_color_new (GeglColorModel *);
+extern void gegl_color_set (GeglColor *, GeglColor *);
+extern GeglChannelValue *gegl_color_get_channel_values(GeglColor *);
+#endif
+
+%}
+
+class Gegl:Unpremult:Op from Gegl:Point:Op {
+
+  
+  public 
+  GeglUnpremultOp *
+  new (GeglImageBuffer *dest,
+       GeglRect *dest_rect) 
+  {
+    GeglUnpremultOp * self = GEGL_UNPREMULT_OP(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, dest, dest_rect))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self, 
+	GeglImageBuffer *dest,
+	GeglRect *dest_rect) 
+  {
+    gboolean	has_alpha;
+    GeglColorModel *cm;
+    GeglPointOp *point_op = GEGL_POINT_OP (self);
+    GeglPointOpClass *point_op_class = 
+	GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+    
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+    
+    /* Chain up */
+    if (!gegl_point_op_constructor (
+	GEGL_POINT_OP(self), &dest, dest_rect, 1))
+      return FALSE;
+
+    /*
+	Now based on the image buffers's color model(s)/data storage(s)
+	choose one of our scanline funcs to install
+	This is where some "autogeneration" happens.
+    */ 
+
+#if 0
+      GeglChannelDataType data_type;
+      cm = gegl_image_buffer_color_model (dest);
+      data_type = gegl_color_model_data_type (cm);
+      switch (data_type)
+      {
+	case FLOAT:
+	  point_op_class->scanline_func = gegl_unpremult_op_RGB_FLOAT; 	
+	  break;
+	default:
+	  g_warning("PrintOp: Color Model data type none or unknown\n");
+	  point_op_class->scanline_func = NULL; 	
+	  return FALSE;
+      }
+#endif
+
+    /* Allocate a color and set its channels to the passed one */  
+    cm = gegl_image_buffer_color_model (dest);
+    has_alpha = gegl_color_model_has_alpha(cm);
+    
+    if(has_alpha)
+	point_op_class->scanline_func = gegl_unpremult_op_RGBA_FLOAT;
+    else
+	point_op_class->scanline_func = gegl_unpremult_op_RGB_FLOAT;
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  private
+  void
+  RGB_FLOAT (GeglPointOp *point_op)
+  {
+
+  }
+
+  private 
+  void
+  RGBA_FLOAT (GeglPointOp *point_op)
+  {
+    guint width;
+    gfloat * dest_data[4]; 
+    gfloat *r, *g, *b, *a, t;
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv); 
+
+    width = point_opP->scanline_width;
+
+    /* image_buffers[0] is the dest here */
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
+		(guchar**)dest_data);
+
+    /* Make r,g,b point to the dest image data */
+    r = dest_data[0];
+    g = dest_data[1];
+    b = dest_data[2];
+    a = dest_data[3];
+
+    /* Unpremult the dest with the fill color */
+    while (width--)
+    {
+      if(*a){
+	t = 1.0 / *a++;
+        *r++ *= *a;
+        *g++ *= *a;
+        *b++ *= *a++;
+      } else {
+        *r++ = 0;
+	*g++ = 0;
+	*b++ = 0;
+	 a++; 
+      }
+    }
+  }
+}
