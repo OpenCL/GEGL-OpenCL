@@ -11,15 +11,6 @@
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
 #include <stdio.h>
-
-
-#if 0
-extern GeglColorModel * gegl_color_get_color_model (GeglColor *);
-extern GeglColor * gegl_color_new (GeglColorModel *);
-extern void gegl_color_set (GeglColor *, GeglColor *);
-extern GeglChannelValue *gegl_color_get_channel_values(GeglColor *);
-#endif
-
 %}
 
 class Gegl:Premult:Op from Gegl:Point:Op {
@@ -136,10 +127,10 @@ class Gegl:Premult:Op from Gegl:Point:Op {
 
     /* Premult the dest with the fill color */
     while (width--)
-    {
-      *r++ *= *a;
-      *g++ *= *a;
-      *b++ *= *a++;
-    }
+      {
+	*r++ *= *a;
+	*g++ *= *a;
+	*b++ *= *a++;
+      }
   }
 }

@@ -1,0 +1,111 @@
+%h{
+#include "gegl-color-convert-op.h"
+#include "gegl-image-buffer.h"
+%}
+%{
+#include "gegl-color-convert-to-rgb-u8-op.h"
+#include "gegl-color-convert-to-rgb-u8-op-private.h"
+#include "gegl-point-op-private.h"
+#include "gegl-op-private.h"
+#include "gegl-color.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+#include <stdio.h>
+%}
+
+
+class Gegl:Color:Convert:To:Rgb:U8:Op from Gegl:Color:Convert:Op {
+
+  private GeglColorModel *u8_cm;         /* a u8 cm with same colorspace as src*/    
+  private GeglImageBuffer *buffer;       /* a one scanline image buffer with above cm*/ 
+  private guint8 **data_ptrs;            /* pointers to u8 data for above */ 
+
+  public 
+  GeglColorConvertToRgbU8Op *
+  new (GeglImageBuffer *dest, 
+       GeglImageBuffer *src,
+       GeglRect *dest_rect,
+       GeglRect *src_rect)
+  {
+    GeglColorConvertToRgbU8Op * self = 
+       GEGL_COLOR_CONVERT_TO_RGB_U8_OP (GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, dest, src, dest_rect, src_rect))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self, 
+	GeglImageBuffer *dest,
+	GeglImageBuffer *src, 
+	GeglRect *dest_rect,
+	GeglRect *src_rect) 
+  {
+    GeglPointOp *point_op = GEGL_POINT_OP (self);
+    GeglPointOpClass *point_op_class = 
+        GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+ 
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+   
+    /* Chain up */
+    if (!gegl_color_convert_op_constructor ( 
+		     GEGL_COLOR_CONVERT_OP (self), 
+		     dest,src,dest_rect,src_rect))
+      return FALSE;
+
+    /* 
+      Set up the point_ops scanline function pointer 
+      if everything is okay.
+    */
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  private
+  void 
+  scanline(self)
+  {
+#if 0
+     if (Just a color space conversion)
+       {
+         gegl_color_model_to_rgb (src_cm, ...);
+       }
+     else if (Just a data conversion)
+       {
+         gegl_color_model_to_u8 (src_cm, ...);
+       }
+     else /* Both color space and data conversion */
+       {
+
+         /*
+            Introduce intermediate color model and one scanline
+            image buffer to hold u8 data with same color space as src.
+         */
+
+         /*
+            This requires calling a "color model factory"
+            with the u8 data type and src color space
+         */
+
+         gegl_color_model_to_u8 (src_cm,intermed_data, src_data,...);
+         gegl_color_model_to_rgb (intermed_cm, dest_data, intermed_data,...);
+       }
+#endif
+  } 
+}

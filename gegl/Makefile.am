@@ -22,8 +22,11 @@ GOB     = \
 	gegl-composite-op.gob \
 	gegl-premult-op.gob \
 	gegl-unpremult-op.gob \
-	gegl-convert-rgb-op.gob \
-	gegl-convert-gray-op.gob
+	gegl-color-convert-op.gob \
+	gegl-color-convert-to-rgb-float-op.gob \
+	gegl-color-convert-to-gray-float-op.gob \
+	gegl-color-convert-to-rgb-u8-op.gob \
+	gegl-color-convert-to-gray-u8-op.gob
 
 	
 
@@ -47,8 +50,11 @@ GOB_SRC = \
 	gegl-composite-op.c \
         gegl-premult-op.c \
         gegl-unpremult-op.c \
-	gegl-convert-rgb-op.c \
-        gegl-convert-gray-op.c
+	gegl-color-convert-op.c \
+	gegl-color-convert-to-rgb-float-op.c \
+	gegl-color-convert-to-gray-float-op.c \
+	gegl-color-convert-to-rgb-u8-op.c \
+	gegl-color-convert-to-gray-u8-op.c
 
 
 GOB_PUBLIC_H = \
@@ -71,8 +77,11 @@ GOB_PUBLIC_H = \
 	gegl-composite-op.h \
         gegl-premult-op.h \
         gegl-unpremult-op.h \
-	gegl-convert-rgb-op.h \
-        gegl-convert-gray-op.h
+	gegl-color-convert-op.h \
+	gegl-color-convert-to-rgb-float-op.h \
+	gegl-color-convert-to-gray-float-op.h \
+	gegl-color-convert-to-rgb-u8-op.h \
+	gegl-color-convert-to-gray-u8-op.h
  
 
 

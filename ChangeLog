@@ -1,3 +1,13 @@
+Fri Jan 28 18:42:26 EST 2000 calvinw@mindspring.com
+
+    * Added the gegl-color-convert-op.gob 
+    * Added the gegl-color-convert-to-rgb-float-op.gob 
+    * Added the gegl-color-convert-to-rgb-u8-op.gob 
+    * Added the gegl-color-convert-to-gray-float-op.gob 
+    * Added the gegl-color-convert-to-gray-u8-op.gob 
+    * removed gegl-convert-rgb-op.gob
+    * removed gegl-convert-gray-op.gob
+
 Fri Jan 28 14:12:37 PST 2000 caro@rhythm.com
     
     * Simplified the gegl-composite-op.pregob

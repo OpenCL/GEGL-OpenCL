@@ -1,0 +1,124 @@
+%h{
+#include "gegl-point-op.h"
+#include "gegl-image-buffer.h"
+%}
+%{
+#include "gegl-color-convert-op.h"
+#include "gegl-color-convert-op-private.h"
+#include "gegl-point-op-private.h"
+#include "gegl-op-private.h"
+#include "gegl-color.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+#include <stdio.h>
+%}
+
+
+class Gegl:Color:Convert:Op from Gegl:Point:Op {
+
+  private guchar **dest_data;   /* generic data pointers to dest channels */
+  private guchar **src_data;    /* generic data pointers to src channels */
+  private gfloat **xyz_data;    /* floating data pointers to xyz channels */ 
+  private gboolean allocated;   /* arrays above been allocated? */
+
+  protected 
+  gboolean 
+  constructor(self, 
+	      GeglImageBuffer *dest,
+	      GeglImageBuffer *src, 
+	      GeglRect *dest_rect,
+	      GeglRect *src_rect) 
+  {
+    GeglImageBuffer *image_buffers[2];
+    GeglRect rects[2]; 
+    GeglPointOp *point_op = GEGL_POINT_OP (self);
+    GeglPointOpClass *point_op_class = 
+        GEGL_POINT_OP_CLASS (GTK_OBJECT (point_op)->klass);
+ 
+    if(GEGL_OBJECT (self)->constructed) 
+      return FALSE;
+  
+    /* Put rects and image buffers into suitable form for point op */ 
+    image_buffers[0] = dest;
+    image_buffers[1] = src;
+
+    gegl_rect_copy (&rects[0], dest_rect); 
+    gegl_rect_copy (&rects[1], src_rect); 
+ 
+    /* Chain up */
+    if (!gegl_point_op_constructor ( 
+	GEGL_POINT_OP (self), image_buffers, rects, 2))
+      return FALSE;
+
+    self->_priv->allocated = FALSE;
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+
+    /* 
+       If they were allocated, free the data pointer arrays and 
+       also free the scanline of xyz float data.
+
+     */ 
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  private
+  void
+  allocate_data(self)
+  {
+     /* 
+        Allocate the data pointer arrays based on the src and dest
+	color models and num_channels, and a scanline of floating
+        point data for the xyz data. 
+     */
+
+    self->_priv->allocated = TRUE;
+  } 
+
+  public 
+  void
+  convert_using_xyz(GeglPointOp *point_op)
+  {
+    gint width;
+    GeglColorConvertOp *self = GEGL_COLOR_CONVERT_OP (point_op);
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
+    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
+    GeglColorModel *dest_cm = gegl_image_buffer_color_model (
+                              opP->image_buffers[0]);
+    GeglColorModel *src_cm = gegl_image_buffer_color_model (
+                              opP->image_buffers[1]);
+
+    if(!self->_priv->allocated)
+	allocate_data(self);
+
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
+		                         self->_priv->dest_data);
+
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[1], 
+		                         self->_priv->src_data);
+
+    width = point_opP->scanline_width;
+
+#if 0
+
+    gegl_color_model_convert_to_xyz (src_cm, 
+				     (guchar **)self->_priv->xyz_data, 
+                                     self->_priv->src_data, 
+                                     width);
+
+    gegl_color_model_convert_from_xyz (dest_cm, 
+                                       self->_priv->dest_data, 
+                                       (guchar **)self->_priv->xyz_data,
+                                       width); 
+#endif
+  }
+  
+}
