@@ -43,13 +43,17 @@ typedef enum
 {
   DATATYPE_NONE,
   U8,
-  FLOAT
+  FLOAT,
+  U16,
+  U16_4
 }GeglChannelDataType;
 
 typedef union
 {
   guint8 u8;
   gfloat f;
+  guint16 u16;
+  guint16 u16_4; 
 }GeglChannelValue;
 
 typedef struct _GeglRect GeglRect;

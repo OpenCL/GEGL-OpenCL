@@ -23,8 +23,13 @@
 #include "gegl-subtract-op.h"
 #include "gegl-screen-op.h"
 #include "gegl-dark-op.h"
+#include "gegl-add-op.h"
 #include "gegl-light-op.h"
 #include "gegl-premult-op.h"
+#include "gegl-types.h"
+
+
+static GeglChannelDataType  DATA_TYPE;
 
 static void
 create_preview(GtkWidget **window, 
@@ -53,13 +58,19 @@ display_image(GtkWidget *window,
               GeglRect rect)
 {
   gint            w, h, num_chans;
-  gfloat          **data_ptrs;
+  gfloat          **data_ptrs1;
+  guint8          **data_ptrs2;
+  gfloat          **data_ptrs3;
+  gfloat          **data_ptrs4;
   int             i, j;
   guchar          *tmp;
   GeglRect        current_rect;
   num_chans = gegl_color_model_num_channels(
                 gegl_image_buffer_color_model(image_buffer));
-  data_ptrs = (gfloat**) g_malloc(sizeof(gfloat*) * num_chans);
+  data_ptrs1 = (gfloat**) g_malloc(sizeof(gfloat*) * num_chans);
+  data_ptrs2 = (guint8**) g_malloc(sizeof(guint8*) * num_chans);
+  data_ptrs3 = (gfloat**) g_malloc(sizeof(gfloat*) * num_chans);
+  data_ptrs4 = (gfloat**) g_malloc(sizeof(gfloat*) * num_chans);
   h = rect.h;
   w = rect.w;
   tmp = g_new(char, 3*w);
@@ -71,15 +82,58 @@ display_image(GtkWidget *window,
 
     for(i=0; i<h; i++)
       {
-	gegl_image_iterator_get_scanline_data(iterator, 
-                                             (guchar**)data_ptrs);
+	switch (DATA_TYPE)
+	  {
+	  case FLOAT:
+	    gegl_image_iterator_get_scanline_data(iterator, 
+		(guchar**)data_ptrs1);
 
-	/* convert the data from float -> unsigned 8bit */   
-	for(j=0; j<w; j++)
-          {
-	    tmp[0 + 3*j] = data_ptrs[0][j] * 255;
-	    tmp[1 + 3*j] = data_ptrs[1][j] * 255;
-	    tmp[2 + 3*j] = data_ptrs[2][j] * 255;
+	    /* convert the data from float -> unsigned 8bit */   
+	    for(j=0; j<w; j++)
+	      {
+		tmp[0 + 3*j] = data_ptrs1[0][j] * 255;
+		tmp[1 + 3*j] = data_ptrs1[1][j] * 255;
+		tmp[2 + 3*j] = data_ptrs1[2][j] * 255;
+	      }
+	    break;
+	  case U8:
+	    gegl_image_iterator_get_scanline_data(iterator, 
+		(guchar**)data_ptrs2);
+
+	    /* convert the data from float -> unsigned 8bit */   
+	    for(j=0; j<w; j++)
+	      {
+		tmp[0 + 3*j] = data_ptrs2[0][j];
+		tmp[1 + 3*j] = data_ptrs2[1][j];
+		tmp[2 + 3*j] = data_ptrs2[2][j];
+	      }
+	    break;
+	  case U16:
+	    gegl_image_iterator_get_scanline_data(iterator, 
+		(guchar**)data_ptrs3);
+
+	    /* convert the data from float -> unsigned 8bit */   
+	    for(j=0; j<w; j++)
+	      {
+		tmp[0 + 3*j] = data_ptrs3[0][j] * 255;
+		tmp[1 + 3*j] = data_ptrs3[1][j] * 255;
+		tmp[2 + 3*j] = data_ptrs3[2][j] * 255;
+	      }
+	    break;
+	  case U16_4:
+	    gegl_image_iterator_get_scanline_data(iterator, 
+		(guchar**)data_ptrs4);
+
+	    /* convert the data from float -> unsigned 8bit */   
+	    for(j=0; j<w; j++)
+	      {
+		tmp[0 + 3*j] = data_ptrs4[0][j] * 255;
+		tmp[1 + 3*j] = data_ptrs4[1][j] * 255;
+		tmp[2 + 3*j] = data_ptrs4[2][j] * 255;
+	      }
+	    break;  
+	  default:
+	   break;  
 
 	  }       
 	gtk_preview_draw_row(GTK_PREVIEW(preview), tmp, 0, h-1-i, w);
@@ -88,19 +142,22 @@ display_image(GtkWidget *window,
     gegl_object_destroy (GEGL_OBJECT(iterator));
   }
 
-  g_free(data_ptrs); 
+  g_free(data_ptrs1); 
+  g_free(data_ptrs2); 
+  g_free(data_ptrs3); 
+  g_free(data_ptrs4); 
   g_free(tmp); 
-  
+
   /* display the window */
   gtk_widget_show_all(window);
-    
+
 }       
 
 void
 test_composite_ops( GeglImageBuffer ** src_image_buffer,
-                    guint * src_width,
-                    guint * src_height,
-                    GeglRect *src_rect )
+    guint * src_width,
+    guint * src_height,
+    GeglRect *src_rect )
 {
   GeglRect               dest_rect;
   GeglImageBuffer       *dest_image_buffer;
@@ -124,7 +181,7 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
   dest_image_buffer = gegl_image_buffer_new (dest_color_model, 
                                             width, height);
   num_chans = gegl_color_model_num_channels (dest_color_model);
-  gegl_rect_set (&dest_rect, 0,0, width, height);
+  gegl_rect_set (&dest_rect, 0, 0, width, height);
 
   for (i = 0; i< 6; i++) 
     {
@@ -138,7 +195,7 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
       gegl_op_apply (op);   
       gegl_object_destroy (GEGL_OBJECT(op));
 
-#if 1 
+#if 0 
       op = GEGL_OP(gegl_premult_op_new(dest_image_buffer, 
                                        dest_image_buffer,
                                        &dest_rect,
@@ -168,7 +225,8 @@ typedef enum
   POINT_OP_DIFF,
   POINT_OP_SCREEN,
   POINT_OP_DARK,
-  POINT_OP_LIGHT
+  POINT_OP_LIGHT,
+  POINT_OP_PLUS
 }PointOpType;
 
 GeglOp *
@@ -204,6 +262,9 @@ point_op_factory (GeglImageBuffer * dest,
     case POINT_OP_LIGHT:
        return GEGL_OP(gegl_light_op_new (dest, srcs[0], srcs[1], 
                     dest_rect, &src_rect[0], &src_rect[1]));
+    case POINT_OP_PLUS:
+       return GEGL_OP(gegl_add_op_new (dest, srcs[0], srcs[1], 
+                    dest_rect, &src_rect[0], &src_rect[1]));
     default:
        return NULL;
     }
@@ -222,11 +283,11 @@ test_point_ops( GeglImageBuffer ** src_image_buffer,
   gint                   num_chans;
   gint                   i;
   gint                   width, height;
-  GtkWidget       	*dest_window[8];
-  GtkWidget       	*dest_preview[8];
-  gchar                 *point_op_names[] = {"PLUS", "MIN", "MAX", "MULT", 
+  GtkWidget       	*dest_window[9];
+  GtkWidget       	*dest_preview[9];
+  gchar                 *point_op_names[] = {"MIN", "MAX", "MULT", 
                                              "SUB", "DIFF", "SCREEN", 
-                                             "DARK", "LIGHT"};        
+                                             "DARK", "LIGHT", "PLUS"};        
 
   width = src_width[0];
   height = src_height[0];
@@ -237,7 +298,7 @@ test_point_ops( GeglImageBuffer ** src_image_buffer,
   num_chans = gegl_color_model_num_channels (dest_color_model);
   gegl_rect_set (&dest_rect, 0,0, width, height);
 
-  for (i = 0; i < 8; i++) 
+  for (i = 0; i < 9; i++) 
     {
       op = point_op_factory (dest_image_buffer, src_image_buffer, 
                             &dest_rect, src_rect, (PointOpType)i); 
@@ -267,17 +328,42 @@ main(int argc,
 
   int             	i, j, k;
   gint            	num_chans;
-  float           	*t;
+  float           	*t1=NULL;
+  guint8           	*t2=NULL;
+  float           	*t3=NULL;
+  float           	*t4=NULL;
 
   /* stuff for reading a tiff */
   guchar          *image_data;
   TIFF            *tif;   
   uint32          *image;
-  guchar          img[4];
-  guchar          r,g,b,a;
+  guchar          r,g,b,a; 
   gint            plane_size;
 
   gtk_init (&argc, &argv);
+
+  /* find out what data type we will be using */
+  if (argc > 3)
+    {
+      if (!strcmp (argv[3], "float"))
+	{
+	  DATA_TYPE = FLOAT;
+	}
+      else if (!strcmp (argv[3], "u8"))
+	{
+	  DATA_TYPE = U8;
+	}
+      else if (!strcmp (argv[3], "u16"))
+	{
+	  DATA_TYPE = U16;
+	}
+      else if (!strcmp (argv[3], "u16_4"))
+	{
+	  DATA_TYPE = U16_4;
+	}
+    }
+  else
+   DATA_TYPE = FLOAT;
 
   /* read in the 2 sources, src1 and src2 */ 
 
@@ -291,7 +377,23 @@ main(int argc,
       TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &src_height[k]);
       
       /* create the gegl image buffer */
-      src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+      switch (DATA_TYPE)
+	{
+	case FLOAT:
+	  src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+	  break;
+	case U8:
+	  src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_u8_new(TRUE, TRUE));
+	  break;
+	case U16:
+	  src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+	  break;
+	case U16_4:
+	  src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+	  break;
+	default:
+	  break;
+	}
       src_image_buffer[k] = gegl_image_buffer_new(src_color_model[k], src_width[k], src_height[k]);
       num_chans = gegl_color_model_num_channels(src_color_model[k]);
       gegl_rect_set (&src_rect[k], 0,0, src_width[k], src_height[k]);
@@ -301,31 +403,95 @@ main(int argc,
       image = (uint32*) _TIFFmalloc(src_width[k] * src_height[k] * sizeof(uint32));
       image_data = (guchar*) g_malloc(sizeof(guchar) * src_width[k] * src_height[k] *
 			      sizeof(float) * num_chans);
-      t = (float*) g_malloc(sizeof(float) * src_width[k] * src_height[k] * 4);
-
+      
+      switch (DATA_TYPE)
+	{
+	case FLOAT:
+	  t1 = (float*) g_malloc(sizeof(float) * src_width[k] * src_height[k] * 4);
+	  break;
+	case U8:
+	  t2 = (guint8*) g_malloc(sizeof(guint8) * src_width[k] * src_height[k] * 4);
+	  break;
+	case U16:
+	  t3 = (float*) g_malloc(sizeof(float) * src_width[k] * src_height[k] * 4);
+	  break;
+	case U16_4:
+	  t4 = (float*) g_malloc(sizeof(float) * src_width[k] * src_height[k] * 4);
+	  break;
+	default:
+	  break; 
+	}
       TIFFReadRGBAImage(tif, src_width[k], src_height[k], image, 0);
       j=0;
       plane_size = src_width[k] * src_height[k];
       for(i=0; i<plane_size; i++)
         {
-	  /*memcpy(img, &image[i], 4);*/
-          
           r = TIFFGetR(image[i]);
           g = TIFFGetG(image[i]);
           b = TIFFGetB(image[i]);
           a = TIFFGetA(image[i]);
 
-	  t[j             ] = ((float)r) / 255.0;
-	  t[j+plane_size  ] = ((float)g) / 255.0;
-	  t[j+plane_size*2] = ((float)b) / 255.0;
-	  t[j+plane_size*3] = ((float)a) / 255.0;
-	  j++;  
+	  switch (DATA_TYPE)
+	    {
+	    case FLOAT:
+	      t1[j             ] = ((float)r) / 255.0;
+	      t1[j+plane_size  ] = ((float)g) / 255.0;
+	      t1[j+plane_size*2] = ((float)b) / 255.0;
+	      t1[j+plane_size*3] = ((float)a) / 255.0;
+	      j++;
+	      break; 
+	    case U8:
+	      t2[j             ] = ((char)r);
+	      t2[j+plane_size  ] = ((char)g);
+	      t2[j+plane_size*2] = ((char)b);
+	      t2[j+plane_size*3] = ((char)a);
+	      j++;
+	      break; 
+	    case U16:
+	      t3[j             ] = ((float)r) / 255.0;
+	      t3[j+plane_size  ] = ((float)g) / 255.0;
+	      t3[j+plane_size*2] = ((float)b) / 255.0;
+	      t3[j+plane_size*3] = ((float)a) / 255.0;
+	      j++;
+	      break; 
+	    case U16_4:
+	      t4[j             ] = ((float)r) / 255.0;
+	      t4[j+plane_size  ] = ((float)g) / 255.0;
+	      t4[j+plane_size*2] = ((float)b) / 255.0;
+	      t4[j+plane_size*3] = ((float)a) / 255.0;
+	      j++;
+	      break;
+	    default:
+	     break;  
+	    }  
+	  /*memcpy(img, &image[i], 4);*/
+          
         }
 
-      memcpy(image_data, t, src_width[k] * src_height[k] * sizeof(float) * num_chans);
+      switch (DATA_TYPE)
+	{
+	case FLOAT:
+	  memcpy(image_data, t1, src_width[k] * src_height[k] * sizeof(float) * num_chans);
+	  break;
+	case U8:
+	  memcpy(image_data, t2, src_width[k] * src_height[k] * sizeof(guint8) * num_chans);
+	  break;
+	case U16:
+	  memcpy(image_data, t3, src_width[k] * src_height[k] * sizeof(float) * num_chans);
+	  break;
+	case U16_4:
+	  memcpy(image_data, t4, src_width[k] * src_height[k] * sizeof(float) * num_chans);
+	  break;
+	default:
+	  break; 
+
+	}
       _TIFFfree(image);
       TIFFClose(tif); 
-      g_free(t);
+      g_free(t1);
+      g_free(t2);
+      g_free(t3);
+      g_free(t4);
 
       /* give the data to the gegl image buff */
       gegl_image_buffer_set_data(src_image_buffer[k], image_data);
@@ -338,7 +504,7 @@ main(int argc,
     } 
      
   test_composite_ops (src_image_buffer, src_width, src_height, src_rect);
-  /*test_point_ops (src_image_buffer, src_width, src_height, src_rect);*/
+  /*test_point_ops (src_image_buffer, src_width, src_height, src_rect);*/ 
 
   for (k = 0; k < 2; k++)
     {

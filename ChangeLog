@@ -1,3 +1,18 @@
+Tue Apr  4 12:40:36 PDT 2000 caro@rhythm.com
+
+	* check in for gegl
+	
+	* gegl-types.h added varible to the enum and union
+	to handle all the data types u8, u16, u16_4, float
+
+	* changed testgeglfile to handle the new data
+	types
+
+	* created a color model for u16 and u16_4
+		- gegl-color-model-rgb-u16_4.gob
+		- gegl-color-model-rgb-u16.gob
+
+
 Tue Apr  4 12:29:33 EDT 2000 calvinw@mindspring.com
 
 	* Added the first set of .gil files(.gil files generate .gob files)
