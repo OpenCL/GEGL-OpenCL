@@ -1,5 +1,7 @@
 noinst_PROGRAMS =
 
+SUBDIRS = image
+
 lib_LTLIBRARIES = libgegl-1.0.la
 
 GEGL_SRC = \
