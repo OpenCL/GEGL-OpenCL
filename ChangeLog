@@ -1,3 +1,12 @@
+Thu Apr  6 15:17:30 PDT 2000 caro@rhythm.com
+	
+	* check in for codegen
+
+	* added the promote to lexer.l data_type.h, and parser.y.
+
+	* changed the channel data files so they have
+	a PROMOTE field now
+
 Tue Apr  4 17:59:14 PDT 2000 caro@rhythm.com
 
 	* check in for codegen

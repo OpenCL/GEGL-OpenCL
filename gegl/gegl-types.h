@@ -68,5 +68,4 @@ struct _GeglRect
 
 #define ROUND(x) ((x)>0 ? (gint)((x)+.5) : (gint)((x)-.5))
 
-
 #endif /* __GEGL_TYPES_H__ */

@@ -1,5 +1,6 @@
 DATATYPE_BEGIN
 DATATYPE            guint16
+PROMOTE		    (guint32)  
 WP                  4095
 WP_NORM             (1/4095.0)
 MIN_CHANNEL         0
@@ -7,6 +8,6 @@ MAX_CHANNEL         65535
 ZERO                0
 CHANNEL_CLAMP (x)   CLAMP (x,0,65535)
 WP_CLAMP (x)        CLAMP (x,0,4095)
-CHANNEL_MULT (x,y)  (x*y) / 4095
+CHANNEL_MULT (x,y)  (x*y) / 4095.0 
 CHANNEL_ROUND (x)   ROUND (x)
 DATATYPE_END

@@ -17,6 +17,7 @@
 #endif
 
 EXTERN char  *DATATYPE_STR;      
+EXTERN char  *PROMOTE_STR;      
 EXTERN char  *WP_STR;   
 EXTERN char  *WP_NORM_STR;       
 EXTERN char  *MIN_CHANNEL_STR;   

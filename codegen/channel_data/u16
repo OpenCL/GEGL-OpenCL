@@ -1,5 +1,6 @@
 DATATYPE_BEGIN
 DATATYPE           guint16
+PROMOTE		   (guint32) 
 WP                 65535
 WP_NORM            (1/65535.0)
 MIN_CHANNEL        0
