@@ -108,7 +108,7 @@ I_op_PREMULT_IA()
   }
 }
 
-PREMULT_IA_op_PREMULT_IA()
+IA_op_IA()
 {
   IMAGE DEST, SRC;
   GeglCompositeMode comp_mode = self->_priv->comp_mode;

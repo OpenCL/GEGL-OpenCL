@@ -6,12 +6,12 @@ GOB_SRC = \
 	gegl-object.gob					\
 	gegl-drawable.gob				\
 	gegl-color-model.gob				\
-	gegl-color-model-rgb.gob			\
-	gegl-color-model-rgb-float.gob			\
-	gegl-color-model-rgb-u8.gob			\
 	gegl-color-model-gray.gob			\
-	gegl-color-model-gray-float.gob			\
 	gegl-color-model-gray-u8.gob			\
+	gegl-color-model-gray-float.gob			\
+	gegl-color-model-rgb.gob			\
+	gegl-color-model-rgb-u8.gob			\
+	gegl-color-model-rgb-float.gob			\
 	gegl-image-buffer.gob				\
 	gegl-op.gob					\
 	gegl-point-op.gob				\
@@ -23,21 +23,22 @@ GOB_SRC = \
 	gegl-premult-op.gob				\
 	gegl-unpremult-op.gob				\
 	gegl-color-convert-op.gob			\
-	gegl-color-convert-to-rgb-float-op.gob		\
-	gegl-color-convert-to-gray-float-op.gob		\
-	gegl-color-convert-to-rgb-u8-op.gob		\
-	gegl-color-convert-to-gray-u8-op.gob
+	gegl-color-convert-connection-op.gob		\
+	gegl-color-convert-to-gray-u8-op.gob            \
+	gegl-color-convert-to-gray-float-op.gob         \
+	gegl-color-convert-to-rgb-u8-op.gob             \
+	gegl-color-convert-to-rgb-float-op.gob
 
 GOB_GEN_PUBLIC = \
 	gegl-object.h					\
 	gegl-drawable.h					\
 	gegl-color-model.h				\
-	gegl-color-model-rgb.h				\
-	gegl-color-model-rgb-float.h			\
-	gegl-color-model-rgb-u8.h			\
 	gegl-color-model-gray.h				\
-	gegl-color-model-gray-float.h			\
 	gegl-color-model-gray-u8.h			\
+	gegl-color-model-gray-float.h			\
+	gegl-color-model-rgb.h				\
+	gegl-color-model-rgb-u8.h			\
+	gegl-color-model-rgb-float.h			\
 	gegl-image-buffer.h				\
 	gegl-op.h					\
 	gegl-point-op.h					\
@@ -49,10 +50,11 @@ GOB_GEN_PUBLIC = \
 	gegl-premult-op.h				\
 	gegl-unpremult-op.h				\
 	gegl-color-convert-op.h				\
-	gegl-color-convert-to-rgb-float-op.h		\
-	gegl-color-convert-to-gray-float-op.h		\
-	gegl-color-convert-to-rgb-u8-op.h		\
-	gegl-color-convert-to-gray-u8-op.h
+	gegl-color-convert-connection-op.h		\
+	gegl-color-convert-to-gray-u8-op.h              \
+	gegl-color-convert-to-gray-float-op.h           \
+	gegl-color-convert-to-rgb-u8-op.h               \
+	gegl-color-convert-to-rgb-float-op.h
 
 GOB_GEN_SRC = \
 	gegl-object.c					\
@@ -61,18 +63,18 @@ GOB_GEN_SRC = \
 	gegl-drawable-private.h				\
 	gegl-color-model.c				\
 	gegl-color-model-private.h			\
-	gegl-color-model-rgb.c				\
-	gegl-color-model-rgb-private.h			\
-	gegl-color-model-rgb-float.c			\
-	gegl-color-model-rgb-float-private.h		\
-	gegl-color-model-rgb-u8.c			\
-	gegl-color-model-rgb-u8-private.h		\
 	gegl-color-model-gray.c				\
 	gegl-color-model-gray-private.h			\
-	gegl-color-model-gray-float.c			\
-	gegl-color-model-gray-float-private.h		\
 	gegl-color-model-gray-u8.c			\
 	gegl-color-model-gray-u8-private.h		\
+	gegl-color-model-gray-float.c			\
+	gegl-color-model-gray-float-private.h		\
+	gegl-color-model-rgb.c				\
+	gegl-color-model-rgb-private.h			\
+	gegl-color-model-rgb-u8.c			\
+	gegl-color-model-rgb-u8-private.h		\
+	gegl-color-model-rgb-float.c			\
+	gegl-color-model-rgb-float-private.h		\
 	gegl-image-buffer.c				\
 	gegl-image-buffer-private.h			\
 	gegl-op.c					\
@@ -95,14 +97,16 @@ GOB_GEN_SRC = \
 	gegl-unpremult-op-private.h			\
 	gegl-color-convert-op.c				\
 	gegl-color-convert-op-private.h			\
-	gegl-color-convert-to-rgb-float-op.c		\
-	gegl-color-convert-to-rgb-float-op-private.h	\
-	gegl-color-convert-to-gray-float-op.c		\
-	gegl-color-convert-to-gray-float-op-private.h	\
-	gegl-color-convert-to-rgb-u8-op.c		\
-	gegl-color-convert-to-rgb-u8-op-private.h	\
+	gegl-color-convert-connection-op.c		\
+	gegl-color-convert-connection-op-private.h	\
 	gegl-color-convert-to-gray-u8-op.c		\
-	gegl-color-convert-to-gray-u8-op-private.h
+	gegl-color-convert-to-gray-u8-op-private.h      \
+	gegl-color-convert-to-gray-float-op.c		\
+	gegl-color-convert-to-gray-float-op-private.h   \
+	gegl-color-convert-to-rgb-u8-op.c		\
+	gegl-color-convert-to-rgb-u8-op-private.h       \
+	gegl-color-convert-to-rgb-float-op.c		\
+	gegl-color-convert-to-rgb-float-op-private.h
 
 NONGOB_PUBLIC = \
 	gegl-types.h	\

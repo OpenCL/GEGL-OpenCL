@@ -1,10 +1,23 @@
+Sun Jan 30 16:03:20 EST 2000 calvinw@mindspring.com
+
+	*added ColorConvertConnectionOp class  
+	 which handles conversion through an xyz float space
+
+	*updated all the convert ops to call to_float, to_u8, to_gray, 
+	 to_rgb routines of the appropriate color model classes. 
+
+	*cleaned up some in the ColorModel classes. 
+
+	*added a color model maker routine to gegl-utils.c 
+         (need a factory thing). 
+
 Sat Jan 29 15:29:38 PST 2000 caro@rhythm.com
 
 	* added to_float, to_u8, to_gray, to_rgb
 	to color_model classes.
 
-	* changed to_xzy, from_xzy in color_model
-	so that it takes now a **float arg instead of a *float
+	* changed to_xyz, from_xyz in color_model
+	so that it takes now a float** arg instead of a float*
 
 Fri Jan 28 16:37:57 PST 2000 Manish Singh <yosh@gimp.org>
 

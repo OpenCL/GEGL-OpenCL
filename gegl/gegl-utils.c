@@ -1,4 +1,10 @@
 #include "gegl-utils.h"
+#include "gegl-types.h"
+
+#include "gegl-color-model-gray-u8.h"
+#include "gegl-color-model-gray-float.h"
+#include "gegl-color-model-rgb-u8.h"
+#include "gegl-color-model-rgb-float.h"
 
 void gegl_rect_set (GeglRect *r,
 		    gint x,
@@ -21,4 +27,42 @@ void gegl_rect_copy (GeglRect *to,
   to->h = from->h;
 }
 
+GeglColorModel *
+gegl_make_color_model (GeglColorSpace space,
+                       GeglChannelDataType data,
+		       gboolean has_alpha)
+{
+  switch (space)
+    {
+    case GRAY:
+      switch (data)
+	{
+	case U8:
+          return GEGL_COLOR_MODEL(gegl_color_model_gray_u8_new(has_alpha, FALSE));
+	  break;
+	case FLOAT:
+          return GEGL_COLOR_MODEL(gegl_color_model_gray_float_new(has_alpha, FALSE));
+	  break;
+	default:
+          return NULL;
+	} 
+      break;
+    case RGB:
+      switch (data)
+	{
+	case U8:
+          return GEGL_COLOR_MODEL(gegl_color_model_rgb_u8_new(has_alpha,FALSE));
+	  break;
+	case FLOAT:
+          return GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(has_alpha,FALSE));
+	  break;
+	default:
+          return NULL;
+	} 
+      break;
+    default:
+      return NULL;
+    } 
+  return NULL;
+}
 

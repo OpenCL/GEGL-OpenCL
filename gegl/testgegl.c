@@ -62,13 +62,6 @@ main (int argc, char *argv[])
 				gegl_color_model_rgb_float_new(FALSE,FALSE));
 	GeglImageBuffer *image_buffer = gegl_image_buffer_new(cm,5,5);
 
-	/* 
-	   Create a graphics state we'll pass to the drawable once
-	   we make our image buffer belong to one of those. 
-	*/
-	GeglGraphicsState *graphics_state = gegl_graphics_state_new (cm);
-
-
         /* Fill the whole 5 x 5 float image with RED */
         {
 	  GeglOp *op;

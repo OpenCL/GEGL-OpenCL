@@ -4,6 +4,12 @@
 #include <gtk/gtk.h>
 #include "gegl-types.h"
 
+#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
+#define __TYPEDEF_GEGL_COLOR_MODEL__
+typedef struct _GeglColorModel  GeglColorModel;
+#endif
+
+
 void gegl_rect_set (GeglRect *r,
 		gint x,
 		gint y,
@@ -12,5 +18,10 @@ void gegl_rect_set (GeglRect *r,
 
 void gegl_rect_copy (GeglRect *to,
 		     GeglRect *from);
+
+GeglColorModel *
+gegl_make_color_model (GeglColorSpace space,
+                       GeglChannelDataType data,
+                       gboolean has_alpha);
 
 #endif /* __GEGL_UTILS_H__ */

@@ -17,9 +17,14 @@
 
 class Gegl:Color:Convert:To:Rgb:U8:Op from Gegl:Color:Convert:Op {
 
-  private GeglColorModel *u8_cm;         /* a u8 cm with same colorspace as src*/    
-  private GeglImageBuffer *buffer;       /* a one scanline image buffer with above cm*/ 
-  private guint8 **data_ptrs;            /* pointers to u8 data for above */ 
+  private gboolean do_color_space;        /* is this a color space conversion? */
+  private gboolean do_data;               /* is this a data type conversion? */
+
+  private GeglColorModel *src_u8_cm;      /* color model with src color space, but u8 data*/ 
+  private guint8 **src_u8_data;           /* u8 data pointers in case we use the above*/ 
+  private gint src_num_channels;          /* num of channels in src */ 
+
+  private gint last_width;                /* last scanline width */ 
 
   public 
   GeglColorConvertToRgbU8Op *
@@ -49,10 +54,6 @@ class Gegl:Color:Convert:To:Rgb:U8:Op from Gegl:Color:Convert:Op {
 	GeglRect *dest_rect,
 	GeglRect *src_rect) 
   {
-    GeglPointOp *point_op = GEGL_POINT_OP (self);
-    GeglPointOpClass *point_op_class = 
-        GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
- 
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
    
@@ -62,11 +63,64 @@ class Gegl:Color:Convert:To:Rgb:U8:Op from Gegl:Color:Convert:Op {
 		     dest,src,dest_rect,src_rect))
       return FALSE;
 
-    /* 
-      Set up the point_ops scanline function pointer 
-      if everything is okay.
-    */
+    {
+      GeglPointOp *point_op = GEGL_POINT_OP (self);
+      GeglPointOpClass *point_op_class = 
+	  GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+      GeglColorConvertOpPrivate *color_convert_opP = 
+       (GeglColorConvertOpPrivate*)(GEGL_COLOR_CONVERT_OP (self)->_priv);
 
+      GeglColorSpace src_color_space = gegl_color_model_color_space (
+                                         color_convert_opP->src_cm); 
+      GeglChannelDataType src_data_type = gegl_color_model_data_type ( 
+                                            color_convert_opP->src_cm); 
+      gint src_num_channels = gegl_color_model_num_channels (
+                                color_convert_opP->src_cm); 
+      gboolean src_has_alpha = gegl_color_model_has_alpha (
+                                color_convert_opP->src_cm); 
+
+      /* 
+         Figure out whether we have to color space 
+         and/or data conversions
+      */
+      self->_priv->do_color_space = 
+                 (src_color_space == RGB) ? FALSE: TRUE;
+
+      self->_priv->do_data = 
+                 (src_data_type == U8) ? FALSE: TRUE;
+
+      self->_priv->src_num_channels = src_num_channels;
+      self->_priv->last_width = 0;
+
+      /* 
+	If we have to convert src to u8 first will need u8 buffers
+	with num channels of the source.
+      */
+
+      if (self->_priv->do_color_space && 
+	  self->_priv->do_data)
+        { 
+          gint i;
+
+          /* allocate the u8 pointers */
+	  self->_priv->src_u8_data = g_new(guint8*, src_num_channels);
+
+          /* allocate the actual u8 data later*/
+	  for (i = 0; i < src_num_channels; i++)
+	    self->_priv->src_u8_data[i] = NULL;
+
+          
+          
+          /* This allocates a u8 color model with same color space as src*/
+	  self->_priv->src_u8_cm = gegl_make_color_model (
+                                            src_color_space, 
+                                            U8,
+                                            src_has_alpha);
+        }
+      
+      point_op_class->scanline_func = 
+           gegl_color_convert_to_rgb_u8_op_scanline;
+    }
     return TRUE;
   }
 
@@ -74,39 +128,95 @@ class Gegl:Color:Convert:To:Rgb:U8:Op from Gegl:Color:Convert:Op {
   void 
   destroy (GtkObject *object)
   {
+    GeglColorConvertToRgbU8Op *self = 
+      GEGL_COLOR_CONVERT_TO_RGB_U8_OP (object); 
+	
+    free_u8_data(self);
+    g_free (self->_priv->src_u8_data);  
+
+    /* Free the u8 cm */
+    gegl_object_destroy (GEGL_OBJECT (self->_priv->src_u8_cm));
+
     /* Chain up on destroy */
     PARENT_HANDLER (object)
   }
 
   private
-  void 
-  scanline(self)
+  void
+  alloc_u8_data(self, gint width)
   {
-#if 0
-     if (Just a color space conversion)
-       {
-         gegl_color_model_to_rgb (src_cm, ...);
-       }
-     else if (Just a data conversion)
-       {
-         gegl_color_model_to_u8 (src_cm, ...);
-       }
-     else /* Both color space and data conversion */
-       {
+    gint i;
+    for (i = 0; i < self->_priv->src_num_channels; i++)
+      self->_priv->src_u8_data[i] = g_new(guint8, width);
+  } 
 
-         /*
-            Introduce intermediate color model and one scanline
-            image buffer to hold u8 data with same color space as src.
-         */
+  private
+  void
+  free_u8_data(self)
+  {
+    gint i;
+    for (i = 0; i < self->_priv->src_num_channels; i++)
+      if (!self->_priv->src_u8_data[i])
+        g_free (self->_priv->src_u8_data[i]);
+  } 
 
-         /*
-            This requires calling a "color model factory"
-            with the u8 data type and src color space
-         */
+  private
+  void 
+  scanline(GeglPointOp *point_op)
+  {
+    GeglColorConvertToRgbU8Op *self = 
+      GEGL_COLOR_CONVERT_TO_RGB_U8_OP (point_op);
+    GeglColorConvertOpPrivate *color_convert_opP = 
+      (GeglColorConvertOpPrivate*)(GEGL_COLOR_CONVERT_OP (point_op)->_priv);
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
+    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
 
-         gegl_color_model_to_u8 (src_cm,intermed_data, src_data,...);
-         gegl_color_model_to_rgb (intermed_cm, dest_data, intermed_data,...);
-       }
-#endif
+    gint width = point_opP->scanline_width;
+
+    gboolean color_space_only = self->_priv->do_color_space && !self->_priv->do_data;
+    gboolean data_only = self->_priv->do_data && !self->_priv->do_color_space;
+ 
+    /* Make the dest and src point to the data to convert */
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
+                                         color_convert_opP->dest_data);
+
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[1], 
+                                         color_convert_opP->src_data);
+
+    if (color_space_only) 
+      {
+       gegl_color_model_convert_to_rgb (color_convert_opP->src_cm,
+                                color_convert_opP->dest_data, 
+                                color_convert_opP->src_data, 
+                                width);
+      }
+    else if (data_only)
+      {
+       gegl_color_model_convert_to_u8 (color_convert_opP->src_cm,
+                                  (guint8**)color_convert_opP->dest_data, 
+                                  color_convert_opP->src_data, 
+                                  width);
+      }
+    else
+      {
+        if (self->_priv->last_width != width) 
+          {
+	    free_u8_data (self);
+	    alloc_u8_data (self, width);
+	  }
+
+        /* convert to a u8 src and then to u8 rgb */
+        gegl_color_model_convert_to_u8 (color_convert_opP->src_cm, 
+                                   (guint8**)self->_priv->src_u8_data, 
+                                   color_convert_opP->src_data,
+                                   width);
+
+        gegl_color_model_convert_to_rgb (self->_priv->src_u8_cm, 
+				  color_convert_opP->dest_data, 
+				  (guchar**)self->_priv->src_u8_data,
+				  width);
+      }
+
+    self->_priv->last_width = width;
   } 
 }

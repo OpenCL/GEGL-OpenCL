@@ -1,0 +1,165 @@
+%h{
+#include "gegl-color-convert-op.h"
+#include "gegl-image-buffer.h"
+%}
+%{
+#include "gegl-color-convert-connection-op.h"
+#include "gegl-color-convert-connection-op-private.h"
+#include "gegl-color-convert-op-private.h"
+#include "gegl-point-op-private.h"
+#include "gegl-op-private.h"
+#include "gegl-color.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+#include <stdio.h>
+%}
+
+
+class Gegl:Color:Convert:Connection:Op from Gegl:Color:Convert:Op {
+
+  private gfloat **xyz_data;    /* float data pointers to xyz data */ 
+  private gint last_width;      /* last scanline width */ 
+
+  public 
+  GeglColorConvertConnectionOp *
+  new (GeglImageBuffer *dest, 
+       GeglImageBuffer *src,
+       GeglRect *dest_rect,
+       GeglRect *src_rect)
+  {
+    GeglColorConvertConnectionOp * self = 
+       GEGL_COLOR_CONVERT_CONNECTION_OP (GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, dest, src, dest_rect, src_rect))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self, 
+	      GeglImageBuffer *dest,
+	      GeglImageBuffer *src, 
+	      GeglRect *dest_rect,
+	      GeglRect *src_rect) 
+  {
+    int i;
+    GeglPointOp *point_op = GEGL_POINT_OP (self);
+    GeglPointOpClass *point_op_class = 
+	GEGL_POINT_OP_CLASS (GTK_OBJECT (point_op)->klass);
+
+    if(GEGL_OBJECT (self)->constructed) 
+      return FALSE;
+  
+    /* Chain up */
+    if (!gegl_color_convert_op_constructor ( 
+                    GEGL_COLOR_CONVERT_OP (self), 
+                    dest, src, dest_rect, src_rect))
+      return FALSE;
+
+    {
+      /* We'll need an extra xyz buffer to do this */
+      self->_priv->xyz_data  = g_new (gfloat*, 4);  
+      
+      /* Allocate the xyz_data later--dont know width yet*/
+      for (i = 0; i < 4; i++)
+	self->_priv->xyz_data[i] = NULL;
+
+      self->_priv->last_width = 0;
+
+      point_op_class->scanline_func = 
+           gegl_color_convert_connection_op_scanline;
+    }
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    GeglColorConvertConnectionOp *self = GEGL_COLOR_CONVERT_CONNECTION_OP (object); 
+    GeglColorConvertOpPrivate *color_convert_opP = 
+        (GeglColorConvertOpPrivate*)(GEGL_COLOR_CONVERT_OP (object)->_priv);
+	
+    free_xyz_data(self);
+    g_free (color_convert_opP->dest_data);  
+    g_free (color_convert_opP->src_data);  
+    g_free (self->_priv->xyz_data);  
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  private
+  void
+  alloc_xyz_data(self, gint width)
+  {
+    gint i;
+    for (i = 0; i < 4; i++)
+      self->_priv->xyz_data[i] = g_new(gfloat, width);
+  } 
+
+  private
+  void
+  free_xyz_data(self)
+  {
+    gint i;
+    for (i = 0; i < 4; i++)
+      if (!self->_priv->xyz_data[i])
+        g_free (self->_priv->xyz_data[i]);
+  } 
+
+  private
+  void
+  scanline(GeglPointOp *point_op)
+  {
+    gint width;
+    GeglColorConvertConnectionOp *self = GEGL_COLOR_CONVERT_CONNECTION_OP (point_op); 
+    GeglColorConvertOpPrivate *color_convert_opP = 
+        (GeglColorConvertOpPrivate*)(GEGL_COLOR_CONVERT_OP (point_op)->_priv);
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
+    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
+
+    /* get the current scanline width */
+    width = point_opP->scanline_width;
+
+    /* 
+       Might have to re-alloc the xyz data buffer 
+       if the scanline changes width. 
+    */
+
+    if (self->_priv->last_width != width) 
+      {
+        free_xyz_data (self);
+        alloc_xyz_data (self, width);
+      }
+	
+    /* Make the dest and src point to the data to convert */
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
+                                         color_convert_opP->dest_data);
+
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[1], 
+                                         color_convert_opP->src_data);
+
+
+    /* Convert through through xyz space */
+    gegl_color_model_convert_to_xyz (color_convert_opP->src_cm, 
+                                     (gfloat **)self->_priv->xyz_data, 
+                                     color_convert_opP->src_data, 
+                                     width);
+
+    gegl_color_model_convert_from_xyz (color_convert_opP->dest_cm, 
+                                       color_convert_opP->dest_data, 
+                                       (gfloat **)self->_priv->xyz_data,
+                                       width); 
+
+    self->_priv->last_width = width;
+  }
+  
+}

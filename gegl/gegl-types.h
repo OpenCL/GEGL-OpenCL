@@ -6,8 +6,8 @@
 typedef enum
 {
   COLORSPACE_NONE,
-  RGB,
   GRAY,
+  RGB,
   INDEXED,
   CMYK,
   SRGB,
@@ -44,14 +44,12 @@ typedef enum
 {
   DATATYPE_NONE,
   U8,
-  U16,
   FLOAT
 }GeglChannelDataType;
 
 typedef union
 {
   guint8 u8;
-  guint16 u16;
   gfloat f;
 }GeglChannelValue;
 
