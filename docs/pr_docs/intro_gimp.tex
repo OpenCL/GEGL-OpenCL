@@ -1,5 +1,67 @@
-GIMP is a freely distributed software program for image editing and painting.
-It has many features and plug-ins as well as a powerful scripting component.
-It is useful for basic painting tasks and can also be customized and configured
-for more specialized needs. It runs on Unix (including SGI, Linux), Windows and
-other platforms.
+
+Gimp 1.2, due to be formally released ``Real Soon Now'' is a direct
+descendent of of the 1.0.4 of 1998-1999. A Gimp developer napping from
+the time of the 1.0 release would, upon awakening, find essentially
+the same design patterns that characterized 1.0 -- just more code
+arising from it.
+
+It would be code filled with good intentions. In the core, she would
+discover that a certain amount of separation has occurred between the
+pipeline and the rest of the application. Much pipeline activity now
+occurs in the context of GTK+ idleloop, where a list of damage
+rectangles, rather than direct tool coupling, update the display; the
+user interface is now more responsive. She would find the tools far
+more ``objectified'' and abstracted, with standard methods that the
+event loop call that resolve into different implementations, giving
+tools their distinctive character. She would find some new tools as
+well, A clone tool, measure tool, a smudge tool, and she would find
+some old tools, such as Bezier paths, much improved. She would find
+a comprehensive support library furnishing a good framework for plugin
+developers. She would also find the user interface much improved, with a more
+consistent look and feel and a multitude of thoughtful touches and
+able to speak fourteen or fifteen languages with the switch of an
+environment variable. She would find hundreds of incremental improvements
+on the same basic framework
+
+But she would find lots and lots of UI code intimately entwined among
+the four hundred and forty seven header and implementation files
+constituting ``the core proper,'' with no clear separation between the
+two. And, if, in the course of her nap, she had suffered from amnesia,
+she would find that two or three months of study would be needed
+before she could offer anything in the line of diagnostic patches or
+bug fixes. One of the authors of this paper is a relative newcomer to
+the team, and had he not been on sabbatical and able to invest four or
+five hours a day over a similar period, he would not be writing these
+lines now. The price of entry into a support role would have been too
+much in terms of time required.
+
+ 
+It has been said that ``The road to hell is paved with good intentions.''
+and this is certainly the case with the 1.2 Gimp code base. The original
+framework furnished by Spencer Kimball and Peter Mattis is still in
+place, but now carrying a good deal more baggage -- all of it lovingly
+supplied by people with the best of intentions. There is very little 
+separation in the design, a great deal of state lies in global variables,
+so it has become very difficult for a newcomer -- or even an individual
+with a few year's experience on the code base -- to make changes 
+without triggering possibly extensive collateral effects.
+
+This has transformed GIMP into a singularly unresponsive application.
+The pre-release ``feature freeze'' is now over a year old, discouraging
+those who would like to invest time into feature development.
+ Bug fixing must proceed with care, and it is not uncommon for a bug fix 
+to introduce collateral bugs. No one dares contemplate merging various
+GIMP CVS branches into a unified application. 
+
+Karl Fogel has observed in ``Open Source Development with CVS''
+(Designing for Decentralized Development) that good design in the Open
+Source sense may not actually make programs run more efficiently, or
+improve the quality or accuracy of their output, but it should make
+the general plan of the program easy to grasp.  It was clear by the
+end of 1999 that what GIMP needed was not so much a new tool or
+plugin, but a reorganization in the way the code read as well as the
+way the code functioned; that code comprehensibility is a necessary
+aspect of social engineering. This observation has lent force to
+the modularization of GIMP, a central concept at the first GimpCon,
+held in Berlin.
+
