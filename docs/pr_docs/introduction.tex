@@ -1,169 +1,58 @@
-The General Image Manipulation Program (GIMP) (http://www.gimp.org)
-is an open source paint program that is freely available, can be
-adapted and used in many different situations and can be installed on
-most Unix and Windows machines. The eight bit version is a staple of
-the Linux desk top; the Windows community is finding GIMP an
-inexpensive alternative to consumer paint programs.
+This paper discusses the General Image Manipulation Program (GIMP,
+http://www.gimp.org) and its possible use in film and production enviroments.
+Gimp is a freely available open source paint program. It can be downloaded with
+source code, and built and installed on most Unix and Windows machines.  It has
+a standard set of painting and image editing tools, similar to Adobe Photoshop.
+It supports plug-ins and scripting.
 
-With the unstable future of many of the current 16-bit off-the-shelf paint
-programs, GIMP ((is)) [has] also [become] an attractive option for the film industry ((-- adapted,
-of course, to the special needs of that industry)). 
+Because source code is available GIMP can be customized to fit the needs of
+production. Experimental versions which support 16bit channels have been built
+and proven useful in production for over a year [see Appendix C].
 
-\begin{enumerate}
+With the unstable future of many of the current 16bit per channel off-the-shelf
+paint packages on the Unix platform, GIMP has a definite advantage for the film
+industry. It provides an opportunity to build and contribute to a stable and
+customizable solution for many of the particular needs of production. 
 
-\item Because GIMP is open source, its future can be directely controled by users by allocating programmers to the project.
+This document describes GIMP and gives some details about the upcoming
+architectural changes for future versions. It also discusses ways interested
+parties can help contribute to the GIMP community. 
 
-\item Because it is open source, GIMP can be changed to handle different data types and color models -- it can be customized to a specific need. With every paint program and studio having their own way of represanting image data being able to have the paint program match perfectly their own format it very imaortant.   
+The following is an outline of the topics we cover:
 
-\item Rhythm \& Hues Studios together with GIMP developers prove that GIMP could be used in film production with the film version of GIMP. They ported a version of GIMP 1.0.4 to use floating point and 16-bit data types. This film version of GIMP, although lacking in many ways, prove that GIMP could become a serious paint tool for film production.  
-
-\item ((Because it is an open source paint program, GIMP is free in the sense of
-intellectual freedom. Permission does not need to be sought to modify
-the program to fulfill particular purposes. Recently, GIMP and Rhythm
-\& Hues developers ported a version of GIMP 1.0.4 to use floating
-point/16-bit data types. In conducting these tests, Rhythm \& Hues developers
-were not captive to the development schedule of third-party
-vendors. They understood their needs and commenced exploratory
-development. This film version is currently used
-in production at Rhythm \& Hues. Appendix \ref{ch:GIMP_at_Rhythm_Hues} 
-``GIMP at Rhythm \& Hues Studios'' describes the program's
-current and projected use.))
-
-\item GIMP is among one of the most actively maintained open source projects
-((on the planet)). There are ongoing mailing lists and chat channels
-dedicated to GIMP users and developers. There are a dozen GIMP book
-titles that support the rank beginner and the graphics professional,
-and more titles are due. ((This constitutes a virtual support
-organization which makes no annual support contract demands. Competent
-support from a core GIMP developer or power user is typically one
-e-mail away.))
-
-\end{enumerate}
-
-((But GIMP is not free in a monetary sense.)) 
-
-((Rhythm \& Hues invested programmer talent, floor space, and equipment,
-all costs to its business. Further, at some juncture it deployed its
-experimental GIMP on a project; that program had to add value before
-deadline arrival, so, to some degree, R \& H put a production schedule
-at risk.))
-
-((More generally, every individual involved in the support of GIMP
-contribute time and talent. This expenditure is not without cost to
-these individuals. Peculiar to the Open Source community, should these
-individuals determine that their personal costs are outweighing a
-(largely psychological) return, they lose interest in the project,
-slowing the pace of development and putting the user base at risk.
-Combating that risk is important, but we think it is beatable and
-we'll address it at the end of this introduction.))
-
-((Obviously, costs distribute themselves differently in an Open Source
-project, challenging current bean counting and project management
-customs, but costs clearly exist, and there is no reason to believe
-they cannot become substantial. As with any effort, costs associated
-with Open Source projects have to be identified as containable, their
-magnitudes have to be estimated and weighed against benefits.))
-
-((This document advocates that GIMP can deliver benefits that exceeds
-costs. First, the benefits can be optimized to meet particular aims,
-for in the Open Source community, aims are specified by those who
-participate most vigorously in the project and who demonstrate
-competence by hitting at what they aim. There are no marketing
-departments subjugating feature sets to product demographics. Second,
-the costs are identifiable. These include traditional time costs to
-develop code (estimated in Chapter \ref{ch:Schedule}), and the
-less-traditional costs of integrating with an Open Source community
-(Discussed in Appendix \ref{ch:Contributing_to_GIMP}, ``Contributing
-to GIMP.'')))
-
-((The greatest risk facing any Open Source project -- the risk
-that determines if anyone benefits at all -- is the risk of malaise.
-Participants in Open Source projects are not primarily motivated by
-money. Many are already richly compensated (thank you); they 
-are in it for something else; they are in it for ``The Game.''
-The Game is partly competitive -- to be the first to implement
-the neat hack -- and it is partially cooperative, for the 
-camaraderie of teaming with colleagues to hit targets deemed
-unreachable is not quite like any elixir that money can buy, and
-once imbibed is addictive. The sense that a project is 
-done, that there is no room anymore for neat hacks -- that The
-Game is Over -- dissipates Open Source teams faster than any
-other effect.))
-
-((This risk, while grave, is beatable. As this document describes,
-GIMP 2.0 has room for a lot of neat hacks. Its emphasis on modular
-design makes not only technical but social sense, because
-the pieces can be ``owned'' by particular people. Contrast
-this to the current GIMP 1.2 code base, where changes in certain 
-areas are unpredictably global, bringing the perpetrator angry
-e-mail and disapproval, often discouraging further participation.)) 
-
-((To the extent that GIMP will benefit anyone sooner or later depends
-very much on furnishing a point of nucleation just as the good people
-are hovering around, wondering ``What's next?'' GIMP 1.2 is done; GIMP
-2.0 is in the wings. Our goal with this document is to attract the
-people who work every day with the really hard image problems -- the
-people in the film industry -- and who know how to spell their aims
-out. We don't need very many; just a few around whom the many will
-gravitate. The best thing that can come of this is that the really
-hard problems are also the most attractive, and those who will benefit
-first will be those who frame the hunt. There are risks involved, many
-beyond the somewhat murky crystal ball of this document, but the very
-worse one somehow goes away when people are just too damn busy to
-notice.))
-
-((So, are you game?))  
-
-((If so, then here are our best guesses as to the problems,
-and what needs to be done.))
-
-[In this document we will cover the following items.]
 \begin{itemize}
 
-\item Chapter \ref{ch:GIMP_2.0} ``GIMP 2.0 Design Concepts'' reviews the 1.2 
-release and discusses why it is not the ``out-of-box'' GIMP for either
-the film industry or future GIMP development.  Reviews the basic architecture 
-of GIMP 2.0.
+\item Chapter \ref{ch:GIMP_2.0_Design} ``GIMP 2.0 Design'' describes 
+the basic architecture of GIMP 2.0.
 
 \item Chapter \ref{ch:GEGL} ``GEGL'' reviews the most concretely realized 
 component of GIMP 2.0, the GEGL library. GEGL will be the heart of
-the GIMP 2.0 rendering pipeline.
+the GIMP 2.0 image processing engine.
 
-\item Chapter \ref{ch:Schedule} ``Schedule'' [contain estimate cost] ((reviews what we think)) for GIMP 2.0
-((will cost in terms of man-hours.)) We are ((may be)) missing scaling factors
-((here)), but ((we think)) we have the relative proportions correct.
+\item Chapter \ref{ch:Schedule} ``Schedule'' is a list of tasks for GIMP 2.0 which
+cover the main areas involved in creating the next version. It lists some rough schedule
+estimates.  
 
-\item ((Chapter \ref{ch:Conclusion}, ``Conclusion'' is where we 
-summarize what we think we've said.))
+\item Chapter \ref{ch:Conclusion}, ``Conclusion'' wraps up. 
 
 \end{itemize}
 
-((For background , we offer a number of appendices:))
-
-[Background information is included in the appendix.] 
+In addition, the appendices cover some extra material:
 
 \begin{itemize}
 
-\item Appendix  \ref{ch:GIMP_Versions_Licences} ``History of GIMP'' from
-0.54 to 2.0, Also notes on the GNU General Public License, which
-control's GIMP's distribution.
+\item Appendix  \ref{ch:GIMP_Versions_Licences} ``GIMP Versions Licenses'' which
+covers versions 0.54 to 1.2 and the experimental HOLLYWOOD branch. It also
+discusses GIMP's license.
+  
+\item Appendix  \ref{ch:GIMP_at_Rhythm_Hues}  ``GIMP at Rhythm \& Hues
+Studios'' goes into details of the use of the HOLLYWOOD branch GIMP in a
+production setting. 
 
-\item Appendix  \ref{ch:GIMP_at_Rhythm_Hues}  ``GIMP at Rhythm \& Hues Studios''
-goes into ((greater)) detail of the use of HOLLYWOOD GIMP in a production
-setting --- the pros and cons. ((GIMP did not meet all needs of all people, it was found unable to
-slice bread, but it did remove wires and more. It's the experiment that gave the 
-authors the courage to write this document.))
-
-\item Appendix \ref{ch:Contributing_to_GIMP} ``Contributing to GIMP''
-Anyone who has managed a software development team in a traditional sense
-can find Open Source strange. The compensation is rich, but it isn't always
-money. Notes on how things get done in Open Source projects.
+\item Appendix \ref{ch:Contributing_to_GIMP} ``Contributing to GIMP'' This is a
+short description of how things get done in Open Source projects.
 
 \item Appendix \ref{ch:More_Information} ``More Information'' contains URLs to
 webpages with more information.
-((is an
-edited version of our favorite links page ;))) 
 
 \end{itemize}
-
-

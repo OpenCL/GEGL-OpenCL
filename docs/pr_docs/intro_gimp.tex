@@ -1,53 +1,13 @@
 
-GIMP 1.2, due to be release soon, contains many new extiting feature. All effort was spend to make it a better program for the user but no effort to improve its architecture --- it continues to be a a monolithic application with a small plug-in library wrapped around it. 
+Though the upcoming 1.2 release of GIMP contains many new features, most
+development effort since 1.0 version has involved improved ui and tools, and
+little improvement in underlying architecture.  Internally GIMP is a monolithic
+application with plug-in library wrapped around it (see Appendix  z0.
 
-
-((GIMP 1.2, due to be formally released ``Real Soon Now'' is a direct
-descendent of of the 1.0.4 of 1998-1999. A Gimp developer napping from
-the time of the 1.0 release would, upon awakening, find essentially
-the same design pattern that characterized 1.0: a monolithic
-application with a small plug-in library wrapped around it. There
-would be just more code; lots of it.))
-
-((It would be code filled with good intentions, to be sure. In the core,
-she would discover that a certain amount of separation has occurred
-between the pipeline and the rest of the application. Much pipeline
-activity now occurs in the context of GTK+ idle loop, where a list of
-damage rectangles, rather than direct tool coupling, update the
-display; the user interface is now more responsive as a
-consequence. She would find the tools far more ``objectified'' and
-abstracted, with standard methods that the event loop call that
-resolve into different implementations, giving tools their distinctive
-character. She would find some new tools as well, A clone tool,
-measure tool, a smudge tool, and she would find some old tools, such
-as Bezier paths, much improved. She would find a comprehensive support
-library furnishing a good framework for plug in developers. She would
-also find the user interface much improved, with a more consistent
-look and feel and a multitude of thoughtful touches and able to speak
-fourteen or fifteen languages with the switch of an environment
-variable. She would find hundreds of incremental improvements on the
-same basic framework.))
-
-((But she would find lots and lots of UI code intimately entwined among
-the four hundred and forty seven header and implementation files
-constituting ``the core proper,'' with no clear separation between the
-two. And, if, in the course of her nap, she had suffered from amnesia,
-she would find that two or three months of study would be needed
-before she could offer anything in the line of diagnostic patches or
-bug fixes. One of the authors of this paper is a relative newcomer to
-the team, and had he not been on sabbatical and able to invest four or
-five hours a day over a similar period, he would not be writing these
-lines now. The price of entry into a support role would have been too
-much in terms of time required.))
- 
-((It has been said that ``The road to hell is paved with good intentions.'' and this is certainly the case with the 1.2 GIMP code base. The original framework furnished by Spencer Kimball and Peter Mattis is still in place, but now carrying a good deal more baggage -- all of it lovingly supplied by people with the best of intentions. There is very little separation in the design, a great deal of state lies in global variables, so it has become very difficult for a newcomer -- or even an individual with a few year's experience on the code base -- to make changes without triggering possibly extensive collateral effects.))
-
-((This has transformed GIMP into a singularly unresponsive application.
-The pre-release ``feature freeze'' is now over a year old, discouraging
-those who would like to invest time into feature development.  Bug fixing must proceed with care, and it is not uncommon for a bug fix to introduce collateral bugs. No one dares contemplate merging various GIMP CVS branches into a unified application.)) 
- 
-((Karl Fogel has observed in ``Open Source Development with CVS''
-(Designing for Decentralized Development) that good design in the Open
-Source sense may not actually make programs run more efficiently or improve the quality or accuracy of their output, but it should make their general plans easy to grasp. As GimpCon approached, it was clear that the program suffered because of a lack of code comprehensibility, that modular design makes as much social as it does technical sense. If much of the volunteerism that characterizes the Open Source community arises from a pride of ownership, then GIMP needed to exhibit clearly defined territories that could be ``owned'' in a technical sense, much as how a particular plug in developer could ``own'' a particular plug in.))
-
- 
+This makes it difficult to add things like color management, CMYK support,
+different color models and data types. Without breaking GIMP into a series of
+modules or libraries, moving forward with any major architectural enhancements
+is impossible. So the plan for GIMP after 1.2 release is to break GIMP into
+modules, separate the UI from the engine code, and give GIMP the flexibility to
+handle the next stage of functionality. Unfortunately there is no way to avoid
+this with GIMP's current state.
