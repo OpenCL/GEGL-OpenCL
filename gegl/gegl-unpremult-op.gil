@@ -106,10 +106,14 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
       {
         GENERIC_IMAGE_BLOCK_BEGIN
 
-        if(src_alpha == ZERO || src_alpha == WP)
+        if(src_alpha == WP)
           {
             dest_color =  src_color;
           }
+	else if (src_alpha == ZERO)
+	  {
+	    dest_color = ZERO;
+	  }
         else
           {
             dest_color =  src_color / src_alpha;

@@ -114,7 +114,7 @@ class Gegl:Screen:Op from Gegl:Dual:Src:Op {
       {
         GENERIC_IMAGE_BLOCK_BEGIN  
 
-        dest_color = WP - ((Promote) (WP - src1_color) * (WP - src2_color));
+        dest_color = WP - (WP - src1_color) * (WP - src2_color);
 	if (dest_has_alpha)
  	  {
 	    if (src1_has_alpha && src2_has_alpha)

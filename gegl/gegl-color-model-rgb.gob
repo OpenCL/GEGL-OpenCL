@@ -20,7 +20,7 @@ class Gegl:Color:Model:Rgb from Gegl:Color:Model {
 
   protected 
   gboolean 
-  constructor(self, gboolean has_alpha, gboolean is_premult)
+  constructor(self, gboolean has_alpha)
   {
     GeglColorModelPrivate *color_modelP = 
               (GeglColorModelPrivate*)(GEGL_COLOR_MODEL (self)->_priv);
@@ -29,7 +29,7 @@ class Gegl:Color:Model:Rgb from Gegl:Color:Model {
       return FALSE;
     
     /* Chain up to superclass*/
-    if (!gegl_color_model_constructor (GEGL_COLOR_MODEL(self), has_alpha, is_premult))
+    if (!gegl_color_model_constructor (GEGL_COLOR_MODEL(self), has_alpha))
       return FALSE;
 
     if (color_modelP->has_alpha)

@@ -13,13 +13,12 @@ class Gegl:Color:Model:Gray:Float from Gegl:Color:Model:Gray {
 
   public
   GeglColorModelGrayFloat *       
-  new(gboolean has_alpha, 
-      gboolean is_premult)
+  new(gboolean has_alpha)
   {
     GeglColorModelGrayFloat * self = GEGL_COLOR_MODEL_GRAY_FLOAT(GET_NEW);
   
     /*Call the constructor */
-    if (!constructor(self, has_alpha, is_premult))
+    if (!constructor(self, has_alpha))
       return NULL;
     
     /*Okay its constructed*/
@@ -31,8 +30,7 @@ class Gegl:Color:Model:Gray:Float from Gegl:Color:Model:Gray {
   protected
   gboolean 
   constructor(self, 
-              gboolean has_alpha, 
-              gboolean is_premult)
+              gboolean has_alpha)
   {
     GeglColorModelPrivate *color_modelP = (GeglColorModelPrivate*)
       (GEGL_COLOR_MODEL (self)->_priv);
@@ -42,7 +40,7 @@ class Gegl:Color:Model:Gray:Float from Gegl:Color:Model:Gray {
     
     /* Chain up to superclass*/
     if (!gegl_color_model_gray_constructor (
-         GEGL_COLOR_MODEL_GRAY(self), has_alpha, is_premult))
+         GEGL_COLOR_MODEL_GRAY(self), has_alpha))
         return FALSE;
 
     color_modelP->data_type = FLOAT;

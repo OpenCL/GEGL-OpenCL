@@ -1,3 +1,58 @@
+Mon Apr 10 13:43:06 EDT 2000 calvinw@mindspring.com
+
+	* changed these files in gegl dir:
+
+	  gegl/gegl-add-op.gil
+	  gegl/gegl-color-convert-to-gray-float-op.gob
+	  gegl/gegl-color-convert-to-gray-u16-op.gob
+	  gegl/gegl-color-convert-to-gray-u16_4-op.gob
+	  gegl/gegl-color-convert-to-gray-u8-op.gob
+	  gegl/gegl-color-convert-to-rgb-float-op.gob
+	  gegl/gegl-color-convert-to-rgb-u16-op.gob
+	  gegl/gegl-color-convert-to-rgb-u16_4-op.gob
+	  gegl/gegl-color-convert-to-rgb-u8-op.gob
+	  gegl/gegl-color-model-gray-float.gob
+	  gegl/gegl-color-model-gray-u16.gob
+	  gegl/gegl-color-model-gray-u16_4.gob
+	  gegl/gegl-color-model-gray-u8.gob
+	  gegl/gegl-color-model-gray.gob
+	  gegl/gegl-color-model-rgb-float.gob
+	  gegl/gegl-color-model-rgb-u16.gob
+	  gegl/gegl-color-model-rgb-u16_4.gob
+	  gegl/gegl-color-model-rgb-u8.gob
+	  gegl/gegl-color-model-rgb.gob
+	  gegl/gegl-color-model.gob
+	  gegl/gegl-composite-op.gil
+	  gegl/gegl-composite-premult-op.gil
+	  gegl/gegl-screen-op.gil
+	  gegl/gegl-subtract-op.gil
+	  gegl/gegl-unpremult-op.gil
+	  gegl/gegl-utils.c
+	  gegl/gegl-utils.h
+	  gegl/testgegl.c
+	  gegl/testgeglfile.c
+
+	* updated the testgeglfile to create correct colormodels
+	  and image buffers automatically. 
+       
+	* fixed GeglCompositeOp to take the composite alpha into account
+
+	* removed the is_premultiplied flag from all the color_model_new
+	  constructors.
+	 
+        * Added Promote, and SignedPromote casts to some other point ops.	
+
+	* changed these files in codegen dir:
+	
+	  codegen/test_files/gegl-add-op.gil
+	  codegen/test_files/gegl-composite-op.gil
+	  codegen/test_files/gegl-composite-premult-op.gil
+	  codegen/test_files/gegl-mult-op.gil
+	  codegen/test_files/gegl-premult-op.gil
+	  codegen/test_files/gegl-screen-op.gil
+	  codegen/test_files/gegl-subtract-op.gil
+	  codegen/test_files/gegl-unpremult-op.gil
+
 Sat Apr  8 17:54:03 PDT 2000 caro@rhythm.com
 	
 	* check in for codegen

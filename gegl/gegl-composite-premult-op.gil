@@ -440,8 +440,8 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 	    GENERIC_IMAGE_BLOCK_BEGIN
 
             b = src1_alpha; 
-            dest_color =  b * src2_color;
-            dest_alpha =  b;
+            dest_color = b * src2_color;
+            dest_alpha = b;
 
 	    dX(dest,1);
 	    dX(src1,1);

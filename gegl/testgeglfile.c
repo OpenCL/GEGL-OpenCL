@@ -28,10 +28,10 @@
 #include "gegl-add-op.h"
 #include "gegl-light-op.h"
 #include "gegl-premult-op.h"
+#include "gegl-unpremult-op.h"
 #include "gegl-types.h"
 
-
-static GeglChannelDataType  DATA_TYPE;
+#define HI_CLAMP(x,hi)     (x)>(hi)?(hi):(x) 
 
 static void
 create_preview(GtkWidget **window, 
@@ -57,7 +57,8 @@ static void
 display_image(GtkWidget *window, 
               GtkWidget *preview, 
               GeglImageBuffer* image_buffer,
-              GeglRect rect)
+              GeglRect rect,
+	      GeglChannelDataType data_type)
 {
   gint            w, h, num_chans;
   gfloat          **data_ptrs1;
@@ -84,25 +85,25 @@ display_image(GtkWidget *window,
 
     for(i=0; i<h; i++)
       {
-	switch (DATA_TYPE)
+	switch (data_type)
 	  {
 	  case FLOAT:
 	    gegl_image_iterator_get_scanline_data(iterator, 
 		(guchar**)data_ptrs1);
 
-	    /* convert the data from float -> unsigned 8bit */   
+	    /* convert the data from float -> uint8 */   
 	    for(j=0; j<w; j++)
 	      {
-		tmp[0 + 3*j] = data_ptrs1[0][j] * 255;
-		tmp[1 + 3*j] = data_ptrs1[1][j] * 255;
-		tmp[2 + 3*j] = data_ptrs1[2][j] * 255;
+		tmp[0 + 3*j] = ROUND(CLAMP(data_ptrs1[0][j],0.0,1.0) * 255);
+		tmp[1 + 3*j] = ROUND(CLAMP(data_ptrs1[1][j],0.0,1.0) * 255);
+		tmp[2 + 3*j] = ROUND(CLAMP(data_ptrs1[2][j],0.0,1.0) * 255);
 	      }
 	    break;
 	  case U8:
 	    gegl_image_iterator_get_scanline_data(iterator, 
 		(guchar**)data_ptrs2);
 
-	    /* convert the data from float -> unsigned 8bit */   
+	    /* no need to convert */   
 	    for(j=0; j<w; j++)
 	      {
 		tmp[0 + 3*j] = data_ptrs2[0][j];
@@ -114,24 +115,24 @@ display_image(GtkWidget *window,
 	    gegl_image_iterator_get_scanline_data(iterator, 
 		(guchar**)data_ptrs3);
 
-	    /* convert the data from float -> unsigned 8bit */   
+	    /* convert the data from uint16 -> uint8 */   
 	    for(j=0; j<w; j++)
 	      {
-		tmp[0 + 3*j] = data_ptrs3[0][j] * 255 / 65535.0;
-		tmp[1 + 3*j] = data_ptrs3[1][j] * 255 / 65535.0;
-		tmp[2 + 3*j] = data_ptrs3[2][j] * 255 / 65535.0;
+		tmp[0 + 3*j] = ROUND((data_ptrs3[0][j]/65535.0) * 255);
+		tmp[1 + 3*j] = ROUND((data_ptrs3[1][j]/65535.0) * 255);
+		tmp[2 + 3*j] = ROUND((data_ptrs3[2][j]/65535.0) * 255);
 	      }
 	    break;
 	  case U16_4:
 	    gegl_image_iterator_get_scanline_data(iterator, 
 		(guchar**)data_ptrs4);
 
-	    /* convert the data from float -> unsigned 8bit */   
+	    /* convert the data from u16_4k -> uint8 */   
 	    for(j=0; j<w; j++)
 	      {
-		tmp[0 + 3*j] = data_ptrs4[0][j] * 255 / 4095.0;
-		tmp[1 + 3*j] = data_ptrs4[1][j] * 255 / 4095.0;
-		tmp[2 + 3*j] = data_ptrs4[2][j] * 255 / 4095.0;
+		tmp[0 + 3*j] = ROUND((HI_CLAMP(data_ptrs4[0][j],4095)/4095.0) * 255);
+		tmp[1 + 3*j] = ROUND((HI_CLAMP(data_ptrs4[1][j],4095)/4095.0) * 255);
+		tmp[2 + 3*j] = ROUND((HI_CLAMP(data_ptrs4[2][j],4095)/4095.0) * 255);
 	      }
 	    break;  
 	  default:
@@ -155,6 +156,35 @@ display_image(GtkWidget *window,
 
 }       
 
+void 
+premultiply_buffer(GeglImageBuffer *buffer,
+                   GeglRect *rect)
+{
+  GeglOp *op = GEGL_OP(gegl_premult_op_new(buffer, 
+				   buffer,
+				   rect,
+				   rect));
+
+
+  gegl_op_apply (op);   
+  gegl_object_destroy (GEGL_OBJECT(op));
+}
+
+
+void 
+unpremultiply_buffer(GeglImageBuffer *buffer,
+                     GeglRect *rect)
+{
+  GeglOp *op = GEGL_OP(gegl_unpremult_op_new(buffer, 
+				   buffer,
+				   rect,
+				   rect));
+
+
+  gegl_op_apply (op);   
+  gegl_object_destroy (GEGL_OBJECT(op));
+}
+
 void
 test_composite_ops( GeglImageBuffer ** src_image_buffer,
     guint * src_width,
@@ -164,8 +194,10 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
   GeglRect               dest_rect;
   GeglImageBuffer       *dest_image_buffer;
   GeglColorModel        *dest_color_model;
+  GeglChannelDataType    data_type;
   GeglOp 		*op;
   gint                   num_chans;
+  gboolean               has_alpha;
   gint                   i;
   gint                   width, height;
   GtkWidget       	*dest_window[6];
@@ -182,37 +214,62 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
 
   dest_image_buffer = gegl_image_buffer_new (dest_color_model, 
                                             width, height);
+  data_type = gegl_color_model_data_type (dest_color_model);
   num_chans = gegl_color_model_num_channels (dest_color_model);
+  has_alpha = gegl_color_model_has_alpha (dest_color_model);
   gegl_rect_set (&dest_rect, 0, 0, width, height);
 
+    /* premultiplied composite */
+#if 1 
+  for (i = 0; i< 6; i++) 
+    {
+      op = GEGL_OP(gegl_composite_premult_op_new (dest_image_buffer, 
+					  src_image_buffer[0], 
+					  src_image_buffer[1], 
+					  &dest_rect, 
+					  &src_rect[0], 
+					  &src_rect[1], 
+					  i));
+      gegl_op_apply (op);   
+      gegl_object_destroy (GEGL_OBJECT(op));
+
+      /* display the destination */ 
+      create_preview (&dest_window[i], &dest_preview[i], 
+	              width, height, mode_names[i]);
+
+      display_image (dest_window[i], dest_preview[i], 
+	             dest_image_buffer,  dest_rect,
+	  	     data_type);
+    }
+#endif
+
+    /* unpremultiplied composite */
+#if 0 
   for (i = 0; i< 6; i++) 
     {
       op = GEGL_OP(gegl_composite_op_new (dest_image_buffer, 
 					  src_image_buffer[0], 
 					  src_image_buffer[1], 
-					  &src_rect[1], 
 					  &dest_rect, 
 					  &src_rect[0], 
+					  &src_rect[1], 
 					  i));
       gegl_op_apply (op);   
       gegl_object_destroy (GEGL_OBJECT(op));
 
-#if 1 
-      op = GEGL_OP(gegl_premult_op_new(dest_image_buffer, 
-                                       dest_image_buffer,
-                                       &dest_rect,
-                                       &dest_rect));
-
-
-      gegl_op_apply (op);   
-      gegl_object_destroy (GEGL_OBJECT(op));
-#endif
+      /* unpremultiplied dest, so premultiply on display */
+      if (has_alpha)
+        premultiply_buffer(dest_image_buffer, &dest_rect);
 
       /* display the destination */ 
-      create_preview (&dest_window[i], &dest_preview[i], width, height, mode_names[i]);
-      display_image (dest_window[i], dest_preview[i], dest_image_buffer,  dest_rect);
-      gegl_object_destroy (GEGL_OBJECT(op));
+      create_preview (&dest_window[i], &dest_preview[i], 
+	              width, height, mode_names[i]);
+
+      display_image (dest_window[i], dest_preview[i], 
+	             dest_image_buffer,  dest_rect,
+	  	     data_type);
     }
+#endif
 
   gegl_object_destroy (GEGL_OBJECT (dest_image_buffer));
   gegl_object_destroy (GEGL_OBJECT (dest_color_model));
@@ -281,6 +338,7 @@ test_point_ops( GeglImageBuffer ** src_image_buffer,
   GeglRect               dest_rect;
   GeglImageBuffer       *dest_image_buffer;
   GeglColorModel        *dest_color_model;
+  GeglChannelDataType    data_type;
   GeglOp 		*op;
   gint                   num_chans;
   gint                   i;
@@ -297,6 +355,7 @@ test_point_ops( GeglImageBuffer ** src_image_buffer,
 
   dest_image_buffer = gegl_image_buffer_new (dest_color_model, 
                                             width, height);
+  data_type = gegl_color_model_data_type (dest_color_model);
   num_chans = gegl_color_model_num_channels (dest_color_model);
   gegl_rect_set (&dest_rect, 0,0, width, height);
 
@@ -307,8 +366,10 @@ test_point_ops( GeglImageBuffer ** src_image_buffer,
       gegl_op_apply (op);   
 
       /* display the destination */ 
-      create_preview (&dest_window[i], &dest_preview[i], width, height, point_op_names[i]);
-      display_image (dest_window[i], dest_preview[i], dest_image_buffer, dest_rect);
+      create_preview (&dest_window[i], &dest_preview[i], 
+	              width, height, point_op_names[i]);
+      display_image (dest_window[i], dest_preview[i], 
+	             dest_image_buffer, dest_rect, data_type);
       gegl_object_destroy (GEGL_OBJECT(op));
     }
 
@@ -316,7 +377,125 @@ test_point_ops( GeglImageBuffer ** src_image_buffer,
   gegl_object_destroy (GEGL_OBJECT (dest_color_model));
 }
 
+guchar *
+read_tiff_image_data (TIFF *tif,
+		      gint width,
+		      gint height,
+		      gint num_chans,
+		      GeglChannelDataType data_type,
+		      gboolean has_alpha)
+{
+  int             	i, j;
+  gfloat           	*t1=NULL;
+  guint8           	*t2=NULL;
+  guint16           	*t3=NULL;
+  guint16           	*t4=NULL;
+  uint32          *image;
+  guchar          *image_data;
+  guchar          r,g,b,a; 
+  gint            plane_size;
+  gint            channel_bytes = 0;
 
+  /* Create an appropriate image_data for passing to gegl_image_buffer */  
+  switch (data_type) 
+    {
+    case FLOAT:
+      channel_bytes = sizeof(float);
+      break;
+    case U8:
+      channel_bytes = sizeof(guint8);
+      break;
+    case U16:
+      channel_bytes = sizeof(guint16);
+      break;
+    case U16_4:
+      channel_bytes = sizeof(guint16);
+      break;
+    default:
+      break; 
+    }
+
+  image_data = (guchar*)g_malloc(width * height * channel_bytes * num_chans);
+
+  /* Initialize some data pointers */
+  switch (data_type) 
+    {
+    case FLOAT:
+      t1 = (gfloat *)image_data;
+      break;
+    case U8:
+      t2 = (guint8 *)image_data;
+      break;
+    case U16:
+      t3 = (guint16 *)image_data;
+      break;
+    case U16_4:
+      t4 = (guint16 *)image_data;
+      break;
+    default:
+      break; 
+    }
+
+  /* Read the tiff data into abgr packed uint32s. */  
+
+  image = (uint32*) _TIFFmalloc(width* height * sizeof(uint32));
+  TIFFReadRGBAImage(tif, width, height, image, 0);
+
+  /* Convert the abgr packed uint32s to image_data format 
+     suitable for passing to a GeglImageBuffer. */
+
+  j=0;
+  plane_size = width * height;
+  for(i=0; i<plane_size; i++)
+    {
+      r = TIFFGetR(image[i]);
+      g = TIFFGetG(image[i]);
+      b = TIFFGetB(image[i]);
+      a = TIFFGetA(image[i]);
+
+      switch (data_type)
+	{
+	case FLOAT:
+	  t1[j             ] = r / 255.0;
+	  t1[j+plane_size  ] = g / 255.0;
+	  t1[j+plane_size*2] = b / 255.0;
+	  if (has_alpha)
+	    t1[j+plane_size*3] = a / 255.0;
+	  j++;
+	  break; 
+	case U8:
+	  t2[j             ] = r;
+	  t2[j+plane_size  ] = g;
+	  t2[j+plane_size*2] = b;
+	  if (has_alpha)
+	    t2[j+plane_size*3] = a;
+	  j++;
+	  break; 
+	case U16:
+	  t3[j             ] = (r / 255.0) * 65535;
+	  t3[j+plane_size  ] = (g / 255.0) * 65535;
+	  t3[j+plane_size*2] = (b / 255.0) * 65535;
+	  if (has_alpha)
+	    t3[j+plane_size*3] = (a / 255.0) * 65535;
+	  j++;
+	  break; 
+	case U16_4:
+	  t4[j             ] = (r / 255.0) * 4095;
+	  t4[j+plane_size  ] = (g / 255.0) * 4095;
+	  t4[j+plane_size*2] = (b / 255.0) * 4095;
+	  if (has_alpha)
+	    t4[j+plane_size*3] = (a / 255.0) * 4095;
+	  j++;
+	  break;
+	default:
+	 break;  
+	}  
+      
+    }
+    _TIFFfree(image);
+    return image_data;
+}
+	      
 int
 main(int argc, 
      char *argv[])
@@ -327,20 +506,13 @@ main(int argc,
   GtkWidget       	*src_preview[2];
   guint          	src_width[2], src_height[2];
   GeglRect        	src_rect[2];
-
-  int             	i, j, k;
+  int             	k;
   gint            	num_chans;
-  gfloat           	*t1=NULL;
-  guint8           	*t2=NULL;
-  guint16           	*t3=NULL;
-  guint16           	*t4=NULL;
-
-  /* stuff for reading a tiff */
-  guchar          *image_data;
-  TIFF            *tif;   
-  uint32          *image;
-  guchar          r,g,b,a; 
-  gint            plane_size;
+  TIFF                  *tif;   
+  guchar                *image_data = NULL;
+  guint16               samples_per_pixel;
+  GeglChannelDataType   data_type = FLOAT;
+  gboolean              has_alpha = FALSE;
 
   gtk_init (&argc, &argv);
 
@@ -349,170 +521,100 @@ main(int argc,
     {
       if (!strcmp (argv[3], "float"))
 	{
-	  DATA_TYPE = FLOAT;
+	  data_type = FLOAT;
 	}
       else if (!strcmp (argv[3], "u8"))
 	{
-	  DATA_TYPE = U8;
+	  data_type = U8;
 	}
       else if (!strcmp (argv[3], "u16"))
 	{
-	  DATA_TYPE = U16;
+	  data_type = U16;
 	}
       else if (!strcmp (argv[3], "u16_4"))
 	{
-	  DATA_TYPE = U16_4;
+	  data_type = U16_4;
 	}
     }
-  else
-   DATA_TYPE = FLOAT;
 
   /* read in the 2 sources, src1 and src2 */ 
-
   for(k=0; k<=1; k++)
     {             
       /* open the file */
       tif = TIFFOpen(argv[k+1], "r");
 
+      /* get number of channels */
+      TIFFGetFieldDefaulted (tif, 
+	          TIFFTAG_SAMPLESPERPIXEL, 
+		  &samples_per_pixel);
+
+      /* heres a hack for has_alpha */
+      if (samples_per_pixel == 2 || samples_per_pixel == 4)
+	has_alpha = TRUE;
+
       /* get width and height */
       TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &src_width[k]);
       TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &src_height[k]);
       
-      /* create the gegl image buffer */
-      switch (DATA_TYPE)
-	{
-	case FLOAT:
-	  src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
-	  break;
-	case U8:
-	  src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_u8_new(TRUE, TRUE));
-	  break;
-	case U16:
-	  src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_u16_new(TRUE, TRUE));
-	  break;
-	case U16_4:
-	  src_color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_u16_4_new(TRUE, TRUE));
-	  break;
-	default:
-	  break;
-	}
-      src_image_buffer[k] = gegl_image_buffer_new(src_color_model[k], src_width[k], src_height[k]);
+      /* create the src GeglColorModel */
+      src_color_model[k] = gegl_color_model_factory (RGB, data_type, has_alpha);
+
+      /* create the src GeglImageBuffer */
+      src_image_buffer[k] = gegl_image_buffer_new (src_color_model[k], 
+	  src_width[k], src_height[k]); 
+        
       num_chans = gegl_color_model_num_channels(src_color_model[k]);
-      gegl_rect_set (&src_rect[k], 0,0, src_width[k], src_height[k]);
-	      
-      /* put the data from the image into image_data and make sure it is
-      in the right format rrr ggg bbb */
-      image = (uint32*) _TIFFmalloc(src_width[k] * src_height[k] * sizeof(uint32));
-      image_data = (guchar*) g_malloc(sizeof(guchar) * src_width[k] * src_height[k] *
-			      sizeof(float) * num_chans);
+
+      /* get an image_data buffer we can pass to GeglImageBuffer */
+      image_data = read_tiff_image_data (tif, 
+	           src_width[k], src_height[k], num_chans, data_type, has_alpha);
       
-      switch (DATA_TYPE)
-	{
-	case FLOAT:
-	  t1 = (float*) g_malloc(sizeof(float) * src_width[k] * src_height[k] * 4);
-	  break;
-	case U8:
-	  t2 = (guint8*) g_malloc(sizeof(guint8) * src_width[k] * src_height[k] * 4);
-	  break;
-	case U16:
-	  t3 = (guint16*) g_malloc(sizeof(guint16) * src_width[k] * src_height[k] * 4);
-	  break;
-	case U16_4:
-	  t4 = (guint16*) g_malloc(sizeof(guint16) * src_width[k] * src_height[k] * 4);
-	  break;
-	default:
-	  break; 
-	}
-      TIFFReadRGBAImage(tif, src_width[k], src_height[k], image, 0);
-      j=0;
-      plane_size = src_width[k] * src_height[k];
-      for(i=0; i<plane_size; i++)
-        {
-          r = TIFFGetR(image[i]);
-          g = TIFFGetG(image[i]);
-          b = TIFFGetB(image[i]);
-          a = TIFFGetA(image[i]);
-
-	  switch (DATA_TYPE)
-	    {
-	    case FLOAT:
-	      t1[j             ] = ((float)r) / 255.0;
-	      t1[j+plane_size  ] = ((float)g) / 255.0;
-	      t1[j+plane_size*2] = ((float)b) / 255.0;
-	      t1[j+plane_size*3] = ((float)a) / 255.0;
-	      j++;
-	      break; 
-	    case U8:
-	      t2[j             ] = ((char)r);
-	      t2[j+plane_size  ] = ((char)g);
-	      t2[j+plane_size*2] = ((char)b);
-	      t2[j+plane_size*3] = ((char)a);
-	      j++;
-	      break; 
-	    case U16:
-	      t3[j             ] = ((float)r) * 65535 / 255.0;
-	      t3[j+plane_size  ] = ((float)g) * 65535 / 255.0;
-	      t3[j+plane_size*2] = ((float)b) * 65535 / 255.0;
-	      t3[j+plane_size*3] = ((float)a) * 65535 / 255.0;
-	      j++;
-	      break; 
-	    case U16_4:
-	      t4[j             ] = ((float)r) * 4095 / 255.0;
-	      t4[j+plane_size  ] = ((float)g) * 4095 / 255.0;
-	      t4[j+plane_size*2] = ((float)b) * 4095 / 255.0;
-	      t4[j+plane_size*3] = ((float)a) * 4095 / 255.0;
-	      j++;
-	      break;
-	    default:
-	     break;  
-	    }  
-	  /*memcpy(img, &image[i], 4);*/
-          
-        }
-
-      switch (DATA_TYPE)
-	{
-	case FLOAT:
-	  memcpy(image_data, t1, src_width[k] * src_height[k] * sizeof(float) * num_chans);
-	  break;
-	case U8:
-	  memcpy(image_data, t2, src_width[k] * src_height[k] * sizeof(guint8) * num_chans);
-	  break;
-	case U16:
-	  memcpy(image_data, t3, src_width[k] * src_height[k] * sizeof(guint16) * num_chans);
-	  break;
-	case U16_4:
-	  memcpy(image_data, t4, src_width[k] * src_height[k] * sizeof(guint16) * num_chans);
-	  break;
-	default:
-	  break; 
-
-	}
-      _TIFFfree(image);
+      gegl_rect_set (&src_rect[k], 0,0, src_width[k], src_height[k]);
       TIFFClose(tif); 
-      g_free(t1);
-      g_free(t2);
-      g_free(t3);
-      g_free(t4);
 
-      /* give the data to the gegl image buff */
+      /* pass the image data to the GeglImageBuffer */
       gegl_image_buffer_set_data(src_image_buffer[k], image_data);
       g_free(image_data);
 
-      /* create the display window */
-      create_preview(&src_window[k], &src_preview[k], src_width[k], src_height[k], 
-                    (k==0)?"src1":"src2");
-      display_image(src_window[k], src_preview[k], src_image_buffer[k], src_rect[k]);
+
+      /* If srcs should be unpremultiplied before any ops are called,
+	 you can do that here */
+#if 0 
+      if (has_alpha)
+	unpremultiply_buffer(src_image_buffer[k], &src_rect[k]);
+#endif 
     } 
-     
+
+  /* Test some of the GeglOps */  
   test_composite_ops (src_image_buffer, src_width, src_height, src_rect);
   /*test_point_ops (src_image_buffer, src_width, src_height, src_rect);*/ 
+
+  /* display the sources ie src1 and src2 */
+  for (k = 0; k < 2; k++)
+    {
+
+      /* if unpremultiplied and should be premultiplied for display,
+         you can do that here. */
+#if 0 
+      has_alpha = gegl_color_model_has_alpha (src_color_model[k]);
+      if (has_alpha)
+	premultiply_buffer(src_image_buffer[k], &src_rect[k]);
+#endif 
+
+      create_preview(&src_window[k], &src_preview[k], 
+	             src_width[k], src_height[k], 
+                     (k==0)?"src1":"src2");
+      display_image(src_window[k], src_preview[k], 
+	            src_image_buffer[k], src_rect[k],
+	            data_type);
+    }  
 
   for (k = 0; k < 2; k++)
     {
       gegl_object_destroy(GEGL_OBJECT(src_image_buffer[k]));
       gegl_object_destroy(GEGL_OBJECT(src_color_model[k]));
     }  
+
   gtk_main();
 
   return 0;

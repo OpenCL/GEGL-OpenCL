@@ -10,18 +10,20 @@ typedef struct _GeglColorModel  GeglColorModel;
 #endif
 
 
-void gegl_rect_set (GeglRect *r,
-		gint x,
-		gint y,
-		guint w,
-		guint h);
+void 
+gegl_rect_set (GeglRect *r,
+	       gint x,
+	       gint y,
+	       guint w,
+	       guint h);
 
-void gegl_rect_copy (GeglRect *to,
-		     GeglRect *from);
+void 
+gegl_rect_copy (GeglRect *to,
+	        GeglRect *from);
 
 GeglColorModel *
-gegl_make_color_model (GeglColorSpace space,
-                       GeglChannelDataType data,
-                       gboolean has_alpha);
+gegl_color_model_factory (GeglColorSpace space,
+                          GeglChannelDataType data,
+                          gboolean has_alpha);
 
 #endif /* __GEGL_UTILS_H__ */

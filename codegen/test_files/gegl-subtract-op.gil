@@ -114,7 +114,7 @@ class Gegl:Subtract:Op from Gegl:Dual:Src:Op {
       {
         GENERIC_IMAGE_BLOCK_BEGIN  
 
-	dest_color = WP_CLAMP(src1_color - src2_color);
+	dest_color = CHANNEL_CLAMP((SignedPromote)src1_color - src2_color);
 
 	if (dest_has_alpha)
  	  {

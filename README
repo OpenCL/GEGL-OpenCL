@@ -4,7 +4,7 @@ http://www.mindspring.com/~calvinw/geglClasses.html
 http://www.mindspring.com/~calvinw/genericChannelData.html
 http://www.mindspring.com/~calvinw/genericImageLanguage.html
 
-If possible, you should use Gob 0.92.3 (in gnome cvs or from
+If possible, you should use Gob 0.93.1 (in gnome cvs or from
 http://ftp.5z.com/pub/gob/) or later with gegl. Earlier
 versions of Gob may not work as well.
 
@@ -53,15 +53,22 @@ There is some support for remaking generated .c and .h files
 automatically.  Look in gegl/gegl/Makefile.am for rules at the
 bottom.
 
->make clean    removes *.o's but not .h's or .c's or .gobs
->make gobclean removes generated .c and .h files, leaves .gobs
->make gobs     builds all generated .c and .h files from .gobs
+>make clean   
 
-Dependencies more or less work so if you edit a .gob file, the
-make will pick up that depend and rerun gob for you before
-compiling, but the very first build seems to have trouble
-sometimes. (.deps files problem somehow). Just cd to the gegl dir
-and do a make gobs for the first time. 
+removes *.o's but not .h's or .c's or any .gobs
+
+>make gobclean 
+
+removes gob generated .c and .h files, leaves all .gobs, and all .gils.
+
+>make gilclean 
+
+removes gob generated .c and .h files, gil generated .gobs, leaves .gils
+and non-gil generated .gobs.
+               
+Dependencies more or less work so if you edit a .gil or .gob file, the
+make will pick up that depend and rerun gob or codegen for you before
+compiling
 
 The testgegl program just creates some operators and runs them.
 There is a PrintOp for debugging. See testgegl.c for details.
@@ -69,5 +76,18 @@ There is a PrintOp for debugging. See testgegl.c for details.
 The testgeglfile program has code for reading tiffs and
 displaying images in a gtk window. You can use this for testing
 op classes as well. 
+
+The arguments for testgeglfile are:
+
+>testgeglfile A.tiff B.tiff [data_type]
+
+where data type is one of float,u8,u16,u16_4k.
+float is the default, and this is the default data type
+for gegl at present. 
+
+To use the other data types you have to change the Makefile.am
+to run codegen with another data type. This will all be automated
+and change once the codegen preprocessor is in place. See the 
+docs. 
 
 calvinw@mindspring.com

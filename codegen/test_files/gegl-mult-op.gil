@@ -115,7 +115,7 @@ class Gegl:Mult:Op from Gegl:Dual:Src:Op {
       {
         GENERIC_IMAGE_BLOCK_BEGIN  
 
-	dest_color = (Promote) src1_color * src2_color;
+	dest_color = src1_color * src2_color;
 
 	if (dest_has_alpha)
 	  {

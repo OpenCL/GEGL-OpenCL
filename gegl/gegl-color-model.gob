@@ -15,7 +15,6 @@ typedef struct _GeglColor GeglColor;
 class Gegl:Color:Model from Gegl:Object {
 
   private GeglColorSpace  colorspace;       /*RGB, GRAY, CMYK, etc*/
- 
   private GeglChannelDataType data_type;    /*FLOAT, U8, U16, etc*/
 
   private gint       bytes_per_channel;
@@ -24,7 +23,7 @@ class Gegl:Color:Model from Gegl:Object {
   private gint       num_colors;       /* number of color channels */
   private gboolean   has_alpha;        /* is there an alpha   */ 
   private gint       alpha_channel;    /* alpha channel index */
-  private gboolean   premultiplied;    /* model represents premultiplied*/
+  private gboolean   is_premultiplied; /* model represents premultiplied*/
 
   private gboolean   is_additive;      /* bigger is brighter  */
   private gboolean   is_subtractive;   /* bigger is darker    */
@@ -37,7 +36,7 @@ class Gegl:Color:Model from Gegl:Object {
 
   protected 
   gboolean 
-  constructor(self, gboolean has_alpha, gboolean is_premult)
+  constructor(self, gboolean has_alpha)
   {
     if (GEGL_OBJECT(self)->constructed) 
        return FALSE;
@@ -54,7 +53,7 @@ class Gegl:Color:Model from Gegl:Object {
     self->_priv->num_colors = -1;
     self->_priv->has_alpha = has_alpha;
     self->_priv->alpha_channel = -1;
-    self->_priv->premultiplied = is_premult; 
+    self->_priv->is_premultiplied = FALSE; 
 
     self->_priv->is_additive = FALSE;
     self->_priv->is_subtractive = FALSE;
@@ -111,43 +110,74 @@ class Gegl:Color:Model from Gegl:Object {
   public 
   gboolean        
   is_premultiplied(self) 
-  { return self->_priv->premultiplied; }
+  { return self->_priv->is_premultiplied; }
+
+  public 
+  void
+  set_is_premultiplied(self, 
+                       gboolean is_premultiplied) 
+  { self->_priv->is_premultiplied = is_premultiplied ; }
 
   virtual 
   void 
-  set_color (self, GeglColor *c, 
+  set_color (self, 
+             GeglColor *c, 
              GeglColorConstant constant);
 
   virtual
   void
-  convert_to_xyz (self, gfloat **dest_data, guchar **src_data, gint width);
+  convert_to_xyz (self, 
+                  gfloat **dest_data, 
+		  guchar **src_data, 
+		  gint width);
 
   virtual
   void
-  convert_from_xyz (self, guchar **dest_data, gfloat **src_data, gint width);
+  convert_from_xyz (self, 
+                    guchar **dest_data, 
+		    gfloat **src_data, 
+		    gint width);
 
   virtual
   void
-  convert_to_float (self, guchar **dest_data, guchar **src_data, gint width);
+  convert_to_float (self, 
+                    guchar **dest_data, 
+		    guchar **src_data, 
+		    gint width);
   
   virtual
   void
-  convert_to_u8 (self, guchar **dest_data, guchar **src_data, gint width);
+  convert_to_u8 (self, 
+                 guchar **dest_data, 
+		 guchar **src_data, 
+		 gint width);
 
   virtual
   void
-  convert_to_u16 (self, guchar **dest_data, guchar **src_data, gint width);
+  convert_to_u16 (self, 
+                  guchar **dest_data, 
+		  guchar **src_data, 
+		  gint width);
 
   virtual
   void
-  convert_to_u16_4 (self, guchar **dest_data, guchar **src_data, gint width);
+  convert_to_u16_4 (self, 
+                    guchar **dest_data, 
+		    guchar **src_data, 
+		    gint width);
   
   virtual
   void
-  convert_to_gray (self, guchar **dest_data, guchar **src_data, gint width);
+  convert_to_gray (self, 
+                   guchar **dest_data, 
+		   guchar **src_data, 
+		   gint width);
   
   virtual
   void
-  convert_to_rgb (self, guchar **dest_data, guchar **src_data, gint width);
+  convert_to_rgb (self, 
+                  guchar **dest_data, 
+		  guchar **src_data, 
+		  gint width);
 
 }

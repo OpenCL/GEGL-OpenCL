@@ -116,7 +116,7 @@ class Gegl:Color:Convert:To:Rgb:U8:Op from Gegl:Color:Convert:Op {
           
           
           /* This allocates a u8 color model with same color space as src*/
-         self->_priv->src_u8_cm = gegl_make_color_model (
+         self->_priv->src_u8_cm = gegl_color_model_factory (
                                             src_color_space, 
                                             U8,
                                             src_has_alpha);

@@ -13,13 +13,12 @@ class Gegl:Color:Model:Gray:U16 from Gegl:Color:Model:Gray {
 
   public
   GeglColorModelGrayU16 *       
-  new(gboolean has_alpha, 
-      gboolean is_premult)
+  new(gboolean has_alpha)
   {
     GeglColorModelGrayU16 * self = GEGL_COLOR_MODEL_GRAY_U16(GET_NEW);
   
     /*Call the constructor */
-    if (!constructor(self, has_alpha, is_premult))
+    if (!constructor(self, has_alpha))
       return NULL;
     
     /*Okay its constructed*/
@@ -31,8 +30,7 @@ class Gegl:Color:Model:Gray:U16 from Gegl:Color:Model:Gray {
   protected
   gboolean 
   constructor(self, 
-              gboolean has_alpha, 
-              gboolean is_premult)
+              gboolean has_alpha)
   {
     GeglColorModelPrivate *color_modelP = (GeglColorModelPrivate*)
                                   (GEGL_COLOR_MODEL (self)->_priv);
@@ -42,7 +40,7 @@ class Gegl:Color:Model:Gray:U16 from Gegl:Color:Model:Gray {
     
     /* Chain up to superclass*/
     if (!gegl_color_model_gray_constructor (
-         GEGL_COLOR_MODEL_GRAY(self), has_alpha, is_premult))
+         GEGL_COLOR_MODEL_GRAY(self), has_alpha))
         return FALSE;
 
     color_modelP->data_type = U16;

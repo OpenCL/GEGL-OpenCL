@@ -117,7 +117,7 @@ class Gegl:Color:Convert:To:Gray:U16:Op from Gegl:Color:Convert:Op {
           
           
           /* This allocates a u16 color model with same color space as src*/
-         self->_priv->src_u16_cm = gegl_make_color_model (
+         self->_priv->src_u16_cm = gegl_color_model_factory (
                                             src_color_space, 
                                             U16,
                                             src_has_alpha);

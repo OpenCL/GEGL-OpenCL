@@ -32,7 +32,7 @@ main (int argc, char *argv[])
   {
 
 	GeglColorModel *cm = GEGL_COLOR_MODEL(
-				gegl_color_model_rgb_float_new(FALSE,FALSE));
+				gegl_color_model_rgb_float_new(FALSE));
 	GeglImageBuffer *image_buffer = gegl_image_buffer_new(cm,5,5);
 
         /* Fill the whole 5 x 5 float image with RED */
@@ -115,11 +115,11 @@ main (int argc, char *argv[])
   {
 
 	GeglColorModel *dest_cm = GEGL_COLOR_MODEL(
-				gegl_color_model_rgb_float_new(FALSE,FALSE));
+				gegl_color_model_rgb_float_new(FALSE));
 	GeglImageBuffer *dest = gegl_image_buffer_new(dest_cm,5,5);
 
 	GeglColorModel *src_cm = GEGL_COLOR_MODEL(
-				gegl_color_model_rgb_float_new(FALSE,FALSE));
+				gegl_color_model_rgb_float_new(FALSE));
 	GeglImageBuffer *src = gegl_image_buffer_new(src_cm,5,5);
 
         /* Fill the whole 5 x 5 src image with RED */
@@ -197,7 +197,7 @@ main (int argc, char *argv[])
 #if  0      /*This uses the GeglDrawable class */ 
   {
 
-	GeglColorModel *cm = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(FALSE,FALSE));
+	GeglColorModel *cm = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(FALSE));
 	GeglDrawable *d = GEGL_DRAWABLE(gegl_drawable_new(cm,"myDrawable",5,5));
 	GeglGraphicsState *state = gegl_drawable_get_graphics_state (d);
 	GeglRect r;
@@ -233,10 +233,10 @@ main (int argc, char *argv[])
 #if 0  /*This illustrates a color conversion from rgb float to gray float*/ 
   {
     GeglColorModel *from_cm = GEGL_COLOR_MODEL(
-                              gegl_color_model_rgb_float_new(FALSE,FALSE));
+                              gegl_color_model_rgb_float_new(FALSE));
     GeglImageBuffer *from_image = gegl_image_buffer_new(from_cm,2,2);
     GeglColorModel *to_cm = GEGL_COLOR_MODEL(
-                            gegl_color_model_gray_float_new(FALSE,FALSE));
+                            gegl_color_model_gray_float_new(FALSE));
     GeglImageBuffer *to_image = gegl_image_buffer_new(to_cm,2,2);
 
 
@@ -308,10 +308,10 @@ main (int argc, char *argv[])
 #if 0  /*This illustrates a color conversion using XYZ connection space */ 
   {
     GeglColorModel *from_cm = GEGL_COLOR_MODEL(
-                              gegl_color_model_rgb_float_new(FALSE,FALSE));
+                              gegl_color_model_rgb_float_new(FALSE));
     GeglImageBuffer *from_image = gegl_image_buffer_new(from_cm,2,2);
     GeglColorModel *to_cm = GEGL_COLOR_MODEL(
-                            gegl_color_model_gray_float_new(FALSE,FALSE));
+                            gegl_color_model_gray_float_new(FALSE));
     GeglImageBuffer *to_image = gegl_image_buffer_new(to_cm,2,2);
 
     GeglRect to_rect;

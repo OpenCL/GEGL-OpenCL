@@ -135,10 +135,20 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN
 
-            dest_color = src2_color;
-            dest_alpha = WP;
+            alpha = src2_alpha;
+            dest_alpha = src2_alpha;
+
+	    if (alpha)
+	      {
+		dest_color = src2_color;
+	      }
+	    else
+	      {
+		dest_color = src1_color;
+	      }
 
             dX(dest,1);
+	    dX(src1,1);
             dX(src2,1); 
 
             GENERIC_IMAGE_BLOCK_END
@@ -157,7 +167,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
             if (alpha)
               {
-                dest_color = (a * src1_color  + b * src2_color)/alpha;
+                dest_color = (a * src1_color + b * src2_color)/alpha;
               }
             else 
               {
@@ -230,7 +240,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             b = src2_alpha;
             alpha = src1_alpha;
 
-            dest_a = alpha;
+            dest_alpha = alpha;
 
             if (alpha)
               {
@@ -255,17 +265,17 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
             a = (WP - src2_alpha) * src1_alpha;
             b = (WP - src1_alpha) * src2_alpha;
-            alpha = (Promote) a + b;
+            alpha = a + b;
 
             dest_alpha = alpha;
 
             if (alpha)
               {
-                dest_color = (Promote) (a * src1_color + b * src2_color)/alpha;
+                dest_color = (a * src1_color + b * src2_color) / alpha;
               }
             else 
               {
-               dest_color = src1_color;
+               dest_color = src1_color; 
               }
 
 	    dX(dest,1);
@@ -291,7 +301,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
     Pixel dest(color);
     Pixel src1(color);
     Pixel src2(color,alpha);
-    Channel a, b, alpha;
+    Channel a, b;
     GENERIC_IMAGE_DECL_END
     gint width = point_opP->scanline_width;
 
@@ -314,10 +324,11 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN 
 
-       	    dest_color = src2_color;
+	    dest_color = src2_color * src2_alpha;
 
-	    dX(dest,1);
-	    dX(src2,1); 
+            dX(dest,1);
+	    dX(src1,1);
+            dX(src2,1); 
 
             GENERIC_IMAGE_BLOCK_END 
 	  }
@@ -329,6 +340,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
             a = (WP - src2_alpha);
             b = src2_alpha;
+
             dest_color = (a * src1_color + b * src2_color);
 
 	    dX(dest,1);
@@ -343,15 +355,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN 
 
-            alpha = src2_alpha;
-            if (alpha)
-              {
-                dest_color = src2_color;
-              }
-            else 
-              {
-                dest_color = src1_color;
-              }
+	    dest_color = src2_color * src2_alpha;
 
 	    dX(dest,1);
 	    dX(src1,1);
@@ -365,10 +369,11 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN 
 
-            dest_color = src1_color;
+            dest_color = ZERO;
 
 	    dX(dest,1);
 	    dX(src1,1);
+	    dX(src2,1);
 
             GENERIC_IMAGE_BLOCK_END 
           }
@@ -380,7 +385,8 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
             a = WP - src2_alpha;
             b = src2_alpha;
-            dest_color = a * src1_color + b * src2_color;
+
+            dest_color = (a * src1_color + b * src2_color);
 
 	    dX(dest,1);
 	    dX(src1,1);
@@ -394,7 +400,9 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN 
 
-            dest_color = src1_color;
+            a = (WP - src2_alpha);
+
+            dest_color = a * src1_color;
 
 	    dX(dest,1);
 	    dX(src1,1);
@@ -419,7 +427,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
     Pixel dest(color,alpha);
     Pixel src1(color,alpha);
     Pixel src2(color);
-    Channel b, alpha;
+    Channel alpha;
     GENERIC_IMAGE_DECL_END 
     gint width = point_opP->scanline_width;
 
@@ -446,6 +454,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             dest_alpha = WP;
 
 	    dX(dest,1);
+	    dX(src1,1);
 	    dX(src2,1); 
 
             GENERIC_IMAGE_BLOCK_END 
@@ -460,6 +469,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             dest_alpha = WP;
 
 	    dX(dest,1);
+	    dX(src1,1);
 	    dX(src2,1); 
 
             GENERIC_IMAGE_BLOCK_END 
@@ -472,6 +482,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
             alpha = src1_alpha;
             dest_alpha = alpha;
+
             if (alpha)
               {
                 dest_color = src2_color;
@@ -493,15 +504,16 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN 
 
-            alpha = (WP - src1_alpha);
+            alpha = WP - src1_alpha;
             dest_alpha = alpha;
+
             if (alpha)
               {
                 dest_color = src2_color;
               }
             else 
               {
-               dest_color = src1_color;
+                dest_color = src1_color;
               }
 
        	    dX(dest,1);
@@ -518,6 +530,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
             alpha = src1_alpha;
             dest_alpha = alpha;
+
 	    if (alpha)
               {
                 dest_color = src2_color;
@@ -539,9 +552,9 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN 
 
-            b = (WP - src1_alpha);
-            alpha = b;
-            dest_a = alpha;
+            alpha = WP - src1_alpha;
+            dest_alpha = alpha;
+
             if (alpha)
               {
                 dest_color = src2_color;
@@ -600,9 +613,10 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN 
 
-	    dest = src2;
+	    dest_color = src2_color;
 
 	    dX(dest,1);
+	    dX(src1,1);
 	    dX(src2,1); 
 
             GENERIC_IMAGE_BLOCK_END 
@@ -614,10 +628,11 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN 
 
-            dest = src1;
+            dest_color = ZERO;
 
 	    dX(dest,1);
 	    dX(src1,1); 
+	    dX(src2,1);
 
             GENERIC_IMAGE_BLOCK_END 
           }

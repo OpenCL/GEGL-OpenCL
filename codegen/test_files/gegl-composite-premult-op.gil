@@ -150,7 +150,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 	    GENERIC_IMAGE_BLOCK_BEGIN
 
 	    a = WP - src2_alpha;
-	    dest = (Promote) a * src1 + src2;
+	    dest = a * src1 + src2;
 
 	    dX(dest,1);
 	    dX(src1,1);
@@ -165,7 +165,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 	    GENERIC_IMAGE_BLOCK_BEGIN
 
 	    b = src1_alpha;
-	    dest = (Promote) b * src2;
+	    dest = b * src2;
 
 	    dX(dest,1);
 	    dX(src1,1);
@@ -180,7 +180,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 	    GENERIC_IMAGE_BLOCK_BEGIN
 
 	    b = WP - src1_alpha;
-	    dest = (Promote) b * src2;
+	    dest = b * src2;
 
 	    dX(dest,1);
 	    dX(src1,1);
@@ -196,7 +196,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 
 	    a = WP - src2_alpha; 
 	    b = src1_alpha; 
-	    dest_color = (Promote) a * src1_color + b * src2_color;
+	    dest_color = a * src1_color + b * src2_color;
 	    dest_alpha = b;
 
 	    dX(dest,1);
@@ -213,7 +213,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 
 	    a = WP - src2_alpha;
 	    b = WP - src1_alpha; 
-	    dest = (Promote) a * src1 + b * src2;
+	    dest = a * src1 + b * src2;
 
 	    dX(dest,1);
 	    dX(src1,1);
@@ -276,7 +276,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 	    GENERIC_IMAGE_BLOCK_BEGIN
 
 	    a = WP - src2_a;
-	    dest_color = (Promote) a * src1_color + src2_color;
+	    dest_color = a * src1_color + src2_color;
 
 	    dX(dest,1);
 	    dX(src1,1);
@@ -316,7 +316,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 	    GENERIC_IMAGE_BLOCK_BEGIN
 
             a = WP - src2_alpha; 
-            dest_color = (Promote) a * src1_color + src2_color;
+            dest_color = a * src1_color + src2_color;
 
 	    dX(dest,1);
 	    dX(src1,1);
@@ -331,7 +331,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 	    GENERIC_IMAGE_BLOCK_BEGIN
 
             a = WP - src2_a; 
-            dest_color = (Promote) a * src1_color;
+            dest_color = a * src1_color;
 
             dX(dest,1);
 	    dX(src1,1);
@@ -408,7 +408,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 	    GENERIC_IMAGE_BLOCK_BEGIN
 
             b = src1_alpha;
-            dest_color = (Promote) b * src2_color;
+            dest_color = b * src2_color;
             dest_alpha = b;  
 
             dX(dest,1);
@@ -424,7 +424,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 	    GENERIC_IMAGE_BLOCK_BEGIN
 
             b = WP - src1_alpha;
-            dest_color = (Promote) b * src2_color;
+            dest_color = b * src2_color;
             dest_alpha = b;  
 
 	    dX(dest,1);
@@ -440,8 +440,8 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 	    GENERIC_IMAGE_BLOCK_BEGIN
 
             b = src1_alpha; 
-            dest_color =  (Promote) b * src2_color;
-            dest_alpha =  b;
+            dest_color = b * src2_color;
+            dest_alpha = b;
 
 	    dX(dest,1);
 	    dX(src1,1);
@@ -456,7 +456,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 	    GENERIC_IMAGE_BLOCK_BEGIN
 
             b = WP - src1_alpha;
-            dest_color = (Promote) b * src2_color;
+            dest_color = b * src2_color;
             dest_alpha = b;
 
 	    dX(dest,1);
