@@ -2,8 +2,6 @@
 #define __GEGL_IMAGE_OP_H__
 
 #include "gegl-filter.h"
-#include "gegl-color-model.h"
-#include "gegl-image.h"
 
 #ifdef __cplusplus
 extern "C" {

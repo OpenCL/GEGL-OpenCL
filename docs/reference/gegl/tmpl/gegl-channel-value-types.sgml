@@ -42,6 +42,14 @@ gegl-channel-value-types
 @value: 
 
 
+<!-- ##### STRUCT ChannelValueInfo ##### -->
+<para>
+
+</para>
+
+@channel_space_name: 
+@bits_per_channel: 
+
 <!-- ##### FUNCTION gegl_channel_value_types_init ##### -->
 <para>
 

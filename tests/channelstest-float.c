@@ -43,11 +43,15 @@ test_channels_apply(Test *test)
 static void
 channels_test_setup(Test *test)
 {
-  source = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+                                  "rgb-float", R0, G0, B0, 
+                                  NULL);
+  source = g_object_new(GEGL_TYPE_FILL, 
                         "width", IMAGE_OP_WIDTH, 
                         "height", IMAGE_OP_HEIGHT, 
-                        "pixel-rgb-float", R0, G0, B0, 
+                        "fill-color", color, 
                         NULL); 
+  g_object_unref(color);
 }
 
 static void

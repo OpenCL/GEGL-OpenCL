@@ -5,6 +5,7 @@
 #include "gegl-value-types.h"
 #include "gegl-param-specs.h"
 #include "gegl-utils.h"
+#include <string.h>
 
 enum
 {
@@ -19,7 +20,7 @@ static void init (GeglFade * self, GeglFadeClass * klass);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static GeglScanlineFunc get_scanline_func(GeglUnary * unary, GeglColorSpaceType space, GeglChannelSpaceType type);
+static GeglScanlineFunc get_scanline_function(GeglUnary * unary, GeglColorModel *cm);
 
 static void fade_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 static void fade_uint8 (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
@@ -63,7 +64,7 @@ class_init (GeglFadeClass * klass)
 
   parent_class = g_type_class_peek_parent(klass);
 
-  unary_class->get_scanline_func = get_scanline_func;
+  unary_class->get_scanline_function = get_scanline_function;
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
@@ -125,21 +126,22 @@ set_property (GObject      *gobject,
   }
 }
 
-/* scanline_funcs[data type] */
-static GeglScanlineFunc scanline_funcs[] = 
-{ 
-  NULL, 
-  fade_uint8, 
-  fade_float, 
-  NULL 
-};
-
 static GeglScanlineFunc
-get_scanline_func(GeglUnary * unary,
-                  GeglColorSpaceType space,
-                  GeglChannelSpaceType type)
+get_scanline_function(GeglUnary * unary,
+                      GeglColorModel *cm)
 {
-  return scanline_funcs[type];
+  gchar *name = gegl_color_model_name(cm);
+
+  if(!strcmp(name, "rgb-float"))
+    return fade_float;
+  else if(!strcmp(name, "rgba-float"))
+    return fade_float;
+  else if(!strcmp(name, "rgb-uint8"))
+    return fade_uint8;
+  else if(!strcmp(name, "rgba-uint8"))
+    return fade_uint8;
+
+  return NULL;
 }
 
 static void                                                            

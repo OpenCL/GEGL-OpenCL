@@ -24,9 +24,13 @@ test_haverect_color_default_size(Test *t)
   GeglRect have_rect;
   GeglData *output_data;
 
-  GeglOp * op = g_object_new(GEGL_TYPE_COLOR, 
-                             "pixel-rgb-float", R0, G0, B0, 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+                                  "rgb-float", R0, G0, B0, 
+                                  NULL);
+  GeglOp * op = g_object_new(GEGL_TYPE_FILL, 
+                             "fill-color", color,
                              NULL); 
+  g_object_unref(color);
 
   gegl_image_op_interface_compute_have_rect(GEGL_IMAGE_OP_INTERFACE(op));
 
@@ -44,11 +48,15 @@ test_haverect_color(Test *t)
   GeglRect have_rect;
   GeglData *output_data;
 
-  GeglOp * op = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+                                  "rgb-float", R0, G0, B0, 
+                                  NULL);
+  GeglOp * op = g_object_new(GEGL_TYPE_FILL, 
                              "width", IMAGE_OP_WIDTH, 
                              "height", IMAGE_OP_HEIGHT, 
-                             "pixel-rgb-float", R0, G0, B0, 
+                             "fill-color", color,
                              NULL); 
+  g_object_unref(color);
 
   gegl_image_op_interface_compute_have_rect(GEGL_IMAGE_OP_INTERFACE(op));
 

@@ -143,22 +143,6 @@ test_node_g_object_get(Test *test)
     g_object_get(node0, "num_outputs", &num_outputs, NULL);
     ct_test(test, 1 == num_outputs);
   }
-
-#if 0
-  {
-    GeglNode * source0 = NULL; 
-    GeglNode * source1 = NULL; 
-
-    g_object_get(node2, "source0", &source0, NULL);
-    ct_test(test, source0 == node0);
-
-    g_object_get(node2, "source1", &source1, NULL);
-    ct_test(test, source1 == node1);
-
-    g_object_unref(source0);
-    g_object_unref(source1);
-  }
-#endif
 }
 
 
@@ -374,7 +358,6 @@ test_node_unlink(Test *test)
     g_object_unref(n0); 
   }
 
-#if 1 
   {
     /*
        n2
@@ -416,7 +399,6 @@ test_node_unlink(Test *test)
     g_object_unref(n0); 
     g_object_unref(n2);
   }
-#endif
 }
 
 static void

@@ -32,12 +32,7 @@ B + B0
 
 @unary_class: 
 
-<!-- ##### ARG GeglAdd:constant-rgb-float ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglAdd:constant-rgb-uint8 ##### -->
+<!-- ##### ARG GeglAdd:constant ##### -->
 <para>
 
 </para>

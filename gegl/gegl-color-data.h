@@ -3,7 +3,7 @@
 
 
 #include "gegl-data.h"
-#include "gegl-color-model.h"
+#include "gegl-color-space.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,7 +22,7 @@ struct _GeglColorData
     GeglData data;
 
     /*< private >*/
-    GeglColorModel *color_model;
+    GeglColorSpace *color_space;
 };
 
 typedef struct _GeglColorDataClass GeglColorDataClass;
@@ -32,9 +32,12 @@ struct _GeglColorDataClass
 };
 
 GType           gegl_color_data_get_type              (void);
-GeglColorModel* gegl_color_data_get_color_model       (GeglColorData * self);
-void            gegl_color_data_set_color_model       (GeglColorData * self,
-                                                       GeglColorModel *color_model);
+
+GeglColorSpace* gegl_color_data_get_color_space       (GeglColorData * self);
+void            gegl_color_data_set_color_space       (GeglColorData * self,
+                                                       GeglColorSpace *color_space);
+gfloat         *gegl_color_data_get_components        (GeglColorData *self,
+                                                       gint *num_components);
 
 #ifdef __cplusplus
 }

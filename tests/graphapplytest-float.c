@@ -13,7 +13,7 @@ test_graph_apply(Test *t)
   /* 
      graph
        | 
-     color 
+     fill 
 
     --------------
     |(.05,.1,.15)|
@@ -23,9 +23,13 @@ test_graph_apply(Test *t)
 
   */ 
 
-  GeglOp * color = g_object_new (GEGL_TYPE_COLOR, 
-                                 "pixel-rgb-float", .1, .2, .3, 
-                                 NULL); 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+                                  "rgb-float", .1, .2, .3, 
+                                  NULL);
+
+  GeglOp * fill = g_object_new (GEGL_TYPE_FILL, 
+                                "fill-color", color,
+                                NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
                                 "multiplier", .5,
@@ -33,8 +37,9 @@ test_graph_apply(Test *t)
 
   GeglOp * graph = g_object_new (GEGL_TYPE_GRAPH,
                                  "root", fade, 
-                                 "input", 0, color,
+                                 "input", 0, fill,
                                  NULL);
+  g_object_unref(color);
 
   gegl_op_apply(graph); 
 
@@ -43,7 +48,7 @@ test_graph_apply(Test *t)
 
   g_object_unref(graph);
   g_object_unref(fade);
-  g_object_unref(color);
+  g_object_unref(fill);
 }
 
 static void
@@ -55,11 +60,11 @@ test_graph_apply_with_source(Test *t)
    | fade  |  <--graph
    ---------
        |
-     color 
+     fill 
       
      graph
        | 
-     color 
+     fill 
 
     --------------
     |(.05,.1,.15)|
@@ -69,8 +74,12 @@ test_graph_apply_with_source(Test *t)
 
   */ 
 
-  GeglOp * color = g_object_new (GEGL_TYPE_COLOR, 
-                                 "pixel-rgb-float", .1, .2, .3, 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+                                  "rgb-float", .1, .2, .3, 
+                                  NULL);
+
+  GeglOp * fill = g_object_new (GEGL_TYPE_FILL, 
+                                "fill-color", color,
                                  NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
@@ -79,8 +88,10 @@ test_graph_apply_with_source(Test *t)
 
   GeglOp * graph = g_object_new (GEGL_TYPE_GRAPH,
                                  "root", fade, 
-                                 "input", 0, color,
+                                 "input", 0, fill,
                                  NULL);
+
+  g_object_unref(color);
 
   gegl_op_apply(graph); 
 
@@ -89,7 +100,7 @@ test_graph_apply_with_source(Test *t)
 
   g_object_unref(graph);
   g_object_unref(fade);
-  g_object_unref(color);
+  g_object_unref(fill);
 }
 
 static void
@@ -102,14 +113,14 @@ test_graph_apply_with_source_and_output(Test *t)
    | fade1 | <----graph
    ---------
        |
-     color 
+     fill 
 
    
      fade2
        |
      graph
        |
-     color
+     fill
 
     (.025,.05,.075)
           |          
@@ -121,8 +132,12 @@ test_graph_apply_with_source_and_output(Test *t)
 
   */ 
 
-  GeglOp * color = g_object_new (GEGL_TYPE_COLOR, 
-                                 "pixel-rgb-float", .1, .2, .3, 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+                                  "rgb-float", .1, .2, .3, 
+                                  NULL);
+
+  GeglOp * fill = g_object_new (GEGL_TYPE_FILL, 
+                                "fill-color", color,
                                  NULL); 
 
   GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
@@ -131,13 +146,15 @@ test_graph_apply_with_source_and_output(Test *t)
 
   GeglOp * graph = g_object_new (GEGL_TYPE_GRAPH,
                                  "root", fade1, 
-                                 "input", 0, color,
+                                 "input", 0, fill,
                                  NULL);
 
   GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
                                  "source", graph,
                                  "multiplier", .5,
                                  NULL); 
+
+  g_object_unref(color);
 
   gegl_op_apply(fade2); 
 
@@ -146,7 +163,7 @@ test_graph_apply_with_source_and_output(Test *t)
   g_object_unref(fade2);
   g_object_unref(graph);
   g_object_unref(fade1);
-  g_object_unref(color);
+  g_object_unref(fill);
 }
 
 static void
@@ -161,14 +178,14 @@ test_graph_apply_with_2_ops_source_and_output(Test *t)
    | fade1 |
    ---------
        |
-     color 
+     fill 
 
    
      fade3
        |
      graph
        |
-     color 
+     fill 
 
     (.0125,.025,.0375)
           |          
@@ -183,8 +200,12 @@ test_graph_apply_with_2_ops_source_and_output(Test *t)
   */ 
 
 
-  GeglOp * color = g_object_new (GEGL_TYPE_COLOR, 
-                                 "pixel-rgb-float", .1, .2, .3, 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+                                  "rgb-float", .1, .2, .3, 
+                                  NULL);
+
+  GeglOp * fill = g_object_new (GEGL_TYPE_FILL, 
+                                "fill-color", color,
                                  NULL); 
 
   GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
@@ -198,13 +219,15 @@ test_graph_apply_with_2_ops_source_and_output(Test *t)
 
   GeglOp * graph = g_object_new (GEGL_TYPE_GRAPH,
                                  "root", fade2, 
-                                 "input", 0, color,
+                                 "input", 0, fill,
                                  NULL);
 
   GeglOp * fade3 = g_object_new (GEGL_TYPE_FADE,
                                  "source", graph,
                                  "multiplier", .5,
                                  NULL); 
+
+  g_object_unref(color);
 
   gegl_op_apply(fade3); 
 
@@ -214,26 +237,26 @@ test_graph_apply_with_2_ops_source_and_output(Test *t)
   g_object_unref(fade2);
   g_object_unref(graph);
   g_object_unref(fade1);
-  g_object_unref(color);
+  g_object_unref(fill);
 }
 
 static void
-test_graph_apply_add_graph_and_color(Test *t)
+test_graph_apply_add_graph_and_fill(Test *t)
 {
   /*        
              iadd
             /    \ 
            /      \
-      --------   color2 
+      --------   fill2 
      | fade   |   
      |   |    |    
-     | color1 | 
+     | fill1  | 
      ---------  
 
              iadd
             /    \ 
            /      \
-      graph      color2  
+      graph      fill2  
 
 
            (.45,.6,.75)
@@ -247,12 +270,16 @@ test_graph_apply_add_graph_and_color(Test *t)
 
   */ 
 
-  GeglOp * color1 = g_object_new (GEGL_TYPE_COLOR, 
-                                  "pixel-rgb-float", .1, .2, .3, 
-                                  NULL); 
+  GeglColor *color1 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgb-float", .1, .2, .3,
+                                   NULL);
+
+  GeglOp * fill1 = g_object_new (GEGL_TYPE_FILL, 
+                                 "fill-color", color1,
+                                 NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
-                                "source", color1,
+                                "source", fill1,
                                 "multiplier", .5,
                                 NULL); 
 
@@ -260,24 +287,31 @@ test_graph_apply_add_graph_and_color(Test *t)
                                  "root", fade, 
                                  NULL);
 
-  GeglOp * color2 = g_object_new (GEGL_TYPE_COLOR, 
-                                  "pixel-rgb-float", .4, .5, .6, 
-                                  NULL); 
+  GeglColor *color2 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgb-float", .4, .5, .6,
+                                   NULL);
+
+  GeglOp * fill2 = g_object_new (GEGL_TYPE_FILL, 
+                                 "fill-color", color2,
+                                 NULL); 
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD, 
                                 "source-0", graph,
-                                "source-1", color2,
+                                "source-1", fill2,
                                 NULL);  
+
+  g_object_unref(color1);
+  g_object_unref(color2);
 
   gegl_op_apply(iadd); 
 
   ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(iadd), .45, .6, .75));  
 
   g_object_unref(iadd);
-  g_object_unref(color2);
+  g_object_unref(fill2);
   g_object_unref(graph);
   g_object_unref(fade);
-  g_object_unref(color1);
+  g_object_unref(fill1);
 }
 
 static void
@@ -290,7 +324,7 @@ test_graph_apply_add_graph_and_graph(Test *t)
       --------    -------------
      | fade   |  |    iadd1    |
      |   |    |  |   /    \    |  
-     | color1 |  |color2 color3| 
+     | fill1  |  | fill2 fill3 | 
      ---------   --------------
 
              iadd
@@ -310,12 +344,16 @@ test_graph_apply_add_graph_and_graph(Test *t)
 
   */ 
 
-  GeglOp * color1 = g_object_new (GEGL_TYPE_COLOR, 
-                                  "pixel-rgb-float", .1, .2, .3, 
+  GeglColor *color1 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgb-float", .1, .2, .3,
+                                   NULL);
+
+  GeglOp * fill1 = g_object_new (GEGL_TYPE_FILL, 
+                                  "fill-color", color1,
                                   NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
-                                "source", color1,
+                                "source", fill1,
                                 "multiplier", .5,
                                 NULL); 
 
@@ -323,17 +361,25 @@ test_graph_apply_add_graph_and_graph(Test *t)
                                   "root", fade, 
                                   NULL);
 
-  GeglOp * color2 = g_object_new (GEGL_TYPE_COLOR, 
-                                  "pixel-rgb-float", .4, .5, .6, 
-                                  NULL); 
+  GeglColor *color2 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgb-float", .4, .5, .6,
+                                   NULL);
 
-  GeglOp * color3 = g_object_new (GEGL_TYPE_COLOR, 
-                                  "pixel-rgb-float", .7, .8, .9, 
-                                  NULL); 
+  GeglOp * fill2 = g_object_new (GEGL_TYPE_FILL, 
+                                 "fill-color", color2,
+                                 NULL); 
+
+  GeglColor *color3 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgb-float", .7, .8, .9,
+                                   NULL);
+
+  GeglOp * fill3 = g_object_new (GEGL_TYPE_FILL, 
+                                 "fill-color", color3,
+                                 NULL); 
 
   GeglOp * iadd1 = g_object_new (GEGL_TYPE_I_ADD,
-                                 "source-0", color2,
-                                 "source-1", color3,
+                                 "source-0", fill2,
+                                 "source-1", fill3,
                                  NULL); 
 
   GeglOp * graph2 = g_object_new (GEGL_TYPE_GRAPH,
@@ -346,6 +392,10 @@ test_graph_apply_add_graph_and_graph(Test *t)
                                NULL); 
                         
 
+  g_object_unref(color1);
+  g_object_unref(color2);
+  g_object_unref(color3);
+
   gegl_op_apply(iadd); 
 
   ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(iadd), 1.15, 1.4, 1.65));  
@@ -354,10 +404,10 @@ test_graph_apply_add_graph_and_graph(Test *t)
   g_object_unref(graph2);
   g_object_unref(graph1);
   g_object_unref(fade);
-  g_object_unref(color1);
+  g_object_unref(fill1);
   g_object_unref(iadd1);
-  g_object_unref(color2);
-  g_object_unref(color3);
+  g_object_unref(fill2);
+  g_object_unref(fill3);
 }
 
 static void
@@ -372,13 +422,13 @@ test_graph_apply_with_2_sources(Test *t)
         |fade2 fade3| 
         --------------
            |      |
-         color1  color2
+         fill1  fill2
 
              fade1 
                |
              graph  
              /    \ 
-          color1 color2 
+          fill1 fill2 
 
 
           (.125,.175,.225)
@@ -393,13 +443,21 @@ test_graph_apply_with_2_sources(Test *t)
 
   */ 
 
-  GeglOp * color1 = g_object_new (GEGL_TYPE_COLOR, 
-                                  "pixel-rgb-float", .1, .2, .3, 
-                                  NULL); 
+  GeglColor *color1 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgb-float", .1, .2, .3,
+                                   NULL);
 
-  GeglOp * color2 = g_object_new (GEGL_TYPE_COLOR, 
-                                  "pixel-rgb-float", .4, .5, .6, 
-                                  NULL); 
+  GeglOp * fill1 = g_object_new (GEGL_TYPE_FILL, 
+                                 "fill-color", color1,
+                                 NULL); 
+
+  GeglColor *color2 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgb-float", .4, .5, .6,
+                                   NULL);
+
+  GeglOp * fill2 = g_object_new (GEGL_TYPE_FILL, 
+                                 "fill-color", color2,
+                                 NULL); 
 
   GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
                                  "multiplier", .5,
@@ -416,14 +474,17 @@ test_graph_apply_with_2_sources(Test *t)
 
   GeglOp * graph = g_object_new (GEGL_TYPE_GRAPH,
                                  "root", iadd, 
-                                 "input", 0, color1,
-                                 "input", 2, color2,
+                                 "input", 0, fill1,
+                                 "input", 2, fill2,
                                  NULL);
 
   GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
                                  "source", graph,
                                  "multiplier", .5,
                                  NULL); 
+
+  g_object_unref(color1);
+  g_object_unref(color2);
 
   gegl_op_apply(fade1); 
 
@@ -434,8 +495,8 @@ test_graph_apply_with_2_sources(Test *t)
   g_object_unref(fade1);
   g_object_unref(fade2);
   g_object_unref(fade3);
-  g_object_unref(color1);
-  g_object_unref(color2);
+  g_object_unref(fill1);
+  g_object_unref(fill2);
 }
 
 static void
@@ -461,7 +522,7 @@ create_graph_apply_test_float()
   g_assert(ct_addTestFun(t, test_graph_apply_with_source));
   g_assert(ct_addTestFun(t, test_graph_apply_with_source_and_output));
   g_assert(ct_addTestFun(t, test_graph_apply_with_2_ops_source_and_output));
-  g_assert(ct_addTestFun(t, test_graph_apply_add_graph_and_color));
+  g_assert(ct_addTestFun(t, test_graph_apply_add_graph_and_fill));
   g_assert(ct_addTestFun(t, test_graph_apply_add_graph_and_graph));
   g_assert(ct_addTestFun(t, test_graph_apply_with_2_sources));
 #endif

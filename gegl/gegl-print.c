@@ -9,6 +9,7 @@
 #include "gegl-data.h"
 #include "gegl-param-specs.h"
 #include <stdio.h>
+#include <string.h>
 
 #define MAX_PRINTED_CHARS_PER_CHANNEL 20
 
@@ -17,7 +18,7 @@ static void init (GeglPrint * self, GeglPrintClass * klass);
 static void prepare (GeglFilter * filter);
 static void finish (GeglFilter * filter);
 
-static GeglScanlineFunc get_scanline_func(GeglPipe * pipe, GeglColorSpaceType space, GeglChannelSpaceType type);
+static GeglScanlineFunc get_scanline_function(GeglPipe * pipe, GeglColorModel *cm);
 static void print (GeglPrint * self, gchar * format, ...);
 
 static void print_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
@@ -61,12 +62,10 @@ class_init (GeglPrintClass * klass)
 
   parent_class = g_type_class_peek_parent(klass);
 
-  pipe_class->get_scanline_func = get_scanline_func;
+  pipe_class->get_scanline_function = get_scanline_function;
 
   filter_class->prepare = prepare;
   filter_class->finish = finish;
-
-  return;
 }
 
 static void 
@@ -154,22 +153,20 @@ print (GeglPrint * self,
 */
 }
 
-/* scanline_funcs[data type] */
-static GeglScanlineFunc scanline_funcs[] = 
-{ 
-  NULL, 
-  NULL, 
-  print_float, 
-  NULL 
-};
-
 static GeglScanlineFunc
-get_scanline_func(GeglPipe *pipe,
-                  GeglColorSpaceType space,
-                  GeglChannelSpaceType type)
+get_scanline_function(GeglPipe * pipe,
+                      GeglColorModel *cm)
 {
-  return scanline_funcs[type];
+  gchar *name = gegl_color_model_name(cm);
+
+  if(!strcmp(name, "rgb-float"))
+    return print_float;
+  else if(!strcmp(name, "rgba-float"))
+    return print_float;
+
+  return NULL;
 }
+
 
 static void 
 print_float (GeglFilter * filter, 

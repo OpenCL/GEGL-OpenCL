@@ -2,7 +2,6 @@
 #include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
 #include "gegl-color-space.h"
-#include "gegl-channel-space.h"
 #include "gegl-image.h"
 #include "gegl-image-iterator.h"
 #include "gegl-image-data.h"
@@ -171,24 +170,19 @@ prepare (GeglFilter * filter)
   GeglPipe *self = GEGL_PIPE(filter);
   GValue *dest_value = gegl_op_get_output_data_value(GEGL_OP(filter), "dest");
   GValue *src_value = gegl_op_get_input_data_value(GEGL_OP(filter), "source");
-
   GeglImage *src = (GeglImage*)g_value_get_object (src_value);
   GeglColorModel * src_cm = gegl_image_get_color_model (src);
-  GeglColorSpace * src_color_space = gegl_color_model_color_space (src_cm);
-  GeglChannelSpace * src_channel_space = gegl_color_model_channel_space (src_cm);
-  GeglChannelSpaceType channel_type = gegl_channel_space_channel_space_type (src_channel_space);
-  GeglColorSpaceType color_type = gegl_color_space_color_space_type (src_color_space);
-
   GeglPipeClass *klass = GEGL_PIPE_GET_CLASS(self);
 
   /* copy the src value to the dest value */
   g_value_set_object(dest_value, src);
 
   /* Get the appropriate scanline func from subclass */
-  if(klass->get_scanline_func)
-    self->scanline_processor->func = (*klass->get_scanline_func)(self, 
-                                                                 color_type, 
-                                                                 channel_type);
+  if(klass->get_scanline_function)
+    self->scanline_processor->func = 
+        klass->get_scanline_function(self, src_cm);
+  else
+    g_print("Cant find scanline func\n");
 }
 
 static void 

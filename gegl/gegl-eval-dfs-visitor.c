@@ -94,14 +94,14 @@ static void
 validate_color_model(GeglData *input_data, 
                      GeglData *collected_input_data)
 {
-  if(GEGL_IS_COLOR_DATA(input_data))
+  if(GEGL_IS_IMAGE_DATA(input_data))
     {
       if(collected_input_data) 
         {
            GeglColorModel *color_model;
-           g_return_if_fail(GEGL_IS_COLOR_DATA(collected_input_data));
-           color_model = gegl_color_data_get_color_model(GEGL_COLOR_DATA(collected_input_data));
-           gegl_color_data_set_color_model(GEGL_COLOR_DATA(input_data), color_model);
+           g_return_if_fail(GEGL_IS_IMAGE_DATA(collected_input_data));
+           color_model = gegl_image_data_get_color_model(GEGL_IMAGE_DATA(collected_input_data));
+           gegl_image_data_set_color_model(GEGL_IMAGE_DATA(input_data), color_model);
         }
     }
 }

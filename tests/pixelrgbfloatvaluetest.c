@@ -220,15 +220,6 @@ test_pixel_rgb_float_param_value_set_default(Test *test)
 }
 
 static void
-test_pixel_rgb_float_collect_values(Test *test)
-{
-  GeglOp * op = g_object_new(GEGL_TYPE_MOCK_PROPERTIES_FILTER,
-                             "pixel-rgb-float", .1, .2, .3,
-                             NULL);
-  g_object_unref(op);
-}
-
-static void
 test_pixel_rgb_float_pixel_get_color_model(Test *test)
 {
   GValue *value =  g_new0(GValue, 1); 
@@ -262,6 +253,17 @@ test_pixel_rgb_float_pixel_get_data(Test *test)
 }
 
 static void
+test_pixel_rgb_float_pixel_get_pixel_value_info(Test *test)
+{
+  PixelValueInfo *pixel_value_info = g_type_get_qdata(GEGL_TYPE_PIXEL_RGB_FLOAT,
+                                                      g_quark_from_string("pixel_value_info")); 
+
+  ct_test(test, 0 == strcmp("GeglChannelFloat", pixel_value_info->channel_type_name));
+  ct_test(test, 0 == strcmp("rgb", pixel_value_info->color_space_name));
+  ct_test(test, FALSE == pixel_value_info->has_alpha);
+}
+
+static void
 pixel_rgb_float_value_test_setup(Test *test)
 {
 }
@@ -287,9 +289,9 @@ create_pixel_rgb_float_value_test()
   g_assert(ct_addTestFun(t, test_pixel_rgb_float_param_value_validate_false));
   g_assert(ct_addTestFun(t, test_pixel_rgb_float_param_value_validate_true));
   g_assert(ct_addTestFun(t, test_pixel_rgb_float_param_value_set_default));
-  g_assert(ct_addTestFun(t, test_pixel_rgb_float_collect_values));
   g_assert(ct_addTestFun(t, test_pixel_rgb_float_pixel_get_color_model));
   g_assert(ct_addTestFun(t, test_pixel_rgb_float_pixel_get_data));
+  g_assert(ct_addTestFun(t, test_pixel_rgb_float_pixel_get_pixel_value_info));
 #endif
 
   return t; 

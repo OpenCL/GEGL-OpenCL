@@ -8,7 +8,6 @@
 #include "gegl-image-op.h"
 #include "gegl-color-model.h"
 #include "gegl-color-space.h"
-#include "gegl-channel-space.h"
 #include "gegl-data.h"
 #include "gegl-param-specs.h"
 #include <stdio.h> 
@@ -105,7 +104,7 @@ data_string(GeglOp *op)
   if(GEGL_IS_IMAGE_DATA(output_data))
     {
       GeglColorModel *color_model = 
-        gegl_color_data_get_color_model(GEGL_COLOR_DATA(output_data));
+        gegl_image_data_get_color_model(GEGL_IMAGE_DATA(output_data));
 
       image_value = g_value_get_object(output_data->value);
       gegl_rect_copy(&rect, &GEGL_IMAGE_DATA(output_data)->rect);

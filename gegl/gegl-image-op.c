@@ -105,7 +105,7 @@ validate_outputs (GeglFilter *filter)
   if(!image)
     {
       GeglColorModel *color_model = 
-        gegl_color_data_get_color_model(GEGL_COLOR_DATA(output_data));
+        gegl_image_data_get_color_model(GEGL_IMAGE_DATA(output_data));
 
       GeglImage *image = g_object_new(GEGL_TYPE_IMAGE, NULL);
       GeglRect rect;
@@ -204,6 +204,6 @@ compute_color_model (GeglImageOpInterface   *interface)
   g_return_if_fail(GEGL_IS_IMAGE_DATA(output_data));
   g_return_if_fail(GEGL_IS_IMAGE_DATA(input_data));
 
-  color_model = gegl_color_data_get_color_model(GEGL_COLOR_DATA(input_data));
-  gegl_color_data_set_color_model(GEGL_COLOR_DATA(output_data), color_model);
+  color_model = gegl_image_data_get_color_model(GEGL_IMAGE_DATA(input_data));
+  gegl_image_data_set_color_model(GEGL_IMAGE_DATA(output_data), color_model);
 }

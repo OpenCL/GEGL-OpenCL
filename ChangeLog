@@ -1,3 +1,209 @@
+Mon Aug 18 12:32:54 EDT 2003 calvinw@mindspring.com
+    
+    Removed the ChannelSpace classes, and introduced a single color Color
+    object. In the process I renamed the former constant color image object
+    (previously called Color) to Fill and made this take a Color object.
+    Now to create a constant color image you create a Fill object and 
+    pass it a color object and a data type for the image data. Color objects
+    are meant to be stored as floats internally (doubles eventually) and 
+    ops can extract their color model versions of the color during processing
+    and use these. This is closer to how gimp passes its colors around internally.
+    (as doubles). The docs are not completely updated yet for these changes
+    so descriptions and examples may be a little different. There is no need
+    for "generic properties" for parameters if we assume we are passing float
+    or double versions of single colors, opacities, and other parameters. 
+    This makes properties a bit simpler overall.
+
+    Also removed a bunch of ops and left more or less one of each kind. This
+    is easier while the code changes a lot in the images, data buffers, iterators,
+    section of the code.
+
+    These were modified:
+	*docs/reference/gegl/gegl-docs.sgml
+	*docs/reference/gegl/gegl-sections.txt
+	*docs/reference/gegl/gegl.types
+	*docs/reference/gegl/gegl-undocumented.txt
+	*docs/reference/gegl/tmpl/gegl-add.sgml
+	*docs/reference/gegl/tmpl/gegl-binary.sgml
+	*docs/reference/gegl/tmpl/gegl-channel-value-types.sgml
+	*docs/reference/gegl/tmpl/gegl-color-data.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model.sgml
+	*docs/reference/gegl/tmpl/gegl-color.sgml
+	*docs/reference/gegl/tmpl/gegl-comp.sgml
+	*docs/reference/gegl/tmpl/gegl-image-data.sgml
+	*docs/reference/gegl/tmpl/gegl-no-input.sgml
+	*docs/reference/gegl/tmpl/gegl-pipe.sgml
+	*docs/reference/gegl/tmpl/gegl-pixel-value-types.sgml
+	*docs/reference/gegl/tmpl/gegl-unary.sgml
+	*docs/reference/gegl/tmpl/gegl-unused.sgml
+	*gegl/gegl-add.c
+	*gegl/gegl-binary.c
+	*gegl/gegl-binary.h
+	*gegl/gegl-channel-param-specs.c
+	*gegl/gegl-channel-value-types.c
+	*gegl/gegl-channel-value-types.h
+	*gegl/gegl-color.c
+	*gegl/gegl-color-data.c
+	*gegl/gegl-color-data.h
+	*gegl/gegl-color.h
+	*gegl/gegl-color-model.c
+	*gegl/gegl-color-model.h
+	*gegl/gegl-comp.c
+	*gegl/gegl-comp.h
+	*gegl/gegl-component-color-model.c
+	*gegl/gegl-dump-visitor.c
+	*gegl/gegl-eval-dfs-visitor.c
+	*gegl/gegl-fade.c
+	*gegl/gegl.h
+	*gegl/gegl-i-add.c
+	*gegl/gegl-image-data.c
+	*gegl/gegl-image-data.h
+	*gegl/gegl-image-op.c
+	*gegl/gegl-image-op.h
+	*gegl/gegl-init.c
+	*gegl/gegl-mult.c
+	*gegl/gegl-multiply.c
+	*gegl/gegl-no-input.c
+	*gegl/gegl-no-input.h
+	*gegl/gegl-over.c
+	*gegl/gegl-param-specs.h
+	*gegl/gegl-pipe.c
+	*gegl/gegl-pipe.h
+	*gegl/gegl-pixel-param-specs.c
+	*gegl/gegl-pixel-value-types.c
+	*gegl/gegl-pixel-value-types.h
+	*gegl/gegl-print.c
+	*gegl/gegl-unary.c
+	*gegl/gegl-unary.h
+	*gegl/gegl-utils.c
+	*gegl/gegl-value-types.h
+	*gegl/Makefile.am
+	*tests/addtest-float.c
+	*tests/addtest-uint8.c
+	*tests/channelfloatvaluetest.c
+	*tests/channelstest-float.c
+	*tests/channeluint8valuetest.c
+	*tests/checkoptest.c
+	*tests/colormodeltest.c
+	*tests/fadetest-float.c
+	*tests/fadetest-uint8.c
+	*tests/gegl-check-op.c
+	*tests/gegl-mock-properties-filter.c
+	*tests/graphapplytest-float.c
+	*tests/haverecttest.c
+	*tests/iaddtest-float.c
+	*tests/iaddtest-uint8.c
+	*tests/Makefile.am
+	*tests/mockpropertiesfiltertest.c
+	*tests/multiplytest-float.c
+	*tests/multtest-float.c
+	*tests/multtest-uint8.c
+	*tests/nodetest.c
+	*tests/pixelrgbafloatvaluetest.c
+	*tests/pixelrgbfloatvaluetest.c
+	*tests/pixelrgbuint8valuetest.c
+	*tests/pointoptest.c
+	*tests/printtest.c
+	*tests/simpletreetest-float.c
+	*tests/testgegl.c
+	*tests/testutils.c
+	*tests/valueimagedatatest.c
+	*tests/valuetest.c
+
+     These were removed as described above:
+	*docs/reference/gegl/tmpl/gegl-atop.sgml
+	*docs/reference/gegl/tmpl/gegl-channel-data.sgml
+	*docs/reference/gegl/tmpl/gegl-channel-space-float.sgml
+	*docs/reference/gegl/tmpl/gegl-channel-space.sgml
+	*docs/reference/gegl/tmpl/gegl-channel-space-uint8.sgml
+	*docs/reference/gegl/tmpl/gegl-copy.sgml
+	*docs/reference/gegl/tmpl/gegl-darken.sgml
+	*docs/reference/gegl/tmpl/gegl-difference.sgml
+	*docs/reference/gegl/tmpl/gegl-image-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-i-mult.sgml
+	*docs/reference/gegl/tmpl/gegl-inside.sgml
+	*docs/reference/gegl/tmpl/gegl-lighten.sgml
+	*docs/reference/gegl/tmpl/gegl-max.sgml
+	*docs/reference/gegl/tmpl/gegl-min.sgml
+	*docs/reference/gegl/tmpl/gegl-normal.sgml
+	*docs/reference/gegl/tmpl/gegl-outside.sgml
+	*docs/reference/gegl/tmpl/gegl-pixel-data.sgml
+	*docs/reference/gegl/tmpl/gegl-premult.sgml
+	*docs/reference/gegl/tmpl/gegl-screen.sgml
+	*docs/reference/gegl/tmpl/gegl-subtract.sgml
+	*docs/reference/gegl/tmpl/gegl-unpremult.sgml
+	*docs/reference/gegl/tmpl/gegl-xor.sgml
+	*gegl/gegl-atop.c
+	*gegl/gegl-atop.h
+	*gegl/gegl-channel-data.c
+	*gegl/gegl-channel-data.h
+	*gegl/gegl-channel-space.c
+	*gegl/gegl-channel-space-float.c
+	*gegl/gegl-channel-space-float.h
+	*gegl/gegl-channel-space.h
+	*gegl/gegl-channel-space-uint8.c
+	*gegl/gegl-channel-space-uint8.h
+	*gegl/gegl-copy.c
+	*gegl/gegl-copy.h
+	*gegl/gegl-darken.c
+	*gegl/gegl-darken.h
+	*gegl/gegl-difference.c
+	*gegl/gegl-difference.h
+	*gegl/gegl-image-param-specs.c
+	*gegl/gegl-image-param-specs.h
+	*gegl/gegl-i-mult.c
+	*gegl/gegl-i-mult.h
+	*gegl/gegl-inside.c
+	*gegl/gegl-inside.h
+	*gegl/gegl-lighten.c
+	*gegl/gegl-lighten.h
+	*gegl/gegl-max.c
+	*gegl/gegl-max.h
+	*gegl/gegl-min.c
+	*gegl/gegl-min.h
+	*gegl/gegl-normal.c
+	*gegl/gegl-normal.h
+	*gegl/gegl-outside.c
+	*gegl/gegl-outside.h
+	*gegl/gegl-pixel-data.c
+	*gegl/gegl-pixel-data.h
+	*gegl/gegl-premult.c
+	*gegl/gegl-premult.h
+	*gegl/gegl-screen.c
+	*gegl/gegl-screen.h
+	*gegl/gegl-subtract.c
+	*gegl/gegl-subtract.h
+	*gegl/gegl-unpremult.c
+	*gegl/gegl-unpremult.h
+	*gegl/gegl-xor.c
+	*gegl/gegl-xor.h
+	*tests/channelspacetest.c
+	*tests/colortest-float.c
+	*tests/colortest-uint8.c
+	*tests/copytest-float.c
+	*tests/copytest-uint8.c
+	*tests/imulttest-float.c
+	*tests/imulttest-uint8.c
+	*tests/normaltest-float.c
+
+    These were added:
+	*docs/reference/gegl/tmpl/gegl-array-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-array-value-types.sgml
+	*docs/reference/gegl/tmpl/gegl-fill.sgml
+	*docs/reference/gegl/tmpl/gegl-string-data.sgml
+	*gegl/gegl-array-param-specs.c
+	*gegl/gegl-array-param-specs.h
+	*gegl/gegl-array-value-types.c
+	*gegl/gegl-array-value-types.h
+	*gegl/gegl-fill.c
+	*gegl/gegl-fill.h
+	*gegl/gegl-string-data.c
+	*gegl/gegl-string-data.h
+	*tests/colortest.c
+	*tests/filltest-float.c
+	*tests/filltest-uint8.c
+	*tests/floatarraytest.c
+
 Tue Aug  5 18:58:17 EDT 2003 calvinw@mindspring.com
 
 	Added the image op interface. This puts the need_rect, have_rect

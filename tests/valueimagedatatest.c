@@ -46,40 +46,6 @@ test_value_image_copy(Test *test)
   g_free(src_value);
 }
 
-static void
-test_value_compatible(Test *test)
-{
-  GValue * float_value = g_new0(GValue, 1);
-  GValue * int_value = g_new0(GValue, 1);
-
-  g_value_init(float_value, G_TYPE_FLOAT);
-  g_value_init(int_value, G_TYPE_INT);
-
-  /* These value types are not compatible ... */
-  ct_test(test, !g_value_type_compatible(G_VALUE_TYPE(int_value), G_VALUE_TYPE(float_value)));
-  ct_test(test, !g_value_type_compatible(G_VALUE_TYPE(float_value), G_VALUE_TYPE(int_value)));
-
-  /* but they are transformable */
-  ct_test(test, g_value_type_transformable(G_VALUE_TYPE(float_value), G_VALUE_TYPE(int_value)));
-  ct_test(test, g_value_type_transformable(G_VALUE_TYPE(int_value), G_VALUE_TYPE(float_value)));
-
-  /* transform float to int, just truncates */
-  g_value_set_float(float_value, 3.6);
-  ct_test(test, g_value_transform(float_value, int_value));
-  ct_test(test, 3 == g_value_get_int(int_value));
-
-  /* transform int to float */
-  g_value_set_int(int_value, 9);
-  ct_test(test, g_value_transform(int_value, float_value));
-  ct_test(test, 9 == g_value_get_float(float_value));
-
-  g_value_unset(float_value);
-  g_value_unset(int_value);
-
-  g_free(float_value);
-  g_free(int_value);
-}
-
 #if 0
 static void
 test_value_image_param_spec_validate(Test *test)
@@ -179,7 +145,6 @@ create_value_image_test()
   g_assert(ct_addTearDown(t, value_image_test_teardown));
   g_assert(ct_addTestFun(t, test_value_image_set));
   g_assert(ct_addTestFun(t, test_value_image_copy));
-  g_assert(ct_addTestFun(t, test_value_compatible));
 #if 0
   g_assert(ct_addTestFun(t, test_value_image_compatible));
   g_assert(ct_addTestFun(t, test_value_image_param_spec_validate));

@@ -5,7 +5,6 @@
 #include    "gegl-color-model.h"
 #include    "gegl-color-model.h"
 #include    "gegl-color-space.h"
-#include    "gegl-channel-space.h"
 
 GType GEGL_TYPE_PARAM_CHANNEL = 0;
 GType GEGL_TYPE_PARAM_CHANNEL_UINT8 = 0;
@@ -18,7 +17,7 @@ param_spec_channel_uint8_set_default (GParamSpec *pspec,
                                       GValue     *value)
 {
   GeglParamSpecChannelUInt8 *spec = GEGL_PARAM_SPEC_CHANNEL_UINT8 (pspec);
-  value->data[1].v_uint = spec->default_value;
+  value->data[0].v_uint = spec->default_value;
 }
 
 static gboolean
@@ -26,11 +25,11 @@ param_spec_channel_uint8_validate (GParamSpec *pspec,
                                    GValue     *value)
 {
   GeglParamSpecChannelUInt8 *spec = GEGL_PARAM_SPEC_CHANNEL_UINT8 (pspec);
-  guint oval = value->data[1].v_uint;
+  guint oval = value->data[0].v_uint;
   
-  value->data[1].v_uint = CLAMP (value->data[1].v_uint, spec->minimum, spec->maximum);
+  value->data[0].v_uint = CLAMP (value->data[0].v_uint, spec->minimum, spec->maximum);
   
-  return value->data[1].v_uint != oval;
+  return value->data[0].v_uint != oval;
 }
 
 static void 
@@ -38,7 +37,7 @@ param_spec_channel_float_set_default (GParamSpec *pspec,
                                       GValue     *value)
 {
   GeglParamSpecChannelFloat *spec = GEGL_PARAM_SPEC_CHANNEL_FLOAT (pspec);
-  value->data[1].v_float = spec->default_value;
+  value->data[0].v_float = spec->default_value;
 }
 
 static gboolean
@@ -46,11 +45,11 @@ param_spec_channel_float_validate (GParamSpec *pspec,
                                    GValue     *value)
 {
   GeglParamSpecChannelFloat *spec = GEGL_PARAM_SPEC_CHANNEL_FLOAT (pspec);
-  gfloat oval = value->data[1].v_float;
+  gfloat oval = value->data[0].v_float;
   
-  value->data[1].v_float = CLAMP (value->data[1].v_float, spec->minimum, spec->maximum);
+  value->data[0].v_float = CLAMP (value->data[0].v_float, spec->minimum, spec->maximum);
   
-  return value->data[1].v_float != oval;
+  return value->data[0].v_float != oval;
 }
 
 static gboolean

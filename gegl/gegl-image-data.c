@@ -28,7 +28,7 @@ gegl_image_data_get_type (void)
         NULL,             /* value_table */
       };
 
-      type = g_type_register_static (GEGL_TYPE_COLOR_DATA, 
+      type = g_type_register_static (GEGL_TYPE_DATA, 
                                      "GeglImageData", 
                                      &typeInfo, 
                                      0);
@@ -50,6 +50,7 @@ init (GeglImageData * self,
   GeglData * data = GEGL_DATA(self);
   gegl_rect_set(&self->rect, 0,0,0,0);
   g_value_init(data->value, GEGL_TYPE_IMAGE);
+  self->color_model = NULL;
 }
 
 void 
@@ -71,4 +72,23 @@ gegl_image_data_set_rect (GeglImageData * self,
   g_return_if_fail (rect != NULL);
 
   gegl_rect_copy(&self->rect,rect);
+}
+
+GeglColorModel * 
+gegl_image_data_get_color_model (GeglImageData * self)
+{
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (GEGL_IS_IMAGE_DATA (self), NULL);
+   
+  return self->color_model;
+}
+
+void
+gegl_image_data_set_color_model (GeglImageData * self,
+                                 GeglColorModel *color_model)
+{
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_IMAGE_DATA (self));
+   
+  self->color_model = color_model;
 }

@@ -27,6 +27,24 @@ GeglImageData
 
 @data_class: 
 
+<!-- ##### FUNCTION gegl_image_data_get_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_data_set_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@color_model: 
+
+
 <!-- ##### FUNCTION gegl_image_data_get_rect ##### -->
 <para>
 

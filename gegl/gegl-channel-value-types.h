@@ -12,6 +12,13 @@ extern GType GEGL_TYPE_CHANNEL_UINT8;
 #define G_VALUE_HOLDS_CHANNEL_UINT8(value)    (G_TYPE_CHECK_VALUE_TYPE ((value), GEGL_TYPE_CHANNEL_UINT8))
 #define G_VALUE_HOLDS_CHANNEL_FLOAT(value)    (G_TYPE_CHECK_VALUE_TYPE ((value), GEGL_TYPE_CHANNEL_FLOAT))
 
+typedef struct _ChannelValueInfo ChannelValueInfo;
+struct _ChannelValueInfo
+{
+  gchar * channel_space_name;
+  gint bits_per_channel;
+};
+
 /* --- prototypes --- */
 void gegl_channel_value_types_init (void);
 void gegl_channel_value_transform_init(void);

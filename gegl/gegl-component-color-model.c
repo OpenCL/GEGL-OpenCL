@@ -1,8 +1,9 @@
 #include "gegl-component-color-model.h"
 #include "gegl-color-space.h"
-#include "gegl-channel-space.h"
 #include "gegl-component-storage.h"
 #include "gegl-object.h"
+#include "gegl-channel-value-types.h"
+#include "gegl-pixel-value-types.h"
 
 static void class_init (GeglComponentColorModelClass * klass);
 static void init (GeglComponentColorModel * self, GeglComponentColorModelClass * klass);
@@ -65,22 +66,40 @@ constructor (GType                  type,
              GObjectConstructParam *props)
 {
   gint i;
+  gint *bits;
+  gint num_colors;
+  gint num_channels;
+  GType channel_type;
+
+  PixelValueInfo *pixel_value_info;
+  ChannelValueInfo *channel_value_info;
+
   GObject *gobject = G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
   GeglColorModel *color_model = GEGL_COLOR_MODEL(gobject);
-  gint num_colors = gegl_color_space_num_components(color_model->color_space);
-  gint num_channels = num_colors;
+
+  GType pixel_type = g_type_from_name(color_model->pixel_type_name);
+  pixel_value_info = g_type_get_qdata(pixel_type, g_quark_from_string("pixel_value_info"));
+
+  color_model->channel_type_name = g_strdup(pixel_value_info->channel_type_name);
+  channel_type = g_type_from_name(color_model->channel_type_name);
+
+  /* Remove this! */
+  color_model->color_space = gegl_color_space_instance(pixel_value_info->color_space_name); 
+
+  channel_value_info =  g_type_get_qdata(channel_type, g_quark_from_string("channel_value_info"));
+#if 0
+  color_model->channel_space = gegl_channel_space_instance(channel_value_info->channel_space_name); 
+#endif
+
+  num_colors = gegl_color_space_num_components(color_model->color_space);
+  num_channels = num_colors;
 
   color_model->num_colors = num_colors;
+  color_model->has_alpha = pixel_value_info->has_alpha;
 
   if(color_model->has_alpha)
     {
       color_model->alpha_channel = num_channels; 
-      num_channels++;
-    }
-
-  if(color_model->has_z)
-    {
-      color_model->z_channel = num_channels;
       num_channels++;
     }
 
@@ -89,38 +108,18 @@ constructor (GType                  type,
   color_model->bits_per_channel = g_new(gint, color_model->num_channels);
 
   for(i = 0; i < num_colors; i++)
-    color_model->bits_per_channel[i] = gegl_channel_space_bits(color_model->channel_space);
+    color_model->bits_per_channel[i] = channel_value_info->bits_per_channel;
 
   if(color_model->has_alpha)
-    color_model->bits_per_channel[color_model->alpha_channel] = 
-        gegl_channel_space_bits(color_model->channel_space);
-
-  if(color_model->has_z)
-    color_model->bits_per_channel[color_model->z_channel] = sizeof(gfloat);
+    color_model->bits_per_channel[color_model->alpha_channel] = channel_value_info->bits_per_channel; 
 
   color_model->bits_per_pixel = 0;
   for(i = 0; i < color_model->num_channels; i++)
     color_model->bits_per_pixel += color_model->bits_per_channel[i];
 
-  {
-    gchar * color_space_name =  gegl_color_space_name(color_model->color_space);
-    gchar * channel_space_name =  gegl_channel_space_name(color_model->channel_space);
-    GString * name = g_string_new(color_space_name);
-
-    if(color_model->has_alpha)
-      name = g_string_append(name, "a");
-
-    if(color_model->has_z)
-      name = g_string_append(name, "z");
-
-    name = g_string_append(name, "-");
-    name = g_string_append(name, channel_space_name);
-
-    color_model->name = g_strdup(name->str);
-    g_string_free(name, TRUE);
-  }
-
+  color_model->name = g_strdup(pixel_value_info->color_model_name);
   color_model->channel_names = g_new(gchar*, color_model->num_channels);
+
   for(i = 0; i < color_model->num_colors; i++) 
     {
       gchar * channel_name = gegl_color_space_component_name(color_model->color_space, i);
@@ -130,9 +129,6 @@ constructor (GType                  type,
   if(color_model->has_alpha)
     color_model->channel_names[color_model->alpha_channel] = g_strdup("alpha"); 
 
-  if(color_model->has_z)
-    color_model->channel_names[color_model->z_channel] = g_strdup("z"); 
-
   return gobject;
 }
 
@@ -141,9 +137,9 @@ create_storage (GeglColorModel * color_model,
                 gint width, 
                 gint height)
 {
-  GeglChannelSpace *channel_space = gegl_color_model_channel_space(color_model);
-  gint data_type_bytes = gegl_channel_space_bits(channel_space) / 8;
-
+  GType channel_type = g_type_from_name(color_model->channel_type_name);
+  ChannelValueInfo *channel_value_info =  g_type_get_qdata(channel_type, g_quark_from_string("channel_value_info"));
+  gint data_type_bytes = channel_value_info->bits_per_channel / 8;
 
   GeglStorage * storage = g_object_new(GEGL_TYPE_COMPONENT_STORAGE,
                                        "data_type_bytes", data_type_bytes,

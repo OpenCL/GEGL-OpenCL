@@ -26,6 +26,18 @@ gegl-pixel-value-types
 </para>
 
 
+<!-- ##### VARIABLE GEGL_TYPE_PIXEL_GRAY_FLOAT ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_PIXEL_GRAYA_FLOAT ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### VARIABLE GEGL_TYPE_PIXEL_RGB_UINT8 ##### -->
 <para>
 
@@ -54,6 +66,22 @@ gegl-pixel-value-types
 @value: 
 
 
+<!-- ##### MACRO G_VALUE_HOLDS_PIXEL_GRAY_FLOAT ##### -->
+<para>
+
+</para>
+
+@value: 
+
+
+<!-- ##### MACRO G_VALUE_HOLDS_PIXEL_GRAYA_FLOAT ##### -->
+<para>
+
+</para>
+
+@value: 
+
+
 <!-- ##### MACRO G_VALUE_HOLDS_PIXEL_RGB_UINT8 ##### -->
 <para>
 
@@ -69,6 +97,16 @@ gegl-pixel-value-types
 
 @value: 
 
+
+<!-- ##### STRUCT PixelValueInfo ##### -->
+<para>
+
+</para>
+
+@channel_type_name: 
+@color_space_name: 
+@color_model_name: 
+@has_alpha: 
 
 <!-- ##### FUNCTION gegl_pixel_value_types_init ##### -->
 <para>
@@ -128,6 +166,44 @@ gegl-pixel-value-types
 @g: 
 @b: 
 @a: 
+
+
+<!-- ##### FUNCTION g_value_set_pixel_gray_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@gray: 
+
+
+<!-- ##### FUNCTION g_value_get_pixel_gray_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@gray: 
+
+
+<!-- ##### FUNCTION g_value_set_pixel_graya_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@gray: 
+@alpha: 
+
+
+<!-- ##### FUNCTION g_value_get_pixel_graya_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@gray: 
+@alpha: 
 
 
 <!-- ##### FUNCTION g_value_set_pixel_rgb_uint8 ##### -->

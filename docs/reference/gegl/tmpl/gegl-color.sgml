@@ -2,11 +2,12 @@
 GeglColor
 
 <!-- ##### SECTION Short_Description ##### -->
-Constant color image
+Single color object
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This op creates a constant color image.
+This object represents a single color. It is stored
+internally using floats.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -25,39 +26,39 @@ This op creates a constant color image.
 
 </para>
 
-@no_input_class: 
+@object_class: 
 
-<!-- ##### ARG GeglColor:height ##### -->
+<!-- ##### ARG GeglColor:color-components ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglColor:pixel-node ##### -->
+<!-- ##### ARG GeglColor:color-space ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglColor:pixel-rgb-float ##### -->
+<!-- ##### ARG GeglColor:components ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglColor:pixel-rgb-uint8 ##### -->
+<!-- ##### ARG GeglColor:rgb-float ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglColor:pixel-rgba-float ##### -->
+<!-- ##### ARG GeglColor:rgb-uint8 ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglColor:pixel-rgba-uint8 ##### -->
+<!-- ##### ARG GeglColor:rgba-float ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglColor:width ##### -->
+<!-- ##### ARG GeglColor:rgba-uint8 ##### -->
 <para>
 
 </para>

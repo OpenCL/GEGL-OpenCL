@@ -36,17 +36,26 @@ test_multiply_g_object_new(Test *test)
 static void
 test_multiply_apply_rgb_rgb(Test *test)
 {
-  GeglOp * background = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color0 = g_object_new(GEGL_TYPE_COLOR, 
+                                  "rgb-float", R0, G0, B0, 
+                                  NULL);
+  GeglOp * background = g_object_new(GEGL_TYPE_FILL, 
                                      "width", IMAGE_OP_WIDTH, 
                                      "height", IMAGE_OP_HEIGHT, 
-                                     "pixel-rgb-float", R0, G0, B0, 
+                                     "fill-color", color0,
                                      NULL); 
 
-  GeglOp * foreground = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color1 = g_object_new(GEGL_TYPE_COLOR, 
+                                  "rgb-float", R1, G1, B1, 
+                                  NULL);
+  GeglOp * foreground = g_object_new(GEGL_TYPE_FILL, 
                                      "width", IMAGE_OP_WIDTH, 
                                      "height", IMAGE_OP_HEIGHT, 
-                                     "pixel-rgb-float", R1, G1, B1, 
+                                     "fill-color", color1,
                                      NULL); 
+  g_object_unref(color0);
+  g_object_unref(color1);
+
   {
     /* 
        multiply = source0 * source1 
@@ -57,6 +66,7 @@ test_multiply_apply_rgb_rgb(Test *test)
                                       "background", background,
                                       "foreground", foreground,
                                       NULL);  
+
 
     gegl_op_apply(multiply); 
 
@@ -72,17 +82,28 @@ test_multiply_apply_rgb_rgb(Test *test)
 static void
 test_multiply_apply_rgba_rgba(Test *test)
 {
-  GeglOp * background = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color0 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgba-float", R0, G0, B0, A0, 
+                                   NULL);
+  GeglOp * background = g_object_new(GEGL_TYPE_FILL, 
                                      "width", IMAGE_OP_WIDTH, 
                                      "height", IMAGE_OP_HEIGHT, 
-                                     "pixel-rgba-float", R0, G0, B0, A0, 
+                                     "fill-color", color0,
+                                     "image-data-type", "rgba-float",
                                      NULL); 
 
-  GeglOp * foreground = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color1 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgba-float", R1, G1, B1, A1, 
+                                   NULL);
+  GeglOp * foreground = g_object_new(GEGL_TYPE_FILL, 
                                      "width", IMAGE_OP_WIDTH, 
                                      "height", IMAGE_OP_HEIGHT, 
-                                     "pixel-rgba-float", R1, G1, B1, A1, 
+                                     "fill-color", color1,
+                                     "image-data-type", "rgba-float",
                                      NULL); 
+  g_object_unref(color0);
+  g_object_unref(color1);
+
   {
     /* 
        (f, fa) = (.4,.5,.6,.4)
@@ -107,6 +128,7 @@ test_multiply_apply_rgba_rgba(Test *test)
                                       "background", background,
                                       "foreground", foreground,
                                       NULL);  
+
 
     gegl_op_apply(multiply); 
 

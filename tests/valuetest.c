@@ -51,6 +51,28 @@ test_value_compatible(Test *test)
 }
 
 static void
+test_float_array_value_set(Test *test)
+{
+  gfloat array[] = {1.0,2.0,3.0};
+  const gfloat *channels = NULL;
+  gint length;
+
+  GValue *value =  g_new0(GValue, 1); 
+  g_value_init(value, GEGL_TYPE_FLOAT_ARRAY);
+
+  g_value_set_float_array(value, 3, &array[0]);
+
+  channels = g_value_get_float_array(value, &length);
+
+  ct_test(test, GEGL_FLOAT_EQUAL(1.0, channels[0]));
+  ct_test(test, GEGL_FLOAT_EQUAL(2.0, channels[1]));
+  ct_test(test, GEGL_FLOAT_EQUAL(3.0, channels[2]));
+
+  g_value_unset(value);
+  g_free(value);
+}
+
+static void
 value_test_setup(Test *test)
 {
 }
@@ -71,6 +93,7 @@ create_value_test()
 #if 1 
   g_assert(ct_addTestFun(t, test_value_set));
   g_assert(ct_addTestFun(t, test_value_compatible));
+  g_assert(ct_addTestFun(t, test_float_array_value_set));
 #endif
 
   return t; 

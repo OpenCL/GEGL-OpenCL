@@ -89,17 +89,30 @@ test_i_add_apply(Test *test)
 static void
 i_add_test_setup(Test *test)
 {
-  source0 = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color0; 
+  GeglColor *color1; 
+
+  color0 = g_object_new(GEGL_TYPE_COLOR, 
+                        "rgb-float", R0/255.0, G0/255.0, B0/255.0, 
+                        NULL);
+  source0 = g_object_new(GEGL_TYPE_FILL, 
                          "width", IMAGE_OP_WIDTH, 
                          "height", IMAGE_OP_HEIGHT, 
-                         "pixel-rgb-uint8", R0, G0, B0, 
+                         "fill-color", color0,
+                         "image-data-type", "rgb-uint8",
                          NULL); 
 
-  source1 = g_object_new(GEGL_TYPE_COLOR, 
+  color1 = g_object_new(GEGL_TYPE_COLOR, 
+                        "rgb-float", R1/255.0, G1/255.0, B1/255.0, 
+                        NULL);
+  source1 = g_object_new(GEGL_TYPE_FILL, 
                          "width", IMAGE_OP_WIDTH, 
                          "height", IMAGE_OP_HEIGHT, 
-                         "pixel-rgb-uint8", R1, G1, B1, 
+                         "fill-color", color1,
+                         "image-data-type", "rgb-uint8",
                          NULL); 
+  g_object_unref(color0);
+  g_object_unref(color1);
 }
 
 static void

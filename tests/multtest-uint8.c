@@ -133,11 +133,16 @@ test_mult_apply(Test *test)
 static void
 mult_test_setup(Test *test)
 {
-  source = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+                                  "rgb-float", R0/255.0, G0/255.0, B0/255.0, 
+                                  NULL);
+  source = g_object_new(GEGL_TYPE_FILL, 
                         "width", IMAGE_OP_WIDTH, 
                         "height", IMAGE_OP_HEIGHT, 
-                        "pixel-rgb-uint8", R0, G0, B0, 
+                        "fill-color", color,
+                        "image-data-type", "rgb-uint8",
                         NULL); 
+  g_object_unref(color);
 }
 
 static void

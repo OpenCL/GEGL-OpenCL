@@ -172,19 +172,14 @@ test_channel_uint8_param_value_set_default(Test *test)
 }
 
 static void
-test_channel_uint8_collect_values(Test *test)
+test_channel_uint8_get_channel_value_info(Test *test)
 {
-  guint8 channel_uint8;
-  GeglOp * op = g_object_new(GEGL_TYPE_MOCK_PROPERTIES_FILTER,
-                             "channel-uint8", 233,
-                             NULL);
+  ChannelValueInfo *channel_value_info = g_type_get_qdata(GEGL_TYPE_CHANNEL_UINT8,
+                                                      g_quark_from_string("channel_value_info")); 
 
-  g_object_get(op, "channel-uint8", &channel_uint8, NULL);
-
-  ct_test(test, 233 == channel_uint8);
-  g_object_unref(op);
+  ct_test(test, 0 == strcmp("uint8", channel_value_info->channel_space_name));
+  ct_test(test, 8 == channel_value_info->bits_per_channel);
 }
-
 
 static void
 channel_uint8_value_test_setup(Test *test)
@@ -212,7 +207,7 @@ create_channel_uint8_value_test()
   g_assert(ct_addTestFun(t, test_channel_uint8_param_value_validate_false));
   g_assert(ct_addTestFun(t, test_channel_uint8_param_value_validate_true));
   g_assert(ct_addTestFun(t, test_channel_uint8_param_value_set_default));
-  g_assert(ct_addTestFun(t, test_channel_uint8_collect_values));
+  g_assert(ct_addTestFun(t, test_channel_uint8_get_channel_value_info));
 #endif
 
   return t; 

@@ -1,7 +1,8 @@
 #ifndef __GEGL_IMAGE_DATA_H__
 #define __GEGL_IMAGE_DATA_H__
 
-#include "gegl-color-data.h"
+#include "gegl-data.h"
+#include "gegl-color-model.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,19 +18,23 @@ extern "C" {
 typedef struct _GeglImageData GeglImageData;
 struct _GeglImageData 
 {
-    GeglColorData data;
+    GeglData data;
 
     /*< private >*/
     GeglRect rect; 
+    GeglColorModel *color_model;
 };
 
 typedef struct _GeglImageDataClass GeglImageDataClass;
 struct _GeglImageDataClass 
 {
-    GeglColorDataClass data_class;
+    GeglDataClass data_class;
 };
 
 GType           gegl_image_data_get_type              (void);
+GeglColorModel* gegl_image_data_get_color_model       (GeglImageData * self);
+void            gegl_image_data_set_color_model       (GeglImageData * self,
+                                                       GeglColorModel *color_model);
 void            gegl_image_data_get_rect              (GeglImageData * self,
                                                        GeglRect * rect);
 void            gegl_image_data_set_rect              (GeglImageData * self,

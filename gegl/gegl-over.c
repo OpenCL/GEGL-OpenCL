@@ -2,11 +2,12 @@
 #include "gegl-scanline-processor.h"
 #include "gegl-image-iterator.h"
 #include "gegl-utils.h"
+#include <string.h>
 
 static void class_init (GeglOverClass * klass);
 static void init (GeglOver * self, GeglOverClass * klass);
 
-static GeglScanlineFunc get_scanline_func(GeglComp * comp, GeglColorSpaceType space, GeglChannelSpaceType type);
+static GeglScanlineFunc get_scanline_function(GeglComp * comp, GeglColorModel *cm);
 
 static void fg_over_bg_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 
@@ -46,7 +47,7 @@ class_init (GeglOverClass * klass)
 {
   GeglCompClass *comp_class = GEGL_COMP_CLASS(klass);
   parent_class = g_type_class_peek_parent(klass);
-  comp_class->get_scanline_func = get_scanline_func;
+  comp_class->get_scanline_function = get_scanline_function;
 }
 
 static void 
@@ -55,23 +56,19 @@ init (GeglOver * self,
 {
 }
 
-/* scanline_funcs[data type] */
-static GeglScanlineFunc scanline_funcs[] = 
-{ 
-  NULL, 
-  NULL, 
-  fg_over_bg_float, 
-  NULL 
-};
-
 static GeglScanlineFunc
-get_scanline_func(GeglComp * comp,
-                  GeglColorSpaceType space,
-                  GeglChannelSpaceType type)
+get_scanline_function(GeglComp * comp,
+                      GeglColorModel *cm)
 {
-  return scanline_funcs[type];
-}
+  gchar *name = gegl_color_model_name(cm);
 
+  if(!strcmp(name, "rgb-float"))
+    return fg_over_bg_float;
+  else if(!strcmp(name, "rgba-float"))
+    return fg_over_bg_float;
+
+  return NULL;
+}
 
 static void                                                            
 fg_over_bg_float (GeglFilter * filter,              

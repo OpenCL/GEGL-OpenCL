@@ -1,0 +1,49 @@
+<!-- ##### SECTION Title ##### -->
+GeglFill
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglFill ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglFillClass ##### -->
+<para>
+
+</para>
+
+@no_input_class: 
+
+<!-- ##### ARG GeglFill:fill-color ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglFill:height ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglFill:image-data-type ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglFill:width ##### -->
+<para>
+
+</para>
+

@@ -30,11 +30,17 @@ testutils_check_pixel_rgb_float_xy(GeglImageOp *image_op,
 {
   gboolean success;
 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR,
+                                  "rgb-float", a, b, c,
+                                  NULL);
+                                  
   GeglOp * check_op = g_object_new(GEGL_TYPE_CHECK_OP, 
-                                   "pixel-rgb-float", a, b, c, 
+                                   "color", color, 
                                    "x", x, "y", y,
                                    "image-op", image_op,
                                    NULL);
+  g_object_unref(color);
+
   gegl_op_apply(check_op); 
 
   success = gegl_check_op_get_success(GEGL_CHECK_OP(check_op)); 
@@ -51,11 +57,17 @@ testutils_check_pixel_rgba_float_xy(GeglImageOp *image_op,
 {
   gboolean success;
 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR,
+                                  "rgba-float", a, b, c, d,
+                                  NULL);
+
   GeglOp * check_op = g_object_new(GEGL_TYPE_CHECK_OP, 
-                                   "pixel-rgba-float", a, b, c, d, 
+                                   "color", color, 
                                    "x", x, "y", y,
                                    "image-op", image_op,
                                    NULL);
+
+  g_object_unref(color);
   gegl_op_apply(check_op); 
 
   success = gegl_check_op_get_success(GEGL_CHECK_OP(check_op)); 
@@ -81,11 +93,16 @@ testutils_check_rgb_uint8_xy(GeglImageOp *image_op,
 {
   gboolean success;
 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR,
+                                  "rgb-float", a/255.0, b/255.0, c/255.0,
+                                  NULL);
+
   GeglOp * check_op = g_object_new(GEGL_TYPE_CHECK_OP, 
-                                   "pixel-rgb-uint8", a, b, c, 
+                                   "color", color, 
                                    "x", x, "y", y,
                                    "image-op", image_op,
                                    NULL);
+  g_object_unref(color);
   gegl_op_apply(check_op); 
 
   success = gegl_check_op_get_success(GEGL_CHECK_OP(check_op)); 

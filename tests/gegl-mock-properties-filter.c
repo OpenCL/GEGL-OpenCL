@@ -1,6 +1,6 @@
 #include "gegl-mock-properties-filter.h"
-#include "gegl-channel-data.h"
-#include "gegl-pixel-data.h"
+#include "gegl-color-data.h"
+#include "gegl-color.h"
 #include "gegl-scalar-data.h"
 #include "gegl-param-specs.h"
 #include "gegl-value-types.h"
@@ -10,12 +10,7 @@ enum
   PROP_0, 
   PROP_SCALAR_FLOAT,
   PROP_SCALAR_INT,
-  PROP_CHANNEL_FLOAT,
-  PROP_CHANNEL_UINT8,
-  PROP_PIXEL_RGB_FLOAT,
-  PROP_PIXEL_RGBA_FLOAT,
-  PROP_PIXEL_RGB_UINT8,
-  PROP_PIXEL_RGBA_UINT8,
+  PROP_COLOR,
   PROP_LAST 
 };
 
@@ -85,65 +80,13 @@ class_init (GeglMockPropertiesFilterClass * klass)
                                     1000,
                                     G_PARAM_READWRITE));
 
-  g_object_class_install_property (gobject_class, PROP_CHANNEL_FLOAT,
-     gegl_param_spec_channel_float ("channel-float",
-                                    "Channel-Float",
-                                    "The channel float",
-                                    0.0,
-                                    1.0,
-                                    0.0,
-                                    G_PARAM_READWRITE));
-
-  g_object_class_install_property (gobject_class, PROP_CHANNEL_UINT8,
-     gegl_param_spec_channel_uint8 ("channel-uint8",
-                                    "Channel-Uint8",
-                                    "The channel uint8",
-                                    0,
-                                    255,
-                                    0,
-                                    G_PARAM_READWRITE));
-
-  g_object_class_install_property (gobject_class, PROP_PIXEL_RGB_FLOAT,
-     gegl_param_spec_pixel_rgb_float ("pixel-rgb-float",
-                                      "Pixel-Rgb-Float",
-                                      "The pixel as rgb float",
-                                      0.0, 1.0,
-                                      0.0, 1.0,
-                                      0.0, 1.0,
-                                      0.0, 0.0, 0.0,
-                                      G_PARAM_READWRITE));
-
-  g_object_class_install_property (gobject_class, PROP_PIXEL_RGBA_FLOAT,
-     gegl_param_spec_pixel_rgba_float ("pixel-rgba-float",
-                                       "Pixel-Rgba-Float",
-                                       "The pixel as rgba float",
-                                        0.0, 1.0,
-                                        0.0, 1.0,
-                                        0.0, 1.0,
-                                        0.0, 1.0,
-                                        0.0, 0.0, 0.0, 0.0,
-                                        G_PARAM_READWRITE));
-
-  g_object_class_install_property (gobject_class, PROP_PIXEL_RGB_UINT8,
-     gegl_param_spec_pixel_rgb_uint8 ("pixel-rgb-uint8",
-                                      "Pixel-Rgb-Uint8",
-                                      "The pixel as rgb uint8",
-                                      0, 255,
-                                      0, 255,
-                                      0, 255,
-                                      0, 0, 0,
-                                      G_PARAM_READWRITE));
-
-  g_object_class_install_property (gobject_class, PROP_PIXEL_RGBA_UINT8,
-     gegl_param_spec_pixel_rgba_uint8 ("pixel-rgba-uint8",
-                                      "Pixel-Rgba-Uint8",
-                                      "The pixel as rgba uint8",
-                                      0, 255,
-                                      0, 255,
-                                      0, 255,
-                                      0, 255,
-                                      0, 0, 0, 0,
-                                      G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class, PROP_COLOR,
+               g_param_spec_object ("color",
+                                    "Color",
+                                    "The color.",
+                                     GEGL_TYPE_COLOR,
+                                     G_PARAM_CONSTRUCT |
+                                     G_PARAM_READWRITE));
 
 }
 
@@ -152,8 +95,7 @@ init (GeglMockPropertiesFilter * self,
       GeglMockPropertiesFilterClass * klass)
 {
   gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "scalar");
-  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_CHANNEL_DATA, "channel");
-  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_PIXEL_DATA, "pixel");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_COLOR_DATA, "color");
 }
 
 static void
@@ -178,19 +120,9 @@ get_property (GObject      *gobject,
         g_param_value_convert(pspec, data_value, value, TRUE);
       }
       break;
-    case PROP_CHANNEL_FLOAT:
-    case PROP_CHANNEL_UINT8:
+    case PROP_COLOR:
       {
-        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "channel");
-        g_param_value_convert(pspec, data_value, value, TRUE);
-      }
-      break;
-    case PROP_PIXEL_RGB_FLOAT:
-    case PROP_PIXEL_RGBA_FLOAT:
-    case PROP_PIXEL_RGB_UINT8:
-    case PROP_PIXEL_RGBA_UINT8:
-      {
-        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
+        GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "color");
         g_param_value_convert(pspec, data_value, value, TRUE);
       }
       break;
@@ -213,15 +145,8 @@ set_property (GObject      *gobject,
     case PROP_SCALAR_INT:
       gegl_op_set_input_data_value(GEGL_OP(self), "scalar", value);
       break;
-    case PROP_CHANNEL_FLOAT:
-    case PROP_CHANNEL_UINT8:
-      gegl_op_set_input_data_value(GEGL_OP(self), "channel", value);
-      break;
-    case PROP_PIXEL_RGB_FLOAT:
-    case PROP_PIXEL_RGBA_FLOAT:
-    case PROP_PIXEL_RGB_UINT8:
-    case PROP_PIXEL_RGBA_UINT8:
-      gegl_op_set_input_data_value(GEGL_OP(self), "pixel", value);
+    case PROP_COLOR:
+      gegl_op_set_input_data_value(GEGL_OP(self), "color", value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);

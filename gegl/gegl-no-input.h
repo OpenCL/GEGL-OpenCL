@@ -3,6 +3,7 @@
 
 #include "gegl-point-op.h"
 #include "gegl-scanline-processor.h"
+#include "gegl-color-model.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,9 +29,8 @@ struct _GeglNoInputClass
 {
     GeglPointOpClass point_op_class;
 
-    GeglScanlineFunc (*get_scanline_func)   (GeglNoInput *self,
-                                             GeglColorSpaceType space,
-                                             GeglChannelSpaceType type);
+    GeglScanlineFunc (*get_scanline_function) (GeglNoInput *self,
+                                               GeglColorModel *cm);
 };
 
 GType           gegl_no_input_get_type          (void);

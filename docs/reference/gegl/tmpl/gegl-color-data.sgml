@@ -27,7 +27,7 @@ GeglColorData
 
 @data_class: 
 
-<!-- ##### FUNCTION gegl_color_data_get_color_model ##### -->
+<!-- ##### FUNCTION gegl_color_data_get_color_space ##### -->
 <para>
 
 </para>
@@ -36,12 +36,22 @@ GeglColorData
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_data_set_color_model ##### -->
+<!-- ##### FUNCTION gegl_color_data_set_color_space ##### -->
 <para>
 
 </para>
 
 @self: 
-@color_model: 
+@color_space: 
+
+
+<!-- ##### FUNCTION gegl_color_data_get_components ##### -->
+<para>
+
+</para>
+
+@self: 
+@num_components: 
+@Returns: 
 
 

@@ -46,37 +46,21 @@ test_add_g_object_properties(Test *test)
 
     g_object_unref(add);
   }
-
-  {
-    gfloat add0, add1, add2;
-    GeglAdd * add = g_object_new (GEGL_TYPE_ADD, 
-                                  "source", source,
-                                  "constant-rgb-float", ADD0, ADD1, ADD2,
-                                  NULL);  
-
-    g_object_get(add, "constant-rgb-float", &add0, &add1, &add2, NULL);
-
-    ct_test(test, GEGL_FLOAT_EQUAL(ADD0, add0)); 
-    ct_test(test, GEGL_FLOAT_EQUAL(ADD1, add1)); 
-    ct_test(test, GEGL_FLOAT_EQUAL(ADD2, add2)); 
-
-    {
-      guint8 add0, add1, add2;
-      g_object_get(add, "constant-rgb-uint8", &add0, &add1, &add2, NULL);
-      ct_test(test, 128 == add0); 
-    }
-
-    g_object_unref(add);
-  }
 }
 
 static void
 test_add_apply(Test *test)
 {
-  GeglOp *add = g_object_new(GEGL_TYPE_ADD,
-                             "source", source,
-                             "constant-rgb-float", ADD0, ADD1, ADD2,
-                             NULL);
+  GeglColor *constant = g_object_new(GEGL_TYPE_COLOR, 
+                                     "rgb-float", ADD0, ADD1, ADD2, 
+                                     NULL);
+
+  GeglOp * add = g_object_new(GEGL_TYPE_ADD,
+                              "source", source,
+                              "constant", constant,
+                              NULL);
+
+  g_object_unref(constant);
 
   gegl_op_apply(add); 
   ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(add), 
@@ -89,15 +73,21 @@ test_add_apply(Test *test)
 static void
 test_add_apply_two_adds(Test *test)
 {
+  GeglColor *constant = g_object_new(GEGL_TYPE_COLOR, 
+                                     "rgb-float", ADD0, ADD1, ADD2, 
+                                     NULL);
+
   GeglOp *add1 = g_object_new(GEGL_TYPE_ADD,
                               "source", source,
-                              "constant-rgb-float", ADD0, ADD1, ADD2,
+                              "constant", constant, 
                               NULL);
 
   GeglOp *add2 = g_object_new(GEGL_TYPE_ADD,
                               "source", add1,
-                              "constant-rgb-float", ADD0, ADD1, ADD2,
+                              "constant", constant, 
                               NULL);
+
+  g_object_unref(constant);
 
   gegl_op_apply(add2); 
   ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(add2), 
@@ -112,11 +102,16 @@ test_add_apply_two_adds(Test *test)
 static void
 add_test_setup(Test *test)
 {
-  source = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+                                  "rgb-float", R0, G0, B0, 
+                                  NULL);
+  source = g_object_new(GEGL_TYPE_FILL, 
                         "width", IMAGE_OP_WIDTH, 
                         "height", IMAGE_OP_HEIGHT, 
-                        "pixel-rgb-float", R0, G0, B0, 
+                        "fill-color", color, 
+                        "image-data-type", "rgb-float",
                         NULL); 
+  g_object_unref(color);
 }
 
 static void
@@ -136,7 +131,6 @@ create_add_test_float()
 
 #if 1 
   g_assert(ct_addTestFun(t, test_add_g_object_new));
-  g_assert(ct_addTestFun(t, test_add_g_object_properties));
   g_assert(ct_addTestFun(t, test_add_apply));
   g_assert(ct_addTestFun(t, test_add_apply_two_adds));
 #endif

@@ -2,11 +2,12 @@
 #include "gegl-scanline-processor.h"
 #include "gegl-image-iterator.h"
 #include "gegl-utils.h"
+#include <string.h>
 
 static void class_init (GeglIAddClass * klass);
 static void init (GeglIAdd * self, GeglIAddClass * klass);
 
-static GeglScanlineFunc get_scanline_func(GeglBinary * binary, GeglColorSpaceType space, GeglChannelSpaceType type);
+static GeglScanlineFunc get_scanline_function(GeglBinary * binary, GeglColorModel *cm);
 
 static void a_iadd_b_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 static void a_iadd_b_uint8 (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);                       
@@ -46,7 +47,7 @@ class_init (GeglIAddClass * klass)
 {
   GeglBinaryClass *blend_class = GEGL_BINARY_CLASS(klass);
   parent_class = g_type_class_peek_parent(klass);
-  blend_class->get_scanline_func = get_scanline_func;
+  blend_class->get_scanline_function = get_scanline_function;
 }
 
 static void 
@@ -55,21 +56,22 @@ init (GeglIAdd * self,
 {
 }
 
-/* scanline_funcs[data type] */
-static GeglScanlineFunc scanline_funcs[] = 
-{ 
-  NULL, 
-  a_iadd_b_uint8, 
-  a_iadd_b_float, 
-  NULL 
-};
-
 static GeglScanlineFunc
-get_scanline_func(GeglBinary * binary,
-                  GeglColorSpaceType space,
-                  GeglChannelSpaceType type)
+get_scanline_function(GeglBinary * unary,
+                      GeglColorModel *cm)
 {
-  return scanline_funcs[type];
+  gchar *name = gegl_color_model_name(cm);
+
+  if(!strcmp(name, "rgb-float"))
+    return a_iadd_b_float; 
+  else if(!strcmp(name, "rgba-float"))
+    return a_iadd_b_float; 
+  else if(!strcmp(name, "rgb-uint8"))
+    return a_iadd_b_uint8; 
+  else if(!strcmp(name, "rgba-uint8"))
+    return a_iadd_b_uint8; 
+
+  return NULL;
 }
 
 static void                                                            

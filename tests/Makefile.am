@@ -50,28 +50,25 @@ testgegl_SOURCES = \
    bfsvisitortest.c \
    buffertest.c \
    channelfloatvaluetest.c \
-   channelspacetest.c \
    channelstest-float.c \
    channeluint8valuetest.c \
    channelvaluetest.c \
    checkoptest.c \
    colormodeltest.c \
    colorspacetest.c \
-   colortest-float.c \
-   colortest-uint8.c \
-   copytest-float.c \
-   copytest-uint8.c \
+   colortest.c \
    dfsvisitortest.c \
    dumpvisitortest.c \
    fadetest-float.c \
    fadetest-uint8.c \
+   filltest-float.c \
+   filltest-uint8.c \
+   floatarraytest.c \
    graphapplytest-float.c \
    graphnodetest.c \
    haverecttest.c \
    iaddtest-float.c \
    iaddtest-uint8.c \
-   imulttest-float.c \
-   imulttest-uint8.c \
    imageiteratortest.c \
    imageoptest.c \
    imagetest.c \
@@ -82,7 +79,6 @@ testgegl_SOURCES = \
    multtest-uint8.c \
    needrecttest.c \
    nodetest.c \
-   normaltest-float.c \
    objecttest.c \
    optest.c \
    pipetest.c \
@@ -108,4 +104,3 @@ TESTS = testgegl
 EXTRA_PROGRAMS = $(TESTS)
   
 all: check 
-

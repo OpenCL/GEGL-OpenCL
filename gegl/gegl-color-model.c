@@ -1,13 +1,13 @@
 #include "gegl-color-model.h"
 #include "gegl-color-space.h"
-#include "gegl-channel-space.h"
 #include "gegl-object.h"
 
 enum
 {
   PROP_0, 
   PROP_COLOR_SPACE,
-  PROP_CHANNEL_SPACE,
+  PROP_CHANNEL_TYPE_NAME,
+  PROP_PIXEL_TYPE_NAME,
   PROP_HAS_ALPHA,
   PROP_HAS_Z,
   PROP_LAST 
@@ -118,13 +118,20 @@ class_init (GeglColorModelClass * klass)
                                                          G_PARAM_CONSTRUCT |
                                                          G_PARAM_READWRITE));
 
-  g_object_class_install_property (gobject_class, PROP_CHANNEL_SPACE,
-                                   g_param_spec_object ("channel_space",
-                                                        "ChannelSpace",
-                                                        "The data space of the model",
-                                                         GEGL_TYPE_CHANNEL_SPACE,
-                                                         G_PARAM_CONSTRUCT |
-                                                         G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class, PROP_CHANNEL_TYPE_NAME,
+                                   g_param_spec_string("channel_type_name",
+                                                       "ChannelTypeName",
+                                                       "The channel typename of the model",
+                                                       "",
+                                                       G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class, PROP_PIXEL_TYPE_NAME,
+                                   g_param_spec_string ("pixel_type_name",
+                                                        "PixelTypeName",
+                                                        "The pixel typename of the model",
+                                                        "",
+                                                        G_PARAM_CONSTRUCT |
+                                                        G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_HAS_ALPHA,
                                    g_param_spec_boolean ("has_alpha",
@@ -150,7 +157,9 @@ init (GeglColorModel * self,
       GeglColorModelClass * klass)
 {
   self->color_space = NULL;
-  self->channel_space = NULL;
+
+  self->channel_type_name = NULL;
+  self->pixel_type_name = NULL;
 
   self->bits_per_channel = NULL;
   self->bits_per_pixel = 0; 
@@ -177,6 +186,9 @@ finalize(GObject *gobject)
   g_free(self->bits_per_channel);
   g_free(self->name);
 
+  g_free(self->channel_type_name);
+  g_free(self->pixel_type_name);
+
   for(i = 0; i < self->num_channels; i++)
     g_free(self->channel_names[i]);
 
@@ -198,8 +210,11 @@ set_property (GObject      *gobject,
     case PROP_COLOR_SPACE:
       self->color_space = GEGL_COLOR_SPACE(g_value_get_object(value));
       break;
-    case PROP_CHANNEL_SPACE:
-      self->channel_space = GEGL_CHANNEL_SPACE(g_value_get_object(value));
+    case PROP_CHANNEL_TYPE_NAME:
+      self->channel_type_name = g_value_dup_string(value);
+      break;
+    case PROP_PIXEL_TYPE_NAME:
+      self->pixel_type_name = g_value_dup_string(value);
       break;
     case PROP_HAS_ALPHA:
       gegl_color_model_set_has_alpha(self, g_value_get_boolean (value));
@@ -226,8 +241,11 @@ get_property (GObject      *gobject,
     case PROP_COLOR_SPACE:
       g_value_set_object (value, G_OBJECT(gegl_color_model_color_space(self)));
       break;
-    case PROP_CHANNEL_SPACE:
-      g_value_set_object (value, G_OBJECT(gegl_color_model_channel_space(self)));
+    case PROP_CHANNEL_TYPE_NAME:
+      g_value_set_string (value, gegl_color_model_channel_type_name(self));
+      break;
+    case PROP_PIXEL_TYPE_NAME:
+      g_value_set_string (value, gegl_color_model_pixel_type_name(self));
       break;
     case PROP_HAS_ALPHA:
       g_value_set_boolean (value, gegl_color_model_has_alpha(self));
@@ -259,20 +277,37 @@ gegl_color_model_color_space (GeglColorModel * self)
 }
 
 /**
- * gegl_color_model_channel_space:
+ * gegl_color_model_channel_type_nmae:
  * @self: a #GeglColorModel
  *
- * Gets the data space of the color model. (eg U8, FLOAT)
+ * Gets the channel type name of the color model. (eg uint8, float)
  *
- * Returns: the #GeglChannelSpace of this color model.
+ * Returns: the GType of the channel.
  **/
-GeglChannelSpace*
-gegl_color_model_channel_space (GeglColorModel * self)
+const gchar*
+gegl_color_model_channel_type_name (GeglColorModel * self)
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_COLOR_MODEL (self), NULL);
 
-  return self->channel_space; 
+  return self->channel_type_name; 
+}
+
+/**
+ * gegl_color_model_pixel_type:
+ * @self: a #GeglColorModel
+ *
+ * Gets the pixel type of the color model. (eg rgb_uint8, rgb_float)
+ *
+ * Returns: the GType of the channel.
+ **/
+const gchar*
+gegl_color_model_pixel_type_name (GeglColorModel * self)
+{
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (GEGL_IS_COLOR_MODEL (self), NULL);
+
+  return self->pixel_type_name; 
 }
 
 /**

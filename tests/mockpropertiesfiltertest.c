@@ -30,12 +30,17 @@ test_mock_properties_filter_g_object_new_properties(Test *test)
 {
   {
     GeglNode *a;
+    GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+                                    "rgb-float", 1.0, 1.0, 1.0,
+                                    NULL);
+
     a = g_object_new (GEGL_TYPE_MOCK_PROPERTIES_FILTER, 
                       "scalar-int", 1000, 
                       "scalar-float", .5, 
-                      "channel-uint8", 255,
-                      "pixel-rgb-float", 1.0, 1.0, 1.0,
+                      "color", color,
                       NULL);  
+
+    g_object_unref(color);
     g_object_unref(a);
   }
 }
@@ -48,12 +53,6 @@ test_mock_properties_filter_g_object_set(Test *test)
     a = g_object_new (GEGL_TYPE_MOCK_PROPERTIES_FILTER, NULL);  
     g_object_set(a, "scalar-int", 1000, NULL); 
     g_object_set(a, "scalar-float", .5, NULL); 
-    g_object_set(a, "channel-uint8", 255, NULL); 
-    g_object_set(a, "channel-float", .5, NULL); 
-    g_object_set(a, "pixel-rgb-float", .5, .5, .5, NULL); 
-    g_object_set(a, "pixel-rgba-float", .5, .5, .5, 1.0, NULL); 
-    g_object_set(a, "pixel-rgb-uint8", 128, 128, 128, NULL); 
-    g_object_set(a, "pixel-rgba-uint8", 128, 128, 128, 255, NULL); 
     g_object_unref(a);
   }
 }

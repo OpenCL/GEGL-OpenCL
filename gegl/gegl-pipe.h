@@ -3,6 +3,7 @@
 
 #include "gegl-image-op.h"
 #include "gegl-scanline-processor.h"
+#include "gegl-color-model.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,9 +30,8 @@ struct _GeglPipeClass
 {
     GeglImageOpClass image_op_class;
 
-    GeglScanlineFunc (*get_scanline_func)   (GeglPipe *self,
-                                             GeglColorSpaceType space,
-                                             GeglChannelSpaceType type);
+    GeglScanlineFunc (*get_scanline_function)(GeglPipe *self,
+                                             GeglColorModel *cm);
 };
 
 GType           gegl_pipe_get_type           (void);

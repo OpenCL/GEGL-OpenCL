@@ -13,9 +13,9 @@ test_simple_tree_apply(Test *t)
   /* 
         iadd 
         /   \ 
-     fade  color2 
+     fade  fill2 
       |
-     color1  
+     fill1  
 
           (.55,.7,.85)
           /         \
@@ -25,23 +25,34 @@ test_simple_tree_apply(Test *t)
 
   */ 
 
-  GeglOp * color1 = g_object_new(GEGL_TYPE_COLOR, 
-                                 "pixel-rgb-float", .1, .2, .3, 
-                                 NULL); 
+  GeglColor *color1 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgb-float", .1, .2, .3,
+                                   NULL);
 
-  GeglOp * color2 = g_object_new(GEGL_TYPE_COLOR, 
-                                 "pixel-rgb-float", .5, .6, .7, 
-                                 NULL); 
+  GeglOp * fill1 = g_object_new(GEGL_TYPE_FILL, 
+                                "fill-color", color1,
+                                NULL); 
+
+  GeglColor *color2 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgb-float", .5, .6, .7,
+                                   NULL);
+
+  GeglOp * fill2 = g_object_new(GEGL_TYPE_FILL, 
+                                "fill-color", color2,
+                                NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
-                                "source", color1,
+                                "source", fill1,
                                 "multiplier", .5,
                                 NULL); 
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD, 
                                 "source-0", fade,
-                                "source-1", color2,
+                                "source-1", fill2,
                                 NULL);  
+
+  g_object_unref(color1);
+  g_object_unref(color2);
 
   gegl_op_apply(iadd); 
 
@@ -49,8 +60,8 @@ test_simple_tree_apply(Test *t)
 
   g_object_unref(iadd);
   g_object_unref(fade);
-  g_object_unref(color1);
-  g_object_unref(color2);
+  g_object_unref(fill1);
+  g_object_unref(fill2);
 }
 
 static void
@@ -61,13 +72,13 @@ test_simple_tree_apply_with_prints(Test *t)
   /* 
         iadd
         /   \ 
-     print2 color2 
+     print2 fill2 
       |
      fade   
       |
      print1
       |
-     color1  
+     fill1  
 
           (.55,.7,.85)
           /         \
@@ -81,20 +92,28 @@ test_simple_tree_apply_with_prints(Test *t)
 
   */ 
 
-  GeglOp * color1 = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color1 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgb-float", .1, .2, .3,
+                                   NULL);
+
+  GeglOp * fill1 = g_object_new(GEGL_TYPE_FILL, 
                                  "width", IMAGE_OP_WIDTH,
                                  "height", IMAGE_OP_HEIGHT,
-                                 "pixel-rgb-float", .1, .2, .3, 
+                                 "fill-color", color1,
                                  NULL); 
 
   GeglOp * print1 = g_object_new(GEGL_TYPE_PRINT,
-                                 "source", color1,
+                                 "source", fill1,
                                  NULL);
 
-  GeglOp * color2 = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color2 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgb-float", .5, .6, .7,
+                                   NULL);
+
+  GeglOp * fill2 = g_object_new(GEGL_TYPE_FILL, 
                                  "width", IMAGE_OP_WIDTH,
                                  "height", IMAGE_OP_HEIGHT,
-                                 "pixel-rgb-float", .5, .6, .7, 
+                                 "fill-color", color2,
                                  NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
@@ -108,8 +127,11 @@ test_simple_tree_apply_with_prints(Test *t)
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD, 
                                 "source-0", print2,
-                                "source-1", color2,
+                                "source-1", fill2,
                                 NULL);  
+
+  g_object_unref(color1);
+  g_object_unref(color2);
 
   gegl_op_apply(iadd); 
 
@@ -117,8 +139,8 @@ test_simple_tree_apply_with_prints(Test *t)
 
   g_object_unref(iadd);
   g_object_unref(fade);
-  g_object_unref(color1);
-  g_object_unref(color2);
+  g_object_unref(fill1);
+  g_object_unref(fill2);
   g_object_unref(print1);
   g_object_unref(print2);
 }
@@ -132,7 +154,7 @@ test_simple_diamond_apply(Test *t)
         /   \ 
     fade1 fade2 
        \    / 
-        color 
+        fill 
 
             (.25,.5,.75)
             /         \
@@ -142,19 +164,22 @@ test_simple_diamond_apply(Test *t)
 
   */ 
 
-  GeglOp * color = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color1 = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgb-float", .1, .2, .3,
+                                   NULL);
+  GeglOp * fill = g_object_new(GEGL_TYPE_FILL, 
                                 "width", IMAGE_OP_WIDTH,
                                 "height", IMAGE_OP_HEIGHT,
-                                "pixel-rgb-float", .1, .2, .3, 
+                                "fill-color", color1,
                                 NULL); 
 
   GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
-                                 "source", color,
+                                 "source", fill,
                                  "multiplier", .5,
                                  NULL); 
 
   GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
-                                 "source", color,
+                                 "source", fill,
                                  "multiplier", 2.0,
                                  NULL); 
 
@@ -163,6 +188,8 @@ test_simple_diamond_apply(Test *t)
                                 "source-1", fade2,
                                 NULL);  
 
+  g_object_unref(color1);
+
   gegl_op_apply(iadd); 
 
   ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(iadd), .25, .5, .75));  
@@ -170,7 +197,7 @@ test_simple_diamond_apply(Test *t)
   g_object_unref(iadd);
   g_object_unref(fade1);
   g_object_unref(fade2);
-  g_object_unref(color);
+  g_object_unref(fill);
 }
 
 static void
@@ -181,7 +208,7 @@ test_simple_chain_apply(Test *t)
         |  
       fade1  
         |
-      color  
+      fill  
 
     (.025,.05,.075)
          | 
@@ -191,14 +218,17 @@ test_simple_chain_apply(Test *t)
 
   */ 
 
-  GeglOp * color = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+                                   "rgb-float", .1, .2, .3,
+                                   NULL);
+  GeglOp * fill = g_object_new(GEGL_TYPE_FILL, 
                                 "width", IMAGE_OP_WIDTH,
                                 "height", IMAGE_OP_HEIGHT,
-                                "pixel-rgb-float", .1, .2, .3, 
+                                "fill-color", color,
                                 NULL); 
 
   GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
-                                 "source", color,
+                                 "source", fill,
                                  "multiplier", .5,
                                  NULL); 
 
@@ -207,13 +237,15 @@ test_simple_chain_apply(Test *t)
                                  "multiplier", .5,
                                  NULL); 
 
+  g_object_unref(color);
+
   gegl_op_apply(fade2); 
 
   ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(fade2), .025, .05, .075));  
 
   g_object_unref(fade1);
   g_object_unref(fade2);
-  g_object_unref(color);
+  g_object_unref(fill);
 }
 
 static void

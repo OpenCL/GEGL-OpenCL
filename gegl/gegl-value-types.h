@@ -3,6 +3,7 @@
 
 #include <glib-object.h>
 #include "gegl-types.h"
+#include "gegl-array-value-types.h"
 #include "gegl-channel-value-types.h"
 #include "gegl-pixel-value-types.h"
 #include "gegl-input-value-types.h"

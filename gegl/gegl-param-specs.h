@@ -5,7 +5,7 @@
 #include "gegl-utils.h"
 #include "gegl-channel-param-specs.h"
 #include "gegl-pixel-param-specs.h"
-#include "gegl-image-param-specs.h"
+#include "gegl-array-param-specs.h"
 #include "gegl-input-param-specs.h"
 #include "gegl-m-source-param-specs.h"
 

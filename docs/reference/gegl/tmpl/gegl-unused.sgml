@@ -1,3 +1,110 @@
+<!-- ##### SECTION ./tmpl/gegl-atop.sgml:Long_Description ##### -->
+<para>
+This composites foreground (f,fa) atop background (b,ba). The part of the
+foreground lying inside of the background is composited onto the background.
+</para>
+<para>
+<literallayout>
+c  = f*ba + b*(1-fa)
+ca = ba 
+</literallayout>
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-atop.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-atop.sgml:Short_Description ##### -->
+Composite foreground atop background
+
+
+<!-- ##### SECTION ./tmpl/gegl-atop.sgml:Title ##### -->
+GeglAtop
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-data.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-data.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-data.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-data.sgml:Title ##### -->
+GeglChannelData
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-space-float.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-space-float.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-space-float.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-space-float.sgml:Title ##### -->
+GeglChannelSpaceFloat
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-space-uint8.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-space-uint8.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-space-uint8.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-space-uint8.sgml:Title ##### -->
+GeglChannelSpaceU8
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-space.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-space.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-space.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-channel-space.sgml:Title ##### -->
+GeglChannelSpace
+
+
 <!-- ##### SECTION ./tmpl/gegl-color-alpha.sgml:Long_Description ##### -->
 <para>
 
@@ -18,6 +125,499 @@
 GeglPointOp
 
 
+<!-- ##### SECTION ./tmpl/gegl-copy.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-copy.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-copy.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-copy.sgml:Title ##### -->
+GeglCopy
+
+
+<!-- ##### SECTION ./tmpl/gegl-darken.sgml:Long_Description ##### -->
+<para>
+Selects the darker of the background and foreground colors. The background is
+replaced with the foreground when the foreground is darker, otherwise it is left
+unchanged.
+<literallayout>
+c = min(f*ba, b*fa) + f*(1-ba) + b*(1-fa) 
+ca = fa + ba - fa*ba 
+</literallayout>
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-darken.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-darken.sgml:Short_Description ##### -->
+Darken blend mode
+
+
+<!-- ##### SECTION ./tmpl/gegl-darken.sgml:Title ##### -->
+GeglDarken
+
+
+<!-- ##### SECTION ./tmpl/gegl-difference.sgml:Long_Description ##### -->
+<para>
+Subtracts the darker of the two constituent colors from the lighter. Painting
+with white inverts the destination color. Painting with black produces no
+change.
+<literallayout>
+c = ABS(b*fa - b*ba) + f*(1-ba) + b*(1-fa) 
+  = f + b - 2*MIN(f*ba,b*fa)
+ca = fa + ba - fa*ba
+</literallayout>
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-difference.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-difference.sgml:Short_Description ##### -->
+Difference blend mode
+
+
+<!-- ##### SECTION ./tmpl/gegl-difference.sgml:Title ##### -->
+GeglDifference
+
+
+<!-- ##### SECTION ./tmpl/gegl-i-mult.sgml:Long_Description ##### -->
+<para>
+Multiply two images.
+</para>
+<para>
+A * B
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-i-mult.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-i-mult.sgml:Short_Description ##### -->
+Multiply two images
+
+
+<!-- ##### SECTION ./tmpl/gegl-i-mult.sgml:Title ##### -->
+GeglIMult
+
+
+<!-- ##### SECTION ./tmpl/gegl-image-param-specs.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-image-param-specs.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-image-param-specs.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-image-param-specs.sgml:Title ##### -->
+gegl-image-param-specs
+
+
+<!-- ##### SECTION ./tmpl/gegl-inside.sgml:Long_Description ##### -->
+<para>
+Composite foreground (f,fa) inside background (b,ba).
+The part of the foreground lying inside of the background replaces the background.
+</para>
+
+<para>
+<literallayout>
+c = f * ba 
+ca = fa * ba
+</literallayout>
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-inside.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-inside.sgml:Short_Description ##### -->
+Composite foreground inside background
+
+
+<!-- ##### SECTION ./tmpl/gegl-inside.sgml:Title ##### -->
+GeglInside
+
+
+<!-- ##### SECTION ./tmpl/gegl-lighten.sgml:Long_Description ##### -->
+<para>
+Selects the lighter of the background and foreground colors. The background is
+replaced with the foreground when the foreground is lighter, otherwise it is left
+unchanged.
+<literallayout>
+c = max(f*ba, b*fa) + f*(1-ba) + b*(1-fa)
+ca = fa + ba - fa*ba
+</literallayout>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-lighten.sgml:See_Also ##### -->
+<para>
+#GeglBlend
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-lighten.sgml:Short_Description ##### -->
+Lighten blend mode
+
+
+<!-- ##### SECTION ./tmpl/gegl-lighten.sgml:Title ##### -->
+GeglLighten
+
+
+<!-- ##### SECTION ./tmpl/gegl-max.sgml:Long_Description ##### -->
+<para>
+Take the maximum of two images.
+</para>
+<para>
+Max(A,B)
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-max.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-max.sgml:Short_Description ##### -->
+Max of two images
+
+
+<!-- ##### SECTION ./tmpl/gegl-max.sgml:Title ##### -->
+GeglMax
+
+
+<!-- ##### SECTION ./tmpl/gegl-min.sgml:Long_Description ##### -->
+<para>
+Take the minimum of two images.
+</para>
+<para>
+Min(A,B)
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-min.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-min.sgml:Short_Description ##### -->
+Min of two images
+
+
+<!-- ##### SECTION ./tmpl/gegl-min.sgml:Title ##### -->
+GeglMin
+
+
+<!-- ##### SECTION ./tmpl/gegl-normal.sgml:Long_Description ##### -->
+<para>
+Composite foreground (f,fa) and background (b,ba) using normal
+blend mode, blend(x,y)=x.
+<literallayout>
+c = (1-fa)*b + f
+ca = fa + ba - fa*ba
+</literallayout>
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-normal.sgml:See_Also ##### -->
+<para>
+#GeglBlend
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-normal.sgml:Short_Description ##### -->
+Composite foreground and background using normal blend mode.
+
+
+<!-- ##### SECTION ./tmpl/gegl-normal.sgml:Title ##### -->
+GeglNormal
+
+
+<!-- ##### SECTION ./tmpl/gegl-outside.sgml:Long_Description ##### -->
+<para>
+Composite foreground(f,fa) outside background(b,ba).
+Part of the foreground outside of background replaces background.
+</para>
+<para>
+<literallayout>
+c = (1-ba) * f 
+ca = (1-ba) * fa 
+</literallayout>
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-outside.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-outside.sgml:Short_Description ##### -->
+Composite foreground outside background
+
+
+<!-- ##### SECTION ./tmpl/gegl-outside.sgml:Title ##### -->
+GeglOutside
+
+
+<!-- ##### SECTION ./tmpl/gegl-pixel-data.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-pixel-data.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-pixel-data.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-pixel-data.sgml:Title ##### -->
+GeglPixelData
+
+
+<!-- ##### SECTION ./tmpl/gegl-pixel.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-pixel.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-pixel.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-pixel.sgml:Title ##### -->
+GeglPixel
+
+
+<!-- ##### SECTION ./tmpl/gegl-premult.sgml:Long_Description ##### -->
+<para>
+Premultiply the image by the alpha channel.
+<literallayout>
+A*R
+A*G
+A*B 
+A
+</literallayout>
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-premult.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-premult.sgml:Short_Description ##### -->
+Premultiply image by alpha
+
+
+<!-- ##### SECTION ./tmpl/gegl-premult.sgml:Title ##### -->
+GeglPremult
+
+
+<!-- ##### SECTION ./tmpl/gegl-screen.sgml:Long_Description ##### -->
+<para> 
+The foreground and background are complemented and then multiplied and then
+replace the background. The resultant color is always at least as light as
+either of the two constituent colors. Screening any color with white produces
+white.  Screening any color with black leaves the original color unchanged.
+<literallayout>
+c = f + b - f*b 
+ca = fa + ba - fa*ba 
+</literallayout>
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-screen.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-screen.sgml:Short_Description ##### -->
+Composite foreground and background using screen blend mode.
+
+
+<!-- ##### SECTION ./tmpl/gegl-screen.sgml:Title ##### -->
+GeglScreen
+
+
+<!-- ##### SECTION ./tmpl/gegl-subtract.sgml:Long_Description ##### -->
+<para>
+Subtract two images.
+</para>
+<para>
+A - B
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-subtract.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-subtract.sgml:Short_Description ##### -->
+Subtract two images
+
+
+<!-- ##### SECTION ./tmpl/gegl-subtract.sgml:Title ##### -->
+GeglSubtract
+
+
+<!-- ##### SECTION ./tmpl/gegl-unpremult.sgml:Long_Description ##### -->
+<para>
+Unpremultiply the image by the alpha channel.
+<literallayout>
+R/A
+G/A
+B/A 
+A
+</literallayout>
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-unpremult.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-unpremult.sgml:Short_Description ##### -->
+Unpremultiply the image by alpha
+
+
+<!-- ##### SECTION ./tmpl/gegl-unpremult.sgml:Title ##### -->
+GeglUnpremult
+
+
+<!-- ##### SECTION ./tmpl/gegl-xor.sgml:Long_Description ##### -->
+<para>
+Composite foreground(f,fa) exclusive or background(b,ba). The part of the
+foreground that lies outside of the background is combined with the part of the
+background that lies outside of the foreground.
+</para>
+<para>
+<literallayout>
+c = f*(1-ba) + b*(1-fa)  
+ca = fa*(1-ba) + ba*(1-fa)
+</literallayout>
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-xor.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-xor.sgml:Short_Description ##### -->
+Composite foreground xor background
+
+
+<!-- ##### SECTION ./tmpl/gegl-xor.sgml:Title ##### -->
+GeglXor
+
+
+<!-- ##### MACRO GEGL_FLOAT_TO_UINT8 ##### -->
+<para>
+
+</para>
+
+@x: 
+
+<!-- ##### MACRO GEGL_TYPE_COMPONENTS ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_PARAM_IMAGE ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO GEGL_VALUE_HOLDS_COMPONENTS ##### -->
+<para>
+
+</para>
+
+@value: 
+
+<!-- ##### ARG GeglAdd:constant-rgb-float ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglAdd:constant-rgb-uint8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglAtop ##### -->
+<para>
+
+</para>
+
+@comp: 
+
+<!-- ##### STRUCT GeglAtopClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
+
 <!-- ##### ARG GeglBinary:input-image-a ##### -->
 <para>
 
@@ -25,6 +625,12 @@ GeglPointOp
 
 
 <!-- ##### ARG GeglBinary:input-image-b ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglChannelData ##### -->
 <para>
 
 </para>
@@ -42,6 +648,104 @@ GeglPointOp
 </para>
 
 
+<!-- ##### STRUCT GeglChannelDataClass ##### -->
+<para>
+
+</para>
+
+@data_class: 
+
+<!-- ##### STRUCT GeglChannelSpace ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglChannelSpaceClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@convert_to_float: 
+@convert_from_float: 
+@convert_value_to_float: 
+@convert_value_from_float: 
+
+<!-- ##### STRUCT GeglChannelSpaceFloat ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglChannelSpaceFloatClass ##### -->
+<para>
+
+</para>
+
+@channel_space_class: 
+
+<!-- ##### STRUCT GeglChannelSpaceU8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglChannelSpaceU8Class ##### -->
+<para>
+
+</para>
+
+@channel_space_class: 
+
+<!-- ##### ARG GeglColor:height ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglColor:pixel-node ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglColor:pixel-rgb-float ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglColor:pixel-rgb-uint8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglColor:pixel-rgba-float ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglColor:pixel-rgba-uint8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglColor:width ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglColorModel:channel-space ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### ARG GeglComp:input-image-a ##### -->
 <para>
 
@@ -54,6 +758,14 @@ GeglPointOp
 </para>
 
 
+<!-- ##### STRUCT GeglComponents ##### -->
+<para>
+
+</para>
+
+@num: 
+@values: 
+
 <!-- ##### STRUCT GeglConnector ##### -->
 <para>
 
@@ -63,11 +775,135 @@ GeglPointOp
 @input: 
 @source: 
 
+<!-- ##### STRUCT GeglCopy ##### -->
+<para>
+
+</para>
+
+@unary: 
+
+<!-- ##### STRUCT GeglCopyClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
+
+<!-- ##### STRUCT GeglDarken ##### -->
+<para>
+
+</para>
+
+@blend: 
+
+<!-- ##### STRUCT GeglDarkenClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
+
 <!-- ##### ARG GeglData:param-spec ##### -->
 <para>
 
 </para>
 
+
+<!-- ##### STRUCT GeglDifference ##### -->
+<para>
+
+</para>
+
+@blend: 
+
+<!-- ##### STRUCT GeglDifferenceClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
+
+<!-- ##### ARG GeglFill:color ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglFill:color-model-string ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglIMult ##### -->
+<para>
+
+</para>
+
+@binary: 
+
+<!-- ##### STRUCT GeglIMultClass ##### -->
+<para>
+
+</para>
+
+@binary_class: 
+
+<!-- ##### STRUCT GeglInside ##### -->
+<para>
+
+</para>
+
+@comp: 
+
+<!-- ##### STRUCT GeglInsideClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
+
+<!-- ##### STRUCT GeglLighten ##### -->
+<para>
+
+</para>
+
+@blend: 
+
+<!-- ##### STRUCT GeglLightenClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
+
+<!-- ##### STRUCT GeglMax ##### -->
+<para>
+
+</para>
+
+@binary: 
+
+<!-- ##### STRUCT GeglMaxClass ##### -->
+<para>
+
+</para>
+
+@binary_class: 
+
+<!-- ##### STRUCT GeglMin ##### -->
+<para>
+
+</para>
+
+@binary: 
+
+<!-- ##### STRUCT GeglMinClass ##### -->
+<para>
+
+</para>
+
+@binary_class: 
 
 <!-- ##### ARG GeglNode:input ##### -->
 <para>
@@ -75,7 +911,62 @@ GeglPointOp
 </para>
 
 
+<!-- ##### STRUCT GeglNormal ##### -->
+<para>
+
+</para>
+
+@blend: 
+
+<!-- ##### STRUCT GeglNormalClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
+
+<!-- ##### STRUCT GeglOutside ##### -->
+<para>
+
+</para>
+
+@comp: 
+
+<!-- ##### STRUCT GeglOutsideClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
+
+<!-- ##### STRUCT GeglParamSpecImage ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
 <!-- ##### ARG GeglPipe:input-image ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglPixel ##### -->
+<para>
+
+</para>
+
+@object: 
+
+<!-- ##### STRUCT GeglPixelClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+
+<!-- ##### STRUCT GeglPixelData ##### -->
 <para>
 
 </para>
@@ -105,11 +996,87 @@ GeglPointOp
 </para>
 
 
+<!-- ##### STRUCT GeglPixelDataClass ##### -->
+<para>
+
+</para>
+
+@data_class: 
+
+<!-- ##### STRUCT GeglPremult ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglPremultClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
+
+<!-- ##### STRUCT GeglScreen ##### -->
+<para>
+
+</para>
+
+@blend: 
+
+<!-- ##### STRUCT GeglScreenClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
+
+<!-- ##### STRUCT GeglSubtract ##### -->
+<para>
+
+</para>
+
+@binary: 
+
+<!-- ##### STRUCT GeglSubtractClass ##### -->
+<para>
+
+</para>
+
+@binary_class: 
+
 <!-- ##### ARG GeglUnary:input-image ##### -->
 <para>
 
 </para>
 
+
+<!-- ##### STRUCT GeglUnpremult ##### -->
+<para>
+
+</para>
+
+@unary: 
+
+<!-- ##### STRUCT GeglUnpremultClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
+
+<!-- ##### STRUCT GeglXor ##### -->
+<para>
+
+</para>
+
+@comp: 
+
+<!-- ##### STRUCT GeglXorClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
 
 <!-- ##### FUNCTION LOG_DEBUG ##### -->
 <para>
@@ -205,6 +1172,116 @@ GeglPointOp
 @self: 
 @opacity: 
 
+<!-- ##### FUNCTION gegl_channel_data_get_channel_space ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_channel_space_bits ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_channel_space_channel_space_type ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_channel_space_convert_from_float ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest: 
+@src: 
+@num: 
+
+<!-- ##### FUNCTION gegl_channel_space_convert_to_float ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest: 
+@src: 
+@num: 
+
+<!-- ##### FUNCTION gegl_channel_space_convert_value_from_float ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest: 
+@src: 
+
+<!-- ##### FUNCTION gegl_channel_space_convert_value_to_float ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest: 
+@src: 
+
+<!-- ##### FUNCTION gegl_channel_space_instance ##### -->
+<para>
+
+</para>
+
+@channel_space_name: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_channel_space_is_channel_data ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_channel_space_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_channel_space_register ##### -->
+<para>
+
+</para>
+
+@channel_space: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_data_get_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_data_set_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@color_model: 
+
 <!-- ##### FUNCTION gegl_color_get_height ##### -->
 <para>
 
@@ -222,6 +1299,22 @@ GeglPointOp
 @pixel: 
 
 <!-- ##### FUNCTION gegl_color_get_width ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_channel_type ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_color_model_pixel_type ##### -->
 <para>
 
 </para>
@@ -408,6 +1501,12 @@ GeglPointOp
 
 @self: 
 @image: 
+
+<!-- ##### FUNCTION gegl_image_param_spec_types_init ##### -->
+<para>
+
+</para>
+
 
 <!-- ##### FUNCTION gegl_log ##### -->
 <para>
@@ -658,6 +1757,40 @@ GeglPointOp
 @op: 
 @collected_input_data_list: 
 @func: 
+
+<!-- ##### FUNCTION gegl_param_spec_image ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@flags: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_pixel_data_get_color_space ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_pixel_data_set_color_space ##### -->
+<para>
+
+</para>
+
+@self: 
+@color_space: 
+
+<!-- ##### FUNCTION gegl_pixel_get_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
 
 <!-- ##### FUNCTION gegl_visitor_collect_data_inputs ##### -->
 <para>

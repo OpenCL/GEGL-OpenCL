@@ -46,22 +46,6 @@ test_add_g_object_properties(Test *test)
 
     g_object_unref(add);
   }
-
-  {
-    guint8 add0, add1, add2;
-    GeglAdd * add = g_object_new (GEGL_TYPE_ADD, 
-                                  "source", source,
-                                  "constant-rgb-uint8", ADD0, ADD1, ADD2,
-                                  NULL);  
-
-    g_object_get(add, "constant-rgb-uint8", &add0, &add1, &add2, NULL);
-
-    ct_test(test, ADD0 == add0); 
-    ct_test(test, ADD1 == add1); 
-    ct_test(test, ADD2 == add2); 
-
-    g_object_unref(add);
-  }
 }
 
 static void
@@ -69,10 +53,16 @@ test_add_apply(Test *test)
 {
   {
     guint8 r, g, b;
+    GeglColor *constant = g_object_new(GEGL_TYPE_COLOR, 
+                                       "rgb-float", ADD0/255.0, ADD1/255.0, ADD2/255.0, 
+                                       NULL);
     GeglOp *add = g_object_new(GEGL_TYPE_ADD,
                                "source", source,
-                               "constant-rgb-uint8", ADD0, ADD1, ADD2,
+                               "constant", constant,
                                NULL);
+
+
+    g_object_unref(constant);
 
     gegl_op_apply(add); 
 
@@ -86,15 +76,20 @@ test_add_apply(Test *test)
 
   {
     gint r, g, b;
+    GeglColor *constant = g_object_new(GEGL_TYPE_COLOR, 
+                                       "rgb-float", ADD0/255.0, ADD1/255.0, ADD2/255.0, 
+                                       NULL);
     GeglOp *add1 = g_object_new(GEGL_TYPE_ADD,
                                  "source", source,
-                                 "constant-rgb-uint8", ADD0, ADD1, ADD2,
+                                 "constant", constant,
                                  NULL);
 
     GeglOp *add2 = g_object_new(GEGL_TYPE_ADD,
                                  "source", add1,
-                                 "constant-rgb-uint8", ADD0, ADD1, ADD2,
+                                 "constant", constant, 
                                  NULL);
+
+    g_object_unref(constant);
 
     gegl_op_apply(add2); 
 
@@ -116,11 +111,16 @@ test_add_apply(Test *test)
 static void
 add_test_setup(Test *test)
 {
-  source = g_object_new(GEGL_TYPE_COLOR, 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
+                                  "rgb-float", R0/255.0, G0/255.0, B0/255.0, 
+                                  NULL);
+  source = g_object_new(GEGL_TYPE_FILL, 
                         "width", IMAGE_OP_WIDTH, 
                         "height", IMAGE_OP_HEIGHT, 
-                        "pixel-rgb-uint8", R0, G0, B0, 
+                        "fill-color", color, 
+                        "image-data-type", "rgb-uint8",
                         NULL); 
+  g_object_unref(color);
 }
 
 static void

@@ -1,7 +1,7 @@
 #ifndef __GEGL_COLOR_H__
 #define __GEGL_COLOR_H__
 
-#include "gegl-no-input.h"
+#include "gegl-object.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,18 +17,20 @@ extern "C" {
 typedef struct _GeglColor GeglColor;
 struct _GeglColor 
 {
-   GeglNoInput no_input;
+    GeglObject object;
 
-   /*< private >*/
+    /*< private >*/
+    GValue *color_value;
 };
 
 typedef struct _GeglColorClass GeglColorClass;
 struct _GeglColorClass 
 {
-   GeglNoInputClass no_input_class;
+    GeglObjectClass object_class;
 };
 
-GType           gegl_color_get_type         (void);
+GType           gegl_color_get_type              (void);
+
 
 #ifdef __cplusplus
 }

@@ -3,7 +3,9 @@
 
 #include "gegl-object.h"
 #include "gegl-color-space.h"
+#if 0
 #include "gegl-channel-space.h"
+#endif
 #include "gegl-storage.h"
 
 #ifdef __cplusplus
@@ -25,8 +27,12 @@ struct _GeglColorModel
 
    /*< private >*/
    GeglColorSpace * color_space;
+#if 0
    GeglChannelSpace *  channel_space;
-   GType pixel_type;
+#endif
+
+   gchar *pixel_type_name;
+   gchar *channel_type_name;
 
    gint num_channels;                    
    gint num_colors;                     
@@ -51,6 +57,16 @@ struct _GeglColorModelClass
    GeglObjectClass object_class;
    
    GeglStorage* (*create_storage)(GeglColorModel *self, gint w, gint h);
+
+  void  (*convert_from_float) (GeglColorModel * self, 
+                               gpointer * dest, 
+                               gfloat * src, 
+                               gint num);
+
+  void  (*convert_to_float) (GeglColorModel * self, 
+                             gfloat * dest, 
+                             gpointer * src, 
+                             gint num);
 };
 
 
@@ -60,10 +76,12 @@ gboolean        gegl_color_model_register       (GeglColorModel *color_model);
 GeglColorModel *  gegl_color_model_instance       (gchar * color_model_name);
 
 GeglColorSpace* gegl_color_model_color_space    (GeglColorModel * self);
+#if 0
 GeglChannelSpace*  gegl_color_model_channel_space     (GeglColorModel * self);
+#endif
 
-GType           gegl_color_model_channel_type   (GeglColorModel *self);
-GType           gegl_color_model_pixel_type     (GeglColorModel *self);
+const gchar*    gegl_color_model_channel_type_name (GeglColorModel *self);
+const gchar*    gegl_color_model_pixel_type_name (GeglColorModel *self);
 
 gint            gegl_color_model_num_channels   (GeglColorModel * self);
 gint            gegl_color_model_num_colors     (GeglColorModel * self);

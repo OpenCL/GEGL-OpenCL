@@ -28,7 +28,7 @@ is used as multiplier applied to the first input, a.
 </para>
 
 @point_op_class: 
-@get_scanline_func: 
+@get_scanline_function: 
 
 <!-- ##### ARG GeglBinary:fade ##### -->
 <para>

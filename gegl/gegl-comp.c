@@ -5,7 +5,6 @@
 #include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
 #include "gegl-color-space.h"
-#include "gegl-channel-space.h"
 #include "gegl-param-specs.h"
 #include "gegl-value-types.h"
 
@@ -67,7 +66,7 @@ class_init (GeglCompClass * klass)
 
   parent_class = g_type_class_peek_parent(klass);
 
-  klass->get_scanline_func = NULL;
+  klass->get_scanline_function = NULL;
 
   filter_class->prepare = prepare;
   filter_class->validate_inputs = validate_inputs;
@@ -220,13 +219,12 @@ prepare (GeglFilter * filter)
   GeglImage *dest = (GeglImage*)g_value_get_object(dest_value);
   GeglColorModel * dest_cm = gegl_image_get_color_model (dest);
   GeglColorSpace * dest_color_space = gegl_color_model_color_space(dest_cm);
-  GeglChannelSpace * dest_channel_space = gegl_color_model_channel_space(dest_cm);
-  GeglChannelSpaceType type = gegl_channel_space_channel_space_type(dest_channel_space);
-  GeglColorSpaceType space = gegl_color_space_color_space_type(dest_color_space);
   GeglCompClass *klass = GEGL_COMP_GET_CLASS(self);
 
   /* Get the appropriate scanline func from subclass */
-  if(klass->get_scanline_func)
+  if(klass->get_scanline_function)
     point_op->scanline_processor->func = 
-      (*klass->get_scanline_func)(self, space, type);
+        klass->get_scanline_function(self, dest_cm);
+  else
+    g_print("Cant find scanline func\n");
 }

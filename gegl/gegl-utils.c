@@ -3,8 +3,6 @@
 
 #include "gegl-color-space-rgb.h"
 #include "gegl-color-space-gray.h"
-#include "gegl-channel-space-float.h"
-#include "gegl-channel-space-uint8.h"
 #include "gegl-component-color-model.h"
 #include "gegl-param-specs.h"
 #include "gegl-value-types.h"
