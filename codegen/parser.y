@@ -1336,7 +1336,7 @@ init_data_varible (char *s)
      set_num (e, 1);
      printf ("\n%sgint %s;", tmp, name); 
     }*/ 
- /* printf ("\n%s%s *%s_rowstride[%d];", tmp, DATATYPE_STR, s, e->num);*/
+  /*printf ("\n%s%s *%s_rowstride[%d];", tmp, DATATYPE_STR, s, e->num);*/
   if (e->type == TYPE_C_A_VECTOR)
     {  
       elem_t e; 
