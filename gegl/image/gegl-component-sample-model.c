@@ -265,6 +265,8 @@ get_max_bands_per_bank(const GeglComponentSampleModel* csm) {
   return max_bands_per_bank;
 }
 static void finalize(GObject *object) {
+
+
   GeglComponentSampleModel* csm=(GeglComponentSampleModel*)object;
   if (csm->bank_offsets!=NULL) {
     g_array_free(csm->bank_offsets,FALSE);
@@ -272,6 +274,9 @@ static void finalize(GObject *object) {
   if (csm->band_indices!=NULL) {
     g_array_free(csm->band_indices,FALSE);
   }
+
+  G_OBJECT_CLASS(parent_class)->finalize(object);
+
 }
 
 static void

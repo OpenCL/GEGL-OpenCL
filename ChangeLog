@@ -1,24 +1,29 @@
+Fri Oct 31 13:22:26 EST 2003 calvinw@mindspring.com
+
+	*gegl/image/gegl-component-sample-model.c -- added chaining in finalize
+	*tests/gegl-image-component-sample-model-test.c -- added some unrefs.
+
 Mon Aug 18 12:32:54 EDT 2003 calvinw@mindspring.com
     
-    Removed the ChannelSpace classes, and introduced a single color Color
-    object. In the process I renamed the former constant color image object
-    (previously called Color) to Fill and made this take a Color object.
-    Now to create a constant color image you create a Fill object and 
-    pass it a color object and a data type for the image data. Color objects
-    are meant to be stored as floats internally (doubles eventually) and 
-    ops can extract their color model versions of the color during processing
-    and use these. This is closer to how gimp passes its colors around internally.
-    (as doubles). The docs are not completely updated yet for these changes
-    so descriptions and examples may be a little different. There is no need
-    for "generic properties" for parameters if we assume we are passing float
-    or double versions of single colors, opacities, and other parameters. 
-    This makes properties a bit simpler overall.
+	Removed the ChannelSpace classes, and introduced a single color Color
+	object. In the process I renamed the former constant color image object
+	(previously called Color) to Fill and made this take a Color object.
+	Now to create a constant color image you create a Fill object and 
+	pass it a color object and a data type for the image data. Color objects
+	are meant to be stored as floats internally (doubles eventually) and 
+	ops can extract their color model versions of the color during processing
+	and use these. This is closer to how gimp passes its colors around internally.
+	(as doubles). The docs are not completely updated yet for these changes
+	so descriptions and examples may be a little different. There is no need
+	for "generic properties" for parameters if we assume we are passing float
+	or double versions of single colors, opacities, and other parameters. 
+	This makes properties a bit simpler overall.
 
-    Also removed a bunch of ops and left more or less one of each kind. This
-    is easier while the code changes a lot in the images, data buffers, iterators,
-    section of the code.
+	Also removed a bunch of ops and left more or less one of each kind. This
+	is easier while the code changes a lot in the images, data buffers, iterators,
+	section of the code.
 
-    These were modified:
+	These were modified:
 	*docs/reference/gegl/gegl-docs.sgml
 	*docs/reference/gegl/gegl-sections.txt
 	*docs/reference/gegl/gegl.types
@@ -110,7 +115,7 @@ Mon Aug 18 12:32:54 EDT 2003 calvinw@mindspring.com
 	*tests/valueimagedatatest.c
 	*tests/valuetest.c
 
-     These were removed as described above:
+	These were removed as described above:
 	*docs/reference/gegl/tmpl/gegl-atop.sgml
 	*docs/reference/gegl/tmpl/gegl-channel-data.sgml
 	*docs/reference/gegl/tmpl/gegl-channel-space-float.sgml
@@ -186,7 +191,7 @@ Mon Aug 18 12:32:54 EDT 2003 calvinw@mindspring.com
 	*tests/imulttest-uint8.c
 	*tests/normaltest-float.c
 
-    These were added:
+	These were added:
 	*docs/reference/gegl/tmpl/gegl-array-param-specs.sgml
 	*docs/reference/gegl/tmpl/gegl-array-value-types.sgml
 	*docs/reference/gegl/tmpl/gegl-fill.sgml

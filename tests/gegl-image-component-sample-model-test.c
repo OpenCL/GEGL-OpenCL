@@ -294,7 +294,8 @@ test_normalizers(Test* test)
     g_array_append_val(normalizers,nor0);
     g_array_append_val(normalizers,nor1);
     g_array_append_val(normalizers,nor2);
-    
+
+
     gint width=64;
     gint height=128;
     gint num_bands=3;
@@ -340,6 +341,12 @@ test_normalizers(Test* test)
   }
 
   ct_test(test,all_OK==TRUE);
+
+  g_object_unref(nor0);
+  g_object_unref(nor1);
+  g_object_unref(nor2);
+  g_object_unref(csm);
+  g_object_unref(buffer_double);
 }
 
 Test *
@@ -347,13 +354,12 @@ create_component_sample_model_test()
 {
   Test* t = ct_create("GeglComponentSampleModelTest");
   
-  //g_assert(ct_addSetUp(t, color_test_setup));
-  //g_assert(ct_addTearDown(t, color_test_teardown));
   g_assert(ct_addTestFun(t, test_g_object_new));
   g_assert(ct_addTestFun(t, test_properties));
   g_assert(ct_addTestFun(t, test_pixel_interleaving));
   g_assert(ct_addTestFun(t, test_band_interleaving));
   g_assert(ct_addTestFun(t, test_normalizers));
+
   return t; 
 }
 
