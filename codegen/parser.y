@@ -981,8 +981,8 @@ init_image_data (char *indent)
       sprintf (tmp, "%s%s_c = %s_data_v;", indent, symtab[i].string, symtab[i].string);
       strcpy (e.string, tmp); 
       print_line (e); 
-      sprintf (tmp, "%sif (%s_has_a)%s  %s_a = %s_data[NUM_COLOR_CHAN];", 
-	  indent, symtab[i].string, indent, symtab[i].string, symtab[i].string);
+      sprintf (tmp, "%sif (%s_has_a)%s  %s_a = %s_data[%d];", 
+	  indent, symtab[i].string, indent, symtab[i].string, symtab[i].string, NUM_COLOR_CHAN);
       strcpy (e.string, tmp);
       print_line (e); 
 	
@@ -1026,6 +1026,7 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
 
   t[0] = '\0';
 
+  dest->num = 1; 
   if (is_define && get_sym (src.string)->type == TYPE_C_VECTOR)
     {
     sprintf (tmp, "%s_c", get_sym (src.string)->string);
