@@ -1,3 +1,46 @@
+2003-11-22 Daniel Rogers <daniel@phasevelocity.org>
+
+	The below classes represent a partial implementation of the new
+	gegl pixel data interface.  It should be used as a convience
+	library libimage.
+	
+	* gegl/image
+	* gegl/image/Makefile.am
+	* gegl/image/gegl-buffer-double.c
+	* gegl/image/gegl-buffer-double.h
+	* gegl/image/gegl-buffer.c
+	* gegl/image/gegl-buffer.h
+	* gegl/image/gegl-component-sample-model.c
+	* gegl/image/gegl-component-sample-model.h
+	* gegl/image/gegl-normalizer-mult.c
+	* gegl/image/gegl-normalizer-mult.h
+	* gegl/image/gegl-normalizer.c
+	* gegl/image/gegl-normalizer.h
+	* gegl/image/gegl-sample-model.c
+	* gegl/image/gegl-sample-model.h
+
+	These six files are copied directly from the parent directory.
+	They don't belong here but here until the rest of gegl is ready to
+	integrate the new pixel data interface, these are here to allow
+	compiling.  There are currently name collisions between the two
+	different pieces of code that won't exist when gegl starts using
+	libimage.
+	
+	* gegl/image/gegl-object.c 
+	* gegl/image/gegl-object.h
+	* gegl/image/gegl-init.c
+	* gegl/image/gegl-init.h
+	* gegl/image/gegl-utils.c
+	* gegl/image/gegl-utils.h
+
+	Unit tests for libimage.  Currently uses a different test binary
+	since libgegl and libimage are currently not link compatible.
+
+	* test/Makefile.am
+	* test/gegl-image-buffer-double-test.c
+	* test/gegl-image-component-sample-model-test.c
+	* test/testimage.c
+
 Fri Oct 31 13:22:26 EST 2003 calvinw@mindspring.com
 
 	*gegl/image/gegl-component-sample-model.c -- added chaining in finalize
