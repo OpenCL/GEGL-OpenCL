@@ -14,22 +14,18 @@ GeglColorModelGray
 
 </para>
 
+<!-- ##### STRUCT GeglColor ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### FUNCTION gegl_color_model_gray_get_gray_index ##### -->
 <para>
 
 </para>
 
 @self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_gray_constructor ##### -->
-<para>
-
-</para>
-
-@self: 
-@has_alpha: 
 @Returns: 
 
 

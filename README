@@ -2,164 +2,45 @@ Webpages for Gegl (also see the docs dir):
 
 http://www.gegl.org
 
-Gegl is tested with Gob 1.0.5 (available from gnome cvs or 
-http://ftp.5z.com/pub/gob/).
-
-For more information on gob see: 
-http://www.5z.com/jirka/gob.html. 
-
 Building Gegl
 -------------
 
-.gil   files contain code that have generic image language statements 
-       embedded in them. codegen(or gil) generates .gob files
-       from these.
-.gob   files contain gob format code and these produce  
-       straight C when run through gob.
-
-So roughly 
-
-gil code -----> gob code -----> regular c  
-         codegen          gob
-         or gil
-
-But only some .gob files are generated from .gil files 
-(called GIL_GEN_GOB in gegl/Makefile.am). Others
-dont need to be generated since they contain no gil code.  
-(NOGEN_GOB in gegl/Makefile.am). Still other files
-are just plain normal C files (NONGOB_SRC) that get compiled
-in. 
-
 When you type make in the top dir, the following should occur:
 
-1)In the codegen subdir, the code generating tool codegen 
-is built in the codegen directory. This will require flex/bison 
-(or lex/yacc) installed somewhere.
+1)In the codegen subdir, the code generating tool codegen is built. This will
+require flex/bison (or lex/yacc) installed somewhere.
 
-2)In the gegl subdir, codegen runs on each .gil file.
-and generates a corresponding .gob file from these.
+2)In the gil subdir, the (experimental) code generating tool gil is built. This
+will require flex/bison (or lex/yacc) installed somewhere. NOTE: gil is
+currently not used, but will eventually replace codegen above. 
 
-3)In the gegl subdir gob runs on all .gob files and generates
-three files:
-gegl-bleah-object.h (public header) 
-gegl-bleah-object-private.h (private header--"private" vars, 
-                             and "protected" methods,(see below)) 
-gegl-bleah-object.c (class C source)
+3)In the gegl subdir, codegen runs on each .gil file and generates a
+corresponding .c file.
 
-4)In the gegl subdir, regular C files get compiled to
-the gegl lib and some test programs.
+4)In the gegl subdir, regular C and header files get compiled to the gegl lib.
 
-Cleaning
+5)In the tools/testsuite subdir, a xUnit testing tool gets built. 
+
+6)In the tests subdir, some tests get built and run, using the testsuite tool
+built in step 5 above.
+
+codegen 
 --------
 
->make clean   
-
-removes just *.o's 
-
->make gobclean 
-
-removes gob generated .c and .h files
-but leaves .gob and .gil files.
-
->make gilclean 
-
-removes gob generated .c and .h files and gil generated .gobs 
-but leaves .gil and any nongenerated .gob files.
-               
-Dependencies more or less work so if you edit a .gil or .gob file, 
-the make will pick up that dependency and rerun gob or codegen for you 
-before compiling the c code. But you will notice some odd dependencies
-and too much regeneration of things at odd times. Hopefully we'll fix these
-soon.
-
-About the use of private, protected and public as used by Gob
--------------------------------------------------------------
-
-Gob allows "private", "protected" and "public" variables and
-methods. Some of these are similar to C++, but some of these
-are a little different. 
-
-In gegl we use these keywords mostly in a C++ spirit.
-
-For variables:
-
-1) "public" gob variables appear in the class struct in the 
-class 's public header file(ie in the gegl-bleah-object.h 
-file), and are visible and available to all. Gegl doesnt have
-many of these.
-
-2) "protected" gob variables also appear in the "public" 
-(gegl-bleah-object.h) header file, but are marked with comments 
-as protected. You are on the honor system for this
-if you are using the object externally (like gtk and glib). 
-Extending classes can reference the "protected"
-variables of parents directly (ie with a pointer 
-like self_parent->data_variable) if they wish. External clients
-should use get-ers and set-ers. 
-
-3) "private" gob variables in gegl class files are similar to
-C++-style private. They are defined in gegl-bleah-object-private.h 
-header files, and are not considered to be available directly (like
-above) to children classes. But again its the honor system here, 
-since children classes must include the private header of a parent 
-class in order to access the "protected" methods (see below). 
-
-For methods: 
-
-1)"public" gob methods are available to all through the class's
-public header file gegl-bleah-object.h.
-
-2)"protected" gob methods are available to subclasses by virtue of
-of having their declaration in the object's private header file
-(gegl-bleah-object-private.h). Subclasses include this to get
-parents protected methods. 
-
-3)"private" gob methods are available only in the class where they
-are defined.  They are static functions in the class's .c file
-(gegl-bleah-object.c).  
-
-In short, for methods and data, visibility corresponds roughly 
-to the C++ interpretation. The slightly weird thing though
-is that bit about including the private header to get the
-protected methods.
-
-codegen (gil)
--------------
-
-Currently codegen is set to generate code for the floating point
-case by default. You can change this by altering the line 
+Currently codegen is set to generate code for the floating point case by
+default. You can change this by altering the line 
 
 %.gob : %.gil 
 	../codegen/codegen ...blah blah...
 
-in gegl/Makefile.am to run the case you want. Soon codegen
-will be replaced by a new code generator (called just gil,
-in the gegl/gil directory) which generates abstract syntax
-trees for the gil code, so will do more powerful code generation. 
+in gegl/Makefile.am to run the case you want. Soon codegen will be replaced by
+a new code generator (called gil, in the gegl/gil directory) which generates
+abstract syntax trees for the gil code, so will do more powerful code
+generation. 
 
-Eventually a front end will generate code for whichever
-types you are interested in, and those will get compiled
-in. Currently codegen just generates one specified data
-type (8bit, 16bit (64K or 4K) or float) at a time.  
-
-Codegen (and gil) are lex/yacc based. 
-
-Test programs
--------------
-
-The testgegl program creates tests of various things. Look
-there for examples of the classes. 
-
-The testgeglfile program has code for reading and
-displaying tiff images in a gtk window. You can use this 
-for testing classes as well, but it is currently out
-of date. We will try to update it soon. 
-
-The arguments for testgeglfile are:
-
->testgeglfile A.tiff B.tiff [data_type]
-
-where data type is one of {u8,u16,u16_4k,float} and
-where float is the default for now.
+Eventually there will be a way to generate code for whichever types you are
+interested in, and those datatypes/colormodels will get compiled in. Currently
+codegen just generates one specified data type (8bit, 16bit(integer) or float)
+for each .gil file.  
 
 calvinw@mindspring.com

@@ -1,3 +1,195 @@
+Sun Dec  9 21:01:40 EST 2001 calvinw@mindspring.com
+
+	*gegl/gegl-add-impl.gil
+	*gegl/gegl-add-impl.h
+	*gegl/gegl-add.c
+	*gegl/gegl-add.h
+	*gegl/gegl-buffer.c
+	*gegl/gegl-buffer.h
+	*gegl/gegl-color-model-gray-float.c
+	*gegl/gegl-color-model-gray-float.h
+	*gegl/gegl-color-model-gray-u16.c
+	*gegl/gegl-color-model-gray-u16.h
+	*gegl/gegl-color-model-gray-u8.c
+	*gegl/gegl-color-model-gray-u8.h
+	*gegl/gegl-color-model-gray.c
+	*gegl/gegl-color-model-gray.h
+	*gegl/gegl-color-model-rgb-float.c
+	*gegl/gegl-color-model-rgb-float.h
+	*gegl/gegl-color-model-rgb-u16.c
+	*gegl/gegl-color-model-rgb-u16.h
+	*gegl/gegl-color-model-rgb-u8.c
+	*gegl/gegl-color-model-rgb-u8.h
+	*gegl/gegl-color-model-rgb.c
+	*gegl/gegl-color-model-rgb.h
+	*gegl/gegl-color-model.c
+	*gegl/gegl-color-model.h
+	*gegl/gegl-color.c
+	*gegl/gegl-color.h
+	*gegl/gegl-comp-impl.gil
+	*gegl/gegl-comp-impl.h
+	*gegl/gegl-comp-premult-impl.gil
+	*gegl/gegl-comp-premult-impl.h
+	*gegl/gegl-comp-premult.c
+	*gegl/gegl-comp-premult.h
+	*gegl/gegl-comp.c
+	*gegl/gegl-comp.h
+	*gegl/gegl-const-mult-impl.gil
+	*gegl/gegl-const-mult-impl.h
+	*gegl/gegl-const-mult.c
+	*gegl/gegl-const-mult.h
+	*gegl/gegl-copy-impl.c
+	*gegl/gegl-copy-impl.h
+	*gegl/gegl-copy.c
+	*gegl/gegl-copy.h
+	*gegl/gegl-dark-impl.gil
+	*gegl/gegl-dark-impl.h
+	*gegl/gegl-dark.c
+	*gegl/gegl-dark.h
+	*gegl/gegl-diff-impl.gil
+	*gegl/gegl-diff-impl.h
+	*gegl/gegl-diff.c
+	*gegl/gegl-diff.h
+	*gegl/gegl-fill-impl.c
+	*gegl/gegl-fill-impl.h
+	*gegl/gegl-fill.c
+	*gegl/gegl-fill.h
+	*gegl/gegl-image-impl.c
+	*gegl/gegl-image-impl.h
+	*gegl/gegl-image-mgr.c
+	*gegl/gegl-image-mgr.h
+	*gegl/gegl-image.c
+	*gegl/gegl-image.h
+	*gegl/gegl-light-impl.gil
+	*gegl/gegl-light-impl.h
+	*gegl/gegl-light.c
+	*gegl/gegl-light.h
+	*gegl/gegl-max-impl.gil
+	*gegl/gegl-max-impl.h
+	*gegl/gegl-max.c
+	*gegl/gegl-max.h
+	*gegl/gegl-mem-buffer.c
+	*gegl/gegl-mem-buffer.h
+	*gegl/gegl-min-impl.gil
+	*gegl/gegl-min-impl.h
+	*gegl/gegl-min.c
+	*gegl/gegl-min.h
+	*gegl/gegl-mult-impl.gil
+	*gegl/gegl-mult-impl.h
+	*gegl/gegl-mult.c
+	*gegl/gegl-mult.h
+	*gegl/gegl-node.c
+	*gegl/gegl-node.h
+	*gegl/gegl-object.c
+	*gegl/gegl-object.h
+	*gegl/gegl-op-impl.c
+	*gegl/gegl-op-impl.h
+	*gegl/gegl-op.c
+	*gegl/gegl-op.h
+	*gegl/gegl-point-op-impl.c
+	*gegl/gegl-point-op-impl.h
+	*gegl/gegl-point-op.c
+	*gegl/gegl-point-op.h
+	*gegl/gegl-premult-impl.gil
+	*gegl/gegl-premult-impl.h
+	*gegl/gegl-premult.c
+	*gegl/gegl-premult.h
+	*gegl/gegl-print-impl.c
+	*gegl/gegl-print-impl.h
+	*gegl/gegl-print.c
+	*gegl/gegl-print.h
+	*gegl/gegl-sampled-image-impl.c
+	*gegl/gegl-sampled-image-impl.h
+	*gegl/gegl-sampled-image.c
+	*gegl/gegl-sampled-image.h
+	*gegl/gegl-scanline-processor.c
+	*gegl/gegl-scanline-processor.h
+	*gegl/gegl-screen-impl.gil
+	*gegl/gegl-screen-impl.h
+	*gegl/gegl-screen.c
+	*gegl/gegl-screen.h
+	*gegl/gegl-simple-image-mgr.c
+	*gegl/gegl-simple-image-mgr.h
+	*gegl/gegl-stat-op-impl.c
+	*gegl/gegl-stat-op-impl.h
+	*gegl/gegl-stat-op.c
+	*gegl/gegl-stat-op.h
+	*gegl/gegl-subtract-impl.gil
+	*gegl/gegl-subtract-impl.h
+	*gegl/gegl-subtract.c
+	*gegl/gegl-subtract.h
+	*gegl/gegl-tile-iterator.c
+	*gegl/gegl-tile-iterator.h
+	*gegl/gegl-tile-mgr.c
+	*gegl/gegl-tile-mgr.h
+	*gegl/gegl-tile.c
+	*gegl/gegl-tile.h
+	*gegl/gegl-types.h
+	*gegl/gegl-unpremult-impl.gil
+	*gegl/gegl-unpremult-impl.h
+	*gegl/gegl-unpremult.c
+	*gegl/gegl-unpremult.h
+	*gegl/gegl-utils.c
+	*gegl/gegl-utils.h
+	*gegl/gegl.h
+
+	Removed gob from the project, and ported to glib2.0.  All classes now are
+	GObjects, and are constructed with g_object_new. Gtk is no longer required. 
+
+	Split the op classes into a graph related (extrinsic) part, and an image
+	processing (intrinsic) part. Added glib properties for some classes. Lots
+	of other changes, Ill update the docs/geglClasses.html to reflect changes.
+
+	*tools/testsuite/Makefile.am
+	*tools/testsuite/csuite.c
+	*tools/testsuite/csuite.h
+	*tools/testsuite/ctest.c
+	*tools/testsuite/ctest.h
+	*tools/testsuite/testcomplex.c
+
+	A xUnit testing setup. This is used for unit tests below in the tests dir.
+	testcomplex.c is an example of using the framework.
+
+	*tests/Makefile.am
+	*tests/addimpltest.c
+	*tests/addtest.c
+	*tests/buffertest.c
+	*tests/colormodelrgbfloattest.c
+	*tests/colormodelrgbtest.c
+	*tests/colormodeltest.c
+	*tests/colortest.c
+	*tests/constmultimpltest.c
+	*tests/constmulttest.c
+	*tests/copytest.c
+	*tests/fillimpltest.c
+	*tests/filltest.c
+	*tests/imagemgrtest.c
+	*tests/imagetest.c
+	*tests/membuffertest.c
+	*tests/nodetest.c
+	*tests/objecttest.c
+	*tests/opimpltest.c
+	*tests/optest.c
+	*tests/pointopimpltest.c
+	*tests/pointoptest.c
+	*tests/printimpltest.c
+	*tests/printtest.c
+	*tests/sampledimageimpltest.c
+	*tests/sampledimagetest.c
+	*tests/simpleimagemgrtest.c
+	*tests/simpletreetest.c
+	*tests/statopimpltest.c
+	*tests/statoptest.c
+	*tests/testgegl.c
+	*tests/testgeglfile.c
+	*tests/testutils.c
+	*tests/testutils.h
+	*tests/tileiteratortest.c
+	*tests/tilemgrtest.c
+	*tests/tiletest.c
+
+	A set of unit tests for gegl development. testgegl.c sets up the tests. 
+
 Thu Jun  7 02:23:42 EDT 2001 calvinw@mindspring.com
 	*docs/geglClasses.html
 	*docs/images/image_request.png

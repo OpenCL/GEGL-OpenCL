@@ -1,17 +1,12 @@
-SUBDIRS = gil codegen gegl tools tests docs
+# Process this file with automake to create Makefile.in.
 
-bin_SCRIPTS = \
-	gegl-config
+SUBDIRS = codegen gil tools gegl tests docs
 
-EXTRA_DIST = 		\
-	gegl.m4		\
-	geglConf.sh.in	\
-	gegl-config.in
+EXTRA_DIST = 			\
+	gegl-uninstalled.pc.in	\
+	gegl.pc.in		\
+	gegl.spec.in		\
+	gegl.spec
 
-m4datadir = $(datadir)/aclocal
-m4data_DATA = gegl.m4
-
-## Put `exec' in the name because this should be installed by
-## `install-exec', not `install-data'.
-
-confexecdir=$(libdir)
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = gegl.pc

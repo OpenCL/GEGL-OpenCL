@@ -14,30 +14,24 @@ GeglNode
 
 </para>
 
-<!-- ##### FUNCTION gegl_node_unlink ##### -->
+<!-- ##### ENUM GeglNodeVisitFlags ##### -->
 <para>
 
 </para>
 
-@self: 
+@GEGL_NODE_VISIT_ENABLED: 
+@GEGL_NODE_VISIT_DISABLED: 
+@GEGL_NODE_VISIT_ALL: 
+@GEGL_NODE_VISIT_MASK: 
 
-
-<!-- ##### FUNCTION gegl_node_get_name ##### -->
+<!-- ##### USER_FUNCTION GeglNodeTraverseFunc ##### -->
 <para>
 
 </para>
 
-@self: 
+@node: 
+@data: 
 @Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_set_name ##### -->
-<para>
-
-</para>
-
-@self: 
-@name: 
 
 
 <!-- ##### FUNCTION gegl_node_set_nth_input ##### -->
@@ -118,7 +112,34 @@ GeglNode
 @Returns: 
 
 
+<!-- ##### FUNCTION gegl_node_get_enabled ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_set_enabled ##### -->
+<para>
+
+</para>
+
+@self: 
+@enabled: 
+
+
 <!-- ##### FUNCTION gegl_node_num_outputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_shared_count ##### -->
 <para>
 
 </para>
@@ -148,13 +169,12 @@ GeglNode
 @data: 
 
 
-<!-- ##### FUNCTION gegl_node_constructor ##### -->
+<!-- ##### FUNCTION gegl_node_get_outputs ##### -->
 <para>
 
 </para>
 
 @self: 
-@inputs: 
 @Returns: 
 
 
@@ -167,7 +187,16 @@ GeglNode
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_node_get_outputs ##### -->
+<!-- ##### FUNCTION gegl_node_set_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@list: 
+
+
+<!-- ##### FUNCTION gegl_node_inheriting_input ##### -->
 <para>
 
 </para>
@@ -176,17 +205,8 @@ GeglNode
 @Returns: 
 
 
-<!-- ##### STRUCT GeglNodePrivate ##### -->
+<!-- ##### ARG GeglNode:inputs ##### -->
 <para>
 
 </para>
-
-@inputs: 
-@num_inputs: 
-@outputs: 
-@alt_input: 
-@enabled: 
-@visited: 
-@discovered: 
-@name: 
 

@@ -1,54 +1,70 @@
 <!doctype book PUBLIC "-//Davenport//DTD DocBook V3.0//EN" [
-<!entity gegl-GeglAddOp SYSTEM "sgml/gegl-add-op.sgml">
-<!entity gegl-GeglCache SYSTEM "sgml/gegl-cache.sgml">
-<!entity gegl-GeglColorConvertOp SYSTEM "sgml/gegl-color-convert-op.sgml">
-<!entity gegl-GeglColorConvertToGrayOp SYSTEM "sgml/gegl-color-convert-to-gray-op.sgml">
-<!entity gegl-GeglColorConvertToRgbOp SYSTEM "sgml/gegl-color-convert-to-rgb-op.sgml">
-<!entity gegl-GeglColorModelGray SYSTEM "sgml/gegl-color-model-gray.sgml">
-<!entity gegl-GeglColorModelGrayU8 SYSTEM "sgml/gegl-color-model-gray-u8.sgml">
-<!entity gegl-GeglColorModelGrayFloat SYSTEM "sgml/gegl-color-model-gray-float.sgml">
-<!entity gegl-GeglColorModelGrayU16 SYSTEM "sgml/gegl-color-model-gray-u16.sgml">
-<!entity gegl-GeglColorModelGrayU16-4 SYSTEM "sgml/gegl-color-model-gray-u16_4.sgml">
-<!entity gegl-GeglColorModelRgb SYSTEM "sgml/gegl-color-model-rgb.sgml">
-<!entity gegl-GeglColorModelRgbU8 SYSTEM "sgml/gegl-color-model-rgb-u8.sgml">
-<!entity gegl-GeglColorModelRgbFloat SYSTEM "sgml/gegl-color-model-rgb-float.sgml">
-<!entity gegl-GeglColorModelRgbU16 SYSTEM "sgml/gegl-color-model-rgb-u16.sgml">
-<!entity gegl-GeglColorModelRgbU16-4 SYSTEM "sgml/gegl-color-model-rgb-u16_4.sgml">
-<!entity gegl-GeglColorModel SYSTEM "sgml/gegl-color-model.sgml">
-<!entity gegl-GeglColor SYSTEM "sgml/gegl-color.sgml">
-<!entity gegl-GeglCompositeOp SYSTEM "sgml/gegl-composite-op.sgml">
-<!entity gegl-GeglCompositePremultOp SYSTEM "sgml/gegl-composite-premult-op.sgml">
-<!entity gegl-GeglCopyOp SYSTEM "sgml/gegl-copy-op.sgml">
-<!entity gegl-GeglDarkOp SYSTEM "sgml/gegl-dark-op.sgml">
-<!entity gegl-GeglDataBuffer SYSTEM "sgml/gegl-data-buffer.sgml">
-<!entity gegl-GeglDiffOp SYSTEM "sgml/gegl-diff-op.sgml">
-<!entity gegl-GeglDualSrcOp SYSTEM "sgml/gegl-dual-src-op.sgml">
-<!entity gegl-GeglFillOp SYSTEM "sgml/gegl-fill-op.sgml">
-<!entity gegl-GeglImage SYSTEM "sgml/gegl-image.sgml">
-<!entity gegl-GeglImageBuffer SYSTEM "sgml/gegl-image-buffer.sgml">
-<!entity gegl-GeglImageManager SYSTEM "sgml/gegl-image-manager.sgml">
-<!entity gegl-GeglLightOp SYSTEM "sgml/gegl-light-op.sgml">
-<!entity gegl-GeglMaxOp SYSTEM "sgml/gegl-max-op.sgml">
-<!entity gegl-GeglMinOp SYSTEM "sgml/gegl-min-op.sgml">
-<!entity gegl-GeglMultOp SYSTEM "sgml/gegl-mult-op.sgml">
-<!entity gegl-GeglNode SYSTEM "sgml/gegl-node.sgml">
-<!entity gegl-GeglNSrcOp SYSTEM "sgml/gegl-n-src-op.sgml">
-<!entity gegl-GeglObject SYSTEM "sgml/gegl-object.sgml">
-<!entity gegl-GeglOp SYSTEM "sgml/gegl-op.sgml">
-<!entity gegl-GeglPointOp SYSTEM "sgml/gegl-point-op.sgml">
-<!entity gegl-GeglPremultOp SYSTEM "sgml/gegl-premult-op.sgml">
-<!entity gegl-GeglPrintOp SYSTEM "sgml/gegl-print-op.sgml">
-<!entity gegl-GeglScreenOp SYSTEM "sgml/gegl-screen-op.sgml">
-<!entity gegl-GeglSingleSrcOp SYSTEM "sgml/gegl-single-src-op.sgml">
-<!entity gegl-GeglSubtractOp SYSTEM "sgml/gegl-subtract-op.sgml">
-<!entity gegl-GeglTestOp SYSTEM "sgml/gegl-test-op.sgml">
-<!entity gegl-GeglTile SYSTEM "sgml/gegl-tile.sgml">
-<!entity gegl-GeglTileImageManager SYSTEM "sgml/gegl-tile-image-manager.sgml">
-<!entity gegl-GeglTileIterator SYSTEM "sgml/gegl-tile-iterator.sgml">
-<!entity gegl-GeglUnpremultOp SYSTEM "sgml/gegl-unpremult-op.sgml">
-<!entity gegl-gegl-types SYSTEM "sgml/gegl-types.sgml">
-<!entity gegl-gegl-utils SYSTEM "sgml/gegl-utils.sgml">
-<!entity gegl-trace SYSTEM "sgml/trace.sgml">
+<!ENTITY GeglAdd SYSTEM "sgml/gegl-add.sgml">
+<!ENTITY GeglAddImpl SYSTEM "sgml/gegl-add-impl.sgml">
+<!ENTITY GeglBuffer SYSTEM "sgml/gegl-buffer.sgml">
+<!ENTITY GeglColor SYSTEM "sgml/gegl-color.sgml">
+<!ENTITY GeglColorModel SYSTEM "sgml/gegl-color-model.sgml">
+<!ENTITY GeglColorModelGray SYSTEM "sgml/gegl-color-model-gray.sgml">
+<!ENTITY GeglColorModelGrayFloat SYSTEM "sgml/gegl-color-model-gray-float.sgml">
+<!ENTITY GeglColorModelGrayU8 SYSTEM "sgml/gegl-color-model-gray-u8.sgml">
+<!ENTITY GeglColorModelGrayU16 SYSTEM "sgml/gegl-color-model-gray-u16.sgml">
+<!ENTITY GeglColorModelRgb SYSTEM "sgml/gegl-color-model-rgb.sgml">
+<!ENTITY GeglColorModelRgbFloat SYSTEM "sgml/gegl-color-model-rgb-float.sgml">
+<!ENTITY GeglColorModelRgbU8 SYSTEM "sgml/gegl-color-model-rgb-u8.sgml">
+<!ENTITY GeglColorModelRgbU16 SYSTEM "sgml/gegl-color-model-rgb-u16.sgml">
+<!ENTITY GeglComp SYSTEM "sgml/gegl-comp.sgml">
+<!ENTITY GeglCompImpl SYSTEM "sgml/gegl-comp-impl.sgml">
+<!ENTITY GeglCompPremult SYSTEM "sgml/gegl-comp-premult.sgml">
+<!ENTITY GeglCompPremultImpl SYSTEM "sgml/gegl-comp-premult-impl.sgml">
+<!ENTITY GeglConstMult SYSTEM "sgml/gegl-const-mult.sgml">
+<!ENTITY GeglConstMultImpl SYSTEM "sgml/gegl-const-mult-impl.sgml">
+<!ENTITY GeglCopy SYSTEM "sgml/gegl-copy.sgml">
+<!ENTITY GeglCopyImpl SYSTEM "sgml/gegl-copy-impl.sgml">
+<!ENTITY GeglDark SYSTEM "sgml/gegl-dark.sgml">
+<!ENTITY GeglDarkImpl SYSTEM "sgml/gegl-dark-impl.sgml">
+<!ENTITY GeglDiff SYSTEM "sgml/gegl-diff.sgml">
+<!ENTITY GeglDiffImpl SYSTEM "sgml/gegl-diff-impl.sgml">
+<!ENTITY GeglFill SYSTEM "sgml/gegl-fill.sgml">
+<!ENTITY GeglFillImpl SYSTEM "sgml/gegl-fill-impl.sgml">
+<!ENTITY GeglImage SYSTEM "sgml/gegl-image.sgml">
+<!ENTITY GeglImageImpl SYSTEM "sgml/gegl-image-impl.sgml">
+<!ENTITY GeglImageMgr SYSTEM "sgml/gegl-image-mgr.sgml">
+<!ENTITY GeglLight SYSTEM "sgml/gegl-light.sgml">
+<!ENTITY GeglLightImpl SYSTEM "sgml/gegl-light-impl.sgml">
+<!ENTITY GeglMemBuffer SYSTEM "sgml/gegl-mem-buffer.sgml">
+<!ENTITY GeglMax SYSTEM "sgml/gegl-max.sgml">
+<!ENTITY GeglMaxImpl SYSTEM "sgml/gegl-max-impl.sgml">
+<!ENTITY GeglMin SYSTEM "sgml/gegl-min.sgml">
+<!ENTITY GeglMinImpl SYSTEM "sgml/gegl-min-impl.sgml">
+<!ENTITY GeglMult SYSTEM "sgml/gegl-mult.sgml">
+<!ENTITY GeglMultImpl SYSTEM "sgml/gegl-mult-impl.sgml">
+<!ENTITY GeglNode SYSTEM "sgml/gegl-node.sgml">
+<!ENTITY GeglObject SYSTEM "sgml/gegl-object.sgml">
+<!ENTITY GeglOp SYSTEM "sgml/gegl-op.sgml">
+<!ENTITY GeglOpImpl SYSTEM "sgml/gegl-op-impl.sgml">
+<!ENTITY GeglPointOp SYSTEM "sgml/gegl-point-op.sgml">
+<!ENTITY GeglPointOpImpl SYSTEM "sgml/gegl-point-op-impl.sgml">
+<!ENTITY GeglPremult SYSTEM "sgml/gegl-premult.sgml">
+<!ENTITY GeglPremultImpl SYSTEM "sgml/gegl-premult-impl.sgml">
+<!ENTITY GeglPrint SYSTEM "sgml/gegl-print.sgml">
+<!ENTITY GeglPrintImpl SYSTEM "sgml/gegl-print-impl.sgml">
+<!ENTITY GeglSampledImage SYSTEM "sgml/gegl-sampled-image.sgml">
+<!ENTITY GeglSampledImageImpl SYSTEM "sgml/gegl-sampled-image-impl.sgml">
+<!ENTITY GeglSimpleImageMgr SYSTEM "sgml/gegl-simple-image-mgr.sgml">
+<!ENTITY GeglScanlineProcessor SYSTEM "sgml/gegl-scanline-processor.sgml">
+<!ENTITY GeglScreen SYSTEM "sgml/gegl-screen.sgml">
+<!ENTITY GeglScreenImpl SYSTEM "sgml/gegl-screen-impl.sgml">
+<!ENTITY GeglStatOp SYSTEM "sgml/gegl-stat-op.sgml">
+<!ENTITY GeglStatOpImpl SYSTEM "sgml/gegl-stat-op-impl.sgml">
+<!ENTITY GeglSubtract SYSTEM "sgml/gegl-subtract.sgml">
+<!ENTITY GeglSubtractImpl SYSTEM "sgml/gegl-subtract-impl.sgml">
+<!ENTITY GeglTile SYSTEM "sgml/gegl-tile.sgml">
+<!ENTITY GeglTileMgr SYSTEM "sgml/gegl-tile-mgr.sgml">
+<!ENTITY GeglTileIterator SYSTEM "sgml/gegl-tile-iterator.sgml">
+<!ENTITY GeglUnpremult SYSTEM "sgml/gegl-unpremult.sgml">
+<!ENTITY GeglUnpremultImpl SYSTEM "sgml/gegl-unpremult-impl.sgml">
+<!ENTITY gegl-gegl-utils SYSTEM "sgml/gegl-utils.sgml">
+<!ENTITY gegl-gegl-types SYSTEM "sgml/gegl-types.sgml">
 
 ]>
 <book id="index">
@@ -58,56 +74,72 @@
 
   <chapter id="gegl-classes">
     <title>Gegl Classes</title>
-    &gegl-GeglAddOp;
-    &gegl-GeglCache;
-    &gegl-GeglColorConvertOp;
-    &gegl-GeglColorConvertToGrayOp;
-    &gegl-GeglColorConvertToRgbOp;
-    &gegl-GeglColorModelGray;
-    &gegl-GeglColorModelGrayU8;
-    &gegl-GeglColorModelGrayFloat;
-    &gegl-GeglColorModelGrayU16;
-    &gegl-GeglColorModelGrayU16-4;
-    &gegl-GeglColorModelRgb;
-    &gegl-GeglColorModelRgbU8;
-    &gegl-GeglColorModelRgbFloat;
-    &gegl-GeglColorModelRgbU16;
-    &gegl-GeglColorModelRgbU16-4;
-    &gegl-GeglColorModel;
-    &gegl-GeglColor;
-    &gegl-GeglCompositeOp;
-    &gegl-GeglCompositePremultOp;
-    &gegl-GeglCopyOp;
-    &gegl-GeglDarkOp;
-    &gegl-GeglDataBuffer;
-    &gegl-GeglDiffOp;
-    &gegl-GeglDualSrcOp;
-    &gegl-GeglFillOp;
-    &gegl-GeglImage;
-    &gegl-GeglImageBuffer;
-    &gegl-GeglImageManager;
-    &gegl-GeglLightOp;
-    &gegl-GeglMaxOp;
-    &gegl-GeglMinOp;
-    &gegl-GeglMultOp;
-    &gegl-GeglNode;
-    &gegl-GeglNSrcOp;
-    &gegl-GeglObject;
-    &gegl-GeglOp;
-    &gegl-GeglPointOp;
-    &gegl-GeglPremultOp;
-    &gegl-GeglPrintOp;
-    &gegl-GeglScreenOp;
-    &gegl-GeglSingleSrcOp;
-    &gegl-GeglSubtractOp;
-    &gegl-GeglTestOp;
-    &gegl-GeglTile;
-    &gegl-GeglTileImageManager;
-    &gegl-GeglTileIterator;
-    &gegl-GeglUnpremultOp;
-    &gegl-gegl-types;
+    &GeglAdd;
+    &GeglAddImpl;
+    &GeglBuffer;
+    &GeglColor;
+    &GeglColorModel;
+    &GeglColorModelGray;
+    &GeglColorModelGrayU8;
+    &GeglColorModelGrayU16;
+    &GeglColorModelGrayFloat;
+    &GeglColorModelRgb;
+    &GeglColorModelRgbU8;
+    &GeglColorModelRgbU16;
+    &GeglColorModelRgbFloat;
+    &GeglComp;
+    &GeglCompImpl;
+    &GeglCompPremult;
+    &GeglCompPremultImpl;
+    &GeglConstMult;
+    &GeglConstMultImpl;
+    &GeglCopy;
+    &GeglCopyImpl;
+    &GeglDark;
+    &GeglDarkImpl;
+    &GeglDiff;
+    &GeglDiffImpl;
+    &GeglFill;
+    &GeglFillImpl;
+    &GeglImage;
+    &GeglImageImpl;
+    &GeglImageMgr;
+    &GeglLight;
+    &GeglLightImpl;
+    &GeglMemBuffer;
+    &GeglMax;
+    &GeglMaxImpl;
+    &GeglMin;
+    &GeglMinImpl;
+    &GeglMult;
+    &GeglMultImpl;
+    &GeglNode;
+    &GeglObject;
+    &GeglOp;
+    &GeglOpImpl;
+    &GeglPointOp;
+    &GeglPointOpImpl;
+    &GeglPremult;
+    &GeglPremultImpl;
+    &GeglPrint;
+    &GeglPrintImpl;
+    &GeglScanlineProcessor;
+    &GeglStatOp;
+    &GeglStatOpImpl;
+    &GeglSampledImage;
+    &GeglSampledImageImpl;
+    &GeglScreen;
+    &GeglScreenImpl;
+    &GeglSimpleImageMgr;
+    &GeglSubtract;
+    &GeglSubtractImpl;
+    &GeglTile;
+    &GeglTileMgr;
+    &GeglTileIterator;
+    &GeglUnpremult;
+    &GeglUnpremultImpl;
     &gegl-gegl-utils;
-    &gegl-trace;
+    &gegl-gegl-types;
   </chapter>
 
 </book>

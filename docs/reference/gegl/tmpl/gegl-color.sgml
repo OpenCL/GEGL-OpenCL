@@ -14,21 +14,10 @@ GeglColor
 
 </para>
 
-<!-- ##### STRUCT GeglColor ##### -->
+<!-- ##### STRUCT GeglColorModel ##### -->
 <para>
 
 </para>
-
-
-<!-- ##### FUNCTION gegl_color_new ##### -->
-<para>
-
-</para>
-
-@color_model: 
-@Returns: 
-<!-- # Unused Parameters # -->
-@cm: 
 
 
 <!-- ##### FUNCTION gegl_color_get_channel_values ##### -->
@@ -85,24 +74,8 @@ GeglColor
 @constant: 
 
 
-<!-- ##### FUNCTION gegl_color_constructor ##### -->
+<!-- ##### ARG GeglColor:colormodel ##### -->
 <para>
 
 </para>
-
-@self: 
-@color_model: 
-@Returns: 
-<!-- # Unused Parameters # -->
-@cm: 
-
-
-<!-- ##### STRUCT GeglColorPrivate ##### -->
-<para>
-
-</para>
-
-@color_model: 
-@channel_values: 
-@num_channels: 
 

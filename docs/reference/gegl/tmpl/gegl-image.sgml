@@ -14,49 +14,16 @@ GeglImage
 
 </para>
 
-<!-- ##### FUNCTION gegl_image_get_have_rect ##### -->
+<!-- ##### STRUCT GeglColorModel ##### -->
 <para>
 
 </para>
 
-@self: 
-@have_rect: 
 
-
-<!-- ##### FUNCTION gegl_image_get_need_rect ##### -->
+<!-- ##### STRUCT GeglImageImpl ##### -->
 <para>
 
 </para>
-
-@self: 
-@need_rect: 
-
-
-<!-- ##### FUNCTION gegl_image_get_result_rect ##### -->
-<para>
-
-</para>
-
-@self: 
-@result_rect: 
-
-
-<!-- ##### FUNCTION gegl_image_get_cache_rect ##### -->
-<para>
-
-</para>
-
-@self: 
-@cache_rect: 
-
-
-<!-- ##### FUNCTION gegl_image_get_dest ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
 
 
 <!-- ##### FUNCTION gegl_image_color_model ##### -->
@@ -77,12 +44,139 @@ GeglImage
 @cm: 
 
 
-<!-- ##### STRUCT GeglImagePrivate ##### -->
+<!-- ##### FUNCTION gegl_image_derived_color_model ##### -->
 <para>
 
 </para>
 
-@color_model: 
-@derived_color_model: 
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_set_derived_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@cm: 
+
+
+<!-- ##### FUNCTION gegl_image_compute_derived_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@input_color_models: 
+
+
+<!-- ##### FUNCTION gegl_image_compute_have_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@have_rect: 
+@inputs_have_rects: 
+
+
+<!-- ##### FUNCTION gegl_image_compute_result_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@result_rect: 
+@need_rect: 
+@have_rect: 
+
+
+<!-- ##### FUNCTION gegl_image_get_have_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@have_rect: 
+
+
+<!-- ##### FUNCTION gegl_image_set_have_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@have_rect: 
+
+
+<!-- ##### FUNCTION gegl_image_get_result_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@result_rect: 
+
+
+<!-- ##### FUNCTION gegl_image_set_result_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@result_rect: 
+
+
+<!-- ##### FUNCTION gegl_image_compute_preimage ##### -->
+<para>
+
+</para>
+
+@self: 
+@preimage: 
+@rect: 
+@i: 
+
+
+<!-- ##### FUNCTION gegl_image_get_need_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@need_rect: 
+
+
+<!-- ##### FUNCTION gegl_image_set_need_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@need_rect: 
+
+
+<!-- ##### FUNCTION gegl_image_get_dest ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_set_dest ##### -->
+<para>
+
+</para>
+
+@self: 
 @dest: 
+
+
+<!-- ##### ARG GeglImage:colormodel ##### -->
+<para>
+
+</para>
 

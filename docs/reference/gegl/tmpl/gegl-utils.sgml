@@ -85,44 +85,6 @@ gegl-utils
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_image_manager_instance ##### -->
-<para>
-
-</para>
-
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_instance ##### -->
-<para>
-
-</para>
-
-@type: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_instance1 ##### -->
-<para>
-
-</para>
-
-@color_alpha_space: 
-@data_type: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_instance2 ##### -->
-<para>
-
-</para>
-
-@color_space: 
-@data_type: 
-@has_alpha: 
-@Returns: 
-
-
 <!-- ##### FUNCTION gegl_init ##### -->
 <para>
 
@@ -157,5 +119,85 @@ gegl-utils
 
 @inputs: 
 @Returns: 
+
+
+<!-- ##### FUNCTION gegl_utils_construct_val ##### -->
+<para>
+
+</para>
+
+@name: 
+@n_props: 
+@props: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_log ##### -->
+<para>
+
+</para>
+
+@level: 
+@file: 
+@line: 
+@function: 
+@format: 
+@Varargs: 
+
+
+<!-- ##### FUNCTION gegl_logv ##### -->
+<para>
+
+</para>
+
+@level: 
+@file: 
+@line: 
+@function: 
+@format: 
+@args: 
+
+
+<!-- ##### MACRO LOG_DEBUG ##### -->
+<para>
+
+</para>
+
+@function: 
+@args...: 
+
+
+<!-- ##### MACRO LOG_INFO ##### -->
+<para>
+
+</para>
+
+@function: 
+@args...: 
+
+
+<!-- ##### MACRO LOG_MSG ##### -->
+<para>
+
+</para>
+
+@function: 
+@args...: 
+
+
+<!-- ##### MACRO GEGL_FLOAT_EPSILON ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO GEGL_FLOAT_EQUAL ##### -->
+<para>
+
+</para>
+
+@v1: 
+@v2: 
 
 

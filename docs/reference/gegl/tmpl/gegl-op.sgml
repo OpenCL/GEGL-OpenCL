@@ -14,6 +14,27 @@ GeglOp
 
 </para>
 
+<!-- ##### STRUCT GeglSampledImage ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglOpImpl ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_op_get_alt_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
 <!-- ##### FUNCTION gegl_op_apply ##### -->
 <para>
 
@@ -23,4 +44,68 @@ GeglOp
 @dest: 
 @roi: 
 
+
+<!-- ##### FUNCTION gegl_op_get_source0 ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_op_set_source0 ##### -->
+<para>
+
+</para>
+
+@op: 
+@source0: 
+
+
+<!-- ##### FUNCTION gegl_op_get_source1 ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_op_set_source1 ##### -->
+<para>
+
+</para>
+
+@op: 
+@source1: 
+
+
+<!-- ##### FUNCTION gegl_op_get_op_impl ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_op_set_op_impl ##### -->
+<para>
+
+</para>
+
+@self: 
+@op_impl: 
+
+
+<!-- ##### ARG GeglOp:source0 ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglOp:source1 ##### -->
+<para>
+
+</para>
 

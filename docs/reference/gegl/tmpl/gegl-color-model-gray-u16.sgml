@@ -14,22 +14,3 @@ GeglColorModelGrayU16
 
 </para>
 
-<!-- ##### FUNCTION gegl_color_model_gray_u16_new ##### -->
-<para>
-
-</para>
-
-@has_alpha: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_gray_u16_constructor ##### -->
-<para>
-
-</para>
-
-@self: 
-@has_alpha: 
-@Returns: 
-
-

@@ -14,14 +14,16 @@ GeglTileIterator
 
 </para>
 
-<!-- ##### FUNCTION gegl_tile_iterator_new ##### -->
+<!-- ##### STRUCT GeglTile ##### -->
 <para>
 
 </para>
 
-@tile: 
-@rect: 
-@Returns: 
+
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
 
 
 <!-- ##### FUNCTION gegl_tile_iterator_get_tile ##### -->
@@ -31,6 +33,15 @@ GeglTileIterator
 
 @self: 
 @Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_iterator_get_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@rect: 
 
 
 <!-- ##### FUNCTION gegl_tile_iterator_get_color_model ##### -->
@@ -76,23 +87,31 @@ GeglTileIterator
 @data_pointers: 
 
 
-<!-- ##### FUNCTION gegl_tile_iterator_constructor ##### -->
+<!-- ##### FUNCTION gegl_tile_iterator_set_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@rect: 
+
+
+<!-- ##### FUNCTION gegl_tile_iterator_set_tile ##### -->
 <para>
 
 </para>
 
 @self: 
 @tile: 
-@rect: 
-@Returns: 
 
 
-<!-- ##### STRUCT GeglTileIteratorPrivate ##### -->
+<!-- ##### ARG GeglTileIterator:tile ##### -->
 <para>
 
 </para>
 
-@tile: 
-@rect: 
-@current: 
+<!-- ##### ARG GeglTileIterator:area ##### -->
+<para>
+
+</para>
 

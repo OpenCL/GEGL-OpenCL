@@ -1,0 +1,40 @@
+<!-- ##### SECTION Title ##### -->
+GeglFillImpl
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglColor ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_fill_impl_get_fill_color ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_fill_impl_set_fill_color ##### -->
+<para>
+
+</para>
+
+@self: 
+@fill_color: 
+
+

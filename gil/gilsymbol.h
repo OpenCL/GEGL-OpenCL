@@ -1,7 +1,7 @@
 #ifndef __GIL_SYMBOL_H__
 #define __GIL_SYMBOL_H__
 
-#include <glib.h>
+#include <glib-2.0/glib.h>
 #include "giltype.h"
 
 typedef enum

@@ -1,0 +1,39 @@
+<!-- ##### SECTION Title ##### -->
+GeglConstMult
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_const_mult_get_multiplier ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_const_mult_set_multiplier ##### -->
+<para>
+
+</para>
+
+@self: 
+@multiplier: 
+
+
+<!-- ##### ARG GeglConstMult:multiplier ##### -->
+<para>
+
+</para>
+

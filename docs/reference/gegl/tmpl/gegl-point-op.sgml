@@ -14,13 +14,23 @@ GeglPointOp
 
 </para>
 
-<!-- ##### FUNCTION gegl_point_op_constructor ##### -->
+<!-- ##### FUNCTION gegl_point_op_get_nth_input_offset ##### -->
 <para>
 
 </para>
 
 @self: 
-@inputs: 
-@Returns: 
+@i: 
+@point: 
+
+
+<!-- ##### FUNCTION gegl_point_op_set_nth_input_offset ##### -->
+<para>
+
+</para>
+
+@self: 
+@i: 
+@point: 
 
 

@@ -1,87 +1,45 @@
 #ifndef __GEGL_UTILS_H__
 #define __GEGL_UTILS_H__
 
-#include <gtk/gtk.h>
+#include <glib-object.h>
 #include "gegl-types.h"
 
-#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
-#define __TYPEDEF_GEGL_COLOR_MODEL__
-typedef struct _GeglColorModel  GeglColorModel;
-#endif
+void     gegl_rect_set          (GeglRect *r, gint x, gint y, guint w, guint h);
+gboolean gegl_rect_equal        (GeglRect *r, GeglRect *s); 
+void     gegl_rect_copy         (GeglRect *to, GeglRect *from);
+void     gegl_rect_union        (GeglRect *dest, GeglRect *src1, GeglRect *src2);
+gboolean gegl_rect_intersect    (GeglRect *dest, GeglRect *src1, GeglRect *src2);
+gboolean gegl_rect_contains     (GeglRect *r, GeglRect *s); 
 
-#ifndef __TYPEDEF_GEGL_IMAGE_MANAGER__
-#define __TYPEDEF_GEGL_IMAGE_MANAGER__
-typedef struct _GeglImageManager  GeglImageManager;
-#endif
+gint                gegl_channel_data_type_bytes (GeglChannelDataType data);
+void                gegl_init (int *argc, char ***argv); 
+GeglColorAlphaSpace gegl_utils_derived_color_alpha_space(GList *inputs);
+GeglChannelDataType gegl_utils_derived_channel_data_type(GList *inputs);
+GeglColorSpace      gegl_utils_derived_color_space(GList *inputs);
+GValue *            gegl_utils_construct_val (gchar *name, guint  n_props, GObjectConstructParam *props);
 
-void 
-gegl_rect_set (GeglRect *r,
-	           gint x,
-	           gint y,
-	           guint w,
-	           guint h);
-gboolean
-gegl_rect_equal (GeglRect *r,
-		 GeglRect *s); 
-void 
-gegl_rect_copy (GeglRect *to,
-	            GeglRect *from);
-void 
-gegl_rect_union (GeglRect *dest,
-                 GeglRect *src1,
-                 GeglRect *src2);
-gboolean 
-gegl_rect_intersect(GeglRect *dest,
-                    GeglRect *src1,
-                    GeglRect *src2);
-gboolean
-gegl_rect_contains (GeglRect *r,
-                    GeglRect *s);
+void gegl_log(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, ...);
+void gegl_logv(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, va_list args);
 
-void
-gegl_log(GLogLevelFlags level,
-         gchar *file,
-         gint line,
-         gchar *function,
-         gchar *format,
-         ...);
+#define LOG_DEBUG(function, args...)  gegl_log(G_LOG_LEVEL_DEBUG,__FILE__,__LINE__,function,##args)
+#define LOG_INFO(function, args...)  gegl_log(G_LOG_LEVEL_INFO,__FILE__,__LINE__,function,##args)
+#define LOG_MSG(function, args...)  gegl_log(G_LOG_LEVEL_MESSAGE,__FILE__,__LINE__,function,##args)
 
-void
-gegl_logv(GLogLevelFlags level,
-         gchar *file,
-         gint line,
-         gchar *function,
-         gchar *format,
-         va_list args);
+#define GEGL_FLOAT_EPSILON                       (1e-5)
+#define GEGL_FLOAT_IS_ZERO(value) (_gegl_float_epsilon_zero ((value)))
+#define GEGL_FLOAT_EQUAL(v1, v2) (_gegl_float_epsilon_equal ((v1), (v2)))
 
-gint
-gegl_channel_data_type_bytes (GeglChannelDataType data);
+static inline gint
+_gegl_float_epsilon_zero (float value)
+{
+  return value > -GEGL_FLOAT_EPSILON && value < GEGL_FLOAT_EPSILON; 
+}
 
-GeglImageManager *
-gegl_image_manager_instance (void);
-
-GeglColorModel *
-gegl_color_model_instance(GeglColorModelType type);
-
-GeglColorModel *
-gegl_color_model_instance1(GeglColorAlphaSpace color_alpha_space,
-                           GeglChannelDataType data_type);
-
-GeglColorModel *
-gegl_color_model_instance2(GeglColorSpace color_space,
-                           GeglChannelDataType data_type,
-                           gboolean has_alpha);
-void
-gegl_init (int *argc, 
-           char ***argv);
-
-GeglColorAlphaSpace
-gegl_utils_derived_color_alpha_space(GList *inputs);
-
-GeglChannelDataType
-gegl_utils_derived_channel_data_type(GList *inputs);
-
-GeglColorSpace
-gegl_utils_derived_color_space(GList *inputs);
+static inline gint
+_gegl_float_epsilon_equal (float v1, float v2)
+{
+  register float diff = v1 - v2;
+  return diff > -GEGL_FLOAT_EPSILON && diff < GEGL_FLOAT_EPSILON; 
+}
 
 #endif /* __GEGL_UTILS_H__ */

@@ -1,0 +1,62 @@
+<!-- ##### SECTION Title ##### -->
+GeglSampledImage
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_sampled_image_get_width ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_sampled_image_get_height ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_sampled_image_set_width ##### -->
+<para>
+
+</para>
+
+@self: 
+@width: 
+
+
+<!-- ##### FUNCTION gegl_sampled_image_set_height ##### -->
+<para>
+
+</para>
+
+@self: 
+@height: 
+
+
+<!-- ##### ARG GeglSampledImage:width ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglSampledImage:height ##### -->
+<para>
+
+</para>
+

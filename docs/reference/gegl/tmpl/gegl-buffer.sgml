@@ -1,0 +1,112 @@
+<!-- ##### SECTION Title ##### -->
+GeglBuffer
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_buffer_get_bytes_per_buffer ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_buffer_get_num_buffers ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_buffer_get_data_pointers ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_buffer_unalloc_data ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_buffer_alloc_data ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_buffer_ref ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_buffer_unref ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_buffer_get_ref_count ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_buffer_set_bytes_per_buffer ##### -->
+<para>
+
+</para>
+
+@self: 
+@bytes_per_buffer: 
+
+
+<!-- ##### FUNCTION gegl_buffer_set_num_buffers ##### -->
+<para>
+
+</para>
+
+@self: 
+@num_buffers: 
+
+
+<!-- ##### ARG GeglBuffer:bytesperbuffer ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglBuffer:numbuffers ##### -->
+<para>
+
+</para>
+

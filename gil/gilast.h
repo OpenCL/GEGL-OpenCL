@@ -1,7 +1,7 @@
 #ifndef __GIL_AST_H__
 #define __GIL_AST_H__
 
-#include <glib.h>
+#include <glib-2.0/glib.h>
 
 /* Node kinds */
 typedef enum 

@@ -3,7 +3,7 @@ YFLAGS += -d -t -v
 SUBDIRS =
 CFLAGS = -g
 
-INCLUDES = @GLIB_CFLAGS@ -I$(includedir)
+INCLUDES = $(GLIB_CFLAGS) -I$(includedir)
 
 bin_PROGRAMS =
 noinst_PROGRAMS = gil

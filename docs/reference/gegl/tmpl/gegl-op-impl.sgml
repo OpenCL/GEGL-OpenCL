@@ -1,0 +1,52 @@
+<!-- ##### SECTION Title ##### -->
+GeglOpImpl
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_op_impl_prepare ##### -->
+<para>
+
+</para>
+
+@self: 
+@request_list: 
+
+
+<!-- ##### FUNCTION gegl_op_impl_process ##### -->
+<para>
+
+</para>
+
+@self: 
+@request_list: 
+
+
+<!-- ##### FUNCTION gegl_op_impl_finish ##### -->
+<para>
+
+</para>
+
+@self: 
+@request_list: 
+
+
+<!-- ##### FUNCTION gegl_op_impl_get_num_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+

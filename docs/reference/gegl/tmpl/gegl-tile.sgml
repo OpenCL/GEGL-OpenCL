@@ -14,19 +14,38 @@ GeglTile
 
 </para>
 
-<!-- ##### STRUCT GeglTile ##### -->
+<!-- ##### STRUCT GeglBuffer ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### FUNCTION gegl_tile_new ##### -->
+<!-- ##### STRUCT GeglColorModel ##### -->
 <para>
 
 </para>
 
-@area: 
-@color_model: 
+
+<!-- ##### STRUCT GeglImage ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglOpRequest ##### -->
+<para>
+
+</para>
+
+@tile: 
+@rect: 
+
+<!-- ##### FUNCTION gegl_tile_get_buffer ##### -->
+<para>
+
+</para>
+
+@self: 
 @Returns: 
 
 
@@ -68,7 +87,7 @@ GeglTile
 @y: 
 
 
-<!-- ##### FUNCTION gegl_tile_constructor ##### -->
+<!-- ##### FUNCTION gegl_tile_alloc ##### -->
 <para>
 
 </para>
@@ -79,12 +98,39 @@ GeglTile
 @Returns: 
 
 
-<!-- ##### STRUCT GeglTilePrivate ##### -->
+<!-- ##### FUNCTION gegl_tile_validate_data ##### -->
 <para>
 
 </para>
 
-@buffer: 
-@color_model: 
+@self: 
+
+
+<!-- ##### FUNCTION gegl_tile_set_area ##### -->
+<para>
+
+</para>
+
+@self: 
 @area: 
+
+
+<!-- ##### FUNCTION gegl_tile_set_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@color_model: 
+
+
+<!-- ##### ARG GeglTile:area ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglTile:colormodel ##### -->
+<para>
+
+</para>
 

@@ -1,7 +1,7 @@
 #ifndef __GEGL_TYPES_H__
 #define __GEGL_TYPES_H__
 
-#include <gtk/gtk.h>
+#include <glib.h>
 
 typedef enum
 {
@@ -86,8 +86,8 @@ struct _GeglRect
 {
   gint x;
   gint y;
-  guint w;
-  guint h;
+  gint w;
+  gint h;
 };
 
 typedef struct _GeglPoint GeglPoint;

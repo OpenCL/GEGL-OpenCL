@@ -1,0 +1,46 @@
+<!-- ##### SECTION Title ##### -->
+GeglImageImpl
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglTile ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_image_impl_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_impl_set_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@cm: 
+
+

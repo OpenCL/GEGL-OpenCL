@@ -14,22 +14,3 @@ GeglColorModelRgbU8
 
 </para>
 
-<!-- ##### FUNCTION gegl_color_model_rgb_u8_new ##### -->
-<para>
-
-</para>
-
-@has_alpha: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_rgb_u8_constructor ##### -->
-<para>
-
-</para>
-
-@self: 
-@has_alpha: 
-@Returns: 
-
-

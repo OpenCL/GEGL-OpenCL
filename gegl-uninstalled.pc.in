@@ -1,0 +1,6 @@
+Name: Gegl Uninstalled
+Description: Gegl Library, Not Installed
+Version: @VERSION@
+Requires: @GLIB_PACKAGES@
+Libs: ${pc_top_builddir}/${pcfiledir}/gegl/libgegl.la
+Cflags: -I${pc_top_builddir}/${pcfiledir}/@srcdir@

@@ -1,0 +1,94 @@
+<!-- ##### SECTION Title ##### -->
+GeglImageMgr
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglSampledImage ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglImageImpl ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglOp ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglTileMgr ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_image_mgr_install ##### -->
+<para>
+
+</para>
+
+@image_mgr: 
+
+
+<!-- ##### FUNCTION gegl_image_mgr_instance ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_mgr_apply ##### -->
+<para>
+
+</para>
+
+@self: 
+@root: 
+@dest: 
+@roi: 
+
+
+<!-- ##### FUNCTION gegl_image_mgr_delete_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@image_impl: 
+
+
+<!-- ##### FUNCTION gegl_image_mgr_add_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@image_impl: 
+
+
+<!-- ##### FUNCTION gegl_image_mgr_get_tile_mgr ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+

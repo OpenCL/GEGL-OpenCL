@@ -1,9 +1,0 @@
-README
-======
-
-rm_tabs: This small lex program goes through a file and substitute all the tabs with eight spaces. To run the program type:
->rm_tabs filename
-
-
-Caroline Dahllof <caro@rhythm.com>
-

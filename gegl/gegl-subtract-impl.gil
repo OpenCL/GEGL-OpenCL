@@ -1,0 +1,139 @@
+#include "gegl-subtract-impl.h"
+#include "gegl-scanline-processor.h"
+#include "gegl-color-model.h"
+#include "gegl-tile.h"
+#include "gegl-tile-iterator.h"
+#include "gegl-utils.h"
+
+static void class_init (GeglSubtractImplClass * klass);
+static void init (GeglSubtractImpl * self, GeglSubtractImplClass * klass);
+static void prepare (GeglOpImpl * self_op_impl, GList * requests);
+static void scanline (GeglOpImpl * self_op_impl, GeglTileIterator ** iters, gint width);
+
+static gpointer parent_class = NULL;
+
+GType
+gegl_subtract_impl_get_type (void)
+{
+  static GType type = 0;
+
+  if (!type)
+    {
+      static const GTypeInfo typeInfo =
+      {
+        sizeof (GeglSubtractImplClass),
+        (GBaseInitFunc) NULL,
+        (GBaseFinalizeFunc) NULL,
+        (GClassInitFunc) class_init,
+        (GClassFinalizeFunc) NULL,
+        NULL,
+        sizeof (GeglSubtractImpl),
+        0,
+        (GInstanceInitFunc) init,
+      };
+
+      type = g_type_register_static (GEGL_TYPE_POINT_OP_IMPL, 
+                                     "GeglSubtractImpl", 
+                                     &typeInfo, 
+                                     0);
+    }
+    return type;
+}
+
+static void 
+class_init (GeglSubtractImplClass * klass)
+{
+  GeglOpImplClass *op_impl_class = GEGL_OP_IMPL_CLASS(klass);
+
+  parent_class = g_type_class_peek_parent(klass);
+
+  op_impl_class->prepare = prepare;
+  return;
+}
+
+static void 
+init (GeglSubtractImpl * self, 
+      GeglSubtractImplClass * klass)
+{
+  GeglOpImpl * self_op_impl = GEGL_OP_IMPL(self);
+  self_op_impl->num_inputs = 2;
+  return;
+}
+
+static void 
+prepare (GeglOpImpl * self_op_impl, 
+         GList * requests)
+{
+  GeglPointOpImpl *self_point_op_impl = GEGL_POINT_OP_IMPL(self_op_impl);
+  GeglOpRequest *dest_request = (GeglOpRequest*)g_list_nth_data(requests,0); 
+  GeglTile *dest = dest_request->tile;
+  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
+  g_return_if_fail (dest_cm);
+
+  /* Now make sure the correct scanline func is installed */
+  self_point_op_impl->scanline_processor->func = scanline;
+}
+
+/**
+ * scanline:
+ * @self_op_impl: a #GeglOpImpl
+ * @iters: #GeglTileIterators array. 
+ * @width: width of scanline.
+ *
+ * Processes a scanline.
+ *
+ **/
+static void 
+scanline (GeglOpImpl * self_op_impl, 
+          GeglTileIterator ** iters, 
+          gint width)
+{
+  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
+  GeglColorModel *src1_cm = gegl_tile_iterator_get_color_model(iters[1]);
+  GeglColorModel *src2_cm = gegl_tile_iterator_get_color_model(iters[2]);
+
+  GENERIC_IMAGE_DECL_BEGIN
+  Pixel dest(color,alpha,has_alpha);
+  Pixel src1(color,alpha,has_alpha);
+  Pixel src2(color,alpha,has_alpha);
+  GENERIC_IMAGE_DECL_END
+
+  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
+  src1_has_alpha = gegl_color_model_has_alpha(src1_cm); 
+  src2_has_alpha = gegl_color_model_has_alpha(src2_cm); 
+
+  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
+  gegl_tile_iterator_get_current (iters[1], (gpointer*)src1_data);
+  gegl_tile_iterator_get_current (iters[2], (gpointer*)src2_data);
+
+  GENERIC_IMAGE_IMAGE_DATA_INIT
+    
+  while (width--)
+    {
+      GENERIC_IMAGE_CODE_BEGIN  
+
+      dest_color = CHANNEL_CLAMP((SignedPromote)src1_color - src2_color);
+
+      if (dest_has_alpha)
+        {
+          if (src1_has_alpha && src2_has_alpha)
+            {
+              dest_alpha = MIN(src1_alpha, src2_alpha);
+            }
+          else if (src1_has_alpha)
+            {
+              dest_alpha = src1_alpha;
+            }
+          else if (src2_has_alpha)
+            {
+              dest_alpha = src2_alpha;
+            }
+        }
+
+      dX(dest,1);
+      dX(src1,1);
+      dX(src2,1);
+
+      GENERIC_IMAGE_CODE_END
+    }               
+}

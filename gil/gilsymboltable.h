@@ -1,7 +1,7 @@
 #ifndef __GIL_SYMBOL_TABLE_H__
 #define __GIL_SYMBOL_TABLE_H__
 
-#include <glib.h>
+#include <glib-2.0/glib.h>
 #include "gilsymbol.h"
 
 typedef struct _GilSymbolTable GilSymbolTable;

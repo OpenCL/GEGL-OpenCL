@@ -14,13 +14,13 @@ GeglColorModel
 
 </para>
 
-<!-- ##### STRUCT GeglColorModel ##### -->
+<!-- ##### STRUCT GeglColor ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### USER_FUNCTION ConvertFunc ##### -->
+<!-- ##### USER_FUNCTION GeglConvertFunc ##### -->
 <para>
 
 </para>
@@ -30,6 +30,25 @@ GeglColorModel
 @Param3: 
 @Param4: 
 @Param5: 
+
+
+<!-- ##### FUNCTION gegl_color_model_register ##### -->
+<para>
+
+</para>
+
+@color_model_name: 
+@color_model: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_instance ##### -->
+<para>
+
+</para>
+
+@color_model_name: 
+@Returns: 
 
 
 <!-- ##### FUNCTION gegl_color_model_color_space ##### -->
@@ -130,8 +149,6 @@ GeglColorModel
 @self: 
 @color: 
 @constant: 
-<!-- # Unused Parameters # -->
-@c: 
 
 
 <!-- ##### FUNCTION gegl_color_model_convert_to_xyz ##### -->
@@ -165,13 +182,17 @@ GeglColorModel
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_model_constructor ##### -->
+<!-- ##### FUNCTION gegl_color_model_set_has_alpha ##### -->
 <para>
 
 </para>
 
 @self: 
 @has_alpha: 
-@Returns: 
 
+
+<!-- ##### ARG GeglColorModel:hasalpha ##### -->
+<para>
+
+</para>
 

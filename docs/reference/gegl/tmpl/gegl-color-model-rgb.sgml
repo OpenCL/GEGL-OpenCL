@@ -14,6 +14,12 @@ GeglColorModelRgb
 
 </para>
 
+<!-- ##### STRUCT GeglColor ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### FUNCTION gegl_color_model_rgb_get_red_index ##### -->
 <para>
 
@@ -38,16 +44,6 @@ GeglColorModelRgb
 </para>
 
 @self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_rgb_constructor ##### -->
-<para>
-
-</para>
-
-@self: 
-@has_alpha: 
 @Returns: 
 
 

@@ -1,0 +1,47 @@
+<!-- ##### SECTION Title ##### -->
+GeglScanlineProcessor
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglOpImpl ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglTileIterator ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### USER_FUNCTION GeglScanlineFunc ##### -->
+<para>
+
+</para>
+
+@op_impl: 
+@iters: 
+@width: 
+
+
+<!-- ##### FUNCTION gegl_scanline_processor_process ##### -->
+<para>
+
+</para>
+
+@self: 
+@request_list: 
+
+
