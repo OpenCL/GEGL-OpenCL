@@ -1,3 +1,23 @@
+<!-- ##### SECTION ./tmpl/gegl-color-alpha.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-alpha.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-alpha.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-color-alpha.sgml:Title ##### -->
+GeglPointOp
+
+
 <!-- ##### ARG GeglBinary:input-image-a ##### -->
 <para>
 
@@ -314,6 +334,24 @@
 @self: 
 @multiplier: 
 
+<!-- ##### FUNCTION gegl_image_op_compute_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@data_inputs: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_image_op_compute_have_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@have_rect: 
+@data_inputs: 
+
 <!-- ##### FUNCTION gegl_image_op_compute_need_rect ##### -->
 <para>
 
@@ -323,6 +361,13 @@
 @input_need_rect: 
 @need_rect: 
 @i: 
+
+<!-- ##### FUNCTION gegl_image_op_compute_need_rects ##### -->
+<para>
+
+</para>
+
+@self: 
 
 <!-- ##### FUNCTION gegl_image_op_evaluate_color_model ##### -->
 <para>
@@ -387,6 +432,27 @@
 @function: 
 @format: 
 @args: 
+
+<!-- ##### FUNCTION gegl_multi_image_op_compute_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+
+<!-- ##### FUNCTION gegl_multi_image_op_compute_have_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+
+<!-- ##### FUNCTION gegl_multi_image_op_compute_need_rects ##### -->
+<para>
+
+</para>
+
+@self: 
 
 <!-- ##### FUNCTION gegl_node_free_inputs ##### -->
 <para>

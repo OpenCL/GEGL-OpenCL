@@ -38,6 +38,7 @@ gegl_image_get_type
 gegl_image_data_get_type 
 gegl_image_iterator_get_type 
 gegl_image_op_get_type 
+gegl_image_op_interface_get_type 
 gegl_i_mult_get_type 
 gegl_inside_get_type 
 gegl_lighten_get_type 

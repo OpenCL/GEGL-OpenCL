@@ -20,7 +20,6 @@ typedef struct _GeglImageOp GeglImageOp;
 struct _GeglImageOp 
 {
    GeglFilter filter;
-
    /*< private >*/
 };
 
@@ -28,18 +27,9 @@ typedef struct _GeglImageOpClass GeglImageOpClass;
 struct _GeglImageOpClass 
 {
    GeglFilterClass filter_class;
-
-   void (* compute_need_rects)   (GeglImageOp *self);
-   void (* compute_have_rect)    (GeglImageOp *self);
-   void (* compute_color_model)  (GeglImageOp *self);
-
 };
 
 GType           gegl_image_op_get_type             (void);
-
-void            gegl_image_op_compute_need_rects (GeglImageOp * self);
-void            gegl_image_op_compute_have_rect  (GeglImageOp * self);
-void            gegl_image_op_compute_color_model(GeglImageOp * self);
 
 #ifdef __cplusplus
 }

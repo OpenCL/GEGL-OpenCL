@@ -89,37 +89,4 @@ efficient calculations and avoids overcomputing.
 </para>
 
 @filter_class: 
-@compute_need_rects: 
-@compute_have_rect: 
-@compute_color_model: 
-
-<!-- ##### FUNCTION gegl_image_op_compute_need_rects ##### -->
-<para>
-
-</para>
-
-@self: 
-
-
-<!-- ##### FUNCTION gegl_image_op_compute_have_rect ##### -->
-<para>
-
-</para>
-
-@self: 
-<!-- # Unused Parameters # -->
-@have_rect: 
-@data_inputs: 
-
-
-<!-- ##### FUNCTION gegl_image_op_compute_color_model ##### -->
-<para>
-
-</para>
-
-@self: 
-<!-- # Unused Parameters # -->
-@data_inputs: 
-@Returns: 
-
 

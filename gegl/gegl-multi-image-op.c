@@ -19,10 +19,6 @@ static void get_property (GObject *gobject, guint prop_id, GValue *value, GParam
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void validate_inputs  (GeglFilter *filter, GArray *collected_data);
 
-static void compute_need_rects(GeglMultiImageOp *self);
-static void compute_have_rect(GeglMultiImageOp *self);
-static void compute_color_model (GeglMultiImageOp * self);
-
 static gpointer parent_class = NULL;
 
 GType
@@ -143,51 +139,4 @@ validate_inputs  (GeglFilter *filter,
     GValue *value = gegl_data_get_value(data);
     gegl_op_set_input_data_value(GEGL_OP(filter), "source", value);
   }
-}
-
-/**
- * gegl_multi_image_op_compute_color_model:
- * @self: a #GeglMultiImageOp.
- *
- * Compute the color model of the multi_image op.
- *
- **/
-void
-gegl_multi_image_op_compute_color_model (GeglMultiImageOp * self)
-{
-  GeglMultiImageOpClass *klass;
-  g_return_if_fail (GEGL_IS_MULTI_IMAGE_OP (self));
-  klass = GEGL_MULTI_IMAGE_OP_GET_CLASS(self);
-
-  if(klass->compute_color_model)
-    (*klass->compute_color_model)(self);
-}
-
-/**
- * gegl_multi_image_op_compute_have_rect:
- * @self: a #GeglMultiImageOp.
- *
- * Compute the have rect of this multi_image op.
- *
- **/
-void      
-gegl_multi_image_op_compute_have_rect (GeglMultiImageOp * self) 
-{
-  GeglMultiImageOpClass *klass;
-  g_return_if_fail (GEGL_IS_MULTI_IMAGE_OP (self));
-  klass = GEGL_MULTI_IMAGE_OP_GET_CLASS(self);
-
-    if(klass->compute_have_rect)
-      (*klass->compute_have_rect)(self);
-}
-
-void
-gegl_multi_image_op_compute_need_rects(GeglMultiImageOp *self)
-{
-  GeglMultiImageOpClass *klass;
-  g_return_if_fail (GEGL_IS_MULTI_IMAGE_OP (self));
-  klass = GEGL_MULTI_IMAGE_OP_GET_CLASS(self);
-
-  if(klass->compute_need_rects)
-    (*klass->compute_need_rects)(self);
 }

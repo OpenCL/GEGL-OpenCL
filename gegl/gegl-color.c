@@ -3,11 +3,13 @@
 #include "gegl-color-model.h"
 #include "gegl-image-iterator.h"
 #include "gegl-image-data.h"
+#include "gegl-image-op-interface.h"
 #include "gegl-pixel-value-types.h"
 #include "gegl-pixel-data.h"
 #include "gegl-scalar-data.h"
 #include "gegl-param-specs.h"
 #include "gegl-utils.h"
+
 
 enum
 {
@@ -29,8 +31,9 @@ static void finalize (GObject * gobject);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void compute_have_rect (GeglImageOp * image_op);
-static void compute_color_model (GeglImageOp * image_op);
+static void image_op_interface_init (gpointer ginterface, gpointer interface_data);
+static void compute_have_rect (GeglImageOpInterface *interface);
+static void compute_color_model (GeglImageOpInterface *interface);
 
 static GeglScanlineFunc get_scanline_func(GeglNoInput * no_input, GeglColorSpaceType space, GeglChannelSpaceType type);
 
@@ -61,10 +64,21 @@ gegl_color_get_type (void)
         NULL
       };
 
+      static const GInterfaceInfo image_op_interface_info = 
+      { 
+         (GInterfaceInitFunc) image_op_interface_init,
+         NULL,  
+         NULL
+      };
+
       type = g_type_register_static (GEGL_TYPE_NO_INPUT, 
                                      "GeglColor", 
                                      &typeInfo, 
                                      0);
+
+      g_type_add_interface_static (type, 
+                                   GEGL_TYPE_IMAGE_OP_INTERFACE,
+                                   &image_op_interface_info);
     }
     return type;
 }
@@ -73,7 +87,6 @@ static void
 class_init (GeglColorClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-  GeglImageOpClass *image_op_class = GEGL_IMAGE_OP_CLASS(klass);
   GeglNoInputClass *no_input_class = GEGL_NO_INPUT_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
@@ -83,10 +96,6 @@ class_init (GeglColorClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
   gobject_class->finalize = finalize;
-
-  image_op_class->compute_have_rect = compute_have_rect;
-  image_op_class->compute_have_rect = compute_have_rect;
-  image_op_class->compute_color_model = compute_color_model;
 
   g_object_class_install_property (gobject_class, PROP_PIXEL_RGB_FLOAT,
     gegl_param_spec_pixel_rgb_float ("pixel-rgb-float",
@@ -156,6 +165,18 @@ class_init (GeglColorClass * klass)
                                      GEGL_DEFAULT_HEIGHT,
                                      G_PARAM_CONSTRUCT |
                                      G_PARAM_READWRITE));
+}
+
+static void
+image_op_interface_init (gpointer ginterface,
+                         gpointer interface_data)
+{
+  GeglImageOpInterfaceClass *interface = ginterface;
+
+  g_assert (G_TYPE_FROM_INTERFACE (interface) == GEGL_TYPE_IMAGE_OP_INTERFACE);
+
+  interface->compute_have_rect = compute_have_rect;
+  interface->compute_color_model = compute_color_model;
 }
 
 static void 
@@ -244,13 +265,12 @@ set_property (GObject      *gobject,
   }
 }
 
-static void 
-compute_have_rect(GeglImageOp * image_op) 
-{ 
-  GeglColor * self = GEGL_COLOR(image_op);
+static void
+compute_have_rect (GeglImageOpInterface   *interface)
+{
+  GeglColor * self = GEGL_COLOR(interface);
 
-  GeglData *output_data = 
-    gegl_op_get_output_data(GEGL_OP(self), "dest");
+  GeglData *output_data = gegl_op_get_output_data(GEGL_OP(self), "dest");
   GeglImageData *output_image_data = GEGL_IMAGE_DATA(output_data);
 
   GValue *width_data_value;
@@ -270,13 +290,12 @@ compute_have_rect(GeglImageOp * image_op)
 }
 
 static void
-compute_color_model (GeglImageOp * image_op)
+compute_color_model (GeglImageOpInterface   *interface)
 {
-  GeglData *output_data = 
-    gegl_op_get_output_data(GEGL_OP(image_op), "dest");
-  GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(image_op), "pixel");
+  GeglColor *self = GEGL_COLOR(interface);
+  GeglData *output_data = gegl_op_get_output_data(GEGL_OP(self), "dest");
+  GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
   GeglColorModel *pixel_cm = g_value_pixel_get_color_model(data_value);
-
   gegl_color_data_set_color_model(GEGL_COLOR_DATA(output_data), pixel_cm);
 }
 

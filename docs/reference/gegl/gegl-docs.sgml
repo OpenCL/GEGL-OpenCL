@@ -44,11 +44,13 @@
 <!ENTITY GeglIAdd SYSTEM "xml/gegl-i-add.xml">
 <!ENTITY GeglIMult SYSTEM "xml/gegl-i-mult.xml">
 <!ENTITY GeglImage SYSTEM "xml/gegl-image.xml">
+<!ENTITY GeglImageOpInterface SYSTEM "xml/gegl-image-op-interface.xml">
 <!ENTITY GeglImageIterator SYSTEM "xml/gegl-image-iterator.xml">
 <!ENTITY gegl-gegl-image-param-specs SYSTEM "xml/gegl-image-param-specs.xml">
 <!ENTITY GeglImageData SYSTEM "xml/gegl-image-data.xml">
 <!ENTITY GeglImageOp SYSTEM "xml/gegl-image-op.xml">
 <!ENTITY gegl-gegl-input-param-specs SYSTEM "xml/gegl-input-param-specs.xml">
+<!ENTITY gegl-gegl-m-source-param-specs SYSTEM "xml/gegl-m-source-param-specs.xml">
 <!ENTITY GeglInside SYSTEM "xml/gegl-inside.xml">
 <!ENTITY GeglLighten SYSTEM "xml/gegl-lighten.xml">
 <!ENTITY GeglMax SYSTEM "xml/gegl-max.xml">
@@ -83,6 +85,7 @@
 <!ENTITY gegl-gegl-channel-value-types SYSTEM "xml/gegl-channel-value-types.xml">
 <!ENTITY gegl-gegl-init SYSTEM "xml/gegl-init.xml">
 <!ENTITY gegl-gegl-input-value-types SYSTEM "xml/gegl-input-value-types.xml">
+<!ENTITY gegl-gegl-m-source-value-types SYSTEM "xml/gegl-m-source-value-types.xml">
 <!ENTITY gegl-gegl-pixel-value-types SYSTEM "xml/gegl-pixel-value-types.xml">
 <!ENTITY gegl-gegl-types SYSTEM "xml/gegl-types.xml">
 <!ENTITY gegl-objecttree SYSTEM "xml/tree_index.sgml">
@@ -192,6 +195,7 @@
       &GeglFilter;
       &GeglGraph;
       &GeglImageOp;
+      &GeglImageOpInterface;
       &GeglMultiImageOp;
       &GeglNoInput;
       &GeglOp;
@@ -273,6 +277,7 @@
       &gegl-gegl-image-param-specs;
       &gegl-gegl-input-param-specs;
       &gegl-gegl-pixel-param-specs;
+      &gegl-gegl-m-source-param-specs;
     </chapter>
 
     <chapter id="values">
@@ -280,6 +285,7 @@
       &gegl-gegl-channel-value-types;
       &gegl-gegl-input-value-types;
       &gegl-gegl-pixel-value-types;
+      &gegl-gegl-m-source-value-types;
     </chapter>
 
     <chapter id="colormodels">

@@ -5,13 +5,15 @@
 #include "gegl-color-space.h"
 #include "gegl-channel-space.h"
 #include "gegl-image.h"
+#include "gegl-image-op-interface.h"
 #include "gegl-image-data.h"
 #include "gegl-utils.h"
 
 static void class_init (GeglNoInputClass * klass);
 static void init (GeglNoInput * self, GeglNoInputClass * klass);
 
-static void compute_have_rect(GeglImageOp * image_op);
+static void image_op_interface_init (gpointer ginterface, gpointer interface_data);
+static void compute_have_rect (GeglImageOpInterface *interface);
 
 static void prepare (GeglFilter * filter);
 
@@ -38,10 +40,22 @@ gegl_no_input_get_type (void)
         NULL
       };
 
+      static const GInterfaceInfo image_op_interface_info = 
+      { 
+         (GInterfaceInitFunc) image_op_interface_init,
+         NULL,  
+         NULL
+      };
+
       type = g_type_register_static (GEGL_TYPE_POINT_OP , 
                                      "GeglNoInput", 
                                      &typeInfo, 
                                      G_TYPE_FLAG_ABSTRACT);
+
+      g_type_add_interface_static (type, 
+                                   GEGL_TYPE_IMAGE_OP_INTERFACE,
+                                   &image_op_interface_info);
+
     }
     return type;
 }
@@ -57,8 +71,17 @@ class_init (GeglNoInputClass * klass)
   klass->get_scanline_func = NULL;
 
   filter_class->prepare = prepare;
+}
 
-  image_op_class->compute_have_rect = compute_have_rect;
+static void
+image_op_interface_init (gpointer ginterface,
+                         gpointer interface_data)
+{
+  GeglImageOpInterfaceClass *interface = ginterface;
+
+  g_assert (G_TYPE_FROM_INTERFACE (interface) == GEGL_TYPE_IMAGE_OP_INTERFACE);
+
+  interface->compute_have_rect = compute_have_rect;
 }
 
 static void 
@@ -67,15 +90,19 @@ init (GeglNoInput * self,
 {
 }
 
-static void 
-compute_have_rect(GeglImageOp * image_op) 
-{ 
-  GeglData *output_data = gegl_op_get_output_data(GEGL_OP(image_op), "dest");
-  GeglImageData *output_image_data = GEGL_IMAGE_DATA(output_data);
+static void
+compute_have_rect (GeglImageOpInterface   *interface)
+{
+  g_print ("compute_have_rect: calling from no input\n");
+  {
+    GeglNoInput *self = GEGL_NO_INPUT(interface);
+    GeglData *output_data = gegl_op_get_output_data(GEGL_OP(self), "dest");
+    GeglImageData *output_image_data = GEGL_IMAGE_DATA(output_data);
 
-  GeglRect have_rect;
-  gegl_rect_set(&have_rect, 0,0,GEGL_DEFAULT_WIDTH, GEGL_DEFAULT_HEIGHT);
-  gegl_image_data_set_rect(output_image_data,&have_rect);
+    GeglRect have_rect;
+    gegl_rect_set(&have_rect, 0,0,GEGL_DEFAULT_WIDTH, GEGL_DEFAULT_HEIGHT);
+    gegl_image_data_set_rect(output_image_data,&have_rect);
+  }
 }
 
 static void 

@@ -90,7 +90,7 @@ gegl_input_value_types_init (void)
   }
 
   g_assert (GEGL_TYPE_INPUT == 0);
-  GEGL_TYPE_INPUT = G_TYPE_MAKE_FUNDAMENTAL(51);
+  GEGL_TYPE_INPUT = g_type_fundamental_next();
   type = g_type_register_fundamental (GEGL_TYPE_INPUT, 
                                       "GeglInput", 
                                       &info, 

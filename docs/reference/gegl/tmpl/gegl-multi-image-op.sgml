@@ -26,33 +26,6 @@ GeglMultiImageOp
 </para>
 
 @filter_class: 
-@compute_need_rects: 
-@compute_have_rect: 
-@compute_color_model: 
-
-<!-- ##### FUNCTION gegl_multi_image_op_compute_need_rects ##### -->
-<para>
-
-</para>
-
-@self: 
-
-
-<!-- ##### FUNCTION gegl_multi_image_op_compute_have_rect ##### -->
-<para>
-
-</para>
-
-@self: 
-
-
-<!-- ##### FUNCTION gegl_multi_image_op_compute_color_model ##### -->
-<para>
-
-</para>
-
-@self: 
-
 
 <!-- ##### ARG GeglMultiImageOp:m-source ##### -->
 <para>

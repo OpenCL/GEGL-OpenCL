@@ -1,7 +1,6 @@
 #include "gegl-eval-bfs-visitor.h"
 #include "gegl-filter.h"
-#include "gegl-image-op.h"
-#include "gegl-multi-image-op.h"
+#include "gegl-image-op-interface.h"
 #include "gegl-image-data.h"
 #include "gegl-graph.h"
 
@@ -96,25 +95,10 @@ visit_filter(GeglVisitor * visitor,
                  "computing need rects for inputs of %s %p", 
                  G_OBJECT_TYPE_NAME(filter),filter);
 
-  if(GEGL_IS_IMAGE_OP(filter))
+  if(GEGL_IS_IMAGE_OP_INTERFACE(filter))
   {
     GArray *collected_data; 
-    gegl_image_op_compute_need_rects(GEGL_IMAGE_OP(filter));
-
-    collected_data = gegl_visitor_collect_input_data(visitor, GEGL_NODE(filter));
-
-    gegl_op_validate_input_data_array(GEGL_OP(filter), 
-                                      collected_data, 
-                                      &validate_need_rect);
-  
-    g_array_free(collected_data, TRUE);
-  }
-
-  if(GEGL_IS_MULTI_IMAGE_OP(filter))
-  {
-    GArray *collected_data; 
-    gegl_multi_image_op_compute_need_rects(GEGL_MULTI_IMAGE_OP(filter));
-
+    gegl_image_op_interface_compute_need_rects (GEGL_IMAGE_OP_INTERFACE(filter));
     collected_data = gegl_visitor_collect_input_data(visitor, GEGL_NODE(filter));
 
     gegl_op_validate_input_data_array(GEGL_OP(filter), 

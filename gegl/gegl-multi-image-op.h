@@ -26,18 +26,9 @@ typedef struct _GeglMultiImageOpClass GeglMultiImageOpClass;
 struct _GeglMultiImageOpClass 
 {
    GeglFilterClass filter_class;
-
-   void (* compute_need_rects)   (GeglMultiImageOp *self);
-   void (* compute_have_rect)    (GeglMultiImageOp *self);
-   void (* compute_color_model)  (GeglMultiImageOp *self);
-
 };
 
 GType           gegl_multi_image_op_get_type             (void);
-
-void            gegl_multi_image_op_compute_need_rects (GeglMultiImageOp * self);
-void            gegl_multi_image_op_compute_have_rect  (GeglMultiImageOp * self);
-void            gegl_multi_image_op_compute_color_model(GeglMultiImageOp * self);
 
 #ifdef __cplusplus
 }

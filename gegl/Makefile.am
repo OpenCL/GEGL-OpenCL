@@ -41,6 +41,7 @@ GEGL_SRC = \
   gegl-i-mult.c \
   gegl-image.c \
   gegl-image-op.c \
+  gegl-image-op-interface.c \
   gegl-image-data.c \
   gegl-image-iterator.c \
   gegl-inside.c \

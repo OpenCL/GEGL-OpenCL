@@ -2,6 +2,7 @@
 #include "gegl-scanline-processor.h"
 #include "gegl-image-data.h"
 #include "gegl-image.h"
+#include "gegl-image-op-interface.h"
 
 static void class_init (GeglChannelsClass * klass);
 static void init (GeglChannels * self, GeglChannelsClass * klass);
@@ -15,9 +16,10 @@ static void validate_outputs  (GeglFilter *filter);
 
 static void validate_output_image(GeglChannels *self, gchar *name);
 static void channels_rgb (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);                       
-static void compute_need_rects (GeglMultiImageOp *multi);
-static void compute_have_rect (GeglMultiImageOp *multi);
-static void compute_color_model (GeglMultiImageOp *multi);
+static void image_op_interface_init (gpointer ginterface, gpointer interface_data);
+static void compute_need_rects (GeglImageOpInterface *interface);
+static void compute_have_rect (GeglImageOpInterface *interface);
+static void compute_color_model (GeglImageOpInterface *interface);
 
 static gpointer parent_class = NULL;
 
@@ -42,10 +44,21 @@ gegl_channels_get_type (void)
         NULL
       };
 
+      static const GInterfaceInfo image_op_interface_info = 
+      { 
+         (GInterfaceInitFunc) image_op_interface_init,
+         NULL,  
+         NULL
+      };
+
       type = g_type_register_static (GEGL_TYPE_MULTI_IMAGE_OP , 
                                      "GeglChannels", 
                                      &typeInfo, 
                                      0);
+
+      g_type_add_interface_static (type, 
+                                   GEGL_TYPE_IMAGE_OP_INTERFACE,
+                                   &image_op_interface_info);
     }
     return type;
 }
@@ -64,10 +77,6 @@ class_init (GeglChannelsClass * klass)
   filter_class->prepare = prepare;
   filter_class->validate_inputs = validate_inputs;
   filter_class->validate_outputs = validate_outputs;
-
-  multi_image_op_class->compute_need_rects = compute_need_rects;
-  multi_image_op_class->compute_have_rect = compute_have_rect;
-  multi_image_op_class->compute_color_model = compute_color_model;
 }
 
 static void 
@@ -80,6 +89,19 @@ init (GeglChannels * self,
   gegl_op_add_output_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "red");
   gegl_op_add_output_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "green");
   gegl_op_add_output_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "blue");
+}
+
+static void
+image_op_interface_init (gpointer ginterface,
+                         gpointer interface_data)
+{
+  GeglImageOpInterfaceClass *interface = ginterface;
+
+  g_assert (G_TYPE_FROM_INTERFACE (interface) == GEGL_TYPE_IMAGE_OP_INTERFACE);
+
+  interface->compute_need_rects = compute_need_rects;
+  interface->compute_have_rect = compute_have_rect;
+  interface->compute_color_model = compute_color_model;
 }
 
 static void 
@@ -139,23 +161,9 @@ validate_output_image(GeglChannels *self,
 }
 
 static void
-compute_have_rect(GeglMultiImageOp *self)
+compute_need_rects (GeglImageOpInterface   *interface)
 {
-  GeglData *red = gegl_op_get_output_data(GEGL_OP(self), "red");
-  GeglData *green = gegl_op_get_output_data(GEGL_OP(self), "green");
-  GeglData *blue = gegl_op_get_output_data(GEGL_OP(self), "blue");
-  GeglData *source = gegl_op_get_input_data(GEGL_OP(self), "source");
-  GeglRect s_rect;  /* source have rect */
-
-  gegl_image_data_get_rect(GEGL_IMAGE_DATA(source), &s_rect);
-  gegl_image_data_set_rect(GEGL_IMAGE_DATA(red), &s_rect);
-  gegl_image_data_set_rect(GEGL_IMAGE_DATA(green), &s_rect);
-  gegl_image_data_set_rect(GEGL_IMAGE_DATA(blue), &s_rect);
-}
-
-static void
-compute_need_rects(GeglMultiImageOp *self)
-{
+  GeglChannels *self = GEGL_CHANNELS(interface);
   GeglData *red = gegl_op_get_output_data(GEGL_OP(self), "red");
   GeglData *green = gegl_op_get_output_data(GEGL_OP(self), "green");
   GeglData *blue = gegl_op_get_output_data(GEGL_OP(self), "blue");
@@ -178,7 +186,23 @@ compute_need_rects(GeglMultiImageOp *self)
 }
 
 static void
-compute_color_model(GeglMultiImageOp *self)
+compute_have_rect (GeglImageOpInterface   *interface)
+{
+  GeglChannels *self = GEGL_CHANNELS(interface);
+  GeglData *red = gegl_op_get_output_data(GEGL_OP(self), "red");
+  GeglData *green = gegl_op_get_output_data(GEGL_OP(self), "green");
+  GeglData *blue = gegl_op_get_output_data(GEGL_OP(self), "blue");
+  GeglData *source = gegl_op_get_input_data(GEGL_OP(self), "source");
+  GeglRect s_rect;  /* source have rect */
+
+  gegl_image_data_get_rect(GEGL_IMAGE_DATA(source), &s_rect);
+  gegl_image_data_set_rect(GEGL_IMAGE_DATA(red), &s_rect);
+  gegl_image_data_set_rect(GEGL_IMAGE_DATA(green), &s_rect);
+  gegl_image_data_set_rect(GEGL_IMAGE_DATA(blue), &s_rect);
+}
+
+static void
+compute_color_model (GeglImageOpInterface   *interface)
 {
 }
 

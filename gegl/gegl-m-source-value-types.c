@@ -90,7 +90,7 @@ gegl_m_source_value_types_init (void)
   }
 
   g_assert (GEGL_TYPE_M_SOURCE == 0);
-  GEGL_TYPE_M_SOURCE = G_TYPE_MAKE_FUNDAMENTAL(52);
+  GEGL_TYPE_M_SOURCE = g_type_fundamental_next();
   type = g_type_register_fundamental (GEGL_TYPE_M_SOURCE, 
                                       "GeglMSource", 
                                       &info, 

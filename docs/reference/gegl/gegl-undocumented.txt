@@ -1,6 +1,6 @@
-28% symbol docs coverage.
-116 symbols documented.
-302 not documented.
+27% symbol docs coverage.
+112 symbols documented.
+305 not documented.
 
 
 GEGL_DEFAULT_HEIGHT
@@ -136,6 +136,8 @@ GeglImageIterator
 GeglImageIteratorClass
 GeglImageOp
 GeglImageOpClass
+GeglImageOpInterface
+GeglImageOpInterfaceClass
 GeglInside
 GeglInsideClass
 GeglLighten
@@ -260,7 +262,9 @@ gegl_image_iterator_get_rect
 gegl_image_iterator_set_image
 gegl_image_iterator_set_rect
 gegl_image_iterator_set_scanline
-gegl_image_op_compute_need_rects
+gegl_image_op_interface_compute_color_model
+gegl_image_op_interface_compute_have_rect
+gegl_image_op_interface_compute_need_rects
 gegl_image_param_spec_types_init
 gegl_image_set_color_model
 gegl_image_set_tile
@@ -273,7 +277,6 @@ gegl_log_info
 gegl_log_message
 gegl_m_source_param_spec_types_init
 gegl_m_source_value_types_init
-gegl_multi_image_op_compute_need_rects
 gegl_op_get_input_data_value
 gegl_op_get_output_data_value
 gegl_op_validate_input_data_array

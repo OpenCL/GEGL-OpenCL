@@ -1,3 +1,35 @@
+Tue Aug  5 18:58:17 EDT 2003 calvinw@mindspring.com
+
+	Added the image op interface. This puts the need_rect, have_rect
+	and color_model compute methods in these. This interface is implemented
+	by any op that has input or output image data, hence needs to calculate
+	the above rects and color model to go with that image data. 
+
+	*gegl/Makefile.am
+	*gegl/gegl-channels.c
+	*gegl/gegl-color.c
+	*gegl/gegl-eval-bfs-visitor.c
+	*gegl/gegl-eval-dfs-visitor.c
+	*gegl/gegl-image-op.c
+	*gegl/gegl-image-op.h
+	*gegl/gegl-init.c
+	*gegl/gegl-input-value-types.c
+	*gegl/gegl-m-source-value-types.c
+	*gegl/gegl-multi-image-op.c
+	*gegl/gegl-multi-image-op.h
+	*gegl/gegl-no-input.c
+	*gegl/gegl-unary.c
+	*gegl/gegl.h
+	*tests/haverecttest.c
+	*tests/needrecttest.c
+	*docs/reference/gegl/gegl-docs.sgml
+	*docs/reference/gegl/gegl-sections.txt
+	*docs/reference/gegl/gegl-undocumented.txt
+	*docs/reference/gegl/gegl.types
+	*docs/reference/gegl/tmpl/gegl-image-op.sgml
+	*docs/reference/gegl/tmpl/gegl-multi-image-op.sgml
+	*docs/reference/gegl/tmpl/gegl-unused.sgml
+
 Aug  1 13:57:09 EDT 2003  calvinw@mindspring.com
 
 	Added basic multi-output support. Introduced m-sources, which stands for 

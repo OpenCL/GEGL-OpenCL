@@ -13,10 +13,10 @@ static void init (GeglFilter * self, GeglFilterClass * klass);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 
+static void accept(GeglNode * node, GeglVisitor * visitor);
+
 static void validate_inputs (GeglFilter * self, GArray * collected_data);
 static void validate_outputs (GeglFilter * self);
-
-static void accept(GeglNode * node, GeglVisitor * visitor);
 
 static gpointer parent_class = NULL;
 
@@ -143,12 +143,12 @@ gegl_filter_validate_inputs (GeglFilter * self,
 
   klass = GEGL_FILTER_GET_CLASS(self);
   if(klass->validate_inputs)
-    (*klass->validate_inputs)(self, collected_data);
+    klass->validate_inputs(self, collected_data);
 }
 
-static void
-validate_inputs(GeglFilter *self,
-                GArray *collected_data)
+void      
+validate_inputs (GeglFilter * self, 
+                 GArray * collected_data)
 {
 }
 
@@ -167,11 +167,11 @@ gegl_filter_validate_outputs (GeglFilter * self)
 
   klass = GEGL_FILTER_GET_CLASS(self);
   if(klass->validate_outputs)
-    (*klass->validate_outputs)(self);
+    klass->validate_outputs(self);
 }
 
-static void
-validate_outputs(GeglFilter *self)
+static void      
+validate_outputs (GeglFilter * self)
 {
 }
 

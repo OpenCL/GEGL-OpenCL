@@ -20,7 +20,7 @@ test_needrect_op(Test *t)
   output_data = gegl_op_get_nth_output_data(GEGL_OP(op), 0);
   gegl_image_data_set_rect(GEGL_IMAGE_DATA(output_data), &need_rect);
 
-  gegl_image_op_compute_need_rects(GEGL_IMAGE_OP(op)); 
+  gegl_image_op_interface_compute_need_rects(GEGL_IMAGE_OP_INTERFACE(op));
 
   input_data = gegl_op_get_nth_input_data(GEGL_OP(op), 0);
   gegl_image_data_get_rect(GEGL_IMAGE_DATA(input_data), &input0_need_rect);
@@ -55,7 +55,7 @@ test_needrect_op_source_needrect_set(Test *t)
   input_data = gegl_op_get_nth_input_data(GEGL_OP(op), 0);
   gegl_image_data_set_rect(GEGL_IMAGE_DATA(input_data), &input0_need_rect);
 
-  gegl_image_op_compute_need_rects(GEGL_IMAGE_OP(op)); 
+  gegl_image_op_interface_compute_need_rects(GEGL_IMAGE_OP_INTERFACE(op));
 
   gegl_image_data_get_rect(GEGL_IMAGE_DATA(input_data), &input0_need_rect);
   ct_test(t, gegl_rect_equal_coords(&input0_need_rect, 0,0,6,6));  
@@ -63,8 +63,7 @@ test_needrect_op_source_needrect_set(Test *t)
   gegl_rect_set(&input1_need_rect, 2,2,6,6);
   input_data = gegl_op_get_nth_input_data(GEGL_OP(op), 1);
   gegl_image_data_set_rect(GEGL_IMAGE_DATA(input_data), &input1_need_rect);
-
-  gegl_image_op_compute_need_rects(GEGL_IMAGE_OP(op)); 
+  gegl_image_op_interface_compute_need_rects(GEGL_IMAGE_OP_INTERFACE(op));
 
   gegl_image_data_get_rect(GEGL_IMAGE_DATA(input_data), &input1_need_rect);
   ct_test(t, gegl_rect_equal_coords(&input1_need_rect, 1,1,7,7));  

@@ -27,8 +27,6 @@ static void set_property (GObject *gobject, guint prop_id, const GValue *value, 
 static void prepare (GeglFilter * filter);
 static void validate_inputs  (GeglFilter *filter, GArray *collected_data);
 
-static void compute_color_model (GeglImageOp * self);
-
 static gpointer parent_class = NULL;
 
 GType
@@ -65,7 +63,6 @@ class_init (GeglUnaryClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
-  GeglImageOpClass *image_op_class = GEGL_IMAGE_OP_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
@@ -74,8 +71,6 @@ class_init (GeglUnaryClass * klass)
 
   filter_class->prepare = prepare;
   filter_class->validate_inputs = validate_inputs;
-
-  image_op_class->compute_color_model = compute_color_model;
 
   klass->get_scanline_func = NULL;
 
@@ -155,21 +150,6 @@ validate_inputs  (GeglFilter *filter,
     GValue *value = gegl_data_get_value(data);
     gegl_op_set_input_data_value(GEGL_OP(filter), "source", value);
   }
-}
-
-static void
-compute_color_model (GeglImageOp * self) 
-{
-  GeglColorModel *color_model;
-
-  GeglData *output_data = gegl_op_get_output_data(GEGL_OP(self), "dest");
-  GeglData *input_data = gegl_op_get_input_data(GEGL_OP(self), "source");
-
-  g_return_if_fail(GEGL_IS_IMAGE_DATA(output_data));
-  g_return_if_fail(GEGL_IS_IMAGE_DATA(input_data));
-
-  color_model = gegl_color_data_get_color_model(GEGL_COLOR_DATA(input_data));
-  gegl_color_data_set_color_model(GEGL_COLOR_DATA(output_data), color_model);
 }
 
 static void 

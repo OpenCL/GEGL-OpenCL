@@ -40,6 +40,7 @@
 #include <gegl-image.h>
 #include <gegl-image-data.h>
 #include <gegl-image-iterator.h>
+#include <gegl-image-op-interface.h>
 #include <gegl-inside.h>
 #include <gegl-init.h>
 #include <gegl-lighten.h>

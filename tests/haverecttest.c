@@ -28,7 +28,7 @@ test_haverect_color_default_size(Test *t)
                              "pixel-rgb-float", R0, G0, B0, 
                              NULL); 
 
-  gegl_image_op_compute_have_rect(GEGL_IMAGE_OP(op)); 
+  gegl_image_op_interface_compute_have_rect(GEGL_IMAGE_OP_INTERFACE(op));
 
   output_data = gegl_op_get_nth_output_data(op, 0);
   gegl_image_data_get_rect(GEGL_IMAGE_DATA(output_data), &have_rect);
@@ -50,7 +50,7 @@ test_haverect_color(Test *t)
                              "pixel-rgb-float", R0, G0, B0, 
                              NULL); 
 
-  gegl_image_op_compute_have_rect(GEGL_IMAGE_OP(op)); 
+  gegl_image_op_interface_compute_have_rect(GEGL_IMAGE_OP_INTERFACE(op));
 
   output_data = gegl_op_get_nth_output_data(op, 0);
   gegl_image_data_get_rect(GEGL_IMAGE_DATA(output_data), &have_rect);
@@ -75,7 +75,7 @@ test_haverect_op(Test *t)
   gegl_image_data_set_rect(GEGL_IMAGE_DATA(input0_data), &have_rect0);
   gegl_image_data_set_rect(GEGL_IMAGE_DATA(input1_data), &have_rect1);
 
-  gegl_image_op_compute_have_rect(GEGL_IMAGE_OP(op)); 
+  gegl_image_op_interface_compute_have_rect(GEGL_IMAGE_OP_INTERFACE(op));
 
   output_data = gegl_op_get_nth_output_data(op, 0);
   gegl_image_data_get_rect(GEGL_IMAGE_DATA(output_data), &have_rect);

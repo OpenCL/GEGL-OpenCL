@@ -178,7 +178,7 @@ gegl_fundamental_types_init(void)
   GType type;
 
   g_assert (GEGL_TYPE_CHANNEL == 0);
-  GEGL_TYPE_CHANNEL = G_TYPE_MAKE_FUNDAMENTAL(49);
+  GEGL_TYPE_CHANNEL = g_type_fundamental_next();
   type = g_type_register_fundamental (GEGL_TYPE_CHANNEL, 
                                       "GeglChannel", 
                                       &info, 
@@ -188,7 +188,7 @@ gegl_fundamental_types_init(void)
   g_assert (type == GEGL_TYPE_CHANNEL);
 
   g_assert (GEGL_TYPE_PIXEL == 0);
-  GEGL_TYPE_PIXEL = G_TYPE_MAKE_FUNDAMENTAL(50);
+  GEGL_TYPE_PIXEL = g_type_fundamental_next();
   type = g_type_register_fundamental (GEGL_TYPE_PIXEL, 
                                       "GeglPixel", 
                                       &info, 
