@@ -97,3 +97,27 @@ gegl_cache_entry_unflatten (GeglCacheEntry* self,
   g_return_if_fail (gegl_cache_entry_flattened_size (self) < length);
   class->unflatten (self, buffer, length);
 }
+
+void
+gegl_cache_entry_set_expire_fuction (GeglCacheEntry* self,
+				     GeglCacheExpireFunc expire_entry,
+				     gpointer expire_data)
+{
+  g_return_if_fail(GEGL_IS_CACHE_ENTRY(self));
+  
+  self->expire_entry=expire_entry;
+  self->expire_data=expire_data;
+}
+
+void
+gegl_cache_entry_expire_entry (GeglCacheEntry * self,
+			       gpointer expire_data)
+{
+  g_return_if_fail (GEGL_IS_CACHE_ENTRY(self));
+  
+  if (self->expire_entry != NULL)
+    {
+      self->expire_entry(self,expire_data);
+    }
+}
+
