@@ -15,7 +15,7 @@
  *    along with GEGL; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- *  Copyright 2003 Daniel S. Rogers
+ *  Copyright 2003-2004 Daniel S. Rogers
  *
  */
 

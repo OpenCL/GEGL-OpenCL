@@ -15,7 +15,7 @@
  *    along with GEGL; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- *  Copyright 2003 Daniel S. Rogers
+ *  Copyright 2003-2004 Daniel S. Rogers
  *
  */
 
@@ -41,6 +41,25 @@ static void mark_as_dirty (GeglCache * cache,
 static void flush (GeglCache * cache,
 		   gsize entry_id);
 
+typedef enum Status_ Status;
+enum Status_
+  {
+    STORED,
+    FETCHED,
+    DISCARDED
+  };
+
+typedef struct EntryRecord_ EntryRecord;
+struct EntryRecord_
+{
+  /*
+   * magic_number is used to help ensure that any random entry_id is
+   * contained in this cache.
+   */
+  GeglCache * magic_number;
+  Status status;
+  GeglCacheEntry * data;
+};
 
 GType
 gegl_memory_cache_get_type (void)
@@ -99,8 +118,12 @@ free_entry_data (gpointer data, gpointer user_data)
     {
       return;
     }
-  GObject* object=G_OBJECT(data);
-  g_object_unref(object);
+  EntryRecord * record = (EntryRecord *) data;
+  if (record->data != NULL)
+    {
+      g_object_unref(record->data);
+    }
+  g_free (record);
 }
 
 
@@ -110,7 +133,9 @@ instance_init (GTypeInstance *instance,
 {
   GeglMemoryCache* mem_cache=GEGL_MEMORY_CACHE(instance);
   mem_cache->current_size=0;
-  mem_cache->entries=NULL;
+  mem_cache->stored_entries=NULL;
+  mem_cache->discarded_entries = NULL;
+  mem_cache->fetched_entries = NULL;
 }
 
 static void
@@ -124,9 +149,15 @@ static void dispose (GObject *object)
   static gboolean has_disposed=FALSE;
   if (!has_disposed)
     {
-      g_list_foreach(self->entries,free_entry_data,NULL);
-      g_list_free(self->entries);
-      self->entries=NULL;
+      g_list_foreach(self->discarded_entries,free_entry_data,NULL);
+      g_list_free(self->discarded_entries);
+      g_list_foreach(self->fetched_entries,free_entry_data,NULL);
+      g_list_free(self->fetched_entries);
+      g_list_foreach(self->stored_entries,free_entry_data,NULL);
+      g_list_free(self->stored_entries);
+      self->discarded_entries = NULL;
+      self->fetched_entries = NULL;
+      self->stored_entries = NULL;
       has_disposed = TRUE;
     }
 }
@@ -152,8 +183,8 @@ put (GeglCache * cache,
      gsize * entry_id)
 {
   GeglMemoryCache* mem_cache=GEGL_MEMORY_CACHE(cache);
-  GList* new_element;
   gsize new_size=gegl_cache_entry_flattened_size (entry);
+  GList *link,*old_link;
   if ((cache->persistent == TRUE) &&
       (mem_cache->current_size + new_size > cache->hard_limit))
     {
@@ -165,35 +196,55 @@ put (GeglCache * cache,
     }
   if (mem_cache->current_size + new_size > cache->hard_limit)
     {
-      GList* link;
-      link = g_list_first(mem_cache->entries);
+      link = g_list_last (mem_cache->stored_entries);
       while ((mem_cache->current_size != 0) &&
 	     (mem_cache->current_size > cache->soft_limit) &&
 	     (link != NULL))
 	{
 	  gsize entry_size;
-	  entry_size=gegl_cache_entry_flattened_size (GEGL_CACHE_ENTRY(link->data));
-	  if (link->data != NULL)
-	    {
-	      free_entry_data(link->data,NULL);
-	      link->data = NULL;
-	      mem_cache->current_size -= entry_size;
-	    }
-	  link=g_list_next(link);
+	  EntryRecord * record = (EntryRecord *) (link->data);
+	  entry_size=gegl_cache_entry_flattened_size (record->data);
+	  g_return_val_if_fail (record->data != NULL, GEGL_PUT_INVALID);
+	  g_return_val_if_fail (record->status == STORED, GEGL_PUT_INVALID);
+	  g_return_val_if_fail (record->magic_number == cache, GEGL_PUT_INVALID);
+	  g_object_unref(record->data);
+	  /*
+	   * Might want to keep weak references to the old entries
+	   * here.
+	   */
+	  record->data = NULL;
+	  mem_cache->current_size -= entry_size;
+	  old_link = link;
+	  link=g_list_previous(link);
+	  mem_cache->stored_entries = g_list_remove_link (mem_cache->stored_entries, old_link);
+	  mem_cache->discarded_entries = g_list_concat (old_link, mem_cache->discarded_entries);
+	  record->status = DISCARDED;
 	}
     }
 
   g_object_ref(entry);
   if (*entry_id == 0)
     {
-      mem_cache->entries=g_list_prepend(mem_cache->entries,entry);
-      new_element=g_list_first(mem_cache->entries);
-      *entry_id = GPOINTER_TO_SIZE(new_element);
+      EntryRecord * record = g_new (EntryRecord, 1);
+      record->data = entry;
+      record->status = STORED;
+      record->magic_number = cache;
+      mem_cache->stored_entries=g_list_append(mem_cache->stored_entries, record);
+      mem_cache->current_size += gegl_cache_entry_flattened_size (entry);
+      link=g_list_last(mem_cache->stored_entries);
+      *entry_id = GPOINTER_TO_SIZE(link);
     }
   else
     {
-      new_element = GSIZE_TO_POINTER(*entry_id);
-      new_element->data = entry;
+      link = GSIZE_TO_POINTER(*entry_id);
+      EntryRecord * record = (EntryRecord *) (link->data);
+      g_return_val_if_fail (record->status == FETCHED, GEGL_PUT_INVALID);
+      g_return_val_if_fail (record->magic_number == cache, GEGL_PUT_INVALID);
+      record->data = entry;
+      mem_cache->current_size += gegl_cache_entry_flattened_size (entry);
+      mem_cache->fetched_entries = g_list_remove_link (mem_cache->fetched_entries, link);
+      mem_cache->stored_entries = g_list_concat (link, mem_cache->stored_entries);
+      record->status = STORED;
     }
   return GEGL_PUT_SUCCEEDED;
 }
@@ -205,23 +256,18 @@ fetch (GeglCache * cache,
 {
   GeglMemoryCache* mem_cache=GEGL_MEMORY_CACHE(cache);
   GList* link = GSIZE_TO_POINTER(entry_id);
-  GeglCacheEntry* entry = GEGL_CACHE_ENTRY(link->data);
-  if (link->data == NULL)
+  EntryRecord * record = (EntryRecord *) (link->data);
+  GeglCacheEntry* entry = GEGL_CACHE_ENTRY(record->data);
+  g_return_val_if_fail (record->magic_number == cache,GEGL_FETCH_INVALID);
+  if (record->status == DISCARDED)
     {
       return GEGL_FETCH_EXPIRED;
     }
-  mem_cache->entries=g_list_remove_link (mem_cache->entries,link);
-  if (mem_cache->entries == NULL)
-    {
-      mem_cache->entries = link;
-    }
-  else
-    {
-      mem_cache->entries->prev=link;
-      link->next=mem_cache->entries;
-      mem_cache->entries = link;
-    }
-  link->data = NULL;
+  g_return_val_if_fail (entry != NULL, GEGL_FETCH_INVALID);
+  record->data = NULL;
+  mem_cache->stored_entries = g_list_remove_link (mem_cache->stored_entries, link);
+  mem_cache->fetched_entries = g_list_concat (link, mem_cache->fetched_entries);
+  record->status = FETCHED;
   mem_cache->current_size -= gegl_cache_entry_flattened_size (entry);
   *entry_handle=entry;
   return GEGL_FETCH_SUCCEEDED;
@@ -239,8 +285,24 @@ flush (GeglCache * cache,
 {
   GList* link = GSIZE_TO_POINTER(entry_id);
   GeglMemoryCache* mem_cache = GEGL_MEMORY_CACHE(cache);
-  gsize entry_size=gegl_cache_entry_flattened_size (GEGL_CACHE_ENTRY(link->data));
+  EntryRecord * record = (EntryRecord *) link->data;
+  gsize entry_size=gegl_cache_entry_flattened_size (record->data);
+  Status status = record->status;
   free_entry_data(link->data,NULL);
-  mem_cache->current_size -= entry_size;
-  mem_cache->entries=g_list_delete_link(mem_cache->entries, link);
+  switch (status)
+    {
+    case STORED:
+      mem_cache->current_size -= entry_size;
+      mem_cache->stored_entries = g_list_delete_link(mem_cache->stored_entries, link);
+      break;
+    case FETCHED:
+      mem_cache->fetched_entries = g_list_delete_link(mem_cache->fetched_entries, link);
+      break;
+    case DISCARDED:
+      mem_cache->discarded_entries = g_list_delete_link(mem_cache->discarded_entries, link);
+      break;
+    default:
+      g_warning ("GeglMemoryCache: unhandled status type in flush()");
+      break;
+    }
 }

@@ -1,3 +1,18 @@
+2004-1-1 23:44 Daniel Rogers <daniel@phasevelocity.org>
+
+	* gegl/image/gegl-buffer-double.c
+	* gegl/image/gegl-component-sample-model.c
+
+	Updates to the copyright notice for the New Year.
+	
+	* gegl/image/gegl-memory-cache.c
+	* gegl/image/gegl-memory-cache.h
+	* tests/gegl-image-memory-cache-test.c
+	* tests/gegl-image-mock-cache-entry-test.c
+
+	A (possibly) complete test for GeglMemoryCache and fixes for bugs
+	discovered during the writing of the test.
+
 2004-1-1 23:38 Daniel Rogers <daniel@phasevelocity.org>
 	
 	* gegl/image/gegl-buffer-double.c
