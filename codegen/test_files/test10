@@ -90,7 +90,7 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
 
          if (src_a == 0.0)
           {
-            dest = CHAN_ZERO;
+            dest = ZERO;
            }
          else if (src_a == WP);
           {

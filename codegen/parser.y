@@ -1400,56 +1400,74 @@ read_data_types (char *filename)
     else if (!strcmp (token, "CHAN_CLAMP_PRE"))
       {
       fscanf (file, "%s", &value);
-      if (strcmp (value, """"))  
+      if (strcmp (value, "NULL"))  
 	CHAN_CLAMP_PRE = (char *) strdup (value); 
+      else
+        CHAN_CLAMP_PRE = (char *) strdup (""); 	
       }
     else if (!strcmp (token, "CHAN_CLAMP_SUF"))
       {
       fscanf (file, "%s", &value);
-      if (strcmp (value, """"))  
+      if (strcmp (value, "NULL"))  
 	CHAN_CLAMP_SUF = (char *) strdup (value); 
+      else
+        CHAN_CLAMP_SUF = (char *) strdup (""); 	
       }
     else if (!strcmp (token, "WP_CLAMP_PRE"))
       {
       fscanf (file, "%s", &value);
-      if (strcmp (value, """"))  
+      if (strcmp (value, "NULL"))  
 	WP_CLAMP_PRE = (char *) strdup (value); 
+      else
+        WP_CLAMP_PRE = (char *) strdup (""); 	
       }
     else if (!strcmp (token, "WP_CLAMP_SUF"))
       {
       fscanf (file, "%s", &value);
-      if (strcmp (value, """"))  
+      if (strcmp (value, "NULL"))  
 	WP_CLAMP_SUF = (char *) strdup (value); 
+      else
+        WP_CLAMP_SUF = (char *) strdup (""); 	
       }
     else if (!strcmp (token, "CHAN_MULT_PRE"))
       {
       fscanf (file, "%s", &value);
-      if (strcmp (value, """"))  
+      if (strcmp (value, "NULL"))  
 	CHAN_MULT_PRE = (char *) strdup (value); 
+      else
+        CHAN_MULT_PRE = (char *) strdup (""); 	
       }
     else if (!strcmp (token, "CHAN_MULT_MID"))
       {
       fscanf (file, "%s", &value);
-      if (strcmp (value, """"))  
+      if (strcmp (value, "NULL"))  
 	CHAN_MULT_MID = (char *) strdup (value); 
+      else
+        CHAN_MULT_MID = (char *) strdup (""); 	
       }
     else if (!strcmp (token, "CHAN_MULT_SUF"))
       {
       fscanf (file, "%s", &value);
-      if (strcmp (value, """"))  
+      if (strcmp (value, "NULL"))  
 	CHAN_MULT_SUF = (char *) strdup (value); 
+      else
+        CHAN_MULT_SUF = (char *) strdup (""); 	
       }
     else if (!strcmp (token, "ROUND_PRE"))
       {
       fscanf (file, "%s", &value);
-      if (strcmp (value, """"))  
+      if (strcmp (value, "NULL"))  
 	ROUND_PRE = (char *) strdup (value); 
+      else
+       ROUND_PRE = (char *) strdup (""); 	
       }
     else if (!strcmp (token, "ROUND_SUF"))
       {
       fscanf (file, "%s", &value);
-      if (strcmp (value, """"))  
-	ROUND_SUF = (char *) strdup (value); 
+      if (strcmp (value, "NULL"))  
+	ROUND_SUF = (char *) strdup (value);
+      else
+       ROUND_SUF = (char *) strdup (""); 	
       }
     token[0] = '\0';  
     }
