@@ -1,4 +1,3 @@
-/*codegen_copy
 %h{
 #include "gegl-dual-src-op.h"
 %}
@@ -103,15 +102,16 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
   {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
-codegen_copy*/
+
+CODEGEN_DECL_BEGIN    
     Chan *dest_data[4], *src1_data[4], *src2_data[4]; 
-    VectorChan *dest(_c_,_a_);
-    VectorChan *src1(_c_,_a_);
-    VectorChan *src2(_c_,_a_);
+    VectorChan *dest(color,alpha);
+    VectorChan *src1(color,alpha);
+    VectorChan *src2(color,alpha);
     gfloat a, b, c, alpha;
     guint width;  
+CODEGEN_DECL_END
 
-/*codegen_copy
     width = point_opP->scanline_width;
 
     gegl_image_iterator_get_scanline_data ( 
@@ -123,7 +123,6 @@ codegen_copy*/
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
-codegen_copy*/
 
     dest = dest_data;
 
@@ -131,10 +130,9 @@ codegen_copy*/
 
     src2 = src2_data;
 
-/*codegen_copy
     switch(self->_priv->comp_mode)
-codegen_copy*/
       {
+CODEGEN_BLOCK_BEGIN
       case COMPOSITE_REPLACE:
        while (width--)
          {
@@ -263,24 +261,23 @@ codegen_copy*/
       default:
        break;
       }       
+CODEGEN_BLOCK_END
   }
 
-/*codegen_copy 
   private
   void
   HUEA_op_HUE_CHAN (GeglPointOp *point_op)
   {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
-codegen_copy*/
+CODEGEN_DECL_BEGIN
     Chan *dest_data[3], *src1_data[3], *src2_data[4]; 
-    VectorChan *dest(_c_); 
-    VectorChan *src1(_c_);
-    VectorChan *src2(_c_,_a_);
+    VectorChan *dest(color,alpha); 
+    VectorChan *src1(color);
+    VectorChan *src2(color,alpha);
     gfloat a, b, alpha;
     guint width;
-
-/*codegen_copy
+CODEGEN_DECL_END
     width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
@@ -291,7 +288,6 @@ codegen_copy*/
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
-codegen_copy*/
 
     dest = dest_data;
 
@@ -299,9 +295,8 @@ codegen_copy*/
 
     src2 = src2_data;
 
-/*codegen_copy
     switch(self->_priv->comp_mode)
-codegen_copy*/
+CODEGEN_BLOCK_BEGIN
       {
       case COMPOSITE_REPLACE:
        while (width--)
@@ -367,24 +362,24 @@ codegen_copy*/
       default:
        break;
       }
+CODEGEN_BLOCK_END
   }
-/*codegen_copy
+
   private
   void
   HUE_op_HUEA_CHAN (GeglPointOp *point_op)
   {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
-codegen_copy*/
 
+CODEGEN_DECL_BEGIN
     Chan *dest_data[4], *src1_data[4], *src2_data[3]; 
-    VectorChan *dest(_c_,_a_);
-    VectorChan *src1(_c_,_a_);
-    VectorChan *src2(_c_);
+    VectorChan *dest(color,alpha);
+    VectorChan *src1(color,alpha);
+    VectorChan *src2(color);
     gfloat b, alpha;
     guint width;
-
-/*codegen_copy
+CODEGEN_DECL_END
     width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
@@ -395,16 +390,14 @@ codegen_copy*/
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
-codegen_copy*/ 
     dest = dest_data;
  
     src1 = src1_data;
 
     src2 = src2_data;
 
-/*codegen_copy
     switch(self->_priv->comp_mode)
-codegen_copy*/
+CODEGEN_BLOCK_BEGIN
       {
       case COMPOSITE_REPLACE:
        while (width--)
@@ -510,9 +503,9 @@ codegen_copy*/
       default:
        break;
       }       
+CODEGEN_BLOCK_END
   }
 
-/*codegen_copy
   private 
   void
   HUE_op_HUE_CHAN (GeglPointOp *point_op)
@@ -520,15 +513,13 @@ codegen_copy*/
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)
                                     (point_op->_priv); 
-codegen_copy*/ 
-
+CODEGEN_DECL_BEGIN
     Chan *dest_data[3], *src1_data[3], *src2_data[3]; 
-    VectorChan *dest(_c_);
-    VectorChan *src1(_c_);
-    VectorChan *src2(_c_);
+    VectorChan *dest(color);
+    VectorChan *src1(color);
+    VectorChan *src2(color);
     guint width;
-
-/*codegen_copy
+CODEGEN_DECL_END
     width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
@@ -539,16 +530,14 @@ codegen_copy*/
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
-codegen_copy*/
     dest = dest_data;
  
     src1 = src2_data;
 
     src2 = src2_data;
 
-/*codegen_copy
     switch(self->_priv->comp_mode)
-codegen_copy*/
+CODEGEN_BLOCK_BEGIN
       {
       case COMPOSITE_REPLACE:
       case COMPOSITE_OVER:
@@ -568,6 +557,7 @@ codegen_copy*/
        break;
       default:
        break;
-      }       
+      }
+CODEGEN_BLOCK_END        
   }
 }

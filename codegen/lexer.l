@@ -6,11 +6,10 @@
 #include <math.h>
 #include <ctype.h>
 
-void comment (); 
-void codegen_copy (); 
 %}
 
-%s			CODEGEN
+%s			CODEGEN_DECL
+%s			CODEGEN_BLOCK
 
 white   		[ \t]+
 indent			[\n][ ]*
@@ -21,228 +20,170 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 
 %%
 
-<CODEGEN>{indent}	 	{
-  			strcpy(yylval.elem.string, yytext);
-			return INDENT;
-			}
-<CODEGEN>{white} 		; /* ignore white space */
+"CODEGEN_DECL_BEGIN"		BEGIN CODEGEN_DECL;
+				
+"CODEGEN_BLOCK_BEGIN"		BEGIN CODEGEN_BLOCK;
+"CODEGEN_IMAGE_DATA_INIT"	{}
+"COLORSPACE"			printf ("%s", _COLORSPACE_);
+"Colorspace"			printf ("%s", _Colorspace_);
+"colorspace"                    printf ("%s", _colorspace_);
+"DATATYPE"			printf ("%s", _DATATYPE_);
+"Datatype"		        printf ("%s", _Datatype_);
+"datatype"                      printf ("%s", _datatype_); 
 
-{integer} 		{ 
-            		/* found an int */
-			strcpy(yylval.elem.string, yytext);
-                	yylval.elem.type = TYPE_SCALER;
-			yylval.elem.dtype = TYPE_CHAN;
-            		return INT;
-          		} 
+<CODEGEN_DECL>{indent}          {
+                            	strcpy(yylval.elem.string, yytext);
+			        return INDENT;
+			        }
+<CODEGEN_BLOCK>{indent}         {
+                                strcpy(yylval.elem.string, yytext);
+				return INDENT;
+				}
 
-<CODEGEN>{float} 		{ 
-          		/* found a float */
-          		strcpy(yylval.elem.string, yytext);
-                	yylval.elem.type = TYPE_SCALER;
-                	yylval.elem.dtype = TYPE_FLOAT; 
-			return FLOAT;
-        		}
+			    	 	
+<CODEGEN_DECL>{white} 		; 
+<CODEGEN_BLOCK>{white} 		; 
 
-			
-"(_c_)"			return COLOR;
-"(_c_,_a_)"		return COLOR_ALPHA; 
-    			
-"WP"			{
-			strcpy(yylval.elem.string, _WP_);
-                	yylval.elem.dtype = TYPE_CHAN;
-			yylval.elem.type = TYPE_SCALER;
-			return(WP); 
-			}
-			
-"ZERO_CHAN"		{
-    			strcpy(yylval.elem.string, _ZERO_CHAN_);
-			yylval.elem.dtype = TYPE_CHAN;
-			yylval.elem.type = TYPE_SCALER;
-			return(ZERO_CHAN);
-			}
-			
-"VectorChan"		{
-			strcpy(yylval.elem.string, _VectorChan_);
-			yylval.elem.dtype = TYPE_CHAN;
-			return(VectorChan);
-			}
-			
-			
-"Chan"			{
-			strcpy(yylval.elem.string, _Chan_);
-			yylval.elem.dtype = TYPE_CHAN;
-			return(Chan);
-			}
-			
-"FloatChan"		{
-			strcpy(yylval.elem.string, _FloatChan_);
-			yylval.elem.dtype = TYPE_FLOAT;
-			return(FloatChan);  
-			} 
-"/*"			{ 
-    			comment (); 
-			} 
-"/*codegen_copy"	{
-    			codegen_copy ();
-			}
+<CODEGEN_DECL>"CODEGEN_DECL_END" 	BEGIN 0;
+<CODEGEN_BLOCK>"CODEGEN_BLOCK_END" 	BEGIN 0;
 
-"MAX"			return(MAX);
-"MIN"			return(MIN);
-"ABS"			return(ABS); 
-"CHAN_CLAMP"		return(CHAN_CLAMP);
-"WP_CLAMP"    		return(WP_CLAMP);
-"+"			return(PLUS);
-"-"			return(MINUS);
-"*"			return(TIMES);
-"/"			return(DIVIDE);
-"^"			return(POWER);
-"("			return(LT_PARENTHESIS);
-")"			return(RT_PARENTHESIS);
-"{"			return(LT_CURLY);
-"}"			return(RT_CURLY); 
-"["			return(LT_SQUARE);
-"]"			return(RT_SQUARE); 
-"="			return(EQUAL); 
-"+="			return(PLUS_EQUAL); 
-"-="			return(MINUS_EQUAL); 
-"*="			return(TIMES_EQUAL); 
-"/="			return(DIVIDE_EQUAL); 
-"&&"			return(AND);
-"||"			return(OR);
-"=="			return(EQ);
-"!="			return(NOT_EQ);
-"<"			return(SMALLER);
-">"			return(GREATER);
-"<="			return(SMALLER_EQ);
-">="			return(GREATER_EQ);
-"!"			return(NOT);
-"#"			return(POUND);
-"++"			return(ADD);
-"--"			return(SUBTRACT);
+<CODEGEN_BLOCK>"WP"		{
+				strcpy(yylval.elem.string, _WP_);
+                		yylval.elem.dtype = TYPE_CHAN;
+				yylval.elem.type = TYPE_SCALER;
+				return(WP); 
+				}
+<CODEGEN_BLOCK>"ZERO_CHAN"	{
+    				strcpy(yylval.elem.string, _ZERO_CHAN_);
+				yylval.elem.dtype = TYPE_CHAN;
+				yylval.elem.type = TYPE_SCALER;
+				return(ZERO_CHAN);
+				}
+<CODEGEN_DECL>"VectorChan"	{
+				strcpy(yylval.elem.string, _VectorChan_);
+				yylval.elem.dtype = TYPE_CHAN;
+				return(VectorChan);
+				}
+<CODEGEN_DECL>"Chan"		{
+    				strcpy(yylval.elem.string, _Chan_);
+				yylval.elem.dtype = TYPE_CHAN;
+				return(Chan);
+				}
+<CODEGEN_DECL>"FloatChan"	{
+				strcpy(yylval.elem.string, _FloatChan_);
+				yylval.elem.dtype = TYPE_FLOAT;
+				return(FloatChan);  
+				} 
 
-{name}  		{
-			int keyword = get_keyword (yytext);
-			switch (keyword) 
-			  { 
-			  case -1:
-			    /* return symbol pointer */
-			    yylval.elem = add_sym (yytext);
-			    strcpy(yylval.elem.string, yytext); 
-			    return NAME;
-			    break;
-			  default:
-			    return get_keyword (yytext);
-			    break; 		  
-			  }
-			}
+<CODEGEN_DECL>{integer}		{ 
+            			/* found an int */
+				strcpy(yylval.elem.string, yytext);
+                		yylval.elem.type = TYPE_SCALER;
+				yylval.elem.dtype = TYPE_CHAN;
+            			return INT;
+				}
+<CODEGEN_DECL>{float} 		{ 
+          			/* found a float */
+          			strcpy(yylval.elem.string, yytext);
+                		yylval.elem.type = TYPE_SCALER;
+                		yylval.elem.dtype = TYPE_FLOAT; 
+				return FLOAT;
+        			}
+<CODEGEN_BLOCK>{integer}	{ 
+            			/* found an int */
+				strcpy(yylval.elem.string, yytext);
+                		yylval.elem.type = TYPE_SCALER;
+				yylval.elem.dtype = TYPE_CHAN;
+            			return INT;
+          			} 
+<CODEGEN_BLOCK>{float} 		{ 
+          			/* found a float */
+          			strcpy(yylval.elem.string, yytext);
+                		yylval.elem.type = TYPE_SCALER;
+                		yylval.elem.dtype = TYPE_FLOAT; 
+				return FLOAT;
+        			}
 
-"$"     		{ 
-    			return 0; 
-			}
+<CODEGEN_DECL>"(color,alpha)"	return(COLOR_ALPHA);
+<CODEGEN_DECL>"(color)"		return(COLOR);
 
-.       		return yytext[0];
+<CODEGEN_BLOCK>"MAX"		return(MAX);
+<CODEGEN_BLOCK>"MIN"		return(MIN);
+<CODEGEN_BLOCK>"ABS"		return(ABS); 
+<CODEGEN_BLOCK>"CHAN_CLAMP"	return(CHAN_CLAMP);
+<CODEGEN_BLOCK>"WP_CLAMP"    	return(WP_CLAMP);
+
+
+<CODEGEN_BLOCK>"+"		return(PLUS);
+<CODEGEN_BLOCK>"-"		return(MINUS);
+<CODEGEN_DECL>"*"		return(TIMES);
+<CODEGEN_BLOCK>"*"		return(TIMES);
+<CODEGEN_BLOCK>"/"		return(DIVIDE);
+<CODEGEN_BLOCK>"^"		return(POWER);
+<CODEGEN_BLOCK>"("		return(LT_PARENTHESIS);
+<CODEGEN_BLOCK>")"		return(RT_PARENTHESIS);
+<CODEGEN_BLOCK>"{"		return(LT_CURLY);
+<CODEGEN_BLOCK>"}"		return(RT_CURLY); 
+<CODEGEN_DECL>"["		return(LT_SQUARE);
+<CODEGEN_BLOCK>"["		return(LT_SQUARE);
+<CODEGEN_DECL>"]"		return(RT_SQUARE); 
+<CODEGEN_BLOCK>"]"		return(RT_SQUARE); 
+<CODEGEN_DECL>"="		return(EQUAL); 
+<CODEGEN_BLOCK>"="		return(EQUAL); 
+<CODEGEN_BLOCK>"+="		return(PLUS_EQUAL); 
+<CODEGEN_BLOCK>"-="		return(MINUS_EQUAL); 
+<CODEGEN_BLOCK>"*="		return(TIMES_EQUAL); 
+<CODEGEN_BLOCK>"/="		return(DIVIDE_EQUAL); 
+<CODEGEN_BLOCK>"&&"		return(AND);
+<CODEGEN_BLOCK>"||"		return(OR);
+<CODEGEN_BLOCK>"=="		return(EQ);
+<CODEGEN_BLOCK>"!="		return(NOT_EQ);
+<CODEGEN_BLOCK>"<"		return(SMALLER);
+<CODEGEN_BLOCK>">"		return(GREATER);
+<CODEGEN_BLOCK>"<="		return(SMALLER_EQ);
+<CODEGEN_BLOCK>">="		return(GREATER_EQ);
+<CODEGEN_BLOCK>"!"		return(NOT);
+<CODEGEN_BLOCK>"#"		return(POUND);
+<CODEGEN_BLOCK>"++"		return(ADD);
+<CODEGEN_BLOCK>"--"		return(SUBTRACT);
+
+<CODEGEN_DECL>{name}  		{
+				int keyword = get_keyword (yytext);
+				switch (keyword) 
+			  	{ 
+			  	case -1:
+			    		/* return symbol pointer */
+			    		yylval.elem = add_sym (yytext);
+			    		strcpy(yylval.elem.string, yytext); 
+			    		return NAME;
+			    	break;
+			  	default:
+			    		return get_keyword (yytext);
+			    	break; 		  
+			  	}
+          			}
+<CODEGEN_BLOCK>{name}  		{
+				int keyword = get_keyword (yytext);
+				switch (keyword) 
+			  	{ 
+			  	case -1:
+			    		/* return symbol pointer */
+			    		yylval.elem = add_sym (yytext);
+			    		strcpy(yylval.elem.string, yytext); 
+			    		return NAME;
+			    	break;
+			  	default:
+			    		return get_keyword (yytext);
+			    	break; 		  
+			  	}
+          			}
+
+"$" 				return 0; 
+<CODEGEN_DECL>.			return yytext[0];
+<CODEGEN_BLOCK>.		return yytext[0];
+.				ECHO;
+
 
 %%
-
-void
-comment ()
-{
-  int c,c1;
-  
-  printf ("/*");  
-
-loop:
-  while ((c = input()) != '*' && c != 0)
-    {
-    printf ("%c", (char)c);
-    } 
-  if ((c1 = input()) != '/' && c != 0)
-  {
-    printf ("%c", (char)c1); 
-    unput(c1);
-    goto loop;
-  }
-  
-  printf ("*/"); 
-}
-
-void 
-codegen_copy ()
-{
- 
-  int c, c1[14], i=0, j;
-  char word[]={'o','d','e','g','e','n','_','c','o','p','y','*','/'}; 
-  char dt_word[]={'H','A','N'};  
-  char cs_word[]={'U', 'E'};
-  
-loop:
-  while (((c = input()) != 'c' && c != 'C' && c != 'H') && c != 0)
-    {
-    printf ("%c", (char)c);
-    }
-  i = 0;
-  if ((char)c == 'c')
-    {
-    while ((c1[i] = input()) == word[i] && c != 0) 
-    {
-    if (i == 12)
-      {
-      goto done;
-      } 
-    i++;
-    }
-    printf ("%c", (char)(c)); 
-    for (i=i; i>=0; i--)
-      {
-      unput(c1[i]);
-      }
-    goto loop; 
-
-    }
-
-  else if ((char)c == 'C')
-
-    {
-    i = 0;
-    while ((c1[i] = input()) == dt_word[i] && c != 0)
-      {
-      if (i == 2)
-        {
-        printf ("%s",_CHAN_);
-        goto loop; 
-        }
-      i++;
-      }
-    printf ("%c", (char)(c));
-    for (i=i; i>=0; i--)
-      {
-      unput(c1[i]);
-      }
-    goto loop;
-    }
-  else 
-    {
-    i=0; 
-    while ((c1[i] = input()) == cs_word[i] && c != 0)
-      {
-      if (i == 1)
-	{
-	for (j=0; j<_NUM_COLOR_CHAN_; j++)
-	  {
-	  printf ("%c",(char) toupper ((int)_NAME_COLOR_CHAN_[j]));
-	  }
-	goto loop;
-	}
-      i++;
-      }
-    printf ("%c", (char)(c));
-    for (i=i; i>=0; i--)
-      {
-      unput(c1[i]);
-      }
-    goto loop;
-    }
-done:
-}
 
 

@@ -1,3 +1,8 @@
+Fri Mar  3 19:02:36 PST 2000 caro@rhythm.com
+	
+	* made more changes to codegen, there are now states
+	in the lexer. 
+
 Thu Mar  2 15:30:18 PST 2000 caro@rhythm.com
 	
 	* fixed codegen, I am checking in before a big

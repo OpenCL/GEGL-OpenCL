@@ -16,11 +16,16 @@
 #undef  _PARSER_Y_
 #endif
 
+EXTERN char *_COLORSPACE_;
+EXTERN char *_Colorspace_;
+EXTERN char *_colorspace_;
+EXTERN char *_DATATYPE_;
+EXTERN char *_Datatype_;
+EXTERN char *_datatype_;
 
 EXTERN char *_WP_;   
 EXTERN char *_WP_NORM_;       
 EXTERN char *_VectorChan_;      
-EXTERN char *_CHAN_;      
 EXTERN char *_Chan_;      
 EXTERN char *_FloatChan_;     	
 EXTERN char *_MIN_CHAN_;   

@@ -27,6 +27,7 @@ typedef enum
   TYPE_VECTOR, 
   TYPE_C_VECTOR,
   TYPE_CA_VECTOR,  
+  TYPE_C_A_VECTOR,  
 }SV_TYPE;
 
 /* FUNCTIONS */

@@ -507,24 +507,17 @@ Definition:
 
 
 Chan_List:
-	Chan_List ',' Chan_List
-		{
-		char tmp[256];
-		sprintf(tmp, "%s, %s", $1.string, $3.string);
-		strcpy($$.string, tmp);
-		
-		/*
-          Star NAME ',' Chan_List              
+          Chan_List ',' Star NAME               
 		{ 
 		char tmp[256]; 
-		set_dtype($2, TYPE_CHAN);
-                set_type($2, TYPE_SCALER);
-                set_num ($2, 1);
-                $$=$2;
-                print_name (&$$, $2, NOT_DEFINE);
-                sprintf(tmp, "%s%s", $1.string, $$.string);
+		set_dtype($4, TYPE_CHAN);
+                set_type($4, TYPE_SCALER);
+                set_num ($4, 1);
+                $$=$4;
+                print_name (&$$, $4, NOT_DEFINE);
+                sprintf(tmp, "%s%s", $3.string, $$.string);
                 strcpy($$.string, tmp);
-                sprintf (tmp, "%s, %s", $$.string, $4.string);
+                sprintf (tmp, "%s, %s", $$.string, $1.string);
                 strcpy($$.string, tmp); 
 		}
         | Star NAME EQUAL INT ',' Chan_List              
@@ -566,8 +559,6 @@ Chan_List:
 		sprintf (tmp, "%s, %s", $$.string, $7.string);
 		strcpy($$.string, tmp);
                 } 
-		*/
-		}
         | Star NAME                          
 		{
 	        char tmp[256];	
@@ -750,6 +741,17 @@ VectorChan_List:
 		print_name (&$$, $2, DEFINE);
 		sprintf(tmp, "%s%s", $1.string, $$.string); 
 		print_repeat (&$$, $2, tmp); 
+		}
+	| Star NAME
+		{
+		char tmp[256];
+		set_dtype($2, TYPE_CHAN);
+		set_type($2, TYPE_C_A_VECTOR);
+		set_num($2, _NUM_COLOR_CHAN_+1);
+		$$=$2;
+		print_name (&$$, $2, DEFINE);
+		sprintf(tmp, "%s%s", $1.string, $$.string);
+		print_repeat (&$$, $2, tmp);
 		}
 	;
 
@@ -1261,16 +1263,20 @@ get_keyword (char *keywd)
 void
 read_data_types (char *data_type)
 {
+
+
 /*
         UINT8
 */
    if (!strcmp (data_type, "UINT8"))
-     { 
+     {
+     _DATATYPE_		= (char *) strdup ("UINT8");
+     _Datatype_		= (char *) strdup ("Uint8");
+     _datatype_         = (char *) strdup ("uint8"); 
      _WP_         	= (char *) strdup ("255");
      _WP_NORM_      	= (char *) strdup ("(1.0/255.0)");
      _VectorChan_       = (char *) strdup ("guint8");
      _Chan_         	= (char *) strdup ("guint8");
-     _CHAN_         	= (char *) strdup ("GUINT8");
      _FloatChan_    	= (char *) strdup ("float");
      _MIN_CHAN_     	= (char *) strdup ("0");
 
@@ -1305,11 +1311,13 @@ read_data_types (char *data_type)
    if (!strcmp(data_type, "UINT16"))
      {
 
+     _DATATYPE_		= (char *) strdup ("UINT16");
+     _Datatype_		= (char *) strdup ("Uint16");
+     _datatype_         = (char *) strdup ("uint16"); 
      _WP_          	= (char *) strdup ("4095");
      _WP_NORM_     	= (char *) strdup ("(1.0/4095.0)");
      _VectorChan_       = (char *) strdup ("guint16");
      _Chan_         	= (char *) strdup ("guint16");
-     _CHAN_         	= (char *) strdup ("GUINT16");
      _FloatChan_    	= (char *) strdup ("float");
      _MIN_CHAN_      	= (char *) strdup ("0");
      _MAX_CHAN_        	= (char *) strdup ("65535");
@@ -1343,11 +1351,13 @@ read_data_types (char *data_type)
 */
    if (!strcmp(data_type, "FLOAT"))
      {
+     _DATATYPE_		= (char *) strdup ("FLOAT");
+     _Datatype_		= (char *) strdup ("Float");
+     _datatype_         = (char *) strdup ("float"); 
      _WP_               = (char *) strdup ("1.0");
      _WP_NORM_          = (char *) strdup ("1.0");
      _VectorChan_       = (char *) strdup ("float");
      _Chan_             = (char *) strdup ("float");
-     _CHAN_             = (char *) strdup ("FLOAT");
      _FloatChan_        = (char *) strdup ("float");
      _MIN_CHAN_         = (char *) strdup ("0");
      _MAX_CHAN_         = (char *) strdup ("1.0");
@@ -1382,6 +1392,7 @@ read_color_space (char *color_space)
 {
 
   int i;
+  char tmp1[20], tmp2[20], tmp3[20];
 
   _NUM_COLOR_CHAN_ = strlen (color_space); 
   _NAME_COLOR_CHAN_ = (char*) malloc (sizeof(char) * (_NUM_COLOR_CHAN_ + 1));
@@ -1389,8 +1400,16 @@ read_color_space (char *color_space)
   for (i=0; i<_NUM_COLOR_CHAN_; i++)
     {
     _NAME_COLOR_CHAN_[i] = color_space[i]; 
+    tmp1[i] = toupper (color_space[i]);
+    tmp2[i] = tolower (color_space[i]);
     }
-  _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_] = 'a'; 
+  _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_] = 'a';
+  tmp1[_NUM_COLOR_CHAN_] = '\0';
+  tmp2[_NUM_COLOR_CHAN_] = '\0';
+  _COLORSPACE_ = (char *) strdup (tmp1);
+  _colorspace_ = (char *) strdup (tmp2);
+  tmp2[0] = tmp1[0];
+  _Colorspace_ = (char *) strdup (tmp2); 
 }
 
 int

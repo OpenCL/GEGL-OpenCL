@@ -1,6 +1,7 @@
 #YACCFLAGS += -d -t
 YFLAGS += -d -t
 SUBDIRS =
+CFLAGS = -g
 
 INCLUDES = -I$(includedir)
 
@@ -15,7 +16,6 @@ codegen_SOURCES = 	\
 
 codegen_LDADD = \
 	-lm \
-	@LEXLIB@ \
 	-lfl
 
 BUILT_SOURCES = lexer.c parser.c parser.h
