@@ -1,21 +1,22 @@
 
-\begin{itemize}
-\item {\bf libgimpcore} will interface with gegl. does all the non-ui stuff
-\item {\bf libgimpcoreui} contains the starting building blocks for all the ui. it
-is like xwindows is for motif
-\item {\bf libgimpui} this is the actuall interface for gimp. it is build from
-the gimpwidget. 
-\item {\bf libgimpwidget} this is build on top of gimpcoreui. it contains all the
-ui widgets. will these widget be smart enough to display themselves in the
-right data range???
-\item {\bf libgimpiface} this is an interface to the core and the ui for the
-plug-in.
-\item {\bf libgimpplugin} this is the plug-in library
-\item {\bf libgimpextapp} this is a communication interface that the application
-will use to comunicate with the plug-in
-\item {\bf libgimpapp} this is the application for the gimp
-\item {\bf libgimpjunk} contains random support things
-\end{itemize}
+The schedule for achieving GIMP2.0 is broken into three main parts. 
+
+The first part involves the development of GEGL. Since GEGL is a low-level
+library to be used by GIMP, work for it can proceed somewhat independent of
+GIMP.    
+
+Once GEGL is far enough along, a simple skeleton of imaging and painting tools
+will be developed using GEGL. This stripped down version is called MicroGIMP
+and will include some simple paint, retouch and editing tools, enough to
+provide first tests of each of the major areas of functionality for GIMP:
+painting, editing, compositing, color conversions. 
+
+After MicroGimp is built and tested as a small production tool, the rest of the
+major GIMP libraries will be built. These libraries include the various GIMP UI
+libs and the core code for GIMP's graphics objects (Images, Layers, Channels,
+Drawables). GIMPs task management (rendering pipeline), libraries for plugin
+communication  as well as GIMPs component for scripting (PDB, Procedural Data
+Base) are all included here.  
 
 \begin{flushleft}		
 \begin{tabular}{|l|p{3cm}|p{5cm}|p{2cm}|l|}\hline

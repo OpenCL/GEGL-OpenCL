@@ -1,9 +1,8 @@
-
 Though the upcoming 1.2 release of GIMP contains many new features, most
-development effort since the 1.0 version has involved improved ui and tools,
-and little improvement in underlying architecture. Internally GIMP is still a
-monolithic application with a plug-in library wrapped around it. It was never
-broken into libraries or manageable pieces. 
+development effort since the 1.0 version has involved improved ui and tools
+(Appendix A), with little improvement in underlying architecture. Internally
+GIMP is still a monolithic application with a plug-in library wrapped around
+it. It was never broken into libraries or manageable pieces. 
 
 This makes it difficult to add things like color management, CMYK support,
 different color models and data types. Without breaking GIMP into a series of
@@ -11,4 +10,4 @@ libraries, moving forward with any major architectural enhancements is
 impossible. So the plan for GIMP after 1.2 release is to break GIMP into
 modules, separate the UI from the engine code, and give GIMP the flexibility to
 handle the next stage of functionality. Unfortunately there is no way to avoid
-this with GIMP's current state.
+this reworking of GIMP's current architecture.

@@ -1,14 +1,14 @@
 GIMP 2.0 will consist of the following libraries: 
 \begin{itemize}
-\item {\em gegl} Image procesing library 
-\item {\em libgimpcore} Core code, includes main GIMP objects and classes  
-\item {\em libgimpcoreui} Private widgets needed by app, not exported to plugins 
-\item {\em libgimpui} Widgets available for both app and plugins 
-\item {\em libgimpwidget} Utility widgets used in building the other ui libaries. 
-\item {\em libgimpapp} Actual GIMP app
-\item {\em libgimpext} Communication library between plug-ins and application
-\item {\em libgimpiface} interfaces for libgimpui and libgimpcore
-\item {\em libgimpjunk} Various utilities 
+\item {\em gegl} -- Image processing library. 
+\item {\em libgimpcore} -- Core code, includes main GIMP objects and classes.  
+\item {\em libgimpcoreui} -- Private widgets needed by app, not exported to plugins. 
+\item {\em libgimpui} -- Widgets available for both app and plugins. 
+\item {\em libgimpwidget} -- Utility widgets used in building the other ui libaries. 
+\item {\em libgimpapp} -- Actual GIMP app.
+\item {\em libgimpext} -- Communication library between plug-ins and application.
+\item {\em libgimpiface} -- Interfaces for libgimpui and libgimpcore.
+\item {\em libgimpjunk} -- Various utilities. 
 \end{itemize}
 
 \subsection{GEGL}
@@ -18,10 +18,10 @@ Pixel manipulation will be done using GEGL (Generic Graphics Library -- Chapter
 provides generic data types for channels or colors.  The algorithms implemented
 using these abstract types are converted to the actual C code using a
 code-generator. That way it's easier to add additional data types and color
-models and optimizations.   
+models and optimizations.
 
 Chapter
-\ref{ch:GEGL} has been dedicated to a technical description of this library.
+\ref{ch:GEGL} has a more detailed description of this library.
 
 \subsection{GIMP Core and Plugin Interfaces}
 
@@ -36,9 +36,8 @@ instead of the simple procedural approach GIMP uses now.
 This architecture also allows reuse of UI-elements from the core ui libraries
 in plug-ins and provides a clean model-view separation. By exporting the
 internal object structure to the plug-ins it will become possible to implement
-operators, tools or complete layer-types as plug-ins. The design of layers and
-tools would allow the creation specific tools for special layer-types for
-example vector-tools and vector-layers.
+operators, tools or complete layer types as plug-ins. For example one could
+create plugin vector tools for vector layers in with this design.
 
 \subsection{Layer Trees}
  
