@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (C version 6.1) (format=latex 98.4.2)  21 SEP 2000 19:24
+This is TeX, Version 3.14159 (C version 6.1) (format=latex 98.4.2)  22 SEP 2000 14:39
 **gimp
 (gimp.tex
 LaTeX2e <1996/12/01> patch level 1
@@ -107,74 +107,74 @@ Chapter 3.
 ]) (current_state_gegl.tex) (future_gegl.tex) [13]
 Chapter 4.
 (schedule.tex
-Underfull \hbox (badness 10000) in paragraph at lines 32--32
-[]\OT1/cmr/m/n/10 Basic Im-age
- []
-
-
-Underfull \hbox (badness 2027) in paragraph at lines 32--32
-[]\OT1/cmr/m/n/10 Write classes for GimpIm-age,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 32--32
-\OT1/cmr/m/n/10 Gim-p-Draw-able, Gim-pLayer,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 34--34
+Underfull \hbox (badness 10000) in paragraph at lines 31--31
 []\OT1/cmr/m/n/10 Implement the core for
  []
 
 
-Underfull \hbox (badness 6268) in paragraph at lines 62--62
+Underfull \hbox (badness 1189) in paragraph at lines 35--35
+[]\OT1/cmr/m/n/10 Implement a strip down app.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 59--59
+[]\OT1/cmr/m/n/10 gimpiface,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 59--59
+\OT1/cmr/m/n/10 gimp-plu-g-ins,
+ []
+
+
+Underfull \hbox (badness 6268) in paragraph at lines 66--66
 []\OT1/cmr/m/n/10 Geometric Op-er-a-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 68--68
+Underfull \hbox (badness 10000) in paragraph at lines 72--72
 []\OT1/cmr/m/n/10 Preprocessor for
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--70
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
 []\OT1/cmr/m/n/10 Memory Man-age-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--70
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
 []\OT1/cmr/m/n/10 Investigate trade-offs among
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 70--70
+Underfull \hbox (badness 10000) in paragraph at lines 74--74
 \OT1/cmr/m/n/10 conquer memory-management
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 72--72
+Underfull \hbox (badness 10000) in paragraph at lines 76--76
 []\OT1/cmr/m/n/10 Multi-thread sup-
  []
 
 
-Underfull \hbox (badness 2221) in paragraph at lines 72--72
+Underfull \hbox (badness 2221) in paragraph at lines 76--76
 \OT1/cmr/m/n/10 op-er-a-tions multi-threaded and
  []
 
 
-Underfull \hbox (badness 1028) in paragraph at lines 72--72
+Underfull \hbox (badness 1028) in paragraph at lines 76--76
 \OT1/cmr/m/n/10 as-sure that all op-er-a-tions are
  []
 
 
-Overfull \hbox (50.69437pt too wide) in paragraph at lines 21--79
+Overfull \hbox (50.69437pt too wide) in paragraph at lines 21--83
 []  
  []
 
 [14
 
 ]
-Overfull \vbox (78.16203pt too high) has occurred while \output is active []
+Overfull \vbox (102.96202pt too high) has occurred while \output is active []
 
 
 [15])
@@ -214,10 +214,10 @@ No file gimp.bbl.
 Here is how much of TeX's memory you used:
  756 strings out of 10906
  8024 string characters out of 72188
- 60803 words of memory out of 262141
+ 61803 words of memory out of 262141
  3541 multiletter control sequences out of 9500
  9752 words of font info for 34 fonts, out of 150000 for 255
  14 hyphenation exceptions out of 607
  32i,8n,21p,666b,259s stack positions out of 300i,40n,60p,3000b,4000s
 
-Output written on gimp.dvi (26 pages, 66856 bytes).
+Output written on gimp.dvi (26 pages, 67388 bytes).

@@ -24,38 +24,42 @@ will use to comunicate with the plug-in
 Order & Task & Description & Library & Cost\\ 
 \hline 
 
-\hline
-\multicolumn{5}{|c|}{GIMP Internal Schedule}\\
+\multicolumn{5}{|c|}{\bf GIMP Internal Schedule}\\
 \hline 
-1 & Gimp core & Design the core of GIMP & gimpcore & xh\\
-\hline
-2 & Basic Image Classes & Write classes for GimpImage, GimpDrawable, GimpLayer, GimpChannel. & gimpcore & 160h\\
+1 & GIMP core & Design the core of GIMP & gimpcore & 80h\\
 \hline 
-2 & MicroGimp core & Implement the core for MircoGIMP & gimpcore & xh\\
+2 & MicroGimp core & Implement the core for MircoGIMP, such as GimpImage, GimpDrawable, GimpLayer, GimpChannel. & gimpcore & 100h\\
+\hline
+2 & GIMP app & Design the app & gimpapp & 80h\\
+\hline 
+3 & MicroGIMP app & Implement a strip down app. This include tools such as the edit tools, clone, paint & gimpapp & 100h\\
+\hline 
+4 & Finish the core & Finish implementing the core & gimpcore & 160h\\
+\hline
+5 & Finish the app & Finish implementing the app & gimpapp & 160h\\
+\hline 
+8 & Undo history & Create a new undo tree & gimpcore & 100h\\
 \hline
 
-\multicolumn{5}{|c|}{UI Schedule}\\
+\multicolumn{5}{|c|}{\bf UI Schedule}\\
 \hline 
-1 & Gimp core ui & Design and implement. & gimpcoreui & xh\\
+1 & Gimp core ui & Design and implement. & gimpcoreui & 90h\\
 \hline
-2 & Widget & Design the widget taking into an acount how they will handle the different data types. & gimpwidget &xh\\
+2 & Widget & Design the widget taking into an acount how they will handle the different data types. & gimpwidget &100h\\
 \hline
-3 & MicroGimp UI & Implement the UI for a stripped down GIMP. This involved implementing the widget necessary for this& gimpui, gimpwidget & xh\\
+3 & MicroGimp UI & Implement the UI for a stripped down GIMP. This involved implementing the widget necessary for this& gimpui, gimpwidget & 100h\\
+\hline
+4 & Finish Widget & Finish implementing all the Widget & gimpwidget & 300h\\
+\hline
+5 & Finish UI & Finish the UI & gimpui & 140h\\
+\hline 
+
+\multicolumn{5}{|c|}{\bf Plug-in Schedule}\\
+\hline
+6 & Plug-in interface & Design and implement the interface for the plug-ins & gimpiface, gimpplugins, gimpextapp & 500h\\ 
 \hline
 
-
-\multicolumn{5}{|c|}{Plug-in Schedule}\\
-\hline 
-4 & Event Manager & Add an event/task manager to the app. This component will allow communication between the UI, the paint core, and the app & gimpcore & 120h\\
-\hline 
-4 & GIMP tools & Write the basic tools such as paint, clone, simple edit tools. & gimpcore & 80h\\
-\hline
-8 & Interface for plug-in & Create and design and interface for plug-in developers that takes advantage of gegl & plug-in & 500h\\
-\hline
-8 & Undo history & Create a new undo tree & gimp & 100h\\
-\hline
-
-\multicolumn{5}{|c|}{GEGL Schedule}\\
+\multicolumn{5}{|c|}{\bf GEGL Schedule}\\
 \hline
 1 & Area Operation & Classes for common area operations in GEGL (convolve, kernel ops) & gegl & 120h\\
 \hline
@@ -63,7 +67,7 @@ Order & Task & Description & Library & Cost\\
 \hline
 8 & GIL Specialization & Mechanism for allowing partial specialization in GIL code & gegl & 120h\\
 \hline
-9 & Point Operations & Classes for LUT operations & gegl & 120h\\
+8 & Point Operations & Classes for LUT operations & gegl & 120h\\
 \hline
 8 & Preprocessor for codegen & Make another abstraction for gil & gegl & 80h\\
 \hline
@@ -73,7 +77,7 @@ Order & Task & Description & Library & Cost\\
 \hline
 
  
-\multicolumn{4}{|r|}{Total man-hours} & 2460h\\
+\multicolumn{4}{|r|}{Total man-hours} & 3070h\\
 \hline
 \end{tabular}
 \end{flushleft}
