@@ -19,13 +19,13 @@ typedef struct _GeglImageBuffer  GeglImageBuffer;
 
 class Gegl:Op from Gegl:Image {
 
-  private GeglImage **sources;         /* the input sources  (ops or images)*/
-  private GeglRect *source_rois;       /* rois of sources  */
+  private GeglImage **sources;                /* input sources  (ops or images)*/
+  private GeglRect *source_rois;              /* rois of sources  */
+  private GeglPoint *source_offsets;          /* offsets of sources-relative to this op */ 
   private gint num_sources; 
-  private GeglImageBuffer **input_buffers;   /* actual data buffers for inputs */
-
-  private gboolean *src_has_alpha;         /*Do the sources have alphas*/ 
-  private gboolean has_alpha;              /*Does this op have alpha*/ 
+  private GeglImageBuffer **input_buffers;    /* actual data buffers for inputs */
+  private gboolean *src_has_alpha;            /*Do the sources have alphas*/ 
+  private gboolean has_alpha;                 /*Does this op have alpha*/ 
 
   protected 
   gboolean 
@@ -47,6 +47,7 @@ class Gegl:Op from Gegl:Image {
       self->_priv->input_buffers = g_new(GeglImageBuffer*,num_sources);
       self->_priv->src_has_alpha = g_new(gboolean, num_sources);
       self->_priv->source_rois = g_new (GeglRect, num_sources);
+      self->_priv->source_offsets = g_new (GeglPoint, num_sources);
       self->_priv->num_sources = num_sources;
 
       for (i = 0; i < num_sources; i++)
@@ -54,6 +55,8 @@ class Gegl:Op from Gegl:Image {
           self->_priv->sources[i] = sources[i];
           self->_priv->input_buffers[i] = NULL;
           gegl_rect_set (&self->_priv->source_rois[i],0,0,0,0);
+	  self->_priv->source_offsets[i].x = 0;
+	  self->_priv->source_offsets[i].y = 0;
         }	  
     }
 
@@ -68,6 +71,7 @@ class Gegl:Op from Gegl:Image {
 
     g_free (self->_priv->sources);
     g_free (self->_priv->source_rois);
+    g_free (self->_priv->source_offsets);
     g_free (self->_priv->input_buffers);
     g_free (self->_priv->src_has_alpha);
 
@@ -75,7 +79,7 @@ class Gegl:Op from Gegl:Image {
     PARENT_HANDLER (object)
   }
 
-  /* get pixels from input(s) and put in dest */
+  /* Get pixels from input(s) and put in dest */
   override (Gegl:Image)
   GeglImage* 
   get_pixels (GeglImage *self, 
@@ -90,10 +94,10 @@ class Gegl:Op from Gegl:Image {
     trace_begin("get_pixels %s", gtk_type_name(GTK_OBJECT_TYPE(self)));
 #endif
 
-    /* If dest exists but isnt writable return NULL */ 
-    if (dest && !gegl_image_is_writable (dest))
+    /* If dest exists but isnt an image buffer return NULL */ 
+    if (dest && !GEGL_IS_IMAGE_BUFFER(dest))
        {
-	 g_warning("gegl_op_get_pixels: dest is not writable.\n");
+	 g_warning("gegl_op_get_pixels: dest not image buffer.\n");
          return NULL; 
        }
 
@@ -155,11 +159,11 @@ class Gegl:Op from Gegl:Image {
 #endif
     gegl_op_apply (self_op, dest, &dest_rect); 
 
-    /* Everything is ready, actually do the op */
+    /* Everything is done, free the inputs */
     for (i = 0; i < self_op->_priv->num_sources; i++)    
       {
-	/* Free any non writable input data */ 
-        if (!gegl_image_is_writable(self_op->_priv->sources[i]))
+	/* Free any input data */ 
+        if (!GEGL_IS_IMAGE_BUFFER(self_op->_priv->sources[i]))
 	  {
 #ifdef DEBUG_GET_PIXELS 
             g_print("freeing input %d at %x\n", 
@@ -216,22 +220,15 @@ class Gegl:Op from Gegl:Image {
     self->_priv->has_alpha = gegl_color_model_has_alpha (dest_cm); 
   }
 
-  override (Gegl:Image)
-  gboolean
-  is_writable(GeglImage *image)
+  public
+  void
+  set_offset(self, 
+             int x,
+             int y, 
+	     int index)
   {
-    return FALSE;
-  }
-                      
-  /* Copy pixels from src to me */
-  override (Gegl:Image) 
-  void 
-  copy_pixels (GeglImage *image, 
-               GeglRect  *image_rect, 
-	       GeglImage *src, 
-	       GeglRect  *src_rect)
-  {
-    g_warning("gegl_op_copy_pixels: Cant use copy_pixels on Ops\n");
+    self->_priv->source_offsets[index].x = x;
+    self->_priv->source_offsets[index].y = y;
   }
 
   /* routines subclasses may need to implement */

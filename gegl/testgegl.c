@@ -13,6 +13,7 @@
 #include "gegl-color-model-gray-u16.h"
 #include "gegl-color-convert-to-rgb-op.h"
 #include "gegl-color-convert-to-gray-op.h"
+#include "gegl-copy-op.h"
 #include "gegl-image.h"
 #include "gegl-image-buffer.h"
 #include "gegl-op.h"
@@ -169,6 +170,156 @@ fillop_and_printop (void)
   gegl_object_destroy (GEGL_OBJECT(src));
   gegl_object_destroy (GEGL_OBJECT(dest));
   gegl_object_destroy (GEGL_OBJECT(cm));
+}
+
+void
+copy_ops (void)
+{
+    GeglImage *op; 
+    GeglRect roi;
+    GeglChannelValue * chans;
+
+    GeglColorModel *A_cm = 
+      GEGL_COLOR_MODEL (gegl_color_model_rgb_float_new(FALSE));
+    GeglColorModel *B_cm = 
+      GEGL_COLOR_MODEL (gegl_color_model_rgb_float_new(FALSE));
+    GeglColorModel *C_cm = 
+      GEGL_COLOR_MODEL (gegl_color_model_rgb_u8_new(FALSE));
+    GeglColorModel *D_cm = 
+      GEGL_COLOR_MODEL (gegl_color_model_rgb_u8_new(FALSE));
+    GeglColorModel *E_cm = 
+      GEGL_COLOR_MODEL (gegl_color_model_rgb_u16_new(FALSE));
+    GeglColorModel *F_cm = 
+      GEGL_COLOR_MODEL (gegl_color_model_rgb_u16_new(FALSE));
+
+    GeglImage *A = GEGL_IMAGE(gegl_image_buffer_new(A_cm,2,2));
+    GeglImage *B = GEGL_IMAGE(gegl_image_buffer_new(B_cm,2,2));
+    GeglImage *C = GEGL_IMAGE(gegl_image_buffer_new(C_cm,2,2));
+    GeglImage *D = GEGL_IMAGE(gegl_image_buffer_new(D_cm,2,2));
+    GeglImage *E = GEGL_IMAGE(gegl_image_buffer_new(E_cm,2,2));
+    GeglImage *F = GEGL_IMAGE(gegl_image_buffer_new(F_cm,2,2));
+
+    GeglColor *A_color = gegl_color_new (A_cm);
+    GeglColor *B_color = gegl_color_new (B_cm);
+    GeglColor *C_color = gegl_color_new (C_cm);
+    GeglColor *D_color = gegl_color_new (D_cm);
+    GeglColor *E_color = gegl_color_new (E_cm);
+    GeglColor *F_color = gegl_color_new (F_cm);
+
+    chans = gegl_color_get_channel_values(A_color);
+    chans[0].f = .1;
+    chans[1].f = .2;
+    chans[2].f = .3;
+
+    /* Fill A with (.1,.2,.3) */
+    op = GEGL_IMAGE(gegl_fill_op_new (A_color)); 
+    gegl_rect_set (&roi, 0,0,2,2);
+    gegl_image_get_pixels (op, A, &roi);
+    gegl_object_destroy (GEGL_OBJECT(op));
+    printf("A is: \n");
+    print_result (A,0,0,2,2);
+
+    chans = gegl_color_get_channel_values(B_color);
+    chans[0].f = .4;
+    chans[1].f = .5;
+    chans[2].f = .6;
+
+    /* Fill B with (.4.,.5,.6) */
+    op =  GEGL_IMAGE(gegl_fill_op_new (B_color)); 
+    gegl_rect_set (&roi, 0,0,2,2);
+    gegl_image_get_pixels (op, B, &roi);
+    gegl_object_destroy (GEGL_OBJECT(op));
+    printf("B is: \n");
+    print_result (B,0,0,2,2);
+
+    /* Copy B to A, rgb_float->rgb_float */
+    op = GEGL_IMAGE(gegl_copy_op_new (B)); 
+    gegl_rect_set (&roi, 0,0,2,2);
+    gegl_image_get_pixels (op, A, &roi);
+    gegl_object_destroy (GEGL_OBJECT(op));
+    printf("Copy B to A:\n");
+    print_result (A,0,0,2,2);
+
+    chans = gegl_color_get_channel_values(C_color);
+    chans[0].u8 = 1;
+    chans[1].u8 = 2;
+    chans[2].u8 = 3;
+
+    /* Fill C with (1,2,3)*/
+    op = GEGL_IMAGE(gegl_fill_op_new (C_color)); 
+    gegl_rect_set (&roi, 0,0,2,2);
+    gegl_image_get_pixels (op, C, &roi);
+    gegl_object_destroy (GEGL_OBJECT(op));
+    printf("C is: \n");
+    print_result (C,0,0,2,2);
+
+    chans = gegl_color_get_channel_values(D_color);
+    chans[0].u8 = 4;
+    chans[1].u8 = 5;
+    chans[2].u8 = 6;
+
+    /* Fill D with (4,5,6) */
+    op =  GEGL_IMAGE(gegl_fill_op_new (D_color)); 
+    gegl_rect_set (&roi, 0,0,2,2);
+    gegl_image_get_pixels (op, D, &roi);
+    gegl_object_destroy (GEGL_OBJECT(op));
+    printf("D is: \n");
+    print_result (D,0,0,2,2);
+
+    /* Copy D to C, rgb_u8->rgb_u8 */
+    op = GEGL_IMAGE(gegl_copy_op_new (D)); 
+    gegl_rect_set (&roi, 0,0,2,2);
+    gegl_image_get_pixels (op, C, &roi);
+    gegl_object_destroy (GEGL_OBJECT(op));
+    printf("Copy D to C:\n");
+    print_result (C,0,0,2,2);
+
+    chans = gegl_color_get_channel_values(E_color);
+    chans[0].u16 = 1000;
+    chans[1].u16 = 2000;
+    chans[2].u16 = 3000;
+
+    /* Fill E with (1000,2000,3000)*/
+    op = GEGL_IMAGE(gegl_fill_op_new (E_color)); 
+    gegl_rect_set (&roi, 0,0,2,2);
+    gegl_image_get_pixels (op, E, &roi);
+    gegl_object_destroy (GEGL_OBJECT(op));
+    printf("E is: \n");
+    print_result (E,0,0,2,2);
+
+    chans = gegl_color_get_channel_values(F_color);
+    chans[0].u16 = 4000;
+    chans[1].u16 = 5000;
+    chans[2].u16 = 6000;
+
+    /* Fill F with (4000,5000,6000) */
+    op =  GEGL_IMAGE(gegl_fill_op_new (F_color)); 
+    gegl_rect_set (&roi, 0,0,2,2);
+    gegl_image_get_pixels (op, F, &roi);
+    gegl_object_destroy (GEGL_OBJECT(op));
+    printf("F is: \n");
+    print_result (F,0,0,2,2);
+
+    /* Copy F to E, rgb_u16->rgb_u16 */
+    op = GEGL_IMAGE(gegl_copy_op_new (F)); 
+    gegl_rect_set (&roi, 0,0,2,2);
+    gegl_image_get_pixels (op, E, &roi);
+    gegl_object_destroy (GEGL_OBJECT(op));
+    printf("Copy F to E:\n");
+    print_result (E,0,0,2,2);
+
+    gegl_object_destroy (GEGL_OBJECT(A_cm));
+    gegl_object_destroy (GEGL_OBJECT(B_cm));
+    gegl_object_destroy (GEGL_OBJECT(C_cm));
+    gegl_object_destroy (GEGL_OBJECT(D_cm));
+    gegl_object_destroy (GEGL_OBJECT(A));
+    gegl_object_destroy (GEGL_OBJECT(B));
+    gegl_object_destroy (GEGL_OBJECT(C));
+    gegl_object_destroy (GEGL_OBJECT(D));
+    gegl_object_destroy (GEGL_OBJECT(A_color));
+    gegl_object_destroy (GEGL_OBJECT(B_color));
+    gegl_object_destroy (GEGL_OBJECT(C_color));
+    gegl_object_destroy (GEGL_OBJECT(D_color));
 }
 
 void
@@ -426,6 +577,7 @@ main (int argc, char *argv[])
   /* some tests */
   point_ops_and_chains();
   color_convert_ops();
+  copy_ops();
 
   /*fillop_and_printop();*/
   /*copy_chans_ops();*/

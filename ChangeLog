@@ -1,3 +1,28 @@
+Mon Aug 21 08:28:38 EDT 2000 calvinw@mindspring.com
+	* gegl/gegl-color-model-rgb-float.gob
+	* gegl/gegl-color-model-rgb-u8.gob
+	* gegl/gegl-color-model-rgb-u16-.gob
+	* gegl/gegl-color-model-gray-float.gob
+	* gegl/gegl-color-model-gray-u8.gob:
+	* gegl/gegl-color-model-gray-u16.gob
+	Updated each of these to implement converters for CopyOp
+	to call.
+
+	* gegl/Makefile.am:
+	* gegl/gegl-copy-op.gob:
+	* gegl/gegl-copy-op.gil:
+	Removed copy-op.gil, added copy-op.gob since this is done by
+	calling converters now.  
+
+	* gegl/gegl-op.gob:
+	* gegl/gegl-image-buffer.gob:
+	* gegl/gegl-image.gob:
+	Took out copy_pixels from Image, and Op and moved to ImageBuffer
+	Put in some offsets for the sources relative to Op.
+
+	* gegl/testgegl.c:
+	Put in tests for CopyOp.
+
 Mon Aug  7 00:33:52 EDT 2000 calvinw@mindspring.com
 
 	* gegl/gegl-color-convert-op.gob

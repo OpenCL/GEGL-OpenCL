@@ -5,7 +5,6 @@ lib_LTLIBRARIES = libgegl.la
 GIL_FILES = \
   gegl-mult-op.gil \
   gegl-add-op.gil \
-  gegl-copy-op.gil \
   gegl-diff-op.gil \
   gegl-subtract-op.gil \
   gegl-max-op.gil \
@@ -22,7 +21,6 @@ GIL_FILES = \
 GIL_GEN_GOB = \
   gegl-mult-op.gob \
   gegl-add-op.gob \
-  gegl-copy-op.gob \
   gegl-diff-op.gob \
   gegl-subtract-op.gob \
   gegl-max-op.gob \
@@ -52,6 +50,7 @@ NONGEN_GOB = \
   gegl-color-convert-to-rgb-op.gob \
   gegl-color-convert-to-gray-op.gob \
   gegl-color-convert-op.gob \
+  gegl-copy-op.gob \
   gegl-image-buffer.gob \
   gegl-image.gob \
   gegl-op.gob \
@@ -80,6 +79,7 @@ GOB_GEN_PUBLIC_HDRS = \
   gegl-color-convert-to-rgb-op.h \
   gegl-color-convert-to-gray-op.h \
   gegl-color-convert-op.h \
+  gegl-copy-op.h \
   gegl-image-buffer.h \
   gegl-image.h \
   gegl-op.h \
@@ -90,7 +90,6 @@ GOB_GEN_PUBLIC_HDRS = \
   gegl-print-op.h \
   gegl-mult-op.h \
   gegl-add-op.h \
-  gegl-copy-op.h \
   gegl-diff-op.h \
   gegl-subtract-op.h \
   gegl-max-op.h \
@@ -106,7 +105,6 @@ GOB_GEN_PUBLIC_HDRS = \
   gegl-color.h \
   gegl-image-iterator.h \
   gegl-copychan-op.h 
-
 
 GOB_GEN_PRIVATE_HDRS = \
   gegl-fill-op-private.h \
@@ -124,6 +122,7 @@ GOB_GEN_PRIVATE_HDRS = \
   gegl-color-convert-to-rgb-op-private.h \
   gegl-color-convert-to-gray-op-private.h \
   gegl-color-convert-op-private.h \
+  gegl-copy-op-private.h \
   gegl-image-buffer-private.h \
   gegl-image-private.h \
   gegl-op-private.h \
@@ -134,7 +133,6 @@ GOB_GEN_PRIVATE_HDRS = \
   gegl-print-op-private.h \
   gegl-mult-op-private.h \
   gegl-add-op-private.h \
-  gegl-copy-op-private.h \
   gegl-diff-op-private.h \
   gegl-subtract-op-private.h \
   gegl-max-op-private.h \
@@ -167,6 +165,7 @@ GOB_GEN_SRC = \
   gegl-color-convert-to-rgb-op.c \
   gegl-color-convert-to-gray-op.c \
   gegl-color-convert-op.c \
+  gegl-copy-op.c \
   gegl-image-buffer.c \
   gegl-image.c \
   gegl-op.c \
@@ -177,7 +176,6 @@ GOB_GEN_SRC = \
   gegl-print-op.c \
   gegl-mult-op.c \
   gegl-add-op.c \
-  gegl-copy-op.c \
   gegl-diff-op.c \
   gegl-subtract-op.c \
   gegl-max-op.c \

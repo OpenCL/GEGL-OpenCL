@@ -61,6 +61,13 @@ struct _GeglRect
   guint h;
 };
 
+typedef struct _GeglPoint GeglPoint;
+struct _GeglPoint
+{
+  gint x;
+  gint y;
+};
+
 #define ROUND(x) ((x)>0 ? (gint)((x)+.5) : (gint)((x)-.5))
 
 #endif /* __GEGL_TYPES_H__ */

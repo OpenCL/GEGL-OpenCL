@@ -7,6 +7,7 @@
 #include "gegl-color-model-rgb-private.h"
 #include "gegl-color-model-private.h"
 #include "gegl-color.h"
+#include <string.h>
 %}
 
 class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
@@ -50,6 +51,8 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
 		    cm->_priv->num_channels;
 
       /* These are the color models we can convert from directly */
+      gegl_object_add_interface (GEGL_OBJECT(self), "FromRgbFloat", 
+				 gegl_color_model_rgb_float_from_rgb_float);
       gegl_object_add_interface (GEGL_OBJECT(self), "FromRgbU8", 
 				 gegl_color_model_rgb_float_from_rgb_u8);
       gegl_object_add_interface (GEGL_OBJECT(self), "FromGrayFloat", 
@@ -341,5 +344,57 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
        else if (dest_has_alpha) 
          *dest_a++ = 1.0;
       } 
+  }
+
+  private
+  void
+  from_rgb_float (GeglColorModel *dest_cm, 
+			   GeglColorModel *src_cm,
+			   guchar **dest_data, 
+			   guchar **src_data, 
+			   gint width)
+  {
+    gfloat          *dest_r, *dest_g, *dest_b; 
+    gfloat          *dest_a = NULL;
+    gfloat          *src_r, *src_g, *src_b; 
+    gfloat          *src_a = NULL;
+    gboolean         dest_has_alpha = gegl_color_model_has_alpha(dest_cm);
+    gboolean         src_has_alpha = gegl_color_model_has_alpha(src_cm);
+    gint             row_bytes = width * gegl_color_model_bytes_per_channel(dest_cm); 
+    
+    dest_r = (gfloat*)dest_data[0];
+    dest_g = (gfloat*)dest_data[1];
+    dest_b = (gfloat*)dest_data[2];
+    if (dest_has_alpha)
+      dest_a = (gfloat*)dest_data[3];
+
+    src_r = (gfloat*)src_data[0];
+    src_g = (gfloat*)src_data[1];
+    src_b = (gfloat*)src_data[2];
+    if (src_has_alpha)
+      src_a = (gfloat*)src_data[3];
+
+    if (src_has_alpha && dest_has_alpha)
+      {
+	memcpy(dest_r, src_r, row_bytes);  
+	memcpy(dest_g, src_g, row_bytes);  
+	memcpy(dest_b, src_b, row_bytes);  
+	memcpy(dest_a, src_a, row_bytes);  
+      }
+    else if (dest_has_alpha) 
+      {
+	memcpy(dest_r, src_r, row_bytes);  
+	memcpy(dest_g, src_g, row_bytes);  
+	memcpy(dest_b, src_b, row_bytes);  
+
+	while(width--)
+	  *dest_a++ = 1.0;
+      }
+    else 
+      {
+	memcpy(dest_r, src_r, row_bytes);  
+	memcpy(dest_g, src_g, row_bytes);  
+	memcpy(dest_b, src_b, row_bytes);  
+      }
   }
 }

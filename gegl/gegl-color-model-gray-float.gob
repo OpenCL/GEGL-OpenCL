@@ -7,6 +7,7 @@
 #include "gegl-color-model-gray-private.h"
 #include "gegl-color-model-private.h"
 #include "gegl-color.h"
+#include <string.h>
 %}
 
 class Gegl:Color:Model:Gray:Float from Gegl:Color:Model:Gray {
@@ -49,6 +50,8 @@ class Gegl:Color:Model:Gray:Float from Gegl:Color:Model:Gray {
 			           cm->_priv->num_channels;
 
       /* These are the color models we can convert from directly */
+      gegl_object_add_interface (GEGL_OBJECT(self), "FromGrayFloat", 
+				 gegl_color_model_gray_float_from_gray_float);
       gegl_object_add_interface (GEGL_OBJECT(self), "FromRgbFloat", 
 				 gegl_color_model_gray_float_from_rgb_float);
       gegl_object_add_interface (GEGL_OBJECT(self), "FromGrayU8", 
@@ -314,5 +317,47 @@ class Gegl:Color:Model:Gray:Float from Gegl:Color:Model:Gray {
        else if (dest_has_alpha) 
          *dest_a++ = 1.0;
       } 
+  }
+
+  private
+  void
+  from_gray_float (GeglColorModel *dest_cm, 
+			   GeglColorModel *src_cm,
+			   guchar **dest_data, 
+			   guchar **src_data, 
+			   gint width)
+  {
+    gfloat          *dest_g; 
+    gfloat          *dest_a = NULL;
+    gfloat          *src_g; 
+    gfloat          *src_a = NULL;
+    gboolean         dest_has_alpha = gegl_color_model_has_alpha(dest_cm);
+    gboolean         src_has_alpha = gegl_color_model_has_alpha(src_cm);
+    gint             row_bytes = width * gegl_color_model_bytes_per_channel(dest_cm); 
+    
+    dest_g = (gfloat*)dest_data[0];
+    if (dest_has_alpha)
+      dest_a = (gfloat*)dest_data[1];
+
+    src_g = (gfloat*)src_data[0];
+    if (src_has_alpha)
+      src_a = (gfloat*)src_data[1];
+
+    if (src_has_alpha && dest_has_alpha)
+      {
+	memcpy(dest_g, src_g, row_bytes);  
+	memcpy(dest_a, src_a, row_bytes);  
+      }
+    else if (dest_has_alpha) 
+      {
+	memcpy(dest_g, src_g, row_bytes);  
+
+	while(width--)
+	  *dest_a++ = 1.0;
+      }
+    else 
+      {
+	memcpy(dest_g, src_g, row_bytes);  
+      }
   }
 }

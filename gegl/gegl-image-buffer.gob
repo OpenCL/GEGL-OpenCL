@@ -132,13 +132,6 @@ class Gegl:Image:Buffer from Gegl:Image {
     image->_priv->height = 0;
   }
   
-  override (Gegl:Image)
-  gboolean
-  is_writable(GeglImage *image)
-  {
-    return TRUE;
-  }
-
   public
   guchar ** 
   get_data(self)
@@ -187,71 +180,35 @@ class Gegl:Image:Buffer from Gegl:Image {
         return self;
       }
 
-    if (!gegl_image_is_writable(dest))
+    if (!GEGL_IS_IMAGE_BUFFER(dest))
       {
-	g_warning("gegl_image_buffer_get_pixels: dest not writable\n");
+	g_warning("gegl_image_buffer_get_pixels: dest not image buffer\n");
 	return NULL;
       }
-
-    /* copy pixels from me to dest */
-    g_warning("gegl_image_buffer_get_pixels: routine not implemented yet!\n");
-      {
-#if 1
-	gint i, j, k;
-	gint x = roi->x;
-	gint y = roi->y;
-	gint w = roi->w;
-	gint h = roi->h;
-	guchar *src_d, *dest_d; 
-	GeglColorModel *src_cm = self->_priv->color_model;
-	GeglColorModel *dest_cm = dest->_priv->color_model;
-
-	gint src_bpc = gegl_color_model_bytes_per_channel(src_cm);
-	gint dest_bpc = gegl_color_model_bytes_per_channel(dest_cm);
-	gint src_num_channels = gegl_color_model_bytes_per_channel(src_cm);
-	gint dest_num_channels = gegl_color_model_bytes_per_channel(dest_cm);
-    
-	gint src_width = self->_priv->width;  
-	gint dest_width = dest->_priv->width;  
-
-
-	if (src_bpc != dest_bpc || src_num_channels != dest_num_channels)
-	  {
-	    g_warning("gegl_image_buffer_get_pixels: incompatible images\n");
-	    return NULL;
-	  }
-	
-	for (i=0; i<src_num_channels; i++)
-	  {
-	    for (k=x; k<h+x; k++)
-	      {
-		src_d = GEGL_IMAGE_BUFFER ((GtkObject*)self)->_priv->data[i] + k * src_width + y;
-		dest_d = GEGL_IMAGE_BUFFER ((GtkObject*)dest)->_priv->data[i] + k * dest_width + y; 
-		for (j=0; j<w*src_bpc; j++)
-		  {
-
-		    *dest_d++ = *src_d++; 
-		  }
-	      } 
-	  }
-
-#endif 	
-	
-      }
-
-    return dest;
+   
+   /* Just copy the pixels to the dest */ 
+   copy_pixels (GEGL_IMAGE_BUFFER(dest), roi, 
+                GEGL_IMAGE_BUFFER(self), roi);   
+  
+   return dest;
   }
 
-  override (Gegl:Image)
+  public
   void 
-  copy_pixels (GeglImage *self, 
+  copy_pixels (GeglImageBuffer *self, 
                     GeglRect *self_rect, 
-		    GeglImage *src, 
+		    GeglImageBuffer *src, 
 		    GeglRect  *src_rect)
   {
-    GeglImage * op = GEGL_IMAGE (gegl_copy_op_new (src));
-    gegl_image_get_pixels (op, self, self_rect);
-    gegl_object_destroy (GEGL_OBJECT(op));
 
+    /* 
+       This routine will check the rects and do scaling if
+       self_rect and src_rect have different sizes. Of course
+       the CopyOp will trigger color conversions automatically.
+    */ 
+
+    GeglImage * op = GEGL_IMAGE(gegl_copy_op_new (GEGL_IMAGE(src)));
+    gegl_image_get_pixels (op, GEGL_IMAGE(self), self_rect);
+    gegl_object_destroy (GEGL_OBJECT(op));
   }
 }
