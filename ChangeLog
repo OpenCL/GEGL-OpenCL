@@ -1,3 +1,39 @@
+2004-3-18 17:48 Daniel Rogers <daniel@phasevelocity.org>
+
+	* docs/reference/gegl/gegl-undocumented.txt
+	* docs/reference/gegl/tmpl/gegl-buffer-double.sgml
+	* docs/reference/gegl/tmpl/gegl-buffer.sgml
+	* docs/reference/gegl/tmpl/gegl-cache-entry.sgml
+	* docs/reference/gegl/tmpl/gegl-cache.sgml
+	* docs/reference/gegl/tmpl/gegl-color-space-imp.sgml
+	* docs/reference/gegl/tmpl/gegl-component-sample-model.sgml
+	* docs/reference/gegl/tmpl/gegl-connection.sgml
+	* docs/reference/gegl/tmpl/gegl-normalizer-mult.sgml
+	* docs/reference/gegl/tmpl/gegl-normalizer.sgml
+	* docs/reference/gegl/tmpl/gegl-property.sgml
+	* docs/reference/gegl/tmpl/gegl-sample-model.sgml
+	* docs/reference/gegl/tmpl/gegl-tile-iterator.sgml
+	* docs/reference/gegl/tmpl/gegl-unused.sgml
+	* docs/reference/gegl/tmpl/gegl-visitable.sgml
+
+	Adds some skeletons for some new gegl classes that have yet to be
+	documented.
+	
+2004-3-18 17:30 Daniel Rogers <daniel@phasevelocity.org>
+
+	* gegl/image/gegl-entry-record.c
+	* gegl/image/gegl-entry-record.h
+	* gegl/image/gegl-heap-cache-store.c
+	* gegl/image/gegl-heap-cache-store.h
+	* gegl/image/gegl-swap-cache-store.c
+	* gegl/image/gegl-swap-cache-store.h
+	* tests/Makefile.am
+	* tests/gegl-image-cache-store-tests.c
+	* tests/testgegl.c
+	* tests/gegl-image-heap-cache-tests.c
+
+	Added more tests for GeglHeapCache
+	
 2004-3-16 12:31 Daniel Rogers <daniel@phasevelocity.org>
 
 	* ChangeLog,

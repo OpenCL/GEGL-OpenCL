@@ -1,0 +1,60 @@
+<!-- ##### SECTION Title ##### -->
+GeglNormalizer
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglNormalizer ##### -->
+<para>
+
+</para>
+
+@parent: 
+
+<!-- ##### STRUCT GeglNormalizerClass ##### -->
+<para>
+
+</para>
+
+@parent_class: 
+@normalize: 
+@unnormalize: 
+
+<!-- ##### FUNCTION gegl_normalizer_normalize ##### -->
+<para>
+
+</para>
+
+@self: 
+@unnor_data: 
+@nor_data: 
+@length: 
+@stride: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_normalizer_unnormalize ##### -->
+<para>
+
+</para>
+
+@self: 
+@nor_data: 
+@unnor_data: 
+@length: 
+@stride: 
+@Returns: 
+
+

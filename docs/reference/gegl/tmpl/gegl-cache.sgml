@@ -1,0 +1,77 @@
+<!-- ##### SECTION Title ##### -->
+GeglCache
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglCacheClass ##### -->
+<para>
+
+</para>
+
+@parent_class: 
+@put: 
+@fetch: 
+@unfetch: 
+@flush: 
+@mark_as_dirty: 
+@discard: 
+@size: 
+@capacity: 
+@is_persistent: 
+@insert_record: 
+@check_room_for: 
+@flush_internal: 
+
+<!-- ##### FUNCTION gegl_cache_put ##### -->
+<para>
+
+</para>
+
+@cache: 
+@entry: 
+@entry_id: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_cache_fetch ##### -->
+<para>
+
+</para>
+
+@cache: 
+@entry_id: 
+@entry: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_cache_mark_as_dirty ##### -->
+<para>
+
+</para>
+
+@cache: 
+@entry_id: 
+
+
+<!-- ##### FUNCTION gegl_cache_flush ##### -->
+<para>
+
+</para>
+
+@cache: 
+@entry_id: 
+
+

@@ -1,0 +1,129 @@
+<!-- ##### SECTION Title ##### -->
+GeglProperty
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ENUM GeglPropertyType ##### -->
+<para>
+
+</para>
+
+@GEGL_PROPERTY_OUTPUT: 
+@GEGL_PROPERTY_INPUT: 
+
+<!-- ##### STRUCT GeglProperty ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglPropertyClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+
+<!-- ##### FUNCTION gegl_property_get_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_property_set_param_spec ##### -->
+<para>
+
+</para>
+
+@self: 
+@param_spec: 
+
+
+<!-- ##### FUNCTION gegl_property_get_depends_on ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_property_get_filter ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_property_set_filter ##### -->
+<para>
+
+</para>
+
+@self: 
+@filter: 
+
+
+<!-- ##### FUNCTION gegl_property_is_output ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_property_is_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_property_get_connected_to ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_property_is_dirty ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_property_set_dirty ##### -->
+<para>
+
+</para>
+
+@self: 
+@flag: 
+
+

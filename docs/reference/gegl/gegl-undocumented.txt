@@ -1,6 +1,6 @@
 4% symbol docs coverage.
 8 symbols documented.
-190 not documented.
+185 not documented.
 
 
 GEGL_FLOAT_EPSILON
@@ -9,11 +9,9 @@ GeglBuffer
 GeglBufferClass
 GeglBufferDouble
 GeglBufferDoubleClass
-GeglCache
 GeglCacheClass
 GeglCacheEntry
 GeglCacheEntryClass
-GeglCacheExpireFunc
 GeglColorModel
 GeglColorModelClass
 GeglColorSpace
@@ -66,7 +64,6 @@ gegl_buffer_get_element_double
 gegl_buffer_get_elements_per_bank
 gegl_buffer_get_num_banks
 gegl_buffer_get_transfer_type
-gegl_buffer_get_unique_id
 gegl_buffer_is_finalized
 gegl_buffer_lock
 gegl_buffer_release
@@ -75,13 +72,11 @@ gegl_buffer_unlock
 gegl_buffer_unshare
 gegl_cache_entry_flatten
 gegl_cache_entry_flattened_size
-gegl_cache_entry_set_expire_fuction
 gegl_cache_entry_unflatten
 gegl_cache_fetch
 gegl_cache_flush
 gegl_cache_mark_as_dirty
 gegl_cache_put
-gegl_cache_try_put
 gegl_color_model_get_alpha
 gegl_color_model_get_num_colors
 gegl_color_model_has_alpha

@@ -1,0 +1,61 @@
+<!-- ##### SECTION Title ##### -->
+GeglVisitable
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglVisitable ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglVisitableClass ##### -->
+<para>
+
+</para>
+
+@base_interface: 
+@accept: 
+@depends_on: 
+@needs_visiting: 
+
+<!-- ##### FUNCTION gegl_visitable_accept ##### -->
+<para>
+
+</para>
+
+@interface: 
+@visitor: 
+
+
+<!-- ##### FUNCTION gegl_visitable_depends_on ##### -->
+<para>
+
+</para>
+
+@interface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_visitable_needs_visiting ##### -->
+<para>
+
+</para>
+
+@interface: 
+@Returns: 
+
+

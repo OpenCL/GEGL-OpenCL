@@ -1,0 +1,33 @@
+<!-- ##### SECTION Title ##### -->
+GeglNormalizerMult
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglNormalizerMult ##### -->
+<para>
+
+</para>
+
+@parent: 
+@alpha: 
+
+<!-- ##### STRUCT GeglNormalizerMultClass ##### -->
+<para>
+
+</para>
+
+@parent_class: 
+

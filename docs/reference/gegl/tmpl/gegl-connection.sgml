@@ -1,0 +1,108 @@
+<!-- ##### SECTION Title ##### -->
+gegl-connection
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglConnection ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_connection_new ##### -->
+<para>
+
+</para>
+
+@sink: 
+@sink_prop: 
+@source: 
+@source_prop: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_connection_get_source_node ##### -->
+<para>
+
+</para>
+
+@connection: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_connection_get_sink_node ##### -->
+<para>
+
+</para>
+
+@connection: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_connection_get_source_prop ##### -->
+<para>
+
+</para>
+
+@connection: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_connection_get_sink_prop ##### -->
+<para>
+
+</para>
+
+@connection: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_connection_set_sink_node ##### -->
+<para>
+
+</para>
+
+@connection: 
+@sink: 
+
+
+<!-- ##### FUNCTION gegl_connection_set_sink_prop ##### -->
+<para>
+
+</para>
+
+@connection: 
+@sink_prop: 
+
+
+<!-- ##### FUNCTION gegl_connection_set_source_node ##### -->
+<para>
+
+</para>
+
+@connection: 
+@source: 
+
+
+<!-- ##### FUNCTION gegl_connection_set_source_prop ##### -->
+<para>
+
+</para>
+
+@connection: 
+@source_prop: 
+
+

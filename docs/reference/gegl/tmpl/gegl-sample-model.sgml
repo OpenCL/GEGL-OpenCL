@@ -1,0 +1,196 @@
+<!-- ##### SECTION Title ##### -->
+GeglSampleModel
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglSampleModel ##### -->
+<para>
+
+</para>
+
+@parent: 
+@width: 
+@height: 
+@num_bands: 
+@normalizers: 
+@is_disposed: 
+
+<!-- ##### STRUCT GeglSampleModelClass ##### -->
+<para>
+
+</para>
+
+@parent_class: 
+@get_pixel_double: 
+@set_pixel_double: 
+@get_sample_normalized: 
+@set_sample_normalized: 
+@get_pixel_normalized: 
+@set_pixel_normalized: 
+@get_sample_double: 
+@set_sample_double: 
+@create_buffer: 
+@check_buffer: 
+
+<!-- ##### FUNCTION gegl_sample_model_get_num_bands ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_sample_model_get_width ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_sample_model_get_height ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_sample_model_get_pixel_double ##### -->
+<para>
+
+</para>
+
+@self: 
+@x: 
+@y: 
+@dArray: 
+@buffer: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_sample_model_set_pixel_double ##### -->
+<para>
+
+</para>
+
+@self: 
+@x: 
+@y: 
+@dArray: 
+@buffer: 
+
+
+<!-- ##### FUNCTION gegl_sample_model_get_sample_double ##### -->
+<para>
+
+</para>
+
+@self: 
+@x: 
+@y: 
+@band: 
+@buffer: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_sample_model_set_sample_double ##### -->
+<para>
+
+</para>
+
+@self: 
+@x: 
+@y: 
+@band: 
+@sample: 
+@buffer: 
+
+
+<!-- ##### FUNCTION gegl_sample_model_get_sample_normalized ##### -->
+<para>
+
+</para>
+
+@self: 
+@x: 
+@y: 
+@band: 
+@buffer: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_sample_model_set_sample_normalized ##### -->
+<para>
+
+</para>
+
+@self: 
+@x: 
+@y: 
+@band: 
+@sample: 
+@buffer: 
+
+
+<!-- ##### FUNCTION gegl_sample_model_get_pixel_normalized ##### -->
+<para>
+
+</para>
+
+@self: 
+@x: 
+@y: 
+@d_array: 
+@buffer: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_sample_model_set_pixel_normalized ##### -->
+<para>
+
+</para>
+
+@self: 
+@x: 
+@y: 
+@d_array: 
+@buffer: 
+
+
+<!-- ##### FUNCTION gegl_sample_model_create_buffer ##### -->
+<para>
+
+</para>
+
+@self: 
+@type: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_sample_model_check_buffer ##### -->
+<para>
+
+</para>
+
+@self: 
+@buffer: 
+@Returns: 
+
+

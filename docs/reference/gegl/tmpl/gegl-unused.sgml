@@ -1961,6 +1961,14 @@ GeglXor
 @self: 
 @opacity: 
 
+<!-- ##### FUNCTION gegl_buffer_get_unique_id ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
 <!-- ##### FUNCTION gegl_channel_data_get_channel_space ##### -->
 <para>
 

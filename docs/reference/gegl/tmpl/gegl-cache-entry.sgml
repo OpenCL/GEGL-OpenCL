@@ -1,0 +1,66 @@
+<!-- ##### SECTION Title ##### -->
+GeglCacheEntry
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglCacheEntry ##### -->
+<para>
+
+</para>
+
+@object: 
+@cache_hints: 
+
+<!-- ##### STRUCT GeglCacheEntryClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@flattened_size: 
+@flatten: 
+@unflatten: 
+@discard: 
+
+<!-- ##### FUNCTION gegl_cache_entry_flattened_size ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_cache_entry_flatten ##### -->
+<para>
+
+</para>
+
+@self: 
+@buffer: 
+@length: 
+
+
+<!-- ##### FUNCTION gegl_cache_entry_unflatten ##### -->
+<para>
+
+</para>
+
+@self: 
+@buffer: 
+@length: 
+
+

@@ -32,11 +32,14 @@ GeglBuffer
 @num_banks: 
 @bytes_per_element: 
 @transfer_type: 
+@cache: 
 @banks: 
 @share_count: 
 @lock_count: 
-@cache: 
-@unique_id: 
+@entry_id: 
+@entry: 
+@has_expired: 
+@has_disposed: 
 
 <!-- ##### STRUCT GeglBufferClass ##### -->
 <para>
@@ -182,14 +185,5 @@ GeglBuffer
 </para>
 
 @self: 
-
-
-<!-- ##### FUNCTION gegl_buffer_get_unique_id ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
 
 
