@@ -88,11 +88,17 @@ class Gegl:Image from Gegl:Object {
 
 
   /* get pixels -- read from inputs, write to dest */
-  virtual GeglImage * get_pixels (self, GeglImage *dest, GeglRect *dest_roi);
+  virtual 
+    GeglImage * 
+    get_pixels (self, GeglImage *dest, GeglRect *dest_roi);
 
   /* copy pixels to me from src */
-  virtual void copy_pixels (self, GeglRect *self_rect, GeglImage *src, GeglRect  *src_rect);
+  virtual 
+    void 
+    copy_pixels (self, GeglRect *self_rect, GeglImage *src, GeglRect  *src_rect);
 
   /* Can we write to this image */ 
-  virtual gboolean is_writable(self);
+  virtual 
+    gboolean 
+    is_writable(self);
 }

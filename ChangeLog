@@ -1,3 +1,12 @@
+Wed Jun 28 12:00:33 PDT 2000 caro@rhythm.com
+
+	* updated docs/geglTasks.html
+
+	* added diff-op to gegl/Makefile.am
+
+	* implemented copy_pixel and get_pixel for
+	gegl/gegl-image-buffer.gob
+
 Tue Jun 27 18:42:39 PDT 2000 caro@rhythm.com
 
 	* updated docs/gegl.html and geglTasks.html

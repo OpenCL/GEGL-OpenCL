@@ -194,6 +194,50 @@ class Gegl:Image:Buffer from Gegl:Image {
 
     /* copy pixels from me to dest */
     g_warning("gegl_image_buffer_get_pixels: routine not implemented yet!\n");
+      {
+#if 1
+	gint i, j, k;
+	gint x = roi->x;
+	gint y = roi->y;
+	gint w = roi->w;
+	gint h = roi->h;
+	guchar *src_d, *dest_d; 
+	GeglColorModel *src_cm = self->_priv->color_model;
+	GeglColorModel *dest_cm = dest->_priv->color_model;
+
+	gint src_bpc = gegl_color_model_bytes_per_channel(src_cm);
+	gint dest_bpc = gegl_color_model_bytes_per_channel(dest_cm);
+	gint src_num_channels = gegl_color_model_bytes_per_channel(src_cm);
+	gint dest_num_channels = gegl_color_model_bytes_per_channel(dest_cm);
+    
+	gint src_width = self->_priv->width;  
+	gint dest_width = dest->_priv->width;  
+
+
+	if (src_bpc != dest_bpc || src_num_channels != dest_num_channels)
+	  {
+	    g_warning("gegl_image_buffer_get_pixels: incompatible images\n");
+	    return NULL;
+	  }
+	
+	for (i=0; i<src_num_channels; i++)
+	  {
+	    for (k=x; k<h+x; k++)
+	      {
+		src_d = GEGL_IMAGE_BUFFER ((GtkObject*)self)->_priv->data[i] + k * src_width + y;
+		dest_d = GEGL_IMAGE_BUFFER ((GtkObject*)dest)->_priv->data[i] + k * dest_width + y; 
+		for (j=0; j<w*src_bpc; j++)
+		  {
+
+		    *dest_d++ = *src_d++; 
+		  }
+	      } 
+	  }
+
+#endif 	
+	
+      }
+
     return dest;
   }
 
@@ -204,6 +248,53 @@ class Gegl:Image:Buffer from Gegl:Image {
 		    GeglImage *src, 
 		    GeglRect  *src_rect)
   {
+  
+    gint i, j, k;
+    gint dest_x = self_rect->x;
+    gint dest_y = self_rect->y;
+    gint dest_w = self_rect->w;
+    gint dest_h = self_rect->h;
+    gint src_x = src_rect->x;
+    gint src_y = src_rect->y;
+    gint src_w = src_rect->w;
+    gint src_h = src_rect->h;
+    guchar *src_d, *dest_d;
+    GeglColorModel *src_cm = src->_priv->color_model;
+    GeglColorModel *dest_cm = self->_priv->color_model;
+
+    gint src_bpc = gegl_color_model_bytes_per_channel(src_cm);
+    gint dest_bpc = gegl_color_model_bytes_per_channel(dest_cm);
+    gint src_num_channels = gegl_color_model_bytes_per_channel(src_cm);
+    gint dest_num_channels = gegl_color_model_bytes_per_channel(dest_cm);
+
+    gint src_width = src->_priv->width;
+    gint dest_width = self->_priv->width;
+
+
+    if (dest_w != src_w || dest_h != src_h || 
+	src_bpc != dest_bpc || src_num_channels != dest_num_channels)
+      {
+	g_warning("gegl_image_buffer_get_pixels: incompatible images\n");
+	return;
+      }
+
+    for (i=0; i<src_num_channels; i++)
+      {
+	for (k=0; k<dest_h; k++)
+	  {
+	    src_d = GEGL_IMAGE_BUFFER ((GtkObject*)src)->_priv->data[i] + 
+	      (k+src_x) * src_width + src_y;
+	    dest_d = GEGL_IMAGE_BUFFER ((GtkObject*)self)->_priv->data[i] + 
+	      (k+dest_x) * dest_width + dest_y;
+	    for (j=0; j<dest_w*src_bpc; j++)
+	      {
+
+		*dest_d++ = *src_d++;  
+	      }
+	  }
+      }
     g_warning("gegl_image_buffer_copy_pixels: routine not implemented yet!\n");
+
+
   }
 }
