@@ -1,7 +1,7 @@
 GENERIC_IMAGE_DECL_BEGIN
-VectorChan dest(color,alpha,has_alpha);
-VectorChan src1(color,alpha,has_alpha);
-VectorChan src2(color,alpha,has_alpha);
+Pixel dest(color,alpha,has_alpha);
+Pixel src1(color,alpha,has_alpha);
+Pixel src2(color,alpha,has_alpha);
 GENERIC_IMAGE_DECL_END
 
 GENERIC_IMAGE_IMAGE_DATA_INIT

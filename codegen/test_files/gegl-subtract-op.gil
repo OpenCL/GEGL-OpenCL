@@ -87,12 +87,11 @@ class Gegl:Subtract:Op from Gegl:Dual:Src:Op {
         (GeglDualSrcOpPrivate *)(dual_src_op->_priv); 
 
     GENERIC_IMAGE_DECL_BEGIN
-    VectorChan dest(color,alpha,has_alpha);
-    VectorChan src1(color,alpha,has_alpha);
-    VectorChan src2(color,alpha,has_alpha);
+    Pixel dest(color,alpha,has_alpha);
+    Pixel src1(color,alpha,has_alpha);
+    Pixel src2(color,alpha,has_alpha);
     GENERIC_IMAGE_DECL_END
-
-    int width = point_opP->scanline_width;
+    gint width = point_opP->scanline_width;
 
     dest_has_alpha = gegl_color_model_has_alpha(
                        dual_src_opP->dest_cm); 
@@ -121,18 +120,18 @@ class Gegl:Subtract:Op from Gegl:Dual:Src:Op {
 
 	if (dest_has_alpha)
  	  {
-	  if (src1_has_alpha && src2_has_alpha)
-	    {
-	    dest_alpha = MIN(src1_alpha, src2_alpha);
-	    }       
-	  else if (src1_has_alpha)
-	    {
-	    dest_alpha = src1_alpha;
-	    }
-	  else if (src2_has_alpha)
-	    {
-	    dest_alpha = src2_alpha; 
-	    } 
+	    if (src1_has_alpha && src2_has_alpha)
+	      {
+		dest_alpha = MIN(src1_alpha, src2_alpha);
+	      }       
+	    else if (src1_has_alpha)
+	      {
+		dest_alpha = src1_alpha;
+	      }
+	    else if (src2_has_alpha)
+	      {
+		dest_alpha = src2_alpha; 
+	      } 
  	  } 
 
 	dX(dest,1);

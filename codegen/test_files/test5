@@ -1,8 +1,8 @@
 GENERIC_IMAGE_DECL_BEGIN    
-    VectorChan dest(color,alpha);
-    VectorChan src1(color,alpha);
-    VectorChan src2(color,alpha);
-    Chan a, b, c, alpha;
+    Pixel dest(color,alpha);
+    Pixel src1(color,alpha);
+    Pixel src2(color,alpha);
+    Channel a, b, c, alpha;
     int width;  
 GENERIC_IMAGE_DECL_END
 

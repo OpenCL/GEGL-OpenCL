@@ -1,36 +1,54 @@
 README
 ======
 
-This program parses a fuke with generic code (not data type or color space specific) and created a file that is data type and color space specific. To find out more about the syntax that the program understand look at these pages:
-http://www.mindspring.com/~calvinw/genericImageLanguage.html
-http://www.mindspring.com/~calvinw/genericChannelData.html
+Codegen parses a single generic image language program as
+described in:
 
-To run the program type:
-codegen --channel-names NAME,NAME,NAME  --channel-data-file FILE_NAME  
-	FILE_NAME: is a file that contains the data type specific information.
-	Look at FLOAT, UINT8, and UINT16
-	NAME,NAME,NAME: is a list of the channel names. The names are seperated by
-	',' and no spaces. Alpha is always addded by the program, you should not
-	specify alpha.  
+gegl/docs/genericImageLanguage.html 
+gegl/docs/genericChannelData.html
+ 
+To run the program:
 
+>codegen --channel-names COLOR_CHANNEL_NAMES  --channel-data-file CHANNEL_DATA_FILE  
 
-This program has 4 files; lexer.l, parser.y, common.h, and data_type.h
+CHANNEL_DATA_FILE: a file that contains the data type
+specific information (see genericImageLanguage.html) . See
+gegl/codegen/channel_data for the examples
+u8,u16,u16_4k,float.
 
-The over all flow of the program goes like this. parser.y contains the main of the program and starts by parsing the command line. It will read the channel-data-file, and initialize all the varibles in data_type.h with the read values. It will also parse the channel-names and set NUM_COLOR_CHAN and NAME_COLOR_CHAN. It then calls yyparse.
+COLOR_CHANNEL_NAMES: a list of the color channel names. The
+names are comma-separated with no spaces.
 
-lexer.l has 4 states: the initial state, GENERIC_IMAGE_DECL, GENERIC_IMAGE_BLOCK, and COMMENT. 
+Codegen is built from 4 files: 
 
-	inital state ---------GENERIC_IMAGE_DECL_BEGIN---> GENERIC_IMAGE_DECL
-	inital state ---------GENERIC_IMAGE_BLOCK_BEGIN--> GENERIC_IMAGE_BLOCK
-	GENERIC_IMAGE_DECL ---GENERIC_IMAGE_DECL_END-----> inital state
-	GENERIC_IMAGE_BLOCK---GENERIC_IMAGE_BLOCK_END----> inital state
+1)lexer.l 
+2)parser.y 
+3)common.h
+4)data_type.h
 
-	GENERIC_IMAGE_DECL ---/*-->COMMENT--*/-->GENERIC_IMAGE_DECL
-	GENERIC_IMAGE_BLOCK --/*-->COMMENT--*/-->GENERIC_IMAGE_BLOCK
+The over all flow of the program goes like this: parser.y
+contains the main of the program and starts by parsing the
+command line. It will read the channel-data-file, and
+initialize all the varibles in data_type.h with the read
+values. It will also parse the channel-names and set
+NUM_COLOR_CHAN and NAME_COLOR_CHAN from these. It then calls
+yyparse.
 
-			
-		
+lexer.l has 4 states: 
+
+1)the initial state 
+2)GENERIC_IMAGE_DECL 
+3)GENERIC_IMAGE_BLOCK 
+4)COMMENT 
+
+inital state ---------GENERIC_IMAGE_DECL_BEGIN---> GENERIC_IMAGE_DECL
+inital state ---------GENERIC_IMAGE_BLOCK_BEGIN--> GENERIC_IMAGE_BLOCK
+GENERIC_IMAGE_DECL ---GENERIC_IMAGE_DECL_END-----> inital state
+GENERIC_IMAGE_BLOCK---GENERIC_IMAGE_BLOCK_END----> inital state
+
+GENERIC_IMAGE_DECL ---/*-->COMMENT--*/-->GENERIC_IMAGE_DECL
+GENERIC_IMAGE_BLOCK --/*-->COMMENT--*/-->GENERIC_IMAGE_BLOCK
+
 ===
  
 Caroline Dahllof <caro@rhythm.com>
-

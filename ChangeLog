@@ -1,3 +1,32 @@
+Tue Mar 28 12:33:51 EST 2000 calvinw@mindspring.com
+
+	* check in for codegen
+
+	* Updated all the .gil files in gegl/codegen/test_files: 
+	  gegl-add-op.gil
+	  gegl-composite-op.gil
+	  gegl-composite-premult-op.gil
+	  gegl-dark-op.gil
+	  gegl-diff-op.gil
+	  gegl-light-op.gil
+	  gegl-max-op.gil
+	  gegl-min-op.gil
+	  gegl-mult-op.gil
+	  gegl-premult-op.gil
+	  gegl-screen-op.gil
+	  gegl-subtract-op.gil
+	  gegl-unpremult-op.gil
+
+	* Changed VectorChan to Pixel, Chan to Channel in 
+          gegl/docs/genericImageLanguage.html 
+          gegl/docs/genericChannelData.html 
+
+	* updated all the test files gegl/codegen/test_files to 
+          use the new terms. 
+
+        * updated gegl/codegen/README a little.
+
+
 Mon Mar 27 13:48:11 PST 2000 caro@rhythm.com
 
 	* check in for codegen

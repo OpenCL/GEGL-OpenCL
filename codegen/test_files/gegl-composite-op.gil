@@ -44,13 +44,13 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
   protected 
   gboolean 
   constructor(self, 
-             GeglImageBuffer *dest, 
-             GeglImageBuffer *src1,
-             GeglImageBuffer *src2,       
-             GeglRect *dest_rect,
-             GeglRect *src1_rect,
-             GeglRect *src2_rect,
-             GeglCompositeMode mode)
+              GeglImageBuffer *dest, 
+              GeglImageBuffer *src1,
+              GeglImageBuffer *src2,       
+              GeglRect *dest_rect,
+              GeglRect *src1_rect,
+              GeglRect *src2_rect,
+              GeglCompositeMode mode)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -63,10 +63,10 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
     {
       GeglPointOpClass *point_op_class = 
-         GEGL_POINT_OP_CLASS(GTK_OBJECT(self)->klass);
+        GEGL_POINT_OP_CLASS(GTK_OBJECT(self)->klass);
 
-      GeglColorModel              *src1_cm, *src2_cm;
-      gboolean                    src1_has_alpha, src2_has_alpha;
+      GeglColorModel     *src1_cm, *src2_cm;
+      gboolean            src1_has_alpha, src2_has_alpha;
        
       src1_cm = gegl_image_buffer_color_model (src1);
       src1_has_alpha = gegl_color_model_has_alpha (src1_cm);
@@ -74,14 +74,19 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
       src2_cm = gegl_image_buffer_color_model (src2);
       src2_has_alpha = gegl_color_model_has_alpha (src2_cm);
 
+      /* dest = src2 op src1 */
       if ( src2_has_alpha && src1_has_alpha)
-       point_op_class->scanline_func = gegl_composite_op_RGBA_op_RGBA_FLOAT;
+        point_op_class->scanline_func = 
+               gegl_composite_op_COLORSPACEa_op_COLORPSPACEa_DATATYPE;
       else if ( src2_has_alpha && !src1_has_alpha )
-       point_op_class->scanline_func = gegl_composite_op_RGBA_op_RGB_FLOAT;
+        point_op_class->scanline_func = 
+               gegl_composite_op_COLORSPACEa_op_COLORSPACE_DATATYPE;
       else if ( !src2_has_alpha && src1_has_alpha )
-       point_op_class->scanline_func = gegl_composite_op_RGB_op_RGBA_FLOAT;
+        point_op_class->scanline_func = 
+               gegl_composite_op_COLORSPACE_op_COLORSPACEa_DATATYPE;
       else if ( !src2_has_alpha && !src1_has_alpha )
-       point_op_class->scanline_func = gegl_composite_op_RGB_op_RGB_FLOAT;
+        point_op_class->scanline_func = 
+               gegl_composite_op_COLORSPACE_op_COLORSPACE_DATATYPE;
 
       self->_priv->comp_mode = mode;
     }
@@ -96,22 +101,22 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
     PARENT_HANDLER (object)
   }
 
+  GENERIC_IMAGE_PROGRAM colormodels_file
   private 
   void
-  RGBA_op_RGBA_FLOAT (GeglPointOp *point_op)
+  COLORSPACEa_op_COLORSPACEa_DATATYPE (GeglPointOp *point_op)
+  GENERIC_IMAGE_CODEGEN_BEGIN
   {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
 
     GENERIC_IMAGE_DECL_BEGIN
-    VectorChan dest(color,alpha);
-    VectorChan src1(color,alpha);
-    VectorChan src2(color,alpha);
-    float a, b, c, alpha;
-    int width;
+    Pixel dest(color,alpha);
+    Pixel src1(color,alpha);
+    Pixel src2(color,alpha);
+    Channel a, b, c, alpha;
     GENERIC_IMAGE_DECL_END
-    
-    width = point_opP->scanline_width;
+    gint width = point_opP->scanline_width;
 
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
@@ -123,145 +128,181 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
 
-
     GENERIC_IMAGE_IMAGE_DATA_INIT
 
     switch(self->_priv->comp_mode)
-      GENERIC_IMAGE_BLOCK_BEGIN
       {
       case COMPOSITE_REPLACE:
-       while (width--)
-         {
-           dest_color = src2_color;
-	   dX(dest,1);
-	   dX(src2,1); 
-         }
-       break;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN
+
+            dest_color = src2_color;
+            dest_alpha = WP;
+
+            dX(dest,1);
+            dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END
+          }
+        break;
       case COMPOSITE_OVER:
-       while (width--)
-         {
-           a = (WP - src2_alpha) * src1_alpha;
-           b = src2_alpha;
-           alpha = a + b;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN
 
-           dest_alpha = alpha;
+            a = (WP - src2_alpha) * src1_alpha;
+            b = src2_alpha;
+            alpha = a + b;
 
-           if (alpha)
-             {
-              c = WP / alpha;
+            dest_alpha = alpha;
 
-              dest_color = (a * src1_color * WP + b * src2_color * WP) * c * WP;
-             }
-           else 
-             {
-              dest_color = src1_color;
-             }
-	   dX(dest,1);
-	   dX(src1,1);
-	   dX(src2,1); 
-         }
-       break;
+            if (alpha)
+              {
+                c = WP / alpha;
+                dest_color = (a * src1_color * WP + b * src2_color * WP) * c * WP;
+              }
+            else 
+              {
+                dest_color = src1_color;
+              }
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END
+          }
+        break;
       case COMPOSITE_IN:
-       while (width--)
-         {
-           alpha = src1_alpha * src2_alpha;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN
 
-           dest_alpha = alpha;
+            alpha = src1_alpha * src2_alpha;
 
-           if (alpha)
-             {
-              dest_color = src2_color;
-             }
-           else 
-             {
-              dest_color = src1_color;
-             }
-         }
-       break;
+            dest_alpha = alpha;
+
+            if (alpha)
+              {
+                dest_color = src2_color;
+              }
+            else 
+              {
+                dest_color = src1_color;
+              }
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END
+          }
+        break;
       case COMPOSITE_OUT:
-       while (width--)
-         {
-           alpha = (WP - src1_alpha) * src2_alpha;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN
 
-           dest_alpha = alpha;
+            alpha = (WP - src1_alpha) * src2_alpha;
 
-           if (alpha)
-             {
-             dest_color = src2_color;
-             }
-           else 
-             {
-             dest_color = src1_color;
-             }
-         }
-       break;
+            dest_alpha = alpha;
+
+            if (alpha)
+              {
+                dest_color = src2_color;
+              }
+            else 
+              {
+                dest_color = src1_color;
+              }
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END
+          }
+        break;
       case COMPOSITE_ATOP:
-       while (width--)
-         {
-           a = WP - src2_alpha;
-           b = src2_alpha;
-           alpha = src1_alpha;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN
 
-           dest_a = alpha;
+            a = WP - src2_alpha;
+            b = src2_alpha;
+            alpha = src1_alpha;
 
-           if (alpha)
-             {
-             dest_color = a * src1_color + b * src2_color * WP;
-             }
-           else 
-             {
-              dest_color = src1_color;
-             }
-	   dX(dest,1);
-	   dX(src1,1);
-	   dX(src2,1); 
-         }
-       break;
+            dest_a = alpha;
+
+            if (alpha)
+              {
+                dest_color = a * src1_color + b * src2_color * WP;
+              }
+            else 
+              {
+                dest_color = src1_color;
+              }
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END
+          }
+        break;
       case COMPOSITE_XOR:
-       while (width--)
-         {
-           a = (WP - src2_alpha) * src1_alpha;
-           b = (WP - src1_alpha) * src2_alpha;
-           alpha = a + b;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN
 
-           dest_alpha = alpha;
+            a = (WP - src2_alpha) * src1_alpha;
+            b = (WP - src1_alpha) * src2_alpha;
+            alpha = a + b;
 
-           if (alpha)
-             {
-              c = 1.0 / alpha;
+            dest_alpha = alpha;
 
-              dest_color = (a * src1_color * WP + b * src2_color * WP) * c * WP;
-             }
-           else 
-             {
-              dest_color = src1_color;
+            if (alpha)
+              {
+                c = 1.0 / alpha;
+                dest_color = (a * src1_color * WP + b * src2_color * WP) * c * WP;
+              }
+            else 
+              {
+               dest_color = src1_color;
 
-             }
-         }
-       break;
+              }
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END
+          }
+        break;
       default:
-       break;
+        break;
       }
-     GENERIC_IMAGE_BLOCK_END
   }
+  GENERIC_IMAGE_CODEGEN_END
  
-  private
+  GENERIC_IMAGE_PROGRAM colormodels_file
+  private 
   void
-  RGBA_op_RGB_FLOAT (GeglPointOp *point_op)
+  COLORSPACEa_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
+  GENERIC_IMAGE_CODEGEN_BEGIN
   {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
 
-
     GENERIC_IMAGE_DECL_BEGIN
-    VectorChan dest(color);
-    VectorChan src1(color);
-    VectorChan src2(color,alpha);
-    float a, b, alpha;
-    int width;
+    Pixel dest(color);
+    Pixel src1(color);
+    Pixel src2(color,alpha);
+    Channel a, b, alpha;
     GENERIC_IMAGE_DECL_END
+    gint width = point_opP->scanline_width;
 
-    width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
                       (guchar**)dest_data);
@@ -271,105 +312,127 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
-
-
-
 
     GENERIC_IMAGE_IMAGE_DATA_INIT
 
     switch(self->_priv->comp_mode)
-      GENERIC_IMAGE_BLOCK_BEGIN 
       {
       case COMPOSITE_REPLACE:
-       while (width--)
-         {
-       	 dest_color = src2_color;
-	 dX(dest,1);
-	 dX(src2,1); 
-	 }
-       break;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
+
+       	    dest_color = src2_color;
+
+	    dX(dest,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END 
+	  }
+        break;
       case COMPOSITE_OVER:
-       while (width--)
-         {
-           a = (WP - src2_alpha);
-           b = src2_alpha;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
 
-           dest_color = (a * src1_color * WP + b * src2_color * WP);
-	   dX(dest,1);
-	   dX(src1,1);
-	   dX(src2,1); 
-         }
-       break;
+            a = (WP - src2_alpha);
+            b = src2_alpha;
+            dest_color = (a * src1_color * WP + b * src2_color * WP);
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END 
+          }
+        break;
       case COMPOSITE_IN:
-       while (width--)
-         {
-           alpha = src2_alpha;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
 
-           if (alpha)
-             {
-             dest_color = src2_color;
-             }
-           else 
-             {
-             dest_color = src1_color;
-             }
-	   dX(dest,1);
-	   dX(src1,1);
-	   dX(src2,1); 
-         }
-       break;
+            alpha = src2_alpha;
+            if (alpha)
+              {
+                dest_color = src2_color;
+              }
+            else 
+              {
+                dest_color = src1_color;
+              }
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END 
+          }
+        break;
       case COMPOSITE_OUT:
-       while (width--)
-         {
-         dest_color = src1_color;
-	   dX(dest,1);
-	   dX(src1,1);
-         }
-       break;
-      case COMPOSITE_ATOP:
-       while (width--)
-         {
-           a = WP - src2_alpha;
-           b = src2_alpha;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
 
-           dest_color = a * src1_color + b * src2_color * WP;
-	   dX(dest,1);
-	   dX(src1,1);
-	   dX(src2,1); 
-         }
+            dest_color = src1_color;
+
+	    dX(dest,1);
+	    dX(src1,1);
+
+            GENERIC_IMAGE_BLOCK_END 
+          }
+        break;
+      case COMPOSITE_ATOP:
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
+
+            a = WP - src2_alpha;
+            b = src2_alpha;
+            dest_color = a * src1_color + b * src2_color * WP;
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END 
+          }
        break;
       case COMPOSITE_XOR:
-       while (width--)
-         {
-           dest_color = src1_color;
-	   dX(dest,1);
-	   dX(src1,1);
-	   dX(src2,1); 
-         }
-       break;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
+
+            dest_color = src1_color;
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END 
+          }
+        break;
       default:
-       break;
+        break;
       }
-    GENERIC_IMAGE_BLOCK_END 
   }
-  private
+
+  GENERIC_IMAGE_PROGRAM colormodels_file
+  private 
   void
-  RGB_op_RGBA_FLOAT (GeglPointOp *point_op)
+  COLORSPACE_op_COLORSPACEa_DATATYPE (GeglPointOp *point_op)
+  GENERIC_IMAGE_CODEGEN_BEGIN
   {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
 
-
-
     GENERIC_IMAGE_DECL_BEGIN
-    VectorChan dest(color,alpha);
-    VectorChan src1(color,alpha);
-    VectorChan src2(color);
-    float b, alpha;
-    int width;
+    Pixel dest(color,alpha);
+    Pixel src1(color,alpha);
+    Pixel src2(color);
+    Channel b, alpha;
     GENERIC_IMAGE_DECL_END 
+    gint width = point_opP->scanline_width;
 
-    width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
                       (guchar**)dest_data);
@@ -379,137 +442,155 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
-
-
 
     GENERIC_IMAGE_IMAGE_DATA_INIT
       
     switch(self->_priv->comp_mode)
-      GENERIC_IMAGE_BLOCK_BEGIN 
       {
       case COMPOSITE_REPLACE:
-       while (width--)
-         {
-           dest_color = src2_color;
-           dest_alpha = WP;
-	   dX(dest,1);
-	   dX(src2,1); 
-         }
-       break;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
+
+            dest_color = src2_color;
+            dest_alpha = WP;
+
+	    dX(dest,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END 
+          }
+        break;
       case COMPOSITE_OVER:
-       while (width--)
-         {
-           dest_color = src2_color;
-           dest_alpha = WP;
-	   dX(dest,1);
-	   dX(src2,1); 
-         }
-       break;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
+
+            dest_color = src2_color;
+            dest_alpha = WP;
+
+	    dX(dest,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END 
+          }
+        break;
       case COMPOSITE_IN:
-       while (width--)
-         {
-           alpha = src1_alpha;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
 
-           dest_alpha = alpha;
+            alpha = src1_alpha;
+            dest_alpha = alpha;
+            if (alpha)
+              {
+                dest_color = src2_color;
+              }
+            else 
+              {
+                dest_color = src1_color;
+              }
 
-           if (alpha)
-             {
-              dest_color = src2_color;
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
 
-             }
-           else 
-             {
-              dest_color = src1_color;
-             }
-	   dX(dest,1);
-	   dX(src1,1);
-	   dX(src2,1); 
-         }
+            GENERIC_IMAGE_BLOCK_END 
+          }
        break;
       case COMPOSITE_OUT:
-       while (width--)
-         {
-           alpha = (WP - src1_alpha);
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
 
-           dest_alpha = alpha;
+            alpha = (WP - src1_alpha);
+            dest_alpha = alpha;
+            if (alpha)
+              {
+                dest_color = src2_color;
+              }
+            else 
+              {
+               dest_color = src1_color;
+              }
 
-           if (alpha)
-             {
-              dest_color = src2_color;
-             }
-           else 
-             {
-              dest_color = src1_color;
-             }
-	   dX(dest,1);
-	   dX(src1,1);
-	   dX(src2,1); 
-         }
-       break;
+       	    dX(dest,1);
+            dX(src1,1);
+            dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END 
+          }
+        break;
       case COMPOSITE_ATOP:
-       while (width--)
-         {
-           alpha = src1_alpha;
-           dest_alpha = alpha;
-           
-	   if (alpha)
-             {
-              dest_color = src2_color;
-             }
-           else 
-             {
-              dest_color = src1_color;
-             }
-	   dX(dest,1);
-	   dX(src1,1);
-	   dX(src2,1);
-         }
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
+
+            alpha = src1_alpha;
+            dest_alpha = alpha;
+	    if (alpha)
+              {
+                dest_color = src2_color;
+              }
+            else 
+              {
+                dest_color = src1_color;
+              }
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1);
+
+            GENERIC_IMAGE_BLOCK_END 
+          }
        break;
       case COMPOSITE_XOR:
-       while (width--)
-         {
-           b = (WP - src1_alpha);
-           alpha = b;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
 
-           dest_a = alpha;
+            b = (WP - src1_alpha);
+            alpha = b;
+            dest_a = alpha;
+            if (alpha)
+              {
+                dest_color = src2_color;
+              }
+            else 
+              {
+                dest_color = src1_color;
+              }
 
-           if (alpha)
-             {
-              dest_color = src2_color;
-             }
-           else 
-             {
-              dest_color = src1_color;
-             }
-	   dX(dest,1);
-	   dX(src1,1);
-	   dX(src2,1); 
-         }
-       break;
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END 
+          }
+        break;
       default:
-       break;
+        break;
       }
-    GENERIC_IMAGE_BLOCK_END
   }
+  GENERIC_IMAGE_CODEGEN_END
 
+  GENERIC_IMAGE_PROGRAM colormodels_file
   private 
   void
-  RGB_op_RGB_FLOAT (GeglPointOp *point_op)
+  COLORSPACE_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
+  GENERIC_IMAGE_CODEGEN_BEGIN
   {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)
                                     (point_op->_priv); 
 
-
-
     GENERIC_IMAGE_DECL_BEGIN
-    VectorChan dest(color);
-    VectorChan src1(color);
-    VectorChan src2(color);
-    int width;
+    Pixel dest(color);
+    Pixel src1(color);
+    Pixel src2(color);
     GENERIC_IMAGE_DECL_END 
+    gint width = point_opP->scanline_width;
 
-    width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
                       (guchar**)dest_data);
@@ -520,36 +601,43 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
 
-
-
     GENERIC_IMAGE_IMAGE_DATA_INIT
 
     switch(self->_priv->comp_mode)
-      GENERIC_IMAGE_BLOCK_BEGIN
       {
       case COMPOSITE_REPLACE:
       case COMPOSITE_OVER:
       case COMPOSITE_IN:
       case COMPOSITE_ATOP:
-       while (width--)
-         {
-	 dest = src2;
-	 dX(dest,1);
-	 dX(src2,1); 
-       	 }
-       break;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
+
+	    dest = src2;
+
+	    dX(dest,1);
+	    dX(src2,1); 
+
+            GENERIC_IMAGE_BLOCK_END 
+       	  }
+        break;
       case COMPOSITE_OUT:
       case COMPOSITE_XOR:
-       while (width--)
-         {
-         dest = src1;
-	 dX(dest,1);
-	 dX(src1,1); 
-         }
-       break;
+        while (width--)
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN 
+
+            dest = src1;
+
+	    dX(dest,1);
+	    dX(src1,1); 
+
+            GENERIC_IMAGE_BLOCK_END 
+          }
+        break;
       default:
-       break;
+        break;
       }
-    GENERIC_IMAGE_BLOCK_END 
   }
+  GENERIC_IMAGE_CODEGEN_END
 }

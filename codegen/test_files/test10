@@ -85,8 +85,8 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
      /*
      Whats the algorithm for this code?       
      {
-       Chan dest;
-       Chan src;
+       Channel dest;
+       Channel src;
 
          if (src_a == 0.0)
           {
@@ -108,8 +108,8 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
         (GeglPointOpPrivate *)(point_op->_priv); 
     GENERIC_IMAGE_DECL_BEGIN
     int width;
-    VectorChan dest(color,alpha);
-    VectorChan src(color,alpha);
+    Pixel dest(color,alpha);
+    Pixel src(color,alpha);
     GENERIC_IMAGE_DECL_END
 
     width = point_opP->scanline_width;

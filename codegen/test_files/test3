@@ -1,11 +1,11 @@
 GENERIC_IMAGE_DECL_BEGIN
 int i;
 float f;
-Chan a; 
-VectorChan d(color,alpha,has_alpha);
-VectorChan s(color,alpha,has_alpha);
-VectorChan s1(color,alpha), s2(color,alpha);
-VectorChan s3(color,alpha,has_alpha); /*a comment*/
+Channel a; 
+Pixel d(color,alpha,has_alpha);
+Pixel s(color,alpha,has_alpha);
+Pixel s1(color,alpha), s2(color,alpha);
+Pixel s3(color,alpha,has_alpha); /*a comment*/
 
 GENERIC_IMAGE_DECL_END
 

@@ -3,11 +3,11 @@
 GENERIC_IMAGE_DECL_BEGIN
 int i;
 float f;
-Chan a; 
-VectorChan d(color,alpha);
-VectorChan s(color,alpha);
-VectorChan s1(color,alpha), s2(color,alpha);
-VectorChan s3(color,alpha); /*a comment*/
+Channel a; 
+Pixel d(color,alpha);
+Pixel s(color,alpha);
+Pixel s1(color,alpha), s2(color,alpha);
+Pixel s3(color,alpha); /*a comment*/
 
 GENERIC_IMAGE_DECL_END
 
@@ -24,15 +24,15 @@ d = s1 * s2;
 GENERIC_IMAGE_BLOCK_END
 
 
-/* d = CHAN_CLAMP(s1 + s2); */
+/* d = CHANNEL_CLAMP(s1 + s2); */
 GENERIC_IMAGE_BLOCK_BEGIN
-d = CHAN_CLAMP(s1 + s2);
+d = CHANNEL_CLAMP(s1 + s2);
 GENERIC_IMAGE_BLOCK_END
 
 
-/* d = CHAN_CLAMP (5 *s); */
+/* d = CHANNEL_CLAMP (5 *s); */
 GENERIC_IMAGE_BLOCK_BEGIN
-d = CHAN_CLAMP (5 *s);
+d = CHANNEL_CLAMP (5 *s);
 GENERIC_IMAGE_BLOCK_END
 
 /* d = (s1 + s2 + s3)/3; */
@@ -53,9 +53,9 @@ d = .333 * (s1 + s2 + s3);
 GENERIC_IMAGE_BLOCK_END
 
 
-/* d = CHAN_CLAMP(s1 * s2 + s3); */
+/* d = CHANNEL_CLAMP(s1 * s2 + s3); */
 GENERIC_IMAGE_BLOCK_BEGIN
-d = CHAN_CLAMP(s1 * s2 + s3);
+d = CHANNEL_CLAMP(s1 * s2 + s3);
 GENERIC_IMAGE_BLOCK_END
 
 
@@ -71,9 +71,9 @@ d = MAX(s1, s2);
 GENERIC_IMAGE_BLOCK_END
 
 
-/* d = CHAN_CLAMP(s1 - s2) */;
+/* d = CHANNEL_CLAMP(s1 - s2) */;
 GENERIC_IMAGE_BLOCK_BEGIN
-d = CHAN_CLAMP(s1 - s2);
+d = CHANNEL_CLAMP(s1 - s2);
 GENERIC_IMAGE_BLOCK_END
 
 
@@ -90,11 +90,11 @@ GENERIC_IMAGE_BLOCK_END
 
 
 /*
-d_color = CHAN_CLAMP(s1_color + s2_color);
+d_color = CHANNEL_CLAMP(s1_color + s2_color);
 d_alpha = s1_alpha;
 */
 GENERIC_IMAGE_BLOCK_BEGIN
-d_color = CHAN_CLAMP(s1_color + s2_color);
+d_color = CHANNEL_CLAMP(s1_color + s2_color);
 d_alpha = WP;
 GENERIC_IMAGE_BLOCK_END
 

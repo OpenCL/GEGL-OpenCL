@@ -83,9 +83,9 @@ class Gegl:Screen:Op from Gegl:Dual:Src:Op {
        int src1_has_alpha; 
        int src2_has_alpha; 
 
-       Chan dest;
-       Chan src1;
-       Chan src2;
+       Channel dest;
+       Channel src1;
+       Channel src2;
 
        dest = WP - ((WP - src1) * (WP - src2));
 
@@ -111,9 +111,9 @@ class Gegl:Screen:Op from Gegl:Dual:Src:Op {
     GENERIC_IMAGE_DECL_BEGIN
     int width ;
 
-    VectorChan dest(color,alpha,has_alpha);
-    VectorChan src1(color,alpha,has_alpha);
-    VectorChan src2(color,alpha,has_alpha);
+    Pixel dest(color,alpha,has_alpha);
+    Pixel src1(color,alpha,has_alpha);
+    Pixel src2(color,alpha,has_alpha);
     GENERIC_IMAGE_DECL_END
 
     dest_has_alpha = 

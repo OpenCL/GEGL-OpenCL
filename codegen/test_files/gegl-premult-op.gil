@@ -43,7 +43,7 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
               GeglImageBuffer *dest,
               GeglImageBuffer *src,
               GeglRect *dest_rect,
-             GeglRect *src_rect) 
+              GeglRect *src_rect) 
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -59,13 +59,14 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
      gboolean has_alpha = gegl_color_model_has_alpha(cm);
       
      if(has_alpha)
-       point_op_class->scanline_func = gegl_premult_op_RGBA_FLOAT;
+       point_op_class->scanline_func = 
+         gegl_premult_op_scanline_COLORSPACE_DATATYPE;
      else
        {
          g_warning("GeglPremultOp: dest has no alpha channel\n");
          return FALSE;
        } 
-    }
+   }
 
     return TRUE;
   }
@@ -78,41 +79,21 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
     PARENT_HANDLER (object)
   }
 
+  GENERIC_IMAGE_PROGRAM colormodels_file
   private 
   void
-  RGBA_FLOAT (GeglPointOp *point_op)
+  scanline_COLORSPACE_DATATYPE (GeglPointOp *point_op)
+  GENERIC_IMAGE_CODEGEN_BEGIN
   {
-     /*
-     Whats the algorithm for this code?       
-     {
-       Chan dest;
-       Chan src;
-
-         if (src_a == 0.0)
-          {
-            dest = ZERO;
-           }
-         else if (src_a == WP);
-          {
-             dest = src;
-          }
-         else
-          {
-             dest = src_a * src;
-          }
-        dest_a = src_a;
-      }
-      */
-
     GeglPointOpPrivate *point_opP = 
         (GeglPointOpPrivate *)(point_op->_priv); 
-    GENERIC_IMAGE_DECL_BEGIN
-    int width;
-    VectorChan dest(color,alpha);
-    VectorChan src(color,alpha);
-    GENERIC_IMAGE_DECL_END
 
-    width = point_opP->scanline_width;
+    GENERIC_IMAGE_DECL_BEGIN
+    Pixel dest(color,alpha);
+    Pixel src(color,alpha);
+    GENERIC_IMAGE_DECL_END
+    gint width = point_opP->scanline_width;
+
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
                       (guchar**)dest_data);
@@ -120,29 +101,31 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
                       point_opP->iterators[1],
                       (guchar**)src_data);
 
-
     GENERIC_IMAGE_IMAGE_DATA_INIT 
 
-    GENERIC_IMAGE_BLOCK_BEGIN
     while (width--)
-	{
-         if (src_alpha == ZERO)
+      {
+        GENERIC_IMAGE_BLOCK_BEGIN
+
+        if (src_alpha == ZERO)
           {
             dest_color = ZERO;
           }
-         else if (src_alpha == WP)
+        else if (src_alpha == WP)
           {
             dest_color = src_color;
           }
-         else
+        else
           {
             dest_color = src_alpha * src_color;
           }
-
         dest_alpha = src_alpha;
+
         dX(dest,1);
         dX(src,1);  
+
+        GENERIC_IMAGE_BLOCK_END
       }
-   GENERIC_IMAGE_BLOCK_END
   }
+  GENERIC_IMAGE_CODEGEN_END
 }

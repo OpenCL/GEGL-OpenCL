@@ -2,9 +2,9 @@
 /* Another test file */
 
 GENERIC_IMAGE_DECL_BEGIN
-VectorChan ca(color,alpha);
-VectorChan c(color);
-Chan b;
+Pixel ca(color,alpha);
+Pixel c(color);
+Channel b;
 int i;
 float f; 
 GENERIC_IMAGE_DECL_END

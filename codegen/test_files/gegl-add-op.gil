@@ -16,6 +16,7 @@
 #include <stdio.h>
 %}
 
+
 class Gegl:Add:Op from Gegl:Dual:Src:Op {
 
   public 
@@ -43,8 +44,8 @@ class Gegl:Add:Op from Gegl:Dual:Src:Op {
   protected 
   gboolean 
   constructor(self, 
-               GeglImageBuffer *dest,
-                    GeglImageBuffer *src1,
+              GeglImageBuffer *dest,
+              GeglImageBuffer *src1,
               GeglImageBuffer *src2,
               GeglRect *dest_rect,
               GeglRect *src1_rect,
@@ -64,63 +65,40 @@ class Gegl:Add:Op from Gegl:Dual:Src:Op {
       return FALSE;
 
     {
-      point_op_class->scanline_func = gegl_add_op_RGB_FLOAT;        
+      /* codegen preprocessor puts in "switch" on color_models file  */ 
+
+      point_op_class->scanline_func = 
+        gegl_add_op_scanline_COLORSPACE_DATATYPE;        
     }
 
     return TRUE;
   }
 
+  GENERIC_IMAGE_PROGRAM colormodels_file
   private 
   void
-  RGB_FLOAT (GeglPointOp *point_op)
+  scanline_COLORSPACE_DATATYPE (GeglPointOp *point_op)
+  GENERIC_IMAGE_CODEGEN_BEGIN
   {
-    /*
-      Whats the algorithm for this code?       
-     
-     {
-       int dest_has_alpha; 
-       int src1_has_alpha; 
-       int src2_has_alpha; 
-
-       Chan dest;
-       Chan src1;
-       Chan src2;
-
-       dest = CHAN_CLAMP(src1 + src2);
-       if (dest_has_alpha)
-         {
-           if (src1_has_alpha && src2_has_alpha)
-             dest_a = CHAN_CLAMP (src1_a + src2_a);
-           else if (src1_has_alpha)
-             dest_a = WP;
-           else if (src2_has_alpha)
-             dest_a = WP; 
-         } 
-      }
-
-    */ 
     GeglPointOpPrivate *point_opP = 
         (GeglPointOpPrivate *)(point_op->_priv); 
     GeglDualSrcOp *dual_src_op = GEGL_DUAL_SRC_OP(point_op); 
     GeglDualSrcOpPrivate *dual_src_opP = 
         (GeglDualSrcOpPrivate *)(dual_src_op->_priv); 
 
-
-
     GENERIC_IMAGE_DECL_BEGIN
-    VectorChan dest(color,alpha,has_alpha);
-    VectorChan src1(color,alpha,has_alpha);
-    VectorChan src2(color,alpha,has_alpha);
-    GENERIC_IMAGE_DECL_END 
+    Pixel dest(color,alpha,has_alpha);
+    Pixel src1(color,alpha,has_alpha);
+    Pixel src2(color,alpha,has_alpha);
+    GENERIC_IMAGE_DECL_END
+    gint width = point_opP->scanline_width;
 
-    int width = point_opP->scanline_width;
-    
-    dest_has_alpha = 
-       gegl_color_model_has_alpha(dual_src_opP->dest_cm); 
-    src1_has_alpha = 
-       gegl_color_model_has_alpha(dual_src_opP->src1_cm); 
-    src2_has_alpha = 
-       gegl_color_model_has_alpha(dual_src_opP->src2_cm); 
+    dest_has_alpha = gegl_color_model_has_alpha(
+                       dual_src_opP->dest_cm); 
+    src1_has_alpha = gegl_color_model_has_alpha(
+                       dual_src_opP->src1_cm); 
+    src2_has_alpha = gegl_color_model_has_alpha(
+                       dual_src_opP->src2_cm); 
 
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
@@ -133,34 +111,34 @@ class Gegl:Add:Op from Gegl:Dual:Src:Op {
                       (guchar**)src2_data); 
     
     GENERIC_IMAGE_IMAGE_DATA_INIT
-
+      
     while (width--)
       {
-      GENERIC_IMAGE_BLOCK_BEGIN 
+        GENERIC_IMAGE_BLOCK_BEGIN  
 
-      dest_color = src1_color + src2_color;
-
-      if (dest_has_alpha)
- 	{
-	if (src1_has_alpha && src2_has_alpha)
-	  {
-	  dest_alpha = src1_alpha + src2_alpha;
-	  } 
-	else if (src1_has_alpha)
-	  {
-	  dest_alpha = WP;
-	  }
-	else if (src2_has_alpha)
-	  {
-	  dest_alpha = WP; 
-	  } 
- 	}
-      
-     dX(dest,1);
-     dX(src1,1);
-     dX(src2,1);  
-
-     GENERIC_IMAGE_BLOCK_END                
-    }
+        dest = CHANNEL_CLAMP(src1 + src2);
+        if (dest_has_alpha)
+          {
+            if (src1_has_alpha && src2_has_alpha)
+              {
+                dest_alpha = CHANNEL_CLAMP (src1_alpha + src2_alpha);
+              }
+            else if (src1_has_alpha)
+              {
+                dest_alpha = WP;
+              }
+            else if (src2_has_alpha)
+              {
+                dest_alpha = WP;
+              }
+          }
+        
+        dX(dest,1);
+        dX(src1,1);
+        dX(src2,1);
+ 
+        GENERIC_IMAGE_BLOCK_BEGIN  
+      }               
   }
+  GENERIC_IMAGE_CODEGEN_END
 }

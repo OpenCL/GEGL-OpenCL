@@ -43,7 +43,7 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
               GeglImageBuffer *dest,
               GeglImageBuffer *src,
               GeglRect *dest_rect,
-             GeglRect *src_rect) 
+              GeglRect *src_rect) 
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -59,7 +59,8 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
      gboolean has_alpha = gegl_color_model_has_alpha(cm);
       
      if(has_alpha)
-       point_op_class->scanline_func = gegl_unpremult_op_RGBA_FLOAT;
+       point_op_class->scanline_func = 
+         gegl_unpremult_op_scanline_COLORSPACE_DATATYPE;
      else
        {
          g_warning("GeglPremultOp: dest has no alpha channel\n");
@@ -78,39 +79,21 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
     PARENT_HANDLER (object)
   }
 
+  GENERIC_IMAGE_PROGRAM colormodels_file
   private 
   void
-  RGBA_FLOAT (GeglPointOp *point_op)
+  scanline_COLORSPACE_DATATYPE (GeglPointOp *point_op)
+  GENERIC_IMAGE_CODEGEN_BEGIN
   {
-     /*
-     Whats the algorithm for this code?       
-     {
-       Chan dest;
-       Chan src;
-
-       if (src_a == CHAN_ZERO || src_a == WP)
-         {
-            dest = src;
-         }
-        else
-         {
-            dest = src / src_a;
-          }
-       dest_a = src_a; 
-      }
-      */
-
     GeglPointOpPrivate *point_opP = 
         (GeglPointOpPrivate *)(point_op->_priv); 
 
-
     GENERIC_IMAGE_DECL_BEGIN
-    int width;
-    VectorChan dest(color,alpha);
-    VectorChan src(color,alpha);
+    Pixel dest(color,alpha);
+    Pixel src(color,alpha);
     GENERIC_IMAGE_DECL_END
 
-    width = point_opP->scanline_width;
+    gint width = point_opP->scanline_width;
 
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
@@ -121,24 +104,25 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
 
     GENERIC_IMAGE_IMAGE_DATA_INIT 
 
-    GENERIC_IMAGE_BLOCK_BEGIN
     while (width--)
       {
-       if(src_alpha == ZERO || src_alpha == WP)
-         {
-           dest_color =  src_color;
-         }
+        GENERIC_IMAGE_BLOCK_BEGIN
+
+        if(src_alpha == ZERO || src_alpha == WP)
+          {
+            dest_color =  src_color;
+          }
         else
-         {
-           dest_color =  src_color / src_alpha;
-         }
+          {
+            dest_color =  src_color / src_alpha;
+          }
 	dest_alpha = src_alpha;
 	
 	dX(dest,1);
 	dX(src,1); 
+
+        GENERIC_IMAGE_BLOCK_END;
       }
-
-    GENERIC_IMAGE_BLOCK_END;
-
   }
+  GENERIC_IMAGE_CODEGEN_END
 }

@@ -44,25 +44,26 @@ CLASS="TOC"
 <dl 
 >
 <dt>
-<b>Gegl Chan Math</b></dt>
+<b>Generic Channel Math</b></dt>
 
 <dt>
-<a href="#Chan Type">Chan Type</a></dt>
+<a href="#Channel Type">Channel Type</a></dt>
 
 <dt>
-<a href="#ChanMacros">Chan Macros, Functions</a></dt>
+<a href="#ChannelMacros">Channel Macros, Functions</a></dt>
 
 <dt>
-<a href="#ChannelExpressions">Chan Expressions, Rewrite Rules</a></dt>
+<a href="#ChannelnelExpressions">Channel Expressions, Rewrite Rules</a></dt>
 
 <dt>
 <a href="#Code Examples">Code Examples</a></dt>
 
 <dt>
-<a href="#Vector Space Structure of Chans">Vector Space Structure of Chans</a></dt>
+<a href="#Vector Space Structure of Channels">Vector Space Structure of
+Channels</a></dt>
 
 <dt>
-<a href="#VectorChan Type">VectorChan Type</a></dt>
+<a href="#Pixel Type">Pixel Type</a></dt>
 
 <br>&nbsp;
 <dt>
@@ -77,50 +78,56 @@ CLASS="TOC"
 CLASS="SECT1"
 >
 <h1 CLASS="SECT1">
-<a NAME="Chan Type"></a><font size=+2>Chan Type</font></h1>
+<a NAME="Channel Type"></a><font size=+2>Channel Type</font></h1>
 First, every colormodel has a channel&nbsp; math data type defined, called
-here <b><tt>Chan </tt></b>for short.&nbsp; For regular 8bit unsigned chars
-<b><tt>Chan
-</tt></b>would
-just be <b><tt>uint8</tt></b> as usual,&nbsp; and for floating point channel
-images it would be <b><tt>float</tt></b>. This channel math data type has
-a <b><tt>MIN_CHAN, MAX_CHAN </tt></b>which are the max and min values the
-data type can obtain. These are not to be confused with the colormodel
-white point interval, <b><tt>[0,WP]</tt></b>, which characterises a "black"
-to "white" range. We require that <b><tt>[0,WP]</tt></b> be contained within
-<b><tt>[MIN_CHAN,
-MAX_CHAN] </tt></b>though.
+here <b><tt>Channel </tt></b>for short.&nbsp; For regular 8bit unsigned
+chars
+<b><tt>Channel
+</tt></b>would just be <b><tt>uint8</tt></b> as usual,&nbsp;
+and for floating point channel images it would be <b><tt>float</tt></b>.
+This channel math data type has a <b><tt>MIN_CHANNEL</tt></b> and<b><tt>
+MAX_CHANNEL </tt></b>which are the max and min values the data type can
+obtain. These are not to be confused with the colormodel white point interval,
+<b><tt>[0,WP]</tt></b>,
+which characterises a "black" to "white" range. We require that <b><tt>[0,WP]</tt></b>
+be contained within
+<b><tt>[MIN_CHANNEL, MAX_CHANNEL] </tt></b>though.
 <p>Here are some important channel data type expressions involved with
 generic coding:
-<p><b><tt>Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt></b>channel
-data&nbsp; in <b><tt>[MIN_CHAN, MAX_CHAN]</tt></b>
-<br><b><tt>FloatChan&nbsp;&nbsp;&nbsp;&nbsp; </tt></b>float channel data
-in<b><tt> [MIN_CHAN, MAX_CHAN]</tt></b>
-<p>In addition we will have occasion to refer to these:
-<p><b><tt>Chan0W&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt></b>channel
+<p><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt></b>channel
+data&nbsp; in <b><tt>[MIN_CHANNEL, MAX_CHANNEL]</tt></b>
+<br><b><tt>FloatChannel&nbsp;&nbsp;&nbsp; </tt></b>float channel data in<b><tt>
+[MIN_CHANNEL, MAX_CHANNEL]</tt></b>
+<p>In addition we will have occasion to refer to these restrictions of
+the above:
+<p><b><tt>Channel0W&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt></b>channel
 data in <b><tt>[0, WP]</tt></b>
-<br><b><tt>FloatChan0W&nbsp;&nbsp; </tt></b>float channel data in <b><tt>[0,
+<br><b><tt>FloatChannel0W&nbsp;&nbsp; </tt></b>float channel data in <b><tt>[0,
 WP]</tt></b>
 <h4>
 <u>examples:</u></h4>
 <b>1) <tt>uint8 </tt></b>with <b><tt>WP= 255</tt></b>:
-<blockquote><b><tt>[MIN_CHAN, MAX_CHAN] </tt></b>is<b><tt> [0,255]</tt></b>
-<br><b><tt>Chan </tt></b>is integer channel data in <b><tt>[0, 255]</tt></b>
-<br><b><tt>FloatChan </tt></b>is float channel data in <b><tt>[0.0, 255.0]</tt></b>
-<br><b><tt>Chan0W </tt></b>is same as <b><tt>Chan</tt></b>
-<br><b><tt>FloatChan0W </tt></b>is same as <b><tt>FloatChan</tt></b></blockquote>
+<blockquote><b><tt>[MIN_CHANNEL, MAX_CHANNEL] </tt></b>is<b><tt> [0,255]</tt></b>
+<br><b><tt>Channel </tt></b>is integer channel data in <b><tt>[0, 255]</tt></b>
+<br><b><tt>FloatChannel </tt></b>is float channel data in <b><tt>[0.0,
+255.0]</tt></b>
+<br><b><tt>Channel0W </tt></b>is same as <b><tt>Channel</tt></b>
+<br><b><tt>FloatChannel0W </tt></b>is same as <b><tt>FloatChannel</tt></b></blockquote>
 <b>2)</b> <b><tt>uint16</tt></b> with <b><tt>WP= 4095</tt></b>:
-<blockquote><b><tt>[MIN_CHAN, MAX_CHAN] </tt></b>is<b><tt> [0,65535]</tt></b>
-<br><b><tt>Chan </tt></b>is integer channel data in <b><tt>[0, 65535]</tt></b>
-<br><b><tt>FloatChan </tt></b>is float channel data in <b><tt>[0.0, 65535.0]</tt></b>
-<br><b><tt>Chan0W </tt></b>is channel data in<b><tt> [0, 4095]</tt></b>
-<br><b><tt>FloatChan0W </tt></b>is float channel data in <b><tt>[0.0, 4095.0]</tt></b></blockquote>
+<blockquote><b><tt>[MIN_CHANNEL, MAX_CHANNEL] </tt></b>is<b><tt> [0,65535]</tt></b>
+<br><b><tt>Channel </tt></b>is integer channel data in <b><tt>[0, 65535]</tt></b>
+<br><b><tt>FloatChannel </tt></b>is float channel data in <b><tt>[0.0,
+65535.0]</tt></b>
+<br><b><tt>Channel0W </tt></b>is channel data in<b><tt> [0, 4095]</tt></b>
+<br><b><tt>FloatChannel0W </tt></b>is float channel data in <b><tt>[0.0,
+4095.0]</tt></b></blockquote>
 <b>3)<tt> float </tt></b>with <b><tt>WP = 1.0</tt></b>:
-<blockquote><tt><b>[MIN_CHAN, MAX_CHAN]</b> </tt>is<tt> <b>[FLT_MIN, FLT_MAX]</b></tt>
-<br><b><tt>Chan </tt></b>is float channel data in <b><tt>[FLT_MIN, FLT_MAX]</tt></b>
-<br><b><tt>FloatChan </tt></b>is same as <b><tt>Chan</tt></b>
-<br><b><tt>Chan0W </tt></b>is float channel data in<b><tt> [0.0, 1.0]</tt></b>
-<br><b><tt>FloatChan0W </tt></b>is same as <b><tt>Chan0W</tt></b></blockquote>
+<blockquote><tt><b>[MIN_CHANNEL, MAX_CHANNEL]</b> </tt>is<tt> <b>[FLT_MIN,
+FLT_MAX]</b></tt>
+<br><b><tt>Channel </tt></b>is float channel data in <b><tt>[FLT_MIN, FLT_MAX]</tt></b>
+<br><b><tt>FloatChannel </tt></b>is same as <b><tt>Channel</tt></b>
+<br><b><tt>Channel0W </tt></b>is float channel data in<b><tt> [0.0, 1.0]</tt></b>
+<br><b><tt>FloatChannel0W </tt></b>is same as <b><tt>Channel0W</tt></b></blockquote>
 Note: Perhaps we want to consider spaces with BlackPoint not 0 as well
 at some point.</div>
 
@@ -129,63 +136,66 @@ CLASS="SECT1"
 >
 <hr>
 <h1 CLASS="SECT1">
-<a NAME="ChanMacros"></a><font size=+2>Chan Macros, Functions</font></h1>
+<a NAME="ChannelMacros"></a><font size=+2>Channel Macros, Functions</font></h1>
 We assume there is a way to "multiply" channel math data types:
-<p><b><tt>CHAN_MULT: Chan x Chan -> Chan</tt></b>
+<p><b><tt>CHANNEL_MULT: Channel x Channel -> Channel</tt></b>
 <p>which satisfies the following: If <b><tt>x</tt></b> and&nbsp; <b><tt>y
 </tt></b>are
-<b><tt>Chan0W</tt></b>,
-then so is <b><tt>CHAN_MULT(x,y) </tt></b>and&nbsp; <b><tt>CHAN_MULT(WP,
+<b><tt>Channel0W</tt></b>,
+then so is <b><tt>CHANNEL_MULT(x,y) </tt></b>and&nbsp; <b><tt>CHANNEL_MULT(WP,
 WP) = WP</tt></b>.
-<p>Also we require a WhitePoint normalization factor, which is a float:
+<p>Also we require a WhitePoint normalization factor, which is a <b><tt>float</tt></b>:
 <p><b><tt>WP_NORM = 1.0/(float)WP</tt></b>
-<p>Similar to the white point <b><tt>Chan</tt></b> value <b><tt>WP</tt></b>
-we denote the <b><tt>Chan</tt></b> zero element by <b><tt>ZERO</tt></b>.
-<p>Also we require a way to "round" FloatChan to Chan values:
-<p><b><tt>ROUND: FloatChan -> Chan</tt></b>
+<p>Similar to the white point <b><tt>Channel</tt></b> value <b><tt>WP</tt></b>
+we denote the <b><tt>Channel</tt></b> zero element by <b><tt>ZERO</tt></b>.
+<p>Also we require a way to "round" <b><tt>FloatChannel </tt></b>to <b><tt>Channel
+</tt></b>values:
+<p><b><tt>CHANNEL_ROUND: FloatChannel -> Channel</tt></b>
 <p>We require a way to "clamp" values to the white point interval <b><tt>[0,WP]</tt></b>:
-<p><b><tt>WP_CLAMP: Chan -> Chan0W</tt></b>
-<br><b><tt>WP_CLAMP: FloatChan ->&nbsp; FloatChan0W</tt></b>
-<p><b><tt>WP_CLAMP: int, uint -> Chan0W</tt></b>
-<br><b><tt>WP_CLAMP: float ->FloatChan0W</tt></b>
+<p><b><tt>WP_CLAMP: Channel -> Channel0W</tt></b>
+<br><b><tt>WP_CLAMP: FloatChannel ->&nbsp; FloatChannel0W</tt></b>
+<p><b><tt>WP_CLAMP: int, uint -> Channel0W</tt></b>
+<br><b><tt>WP_CLAMP: float ->FloatChannel0W</tt></b>
 <p>Finally we also need a way to "clamp" values to the channel interval
-<b><tt>[ChanMin,
-ChanMax]</tt></b>:
-<p><b><tt>CHAN_CLAMP: value -> [ChanMin, ChanMax]</tt></b>
-<p>where value could be any type: int, uint, float, etc. Specifically we
-get this:
-<p><b><tt>CHAN_CLAMP: int,uint -> Chan</tt></b>
-<br><b><tt>CHAN_CLAMP: float -> FloatChan</tt></b>
-<p><b><tt>Chan </tt></b>values are obviously already clamped like this,
-but this is for use when "clamping" another data type down to the <b><tt>Chan
+<b><tt>[MIN_CHANNEL,
+MAX_CHANNEL]</tt></b>:
+<p><b><tt>CHANNEL_CLAMP: value -> [MIN_CHANNEL, MAX_CHANNEL]</tt></b>
+<p>where value could be any type: <b><tt>int</tt></b>, <b><tt>uint</tt></b>,
+<b><tt>float</tt></b>,
+etc. Specifically we get this:
+<p><b><tt>CHANNEL_CLAMP: int,uint -> Channel</tt></b>
+<br><b><tt>CHANNEL_CLAMP: float -> FloatChannel</tt></b>
+<p><b><tt>Channel </tt></b>values are obviously already clamped like this,
+but this is for use when "clamping" another data type down to the <b><tt>Channel
 </tt></b>or
-<b><tt>FloatChan
+<b><tt>FloatChannel
 </tt></b>range.
 <p>note: It may be better to introduce "high" and "low" clamp versions
 of the above to reduce the operations.
 <h4>
 <u>examples:</u></h4>
 <b>1) <tt>uint8</tt></b> with <b><tt>WP = 255</tt></b>:
-<blockquote><b><tt>CHAN_MULT</tt></b> <b><tt>(x,y)&nbsp;&nbsp;&nbsp; INT_MULT(a,b,t)&nbsp;
-((t) = (a) * (b) + 0x80, \</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-((((t) >> 8) + (t)) >> 8)</tt></b>
-<br><b><tt>WP_NORM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<blockquote><b><tt>CHANNEL_MULT</tt></b> <b><tt>(x,y)&nbsp;&nbsp;&nbsp;
+INT_MULT8(x,y,t)</tt></b>
+<br><b><tt>WP_NORM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 1/255.0</tt></b>
-<br><b><tt>ROUND (x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-(int)((x) + .5)</tt></b>
-<br><b><tt>WP_CLAMP (x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CLAMP(x, 0,
-255)</tt></b>
-<br><b><tt>CHAN_CLAMP (x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CLAMP(x, 0, 255)</tt></b></blockquote>
-<b>2)</b> <b><tt>float </tt></b>with <b><tt>WP = 1.0</tt></b>:
-<blockquote><b><tt>CHAN_MULT (x,y)&nbsp;&nbsp;&nbsp; x * y</tt></b>
-<br><b><tt>WP_NORM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><b><tt>CHANNEL_ROUND (x)&nbsp;&nbsp;&nbsp;&nbsp; (int)((x) + .5)</tt></b>
+<br><b><tt>WP_CLAMP (x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CLAMP(x, 0, 255)</tt></b>
+<br><b><tt>CHANNEL_CLAMP (x)&nbsp;&nbsp;&nbsp;&nbsp; CLAMP(x, 0, 255)</tt></b></blockquote>
+where<b><tt> INT_MULT8(x,y,t) </tt></b>is defined in C by something like
+this:
+<p><b><tt>#define INT_MULT8(x,y,t)&nbsp;((t) = (a) * (b) + 0x80, ((((t)
+>> 8) + (t)) >> 8)</tt></b><b><tt></tt></b>
+<p><b>2)</b> <b><tt>float </tt></b>with <b><tt>WP = 1.0</tt></b>:
+<blockquote><b><tt>CHANNEL_MULT (x,y)&nbsp;&nbsp;&nbsp; x * y</tt></b>
+<br><b><tt>WP_NORM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 1.0</tt></b>
-<br><b><tt>ROUND (x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-x</tt></b>
-<br><b><tt>WP_CLAMP (x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CLAMP(x, 0.0,
-1.0)</tt></b>
-<br><b><tt>CHAN_CLAMP (x)&nbsp;&nbsp;&nbsp;&nbsp; x</tt></b></blockquote>
+<br><b><tt>CHANNEL_ROUND (x)&nbsp;&nbsp;&nbsp;&nbsp; x</tt></b>
+<br><b><tt>WP_CLAMP (x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CLAMP(x, 0.0, 1.0)</tt></b>
+<br><b><tt>CHANNEL_CLAMP (x)&nbsp;&nbsp;&nbsp;&nbsp; x</tt></b>
+<br>&nbsp;</blockquote>
 </div>
 
 <div 
@@ -193,67 +203,70 @@ CLASS="SECT1"
 >
 <hr>
 <h1 CLASS="SECT1">
-<a NAME="ChannelExpressions"></a><font size=+2>Channel Expressions , Rewrite
-Rules</font></h1>
+<a NAME="ChannelnelExpressions"></a><font size=+2>Channel Expressions ,
+Rewrite Rules</font></h1>
 
 <div CLASS="SECT1">We have multiplication, scalar multiplication, addition
-and assignment for channel (<b><tt>Chan</tt></b>) variables.
-<p>In the following <b><tt>x,y</tt></b> represent channel variables and
-<b><tt>a</tt></b>
-represents a scalar variable (<b><tt>float</tt></b>,
-<b><tt>int</tt></b>
-or <b><tt>uint</tt></b>). It makes sense to think of the channel variables
-as a sort of vector space (scalar multiplication and addition) with a product
-defined as well (multiplication) . This multiplication is the <b><tt>CHAN_MULT</tt></b>
-operation. The other kind of multiplication is just a scalar variable times
-a channel.
+and assignment for channel variables (both <b><tt>Channel </tt></b>and
+<b><tt>FloatChannel</tt></b>).
+<p>In the following <b><tt>x,y</tt></b> represent channel variables (either
+<b><tt>Channel</tt></b>
+or <b><tt>FloatChannel </tt></b>types) and
+<b><tt>a</tt></b> represents
+a scalar variable (<b><tt>float</tt></b>,
+<b><tt>int</tt></b> or <b><tt>uint</tt></b>).
+It makes sense to think of the channel variables as a sort of vector space
+(scalar multiplication and addition) with a product defined as well (multiplication)
+. This multiplication is the <b><tt>CHANNEL_MULT</tt></b> operation. The
+other kind of multiplication is just a scalar variable times a channel
+variable.
 <h1>
 <b><u><font size=+0>multiplication</font></u></b></h1>
-<b><tt>Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Chan * Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: CHAN_MULT (x,y)&nbsp;&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<br><b><tt>FloatChan &lt;- FloatChan * FloatChan&nbsp; rewrite rule: WP_NORM
-* x * y&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<br><b><tt>FloatChan &lt;- Chan * FloatChan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: WP_NORM * x * y&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<br><b><tt>Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Chan / Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: ((x&nbsp; * WP) / y)&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<br><b><tt>FloatChan &lt;- FloatChan / FloatChan&nbsp; rewrite rule: ((x&nbsp;
-* WP) / y)&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<br><b><tt>FloatChan &lt;- FloatChan / Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: ((x&nbsp; * WP) / y)&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<br><b><tt>FloatChan &lt;- Chan / FloatChan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: ((x&nbsp; * WP) / y)&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
+<b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Channel * Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: CHANNEL_MULT (x,y)&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<br><b><tt>FloatChannel &lt;- FloatChannel * FloatChannel&nbsp; rewrite
+rule: WP_NORM * x * y&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<br><b><tt>FloatChannel &lt;- Channel * FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: WP_NORM * x * y&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<br><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Channel / Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: ((x&nbsp; * WP) / y)&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<br><b><tt>FloatChannel &lt;- FloatChannel / FloatChannel&nbsp; rewrite
+rule: ((x&nbsp; * WP) / y)&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<br><b><tt>FloatChannel &lt;- FloatChannel / Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: ((x&nbsp; * WP) / y)&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<br><b><tt>FloatChannel &lt;- Channel / FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: ((x&nbsp; * WP) / y)&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
 <p><b><u>scalar multiplication</u></b>
-<p><b><tt>FloatChan &lt;- float * Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: a * x&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<br><b><tt>Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- int * Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: a * x&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<br><b><tt>Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- uint * Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: a * x&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<p><b><tt>FloatChan &lt;- float * FloatChan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: a * x&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<br><b><tt>FloatChan &lt;- int * FloatChan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: a * x&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<br><b><tt>FloatChan &lt;- uint * FloatChan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: a * x&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<p><b><tt>FloatChan &lt;- Chan / float&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: x / a&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<br><b><tt>Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Chan / uint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<p><b><tt>FloatChannel &lt;- float * Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: a * x&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<br><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- int * Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: a * x&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<br><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- uint * Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: a * x&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<p><b><tt>FloatChannel &lt;- float * FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: a * x&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<br><b><tt>FloatChannel &lt;- int * FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: a * x&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<br><b><tt>FloatChannel &lt;- uint * FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: a * x&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<p><b><tt>FloatChannel &lt;- Channel / float&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: x / a&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<br><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Channel / uint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 rewrite rule: x / a</tt></b>
-<br><b><tt>Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Chan / int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Channel / int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 rewrite rule: x / a</tt></b>
 <p><b><u>addition</u></b>
-<p><b><tt>Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Chan + Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: x + y&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<br><b><tt>FloatChan &lt;- FloatChan + FloatChan&nbsp; rewrite rule: x
-+ y&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
-<br><b><tt>FloatChan &lt;- Chan + FloatChan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: x + y&nbsp;&nbsp; needs possible CHAN_CLAMP</tt></b>
+<p><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Channel + Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: x + y&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<br><b><tt>FloatChannel &lt;- FloatChannel + FloatChannel&nbsp; rewrite
+rule: x + y&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+<br><b><tt>FloatChannel &lt;- Channel + FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: x + y&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
 <p><b><u>assignment</u></b>
-<p><b><tt>Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<p><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 rewrite rule: x = y</tt></b>
-<br><b><tt>Chan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = FloatChan&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: x = ROUND (y)</tt></b>
+<br><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rewrite rule: x = CHANNEL_ROUND (y)</tt></b>
 <br>&nbsp;</div>
 
 <div 
@@ -263,187 +276,223 @@ CLASS="SECT2"
 <h1 CLASS="SECT2">
 <a NAME="Code Examples"></a><font size=+2>Code Examples</font></h1>
 This section gives some very simple examples of the generic code and the
-re-written (generated) C- code. The generic code should make clear when
-a scalar multiplication (eg <b><tt>int * Chan</tt></b>) is meant and when
-a vector (<b><tt>Chan * Chan</tt></b>)&nbsp; multiplication is meant. Also
-<b><tt>CHAN_CLAMP</tt></b>s
-are actually specified in the generic code (ie by hand) to avoid having
-to insert them for each rewritten rule.&nbsp; For floating cases the <b><tt>CHAN_CLAMP
+re-written (generated) C code. The generic code should make clear when
+a scalar multiplication (eg <b><tt>int * Channel</tt></b>) is meant and
+when a vector (<b><tt>Channel * Channel</tt></b>)&nbsp; multiplication
+is meant. Also
+<b><tt>CHANNEL_CLAMP</tt></b>s are actually specified in
+the generic code (ie by hand) to avoid having to insert them for each rewritten
+rule automatically.&nbsp; This saves unnecessary clamps, as they are not
+always needed depending for each algorithm. For floating cases the <b><tt>CHANNEL_CLAMP
 </tt></b>has
-no effect and just falls out. The assignment rules in the last section
-make it possible to write integer channel values mixed with float values,
-and at the end if the result has become a <b><tt>FloatChan</tt></b>, then
-a <b><tt>ROUND</tt></b> will be required upon assignment.
+no effect and just becomes the identity. The assignment rules in the last
+section make it possible to write integer channel values mixed with float
+values, and at the end if the result has become a <b><tt>FloatChannel</tt></b>,
+then a <b><tt>ROUND</tt></b> will be required upon assignment to a <b><tt>Channel
+</tt></b>variable.
+Again in the float case the <b><tt>ROUND</tt></b> macro is just the identity.
+The examples below show the generic expression and then underneath two
+examples of the corresponding generated code.
 <div CLASS="SECT2">
 <h4>
 <u>examples:</u></h4>
 </div>
 
 <div CLASS="SECT2">
-<div CLASS="SECT2"><b><tt>1)</tt></b>
-<p><b><tt>{</tt></b>
-<br><b><tt>&nbsp; Chan s1, s2, d;</tt></b>
-<p><b><tt>&nbsp; /* generic */</tt></b></div>
-
-<div CLASS="SECT2"><b><tt>&nbsp; d = s1 * s2;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* Chan * Chan */</tt></b>
-<p><b><tt>&nbsp; /* a u8 version */</tt></b>
-<br><b><tt>&nbsp; d = INT_MULT(src1, src2);</tt></b>
-<p><b><tt>&nbsp; /* a float version */</tt></b>
-<br><b><tt>&nbsp; d = src1 * src2;</tt></b>
-<br><b><tt>}</tt></b>
-<p><b><tt>2)</tt></b>
-<br>&nbsp;
-<div CLASS="SECT2"><b><tt>{</tt></b>
-<br><b><tt>&nbsp; Chan s, d;</tt></b>
-<br><b><tt>&nbsp; int a = 5;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* a is a"scalar" variable */</tt></b>
-<p><b><tt>&nbsp; /* generic */</tt></b></div>
-
-<div CLASS="SECT2"><b><tt>&nbsp; d = CHAN_CLAMP(a * s);&nbsp; /* int *
-Chan */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* CHAN_CLAMP put in by hand */</tt></b>
-<p><b><tt>&nbsp; /* u8 version */</tt></b>
-<br><b><tt>&nbsp; d = CLAMP(a * s, 0, 255);</tt></b>
-<p><b><tt>&nbsp; /* float version */</tt></b>
-<br><b><tt>&nbsp; d = a * s;</tt></b>
-<br><b><tt>}</tt></b></div>
-</div>
-
-<div CLASS="SECT2">&nbsp;
-<br><b><tt>3)</tt></b>
-<br>&nbsp;
-<div CLASS="SECT2"><b><tt>{</tt></b>
-<br><b><tt>&nbsp; Chan d, s1, s2, s3;</tt></b>
-<p><b><tt>&nbsp; /* generic */</tt></b></div>
-
-<div CLASS="SECT2"><b><tt>&nbsp; d = (s1 + s2 + s3)/3;&nbsp;&nbsp; /* (Chan
-+ Chan + Chan)/3 */</tt></b>
-<p><b><tt>&nbsp; /* u8 version */</tt></b>
-<br><b><tt>&nbsp; d = (s1 + s2 + s3)/3;</tt></b>
-<p><b><tt>&nbsp; /* float version */</tt></b>
-<br><b><tt>&nbsp; d = (s1 + s2 + s3)/3;</tt></b>
-<br><b><tt>}</tt></b>
-<p><b><tt>4)</tt></b>
-<div CLASS="SECT2">&nbsp;
+<div CLASS="SECT2"><b><tt><font size=+1>1)</font></tt></b>
+<p><b><tt>/* generic version*/</tt></b>
 <br><b><tt>{</tt></b>
-<br><b><tt>&nbsp; Chan d, s1, s2, s;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* s a Chan, not a scalar! */</tt></b>
-<p><b><tt>&nbsp; /* generic */</tt></b></div>
+<br><b><tt>&nbsp; Channel s1,s2,d;</tt></b>
+<p><b><tt>&nbsp; d = s1 * s2;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/* Channel * Channel */</tt></b></div>
 
-<div CLASS="SECT2"><b><tt>&nbsp; d = s * s1 + (WP-s) * s2;&nbsp; /* Chan
-* Chan + Chan * Chan */</tt></b>
-<p><b><tt>&nbsp; /* u8 version */</tt></b>
-<br><b><tt>&nbsp; d = INT_MULT(s,s1) + INT_MULT(255-s, s2);</tt></b>
-<p><b><tt>&nbsp; /* float version */</tt></b>
-<br><b><tt>&nbsp; d = s * s1 + (1.0-s) * s2;</tt></b>
-<br><b><tt>}</tt></b></div>
-</div>
-</div>
-
-<p><br><b><tt>5)</tt></b>
-<div CLASS="SECT2">&nbsp;
+<div CLASS="SECT2"><b><tt>}</tt></b>
+<p><b><tt>/* u8 version after code generation */</tt></b>
 <br><b><tt>{</tt></b>
-<br><b><tt>&nbsp; Chan d, s1, s2, s3;</tt></b>
-<p><b><tt>&nbsp; /* generic */</tt></b></div>
-
-<div CLASS="SECT2"><b><tt>&nbsp; d = CHAN_CLAMP(s1 * s2 + s3);&nbsp;&nbsp;&nbsp;
-/* (Chan * Chan) + Chan */</tt></b>
-<p><b><tt>&nbsp; /* u8 version */</tt></b>
-<br><b><tt>&nbsp; d = CLAMP(INT_MULT(s1,s2) + s3, 0, 255);</tt></b>
-<p><b><tt>&nbsp; /* float version */</tt></b>
-<br><b><tt>&nbsp; d = s1 * s2 + s3;</tt></b>
+<br><b><tt>&nbsp; unsigned char s1,s2,d;</tt></b>
+<p><b><tt>&nbsp; d = INT_MULT8(s1, s2);</tt></b>
 <br><b><tt>}</tt></b>
-<p><b><tt>6)</tt></b>
-<br>&nbsp;</div>
-<b><tt>{</tt></b>
-<div CLASS="SECT2"><b><tt>&nbsp; Chan d, s1, s2, s3;</tt></b>
-<p><b><tt>&nbsp; /* generic */</tt></b></div>
+<p><b><tt>/* float version after code generation */</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp; float s1,s2,d;</tt></b>
+<p><b><tt>&nbsp; d = s1 * s2;</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt><font size=+1>2)</font></tt></b>
+<p><b><tt>/* generic version */</tt></b>
+<div CLASS="SECT2"><b><tt>{</tt></b>
+<br><b><tt>&nbsp; Channel s, d;</tt></b>
+<br><b><tt>&nbsp; int a = 5;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/* a is a "scalar" variable */</tt></b>
+<p><b><tt>&nbsp; d = CHANNEL_CLAMP(a * s);&nbsp;&nbsp; /* int * Channel
+*/</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/* note: CHANNEL_CLAMP in generic code */</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>/* u8 version after code generation */</tt></b>
+<br><b><tt>{</tt></b></div>
 
-<div CLASS="SECT2"><b><tt>&nbsp; d = .333 * (s1 + s2 + s3);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* float * (Chan + Chan + Chan) */</tt></b>
-<p><b><tt>&nbsp; /* u8 version */</tt></b>
-<br><b><tt>&nbsp; d = ROUND(.333 * (s1 + s2 + s3))&nbsp;&nbsp; /*FloatChan
-expression, will ROUND*/</tt></b>
-<p><b><tt>&nbsp; /* float version */</tt></b>
-<br><b><tt>&nbsp; d = .333 * (s1 + s2 + s3);</tt></b>
+<div CLASS="SECT2"><b><tt>&nbsp; unsigned char s, d;</tt></b>
+<br><b><tt>&nbsp; int a = 5;</tt></b>
+<p><b><tt>&nbsp; d = CLAMP(a * s, 0, 255);</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>/* float version after code generation */</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp; float s, d;</tt></b>
+<br><b><tt>&nbsp; int a = 5;</tt></b>
+<p><b><tt>&nbsp; d = a * s;</tt></b>
 <br><b><tt>}</tt></b></div>
 </div>
 
 <div CLASS="SECT2">&nbsp;
-<div CLASS="SECT2"><b><tt>7)</tt></b></div>
-<b><tt>{</tt></b>
-<div CLASS="SECT2"><b><tt>&nbsp; Chan d;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* assume d Chan is gray */</tt></b>
-<br><b><tt>&nbsp; GeglColor c;</tt></b>
-<p><b><tt>&nbsp; /* generic */</tt></b></div>
+<br><b><tt><font size=+1>3)</font></tt></b>
+<p><b><tt>/* generic version*/</tt></b>
+<div CLASS="SECT2"><b><tt>{</tt></b>
+<br><b><tt>&nbsp; Channel d, s1, s2, s3;</tt></b></div>
 
-<div CLASS="SECT2"><b><tt>&nbsp; d = c;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* need Chan = Color assignment rule ? */</tt></b>
-<p><b><tt>&nbsp; /* u8 version */</tt></b>
-<br><b><tt>&nbsp; d = (c->channel_values)[GRAY].u8;</tt></b>
-<p><b><tt>&nbsp; /* float version */</tt></b>
-<br><b><tt>&nbsp; d = (c->channel_values)[GRAY].f;</tt></b>
+<div CLASS="SECT2"><b><tt>&nbsp; d = (s1 + s2 + s3)/3;&nbsp;&nbsp; /* (Channel
++ Channel + Channel)/3 */</tt></b>
 <br><b><tt>}</tt></b>
+<p><b><tt>/* u8 version after code generation */</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp; unsigned char d, s1, s2, s3;</tt></b>
+<p><b><tt>&nbsp; d = (s1 + s2 + s3)/3;</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>/* float version after code generation */</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp; float d, s1, s2, s3;</tt></b>
+<p><b><tt>&nbsp; d = (s1 + s2 + s3)/3;</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt><font size=+1>4)</font></tt></b>
+<div CLASS="SECT2">&nbsp;
+<br><b><tt>/* generic version */</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp; Channel d, s1, s2, s;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/* s a Channel, not a scalar! */</tt></b></div>
+
+<div CLASS="SECT2"><b><tt>&nbsp; d = s * s1 + (WP-s) * s2;&nbsp;&nbsp;&nbsp;&nbsp;
+/* Channel * Channel + Channel * Channel */</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>/* u8 version after code generation*/</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp; unsigned char d, s1, s2, s;</tt></b>
+<p><b><tt>&nbsp; d = INT_MULT8(s,s1) + INT_MULT8(255-s, s2);</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>/* float version after code generation */</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp; float d, s1, s2, s;</tt></b>
+<p><b><tt>&nbsp; d = s * s1 + (1.0-s) * s2;</tt></b>
+<br><b><tt>}</tt></b></div>
+</div>
+</div>
+
+<p><br><b><tt><font size=+1>5)</font></tt></b>
+<div CLASS="SECT2">&nbsp;
+<br><b><tt>/* generic version */</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp; Channel d, s1, s2, s3;</tt></b></div>
+
+<div CLASS="SECT2"><b><tt>&nbsp; d = CHANNEL_CLAMP(s1 * s2 + s3);&nbsp;&nbsp;&nbsp;
+/* (Channel * Channel) + Channel */</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>/* u8 version after code generation*/</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp; unsigned char d, s1, s2, s3;</tt></b>
+<p><b><tt>&nbsp; d = CLAMP(INT_MULT8(s1,s2) + s3, 0, 255);</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>/* float version after code generation */</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp; float d, s1, s2, s3;</tt></b>
+<p><b><tt>&nbsp; d = s1 * s2 + s3;</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt><font size=+1>6)</font></tt></b>
+<p><b><tt>/* generic version */</tt></b></div>
+<b><tt>{</tt></b>
+<div CLASS="SECT2"><b><tt>&nbsp; Channel d, s1, s2, s3;</tt></b>
+<br><b><tt>&nbsp; float weight = .333;</tt></b></div>
+
+<div CLASS="SECT2"><b><tt>&nbsp; d = weight * (s1 + s2 + s3);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/* float * (Channel + Channel + Channel) */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/* FloatChannel expression, so will ROUND*/</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>/* u8 version after code generation*/</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp; unsigned char d, s1, s2, s3;</tt></b>
+<br><b><tt>&nbsp; float weight = .333;</tt></b>
+<p><b><tt>&nbsp; d = ROUND(weight * (s1 + s2 + s3));</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>/* float version after code generation */</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp; float d, s1, s2, s3;</tt></b>
+<br><b><tt>&nbsp; float weight = .333;</tt></b>
+<p><b><tt>&nbsp; d = weight * (s1 + s2 + s3);</tt></b>
+<br><b><tt>}</tt></b></div>
+</div>
+
+<div CLASS="SECT2">
+<div CLASS="SECT2">&nbsp;
 <p>
 <hr>
 <h1 CLASS="SECT2">
-<a NAME="Vector Space Structure of Chans"></a><font size=+2>Vector Space
-Structure of Chans</font></h1>
-Heres some more discussion of the vector space of the <b><tt>Chan</tt></b>
+<a NAME="Vector Space Structure of Channels"></a><font size=+2>Vector Space
+Structure of Channels</font></h1>
+Heres some more discussion of the vector space of the <b><tt>Channel</tt></b>
 data type:
 <p>As a quick review of vector spaces, if you have two vectors <b><tt>v1</tt></b>
 and <b><tt>v2</tt></b>, then the sum <b><tt>v1 + v2</tt></b>&nbsp; is also
-vector.&nbsp; If you multiply a vector <b><tt>v</tt></b> by a scalar&nbsp;
-<b><tt>c</tt></b> the result <b><tt>c*v</tt></b> is also a vector. If you
-are lucky there will be some type of vector multiplication defined for
-your vector space(like for matrices). You cannot add a vector <b><tt>v</tt></b>
-and a scalar <b><tt>c </tt></b>though. So <b><tt>v + c</tt></b> doesnt
-make sense.
-<p>For the <b><tt>Chan</tt></b> data type, we do have a vector space (channels
-are components of n-tuples that you can add and multiply by scalars), but
-we also have clipping and rounding operations due to data type restrictions.
+vector.&nbsp; If you multiply a vector <b><tt>v</tt></b> by a scalar <b><tt>c</tt></b>
+the result <b><tt>c*v</tt></b> is also a vector. If you are lucky there
+will be some type of vector multiplication defined for your vector space(like
+for matrices). You cannot add a vector <b><tt>v</tt></b> and a scalar <b><tt>c
+</tt></b>though.
+So <b><tt>v + c</tt></b> doesnt make sense.
+<p>For the <b><tt>Channel</tt></b> data type, we do have a vector space
+(channels are components of n-tuples that you can add and multiply by scalars),
+but we also have clipping and rounding operations due to data type restrictions.
 For example, <b><tt>uint8</tt></b>s certainly dont form a vector space
 by themselves (eg no additive inverse <b><tt>-v</tt></b> exists in the
-<b><tt>uint8</tt></b> data type space. ) . But the uint8 <b><tt>Chan</tt></b>
-type is embedded in some larger vector space, and so they act like them
-but with clipping and rounding restrictions.
-<p>The "vector multiplication" thats defined here is the <b><tt>CHAN_MULT.
-</tt></b>This is usually defined as some macro trickery to really just
-do this : If <b><tt>x, y</tt></b>&nbsp; are <b><tt>Chans</tt></b>&nbsp;
-then a <b><tt>Chan</tt></b> multiplication of&nbsp; these is just <b><tt>(x
-* y)/WP</tt></b>.&nbsp; Here <b><tt>WP</tt></b> is just the normalizing
-white point constant and the division is just regular division. That is
-one way to define <b><tt>CHAN_MULT</tt></b>: <b><tt>Chan x Chan -> Chan</tt></b>
-. There may be fancier and faster ways, like the
+<b><tt>uint8</tt></b>
+data type space. ) . But the uint8 <b><tt>Channel</tt></b> type is embedded
+in some larger vector space, and so they act like them but with clipping
+and rounding restrictions.
+<p>The "vector multiplication" thats defined here is the <b><tt>CHANNEL_MULT.
+</tt></b>This
+is usually defined as some macro trickery to really just do this : If <b><tt>x,
+y</tt></b>&nbsp; are <b><tt>Channels</tt></b>&nbsp; then a <b><tt>Channel</tt></b>
+multiplication of&nbsp; these is just <b><tt>(x * y)/WP</tt></b>.&nbsp;
+Here <b><tt>WP</tt></b> is just the normalizing white point constant and
+the division is just regular division. That is one way to define <b><tt>CHANNEL_MULT</tt></b>:
+<b><tt>Channel
+x Channel -> Channel</tt></b> . There may be fancier and faster ways, like
+the
 <b><tt>INT_MULT
-</tt></b>macros
-which use shifts instead of integer division but they are basically just
-a better version of<b><tt> (x * y)/WP</tt></b>.
-<p>All the usual math with ints, floats, uints and so on is now thought
-of as"scalar" math. In addition we have the math of <b><tt>Chan</tt></b>s
-and <b><tt>FloatChan</tt></b>s thrown in as well. (<b><tt>FloatChan</tt></b>s
-are basically a <b><tt>Chan</tt></b> with a float granularity, so they
-are vector type things as well.)
+</tt></b>macros which use shifts instead of integer
+division but they are basically just a better version of<b><tt> (x * y)/WP</tt></b>.
+<p>All the usual math with <b><tt>int</tt></b>s, <b><tt>float</tt></b>s,
+<b><tt>uint</tt></b>s
+and so on is now thought of as"scalar" math. In addition we have the math
+of <b><tt>Channel</tt></b>s and <b><tt>FloatChannel</tt></b>s thrown in
+as well. (<b><tt>FloatChannel</tt></b>s are basically a <b><tt>Channel</tt></b>
+with a float granularity, so they are vector type things as well.)
 <p><b><u>example:</u></b>
 <p><b><tt>int f, g, h;</tt></b>
-<br><b><tt>Chan u,v;</tt></b>
+<br><b><tt>Channel u,v;</tt></b>
 <p><b><tt>h = f * g;&nbsp;&nbsp;&nbsp; //regular C ints, a scalar = scalar
 * scalar operation.</tt></b>
-<p><b><tt>u = f * v;&nbsp;&nbsp;&nbsp; //a Chan = scalar * Chan, so a "vector"
-expression.</tt></b>
+<p><b><tt>u = f * v;&nbsp;&nbsp;&nbsp; //a Channel = scalar * Channel,
+so a "vector" expression.</tt></b>
 <p>So when you are constructing the generic algorithms...you would never
 do this:
 <p><b><u>example:</u></b>
 <p><b><tt>int f;</tt></b>
-<br><b><tt>Chan d, s;</tt></b>
+<br><b><tt>Channel d, s;</tt></b>
 <p><b><tt>d = s + f;&nbsp; //adding a vector and a scalar--not allowed.</tt></b>
 <p>But you might do this:
-<p><b><tt>d = s + f*WP&nbsp;&nbsp; //WP represents the Chan constant WP</tt></b>
+<p><b><tt>d = s + f*WP&nbsp;&nbsp; //WP represents the Channel constant
+WP</tt></b>
 <p>This makes perfect sense now, since here <b><tt>WP</tt></b> is a "vector",
 so <b><tt>f * WP</tt></b> is a "vector" as well. Now <b><tt>f *WP</tt></b>
-might take you out of the data type space,&nbsp; and thats where the <b><tt>CHAN_CLAMP</tt></b>s
+might take you out of the data type space,&nbsp; and thats where the <b><tt>CHANNEL_CLAMP</tt></b>s
 are needed. You have to always restrict your vector space back down to
 the channel data type.
 <br>&nbsp;
@@ -451,47 +500,46 @@ the channel data type.
 <div CLASS="SECT2">
 <hr>
 <h1 CLASS="SECT2">
-<a NAME="VectorChan Type"></a><font size=+2>VectorChan Type</font></h1>
-With the above <b><tt>Chan</tt></b> type, we can now define a vector of
-<b><tt>Chan</tt></b>s,
-which we call a <b><tt>VectorChan</tt></b>. <b><tt>VectorChan</tt></b>s
-will be used for the n-tuple that represents the color and possible alpha
+<a NAME="Pixel Type"></a><font size=+2>Pixel Type</font></h1>
+With the above <b><tt>Channel</tt></b> type, we can now define a vector
+of
+<b><tt>Channel</tt></b>s, which we call a <b><tt>Pixel</tt></b>. <b><tt>Pixel</tt></b>s
+will be used for the n-tuple that represents the color and (optional) alpha
 channel of pixel data. The number of color channels depends on the type
-of color model, and the <b><tt>Chan</tt></b> type of course is fixed by
-the color model's channel data type.
-<p>The mathematics of the <b><tt>VectorChan</tt></b> type follows from
-the math of the <b><tt>Chan</tt></b> type.&nbsp; <b><tt>VectorChan</tt></b>s
-have a dimension that is given by the number of components in the vector.&nbsp;
-Operations with <b><tt>VectorChan</tt></b>s of different dimension are
-not allowed. Multiplication of <b><tt>VectorChan</tt></b>s by scalars and
-multiplication of <b><tt>VectorChan</tt></b>s by <b><tt>Chan</tt></b>s
-is defined componentwise in the natural way. <b><tt>VectorChan</tt></b>
-vector multiplication (<b><tt>VectorChan</tt></b> * <b><tt>VectorChan</tt></b>
-) is also defined componentwise.
-<p>We use <b><tt>WP</tt></b> to denote the <b><tt>VectorChan</tt></b> whose
-components are all the <b><tt>Chan</tt></b> white point value. Note we
-use <b><tt>WP</tt></b> for the single <b><tt>Chan</tt></b> representing
+of color model, and the <b><tt>Channel</tt></b> type of course is fixed
+by the color model's channel data type.
+<p>The mathematics of the <b><tt>Pixel</tt></b> type follows from the math
+of the <b><tt>Channel</tt></b> type.&nbsp; <b><tt>Pixel</tt></b>s have
+a dimension that is given by the number of components in the vector.&nbsp;
+Operations with <b><tt>Pixel</tt></b>s of different dimension are not allowed.
+Multiplication of <b><tt>Pixel</tt></b>s by scalars and multiplication
+of <b><tt>Pixel</tt></b>s by <b><tt>Channel</tt></b>s is defined componentwise
+in the natural way. <b><tt>Pixel</tt></b> vector multiplication (<b><tt>Pixel</tt></b>
+* <b><tt>Pixel</tt></b> ) is also defined componentwise.
+<p>We use <b><tt>WP</tt></b> to denote the <b><tt>Pixel</tt></b> whose
+components are all the <b><tt>Channel</tt></b> white point value. Note
+we use <b><tt>WP</tt></b> for the single <b><tt>Channel</tt></b> representing
 the <b><tt>WP</tt></b> as well, with the meaning clear from the context.
 Likewise,
-<b><tt>ZERO</tt></b> will denote the <b><tt>VectorChan</tt></b>
-(or <b><tt>Chan</tt></b>) whose components are the zero
-<b><tt>Chan</tt></b>
-value.
+<b><tt>ZERO</tt></b> will denote the <b><tt>Pixel</tt></b> (or
+<b><tt>Channel</tt></b>)
+whose components are the zero
+<b><tt>Channel</tt></b> value.
 <p><b><tt><u>examples:</u></tt></b>
-<p>1) Multiplication <b><tt>Chan * VectorChan</tt></b>
-<p>If&nbsp; <b><tt>VectorChan d</tt></b>&nbsp; is given by
+<p>1) Multiplication <b><tt>Channel * Pixel</tt></b>
+<p>If&nbsp; <b><tt>Pixel d</tt></b>&nbsp; is given by
 <p><b><tt>d = [d_r, d_g, d_b]</tt></b>
-<p>and <b><tt>a</tt></b> is a <b><tt>Chan</tt></b> then
+<p>and <b><tt>a</tt></b> is a <b><tt>Channel</tt></b> then
 <p><b><tt>a * d = [a * d_r, a * d_g, a * d_b]</tt></b>
-<p>and each component is a <b><tt>Chan * Chan </tt></b>multiplication.
-<p>2) Multiplication <b><tt>VectorChan</tt> *</b> <b><tt>VectorChan</tt></b>
-<p>If <b><tt>VectorChan</tt></b>s <b><tt>d</tt></b> and <b><tt>s</tt></b>
-are given by
+<p>and each component is a <b><tt>Channel * Channel </tt></b>multiplication.
+<p>2) Multiplication <b><tt>Pixel</tt> *</b> <b><tt>Pixel</tt></b>
+<p>If <b><tt>Pixel</tt></b>s <b><tt>d</tt></b> and <b><tt>s</tt></b> are
+given by
 <p><b><tt>d = [d_r, d_g, d_b]</tt></b>
 <br><b><tt>s = [s_r, s_g, s_b]</tt></b>
 <p>Then
 <p><b><tt>d * s = [d_r * s_r, d_g * s_g, d_b * s_b]</tt></b>
-<p>and each component is a <b><tt>Chan * Chan</tt></b> multiplication.
+<p>and each component is a <b><tt>Channel * Channel</tt></b> multiplication.
 <br>&nbsp;</div>
 </div>
 </div>

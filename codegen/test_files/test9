@@ -2,28 +2,28 @@
 {
        GENERIC_IMAGE_DECL_BEGIN
  
-       Chan a ;
-       VectorChan s(color,alpha); 
-       VectorChan d(color,alpha), s1(color,alpha), s2(color,alpha), s3(color,alpha); 
-       VectorChan dest(color,alpha);
-       VectorChan src1(color,alpha);
-       VectorChan src2(color,alpha);
-       VectorChan c(color,alpha);
-       Chan g[4], h[2];
-       Chan f;
+       Channel a ;
+       Pixel s(color,alpha); 
+       Pixel d(color,alpha), s1(color,alpha), s2(color,alpha), s3(color,alpha); 
+       Pixel dest(color,alpha);
+       Pixel src1(color,alpha);
+       Pixel src2(color,alpha);
+       Pixel c(color,alpha);
+       Channel g[4], h[2];
+       Channel f;
        GENERIC_IMAGE_DECL_END
 
        GENERIC_IMAGE_BLOCK_BEGIN
 
              d = s1 * s2;
 
-              d = CHAN_CLAMP(5 * s);
+              d = CHANNEL_CLAMP(5 * s);
 
               d = (s1 + s2 + s3)/3;
 
               d = s * s1 + (WP-s) * s2;
 
-              d = CHAN_CLAMP(s1 * s2 + s3);
+              d = CHANNEL_CLAMP(s1 * s2 + s3);
 
               d = .333 * (s1 + s2 + s3); 
 
@@ -38,15 +38,15 @@
 
               dest = src1 * src2;
 
-              dest = CHAN_CLAMP(src1 - src2);
+              dest = CHANNEL_CLAMP(src1 - src2);
 
               dest = ABS(src1 - src2);
 
               dest = MIN(src1, src2);
 
-              dest = CHAN_CLAMP(src1 + src2);
+              dest = CHANNEL_CLAMP(src1 + src2);
 
-              dest_alpha = CHAN_CLAMP(src1_alpha + src2_alpha);
+              dest_alpha = CHANNEL_CLAMP(src1_alpha + src2_alpha);
 
               dest = dest_alpha * dest; 
 
