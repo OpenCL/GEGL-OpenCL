@@ -19,8 +19,7 @@
 
 EXTERN char *_WP_;   
 EXTERN char *_WP_NORM_;       
-EXTERN char *_ColorAlphaChan_;      
-EXTERN char *_ColorChan_;      
+EXTERN char *_VectorChan_;      
 EXTERN char *_Chan_;      
 EXTERN char *_FloatChan_;     	
 EXTERN char *_MIN_CHAN_;   
@@ -48,6 +47,10 @@ EXTERN char *_TIMES_VV_SUF_;
 
 EXTERN char *_EQUAL_CFC_PRE_;	
 EXTERN char *_EQUAL_CFC_SUF_;
+
+/* these are related to the color space */
+EXTERN int   _NUM_COLOR_CHAN_;
+EXTERN char *_NAME_COLOR_CHAN_;
 
 #undef  EXTERN
 

@@ -1,11 +1,11 @@
-gint dest_has_alpha; 
-        gint src1_has_alpha; 
-        gint src2_has_alpha;
-Chan dest;
-        Chan src1;
-        Chan src2;
+	gint dest_has_alpha; 
+	gint src1_has_alpha; 
+	gint src2_has_alpha;
+	VectorChan dest(_c_,_a_);
+	VectorChan src1(_c_,_a_);
+	VectorChan src2(_c_,_a_);
 
-        dest = MIN(src1, src2);
+        dest_c = MIN(src1_c, src2_c);
         if (dest_has_alpha)
           {
             if (src1_has_alpha && src2_has_alpha)
@@ -17,12 +17,11 @@ Chan dest;
           }
 
 
- Chan dest;
-        Chan src;
+        VectorChan src(_c_,_a_);
 
         if (src_a == ZERO_CHAN || src_a == WP)
           {
-            dest = src;
+            dest_c = src_c;
           }
         else
           {
@@ -30,16 +29,14 @@ Chan dest;
           }
         dest_a = src_a;
 
-Chan dest;
-        Chan src;
 
         if (src_a == ZERO_CHAN || src_a == WP)
           {
-            dest = src;
+            dest_c = src_c;
           }
         else
           {
-            dest = src / src_a;
+            dest_c = src_c / src_a_c;
           }
         dest_a = src_a;
 

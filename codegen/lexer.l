@@ -10,7 +10,7 @@ void comment ();
 
 
 white   		[ \t]+
-indent			^[ ]+ 
+indent			[\n][ ]*
 digit   		[0-9]
 integer 		{digit}+
 float   		{digit}*\.{integer}
@@ -18,11 +18,10 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 
 %%
 
-{indent}		{
+{indent}	 	{
   			strcpy(yylval.elem.string, yytext);
 			return INDENT;
 			}
-
 {white} 		; /* ignore white space */
 
 {integer} 		{ 
@@ -41,6 +40,10 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 			return FLOAT;
         		}
 
+			
+"(_c_)"			return COLOR;
+"(_c_,_a_)"		return COLOR_ALPHA; 
+    			
 "WP"			{
 			strcpy(yylval.elem.string, _WP_);
                 	yylval.elem.dtype = TYPE_CHAN;
@@ -55,17 +58,12 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 			return(ZERO_CHAN);
 			}
 			
-"ColorAlphaChan"	{
-			strcpy(yylval.elem.string, _ColorAlphaChan_);
+"VectorChan"		{
+			strcpy(yylval.elem.string, _VectorChan_);
 			yylval.elem.dtype = TYPE_CHAN;
-			return(ColorAlphaChan);
+			return(VectorChan);
 			}
 			
-"ColorChan"		{	
-			strcpy(yylval.elem.string, _ColorChan_);
-			yylval.elem.dtype = TYPE_CHAN;
-			return(ColorChan);
-			}
 			
 "Chan"			{
 			strcpy(yylval.elem.string, _Chan_);
@@ -93,6 +91,8 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 ")"			return(RT_PARENTHESIS);
 "{"			return(LT_CURLY);
 "}"			return(RT_CURLY); 
+"["			return(LT_SQUARE);
+"]"			return(RT_SQUARE); 
 "="			return(EQUAL); 
 "+="			return(PLUS_EQUAL); 
 "-="			return(MINUS_EQUAL); 

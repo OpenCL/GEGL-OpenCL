@@ -11,14 +11,17 @@ void do_op_one (elem_t *dest, FUNCTION op);
 void do_op_two (elem_t *dest, elem_t src, FUNCTION op);
 void do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op);
 void print_value (elem_t *dest, elem_t src);
-void print_stuff (elem_t *dest, elem_t src);
+void print_name (elem_t *dest, elem_t src, TYPE_DEF is_define);
+void print_line (elem_t src);
 elem_t* get_sym (char *sym);
 void set_dtype (elem_t e, DATA_TYPE dtype);
 void set_type (elem_t e, DATA_TYPE dtype);
+void set_num (elem_t e, int n);
 void read_data_types (char *data_type);
+void read_color_space (char *color_space); 
 int yyerror (char *s); 
     
-#define NSYMS 20          /* maximum number of symbols */
+#define NSYMS 20           /* maximum number of symbols */
 elem_t  symtab[NSYMS];
 int     cur_nsyms=0;
 
@@ -73,8 +76,7 @@ keyword_t keyword_tab[] = {
 %token	<elem> INT
 %token  <elem> WP 
 %token  <elem> ZERO_CHAN  
-%token  <elem> ColorAlphaChan
-%token  <elem> ColorChan
+%token  <elem> VectorChan
 %token  <elem> Chan
 %token  <elem> FloatChan 
 %token  <elem> INDENT
@@ -90,8 +92,11 @@ keyword_t keyword_tab[] = {
 /* operations */ 
 %token	MAX  MIN  ABS  CHAN_CLAMP  WP_CLAMP
 %token  PLUS  MINUS  TIMES  DIVIDE  POWER  LT_PARENTHESIS RT_PARENTHESIS
-%token  LT_CURLY  RT_CURLY EQUAL PLUS_EQUAL MINUS_EQUAL TIMES_EQUAL DIVIDE_EQUAL
+%token  LT_CURLY  RT_CURLY LT_SQUARE RT_SQUARE 
+%token  EQUAL PLUS_EQUAL MINUS_EQUAL TIMES_EQUAL DIVIDE_EQUAL
 %token  AND OR EQ NOT_EQ SMALLER GREATER SMALLER_EQ GREATER_EQ NOT ADD SUBTRACT  
+
+%token  COLOR  COLOR_ALPHA 
 
 %left 		PLUS	MINUS
 %left 		TIMES	DIVIDE
@@ -103,8 +108,7 @@ keyword_t keyword_tab[] = {
 %type   <elem> Definition
 %type   <elem> FloatChan_List
 %type   <elem> Chan_List
-%type   <elem> ColorAlphaChan_List
-%type   <elem> ColorChan_List
+%type   <elem> VectorChan_List
 %type   <elem> GINT_List
 %type   <elem> PoundInclDef
 %type	<elem> Arguments
@@ -124,6 +128,10 @@ Line:
 		{ 
 		printf("\n"); 
 		}
+	| INDENT
+		{
+		printf("%s", $1.string); 
+		}
 	| VOID				
 		{ 
 		printf("void "); 
@@ -132,101 +140,107 @@ Line:
 		{ 
 		printf("#%s ", $2.string); 
 		}
-	| INDENT			
+	| INDENT LT_CURLY			
 		{ 
-		printf("%s", $1.string); 
-		} 
-	| LT_CURLY			
-		{ 
-		printf("{"); 
+		printf("%s{", $1.string); 
 		}
-	| RT_CURLY                      
+	| INDENT RT_CURLY                      
 		{ 
-		printf("}"); 
+		printf("%s}", $1.string); 
 		} 
-	| BREAK ';'  			
+	| INDENT BREAK ';'  			
 		{ 
-		printf("break;"); 
+		printf("%sbreak;", $1.string); 
 		} 			
-	| CASE NAME ':'  		
+	| INDENT CASE NAME ':'  		
 		{ 
-		printf("case %s:", $2.string); 
+		printf("%scase %s:", $1.string, $3.string); 
 		}
-       	| DEFAULT ':' 	 		
+       	| INDENT DEFAULT ':' 	 		
 		{ 
-		printf("default:"); 
+		printf("%sdefault:", $1.string); 
 		}
-	| ELSE 				
+	| INDENT ELSE 				
 		{ 
-		printf("else "); 
+		printf("%selse ", $1.string); 
 		}
-	| FOR LT_PARENTHESIS Expression ';' Expression ';' Expression RT_PARENTHESIS
+	| INDENT FOR LT_PARENTHESIS Expression ';' Expression ';' Expression RT_PARENTHESIS
 		{ 
-		printf("for (%s; %s; %s)", $3.string, $5.string, $7.string); 
+		printf("%sfor (%s; %s; %s)", $1.string, $4.string, $6.string, $8.string); 
 		}
-	| IF LT_PARENTHESIS Expression RT_PARENTHESIS
+	| INDENT IF LT_PARENTHESIS Expression RT_PARENTHESIS
                 { 
-		printf("if (%s)", $3.string); 
+		printf("%sif (%s)", $1.string, $4.string); 
 		}	
- 	| RETURN Expression ';'		
+ 	| INDENT RETURN Expression ';'		
 		{ 
-		printf("return (%s)", $2.string); 
+		printf("%sreturn (%s);", $1.string, $3.string); 
 		}	
-	| SWITCH LT_PARENTHESIS Expression RT_PARENTHESIS
+	| INDENT SWITCH LT_PARENTHESIS Expression RT_PARENTHESIS
                 { 
-		printf("switch (%s)", $3.string); 
+		printf("%sswitch (%s)", $1.string, $4.string); 
 		}
-	| WHILE LT_PARENTHESIS Expression RT_PARENTHESIS
+	| INDENT WHILE LT_PARENTHESIS Expression RT_PARENTHESIS
                 { 
-		printf("while (%s)", $3.string); 
+		printf("%swhile (%s)", $1.string, $4.string); 
 		} 	
-	| Definition ';' 		
+	| INDENT Definition ';' 		
 		{ 
-		printf("%s;", $1.string); 
+		printf("%s%s;", $1.string, $2.string); 
 		} 
-	| NAME EQUAL Expression ';'  	
-		{ 
-		do_op_three (&$1, $1, $3, OP_EQUAL); 
-		printf("%s;", $1.string); 
+	| INDENT NAME EQUAL Expression ';'  	
+		{
+	        char tmp[256];	
+		print_name (&$2, $2, NOT_DEFINE); 
+		do_op_three (&$2, $2, $4, OP_EQUAL); 
+		sprintf (tmp, "%s%s;", $1.string, $2.string);   
+		strcpy ($2.string, tmp); 
+		print_line ($2); 
 		} 
-	| NAME PLUS_EQUAL Expression ';'  	
-		{ 
-		elem_t tmp; do_op_three (&tmp, $1, $3, OP_PLUS); 
-		do_op_three (&$1, $1, tmp, OP_EQUAL); 
-		printf("%s;", $1.string); 
-		} 
-	| NAME MINUS_EQUAL Expression ';'  	
+	| INDENT NAME PLUS_EQUAL Expression ';'  	
 		{ 
 		elem_t tmp; 
-		do_op_three (&tmp, $1, $3, OP_MINUS);
-		do_op_three (&$1, $1, tmp, OP_EQUAL); 
-		printf("%s;", $1.string); 
+		do_op_three (&tmp, $2, $4, OP_PLUS); 
+		print_name (&$2, $2, NOT_DEFINE);
+		do_op_three (&$2, $2, tmp, OP_EQUAL); 
+		sprintf ($1.string, "%s%s;", $1.string, $2.string);   
+		print_line ($1); 
 		} 
-	| NAME TIMES_EQUAL Expression ';'  	
+	| INDENT NAME MINUS_EQUAL Expression ';'  	
 		{ 
 		elem_t tmp; 
-		do_op_three (&tmp, $1, $3, OP_TIMES);
-		do_op_three (&$1, $1, tmp, OP_EQUAL); 
-		printf("%s;", $1.string); 
+		do_op_three (&tmp, $2, $4, OP_PLUS); 
+		print_name (&$2, $2, NOT_DEFINE);
+		do_op_three (&$2, $2, tmp, OP_EQUAL); 
+		sprintf ($1.string, "%s%s;", $1.string, $2.string);   
+		print_line ($1); 
 		} 
-	| NAME DIVIDE_EQUAL Expression ';'  	
+	| INDENT NAME TIMES_EQUAL Expression ';'  	
 		{ 
 		elem_t tmp; 
-		do_op_three (&tmp, $1, $3, OP_DIVIDE);
-		do_op_three (&$1, $1, tmp, OP_EQUAL); 
-		printf("%s;", $1.string); 
+		do_op_three (&tmp, $2, $4, OP_PLUS); 
+		print_name (&$2, $2, NOT_DEFINE);
+		do_op_three (&$2, $2, tmp, OP_EQUAL); 
+		sprintf ($1.string, "%s%s;", $1.string, $2.string);   
+		print_line ($1); 
 		} 
-	| Expression ';'   		
+	| INDENT NAME DIVIDE_EQUAL Expression ';'  	
 		{ 
-		printf("%s;", $1.string); 
+		elem_t tmp; 
+		do_op_three (&tmp, $2, $4, OP_PLUS); 
+		print_name (&$2, $2, NOT_DEFINE);
+		do_op_three (&$2, $2, tmp, OP_EQUAL); 
+		sprintf ($1.string, "%s%s;", $1.string, $2.string);   
+		print_line ($1); 
+		} 
+	| INDENT Expression ';'   		
+		{ 
+		sprintf ($1.string, "%s%s;", $1.string, $2.string);   
+		print_line($1); 
 		}
-	| IF LT_PARENTHESIS Expression RT_PARENTHESIS
-		{ 
-		printf("if (%s)", $3.string); 
-		}
-	| NAME LT_PARENTHESIS Arguments RT_PARENTHESIS
+	| INDENT NAME LT_PARENTHESIS Arguments RT_PARENTHESIS
        		{ 
-		printf("%s (%s)", $1.string, $3.string); 
+		printf("%s%s (%s)", $1.string, $2.string, $4.string); 
 		}	
 	;
 
@@ -386,27 +400,27 @@ Expression:
 	| NAME				
 		{ 
 		$$=$1; 
-		print_value(&$$, $1); 
+		print_name(&$$, $1, NOT_DEFINE); 
 		}
 	| FLOAT				
 		{ 
 		$$=$1; 
-		print_stuff(&$$, $1); 
+		print_value(&$$, $1); 
 		}
 	| INT				
 		{ 
 		$$=$1; 
-		print_stuff(&$$, $1); 
+		print_value(&$$, $1); 
 		} 
 	| WP				
 		{ 
 		$$=$1; 
-		print_stuff(&$$, $1); 
+		print_value(&$$, $1); 
 		}
 	| ZERO_CHAN			
 		{ 
 		$$=$1; 
-		print_stuff(&$$, $1); 
+		print_value(&$$, $1); 
 		} 
 	;
 
@@ -442,14 +456,7 @@ Definition:
 		sprintf (tmp,"%s %s", $1.string, $2.string);
                 strcpy($$.string, tmp); 
 		}
-	| ColorChan ColorChan_List
-                {
-                char tmp[256];
-                $$=$2;
-                sprintf (tmp,"%s %s", $1.string, $2.string);
-                strcpy($$.string, tmp);
-                }
-	| ColorAlphaChan ColorAlphaChan_List
+	| VectorChan VectorChan_List
                 {
                 char tmp[256];
                 $$=$2;
@@ -466,24 +473,25 @@ Definition:
 	;
 
 GINT_List:
-	 NAME ',' GINT_List             
+	 GINT_List ',' GINT_List             
 		{ 
 		char tmp[256]; 
 		$$=$3;
-                set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_SCALER);
                 sprintf (tmp, "%s, %s", $1.string, $3.string);
                 strcpy($$.string, tmp); 
 		}
         | NAME                          
 		{ 
-		set_dtype($1, TYPE_CHAN); set_type($1, TYPE_SCALER); 
-	  	$$=$1; print_value (&$$, $1);
+		set_dtype($1, TYPE_CHAN); 
+		set_type($1, TYPE_SCALER); 
+	        set_num ($1, 1); 	
+	  	$$=$1; print_name (&$$, $1, DEFINE);
 		}
         | NAME EQUAL FLOAT              
 		{ 
 		set_dtype($1, TYPE_CHAN);
                 set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
                 sprintf ($$.string, "%s=%s", $1.string, $3.string);
                 $$.dtype = $1.dtype; 
 		}
@@ -491,228 +499,111 @@ GINT_List:
 		{ 
 		set_dtype($1, TYPE_CHAN);
                 set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
                 sprintf ($$.string, "%s=%s", $1.string, $3.string);
                 $$.dtype = $1.dtype; }
-        | NAME EQUAL FLOAT ',' GINT_List
-                { 
-		char tmp[256]; 
-		$$=$5;
-                set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_SCALER);
-                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-                strcpy($$.string, tmp); 
-		}
-        | NAME EQUAL INT ',' GINT_List
-                { 
-		char tmp[256]; 
-		$$=$5;
-                set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_SCALER);
-                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-                strcpy($$.string, tmp); 
-		}
         ;
 
 Chan_List:
-          NAME ',' Chan_List            
+          Chan_List ',' Chan_List            
 		{ 
 		char tmp[256]; 
 		$$=$3;
-                set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_VECTOR);
                 sprintf (tmp, "%s, %s", $1.string, $3.string);
                 strcpy($$.string, tmp); 
 		}
         | NAME                          
 		{ 
 		set_dtype($1, TYPE_CHAN); 
-		set_type($1, TYPE_VECTOR);
+		set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
 	  	$$=$1; 
-		print_value (&$$, $1);
+		print_name (&$$, $1, NOT_DEFINE);
 		}
         | NAME EQUAL FLOAT              
 		{ 
 		set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_VECTOR);
+                set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
                 sprintf ($$.string, "%s=%s", $1.string, $3.string);
                 $$.dtype = $1.dtype; 
 		}
         | NAME EQUAL INT                
 		{ 
 		set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_VECTOR);
+                set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
                 sprintf ($$.string, "%s=%s", $1.string, $3.string);
                 $$.dtype = $1.dtype; 
 		}
-        | NAME EQUAL FLOAT ',' Chan_List
-                { 
-		char tmp[256]; 
-		$$=$5;
-                set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_VECTOR);
-                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-                strcpy($$.string, tmp); 
-		}
-        | NAME EQUAL INT ',' Chan_List
-                { 
-		char tmp[256]; 
-		$$=$5;
-                set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_VECTOR);
-                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-                strcpy($$.string, tmp); 
-		}
         ;
 
-ColorChan_List:
-          NAME ',' ColorChan_List            
+VectorChan_List:
+          VectorChan_List ',' VectorChan_List            
 		{ 
 		char tmp[256]; 
 		$$=$3;
-                set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_C_VECTOR);
                 sprintf (tmp, "%s, %s", $1.string, $3.string);
                 strcpy($$.string, tmp); 
 		}
-        | NAME                          
+        | NAME COLOR                         
 		{ 
 		set_dtype($1, TYPE_CHAN); 
 		set_type($1, TYPE_C_VECTOR);
+		set_num($1, _NUM_COLOR_CHAN_);
 	  	$$=$1; 
-		print_value (&$$, $1);
+		print_name (&$$, $1, DEFINE);
 		}
-        | NAME EQUAL FLOAT              
-		{ 
+	| NAME COLOR_ALPHA
+		{
 		set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_C_VECTOR);
-                sprintf ($$.string, "%s=%s", $1.string, $3.string);
-                $$.dtype = $1.dtype; 
-		}
-        | NAME EQUAL INT                
-		{ 
-		set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_C_VECTOR);
-                sprintf ($$.string, "%s=%s", $1.string, $3.string);
-                $$.dtype = $1.dtype; 
-		}
-        | NAME EQUAL FLOAT ',' ColorChan_List
-                { 
-		char tmp[256]; 
-		$$=$5;
-                set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_C_VECTOR);
-                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-                strcpy($$.string, tmp); 
-		}
-        | NAME EQUAL INT ',' ColorChan_List
-                { 
-		char tmp[256]; 
-		$$=$5;
-                set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_C_VECTOR);
-                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-                strcpy($$.string, tmp); 
-		}
-        ;
-ColorAlphaChan_List:
-          NAME ',' ColorAlphaChan_List            
-		{ 
-		char tmp[256]; 
-		$$=$3;
-                set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_CA_VECTOR);
-                sprintf (tmp, "%s, %s", $1.string, $3.string);
-                strcpy($$.string, tmp); 
-		}
-        | NAME                          
-		{ 
-		set_dtype($1, TYPE_CHAN); 
 		set_type($1, TYPE_CA_VECTOR);
-	  	$$=$1; 
-		print_value (&$$, $1);
+		set_num($1, _NUM_COLOR_CHAN_+1); 
+		$$=$1;
+		print_name (&$$, $1, DEFINE);
 		}
-        | NAME EQUAL FLOAT              
-		{ 
+        | NAME LT_SQUARE INT RT_SQUARE
+		{
 		set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_CA_VECTOR);
-                sprintf ($$.string, "%s=%s", $1.string, $3.string);
-                $$.dtype = $1.dtype; 
-		}
-        | NAME EQUAL INT                
-		{ 
-		set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_CA_VECTOR);
-                sprintf ($$.string, "%s=%s", $1.string, $3.string);
-                $$.dtype = $1.dtype; 
-		}
-        | NAME EQUAL FLOAT ',' ColorAlphaChan_List
-                { 
-		char tmp[256]; 
-		$$=$5;
-                set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_CA_VECTOR);
-                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-                strcpy($$.string, tmp); 
-		}
-        | NAME EQUAL INT ',' ColorAlphaChan_List
-                { 
-		char tmp[256]; 
-		$$=$5;
-                set_dtype($1, TYPE_CHAN);
-                set_type($1, TYPE_CA_VECTOR);
-                sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-                strcpy($$.string, tmp); 
-		}
-        ;
+		set_type($1, TYPE_VECTOR);
+		set_num($1, atoi ($3.string)); 
+	        $$=$1;
+		print_name (&$$, $1, DEFINE);
+		}	
+	;
 
 
 FloatChan_List:
-	  NAME ',' FloatChan_List	
+	  FloatChan_List ',' FloatChan_List	
 		{ 
 		char tmp[256]; 
 		$$=$3; 
-	  	set_dtype($1, TYPE_FLOAT); 
-	  	set_type($1, TYPE_FLOAT); 
 		sprintf (tmp, "%s, %s", $1.string, $3.string);
 		strcpy($$.string, tmp); 
 		}	
 	| NAME  			
 		{ 
-		set_dtype($1, TYPE_FLOAT); 
-		set_type($1, TYPE_FLOAT); 
+		set_dtype ($1, TYPE_FLOAT); 
+		set_type ($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
 	  	$$=$1; 
-		print_value (&$$, $1);
+		print_name (&$$, $1, DEFINE);
 		}
 	| NAME EQUAL FLOAT 		
 		{ 
-		set_dtype($1, TYPE_FLOAT); 
-	  	set_type($1, TYPE_FLOAT); 
+		set_dtype ($1, TYPE_FLOAT); 
+	  	set_type ($1, TYPE_SCALER); 
+	        set_num ($1, 1); 	
 	  	sprintf ($$.string, "%s=%s", $1.string, $3.string);
 		$$.dtype = $1.dtype; 
 		}
 	| NAME EQUAL INT		
 		{ 
-		set_dtype($1, TYPE_FLOAT); 
-		set_type($1, TYPE_FLOAT); 
+		set_dtype ($1, TYPE_FLOAT); 
+		set_type ($1, TYPE_SCALER); 
+	        set_num ($1, 1); 	
 		sprintf ($$.string, "%s=%s", $1.string, $3.string);
 		$$.dtype = $1.dtype; 
-		}
-	| NAME EQUAL FLOAT ',' FloatChan_List
-					
-		{ 
-		char tmp[256]; $$=$5;
-		set_dtype($1, TYPE_FLOAT);
-		set_type($1, TYPE_FLOAT); 
-		sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-		strcpy($$.string, tmp); 
-		}
-	| NAME EQUAL INT ',' FloatChan_List
-		{ 
-		char tmp[256]; $$=$5;
-		set_dtype($1, TYPE_FLOAT);
-		set_type($1, TYPE_FLOAT); 
-		sprintf (tmp, "%s=%s, %s", $1.string, $3.string, $5.string);
-		strcpy($$.string, tmp); 
 		}
 	;
 
@@ -720,12 +611,99 @@ FloatChan_List:
 
 #include <stdio.h>
 void
-print_stuff (elem_t *dest, elem_t src)
+print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
 {
   char tmp[256];
-  sprintf (tmp, "%s", src.string);
+
+
+  if (is_define && get_sym (src.string)->type == TYPE_C_VECTOR)
+    {
+    sprintf (tmp, "%s_c", get_sym (src.string)->string);
+    dest->num = 3;
+    }
+  else if (is_define && get_sym (src.string)->type == TYPE_CA_VECTOR && 
+      !strcmp (src.string, get_sym (src.string)->string))
+    sprintf (tmp, "%s_ca", get_sym (src.string)->string);
+  else if (is_define && get_sym (src.string)->type == TYPE_CA_VECTOR)
+    {
+    int l = strlen (src.string);
+    if (src.string[l-1] == 'a' && src.string[l-2] == '_')
+      {
+      dest->num = 1;
+      sprintf (tmp, "%s", src.string);
+      }
+    if (src.string[l-1] == 'c' && src.string[l-2] == '_')
+      {
+      dest->num = 3; 
+      sprintf (tmp, "%s", src.string);
+      }
+    } 
+  else if (is_define && get_sym (src.string)->type == TYPE_VECTOR)
+    sprintf (tmp, "%s_v", src.string);
+  else if (!is_define && get_sym (src.string)->type == TYPE_VECTOR)
+    sprintf (tmp, "%s[%d]", src.string, get_sym (src.string)->num);
+  else
+    sprintf (tmp, "%s", src.string);
+
   dest->dtype = src.dtype;
   strcpy (dest->string, tmp);
+}
+
+void
+print_line (elem_t src)
+{
+
+  int i,j,k=1;
+  int l = strlen (src.string);
+ 
+  if (src.type>1 || (src.type && src.num == _NUM_COLOR_CHAN_)) /* if it is a vector */ 
+  for (i=0; i<k; i++)
+    {
+    for(j=0; j<l; j++)
+      {
+      if (j < l-2 && src.string[j] == '_' && src.string[j+1] == 'c' && src.string[j+2] == 'a')
+	{
+	printf("_%c", _NAME_COLOR_CHAN_[i]);
+	k = _NUM_COLOR_CHAN_ + 1;
+	j += 2;
+	}
+      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'c')
+	{
+	printf("_%c", _NAME_COLOR_CHAN_[i]);
+	k = _NUM_COLOR_CHAN_; 	
+	j++;
+	}
+      else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
+	{
+	printf("[%d]", i);
+	k = _NUM_COLOR_CHAN_; 
+	j++;
+	}
+      else
+	{
+	printf("%c", src.string[j]);
+	}
+      }
+    }
+  else if (src.type)
+    for (i=0; i<src.num; i++)
+      {
+      for(j=0; j<l; j++)
+	{
+	if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
+	  {
+	  printf("[%d]", i);
+	  j++;
+	  }
+	else
+	  {
+	  printf("%c", src.string[j]); 
+	  }
+	}
+      }
+  else
+    printf("%s", src.string); 
+  
 }
 
 void
@@ -734,7 +712,9 @@ print_value (elem_t *dest, elem_t src)
   char tmp[256];
   sprintf (tmp, "%s", src.string);
   strcpy (dest->string, tmp);
-  dest->dtype = get_sym(src.string)->dtype;
+  dest->dtype = src.dtype;
+  dest->num = 1;
+
 }
 
 void
@@ -784,6 +764,14 @@ void
 do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 {
   char tmp[256];
+  
+  /* error checking */
+  if (src1.num != src2.num  && src1.num != 1 && src2.num != 1)
+    {
+    yyerror("ERROR: Error");
+    exit(1); 
+    }
+
   switch (op)
     {
     case OP_PLUS:
@@ -855,6 +843,13 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
       sprintf (tmp, "MAX (%s,%s)", src1.string, src2.string);
       break;
     case OP_EQUAL:
+  	
+      /* error checking */
+      if (src1.num != src2.num && !(src1.num > src2.num && src2.num == 1))
+	{
+	yyerror("ERROR: op_EQUAL");
+	exit(1); 
+	}
       switch (src1.dtype)
 	{
 	case TYPE_FLOAT:
@@ -887,7 +882,8 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
     }
   
   dest->dtype = src1.dtype | src2.dtype; 
-  dest->type = src1.type | src2.type;
+  dest->type  = (src1.type > src2.type)?src1.type:src2.type;
+  dest->num   = (src1.num > src2.num)?src1.num:src2.num;
   strcpy (dest->string, tmp);
 }
 
@@ -899,7 +895,7 @@ set_dtype (elem_t e, DATA_TYPE dtype)
   char *s = strdup(e.string); 
   i = strlen(s);
   if (i>2)
-  if (s[i-1] == 'a' && s[i-2] == '_')
+  if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
   {
     s[i-1] = '\0';
     s[i-2] = '\0'; 
@@ -908,13 +904,16 @@ set_dtype (elem_t e, DATA_TYPE dtype)
   for (i=0; i<cur_nsyms; i++)
   {
     /* is it already here? */
-    if(!strcmp(symtab[i].string, e.string))
+    if(!strcmp(symtab[i].string, s))
+      {
         symtab[i].dtype = dtype;
+  	return;
+      }
   }
 
   if (cur_nsyms == NSYMS)
   {
-    yyerror("Too many symbols");
+    yyerror("==>DTYPE");
     exit(1);      /* cannot continue */
   }
 
@@ -928,7 +927,7 @@ set_type (elem_t e, SV_TYPE type)
   char *s = strdup(e.string); 
   i = strlen(s);
   if (i>2)
-  if (s[i-1] == 'a' && s[i-2] == '_')
+  if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
   {
     s[i-1] = '\0';
     s[i-2] = '\0'; 
@@ -937,20 +936,45 @@ set_type (elem_t e, SV_TYPE type)
   for (i=0; i<cur_nsyms; i++)
   {
     /* is it already here? */
-    if(!strcmp(symtab[i].string, e.string))
+    if(!strcmp(symtab[i].string, s))
+      {
         symtab[i].type = type;
+	return;
+      }
   }
 
   if (cur_nsyms == NSYMS)
   {
-    yyerror("Too many symbols");
+    yyerror("==>TYPE");
     exit(1);      /* cannot continue */
   }
 
    
 }
 
- 
+void
+set_num (elem_t e, int n)
+{
+  int   i;
+      
+  for (i=0; i<cur_nsyms; i++)
+    {
+    /* is it already here? */
+    if(!strcmp(symtab[i].string, e.string))
+      {
+      symtab[i].num = n;
+      return;
+      }
+    }
+  
+  if (cur_nsyms == NSYMS)
+    {
+    yyerror("==>TYPE");
+    exit(1);      /* cannot continue */
+    }
+}
+
+
 /* look up a symbol table entry, add if not present */
 elem_t
 add_sym (char *ss)
@@ -960,7 +984,7 @@ add_sym (char *ss)
 
   i = strlen(s);
   if (i>2)
-  if (s[i-1] == 'a' && s[i-2] == '_')
+  if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
   {
     s[i-1] = '\0';
     s[i-2] = '\0'; 
@@ -995,7 +1019,7 @@ get_sym (char *ss)
  
   i = strlen(s);
   if (i>2)
-  if (s[i-1] == 'a' && s[i-2] == '_')
+  if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
   {
     s[i-1] = '\0';
     s[i-2] = '\0'; 
@@ -1009,7 +1033,7 @@ get_sym (char *ss)
   
   }
 
-  yyerror("Too many symbols");
+  yyerror("==>GET");
   exit(1);      /* cannot continue */
 
 } 
@@ -1042,8 +1066,7 @@ read_data_types (char *data_type)
      { 
      _WP_         	= (char *) strdup ("255");
      _WP_NORM_      	= (char *) strdup ("(1.0/255.0)");
-     _ColorAlphaChan_   = (char *) strdup ("guint8");
-     _ColorChan_        = (char *) strdup ("guint8");
+     _VectorChan_       = (char *) strdup ("guint8");
      _Chan_         	= (char *) strdup ("guint8");
      _FloatChan_    	= (char *) strdup ("float");
      _MIN_CHAN_     	= (char *) strdup ("0");
@@ -1081,8 +1104,7 @@ read_data_types (char *data_type)
 
      _WP_          	= (char *) strdup ("4095");
      _WP_NORM_     	= (char *) strdup ("(1.0/4095.0)");
-     _ColorAlphaChan_   = (char *) strdup ("guint16");
-     _ColorChan_        = (char *) strdup ("guint16");
+     _VectorChan_       = (char *) strdup ("guint16");
      _Chan_         	= (char *) strdup ("guint16");
      _FloatChan_    	= (char *) strdup ("float");
      _MIN_CHAN_      	= (char *) strdup ("0");
@@ -1119,8 +1141,7 @@ read_data_types (char *data_type)
      {
      _WP_               = (char *) strdup ("1.0");
      _WP_NORM_          = (char *) strdup ("1.0");
-     _ColorAlphaChan_   = (char *) strdup ("float");
-     _ColorChan_        = (char *) strdup ("float");
+     _VectorChan_       = (char *) strdup ("float");
      _Chan_             = (char *) strdup ("float");
      _FloatChan_        = (char *) strdup ("float");
      _MIN_CHAN_         = (char *) strdup ("0");
@@ -1151,6 +1172,22 @@ read_data_types (char *data_type)
    }
 }
 
+void
+read_color_space (char *color_space)
+{
+
+  int i;
+
+  _NUM_COLOR_CHAN_ = strlen (color_space); 
+  _NAME_COLOR_CHAN_ = (char*) malloc (sizeof(char) * (_NUM_COLOR_CHAN_ + 1));
+
+  for (i=0; i<_NUM_COLOR_CHAN_; i++)
+    {
+    _NAME_COLOR_CHAN_[i] = color_space[i]; 
+    }
+  _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_] = 'a'; 
+}
+
 int
 yyerror (char *s)
 {
@@ -1164,6 +1201,7 @@ main (int argc, char **argv)
 {
   yydebug = 1; 
   read_data_types (argv[1]);
+  read_color_space (argv[2]); 
   yyparse();
 
   return 0; 

@@ -8,6 +8,12 @@
 
 #include "data_type.h"
 
+typedef enum
+{
+  DEFINE,
+  NOT_DEFINE
+}TYPE_DEF;
+
 /* DATA TYPES */
 typedef enum
 {
@@ -20,7 +26,7 @@ typedef enum
   TYPE_SCALER,
   TYPE_VECTOR, 
   TYPE_C_VECTOR,
-  TYPE_CA_VECTOR 
+  TYPE_CA_VECTOR,  
 }SV_TYPE;
 
 /* FUNCTIONS */
@@ -49,6 +55,7 @@ typedef struct
   DATA_TYPE 	dtype;
   char          string[256];
   SV_TYPE	type; 
+  int		num; 
 }elem_t;
 
 typedef	struct node_s node_t; 

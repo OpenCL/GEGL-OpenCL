@@ -1,25 +1,25 @@
 
 {
-  Chan dest, src;
+  VectorChan dest(_c_,_a_), src(_c_._a_);
   gint comp_mode;
   gint A,B;
 
   switch (comp_mode)
   {
     case REPLACE:
-      dest = src;
+      dest_c = src_c;
     case OVER:
-      dest = src;
+      dest_c = src_c;
     case IN:
-      dest = src;
+      dest_c = src_c;
     case OUT:
-      dest = 0;
+      dest_c = 0;
     case ATOP:
-      dest = src;
+      dest_c = src_c;
     case XOR:
-      dest = 0;
+      dest_c = 0;
     case PLUS:
-      dest = src + dest;
+      dest_c = src_c + dest_c;
   }
 }
 
@@ -29,25 +29,18 @@
   switch (comp_mode)
   {
     case REPLACE:
-      dest_a = src_a;
       dest = src;
     case OVER:
-      dest_a = src_a + dest_a * (1-src_a);  
       dest = src + dest * (1-src_a);
     case IN:
-      dest_a = src_a * dest_a;
       dest = src * dest_a;
     case OUT:
-      dest_a = src_a * (1-dest_a);
       dest = src * (1-dest_a);
     case ATOP:
-      dest_a = src_a * dest_a + dest_a * (1-src_a);
       dest = src * dest_a + dest * (1-src_a);
     case XOR:
-      dest_a = src_a * (1-dest_a) + dest_a * (1-src_a);
       dest = src * (1-dest_a) + dest * (1-src_a);
     case PLUS:
-      dest_a = src_a + dest_a; 
       dest = src + dest;
   }
 }
@@ -61,20 +54,20 @@
       dest = src;
     case OVER:
       dest_a = 1;
-      dest = src;
+      dest_c = src_c;
     case IN:
       dest = src * dest_a;
     case OUT:
       dest_a = (1-dest_a);
-      dest = src * (1-dest_a);
+      dest_c = src_c * (1-dest_a);
     case ATOP:
       dest = src * dest_a;
     case XOR:
       dest_a = (1-dest_a);
-      dest = src * (1-dest_a) + dest;
+      dest_c = src_c * (1-dest_a) + dest_c;
     case PLUS:
       dest_a = 1 + dest_a;
-      dest = src + dest;
+      dest_c = src_c + dest_c;
   }
 }
 
@@ -105,7 +98,7 @@
   {
     case REPLACE:
       dest_a = src_a;
-      dest = src;
+      dest_c = src_c;
     case OVER:
       A = src_a;
       B =  dest_a * (1-src_a);
