@@ -957,7 +957,8 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
   /* error checking */
   if (src1.num != src2.num  && src1.num != 1 && src2.num != 1)
     {
-    yyerror("ERROR: Error");
+    yyerror("ERROR: you are trying to preform an operation on varibles
+	that dont have the same number of channels");
     exit(1); 
     }
 
@@ -1010,7 +1011,8 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
       /* error checking */
       if (src1.num != src2.num && !(src1.num > src2.num && src2.num == 1))
 	{
-	yyerror("ERROR: op_EQUAL");
+	yyerror("ERROR: You trying to assign a varible to another varible
+	    and they have different number of channels");
 	exit(1); 
 	}
       switch (src1.dtype)
@@ -1040,7 +1042,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
 	    default:
-	      yyerror("ERROR: op_EQUAL");
+	      yyerror("ERROR: programming error");
 	      exit(1);
 	      break;
 	   }			     
@@ -1107,7 +1109,7 @@ set_dtype (elem_t e, DATA_TYPE dtype)
 
   if (cur_nsyms == NSYMS)
   {
-    yyerror("==>DTYPE");
+    yyerror("Error: the sysmble was not defined");
     exit(1);      /* cannot continue */
   }
 
@@ -1139,7 +1141,7 @@ set_type (elem_t e, SV_TYPE type)
 
   if (cur_nsyms == NSYMS)
   {
-    yyerror("==>TYPE");
+    yyerror("Error: the symbol was not define");
     exit(1);      /* cannot continue */
   }
 
@@ -1163,7 +1165,7 @@ set_num (elem_t e, int n)
   
   if (cur_nsyms == NSYMS)
     {
-    yyerror("==>TYPE");
+    yyerror("Error: the symbol was not define");
     exit(1);      /* cannot continue */
     }
 }
@@ -1181,7 +1183,7 @@ add_sym (char *ss, char scope)
     /* is it already here? */
     if(!strcmp(symtab[i].string, s)){
 
-	yyerror("Varible already declared");
+	yyerror("Error: Varible already declared");
 	exit(1);
 	
     }
@@ -1238,7 +1240,7 @@ get_sym (char *ss)
   
   }
 
-  yyerror("==>GET");
+  yyerror("Error: you have not defined the varible");
   exit(1);      /* cannot continue */
 
 } 
