@@ -11,7 +11,6 @@
 #include <stdio.h>
 
 void print_info (char *line); 
-char* get_sufix (char *type);
 
 int PREV;  
 %}
@@ -359,46 +358,4 @@ print_info (char *line)
 #endif 
 }
 
-char*
-get_sufix (char *type)
-{
-  FILE *file;
-  char datatype[30];
-  char name[10];
-  char tmp[30];
-
-  file = fopen (gegl_pixel, "r");
-
-  fscanf (file, "%s", &tmp);
-  while (strcmp (tmp, type))
-    {
-      if (feof (file))
-	{
-	  fclose (file);
-	  return (char*) strdup ("");
-	}
-      fscanf (file, "%s", &tmp);
-    }
-
-  while (strcmp (tmp, "{"))
-    {
-      fscanf (file, "%s", &tmp); 
-    }
-
-  fscanf (file, "%s", &datatype);
-  while (strcmp (datatype, "}"))
-    {
-      fscanf (file, "%s", &name);
-      if (!strcmp (datatype, DATATYPE_STR))
-	{
-	  fclose (file); 
-	  return (char*) strdup (name);
-	} 
-      fscanf (file, "%s", &datatype);
-    }
-
-  fclose (file);
-  return (char*) strdup (""); 
-
-}
 

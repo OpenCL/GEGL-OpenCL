@@ -10,7 +10,7 @@ gegl/docs/genericChannelData.html
 To run the program:
 
 >codegen --channel-names COLOR_CHANNEL_NAMES  --channel-data-file CHANNEL_DATA_FILE 
- --pixel-data-file PIXEL_FILE 
+ 
 
 CHANNEL_DATA_FILE: a file that contains the data type
 specific information (see genericImageLanguage.html) . See
@@ -19,8 +19,6 @@ u8,u16,u16_4k,float.
 
 COLOR_CHANNEL_NAMES: a list of the color channel names. The
 names are comma-separated with no spaces.
-
-PIXEL_FILE: this file contains information for the PIXEL_INIT and CHANNEL_INIT.  
 
 Codegen is built from 4 files: 
 
@@ -37,7 +35,7 @@ values. It will also parse the channel-names and set
 NUM_COLOR_CHAN and NAME_COLOR_CHAN from these. It then calls
 yyparse.
 
-lexer.l has 4 states: 
+lexer.l has 8 states: 
 
 1)the initial state 
 2)GENERIC_IMAGE_DECL 
@@ -46,6 +44,7 @@ lexer.l has 4 states:
 5)DATA_TYPE
 6)ARGUMENTS
 7)DEFINITION
+8)EXTERNAL_INIT
 
 inital state ---------DATATYPE_BEGIN-------------> DATA_TYPE
 inital state ---------GENERIC_IMAGE_DECL_BEGIN---> GENERIC_IMAGE_DECL
@@ -53,6 +52,9 @@ inital state ---------GENERIC_IMAGE_BLOCK_BEGIN--> GENERIC_IMAGE_BLOCK
 DATA_TYPE ------------DATATYPE_END---------------> inital state 
 GENERIC_IMAGE_DECL ---GENERIC_IMAGE_DECL_END-----> inital state
 GENERIC_IMAGE_BLOCK---GENERIC_IMAGE_BLOCK_END----> inital state
+GENERIC_IMAGE_BLOCK---EXTERNAL_INIT--------------> EXTERNAL_VARIABLE
+EXTERNAL_VARIABLE ----)--------------------------> GENERIC_IMAGE_BLOCK
+
 
 DATA_TYPE ------------dt_keyword.arg == 0 -------> DEFINITION
 DATA_TYPE ------------dt_keyword.arg == 1 -------> ARGUMENTS
