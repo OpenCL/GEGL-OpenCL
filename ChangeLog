@@ -1,3 +1,9 @@
+Thu Mar 23 15:55:36 PST 2000 caro@rhythm.com
+
+	* codegen?parser.y. I have rm the varibles Pointer and
+	PointerVecChan. It is now not possible to have any pointers
+	in codegen.
+
 Thu Mar 23 15:19:45 PST 2000 caro@rhythm.com
 
 	* codegen/parser.y I have made all PointerVecChab into

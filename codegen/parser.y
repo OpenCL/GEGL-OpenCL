@@ -115,8 +115,6 @@ int     cur_nsyms=0;
 %type   <elem> Float_List
 %type   <elem> Chan_List
 %type   <elem> VectorChan_List
-%type	<elem> PointerVecChan		/* This is for VectorChan, it adds an extra * */ 
-%type	<elem> Pointer  
 
 /* tokens for data types */
 %token  DT_DATATYPE  DT_WP  DT_WP_NORM  DT_MIN_CHAN DT_MAX_CHAN
@@ -431,119 +429,94 @@ Line:
 		{ 
 		printf("%s%s;", $1.string, $2.string); 
 		} 
-	| INDENT Pointer NAME EQUAL Expression ';'  	
+	| INDENT NAME EQUAL Expression ';'  	
 		{
 	        char tmp[256];
 		elem_t e; 	
-		print_name (&e, $3, NOT_DEFINE); 
-		do_op_three (&e, e, $5, OP_EQUAL); 
-		if (get_sym ($3.string)->type == TYPE_CA_VECTOR ||
-		    get_sym ($3.string)->type == TYPE_C_VECTOR ||
-		    get_sym ($3.string)->type == TYPE_C_A_VECTOR) 
+		print_name (&e, $2, NOT_DEFINE); 
+		do_op_three (&e, e, $4, OP_EQUAL); 
+		if (get_sym ($2.string)->type == TYPE_CA_VECTOR ||
+		    get_sym ($2.string)->type == TYPE_C_VECTOR ||
+		    get_sym ($2.string)->type == TYPE_C_A_VECTOR) 
 		  {
-		  sprintf(tmp, "*%s%s", $2.string, e.string); 
-		  strcpy(e.string, tmp); 
-		  }
-		else
-		  {
-		  sprintf(tmp, "%s%s", $2.string, e.string); 
+		  sprintf(tmp, "*%s", e.string); 
 		  strcpy(e.string, tmp); 
 		  }
 		sprintf (tmp, "%s%s;", $1.string, e.string);   
-		strcpy ($3.string, tmp); 
-		print_line ($3); 
+		strcpy ($2.string, tmp); 
+		print_line ($2); 
 		} 
-	| INDENT Pointer NAME PLUS_EQUAL Expression ';'  	
+	| INDENT NAME PLUS_EQUAL Expression ';'  	
 		{ 
 	        char tmp[256];
 		elem_t e; 	
-		print_name (&e, $3, NOT_DEFINE); 
-		if (get_sym ($3.string)->type == TYPE_CA_VECTOR ||
-		    get_sym ($3.string)->type == TYPE_C_VECTOR ||
-		    get_sym ($3.string)->type == TYPE_C_A_VECTOR) 
+		print_name (&e, $2, NOT_DEFINE); 
+		if (get_sym ($2.string)->type == TYPE_CA_VECTOR ||
+		    get_sym ($2.string)->type == TYPE_C_VECTOR ||
+		    get_sym ($2.string)->type == TYPE_C_A_VECTOR) 
 		  {
-		  sprintf(tmp, "*%s%s", $2.string, e.string); 
+		  sprintf(tmp, "*%s", e.string); 
 		  strcpy(e.string, tmp); 
 		  }
-		else
-		  {
-		  sprintf(tmp, "%s%s", $2.string, e.string); 
-		  strcpy(e.string, tmp); 
-		  }
-		do_op_three (&$3, e, $5, OP_PLUS); 
-		do_op_three (&e, e, $3, OP_EQUAL); 
+		do_op_three (&$2, e, $4, OP_PLUS); 
+		do_op_three (&e, e, $2, OP_EQUAL); 
 		sprintf (tmp, "%s%s;", $1.string, e.string);   
-		strcpy ($3.string, tmp); 
-		print_line ($3); 
+		strcpy ($2.string, tmp); 
+		print_line ($2); 
 		} 
-	| INDENT Pointer NAME MINUS_EQUAL Expression ';'  	
+	| INDENT NAME MINUS_EQUAL Expression ';'  	
 		{ 
 	        char tmp[256];
 		elem_t e; 	
-		print_name (&e, $3, NOT_DEFINE); 
-		if (get_sym ($3.string)->type == TYPE_CA_VECTOR ||
-		    get_sym ($3.string)->type == TYPE_C_VECTOR ||
-		    get_sym ($3.string)->type == TYPE_C_A_VECTOR) 
+		print_name (&e, $2, NOT_DEFINE); 
+		if (get_sym ($2.string)->type == TYPE_CA_VECTOR ||
+		    get_sym ($2.string)->type == TYPE_C_VECTOR ||
+		    get_sym ($2.string)->type == TYPE_C_A_VECTOR) 
 		  {
-		  sprintf(tmp, "*%s%s", $2.string, e.string); 
+		  sprintf(tmp, "*%s", e.string); 
 		  strcpy(e.string, tmp); 
 		  }
-		else
-		  {
-		  sprintf(tmp, "%s%s", $2.string, e.string); 
-		  strcpy(e.string, tmp); 
-		  }
-		do_op_three (&$3, e, $5, OP_PLUS); 
-		do_op_three (&e, e, $3, OP_EQUAL); 
+		do_op_three (&$2, e, $4, OP_PLUS); 
+		do_op_three (&e, e, $2, OP_EQUAL); 
 		sprintf (tmp, "%s%s;", $1.string, e.string);   
-		strcpy ($3.string, tmp); 
-		print_line ($3); 
+		strcpy ($2.string, tmp); 
+		print_line ($2); 
 		} 
-	| INDENT Pointer NAME TIMES_EQUAL Expression ';'  	
+	| INDENT NAME TIMES_EQUAL Expression ';'  	
 		{ 
 	        char tmp[256];
 		elem_t e; 	
-		print_name (&e, $3, NOT_DEFINE); 
-		if (get_sym ($3.string)->type == TYPE_CA_VECTOR ||
-		    get_sym ($3.string)->type == TYPE_C_VECTOR ||
-		    get_sym ($3.string)->type == TYPE_C_A_VECTOR) 
+		print_name (&e, $2, NOT_DEFINE); 
+		if (get_sym ($2.string)->type == TYPE_CA_VECTOR ||
+		    get_sym ($2.string)->type == TYPE_C_VECTOR ||
+		    get_sym ($2.string)->type == TYPE_C_A_VECTOR) 
 		  {
-		  sprintf(tmp, "*%s%s", $2.string, e.string); 
+		  sprintf(tmp, "*%s", e.string); 
 		  strcpy(e.string, tmp); 
 		  }
-		else
-		  {
-		  sprintf(tmp, "%s%s", $2.string, e.string); 
-		  strcpy(e.string, tmp); 
-		  }
-		do_op_three (&$3, e, $5, OP_PLUS); 
-		do_op_three (&e, e, $3, OP_EQUAL); 
+		do_op_three (&$2, e, $4, OP_PLUS); 
+		do_op_three (&e, e, $2, OP_EQUAL); 
 		sprintf (tmp, "%s%s;", $1.string, e.string);   
-		strcpy ($3.string, tmp); 
-		print_line ($3); 
+		strcpy ($2.string, tmp); 
+		print_line ($2); 
 		} 
-	| INDENT Pointer NAME DIVIDE_EQUAL Expression ';'  	
+	| INDENT NAME DIVIDE_EQUAL Expression ';'  	
 		{ 
 	        char tmp[256];
 		elem_t e; 	
-		print_name (&e, $3, NOT_DEFINE); 
-		if (get_sym ($3.string)->type == TYPE_CA_VECTOR ||
-		    get_sym ($3.string)->type == TYPE_C_VECTOR ||
-		    get_sym ($3.string)->type == TYPE_C_A_VECTOR) 
+		print_name (&e, $2, NOT_DEFINE); 
+		if (get_sym ($2.string)->type == TYPE_CA_VECTOR ||
+		    get_sym ($2.string)->type == TYPE_C_VECTOR ||
+		    get_sym ($2.string)->type == TYPE_C_A_VECTOR) 
 		  {
-		  sprintf(tmp, "*%s%s", $2.string, e.string); 
+		  sprintf(tmp, "*%s", e.string); 
 		  strcpy(e.string, tmp); 
 		  }
-		else
-		  {
-		  sprintf(tmp, "%s%s", $2.string, e.string); 
-		  strcpy(e.string, tmp); 
-		  }
-		do_op_three (&$3, e, $5, OP_PLUS); 
-		do_op_three (&e, e, $3, OP_EQUAL); 
+		do_op_three (&$2, e, $4, OP_PLUS); 
+		do_op_three (&e, e, $2, OP_EQUAL); 
 		sprintf (tmp, "%s%s;", $1.string, e.string);   
-		strcpy ($3.string, tmp); 
-		print_line ($3); 
+		strcpy ($2.string, tmp); 
+		print_line ($2); 
 		} 
 	| INDENT Expression ';'   		
 		{
@@ -552,51 +525,51 @@ Line:
 	 	strcpy ($2.string, tmp); 	
 		print_line($2); 
 		}
-	| INDENT ITERATOR_X LT_PARENTHESIS Pointer NAME ',' INT RT_PARENTHESIS ';'
+	| INDENT ITERATOR_X LT_PARENTHESIS NAME ',' INT RT_PARENTHESIS ';'
 		{
 		char tmp[256];
-		if (!strcmp($7.string, "1"))
+		if (!strcmp($6.string, "1"))
 		  {
-		  if (get_sym ($5.string)->type == TYPE_C_A_VECTOR)
+		  if (get_sym ($4.string)->type == TYPE_C_A_VECTOR)
 		    {
-		    printf ("%sif (%s_has_%s)%s  %s%s_%s++;", $1.string, $5.string,
+		    printf ("%sif (%s_has_%s)%s  *%s_%s++;", $1.string, $4.string,
 			NAME_COLOR_CHAN[NUM_COLOR_CHAN],
-			$1.string, $4.string, $5.string,
+			$1.string, $4.string,
 			NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
-		    sprintf (tmp, "%s%s%s_c++;", 
-		      $1.string, $4.string, $5.string);  
+		    sprintf (tmp, "%s*%s_c++;", 
+		      $1.string, $4.string);  
 		    }
-		  else if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
+		  else if (get_sym ($4.string)->type == TYPE_CA_VECTOR)
 		    {
-		    sprintf (tmp, "%s%s%s_c++;", 
-		      $1.string, $4.string, $5.string);  
+		    sprintf (tmp, "%s*%s_c++;", 
+		      $1.string, $4.string);  
 		    }
 		  else
-		    sprintf (tmp, "%s%s%s_c++;", $1.string, $4.string, $5.string);
+		    sprintf (tmp, "%s*%s_c++;", $1.string, $4.string);
 		  
 		  }
 		  else
 		    { 
-		    if (get_sym ($5.string)->type == TYPE_C_A_VECTOR)
+		    if (get_sym ($4.string)->type == TYPE_C_A_VECTOR)
 		      {
-		      printf ("%sif (%s_has_%s)%s  %s%s_%s += %s", $1.string, $5.string,
+		      printf ("%sif (%s_has_%s)%s  %s_%s += %s", $1.string, $4.string,
 			 NAME_COLOR_CHAN[NUM_COLOR_CHAN], 
-			 $1.string, $4.string, $5.string, 
+			 $1.string, $4.string,  
 			 NAME_COLOR_CHAN[NUM_COLOR_CHAN],
-			 $7.string);
-		      sprintf (tmp, "%s%s%s_c += %s;", $1.string, $4.string, $5.string, $7.string); 
+			 $6.string);
+		      sprintf (tmp, "%s%s%s_c += %s;", $1.string, $4.string, $6.string); 
 		      }
-		    else if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
+		    else if (get_sym ($4.string)->type == TYPE_CA_VECTOR)
 		      {
-		      sprintf (tmp, "%s%s%s_ca += %s;", $1.string, $4.string, $5.string, $7.string); 
+		      sprintf (tmp, "%s*%s_ca += %s;", $1.string, $4.string, $6.string); 
 		      }
 		    else
-		      sprintf (tmp, "%s%s%s_c += %s;", $1.string, $4.string, $5.string, $7.string); 
+		      sprintf (tmp, "%s*%s_c += %s;", $1.string, $4.string, $6.string); 
 		    }
-		strcpy ($5.string, tmp);
-		print_line($5); 	
+		strcpy ($4.string, tmp);
+		print_line($4); 	
 		}
-	| INDENT ITERATOR_XY LT_PARENTHESIS Pointer NAME ',' INT ',' INT RT_PARENTHESIS ';' 
+	| INDENT ITERATOR_XY LT_PARENTHESIS NAME ',' INT ',' INT RT_PARENTHESIS ';' 
 		{
 	
 		}	
@@ -681,21 +654,16 @@ Expression:
 	        sprintf (tmp,"%s%s", $1.string,$2.string);
 	        strcpy($$.string, tmp);
 		} 
-	| Pointer NAME				
+	| NAME				
 		{ 
 		char tmp[256];
-		$$=$2; 
-		print_name(&$$, $2, NOT_DEFINE); 
-		if (get_sym ($2.string)->type == TYPE_CA_VECTOR ||
-		    get_sym ($2.string)->type == TYPE_C_VECTOR ||
-		    get_sym ($2.string)->type == TYPE_C_A_VECTOR) 
+		$$=$1; 
+		print_name(&$$, $1, NOT_DEFINE); 
+		if (get_sym ($1.string)->type == TYPE_CA_VECTOR ||
+		    get_sym ($1.string)->type == TYPE_C_VECTOR ||
+		    get_sym ($1.string)->type == TYPE_C_A_VECTOR) 
 		  {
-		  sprintf(tmp, "*%s%s", $1.string, $$.string); 
-		  strcpy($$.string, tmp); 
-		  }
-		else
-		  {
-		  sprintf(tmp, "%s%s", $1.string, $$.string);
+		  sprintf(tmp, "*%s", $$.string); 
 		  strcpy($$.string, tmp); 
 		  }
 		}
@@ -771,48 +739,44 @@ Chan_List:
 		sprintf(tmp, "%s, %s", $1.string, $3.string);
 		strcpy($$.string, tmp);
 		}
-        | Pointer NAME                          
+        | NAME                          
 		{
-	        char tmp[256];	
-		set_dtype($2, TYPE_CHAN); 
-		set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-	  	$$=$2; 
-		print_name (&$$, $2, NOT_DEFINE);
-		sprintf(tmp, "%s%s", $1.string, $$.string);
-		strcpy($$.string, tmp);
+		set_dtype($1, TYPE_CHAN); 
+		set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
+	  	$$=$1; 
+		print_name (&$$, $1, NOT_DEFINE);
 		}
-        | Pointer NAME EQUAL FLOAT              
+        | NAME EQUAL FLOAT              
 		{ 
 		char tmp[256];
-		set_dtype($2, TYPE_CHAN);
-                set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-		$$=$2; 
-		print_name (&$$, $2, NOT_DEFINE);
-		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+		set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
+		$$=$1; 
+		print_name (&$$, $1, NOT_DEFINE);
+		sprintf(tmp, "%s=%s", $$.string, $3.string);
 		strcpy($$.string, tmp);
 		}
-        | Pointer NAME EQUAL INT                
+        | NAME EQUAL INT                
 		{ 
 		char tmp[256];
-		set_dtype($2, TYPE_CHAN);
-                set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-		$$=$2; 
-		print_name (&$$, $2, NOT_DEFINE);
-		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+		set_dtype($1, TYPE_CHAN);
+                set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
+		$$=$1; 
+		print_name (&$$, $1, NOT_DEFINE);
+		sprintf(tmp, "%s=%s", $$.string, $3.string);
 		strcpy($$.string, tmp);
 		}
-        | Pointer NAME LT_SQUARE INT RT_SQUARE
+        | NAME LT_SQUARE INT RT_SQUARE
 		{
 		char tmp[256];
-		set_dtype($2, TYPE_CHAN); 
-		set_type($2, TYPE_VECTOR);
-		set_num($2, atoi ($4.string)); 
-	        $$=$2;
-		print_name (&$$, $2, DEFINE);
-		sprintf (tmp, "%s%s", $1.string, $$.string); 
+		set_dtype($1, TYPE_CHAN); 
+		set_type($1, TYPE_VECTOR);
+		set_num($1, atoi ($3.string)); 
+	        $$=$1;
+		print_name (&$$, $1, DEFINE);
 		strcpy ($$.string, tmp); 
 		}	
         ;
@@ -823,48 +787,44 @@ Int_List:
 		sprintf(tmp, "%s, %s", $1.string, $3.string);
 		strcpy($$.string, tmp);
 		}
-        | Pointer NAME                          
+        | NAME                          
 		{
-	        char tmp[256];	
-		set_dtype($2, TYPE_INT); 
-		set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-	  	$$=$2; 
-		print_name (&$$, $2, NOT_DEFINE);
-		sprintf(tmp, "%s%s", $1.string, $$.string);
-		strcpy($$.string, tmp);
+		set_dtype($1, TYPE_INT); 
+		set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
+	  	$$=$1; 
+		print_name (&$$, $1, NOT_DEFINE);
 		}
-        | Pointer NAME EQUAL FLOAT              
+        | NAME EQUAL FLOAT              
 		{ 
 		char tmp[256];
-		set_dtype($2, TYPE_INT);
-                set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-		$$=$2; 
-		print_name (&$$, $2, NOT_DEFINE);
-		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+		set_dtype($1, TYPE_INT);
+                set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
+		$$=$1; 
+		print_name (&$$, $1, NOT_DEFINE);
+		sprintf(tmp, "%s=%s", $$.string, $3.string);
 		strcpy($$.string, tmp);
 		}
-        | Pointer NAME EQUAL INT                
+        | NAME EQUAL INT                
 		{ 
 		char tmp[256];
-		set_dtype($2, TYPE_INT);
-                set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-		$$=$2; 
-		print_name (&$$, $2, NOT_DEFINE);
-		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+		set_dtype($1, TYPE_INT);
+                set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
+		$$=$1; 
+		print_name (&$$, $1, NOT_DEFINE);
+		sprintf(tmp, "%s=%s", $$.string, $3.string);
 		strcpy($$.string, tmp);
 		}
-        | Pointer NAME LT_SQUARE INT RT_SQUARE
+        | NAME LT_SQUARE INT RT_SQUARE
 		{
 		char tmp[256];
-		set_dtype($2, TYPE_INT); 
-		set_type($2, TYPE_VECTOR);
-		set_num($2, atoi ($4.string)); 
-	        $$=$2;
-		print_name (&$$, $2, DEFINE);
-		sprintf (tmp, "%s%s", $1.string, $$.string); 
+		set_dtype($1, TYPE_INT); 
+		set_type($1, TYPE_VECTOR);
+		set_num($1, atoi ($3.string)); 
+	        $$=$1;
+		print_name (&$$, $1, DEFINE);
 		strcpy ($$.string, tmp); 
 		}	
         ;
@@ -875,48 +835,44 @@ Float_List:
 		sprintf(tmp, "%s, %s", $1.string, $3.string);
 		strcpy($$.string, tmp);
 		}
-        | Pointer NAME                          
+        | NAME                          
 		{
-	        char tmp[256];	
-		set_dtype($2, TYPE_FLOAT);
-		set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-	  	$$=$2; 
-		print_name (&$$, $2, NOT_DEFINE);
-		sprintf(tmp, "%s%s", $1.string, $$.string);
-		strcpy($$.string, tmp);
+		set_dtype($1, TYPE_FLOAT);
+		set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
+	  	$$=$1; 
+		print_name (&$$, $1, NOT_DEFINE);
 		}
-        | Pointer NAME EQUAL FLOAT              
+        | NAME EQUAL FLOAT              
 		{ 
 		char tmp[256];
-		set_dtype($2, TYPE_FLOAT);
-                set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-		$$=$2; 
-		print_name (&$$, $2, NOT_DEFINE);
-		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+		set_dtype($1, TYPE_FLOAT);
+                set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
+		$$=$1; 
+		print_name (&$$, $1, NOT_DEFINE);
+		sprintf(tmp, "%s=%s", $$.string, $3.string);
 		strcpy($$.string, tmp);
 		}
-        | Pointer NAME EQUAL INT                
+        | NAME EQUAL INT                
 		{ 
 		char tmp[256];
-		set_dtype($2, TYPE_FLOAT);
-                set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-		$$=$2; 
-		print_name (&$$, $2, NOT_DEFINE);
-		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+		set_dtype($1, TYPE_FLOAT);
+                set_type($1, TYPE_SCALER);
+	        set_num ($1, 1); 	
+		$$=$1; 
+		print_name (&$$, $1, NOT_DEFINE);
+		sprintf(tmp, "%s=%s", $$.string, $3.string);
 		strcpy($$.string, tmp);
 		}
-        | Pointer NAME LT_SQUARE INT RT_SQUARE
+        | NAME LT_SQUARE INT RT_SQUARE
 		{
 		char tmp[256];
-		set_dtype($2, TYPE_FLOAT);
-		set_type($2, TYPE_VECTOR);
-		set_num($2, atoi ($4.string)); 
-	        $$=$2;
-		print_name (&$$, $2, DEFINE);
-		sprintf (tmp, "%s%s", $1.string, $$.string); 
+		set_dtype($1, TYPE_FLOAT);
+		set_type($1, TYPE_VECTOR);
+		set_num($1, atoi ($3.string)); 
+	        $$=$1;
+		print_name (&$$, $1, DEFINE);
 		strcpy ($$.string, tmp); 
 		}	
         ;
@@ -929,69 +885,44 @@ VectorChan_List:
                 sprintf (tmp, "%s, %s", $1.string, $3.string);
                 strcpy($$.string, tmp); 
 		}
-        | PointerVecChan NAME COLOR                         
+        | NAME COLOR                         
 		{ 
 		char tmp[256];
-		set_dtype($2, TYPE_CHAN); 
-		set_type($2, TYPE_C_VECTOR);
-		set_num($2, NUM_COLOR_CHAN);
-	  	$$=$2; 
-		print_name (&$$, $2, DEFINE);
-		sprintf(tmp, "%s%s", $1.string, $$.string); 
-		print_repeat (&$$, $2, tmp); 
-		init_data_varible ($2.string); 
+		set_dtype($1, TYPE_CHAN); 
+		set_type($1, TYPE_C_VECTOR);
+		set_num($1, NUM_COLOR_CHAN);
+	  	$$=$1; 
+		print_name (&$$, $1, DEFINE);
+		sprintf(tmp, "*%s", $$.string); 
+		print_repeat (&$$, $1, tmp); 
+		init_data_varible ($1.string); 
 		}
-	| PointerVecChan NAME COLOR_ALPHA
+	| NAME COLOR_ALPHA
 		{
 		char tmp[256];
-		set_dtype($2, TYPE_CHAN);
-		set_type($2, TYPE_CA_VECTOR);
-		set_num($2, NUM_COLOR_CHAN+1); 
-		$$=$2;
-		print_name (&$$, $2, DEFINE);
-		sprintf(tmp, "%s%s", $1.string, $$.string); 
-		print_repeat (&$$, $2, tmp); 
-		init_data_varible ($2.string); 
+		set_dtype($1, TYPE_CHAN);
+		set_type($1, TYPE_CA_VECTOR);
+		set_num($1, NUM_COLOR_CHAN+1); 
+		$$=$1;
+		print_name (&$$, $1, DEFINE);
+		sprintf(tmp, "*%s", $$.string); 
+		print_repeat (&$$, $1, tmp); 
+		init_data_varible ($1.string); 
 		}
-	| PointerVecChan NAME COLOR_MAYBE_ALPHA
+	| NAME COLOR_MAYBE_ALPHA
 		{
 		char tmp[256];
-		set_dtype($2, TYPE_CHAN);
-		set_type($2, TYPE_C_A_VECTOR);
-		set_num($2, NUM_COLOR_CHAN+1);
-		$$=$2;
-		print_name (&$$, $2, DEFINE);
-		sprintf(tmp, "%s%s", $1.string, $$.string);
-		print_repeat (&$$, $2, tmp);
-		init_data_varible ($2.string); 
+		set_dtype($1, TYPE_CHAN);
+		set_type($1, TYPE_C_A_VECTOR);
+		set_num($1, NUM_COLOR_CHAN+1);
+		$$=$1;
+		print_name (&$$, $1, DEFINE);
+		sprintf(tmp, "*%s", $$.string);
+		print_repeat (&$$, $1, tmp);
+		init_data_varible ($1.string); 
 		}
 	;
 
-PointerVecChan:		
-		{ $$.string[0] = '*'; $$.string[1] = '\0'; 	}
-	| TIMES PointerVecChan
-		{
-		$$ = $2; 
-		sprintf ($$.string, "*%s", $2.string);
-		}
-	| TIMES
-		{
-		sprintf ($$.string, "*");
-		}
-		
-	; 
-	
-Pointer:	{$$.string[0] = '\0';}
-	| TIMES Pointer 
-		{
-	        $$ = $2;
-	        sprintf ($$.string, "*%s", $2.string);
-	        }
-	| TIMES
-	        {
-	        sprintf ($$.string, "*");
-	        } 
-	;
 	
 %%
 
