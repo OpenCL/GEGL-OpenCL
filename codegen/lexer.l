@@ -167,7 +167,8 @@ rm			[\t \n]*
     					strcpy (yylval.tok.string, yytext); 
     					return (MIN_MAX);
 					}
-<GENERIC_IMAGE_BLOCK>"(Promote)"	return(PROMOTE); 
+<GENERIC_IMAGE_BLOCK>"(Promote)"	return(PROMOTE_TYPE); 
+<GENERIC_IMAGE_BLOCK>"(SignedPromote)"	return(SIGNED_PROMOTE_TYPE); 
 <GENERIC_IMAGE_BLOCK>"ABS"		return(ABS); 
 <GENERIC_IMAGE_BLOCK>"CHANNEL_CLAMP"	return(CHANNEL_CLAMP);
 <GENERIC_IMAGE_BLOCK>"WP_CLAMP"    	return(WP_CLAMP);

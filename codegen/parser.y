@@ -65,7 +65,8 @@ int     cur_nsyms=0;
 
   dt_keyword_t dt_keyword_tab[] = {
 	{"DATATYPE", 0, DT_DATATYPE},
-	{"PROMOTE", 0, DT_PROMOTE},
+	{"PROMOTE_TYPE", 0, DT_PROMOTE_TYPE},
+	{"SIGNED_PROMOTE_TYPE", 0, DT_SIGNED_PROMOTE_TYPE},
 	{"WP", 0, DT_WP},
 	{"WP_NORM", 0, DT_WP_NORM},
 	{"MIN_CHANNEL", 0, DT_MIN_CHANNEL},
@@ -115,7 +116,8 @@ int     cur_nsyms=0;
 %token  EQUAL PLUS_EQUAL MINUS_EQUAL TIMES_EQUAL DIVIDE_EQUAL
 %token  AND OR EQ NOT_EQ SMALLER GREATER SMALLER_EQ GREATER_EQ NOT ADD SUBTRACT  
 
-%token  COLOR  COLOR_ALPHA  COLOR_MAYBE_ALPHA  ITERATOR_X  ITERATOR_XY PROMOTE  
+%token  COLOR  COLOR_ALPHA  COLOR_MAYBE_ALPHA  ITERATOR_X  ITERATOR_XY 
+%token  PROMOTE_TYPE SIGNED_PROMOTE_TYPE 
 
 %left 		PLUS	MINUS
 %left 		TIMES	DIVIDE
@@ -133,7 +135,8 @@ int     cur_nsyms=0;
 %type   <elem> Pixel_List
 
 /* tokens for data types */
-%token  DT_DATATYPE  DT_PROMOTE  DT_WP  DT_WP_NORM  DT_MIN_CHANNEL DT_MAX_CHANNEL
+%token  DT_DATATYPE  DT_PROMOTE_TYPE  DT_SIGNED_PROMOTE_TYPE  DT_WP  DT_WP_NORM  
+%token  DT_MIN_CHANNEL DT_MAX_CHANNEL
 %token  DT_ZERO  DT_CHANNEL_CLAMP  DT_WP_CLAMP  DT_CHANNEL_MULT  DT_CHANNEL_ROUND DT_COMMA 
 %token  <tok> DT_NAME
 %token  <tok> DT_STRING
@@ -159,13 +162,21 @@ DT_Line:
 		DATATYPE_STR = (char *) strdup (&($2.string[i]));
 		DATATYPE_STR[strlen (DATATYPE_STR)] = '\0';   
 		}
-	| DT_PROMOTE DT_STRING  
+	| DT_PROMOTE_TYPE DT_STRING  
 		{
 		int i=0;
 		while ($2.string[i] == '\t' || $2.string[i] == ' ')
 		  i++; 
-		PROMOTE_STR = (char *) strdup (&($2.string[i]));
-		PROMOTE_STR[strlen (PROMOTE_STR)] = '\0';   
+		PROMOTE_TYPE_STR = (char *) strdup (&($2.string[i]));
+		PROMOTE_TYPE_STR[strlen (PROMOTE_TYPE_STR)] = '\0';   
+		}
+	| DT_SIGNED_PROMOTE_TYPE DT_STRING  
+		{
+		int i=0;
+		while ($2.string[i] == '\t' || $2.string[i] == ' ')
+		  i++; 
+		SIGNED_PROMOTE_TYPE_STR = (char *) strdup (&($2.string[i]));
+		SIGNED_PROMOTE_TYPE_STR[strlen (SIGNED_PROMOTE_TYPE_STR)] = '\0';   
 		}
 	| DT_WP DT_STRING
 		{
@@ -687,10 +698,15 @@ Line:
 
 	
 Expression:
-	  PROMOTE Expression
+	  PROMOTE_TYPE Expression
 	  	{
 		$$=$2;
-      		sprintf ($$.string, "%s %s", PROMOTE_STR, $2.string); 		
+      		sprintf ($$.string, "%s %s", PROMOTE_TYPE_STR, $2.string); 		
+		}
+        | SIGNED_PROMOTE_TYPE Expression
+	  	{
+		$$=$2;
+      		sprintf ($$.string, "%s %s", SIGNED_PROMOTE_TYPE_STR, $2.string); 		
 		}
 	| Expression PLUS Expression	
 		{ 
