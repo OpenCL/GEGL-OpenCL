@@ -372,12 +372,7 @@ Expression:
 		{ 
 		$$=$1; 
 		do_op_three (&$$, $1, $3, OP_OR); 
-	/*	} 	 
-	| Expression EQUAL Expression   
-		{ 
-		$$=$1; 
-		do_op_three (&$$, $1, $3, OP_EQUAL); 
-	*/	}
+		}
 	| MINUS Expression %prec NEG	
 		{ 
 		$$=$2; 
@@ -464,8 +459,10 @@ Expression:
 		}
 	| Expression ADD		
 		{ 
-		$$=$1; 
-		do_op_two (&$$, $1, OP_ADD);
+		char tmp[256];
+	        $$=$1;
+	        sprintf (tmp,"%s++", $1.string);
+	        strcpy($$.string, tmp);
 		} 
 	| Expression SUBTRACT		
 		{ 
@@ -1017,10 +1014,6 @@ do_op_two (elem_t *dest, elem_t src, FUNCTION op)
   case OP_ABS:
     sprintf (tmp, "ABS (%s)", src.string);
     break;
-
-  case OP_ADD:
-    sprintf (tmp, "%s++", src.string);
-    break;
   default:
     break; 
   }
@@ -1399,75 +1392,97 @@ read_data_types (char *filename)
       }
     else if (!strcmp (token, "CHAN_CLAMP_PRE"))
       {
-      fscanf (file, "%s", &value);
-      if (strcmp (value, "NULL"))  
-	CHAN_CLAMP_PRE = (char *) strdup (value); 
+      int i = 0; 
+      while ((value[i] = (char) fgetc (file)) != '\n')
+	i++;
+      if (value[0] == '"' && value[1] == '"')
+        CHAN_CLAMP_PRE = (char *) strdup ("");
       else
-        CHAN_CLAMP_PRE = (char *) strdup (""); 	
+	CHAN_CLAMP_PRE = (char *) strdup (value); 
       }
     else if (!strcmp (token, "CHAN_CLAMP_SUF"))
       {
-      fscanf (file, "%s", &value);
-      if (strcmp (value, "NULL"))  
-	CHAN_CLAMP_SUF = (char *) strdup (value); 
+      int i = 0; 
+      while ((value[i] = (char) fgetc (file)) != '\n')
+	i++;
+      if (value[0] == '"' && value[1] == '"')
+        CHAN_CLAMP_SUF = (char *) strdup ("");
       else
-        CHAN_CLAMP_SUF = (char *) strdup (""); 	
+	CHAN_CLAMP_SUF = (char *) strdup (value); 
       }
     else if (!strcmp (token, "WP_CLAMP_PRE"))
       {
-      fscanf (file, "%s", &value);
-      if (strcmp (value, "NULL"))  
-	WP_CLAMP_PRE = (char *) strdup (value); 
+      int i = 0; 
+      while ((value[i] = (char) fgetc (file)) != '\n')
+	i++;
+      if (value[0] == '"' && value[1] == '"')
+        WP_CLAMP_PRE = (char *) strdup ("");
       else
-        WP_CLAMP_PRE = (char *) strdup (""); 	
+	WP_CLAMP_PRE = (char *) strdup (value); 
       }
     else if (!strcmp (token, "WP_CLAMP_SUF"))
       {
-      fscanf (file, "%s", &value);
-      if (strcmp (value, "NULL"))  
-	WP_CLAMP_SUF = (char *) strdup (value); 
+      int i = 0; 
+      while ((value[i] = (char) fgetc (file)) != '\n')
+	i++;
+      if (value[0] == '"' && value[1] == '"')
+        WP_CLAMP_SUF = (char *) strdup ("");
       else
-        WP_CLAMP_SUF = (char *) strdup (""); 	
+	WP_CLAMP_SUF = (char *) strdup (value); 
       }
     else if (!strcmp (token, "CHAN_MULT_PRE"))
       {
-      fscanf (file, "%s", &value);
-      if (strcmp (value, "NULL"))  
-	CHAN_MULT_PRE = (char *) strdup (value); 
+      int i = 0; 
+      while ((value[i] = (char) fgetc (file)) != '\n')
+	{
+	if (value[i] != '\t')
+	  i++;
+	}
+      value[i] = '\0'; 
+      if (value[0] == '"' && value[1] == '"')
+        CHAN_MULT_PRE = (char *) strdup ("");
       else
-        CHAN_MULT_PRE = (char *) strdup (""); 	
+	CHAN_MULT_PRE = (char *) strdup (value); 
       }
     else if (!strcmp (token, "CHAN_MULT_MID"))
       {
-      fscanf (file, "%s", &value);
-      if (strcmp (value, "NULL"))  
-	CHAN_MULT_MID = (char *) strdup (value); 
+      int i = 0; 
+      while ((value[i] = (char) fgetc (file)) != '\n')
+	i++;
+      if (value[0] == '"' && value[1] == '"')
+       CHAN_MULT_MID = (char *) strdup ("");
       else
-        CHAN_MULT_MID = (char *) strdup (""); 	
+       CHAN_MULT_MID = (char *) strdup (value); 
       }
     else if (!strcmp (token, "CHAN_MULT_SUF"))
       {
-      fscanf (file, "%s", &value);
-      if (strcmp (value, "NULL"))  
-	CHAN_MULT_SUF = (char *) strdup (value); 
+      int i = 0; 
+      while ((value[i] = (char) fgetc (file)) != '\n')
+	i++;
+      if (value[0] == '"' && value[1] == '"')
+        CHAN_MULT_SUF = (char *) strdup ("");
       else
-        CHAN_MULT_SUF = (char *) strdup (""); 	
+	CHAN_MULT_SUF = (char *) strdup (value); 
       }
     else if (!strcmp (token, "ROUND_PRE"))
       {
-      fscanf (file, "%s", &value);
-      if (strcmp (value, "NULL"))  
-	ROUND_PRE = (char *) strdup (value); 
+      int i = 0; 
+      while ((value[i] = (char) fgetc (file)) != '\n')
+	i++;
+      if (value[0] == '"' && value[1] == '"')
+        ROUND_PRE = (char *) strdup ("");
       else
-       ROUND_PRE = (char *) strdup (""); 	
+	ROUND_PRE = (char *) strdup (value); 
       }
     else if (!strcmp (token, "ROUND_SUF"))
       {
-      fscanf (file, "%s", &value);
-      if (strcmp (value, "NULL"))  
-	ROUND_SUF = (char *) strdup (value);
+      int i = 0; 
+      while ((value[i] = (char) fgetc (file)) != '\n')
+	i++;
+      if (value[0] == '"' && value[1] == '"')
+        ROUND_SUF = (char *) strdup ("");
       else
-       ROUND_SUF = (char *) strdup (""); 	
+	ROUND_SUF = (char *) strdup (value); 
       }
     token[0] = '\0';  
     }

@@ -10,13 +10,13 @@ noinst_PROGRAMS = rm_tabs
 EXTRA_PROGRAMS =
 
 rm_tabs_SOURCES = 	\
-	find_replace.l 
+	lexer.l 
 
 rm_tabs_LDADD = \
 	-lm \
 	-lfl
 
-BUILT_SOURCES = find_replace.c 
+BUILT_SOURCES = lexer.c 
 
 CLEANFILES += $(BUILT_SOURCES)
 
