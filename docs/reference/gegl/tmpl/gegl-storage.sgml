@@ -20,6 +20,14 @@ GeglStorage
 </para>
 
 
+<!-- ##### STRUCT GeglStorageClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@create_buffer: 
+
 <!-- ##### FUNCTION gegl_storage_data_type_bytes ##### -->
 <para>
 

@@ -20,6 +20,15 @@ GeglColorSpace
 </para>
 
 
+<!-- ##### STRUCT GeglColorSpaceClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@convert_to_xyz: 
+@convert_from_xyz: 
+
 <!-- ##### FUNCTION gegl_color_space_register ##### -->
 <para>
 

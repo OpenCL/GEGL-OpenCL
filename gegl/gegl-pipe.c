@@ -13,7 +13,7 @@
 enum
 {
   PROP_0, 
-  PROP_INPUT_IMAGE,
+  PROP_SOURCE,
   PROP_LAST 
 };
 
@@ -27,7 +27,7 @@ static void process (GeglFilter * filter);
 static void prepare (GeglFilter * filter);
 static gpointer parent_class = NULL;
 
-static void validate_inputs  (GeglFilter *filter, GList *collected_input_data_list);
+static void validate_inputs  (GeglFilter *filter, GArray *collected_data);
 static void validate_outputs (GeglFilter *filter);
 
 GType
@@ -48,6 +48,7 @@ gegl_pipe_get_type (void)
         sizeof (GeglPipe),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_IMAGE_OP, 
@@ -76,10 +77,10 @@ class_init (GeglPipeClass * klass)
   filter_class->validate_inputs = validate_inputs;
   filter_class->validate_outputs = validate_outputs;
 
-  g_object_class_install_property (gobject_class, PROP_INPUT_IMAGE,
-               g_param_spec_object ("input-image",
-                                    "InputImage",
-                                    "The input image",
+  g_object_class_install_property (gobject_class, PROP_SOURCE,
+               g_param_spec_object ("source",
+                                    "Source",
+                                    "The source image",
                                      GEGL_TYPE_OP,
                                      G_PARAM_CONSTRUCT_ONLY | 
                                      G_PARAM_WRITABLE));
@@ -90,7 +91,7 @@ static void
 init (GeglPipe * self, 
       GeglPipeClass * klass)
 {
-  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "source");
 
   self->scanline_processor = g_object_new(GEGL_TYPE_SCANLINE_PROCESSOR,NULL);
   self->scanline_processor->op = GEGL_FILTER(self);
@@ -128,11 +129,11 @@ set_property (GObject      *gobject,
   GeglPipe *pipe = GEGL_PIPE (gobject);
   switch (prop_id)
   {
-    case PROP_INPUT_IMAGE:
+    case PROP_SOURCE:
       {
-        GeglNode *input = (GeglNode*)g_value_get_object(value);
-        gint index = gegl_op_get_input_data_index(GEGL_OP(pipe), "input-image");
-        gegl_node_set_source(GEGL_NODE(pipe), input, index);  
+        GeglNode *source = (GeglNode*)g_value_get_object(value);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(pipe), "source");
+        gegl_node_set_source(GEGL_NODE(pipe), source, index);  
       }
       break;
     default:
@@ -143,24 +144,22 @@ set_property (GObject      *gobject,
 
 static void 
 validate_inputs  (GeglFilter *filter, 
-                  GList *collected_input_data_list)
+                        GArray *collected_data)
 {
-  GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_input_data_list);
+  GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_data);
 
   {
-    gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "input-image");
-    GeglData * data = g_list_nth_data(collected_input_data_list, index);
+    gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "source");
+    GeglData * data = g_array_index(collected_data, GeglData*, index);
     GValue *value = gegl_data_get_value(data);
-    gegl_op_set_input_data_value(GEGL_OP(filter), "input-image", value);
+    gegl_op_set_input_data_value(GEGL_OP(filter), "source", value);
   }
 }
 
 static void 
 validate_outputs (GeglFilter *filter)
 {
-  GList *output_data_list = gegl_op_get_output_data_list(GEGL_OP(filter));
-  GeglData *data = g_list_nth_data(output_data_list, 0);
-  GValue *value = gegl_data_get_value(data);
+  GValue *value = gegl_op_get_output_data_value(GEGL_OP(filter), "dest");
 
   if(G_VALUE_TYPE(value) != GEGL_TYPE_IMAGE)
     g_value_init(value, GEGL_TYPE_IMAGE);
@@ -170,15 +169,8 @@ static void
 prepare (GeglFilter * filter)
 {
   GeglPipe *self = GEGL_PIPE(filter);
-
-  GList * output_data_list = gegl_op_get_output_data_list(GEGL_OP(self));
-  GList * input_data_list = gegl_op_get_input_data_list(GEGL_OP(self));
-
-  GeglData *src_data = (GeglData*)g_list_nth_data (input_data_list, 0); 
-  GValue *src_value = gegl_data_get_value (src_data);
-
-  GeglData *dest_data = (GeglData*)g_list_nth_data (output_data_list, 0); 
-  GValue *dest_value = gegl_data_get_value (dest_data);
+  GValue *dest_value = gegl_op_get_output_data_value(GEGL_OP(filter), "dest");
+  GValue *src_value = gegl_op_get_input_data_value(GEGL_OP(filter), "source");
 
   GeglImage *src = (GeglImage*)g_value_get_object (src_value);
   GeglColorModel * src_cm = gegl_image_get_color_model (src);
@@ -203,11 +195,5 @@ static void
 process (GeglFilter * filter) 
 {
   GeglPipe *self =  GEGL_PIPE(filter);
-
-  GList * output_data_list = gegl_op_get_output_data_list(GEGL_OP(self));
-  GList * input_data_list = gegl_op_get_input_data_list(GEGL_OP(self));
-
-  gegl_scanline_processor_process(self->scanline_processor, 
-                                  output_data_list,
-                                  input_data_list);
+  gegl_scanline_processor_process(self->scanline_processor);
 }

@@ -46,6 +46,7 @@ gegl_mock_properties_filter_get_type (void)
         sizeof (GeglMockPropertiesFilter),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_FILTER, 

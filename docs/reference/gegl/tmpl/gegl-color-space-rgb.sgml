@@ -20,3 +20,10 @@ GeglColorSpaceRgb
 </para>
 
 
+<!-- ##### STRUCT GeglColorSpaceRgbClass ##### -->
+<para>
+
+</para>
+
+@color_space_class: 
+

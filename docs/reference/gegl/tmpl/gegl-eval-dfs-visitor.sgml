@@ -26,3 +26,10 @@ is only used by #GeglEvalMgr.
 </para>
 
 
+<!-- ##### STRUCT GeglEvalDfsVisitorClass ##### -->
+<para>
+
+</para>
+
+@dfs_visitor_class: 
+

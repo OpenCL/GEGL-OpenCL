@@ -20,3 +20,10 @@ GeglScalarData
 </para>
 
 
+<!-- ##### STRUCT GeglScalarDataClass ##### -->
+<para>
+
+</para>
+
+@data_class: 
+

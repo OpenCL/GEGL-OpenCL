@@ -20,3 +20,10 @@ Prints out the pixel values of an image.
 </para>
 
 
+<!-- ##### STRUCT GeglPrintClass ##### -->
+<para>
+
+</para>
+
+@pipe_class: 
+

@@ -20,6 +20,13 @@ GeglColorData
 </para>
 
 
+<!-- ##### STRUCT GeglColorDataClass ##### -->
+<para>
+
+</para>
+
+@data_class: 
+
 <!-- ##### FUNCTION gegl_color_data_get_color_model ##### -->
 <para>
 

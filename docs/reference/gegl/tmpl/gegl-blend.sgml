@@ -37,6 +37,13 @@ For example the Multiply mode defines blend(x,y) = x*y.
 </para>
 
 
+<!-- ##### STRUCT GeglBlendClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
+
 <!-- ##### ARG GeglBlend:opacity ##### -->
 <para>
 

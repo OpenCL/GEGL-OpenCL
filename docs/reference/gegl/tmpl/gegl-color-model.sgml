@@ -20,6 +20,14 @@ GeglColorModel
 </para>
 
 
+<!-- ##### STRUCT GeglColorModelClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@create_storage: 
+
 <!-- ##### FUNCTION gegl_color_model_register ##### -->
 <para>
 

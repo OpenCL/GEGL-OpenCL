@@ -28,10 +28,10 @@ If you introduce new code, you should write new unit tests for these as well.
 <para>
 If this variable is set, Gegl will print out extensive debugging 
 messages. These messages contain various file and line numbers
-to help follow what is happening. The macros that are useful
-for this LOG_INFO, LOG_DEBUG, LOG_MSG, and LOG_DIRECT, which 
-which are defined <filename>gegl-utils.h</filename>. 
-If you do not wish to see these any longer just unset the 
+to help follow what is happening. The functions that are useful
+for this gegl_log_debug, gegl_log_info, gegl_log_message, and gegl_log_direct, which 
+which are defined <filename>gegl-utils.h</filename>. Grep the 
+source to see how they are used. If you do not wish to see these any longer just unset the 
 variable.
 </para>
 </formalpara>

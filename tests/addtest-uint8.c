@@ -38,7 +38,7 @@ test_add_g_object_properties(Test *test)
 {
   {
     GeglAdd * add = g_object_new (GEGL_TYPE_ADD, 
-                                  "input-image", source,
+                                  "source", source,
                                   NULL);  
 
     ct_test(test, 2 == gegl_node_get_num_inputs(GEGL_NODE(add)));
@@ -50,7 +50,7 @@ test_add_g_object_properties(Test *test)
   {
     guint8 add0, add1, add2;
     GeglAdd * add = g_object_new (GEGL_TYPE_ADD, 
-                                  "input-image", source,
+                                  "source", source,
                                   "constant-rgb-uint8", ADD0, ADD1, ADD2,
                                   NULL);  
 
@@ -70,7 +70,7 @@ test_add_apply(Test *test)
   {
     guint8 r, g, b;
     GeglOp *add = g_object_new(GEGL_TYPE_ADD,
-                               "input-image", source,
+                               "source", source,
                                "constant-rgb-uint8", ADD0, ADD1, ADD2,
                                NULL);
 
@@ -87,12 +87,12 @@ test_add_apply(Test *test)
   {
     gint r, g, b;
     GeglOp *add1 = g_object_new(GEGL_TYPE_ADD,
-                                 "input-image", source,
+                                 "source", source,
                                  "constant-rgb-uint8", ADD0, ADD1, ADD2,
                                  NULL);
 
     GeglOp *add2 = g_object_new(GEGL_TYPE_ADD,
-                                 "input-image", add1,
+                                 "source", add1,
                                  "constant-rgb-uint8", ADD0, ADD1, ADD2,
                                  NULL);
 

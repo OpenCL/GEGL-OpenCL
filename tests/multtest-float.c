@@ -34,7 +34,7 @@ test_mult_g_object_properties(Test *test)
 {
   {
     GeglMult * mult = g_object_new (GEGL_TYPE_MULT, 
-                                    "input-image", source,
+                                    "source", source,
                                     "mult0", MULT0, 
                                     "mult1", MULT1, 
                                     "mult2", MULT2, 
@@ -49,7 +49,7 @@ test_mult_g_object_properties(Test *test)
   {
     gfloat mult0, mult1, mult2;
     GeglMult * mult = g_object_new (GEGL_TYPE_MULT, 
-                                    "input-image", source,
+                                    "source", source,
                                     "mult0", MULT0, 
                                     "mult1", MULT1, 
                                     "mult2", MULT2, 
@@ -74,7 +74,7 @@ test_mult_apply(Test *test)
 {
   {
     GeglOp *mult = g_object_new(GEGL_TYPE_MULT,
-                                "input-image", source,
+                                "source", source,
                                 "mult0", MULT0, 
                                 "mult1", MULT1, 
                                 "mult2", MULT2,
@@ -90,14 +90,14 @@ test_mult_apply(Test *test)
 
   {
     GeglOp *mult1 = g_object_new(GEGL_TYPE_MULT,
-                                 "input-image", source,
+                                 "source", source,
                                  "mult0", MULT0, 
                                  "mult1", MULT1, 
                                  "mult2", MULT2,
                                  NULL);
 
     GeglOp *mult2 = g_object_new(GEGL_TYPE_MULT,
-                                 "input-image", mult1,
+                                 "source", mult1,
                                  "mult0", MULT0, 
                                  "mult1", MULT1, 
                                  "mult2", MULT2,

@@ -49,6 +49,7 @@ gegl_eval_mgr_get_type (void)
         sizeof (GeglEvalMgr),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_OBJECT , 
@@ -243,7 +244,7 @@ static void
 evaluate (GeglEvalMgr * self) 
 {
   /* Get the root and set roi on it */
-  GeglData * data = gegl_op_get_output_data(GEGL_OP(self->root), "output-image");
+  GeglData * data = gegl_op_get_output_data(GEGL_OP(self->root), "dest");
   if(data && GEGL_IS_IMAGE_DATA(data))
     {
       GeglImageData *image_data = GEGL_IMAGE_DATA(data);
@@ -251,21 +252,21 @@ evaluate (GeglEvalMgr * self)
     }
 
   /* This part computes need rects, breadth first. */
-  LOG_DEBUG("evaluate", 
+  gegl_log_debug("evaluate", 
             "begin bfs for %s %p", 
             G_OBJECT_TYPE_NAME(self->root), 
             self);
   eval_bfs_visitor(self);
 
   /* This part computes have rects, color models, depth first. */
-  LOG_DEBUG("evaluate", 
+  gegl_log_debug("evaluate", 
             "begin dfs for %s %p", 
             G_OBJECT_TYPE_NAME(self->root), 
             self);
   eval_dfs_visitor(self);
 
   /* This part does the evaluation of the ops, depth first. */
-  LOG_DEBUG("evaluate", 
+  gegl_log_debug("evaluate", 
             "begin evaluate dfs for %s %p", 
             G_OBJECT_TYPE_NAME(self->root), 
             self);

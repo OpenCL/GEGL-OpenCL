@@ -21,7 +21,15 @@ image input.
 </para>
 
 
-<!-- ##### ARG GeglUnary:input-image ##### -->
+<!-- ##### STRUCT GeglUnaryClass ##### -->
+<para>
+
+</para>
+
+@point_op_class: 
+@get_scanline_func: 
+
+<!-- ##### ARG GeglUnary:source ##### -->
 <para>
 
 </para>

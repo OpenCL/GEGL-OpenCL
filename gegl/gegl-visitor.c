@@ -34,6 +34,7 @@ gegl_visitor_get_type (void)
         sizeof (GeglVisitor),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_OBJECT, 
@@ -95,11 +96,10 @@ gegl_visitor_node_lookup(GeglVisitor * self,
                          GeglNode *node)
 {
   GeglNodeInfo * node_info;
-  g_return_val_if_fail(self, NULL);
-  g_return_val_if_fail(node, NULL);
+  g_return_val_if_fail(GEGL_IS_VISITOR(self), NULL);
+  g_return_val_if_fail(GEGL_IS_NODE(node), NULL);
 
   node_info = g_hash_table_lookup(self->nodes_hash, node);
-
   return node_info;
 }
 
@@ -115,7 +115,11 @@ void
 gegl_visitor_node_insert(GeglVisitor *self,
                          GeglNode *node)
 {
-  GeglNodeInfo * node_info = gegl_visitor_node_lookup(self,node);
+  GeglNodeInfo * node_info;
+  g_return_if_fail(GEGL_IS_VISITOR(self));
+  g_return_if_fail(GEGL_IS_NODE(node));
+
+  node_info = gegl_visitor_node_lookup(self,node);
 
   if(!node_info)
     {
@@ -144,7 +148,11 @@ gboolean
 gegl_visitor_get_visited(GeglVisitor *self,
                          GeglNode *node)
 {
-  GeglNodeInfo * node_info = gegl_visitor_node_lookup(self,node);
+  GeglNodeInfo * node_info;
+  g_return_val_if_fail(GEGL_IS_VISITOR(self), FALSE);
+  g_return_val_if_fail(GEGL_IS_NODE(node), FALSE);
+
+  node_info = gegl_visitor_node_lookup(self,node);
   g_assert(node_info);
   return node_info->visited;
 }
@@ -163,7 +171,11 @@ gegl_visitor_set_visited(GeglVisitor *self,
                          GeglNode *node,
                          gboolean visited)
 {
-  GeglNodeInfo * node_info = gegl_visitor_node_lookup(self,node);
+  GeglNodeInfo * node_info;
+  g_return_if_fail(GEGL_IS_VISITOR(self));
+  g_return_if_fail(GEGL_IS_NODE(node));
+
+  node_info = gegl_visitor_node_lookup(self,node);
   g_assert(node_info);
   node_info->visited = visited;
 }
@@ -181,7 +193,11 @@ gboolean
 gegl_visitor_get_discovered(GeglVisitor *self,
                             GeglNode *node)
 {
-  GeglNodeInfo * node_info = gegl_visitor_node_lookup(self,node);
+  GeglNodeInfo * node_info;
+  g_return_val_if_fail(self, FALSE);
+  g_return_val_if_fail(node, FALSE);
+
+  node_info = gegl_visitor_node_lookup(self,node);
   g_assert(node_info);
   return node_info->discovered;
 }
@@ -200,7 +216,11 @@ gegl_visitor_set_discovered(GeglVisitor *self,
                             GeglNode *node,
                             gboolean discovered)
 {
-  GeglNodeInfo * node_info = gegl_visitor_node_lookup(self,node);
+  GeglNodeInfo * node_info;
+  g_return_if_fail (GEGL_IS_VISITOR (self));
+  g_return_if_fail (GEGL_IS_NODE (node));
+
+  node_info = gegl_visitor_node_lookup(self,node);
   g_assert(node_info);
   node_info->discovered = discovered;
 }
@@ -219,7 +239,11 @@ gint
 gegl_visitor_get_shared_count(GeglVisitor *self,
                               GeglNode *node)
 {
-  GeglNodeInfo * node_info = gegl_visitor_node_lookup(self,node);
+  GeglNodeInfo * node_info;
+  g_return_val_if_fail (GEGL_IS_VISITOR (self), -1);
+  g_return_val_if_fail (GEGL_IS_NODE (node), -1);
+
+  node_info = gegl_visitor_node_lookup(self,node);
   g_assert(node_info);
   return node_info->shared_count;
 }
@@ -239,7 +263,11 @@ gegl_visitor_set_shared_count(GeglVisitor *self,
                               GeglNode *node,
                               gint shared_count)
 {
-  GeglNodeInfo * node_info = gegl_visitor_node_lookup(self,node);
+  GeglNodeInfo * node_info;
+  g_return_if_fail (GEGL_IS_VISITOR (self));
+  g_return_if_fail (GEGL_IS_NODE (node));
+
+  node_info = gegl_visitor_node_lookup(self,node);
   g_assert(node_info);
   node_info->shared_count = shared_count;
 }
@@ -255,6 +283,8 @@ gegl_visitor_set_shared_count(GeglVisitor *self,
 GList *
 gegl_visitor_get_visits_list(GeglVisitor *self)
 {
+  g_return_val_if_fail (GEGL_IS_VISITOR (self), NULL);
+
   return self->visits_list;
 }
 
@@ -278,13 +308,10 @@ gegl_visitor_visit_node(GeglVisitor * self,
                         GeglNode *node)
 {
   GeglVisitorClass *klass;
-  g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_VISITOR (self));
-  g_return_if_fail (node != NULL);
   g_return_if_fail (GEGL_IS_NODE(node));
 
   klass = GEGL_VISITOR_GET_CLASS(self);
-
   if(klass->visit_node)
     (*klass->visit_node)(self, node);
 }
@@ -309,13 +336,10 @@ gegl_visitor_visit_filter(GeglVisitor * self,
                           GeglFilter *filter)
 {
   GeglVisitorClass *klass;
-  g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_VISITOR (self));
-  g_return_if_fail (filter != NULL);
   g_return_if_fail (GEGL_IS_FILTER(filter));
 
   klass = GEGL_VISITOR_GET_CLASS(self);
-
   if(klass->visit_filter)
     (*klass->visit_filter)(self, filter);
 }
@@ -340,13 +364,10 @@ gegl_visitor_visit_op(GeglVisitor * self,
                       GeglOp *op)
 {
   GeglVisitorClass *klass;
-  g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_VISITOR (self));
-  g_return_if_fail (op != NULL);
   g_return_if_fail (GEGL_IS_OP(op));
 
   klass = GEGL_VISITOR_GET_CLASS(self);
-
   if(klass->visit_op)
     (*klass->visit_op)(self, op);
 }
@@ -371,13 +392,10 @@ gegl_visitor_visit_graph(GeglVisitor * self,
                           GeglGraph *graph)
 {
   GeglVisitorClass *klass;
-  g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_VISITOR (self));
-  g_return_if_fail (graph != NULL);
   g_return_if_fail (GEGL_IS_GRAPH(graph));
 
   klass = GEGL_VISITOR_GET_CLASS(self);
-
   if(klass->visit_graph)
     (*klass->visit_graph)(self, graph);
 }
@@ -390,22 +408,28 @@ visit_graph(GeglVisitor * self,
 }
 
 /**
- * gegl_visitor_collect_input_data_list
+ * gegl_visitor_collect_input_data
  * @self: a #GeglVisitor.
  * @node: a #GeglNode.
  *
- * This routine finds the data outputs to be delivered to a node.  The returned
- * list should be freed when finished.
+ * This routine finds the data inputs to be delivered to a node. The returned
+ * array should be freed when finished.
  *
- * Returns: a list of data outputs.
+ * Returns: an array of data.
  **/
-GList * 
-gegl_visitor_collect_input_data_list(GeglVisitor *self,
-                                  GeglNode *node)
+GArray * 
+gegl_visitor_collect_input_data(GeglVisitor *self,
+                                GeglNode *node)
 {
-  GList * input_data_list = NULL;
+  GArray * input_data_array;
   gint i;
-  gint num_inputs = gegl_node_get_num_inputs(node);
+  gint num_inputs;
+
+  g_return_val_if_fail (GEGL_IS_VISITOR (self), NULL);
+  g_return_val_if_fail (GEGL_IS_NODE(node), NULL);
+
+  input_data_array = g_array_new(FALSE, FALSE, sizeof(GeglData*));
+  num_inputs = gegl_node_get_num_inputs(node);
 
   /* There is a bug here, if we dont find the inputs 
      one level out, we have to climb out further. I 
@@ -423,12 +447,15 @@ gegl_visitor_collect_input_data_list(GeglVisitor *self,
       if(source) 
         {
           GeglData *input_data = gegl_op_get_nth_output_data(GEGL_OP(source), 0); 
-          input_data_list = g_list_append(input_data_list, input_data);
+          input_data_array = g_array_append_val(input_data_array, input_data);
         }
       else
-          input_data_list = g_list_append(input_data_list, NULL);
+        {
+          GeglData *input_data = NULL;
+          input_data_array = g_array_append_val(input_data_array, input_data);
+        }
 
     }
 
-  return input_data_list;
+  return input_data_array;
 }

@@ -20,3 +20,10 @@ GeglChannelSpaceFloat
 </para>
 
 
+<!-- ##### STRUCT GeglChannelSpaceFloatClass ##### -->
+<para>
+
+</para>
+
+@channel_space_class: 
+

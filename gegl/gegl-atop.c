@@ -28,6 +28,7 @@ gegl_atop_get_type (void)
         sizeof (GeglAtop),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_COMP, 
@@ -48,7 +49,7 @@ class_init (GeglAtopClass * klass)
 
 static void 
 init (GeglAtop * self, 
-      GeglAtopClass * klass)
+      GeglAtopClass *klass)
 {
 }
 

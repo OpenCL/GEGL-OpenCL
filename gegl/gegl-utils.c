@@ -11,6 +11,11 @@
 #include "gegl-graph.h"
 #include "gegl-dump-visitor.h"
 
+void gegl_log(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, ...);
+void gegl_logv(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, va_list args);
+void gegl_direct_log(GLogLevelFlags level, gchar *format, ...);
+void gegl_direct_logv(GLogLevelFlags level, gchar *format, va_list args);
+
 inline gint
 _gegl_float_epsilon_zero (float value)
 {
@@ -150,6 +155,37 @@ gegl_rect_equal_coords (GeglRect *r,
 
 #define GEGL_LOG_DOMAIN "Gegl"
 
+void gegl_log_debug(gchar *function, gchar * format, ...)
+{
+  va_list args;
+  va_start(args,format);
+  gegl_logv(G_LOG_LEVEL_DEBUG,__FILE__,__LINE__,function, format, args);
+  va_end(args);
+}
+
+void gegl_log_info(gchar *function, gchar * format, ...)
+{
+  va_list args;
+  va_start(args,format);
+  gegl_logv(G_LOG_LEVEL_INFO,__FILE__,__LINE__,function, format, args);
+  va_end(args);
+}
+
+void gegl_log_message(gchar *function, gchar * format, ...)
+{
+  va_list args;
+  va_start(args,format);
+  gegl_logv(G_LOG_LEVEL_MESSAGE,__FILE__,__LINE__,function, format, args);
+  va_end(args);
+}
+
+void gegl_log_direct(gchar * format, ...)
+{
+  va_list args;
+  va_start(args,format);
+  gegl_direct_logv(G_LOG_LEVEL_DEBUG, format, args);
+  va_end(args);
+}
 
 void
 gegl_log(GLogLevelFlags level,

@@ -28,6 +28,7 @@ gegl_mock_image_op_get_type (void)
         sizeof (GeglMockImageOp),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_IMAGE_OP, 

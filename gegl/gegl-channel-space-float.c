@@ -30,6 +30,7 @@ gegl_channel_space_float_get_type (void)
         sizeof (GeglChannelSpaceFloat),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_CHANNEL_SPACE, 

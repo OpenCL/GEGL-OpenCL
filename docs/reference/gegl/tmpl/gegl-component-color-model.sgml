@@ -20,3 +20,10 @@ GeglComponentColorModel
 </para>
 
 
+<!-- ##### STRUCT GeglComponentColorModelClass ##### -->
+<para>
+
+</para>
+
+@color_model_class: 
+

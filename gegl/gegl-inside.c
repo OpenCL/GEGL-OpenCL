@@ -30,6 +30,7 @@ gegl_inside_get_type (void)
         sizeof (GeglInside),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_COMP, 

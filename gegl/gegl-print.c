@@ -42,6 +42,7 @@ gegl_print_get_type (void)
         sizeof (GeglPrint),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_PIPE, 
@@ -80,48 +81,41 @@ static void
 prepare (GeglFilter * filter) 
 {
   GeglPrint *self = GEGL_PRINT(filter);
-  GList * output_data_list = gegl_op_get_output_data_list(GEGL_OP(self));
-  GeglData *src_data; 
-  GValue *src_value;
-  GeglImageData* src_image_data;
-  GeglColorModel *src_cm;
-  GeglImage *src;
-  GeglRect rect;
-  gint num_channels;
 
   GEGL_FILTER_CLASS(parent_class)->prepare(filter);
 
-  src_data = (GeglData*)g_list_nth_data(output_data_list, 0); 
-  src_image_data = GEGL_IMAGE_DATA(src_data);
-  src_value = gegl_data_get_value(src_data);
-
-  src = (GeglImage*)g_value_get_object(src_value);
-  src_cm = gegl_image_get_color_model (src);
-  num_channels = gegl_color_model_num_channels(src_cm);
-
-  gegl_rect_copy(&rect, &src_image_data->rect);
-
   {
-    gint x = rect.x;
-    gint y = rect.y;
-    gint width = rect.w;
-    gint height = rect.h;
-    
-    /* Allocate a scanline char buffer for output */
-    self->buffer_size = width * (num_channels + 1) * MAX_PRINTED_CHARS_PER_CHANNEL;
-    self->buffer = g_new(gchar, self->buffer_size); 
+    GeglData *src_data = gegl_op_get_input_data(GEGL_OP(self), "source");
+    GValue *src_value = gegl_data_get_value(src_data);
+    GeglImage *src = (GeglImage*)g_value_get_object(src_value);
+    GeglColorModel *src_cm = gegl_image_get_color_model (src);
+    gint num_channels = gegl_color_model_num_channels(src_cm);
 
-    /*
-    LOG_INFO("prepare", "buffer_size is %d", self->buffer_size); 
-    */
+    GeglRect rect;
+    gegl_image_data_get_rect(GEGL_IMAGE_DATA(src_data), &rect);
 
-    if(self->use_log)
-      LOG_INFO("prepare", 
-               "Printing GeglImage: %p area (x,y,w,h) = (%d,%d,%d,%d)",
-               src,x,y,width,height);
-    else
-      printf("Printing GeglImage: %p area (x,y,w,h) = (%d,%d,%d,%d)", 
-               src,x,y,width,height);
+    {
+      gint x = rect.x;
+      gint y = rect.y;
+      gint width = rect.w;
+      gint height = rect.h;
+      
+      /* Allocate a scanline char buffer for output */
+      self->buffer_size = width * (num_channels + 1) * MAX_PRINTED_CHARS_PER_CHANNEL;
+      self->buffer = g_new(gchar, self->buffer_size); 
+
+      /*
+      gegl_log_info("prepare", "buffer_size is %d", self->buffer_size); 
+      */
+
+      if(self->use_log)
+        gegl_log_info("prepare", 
+                 "Printing GeglImage: %p area (x,y,w,h) = (%d,%d,%d,%d)",
+                 src,x,y,width,height);
+      else
+        printf("Printing GeglImage: %p area (x,y,w,h) = (%d,%d,%d,%d)", 
+                 (gpointer)src,x,y,width,height);
+    }
   }
 }
 
@@ -155,7 +149,7 @@ print (GeglPrint * self,
   }
 
 /*
-  LOG_DEBUG("print", "total written : %d", self->buffer_size - self->left);
+  gegl_log_debug("print", "total written : %d", self->buffer_size - self->left);
 */
 }
 
@@ -263,7 +257,7 @@ print_float (GeglFilter * filter,
     print(self,"%c", (char)0);
 
     if(self->use_log)
-      LOG_INFO("print_float","%s",self->buffer);
+      gegl_log_info("print_float","%s",self->buffer);
     else
       printf("%s", self->buffer);
   }

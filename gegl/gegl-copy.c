@@ -43,6 +43,7 @@ gegl_copy_get_type (void)
         sizeof (GeglCopy),
         0,
         (GInstanceInitFunc) NULL,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_UNARY, 

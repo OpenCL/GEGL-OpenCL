@@ -32,14 +32,14 @@ struct _GeglFilterClass
    void (* finish)                  (GeglFilter * self); 
 
    void (* validate_inputs)         (GeglFilter *self,
-                                     GList *collected_input_data_list);
+                                     GArray *collected_data);
    void (* validate_outputs)        (GeglFilter *self);
 };
 
 GType           gegl_filter_get_type            (void);
 void            gegl_filter_evaluate            (GeglFilter * self); 
 void            gegl_filter_validate_inputs     (GeglFilter * self, 
-                                                 GList * collected_input_data_list);
+                                                 GArray * collected_data);
 void            gegl_filter_validate_outputs    (GeglFilter * self);
 
 

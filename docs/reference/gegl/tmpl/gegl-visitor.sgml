@@ -56,6 +56,17 @@ routine finds inputs C and B when used for A, and D when used for B.
 </para>
 
 
+<!-- ##### STRUCT GeglVisitorClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@visit_node: 
+@visit_op: 
+@visit_filter: 
+@visit_graph: 
+
 <!-- ##### FUNCTION gegl_visitor_visit_node ##### -->
 <para>
 
@@ -180,7 +191,7 @@ routine finds inputs C and B when used for A, and D when used for B.
 @shared_count: 
 
 
-<!-- ##### FUNCTION gegl_visitor_collect_input_data_list ##### -->
+<!-- ##### FUNCTION gegl_visitor_collect_input_data ##### -->
 <para>
 
 </para>

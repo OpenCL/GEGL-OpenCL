@@ -1,45 +1,14 @@
-<!-- ##### STRUCT GeglAddClass ##### -->
+<!-- ##### ARG GeglBinary:input-image-a ##### -->
 <para>
 
 </para>
 
-@unary_class: 
 
-<!-- ##### STRUCT GeglAtopClass ##### -->
+<!-- ##### ARG GeglBinary:input-image-b ##### -->
 <para>
 
 </para>
 
-@comp_class: 
-
-<!-- ##### STRUCT GeglBfsVisitorClass ##### -->
-<para>
-
-</para>
-
-@visitor_class: 
-
-<!-- ##### STRUCT GeglBinaryClass ##### -->
-<para>
-
-</para>
-
-@point_op_class: 
-@get_scanline_func: 
-
-<!-- ##### STRUCT GeglBlendClass ##### -->
-<para>
-
-</para>
-
-@comp_class: 
-
-<!-- ##### STRUCT GeglBufferClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
 
 <!-- ##### ARG GeglChannelData:float ##### -->
 <para>
@@ -53,83 +22,6 @@
 </para>
 
 
-<!-- ##### STRUCT GeglChannelDataClass ##### -->
-<para>
-
-</para>
-
-@data_class: 
-
-<!-- ##### STRUCT GeglChannelSpaceClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-@convert_to_float: 
-@convert_from_float: 
-@convert_value_to_float: 
-@convert_value_from_float: 
-
-<!-- ##### STRUCT GeglChannelSpaceFloatClass ##### -->
-<para>
-
-</para>
-
-@channel_space_class: 
-
-<!-- ##### STRUCT GeglChannelSpaceU8Class ##### -->
-<para>
-
-</para>
-
-@channel_space_class: 
-
-<!-- ##### STRUCT GeglColorClass ##### -->
-<para>
-
-</para>
-
-@no_input_class: 
-
-<!-- ##### STRUCT GeglColorDataClass ##### -->
-<para>
-
-</para>
-
-@data_class: 
-
-<!-- ##### STRUCT GeglColorModelClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-@create_storage: 
-
-<!-- ##### STRUCT GeglColorSpaceClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-@convert_to_xyz: 
-@convert_from_xyz: 
-
-<!-- ##### STRUCT GeglColorSpaceGrayClass ##### -->
-<para>
-
-</para>
-
-@color_space_class: 
-
-<!-- ##### STRUCT GeglColorSpaceRgbClass ##### -->
-<para>
-
-</para>
-
-@color_space_class: 
-
 <!-- ##### ARG GeglComp:input-image-a ##### -->
 <para>
 
@@ -142,41 +34,14 @@
 </para>
 
 
-<!-- ##### STRUCT GeglCompClass ##### -->
+<!-- ##### STRUCT GeglConnector ##### -->
 <para>
 
 </para>
 
-@point_op_class: 
-@get_scanline_func: 
-
-<!-- ##### STRUCT GeglComponentColorModelClass ##### -->
-<para>
-
-</para>
-
-@color_model_class: 
-
-<!-- ##### STRUCT GeglComponentStorageClass ##### -->
-<para>
-
-</para>
-
-@storage_class: 
-
-<!-- ##### STRUCT GeglCopyClass ##### -->
-<para>
-
-</para>
-
-@unary_class: 
-
-<!-- ##### STRUCT GeglDarkenClass ##### -->
-<para>
-
-</para>
-
-@blend_class: 
+@node: 
+@input: 
+@source: 
 
 <!-- ##### ARG GeglData:param-spec ##### -->
 <para>
@@ -184,240 +49,17 @@
 </para>
 
 
-<!-- ##### STRUCT GeglDataClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-
-<!-- ##### STRUCT GeglDfsVisitorClass ##### -->
-<para>
-
-</para>
-
-@visitor_class: 
-
-<!-- ##### STRUCT GeglDifferenceClass ##### -->
-<para>
-
-</para>
-
-@blend_class: 
-
-<!-- ##### STRUCT GeglDumpVisitorClass ##### -->
-<para>
-
-</para>
-
-@visitor_class: 
-
-<!-- ##### STRUCT GeglEvalBfsVisitorClass ##### -->
-<para>
-
-</para>
-
-@bfs_visitor_class: 
-
-<!-- ##### STRUCT GeglEvalDfsVisitorClass ##### -->
-<para>
-
-</para>
-
-@dfs_visitor_class: 
-
-<!-- ##### STRUCT GeglEvalMgrClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-@evaluate: 
-
-<!-- ##### STRUCT GeglEvalVisitorClass ##### -->
-<para>
-
-</para>
-
-@dfs_visitor_class: 
-
-<!-- ##### STRUCT GeglFadeClass ##### -->
-<para>
-
-</para>
-
-@unary_class: 
-
-<!-- ##### STRUCT GeglFilterClass ##### -->
-<para>
-
-</para>
-
-@op_class: 
-@prepare: 
-@process: 
-@finish: 
-@validate_inputs: 
-@validate_outputs: 
-
-<!-- ##### STRUCT GeglGraphClass ##### -->
-<para>
-
-</para>
-
-@op_class: 
-
-<!-- ##### STRUCT GeglGraphSetupVisitorClass ##### -->
-<para>
-
-</para>
-
-@dfs_visitor_class: 
-
-<!-- ##### STRUCT GeglIAddClass ##### -->
-<para>
-
-</para>
-
-@binary_class: 
-
-<!-- ##### STRUCT GeglIMultClass ##### -->
-<para>
-
-</para>
-
-@binary_class: 
-
-<!-- ##### STRUCT GeglImageClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-
-<!-- ##### STRUCT GeglImageDataClass ##### -->
-<para>
-
-</para>
-
-@data_class: 
-
-<!-- ##### STRUCT GeglImageIteratorClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-
-<!-- ##### STRUCT GeglImageOpClass ##### -->
-<para>
-
-</para>
-
-@filter_class: 
-@compute_need_rects: 
-@compute_have_rect: 
-@compute_color_model: 
-
-<!-- ##### STRUCT GeglInsideClass ##### -->
-<para>
-
-</para>
-
-@comp_class: 
-
-<!-- ##### STRUCT GeglLightenClass ##### -->
-<para>
-
-</para>
-
-@blend_class: 
-
-<!-- ##### STRUCT GeglMaxClass ##### -->
-<para>
-
-</para>
-
-@binary_class: 
-
-<!-- ##### STRUCT GeglMinClass ##### -->
-<para>
-
-</para>
-
-@binary_class: 
-
-<!-- ##### STRUCT GeglMultClass ##### -->
-<para>
-
-</para>
-
-@unary_class: 
-
-<!-- ##### STRUCT GeglMultiplyClass ##### -->
-<para>
-
-</para>
-
-@blend_class: 
-
-<!-- ##### STRUCT GeglNoInputClass ##### -->
-<para>
-
-</para>
-
-@point_op_class: 
-@get_scanline_func: 
-
 <!-- ##### ARG GeglNode:input ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### STRUCT GeglNodeClass ##### -->
+<!-- ##### ARG GeglPipe:input-image ##### -->
 <para>
 
 </para>
 
-@object_class: 
-@accept: 
-
-<!-- ##### STRUCT GeglObjectClass ##### -->
-<para>
-
-</para>
-
-@gobject_class: 
-
-<!-- ##### STRUCT GeglOpClass ##### -->
-<para>
-
-</para>
-
-@node_class: 
-
-<!-- ##### STRUCT GeglOutsideClass ##### -->
-<para>
-
-</para>
-
-@comp_class: 
-
-<!-- ##### STRUCT GeglOverClass ##### -->
-<para>
-
-</para>
-
-@comp_class: 
-
-<!-- ##### STRUCT GeglPipeClass ##### -->
-<para>
-
-</para>
-
-@image_op_class: 
-@get_scanline_func: 
 
 <!-- ##### ARG GeglPixelData:rgb-float ##### -->
 <para>
@@ -443,109 +85,57 @@
 </para>
 
 
-<!-- ##### STRUCT GeglPixelDataClass ##### -->
+<!-- ##### ARG GeglUnary:input-image ##### -->
 <para>
 
 </para>
 
-@data_class: 
 
-<!-- ##### STRUCT GeglPointOpClass ##### -->
+<!-- ##### FUNCTION LOG_DEBUG ##### -->
 <para>
 
 </para>
 
-@image_op_class: 
+@function: 
+@format: 
+@Varargs: 
+@args...: 
 
-<!-- ##### STRUCT GeglPremultClass ##### -->
+<!-- ##### FUNCTION LOG_DIRECT ##### -->
 <para>
 
 </para>
 
-@unary_class: 
+@format: 
+@Varargs: 
+@args...: 
 
-<!-- ##### STRUCT GeglPrintClass ##### -->
+<!-- ##### FUNCTION LOG_INFO ##### -->
 <para>
 
 </para>
 
-@pipe_class: 
+@function: 
+@format: 
+@Varargs: 
+@args...: 
 
-<!-- ##### STRUCT GeglScalarDataClass ##### -->
+<!-- ##### FUNCTION LOG_MESSAGE ##### -->
 <para>
 
 </para>
 
-@data_class: 
+@function: 
+@format: 
+@Varargs: 
 
-<!-- ##### STRUCT GeglScanlineProcessorClass ##### -->
+<!-- ##### MACRO LOG_MSG ##### -->
 <para>
 
 </para>
 
-@object_class: 
-
-<!-- ##### STRUCT GeglScreenClass ##### -->
-<para>
-
-</para>
-
-@blend_class: 
-
-<!-- ##### STRUCT GeglStorageClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-@create_buffer: 
-
-<!-- ##### STRUCT GeglSubtractClass ##### -->
-<para>
-
-</para>
-
-@binary_class: 
-
-<!-- ##### STRUCT GeglTileClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-
-<!-- ##### STRUCT GeglUnaryClass ##### -->
-<para>
-
-</para>
-
-@point_op_class: 
-@get_scanline_func: 
-
-<!-- ##### STRUCT GeglUnpremultClass ##### -->
-<para>
-
-</para>
-
-@unary_class: 
-
-<!-- ##### STRUCT GeglVisitorClass ##### -->
-<para>
-
-</para>
-
-@object_class: 
-@visit_node: 
-@visit_op: 
-@visit_filter: 
-@visit_graph: 
-
-<!-- ##### STRUCT GeglXorClass ##### -->
-<para>
-
-</para>
-
-@comp_class: 
+@function: 
+@args...: 
 
 <!-- ##### FUNCTION gegl_add_get_constant ##### -->
 <para>
@@ -675,6 +265,24 @@
 @self: 
 @param_spec: 
 
+<!-- ##### FUNCTION gegl_direct_log ##### -->
+<para>
+
+</para>
+
+@level: 
+@format: 
+@Varargs: 
+
+<!-- ##### FUNCTION gegl_direct_logv ##### -->
+<para>
+
+</para>
+
+@level: 
+@format: 
+@args: 
+
 <!-- ##### FUNCTION gegl_dump_graph ##### -->
 <para>
 
@@ -755,6 +363,44 @@
 
 @self: 
 @image: 
+
+<!-- ##### FUNCTION gegl_log ##### -->
+<para>
+
+</para>
+
+@level: 
+@file: 
+@line: 
+@function: 
+@format: 
+@Varargs: 
+
+<!-- ##### FUNCTION gegl_logv ##### -->
+<para>
+
+</para>
+
+@level: 
+@file: 
+@line: 
+@function: 
+@format: 
+@args: 
+
+<!-- ##### FUNCTION gegl_node_free_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+
+<!-- ##### FUNCTION gegl_node_free_outputs ##### -->
+<para>
+
+</para>
+
+@self: 
 
 <!-- ##### FUNCTION gegl_object_add_interface ##### -->
 <para>
@@ -874,6 +520,20 @@
 
 @self: 
 
+<!-- ##### FUNCTION gegl_op_free_input_data_list ##### -->
+<para>
+
+</para>
+
+@self: 
+
+<!-- ##### FUNCTION gegl_op_free_output_data_list ##### -->
+<para>
+
+</para>
+
+@self: 
+
 <!-- ##### FUNCTION gegl_op_get_data_input ##### -->
 <para>
 
@@ -908,7 +568,41 @@
 @self: 
 @Returns: 
 
+<!-- ##### FUNCTION gegl_op_get_input_data_list ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_get_output_data_list ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_validate_input_data ##### -->
+<para>
+
+</para>
+
+@op: 
+@collected_input_data_list: 
+@func: 
+
 <!-- ##### FUNCTION gegl_visitor_collect_data_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_visitor_collect_input_data_list ##### -->
 <para>
 
 </para>

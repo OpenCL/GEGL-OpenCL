@@ -24,6 +24,14 @@ image should be premultiplied before the operation.
 </para>
 
 
+<!-- ##### STRUCT GeglCompClass ##### -->
+<para>
+
+</para>
+
+@point_op_class: 
+@get_scanline_func: 
+
 <!-- ##### ARG GeglComp:background ##### -->
 <para>
 

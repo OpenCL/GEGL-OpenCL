@@ -29,6 +29,7 @@ gegl_mock_bfs_visitor_get_type (void)
         sizeof (GeglMockBfsVisitor),
         0,
         (GInstanceInitFunc) NULL,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_BFS_VISITOR, 

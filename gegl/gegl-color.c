@@ -18,6 +18,7 @@ enum
   PROP_PIXEL_RGBA_FLOAT,
   PROP_PIXEL_RGB_UINT8,
   PROP_PIXEL_RGBA_UINT8,
+  PROP_PIXEL_NODE,
   PROP_LAST 
 };
 
@@ -57,6 +58,7 @@ gegl_color_get_type (void)
         sizeof (GeglColor),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_NO_INPUT, 
@@ -128,6 +130,13 @@ class_init (GeglColorClass * klass)
                                      0, 0, 0, 0,
                                      G_PARAM_READWRITE));
 
+  g_object_class_install_property (gobject_class, PROP_PIXEL_NODE,
+               g_param_spec_object ("pixel-node",
+                                    "PixelNode",
+                                    "The pixel node",
+                                     GEGL_TYPE_OP,
+                                     G_PARAM_WRITABLE));
+
   g_object_class_install_property (gobject_class, PROP_WIDTH,
                    g_param_spec_int ("width",
                                      "Width",
@@ -183,6 +192,13 @@ get_property (GObject      *gobject,
         g_param_value_convert(pspec, data_value, value, TRUE);
       }
       break;
+    case PROP_PIXEL_NODE:
+      {
+        GeglNode *source = (GeglNode*)g_value_get_object(value);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(self), "pixel");
+        gegl_node_set_source(GEGL_NODE(self), source, index);  
+      }
+      break;
     case PROP_WIDTH:
       {
         GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "width");
@@ -234,7 +250,7 @@ compute_have_rect(GeglImageOp * image_op)
   GeglColor * self = GEGL_COLOR(image_op);
 
   GeglData *output_data = 
-    gegl_op_get_output_data(GEGL_OP(self), "output-image");
+    gegl_op_get_output_data(GEGL_OP(self), "dest");
   GeglImageData *output_image_data = GEGL_IMAGE_DATA(output_data);
 
   GValue *width_data_value;
@@ -257,7 +273,7 @@ static void
 compute_color_model (GeglImageOp * image_op)
 {
   GeglData *output_data = 
-    gegl_op_get_output_data(GEGL_OP(image_op), "output-image");
+    gegl_op_get_output_data(GEGL_OP(image_op), "dest");
   GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(image_op), "pixel");
   GeglColorModel *pixel_cm = g_value_pixel_get_color_model(data_value);
 

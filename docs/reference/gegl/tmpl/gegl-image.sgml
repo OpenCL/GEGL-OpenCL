@@ -20,6 +20,13 @@ GeglImage
 </para>
 
 
+<!-- ##### STRUCT GeglImageClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+
 <!-- ##### FUNCTION gegl_image_get_tile ##### -->
 <para>
 

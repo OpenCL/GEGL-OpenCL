@@ -34,13 +34,13 @@ test_simple_tree_apply(Test *t)
                                  NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
-                                "input-image", color1,
+                                "source", color1,
                                 "multiplier", .5,
                                 NULL); 
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD, 
-                                "input-image-a", fade,
-                                "input-image-b", color2,
+                                "source-0", fade,
+                                "source-1", color2,
                                 NULL);  
 
   gegl_op_apply(iadd); 
@@ -88,7 +88,7 @@ test_simple_tree_apply_with_prints(Test *t)
                                  NULL); 
 
   GeglOp * print1 = g_object_new(GEGL_TYPE_PRINT,
-                                 "input-image", color1,
+                                 "source", color1,
                                  NULL);
 
   GeglOp * color2 = g_object_new(GEGL_TYPE_COLOR, 
@@ -98,17 +98,17 @@ test_simple_tree_apply_with_prints(Test *t)
                                  NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
-                                "input-image", print1,
+                                "source", print1,
                                 "multiplier", .5,
                                 NULL); 
 
   GeglOp * print2 = g_object_new(GEGL_TYPE_PRINT,
-                                 "input-image", fade,
+                                 "source", fade,
                                  NULL);
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD, 
-                                "input-image-a", print2,
-                                "input-image-b", color2,
+                                "source-0", print2,
+                                "source-1", color2,
                                 NULL);  
 
   gegl_op_apply(iadd); 
@@ -149,18 +149,18 @@ test_simple_diamond_apply(Test *t)
                                 NULL); 
 
   GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
-                                 "input-image", color,
+                                 "source", color,
                                  "multiplier", .5,
                                  NULL); 
 
   GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
-                                 "input-image", color,
+                                 "source", color,
                                  "multiplier", 2.0,
                                  NULL); 
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD, 
-                                "input-image-a", fade1,
-                                "input-image-b", fade2,
+                                "source-0", fade1,
+                                "source-1", fade2,
                                 NULL);  
 
   gegl_op_apply(iadd); 
@@ -198,12 +198,12 @@ test_simple_chain_apply(Test *t)
                                 NULL); 
 
   GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
-                                 "input-image", color,
+                                 "source", color,
                                  "multiplier", .5,
                                  NULL); 
 
   GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
-                                 "input-image", fade1,
+                                 "source", fade1,
                                  "multiplier", .5,
                                  NULL); 
 

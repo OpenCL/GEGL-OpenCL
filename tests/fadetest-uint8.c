@@ -37,7 +37,7 @@ test_fade_g_object_properties(Test *test)
   {
     GeglFade * fade = g_object_new (GEGL_TYPE_FADE, 
                                     "multiplier", MULTIPLIER, 
-                                    "input-image", source,
+                                    "source", source,
                                      NULL);  
 
     ct_test(test, 2 == gegl_node_get_num_inputs(GEGL_NODE(fade)));
@@ -74,7 +74,7 @@ test_fade_apply(Test *test)
   {
     guint8 r, g, b;
     GeglOp *fade = g_object_new(GEGL_TYPE_FADE,
-                                "input-image", source,
+                                "source", source,
                                 "multiplier", MULTIPLIER,
                                 NULL);
 
@@ -93,12 +93,12 @@ test_fade_apply(Test *test)
     guint8 r, g, b;
     GeglOp *fade1 = g_object_new(GEGL_TYPE_FADE,
                                  "multiplier", MULTIPLIER,
-                                 "input-image", source,
+                                 "source", source,
                                  NULL);
 
     GeglOp *fade2 = g_object_new(GEGL_TYPE_FADE,
                                  "multiplier", MULTIPLIER,
-                                 "input-image", fade1,
+                                 "source", fade1,
                                  NULL);
 
     gegl_op_apply(fade2); 

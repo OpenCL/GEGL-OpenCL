@@ -193,7 +193,8 @@ value_transform_channel(const GValue *src_value,
   {
     GeglChannelSpace *src_channel_space = src_value->data[0].v_pointer;
     GeglChannelSpace *dest_channel_space = dest_value->data[0].v_pointer;
-    GValue  float_value = {0,}; 
+    GValue  float_value; 
+    float_value.g_type=0L;
     g_value_init(&float_value, GEGL_TYPE_CHANNEL_FLOAT);
     gegl_channel_space_convert_value_to_float(src_channel_space, 
                                            &float_value, 
@@ -265,12 +266,12 @@ g_value_channel_print(GValue * value)
   if(channel_space)
     name = gegl_channel_space_name(channel_space);
 
-  LOG_DIRECT("data space name is %s", name);
+  gegl_log_direct("data space name is %s", name);
 
   if(channel_space == gegl_channel_space_instance("uint8"))
-    LOG_DIRECT("value is %d", value->data[1].v_uint);
+    gegl_log_direct("value is %d", value->data[1].v_uint);
   else if(channel_space == gegl_channel_space_instance("float"))
-    LOG_DIRECT("value is %f", value->data[1].v_float);
+    gegl_log_direct("value is %f", value->data[1].v_float);
   else if(channel_space == gegl_channel_space_instance("u16"))
-    LOG_DIRECT("value is %d", value->data[1].v_uint);
+    gegl_log_direct("value is %d", value->data[1].v_uint);
 }

@@ -48,8 +48,8 @@ test_i_add_properties(Test *test)
 {
   {
     GeglOp * i_add = g_object_new (GEGL_TYPE_I_ADD, 
-                                   "input-image-a", source0,
-                                   "input-image-b", source1,
+                                   "source-0", source0,
+                                   "source-1", source1,
                                    NULL);  
 
     ct_test(test, source0 == (GeglOp*)gegl_node_get_source(GEGL_NODE(i_add), 0));
@@ -69,8 +69,8 @@ test_i_add_apply(Test *test)
     */
 
     GeglOp * i_add = g_object_new (GEGL_TYPE_I_ADD, 
-                                   "input-image-a", source0,
-                                   "input-image-b", source1,
+                                   "source-0", source0,
+                                   "source-1", source1,
                                    NULL);  
 
     gegl_op_apply(i_add); 

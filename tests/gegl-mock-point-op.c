@@ -40,6 +40,7 @@ gegl_mock_point_op_get_type (void)
         sizeof (GeglMockPointOp),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_POINT_OP, 
@@ -65,14 +66,14 @@ class_init (GeglMockPointOpClass * klass)
   gobject_class->get_property = get_property;
 
   g_object_class_install_property (gobject_class, PROP_INPUT_IMAGE_A,
-               g_param_spec_object ("input-image-a",
+               g_param_spec_object ("source-0",
                                     "InputImageA",
                                     "The input image a",
                                      GEGL_TYPE_OP,
                                      G_PARAM_WRITABLE));
 
   g_object_class_install_property (gobject_class, PROP_INPUT_IMAGE_B,
-               g_param_spec_object ("input-image-b",
+               g_param_spec_object ("source-1",
                                     "InputImageB",
                                     "The input image b",
                                      GEGL_TYPE_OP,
@@ -83,8 +84,8 @@ static void
 init (GeglMockPointOp * self, 
       GeglMockPointOpClass * klass)
 {
-  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image-a");
-  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image-b");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "source-0");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "source-1");
 }
 
 static void
@@ -133,7 +134,7 @@ scanline (GeglFilter * op,
           GeglImageIterator ** iters,
           gint width)
 {
-  LOG_DEBUG("scanline", "MockPointOp scanline was called");
+  gegl_log_debug("scanline", "MockPointOp scanline was called");
 }
 
 static void 
@@ -146,5 +147,5 @@ prepare (GeglFilter * filter)
 static void 
 finish (GeglFilter * filter) 
 {
-  LOG_DEBUG("finish", "MockPointOp finish was called");
+  gegl_log_debug("finish", "MockPointOp finish was called");
 }

@@ -135,7 +135,7 @@ test_graph_apply_with_source_and_output(Test *t)
                                  NULL);
 
   GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
-                                 "input-image", graph,
+                                 "source", graph,
                                  "multiplier", .5,
                                  NULL); 
 
@@ -192,7 +192,7 @@ test_graph_apply_with_2_ops_source_and_output(Test *t)
                                  NULL); 
 
   GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
-                                 "input-image", fade1,
+                                 "source", fade1,
                                  "multiplier", .5,
                                  NULL); 
 
@@ -202,7 +202,7 @@ test_graph_apply_with_2_ops_source_and_output(Test *t)
                                  NULL);
 
   GeglOp * fade3 = g_object_new (GEGL_TYPE_FADE,
-                                 "input-image", graph,
+                                 "source", graph,
                                  "multiplier", .5,
                                  NULL); 
 
@@ -252,7 +252,7 @@ test_graph_apply_add_graph_and_color(Test *t)
                                   NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
-                                "input-image", color1,
+                                "source", color1,
                                 "multiplier", .5,
                                 NULL); 
 
@@ -265,8 +265,8 @@ test_graph_apply_add_graph_and_color(Test *t)
                                   NULL); 
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD, 
-                                "input-image-a", graph,
-                                "input-image-b", color2,
+                                "source-0", graph,
+                                "source-1", color2,
                                 NULL);  
 
   gegl_op_apply(iadd); 
@@ -315,7 +315,7 @@ test_graph_apply_add_graph_and_graph(Test *t)
                                   NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
-                                "input-image", color1,
+                                "source", color1,
                                 "multiplier", .5,
                                 NULL); 
 
@@ -332,8 +332,8 @@ test_graph_apply_add_graph_and_graph(Test *t)
                                   NULL); 
 
   GeglOp * iadd1 = g_object_new (GEGL_TYPE_I_ADD,
-                                 "input-image-a", color2,
-                                 "input-image-b", color3,
+                                 "source-0", color2,
+                                 "source-1", color3,
                                  NULL); 
 
   GeglOp * graph2 = g_object_new (GEGL_TYPE_GRAPH,
@@ -341,8 +341,8 @@ test_graph_apply_add_graph_and_graph(Test *t)
                                   NULL);
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD,
-                               "input-image-a", graph1,
-                               "input-image-b", graph2,
+                               "source-0", graph1,
+                               "source-1", graph2,
                                NULL); 
                         
 
@@ -410,8 +410,8 @@ test_graph_apply_with_2_sources(Test *t)
                                  NULL); 
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD,
-                                "input-image-a", fade2,
-                                "input-image-b", fade3,
+                                "source-0", fade2,
+                                "source-1", fade3,
                                 NULL); 
 
   GeglOp * graph = g_object_new (GEGL_TYPE_GRAPH,
@@ -421,7 +421,7 @@ test_graph_apply_with_2_sources(Test *t)
                                  NULL);
 
   GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
-                                 "input-image", graph,
+                                 "source", graph,
                                  "multiplier", .5,
                                  NULL); 
 

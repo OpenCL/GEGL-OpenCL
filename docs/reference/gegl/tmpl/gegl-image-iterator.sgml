@@ -20,6 +20,13 @@ GeglImageIterator
 </para>
 
 
+<!-- ##### STRUCT GeglImageIteratorClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+
 <!-- ##### FUNCTION gegl_image_iterator_get_image ##### -->
 <para>
 

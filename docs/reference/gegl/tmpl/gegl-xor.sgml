@@ -28,3 +28,10 @@ ca = fa*(1-ba) + ba*(1-fa)
 </para>
 
 
+<!-- ##### STRUCT GeglXorClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
+

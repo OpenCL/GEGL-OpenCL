@@ -26,6 +26,13 @@ mult3 * A
 </para>
 
 
+<!-- ##### STRUCT GeglMultClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
+
 <!-- ##### ARG GeglMult:mult0 ##### -->
 <para>
 

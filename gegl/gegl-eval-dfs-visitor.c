@@ -38,6 +38,7 @@ gegl_eval_dfs_visitor_get_type (void)
         sizeof (GeglEvalDfsVisitor),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_DFS_VISITOR, 
@@ -97,10 +98,9 @@ validate_color_model(GeglData *input_data,
     {
       if(collected_input_data) 
         {
+           GeglColorModel *color_model;
            g_return_if_fail(GEGL_IS_COLOR_DATA(collected_input_data));
-
-           GeglColorModel *color_model = 
-             gegl_color_data_get_color_model(GEGL_COLOR_DATA(collected_input_data));
+           color_model = gegl_color_data_get_color_model(GEGL_COLOR_DATA(collected_input_data));
            gegl_color_data_set_color_model(GEGL_COLOR_DATA(input_data), color_model);
         }
     }
@@ -112,41 +112,38 @@ visit_filter(GeglVisitor * visitor,
 {
   GEGL_VISITOR_CLASS(parent_class)->visit_filter(visitor, filter);
 
-  LOG_DEBUG("visit_filter", 
+  gegl_log_debug("visit_filter", 
             "computing have rect for %s %p", 
             G_OBJECT_TYPE_NAME(filter),filter);
 
   if(GEGL_IS_IMAGE_OP(filter))
     {
-      /* Copy the have rect from collected input data to input data */ 
-      GList *collected_input_data_list = 
-        gegl_visitor_collect_input_data_list(visitor, GEGL_NODE(filter));
+      GArray *collected_data = 
+          gegl_visitor_collect_input_data(visitor, GEGL_NODE(filter));
 
-      gegl_op_validate_input_data(GEGL_OP(filter), 
-                                  collected_input_data_list, 
-                                  &validate_have_rect);
+      gegl_op_validate_input_data_array(GEGL_OP(filter), 
+                                        collected_data, 
+                                        &validate_have_rect);
     
-      g_list_free(collected_input_data_list);
-
+      g_array_free(collected_data, TRUE);
       /* Now compute the have rect for the output data */
       gegl_image_op_compute_have_rect(GEGL_IMAGE_OP(filter));
     }
 
-  LOG_DEBUG("visit_filter", 
+  gegl_log_debug("visit_filter", 
             "computing derived color_model for %s %p", 
             G_OBJECT_TYPE_NAME(filter), filter);
 
   if(GEGL_IS_IMAGE_OP(filter))
     {
-      /* Copy the color model from collected input data to input data */ 
-      GList *collected_input_data_list = 
-        gegl_visitor_collect_input_data_list(visitor, GEGL_NODE(filter));
+      GArray *collected_data = 
+          gegl_visitor_collect_input_data(visitor, GEGL_NODE(filter));
 
-      gegl_op_validate_input_data(GEGL_OP(filter), 
-                                  collected_input_data_list, 
-                                  &validate_color_model);
+      gegl_op_validate_input_data_array(GEGL_OP(filter), 
+                                        collected_data, 
+                                        &validate_color_model);
     
-      g_list_free(collected_input_data_list);
+      g_array_free(collected_data, TRUE);
 
       /* Now compute the color model for the output data */
       gegl_image_op_compute_color_model(GEGL_IMAGE_OP(filter));

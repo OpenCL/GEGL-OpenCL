@@ -30,6 +30,7 @@ gegl_difference_get_type (void)
         sizeof (GeglDifference),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_BLEND, 

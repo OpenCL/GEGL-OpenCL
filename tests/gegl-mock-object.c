@@ -21,6 +21,7 @@ gegl_mock_object_get_type (void)
         sizeof (GeglMockObject),
         0,
         (GInstanceInitFunc) NULL,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_OBJECT, 

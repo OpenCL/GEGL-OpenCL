@@ -23,8 +23,8 @@ struct _GeglOp
     GeglNode node;
 
     /*< private >*/
-    GList *input_data_list;
-    GList *output_data_list;
+    GArray *input_data_array;
+    GArray *output_data_array;
 };
 
 typedef struct _GeglOpClass GeglOpClass;
@@ -65,18 +65,19 @@ GValue*         gegl_op_get_output_data_value   (GeglOp *self,
 void            gegl_op_set_output_data_value   (GeglOp *self, 
                                                  gchar *name,
                                                  const GValue *value);
-GList *         gegl_op_get_input_data_list     (GeglOp *self);
-GList *         gegl_op_get_output_data_list    (GeglOp *self);
+GArray*         gegl_op_get_input_data_array    (GeglOp *self);
+GArray*         gegl_op_get_output_data_array   (GeglOp *self);
+
 void            gegl_op_append_input_data       (GeglOp *self,
                                                  GeglData *data);
 void            gegl_op_append_output_data      (GeglOp *self,
                                                  GeglData *data);
-void            gegl_op_free_input_data_list    (GeglOp * self);
-void            gegl_op_free_output_data_list   (GeglOp * self);
+void            gegl_op_free_input_data_array   (GeglOp * self);
+void            gegl_op_free_output_data_array  (GeglOp * self);
 
-void            gegl_op_validate_input_data     (GeglOp *op,
-                                                 GList *collected_input_data_list,
-                                                 GeglValidateDataFunc func);
+void            gegl_op_validate_input_data_array(GeglOp *self, 
+                                                  GArray *collected_array,
+                                                  GeglValidateDataFunc func);
 
 #ifdef __cplusplus
 }

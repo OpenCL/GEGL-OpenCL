@@ -30,6 +30,7 @@ gegl_i_mult_get_type (void)
         sizeof (GeglIMult),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_BINARY, 

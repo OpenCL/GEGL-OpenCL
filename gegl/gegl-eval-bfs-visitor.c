@@ -33,6 +33,7 @@ gegl_eval_bfs_visitor_get_type (void)
         sizeof (GeglEvalBfsVisitor),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_BFS_VISITOR, 
@@ -90,23 +91,22 @@ visit_filter(GeglVisitor * visitor,
 {
   GEGL_VISITOR_CLASS(parent_class)->visit_filter(visitor, filter);
 
-  LOG_DEBUG("visit_filter", 
+  gegl_log_debug("visit_filter", 
             "computing need rects for inputs of %s %p", 
             G_OBJECT_TYPE_NAME(filter),filter);
 
   if(GEGL_IS_IMAGE_OP(filter))
   {
+    GArray *collected_data; 
     gegl_image_op_compute_need_rects(GEGL_IMAGE_OP(filter));
 
-    /* Copy the need rect from input data to collected input data */
-    GList *collected_input_data_list = 
-        gegl_visitor_collect_input_data_list(visitor, GEGL_NODE(filter));
+    collected_data = gegl_visitor_collect_input_data(visitor, GEGL_NODE(filter));
 
-    gegl_op_validate_input_data(GEGL_OP(filter), 
-                                collected_input_data_list, 
-                                &validate_need_rect);
+    gegl_op_validate_input_data_array(GEGL_OP(filter), 
+                                      collected_data, 
+                                      &validate_need_rect);
   
-    g_list_free(collected_input_data_list);
+    g_array_free(collected_data, TRUE);
   }
 }
 

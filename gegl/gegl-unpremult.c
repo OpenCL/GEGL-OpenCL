@@ -30,6 +30,7 @@ gegl_unpremult_get_type (void)
         sizeof (GeglUnpremult),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_UNARY, 

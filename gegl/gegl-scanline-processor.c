@@ -10,6 +10,8 @@
 static void class_init (GeglScanlineProcessorClass * klass);
 static gpointer parent_class = NULL;
 static GList * get_image_data_list(GeglScanlineProcessor *self, GList *list);
+static GList * get_input_image_data_list(GeglScanlineProcessor *self);
+static GList * get_output_image_data_list(GeglScanlineProcessor *self);
 
 GType
 gegl_scanline_processor_get_type (void)
@@ -29,6 +31,7 @@ gegl_scanline_processor_get_type (void)
         sizeof (GeglScanlineProcessor),
         0,
         (GInstanceInitFunc) NULL,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_OBJECT, 
@@ -48,58 +51,80 @@ class_init (GeglScanlineProcessorClass * klass)
 
 static
 GList *
-get_image_data_list(GeglScanlineProcessor *self,
-                    GList *list)
+get_output_image_data_list(GeglScanlineProcessor *self)
 {
-  GList *data_llink = list;
-  GList *llink = NULL;
+  GeglOp *op = GEGL_OP(self->op);
+  gint num_outputs = gegl_node_get_num_outputs(GEGL_NODE(op));
+  gint i;
+  GList *list = NULL;
 
-  while(data_llink)
-    {
-      GeglData *data = data_llink->data;
+  for(i = 0; i < num_outputs; i++)
+    { 
+      GeglData * data = gegl_op_get_nth_output_data(op, i);
 
       if(GEGL_IS_IMAGE_DATA(data))
-        llink = g_list_append(llink, data);
-
-      data_llink = data_llink->next;
+        list = g_list_append(list, data);
     }
 
-  return llink;
+  return list;
 }
-                                            
+
+static
+GList *
+get_input_image_data_list(GeglScanlineProcessor *self)
+{
+  GeglOp *op = GEGL_OP(self->op);
+  gint num_inputs = gegl_node_get_num_inputs(GEGL_NODE(op));
+  gint i;
+  GList *list = NULL;
+
+  for(i = 0; i < num_inputs; i++)
+    { 
+      GeglData * data = gegl_op_get_nth_input_data(op, i);
+
+      if(GEGL_IS_IMAGE_DATA(data))
+        list = g_list_append(list, data);
+    }
+
+  return list;
+}
+
 
 /**
  * gegl_scanline_processor_process:
  * @self: a #GeglScanlineProcessor.
- * @output_data_list: A list of #GeglData outputs. 
- * @input_data_list: A list of #GeglData inputs. 
  *
  * Process scanlines.
  *
  **/
 void 
-gegl_scanline_processor_process (GeglScanlineProcessor * self, 
-                                 GList  *output_data_list,
-                                 GList  *input_data_list)
+gegl_scanline_processor_process (GeglScanlineProcessor * self)
 {
   gint i,j;
   GeglRect rect;
   GeglImage *image;
   gint width, height;
-  GList *image_output_data_list = get_image_data_list(self, output_data_list); 
-  GList *image_input_data_list = get_image_data_list(self, input_data_list); 
+
+  GList *image_output_data_list = get_output_image_data_list(self); 
+  GList *image_input_data_list = get_input_image_data_list(self); 
   gint num_inputs = g_list_length(image_input_data_list);
   gint num_outputs = g_list_length(image_output_data_list);
+
   GeglData *data = g_list_nth_data(image_output_data_list,0);
   GValue *value = gegl_data_get_value(data);
   GeglImageData *image_data = GEGL_IMAGE_DATA(data);
   GeglImageIterator **iters = g_new (GeglImageIterator*, num_inputs + num_outputs);
 
 #if 1 
-  LOG_DEBUG("processor_process", "%s %p", 
-             G_OBJECT_TYPE_NAME(self->op), self->op); 
+  /*
+  gegl_log_debug("processor_process", "%s %p", 
+            G_OBJECT_TYPE_NAME(self->op), self->op); 
+  */
 
-  LOG_DEBUG("processor_process", "inputs %d outputs %d", 
+  gegl_log_debug("processor_process", 
+                 "%s %p", G_OBJECT_TYPE_NAME(self->op), self->op); 
+
+  gegl_log_debug("processor_process", "inputs %d outputs %d", 
              num_inputs, num_outputs); 
 #endif
 
@@ -107,7 +132,7 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
   if (num_outputs == 1)
     {
       /*
-       LOG_DEBUG("processor_process", 
+       gegl_log_debug("processor_process", 
                  "getting image iterator for output %d", 
                  i);
       */
@@ -118,7 +143,7 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
        /* Get the image, if it is not NULL */ 
        if(image)
          {
-           LOG_DEBUG("processor_process", 
+           gegl_log_debug("processor_process", 
                      "output value image is %p", 
                      image);
 
@@ -135,7 +160,7 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
   for (i = 0; i < num_inputs; i++)
     {
       /*
-       LOG_DEBUG("processor_process", 
+       gegl_log_debug("processor_process", 
                  "getting image iterator for input %d", 
                  i);
       */
@@ -150,7 +175,7 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
        /* Get the image, if it is not NULL */ 
        if(image)
          {
-           LOG_DEBUG("processor_process", 
+           gegl_log_debug("processor_process", 
                      "input value image is %p", 
                      image);
 
@@ -173,13 +198,13 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
   width = rect.w;
   height = rect.h;
 
-  LOG_DEBUG("processor_process", "width height %d %d", width, height);
+  gegl_log_debug("processor_process", "width height %d %d", width, height);
 
   /* Now iterate over the scanlines */
   for(j=0; j < height; j++)
     {
       /*
-      LOG_DEBUG("processor_process", 
+      gegl_log_debug("processor_process", 
                 "doing scanline %d", 
                 j);
                 */

@@ -26,6 +26,13 @@ multiplier * A
 </para>
 
 
+<!-- ##### STRUCT GeglFadeClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
+
 <!-- ##### ARG GeglFade:multiplier ##### -->
 <para>
 

@@ -28,3 +28,10 @@ ca = fa + ba - fa*ba
 </para>
 
 
+<!-- ##### STRUCT GeglLightenClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
+

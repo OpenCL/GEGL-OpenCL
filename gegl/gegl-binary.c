@@ -8,8 +8,8 @@
 enum
 {
   PROP_0, 
-  PROP_INPUT_IMAGE_A,
-  PROP_INPUT_IMAGE_B,
+  PROP_SOURCE_0,
+  PROP_SOURCE_1,
   PROP_FADE,
   PROP_LAST 
 };
@@ -18,7 +18,7 @@ static void class_init (GeglBinaryClass * klass);
 static void init (GeglBinary * self, GeglBinaryClass * klass);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-static void validate_inputs  (GeglFilter *filter, GList *collected_input_data_list);
+static void validate_inputs (GeglFilter *filter, GArray *collected_data);
 
 static void prepare (GeglFilter * filter);
 
@@ -42,6 +42,7 @@ gegl_binary_get_type (void)
         sizeof (GeglBinary),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_POINT_OP , 
@@ -68,17 +69,17 @@ class_init (GeglBinaryClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  g_object_class_install_property (gobject_class, PROP_INPUT_IMAGE_A,
-               g_param_spec_object ("input-image-a",
-                                    "InputImageA",
-                                    "The input image a",
+  g_object_class_install_property (gobject_class, PROP_SOURCE_0,
+               g_param_spec_object ("source-0",
+                                    "Source0",
+                                    "The source 0",
                                      GEGL_TYPE_OP,
                                      G_PARAM_WRITABLE));
 
-  g_object_class_install_property (gobject_class, PROP_INPUT_IMAGE_B,
-               g_param_spec_object ("input-image-b",
-                                    "InputImageB",
-                                    "The input image b",
+  g_object_class_install_property (gobject_class, PROP_SOURCE_1,
+               g_param_spec_object ("source-1",
+                                    "Source1",
+                                    "The source 1",
                                      GEGL_TYPE_OP,
                                      G_PARAM_WRITABLE));
 
@@ -97,8 +98,8 @@ static void
 init (GeglBinary * self, 
       GeglBinaryClass * klass)
 {
-  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image-a");
-  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image-b");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "source-0");
+  gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "source-1");
   gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "fade");
 }
 
@@ -131,18 +132,18 @@ set_property (GObject      *gobject,
   GeglBinary *self = GEGL_BINARY(gobject);
   switch (prop_id)
   {
-    case PROP_INPUT_IMAGE_A:
+    case PROP_SOURCE_0:
       {
-        GeglNode *input = (GeglNode*)g_value_get_object(value);
-        gint index = gegl_op_get_input_data_index(GEGL_OP(self), "input-image-a");
-        gegl_node_set_source(GEGL_NODE(self), input, index);  
+        GeglNode *source = (GeglNode*)g_value_get_object(value);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(self), "source-0");
+        gegl_node_set_source(GEGL_NODE(self), source, index);  
       }
       break;
-    case PROP_INPUT_IMAGE_B:
+    case PROP_SOURCE_1:
       {
-        GeglNode *input = (GeglNode*)g_value_get_object(value);
-        gint index = gegl_op_get_input_data_index(GEGL_OP(self), "input-image-b");
-        gegl_node_set_source(GEGL_NODE(self), input, index);  
+        GeglNode *source = (GeglNode*)g_value_get_object(value);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(self), "source-1");
+        gegl_node_set_source(GEGL_NODE(self), source, index);  
       }
       break;
     case PROP_FADE:
@@ -155,22 +156,22 @@ set_property (GObject      *gobject,
 
 static void 
 validate_inputs  (GeglFilter *filter, 
-                  GList *collected_input_data_list)
+                        GArray *collected_data)
 {
-  GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_input_data_list);
+  GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_data);
 
   {
-    gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "input-image-a");
-    GeglData * data = g_list_nth_data(collected_input_data_list, index);
+    gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "source-0");
+    GeglData * data = g_array_index(collected_data, GeglData*, index);
     GValue *value = gegl_data_get_value(data);
-    gegl_op_set_input_data_value(GEGL_OP(filter), "input-image-a", value);
+    gegl_op_set_input_data_value(GEGL_OP(filter), "source-0", value);
   }
 
   {
-    gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "input-image-b");
-    GeglData * data = g_list_nth_data(collected_input_data_list, index);
+    gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "source-1");
+    GeglData * data = g_array_index(collected_data, GeglData*, index);
     GValue *value = gegl_data_get_value(data);
-    gegl_op_set_input_data_value(GEGL_OP(filter), "input-image-b", value);
+    gegl_op_set_input_data_value(GEGL_OP(filter), "source-1", value);
   }
 }
 
@@ -179,9 +180,8 @@ prepare (GeglFilter * filter)
 {
   GeglPointOp *point_op = GEGL_POINT_OP(filter);
   GeglBinary *self = GEGL_BINARY(filter);
-  GList * output_data_list = gegl_op_get_output_data_list(GEGL_OP(self));
-  GeglData *output_data = g_list_nth_data(output_data_list, 0);
-  GeglImage *dest = (GeglImage*)g_value_get_object(output_data->value);
+  GValue *dest_value = gegl_op_get_output_data_value(GEGL_OP(filter), "dest");
+  GeglImage *dest = (GeglImage*)g_value_get_object(dest_value);
   GeglColorModel * dest_cm = gegl_image_get_color_model (dest);
   GeglColorSpace * dest_color_space = gegl_color_model_color_space(dest_cm);
   GeglChannelSpace * dest_channel_space = gegl_color_model_channel_space(dest_cm);

@@ -30,6 +30,7 @@ gegl_subtract_get_type (void)
         sizeof (GeglSubtract),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_BINARY, 

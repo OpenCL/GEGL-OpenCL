@@ -20,7 +20,7 @@ static void finalize (GObject * gobject);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void validate_inputs  (GeglFilter *filter, GList *collected_input_data_list);
+static void validate_inputs  (GeglFilter *filter, GArray *collected_data);
 
 static GeglScanlineFunc get_scanline_func(GeglUnary * unary, GeglColorSpaceType space, GeglChannelSpaceType type);
 
@@ -47,6 +47,7 @@ gegl_add_get_type (void)
         sizeof (GeglAdd),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_UNARY, 
@@ -151,13 +152,13 @@ set_property (GObject      *gobject,
 
 static void 
 validate_inputs  (GeglFilter *filter, 
-                  GList *collected_input_data_list)
+                        GArray *collected_data)
 {
-  GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_input_data_list);
+  GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_data);
 
   {
     GeglData * output_data = 
-        gegl_op_get_output_data(GEGL_OP(filter), "output-image");
+        gegl_op_get_output_data(GEGL_OP(filter), "dest");
     GeglData * input_data = 
         gegl_op_get_input_data(GEGL_OP(filter), "constant");
 
@@ -172,7 +173,7 @@ validate_inputs  (GeglFilter *filter,
        color model. */
     {
       gint index = gegl_op_get_input_data_index(GEGL_OP(filter), "constant");
-      GeglData *input_data = (GeglData*)g_list_nth_data(collected_input_data_list, index);
+      GeglData *input_data = g_array_index(collected_data, GeglData*, index);
       if(input_data)
        {
          /* Convert the pixel to the right color model */

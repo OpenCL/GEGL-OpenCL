@@ -1,9 +1,5 @@
 #include "gegl-op.h"
-#include "gegl-node.h"
-#include "gegl-object.h"
 #include "gegl-visitor.h"
-#include "gegl-utils.h"
-#include "gegl-value-types.h"
 #include "gegl-eval-mgr.h"
 #include <string.h>
 
@@ -11,11 +7,14 @@ static void class_init (GeglOpClass * klass);
 static void init (GeglOp * self, GeglOpClass * klass);
 static void finalize(GObject * gobject);
 
-static void free_data(GeglOp *self, GList *list);
-static GList * add_data(GeglOp *self, GList *list, GeglData *data);
-static GeglData* get_nth_data(GeglOp *self, GList *list, gint n);
-static GeglData* get_data(GeglOp *self, GList *list, gchar* name);
-static gint get_data_index(GeglOp *self, GList * list, gchar * name);
+
+static void free_data(GeglOp *self, GArray *array);
+static GArray * add_data(GeglOp *self, GArray *array, GeglData *data);
+static GeglData* get_nth_data(GeglOp *self, GArray *array, gint n);
+static GeglData* get_data(GeglOp *self, GArray *array, gchar * name);
+static gint get_data_index(GeglOp *self, GArray *array, gchar * name);
+
+static GList * make_data_list(GArray *array);
 
 static void accept (GeglNode * node, GeglVisitor * visitor);
 
@@ -39,6 +38,7 @@ gegl_op_get_type (void)
         sizeof (GeglOp),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_NODE , 
@@ -66,8 +66,8 @@ static void
 init (GeglOp * self, 
       GeglOpClass * klass)
 {
-  self->input_data_list = NULL;
-  self->output_data_list = NULL;
+  self->input_data_array = g_array_new(FALSE,FALSE,sizeof(GeglData*));
+  self->output_data_array = g_array_new(FALSE,FALSE,sizeof(GeglData*));
 }
 
 static void
@@ -75,8 +75,11 @@ finalize(GObject *gobject)
 {
   GeglOp *self = GEGL_OP(gobject);
 
-  gegl_op_free_input_data_list(self);
-  gegl_op_free_output_data_list(self);
+  gegl_op_free_input_data_array(self);
+  g_array_free(self->input_data_array, TRUE);
+
+  gegl_op_free_output_data_array(self);
+  g_array_free(self->output_data_array, TRUE);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
@@ -91,6 +94,8 @@ finalize(GObject *gobject)
 void      
 gegl_op_apply(GeglOp * self)
 {
+  g_return_if_fail (GEGL_IS_OP (self));
+
   gegl_op_apply_roi(self, NULL);
 }
 
@@ -106,17 +111,16 @@ void
 gegl_op_apply_roi(GeglOp * self, 
                   GeglRect *roi)
 {
-  g_return_if_fail (self != NULL);
+  GeglEvalMgr * eval_mgr;
   g_return_if_fail (GEGL_IS_OP (self));
 
-  {
-    GeglEvalMgr * eval_mgr = g_object_new(GEGL_TYPE_EVAL_MGR,
-                                          "root", self,
-                                          "roi", roi,
-                                          NULL);
-    gegl_eval_mgr_evaluate(eval_mgr);
-    g_object_unref(eval_mgr);
-  }
+  eval_mgr = g_object_new(GEGL_TYPE_EVAL_MGR,
+                          "root", self,
+                          "roi", roi,
+                          NULL);
+
+  gegl_eval_mgr_evaluate(eval_mgr);
+  g_object_unref(eval_mgr);
 }
 
 /**
@@ -132,7 +136,9 @@ GeglData*
 gegl_op_get_nth_input_data(GeglOp *self,
                            gint n)
 {
-  return get_nth_data(self, self->input_data_list, n);
+  g_return_val_if_fail (GEGL_IS_OP (self), NULL);
+
+  return get_nth_data(self, self->input_data_array, n);
 }
 
 /**
@@ -148,19 +154,20 @@ GeglData*
 gegl_op_get_nth_output_data(GeglOp *self,
                             gint n)
 {
-  return get_nth_data(self, self->output_data_list, n);
+  g_return_val_if_fail (GEGL_IS_OP (self), NULL);
+
+  return get_nth_data(self, self->output_data_array, n);
 }
 
 static GeglData*
 get_nth_data(GeglOp *self,
-             GList *list,
+             GArray *array,
              gint n)
 {
-  g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_OP (self), NULL);
 
-  if(n >= 0 && n < g_list_length(list))
-    return g_list_nth_data(list, n);
+  if(n >= 0L && n < (gint)array->len)
+    return g_array_index(array, GeglData*, n);
 
   return NULL;
 }
@@ -178,7 +185,9 @@ GeglData*
 gegl_op_get_input_data(GeglOp *self,
                        gchar * name)
 {
-  return get_data(self, self->input_data_list, name);
+  g_return_val_if_fail (GEGL_IS_OP (self), NULL);
+
+  return get_data(self, self->input_data_array, name);
 }
 
 /**
@@ -194,65 +203,60 @@ GeglData*
 gegl_op_get_output_data(GeglOp *self,
                         gchar * name)
 {
-  return get_data(self, self->output_data_list, name);
+  g_return_val_if_fail (GEGL_IS_OP (self), NULL);
+
+  return get_data(self, self->output_data_array, name);
 }
 
 static GeglData*
 get_data(GeglOp *self,
-         GList *list,
-         gchar * name)
+               GArray *array,
+               gchar * name)
 {
-  GList *llink;
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (GEGL_IS_OP (self), NULL);
-
-  llink = list;
-  while (llink)
+  gint i;
+  for(i = 0; i < (gint)array->len; i++)
     {
-      GeglData *data = llink->data;
+      GeglData *data = g_array_index(array, GeglData*, i); 
       const gchar * data_name = gegl_data_get_name(data);
       if (!strcmp(data_name, name))
         return data;
-
-      llink = llink->next;
     }
 
   return NULL;
 }
            
 /**
- * gegl_op_get_input_data_list
+ * gegl_op_get_input_data_array
  * @self: a #GeglOp.
  *
- * Get the inputs data list. 
+ * Get the input data array. 
  *
- * Returns: a #GeglData.
+ * Returns: a GArray of #GeglData pointers.
  **/
-GList*
-gegl_op_get_input_data_list(GeglOp *self)
+GArray*
+gegl_op_get_input_data_array(GeglOp *self)
 {
-  g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_OP (self), NULL);
 
-  return self->input_data_list; 
+  return self->input_data_array; 
 }
 
 /**
- * gegl_op_get_output_data_list
+ * gegl_op_get_output_data_array
  * @self: a #GeglOp.
  *
- * Get the outputs data list. 
+ * Get the output data array. 
  *
- * Returns: a #GeglData.
+ * Returns: a GArray of #GeglData pointers.
  **/
-GList*
-gegl_op_get_output_data_list(GeglOp *self)
+GArray*
+gegl_op_get_output_data_array(GeglOp *self)
 {
-  g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_OP (self), NULL);
 
-  return self->output_data_list; 
+  return self->output_data_array; 
 }
+
 
 /**
  * gegl_op_get_input_data_index
@@ -267,10 +271,9 @@ gint
 gegl_op_get_input_data_index(GeglOp *self,
                              gchar *name)
 {
-  g_return_val_if_fail (self != NULL, -1);
   g_return_val_if_fail (GEGL_IS_OP (self), -1);
 
-  return get_data_index(self, self->input_data_list, name);
+  return get_data_index(self, self->input_data_array, name);
 }
 
 /**
@@ -286,23 +289,26 @@ gint
 gegl_op_get_output_data_index(GeglOp *self,
                               gchar *name)
 {
-  g_return_val_if_fail (self != NULL, -1);
   g_return_val_if_fail (GEGL_IS_OP (self), -1);
 
-  return get_data_index(self, self->output_data_list, name);
+  return get_data_index(self, self->output_data_array, name);
 }
 
-static gint
+static gint 
 get_data_index(GeglOp *self,
-               GList * list,
-               gchar * name)
+                     GArray *array,
+                     gchar * name)
 {
-  g_return_val_if_fail (self != NULL, -1);
-  g_return_val_if_fail (GEGL_IS_OP (self), -1);
+  gint i;
+  for(i = 0; i < (gint)array->len; i++)
+    {
+      GeglData *data = g_array_index(array, GeglData*, i); 
+      const gchar * data_name = gegl_data_get_name(data);
+      if (!strcmp(data_name, name))
+        return i;
+    }
 
-  GeglData * data = get_data(self, list, name);
-  GList *llink = g_list_find(list, data);
-  return g_list_position(list, llink); 
+  return -1;
 }
 
 /**
@@ -318,10 +324,9 @@ gegl_op_get_input_data_value(GeglOp *self,
                              gchar *name)
 {
   GeglData * data;
-  g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_OP (self), NULL);
 
-  data = get_data(self, self->input_data_list, name);
+  data = get_data(self, self->input_data_array, name);
 
   if(!data) 
     return NULL;
@@ -345,10 +350,9 @@ gegl_op_set_input_data_value(GeglOp *self,
                              const GValue *value)
 {
   GeglData * data;
-  g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_OP (self));
 
-  data = get_data(self, self->input_data_list, name);
+  data = get_data(self, self->input_data_array, name);
 
   if(!data) 
     {
@@ -372,10 +376,9 @@ gegl_op_get_output_data_value(GeglOp *self,
                               gchar *name)
 {
   GeglData * data;
-  g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_OP (self), NULL);
 
-  data = get_data(self, self->output_data_list, name);
+  data = get_data(self, self->output_data_array, name);
 
   if(!data) 
     return NULL;
@@ -398,12 +401,10 @@ gegl_op_set_output_data_value(GeglOp *self,
                               gchar *name,
                               const GValue *value)
 {
-
   GeglData * data;
-  g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_OP (self));
 
-  data = get_data(self, self->output_data_list, name);
+  data = get_data(self, self->output_data_array, name);
 
   if(!data) 
     {
@@ -428,7 +429,10 @@ gegl_op_add_input_data(GeglOp *self,
                      GType data_type,
                      gchar *name)
 {
-  GeglData *data = g_object_new(data_type,"data_name", name, NULL);
+  GeglData * data;
+  g_return_if_fail (GEGL_IS_OP (self));
+
+  data = g_object_new(data_type,"data_name", name, NULL);
   gegl_op_append_input_data(self, data);
   g_object_unref(data);
 }
@@ -447,7 +451,10 @@ gegl_op_add_output_data(GeglOp *self,
                       GType data_type,
                       gchar *name)
 {
-  GeglData *data = g_object_new(data_type,"data_name", name, NULL);
+  GeglData *data;
+  g_return_if_fail (GEGL_IS_OP (self));
+
+  data = g_object_new(data_type,"data_name", name, NULL);
   gegl_op_append_output_data(self, data);
   g_object_unref(data);
 }
@@ -464,8 +471,10 @@ void
 gegl_op_append_input_data(GeglOp *self,
                           GeglData *data)
 {
-  gegl_node_add_input(GEGL_NODE(self), g_list_length(self->input_data_list));
-  self->input_data_list = add_data(self, self->input_data_list, data);
+  g_return_if_fail (GEGL_IS_OP (self));
+
+  gegl_node_add_input(GEGL_NODE(self));
+  self->input_data_array = add_data(self, self->input_data_array, data);
 }
 
 /**
@@ -480,21 +489,23 @@ void
 gegl_op_append_output_data(GeglOp *self,
                            GeglData *data)
 {
-  gegl_node_add_output(GEGL_NODE(self), g_list_length(self->output_data_list));
-  self->output_data_list = add_data(self, self->output_data_list, data);
+  g_return_if_fail (GEGL_IS_OP (self));
+
+  gegl_node_add_output(GEGL_NODE(self));
+  self->output_data_array = add_data(self, self->output_data_array, data);
 }
 
-static GList *
+static GArray *
 add_data(GeglOp *self,
-         GList *list,
-         GeglData *data)
+               GArray *array,
+               GeglData *data)
 {
   g_return_val_if_fail(self != NULL, NULL);
 
   if(data)
     g_object_ref(data);
 
-  return g_list_append(list, data);
+  return g_array_append_val(array, data);
 }
 
 /**
@@ -507,8 +518,24 @@ add_data(GeglOp *self,
 void
 gegl_op_free_input_data_list(GeglOp * self)
 {
-  free_data(self, self->input_data_list);
-  self->input_data_list = NULL;
+  g_return_if_fail (GEGL_IS_OP (self));
+
+  free_data(self,self->input_data_array);
+}
+
+/**
+ * gegl_op_free_input_data_array
+ * @self: a #GeglOp.
+ *
+ * Free the array of input data. 
+ *
+ **/
+void
+gegl_op_free_input_data_array(GeglOp * self)
+{
+  g_return_if_fail (GEGL_IS_OP (self));
+
+  free_data(self, self->input_data_array);
 }
 
 /**
@@ -521,38 +548,68 @@ gegl_op_free_input_data_list(GeglOp * self)
 void
 gegl_op_free_output_data_list(GeglOp * self)
 {
-  free_data(self, self->output_data_list);
-  self->output_data_list = NULL;
+  g_return_if_fail (GEGL_IS_OP (self));
+
+  free_data(self,self->output_data_array);
+}
+
+/**
+ * gegl_op_free_output_data_array
+ * @self: a #GeglOp.
+ *
+ * Free the array of output data. 
+ *
+ **/
+void
+gegl_op_free_output_data_array(GeglOp * self)
+{
+  g_return_if_fail (GEGL_IS_OP (self));
+
+  free_data(self, self->output_data_array);
 }
 
 static void 
 free_data(GeglOp *self,
-          GList *list)
+                GArray *array)
 {
-  GList *llink;
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_OP (self));
+  gint i;
 
-  llink = list;
-  while(llink)
+  for(i = 0 ; i < (gint)array->len; i++)
     {
-      /* Free all the GeglData. */
-      if(llink->data)
-        g_object_unref(llink->data);
+      GeglData *data = g_array_index(array, GeglData*, i);
 
-      llink = g_list_next(llink);
+      if(data)
+        g_object_unref(data);
     }
-
-  g_list_free(list);
 }
 
-void
-gegl_op_validate_input_data(GeglOp *op,
-                            GList *collected_input_data_list,
-                            GeglValidateDataFunc func)
+static GList *
+make_data_list(GArray *array)
 {
-  GList *collected_input_data_llink = collected_input_data_list;
-  GList *input_data_llink = gegl_op_get_input_data_list(op);
+  GList * list = NULL;
+  gint i;
+
+  for(i = 0 ; i < (gint)array->len; i++)
+    {
+      GeglData *data = g_array_index(array, GeglData*, i);
+      list = g_list_append(list, data); 
+    }
+  return list;
+}
+ 
+void
+gegl_op_validate_input_data_array(GeglOp *self,
+                                  GArray *collected_array,
+                                  GeglValidateDataFunc func)
+{
+  gint num_inputs;
+  gint i;
+  g_return_if_fail (GEGL_IS_OP (self));
+  g_return_if_fail (collected_array);
+
+  num_inputs = gegl_node_get_num_inputs(GEGL_NODE(self));
+
+  g_assert((gint)collected_array->len == num_inputs); 
 
    /* 
      Traverse through the input data, calling 
@@ -560,21 +617,12 @@ gegl_op_validate_input_data(GeglOp *op,
      and the corresponding collected input data. 
    */
 
-  while(input_data_llink)
-    {
-      GeglData *collected_input_data;
-      GeglData *input_data;
-
-      g_return_if_fail(collected_input_data_llink);
-
-      collected_input_data = collected_input_data_llink->data;
-      input_data = input_data_llink->data;
-
-      (*func)(input_data, collected_input_data);
-
-      input_data_llink = input_data_llink->next;
-      collected_input_data_llink = collected_input_data_llink->next;
-    }
+  for(i = 0; i < num_inputs; i++)
+  {
+    GeglData *collected_data = g_array_index(collected_array, GeglData*, i);
+    GeglData *input_data = gegl_op_get_nth_input_data(self, i);
+    (*func)(input_data, collected_data);
+  }
 }
 
 static void              

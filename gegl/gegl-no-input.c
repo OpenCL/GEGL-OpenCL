@@ -35,6 +35,7 @@ gegl_no_input_get_type (void)
         sizeof (GeglNoInput),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_POINT_OP , 
@@ -69,7 +70,7 @@ init (GeglNoInput * self,
 static void 
 compute_have_rect(GeglImageOp * image_op) 
 { 
-  GeglData *output_data = gegl_op_get_output_data(GEGL_OP(image_op), "output-image");
+  GeglData *output_data = gegl_op_get_output_data(GEGL_OP(image_op), "dest");
   GeglImageData *output_image_data = GEGL_IMAGE_DATA(output_data);
 
   GeglRect have_rect;
@@ -82,9 +83,7 @@ prepare (GeglFilter * filter)
 {
   GeglPointOp *point_op = GEGL_POINT_OP(filter);
   GeglNoInput *self = GEGL_NO_INPUT(filter);
-  GList * output_data_list = gegl_op_get_output_data_list(GEGL_OP(self));
-  GeglData *dest_data = g_list_nth_data(output_data_list, 0);
-  GValue *dest_value = gegl_data_get_value(dest_data); 
+  GValue *dest_value = gegl_op_get_output_data_value(GEGL_OP(self), "dest"); 
   GeglImage *dest = (GeglImage*)g_value_get_object(dest_value);
   GeglColorModel * dest_cm = gegl_image_get_color_model (dest);
   GeglColorSpace * dest_color_space = gegl_color_model_color_space(dest_cm);

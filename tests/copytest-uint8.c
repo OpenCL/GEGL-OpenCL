@@ -40,7 +40,7 @@ test_copy_g_object_properties(Test *test)
 {
   {
     GeglCopy * copy = g_object_new (GEGL_TYPE_COPY,  
-                                    "input-image", source,
+                                    "source", source,
                                      NULL);  
 
     ct_test(test, 1 == gegl_node_get_num_inputs(GEGL_NODE(copy)));
@@ -69,7 +69,7 @@ test_copy_apply(Test *test)
   {
     guint8 r, g, b;
     GeglOp *copy = g_object_new(GEGL_TYPE_COPY,
-                                "input-image", source,
+                                "source", source,
                                 NULL);
 
     gegl_op_apply(copy); 
@@ -86,11 +86,11 @@ test_copy_apply(Test *test)
   {
     guint8 r, g, b;
     GeglOp *copy1 = g_object_new(GEGL_TYPE_COPY,
-                                 "input-image", source,
+                                 "source", source,
                                  NULL);
 
     GeglOp *copy2 = g_object_new(GEGL_TYPE_COPY,
-                                 "input-image", copy1,
+                                 "source", copy1,
                                  NULL);
 
     gegl_op_apply(copy2); 

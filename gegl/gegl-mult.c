@@ -46,6 +46,7 @@ gegl_mult_get_type (void)
         sizeof (GeglMult),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_UNARY, 
@@ -220,13 +221,12 @@ mult_float (GeglFilter * filter,
   GValue *mult3_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult3");
 
   gfloat mult[4];
+  gint alpha_mask = 0x0;
 
   mult[0] = g_value_get_float(mult0_value); 
   mult[1] = g_value_get_float(mult1_value); 
   mult[2] = g_value_get_float(mult2_value); 
   mult[3] = g_value_get_float(mult3_value); 
-
-  gint alpha_mask = 0x0;
 
   if(aa)
     alpha_mask |= GEGL_A_ALPHA; 

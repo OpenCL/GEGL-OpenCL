@@ -27,6 +27,7 @@ gegl_color_space_rgb_get_type (void)
         sizeof (GeglColorSpaceRgb),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_COLOR_SPACE, 

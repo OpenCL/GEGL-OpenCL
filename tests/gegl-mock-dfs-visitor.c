@@ -30,6 +30,7 @@ gegl_mock_dfs_visitor_get_type (void)
         sizeof (GeglMockDfsVisitor),
         0,
         (GInstanceInitFunc) NULL,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_DFS_VISITOR, 

@@ -1,7 +1,5 @@
 #include "gegl-point-op.h"
-#include "gegl-data.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-utils.h"
 
 static void class_init (GeglPointOpClass * klass);
 static void init (GeglPointOp * self, GeglPointOpClass * klass);
@@ -29,6 +27,7 @@ gegl_point_op_get_type (void)
         sizeof (GeglPointOp),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_IMAGE_OP , 
@@ -76,11 +75,5 @@ static void
 process (GeglFilter * filter) 
 {
   GeglPointOp *self =  GEGL_POINT_OP(filter);
-
-  GList * output_data_list = gegl_op_get_output_data_list(GEGL_OP(self));
-  GList * input_data_list = gegl_op_get_input_data_list(GEGL_OP(self));
-
-  gegl_scanline_processor_process(self->scanline_processor, 
-                                  output_data_list,
-                                  input_data_list);
+  gegl_scanline_processor_process(self->scanline_processor);
 }

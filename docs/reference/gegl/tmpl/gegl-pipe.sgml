@@ -22,7 +22,15 @@ do image statistics or some other operation that doesnt affect the image data.
 </para>
 
 
-<!-- ##### ARG GeglPipe:input-image ##### -->
+<!-- ##### STRUCT GeglPipeClass ##### -->
+<para>
+
+</para>
+
+@image_op_class: 
+@get_scanline_func: 
+
+<!-- ##### ARG GeglPipe:source ##### -->
 <para>
 
 </para>

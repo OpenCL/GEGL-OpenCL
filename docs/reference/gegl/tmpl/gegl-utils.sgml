@@ -89,85 +89,43 @@ gegl-utils
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_log ##### -->
+<!-- ##### FUNCTION gegl_log_debug ##### -->
 <para>
 
 </para>
 
-@level: 
-@file: 
-@line: 
 @function: 
 @format: 
 @Varargs: 
 
 
-<!-- ##### FUNCTION gegl_logv ##### -->
+<!-- ##### FUNCTION gegl_log_info ##### -->
 <para>
 
 </para>
 
-@level: 
-@file: 
-@line: 
 @function: 
-@format: 
-@args: 
-
-
-<!-- ##### FUNCTION gegl_direct_log ##### -->
-<para>
-
-</para>
-
-@level: 
 @format: 
 @Varargs: 
 
 
-<!-- ##### FUNCTION gegl_direct_logv ##### -->
+<!-- ##### FUNCTION gegl_log_message ##### -->
 <para>
 
 </para>
 
-@level: 
+@function: 
 @format: 
-@args: 
+@Varargs: 
 
 
-<!-- ##### MACRO LOG_DEBUG ##### -->
+<!-- ##### FUNCTION gegl_log_direct ##### -->
 <para>
 
 </para>
 
-@function: 
-@args...: 
-
-
-<!-- ##### MACRO LOG_INFO ##### -->
-<para>
-
-</para>
-
-@function: 
-@args...: 
-
-
-<!-- ##### MACRO LOG_MSG ##### -->
-<para>
-
-</para>
-
-@function: 
-@args...: 
-
-
-<!-- ##### MACRO LOG_DIRECT ##### -->
-<para>
-
-</para>
-
-@args...: 
+@format: 
+@Varargs: 
 
 
 <!-- ##### MACRO GEGL_FLOAT_EPSILON ##### -->

@@ -36,6 +36,7 @@ gegl_object_get_type (void)
         sizeof (GeglObject),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (G_TYPE_OBJECT, 
@@ -143,7 +144,6 @@ void
 gegl_object_set_name (GeglObject * self, 
                       const gchar * name)
 {
-  g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_OBJECT (self));
 
   self->name = g_strdup(name);
@@ -160,7 +160,6 @@ gegl_object_set_name (GeglObject * self,
 G_CONST_RETURN gchar*
 gegl_object_get_name (GeglObject * self)
 {
-  g_return_val_if_fail (self, NULL);
   g_return_val_if_fail (GEGL_IS_OBJECT (self), NULL);
 
   return self->name;

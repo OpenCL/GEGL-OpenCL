@@ -1,10 +1,5 @@
 #include "gegl-filter.h"
-#include "gegl-node.h"
-#include "gegl-object.h"
 #include "gegl-visitor.h"
-#include "gegl-utils.h"
-#include "gegl-value-types.h"
-#include "gegl-image.h"
 
 enum
 {
@@ -18,7 +13,7 @@ static void init (GeglFilter * self, GeglFilterClass * klass);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 
-static void validate_inputs (GeglFilter * self, GList * collected_input_data_list);
+static void validate_inputs (GeglFilter * self, GArray * collected_data);
 static void validate_outputs (GeglFilter * self);
 
 static void accept(GeglNode * node, GeglVisitor * visitor);
@@ -43,6 +38,7 @@ gegl_filter_get_type (void)
         sizeof (GeglFilter),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_OP , 
@@ -117,10 +113,9 @@ void
 gegl_filter_evaluate (GeglFilter * self) 
 {
   GeglFilterClass *klass;
-  g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_FILTER (self));
-  klass = GEGL_FILTER_GET_CLASS(self);
 
+  klass = GEGL_FILTER_GET_CLASS(self);
   if(klass->prepare)
     (*klass->prepare)(self);
 
@@ -134,27 +129,26 @@ gegl_filter_evaluate (GeglFilter * self)
 /**
  * gegl_filter_validate_inputs:
  * @self: a #GeglFilter.
- * @collected_input_data_list: List of #GeglData to validate and convert.
+ * @collected_data: Array of #GeglData to validate and convert.
  *
  * Validate and convert the inputs.
  * 
  **/
 void      
 gegl_filter_validate_inputs (GeglFilter * self, 
-                             GList * collected_input_data_list)
+                             GArray * collected_data)
 {
   GeglFilterClass *klass;
-  g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_FILTER (self));
-  klass = GEGL_FILTER_GET_CLASS(self);
 
+  klass = GEGL_FILTER_GET_CLASS(self);
   if(klass->validate_inputs)
-    (*klass->validate_inputs)(self, collected_input_data_list);
+    (*klass->validate_inputs)(self, collected_data);
 }
 
 static void
 validate_inputs(GeglFilter *self,
-                GList *collected_input_data_list)
+                GArray *collected_data)
 {
 }
 
@@ -169,10 +163,9 @@ void
 gegl_filter_validate_outputs (GeglFilter * self)
 {
   GeglFilterClass *klass;
-  g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_FILTER (self));
-  klass = GEGL_FILTER_GET_CLASS(self);
 
+  klass = GEGL_FILTER_GET_CLASS(self);
   if(klass->validate_outputs)
     (*klass->validate_outputs)(self);
 }

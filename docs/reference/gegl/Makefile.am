@@ -34,6 +34,9 @@ images/collectinputs.png \
 images/composite.png \
 images/graph.png \
 images/graphsource.png \
+images/inputs_outputs_for_fade_op.png \
+images/inputs_outputs_for_over_op.png \
+images/inputs_outputs_for_color_op.png \
 images/node_2inputs_1output.png \
 images/node_input_outputs.png \
 images/node_no_input_upstream.png \

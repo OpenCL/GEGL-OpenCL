@@ -17,25 +17,13 @@ struct _GeglVisitor;
 #define GEGL_NODE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NODE, GeglNodeClass))
 
 typedef struct _GeglNode  GeglNode;
-typedef struct _GeglConnector  GeglConnector;
-struct _GeglConnector
-{
-    GeglNode * node;
-    gint input;
-
-    GeglNode * source;
-};
-
 struct _GeglNode 
 {
     GeglObject object;
 
     /*< private >*/
-    gint    num_inputs;
-    GList  *inputs;
-
-    gint    num_outputs;
-    GList  *outputs;
+    GArray *inputs;
+    GArray *outputs;
 
     gboolean enabled;
 };
@@ -65,7 +53,6 @@ GeglNode*       gegl_node_get_sink              (GeglNode * self,
                                                  gint n);
 gint            gegl_node_get_sink_input        (GeglNode * self,
                                                  gint n);
-
 void            gegl_node_unlink                (GeglNode * self);
 void            gegl_node_remove_sources        (GeglNode *self); 
 void            gegl_node_remove_sinks          (GeglNode *self); 
@@ -75,12 +62,8 @@ void            gegl_node_set_num_inputs        (GeglNode * self,
                                                  gint num_inputs);
 void            gegl_node_set_num_outputs       (GeglNode * self,
                                                  gint num_outputs);
-void            gegl_node_add_input             (GeglNode *self, 
-                                                 gint n);
-void            gegl_node_add_output            (GeglNode *self, 
-                                                 gint n);
-void            gegl_node_free_inputs           (GeglNode * self);
-void            gegl_node_free_outputs          (GeglNode * self);
+void            gegl_node_add_input             (GeglNode *self);
+void            gegl_node_add_output            (GeglNode *self);
 void            gegl_node_accept                (GeglNode * self, 
                                                  struct _GeglVisitor * visitor);
                                                                  

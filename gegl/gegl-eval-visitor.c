@@ -37,6 +37,7 @@ gegl_eval_visitor_get_type (void)
         sizeof (GeglEvalVisitor),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_DFS_VISITOR, 
@@ -77,21 +78,23 @@ static void
 visit_filter(GeglVisitor * visitor,
              GeglFilter *filter)
 {
-  GList * collected_input_data_list;
-
   GEGL_VISITOR_CLASS(parent_class)->visit_filter(visitor, filter);
 
-  /* Validate the inputs of op */
-  collected_input_data_list = 
-    gegl_visitor_collect_input_data_list(visitor, GEGL_NODE(filter));
-  gegl_filter_validate_inputs(filter, collected_input_data_list);
-  g_list_free(collected_input_data_list);
+  {
+    /* Validate the inputs of op */
 
-  /* Validate the outputs of op */
-  gegl_filter_validate_outputs(filter);
+    GArray * collected_data = 
+        gegl_visitor_collect_input_data(visitor, GEGL_NODE(filter));
 
-  /* Do the operation */
-  gegl_filter_evaluate(filter);
+    gegl_filter_validate_inputs(filter, collected_data);
+    g_array_free(collected_data, TRUE);
+
+    /* Validate the outputs of op */
+    gegl_filter_validate_outputs(filter);
+
+    /* Do the operation */
+    gegl_filter_evaluate(filter);
+  }
 }
 
 static void      

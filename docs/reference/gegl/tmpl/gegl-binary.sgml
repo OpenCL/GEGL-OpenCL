@@ -22,17 +22,25 @@ is used as multiplier applied to the first input, a.
 </para>
 
 
+<!-- ##### STRUCT GeglBinaryClass ##### -->
+<para>
+
+</para>
+
+@point_op_class: 
+@get_scanline_func: 
+
 <!-- ##### ARG GeglBinary:fade ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglBinary:input-image-a ##### -->
+<!-- ##### ARG GeglBinary:source-0 ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglBinary:input-image-b ##### -->
+<!-- ##### ARG GeglBinary:source-1 ##### -->
 <para>
 
 </para>

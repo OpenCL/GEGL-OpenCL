@@ -20,7 +20,19 @@ This op creates a constant color image.
 </para>
 
 
+<!-- ##### STRUCT GeglColorClass ##### -->
+<para>
+
+</para>
+
+@no_input_class: 
+
 <!-- ##### ARG GeglColor:height ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglColor:pixel-node ##### -->
 <para>
 
 </para>

@@ -44,6 +44,7 @@ gegl_mock_filter_get_type (void)
         sizeof (GeglMockFilter),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_FILTER, 
@@ -177,13 +178,13 @@ get_property (GObject      *gobject,
       gegl_mock_filter_get_channel(self, value);
       break;
     case PROP_PIXEL_RGB_FLOAT:
-      /*LOG_DIRECT("getting pixel-rgb-float");*/
+      /*gegl_log_direct("getting pixel-rgb-float");*/
       break;
     case PROP_PIXEL_RGBA_FLOAT:
-      /*LOG_DIRECT("getting pixel-rgba-float");*/
+      /*gegl_log_direct("getting pixel-rgba-float");*/
       break;
     case PROP_PIXEL_RGB_UINT8:
-      /*LOG_DIRECT("getting pixel-rgb-uint8");*/
+      /*gegl_log_direct("getting pixel-rgb-uint8");*/
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
@@ -211,13 +212,13 @@ set_property (GObject      *gobject,
       gegl_mock_filter_set_channel(self, (GValue*)value);
       break;
     case PROP_PIXEL_RGB_FLOAT:
-      /*LOG_DIRECT("setting pixel-rgb-float");*/
+      /*gegl_log_direct("setting pixel-rgb-float");*/
       break;
     case PROP_PIXEL_RGBA_FLOAT:
-      /*LOG_DIRECT("setting pixel-rgba-float");*/
+      /*gegl_log_direct("setting pixel-rgba-float");*/
       break;
     case PROP_PIXEL_RGB_UINT8:
-      /*LOG_DIRECT("setting pixel-rgb-uint8");*/
+      /*gegl_log_direct("setting pixel-rgb-uint8");*/
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);

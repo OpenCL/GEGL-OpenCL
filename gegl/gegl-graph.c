@@ -49,6 +49,7 @@ gegl_graph_get_type (void)
         sizeof (GeglGraph),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_OP , 
@@ -152,8 +153,8 @@ get_property (GObject      *gobject,
 static void
 root_changed(GeglGraph * self)
 {
-  gegl_op_free_output_data_list(GEGL_OP(self));
-  gegl_op_free_input_data_list(GEGL_OP(self));
+  gegl_op_free_output_data_array(GEGL_OP(self));
+  gegl_op_free_input_data_array(GEGL_OP(self));
 
   if(self->root)
     {

@@ -66,7 +66,7 @@ main (int argc, char *argv[])
 
   gegl_init(&argc, &argv);
 
-  LOG_DIRECT("Hello there");
+  gegl_log_direct("Hello there");
 
   {
     Suite *suite = cs_create("GeglTestSuite");

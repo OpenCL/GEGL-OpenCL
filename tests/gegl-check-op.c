@@ -21,7 +21,7 @@ static void finalize (GObject * gobject);
 
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-static void validate_inputs(GeglFilter *filter, GList *collected_input_data_list);
+static void validate_inputs(GeglFilter *filter, GArray *collected_data);
 
 static void process (GeglFilter * filter);
 
@@ -48,6 +48,7 @@ gegl_check_op_get_type (void)
         sizeof (GeglCheckOp),
         0,
         (GInstanceInitFunc) init,
+        NULL
       };
 
       type = g_type_register_static (GEGL_TYPE_FILTER, 
@@ -249,16 +250,16 @@ gegl_check_op_get_success(GeglCheckOp *self)
 
 static void
 validate_inputs(GeglFilter *filter,
-                GList *collected_input_data_list)
+                      GArray *collected_data)
 {
-  GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_input_data_list);
+  GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_data);
 #if 0 
   /* Check that the pixel is the same color model as image op */
   {
     GeglData *pixel_data = 
       gegl_op_get_input_data(GEGL_OP(filter), "pixel"); 
     GeglData *image_data = 
-      gegl_op_get_output_data(GEGL_OP(self->image_op), "output-image"); 
+      gegl_op_get_output_data(GEGL_OP(self->image_op), "dest"); 
 
     GeglColorModel *pixel_color_model = 
       gegl_color_data_get_color_model(GEGL_COLOR_DATA(pixel_data));
@@ -268,7 +269,7 @@ validate_inputs(GeglFilter *filter,
 
     if(image_color_model != pixel_color_model)
       {
-        LOG_DIRECT("Color models dont match. Expected: %s Found %s", 
+        gegl_log_direct("Color models dont match. Expected: %s Found %s", 
                    gegl_color_model_name(pixel_color_model), 
                    gegl_color_model_name(image_color_model));
         self->success = FALSE;
@@ -290,7 +291,7 @@ process (GeglFilter * filter)
   gint y = g_value_get_int(y_value); 
 
   GeglData *image_op_data = 
-        gegl_op_get_output_data(GEGL_OP(self->image_op), "output-image"); 
+        gegl_op_get_output_data(GEGL_OP(self->image_op), "dest"); 
   GValue *image_value = gegl_data_get_value(image_op_data);
   GeglImage *image = g_value_get_object(image_value);
   GeglColorModel *color_model = 
@@ -336,7 +337,7 @@ check_op_float(GeglCheckOp *self,
 
   self->success = TRUE;
 
-  /*LOG_DIRECT("x y %d %d", self->x, self->y);*/
+  /*gegl_log_direct("x y %d %d", self->x, self->y);*/
 
   switch(a_color_chans)
     {
@@ -392,7 +393,7 @@ check_op_uint8(GeglCheckOp *self,
 
   self->success = TRUE;
 
-  /* LOG_DIRECT("x y %d %d", self->x, self->y);*/
+  /* gegl_log_direct("x y %d %d", self->x, self->y);*/
   /* g_print("addresses are: %p %p %p\n",  data[0], data[1], data[2]); */
 
   switch(a_color_chans)

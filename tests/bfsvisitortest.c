@@ -51,7 +51,7 @@ test_bfs_visitor_traverse(Test *test)
     gegl_bfs_visitor_traverse (GEGL_BFS_VISITOR(mock_bfs_visitor), E); 
     visits_list = gegl_visitor_get_visits_list(GEGL_VISITOR(mock_bfs_visitor));
 
-    for(i = 0; i < g_list_length(visits_list); i++)
+    for(i = 0; i < (gint)g_list_length(visits_list); i++)
       {
         GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);  
         const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));
@@ -70,7 +70,7 @@ test_bfs_visitor_traverse(Test *test)
     gegl_bfs_visitor_traverse (GEGL_BFS_VISITOR(mock_bfs_visitor), D); 
     visits_list = gegl_visitor_get_visits_list(GEGL_VISITOR(mock_bfs_visitor));
 
-    for(i = 0; i < g_list_length(visits_list); i++)
+    for(i = 0; i < (gint)g_list_length(visits_list); i++)
       {
         GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);  
         const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));
@@ -105,7 +105,7 @@ test_bfs_visitor_traverse_diamond(Test *test)
     gegl_bfs_visitor_traverse (GEGL_BFS_VISITOR(mock_bfs_visitor), O); 
     visits_list = gegl_visitor_get_visits_list(GEGL_VISITOR(mock_bfs_visitor));
 
-    for(i = 0; i < g_list_length(visits_list); i++)
+    for(i = 0; i < (gint)g_list_length(visits_list); i++)
       {
         GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);  
         const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));
@@ -147,7 +147,7 @@ test_bfs_visitor_traverse_graph(Test *test)
     visits_list = gegl_visitor_get_visits_list(GEGL_VISITOR(mock_bfs_visitor));
 
     length = g_list_length(visits_list);
-    for(i = 0; i < g_list_length(visits_list); i++)
+    for(i = 0; i < (gint)g_list_length(visits_list); i++)
       {
         GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);  
         const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));
@@ -209,7 +209,7 @@ test_bfs_visitor_simple_shared(Test *test)
     visits_list = gegl_visitor_get_visits_list(GEGL_VISITOR(mock_bfs_visitor));
 
     ct_test (test, 4 == g_list_length(visits_list));
-    for(i = 0; i < g_list_length(visits_list); i++)
+    for(i = 0; i < (gint)g_list_length(visits_list); i++)
       {
         GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);
         const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));
@@ -250,7 +250,7 @@ test_bfs_visitor_traverse_with_nulls(Test *test)
     visits_list = gegl_visitor_get_visits_list(GEGL_VISITOR(mock_bfs_visitor));
 
     ct_test (test, 4 == g_list_length(visits_list));
-    for(i = 0; i < g_list_length(visits_list); i++)
+    for(i = 0; i < (gint)g_list_length(visits_list); i++)
       {
         GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);
         const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));

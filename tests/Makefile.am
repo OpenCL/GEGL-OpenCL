@@ -105,7 +105,7 @@ TESTS = testgegl
 
 EXTRA_PROGRAMS = $(TESTS)
   
-all: check
+all: check 
 
 dummy:
 	cd $(top_builddir)/gegl \

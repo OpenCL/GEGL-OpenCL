@@ -36,6 +36,13 @@ eval_bfs_visitor(GeglEvalMgr *self)
 </para>
 
 
+<!-- ##### STRUCT GeglBfsVisitorClass ##### -->
+<para>
+
+</para>
+
+@visitor_class: 
+
 <!-- ##### FUNCTION gegl_bfs_visitor_traverse ##### -->
 <para>
 
