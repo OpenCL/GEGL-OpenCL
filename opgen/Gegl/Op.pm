@@ -44,7 +44,7 @@ sub setup
 	print "Warning:  libraries setting not implemented\n";
       }
 
-    $op->{class_name} = "Gegl$op->{name}Op";
+    $op->{class_name} = "Gegl" . ucfirst $op->{name} . "Op";
 
     $op->{class_cast} = "GEGL_" . uc($op->{name}) . "_OP";
     @{$op->{argnames}} = [];
@@ -82,7 +82,7 @@ sub print_class
 
     $op->setup();
     $op->print_headers();
-    print "class Gegl:$op->{name}:op from $op->{parent_class}\n";
+    print "class Gegl:" . ucfirst $op->{name} . ":Op from $op->{parent_class}\n";
     print "{\n\n";
     $op->print_variables();
     $op->print_new();
@@ -109,6 +109,7 @@ sub print_headers
 %}
 %{
 #include "gegl-n-src-op.h"
+#include "gegl-$op->{name}-op.h"
 #include "gegl-image-iterator.h"
 #include "gegl-color.h"
 #include "gegl-color-model.h"

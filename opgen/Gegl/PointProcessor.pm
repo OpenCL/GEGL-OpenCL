@@ -37,6 +37,11 @@ sub print_scanline_function
     my ($precision) = "u8";
     my ($colormodel) = $p->{colormodel};
     my $i;
+    my $has_alpha = "";
+    $has_alpha = 1 if ($p->{per_pixel} =~ /_has_alpha/ ||
+		       $p->{per_color} =~ /_has_alpha/ ||
+		       $p->{per_alpha} =~ /_has_alpha/ ||
+		       $p->{cleanup}   =~ /_has_alpha/);
 
     print <<HERE;
   private
@@ -53,25 +58,37 @@ sub print_scanline_function
     /* ---------------------- */
 
     GENERIC_IMAGE_DECL_BEGIN
-    Pixel dest(color,alpha,has_alpha);
 HERE
-    foreach (@{$op->{buffer_args}})
+# Only compute the has_alpha variables if we are going to use them
+    if ($has_alpha)
       {
-	print "    Pixel ${_}(color, alpha, has_alpha);\n";
+        print "    Pixel dest(color, alpha, has_alpha);";
+        foreach (@{$op->{buffer_args}})
+          {
+            print "    Pixel ${_}(color, alpha, has_alpha);\n";
+          }
       }
-
+    else
+      {
+        print "    Pixel dest(color,alpha);";
+        foreach (@{$op->{buffer_args}})
+          {
+            print "    Pixel ${_}(color, alpha);\n";
+          }
+      }
     print <<HERE;
     GENERIC_IMAGE_DECL_END
 
-    dest_has_alpha = self_op->has_alpha;
 HERE
-# setup *_has_alpha
-# This does not need to be done unless _has_alpha is used from user code
-    $i = 0;
-    foreach (@{$op->{buffer_args}})
+    if ($has_alpha)
       {
-	print "    ${_}_has_alpha = self_op->src_has_alpha[$i];\n";
-	$i++;
+        print "    dest_has_alpha = self_op->has_alpha;";
+        $i = 0;
+        foreach (@{$op->{buffer_args}})
+          {
+            print "    ${_}_has_alpha = self_op->src_has_alpha[$i];\n";
+            $i++;
+          }
       }
 
 # Calculate the mask_mask bitmask

@@ -14,10 +14,6 @@ TODO:
   if the per_pixel/per_color code uses any of the alpha values we have
 to do a big switch statement like in per_alpha.
 
-  Fix up the headers output.
-
-  Fix up capitalization in a couple of spots.
-
   Make the constants line up with the real gegl constants.
 
   Figure out how we tell GIL to generate multiple versions of the 

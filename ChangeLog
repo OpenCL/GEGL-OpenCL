@@ -1,3 +1,18 @@
+2001-02-05  Jay Cox  <jaycox@gimp.org>
+
+	* opgen/Gegl/Op.pm
+	Fix capitalization.
+	
+	* gegl/gegl-n-src-op.gob
+	* opgen/Gegl/PointOp.pm
+	minor fixes
+
+	* opgen/Gegl/PointProcessor.pm
+	Only generate the _has_alpha variables if we are going to use them.
+
+	* docs/TODO.xml
+	update opgen status
+
 Sun Feb  4 18:09:58 EST 2001 calvinw@mindspring.com
 
 	* Makefile.am

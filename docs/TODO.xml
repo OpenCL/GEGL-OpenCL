@@ -230,18 +230,12 @@
       <description>
         <p>
           Opgen generates gegl-operators from XML files.  The code it generates
-          isn't good enough to compile, but it is pretty close.
+          isn't good enough to compile, but it is close.
         </p>
         <ul>
             <li>
               If the per_pixel/per_color code uses any of the alpha values we have
               to do a big switch statement like in per_alpha.
-            </li>
-            <li>
-              Fix up the headers output.
-            </li>
-            <li>
-              Fix up capitalization in a couple of spots.
             </li>
             <li>
               Make the constants line up with the real gegl constants.

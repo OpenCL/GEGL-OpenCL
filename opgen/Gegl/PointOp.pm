@@ -20,7 +20,7 @@ sub new
     my $i;
     # Initialize the data members to help with error checking
 
-    $op->{parent_class} = "Gegl::N::Src::Op";
+    $op->{parent_class} = "Gegl:N:Src:Op";
 
     bless ($op, $class);
     return $op;
@@ -31,7 +31,8 @@ sub print_variables
   {
     my $op = shift;
    #use precisions, colorspaces +1 because of COLORSPACE_NONE, PRECISION_NONE
-    print "  classwide SCANLINE_FUNC_P scanline_funcs[" . (@Gegl::precisions + 1) . "][" . (@Gegl::colorspaces + 1) . "];\n";
+   # moved to gegl-n-src-op
+   # print "  classwide SCANLINE_FUNC_P scanline_funcs[" . (@Gegl::precisions + 1) . "][" . (@Gegl::colorspaces + 1) . "];\n";
     print "\n";
     if ($op->{variables})
       {
@@ -88,13 +89,15 @@ sub print_class_init
     print <<HERE;
   class_init(class)
   {
+    GeglNSrcOpClass  *self_n_src_op_class = GEGL_N_SRC_OP_CLASS(class);
+    
 HERE
 
     foreach $cspace (@Gegl::colorspaces)
       {
 	foreach $prec (@Gegl::precisions)
 	  {
-	    $var = "    class->scanline_funcs[" .
+	    $var = "    self_n_src_op_class->scanline_funcs[" .
 	      pad_string($Gegl::precision{$prec}{enum}, 11) . "][" .
 		pad_string("$Gegl::colormodels{$cspace}{enum}", 9) . "]";
 	    print $var;

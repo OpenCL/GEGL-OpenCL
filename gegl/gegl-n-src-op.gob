@@ -73,8 +73,6 @@ class Gegl:N:Src:Op from Gegl:Point:Op
 
   /* compute the mask_mask so we can switch on it in the scanline funcs */
 
-    self_n_src_op->_priv->mask_mask = 0;
-
     for (list = g_list_last(gegl_node_get_inputs(self_node)); list; 
            list = g_list_previous(list))
       {
@@ -85,6 +83,8 @@ class Gegl:N:Src:Op from Gegl:Point:Op
 	  mask_mask = (mask_mask << 1) | 0;
       }
     
+    self_n_src_op->_priv->mask_mask = mask_mask;
+
   /* Now make sure the correct scanline func is installed */
     if (!(self_point_op_class->scanline_func =
 	  self_n_src_op_class->scanline_funcs[datatype][colorspace]))
