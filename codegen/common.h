@@ -60,6 +60,8 @@ typedef struct
   char          string[256];
   SV_TYPE	type; 
   int		num; 
+  char		inited; 
+  char          scope; 
 }elem_t;
 
 typedef	struct node_s node_t; 
@@ -77,10 +79,11 @@ typedef struct
   int	token;
 }keyword_t;
 
-elem_t  add_sym (char *s);
+elem_t  add_sym (char *s, char scope);
+elem_t* get_sym (char *sym); 
 void	init_image_data (char *indent); 
 int 	get_keyword (char *s); 
 int	yylex (); 
-
+void    rm_varibles (char scope); 
 #endif
 

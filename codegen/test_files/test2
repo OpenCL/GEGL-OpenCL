@@ -15,11 +15,9 @@ if (dest_has_alpha)
   {
     if (src1_has_alpha && src2_has_alpha)
       dest_alpha = MIN(src1_alpha, src2_alpha);
-    else 
-      if (src1_has_alpha)
+    else if (src1_has_alpha)
         dest_alpha = src1_alpha;
-    else 
-      if (src2_has_alpha)
+    else if (src2_has_alpha)
         dest_alpha = src2_alpha; 
   }
 CODEGEN_BLOCK_END 

@@ -14,7 +14,6 @@ void print_value (elem_t *dest, elem_t src);
 void print_name (elem_t *dest, elem_t src, TYPE_DEF is_define);
 void print_repeat (elem_t *dest, elem_t src, char *string); 
 void print_line (elem_t src);
-elem_t* get_sym (char *sym);
 void set_dtype (elem_t e, DATA_TYPE dtype);
 void set_type (elem_t e, DATA_TYPE dtype);
 void set_num (elem_t e, int n);
@@ -42,6 +41,7 @@ keyword_t keyword_tab[] = {
 {"gfloat",     GFLOAT},
 {"gint",       GINT},
 {"goto",       GOTO},
+{"gboolean",   GBOOLEAN}, 
 {"guchar",     GUCHAR},
 {"guint",      GUINT},
 {"guint8",     GUINT8},
@@ -91,7 +91,7 @@ keyword_t keyword_tab[] = {
 
 /* keywords */
 %token	BREAK  CASE  CONST  CONTINUE  DEFAULT  DO	
-%token 	ELSE  FLOAT FOR  GCHAR  GFLOAT  GINT  GOTO  GUCHAR  GUINT
+%token 	ELSE  FLOAT FOR  GBOOLEAN  GCHAR  GFLOAT  GINT  GOTO  GUCHAR  GUINT
 %token  GUINT8  GUINT16  GSHORT  IF  INCLUDE INT LONG  REAL  REGISTER
 %token  RETURN  SIGNED  SIZEOF  STATIC  STRUCT  SWITCH  TYPEDEF
 %token  UNION  UNSIGNED  VOID  VOLATILE  WHILE
@@ -276,10 +276,12 @@ Line:
 		if (!strcmp($7.string, "1"))
 		  {
 		  if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
-		    sprintf (tmp, "%s%s%s_c++;\n%sif (%s_a)\n%s  %s%s_a++", 
-		      $1.string, $4.string, $5.string, 
-		      $1.string, $5.string,
-		      $1.string, $4.string, $5.string);
+		    {
+		    printf ("%sif (%s_a)%s  %s%s_a++", $1.string, $5.string,
+			$1.string, $4.string, $5.string);
+		    sprintf (tmp, "%s%s%s_c++;", 
+		      $1.string, $4.string, $5.string);  
+		    }
 		  else
 		    sprintf (tmp, "%s%s%s_c++;", $1.string, $4.string, $5.string);
 		  
@@ -287,7 +289,11 @@ Line:
 		  else
 		    { 
 		    if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
+		      {
+		      printf ("%sif (%s_a)%s  %s%s_a += %s", $1.string, $5.string,
+			 $1.string, $4.string, $5.string, $7.string);
 		      sprintf (tmp, "%s%s%s_ca += %s;", $1.string, $4.string, $5.string, $7.string); 
+		      }
 		    else
 		      sprintf (tmp, "%s%s%s_c += %s;", $1.string, $4.string, $5.string, $7.string); 
 		    }
@@ -558,6 +564,13 @@ Definition:
                 strcpy($$.string, tmp);
                 }
 
+	| GBOOLEAN Int_List
+                {
+                char tmp[256];
+                $$=$2;
+                sprintf (tmp,"int %s", $2.string);
+                strcpy($$.string, tmp);
+                }
 	;
 
 
@@ -793,6 +806,22 @@ Star2:	{$$.string[0] = '\0';}
 
 #include <stdio.h>
 
+void
+rm_varibles (char scope)
+{
+  int i;
+  
+  for (i=0; i<cur_nsyms; i++)
+    {
+    if (symtab[i].scope > scope)
+      {
+      symtab[i] = symtab[cur_nsyms-1];
+      cur_nsyms--; 
+      }
+    }
+  
+}
+
 void 
 init_image_data (char *indent)
 {
@@ -803,16 +832,18 @@ init_image_data (char *indent)
   /* go through all the symbols find all the color and color alpha vectors */
   for (i=0; i<cur_nsyms; i++)
     {
-    if (symtab[i].type == TYPE_CA_VECTOR) 
+    if (symtab[i].type == TYPE_CA_VECTOR && !symtab[i].inited) 
       {
       e = symtab[i];
+      symtab[i].inited = 1;
       sprintf (tmp, "\n%s%s_ca = %s_data_v;", indent, symtab[i].string, symtab[i].string);
       strcpy (e.string, tmp); 
       print_line (e);  
       }
-    if (symtab[i].type == TYPE_C_VECTOR)
+    if (symtab[i].type == TYPE_C_VECTOR && !symtab[i].inited)
       {
       e = symtab[i];
+      symtab[i].inited = 1;
       sprintf (tmp, "%s%s_c = %s_data_v;\n", indent, symtab[i].string, symtab[i].string);
       strcpy (e.string, tmp);
       print_line (e);
@@ -825,23 +856,9 @@ init_image_data (char *indent)
 void
 init_data_varible (char *s)
 {
- 
-  int i;
-  char string[256];
- 
-  elem_t *e, tmp;  
- 
-  e = get_sym (s); 
-  
-  sprintf (string, "%s_data", s);
-  tmp = add_sym (string);
-  
-  set_dtype(tmp, TYPE_CHAN);
-  set_type(tmp, TYPE_VECTOR);
-  set_num(tmp, e->num);
+  elem_t *e = get_sym (s); 
 
-  printf ("\n       %s *%s[%d];", _Chan_, string, e->num); 
-  
+  printf ("\n       %s *%s_data[%d];", _Chan_, s, e->num); 
 }
 
 void
@@ -869,7 +886,6 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
       {
       dest->num = 1;
       sprintf (tmp, "%s", src.string);
-      src.type = TYPE_SCALER; 
       }
     if (src.string[l-1] == 'c' && src.string[l-2] == '_')
       {
@@ -889,6 +905,7 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
   if(!is_define)
     dest->num   = src.num;  
   strcpy (dest->string, tmp);
+  dest->inited = 0;
 }
 
 void
@@ -985,6 +1002,7 @@ print_value (elem_t *dest, elem_t src)
   sprintf (dest->string, "%s", src.string);
   dest->dtype = src.dtype;
   dest->num = 1;
+  dest->inited = 0;
 }
 
 void
@@ -1257,7 +1275,7 @@ set_num (elem_t e, int n)
 
 /* look up a symbol table entry, add if not present */
 elem_t
-add_sym (char *ss)
+add_sym (char *ss, char scope)
 {
   int	i; 
   char *s = strdup(ss);
@@ -1284,7 +1302,8 @@ add_sym (char *ss)
     exit(1);      /* cannot continue */
   }
   
-  strcpy(symtab[cur_nsyms].string, s); 
+  strcpy(symtab[cur_nsyms].string, s);
+ symtab[cur_nsyms].scope = scope;  
   cur_nsyms++; 
   return symtab[cur_nsyms-1];
 
@@ -1296,7 +1315,15 @@ get_sym (char *ss)
 
   int   i;
   char *s = strdup(ss);
- 
+
+  i = strlen(s);
+  if (i>6)
+  if ((s[i-5] == 'a' || s[i-5] == 'c') && s[i-6] == '_')
+    {
+      s[i-6] = '\0';
+      ss[i-4] = '\0';
+    }
+  
   i = strlen(s);
   if (i>2)
   if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')

@@ -1,0 +1,164 @@
+%h{
+#include "gegl-dual-src-op.h"
+%}
+%{
+#include "gegl-screen-op.h"
+#include "gegl-screen-op-private.h"
+#include "gegl-dual-src-op-private.h"
+#include "gegl-point-op-private.h"
+#include "gegl-op-private.h"
+#include "gegl-object-private.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-iterator.h"
+#include "gegl-color.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+#include <stdio.h>
+%}
+
+
+class Gegl:Screen:Op from Gegl:Dual:Src:Op {
+
+  public 
+  GeglScreenOp *
+  new (GeglImageBuffer *dest, 
+       GeglImageBuffer *src1,
+       GeglImageBuffer *src2,       
+       GeglRect *dest_rect,
+       GeglRect *src1_rect,
+       GeglRect *src2_rect)
+  {
+    GeglScreenOp * self = GEGL_SCREEN_OP(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, dest, src1, src2, 
+                     dest_rect, src1_rect, src2_rect))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self, 
+               GeglImageBuffer *dest,
+                    GeglImageBuffer *src1,
+              GeglImageBuffer *src2,
+              GeglRect *dest_rect,
+              GeglRect *src1_rect,
+              GeglRect *src2_rect)        
+  {
+    GeglPointOp *point_op = GEGL_POINT_OP (self);
+    GeglPointOpClass *point_op_class = 
+        GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+    
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+    
+    /* Chain up */
+    if (!gegl_dual_src_op_constructor ( 
+           GEGL_DUAL_SRC_OP(self),dest, src1, src2, 
+           dest_rect, src1_rect, src2_rect))
+      return FALSE;
+
+    {
+      point_op_class->scanline_func = gegl_screen_op_RGB_FLOAT;        
+    }
+
+    return TRUE;
+  }
+
+  private 
+  void
+  RGB_FLOAT (GeglPointOp *point_op)
+  {
+    /*
+     Whats the algorithm for this code?       
+     
+     {
+       int dest_has_alpha; 
+       int src1_has_alpha; 
+       int src2_has_alpha; 
+
+       Chan dest;
+       Chan src1;
+       Chan src2;
+
+       dest = WP - ((WP - src1) * (WP - src2));
+
+       if (dest_has_alpha)
+         {
+           if (src1_has_alpha && src2_has_alpha)
+             dest_a = MIN(src1_a, src2_a);
+           else if (src1_has_alpha)
+             dest_a = src1_a;
+           else if (src2_has_alpha)
+             dest_a = src2_a; 
+         } 
+      }
+
+    */ 
+    GeglPointOpPrivate *point_opP = 
+        (GeglPointOpPrivate *)(point_op->_priv); 
+    GeglDualSrcOp *dual_src_op = GEGL_DUAL_SRC_OP(point_op); 
+    GeglDualSrcOpPrivate *dual_src_opP = 
+        (GeglDualSrcOpPrivate *)(dual_src_op->_priv); 
+
+
+    CODEGEN_DECL_BEGIN
+    guint width ;
+
+    VectorChan dest(color,alpha);
+    VectorChan src1(color,alpha);
+    VectorChan src2(color,alpha);
+    gboolean dest_has_alpha;  
+    gboolean src1_has_alpha;  
+    gboolean src2_has_alpha;  
+    CODEGEN_DECL_END
+
+    dest_has_alpha = 
+       gegl_color_model_has_alpha(dual_src_opP->dest_cm); 
+    src1_has_alpha = 
+       gegl_color_model_has_alpha(dual_src_opP->src1_cm); 
+    src2_has_alpha = 
+       gegl_color_model_has_alpha(dual_src_opP->src2_cm); 
+    
+    width = point_opP->scanline_width;
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[0], 
+                      (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[1],
+                      (guchar**)src1_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[2],
+                      (guchar**)src2_data); 
+    
+    CODEGEN_INIT_IMAGE_DATA
+
+    CODEGEN_BLOCK_BEGIN
+    while (width--)
+    {
+      dest_color = WP - ((WP - src1_color) * (WP - src2_color));
+
+      if (dest_has_alpha)
+       {
+         if (src1_has_alpha && src2_has_alpha)
+           {
+             dest_alpha = MIN(src1_alpha, src2_alpha);
+           }       
+         else if (src1_has_alpha)
+           dest_alpha = src1_alpha;
+         else if (src2_has_alpha)
+           dest_alpha = src2_alpha; 
+       }
+      dX(dest,1);
+      dX(src1,1);
+      dX(src2,1); 
+    }               
+    CODEGEN_BLOCK_END 
+  }
+}

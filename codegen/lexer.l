@@ -6,7 +6,7 @@
 #include <math.h>
 #include <ctype.h>
 int PREV;  
-
+int SCOPE; 
 %}
 
 %s			CODEGEN_DECL
@@ -137,8 +137,12 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 <CODEGEN_BLOCK>"^"		return(POWER);
 <CODEGEN_BLOCK>"("		return(LT_PARENTHESIS);
 <CODEGEN_BLOCK>")"		return(RT_PARENTHESIS);
-<CODEGEN_BLOCK>"{"		return(LT_CURLY);
-<CODEGEN_BLOCK>"}"		return(RT_CURLY); 
+<CODEGEN_BLOCK>"{"		{SCOPE ++; return(LT_CURLY);}
+<CODEGEN_BLOCK>"}"		{SCOPE --; rm_varibles (SCOPE); return(RT_CURLY); } 
+<CODEGEN_DECL>"{"		{SCOPE ++;}
+<CODEGEN_DECL>"}"		{SCOPE --; rm_varibles (SCOPE);} 
+"{"				{SCOPE ++;}
+"}"				{SCOPE --; rm_varibles (SCOPE);} 
 <CODEGEN_DECL>"["		return(LT_SQUARE);
 <CODEGEN_BLOCK>"["		return(LT_SQUARE);
 <CODEGEN_DECL>"]"		return(RT_SQUARE); 
@@ -168,9 +172,9 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 			  	{ 
 			  	case -1:
 			    		/* return symbol pointer */
-			    		yylval.elem = add_sym (yytext);
+			    		yylval.elem = add_sym (yytext, SCOPE);
 			    		strcpy(yylval.elem.string, yytext); 
-			    		return NAME;
+					return NAME;
 			    	break;
 			  	default:
 			    		return get_keyword (yytext);
@@ -183,7 +187,7 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 			  	{ 
 			  	case -1:
 			    		/* return symbol pointer */
-			    		yylval.elem = add_sym (yytext);
+			    		yylval.elem = *(get_sym (yytext));
 			    		strcpy(yylval.elem.string, yytext); 
 			    		return NAME;
 			    	break;

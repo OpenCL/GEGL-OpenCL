@@ -1,0 +1,79 @@
+Heres another odd one:
+
+This example (just save to a file then run with UINT8 rgb)
+
+---start example---
+
+private
+void
+COLORSPACEa_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
+{
+    GeglCompositePremultOp * self = GEGL_COMPOSITE_PREMULT_OP (point_op);
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+
+    CODEGEN_DECL_BEGIN
+    VectorChan dest(color);
+    VectorChan src1(color);
+    VectorChan src2(color,alpha);
+    Chan a;
+    CODEGEN_DECL_END
+
+    guint width = point_opP->scanline_width;
+
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[0], 
+                      (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[1],
+                      (guchar**)src1_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[2],
+                      (guchar**)src2_data); 
+
+    CODEGEN_IMAGE_DATA_INIT
+
+     CODEGEN_BLOCK_BEGIN
+     dest = src2_color;
+
+     dX(dest,1);
+     dX(src2,1);
+     CODEGEN_BLOCK_END
+}
+
+---end example---
+
+outputs something like this in the CODEGENBLOCK:
+
+while (width--)
+           {
+
+
+             *dest_r = *src2_r;
+             *dest_g = *src2_g;
+             *dest_b = *src2_b;
+
+*dest_r++;
+*dest_g++;
+*dest_b++;
+*src2_r++;
+*src2_g++;
+*src2_b++;
+*src2_a++;
+           }
+
+
+It should be outputting this 
+
+dest_r++;
+dest_g++;
+dest_b++;
+
+src2_r++;
+src2_g++;
+src2_b++;
+src2_a++;
+
+as the algorithm is written (even though src2_a is unused).
+
+
+Calvin

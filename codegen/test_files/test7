@@ -1,0 +1,122 @@
+
+colorspacea_op_colorspacea_datatype(GeglPointOp *point_op)
+{
+       GeglCompositePremultOp * self = GEGL_COMPOSITE_PREMULT_OP (point_op);
+       GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
+
+       CODEGEN_DECL_BEGIN
+       VectorChan dest(color,alpha);
+       VectorChan src1(color,alpha);
+       VectorChan src2(color,alpha);
+       Chan a,b;
+       CODEGEN_DECL_END
+
+       guint width = point_opP->scanline_width;
+
+       gegl_image_iterator_get_scanline_data (
+                    point_opP->iterators[0],
+                    (guchar**)dest_data);
+       gegl_image_iterator_get_scanline_data (
+                    point_opP->iterators[1],
+                    (guchar**)src1_data);
+       gegl_image_iterator_get_scanline_data (
+                    point_opP->iterators[2],
+                    (guchar**)src2_data);
+
+       CODEGEN_IMAGE_DATA_INIT
+
+       switch(self->_priv->comp_mode)
+       {
+       case COMPOSITE_REPLACE:
+       while (width--)
+        {
+          CODEGEN_BLOCK_BEGIN
+          dest = src2;
+          dest = ZERO; 
+          dX(dest,1);
+          dX(src2,1);
+          CODEGEN_BLOCK_END
+        }
+       break;
+       case COMPOSITE_OVER:
+       while (width--)
+        {
+          CODEGEN_BLOCK_BEGIN
+          a = WP - src2_alpha;
+
+          dest = a * src1 + src2;
+
+          dX(dest,1);
+          dX(src1,1);
+          dX(src2,1);
+          CODEGEN_BLOCK_END
+        }
+       break;
+      case COMPOSITE_IN:
+       while (width--)
+         {
+           CODEGEN_BLOCK_BEGIN
+           b = src1_alpha;
+
+           dest = b * src2;
+
+           dX(dest,1);
+           dX(src1,1);
+           dX(src2,1);
+           CODEGEN_BLOCK_END
+         }
+       break;
+      case COMPOSITE_OUT:
+       while (width--)
+         {
+           CODEGEN_BLOCK_BEGIN
+           b = WP - src1_alpha;
+
+           dest = b * src2;
+
+           dX(dest,1);
+           dX(src1,1);
+           dX(src2,1);
+           CODEGEN_BLOCK_END
+         }
+       break;
+      case COMPOSITE_ATOP:
+       while (width--)
+         {
+           CODEGEN_BLOCK_BEGIN
+           a = WP - src2_alpha;
+           b = src1_alpha;
+
+           dest = a * src1 + b * src2;
+
+           dX(dest,1);
+           dX(src1,1);
+           dX(src2,1);
+           CODEGEN_BLOCK_END
+         }
+       break;
+      case COMPOSITE_XOR:
+       while (width--)
+         {
+           CODEGEN_BLOCK_BEGIN
+           a = WP - src2_alpha;
+           b = WP - src1_alpha;
+
+           dest = a * src1 + b * src2;
+
+           dX(dest,1);
+           dX(src1,1);
+           dX(src2,1);
+           CODEGEN_BLOCK_END
+         }
+       break;
+     default:
+      break;
+    }
+ }
+
+More coming...
+
+Calvin
+
+
