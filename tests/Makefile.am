@@ -12,6 +12,12 @@ DEPS = ../gegl/libgegl.la ../tools/testsuite/libtestsuite.la
 LDADDS = ../gegl/libgegl.la ../tools/testsuite/libtestsuite.la
 
 MOCK_OBJECT_SRC = \
+   gegl-mock-bfs-visitor.c \
+   gegl-mock-bfs-visitor.h \
+   gegl-mock-dfs-visitor.c \
+   gegl-mock-dfs-visitor.h \
+   gegl-mock-filter.c \
+   gegl-mock-filter.h \
    gegl-mock-image.c \
    gegl-mock-image.h \
    gegl-mock-node.c \
@@ -28,6 +34,7 @@ MOCK_OBJECT_SRC = \
 testgegl_SOURCES = \
    $(MOCK_OBJECT_SRC) \
    addtest.c \
+   bfsvisitortest.c \
    buffertest.c \
    colortest.c \
    colormodeltest.c \
@@ -35,10 +42,15 @@ testgegl_SOURCES = \
    colormodelrgbfloattest.c \
    constmulttest.c \
    copytest.c \
+   dfsvisitortest.c \
+   dumpvisitortest.c \
    filltest.c \
-   filtertest.c \
+   graphapplytest.c \
+   graphnodetest.c \
+   haverecttest.c \
    imagetest.c \
    membuffertest.c \
+   needrecttest.c \
    nodetest.c \
    optest.c \
    objecttest.c \
@@ -56,7 +68,7 @@ testgegl_SOURCES = \
 
 testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(DEPS)
-testgegl_LDADD = $(LDADDS) -lm
+testgegl_LDADD = $(LDADDS) -lm -lefence
 
 tests: dummy testgegl
 

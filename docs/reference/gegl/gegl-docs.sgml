@@ -19,10 +19,10 @@
 <!ENTITY GeglDark SYSTEM "sgml/gegl-dark.sgml">
 <!ENTITY GeglDiff SYSTEM "sgml/gegl-diff.sgml">
 <!ENTITY GeglFill SYSTEM "sgml/gegl-fill.sgml">
-<!ENTITY GeglFilter SYSTEM "sgml/gegl-filter.sgml">
-<!ENTITY GeglFilterBfsVisitor SYSTEM "sgml/gegl-filter-bfs-visitor.sgml">
-<!ENTITY GeglFilterDfsVisitor SYSTEM "sgml/gegl-filter-dfs-visitor.sgml">
-<!ENTITY GeglFilterInputsVisitor SYSTEM "sgml/gegl-filter-inputs-visitor.sgml">
+<!ENTITY GeglGraphBfsVisitor SYSTEM "sgml/gegl-graph-bfs-visitor.sgml">
+<!ENTITY GeglGraphDfsVisitor SYSTEM "sgml/gegl-graph-dfs-visitor.sgml">
+<!ENTITY GeglGraphEvaluateVisitor SYSTEM "sgml/gegl-graph-evaluate-visitor.sgml">
+<!ENTITY GeglGraph SYSTEM "sgml/gegl-graph.sgml">
 <!ENTITY GeglImage SYSTEM "sgml/gegl-image.sgml">
 <!ENTITY GeglLight SYSTEM "sgml/gegl-light.sgml">
 <!ENTITY GeglMax SYSTEM "sgml/gegl-max.sgml">
@@ -45,9 +45,16 @@
 <!ENTITY GeglTile SYSTEM "sgml/gegl-tile.sgml">
 <!ENTITY GeglUnpremult SYSTEM "sgml/gegl-unpremult.sgml">
 <!ENTITY GeglVisitor SYSTEM "sgml/gegl-visitor.sgml">
+<!ENTITY GeglDumpVisitor SYSTEM "sgml/gegl-dump-visitor.sgml">
+<!ENTITY GeglDfsVisitor SYSTEM "sgml/gegl-dfs-visitor.sgml">
+<!ENTITY GeglGraphInitVisitor SYSTEM "sgml/gegl-graph-init-visitor.sgml">
+<!ENTITY GeglGraphSetupVisitor SYSTEM "sgml/gegl-graph-setup-visitor.sgml">
+<!ENTITY GeglFilter SYSTEM "sgml/gegl-filter.sgml">
+<!ENTITY GeglBfsVisitor SYSTEM "sgml/gegl-bfs-visitor.sgml">
+<!ENTITY gegl-gegl-attributes SYSTEM "sgml/gegl-attributes.sgml">
 <!ENTITY gegl-gegl-param-specs SYSTEM "sgml/gegl-param-specs.sgml">
-<!ENTITY gegl-gegl-utils SYSTEM "sgml/gegl-utils.sgml">
 <!ENTITY gegl-gegl-types SYSTEM "sgml/gegl-types.sgml">
+<!ENTITY gegl-gegl-utils SYSTEM "sgml/gegl-utils.sgml">
 <!ENTITY gegl-gegl-value-types SYSTEM "sgml/gegl-value-types.sgml">
 <!entity gegl-objecttree SYSTEM "sgml/tree_index.sgml">
 <!entity gegl-compiling SYSTEM "compiling.sgml">
@@ -65,62 +72,74 @@
 
   <chapter id="object">
     <title>Object and Nodes</title>
-    &GeglObject;
     &GeglNode;
+    &GeglObject;
+  </chapter>
+
+  <chapter id="abstractops">
+    <title>Abstract and Container Ops</title>
+    &GeglFilter;
+    &GeglGraph;
+    &GeglImage;
+    &GeglOp;
+    &GeglPointOp;
+    &GeglStatOp;
   </chapter>
 
   <chapter id="ops">
     <title>Operators</title>
     &GeglAdd;
-    &GeglCopy;
-    &GeglConstMult;
-    &GeglComp;
     &GeglCompPremult;
+    &GeglComp;
+    &GeglConstMult;
+    &GeglCopy;
     &GeglDark;
     &GeglDiff;
+    &GeglFill;
     &GeglLight;
     &GeglMax;
     &GeglMin;
     &GeglMult;
-    &GeglFill;
-    &GeglFilter;
     &GeglPremult;
-    &GeglScreen;
-    &GeglImage;
-    &GeglSubtract;
-    &GeglUnpremult;
-    &GeglOp;
-    &GeglPointOp;
     &GeglPrint;
     &GeglSampledImage;
     &GeglScanlineProcessor;
-    &GeglStatOp;
+    &GeglScreen;
+    &GeglSubtract;
+    &GeglUnpremult;
+  </chapter>
+
+  <chapter id="visitors">
+    <title>Visitors</title>
+    &GeglBfsVisitor;
+    &GeglDfsVisitor;
+    &GeglDumpVisitor;
+    &GeglGraphBfsVisitor;
+    &GeglGraphDfsVisitor;
+    &GeglGraphEvaluateVisitor;
+    &GeglGraphInitVisitor;
+    &GeglGraphSetupVisitor;
+    &GeglVisitor;
   </chapter>
 
   <chapter id="colormodel">
     <title>Color and Color Models</title>
     &GeglColor;
     &GeglColorModel;
-    &GeglColorModelGray;
-    &GeglColorModelRgb;
-    &GeglColorModelRgbFloat;
-    &GeglColorModelRgbU16;
-    &GeglColorModelRgbU8;
     &GeglColorModelGrayFloat;
     &GeglColorModelGrayU16;
     &GeglColorModelGrayU8;
-  </chapter>
-
-  <chapter id="visitors">
-    <title>Visitors</title>
-    &GeglVisitor;
-    &GeglFilterBfsVisitor;
-    &GeglFilterDfsVisitor;
-    &GeglFilterInputsVisitor;
+    &GeglColorModelGray;
+    &GeglColorModelRgbFloat;
+    &GeglColorModelRgbU16;
+    &GeglColorModelRgbU8;
+    &GeglColorModelRgb;
   </chapter>
 
   <chapter id="tilemgrs">
     <title>Tile Manager</title>
+    &GeglTile;
+    &GeglTileIterator;
     &GeglTileMgr;
   </chapter>
 
@@ -128,15 +147,14 @@
     <title>Image Data and Memory Buffer Classes</title>
     &GeglBuffer;
     &GeglMemBuffer;
-    &GeglTile;
-    &GeglTileIterator;
   </chapter>
 
   <chapter id="misc">
     <title>Misc</title>
-    &gegl-gegl-utils;
-    &gegl-gegl-types;
-    &gegl-gegl-value-types;
+    &gegl-gegl-attributes;
     &gegl-gegl-param-specs;
+    &gegl-gegl-types;
+    &gegl-gegl-utils;
+    &gegl-gegl-value-types;
   </chapter>
 </book>

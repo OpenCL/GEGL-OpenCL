@@ -3,6 +3,7 @@
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
+#include <string.h>
 
 static void
 do_rgba_float_tests (Test * test, GeglColorModel *color_model)

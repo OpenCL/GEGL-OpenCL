@@ -4,6 +4,7 @@
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
+#include <string.h>
 
 GeglColorModel * color_model;
 #define SAMPLED_IMAGE_WIDTH 10 
@@ -46,7 +47,6 @@ test_point_op_apply(Test *test)
                                              NULL);  
 
   GeglOp * op = g_object_new (GEGL_TYPE_MOCK_POINT_OP, 
-                              "num_inputs", 2, 
                               "input0", image0,
                               "input1", image1,
                               NULL);  

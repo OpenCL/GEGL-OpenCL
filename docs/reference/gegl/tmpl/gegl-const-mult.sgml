@@ -2,6 +2,7 @@
 GeglConstMult
 
 <!-- ##### SECTION Short_Description ##### -->
+Multiply image by constant.
 
 
 <!-- ##### SECTION Long_Description ##### -->

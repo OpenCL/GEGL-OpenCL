@@ -185,6 +185,24 @@ GeglColorModel
 @has_alpha: 
 
 
+<!-- ##### FUNCTION gegl_color_model_set_color_space_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@name: 
+
+
+<!-- ##### FUNCTION gegl_color_model_get_color_space_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
 <!-- ##### ARG GeglColorModel:hasalpha ##### -->
 <para>
 

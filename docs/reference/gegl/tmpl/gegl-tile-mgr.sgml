@@ -38,6 +38,7 @@ GeglTileMgr
 @self: 
 @tile: 
 @area: 
+@color_model: 
 @Returns: 
 
 

@@ -2,12 +2,13 @@
 #include "gegl-node.h"
 #include "gegl-op.h"
 #include "gegl-filter.h"
+#include "gegl-graph.h"
 
 static void class_init (GeglMockVisitorClass * klass);
 
 static void visit_node (GeglVisitor *visitor, GeglNode * node);
-static void visit_op (GeglVisitor *visitor, GeglOp * op);
-static void visit_filter (GeglVisitor *visitor, GeglFilter * filter);
+static void visit_filter (GeglVisitor *visitor, GeglFilter * op);
+static void visit_graph (GeglVisitor *visitor, GeglGraph * graph);
 
 static gpointer parent_class = NULL;
 
@@ -47,8 +48,8 @@ class_init (GeglMockVisitorClass * klass)
   parent_class = g_type_class_peek_parent(klass);
 
   visitor_class->visit_node = visit_node;
-  visitor_class->visit_op = visit_op;
   visitor_class->visit_filter = visit_filter;
+  visitor_class->visit_graph = visit_graph;
 }
 
 static void      
@@ -59,15 +60,15 @@ visit_node(GeglVisitor * visitor,
 }
 
 static void      
-visit_op(GeglVisitor * visitor,
-         GeglOp *op)
+visit_filter(GeglVisitor * visitor,
+         GeglFilter *op)
 {
   visit_node(visitor, GEGL_NODE(op));
 }
 
 static void      
-visit_filter(GeglVisitor * visitor,
-             GeglFilter *filter)
+visit_graph(GeglVisitor * visitor,
+             GeglGraph *graph)
 {
-  visit_node(visitor, GEGL_NODE(filter));
+  visit_node(visitor, GEGL_NODE(graph));
 }

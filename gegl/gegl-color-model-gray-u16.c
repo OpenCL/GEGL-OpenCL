@@ -3,6 +3,7 @@
 #include "gegl-color-model.h"
 #include "gegl-object.h"
 #include "gegl-color.h"
+#include <string.h> 
 
 static void class_init (GeglColorModelGrayU16Class * klass);
 static void init (GeglColorModelGrayU16 * self, GeglColorModelGrayU16Class * klass);

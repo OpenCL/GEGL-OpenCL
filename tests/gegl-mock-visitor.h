@@ -18,13 +18,15 @@ extern "C" {
 #define __TYPEDEF_GEGL_MOCK_VISITOR__
 typedef struct _GeglMockVisitor GeglMockVisitor;
 #endif
-struct _GeglMockVisitor {
-       GeglVisitor __parent__;
+struct _GeglMockVisitor 
+{
+       GeglVisitor visitor;
 };
 
 typedef struct _GeglMockVisitorClass GeglMockVisitorClass;
-struct _GeglMockVisitorClass {
-       GeglVisitorClass __parent__;
+struct _GeglMockVisitorClass 
+{
+       GeglVisitorClass visitor_class;
 };
 
 GType         gegl_mock_visitor_get_type          (void); 

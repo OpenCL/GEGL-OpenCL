@@ -163,6 +163,8 @@ gegl_color_model_convert_to_xyz
 gegl_color_model_convert_from_xyz
 gegl_color_model_get_convert_interface_name
 gegl_color_model_set_has_alpha
+gegl_color_model_set_color_space_name
+gegl_color_model_get_color_space_name
 <SUBSECTION Standard>
 GEGL_COLOR_MODEL
 GEGL_IS_COLOR_MODEL
@@ -175,7 +177,6 @@ GEGL_COLOR_MODEL_GET_CLASS
 
 <SECTION>
 <FILE>gegl-color</FILE>
-GeglColorModel
 <TITLE>GeglColor</TITLE>
 gegl_color_get_channel_values
 gegl_color_get_color_model
@@ -289,26 +290,68 @@ GEGL_FILL_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-filter</FILE>
-GeglFilterInput
-<TITLE>GeglFilter</TITLE>
-gegl_filter_get_root
-gegl_filter_set_root
-gegl_filter_get_roi
-gegl_filter_set_roi
-gegl_filter_get_image
-gegl_filter_set_image
-gegl_filter_get_input_values
-gegl_filter_validate_input_values
-gegl_filter_validate_output_values
+<FILE>gegl-graph-bfs-visitor</FILE>
+<TITLE>GeglGraphBfsVisitor</TITLE>
 <SUBSECTION Standard>
-GEGL_FILTER
-GEGL_IS_FILTER
-GEGL_TYPE_FILTER
-gegl_filter_get_type
-GEGL_FILTER_CLASS
-GEGL_IS_FILTER_CLASS
-GEGL_FILTER_GET_CLASS
+GEGL_GRAPH_BFS_VISITOR
+GEGL_IS_GRAPH_BFS_VISITOR
+GEGL_TYPE_GRAPH_BFS_VISITOR
+gegl_graph_bfs_visitor_get_type
+GEGL_GRAPH_BFS_VISITOR_CLASS
+GEGL_IS_GRAPH_BFS_VISITOR_CLASS
+GEGL_GRAPH_BFS_VISITOR_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-graph-dfs-visitor</FILE>
+<TITLE>GeglGraphDfsVisitor</TITLE>
+<SUBSECTION Standard>
+GEGL_GRAPH_DFS_VISITOR
+GEGL_IS_GRAPH_DFS_VISITOR
+GEGL_TYPE_GRAPH_DFS_VISITOR
+gegl_graph_dfs_visitor_get_type
+GEGL_GRAPH_DFS_VISITOR_CLASS
+GEGL_IS_GRAPH_DFS_VISITOR_CLASS
+GEGL_GRAPH_DFS_VISITOR_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-graph-evaluate-visitor</FILE>
+<TITLE>GeglGraphEvaluateVisitor</TITLE>
+<SUBSECTION Standard>
+GEGL_GRAPH_EVALUATE_VISITOR
+GEGL_IS_GRAPH_EVALUATE_VISITOR
+GEGL_TYPE_GRAPH_EVALUATE_VISITOR
+gegl_graph_evaluate_visitor_get_type
+GEGL_GRAPH_EVALUATE_VISITOR_CLASS
+GEGL_IS_GRAPH_EVALUATE_VISITOR_CLASS
+GEGL_GRAPH_EVALUATE_VISITOR_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-graph</FILE>
+GeglGraphInput
+GeglGraphOutput
+<TITLE>GeglGraph</TITLE>
+gegl_graph_get_root
+gegl_graph_set_root
+gegl_graph_get_roi
+gegl_graph_set_roi
+gegl_graph_execute
+gegl_graph_get_image
+gegl_graph_set_image
+gegl_graph_lookup_input
+gegl_graph_lookup_output
+gegl_graph_find_input_connection
+gegl_graph_get_input_attributes
+<SUBSECTION Standard>
+GEGL_GRAPH
+GEGL_IS_GRAPH
+GEGL_TYPE_GRAPH
+gegl_graph_get_type
+GEGL_GRAPH_CLASS
+GEGL_IS_GRAPH_CLASS
+GEGL_GRAPH_GET_CLASS
 </SECTION>
 
 <SECTION>
@@ -394,19 +437,17 @@ GEGL_MULT_GET_CLASS
 
 <SECTION>
 <FILE>gegl-node</FILE>
-GeglInputInfo
+GeglConnection
 <TITLE>GeglNode</TITLE>
-gegl_node_set_nth_input_info
-gegl_node_get_nth_input_info
 gegl_node_get_nth_input
 gegl_node_set_nth_input
+gegl_node_set_nth_input_connection
+gegl_node_get_nth_input_connection
 gegl_node_get_num_inputs
 gegl_node_get_num_outputs
-gegl_node_get_input_infos
+gegl_node_get_input_connections
 gegl_node_get_outputs
 gegl_node_accept
-gegl_node_traverse_depth_first
-gegl_node_traverse_breadth_first
 gegl_node_set_num_inputs
 gegl_node_set_num_outputs
 <SUBSECTION Standard>
@@ -442,14 +483,9 @@ GEGL_OBJECT_GET_CLASS
 gegl_op_apply
 gegl_op_apply_image
 gegl_op_apply_roi
-gegl_op_compute_need_rects
-gegl_op_compute_have_rect
-gegl_op_compute_derived_color_model
-gegl_op_evaluate
-gegl_op_set_num_output_values
-gegl_op_get_nth_output_value
-gegl_op_get_nth_input_value
-gegl_op_get_output_values
+gegl_op_allocate_attributes
+gegl_op_get_nth_attributes
+gegl_op_get_attributes
 <SUBSECTION Standard>
 GEGL_OP
 GEGL_IS_OP
@@ -666,22 +702,28 @@ GEGL_UNPREMULT_GET_CLASS
 <FILE>gegl-utils</FILE>
 gegl_rect_set
 gegl_rect_equal
+gegl_rect_equal_coords
 gegl_rect_copy
 gegl_rect_bounding_box
 gegl_rect_intersect
 gegl_rect_contains
+gegl_dump_graph
+gegl_dump_graph_msg
 gegl_channel_data_type_bytes
 gegl_init
 gegl_utils_derived_color_alpha_space
 gegl_utils_derived_channel_data_type
 gegl_utils_derived_color_space
 gegl_utils_construct_val
-gegl_utils_get_filter_type
+gegl_utils_execute_graph
 gegl_log
 gegl_logv
+gegl_direct_log
+gegl_direct_logv
 LOG_DEBUG
 LOG_INFO
 LOG_MSG
+LOG_DIRECT
 GEGL_FLOAT_EPSILON
 GEGL_FLOAT_EQUAL
 <SUBSECTION Standard>
@@ -690,11 +732,22 @@ GEGL_FLOAT_IS_ZERO
 
 <SECTION>
 <FILE>gegl-visitor</FILE>
+GeglNodeInfo
 <TITLE>GeglVisitor</TITLE>
 gegl_visitor_visit_node
-gegl_visitor_visit_op
 gegl_visitor_visit_filter
+gegl_visitor_visit_op
+gegl_visitor_visit_graph
 gegl_visitor_get_visits_list
+gegl_visitor_get_inputs
+gegl_visitor_node_insert
+gegl_visitor_node_lookup
+gegl_visitor_get_visited
+gegl_visitor_set_visited
+gegl_visitor_get_discovered
+gegl_visitor_set_discovered
+gegl_visitor_get_shared_count
+gegl_visitor_set_shared_count
 <SUBSECTION Standard>
 GEGL_VISITOR
 GEGL_IS_VISITOR
@@ -706,42 +759,88 @@ GEGL_VISITOR_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-filter-bfs-visitor</FILE>
-<TITLE>GeglFilterBfsVisitor</TITLE>
+<FILE>gegl-dump-visitor</FILE>
+<TITLE>GeglDumpVisitor</TITLE>
+gegl_dump_visitor_traverse
 <SUBSECTION Standard>
-GEGL_FILTER_BFS_VISITOR
-GEGL_IS_FILTER_BFS_VISITOR
-GEGL_TYPE_FILTER_BFS_VISITOR
-gegl_filter_bfs_visitor_get_type
-GEGL_FILTER_BFS_VISITOR_CLASS
-GEGL_IS_FILTER_BFS_VISITOR_CLASS
-GEGL_FILTER_BFS_VISITOR_GET_CLASS
+GEGL_DUMP_VISITOR
+GEGL_IS_DUMP_VISITOR
+GEGL_TYPE_DUMP_VISITOR
+gegl_dump_visitor_get_type
+GEGL_DUMP_VISITOR_CLASS
+GEGL_IS_DUMP_VISITOR_CLASS
+GEGL_DUMP_VISITOR_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-filter-dfs-visitor</FILE>
-<TITLE>GeglFilterDfsVisitor</TITLE>
+<FILE>gegl-dfs-visitor</FILE>
+<TITLE>GeglDfsVisitor</TITLE>
+gegl_dfs_visitor_traverse
 <SUBSECTION Standard>
-GEGL_FILTER_DFS_VISITOR
-GEGL_IS_FILTER_DFS_VISITOR
-GEGL_TYPE_FILTER_DFS_VISITOR
-gegl_filter_dfs_visitor_get_type
-GEGL_FILTER_DFS_VISITOR_CLASS
-GEGL_IS_FILTER_DFS_VISITOR_CLASS
-GEGL_FILTER_DFS_VISITOR_GET_CLASS
+GEGL_DFS_VISITOR
+GEGL_IS_DFS_VISITOR
+GEGL_TYPE_DFS_VISITOR
+gegl_dfs_visitor_get_type
+GEGL_DFS_VISITOR_CLASS
+GEGL_IS_DFS_VISITOR_CLASS
+GEGL_DFS_VISITOR_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-filter-inputs-visitor</FILE>
-<TITLE>GeglFilterInputsVisitor</TITLE>
+<FILE>gegl-graph-init-visitor</FILE>
+<TITLE>GeglGraphInitVisitor</TITLE>
 <SUBSECTION Standard>
-GEGL_FILTER_INPUTS_VISITOR
-GEGL_IS_FILTER_INPUTS_VISITOR
-GEGL_TYPE_FILTER_INPUTS_VISITOR
-gegl_filter_inputs_visitor_get_type
-GEGL_FILTER_INPUTS_VISITOR_CLASS
-GEGL_IS_FILTER_INPUTS_VISITOR_CLASS
-GEGL_FILTER_INPUTS_VISITOR_GET_CLASS
+GEGL_GRAPH_INIT_VISITOR
+GEGL_IS_GRAPH_INIT_VISITOR
+GEGL_TYPE_GRAPH_INIT_VISITOR
+gegl_graph_init_visitor_get_type
+GEGL_GRAPH_INIT_VISITOR_CLASS
+GEGL_IS_GRAPH_INIT_VISITOR_CLASS
+GEGL_GRAPH_INIT_VISITOR_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-graph-setup-visitor</FILE>
+<TITLE>GeglGraphSetupVisitor</TITLE>
+<SUBSECTION Standard>
+GEGL_GRAPH_SETUP_VISITOR
+GEGL_IS_GRAPH_SETUP_VISITOR
+GEGL_TYPE_GRAPH_SETUP_VISITOR
+gegl_graph_setup_visitor_get_type
+GEGL_GRAPH_SETUP_VISITOR_CLASS
+GEGL_IS_GRAPH_SETUP_VISITOR_CLASS
+GEGL_GRAPH_SETUP_VISITOR_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-filter</FILE>
+<TITLE>GeglFilter</TITLE>
+gegl_filter_compute_need_rect
+gegl_filter_compute_have_rect
+gegl_filter_compute_derived_color_model
+gegl_filter_evaluate
+<SUBSECTION Standard>
+GEGL_FILTER
+GEGL_IS_FILTER
+GEGL_TYPE_FILTER
+gegl_filter_get_type
+GEGL_FILTER_CLASS
+GEGL_IS_FILTER_CLASS
+GEGL_FILTER_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-bfs-visitor</FILE>
+<TITLE>GeglBfsVisitor</TITLE>
+gegl_bfs_visitor_traverse
+<SUBSECTION Standard>
+GEGL_BFS_VISITOR
+GEGL_IS_BFS_VISITOR
+GEGL_TYPE_BFS_VISITOR
+gegl_bfs_visitor_get_type
+GEGL_BFS_VISITOR_CLASS
+GEGL_IS_BFS_VISITOR_CLASS
+GEGL_BFS_VISITOR_GET_CLASS
 </SECTION>
 
 <SECTION>
@@ -762,9 +861,23 @@ ROUND
 </SECTION>
 
 <SECTION>
+<FILE>gegl</FILE>
+</SECTION>
+
+<SECTION>
+<FILE>gegl-attributes</FILE>
+GeglAttributes
+gegl_attributes_new
+gegl_attributes_set_rect
+gegl_attributes_get_rect
+gegl_attributes_set_color_model
+gegl_attributes_get_color_model
+gegl_attributes_print
+</SECTION>
+
+<SECTION>
 <FILE>gegl-value-types</FILE>
 G_VALUE_HOLDS_IMAGE_DATA
-GeglImageData
 g_value_get_image_data
 g_value_set_image_data
 g_value_get_image_data_rect
@@ -772,9 +885,5 @@ g_value_set_image_data_rect
 g_value_get_image_data_tile
 g_value_set_image_data_tile
 g_value_print_image_data
-</SECTION>
-
-<SECTION>
-<FILE>gegl</FILE>
 </SECTION>
 

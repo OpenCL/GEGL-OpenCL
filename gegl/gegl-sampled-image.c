@@ -21,7 +21,8 @@ static GObject* constructor (GType type, guint n_props, GObjectConstructParam *p
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void compute_have_rect(GeglOp *self, GList * input_values);
+static void compute_have_rect(GeglFilter * op, GeglRect *have_rect, GList * input_have_rects);
+static GeglColorModel *compute_derived_color_model (GeglFilter * op, GList* input_color_models);
 
 static gpointer parent_class = NULL;
 
@@ -57,7 +58,7 @@ static void
 class_init (GeglSampledImageClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-  GeglOpClass *op_class = GEGL_OP_CLASS (klass);
+  GeglFilterClass *filter_class = GEGL_FILTER_CLASS (klass);
 
   parent_class = g_type_class_peek_parent(klass);
    
@@ -65,7 +66,8 @@ class_init (GeglSampledImageClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  op_class->compute_have_rect = compute_have_rect;
+  filter_class->compute_have_rect = compute_have_rect;
+  filter_class->compute_derived_color_model = compute_derived_color_model;
 
   g_object_class_install_property (gobject_class, PROP_WIDTH,
                                    g_param_spec_int ("width",
@@ -96,8 +98,7 @@ init (GeglSampledImage * self,
       GeglSampledImageClass * klass)
 {
   GeglNode * node = GEGL_NODE(self);
-  node->num_inputs = 0;
-  gegl_node_set_num_outputs(node, 1);
+  gegl_node_set_num_inputs(node, 0);
   return;
 }
 
@@ -115,12 +116,12 @@ constructor (GType                  type,
 
   gegl_rect_set(&rect, 0,0,self->width,self->height);
 
-  LOG_DEBUG("sampled_image_constructor", "creating tile for %s %x", 
-            G_OBJECT_TYPE_NAME(self), (guint)self);
+  LOG_DEBUG("sampled_image_constructor", "creating tile for %s %p", 
+            G_OBJECT_TYPE_NAME(self), self);
   image->tile = gegl_tile_mgr_create_tile(mgr, color_model, &rect); 
 
-  LOG_DEBUG("sampled_image_constructor", "validating tile %x for %s %x", 
-            image->tile, G_OBJECT_TYPE_NAME(self), (guint)self);
+  LOG_DEBUG("sampled_image_constructor", "validating tile %p for %s %p", 
+            image->tile, G_OBJECT_TYPE_NAME(self), self);
   gegl_tile_mgr_validate_data(mgr, image->tile);
 
   g_object_unref(mgr);
@@ -190,9 +191,17 @@ gegl_sampled_image_get_width (GeglSampledImage * self)
   return self->width;
 }
 
+/**
+ * gegl_sampled_image_set_width:
+ * @self: a #GeglSampledImage. 
+ * @width: a integer width. 
+ *
+ * Sets the width of the sampled image.
+ *
+ **/
 void
 gegl_sampled_image_set_width (GeglSampledImage * self, 
-                                    gint width)
+                              gint width)
 {
   self->width = width;
 }
@@ -211,6 +220,14 @@ gegl_sampled_image_get_height (GeglSampledImage * self)
   return self->height;
 }
 
+/**
+ * gegl_sampled_image_set_height:
+ * @self: a #GeglSampledImage. 
+ * @height: a integer height. 
+ *
+ * Sets the height of the sampled image.
+ *
+ **/
 void
 gegl_sampled_image_set_height (GeglSampledImage * self, 
                                gint height)
@@ -218,27 +235,22 @@ gegl_sampled_image_set_height (GeglSampledImage * self,
   self->height = height;
 }
 
-static void
-compute_have_rect(GeglOp *op, 
-                  GList * input_values)
+static void 
+compute_have_rect(GeglFilter * filter, 
+                  GeglRect *have_rect, 
+                  GList * input_have_rects)
+{ 
+  GeglSampledImage * self = GEGL_SAMPLED_IMAGE(filter);
+
+  have_rect->x = 0;
+  have_rect->y = 0;
+  have_rect->w = self->width;
+  have_rect->h = self->height;
+}
+
+static GeglColorModel * 
+compute_derived_color_model (GeglFilter * filter, 
+                             GList * input_color_models)
 {
-  GeglSampledImage * self = GEGL_SAMPLED_IMAGE(op);
-  GeglRect have_rect;
-  GeglRect need_rect;
-  GeglRect result_rect;
-  GValue * output_value = gegl_op_get_nth_output_value(op,0);
-
-  have_rect.x = 0;
-  have_rect.y = 0;
-  have_rect.w = self->width;
-  have_rect.h = self->height;
-
-  /* Get the need rect. */
-  g_value_get_image_data_rect(output_value, &need_rect);
-
-  /* Find the result rect. */
-  gegl_rect_intersect(&result_rect, &have_rect, &need_rect);
-
-  /* Store the result rect in the output value. */
-  g_value_set_image_data_rect(output_value, &result_rect);
+  return gegl_image_color_model(GEGL_IMAGE(filter)); 
 }

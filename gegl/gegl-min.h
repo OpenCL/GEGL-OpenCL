@@ -18,14 +18,16 @@ extern "C" {
 #define __TYPEDEF_GEGL_MIN__
 typedef struct _GeglMin GeglMin;
 #endif
-struct _GeglMin {
-   GeglPointOp __parent__;
+struct _GeglMin 
+{
+   GeglPointOp point_op;
    /*< private >*/
 };
 
 typedef struct _GeglMinClass GeglMinClass;
-struct _GeglMinClass {
-   GeglPointOpClass __parent__;
+struct _GeglMinClass 
+{
+   GeglPointOpClass point_op_class;
 };
 
 GType            gegl_min_get_type         (void);

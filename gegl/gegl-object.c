@@ -133,6 +133,14 @@ get_property (GObject      *gobject,
   }
 }
 
+/**
+ * gegl_object_set_name:
+ * @self: a #GeglObject.
+ * @name: a string 
+ *
+ * Sets the name for this object.
+ *
+ **/
 void 
 gegl_object_set_name (GeglObject * self, 
                       const gchar * name)
@@ -143,13 +151,21 @@ gegl_object_set_name (GeglObject * self,
   self->name = g_strdup(name);
 }
 
+/**
+ * gegl_object_get_name:
+ * @self: a #GeglObject.
+ *
+ * Gets the name for this object.
+ *
+ * Returns: a string for the name of this object.
+ **/
 G_CONST_RETURN gchar*
 gegl_object_get_name (GeglObject * self)
 {
   g_return_val_if_fail (self, NULL);
   g_return_val_if_fail (GEGL_IS_OBJECT (self), NULL);
 
-  return g_strdup(self->name);
+  return self->name;
 }
 
 /**

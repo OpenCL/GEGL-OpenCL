@@ -7,6 +7,7 @@
 #include "testutils.h"
 
 extern Test * create_add_test();
+extern Test * create_bfs_visitor_test();
 extern Test * create_buffer_test();
 extern Test * create_color_test();
 extern Test * create_color_model_test();
@@ -14,11 +15,16 @@ extern Test * create_color_model_rgb_test();
 extern Test * create_color_model_rgb_float_test();
 extern Test * create_const_mult_test();
 extern Test * create_copy_test();
+extern Test * create_dfs_visitor_test();
+extern Test * create_dump_visitor_test();
 extern Test * create_fill_test();
-extern Test * create_filter_test();
+extern Test * create_graph_apply_test();
+extern Test * create_graph_node_test();
+extern Test * create_haverect_test();
 extern Test * create_image_test();
 extern Test * create_mem_buffer_test();
 extern Test * create_mem_image_mgr_test();
+extern Test * create_needrect_test();
 extern Test * create_node_test();
 extern Test * create_object_test();
 extern Test * create_op_test();
@@ -46,8 +52,9 @@ main (int argc, char *argv[])
   {
     Suite *suite = cs_create("GeglTestSuite");
 
-#if 1 
+#if 1  
     cs_addTest(suite, create_add_test());
+    cs_addTest(suite, create_bfs_visitor_test());
     cs_addTest(suite, create_buffer_test());
     cs_addTest(suite, create_color_test());
     cs_addTest(suite, create_color_model_test());
@@ -55,10 +62,15 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_color_model_rgb_float_test());
     cs_addTest(suite, create_const_mult_test());
     cs_addTest(suite, create_copy_test());
+    cs_addTest(suite, create_dfs_visitor_test());
+    cs_addTest(suite, create_dump_visitor_test());
     cs_addTest(suite, create_fill_test());
-    cs_addTest(suite, create_filter_test());
+    cs_addTest(suite, create_graph_apply_test());
+    cs_addTest(suite, create_graph_node_test());
+    cs_addTest(suite, create_haverect_test());
     cs_addTest(suite, create_image_test());
     cs_addTest(suite, create_mem_buffer_test());
+    cs_addTest(suite, create_needrect_test());
     cs_addTest(suite, create_node_test());
     cs_addTest(suite, create_object_test());
     cs_addTest(suite, create_op_test());
@@ -66,6 +78,7 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_print_test());
     cs_addTest(suite, create_simpletree_test());
     cs_addTest(suite, create_sampled_image_test());
+    cs_addTest(suite, create_stat_op_test());
     cs_addTest(suite, create_tile_test());
     cs_addTest(suite, create_tile_iterator_test());
     cs_addTest(suite, create_tile_mgr_test());

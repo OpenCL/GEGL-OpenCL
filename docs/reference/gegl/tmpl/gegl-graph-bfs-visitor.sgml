@@ -1,7 +1,8 @@
 <!-- ##### SECTION Title ##### -->
-GeglFilterInputsVisitor
+GeglGraphBfsVisitor
 
 <!-- ##### SECTION Short_Description ##### -->
+Breadth first visitor for graphs.
 
 
 <!-- ##### SECTION Long_Description ##### -->

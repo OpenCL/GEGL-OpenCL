@@ -3,6 +3,7 @@
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
+#include <string.h>
 
 #define SAMPLED_IMAGE_WIDTH 5 
 #define SAMPLED_IMAGE_HEIGHT 5 

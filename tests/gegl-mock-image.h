@@ -21,7 +21,7 @@ typedef struct _GeglMockImage  GeglMockImage;
 
 struct _GeglMockImage 
 {
-    GeglImage       __parent__;
+    GeglImage       image;
 
     /*< private >*/
 };
@@ -29,7 +29,7 @@ struct _GeglMockImage
 typedef struct _GeglMockImageClass GeglMockImageClass;
 struct _GeglMockImageClass 
 {
-   GeglImageClass __parent__;
+   GeglImageClass image_class;
 };
 
 GType             gegl_mock_image_get_type                  (void);

@@ -3,6 +3,7 @@
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
+#include <string.h>
 
 static void
 test_tile_mgr_g_object_new(Test *test)

@@ -18,14 +18,16 @@ extern "C" {
 #define __TYPEDEF_GEGL_LIGHT__
 typedef struct _GeglLight GeglLight;
 #endif
-struct _GeglLight {
-   GeglPointOp __parent__;
+struct _GeglLight 
+{
+   GeglPointOp point_op;
    /*< private >*/
 };
 
 typedef struct _GeglLightClass GeglLightClass;
-struct _GeglLightClass {
-   GeglPointOpClass __parent__;
+struct _GeglLightClass 
+{
+   GeglPointOpClass point_op_class;
 };
 
 GType            gegl_light_get_type         (void);

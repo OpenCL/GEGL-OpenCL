@@ -2,6 +2,7 @@
 #include <gdk/gdkprivate.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <tiffio.h>
 
 #include "gegl-color-model-rgb-float.h"

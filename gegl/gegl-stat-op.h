@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-op.h"
+#include "gegl-filter.h"
 
 #ifndef __TYPEDEF_GEGL_SCANLINE_PROCESSOR__
 #define __TYPEDEF_GEGL_SCANLINE_PROCESSOR__
@@ -23,16 +23,18 @@ typedef struct _GeglScanlineProcessor  GeglScanlineProcessor;
 #define __TYPEDEF_GEGL_STAT_OP__
 typedef struct _GeglStatOp GeglStatOp;
 #endif
-struct _GeglStatOp {
-   GeglOp __parent__;
+struct _GeglStatOp 
+{
+   GeglFilter filter;
 
    /*< private >*/
    GeglScanlineProcessor * scanline_processor;
 };
 
 typedef struct _GeglStatOpClass GeglStatOpClass;
-struct _GeglStatOpClass {
-   GeglOpClass __parent__;
+struct _GeglStatOpClass 
+{
+   GeglFilterClass filter_class;
 };
 
 GType            gegl_stat_op_get_type                     (void);

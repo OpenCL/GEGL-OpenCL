@@ -1,7 +1,8 @@
 <!-- ##### SECTION Title ##### -->
-GeglFilterBfsVisitor
+GeglDumpVisitor
 
 <!-- ##### SECTION Short_Description ##### -->
+Visitor that prints out graph infomation.
 
 
 <!-- ##### SECTION Long_Description ##### -->
@@ -13,4 +14,13 @@ GeglFilterBfsVisitor
 <para>
 
 </para>
+
+<!-- ##### FUNCTION gegl_dump_visitor_traverse ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+
 

@@ -11,6 +11,7 @@ enum
 
 static void class_init (GeglColorModelClass * klass);
 static void init (GeglColorModel * self, GeglColorModelClass * klass);
+static void finalize(GObject *gobject);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
@@ -33,8 +34,9 @@ gegl_color_model_register(gchar * color_model_name,
         return FALSE;
       }
 
+    gegl_color_model_set_color_space_name(color_model, color_model_name); 
     g_hash_table_insert(color_model_instances, 
-                        (gpointer)g_strdup(color_model_name), 
+                        (gpointer)gegl_color_model_get_color_space_name(color_model), 
                         (gpointer)color_model);
 
     cm = g_hash_table_lookup(color_model_instances, 
@@ -99,6 +101,7 @@ class_init (GeglColorModelClass * klass)
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
+  gobject_class->finalize = finalize;
 
   klass->color_alpha_space = NULL;
   klass->color_model_type = NULL;
@@ -139,6 +142,17 @@ init (GeglColorModel * self,
   self->alpha_string = NULL;
   self->channel_data_type_name = NULL;
   return;
+}
+
+static void
+finalize(GObject *gobject)
+{
+  GeglColorModel *self = GEGL_COLOR_MODEL(gobject);
+
+  if(self->color_space_name)
+    g_free(self->color_space_name);
+
+  G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
 static void
@@ -195,6 +209,25 @@ gegl_color_model_color_space (GeglColorModel * self)
   g_return_val_if_fail (GEGL_IS_COLOR_MODEL (self), (GeglColorSpace )0);
 
   return self->colorspace; 
+}
+
+void
+gegl_color_model_set_color_space_name (GeglColorModel * self, 
+                                       gchar *name)
+{
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_COLOR_MODEL (self));
+  g_return_if_fail (name != NULL);
+
+  self->color_space_name = g_strdup(name); 
+}
+
+gchar *
+gegl_color_model_get_color_space_name (GeglColorModel * self)
+{
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (GEGL_IS_COLOR_MODEL (self), NULL);
+  return self->color_space_name; 
 }
 
 /**

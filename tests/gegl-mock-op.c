@@ -95,15 +95,9 @@ init (GeglMockOp * self,
       GeglMockOpClass * klass)
 {
   GeglNode * node = GEGL_NODE(self);
-  GeglOp *op = GEGL_OP(self);
-  GValue *output_value;
 
   gegl_node_set_num_outputs(node, 1);
   gegl_node_set_num_inputs(node, 0);
-
-  gegl_op_set_num_output_values(op, 1);
-  output_value = gegl_op_get_nth_output_value(op, 0);
-  g_value_init(output_value, GEGL_TYPE_IMAGE_DATA);
 
   return;
 }

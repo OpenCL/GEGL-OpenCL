@@ -1,6 +1,7 @@
 #include "gegl-scanline-processor.h"
 #include "gegl-tile.h"
 #include "gegl-tile-iterator.h"
+#include "gegl-attributes.h"
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
 
@@ -42,51 +43,61 @@ class_init (GeglScanlineProcessorClass * klass)
   return;
 }
 
+/**
+ * gegl_scanline_processor_process:
+ * @self: a #GeglScanlineProcessor.
+ * @attributes: A list of output attributes. 
+ * @input_attributes: A list of input attributes. 
+ *
+ * Process scanlines.
+ *
+ **/
 void 
 gegl_scanline_processor_process (GeglScanlineProcessor * self, 
-                                 GList * output_values,
-                                 GList * input_values)
+                                 GList * attributes,
+                                 GList * input_attributes)
 {
-  GValue * value;
   gint i,j;
   GeglRect rect;
   GeglTile *tile;
   gint width, height;
-  gint num_inputs = g_list_length(input_values);
-  gint num_outputs = g_list_length(output_values);
+  gint num_inputs = g_list_length(input_attributes);
+  gint num_outputs = g_list_length(attributes);
+  GeglAttributes * attrs;
   GeglTileIterator **iters = g_new (GeglTileIterator*, 
                                     num_inputs + num_outputs);
 
-  /*
-  LOG_DEBUG("processor_process", "%s %x", 
-             G_OBJECT_TYPE_NAME(self->op), (guint)self->op); 
+#if 1 
+  LOG_DEBUG("processor_process", "%s %p", 
+             G_OBJECT_TYPE_NAME(self->op), self->op); 
 
   LOG_DEBUG("processor_process", "inputs %d outputs %d", 
              num_inputs, num_outputs); 
-  */           
+#endif
 
   /* Get tile iterators for dests. */
   for (i = 0; i < num_outputs; i++, j++)
     {
-  /*
+      /*
        LOG_DEBUG("processor_process", 
                  "getting tile iterator for output %d", 
                  i);
-  */           
+      */
 
 
-       value = (GValue*)g_list_nth_data(output_values,i); 
-       tile = g_value_get_image_data_tile(value);
-       g_value_get_image_data_rect(value, &rect);
+       attrs = (GeglAttributes*)g_list_nth_data(attributes,i); 
+       tile = (GeglTile*)g_value_get_object(attrs->value);
+       gegl_rect_copy(&rect, &attrs->rect);
 
        /* Get the tile, if it is not NULL */ 
        if(tile)
          {
-  /*
+           /*
            LOG_DEBUG("processor_process", 
-                     "tile is %x", 
-                     (guint)tile);
-  */           
+                     "output value tile is %p", 
+                     tile);
+
+                     */
 
            iters[i] = g_object_new (GEGL_TYPE_TILE_ITERATOR, 
                                     "tile", tile,
@@ -99,33 +110,33 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
          iters[i] = NULL;
     }
 
-  /* Get tile iterators for dests. */
+  /* Get tile iterators for inputs. */
   for (i = 0; i < num_inputs; i++)
     {
-  /*
+      /*
        LOG_DEBUG("processor_process", 
                  "getting tile iterator for input %d", 
                  i);
-  */           
+      */
 
-       value = (GValue*)g_list_nth_data(input_values,i); 
-       tile = g_value_get_image_data_tile(value);
-       g_value_get_image_data_rect(value, &rect);
+       attrs = (GeglAttributes*)g_list_nth_data(input_attributes,i); 
+       tile = (GeglTile*)g_value_get_object(attrs->value);
+       gegl_rect_copy(&rect, &attrs->rect);
 
        /* Get the tile, if it is not NULL */ 
        if(tile)
          {
-  /*
+      /*
            LOG_DEBUG("processor_process", 
-                     "tile is %x", 
-                     (guint)tile);
-  */           
+                     "input value tile is %p", 
+                     tile);
+      */
 
 
            iters[i + num_outputs] = g_object_new (GEGL_TYPE_TILE_ITERATOR, 
-                                    "tile", tile,
-                                    "area", &rect,
-                                    NULL);  
+                                                  "tile", tile,
+                                                  "area", &rect,
+                                                  NULL);  
 
            gegl_tile_iterator_first (iters[i + num_outputs]);
          }
@@ -134,25 +145,23 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
     }
 
   /* Get the height and width of dest rect we want to process */
-  value = (GValue*)g_list_nth_data(output_values,0); 
-  tile = g_value_get_image_data_tile(value);
-  g_value_get_image_data_rect(value, &rect);
+  attrs = (GeglAttributes*)g_list_nth_data(attributes,0); 
+  tile = (GeglTile*)g_value_get_object(attrs->value);
+  gegl_rect_copy(&rect, &attrs->rect);
 
   width = rect.w;
   height = rect.h;
 
-  /*
   LOG_DEBUG("processor_process", "width height %d %d", width, height);
-  */           
 
   /* Now iterate over the scanlines */
   for(j=0; j < height; j++)
     {
-  /*
+      /*
       LOG_DEBUG("processor_process", 
                 "doing scanline %d", 
                 j);
-  */           
+                */
 
       /* Call the subclass scanline func. */
       (self->func)(self->op, iters, width);

@@ -18,15 +18,17 @@ extern "C" {
 #define __TYPEDEF_GEGL_PREMULT__
 typedef struct _GeglPremult GeglPremult;
 #endif
-struct _GeglPremult {
-   GeglPointOp __parent__;
+struct _GeglPremult 
+{
+   GeglPointOp point_op;
 
    /*< private >*/
 };
 
 typedef struct _GeglPremultClass GeglPremultClass;
-struct _GeglPremultClass {
-   GeglPointOpClass __parent__;
+struct _GeglPremultClass 
+{
+   GeglPointOpClass point_op_class;
 };
 
 GType           gegl_premult_get_type       (void);

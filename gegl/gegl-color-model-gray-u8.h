@@ -18,13 +18,15 @@ extern "C" {
 #define __TYPEDEF_GEGL_COLOR_MODEL_GRAY_U8__
 typedef struct _GeglColorModelGrayU8 GeglColorModelGrayU8;
 #endif
-struct _GeglColorModelGrayU8 {
-   GeglColorModelGray __parent__;
+struct _GeglColorModelGrayU8 
+{
+   GeglColorModelGray color_model_gray;
 };
 
 typedef struct _GeglColorModelGrayU8Class GeglColorModelGrayU8Class;
-struct _GeglColorModelGrayU8Class {
-   GeglColorModelGrayClass __parent__;
+struct _GeglColorModelGrayU8Class 
+{
+   GeglColorModelGrayClass color_model_gray_class;
 };
 
 GType                        gegl_color_model_gray_u8_get_type (void);

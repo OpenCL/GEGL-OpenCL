@@ -18,14 +18,16 @@ extern "C" {
 #define __TYPEDEF_GEGL_SCREEN__
 typedef struct _GeglScreen GeglScreen;
 #endif
-struct _GeglScreen {
-   GeglPointOp __parent__;
+struct _GeglScreen 
+{
+   GeglPointOp point_op;
    /*< private >*/
 };
 
 typedef struct _GeglScreenClass GeglScreenClass;
-struct _GeglScreenClass {
-   GeglPointOpClass __parent__;
+struct _GeglScreenClass 
+{
+   GeglPointOpClass point_op_class;
 };
 
 GType            gegl_screen_get_type         (void);

@@ -26,7 +26,7 @@ typedef struct _GeglFill GeglFill;
 #endif
 struct _GeglFill 
 {
-   GeglPointOp __parent__;
+   GeglPointOp point_op;
 
    /*< private >*/
    GeglColor * fill_color;
@@ -35,7 +35,7 @@ struct _GeglFill
 typedef struct _GeglFillClass GeglFillClass;
 struct _GeglFillClass 
 {
-   GeglPointOpClass __parent__;
+   GeglPointOpClass point_op_class;
 };
 
 GType       gegl_fill_get_type       (void);

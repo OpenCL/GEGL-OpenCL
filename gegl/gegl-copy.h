@@ -8,13 +8,6 @@ extern "C" {
 #include "gegl-point-op.h"
 #include "gegl-color-model.h"
       
-#if 0
-#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
-#define __TYPEDEF_GEGL_COLOR_MODEL__
-typedef struct _GeglColorModel  GeglColorModel;
-#endif
-#endif
-
 #define GEGL_TYPE_COPY               (gegl_copy_get_type ())
 #define GEGL_COPY(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COPY, GeglCopy))
 #define GEGL_COPY_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_COPY, GeglCopyClass))
@@ -26,8 +19,9 @@ typedef struct _GeglColorModel  GeglColorModel;
 #define __TYPEDEF_GEGL_COPY__
 typedef struct _GeglCopy GeglCopy;
 #endif
-struct _GeglCopy {
-   GeglPointOp __parent__;
+struct _GeglCopy 
+{
+   GeglPointOp point_op;
 
    /*< private >*/
    gfloat * float_xyz_data[4];
@@ -35,8 +29,9 @@ struct _GeglCopy {
 };
 
 typedef struct _GeglCopyClass GeglCopyClass;
-struct _GeglCopyClass {
-   GeglPointOpClass __parent__;
+struct _GeglCopyClass 
+{
+   GeglPointOpClass point_op_class;
 };
 
 GType                gegl_copy_get_type (void);

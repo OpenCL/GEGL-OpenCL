@@ -23,15 +23,17 @@ typedef struct _GeglColor GeglColor;
 #define __TYPEDEF_GEGL_COLOR_MODEL_GRAY__
 typedef struct _GeglColorModelGray GeglColorModelGray;
 #endif
-struct _GeglColorModelGray {
-   GeglColorModel __parent__;
+struct _GeglColorModelGray 
+{
+   GeglColorModel color_model;
    /*< private >*/
    gint gray_index;
 };
 
 typedef struct _GeglColorModelGrayClass GeglColorModelGrayClass;
-struct _GeglColorModelGrayClass {
-   GeglColorModelClass __parent__;
+struct _GeglColorModelGrayClass 
+{
+   GeglColorModelClass color_model_class;
 };
 
 GType   gegl_color_model_gray_get_type         (void);

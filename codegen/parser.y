@@ -1575,8 +1575,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
   /* error checking */
   if (src1.num != src2.num && src1.num && src2.num && src1.num != 1 && src2.num != 1)
     {
-      yyerror("ERROR: you are trying to preform an operation on vector variables
-	  that dont have the same number of channels");
+      yyerror("ERROR: you are trying to preform an operation on vector variables that dont have the same number of channels");
 	exit(1); 
     }
 
@@ -1585,8 +1584,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
     case OP_PLUS:
       if (src1.num != src2.num && src1.num && src2.num)
 	{
-	  yyerror("ERROR: you are trying to preform an operation on vector variables
-	      that dont have the same number of channels");
+	  yyerror("ERROR: you are trying to preform an operation on vector variables that dont have the same number of channels");
 	    exit(1);
 	}
       sprintf (tmp, "%s + %s", src1.string, src2.string);
@@ -1594,8 +1592,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
     case OP_MINUS:
       if (src1.num != src2.num && src1.num && src2.num)
 	{
-	  yyerror("ERROR: you are trying to preform an operation on vector variables
-	      that dont have the same number of channels");
+	  yyerror("ERROR: you are trying to preform an operation on vector variables that dont have the same number of channels");
 	    exit(1);
 	}
       sprintf (tmp, "%s - %s", src1.string, src2.string);
@@ -1645,8 +1642,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
       /* error checking */
       if (src1.num != src2.num && !(src1.num > src2.num && src2.num < 1))
 	{
-	  yyerror("ERROR: You trying to assign a varible to another varible
-	      and they have different number of channels");
+	  yyerror("ERROR: You trying to assign a varible to another varible and they have different number of channels");
 	    exit(1); 
 	}
       switch (src1.dtype)

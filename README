@@ -7,19 +7,19 @@ Building Gegl
 
 When you type make in the top dir, the following should occur:
 
-1)In the codegen subdir, the code generating tool codegen is built. This will
+1)In the tools/testsuite subdir, a xUnit testing tool gets built. 
+
+2)In the codegen subdir, the code generating tool codegen is built. This will
 require flex/bison (or lex/yacc) installed somewhere.
 
-2)In the gil subdir, the (experimental) code generating tool gil is built. This
+3)In the gil subdir, the (experimental) code generating tool gil is built. This
 will require flex/bison (or lex/yacc) installed somewhere. NOTE: gil is
 currently not used, but will eventually replace codegen above. 
 
-3)In the gegl subdir, codegen runs on each .gil file and generates a
+4)In the gegl subdir, codegen runs on each .gil file and generates a
 corresponding .c file.
 
-4)In the gegl subdir, regular C and header files get compiled to the gegl lib.
-
-5)In the tools/testsuite subdir, a xUnit testing tool gets built. 
+5)In the gegl subdir, regular C and header files get compiled to the gegl lib.
 
 6)In the tests subdir, some tests get built and run, using the testsuite tool
 built in step 5 above.

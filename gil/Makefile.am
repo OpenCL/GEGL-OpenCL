@@ -1,5 +1,5 @@
 #YACCFLAGS += -d -t
-YFLAGS += -d -t -v
+YFLAGS = -d -t -v
 SUBDIRS =
 CFLAGS = -g
 
@@ -33,7 +33,7 @@ gil_LDADD = \
 
 BUILT_SOURCES = lexer.c parse.c parse.h
 
-CLEANFILES += y.output $(BUILT_SOURCES)
+CLEANFILES = y.output $(BUILT_SOURCES)
 
 EXTRA_DIST = test.gil 
 

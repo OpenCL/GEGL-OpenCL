@@ -18,14 +18,15 @@ extern "C" {
 #define __TYPEDEF_GEGL_MAX__
 typedef struct _GeglMax GeglMax;
 #endif
-struct _GeglMax {
-   GeglPointOp __parent__;
+struct _GeglMax 
+{
+   GeglPointOp point_op;
    /*< private >*/
 };
 
 typedef struct _GeglMaxClass GeglMaxClass;
 struct _GeglMaxClass {
-   GeglPointOpClass __parent__;
+   GeglPointOpClass point_op_class;
 };
 
 GType            gegl_max_get_type         (void);

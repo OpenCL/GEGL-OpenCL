@@ -1,6 +1,6 @@
 # Process this file with automake to create Makefile.in.
 
-SUBDIRS = codegen gil tools gegl tests docs
+SUBDIRS = tools codegen gil gegl tests docs
 
 EXTRA_DIST = 			\
 	gegl-uninstalled.pc.in	\

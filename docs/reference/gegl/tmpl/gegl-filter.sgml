@@ -2,11 +2,42 @@
 GeglFilter
 
 <!-- ##### SECTION Short_Description ##### -->
+Abstract class for basic image processing object.
 
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
+Filters are the basic image processing objects of Gegl. A Filter will have
+methods and algorithms that process inputs and turn them into outputs. The
+evaluation of a Filter happens primarily during gegl_filter_evaluate, which is
+is called during evaluation of the graph the filter is part of. You should not
+call this routine directly to do image processing. It will be called as
+consequence of calling one of gegl_op_apply, gegl_op_apply_image, etc.
+</para>
 
+<para>
+gegl_filter_evaluate is called after a Filter's inputs have all been processed
+and are ready. It is passed a list of input Attributes that describe the inputs
+and contain the input values. The graph traversal and evaluation code
+determines if a Filter needs its inputs to be converted before being passed to
+gegl_filter_evaluate. This happens automatically.
+</para>
+
+<para>
+The default implementation of gegl_filter_evaluate evaluates the operation in
+three stages: prepare, process, and finish. Each of these is passed the input
+Attributes. This allows Filters to initialize (in prepare) and destroy (in
+finish) any resources that are needed for the operation. The method called
+process is where the operation actually occurs.
+</para>
+
+<para>
+During the method process the Filter will get the corresponding input values
+from the passed list of input Attributes. It then produces its result based on
+the intput values as well as any corresponding relevant attributes taken from
+its own Attributes structures. The results are placed in the values of the Ops
+Attributes structures and then the Filter is finished. The graph evaluation
+code then chooses some Filter downstream and calls gegl_filter_evaluate on it.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -14,110 +45,44 @@ GeglFilter
 
 </para>
 
-<!-- ##### STRUCT GeglFilterInput ##### -->
-<para>
-
-</para>
-
-@input: 
-@index: 
-
-<!-- ##### FUNCTION gegl_filter_get_root ##### -->
+<!-- ##### FUNCTION gegl_filter_compute_need_rect ##### -->
 <para>
 
 </para>
 
 @self: 
+@input_need_rect: 
+@need_rect: 
+@i: 
+
+
+<!-- ##### FUNCTION gegl_filter_compute_have_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@have_rect: 
+@input_have_rects: 
+
+
+<!-- ##### FUNCTION gegl_filter_compute_derived_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@input_color_models: 
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_filter_set_root ##### -->
+<!-- ##### FUNCTION gegl_filter_evaluate ##### -->
 <para>
 
 </para>
 
 @self: 
-@root: 
+@attributes: 
+@input_attributes: 
 
-
-<!-- ##### FUNCTION gegl_filter_get_roi ##### -->
-<para>
-
-</para>
-
-@self: 
-@roi: 
-
-
-<!-- ##### FUNCTION gegl_filter_set_roi ##### -->
-<para>
-
-</para>
-
-@self: 
-@roi: 
-
-
-<!-- ##### FUNCTION gegl_filter_get_image ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_filter_set_image ##### -->
-<para>
-
-</para>
-
-@self: 
-@image: 
-
-
-<!-- ##### FUNCTION gegl_filter_get_input_values ##### -->
-<para>
-
-</para>
-
-@self: 
-@op: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_filter_validate_input_values ##### -->
-<para>
-
-</para>
-
-@self: 
-@op: 
-@input_values: 
-
-
-<!-- ##### FUNCTION gegl_filter_validate_output_values ##### -->
-<para>
-
-</para>
-
-@self: 
-@op: 
-@output_values: 
-
-
-<!-- ##### ARG GeglFilter:root ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglFilter:image ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglFilter:roi ##### -->
-<para>
-
-</para>
 

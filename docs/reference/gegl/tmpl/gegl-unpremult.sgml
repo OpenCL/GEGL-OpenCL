@@ -2,6 +2,7 @@
 GeglUnpremult
 
 <!-- ##### SECTION Short_Description ##### -->
+Divide color by alpha for image.
 
 
 <!-- ##### SECTION Long_Description ##### -->

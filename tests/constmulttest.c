@@ -3,6 +3,7 @@
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
+#include <string.h>
 
 #define MULTIPLIER .5
 
@@ -97,6 +98,7 @@ test_const_mult_apply(Test *test)
                                       "multiplier", MULTIPLIER,
                                       NULL);
 
+    gegl_op_apply(const_mult); 
     gegl_op_apply_image(const_mult, dest, NULL); 
 
     ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(dest), .1 * MULTIPLIER, 
@@ -173,10 +175,13 @@ create_const_mult_test()
 
   g_assert(ct_addSetUp(t, const_mult_test_setup));
   g_assert(ct_addTearDown(t, const_mult_test_teardown));
+
+#if 1 
   g_assert(ct_addTestFun(t, test_const_mult_g_object_new));
   g_assert(ct_addTestFun(t, test_const_mult_g_object_set));
   g_assert(ct_addTestFun(t, test_const_mult_g_object_get));
   g_assert(ct_addTestFun(t, test_const_mult_apply));
+#endif
 
   return t; 
 }

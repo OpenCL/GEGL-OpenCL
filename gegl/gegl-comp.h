@@ -18,16 +18,18 @@ extern "C" {
 #define __TYPEDEF_GEGL_COMP__
 typedef struct _GeglComp GeglComp;
 #endif
-struct _GeglComp {
-   GeglPointOp __parent__;
+struct _GeglComp 
+{
+   GeglPointOp point_op;
 
    /*< private >*/
    GeglCompositeMode comp_mode; 
 };
 
 typedef struct _GeglCompClass GeglCompClass;
-struct _GeglCompClass {
-   GeglPointOpClass __parent__;
+struct _GeglCompClass 
+{
+   GeglPointOpClass point_op_class;
 };
 
 GType            gegl_comp_get_type         (void);

@@ -28,8 +28,9 @@ typedef struct _GeglColorModel  GeglColorModel;
 #define __TYPEDEF_GEGL_TILE_ITERATOR__
 typedef struct _GeglTileIterator GeglTileIterator;
 #endif
-struct _GeglTileIterator {
-   GeglObject __parent__;
+struct _GeglTileIterator 
+{
+   GeglObject object;
 
    /*< private >*/
    GeglTile * tile;
@@ -38,8 +39,9 @@ struct _GeglTileIterator {
 };
 
 typedef struct _GeglTileIteratorClass GeglTileIteratorClass;
-struct _GeglTileIteratorClass {
-   GeglObjectClass __parent__;
+struct _GeglTileIteratorClass 
+{
+   GeglObjectClass object_class;
 };
 
 GType                 gegl_tile_iterator_get_type          (void);

@@ -18,14 +18,16 @@ extern "C" {
 #define __TYPEDEF_GEGL_DARK__
 typedef struct _GeglDark GeglDark;
 #endif
-struct _GeglDark {
-   GeglPointOp __parent__;
+struct _GeglDark 
+{
+   GeglPointOp point_op;
    /*< private >*/
 };
 
 typedef struct _GeglDarkClass GeglDarkClass;
-struct _GeglDarkClass {
-   GeglPointOpClass __parent__;
+struct _GeglDarkClass 
+{
+   GeglPointOpClass point_op_class;
 };
 
 GType            gegl_dark_get_type         (void);

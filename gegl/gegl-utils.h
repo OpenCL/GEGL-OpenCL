@@ -4,13 +4,26 @@
 #include <glib-object.h>
 #include "gegl-types.h"
 
+#ifndef __TYPEDEF_GEGL_NODE__
+#define __TYPEDEF_GEGL_NODE__
+typedef struct _GeglNode  GeglNode;
+#endif
+
+#ifndef __TYPEDEF_GEGL_OP__
+#define __TYPEDEF_GEGL_OP__
+typedef struct _GeglOp  GeglOp;
+#endif
+
 void     gegl_rect_set          (GeglRect *r, gint x, gint y, guint w, guint h);
 gboolean gegl_rect_equal        (GeglRect *r, GeglRect *s); 
+gboolean gegl_rect_equal_coords (GeglRect *r, gint x, gint y, gint w, gint h);
 void     gegl_rect_copy         (GeglRect *to, GeglRect *from);
 void     gegl_rect_bounding_box (GeglRect *dest, GeglRect *src1, GeglRect *src2);
 gboolean gegl_rect_intersect    (GeglRect *dest, GeglRect *src1, GeglRect *src2);
 gboolean gegl_rect_contains     (GeglRect *r, GeglRect *s); 
 
+void                gegl_dump_graph(GeglNode * root);
+void                gegl_dump_graph_msg(gchar * msg, GeglNode * root); 
 gint                gegl_channel_data_type_bytes (GeglChannelDataType data);
 void                gegl_init (int *argc, char ***argv); 
 GeglColorAlphaSpace gegl_utils_derived_color_alpha_space(GList *inputs);
@@ -18,13 +31,16 @@ GeglChannelDataType gegl_utils_derived_channel_data_type(GList *inputs);
 GeglColorSpace      gegl_utils_derived_color_space(GList *inputs);
 GValue *            gegl_utils_construct_val (gchar *name, guint  n_props, GObjectConstructParam *props);
 
-GType gegl_utils_get_filter_type();
+void gegl_utils_execute_graph(GeglOp * root, GeglOp * image, GeglRect *roi);
 void gegl_log(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, ...);
 void gegl_logv(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, va_list args);
+void gegl_direct_log(GLogLevelFlags level, gchar *format, ...);
+void gegl_direct_logv(GLogLevelFlags level, gchar *format, va_list args);
 
 #define LOG_DEBUG(function, args...)  gegl_log(G_LOG_LEVEL_DEBUG,__FILE__,__LINE__,function,##args)
 #define LOG_INFO(function, args...)  gegl_log(G_LOG_LEVEL_INFO,__FILE__,__LINE__,function,##args)
 #define LOG_MSG(function, args...)  gegl_log(G_LOG_LEVEL_MESSAGE,__FILE__,__LINE__,function,##args)
+#define LOG_DIRECT(args...)  gegl_direct_log(G_LOG_LEVEL_DEBUG,##args)
 
 #define GEGL_FLOAT_EPSILON                       (1e-5)
 #define GEGL_FLOAT_IS_ZERO(value) (_gegl_float_epsilon_zero ((value)))

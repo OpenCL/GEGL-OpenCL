@@ -3,6 +3,7 @@
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
+#include <string.h>
 
 #define SAMPLED_IMAGE_WIDTH 1 
 #define SAMPLED_IMAGE_HEIGHT 1 
@@ -159,11 +160,13 @@ create_copy_test()
   g_assert(ct_addSetUp(t, copy_test_setup));
   g_assert(ct_addTearDown(t, copy_test_teardown));
 
+#if 1 
   g_assert(ct_addTestFun(t, test_copy_g_object_new));
   g_assert(ct_addTestFun(t, test_copy_rgb_to_rgb_apply));
   g_assert(ct_addTestFun(t, test_copy_rgb_to_null_dest_apply));
   g_assert(ct_addTestFun(t, test_copy_rgb_to_gray_null_dest_apply));
   g_assert(ct_addTestFun(t, test_copy_rgb_to_gray_apply));
+#endif
 
   return t; 
 }

@@ -21,7 +21,7 @@ typedef struct _GeglMockPointOp  GeglMockPointOp;
 
 struct _GeglMockPointOp 
 {
-    GeglPointOp    __parent__;
+    GeglPointOp    point_op;
 
     /*< private >*/
 };
@@ -29,7 +29,7 @@ struct _GeglMockPointOp
 typedef struct _GeglMockPointOpClass GeglMockPointOpClass;
 struct _GeglMockPointOpClass 
 {
-   GeglPointOpClass __parent__;
+   GeglPointOpClass point_op_class;
 };
 
 GType             gegl_mock_point_op_get_type                  (void);

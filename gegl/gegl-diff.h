@@ -18,14 +18,16 @@ extern "C" {
 #define __TYPEDEF_GEGL_DIFF__
 typedef struct _GeglDiff GeglDiff;
 #endif
-struct _GeglDiff {
-   GeglPointOp __parent__;
+struct _GeglDiff 
+{
+   GeglPointOp point_op;
    /*< private >*/
 };
 
 typedef struct _GeglDiffClass GeglDiffClass;
-struct _GeglDiffClass {
-   GeglPointOpClass __parent__;
+struct _GeglDiffClass 
+{
+   GeglPointOpClass point_op_class;
 };
 
 GType            gegl_diff_get_type         (void);

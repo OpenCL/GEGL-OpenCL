@@ -18,13 +18,15 @@ extern "C" {
 #define __TYPEDEF_GEGL_MEM_BUFFER__
 typedef struct _GeglMemBuffer GeglMemBuffer;
 #endif
-struct _GeglMemBuffer {
-   GeglBuffer __parent__;
+struct _GeglMemBuffer 
+{
+   GeglBuffer mem_buffer;
 };
 
 typedef struct _GeglMemBufferClass GeglMemBufferClass;
-struct _GeglMemBufferClass {
-   GeglBufferClass __parent__;
+struct _GeglMemBufferClass 
+{
+   GeglBufferClass mem_buffer_class;
 };
 
 GType              gegl_mem_buffer_get_type   (void);

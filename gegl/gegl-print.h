@@ -18,8 +18,9 @@ extern "C" {
 #define __TYPEDEF_GEGL_PRINT__
 typedef struct _GeglPrint GeglPrint;
 #endif
-struct _GeglPrint {
-   GeglStatOp __parent__;
+struct _GeglPrint 
+{
+   GeglStatOp stat_op;
 
    /*< private >*/
    gchar * buffer;
@@ -30,8 +31,9 @@ struct _GeglPrint {
 };
 
 typedef struct _GeglPrintClass GeglPrintClass;
-struct _GeglPrintClass {
-   GeglStatOpClass __parent__;
+struct _GeglPrintClass 
+{
+   GeglStatOpClass stat_op_class;
 };
 
 GType       gegl_print_get_type       (void);

@@ -14,8 +14,7 @@ static void class_init (GeglStatOpClass * klass);
 static void init (GeglStatOp * self, GeglStatOpClass * klass);
 static void finalize(GObject * gobject);
 
-static void process (GeglOp * self, GList *output_values, GList * input_values);
-
+static void process (GeglFilter * filter, GList * attributes, GList * input_attributes);
 static gpointer parent_class = NULL;
 
 GType
@@ -38,7 +37,7 @@ gegl_stat_op_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GEGL_TYPE_OP , 
+      type = g_type_register_static (GEGL_TYPE_FILTER , 
                                      "GeglStatOp", 
                                      &typeInfo, 
                                      0);
@@ -50,13 +49,13 @@ static void
 class_init (GeglStatOpClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
+  GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->finalize = finalize;
 
-  op_class->process = process;
+  filter_class->process = process;
 
   return;
 }
@@ -66,7 +65,7 @@ init (GeglStatOp * self,
       GeglStatOpClass * klass)
 {
   self->scanline_processor = g_object_new(GEGL_TYPE_SCANLINE_PROCESSOR,NULL);
-  self->scanline_processor->op = GEGL_OP(self);
+  self->scanline_processor->op = GEGL_FILTER(self);
   return;
 }
 
@@ -79,15 +78,12 @@ finalize(GObject *gobject)
 }
 
 static void 
-process (GeglOp * self_op, 
-         GList * output_values,
-         GList * input_values)
+process (GeglFilter * filter, 
+         GList * attributes,
+         GList * input_attributes)
 {
-  GeglStatOp *self =  GEGL_STAT_OP(self_op);
-  /*
-  LOG_DEBUG("process", "calling scanline processor"); 
-  */
+  GeglStatOp *self =  GEGL_STAT_OP(filter);
   gegl_scanline_processor_process(self->scanline_processor, 
-                                  output_values,
-                                  input_values);
+                                  attributes,
+                                  input_attributes);
 }

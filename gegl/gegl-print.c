@@ -24,17 +24,17 @@ static void finalize (GObject * gobject);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void prepare (GeglOp * op, GList * output_values, GList *input_values);
-static void finish (GeglOp * op, GList * output_values, GList *input_values);
+static void prepare (GeglFilter * filter, GList * attributes, GList *input_attributes);
+static void finish (GeglFilter * filter, GList * attributes, GList *input_attributes);
 
 static void print (GeglPrint * self, gchar * format, ...);
 
-static void scanline_rgb_u8 (GeglOp * op, GeglTileIterator ** iters, gint width);
-static void scanline_rgb_float (GeglOp * op, GeglTileIterator ** iters, gint width);
-static void scanline_rgb_u16 (GeglOp * op, GeglTileIterator ** iters, gint width);
-static void scanline_gray_u8 (GeglOp * op, GeglTileIterator ** iters, gint width);
-static void scanline_gray_float (GeglOp * op, GeglTileIterator ** iters, gint width);
-static void scanline_gray_u16 (GeglOp * op, GeglTileIterator ** iters, gint width);
+static void scanline_rgb_u8 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static void scanline_rgb_float (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static void scanline_rgb_u16 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static void scanline_gray_u8 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static void scanline_gray_float (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static void scanline_gray_u16 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -70,14 +70,14 @@ static void
 class_init (GeglPrintClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
+  GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->finalize= finalize;
 
-  op_class->prepare = prepare;
-  op_class->finish = finish;
+  filter_class->prepare = prepare;
+  filter_class->finish = finish;
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
@@ -99,15 +99,15 @@ init (GeglPrint * self,
 {
   GeglNode * node = GEGL_NODE(self); 
   GeglOp *op = GEGL_OP(self);
-  GValue * output_value;
+  GeglAttributes * attributes;
 
-  gegl_op_set_num_output_values(op, 1);
-  output_value = gegl_op_get_nth_output_value(op,0);
-  g_value_init(output_value, GEGL_TYPE_IMAGE_DATA);
+  gegl_node_set_num_outputs(node, 1);
+  gegl_op_allocate_attributes(op);
+  attributes = gegl_op_get_nth_attributes(op,0);
+  g_value_init(attributes->value, GEGL_TYPE_OBJECT);
 
   self->buffer = NULL;
   self->use_log = TRUE;
-  gegl_node_set_num_outputs(node, 1);
   gegl_node_set_num_inputs(node, 1);
 
   return;
@@ -156,25 +156,27 @@ set_property (GObject      *gobject,
 }
 
 static void 
-prepare (GeglOp * op, 
-         GList * output_values,
-         GList * input_values)
+prepare (GeglFilter * filter, 
+         GList * attributes,
+         GList * input_attributes)
 {
-  GeglPrint *self = GEGL_PRINT(op);
-  GeglStatOp *stat_op = GEGL_STAT_OP(op);
+  GeglPrint *self = GEGL_PRINT(filter);
+  GeglStatOp *stat_op = GEGL_STAT_OP(filter);
 
-  GValue *src_value = (GValue*)g_list_nth_data(input_values, 0); 
-  GeglTile *src = g_value_get_image_data_tile(src_value);
+  GeglAttributes *src_attributes = 
+    (GeglAttributes*)g_list_nth_data(input_attributes, 0); 
+  GeglTile *src = (GeglTile*)g_value_get_object(src_attributes->value);
 
   GeglRect dest_rect;
   GeglTile *dest;
   GeglColorModel * dest_cm;
-  GValue *dest_value = (GValue*)g_list_nth_data(output_values, 0); 
+  GeglAttributes *dest_attributes = 
+    (GeglAttributes*)g_list_nth_data(attributes, 0); 
   
-  g_value_set_image_data_tile(dest_value, src);
+  g_value_set_object(dest_attributes->value, src);
+  gegl_rect_copy(&dest_rect, &dest_attributes->rect);
 
-  g_value_get_image_data_rect(dest_value, &dest_rect);
-  dest = g_value_get_image_data_tile(dest_value);
+  dest = (GeglTile*)g_value_get_object(dest_attributes->value);
   dest_cm = gegl_tile_get_color_model (dest);
 
   g_return_if_fail (dest_cm);
@@ -244,20 +246,21 @@ prepare (GeglOp * op,
 
     if(self->use_log)
       LOG_INFO("prepare", 
-               "Printing GeglTile: %x area (x,y,w,h) = (%d,%d,%d,%d)",
-               (guint)dest,x,y,width,height);
+               "Printing GeglTile: %p area (x,y,w,h) = (%d,%d,%d,%d)",
+               dest,x,y,width,height);
     else
-      printf("Printing GeglTile: %x area (x,y,w,h) = (%d,%d,%d,%d)", 
-               (guint)dest,x,y,width,height);
+      printf("Printing GeglTile: %p area (x,y,w,h) = (%d,%d,%d,%d)", 
+               dest,x,y,width,height);
   }
+  
 }
 
 static void 
-finish (GeglOp * op, 
-        GList * output_values,
-        GList * input_values)
+finish (GeglFilter * filter, 
+        GList * attributes,
+        GList * input_attributes)
 {
-  GeglPrint *self = GEGL_PRINT(op);
+  GeglPrint *self = GEGL_PRINT(filter);
 
   /* Delete the scanline char buffer used for output */ 
   g_free(self->buffer); 
@@ -300,7 +303,7 @@ print (GeglPrint * self,
 
 /**
  * scanline_rgb_u8:
- * @op: a #GeglOp.
+ * @filter: a #GeglFilter.
  * @iters: #GeglTileIterators array. 
  * @width: width of scanline. 
  *
@@ -308,11 +311,11 @@ print (GeglPrint * self,
  *
  **/
 static void 
-scanline_rgb_u8 (GeglOp * op, 
+scanline_rgb_u8 (GeglFilter * filter, 
                  GeglTileIterator ** iters, 
                  gint width)
 {
-  GeglPrint *self = GEGL_PRINT(op);
+  GeglPrint *self = GEGL_PRINT(filter);
   GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
 
   guint8 *dest_data[4];
@@ -360,7 +363,7 @@ scanline_rgb_u8 (GeglOp * op,
 
 /**
  * scanline_rgb_float:
- * @op: a #GeglOp.
+ * @filter: a #GeglFilter.
  * @iters: #GeglTileIterators array. 
  * @width: width of scanline. 
  *
@@ -368,11 +371,11 @@ scanline_rgb_u8 (GeglOp * op,
  *
  **/
 static void 
-scanline_rgb_float (GeglOp * op, 
+scanline_rgb_float (GeglFilter * filter, 
                     GeglTileIterator ** iters, 
                     gint width)
 {
-  GeglPrint *self = GEGL_PRINT(op);
+  GeglPrint *self = GEGL_PRINT(filter);
   GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
 
   gfloat *dest_data[4];
@@ -431,7 +434,7 @@ scanline_rgb_float (GeglOp * op,
 
 /**
  * scanline_rgb_u16:
- * @op: a #GeglOp.
+ * @filter: a #GeglFilter.
  * @iters: #GeglTileIterators array. 
  * @width: width of scanline. 
  *
@@ -439,11 +442,11 @@ scanline_rgb_float (GeglOp * op,
  *
  **/
 static void 
-scanline_rgb_u16 (GeglOp * op, 
+scanline_rgb_u16 (GeglFilter * filter, 
                   GeglTileIterator ** iters, 
                   gint width)
 {
-  GeglPrint *self = GEGL_PRINT(op);
+  GeglPrint *self = GEGL_PRINT(filter);
   GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
 
   guint16 *dest_data[4];
@@ -491,11 +494,11 @@ scanline_rgb_u16 (GeglOp * op,
 }
 
 static void 
-scanline_gray_u8 (GeglOp * op, 
+scanline_gray_u8 (GeglFilter * filter, 
                   GeglTileIterator ** iters, 
                   gint width)
 {
-  GeglPrint *self = GEGL_PRINT(op);
+  GeglPrint *self = GEGL_PRINT(filter);
   GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
 
   guint8 *dest_data[2];
@@ -536,7 +539,7 @@ scanline_gray_u8 (GeglOp * op,
 
 /**
  * scanline_gray_float:
- * @op: a #GeglOp.
+ * @filter: a #GeglFilter.
  * @iters: #GeglTileIterators array. 
  * @width: width of scanline. 
  *
@@ -544,11 +547,11 @@ scanline_gray_u8 (GeglOp * op,
  *
  **/
 static void 
-scanline_gray_float (GeglOp * op, 
+scanline_gray_float (GeglFilter * filter, 
                      GeglTileIterator ** iters, 
                      gint width)
 {
-  GeglPrint *self = GEGL_PRINT(op);
+  GeglPrint *self = GEGL_PRINT(filter);
   GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
 
   gfloat *dest_data[2];
@@ -590,7 +593,7 @@ scanline_gray_float (GeglOp * op,
 
 /**
  * scanline_gray_u16:
- * @op: a #GeglOp.
+ * @filter: a #GeglFilter.
  * @iters: #GeglTileIterators array. 
  * @width: width of scanline. 
  *
@@ -598,11 +601,11 @@ scanline_gray_float (GeglOp * op,
  *
  **/
 static void 
-scanline_gray_u16 (GeglOp * op, 
+scanline_gray_u16 (GeglFilter * filter, 
                    GeglTileIterator ** iters, 
                    gint width)
 {
-  GeglPrint *self = GEGL_PRINT(op);
+  GeglPrint *self = GEGL_PRINT(filter);
   GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
 
   guint16 *dest_data[2];

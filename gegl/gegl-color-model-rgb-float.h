@@ -18,13 +18,15 @@ extern "C" {
 #define __TYPEDEF_GEGL_COLOR_MODEL_RGB_FLOAT__
 typedef struct _GeglColorModelRgbFloat GeglColorModelRgbFloat;
 #endif
-struct _GeglColorModelRgbFloat {
-   GeglColorModelRgb __parent__;
+struct _GeglColorModelRgbFloat 
+{
+   GeglColorModelRgb color_model_rgb;
 };
 
 typedef struct _GeglColorModelRgbFloatClass GeglColorModelRgbFloatClass;
-struct _GeglColorModelRgbFloatClass {
-   GeglColorModelRgbClass __parent__;
+struct _GeglColorModelRgbFloatClass 
+{
+   GeglColorModelRgbClass color_model_rgb_class;
 };
 
 GType                       gegl_color_model_rgb_float_get_type      (void);

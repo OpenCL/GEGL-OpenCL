@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-op.h"
+#include "gegl-filter.h"
 
 #ifndef __TYPEDEF_GEGL_COLOR_MODEL__
 #define __TYPEDEF_GEGL_COLOR_MODEL__
@@ -30,7 +30,7 @@ typedef struct _GeglImage GeglImage;
 #endif
 struct _GeglImage 
 {
-   GeglOp __parent__;
+   GeglFilter filter;
 
    /*< private >*/
 
@@ -43,7 +43,7 @@ struct _GeglImage
 typedef struct _GeglImageClass GeglImageClass;
 struct _GeglImageClass 
 {
-   GeglOpClass __parent__;
+   GeglFilterClass filter_class;
 };
 
 GType gegl_image_get_type                     (void);
@@ -51,8 +51,6 @@ GType gegl_image_get_type                     (void);
 GeglColorModel*  gegl_image_color_model                  (GeglImage * self);
 void             gegl_image_set_color_model              (GeglImage * self, 
                                                           GeglColorModel * cm);
-
-
 void             gegl_image_set_derived_color_model      (GeglImage * self, 
                                                           GeglColorModel * cm);
 

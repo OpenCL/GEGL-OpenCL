@@ -18,14 +18,16 @@ extern "C" {
 #define __TYPEDEF_GEGL_SUBTRACT__
 typedef struct _GeglSubtract GeglSubtract;
 #endif
-struct _GeglSubtract {
-   GeglPointOp __parent__;
+struct _GeglSubtract 
+{
+   GeglPointOp point_op;
    /*< private >*/
 };
 
 typedef struct _GeglSubtractClass GeglSubtractClass;
-struct _GeglSubtractClass {
-   GeglPointOpClass __parent__;
+struct _GeglSubtractClass 
+{
+   GeglPointOpClass point_op_class;
 };
 
 GType            gegl_subtract_get_type         (void);

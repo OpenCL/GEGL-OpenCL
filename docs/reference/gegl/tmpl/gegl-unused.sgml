@@ -18,26 +18,6 @@
 GeglAddImpl
 
 
-<!-- ##### SECTION ./tmpl/gegl-bfs-visitor.sgml:Long_Description ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### SECTION ./tmpl/gegl-bfs-visitor.sgml:See_Also ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### SECTION ./tmpl/gegl-bfs-visitor.sgml:Short_Description ##### -->
-
-
-
-<!-- ##### SECTION ./tmpl/gegl-bfs-visitor.sgml:Title ##### -->
-GeglBfsVisitor
-
-
 <!-- ##### SECTION ./tmpl/gegl-comp-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -138,26 +118,6 @@ GeglCopyImpl
 GeglDarkImpl
 
 
-<!-- ##### SECTION ./tmpl/gegl-dfs-visitor.sgml:Long_Description ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### SECTION ./tmpl/gegl-dfs-visitor.sgml:See_Also ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### SECTION ./tmpl/gegl-dfs-visitor.sgml:Short_Description ##### -->
-
-
-
-<!-- ##### SECTION ./tmpl/gegl-dfs-visitor.sgml:Title ##### -->
-GeglDfsVisitor
-
-
 <!-- ##### SECTION ./tmpl/gegl-diff-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -196,6 +156,86 @@ GeglDiffImpl
 
 <!-- ##### SECTION ./tmpl/gegl-fill-impl.sgml:Title ##### -->
 GeglFillImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-filter-bfs-visitor.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-filter-bfs-visitor.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-filter-bfs-visitor.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-filter-bfs-visitor.sgml:Title ##### -->
+GeglFilterBfsVisitor
+
+
+<!-- ##### SECTION ./tmpl/gegl-filter-dfs-visitor.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-filter-dfs-visitor.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-filter-dfs-visitor.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-filter-dfs-visitor.sgml:Title ##### -->
+GeglFilterDfsVisitor
+
+
+<!-- ##### SECTION ./tmpl/gegl-filter-inputs-visitor.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-filter-inputs-visitor.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-filter-inputs-visitor.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-filter-inputs-visitor.sgml:Title ##### -->
+GeglFilterInputsVisitor
+
+
+<!-- ##### SECTION ./tmpl/gegl-graph-cleanup-visitor.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-graph-cleanup-visitor.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-graph-cleanup-visitor.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-graph-cleanup-visitor.sgml:Title ##### -->
+GeglGraphCleanupVisitor
 
 
 <!-- ##### SECTION ./tmpl/gegl-image-impl.sgml:Long_Description ##### -->
@@ -586,6 +626,12 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### STRUCT GeglColorModelGray ##### -->
 <para>
 
@@ -682,11 +728,45 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### ARG GeglFilter:image ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglFilter:roi ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglFilter:root ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglFilterInput ##### -->
+<para>
+
+</para>
+
+@input: 
+@index: 
+
 <!-- ##### STRUCT GeglImage ##### -->
 <para>
 
 </para>
 
+
+<!-- ##### STRUCT GeglImageData ##### -->
+<para>
+
+</para>
+
+@tile: 
+@rect: 
 
 <!-- ##### STRUCT GeglImageImpl ##### -->
 <para>
@@ -700,6 +780,14 @@ GeglUnpremultImpl
 </para>
 
 @__parent__: 
+
+<!-- ##### STRUCT GeglInputInfo ##### -->
+<para>
+
+</para>
+
+@input: 
+@index: 
 
 <!-- ##### STRUCT GeglLight ##### -->
 <para>
@@ -909,6 +997,81 @@ GeglUnpremultImpl
 @self: 
 @fill_color: 
 
+<!-- ##### FUNCTION gegl_filter_get_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_filter_get_input_values ##### -->
+<para>
+
+</para>
+
+@self: 
+@op: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_filter_get_roi ##### -->
+<para>
+
+</para>
+
+@self: 
+@roi: 
+
+<!-- ##### FUNCTION gegl_filter_get_root ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_filter_set_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@image: 
+
+<!-- ##### FUNCTION gegl_filter_set_roi ##### -->
+<para>
+
+</para>
+
+@self: 
+@roi: 
+
+<!-- ##### FUNCTION gegl_filter_set_root ##### -->
+<para>
+
+</para>
+
+@self: 
+@root: 
+
+<!-- ##### FUNCTION gegl_filter_validate_input_values ##### -->
+<para>
+
+</para>
+
+@self: 
+@op: 
+@input_values: 
+
+<!-- ##### FUNCTION gegl_filter_validate_output_values ##### -->
+<para>
+
+</para>
+
+@self: 
+@op: 
+@output_values: 
+
 <!-- ##### FUNCTION gegl_image_compute_derived_color_model ##### -->
 <para>
 
@@ -1093,12 +1256,29 @@ GeglUnpremultImpl
 @self: 
 @Returns: 
 
+<!-- ##### FUNCTION gegl_node_get_input_infos ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
 <!-- ##### FUNCTION gegl_node_get_inputs ##### -->
 <para>
 
 </para>
 
 @self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_node_get_nth_input_info ##### -->
+<para>
+
+</para>
+
+@self: 
+@n: 
 @Returns: 
 
 <!-- ##### FUNCTION gegl_node_get_nth_output ##### -->
@@ -1184,6 +1364,15 @@ GeglUnpremultImpl
 @self: 
 @list: 
 
+<!-- ##### FUNCTION gegl_node_set_nth_input_info ##### -->
+<para>
+
+</para>
+
+@self: 
+@input_info: 
+@n: 
+
 <!-- ##### FUNCTION gegl_node_shared_count ##### -->
 <para>
 
@@ -1191,6 +1380,60 @@ GeglUnpremultImpl
 
 @self: 
 @Returns: 
+
+<!-- ##### FUNCTION gegl_node_traverse_breadth_first ##### -->
+<para>
+
+</para>
+
+@self: 
+@visitor: 
+@visit_func: 
+@data: 
+
+<!-- ##### FUNCTION gegl_node_traverse_depth_first ##### -->
+<para>
+
+</para>
+
+@self: 
+@visitor: 
+@init: 
+@visit_func: 
+@data: 
+
+<!-- ##### FUNCTION gegl_op_compute_derived_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@input_values: 
+
+<!-- ##### FUNCTION gegl_op_compute_have_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@input_values: 
+
+<!-- ##### FUNCTION gegl_op_compute_need_rects ##### -->
+<para>
+
+</para>
+
+@self: 
+@input_values: 
+
+<!-- ##### FUNCTION gegl_op_evaluate ##### -->
+<para>
+
+</para>
+
+@self: 
+@output_values: 
+@input_values: 
 
 <!-- ##### FUNCTION gegl_op_finish ##### -->
 <para>
@@ -1216,7 +1459,33 @@ GeglUnpremultImpl
 @self: 
 @Returns: 
 
+<!-- ##### FUNCTION gegl_op_get_nth_input_value ##### -->
+<para>
+
+</para>
+
+@op: 
+@n: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_get_nth_output_value ##### -->
+<para>
+
+</para>
+
+@op: 
+@n: 
+@Returns: 
+
 <!-- ##### FUNCTION gegl_op_get_op_impl ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_get_output_values ##### -->
 <para>
 
 </para>
@@ -1287,6 +1556,14 @@ GeglUnpremultImpl
 
 @self: 
 @request_list: 
+
+<!-- ##### FUNCTION gegl_op_set_num_output_values ##### -->
+<para>
+
+</para>
+
+@self: 
+@num_output_values: 
 
 <!-- ##### FUNCTION gegl_op_set_op_impl ##### -->
 <para>
@@ -1448,4 +1725,11 @@ GeglUnpremultImpl
 
 @self: 
 @request_list: 
+
+<!-- ##### FUNCTION gegl_utils_get_filter_type ##### -->
+<para>
+
+</para>
+
+@Returns: 
 

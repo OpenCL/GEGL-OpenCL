@@ -11,7 +11,10 @@
 static void
 value_init_image_data(GValue *value) 
 {
-  value->data[0].v_pointer = NULL;
+  GeglImageData *image_data;
+  image_data = value->data[0].v_pointer = g_new(GeglImageData, 1);
+  image_data->tile = NULL;
+  gegl_rect_set(&image_data->rect,0,0,0,0);
 }
 
 static void
@@ -117,18 +120,18 @@ g_value_set_image_data(GValue *value,
                        GeglTile * tile,
                        GeglRect * rect)
 {
-   GeglImageData * old_image_data;
    GeglImageData * image_data;
 
    g_return_if_fail (G_VALUE_HOLDS_IMAGE_DATA (value));
 
-   old_image_data = value->data[0].v_pointer;
-
-   image_data = value->data[0].v_pointer = g_new (GeglImageData, 1);
+   image_data = value->data[0].v_pointer;
 
    image_data->tile = tile;
-   gegl_rect_copy(&image_data->rect, rect); 
-   g_free(old_image_data);
+
+   if(rect)
+     gegl_rect_copy(&image_data->rect, rect); 
+   else
+     gegl_rect_set(&image_data->rect,0,0,0,0);
 }
 
 GeglTile*
@@ -140,7 +143,8 @@ g_value_get_image_data(const GValue *value,
 
    image_data = value->data[0].v_pointer;
 
-   gegl_rect_copy(rect, &image_data->rect);
+   if(rect)
+     gegl_rect_copy(rect, &image_data->rect);
 
    return image_data->tile;
 }
@@ -149,17 +153,13 @@ void
 g_value_set_image_data_rect(GValue *value,
                             GeglRect * rect)
 {
-   GeglImageData * old_image_data;
    GeglImageData * image_data; 
    g_return_if_fail (G_VALUE_HOLDS_IMAGE_DATA (value));
 
-   old_image_data = value->data[0].v_pointer;
-   image_data = value->data[0].v_pointer = g_new(GeglImageData, 1);
+   image_data = value->data[0].v_pointer;
 
-   image_data->tile = old_image_data? old_image_data->tile: NULL;
-   gegl_rect_copy(&image_data->rect, rect); 
-
-   g_free(old_image_data);
+   if(rect)
+     gegl_rect_copy(&image_data->rect, rect); 
 }
 
 void
@@ -168,31 +168,23 @@ g_value_get_image_data_rect(const GValue *value,
 {
    GeglImageData * image_data; 
    g_return_if_fail (G_VALUE_HOLDS_IMAGE_DATA (value));
+
    image_data = value->data[0].v_pointer;
-   g_assert(image_data);
-   gegl_rect_copy(rect, &image_data->rect); 
+
+   if(rect)
+     gegl_rect_copy(rect, &image_data->rect); 
 }
 
 void
 g_value_set_image_data_tile(GValue *value,
                             GeglTile * tile)
 {
-   GeglImageData * old_image_data;
    GeglImageData * image_data; 
-
    g_return_if_fail (G_VALUE_HOLDS_IMAGE_DATA (value));
 
-   old_image_data = value->data[0].v_pointer;
-   image_data = value->data[0].v_pointer = g_new(GeglImageData, 1);
+   image_data = value->data[0].v_pointer;
 
    image_data->tile = tile; 
-
-   if(old_image_data)
-     gegl_rect_copy(&image_data->rect, &old_image_data->rect); 
-   else
-     gegl_rect_set(&image_data->rect, 0,0,-1,-1); 
-
-   g_free(old_image_data);
 }
 
 GeglTile *
@@ -200,8 +192,10 @@ g_value_get_image_data_tile(const GValue *value)
 {
   GeglImageData * image_data; 
   g_return_val_if_fail (G_VALUE_HOLDS_IMAGE_DATA (value), NULL);
+
   image_data = value->data[0].v_pointer;
-  return image_data->tile; 
+
+  return image_data->tile;
 }
 
 void

@@ -2,6 +2,7 @@
 GeglPointOp
 
 <!-- ##### SECTION Short_Description ##### -->
+Abstract class for Image Filters with inputs.
 
 
 <!-- ##### SECTION Long_Description ##### -->

@@ -18,16 +18,18 @@ extern "C" {
 #define __TYPEDEF_GEGL_CONST_MULT__
 typedef struct _GeglConstMult GeglConstMult;
 #endif
-struct _GeglConstMult {
-   GeglPointOp __parent__;
+struct _GeglConstMult 
+{
+   GeglPointOp point_op;
 
    /*< private >*/
    gfloat multiplier;
 };
 
 typedef struct _GeglConstMultClass GeglConstMultClass;
-struct _GeglConstMultClass {
-   GeglPointOpClass __parent__;
+struct _GeglConstMultClass 
+{
+   GeglPointOpClass point_op_class;
 };
 
 GType           gegl_const_mult_get_type       (void);

@@ -20,7 +20,7 @@ typedef struct _GeglSampledImage GeglSampledImage;
 #endif
 struct _GeglSampledImage 
 {
-   GeglImage __parent__;
+   GeglImage image;
 
    /*< private >*/
    gint width;  
@@ -30,7 +30,7 @@ struct _GeglSampledImage
 typedef struct _GeglSampledImageClass GeglSampledImageClass;
 struct _GeglSampledImageClass 
 {
-   GeglImageClass __parent__;
+   GeglImageClass image_class;
 };
 
 GType                gegl_sampled_image_get_type    (void);

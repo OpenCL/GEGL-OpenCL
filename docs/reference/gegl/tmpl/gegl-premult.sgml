@@ -2,6 +2,7 @@
 GeglPremult
 
 <!-- ##### SECTION Short_Description ##### -->
+Multiply color by alpha for image.
 
 
 <!-- ##### SECTION Long_Description ##### -->

@@ -2,31 +2,55 @@
 GeglOp
 
 <!-- ##### SECTION Short_Description ##### -->
-Abstract class for operations in gegl.
+Abstract class for operation with inputs and outputs.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This is the main abstract class for operations in gegl.  An Op represents some
-operation that takes image and/or other input parameters and produces a result
-based on the those inputs.  The result may be image data or some other output,
-like a histogram.  The subclass Image is the base op class for the Image
-producing operations. The other subclasses of Op perform various other
-operations that are useful. This includes things like StatOps which gather
-information about an image and produce some kind of statistic output,
-SwitchOps, which just choose an input to pass along, and RoiOps which set
-regions of interest during graph evaluation. Print is an example of an op that
-just prints out the values of the input and produces no image data of its own.
+This is the main abstract class for operations in Gegl. An Op represents some
+operation that takes inputs and produces outputs. The outputs may be image data
+or some other kind of data, like histograms, or scalars, like the average of a
+grayscale image. An Op may produce no output at all but do something useful
+during its operation. For example a PrintOp may print the values of its pixels
+but otherwise do nothing to the data.
 </para>
+
 <para>
-The most important routine in Op is apply, which is the main image processing
-routine. This begins processing a graph for the passed root node. Its arguments
-are the root node for the graph to evaluate, an optional output destination
-SampledImage and a region of interest (roi), which restricts image processing
-to an area. Calling apply on the root of an image graph will result in
-processing the entire graph in depth-first (or some other topological sort)
-order. Ops are processed from the leaves of the graph towards the root, with
-each node waiting until inputs are computed before it begins. Once the inputs
-are finished the node performs its operation.
+Op is the common superclass of Filter and Graph. This forms a composite design
+pattern (GoF Design Patterns), with Filter as the "leaf" or atomic class, and
+Graph as the "composite" or container class. So Filters can be thought of as
+basic image processing objects and Graphs are chains and trees of these. Hence
+Graphs will contain other Filters and Graphs. A Graph will typically contain a
+root node that corresponds to its output as well as nodes that correspond to
+each of its inputs.
+</para>
+
+<para>
+The inputs and outputs of Ops are described and passed using Attribute
+structures. For each output an Op produces, there is a corresponding Attribute
+struct that describes the output type and holds the computed result value. In
+addition to descriptions of the outputs, the Attribute struct for an output
+also holds various synthesized and inherited attributes that are computed and
+used while evaluating a Graph. For example, Attributes for image data will
+carry regions of interest (need rects) and domains of definitions (have rects)
+information. Also they will hold synthesized color models. For example, if an
+Op has inputs that have color models RGB and GRAY, respectively, the output
+will be placed in a RGB color model. If this Op needs both inputs to be of
+the same color model, then the GRAY input will be "promoted" to RGB before
+being passed to the Op. Attribute structures keep this kind of information
+for each output.
+</para>
+
+<para>
+The most important method in Op is gegl_op_apply, which is the main image
+processing routine. This begins processing a graph for the passed root node.
+The method gegl_op_apply_image is similar and may be passed an output
+destination SampledImage as well as a region of interest. The image processing
+in this case will be restricted to the passed roi. Calling apply on the root of
+a graph causes processing of the entire graph in depth-first (or some other
+topological sort) order. Ops are processed from the leaves of the graph
+towards the root, with each node waiting until inputs are computed before it
+begins. Once the inputs of a node are finished the node can perform its
+operation.
 </para>
 <para>
 Heres an example of setting up a Mult op and calling apply on it:
@@ -34,24 +58,27 @@ Heres an example of setting up a Mult op and calling apply on it:
 <title>Setting up a Mult Op</title>
 <programlisting>
 
-  /* Get some SampledImages to use as inputs */
-
+  /* Make some SampledImages to use as inputs */
+  gint w = 720; 
+  gint h = 486; 
   GeglColorModel *rgb_u8 = gegl_color_model_instance("RgbU8");
-  GeglSampledImage *A = g_object_new(GEGL_TYPE_SAMPLED_IMAGE,
-                                     "colormodel", rgb_u8,
-                                     "width", w,
-                                     "height", h,
-                                      NULL);
 
-  GeglSampledImage *B = g_object_new(GEGL_TYPE_SAMPLED_IMAGE,
-                                     "colormodel", rgb_u8,
-                                     "width", w,
-                                     "height", h, 
-                                     NULL);
+  GeglOp *A = g_object_new(GEGL_TYPE_SAMPLED_IMAGE,
+                           "colormodel", rgb_u8,
+                           "width", w,
+                           "height", h,
+                            NULL);
 
-  /* Do something to the inputs ...like read an image file into them. */
+  GeglOp *B = g_object_new(GEGL_TYPE_SAMPLED_IMAGE,
+                           "colormodel", rgb_u8,
+                           "width", w,
+                           "height", h, 
+                           NULL);
 
-  /* Next set up
+  /* Do something to set up the SampledImages above... */
+
+  /* 
+      Now set up the mult op
 
         mult
         / \
@@ -59,62 +86,27 @@ Heres an example of setting up a Mult op and calling apply on it:
   */
 
   GeglOp * mult = g_object_new (GEGL_TYPE_MULT,
-                                "source0", A,
-                                "source1", B,
+                                "input0", A,
+                                "input1", B,
                                 NULL);
 
+  /* Create a sampled image to hold result */
   GeglSampledImage *dest = g_object_new(GEGL_TYPE_SAMPLED_IMAGE,
                                         "colormodel", rgb_u8, 
                                         "width", w, 
                                         "height", h, 
                                         NULL);
 
-  /* Call apply to do the operation, and put result in dest */
-
-  gegl_op_apply (mult, dest, NULL);
+  /* Call apply to do the operation, put result in dest */
+  gegl_op_apply_image (mult, dest, NULL);
 
   g_object_unref (mult);
   g_object_unref (A);
   g_object_unref (B);
   g_object_unref (rgb_u8);
+
 </programlisting>
 </example>
-</para>
-
-<para>
-Op has three virtual methods (prepare, process, finish) which accomplish the
-actual image processing.  Subclasses of Op override these  routines to do the
-operation.
-</para>
-
-<para>
-The Op's prepare, process, and finish routines all take a GList of OpRequests.
-This list of OpRequests tells the Op which areas on the inputs and output it
-will be processing and also which data buffers to use. The output is given
-first in the list (if there is an output) followed by any inputs. Each
-OpRequest is made up of a region to use (a Rect) together with some image data
-(a Tile) . The Tile corresponds to an area of image space and the Rect is the
-subportion of that Tile to use or process during the operation. Tiles used here
-are just thought of as "chunks of image data", and may be of any size. They
-might correspond to what is usually called "pages" or they might be the entire
-data of the Image. It depends on the way the ImageMgr in question organizes
-things.
-</para>
-
-<para>
-Here is a picture of an OpRequest:
-</para>
-
-<graphic fileref="../images/request.png"></graphic>
-
-<para>
-Note that Image nodes may receive OpRequests that correspond to any area of its
-image space, and do not have an intrinsic width and height. So it is legal to
-ask an Image to compute its result anywhere in the plane.  SampledImages though
-do have a width and height since they correspond to in-memory representations
-of image files. Of course if the area you request is outside of the have_rects
-(domain of definitions) of the inputs to an Image then you will likely just get
-a zero (or some other default fill value) as output.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -152,73 +144,27 @@ a zero (or some other default fill value) as output.
 @roi: 
 
 
-<!-- ##### FUNCTION gegl_op_compute_need_rects ##### -->
+<!-- ##### FUNCTION gegl_op_allocate_attributes ##### -->
 <para>
 
 </para>
 
 @self: 
-@input_values: 
 
 
-<!-- ##### FUNCTION gegl_op_compute_have_rect ##### -->
+<!-- ##### FUNCTION gegl_op_get_nth_attributes ##### -->
 <para>
 
 </para>
 
 @self: 
-@input_values: 
-
-
-<!-- ##### FUNCTION gegl_op_compute_derived_color_model ##### -->
-<para>
-
-</para>
-
-@self: 
-@input_values: 
-
-
-<!-- ##### FUNCTION gegl_op_evaluate ##### -->
-<para>
-
-</para>
-
-@self: 
-@output_values: 
-@input_values: 
-
-
-<!-- ##### FUNCTION gegl_op_set_num_output_values ##### -->
-<para>
-
-</para>
-
-@self: 
-@num_output_values: 
-
-
-<!-- ##### FUNCTION gegl_op_get_nth_output_value ##### -->
-<para>
-
-</para>
-
-@op: 
 @n: 
 @Returns: 
-
-
-<!-- ##### FUNCTION gegl_op_get_nth_input_value ##### -->
-<para>
-
-</para>
-
+<!-- # Unused Parameters # -->
 @op: 
-@n: 
-@Returns: 
 
 
-<!-- ##### FUNCTION gegl_op_get_output_values ##### -->
+<!-- ##### FUNCTION gegl_op_get_attributes ##### -->
 <para>
 
 </para>

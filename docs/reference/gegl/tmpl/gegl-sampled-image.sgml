@@ -2,7 +2,7 @@
 GeglSampledImage
 
 <!-- ##### SECTION Short_Description ##### -->
-The basic image object that represents an image with fixed resolution.
+Image object with fixed resolution.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

@@ -1,6 +1,6 @@
-39% function docs coverage.
-60 functions documented.
-92 not documented.
+55% function docs coverage.
+98 functions documented.
+80 not documented.
 
 
 GEGL_DEFAULT_HEIGHT
@@ -14,6 +14,7 @@ GEGL_TYPE_PARAM_IMAGE_DATA
 GEGL_TYPE_PARAM_INT
 G_VALUE_HOLDS_IMAGE_DATA
 LOG_DEBUG
+LOG_DIRECT
 LOG_INFO
 LOG_MSG
 ROUND
@@ -24,6 +25,12 @@ g_value_print_image_data
 g_value_set_image_data
 g_value_set_image_data_rect
 g_value_set_image_data_tile
+gegl_attributes_get_color_model
+gegl_attributes_get_rect
+gegl_attributes_new
+gegl_attributes_print
+gegl_attributes_set_color_model
+gegl_attributes_set_rect
 gegl_buffer_alloc_data
 gegl_buffer_get_ref_count
 gegl_buffer_ref
@@ -32,49 +39,33 @@ gegl_buffer_set_num_buffers
 gegl_buffer_unalloc_data
 gegl_buffer_unref
 gegl_channel_data_type_bytes
+gegl_color_model_get_color_space_name
 gegl_color_model_instance
 gegl_color_model_register
+gegl_color_model_set_color_space_name
 gegl_color_model_set_has_alpha
 gegl_const_mult_get_multiplier
 gegl_const_mult_set_multiplier
+gegl_direct_log
+gegl_direct_logv
+gegl_dump_graph
+gegl_dump_graph_msg
+gegl_dump_visitor_traverse
 gegl_fill_get_fill_color
 gegl_fill_set_fill_color
-gegl_filter_get_image
-gegl_filter_get_input_values
-gegl_filter_get_roi
-gegl_filter_get_root
-gegl_filter_set_image
-gegl_filter_set_roi
-gegl_filter_set_root
-gegl_filter_validate_input_values
-gegl_filter_validate_output_values
 gegl_image_set_derived_color_model
 gegl_init
 gegl_log
 gegl_logv
-gegl_node_accept
-gegl_object_get_name
-gegl_object_set_name
-gegl_op_apply
-gegl_op_apply_image
-gegl_op_apply_roi
-gegl_op_compute_have_rect
-gegl_op_compute_need_rects
-gegl_op_evaluate
-gegl_op_get_nth_input_value
-gegl_op_get_nth_output_value
-gegl_op_get_output_values
 gegl_param_spec_image_data
 gegl_param_spec_int
 gegl_rect_bounding_box
 gegl_rect_contains
 gegl_rect_copy
 gegl_rect_equal
+gegl_rect_equal_coords
 gegl_rect_intersect
 gegl_rect_set
-gegl_sampled_image_set_height
-gegl_sampled_image_set_width
-gegl_scanline_processor_process
 gegl_tile_alloc
 gegl_tile_iterator_get_rect
 gegl_tile_iterator_set_rect
@@ -90,8 +81,5 @@ gegl_utils_construct_val
 gegl_utils_derived_channel_data_type
 gegl_utils_derived_color_alpha_space
 gegl_utils_derived_color_space
-gegl_utils_get_filter_type
-gegl_visitor_get_visits_list
-gegl_visitor_visit_filter
-gegl_visitor_visit_node
-gegl_visitor_visit_op
+gegl_utils_execute_graph
+gegl_visitor_set_discovered

@@ -32,8 +32,9 @@ typedef void (*GeglConvertFunc)(GeglColorModel *,
 #define GEGL_COLOR_MODEL_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COLOR_MODEL, GeglColorModelClass))
 
 
-struct _GeglColorModel {
-   GeglObject __parent__;
+struct _GeglColorModel 
+{
+   GeglObject object;
 
    /*< private >*/
    GeglColorSpace colorspace;            /*  */
@@ -47,16 +48,17 @@ struct _GeglColorModel {
    gboolean is_premultiplied;            /*  */
    gboolean is_additive;                 /*  */
    gboolean is_subtractive;              /*  */
-   const char ** channel_names;          /*  */
-   const char * color_space_name;        /*  */
-   const char * alpha_string;            /*  */
-   const char * channel_data_type_name;  /*  */
+   gchar ** channel_names;          /*  */
+   gchar * color_space_name;        /*  */
+   gchar * alpha_string;            /*  */
+   gchar * channel_data_type_name;  /*  */
 };
 
 
 typedef struct _GeglColorModelClass GeglColorModelClass;
-struct _GeglColorModelClass {
-   GeglObjectClass __parent__;
+struct _GeglColorModelClass 
+{
+   GeglObjectClass object_class;
 
    GeglColorAlphaSpace (* color_alpha_space)              (GeglColorModel * self);
    GeglColorModelType  (* color_model_type)               (GeglColorModel * self);
@@ -106,6 +108,9 @@ gchar *               gegl_color_model_get_convert_interface_name    (GeglColorM
 
 void                  gegl_color_model_set_has_alpha       (GeglColorModel * self, 
                                                             gboolean has_alpha);
+void                  gegl_color_model_set_color_space_name (GeglColorModel * self, 
+                                                             gchar *name);
+gchar *               gegl_color_model_get_color_space_name (GeglColorModel * self);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -1,0 +1,80 @@
+<!-- ##### SECTION Title ##### -->
+gegl-attributes
+
+<!-- ##### SECTION Short_Description ##### -->
+Attributes for an op.
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglAttributes ##### -->
+<para>
+
+</para>
+
+@value: 
+@param_spec: 
+@rect: 
+@color_model: 
+
+<!-- ##### FUNCTION gegl_attributes_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_attributes_set_rect ##### -->
+<para>
+
+</para>
+
+@attributes: 
+@rect: 
+
+
+<!-- ##### FUNCTION gegl_attributes_get_rect ##### -->
+<para>
+
+</para>
+
+@attributes: 
+@rect: 
+
+
+<!-- ##### FUNCTION gegl_attributes_set_color_model ##### -->
+<para>
+
+</para>
+
+@attributes: 
+@color_model: 
+
+
+<!-- ##### FUNCTION gegl_attributes_get_color_model ##### -->
+<para>
+
+</para>
+
+@attributes: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_attributes_print ##### -->
+<para>
+
+</para>
+
+@attributes: 
+@op: 
+
+

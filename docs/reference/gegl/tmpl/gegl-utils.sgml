@@ -36,6 +36,19 @@ gegl-utils
 @Returns: 
 
 
+<!-- ##### FUNCTION gegl_rect_equal_coords ##### -->
+<para>
+
+</para>
+
+@r: 
+@x: 
+@y: 
+@w: 
+@h: 
+@Returns: 
+
+
 <!-- ##### FUNCTION gegl_rect_copy ##### -->
 <para>
 
@@ -74,6 +87,23 @@ gegl-utils
 @r: 
 @s: 
 @Returns: 
+
+
+<!-- ##### FUNCTION gegl_dump_graph ##### -->
+<para>
+
+</para>
+
+@root: 
+
+
+<!-- ##### FUNCTION gegl_dump_graph_msg ##### -->
+<para>
+
+</para>
+
+@msg: 
+@root: 
 
 
 <!-- ##### FUNCTION gegl_channel_data_type_bytes ##### -->
@@ -132,12 +162,14 @@ gegl-utils
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_utils_get_filter_type ##### -->
+<!-- ##### FUNCTION gegl_utils_execute_graph ##### -->
 <para>
 
 </para>
 
-@Returns: 
+@root: 
+@image: 
+@roi: 
 
 
 <!-- ##### FUNCTION gegl_log ##### -->
@@ -166,6 +198,26 @@ gegl-utils
 @args: 
 
 
+<!-- ##### FUNCTION gegl_direct_log ##### -->
+<para>
+
+</para>
+
+@level: 
+@format: 
+@Varargs: 
+
+
+<!-- ##### FUNCTION gegl_direct_logv ##### -->
+<para>
+
+</para>
+
+@level: 
+@format: 
+@args: 
+
+
 <!-- ##### MACRO LOG_DEBUG ##### -->
 <para>
 
@@ -190,6 +242,14 @@ gegl-utils
 </para>
 
 @function: 
+@args...: 
+
+
+<!-- ##### MACRO LOG_DIRECT ##### -->
+<para>
+
+</para>
+
 @args...: 
 
 

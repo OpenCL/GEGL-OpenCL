@@ -3,6 +3,7 @@
 #include "gegl-color-model.h"
 #include "gegl-tile.h"
 #include "gegl-tile-iterator.h"
+#include "gegl-attributes.h"
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
 
@@ -19,8 +20,8 @@ static void init (GeglDark * self, GeglDarkClass * klass);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void prepare (GeglOp * op, GList * output_values, GList *input_values);
-static void scanline (GeglOp * op, GeglTileIterator ** iters, gint width);
+static void prepare (GeglFilter * op, GList * output_attributes, GList *input_attributes);
+static void scanline (GeglFilter * op, GeglTileIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -56,11 +57,11 @@ static void
 class_init (GeglDarkClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
+  GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
-  op_class->prepare = prepare;
+  filter_class->prepare = prepare;
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
@@ -88,7 +89,6 @@ init (GeglDark * self,
       GeglDarkClass * klass)
 {
   GeglNode * node = GEGL_NODE(self); 
-  gegl_node_set_num_outputs(node, 1);
   gegl_node_set_num_inputs(node, 2);
 }
 
@@ -136,14 +136,15 @@ set_property (GObject      *gobject,
 
 
 static void 
-prepare (GeglOp * op, 
-         GList * output_values,
-         GList * input_values)
+prepare (GeglFilter * op, 
+         GList * output_attributes,
+         GList * input_attributes)
 {
   GeglPointOp *point_op = GEGL_POINT_OP(op); 
 
-  GValue *dest_value = g_list_nth_data(output_values, 0); 
-  GeglTile *dest = g_value_get_image_data_tile(dest_value);
+  GeglAttributes *dest_attributes = 
+    (GeglAttributes*)g_list_nth_data(output_attributes, 0); 
+  GeglTile *dest = (GeglTile *)g_value_get_object(dest_attributes->value);
   GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
 
   g_return_if_fail(dest_cm);
@@ -154,7 +155,7 @@ prepare (GeglOp * op,
 
 /**
  * scanline:
- * @op: a #GeglOp
+ * @op: a #GeglFilter
  * @iters: #GeglTileIterators array. 
  * @width: width of scanline.
  *
@@ -162,7 +163,7 @@ prepare (GeglOp * op,
  *
  **/
 static void 
-scanline (GeglOp * op, 
+scanline (GeglFilter * op, 
           GeglTileIterator ** iters, 
           gint width)
 {

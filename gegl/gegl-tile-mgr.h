@@ -35,7 +35,7 @@ typedef struct _GeglTileMgr GeglTileMgr;
 #endif
 struct _GeglTileMgr 
 {
-   GeglObject __parent__;
+   GeglObject object;
 
    /*< private >*/
 };
@@ -43,7 +43,7 @@ struct _GeglTileMgr
 typedef struct _GeglTileMgrClass GeglTileMgrClass;
 struct _GeglTileMgrClass 
 {
-   GeglObjectClass __parent__;
+   GeglObjectClass object_class;
 };
 
 GeglTileMgr * gegl_tile_mgr_instance          (void);
@@ -53,7 +53,8 @@ GType         gegl_tile_mgr_get_type            (void);
 
 GeglTile *    gegl_tile_mgr_validate_tile      (GeglTileMgr * self, 
                                                 GeglTile * tile, 
-                                                GeglRect * area);
+                                                GeglRect * area,
+                                                GeglColorModel * color_model);
 void          gegl_tile_mgr_validate_data      (GeglTileMgr * self, 
                                                 GeglTile * tile);
 GeglBuffer *  gegl_tile_mgr_create_buffer       (GeglTileMgr * self, 

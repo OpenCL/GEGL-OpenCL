@@ -18,8 +18,9 @@ extern "C" {
 #define __TYPEDEF_GEGL_BUFFER__
 typedef struct _GeglBuffer  GeglBuffer;
 #endif
-struct _GeglBuffer {
-   GeglObject parent;
+struct _GeglBuffer 
+{
+   GeglObject object;
 
    /*< private >*/
    gpointer * data_pointers; 
@@ -29,8 +30,9 @@ struct _GeglBuffer {
 };
 
 typedef struct _GeglBufferClass GeglBufferClass;
-struct _GeglBufferClass {
-   GeglObjectClass parent;
+struct _GeglBufferClass 
+{
+   GeglObjectClass object_class;
 
    void (* unalloc_data) (GeglBuffer * self);
    void (* alloc_data) (GeglBuffer * self);

@@ -2,6 +2,7 @@
 GeglVisitor
 
 <!-- ##### SECTION Short_Description ##### -->
+Abstract class for all visitors.
 
 
 <!-- ##### SECTION Long_Description ##### -->
@@ -14,6 +15,15 @@ GeglVisitor
 
 </para>
 
+<!-- ##### STRUCT GeglNodeInfo ##### -->
+<para>
+
+</para>
+
+@visited: 
+@discovered: 
+@shared_count: 
+
 <!-- ##### FUNCTION gegl_visitor_visit_node ##### -->
 <para>
 
@@ -21,6 +31,17 @@ GeglVisitor
 
 @self: 
 @node: 
+
+
+<!-- ##### FUNCTION gegl_visitor_visit_filter ##### -->
+<para>
+
+</para>
+
+@self: 
+@filter: 
+<!-- # Unused Parameters # -->
+@op: 
 
 
 <!-- ##### FUNCTION gegl_visitor_visit_op ##### -->
@@ -32,13 +53,13 @@ GeglVisitor
 @op: 
 
 
-<!-- ##### FUNCTION gegl_visitor_visit_filter ##### -->
+<!-- ##### FUNCTION gegl_visitor_visit_graph ##### -->
 <para>
 
 </para>
 
 @self: 
-@filter: 
+@graph: 
 
 
 <!-- ##### FUNCTION gegl_visitor_get_visits_list ##### -->
@@ -48,5 +69,94 @@ GeglVisitor
 
 @self: 
 @Returns: 
+
+
+<!-- ##### FUNCTION gegl_visitor_get_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_visitor_node_insert ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+
+
+<!-- ##### FUNCTION gegl_visitor_node_lookup ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_visitor_get_visited ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_visitor_set_visited ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+@visited: 
+
+
+<!-- ##### FUNCTION gegl_visitor_get_discovered ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_visitor_set_discovered ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+@discovered: 
+
+
+<!-- ##### FUNCTION gegl_visitor_get_shared_count ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_visitor_set_shared_count ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+@shared_count: 
 
 

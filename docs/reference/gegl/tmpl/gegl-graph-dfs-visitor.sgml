@@ -1,7 +1,8 @@
 <!-- ##### SECTION Title ##### -->
-GeglFilterDfsVisitor
+GeglGraphDfsVisitor
 
 <!-- ##### SECTION Short_Description ##### -->
+Depth first visitor for graphs.
 
 
 <!-- ##### SECTION Long_Description ##### -->

@@ -1,0 +1,160 @@
+<!-- ##### SECTION Title ##### -->
+GeglGraph
+
+<!-- ##### SECTION Short_Description ##### -->
+Class for container of Ops.
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglGraphInput ##### -->
+<para>
+
+</para>
+
+@node: 
+@node_input_index: 
+@graph: 
+@graph_input_index: 
+
+<!-- ##### STRUCT GeglGraphOutput ##### -->
+<para>
+
+</para>
+
+@node: 
+@node_output_index: 
+@graph: 
+@graph_output_index: 
+
+<!-- ##### FUNCTION gegl_graph_get_root ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_graph_set_root ##### -->
+<para>
+
+</para>
+
+@self: 
+@root: 
+
+
+<!-- ##### FUNCTION gegl_graph_get_roi ##### -->
+<para>
+
+</para>
+
+@self: 
+@roi: 
+
+
+<!-- ##### FUNCTION gegl_graph_set_roi ##### -->
+<para>
+
+</para>
+
+@self: 
+@roi: 
+
+
+<!-- ##### FUNCTION gegl_graph_execute ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_graph_get_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_graph_set_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@image: 
+
+
+<!-- ##### FUNCTION gegl_graph_lookup_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+@node_input_index: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_graph_lookup_output ##### -->
+<para>
+
+</para>
+
+@self: 
+@graph_output_index: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_graph_find_input_connection ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+@index: 
+@Returns: 
+<!-- # Unused Parameters # -->
+@graph: 
+
+
+<!-- ##### FUNCTION gegl_graph_get_input_attributes ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+@Returns: 
+<!-- # Unused Parameters # -->
+@graph: 
+
+
+<!-- ##### ARG GeglGraph:root ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglGraph:image ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglGraph:roi ##### -->
+<para>
+
+</para>
+

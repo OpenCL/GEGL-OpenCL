@@ -2,6 +2,7 @@
 GeglScanlineProcessor
 
 <!-- ##### SECTION Short_Description ##### -->
+Scanline processor helper class.
 
 
 <!-- ##### SECTION Long_Description ##### -->
@@ -32,9 +33,12 @@ GeglScanlineProcessor
 </para>
 
 @self: 
+@attributes: 
+@input_attributes: 
+<!-- # Unused Parameters # -->
+@output_attributes: 
 @output_values: 
 @input_values: 
-<!-- # Unused Parameters # -->
 @request_list: 
 
 

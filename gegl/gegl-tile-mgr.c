@@ -93,6 +93,7 @@ finalize(GObject *gobject)
  * @self: a #GeglTileMgr. 
  * @tile: #GeglTile we are validating. 
  * @area: #GeglRect needed.
+ * @color_model: #GeglColorModel needed.
  *
  * Check if tile is valid for the desired area. Realloc the tile if it doesnt
  * contain the rect area. Then validate the data for the tile as well.
@@ -102,10 +103,12 @@ finalize(GObject *gobject)
 GeglTile * 
 gegl_tile_mgr_validate_tile (GeglTileMgr * self, 
                              GeglTile * tile, 
-                             GeglRect * area)
+                             GeglRect * area,
+                             GeglColorModel *color_model)
 {
   GeglTile *valid_tile;
   GeglRect tile_rect;
+  GeglColorModel * tile_color_model;
 
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_TILE_MGR (self), NULL);
@@ -113,17 +116,18 @@ gegl_tile_mgr_validate_tile (GeglTileMgr * self,
   g_return_val_if_fail (GEGL_IS_TILE(tile), NULL);
   g_return_val_if_fail (area != NULL, NULL);
 
+  tile_color_model = gegl_tile_get_color_model(tile);
   gegl_tile_get_area(tile, &tile_rect);
 
-  if(gegl_rect_contains(&tile_rect, area))
+  if(gegl_rect_contains(&tile_rect, area) && 
+     color_model == tile_color_model)
     valid_tile = tile;
   else 
     {
-      GeglColorModel * color_model = gegl_tile_get_color_model(tile);
       g_object_unref(tile);
-      LOG_DEBUG("tile_mgr_validate_tile", "have to re-create tile %x", (guint)tile);
+      LOG_DEBUG("tile_mgr_validate_tile", "have to re-create tile %p", tile);
       valid_tile = gegl_tile_mgr_create_tile (self, color_model, area);
-      LOG_DEBUG("tile_mgr_validate_tile", "new tile is %x", (guint)valid_tile);
+      LOG_DEBUG("tile_mgr_validate_tile", "new tile is %p", valid_tile);
     }
    
   gegl_tile_mgr_validate_data(self, valid_tile);
@@ -149,7 +153,7 @@ gegl_tile_mgr_validate_data (GeglTileMgr * self,
 
   /* Make sure the tile data is there. */
   /*
-  LOG_DEBUG("tile_mgr_validate_data", "validating data for tile %x", (guint)tile);
+  LOG_DEBUG("tile_mgr_validate_data", "validating data for tile %p", tile);
   */
   gegl_tile_validate_data(tile);
 }
@@ -180,7 +184,7 @@ gegl_tile_mgr_create_buffer (GeglTileMgr * self,
       bytes_per_buffer = area.w * area.h * bytes_per_channel;
 
       /*
-      LOG_DEBUG("tile_mgr_create_buffer", "creating mem buffer for tile %x", (guint)tile);
+      LOG_DEBUG("tile_mgr_create_buffer", "creating mem buffer for tile %p", tile);
       */
       return g_object_new (GEGL_TYPE_MEM_BUFFER, 
                            "bytesperbuffer", bytes_per_buffer, 
@@ -193,6 +197,7 @@ gegl_tile_mgr_create_buffer (GeglTileMgr * self,
  * gegl_tile_mgr_create_tile:
  * @self: a #GeglTileMgr. 
  * @color_model : #GeglColorModel.  
+ * @area : #GeglRect that describes the area.  
  *
  * Returns: a #GeglBuffer for this tile.
  **/
@@ -214,7 +219,7 @@ gegl_tile_mgr_create_tile (GeglTileMgr * self,
                        "area", area, 
                        "colormodel", color_model,
                        NULL);  
-  LOG_DEBUG("tile_mgr_create_tile", "creating tile %x", (guint)tile);
+  LOG_DEBUG("tile_mgr_create_tile", "creating tile %p", tile);
 
 
   return tile;

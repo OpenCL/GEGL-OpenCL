@@ -18,13 +18,15 @@ extern "C" {
 #define __TYPEDEF_GEGL_MOCK_OP__
 typedef struct _GeglMockOp GeglMockOp;
 #endif
-struct _GeglMockOp {
-       GeglOp __parent__;
+struct _GeglMockOp 
+{
+       GeglOp op;
 };
 
 typedef struct _GeglMockOpClass GeglMockOpClass;
-struct _GeglMockOpClass {
-       GeglOpClass __parent__;
+struct _GeglMockOpClass 
+{
+       GeglOpClass op_class;
 };
 
 GType         gegl_mock_op_get_type          (void); 

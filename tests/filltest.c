@@ -3,11 +3,19 @@
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
+#include <string.h>
 
 #define SAMPLED_IMAGE_WIDTH 10 
 #define SAMPLED_IMAGE_HEIGHT 10 
 
 GeglSampledImage * dest;
+
+static void dump_graph (GeglNode * node)
+{
+  GeglDumpVisitor *dump_visitor = g_object_new(GEGL_TYPE_DUMP_VISITOR, NULL);  
+  gegl_dump_visitor_traverse(dump_visitor, node); 
+  g_object_unref(dump_visitor);
+}
 
 static void
 test_fill_g_object_new(Test *test)
@@ -66,6 +74,7 @@ test_fill_apply(Test *test)
                                       "colormodel", rgb_float,  
                                       NULL);  
     GeglChannelValue * chans = gegl_color_get_channel_values(color);
+
     GeglOp *op = g_object_new(GEGL_TYPE_FILL, 
                               "fillcolor", color, 
                               NULL);
@@ -74,7 +83,13 @@ test_fill_apply(Test *test)
     chans[1].f = .2;
     chans[2].f = .3;
 
+    dump_graph(GEGL_NODE(op));
+    LOG_DEBUG("calling apply", "");
+
+
     gegl_op_apply(op); 
+    dump_graph(GEGL_NODE(op));
+    LOG_DEBUG("back from apply", "");
 
     ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(op), .1, .2, .3));  
 
@@ -88,7 +103,7 @@ static void
 test_fill_apply_roi(Test *test)
 {
   {
-    GeglRect roi = {0,0,SAMPLED_IMAGE_WIDTH/2,SAMPLED_IMAGE_HEIGHT/2};
+    GeglRect roi = {0,0,SAMPLED_IMAGE_WIDTH,SAMPLED_IMAGE_HEIGHT};
     GeglColorModel *rgb_float = gegl_color_model_instance("RgbFloat");
     GeglColor * color = g_object_new (GEGL_TYPE_COLOR, 
                                       "colormodel", rgb_float,  
@@ -102,9 +117,10 @@ test_fill_apply_roi(Test *test)
     chans[1].f = .2;
     chans[2].f = .3;
 
-    gegl_op_apply_roi(op, &roi); 
+    /*gegl_rect_set(&roi,0,0,1,1);*/
+    gegl_op_apply_image(op, GEGL_OP(dest), &roi); 
 
-    ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(op), .1, .2, .3));  
+    ct_test(test, testutils_check_rgb_float_pixel_xy(GEGL_IMAGE(dest), 0, 0, .1, .2, .3));  
 
     g_object_unref(op);
     g_object_unref(color);
@@ -149,6 +165,7 @@ fill_test_setup(Test *test)
                        "width", SAMPLED_IMAGE_WIDTH, 
                        "height", SAMPLED_IMAGE_HEIGHT,
                        NULL);  
+
   g_object_unref(rgb_float);
 }
 
@@ -165,10 +182,13 @@ create_fill_test()
 
   g_assert(ct_addSetUp(t, fill_test_setup));
   g_assert(ct_addTearDown(t, fill_test_teardown));
+
+#if 1 
   g_assert(ct_addTestFun(t, test_fill_g_object_new));
   g_assert(ct_addTestFun(t, test_fill_apply));
   g_assert(ct_addTestFun(t, test_fill_apply_roi));
   g_assert(ct_addTestFun(t, test_fill_apply_image));
+#endif
 
   return t; 
 }

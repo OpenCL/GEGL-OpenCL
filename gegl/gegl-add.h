@@ -18,14 +18,16 @@ extern "C" {
 #define __TYPEDEF_GEGL_ADD__
 typedef struct _GeglAdd GeglAdd;
 #endif
-struct _GeglAdd {
-   GeglPointOp __parent__;
+struct _GeglAdd 
+{
+   GeglPointOp point_op;
    /*< private >*/
 };
 
 typedef struct _GeglAddClass GeglAddClass;
-struct _GeglAddClass {
-   GeglPointOpClass __parent__;
+struct _GeglAddClass 
+{
+   GeglPointOpClass point_op_class;
 };
 
 GType            gegl_add_get_type         (void);

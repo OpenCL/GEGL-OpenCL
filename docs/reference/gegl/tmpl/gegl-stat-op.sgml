@@ -2,6 +2,7 @@
 GeglStatOp
 
 <!-- ##### SECTION Short_Description ##### -->
+Abstract class for Filters without Image outputs
 
 
 <!-- ##### SECTION Long_Description ##### -->

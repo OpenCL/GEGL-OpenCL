@@ -3,6 +3,7 @@
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
+#include <string.h>
 
 static GeglColorModel * color_model;
 
@@ -13,7 +14,7 @@ test_image_g_object_new(Test *test)
 
   ct_test(test, image != NULL);
   ct_test(test, GEGL_IS_IMAGE(image));
-  ct_test(test, g_type_parent(GEGL_TYPE_IMAGE) == GEGL_TYPE_OP);
+  ct_test(test, g_type_parent(GEGL_TYPE_IMAGE) == GEGL_TYPE_FILTER);
   ct_test(test, !strcmp("GeglImage", g_type_name(GEGL_TYPE_IMAGE)));
 
   ct_test(test, GEGL_IS_MOCK_IMAGE(image));

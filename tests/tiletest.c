@@ -3,6 +3,7 @@
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
+#include <string.h>
 
 static GeglColorModel * color_model;
 #define AREA_WIDTH 5 

@@ -2,34 +2,56 @@
 GeglNode
 
 <!-- ##### SECTION Short_Description ##### -->
-Abstract graph node class for operator graphs.
+Abstract node class.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This is the Abstract graph node class for Gegl. Since we want graphs to be able to
-share nodes, image graphs in gegl are directed acyclic graphs, with inputs
-(children) and outputs (parents).  If nodes of an image graph are all distinct,
-the graph is a simple tree. Leaf nodes have no inputs and root nodes have no
-outputs.  Shared nodes have multiple outputs. Normal GObject reference counting
-is used to keep track of references to nodes.
+This is the abstract node class for Gegl. Since we want to be able to share
+nodes, graphs in Gegl are directed acyclic graphs (DAGs). Nodes have both
+inputs and outputs. Usually the number of these is fixed for the duration of
+the Node's existence. If the nodes of a graph are all distinct, the graph is a
+tree.
 </para>
+
 <para>
-The Node class manages adding and removing parents and children. It also has
-methods for traversing image graphs (breadth-first, depth-first), detecting
-cycles in graphs and topological sorting. Freeing a root node will free nodes
-that descend from the root when there are no other objects holding references
-to these nodes. When a node descends from more than one root (ie its part of
-two or more image graphs) it wont be deleted when a graph is deleted since
-its reference count will not be zero.
+Each input of a Node has at most one Node attached to the other end of it
+upstream. There may be no Node upstream that is attached to a particular input
+for a Node if the graph is still being constructed. 
 </para>
+
 <para>
-Heres a simple example of an image graph for Comp(Blur(A), Mult(A,B)):
+In contrast, each output of a Node can have multiple Nodes attached to it
+downstream. This is because more than one Node may be pulling data downstream
+from the same output of a Node. A Node with more than one Node attached
+downstream like this is called a shared node. We use GObject reference counting
+to keep track of shared nodes. 
+</para>
+
+<para>
+A Node is called a leaf node if it has no inputs. A Node is called a root node
+if there are no Nodes attached to the outputs of it.
+</para>
+
+<para>
+Heres a simple example of an graph for Comp(Blur(A), Mult(A,B)):
 </para>
 <graphic fileref="../images/chain.png"></graphic>
 <para>
-Here Comp (eg a composite over) is a root node, A and B are SampledImage leaf
-nodes, Blur has A as input and Comp as output, and Mult has two inputs (A and
-B) and Comp as output. A is shared by both its outputs Blur and Mult.
+Here Comp (composite over) is the root node, A and B are leaf SampledImage
+nodes. Blur has A as input and Comp as output and Mult has two inputs, A and B,
+with Comp as output. A is shared by both its outputs Blur and Mult. Finally
+Comp is downstream from Blur, A and B are upstream from everything, etc. 
+</para>
+
+<para>
+The Node class also manages adding and removing inputs as well as nodes
+attached to outputs.
+</para>
+
+<para>
+The Node class keeps track of output-to-input information for each Node by
+using Connectors. An input Connector holds the information about which Node is
+an input to a given Node, and which output that input Node came from.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -37,33 +59,15 @@ B) and Comp as output. A is shared by both its outputs Blur and Mult.
 
 </para>
 
-<!-- ##### STRUCT GeglInputInfo ##### -->
+<!-- ##### STRUCT GeglConnection ##### -->
 <para>
 
 </para>
 
+@node: 
+@input_index: 
 @input: 
-@index: 
-
-<!-- ##### FUNCTION gegl_node_set_nth_input_info ##### -->
-<para>
-
-</para>
-
-@self: 
-@input_info: 
-@n: 
-
-
-<!-- ##### FUNCTION gegl_node_get_nth_input_info ##### -->
-<para>
-
-</para>
-
-@self: 
-@n: 
-@Returns: 
-
+@output_index: 
 
 <!-- ##### FUNCTION gegl_node_get_nth_input ##### -->
 <para>
@@ -87,6 +91,27 @@ B) and Comp as output. A is shared by both its outputs Blur and Mult.
 @Returns: 
 
 
+<!-- ##### FUNCTION gegl_node_set_nth_input_connection ##### -->
+<para>
+
+</para>
+
+@self: 
+@input: 
+@output_index: 
+@n: 
+
+
+<!-- ##### FUNCTION gegl_node_get_nth_input_connection ##### -->
+<para>
+
+</para>
+
+@self: 
+@n: 
+@Returns: 
+
+
 <!-- ##### FUNCTION gegl_node_get_num_inputs ##### -->
 <para>
 
@@ -105,7 +130,7 @@ B) and Comp as output. A is shared by both its outputs Blur and Mult.
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_node_get_input_infos ##### -->
+<!-- ##### FUNCTION gegl_node_get_input_connections ##### -->
 <para>
 
 </para>
@@ -120,9 +145,11 @@ B) and Comp as output. A is shared by both its outputs Blur and Mult.
 </para>
 
 @self: 
+@output_index: 
+@Returns: 
+<!-- # Unused Parameters # -->
 @index_num_outputs: 
 @index: 
-@Returns: 
 
 
 <!-- ##### FUNCTION gegl_node_accept ##### -->
@@ -132,31 +159,6 @@ B) and Comp as output. A is shared by both its outputs Blur and Mult.
 
 @self: 
 @visitor: 
-
-
-<!-- ##### FUNCTION gegl_node_traverse_depth_first ##### -->
-<para>
-
-</para>
-
-@self: 
-@visitor: 
-@init: 
-<!-- # Unused Parameters # -->
-@visit_func: 
-@data: 
-
-
-<!-- ##### FUNCTION gegl_node_traverse_breadth_first ##### -->
-<para>
-
-</para>
-
-@self: 
-@visitor: 
-<!-- # Unused Parameters # -->
-@visit_func: 
-@data: 
 
 
 <!-- ##### FUNCTION gegl_node_set_num_inputs ##### -->

@@ -20,8 +20,9 @@ extern "C" {
 #define __TYPEDEF_GEGL_OBJECT__
 typedef struct _GeglObject GeglObject;
 #endif
-struct _GeglObject {
-       GObject __parent__;
+struct _GeglObject 
+{
+       GObject gobject;
 
        /*< private >*/
        gchar * name;
@@ -30,8 +31,9 @@ struct _GeglObject {
 };
 
 typedef struct _GeglObjectClass GeglObjectClass;
-struct _GeglObjectClass {
-       GObjectClass __parent__;
+struct _GeglObjectClass 
+{
+       GObjectClass gobject_class;
 };
 
 GType         gegl_object_get_type          (void); 

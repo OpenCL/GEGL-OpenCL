@@ -21,8 +21,9 @@ static void finalize (GObject *gobject);
 static void allocate_xyz_data (GeglCopy * self, gint width);
 static void free_xyz_data (GeglCopy * self);
 
-static void prepare (GeglOp * op, GList * output_values, GList *input_values);
-static void scanline (GeglOp * op, GeglTileIterator ** iters, gint width);
+static void prepare (GeglFilter * op, GList * attributes, GList *input_attributes);
+static void scanline (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static GeglColorModel *compute_derived_color_model (GeglFilter * filter, GList* input_color_models);
 
 static gpointer parent_class = NULL;
 
@@ -58,13 +59,14 @@ static void
 class_init (GeglCopyClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-  GeglOpClass *op_class = GEGL_OP_CLASS (klass);
+  GeglFilterClass *filter_class = GEGL_FILTER_CLASS (klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->finalize = finalize;
 
-  op_class->prepare = prepare;
+  filter_class->prepare = prepare;
+  filter_class->compute_derived_color_model = compute_derived_color_model;
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
@@ -190,24 +192,35 @@ free_xyz_data (GeglCopy * self)
     }   
 }
 
-static void 
-prepare (GeglOp * op, 
-         GList * output_values,
-         GList * input_values)
+static GeglColorModel * 
+compute_derived_color_model (GeglFilter * filter, 
+                             GList * input_color_models)
 {
-  GeglPointOp *point_op = GEGL_POINT_OP(op); 
-  GeglCopy *self = GEGL_COPY(op); 
+  GeglColorModel *cm = gegl_image_color_model(GEGL_IMAGE(filter));
+  if(cm) 
+    return cm; 
+  else 
+    return (GeglColorModel *)g_list_nth_data(input_color_models, 0);
+}
 
-  GValue *dest_value = g_list_nth_data(output_values, 0); 
-  GeglTile *dest = g_value_get_image_data_tile(dest_value);
+static void 
+prepare (GeglFilter * filter, 
+         GList *attributes,
+         GList *input_attributes)
+{
+  GeglPointOp *point_op = GEGL_POINT_OP(filter); 
+  GeglCopy *self = GEGL_COPY(filter); 
+
+  GeglAttributes *dest_attributes = g_list_nth_data(attributes, 0); 
+  GeglTile *dest = (GeglTile*)g_value_get_object(dest_attributes->value);
   GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
   GeglRect dest_rect;
 
-  GValue *src_value = g_list_nth_data(input_values, 0); 
-  GeglTile *src = g_value_get_image_data_tile(src_value);
+  GeglAttributes *src_attributes = g_list_nth_data(input_attributes, 0); 
+  GeglTile *src = (GeglTile*)g_value_get_object(src_attributes->value);
   GeglColorModel * src_cm = gegl_tile_get_color_model (src);
 
-  g_value_get_image_data_rect(dest_value, &dest_rect);
+  gegl_rect_copy(&dest_rect, &dest_attributes->rect);
 
   g_return_if_fail(dest_cm);
   g_return_if_fail(src_cm);
@@ -237,7 +250,7 @@ prepare (GeglOp * op,
 
 /**
  * scanline:
- * @self_op: a #GeglOp.
+ * @filter: a #GeglFilter.
  * @iters: a #GeglTileIterator array. 
  * @width: width of scanline.
  *
@@ -245,11 +258,11 @@ prepare (GeglOp * op,
  *
  **/
 static void 
-scanline (GeglOp * op, 
+scanline (GeglFilter * filter, 
           GeglTileIterator ** iters, 
           gint width)
 {
-  GeglCopy *self = GEGL_COPY (op);
+  GeglCopy *self = GEGL_COPY (filter);
   GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
   GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[1]);
   guint dest_nchans = gegl_color_model_num_channels (dest_cm);

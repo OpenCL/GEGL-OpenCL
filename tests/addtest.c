@@ -3,6 +3,7 @@
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
+#include <string.h>
 
 #define SAMPLED_IMAGE_WIDTH 1 
 #define SAMPLED_IMAGE_HEIGHT 1 
@@ -51,22 +52,42 @@ test_add_g_object_new(Test *test)
 static void
 test_add_apply(Test *test)
 {
+  {
+    /* 
+       add = input0 + input1 
+       (.5,.7,.9) = (.1,.2,.3) + (.4,.5,.6)
+    */
 
-  /* 
-     add = input0 + input1 
-     (.5,.7,.9) = (.1,.2,.3) + (.4,.5,.6)
-  */
+    GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
+                                "input0", input0,
+                                "input1", input1,
+                                NULL);  
 
-  GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
-                              "input0", input0,
-                              "input1", input1,
-                              NULL);  
+    gegl_op_apply(add); 
 
-  gegl_op_apply_image(add, dest, NULL); 
+    ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(add), .1 + .4, .2 + .5, .3 + .6));
+    g_object_unref(add);
+  }
+}
 
-  ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(dest), .1 + .4, .2 + .5, .3 + .6));  
+static void
+test_add_apply_image(Test *test)
+{
+    /* 
+       add = input0 + input1 
+       (.5,.7,.9) = (.1,.2,.3) + (.4,.5,.6)
+    */
 
-  g_object_unref(add);
+    GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
+                                "input0", input0,
+                                "input1", input1,
+                                NULL);  
+
+    gegl_op_apply_image(add, dest, NULL); 
+
+    ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(dest), .1 + .4, .2 + .5, .3 + .6));  
+
+    g_object_unref(add);
 }
 
 static void
@@ -108,8 +129,12 @@ create_add_test()
 
   g_assert(ct_addSetUp(t, add_test_setup));
   g_assert(ct_addTearDown(t, add_test_teardown));
+
+#if 1 
   g_assert(ct_addTestFun(t, test_add_g_object_new));
   g_assert(ct_addTestFun(t, test_add_apply));
+  g_assert(ct_addTestFun(t, test_add_apply_image));
+#endif
 
   return t; 
 }

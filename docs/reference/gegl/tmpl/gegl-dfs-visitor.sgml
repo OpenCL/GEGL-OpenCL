@@ -1,0 +1,26 @@
+<!-- ##### SECTION Title ##### -->
+GeglDfsVisitor
+
+<!-- ##### SECTION Short_Description ##### -->
+Abstract class for Depth first visitors.
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_dfs_visitor_traverse ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+
+

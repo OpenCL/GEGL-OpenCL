@@ -35,6 +35,8 @@ GEGL_GEN_SRC = \
   gegl-unpremult.c
 
 GEGL_SRC = \
+  gegl-attributes.c \
+  gegl-bfs-visitor.c \
   gegl-buffer.c \
   gegl-color.c \
   gegl-color-model.c \
@@ -47,11 +49,16 @@ GEGL_SRC = \
   gegl-color-model-rgb-u8.c \
   gegl-color-model-rgb-u16.c \
   gegl-copy.c \
+  gegl-dfs-visitor.c \
+  gegl-dump-visitor.c \
   gegl-fill.c \
   gegl-filter.c \
-  gegl-filter-bfs-visitor.c \
-  gegl-filter-dfs-visitor.c \
-  gegl-filter-inputs-visitor.c \
+  gegl-graph.c \
+  gegl-graph-bfs-visitor.c \
+  gegl-graph-dfs-visitor.c \
+  gegl-graph-evaluate-visitor.c \
+  gegl-graph-init-visitor.c \
+  gegl-graph-setup-visitor.c \
   gegl-image.c \
   gegl-mem-buffer.c \
   gegl-node.c \
@@ -72,6 +79,8 @@ GEGL_SRC = \
 
 GEGL_PUBLIC_HDRS = \
   gegl-add.h \
+  gegl-attributes.h \
+  gegl-bfs-visitor.h \
   gegl-buffer.h \
   gegl-color.h \
   gegl-color-model.h \
@@ -88,12 +97,17 @@ GEGL_PUBLIC_HDRS = \
   gegl-const-mult.h \
   gegl-copy.h \
   gegl-dark.h \
+  gegl-dfs-visitor.h \
   gegl-diff.h \
+  gegl-dump-visitor.h \
   gegl-fill.h \
   gegl-filter.h \
-  gegl-filter-bfs-visitor.h \
-  gegl-filter-dfs-visitor.h \
-  gegl-filter-inputs-visitor.h \
+  gegl-graph.h \
+  gegl-graph-bfs-visitor.h \
+  gegl-graph-dfs-visitor.h \
+  gegl-graph-evaluate-visitor.h \
+  gegl-graph-init-visitor.h \
+  gegl-graph-setup-visitor.h \
   gegl-image.h \
   gegl-light.h \
   gegl-max.h \

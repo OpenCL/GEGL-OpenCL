@@ -23,8 +23,9 @@ typedef struct _GeglColorModel  GeglColorModel;
 #define __TYPEDEF_GEGL_COLOR__
 typedef struct _GeglColor GeglColor;
 #endif
-struct _GeglColor {
-   GeglObject __parent__;
+struct _GeglColor 
+{
+   GeglObject object;
 
    /*< private >*/
    GeglColorModel * color_model;
@@ -33,8 +34,9 @@ struct _GeglColor {
 };
 
 typedef struct _GeglColorClass GeglColorClass;
-struct _GeglColorClass {
-   GeglObjectClass __parent__;
+struct _GeglColorClass 
+{
+   GeglObjectClass object_class;
 };
 
 GType                 gegl_color_get_type             (void);

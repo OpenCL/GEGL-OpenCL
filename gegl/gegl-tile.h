@@ -33,8 +33,9 @@ typedef struct _GeglColorModel  GeglColorModel;
 #define __TYPEDEF_GEGL_TILE__
 typedef struct _GeglTile GeglTile;
 #endif
-struct _GeglTile {
-   GeglObject __parent__;
+struct _GeglTile 
+{
+   GeglObject object;
 
    /*< private >*/
    GeglBuffer * buffer;
@@ -43,8 +44,9 @@ struct _GeglTile {
 };
 
 typedef struct _GeglTileClass GeglTileClass;
-struct _GeglTileClass {
-   GeglObjectClass __parent__;
+struct _GeglTileClass 
+{
+   GeglObjectClass object_class;
 };
 
 #ifndef __TYPEDEF_GEGL_OP_REQUEST__

@@ -2,6 +2,7 @@
 GeglCompPremult
 
 <!-- ##### SECTION Short_Description ##### -->
+Composite two premultiplied images.
 
 
 <!-- ##### SECTION Long_Description ##### -->

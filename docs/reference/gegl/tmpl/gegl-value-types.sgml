@@ -22,14 +22,6 @@ gegl-value-types
 @value: 
 
 
-<!-- ##### STRUCT GeglImageData ##### -->
-<para>
-
-</para>
-
-@tile: 
-@rect: 
-
 <!-- ##### FUNCTION g_value_get_image_data ##### -->
 <para>
 

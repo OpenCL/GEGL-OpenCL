@@ -18,13 +18,15 @@ extern "C" {
 #define __TYPEDEF_GEGL_COLOR_MODEL_RGB_U16__
 typedef struct _GeglColorModelRgbU16 GeglColorModelRgbU16;
 #endif
-struct _GeglColorModelRgbU16 {
-   GeglColorModelRgb __parent__;
+struct _GeglColorModelRgbU16 
+{
+   GeglColorModelRgb color_model_rgb;
 };
 
 typedef struct _GeglColorModelRgbU16Class GeglColorModelRgbU16Class;
-struct _GeglColorModelRgbU16Class {
-   GeglColorModelRgbClass __parent__;
+struct _GeglColorModelRgbU16Class 
+{
+   GeglColorModelRgbClass color_model_rgb_class;
 };
 
 GType                       gegl_color_model_rgb_u16_get_type      (void);

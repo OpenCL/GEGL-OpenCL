@@ -8,7 +8,8 @@
 #include "gegl-param-specs.h"
 #include "gegl-value-types.h"
 #include "gegl-tile-mgr.h"
-#include "gegl-filter.h"
+#include "gegl-graph.h"
+#include "gegl-dump-visitor.h"
 
 static gboolean gegl_initialized = FALSE;
 
@@ -132,10 +133,19 @@ gegl_init (int *argc,
   
 }
 
-GType
-gegl_utils_get_filter_type()
+void 
+gegl_utils_execute_graph(GeglOp * root,
+                         GeglOp * image,
+                         GeglRect *roi)
 {
-  return GEGL_TYPE_FILTER; 
+  GeglGraph * graph = g_object_new(GEGL_TYPE_GRAPH,
+                                   "root", root,
+                                   "image", image,
+                                   "roi", roi,
+                                   NULL);
+
+  gegl_graph_execute(graph);
+  g_object_unref(graph);
 }
 
 void 
@@ -156,15 +166,26 @@ gegl_rect_bounding_box (GeglRect *dest,
                         GeglRect *src1,
                         GeglRect *src2)
 {
-  gint x1 = MIN(src1->x, src2->x); 
-  gint x2 = MAX(src1->x + src1->w, src2->x + src2->w);  
-  gint y1 = MIN(src1->y, src2->y); 
-  gint y2 = MAX(src1->y + src1->h, src2->y + src2->h);  
-    
-  dest->x = x1;
-  dest->y = y1; 
-  dest->w = x2 - x1;
-  dest->h = y2 - y1;
+  gboolean s1_has_area = src1->w && src1->h;
+  gboolean s2_has_area = src2->w && src2->h;
+
+  if( !s1_has_area &&  !s2_has_area)
+      gegl_rect_set(dest,0,0,0,0);
+  else if(!s1_has_area)
+      gegl_rect_copy(dest,src2);
+  else if(!s2_has_area)
+      gegl_rect_copy(dest,src1);
+
+  {
+    gint x1 = MIN(src1->x, src2->x); 
+    gint x2 = MAX(src1->x + src1->w, src2->x + src2->w);  
+    gint y1 = MIN(src1->y, src2->y); 
+    gint y2 = MAX(src1->y + src1->h, src2->y + src2->h);  
+    dest->x = x1;
+    dest->y = y1; 
+    dest->w = x2 - x1;
+    dest->h = y2 - y1;
+  }
 }
 
 gboolean 
@@ -235,6 +256,22 @@ gegl_rect_equal (GeglRect *r,
     return FALSE;
 }
 
+gboolean
+gegl_rect_equal_coords (GeglRect *r,
+                        gint x,
+                        gint y,
+                        gint w,
+                        gint h)
+{
+  if (r->x == x && 
+      r->y == y &&
+      r->w == w &&
+      r->h == h)
+    return TRUE;
+  else
+    return FALSE;
+}
+
 #define GEGL_LOG_DOMAIN "Gegl"
 
 
@@ -273,4 +310,45 @@ gegl_logv(GLogLevelFlags level,
         g_log(GEGL_LOG_DOMAIN,level, "        ");
         g_free(tabbed);
       }
+}
+
+void
+gegl_direct_log(GLogLevelFlags level,
+         gchar *format,
+         ...)
+{
+    va_list args;
+    va_start(args,format);
+    gegl_direct_logv(level,format,args);
+    va_end(args);
+}
+
+void
+gegl_direct_logv(GLogLevelFlags level,
+         gchar *format,
+         va_list args)
+{
+    if (g_getenv("GEGL_LOG_ON"))
+      {
+        gchar *tabbed = NULL;
+        tabbed = g_strconcat("   ", format, NULL);
+        g_logv(GEGL_LOG_DOMAIN, level, tabbed, args);
+        g_free(tabbed);
+      }
+}
+
+void
+gegl_dump_graph_msg(gchar * msg, 
+                    GeglNode * root) 
+{
+   LOG_DIRECT(msg);
+   gegl_dump_graph(root);
+}
+
+void
+gegl_dump_graph(GeglNode * root) 
+{
+   GeglDumpVisitor * dump = g_object_new(GEGL_TYPE_DUMP_VISITOR, NULL); 
+   gegl_dump_visitor_traverse(dump, root); 
+   g_object_unref(dump);
 }

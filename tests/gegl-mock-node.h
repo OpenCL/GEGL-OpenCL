@@ -21,7 +21,7 @@ typedef struct _GeglMockNode  GeglMockNode;
 
 struct _GeglMockNode 
 {
-    GeglNode       __parent__;
+    GeglNode       node;
 
     /*< private >*/
 };
@@ -29,7 +29,7 @@ struct _GeglMockNode
 typedef struct _GeglMockNodeClass GeglMockNodeClass;
 struct _GeglMockNodeClass 
 {
-   GeglNodeClass __parent__;
+   GeglNodeClass node_class;
 };
 
 GType             gegl_mock_node_get_type                  (void);

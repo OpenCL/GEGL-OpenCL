@@ -23,8 +23,9 @@ typedef struct _GeglColor GeglColor;
 #define __TYPEDEF_GEGL_COLOR_MODEL_RGB__
 typedef struct _GeglColorModelRgb GeglColorModelRgb;
 #endif
-struct _GeglColorModelRgb {
-   GeglColorModel __parent__;
+struct _GeglColorModelRgb 
+{
+   GeglColorModel color_model;
 
    /*< private >*/
    gint red_index; 
@@ -33,8 +34,9 @@ struct _GeglColorModelRgb {
 };
 
 typedef struct _GeglColorModelRgbClass GeglColorModelRgbClass;
-struct _GeglColorModelRgbClass {
-   GeglColorModelClass __parent__;
+struct _GeglColorModelRgbClass 
+{
+   GeglColorModelClass color_model_class;
 };
 
 GType   gegl_color_model_rgb_get_type          (void);

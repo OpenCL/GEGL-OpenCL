@@ -2,14 +2,14 @@
 GeglObject
 
 <!-- ##### SECTION Short_Description ##### -->
-Base class for gegl.
+Base Object class.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This is the base class for gegl.  All gegl classes extend from this class.
-GeglObjects have a construction flag, keep track of pointers to interfaces for
-some color conversions, but aside from this dont do much.
-
+This is the base Object class for Gegl. All Gegl classes extend from this
+class. GeglObjects don't do much. They can be given names, have a construction
+flag. There are some methods for storing interfaces, but these are deprecated.
+They will be replaced with normal GTypeInterfaces shortly.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
