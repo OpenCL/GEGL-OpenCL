@@ -6,72 +6,28 @@
                "file:///home/calvinw/develop/gegl/docbook/docbkx412/docbookx.dtd" [
 -->
 
-<!ENTITY GeglAdd SYSTEM "xml/gegl-add.xml">
-<!ENTITY gegl-gegl-array-param-specs SYSTEM "xml/gegl-array-param-specs.xml">
-<!ENTITY gegl-gegl-array-value-types SYSTEM "xml/gegl-array-value-types.xml">
-<!ENTITY GeglBfsVisitor SYSTEM "xml/gegl-bfs-visitor.xml">
-<!ENTITY GeglBinary SYSTEM "xml/gegl-binary.xml">
-<!ENTITY GeglBlend SYSTEM "xml/gegl-blend.xml">
-<!ENTITY gegl-gegl-channel-param-specs SYSTEM "xml/gegl-channel-param-specs.xml">
-<!ENTITY GeglColorData SYSTEM "xml/gegl-color-data.xml">
-<!ENTITY GeglColorModel SYSTEM "xml/gegl-color-model.xml">
-<!ENTITY GeglColorSpaceGray SYSTEM "xml/gegl-color-space-gray.xml">
-<!ENTITY GeglColorSpaceRgb SYSTEM "xml/gegl-color-space-rgb.xml">
-<!ENTITY GeglColorSpace SYSTEM "xml/gegl-color-space.xml">
-<!ENTITY GeglColor SYSTEM "xml/gegl-color.xml">
-<!ENTITY GeglComp SYSTEM "xml/gegl-comp.xml">
-<!ENTITY GeglComponentColorModel SYSTEM "xml/gegl-component-color-model.xml">
-<!ENTITY GeglComponentStorage SYSTEM "xml/gegl-component-storage.xml">
 <!ENTITY GeglBuffer SYSTEM "xml/gegl-buffer.xml">
-<!ENTITY GeglChannels SYSTEM "xml/gegl-channels.xml">
-<!ENTITY GeglData SYSTEM "xml/gegl-data.xml">
-<!ENTITY GeglDfsVisitor SYSTEM "xml/gegl-dfs-visitor.xml">
-<!ENTITY GeglDifference SYSTEM "xml/gegl-difference.xml">
-<!ENTITY GeglDumpVisitor SYSTEM "xml/gegl-dump-visitor.xml">
-<!ENTITY GeglEvalBfsVisitor SYSTEM "xml/gegl-eval-bfs-visitor.xml">
-<!ENTITY GeglEvalDfsVisitor SYSTEM "xml/gegl-eval-dfs-visitor.xml">
+<!ENTITY GeglBufferDouble SYSTEM "xml/gegl-buffer-double.xml">
+<!ENTITY GeglCacheEntry SYSTEM "xml/gegl-cache-entry.xml">
+<!ENTITY GeglCache SYSTEM "xml/gegl-cache.xml">
+<!ENTITY GeglColorModel SYSTEM "xml/gegl-color-model.xml">
+<!ENTITY GeglColorSpaceImp SYSTEM "xml/gegl-color-space-imp.xml">
+<!ENTITY GeglColorSpace SYSTEM "xml/gegl-color-space.xml">
+<!ENTITY GeglComponentSampleModel SYSTEM "xml/gegl-component-sample-model.xml">
 <!ENTITY GeglEvalMgr SYSTEM "xml/gegl-eval-mgr.xml">
 <!ENTITY GeglEvalVisitor SYSTEM "xml/gegl-eval-visitor.xml">
-<!ENTITY GeglFade SYSTEM "xml/gegl-fade.xml">
-<!ENTITY GeglFill SYSTEM "xml/gegl-fill.xml">
 <!ENTITY GeglFilter SYSTEM "xml/gegl-filter.xml">
-<!ENTITY GeglGraphSetupVisitor SYSTEM "xml/gegl-graph-setup-visitor.xml">
 <!ENTITY GeglGraph SYSTEM "xml/gegl-graph.xml">
-<!ENTITY GeglIAdd SYSTEM "xml/gegl-i-add.xml">
-<!ENTITY GeglImage SYSTEM "xml/gegl-image.xml">
-<!ENTITY GeglImageOpInterface SYSTEM "xml/gegl-image-op-interface.xml">
-<!ENTITY GeglImageIterator SYSTEM "xml/gegl-image-iterator.xml">
-<!ENTITY gegl-gegl-image-param-specs SYSTEM "xml/gegl-image-param-specs.xml">
-<!ENTITY GeglImageData SYSTEM "xml/gegl-image-data.xml">
-<!ENTITY GeglImageOp SYSTEM "xml/gegl-image-op.xml">
-<!ENTITY gegl-gegl-input-param-specs SYSTEM "xml/gegl-input-param-specs.xml">
-<!ENTITY gegl-gegl-m-source-param-specs SYSTEM "xml/gegl-m-source-param-specs.xml">
-<!ENTITY GeglMult SYSTEM "xml/gegl-mult.xml">
-<!ENTITY GeglMultiImageOp SYSTEM "xml/gegl-multi-image-op.xml">
-<!ENTITY GeglMultiply SYSTEM "xml/gegl-multiply.xml">
-<!ENTITY GeglNoInput SYSTEM "xml/gegl-no-input.xml">
 <!ENTITY GeglNode SYSTEM "xml/gegl-node.xml">
+<!ENTITY GeglNormalizer SYSTEM "xml/gegl-normalizer.xml">
+<!ENTITY GeglNormalizerMult SYSTEM "xml/gegl-normalizer-mult.xml">
 <!ENTITY GeglObject SYSTEM "xml/gegl-object.xml">
-<!ENTITY GeglOp SYSTEM "xml/gegl-op.xml">
-<!ENTITY GeglOver SYSTEM "xml/gegl-over.xml">
-<!ENTITY GeglPipe SYSTEM "xml/gegl-pipe.xml">
-<!ENTITY gegl-gegl-pixel-param-specs SYSTEM "xml/gegl-pixel-param-specs.xml">
-<!ENTITY GeglPointOp SYSTEM "xml/gegl-point-op.xml">
-<!ENTITY GeglPrint SYSTEM "xml/gegl-print.xml">
-<!ENTITY GeglScalarData SYSTEM "xml/gegl-scalar-data.xml">
-<!ENTITY GeglScanlineProcessor SYSTEM "xml/gegl-scanline-processor.xml">
-<!ENTITY GeglStorage SYSTEM "xml/gegl-storage.xml">
-<!ENTITY GeglStringData SYSTEM "xml/gegl-string-data.xml">
+<!ENTITY GeglProperty SYSTEM "xml/gegl-property.xml">
+<!ENTITY GeglSampleModel SYSTEM "xml/gegl-sample-model.xml">
 <!ENTITY GeglTile SYSTEM "xml/gegl-tile.xml">
-<!ENTITY GeglUnary SYSTEM "xml/gegl-unary.xml">
-<!ENTITY gegl-gegl-utils SYSTEM "xml/gegl-utils.xml">
+<!ENTITY GeglTileIterator SYSTEM "xml/gegl-tile-iterator.xml">
 <!ENTITY GeglVisitor SYSTEM "xml/gegl-visitor.xml">
-<!ENTITY gegl-gegl-channel-value-types SYSTEM "xml/gegl-channel-value-types.xml">
-<!ENTITY gegl-gegl-init SYSTEM "xml/gegl-init.xml">
-<!ENTITY gegl-gegl-input-value-types SYSTEM "xml/gegl-input-value-types.xml">
-<!ENTITY gegl-gegl-m-source-value-types SYSTEM "xml/gegl-m-source-value-types.xml">
-<!ENTITY gegl-gegl-pixel-value-types SYSTEM "xml/gegl-pixel-value-types.xml">
-<!ENTITY gegl-gegl-types SYSTEM "xml/gegl-types.xml">
+<!ENTITY GeglVisitable SYSTEM "xml/gegl-visitable.xml">
 <!ENTITY gegl-objecttree SYSTEM "xml/tree_index.sgml">
 <!ENTITY gegl-cvs SYSTEM "cvs.sgml">
 <!ENTITY gegl-prerequisites SYSTEM "prerequisites.sgml">
@@ -83,6 +39,7 @@
 <!ENTITY gegl-bugs SYSTEM "bugs.sgml">
 <!ENTITY gegl-mailinglists SYSTEM "mailinglists.sgml">
 <!ENTITY version SYSTEM "version.xml">
+
 ]>
 <book id="index">
   <bookinfo>
@@ -166,55 +123,28 @@
     </chapter>
 
     <chapter id="object">
-      <title>Object and Nodes</title>
-      &GeglNode;
+      <title>Object</title>
       &GeglObject;
     </chapter>
 
     <chapter id="abstractops">
       <title>Abstract and Container Ops</title>
-      &GeglBinary;
-      &GeglBlend;
-      &GeglComp;
+      &GeglNode;
       &GeglFilter;
       &GeglGraph;
-      &GeglImageOp;
-      &GeglImageOpInterface;
-      &GeglMultiImageOp;
-      &GeglNoInput;
-      &GeglOp;
-      &GeglPipe;
-      &GeglPointOp;
-      &GeglScanlineProcessor;
-      &GeglUnary;
     </chapter>
 
     <chapter id="ops">
       <title>Operators</title>
-      &GeglAdd;
-      &GeglChannels;
-      &GeglFade;
-      &GeglFill;
-      &GeglIAdd;
-      &GeglMult;
-      &GeglMultiply;
-      &GeglOver;
-      &GeglPrint;
     </chapter>
 
     <chapter id="visitors">
       <title>Visitors</title>
-      &GeglBfsVisitor;
-      &GeglDfsVisitor;
-      &GeglDumpVisitor;
-      &GeglGraphSetupVisitor;
       &GeglVisitor;
     </chapter>
 
     <chapter id="evaluation">
       <title>Evaluation Manager and Visitors</title>
-      &GeglEvalBfsVisitor;
-      &GeglEvalDfsVisitor;
       &GeglEvalMgr;
       &GeglEvalVisitor;
     </chapter>
@@ -222,57 +152,41 @@
     <chapter id="image">
       <title>Images, Storage and Buffers</title>
       &GeglBuffer;
-      &GeglComponentStorage;
-      &GeglImage;
-      &GeglImageIterator;
-      &GeglStorage;
+      &GeglBufferDouble;
+      &GeglCache;
+      &GeglCacheEntry;
+      &GeglComponentSampleModel;
+      &GeglNormalizer;
+      &GeglNormalizerMult;
+      &GeglSampleModel;
       &GeglTile;
+      &GeglTileIterator;
     </chapter>
 
-    <chapter id="data">
-      <title>Data</title>
-      &GeglColorData;
-      &GeglData;
-      &GeglImageData;
-      &GeglScalarData;
-      &GeglStringData;
+    <chapter id="property">
+      <title>Properties</title>
+      &GeglProperty;
     </chapter>
 
     <chapter id="paramspecs">
       <title>Parameter Specs</title>
-      &gegl-gegl-array-param-specs;
-      &gegl-gegl-channel-param-specs;
-      &gegl-gegl-input-param-specs;
-      &gegl-gegl-pixel-param-specs;
-      &gegl-gegl-m-source-param-specs;
     </chapter>
 
     <chapter id="values">
       <title>Values</title>
-      &gegl-gegl-array-value-types;
-      &gegl-gegl-channel-value-types;
-      &gegl-gegl-input-value-types;
-      &gegl-gegl-pixel-value-types;
-      &gegl-gegl-m-source-value-types;
     </chapter>
 
     <chapter id="colors">
       <title>Colors, ColorSpaces, ColorModels</title>
-      &GeglColor;
-      &GeglColorSpaceGray;
-      &GeglColorSpaceRgb;
-      &GeglColorSpace;
       &GeglColorModel;
-      &GeglComponentColorModel;
+      &GeglColorSpace;
+      &GeglColorSpaceImp;
     </chapter>
 
   </part>
 
   <part  id="geglmisc">
     <title>Gegl Miscellaneous</title>
-    &gegl-gegl-init;
-    &gegl-gegl-types;
-    &gegl-gegl-utils;
   </part>
 
 </book>

@@ -19,123 +19,38 @@ GeglColorModel
 
 </para>
 
+@parent: 
+@color_channels: 
+@alpha_channel: 
+@num_colors: 
+@is_lum_channel: 
 
 <!-- ##### STRUCT GeglColorModelClass ##### -->
 <para>
 
 </para>
 
-@object_class: 
-@create_storage: 
-@convert_from_float: 
-@convert_to_float: 
+@parent_class: 
 
-<!-- ##### FUNCTION gegl_color_model_register ##### -->
-<para>
-
-</para>
-
-@color_model: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_instance ##### -->
-<para>
-
-</para>
-
-@color_model_name: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_color_space ##### -->
+<!-- ##### FUNCTION gegl_color_model_is_color_channel ##### -->
 <para>
 
 </para>
 
 @self: 
+@channel_num: 
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_model_channel_space ##### -->
+<!-- ##### FUNCTION gegl_color_model_set_color_channels ##### -->
 <para>
 
 </para>
 
 @self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_channel_type_name ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_pixel_type_name ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_num_channels ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_num_colors ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_bits_per_channel ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_bits_per_pixel ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_name ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_color_model_channel_names ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
+@bands: 
+@has_lum_info: 
+@num_colors: 
 
 
 <!-- ##### FUNCTION gegl_color_model_has_alpha ##### -->
@@ -147,16 +62,7 @@ GeglColorModel
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_model_set_has_alpha ##### -->
-<para>
-
-</para>
-
-@self: 
-@has_alpha: 
-
-
-<!-- ##### FUNCTION gegl_color_model_alpha_channel ##### -->
+<!-- ##### FUNCTION gegl_color_model_get_alpha ##### -->
 <para>
 
 </para>
@@ -165,7 +71,23 @@ GeglColorModel
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_model_has_z ##### -->
+<!-- ##### FUNCTION gegl_color_model_set_alpha ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_color_model_remove_alpha ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_color_model_is_lum_channel ##### -->
 <para>
 
 </para>
@@ -174,16 +96,7 @@ GeglColorModel
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_model_set_has_z ##### -->
-<para>
-
-</para>
-
-@self: 
-@has_z: 
-
-
-<!-- ##### FUNCTION gegl_color_model_z_channel ##### -->
+<!-- ##### FUNCTION gegl_color_model_get_num_colors ##### -->
 <para>
 
 </para>
@@ -191,40 +104,4 @@ GeglColorModel
 @self: 
 @Returns: 
 
-
-<!-- ##### FUNCTION gegl_color_model_create_storage ##### -->
-<para>
-
-</para>
-
-@self: 
-@width: 
-@height: 
-@Returns: 
-
-
-<!-- ##### ARG GeglColorModel:channel-type-name ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglColorModel:color-space ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglColorModel:has-alpha ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglColorModel:has-z ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglColorModel:pixel-type-name ##### -->
-<para>
-
-</para>
 

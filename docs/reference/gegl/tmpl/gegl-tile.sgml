@@ -19,13 +19,73 @@ GeglTile
 
 </para>
 
+@parent: 
+@x_offset: 
+@y_offset: 
+@sample_model: 
+@color_model: 
+@color_space: 
 
 <!-- ##### STRUCT GeglTileClass ##### -->
 <para>
 
 </para>
 
-@object_class: 
+@parent_class: 
+@get_iterator: 
+
+<!-- ##### FUNCTION gegl_tile_get_iterator ##### -->
+<para>
+
+</para>
+
+@self: 
+@rect: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_get_bounds ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_init_shared ##### -->
+<para>
+
+</para>
+
+@source: 
+@x_offset: 
+@y_offset: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_init ##### -->
+<para>
+
+</para>
+
+@x_offset: 
+@y_offset: 
+@sample_model: 
+@color_model: 
+@color_space: 
+@buffer: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_get_writable_buffer ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
 
 <!-- ##### FUNCTION gegl_tile_get_buffer ##### -->
 <para>
@@ -35,94 +95,4 @@ GeglTile
 @self: 
 @Returns: 
 
-
-<!-- ##### FUNCTION gegl_tile_get_area ##### -->
-<para>
-
-</para>
-
-@self: 
-@area: 
-
-
-<!-- ##### FUNCTION gegl_tile_get_storage ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_tile_data_pointers ##### -->
-<para>
-
-</para>
-
-@self: 
-@x: 
-@y: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_tile_get_x ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_tile_get_y ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_tile_get_width ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_tile_get_height ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### ARG GeglTile:height ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglTile:storage ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglTile:width ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglTile:x ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglTile:y ##### -->
-<para>
-
-</para>
 

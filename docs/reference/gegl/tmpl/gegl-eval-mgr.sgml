@@ -67,6 +67,7 @@ are interior to a graph. See #GeglGraph for this.
 
 </para>
 
+@object: 
 
 <!-- ##### STRUCT GeglEvalMgrClass ##### -->
 <para>
@@ -74,59 +75,14 @@ are interior to a graph. See #GeglGraph for this.
 </para>
 
 @object_class: 
-@evaluate: 
 
-<!-- ##### FUNCTION gegl_eval_mgr_get_root ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_eval_mgr_set_root ##### -->
+<!-- ##### FUNCTION gegl_eval_mgr_apply ##### -->
 <para>
 
 </para>
 
 @self: 
 @root: 
+@property_name: 
 
-
-<!-- ##### FUNCTION gegl_eval_mgr_get_roi ##### -->
-<para>
-
-</para>
-
-@self: 
-@roi: 
-
-
-<!-- ##### FUNCTION gegl_eval_mgr_set_roi ##### -->
-<para>
-
-</para>
-
-@self: 
-@roi: 
-
-
-<!-- ##### FUNCTION gegl_eval_mgr_evaluate ##### -->
-<para>
-
-</para>
-
-@self: 
-
-
-<!-- ##### ARG GeglEvalMgr:roi ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglEvalMgr:root ##### -->
-<para>
-
-</para>
 

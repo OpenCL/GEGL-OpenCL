@@ -5,70 +5,19 @@ SUBDIRS = image
 lib_LTLIBRARIES = libgegl-1.0.la
 
 GEGL_SRC = \
-  gegl-add.c \
-  gegl-bfs-visitor.c \
-  gegl-binary.c \
-  gegl-blend.c \
-  gegl-buffer.c \
-  gegl-channels.c \
-  gegl-color.c \
-  gegl-color-data.c \
-  gegl-color-model.c \
-  gegl-color-space.c \
-  gegl-color-space-rgb.c \
-  gegl-color-space-gray.c \
-  gegl-comp.c \
-  gegl-component-color-model.c \
-  gegl-component-storage.c \
-  gegl-data.c \
-  gegl-dfs-visitor.c \
-  gegl-dump-visitor.c \
-  gegl-eval-bfs-visitor.c \
-  gegl-eval-dfs-visitor.c \
+  gegl-graph.c \
   gegl-eval-mgr.c \
   gegl-eval-visitor.c \
-  gegl-fade.c \
-  gegl-fill.c \
   gegl-filter.c \
-  gegl-graph.c \
-  gegl-graph-setup-visitor.c \
-  gegl-i-add.c \
-  gegl-image.c \
-  gegl-image-op.c \
-  gegl-image-op-interface.c \
-  gegl-image-data.c \
-  gegl-image-iterator.c \
-  gegl-mult.c \
-  gegl-multi-image-op.c \
-  gegl-multiply.c \
-  gegl-no-input.c \
+  gegl-visitor.c \
   gegl-node.c \
   gegl-object.c \
-  gegl-op.c \
-  gegl-over.c \
-  gegl-pipe.c \
-  gegl-point-op.c \
-  gegl-print.c \
-  gegl-scalar-data.c \
-  gegl-scanline-processor.c \
-  gegl-storage.c \
-  gegl-string-data.c \
-  gegl-tile.c \
-  gegl-unary.c \
-  gegl-visitor.c
+  gegl-property.c \
+  gegl-visitable.c
 
 GEGL_NONCLASS_SRC = \
-  gegl-channel-param-specs.c \
-  gegl-channel-value-types.c \
+  gegl-connection.c \
   gegl-init.c \
-  gegl-input-value-types.c \
-  gegl-input-param-specs.c \
-  gegl-m-source-value-types.c \
-  gegl-m-source-param-specs.c \
-  gegl-pixel-param-specs.c \
-  gegl-array-param-specs.c \
-  gegl-pixel-value-types.c \
-  gegl-array-value-types.c \
   gegl-utils.c
 
 GEGL_PUBLIC_HDRS = \

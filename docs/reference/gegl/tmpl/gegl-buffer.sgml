@@ -14,11 +14,29 @@ GeglBuffer
 
 </para>
 
+<!-- ##### ENUM TransferType ##### -->
+<para>
+
+</para>
+
+@TYPE_DOUBLE: 
+@TYPE_UNKNOWN: 
+
 <!-- ##### STRUCT GeglBuffer ##### -->
 <para>
 
 </para>
 
+@object: 
+@elements_per_bank: 
+@num_banks: 
+@bytes_per_element: 
+@transfer_type: 
+@banks: 
+@share_count: 
+@lock_count: 
+@cache: 
+@unique_id: 
 
 <!-- ##### STRUCT GeglBufferClass ##### -->
 <para>
@@ -26,8 +44,10 @@ GeglBuffer
 </para>
 
 @object_class: 
+@get_element_double: 
+@set_element_double: 
 
-<!-- ##### FUNCTION gegl_buffer_num_banks ##### -->
+<!-- ##### FUNCTION gegl_buffer_get_transfer_type ##### -->
 <para>
 
 </para>
@@ -36,7 +56,7 @@ GeglBuffer
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_buffer_bytes_per_bank ##### -->
+<!-- ##### FUNCTION gegl_buffer_get_num_banks ##### -->
 <para>
 
 </para>
@@ -45,7 +65,7 @@ GeglBuffer
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_buffer_total_bytes ##### -->
+<!-- ##### FUNCTION gegl_buffer_get_elements_per_bank ##### -->
 <para>
 
 </para>
@@ -54,7 +74,7 @@ GeglBuffer
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_buffer_banks_data ##### -->
+<!-- ##### FUNCTION gegl_buffer_get_banks ##### -->
 <para>
 
 </para>
@@ -63,13 +83,113 @@ GeglBuffer
 @Returns: 
 
 
-<!-- ##### ARG GeglBuffer:bytes-per-bank ##### -->
+<!-- ##### FUNCTION gegl_buffer_get_element_double ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglBuffer:num-banks ##### -->
+@self: 
+@bank: 
+@index: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_buffer_set_element_double ##### -->
 <para>
 
 </para>
+
+@self: 
+@bank: 
+@index: 
+@elem: 
+
+
+<!-- ##### FUNCTION gegl_buffer_create ##### -->
+<para>
+
+</para>
+
+@type: 
+@first_property_name: 
+@Varargs: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_buffer_acquire ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_buffer_release ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_buffer_unshare ##### -->
+<para>
+
+</para>
+
+@source: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_buffer_is_finalized ##### -->
+<para>
+
+</para>
+
+@source: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_buffer_lock ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_buffer_unlock ##### -->
+<para>
+
+</para>
+
+@self: 
+@is_dirty: 
+
+
+<!-- ##### FUNCTION gegl_buffer_attach ##### -->
+<para>
+
+</para>
+
+@self: 
+@cache: 
+
+
+<!-- ##### FUNCTION gegl_buffer_detach ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_buffer_get_unique_id ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
 

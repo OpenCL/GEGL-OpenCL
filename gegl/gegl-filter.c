@@ -1,22 +1,31 @@
-#include "gegl-filter.h"
-#include "gegl-visitor.h"
+/*
+ *   This file is part of GEGL.
+ *
+ *    GEGL is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    GEGL is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with GEGL; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  Copyright 2003 Calvin Williamson
+ *
+ */
 
-enum
-{
-  PROP_0, 
-  PROP_LAST 
-};
+#include "gegl-filter.h"
+#include "gegl-property.h"
+#include <string.h>
 
 static void class_init (GeglFilterClass * klass);
 static void init (GeglFilter * self, GeglFilterClass * klass);
-
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
-
-static void accept(GeglNode * node, GeglVisitor * visitor);
-
-static void validate_inputs (GeglFilter * self, GArray * collected_data);
-static void validate_outputs (GeglFilter * self);
+static void finalize(GObject * gobject);
 
 static gpointer parent_class = NULL;
 
@@ -41,7 +50,7 @@ gegl_filter_get_type (void)
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_OP , 
+      type = g_type_register_static (GEGL_TYPE_NODE , 
                                      "GeglFilter", 
                                      &typeInfo, 
                                      G_TYPE_FLAG_ABSTRACT);
@@ -53,21 +62,10 @@ static void
 class_init (GeglFilterClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-  GeglNodeClass *node_class = GEGL_NODE_CLASS (klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-
-  node_class->accept = accept;
-
-  klass->prepare = NULL;
-  klass->process = NULL;
-  klass->finish = NULL;
-
-  klass->validate_inputs = validate_inputs;
-  klass->validate_outputs = validate_outputs;
+  gobject_class->finalize = finalize;
 }
 
 static void 
@@ -77,107 +75,42 @@ init (GeglFilter * self,
 }
 
 static void
-set_property (GObject      *gobject,
-              guint         prop_id,
-              const GValue *value,
-              GParamSpec   *pspec)
+finalize(GObject *gobject)
 {
-  switch (prop_id)
-  {
-    default:
-      break;
-  }
-}
+  GeglFilter *self = GEGL_FILTER(gobject);
 
-static void
-get_property (GObject      *gobject,
-              guint         prop_id,
-              GValue       *value,
-              GParamSpec   *pspec)
-{
-  switch (prop_id)
-  {
-    default:
-      break;
-  }
+  G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
 /**
- * gegl_filter_evaluate:
+ * gegl_filter_create_property:
  * @self: a #GeglFilter.
+ * @name: property name.
  *
- * Evaluate the filter.
- * 
+ * Create a property.
+ *
  **/
-void      
-gegl_filter_evaluate (GeglFilter * self) 
+void
+gegl_filter_create_property(GeglFilter *self,
+                        GParamSpec *param_spec)
+{
+  GeglProperty * property; 
+  g_return_if_fail(GEGL_IS_FILTER(self));
+  g_return_if_fail(param_spec);
+
+  property = g_object_new (GEGL_TYPE_PROPERTY, NULL); 
+  gegl_property_set_param_spec(property, param_spec);
+  gegl_property_set_filter(property, self);
+  gegl_node_add_property(GEGL_NODE(self), property);
+}
+
+gboolean           
+gegl_filter_evaluate (GeglFilter *self, 
+                      const gchar *output_prop)
 {
   GeglFilterClass *klass;
-  g_return_if_fail (GEGL_IS_FILTER (self));
+  g_return_val_if_fail (GEGL_IS_FILTER (self), FALSE);
 
   klass = GEGL_FILTER_GET_CLASS(self);
-  if(klass->prepare)
-    (*klass->prepare)(self);
-
-  if(klass->process)
-    (*klass->process)(self);
-
-  if(klass->finish)
-    (*klass->finish)(self);
-}
-
-/**
- * gegl_filter_validate_inputs:
- * @self: a #GeglFilter.
- * @collected_data: Array of #GeglData to validate and convert.
- *
- * Validate and convert the inputs.
- * 
- **/
-void      
-gegl_filter_validate_inputs (GeglFilter * self, 
-                             GArray * collected_data)
-{
-  GeglFilterClass *klass;
-  g_return_if_fail (GEGL_IS_FILTER (self));
-
-  klass = GEGL_FILTER_GET_CLASS(self);
-  if(klass->validate_inputs)
-    klass->validate_inputs(self, collected_data);
-}
-
-void      
-validate_inputs (GeglFilter * self, 
-                 GArray * collected_data)
-{
-}
-
-/**
- * gegl_filter_validate_outputs:
- * @self: a #GeglFilter.
- *
- * Validate the outputs.
- * 
- **/
-void      
-gegl_filter_validate_outputs (GeglFilter * self)
-{
-  GeglFilterClass *klass;
-  g_return_if_fail (GEGL_IS_FILTER (self));
-
-  klass = GEGL_FILTER_GET_CLASS(self);
-  if(klass->validate_outputs)
-    klass->validate_outputs(self);
-}
-
-static void      
-validate_outputs (GeglFilter * self)
-{
-}
-
-static void              
-accept (GeglNode * node, 
-        GeglVisitor * visitor)
-{
-  gegl_visitor_visit_filter(visitor, GEGL_FILTER(node));
+  return klass->evaluate(self, output_prop);
 }

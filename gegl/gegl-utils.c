@@ -1,14 +1,6 @@
 #include "gegl-utils.h"
 #include "gegl-types.h"
 
-#include "gegl-color-space-rgb.h"
-#include "gegl-color-space-gray.h"
-#include "gegl-component-color-model.h"
-#include "gegl-param-specs.h"
-#include "gegl-value-types.h"
-#include "gegl-graph.h"
-#include "gegl-dump-visitor.h"
-
 void gegl_log(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, ...);
 void gegl_logv(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, va_list args);
 void gegl_direct_log(GLogLevelFlags level, gchar *format, ...);

@@ -19,90 +19,76 @@ GeglColorSpace
 
 </para>
 
+@parent: 
+@implementation_data: 
+@name: 
+@num_colors: 
+@varient: 
+@limits: 
 
 <!-- ##### STRUCT GeglColorSpaceClass ##### -->
 <para>
 
 </para>
 
-@object_class: 
-@convert_to_xyz: 
-@convert_from_xyz: 
+@parent_class: 
+@implementation: 
 
-<!-- ##### FUNCTION gegl_color_space_register ##### -->
+<!-- ##### FUNCTION gegl_color_space_create_icc ##### -->
 <para>
 
 </para>
 
-@color_space: 
+@icc_filename: 
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_space_instance ##### -->
+<!-- ##### FUNCTION gegl_color_space_create_sRGB ##### -->
 <para>
 
 </para>
 
-@name: 
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_space_color_space_type ##### -->
+<!-- ##### FUNCTION gegl_color_space_create_SWOP ##### -->
 <para>
 
 </para>
 
-@self: 
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_space_num_components ##### -->
+<!-- ##### FUNCTION gegl_color_space_create_grey22 ##### -->
 <para>
 
 </para>
 
-@self: 
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_space_name ##### -->
+<!-- ##### FUNCTION gegl_color_space_create_grey ##### -->
 <para>
 
 </para>
 
-@self: 
+@gamma: 
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_space_component_name ##### -->
+<!-- ##### FUNCTION gegl_color_space_create_lab ##### -->
 <para>
 
 </para>
 
-@self: 
-@n: 
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_space_convert_to_xyz ##### -->
+<!-- ##### FUNCTION gegl_color_space_check_color_model ##### -->
 <para>
 
 </para>
 
-@self: 
-@dest: 
-@src: 
-@num: 
-
-
-<!-- ##### FUNCTION gegl_color_space_convert_from_xyz ##### -->
-<para>
-
-</para>
-
-@self: 
-@dest: 
-@src: 
-@num: 
+@Returns: 
 
 

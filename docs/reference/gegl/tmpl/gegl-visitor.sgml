@@ -41,15 +41,6 @@ routine finds inputs C and B when used for A, and D when used for B.
 
 </para>
 
-<!-- ##### STRUCT GeglNodeInfo ##### -->
-<para>
-
-</para>
-
-@visited: 
-@discovered: 
-@shared_count: 
-
 <!-- ##### STRUCT GeglVisitor ##### -->
 <para>
 
@@ -62,46 +53,8 @@ routine finds inputs C and B when used for A, and D when used for B.
 </para>
 
 @object_class: 
+@visit_property: 
 @visit_node: 
-@visit_op: 
-@visit_filter: 
-@visit_graph: 
-
-<!-- ##### FUNCTION gegl_visitor_visit_node ##### -->
-<para>
-
-</para>
-
-@self: 
-@node: 
-
-
-<!-- ##### FUNCTION gegl_visitor_visit_filter ##### -->
-<para>
-
-</para>
-
-@self: 
-@filter: 
-
-
-<!-- ##### FUNCTION gegl_visitor_visit_op ##### -->
-<para>
-
-</para>
-
-@self: 
-@op: 
-
-
-<!-- ##### FUNCTION gegl_visitor_visit_graph ##### -->
-<para>
-
-</para>
-
-@self: 
-@graph: 
-
 
 <!-- ##### FUNCTION gegl_visitor_get_visits_list ##### -->
 <para>
@@ -112,7 +65,25 @@ routine finds inputs C and B when used for A, and D when used for B.
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_visitor_node_insert ##### -->
+<!-- ##### FUNCTION gegl_visitor_visit_visitable ##### -->
+<para>
+
+</para>
+
+@self: 
+@visitable: 
+
+
+<!-- ##### FUNCTION gegl_visitor_visit_property ##### -->
+<para>
+
+</para>
+
+@self: 
+@property: 
+
+
+<!-- ##### FUNCTION gegl_visitor_visit_node ##### -->
 <para>
 
 </para>
@@ -121,83 +92,21 @@ routine finds inputs C and B when used for A, and D when used for B.
 @node: 
 
 
-<!-- ##### FUNCTION gegl_visitor_node_lookup ##### -->
+<!-- ##### FUNCTION gegl_visitor_dfs_traverse ##### -->
 <para>
 
 </para>
 
 @self: 
-@node: 
-@Returns: 
+@visitable: 
 
 
-<!-- ##### FUNCTION gegl_visitor_get_visited ##### -->
+<!-- ##### FUNCTION gegl_visitor_bfs_traverse ##### -->
 <para>
 
 </para>
 
 @self: 
-@node: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_visitor_set_visited ##### -->
-<para>
-
-</para>
-
-@self: 
-@node: 
-@visited: 
-
-
-<!-- ##### FUNCTION gegl_visitor_get_discovered ##### -->
-<para>
-
-</para>
-
-@self: 
-@node: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_visitor_set_discovered ##### -->
-<para>
-
-</para>
-
-@self: 
-@node: 
-@discovered: 
-
-
-<!-- ##### FUNCTION gegl_visitor_get_shared_count ##### -->
-<para>
-
-</para>
-
-@self: 
-@node: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_visitor_set_shared_count ##### -->
-<para>
-
-</para>
-
-@self: 
-@node: 
-@shared_count: 
-
-
-<!-- ##### FUNCTION gegl_visitor_collect_input_data ##### -->
-<para>
-
-</para>
-
-@self: 
-@node: 
-@Returns: 
+@visitable: 
 
 

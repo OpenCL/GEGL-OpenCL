@@ -1,3 +1,23 @@
+/*
+ *   This file is part of GEGL.
+ *
+ *    GEGL is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    GEGL is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with GEGL; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  Copyright 2003 Calvin Williamson
+ *
+ */
 #ifndef __GEGL_EVAL_MGR_H__
 #define __GEGL_EVAL_MGR_H__
 
@@ -21,28 +41,18 @@ struct _GeglEvalMgr
    GeglObject object;
 
    /*< private >*/
-   GeglNode * root;
-   GeglRect roi;
 };
 
 typedef struct _GeglEvalMgrClass GeglEvalMgrClass;
 struct _GeglEvalMgrClass 
 {
    GeglObjectClass object_class;
-
-   void (*evaluate)                 (GeglEvalMgr * self);
 };
 
 GType           gegl_eval_mgr_get_type          (void);
-GeglNode *      gegl_eval_mgr_get_root          (GeglEvalMgr * self); 
-void            gegl_eval_mgr_set_root          (GeglEvalMgr * self, 
-                                                 GeglNode *root);
-void            gegl_eval_mgr_get_roi           (GeglEvalMgr *self, 
-                                                 GeglRect *roi);
-void            gegl_eval_mgr_set_roi           (GeglEvalMgr *self, 
-                                                 GeglRect *roi);
-
-void            gegl_eval_mgr_evaluate          (GeglEvalMgr * self);
+void            gegl_eval_mgr_apply             (GeglEvalMgr * self, 
+                                                 GeglNode *root,
+                                                 const gchar *property_name);
 
 #ifdef __cplusplus
 }

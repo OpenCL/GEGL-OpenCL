@@ -1,7 +1,27 @@
+/*
+ *   This file is part of GEGL.
+ *
+ *    GEGL is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    GEGL is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with GEGL; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  Copyright 2003 Calvin Williamson
+ *
+ */
 #ifndef __GEGL_GRAPH_H__
 #define __GEGL_GRAPH_H__
                                                 
-#include "gegl-op.h"
+#include "gegl-node.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,41 +35,29 @@ extern "C" {
 #define GEGL_GRAPH_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_GRAPH, GeglGraphClass))
 
 typedef struct _GeglGraph GeglGraph;
-typedef struct _GeglGraphInput GeglGraphInput;
-struct _GeglGraphInput
-{
-  GeglNode * node;
-  gint node_input;
-
-  GeglGraph * graph;
-  gint graph_input;
-};
 
 struct _GeglGraph 
 {
-   GeglOp op;
+   GeglNode node;
 
    /*< private >*/
-   GeglNode * root;
-   GList * graph_inputs;
+   GList * children;
 };
 
 typedef struct _GeglGraphClass GeglGraphClass;
 struct _GeglGraphClass 
 {
-   GeglOpClass op_class;
+   GeglNodeClass node_class;
 };
 
-GType           gegl_graph_get_type             (void);
-GeglNode *      gegl_graph_get_root             (GeglGraph * self); 
-void            gegl_graph_set_root             (GeglGraph * self, 
-                                                 GeglNode *root);
-GeglGraphInput *gegl_graph_lookup_input         (GeglGraph *self,
-                                                 GeglNode *node,
-                                                 gint node_input);
-GeglNode *      gegl_graph_find_source          (GeglGraph *self,
-                                                 GeglNode *node,
-                                                 gint index);
+GType           gegl_graph_get_type            (void);
+GeglNode*       gegl_graph_add_child           (GeglGraph *self, GeglNode *child);
+GeglNode*       gegl_graph_remove_child        (GeglGraph *self, GeglNode *child);
+GeglNode*       gegl_graph_get_nth_child       (GeglGraph *self, gint n);
+GList*          gegl_graph_get_children        (GeglGraph *self); 
+void            gegl_graph_remove_children     (GeglGraph *self);
+gint            gegl_graph_num_children        (GeglGraph *self);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

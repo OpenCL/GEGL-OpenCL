@@ -107,182 +107,22 @@ an op that just adds the components of the inputs it is passed.
 </para>
 
 @object_class: 
-@accept: 
 
-<!-- ##### FUNCTION gegl_node_get_num_inputs ##### -->
+<!-- ##### FUNCTION gegl_node_add_property ##### -->
 <para>
 
 </para>
 
 @self: 
-@Returns: 
+@property: 
 
 
-<!-- ##### FUNCTION gegl_node_get_num_outputs ##### -->
+<!-- ##### FUNCTION gegl_node_remove_property ##### -->
 <para>
 
 </para>
 
 @self: 
-@Returns: 
+@property: 
 
-
-<!-- ##### FUNCTION gegl_node_get_source ##### -->
-<para>
-
-</para>
-
-@self: 
-@input: 
-@Returns: 
-<!-- # Unused Parameters # -->
-@n: 
-
-
-<!-- ##### FUNCTION gegl_node_set_source ##### -->
-<para>
-
-</para>
-
-@self: 
-@source: 
-@input: 
-<!-- # Unused Parameters # -->
-@n: 
-
-
-<!-- ##### FUNCTION gegl_node_set_m_source ##### -->
-<para>
-
-</para>
-
-@self: 
-@source: 
-@input: 
-@output: 
-
-
-<!-- ##### FUNCTION gegl_node_get_m_source ##### -->
-<para>
-
-</para>
-
-@self: 
-@input: 
-@output: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_remove_sources ##### -->
-<para>
-
-</para>
-
-@self: 
-
-
-<!-- ##### FUNCTION gegl_node_get_num_sinks ##### -->
-<para>
-
-</para>
-
-@self: 
-@output: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_get_sink ##### -->
-<para>
-
-</para>
-
-@self: 
-@output: 
-@n: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_get_sink_input ##### -->
-<para>
-
-</para>
-
-@self: 
-@output: 
-@n: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_remove_sinks ##### -->
-<para>
-
-</para>
-
-@self: 
-
-
-<!-- ##### FUNCTION gegl_node_unlink ##### -->
-<para>
-
-</para>
-
-@self: 
-
-
-<!-- ##### FUNCTION gegl_node_set_num_inputs ##### -->
-<para>
-
-</para>
-
-@self: 
-@num_inputs: 
-
-
-<!-- ##### FUNCTION gegl_node_set_num_outputs ##### -->
-<para>
-
-</para>
-
-@self: 
-@num_outputs: 
-
-
-<!-- ##### FUNCTION gegl_node_add_input ##### -->
-<para>
-
-</para>
-
-@self: 
-<!-- # Unused Parameters # -->
-@n: 
-
-
-<!-- ##### FUNCTION gegl_node_add_output ##### -->
-<para>
-
-</para>
-
-@self: 
-<!-- # Unused Parameters # -->
-@n: 
-
-
-<!-- ##### FUNCTION gegl_node_accept ##### -->
-<para>
-
-</para>
-
-@self: 
-@visitor: 
-
-
-<!-- ##### ARG GeglNode:num-inputs ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglNode:num-outputs ##### -->
-<para>
-
-</para>
 

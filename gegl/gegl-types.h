@@ -4,59 +4,6 @@
 #include <glib.h>
 #include <glib-object.h>
 
-/* --- fundamental types --- */
-extern GType GEGL_TYPE_SCALAR;
-extern GType GEGL_TYPE_CHANNEL;
-extern GType GEGL_TYPE_PIXEL;
-
-#define GEGL_DEFAULT_WIDTH 64 
-#define GEGL_DEFAULT_HEIGHT 64 
-
-typedef enum
-{
-  GEGL_COLOR_SPACE_NONE,
-  GEGL_COLOR_SPACE_GRAY,
-  GEGL_COLOR_SPACE_RGB
-}GeglColorSpaceType;
-
-typedef enum
-{
-  GEGL_ALPHA_NONE    = 0, 
-  GEGL_A_ALPHA       = 1 << 0,
-  GEGL_B_ALPHA       = 1 << 1,
-  GEGL_A_B_ALPHA     = GEGL_A_ALPHA | GEGL_B_ALPHA
-} GeglAlphaFlags;
-
-typedef enum
-{
-  GEGL_NO_ALPHA  = 0, 
-  GEGL_FG_ALPHA       = 1 << 0,
-  GEGL_BG_ALPHA       = 1 << 1,
-  GEGL_FG_BG_ALPHA    = GEGL_FG_ALPHA | GEGL_BG_ALPHA
-} GeglFgBgAlphaFlags;
-
-typedef enum
-{
-  GEGL_COLOR_WHITE,
-  GEGL_COLOR_BLACK,
-  GEGL_COLOR_RED,
-  GEGL_COLOR_GREEN,
-  GEGL_COLOR_BLUE,
-  GEGL_COLOR_GRAY,
-  GEGL_COLOR_HALF_WHITE,
-  GEGL_COLOR_TRANSPARENT,
-  GEGL_COLOR_WHITE_TRANSPARENT,
-  GEGL_COLOR_BLACK_TRANSPARENT
-}GeglColorConstant;
-
-typedef enum
-{
-  GEGL_CHANNEL_SPACE_NONE,
-  GEGL_CHANNEL_SPACE_UINT8,
-  GEGL_CHANNEL_SPACE_FLOAT,
-  GEGL_CHANNEL_SPACE_U16
-}GeglChannelSpaceType;
-
 typedef struct _GeglRect GeglRect;
 struct _GeglRect
 {

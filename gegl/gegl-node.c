@@ -1,23 +1,36 @@
+/*
+ *   This file is part of GEGL.
+ *
+ *    GEGL is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    GEGL is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with GEGL; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  Copyright 2003 Calvin Williamson
+ *
+ */
 #include "gegl-node.h"
 #include "gegl-visitor.h"
+#include "gegl-visitable.h"
+#include "gegl-property.h"
+#include "gegl-connection.h"
+#include "gegl-eval-mgr.h"
 #include <stdio.h>
+#include <string.h>
 
 enum
 {
   PROP_0, 
-  PROP_NUM_INPUTS,
-  PROP_NUM_OUTPUTS,
   PROP_LAST 
-};
-
-typedef struct _GeglConnector  GeglConnector;
-struct _GeglConnector
-{
-    GeglNode * sink;
-    gint input;
-
-    GeglNode * source;
-    gint output;
 };
 
 static void class_init (GeglNodeClass * klass);
@@ -26,10 +39,14 @@ static void finalize(GObject * self_object);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 
-static void accept(GeglNode * node, GeglVisitor * visitor);
+static void free_properties (GeglNode *self);
+static gboolean properties_exist(GeglNode *sink, const gchar *sink_prop_name, GeglNode *source, const gchar *source_prop_name);
+static GeglConnection * find_connection(GeglNode *sink, GeglProperty *sink_prop);
 
-static void remove_sink(GeglNode *self, GeglConnector *connector);
-static void add_sink(GeglNode *self, GeglConnector *connector);
+static void visitable_init (gpointer ginterface, gpointer interface_data);
+static void visitable_accept (GeglVisitable *visitable, GeglVisitor *visitor);
+static GList* visitable_depends_on(GeglVisitable *visitable);
+static gboolean visitable_needs_visiting(GeglVisitable *visitable);
 
 static gpointer parent_class = NULL;
 
@@ -54,10 +71,21 @@ gegl_node_get_type (void)
         NULL
       };
 
+      static const GInterfaceInfo visitable_info = 
+      { 
+         (GInterfaceInitFunc) visitable_init,
+         NULL,  
+         NULL
+      };
+
       type = g_type_register_static (GEGL_TYPE_OBJECT, 
                                      "GeglNode", 
                                      &typeInfo, 
                                      G_TYPE_FLAG_ABSTRACT);
+
+      g_type_add_interface_static (type, 
+                                   GEGL_TYPE_VISITABLE,
+                                   &visitable_info);
     }
     return type;
 }
@@ -72,35 +100,31 @@ class_init (GeglNodeClass * klass)
   gobject_class->finalize = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-
-  klass->accept = accept;
-
-  g_object_class_install_property (gobject_class, PROP_NUM_INPUTS,
-                 g_param_spec_int ("num_inputs",
-                                    "NumInputs",
-                                    "Number of inputs for node",
-                                    0,
-                                    G_MAXINT,
-                                    0,
-                                    G_PARAM_READWRITE));
-
-  g_object_class_install_property (gobject_class, PROP_NUM_OUTPUTS,
-                 g_param_spec_int ("num_outputs",
-                                    "NumOutputs",
-                                    "Number of outputs for node",
-                                    0,
-                                    G_MAXINT,
-                                    0,
-                                    G_PARAM_READWRITE));
 }
 
 static void 
 init (GeglNode * self, 
       GeglNodeClass * klass)
 {
-  self->inputs = g_array_new(FALSE,FALSE,sizeof(GeglConnector));
-  self->outputs = g_array_new(FALSE,FALSE,sizeof(GList*));
+  self->properties = NULL;
+  self->input_properties = NULL;
+  self->output_properties = NULL;
+  self->sinks = NULL;
+  self->sources = NULL;
   self->enabled = TRUE;
+}
+
+static void
+visitable_init (gpointer ginterface,
+                gpointer interface_data)
+{
+  GeglVisitableClass *visitable_class = ginterface;
+
+  g_assert (G_TYPE_FROM_INTERFACE (ginterface) == GEGL_TYPE_VISITABLE);
+
+  visitable_class->accept = visitable_accept;
+  visitable_class->depends_on = visitable_depends_on;
+  visitable_class->needs_visiting = visitable_needs_visiting;
 }
 
 static void
@@ -108,13 +132,26 @@ finalize(GObject *gobject)
 {
   GeglNode *self = GEGL_NODE (gobject);
 
-  gegl_node_remove_sources(self);
-  g_array_free(self->inputs, TRUE);
+  gegl_node_disconnect_sources(self);
+  gegl_node_disconnect_sinks(self);
 
-  gegl_node_remove_sinks(self);
-  g_array_free(self->outputs, TRUE);
+  free_properties(self);
+
+  g_list_free(self->input_properties);
+  g_list_free(self->output_properties);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
+}
+
+static void
+free_properties (GeglNode *self)
+{
+  while(self->properties)
+    {
+      GeglProperty *property = g_list_nth_data(self->properties, 0);
+      self->properties = g_list_remove(self->properties, property);
+      g_object_unref(property);
+    }
 }
 
 static void
@@ -123,16 +160,8 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglNode *node = GEGL_NODE (gobject);
-
   switch (prop_id)
   {
-    case PROP_NUM_INPUTS:
-      gegl_node_set_num_inputs(node, g_value_get_int(value));  
-      break;
-    case PROP_NUM_OUTPUTS:
-      gegl_node_set_num_outputs(node, g_value_get_int(value));  
-      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
@@ -145,16 +174,8 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglNode *node = GEGL_NODE (gobject);
-
   switch (prop_id)
   {
-    case PROP_NUM_INPUTS:
-      g_value_set_int(value, gegl_node_get_num_inputs(node));  
-      break;
-    case PROP_NUM_OUTPUTS:
-      g_value_set_int(value, gegl_node_get_num_outputs(node));  
-      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
@@ -162,43 +183,284 @@ get_property (GObject      *gobject,
 }
 
 /**
- * gegl_node_add_input:
+ * gegl_node_get_property:
  * @self: a #GeglNode.
+ * @name: property name.
  *
- * Add an input at the end.
+ * Get a property.
  *
+ * Returns: A #GeglProperty. 
  **/
-void
-gegl_node_add_input(GeglNode *self)
+GeglProperty *
+gegl_node_get_property(GeglNode *self,
+                       const gchar *name)
 {
-  GeglConnector connector; 
-  g_return_if_fail(GEGL_IS_NODE(self));
+  GList *llink = self->properties;
+  while(llink)
+    {
+      GeglProperty *property = llink->data;
 
-  connector.sink = self;
-  connector.input = self->inputs->len;
-  connector.source = NULL;
-  connector.output = 0;
-  self->inputs = g_array_append_val(self->inputs, connector);
+      if(!strcmp(name, gegl_property_get_name(property)))
+        return property;
+
+      llink = g_list_next(llink);
+    }
+
+  return NULL;
 }
 
 /**
- * gegl_node_add_output:
+ * gegl_node_get_properties:
  * @self: a #GeglNode.
  *
- * Add an output at the end.
- *
+ * Returns: A list of #GeglProperty. 
  **/
-void
-gegl_node_add_output(GeglNode *self)
+GList *
+gegl_node_get_properties(GeglNode *self)
 {
-  GList *outputs_list = NULL;
-  g_return_if_fail(GEGL_IS_NODE(self));
-
-  self->outputs = g_array_append_val(self->outputs, outputs_list);
+  g_return_val_if_fail(GEGL_IS_NODE(self), NULL);
+  return self->properties;
 }
 
 /**
- * gegl_node_get_num_inputs:
+ * gegl_node_get_input_properties:
+ * @self: a #GeglNode.
+ *
+ * Returns: A list of #GeglProperty. 
+ **/
+GList *
+gegl_node_get_input_properties(GeglNode *self)
+{
+  g_return_val_if_fail(GEGL_IS_NODE(self), NULL);
+  return self->input_properties;
+}
+
+/**
+ * gegl_node_get_output_properties:
+ * @self: a #GeglNode.
+ *
+ * Returns: A list of #GeglProperty. 
+ **/
+GList *
+gegl_node_get_output_properties(GeglNode *self)
+{
+  g_return_val_if_fail(GEGL_IS_NODE(self), NULL);
+  return self->output_properties;
+}
+
+void
+gegl_node_add_property(GeglNode *self,
+                       GeglProperty *property)
+{
+  g_return_if_fail(GEGL_IS_NODE(self));
+  g_return_if_fail(GEGL_IS_PROPERTY(property));
+
+  self->properties = g_list_append(self->properties, property);
+
+  if(gegl_property_is_output(property))
+    self->output_properties = g_list_append(self->output_properties, property);
+
+  if(gegl_property_is_input(property))
+    self->input_properties = g_list_append(self->input_properties, property);
+}
+
+void
+gegl_node_remove_property(GeglNode *self,
+                          GeglProperty *property)
+{
+  g_return_if_fail(GEGL_IS_NODE(self));
+  g_return_if_fail(GEGL_IS_PROPERTY(property));
+
+  self->properties = g_list_remove(self->properties, property);
+
+  if(gegl_property_is_output(property))
+    self->output_properties = g_list_remove(self->output_properties, property);
+
+  if(gegl_property_is_input(property))
+    self->input_properties = g_list_remove(self->input_properties, property);
+}
+
+static gboolean
+properties_exist(GeglNode *sink, 
+                 const gchar *sink_prop_name,
+                 GeglNode *source,
+                 const gchar *source_prop_name)
+{
+  GeglProperty *sink_prop = gegl_node_get_property(sink, sink_prop_name);
+  GeglProperty *source_prop = gegl_node_get_property(source, source_prop_name);
+
+  if(!sink_prop || !gegl_property_is_input(sink_prop))
+    {
+      g_warning("Can't find sink property %s", sink_prop_name);
+      return FALSE;
+    }
+  else if(!source_prop || !gegl_property_is_output(source_prop))
+    {
+      g_warning("Can't find source property %s", source_prop_name);
+      return FALSE;
+    }
+
+  return TRUE;
+}
+
+static GeglConnection *
+find_connection(GeglNode *sink, 
+                GeglProperty *sink_prop)
+{
+  GList *llink;
+  g_return_val_if_fail(GEGL_IS_NODE(sink), NULL);
+
+  llink = sink->sources;
+  while(llink)
+    {
+      GeglConnection *connection = llink->data;
+
+      if(sink_prop == gegl_connection_get_sink_prop(connection))
+        return connection;
+
+      llink = g_list_next(llink);
+    }
+
+  return NULL;
+}
+
+gboolean            
+gegl_node_connect (GeglNode *sink, 
+                   const gchar *sink_prop_name,
+                   GeglNode *source,
+                   const gchar *source_prop_name)
+{
+  g_return_val_if_fail(GEGL_IS_NODE(sink), FALSE);
+  g_return_val_if_fail(GEGL_IS_NODE(source), FALSE);
+
+  if(!properties_exist(sink, sink_prop_name, source, source_prop_name))
+    return FALSE;
+  else
+    {
+      GeglProperty *sink_prop = gegl_node_get_property(sink, sink_prop_name);
+      GeglProperty *source_prop = gegl_node_get_property(source, source_prop_name);
+      GeglConnection *connection = gegl_property_connect(sink_prop, source_prop);
+
+      gegl_connection_set_sink_node(connection, sink);
+      gegl_connection_set_source_node(connection, source);
+
+      sink->sources = g_list_append(sink->sources, connection);
+      source->sinks = g_list_append(source->sinks, connection);
+      return TRUE;
+    }
+}
+
+gboolean            
+gegl_node_disconnect (GeglNode *sink, 
+                      const gchar *sink_prop_name,
+                      GeglNode *source,
+                      const gchar *source_prop_name)
+{
+  g_return_val_if_fail(GEGL_IS_NODE(sink), FALSE);
+  g_return_val_if_fail(GEGL_IS_NODE(source), FALSE);
+
+  if(!properties_exist(sink, sink_prop_name, source, source_prop_name))
+    return FALSE;
+  else
+    {
+      GeglProperty *sink_prop = gegl_node_get_property(sink, sink_prop_name);
+      GeglProperty *source_prop = gegl_node_get_property(source, source_prop_name);
+      GeglConnection * connection = find_connection(sink, sink_prop); 
+
+      if(!connection)
+        return FALSE;
+
+      gegl_property_disconnect(sink_prop, source_prop, connection);
+
+      sink->sources = g_list_remove(sink->sources, connection);
+      source->sinks = g_list_remove(source->sinks, connection);
+
+      g_free(connection);
+
+      return TRUE;
+    }
+}
+
+void            
+gegl_node_disconnect_sources (GeglNode *self)
+{
+  while(1)
+  {
+    GeglConnection *connection = g_list_nth_data(self->sources, 0);
+    if(connection)
+      {
+        GeglNode *sink = gegl_connection_get_sink_node(connection);
+        GeglNode *source = gegl_connection_get_source_node(connection);
+        GeglProperty *sink_prop = gegl_connection_get_sink_prop(connection);
+        GeglProperty *source_prop = gegl_connection_get_source_prop(connection);
+        const gchar *sink_prop_name = gegl_property_get_name(sink_prop);
+        const gchar *source_prop_name = gegl_property_get_name(source_prop);
+
+        g_assert(self == sink);
+
+        gegl_node_disconnect(sink, sink_prop_name, source, source_prop_name);
+      }
+    else
+      break;
+  }
+}
+
+void            
+gegl_node_disconnect_sinks (GeglNode *self)
+{
+  while(1)
+  {
+    GeglConnection *connection = g_list_nth_data(self->sinks, 0);
+    if(connection)
+      {
+        GeglNode *sink = gegl_connection_get_sink_node(connection);
+        GeglNode *source = gegl_connection_get_source_node(connection);
+        GeglProperty *sink_prop = gegl_connection_get_sink_prop(connection);
+        GeglProperty *source_prop = gegl_connection_get_source_prop(connection);
+        const gchar *sink_prop_name = gegl_property_get_name(sink_prop);
+        const gchar *source_prop_name = gegl_property_get_name(source_prop);
+
+        g_assert(self == source);
+
+        gegl_node_disconnect(sink, sink_prop_name, source, source_prop_name);
+      }
+    else
+      break;
+  }
+}
+
+/**
+ * gegl_node_num_sinks:
+ * @self: a #GeglNode.
+ *
+ * Gets the number of sinks 
+ *
+ * Returns: number of sinks 
+ **/
+gint 
+gegl_node_num_sinks (GeglNode * self)
+{
+  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
+  return g_list_length(self->sinks);
+}
+
+/**
+ * gegl_node_num_sources:
+ * @self: a #GeglNode.
+ *
+ * Gets the number of source 
+ *
+ * Returns: number of sources 
+ **/
+gint 
+gegl_node_num_sources (GeglNode * self)
+{
+  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
+  return g_list_length(self->sources);
+}
+
+/**
+ * gegl_node_get_num_input_props:
  * @self: a #GeglNode.
  *
  * Gets the number of inputs.
@@ -206,36 +468,14 @@ gegl_node_add_output(GeglNode *self)
  * Returns: number of inputs. 
  **/
 gint 
-gegl_node_get_num_inputs (GeglNode * self)
+gegl_node_get_num_input_props (GeglNode * self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
-
-  return self->inputs->len;
-}
-
-
-/**
- * gegl_node_set_num_inputs:
- * @self: a #GeglNode.
- * @num_inputs: number of inputs 
- *
- * Sets the number of inputs. 
- *
- **/
-void 
-gegl_node_set_num_inputs (GeglNode * self, 
-                          gint num_inputs)
-{
-  gint i;
-  g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail (num_inputs >= 0);
-
-  for(i = 0; i < num_inputs; i++)
-    gegl_node_add_input(self);
+  return g_list_length(self->input_properties);
 }
 
 /**
- * gegl_node_get_num_outputs:
+ * gegl_node_get_num_output_props:
  * @self: a #GeglNode.
  *
  * Gets the number of outputs.
@@ -243,355 +483,88 @@ gegl_node_set_num_inputs (GeglNode * self,
  * Returns: number of outputs. 
  **/
 gint 
-gegl_node_get_num_outputs (GeglNode * self)
+gegl_node_get_num_output_props (GeglNode * self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
-
-  return self->outputs->len;
-}
-
-
-/**
- * gegl_node_set_num_outputs:
- * @self: a #GeglNode.
- * @num_outputs: number of outputs 
- *
- * Sets the number of outputs.
- *
- **/
-void 
-gegl_node_set_num_outputs (GeglNode * self, 
-                           gint num_outputs)
-{
-  gint i;
-  g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail (num_outputs >= 0);
-
-  for(i = 0; i < num_outputs; i++)
-    gegl_node_add_output(self);
-}
-
-
-/**
- * gegl_node_get_source:
- * @self: a #GeglNode.
- * @input: which input.
- *
- * Gets the source node for the specified input.
- *
- * Returns: a #GeglNode. 
- **/
-GeglNode *
-gegl_node_get_source (GeglNode * self, 
-                      gint input)
-{
-  gint output = 0;
-  return gegl_node_get_m_source(self, input, &output);
+  return g_list_length(self->output_properties);
 }
 
 /**
- * gegl_node_set_source:
+ * gegl_node_get_sinks:
  * @self: a #GeglNode.
- * @source: the node to use.
- * @input: which input.
  *
- * Sets the source node for the specified input.
+ * Gets list of sink connections attached to this node.
  *
+ * Returns: list of sink connections.
  **/
-void
-gegl_node_set_source(GeglNode * self, 
-                     GeglNode * source, 
-                     gint input)
+GList * 
+gegl_node_get_sinks (GeglNode * self)
 {
-  gegl_node_set_m_source(self, source, input, 0);
+  return self->sinks;
 }
 
-
 /**
- * gegl_node_get_m_source:
+ * gegl_node_get_sources:
  * @self: a #GeglNode.
- * @input: which input.
- * @output: returns which output of the source node is used. 
  *
- * Gets the source node and output for the specified input. 
+ * Gets list of source connections attached to this node.
  *
- * Returns: a #GeglNode. 
+ * Returns: list of source connections.
  **/
-GeglNode *
-gegl_node_get_m_source (GeglNode * self, 
-                        gint input,
-                        gint *output)
+GList * 
+gegl_node_get_sources (GeglNode * self)
 {
-  GeglNode *source =  NULL;
-  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
-  g_return_val_if_fail (input >= 0L && input < (gint)self->inputs->len, NULL); 
+  return self->sources;
+}
 
-  *output = -1;
+void            
+gegl_node_apply  (GeglNode *self, 
+                  const gchar *output_prop_name)
+{
+  g_return_if_fail(GEGL_IS_NODE(self));
+  
+  GeglEvalMgr *eval_mgr = g_object_new(GEGL_TYPE_EVAL_MGR, NULL);
+  gegl_eval_mgr_apply(eval_mgr, self, output_prop_name);
+  g_object_unref(eval_mgr);
+}
 
-  if(self->inputs->len > 0L)
+GList *
+gegl_node_get_depends_on(GeglNode *self)
+{
+  GList *depends_on = NULL;
+  GList *llink = self->sources;
+
+  while(llink)
     {
-      if(input >= 0L && input < (gint)self->inputs->len)
-        {
-          GeglConnector *connector = &g_array_index(self->inputs, GeglConnector, input);
-          source = connector->source;
-          *output = connector->output;
-        }
+      GeglConnection *connection = llink->data;
+      GeglNode * source_node = gegl_connection_get_source_node(connection);
+
+      /* It may already be on the list, so check first */
+      if(!g_list_find(depends_on, source_node))
+        depends_on = g_list_append(depends_on, source_node);
+
+      llink = g_list_next(llink);
     }
 
-  return source;
-}
-
-/**
- * gegl_node_set_m_source:
- * @self: a #GeglNode.
- * @source: the node to use.
- * @input: which input.
- * @output: which output of source node to use.
- *
- * Sets the source node and output for the specified input.
- *
- **/
-void
-gegl_node_set_m_source(GeglNode * self, 
-                       GeglNode * source, 
-                       gint input,
-                       gint output)
-{
-  gint num_outputs;
-  GeglConnector *connector;
-  GeglNode *old_source;
-  g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail(input >= 0L && input < (gint)self->inputs->len); 
-
-  connector = &g_array_index(self->inputs, GeglConnector, input);
-  old_source = connector->source;
-
-  if(old_source)
-    remove_sink(old_source, connector);
-
-  /* Set the passed output to use */
-  if(source)
-  {
-    num_outputs = gegl_node_get_num_outputs(source);
-    g_assert(output < num_outputs);
-    connector->output = output;
-  }
-  else
-    connector->output = 0;
-
-  if(source)
-    add_sink(source, connector);
-}
-
-
-static void
-remove_sink(GeglNode *self, 
-            GeglConnector *connector)
-{
-  if(self->outputs->len > 0L && connector)
-    {
-      GList **sinks = &g_array_index(self->outputs, GList*, connector->output); 
-
-      *sinks = g_list_remove(*sinks, connector);
-
-      /* sink loses a ref to me. */
-      g_object_unref(self);
-      connector->source = NULL;
-    }
-}
-
-static void
-add_sink(GeglNode *self,
-         GeglConnector *connector)
-{
-  if(self->outputs->len > 0 && connector)
-    {
-      GList **sinks = &g_array_index(self->outputs, GList*, connector->output); 
-      *sinks = g_list_append(*sinks, connector);
-
-      /* sink gains a ref to me. */
-      g_object_ref(self);
-      connector->source = self;
-    }
-}
-
-/**
- * gegl_node_get_num_sinks:
- * @self: a #GeglNode.
- * @output: which output.
- *
- * Gets the number of sinks for the specified output.
- *
- * Returns: number of sinks. 
- **/
-gint 
-gegl_node_get_num_sinks (GeglNode * self, 
-                         gint output)
-{
-  gint num_sinks = 0;
-  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
-#if 0
-  g_return_val_if_fail(output >= 0L && output < (gint)self->outputs->len, -1); 
-#endif
-
-  if(self->outputs->len > 0)
-    {
-      GList *sinks = g_array_index(self->outputs, GList*, output); 
-      num_sinks = g_list_length(sinks);
-    }
-
-  return num_sinks;
-}
-
-
-/**
- * gegl_node_get_sink:
- * @self: a #GeglNode.
- * @output: which output to use.
- * @n: which sink to get.
- *
- * Gets the nth sink attached to the specified output.
- *
- * Returns: a #GeglNode. 
- **/
-GeglNode*         
-gegl_node_get_sink (GeglNode * self,
-                    gint output,
-                    gint n)
-{
-  GeglNode *sink = NULL;
-  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
-
-  if(self->outputs->len > 0)
-    {
-      GList *sinks = g_array_index(self->outputs, GList*, output); 
-      GeglConnector * connector = (GeglConnector*)g_list_nth_data(sinks, n);
-      if(connector)
-        sink = connector->sink;
-    }
-
-  return sink;
-}
-
-
-/**
- * gegl_node_get_sink_input:
- * @self: a #GeglNode.
- * @output: which output to use.
- * @n: which sink.
- *
- * Gets which input of the nth sink of the specified output this node is
- * attached to.
- *
- * Returns: an input of the nth sink. 
- **/
-gint              
-gegl_node_get_sink_input(GeglNode * self,
-                         gint output,
-                         gint n)
-{
-  gint input = -1;
-  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
-
-  if(self->outputs->len > 0)
-    {
-      GList *sinks = g_array_index(self->outputs, GList*, output); 
-      GeglConnector * connector = (GeglConnector*)g_list_nth_data(sinks, n);
-
-      /* Just return the input */
-      if(connector)
-        input = connector->input;
-    }
-
-  return input;
-}
-
-/**
- * gegl_node_unlink:
- * @self: a #GeglNode.
- *
- * Removes all sources and sinks for this node.
- *
- **/
-void      
-gegl_node_unlink(GeglNode * self)
-
-{
-  g_return_if_fail (GEGL_IS_NODE (self));
-
-  gegl_node_remove_sources(self);
-  gegl_node_remove_sinks(self);
-}
-
-/**
- * gegl_node_remove_sources:
- * @self: a #GeglNode.
- *
- * Removes all sources for this node.
- *
- **/
-void
-gegl_node_remove_sources(GeglNode *self) 
-{
-  gint i;
-  g_return_if_fail (GEGL_IS_NODE (self));
-
-  for(i = 0; i < (gint)self->inputs->len; i++)
-    gegl_node_set_source(self, NULL, i);
-}
-
-/**
- * gegl_node_remove_sinks:
- * @self: a #GeglNode.
- *
- * Removes all sinks for this node.
- *
- **/
-void
-gegl_node_remove_sinks(GeglNode *self) 
-{
-  g_return_if_fail (GEGL_IS_NODE (self));
-
-  if(self->outputs->len > 0)
-    {
-      GList *sinks = NULL;
-      do
-        {
-          sinks = g_array_index(self->outputs, GList*, 0);
-          if(sinks) 
-            {
-              GeglConnector *connector = sinks->data;
-              remove_sink(self,connector);
-            }
-        }
-      while(sinks);
-    }
-}
-
-/**
- * gegl_node_accept:
- * @self: a #GeglNode.
- * @visitor: a #GeglVisitor.
- *
- * Accept a visitor.
- *
- **/
-void      
-gegl_node_accept(GeglNode * self,
-                 GeglVisitor * visitor)
-{
-  GeglNodeClass *klass;
-  g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail (GEGL_IS_VISITOR(visitor));
-
-  klass = GEGL_NODE_GET_CLASS(self);
-  if(klass->accept)
-    (*klass->accept)(self, visitor);
+  return depends_on;
 }
 
 static void              
-accept (GeglNode * node, 
-        GeglVisitor * visitor)
+visitable_accept (GeglVisitable * visitable, 
+                  GeglVisitor * visitor)
 {
-  gegl_visitor_visit_node(visitor, node);
+  gegl_visitor_visit_node(visitor, GEGL_NODE(visitable));
+}
+
+GList *
+visitable_depends_on(GeglVisitable *visitable)
+{
+  GeglNode * node = GEGL_NODE(visitable);
+  return gegl_node_get_depends_on(node);
+}
+
+static gboolean
+visitable_needs_visiting(GeglVisitable *visitable)
+{
+  return TRUE;
 }

@@ -1,21 +1,31 @@
+/*
+ *   This file is part of GEGL.
+ *
+ *    GEGL is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    GEGL is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with GEGL; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  Copyright 2003 Calvin Williamson
+ *
+ */
+
 #include "gegl-eval-visitor.h"
-#include "gegl-filter.h"
-#include "gegl-data.h"
-#include "gegl-dump-visitor.h"
-#include "gegl-graph.h"
-#include "gegl-value-types.h"
-#include "gegl-image-op.h"
-#include "gegl-color-model.h"
-#include "gegl-image.h"
-#include "gegl-utils.h"
-#include "gegl-value-types.h"
+#include "gegl-node.h"
+#include "gegl-property.h"
+#include "gegl-visitable.h"
 
 static void class_init (GeglEvalVisitorClass * klass);
-static void init (GeglEvalVisitor * self, GeglEvalVisitorClass * klass);
-static void finalize(GObject *gobject);
-
-static void visit_filter (GeglVisitor *visitor, GeglFilter * filter);
-static void visit_graph (GeglVisitor *visitor, GeglGraph * graph);
+static void visit_property (GeglVisitor *visitor, GeglProperty * property);
 
 static gpointer parent_class = NULL;
 
@@ -36,11 +46,11 @@ gegl_eval_visitor_get_type (void)
         NULL,
         sizeof (GeglEvalVisitor),
         0,
-        (GInstanceInitFunc) init,
+        (GInstanceInitFunc) NULL,
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_DFS_VISITOR, 
+      type = g_type_register_static (GEGL_TYPE_VISITOR, 
                                      "GeglEvalVisitor", 
                                      &typeInfo, 
                                      0);
@@ -52,60 +62,51 @@ static void
 class_init (GeglEvalVisitorClass * klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
-  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
-  gobject_class->finalize = finalize;
-
-  visitor_class->visit_filter = visit_filter;
-  visitor_class->visit_graph = visit_graph;
-}
-
-static void 
-init (GeglEvalVisitor * self, 
-      GeglEvalVisitorClass * klass)
-{
-}
-
-static void
-finalize(GObject *gobject)
-{  
-  G_OBJECT_CLASS(parent_class)->finalize(gobject);
+  visitor_class->visit_property = visit_property;
 }
 
 static void      
-visit_filter(GeglVisitor * visitor,
-             GeglFilter *filter)
+visit_property(GeglVisitor * visitor,
+               GeglProperty *property)
 {
-  GEGL_VISITOR_CLASS(parent_class)->visit_filter(visitor, filter);
+  GEGL_VISITOR_CLASS(parent_class)->visit_property(visitor, property);
 
   {
-    /* Validate the inputs of op */
+    GeglFilter *filter = gegl_property_get_filter(property);
+#if 0
+    g_print("Compute Visitor: Visiting property %s from filter %s\n", 
+             gegl_property_get_name(property),
+             gegl_object_get_name(GEGL_OBJECT(filter)));
+#endif
 
-    GArray * collected_data = 
-        gegl_visitor_collect_input_data(visitor, GEGL_NODE(filter));
+    if(gegl_property_is_output(property))
+      {
+        gboolean success;
+        const gchar *property_name = gegl_property_get_name(property);
+        success = gegl_filter_evaluate(filter, property_name);
+      }
+    else if(gegl_property_is_input(property))
+      {
+        GeglProperty *source_prop = gegl_property_get_connected_to(property);
+        if(source_prop)
+          {
+            GValue value = {0};
+            GParamSpec *prop_spec = gegl_property_get_param_spec(property);
+            GeglFilter *source = gegl_property_get_filter(source_prop);
 
-    gegl_filter_validate_inputs(filter, collected_data);
-    g_array_free(collected_data, TRUE);
+            g_value_init(&value, G_PARAM_SPEC_VALUE_TYPE(prop_spec));
 
-    /* Validate the outputs of op */
-    gegl_filter_validate_outputs(filter);
+            g_object_get_property(G_OBJECT(source), 
+                                  gegl_property_get_name(source_prop), 
+                                  &value);
+            g_object_set_property(G_OBJECT(filter), 
+                                  gegl_property_get_name(property), 
+                                  &value); 
 
-    /* Do the operation */
-    gegl_filter_evaluate(filter);
+          }
+      }
   }
-}
-
-static void      
-visit_graph(GeglVisitor * visitor,
-             GeglGraph *graph)
-{
-  GeglGraph *prev_graph = visitor->graph;
-  GEGL_VISITOR_CLASS(parent_class)->visit_graph(visitor, graph);
-
-  visitor->graph = graph;
-  gegl_dfs_visitor_traverse(GEGL_DFS_VISITOR(visitor), 
-                            GEGL_NODE(graph->root));
-  visitor->graph = prev_graph; 
 }

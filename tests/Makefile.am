@@ -29,84 +29,45 @@ IMAGELDADDS = @STRIP_BEGIN@ \
 @STRIP_END@
 
 MOCK_OBJECT_SRC = \
-   gegl-mock-bfs-visitor.c \
-   gegl-mock-bfs-visitor.h \
-   gegl-mock-dfs-visitor.c \
-   gegl-mock-dfs-visitor.h \
-   gegl-mock-filter.c \
-   gegl-mock-filter.h \
-   gegl-mock-image-op.c \
-   gegl-mock-image-op.h \
-   gegl-mock-node.c \
-   gegl-mock-node.h \
-   gegl-mock-object.c \
-   gegl-mock-object.h \
-   gegl-mock-op.c \
-   gegl-mock-op.h \
-   gegl-mock-point-op.c \
-   gegl-mock-point-op.h \
-   gegl-mock-properties-filter.c \
-   gegl-mock-properties-filter.h \
-   gegl-mock-visitor.c \
-   gegl-mock-visitor.h
+    gegl-mock-image-filter.c \
+    gegl-mock-image.c \
+    gegl-mock-filter-0-1.c \
+    gegl-mock-filter-0-1.h \
+    gegl-mock-filter-1-1.c \
+    gegl-mock-filter-1-1.h \
+    gegl-mock-filter-1-2.c \
+    gegl-mock-filter-1-2.h \
+    gegl-mock-filter-2-1.c \
+    gegl-mock-filter-2-1.h \
+    gegl-mock-filter-2-2.c \
+    gegl-mock-filter-2-2.h \
+    gegl-mock-node-visitor.c \
+    gegl-mock-node-visitor.h \
+    gegl-mock-object.c \
+    gegl-mock-object.h \
+    gegl-mock-property-visitor.c \
+    gegl-mock-property-visitor.h
 
-EXTRA_SRC = \
-   gegl-check-op.c \
-   gegl-check-op.h
+EXTRA_SRC =
 
 testgegl_SOURCES = \
-   $(MOCK_OBJECT_SRC) \
-   $(EXTRA_SRC) \
-   addtest-float.c \
-   addtest-uint8.c \
-   bfsvisitortest.c \
-   buffertest.c \
-   channelfloatvaluetest.c \
-   channelstest-float.c \
-   channeluint8valuetest.c \
-   channelvaluetest.c \
-   checkoptest.c \
-   colormodeltest.c \
-   colorspacetest.c \
-   colortest.c \
-   dfsvisitortest.c \
-   dumpvisitortest.c \
-   fadetest-float.c \
-   fadetest-uint8.c \
-   filltest-float.c \
-   filltest-uint8.c \
-   floatarraytest.c \
-   graphapplytest-float.c \
-   graphnodetest.c \
-   haverecttest.c \
-   iaddtest-float.c \
-   iaddtest-uint8.c \
-   imageiteratortest.c \
-   imageoptest.c \
-   imagetest.c \
-   mockpropertiesfiltertest.c \
-   multiplytest-float.c \
-   multipleoutputstest.c \
-   multtest-float.c \
-   multtest-uint8.c \
-   needrecttest.c \
-   nodetest.c \
-   objecttest.c \
-   optest.c \
-   pipetest.c \
-   pixelrgbfloatvaluetest.c \
-   pixelrgbafloatvaluetest.c \
-   pixelrgbuint8valuetest.c \
-   pointoptest.c \
-   printtest.c \
-   simpletreetest-float.c \
-   storagetest.c \
-   testgegl.c \
-   testutils.c \
-   tiletest.c \
-   valueimagedatatest.c \
-   valuetest.c
-
+    $(MOCK_OBJECT_SRC) \
+    $(EXTRA_SRC) \
+    bfspropertyvisitortest.c \
+    dfsnodevisitortest.c \
+    dfspropertyvisitortest.c \
+    graphtest.c \
+    mockimagefiltertest.c \
+    mockfilter01test.c \
+    mockfilter11test.c \
+    mockfilter12test.c \
+    mockfilter21test.c \
+    mockfilter22test.c \
+    nodeconnectionstest.c \
+    objecttest.c \
+    propertyconnectionstest.c \
+    testgegl.c \
+    updatepropertytest.c
 
 testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(GEGLDEPS)

@@ -2,18 +2,19 @@
 GeglObject
 
 <!-- ##### SECTION Short_Description ##### -->
-Base Object class.
+
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This is the base Object class for Gegl. All Gegl classes extend from this
-class. GeglObjects have names, and that is about it.
+
 </para>
+
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
 
 <!-- ##### STRUCT GeglObject ##### -->
 <para>
