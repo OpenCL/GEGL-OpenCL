@@ -53,12 +53,11 @@ These classes currently have implementations in gegl:</dt>
 <br><b><tt><a href="#GeglObject">GeglObject</a></tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; <a href="#GeglNode">GeglNode</a></tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#GeglOp">GeglOp</a></tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="#GeglImage">GeglImage</a></tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#GeglImage">GeglImage</a></tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#GeglSampledImage">GeglSampledImage</a></tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-<a href="#GeglImageBuffer">GeglSampledImage</a></tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="#GeglPointOp">GeglPointOp</a></tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 GeglFillOp</tt></b>
@@ -94,48 +93,7 @@ GeglCompPremult</tt></b>
 GeglStatOp</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 GeglPrint</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglOpImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglImageImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglSampledImageImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglPointOpImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglFillImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglPremultImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglUnpremultImp</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglCopyImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglAddImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglDarkImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglDiffImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglLightImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglMaxImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglMinImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglMultImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglScreenImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglSubtractImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglCompImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglCompPremultImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglStatOpImpl</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglPrintImpl</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; GeglColor</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; <a href="#GeglColor">GeglColor</a></tt></b>
 <p><b><tt>&nbsp;&nbsp;&nbsp; <a href="#GeglColorModel">GeglColorModel</a></tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelRgb</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -286,7 +244,7 @@ Image and its subclasses all "produce" an output image by operating on
 inputs and and placing the result in some buffer. Examples are PointOps,
 AreaOps and GeometricOps. These are typically non-leaf nodes and have one
 or more inputs (There are some Ops without image inputs though-like noise
-ops).&nbsp; ImageBuffers are a special kind of Image. They have no inputs,
+ops).&nbsp; SampledImages are a special kind of Image. They have no inputs,
 and so are leaf nodes in image graphs.&nbsp; They&nbsp; "produce" their
 output by just returning their normal image data as output.
 <p>Images have ColorModels which describe the color model of their output
@@ -345,7 +303,7 @@ on the way the ImageManager in question organizes things.
 <p>Note that Image nodes may receive OpRequests that correspond to any
 area of its image space, and do not have an intrinsic width and height.
 So it is legal to ask an Image to compute its result anywhere in the plane.
-ImageBuffers, which correspond more to in-memory representations of image
+SampledImages, which correspond more to in-memory representations of image
 files, do have a width and height.&nbsp; Of course if the area you request
 is outside of the have_rects (domain of definitions) of the inputs to an
 Image then you will likely just get a zero(or some other default fill value)
@@ -444,21 +402,21 @@ desired, or where autogeneration is just impossible (like LUT operations
 on small bitdepth channels vs floating point channels)
 <div CLASS="SECT1">&nbsp;
 <br>
-<hr><a NAME="GeglImageBuffer"></a><b><font size=+2>GeglImageBuffer</font></b></div>
+<hr><a NAME="GeglSampledImage"></a><b><font size=+2>GeglSampledImage</font></b></div>
 This object describes what is usually thought of as normal image data.&nbsp;
-ImageBuffer is the basic writable image data object. They occur as leaf
-nodes for image graphs and are used as inputs for Ops.&nbsp; An ImageBuffer
+SampledImage is the basic writable image data object. They occur as leaf
+nodes for image graphs and are used as inputs for Ops.&nbsp; An SampledImage
 sets its ColorModel when it is created and has a width and height.&nbsp;
-ImageBuffer doesnt actually have an operation to perform during apply,
-its output is basically just itself.&nbsp; ImageBuffers may be passed to
-any apply routine as the destination buffer for an&nbsp; Op. This is how
-ImageBuffers are written to.&nbsp; Since ImageBuffers have a width and
-height, this determines their domain of definition (have_rects).&nbsp;
+SampledImage doesnt actually have an operation to perform during apply,
+its output is basically just itself.&nbsp; SampledImages may be passed
+to any apply routine as the destination buffer for an&nbsp; Op. This is
+how SampledImages are written to.&nbsp; Since SampledImages have a width
+and height, this determines their domain of definition (have_rects).&nbsp;
 During the evaluation of an image graph, these have_rects are propagated
 back up the graph towards the root.&nbsp; Depending on the ImageManager,
-image data for an ImageBuffer may be stored in different ways. This is
+image data for an SampledImage may be stored in different ways. This is
 left up to the ImageManager implementation. TileImageManager stores an
-ImageBuffer in "pages" or Tiles, which may be swapped out or cached.
+SampledImage in "pages" or Tiles, which may be swapped out or cached.
 <p>
 <hr><a NAME="GeglConvertOp"></a><b><font size=+2>GeglConvertOp</font></b>
 <p>ColorConvertOp is the base class for color model conversions. Every
@@ -485,7 +443,7 @@ CLASS="SECT1"
 <a NAME="GeglTile"></a><font size=+2>GeglTile</font></h1>
 
 <div CLASS="SECT1">This object describes a chunk of image data that corresponds
-to a portion of image space. It represents image data for an Image or ImageBuffer.
+to a portion of image space. It represents image data for an Image or SampledImage.
 Tiles have ColorModels and pointers to DataBuffers. They return pointers
 to the underlying data and provide (through TileIterators) different ways
 to traverse the data.&nbsp; The number of banks a Tile's DataBuffer has
@@ -521,7 +479,7 @@ to ColorModels that describe the interpretation of the components.&nbsp;
 They also have a pointer to an array of channel values that represent the
 components for the color value. Colors are for operations that need a small
 number of colors (like for a fill) to specify some color related action.
-For large numbers of colors, use an actual ImageBuffer with an appropriate
+For large numbers of colors, use an actual SampledImage with an appropriate
 color model and data type, etc.
 <p>Heres the Color object:
 <p><b><tt>typedef union</tt></b>
