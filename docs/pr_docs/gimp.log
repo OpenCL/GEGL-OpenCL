@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (C version 6.1) (format=latex 98.4.2)  1 SEP 2000 12:02
+This is TeX, Version 3.14159 (C version 6.1) (format=latex 98.4.2)  1 SEP 2000 13:22
 **gimp
 (gimp.tex
 LaTeX2e <1996/12/01> patch level 1
@@ -135,12 +135,12 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 718 strings out of 10906
- 7386 string characters out of 72188
+ 719 strings out of 10906
+ 7401 string characters out of 72188
  53802 words of memory out of 262141
- 3518 multiletter control sequences out of 9500
- 9445 words of font info for 33 fonts, out of 150000 for 255
+ 3519 multiletter control sequences out of 9500
+ 9752 words of font info for 34 fonts, out of 150000 for 255
  14 hyphenation exceptions out of 607
- 32i,8n,21p,848b,240s stack positions out of 300i,40n,60p,3000b,4000s
+ 32i,8n,21p,848b,272s stack positions out of 300i,40n,60p,3000b,4000s
 
-Output written on gimp.dvi (15 pages, 34604 bytes).
+Output written on gimp.dvi (15 pages, 34696 bytes).
