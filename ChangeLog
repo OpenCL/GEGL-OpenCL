@@ -1,3 +1,9 @@
+Thu Apr  6 17:28:02 PDT 2000 caro@rhythm.com
+
+	* check in for gegl
+
+	* Corrected the Makefile.am to be float.
+
 Thu Apr  6 17:06:44 PDT 2000 caro@rhythm.com
 
 	* checked in for codegen
