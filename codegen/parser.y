@@ -993,7 +993,7 @@ void
 init_data_varible (char *s)
 {
   int i; 
-  char tmp[20]; 
+  char tmp[20], name[20]; 
   elem_t *e = get_sym (s); 
  
   for (i=0; i<SCOPE; i++)
@@ -1003,9 +1003,17 @@ init_data_varible (char *s)
     }
   tmp[i*2  ] = '\0'; 
   printf ("\n%s%s *%s_data[%d];", tmp, DATATYPE_STR, s, e->num);
-  if (e->type == TYPE_C_A_VECTOR)  
-    printf ("\n%sint %s_has_%s;", tmp, s, NAME_COLOR_CHAN[NUM_COLOR_CHAN]); 
+  if (e->type == TYPE_C_A_VECTOR)
+    {  
+    elem_t e; 
+    sprintf (name, "%s_has_%s", s, NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
+    e = add_sym (name, SCOPE);
+    set_dtype (e, TYPE_INT);
+    set_type (e, TYPE_SCALER);
+    set_num (e, 1);  
+    printf ("\n%sint %s;", tmp, name); 
 
+    }
 }
 
 void
@@ -1543,16 +1551,19 @@ get_sym (char *ss)
   }
 
   i = strlen(s);
+  if (i>10)
+  if (!strcmp ("_has_alpha", s[i-11]))  
+    {
+    ss[i-6] = '\0'; 
+    sprintf (s, "%d_%d", ss, NAME_COLOR_CHAN[NUM_COLOR_CHAN]);  
+    goto find;
+    }
+     
   if (i>6)
   if ((s[i-5] == 'a' || s[i-5] == 'c') && s[i-6] == '_')
     {
       s[i-6] = '\0';
       ss[i-4] = '\0';
-      if (i>10)
-    if (s[i-7] == 's' && s[i-8] == 'a' && s[i-9] == 'h' && s[i-10] == '_')
-      {
-      s[i-10] = '\0';  
-      }
     }
 
   i = strlen(s);
@@ -1560,13 +1571,9 @@ get_sym (char *ss)
   if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
   {
     s[i-2] = '\0';
-   if (i>6) 
-    if (s[i-3] == 's' && s[i-4] == 'a' && s[i-5] == 'h' && s[i-6] == '_')
-      {
-      s[i-6] = '\0';
-      }
   } 
 
+find:
   for (i=0; i<cur_nsyms; i++)
   {
     /* is it already here? */

@@ -1,3 +1,10 @@
+Thu Mar 23 16:49:25 PST 2000 caro@rhythm.com
+	
+	* codegen/parser.y. I have changed it so that
+	%s_has_%s has now become its own varible, unlike 
+	before when it lived of the color chan that it
+	was associated with it.
+
 Thu Mar 23 15:55:36 PST 2000 caro@rhythm.com
 
 	* codegen?parser.y. I have rm the varibles Pointer and
