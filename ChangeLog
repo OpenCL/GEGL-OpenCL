@@ -1,3 +1,10 @@
+Mon Sep 18 15:30:00 Garry R. Osgood <gosgood@idt.net>
+	*gegl/docs/pr_docs/introduction.tex
+	*gegl/docs/pr_docs/gimp.tex
+	Reread Cavin's email of 11:24 am and decided that
+	the tail of the introduction had to address the
+	"expectations" problem head on. I think it does now.
+
 Sun Sep 17 18:45:00 Garry R. Osgood <gosgood@idt.net>
 	*gegl/docs/pr_docs/introduction.tex
 	*gegl/docs/pr_docs/gimp.tex
