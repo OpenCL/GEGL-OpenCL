@@ -1,3 +1,13 @@
+Sat Mar 25 17:29:26 EST 2000 calvinw@mindspring.com
+	
+	* check in for codegen
+
+        * created directory channel_data which has the channel
+          data files u8, u16, float, u16_4k (renamed from FLOAT,
+          UINT8, UINT16)
+
+        * removed FLOAT, UINT8, UINT16 from main codegen directory
+
 Sat Mar 25 14:33:08 PST 2000 caro@rhythm.com
 	
 	* check in for codegen
