@@ -20,7 +20,7 @@ static void notify_num_outputs(GObject * self, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 
-static void free_attributes_array(GeglOp * self);
+static void free_attributes(GeglOp * self);
 static void init_attributes(GeglOp *self);
 
 static void accept (GeglNode * node, GeglVisitor * visitor);
@@ -68,7 +68,9 @@ class_init (GeglOpClass * klass)
   gobject_class->get_property = get_property;
 
   node_class->accept = accept;
+
   klass->init_attributes = init_attributes;
+  klass->free_attributes = free_attributes;
 
   return;
 }
@@ -91,6 +93,7 @@ notify_num_outputs(GObject * self,
                    GParamSpec *pspec)
 {
   GeglOp *op = GEGL_OP(self);
+
   gegl_op_init_attributes(op);
 }
 
@@ -99,7 +102,7 @@ finalize(GObject *gobject)
 {
   GeglOp *self = GEGL_OP(gobject);
 
-  free_attributes_array(self);
+  gegl_op_free_attributes(self);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
@@ -173,7 +176,7 @@ gegl_op_apply_roi(GeglOp * self,
  * gegl_op_init_attributes:
  * @self: a #GeglOp.
  *
- * Allocates the attributes array for this op. 
+ * Init the attributes for this op. 
  *
  **/
 void 
@@ -190,9 +193,46 @@ gegl_op_init_attributes(GeglOp * self)
   }
 }
 
+static void
+init_attributes(GeglOp *self)
+{
+  gint num_output_values = gegl_node_get_num_outputs(GEGL_NODE(self));
+
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_OP(self));
+  g_return_if_fail (num_output_values >= 0 && 
+                    num_output_values <= 1);
+
+  if(num_output_values == 1) 
+    self->attributes = g_new0(GeglAttributes, 1); 
+  else
+    self->attributes = NULL; 
+}
+
+
+/**
+ * gegl_op_free_attributes:
+ * @self: a #GeglOp.
+ *
+ * Free the attributes for this op. 
+ *
+ **/
+void 
+gegl_op_free_attributes(GeglOp * self)
+{
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_OP (self));
+
+  {
+    GeglOpClass *klass = GEGL_OP_GET_CLASS(self);
+
+    if(klass->free_attributes)
+      (*klass->free_attributes)(self);
+  }
+}
 
 static void
-free_attributes_array (GeglOp *self)
+free_attributes (GeglOp *self)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_OP(self));
@@ -204,67 +244,21 @@ free_attributes_array (GeglOp *self)
     }
 }
 
-static void
-init_attributes(GeglOp *self)
-{
-  gint num_output_values = gegl_node_get_num_outputs(GEGL_NODE(self));
-
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_OP(self));
-  g_return_if_fail (num_output_values >= 0);
-
-  /* Free the old array of pointers. */
-  free_attributes_array(self);
-
-  /* Just allocate the array, leave subclasses to fill in */
-  if(num_output_values > 0)
-    self->attributes = g_new0(GeglAttributes*, num_output_values); 
-}
-
 /**
  * gegl_op_get_attributes:
  * @self: a #GeglOp.
  *
- * Get the attributes for this op, as a list. 
- *
- * Returns: a GList of attributes.
- **/
-GList *
-gegl_op_get_attributes(GeglOp * self) 
-{
-  GList * attributes = NULL;
-  gint i;
-  gint num_outputs = GEGL_NODE(self)->num_outputs;
-
-  for(i = 0; i < num_outputs; i++)
-    attributes = g_list_append(attributes, self->attributes[i]); 
-
-  return attributes;
-}
-
-/**
- * gegl_op_get_nth_attributes:
- * @self: a #GeglOp.
- * @n: which attributes we want.
- *
- * Get attributes for the nth output of this Op. 
+ * Get attributes for this Op. 
  *
  * Returns: a pointer to the Attributes.
  **/
 GeglAttributes *
-gegl_op_get_nth_attributes(GeglOp *self,
-                           gint n) 
+gegl_op_get_attributes(GeglOp *self) 
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_OP (self), NULL);
-  g_return_val_if_fail (n >=0, NULL);
 
-  if(n == 0 && GEGL_NODE(self)->num_outputs == 0)
-    return NULL;
-  else
-    g_return_val_if_fail (n < GEGL_NODE(self)->num_outputs, NULL);
-
-  return self->attributes[n];
+  return self->attributes;
 }
 
 static void              

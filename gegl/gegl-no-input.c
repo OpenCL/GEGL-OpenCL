@@ -20,7 +20,7 @@ static void get_property (GObject *gobject, guint prop_id, GValue *value, GParam
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void compute_have_rect(GeglFilter * filter, GeglRect *have_rect, GList * input_have_rects);
 
-static void prepare (GeglFilter * filter, GList * output_attributes, GList *input_attributes);
+static void prepare (GeglFilter * filter, GeglAttributes * attributes, GList *input_attributes);
 
 static gpointer parent_class = NULL;
 
@@ -112,13 +112,13 @@ compute_have_rect(GeglFilter * op,
 
 static void 
 prepare (GeglFilter * filter, 
-         GList * output_attributes,
+         GeglAttributes * output_attributes,
          GList * input_attributes)
 {
   GeglPointOp *point_op = GEGL_POINT_OP(filter);
   GeglNoInput *self = GEGL_NO_INPUT(filter);
 
-  GeglAttributes *dest_attr = g_list_nth_data(output_attributes, 0);
+  GeglAttributes *dest_attr = output_attributes;
   GeglImageData *dest = (GeglImageData*)g_value_get_object(dest_attr->value);
   GeglColorModel * dest_cm = gegl_image_data_get_color_model (dest);
   GeglColorSpace * dest_cs = gegl_color_model_color_space(dest_cm);

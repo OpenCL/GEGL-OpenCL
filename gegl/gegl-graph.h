@@ -32,28 +32,13 @@ struct _GeglGraphInput
   gint graph_input;
 };
 
-#ifndef __TYPEDEF_GEGL_GRAPH_OUTPUT__
-#define __TYPEDEF_GEGL_GRAPH_OUTPUT_
-typedef struct _GeglGraphOutput GeglGraphOutput;
-#endif
-struct _GeglGraphOutput
-{
-  GeglNode * node;
-  gint node_output;
-
-  GeglGraph * graph;
-  gint graph_output;
-};
-
 struct _GeglGraph 
 {
    GeglOp op;
 
    /*< private >*/
    GeglNode * root;
-
    GList * graph_inputs;
-   GList * graph_outputs;
 };
 
 typedef struct _GeglGraphClass GeglGraphClass;
@@ -69,10 +54,7 @@ void            gegl_graph_set_root             (GeglGraph * self,
 GeglGraphInput *gegl_graph_lookup_input         (GeglGraph *self,
                                                  GeglNode *node,
                                                  gint node_input);
-GeglGraphOutput*gegl_graph_lookup_output        (GeglGraph *self,
-                                                 gint graph_output);
 GeglNode *      gegl_graph_find_source          (GeglGraph *self,
-                                                 gint * output,
                                                  GeglNode *node,
                                                  gint index);
 #ifdef __cplusplus

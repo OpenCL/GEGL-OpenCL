@@ -2,7 +2,6 @@
 #include "gegl.h"
 #include "ctest.h"
 #include "csuite.h"
-#include "testutils.h"
 
 static void
 test_value_set(Test *test)

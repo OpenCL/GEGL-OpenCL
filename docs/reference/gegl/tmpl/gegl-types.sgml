@@ -14,6 +14,24 @@ gegl-types
 
 </para>
 
+<!-- ##### VARIABLE GEGL_TYPE_SCALAR ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_CHANNEL ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_PIXEL ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### MACRO GEGL_DEFAULT_WIDTH ##### -->
 <para>
 
@@ -37,17 +55,6 @@ gegl-types
 @GEGL_COLOR_SPACE_GRAY: 
 @GEGL_COLOR_SPACE_RGB: 
 
-<!-- ##### ENUM GeglColorAlphaSpace ##### -->
-<para>
-
-</para>
-
-@GEGL_COLOR_ALPHA_SPACE_NONE: 
-@GEGL_COLOR_ALPHA_SPACE_GRAY: 
-@GEGL_COLOR_ALPHA_SPACE_GRAYA: 
-@GEGL_COLOR_ALPHA_SPACE_RGB: 
-@GEGL_COLOR_ALPHA_SPACE_RGBA: 
-
 <!-- ##### ENUM GeglAlphaFlags ##### -->
 <para>
 
@@ -68,25 +75,6 @@ gegl-types
 @GEGL_BG_ALPHA: 
 @GEGL_FG_BG_ALPHA: 
 
-<!-- ##### ENUM GeglColorModelType ##### -->
-<para>
-
-</para>
-
-@GEGL_COLOR_MODEL_TYPE_NONE: 
-@GEGL_COLOR_MODEL_TYPE_GRAY_U8: 
-@GEGL_COLOR_MODEL_TYPE_GRAY_U16: 
-@GEGL_COLOR_MODEL_TYPE_GRAY_FLOAT: 
-@GEGL_COLOR_MODEL_TYPE_GRAYA_U8: 
-@GEGL_COLOR_MODEL_TYPE_GRAYA_U16: 
-@GEGL_COLOR_MODEL_TYPE_GRAYA_FLOAT: 
-@GEGL_COLOR_MODEL_TYPE_RGB_U8: 
-@GEGL_COLOR_MODEL_TYPE_RGB_U16: 
-@GEGL_COLOR_MODEL_TYPE_RGB_FLOAT: 
-@GEGL_COLOR_MODEL_TYPE_RGBA_U8: 
-@GEGL_COLOR_MODEL_TYPE_RGBA_U16: 
-@GEGL_COLOR_MODEL_TYPE_RGBA_FLOAT: 
-
 <!-- ##### ENUM GeglColorConstant ##### -->
 <para>
 
@@ -102,16 +90,6 @@ gegl-types
 @GEGL_COLOR_TRANSPARENT: 
 @GEGL_COLOR_WHITE_TRANSPARENT: 
 @GEGL_COLOR_BLACK_TRANSPARENT: 
-
-<!-- ##### ENUM GeglChannelDataType ##### -->
-<para>
-
-</para>
-
-@GEGL_NONE: 
-@GEGL_U8: 
-@GEGL_FLOAT: 
-@GEGL_U16: 
 
 <!-- ##### ENUM GeglDataSpaceType ##### -->
 <para>

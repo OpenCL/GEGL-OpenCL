@@ -49,16 +49,6 @@ just returning their normal image data as output.
 @cm: 
 
 
-<!-- ##### FUNCTION gegl_image_set_channels_mask ##### -->
-<para>
-
-</para>
-
-@self: 
-@data: 
-@Returns: 
-
-
 <!-- ##### FUNCTION gegl_image_set_image_data ##### -->
 <para>
 

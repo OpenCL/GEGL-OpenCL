@@ -34,7 +34,6 @@ struct _GeglConnector
     gint input;
 
     GeglNode * source;
-    gint output;
 };
 
 struct _GeglNode 
@@ -45,8 +44,8 @@ struct _GeglNode
     gint     num_inputs;
     GeglConnector   *connectors;
 
-    gint     num_outputs;
-    GList  **sinks;
+    gint    num_outputs;
+    GList  *sinks;
 
     gboolean enabled;
 };
@@ -67,31 +66,14 @@ gint            gegl_node_get_num_inputs        (GeglNode * self);
 gint            gegl_node_get_num_outputs       (GeglNode * self);
 
 GeglNode *      gegl_node_get_source            (GeglNode * self, 
-                                                 gint * output,
                                                  gint n);
 void            gegl_node_set_source            (GeglNode * self, 
                                                  GeglNode * source,
-                                                 gint output,
                                                  gint n);
-GeglNode*       gegl_node_get_source_node       (GeglNode * self, 
-                                                 gint n);
-void            gegl_node_set_source_node       (GeglNode * self, 
-                                                 GeglNode * source,
-                                                 gint n);
-void            gegl_node_set_source_output     (GeglNode * self, 
-                                                 gint output, 
-                                                 gint n);
-gint            gegl_node_get_source_output     (GeglNode * self, 
-                                                 gint n);
-
-gint            gegl_node_get_num_sinks         (GeglNode * self,
-                                                 gint output);
-gint            gegl_node_get_total_num_sinks   (GeglNode * self);
+gint            gegl_node_get_num_sinks         (GeglNode * self);
 GeglNode*       gegl_node_get_sink              (GeglNode * self,
-                                                 gint output,
                                                  gint n);
 gint            gegl_node_get_sink_input        (GeglNode * self,
-                                                 gint output,
                                                  gint n);
 
 void            gegl_node_unlink                (GeglNode * self);
@@ -102,8 +84,7 @@ void            gegl_node_accept                (GeglNode * self,
                                                  GeglVisitor * visitor);
 
 /* protected */
-GList*          gegl_node_get_sinks             (GeglNode * self,
-                                                 gint output);
+GList*          gegl_node_get_sinks             (GeglNode * self);
 void            gegl_node_set_num_inputs        (GeglNode * self,
                                                  gint num_inputs);
 void            gegl_node_set_num_outputs       (GeglNode * self,

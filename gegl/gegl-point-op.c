@@ -7,7 +7,7 @@ static void class_init (GeglPointOpClass * klass);
 static void init (GeglPointOp * self, GeglPointOpClass * klass);
 static void finalize (GObject * gobject);
 
-static void process (GeglFilter * self_op, GList * attributes, GList * input_attributes);
+static void process (GeglFilter * self_op, GeglAttributes * attributes, GList * input_attributes);
 
 static gpointer parent_class = NULL;
 
@@ -74,7 +74,7 @@ finalize (GObject * gobject)
 
 static void 
 process (GeglFilter * filter, 
-         GList * attributes,
+         GeglAttributes * attributes,
          GList * input_attributes)
 {
   GeglPointOp *self =  GEGL_POINT_OP(filter);

@@ -72,8 +72,7 @@ init_traversal (GeglDfsVisitor * self,
   num_inputs = gegl_node_get_num_inputs(node);
   for(i = 0; i < num_inputs; i++)
     {
-      gint output;
-      GeglNode *source = gegl_node_get_source(node, &output, i);
+      GeglNode *source = gegl_node_get_source(node, i);
 
       if(source)
         {
@@ -125,8 +124,7 @@ dfs_visitor_traverse(GeglDfsVisitor * self,
   num_inputs = gegl_node_get_num_inputs(node);
   for(i = 0; i < num_inputs; i++)
     {
-      gint output;
-      GeglNode *source = gegl_node_get_source(node, &output, i);
+      GeglNode *source = gegl_node_get_source(node, i);
       if(source) 
         {
          gboolean visited = gegl_visitor_get_visited(visitor, source);

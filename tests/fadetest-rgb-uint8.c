@@ -41,7 +41,7 @@ test_fade_g_object_properties(Test *test)
                                      NULL);  
 
     ct_test(test, 1 == gegl_node_get_num_inputs(GEGL_NODE(fade)));
-    ct_test(test, source == (GeglOp*)gegl_node_get_source_node(GEGL_NODE(fade), 0));
+    ct_test(test, source == (GeglOp*)gegl_node_get_source(GEGL_NODE(fade), 0));
 
     g_object_unref(fade);
   }

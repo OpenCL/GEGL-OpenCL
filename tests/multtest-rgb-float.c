@@ -41,7 +41,7 @@ test_mult_g_object_properties(Test *test)
                                     NULL);  
 
     ct_test(test, 1 == gegl_node_get_num_inputs(GEGL_NODE(mult)));
-    ct_test(test, source == (GeglOp*)gegl_node_get_source_node(GEGL_NODE(mult), 0));
+    ct_test(test, source == (GeglOp*)gegl_node_get_source(GEGL_NODE(mult), 0));
 
     g_object_unref(mult);
   }
@@ -81,7 +81,7 @@ test_mult_apply(Test *test)
                                 NULL);
 
     gegl_op_apply(mult); 
-    ct_test(test, testutils_check_rgb_float(GEGL_IMAGE(mult), 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(mult), 
                                             .1 * MULT0, 
                                             .2 * MULT1, 
                                             .3 * MULT2));  
@@ -104,7 +104,7 @@ test_mult_apply(Test *test)
                                  NULL);
 
     gegl_op_apply(mult2); 
-    ct_test(test, testutils_check_rgb_float(GEGL_IMAGE(mult2), 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(mult2), 
                                             .1 * MULT0 * MULT0, 
                                             .2 * MULT1 * MULT1, 
                                             .3 * MULT2 * MULT2));  
@@ -131,9 +131,9 @@ mult_test_teardown(Test *test)
 }
 
 Test *
-create_mult_test_rgb_float()
+create_mult_test_pixel_rgb_float()
 {
-  Test* t = ct_create("GeglMultTestRgbFloat");
+  Test* t = ct_create("GeglMultTestPixelRgbFloat");
 
   g_assert(ct_addSetUp(t, mult_test_setup));
   g_assert(ct_addTearDown(t, mult_test_teardown));

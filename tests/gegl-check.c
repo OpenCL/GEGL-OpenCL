@@ -19,7 +19,7 @@ static void finalize (GObject * gobject);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void process (GeglFilter * filter, GList * attributes, GList * input_attributes);
+static void process (GeglFilter * filter, GeglAttributes * attributes, GList * input_attributes);
 
 static void check_float(GeglCheck *self, GeglImageDataIterator *iter, gint x);
 static void check_uint8(GeglCheck *self, GeglImageDataIterator *iter, gint x);
@@ -69,24 +69,24 @@ class_init (GeglCheckClass * klass)
   filter_class->process = process;
 
   g_object_class_install_property (gobject_class, PROP_PIXEL_RGB_FLOAT,
-                                   gegl_param_spec_rgb_float ("pixel-rgb-float",
-                                                              "Pixel-Rgb-Float",
-                                                              "The pixel as float",
-                                                              -G_MAXFLOAT, G_MAXFLOAT,
-                                                              -G_MAXFLOAT, G_MAXFLOAT,
-                                                              -G_MAXFLOAT, G_MAXFLOAT,
-                                                              0.0, 0.0, 0.0,
-                                                              G_PARAM_READWRITE));
+                                   gegl_param_spec_pixel_rgb_float ("pixel-rgb-float",
+                                                                    "Pixel-Rgb-Float",
+                                                                    "The pixel as float",
+                                                                    -G_MAXFLOAT, G_MAXFLOAT,
+                                                                    -G_MAXFLOAT, G_MAXFLOAT,
+                                                                    -G_MAXFLOAT, G_MAXFLOAT,
+                                                                    0.0, 0.0, 0.0,
+                                                                    G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_PIXEL_RGB_UINT8,
-                                   gegl_param_spec_rgb_uint8 ("pixel-rgb-uint8",
-                                                              "Pixel-Rgb-Uint8",
-                                                              "The pixel as uint8",
-                                                              0, 255,
-                                                              0, 255,
-                                                              0, 255,
-                                                              0, 0, 0,
-                                                              G_PARAM_READWRITE));
+                                   gegl_param_spec_pixel_rgb_uint8 ("pixel-rgb-uint8",
+                                                                    "Pixel-Rgb-Uint8",
+                                                                    "The pixel as uint8",
+                                                                    0, 255,
+                                                                    0, 255,
+                                                                    0, 255,
+                                                                    0, 0, 0,
+                                                                    G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x",
@@ -128,8 +128,8 @@ init (GeglCheck * self,
   self->image_data = NULL;
 
   self->pixel = g_new0(GValue, 1); 
-  g_value_init(self->pixel, GEGL_TYPE_RGB_FLOAT);
-  g_value_set_gegl_rgb_float(self->pixel, 0.0, 0.0, 0.0);
+  g_value_init(self->pixel, GEGL_TYPE_PIXEL_RGB_FLOAT);
+  g_value_set_pixel_rgb_float(self->pixel, 0.0, 0.0, 0.0);
 }
 
 static void
@@ -262,7 +262,7 @@ gegl_check_get_image_data (GeglCheck * self)
 
 static void 
 process (GeglFilter * filter, 
-         GList * attributes,
+         GeglAttributes * attributes,
          GList * input_attributes)
 {
   GeglCheck *self =  GEGL_CHECK(filter);

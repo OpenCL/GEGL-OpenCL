@@ -1,17 +1,23 @@
 <!doctype book PUBLIC "-//Davenport//DTD DocBook V3.0//EN" [
 <!entity hash "#">
 <!ENTITY GeglAdd SYSTEM "sgml/gegl-add.sgml">
-<!ENTITY GeglIAdd SYSTEM "sgml/gegl-i-add.sgml">
 <!ENTITY GeglAtop SYSTEM "sgml/gegl-atop.sgml">
 <!ENTITY GeglBfsVisitor SYSTEM "sgml/gegl-bfs-visitor.sgml">
 <!ENTITY GeglBinary SYSTEM "sgml/gegl-binary.sgml">
 <!ENTITY GeglBlend SYSTEM "sgml/gegl-blend.sgml">
-<!ENTITY GeglMult SYSTEM "sgml/gegl-mult.sgml">
 <!ENTITY GeglColorModel SYSTEM "sgml/gegl-color-model.sgml">
-<!ENTITY GeglTile SYSTEM "sgml/gegl-tile.sgml">
+<!ENTITY GeglColorSpaceGray SYSTEM "sgml/gegl-color-space-gray.sgml">
+<!ENTITY GeglColorSpaceRgb SYSTEM "sgml/gegl-color-space-rgb.sgml">
+<!ENTITY GeglColorSpace SYSTEM "sgml/gegl-color-space.sgml">
+<!ENTITY GeglColor SYSTEM "sgml/gegl-color.sgml">
 <!ENTITY GeglComp SYSTEM "sgml/gegl-comp.sgml">
 <!ENTITY GeglComponentColorModel SYSTEM "sgml/gegl-component-color-model.sgml">
+<!ENTITY GeglComponentStorage SYSTEM "sgml/gegl-component-storage.sgml">
 <!ENTITY GeglDarken SYSTEM "sgml/gegl-darken.sgml">
+<!ENTITY GeglDataBuffer SYSTEM "sgml/gegl-data-buffer.sgml">
+<!ENTITY GeglDataSpaceFloat SYSTEM "sgml/gegl-data-space-float.sgml">
+<!ENTITY GeglDataSpaceU8 SYSTEM "sgml/gegl-data-space-u8.sgml">
+<!ENTITY GeglDataSpace SYSTEM "sgml/gegl-data-space.sgml">
 <!ENTITY GeglDfsVisitor SYSTEM "sgml/gegl-dfs-visitor.sgml">
 <!ENTITY GeglDifference SYSTEM "sgml/gegl-difference.sgml">
 <!ENTITY GeglDumpVisitor SYSTEM "sgml/gegl-dump-visitor.sgml">
@@ -23,11 +29,16 @@
 <!ENTITY GeglFilter SYSTEM "sgml/gegl-filter.sgml">
 <!ENTITY GeglGraphSetupVisitor SYSTEM "sgml/gegl-graph-setup-visitor.sgml">
 <!ENTITY GeglGraph SYSTEM "sgml/gegl-graph.sgml">
+<!ENTITY GeglIAdd SYSTEM "sgml/gegl-i-add.sgml">
+<!ENTITY GeglIMult SYSTEM "sgml/gegl-i-mult.sgml">
+<!ENTITY GeglImageDataIterator SYSTEM "sgml/gegl-image-data-iterator.sgml">
+<!ENTITY GeglImageData SYSTEM "sgml/gegl-image-data.sgml">
 <!ENTITY GeglImage SYSTEM "sgml/gegl-image.sgml">
 <!ENTITY GeglInside SYSTEM "sgml/gegl-inside.sgml">
 <!ENTITY GeglLighten SYSTEM "sgml/gegl-lighten.sgml">
 <!ENTITY GeglMax SYSTEM "sgml/gegl-max.sgml">
 <!ENTITY GeglMin SYSTEM "sgml/gegl-min.sgml">
+<!ENTITY GeglMult SYSTEM "sgml/gegl-mult.sgml">
 <!ENTITY GeglMultiply SYSTEM "sgml/gegl-multiply.sgml">
 <!ENTITY GeglNoInput SYSTEM "sgml/gegl-no-input.sgml">
 <!ENTITY GeglNode SYSTEM "sgml/gegl-node.sgml">
@@ -41,29 +52,22 @@
 <!ENTITY GeglPrint SYSTEM "sgml/gegl-print.sgml">
 <!ENTITY GeglScanlineProcessor SYSTEM "sgml/gegl-scanline-processor.sgml">
 <!ENTITY GeglScreen SYSTEM "sgml/gegl-screen.sgml">
+<!ENTITY GeglStorage SYSTEM "sgml/gegl-storage.sgml">
 <!ENTITY GeglSubtract SYSTEM "sgml/gegl-subtract.sgml">
+<!ENTITY GeglTile SYSTEM "sgml/gegl-tile.sgml">
 <!ENTITY GeglUnary SYSTEM "sgml/gegl-unary.sgml">
 <!ENTITY GeglUnpremult SYSTEM "sgml/gegl-unpremult.sgml">
+<!ENTITY gegl-gegl-utils SYSTEM "sgml/gegl-utils.sgml">
 <!ENTITY GeglVisitor SYSTEM "sgml/gegl-visitor.sgml">
 <!ENTITY GeglXor SYSTEM "sgml/gegl-xor.sgml">
-<!ENTITY GeglColor SYSTEM "sgml/gegl-color.sgml">
-<!ENTITY GeglColorSpace SYSTEM "sgml/gegl-color-space.sgml">
-<!ENTITY GeglIMult SYSTEM "sgml/gegl-i-mult.sgml">
-<!ENTITY GeglColorSpaceRgb SYSTEM "sgml/gegl-color-space-rgb.sgml">
-<!ENTITY GeglColorSpaceGray SYSTEM "sgml/gegl-color-space-gray.sgml">
-<!ENTITY GeglDataSpace SYSTEM "sgml/gegl-data-space.sgml">
-<!ENTITY GeglDataSpaceFloat SYSTEM "sgml/gegl-data-space-float.sgml">
-<!ENTITY GeglDataSpaceU8 SYSTEM "sgml/gegl-data-space-u8.sgml">
-<!ENTITY GeglDataBuffer SYSTEM "sgml/gegl-data-buffer.sgml">
-<!ENTITY GeglStorage SYSTEM "sgml/gegl-storage.sgml">
-<!ENTITY GeglComponentStorage SYSTEM "sgml/gegl-component-storage.sgml">
-<!ENTITY GeglImageData SYSTEM "sgml/gegl-image-data.sgml">
-<!ENTITY GeglImageDataIterator SYSTEM "sgml/gegl-image-data-iterator.sgml">
+<!ENTITY gegl-gegl-channel-param-specs SYSTEM "sgml/gegl-channel-param-specs.sgml">
+<!ENTITY gegl-gegl-pixel-param-specs SYSTEM "sgml/gegl-pixel-param-specs.sgml">
+<!ENTITY gegl-gegl-image-data-param-specs SYSTEM "sgml/gegl-image-data-param-specs.sgml">
 <!ENTITY gegl-gegl-attributes SYSTEM "sgml/gegl-attributes.sgml">
-<!ENTITY gegl-gegl-param-specs SYSTEM "sgml/gegl-param-specs.sgml">
 <!ENTITY gegl-gegl-types SYSTEM "sgml/gegl-types.sgml">
-<!ENTITY gegl-gegl-utils SYSTEM "sgml/gegl-utils.sgml">
-<!ENTITY gegl-gegl-value-types SYSTEM "sgml/gegl-value-types.sgml">
+<!ENTITY gegl-gegl-channel-value-types SYSTEM "sgml/gegl-channel-value-types.sgml">
+<!ENTITY gegl-gegl-pixel-value-types SYSTEM "sgml/gegl-pixel-value-types.sgml">
+<!ENTITY gegl-gegl-init SYSTEM "sgml/gegl-init.sgml">
 <!entity gegl-objecttree SYSTEM "sgml/tree_index.sgml">
 <!entity gegl-compiling SYSTEM "compiling.sgml">
 <!entity gegl-building SYSTEM "building.sgml">
@@ -171,10 +175,13 @@
 
   <chapter id="misc">
     <title>Misc</title>
-    &gegl-gegl-param-specs;
-    &gegl-gegl-utils;
+    &gegl-gegl-channel-param-specs;
+    &gegl-gegl-pixel-param-specs;
+    &gegl-gegl-image-data-param-specs;
     &gegl-gegl-attributes;
     &gegl-gegl-types;
-    &gegl-gegl-value-types;
+    &gegl-gegl-channel-value-types;
+    &gegl-gegl-pixel-value-types;
+    &gegl-gegl-init;
   </chapter>
 </book>

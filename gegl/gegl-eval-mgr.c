@@ -1,14 +1,12 @@
 #include "gegl-eval-mgr.h"
 #include "gegl-node.h"
-#include "gegl-image.h"
-#include "gegl-image-data.h"
+#include "gegl-op.h"
 #include "gegl-attributes.h"
 #include "gegl-visitor.h"
 #include "gegl-eval-bfs-visitor.h"
 #include "gegl-eval-dfs-visitor.h"
 #include "gegl-eval-visitor.h"
 #include "gegl-utils.h"
-#include "gegl-value-types.h"
 
 enum
 {
@@ -244,7 +242,7 @@ static void
 evaluate (GeglEvalMgr * self) 
 {
   /* Get the root and set roi on it */
-  GeglAttributes * attr = gegl_op_get_nth_attributes(GEGL_OP(self->root),0);
+  GeglAttributes * attr = gegl_op_get_attributes(GEGL_OP(self->root));
 
   if(attr)
     gegl_attributes_set_rect(attr, &self->roi);

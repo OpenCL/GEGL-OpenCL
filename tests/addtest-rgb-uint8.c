@@ -42,7 +42,7 @@ test_add_g_object_properties(Test *test)
                                   NULL);  
 
     ct_test(test, 1 == gegl_node_get_num_inputs(GEGL_NODE(add)));
-    ct_test(test, source == (GeglOp*)gegl_node_get_source_node(GEGL_NODE(add), 0));
+    ct_test(test, source == (GeglOp*)gegl_node_get_source(GEGL_NODE(add), 0));
 
     g_object_unref(add);
   }
@@ -51,10 +51,10 @@ test_add_g_object_properties(Test *test)
     guint8 add0, add1, add2;
     GeglAdd * add = g_object_new (GEGL_TYPE_ADD, 
                                   "source", source,
-                                  "constants-uint8", ADD0, ADD1, ADD2,
+                                  "constant-uint8", ADD0, ADD1, ADD2,
                                   NULL);  
 
-    g_object_get(add, "constants-uint8", &add0, &add1, &add2, NULL);
+    g_object_get(add, "constant-uint8", &add0, &add1, &add2, NULL);
 
     ct_test(test, ADD0 == add0); 
     ct_test(test, ADD1 == add1); 
@@ -71,7 +71,7 @@ test_add_apply(Test *test)
     guint8 r, g, b;
     GeglOp *add = g_object_new(GEGL_TYPE_ADD,
                                "source", source,
-                               "constants-uint8", ADD0, ADD1, ADD2,
+                               "constant-uint8", ADD0, ADD1, ADD2,
                                NULL);
 
     gegl_op_apply(add); 
@@ -88,12 +88,12 @@ test_add_apply(Test *test)
     gint r, g, b;
     GeglOp *add1 = g_object_new(GEGL_TYPE_ADD,
                                  "source", source,
-                                 "constants-uint8", ADD0, ADD1, ADD2,
+                                 "constant-uint8", ADD0, ADD1, ADD2,
                                  NULL);
 
     GeglOp *add2 = g_object_new(GEGL_TYPE_ADD,
                                  "source", add1,
-                                 "constants-uint8", ADD0, ADD1, ADD2,
+                                 "constant-uint8", ADD0, ADD1, ADD2,
                                  NULL);
 
     gegl_op_apply(add2); 

@@ -100,6 +100,8 @@ code then chooses some Filter downstream and calls gegl_filter_evaluate on it.
 </para>
 
 @self: 
+@attributes: 
+<!-- # Unused Parameters # -->
 @output_attributes: 
 
 

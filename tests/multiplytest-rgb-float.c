@@ -38,8 +38,8 @@ test_multiply_properties(Test *test)
   {
     GeglOp * multiply =  g_object_new (GEGL_TYPE_MULTIPLY, NULL);  
 
-    ct_test(test, NULL == gegl_node_get_source_node(GEGL_NODE(multiply), 0));
-    ct_test(test, NULL == gegl_node_get_source_node(GEGL_NODE(multiply), 1));
+    ct_test(test, NULL == gegl_node_get_source(GEGL_NODE(multiply), 0));
+    ct_test(test, NULL == gegl_node_get_source(GEGL_NODE(multiply), 1));
     ct_test(test, 2 == gegl_node_get_num_inputs(GEGL_NODE(multiply)));
     ct_test(test, 1 == gegl_node_get_num_outputs(GEGL_NODE(multiply)));
 
@@ -52,8 +52,8 @@ test_multiply_properties(Test *test)
                                       "source1", source1,
                                       NULL);  
 
-    ct_test(test, source0 == (GeglOp*)gegl_node_get_source_node(GEGL_NODE(multiply), 0));
-    ct_test(test, source1 == (GeglOp*)gegl_node_get_source_node(GEGL_NODE(multiply), 1));
+    ct_test(test, source0 == (GeglOp*)gegl_node_get_source(GEGL_NODE(multiply), 0));
+    ct_test(test, source1 == (GeglOp*)gegl_node_get_source(GEGL_NODE(multiply), 1));
 
     g_object_unref(multiply);
   }
@@ -76,7 +76,7 @@ test_multiply_apply(Test *test)
 
     gegl_op_apply(multiply); 
 
-    ct_test(test, testutils_check_rgb_float(GEGL_IMAGE(multiply), .04, .10, .18));
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(multiply), .04, .10, .18));
     g_object_unref(multiply);
   }
 }
@@ -139,9 +139,9 @@ multiply_test_teardown(Test *test)
 }
 
 Test *
-create_multiply_test_rgb_float()
+create_multiply_test_pixel_rgb_float()
 {
-  Test* t = ct_create("GeglMultiplyTestRgbFloat");
+  Test* t = ct_create("GeglMultiplyTestPixelRgbFloat");
 
   g_assert(ct_addSetUp(t, multiply_test_setup));
   g_assert(ct_addTearDown(t, multiply_test_teardown));

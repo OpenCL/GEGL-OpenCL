@@ -106,15 +106,6 @@ gegl-utils
 @root: 
 
 
-<!-- ##### FUNCTION gegl_init ##### -->
-<para>
-
-</para>
-
-@argc: 
-@argv: 
-
-
 <!-- ##### FUNCTION gegl_log ##### -->
 <para>
 

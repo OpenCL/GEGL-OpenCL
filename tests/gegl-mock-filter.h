@@ -21,8 +21,13 @@ typedef struct _GeglMockFilter GeglMockFilter;
 struct _GeglMockFilter 
 {
    GeglFilter filter;
+
    /*< private >*/
-   GValue * value;
+   gfloat glib_float;
+   gfloat glib_int;
+
+   GValue *channel;
+   GValue *pixel;
 };
 
 typedef struct _GeglMockFilterClass GeglMockFilterClass;
@@ -33,6 +38,15 @@ struct _GeglMockFilterClass
 
 GType         gegl_mock_filter_get_type          (void); 
 
+void gegl_mock_filter_get_channel (GeglMockFilter * self, 
+                                   GValue *channel);
+void gegl_mock_filter_set_channel (GeglMockFilter * self, 
+                                   GValue *pixel);
+
+void gegl_mock_filter_get_pixel    (GeglMockFilter * self, 
+                                    GValue *pixel);
+void gegl_mock_filter_set_pixel    (GeglMockFilter * self, 
+                                    GValue *pixel);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

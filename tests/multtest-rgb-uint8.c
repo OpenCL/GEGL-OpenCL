@@ -46,7 +46,7 @@ test_mult_g_object_properties(Test *test)
                                     NULL);  
 
     ct_test(test, 1 == gegl_node_get_num_inputs(GEGL_NODE(mult)));
-    ct_test(test, source == (GeglOp*)gegl_node_get_source_node(GEGL_NODE(mult), 0));
+    ct_test(test, source == (GeglOp*)gegl_node_get_source(GEGL_NODE(mult), 0));
 
     g_object_unref(mult);
   }

@@ -91,8 +91,7 @@ attributes_string(GeglOp *op)
   char *color_model_name = "None";
   GObject* image_data_value = NULL;
 
-  GeglAttributes * attributes = 
-    gegl_op_get_nth_attributes(op,0); 
+  GeglAttributes * attributes = gegl_op_get_attributes(op); 
 
   /*
       attr addr [value (x,y,w,h) cm] 
@@ -137,8 +136,7 @@ gegl_dump_visitor_traverse(GeglDumpVisitor * self,
       self->tabs++;
       for(i=0; i < num_inputs; i++)
         {
-          gint output = -1;
-          GeglNode *source = gegl_node_get_source(node, &output, i);
+          GeglNode *source = gegl_node_get_source(node, i);
 
           if(source) 
             gegl_dump_visitor_traverse(self, source);

@@ -19,6 +19,8 @@ static void set_property (GObject *gobject, guint prop_id, const GValue *value, 
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 
 static void init_attributes(GeglOp *op);
+static void free_attributes(GeglOp *op);
+
 static void free_list(GeglGraph *self, GList *list);
 
 static void reset_inputs(GeglGraph *self);
@@ -70,7 +72,9 @@ class_init (GeglGraphClass * klass)
   gobject_class->get_property = get_property;
 
   node_class->accept = accept;
+
   op_class->init_attributes = init_attributes;
+  op_class->free_attributes = free_attributes;
 
   g_object_class_install_property (gobject_class, PROP_ROOT,
                                    g_param_spec_object ("root",
@@ -96,7 +100,6 @@ finalize(GObject *gobject)
   GeglGraph *self = GEGL_GRAPH(gobject);
 
   free_list(self, self->graph_inputs);
-  free_list(self, self->graph_outputs);
 
   if(self->root)
     g_object_unref(self->root);
@@ -221,28 +224,12 @@ reset_inputs(GeglGraph *self)
 static void
 reset_outputs(GeglGraph *self)
 {
-  gint i;
   gint num_outputs = gegl_node_get_num_outputs(self->root);
-
-  if(self->graph_outputs)
-    free_list(self, self->graph_outputs);
-
-  for(i = 0; i < num_outputs; i++)
-  {
-    GeglGraphOutput * graph_output = g_new(GeglGraphOutput, 1);
-    graph_output->node = self->root;
-    graph_output->node_output = i;
-    graph_output->graph = self; 
-    graph_output->graph_output = i;
-    self->graph_outputs = g_list_append(self->graph_outputs, graph_output); 
-  }
-
   g_object_set(self, "num_outputs", num_outputs, NULL);
 }
 
 GeglNode *
 gegl_graph_find_source(GeglGraph *self,
-                       gint * output,
                        GeglNode *node,
                        gint index)
 {
@@ -252,7 +239,7 @@ gegl_graph_find_source(GeglGraph *self,
   g_return_val_if_fail (node != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
 
-  source = gegl_node_get_source(node, output, index);
+  source = gegl_node_get_source(node, index);
 
   /* If the source is null, must get it from the graph */
   if(!source)
@@ -260,31 +247,10 @@ gegl_graph_find_source(GeglGraph *self,
       GeglGraphInput *graph_input = 
         gegl_graph_lookup_input(self, node, index); 
 
-      source = gegl_node_get_source(GEGL_NODE(self), 
-                                     output,
-                                     graph_input->graph_input);
+      source = gegl_node_get_source(GEGL_NODE(self), graph_input->graph_input);
     }
 
   return source;
-}
-
-/**
- * gegl_graph_lookup_output:
- * @self: a #GeglGraph.
- * @graph_output: output index of graph. 
- *
- * Lookup the #GeglGraphOutput for this output index. 
- *
- * Returns: a #GeglGraphOutput.
- **/
-GeglGraphOutput *
-gegl_graph_lookup_output(GeglGraph *self,
-                         gint graph_output)
-{
-  g_return_val_if_fail (self, NULL);
-  g_return_val_if_fail (GEGL_IS_GRAPH (self), NULL);
-
-  return (GeglGraphOutput*)g_list_nth_data(self->graph_outputs, graph_output);
 }
 
 /**
@@ -327,31 +293,26 @@ gegl_graph_lookup_input(GeglGraph *self,
 static void
 init_attributes(GeglOp *op)
 {
-  gint i;
   GeglGraph *self = GEGL_GRAPH(op);
-  gint num_output_values = 
-    gegl_node_get_num_outputs(GEGL_NODE(op));
 
   g_return_if_fail (op != NULL);
   g_return_if_fail (GEGL_IS_GRAPH(op));
-  g_return_if_fail (num_output_values >= 0);
 
-  /* This will allocate the array of attributes pointers. */
-  GEGL_OP_CLASS(parent_class)->init_attributes(op);
-
-   /* Now we set each attribute pointer to the corresponding real one. */
-  for(i = 0; i < num_output_values; i++)
+  if(GEGL_IS_OP(self->root))
     {
-      GeglGraphOutput *graph_output = 
-        (GeglGraphOutput*)g_list_nth_data(self->graph_outputs, i);
-
-      if(GEGL_IS_OP(graph_output->node))
-       op->attributes[i] = 
-        gegl_op_get_nth_attributes(GEGL_OP(graph_output->node), 
-                                   graph_output->node_output);
-      else
-       op->attributes[i] = NULL; 
+      op->attributes = gegl_op_get_attributes(GEGL_OP(self->root));
     }
+  else
+    op->attributes = NULL;
+}
+
+static void
+free_attributes(GeglOp *op)
+{
+  g_return_if_fail (op != NULL);
+  g_return_if_fail (GEGL_IS_GRAPH(op));
+
+  op->attributes = NULL;
 }
 
 static void              

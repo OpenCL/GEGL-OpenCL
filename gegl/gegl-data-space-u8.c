@@ -97,9 +97,9 @@ convert_value_to_float (GeglDataSpace * data_space,
                         GValue *dest,
                         GValue *src)
 {
-  gint s = g_value_get_gegl_uint8(src);
+  gint s = g_value_get_channel_uint8(src);
   gfloat d = s / 255.0;
-  g_value_set_gegl_float(dest, d);
+  g_value_set_channel_float(dest, d);
 }
 
 
@@ -108,7 +108,7 @@ convert_value_from_float (GeglDataSpace * data_space,
                           GValue *dest,
                           GValue *src)
 {
-  gfloat s = g_value_get_gegl_float(src);
+  gfloat s = g_value_get_channel_float(src);
   guint8 d = CLAMP((gint)(255 * s + .5), 0, 255);
-  g_value_set_gegl_uint8(dest, d);
+  g_value_set_channel_uint8(dest, d);
 }

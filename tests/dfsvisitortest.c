@@ -279,13 +279,13 @@ dfs_visitor_setup(Test *test)
                       NULL);  
 
 
-    gegl_node_set_source_node(B, A, 0);
-    gegl_node_set_source_node(C, A, 0);
-    gegl_node_set_source_node(D, B, 0);
-    gegl_node_set_source_node(D, C, 1);
-    gegl_node_set_source_node(E, D, 0);
-    gegl_node_set_source_node(E, F, 1);
-    gegl_node_set_source_node(F, G, 0);
+    gegl_node_set_source(B, A, 0);
+    gegl_node_set_source(C, A, 0);
+    gegl_node_set_source(D, B, 0);
+    gegl_node_set_source(D, C, 1);
+    gegl_node_set_source(E, D, 0);
+    gegl_node_set_source(E, F, 1);
+    gegl_node_set_source(F, G, 0);
 
   }
 
@@ -333,16 +333,16 @@ dfs_visitor_setup(Test *test)
                       "num_outputs", 1, 
                       NULL);  
 
-    gegl_node_set_source_node(K, I, 0);
-    gegl_node_set_source_node(K, J, 1);
+    gegl_node_set_source(K, I, 0);
+    gegl_node_set_source(K, J, 1);
     L = g_object_new (GEGL_TYPE_GRAPH, 
                       "name", "L", 
                       "root", K, 
                       NULL);  
 
-    gegl_node_set_source_node(L, H, 0);
-    gegl_node_set_source_node(M, L, 0);
-    gegl_node_set_source_node(M, N, 1);
+    gegl_node_set_source(L, H, 0);
+    gegl_node_set_source(M, L, 0);
+    gegl_node_set_source(M, N, 1);
   }
 
 /**
@@ -386,12 +386,12 @@ dfs_visitor_setup(Test *test)
                       "num_outputs", 1, 
                       NULL);  
 
-    gegl_node_set_source_node(O, R, 0);
-    gegl_node_set_source_node(O, P, 1);
+    gegl_node_set_source(O, R, 0);
+    gegl_node_set_source(O, P, 1);
 
-    gegl_node_set_source_node(P, Q, 0);
-    gegl_node_set_source_node(Q, R, 0);
-    gegl_node_set_source_node(R, S, 0);
+    gegl_node_set_source(P, Q, 0);
+    gegl_node_set_source(Q, R, 0);
+    gegl_node_set_source(R, S, 0);
   }
 }
 

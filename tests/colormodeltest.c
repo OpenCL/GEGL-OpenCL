@@ -2,7 +2,6 @@
 #include "gegl.h"
 #include "ctest.h"
 #include "csuite.h"
-#include "testutils.h"
 #include <string.h>
 
 static GeglColorSpace * rgb_color_space; 
@@ -33,7 +32,7 @@ test_color_model_g_object_new(Test *test)
 }
 
 static void
-test_color_model_rgb_float(Test *test)
+test_color_model_pixel_rgb_float(Test *test)
 {
   {
     gint * bits_per_channel;
@@ -417,7 +416,7 @@ create_color_model_test()
   g_assert(ct_addTearDown(t, color_model_test_teardown));
   g_assert(ct_addTestFun(t, test_color_model_g_object_new));
 
-  g_assert(ct_addTestFun(t, test_color_model_rgb_float));
+  g_assert(ct_addTestFun(t, test_color_model_pixel_rgb_float));
   g_assert(ct_addTestFun(t, test_color_model_rgba_float));
   g_assert(ct_addTestFun(t, test_color_model_gray_float));
   g_assert(ct_addTestFun(t, test_color_model_graya_float));

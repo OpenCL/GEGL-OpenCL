@@ -2,10 +2,8 @@
 #include "gegl-node.h"
 #include "gegl-object.h"
 #include "gegl-visitor.h"
-#include "gegl-dump-visitor.h"
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
-#include "gegl-image.h"
 #include "gegl-image-data.h"
 
 enum
@@ -24,7 +22,7 @@ static void get_property (GObject *gobject, guint prop_id, GValue *value, GParam
 static void init_attributes(GeglOp *op);
 static void free_attributes(GeglFilter *self);
 
-static void evaluate (GeglFilter * self, GList * attributes, GList * input_attributes);
+static void evaluate (GeglFilter * self, GeglAttributes * attributes, GList * input_attributes);
 
 static void compute_have_rect(GeglFilter *self, GeglRect *have_rect, GList * input_have_rects);
 static void compute_need_rect(GeglFilter *self, GeglRect *input_need_rect, GeglRect * need_rect, gint i);
@@ -141,18 +139,13 @@ get_property (GObject      *gobject,
 static void
 free_attributes(GeglFilter *self) 
 {
-  gint i;
   GeglOp *op = GEGL_OP(self);
-  gint num_outputs = gegl_node_get_num_outputs(GEGL_NODE(op));
-
   if(op->attributes)
     {
-      for(i = 0; i < num_outputs; i++)
-        {
-           g_value_unset(op->attributes[i]->value);
-           g_free(op->attributes[i]->value);
-           g_free(op->attributes[i]);
-        }
+       g_value_unset(op->attributes->value);
+       g_free(op->attributes->value);
+       g_free(op->attributes);
+       op->attributes = NULL;
     }
 }
 
@@ -160,25 +153,21 @@ static void
 init_attributes(GeglOp *op)
 {
   GeglFilter *self = GEGL_FILTER(op);
-  gint i;
-  gint num_outputs = gegl_node_get_num_outputs(GEGL_NODE(op));
 
   g_return_if_fail (op != NULL);
   g_return_if_fail (GEGL_IS_FILTER(op));
-  g_return_if_fail (num_outputs >= 0);
 
   /* Free any old attributes */
   free_attributes(self);
 
-  /* Free and re-allocate the array of attributes */
+  /* Free and re-allocate the attributes */
   GEGL_OP_CLASS(parent_class)->init_attributes(op);
 
-  /* Now allocate the individual attributes and init */
-  for(i = 0; i < num_outputs; i++)
+  /* Now allocate the attribute value and init */
+  if(op->attributes)
     {
-      op->attributes[i] = g_new0(GeglAttributes, 1);
-      op->attributes[i]->value = g_new0(GValue, 1);
-      g_value_init(op->attributes[i]->value, GEGL_TYPE_IMAGE_DATA);
+      op->attributes->value = g_new0(GValue, 1);
+      g_value_init(op->attributes->value, GEGL_TYPE_IMAGE_DATA);
     }
 }
 
@@ -225,7 +214,7 @@ compute_derived_color_model (GeglFilter * filter,
  **/
 void      
 gegl_filter_evaluate (GeglFilter * self, 
-                      GList * attributes,
+                      GeglAttributes * attributes,
                       GList * input_attributes)
 {
   GeglFilterClass *klass;
@@ -254,7 +243,7 @@ gegl_filter_validate_inputs (GeglFilter * self,
 
 void      
 gegl_filter_validate_outputs (GeglFilter * self, 
-                              GList * attributes)
+                              GeglAttributes * attributes)
 {
   GeglFilterClass *klass;
   g_return_if_fail (self != NULL);
@@ -267,7 +256,7 @@ gegl_filter_validate_outputs (GeglFilter * self,
 
 static void      
 evaluate (GeglFilter * self, 
-          GList * attributes,
+          GeglAttributes * attributes,
           GList * input_attributes)
 {
   GeglFilterClass *klass;
@@ -386,6 +375,7 @@ compute_need_rect(GeglFilter * self,
              input_need_rect->w, 
              input_need_rect->h);
 }
+
 
 static void              
 accept (GeglNode * node, 

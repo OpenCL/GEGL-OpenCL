@@ -24,16 +24,6 @@ Class for container of Ops.
 @graph: 
 @graph_input: 
 
-<!-- ##### STRUCT GeglGraphOutput ##### -->
-<para>
-
-</para>
-
-@node: 
-@node_output: 
-@graph: 
-@graph_output: 
-
 <!-- ##### FUNCTION gegl_graph_get_root ##### -->
 <para>
 
@@ -65,28 +55,17 @@ Class for container of Ops.
 @node_input_index: 
 
 
-<!-- ##### FUNCTION gegl_graph_lookup_output ##### -->
-<para>
-
-</para>
-
-@self: 
-@graph_output: 
-@Returns: 
-<!-- # Unused Parameters # -->
-@graph_output_index: 
-
-
 <!-- ##### FUNCTION gegl_graph_find_source ##### -->
 <para>
 
 </para>
 
 @self: 
-@output: 
 @node: 
 @index: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@output: 
 
 
 <!-- ##### ARG GeglGraph:root ##### -->

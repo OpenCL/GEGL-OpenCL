@@ -2,7 +2,7 @@
 #include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
 #include "gegl-image-data-iterator.h"
-#include "gegl-value-types.h"
+#include "gegl-pixel-value-types.h"
 #include "gegl-param-specs.h"
 #include "gegl-utils.h"
 
@@ -101,9 +101,9 @@ class_init (GeglColorClass * klass)
                                                       G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_PIXEL_RGB_FLOAT,
-                                   gegl_param_spec_rgb_float ("pixel-rgb-float",
+                                   gegl_param_spec_pixel_rgb_float ("pixel-rgb-float",
                                                               "Pixel-Rgb-Float",
-                                                              "The rgb-float pixel",
+                                                              "The pixel-rgb-float pixel",
                                                               0.0, 1.0,
                                                               0.0, 1.0,
                                                               0.0, 1.0,
@@ -111,7 +111,7 @@ class_init (GeglColorClass * klass)
                                                               G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_PIXEL_RGB_UINT8,
-                                   gegl_param_spec_rgb_uint8 ("pixel-rgb-uint8",
+                                   gegl_param_spec_pixel_rgb_uint8 ("pixel-rgb-uint8",
                                                               "Pixel-Rgb-Uint8",
                                                               "The rgb-uint8 pixel",
                                                               0, 255,
@@ -126,8 +126,8 @@ init (GeglColor * self,
       GeglColorClass * klass)
 {
   self->pixel = g_new0(GValue, 1); 
-  g_value_init(self->pixel, GEGL_TYPE_RGB_FLOAT);
-  g_value_set_gegl_rgb_float(self->pixel, 1.0, 1.0, 1.0);
+  g_value_init(self->pixel, GEGL_TYPE_PIXEL_RGB_FLOAT);
+  g_value_set_pixel_rgb_float(self->pixel, 1.0, 1.0, 1.0);
 }
 
 static void

@@ -83,7 +83,7 @@ compute_need_rects(GeglEvalBfsVisitor * self,
 
   /* Warning: using the 0th output attributes only */
   GeglAttributes *attributes = 
-    gegl_op_get_nth_attributes(GEGL_OP(filter), 0);
+    gegl_op_get_attributes(GEGL_OP(filter));
 
   for(i = 0 ; i < num_inputs; i++) 
     {

@@ -2,7 +2,6 @@
 #include "gegl.h"
 #include "ctest.h"
 #include "csuite.h"
-#include "testutils.h"
 #include <string.h>
 
 static void
@@ -24,12 +23,12 @@ static void
 test_image_data_construct_properties(Test *test)
 {
   {
-    GeglColorModel * rgb_float = gegl_color_model_instance("rgb-float");
+    GeglColorModel * pixel_rgb_float = gegl_color_model_instance("rgb-float");
     GeglImageData * image_data = g_object_new (GEGL_TYPE_IMAGE_DATA, 
-                                               "color_model", rgb_float, 
+                                               "color_model", pixel_rgb_float, 
                                                NULL);  
 
-    ct_test(test, rgb_float == (GeglColorModel*)gegl_image_data_get_color_model(image_data));
+    ct_test(test, pixel_rgb_float == (GeglColorModel*)gegl_image_data_get_color_model(image_data));
     ct_test(test, NULL == gegl_image_data_get_tile(image_data));
 
     g_object_unref(image_data);
@@ -40,12 +39,12 @@ static void
 test_image_data_properties(Test *test)
 {
   {
-    GeglColorModel * rgb_float = gegl_color_model_instance("rgb-float");
+    GeglColorModel * pixel_rgb_float = gegl_color_model_instance("rgb-float");
     GeglImageData * image_data = g_object_new (GEGL_TYPE_IMAGE_DATA,  NULL);  
 
-    gegl_image_data_set_color_model(image_data, rgb_float);
+    gegl_image_data_set_color_model(image_data, pixel_rgb_float);
 
-    ct_test(test, rgb_float == (GeglColorModel*)gegl_image_data_get_color_model(image_data));
+    ct_test(test, pixel_rgb_float == (GeglColorModel*)gegl_image_data_get_color_model(image_data));
 
     g_object_unref(image_data);
   }
@@ -56,13 +55,13 @@ test_image_data_create_tile(Test *test)
 {
   {
     GeglRect area = {0,0,2,2};
-    GeglColorModel * rgb_float = gegl_color_model_instance("rgb-float");
+    GeglColorModel * pixel_rgb_float = gegl_color_model_instance("rgb-float");
 
     GeglImageData * image_data = g_object_new (GEGL_TYPE_IMAGE_DATA, NULL);  
-    gegl_image_data_create_tile(image_data, rgb_float, &area);
+    gegl_image_data_create_tile(image_data, pixel_rgb_float, &area);
 
     ct_test(test, NULL != gegl_image_data_get_tile(image_data));
-    ct_test(test, rgb_float == gegl_image_data_get_color_model(image_data));
+    ct_test(test, pixel_rgb_float == gegl_image_data_get_color_model(image_data));
 
     g_object_unref(image_data);
   }

@@ -37,23 +37,23 @@ struct _GeglFilterClass
    GeglOpClass op_class;
                                     
    void (* evaluate)                (GeglFilter * self, 
-                                     GList * attributes,
+                                     GeglAttributes * attributes,
                                      GList * input_attributes);
    void (* prepare)                 (GeglFilter * self, 
-                                     GList * attributes,
+                                     GeglAttributes * attributes,
                                      GList * input_attributes);
    void (* process)                 (GeglFilter * self, 
-                                     GList * attributes,
+                                     GeglAttributes * attributes,
                                      GList * input_attributes);
    void (* finish)                  (GeglFilter * self, 
-                                     GList * attributes,
+                                     GeglAttributes * attributes,
                                      GList * input_attributes);
 
    void (* validate_inputs)         (GeglFilter *self,
                                      GList *input_attributes);
 
    void (* validate_outputs)        (GeglFilter *self,
-                                     GList *attributes);
+                                     GeglAttributes *attributes);
 
    void (* compute_need_rect)       (GeglFilter *self,
                                      GeglRect *input_need_rect,
@@ -79,12 +79,12 @@ GeglColorModel*
          gegl_filter_compute_derived_color_model(GeglFilter * self, 
                                                  GList * input_color_models);
 void            gegl_filter_evaluate            (GeglFilter * self, 
-                                                 GList * attributes,
+                                                 GeglAttributes * attributes,
                                                  GList * input_attributes);
 void            gegl_filter_validate_inputs     (GeglFilter * self, 
                                                  GList * input_attributes);
 void            gegl_filter_validate_outputs    (GeglFilter * self, 
-                                                 GList * output_attributes);
+                                                 GeglAttributes * attributes);
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,6 @@
 #include "gegl-data-space-float.h"
 #include "gegl-object.h"
+#include "gegl-channel-value-types.h"
 #include "gegl-value-types.h"
 
 static void class_init (GeglDataSpaceFloatClass * klass);
@@ -68,8 +69,8 @@ convert_value_to_float (GeglDataSpace * data_space,
                         GValue *dest,
                         GValue *src)
 {
-  gfloat s = g_value_get_gegl_float(src);
-  g_value_set_gegl_float(dest, s);
+  gfloat s = g_value_get_channel_float(src);
+  g_value_set_channel_float(dest, s);
 }
 
 static void 
@@ -88,8 +89,8 @@ convert_value_from_float (GeglDataSpace * data_space,
                           GValue *dest,
                           GValue *src)
 {
-  gfloat s = g_value_get_gegl_float(src);
-  g_value_set_gegl_float(dest, s);
+  gfloat s = g_value_get_channel_float(src);
+  g_value_set_channel_float(dest, s);
 }
 
 static void 

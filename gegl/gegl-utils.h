@@ -24,7 +24,6 @@ gboolean gegl_rect_contains     (GeglRect *r, GeglRect *s);
 
 void                gegl_dump_graph(GeglNode * root);
 void                gegl_dump_graph_msg(gchar * msg, GeglNode * root); 
-void                gegl_init (int *argc, char ***argv); 
 
 void gegl_log(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, ...);
 void gegl_logv(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, va_list args);

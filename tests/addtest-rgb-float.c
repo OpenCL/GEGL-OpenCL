@@ -42,7 +42,7 @@ test_add_g_object_properties(Test *test)
                                   NULL);  
 
     ct_test(test, 1 == gegl_node_get_num_inputs(GEGL_NODE(add)));
-    ct_test(test, source == (GeglOp*)gegl_node_get_source_node(GEGL_NODE(add), 0));
+    ct_test(test, source == (GeglOp*)gegl_node_get_source(GEGL_NODE(add), 0));
 
     g_object_unref(add);
   }
@@ -51,14 +51,20 @@ test_add_g_object_properties(Test *test)
     gfloat add0, add1, add2;
     GeglAdd * add = g_object_new (GEGL_TYPE_ADD, 
                                   "source", source,
-                                  "constants-float", ADD0, ADD1, ADD2,
+                                  "constant-float", ADD0, ADD1, ADD2,
                                   NULL);  
 
-    g_object_get(add, "constants-float", &add0, &add1, &add2, NULL);
+    g_object_get(add, "constant-float", &add0, &add1, &add2, NULL);
 
     ct_test(test, GEGL_FLOAT_EQUAL(ADD0, add0)); 
     ct_test(test, GEGL_FLOAT_EQUAL(ADD1, add1)); 
     ct_test(test, GEGL_FLOAT_EQUAL(ADD2, add2)); 
+
+    {
+      guint8 add0, add1, add2;
+      g_object_get(add, "constant-uint8", &add0, &add1, &add2, NULL);
+      ct_test(test, 128 == add0); 
+    }
 
     g_object_unref(add);
   }
@@ -70,11 +76,11 @@ test_add_apply(Test *test)
   {
     GeglOp *add = g_object_new(GEGL_TYPE_ADD,
                                "source", source,
-                               "constants-float", ADD0, ADD1, ADD2,
+                               "constant-float", ADD0, ADD1, ADD2,
                                NULL);
 
     gegl_op_apply(add); 
-    ct_test(test, testutils_check_rgb_float(GEGL_IMAGE(add), 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(add), 
                                             R0 + ADD0, 
                                             G0 + ADD1, 
                                             B0 + ADD2));  
@@ -84,16 +90,16 @@ test_add_apply(Test *test)
   {
     GeglOp *add1 = g_object_new(GEGL_TYPE_ADD,
                                  "source", source,
-                                 "constants-float", ADD0, ADD1, ADD2,
+                                 "constant-float", ADD0, ADD1, ADD2,
                                  NULL);
 
     GeglOp *add2 = g_object_new(GEGL_TYPE_ADD,
                                  "source", add1,
-                                 "constants-float", ADD0, ADD1, ADD2,
+                                 "constant-float", ADD0, ADD1, ADD2,
                                  NULL);
 
     gegl_op_apply(add2); 
-    ct_test(test, testutils_check_rgb_float(GEGL_IMAGE(add2), 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(add2), 
                                             R0 + ADD0 + ADD0, 
                                             G0 + ADD1 + ADD1, 
                                             B0 + ADD2 + ADD2));  
@@ -120,9 +126,9 @@ add_test_teardown(Test *test)
 }
 
 Test *
-create_add_test_rgb_float()
+create_add_test_pixel_rgb_float()
 {
-  Test* t = ct_create("GeglAddTestRgbFloat");
+  Test* t = ct_create("GeglAddTestPixelRgbFloat");
 
   g_assert(ct_addSetUp(t, add_test_setup));
   g_assert(ct_addTearDown(t, add_test_teardown));

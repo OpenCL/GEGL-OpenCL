@@ -3,7 +3,6 @@
 #include "gegl-mock-op.h"
 #include "ctest.h"
 #include "csuite.h"
-#include "testutils.h"
 #include <string.h>
 
 static void
@@ -43,7 +42,7 @@ test_op_g_object_new_source0(Test *test)
 
     ct_test(test, 1 == gegl_node_get_num_outputs(B)); 
     ct_test(test, 0 == gegl_node_get_num_inputs(B)); 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(B)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(B)); 
     ct_test(test, 0 == gegl_node_get_num_outputs(A)); 
     ct_test(test, 1 == gegl_node_get_num_inputs(A)); 
 

@@ -78,7 +78,7 @@ visit_filter(GeglVisitor * visitor,
              GeglFilter *filter)
 {
   GList * input_attributes;
-  GList * attributes;
+  GeglAttributes * attributes;
 
   GEGL_VISITOR_CLASS(parent_class)->visit_filter(visitor, filter);
   
@@ -88,17 +88,8 @@ visit_filter(GeglVisitor * visitor,
   attributes = gegl_op_get_attributes(GEGL_OP(filter));
   gegl_filter_validate_outputs(filter, attributes);
 
-#if 0
-  {
-    GeglDumpVisitor *dump_visitor = g_object_new(GEGL_TYPE_DUMP_VISITOR, NULL);  
-    gegl_dump_visitor_traverse(dump_visitor, GEGL_NODE(filter)); 
-    g_object_unref(dump_visitor);
-  }
-#endif
-
   gegl_filter_evaluate(filter, attributes, input_attributes);
 
-  g_list_free(attributes);
   g_list_free(input_attributes);
 }
 

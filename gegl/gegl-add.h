@@ -24,7 +24,7 @@ struct _GeglAdd
 
    /*< private >*/
 
-   GValue *constants;
+   GValue *constant;
 };
 
 typedef struct _GeglAddClass GeglAddClass;
@@ -35,8 +35,8 @@ struct _GeglAddClass
 
 GType           gegl_add_get_type         (void);
 
-void gegl_add_get_constants (GeglAdd * self, GValue *constants);
-void gegl_add_set_constants (GeglAdd * self, GValue *constants);
+void gegl_add_get_constant (GeglAdd * self, GValue *constant);
+void gegl_add_set_constant (GeglAdd * self, GValue *constant);
 
 #ifdef __cplusplus
 }

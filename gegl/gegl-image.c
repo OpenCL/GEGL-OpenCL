@@ -24,7 +24,7 @@ static void set_property (GObject *gobject, guint prop_id, const GValue *value, 
 static GeglColorModel *compute_derived_color_model (GeglFilter * filter, GList* input_color_models);
 
 static void validate_inputs  (GeglFilter *filter, GList *input_attributes);
-static void validate_outputs (GeglFilter *filter, GList *attributes);
+static void validate_outputs (GeglFilter *filter, GeglAttributes *attributes);
 
 static gpointer parent_class = NULL;
 
@@ -212,15 +212,6 @@ gegl_image_set_color_model (GeglImage * self,
   self->color_model = cm;
 }
 
-gint 
-gegl_image_set_channels_mask(GeglImage *self,
-                             gpointer *data)
-{
-  g_return_val_if_fail (self != NULL, -1);
-  g_return_val_if_fail (GEGL_IS_IMAGE (self), -1);
-  return gegl_color_model_num_colors(self->color_model);
-}
-
 static GeglColorModel * 
 compute_derived_color_model (GeglFilter * filter, 
                            GList * input_color_models)
@@ -240,20 +231,19 @@ validate_inputs (GeglFilter *filter,
 
 static void 
 validate_outputs (GeglFilter *filter,
-                  GList *attributes)
+                  GeglAttributes *attributes)
 {
   GeglImage *self = GEGL_IMAGE(filter);
-  GeglAttributes * attrs = (GeglAttributes*)g_list_nth_data(attributes, 0);
-  GeglImageData *image_data = g_value_get_object(attrs->value);
+  GeglImageData *image_data = g_value_get_object(attributes->value);
 
   if(!image_data)
     {
       LOG_DIRECT("setting output image data %p", self->image_data);
 
-      g_value_set_object(attrs->value, self->image_data);
+      g_value_set_object(attributes->value, self->image_data);
       gegl_image_data_create_tile(self->image_data, 
-                                    attrs->color_model, 
-                                    &attrs->rect); 
+                                    attributes->color_model, 
+                                    &attributes->rect); 
 
         {
           gpointer *data = gegl_tile_data_pointers(self->image_data->tile, 0,0);

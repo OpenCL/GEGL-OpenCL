@@ -70,8 +70,7 @@ init_traversal (GeglBfsVisitor * self,
 
   for(i = 0; i < num_inputs; i++)
     {
-      gint output = -1;
-      GeglNode *source = gegl_node_get_source(node, &output, i);
+      GeglNode *source = gegl_node_get_source(node, i);
 
       if(source)
         {
@@ -149,8 +148,7 @@ gegl_bfs_visitor_traverse(GeglBfsVisitor *self,
 
         for(i = 0; i < num_inputs; i++)
           {
-            gint output = -1;
-            GeglNode *source = gegl_node_get_source(node, &output, i);
+            GeglNode *source = gegl_node_get_source(node, i);
             if(source) 
               {
                 shared_count = gegl_visitor_get_shared_count(visitor,source);

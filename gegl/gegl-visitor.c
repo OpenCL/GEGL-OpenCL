@@ -400,14 +400,13 @@ gegl_visitor_get_input_attributes(GeglVisitor *self,
   for(i = 0 ; i < num_inputs; i++) 
     {
       GeglAttributes *input_attributes;
-      gint output = -1;
-      GeglNode *source = gegl_node_get_source(node, &output, i);
+      GeglNode *source = gegl_node_get_source(node, i);
 
       /* Try the graph instead. */
       if(!source) 
-        source = gegl_graph_find_source(self->graph, &output, node, i); 
+        source = gegl_graph_find_source(self->graph, node, i); 
 
-      input_attributes = gegl_op_get_nth_attributes(GEGL_OP(source), output); 
+      input_attributes = gegl_op_get_attributes(GEGL_OP(source)); 
 
       input_attributes_list = 
         g_list_append(input_attributes_list, input_attributes);

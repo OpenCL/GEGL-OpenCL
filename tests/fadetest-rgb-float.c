@@ -37,7 +37,7 @@ test_fade_g_object_properties(Test *test)
                                      NULL);  
 
     ct_test(test, 1 == gegl_node_get_num_inputs(GEGL_NODE(fade)));
-    ct_test(test, source == (GeglOp*)gegl_node_get_source_node(GEGL_NODE(fade), 0));
+    ct_test(test, source == (GeglOp*)gegl_node_get_source(GEGL_NODE(fade), 0));
 
     g_object_unref(fade);
   }
@@ -75,7 +75,7 @@ test_fade_apply(Test *test)
 
     gegl_op_apply(fade); 
 
-    ct_test(test, testutils_check_rgb_float(GEGL_IMAGE(fade), 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(fade), 
                                             .1 * MULTIPLIER, 
                                             .2 * MULTIPLIER, 
                                             .3 * MULTIPLIER));  
@@ -95,7 +95,7 @@ test_fade_apply(Test *test)
 
     gegl_op_apply(fade2); 
 
-    ct_test(test, testutils_check_rgb_float(GEGL_IMAGE(fade2), 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(fade2), 
                                             .1 * MULTIPLIER * MULTIPLIER, 
                                             .2 * MULTIPLIER * MULTIPLIER, 
                                             .3 * MULTIPLIER * MULTIPLIER));  
@@ -123,9 +123,9 @@ fade_test_teardown(Test *test)
 }
 
 Test *
-create_fade_test_rgb_float()
+create_fade_test_pixel_rgb_float()
 {
-  Test* t = ct_create("GeglFadeTestRgbFloat");
+  Test* t = ct_create("GeglFadeTestPixelRgbFloat");
 
   g_assert(ct_addSetUp(t, fade_test_setup));
   g_assert(ct_addTearDown(t, fade_test_teardown));

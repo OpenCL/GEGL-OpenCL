@@ -1005,6 +1005,46 @@ Image object with fixed resolution.
 GeglSampledImage
 
 
+<!-- ##### SECTION ./tmpl/gegl-scalar-param-specs.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-scalar-param-specs.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-scalar-param-specs.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-scalar-param-specs.sgml:Title ##### -->
+gegl-scalar-param-specs
+
+
+<!-- ##### SECTION ./tmpl/gegl-scalar-value-types.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-scalar-value-types.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-scalar-value-types.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-scalar-value-types.sgml:Title ##### -->
+gegl-scalar-value-types
+
+
 <!-- ##### SECTION ./tmpl/gegl-screen-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -1252,7 +1292,97 @@ GeglUnpremultImpl
 
 @value: 
 
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_CHANNEL_UINT8 ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_FLOAT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_RGB_FLOAT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_RGB_UINT8 ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_SCALAR_FLOAT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_SCALAR_INT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+<!-- ##### MACRO GEGL_PARAM_SPEC_CHANNEL_UINT8 ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+<!-- ##### MACRO GEGL_PARAM_SPEC_FLOAT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+<!-- ##### MACRO GEGL_PARAM_SPEC_RGB_FLOAT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+<!-- ##### MACRO GEGL_PARAM_SPEC_RGB_UINT8 ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+<!-- ##### MACRO GEGL_PARAM_SPEC_SCALAR_FLOAT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+<!-- ##### MACRO GEGL_PARAM_SPEC_SCALAR_INT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
 <!-- ##### MACRO GEGL_TYPE_CHANNEL_U8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_FLOAT ##### -->
 <para>
 
 </para>
@@ -1264,7 +1394,37 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### VARIABLE GEGL_TYPE_PARAM_FLOAT ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### MACRO GEGL_TYPE_PARAM_INT ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO GEGL_TYPE_PARAM_RGB_FLOAT ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO GEGL_TYPE_PARAM_RGB_UINT8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_PARAM_SCALAR_FLOAT ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_PARAM_SCALAR_INT ##### -->
 <para>
 
 </para>
@@ -1276,7 +1436,85 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### VARIABLE GEGL_TYPE_PARAM_UINT8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_RGB_FLOAT ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_RGB_UINT8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_SCALAR_FLOAT ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_SCALAR_INT ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_UINT8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO G_VALUE_HOLDS_GEGL_FLOAT ##### -->
+<para>
+
+</para>
+
+@value: 
+
+<!-- ##### MACRO G_VALUE_HOLDS_GEGL_RGB_FLOAT ##### -->
+<para>
+
+</para>
+
+@value: 
+
+<!-- ##### MACRO G_VALUE_HOLDS_GEGL_RGB_UINT8 ##### -->
+<para>
+
+</para>
+
+@value: 
+
+<!-- ##### MACRO G_VALUE_HOLDS_GEGL_UINT8 ##### -->
+<para>
+
+</para>
+
+@value: 
+
 <!-- ##### MACRO G_VALUE_HOLDS_IMAGE_DATA ##### -->
+<para>
+
+</para>
+
+@value: 
+
+<!-- ##### MACRO G_VALUE_HOLDS_SCALAR_FLOAT ##### -->
+<para>
+
+</para>
+
+@value: 
+
+<!-- ##### MACRO G_VALUE_HOLDS_SCALAR_INT ##### -->
 <para>
 
 </para>
@@ -1296,6 +1534,18 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### ARG GeglAdd:constants-float ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglAdd:constants-uint8 ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### ARG GeglAdd:input0 ##### -->
 <para>
 
@@ -1307,6 +1557,16 @@ GeglUnpremultImpl
 
 </para>
 
+
+<!-- ##### STRUCT GeglAttributes ##### -->
+<para>
+
+</para>
+
+@value: 
+@param_spec: 
+@rect: 
+@color_model: 
 
 <!-- ##### ARG GeglBlend:premultiply ##### -->
 <para>
@@ -1332,6 +1592,16 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### ENUM GeglChannelDataType ##### -->
+<para>
+
+</para>
+
+@GEGL_NONE: 
+@GEGL_U8: 
+@GEGL_FLOAT: 
+@GEGL_U16: 
+
 <!-- ##### STRUCT GeglColor ##### -->
 <para>
 
@@ -1344,6 +1614,17 @@ GeglUnpremultImpl
 
 </para>
 
+
+<!-- ##### ENUM GeglColorAlphaSpace ##### -->
+<para>
+
+</para>
+
+@GEGL_COLOR_ALPHA_SPACE_NONE: 
+@GEGL_COLOR_ALPHA_SPACE_GRAY: 
+@GEGL_COLOR_ALPHA_SPACE_GRAYA: 
+@GEGL_COLOR_ALPHA_SPACE_RGB: 
+@GEGL_COLOR_ALPHA_SPACE_RGBA: 
 
 <!-- ##### STRUCT GeglColorModel ##### -->
 <para>
@@ -1405,18 +1686,30 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### ENUM GeglColorModelType ##### -->
+<para>
+
+</para>
+
+@GEGL_COLOR_MODEL_TYPE_NONE: 
+@GEGL_COLOR_MODEL_TYPE_GRAY_U8: 
+@GEGL_COLOR_MODEL_TYPE_GRAY_U16: 
+@GEGL_COLOR_MODEL_TYPE_GRAY_FLOAT: 
+@GEGL_COLOR_MODEL_TYPE_GRAYA_U8: 
+@GEGL_COLOR_MODEL_TYPE_GRAYA_U16: 
+@GEGL_COLOR_MODEL_TYPE_GRAYA_FLOAT: 
+@GEGL_COLOR_MODEL_TYPE_RGB_U8: 
+@GEGL_COLOR_MODEL_TYPE_RGB_U16: 
+@GEGL_COLOR_MODEL_TYPE_RGB_FLOAT: 
+@GEGL_COLOR_MODEL_TYPE_RGBA_U8: 
+@GEGL_COLOR_MODEL_TYPE_RGBA_U16: 
+@GEGL_COLOR_MODEL_TYPE_RGBA_FLOAT: 
+
 <!-- ##### STRUCT GeglColorSpace ##### -->
 <para>
 
 </para>
 
-@object: 
-@color_space_type: 
-@num_components: 
-@is_additive: 
-@is_subtractive: 
-@name: 
-@component_names: 
 
 <!-- ##### STRUCT GeglComp ##### -->
 <para>
@@ -1583,18 +1876,12 @@ GeglUnpremultImpl
 
 </para>
 
-@object: 
 
 <!-- ##### STRUCT GeglDataSpace ##### -->
 <para>
 
 </para>
 
-@object: 
-@data_space_type: 
-@is_channel_data: 
-@bits: 
-@name: 
 
 <!-- ##### STRUCT GeglDiff ##### -->
 <para>
@@ -1669,7 +1956,6 @@ GeglUnpremultImpl
 
 </para>
 
-@op: 
 
 <!-- ##### ARG GeglGraph:image ##### -->
 <para>
@@ -1682,6 +1968,16 @@ GeglUnpremultImpl
 
 </para>
 
+
+<!-- ##### STRUCT GeglGraphOutput ##### -->
+<para>
+
+</para>
+
+@node: 
+@node_output: 
+@graph: 
+@graph_output: 
 
 <!-- ##### STRUCT GeglImage ##### -->
 <para>
@@ -1806,6 +2102,24 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### ARG GeglNode:source-output ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglNode:source0-output ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglNode:source1-output ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### USER_FUNCTION GeglNodeTraverseFunc ##### -->
 <para>
 
@@ -1863,6 +2177,16 @@ GeglUnpremultImpl
 @tile: 
 @rect: 
 
+<!-- ##### STRUCT GeglParamSpecFloat ##### -->
+<para>
+
+</para>
+
+@pspec: 
+@minimum: 
+@maximum: 
+@default_value: 
+
 <!-- ##### STRUCT GeglParamSpecInt ##### -->
 <para>
 
@@ -1870,6 +2194,58 @@ GeglUnpremultImpl
 
 @pspec: 
 @increment: 
+
+<!-- ##### STRUCT GeglParamSpecRgbFloat ##### -->
+<para>
+
+</para>
+
+@pspec: 
+@min_red: 
+@max_red: 
+@min_green: 
+@max_green: 
+@min_blue: 
+@max_blue: 
+@default_red: 
+@default_green: 
+@default_blue: 
+
+<!-- ##### STRUCT GeglParamSpecRgbUInt8 ##### -->
+<para>
+
+</para>
+
+@pspec: 
+@min_red: 
+@max_red: 
+@min_green: 
+@max_green: 
+@min_blue: 
+@max_blue: 
+@default_red: 
+@default_green: 
+@default_blue: 
+
+<!-- ##### STRUCT GeglParamSpecScalarFloat ##### -->
+<para>
+
+</para>
+
+@pspec: 
+@minimum: 
+@maximum: 
+@default_value: 
+
+<!-- ##### STRUCT GeglParamSpecScalarInt ##### -->
+<para>
+
+</para>
+
+@pspec: 
+@minimum: 
+@maximum: 
+@default_value: 
 
 <!-- ##### STRUCT GeglParamSpecTile ##### -->
 <para>
@@ -1879,6 +2255,16 @@ GeglUnpremultImpl
 @pspec: 
 @rect: 
 @color_model: 
+
+<!-- ##### STRUCT GeglParamSpecUInt8 ##### -->
+<para>
+
+</para>
+
+@pspec: 
+@minimum: 
+@maximum: 
+@default_value: 
 
 <!-- ##### STRUCT GeglPointOp ##### -->
 <para>
@@ -1933,7 +2319,6 @@ GeglUnpremultImpl
 
 </para>
 
-@object: 
 
 <!-- ##### STRUCT GeglScreen ##### -->
 <para>
@@ -1971,7 +2356,6 @@ GeglUnpremultImpl
 
 </para>
 
-@object: 
 
 <!-- ##### STRUCT GeglSubtract ##### -->
 <para>
@@ -1996,7 +2380,6 @@ GeglUnpremultImpl
 
 </para>
 
-@object: 
 
 <!-- ##### ARG GeglTile:area ##### -->
 <para>
@@ -2057,12 +2440,44 @@ GeglUnpremultImpl
 
 </para>
 
-@object: 
-@visits_list: 
-@nodes_hash: 
-@graph: 
 
 <!-- ##### FUNCTION g_value_dup_tile ##### -->
+<para>
+
+</para>
+
+@value: 
+@Returns: 
+
+<!-- ##### FUNCTION g_value_get_gegl_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@Returns: 
+
+<!-- ##### FUNCTION g_value_get_gegl_rgb_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@r: 
+@g: 
+@b: 
+
+<!-- ##### FUNCTION g_value_get_gegl_rgb_uint8 ##### -->
+<para>
+
+</para>
+
+@value: 
+@r: 
+@g: 
+@b: 
+
+<!-- ##### FUNCTION g_value_get_gegl_uint8 ##### -->
 <para>
 
 </para>
@@ -2095,6 +2510,22 @@ GeglUnpremultImpl
 @value: 
 @Returns: 
 
+<!-- ##### FUNCTION g_value_get_scalar_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@Returns: 
+
+<!-- ##### FUNCTION g_value_get_scalar_int ##### -->
+<para>
+
+</para>
+
+@value: 
+@Returns: 
+
 <!-- ##### FUNCTION g_value_get_tile ##### -->
 <para>
 
@@ -2110,6 +2541,42 @@ GeglUnpremultImpl
 
 @value: 
 @msg: 
+
+<!-- ##### FUNCTION g_value_set_gegl_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@v_float: 
+
+<!-- ##### FUNCTION g_value_set_gegl_rgb_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@r: 
+@g: 
+@b: 
+
+<!-- ##### FUNCTION g_value_set_gegl_rgb_uint8 ##### -->
+<para>
+
+</para>
+
+@value: 
+@r: 
+@g: 
+@b: 
+
+<!-- ##### FUNCTION g_value_set_gegl_uint8 ##### -->
+<para>
+
+</para>
+
+@value: 
+@v_uint8: 
 
 <!-- ##### FUNCTION g_value_set_image_data ##### -->
 <para>
@@ -2136,6 +2603,22 @@ GeglUnpremultImpl
 @value: 
 @tile: 
 
+<!-- ##### FUNCTION g_value_set_scalar_float ##### -->
+<para>
+
+</para>
+
+@value: 
+@v_float: 
+
+<!-- ##### FUNCTION g_value_set_scalar_int ##### -->
+<para>
+
+</para>
+
+@value: 
+@v_int: 
+
 <!-- ##### FUNCTION g_value_set_tile ##### -->
 <para>
 
@@ -2151,6 +2634,22 @@ GeglUnpremultImpl
 
 @value: 
 @v_object: 
+
+<!-- ##### FUNCTION gegl_add_get_constants ##### -->
+<para>
+
+</para>
+
+@self: 
+@constants: 
+
+<!-- ##### FUNCTION gegl_add_set_constants ##### -->
+<para>
+
+</para>
+
+@self: 
+@constants: 
 
 <!-- ##### FUNCTION gegl_blend_get_premultiply ##### -->
 <para>
@@ -2681,6 +3180,16 @@ GeglUnpremultImpl
 @self: 
 @roi: 
 
+<!-- ##### FUNCTION gegl_graph_lookup_output ##### -->
+<para>
+
+</para>
+
+@self: 
+@graph_output: 
+@Returns: 
+@graph_output_index: 
+
 <!-- ##### FUNCTION gegl_graph_set_image ##### -->
 <para>
 
@@ -2849,6 +3358,15 @@ GeglUnpremultImpl
 
 @Returns: 
 
+<!-- ##### FUNCTION gegl_image_set_channels_mask ##### -->
+<para>
+
+</para>
+
+@self: 
+@data: 
+@Returns: 
+
 <!-- ##### FUNCTION gegl_image_set_dest ##### -->
 <para>
 
@@ -2985,6 +3503,32 @@ GeglUnpremultImpl
 @index_num_outputs: 
 @index: 
 
+<!-- ##### FUNCTION gegl_node_get_source_node ##### -->
+<para>
+
+</para>
+
+@self: 
+@n: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_node_get_source_output ##### -->
+<para>
+
+</para>
+
+@self: 
+@n: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_node_get_total_num_sinks ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
 <!-- ##### FUNCTION gegl_node_inheriting_input ##### -->
 <para>
 
@@ -3098,6 +3642,24 @@ GeglUnpremultImpl
 @input_info: 
 @n: 
 
+<!-- ##### FUNCTION gegl_node_set_source_node ##### -->
+<para>
+
+</para>
+
+@self: 
+@source: 
+@n: 
+
+<!-- ##### FUNCTION gegl_node_set_source_output ##### -->
+<para>
+
+</para>
+
+@self: 
+@output: 
+@n: 
+
 <!-- ##### FUNCTION gegl_node_shared_count ##### -->
 <para>
 
@@ -3199,6 +3761,16 @@ GeglUnpremultImpl
 
 @self: 
 @Returns: 
+
+<!-- ##### FUNCTION gegl_op_get_nth_attributes ##### -->
+<para>
+
+</para>
+
+@self: 
+@n: 
+@Returns: 
+@op: 
 
 <!-- ##### FUNCTION gegl_op_get_nth_input_value ##### -->
 <para>
@@ -3330,6 +3902,20 @@ GeglUnpremultImpl
 @op: 
 @source1: 
 
+<!-- ##### FUNCTION gegl_param_spec_float ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@min: 
+@max: 
+@default_value: 
+@flags: 
+@Returns: 
+
 <!-- ##### FUNCTION gegl_param_spec_int ##### -->
 <para>
 
@@ -3345,6 +3931,74 @@ GeglUnpremultImpl
 @flags: 
 @Returns: 
 
+<!-- ##### FUNCTION gegl_param_spec_rgb_float ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@min_red: 
+@max_red: 
+@min_green: 
+@max_green: 
+@min_blue: 
+@max_blue: 
+@default_red: 
+@default_green: 
+@default_blue: 
+@flags: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_param_spec_rgb_uint8 ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@min_red: 
+@max_red: 
+@min_green: 
+@max_green: 
+@min_blue: 
+@max_blue: 
+@default_red: 
+@default_green: 
+@default_blue: 
+@flags: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_param_spec_scalar_float ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@min: 
+@max: 
+@default_value: 
+@flags: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_param_spec_scalar_int ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@min: 
+@max: 
+@default_value: 
+@flags: 
+@Returns: 
+
 <!-- ##### FUNCTION gegl_param_spec_tile ##### -->
 <para>
 
@@ -3355,6 +4009,26 @@ GeglUnpremultImpl
 @blurb: 
 @rect: 
 @color_model: 
+@flags: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_param_spec_types_init ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_param_spec_uint8 ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@min: 
+@max: 
+@default_value: 
 @flags: 
 @Returns: 
 
@@ -3466,6 +4140,24 @@ GeglUnpremultImpl
 
 @self: 
 @width: 
+
+<!-- ##### FUNCTION gegl_scalar_param_spec_types_init ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_scalar_value_transform_init ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_scalar_value_types_init ##### -->
+<para>
+
+</para>
+
 
 <!-- ##### FUNCTION gegl_simple_image_mgr_get_tile ##### -->
 <para>
@@ -3808,6 +4500,18 @@ GeglUnpremultImpl
 </para>
 
 @Returns: 
+
+<!-- ##### FUNCTION gegl_value_transform_init ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_value_types_init ##### -->
+<para>
+
+</para>
+
 
 <!-- ##### FUNCTION gegl_visitor_get_inputs ##### -->
 <para>

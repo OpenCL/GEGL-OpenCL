@@ -144,16 +144,12 @@ Heres an example of setting up a Mult op and calling apply on it:
 @self: 
 
 
-<!-- ##### FUNCTION gegl_op_get_nth_attributes ##### -->
+<!-- ##### FUNCTION gegl_op_free_attributes ##### -->
 <para>
 
 </para>
 
 @self: 
-@n: 
-@Returns: 
-<!-- # Unused Parameters # -->
-@op: 
 
 
 <!-- ##### FUNCTION gegl_op_get_attributes ##### -->

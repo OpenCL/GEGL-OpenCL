@@ -11,8 +11,8 @@ enum
 
 static void class_init (GeglMockPointOpClass * klass);
 static void init(GeglMockPointOp *self, GeglMockPointOpClass *klass);
-static void prepare (GeglFilter * op, GList * output_attributes, GList * input_attributes);
-static void finish (GeglFilter * op, GList * output_attributes, GList * input_attributes);
+static void prepare (GeglFilter * op, GeglAttributes * output_attributes, GList * input_attributes);
+static void finish (GeglFilter * op, GeglAttributes * output_attributes, GList * input_attributes);
 static void scanline (GeglFilter * op, GeglImageDataIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
@@ -73,7 +73,7 @@ scanline (GeglFilter * op,
 
 static void 
 prepare                (GeglFilter * op, 
-                        GList * output_attributes,
+                        GeglAttributes * output_attributes,
                         GList * input_attributes)
 {
   GeglPointOp *point_op = GEGL_POINT_OP(op); 
@@ -84,7 +84,7 @@ prepare                (GeglFilter * op,
 
 static void 
 finish                (GeglFilter * op, 
-                       GList * output_attributes,
+                       GeglAttributes * outpu_attributes,
                        GList * input_attributes)
 {
   LOG_DEBUG("finish", "MockPointOp finish was called");

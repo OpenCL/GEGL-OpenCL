@@ -54,7 +54,7 @@ class_init (GeglScanlineProcessorClass * klass)
  **/
 void 
 gegl_scanline_processor_process (GeglScanlineProcessor * self, 
-                                 GList * attributes,
+                                 GeglAttributes * attributes,
                                  GList * input_attributes)
 {
   gint i,j;
@@ -62,8 +62,9 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
   GeglImageData *image_data;
   gint width, height;
   gint num_inputs = g_list_length(input_attributes);
-  gint num_outputs = g_list_length(attributes);
-  GeglAttributes * attrs;
+  gint num_outputs = attributes ? 1: 0;
+  GeglAttributes *input_attrs;
+
   GeglImageDataIterator **iters = g_new (GeglImageDataIterator*, 
                                     num_inputs + num_outputs);
 
@@ -75,8 +76,8 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
              num_inputs, num_outputs); 
 #endif
 
-  /* Get image_data iterators for dests. */
-  for (i = 0; i < num_outputs; i++, j++)
+  /* Get image_data iterators for outputs. */
+  if (num_outputs == 1)
     {
       /*
        LOG_DEBUG("processor_process", 
@@ -84,10 +85,8 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
                  i);
       */
 
-
-       attrs = (GeglAttributes*)g_list_nth_data(attributes,i); 
-       image_data = (GeglImageData*)g_value_get_object(attrs->value);
-       gegl_rect_copy(&rect, &attrs->rect);
+       image_data = (GeglImageData*)g_value_get_object(attributes->value);
+       gegl_rect_copy(&rect, &attributes->rect);
 
        /* Get the image_data, if it is not NULL */ 
        if(image_data)
@@ -96,15 +95,13 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
                      "output value image_data is %p", 
                      image_data);
 
-           iters[i] = g_object_new (GEGL_TYPE_IMAGE_DATA_ITERATOR, 
+           iters[0] = g_object_new (GEGL_TYPE_IMAGE_DATA_ITERATOR, 
                                     "image_data", image_data,
                                     "area", &rect,
                                     NULL);  
 
-           gegl_image_data_iterator_first (iters[i]);
+           gegl_image_data_iterator_first (iters[0]);
          }
-       else
-         iters[i] = NULL;
     }
 
   /* Get image_data iterators for inputs. */
@@ -116,9 +113,9 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
                  i);
       */
 
-       attrs = (GeglAttributes*)g_list_nth_data(input_attributes,i); 
-       image_data = (GeglImageData*)g_value_get_object(attrs->value);
-       gegl_rect_copy(&rect, &attrs->rect);
+       input_attrs = (GeglAttributes*)g_list_nth_data(input_attributes,i); 
+       image_data = (GeglImageData*)g_value_get_object(input_attrs->value);
+       gegl_rect_copy(&rect, &input_attrs->rect);
 
        /* Get the image_data, if it is not NULL */ 
        if(image_data)
@@ -140,10 +137,9 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
     }
 
   /* Get the height and width of dest rect we want to process */
-  attrs = (GeglAttributes*)g_list_nth_data(attributes,0); 
-  image_data = (GeglImageData*)g_value_get_object(attrs->value);
-  gegl_rect_copy(&rect, &attrs->rect);
 
+  image_data = (GeglImageData*)g_value_get_object(attributes->value);
+  gegl_rect_copy(&rect, &attributes->rect);
   width = rect.w;
   height = rect.h;
 

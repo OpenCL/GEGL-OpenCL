@@ -14,30 +14,30 @@ Add two images.
 
 </para>
 
-<!-- ##### FUNCTION gegl_add_get_constants ##### -->
+<!-- ##### FUNCTION gegl_add_get_constant ##### -->
 <para>
 
 </para>
 
 @self: 
-@constants: 
+@constant: 
 
 
-<!-- ##### FUNCTION gegl_add_set_constants ##### -->
+<!-- ##### FUNCTION gegl_add_set_constant ##### -->
 <para>
 
 </para>
 
 @self: 
-@constants: 
+@constant: 
 
 
-<!-- ##### ARG GeglAdd:constants-float ##### -->
+<!-- ##### ARG GeglAdd:constant-float ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglAdd:constants-uint8 ##### -->
+<!-- ##### ARG GeglAdd:constant-uint8 ##### -->
 <para>
 
 </para>

@@ -71,7 +71,7 @@ test_color_apply(Test *test)
 
     gegl_op_apply(op); 
 
-    ct_test(test, testutils_check_rgb_float(GEGL_IMAGE(op), .1, .2, .3));  
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(op), .1, .2, .3));  
 
     g_object_unref(op);
   }
@@ -88,7 +88,7 @@ test_color_apply_roi(Test *test)
 
     gegl_op_apply_roi(op, &roi); 
 
-    ct_test(test, testutils_check_rgb_float_xy(GEGL_IMAGE(op), 1, 1, .1, .2, .3));  
+    ct_test(test, testutils_check_pixel_rgb_float_xy(GEGL_IMAGE(op), 1, 1, .1, .2, .3));  
 
     g_object_unref(op);
   }
@@ -106,7 +106,7 @@ test_color_apply_width_height(Test *test)
 
     gegl_op_apply(op); 
 
-    ct_test(test, testutils_check_rgb_float(GEGL_IMAGE(op), .1, .2, .3));  
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(op), .1, .2, .3));  
 
     g_object_unref(op);
   }
@@ -123,9 +123,9 @@ color_test_teardown(Test *test)
 }
 
 Test *
-create_color_test_rgb_float()
+create_color_test_pixel_rgb_float()
 {
-  Test* t = ct_create("GeglColorTestRgbFloat");
+  Test* t = ct_create("GeglColorTestPixelRgbFloat");
 
   g_assert(ct_addSetUp(t, color_test_setup));
   g_assert(ct_addTearDown(t, color_test_teardown));

@@ -1,0 +1,68 @@
+<!-- ##### SECTION Title ##### -->
+gegl-image-data-param-specs
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### VARIABLE GEGL_TYPE_PARAM_IMAGE_DATA ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_IMAGE_DATA ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
+<!-- ##### MACRO GEGL_PARAM_SPEC_IMAGE_DATA ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
+<!-- ##### STRUCT GeglParamSpecImageData ##### -->
+<para>
+
+</para>
+
+@pspec: 
+@rect: 
+@color_model: 
+
+<!-- ##### FUNCTION gegl_param_spec_image_data ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@rect: 
+@color_model: 
+@flags: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_data_param_spec_types_init ##### -->
+<para>
+
+</para>
+
+
+

@@ -5,12 +5,12 @@
 #include "gegl.h"
 
 gboolean
-testutils_check_rgb_float(GeglImage *image, 
+testutils_check_pixel_rgb_float(GeglImage *image, 
                            gfloat a, 
                            gfloat b, 
                            gfloat c);
 gboolean
-testutils_check_rgb_float_xy(GeglImage *image, 
+testutils_check_pixel_rgb_float_xy(GeglImage *image, 
                               gint x, gint y,
                               gfloat a, gfloat b, gfloat c);
 gboolean

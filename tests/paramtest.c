@@ -100,10 +100,10 @@ test_value_param_spec_validate(Test *test)
   GeglRect smaller_area = {0,0,AREA_WIDTH-1,AREA_HEIGHT};
   GeglRect bigger_area = {0,0,AREA_WIDTH+1,AREA_HEIGHT};
 
-  GeglColorModel *rgb_float = gegl_color_model_instance("rgbfloat");
+  GeglColorModel *pixel_rgb_float = gegl_color_model_instance("rgbfloat");
   GeglColorModel *gray_float = gegl_color_model_instance("grayfloat");
 
-  GeglOp *filled = testutils_rgb_float_sampled_image(AREA_WIDTH, 
+  GeglOp *filled = testutils_pixel_rgb_float_sampled_image(AREA_WIDTH, 
                                                      AREA_HEIGHT, 
                                                      .1, .2, .3);
   GeglImageData *image_data = gegl_image_get_image_data(GEGL_IMAGE(filled));
@@ -112,14 +112,14 @@ test_value_param_spec_validate(Test *test)
                                             "Data0",
                                             "data0",
                                             &smaller_area,
-                                            rgb_float,
+                                            pixel_rgb_float,
                                             G_PARAM_READWRITE);
 
   GParamSpec *pspec1 = gegl_param_spec_image_data("data1",
                                             "Data1",
                                             "data1",
                                             &bigger_area,
-                                            rgb_float,
+                                            pixel_rgb_float,
                                             G_PARAM_READWRITE);
 
   GParamSpec *pspec2 = gegl_param_spec_image_data("data2",

@@ -38,8 +38,9 @@ testgegl_SOURCES = \
    $(EXTRA_SRC) \
    addtest-rgb-float.c \
    addtest-rgb-uint8.c \
-   bfsvisitormultouttest.c \
    bfsvisitortest.c \
+   channelfloatvaluetest.c \
+   channeluint8valuetest.c \
    checktest.c \
    colormodeltest.c \
    colorspacetest.c \
@@ -47,41 +48,38 @@ testgegl_SOURCES = \
    colortest-rgb-uint8.c \
    databuffertest.c \
    dataspacetest.c \
-   dfsvisitormultouttest.c \
    dfsvisitortest.c \
    dumpvisitortest.c \
    fadetest-rgb-float.c \
    fadetest-rgb-uint8.c \
-   floatvaluetest.c \
    graphapplytest-rgb-float.c \
    graphnodetest.c \
    haverecttest.c \
    iaddtest-rgb-float.c \
    iaddtest-rgb-uint8.c \
-   imagetest.c \
-   imagedatatest.c \
-   imagedataiteratortest.c \
    imulttest-rgb-float.c \
    imulttest-rgb-uint8.c \
+   imagetest.c \
+   imagedataiteratortest.c \
+   imagedatatest.c \
    multiplytest-rgb-float.c \
    multtest-rgb-float.c \
    multtest-rgb-uint8.c \
    needrecttest.c \
    nodetest.c \
-   nodemultouttest.c \
-   optest.c \
    objecttest.c \
+   optest.c \
    pipetest.c \
+   pixelrgbfloatvaluetest.c \
+   pixelrgbafloatvaluetest.c \
+   pixelrgbuint8valuetest.c \
    pointoptest.c \
    printtest.c \
-   rgbfloatvaluetest.c \
-   rgbuint8valuetest.c \
    simpletreetest-rgb-float.c \
    storagetest.c \
    testgegl.c \
    testutils.c \
    tiletest.c \
-   uint8valuetest.c \
    valueimagedatatest.c \
    valuetest.c
 

@@ -11,8 +11,8 @@
 
 static void class_init (GeglPrintClass * klass);
 static void init (GeglPrint * self, GeglPrintClass * klass);
-static void prepare (GeglFilter * filter, GList * attributes, GList *input_attributes);
-static void finish (GeglFilter * filter, GList * attributes, GList *input_attributes);
+static void prepare (GeglFilter * filter, GeglAttributes * attributes, GList *input_attributes);
+static void finish (GeglFilter * filter, GeglAttributes * attributes, GList *input_attributes);
 
 static GeglScanlineFunc get_scanline_func(GeglPipe * pipe, GeglColorSpaceType space, GeglDataSpaceType type);
 static void print (GeglPrint * self, gchar * format, ...);
@@ -75,7 +75,7 @@ init (GeglPrint * self,
 
 static void 
 prepare (GeglFilter * filter, 
-         GList * attributes,
+         GeglAttributes * attributes,
          GList * input_attributes)
 {
   GeglPrint *self = GEGL_PRINT(filter);
@@ -120,7 +120,7 @@ prepare (GeglFilter * filter,
 
 static void 
 finish (GeglFilter * filter, 
-        GList * attributes,
+        GeglAttributes * attributes,
         GList * input_attributes)
 {
   GeglPrint *self = GEGL_PRINT(filter);

@@ -4,6 +4,11 @@
 #include <glib.h>
 #include <glib-object.h>
 
+/* --- fundamental types --- */
+extern GType GEGL_TYPE_SCALAR;
+extern GType GEGL_TYPE_CHANNEL;
+extern GType GEGL_TYPE_PIXEL;
+
 #define GEGL_DEFAULT_WIDTH 64 
 #define GEGL_DEFAULT_HEIGHT 64 
 
@@ -13,15 +18,6 @@ typedef enum
   GEGL_COLOR_SPACE_GRAY,
   GEGL_COLOR_SPACE_RGB
 }GeglColorSpaceType;
-
-typedef enum
-{
-  GEGL_COLOR_ALPHA_SPACE_NONE,
-  GEGL_COLOR_ALPHA_SPACE_GRAY,
-  GEGL_COLOR_ALPHA_SPACE_GRAYA,
-  GEGL_COLOR_ALPHA_SPACE_RGB,
-  GEGL_COLOR_ALPHA_SPACE_RGBA
-}GeglColorAlphaSpace;
 
 typedef enum
 {
@@ -41,23 +37,6 @@ typedef enum
 
 typedef enum
 {
-  GEGL_COLOR_MODEL_TYPE_NONE,
-  GEGL_COLOR_MODEL_TYPE_GRAY_U8,
-  GEGL_COLOR_MODEL_TYPE_GRAY_U16,
-  GEGL_COLOR_MODEL_TYPE_GRAY_FLOAT,
-  GEGL_COLOR_MODEL_TYPE_GRAYA_U8,
-  GEGL_COLOR_MODEL_TYPE_GRAYA_U16,
-  GEGL_COLOR_MODEL_TYPE_GRAYA_FLOAT,
-  GEGL_COLOR_MODEL_TYPE_RGB_U8,
-  GEGL_COLOR_MODEL_TYPE_RGB_U16,
-  GEGL_COLOR_MODEL_TYPE_RGB_FLOAT,
-  GEGL_COLOR_MODEL_TYPE_RGBA_U8,
-  GEGL_COLOR_MODEL_TYPE_RGBA_U16,
-  GEGL_COLOR_MODEL_TYPE_RGBA_FLOAT
-}GeglColorModelType;
-
-typedef enum
-{
   GEGL_COLOR_WHITE,
   GEGL_COLOR_BLACK,
   GEGL_COLOR_RED,
@@ -72,26 +51,11 @@ typedef enum
 
 typedef enum
 {
-  GEGL_NONE,
-  GEGL_U8,
-  GEGL_FLOAT,
-  GEGL_U16,
-}GeglChannelDataType;
-
-typedef enum
-{
   GEGL_DATA_SPACE_NONE,
   GEGL_DATA_SPACE_U8,
   GEGL_DATA_SPACE_FLOAT,
   GEGL_DATA_SPACE_U16,
 }GeglDataSpaceType;
-
-typedef union
-{
-  guint8 u8;
-  gfloat f;
-  guint16 u16;
-}GeglChannelValue;
 
 typedef struct _GeglRect GeglRect;
 struct _GeglRect

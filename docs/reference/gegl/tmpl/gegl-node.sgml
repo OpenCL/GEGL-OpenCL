@@ -74,7 +74,6 @@ and which output that input Node came from.
 @node: 
 @input: 
 @source: 
-@output: 
 
 <!-- ##### FUNCTION gegl_node_get_num_inputs ##### -->
 <para>
@@ -100,9 +99,10 @@ and which output that input Node came from.
 </para>
 
 @self: 
-@output: 
 @n: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@output: 
 
 
 <!-- ##### FUNCTION gegl_node_set_source ##### -->
@@ -112,48 +112,9 @@ and which output that input Node came from.
 
 @self: 
 @source: 
+@n: 
+<!-- # Unused Parameters # -->
 @output: 
-@n: 
-
-
-<!-- ##### FUNCTION gegl_node_get_source_node ##### -->
-<para>
-
-</para>
-
-@self: 
-@n: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_set_source_node ##### -->
-<para>
-
-</para>
-
-@self: 
-@source: 
-@n: 
-
-
-<!-- ##### FUNCTION gegl_node_set_source_output ##### -->
-<para>
-
-</para>
-
-@self: 
-@output: 
-@n: 
-
-
-<!-- ##### FUNCTION gegl_node_get_source_output ##### -->
-<para>
-
-</para>
-
-@self: 
-@n: 
-@Returns: 
 
 
 <!-- ##### FUNCTION gegl_node_get_num_sinks ##### -->
@@ -162,17 +123,9 @@ and which output that input Node came from.
 </para>
 
 @self: 
+@Returns: 
+<!-- # Unused Parameters # -->
 @output: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_get_total_num_sinks ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
 
 
 <!-- ##### FUNCTION gegl_node_get_sink ##### -->
@@ -181,9 +134,10 @@ and which output that input Node came from.
 </para>
 
 @self: 
-@output: 
 @n: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@output: 
 
 
 <!-- ##### FUNCTION gegl_node_get_sink_input ##### -->
@@ -192,9 +146,10 @@ and which output that input Node came from.
 </para>
 
 @self: 
-@output: 
 @n: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@output: 
 
 
 <!-- ##### FUNCTION gegl_node_unlink ##### -->
@@ -236,8 +191,9 @@ and which output that input Node came from.
 </para>
 
 @self: 
-@output: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@output: 
 
 
 <!-- ##### FUNCTION gegl_node_set_num_inputs ##### -->
@@ -279,21 +235,6 @@ and which output that input Node came from.
 </para>
 
 <!-- ##### ARG GeglNode:source1 ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglNode:source-output ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglNode:source0-output ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglNode:source1-output ##### -->
 <para>
 
 </para>

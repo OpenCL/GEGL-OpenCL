@@ -1,10 +1,8 @@
 #include <glib-object.h>
 #include "gegl.h"
 #include "gegl-mock-node.h"
-#include "gegl-mock-visitor.h"
 #include "ctest.h"
 #include "csuite.h"
-#include "testutils.h"
 #include <string.h>
 
 static GeglNode *node0, *node1, *node2, *node3;
@@ -70,14 +68,14 @@ test_node_g_object_new(Test *test)
 
     ct_test(test, 1 == gegl_node_get_num_outputs(B)); 
     ct_test(test, 0 == gegl_node_get_num_inputs(B)); 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(B)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(B)); 
 
     ct_test(test, 1 == gegl_node_get_num_outputs(C)); 
     ct_test(test, 0 == gegl_node_get_num_inputs(C)); 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(C)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(C)); 
 
-    ct_test(test, B == gegl_node_get_source_node(A, 0)); 
-    ct_test(test, C == gegl_node_get_source_node(A, 1)); 
+    ct_test(test, B == gegl_node_get_source(A, 0)); 
+    ct_test(test, C == gegl_node_get_source(A, 1)); 
 
     g_object_unref(A);
     g_object_unref(B);
@@ -93,8 +91,6 @@ test_node_g_object_new(Test *test)
 
     */
 
-    gint output = -1;
-
     GeglNode *source0 = g_object_new(GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);
     GeglNode * node = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                     "num_inputs", 1,
@@ -105,7 +101,7 @@ test_node_g_object_new(Test *test)
 
     /* node should still has a ref to source0 */
 
-    ct_test(test, source0 == gegl_node_get_source_node(node, 0)); 
+    ct_test(test, source0 == gegl_node_get_source(node, 0)); 
 
     ct_test(test, 1 == gegl_node_get_num_inputs(node)); 
     ct_test(test, 0 == gegl_node_get_num_outputs(node)); 
@@ -113,10 +109,9 @@ test_node_g_object_new(Test *test)
     ct_test(test, 0 == gegl_node_get_num_inputs(source0)); 
     ct_test(test, 1 == gegl_node_get_num_outputs(source0)); 
 
-    ct_test(test, source0 == gegl_node_get_source(node, &output, 0)); 
-    ct_test(test, 0 == output); 
+    ct_test(test, source0 == gegl_node_get_source(node, 0)); 
 
-    ct_test(test, 1 == gegl_node_get_num_sinks(source0, 0)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(source0)); 
 
     g_object_unref(node);
   }
@@ -179,8 +174,8 @@ test_node_g_object_set(Test *test)
                  "source1", source1, 
                  NULL);
 
-    ct_test(test, source0 == gegl_node_get_source_node(node, 0)); 
-    ct_test(test, source1 == gegl_node_get_source_node(node, 1)); 
+    ct_test(test, source0 == gegl_node_get_source(node, 0)); 
+    ct_test(test, source1 == gegl_node_get_source(node, 1)); 
 
     g_object_unref(node);
     g_object_unref(source0);
@@ -206,11 +201,8 @@ test_node_get_sources(Test *test)
 
   {
     GeglNode *source0, *source1;
-    source0 = gegl_node_get_source_node(node2, 0);
-    ct_test(test, 0 == gegl_node_get_source_output(node2, 0));
-
-    source1 = gegl_node_get_source_node(node2, 1);
-    ct_test(test, 0 == gegl_node_get_source_output(node2, 1));
+    source0 = gegl_node_get_source(node2, 0);
+    source1 = gegl_node_get_source(node2, 1);
 
     ct_test(test, 2 == gegl_node_get_num_inputs(node2));
   }
@@ -232,20 +224,18 @@ test_node_get_sinks(Test *test)
 
     */
   {
-    ct_test(test, 2 == gegl_node_get_total_num_sinks(node0)); 
-    ct_test(test, 2 == gegl_node_get_num_sinks(node0, 0)); 
+    ct_test(test, 2 == gegl_node_get_num_sinks(node0)); 
 
-    ct_test(test, node2 == gegl_node_get_sink(node0, 0, 0)); 
-    ct_test(test, 0 == gegl_node_get_sink_input(node0, 0, 0)); 
+    ct_test(test, node2 == gegl_node_get_sink(node0, 0)); 
+    ct_test(test, 0 == gegl_node_get_sink_input(node0, 0)); 
 
-    ct_test(test, node3 == gegl_node_get_sink(node0, 0, 1)); 
-    ct_test(test, 0 == gegl_node_get_sink_input(node0, 0, 1)); 
+    ct_test(test, node3 == gegl_node_get_sink(node0, 1)); 
+    ct_test(test, 0 == gegl_node_get_sink_input(node0, 1)); 
 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(node1)); 
-    ct_test(test, 1 == gegl_node_get_num_sinks(node1, 0)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(node1)); 
 
-    ct_test(test, node2 == gegl_node_get_sink(node1, 0, 0)); 
-    ct_test(test, 1 == gegl_node_get_sink_input(node1, 0, 0)); 
+    ct_test(test, node2 == gegl_node_get_sink(node1, 0)); 
+    ct_test(test, 1 == gegl_node_get_sink_input(node1, 0)); 
   }
 }
 
@@ -268,11 +258,11 @@ test_node_set_source_node(Test *test)
     n2 = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 2, NULL);  
     n3 = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 2, NULL);  
 
-    gegl_node_set_source_node(n2, n0, 0);
-    gegl_node_set_source_node(n3, n0, 0);
+    gegl_node_set_source (n2, n0, 0);
+    gegl_node_set_source (n3, n0, 0);
 
-    gegl_node_set_source_node(n2, n1, 1);
-    gegl_node_set_source_node(n3, n1, 1);
+    gegl_node_set_source (n2, n1, 1);
+    gegl_node_set_source (n3, n1, 1);
 
     g_object_unref(n0); 
     g_object_unref(n1);
@@ -288,8 +278,8 @@ test_node_set_source_node(Test *test)
 
     g_object_unref(n3);
 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(n0)); 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(n1)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(n0)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(n1)); 
 
     /*
        Remove n2 
@@ -314,11 +304,11 @@ test_node_set_source_node(Test *test)
     n2 = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 2, NULL);  
     n3 = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 2, NULL);  
 
-    gegl_node_set_source_node(n2, n0, 0);
-    gegl_node_set_source_node(n3, n0, 0);
+    gegl_node_set_source (n2, n0, 0);
+    gegl_node_set_source (n3, n0, 0);
 
-    gegl_node_set_source_node(n2, n1, 1);
-    gegl_node_set_source_node(n3, n1, 1);
+    gegl_node_set_source (n2, n1, 1);
+    gegl_node_set_source (n3, n1, 1);
 
     g_object_unref(n0); 
     g_object_unref(n1);
@@ -332,16 +322,16 @@ test_node_set_source_node(Test *test)
              n1 
     */
 
-    gegl_node_set_source_node(n2, NULL, 0); 
-    gegl_node_set_source_node(n3, NULL, 0); 
+    gegl_node_set_source (n2, NULL, 0); 
+    gegl_node_set_source (n3, NULL, 0); 
 
     ct_test(test, 2 == gegl_node_get_num_inputs(n2)); 
-    ct_test(test, NULL == gegl_node_get_source_node(n2, 0)); 
-    ct_test(test, n1 == gegl_node_get_source_node(n2, 1)); 
+    ct_test(test, NULL == gegl_node_get_source (n2, 0)); 
+    ct_test(test, n1 == gegl_node_get_source (n2, 1)); 
 
     ct_test(test, 2 == gegl_node_get_num_inputs(n3)); 
-    ct_test(test, NULL == gegl_node_get_source_node(n3, 0)); 
-    ct_test(test, n1 == gegl_node_get_source_node(n3, 1)); 
+    ct_test(test, NULL == gegl_node_get_source (n3, 0)); 
+    ct_test(test, n1 == gegl_node_get_source (n3, 1)); 
 
     g_object_unref(n2);
     g_object_unref(n3);
@@ -376,17 +366,17 @@ test_node_unlink(Test *test)
                        "source0", n1, 
                        NULL);  
 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(n0)); 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(n1)); 
-    ct_test(test, n1 == gegl_node_get_source_node(n2, 0)); 
-    ct_test(test, n0 == gegl_node_get_source_node(n1, 0)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(n0)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(n1)); 
+    ct_test(test, n1 == gegl_node_get_source (n2, 0)); 
+    ct_test(test, n0 == gegl_node_get_source (n1, 0)); 
 
     gegl_node_unlink(n1);
 
-    ct_test(test, 0 == gegl_node_get_total_num_sinks(n0)); 
-    ct_test(test, 0 == gegl_node_get_total_num_sinks(n1)); 
-    ct_test(test, NULL == gegl_node_get_source_node(n2, 0)); 
-    ct_test(test, NULL == gegl_node_get_source_node(n1, 0)); 
+    ct_test(test, 0 == gegl_node_get_num_sinks(n0)); 
+    ct_test(test, 0 == gegl_node_get_num_sinks(n1)); 
+    ct_test(test, NULL == gegl_node_get_source (n2, 0)); 
+    ct_test(test, NULL == gegl_node_get_source (n1, 0)); 
 
     g_object_unref(n1);
 
@@ -422,17 +412,17 @@ test_node_remove_sources(Test *test)
                        "source0", n1, 
                        NULL);  
 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(n0)); 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(n1)); 
-    ct_test(test, n1 == gegl_node_get_source_node(n2, 0)); 
-    ct_test(test, n0 == gegl_node_get_source_node(n1, 0)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(n0)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(n1)); 
+    ct_test(test, n1 == gegl_node_get_source(n2, 0)); 
+    ct_test(test, n0 == gegl_node_get_source(n1, 0)); 
 
     gegl_node_remove_sources(n2);
 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(n0)); 
-    ct_test(test, 0 == gegl_node_get_total_num_sinks(n1)); 
-    ct_test(test, NULL == gegl_node_get_source_node(n2, 0)); 
-    ct_test(test, n0 == gegl_node_get_source_node(n1, 0)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(n0)); 
+    ct_test(test, 0 == gegl_node_get_num_sinks(n1)); 
+    ct_test(test, NULL == gegl_node_get_source(n2, 0)); 
+    ct_test(test, n0 == gegl_node_get_source(n1, 0)); 
 
     g_object_unref(n2);
     g_object_unref(n1);
@@ -467,17 +457,17 @@ test_node_remove_sinks(Test *test)
                        "source0", n1, 
                        NULL);  
 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(n0)); 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(n1)); 
-    ct_test(test, n1 == gegl_node_get_source_node(n2, 0)); 
-    ct_test(test, n0 == gegl_node_get_source_node(n1, 0)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(n0)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(n1)); 
+    ct_test(test, n1 == gegl_node_get_source(n2, 0)); 
+    ct_test(test, n0 == gegl_node_get_source(n1, 0)); 
 
     gegl_node_remove_sinks(n1);
 
-    ct_test(test, 1 == gegl_node_get_total_num_sinks(n0)); 
-    ct_test(test, 0 == gegl_node_get_total_num_sinks(n1)); 
-    ct_test(test, NULL == gegl_node_get_source_node(n2, 0)); 
-    ct_test(test, n0 == gegl_node_get_source_node(n1, 0)); 
+    ct_test(test, 1 == gegl_node_get_num_sinks(n0)); 
+    ct_test(test, 0 == gegl_node_get_num_sinks(n1)); 
+    ct_test(test, NULL == gegl_node_get_source(n2, 0)); 
+    ct_test(test, n0 == gegl_node_get_source(n1, 0)); 
 
     g_object_unref(n2);
     g_object_unref(n1);

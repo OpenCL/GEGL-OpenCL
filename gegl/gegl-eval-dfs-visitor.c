@@ -110,7 +110,7 @@ compute_have_rect(GeglEvalDfsVisitor * self,
     gegl_visitor_get_input_attributes(visitor, GEGL_NODE(filter));
 
   GeglAttributes *attributes = 
-    gegl_op_get_nth_attributes(GEGL_OP(filter), 0); 
+    gegl_op_get_attributes(GEGL_OP(filter)); 
 
   for(i = 0; i < num_inputs; i++)
     {
@@ -151,7 +151,7 @@ compute_derived_color_model(GeglEvalDfsVisitor * self,
     gegl_visitor_get_input_attributes(visitor, GEGL_NODE(filter));
 
   GeglAttributes *attributes = 
-    gegl_op_get_nth_attributes(GEGL_OP(filter), 0); 
+    gegl_op_get_attributes(GEGL_OP(filter)); 
 
   /* Collect the color models of the inputs. */
   for(i = 0; i < num_inputs; i++)

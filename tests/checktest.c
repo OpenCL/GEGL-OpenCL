@@ -25,7 +25,7 @@ test_check_g_object_new(Test *test)
 }
 
 static void
-test_check_rgb_float(Test *test)
+test_check_pixel_rgb_float(Test *test)
 {
   {
     gboolean success;
@@ -35,7 +35,7 @@ test_check_rgb_float(Test *test)
 
     gegl_op_apply(constant); 
 
-    /* This is what testutils_check_rgb_float does */
+    /* This is what testutils_check_pixel_rgb_float does */
     {
       GeglImageData * image_data = gegl_image_get_image_data(GEGL_IMAGE(constant));
       GeglOp * check = g_object_new(GEGL_TYPE_CHECK, 
@@ -89,7 +89,7 @@ test_check_rgb_uint8(Test *test)
 }
 
 static void
-test_check_testutils_rgb_float(Test *test)
+test_check_testutils_pixel_rgb_float(Test *test)
 {
   {
     GeglOp *constant = g_object_new(GEGL_TYPE_COLOR, 
@@ -97,7 +97,7 @@ test_check_testutils_rgb_float(Test *test)
                                     NULL);
     gegl_op_apply(constant); 
 
-    ct_test(test, testutils_check_rgb_float(GEGL_IMAGE(constant), .1, .2, .3));  
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(constant), .1, .2, .3));  
 
     g_object_unref(constant);
   }
@@ -119,7 +119,7 @@ test_check_testutils_rgb_uint8(Test *test)
 }
 
 static void
-test_check_testutils_rgb_float_xy(Test *test)
+test_check_testutils_pixel_rgb_float_xy(Test *test)
 {
   {
     GeglOp *constant = g_object_new(GEGL_TYPE_COLOR, 
@@ -127,7 +127,7 @@ test_check_testutils_rgb_float_xy(Test *test)
                                     NULL);
     gegl_op_apply(constant); 
 
-    ct_test(test, testutils_check_rgb_float_xy(GEGL_IMAGE(constant), 1, 1, .1, .2, .3));  
+    ct_test(test, testutils_check_pixel_rgb_float_xy(GEGL_IMAGE(constant), 1, 1, .1, .2, .3));  
 
     g_object_unref(constant);
   }
@@ -158,7 +158,7 @@ test_check_testutils_color_modelels_match_failure(Test *test)
     gegl_op_apply(constant); 
 
     /* returns false since check fails */
-    ct_test(test, !testutils_check_rgb_float(GEGL_IMAGE(constant), .1, .2, .3));  
+    ct_test(test, !testutils_check_pixel_rgb_float(GEGL_IMAGE(constant), .1, .2, .3));  
 
     g_object_unref(constant);
   }
@@ -196,11 +196,11 @@ create_check_test()
 
 #if 1 
   g_assert(ct_addTestFun(t, test_check_g_object_new));
-  g_assert(ct_addTestFun(t, test_check_rgb_float));
+  g_assert(ct_addTestFun(t, test_check_pixel_rgb_float));
   g_assert(ct_addTestFun(t, test_check_rgb_uint8));
-  g_assert(ct_addTestFun(t, test_check_testutils_rgb_float));
+  g_assert(ct_addTestFun(t, test_check_testutils_pixel_rgb_float));
   g_assert(ct_addTestFun(t, test_check_testutils_rgb_uint8));
-  g_assert(ct_addTestFun(t, test_check_testutils_rgb_float_xy));
+  g_assert(ct_addTestFun(t, test_check_testutils_pixel_rgb_float_xy));
   g_assert(ct_addTestFun(t, test_check_testutils_rgb_uint8_xy));
   g_assert(ct_addTestFun(t, test_check_testutils_color_modelels_match_failure));
 #endif

@@ -79,7 +79,7 @@ visit_node(GeglVisitor * visitor,
 
     for(i = 0; i < num_inputs; i++)
       {
-        GeglNode * source = gegl_node_get_source_node(node, i);
+        GeglNode * source = gegl_node_get_source(node, i);
 
         if(!source) 
           {

@@ -51,11 +51,10 @@ GeglColorModel* gegl_image_color_model          (GeglImage * self);
 void            gegl_image_set_color_model      (GeglImage * self, 
                                                  GeglColorModel * cm);
 void            gegl_image_set_derived_color_model(GeglImage * self, 
-                                                 GeglColorModel * cm);
-gint            gegl_image_set_channels_mask    (GeglImage *self, 
-                                                 gpointer *data);
+                                                   GeglColorModel * cm);
 
-void gegl_image_set_image_data (GeglImage * self, GeglImageData *image_data);
+void            gegl_image_set_image_data (GeglImage * self, 
+                                           GeglImageData *image_data);
 GeglImageData * gegl_image_get_image_data (GeglImage * self);
 
 #ifdef __cplusplus

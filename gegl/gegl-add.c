@@ -8,8 +8,8 @@
 enum
 {
   PROP_0, 
-  PROP_CONSTANTS_FLOAT,
-  PROP_CONSTANTS_UINT8,
+  PROP_CONSTANT_FLOAT,
+  PROP_CONSTANT_UINT8,
   PROP_LAST 
 };
 
@@ -69,34 +69,34 @@ class_init (GeglAddClass * klass)
   gobject_class->get_property = get_property;
   gobject_class->finalize = finalize;
 
-  g_object_class_install_property (gobject_class, PROP_CONSTANTS_FLOAT,
-                                   gegl_param_spec_rgb_float ("constants-float",
-                                                              "ConstantsFloat",
-                                                              "The float constants",
-                                                              -G_MAXFLOAT, G_MAXFLOAT,
-                                                              -G_MAXFLOAT, G_MAXFLOAT,
-                                                              -G_MAXFLOAT, G_MAXFLOAT,
-                                                              0.0, 0.0, 0.0,
-                                                              G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class, PROP_CONSTANT_FLOAT,
+                                   gegl_param_spec_pixel_rgb_float ("constant-float",
+                                                                    "ConstantFloat",
+                                                                    "The float constant",
+                                                                    -G_MAXFLOAT, G_MAXFLOAT,
+                                                                    -G_MAXFLOAT, G_MAXFLOAT,
+                                                                    -G_MAXFLOAT, G_MAXFLOAT,
+                                                                    0.0, 0.0, 0.0,
+                                                                    G_PARAM_READWRITE));
 
-  g_object_class_install_property (gobject_class, PROP_CONSTANTS_UINT8,
-                                   gegl_param_spec_rgb_uint8 ("constants-uint8",
-                                                              "Color-Rgb-Uint8",
-                                                              "The uint8 constants",
-                                                              0, 255,
-                                                              0, 255,
-                                                              0, 255,
-                                                              0, 0, 0,
-                                                              G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class, PROP_CONSTANT_UINT8,
+                                   gegl_param_spec_pixel_rgb_uint8 ("constant-uint8",
+                                                                    "Color-Rgb-Uint8",
+                                                                    "The uint8 constant",
+                                                                    0, 255,
+                                                                    0, 255,
+                                                                    0, 255,
+                                                                    0, 0, 0,
+                                                                    G_PARAM_READWRITE));
 }
 
 static void 
 init (GeglAdd * self, 
       GeglAddClass * klass)
 {
-  self->constants = g_new0(GValue, 1); 
-  g_value_init(self->constants, GEGL_TYPE_RGB_FLOAT);
-  g_value_set_gegl_rgb_float(self->constants, 0.0, 0.0, 0.0);
+  self->constant = g_new0(GValue, 1); 
+  g_value_init(self->constant, GEGL_TYPE_PIXEL_RGB_FLOAT);
+  g_value_set_pixel_rgb_float(self->constant, 0.0, 0.0, 0.0);
 }
 
 static void
@@ -104,7 +104,7 @@ finalize(GObject *gobject)
 {
   GeglAdd *self = GEGL_ADD (gobject);
 
-  g_free(self->constants);
+  g_free(self->constant);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
@@ -118,9 +118,9 @@ get_property (GObject      *gobject,
   GeglAdd *self = GEGL_ADD(gobject);
   switch (prop_id)
   {
-    case PROP_CONSTANTS_FLOAT:
-    case PROP_CONSTANTS_UINT8:
-      gegl_add_get_constants(self, value); 
+    case PROP_CONSTANT_FLOAT:
+    case PROP_CONSTANT_UINT8:
+      gegl_add_get_constant(self, value); 
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
@@ -137,9 +137,9 @@ set_property (GObject      *gobject,
   GeglAdd *self = GEGL_ADD(gobject);
   switch (prop_id)
   {
-    case PROP_CONSTANTS_FLOAT:
-    case PROP_CONSTANTS_UINT8:
-      gegl_add_set_constants(self, (GValue*)value); 
+    case PROP_CONSTANT_FLOAT:
+    case PROP_CONSTANT_UINT8:
+      gegl_add_set_constant(self, (GValue*)value); 
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
@@ -148,26 +148,26 @@ set_property (GObject      *gobject,
 }
 
 void
-gegl_add_get_constants (GeglAdd * self,
-                        GValue *constants)
+gegl_add_get_constant (GeglAdd * self,
+                        GValue *constant)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_ADD (self));
-  g_return_if_fail (g_value_type_compatible(G_VALUE_TYPE(self->constants), G_VALUE_TYPE(constants)));
+  g_return_if_fail (g_value_type_transformable(G_VALUE_TYPE(self->constant), G_VALUE_TYPE(constant)));
 
-  g_value_copy(self->constants, constants); 
+  g_value_transform(self->constant, constant); 
 }
 
 void
-gegl_add_set_constants (GeglAdd * self, 
-                        GValue *constants)
+gegl_add_set_constant (GeglAdd * self, 
+                        GValue *constant)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_ADD (self));
 
-  g_value_unset(self->constants);
-  g_value_init(self->constants, G_VALUE_TYPE(constants));
-  g_value_copy(constants, self->constants); 
+  g_value_unset(self->constant);
+  g_value_init(self->constant, G_VALUE_TYPE(constant));
+  g_value_copy(constant, self->constant); 
 }
 
 /* scanline_funcs[data type] */
@@ -194,7 +194,7 @@ add_float (GeglFilter * filter,
 {                                                                       
   GeglAdd * self = GEGL_ADD(filter);
 
-  gfloat* data = (gfloat*)g_value_pixel_get_data(self->constants);
+  gfloat* data = (gfloat*)g_value_pixel_get_data(self->constant);
 
   gfloat **d = (gfloat**)gegl_image_data_iterator_color_channels(iters[0]);
   gfloat *da = (gfloat*)gegl_image_data_iterator_alpha_channel(iters[0]);
@@ -246,7 +246,7 @@ add_uint8 (GeglFilter * filter,
 {                                                                       
   GeglAdd * self = GEGL_ADD(filter);
 
-  guint8* data = (guint8*)g_value_pixel_get_data(self->constants);
+  guint8* data = (guint8*)g_value_pixel_get_data(self->constant);
 
   guint8 **d = (guint8**)gegl_image_data_iterator_color_channels(iters[0]);
   guint8 *da = (guint8*)gegl_image_data_iterator_alpha_channel(iters[0]);

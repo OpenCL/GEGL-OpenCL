@@ -1,3 +1,155 @@
+Wed Nov 13 23:32:58 EST 2002 calvinw@mindspring.com
+	
+	Created gegl-init.c and moved all init code out of gegl-utils. Then
+	split the value types and the param specs into separate channel and pixel value
+	types. See the corresponding unit tests for examples.
+
+	Also temporarily removed multiple outputs from the nodes classes till work
+	is complete on setting up the list of attributes/paramspecs to pass to each op.
+	Too confusing to do it with multiple outputs for now. 
+
+	Added more rgba value types and param specs.    
+
+	Removed gegl_op_apply_image for time being as well, not sure it
+	makes sense in the current scheme.
+
+	*gegl/Makefile.am
+	*gegl/gegl-add.c
+	*gegl/gegl-add.h
+	*gegl/gegl-bfs-visitor.c
+	*gegl/gegl-binary.c
+	*gegl/gegl-color.c
+	*gegl/gegl-comp.c
+	*gegl/gegl-data-space-float.c
+	*gegl/gegl-data-space-u8.c
+	*gegl/gegl-dfs-visitor.c
+	*gegl/gegl-dump-visitor.c
+	*gegl/gegl-eval-bfs-visitor.c
+	*gegl/gegl-eval-dfs-visitor.c
+	*gegl/gegl-eval-mgr.c
+	*gegl/gegl-eval-visitor.c
+	*gegl/gegl-filter.c
+	*gegl/gegl-filter.h
+	*gegl/gegl-graph-setup-visitor.c
+	*gegl/gegl-graph.c
+	*gegl/gegl-graph.h
+	*gegl/gegl-image.c
+	*gegl/gegl-image.h
+	*gegl/gegl-no-input.c
+	*gegl/gegl-node.c
+	*gegl/gegl-node.h
+	*gegl/gegl-op.c
+	*gegl/gegl-op.h
+	*gegl/gegl-param-specs.h
+	*gegl/gegl-pipe.c
+	*gegl/gegl-point-op.c
+	*gegl/gegl-print.c
+	*gegl/gegl-scanline-processor.c
+	*gegl/gegl-scanline-processor.h
+	*gegl/gegl-types.h
+	*gegl/gegl-unary.c
+	*gegl/gegl-utils.c
+	*gegl/gegl-utils.h
+	*gegl/gegl-value-types.h
+	*gegl/gegl-visitor.c
+	*gegl/gegl.h
+	*docs/reference/gegl/Makefile.am
+	*docs/reference/gegl/gegl-docs.sgml
+	*docs/reference/gegl/gegl-sections.txt
+	*docs/reference/gegl/gegl-undocumented.txt
+	*docs/reference/gegl/tmpl/gegl-add.sgml
+	*docs/reference/gegl/tmpl/gegl-attributes.sgml
+	*docs/reference/gegl/tmpl/gegl-filter.sgml
+	*docs/reference/gegl/tmpl/gegl-graph.sgml
+	*docs/reference/gegl/tmpl/gegl-image.sgml
+	*docs/reference/gegl/tmpl/gegl-node.sgml
+	*docs/reference/gegl/tmpl/gegl-op.sgml
+	*docs/reference/gegl/tmpl/gegl-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-types.sgml
+	*docs/reference/gegl/tmpl/gegl-unused.sgml
+	*docs/reference/gegl/tmpl/gegl-utils.sgml
+	*docs/reference/gegl/tmpl/gegl-value-types.sgml
+	*tests/Makefile.am
+	*tests/addtest-rgb-float.c
+	*tests/addtest-rgb-uint8.c
+	*tests/bfsvisitortest.c
+	*tests/checktest.c
+	*tests/colormodeltest.c
+	*tests/colorspacetest.c
+	*tests/colortest-rgb-float.c
+	*tests/databuffertest.c
+	*tests/dataspacetest.c
+	*tests/dfsvisitortest.c
+	*tests/dumpvisitortest.c
+	*tests/fadetest-rgb-float.c
+	*tests/fadetest-rgb-uint8.c
+	*tests/gegl-check.c
+	*tests/gegl-mock-filter.c
+	*tests/gegl-mock-filter.h
+	*tests/gegl-mock-point-op.c
+	*tests/graphapplytest-rgb-float.c
+	*tests/graphnodetest.c
+	*tests/iaddtest-rgb-float.c
+	*tests/iaddtest-rgb-uint8.c
+	*tests/imagedatatest.c
+	*tests/imulttest-rgb-float.c
+	*tests/imulttest-rgb-uint8.c
+	*tests/multiplytest-rgb-float.c
+	*tests/multtest-rgb-float.c
+	*tests/multtest-rgb-uint8.c
+	*tests/nodemultouttest.c
+	*tests/nodetest.c
+	*tests/objecttest.c
+	*tests/optest.c
+	*tests/paramtest.c
+	*tests/simpletreetest-rgb-float.c
+	*tests/storagetest.c
+	*tests/testgegl.c
+	*tests/testgeglfile.c
+	*tests/testutils.c
+	*tests/testutils.h
+	*tests/tiletest.c
+	*tests/valueimagedatatest.c
+	*tests/valuetest.c
+	Modified these as described above.
+
+	*docs/reference/gegl/tmpl/gegl-init.sgml
+	*docs/reference/gegl/tmpl/gegl-channel-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-pixel-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-image-data-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-channel-value-types.sgml
+	*docs/reference/gegl/tmpl/gegl-pixel-value-types.sgml
+	*gegl/gegl-channel-value-types.c
+	*gegl/gegl-channel-value-types.h
+	*gegl/gegl-pixel-value-types.c
+	*gegl/gegl-pixel-value-types.h
+	*gegl/gegl-channel-param-specs.c
+	*gegl/gegl-channel-param-specs.h
+	*gegl/gegl-pixel-param-specs.h
+	*gegl/gegl-pixel-param-specs.c
+	*gegl/gegl-image-data-param-specs.c
+	*gegl/gegl-image-data-param-specs.h
+	*gegl/gegl-init.c
+	*gegl/gegl-init.h
+	*tests/pixelrgbfloatvaluetest.c
+	*tests/pixelrgbafloatvaluetest.c
+	*tests/channelfloatvaluetest.c
+	*tests/pixelrgbuint8valuetest.c
+	*tests/channeluint8valuetest.c
+	Added these to split up value types into channel and pixel value types.
+	Fixed the tests to reflect this as well. Also split the pixel and channel 
+	and image data param specs.
+
+	*gegl/gegl-param-specs.c
+	*gegl/gegl-value-types.c
+	*tests/nodemultouttest.c
+	*tests/floatvaluetest.c
+	*tests/rgbfloatvaluetest.c
+	*tests/rgbuint8valuetest.c
+	*tests/uint8valuetest.c
+	Removed these since split channel and pixel value types. 	
+
+
 2002-11-11  Sven Neumann  <sven@gimp.org>
 
 	* docs/Makefile.am: fixed rule for TODO.html

@@ -17,8 +17,8 @@ static void class_init (GeglPipeClass * klass);
 static void init (GeglPipe * self, GeglPipeClass * klass);
 static void finalize(GObject * gobject);
 
-static void process (GeglFilter * filter, GList * attributes, GList * input_attributes);
-static void prepare (GeglFilter * filter, GList * attributes, GList * input_attributes);
+static void process (GeglFilter * filter, GeglAttributes * attributes, GList * input_attributes);
+static void prepare (GeglFilter * filter, GeglAttributes * attributes, GList * input_attributes);
 static gpointer parent_class = NULL;
 
 GType
@@ -88,7 +88,7 @@ finalize(GObject *gobject)
 
 static void 
 prepare (GeglFilter * filter, 
-         GList * attributes,
+         GeglAttributes * attributes,
          GList * input_attributes)
 {
   GeglPipe *self = GEGL_PIPE(filter);
@@ -99,7 +99,7 @@ prepare (GeglFilter * filter,
   GeglColorSpace * src_cs = gegl_color_model_color_space(src_cm);
   GeglDataSpace * src_ds = gegl_color_model_data_space(src_cm);
 
-  GeglAttributes *dest_attributes = (GeglAttributes*)g_list_nth_data(attributes, 0); 
+  GeglAttributes *dest_attributes = attributes; 
   g_value_set_object(dest_attributes->value, src);
 
   {
@@ -117,7 +117,7 @@ prepare (GeglFilter * filter,
 
 static void 
 process (GeglFilter * filter, 
-         GList * attributes,
+         GeglAttributes * attributes,
          GList * input_attributes)
 {
   GeglPipe *self =  GEGL_PIPE(filter);

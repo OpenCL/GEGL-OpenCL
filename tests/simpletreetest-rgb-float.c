@@ -45,7 +45,7 @@ test_simple_tree_apply(Test *t)
 
   gegl_op_apply(iadd); 
 
-  ct_test(t, testutils_check_rgb_float(GEGL_IMAGE(iadd), .55, .7, .85));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(iadd), .55, .7, .85));  
 
   g_object_unref(iadd);
   g_object_unref(fade);
@@ -113,7 +113,7 @@ test_simple_tree_apply_with_prints(Test *t)
 
   gegl_op_apply(iadd); 
 
-  ct_test(t, testutils_check_rgb_float(GEGL_IMAGE(iadd), .55, .7, .85));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(iadd), .55, .7, .85));  
 
   g_object_unref(iadd);
   g_object_unref(fade);
@@ -132,7 +132,7 @@ test_simple_diamond_apply(Test *t)
         /   \ 
     fade1 fade2 
        \    / 
-       color 
+        color 
 
             (.25,.5,.75)
             /         \
@@ -165,7 +165,7 @@ test_simple_diamond_apply(Test *t)
 
   gegl_op_apply(iadd); 
 
-  ct_test(t, testutils_check_rgb_float(GEGL_IMAGE(iadd), .25, .5, .75));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(iadd), .25, .5, .75));  
 
   g_object_unref(iadd);
   g_object_unref(fade1);
@@ -209,7 +209,7 @@ test_simple_chain_apply(Test *t)
 
   gegl_op_apply(fade2); 
 
-  ct_test(t, testutils_check_rgb_float(GEGL_IMAGE(fade2), .025, .05, .075));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(fade2), .025, .05, .075));  
 
   g_object_unref(fade1);
   g_object_unref(fade2);
@@ -227,9 +227,9 @@ simple_tree_test_teardown(Test *test)
 }
 
 Test *
-create_simple_tree_test_rgb_float()
+create_simple_tree_test_pixel_rgb_float()
 {
-  Test* t = ct_create("GeglSimpleTreeTestRgbFloat");
+  Test* t = ct_create("GeglSimpleTreeTestPixelRgbFloat");
 
   g_assert(ct_addSetUp(t, simple_tree_test_setup));
   g_assert(ct_addTearDown(t, simple_tree_test_teardown));

@@ -27,13 +27,10 @@ static void accept(GeglNode * node, GeglVisitor * visitor);
 static GeglConnector* allocate_connectors(GeglNode * self, gint num_inputs);
 static void free_connectors(GeglNode * self);
 
-static GList** allocate_sinks(GeglNode * self, gint num_outputs);
 static void free_sinks(GeglNode * self);
 
 static void add_sink(GeglNode * self, GeglConnector * connector);
 static void remove_sink(GeglNode * self, GeglConnector * connector);
-
-static GeglConnector* get_connector(GeglNode * self, gint n);
 
 static gpointer parent_class = NULL;
 
@@ -92,7 +89,7 @@ class_init (GeglNodeClass * klass)
                                                       "NumOutputs",
                                                       "Number of outputs for node",
                                                       0,
-                                                      G_MAXINT,
+                                                      1,
                                                       0,
                                                       G_PARAM_READWRITE));
 
@@ -116,33 +113,6 @@ class_init (GeglNodeClass * klass)
                                                         "Source 1 of this node",
                                                          GEGL_TYPE_NODE,
                                                          G_PARAM_READWRITE));
-
-  g_object_class_install_property (gobject_class, PROP_SOURCE_OUTPUT,
-                                   g_param_spec_int ("source_output",
-                                                      "SourceOutput",
-                                                      "Source's output ",
-                                                      0,
-                                                      G_MAXINT,
-                                                      0,
-                                                      G_PARAM_READWRITE));
-
-  g_object_class_install_property (gobject_class, PROP_SOURCE0_OUTPUT,
-                                   g_param_spec_int ("source0_output",
-                                                      "Source0Output",
-                                                      "Source0's output ",
-                                                      0,
-                                                      G_MAXINT,
-                                                      0,
-                                                      G_PARAM_READWRITE));
-
-  g_object_class_install_property (gobject_class, PROP_SOURCE1_OUTPUT,
-                                   g_param_spec_int ("source1_output",
-                                                      "Source1Output",
-                                                      "Source1's output",
-                                                      0,
-                                                      G_MAXINT,
-                                                      0,
-                                                      G_PARAM_READWRITE));
 
   return;
 }
@@ -193,17 +163,10 @@ set_property (GObject      *gobject,
       break;
     case PROP_SOURCE:
     case PROP_SOURCE0:
-      gegl_node_set_source_node(node, (GeglNode*)g_value_get_object(value), 0);  
+      gegl_node_set_source(node, (GeglNode*)g_value_get_object(value), 0);  
       break;
     case PROP_SOURCE1:
-      gegl_node_set_source_node(node, (GeglNode*)g_value_get_object(value), 1);  
-      break;
-    case PROP_SOURCE_OUTPUT:
-    case PROP_SOURCE0_OUTPUT:
-      gegl_node_set_source_output(node, g_value_get_int(value), 0);  
-      break;
-    case PROP_SOURCE1_OUTPUT:
-      gegl_node_set_source_output(node, g_value_get_int(value), 1);  
+      gegl_node_set_source(node, (GeglNode*)g_value_get_object(value), 1);  
       break;
     default:
       break;
@@ -228,17 +191,10 @@ get_property (GObject      *gobject,
       break;
     case PROP_SOURCE:
     case PROP_SOURCE0:
-      g_value_set_object(value, (GObject*)gegl_node_get_source_node(node, 0));  
+      g_value_set_object(value, (GObject*)gegl_node_get_source(node, 0));  
       break;
     case PROP_SOURCE1:
-      g_value_set_object(value, (GObject*)gegl_node_get_source_node(node, 1));  
-      break;
-    case PROP_SOURCE_OUTPUT:
-    case PROP_SOURCE0_OUTPUT:
-      g_value_set_int(value, gegl_node_get_source_output(node, 0));  
-      break;
-    case PROP_SOURCE1_OUTPUT:
-      g_value_set_int(value, gegl_node_get_source_output(node, 1));  
+      g_value_set_object(value, (GObject*)gegl_node_get_source(node, 1));  
       break;
     default:
       break;
@@ -319,19 +275,15 @@ gegl_node_set_num_outputs (GeglNode * self,
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail (num_outputs >= 0);
+  g_return_if_fail (num_outputs >= 0 && num_outputs <=1);
 
   self->num_outputs = num_outputs;
-
-  if(self->num_outputs > 0)
-    self->sinks = allocate_sinks(self, self->num_outputs);
 }
 
 
 /**
  * gegl_node_get_source:
  * @self: a #GeglNode.
- * @output: pointer to output (out)
  * @n: which source.
  *
  * Returns the nth source node and which output it uses as source.
@@ -340,20 +292,14 @@ gegl_node_set_num_outputs (GeglNode * self,
  **/
 GeglNode *
 gegl_node_get_source (GeglNode * self, 
-                      gint * output,
                       gint n)
 {
   GeglNode *source =  NULL;
   if(n < 0 || n >= self->num_inputs)
       return NULL;
 
-  *output = -1;
-
   if(self->connectors)
-    {
-      *output = self->connectors[n].output;
-       source = self->connectors[n].source;
-    }
+    source = self->connectors[n].source;
 
   return source;
 }
@@ -363,7 +309,6 @@ gegl_node_get_source (GeglNode * self,
  * gegl_node_set_source:
  * @self: a #GeglNode.
  * @source: the node to use for nth source.
- * @output: the output of the source.
  * @n: which source.
  *
  * Sets source and output of the nth source.
@@ -372,7 +317,6 @@ gegl_node_get_source (GeglNode * self,
 void
 gegl_node_set_source(GeglNode * self, 
                      GeglNode * source, 
-                     gint output,
                      gint n)
 {
   GeglConnector * connectors = NULL;
@@ -392,7 +336,6 @@ gegl_node_set_source(GeglNode * self,
     }
 
   connectors[n].source = source;
-  connectors[n].output = output;
 
   /* Should already be set, but thats okay. */
   connectors[n].node = self;
@@ -408,186 +351,45 @@ gegl_node_set_source(GeglNode * self,
     }
 }
 
-
-/**
- * gegl_node_get_source_node:
- * @self: a #GeglNode.
- * @n: which source.
- *
- * Gets the nth source.
- *
- * Returns: a #GeglNode, the nth source of this node.
- **/
-GeglNode * 
-gegl_node_get_source_node (GeglNode * self, 
-                           gint n)
-{
-  GeglConnector* connector = 
-    get_connector(self,n);
-  if(!connector)
-    return NULL;
-
-  /* Just return the source node */
-  return connector->source;
-}
-
-
-/**
- * gegl_node_set_source_node:
- * @self: a #GeglNode.
- * @source: the node to make the nth source.
- * @n: which source.
- *
- * Sets the nth source of this node.
- *
- **/
-void
-gegl_node_set_source_node(GeglNode * self, 
-                          GeglNode * source, 
-                          gint n)
-{
-  g_return_if_fail(self != NULL);
-  g_return_if_fail(n >= 0 && n < self->num_inputs); 
-
-  /* Assume will use the 0th output from this source. */
-  gegl_node_set_source(self, source, 0, n);
-}
-
-
-/**
- * gegl_node_get_source_output:
- * @self: a #GeglNode.
- * @n: which source.
- *
- * Gets the nth source output.
- *
- * Returns: The nth source output.
- **/
-gint 
-gegl_node_get_source_output(GeglNode * self, 
-                            gint n)
-{
-  GeglConnector * connector;
-  g_return_val_if_fail (self != NULL, -1);
-  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
-
-  connector = get_connector(self, n);
-
-  g_return_val_if_fail(connector->source, -1);
-
-  return connector->output;
-}
-
-
-/**
- * gegl_node_set_source_output:
- * @self: a #GeglNode.
- * @output: The output for the nth source. 
- * @n: nth source.
- *
- * Sets the nth source output of this node.
- *
- **/
-void
-gegl_node_set_source_output(GeglNode * self, 
-                            gint output, 
-                            gint n)
-{
-  GeglConnector * connector;
-  gint source_num_outputs;
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_NODE (self));
-
-  connector = get_connector(self, n);
-
-  g_return_if_fail(connector->source);
-  source_num_outputs = gegl_node_get_num_outputs(connector->source);
-  g_return_if_fail(connector->output < source_num_outputs &&
-                   connector->output >=0);
-
-  remove_sink(connector->source, connector);
-  connector->output = output; 
-  add_sink(connector->source, connector);
-}
-
 /**
  * gegl_node_get_sinks:
  * @self: a #GeglNode.
- * @output: which output index.
  *
- * Returns a list of GeglConnectors for the passed output number. 
+ * Returns a list of GeglConnectors. 
  *
  * Returns: a list of GeglConnector pointers. 
  **/
 GList *
-gegl_node_get_sinks (GeglNode * self, 
-                     gint output)
+gegl_node_get_sinks (GeglNode * self)
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
-  g_return_val_if_fail (output >= 0 && 
-                        output < self->num_outputs, NULL);
-
-  return self->sinks[output];
+  return self->sinks;
 }
 
 
 /**
  * gegl_node_get_num_sinks:
  * @self: a #GeglNode.
- * @output: output index
  *
- * Gets the number of sinks for this output.
+ * Gets the number of sinks.
  *
  * Returns: number of sinks. 
  **/
 gint 
-gegl_node_get_num_sinks (GeglNode * self,
-                         gint output)
+gegl_node_get_num_sinks (GeglNode * self)
 {
   g_return_val_if_fail (self != NULL, -1);
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
-  if(self->num_outputs == 0)
-    return 0;
-
-  {
-    g_return_val_if_fail (output >= 0 && 
-                          output < self->num_outputs, -1);
-
-    return g_list_length(self->sinks[output]);
-  }
-}
-
-
-/**
- * gegl_node_get_total_num_sinks:
- * @self: a #GeglNode.
- *
- * Gets the total number of sinks for this node.
- *
- * Returns: total number of sinks. 
- **/
-gint 
-gegl_node_get_total_num_sinks (GeglNode * self)
-{
-  gint total = 0;
-  gint i;
-  g_return_val_if_fail (self != NULL, -1);
-  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
-
-  for(i = 0; i < self->num_outputs; i++)
-    total += g_list_length(self->sinks[i]);
-
-  return total;
+  return g_list_length(self->sinks);
 }
 
 
 /**
  * gegl_node_get_sink:
  * @self: a #GeglNode.
- * @output: the output.
  * @n: nth sink attached to output.
  *
  * Gets the nth sink attached to nodes output.
@@ -596,17 +398,14 @@ gegl_node_get_total_num_sinks (GeglNode * self)
  **/
 GeglNode*         
 gegl_node_get_sink (GeglNode * self,
-                    gint output,
                     gint n)
 {
   GeglConnector * connector;
   GeglNode *node = NULL;
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
-  g_return_val_if_fail(output < self->num_outputs &&
-                       output >=0, NULL);
 
-  connector = (GeglConnector*)g_list_nth_data(self->sinks[output], n);
+  connector = (GeglConnector*)g_list_nth_data(self->sinks, n);
 
   /* Just return the node */
   if(connector)
@@ -619,7 +418,6 @@ gegl_node_get_sink (GeglNode * self,
 /**
  * gegl_node_get_sink_input:
  * @self: a #GeglNode.
- * @output: which output.
  * @n: nth sink attached to output.
  *
  * Gets the input of the nth sink attached to nodes output.
@@ -628,17 +426,14 @@ gegl_node_get_sink (GeglNode * self,
  **/
 gint              
 gegl_node_get_sink_input(GeglNode * self,
-                         gint output,
                          gint n)
 {
   GeglConnector * connector;
   gint input = -1;
   g_return_val_if_fail (self != NULL, -1);
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
-  g_return_val_if_fail(output < self->num_outputs &&
-                       output >=0, -1);
 
-  connector = (GeglConnector*)g_list_nth_data(self->sinks[output], n);
+  connector = (GeglConnector*)g_list_nth_data(self->sinks, n);
 
   /* Just return the input */
   if(connector)
@@ -681,9 +476,7 @@ gegl_node_remove_sources(GeglNode *self)
   g_return_if_fail (GEGL_IS_NODE (self));
 
   for(i = 0; i < self->num_inputs; i++)
-    {
-      gegl_node_set_source(self, NULL, 0, i);
-    }
+    gegl_node_set_source(self, NULL, i);
 }
 
 /**
@@ -696,38 +489,24 @@ gegl_node_remove_sources(GeglNode *self)
 void
 gegl_node_remove_sinks(GeglNode *self) 
 {
-  gint i, j;
+  gint j;
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_NODE (self));
 
-  for(i = 0; i < self->num_outputs; i++)
+  if (self->num_outputs == 1)
     {
-      for(j=0; j < g_list_length(self->sinks[i]); j++)
+      for(j=0; j < g_list_length(self->sinks); j++)
         {
           GeglConnector *connector = 
-              (GeglConnector*)g_list_nth_data(self->sinks[i], j); 
+              (GeglConnector*)g_list_nth_data(self->sinks, j); 
 
           gegl_node_set_source(connector->node, 
                                NULL, 
-                               0, 
                                connector->input); 
         }
     }
 }
 
-
-static GeglConnector *
-get_connector (GeglNode * self, 
-               gint n)
-{
-  if(n < 0 || n >= self->num_inputs)
-      return NULL;
-
-  if(self->connectors)
-    return &self->connectors[n];
-  else
-    return NULL;
-}
 
 static void 
 add_sink(GeglNode * self,
@@ -738,11 +517,7 @@ add_sink(GeglNode * self,
 
   g_return_if_fail (connector != NULL);
 
-  g_return_if_fail (connector->output >= 0 &&
-                    connector->output < self->num_outputs);
-
-  self->sinks[connector->output] = 
-    g_list_append(self->sinks[connector->output], connector);
+  self->sinks = g_list_append(self->sinks, connector);
 }
 
 static void 
@@ -754,11 +529,7 @@ remove_sink (GeglNode * self,
 
   g_return_if_fail (connector != NULL);
 
-  g_return_if_fail (connector->output >= 0 && 
-                    connector->output < self->num_outputs);
-
-  self->sinks[connector->output] = 
-    g_list_remove(self->sinks[connector->output], connector);
+  self->sinks = g_list_remove(self->sinks, connector);
 }
 
 static GeglConnector* 
@@ -771,8 +542,6 @@ allocate_connectors(GeglNode *self,
   for(i = 0; i < num_inputs; i++)
     {
       connectors[i].source = NULL;
-      connectors[i].output = 0;
-
       connectors[i].node = self;
       connectors[i].input = i;
     }
@@ -787,37 +556,14 @@ free_connectors(GeglNode * self)
   self->connectors = NULL;
 }
 
-static GList** 
-allocate_sinks(GeglNode * self,
-               gint num_outputs)
-{
-  gint i;
-  GList ** sinks = g_new(GList*, num_outputs);
-
-  for(i = 0; i < num_outputs; i++)
-    sinks[i] = NULL;
-
-  return sinks;
-}
-
 static void
 free_sinks(GeglNode * self)
 {
-  gint i; 
-
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_NODE (self));
 
-  /* Free each list.  Entries on each 
-     list should be freed already.*/
-  for(i = 0; i < self->num_outputs; i++)
-    {
-      g_list_free(self->sinks[i]);
-      self->sinks[i] = NULL;
-    }
+  g_list_free(self->sinks);
 
-  /* Free the array of lists. */
-  g_free(self->sinks);
   self->sinks = NULL;
 }
 
