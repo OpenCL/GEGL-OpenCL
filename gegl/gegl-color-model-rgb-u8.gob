@@ -143,7 +143,7 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
 
   override (Gegl:Color:Model)
   void
-  convert_to_xyz (GeglColorModel *cm, gfloat *dest_data, guchar **src_data, gint width)
+  convert_to_xyz (GeglColorModel *cm, gfloat **dest_data, guchar **src_data, gint width)
   {
     /* the color datat in src_data is rgb_float */
     /*
@@ -153,58 +153,67 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
       | Z  |      | 0.02133944350088028 0.14297193020246480 1.24172892629665500 | | B  |
       --  --      ---                                                        ---- --  --
     */
-    gfloat m00 = 0.38106149108714790;
-    gfloat m10 = 0.32025712365352110;
-    gfloat m20 = 0.24834578525933100;
-    gfloat m01 = 0.20729745115140850;
-    gfloat m11 = 0.68054638776373240;
-    gfloat m21 = 0.11215616108485920;
-    gfloat m02 = 0.02133944350088028;
-    gfloat m12 = 0.14297193020246480;
-    gfloat m22 = 1.24172892629665500;
 
-    guint8 *r, *g, *b, *a;
+    gfloat m00 = 0.412453;
+    gfloat m10 = 0.35758;
+    gfloat m20 = 0.180423;
+    gfloat m01 = 0.212671;
+    gfloat m11 = 0.71516;
+    gfloat m21 = 0.072169;
+    gfloat m02 = 0.019334;
+    gfloat m12 = 0.119193;
+    gfloat m22 = 0.950227;
+
+    guint8 *src_r, *src_g, *src_b, *src_a;
+    gfloat *dest_x, *dest_y, *dest_z, *dest_a;
+    
     gfloat R, G, B, A;
-    gint i=0;
     gfloat tmp= 1.0/255.0;
 
     gboolean has_alpha = gegl_color_model_has_alpha(cm);
 
-    r = src_data[0];
-    g = src_data[1];
-    b = src_data[2];
+    src_r = src_data[0];
+    src_g = src_data[1];
+    src_b = src_data[2];
     
-    if(has_alpha){
+    dest_x = (gfloat*) dest_data[0];
+    dest_y = (gfloat*) dest_data[1];
+    dest_z = (gfloat*) dest_data[2];
 
-    a = src_data[3];
+    if (has_alpha)
+      {
+      src_a = src_data[3];
+      dest_a = (gfloat*) dest_data[3];
 
-    while(width--)
-    {
-      R = *r++ * tmp;
-      G = *g++ * tmp;
-      B = *b++ * tmp; 
-      A = *a++ * tmp;
-      dest_data[i++] = m00 * R + m10 * G + m20 * B;
-      dest_data[i++] = m01 * R + m11 * G + m21 * B;
-      dest_data[i++] = m02 * R + m12 * G + m22 * B;
-      dest_data[i++] = A;
-    }
-    } else {
-    while(width--)
-    {
-      R = *r++ * tmp;
-      G = *g++ * tmp;
-      B = *b++ * tmp;
-      dest_data[i++] = m00 * R + m10 * G + m20 * B;
-      dest_data[i++] = m01 * R + m11 * G + m21 * B;
-      dest_data[i++] = m02 * R + m12 * G + m22 * B;
-    }
-    }
+      while (width--)
+	{
+      	R = *src_r++ * tmp;
+      	G = *src_g++ * tmp;
+      	B = *src_b++ * tmp; 
+      	A = *src_a++ * tmp;
+      	*dest_x++ = m00 * R + m10 * G + m20 * B;
+      	*dest_y++ = m01 * R + m11 * G + m21 * B;
+      	*dest_z++ = m02 * R + m12 * G + m22 * B;
+      	*dest_a++ = A;
+      	}
+      } 
+    else 
+      {
+      while (width--)
+	{
+	R = *src_r++ * tmp;
+	G = *src_g++ * tmp;
+	B = *src_b++ * tmp;
+	*dest_x++ = m00 * R + m10 * G + m20 * B;
+	*dest_y++ = m01 * R + m11 * G + m21 * B;
+	*dest_z++ = m02 * R + m12 * G + m22 * B;
+	}
+      }
   }
 
   override (Gegl:Color:Model)
   void
-  convert_from_xyz (GeglColorModel *cm, guchar **dest_data, gfloat *src_data, gint width)
+  convert_from_xyz (GeglColorModel *cm, guchar **dest_data, gfloat **src_data, gint width)
   {
     /* the color datat in src_data is xyz_float */
     /*
@@ -214,45 +223,113 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
       | B  |      | 0.055648   -0.204043    1.057311 | | Z  |
       --  --      ---                              ---- --  --
     */
-    gfloat m00 =  3.48340481253539000;
-    gfloat m10 = -1.07152751306193600;
-    gfloat m20 =  0.06351179790497788;
-    gfloat m01 = -1.52176374927285200;
-    gfloat m11 =  1.96593795204372400;
-    gfloat m21 = -0.20020501000496480;
-    gfloat m02 = -0.55923133354049780;
-    gfloat m12 =  0.03673691339553462;
-    gfloat m22 =  0.81070942031648220;
+    gfloat m00 = 3.240479;
+    gfloat m10 = -1.53715;
+    gfloat m20 = -0.498535;
+    gfloat m01 = -0.969256;
+    gfloat m11 = 1.875991;
+    gfloat m21 = 0.041556; 
+    gfloat m02 = 0.055648;
+    gfloat m12 = -0.204043;
+    gfloat m22 = 1.057311;
+				    
 
-    guint8 *r, *g, *b, *a;
-    gint i=0;
+    guint8 *dest_r, *dest_g, *dest_b, *dest_a;
+    gfloat *src_x, *src_y, *src_z, *src_a;
 
     gboolean has_alpha = gegl_color_model_has_alpha(cm);
 
-    r = dest_data[0];
-    g = dest_data[1];
-    b = dest_data[2];
-    if(has_alpha){
-    a = dest_data[3];
+    dest_r = dest_data[0];
+    dest_g = dest_data[1];
+    dest_b = dest_data[2];
+    src_x = src_data[0];
+    src_y = src_data[1];
+    src_z = src_data[2];
 
-    while(width--)
-    {
-      *r++ = (m00 * src_data[i*4] + m10 * src_data[i*4+1] + m20 * src_data[i*4+2]) * 255;
-      *g++ = (m01 * src_data[i*4] + m11 * src_data[i*4+1] + m21 * src_data[i*4+2]) * 255;
-      *b++ = (m02 * src_data[i*4] + m12 * src_data[i*4+1] + m22 * src_data[i*4+2]) * 255;
-      *a++ = (src_data[i*4+3]) * 255;
-      i++;
-    }
-    } else {
-    while(width--)
-    {
-      *r++ = (m00 * src_data[i*3] + m10 * src_data[i*3+1] + m20 * src_data[i*3+2]) * 255;
-      *g++ = (m01 * src_data[i*3] + m11 * src_data[i*3+1] + m21 * src_data[i*3+2]) * 255;
-      *b++ = (m02 * src_data[i*3] + m12 * src_data[i*3+1] + m22 * src_data[i*3+2]) * 255;
-      i++;
-    }
-    }
+    if (has_alpha)
+      {
+      dest_a = dest_data[3];
+      src_a = src_data[3];
+      
+      while (width--)
+	{
+	*dest_r++ = (m00 * *src_x + m10 * *src_y + m20 * *src_z) * 255;
+	*dest_g++ = (m01 * *src_x + m11 * *src_y + m21 * *src_z) * 255;
+	*dest_b++ = (m02 * *src_x++ + m12 * *src_y++ + m22 * *src_z++) * 255;
+	*dest_a++ = *src_a++ * 255;
+	}
+      } 
+    else 
+      {
+      while (width--)
+	{
+	*dest_r++ = (m00 * *src_x + m10 * *src_y + m20 * *src_z) * 255;
+        *dest_g++ = (m01 * *src_x + m11 * *src_y + m21 * *src_z) * 255;
+        *dest_b++ = (m02 * *src_x++ + m12 * *src_y++ + m22 * *src_z++) * 255;
+	}
+      }
   }
+
+  override (Gegl:Color:Model)
+    void
+    convert_to_float (GeglColorModel *cm, guint8 **dest_data, guchar **src_data, gint width)
+      {
+      	/* convert src_data (which is rgb float data) into rgb u8 data */
+	guint8		*src_r, *src_g, *src_b, *src_a;
+	gfloat		*dest_r, *dest_g, *dest_b, *dest_a;
+	gboolean	has_alpha = gegl_color_model_has_alpha(cm);
+	
+	src_r = (guint8*) src_data[0];
+	src_g = (guint8*) src_data[1];
+	src_b = (guint8*) src_data[2];
+	if (has_alpha)
+	  src_a = (guint8*) src_data[3];
+	
+	dest_r = (float*) dest_data[0];
+	dest_g = (float*) dest_data[1];
+	dest_b = (float*) dest_data[2];
+	if (has_alpha)
+	  dest_a = (float*) dest_data[3];
+
+	while (width--)
+	  {
+	  *dest_r++ = *src_r++ / 255.0;
+	  *dest_g++ = *src_g++ / 255.0;
+	  *dest_b++ = *src_b++ / 255.0;
+	  if (has_alpha)
+	    *dest_a++ = *src_a++ * 255;
+	  } 
+	
+      }
+
+   override (Gegl:Color:Model)
+   void
+   convert_to_gray (GeglColorModel *cm, guchar **dest_data, guchar **src_data, gint width)
+   {
+
+    guint8          *src_r, *src_g, *src_b, *src_a;
+    guint8          *dest_g, *dest_a;
+    gboolean        has_alpha = gegl_color_model_has_alpha(cm);
+
+    src_r = src_data[0];
+    src_g = src_data[1];
+    src_b = src_data[2];
+    if (has_alpha)
+      src_a = src_data[3];
+
+    dest_g = dest_data[0];
+    if (has_alpha)
+      dest_a = dest_data[1];
+
+    while (width--)
+      {
+      *dest_g++ = *src_r++ * 0.3 + *src_g++ * 0.6 + *src_b++ * 0.1;
+      if (has_alpha)
+	*dest_a++ = *src_a++;
+      } 
+     
+   }
+
 
 }
 

@@ -126,5 +126,22 @@ class Gegl:Color:Model from Gegl:Object {
   void
   convert_from_xyz (self, guchar **dest_data, gfloat **src_data, gint width);
 
+  virtual
+    void
+    convert_to_float (self, gfloat **dest_data, guchar **src_data, gint width);
+  
+  virtual
+    void
+    convert_to_u8 (self, guint8 **dest_data, guchar **src_data, gint width);
+  
+  virtual
+    void
+    convert_to_gray (self, guchar **dest_data, guchar **src_data, gint width);
+  
+  virtual
+    void
+    convert_to_rgb (self, guchar **dest_data, guchar **src_data, gint width);
+  
+
 
 }
