@@ -234,8 +234,10 @@
         </p>
         <ul>
             <li>
-              If the per_pixel/per_color code uses any of the alpha values we have
-              to do a big switch statement like in per_alpha.
+              Write documentation for opgen.
+            </li>
+            <li>
+              Add license entities for gpl, lgpl, bsd, etc?
             </li>
             <li>
               Make the constants line up with the real gegl constants.

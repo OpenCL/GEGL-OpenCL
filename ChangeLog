@@ -1,3 +1,16 @@
+2001-02-09  Jay Cox  <jaycox@gimp.org>
+
+	* opgen/Gegl/PointProcessor.pm
+	Replace the alpha component of pixels with MAX_CHANNEL for buffers
+        that don't have an alpha channel.
+	
+	* opgen/blend.xml:
+	A new test operator.
+
+	* opgen/README
+	* docs/TODO.xml
+	Update accordingly
+
 2001-02-05  Jay Cox  <jaycox@gimp.org>
 
 	* opgen/Gegl/Op.pm

@@ -38,6 +38,7 @@ sub print_scanline_function
     my ($colormodel) = $p->{colormodel};
     my $i;
     my $has_alpha = "";
+    my ($per_pixel_alpha, $per_color_alpha);
     $has_alpha = 1 if ($p->{per_pixel} =~ /_has_alpha/ ||
 		       $p->{per_color} =~ /_has_alpha/ ||
 		       $p->{per_alpha} =~ /_has_alpha/ ||
@@ -125,26 +126,31 @@ HERE
       {
         GENERIC_IMAGE_CODE_BEGIN
 HERE
-    if ($p->{per_pixel})
+
+# per pixel
+    if ($p->{per_pixel} =~ /_alpha/)
+      {
+        $per_pixel_alpha = 1; # need to do per pixel in alpha switch statment
+
+        $per_color_alpha = 1; # must put per_color in switch also because
+                              # it may depend on results from per_pixel
+      }
+
+    if ($p->{per_pixel} && !$per_pixel_alpha)
     {
       print "        /*-----------  <User per_pixel> -----------*/\n";
       print "        $p->{per_pixel}\n";
       print "        /*----------- </User per_pixel> -----------*/\n\n";
     }
 
-    if ($p->{per_color})
-    {
-      my $tmp = $p->{per_color};
-
-      # add the _color sufix to the buffer names
-
-      $tmp =~ s/dest(?=[^_])/dest_color/g;
-
-      foreach (@{$op->{buffer_args}})
+# per color
+    if ($p->{per_color} =~ /_alpha/)
       {
-        my ($t2) = "$_" . "_color";
-        $tmp =~ s/$_(?=[^_])/$t2/g;
+        $per_color_alpha = 1; # need to do per color in alpha switch statment
       }
+    if ($p->{per_color} && !$per_color_alpha)
+    {
+      my $tmp = per_colorify($op, $p->{per_color});
 
       print "        /*-----------  <User per_color> -----------*/\n";
       print "        $tmp\n";
@@ -160,7 +166,7 @@ HERE
 
 
 # Per Alpha
-    if ($p->{per_alpha})
+    if ($p->{per_alpha} || $per_color_alpha)
     {
       my $bits;
       print "           switch (mask_mask)\n";
@@ -171,7 +177,24 @@ HERE
         {
           $bits = $bits - 1;
           print "               case $bits:\n";
-          print "                 " . my_bit_alpha($p->{per_alpha}, $bits, [@{$op->{buffer_args}}]) . "\n";
+          if ($per_pixel_alpha)
+            {
+              print "                 " .
+                    my_bit_alpha($p->{per_pixel}, $bits,
+                                 [@{$op->{buffer_args}}]) . "\n";
+            }
+          if ($per_color_alpha)
+            {
+              print "                 " .
+                    my_bit_alpha(per_colorify($op, $p->{per_color}), $bits,
+                                 [@{$op->{buffer_args}}]) . "\n";
+            }
+          if ($p->{per_alpha})
+            {
+              print "                 " .
+                    my_bit_alpha(per_alphify($op, $p->{per_alpha}), $bits,
+                                 [@{$op->{buffer_args}}]) . "\n";
+            }
           print "               break:\n";
         }
       print "               default:\n";
@@ -189,7 +212,7 @@ print <<HERE;
 
           }
 
-        dX(dest,1);
+        dX(dest, 1);
 HERE
 
     foreach (@{$op->{buffer_args}})
@@ -211,6 +234,39 @@ HERE
 
   }
 
+sub per_colorify
+  {
+    my $op  = $_[0];
+    my $tmp = $_[1];
+
+    $tmp =~ s/dest(?=[^_])/dest_color/g;
+
+    foreach (@{$op->{buffer_args}})
+      {
+        my ($t2) = "$_" . "_color";
+        $tmp =~ s/$_(?=[^_])/$t2/g;
+      }
+
+    return $tmp;
+  }
+
+sub per_alphify
+  {
+    my $op  = $_[0];
+    my $tmp = $_[1];
+
+    $tmp =~ s/dest(?=[^_])/dest_alpha/g;
+
+    foreach (@{$op->{buffer_args}})
+      {
+        my ($t2) = "$_" . "_alpha";
+        $tmp =~ s/$_(?=[^_])/$t2/g;
+      }
+
+    return $tmp;
+  }
+
+
 sub my_bit_alpha
   {
     my $tmp   = $_[0];
@@ -223,61 +279,14 @@ sub my_bit_alpha
     $tmp =~ s/dest(?=[^_])/dest_alpha/g;
     foreach (@buffs)
       {
-        if ($i & $num)
+        unless ($i & $num)
         {
-          my ($t2) = "$_" . "_alpha";
-          $tmp =~ s/$_(?=[^_])/$t2/g;
-        }
-        else
-        {
-          $tmp =~ s/$_(?=[^_])/CHANNEL_MAX/g;
+          $tmp =~ s/${_}_alpha/CHANNEL_MAX/g;
         }
         $i = $i << 1;
       }
     return $tmp;
   }
-
-sub my_bit_alpha_old
-  {
-    my $tmp   = $_[0];
-    my $num   = $_[1];
-    my @buffs = @{$_[2]};
-    my $len   = $#buffs;
-    my $i = 1;
-    my $first = 1;
-
-    if ($num)
-      {
-        print " if (";
-      }
-    else
-      {
-        print "\n";
-      }
-    foreach (@buffs)
-      {
-        if ($i & $num)
-        {
-          print " && " unless ($first == 1);
-          $first = 0;
-          print $_ . "_has_alpha";
-          my ($t2) = "$_" . "_alpha";
-          $tmp =~ s/$_(?=[^_])/$t2/g;
-        }
-        else
-        {
-          $tmp =~ s/$_(?=[^_])/CHANNEL_MAX/g;
-        }
-        $i = $i << 1;
-      }
-    if ($num)
-    {
-      print " )\n";
-    }
-    print "              {\n";
-    print "                $tmp\n              }\n";
-  }
-
 
 1;  # package return code
 
