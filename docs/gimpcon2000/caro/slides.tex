@@ -29,9 +29,9 @@
 %%%% redefine colors for blue background %%%%
 \newcolor{textcolor}{rgb}{.9,.9,.9}
 \newcolor{titlecolor}{rgb}{0.0,.14,.33}
-\newcolor{headingcolor}{rgb}{1,.5,.1}
-\newcolor{bullet1color}{rgb}{.9,.9,.3}
-\newcolor{bullet2color}{rgb}{0,.7,0}
+\newcolor{headingcolor}{rgb}{0.0,.43,.66}
+\newcolor{bullet1color}{rgb}{0.29,.53,.66}
+\newcolor{bullet2color}{rgb}{0.29,.53,.66}
 \newcolor{bullet3color}{rgb}{.7,.7,.7}
 
 \newcommand{\myfig}[2]{
@@ -251,7 +251,7 @@ GENERIC\_IMAGE\_BLOCK\_END\\
 
 \nfoil{Codegen}
 \begin{itemize}
-\item Parses Generic Image Language
+\item Parses GIL 
 \item Creates data type and color model dependent code
 \item Independent of data type and color model 
 \end{itemize}
@@ -368,7 +368,7 @@ if (src2\_has\_alpha)\\
 
 \nfoil{Creating dependent code}
 \begin{itemize}
-\item Pixel a(color,alpha,has\_alpha)\\
+\item Pixel a (color,alpha,has\_alpha)\\
 \small {\hspace*{.4cm} guint16 *a\_data[4];\\*[-.5cm]
 \hspace*{.4cm} gboolean a\_has\_alpha;\\*[-.5cm]
 \hspace*{.4cm} guint16 *a\_red, *a\_green, *a\_blue, *a\_alpha=NULL;}
@@ -433,7 +433,7 @@ if (src2\_has\_alpha)\\
 
 \nfoil{Limitations}
 \begin{itemize}
-\item Channels of different ranges 
+\item Color models with different value ranges 
 \end{itemize}
 
 \nfoil{More Information}

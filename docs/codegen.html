@@ -12,7 +12,7 @@
 <center><table COLS=1 WIDTH="90%" NOSAVE >
 <tr>
 <td>
-<center><b><font face="Courier New,Courier"><font color="#FF6600"><font size=+4>CODEGEN</font></font></font></b><b><font face="Courier New,Courier"><font color="#FF6600"><font size=+4></font></font></font></b>
+<center><b><font face="Courier New,Courier"><font color="#FF6600"><font size=+4>CODEGEN</font></font></font></b>
 <p>
 <hr WIDTH="100%">
 <br><font size=-1>Caroline Dahllof &lt;caro@rhythm.com>&nbsp; ---&nbsp;
@@ -22,34 +22,32 @@ Calvin Williamson &lt;calvinw@mindspring.com</font></center>
 </tr>
 
 <tr NOSAVE>
-<td NOSAVE><b><font face="Courier New,Courier">Introduction.</font></b><b><font face="Courier New,Courier"></font></b>
+<td NOSAVE><b><font face="Courier New,Courier">Introduction.</font></b>
 <p><font face="Courier New,Courier">Codegen is a part of GEGL, its purpose
 is to convert Generic Image Language (GIL) code into data type and color
 model specific code. Codegen is written in Flex and Bison. This document
 will give an overview of the implementation of Codegen, you should have
 a good understanding of the GIL before reading this document.</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
 <td><b><font face="Courier New,Courier">How to run Codegen.</font></b>
 <p><font face="Courier New,Courier">> codegen --channel-names COLOR_CHANNEL_NAMES
 --channel-data-file CHANNEL_DATA_FILE</font>
-<p><i><font face="Courier New,Courier">--channel-names</font></i><font face="Courier New,Courier">
-Codegen expects a string that contains the channel names separated by commas
-after this flag . The first name will be the name of the first channel,
-the second name will be for the second channels and so on. One should not
-include the alpha channel in this string, Codegen will add this channel
-automatically. The alpha channel will be the last channel and it will be
-called alpha.&nbsp;</font>
-<p><i><font face="Courier New,Courier">--channel-data-file</font></i><font face="Courier New,Courier">
-Channel data file contains the definition of the DT Macros and it specified
-with this flag. These channel data files are in the sub directory called
-channel_data.</font><font face="Courier New,Courier"></font>
+<p><font face="Courier New,Courier"><i>--channel-names</i> Codegen expects
+a string that contains the channel names separated by commas after this
+flag . The first name will be the name of the first channel, the second
+name will be for the second channels and so on. Don't include the alpha
+channel in this string, Codegen will add this channel automatically. The
+alpha channel will be the last channel and it will be called alpha.&nbsp;</font>
+<p><font face="Courier New,Courier"><i>--channel-data-file</i> Channel
+data file contains the definition of the DT Macros and it specified with
+this flag. These channel data files are in the sub directory called channel_data.</font>
 <p><font face="Courier New,Courier">The fifth argument can be a .gil file,
 if no file is supplied Codegen will assume the input will come from stdin.
 The result of Codegen is printed to stdout.</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
@@ -59,7 +57,7 @@ It stores the channel name in NAME_COLOR_CHANNEL and the number of channels
 is stored in NUM_COLOR_CHANNEL (not including alpha). Remember that Codegen
 will add an extra channel called alpha and Codegen will assume this channel
 to be the alpha channel. These two variables are defined in data_type.h.</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
@@ -103,10 +101,16 @@ The EXTERNAL_VARIABLE will parse any external variables in the code block
 of GIL.&nbsp;</font>
 <p><font face="Courier New,Courier">Most time the lexer will either return
 a simple token or a token that contains a elem_t struct (defined in common.h)
-when it is the .gil file states.</font><font face="Courier New,Courier"></font>
+when it is the .gil file states.</font>
 <p><font face="Courier New,Courier">In the initial state the lexer will
-just echo everything it reads.&nbsp;</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+just echo everything it reads.</font>
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td><b><font face="Courier New,Courier">LEXER: STATE DIAGRAM</font></b>
+<p><img SRC="file.gif" NOSAVE height=515 width=774>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
@@ -120,7 +124,7 @@ the lexer weather the macro has arguments or not. If the struct has arguments
 (arg==1) it will switch to ARGUMENTS and if it doesn't (arg==0) it will
 switch to DEFINITIONS. When it reads the string DT_MACROS_END it will switch
 back to the initial state.</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
@@ -129,7 +133,7 @@ back to the initial state.</font>
 the arguments of the DT Macros. It will parse the parenthesis, the arguments,
 and the commas separating the arguments. After it has read the closing
 parenthesis it will switch state to DEFINITION.</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
@@ -138,7 +142,7 @@ parenthesis it will switch state to DEFINITION.</font>
 string that can include new line characters, spaces, parenthesis, numbers,
 and characters. After it has read the string it will switch back to the
 DT_MACROS state.&nbsp;</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
@@ -154,15 +158,16 @@ in the DT_STRING with the string $number-of-the-argument. For example,
 if it is the first argument it will be replaced by $1.&nbsp;</font>
 <p><font face="Courier New,Courier">The parser contains a dt_keyword_tab
 that is an array of dt_keyword struct.</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
 <td><b><font face="Courier New,Courier">dt_keyword</font></b>
 <p><font face="Courier New,Courier">This is a struct that contains the
 name of the macro, the field that tells the lexer weather or not the struct
-has arguments, and the token of the macro.&nbsp;</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+has arguments, and the token of the macro. All the allowed DT macros are
+stores in dt_keyword_tab.&nbsp;</font>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
@@ -175,7 +180,7 @@ types, and the variable names. When it reads the GENERIC_IMAGE_DECL_END,
 it will switch back to the initial state. During the GENERIC_IMAGE_DECL
 state, if the lexer reads a /* it will switch to the COMMENT state and
 it will return form this state when it has read a */.</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
@@ -185,14 +190,14 @@ then the data type, and finally the variable names. The grammars allows
 a list of variables names separated by ','.&nbsp;</font>
 <p><font face="Courier New,Courier">Pixel and Channel will be substituted
 by DATATYPE_STR. Depending on the arguments that is passed to Pixel, parser
-will defined some aux variables.&nbsp;</font><font face="Courier New,Courier"></font>
+will defined some aux variables.&nbsp;</font>
 <p><font face="Courier New,Courier">All the variables are a elem_t struct
 (common.h) and when defined in the declaration block are added to the symtab
 (parser.y). elem_t has a field called scope which is assigned when a variable
 is defined. When a variable goes out of scope the variable is removed from
 the symtab. Remember that variables that are out of scope cannot be used
-in the code block.&nbsp;</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+in the code block.</font>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
@@ -205,27 +210,27 @@ lexer reads EXTERNAL_VARIABLE it will switch to the EXTERNAL_VARIABLE state
 and read the variable and then switch back. It will switch to the COMMENT
 state when it reads comments and the switch back. When it finally read
 GENERIC_IMAGE_CODE_END it will switch back to its initial state.</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
-<td><b><font face="Courier New,Courier">PARSER:&nbsp;GENERIC_IMAGE_CODE</font></b><font face="Courier New,Courier"></font>
+<td><b><font face="Courier New,Courier">PARSER: GENERIC_IMAGE_CODE</font></b>
 <p><font face="Courier New,Courier">The parser will make sure that the
 generic code has the right grammar, if it does not, it will simple give
 an error and exit. The parser also makes sure that the variables that are
 in a function represent the same number of channels. For example, if you
 try to assign a rgb channels to an alpha channel (variable_alpha = variable_color),
-parser would give an error and exit.&nbsp;</font><font face="Courier New,Courier"></font>
+parser would give an error and exit.&nbsp;</font>
 <p><font face="Courier New,Courier">Parser will expand functions depending
 on the color channel names and variable used. For example, for the r,g,b
 channel color names:</font>
-<br><font face="Courier New,Courier"></font>&nbsp;
-<br><font face="Courier New,Courier"></font>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
 <table BORDER COLS=2 WIDTH="100%" NOSAVE >
 <tr>
-<td><u><font face="Courier New,Courier">GIL&nbsp;CODE</font></u></td>
+<td><u><font face="Courier New,Courier">GIL CODE</font></u></td>
 
-<td><u><font face="Courier New,Courier">EXPANDED&nbsp;CODE</font></u></td>
+<td><u><font face="Courier New,Courier">EXPANDED CODE</font></u></td>
 </tr>
 
 <tr>
@@ -272,10 +277,10 @@ src(color,alpha);</font>
 <br><font face="Courier New,Courier">dest_b = src_b;</font></td>
 </tr>
 </table>
-<font face="Courier New,Courier"></font>
+
 <p><font face="Courier New,Courier">All the DT Macros are substituted with
 their definitions.&nbsp;</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
@@ -284,7 +289,7 @@ their definitions.&nbsp;</font>
 the GENERIC_IMAGE_DECL or GENERIC_IMAGE_CODE state when the lexer reads
 a /*. When the lexer is in the COMMENT state it will echo everything it
 reads. When it reads */, it will switch back to its previous state.</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
@@ -294,15 +299,15 @@ state reads EXTERNAL_VARIABLE it will switch to the EXTERNAL_VARIABLE state.
 The lexer will add the $e.EXTERNAL_INIT_STRING to the variable and return
 it in the elem_t to the parser and then switch back to the GENERIC_IMAGE_CODE
 when it reads ')'.&nbsp;</font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+<br>&nbsp;</td>
 </tr>
 
 <tr>
-<td><b><font face="Courier New,Courier">REFERENCE</font></b><font face="Courier New,Courier"></font>
+<td><b><font face="Courier New,Courier">REFERENCE</font></b>
 <p><font face="Courier New,Courier"><a href="http://www.mindspring.com/~calvinw/geglClasses.html">http://www.mindspring.com/~calvinw/geglClasses.html</a></font>
 <br><font face="Courier New,Courier"><a href="http://www.mindspring.com/~calvinw/geglImageAndOp.html">http://www.mindspring.com/~calvinw/geglImageAndOp.html</a></font>
 <br><font face="Courier New,Courier"><a href="http://www.mindspring.com/~calvinw/genericChannelData.html">http://www.mindspring.com/~calvinw/genericChannelData.html</a></font>
-<br><font face="Courier New,Courier"></font>&nbsp;</td>
+<br>&nbsp;</td>
 </tr>
 </table></center>
 
