@@ -1,3 +1,9 @@
+Wed May  3 17:40:01 PDT 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* fixed test_files/gegl-fill-op.gil
+
 Wed May  3 17:32:15 PDT 2000 caro@rhythm.com
 
 	* check in for codegen

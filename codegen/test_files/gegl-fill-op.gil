@@ -140,7 +140,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
 	{
 	  dest_alpha = PIXEL_INIT (fill_values);
         }
-      dX(dest,dest_pixelstride); 
+      dX(dest,1); 
       GENERIC_IMAGE_BLOCK_END
     }
   } 
