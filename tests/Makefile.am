@@ -72,8 +72,7 @@ testgegl_LDADD = $(GEGLLDADDS) -lm
 
 TESTS = testgegl$(EXEEXT)
 
-EXTRA_PROGRAMS = $(TESTS) 
-
+EXTRA_PROGRAMS = testgegl
 
 
 all: check 

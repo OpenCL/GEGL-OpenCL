@@ -1,3 +1,8 @@
+2004-03-03  Sven Neumann  <sven@gimp.org>
+
+	* tests/Makefile.am (EXTRA_PROGRAMS): can't use $(TESTS) here any
+	longer because $(EXEEXT) gets in our way.
+
 2004-02-12 22:20 Michael Schumacher <schumaml@gnome.org>
 	* tests/Makefile.am
 	Added $(EXEEXT) to TESTS = testgegl. With this change, building
