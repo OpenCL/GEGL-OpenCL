@@ -1,12 +1,16 @@
-The low level design of GEGL includes a comprehensive set of operators for
-point, area, geometric and statistics operations.  For all of these, different
-data types (ie bit depths) for channels and color models are handled through
-generic programming techniques. This involves the Generic Image Language (GIL),
-a simple image manipulation and algorithm description language designed as part
-of GEGL. This allows algorithms to be written in pseudo-code like fashion and
-particular data type and color model cases are then generated from this
-description. Most image processing algorithms are well suited to this style of
-generic coding, but it will also be possible to do specialization for certain
-algorithms or color models within GEGL as well. Efficiency memory management
-will be achieved through a cache and tile system. Region of interests and
-domains of definitions will be tracked to avoid over computation.
+GEGL will include a comprehensive set of operators for point, area, geometric
+and statistics operations. For these, different data types (ie bit depths) for
+channels and color models will be handled through generic programming
+techniques. This involves using a Generic Image Language (GIL), a simple image
+manipulation and algorithm description language designed as part of GEGL.  
+
+Image algorithms will be written where possible using GIL and particular data
+type and color model cases will be generated from their GIL description.
+Though many image processing algorithms are well suited to this style of
+generic coding, it will be necessary to allow partial specialization techniques
+where a generic approach is not suitable. 
+
+Memory management will include a cache and swapping system. Image data will
+typically consist of tiles. Multi-threaded computation of operations is planned
+where possible. For efficiency, region of interests and domains of definitions
+will be calculated to avoid doing unnecessary computations.  

@@ -1,8 +1,17 @@
-In the beginning of June the first official GIMP Developers Conference took place in Berlin. This conference was sponsored by Free Software Foundation, Chaos Computer Club, O'Reilly Germany and organized by Sven Neuman and Michael Natterer. At the meeting most of the core developers met to discuss the future direction of GIMP.
+In June 2000 the first official GIMP Developers Conference took place in
+Berlin. This conference was sponsored by the Free Software Foundation, the
+Chaos Computer Club, and O'Reilly Germany and organized by Sven Neuman and
+Michael Natterer. At the meeting most of the core developers met to discuss the
+future direction of GIMP.
 
-It was clear to everyone that GIMP needs to be rewritten to be able to support all the new features such as CMYK color space and 16 bit color depth. It would be near impossible to add major features to the current code base and it would not be soon when it would be impossible to do so. 
+A plan for reaching GIMP 2.0 was discussed. The current architecture of GIMP
+makes it difficult to move forward with the plans for color management, CMYK
+support, and high color resolution channels. The GIMP core code was not broken
+into independent modules or libraries after reaching 1.0 in a reasonable
+manner, and consequently it has become difficult to work with, and hard to
+extend. A new set of libraries for the different parts of GIMP 2.0 were
+discussed.
 
-Our plan is to make the GIMP more general and more modular thereby allowing new features down the road to be added with great ease. GIMP 2.0 will be the version that will contain this new code base.
-
-
-
+The plan is to make the GIMP more general and more modular allowing new
+functionality to be added with greater ease. GIMP 2.0 will be the first version
+that will contain the new set of libraries.

@@ -1,15 +1,16 @@
-GEGL is based on the Gtk+Object model, an object oriented class system that
-supports inheritance, has an advanced signal and type system, and provides a
-reference counting scheme for memory management of objects. The main classes
-cover images, image processing operators, and color models.  Operators and
-images inherit from a common abstract base class, and so image computing chains
-or trees can be set up where nodes represent either images or image operations.
-Color and data conversions between inputs and outputs can be handled
-automatically during computation of a tree. Each color model implements at
-least converters to and from an absolute CIE XYZ color model. Specific color
-models may implement direct conversions between common or related color models
-as well. Image processing is done on an image chain by specifying a destination
-image buffer and region of interest and evaluating the chain on this
-destination.  Memory management will include a cache and swapping system for
-computation and image memory will typically consist of tiles of image data. The
-image computations will be multi-threaded where possible as well.  
+GEGL is based on the GTK+ object model, an object oriented system that supports
+inheritance, has an advanced signal and type system, and provides a reference
+counting scheme for memory management. 
+
+The main classes for GEGL are for images, image processing operators, and color
+models. Operators and images inherit from a common abstract base class, so
+image operation chains (or trees) can be set up with nodes representing either
+images or image operations. Color and data conversions between inputs and
+outputs is handled automatically if desired during computation of a chain. 
+
+Each color model implements at least converters to and from an absolute CIE XYZ
+color model. Specific color models may implement direct conversions between
+common or closely related color models as well. 
+
+Image processing on a chain is done by passing a destination image buffer and
+region of interest and evaluating the chain to fill in the destination.  

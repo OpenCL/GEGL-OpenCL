@@ -1,9 +1,10 @@
-GEGL will be used in the future as the main GIMP image processing engine, for
-versions 2.0 and up.  As the GIMP libraries for 2.0 are written, a simple
-skeleton set of imaging and painting tools will be developed first and the new
-libraries for GIMP and GEGL will be tested in this simple setting initially. The
-new painting core libraries and compositing engine for layers in GIMP will use
-GEGL operations exclusively for all its imaging, and some production use and testing
-should already be done with simple set of tools. This simple set of tools
-will include things like painting, cloning, cut and paste, and simple
-editing tools.
+GEGL will be used in the future as the GIMP image processing engine, starting
+with version 2.0. As the new GIMP 2.0 libraries are written, a simple skeleton
+set of imaging and painting tools will be developed first using the new GIMP 2.0
+and GEGL libraries. 
+
+Once this simple set of tools is in place, production testing will begin. This
+set will include simple painting, cloning, cut, copy and paste editing and
+selection tools. Testing this simple skeleton set of tools in production will
+provide tests of the stability of GEGL and the GIMP 2.0 libraries. This code 
+will then become the next series of developer releases.

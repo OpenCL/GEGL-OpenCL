@@ -1,42 +1,43 @@
 
-For high color resolution film work being able to edit frames in a paint
+For high color resolution film work the ability to edit frames in a paint
 package with minimal color data loss is extremely important. If a single frame
 from a scene must be edited in a package whose format doesn't match the native
-format of the image, it can mean the entire scene must be opened and saved in
-that paint package to ensure consistent color throughout.   
+format of the image file, it means the entire scene must be opened and saved in
+that paint package to ensure consistent color throughout.  Problems like these
+are common in working with 16bit/channel data types in film production. Each
+16bit data type makes a different choice for dynamic range, white point and so
+on. With each studio or package with its own version of these data types
+finding a paint package that can handle a particular type or choice and can be
+installed on every machine is difficult.
 
-The differences in dynamic range and white point choice for image formats cause
-problems like this and many others in the paint and image-editing world of film.
-Each studio or program has its own version of 16bits/channel, and finding a
-paint package that can handle a particular type and can be installed on every
-machine is difficult.
+The General Image Manipulation Program (GIMP) ~\cite{http://www.gimp.org} is an
+open source paint program that is freely available, can be adapted and used in
+many different situations and can be installed on most Unix and Windows
+machines. This makes it a perfect candidate to solve problems like the above.
 
-GIMP (General Image Manipulation Program) ~\cite{gegl} is an open source paint program that
-can potentially be adapted to many different kinds of image data types and
-color models, and can be installed freely on every Unix and Windows machine. 
-
-Recently, GIMP's and Rhythm \& Hues' developers ported GIMP 1.0 to floating point
-and 16-bit data types. This 16-bit version of GIMP became a test for the
-possibility of using GIMP in a film production environment. Although still
+Recently, GIMP and Rhythm \& Hues developers ported a version of GIMP 1.0.4 to
+use floating point/16-bit data types. This 16-bit version of GIMP was intended
+to test GIMP in a film production environment and to investigate changes
+needed to support high bit depths in future versions of GIMP. Although still
 missing some important features, this version has proven that GIMP has the
-potential of becoming a serious tool for film and high color resolution work. 
+potential of becoming a serious tool for film and high color resolution work.
+This film version is currently used in production at Rhythm and Hues Studios.
 
-With the unstable future of many of the current 16-bit paint programs, GIMP is
-an attractive option because it is open source and can be customized easily.
-It does needs additional development though to be able to fully fill the place
-of current production paint choices. 
+With the unstable future of many of the current 16-bit off-the-shelf paint
+programs, GIMP is an attractive option because it is open source, and actively
+maintained. This document outlines how studios could contribute resources
+(defined as programmers, time, tools, documentation, or users) to help further
+the GIMP project and what kind of work is involved with this effort.
 
-This document outlines how studios could contribute resources to the GIMP
-project to make this possible, and what kind of work is involved with this
-effort.  
+Section 2 describes current GIMP versions and plans for future versions.
+Section 3 describes the image processing library GEGL, intended for future
+versions of GIMP. Section 4 describes how GIMP is used in production now at
+Rhythm and Hues Studios. Section 5 describes how studios could contribute
+resources and help further the development of GIMP as a serious production
+paint tool.
 
-Section 2 will give a description of the current state of GIMP. Section 3
-and 4 will describe future versions of GIMP and its underlying image processing
-library, GEGL. Section 5 describes how GIMP is being currently used in
-production at Rhythm and Hues Studios. Section 6 describes a scenario of how
-the studios could work together to turn GIMP into a mature production paint
-tool.
-
-It is important to note that we do not want the film industry to take over GIMP, this is document is an invitation to join the already existing GIMP team. The first and most important task for a GIMP developer is to satisfy their current 8 bit users and make GIMP the one of the greatest paint tools for their users.
-
-
+This document is an invitation to join an already existing group of GIMP
+contributers, programmers and supporters. While we are describing some uses of
+GIMP for film production use, as with most open source projects there are
+interests of all kinds involved. It is clear though that a general purpose
+actively maintained and configurable paint tool is in the interest of everyone.
