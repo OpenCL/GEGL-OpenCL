@@ -1,3 +1,16 @@
+Thu May 25 11:12:35 PDT 2000 caro@rhythm.com
+	
+	* check in for docs
+
+	* I added these files:
+	  - codegen.html
+	  - gegl-color-model.html
+          - gegl-color-model.gif
+	  - gegl-color-convert-op.html
+          - gegl-color-convert-op.gif
+          - gimp2000/caro/slides.tex
+          - gimp2000/caro/r-n-h.tex
+
 Wed May 24 10:04:34 PDT 2000 caro@rhythm.com
 
 	* check in for codegen

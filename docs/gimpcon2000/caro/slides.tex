@@ -28,7 +28,7 @@
 
 %%%% redefine colors for blue background %%%%
 \newcolor{textcolor}{rgb}{.9,.9,.9}
-\newcolor{titlecolor}{rgb}{.9,.9,.3}
+\newcolor{titlecolor}{rgb}{0.0,.14,.33}
 \newcolor{headingcolor}{rgb}{1,.5,.1}
 \newcolor{bullet1color}{rgb}{.9,.9,.3}
 \newcolor{bullet2color}{rgb}{0,.7,0}
@@ -46,7 +46,7 @@
 %%%%% modify these %%%%%
 \newcommand{\talktitle}{\color{titlecolor}{\cmrhuge Codegen}}
 \newcommand{\talkdate}{\date{June 2000}}
-\MyLogo{\color{textcolor} 05/00} %%also date of talk
+\MyLogo{\color{textcolor} 06/00} %%also date of talk
 %%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -100,15 +100,15 @@
 %%only the first foil needs to do \LogoOn
 \LogoOn
 \begin{itemize}
-\item What is the problem? 
-\item How we solves it?
-\item Assumptions we make
+\item What are the problems? 
+\item How we solved it?
+\item Assumptions we made
 \item Generic Image Language
 \item Codegen
-\item Limitation
+\item Limitations
 \end{itemize}
 
-\nfoil{What is the problem?}
+\nfoil{What are the problems?}
 \begin{itemize}
 \item Different data types and color models
 \item Promotion
@@ -122,10 +122,10 @@
 \item Codegen
 \end{itemize}
 
-\nfoil{Assumptions we make}
+\nfoil{Assumptions we made}
 \begin{itemize}
 \item Channel data are pointers 
-\item Variables are assigned value outside GIL  
+\item Independent code is left outside GIL blocks  
 \end{itemize}
 
 \nfoil{Overview}
@@ -181,21 +181,6 @@ dX (src2,1);\\
 GENERIC\_IMAGE\_BLOCK\_END\\
 \end{flushleft}
 
-\nfoil{Overview}
-\begin{itemize}
-\item Codegen
-\begin{itemize}
-\item Definition
-\item How to run Codegen
-\item Color Channel names
-\item Channel data file
-\item Example
-\item Creating dependent code
-\item Implementation detail
-\item Flex
-\item Bison
-\end{itemize}
-\end{itemize}
 
 \nfoil{Declaration Block}
 \begin{itemize}
@@ -208,7 +193,7 @@ GENERIC\_IMAGE\_BLOCK\_END\\
 \nfoil{Initialization Block}
 \begin{itemize}
 \item GENERIC\_IMAGE\_IMAGE\_DATA\_INIT
-\item Sets Pixel variable equal to data value 
+\item Sets Pixel variable equal to their data value 
 \end{itemize}
 
 \nfoil{Code Block}
@@ -248,6 +233,20 @@ GENERIC\_IMAGE\_BLOCK\_END\\
 \end{itemize}
 \item PRINT (x)
 \item EXTERNAL\_INIT (x)
+\end{itemize}
+
+\nfoil{Overview}
+\begin{itemize}
+\item Codegen
+\begin{itemize}
+\item Definition
+\item How to run Codegen
+\item Color Channel names
+\item Channel data file
+\item Example
+\item Creating dependent code
+\item Implementation details
+\end{itemize}
 \end{itemize}
 
 \nfoil{Codegen}
@@ -391,12 +390,12 @@ if (src2\_has\_alpha)\\
 \hspace*{.4cm} if (a\_has\_alpha)\\*[-.5cm]
 \hspace*{.8cm} *a\_alpha = (b * *a\_alpha)/4095UL;}
 \Large
-\item a = EXTERNAL\_VARIBLE (v);\\
-\small {\hspace*{.4cm} *a\_red = v[0].u16\_k;\\*[-.5cm]
-\hspace*{.4cm} *a\_green = v[1].u16\_k;\\*[-.5cm]
-\hspace*{.4cm} *a\_blue = v[2].u16\_k;\\*[-.5cm]
+\item a = EXTERNAL\_VARIABLE (v);\\
+\small {\hspace*{.4cm} *a\_red = v[0].u16\_4k;\\*[-.5cm]
+\hspace*{.4cm} *a\_green = v[1].u16\_4k;\\*[-.5cm]
+\hspace*{.4cm} *a\_blue = v[2].u16\_4k;\\*[-.5cm]
 \hspace*{.4cm} if (d\_has\_alpha)\\*[-.5cm]
-\hspace*{.8cm} *a\_alpha = v[3].u16\_k;} 
+\hspace*{.8cm} *a\_alpha = v[3].u16\_4k;} 
 \Large
 \item a = a / 5.0;\\
 \small {\hspace*{.4cm} a\_red = ROUND (*a\_red / 5.0);\\*[-.5cm]
@@ -410,11 +409,11 @@ if (src2\_has\_alpha)\\
 \hspace*{.4cm} *a\_blue = CLAMP (*a\_blue + *a\_blue,0,255);}
 \Large
 \item a\_alpha = WP - ((WP - a\_alpha) * (WP - a\_alpha));\\
-\small {\hspace*{.4cm} *a\_alpha = (*a\_alpha * *a\_alpha) / 255L + ((255L - *a\_alpha) * *a\_alpha) / 255L;}
+\small {\hspace*{.4cm} *a\_alpha = 4095UL - (((4095UL - *a\_alpha) * (4095UL - *a\_alpha))/4095UL);}
 \Large 
 \end{itemize}
 
-\nfoil{Implementation detail}
+\nfoil{Implementation details}
 \begin{itemize}
 \item Written in Flex \& Bison 
 \end{itemize}
@@ -434,7 +433,7 @@ if (src2\_has\_alpha)\\
 
 \nfoil{Limitations}
 \begin{itemize}
-\item Channel of different ranges 
+\item Channels of different ranges 
 \end{itemize}
 
 \nfoil{More Information}
@@ -443,9 +442,9 @@ if (src2\_has\_alpha)\\
 \begin{itemize}
 \small
 \item http://film.gimp.org/geglCodegen.html
-\item http://www.mindspring.com/~calvinw/genericChannelData.html
-\item http://www.mindspring.com/~calvinw/genericImageLanguage.html
-\item http://www.mindspring.com/~calvinw/geglClasses.html
+\item http://www.mindspring.com/\~calvinw/genericChannelData.html
+\item http://www.mindspring.com/\~calvinw/genericImageLanguage.html
+\item http://www.mindspring.com/\~calvinw/geglClasses.html
 \end{itemize}
 \item The 16 bit GIMP
 \begin{itemize}
@@ -455,12 +454,14 @@ if (src2\_has\_alpha)\\
 \item The GIMP's SIGGRAPH meeting
 \begin{itemize}
 \small
-\item http://siggrahp.gimp.org 
+\item http://siggraph.gimp.org 
 \end{itemize}
 \end{itemize}
 
 \nfoil{Thanks}
-Many thanks to Calvin Williamson, The Gimp community, Rhythm \& Hues, and a special thanks to our sponcers the Free Software Foundation, the Chaos Computer Club, and O'Reilly Germany 
+\begin{flushleft}
+Many thanks to Calvin Williamson, The GIMP community, Rhythm \& Hues, and a special thanks to our sponsors the Free Software Foundation, the Chaos Computer Club, and O'Reilly Germany 
+\end{flushleft}
 
 %%End of file label to make numbering work
 \label{'eof'}

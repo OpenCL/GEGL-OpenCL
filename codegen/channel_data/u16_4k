@@ -12,5 +12,5 @@ WP_CLAMP (x)        CLAMP (x,0,4095)
 CHANNEL_MULT (x,y)  (x * y)/4095UL
 CHANNEL_ROUND (x)   ROUND (x)
 PRINT (x)          printf (" %uh", x)
-EXTERNAL_INIT (x)  x.u16_k 
+EXTERNAL_INIT (x)  x.u16_4k 
 DT_MACROS_END
