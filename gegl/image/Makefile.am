@@ -24,7 +24,10 @@ noinst_LTLIBRARIES = libimage.la
 IMAGE_SRC = \
   gegl-buffer.c \
   gegl-buffer-double.c \
-  gegl-sample-model.c
+  gegl-sample-model.c \
+  gegl-object.c \
+  gegl-utils.c \
+  gegl-init.c
 
 libimage_la_SOURCES = \
   $(IMAGE_SRC)

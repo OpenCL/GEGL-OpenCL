@@ -4,18 +4,30 @@ INCLUDES = @STRIP_BEGIN@ \
 	@DEP_CFLAGS@ \
 @STRIP_END@
 
-DEPS = \
-    $(top_builddir)/tools/testsuite/libtestsuite.la \
+TESTDEPS = \
+    $(top_builddir)/tools/testsuite/libtestsuite.la
+
+GEGLDEPS = \
+	$(TESTDEPS) \
 	$(top_builddir)/gegl/@gegltargetlib@
 
-LDADDS = @STRIP_BEGIN@ \
-    $(top_builddir)/tools/testsuite/libtestsuite.la \
+IMAGEDEPS = \
+	$(TESTDEPS) \
+	$(top_builddir)/gegl/image/libimage.la
+
+TESTLDADDS = \
+    $(top_builddir)/tools/testsuite/libtestsuite.la
+
+GEGLLDADDS = @STRIP_BEGIN@ \
+	$(TESTLDADDS) \
 	$(top_builddir)/gegl/@gegltargetlib@ \
 @STRIP_END@
 
-TEST_DEPS = \
-	$(top_builddir)/gegl/@gegltargetlib@
-
+IMAGELDADDS = @STRIP_BEGIN@ \
+	$(TESTLDADDS) \
+	$(top_builddir)/gegl/image/libimage.la \
+@STRIP_END@
+	
 MOCK_OBJECT_SRC = \
    gegl-mock-bfs-visitor.c \
    gegl-mock-bfs-visitor.h \
@@ -95,12 +107,25 @@ testgegl_SOURCES = \
    valueimagedatatest.c \
    valuetest.c
 
+
 testgegl_LDFLAGS = -g
-testgegl_DEPENDENCIES = $(TEST_DEPS)
-testgegl_LDADD = $(LDADDS) -lm
+testgegl_DEPENDENCIES = $(GEGLDEPS)
+testgegl_LDADD = $(GEGLLDADDS) -lm
 
-TESTS = testgegl
+testimage_SOURCES = testimage.c \
+                                    gegl-image-buffer-double-test.c 
 
-EXTRA_PROGRAMS = $(TESTS)
-  
+testimage_LDFLAGS= -g  \
+								 @DEP_LIBS@
+
+testimage_DEPENDENCIES = $(IMAGEDEPS)
+
+testimage_LDADD = $(IMAGELDADDS) -lm 
+
+TESTS = testgegl testimage
+
+EXTRA_PROGRAMS = $(TESTS) 
+
+
+
 all: check 

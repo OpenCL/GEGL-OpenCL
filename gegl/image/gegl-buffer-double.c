@@ -20,25 +20,16 @@
  */
  
 #include "gegl-buffer-double.h"
-/*
-void        (*GBaseInitFunc)                (gpointer g_class);
-void        (*GBaseFinalizeFunc)            (gpointer g_class);
-void        (*GClassInitFunc)               (gpointer g_class,
-                                             gpointer class_data);
-void        (*GClassFinalizeFunc)           (gpointer g_class,
-                                             gpointer class_data);
-void        (*GInstanceInitFunc)            (GTypeInstance *instance,
-                                             gpointer g_class);
-void        (*GInterfaceInitFunc)           (gpointer g_iface,
-                                             gpointer iface_data);
-void        (*GInterfaceFinalizeFunc)       (gpointer g_iface,
-                                            gpointer iface_data);
-*/
+
 static void instance_init (GTypeInstance *instance, gpointer g_class);
 static void class_init (gpointer g_class, gpointer class_data);
-
+static GObject* constructor(GType type,
+                            guint n_construct_properties,
+                            GObjectConstructParam *construct_properties);
 static gdouble get_element_double (GeglBuffer* self, gint bank,gint index);
 static void set_element_double(GeglBuffer* self, gint bank,gint index, gdouble elem);
+
+static gpointer parent_class;
 
 GType
 gegl_buffer_double_get_type (void)
@@ -76,10 +67,21 @@ gegl_buffer_double_get_type (void)
 }
 static void class_init (gpointer g_class, gpointer class_data) {
     GeglBufferDoubleClass* klass=g_class;
-    GeglBufferClass* buffer_class=g_type_class_peek_parent(klass);
+    GeglBufferClass* buffer_class=GEGL_BUFFER_CLASS(klass);
+    GObjectClass* object_class=G_OBJECT_CLASS(klass);
+    
+    parent_class=g_type_class_peek_parent(g_class);
+    
+    object_class->constructor=constructor;
     buffer_class->get_element_double=get_element_double;
     buffer_class->set_element_double=set_element_double;
     
+}
+
+static GObject* constructor(GType type,
+                            guint n_construct_properties,
+                            GObjectConstructParam *construct_properties) {
+    return G_OBJECT_CLASS(parent_class)->constructor(type,n_construct_properties,construct_properties);
 }
 
 static void set_element_double(GeglBuffer* self, gint bank,gint index,gdouble elem) {
