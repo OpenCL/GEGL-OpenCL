@@ -1,4 +1,4 @@
-DATATYPE_BEGIN
+DT_MACROS_BEGIN
 DATATYPE            guint16
 PROMOTE_TYPE		    (guint32)  
 SIGNED_PROMOTE_TYPE		    (gint32)  
@@ -13,4 +13,4 @@ CHANNEL_MULT (x,y)  (x * y)/4095UL
 CHANNEL_ROUND (x)   ROUND (x)
 PRINT (x)          printf (" %uh", x);
 EXTERNAL_INIT (x)  x.u16_k 
-DATATYPE_END
+DT_MACROS_END

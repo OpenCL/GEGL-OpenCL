@@ -94,10 +94,10 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
     while (width--)
       {
  	printf("(");
-	GENERIC_IMAGE_BLOCK_BEGIN
+	GENERIC_IMAGE_CODE_BEGIN
 	PRINT (src); 
 	dX(src,1);
-        GENERIC_IMAGE_BLOCK_END
+        GENERIC_IMAGE_CODE_END
  	printf(")");
 
       }

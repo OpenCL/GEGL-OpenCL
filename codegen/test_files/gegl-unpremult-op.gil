@@ -104,7 +104,7 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
 
     while (width--)
       {
-        GENERIC_IMAGE_BLOCK_BEGIN
+        GENERIC_IMAGE_CODE_BEGIN
 
         if(src_alpha == WP)
           {
@@ -123,7 +123,7 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
 	dX(dest,1);
 	dX(src,1); 
 
-        GENERIC_IMAGE_BLOCK_END;
+        GENERIC_IMAGE_CODE_END;
       }
   }
 }

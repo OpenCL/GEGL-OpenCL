@@ -113,7 +113,7 @@ class Gegl:Max:Op from Gegl:Dual:Src:Op {
       
     while (width--)
       {
-        GENERIC_IMAGE_BLOCK_BEGIN  
+        GENERIC_IMAGE_CODE_BEGIN  
 
 	dest_color = MAX(src1_color, src2_color);
 
@@ -137,7 +137,7 @@ class Gegl:Max:Op from Gegl:Dual:Src:Op {
 	dX(src1,1);
 	dX(src2,1);  
 
-        GENERIC_IMAGE_BLOCK_END
+        GENERIC_IMAGE_CODE_END
       }               
   }
 }

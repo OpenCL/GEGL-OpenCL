@@ -144,10 +144,10 @@ image language code inside a function has several blocks:
 <p><b><tt>&nbsp; GENERIC_IMAGE_DATA_INIT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 /*one data init marker*/</tt></b>
 <p><b><tt>&nbsp; /* regular C code */</tt></b>
-<p><b><tt>&nbsp; GENERIC_IMAGE_BLOCK_BEGIN</tt></b>
+<p><b><tt>&nbsp; GENERIC_IMAGE_CODE_BEGIN</tt></b>
 <br><b><tt>&nbsp; ...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 /*one or more generic code blocks*/</tt></b>
-<br><b><tt>&nbsp; GENERIC_IMAGE_BLOCK_END</tt></b>
+<br><b><tt>&nbsp; GENERIC_IMAGE_CODE_END</tt></b>
 <p><b><tt>}</tt></b>
 <p>Inside this function, there is one declaration block, one image data
 initialization marker, and then one or more generic code blocks each containing
@@ -351,13 +351,13 @@ specify the algorithm.
 <p><b><tt>&nbsp; GENERIC_IMAGE_DATA_INIT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 /*one data init marker*/</tt></b>
 <p><b><tt>&nbsp; /* regular C code */</tt></b>
-<p><b><tt>&nbsp; GENERIC_IMAGE_BLOCK_BEGIN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<p><b><tt>&nbsp; GENERIC_IMAGE_CODE_BEGIN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 /*just one code block this time*/</tt></b>
 <br><b><tt>&nbsp; d_color = c * s_color;</tt></b>
 <br><b><tt>&nbsp; d_alpha = f * s_alpha;</tt></b>
 <p><b><tt>&nbsp; dX(d,1);</tt></b>
 <br><b><tt>&nbsp; dX(s,1);</tt></b>
-<br><b><tt>&nbsp; GENERIC_IMAGE_BLOCK_END</tt></b>
+<br><b><tt>&nbsp; GENERIC_IMAGE_CODE_END</tt></b>
 <br><b><tt>}</tt></b>
 <p>The use of the dX iterator is described below.
 <div CLASS="SECT2">
@@ -475,8 +475,8 @@ by the following:</font>
 <b><tt>...</tt></b>
 <br><b><tt>GENERIC_IMAGE_DATA_INIT</tt></b>
 <br><b><tt>...</tt></b>
-<br><b><tt>GENERIC_IMAGE_BLOCK_BEGIN</tt></b>
-<br><b><tt>GENERIC_IMAGE_BLOCK_END</tt></b>
+<br><b><tt>GENERIC_IMAGE_CODE_BEGIN</tt></b>
+<br><b><tt>GENERIC_IMAGE_CODE_END</tt></b>
 <br><b><tt>..</tt></b>
 <p><b><tt>}</tt></b>
 <br><b><tt>GENERIC_IMAGE_CODEGEN_END</tt></b>

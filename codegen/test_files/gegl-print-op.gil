@@ -138,9 +138,9 @@ class Gegl:Print:Op from Gegl:Point:Op {
     
     while (width--)
       {
-	GENERIC_IMAGE_BLOCK_BEGIN
+	GENERIC_IMAGE_CODE_BEGIN
 	PRINT (src); 
-        GENERIC_IMAGE_BLOCK_END
+        GENERIC_IMAGE_CODE_END
  	printf("\n");
       }
 

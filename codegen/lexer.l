@@ -10,15 +10,13 @@
 #include <ctype.h>
 #include <stdio.h>
 
-void print_info (char *line); 
-
 int PREV;  
 %}
 
 %s			GENERIC_IMAGE_DECL
-%s			GENERIC_IMAGE_BLOCK
+%s			GENERIC_IMAGE_CODE
 %s			COMMENT 
-%s			DATA_TYPE 
+%s			DT_MACROS 
 %s			ARGUMENTS
 %s			DEFINITION
 %s 			EXTERNAL_VARIABLE 
@@ -35,7 +33,7 @@ space			[]*[\t]+
 rm			[\t \n]* 
 %%
 
-{rm}"DATATYPE_BEGIN"			BEGIN DATA_TYPE;  
+{rm}"DT_MACROS_BEGIN"			BEGIN DT_MACROS;  
 {rm}"GENERIC_IMAGE_DECL_BEGIN"		{
   					/* wacky stuff */
   					int i,j;
@@ -45,29 +43,24 @@ rm			[\t \n]*
 					for (j=0; j<i; j++)
 					 printf ("%c", yytext[j]);  
 					      
-  					print_info ("\n/* Generic Image Decl Begin */");
 					BEGIN GENERIC_IMAGE_DECL;
 					}
-{indent}"GENERIC_IMAGE_BLOCK_BEGIN"	{
-					print_info ("\n/* Generic Image Block Begin */"); 
-					BEGIN GENERIC_IMAGE_BLOCK;
-					}
+{indent}"GENERIC_IMAGE_CODE_BEGIN"	BEGIN GENERIC_IMAGE_CODE;
 {indent}"GENERIC_IMAGE_IMAGE_DATA_INIT" {
   					char tmp[255];
-  					print_info ("\n/* Generic Image Image Data Init */"); 
 					strcpy (tmp, yytext);
 					tmp[strlen (tmp) - strlen ("GENERIC_IMAGE_IMAGE_DATA_INIT")] = '\0'; 
   					init_image_data (tmp);
 					}	
-<DATA_TYPE>{indent}			;         	
-<DATA_TYPE>{rm}"DATATYPE_END"{rm}	BEGIN 0; 
+<DT_MACROS>{indent}			;         	
+<DT_MACROS>{rm}"DT_MACROS_END"{rm}	BEGIN 0; 
 
 <ARGUMENTS>","				return DT_COMMA; 
 <ARGUMENTS>"("				return LT_PARENTHESIS;
 <ARGUMENTS>")"				{BEGIN DEFINITION; return RT_PARENTHESIS;}  
 
 
-<GENERIC_IMAGE_BLOCK>{indent}"{"	{
+<GENERIC_IMAGE_CODE>{indent}"{"	{
     					SCOPE++; 
     					strcpy(yylval.elem.string, yytext);
 					return INDENT_CURLY;
@@ -76,34 +69,28 @@ rm			[\t \n]*
                             		strcpy(yylval.elem.string, yytext);
 			       	 	return INDENT;
 			        	}
-<GENERIC_IMAGE_BLOCK>{indent}         	{
+<GENERIC_IMAGE_CODE>{indent}         	{
                                 	strcpy(yylval.elem.string, yytext);
 					return INDENT;
 					}
 
 			    	 	
 <GENERIC_IMAGE_DECL>{white} 		; 
-<GENERIC_IMAGE_BLOCK>{white} 		; 
+<GENERIC_IMAGE_CODE>{white} 		; 
 
-<GENERIC_IMAGE_DECL>{rm}"GENERIC_IMAGE_DECL_END" 	{
-    							print_info ("\n/*Generic Image Decl End */\n");
-							BEGIN 0;
-							}
-<GENERIC_IMAGE_BLOCK>{rm}"GENERIC_IMAGE_BLOCK_END" 	{
-    							print_info ("\n/*Generic Image Block End */\n");
-							BEGIN 0;
-							}
+<GENERIC_IMAGE_DECL>{rm}"GENERIC_IMAGE_DECL_END" 	BEGIN 0;
+<GENERIC_IMAGE_CODE>{rm}"GENERIC_IMAGE_CODE_END" 	BEGIN 0;
 
-<GENERIC_IMAGE_BLOCK>"WP"		{
+<GENERIC_IMAGE_CODE>"WP"		{
 					strcpy(yylval.elem.string, WP_STR);
                 			yylval.elem.dtype = TYPE_CHANNEL;
-					yylval.elem.type = TYPE_VECTOR;
+					yylval.elem.svtype = TYPE_VECTOR;
 					return(WP); 
 					}
-<GENERIC_IMAGE_BLOCK>"ZERO"		{
+<GENERIC_IMAGE_CODE>"ZERO"		{
     					strcpy(yylval.elem.string, ZERO_STR);
 					yylval.elem.dtype = TYPE_CHANNEL;
-			        	yylval.elem.type = TYPE_VECTOR;
+			        	yylval.elem.svtype = TYPE_VECTOR;
 					return ZERO; 	
 					} 
 <GENERIC_IMAGE_DECL>"Pixel"		{
@@ -120,37 +107,37 @@ rm			[\t \n]*
 <GENERIC_IMAGE_DECL>{integer}		{ 
             				/* found an int */
 					strcpy(yylval.elem.string, yytext);
-                			yylval.elem.type = TYPE_SCALER;
+                			yylval.elem.svtype = TYPE_SCALER;
 					yylval.elem.dtype = TYPE_INT;
             				return INT;
 					}
 <GENERIC_IMAGE_DECL>{float} 		{ 
           				/* found a float */
           				strcpy(yylval.elem.string, yytext);
-                			yylval.elem.type = TYPE_SCALER;
+                			yylval.elem.svtype = TYPE_SCALER;
                 			yylval.elem.dtype = TYPE_FLOAT; 
 					return FLOAT;
         				}
-<GENERIC_IMAGE_BLOCK>{integer}		{ 
+<GENERIC_IMAGE_CODE>{integer}		{ 
             				/* found an int */
 					strcpy(yylval.elem.string, yytext);
-                			yylval.elem.type = TYPE_SCALER;
+                			yylval.elem.svtype = TYPE_SCALER;
 					yylval.elem.dtype = TYPE_INT;
             				return INT;
           				} 
-<GENERIC_IMAGE_BLOCK>{float} 		{ 
+<GENERIC_IMAGE_CODE>{float} 		{ 
           				/* found a float */
           				strcpy(yylval.elem.string, yytext);
-                			yylval.elem.type = TYPE_SCALER;
+                			yylval.elem.svtype = TYPE_SCALER;
                 			yylval.elem.dtype = TYPE_FLOAT; 
 					return FLOAT;
         				}
 
 <GENERIC_IMAGE_DECL>"/*"		{ECHO; PREV=0; BEGIN COMMENT;}
-<GENERIC_IMAGE_BLOCK>"/*"		{ECHO; PREV=1; BEGIN COMMENT;}
+<GENERIC_IMAGE_CODE>"/*"		{ECHO; PREV=1; BEGIN COMMENT;}
 <COMMENT>"*/"				{
     					ECHO; 
-					if (PREV) BEGIN GENERIC_IMAGE_BLOCK; 
+					if (PREV) BEGIN GENERIC_IMAGE_CODE; 
     					else BEGIN GENERIC_IMAGE_DECL;
 					} 
 
@@ -158,92 +145,92 @@ rm			[\t \n]*
 <GENERIC_IMAGE_DECL>"(color,alpha)"		return(COLOR_ALPHA);
 <GENERIC_IMAGE_DECL>"(color)"			return(COLOR);
 
-<GENERIC_IMAGE_BLOCK>"dX"		return(ITERATOR_X);
-<GENERIC_IMAGE_BLOCK>"dY"		return(ITERATOR_Y);
-<GENERIC_IMAGE_BLOCK>"dXY"            	return(ITERATOR_XY);
+<GENERIC_IMAGE_CODE>"dX"		return(ITERATOR_X);
+<GENERIC_IMAGE_CODE>"dY"		return(ITERATOR_Y);
+<GENERIC_IMAGE_CODE>"dXY"            	return(ITERATOR_XY);
 
-<GENERIC_IMAGE_BLOCK>"MAX"		{	
+<GENERIC_IMAGE_CODE>"MAX"		{	
     					strcpy (yylval.tok.string, yytext); 
     					return (MIN_MAX);
 					}
-<GENERIC_IMAGE_BLOCK>"MIN"		{	
+<GENERIC_IMAGE_CODE>"MIN"		{	
     					strcpy (yylval.tok.string, yytext); 
     					return (MIN_MAX);
 					}
-<GENERIC_IMAGE_BLOCK>"EXTERNAL_INIT"	BEGIN EXTERNAL_VARIABLE; 	
+<GENERIC_IMAGE_CODE>"EXTERNAL_INIT"	BEGIN EXTERNAL_VARIABLE; 	
 
-<GENERIC_IMAGE_BLOCK>"(Promote)"	return(PROMOTE_TYPE); 
-<GENERIC_IMAGE_BLOCK>"(SignedPromote)"	return(SIGNED_PROMOTE_TYPE); 
-<GENERIC_IMAGE_BLOCK>"ABS"		return(ABS); 
-<GENERIC_IMAGE_BLOCK>"PRINT"		return(PRINT); 
-<GENERIC_IMAGE_BLOCK>"CHANNEL_CLAMP"	return(CHANNEL_CLAMP);
-<GENERIC_IMAGE_BLOCK>"WP_CLAMP"    	return(WP_CLAMP);
+<GENERIC_IMAGE_CODE>"(Promote)"	return(PROMOTE_TYPE); 
+<GENERIC_IMAGE_CODE>"(SignedPromote)"	return(SIGNED_PROMOTE_TYPE); 
+<GENERIC_IMAGE_CODE>"ABS"		return(ABS); 
+<GENERIC_IMAGE_CODE>"PRINT"		return(PRINT); 
+<GENERIC_IMAGE_CODE>"CHANNEL_CLAMP"	return(CHANNEL_CLAMP);
+<GENERIC_IMAGE_CODE>"WP_CLAMP"    	return(WP_CLAMP);
 
 
-<GENERIC_IMAGE_BLOCK>"+"		return(PLUS);
-<GENERIC_IMAGE_BLOCK>"-"		return(MINUS);
+<GENERIC_IMAGE_CODE>"+"		return(PLUS);
+<GENERIC_IMAGE_CODE>"-"		return(MINUS);
 <GENERIC_IMAGE_DECL>"*"			return(TIMES);
-<GENERIC_IMAGE_BLOCK>"*"		return(TIMES);
-<GENERIC_IMAGE_BLOCK>"/"		return(DIVIDE);
-<GENERIC_IMAGE_BLOCK>"^"		return(POWER);
-<GENERIC_IMAGE_BLOCK>"("		return(LT_PARENTHESIS);
-<GENERIC_IMAGE_BLOCK>")"		return(RT_PARENTHESIS);
+<GENERIC_IMAGE_CODE>"*"		return(TIMES);
+<GENERIC_IMAGE_CODE>"/"		return(DIVIDE);
+<GENERIC_IMAGE_CODE>"^"		return(POWER);
+<GENERIC_IMAGE_CODE>"("		return(LT_PARENTHESIS);
+<GENERIC_IMAGE_CODE>")"		return(RT_PARENTHESIS);
 <EXTERNAL_VARIABLE>"("			;
-<EXTERNAL_VARIABLE>")"			BEGIN GENERIC_IMAGE_BLOCK;
-<GENERIC_IMAGE_BLOCK>"{"		{SCOPE ++; return(LT_CURLY);}
-<GENERIC_IMAGE_BLOCK>"}"		{SCOPE --; rm_varibles (SCOPE); return(RT_CURLY); } 
+<EXTERNAL_VARIABLE>")"			BEGIN GENERIC_IMAGE_CODE;
+<GENERIC_IMAGE_CODE>"{"		{SCOPE ++; return(LT_CURLY);}
+<GENERIC_IMAGE_CODE>"}"		{SCOPE --; rm_varibles (SCOPE); return(RT_CURLY); } 
 <GENERIC_IMAGE_DECL>"{"			{SCOPE ++; ECHO;}
 <GENERIC_IMAGE_DECL>"}"			{SCOPE --; rm_varibles (SCOPE); ECHO;} 
 "{"					{SCOPE ++; ECHO;}
 "}"					{SCOPE --; rm_varibles (SCOPE); ECHO;} 
 <GENERIC_IMAGE_DECL>"["			return(LT_SQUARE);
-<GENERIC_IMAGE_BLOCK>"["		return(LT_SQUARE);
+<GENERIC_IMAGE_CODE>"["		return(LT_SQUARE);
 <GENERIC_IMAGE_DECL>"]"			return(RT_SQUARE); 
-<GENERIC_IMAGE_BLOCK>"]"		return(RT_SQUARE); 
+<GENERIC_IMAGE_CODE>"]"		return(RT_SQUARE); 
 <GENERIC_IMAGE_DECL>"="			return(EQUAL); 
-<GENERIC_IMAGE_BLOCK>"="		return(EQUAL); 
-<GENERIC_IMAGE_BLOCK>"+="		return(PLUS_EQUAL); 
-<GENERIC_IMAGE_BLOCK>"-="		return(MINUS_EQUAL); 
-<GENERIC_IMAGE_BLOCK>"*="		return(TIMES_EQUAL); 
-<GENERIC_IMAGE_BLOCK>"/="		return(DIVIDE_EQUAL); 
-<GENERIC_IMAGE_BLOCK>"&&"		{
+<GENERIC_IMAGE_CODE>"="		return(EQUAL); 
+<GENERIC_IMAGE_CODE>"+="		return(PLUS_EQUAL); 
+<GENERIC_IMAGE_CODE>"-="		return(MINUS_EQUAL); 
+<GENERIC_IMAGE_CODE>"*="		return(TIMES_EQUAL); 
+<GENERIC_IMAGE_CODE>"/="		return(DIVIDE_EQUAL); 
+<GENERIC_IMAGE_CODE>"&&"		{
     					strcpy (yylval.tok.string, yytext); 
     					return (COMPARE);
 					}
-<GENERIC_IMAGE_BLOCK>"||"		{
+<GENERIC_IMAGE_CODE>"||"		{
     					strcpy (yylval.tok.string, yytext); 
     					return (COMPARE);
 					}
-<GENERIC_IMAGE_BLOCK>"=="		{
+<GENERIC_IMAGE_CODE>"=="		{
     					strcpy (yylval.tok.string, yytext); 
     					return (COMPARE);
 					}
-<GENERIC_IMAGE_BLOCK>"!="		{
+<GENERIC_IMAGE_CODE>"!="		{
     					strcpy (yylval.tok.string, yytext); 
     					return (COMPARE);
 					}
-<GENERIC_IMAGE_BLOCK>"<"		{
+<GENERIC_IMAGE_CODE>"<"		{
     					strcpy (yylval.tok.string, yytext); 
     					return (COMPARE);
 					}
-<GENERIC_IMAGE_BLOCK>">"		{
+<GENERIC_IMAGE_CODE>">"		{
     					strcpy (yylval.tok.string, yytext); 
     					return (COMPARE);
 					}
-<GENERIC_IMAGE_BLOCK>"<="		{
+<GENERIC_IMAGE_CODE>"<="		{
     					strcpy (yylval.tok.string, yytext); 
     					return (COMPARE);
 					}
-<GENERIC_IMAGE_BLOCK>">="		{	
+<GENERIC_IMAGE_CODE>">="		{	
     					strcpy (yylval.tok.string, yytext); 
     					return (COMPARE);
 					}
-<GENERIC_IMAGE_BLOCK>"!"		return(NOT);
-<GENERIC_IMAGE_BLOCK>"++"		{
+<GENERIC_IMAGE_CODE>"!"		return(NOT);
+<GENERIC_IMAGE_CODE>"++"		{
     					strcpy (yylval.tok.string, yytext); 
     					return (ADD_SUB);
 					}
-<GENERIC_IMAGE_BLOCK>"--"		{
+<GENERIC_IMAGE_CODE>"--"		{
     					strcpy (yylval.tok.string, yytext); 
     					return (ADD_SUB);
 					}
@@ -263,7 +250,7 @@ rm			[\t \n]*
 			    		break; 		  
 			  		}
           				}
-<GENERIC_IMAGE_BLOCK>{Name}  		{
+<GENERIC_IMAGE_CODE>{Name}  		{
 					int keyword = get_keyword (yytext);
 					switch (keyword) 
 			  		{ 
@@ -278,7 +265,7 @@ rm			[\t \n]*
 			  		}
           				}
 
-<GENERIC_IMAGE_BLOCK>{name}  		{
+<GENERIC_IMAGE_CODE>{name}  		{
 					int keyword = get_keyword (yytext);
 					switch (keyword) 
 			  		{ 
@@ -297,7 +284,7 @@ rm			[\t \n]*
     					strcpy (yylval.tok.string, yytext);
 					return DT_NAME;
 					}
-<DATA_TYPE>{Name}			{
+<DT_MACROS>{Name}			{
       					dt_keyword_t keywd;
       					keywd = get_dt_keyword (yytext);
 				        if (keywd.token == -1) 	
@@ -311,23 +298,23 @@ rm			[\t \n]*
 <EXTERNAL_VARIABLE>{name}		{
     					yylval.elem.num = 0;
 					yylval.elem.dtype = TYPE_CHANNEL;
-					yylval.elem.type = TYPE_VECTOR;
+					yylval.elem.svtype = TYPE_VECTOR;
 					sprintf (yylval.elem.string, "%s$e.%s", 
 					      yytext, EXTERNAL_INIT_STR);
 				       	return VARIABLE; 	
       					}
 <DEFINITION>{string}			{
     					strcpy (yylval.tok.string, yytext);
-					BEGIN DATA_TYPE; 
+					BEGIN DT_MACROS; 
 					return DT_STRING;
 					}
 
 
 {rm}"$" 				{BEGIN 0; return 0;} 
 <GENERIC_IMAGE_DECL>.			return yytext[0];
-<GENERIC_IMAGE_BLOCK>.			return yytext[0];
+<GENERIC_IMAGE_CODE>.			return yytext[0];
 <COMMENT>.				ECHO;
-<DATA_TYPE>.				;
+<DT_MACROS>.				;
 <ARGUMENTS>.				;
 
 .					ECHO; 	
@@ -348,14 +335,6 @@ void
 close_file ()
 {
  fclose (yyin); 
-}
-
-void 
-print_info (char *line)
-{
-#if DEBUG
-  printf ("%s", line); 
-#endif 
 }
 
 

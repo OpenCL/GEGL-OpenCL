@@ -55,7 +55,7 @@ typedef struct
 {
   DATA_TYPE 	dtype;
   char          string[256];
-  SV_TYPE	type; 
+  SV_TYPE	svtype; 
   int		num; 
   char		inited; 
   char          scope; 

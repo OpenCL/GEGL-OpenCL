@@ -1,3 +1,35 @@
+Fri May 12 11:46:00 PDT 2000 caro@ehythm.com
+
+	* check in for codegen
+	
+	* changed varibles names:
+ 		- GENERIC_IMAGE_BLOCK ---> GENERIC_IMAGE_CODE
+                  BLOCK has been changed to CODE. It makes more sence.
+    
+		- DATA_TYPE /DATATYPE ---> DT_MACROS
+		  All the varibles that are related to the channel 
+		  data files have been changed.
+	* the test files have been updated and channel files and the readme
+	to reflex the above change.
+
+	* this is a some small changes in lexer.l and parser.y in an attempt
+	to make the code more readable.
+
+	* check in for docs
+	
+	* updated to reflex the above changes
+
+	* check in for gegl
+	
+	* update the .gil file to reflex the above change
+
+Thu May 11 10:32:21 PDT 2000 caro@rhythm.com
+
+	* check in for docs
+
+	* I updated the siggraph web page.
+
+
 Fri May  5 17:52:09 PDT 2000 caro@rhythm.com
 
 	* check in for docs

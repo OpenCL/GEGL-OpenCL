@@ -112,7 +112,7 @@ class Gegl:Add:Op from Gegl:Dual:Src:Op {
       
     while (width--)
       {
-        GENERIC_IMAGE_BLOCK_BEGIN  
+        GENERIC_IMAGE_CODE_BEGIN  
 
         dest_color = CHANNEL_CLAMP((Promote)src1_color + src2_color);
         if (dest_has_alpha)
@@ -135,7 +135,7 @@ class Gegl:Add:Op from Gegl:Dual:Src:Op {
         dX(src1,1);
         dX(src2,1);
  
-        GENERIC_IMAGE_BLOCK_BEGIN  
+        GENERIC_IMAGE_CODE_BEGIN  
       }               
   }
 }

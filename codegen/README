@@ -39,30 +39,30 @@ lexer.l has 8 states:
 
 1)the initial state 
 2)GENERIC_IMAGE_DECL 
-3)GENERIC_IMAGE_BLOCK 
+3)GENERIC_IMAGE_CODE 
 4)COMMENT 
-5)DATA_TYPE
+5)DT_MACROS
 6)ARGUMENTS
 7)DEFINITION
 8)EXTERNAL_INIT
 
-inital state ---------DATATYPE_BEGIN-------------> DATA_TYPE
+inital state ---------DT_MACROS_BEGIN------------> DT_MACROS
 inital state ---------GENERIC_IMAGE_DECL_BEGIN---> GENERIC_IMAGE_DECL
 inital state ---------GENERIC_IMAGE_BLOCK_BEGIN--> GENERIC_IMAGE_BLOCK
-DATA_TYPE ------------DATATYPE_END---------------> inital state 
+DT_MACROS ------------DT_MACROS_END--------------> inital state 
 GENERIC_IMAGE_DECL ---GENERIC_IMAGE_DECL_END-----> inital state
-GENERIC_IMAGE_BLOCK---GENERIC_IMAGE_BLOCK_END----> inital state
-GENERIC_IMAGE_BLOCK---EXTERNAL_INIT--------------> EXTERNAL_VARIABLE
-EXTERNAL_VARIABLE ----)--------------------------> GENERIC_IMAGE_BLOCK
+GENERIC_IMAGE_CODE----GENERIC_IMAGE_CODE_END-----> inital state
+GENERIC_IMAGE_CODE----EXTERNAL_INIT--------------> EXTERNAL_VARIABLE
+EXTERNAL_VARIABLE ----)--------------------------> GENERIC_IMAGE_CODE
 
 
-DATA_TYPE ------------dt_keyword.arg == 0 -------> DEFINITION
-DATA_TYPE ------------dt_keyword.arg == 1 -------> ARGUMENTS
+DT_MACROS ------------dt_keyword.arg == 0 -------> DEFINITION
+DT_MACROS ------------dt_keyword.arg == 1 -------> ARGUMENTS
 ARGUMENTS ---------------------------------------> DEFINITION
 DEFINITION --------------------------------------> DATA_TYPE  
 
 GENERIC_IMAGE_DECL ---/*-->COMMENT--*/-->GENERIC_IMAGE_DECL
-GENERIC_IMAGE_BLOCK --/*-->COMMENT--*/-->GENERIC_IMAGE_BLOCK
+GENERIC_IMAGE_CODE --/*-->COMMENT--*/-->GENERIC_IMAGE_CODE
 
 ===
  
