@@ -1,3 +1,10 @@
+Sat Mar 25 17:57:43 PST 2000 caro@rhythm.com
+	
+	* check in for codegen
+
+	* changed parser.y so that it does now not take the alpha
+	name at the comand line. it is generated automaticly.
+
 Sat Mar 25 17:29:26 EST 2000 calvinw@mindspring.com
 	
 	* check in for codegen

@@ -1014,7 +1014,7 @@ init_data_varible (char *s)
     set_dtype (e, TYPE_INT);
     set_type (e, TYPE_SCALER);
     set_num (e, 1);  
-    printf ("\n%sint %s;", tmp, name); 
+    printf ("\n%sgboolean %s;", tmp, name); 
 
     }
 }
@@ -1634,7 +1634,8 @@ read_channel_names (char *chan_names)
     NAME_COLOR_CHAN[i] = tmp; 
     }
   
-  NUM_COLOR_CHAN = i;
+  NUM_COLOR_CHAN = i+1;
+  NAME_COLOR_CHAN[i] = (char*) strdup ("alpha"); 
 }
 
 int
