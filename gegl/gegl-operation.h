@@ -1,16 +1,11 @@
 #ifndef __GEGL_FILTER_H__
 #define __GEGL_FILTER_H__
 
+#include "gegl-op.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-op.h"
-
-#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
-#define __TYPEDEF_GEGL_COLOR_MODEL__
-typedef struct _GeglColorModel  GeglColorModel;
-#endif
 
 #define GEGL_TYPE_FILTER               (gegl_filter_get_type ())
 #define GEGL_FILTER(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_FILTER, GeglFilter))
@@ -19,10 +14,7 @@ typedef struct _GeglColorModel  GeglColorModel;
 #define GEGL_IS_FILTER_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_FILTER))
 #define GEGL_FILTER_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_FILTER, GeglFilterClass))
 
-#ifndef __TYPEDEF_GEGL_FILTER__
-#define __TYPEDEF_GEGL_FILTER__
 typedef struct _GeglFilter GeglFilter;
-#endif
 struct _GeglFilter 
 {
    GeglOp op;
@@ -35,56 +27,31 @@ struct _GeglFilterClass
 {
    GeglOpClass op_class;
                                     
-   void (* evaluate)                (GeglFilter * self, 
-                                     GList * output_data_list,
-                                     GList * input_data_list);
    void (* prepare)                 (GeglFilter * self, 
-                                     GList * output_data_list,
-                                     GList * input_data_list);
+                                     GList * data_outputs,
+                                     GList * data_inputs);
    void (* process)                 (GeglFilter * self, 
-                                     GList * output_data_list,
-                                     GList * input_data_list);
+                                     GList * data_outputs,
+                                     GList * data_inputs);
    void (* finish)                  (GeglFilter * self, 
-                                     GList * output_data_list,
-                                     GList * input_data_list);
+                                     GList * data_outputs,
+                                     GList * data_inputs);
 
    void (* validate_inputs)         (GeglFilter *self,
-                                     GList *data_list);
+                                     GList *data_inputs);
    void (* validate_outputs)        (GeglFilter *self,
-                                     GList *output_data_list);
-   /* change these to an interface */
-   void (* compute_need_rect)       (GeglFilter *self,
-                                     GeglRect *input_need_rect,
-                                     GeglRect *need_rect,
-                                     gint i);
-   void (* compute_have_rect)       (GeglFilter *self,
-                                     GeglRect *have_rect,
-                                     GList * input_have_rect); 
-   GeglColorModel*
-     (* compute_derived_color_model)(GeglFilter *self,
-                                     GList * input_color_models); 
+                                     GList *data_outputs);
 };
 
 GType           gegl_filter_get_type            (void);
-void            gegl_filter_compute_need_rect   (GeglFilter * self,
-                                                 GeglRect * input_need_rect,
-                                                 GeglRect * need_rect,
-                                                 gint i);
-void            gegl_filter_compute_have_rect   (GeglFilter * self,
-                                                 GeglRect *have_rect,
-                                                 GList * input_have_rects);
-GeglColorModel*  
-         gegl_filter_compute_derived_color_model(GeglFilter * self, 
-                                                 GList * input_color_models);
-
-void            gegl_filter_validate_inputs     (GeglFilter * self, 
-                                                 GList * data_list);
-void            gegl_filter_validate_outputs    (GeglFilter * self, 
-                                                 GList * output_data_list);
-
 void            gegl_filter_evaluate            (GeglFilter * self, 
-                                                 GList * output_data_list,
-                                                 GList * input_data_list);
+                                                 GList * data_outputs,
+                                                 GList * data_inputs);
+void            gegl_filter_validate_inputs     (GeglFilter * self, 
+                                                 GList * data_inputs);
+void            gegl_filter_validate_outputs    (GeglFilter * self, 
+                                                 GList * data_outputs);
+
 
 #ifdef __cplusplus
 }

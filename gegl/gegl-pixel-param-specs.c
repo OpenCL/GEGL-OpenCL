@@ -3,7 +3,7 @@
 #include    "gegl-utils.h"
 #include    "gegl-color-model.h"
 #include    "gegl-color-space.h"
-#include    "gegl-data-space.h"
+#include    "gegl-channel-space.h"
 
 GType GEGL_TYPE_PARAM_PIXEL = 0;
 GType GEGL_TYPE_PARAM_PIXEL_RGB_UINT8 = 0;

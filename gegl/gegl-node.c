@@ -168,6 +168,14 @@ get_property (GObject      *gobject,
   }
 }
 
+/**
+ * gegl_node_add_input:
+ * @self: a #GeglNode.
+ * @n: the postion of the input.
+ *
+ * Add an input at the given position.
+ *
+ **/
 void
 gegl_node_add_input(GeglNode *self,
                     gint n)
@@ -186,6 +194,14 @@ gegl_node_add_input(GeglNode *self,
   self->num_inputs = g_list_length(self->inputs);
 }
 
+/**
+ * gegl_node_add_output:
+ * @self: a #GeglNode.
+ * @n: the postion of the input.
+ *
+ * Add an output at the given position.
+ *
+ **/
 void
 gegl_node_add_output(GeglNode *self,
                      gint n)
@@ -285,9 +301,9 @@ gegl_node_set_num_outputs (GeglNode * self,
 /**
  * gegl_node_get_source:
  * @self: a #GeglNode.
- * @n: which source.
+ * @n: which input.
  *
- * Returns the nth source node and which output it uses as source.
+ * Gets the nth input source node.
  *
  * Returns: a #GeglNode. 
  **/
@@ -311,10 +327,10 @@ gegl_node_get_source (GeglNode * self,
 /**
  * gegl_node_set_source:
  * @self: a #GeglNode.
- * @source: the node to use for nth source.
- * @n: which source.
+ * @source: the node to use.
+ * @n: which input.
  *
- * Sets source and output of the nth source.
+ * Sets the nth input source node.
  *
  **/
 void
@@ -391,11 +407,11 @@ gegl_node_get_num_sinks (GeglNode * self)
 /**
  * gegl_node_get_sink:
  * @self: a #GeglNode.
- * @n: nth sink attached to output.
+ * @n: which sink to get.
  *
- * Gets the nth sink attached to nodes output.
+ * Gets the nth sink.
  *
- * Returns: the #GeglNode that is the sink. 
+ * Returns: the #GeglNode nth sink. 
  **/
 GeglNode*         
 gegl_node_get_sink (GeglNode * self,
@@ -422,11 +438,12 @@ gegl_node_get_sink (GeglNode * self,
 /**
  * gegl_node_get_sink_input:
  * @self: a #GeglNode.
- * @n: nth sink attached to output.
+ * @n: which sink.
  *
- * Gets the input of the nth sink attached to nodes output.
+ * Gets which input of the sink this node is
+ * a source for.
  *
- * Returns: the input of the #GeglNode that is the sink. 
+ * Returns: the input of the sink. 
  **/
 gint              
 gegl_node_get_sink_input(GeglNode * self,
@@ -453,7 +470,7 @@ gegl_node_get_sink_input(GeglNode * self,
  * gegl_node_unlink:
  * @self: a #GeglNode.
  *
- * Removes all sources and sinks from this node.
+ * Removes all sources and sinks for this node.
  *
  **/
 void      
@@ -471,7 +488,7 @@ gegl_node_unlink(GeglNode * self)
  * gegl_node_remove_sources:
  * @self: a #GeglNode.
  *
- * Removes all sources from this node.
+ * Removes all sources for this node.
  *
  **/
 void
@@ -490,7 +507,7 @@ gegl_node_remove_sources(GeglNode *self)
  * gegl_node_remove_sinks:
  * @self: a #GeglNode.
  *
- * Removes any sinks of this node.
+ * Removes all sinks for this node.
  *
  **/
 void
@@ -507,6 +524,13 @@ gegl_node_remove_sinks(GeglNode *self)
     }
 }
 
+/**
+ * gegl_node_free_inputs:
+ * @self: a #GeglNode.
+ *
+ * Free the inputs list for this node.
+ *
+ **/
 void
 gegl_node_free_inputs(GeglNode * self)
 {
@@ -528,6 +552,13 @@ gegl_node_free_inputs(GeglNode * self)
   self->inputs = NULL;
 }
 
+/**
+ * gegl_node_free_outputs:
+ * @self: a #GeglNode.
+ *
+ * Free the outputs list for this node. 
+ *
+ **/
 void
 gegl_node_free_outputs(GeglNode *self)
 {
@@ -540,7 +571,7 @@ gegl_node_free_outputs(GeglNode *self)
  * @self: a #GeglNode.
  * @visitor: a #GeglVisitor.
  *
- * Accepts a visitor.
+ * Accept a visitor.
  *
  **/
 void      

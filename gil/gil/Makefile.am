@@ -2,10 +2,10 @@ YFLAGS = -d -t -v
 SUBDIRS =
 CFLAGS = -g
 
-INCLUDES = @GEGL_CFLAGS@
+INCLUDES = @DEP_CFLAGS@
 LDFLAGS = \
 	-lm \
-	@GEGL_LIBS@
+	@DEP_LIBS@
 
 bin_PROGRAMS =
 

@@ -1,6 +1,6 @@
 #include "gegl-component-color-model.h"
 #include "gegl-color-space.h"
-#include "gegl-data-space.h"
+#include "gegl-channel-space.h"
 #include "gegl-component-storage.h"
 #include "gegl-object.h"
 
@@ -88,11 +88,11 @@ constructor (GType                  type,
   color_model->bits_per_channel = g_new(gint, color_model->num_channels);
 
   for(i = 0; i < num_colors; i++)
-    color_model->bits_per_channel[i] = gegl_data_space_bits(color_model->data_space);
+    color_model->bits_per_channel[i] = gegl_channel_space_bits(color_model->channel_space);
 
   if(color_model->has_alpha)
     color_model->bits_per_channel[color_model->alpha_channel] = 
-        gegl_data_space_bits(color_model->data_space);
+        gegl_channel_space_bits(color_model->channel_space);
 
   if(color_model->has_z)
     color_model->bits_per_channel[color_model->z_channel] = sizeof(gfloat);
@@ -103,7 +103,7 @@ constructor (GType                  type,
 
   {
     gchar * color_space_name =  gegl_color_space_name(color_model->color_space);
-    gchar * data_space_name =  gegl_data_space_name(color_model->data_space);
+    gchar * channel_space_name =  gegl_channel_space_name(color_model->channel_space);
     GString * name = g_string_new(color_space_name);
 
     if(color_model->has_alpha)
@@ -113,7 +113,7 @@ constructor (GType                  type,
       name = g_string_append(name, "z");
 
     name = g_string_append(name, "-");
-    name = g_string_append(name, data_space_name);
+    name = g_string_append(name, channel_space_name);
 
     color_model->name = g_strdup(name->str);
     g_string_free(name, TRUE);
@@ -140,8 +140,8 @@ create_storage (GeglColorModel * color_model,
                 gint width, 
                 gint height)
 {
-  GeglDataSpace *data_space = gegl_color_model_data_space(color_model);
-  gint data_type_bytes = gegl_data_space_bits(data_space) / 8;
+  GeglChannelSpace *channel_space = gegl_color_model_channel_space(color_model);
+  gint data_type_bytes = gegl_channel_space_bits(channel_space) / 8;
 
 
   GeglStorage * storage = g_object_new(GEGL_TYPE_COMPONENT_STORAGE,

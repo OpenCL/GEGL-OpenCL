@@ -1,0 +1,60 @@
+<refentry id="gegl-configuring" revision="14 Jan 2003">
+<refmeta>
+<refentrytitle>Configuring Gegl from CVS</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>Gegl Library</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>Configuring Gegl from CVS</refname>
+<refpurpose>
+How to configure Gegl from CVS.
+</refpurpose>
+</refnamediv>
+
+<refsect1>
+<title>Configuring Gegl from CVS on Unix-like Systems</title>
+
+<para>
+Once you have the source code and prerequisites, cd to the main top level 
+Gegl directory and run the script <filename>autogen.sh</filename> which is found there:
+<programlisting>
+$ ./autogen.sh
+</programlisting>
+</para>
+<para>
+This script is roughly equivalent to the following: 
+<programlisting>
+$ aclocal 
+$ automake
+$ autoconf
+$ ./configure
+</programlisting>
+</para>
+<para>
+The shell script called <filename>configure</filename> makes the template
+makefiles called <filename>Makefile.in</filename> in the package and creates
+makefiles customized for your operating system. 
+</para>
+
+<para>
+If you want to add options to <filename>configure</filename>,
+you can do so by passing them directly to
+<filename>autogen.sh</filename>, they will be passed on to
+<filename>configure</filename>.
+For example if you want to enable building the gtk-docs for
+gegl, you can use the <systemitem>--enable-gtk-doc</systemitem> argument which
+causes the gtk-docs for gegl to be built:
+<programlisting>
+$ ./configure --enable-gtk-doc
+</programlisting>
+</para>
+<para>
+A full list of options you can pass can be found by running
+<filename>configure</filename> with the
+<systemitem>--help</systemitem> argument. In general, the defaults should 
+work fine. 
+</para>
+</refsect1>
+
+</refentry>

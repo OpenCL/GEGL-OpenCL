@@ -14,11 +14,19 @@ GeglStorage
 
 </para>
 
-<!-- ##### STRUCT GeglDataBuffer ##### -->
+<!-- ##### STRUCT GeglStorage ##### -->
 <para>
 
 </para>
 
+
+<!-- ##### STRUCT GeglStorageClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@create_buffer: 
 
 <!-- ##### FUNCTION gegl_storage_data_type_bytes ##### -->
 <para>
@@ -56,7 +64,7 @@ GeglStorage
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_storage_create_data_buffer ##### -->
+<!-- ##### FUNCTION gegl_storage_create_buffer ##### -->
 <para>
 
 </para>
@@ -70,17 +78,17 @@ GeglStorage
 
 </para>
 
+<!-- ##### ARG GeglStorage:height ##### -->
+<para>
+
+</para>
+
 <!-- ##### ARG GeglStorage:num-bands ##### -->
 <para>
 
 </para>
 
 <!-- ##### ARG GeglStorage:width ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglStorage:height ##### -->
 <para>
 
 </para>

@@ -5,8 +5,8 @@
 #include "testutils.h"
 #include <string.h>
 
-#define IMAGE_WIDTH 1 
-#define IMAGE_HEIGHT 1 
+#define IMAGE_OP_WIDTH 1 
+#define IMAGE_OP_HEIGHT 1 
 
 #define R0 .1 
 #define G0 .2
@@ -76,7 +76,7 @@ test_multiply_apply(Test *test)
 
     gegl_op_apply(multiply); 
 
-    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(multiply), .04, .10, .18));
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(multiply), .04, .10, .18));
     g_object_unref(multiply);
   }
 }
@@ -108,7 +108,7 @@ test_multiply_apply_rgba_float(Test *test)
 
     gegl_op_apply(multiply); 
 
-    ct_test(test, testutils_check_pixel(GEGL_IMAGE(multiply), "rgbafloat", 
+    ct_test(test, testutils_check_pixel(GEGL_IMAGE_OP(multiply), "rgbafloat", 
                                         .26, .42, .6, .76));
     g_object_unref(multiply);
   }
@@ -119,14 +119,14 @@ static void
 multiply_test_setup(Test *test)
 {
   source0 = g_object_new(GEGL_TYPE_COLOR, 
-                         "width", IMAGE_WIDTH, 
-                         "height", IMAGE_HEIGHT, 
+                         "width", IMAGE_OP_WIDTH, 
+                         "height", IMAGE_OP_HEIGHT, 
                          "pixel-rgb-float", R0, G0, B0, 
                          NULL); 
 
   source1 = g_object_new(GEGL_TYPE_COLOR, 
-                         "width", IMAGE_WIDTH, 
-                         "height", IMAGE_HEIGHT, 
+                         "width", IMAGE_OP_WIDTH, 
+                         "height", IMAGE_OP_HEIGHT, 
                          "pixel-rgb-float", R1, G1, B1, 
                          NULL); 
 }

@@ -2,17 +2,33 @@
 GeglBinary
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Abstract class that has two image data inputs.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This is the abstract class that represents GeglImageOps with a two image data
+inputs. This class has a <literal>fade</literal> property which is used as
+multiplier that can be applied to the first input.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglBinary ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglBinaryClass ##### -->
+<para>
+
+</para>
+
+@point_op_class: 
+@get_scanline_func: 
 
 <!-- ##### FUNCTION gegl_binary_get_fade ##### -->
 <para>

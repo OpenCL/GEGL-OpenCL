@@ -1,11 +1,8 @@
 #include "gegl-blend.h"
-#include "gegl-data.h"
-#include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
-#include "gegl-image-buffer.h"
-#include "gegl-image-buffer-iterator.h"
+#include "gegl-image.h"
+#include "gegl-image-iterator.h"
 #include "gegl-scalar-data.h"
-#include "gegl-utils.h"
 
 enum
 {
@@ -60,26 +57,26 @@ class_init (GeglBlendClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  /* op properties */
-  gegl_op_class_install_input_data_property(op_class, 
-                                       g_param_spec_float ("opacity",
-                                                           "Opacity",
-                                                           "Opacity of this blend.",
-                                                           0.0, 
-                                                           1.0,
-                                                           1.0,
-                                                           G_PARAM_PRIVATE)); 
+  /* data properties */
+  gegl_op_class_install_data_input_property(op_class, 
+                         g_param_spec_float ("opacity",
+                                             "Opacity",
+                                             "Opacity of this blend.",
+                                             0.0, 
+                                             1.0,
+                                             1.0,
+                                             G_PARAM_PRIVATE)); 
 
   /* regular properties */
   g_object_class_install_property (gobject_class, PROP_OPACITY,
-                                   g_param_spec_float ("opacity",
-                                                       "Opacity",
-                                                       "Opacity of this blend.",
-                                                       0.0, 
-                                                       1.0,
-                                                       1.0,
-                                                       G_PARAM_READWRITE | 
-                                                       G_PARAM_CONSTRUCT));
+                         g_param_spec_float ("opacity",
+                                             "Opacity",
+                                             "Opacity of this blend.",
+                                             0.0, 
+                                             1.0,
+                                             1.0,
+                                             G_PARAM_READWRITE | 
+                                             G_PARAM_CONSTRUCT));
 }
 
 static void 
@@ -87,7 +84,7 @@ init (GeglBlend * self,
       GeglBlendClass * klass)
 {
   /* Opacity input. */
-  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "opacity", 3);
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "opacity");
 
   self->opacity = 1.0;
 }

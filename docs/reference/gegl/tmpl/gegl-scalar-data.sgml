@@ -9,10 +9,21 @@ GeglScalarData
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
 
+<!-- ##### STRUCT GeglScalarData ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglScalarDataClass ##### -->
+<para>
+
+</para>
+
+@data_class: 
 

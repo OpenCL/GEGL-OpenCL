@@ -88,8 +88,8 @@ init (GeglGraph * self,
 static void
 root_changed(GeglGraph * self)
 {
-  gegl_op_free_output_data_list(GEGL_OP(self));
-  gegl_op_free_input_data_list(GEGL_OP(self));
+  gegl_op_free_data_outputs(GEGL_OP(self));
+  gegl_op_free_data_inputs(GEGL_OP(self));
 
   if(self->root)
     {
@@ -230,9 +230,9 @@ reset_inputs(GeglGraph *self)
       GeglData *data = NULL;
 
       if(GEGL_IS_OP(graph_input->node))
-          data = gegl_op_get_input_data(GEGL_OP(graph_input->node), 
+          data = gegl_op_get_data_input(GEGL_OP(graph_input->node), 
                                           graph_input->node_input);
-      gegl_op_add_input_data(GEGL_OP(self), data, i);
+      gegl_op_append_data_input(GEGL_OP(self), data);
     }
 }
 
@@ -246,11 +246,21 @@ reset_outputs(GeglGraph *self)
     {
       GeglData *data = NULL;
       if(GEGL_IS_OP(self->root))
-        data = gegl_op_get_output_data(GEGL_OP(self->root), i);
-      gegl_op_add_output_data(GEGL_OP(self), data, i);
+        data = gegl_op_get_data_output(GEGL_OP(self->root), i);
+      gegl_op_append_data_output(GEGL_OP(self), data);
     }
 }
 
+/**
+ * gegl_graph_find_source:
+ * @self: a #GeglGraph.
+ * @node: a #GeglNode we want the source for.
+ * @index: which input of the #GeglNode want source for. 
+ *
+ * Find a source for the graph that is used as the passed node's input. 
+ *
+ * Returns: a #GeglNode.
+ **/
 GeglNode *
 gegl_graph_find_source(GeglGraph *self,
                        GeglNode *node,

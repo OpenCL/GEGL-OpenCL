@@ -1,6 +1,6 @@
 #include "gegl-mult.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-image-buffer-iterator.h"
+#include "gegl-image-iterator.h"
 #include "gegl-scalar-data.h"
 #include "gegl-value-types.h"
 #include "gegl-param-specs.h"
@@ -21,10 +21,10 @@ static void init (GeglMult * self, GeglMultClass * klass);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static GeglScanlineFunc get_scanline_func(GeglUnary * unary, GeglColorSpaceType space, GeglDataSpaceType type);
+static GeglScanlineFunc get_scanline_func(GeglUnary * unary, GeglColorSpaceType space, GeglChannelSpaceType type);
 
-static void mult_float (GeglFilter * filter, GeglImageBufferIterator ** iters, gint width);
-static void mult_uint8 (GeglFilter * filter, GeglImageBufferIterator ** iters, gint width);
+static void mult_float (GeglFilter * filter, GeglImageIterator ** iters, gint width);
+static void mult_uint8 (GeglFilter * filter, GeglImageIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -71,7 +71,7 @@ class_init (GeglMultClass * klass)
   gobject_class->get_property = get_property;
 
   /* op properties */
-  gegl_op_class_install_input_data_property (op_class,
+  gegl_op_class_install_data_input_property (op_class,
                                         g_param_spec_float ("mult0",
                                                       "Mult0",
                                                       "The multiplier of channel 0",
@@ -79,7 +79,7 @@ class_init (GeglMultClass * klass)
                                                       1.0,
                                                       G_PARAM_PRIVATE));
 
-  gegl_op_class_install_input_data_property (op_class,
+  gegl_op_class_install_data_input_property (op_class,
                                         g_param_spec_float ("mult1",
                                                        "Mult1",
                                                        "The multiplier of channel 1",
@@ -87,7 +87,7 @@ class_init (GeglMultClass * klass)
                                                        1.0,
                                                        G_PARAM_PRIVATE));
 
-  gegl_op_class_install_input_data_property (op_class,
+  gegl_op_class_install_data_input_property (op_class,
                                         g_param_spec_float ("mult2",
                                                        "Mult2",
                                                        "The multiplier of channel 2",
@@ -95,7 +95,7 @@ class_init (GeglMultClass * klass)
                                                        1.0,
                                                        G_PARAM_PRIVATE));
 
-  gegl_op_class_install_input_data_property (op_class,
+  gegl_op_class_install_data_input_property (op_class,
                                         g_param_spec_float ("mult3",
                                                        "Mult3",
                                                        "The multiplier of channel 3",
@@ -142,10 +142,10 @@ init (GeglMult * self,
       GeglMultClass * klass)
 {
   /* Add the multiplier inputs */ 
-  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult0", 1);
-  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult1", 2);
-  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult2", 3);
-  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult3", 4);
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult0");
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult1");
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult2");
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult3");
 
   self->mult[0] = 1.0; 
   self->mult[1] = 1.0; 
@@ -219,27 +219,27 @@ static GeglScanlineFunc scanline_funcs[] =
 static GeglScanlineFunc
 get_scanline_func(GeglUnary * unary,
                   GeglColorSpaceType space,
-                  GeglDataSpaceType type)
+                  GeglChannelSpaceType type)
 {
   return scanline_funcs[type];
 }
 
 static void                                                            
 mult_float (GeglFilter * filter,              
-                  GeglImageBufferIterator ** iters,        
+                  GeglImageIterator ** iters,        
                   gint width)                       
 {                                                                       
   GeglMult * self = GEGL_MULT(filter);
 
   gfloat mult[4] = { self->mult[0], self->mult[1], self->mult[2], self->mult[3] };
 
-  gfloat **d = (gfloat**)gegl_image_buffer_iterator_color_channels(iters[0]);
-  gfloat *da = (gfloat*)gegl_image_buffer_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_image_buffer_iterator_get_num_colors(iters[0]);
+  gfloat **d = (gfloat**)gegl_image_iterator_color_channels(iters[0]);
+  gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
 
-  gfloat **a = (gfloat**)gegl_image_buffer_iterator_color_channels(iters[1]);
-  gfloat *aa = (gfloat*)gegl_image_buffer_iterator_alpha_channel(iters[1]);
-  gint a_color_chans = gegl_image_buffer_iterator_get_num_colors(iters[1]);
+  gfloat **a = (gfloat**)gegl_image_iterator_color_channels(iters[1]);
+  gfloat *aa = (gfloat*)gegl_image_iterator_alpha_channel(iters[1]);
+  gint a_color_chans = gegl_image_iterator_get_num_colors(iters[1]);
 
   gint alpha_mask = 0x0;
 
@@ -280,20 +280,20 @@ mult_float (GeglFilter * filter,
 
 static void                                                            
 mult_uint8 (GeglFilter * filter,              
-                  GeglImageBufferIterator ** iters,        
+                  GeglImageIterator ** iters,        
                   gint width)                       
 {                                                                       
   GeglMult * self = GEGL_MULT(filter);
 
   gfloat mult[4] = {self->mult[0], self->mult[1], self->mult[2], self->mult[3]};
 
-  guint8 **d = (guint8**)gegl_image_buffer_iterator_color_channels(iters[0]);
-  guint8 *da = (guint8*)gegl_image_buffer_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_image_buffer_iterator_get_num_colors(iters[0]);
+  guint8 **d = (guint8**)gegl_image_iterator_color_channels(iters[0]);
+  guint8 *da = (guint8*)gegl_image_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
 
-  guint8 **a = (guint8**)gegl_image_buffer_iterator_color_channels(iters[1]);
-  guint8 *aa = (guint8*)gegl_image_buffer_iterator_alpha_channel(iters[1]);
-  gint a_color_chans = gegl_image_buffer_iterator_get_num_colors(iters[1]);
+  guint8 **a = (guint8**)gegl_image_iterator_color_channels(iters[1]);
+  guint8 *aa = (guint8*)gegl_image_iterator_alpha_channel(iters[1]);
+  gint a_color_chans = gegl_image_iterator_get_num_colors(iters[1]);
 
   gint alpha_mask = 0x0;
 

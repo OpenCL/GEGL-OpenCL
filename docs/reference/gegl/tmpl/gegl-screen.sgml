@@ -2,7 +2,7 @@
 GeglScreen
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Screen blend mode
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
@@ -13,4 +13,17 @@ GeglScreen
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglScreen ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglScreenClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
 

@@ -2,15 +2,34 @@
 GeglEvalDfsVisitor
 
 <!-- ##### SECTION Short_Description ##### -->
-
+A depth first visitor for setting up evaluation.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This visitor is setup by the #GeglEvalMgr to do a depth first preliminary pass
+of the graph to be evaluated. During this pass, the visitor visits each node.
+When it finds a #GeglFilter which is an #GeglImageOp, it calls
+gegl_image_op_evaluate_have_rect() on it to let the op compute its domain of
+definition or have rect. It also calls gegl_image_op_evaluate_color_model(),
+which lets the op compute its color model from that of its inputs. This visitor
+is only used by #GeglEvalMgr.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglEvalDfsVisitor ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglEvalDfsVisitorClass ##### -->
+<para>
+
+</para>
+
+@dfs_visitor_class: 
 

@@ -2,15 +2,31 @@
 GeglInside
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Composite B inside A
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+Composite B inside A.
+</para>
+<para>
+alphaA * B
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglInside ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglInsideClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
 

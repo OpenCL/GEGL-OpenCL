@@ -5,11 +5,6 @@
 #include "gegl-types.h"
 #include "gegl-node.h"
 
-#ifndef __TYPEDEF_GEGL_NODE__
-#define __TYPEDEF_GEGL_NODE__
-typedef struct _GeglNode GeglNode;
-#endif
-
 /* --- derived input type --- */
 extern GType GEGL_TYPE_INPUT;
 

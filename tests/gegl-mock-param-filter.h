@@ -1,11 +1,11 @@
 #ifndef __GEGL_MOCK_PARAM_FILTER_H__
 #define __GEGL_MOCK_PARAM_FILTER_H__
 
+#include "gegl-filter.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-filter.h"
 
 #define GEGL_TYPE_MOCK_PARAM_FILTER               (gegl_mock_param_filter_get_type ())
 #define GEGL_MOCK_PARAM_FILTER(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_MOCK_PARAM_FILTER, GeglMockParamFilter))
@@ -14,10 +14,7 @@ extern "C" {
 #define GEGL_IS_MOCK_PARAM_FILTER_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_MOCK_PARAM_FILTER))
 #define GEGL_MOCK_PARAM_FILTER_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MOCK_PARAM_FILTER, GeglMockParamFilterClass))
 
-#ifndef __TYPEDEF_GEGL_MOCK_PARAM_FILTER__
-#define __TYPEDEF_GEGL_MOCK_PARAM_FILTER__
 typedef struct _GeglMockParamFilter GeglMockParamFilter;
-#endif
 struct _GeglMockParamFilter 
 {
    GeglFilter filter;

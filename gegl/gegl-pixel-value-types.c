@@ -2,7 +2,7 @@
 
 #include    "gegl-pixel-value-types.h"
 #include    "gegl-utils.h"
-#include    "gegl-data-space.h"
+#include    "gegl-channel-space.h"
 #include    "gegl-color-space.h"
 #include    "gegl-color-model.h"
 #include    <string.h>
@@ -405,7 +405,7 @@ value_transform_pixel(const GValue *src_value,
   value_table->value_init(dest_value);
 
   {
-    GeglDataSpace *float_data_space = gegl_data_space_instance("float");
+    GeglChannelSpace *float_channel_space = gegl_channel_space_instance("float");
 
     GeglColorModel *s_cm = src_value->data[0].v_pointer;
     GeglColorModel *d_cm = dest_value->data[0].v_pointer;
@@ -413,8 +413,8 @@ value_transform_pixel(const GValue *src_value,
     GeglColorSpace *src_color_space = gegl_color_model_color_space(s_cm);
     GeglColorSpace *dest_color_space = gegl_color_model_color_space(d_cm);
 
-    GeglDataSpace *src_data_space = gegl_color_model_data_space(s_cm);
-    GeglDataSpace *dest_data_space = gegl_color_model_data_space(d_cm);
+    GeglChannelSpace *src_channel_space = gegl_color_model_channel_space(s_cm);
+    GeglChannelSpace *dest_channel_space = gegl_color_model_channel_space(d_cm);
 
     gint src_num_colors = gegl_color_model_num_colors(s_cm);
     gint dest_num_colors = gegl_color_model_num_colors(d_cm);
@@ -456,12 +456,12 @@ value_transform_pixel(const GValue *src_value,
           src_uint8_ptr += (src_bits[i]/8);  
         src_alpha = src_uint8_ptr;
 
-        gegl_data_space_convert_to_float(src_data_space,
+        gegl_channel_space_convert_to_float(src_channel_space,
                                          &src_float_alpha,
                                          src_alpha,
                                          1);
 
-        gegl_data_space_convert_from_float(src_data_space,
+        gegl_channel_space_convert_from_float(src_channel_space,
                                            dest_alpha,
                                            &dest_float_alpha,
                                            1);
@@ -481,7 +481,7 @@ value_transform_pixel(const GValue *src_value,
           dest_uint8_ptr += (dest_bits[i]/8);  
         dest_alpha = dest_uint8_ptr;
 
-        gegl_data_space_convert_from_float(dest_data_space,
+        gegl_channel_space_convert_from_float(dest_channel_space,
                                            dest_alpha,
                                            &dest_float_alpha,
                                            1);
@@ -489,10 +489,10 @@ value_transform_pixel(const GValue *src_value,
         a = dest_alpha;
       }
 
-    if(src_data_space != float_data_space)
+    if(src_channel_space != float_channel_space)
       {
         src_float_data = g_new(float, src_num_colors);
-        gegl_data_space_convert_to_float(src_data_space, 
+        gegl_channel_space_convert_to_float(src_channel_space, 
                                          src_float_data, 
                                          src_data, 
                                          src_num_colors); 
@@ -518,8 +518,8 @@ value_transform_pixel(const GValue *src_value,
     else 
       dest_float_data = src_float_data;
 
-    if(dest_data_space != float_data_space)
-      gegl_data_space_convert_from_float(dest_data_space, 
+    if(dest_channel_space != float_channel_space)
+      gegl_channel_space_convert_from_float(dest_channel_space, 
                                          dest_data, 
                                          dest_float_data, 
                                          dest_num_colors);
@@ -528,7 +528,7 @@ value_transform_pixel(const GValue *src_value,
              dest_float_data, 
              dest_num_colors * sizeof(gfloat));
 
-    if(src_data_space != float_data_space)
+    if(src_channel_space != float_channel_space)
       g_free(src_float_data);
 
     if(src_color_space != dest_color_space)

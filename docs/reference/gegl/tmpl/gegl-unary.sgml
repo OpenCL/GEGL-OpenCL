@@ -2,15 +2,30 @@
 GeglUnary
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Abstract class that has one image data input.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This is the abstract class that represents GeglImageOps with a single
+image data input.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglUnary ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglUnaryClass ##### -->
+<para>
+
+</para>
+
+@point_op_class: 
+@get_scanline_func: 
 

@@ -51,11 +51,11 @@ typedef enum
 
 typedef enum
 {
-  GEGL_DATA_SPACE_NONE,
-  GEGL_DATA_SPACE_UINT8,
-  GEGL_DATA_SPACE_FLOAT,
-  GEGL_DATA_SPACE_U16,
-}GeglDataSpaceType;
+  GEGL_CHANNEL_SPACE_NONE,
+  GEGL_CHANNEL_SPACE_UINT8,
+  GEGL_CHANNEL_SPACE_FLOAT,
+  GEGL_CHANNEL_SPACE_U16
+}GeglChannelSpaceType;
 
 typedef struct _GeglRect GeglRect;
 struct _GeglRect

@@ -1,16 +1,13 @@
 #ifndef __GEGL_NODE_H__
 #define __GEGL_NODE_H__
 
+#include "gegl-object.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-object.h"
-
-#ifndef __TYPEDEF_GEGL_VISITOR__
-#define __TYPEDEF_GEGL_VISITOR__
-typedef struct _GeglVisitor  GeglVisitor;
-#endif
+struct _GeglVisitor;
 
 #define GEGL_TYPE_NODE               (gegl_node_get_type ())
 #define GEGL_NODE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
@@ -19,15 +16,8 @@ typedef struct _GeglVisitor  GeglVisitor;
 #define GEGL_IS_NODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NODE))
 #define GEGL_NODE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NODE, GeglNodeClass))
 
-#ifndef __TYPEDEF_GEGL_NODE__
-#define __TYPEDEF_GEGL_NODE__
 typedef struct _GeglNode  GeglNode;
-#endif
-
-#ifndef __TYPEDEF_GEGL_CONNECTOR__
-#define __TYPEDEF_GEGL_CONNECTOR__
 typedef struct _GeglConnector  GeglConnector;
-#endif
 struct _GeglConnector
 {
     GeglNode * node;
@@ -56,7 +46,7 @@ struct _GeglNodeClass
     GeglObjectClass object_class;
 
     void (* accept)                  (GeglNode * self, 
-                                      GeglVisitor * visitor);
+                                      struct _GeglVisitor * visitor);
 
 };
 
@@ -92,7 +82,7 @@ void            gegl_node_add_output            (GeglNode *self,
 void            gegl_node_free_inputs           (GeglNode * self);
 void            gegl_node_free_outputs          (GeglNode * self);
 void            gegl_node_accept                (GeglNode * self, 
-                                                 GeglVisitor * visitor);
+                                                 struct _GeglVisitor * visitor);
                                                                  
 #ifdef __cplusplus
 }

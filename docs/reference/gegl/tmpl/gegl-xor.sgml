@@ -2,15 +2,31 @@
 GeglXor
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Composite B xor A
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+Composite B exclusive or A.
+</para>
+<para>
+(1-alphaB) * A + (1-alphaA) * B
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglXor ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglXorClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
 

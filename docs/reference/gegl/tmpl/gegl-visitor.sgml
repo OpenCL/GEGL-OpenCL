@@ -2,41 +2,44 @@
 GeglVisitor
 
 <!-- ##### SECTION Short_Description ##### -->
-Abstract class for all visitors.
+Abstract visitor class
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This is the abstract visitor class for Gegl. It defines the common
+functionality for all visitors, and is an example of the visitor pattern (GoF,
+design patterns). It has virtual methods for visiting various node types,
+visit_node(), visit_op(), visit_filter(), and visit_graph() which subclasses
+override to describe what they do on visiting these types of nodes.   
+</para>
+<para>
+The visitor object keeps a hash table of #GeglNodeInfo structs with information
+about each node. This includes whether it has been discovered, or visited and
+the shared count which is the number of nodes downstream from it.
+</para>
+<para>
+The visitor object also keeps a linked list of the nodes in the order they are
+visited primarily for debugging and testing new visitor types. You can use this
+list to print out the names of the nodes that were visited in order.
+</para>
+<para>
+One important method for hierachical graphs (ie ones with #GeglGraphs) is
+gegl_visitor_collect_data_inputs(). This method is called to find the data
+inputs of a node. If a node is in the interior of a #GeglGraph and has
+some input with no source, then the this routine will look for a source
+to use as this input among the inputs of the containing #GeglGraph.
+<xref linkend="collectinputs"/> shows an example of this. Here this
+routine finds inputs C and B when used for A, and D when used for B. 
+<figure id="collectinputs">
+<title>Collecting data inputs in a graph</title>
+<graphic fileref="collectinputs.png"></graphic>
+</figure>
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
-
-<!-- ##### STRUCT GeglNode ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglOp ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglFilter ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglGraph ##### -->
-<para>
-
-</para>
-
 
 <!-- ##### STRUCT GeglNodeInfo ##### -->
 <para>
@@ -46,6 +49,23 @@ Abstract class for all visitors.
 @visited: 
 @discovered: 
 @shared_count: 
+
+<!-- ##### STRUCT GeglVisitor ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglVisitorClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@visit_node: 
+@visit_op: 
+@visit_filter: 
+@visit_graph: 
 
 <!-- ##### FUNCTION gegl_visitor_visit_node ##### -->
 <para>
@@ -63,8 +83,6 @@ Abstract class for all visitors.
 
 @self: 
 @filter: 
-<!-- # Unused Parameters # -->
-@op: 
 
 
 <!-- ##### FUNCTION gegl_visitor_visit_op ##### -->
@@ -173,7 +191,7 @@ Abstract class for all visitors.
 @shared_count: 
 
 
-<!-- ##### FUNCTION gegl_visitor_collect_data_list ##### -->
+<!-- ##### FUNCTION gegl_visitor_collect_data_inputs ##### -->
 <para>
 
 </para>

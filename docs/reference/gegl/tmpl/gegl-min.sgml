@@ -2,15 +2,31 @@
 GeglMin
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Min of two images
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+Take the minimum of two images.
+</para>
+<para>
+Min(A,B)
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglMin ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglMinClass ##### -->
+<para>
+
+</para>
+
+@binary_class: 
 

@@ -7,7 +7,7 @@ static void class_init (GeglPointOpClass * klass);
 static void init (GeglPointOp * self, GeglPointOpClass * klass);
 static void finalize (GObject * gobject);
 
-static void process (GeglFilter * self_op, GList * output_data_list, GList * input_data_list);
+static void process (GeglFilter * self_op, GList * data_outputs, GList * data_inputs);
 
 static gpointer parent_class = NULL;
 
@@ -31,7 +31,7 @@ gegl_point_op_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GEGL_TYPE_IMAGE , 
+      type = g_type_register_static (GEGL_TYPE_IMAGE_OP , 
                                      "GeglPointOp", 
                                      &typeInfo, 
                                      G_TYPE_FLAG_ABSTRACT);
@@ -74,11 +74,11 @@ finalize (GObject * gobject)
 
 static void 
 process (GeglFilter * filter, 
-         GList * output_data_list,
-         GList * input_data_list)
+         GList * data_outputs,
+         GList * data_inputs)
 {
   GeglPointOp *self =  GEGL_POINT_OP(filter);
   gegl_scanline_processor_process(self->scanline_processor, 
-                                  output_data_list,
-                                  input_data_list);
+                                  data_outputs,
+                                  data_inputs);
 }

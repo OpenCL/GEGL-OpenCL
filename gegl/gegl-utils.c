@@ -3,13 +3,26 @@
 
 #include "gegl-color-space-rgb.h"
 #include "gegl-color-space-gray.h"
-#include "gegl-data-space-float.h"
-#include "gegl-data-space-uint8.h"
+#include "gegl-channel-space-float.h"
+#include "gegl-channel-space-uint8.h"
 #include "gegl-component-color-model.h"
 #include "gegl-param-specs.h"
 #include "gegl-value-types.h"
 #include "gegl-graph.h"
 #include "gegl-dump-visitor.h"
+
+inline gint
+_gegl_float_epsilon_zero (float value)
+{
+  return value > -GEGL_FLOAT_EPSILON && value < GEGL_FLOAT_EPSILON; 
+}
+
+inline gint
+_gegl_float_epsilon_equal (float v1, float v2)
+{
+  register float diff = v1 - v2;
+  return diff > -GEGL_FLOAT_EPSILON && diff < GEGL_FLOAT_EPSILON; 
+}
 
 void 
 gegl_rect_set (GeglRect *r,
@@ -198,20 +211,4 @@ gegl_direct_logv(GLogLevelFlags level,
         g_logv(GEGL_LOG_DOMAIN, level, tabbed, args);
         g_free(tabbed);
       }
-}
-
-void
-gegl_dump_graph_msg(gchar * msg, 
-                    GeglNode * root) 
-{
-   LOG_DIRECT(msg);
-   gegl_dump_graph(root);
-}
-
-void
-gegl_dump_graph(GeglNode * root) 
-{
-   GeglDumpVisitor * dump = g_object_new(GEGL_TYPE_DUMP_VISITOR, NULL); 
-   gegl_dump_visitor_traverse(dump, root); 
-   g_object_unref(dump);
 }

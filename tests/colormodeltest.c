@@ -7,8 +7,8 @@
 static GeglColorSpace * rgb_color_space; 
 static GeglColorSpace * gray_color_space; 
 
-static GeglDataSpace * float_data_space; 
-static GeglDataSpace * uint8_data_space; 
+static GeglChannelSpace * float_channel_space; 
+static GeglChannelSpace * uint8_channel_space; 
 
 static void
 test_color_model_g_object_new(Test *test)
@@ -16,7 +16,7 @@ test_color_model_g_object_new(Test *test)
   {
     GeglColorModel * color_model = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                                 "color_space", rgb_color_space,
-                                                "data_space", float_data_space,
+                                                "channel_space", float_channel_space,
                                                 NULL);
 
     ct_test(test, color_model != NULL);
@@ -41,7 +41,7 @@ test_color_model_pixel_rgb_float(Test *test)
 
     GeglColorModel * color_model = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                                 "color_space", rgb_color_space,
-                                                "data_space", float_data_space,
+                                                "channel_space", float_channel_space,
                                                 NULL);
 
 
@@ -80,7 +80,7 @@ test_color_model_rgba_float(Test *test)
 
     GeglColorModel * color_model = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                                 "color_space", rgb_color_space,
-                                                "data_space", float_data_space,
+                                                "channel_space", float_channel_space,
                                                 "has_alpha", TRUE,
                                                 NULL);
 
@@ -123,7 +123,7 @@ test_color_model_gray_float(Test *test)
 
     GeglColorModel * color_model = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                                 "color_space", gray_color_space,
-                                                "data_space", float_data_space,
+                                                "channel_space", float_channel_space,
                                                 NULL);
 
 
@@ -158,7 +158,7 @@ test_color_model_graya_float(Test *test)
 
     GeglColorModel * color_model = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                                 "color_space", gray_color_space,
-                                                "data_space", float_data_space,
+                                                "channel_space", float_channel_space,
                                                 "has_alpha", TRUE,
                                                 NULL);
 
@@ -195,7 +195,7 @@ test_color_model_rgb_uint8(Test *test)
 
     GeglColorModel * color_model = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                                 "color_space", rgb_color_space,
-                                                "data_space", uint8_data_space,
+                                                "channel_space", uint8_channel_space,
                                                 NULL);
 
 
@@ -234,7 +234,7 @@ test_color_model_rgba_uint8(Test *test)
 
     GeglColorModel * color_model = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                                 "color_space", rgb_color_space,
-                                                "data_space", uint8_data_space,
+                                                "channel_space", uint8_channel_space,
                                                 "has_alpha", TRUE,
                                                 NULL);
 
@@ -277,7 +277,7 @@ test_color_model_gray_uint8(Test *test)
 
     GeglColorModel * color_model = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                                 "color_space", gray_color_space,
-                                                "data_space", uint8_data_space,
+                                                "channel_space", uint8_channel_space,
                                                 NULL);
 
 
@@ -312,7 +312,7 @@ test_color_model_graya_uint8(Test *test)
 
     GeglColorModel * color_model = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                                 "color_space", gray_color_space,
-                                                "data_space", uint8_data_space,
+                                                "channel_space", uint8_channel_space,
                                                 "has_alpha", TRUE,
                                                 NULL);
 
@@ -345,7 +345,7 @@ test_color_model_create_storage(Test *test)
   {
     GeglColorModel * color_model = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                                 "color_space", rgb_color_space,
-                                                "data_space", float_data_space,
+                                                "channel_space", float_channel_space,
                                                 "has_alpha" , TRUE,
                                                 NULL);
 
@@ -364,25 +364,25 @@ test_color_model_create_storage(Test *test)
 }
 
 static void
-test_color_model_create_storage_create_data_buffer(Test *test)
+test_color_model_create_storage_create_buffer(Test *test)
 {
   {
     GeglColorModel * color_model = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                                 "color_space", rgb_color_space,
-                                                "data_space", float_data_space,
+                                                "channel_space", float_channel_space,
                                                 "has_alpha" , TRUE,
                                                 NULL);
 
     GeglStorage * storage = gegl_color_model_create_storage(color_model, 2, 2);
-    GeglDataBuffer *data_buffer = gegl_storage_create_data_buffer(storage);
+    GeglBuffer *buffer = gegl_storage_create_buffer(storage);
 
-    ct_test(test, 4 == gegl_data_buffer_num_banks(data_buffer));
-    ct_test(test, 16 == gegl_data_buffer_bytes_per_bank(data_buffer));
-    ct_test(test, 64 == gegl_data_buffer_total_bytes(data_buffer));
-    ct_test(test, NULL != gegl_data_buffer_banks_data(data_buffer));
+    ct_test(test, 4 == gegl_buffer_num_banks(buffer));
+    ct_test(test, 16 == gegl_buffer_bytes_per_bank(buffer));
+    ct_test(test, 64 == gegl_buffer_total_bytes(buffer));
+    ct_test(test, NULL != gegl_buffer_banks_data(buffer));
 
     g_object_unref(storage);
-    g_object_unref(data_buffer);
+    g_object_unref(buffer);
     g_object_unref(color_model);
   }
 }
@@ -393,8 +393,8 @@ color_model_test_setup(Test *test)
  rgb_color_space = g_object_new(GEGL_TYPE_COLOR_SPACE_RGB, NULL); 
  gray_color_space = g_object_new(GEGL_TYPE_COLOR_SPACE_GRAY, NULL); 
 
- float_data_space = g_object_new(GEGL_TYPE_DATA_SPACE_FLOAT, NULL); 
- uint8_data_space = g_object_new(GEGL_TYPE_DATA_SPACE_UINT8, NULL); 
+ float_channel_space = g_object_new(GEGL_TYPE_CHANNEL_SPACE_FLOAT, NULL); 
+ uint8_channel_space = g_object_new(GEGL_TYPE_CHANNEL_SPACE_UINT8, NULL); 
 }
 
 static void
@@ -403,8 +403,8 @@ color_model_test_teardown(Test *test)
   g_object_unref(rgb_color_space);
   g_object_unref(gray_color_space);
 
-  g_object_unref(float_data_space);
-  g_object_unref(uint8_data_space);
+  g_object_unref(float_channel_space);
+  g_object_unref(uint8_channel_space);
 }
 
 Test *
@@ -427,7 +427,7 @@ create_color_model_test()
   g_assert(ct_addTestFun(t, test_color_model_graya_uint8));
 
   g_assert(ct_addTestFun(t, test_color_model_create_storage));
-  g_assert(ct_addTestFun(t, test_color_model_create_storage_create_data_buffer));
+  g_assert(ct_addTestFun(t, test_color_model_create_storage_create_buffer));
 
   return t; 
 }

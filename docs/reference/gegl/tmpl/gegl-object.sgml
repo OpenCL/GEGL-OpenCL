@@ -7,9 +7,7 @@ Base Object class.
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 This is the base Object class for Gegl. All Gegl classes extend from this
-class. GeglObjects don't do much. They can be given names, have a construction
-flag. There are some methods for storing interfaces, but these are deprecated.
-They will be replaced with normal GTypeInterfaces shortly.
+class. GeglObjects have names, and that is about it.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -17,25 +15,18 @@ They will be replaced with normal GTypeInterfaces shortly.
 
 </para>
 
-<!-- ##### FUNCTION gegl_object_add_interface ##### -->
+<!-- ##### STRUCT GeglObject ##### -->
 <para>
 
 </para>
 
-@self: 
-@interface_name: 
-@interface: 
 
-
-<!-- ##### FUNCTION gegl_object_query_interface ##### -->
+<!-- ##### STRUCT GeglObjectClass ##### -->
 <para>
 
 </para>
 
-@self: 
-@interface_name: 
-@Returns: 
-
+@gobject_class: 
 
 <!-- ##### FUNCTION gegl_object_set_name ##### -->
 <para>

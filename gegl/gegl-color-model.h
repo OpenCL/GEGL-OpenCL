@@ -1,26 +1,14 @@
 #ifndef __GEGL_COLOR_MODEL_H__
 #define __GEGL_COLOR_MODEL_H__
 
+#include "gegl-object.h"
+#include "gegl-color-space.h"
+#include "gegl-channel-space.h"
+#include "gegl-storage.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-object.h"
-
-#ifndef __TYPEDEF_GEGL_COLOR_SPACE__
-#define __TYPEDEF_GEGL_COLOR_SPACE__
-typedef struct _GeglColorSpace  GeglColorSpace;
-#endif
-
-#ifndef __TYPEDEF_GEGL_DATA_SPACE__
-#define __TYPEDEF_GEGL_DATA_SPACE__
-typedef struct _GeglDataSpace  GeglDataSpace;
-#endif
-
-#ifndef __TYPEDEF_GEGL_STORAGE__
-#define __TYPEDEF_GEGL_STORAGE__
-typedef struct _GeglStorage  GeglStorage;
-#endif
 
 #define GEGL_TYPE_COLOR_MODEL               (gegl_color_model_get_type ())
 #define GEGL_COLOR_MODEL(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR_MODEL, GeglColorModel))
@@ -30,17 +18,14 @@ typedef struct _GeglStorage  GeglStorage;
 #define GEGL_COLOR_MODEL_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COLOR_MODEL, GeglColorModelClass))
 
 
-#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
-#define __TYPEDEF_GEGL_COLOR_MODEL__
 typedef struct _GeglColorModel  GeglColorModel;
-#endif
 struct _GeglColorModel 
 {
    GeglObject object;
 
    /*< private >*/
    GeglColorSpace * color_space;
-   GeglDataSpace *  data_space;
+   GeglChannelSpace *  channel_space;
 
    gint num_channels;                    
    gint num_colors;                     
@@ -74,7 +59,7 @@ gboolean        gegl_color_model_register       (GeglColorModel *color_model);
 GeglColorModel *  gegl_color_model_instance       (gchar * color_model_name);
 
 GeglColorSpace* gegl_color_model_color_space    (GeglColorModel * self);
-GeglDataSpace*  gegl_color_model_data_space     (GeglColorModel * self);
+GeglChannelSpace*  gegl_color_model_channel_space     (GeglColorModel * self);
 
 gint            gegl_color_model_num_channels   (GeglColorModel * self);
 gint            gegl_color_model_num_colors     (GeglColorModel * self);

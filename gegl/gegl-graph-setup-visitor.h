@@ -1,16 +1,12 @@
 #ifndef __GEGL_GRAPH_SETUP_VISITOR_H__
 #define __GEGL_GRAPH_SETUP_VISITOR_H__
 
+#include "gegl-dfs-visitor.h"
+#include "gegl-graph.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-dfs-visitor.h"
-
-#ifndef __TYPEDEF_GEGL_GRAPH__
-#define __TYPEDEF_GEGL_GRAPH__
-typedef struct _GeglGraph GeglGraph;
-#endif
 
 #define GEGL_TYPE_GRAPH_SETUP_VISITOR               (gegl_graph_setup_visitor_get_type ())
 #define GEGL_GRAPH_SETUP_VISITOR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_GRAPH_SETUP_VISITOR, GeglGraphSetupVisitor))
@@ -19,10 +15,7 @@ typedef struct _GeglGraph GeglGraph;
 #define GEGL_IS_GRAPH_SETUP_VISITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_GRAPH_SETUP_VISITOR))
 #define GEGL_GRAPH_SETUP_VISITOR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_GRAPH_SETUP_VISITOR, GeglGraphSetupVisitorClass))
 
-#ifndef __TYPEDEF_GEGL_GRAPH_SETUP_VISITOR__
-#define __TYPEDEF_GEGL_GRAPH_SETUP_VISITOR__
 typedef struct _GeglGraphSetupVisitor GeglGraphSetupVisitor;
-#endif
 struct _GeglGraphSetupVisitor 
 {
     GeglDfsVisitor dfs_visitor;

@@ -6,8 +6,8 @@
 #include "testutils.h"
 #include <string.h>
 
-#define IMAGE_WIDTH 2 
-#define IMAGE_HEIGHT 2 
+#define IMAGE_OP_WIDTH 2 
+#define IMAGE_OP_HEIGHT 2 
 
 static void
 test_check_g_object_new(Test *test)
@@ -37,11 +37,11 @@ test_check_pixel_rgb_float(Test *test)
 
     /* This is what testutils_check_pixel_rgb_float does */
     {
-      GeglImageBuffer * image_buffer = gegl_image_get_image_buffer(GEGL_IMAGE(constant));
+      GeglImage * image = gegl_image_op_get_image(GEGL_IMAGE_OP(constant));
       GeglOp * check = g_object_new(GEGL_TYPE_CHECK, 
                                     "pixel-rgb-float", .1, .2, .3, 
                                     "x", 0, "y", 0,
-                                    "image_buffer", image_buffer,
+                                    "image", image,
                                     NULL);
       gegl_op_apply(check); 
 
@@ -69,11 +69,11 @@ test_check_rgb_uint8(Test *test)
 
     /* This is what testutils_check_rgb_uint8 does */
     {
-      GeglImageBuffer * image_buffer = gegl_image_get_image_buffer(GEGL_IMAGE(constant));
+      GeglImage * image = gegl_image_op_get_image(GEGL_IMAGE_OP(constant));
       GeglOp * check = g_object_new(GEGL_TYPE_CHECK, 
                                     "pixel-rgb-uint8", 1, 2, 3, 
                                     "x", 0, "y", 0,
-                                    "image_buffer", image_buffer,
+                                    "image", image,
                                     NULL);
       gegl_op_apply(check); 
 
@@ -97,7 +97,7 @@ test_check_testutils_pixel_rgb_float(Test *test)
                                     NULL);
     gegl_op_apply(constant); 
 
-    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(constant), .1, .2, .3));  
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(constant), .1, .2, .3));  
 
     g_object_unref(constant);
   }
@@ -112,7 +112,7 @@ test_check_testutils_rgb_uint8(Test *test)
                                     NULL);
     gegl_op_apply(constant); 
 
-    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE(constant), 1, 2, 3));  
+    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(constant), 1, 2, 3));  
 
     g_object_unref(constant);
   }
@@ -127,7 +127,7 @@ test_check_testutils_pixel_rgb_float_xy(Test *test)
                                     NULL);
     gegl_op_apply(constant); 
 
-    ct_test(test, testutils_check_pixel_rgb_float_xy(GEGL_IMAGE(constant), 1, 1, .1, .2, .3));  
+    ct_test(test, testutils_check_pixel_rgb_float_xy(GEGL_IMAGE_OP(constant), 1, 1, .1, .2, .3));  
 
     g_object_unref(constant);
   }
@@ -142,7 +142,7 @@ test_check_testutils_rgb_uint8_xy(Test *test)
                                     NULL);
     gegl_op_apply(constant); 
 
-    ct_test(test, testutils_check_rgb_uint8_xy(GEGL_IMAGE(constant), 1, 1, 1, 2, 3));  
+    ct_test(test, testutils_check_rgb_uint8_xy(GEGL_IMAGE_OP(constant), 1, 1, 1, 2, 3));  
 
     g_object_unref(constant);
   }
@@ -158,7 +158,7 @@ test_check_testutils_color_modelels_match_failure(Test *test)
     gegl_op_apply(constant); 
 
     /* returns false since check fails */
-    ct_test(test, !testutils_check_pixel_rgb_float(GEGL_IMAGE(constant), .1, .2, .3));  
+    ct_test(test, !testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(constant), .1, .2, .3));  
 
     g_object_unref(constant);
   }
@@ -170,7 +170,7 @@ test_check_testutils_color_modelels_match_failure(Test *test)
     gegl_op_apply(constant); 
 
     /* returns false since check fails */
-    ct_test(test, !testutils_check_rgb_uint8(GEGL_IMAGE(constant), 1, 2, 3));  
+    ct_test(test, !testutils_check_rgb_uint8(GEGL_IMAGE_OP(constant), 1, 2, 3));  
 
     g_object_unref(constant);
   }

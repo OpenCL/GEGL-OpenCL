@@ -2,15 +2,31 @@
 GeglIAdd
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Add two images
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+Add two images.
+</para>
+<para>
+A + B
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglIAdd ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglIAddClass ##### -->
+<para>
+
+</para>
+
+@binary_class: 
 

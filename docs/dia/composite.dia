@@ -61,13 +61,13 @@
         <point val="2.3,7.25"/>
       </attribute>
       <attribute name="obj_bb">
-        <rectangle val="2.25,7.2;21.633,9.2"/>
+        <rectangle val="2.25,7.2;20.724,9.2"/>
       </attribute>
       <attribute name="elem_corner">
         <point val="2.3,7.25"/>
       </attribute>
       <attribute name="elem_width">
-        <real val="19.283"/>
+        <real val="18.374"/>
       </attribute>
       <attribute name="elem_height">
         <real val="1.9"/>
@@ -128,7 +128,7 @@
             </composite>
             <composite type="umlparameter">
               <attribute name="name">
-                <string>#attributes#</string>
+                <string>#data_outputs#</string>
               </attribute>
               <attribute name="type">
                 <string>#GList*#</string>
@@ -142,7 +142,7 @@
             </composite>
             <composite type="umlparameter">
               <attribute name="name">
-                <string>#input_attributes#</string>
+                <string>#data_inputs#</string>
               </attribute>
               <attribute name="type">
                 <string>#GList*#</string>
@@ -232,16 +232,16 @@
         <point val="11.45,1.7"/>
       </attribute>
       <attribute name="obj_bb">
-        <rectangle val="11.4,1.65;23.814,4.85"/>
+        <rectangle val="11.4,1.65;20.178,5.35"/>
       </attribute>
       <attribute name="elem_corner">
         <point val="11.45,1.7"/>
       </attribute>
       <attribute name="elem_width">
-        <real val="12.314"/>
+        <real val="8.678"/>
       </attribute>
       <attribute name="elem_height">
-        <real val="3.1"/>
+        <real val="3.6"/>
       </attribute>
       <attribute name="name">
         <string>#Op#</string>
@@ -267,16 +267,36 @@
       <attribute name="attributes">
         <composite type="umlattribute">
           <attribute name="name">
-            <string>#attributes#</string>
+            <string>#data_inputs#</string>
           </attribute>
           <attribute name="type">
-            <string>#Attributes**#</string>
+            <string>#GList*#</string>
           </attribute>
           <attribute name="value">
             <string/>
           </attribute>
           <attribute name="visibility">
-            <enum val="0"/>
+            <enum val="1"/>
+          </attribute>
+          <attribute name="abstract">
+            <boolean val="false"/>
+          </attribute>
+          <attribute name="class_scope">
+            <boolean val="false"/>
+          </attribute>
+        </composite>
+        <composite type="umlattribute">
+          <attribute name="name">
+            <string>#data_outputs#</string>
+          </attribute>
+          <attribute name="type">
+            <string>#GList*#</string>
+          </attribute>
+          <attribute name="value">
+            <string/>
+          </attribute>
+          <attribute name="visibility">
+            <enum val="1"/>
           </attribute>
           <attribute name="abstract">
             <boolean val="false"/>
@@ -322,7 +342,7 @@
         </composite>
         <composite type="umloperation">
           <attribute name="name">
-            <string>#apply_image#</string>
+            <string>#apply_roi#</string>
           </attribute>
           <attribute name="type">
             <string/>
@@ -340,20 +360,6 @@
             <composite type="umlparameter">
               <attribute name="name">
                 <string>##</string>
-              </attribute>
-              <attribute name="type">
-                <string>#Op*#</string>
-              </attribute>
-              <attribute name="value">
-                <string/>
-              </attribute>
-              <attribute name="kind">
-                <enum val="0"/>
-              </attribute>
-            </composite>
-            <composite type="umlparameter">
-              <attribute name="name">
-                <string>#image#</string>
               </attribute>
               <attribute name="type">
                 <string>#Op*#</string>
@@ -389,13 +395,13 @@
     </object>
     <object type="Standard - Line" version="0" id="O3">
       <attribute name="obj_pos">
-        <point val="17.607,4.8"/>
+        <point val="15.789,5.3"/>
       </attribute>
       <attribute name="obj_bb">
-        <rectangle val="17.557,4.75;25.118,7.25"/>
+        <rectangle val="15.739,5.25;25.118,7.25"/>
       </attribute>
       <attribute name="conn_endpoints">
-        <point val="17.607,4.8"/>
+        <point val="15.789,5.3"/>
         <point val="25.068,7.2"/>
       </attribute>
       <attribute name="numcp">
@@ -408,14 +414,14 @@
     </object>
     <object type="Standard - Line" version="0" id="O4">
       <attribute name="obj_pos">
-        <point val="17.607,4.8"/>
+        <point val="15.789,5.3"/>
       </attribute>
       <attribute name="obj_bb">
-        <rectangle val="11.8915,4.75;17.657,7.3"/>
+        <rectangle val="11.437,5.25;15.839,7.3"/>
       </attribute>
       <attribute name="conn_endpoints">
-        <point val="17.607,4.8"/>
-        <point val="11.9415,7.25"/>
+        <point val="15.789,5.3"/>
+        <point val="11.487,7.25"/>
       </attribute>
       <attribute name="numcp">
         <int val="1"/>

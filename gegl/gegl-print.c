@@ -1,8 +1,8 @@
 #include "gegl-print.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-image-buffer.h"
-#include "gegl-image-buffer-data.h"
-#include "gegl-image-buffer-iterator.h"
+#include "gegl-image.h"
+#include "gegl-image-data.h"
+#include "gegl-image-iterator.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
@@ -14,13 +14,13 @@
 
 static void class_init (GeglPrintClass * klass);
 static void init (GeglPrint * self, GeglPrintClass * klass);
-static void prepare (GeglFilter * filter, GList * output_data_list, GList *input_data_list);
-static void finish (GeglFilter * filter, GList * output_data_list, GList *input_data_list);
+static void prepare (GeglFilter * filter, GList * data_outputs, GList *data_inputs);
+static void finish (GeglFilter * filter, GList * data_outputs, GList *data_inputs);
 
-static GeglScanlineFunc get_scanline_func(GeglPipe * pipe, GeglColorSpaceType space, GeglDataSpaceType type);
+static GeglScanlineFunc get_scanline_func(GeglPipe * pipe, GeglColorSpaceType space, GeglChannelSpaceType type);
 static void print (GeglPrint * self, gchar * format, ...);
 
-static void print_float (GeglFilter * filter, GeglImageBufferIterator ** iters, gint width);
+static void print_float (GeglFilter * filter, GeglImageIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -78,27 +78,29 @@ init (GeglPrint * self,
 
 static void 
 prepare (GeglFilter * filter, 
-         GList * output_data_list,
-         GList * input_data_list)
+         GList * data_outputs,
+         GList * data_inputs)
 {
   GeglPrint *self = GEGL_PRINT(filter);
   GeglData *src_data; 
-  GeglImageBufferData* src_image_buffer_data;
+  GValue *src_value;
+  GeglImageData* src_image_data;
   GeglColorModel *src_cm;
-  GeglImageBuffer *src;
+  GeglImage *src;
   GeglRect rect;
   gint num_channels;
 
-  GEGL_FILTER_CLASS(parent_class)->prepare(filter, output_data_list, input_data_list);
+  GEGL_FILTER_CLASS(parent_class)->prepare(filter, data_outputs, data_inputs);
 
-  src_data = (GeglData*)g_list_nth_data(input_data_list, 0); 
-  src_image_buffer_data = GEGL_IMAGE_BUFFER_DATA(src_data);
+  src_data = (GeglData*)g_list_nth_data(data_inputs, 0); 
+  src_image_data = GEGL_IMAGE_DATA(src_data);
+  src_value = gegl_data_get_value(src_data);
 
-  src = (GeglImageBuffer*)g_value_get_object(src_data->value);
-  src_cm = gegl_image_buffer_get_color_model (src);
+  src = (GeglImage*)g_value_get_object(src_value);
+  src_cm = gegl_image_get_color_model (src);
   num_channels = gegl_color_model_num_channels(src_cm);
 
-  gegl_rect_copy(&rect, &src_image_buffer_data->rect);
+  gegl_rect_copy(&rect, &src_image_data->rect);
 
   {
     gint x = rect.x;
@@ -116,18 +118,18 @@ prepare (GeglFilter * filter,
 
     if(self->use_log)
       LOG_INFO("prepare", 
-               "Printing GeglImageBuffer: %p area (x,y,w,h) = (%d,%d,%d,%d)",
+               "Printing GeglImage: %p area (x,y,w,h) = (%d,%d,%d,%d)",
                src,x,y,width,height);
     else
-      printf("Printing GeglImageBuffer: %p area (x,y,w,h) = (%d,%d,%d,%d)", 
+      printf("Printing GeglImage: %p area (x,y,w,h) = (%d,%d,%d,%d)", 
                src,x,y,width,height);
   }
 }
 
 static void 
 finish (GeglFilter * filter, 
-        GList * output_data_list,
-        GList * input_data_list)
+        GList * data_outputs,
+        GList * data_inputs)
 {
   GeglPrint *self = GEGL_PRINT(filter);
   g_free(self->buffer); 
@@ -172,20 +174,20 @@ static GeglScanlineFunc scanline_funcs[] =
 static GeglScanlineFunc
 get_scanline_func(GeglPipe *pipe,
                   GeglColorSpaceType space,
-                  GeglDataSpaceType type)
+                  GeglChannelSpaceType type)
 {
   return scanline_funcs[type];
 }
 
 static void 
 print_float (GeglFilter * filter, 
-             GeglImageBufferIterator ** iters, 
+             GeglImageIterator ** iters, 
              gint width)
 {
   GeglPrint *self = GEGL_PRINT(filter);
-  gfloat **a = (gfloat**)gegl_image_buffer_iterator_color_channels(iters[1]);
-  gfloat *aa = (gfloat*)gegl_image_buffer_iterator_alpha_channel(iters[1]);
-  gint a_color_chans = gegl_image_buffer_iterator_get_num_colors(iters[1]);
+  gfloat **a = (gfloat**)gegl_image_iterator_color_channels(iters[1]);
+  gfloat *aa = (gfloat*)gegl_image_iterator_alpha_channel(iters[1]);
+  gint a_color_chans = gegl_image_iterator_get_num_colors(iters[1]);
 
   gint alpha_mask = 0x0;
 

@@ -2,17 +2,31 @@
 GeglDumpVisitor
 
 <!-- ##### SECTION Short_Description ##### -->
-Visitor that prints out graph infomation.
+A visitor which prints out the graph.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This visitor can be used to print out a graph. It prints it to stdout as it
+traverses the graph.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglDumpVisitor ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglDumpVisitorClass ##### -->
+<para>
+
+</para>
+
+@visitor_class: 
 
 <!-- ##### FUNCTION gegl_dump_visitor_traverse ##### -->
 <para>

@@ -2,87 +2,17 @@
 GeglPointOp
 
 <!-- ##### SECTION Short_Description ##### -->
-Abstract class for Image Filters with inputs.
+Abstract class for operation for single output image point ops.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-The PointOp class implements the process routine for all ops that inherit from
-PointOp. This routine is passed a GList of OpRequests as discussed in the
-section on the ImageMgr. The PointOp delegates to a ScanlineProcessor object to
-do the actual scanlines of the areas described in the OpRequests on the inputs
-and output. It creates TileIterators for each OpRequest Tile and Rect in the
-requests list. A TileIterator provides a way to iterate over scanlines of a
-subportion of a Tile.  The ScanlineProcessor updates the TileIterators for each
-scanline and calls the scanline function that was installed by the subclass of
-PointOp.
+This is the abstract class that represents single image output operations that
+are point ops. A pixel in the output only depends on the corresponding single
+pixel in the input.  
 </para>
-
 <para>
-Here's the implementation of process in ScanlineProcessor:
-<example>
-<title>Process in ScanlineProcessor</title>
-<programlisting>
-void 
-gegl_scanline_processor_process (GeglScanlineProcessor * self, 
-                                 GList * requests)
-{
-  GeglOpRequest *request;
-  gint i,j;
-  gint width, height;
-  gint num_requests = g_list_length(requests);
-  GeglTileIterator **iters = g_new (GeglTileIterator*, num_requests);
-
-  /* Get tile iterators for dest and all sources. */
-  for (i = 0; i < num_requests; i++)
-    {
-       request = (GeglOpRequest*)g_list_nth_data(requests,i); 
-
-       /* Get the tile, if it is not NULL */ 
-       if(request->tile)
-         {
-           iters[i] = g_object_new (GEGL_TYPE_TILE_ITERATOR, 
-                                    "tile", request->tile,
-                                    "area", request->rect,
-                                    NULL);  
-
-           gegl_tile_iterator_first (iters[i]);
-         }
-       else
-         iters[i] = NULL;
-    }
-
-  /* Get the height and width of first op request */
-  request = (GeglOpRequest*)g_list_nth_data(requests,0); 
-  width = request->rect.w;
-  height = request->rect.h;
-
-  /* Now iterate over the scanlines */
-  for(j=0; j < height; j++)
-    {
-      /* Call the subclass scanline func. */
-      (self->func)(self->op, iters, width);
-
-      /* Advance all the scanlines. */
-      for (i = 0; i < num_requests; i++)
-        {
-          if(iters[i])
-            gegl_tile_iterator_next(iters[i]);
-        }
-
-    } 
-
-  /* Free the iterators */
-  for (i = 0; i < num_requests; i++)
-    {
-      if (iters[i])
-        g_object_unref (iters[i]); 
-    }
-
-  /* Free the array of iterator pointers */
-  g_free (iters);
-}
-</programlisting>
-</example>
+PointOp sets up a #GeglScanlineProcessor to handle the actual scanline function
+calls. 
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -90,9 +20,16 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
 
 </para>
 
-<!-- ##### STRUCT GeglScanlineProcessor ##### -->
+<!-- ##### STRUCT GeglPointOp ##### -->
 <para>
 
 </para>
 
+
+<!-- ##### STRUCT GeglPointOpClass ##### -->
+<para>
+
+</para>
+
+@image_op_class: 
 

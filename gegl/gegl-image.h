@@ -1,21 +1,13 @@
 #ifndef __GEGL_IMAGE_H__
 #define __GEGL_IMAGE_H__
 
+#include "gegl-object.h"
+#include "gegl-tile.h"
+#include "gegl-color-model.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-filter.h"
-
-#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
-#define __TYPEDEF_GEGL_COLOR_MODEL__
-typedef struct _GeglColorModel  GeglColorModel;
-#endif
-
-#ifndef __TYPEDEF_GEGL_IMAGE_BUFFER__
-#define __TYPEDEF_GEGL_IMAGE_BUFFER__
-typedef struct _GeglImageBuffer  GeglImageBuffer;
-#endif
 
 #define GEGL_TYPE_IMAGE               (gegl_image_get_type ())
 #define GEGL_IMAGE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_IMAGE, GeglImage))
@@ -24,39 +16,33 @@ typedef struct _GeglImageBuffer  GeglImageBuffer;
 #define GEGL_IS_IMAGE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_IMAGE))
 #define GEGL_IMAGE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_IMAGE, GeglImageClass))
 
-#ifndef __TYPEDEF_GEGL_IMAGE__
-#define __TYPEDEF_GEGL_IMAGE__
 typedef struct _GeglImage GeglImage;
-#endif
 struct _GeglImage 
 {
-   GeglFilter filter;
+    GeglObject object;
 
-   /*< private >*/
-
-   GeglColorModel * color_model;
-   GeglImageBuffer * image_buffer;
-
-   GeglColorModel * derived_color_model;
+    /*< private >*/
+    GeglTile * tile;
+    GeglColorModel * color_model;
 };
 
 typedef struct _GeglImageClass GeglImageClass;
 struct _GeglImageClass 
 {
-   GeglFilterClass filter_class;
+    GeglObjectClass object_class;
 };
 
-GType           gegl_image_get_type             (void);
-GeglColorModel* gegl_image_color_model          (GeglImage * self);
-void            gegl_image_set_color_model      (GeglImage * self, 
-                                                 GeglColorModel * cm);
-void            gegl_image_set_derived_color_model(GeglImage * self, 
-                                                   GeglColorModel * cm);
+GType           gegl_image_get_type              (void);
 
-void            gegl_image_set_image_buffer (GeglImage * self, 
-                                           GeglImageBuffer *image_buffer);
-GeglImageBuffer * gegl_image_get_image_buffer (GeglImage * self);
-
+GeglTile *      gegl_image_get_tile              (GeglImage * self);
+void            gegl_image_set_tile              (GeglImage * self,
+                                                  GeglTile *tile);
+GeglColorModel* gegl_image_get_color_model       (GeglImage * self);
+void            gegl_image_set_color_model       (GeglImage * self, 
+                                                  GeglColorModel * color_model);
+void            gegl_image_create_tile           (GeglImage * self, 
+                                                  GeglColorModel * color_model,
+                                                  GeglRect * area);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

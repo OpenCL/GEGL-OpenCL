@@ -4,11 +4,6 @@
 #include <glib-object.h>
 #include "gegl-utils.h"
 
-#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
-#define __TYPEDEF_GEGL_COLOR_MODEL__
-typedef struct _GeglColorModel GeglColorModel;
-#endif
-
 extern GType GEGL_TYPE_PARAM_PIXEL;
 extern GType GEGL_TYPE_PARAM_PIXEL_RGB_UINT8;
 extern GType GEGL_TYPE_PARAM_PIXEL_RGBA_UINT8;

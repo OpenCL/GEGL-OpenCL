@@ -2,10 +2,27 @@
 GeglDfsVisitor
 
 <!-- ##### SECTION Short_Description ##### -->
-Abstract class for Depth first visitors.
+Abstract depth first visitor class.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
+This visitor does a depth-first search of the graph. Any visitor class that
+extends this can do depth-first traversal. <xref linkend="depthfirst"/> shows a
+method from #GeglEvalMgr that creates a #GeglEvalDfsVisitor, which is a
+subclass of this one.  It then calls gegl_dfs_visitor_traverse(), which takes a
+DfsVisitor and the root node to begin traversal with.
+<example id="depthfirst"> 
+<title> A depth first visitor.</title>
+<programlisting>
+static void 
+eval_dfs_visitor(GeglEvalMgr *self) 
+{
+  GeglEvalDfsVisitor * eval_dfs_visitor = g_object_new(GEGL_TYPE_EVAL_DFS_VISITOR, NULL); 
+  gegl_dfs_visitor_traverse(GEGL_DFS_VISITOR(eval_dfs_visitor), self->root);
+  g_object_unref(eval_dfs_visitor);
+}
+</programlisting>
+</example>
 
 </para>
 
@@ -13,6 +30,19 @@ Abstract class for Depth first visitors.
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglDfsVisitor ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglDfsVisitorClass ##### -->
+<para>
+
+</para>
+
+@visitor_class: 
 
 <!-- ##### FUNCTION gegl_dfs_visitor_traverse ##### -->
 <para>

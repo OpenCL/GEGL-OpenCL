@@ -1,11 +1,11 @@
 #ifndef __GEGL_MAX_H__
 #define __GEGL_MAX_H__
 
+#include "gegl-binary.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-binary.h"
 
 #define GEGL_TYPE_MAX               (gegl_max_get_type ())
 #define GEGL_MAX(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_MAX, GeglMax))
@@ -14,10 +14,7 @@ extern "C" {
 #define GEGL_IS_MAX_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_MAX))
 #define GEGL_MAX_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MAX, GeglMaxClass))
 
-#ifndef __TYPEDEF_GEGL_MAX__
-#define __TYPEDEF_GEGL_MAX__
 typedef struct _GeglMax GeglMax;
-#endif
 struct _GeglMax 
 {
    GeglBinary binary;

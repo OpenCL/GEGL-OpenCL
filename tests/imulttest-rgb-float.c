@@ -5,8 +5,8 @@
 #include "testutils.h"
 #include <string.h>
 
-#define IMAGE_WIDTH 1 
-#define IMAGE_HEIGHT 1 
+#define IMAGE_OP_WIDTH 1 
+#define IMAGE_OP_HEIGHT 1 
 
 #define R0 .1 
 #define G0 .2
@@ -75,7 +75,7 @@ test_i_mult_apply(Test *test)
 
     gegl_op_apply(i_mult); 
 
-    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(i_mult), 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(i_mult), 
                                             R0 * R1, G0 * G1, B0 * B1));
     g_object_unref(i_mult);
   }
@@ -85,14 +85,14 @@ static void
 i_mult_test_setup(Test *test)
 {
   source0 = g_object_new(GEGL_TYPE_COLOR, 
-                         "width", IMAGE_WIDTH, 
-                         "height", IMAGE_HEIGHT, 
+                         "width", IMAGE_OP_WIDTH, 
+                         "height", IMAGE_OP_HEIGHT, 
                          "pixel-rgb-float", R0, G0, B0, 
                          NULL); 
 
   source1 = g_object_new(GEGL_TYPE_COLOR, 
-                         "width", IMAGE_WIDTH, 
-                         "height", IMAGE_HEIGHT, 
+                         "width", IMAGE_OP_WIDTH, 
+                         "height", IMAGE_OP_HEIGHT, 
                          "pixel-rgb-float", R1, G1, B1, 
                          NULL); 
 }

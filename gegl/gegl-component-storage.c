@@ -1,5 +1,5 @@
 #include "gegl-component-storage.h"
-#include "gegl-data-buffer.h"
+#include "gegl-buffer.h"
 
 enum
 {
@@ -15,7 +15,7 @@ static GObject* constructor (GType type, guint n_props, GObjectConstructParam *p
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static GeglDataBuffer * create_data_buffer(GeglStorage * storage);
+static GeglBuffer * create_buffer(GeglStorage * storage);
 
 static gpointer parent_class = NULL;
 
@@ -59,7 +59,7 @@ class_init (GeglComponentStorageClass * klass)
   gobject_class->get_property = get_property;
   gobject_class->constructor = constructor;
 
-  storage_class->create_data_buffer = create_data_buffer;
+  storage_class->create_buffer = create_buffer;
 
   g_object_class_install_property (gobject_class, PROP_NUM_BANKS,
                                    g_param_spec_int ("num_banks",
@@ -153,16 +153,16 @@ gegl_component_storage_num_banks (GeglComponentStorage * self)
   return self->num_banks;
 }
 
-static GeglDataBuffer* 
-create_data_buffer  (GeglStorage * storage)
+static GeglBuffer* 
+create_buffer  (GeglStorage * storage)
 {
   GeglComponentStorage * self = GEGL_COMPONENT_STORAGE(storage);
   gint bank_bytes = storage->width * storage->height * storage->data_type_bytes;
 
-  GeglDataBuffer * data_buffer = g_object_new(GEGL_TYPE_DATA_BUFFER,
+  GeglBuffer * buffer = g_object_new(GEGL_TYPE_BUFFER,
                                               "num_banks", self->num_banks,
                                               "bytes_per_bank", bank_bytes,
                                               NULL);
 
-  return data_buffer;
+  return buffer;
 }

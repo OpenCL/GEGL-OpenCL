@@ -2,15 +2,31 @@
 GeglMax
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Max of two images
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+Take the maximum of two images.
+</para>
+<para>
+Max(A,B)
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglMax ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglMaxClass ##### -->
+<para>
+
+</para>
+
+@binary_class: 
 

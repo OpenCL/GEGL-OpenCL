@@ -1,0 +1,47 @@
+<!-- ##### SECTION Title ##### -->
+GeglColorData
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglColorData ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorDataClass ##### -->
+<para>
+
+</para>
+
+@data_class: 
+
+<!-- ##### FUNCTION gegl_color_data_get_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_data_set_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@color_model: 
+
+

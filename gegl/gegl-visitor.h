@@ -1,31 +1,12 @@
 #ifndef __GEGL_VISITOR_H__
 #define __GEGL_VISITOR_H__
 
+#include "gegl-filter.h"
+#include "gegl-graph.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-object.h"
-
-#ifndef __TYPEDEF_GEGL_NODE__
-#define __TYPEDEF_GEGL_NODE__
-typedef struct _GeglNode GeglNode;
-#endif
-
-#ifndef __TYPEDEF_GEGL_OP__
-#define __TYPEDEF_GEGL_OP__
-typedef struct _GeglOp GeglOp;
-#endif
-
-#ifndef __TYPEDEF_GEGL_FILTER__
-#define __TYPEDEF_GEGL_FILTER__
-typedef struct _GeglFilter GeglFilter;
-#endif
-
-#ifndef __TYPEDEF_GEGL_GRAPH__
-#define __TYPEDEF_GEGL_GRAPH__
-typedef struct _GeglGraph GeglGraph;
-#endif
 
 #define GEGL_TYPE_VISITOR               (gegl_visitor_get_type ())
 #define GEGL_VISITOR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_VISITOR, GeglVisitor))
@@ -34,10 +15,7 @@ typedef struct _GeglGraph GeglGraph;
 #define GEGL_IS_VISITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_VISITOR))
 #define GEGL_VISITOR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_VISITOR, GeglVisitorClass))
 
-#ifndef __TYPEDEF_GEGL_NODE_INFO__
-#define __TYPEDEF_GEGL_NODE_INFO__
 typedef struct _GeglNodeInfo GeglNodeInfo;
-#endif
 struct _GeglNodeInfo 
 {
   gboolean visited;
@@ -45,10 +23,7 @@ struct _GeglNodeInfo
   gint shared_count;
 }; 
 
-#ifndef __TYPEDEF_GEGL_VISITOR__
-#define __TYPEDEF_GEGL_VISITOR__
 typedef struct _GeglVisitor GeglVisitor;
-#endif
 struct _GeglVisitor 
 {
        GeglObject object;
@@ -105,7 +80,7 @@ gint            gegl_visitor_get_shared_count   (GeglVisitor *self,
 void            gegl_visitor_set_shared_count   (GeglVisitor *self, 
                                                  GeglNode *node, 
                                                  gint shared_count);
-GList *        gegl_visitor_collect_data_list(GeglVisitor *self,
+GList *        gegl_visitor_collect_data_inputs(GeglVisitor *self,
                                           GeglNode *node);
 #ifdef __cplusplus
 }

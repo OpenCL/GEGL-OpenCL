@@ -2,17 +2,36 @@
 GeglFade
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Apply multiplier to image and alpha
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This op applies a multiplier constant to all channels, including alpha.
+<literallayout>
+multiplier * R
+multiplier * B
+multiplier * G
+multiplier * A
+</literallayout>
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglFade ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglFadeClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
 
 <!-- ##### FUNCTION gegl_fade_get_multiplier ##### -->
 <para>

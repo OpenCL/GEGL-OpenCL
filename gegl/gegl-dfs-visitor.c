@@ -90,7 +90,7 @@ init_traversal (GeglDfsVisitor * self,
  * @self: #GeglDfsVisitor
  * @node: the root #GeglNode
  *
- * Traverse the graph depth first.
+ * Traverse the graph depth first starting at @node.
  *
  **/
 void 

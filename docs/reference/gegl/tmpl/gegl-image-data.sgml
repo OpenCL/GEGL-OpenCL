@@ -1,0 +1,47 @@
+<!-- ##### SECTION Title ##### -->
+GeglImageData
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglImageData ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglImageDataClass ##### -->
+<para>
+
+</para>
+
+@data_class: 
+
+<!-- ##### FUNCTION gegl_image_data_get_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@rect: 
+
+
+<!-- ##### FUNCTION gegl_image_data_set_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@rect: 
+
+

@@ -14,3 +14,16 @@ GeglColorSpaceRgb
 
 </para>
 
+<!-- ##### STRUCT GeglColorSpaceRgb ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorSpaceRgbClass ##### -->
+<para>
+
+</para>
+
+@color_space_class: 
+

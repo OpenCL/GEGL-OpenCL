@@ -4,8 +4,8 @@
 #include "csuite.h"
 #include "testutils.h"
 
-#define IMAGE_WIDTH 1 
-#define IMAGE_HEIGHT 1 
+#define IMAGE_OP_WIDTH 1 
+#define IMAGE_OP_HEIGHT 1 
 
 static void
 test_simple_tree_apply(Test *t)
@@ -45,7 +45,7 @@ test_simple_tree_apply(Test *t)
 
   gegl_op_apply(iadd); 
 
-  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(iadd), .55, .7, .85));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(iadd), .55, .7, .85));  
 
   g_object_unref(iadd);
   g_object_unref(fade);
@@ -82,8 +82,8 @@ test_simple_tree_apply_with_prints(Test *t)
   */ 
 
   GeglOp * color1 = g_object_new(GEGL_TYPE_COLOR, 
-                                 "width", IMAGE_WIDTH,
-                                 "height", IMAGE_HEIGHT,
+                                 "width", IMAGE_OP_WIDTH,
+                                 "height", IMAGE_OP_HEIGHT,
                                  "pixel-rgb-float", .1, .2, .3, 
                                  NULL); 
 
@@ -92,8 +92,8 @@ test_simple_tree_apply_with_prints(Test *t)
                                  NULL);
 
   GeglOp * color2 = g_object_new(GEGL_TYPE_COLOR, 
-                                 "width", IMAGE_WIDTH,
-                                 "height", IMAGE_HEIGHT,
+                                 "width", IMAGE_OP_WIDTH,
+                                 "height", IMAGE_OP_HEIGHT,
                                  "pixel-rgb-float", .5, .6, .7, 
                                  NULL); 
 
@@ -113,7 +113,7 @@ test_simple_tree_apply_with_prints(Test *t)
 
   gegl_op_apply(iadd); 
 
-  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(iadd), .55, .7, .85));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(iadd), .55, .7, .85));  
 
   g_object_unref(iadd);
   g_object_unref(fade);
@@ -143,8 +143,8 @@ test_simple_diamond_apply(Test *t)
   */ 
 
   GeglOp * color = g_object_new(GEGL_TYPE_COLOR, 
-                                "width", IMAGE_WIDTH,
-                                "height", IMAGE_HEIGHT,
+                                "width", IMAGE_OP_WIDTH,
+                                "height", IMAGE_OP_HEIGHT,
                                 "pixel-rgb-float", .1, .2, .3, 
                                 NULL); 
 
@@ -165,7 +165,7 @@ test_simple_diamond_apply(Test *t)
 
   gegl_op_apply(iadd); 
 
-  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(iadd), .25, .5, .75));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(iadd), .25, .5, .75));  
 
   g_object_unref(iadd);
   g_object_unref(fade1);
@@ -192,8 +192,8 @@ test_simple_chain_apply(Test *t)
   */ 
 
   GeglOp * color = g_object_new(GEGL_TYPE_COLOR, 
-                                "width", IMAGE_WIDTH,
-                                "height", IMAGE_HEIGHT,
+                                "width", IMAGE_OP_WIDTH,
+                                "height", IMAGE_OP_HEIGHT,
                                 "pixel-rgb-float", .1, .2, .3, 
                                 NULL); 
 
@@ -209,7 +209,7 @@ test_simple_chain_apply(Test *t)
 
   gegl_op_apply(fade2); 
 
-  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(fade2), .025, .05, .075));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(fade2), .025, .05, .075));  
 
   g_object_unref(fade1);
   g_object_unref(fade2);

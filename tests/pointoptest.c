@@ -6,8 +6,8 @@
 #include "testutils.h"
 #include <string.h>
 
-#define IMAGE_WIDTH 10 
-#define IMAGE_HEIGHT 5 
+#define IMAGE_OP_WIDTH 10 
+#define IMAGE_OP_HEIGHT 5 
 
 #define R0 .1 
 #define G0 .2
@@ -25,7 +25,7 @@ test_point_op_g_object_new(Test *test)
 
     ct_test(test, point_op != NULL);
     ct_test(test, GEGL_IS_POINT_OP(point_op));
-    ct_test(test, g_type_parent(GEGL_TYPE_POINT_OP) == GEGL_TYPE_IMAGE);
+    ct_test(test, g_type_parent(GEGL_TYPE_POINT_OP) == GEGL_TYPE_IMAGE_OP);
     ct_test(test, !strcmp("GeglPointOp", g_type_name(GEGL_TYPE_POINT_OP)));
 
     ct_test(test, GEGL_IS_MOCK_POINT_OP(point_op));
@@ -42,14 +42,14 @@ test_point_op_apply(Test *test)
   GeglRect roi = {0,0,10,10};
 
   GeglOp *source0 = g_object_new(GEGL_TYPE_COLOR, 
-                                 "width", IMAGE_WIDTH, 
-                                 "height", IMAGE_HEIGHT, 
+                                 "width", IMAGE_OP_WIDTH, 
+                                 "height", IMAGE_OP_HEIGHT, 
                                  "pixel-rgb-float", R0, G0, B0, 
                                  NULL); 
 
   GeglOp *source1 = g_object_new(GEGL_TYPE_COLOR, 
-                                 "width", IMAGE_WIDTH, 
-                                 "height", IMAGE_HEIGHT, 
+                                 "width", IMAGE_OP_WIDTH, 
+                                 "height", IMAGE_OP_HEIGHT, 
                                  "pixel-rgb-float", R1, G1, B1, 
                                  NULL); 
 

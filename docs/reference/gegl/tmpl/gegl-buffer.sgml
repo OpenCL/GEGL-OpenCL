@@ -1,0 +1,75 @@
+<!-- ##### SECTION Title ##### -->
+GeglBuffer
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglBuffer ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglBufferClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+
+<!-- ##### FUNCTION gegl_buffer_num_banks ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_buffer_bytes_per_bank ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_buffer_total_bytes ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_buffer_banks_data ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### ARG GeglBuffer:bytes-per-bank ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglBuffer:num-banks ##### -->
+<para>
+
+</para>
+

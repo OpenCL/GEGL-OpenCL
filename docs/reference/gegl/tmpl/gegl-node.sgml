@@ -5,64 +5,94 @@ GeglNode
 Abstract node class.
 
 <!-- ##### SECTION Long_Description ##### -->
+
 <para>
-This is the abstract node class for Gegl. Nodes have both inputs and outputs.
+This is the abstract node class for Gegl. Nodes have inputs and outputs.
 Usually the number of these is fixed for the duration of the Node's existence.
+<xref linkend="node-2inputs-1output"/> shows a Node with two inputs and one 
+output.
+<figure id="node-2inputs-1output">
+<title>Node with two inputs and one output</title>
+<graphic fileref="node_2inputs_1output.png"></graphic>
+</figure>
 </para>
-<para>
-Heres a Node with two inputs and one output:
-</para>
-<graphic fileref="../images/node_2inputs_1output.png"></graphic>
 
 <para>
 Each input of a Node has at most one source attached to it upstream.  There may
 be no source upstream for a particular input if the graph is still being
 constructed or the input is NULL.
+<xref linkend="node-no-input-upstream"/> shows a Node with two inputs. 
+The first input has a source attached to it, the second input has no source
+attached to it.
+<figure id="node-no-input-upstream">
+<title>Node with two inputs and a source</title>
+<graphic fileref="node_no_input_upstream.png"></graphic>
+</figure>
 </para>
-<para>
-Below is a Node with two inputs. The first input has a source attached to it.
-</para>
-<graphic fileref="../images/node_no_input_upstream.png"></graphic>
 
 <para>
 In contrast, each output of a Node can have multiple sinks attached to it
 downstream. This is because more than one Node may be pulling data downstream
-from the output of the Node.
-</para>
-<para>
-Heres an example of two sinks downstream from the output of a Node: 
-</para>
-<graphic fileref="../images/sharednode.png"></graphic>
-
-<para>
-A Node is a root node if there are no sinks attached to its output.
+from the output of the Node. 
+<xref linkend="sharednode"/> shows an example of two sinks 
+downstream from the output of a Node. 
+<figure id="sharednode">
+<title>A node with two sinks</title>
+<graphic fileref="sharednode.png"></graphic>
+</figure>
 </para>
 
 <para>
-Heres a simple example of an graph for Over(Blur(A), Max(A,B)):
-</para>
-<graphic fileref="../images/simplegraph.png"></graphic>
-<para>
-Here Over (composite over) is the root node, and A and B are Color op nodes
+Graphs typically have root Nodes and leaf Nodes.  A Node is a root Node if
+there are no sinks attached to its output. A Node is a leaf Node if has no
+inputs. <xref linkend="simplegraph"/> shows a simple example of an graph 
+for Over(Blur(A), Max(A,B)).
+<figure id="simplegraph">
+<title>A simple graph</title>
+<graphic fileref="simplegraph.png"></graphic>
+</figure>
+Here Over (composite over) is the root Node, and A and B are Color Nodes
 (constant colors).  Blur has A as source and Over as sink. Max has A and B as
 sources and Over as sink. A is shared by both sinks Blur and Max. Finally Over
 is downstream from Blur, A and B are upstream from everything, etc. 
 </para>
 
 <para>
-The Node class also manages adding or changing sources as well sinks.
+The Node class also manages adding or changing sources as well as sinks.
+</para>
+
+<para>
+The Node class property "input" is used for passing inputs to Nodes during
+construction. <xref linkend="inputs"/> below illustrates this.
+<example id="inputs"> 
+<title> An example of inputs for a Node.</title>
+<programlisting>
+/* 
+   Set up to add two constant color images.
+  (.6,.8,1.0) = (.1,.2,.3) + (.5,.6,.7) 
+*/
+GeglOp * color0 = g_object_new (GEGL_TYPE_COLOR,
+                                "pixel-rgb-float", .1, .2, .3,
+                                NULL);
+
+GeglOp * color1 = g_object_new (GEGL_TYPE_COLOR,
+                                "pixel-rgb-float", .5, .6, .7,
+                                NULL);
+
+GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD,
+                              "input", 0, color0,
+                              "input", 1, color1, 
+                              NULL); 
+</programlisting>
+</example>
+The #GeglIAdd node iadd has color0 as its first input (input 0) and color1 as
+its second input (input 1).
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
-
-<!-- ##### STRUCT GeglVisitor ##### -->
-<para>
-
-</para>
-
 
 <!-- ##### STRUCT GeglConnector ##### -->
 <para>
@@ -72,6 +102,20 @@ The Node class also manages adding or changing sources as well sinks.
 @node: 
 @input: 
 @source: 
+
+<!-- ##### STRUCT GeglNode ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglNodeClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@accept: 
 
 <!-- ##### FUNCTION gegl_node_get_num_inputs ##### -->
 <para>
@@ -99,8 +143,6 @@ The Node class also manages adding or changing sources as well sinks.
 @self: 
 @n: 
 @Returns: 
-<!-- # Unused Parameters # -->
-@output: 
 
 
 <!-- ##### FUNCTION gegl_node_set_source ##### -->
@@ -111,8 +153,6 @@ The Node class also manages adding or changing sources as well sinks.
 @self: 
 @source: 
 @n: 
-<!-- # Unused Parameters # -->
-@output: 
 
 
 <!-- ##### FUNCTION gegl_node_get_num_sinks ##### -->
@@ -122,8 +162,6 @@ The Node class also manages adding or changing sources as well sinks.
 
 @self: 
 @Returns: 
-<!-- # Unused Parameters # -->
-@output: 
 
 
 <!-- ##### FUNCTION gegl_node_get_sink ##### -->
@@ -134,8 +172,6 @@ The Node class also manages adding or changing sources as well sinks.
 @self: 
 @n: 
 @Returns: 
-<!-- # Unused Parameters # -->
-@output: 
 
 
 <!-- ##### FUNCTION gegl_node_get_sink_input ##### -->
@@ -146,8 +182,6 @@ The Node class also manages adding or changing sources as well sinks.
 @self: 
 @n: 
 @Returns: 
-<!-- # Unused Parameters # -->
-@output: 
 
 
 <!-- ##### FUNCTION gegl_node_unlink ##### -->

@@ -5,174 +5,260 @@ GeglOp
 Abstract class for operation with inputs and outputs.
 
 <!-- ##### SECTION Long_Description ##### -->
+<refsect2>
+<title>Overview</title>
 <para>
-This is the main abstract class for operations in Gegl. An Op represents some
-operation that takes inputs and produces outputs. The outputs may be image data
-or some other kind of data, like histograms, or scalars, like the average of a
-grayscale image. An Op may produce no output at all but do something useful
-during its operation. For example a PrintOp may print the values of its pixels
-but otherwise do nothing to the data.
+Gegl has two main concepts that describe how it works. The first is the concept
+of image processing operations, or Ops. The second is the concept of data and
+how it is passed between the Ops. Data is described by the #GeglData class. Ops
+are described here.
 </para>
 
 <para>
-Op is the common superclass of Filter and Graph. This forms a composite design
-pattern (GoF Design Patterns), with Filter as the "leaf" or atomic class, and
-Graph as the "composite" or container class. 
-</para>
-<graphic fileref="../images/composite.png"></graphic>
-<para>
-So Filters can be thought of as basic image processing objects and Graphs
-contain other Filters and Graphs.  A Graph will typically contain a root node
-that corresponds to its output as well as nodes that correspond to each of its
-inputs.
-</para>
-<para>
-The inputs and outputs of Ops are described and passed using Attribute
-structures. For each output an Op produces, there is a corresponding Attribute
-struct that describes the output type and holds the computed result value. In
-addition to descriptions of the outputs, the Attribute struct for an output
-also holds various synthesized and inherited attributes that are computed and
-used while evaluating a Graph. For example, Attributes for image data will
-carry regions of interest (need rects) and domains of definitions (have rects)
-information. Also they will hold synthesized color models. For example, if an
-Op has inputs that have color models RGB and GRAY, respectively, the output
-will be placed in a RGB color model. If this Op needs both inputs to be of
-the same color model, then the GRAY input will be "promoted" to RGB before
-being passed to the Op. Attribute structures keep this kind of information
-for each output.
+An Op represents some operation that takes inputs and produces outputs. The
+outputs are usually image data but could be some other kind of data, like
+scalars or a histogram. An Op may produce no output at all but do something
+useful during its operation. For example #GeglPrint just prints the values of
+its pixels but otherwise does nothing to the data. Similarly, the inputs to an
+Op can be any kind of data as well, including images, scalars, or pixels.
 </para>
 
 <para>
-The most important method in Op is gegl_op_apply, which is the main image
-processing routine. This begins processing a graph for the passed root node.
-The method gegl_op_apply_image is similar and may be passed an output
-destination SampledImage as well as a region of interest. The image processing
-in this case will be restricted to the passed roi. Calling apply on the root of
-a graph causes processing of the entire graph in depth-first (or some other
-topological sort) order. Ops are processed from the leaves of the graph
-towards the root, with each node waiting until inputs are computed before it
-begins. Once the inputs of a node are finished the node can perform its
-operation.
+Op is the common superclass of #GeglFilter and #GeglGraph. This forms a composite 
+or container design pattern (GoF Design Patterns), with #GeglFilter as the "leaf" or 
+atomic class, and #GeglGraph as the "composite" or container class. This is
+shown in <xref linkend="composite"/>.
+<figure id="composite">
+<title>Composite or container pattern</title>
+<graphic fileref="composite.png"></graphic>
+</figure>
+So <link linkend="GeglFilter">GeglFilter</link>s are the primitive image
+processing objects in Gegl and <link linkend="GeglGraph">GeglGraph</link>s 
+are containers of other filters and graphs. A #GeglGraph could
+describe a chain or tree of Ops.
 </para>
+
 <para>
-Heres an example of setting up a Mult op and calling apply on it:
-<example>
-<title>Setting up a Mult Op</title>
+Data is passed using inputs and outputs of Ops in the form of #GeglData
+objects. For each output an Op has, there is a corresponding #GeglData object
+in the Op's <literal>data_outputs</literal> list that describes the 
+output type (image, scalar, pixel, channel value, etc) and holds the 
+computed result value. In addition, inputs are held in the Op's 
+<literal>data_inputs</literal> list of #GeglData objects.
+</para>
+
+<para>
+The most important method in Op is gegl_op_apply(), which is the main image
+processing routine. This begins processing a graph rooted on the passed
+Node. <xref linkend="apply"/> shows setting up a #GeglFade op and calling 
+apply on it.  
+<example id="apply"> 
+<title>Creating an op and calling apply.</title>
 <programlisting>
+GeglOp *source = g_object_new(GEGL_TYPE_COLOR, 
+                              "width", 720, 
+                              "height", 486, 
+                              "pixel-rgb-float",.1, .2, .3, 
+                              NULL); 
 
-  /* Make some SampledImages to use as inputs */
-  gint w = 720; 
-  gint h = 486; 
-  GeglColorModel *rgb_u8 = gegl_color_model_instance("RgbU8");
-
-  GeglOp *A = g_object_new(GEGL_TYPE_SAMPLED_IMAGE,
-                           "colormodel", rgb_u8,
-                           "width", w,
-                           "height", h,
+GeglOp *fade = g_object_new(GEGL_TYPE_FADE,
+                            "input", 0, source,
+                            "multiplier", .5, 
                             NULL);
 
-  GeglOp *B = g_object_new(GEGL_TYPE_SAMPLED_IMAGE,
-                           "colormodel", rgb_u8,
-                           "width", w,
-                           "height", h, 
-                           NULL);
+gegl_op_apply(fade);
 
-  /* Do something to set up the SampledImages above... */
-
-  /* 
-      Now set up the mult op
-
-        mult
-        / \
-       A   B
-  */
-
-  GeglOp * mult = g_object_new (GEGL_TYPE_MULT,
-                                "input0", A,
-                                "input1", B,
-                                NULL);
-
-  /* Create a sampled image to hold result */
-  GeglSampledImage *dest = g_object_new(GEGL_TYPE_SAMPLED_IMAGE,
-                                        "colormodel", rgb_u8, 
-                                        "width", w, 
-                                        "height", h, 
-                                        NULL);
-
-  /* Call apply to do the operation, put result in dest */
-  gegl_op_apply_image (mult, dest, NULL);
-
-  g_object_unref (mult);
-  g_object_unref (A);
-  g_object_unref (B);
-  g_object_unref (rgb_u8);
-
+g_object_unref(fade);
+g_object_unref(source);
 </programlisting>
 </example>
+Image processing occurs in the call to gegl_op_apply(). When the call is
+finished, the result of the evaluation is in the #GeglData object that
+represents the output for the <literal>fade</literal> Op. This #GeglData object
+is in the Op's <literal>data_outputs</literal> list.  Usually the
+<literal>data_outputs</literal> list contains just one #GeglData element since
+most Ops have just one output.
 </para>
+
+<para>
+The method gegl_op_apply_roi() is similar except that you may pass a region 
+of interest as well. The image processing in this case will be restricted 
+to the passed roi.
+</para>
+
+<para>
+Calling apply on the root of a graph causes processing of the entire graph in
+roughly depth-first order. This is done by a #GeglEvalMgr. Ops are processed 
+from the leaves of the graph towards the root, with each node waiting until 
+inputs are computed before it is evaluated. Once the inputs of a node are 
+ready the node is called to perform its operation. <xref linkend="simpleopsgraph"/>
+is an example of setting up a simple graph.
+<example id="simpleopsgraph"> 
+<title>A Simple graph of Ops.</title>
+<programlisting>
+
+  /* 
+        iadd              (.55,.7,.85) 
+        /   \             /         \ 
+     fade  color2   (.05,.1,.15)   (.5,.6,.7)
+      |                   | 
+     color1          (.1,.2,.3)
+
+  */ 
+
+  GeglOp * color1 = g_object_new(GEGL_TYPE_COLOR, 
+                                 "pixel-rgb-float", .1, .2, .3, 
+                                 NULL); 
+
+  GeglOp * color2 = g_object_new(GEGL_TYPE_COLOR, 
+                                 "pixel-rgb-float", .5, .6, .7, 
+                                 NULL); 
+
+  GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
+                                "input", 0, color1,
+                                "multiplier", .5,
+                                NULL); 
+
+  GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD, 
+                                "input", 0, fade,
+                                "input", 1, color2,
+                                NULL);  
+
+  gegl_op_apply(iadd); 
+
+  g_object_unref(iadd);
+  g_object_unref(fade);
+  g_object_unref(color1);
+  g_object_unref(color2);
+</programlisting>
+</example>
+The evaluation order here is: <literal>color1</literal>,
+<literal>fade</literal>, <literal>color2</literal>, <literal>iadd</literal>.
+This order is determined by a depth-first traversal of the graph. 
+</para>
+</refsect2>
+
+<refsect2 id="dataproperties">
+<title>Data Properties</title>
+<para>
+Gegl uses a variant of GLib's GParamSpec in validating #GeglData inputs and
+outputs of an Op during graph evaluation. These param specs are called data
+properties, and are similar to regular GLib properties.
+</para>
+
+<para>
+Data properties hold information about an Op's allowable inputs and outputs.
+They must be installed by the Op during its class_init() method.
+This is done with gegl_op_class_install_data_input_property() and
+gegl_op_class_install_data_output_property(). The Op class keeps a list 
+of these data properties for both outputs and inputs for each Op. 
+<xref linkend="dataproperty"/> from <filename>gegl-image-op.c</filename> shows 
+an #GeglImageOp installing an image output data property. 
+<example id="dataproperty"> 
+<title>Installing an image output data property.</title>
+<programlisting>
+static void 
+class_init (GeglImageOpClass * klass)
+{
+  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
+
+  /* other class initialization */ 
+
+  /* data properties */
+  gegl_op_class_install_data_output_property(op_class, 
+                      gegl_param_spec_image("output-image", 
+                                            "OutputImage",
+                                            "Image output",
+                                            G_PARAM_PRIVATE));
+}
+</programlisting>
+</example>
+This code says that an #GeglImageOp will produce an image output during its 
+evaluation.
+</para>
+</refsect2>
+
+<refsect2 id="datasetup">
+<title>Data</title>
+<para>
+In addition to setting up data properties, an Op must add the actual #GeglData
+objects that contain the values and data param specs described above. This
+happens in gegl_op_append_input() and gegl_op_append_output(). These are
+called in the object init() method of the class that installs the property.
+For example, consider the #GeglFade op. It is a subclass of both #GeglImageOp
+and #GeglUnary. Let's follow the various object init() calls of #GeglFade and its 
+superclasses when a new #GeglFade object is created. 
+</para>
+<para>
+First g_object_new is called: 
+<programlisting>
+GeglOp * fade = g_object_new(GEGL_TYPE_FADE,
+                             "multiplier", .5,
+                             NULL);
+</programlisting>
+During this call the various object init() methods are called for all the
+superclasses of #GeglFade starting with #GeglObject first and then in each
+subclass down the class heirarchy until #GeglFade. The first we need to worry
+about is #GeglImageOp: 
+<programlisting>
+static void 
+init (GeglImageOp * self, 
+      GeglImageOpClass * klass)
+{
+  /* Add an image output */
+  gegl_op_append_output(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "output-image");
+
+  /* Other initialization code */
+}
+</programlisting>
+This appends the "output-image" data, installed above in 
+<xref linkend="dataproperty"/>. The next one that concerns
+us is #GeglUnary init(). Here we have: 
+<programlisting>
+static void 
+init (GeglUnary * self, 
+      GeglUnaryClass * klass)
+{
+  /* Add an image input */
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image");
+}
+</programlisting>
+Finally the #GeglFade object init() adds the data input "multiplier", which
+is a scalar:
+<programlisting>
+static void 
+init (GeglFade * self, 
+      GeglFadeClass * klass)
+{
+  /* Add the multiplier input. */
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "multiplier");
+
+  /* Other initialization code */
+}
+</programlisting>
+Once we are done, we have added one image output and two inputs, one an image
+and the other a scalar. This describes all the data outputs and inputs for the
+#GeglFade completely.
+</para>
+</refsect2>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
 
-<!-- ##### FUNCTION gegl_op_class_install_input_data_property ##### -->
+<!-- ##### STRUCT GeglOp ##### -->
 <para>
 
 </para>
 
-@class: 
-@pspec: 
 
-
-<!-- ##### FUNCTION gegl_op_class_find_input_data_property ##### -->
+<!-- ##### STRUCT GeglOpClass ##### -->
 <para>
 
 </para>
 
-@class: 
-@property_name: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_op_class_list_input_data_properties ##### -->
-<para>
-
-</para>
-
-@class: 
-@n_properties_p: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_op_class_install_output_data_property ##### -->
-<para>
-
-</para>
-
-@class: 
-@pspec: 
-
-
-<!-- ##### FUNCTION gegl_op_class_find_output_data_property ##### -->
-<para>
-
-</para>
-
-@class: 
-@property_name: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_op_class_list_output_data_properties ##### -->
-<para>
-
-</para>
-
-@class: 
-@n_properties_p: 
-@Returns: 
-
+@node_class: 
 
 <!-- ##### FUNCTION gegl_op_apply ##### -->
 <para>
@@ -180,9 +266,6 @@ Heres an example of setting up a Mult op and calling apply on it:
 </para>
 
 @self: 
-<!-- # Unused Parameters # -->
-@dest: 
-@roi: 
 
 
 <!-- ##### FUNCTION gegl_op_apply_roi ##### -->
@@ -194,27 +277,25 @@ Heres an example of setting up a Mult op and calling apply on it:
 @roi: 
 
 
-<!-- ##### FUNCTION gegl_op_add_input_data ##### -->
+<!-- ##### FUNCTION gegl_op_append_data_input ##### -->
 <para>
 
 </para>
 
 @self: 
 @data: 
-@n: 
 
 
-<!-- ##### FUNCTION gegl_op_add_output_data ##### -->
+<!-- ##### FUNCTION gegl_op_append_data_output ##### -->
 <para>
 
 </para>
 
 @self: 
 @data: 
-@n: 
 
 
-<!-- ##### FUNCTION gegl_op_add_input ##### -->
+<!-- ##### FUNCTION gegl_op_append_input ##### -->
 <para>
 
 </para>
@@ -222,10 +303,9 @@ Heres an example of setting up a Mult op and calling apply on it:
 @self: 
 @data_type: 
 @name: 
-@n: 
 
 
-<!-- ##### FUNCTION gegl_op_add_output ##### -->
+<!-- ##### FUNCTION gegl_op_append_output ##### -->
 <para>
 
 </para>
@@ -233,10 +313,9 @@ Heres an example of setting up a Mult op and calling apply on it:
 @self: 
 @data_type: 
 @name: 
-@n: 
 
 
-<!-- ##### FUNCTION gegl_op_get_input_data ##### -->
+<!-- ##### FUNCTION gegl_op_get_data_input ##### -->
 <para>
 
 </para>
@@ -246,7 +325,7 @@ Heres an example of setting up a Mult op and calling apply on it:
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_op_get_output_data ##### -->
+<!-- ##### FUNCTION gegl_op_get_data_output ##### -->
 <para>
 
 </para>
@@ -256,7 +335,7 @@ Heres an example of setting up a Mult op and calling apply on it:
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_op_free_input_data_list ##### -->
+<!-- ##### FUNCTION gegl_op_free_data_inputs ##### -->
 <para>
 
 </para>
@@ -264,7 +343,7 @@ Heres an example of setting up a Mult op and calling apply on it:
 @self: 
 
 
-<!-- ##### FUNCTION gegl_op_free_output_data_list ##### -->
+<!-- ##### FUNCTION gegl_op_free_data_outputs ##### -->
 <para>
 
 </para>
@@ -272,7 +351,7 @@ Heres an example of setting up a Mult op and calling apply on it:
 @self: 
 
 
-<!-- ##### FUNCTION gegl_op_get_input_data_list ##### -->
+<!-- ##### FUNCTION gegl_op_get_data_inputs ##### -->
 <para>
 
 </para>
@@ -281,12 +360,70 @@ Heres an example of setting up a Mult op and calling apply on it:
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_op_get_output_data_list ##### -->
+<!-- ##### FUNCTION gegl_op_get_data_outputs ##### -->
 <para>
 
 </para>
 
 @self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_op_class_install_data_input_property ##### -->
+<para>
+
+</para>
+
+@class: 
+@pspec: 
+
+
+<!-- ##### FUNCTION gegl_op_class_find_data_input_property ##### -->
+<para>
+
+</para>
+
+@class: 
+@property_name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_op_class_list_data_input_properties ##### -->
+<para>
+
+</para>
+
+@class: 
+@n_properties_p: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_op_class_install_data_output_property ##### -->
+<para>
+
+</para>
+
+@class: 
+@pspec: 
+
+
+<!-- ##### FUNCTION gegl_op_class_find_data_output_property ##### -->
+<para>
+
+</para>
+
+@class: 
+@property_name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_op_class_list_data_output_properties ##### -->
+<para>
+
+</para>
+
+@class: 
+@n_properties_p: 
 @Returns: 
 
 

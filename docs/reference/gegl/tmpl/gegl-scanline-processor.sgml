@@ -2,11 +2,20 @@
 GeglScanlineProcessor
 
 <!-- ##### SECTION Short_Description ##### -->
-Scanline processor helper class.
+Helper class that does scanline point operations
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This class is a simple helper class that takes care of performing operations
+that can be done as scanline operations. Each scanline based point op uses one
+of these to do the actual scanlines of the operation.
+gegl_scanline_processor_process() takes the data inputs and data outputs to
+process. It unpacks the #GeglImageData objects in the input and output, creates
+#GeglImageIterators for the underlying images and then calls back the point op
+with its installed scanline function. A ScanlineProcessor is setup from
+#GeglPointOp Subclasses of #GeglPointOp only have to make sure that they
+implement the appropriate virtual get_scanline_func(), and the
+#GeglScanlineProcessor takes care calling this method. 
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -22,9 +31,20 @@ Scanline processor helper class.
 @op: 
 @iters: 
 @width: 
-<!-- # Unused Parameters # -->
-@op_impl: 
 
+
+<!-- ##### STRUCT GeglScanlineProcessor ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglScanlineProcessorClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
 
 <!-- ##### FUNCTION gegl_scanline_processor_process ##### -->
 <para>
@@ -32,16 +52,7 @@ Scanline processor helper class.
 </para>
 
 @self: 
-@output_data_list: 
-@input_data_list: 
-<!-- # Unused Parameters # -->
-@param: 
-@input_param: 
-@attributes: 
-@input_attributes: 
-@output_attributes: 
-@output_values: 
-@input_values: 
-@request_list: 
+@data_outputs: 
+@data_inputs: 
 
 

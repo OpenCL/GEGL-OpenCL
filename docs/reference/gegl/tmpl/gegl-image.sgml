@@ -2,19 +2,11 @@
 GeglImage
 
 <!-- ##### SECTION Short_Description ##### -->
-Abstract Class for filters with Image outputs.
+
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This class is the main abstract class for the image producing operations. Image
-and its subclasses all "produce" an output image by operating on inputs and
-placing the result in some output buffer. Examples are PointOps (composites,
-LUT operations, etc), AreaOps (convolutions) and GeometricOps (transforms
-and warps).  These are all typically non-leaf nodes and have one or more
-inputs (There are some Ops without image inputs though-for example Noise
-ops).  SampledImages are a special kind of Image. They have no inputs,
-and are just leaf nodes in image graphs.  They  "produce" their output by
-just returning their normal image data as output.
+
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -22,19 +14,38 @@ just returning their normal image data as output.
 
 </para>
 
-<!-- ##### STRUCT GeglColorModel ##### -->
+<!-- ##### STRUCT GeglImage ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### STRUCT GeglImageBuffer ##### -->
+<!-- ##### STRUCT GeglImageClass ##### -->
 <para>
 
 </para>
 
+@object_class: 
 
-<!-- ##### FUNCTION gegl_image_color_model ##### -->
+<!-- ##### FUNCTION gegl_image_get_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_set_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@tile: 
+
+
+<!-- ##### FUNCTION gegl_image_get_color_model ##### -->
 <para>
 
 </para>
@@ -49,37 +60,20 @@ just returning their normal image data as output.
 </para>
 
 @self: 
-@cm: 
+@color_model: 
 
 
-<!-- ##### FUNCTION gegl_image_set_derived_color_model ##### -->
+<!-- ##### FUNCTION gegl_image_create_tile ##### -->
 <para>
 
 </para>
 
 @self: 
-@cm: 
+@color_model: 
+@area: 
 
 
-<!-- ##### FUNCTION gegl_image_set_image_buffer ##### -->
-<para>
-
-</para>
-
-@self: 
-@image_buffer: 
-
-
-<!-- ##### FUNCTION gegl_image_get_image_buffer ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
-
-
-<!-- ##### ARG GeglImage:colormodel ##### -->
+<!-- ##### ARG GeglImage:color-model ##### -->
 <para>
 
 </para>

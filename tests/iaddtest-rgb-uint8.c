@@ -5,8 +5,8 @@
 #include "testutils.h"
 #include <string.h>
 
-#define IMAGE_WIDTH 1 
-#define IMAGE_HEIGHT 1 
+#define IMAGE_OP_WIDTH 1 
+#define IMAGE_OP_HEIGHT 1 
 
 #define R0 80 
 #define G0 160 
@@ -81,7 +81,7 @@ test_i_add_apply(Test *test)
     g = CLAMP(G0 + G1, 0 ,255); 
     b = CLAMP(B0 + B1, 0 ,255); 
 
-    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE(i_add), r, g, b));
+    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(i_add), r, g, b));
     g_object_unref(i_add);
   }
 }
@@ -90,14 +90,14 @@ static void
 i_add_test_setup(Test *test)
 {
   source0 = g_object_new(GEGL_TYPE_COLOR, 
-                         "width", IMAGE_WIDTH, 
-                         "height", IMAGE_HEIGHT, 
+                         "width", IMAGE_OP_WIDTH, 
+                         "height", IMAGE_OP_HEIGHT, 
                          "pixel-rgb-uint8", R0, G0, B0, 
                          NULL); 
 
   source1 = g_object_new(GEGL_TYPE_COLOR, 
-                         "width", IMAGE_WIDTH, 
-                         "height", IMAGE_HEIGHT, 
+                         "width", IMAGE_OP_WIDTH, 
+                         "height", IMAGE_OP_HEIGHT, 
                          "pixel-rgb-uint8", R1, G1, B1, 
                          NULL); 
 }

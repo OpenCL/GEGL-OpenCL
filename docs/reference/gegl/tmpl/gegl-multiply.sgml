@@ -2,7 +2,7 @@
 GeglMultiply
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Multiply blend mode
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
@@ -13,4 +13,17 @@ GeglMultiply
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglMultiply ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglMultiplyClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
 

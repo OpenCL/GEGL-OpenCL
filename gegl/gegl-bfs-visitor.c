@@ -1,7 +1,4 @@
 #include "gegl-bfs-visitor.h"
-#include "gegl-node.h"
-#include "gegl-op.h"
-#include "gegl-graph.h"
 
 static void class_init (GeglBfsVisitorClass * klass);
 static void init (GeglBfsVisitor * self, GeglBfsVisitorClass * klass);
@@ -95,7 +92,7 @@ init_traversal (GeglBfsVisitor * self,
  * @self: a #GeglBfsVisitor
  * @node: the root #GeglNode.
  *
- * Traverse the graph breadth-first. 
+ * Traverse the graph breadth-first starting at @node. 
  *
  **/
 void 

@@ -2,15 +2,27 @@
 GeglDarken
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Darken blend mode
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglDarken ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglDarkenClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
 

@@ -1,7 +1,4 @@
 #include "gegl-channel-data.h"
-#include "gegl-param-specs.h"
-#include "gegl-value-types.h"
-#include "gegl-utils.h"
 
 enum
 {
@@ -54,14 +51,14 @@ static void
 init (GeglChannelData * self, 
       GeglChannelDataClass * klass)
 {
-  self->data_space = NULL;
+  self->channel_space = NULL;
 }
 
-GeglDataSpace * 
-gegl_channel_data_get_data_space (GeglChannelData * self)
+GeglChannelSpace * 
+gegl_channel_data_get_channel_space (GeglChannelData * self)
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_CHANNEL_DATA (self), NULL);
    
-  return self->data_space;
+  return self->channel_space;
 }

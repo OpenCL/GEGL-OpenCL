@@ -2,8 +2,8 @@
 #include "gegl-types.h"
 #include "gegl-color-space-rgb.h"
 #include "gegl-color-space-gray.h"
-#include "gegl-data-space-float.h"
-#include "gegl-data-space-uint8.h"
+#include "gegl-channel-space-float.h"
+#include "gegl-channel-space-uint8.h"
 #include "gegl-component-color-model.h"
 #include "gegl-param-specs.h"
 #include "gegl-value-types.h"
@@ -37,13 +37,13 @@ gegl_free_color_spaces(void)
 
 static
 void
-gegl_init_data_spaces(void)
+gegl_init_channel_spaces(void)
 {
-  GeglDataSpace * flt = g_object_new(GEGL_TYPE_DATA_SPACE_FLOAT, NULL);
-  GeglDataSpace * uint8 = g_object_new(GEGL_TYPE_DATA_SPACE_UINT8, NULL);
+  GeglChannelSpace * flt = g_object_new(GEGL_TYPE_CHANNEL_SPACE_FLOAT, NULL);
+  GeglChannelSpace * uint8 = g_object_new(GEGL_TYPE_CHANNEL_SPACE_UINT8, NULL);
 
-  gegl_data_space_register(flt);
-  gegl_data_space_register(uint8);
+  gegl_channel_space_register(flt);
+  gegl_channel_space_register(uint8);
 
   g_object_unref (flt); 
   g_object_unref (uint8); 
@@ -51,10 +51,10 @@ gegl_init_data_spaces(void)
 
 static
 void
-gegl_free_data_spaces(void)
+gegl_free_channel_spaces(void)
 {
-  GeglDataSpace * flt = gegl_data_space_instance("float");
-  GeglDataSpace * uint8 = gegl_data_space_instance("uint8");
+  GeglChannelSpace * flt = gegl_channel_space_instance("float");
+  GeglChannelSpace * uint8 = gegl_channel_space_instance("uint8");
 
   g_object_unref (flt); 
   g_object_unref (uint8); 
@@ -66,50 +66,50 @@ gegl_init_color_models(void)
 {
   GeglColorSpace * rgb = gegl_color_space_instance("rgb");
   GeglColorSpace * gray = gegl_color_space_instance("gray");
-  GeglDataSpace * flt = gegl_data_space_instance("float");
-  GeglDataSpace * uint8 = gegl_data_space_instance("uint8");
+  GeglChannelSpace * flt = gegl_channel_space_instance("float");
+  GeglChannelSpace * uint8 = gegl_channel_space_instance("uint8");
 
   GeglColorModel * rgb_float = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                           "color_space", rgb,
-                                          "data_space", flt,
+                                          "channel_space", flt,
                                           NULL);
 
   GeglColorModel * rgba_float = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                            "color_space", rgb,
-                                           "data_space", flt,
+                                           "channel_space", flt,
                                            "has_alpha", TRUE,
                                            NULL);
 
   GeglColorModel * gray_float = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                            "color_space", gray,
-                                           "data_space", flt,
+                                           "channel_space", flt,
                                            NULL);
 
   GeglColorModel * graya_float = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                             "color_space", gray,
-                                            "data_space", flt,
+                                            "channel_space", flt,
                                             "has_alpha", TRUE,
                                             NULL);
 
   GeglColorModel * rgb_uint8 = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                        "color_space", rgb,
-                                       "data_space", uint8,
+                                       "channel_space", uint8,
                                        NULL);
 
   GeglColorModel * rgba_uint8 = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                         "color_space", rgb,
-                                        "data_space", uint8,
+                                        "channel_space", uint8,
                                         "has_alpha", TRUE,
                                         NULL);
 
   GeglColorModel * gray_uint8 = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                         "color_space", gray,
-                                        "data_space", uint8,
+                                        "channel_space", uint8,
                                         NULL);
 
   GeglColorModel * graya_uint8 = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                          "color_space", gray,
-                                         "data_space", uint8,
+                                         "channel_space", uint8,
                                          "has_alpha", TRUE,
                                          NULL);
 
@@ -219,7 +219,7 @@ gegl_param_spec_types_init (void)
   gegl_input_param_spec_types_init();
   gegl_channel_param_spec_types_init();
   gegl_pixel_param_spec_types_init();
-  gegl_image_buffer_param_spec_types_init();
+  gegl_image_param_spec_types_init();
 }
 
 static
@@ -228,7 +228,7 @@ gegl_exit(void)
 {
   gegl_free_color_models();
   gegl_free_color_spaces();
-  gegl_free_data_spaces();
+  gegl_free_channel_spaces();
 }
 
 void
@@ -239,7 +239,7 @@ gegl_init (int *argc,
     return;
 
   gegl_init_color_spaces();
-  gegl_init_data_spaces();
+  gegl_init_channel_spaces();
   gegl_init_color_models();
 
   gegl_fundamental_types_init();

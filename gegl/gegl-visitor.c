@@ -138,7 +138,7 @@ gegl_visitor_node_insert(GeglVisitor *self,
  *
  * Gets whether this node has been visited by this visitor.
  *
- * Returns: a boolean
+ * Returns: whether this node has been visited. 
  **/
 gboolean
 gegl_visitor_get_visited(GeglVisitor *self,
@@ -175,7 +175,7 @@ gegl_visitor_set_visited(GeglVisitor *self,
  *
  * Gets whether this node has been discovered by this visitor.
  *
- * Returns: a boolean
+ * Returns: whether this node has been discovered. 
  **/
 gboolean
 gegl_visitor_get_discovered(GeglVisitor *self,
@@ -187,12 +187,12 @@ gegl_visitor_get_discovered(GeglVisitor *self,
 }
 
 /**
- * gegl_visitor_set_visited
+ * gegl_visitor_set_discovered
  * @self: a #GeglVisitor.
  * @node: a #GeglNode.
- * @visited: a boolean.
+ * @discovered: a boolean.
  *
- * Sets whether this node has been visited by this visitor.
+ * Sets whether this node has been discovered by this visitor.
  *
  **/
 void
@@ -389,14 +389,29 @@ visit_graph(GeglVisitor * self,
   visit_node(self, GEGL_NODE(graph));
 }
 
+/**
+ * gegl_visitor_collect_data_inputs
+ * @self: a #GeglVisitor.
+ * @node: a #GeglNode.
+ *
+ * This routine finds the data inputs for a given node.
+ * The returned list should be freed when finished.
+ *
+ * Returns: a list of data inputs.
+ **/
 GList * 
-gegl_visitor_collect_data_list(GeglVisitor *self,
-                            GeglNode *node)
+gegl_visitor_collect_data_inputs(GeglVisitor *self,
+                                 GeglNode *node)
 {
-  GList * input_data_list = NULL;
+  GList * data_inputs = NULL;
   gint i;
   gint num_inputs = gegl_node_get_num_inputs(node);
 
+  /* There is a bug here, if we dont find the inputs 
+     one level out, we have to climb out further. I 
+     guess we need a stack of levels (Graphs) the visitor 
+     is inside of, not just the current one we are inside. 
+   */
   for(i = 0 ; i < num_inputs; i++) 
     {
       GeglNode *source = gegl_node_get_source(node, i);
@@ -407,10 +422,10 @@ gegl_visitor_collect_data_list(GeglVisitor *self,
 
       if(source) 
         {
-          GeglData *input_data = gegl_op_get_output_data(GEGL_OP(source), 0); 
-          input_data_list = g_list_append(input_data_list, input_data);
+          GeglData *data_input = gegl_op_get_data_output(GEGL_OP(source), 0); 
+          data_inputs = g_list_append(data_inputs, data_input);
         }
     }
 
-  return input_data_list;
+  return data_inputs;
 }

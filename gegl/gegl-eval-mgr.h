@@ -1,16 +1,12 @@
 #ifndef __GEGL_EVAL_MGR_H__
 #define __GEGL_EVAL_MGR_H__
 
+#include "gegl-object.h"
+#include "gegl-node.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-object.h"
-
-#ifndef __TYPEDEF_GEGL_NODE__
-#define __TYPEDEF_GEGL_NODE__
-typedef struct _GeglNode GeglNode;
-#endif
 
 #define GEGL_TYPE_EVAL_MGR               (gegl_eval_mgr_get_type ())
 #define GEGL_EVAL_MGR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_EVAL_MGR, GeglEvalMgr))
@@ -19,11 +15,7 @@ typedef struct _GeglNode GeglNode;
 #define GEGL_IS_EVAL_MGR_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_EVAL_MGR))
 #define GEGL_EVAL_MGR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_EVAL_MGR, GeglEvalMgrClass))
 
-#ifndef __TYPEDEF_GEGL_EVAL_MGR__
-#define __TYPEDEF_GEGL_EVAL_MGR__
 typedef struct _GeglEvalMgr GeglEvalMgr;
-#endif
-
 struct _GeglEvalMgr 
 {
    GeglObject object;

@@ -1,13 +1,13 @@
 #include "gegl-color-model.h"
 #include "gegl-color-space.h"
-#include "gegl-data-space.h"
+#include "gegl-channel-space.h"
 #include "gegl-object.h"
 
 enum
 {
   PROP_0, 
   PROP_COLOR_SPACE,
-  PROP_DATA_SPACE,
+  PROP_CHANNEL_SPACE,
   PROP_HAS_ALPHA,
   PROP_HAS_Z,
   PROP_LAST 
@@ -117,11 +117,11 @@ class_init (GeglColorModelClass * klass)
                                                          G_PARAM_CONSTRUCT |
                                                          G_PARAM_READWRITE));
 
-  g_object_class_install_property (gobject_class, PROP_DATA_SPACE,
-                                   g_param_spec_object ("data_space",
-                                                        "DataSpace",
+  g_object_class_install_property (gobject_class, PROP_CHANNEL_SPACE,
+                                   g_param_spec_object ("channel_space",
+                                                        "ChannelSpace",
                                                         "The data space of the model",
-                                                         GEGL_TYPE_DATA_SPACE,
+                                                         GEGL_TYPE_CHANNEL_SPACE,
                                                          G_PARAM_CONSTRUCT |
                                                          G_PARAM_READWRITE));
 
@@ -149,7 +149,7 @@ init (GeglColorModel * self,
       GeglColorModelClass * klass)
 {
   self->color_space = NULL;
-  self->data_space = NULL;
+  self->channel_space = NULL;
 
   self->bits_per_channel = NULL;
   self->bits_per_pixel = 0; 
@@ -197,8 +197,8 @@ set_property (GObject      *gobject,
     case PROP_COLOR_SPACE:
       self->color_space = GEGL_COLOR_SPACE(g_value_get_object(value));
       break;
-    case PROP_DATA_SPACE:
-      self->data_space = GEGL_DATA_SPACE(g_value_get_object(value));
+    case PROP_CHANNEL_SPACE:
+      self->channel_space = GEGL_CHANNEL_SPACE(g_value_get_object(value));
       break;
     case PROP_HAS_ALPHA:
       gegl_color_model_set_has_alpha(self, g_value_get_boolean (value));
@@ -225,8 +225,8 @@ get_property (GObject      *gobject,
     case PROP_COLOR_SPACE:
       g_value_set_object (value, G_OBJECT(gegl_color_model_color_space(self)));
       break;
-    case PROP_DATA_SPACE:
-      g_value_set_object (value, G_OBJECT(gegl_color_model_data_space(self)));
+    case PROP_CHANNEL_SPACE:
+      g_value_set_object (value, G_OBJECT(gegl_color_model_channel_space(self)));
       break;
     case PROP_HAS_ALPHA:
       g_value_set_boolean (value, gegl_color_model_has_alpha(self));
@@ -258,20 +258,20 @@ gegl_color_model_color_space (GeglColorModel * self)
 }
 
 /**
- * gegl_color_model_data_space:
+ * gegl_color_model_channel_space:
  * @self: a #GeglColorModel
  *
  * Gets the data space of the color model. (eg U8, FLOAT)
  *
- * Returns: the #GeglDataSpace of this color model.
+ * Returns: the #GeglChannelSpace of this color model.
  **/
-GeglDataSpace*
-gegl_color_model_data_space (GeglColorModel * self)
+GeglChannelSpace*
+gegl_color_model_channel_space (GeglColorModel * self)
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_COLOR_MODEL (self), NULL);
 
-  return self->data_space; 
+  return self->channel_space; 
 }
 
 /**

@@ -1,11 +1,11 @@
 #ifndef __GEGL_DATA_H__
 #define __GEGL_DATA_H__
 
+#include "gegl-object.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-object.h"
 
 #define GEGL_TYPE_DATA               (gegl_data_get_type ())
 #define GEGL_DATA(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_DATA, GeglData))
@@ -14,10 +14,7 @@ extern "C" {
 #define GEGL_IS_DATA_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_DATA))
 #define GEGL_DATA_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_DATA, GeglDataClass))
 
-#ifndef __TYPEDEF_GEGL_DATA__
-#define __TYPEDEF_GEGL_DATA__
 typedef struct _GeglData GeglData;
-#endif
 struct _GeglData 
 {
     GeglObject object;

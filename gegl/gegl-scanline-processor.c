@@ -1,7 +1,7 @@
 #include "gegl-scanline-processor.h"
-#include "gegl-image-buffer.h"
-#include "gegl-image-buffer-data.h"
-#include "gegl-image-buffer-iterator.h"
+#include "gegl-image.h"
+#include "gegl-image-data.h"
+#include "gegl-image-iterator.h"
 #include "gegl-data.h"
 #include "gegl-param-specs.h"
 #include "gegl-utils.h"
@@ -48,27 +48,27 @@ class_init (GeglScanlineProcessorClass * klass)
 /**
  * gegl_scanline_processor_process:
  * @self: a #GeglScanlineProcessor.
- * @output_data_list: A list of output data_list. 
- * @input_data_list: A list of input data_list. 
+ * @data_outputs: A list of #GeglData outputs. 
+ * @data_inputs: A list of #GeglData inputs. 
  *
  * Process scanlines.
  *
  **/
 void 
 gegl_scanline_processor_process (GeglScanlineProcessor * self, 
-                                 GList  *output_data_list,
-                                 GList  *input_data_list)
+                                 GList  *data_outputs,
+                                 GList  *data_inputs)
 {
   gint i,j;
   GeglRect rect;
-  GeglImageBuffer *image_buffer;
+  GeglImage *image;
   gint width, height;
-  gint num_inputs = g_list_length(input_data_list);
-  gint num_outputs = g_list_length(output_data_list);
-  GeglData *data = g_list_nth_data(output_data_list,0);
-  GeglImageBufferData *image_buffer_data = GEGL_IMAGE_BUFFER_DATA(data);
-  GeglImageBufferIterator **iters = g_new (GeglImageBufferIterator*, 
-                                    num_inputs + num_outputs);
+  gint num_inputs = g_list_length(data_inputs);
+  gint num_outputs = g_list_length(data_outputs);
+  GeglData *data = g_list_nth_data(data_outputs,0);
+  GValue *value = gegl_data_get_value(data);
+  GeglImageData *image_data = GEGL_IMAGE_DATA(data);
+  GeglImageIterator **iters = g_new (GeglImageIterator*, num_inputs + num_outputs);
 
 #if 1 
   LOG_DEBUG("processor_process", "%s %p", 
@@ -78,64 +78,64 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
              num_inputs, num_outputs); 
 #endif
 
-  /* Get image_buffer iterators for outputs. */
+  /* Get image iterators for outputs. */
   if (num_outputs == 1)
     {
       /*
        LOG_DEBUG("processor_process", 
-                 "getting image_buffer iterator for output %d", 
+                 "getting image iterator for output %d", 
                  i);
       */
 
-       image_buffer = (GeglImageBuffer*)g_value_get_object(data->value);
-       gegl_rect_copy(&rect, &image_buffer_data->rect);
+       image = (GeglImage*)g_value_get_object(value);
+       gegl_image_data_get_rect(image_data, &rect);
 
-       /* Get the image_buffer, if it is not NULL */ 
-       if(image_buffer)
+       /* Get the image, if it is not NULL */ 
+       if(image)
          {
            LOG_DEBUG("processor_process", 
-                     "output value image_buffer is %p", 
-                     image_buffer);
+                     "output value image is %p", 
+                     image);
 
-           iters[0] = g_object_new (GEGL_TYPE_IMAGE_BUFFER_ITERATOR, 
-                                    "image_buffer", image_buffer,
+           iters[0] = g_object_new (GEGL_TYPE_IMAGE_ITERATOR, 
+                                    "image", image,
                                     "area", &rect,
                                     NULL);  
 
-           gegl_image_buffer_iterator_first (iters[0]);
+           gegl_image_iterator_first (iters[0]);
          }
     }
 
-  /* Get image_buffer iterators for inputs. */
+  /* Get image iterators for inputs. */
   for (i = 0; i < num_inputs; i++)
     {
       /*
        LOG_DEBUG("processor_process", 
-                 "getting image_buffer iterator for input %d", 
+                 "getting image iterator for input %d", 
                  i);
       */
 
 
-       GeglData *input_data = (GeglData*)g_list_nth_data(input_data_list,i); 
-       GeglImageBufferData *input_image_buffer_data = GEGL_IMAGE_BUFFER_DATA(input_data);
+       GeglData *data_input = (GeglData*)g_list_nth_data(data_inputs,i); 
+       GeglImageData *image_data_input = GEGL_IMAGE_DATA(data_input);
+       GValue *data_input_value = gegl_data_get_value(data_input);
+       image = (GeglImage*)g_value_get_object(data_input_value);
+       gegl_image_data_get_rect(image_data_input, &rect);
 
-       image_buffer = (GeglImageBuffer*)g_value_get_object(input_data->value);
-       gegl_rect_copy(&rect, &input_image_buffer_data->rect);
-
-       /* Get the image_buffer, if it is not NULL */ 
-       if(image_buffer)
+       /* Get the image, if it is not NULL */ 
+       if(image)
          {
            LOG_DEBUG("processor_process", 
-                     "input value image_buffer is %p", 
-                     image_buffer);
+                     "input value image is %p", 
+                     image);
 
 
-           iters[i + num_outputs] = g_object_new (GEGL_TYPE_IMAGE_BUFFER_ITERATOR, 
-                                                  "image_buffer", image_buffer,
+           iters[i + num_outputs] = g_object_new (GEGL_TYPE_IMAGE_ITERATOR, 
+                                                  "image", image,
                                                   "area", &rect,
                                                   NULL);  
 
-           gegl_image_buffer_iterator_first (iters[i + num_outputs]);
+           gegl_image_iterator_first (iters[i + num_outputs]);
          }
        else
          iters[i + num_outputs] = NULL;
@@ -143,8 +143,8 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
 
   /* Get the height and width of dest rect we want to process */
 
-  image_buffer = (GeglImageBuffer*)g_value_get_object(data->value);
-  gegl_rect_copy(&rect, &image_buffer_data->rect);
+  image = (GeglImage*)g_value_get_object(value);
+  gegl_image_data_get_rect(image_data, &rect);
   width = rect.w;
   height = rect.h;
 
@@ -166,7 +166,7 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
       for (i = 0; i < num_inputs + num_outputs; i++)
         {
           if(iters[i])
-            gegl_image_buffer_iterator_next(iters[i]);
+            gegl_image_iterator_next(iters[i]);
         }
 
     } 

@@ -4,9 +4,9 @@
 #include "gegl-dump-visitor.h"
 #include "gegl-graph.h"
 #include "gegl-value-types.h"
-#include "gegl-image.h"
+#include "gegl-image-op.h"
 #include "gegl-color-model.h"
-#include "gegl-image-buffer.h"
+#include "gegl-image.h"
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
 
@@ -77,25 +77,23 @@ static void
 visit_filter(GeglVisitor * visitor,
              GeglFilter *filter)
 {
-  GList * data_list;
-  GList * output_data_list;
-  GList * input_data_list;
+  GList * data_outputs;
+  GList * data_inputs;
 
   GEGL_VISITOR_CLASS(parent_class)->visit_filter(visitor, filter);
 
 
-  /* Construct and validate the input_data_list of op */
-  data_list = gegl_visitor_collect_data_list(visitor, GEGL_NODE(filter));
-  gegl_filter_validate_inputs(filter, data_list);
-  input_data_list = data_list;
+  /* Construct and validate the data_inputs of op */
+  data_inputs = gegl_visitor_collect_data_inputs(visitor, GEGL_NODE(filter));
+  gegl_filter_validate_inputs(filter, data_inputs);
 
-  /* Validate the output_data_list of op*/
-  output_data_list = gegl_op_get_output_data_list(GEGL_OP(filter));
-  gegl_filter_validate_outputs(filter, output_data_list);
+  /* Validate the data_outputs of op*/
+  data_outputs = gegl_op_get_data_outputs(GEGL_OP(filter));
+  gegl_filter_validate_outputs(filter, data_outputs);
 
-  gegl_filter_evaluate(filter, output_data_list, input_data_list);
+  gegl_filter_evaluate(filter, data_outputs, data_inputs);
 
-  g_list_free(data_list);
+  g_list_free(data_inputs);
 }
 
 static void      

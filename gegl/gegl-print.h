@@ -1,11 +1,11 @@
 #ifndef __GEGL_PRINT_H__
 #define __GEGL_PRINT_H__
 
+#include "gegl-pipe.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-pipe.h"
 
 #define GEGL_TYPE_PRINT               (gegl_print_get_type ())
 #define GEGL_PRINT(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PRINT, GeglPrint))
@@ -14,10 +14,7 @@ extern "C" {
 #define GEGL_IS_PRINT_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_PRINT))
 #define GEGL_PRINT_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_PRINT, GeglPrintClass))
 
-#ifndef __TYPEDEF_GEGL_PRINT__
-#define __TYPEDEF_GEGL_PRINT__
 typedef struct _GeglPrint GeglPrint;
-#endif
 struct _GeglPrint 
 {
     GeglPipe pipe;

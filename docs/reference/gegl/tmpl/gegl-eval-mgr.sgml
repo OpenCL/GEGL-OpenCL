@@ -2,10 +2,55 @@
 GeglEvalMgr
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Evaluation manager for graphs
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
+Each time gegl_op_apply() or gegl_op_apply_roi() is called an EvalMgr is
+created to manage the setup and evaluation of the graph rooted on the passed
+#GeglOp. The EvalMgr keeps track of the root and region of interest for this
+apply. It sets up various visitors for traversal of the graph and makes the
+preliminary passes before the actual evaluation of the Ops is done. The current
+EvalMgr makes three passes over the graph.
+<variablelist>
+  <varlistentry>
+      <term>#GeglEvalBfsVisitor</term>
+        <listitem>
+         <para>
+The first pass is breadth-first and propagates the region of
+interest information from the root towards the leaves. Each #GeglImageOp in the
+graph is called by the visitor to set the need rects of its image inputs. This
+happens in gegl_image_op_evaluate_need_rects().
+         </para>
+        </listitem>
+  </varlistentry>
+  <varlistentry>
+      <term>#GeglEvalDfsVisitor</term>
+        <listitem>
+          <para>
+The second pass is depth-first and propagates domain of
+definition information from the leaves towards the root. Each ImageOp in the
+graph is called by the visitor to set its have rect based on those of its image
+inputs.  This happens in gegl_image_op_evaluate_have_rect(). This pass also
+sets the color models of each #GeglImageOp based on those of its inputs. This
+happens in gegl_image_op_evaluate_color_model().
+          </para>
+        </listitem>
+  </varlistentry>
+  <varlistentry>
+      <term>#GeglEvalVisitor</term>
+        <listitem>
+         <para>
+This final depth-first pass actually does the evaluation of the
+graph. For each #GeglFilter it finds, the visitor calls gegl_filter_validate_inputs(),
+gegl_filter_validate_outputs() and gegl_filter_evaluate(). For each #GeglGraph
+it finds it traverses the ops contained by the #GeglGraph. This visitor keeps
+track of where it is in the hierarchy of Graphs so that it can find sources for
+nodes in a graph that have no source for a particular input. 
+         </para>
+        </listitem>
+  </varlistentry>
+</variablelist>
 
 </para>
 
@@ -14,11 +59,19 @@ GeglEvalMgr
 
 </para>
 
-<!-- ##### STRUCT GeglNode ##### -->
+<!-- ##### STRUCT GeglEvalMgr ##### -->
 <para>
 
 </para>
 
+
+<!-- ##### STRUCT GeglEvalMgrClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@evaluate: 
 
 <!-- ##### FUNCTION gegl_eval_mgr_get_root ##### -->
 <para>
@@ -64,12 +117,12 @@ GeglEvalMgr
 @self: 
 
 
-<!-- ##### ARG GeglEvalMgr:root ##### -->
+<!-- ##### ARG GeglEvalMgr:roi ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglEvalMgr:roi ##### -->
+<!-- ##### ARG GeglEvalMgr:root ##### -->
 <para>
 
 </para>

@@ -2,17 +2,35 @@
 GeglAdd
 
 <!-- ##### SECTION Short_Description ##### -->
-Add two images.
+Add constant to image
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This object adds a constant pixel value to an image.
 </para>
+<literallayout>
+R + R0
+G + G0 
+B + B0
+</literallayout>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglAdd ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglAddClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
 
 <!-- ##### FUNCTION gegl_add_get_constant ##### -->
 <para>

@@ -1,10 +1,10 @@
 INCLUDES = \
 	-I$(top_srcdir)/gil/gil \
 	-I$(top_srcdir)/tools/testsuite \
-	@GEGL_CFLAGS@
+	@DEP_CFLAGS@
 
 LDFLAGS =  \
-	@GEGL_LIBS@
+	@DEP_LIBS@
 
 noinst_PROGRAMS = testgil
 

@@ -1,18 +1,13 @@
 #ifndef __GEGL_SCANLINE_PROCESSOR_H__
 #define __GEGL_SCANLINE_PROCESSOR_H__
 
+#include "gegl-object.h"
+#include "gegl-filter.h"
+#include "gegl-image-iterator.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-object.h"
-#include "gegl-filter.h"
-#include "gegl-image-buffer-iterator.h"
-
-typedef void (*GeglScanlineFunc)(GeglFilter *op,
-                                 GeglImageBufferIterator ** iters, 
-                                 gint width);
-
 
 #define GEGL_TYPE_SCANLINE_PROCESSOR               (gegl_scanline_processor_get_type ())
 #define GEGL_SCANLINE_PROCESSOR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SCANLINE_PROCESSOR, GeglScanlineProcessor))
@@ -21,11 +16,11 @@ typedef void (*GeglScanlineFunc)(GeglFilter *op,
 #define GEGL_IS_SCANLINE_PROCESSOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_SCANLINE_PROCESSOR))
 #define GEGL_SCANLINE_PROCESSOR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SCANLINE_PROCESSOR, GeglScanlineProcessorClass))
 
-#ifndef __TYPEDEF_GEGL_SCANLINE_PROCESSOR__
-#define __TYPEDEF_GEGL_SCANLINE_PROCESSOR__
-typedef struct _GeglScanlineProcessor GeglScanlineProcessor;
-#endif
+typedef void (*GeglScanlineFunc)(GeglFilter *op,
+                                 GeglImageIterator ** iters, 
+                                 gint width);
 
+typedef struct _GeglScanlineProcessor GeglScanlineProcessor;
 struct _GeglScanlineProcessor 
 {
    GeglObject object;
@@ -44,8 +39,8 @@ struct _GeglScanlineProcessorClass
 GType gegl_scanline_processor_get_type   (void);
 
 void gegl_scanline_processor_process(GeglScanlineProcessor  *self,
-                                     GList * output_data_list,
-                                     GList * input_data_list);
+                                     GList * data_outputs,
+                                     GList * data_inputs);
 
 #ifdef __cplusplus
 }

@@ -1,11 +1,11 @@
 #ifndef __GEGL_MULTIPLY_H__
 #define __GEGL_MULTIPLY_H__
 
+#include "gegl-blend.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-blend.h"
 
 #define GEGL_TYPE_MULTIPLY               (gegl_multiply_get_type ())
 #define GEGL_MULTIPLY(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_MULTIPLY, GeglMultiply))
@@ -14,10 +14,7 @@ extern "C" {
 #define GEGL_IS_MULTIPLY_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_MULTIPLY))
 #define GEGL_MULTIPLY_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MULTIPLY, GeglMultiplyClass))
 
-#ifndef __TYPEDEF_GEGL_MULTIPLY__
-#define __TYPEDEF_GEGL_MULTIPLY__
 typedef struct _GeglMultiply GeglMultiply;
-#endif
 struct _GeglMultiply 
 {
    GeglBlend blend;

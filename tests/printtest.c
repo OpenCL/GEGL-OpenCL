@@ -5,8 +5,8 @@
 #include "testutils.h"
 #include <string.h>
 
-#define IMAGE_WIDTH 5 
-#define IMAGE_HEIGHT 5 
+#define IMAGE_OP_WIDTH 5 
+#define IMAGE_OP_HEIGHT 5 
 
 #define R0 .1 
 #define G0 .2
@@ -45,8 +45,8 @@ static void
 print_test_setup(Test *test)
 {
   source = g_object_new(GEGL_TYPE_COLOR, 
-                        "width", IMAGE_WIDTH, 
-                        "height", IMAGE_HEIGHT, 
+                        "width", IMAGE_OP_WIDTH, 
+                        "height", IMAGE_OP_HEIGHT, 
                         "pixel-rgb-float", R0, G0, B0, 
                         NULL); 
 

@@ -35,18 +35,6 @@ test_object_g_object_new_name(Test *test)
 }
 
 static void
-test_object_add_interface(Test *test)
-{
-  GeglObject *object = g_object_new (GEGL_TYPE_MOCK_OBJECT, NULL);  
-  gint some_int;
-
-  gegl_object_add_interface(object, "some_interface", (gpointer)&some_int);
-  ct_test(test, gegl_object_query_interface(object, "some_interface") == (gpointer)&some_int);
-
-  g_object_unref(object);
-}
-
-static void
 object_test_setup(Test *test)
 {
 }
@@ -65,7 +53,6 @@ create_object_test()
   g_assert(ct_addTearDown(t, object_test_teardown));
   g_assert(ct_addTestFun(t, test_object_g_object_new));
   g_assert(ct_addTestFun(t, test_object_g_object_new_name));
-  g_assert(ct_addTestFun(t, test_object_add_interface));
 
   return t; 
 }

@@ -2,15 +2,31 @@
 GeglOutside
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Composite B outside A
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+Composite B outside A.
+</para>
+<para>
+(1-alphaA) * B
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglOutside ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglOutsideClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
 

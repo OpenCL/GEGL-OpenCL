@@ -1,16 +1,12 @@
 #ifndef __GEGL_CHANNEL_DATA_H__
 #define __GEGL_CHANNEL_DATA_H__
 
+#include "gegl-data.h"
+#include "gegl-channel-space.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-data.h"
-
-#ifndef __TYPEDEF_GEGL_DATA_SPACE__
-#define __TYPEDEF_GEGL_DATA_SPACE__
-typedef struct _GeglDataSpace  GeglDataSpace;
-#endif
 
 #define GEGL_TYPE_CHANNEL_DATA               (gegl_channel_data_get_type ())
 #define GEGL_CHANNEL_DATA(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CHANNEL_DATA, GeglChannelData))
@@ -19,16 +15,13 @@ typedef struct _GeglDataSpace  GeglDataSpace;
 #define GEGL_IS_CHANNEL_DATA_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CHANNEL_DATA))
 #define GEGL_CHANNEL_DATA_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CHANNEL_DATA, GeglChannelDataClass))
 
-#ifndef __TYPEDEF_GEGL_CHANNEL_DATA__
-#define __TYPEDEF_GEGL_CHANNEL_DATA__
 typedef struct _GeglChannelData GeglChannelData;
-#endif
 struct _GeglChannelData 
 {
     GeglData data;
 
     /*< private >*/
-    GeglDataSpace *data_space;
+    GeglChannelSpace *channel_space;
 };
 
 typedef struct _GeglChannelDataClass GeglChannelDataClass;
@@ -38,7 +31,7 @@ struct _GeglChannelDataClass
 };
 
 GType           gegl_channel_data_get_type              (void);
-GeglDataSpace*  gegl_channel_data_get_data_space        (GeglChannelData * self);
+GeglChannelSpace*  gegl_channel_data_get_channel_space        (GeglChannelData * self);
 
 #ifdef __cplusplus
 }

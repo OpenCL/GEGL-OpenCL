@@ -1,11 +1,11 @@
 #ifndef __GEGL_COLOR_SPACE_H__
 #define __GEGL_COLOR_SPACE_H__
 
+#include "gegl-object.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-object.h"
 
 #define GEGL_TYPE_COLOR_SPACE               (gegl_color_space_get_type ())
 #define GEGL_COLOR_SPACE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR_SPACE, GeglColorSpace))
@@ -14,10 +14,7 @@ extern "C" {
 #define GEGL_IS_COLOR_SPACE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_COLOR_SPACE))
 #define GEGL_COLOR_SPACE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COLOR_SPACE, GeglColorSpaceClass))
 
-#ifndef __TYPEDEF_GEGL_COLOR_SPACE__
-#define __TYPEDEF_GEGL_COLOR_SPACE__
 typedef struct _GeglColorSpace  GeglColorSpace;
-#endif
 struct _GeglColorSpace 
 {
    GeglObject object;

@@ -17,8 +17,8 @@ extern Test * create_color_space_test();
 extern Test * create_color_test_rgb_float();
 extern Test * create_color_test_rgb_uint8();
 extern Test * create_dump_visitor_test();
-extern Test * create_data_space_test();
-extern Test * create_data_buffer_test();
+extern Test * create_channel_space_test();
+extern Test * create_buffer_test();
 extern Test * create_dfs_visitor_test();
 extern Test * create_fade_test_rgb_float();
 extern Test * create_fade_test_rgb_uint8();
@@ -29,9 +29,9 @@ extern Test * create_i_add_test_rgb_float();
 extern Test * create_i_add_test_rgb_uint8();
 extern Test * create_i_mult_test_rgb_float();
 extern Test * create_i_mult_test_rgb_uint8();
+extern Test * create_image_op_test();
+extern Test * create_image_iterator_test();
 extern Test * create_image_test();
-extern Test * create_image_buffer_iterator_test();
-extern Test * create_image_buffer_test();
 extern Test * create_mult_test_rgb_float();
 extern Test * create_mult_test_rgb_uint8();
 extern Test * create_multiply_test_rgb_float();
@@ -48,7 +48,7 @@ extern Test * create_print_test();
 extern Test * create_simple_tree_test_rgb_float();
 extern Test * create_storage_test();
 extern Test * create_tile_test();
-extern Test * create_value_image_buffer_test();
+extern Test * create_value_image_test();
 extern Test * create_value_test();
 
 int
@@ -77,8 +77,8 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_color_test_rgb_float());
     cs_addTest(suite, create_color_model_test());
     cs_addTest(suite, create_color_space_test());
-    cs_addTest(suite, create_data_space_test());
-    cs_addTest(suite, create_data_buffer_test());
+    cs_addTest(suite, create_channel_space_test());
+    cs_addTest(suite, create_buffer_test());
     cs_addTest(suite, create_dfs_visitor_test());
     cs_addTest(suite, create_dump_visitor_test());
     cs_addTest(suite, create_fade_test_rgb_float());
@@ -90,9 +90,9 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_i_add_test_rgb_uint8());
     cs_addTest(suite, create_i_mult_test_rgb_float());
     cs_addTest(suite, create_i_mult_test_rgb_uint8());
+    cs_addTest(suite, create_image_op_test());
+    cs_addTest(suite, create_image_iterator_test());
     cs_addTest(suite, create_image_test());
-    cs_addTest(suite, create_image_buffer_iterator_test());
-    cs_addTest(suite, create_image_buffer_test());
     cs_addTest(suite, create_mult_test_rgb_float());
     cs_addTest(suite, create_mult_test_rgb_uint8());
     cs_addTest(suite, create_multiply_test_rgb_float());
@@ -109,7 +109,7 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_simple_tree_test_rgb_float());
     cs_addTest(suite, create_storage_test());
     cs_addTest(suite, create_tile_test());
-    cs_addTest(suite, create_value_image_buffer_test());
+    cs_addTest(suite, create_value_image_test());
     cs_addTest(suite, create_value_test());
 #endif
 

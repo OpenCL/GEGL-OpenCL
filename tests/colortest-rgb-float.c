@@ -6,8 +6,8 @@
 #include "testutils.h"
 #include <string.h>
 
-#define IMAGE_WIDTH 2 
-#define IMAGE_HEIGHT 2 
+#define IMAGE_OP_WIDTH 2 
+#define IMAGE_OP_HEIGHT 2 
 
 static void
 test_color_g_object_new(Test *test)
@@ -46,16 +46,16 @@ test_color_g_object_properties(Test *test)
 
   {
     GeglColor *op = g_object_new(GEGL_TYPE_COLOR, 
-                                 "width", IMAGE_WIDTH, 
-                                 "height", IMAGE_HEIGHT, 
+                                 "width", IMAGE_OP_WIDTH, 
+                                 "height", IMAGE_OP_HEIGHT, 
                                  "pixel-rgb-float",.1, .2, .3, 
                                  NULL); 
 
     gint width = gegl_color_get_width(op);
     gint height = gegl_color_get_height(op);
 
-    ct_test(test, IMAGE_WIDTH == width);
-    ct_test(test, IMAGE_HEIGHT == height);
+    ct_test(test, IMAGE_OP_WIDTH == width);
+    ct_test(test, IMAGE_OP_HEIGHT == height);
 
     g_object_unref(op);
   }
@@ -71,7 +71,7 @@ test_color_apply(Test *test)
 
     gegl_op_apply(op); 
 
-    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(op), .1, .2, .3));  
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(op), .1, .2, .3));  
 
     g_object_unref(op);
   }
@@ -81,14 +81,14 @@ static void
 test_color_apply_roi(Test *test)
 {
   {
-    GeglRect roi = {1,1,IMAGE_WIDTH/2,IMAGE_HEIGHT/2};
+    GeglRect roi = {1,1,IMAGE_OP_WIDTH/2,IMAGE_OP_HEIGHT/2};
     GeglOp *op = g_object_new(GEGL_TYPE_COLOR, 
                               "pixel-rgb-float", .1, .2, .3,
                               NULL);
 
     gegl_op_apply_roi(op, &roi); 
 
-    ct_test(test, testutils_check_pixel_rgb_float_xy(GEGL_IMAGE(op), 1, 1, .1, .2, .3));  
+    ct_test(test, testutils_check_pixel_rgb_float_xy(GEGL_IMAGE_OP(op), 1, 1, .1, .2, .3));  
 
     g_object_unref(op);
   }
@@ -99,14 +99,14 @@ test_color_apply_width_height(Test *test)
 {
   {
     GeglOp *op = g_object_new(GEGL_TYPE_COLOR, 
-                              "width", IMAGE_WIDTH, 
-                              "height", IMAGE_HEIGHT, 
+                              "width", IMAGE_OP_WIDTH, 
+                              "height", IMAGE_OP_HEIGHT, 
                               "pixel-rgb-float",.1, .2, .3, 
                               NULL); 
 
     gegl_op_apply(op); 
 
-    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(op), .1, .2, .3));  
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(op), .1, .2, .3));  
 
     g_object_unref(op);
   }

@@ -4,8 +4,8 @@
 #include "csuite.h"
 #include "testutils.h"
 
-#define IMAGE_WIDTH 20 
-#define IMAGE_HEIGHT 20 
+#define IMAGE_OP_WIDTH 20 
+#define IMAGE_OP_HEIGHT 20 
 
 static void
 test_graph_apply(Test *t)
@@ -54,7 +54,7 @@ test_graph_apply(Test *t)
 
   gegl_op_apply(fade2); 
 
-  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(fade2), .025, .05, .075));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(fade2), .025, .05, .075));  
 
   g_object_unref(fade2);
   g_object_unref(graph);
@@ -100,8 +100,8 @@ test_graph_apply_with_source(Test *t)
 
   gegl_op_apply(graph); 
 
-  /* Note: The result is in the fade image data */
-  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(fade), .05, .1, .15));  
+  /* Note: The result is in the fade image_op data */
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(fade), .05, .1, .15));  
 
   g_object_unref(graph);
   g_object_unref(fade);
@@ -157,7 +157,7 @@ test_graph_apply_with_source_and_output(Test *t)
 
   gegl_op_apply(fade2); 
 
-  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(fade2), .025, .05, .075));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(fade2), .025, .05, .075));  
 
   g_object_unref(fade2);
   g_object_unref(graph);
@@ -224,7 +224,7 @@ test_graph_apply_with_2_ops_source_and_output(Test *t)
 
   gegl_op_apply(fade3); 
 
-  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(fade3), .0125, .025, .0375));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(fade3), .0125, .025, .0375));  
 
   g_object_unref(fade3);
   g_object_unref(fade2);
@@ -287,7 +287,7 @@ test_graph_apply_add_graph_and_color(Test *t)
 
   gegl_op_apply(iadd); 
 
-  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(iadd), .45, .6, .75));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(iadd), .45, .6, .75));  
 
   g_object_unref(iadd);
   g_object_unref(color2);
@@ -364,7 +364,7 @@ test_graph_apply_add_graph_and_graph(Test *t)
 
   gegl_op_apply(iadd); 
 
-  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(iadd), 1.15, 1.4, 1.65));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(iadd), 1.15, 1.4, 1.65));  
 
   g_object_unref(iadd);
   g_object_unref(graph2);
@@ -390,12 +390,11 @@ test_graph_apply_with_2_sources(Test *t)
            |      |
          color1  color2
 
-           fade1 
-             |
-           graph  
-           /    \ 
-        color1 color2 
-
+             fade1 
+               |
+             graph  
+             /    \ 
+          color1 color2 
 
 
           (.125,.175,.225)
@@ -444,7 +443,7 @@ test_graph_apply_with_2_sources(Test *t)
 
   gegl_op_apply(fade1); 
 
-  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(fade1), .125, .175, .225));  
+  ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(fade1), .125, .175, .225));  
 
   g_object_unref(iadd);
   g_object_unref(graph);

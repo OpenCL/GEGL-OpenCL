@@ -2,19 +2,11 @@
 GeglTile
 
 <!-- ##### SECTION Short_Description ##### -->
-GeglTile represents an area of an GeglImage.
+
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-This object describes a chunk of image data that corresponds to a portion of
-image space. It represents image data for an Image or SampledImage. Tiles have
-ColorModels and pointers to Buffers. They return pointers to the underlying
-data and provide (through TileIterators) different ways to traverse the data.
-The number of banks a Tile's Buffer has depends on the type of Tile it is.
-Packed data Tiles will have just a Buffer with one bank, while separated
-channel Tiles may have a Buffer with banks for each channel.  Tiles are the
-basic image data structure the ImageMgr passes back to Ops in their prepare,
-process, and finish routines.
+
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -22,19 +14,20 @@ process, and finish routines.
 
 </para>
 
-<!-- ##### STRUCT GeglDataBuffer ##### -->
+<!-- ##### STRUCT GeglTile ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### STRUCT GeglStorage ##### -->
+<!-- ##### STRUCT GeglTileClass ##### -->
 <para>
 
 </para>
 
+@object_class: 
 
-<!-- ##### FUNCTION gegl_tile_get_data_buffer ##### -->
+<!-- ##### FUNCTION gegl_tile_get_buffer ##### -->
 <para>
 
 </para>
@@ -108,12 +101,12 @@ process, and finish routines.
 @Returns: 
 
 
-<!-- ##### ARG GeglTile:x ##### -->
+<!-- ##### ARG GeglTile:height ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglTile:y ##### -->
+<!-- ##### ARG GeglTile:storage ##### -->
 <para>
 
 </para>
@@ -123,12 +116,12 @@ process, and finish routines.
 
 </para>
 
-<!-- ##### ARG GeglTile:height ##### -->
+<!-- ##### ARG GeglTile:x ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglTile:storage ##### -->
+<!-- ##### ARG GeglTile:y ##### -->
 <para>
 
 </para>

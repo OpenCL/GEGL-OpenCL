@@ -1,11 +1,11 @@
 #ifndef __GEGL_DARKEN_H__
 #define __GEGL_DARKEN_H__
 
+#include "gegl-blend.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-blend.h"
 
 #define GEGL_TYPE_DARKEN               (gegl_darken_get_type ())
 #define GEGL_DARKEN(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_DARKEN, GeglDarken))
@@ -14,10 +14,7 @@ extern "C" {
 #define GEGL_IS_DARKEN_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_DARKEN))
 #define GEGL_DARKEN_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_DARKEN, GeglDarkenClass))
 
-#ifndef __TYPEDEF_GEGL_DARKEN__
-#define __TYPEDEF_GEGL_DARKEN__
 typedef struct _GeglDarken GeglDarken;
-#endif
 struct _GeglDarken 
 {
    GeglBlend blend;

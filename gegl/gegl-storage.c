@@ -55,7 +55,7 @@ class_init (GeglStorageClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  klass->create_data_buffer = NULL;
+  klass->create_buffer = NULL;
 
   g_object_class_install_property (gobject_class, PROP_DATA_TYPE_BYTES,
                                    g_param_spec_int ("data_type_bytes",
@@ -233,16 +233,16 @@ gegl_storage_height(GeglStorage * self)
   return self->height;
 }
 
-GeglDataBuffer* 
-gegl_storage_create_data_buffer  (GeglStorage * self)
+GeglBuffer* 
+gegl_storage_create_buffer  (GeglStorage * self)
 {
    GeglStorageClass *klass;
    g_return_val_if_fail (self != NULL, NULL);
    g_return_val_if_fail (GEGL_IS_STORAGE (self), NULL);
    klass = GEGL_STORAGE_GET_CLASS(self);
 
-   if(klass->create_data_buffer)
-      return (*klass->create_data_buffer)(self);
+   if(klass->create_buffer)
+      return (*klass->create_buffer)(self);
    else
       return NULL;
 }

@@ -1,11 +1,11 @@
 #ifndef __GEGL_COLOR_SPACE_RGB_H__
 #define __GEGL_COLOR_SPACE_RGB_H__
 
+#include "gegl-color-space.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-color-space.h"
 
 #define GEGL_TYPE_COLOR_SPACE_RGB               (gegl_color_space_rgb_get_type ())
 #define GEGL_COLOR_SPACE_RGB(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR_SPACE_RGB, GeglColorSpaceRgb))

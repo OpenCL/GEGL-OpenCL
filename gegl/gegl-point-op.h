@@ -1,16 +1,12 @@
 #ifndef __GEGL_POINT_OP_H__
 #define __GEGL_POINT_OP_H__
 
+#include "gegl-image-op.h"
+#include "gegl-scanline-processor.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-image.h"
-
-#ifndef __TYPEDEF_GEGL_SCANLINE_PROCESSOR__
-#define __TYPEDEF_GEGL_SCANLINE_PROCESSOR__
-typedef struct _GeglScanlineProcessor  GeglScanlineProcessor;
-#endif
 
 #define GEGL_TYPE_POINT_OP               (gegl_point_op_get_type ())
 #define GEGL_POINT_OP(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_POINT_OP, GeglPointOp))
@@ -19,13 +15,10 @@ typedef struct _GeglScanlineProcessor  GeglScanlineProcessor;
 #define GEGL_IS_POINT_OP_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_POINT_OP))
 #define GEGL_POINT_OP_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_POINT_OP, GeglPointOpClass))
 
-#ifndef __TYPEDEF_GEGL_POINT_OP__
-#define __TYPEDEF_GEGL_POINT_OP__
 typedef struct _GeglPointOp GeglPointOp;
-#endif
 struct _GeglPointOp 
 {
-    GeglImage image;
+    GeglImageOp image_op;
 
     /*< private >*/
     GeglScanlineProcessor * scanline_processor;
@@ -34,7 +27,7 @@ struct _GeglPointOp
 typedef struct _GeglPointOpClass GeglPointOpClass;
 struct _GeglPointOpClass 
 {
-    GeglImageClass image_class;
+    GeglImageOpClass image_op_class;
 };
 
 GType           gegl_point_op_get_type          (void);

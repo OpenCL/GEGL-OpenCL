@@ -1,0 +1,129 @@
+<!-- ##### SECTION Title ##### -->
+GeglChannelSpace
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglChannelSpace ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglChannelSpaceClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+@convert_to_float: 
+@convert_from_float: 
+@convert_value_to_float: 
+@convert_value_from_float: 
+
+<!-- ##### FUNCTION gegl_channel_space_register ##### -->
+<para>
+
+</para>
+
+@channel_space: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_channel_space_instance ##### -->
+<para>
+
+</para>
+
+@channel_space_name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_channel_space_channel_space_type ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_channel_space_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_channel_space_bits ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_channel_space_is_channel_data ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_channel_space_convert_to_float ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest: 
+@src: 
+@num: 
+
+
+<!-- ##### FUNCTION gegl_channel_space_convert_from_float ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest: 
+@src: 
+@num: 
+
+
+<!-- ##### FUNCTION gegl_channel_space_convert_value_to_float ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest: 
+@src: 
+
+
+<!-- ##### FUNCTION gegl_channel_space_convert_value_from_float ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest: 
+@src: 
+
+

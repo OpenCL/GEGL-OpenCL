@@ -14,18 +14,6 @@ gegl-utils
 
 </para>
 
-<!-- ##### STRUCT GeglNode ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglOp ##### -->
-<para>
-
-</para>
-
-
 <!-- ##### FUNCTION gegl_rect_set ##### -->
 <para>
 
@@ -99,23 +87,6 @@ gegl-utils
 @r: 
 @s: 
 @Returns: 
-
-
-<!-- ##### FUNCTION gegl_dump_graph ##### -->
-<para>
-
-</para>
-
-@root: 
-
-
-<!-- ##### FUNCTION gegl_dump_graph_msg ##### -->
-<para>
-
-</para>
-
-@msg: 
-@root: 
 
 
 <!-- ##### FUNCTION gegl_log ##### -->

@@ -45,7 +45,7 @@ test_tile_properties(Test *test)
     ct_test(test, 2 == gegl_tile_get_width(tile));
     ct_test(test, 2 == gegl_tile_get_height(tile));
     ct_test(test, storage == gegl_tile_get_storage(tile));
-    ct_test(test, NULL != gegl_tile_get_data_buffer(tile));
+    ct_test(test, NULL != gegl_tile_get_buffer(tile));
     data_pointers = gegl_tile_data_pointers(tile,0,0);
     ct_test(test, NULL != data_pointers);
     ct_test(test, NULL != data_pointers[0]);

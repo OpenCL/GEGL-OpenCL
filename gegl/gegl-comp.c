@@ -3,10 +3,10 @@
 #include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
 #include "gegl-color-space.h"
-#include "gegl-data-space.h"
-#include "gegl-image-buffer.h"
-#include "gegl-image-buffer-iterator.h"
-#include "gegl-image-buffer-data.h"
+#include "gegl-channel-space.h"
+#include "gegl-image.h"
+#include "gegl-image-iterator.h"
+#include "gegl-image-data.h"
 #include "gegl-param-specs.h"
 #include "gegl-scalar-data.h"
 #include "gegl-utils.h"
@@ -23,7 +23,7 @@ static void init (GeglComp * self, GeglCompClass * klass);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void prepare (GeglFilter * filter, GList * output_data_list, GList *input_data_list);
+static void prepare (GeglFilter * filter, GList * data_outputs, GList *data_inputs);
 
 static gpointer parent_class = NULL;
 
@@ -72,17 +72,17 @@ class_init (GeglCompClass * klass)
   gobject_class->get_property = get_property;
 
   /* op properties */
-  gegl_op_class_install_input_data_property (op_class, 
-                            gegl_param_spec_image_buffer("input-image-a", 
+  gegl_op_class_install_data_input_property (op_class, 
+                            gegl_param_spec_image("input-image-a", 
                                                        "InputImageA",
-                                                       "InputImage A",
+                                                       "Input Image A",
                                                        G_PARAM_PRIVATE));
-  gegl_op_class_install_input_data_property (op_class, 
-                            gegl_param_spec_image_buffer("input-image-b", 
+  gegl_op_class_install_data_input_property (op_class, 
+                            gegl_param_spec_image("input-image-b", 
                                                        "InputImageB",
                                                        "Input Image B",
                                                        G_PARAM_PRIVATE));
-  gegl_op_class_install_input_data_property (op_class, 
+  gegl_op_class_install_data_input_property (op_class, 
                             g_param_spec_boolean ("premultiply",
                                                    "Premultiply",
                                                    "Premultiply the foreground.",
@@ -104,9 +104,9 @@ static void
 init (GeglComp * self, 
       GeglCompClass * klass)
 {
-  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_IMAGE_BUFFER_DATA, "input-image-a", 0);
-  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_IMAGE_BUFFER_DATA, "input-image-b", 1);
-  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "premultiply", 2);
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image-a");
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image-b");
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "premultiply");
 
   self->premultiply = FALSE;
 }
@@ -186,23 +186,23 @@ gegl_comp_set_premultiply (GeglComp * self,
 
 static void 
 prepare (GeglFilter * filter, 
-         GList * output_data_list,
-         GList * input_data_list)
+         GList * data_outputs,
+         GList * data_inputs)
 {
   GeglPointOp *point_op = GEGL_POINT_OP(filter);
   GeglComp *self = GEGL_COMP(filter);
 
-  GeglData *dest_data = g_list_nth_data(output_data_list, 0);
-  GeglImageBuffer *dest = (GeglImageBuffer*)g_value_get_object(dest_data->value);
-  GeglColorModel * dest_cm = gegl_image_buffer_get_color_model (dest);
-  GeglColorSpace * dest_cs = gegl_color_model_color_space(dest_cm);
-  GeglDataSpace * dest_ds = gegl_color_model_data_space(dest_cm);
+  GeglData *data_output = g_list_nth_data(data_outputs, 0);
+  GeglImage *dest = (GeglImage*)g_value_get_object(data_output->value);
+  GeglColorModel * dest_cm = gegl_image_get_color_model (dest);
+  GeglColorSpace * dest_color_space = gegl_color_model_color_space(dest_cm);
+  GeglChannelSpace * dest_channel_space = gegl_color_model_channel_space(dest_cm);
 
   g_return_if_fail (dest_cm);
 
   {
-    GeglDataSpaceType type = gegl_data_space_data_space_type(dest_ds);
-    GeglColorSpaceType space = gegl_color_space_color_space_type(dest_cs);
+    GeglChannelSpaceType type = gegl_channel_space_channel_space_type(dest_channel_space);
+    GeglColorSpaceType space = gegl_color_space_color_space_type(dest_color_space);
     GeglCompClass *klass = GEGL_COMP_GET_CLASS(self);
 
     /* Get the appropriate scanline func from subclass */

@@ -2,15 +2,31 @@
 GeglNoInput
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Abstract class for operation with no input
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This is the abstract class that represents single image output operations that
+take no image inputs. This includes solid color ops, noise ops, and other
+procedurally defined operations.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglNoInput ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglNoInputClass ##### -->
+<para>
+
+</para>
+
+@point_op_class: 
+@get_scanline_func: 
 

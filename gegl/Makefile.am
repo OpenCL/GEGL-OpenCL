@@ -1,6 +1,6 @@
 noinst_PROGRAMS =
 
-lib_LTLIBRARIES = libgegl.la
+lib_LTLIBRARIES = libgegl-1.0.la
 
 GEGL_SRC = \
   gegl-atop.c \
@@ -8,8 +8,13 @@ GEGL_SRC = \
   gegl-bfs-visitor.c \
   gegl-binary.c \
   gegl-blend.c \
+  gegl-buffer.c \
   gegl-channel-data.c \
+  gegl-channel-space.c \
+  gegl-channel-space-float.c \
+  gegl-channel-space-uint8.c \
   gegl-color.c \
+  gegl-color-data.c \
   gegl-color-model.c \
   gegl-color-space.c \
   gegl-color-space-rgb.c \
@@ -18,10 +23,7 @@ GEGL_SRC = \
   gegl-component-color-model.c \
   gegl-component-storage.c \
   gegl-darken.c \
-  gegl-data-buffer.c \
-  gegl-data-space.c \
-  gegl-data-space-float.c \
-  gegl-data-space-uint8.c \
+  gegl-data.c \
   gegl-dfs-visitor.c \
   gegl-difference.c \
   gegl-dump-visitor.c \
@@ -36,9 +38,9 @@ GEGL_SRC = \
   gegl-i-add.c \
   gegl-i-mult.c \
   gegl-image.c \
-  gegl-image-buffer.c \
-  gegl-image-buffer-data.c \
-  gegl-image-buffer-iterator.c \
+  gegl-image-op.c \
+  gegl-image-data.c \
+  gegl-image-iterator.c \
   gegl-inside.c \
   gegl-lighten.c \
   gegl-max.c \
@@ -51,7 +53,6 @@ GEGL_SRC = \
   gegl-op.c \
   gegl-over.c \
   gegl-outside.c \
-  gegl-data.c \
   gegl-pipe.c \
   gegl-pixel-data.c \
   gegl-point-op.c \
@@ -71,7 +72,7 @@ GEGL_SRC = \
 GEGL_NONCLASS_SRC = \
   gegl-channel-param-specs.c \
   gegl-channel-value-types.c \
-  gegl-image-buffer-param-specs.c \
+  gegl-image-param-specs.c \
   gegl-init.c \
   gegl-input-value-types.c \
   gegl-input-param-specs.c \
@@ -82,7 +83,7 @@ GEGL_NONCLASS_SRC = \
 GEGL_PUBLIC_HDRS = \
   gegl.h
 
-libgegl_la_SOURCES = \
+libgegl_1_0_la_SOURCES = \
   $(GEGL_SRC) \
   $(GEGL_NONCLASS_SRC)
 
@@ -91,12 +92,12 @@ libgegl_la_SOURCES = \
 
 INCLUDES = \
 	-I$(top_srcdir)	\
-	@GEGL_CFLAGS@
+	@DEP_CFLAGS@
 
 LDFLAGS =  \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)	\
-	-no-undefined						\
-	@GEGL_LIBS@
+	-no-undefined \
+	@DEP_LIBS@
 
 libgeglincludedir=$(includedir)/gegl-1.0/gegl
 libgeglinclude_HEADERS = $(GEGL_PUBLIC_HDRS) 

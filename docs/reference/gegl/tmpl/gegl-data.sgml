@@ -2,19 +2,45 @@
 GeglData
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Abstract data class
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+Data represents one of the main concepts in Gegl. This class describes the data
+that is passed between <link linkend="GeglOp">GeglOp</link>s, through data
+outputs and inputs. Data might be described as an image, a pixel, a channel
+value, or a scalar. Subclasses for these are #GeglImageData, #GeglPixelData,
+#GeglChannelData, #GeglScalarData respectively.
 </para>
-
+<para>
+The Data object contains information about the actual value of the data,
+and its specification.  These is stored in the <literal>value</literal> and
+<literal>param_spec</literal> fields.  
+</para>
+<para>
+Lists of data inputs and outputs are stored in #GeglOp. Each data input and
+output for a object is added by the object during its init() methods. This is
+described in this <link linkend="datasetup">section</link> about setting up
+data inputs and outputs in #GeglOp. 
+</para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
 
+<!-- ##### STRUCT GeglData ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglDataClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
 
 <!-- ##### FUNCTION gegl_data_get_value ##### -->
 <para>

@@ -91,15 +91,15 @@ gegl-types
 @GEGL_COLOR_WHITE_TRANSPARENT: 
 @GEGL_COLOR_BLACK_TRANSPARENT: 
 
-<!-- ##### ENUM GeglDataSpaceType ##### -->
+<!-- ##### ENUM GeglChannelSpaceType ##### -->
 <para>
 
 </para>
 
-@GEGL_DATA_SPACE_NONE: 
-@GEGL_DATA_SPACE_UINT8: 
-@GEGL_DATA_SPACE_FLOAT: 
-@GEGL_DATA_SPACE_U16: 
+@GEGL_CHANNEL_SPACE_NONE: 
+@GEGL_CHANNEL_SPACE_UINT8: 
+@GEGL_CHANNEL_SPACE_FLOAT: 
+@GEGL_CHANNEL_SPACE_U16: 
 
 <!-- ##### STRUCT GeglRect ##### -->
 <para>

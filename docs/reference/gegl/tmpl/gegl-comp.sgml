@@ -2,17 +2,34 @@
 GeglComp
 
 <!-- ##### SECTION Short_Description ##### -->
-Composite two unpremultiplied images.
+Abstract class for composite operations
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This is the abstract class that represents composite operations. This includes
+operations like over, atop, in, out, xor, and more complicated blend modes as
+well. This class has a boolean <literal>premultiply</literal> property, which
+can be set if the first image should be premultiplied before the operation.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglComp ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglCompClass ##### -->
+<para>
+
+</para>
+
+@point_op_class: 
+@get_scanline_func: 
 
 <!-- ##### FUNCTION gegl_comp_get_premultiply ##### -->
 <para>

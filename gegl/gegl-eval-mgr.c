@@ -1,7 +1,7 @@
 #include "gegl-eval-mgr.h"
 #include "gegl-node.h"
 #include "gegl-op.h"
-#include "gegl-image-buffer-data.h"
+#include "gegl-image-data.h"
 #include "gegl-param-specs.h"
 #include "gegl-visitor.h"
 #include "gegl-eval-bfs-visitor.h"
@@ -243,28 +243,29 @@ static void
 evaluate (GeglEvalMgr * self) 
 {
   /* Get the root and set roi on it */
-  GeglData * data = gegl_op_get_output_data(GEGL_OP(self->root), 0);
-  if(data && GEGL_IS_IMAGE_BUFFER_DATA(data))
+  GeglData * data = gegl_op_get_data_output(GEGL_OP(self->root), 0);
+  if(data && GEGL_IS_IMAGE_DATA(data))
     {
-      GeglImageBufferData *image_buffer_data = GEGL_IMAGE_BUFFER_DATA(data);
-      gegl_rect_copy(&image_buffer_data->rect, &self->roi);
+      GeglImageData *image_data = GEGL_IMAGE_DATA(data);
+      gegl_image_data_set_rect(image_data, &self->roi);
+      //gegl_rect_copy(&image_data->rect, &self->roi);
     }
 
-  /* This part computes need rects, breadth-first setup */
+  /* This part computes need rects, breadth first. */
   LOG_DEBUG("evaluate", 
             "begin bfs for %s %p", 
             G_OBJECT_TYPE_NAME(self->root), 
             self);
   eval_bfs_visitor(self);
 
-  /* This part computes have rects, color models */
+  /* This part computes have rects, color models, depth first. */
   LOG_DEBUG("evaluate", 
             "begin dfs for %s %p", 
             G_OBJECT_TYPE_NAME(self->root), 
             self);
   eval_dfs_visitor(self);
 
-  /* This part actually does the evaluation of the ops */
+  /* This part does the evaluation of the ops, depth first. */
   LOG_DEBUG("evaluate", 
             "begin evaluate dfs for %s %p", 
             G_OBJECT_TYPE_NAME(self->root), 

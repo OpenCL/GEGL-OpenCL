@@ -13,8 +13,8 @@
 #define G0 .2
 #define B0 .3 
 
-#define IMAGE_WIDTH 1 
-#define IMAGE_HEIGHT 1 
+#define IMAGE_OP_WIDTH 1 
+#define IMAGE_OP_HEIGHT 1 
 
 static GeglOp * source;
 
@@ -80,7 +80,7 @@ test_add_apply(Test *test)
                                NULL);
 
     gegl_op_apply(add); 
-    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(add), 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(add), 
                                             R0 + ADD0, 
                                             G0 + ADD1, 
                                             B0 + ADD2));  
@@ -99,7 +99,7 @@ test_add_apply(Test *test)
                                  NULL);
 
     gegl_op_apply(add2); 
-    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(add2), 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(add2), 
                                             R0 + ADD0 + ADD0, 
                                             G0 + ADD1 + ADD1, 
                                             B0 + ADD2 + ADD2));  
@@ -113,8 +113,8 @@ static void
 add_test_setup(Test *test)
 {
   source = g_object_new(GEGL_TYPE_COLOR, 
-                        "width", IMAGE_WIDTH, 
-                        "height", IMAGE_HEIGHT, 
+                        "width", IMAGE_OP_WIDTH, 
+                        "height", IMAGE_OP_HEIGHT, 
                         "pixel-rgb-float", R0, G0, B0, 
                         NULL); 
 }
@@ -124,6 +124,7 @@ add_test_teardown(Test *test)
 {
   g_object_unref(source);
 }
+
 
 Test *
 create_add_test_rgb_float()

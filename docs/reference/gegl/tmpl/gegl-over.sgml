@@ -2,15 +2,31 @@
 GeglOver
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Composite B over A
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This composites B over A.
+</para>
+<para>
+(1-alphaB) * A + B 
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglOver ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglOverClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
 

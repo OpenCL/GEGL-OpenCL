@@ -7,8 +7,8 @@
 
 #define MULTIPLIER .5
 
-#define IMAGE_WIDTH 1 
-#define IMAGE_HEIGHT 1 
+#define IMAGE_OP_WIDTH 1 
+#define IMAGE_OP_HEIGHT 1 
 
 static GeglOp * source;
 
@@ -75,7 +75,7 @@ test_fade_apply(Test *test)
 
     gegl_op_apply(fade); 
 
-    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(fade), 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(fade), 
                                             .1 * MULTIPLIER, 
                                             .2 * MULTIPLIER, 
                                             .3 * MULTIPLIER));  
@@ -95,7 +95,7 @@ test_fade_apply(Test *test)
 
     gegl_op_apply(fade2); 
 
-    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(fade2), 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(fade2), 
                                             .1 * MULTIPLIER * MULTIPLIER, 
                                             .2 * MULTIPLIER * MULTIPLIER, 
                                             .3 * MULTIPLIER * MULTIPLIER));  
@@ -109,8 +109,8 @@ static void
 fade_test_setup(Test *test)
 {
   source = g_object_new(GEGL_TYPE_COLOR, 
-                        "width", IMAGE_WIDTH, 
-                        "height", IMAGE_HEIGHT, 
+                        "width", IMAGE_OP_WIDTH, 
+                        "height", IMAGE_OP_HEIGHT, 
                         "pixel-rgb-float",.1, .2, .3, 
                         NULL); 
 

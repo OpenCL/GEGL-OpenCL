@@ -2,41 +2,67 @@
 GeglFilter
 
 <!-- ##### SECTION Short_Description ##### -->
-Abstract class for basic image processing object.
+The primitive image processing object.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-Filters are the basic image processing objects of Gegl. A Filter will have
-methods and algorithms that process inputs and turn them into outputs. The
-evaluation of a Filter happens primarily during gegl_filter_evaluate, which is
-is called during evaluation of the graph the filter is part of. You should not
-call this routine directly to do image processing. It will be called as
-consequence of calling one of gegl_op_apply, gegl_op_apply_image, etc.
+Filters are the primitive image processing objects in Gegl. Every Filter has
+methods to validate and process its data inputs and produce data outputs. These
+methods are called by the #GeglEvalMgr visitors during evaluation.
 </para>
 
 <para>
-gegl_filter_evaluate is called after a Filter's inputs have all been processed
-and are ready. It is passed a list of input Attributes that describe the inputs
-and contain the input values. The graph traversal and evaluation code
-determines if a Filter needs its inputs to be converted before being passed to
-gegl_filter_evaluate. This happens automatically.
+The most important of these is gegl_filter_evaluate(). It calls back to the
+particular subclass of Filter to do the actual image processing in three
+stages, prepare(), process(), and finish(). These are all virtual methods of
+Filter that are overridden by subclasses. 
+</para>
+
+<variablelist>
+  <varlistentry>
+      <term>prepare()</term>
+        <listitem>
+         <para>
+         Setup for the operation is done here. Point ops set up their
+         particular scanline function pointer here. Other buffers or resources can be
+         set up here as well.
+         </para>
+        </listitem>
+  </varlistentry>
+  <varlistentry>
+      <term>process()</term>
+        <listitem>
+          <para>
+          The operation is actually carried out here. For point ops this is
+          where the scanline function is called repeatedly until all scanlines are
+          processed.
+          </para>
+        </listitem>
+  </varlistentry>
+  <varlistentry>
+      <term>finish()</term>
+        <listitem>
+         <para>
+         Clean up for the operation is done here. 
+         </para>
+        </listitem>
+  </varlistentry>
+</variablelist>
+
+<para>
+In addition to evaluation methods, Filter has validation methods for both input
+and output data. These are gegl_filter_validate_inputs() and
+gegl_filter_validate_outputs(). These will be called by the #GeglEvalMgr just
+before gegl_filter_evaluate(). Subclasses should override the virtual
+validate_inputs() and validate_outputs() and do validation for the data inputs
+or outputs they added during the Op's initialization. In addition this is where
+inputs are converted if necessary for use in this Op. For example an image data
+input may need conversion from RGB to GRAY to match the color model of the op.
 </para>
 
 <para>
-The default implementation of gegl_filter_evaluate evaluates the operation in
-three stages: prepare, process, and finish. Each of these is passed the input
-Attributes. This allows Filters to initialize (in prepare) and destroy (in
-finish) any resources that are needed for the operation. The method called
-process is where the operation actually occurs.
-</para>
-
-<para>
-During the method process the Filter will get the corresponding input values
-from the passed list of input Attributes. It then produces its result based on
-the intput values as well as any corresponding relevant attributes taken from
-its own Attributes structures. The results are placed in the values of the Ops
-Attributes structures and then the Filter is finished. The graph evaluation
-code then chooses some Filter downstream and calls gegl_filter_evaluate on it.
+The methods in Filter should only ever be called from the #GeglEvalMgr
+visitors during graph traversal. None of them should be called otherwise.  
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -44,41 +70,32 @@ code then chooses some Filter downstream and calls gegl_filter_evaluate on it.
 
 </para>
 
-<!-- ##### STRUCT GeglColorModel ##### -->
+<!-- ##### STRUCT GeglFilter ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### FUNCTION gegl_filter_compute_need_rect ##### -->
+<!-- ##### STRUCT GeglFilterClass ##### -->
 <para>
 
 </para>
 
-@self: 
-@input_need_rect: 
-@need_rect: 
-@i: 
+@op_class: 
+@prepare: 
+@process: 
+@finish: 
+@validate_inputs: 
+@validate_outputs: 
 
-
-<!-- ##### FUNCTION gegl_filter_compute_have_rect ##### -->
-<para>
-
-</para>
-
-@self: 
-@have_rect: 
-@input_have_rects: 
-
-
-<!-- ##### FUNCTION gegl_filter_compute_derived_color_model ##### -->
+<!-- ##### FUNCTION gegl_filter_evaluate ##### -->
 <para>
 
 </para>
 
 @self: 
-@input_color_models: 
-@Returns: 
+@data_outputs: 
+@data_inputs: 
 
 
 <!-- ##### FUNCTION gegl_filter_validate_inputs ##### -->
@@ -87,10 +104,7 @@ code then chooses some Filter downstream and calls gegl_filter_evaluate on it.
 </para>
 
 @self: 
-@data_list: 
-<!-- # Unused Parameters # -->
-@input_param: 
-@input_attributes: 
+@data_inputs: 
 
 
 <!-- ##### FUNCTION gegl_filter_validate_outputs ##### -->
@@ -99,25 +113,6 @@ code then chooses some Filter downstream and calls gegl_filter_evaluate on it.
 </para>
 
 @self: 
-@output_data_list: 
-<!-- # Unused Parameters # -->
-@param: 
-@attributes: 
-@output_attributes: 
-
-
-<!-- ##### FUNCTION gegl_filter_evaluate ##### -->
-<para>
-
-</para>
-
-@self: 
-@output_data_list: 
-@input_data_list: 
-<!-- # Unused Parameters # -->
-@param: 
-@input_param: 
-@attributes: 
-@input_attributes: 
+@data_outputs: 
 
 

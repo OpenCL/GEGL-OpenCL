@@ -2,27 +2,30 @@
 GeglColor
 
 <!-- ##### SECTION Short_Description ##### -->
-The basic color object in gegl.
+Constant color image
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-The Color object is designed to hold single pixel color values. It is used for
-things like the current foreground or background color, and also for color
-constants like WHITE, BLACK, RED, etc. It is left to the individual ColorModels
-to determine what each of these constants means in a particular case. Color is
-generic enough to handle any channel data type (8bit, 16bit, float). Colors
-have pointers to ColorModels that describe the interpretation of the
-components. They also have a pointer to an array of channel values that
-represent the components for the color value. Colors are for operations that
-need a small number of colors (like for a fill) to specify some color related
-action.  For large numbers of colors, use an actual SampledImage with an
-appropriate color model and data type, etc.
+This op creates a constant color image.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglColor ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorClass ##### -->
+<para>
+
+</para>
+
+@no_input_class: 
 
 <!-- ##### FUNCTION gegl_color_get_pixel ##### -->
 <para>
@@ -78,11 +81,6 @@ appropriate color model and data type, etc.
 @height: 
 
 
-<!-- ##### ARG GeglColor:width ##### -->
-<para>
-
-</para>
-
 <!-- ##### ARG GeglColor:height ##### -->
 <para>
 
@@ -94,6 +92,11 @@ appropriate color model and data type, etc.
 </para>
 
 <!-- ##### ARG GeglColor:pixel-rgb-uint8 ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglColor:width ##### -->
 <para>
 
 </para>

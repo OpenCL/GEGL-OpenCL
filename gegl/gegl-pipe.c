@@ -2,30 +2,24 @@
 #include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
 #include "gegl-color-space.h"
-#include "gegl-data-space.h"
-#include "gegl-image-buffer.h"
-#include "gegl-image-buffer-iterator.h"
-#include "gegl-image-buffer-data.h"
+#include "gegl-channel-space.h"
+#include "gegl-image.h"
+#include "gegl-image-iterator.h"
+#include "gegl-image-data.h"
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
 #include "gegl-param-specs.h"
-
-enum
-{
-  PROP_0, 
-  PROP_LAST 
-};
 
 static void class_init (GeglPipeClass * klass);
 static void init (GeglPipe * self, GeglPipeClass * klass);
 static void finalize(GObject * gobject);
 
-static void process (GeglFilter * filter, GList * output_data_list, GList * input_data_list);
-static void prepare (GeglFilter * filter, GList * output_data_list, GList * input_data_list);
+static void process (GeglFilter * filter, GList * data_outputs, GList * data_inputs);
+static void prepare (GeglFilter * filter, GList * data_outputs, GList * data_inputs);
 static gpointer parent_class = NULL;
 
-static void validate_inputs  (GeglFilter *filter, GList *data_list);
-static void validate_outputs (GeglFilter *filter, GList *output_data_list);
+static void validate_inputs  (GeglFilter *filter, GList *data_inputs);
+static void validate_outputs (GeglFilter *filter, GList *data_outputs);
 
 GType
 gegl_pipe_get_type (void)
@@ -47,7 +41,7 @@ gegl_pipe_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GEGL_TYPE_IMAGE, 
+      type = g_type_register_static (GEGL_TYPE_IMAGE_OP, 
                                      "GeglPipe", 
                                      &typeInfo, 
                                      0);
@@ -72,19 +66,19 @@ class_init (GeglPipeClass * klass)
   filter_class->validate_inputs = validate_inputs;
   filter_class->validate_outputs = validate_outputs;
 
-  /* op properties */
-  gegl_op_class_install_input_data_property(op_class, 
-                                       gegl_param_spec_image_buffer("input-image", 
-                                                                  "InputImage",
-                                                                  "The input image.",
-                                                                   G_PARAM_PRIVATE));
+  /* data properties */
+  gegl_op_class_install_data_input_property(op_class, 
+                         gegl_param_spec_image("input-image", 
+                                               "InputImage",
+                                               "The input image.",
+                                                G_PARAM_PRIVATE));
 }
 
 static void 
 init (GeglPipe * self, 
       GeglPipeClass * klass)
 {
-  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_IMAGE_BUFFER_DATA, "input-image", 0);
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "input-image");
 
   self->scanline_processor = g_object_new(GEGL_TYPE_SCANLINE_PROCESSOR,NULL);
   self->scanline_processor->op = GEGL_FILTER(self);
@@ -102,51 +96,56 @@ finalize(GObject *gobject)
 
 static void 
 validate_inputs (GeglFilter *filter,
-                 GList *data_list)
+                 GList *data_inputs)
 {
 }
 
 static void 
 validate_outputs (GeglFilter *filter,
-                  GList *output_data_list)
+                  GList *data_outputs)
 {
-  GeglData *data = g_list_nth_data(output_data_list, 0);
+  GeglData *data = g_list_nth_data(data_outputs, 0);
+  GValue *value = gegl_data_get_value(data);
 
-  if(G_VALUE_TYPE(data->value) != GEGL_TYPE_IMAGE_BUFFER)
-    g_value_init(data->value, GEGL_TYPE_IMAGE_BUFFER);
+  if(G_VALUE_TYPE(value) != GEGL_TYPE_IMAGE)
+    g_value_init(value, GEGL_TYPE_IMAGE);
 }
 
 static void 
 prepare (GeglFilter * filter, 
-         GList * output_data_list,
-         GList * input_data_list)
+         GList * data_outputs,
+         GList * data_inputs)
 {
   GeglPipe *self = GEGL_PIPE(filter);
-  GeglData *src_data = (GeglData*)g_list_nth_data(input_data_list, 0); 
-  GeglData *dest_data = (GeglData*)g_list_nth_data(output_data_list, 0); 
-  GeglImageBuffer *src = (GeglImageBuffer*)g_value_get_object(src_data->value);
-  GeglColorModel * src_cm = gegl_image_buffer_get_color_model (src);
-  GeglColorSpace * src_cs = gegl_color_model_color_space(src_cm);
-  GeglDataSpace * src_ds = gegl_color_model_data_space(src_cm);
-  GeglDataSpaceType type = gegl_data_space_data_space_type(src_ds);
-  GeglColorSpaceType space = gegl_color_space_color_space_type(src_cs);
+  GeglData *src_data = (GeglData*)g_list_nth_data (data_inputs, 0); 
+  GValue *src_value = gegl_data_get_value (src_data);
+  GeglData *dest_data = (GeglData*)g_list_nth_data (data_outputs, 0); 
+  GValue *dest_value = gegl_data_get_value (dest_data);
+  GeglImage *src = (GeglImage*)g_value_get_object (src_value);
+  GeglColorModel * src_cm = gegl_image_get_color_model (src);
+  GeglColorSpace * src_color_space = gegl_color_model_color_space (src_cm);
+  GeglChannelSpace * src_channel_space = gegl_color_model_channel_space (src_cm);
+  GeglChannelSpaceType channel_type = gegl_channel_space_channel_space_type (src_channel_space);
+  GeglColorSpaceType color_type = gegl_color_space_color_space_type (src_color_space);
   GeglPipeClass *klass = GEGL_PIPE_GET_CLASS(self);
 
   /* copy the src value to the dest value */
-  g_value_set_object(dest_data->value, src);
+  g_value_set_object(dest_value, src);
 
   /* Get the appropriate scanline func from subclass */
   if(klass->get_scanline_func)
-    self->scanline_processor->func = (*klass->get_scanline_func)(self, space, type);
+    self->scanline_processor->func = (*klass->get_scanline_func)(self, 
+                                                                 color_type, 
+                                                                 channel_type);
 }
 
 static void 
 process (GeglFilter * filter, 
-         GList * output_data_list,
-         GList * input_data_list)
+         GList * data_outputs,
+         GList * data_inputs)
 {
   GeglPipe *self =  GEGL_PIPE(filter);
   gegl_scanline_processor_process(self->scanline_processor, 
-                                  output_data_list,
-                                  input_data_list);
+                                  data_outputs,
+                                  data_inputs);
 }

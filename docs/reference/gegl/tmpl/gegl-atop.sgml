@@ -2,15 +2,31 @@
 GeglAtop
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Composite B atop A
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This composites B atop A.
+</para>
+<para>
+(1-alphaB) * A + alphaA * B
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglAtop ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglAtopClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
 

@@ -1,13 +1,19 @@
-INCLUDES = \
+INCLUDES = @STRIP_BEGIN@ \
 	-I$(top_srcdir)/gegl \
 	-I$(top_srcdir)/tools/testsuite \
-	@GEGL_CFLAGS@
+	@DEP_CFLAGS@ \
+@STRIP_END@
 
-LDFLAGS =  \
-	@GEGL_LIBS@
+LDFLAGS =
 
-DEPS = ../gegl/libgegl.la ../tools/testsuite/libtestsuite.la
-LDADDS = ../gegl/libgegl.la ../tools/testsuite/libtestsuite.la
+DEPS = \
+    $(top_builddir)/tools/testsuite/libtestsuite.la \
+	$(top_builddir)/gegl/@gegltargetlib@
+
+LDADDS = @STRIP_BEGIN@ \
+    $(top_builddir)/tools/testsuite/libtestsuite.la \
+	$(top_builddir)/gegl/@gegltargetlib@ \
+@STRIP_END@
 
 MOCK_OBJECT_SRC = \
    gegl-mock-bfs-visitor.c \
@@ -16,8 +22,8 @@ MOCK_OBJECT_SRC = \
    gegl-mock-dfs-visitor.h \
    gegl-mock-filter.c \
    gegl-mock-filter.h \
-   gegl-mock-image.c \
-   gegl-mock-image.h \
+   gegl-mock-image-op.c \
+   gegl-mock-image-op.h \
    gegl-mock-node.c \
    gegl-mock-node.h \
    gegl-mock-object.c \
@@ -39,7 +45,9 @@ testgegl_SOURCES = \
    addtest-rgb-float.c \
    addtest-rgb-uint8.c \
    bfsvisitortest.c \
+   buffertest.c \
    channelfloatvaluetest.c \
+   channelspacetest.c \
    channeluint8valuetest.c \
    channelvaluetest.c \
    checktest.c \
@@ -47,8 +55,6 @@ testgegl_SOURCES = \
    colorspacetest.c \
    colortest-rgb-float.c \
    colortest-rgb-uint8.c \
-   databuffertest.c \
-   dataspacetest.c \
    dfsvisitortest.c \
    dumpvisitortest.c \
    fadetest-rgb-float.c \
@@ -60,9 +66,9 @@ testgegl_SOURCES = \
    iaddtest-rgb-uint8.c \
    imulttest-rgb-float.c \
    imulttest-rgb-uint8.c \
+   imageiteratortest.c \
+   imageoptest.c \
    imagetest.c \
-   imagebufferiteratortest.c \
-   imagebuffertest.c \
    multiplytest-rgb-float.c \
    multtest-rgb-float.c \
    multtest-rgb-uint8.c \
@@ -85,12 +91,12 @@ testgegl_SOURCES = \
    valuetest.c
 
 testgegl_LDFLAGS = -g
-testgegl_DEPENDENCIES = $(DEPS)
+testgegl_DEPENDENCIES = $(TEST_DEPS)
 testgegl_LDADD = $(LDADDS) -lm
 
 TESTS = testgegl
 
 EXTRA_PROGRAMS = $(TESTS)
   
-all:
+all: check
 

@@ -9,8 +9,8 @@
 #define MULT1 .6
 #define MULT2 .7
 
-#define IMAGE_WIDTH 1 
-#define IMAGE_HEIGHT 1 
+#define IMAGE_OP_WIDTH 1 
+#define IMAGE_OP_HEIGHT 1 
 
 static GeglOp * source;
 
@@ -81,7 +81,7 @@ test_mult_apply(Test *test)
                                 NULL);
 
     gegl_op_apply(mult); 
-    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(mult), 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(mult), 
                                             .1 * MULT0, 
                                             .2 * MULT1, 
                                             .3 * MULT2));  
@@ -104,7 +104,7 @@ test_mult_apply(Test *test)
                                  NULL);
 
     gegl_op_apply(mult2); 
-    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE(mult2), 
+    ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(mult2), 
                                             .1 * MULT0 * MULT0, 
                                             .2 * MULT1 * MULT1, 
                                             .3 * MULT2 * MULT2));  
@@ -118,8 +118,8 @@ static void
 mult_test_setup(Test *test)
 {
   source = g_object_new(GEGL_TYPE_COLOR, 
-                        "width", IMAGE_WIDTH, 
-                        "height", IMAGE_HEIGHT, 
+                        "width", IMAGE_OP_WIDTH, 
+                        "height", IMAGE_OP_HEIGHT, 
                         "pixel-rgb-float",.1, .2, .3, 
                         NULL); 
 }

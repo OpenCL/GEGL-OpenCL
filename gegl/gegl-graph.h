@@ -1,11 +1,11 @@
 #ifndef __GEGL_GRAPH_H__
 #define __GEGL_GRAPH_H__
                                                 
+#include "gegl-op.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-op.h"
 
 #define GEGL_TYPE_GRAPH               (gegl_graph_get_type ())
 #define GEGL_GRAPH(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_GRAPH, GeglGraph))
@@ -14,15 +14,8 @@ extern "C" {
 #define GEGL_IS_GRAPH_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_GRAPH))
 #define GEGL_GRAPH_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_GRAPH, GeglGraphClass))
 
-#ifndef __TYPEDEF_GEGL_GRAPH__
-#define __TYPEDEF_GEGL_GRAPH__
 typedef struct _GeglGraph GeglGraph;
-#endif
-
-#ifndef __TYPEDEF_GEGL_GRAPH_INPUT__
-#define __TYPEDEF_GEGL_GRAPH_INPUT_
 typedef struct _GeglGraphInput GeglGraphInput;
-#endif
 struct _GeglGraphInput
 {
   GeglNode * node;

@@ -1,11 +1,11 @@
 #ifndef __GEGL_BFS_VISITOR_H__
 #define __GEGL_BFS_VISITOR_H__
 
+#include "gegl-visitor.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-visitor.h"
 
 #define GEGL_TYPE_BFS_VISITOR               (gegl_bfs_visitor_get_type ())
 #define GEGL_BFS_VISITOR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BFS_VISITOR, GeglBfsVisitor))
@@ -14,10 +14,7 @@ extern "C" {
 #define GEGL_IS_BFS_VISITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_BFS_VISITOR))
 #define GEGL_BFS_VISITOR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BFS_VISITOR, GeglBfsVisitorClass))
 
-#ifndef __TYPEDEF_GEGL_BFS_VISITOR__
-#define __TYPEDEF_GEGL_BFS_VISITOR__
 typedef struct _GeglBfsVisitor GeglBfsVisitor;
-#endif
 struct _GeglBfsVisitor 
 {
     GeglVisitor visitor;

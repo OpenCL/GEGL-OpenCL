@@ -1,11 +1,11 @@
 #ifndef __GEGL_ADD_H__
 #define __GEGL_ADD_H__
 
+#include "gegl-unary.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-unary.h"
 
 #define GEGL_TYPE_ADD               (gegl_add_get_type ())
 #define GEGL_ADD(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_ADD, GeglAdd))
@@ -14,10 +14,9 @@ extern "C" {
 #define GEGL_IS_ADD_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_ADD))
 #define GEGL_ADD_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_ADD, GeglAddClass))
 
-#ifndef __TYPEDEF_GEGL_ADD__
-#define __TYPEDEF_GEGL_ADD__
 typedef struct _GeglAdd GeglAdd;
-#endif
+typedef struct _GeglAddClass GeglAddClass;
+
 struct _GeglAdd 
 {
    GeglUnary unary;
@@ -27,7 +26,6 @@ struct _GeglAdd
    GValue *constant;
 };
 
-typedef struct _GeglAddClass GeglAddClass;
 struct _GeglAddClass 
 {
    GeglUnaryClass unary_class;

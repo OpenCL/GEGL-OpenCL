@@ -1,11 +1,11 @@
 #ifndef __GEGL_OVER_H__
 #define __GEGL_OVER_H__
 
+#include "gegl-comp.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-comp.h"
 
 #define GEGL_TYPE_OVER               (gegl_over_get_type ())
 #define GEGL_OVER(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OVER, GeglOver))
@@ -14,10 +14,7 @@ extern "C" {
 #define GEGL_IS_OVER_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_OVER))
 #define GEGL_OVER_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OVER, GeglOverClass))
 
-#ifndef __TYPEDEF_GEGL_OVER__
-#define __TYPEDEF_GEGL_OVER__
 typedef struct _GeglOver GeglOver;
-#endif
 struct _GeglOver 
 {
    GeglComp comp;

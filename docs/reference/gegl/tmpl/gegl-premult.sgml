@@ -2,15 +2,34 @@
 GeglPremult
 
 <!-- ##### SECTION Short_Description ##### -->
-Multiply color by alpha for image.
+Premultiply image by alpha
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+Premultiply the image by the alpha channel.
+<literallayout>
+A*R
+A*G
+A*B 
+A
+</literallayout>
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglPremult ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglPremultClass ##### -->
+<para>
+
+</para>
+
+@unary_class: 
 

@@ -7,6 +7,7 @@
 #include <gegl-blend.h>
 #include <gegl-channel-data.h>
 #include <gegl-color.h>
+#include <gegl-color-data.h>
 #include <gegl-color-model.h>
 #include <gegl-color-space.h>
 #include <gegl-color-space-rgb.h>
@@ -16,10 +17,10 @@
 #include <gegl-component-color-model.h>
 #include <gegl-darken.h>
 #include <gegl-data.h>
-#include <gegl-data-buffer.h>
-#include <gegl-data-space.h>
-#include <gegl-data-space-float.h>
-#include <gegl-data-space-uint8.h>
+#include <gegl-buffer.h>
+#include <gegl-channel-space.h>
+#include <gegl-channel-space-float.h>
+#include <gegl-channel-space-uint8.h>
 #include <gegl-dfs-visitor.h>
 #include <gegl-difference.h>
 #include <gegl-dump-visitor.h>
@@ -33,10 +34,10 @@
 #include <gegl-graph-setup-visitor.h>
 #include <gegl-i-add.h>
 #include <gegl-i-mult.h>
+#include <gegl-image-op.h>
 #include <gegl-image.h>
-#include <gegl-image-buffer.h>
-#include <gegl-image-buffer-data.h>
-#include <gegl-image-buffer-iterator.h>
+#include <gegl-image-data.h>
+#include <gegl-image-iterator.h>
 #include <gegl-inside.h>
 #include <gegl-init.h>
 #include <gegl-lighten.h>

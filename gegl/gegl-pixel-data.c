@@ -3,12 +3,6 @@
 #include "gegl-value-types.h"
 #include "gegl-utils.h"
 
-enum
-{
-  PROP_0, 
-  PROP_LAST 
-};
-
 static void class_init (GeglPixelDataClass * klass);
 static void init (GeglPixelData *self, GeglPixelDataClass * klass);
 
@@ -35,7 +29,7 @@ gegl_pixel_data_get_type (void)
         NULL,             /* value_table */
       };
 
-      type = g_type_register_static (GEGL_TYPE_DATA, 
+      type = g_type_register_static (GEGL_TYPE_COLOR_DATA, 
                                      "GeglPixelData", 
                                      &typeInfo, 
                                      0);
@@ -54,24 +48,4 @@ static void
 init (GeglPixelData * self, 
       GeglPixelDataClass * klass)
 {
-  self->color_model = NULL;
-}
-
-GeglColorModel * 
-gegl_pixel_data_get_color_model (GeglPixelData * self)
-{
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (GEGL_IS_PIXEL_DATA (self), NULL);
-   
-  return self->color_model;
-}
-
-void
-gegl_pixel_data_set_color_model (GeglPixelData * self,
-                                  GeglColorModel *color_model)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_PIXEL_DATA (self));
-   
-  self->color_model = color_model;
 }

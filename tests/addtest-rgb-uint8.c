@@ -13,8 +13,8 @@
 #define G0 160
 #define B0 240
 
-#define IMAGE_WIDTH 1 
-#define IMAGE_HEIGHT 1 
+#define IMAGE_OP_WIDTH 1 
+#define IMAGE_OP_HEIGHT 1 
 
 static GeglOp * source;
 
@@ -80,7 +80,7 @@ test_add_apply(Test *test)
     g = CLAMP(G0 + ADD1, 0, 255);
     b = CLAMP(B0 + ADD2, 0, 255);
 
-    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE(add), r, g, b)); 
+    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(add), r, g, b)); 
     g_object_unref(add);
   }
 
@@ -106,7 +106,7 @@ test_add_apply(Test *test)
     g = CLAMP(g + ADD1, 0, 255);
     b = CLAMP(b + ADD2, 0, 255);
 
-    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE(add2), r, g, b)); 
+    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(add2), r, g, b)); 
 
     g_object_unref(add1);
     g_object_unref(add2);
@@ -117,8 +117,8 @@ static void
 add_test_setup(Test *test)
 {
   source = g_object_new(GEGL_TYPE_COLOR, 
-                        "width", IMAGE_WIDTH, 
-                        "height", IMAGE_HEIGHT, 
+                        "width", IMAGE_OP_WIDTH, 
+                        "height", IMAGE_OP_HEIGHT, 
                         "pixel-rgb-uint8", R0, G0, B0, 
                         NULL); 
 }

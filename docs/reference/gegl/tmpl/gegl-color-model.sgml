@@ -14,23 +14,19 @@ GeglColorModel
 
 </para>
 
-<!-- ##### STRUCT GeglColorSpace ##### -->
+<!-- ##### STRUCT GeglColorModel ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### STRUCT GeglDataSpace ##### -->
+<!-- ##### STRUCT GeglColorModelClass ##### -->
 <para>
 
 </para>
 
-
-<!-- ##### STRUCT GeglStorage ##### -->
-<para>
-
-</para>
-
+@object_class: 
+@create_storage: 
 
 <!-- ##### FUNCTION gegl_color_model_register ##### -->
 <para>
@@ -39,8 +35,6 @@ GeglColorModel
 
 @color_model: 
 @Returns: 
-<!-- # Unused Parameters # -->
-@color_model_name: 
 
 
 <!-- ##### FUNCTION gegl_color_model_instance ##### -->
@@ -61,7 +55,7 @@ GeglColorModel
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_color_model_data_space ##### -->
+<!-- ##### FUNCTION gegl_color_model_channel_space ##### -->
 <para>
 
 </para>
@@ -189,12 +183,12 @@ GeglColorModel
 @Returns: 
 
 
-<!-- ##### ARG GeglColorModel:color-space ##### -->
+<!-- ##### ARG GeglColorModel:channel-space ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglColorModel:data-space ##### -->
+<!-- ##### ARG GeglColorModel:color-space ##### -->
 <para>
 
 </para>

@@ -1,0 +1,145 @@
+<!-- ##### SECTION Title ##### -->
+GeglImageIterator
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglImageIterator ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglImageIteratorClass ##### -->
+<para>
+
+</para>
+
+@object_class: 
+
+<!-- ##### FUNCTION gegl_image_iterator_get_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_iterator_get_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@rect: 
+
+
+<!-- ##### FUNCTION gegl_image_iterator_get_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_iterator_get_num_colors ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_iterator_first ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_image_iterator_next ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_image_iterator_is_done ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_iterator_color_channels ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_iterator_alpha_channel ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_iterator_set_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@rect: 
+
+
+<!-- ##### FUNCTION gegl_image_iterator_set_image ##### -->
+<para>
+
+</para>
+
+@self: 
+@image: 
+
+
+<!-- ##### FUNCTION gegl_image_iterator_set_scanline ##### -->
+<para>
+
+</para>
+
+@self: 
+@y: 
+
+
+<!-- ##### ARG GeglImageIterator:area ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglImageIterator:image ##### -->
+<para>
+
+</para>
+

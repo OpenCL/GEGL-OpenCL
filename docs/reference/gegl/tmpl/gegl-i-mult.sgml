@@ -2,15 +2,31 @@
 GeglIMult
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Multiply two images
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+Multiply two images.
+</para>
+<para>
+A * B
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglIMult ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglIMultClass ##### -->
+<para>
+
+</para>
+
+@binary_class: 
 

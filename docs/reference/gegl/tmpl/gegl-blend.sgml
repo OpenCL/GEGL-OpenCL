@@ -2,17 +2,48 @@
 GeglBlend
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Abstract class that represents common blend modes.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
+This is the abstract class that represents GeglImageOps with two image data
+inputs, A, and B, combined in common blend modes. This class has a
+<literal>opacity</literal> property which is used as multiplier that can be
+applied to the second input (B).
+</para>
 
+<para>
+Blend modes are described by the following formula for the case of 
+premultiplied images (A,aA), (B,aB), with result (C,aC).
+</para>
+
+<literallayout>
+C = (1-aB)*A + (1-aA)*B + aA*aB* Blend(A/aA, B/aB)
+alphaC = aA + aB - aA*aB
+</literallayout>
+
+<para>
+Different blend modes define the function Blend differently. 
+For example Multiply defines Blend(x,y) = x*y.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglBlend ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglBlendClass ##### -->
+<para>
+
+</para>
+
+@comp_class: 
 
 <!-- ##### FUNCTION gegl_blend_get_opacity ##### -->
 <para>

@@ -2,15 +2,28 @@
 GeglPrint
 
 <!-- ##### SECTION Short_Description ##### -->
-Print pixels of an image.
+Print out pixel values of image
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+Prints out the pixel values of an image.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglPrint ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglPrintClass ##### -->
+<para>
+
+</para>
+
+@pipe_class: 
 

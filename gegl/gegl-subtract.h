@@ -1,11 +1,11 @@
 #ifndef __GEGL_SUBTRACT_H__
 #define __GEGL_SUBTRACT_H__
 
+#include "gegl-binary.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-binary.h"
 
 #define GEGL_TYPE_SUBTRACT               (gegl_subtract_get_type ())
 #define GEGL_SUBTRACT(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SUBTRACT, GeglSubtract))
@@ -14,10 +14,7 @@ extern "C" {
 #define GEGL_IS_SUBTRACT_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_SUBTRACT))
 #define GEGL_SUBTRACT_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SUBTRACT, GeglSubtractClass))
 
-#ifndef __TYPEDEF_GEGL_SUBTRACT__
-#define __TYPEDEF_GEGL_SUBTRACT__
 typedef struct _GeglSubtract GeglSubtract;
-#endif
 struct _GeglSubtract 
 {
    GeglBinary binary;

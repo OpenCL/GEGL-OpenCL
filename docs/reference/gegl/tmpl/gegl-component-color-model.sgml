@@ -14,15 +14,16 @@ GeglComponentColorModel
 
 </para>
 
-<!-- ##### STRUCT GeglColorSpace ##### -->
+<!-- ##### STRUCT GeglComponentColorModel ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### STRUCT GeglDataSpace ##### -->
+<!-- ##### STRUCT GeglComponentColorModelClass ##### -->
 <para>
 
 </para>
 
+@color_model_class: 
 

@@ -1,11 +1,11 @@
 #ifndef __GEGL_COLOR_H__
 #define __GEGL_COLOR_H__
 
+#include "gegl-no-input.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-no-input.h"
 
 #define GEGL_TYPE_COLOR               (gegl_color_get_type ())
 #define GEGL_COLOR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR, GeglColor))
@@ -14,10 +14,7 @@ extern "C" {
 #define GEGL_IS_COLOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_COLOR))
 #define GEGL_COLOR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COLOR, GeglColorClass))
 
-#ifndef __TYPEDEF_GEGL_COLOR__
-#define __TYPEDEF_GEGL_COLOR__
 typedef struct _GeglColor GeglColor;
-#endif
 struct _GeglColor 
 {
    GeglNoInput no_input;

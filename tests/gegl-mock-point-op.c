@@ -1,6 +1,6 @@
 #include "gegl-mock-point-op.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-image-buffer-iterator.h"
+#include "gegl-image-iterator.h"
 
 enum
 {
@@ -12,7 +12,7 @@ static void class_init (GeglMockPointOpClass * klass);
 static void init(GeglMockPointOp *self, GeglMockPointOpClass *klass);
 static void prepare (GeglFilter * op, GList * output_params, GList * input_param);
 static void finish (GeglFilter * op, GList * output_params, GList * input_param);
-static void scanline (GeglFilter * op, GeglImageBufferIterator ** iters, gint width);
+static void scanline (GeglFilter * op, GeglImageIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -65,7 +65,7 @@ init (GeglMockPointOp * self,
 
 static void 
 scanline (GeglFilter * op,
-          GeglImageBufferIterator ** iters,
+          GeglImageIterator ** iters,
           gint width)
 {
   LOG_DEBUG("scanline", "MockPointOp scanline was called");

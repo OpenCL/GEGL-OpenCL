@@ -2,7 +2,7 @@
 GeglLighten
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Lighten blend mode
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
@@ -13,4 +13,17 @@ GeglLighten
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglLighten ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglLightenClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
 

@@ -9,20 +9,25 @@ GeglChannelData
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
 
-
-<!-- ##### STRUCT GeglDataSpace ##### -->
+<!-- ##### STRUCT GeglChannelData ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### FUNCTION gegl_channel_data_get_data_space ##### -->
+<!-- ##### STRUCT GeglChannelDataClass ##### -->
+<para>
+
+</para>
+
+@data_class: 
+
+<!-- ##### FUNCTION gegl_channel_data_get_channel_space ##### -->
 <para>
 
 </para>

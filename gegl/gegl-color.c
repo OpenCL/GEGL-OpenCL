@@ -1,7 +1,7 @@
 #include "gegl-color.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
-#include "gegl-image-buffer-iterator.h"
+#include "gegl-image-iterator.h"
 #include "gegl-pixel-value-types.h"
 #include "gegl-pixel-data.h"
 #include "gegl-scalar-data.h"
@@ -25,14 +25,14 @@ static void finalize (GObject * gobject);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void compute_have_rect(GeglFilter * filter, GeglRect *have_rect, GList * input_have_rects);
-static GeglColorModel * compute_derived_color_model (GeglFilter * filter, GList * input_color_models);
+static void compute_have_rect(GeglImageOp * image_op, GeglRect *have_rect, GList * data_inputs);
+static GeglColorModel * compute_color_model (GeglImageOp * image_op, GList * data_inputs);
 
-static GeglScanlineFunc get_scanline_func(GeglNoInput * no_input, GeglColorSpaceType space, GeglDataSpaceType type);
+static GeglScanlineFunc get_scanline_func(GeglNoInput * no_input, GeglColorSpaceType space, GeglChannelSpaceType type);
 
-static void color_uint8 (GeglFilter * filter, GeglImageBufferIterator ** iters, gint width);
-static void color_float (GeglFilter * filter, GeglImageBufferIterator ** iters, gint width);
-static void color_u16 (GeglFilter * filter, GeglImageBufferIterator ** iters, gint width);
+static void color_uint8 (GeglFilter * filter, GeglImageIterator ** iters, gint width);
+static void color_float (GeglFilter * filter, GeglImageIterator ** iters, gint width);
+static void color_u16 (GeglFilter * filter, GeglImageIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -69,7 +69,7 @@ class_init (GeglColorClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GeglOpClass *op_class = GEGL_OP_CLASS(klass);
-  GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
+  GeglImageOpClass *image_op_class = GEGL_IMAGE_OP_CLASS(klass);
   GeglNoInputClass *no_input_class = GEGL_NO_INPUT_CLASS(klass);
 
   GParamSpec *generic_property;
@@ -83,17 +83,17 @@ class_init (GeglColorClass * klass)
   gobject_class->get_property = get_property;
   gobject_class->finalize = finalize;
 
-  filter_class->compute_have_rect = compute_have_rect;
-  filter_class->compute_derived_color_model = compute_derived_color_model;
+  image_op_class->compute_have_rect = compute_have_rect;
+  image_op_class->compute_color_model = compute_color_model;
 
   /* op properties */
-  gegl_op_class_install_input_data_property(op_class, 
+  gegl_op_class_install_data_input_property(op_class, 
                                        gegl_param_spec_pixel("pixel", 
                                                              "Pixel",
                                                              "The color of the constant image",
                                                               G_PARAM_PRIVATE));
 
-  gegl_op_class_install_input_data_property(op_class, 
+  gegl_op_class_install_data_input_property(op_class, 
                                        g_param_spec_int("width", 
                                                         "Width",
                                                         "The width of the constant image",
@@ -101,7 +101,7 @@ class_init (GeglColorClass * klass)
                                                         G_MAXINT,
                                                         GEGL_DEFAULT_WIDTH,
                                                         G_PARAM_PRIVATE));
-  gegl_op_class_install_input_data_property(op_class, 
+  gegl_op_class_install_data_input_property(op_class, 
                                        g_param_spec_int("height", 
                                                         "Height",
                                                         "The height of the constant image",
@@ -111,7 +111,7 @@ class_init (GeglColorClass * klass)
                                                         G_PARAM_PRIVATE));
 
   /* regular properties */
-  generic_property = gegl_op_class_find_input_data_property(op_class, "pixel"); 
+  generic_property = gegl_op_class_find_data_input_property(op_class, "pixel"); 
 
   property = gegl_param_spec_pixel_rgb_float ("pixel-rgb-float",
                                               "Pixel-Rgb-Float",
@@ -160,9 +160,9 @@ static void
 init (GeglColor * self, 
       GeglColorClass * klass)
 {
-  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_PIXEL_DATA, "pixel", 0);
-  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "width", 1);
-  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "height", 2);
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_PIXEL_DATA, "pixel");
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "width");
+  gegl_op_append_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "height");
 
   self->pixel = g_new0(GValue, 1); 
   g_value_init(self->pixel, GEGL_TYPE_PIXEL_RGB_FLOAT);
@@ -290,11 +290,11 @@ gegl_color_set_height (GeglColor * self,
 }
 
 static void 
-compute_have_rect(GeglFilter * filter, 
-                  GeglRect *have_rect, 
-                  GList * input_have_rects)
+compute_have_rect(GeglImageOp * image_op, 
+                      GeglRect *have_rect, 
+                      GList * data_inputs)
 { 
-  GeglColor * self = GEGL_COLOR(filter);
+  GeglColor * self = GEGL_COLOR(image_op);
 
   have_rect->x = 0;
   have_rect->y = 0;
@@ -303,13 +303,12 @@ compute_have_rect(GeglFilter * filter,
 }
 
 static GeglColorModel * 
-compute_derived_color_model (GeglFilter * filter, 
-                           GList *input_color_models)
+compute_color_model (GeglImageOp * image_op, 
+                             GList *data_inputs)
 {
-  GeglColor* self = GEGL_COLOR(filter);
+  GeglColor* self = GEGL_COLOR(image_op);
 
   GeglColorModel *color_cm = g_value_pixel_get_color_model(self->pixel);
-  gegl_image_set_derived_color_model(GEGL_IMAGE(filter), color_cm);
   return color_cm;
 }
 
@@ -348,21 +347,21 @@ static GeglScanlineFunc scanline_funcs[] =
 static GeglScanlineFunc
 get_scanline_func(GeglNoInput * no_input,
                   GeglColorSpaceType space,
-                  GeglDataSpaceType type)
+                  GeglChannelSpaceType type)
 {
   return scanline_funcs[type];
 }
 
 static void                                                            
 color_float(GeglFilter * filter,              
-            GeglImageBufferIterator ** iters,        
+            GeglImageIterator ** iters,        
             gint width)                       
 {                                                                       
   GeglColor * self = GEGL_COLOR(filter);
   gfloat *pixel = (gfloat*)g_value_pixel_get_data(self->pixel);
-  gfloat **d = (gfloat**)gegl_image_buffer_iterator_color_channels(iters[0]);
-  gfloat *da = (gfloat*)gegl_image_buffer_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_image_buffer_iterator_get_num_colors(iters[0]);
+  gfloat **d = (gfloat**)gegl_image_iterator_color_channels(iters[0]);
+  gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
   gboolean has_alpha = da ? TRUE: FALSE;
   gint alpha = d_color_chans;   /* should get from color model */
 
@@ -396,14 +395,14 @@ color_float(GeglFilter * filter,
 
 static void                                                            
 color_u16 (GeglFilter * filter,              
-          GeglImageBufferIterator ** iters,        
-          gint width)                       
+           GeglImageIterator ** iters,        
+           gint width)                       
 {                                                                       
   GeglColor * self = GEGL_COLOR(filter);
   guint16 *pixel = (guint16*)g_value_pixel_get_data(self->pixel);
-  guint16 **d = (guint16**)gegl_image_buffer_iterator_color_channels(iters[0]);
-  guint16 *da = (guint16*)gegl_image_buffer_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_image_buffer_iterator_get_num_colors(iters[0]);
+  guint16 **d = (guint16**)gegl_image_iterator_color_channels(iters[0]);
+  guint16 *da = (guint16*)gegl_image_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
   gboolean has_alpha = da ? TRUE: FALSE;
   gint alpha = d_color_chans;   /* should get from color model */
 
@@ -432,14 +431,14 @@ color_u16 (GeglFilter * filter,
 
 static void                                                            
 color_uint8 (GeglFilter * filter,              
-         GeglImageBufferIterator ** iters,        
+         GeglImageIterator ** iters,        
          gint width)                       
 {                                                                       
   GeglColor * self = GEGL_COLOR(filter);
   guint8 *pixel = (guint8*)g_value_pixel_get_data(self->pixel);
-  guint8 **d = (guint8**)gegl_image_buffer_iterator_color_channels(iters[0]);
-  guint8 *da = (guint8*)gegl_image_buffer_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_image_buffer_iterator_get_num_colors(iters[0]);
+  guint8 **d = (guint8**)gegl_image_iterator_color_channels(iters[0]);
+  guint8 *da = (guint8*)gegl_image_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
   gboolean has_alpha = da ? TRUE: FALSE;
   gint alpha = d_color_chans;   /* should get from color model */
 

@@ -1,16 +1,12 @@
 #ifndef __GEGL_CHECK_H__
 #define __GEGL_CHECK_H__
 
+#include "gegl-filter.h"
+#include "gegl-image.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#include "gegl-filter.h"
-
-#ifndef __TYPEDEF_GEGL_IMAGE_BUFFER__
-#define __TYPEDEF_GEGL_IMAGE_BUFFER__
-typedef struct _GeglImageBuffer GeglImageBuffer;
-#endif
 
 #define GEGL_TYPE_CHECK               (gegl_check_get_type ())
 #define GEGL_CHECK(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CHECK, GeglCheck))
@@ -19,16 +15,13 @@ typedef struct _GeglImageBuffer GeglImageBuffer;
 #define GEGL_IS_CHECK_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CHECK))
 #define GEGL_CHECK_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CHECK, GeglCheckClass))
 
-#ifndef __TYPEDEF_GEGL_CHECK__
-#define __TYPEDEF_GEGL_CHECK__
 typedef struct _GeglCheck GeglCheck;
-#endif
 struct _GeglCheck 
 {
     GeglFilter filter;
 
     /*< private >*/
-    GeglImageBuffer *image_buffer;
+    GeglImage *image;
     GValue *pixel;
     gboolean success;
     gint x;
@@ -47,8 +40,8 @@ gboolean gegl_check_get_success(GeglCheck *self);
 void gegl_check_get_pixel (GeglCheck * self, GValue *pixel);
 void gegl_check_set_pixel (GeglCheck * self, GValue *pixel);
 
-void gegl_check_set_image_buffer (GeglCheck * self, GeglImageBuffer *image_buffer);
-GeglImageBuffer * gegl_check_get_image_buffer (GeglCheck * self);
+void gegl_check_set_image (GeglCheck * self, GeglImage *image);
+GeglImage * gegl_check_get_image (GeglCheck * self);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

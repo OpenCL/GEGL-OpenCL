@@ -14,8 +14,8 @@
 #define G0 160
 #define B0 240
 
-#define IMAGE_WIDTH 1 
-#define IMAGE_HEIGHT 1 
+#define IMAGE_OP_WIDTH 1 
+#define IMAGE_OP_HEIGHT 1 
 
 static GeglOp * source;
 
@@ -92,7 +92,7 @@ test_mult_apply(Test *test)
     g = CLAMP((gint)(G0 * MULT1 + .5), 0, 255); 
     b = CLAMP((gint)(B0 * MULT2 + .5), 0, 255); 
 
-    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE(mult), r, g, b)); 
+    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(mult), r, g, b)); 
 
     g_object_unref(mult);
   }
@@ -123,7 +123,7 @@ test_mult_apply(Test *test)
     g = CLAMP((gint)(g * MULT1 + .5), 0, 255); 
     b = CLAMP((gint)(b * MULT2 + .5), 0, 255); 
 
-    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE(mult2), r, g, b)); 
+    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(mult2), r, g, b)); 
 
     g_object_unref(mult1);
     g_object_unref(mult2);
@@ -134,8 +134,8 @@ static void
 mult_test_setup(Test *test)
 {
   source = g_object_new(GEGL_TYPE_COLOR, 
-                        "width", IMAGE_WIDTH, 
-                        "height", IMAGE_HEIGHT, 
+                        "width", IMAGE_OP_WIDTH, 
+                        "height", IMAGE_OP_HEIGHT, 
                         "pixel-rgb-uint8", R0, G0, B0, 
                         NULL); 
 }

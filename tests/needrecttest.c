@@ -12,18 +12,16 @@ test_needrect_op(Test *t)
   GeglRect source0_need_rect;
   GeglRect source1_need_rect;
 
-  GeglOp * op = g_object_new (GEGL_TYPE_MOCK_FILTER, 
-                              "num_inputs", 2,
-                              NULL);  
+  GeglOp * op = g_object_new (GEGL_TYPE_I_ADD, NULL);  
  
   gegl_rect_set(&need_rect, 0,0,5,5);
   gegl_rect_set(&source0_need_rect, 0,0,0,0);
 
-  gegl_filter_compute_need_rect(GEGL_FILTER(op), &source0_need_rect, &need_rect, 0); 
+  gegl_image_op_compute_need_rect(GEGL_IMAGE_OP(op), &source0_need_rect, &need_rect, 0); 
   ct_test(t, gegl_rect_equal_coords(&source0_need_rect, 0,0,5,5));  
 
   gegl_rect_set(&source1_need_rect, 0,0,0,0);
-  gegl_filter_compute_need_rect(GEGL_FILTER(op), &source1_need_rect, &need_rect, 1); 
+  gegl_image_op_compute_need_rect(GEGL_IMAGE_OP(op), &source1_need_rect, &need_rect, 1); 
   ct_test(t, gegl_rect_equal_coords(&source1_need_rect, 0,0,5,5));  
 
   g_object_unref(op);
@@ -36,18 +34,16 @@ test_needrect_op_source_needrect_set(Test *t)
   GeglRect source0_need_rect;
   GeglRect source1_need_rect;
 
-  GeglOp * op = g_object_new (GEGL_TYPE_MOCK_FILTER, 
-                              "num_inputs", 2,
-                              NULL);  
+  GeglOp * op = g_object_new (GEGL_TYPE_I_ADD, NULL);  
  
   gegl_rect_set(&need_rect, 1,1,5,5);
   gegl_rect_set(&source0_need_rect, 0,0,3,3);
 
-  gegl_filter_compute_need_rect(GEGL_FILTER(op), &source0_need_rect, &need_rect, 0); 
+  gegl_image_op_compute_need_rect(GEGL_IMAGE_OP(op), &source0_need_rect, &need_rect, 0); 
   ct_test(t, gegl_rect_equal_coords(&source0_need_rect, 0,0,6,6));  
 
   gegl_rect_set(&source1_need_rect, 2,2,6,6);
-  gegl_filter_compute_need_rect(GEGL_FILTER(op), &source1_need_rect, &need_rect, 1); 
+  gegl_image_op_compute_need_rect(GEGL_IMAGE_OP(op), &source1_need_rect, &need_rect, 1); 
   ct_test(t, gegl_rect_equal_coords(&source1_need_rect, 1,1,7,7));  
 
   g_object_unref(op);

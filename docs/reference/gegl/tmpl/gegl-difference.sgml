@@ -2,7 +2,7 @@
 GeglDifference
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Difference blend mode
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
@@ -13,4 +13,17 @@ GeglDifference
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglDifference ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglDifferenceClass ##### -->
+<para>
+
+</para>
+
+@blend_class: 
 

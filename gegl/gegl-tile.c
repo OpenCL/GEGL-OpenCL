@@ -1,7 +1,7 @@
 #include "gegl-tile.h"
 #include "gegl-object.h"
 #include "gegl-storage.h"
-#include "gegl-data-buffer.h"
+#include "gegl-buffer.h"
 #include "gegl-utils.h"
 
 enum
@@ -130,7 +130,7 @@ constructor (GType                  type,
   GObject *gobject = G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
   GeglTile *self = GEGL_TILE(gobject);
 
-  self->data_buffer = gegl_storage_create_data_buffer(self->storage);
+  self->buffer = gegl_storage_create_buffer(self->storage);
 
   return gobject;
 }
@@ -140,7 +140,7 @@ finalize(GObject *gobject)
 {
   GeglTile *self = GEGL_TILE (gobject);
 
-  g_object_unref(self->data_buffer);
+  g_object_unref(self->buffer);
   g_object_unref(self->storage);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
@@ -209,20 +209,20 @@ get_property (GObject      *gobject,
 }
 
 /**
- * gegl_tile_get_data_buffer:
+ * gegl_tile_get_buffer:
  * @self: a #GeglTile
  *
  * Gets the data buffer.  
  *
- * Returns: the #GeglDataBuffer for the tile. 
+ * Returns: the #GeglBuffer for the tile. 
  **/
-GeglDataBuffer * 
-gegl_tile_get_data_buffer (GeglTile * self)
+GeglBuffer * 
+gegl_tile_get_buffer (GeglTile * self)
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_TILE (self), NULL);
    
-  return self->data_buffer;
+  return self->buffer;
 }
 
 /**
@@ -234,7 +234,8 @@ gegl_tile_get_data_buffer (GeglTile * self)
  *
  **/
 void 
-gegl_tile_get_area (GeglTile * self, GeglRect * area)
+gegl_tile_get_area (GeglTile * self, 
+                    GeglRect * area)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_TILE (self));
@@ -297,8 +298,8 @@ gegl_tile_get_storage (GeglTile * self)
 
 gpointer * 
 gegl_tile_data_pointers (GeglTile * self, 
-                           gint x, 
-                           gint y)
+                         gint x, 
+                         gint y)
 {
    g_return_val_if_fail (self != NULL, NULL);
    g_return_val_if_fail (GEGL_IS_TILE (self), NULL);
@@ -311,7 +312,7 @@ gegl_tile_data_pointers (GeglTile * self,
       gint num_channels = gegl_storage_num_bands(self->storage);
       gint bytes_per_channel = gegl_storage_data_type_bytes(self->storage);
       gint row_bytes = self->area.w * bytes_per_channel;
-      gpointer *data_banks = gegl_data_buffer_banks_data(self->data_buffer);
+      gpointer *data_banks = gegl_buffer_banks_data(self->buffer);
       gpointer *data_pointers = g_new(gpointer, num_channels);
 
       /* Update the data pointers to point to (x,y) position */

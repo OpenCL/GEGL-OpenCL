@@ -1,11 +1,11 @@
 #include    "gegl-channel-param-specs.h"
 #include    "gegl-channel-value-types.h"
 #include    "gegl-utils.h"
-#include    "gegl-image-buffer.h"
+#include    "gegl-image.h"
 #include    "gegl-color-model.h"
 #include    "gegl-color-model.h"
 #include    "gegl-color-space.h"
-#include    "gegl-data-space.h"
+#include    "gegl-channel-space.h"
 
 GType GEGL_TYPE_PARAM_CHANNEL = 0;
 GType GEGL_TYPE_PARAM_CHANNEL_UINT8 = 0;
@@ -15,7 +15,7 @@ GType GEGL_TYPE_PARAM_CHANNEL_FLOAT = 0;
 
 static void 
 param_spec_channel_uint8_set_default (GParamSpec *pspec,
-                              GValue     *value)
+                                      GValue     *value)
 {
   GeglParamSpecChannelUInt8 *spec = GEGL_PARAM_SPEC_CHANNEL_UINT8 (pspec);
   value->data[1].v_uint = spec->default_value;

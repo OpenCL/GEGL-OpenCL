@@ -3,11 +3,7 @@
 
 #include <glib-object.h>
 #include "gegl-types.h"
-
-#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
-#define __TYPEDEF_GEGL_COLOR_MODEL__
-typedef struct _GeglColorModel  GeglColorModel;
-#endif
+#include "gegl-color-model.h"
 
 /* --- derived pixel types --- */
 extern GType GEGL_TYPE_PIXEL_RGB_FLOAT;

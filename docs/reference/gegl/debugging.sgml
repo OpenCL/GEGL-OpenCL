@@ -1,0 +1,44 @@
+<refentry id="gegl-debugging" revision="14 Jan 2003">
+<refmeta>
+<refentrytitle>Debugging Gegl</refentrytitle>
+<manvolnum>3</manvolnum>
+<refmiscinfo>Gegl</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>Debugging Gegl</refname>
+<refpurpose>
+How to debug Gegl
+</refpurpose>
+</refnamediv>
+
+<refsect1>
+<title>Debugging Gegl</title>
+<refsect2>
+<para>
+The best way to debug Gegl is to constantly run the unit tests while coding.
+If you introduce new code, you should write new unit tests for these as well. 
+</para>
+</refsect2>
+
+<refsect2>
+<title>Environment variables</title>
+<formalpara>
+<title><envar>GEGL_LOG_ON</envar></title>
+<para>
+If this variable is set, Gegl will print out extensive debugging 
+messages. These messages contain various file and line numbers
+to help follow what is happening. The macros that are useful
+for this LOG_INFO, LOG_DEBUG, LOG_MSG, and LOG_DIRECT, which 
+which are defined <filename>gegl-utils.h</filename>. 
+If you do not wish to see these any longer just unset the 
+variable.
+</para>
+</formalpara>
+
+
+</refsect2>
+
+</refsect1>
+
+</refentry>
