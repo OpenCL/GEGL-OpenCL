@@ -1,0 +1,100 @@
+\documentclass{report} 
+\usepackage{epsfig}
+\begin{document}
+\begin{titlepage}
+\title{\huge The GIMP}
+\author{Caroline Dahll\"{o}f\\ \and Calvin Williamson}
+\date{Augost 2000}
+\maketitle
+\end{titlepage}
+\tableofcontents
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\beforepreface
+%\prefacesection{Abstract}
+%\input{abstract} 
+%\prefacesection{Acknowledgments}
+%\input{acknowledgements}
+%\afterpreface
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{introduction.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{The GIMP}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{intro_gimp.tex}
+\section{The history of the GIMP} 
+\section{The GIMP 1.2} 
+\section{Film version of the GIMP} 
+\section{The GIMP's Licene}
+\section{GIMP Developers}
+\section{Future of the GIMP} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{The GIMP 2.0}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Specifications}
+\section{How much need rewriting}
+\section{Schedule}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{GEGL}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{intro_gegl.tex}
+\section{Higher level design}
+\section{Lower level design}
+\section{Current state}
+\section{Future}
+\section{Schedule}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{The GIMP at Rhythm \& Hues Studios}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{intro_rnh.tex}
+\section{Why we chose the GIMP?}
+\input{rnh_why.tex}
+\section{What we use the GIMP for?}
+\input{rnh_what.tex}
+\section{Example shots}
+\input{rnh_example.tex}
+\section{Where does the GIMP fail us?}
+\input{rnh_fail.tex}
+\section{In what direction would we like to see the GIMP go?} 
+\input{rnh_dir.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{How the cooperation would work}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{The first meeting}
+\section{Documentation}
+\section{Management}
+\section{Estimate cost}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Conclusion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{More information}
+
+{
+\small
+\bibliographystyle{plain}
+\bibliography{paint}
+}
+
+
+\input{appendix.tex}
+
+
+
+
+\end{document}
