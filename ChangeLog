@@ -1,3 +1,10 @@
+Thu Mar 23 17:42:53 PST 2000 caro@rhythm.com
+
+	* codegen/parser.y in function get_sym. I fixed the
+	crashing problem it had. I was using %d instead of %s
+	when I created a new string.
+
+
 Thu Mar 23 16:49:25 PST 2000 caro@rhythm.com
 	
 	* codegen/parser.y. I have changed it so that

@@ -1528,7 +1528,7 @@ add_sym (char *ss, char scope)
     exit(1);      /* cannot continue */
   }
   
-  strcpy(symtab[cur_nsyms].string, s);
+  strcpy(symtab[cur_nsyms].string, ss);
   symtab[cur_nsyms].scope = scope;  
   symtab[cur_nsyms].inited = 0; 
   cur_nsyms++; 
@@ -1541,7 +1541,9 @@ get_sym (char *ss)
 {
 
   int   i;
-  char *s = strdup(ss);
+  char s[255];
+ 
+  strcpy (s, ss);
 
   for (i=0; i<cur_nsyms; i++)
   {
@@ -1552,21 +1554,22 @@ get_sym (char *ss)
 
   i = strlen(s);
   if (i>10)
-  if (!strcmp ("_has_alpha", s[i-11]))  
+  if (!strcmp ("_has_alpha", &(s[i-10])))  
     {
     ss[i-6] = '\0'; 
-    sprintf (s, "%d_%d", ss, NAME_COLOR_CHAN[NUM_COLOR_CHAN]);  
+    sprintf (s, "%s_%s", ss, NAME_COLOR_CHAN[NUM_COLOR_CHAN]);  
+    strcpy (ss, s); 
     goto find;
     }
      
   if (i>6)
-  if ((s[i-5] == 'a' || s[i-5] == 'c') && s[i-6] == '_')
+  if (!strcmp ("_color", &(s[i-6])) || !strcmp ("_alpha", &(s[i-6])))
     {
       s[i-6] = '\0';
       ss[i-4] = '\0';
+      goto find;
     }
 
-  i = strlen(s);
   if (i>2)
   if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
   {
