@@ -1,3 +1,36 @@
+Wed Jan 24 01:27:38 EST 2001 calvinw@mindspring.com
+	*Makefile.am
+	*configure.in
+	*gegl/Makefile.am
+
+	Checks for gob 1.0.5 and gtk/glib 1.2.8 now. 
+
+	*gil/Makefile.am
+	*gil/README
+	*gil/TODO
+	*gil/gilast.c
+	*gil/gilast.h
+	*gil/gilinterpret.c
+	*gil/gilinterpret.h
+	*gil/gilsymbol.c
+	*gil/gilsymbol.h
+	*gil/gilsymboltable.c
+	*gil/gilsymboltable.h
+	*gil/giltype.c
+	*gil/giltype.h
+	*gil/lexer.l
+	*gil/parse.y
+	*gil/test.gil
+
+	Added this directory for gil. This is a new abstract syntax
+	tree version of the the code-generator. It builds asts 
+	for simple expressions (not proper gil syntax yet).  
+	It will generate code during tree traversal. Right
+	now it just prints out the ast. See gil/README
+	and gil/test.gil. Needs symbol table work, and the real 
+	gil syntax to be useful.   
+	
+
 Tue Jan 23 01:19:59 EST 2001 calvinw@mindspring.com
 	*README
 	*gegl/Makefile.am
@@ -56,8 +89,8 @@ Tue Jan 23 01:19:59 EST 2001 calvinw@mindspring.com
 	*gegl/gegl-print-op.gil
 	*gegl/gegl-fill-op.gil
 
-    Removed these for now, till autogeneration works for multiple data
-    types at once. gob version has all data types in it for now. 
+    	Removed these for now, till autogeneration works for multiple data
+    	types at once. gob version has all data types in it for now. 
 	 
 
 Fri Jan 19 01:08:12 EST 2001 calvinw@mindspring.com

@@ -28,8 +28,10 @@ AM_PROG_LEX
 
 AM_MAINTAINER_MODE
 
-dnl Check for GTK+
-AM_PATH_GTK(1.2.7,,
+dnl Check for GTK+, GLIB
+AM_PATH_GLIB(1.2.8,,
+  AC_MSG_ERROR(Test for GLIB failed. See the file 'INSTALL' for help.))
+AM_PATH_GTK(1.2.8,,
   AC_MSG_ERROR(Test for GTK failed. See the file 'INSTALL' for help.))
 
 changequote(,)dnl
@@ -64,7 +66,7 @@ fi
 
 changequote([,])dnl
 
-AC_PATH_PROGS(GOB, gob, :)
+GOB_CHECK(1.0.5)
 
 if test "x$GOB" = "x"; then
     AC_MSG_ERROR(No gob.)
@@ -86,7 +88,8 @@ AC_SUBST(GEGL_LIBS)
 
 AC_OUTPUT([
 Makefile
-gegl/Makefile
 codegen/Makefile
+gegl/Makefile
+gil/Makefile
 tools/Makefile
 gegl-config], [case "$CONFIG_FILES" in *gegl-config*) chmod +x gegl-config;; esac])

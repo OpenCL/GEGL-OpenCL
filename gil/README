@@ -1,0 +1,10 @@
+This toy version of gil just builds some abstract syntax trees
+for very simple expression statements with some C-like
+block structures. No variable declarations. See test.gil
+for an example.
+
+To run it just type:
+
+>gil < test.gil 
+
+You should see the syntax tree printed out.

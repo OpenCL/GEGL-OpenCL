@@ -242,7 +242,7 @@ testgeglfile_LDADD = $(LDADDS) -ltiff -lm
 tests:
 
 %.c %.h: %.gob
-	$(GOB) $<
+	@GOB@ $<
 
 %.gob: %.gil
 	../codegen/codegen --channel-names r,g,b --channel-data-file ../codegen/channel_data/float $< > $@ 
