@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159 (C version 6.1) (format=latex 98.4.2)  25 SEP 2000 12:03
+This is TeX, Version 3.14159 (C version 6.1) (format=latex 98.4.2)  4 OCT 2000 15:03
 **gimp
 (gimp.tex
 LaTeX2e <1996/12/01> patch level 1
@@ -61,11 +61,11 @@ LaTeX Font Info:    ... okay on input line 3.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 3.
 LaTeX Font Info:    ... okay on input line 3.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 15.
+(Font)              <12> on input line 16.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 15.
+(Font)              <8> on input line 16.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 15.
+(Font)              <6> on input line 16.
  [1
 
 ] (gimp.toc
@@ -105,19 +105,113 @@ Chapter 3.
 
 ]) (current_state_gegl.tex) [9]
 Chapter 4.
-(schedule.tex [10
+(schedule2.tex
+Underfull \hbox (badness 10000) in paragraph at lines 30--30
+[]\OT1/cmr/m/n/10 MicroGimp-
+ []
+
+
+Underfull \hbox (badness 3884) in paragraph at lines 30--31
+[]\OT1/cmr/m/n/10 Create stripped down GIMP
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 33--33
+[]\OT1/cmr/m/n/10 MicroGimp-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 36--36
+[]\OT1/cmr/m/n/10 MicroGimp-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 39--39
+[]\OT1/cmr/m/n/10 MicroGimp-
+ []
+
+
+Underfull \hbox (badness 1577) in paragraph at lines 39--40
+[]\OT1/cmr/m/n/10 Write first test tools: paint,
+ []
+
+
+Overfull \hbox (3.37242pt too wide) in paragraph at lines 53--53
+[]\OT1/cmr/m/n/10 Specialization|  
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 73--75
+[]\OT1/cmr/m/n/10 Complete Im-age, Draw-able,
+ []
+
+
+Underfull \hbox (badness 1092) in paragraph at lines 73--75
+\OT1/cmr/m/n/10 Layer, Chan-nel classes. The
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 85--85
+[]\OT1/cmr/m/n/10 Painting
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 85--85
+[]\OT1/cmr/m/n/10 gimpcore,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 89--89
+[]\OT1/cmr/m/n/10 gimpcore,
+ []
+
+
+Overfull \hbox (21.63051pt too wide) in paragraph at lines 22--92
+[]  
+ []
+
+[10
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 84--84
-[]\OT1/cmr/m/n/10 gimpiface,
+Overfull \vbox (17.76204pt too high) has occurred while \output is active []
+
+
+[11]
+Underfull \hbox (badness 10000) in paragraph at lines 100--100
+[]\OT1/cmr/m/n/10 gimpcore,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 84--84
-\OT1/cmr/m/n/10 gimp-plu-g-ins,
+Underfull \hbox (badness 10000) in paragraph at lines 104--104
+[]\OT1/cmr/m/n/10 gimpcore,
  []
 
-[11]) [12]
+
+Underfull \hbox (badness 10000) in paragraph at lines 107--107
+[]\OT1/cmr/m/n/10 gimpcore,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 109--110
+\OT1/cmr/m/n/10 gim-p-coreui,
+ []
+
+
+Underfull \hbox (badness 1769) in paragraph at lines 114--115
+[]\OT1/cmr/m/n/10 Corba based de-sign for com-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 115--115
+[]\OT1/cmr/m/n/10 gimpext,
+ []
+
+
+Overfull \hbox (21.63051pt too wide) in paragraph at lines 93--123
+[][]  
+ []
+
+) [12]
 Chapter 5.
 (conclution.tex) [13
 
@@ -137,18 +231,16 @@ Appendix C.
 
 ]
 Appendix D.
-(more_info.tex)
-No file gimp.bbl.
-[20
+(more_info.tex) [20
 
 ] (gimp.aux) ) 
 Here is how much of TeX's memory you used:
- 750 strings out of 10906
- 7972 string characters out of 72188
- 60803 words of memory out of 262141
- 3540 multiletter control sequences out of 9500
- 9752 words of font info for 34 fonts, out of 150000 for 255
+ 746 strings out of 10906
+ 7950 string characters out of 72188
+ 59800 words of memory out of 262141
+ 3539 multiletter control sequences out of 9500
+ 9453 words of font info for 33 fonts, out of 150000 for 255
  14 hyphenation exceptions out of 607
- 32i,8n,21p,224b,252s stack positions out of 300i,40n,60p,3000b,4000s
+ 32i,8n,21p,208b,252s stack positions out of 300i,40n,60p,3000b,4000s
 
-Output written on gimp.dvi (21 pages, 44160 bytes).
+Output written on gimp.dvi (21 pages, 45540 bytes).

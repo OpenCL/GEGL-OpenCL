@@ -5,7 +5,7 @@
 \contentsline {subsection}{\numberline {2.2.1}GEGL}{6}
 \contentsline {subsection}{\numberline {2.2.2}GIMP Core and Plug-in Interfaces}{6}
 \contentsline {subsection}{\numberline {2.2.3}Layer Trees}{6}
-\contentsline {subsection}{\numberline {2.2.4}Common Object Resource Broker Architecture}{7}
+\contentsline {subsection}{\numberline {2.2.4}Common Object Request Broker Architecture}{7}
 \contentsline {subsection}{\numberline {2.2.5}Multi-threading}{7}
 \contentsline {subsection}{\numberline {2.2.6}The Application}{7}
 \contentsline {chapter}{\numberline {3}GEGL}{8}

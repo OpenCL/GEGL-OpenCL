@@ -31,24 +31,24 @@ Area Operation & Classes for common area operations in GEGL (convolve, kernel op
 \hline
 \raggedright{Geometric\\ Operations} & Classes for common geometric operations such as scaling, transformation. & gegl & 120h\\
 \hline
-GIL Specialization & Mechanism for allowing partial specialization in GIL code & gegl & 120h\\
+GIL Specialization & GIL Specialization  Make another abstraction for gil. & gegl & 120h\\
 \hline
 Point Operations & Classes for LUT operations & gegl & 120h\\
 \hline
 \raggedright{Preprocessor for\\ codegen} & Make another abstraction for gil & gegl & 80h\\
 \hline
-\raggedright{Memory \\Management} & \raggedright{Investigate trade-offs among tile\\, microtile, and divide and conquer memory management schemes. Integrate chosen model with GEGL} & gegl & 300h\\
+\raggedright{Memory \\Management} & \raggedright{Cache and virtual memory management classes.} & gegl & 300h\\
 \hline
 \raggedright{Multi-thread \\support} & \raggedright{This involves making most image operations \\multi-threaded and assure that all operations are thread safe.} & gegl & 200h\\  
 \hline
 
 \multicolumn{4}{|c|}{\bf GIMP Internal Schedule}\\
 \hline 
-GIMP core & Design the core of GIMP & gimpcore & 80h\\
+GIMP core & Design the core of GIMP which includes classes such as GimpImage, GimpDrawable, GimpLayer, and GimpChannel. & gimpcore & 80h\\
 \hline 
-\raggedright{MicroGIMP\\ core} & \raggedright{Implement the core for MircoGIMP, such asi\\ GimpImage, GimpDrawable, GimpLayer, GimpChannel.} & gimpcore & 100h\\
+\raggedright{MicroGIMP\\ core} & \raggedright{Implement the basic functionality for the core.} & gimpcore & 100h\\
 \hline
-GIMP app & Design the app & gimpapp & 80h\\
+GIMP app & Design the app. The app ties the user interface together with the GIMP core. & 80h\\
 \hline 
 \raggedright{MicroGIMP\\ app} & Implement a stripped down app. This will include tools such as the edit tools, clone, paint & gimpapp & 100h\\
 \hline 
@@ -68,11 +68,11 @@ Task & Description & Library & Cost\\
 
 \multicolumn{4}{|c|}{\bf UI Schedule}\\
 \hline 
-Gimp core ui & Design and implement. & gimpcoreui & 90h\\
+Gimp core UI & Design and implement. & gimpcoreui & 90h\\
 \hline
-Widget & Design the widget taking into an acount how they will handle the different data types. & gimpwidget &100h\\
+Widget & Design the widgets. The widgets must be data type and color model independent. & gimpwidget &100h\\
 \hline
-\raggedright{MicroGIMP\\ UI} & \raggedright{Implement the UI for a stripped down GIMP. This involved implementing the widget necessary for this.} & gimpui, gimpwidget & 100h\\
+\raggedright{MicroGIMP\\ UI} & \raggedright{Implement the UI for the MicroGIMP. This also involve implementing some of the underlying widgets.} & 100h\\
 \hline
 \raggedright{Finish\\ Widget} & \raggedright{Finish implementing all the \\ widgets.} & gimpwidget & 300h\\
 \hline
