@@ -34,7 +34,15 @@ rm			[\t \n]*
 %%
 
 {rm}"DATATYPE_BEGIN"			BEGIN DATA_TYPE;  
-"GENERIC_IMAGE_DECL_BEGIN"	{
+{rm}"GENERIC_IMAGE_DECL_BEGIN"		{
+  					/* wacky stuff */
+  					int i,j;
+  					i = strlen (yytext);
+					while (i>=0 && yytext[i] != '\n')
+					  i--;
+					for (j=0; j<i; j++)
+					 printf ("%c", yytext[j]);  
+					      
   					print_info ("\n/* Generic Image Decl Begin */");
 					BEGIN GENERIC_IMAGE_DECL;
 					}

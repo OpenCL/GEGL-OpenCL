@@ -1,3 +1,21 @@
+Wed Mar 29 18:37:56 PST 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* parser.y I turned off the debug print out for the lexer 
+	and the parser. This flag is in the main of parser.y. I
+	left a comment about it there.
+
+	* lexer.l I changed it so that when I read the string
+	GENERIC_IMAGE_DECL_BEGIN I eat up all the new lines before it.
+	Then I print all out except for one. It will leave one new line
+	if GENERIC_IMAGE_DECL_BEGIN is on the first line.
+
+	* check in for gegl
+
+	* gegl-premult-op.gob for the ==0 case we for got to
+	increment the src. Fixd that.
+ 
 Wed Mar 29 17:05:22 EST 2000 calvinw@mindspring.com
 
 	* check in for codegen

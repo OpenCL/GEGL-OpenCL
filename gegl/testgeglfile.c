@@ -24,6 +24,7 @@
 #include "gegl-screen-op.h"
 #include "gegl-dark-op.h"
 #include "gegl-light-op.h"
+#include "gegl-premult-op.h"
 
 static void
 create_preview(GtkWidget **window, 
@@ -127,18 +128,19 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
 
   for (i = 0; i< 6; i++) 
     {
-      op = GEGL_OP(gegl_composite_premult_op_new (dest_image_buffer, 
-					  src_image_buffer[0], 
+      op = GEGL_OP(gegl_composite_premult_op_new (dest_image_buffer,
+	    				  src_image_buffer[0], 
 					  src_image_buffer[1], 
+					  &src_rect[1], 
 					  &dest_rect, 
 					  &src_rect[0], 
-					  &src_rect[1], 
 					  i));
+
       gegl_op_apply (op);   
 
       /* display the destination */ 
       create_preview (&dest_window[i], &dest_preview[i], width, height, mode_names[i]);
-      display_image (dest_window[i], dest_preview[i], dest_image_buffer, dest_rect);
+      display_image (dest_window[i], dest_preview[i], dest_image_buffer,  dest_rect);
       gegl_object_destroy (GEGL_OBJECT(op));
     }
 
@@ -295,10 +297,11 @@ main(int argc,
       for(i=0; i<plane_size; i++)
         {
 	  memcpy(img, &image[i], 4);
-	  t[j                     ] = ((float)img[0]) / 255.0;
-	  t[j+plane_size  ] = ((float)img[1]) / 255.0;
-	  t[j+plane_size*2] = ((float)img[2]) / 255.0;
-	  t[j+plane_size*3] = ((float)img[3]) / 255.0;
+
+	  t[j             ] = ((float)img[3]) / 255.0;
+	  t[j+plane_size  ] = ((float)img[2]) / 255.0;
+	  t[j+plane_size*2] = ((float)img[1]) / 255.0;
+	  t[j+plane_size*3] = ((float)img[0]) / 255.0;
 	  j++;  
         }
 

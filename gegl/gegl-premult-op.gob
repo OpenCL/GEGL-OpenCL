@@ -137,7 +137,10 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
             *dest_r++ = 0.0;
             *dest_g++ = 0.0;
             *dest_b++ = 0.0;
-           }
+	    src_r++;
+	    src_g++;
+	    src_b++; 
+	  }
          else if (*src_a == 1.0)
           {
             *dest_r++ = *src_r++;
