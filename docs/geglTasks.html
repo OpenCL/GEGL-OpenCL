@@ -1,0 +1,173 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.61 [en] (X11; I; Linux 2.2.12-20 i686) [Netscape]">
+   <title>Gegl Tasks</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#840084" alink="#0000FF">
+
+<div 
+CLASS="ARTICLE"
+>
+<div 
+CLASS="TITLEPAGE"
+>
+<div CLASS="TITLE"><a NAME="Current Tasks"></a><b><font size=+2>Current
+Tasks</font></b></div>
+
+<div CLASS="COPYRIGHT">&nbsp;</div>
+
+<div 
+CLASS="ABSTRACT"
+>This page contains current tasks and notes about
+these .&nbsp; You should update this page with relevant information about
+the tasks.</div>
+
+<table BORDER COLS=1 WIDTH="100%" NOSAVE >
+<tr>
+<td><a NAME="1 Update GeglColorConvertOp"></a><b>#1 Update GeglColorConvertOp
+-Make the color color ops use new Image class structure.</b>
+<br>Owner: calvinw@mindspring.com
+<br>The new ColorConvertOps dont use the new Op class (Op and ImageBuffer
+inherit from Image now).</td>
+</tr>
+
+<tr>
+<td><a NAME="2 Update GeglCopyChanOp"></a><b>#2 Update GeglCopyChanOp -
+Make CopyChanOp use the new Image class structure.</b>
+<br>Owner: none
+<br>The new CopyChanOp doesnt use the new Op class (Op and ImageBuffer
+inherit from Image now).</td>
+</tr>
+
+<tr>
+<td><a NAME="3 Update testgegl, testgeglfile"></a><b>#3 Update testgegl,
+testgeglfile -Make gegl test programs use the new Image class structure.</b>
+<br>Owner: none</td>
+</tr>
+
+<tr>
+<td><a NAME="4 Preprocessor for codegen"></a><b>#4 Preprocessor for codegen
+- Need preprocessor that finds gil program and runs codegen with them.</b>
+<br>Owner: none</td>
+</tr>
+
+<tr>
+<td><a NAME="6 copy_pixels, get_pixels"></a><b>#6 copy_pixels, get_pixels
+- Implement these for ImageBuffer and Op classes.</b>
+<br>Owner: none
+<br>Some of these routines need to be finished. In particular the Op classes
+should return an error on copy_pixels since they are not writable and copy_pixels
+is supposed to copy from a passed Image to the Image represented by this
+(or self in GOB-speak)</td>
+</tr>
+
+<tr>
+<td><a NAME="7 Remove Drawable, GraphicsState classes"></a><b>#7 Remove
+Drawable, GraphicsState classes- Remove these classes from the tree.</b>
+<br>Owner: caro@rhythm.com
+<br>Gegl doesnt need these classes at present. This might be useful in
+some future version of gegl, but these are higher level classes.</td>
+</tr>
+
+<tr>
+<td><a NAME="8 Multi-threading support"></a><b>#8 Multi-threading support
+- Provide basics of multi-threading for gegl.&nbsp;</b>
+<br>Owner: none</td>
+</tr>
+
+<tr>
+<td><a NAME="9 Roi classes - Write basic Roi class."></a><b>#9 Roi classes
+- Write basic Roi class.</b>
+<br>Owner: none
+<br>See the ImageVision and JAI descriptions of these classes for some
+idea of how to make these classes work.</td>
+</tr>
+
+<tr>
+<td><a NAME="10 AreaOp - Write basic AreaOp class."></a><b>#10 AreaOp -
+Write basic AreaOp class.&nbsp;</b>
+<br>Owner: none
+<br>This abstract class is the next basic class needed to test the GIL
+for these operations. This class will have to decide navigate the image
+based on the storage details of the image (tiled vs non-tiled). So this
+is somewhat dependent on #15, #14</td>
+</tr>
+
+<tr>
+<td><a NAME="11 GIL support for AreaOp"></a><b>#11 GIL support for AreaOp
+- Extend GIL to handle AreaOps.&nbsp;</b>
+<br>Owner: none
+<br>GIL will need to understand how to get rowstrides and access pixels.
+This involves making sure GIL can interpret dY calls.</td>
+</tr>
+
+<tr>
+<td><a NAME="12 ConvolveOp"></a><b>#12 ConvolveOp - Write basic ConvolveOp
+class.&nbsp;</b>
+<br>Owner: none
+<br>The ConvolveOp classes can be written once AreaOps are done. This will
+involve writing details of handling the kernals and computations from these
+(maybe need way of passing generic kernals).&nbsp;</td>
+</tr>
+
+<tr>
+<td><a NAME="13 Iterator classes"></a><b>#13 Iterator classes - Write basics
+Iterator classes</b>
+<br>Owner: none</td>
+</tr>
+
+<tr>
+<td><a NAME="14 Memory Management classes"></a><b>#14 Memory Management
+classes - Write basic memory management classes</b>
+<br>Owner: none
+<br>Gegl will need support for a cache to hold buffers as it computes operations.
+So we need to support swapping unneeded/unused buffers to disk, and controlling
+the cache. This is similar to gimps current tile scheme/memory management.
+Not sure if gimp will use this gegl memory management or its own somehow,
+but gegl still needs these classes to be a complete library.</td>
+</tr>
+
+<tr>
+<td><a NAME="15 Additional Data Storage classes/types for ImageBuffer"></a><b>#15
+Additional Data Storage classes/types for ImageBuffer - Write ImageBuffer
+subclasses for these?</b>
+<br>Owner: none
+<br>Gegl will have a standard (as yet undecided) ImageBuffer storage type.
+This subclass(?) needs to be written. Right now the basic ImageBuffer has
+pointers to each channel of image data and the entire image data resides
+in memory.</td>
+</tr>
+
+<tr>
+<td><a NAME="16 GIL support for accessing channels"></a>#<b>16 GIL support
+for accessing channels - Write GIL support for accessing individual color
+channels.</b>
+<br>Owner: none
+<br>GIL currently has no way to reference the color channnels ie pixel.red
+pixel.green, pixel.blue for rgb. This is needed for Ops that will write
+GIL code and will want a standard way to refer to the color channels.&nbsp;</td>
+</tr>
+</table>
+<br>
+
+<hr WIDTH="100%">
+<div CLASS="TITLE"><a NAME="Finished Tasks"></a><b><font size=+2>Finished
+Tasks</font></b></div>
+
+<table BORDER COLS=1 WIDTH="100%" NOSAVE >
+<tr>
+<td><a NAME="16 GIL support for accessing channels"></a><b>#5 Update to
+latest GOB - Check that the new gob 1.0 and later works for gegl.&nbsp;&nbsp;</b>
+<br>Owner<b>: </b>caro@rhythm.com
+<br>Finished: Tue Jun 20 16:39:33 EDT 2000</td>
+</tr>
+</table>
+
+<div CLASS="TITLE"><b><font size=+2></font></b></div>
+</div>
+</div>
+
+</body>
+</html>

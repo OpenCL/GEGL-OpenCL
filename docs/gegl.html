@@ -3,29 +3,33 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="Author" content="Caroline Dahllof">
-   <meta name="GENERATOR" content="Mozilla/4.7 [en] (X11; U; IRIX64 6.2 IP28) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.61 [en] (X11; I; Linux 2.2.12-20 i686) [Netscape]">
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#4D7F7E" vlink="#551A8B" alink="#FF0000">
 
 <hr WIDTH="100%">
-<br><font color="#62A2A1"><font size=-1><a href="http://www.gegl.org">HOME</a>&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp; <a href="#news">NEWS</a>&nbsp;&nbsp;&nbsp;
-<a href="#mailing lists">MAILING&nbsp;LISTS&nbsp;</a>&nbsp;&nbsp; <a href="#schedual">SCHEDULE</a>&nbsp;&nbsp;&nbsp;
-<a href="#tasks">CURRENT TASKS&nbsp;</a>&nbsp;&nbsp; <a href="#authors">AUTHORS</a>&nbsp;&nbsp;&nbsp;
-<a href="#reference">REFERENCE</a></font></font>
+<br><font color="#62A2A1"><font size=-1><a href="http://www.gegl.org">HOME</a><a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp;
+<a href="#news">NEWS</a><a href="#mailing lists">MAILING LISTS&nbsp;</a>&nbsp;&nbsp;
+<a href="#tasks">CURRENT TASKS&nbsp;</a>&nbsp; <a href="#authors">AUTHORS
+</a><a href="#reference">REFERENCE</a></font></font>
 <br>
-<hr WIDTH="100%"><font color="#62A2A1"><font size=-1></font></font>
+<hr WIDTH="100%">
 <p><img SRC="gegl.jpg" NOSAVE height=62 width=160>
-<br><font color="#62A2A1"><font size=-1>&nbsp;</font></font>
-<br><font color="#62A2A1"><font size=-1></font></font>&nbsp;
-<br><font color="#62A2A1"><font size=-1></font></font>&nbsp;<font color="#62A2A1"><font size=-1></font></font>
-<p><font color="#000000">Gegl -- GIMP 'e' Graphical Library --- is the
-new engine for the GIMP 2.0. This engine has been designed to handle various
-data types and color models. The GIMP -- Gnu Image Manipulation Program
--- is an free application that allows user to do image retouching, image
-compositing, and image authoring. Apart form the 16 bit hollywood branch
-of the GIMP has only supported 8 bits. With Gegl, the GIMP will become
-an excellent tool for all costums needs.</font><font color="#000000"></font>
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<p><font color="#000000">GEGL -- Gimp 'E' Graphical Library --- is an image</font><font color="#33CCFF">
+</font><font color="#000000">processing library based on GtkObjects. This
+library has been designed initially to handle various image processing
+tasks needed in Gimp, but should be useful&nbsp; to other apps as well.
+It is designed to treat different color models and data types&nbsp; in
+a general way.&nbsp; It includes a way of creating chains (or trees) of
+image operations and evaluating these in a demand-driven way.&nbsp; Classes
+for point, area, geometric and statistics operations are provided, as well
+as color conversion ops for converting images between color models.&nbsp;
+Memory management and image classes are included. It also includes a method
+for writing generic image processing routines (Generic Image Language)
+and generating specific data type and colormodel code (Codegen) from this.</font>
 <p>
 <hr WIDTH="100%">
 <br><a NAME="docs"></a>
@@ -67,24 +71,108 @@ Channel Data</a>
 <td></td>
 </tr>
 </table>
-<font color="#000000"></font>
+
 <p>
 <hr WIDTH="100%">
 <br><a NAME="mailing lists"></a>
 <br><b>Mailing Lists</b>
 <p>GEGL's developers mailing list is <a href="mailto: gegldev@gegl.org">gegldev@gegl.org</a>.
 To sign up please email Manish Singh &lt;<a href="mailto:yosh@gimp.org">yosh@gimp.org</a>>.
-<br>There is also the <a href="http://www.gimp.org/mailing_list.html">GIMP's
+There is also the <a href="http://www.gimp.org/mailing_list.html">GIMP's
 developers mailing list and an users mailing list</a>.
 <p>
 <hr WIDTH="100%">
 <br><a NAME="schedual"></a>
-<br><b>Schedual</b>
+<br><b>Schedule</b>
 <p>
 <hr WIDTH="100%">
 <br><a NAME="tasks"></a>
-<br><b>Current Tasks</b>
-<br>&nbsp;
+<br><b><font color="#000000">Current Tasks</font></b>
+<table BORDER COLS=1 WIDTH="100%" NOSAVE >
+<tr>
+<td><a href="geglTasks.html#1 Update GeglColorConvertOp">#1 Update GeglColorConvertOp</a>
+-Make the color color ops use new Image class structure.
+<br>owner: calvinw@mindspring.com</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#2 Update GeglCopyChanOp">#2 Update GeglCopyChanOp</a>
+- Make CopyChanOp use the new Image class structure.</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#3 Update testgegl, testgeglfile">#3 Update
+testgegl, testgeglfile</a> -Make gegl test programs use the new Image class
+structure.</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#4 Preprocessor for codegen">#4 Preprocessor
+for codegen</a> - Need preprocessor that finds gil program and runs codegen
+with them.</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#6 copy_pixels, get_pixels">#6 copy_pixels,
+get_pixels</a> - Implement these for ImageBuffer and Op classes.</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#7 Remove Drawable, GraphicsState classes">#7
+Remove Drawable, GraphicsState classes</a>- Remove these classes from the
+tree.
+<br>owner: caro@rhythm.com</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#8 Multi-threading support">#8 Multi-threading
+support</a> - Provide basics of multi-threading for gegl.&nbsp;</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#9 Roi classes - Write basic Roi class.">#9
+Roi classes</a> - Write basic Roi class.</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#10 AreaOp - Write basic AreaOp class.">#10
+AreaOp</a> - Write basic AreaOp class.&nbsp;</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#11 GIL support for AreaOp">#11 GIL support
+for AreaOp</a> - Extend GIL to handle AreaOps. .</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#12 ConvolveOp">#12 ConvolveOp</a> - Write basic
+ConvolveOp class.&nbsp;</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#13 Iterator classes">#13 Iterator classes</a>
+- Write basics Iterator classes</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#14 Memory Management classes">#14 Memory Management
+classes</a> - Write basic memory management classes</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#15 Additional Data Storage classes/types for ImageBuffer">#15
+Additional Data Storage classes/types for ImageBuffer</a> - Write ImageBuffer
+subclasses for these</td>
+</tr>
+
+<tr>
+<td><a href="geglTasks.html#16 GIL support for accessing channels">#16
+GIL support for accessing channels</a> - Write GIL support for accessing
+individual color channels.</td>
+</tr>
+</table>
+
+<p><b><font color="#000000">Finished Tasks</font></b><b><font color="#000000"></font></b>
 <p>
 <hr WIDTH="100%">
 <br><a NAME="authors"></a>
@@ -97,15 +185,16 @@ developers mailing list and an users mailing list</a>.
 <hr WIDTH="100%">
 <br><a NAME="reference"></a>
 <br><b>Reference</b>
-<p><a href="http://www.gimp.org">The GIMP</a>
-<br><a href="http://siggraph.gimp.org">The GIMP at SIGGRAPH</a>
+<p><a href="http://www.gimp.org">GIMP</a>
+<br><a href="http://siggraph.gimp.org">GIMP at SIGGRAPH</a>
 <p>
 <hr WIDTH="100%">
 <center><font size=-2>Caroline Dahllof &lt;caro@rhythm.com></font></center>
-<font color="#62A2A1"><font size=-1></font></font>
-<p><br><font color="#62A2A1"><font size=-1></font></font>
-<br><font color="#62A2A1"><font size=-1></font></font>
-<p><font color="#62A2A1"><font size=-1>&nbsp;</font></font>
-<br>&nbsp;
+
+<p><br>
+<br>
+<br>
+<br>
+<br>
 </body>
 </html>
