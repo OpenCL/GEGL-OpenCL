@@ -24,3 +24,6 @@ missing
 mkinstalldirs
 stamp-h
 stamp-h.in
+.cdtproject
+.project
+
