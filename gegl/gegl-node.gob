@@ -29,7 +29,7 @@ class Gegl:Node from Gegl:Object {
 
   private GList    *inputs;       /*inputs*/
   private gint      num_inputs;   /*fixed for life of node, for now*/ 
-  private GList    *outputs;      /*outputs, varies depending on dags present*/
+  private GList    *outputs;      /*outputs, all these share this node  */
   private gboolean  visited;      /*flag for traversals*/ 
   private gboolean  discovered;   /*flag for traversals*/ 
   private gchar    *name;         /*name for the node*/
@@ -58,7 +58,6 @@ class Gegl:Node from Gegl:Object {
   protected 
   gboolean 
   constructor(self,
-              gchar * name,
               GList *inputs)
   {
     g_return_val_if_fail (!(GEGL_OBJECT(self)->constructed), FALSE);
@@ -77,7 +76,7 @@ class Gegl:Node from Gegl:Object {
     self->_priv->outputs = NULL;
     self->_priv->visited = TRUE;
     self->_priv->discovered = TRUE;
-    self->_priv->name = g_strdup(name);
+    self->_priv->name = g_strdup(gtk_type_name(GTK_OBJECT_TYPE(self)));
 
     return TRUE;
   }
@@ -167,6 +166,14 @@ class Gegl:Node from Gegl:Object {
   get_name(self)
   {
     return self->_priv->name;
+  }
+
+  public 
+  void 
+  set_name(self, 
+           gchar *name)
+  {
+    self->_priv->name = g_strdup(name);
   }
 
   protected 

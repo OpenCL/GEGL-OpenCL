@@ -1,4 +1,4 @@
-SUBDIRS = gil codegen gegl tools
+SUBDIRS = gil codegen gegl tools tests docs
 
 bin_SCRIPTS = \
 	gegl-config

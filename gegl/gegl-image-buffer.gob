@@ -55,7 +55,7 @@ class Gegl:Image:Buffer from Gegl:Image {
       return FALSE;
        
     /* Chain up */
-    if (!gegl_image_constructor (GEGL_IMAGE(self),"leaf",NULL))
+    if (!gegl_image_constructor (GEGL_IMAGE(self),NULL))
       return FALSE;
 
     /* ImageBuffers set their color model and allocate data when created */

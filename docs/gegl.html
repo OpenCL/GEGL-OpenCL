@@ -9,13 +9,18 @@
 <body text="#000000" bgcolor="#FFFFFF" link="#4D7F7E" vlink="#551A8B" alink="#FF0000">
 
 <hr WIDTH="100%">
-<br><font color="#62A2A1"><font size=-1><a href="http://www.gegl.org">HOME</a>&nbsp;&nbsp;
-<a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#news">NEWS</a>&nbsp;
+<br><font color="#62A2A1"><font size=-1><a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-<a href="#mailing lists">MAILING LISTS&nbsp;</a>&nbsp;&nbsp;&nbsp; <a href="#tasks">CURRENT
-TASKS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#authors">AUTHORS&nbsp;&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#reference">
-REFERENCES</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#getting gegl">GETTING
-GEGL</a></font></font>
+<a href="#news">NEWS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<a href="#mailing lists">MAILING
+LISTS&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<a href="TODO.html">CURRENT
+TASKS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<a href="#authors">AUTHORS&nbsp;&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<a href="#reference">REFERENCES</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<a href="#getting gegl">GETTING GEGL</a></font></font>
 <br>
 <hr WIDTH="100%">
 <p><img SRC="gegl.jpg" NOSAVE height=62 width=160>
@@ -43,10 +48,6 @@ in cvs in the docs directory as well as here.
 <li>
 <a href="geglClasses.html">Gegl Classes</a>, a short description of the
 main gegl classes.</li>
-
-<li>
-<a href="geglImageAndOp.html">Gegl Image and Op classes</a>, a description
-of the Image and Op classes and image chains (or trees).</li>
 
 <li>
 <a href="genericChannelData.html">Generic Channel Data</a>, a technique
@@ -102,80 +103,15 @@ There is also the <a href="http://www.gimp.org/mailing_list.html">GIMP's
 developers mailing list and a users mailing list</a>.
 <p>
 <hr WIDTH="100%">
-<br><a NAME="tasks"></a><font color="#000000"><b>Current Tasks</b> (<a href="geglTasks.html#Current Tasks">list
-with details</a>)</font>
-<table BORDER COLS=1 WIDTH="100%" NOSAVE >
-<tr>
-<td><a href="geglTasks.html#22 Abstract Syntax Trees for gil">#22 Abstract
-Syntax Trees for gil </a>- Built asts so can improve code-generation, type-checking,
-for gil.&nbsp;</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#21 Gtk-doc setup">#21 Support for gtk-doc in
-gegl</a> - Setup gtk-doc style (DocBook) documentation for gegl.</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#20 Nod class for Directed Acyclic Graphs">#20
-Node class for Directed Acyclic Graphs</a> - Support for dag image graphs,
-traversals, ref counting nodes.</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#16 GIL support for accessing channels">#16
-GIL support for accessing channels</a> - Write GIL support for accessing
-individual color channels.</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#15 Additional Data Storage classes/types for ImageBuffer">#15
-Additional Data Storage classes/types for ImageBuffer</a> - Write ImageBuffer
-subclasses for these</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#14 Memory Management classes">#14 Memory Management
-classes</a> - Write basic memory management classes</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#13 Iterator classes">#13 Iterator classes</a>
-- Write basics Iterator classes</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#12 ConvolveOp">#12 ConvolveOp</a> - Write basic
-ConvolveOp class.</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#11 GIL support for AreaOp">#11 GIL support
-for AreaOp</a> - Extend GIL to handle AreaOps. .</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#10 AreaOp - Write basic AreaOp class.">#10
-AreaOp</a> - Write basic AreaOp class.&nbsp;</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#9 Roi classes - Write basic Roi class.">#9
-Roi classes</a> - Write basic Roi class.</td>
-</tr>
-
-<tr>
-<td><a href="geglTasks.html#8 Multi-threading support">#8 Multi-threading
-support</a> - Provide basics of multi-threading for gegl.&nbsp;</td>
-</tr>
-</table>
-
-<p><b><font color="#000000">Finished Tasks (<a href="geglTasks.html#Finished Tasks">list</a>)</font></b>
-<br>
+<br><a NAME="tasks"></a><b><font color="#000000">Current Tasks</font></b>
+<br><font color="#000000">Current tasks are listed <a href="TODO.html">here</a>.
+This list is updated from cvs when docs/TODO.xml is commited. The html
+is generated from docs/make-todo. Developers should keep this list up-to-date.</font>
+<p>
 <hr WIDTH="100%">
 <br><a NAME="schedual"></a><b>Schedule</b>
-<br>&nbsp;milestones for releases go here.
-<br>
+<br>&nbsp;Milestones for releases will go here.
+<p>
 <hr WIDTH="100%">
 <br><a NAME="getting gegl"></a><b>Getting Gegl</b>
 <p>Gegl is available from the gnome cvs site. You can get it through anonymous
@@ -215,17 +151,18 @@ color resolution film work</a>
 <br><a href="http://siggraph.gimp.org">GIMP at SIGGRAPH 2000</a>
 <br><a href="http://www.gimp.org/gimpcon/review.html">GimpCon2000 review
 -discussion of gimp2.0, gegl</a>
-<br><a href="http://www.mindspring.com/~calvinw/genImageProcessing/genericIntro.html">Generic
-Image Processing- slides for an introductory talk</a>
 <br><a href="http://www.acm.org/pubs/citations/proceedings/graph/192161/p147-shantzis/">A
 Model for Efficient and Flexible Image Computing, Michael Shantzis, Siggraph
 94</a>
 <br><a href="http://techpubs.sgi.com:80/library/tpl/cgi-bin/browse.cgi?coll=0650&db=bks&cmd=toc&pth=/SGI_Developer/IL_PG">SGI
 ImageVision libary</a>
-<br>&nbsp;
+<br><a href="http://www.5z.com/jirka/gob.html">GtkObjectBuilder</a>
+<br><a href="http://kogs-www.informatik.uni-hamburg.de/~koethe/vigra/">Vigra
+1.0 Image Processing library</a>
 <p>
 <hr WIDTH="100%">
-<center><font size=-2>Caroline Dahllof &lt;caro@rhythm.com></font></center>
+<center><font size=-2>Caroline Dahllof &lt;caro@rhythm.com></font>
+<br><font size=-2>Calvin Williamson&lt;calvinw@mindspring.com></font></center>
 
 </body>
 </html>

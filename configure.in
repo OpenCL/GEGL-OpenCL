@@ -92,4 +92,6 @@ codegen/Makefile
 gegl/Makefile
 gil/Makefile
 tools/Makefile
+tests/Makefile
+docs/Makefile
 gegl-config], [case "$CONFIG_FILES" in *gegl-config*) chmod +x gegl-config;; esac])

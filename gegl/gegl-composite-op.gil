@@ -76,28 +76,31 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
     GeglPointOp *self_point_op = GEGL_POINT_OP (self_op);
     GeglPointOpClass *self_point_op_class = 
       GEGL_POINT_OP_CLASS(GTK_OBJECT(self_point_op)->klass);
+    GeglNode *self_node = GEGL_NODE(self_op);
+    GeglImage *s1 = GEGL_IMAGE(gegl_node_get_nth_input(self_node,0));
+    GeglImage *s2 = GEGL_IMAGE(gegl_node_get_nth_input(self_node,1));
 
-    gegl_op_save_alphas (self_op);
+    /*gegl_op_save_alphas (self_op);*/
 
       {
-	gboolean  s1_has_alpha = self_op->input_has_alpha[0]; 
-	gboolean  s2_has_alpha = self_op->input_has_alpha[1]; 
-       
+        gboolean  s1_has_alpha = gegl_image_has_alpha(s1); 
+        gboolean  s2_has_alpha = gegl_image_has_alpha(s2); 
+
         /* dest = src2 op src1 */ 
 
-	if ( s2_has_alpha && s1_has_alpha)
-	  self_point_op_class->scanline_func = 
-        gegl_composite_op_COLORSPACEa_op_COLORSPACEa_DATATYPE;
-	else if ( s2_has_alpha && !s1_has_alpha )
-	  self_point_op_class->scanline_func = 
-        gegl_composite_op_COLORSPACEa_op_COLORSPACE_DATATYPE;
-	else if ( !s2_has_alpha && s1_has_alpha )
-	  self_point_op_class->scanline_func = 
-        gegl_composite_op_COLORSPACE_op_COLORSPACEa_DATATYPE;
-	else if ( !s2_has_alpha && !s1_has_alpha )
-	  self_point_op_class->scanline_func = 
-        gegl_composite_op_COLORSPACE_op_COLORSPACE_DATATYPE;
-      }
+        if ( s2_has_alpha && s1_has_alpha)
+          self_point_op_class->scanline_func = 
+           gegl_composite_op_COLORSPACEa_op_COLORSPACEa_DATATYPE;
+        else if ( s2_has_alpha && !s1_has_alpha )
+          self_point_op_class->scanline_func = 
+           gegl_composite_op_COLORSPACEa_op_COLORSPACE_DATATYPE;
+        else if ( !s2_has_alpha && s1_has_alpha )
+          self_point_op_class->scanline_func = 
+           gegl_composite_op_COLORSPACE_op_COLORSPACEa_DATATYPE;
+        else if ( !s2_has_alpha && !s1_has_alpha )
+          self_point_op_class->scanline_func = 
+           gegl_composite_op_COLORSPACE_op_COLORSPACE_DATATYPE;
+     }
   } 
 
   private 

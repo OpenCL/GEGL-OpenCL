@@ -51,7 +51,6 @@ class Gegl:N:Src:Op from Gegl:Point:Op
 	  GeglRect *dest_rect)
   {
     GeglNSrcOp       *self_n_src_op = GEGL_N_SRC_OP (self_op);
-    GeglOp           *self_op       = GEGL_OP (self_op);
     GeglNode         *self_node     = GEGL_NODE (self_op);
     GeglPointOp      *self_point_op = GEGL_POINT_OP (self_op);
 

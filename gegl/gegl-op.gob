@@ -29,14 +29,13 @@ class Gegl:Op from Gegl:Image {
   protected 
   gboolean 
   constructor(self, 
-              gchar * name,
               GList *inputs) 
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
        
     /* Chain up */
-    if (!gegl_image_constructor (GEGL_IMAGE(self),name,inputs))
+    if (!gegl_image_constructor (GEGL_IMAGE(self),inputs))
       return FALSE;
 
     {

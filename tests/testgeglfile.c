@@ -288,9 +288,9 @@ test_copychan_op (GeglImageBuffer ** src_image_buffer,
 
 void
 test_composite_ops( GeglImageBuffer ** src_image_buffer,
-    guint * src_width,
-    guint * src_height,
-    GeglRect *src_rect )
+                    guint * src_width,
+                    guint * src_height,
+                    GeglRect *src_rect )
 {
   GeglRect               dest_rect;
   GeglImageBuffer       *dest_image_buffer;
@@ -303,26 +303,29 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
   gint                   width, height;
   GtkWidget       	*dest_window[6];
   GtkWidget       	*dest_preview[6];
-  gchar	          	*mode_names[] = {"REPLACE", "OVER", 
-                                         "IN", "OUT", 
-                                         "ATOP", "XOR"};
+  gchar	          	*mode_names[] = {"REPLACE", 
+                                     "OVER", 
+                                     "IN", 
+                                     "OUT", 
+                                     "ATOP", 
+                                     "XOR"};
 
 
   /* create the destination , same size as src 1 for now */
   width = src_width[0];
   height = src_height[0];
   dest_color_model = gegl_image_color_model (
-                     GEGL_IMAGE(src_image_buffer[0]));  
+                                GEGL_IMAGE(src_image_buffer[0]));  
 
   dest_image_buffer = gegl_image_buffer_new (dest_color_model, 
-                                            width, height);
+                                             width, height);
   data_type = gegl_color_model_data_type (dest_color_model);
   num_chans = gegl_color_model_num_channels (dest_color_model);
   has_alpha = gegl_color_model_has_alpha (dest_color_model);
   gegl_rect_set (&dest_rect, 0, 0, width, height);
 
     /* premultiplied composite */
-#if 0 
+#if 1 
   for (i = 0; i< 6; i++) 
     {
       GeglImage *s1 = GEGL_IMAGE (src_image_buffer[0]);
@@ -345,7 +348,7 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
 #endif
 
     /* unpremultiplied composite */
-#if 1 
+#if 0 
   for (i = 0; i< 6; i++) 
     {
       GeglImage *s1 = GEGL_IMAGE (src_image_buffer[0]);
@@ -386,48 +389,39 @@ typedef enum
   POINT_OP_PLUS
 }PointOpType;
 
-#if 0
-GeglOp *
+GeglImage *
 point_op_factory (GeglImageBuffer * dest,
                   GeglImageBuffer **srcs,
-                  GeglRect *dest_rect,
-                  GeglRect *src_rect,
                   PointOpType type)
 {
+
+  GeglImage *s1 = GEGL_IMAGE(srcs[0]);
+  GeglImage *s2 = GEGL_IMAGE(srcs[1]);
+
   switch (type)
     {
     case POINT_OP_MIN:
-       return GEGL_OP(gegl_min_op_new (dest, srcs[0], srcs[1], 
-                    dest_rect, &src_rect[0], &src_rect[1]));
+       return GEGL_IMAGE(gegl_min_op_new (s1, s2));
     case POINT_OP_MAX:
-       return GEGL_OP(gegl_max_op_new (dest, srcs[0], srcs[1], 
-                    dest_rect, &src_rect[0], &src_rect[1]));
+       return GEGL_IMAGE(gegl_max_op_new (s1, s2));
     case POINT_OP_MULT:
-       return GEGL_OP(gegl_mult_op_new (dest, srcs[0], srcs[1], 
-                    dest_rect, &src_rect[0], &src_rect[1]));
+       return GEGL_IMAGE(gegl_mult_op_new (s1, s2)); 
     case POINT_OP_SUBTRACT:
-       return GEGL_OP(gegl_subtract_op_new (dest, srcs[0], srcs[1], 
-                    dest_rect, &src_rect[0], &src_rect[1]));
+       return GEGL_IMAGE(gegl_subtract_op_new (s1, s2)); 
     case POINT_OP_DIFF:
-       return GEGL_OP(gegl_diff_op_new (dest, srcs[0], srcs[1], 
-                    dest_rect, &src_rect[0], &src_rect[1]));
+       return GEGL_IMAGE(gegl_diff_op_new (s1, s2)); 
     case POINT_OP_SCREEN:
-       return GEGL_OP(gegl_screen_op_new (dest, srcs[0], srcs[1], 
-                    dest_rect, &src_rect[0], &src_rect[1]));
+       return GEGL_IMAGE(gegl_screen_op_new (s1, s2)); 
     case POINT_OP_DARK:
-       return GEGL_OP(gegl_dark_op_new (dest, srcs[0], srcs[1], 
-                    dest_rect, &src_rect[0], &src_rect[1]));
+       return GEGL_IMAGE(gegl_dark_op_new (s1, s2)); 
     case POINT_OP_LIGHT:
-       return GEGL_OP(gegl_light_op_new (dest, srcs[0], srcs[1], 
-                    dest_rect, &src_rect[0], &src_rect[1]));
+       return GEGL_IMAGE(gegl_light_op_new (s1, s2)); 
     case POINT_OP_PLUS:
-       return GEGL_OP(gegl_add_op_new (dest, srcs[0], srcs[1], 
-                    dest_rect, &src_rect[0], &src_rect[1]));
+       return GEGL_IMAGE(gegl_add_op_new (s1, s2)); 
     default:
        return NULL;
     }
 }
-#endif
 
 void
 test_point_ops( GeglImageBuffer ** src_image_buffer,
@@ -435,12 +429,11 @@ test_point_ops( GeglImageBuffer ** src_image_buffer,
                     guint * src_height,
                     GeglRect *src_rect)
 {
-#if 0
   GeglRect               dest_rect;
   GeglImageBuffer       *dest_image_buffer;
   GeglColorModel        *dest_color_model;
   GeglChannelDataType    data_type;
-  GeglOp 		*op;
+  GeglImage 		     *op;
   gint                   num_chans;
   gint                   i;
   gint                   width, height;
@@ -452,8 +445,7 @@ test_point_ops( GeglImageBuffer ** src_image_buffer,
 
   width = src_width[0];
   height = src_height[0];
-  dest_color_model = gegl_image_buffer_color_model (src_image_buffer[0]);  
-
+  dest_color_model = gegl_image_color_model (GEGL_IMAGE(src_image_buffer[0]));  
   dest_image_buffer = gegl_image_buffer_new (dest_color_model, 
                                             width, height);
   data_type = gegl_color_model_data_type (dest_color_model);
@@ -462,9 +454,10 @@ test_point_ops( GeglImageBuffer ** src_image_buffer,
 
   for (i = 0; i < 9; i++) 
     {
-      op = point_op_factory (dest_image_buffer, src_image_buffer, 
-                            &dest_rect, src_rect, (PointOpType)i); 
-      gegl_op_apply (op);   
+      GeglRect roi;
+      op = point_op_factory (dest_image_buffer, src_image_buffer, (PointOpType)i); 
+      gegl_rect_set(&roi,0,0,src_width[i],src_height[i]); 
+      gegl_image_get_pixels(op,GEGL_IMAGE(dest_image_buffer),&roi);
 
       /* display the destination */ 
       create_preview (&dest_window[i], &dest_preview[i], 
@@ -476,8 +469,6 @@ test_point_ops( GeglImageBuffer ** src_image_buffer,
 
 
   gegl_object_unref (GEGL_OBJECT (dest_image_buffer));
-  gegl_object_unref (GEGL_OBJECT (dest_color_model));
-#endif
 }
 
 guchar *
@@ -656,31 +647,41 @@ main(int argc,
 
       /* heres a hack for has_alpha */
       if (samples_per_pixel == 2 || samples_per_pixel == 4)
-	has_alpha = TRUE;
+        has_alpha = TRUE;
 
       if (has_alpha)
-	printf ("%d has alpha\n", k);
+        printf ("%d has alpha\n", k);
       else
-	 printf ("%d does not have alpha\n", k);
+        printf ("%d does not have alpha\n", k);
 
       /* get width and height */
       TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &src_width[k]);
       TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &src_height[k]);
       
       /* create the src GeglColorModel */
-      src_color_model[k] = gegl_color_model_factory (RGB, data_type, has_alpha);
+      src_color_model[k] = gegl_color_model_factory (RGB, 
+                                                    data_type, 
+                                                    has_alpha);
 
       /* create the src GeglImageBuffer */
       src_image_buffer[k] = gegl_image_buffer_new (src_color_model[k], 
-	  src_width[k], src_height[k]); 
+                                                   src_width[k], 
+                                                   src_height[k]); 
         
       num_chans = gegl_color_model_num_channels(src_color_model[k]);
 
       /* get an image_data buffer we can pass to GeglImageBuffer */
       image_data = read_tiff_image_data (tif, 
-	           src_width[k], src_height[k], num_chans, data_type, has_alpha);
+	                                     src_width[k], 
+                                         src_height[k], 
+                                         num_chans, 
+                                         data_type, 
+                                         has_alpha);
       
-      gegl_rect_set (&src_rect[k], 0,0, src_width[k], src_height[k]);
+      gegl_rect_set (&src_rect[k], 
+                    0,0, 
+                    src_width[k], src_height[k]);
+      
       TIFFClose(tif); 
 
       /* pass the image data to the GeglImageBuffer */
@@ -696,7 +697,7 @@ main(int argc,
 #endif 
     } 
 
-  test_composite_ops (src_image_buffer, src_width, src_height, src_rect);
+  test_point_ops (src_image_buffer, src_width, src_height, src_rect); 
 #if 0
   /* Test some of the GeglOps */  
   test_copy_op (src_image_buffer, src_width, src_height, src_rect);

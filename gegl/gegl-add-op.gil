@@ -51,7 +51,7 @@ class Gegl:Add:Op from Gegl:Dual:Src:Op {
     
     /* Chain up */
     if (!gegl_dual_src_op_constructor (
-	  GEGL_DUAL_SRC_OP(self),src1, src2))
+	  GEGL_DUAL_SRC_OP(self), src1, src2))
       return FALSE;
 
     return TRUE;

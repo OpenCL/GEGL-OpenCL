@@ -31,7 +31,7 @@ class Gegl:Point:Op from Gegl:Op {
       return FALSE;
        
     /* Chain up */
-    if (!gegl_op_constructor (GEGL_OP(self), "point_op", inputs))
+    if (!gegl_op_constructor (GEGL_OP(self), inputs))
       return FALSE;
     
     return TRUE;

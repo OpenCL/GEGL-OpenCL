@@ -32,14 +32,13 @@ class Gegl:Image from Gegl:Node {
   protected 
   gboolean 
   constructor(self,
-              gchar *name,
               GList *inputs)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
        
     /* Chain up */
-    if (!gegl_node_constructor (GEGL_NODE(self), name, inputs))
+    if (!gegl_node_constructor (GEGL_NODE(self), inputs))
       return FALSE;
 
     self->width = 0;

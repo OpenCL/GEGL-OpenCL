@@ -1,0 +1,268 @@
+<!-- This is used to generate the online TODO list for GEGL using
+     the script docs/make-todo. Whenever a change to this file is
+     committed to CVS,the file is run through make-todo and the online
+     version updated. If you modify this file, you should check for
+     parse errors by running:
+
+     $ docs/make-todo TODO.xml > /dev/null
+
+     before committing, or you may screw up the online version.
+     The next new task number is #24 --> 
+<todo logourl="gegl.jpg">
+  <title>Gegl Task list</title>
+  <section>
+    <title>Gegl</title>
+
+    <entry size="medium" status="70%" target="0.0">
+      <title>GeglNode object</title>
+      <description>
+        <p>
+            This class is to hold the information for a node in an image graph
+            dag and will have lists for the input and output nodes.  This class
+            will be responsible for keeping track of all the graph related things
+            for Nodes (images, ops). It will have lists for the inputs and
+            outputs and provide traversals for depth-first, breadth-first, and
+            topologically sorting. It will keep track of the reference counting
+            (via gtk ref counting) associated with adding inputs and outputs to
+            nodes, and check graphs for cycles. This means that it will be
+            possible to set up graphs and pass them around and delete them by
+            just deleting the root, since ref counting will take care of finding
+            and destroying nodes automatically.
+        </p>
+      </description>
+      <contact>Calvin Williamson &lt;calvinw@mindspring.com&gt;</contact>
+    </entry>
+
+    <entry size="small" status="0%" target="0.0">
+      <title>Tests for GeglCopyOp,etc</title>
+      <description>
+        <p>
+            The tests/testgegl.c and tests/testgeglfile.c need updates for
+            testing GeglCopyOp, GeglCopyChanOp, and GeglColorConvertOps. There
+            is some code for these in testgegl.c but it was commented out after
+            the latest changes to libgegl.
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="big" status="0%" target="0.0">
+      <title> Data Storage Types</title>
+      <description>
+        <p>
+            Gegl will have a standard data storage type. The details of this
+            still needs to be determined. It would be best if the choice of
+            underlying data storage can be kept as independent as possible of
+            the details of the operator algorithms. Of course this is a
+            difficult problem, but see the 
+            <a href="http://kogs-www.informatik.uni-hamburg.de/~koethe/vigra/">Vigra</a>
+            library for some ideas. 
+        </p>
+        <p>
+            Right now GeglImage has pointers to each channel of image data and
+            the entire image data resides in memory. This needs to change to
+            the tiled, paging scheme before proceeding too much farther. 
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="big" status="0%" target="0.0">
+      <title>Memory,Cache Manager classes</title>
+      <description>
+        <p>
+            Gegl needs memory management classes in the form of cache with
+            swappable pages.  This will mean image data will be requested from a
+            cache manager, and we need schemes (ref counting,splay trees)
+            for deciding what to swap out. This will need to work with tiles. 
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="big" status="0%" target="0.0">
+      <title> Tile Classes</title>
+      <description>
+        <p>
+            Tile and tile management classes. Want to allow variable size tiles
+            for gegl. 
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="big" status="0%" target="0.0">
+      <title>Multi-Threading Support</title>
+      <description>
+        <p>
+            Basic multi-threading support for image ops, and scheduler/task
+            management classes.
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="medium" status="0%" target="0.0">
+      <title>AreaOp</title>
+      <description>
+        <p>
+            Area operations base class. This class will have to decide how
+            navigate the image. Assuming there is a tiling data scheme, this
+            class must implement how the image data is delivered to the lower
+            level classes so they can compute the results of the area op. This
+            probably will involve some cobbling of adjacent tiles. Also this
+            will need support from gil for dX,dY navigation and AreaIterators. 
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="medium" status="0%" target="0.0">
+      <title>ImageIterator Classes </title>
+      <description>
+        <p>
+            The ImageIterator classes will probably need an base Iterator class
+            and then subclasses that iterate in different ways. Right now there
+            is a GeglImageIterator class which is basically a scanline
+            iterator. 
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+
+    <entry size="medium" status="0%" target="0.0">
+      <title>Additional ColorModels</title>
+      <description>
+        <p>
+            Need to fill out details of more of the color models, and the
+            corresponding color conversion ops. Also complete a color model
+            "promotion" and conversion scheme for use when doing automatic
+            color conversion. ie if inputs to some 2-input op are rgb u8 and
+            cmyk u8 then the output is rgb u8.
+        </p>
+        <ul>
+            <li> GeglColorModelIndexed </li>
+            <li> GeglColorModelCmyk </li>
+            <li> GeglColorModelCieXyz </li>
+            <li> GeglColorModelsRgb </li>
+            <li> GeglColorModelHsv </li>
+            <li> GeglColorModelLab </li>
+            <li> GeglColorModelMultiChannel </li>             
+        </ul>
+        <p>
+            Some ICC profile color models would be nice. 
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="small" status="0%" target="0.0">
+      <title>Gtk-doc Setup</title>
+      <description>
+        <p>
+            Setup gtk-doc for doing documentation in gegl. This is DocBook style
+            documentation.
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+  </section> <!-- Gegl -->
+
+  <section>
+    <title>Gil</title>
+
+    <entry size="medium" status="30%" target="0.0">
+      <title>Abstract Syntax Trees for gil</title>
+      <description>
+        <p>
+            We need to extend codegen to create abstract syntax trees, so that
+            we can do better code generation, type checking and so on.  See gil
+            subdirectory for a simple example.  This will eventually replace
+            codegen. The new code generator will be just called "gil" and will
+            be something that can be used to do various tasks that depend on
+            traversing the gil ast. It will use glib and GNodes for creating
+            the asts from lex/yacc, and GHashtables for the symbol table. The
+            gil syntax will mostly stay the same, but we get a more powerful
+            code generator/language.
+        </p>
+        <p>
+            Currently the example builds asts for simple C-like expressions and
+            code blocks.
+        </p>
+      </description>
+      <contact>Calvin Williamson &lt;calvinw@mindspring.com&gt;</contact>
+    </entry>
+
+    <entry size="medium" status="0%" target="0.0">
+      <title>Gil support for AreaOps</title>
+      <description>
+        <p>
+           Gil will need to understand how to get rowstrides and access pixels.
+           This involves making sure gil can interpret gil built-in dY function
+           calls.
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="medium" status="0%" target="0.0">
+      <title>Gil Channels Support</title>
+      <description>
+        <p>
+           Gil currently has no way to reference individual color channnels ie
+           red, green, blue for rgb color model. This is needed for Ops that
+           will write gil code and will want a standard way to refer to the
+           color channels.  
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+  </section> <!-- Gil -->
+
+  <section>
+    <title>Opgen</title>
+
+    <entry size="medium" status="0%" target="0.0">
+      <title>Opgen Issues</title>
+      <description>
+        <p>
+          Opgen generates gegl-operators from XML files.  The code it generates
+          isn't good enough to compile, but it is pretty close.
+        </p>
+        <ul>
+            <li>
+              If the per_pixel/per_color code uses any of the alpha values we have
+              to do a big switch statement like in per_alpha.
+            </li>
+            <li>
+              Fix up the headers output.
+            </li>
+            <li>
+              Fix up capitalization in a couple of spots.
+            </li>
+            <li>
+              Make the constants line up with the real gegl constants.
+            </li>
+            <li>
+              Figure out how we tell GIL to generate multiple versions of the
+              point processing functions
+            </li>
+            <li>
+              Figure out how we code with specific colors (ie red, green, blue, cyan...)
+            </li>
+            <li>
+              Make the output actually compile.
+            </li>
+            <li>
+              Automatic code indentation?
+            </li>
+        </ul>
+      </description>
+      <contact>Jay Cox &lt;jaycox@gimp.org&gt;</contact>
+    </entry>
+
+  </section> <!-- Opgen -->
+</todo>
