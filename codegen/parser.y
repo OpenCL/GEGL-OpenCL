@@ -342,7 +342,7 @@ Line:
 		{ 
 		printf("%sbreak;", $1.string); 
 		} 			
-	| INDENT CASE Expression ':'  		
+	| INDENT CASE NAME ':'  		
 		{ 
 		printf("%scase %s:", $1.string, $3.string); 
 		}
@@ -472,7 +472,7 @@ Line:
 		  {
 		  if (get_sym ($5.string)->type == TYPE_C_A_VECTOR)
 		    {
-		    printf ("%sif (%s_%s)%s  %s%s_%s++;", $1.string, $5.string,
+		    printf ("%sif (%s_has_%s)%s  %s%s_%s++;", $1.string, $5.string,
 			NAME_COLOR_CHAN[NUM_COLOR_CHAN],
 			$1.string, $4.string, $5.string,
 			NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
@@ -492,7 +492,7 @@ Line:
 		    { 
 		    if (get_sym ($5.string)->type == TYPE_C_A_VECTOR)
 		      {
-		      printf ("%sif (%s_%s)%s  %s%s_%s += %s", $1.string, $5.string,
+		      printf ("%sif (%s_has_%s)%s  %s%s_%s += %s", $1.string, $5.string,
 			 NAME_COLOR_CHAN[NUM_COLOR_CHAN], 
 			 $1.string, $4.string, $5.string, 
 			 NAME_COLOR_CHAN[NUM_COLOR_CHAN],
@@ -911,6 +911,7 @@ rm_varibles (char scope)
       {
       symtab[i] = symtab[cur_nsyms-1];
       cur_nsyms--; 
+      i--; 
       }
     }
   
@@ -973,8 +974,9 @@ init_data_varible (char *s)
     tmp[i*2+1] = ' ';
     }
   tmp[i*2  ] = '\0'; 
-  printf ("\n%s%s *%s_data[%d];", tmp, DATATYPE_STR, s, e->num); 
-  printf ("\n%s int %s_has_alpha;", tmp, s); 
+  printf ("\n%s%s *%s_data[%d];", tmp, DATATYPE_STR, s, e->num);
+  if (e->dtype == TYPE_C_A_VECTOR)  
+    printf ("\n%sint %s_has_%s;", tmp, s, NAME_COLOR_CHAN[NUM_COLOR_CHAN]); 
 
 }
 
@@ -1209,7 +1211,7 @@ void
 do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 {
   char tmp[256];
-  char *t[2]; 
+  char *t[9]; 
 
   /* error checking */
   if (src1.num != src2.num  && src1.num != 1 && src2.num != 1)
@@ -1287,6 +1289,12 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	    case TYPE_FLOAT:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
+	    case TYPE_CHAN:
+	      sprintf (tmp, "%s = %s", src1.string, src2.string);
+	      break;
+	    case TYPE_CHANFLOAT:
+	      sprintf (tmp, "%s = %s", src1.string, src2.string);
+	     break;  
 	    default:
 	      yyerror("ERROR: op_EQUAL");
 	      exit(1);
@@ -1302,6 +1310,12 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	    case TYPE_FLOAT:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
+	    case TYPE_CHAN:
+	      sprintf (tmp, "%s = %s", src1.string, src2.string);
+	      break;
+	    case TYPE_CHANFLOAT:
+	      sprintf (tmp, "%s = %s", src1.string, src2.string);
+	      break; 
 	    default:
 	      yyerror("ERROR: programming error");
 	      exit(1);
@@ -1344,7 +1358,8 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
   else if (op == OP_EQUAL)
     dest->dtype = src1.dtype; 
   else 
-    dest->dtype = (src1.dtype + src2.dtype) > TYPE_CHANFLOAT? TYPE_CHANFLOAT: (src1.dtype + src2.dtype); 
+    dest->dtype = (src1.dtype + src2.dtype) > TYPE_CHANFLOAT? TYPE_CHANFLOAT: 
+      	(src1.dtype + src2.dtype); 
   dest->type  = (src1.type > src2.type)?src1.type:src2.type;
   dest->num   = (src1.num > src2.num)?src1.num:src2.num;
   strcpy (dest->string, tmp);
@@ -1449,7 +1464,7 @@ add_sym (char *ss, char scope)
   {
     /* is it already here? */
     if(!strcmp(symtab[i].string, s)){
-
+ 	printf ("\n%s\n", s); 
 	yyerror("Error: Varible already declared");
 	exit(1);
 	
@@ -1463,7 +1478,8 @@ add_sym (char *ss, char scope)
   }
   
   strcpy(symtab[cur_nsyms].string, s);
- symtab[cur_nsyms].scope = scope;  
+  symtab[cur_nsyms].scope = scope;  
+  symtab[cur_nsyms].inited = 0; 
   cur_nsyms++; 
   return symtab[cur_nsyms-1];
 
@@ -1489,13 +1505,16 @@ get_sym (char *ss)
     {
       s[i-6] = '\0';
       ss[i-4] = '\0';
+    if (s[i-7] == 's' && s[i-8] == 'a' && s[i-9] == 'h' && s[i-10] == '_')
+      {
+      s[i-10] = '\0';  
+      }
     }
-  
+
   i = strlen(s);
   if (i>2)
   if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '_')
   {
-    s[i-1] = '\0';
     s[i-2] = '\0'; 
   } 
 

@@ -8,6 +8,7 @@ VectorChan d(color,alpha);
 VectorChan s(color,alpha);
 VectorChan s1(color,alpha), s2(color,alpha);
 VectorChan s3(color,alpha); /*a comment*/
+
 GENERIC_IMAGE_DECL_END
 
 GENERIC_IMAGE_IMAGE_DATA_INIT

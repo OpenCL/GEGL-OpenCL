@@ -23,6 +23,7 @@ digit   		[0-9]
 integer 		{digit}+
 float   		{digit}*\.{integer}
 name    		[a-zA-Z][A-Z_a-z0-9]*
+Name			[A-Z][_A-Z0-9]*
 string			\".*\"	
 
 %%
@@ -232,7 +233,7 @@ string			\".*\"
 			  		case -1:
 			    		/* return symbol pointer */
 			    		yylval.elem = add_sym (yytext, SCOPE);
-			    		strcpy(yylval.elem.string, yytext); 
+			    		strcpy(yylval.elem.string, yytext);
 					return NAME;
 			    		break;
 			  		default:
@@ -240,6 +241,21 @@ string			\".*\"
 			    		break; 		  
 			  		}
           				}
+<GENERIC_IMAGE_BLOCK>{Name}  		{
+					int keyword = get_keyword (yytext);
+					switch (keyword) 
+			  		{ 
+			  		case -1:
+			    		/* return symbol pointer */
+			    		strcpy(yylval.elem.string, yytext); 
+			    		return NAME;
+			    		break;
+			  		default:
+			    		return get_keyword (yytext);
+			    		break; 		  
+			  		}
+          				}
+
 <GENERIC_IMAGE_BLOCK>{name}  		{
 					int keyword = get_keyword (yytext);
 					switch (keyword) 
