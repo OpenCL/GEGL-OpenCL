@@ -1,81 +1,115 @@
-Webpages for Gegl (or see the docs dir): 
+Webpages for Gegl (also see the docs dir): 
 
-http://www.mindspring.com/~calvinw/geglClasses.html
-http://www.mindspring.com/~calvinw/genericChannelData.html
-http://www.mindspring.com/~calvinw/genericImageLanguage.html
+http://www.gegl.org
 
-If possible, you should use Gob 0.93.1 (in gnome cvs or from
-http://ftp.5z.com/pub/gob/) or later with gegl. Earlier
-versions of Gob may not work as well.
+Gegl is tested with Gob 1.0.1 (available from gnome cvs or 
+http://ftp.5z.com/pub/gob/).
 
-For more information on gob see http://www.5z.com/jirka/gob.html. 
+For more information on gob see: 
+http://www.5z.com/jirka/gob.html. 
 
+Building Gegl
+-------------
 
-About the use of private, protected and public as used by gob:
+.gil files contain code that have generic image language blocks 
+     embedded in it. 
+.gob files contain code in gtk-object-builder format.
+
+So roughly 
+
+gil code -----> gob code -----> regular c  
+         codegen         gob
+
+But only some .gob files are generated from .gil files. Others
+dont need to be generated since they contain no gil code.  
+
+When you type make in the top dir, the following should occur:
+
+1)In the codegen subdir, the code generating tool codegen 
+is built in the codegen directory --this will require a lex/yacc 
+(or flex/bison) installed somewhere.
+
+2)In the gegl subdir, codegen runs on each .gil file.
+and generates a corresponding .gob file from these.
+
+3)In the gegl subdir gob runs on all .gob files and generates
+gegl-whatever-class.h (public header) and 
+gegl-whatever-class-private.h (private header) and
+gegl-whatever-class.c (class file).
+
+4)In the gegl subdir, regular c files get compiled to
+the gegl lib and some test programs are built.
+
+Cleaning
+--------
+
+>make clean   
+
+removes just *.o's 
+
+>make gobclean 
+
+removes gob generated .c and .h files 
+but leaves .gob and .gil files.
+
+>make gilclean 
+
+removes gob generated .c and .h files and gil generated .gobs 
+but leaves .gil and any nongenerated .gob files.
+               
+Dependencies more or less work so if you edit a .gil or .gob file, 
+the make will pick up that dependency and rerun gob or codegen for you 
+before compiling the c code. But you will notice some odd dependencies
+and regeneration of things at odd times. Hopefully we'll fix these
+soon.
+
+About the use of private, protected and public as used by Gob
+-------------------------------------------------------------
 
 Gob allows "private", "protected" and "public" variables and
 methods.  In gegl we use these keywords as follows:
 
-Variables:
+For variables:
 
-1) "public" variables appear in the class struct in class.h,
-available to all.
+1) "public" gob variables appear in the class struct in the 
+class 's public header file(ie in the gegl-whatever-class.h 
+file), and are visible and available to all.
 
-2) "protected" variables are not used in gegl for now.
+2) "protected" gob variables are not used in gegl for now.
 
-3) "private" variables in gegl class files are similar to
+3) "private" gob variables in gegl class files are similar to
 C++-style "protected" variables, in that these gob "private"
 variables are made available to subclasses by including the
-gob-generated class's private header (class-private.h) in the
-subclass.
+gob-generated class's private header (gegl-whatever-class-private.h) 
+in the subclass.
 
-Methods: 
+For methods: 
 
-1)"public" methods are available to all through the class.h
-header.
+1)"public" gob methods are available to all through the class's
+public header file gegl-whatever-class.h.
 
-2)"protected" methods are available to subclasses by virtue of
-being included in the class's class-private.h header.
+2)"protected" gob methods are available to subclasses by virtue of
+of having their declaration in the class's private header file
+(gegl-whatever-class-private.h). 
 
-3)"private" methods are available only to the class where they
-are defined  They are static functions in the class.c file.  
+3)"private" gob methods are available only to the class where they
+are defined.  They are static functions in the class's .c file
+(gegl-whatever-class.c).  
 
-In short, methods are like in C++. And for variables, gob
-"private" means C++-protected and there is no gob "protected"
-used in gegl.
+In short, for methods, visibility corresponds to the C++ interpretation.
 
+But for variables, gob "private" corresponds to C++-protected and there 
+is no gob "protected" used in gegl.
 
-
-
-
-
-There is some support for remaking generated .c and .h files
-automatically.  Look in gegl/gegl/Makefile.am for rules at the
-bottom.
-
->make clean   
-
-removes *.o's but not .h's or .c's or any .gobs
-
->make gobclean 
-
-removes gob generated .c and .h files, leaves all .gobs, and all .gils.
-
->make gilclean 
-
-removes gob generated .c and .h files, gil generated .gobs, leaves .gils
-and non-gil generated .gobs.
-               
-Dependencies more or less work so if you edit a .gil or .gob file, the
-make will pick up that depend and rerun gob or codegen for you before
-compiling
+Test programs
+-------------
 
 The testgegl program just creates some operators and runs them.
 There is a PrintOp for debugging. See testgegl.c for details.
 
 The testgeglfile program has code for reading tiffs and
-displaying images in a gtk window. You can use this for testing
-op classes as well. 
+displaying tiff images in a gtk window. You can use this for testing
+op classes as well.  
 
 The arguments for testgeglfile are:
 
@@ -87,7 +121,7 @@ for gegl at present.
 
 To use the other data types you have to change the Makefile.am
 to run codegen with another data type. This will all be automated
-and change once the codegen preprocessor is in place. See the 
-docs. 
+and change once the preprocessor for codegen is in place. See the 
+genericImageLanguage.html doc for details. 
 
 calvinw@mindspring.com

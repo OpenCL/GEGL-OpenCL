@@ -9,10 +9,11 @@
 
 <hr WIDTH="100%">
 <br><font color="#62A2A1"><font size=-1><a href="gegl.html">HOME</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#news">NEWS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-<a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#news">NEWS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="#mailing lists">MAILING LISTS&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="#tasks">CURRENT TASKS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#mailing lists">MAILING LISTS&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;
+
+<a href="#tasks">CURRENT TASKS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 <a href="#authors">AUTHORS&nbsp;&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#reference">
 REFERENCES</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#getting gegl">GETTING
 GEGL</a></font></font>
@@ -30,7 +31,7 @@ Classes for point, area, geometric and statistics operations will be included,
 as well as color conversion ops for converting images between color models.&nbsp;
 Memory management and image classes are planned as well.&nbsp; It includes
 a method for writing generic image processing routines (Generic Image Language)
-and generating specific data type and colormodel code (Codegen) from this.</font><font color="#000000"></font>
+and generating specific data type and colormodel code (Codegen) from this.</font>
 <p><font color="#000000">GEGL is still in a very early phase, and many
 classes are under construction. There is no official release yet, but you
 can <a href="#getting gegl">get it from anonymous cvs.</a></font>
@@ -39,12 +40,28 @@ can <a href="#getting gegl">get it from anonymous cvs.</a></font>
 <br><a NAME="docs"></a><b>Documents</b>
 <p>These documents all describe various parts of gegl. They are included
 in cvs in the docs directory as well as here.
-<p><a href="geglClasses.html">Gegl Classes</a>
-<br><a href="geglImageAndOp.html">GeglImage and Op classes</a>
-<br><a href="genericImageLanguage.html">Generic Image Language</a>
-<br><a href="genericChannelData.html">Generic Channel Data</a>
-<br><a href="codegen.html">Codegen</a>
-<p>
+<ul>
+<li>
+<a href="geglClasses.html">Gegl Classes</a>, a short description of the
+main gegl classes.</li>
+
+<li>
+<a href="geglImageAndOp.html">Gegl Image and Op classes</a>, a description
+of the Image and Op classes and image chains (or trees).</li>
+
+<li>
+<a href="genericChannelData.html">Generic Channel Data</a>, a technique
+for handling multiple data types in GEGL.</li>
+
+<li>
+<a href="genericImageLanguage.html">Generic Image Language </a>, a description
+of a generic image processing coding in GEGL.</li>
+
+<li>
+<a href="codegen.html">Codegen</a>, the lex/yacc program that generates
+code for the Generic Image Language.</li>
+</ul>
+
 <hr WIDTH="100%">
 <br><a NAME="news"></a><b>News</b>
 <br>&nbsp;
@@ -171,8 +188,8 @@ working directory, issue the command:
 <p>>cvs get gegl
 <p>You can also <a href="http://cvs.gnome.org/bonsai/rview.cgi?cvsroot=/cvs/gnome&dir=gegl">browse
 the cvs source</a> through the web using bonsai.
-<p>You will need a recent version of glib and gtk+ as well, and a version
-of <a href="http://www.5z.com/jirka/gob.html">gob</a>.
+<p>You will need a recent version of glib and gtk+ and <a href="http://www.5z.com/jirka/gob.html">gob</a>.
+You will also need a lex/yacc (or flex/bison) pair.
 <p>
 <hr WIDTH="100%">
 <br><a NAME="authors"></a><b>Authors </b>(listed alphabetical)
@@ -189,6 +206,8 @@ color resolution film work</a>
 <br><a href="http://siggraph.gimp.org">GIMP at SIGGRAPH 2000</a>
 <br><a href="http://www.gimp.org/gimpcon/review.html">GimpCon2000 review
 -discussion of gimp2.0, gegl</a>
+<br><a href="http://www.mindspring.com/~calvinw/genImageProcessing/genericIntro.html">Generic
+Image Processing- slides for an introductory talk</a>
 <br>&nbsp;
 <p>
 <hr WIDTH="100%">
