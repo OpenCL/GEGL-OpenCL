@@ -1,0 +1,9 @@
+Tue Jun  5 23:34:48 EDT 2001  calvinw@mindspring.com
+
+	* initial import of gegl gtk-docs. Makefile.am taken
+	mostly from glib.  The args/parameters for most public/protected 
+	functions are extracted from the gob/gil/c files. It would be 
+	nice if we could also use gtk-doc for private functions as well.
+	Ill try to provide a README for editing the gegl-sections.txt
+	and the others. In the meantime if you know how to do gtk-docs 
+	for glib/gtk etc it is about the same.

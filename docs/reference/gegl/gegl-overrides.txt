@@ -1,0 +1,11 @@
+<FUNCTION>
+<NAME>gegl_add_op_prepare</NAME>
+<RETURNS>void  </RETURNS>
+GeglImage * self_image, GList *requests 
+</FUNCTION>
+
+<FUNCTION>
+<NAME>gegl_add_op_scanline</NAME>
+<RETURNS>void  </RETURNS>
+GeglPointOp * self_point_op, GeglTileIterator **iters, gint width
+</FUNCTION>

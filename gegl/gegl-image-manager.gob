@@ -6,9 +6,24 @@
 typedef struct _GeglImageManager  GeglImageManager;
 #endif
 
+#ifndef __TYPEDEF_GEGL_IMAGE_BUFFER__
+#define __TYPEDEF_GEGL_IMAGE_BUFFER__
+typedef struct _GeglImageBuffer  GeglImageBuffer;
+#endif
+
 #ifndef __TYPEDEF_GEGL_IMAGE__
 #define __TYPEDEF_GEGL_IMAGE__
 typedef struct _GeglImage  GeglImage;
+#endif
+
+#ifndef __TYPEDEF_GEGL_STATISTICS_OP__
+#define __TYPEDEF_GEGL_STATISTICS_OP__
+typedef struct _GeglStatisticsOp  GeglStatisticsOp;
+#endif
+
+#ifndef __TYPEDEF_GEGL_OP__
+#define __TYPEDEF_GEGL_OP__
+typedef struct _GeglOp  GeglOp;
 #endif
 
 #ifndef __TYPEDEF_GEGL_TILE__
@@ -21,12 +36,23 @@ typedef struct _GeglTile  GeglTile;
 #include "gegl-image-manager.h"
 #include "gegl-image-manager-private.h"
 #include "gegl-object-private.h"
-#include "gegl-image.h"
+#include "gegl-op.h"
+#include "gegl-image-buffer.h"
+#include "gegl-statistics-op.h"
 #include <stdio.h>
 %}
 
 class Gegl:Image:Manager from Gegl:Object {
 
+
+  /**
+   * constructor:
+   * @self: a #GeglImageManager
+   *
+   * Initialize the #GeglImageManager.
+   *
+   * Returns: TRUE if constructed successfully.
+   **/ 
   protected 
   gboolean 
   constructor(self)
@@ -40,19 +66,33 @@ class Gegl:Image:Manager from Gegl:Object {
     return TRUE;
   }
 
-  override (Gtk:Object) 
-  void 
-  destroy (GtkObject *object)
-  {
-    g_return_if_fail (object != NULL);
 
-    /* Chain up on destroy */
-    PARENT_HANDLER (object)
-  }
+  /**
+   * apply:
+   * @self: a #GeglImageManager
+   * @root: root node of graph.
+   * @dest: a destination #GeglImageBuffer for result.
+   * @roi: a region of interest.
+   *
+   * This evaluates an operator graph, when @root is a #GeglImage. Subclass
+   * image managers should implement this to traverse the graph and call each
+   * #GeglOp's prepare, process, and finish routines.
+   *
+   **/ 
+  virtual protected 
+  void apply(self, GeglOp *root, GeglImageBuffer *dest, GeglRect *roi);
 
-  virtual protected void get_pixels (self, GeglImage *root, GeglImage *dest, GeglRect *roi);
-  virtual protected void delete_image (self, GeglImage *image);
+
+  /**
+   * delete_image:
+   * @self: a #GeglImageManager
+   * @image: a #GeglImage to delete from memory.
+   *
+   * Delete image data here, since image managers know where image data is
+   * stored. Called from #GeglImage's destroy routine.
+   *
+   **/
+  virtual protected 
+  void delete_image (self, GeglImage *image);
+
 }
-
-%{
-%}

@@ -5,20 +5,31 @@
 #include "gegl-single-src-op.h"
 #include "gegl-single-src-op-private.h"
 #include "gegl-point-op-private.h"
+#include "gegl-op.h"
+#include "gegl-object-private.h"
 %}
 
 class Gegl:Single:Src:Op from Gegl:Point:Op {
   
+  /**
+   * constructor:
+   * @self: a #GeglSingleSrcOp.
+   * @src: input #GeglOp.
+   *
+   * Initialize the #GeglSingleSrcOp.
+   *
+   * Returns: TRUE if constructed successfully.
+   **/ 
   protected 
   gboolean 
   constructor(self, 
-              GeglImage *input)
+              GeglOp *src)
   {
     GList *inputs = NULL;
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
    
-    inputs = g_list_append (inputs,input);
+    inputs = g_list_append (inputs,src);
 
     /* Chain up */
     if (!gegl_point_op_constructor (GEGL_POINT_OP(self), inputs))
@@ -28,11 +39,4 @@ class Gegl:Single:Src:Op from Gegl:Point:Op {
     return TRUE;
   }
 
-  override (Gtk:Object) 
-  void 
-  destroy (GtkObject *self_object)
-  {
-    /* Chain up on destroy */
-    PARENT_HANDLER (self_object)
-  }
 }

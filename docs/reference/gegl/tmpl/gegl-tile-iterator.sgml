@@ -1,0 +1,98 @@
+<!-- ##### SECTION Title ##### -->
+GeglTileIterator
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_tile_iterator_new ##### -->
+<para>
+
+</para>
+
+@tile: 
+@rect: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_iterator_get_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_iterator_get_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_iterator_first ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_tile_iterator_next ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_tile_iterator_is_done ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_iterator_get_current ##### -->
+<para>
+
+</para>
+
+@self: 
+@data_pointers: 
+
+
+<!-- ##### FUNCTION gegl_tile_iterator_constructor ##### -->
+<para>
+
+</para>
+
+@self: 
+@tile: 
+@rect: 
+@Returns: 
+
+
+<!-- ##### STRUCT GeglTileIteratorPrivate ##### -->
+<para>
+
+</para>
+
+@tile: 
+@rect: 
+@current: 
+

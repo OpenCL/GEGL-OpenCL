@@ -6,6 +6,7 @@
 #include "gegl-color-model-rgb-u16_4-private.h"
 #include "gegl-color-model-rgb-private.h"
 #include "gegl-color-model-private.h"
+#include "gegl-object-private.h"
 #include "gegl-color.h"
 %}
 

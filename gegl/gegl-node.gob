@@ -8,11 +8,11 @@ typedef struct _GeglNode  GeglNode;
 
 typedef enum
 {
-   GEGL_NODES_LEAFS  = 1 << 0,
-   GEGL_NODES_NON_LEAFS  = 1 << 1,
-   GEGL_NODES_ALL    = GEGL_NODES_LEAFS | GEGL_NODES_NON_LEAFS,
-   GEGL_NODES_MASK   = 0x03
-} GeglNodesFlags;
+   GEGL_NODE_VISIT_ENABLED = 1 << 0,
+   GEGL_NODE_VISIT_DISABLED = 1 << 1,
+   GEGL_NODE_VISIT_ALL = GEGL_NODE_VISIT_ENABLED | GEGL_NODE_VISIT_DISABLED,
+   GEGL_NODE_VISIT_MASK = 0x03 
+} GeglNodeVisitFlags;
 
 typedef gboolean 
 (*GeglNodeTraverseFunc)(GeglNode *node, gpointer data);
@@ -27,34 +27,25 @@ typedef gboolean
 
 class Gegl:Node from Gegl:Object {
 
-  private GList    *inputs;       /*inputs*/
-  private gint      num_inputs;   /*fixed for life of node, for now*/ 
-  private GList    *outputs;      /*outputs, all these share this node  */
-  private gboolean  visited;      /*flag for traversals*/ 
-  private gboolean  discovered;   /*flag for traversals*/ 
-  private gchar    *name;         /*name for the node*/
+  private GList    *inputs;         /*inputs*/
+  private gint      num_inputs;     /*fixed for life of node, for now*/ 
+  private GList    *outputs;        /*outputs, all these share this node  */
+  private gint      alt_input;      /*a way to pass through this node*/
+  private gboolean  enabled;        /*whether node is enabled.*/
+  private gboolean  visited;        /*flag for traversals*/ 
+  private gboolean  discovered;     /*flag for traversals*/ 
+  private gchar    *name;           /*name for the node*/
 
-  public 
-  GeglNode * 
-  new(gchar * name,
-      gint num_inputs)
-  {
-    GeglNode * self = GEGL_NODE(GET_NEW);
 
-    /*Call the constructor */
-    if (!constructor1(self,name,num_inputs))
-      return NULL;
-    
-    /*Okay its constructed*/
-    GEGL_OBJECT(self)->constructed = TRUE;
-
-    /* ref and sink it */
-    gegl_object_ref(GEGL_OBJECT(self));
-    gtk_object_sink(GTK_OBJECT(self));
-
-    return self;
-  }
-
+  /**
+   * constructor:
+   * @self: a #GeglNode.
+   * @inputs: #GeglNode list.
+   *
+   * Initializes a #GeglNode.
+   *
+   * Returns: TRUE if constructed successfully.
+   **/ 
   protected 
   gboolean 
   constructor(self,
@@ -77,45 +68,20 @@ class Gegl:Node from Gegl:Object {
     self->_priv->visited = TRUE;
     self->_priv->discovered = TRUE;
     self->_priv->name = g_strdup(gtk_type_name(GTK_OBJECT_TYPE(self)));
+    self->_priv->alt_input = 0;
+    self->_priv->enabled = TRUE;
 
     return TRUE;
   }
 
-  protected 
-  gboolean 
-  constructor1(self,
-              gchar * name,
-              gint num_inputs)
-  {
-    g_return_val_if_fail (num_inputs >= 0, FALSE);
-    g_return_val_if_fail (!(GEGL_OBJECT(self)->constructed), FALSE);
 
-    /* Chain up */
-    if (!gegl_object_constructor (GEGL_OBJECT(self)))
-      return FALSE;
-
-    {
-      gint i;   
-      self->_priv->outputs = NULL;
-      self->_priv->inputs = NULL;
-
-      /* Set up an inputs list with empty data pointers. */
-      i = num_inputs;
-      while(i--)
-      {
-        self->_priv->inputs = 
-          g_list_prepend(self->_priv->inputs, NULL);
-      }
-
-      self->_priv->num_inputs = num_inputs;
-      self->_priv->visited = TRUE;
-      self->_priv->discovered = TRUE;
-      self->_priv->name = g_strdup(name);
-    }
-
-    return TRUE;
-  }
-
+  /**
+   * destroy:
+   * @object:
+   * 
+   * Frees memory allocated by this object.
+   *
+   **/ 
   override (Gtk:Object) 
   void 
   destroy (GtkObject *object)
@@ -132,6 +98,15 @@ class Gegl:Node from Gegl:Object {
     PARENT_HANDLER (object)
   }
 
+
+  /**
+   * unlink:
+   * @self: a #GeglNode.
+   * 
+   * Unlink this node from any outputs. Loops through the outputs list and
+   * removes this node from each.
+   *
+   **/ 
   public 
   void
   unlink(self)
@@ -161,6 +136,15 @@ class Gegl:Node from Gegl:Object {
     self->_priv->outputs = NULL;
   }
 
+
+  /**
+   * get_name:
+   * @self: a #GeglNode.
+   *
+   * Gets the name of the node.
+   * 
+   * Returns: name of node.
+   **/
   public 
   gchar * 
   get_name(self)
@@ -168,6 +152,15 @@ class Gegl:Node from Gegl:Object {
     return self->_priv->name;
   }
 
+
+  /**
+   * set_name:
+   * @self: a #GeglNode.
+   * @name: set name to this.
+   *
+   * Sets the name of the node.
+   * 
+   **/
   public 
   void 
   set_name(self, 
@@ -176,6 +169,15 @@ class Gegl:Node from Gegl:Object {
     self->_priv->name = g_strdup(name);
   }
 
+
+  /**
+   * get_inputs:
+   * @self: a #GeglNode.
+   *
+   * Gets the inputs list of the node.
+   * 
+   * Returns: #GeglNode list of inputs.
+   **/
   protected 
   GList * 
   get_inputs(self)
@@ -183,6 +185,15 @@ class Gegl:Node from Gegl:Object {
     return self->_priv->inputs;
   }
 
+
+  /**
+   * get_outputs:
+   * @self: a #GeglNode.
+   *
+   * Gets the outputs list of the node.
+   * 
+   * Returns: #GeglNode list of outputs. 
+   **/
   protected 
   GList * 
   get_outputs(self)
@@ -190,6 +201,17 @@ class Gegl:Node from Gegl:Object {
     return self->_priv->outputs;
   }
 
+
+  /**
+   * set_nth_input:
+   * @self: a #GeglNode.
+   * @input: the node to make the nth input.
+   * @n: which input.
+   * 
+   * Sets the nth input of the node.
+   *
+   * Returns: the #GeglNode that was set.
+   **/
   public
   GeglNode *
   set_nth_input(self,
@@ -221,6 +243,16 @@ class Gegl:Node from Gegl:Object {
     return input;
   } 
 
+
+  /**
+   * get_nth_input:
+   * @self: a #GeglNode.
+   * @n: which input.
+   * 
+   * Gets the nth input of the node.
+   *
+   * Returns: a #GeglNode, the nth input of this node.
+   **/
   public
   GeglNode *
   get_nth_input(self,
@@ -230,6 +262,16 @@ class Gegl:Node from Gegl:Object {
     return (GeglNode *)g_list_nth_data(self->_priv->inputs,n);
   } 
 
+
+  /**
+   * get_nth_output:
+   * @self: a #GeglNode.
+   * @n: which output.
+   *
+   * Gets the nth output of the node.
+   * 
+   * Returns: a #GeglNode, the nth input of this node.
+   **/
   public
   GeglNode *
   get_nth_output(self,
@@ -239,6 +281,15 @@ class Gegl:Node from Gegl:Object {
     return (GeglNode *)g_list_nth_data(self->_priv->outputs,n);
   }
          
+
+  /**
+   * add_inputs:
+   * @self: a #GeglNode.
+   * @list: list of inputs.
+   *
+   * Makes @list the new inputs list and removes the old inputs list.
+   * 
+   **/
   private
   void
   add_inputs(self,
@@ -266,6 +317,14 @@ class Gegl:Node from Gegl:Object {
       }
   }
 
+
+  /**
+   * remove_inputs:
+   * @self: a #GeglNode.
+   *
+   * Removes the current inputs list.
+   * 
+   **/
   private
   void
   remove_inputs(self)
@@ -288,6 +347,16 @@ class Gegl:Node from Gegl:Object {
     self->_priv->inputs = NULL;
   }
 
+
+  /**
+   * add_output:
+   * @self: a #GeglNode.
+   * @output: a #GeglNode to add to output list.
+   * 
+   * Adds @output to the node's outputs list. 
+   *
+   * Returns: the added #GeglNode. 
+   **/
   private 
   GeglNode *
   add_output(self,
@@ -307,6 +376,15 @@ class Gegl:Node from Gegl:Object {
     return output;
   } 
 
+
+  /**
+   * remove_output:
+   * @self: a #GeglNode.
+   * @output: a #GeglNode to remove from outputs list.
+   *
+   * Removes @output from the node's outputs list.
+   * 
+   **/
   private 
   void
   remove_output(self,
@@ -324,6 +402,18 @@ class Gegl:Node from Gegl:Object {
     gegl_object_unref(GEGL_OBJECT(self));
   }
 
+
+  /**
+   * node_multiplicity:
+   * @self: a #GeglNode.
+   * @list: list to use.
+   * @node: a #GeglNode to look for on @list.
+   *
+   * Finds the multiplicity of @node on @list. That is, how many times @node
+   * appears on @list.
+   *
+   * Returns: Number of times @node is on @list. 
+   **/
   private 
   gint 
   node_multiplicity(self,
@@ -346,6 +436,17 @@ class Gegl:Node from Gegl:Object {
     return multiplicity;
   }
 
+
+  /**
+   * input_multiplicity:
+   * @self: a #GeglNode.
+   * @input: a #GeglNode to look for.
+   *
+   * Finds the multiplicity of @input on the node's inputs list.  That is, how
+   * many times @input appears on the inputs list.
+   *
+   * Returns: How many times @input is on the inputs list. 
+   **/
   public
   gint  
   input_multiplicity(self,
@@ -354,6 +455,17 @@ class Gegl:Node from Gegl:Object {
     return node_multiplicity(self, self->_priv->inputs, input);
   }
 
+
+  /**
+   * output_multiplicity:
+   * @self: a #GeglNode.
+   * @output: a #GeglNode to look for.
+   *
+   * Finds the multiplicity of @input on the node's outputs list.  That is, how
+   * many times @output appears on the outputs list.
+   *
+   * Returns: How many times @output is on the outputs list. 
+   **/
   public 
   gint  
   output_multiplicity(self,
@@ -362,6 +474,15 @@ class Gegl:Node from Gegl:Object {
     return node_multiplicity(self, self->_priv->outputs, output);
   }
 
+
+  /**
+   * is_leaf:
+   * @self: a #GeglNode.
+   *
+   * Tests to see if the node is a leaf node. A leaf node has no inputs. 
+   *
+   * Returns: TRUE if is a leaf. 
+   **/
   public
   gboolean
   is_leaf(self) 
@@ -369,6 +490,15 @@ class Gegl:Node from Gegl:Object {
     return (num_inputs(self) == 0) ? TRUE: FALSE;
   }
 
+
+  /**
+   * is_root:
+   * @self: a #GeglNode.
+   *
+   * Tests to see if the node is a root node. A root node has no outputs.
+   *
+   * Returns: TRUE if it is a root. 
+   **/
   public
   gboolean
   is_root(self)
@@ -376,14 +506,81 @@ class Gegl:Node from Gegl:Object {
     return (num_outputs(self) == 0) ? TRUE: FALSE;
   }
 
+
+  /**
+   * num_inputs:
+   * @self: a #GeglNode.
+   *
+   * Gets the number of inputs.
+   *
+   * Returns: number of inputs. 
+   **/
   public
   gint 
   num_inputs(self)
   {
-    g_return_val_if_fail (self != NULL, -1);
     return self->_priv->num_inputs;
   }
 
+
+  /**
+   * get_alt_input:
+   * @self: a #GeglNode.
+   *
+   * Gets the index of input to use instead of this node.  Allows traversals to
+   * pass through this node if not enabled or if looking for a particular kind of
+   * node. 
+   *
+   * Returns: the input's index to use instead of this node. 
+   **/
+  public
+  gint 
+  get_alt_input(self)
+  {
+    return self->_priv->alt_input;
+  }
+
+
+  /**
+   * get_enabled:
+   * @self: a #GeglNode.
+   *
+   * Gets whether this node is enabled. 
+   *
+   * Returns: TRUE if this node is enabled. 
+   **/
+  public
+  gboolean 
+  get_enabled(self)
+  {
+    return self->_priv->enabled;
+  }
+
+
+  /**
+   * set_enabled:
+   * @self: a #GeglNode.
+   *
+   * Sets whether this node is enabled. 
+   *
+   **/
+  public
+  void
+  set_enabled(self,
+              gboolean enabled)
+  {
+    self->_priv->enabled = enabled;
+  }
+
+
+  /**
+   * num_outputs:
+   * @self: a #GeglNode.
+   *
+   * Gets the number of outputs.
+   *
+   * Returns: number of outputs. 
+   **/
   public
   gint 
   num_outputs(self)
@@ -391,6 +588,15 @@ class Gegl:Node from Gegl:Object {
     return g_list_length(self->_priv->outputs);
   }
 
+
+  /**
+   * init_traversal:
+   * @self: a #GeglNode.
+   *
+   * Sets visited and discovered flags to FALSE for this node and all
+   * descendants.
+   *
+   **/
   private 
   void
   init_traversal(self)
@@ -413,6 +619,17 @@ class Gegl:Node from Gegl:Object {
       }
   } 
 
+
+  /**
+   * traverse_depth_first:
+   * @self: a #GeglNode.
+   * @visit_func: function to call on each node.
+   * @data: data to pass to each node.
+   * @init: init every descendant of this node. 
+   *
+   * Traverse the graph depth-first from this node through all descendants. 
+   *
+   **/
   public 
   void
   traverse_depth_first(self,
@@ -433,7 +650,7 @@ class Gegl:Node from Gegl:Object {
       {
         node = (GeglNode *)llink->data;
         if(node && !node->_priv->visited)
-            traverse_depth_first(node,visit_func,data,FALSE);
+            traverse_depth_first(node, visit_func, data, FALSE);
 
         llink = g_list_next(llink);
       }
@@ -443,6 +660,16 @@ class Gegl:Node from Gegl:Object {
     self->_priv->visited = TRUE;
   } 
 
+
+  /**
+   * traverse_breadth_first:
+   * @self: a #GeglNode.
+   * @visit_func: function to call on each node.
+   * @data: data to pass to each node.
+   *
+   * Traverse the graph breadth-first from this node through all descendants. 
+   *
+   **/
   public
   void
   traverse_breadth_first(self,
@@ -497,4 +724,5 @@ class Gegl:Node from Gegl:Object {
         node->_priv->visited = TRUE;
       }
   }
+
 }

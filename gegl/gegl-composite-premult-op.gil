@@ -19,10 +19,21 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 
   private GeglCompositeMode        comp_mode;
 
+
+  /**
+   * new:
+   * @src1: first input, premultiplied.
+   * @src2: second input, premultiplied.
+   * @mode: replace, over, in, out, atop, or xor.
+   *
+   * Creates a new #GeglCompositePremultOp.
+   * 
+   * Returns: a new #GeglCompositePremultOp.
+   **/ 
   public 
   GeglCompositePremultOp *
-  new (GeglImage *src1,
-       GeglImage *src2,       
+  new (GeglOp *src1,
+       GeglOp *src2,       
        GeglCompositeMode mode)
   {
     GeglCompositePremultOp * self = GEGL_COMPOSITE_PREMULT_OP(GET_NEW);
@@ -37,11 +48,23 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     return self;
   }
 
+
+  /**
+   * constructor:
+   * @self: a #GeglCompositePremultOp.
+   * @src1: first input, premultiplied.
+   * @src2: second input, premultiplied.
+   * @mode: replace, over, in, out, atop, or xor.
+   *
+   * Initializes a #GeglCompositePremultOp.
+   * 
+   * Returns: TRUE if constructed successfully.
+   **/ 
   protected 
   gboolean 
   constructor(self, 
-              GeglImage *src1,
-              GeglImage *src2,       
+              GeglOp *src1,
+              GeglOp *src2,       
               GeglCompositeMode mode)
   {
     if(GEGL_OBJECT(self)->constructed) 
@@ -56,34 +79,36 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     return TRUE;
   }
 
-  override (Gtk:Object) 
-  void 
-  destroy (GtkObject *object)
-  {
-    /* Chain up on destroy */
-    PARENT_HANDLER (object)
-  }
 
-  override(Gegl:Image)
+  /**
+   * prepare: 
+   * @self_op: a #GeglOp.
+   * @requests: #GeglOpRequest list.
+   *
+   * Prepare for image processing. Set up scanline function pointers based on
+   * color models of inputs.
+   *
+   **/
+  override(Gegl:Op)
   void
-  prepare(GeglImage *self_image,
+  prepare(GeglOp *self_op,
           GList * requests)
   {
     GeglPointOpClass *self_point_op_class = 
-      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_image)->klass);
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_op)->klass);
 
-    GeglImageRequest *dest_request = 
-      (GeglImageRequest*)g_list_nth_data(requests,0); 
+    GeglOpRequest *dest_request = 
+      (GeglOpRequest*)g_list_nth_data(requests,0); 
     GeglTile *dest = dest_request->tile;
     GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
 
-    GeglImageRequest *s1_request = 
-      (GeglImageRequest*)g_list_nth_data(requests,1); 
+    GeglOpRequest *s1_request = 
+      (GeglOpRequest*)g_list_nth_data(requests,1); 
     GeglTile *s1 = s1_request->tile;
     GeglColorModel * s1_cm = gegl_tile_get_color_model (s1);
 
-    GeglImageRequest *s2_request = 
-      (GeglImageRequest*)g_list_nth_data(requests,2); 
+    GeglOpRequest *s2_request = 
+      (GeglOpRequest*)g_list_nth_data(requests,2); 
     GeglTile *s2 = s2_request->tile;
     GeglColorModel * s2_cm = gegl_tile_get_color_model (s2);
 
@@ -98,25 +123,31 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
         /* dest = src2 op src1 */ 
 
         if ( s2_has_alpha && s1_has_alpha)
-          self_point_op_class->scanline_func = 
-            scanline_COLORSPACEa_op_COLORSPACEa_DATATYPE;
+          self_point_op_class->scanline_func = scanline_ca_op_ca;
         else if ( s2_has_alpha && !s1_has_alpha )
-          self_point_op_class->scanline_func = 
-            scanline_COLORSPACEa_op_COLORSPACE_DATATYPE;
+          self_point_op_class->scanline_func = scanline_ca_op_c;
         else if ( !s2_has_alpha && s1_has_alpha )
-          self_point_op_class->scanline_func = 
-            scanline_COLORSPACE_op_COLORSPACEa_DATATYPE;
+          self_point_op_class->scanline_func = scanline_c_op_ca;
         else if ( !s2_has_alpha && !s1_has_alpha )
-          self_point_op_class->scanline_func = 
-            scanline_COLORSPACE_op_COLORSPACE_DATATYPE;
+          self_point_op_class->scanline_func = scanline_c_op_c;
      }
   } 
 
+
+  /**
+   * scanline_ca_op_ca:
+   * @self_point_op:
+   * @iters: array of TileIterators. 
+   * @width: width of scanline. 
+   *
+   * Process color_alpha op color_alpha scanline. 
+   *
+   **/
   private 
   void
-  scanline_COLORSPACEa_op_COLORSPACEa_DATATYPE (GeglPointOp *self_point_op,
-                                                GeglTileIterator **iters,
-                                                gint width)
+  scanline_ca_op_ca(GeglPointOp *self_point_op,
+                    GeglTileIterator **iters,
+                    gint width)
   {
     GeglCompositePremultOp *self = GEGL_COMPOSITE_PREMULT_OP(self_point_op);
     GENERIC_IMAGE_DECL_BEGIN
@@ -230,11 +261,21 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
       }  
   }
  
+
+  /**
+   * scanline_ca_op_c:
+   * @self_point_op: #a GeglPointOp.
+   * @iters: array of TileIterators. 
+   * @width: width of scanline. 
+   *
+   * Process color_alpha op color scanline. 
+   *
+   **/
   private 
   void
-  scanline_COLORSPACEa_op_COLORSPACE_DATATYPE (GeglPointOp *self_point_op,
-                                               GeglTileIterator **iters,
-                                               gint width)
+  scanline_ca_op_c (GeglPointOp *self_point_op,
+                    GeglTileIterator **iters,
+                    gint width)
   {
     GeglCompositePremultOp *self = GEGL_COMPOSITE_PREMULT_OP(self_point_op);
     GENERIC_IMAGE_DECL_BEGIN
@@ -340,11 +381,21 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
       } 
   }
 
+
+  /**
+   * scanline_c_op_ca:
+   * @self_point_op: #a GeglPointOp.
+   * @iters: array of TileIterators. 
+   * @width: width of scanline. 
+   *
+   * Process color op color_alpha scanline. 
+   *
+   **/
   private 
   void
-  scanline_COLORSPACE_op_COLORSPACEa_DATATYPE (GeglPointOp *self_point_op,
-                                               GeglTileIterator **iters,
-                                               gint width)
+  scanline_c_op_ca (GeglPointOp *self_point_op,
+                    GeglTileIterator **iters,
+                    gint width)
   {
     GeglCompositePremultOp *self = GEGL_COMPOSITE_PREMULT_OP(self_point_op);
     GENERIC_IMAGE_DECL_BEGIN
@@ -459,11 +510,21 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
       } 
   }
 
+
+  /**
+   * scanline_c_op_c:
+   * @self_point_op: #a GeglPointOp.
+   * @iters: array of TileIterators. 
+   * @width: width of scanline. 
+   *
+   * Process color op color scanline. 
+   *
+   **/
   private 
   void
-  scanline_COLORSPACE_op_COLORSPACE_DATATYPE (GeglPointOp *self_point_op,
-                                              GeglTileIterator **iters,
-                                              gint width)
+  scanline_c_op_c (GeglPointOp *self_point_op,
+                   GeglTileIterator **iters,
+                   gint width)
   {
     GeglCompositePremultOp *self = GEGL_COMPOSITE_PREMULT_OP(self_point_op);
     GENERIC_IMAGE_DECL_BEGIN

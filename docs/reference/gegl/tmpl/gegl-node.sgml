@@ -1,0 +1,192 @@
+<!-- ##### SECTION Title ##### -->
+GeglNode
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_node_unlink ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_node_get_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_set_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@name: 
+
+
+<!-- ##### FUNCTION gegl_node_set_nth_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@input: 
+@n: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_get_nth_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@n: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_get_nth_output ##### -->
+<para>
+
+</para>
+
+@self: 
+@n: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_input_multiplicity ##### -->
+<para>
+
+</para>
+
+@self: 
+@input: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_output_multiplicity ##### -->
+<para>
+
+</para>
+
+@self: 
+@output: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_is_leaf ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_is_root ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_num_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_num_outputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_traverse_depth_first ##### -->
+<para>
+
+</para>
+
+@self: 
+@visit_func: 
+@data: 
+@init: 
+
+
+<!-- ##### FUNCTION gegl_node_traverse_breadth_first ##### -->
+<para>
+
+</para>
+
+@self: 
+@visit_func: 
+@data: 
+
+
+<!-- ##### FUNCTION gegl_node_constructor ##### -->
+<para>
+
+</para>
+
+@self: 
+@inputs: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_get_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_get_outputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### STRUCT GeglNodePrivate ##### -->
+<para>
+
+</para>
+
+@inputs: 
+@num_inputs: 
+@outputs: 
+@alt_input: 
+@enabled: 
+@visited: 
+@discovered: 
+@name: 
+

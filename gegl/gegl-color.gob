@@ -22,14 +22,22 @@ class Gegl:Color from Gegl:Object {
   private GeglChannelValue *channel_values;     /* array of channel data */
   private gint num_channels;                    /* number of channels*/
 
+  /**
+   * new: 
+   * @color_model: a #GeglColorModel for the color.
+   *
+   * Creates a new #GeglColor.
+   * 
+   * Returns: a new #GeglColor.
+   **/
   public
   GeglColor *       
-  new(GeglColorModel *cm)
+  new(GeglColorModel *color_model)
   {
     GeglColor * self = GEGL_COLOR(GET_NEW);
 
     /*Call the constructor */
-    if (!constructor(self,cm))
+    if (!constructor(self,color_model))
       return NULL;
     
     /*Okay its constructed*/
@@ -42,9 +50,20 @@ class Gegl:Color from Gegl:Object {
     return self;
   }
 
+
+  /**
+   * constructor: 
+   * @self: a #GeglColor.
+   * @color_model: a #GeglColorModel for the color.
+   *
+   * Initializes a #GeglColor with the given @color_model.
+   * 
+   * Returns: TRUE if constructed sucessfully.
+   **/
   protected 
   gboolean 
-  constructor(self, GeglColorModel *cm)
+  constructor(self, 
+              GeglColorModel *color_model)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -53,15 +72,24 @@ class Gegl:Color from Gegl:Object {
     if (!gegl_object_constructor (GEGL_OBJECT(self)))
       return FALSE;
 
-    self->_priv->color_model = cm;
-    gegl_object_ref(GEGL_OBJECT(cm));
-    self->_priv->num_channels = gegl_color_model_num_channels(cm);
+    self->_priv->color_model = color_model;
+    gegl_object_ref(GEGL_OBJECT(color_model));
+    self->_priv->num_channels = 
+      gegl_color_model_num_channels(color_model);
     self->_priv->channel_values = g_new (GeglChannelValue, 
                                          self->_priv->num_channels);
 
     return TRUE;
   }
 
+
+  /**
+   * destroy:
+   * @object:
+   * 
+   * Frees the channel values and unrefs the color model.
+   *
+   **/ 
   override (Gtk:Object) 
   void 
   destroy (GtkObject *object)
@@ -78,6 +106,15 @@ class Gegl:Color from Gegl:Object {
     PARENT_HANDLER (object)
   }
 
+
+  /**
+   * get_channel_values:
+   * @self: a #GeglColor.
+   *
+   * Gets the array of channel values.
+   * 
+   * Returns: a #GeglChannelValue array.
+   **/ 
   public
   GeglChannelValue * 
   get_channel_values(self)
@@ -85,6 +122,15 @@ class Gegl:Color from Gegl:Object {
     return self->_priv->channel_values;
   }
 
+
+  /**
+   * get_color_model:
+   * @self: a #GeglColor.
+   *
+   * Gets the color model of the color.
+   * 
+   * Returns: a #GeglColorModel. 
+   **/ 
   public
   GeglColorModel * 
   get_color_model(self)
@@ -92,6 +138,15 @@ class Gegl:Color from Gegl:Object {
     return self->_priv->color_model;
   }
 
+
+  /**
+   * get_num_channels:
+   * @self: a #GeglColor.
+   *
+   * Gets the number of channels in the color. 
+   * 
+   * Returns: number of channels in the color. 
+   **/ 
   public
   int 
   get_num_channels(self)
@@ -99,27 +154,57 @@ class Gegl:Color from Gegl:Object {
     return self->_priv->num_channels;
   }
 
+
+  /**
+   * set_channel_values:
+   * @self: a #GeglColor.
+   * @channel_values: a #GeglChannelValue array.
+   * 
+   * Copy @channel_values into the color's #GeglChannelValue array.  
+   *
+   **/ 
   public
   void
-  set_channel_values (self, GeglChannelValue *channel_values)
+  set_channel_values (self, 
+                      GeglChannelValue *channel_values)
   {
     gint i = self->_priv->num_channels;
     while (i--)
       self->_priv->channel_values[i] = channel_values[i]; 
   }
 
+
+  /**
+   * set:
+   * @self: a #GeglColor.
+   * @color: set it to this #GeglColor.
+   * 
+   * Set the channel values of @self to the channel values of @color.
+   *
+   **/ 
   public
   void 
-  set (self, GeglColor * color)
+  set (self, 
+       GeglColor * color)
   {
     GeglChannelValue *channel_values = get_channel_values(color); 
     set_channel_values (self, channel_values);
   }
 
+  /**
+   * set_constant:
+   * @self: a #GeglColor.
+   * @constant: a #GeglColorConstant.
+   * 
+   * Set the channel values for @self based on @constant.
+   *
+   **/ 
   public
   void 
-  set_constant (self, GeglColorConstant constant)
+  set_constant (self, 
+                GeglColorConstant constant)
   {
     gegl_color_model_set_color(self->_priv->color_model, self, constant);
   }
+
 }

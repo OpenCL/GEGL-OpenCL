@@ -6,6 +6,7 @@
 #include "gegl-color-model-gray-u16_4-private.h"
 #include "gegl-color-model-gray-private.h"
 #include "gegl-color-model-private.h"
+#include "gegl-object-private.h"
 #include "gegl-color.h"
 %}
 
@@ -234,5 +235,6 @@ class Gegl:Color:Model:Gray:U16_4 from Gegl:Color:Model:Gray {
           }
       }
   }
+
 }
 

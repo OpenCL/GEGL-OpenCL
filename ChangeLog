@@ -1,3 +1,154 @@
+Wed Jun  6 00:08:03 EDT 2001 calvinw@mindspring.com
+	
+	*gegl/gegl-statistics-op.gob
+	*gegl/gegl.h
+	Added these.
+
+	*configure.in
+	*docs/TODO.xml
+	*autogen.sh
+	*configure.in
+	*docs/TODO.xml
+	*gegl/Makefile.am
+	*gegl/gegl-add-op.gil
+	*gegl/gegl-cache.gob
+	*gegl/gegl-color-convert-op.gob
+	*gegl/gegl-color-convert-to-gray-op.gob
+	*gegl/gegl-color-convert-to-rgb-op.gob
+	*gegl/gegl-color-model-gray-float.gob
+	*gegl/gegl-color-model-gray-u16.gob
+	*gegl/gegl-color-model-gray-u16_4.gob
+	*gegl/gegl-color-model-gray-u8.gob
+	*gegl/gegl-color-model-gray.gob
+	*gegl/gegl-color-model-rgb-float.gob
+	*gegl/gegl-color-model-rgb-u16.gob
+	*gegl/gegl-color-model-rgb-u16_4.gob
+	*gegl/gegl-color-model-rgb-u8.gob
+	*gegl/gegl-color-model-rgb.gob
+	*gegl/gegl-color-model.gob
+	*gegl/gegl-color.gob
+	*gegl/gegl-composite-op.gil
+	*gegl/gegl-composite-premult-op.gil
+	*gegl/gegl-copy-op.gob
+	*gegl/gegl-dark-op.gil
+	*gegl/gegl-data-buffer.gob
+	*gegl/gegl-diff-op.gil
+	*gegl/gegl-dual-src-op.gob
+	*gegl/gegl-fill-op.gob
+	*gegl/gegl-image-buffer.gob
+	*gegl/gegl-image-manager.gob
+	*gegl/gegl-image.gob
+	*gegl/gegl-light-op.gil
+	*gegl/gegl-max-op.gil
+	*gegl/gegl-min-op.gil
+	*gegl/gegl-mult-op.gil
+	*gegl/gegl-n-src-op.gob
+	*gegl/gegl-node.gob
+	*gegl/gegl-object.gob
+	*gegl/gegl-op.gob
+	*gegl/gegl-point-op.gob
+	*gegl/gegl-premult-op.gil
+	*gegl/gegl-print-op.gob
+	*gegl/gegl-screen-op.gil
+	*gegl/gegl-single-src-op.gob
+	*gegl/gegl-subtract-op.gil
+	*gegl/gegl-test-op.gil
+	*gegl/gegl-tile-image-manager.gob
+	*gegl/gegl-tile-iterator.gob
+	*gegl/gegl-tile.gob
+	*gegl/gegl-unpremult-op.gil
+	*gegl/gegl-utils.c
+	*gegl/gegl-utils.h
+	*tests/testgegl.c
+
+	Moved the class structure around a bit. Op class inherits from Node
+	now. Image, StatisticsOp (and possibly others) inherit from this. PointOp,
+	ImageBuffer still inherit from Image. 
+
+	The basic idea is that Image and its subclasses are operations that
+	produce a destination image during operation.  Anything else should subclass
+	Op, which has the notion for some kind of operation with a prepare,process, and
+	finish stage. But an Op does not need to write an output image. 
+
+	It may have inputs and be included in image graphs like Image operations. 
+
+	Whenever a node needs an Image input for operation, it follows the
+	graph down through any non-Image ops until it finds an Image op to use as
+	input. 
+
+	Generally Image inputs pass through non-Image ops without being altered. 
+
+	Also renamed the main "get_pixels" routine to "apply" so that the 
+	main processing routine is now called gegl_op_apply (See GeglOp and 
+	tests/testgegl.c for examples. 
+
+	I'll try to update docs/geglClasses.html shortly with all this.
+
+	*docs/reference/ChangeLog
+	*docs/reference/Makefile.am
+	*docs/reference/gegl/Makefile.am
+	*docs/reference/gegl/gegl-docs.sgml
+	*docs/reference/gegl/gegl-overrides.txt
+	*docs/reference/gegl/gegl-sections.txt
+	*docs/reference/gegl/gegl.types
+	*docs/reference/gegl/tmpl/gegl-add-op.sgml
+	*docs/reference/gegl/tmpl/gegl-cache.sgml
+	*docs/reference/gegl/tmpl/gegl-color-convert-op.sgml
+	*docs/reference/gegl/tmpl/gegl-color-convert-to-gray-op.sgml
+	*docs/reference/gegl/tmpl/gegl-color-convert-to-rgb-op.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-gray-float.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-gray-u16.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-gray-u16_4.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-gray-u8.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-gray.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-rgb-float.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-rgb-u16.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-rgb-u16_4.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-rgb-u8.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-rgb.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model.sgml
+	*docs/reference/gegl/tmpl/gegl-color.sgml
+	*docs/reference/gegl/tmpl/gegl-composite-op.sgml
+	*docs/reference/gegl/tmpl/gegl-composite-premult-op.sgml
+	*docs/reference/gegl/tmpl/gegl-copy-op-private.sgml
+	*docs/reference/gegl/tmpl/gegl-copy-op.sgml
+	*docs/reference/gegl/tmpl/gegl-dark-op.sgml
+	*docs/reference/gegl/tmpl/gegl-data-buffer.sgml
+	*docs/reference/gegl/tmpl/gegl-diff-op.sgml
+	*docs/reference/gegl/tmpl/gegl-dual-src-op.sgml
+	*docs/reference/gegl/tmpl/gegl-fill-op.sgml
+	*docs/reference/gegl/tmpl/gegl-image-buffer.sgml
+	*docs/reference/gegl/tmpl/gegl-image-manager.sgml
+	*docs/reference/gegl/tmpl/gegl-image.sgml
+	*docs/reference/gegl/tmpl/gegl-light-op.sgml
+	*docs/reference/gegl/tmpl/gegl-max-op.sgml
+	*docs/reference/gegl/tmpl/gegl-min-op.sgml
+	*docs/reference/gegl/tmpl/gegl-mult-op.sgml
+	*docs/reference/gegl/tmpl/gegl-n-src-op.sgml
+	*docs/reference/gegl/tmpl/gegl-node.sgml
+	*docs/reference/gegl/tmpl/gegl-object.sgml
+	*docs/reference/gegl/tmpl/gegl-op.sgml
+	*docs/reference/gegl/tmpl/gegl-point-op.sgml
+	*docs/reference/gegl/tmpl/gegl-premult-op.sgml
+	*docs/reference/gegl/tmpl/gegl-print-op.sgml
+	*docs/reference/gegl/tmpl/gegl-screen-op.sgml
+	*docs/reference/gegl/tmpl/gegl-single-src-op-private.sgml
+	*docs/reference/gegl/tmpl/gegl-single-src-op.sgml
+	*docs/reference/gegl/tmpl/gegl-statistics-op.sgml
+	*docs/reference/gegl/tmpl/gegl-subtract-op.sgml
+	*docs/reference/gegl/tmpl/gegl-test-op.sgml
+	*docs/reference/gegl/tmpl/gegl-tile-image-manager.sgml
+	*docs/reference/gegl/tmpl/gegl-tile-iterator.sgml
+	*docs/reference/gegl/tmpl/gegl-tile.sgml
+	*docs/reference/gegl/tmpl/gegl-types.sgml
+	*docs/reference/gegl/tmpl/gegl-unpremult-op.sgml
+	*docs/reference/gegl/tmpl/gegl-unused.sgml
+	*docs/reference/gegl/tmpl/gegl-utils.sgml
+	*docs/reference/gegl/tmpl/trace.sgml
+
+	Added gtk-docs to all the source files. Set up gegl/docs/reference much
+	like the glib. 
+
 Sun May  6 21:16:42 EDT 2001 calvinw@mindspring.com
 
 	Added:
@@ -9,7 +160,7 @@ Sun May  6 21:16:42 EDT 2001 calvinw@mindspring.com
 	*gegl/gegl-tile-image-manager.gob
 	*gegl/gegl-tile-iterator.gob
 
-    These are new classes:
+	These are new classes:
 
 	GeglImageManager (and GeglTileImageManager)-these deal with setting up
 	ops, and fetching tiles from the cache to pass to the ops.	
@@ -19,7 +170,7 @@ Sun May  6 21:16:42 EDT 2001 calvinw@mindspring.com
 	GeglDataBuffer-banks of data. GeglTiles have these.
 	
 	GeglTile-image data chunks. Can be any size, have a colormodel, 
-    and are the things that get passed back to ops prepare,apply,finish
+	and are the things that get passed back to ops prepare,apply,finish
 	routines. GeglTiles have pointers to data buffers that hold the 
 	actual data.	
 
@@ -75,7 +226,7 @@ Sun May  6 21:16:42 EDT 2001 calvinw@mindspring.com
 
 	-made all these work with the new ImageManager, Tiles, etc.
 
-    Removed:
+    	Removed:
 	*gegl/gegl-image-iterator.h
 
 	-this is replaced by the tile iterators. 
@@ -100,25 +251,25 @@ Sun May  6 21:16:42 EDT 2001 calvinw@mindspring.com
 
 Mon Feb 12 01:18:47 EST 2001 calvinw@mindspring.com
 
-    *docs/geglClasses.html
-    *gegl/gegl-add-op.gil
-    *gegl/gegl-dark-op.gil
-    *gegl/gegl-diff-op.gil
-    *gegl/gegl-image.gob
-    *gegl/gegl-light-op.gil
-    *gegl/gegl-max-op.gil
-    *gegl/gegl-min-op.gil
-    *gegl/gegl-mult-op.gil
-    *gegl/gegl-op.gob
-    *gegl/gegl-point-op.gob
-    *gegl/gegl-screen-op.gil
-    *gegl/gegl-subtract-op.gil
-    *gegl/gegl-test-op.gil
-    moved the have_rect, need_rect, result_rect all to GeglImage.
+	*docs/geglClasses.html
+	*gegl/gegl-add-op.gil
+	*gegl/gegl-dark-op.gil
+	*gegl/gegl-diff-op.gil
+	*gegl/gegl-image.gob
+	*gegl/gegl-light-op.gil
+	*gegl/gegl-max-op.gil
+	*gegl/gegl-min-op.gil
+	*gegl/gegl-mult-op.gil
+	*gegl/gegl-op.gob
+	*gegl/gegl-point-op.gob
+	*gegl/gegl-screen-op.gil
+	*gegl/gegl-subtract-op.gil
+	*gegl/gegl-test-op.gil
+	moved the have_rect, need_rect, result_rect all to GeglImage.
 
-    *tests/testgegl.c
-    *tests/testgeglfile.c
-    updated these to work the GEGL_ prefixes
+	*tests/testgegl.c
+	*tests/testgeglfile.c
+	updated these to work the GEGL_ prefixes
 
 2001-02-10  Jay Cox  <jaycox@gimp.org>
 
@@ -182,7 +333,7 @@ Sun Feb  4 18:09:58 EST 2001 calvinw@mindspring.com
 	* gegl/gegl-op.gob
 	* gegl/gegl-point-op.gob
 	Changed these so the "name" of the op is just taken from the
-    class name instead of passing a name up to constructor chain.	
+	class name instead of passing a name up to constructor chain.	
 
 	Removed testgegl,testgeglfile from gegl/Makefile.am. Added tests
 	and docs dir to Makefile.am and configure.in.

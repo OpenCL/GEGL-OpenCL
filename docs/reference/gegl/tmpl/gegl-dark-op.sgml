@@ -1,0 +1,37 @@
+<!-- ##### SECTION Title ##### -->
+GeglDarkOp
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_dark_op_new ##### -->
+<para>
+
+</para>
+
+@src1: 
+@src2: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_dark_op_constructor ##### -->
+<para>
+
+</para>
+
+@self: 
+@src1: 
+@src2: 
+@Returns: 
+
+

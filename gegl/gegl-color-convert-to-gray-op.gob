@@ -12,11 +12,19 @@
 
 class Gegl:Color:Convert:To:Gray:Op from Gegl:Color:Convert:Op {
 
+  /**
+   * new:
+   * @src: input #GeglImage.
+   *
+   * Creates a new #GeglColorConvertToGrayOp.
+   * 
+   * Returns: a new #GeglColorConvertToGrayOp.
+   **/ 
   public 
   GeglColorConvertToGrayOp *
-  new (GeglImage *src)
+  new (GeglOp *src)
   {
-    GeglColorConvertToGrayOp * self = 
+    GeglColorConvertToGrayOp * self =
        GEGL_COLOR_CONVERT_TO_GRAY_OP (GET_NEW);
 
     /*Call the constructor */
@@ -33,10 +41,20 @@ class Gegl:Color:Convert:To:Gray:Op from Gegl:Color:Convert:Op {
     return self;
   }
 
+
+  /**
+   * constructor:
+   * @self: a #GeglColorConvertToGrayOp.
+   * @src: input #GeglImage.
+   *
+   * Initializes a #GeglColorConvertToGrayOp.
+   * 
+   * Returns: TRUE if constructed successfully.
+   **/ 
   protected 
   gboolean 
   constructor(self, 
-              GeglImage *src) 
+              GeglOp *src) 
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -47,13 +65,5 @@ class Gegl:Color:Convert:To:Gray:Op from Gegl:Color:Convert:Op {
                    src, GEGL_COLOR_SPACE_GRAY))
       return FALSE;
     return TRUE;
-  }
-
-  override (Gtk:Object) 
-  void 
-  destroy (GtkObject *object)
-  {
-    /* Chain up on destroy */
-    PARENT_HANDLER (object)
   }
 }

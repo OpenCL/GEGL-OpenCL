@@ -2,11 +2,36 @@
 #include <stdio.h>
 #include <gtk/gtk.h>
 #include "gegl-types.h"
+#include "gegl-utils.h"
 
 #define gegl_object_ref(o) gegl_object_ref_debug(o,__FILE__,__LINE__)
 #define gegl_object_unref(o) gegl_object_unref_debug(o,__FILE__,__LINE__)
 
+/*Short forms for logging output */ 
+
+#define LOG_DEBUG(args...)  gegl_object_log(GEGL_OBJECT(self), \
+                                            G_LOG_LEVEL_DEBUG, \
+                                            __FILE__, \
+                                            __LINE__, \
+                                            __GOB_FUNCTION__, \
+                                            ##args)
+
+#define LOG_INFO(args...)  gegl_object_log(GEGL_OBJECT(self), \
+                                           G_LOG_LEVEL_INFO, \
+                                           __FILE__, \
+                                           __LINE__, \
+                                           __GOB_FUNCTION__, \
+                                           ##args)
+
+#define LOG_MSG(args...)  gegl_object_log(GEGL_OBJECT(self), \
+                                          G_LOG_LEVEL_MESSAGE, \
+                                          __FILE__, \
+                                          __LINE__, \
+                                          __GOB_FUNCTION__, \
+                                          ##args)
+
 %}
+
 %{
 #include "gegl-object.h"
 #include "gegl-object-private.h"
@@ -16,21 +41,43 @@
 class Gegl:Object from Gtk:Object {
 
   protected gboolean constructed;
-  private gboolean trace_refs;
+  private gboolean trace_refs = FALSE;
+  private gboolean logging = TRUE;
 
+  /**
+   * init:
+   * @object:
+   *
+   * Init the Object class.
+   **/ 
   init(object)
   {
     object->constructed = FALSE;
   }
 
+
+  /**
+   * constructor:
+   * @self: a #GeglObject.
+   *
+   * Initialize the #GeglObject.
+   *
+   * Returns: TRUE if constructed successfully.
+   **/ 
   protected
   gboolean       
   constructor(self)
   {
-    self->_priv->trace_refs = FALSE; 
     return TRUE;
   }
 
+
+  /**
+   * destroy:
+   * @object:
+   * 
+   * Free memory allocated by this object.
+   **/ 
   override (Gtk:Object) 
   void 
   destroy (GtkObject *object)
@@ -39,6 +86,14 @@ class Gegl:Object from Gtk:Object {
     PARENT_HANDLER (object)
   }
 
+
+  /**
+   * set_trace_refs:
+   * @self: a #GeglObject.
+   * @trace: TRUE for tracing refs on.
+   * 
+   * Set trace_refs on this object.
+   **/ 
   public 
   void 
   set_trace_refs (self,
@@ -47,14 +102,30 @@ class Gegl:Object from Gtk:Object {
     self->_priv->trace_refs = trace;
   }
 
+
+  /**
+   * get_trace_refs:
+   * @self: a #GeglObject.
+   *
+   * Gets trace_ref.
+   *
+   * Returns: a gboolean. 
+   **/
   public 
   gboolean 
-  get_trace_refs (self,
-                  gboolean trace)
+  get_trace_refs (self)
   {
     return self->_priv->trace_refs;
   }
 
+
+  /**
+   * ref_debug:
+   * @self: a #GeglObject.
+   * @func:
+   * @line:
+   * 
+   **/ 
   public 
   void 
   ref_debug (self,
@@ -67,6 +138,14 @@ class Gegl:Object from Gtk:Object {
       gtk_object_ref(GTK_OBJECT(self));
   }
 
+
+  /**
+   * unref_debug:
+   * @self: a #GeglObject.
+   * @func:
+   * @line:
+   * 
+   **/ 
   public 
   void 
   unref_debug (self,
@@ -79,6 +158,15 @@ class Gegl:Object from Gtk:Object {
       gtk_object_unref(GTK_OBJECT(self));
   }
 
+
+  /**
+   * trace_referencing:
+   * @self: a #GeglObject.
+   * @func: 
+   * @line:
+   * @do_ref:
+   * 
+   **/
   private 
   void
   trace_referencing(self,
@@ -101,27 +189,74 @@ class Gegl:Object from Gtk:Object {
        gtk_object_unref(GTK_OBJECT(self));
   }
                         
+
+  /**
+   * add_interface:
+   * @self: a #GeglObject.
+   * @interface_name: A string for the interface name. 
+   * @interface: An interface (function) pointer.
+   *
+   * This adds an interface which can be retrieved by name.
+   **/
   public
   void 
-  add_interface(GeglObject * obj, 
-		const gchar* interface_name, 
-		gpointer interface) 
+  add_interface(self,
+                const gchar* interface_name, 
+                gpointer interface) 
   {
-    gtk_object_set_data((GtkObject*)obj, interface_name, interface);
+    gtk_object_set_data((GtkObject*)self, interface_name, interface);
   }
 							                    
+
+  /**
+   * query_interface:
+   * @self: a #GeglObject.
+   * @interface_name: The interface name to look for. 
+   *
+   * Retreive an interface based on the name.
+   * 
+   * Returns: a gpointer which represents the interface or NULL.
+   **/
   public
   gpointer 
-  query_interface(GeglObject* obj, 
-		  const gchar* interface_name)
+  query_interface(self, 
+		          const gchar* interface_name)
   {       
-    return gtk_object_get_data((GtkObject*)obj, interface_name);
+    return gtk_object_get_data((GtkObject*)self, interface_name);
   }
 
+
+  /**
+   * type_name:
+   * @self: a #GeglObject.
+   *
+   * Get Gtk type name of this object.
+   * 
+   * Returns: a string.
+   **/
   public 
   gchar * 
   type_name (self)
   {
      return gtk_type_name (GTK_OBJECT_TYPE (self));
+  }
+
+  protected 
+  void
+  log(self,
+      GLogLevelFlags level,
+      gchar *file,
+      gint line,
+      gchar *function,
+      gchar *format,
+      ...)
+  {
+    if (self->_priv->logging)
+      {
+        va_list args;
+        va_start(args,format);
+        gegl_logv(level, file, line, function, format, args);
+        va_end(args);
+      }
   }
 }

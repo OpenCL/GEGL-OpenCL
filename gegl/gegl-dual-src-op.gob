@@ -5,15 +5,28 @@
 #include "gegl-dual-src-op.h"
 #include "gegl-dual-src-op-private.h"
 #include "gegl-point-op-private.h"
+#include "gegl-op.h"
+#include "gegl-object-private.h"
 %}
 
 class Gegl:Dual:Src:Op from Gegl:Point:Op {
 
+
+  /**
+   * constructor:
+   * @self: a #GeglDualSrcOp.
+   * @src1: first input.
+   * @src2: second input.
+   *
+   * Initialize the #GeglDualSrcOp.
+   *
+   * Returns: TRUE if constructed successfully.
+   **/ 
   protected 
   gboolean 
   constructor(self, 
-              GeglImage *src1,
-              GeglImage *src2)
+              GeglOp *src1,
+              GeglOp *src2)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -31,13 +44,5 @@ class Gegl:Dual:Src:Op from Gegl:Point:Op {
     }
 
     return TRUE;
-  }
-
-  override (Gtk:Object) 
-  void 
-  destroy (GtkObject *object)
-  {
-    /* Chain up on destroy */
-    PARENT_HANDLER (object)
   }
 }

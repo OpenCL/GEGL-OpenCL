@@ -6,12 +6,21 @@
 #include "gegl-color-model-rgb-float-private.h"
 #include "gegl-color-model-rgb-private.h"
 #include "gegl-color-model-private.h"
+#include "gegl-object-private.h"
 #include "gegl-color.h"
 #include <string.h>
 %}
 
 class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
 
+  /**
+   * new: 
+   * @has_alpha: TRUE if the color model has an alpha channel.
+   *
+   * Creates a #GeglColorModelRgbFloat.
+   * 
+   * Returns: a new #GeglColorModelRgbFloat.
+   **/
   public
   GeglColorModelRgbFloat *       
   new(gboolean has_alpha)
@@ -32,6 +41,16 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
     return self;
   }
   
+
+  /**
+   * constructor: 
+   * @self: a #GeglColorModelRgbFloat.
+   * @has_alpha: TRUE if the color model has an alpha channel.  
+   *
+   * Initializes a #GeglColorModelRgbFloat.
+   * 
+   * Returns: TRUE if constructed successfully.
+   **/
   protected
   gboolean 
   constructor(self, 
@@ -66,14 +85,16 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
     return TRUE;
   }
   
-  override (Gtk:Object) 
-  void 
-  destroy (GtkObject *object)
-  {
-    /* Chain up on destroy */
-    PARENT_HANDLER (object)
-  }
 
+  /**
+   * color_model_type: 
+   * @self_color_model: a #GeglColorModel
+   *
+   * Gets the #GeglColorModelType.
+   * 
+   * Returns: GEGL_COLOR_MODEL_TYPE_RGBA_FLOAT or 
+   * GEGL_COLOR_MODEL_TYPE_RGB_FLOAT.
+   **/
   override (Gegl:Color:Model)
   GeglColorModelType
   color_model_type(GeglColorModel *self_color_model)
@@ -83,6 +104,17 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
              GEGL_COLOR_MODEL_TYPE_RGB_FLOAT;
   }
 
+
+  /**
+   * set_color: 
+   * @self_color_model: a #GeglColorModel
+   * @color: a Color to set.
+   * @constant: The #GeglColorConstant to use.
+   *
+   * Set @color to the @constant (eg white, black, green, red, etc) based on
+   * the context of this color model.   
+   *
+   **/
   override (Gegl:Color:Model) 
   void 
   set_color (GeglColorModel *self_color_model, 
@@ -162,6 +194,34 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
       }
    }
 
+
+  /**
+   * get_convert_interface_name: 
+   * @self_color_model: a #GeglColorModel
+   *
+   * Gets a the name of the converter interface that converts from
+   * RGB_FLOAT, "FromRgbFloat".
+   *
+   * Returns: the string "FromRgbFloat". 
+   **/
+  override (Gegl:Color:Model) 
+  char * 
+  get_convert_interface_name (GeglColorModel *self_color_model) 
+  {
+    return g_strdup ("FromRgbFloat"); 
+  }
+
+
+  /**
+   * convert_to_xyz: 
+   * @self_color_model: a #GeglColorModel
+   * @dest_data: pointers to dest float xyz data.
+   * @src_data: pointers to src rgb float data.
+   * @width: number of pixels to process.
+   *
+   * Converts from RGB_FLOAT to XYZ. 
+   *
+   **/
   override (Gegl:Color:Model) 
   void
   convert_to_xyz (GeglColorModel *self_color_model, 
@@ -219,6 +279,17 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
       }
   }
 
+
+  /**
+   * convert_from_xyz: 
+   * @self: a #GeglColorModel
+   * @dest_data: pointers to the dest rgb float data..
+   * @src_data: pointers to the src float xyz data.
+   * @width: number of pixels to process.
+   *
+   * Converts from XYZ to RGB_FLOAT.
+   *
+   **/
   override (Gegl:Color:Model) 
   void
   convert_from_xyz (GeglColorModel *self_color_model, 
@@ -275,13 +346,18 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
       }
   }
 
-  override (Gegl:Color:Model) 
-  char * 
-  get_converter_interface_name (GeglColorModel *self_color_model) 
-  {
-    return g_strdup ("FromRgbFloat"); 
-  }
 
+  /**
+   * from_rgb_u8:
+   * @self_color_model: RGB_FLOAT #GeglColorModel.
+   * @src_color_model: RGB_U8 #GeglColorModel.
+   * @data: pointers to the dest rgb float data.
+   * @src_data: pointers to the src rgb u8 data.
+   * @width: number of pixels to process.
+   *
+   * Converts from RGB_U8 to RGB_FLOAT.
+   *
+   **/
   private
   void
   from_rgb_u8(GeglColorModel *self_color_model, 
@@ -322,13 +398,25 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
       } 
   }
 
+
+  /**
+   * from_gray_float:
+   * @self_color_model: RGB_FLOAT #GeglColorModel.
+   * @src_color_model: GRAY_FLOAT #GeglColorModel.
+   * @data: pointers to the dest rgb float data.
+   * @src_data: pointers to the src gray float data.
+   * @width: number of pixels to process.
+   *
+   * Converts from GRAY_FLOAT to RGB_FLOAT.
+   *
+   **/
   private
   void
   from_gray_float (GeglColorModel *self_color_model, 
-			   GeglColorModel *src_color_model,
-			   guchar **data, 
-			   guchar **src_data, 
-			   gint width)
+                   GeglColorModel *src_color_model,
+                   guchar **data, 
+                   guchar **src_data, 
+                   gint width)
   {
     gfloat          *r, *g, *b; 
     gfloat          *a = NULL;
@@ -360,13 +448,25 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
       } 
   }
 
+
+  /**
+   * from_rgb_float:
+   * @self_color_model: RGB_FLOAT #GeglColorModel.
+   * @src_color_model: RGB_FLOAT #GeglColorModel.
+   * @data: pointers to dest rgb float data.
+   * @src_data: pointers to src rgb float data.
+   * @width: number of pixels to process.
+   *
+   * Copies from RGB_FLOAT to RGB_FLOAT.
+   *
+   **/
   private
   void
   from_rgb_float (GeglColorModel *self_color_model, 
-			   GeglColorModel *src_color_model,
-			   guchar **data, 
-			   guchar **src_data, 
-			   gint width)
+                  GeglColorModel *src_color_model,
+                  guchar **data, 
+                  guchar **src_data, 
+                  gint width)
   {
     gfloat          *r, *g, *b; 
     gfloat          *a = NULL;
@@ -411,4 +511,5 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
         memcpy(b, src_b, row_bytes);  
       }
   }
+
 }

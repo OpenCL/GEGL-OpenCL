@@ -65,6 +65,7 @@ NONGEN_GOB = \
   gegl-point-op.gob \
   gegl-print-op.gob \
   gegl-single-src-op.gob \
+  gegl-statistics-op.gob \
   gegl-tile.gob \
   gegl-tile-image-manager.gob \
   gegl-tile-iterator.gob
@@ -113,6 +114,7 @@ GOB_GEN_PUBLIC_HDRS = \
   gegl-print-op.h \
   gegl-screen-op.h \
   gegl-single-src-op.h \
+  gegl-statistics-op.h \
   gegl-subtract-op.h \
   gegl-test-op.h \
   gegl-tile.h \
@@ -162,6 +164,7 @@ GOB_GEN_PRIVATE_HDRS = \
   gegl-print-op-private.h \
   gegl-screen-op-private.h \
   gegl-single-src-op-private.h \
+  gegl-statistics-op-private.h \
   gegl-subtract-op-private.h \
   gegl-test-op-private.h \
   gegl-tile-private.h \
@@ -211,6 +214,7 @@ GOB_GEN_SRC = \
   gegl-print-op.c \
   gegl-screen-op.c \
   gegl-single-src-op.c \
+  gegl-statistics-op.c \
   gegl-subtract-op.c \
   gegl-test-op.c \
   gegl-tile.c \
@@ -221,6 +225,7 @@ GOB_GEN_SRC = \
 NONGOB_HDRS = \
   gegl-types.h \
   gegl-utils.h \
+  gegl.h \
   trace.h
 
 NONGOB_SRC = \
@@ -255,7 +260,7 @@ INCLUDES = \
   -I$(top_builddir)
 
 %.c %.h: %.gob
-	@GOB@ $<
+	@GOB@ --no-lines $<
 
 %.gob: %.gil
 	../codegen/codegen --channel-names r,g,b --channel-data-file ../codegen/channel_data/float $< > $@ 

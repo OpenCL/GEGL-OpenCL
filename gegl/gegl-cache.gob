@@ -32,6 +32,13 @@ class Gegl:Cache from Gegl:Object {
 
   private GHashTable  *hash;
 
+  /**
+   * new: 
+   *
+   * Creates a new #GeglCache.
+   * 
+   * Returns: a new #GeglCache.
+   **/ 
   public
   GeglCache*
   new(void)
@@ -52,6 +59,15 @@ class Gegl:Cache from Gegl:Object {
     return self;
   }
 
+
+  /**
+   * constructor:
+   * @self: a #GeglCache
+   *
+   * Initializes a #GeglCache.
+   * 
+   * Returns: TRUE if constructed successfully.
+   **/ 
   protected 
   gboolean 
   constructor(self)
@@ -67,6 +83,14 @@ class Gegl:Cache from Gegl:Object {
     return TRUE;
   }
 
+
+  /**
+   * destroy:
+   * @object:
+   * 
+   * Free memory allocated by this object. The hash table is freed.
+   *
+   **/ 
   override (Gtk:Object) 
   void 
   destroy (GtkObject *object)
@@ -81,6 +105,14 @@ class Gegl:Cache from Gegl:Object {
     PARENT_HANDLER (object)
   }
 
+
+  /**
+   * print:
+   * @self: a #GeglCache
+   * 
+   * Print out the entire hash table.
+   *
+   **/ 
   public
   void
   print(self)
@@ -89,16 +121,36 @@ class Gegl:Cache from Gegl:Object {
     g_hash_table_foreach(self->_priv->hash, print_entry,NULL);
   }
 
+
+  /**
+   * print_entry:
+   * @key:  a #GeglTileKey.
+   * @value: a #GeglTile.
+   * @user_data: not used.
+   * 
+   * Print out an entry in the hash table.
+   *
+   **/ 
   private
   void
   print_entry(gpointer key,
               gpointer value,
               gpointer user_data)
- {
+  {
     GeglTileKey *k = (GeglTileKey*)key;
     g_print("key: %x  tile: %x\n", (guint)(k->image), (guint)value);
- }
+  }
 
+
+  /**
+   * lookup_tile:
+   * @self: a #GeglCache
+   * @key: a #GeglTileKey.
+   *
+   * Look for a tile that matches @key in the cache.
+   * 
+   * Returns: a found #GeglTile or NULL.
+   **/ 
   public
   GeglTile * 
   lookup_tile(self,
@@ -107,6 +159,17 @@ class Gegl:Cache from Gegl:Object {
     return (GeglTile*)g_hash_table_lookup(self->_priv->hash, key);
   }
 
+
+  /**
+   * insert_tile:
+   * @self: a #GeglCache
+   * @key: a #GeglTileKey.
+   * @tile: a #GeglTile.
+   * 
+   * Insert @tile using the passed @key. Makes a duplicate of @key before
+   * inserting.
+   *
+   **/
   public
   void
   insert_tile(self,
@@ -122,6 +185,17 @@ class Gegl:Cache from Gegl:Object {
     g_hash_table_insert(self->_priv->hash, new_key,tile);
   }
 
+
+  /**
+   * remove_tile:
+   * @self: a #GeglCache
+   * @key: a #GeglTileKey.
+   * 
+   * Remove @tile from the hash using the passed @key. Frees both @tile and the
+   * original #GeglTilekey if it finds them.
+   *
+   * Returns: The removed tile or NULL if not found.
+   **/
   public
   GeglTile *
   remove_tile(self,
@@ -145,6 +219,16 @@ class Gegl:Cache from Gegl:Object {
     return tile;
   }
 
+
+  /**
+   * key_dup:
+   * @self: a #GeglCache
+   * @key: a #GeglTileKey.
+   * 
+   * Duplicates the #GeglTileKey @key.
+   *
+   * Returns: a #GeglTileKey.
+   **/
   private
   GeglTileKey*
   key_dup(self,
@@ -157,6 +241,17 @@ class Gegl:Cache from Gegl:Object {
     return new_key;
   }
 
+
+  /**
+   * compare_key:
+   * @self: a #GeglCache
+   * @a: first #GeglTileKey.
+   * @b: second #GeglTileKey.
+   *
+   * Compares the two keys @a and @b.
+   * 
+   * Returns: TRUE if keys are equal.
+   **/
   private
   gint
   compare_key(gconstpointer a,
@@ -171,6 +266,15 @@ class Gegl:Cache from Gegl:Object {
       return FALSE; 
   }
 
+
+  /**
+   * key_hash_func:
+   * @key: a #GeglTileKey.
+   *
+   * Calculates unsigned int for @key. 
+   * 
+   * Returns: A GUINT for the key. 
+   **/
   private
   guint
   key_hash_func(gconstpointer key)
@@ -178,4 +282,5 @@ class Gegl:Cache from Gegl:Object {
     GeglTileKey *k = (GeglTileKey*)key;
     return GPOINTER_TO_UINT(k->image);
   }
+
 }

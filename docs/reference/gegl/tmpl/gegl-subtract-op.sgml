@@ -1,0 +1,37 @@
+<!-- ##### SECTION Title ##### -->
+GeglSubtractOp
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_subtract_op_new ##### -->
+<para>
+
+</para>
+
+@src1: 
+@src2: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_subtract_op_constructor ##### -->
+<para>
+
+</para>
+
+@self: 
+@src1: 
+@src2: 
+@Returns: 
+
+

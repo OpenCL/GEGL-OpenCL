@@ -15,6 +15,15 @@ class Gegl:Data:Buffer from Gegl:Object {
   private gint num_buffers;         /*number of buffers*/
   private gint bytes;               /*total bytes*/ 
 
+  /**
+   * new:
+   * @bytes_per_buffer: bytes in each buffer.  
+   * @num_buffers: number of buffers. 
+   * 
+   * Creates a new #GeglDataBuffer.
+   *
+   * Returns: a new #GeglDataBuffer.
+   **/ 
   public 
   GeglDataBuffer * 
   new(gint bytes_per_buffer,
@@ -36,6 +45,17 @@ class Gegl:Data:Buffer from Gegl:Object {
     return self;
   }
 
+
+  /**
+   * constructor:
+   * @self: a #GeglDataBuffer.
+   * @bytes_per_buffer: bytes in each buffer.  
+   * @num_buffers: number of buffers. 
+   *
+   * Initializes a #GeglDataBuffer. 
+   * 
+   * Returns: TRUE if constructed successfully. 
+   **/ 
   protected
   gboolean
   constructor(self,
@@ -64,6 +84,15 @@ class Gegl:Data:Buffer from Gegl:Object {
     return TRUE;
   }
 
+
+  /**
+   * destroy:
+   * @object:
+   * 
+   * Free memory allocated by this object. Free the data pointers for the
+   * buffers.
+   *
+   **/ 
   override (Gtk:Object) 
   void 
   destroy (GtkObject *object)
@@ -84,6 +113,15 @@ class Gegl:Data:Buffer from Gegl:Object {
     PARENT_HANDLER (object)
   }
 
+
+  /**
+   * get_bytes:
+   * @self: a #GeglDataBuffer
+   * 
+   * Gets the bytes per buffer.
+   *
+   * Returns: number of bytes per buffer. 
+   **/
   public
   gint
   get_bytes(self)
@@ -91,6 +129,15 @@ class Gegl:Data:Buffer from Gegl:Object {
     return self->_priv->bytes;
   }
 
+
+  /**
+   * get_num_buffers:
+   * @self: a #GeglDataBuffer
+   * 
+   * Gets the number of buffer.
+   *
+   * Returns: number of buffers. 
+   **/
   public
   gint
   get_num_buffers(self)
@@ -98,10 +145,20 @@ class Gegl:Data:Buffer from Gegl:Object {
     return self->_priv->num_buffers;
   }
 
+
+  /**
+   * get_data_pointers:
+   * @self: a #GeglDataBuffer
+   * 
+   * Gets the data pointers.
+   *
+   * Returns: pointers to the buffers. 
+   **/
   public
   gpointer*
   get_data_pointers(self)
   {
     return self->_priv->data_pointers;
   }
+
 }

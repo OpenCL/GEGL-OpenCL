@@ -1,0 +1,132 @@
+<!-- ##### SECTION Title ##### -->
+gegl-types
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### ENUM GeglColorSpace ##### -->
+<para>
+
+</para>
+
+@GEGL_COLOR_SPACE_NONE: 
+@GEGL_COLOR_SPACE_GRAY: 
+@GEGL_COLOR_SPACE_RGB: 
+
+<!-- ##### ENUM GeglColorAlphaSpace ##### -->
+<para>
+
+</para>
+
+@GEGL_COLOR_ALPHA_SPACE_NONE: 
+@GEGL_COLOR_ALPHA_SPACE_GRAY: 
+@GEGL_COLOR_ALPHA_SPACE_GRAYA: 
+@GEGL_COLOR_ALPHA_SPACE_RGB: 
+@GEGL_COLOR_ALPHA_SPACE_RGBA: 
+
+<!-- ##### ENUM GeglColorModelType ##### -->
+<para>
+
+</para>
+
+@GEGL_COLOR_MODEL_TYPE_NONE: 
+@GEGL_COLOR_MODEL_TYPE_GRAY_U8: 
+@GEGL_COLOR_MODEL_TYPE_GRAY_U16: 
+@GEGL_COLOR_MODEL_TYPE_GRAY_U16_4: 
+@GEGL_COLOR_MODEL_TYPE_GRAY_FLOAT: 
+@GEGL_COLOR_MODEL_TYPE_GRAYA_U8: 
+@GEGL_COLOR_MODEL_TYPE_GRAYA_U16: 
+@GEGL_COLOR_MODEL_TYPE_GRAYA_U16_4: 
+@GEGL_COLOR_MODEL_TYPE_GRAYA_FLOAT: 
+@GEGL_COLOR_MODEL_TYPE_RGB_U8: 
+@GEGL_COLOR_MODEL_TYPE_RGB_U16: 
+@GEGL_COLOR_MODEL_TYPE_RGB_U16_4: 
+@GEGL_COLOR_MODEL_TYPE_RGB_FLOAT: 
+@GEGL_COLOR_MODEL_TYPE_RGBA_U8: 
+@GEGL_COLOR_MODEL_TYPE_RGBA_U16: 
+@GEGL_COLOR_MODEL_TYPE_RGBA_U16_4: 
+@GEGL_COLOR_MODEL_TYPE_RGBA_FLOAT: 
+
+<!-- ##### ENUM GeglCompositeMode ##### -->
+<para>
+
+</para>
+
+@GEGL_COMPOSITE_REPLACE: 
+@GEGL_COMPOSITE_OVER: 
+@GEGL_COMPOSITE_IN: 
+@GEGL_COMPOSITE_OUT: 
+@GEGL_COMPOSITE_ATOP: 
+@GEGL_COMPOSITE_XOR: 
+
+<!-- ##### ENUM GeglColorConstant ##### -->
+<para>
+
+</para>
+
+@GEGL_COLOR_WHITE: 
+@GEGL_COLOR_BLACK: 
+@GEGL_COLOR_RED: 
+@GEGL_COLOR_GREEN: 
+@GEGL_COLOR_BLUE: 
+@GEGL_COLOR_GRAY: 
+@GEGL_COLOR_HALF_WHITE: 
+@GEGL_COLOR_TRANSPARENT: 
+@GEGL_COLOR_WHITE_TRANSPARENT: 
+@GEGL_COLOR_BLACK_TRANSPARENT: 
+
+<!-- ##### ENUM GeglChannelDataType ##### -->
+<para>
+
+</para>
+
+@GEGL_NONE: 
+@GEGL_U8: 
+@GEGL_FLOAT: 
+@GEGL_U16: 
+@GEGL_U16_4: 
+
+<!-- ##### STRUCT GeglRect ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+@w: 
+@h: 
+
+<!-- ##### STRUCT GeglPoint ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+
+<!-- ##### STRUCT GeglDimension ##### -->
+<para>
+
+</para>
+
+@width: 
+@height: 
+
+<!-- ##### MACRO ROUND ##### -->
+<para>
+
+</para>
+
+@x: 
+
+

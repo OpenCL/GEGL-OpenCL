@@ -1,0 +1,177 @@
+<!-- ##### SECTION Title ##### -->
+GeglColorModel
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### USER_FUNCTION ConvertFunc ##### -->
+<para>
+
+</para>
+
+@Param1: 
+@Param2: 
+@Param3: 
+@Param4: 
+@Param5: 
+
+
+<!-- ##### FUNCTION gegl_color_model_color_space ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_data_type ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_bytes_per_channel ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_bytes_per_pixel ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_num_channels ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_num_colors ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_has_alpha ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_alpha_channel ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_color_alpha_space ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_color_model_type ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_set_color ##### -->
+<para>
+
+</para>
+
+@self: 
+@color: 
+@constant: 
+<!-- # Unused Parameters # -->
+@c: 
+
+
+<!-- ##### FUNCTION gegl_color_model_convert_to_xyz ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest_data: 
+@src_data: 
+@width: 
+
+
+<!-- ##### FUNCTION gegl_color_model_convert_from_xyz ##### -->
+<para>
+
+</para>
+
+@self: 
+@dest_data: 
+@src_data: 
+@width: 
+
+
+<!-- ##### FUNCTION gegl_color_model_get_convert_interface_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_constructor ##### -->
+<para>
+
+</para>
+
+@self: 
+@has_alpha: 
+@Returns: 
+
+

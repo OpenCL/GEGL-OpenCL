@@ -1,0 +1,90 @@
+<!-- ##### SECTION Title ##### -->
+GeglTile
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglTile ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_tile_new ##### -->
+<para>
+
+</para>
+
+@area: 
+@color_model: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_get_area ##### -->
+<para>
+
+</para>
+
+@self: 
+@area: 
+
+
+<!-- ##### FUNCTION gegl_tile_get_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_get_data ##### -->
+<para>
+
+</para>
+
+@self: 
+@data: 
+
+
+<!-- ##### FUNCTION gegl_tile_get_data_at ##### -->
+<para>
+
+</para>
+
+@self: 
+@data: 
+@x: 
+@y: 
+
+
+<!-- ##### FUNCTION gegl_tile_constructor ##### -->
+<para>
+
+</para>
+
+@self: 
+@area: 
+@color_model: 
+@Returns: 
+
+
+<!-- ##### STRUCT GeglTilePrivate ##### -->
+<para>
+
+</para>
+
+@buffer: 
+@color_model: 
+@area: 
+

@@ -1,87 +1,124 @@
 %h{
-#include "gegl-image.h"
+#include "gegl-node.h"
+
+#ifndef __TYPEDEF_GEGL_TILE__
+#define __TYPEDEF_GEGL_TILE__
+     typedef struct _GeglTile  GeglTile;
+#endif
+
+#ifndef __TYPEDEF_GEGL_IMAGE_BUFFER__
+#define __TYPEDEF_GEGL_IMAGE_BUFFER__
+     typedef struct _GeglImageBuffer  GeglImageBuffer;
+#endif
+
 %}
+
+%privateheader{
+#ifndef __TYPEDEF_GEGL_OP_REQUEST__
+#define __TYPEDEF_GEGL_OP_REQUEST__
+typedef struct _GeglOpRequest GeglOpRequest;
+#endif
+
+struct _GeglOpRequest 
+{
+  GeglTile *tile;
+  GeglRect rect; 
+};
+%}
+
+
 %{
 #include "gegl-op.h"
 #include "gegl-op-private.h"
-#include "gegl-image-private.h"
-#include "gegl-node.h"
 #include "gegl-node-private.h"
+#include "gegl-object-private.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-manager.h"
+#include "gegl-image-manager-private.h"  /*friend*/
 #include "gegl-utils.h"
-#include "trace.h"
 %}
 
-class Gegl:Op from Gegl:Image {
+class Gegl:Op from Gegl:Node {
 
-  protected GeglPoint *input_offsets;   /* offsets of inputs-relative to this op */ 
-
-  protected 
-  gboolean 
-  constructor(self, 
-              GList *inputs) 
+  /**
+   * constructor:
+   * @self: a #GeglOp.
+   * @inputs: #GeglNode list.
+   *
+   * Initialize the #GeglOp.
+   *
+   * Returns: TRUE if constructed successfully.
+   **/ 
+  protected
+  gboolean
+  constructor(self,
+              GList *inputs)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
        
     /* Chain up */
-    if (!gegl_image_constructor (GEGL_IMAGE(self),inputs))
+    if (!gegl_node_constructor (GEGL_NODE(self),inputs))
       return FALSE;
-
-    {
-      gint i;
-      gint num_inputs = g_list_length(inputs);
-
-      self->input_offsets = g_new (GeglPoint, num_inputs);
-
-      for (i = 0; i < num_inputs; i++)
-      {
-        self->input_offsets[i].x = 0;
-        self->input_offsets[i].y = 0;
-      }	  
-    }
 
     return TRUE;
   }
 
-  override (Gtk:Object) 
-  void 
-  destroy (GtkObject *object)
-  {
-    GeglOp *self = GEGL_OP(object);
 
-    g_free (self->input_offsets);
-
-    /* Chain up on destroy */
-    PARENT_HANDLER (object)
-  }
-
-  override(Gegl:Image)
+  /**
+   * apply:
+   * @self: a #GeglOp.
+   * @dest: a #GeglImageBuffer dest image.
+   * @roi: a #GeglRect region of interest.
+   *
+   * This evaluates the graph rooted on this op.
+   *
+   **/ 
+  virtual public
   void
-  compute_derived_color_model(GeglImage *self_image)
+  apply(self,
+        GeglImageBuffer *dest,
+        GeglRect *roi)
   {
-    /* Only compute this if the color model is not set */
-    if (!gegl_image_color_model(self_image))
-      {
-        GList *inputs = gegl_node_get_inputs(GEGL_NODE(self_image));
+    /* Get the singleton image manager. */
+    GeglImageManager *image_manager = gegl_image_manager_instance();
 
-        /* Compute the color alpha space and data type from inputs */
-        GeglColorAlphaSpace space = gegl_utils_derived_color_alpha_space(inputs);
-        GeglChannelDataType type = gegl_utils_derived_channel_data_type(inputs);
-        GeglColorModel * derived = gegl_color_model_instance1(space,type);
-
-        /* Set the derived color model. */ 
-        gegl_image_set_derived_color_model (self_image,derived);
-      }
+    /* Call image manager, which does the operation. */
+    gegl_image_manager_apply(image_manager,self,dest,roi);
   }
 
-  public
-  void
-  set_offset(self, 
-             gint x,
-             gint y, 
-	         gint index)
-  {
-    self->input_offsets[index].x = x;
-    self->input_offsets[index].y = y;
-  }
+  
+  /**
+   * prepare:
+   * @self: a #GeglOp.
+   * @request_list: #GeglOpRequest list.
+   *
+   *  Prepares to do the operation. Subclasses set up for the operation here.
+   *  Inputs are completely determined when this is called.  
+   *
+   **/
+  virtual protected void prepare (self, GList *request_list);
+
+
+  /**
+   * process:
+   * @self: a #GeglOp.
+   * @request_list: #GeglOpRequest list.
+   *
+   *  Does the operation.
+   *
+   **/
+  virtual protected void process(self, GList *request_list); 
+
+
+  /**
+   * finish:
+   * @self: a #GeglOpe.
+   * @request_list: #GeglOpRequest list.
+   *
+   * Cleans up after the operation.
+   *
+   **/
+  virtual protected void finish (self, GList *request_list);
+
 }

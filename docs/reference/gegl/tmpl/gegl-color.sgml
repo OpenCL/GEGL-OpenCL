@@ -1,0 +1,108 @@
+<!-- ##### SECTION Title ##### -->
+GeglColor
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglColor ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_color_new ##### -->
+<para>
+
+</para>
+
+@color_model: 
+@Returns: 
+<!-- # Unused Parameters # -->
+@cm: 
+
+
+<!-- ##### FUNCTION gegl_color_get_channel_values ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_get_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_get_num_channels ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_set_channel_values ##### -->
+<para>
+
+</para>
+
+@self: 
+@channel_values: 
+
+
+<!-- ##### FUNCTION gegl_color_set ##### -->
+<para>
+
+</para>
+
+@self: 
+@color: 
+
+
+<!-- ##### FUNCTION gegl_color_set_constant ##### -->
+<para>
+
+</para>
+
+@self: 
+@constant: 
+
+
+<!-- ##### FUNCTION gegl_color_constructor ##### -->
+<para>
+
+</para>
+
+@self: 
+@color_model: 
+@Returns: 
+<!-- # Unused Parameters # -->
+@cm: 
+
+
+<!-- ##### STRUCT GeglColorPrivate ##### -->
+<para>
+
+</para>
+
+@color_model: 
+@channel_values: 
+@num_channels: 
+

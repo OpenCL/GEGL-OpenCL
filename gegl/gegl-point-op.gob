@@ -1,5 +1,5 @@
 %h{
-#include "gegl-op.h"
+#include "gegl-image.h"
 
 #ifndef __TYPEDEF_GEGL_TILE_ITERATOR__
 #define __TYPEDEF_GEGL_TILE_ITERATOR__
@@ -7,21 +7,33 @@ typedef struct _GeglTileIterator  GeglTileIterator;
 #endif
 
 %}
+
 %{
 #include "gegl-point-op.h"
 #include "gegl-point-op-private.h"
-#include "gegl-op-private.h"
-#include "gegl-image.h"
 #include "gegl-image-private.h"
+#include "gegl-op-private.h"
 #include "gegl-color-model.h"
 #include "gegl-node.h"
+#include "gegl-object-private.h"
 #include "gegl-tile.h"
 #include "gegl-tile-iterator.h"
 #include "gegl-utils.h"
 %}
 
-class Gegl:Point:Op from Gegl:Op {
+class Gegl:Point:Op from Gegl:Image {
 
+  protected GeglPoint *input_offsets;   /* offsets of inputs */ 
+
+  /**
+   * constructor:
+   * @self: a #GeglPointOp.
+   * @inputs: #GeglImage list.
+   *
+   * Initialize the #GeglPointOp.
+   *
+   * Returns: TRUE if constructed successfully.
+   **/ 
   protected 
   gboolean 
   constructor(self, 
@@ -31,28 +43,63 @@ class Gegl:Point:Op from Gegl:Op {
       return FALSE;
        
     /* Chain up */
-    if (!gegl_op_constructor (GEGL_OP(self), inputs))
+    if (!gegl_image_constructor (GEGL_IMAGE(self), inputs))
       return FALSE;
+
+    {
+      gint i;
+      gint num_inputs = g_list_length(inputs);
+
+      self->input_offsets = g_new (GeglPoint, num_inputs);
+
+      for (i = 0; i < num_inputs; i++)
+      {
+        self->input_offsets[i].x = 0;
+        self->input_offsets[i].y = 0;
+      }	  
+    }
 
     return TRUE;
   }
 
+
+  /**
+   * destroy:
+   * @object:
+   * 
+   * Free memory allocated by this object. Free input_offsets array.
+   *
+   **/ 
   override (Gtk:Object) 
   void 
   destroy (GtkObject *object)
   {
+    GeglPointOp * self_point_op = GEGL_POINT_OP(object);
+
+    g_free(self_point_op->input_offsets); 
+
     /* Chain up on destroy */
     PARENT_HANDLER (object)
   }
 
 
-  override (Gegl:Image) 
-  void 
-  compute_have_rect (GeglImage *self_image) 
+  /**
+   * compute_have_rect:
+   * @self_image: a #GeglImage.
+   * @inputs: a #GeglImage list.
+   *
+   * Compute the have rect of this image by intersecting the have rects of the
+   * passed inputs.
+   *
+   *
+   **/
+  override (Gegl:Image)
+  void
+  compute_have_rect (GeglImage *self_image,
+                     GList *inputs)
   {
-    GeglNode *self_node = GEGL_NODE(self_image);
-    GeglOp *self_op = GEGL_OP(self_image);
-    gint num_inputs = gegl_node_num_inputs(self_node);
+    GeglPointOp *self = GEGL_POINT_OP(self_image);
+    gint num_inputs = g_list_length(inputs);
     GeglRect have_rect;
     GeglRect intersection;
     GeglImage *input;
@@ -61,16 +108,16 @@ class Gegl:Point:Op from Gegl:Op {
     gegl_rect_set(&self_image->have_rect, 0, 0, G_MAXINT, G_MAXINT);
 
     /* Lets take the intersection of all the have_rects,
-       though this isnt ideal, it covers some important cases. */ 
+       though this isnt ideal, it covers some important cases. */
     for (i = 0; i < num_inputs; i++)
       {
         /* Get the have_rect of ith input, in its coords */
-        input = GEGL_IMAGE(gegl_node_get_nth_input(self_node,i));
+        input = GEGL_IMAGE(g_list_nth_data(inputs,i));
         gegl_image_get_have_rect (input, &have_rect);
 
         /* Put in the offsets for this op */
-        have_rect.x += self_op->input_offsets[i].x;
-        have_rect.y += self_op->input_offsets[i].y;
+        have_rect.x += self->input_offsets[i].x;
+        have_rect.y += self->input_offsets[i].y;
 
         gegl_rect_intersect (&intersection, 
             &self_image->have_rect, &have_rect); 
@@ -80,48 +127,102 @@ class Gegl:Point:Op from Gegl:Op {
       }
   }
 
+
+  /**
+   * compute_preimage:
+   * @self_image: a #GeglImage
+   * @inputs: a #GeglImage list to use as inputs.
+   * @rect: a rect on the #GeglImage. 
+   * @preimage: returned preimage on ith input. 
+   * @i: which input.
+   *
+   * Computes the @preimage of @rect on the ith input by just translating from
+   * image's coordinates to the input's coordnates. 
+   *
+   **/
   override (Gegl:Image) 
   void 
-  compute_preimage(GeglImage *self_image, 
+  compute_preimage(GeglImage *self_image,
+                   GList *inputs,
                    GeglRect *rect, 
                    GeglRect *preimage, 
                    gint i)
   {
-    GeglOp *self_op = GEGL_OP(self_image); 
+    GeglPointOp *self_point_op = GEGL_POINT_OP(self_image); 
     gegl_rect_copy (preimage, rect);
  
     /* 
        Just take out the offset of this input,
        so put preimage in the inputs coord system.
     */ 
-    preimage->x -= self_op->input_offsets[i].x;
-    preimage->y -= self_op->input_offsets[i].y;
+    preimage->x -= self_point_op->input_offsets[i].x;
+    preimage->y -= self_point_op->input_offsets[i].y;
 
   }
 
-  override (Gegl:Image)
-  void  
-  apply(GeglImage *self_image,
-        GList *requests)
+
+  /**
+   * compute_result_rect:
+   * @self: a #GeglImage.
+   * @inputs: a #GeglImage list.
+   *
+   * Computes the result_rect of this image based on its need and have rects.
+   * Called by #GeglImageManager during graph evaluation. 
+   *
+   **/ 
+  override (Gegl:Image) 
+  void 
+  compute_result_rect (GeglImage *self_image,
+                       GList *inputs)
   {
-    GeglImageRequest * request;
+    /* By default just intersect result and need */
+    gegl_rect_intersect (&self_image->result_rect,
+                         &self_image->need_rect,
+                         &self_image->have_rect);
+  }
+
+
+  /**
+   * process:
+   * @self_image: a #GeglOp
+   * @request_list: #GeglOpRequest list.
+   *
+   * For each #GeglTile and desired subportion rect for a #GeglOpRequest, get a
+   * #GeglTileIterator. Then iterate through the scanlines and call the
+   * installed scanline function of subclass. Pass the tile iterators and width
+   * in each scanline function call. 
+   * 
+   **/
+  override (Gegl:Op)
+  void  
+  process(GeglOp *self_op,
+          GList *requests)
+  {
+    GeglOpRequest * request;
     gint i,j;
     gint width, height;
-    GeglPointOp *self =  GEGL_POINT_OP(self_image);
+    GeglPointOp *self =  GEGL_POINT_OP(self_op);
     GeglPointOpClass *self_class = 
-        GEGL_POINT_OP_CLASS (GTK_OBJECT(self_image)->klass);
-    GeglNode *self_node = GEGL_NODE(self_image);
+        GEGL_POINT_OP_CLASS (GTK_OBJECT(self_op)->klass);
+    GeglNode *self_node = GEGL_NODE(self_op);
     gint num_inputs = gegl_node_num_inputs(self_node);
     GeglTileIterator **iters = g_new (GeglTileIterator*, num_inputs+1);
+
+    LOG_DEBUG("node %x type %s", (guint)self_op, 
+              gegl_object_type_name(GEGL_OBJECT(self_op)));
 
     /* Get tile iterators for dest and sources. */
     for (i = 0; i < num_inputs+1; i++)
       {
-         request = (GeglImageRequest*)g_list_nth_data(requests,i); 
+         /* LOG_DEBUG("getting tile iterator for input %d", i); */ 
+
+         request = (GeglOpRequest*)g_list_nth_data(requests,i); 
 
          /* Get the tile, if it is not NULL */ 
          if(request->tile)
            {
+             /* LOG_DEBUG("tile is %x", (guint)request->tile); */ 
+
              iters[i] = gegl_tile_iterator_new (request->tile, &request->rect);
              gegl_tile_iterator_first (iters[i]);
            }
@@ -130,13 +231,17 @@ class Gegl:Point:Op from Gegl:Op {
       }
 
     /* Get the height and width of dest rect we want to process */
-    request = (GeglImageRequest*)g_list_nth_data(requests,0); 
+    request = (GeglOpRequest*)g_list_nth_data(requests,0); 
     width = request->rect.w;
     height = request->rect.h;
+
+    /* LOG_DEBUG("width height %d %d", width, height); */ 
 
     /* Now iterate over the scanlines in the dest. */
     for(j=0; j < height; j++)
       {
+        /* LOG_DEBUG("doing scanline %d", j); */ 
+
         /* Call the subclass scanline func. */
         (self_class->scanline_func)(self, iters, width);
 
@@ -160,10 +265,21 @@ class Gegl:Point:Op from Gegl:Op {
     g_free (iters);
   }
 
-  /* Subclasses install their own scanline funcs */
-  virtual private void 
-  scanline_func (self,
-                 GeglTileIterator **iters,
+
+  /**
+   * scanline:
+   * @self: a #GeglPointOp
+   * @iters: #GeglTileIterator array.
+   * @width: width of scanline.
+   *
+   * Subclasses install this function, usually in their prepare routine.
+   *
+   **/
+  virtual private 
+  void 
+  scanline_func (self, 
+                 GeglTileIterator **iters, 
                  gint width);
+
 }
 

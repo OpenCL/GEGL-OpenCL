@@ -1,0 +1,88 @@
+<!-- ##### SECTION Title ##### -->
+GeglImage
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_image_get_have_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@have_rect: 
+
+
+<!-- ##### FUNCTION gegl_image_get_need_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@need_rect: 
+
+
+<!-- ##### FUNCTION gegl_image_get_result_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@result_rect: 
+
+
+<!-- ##### FUNCTION gegl_image_get_cache_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+@cache_rect: 
+
+
+<!-- ##### FUNCTION gegl_image_get_dest ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_set_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@cm: 
+
+
+<!-- ##### STRUCT GeglImagePrivate ##### -->
+<para>
+
+</para>
+
+@color_model: 
+@derived_color_model: 
+@dest: 
+

@@ -1,0 +1,58 @@
+<!-- ##### SECTION Title ##### -->
+GeglTileImageManager
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_tile_image_manager_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_image_manager_print_request_list ##### -->
+<para>
+
+</para>
+
+@self: 
+@requests: 
+
+
+<!-- ##### FUNCTION gegl_tile_image_manager_print_request ##### -->
+<para>
+
+</para>
+
+@data: 
+@user_data: 
+
+
+<!-- ##### FUNCTION gegl_tile_image_manager_print_key ##### -->
+<para>
+
+</para>
+
+@self: 
+@k: 
+
+
+<!-- ##### STRUCT GeglTileImageManagerPrivate ##### -->
+<para>
+
+</para>
+
+@cache: 
+

@@ -33,6 +33,15 @@ class Gegl:Tile from Gegl:Object {
   private GeglColorModel *color_model;    /*color model of this tile*/
   private GeglRect  area;                 /*area of image space */
 
+  /**
+   * new:
+   * @area: area of #GeglImage space this tile represents.  
+   * @color_model: the #GeglColorModel of the tile. 
+   *
+   * Creates a new #GeglTile.
+   * 
+   * Returns: a new #GeglTile.
+   **/ 
   public 
   GeglTile *
   new(GeglRect *area,
@@ -54,6 +63,17 @@ class Gegl:Tile from Gegl:Object {
     return self;
   }
 
+
+  /**
+   * constructor:
+   * @self: a #GeglTile
+   * @area: area of #GeglImage space this tile represents.  
+   * @color_model: the #GeglColorModel of the tile. 
+   *
+   * Initializes a #GeglTile.
+   * 
+   * Returns: TRUE if constructed successfully.
+   **/ 
   protected 
   gboolean 
   constructor(self,
@@ -86,6 +106,14 @@ class Gegl:Tile from Gegl:Object {
     return TRUE;
   }
 
+
+  /**
+   * destroy:
+   * @object:
+   * 
+   * Free memory allocated by this object. Unref the data buffer.
+   *
+   **/ 
   override (Gtk:Object) 
   void 
   destroy (GtkObject *object)
@@ -99,6 +127,15 @@ class Gegl:Tile from Gegl:Object {
     PARENT_HANDLER (object)
   }
 
+
+  /**
+   * get_area:
+   * @self: a #GeglTile
+   * @area: rect to pass back.
+   * 
+   * Gets the area of image space this tile represents.
+   *
+   **/ 
   public
   void
   get_area(self, 
@@ -107,6 +144,15 @@ class Gegl:Tile from Gegl:Object {
     gegl_rect_copy(area,&self->_priv->area);
   }
 
+
+  /**
+   * get_color_model:
+   * @self: a #GeglTile
+   *
+   * Gets the color model of the tile.
+   * 
+   * Returns: the #GeglColorModel of the tile. 
+   **/
   public
   GeglColorModel * 
   get_color_model(self)
@@ -114,6 +160,17 @@ class Gegl:Tile from Gegl:Object {
     return self->_priv->color_model;
   }
 
+
+  /**
+   * get_data:
+   * @self: a #GeglTile
+   * @data: data pointers to fill in.
+   * 
+   * Makes the passed data pointers point to data in the tile's
+   * #GeglDataBuffer.  These will point to data that represents the upper left
+   * corner of the tile. ie (area.x,area.y).  
+   *               
+   **/
   public
   void
   get_data(self,
@@ -130,6 +187,19 @@ class Gegl:Tile from Gegl:Object {
       data[i] = data_pointers[i];
   }
 
+
+  /**
+   * get_data_at:
+   * @self: a #GeglTile
+   * @data: data pointers to fill in.
+   * @x: x in [area.x, area.x + area.w - 1]
+   * @y: y in [area.y, area.y + area.h - 1]
+   * 
+   * Makes the passed data pointers point to data in the tile's #GeglDataBuffer
+   * at (x,y). This is offset by  x - area.x and y - area.y from upper left
+   * corner of the tile. 
+   * 
+   **/
   public
   void
   get_data_at(self,

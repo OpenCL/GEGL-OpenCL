@@ -22,9 +22,18 @@ typedef struct _GeglColorModel  GeglColorModel;
 class Gegl:Tile:Iterator from Gegl:Object {
 
   private GeglTile *tile;           /* The tile we iterate over */
-  private GeglRect rect;            /* The portion of tile we want - in image coords */
+  private GeglRect rect;            /* The subportion of tile we want - in image coords */
   private gint current;             /* The current index in [0,rect.height-1] */
 
+  /**
+   * new: 
+   * @tile: #GeglTile to use.
+   * @rect: subportion of the #GeglTile to iterate over.
+   * 
+   * Creates a new #GeglTileIterator.
+   *
+   * Returns: a new #GeglTileIterator.
+   **/ 
   public
   GeglTileIterator *
   new(GeglTile *tile,
@@ -46,6 +55,17 @@ class Gegl:Tile:Iterator from Gegl:Object {
     return self;
   }
 
+
+  /**
+   * constructor:
+   * @self: a #GeglTileIterator.
+   * @tile: the #GeglTile to use.
+   * @rect: subportion of the #GeglTile to iterate over.
+   * 
+   * Initializes a #GeglTileIterator.
+   *
+   * Returns: TRUE if constructed successfully.
+   **/ 
   protected 
   gboolean 
   constructor (self, 
@@ -71,6 +91,14 @@ class Gegl:Tile:Iterator from Gegl:Object {
     return TRUE;
   }
 
+
+  /**
+   * destroy:
+   * @object:
+   * 
+   * Free memory allocated by this object. Unref the #GeglTile.
+   *
+   **/ 
   override (Gtk:Object) 
   void 
   destroy (GtkObject *object)
@@ -84,6 +112,15 @@ class Gegl:Tile:Iterator from Gegl:Object {
     PARENT_HANDLER (object)
   }
 
+
+  /**
+   * get_tile:
+   * @self: a #GeglTileIterator
+   *
+   * Gets the #GeglTile this iterator uses.
+   * 
+   * Returns: a #GeglTile this iterator uses. 
+   **/ 
   public
   GeglTile *
   get_tile(self)
@@ -91,6 +128,15 @@ class Gegl:Tile:Iterator from Gegl:Object {
     return self->_priv->tile;
   }
 
+
+  /**
+   * get_color_model:
+   * @self: a #GeglTileIterator.
+   *
+   * Gets the color model of the tile.
+   * 
+   * Returns: the #GeglColorModel of the tile. 
+   **/
   public
   GeglColorModel *
   get_color_model(self)
@@ -98,6 +144,14 @@ class Gegl:Tile:Iterator from Gegl:Object {
     return gegl_tile_get_color_model(self->_priv->tile);
   }
 
+
+  /**
+   * first:
+   * @self: a #GeglTileIterator.
+   * 
+   * Makes the iterator point to the first scanline.
+   *
+   **/ 
   public
   void
   first(self)
@@ -105,6 +159,14 @@ class Gegl:Tile:Iterator from Gegl:Object {
     self->_priv->current = 0;
   }
 
+
+  /**
+   * next:
+   * @self: a #GeglTileIterator.
+   * 
+   * Makes iterator point to the next scanline. 
+   *
+   **/ 
   public
   void 
   next(self)
@@ -112,6 +174,15 @@ class Gegl:Tile:Iterator from Gegl:Object {
     self->_priv->current++;
   }
 
+
+  /**
+   * is_done:
+   * @self: a #GeglTileIterator.
+   * 
+   * Checks if there are more scanlines. 
+   * 
+   * Returns: TRUE if there are more scanlines.
+   **/ 
   public
   gboolean 
   is_done(self)
@@ -122,6 +193,15 @@ class Gegl:Tile:Iterator from Gegl:Object {
       return TRUE;
   }
   
+
+  /**
+   * get_current:
+   * @self: a #GeglTileIterator.
+   * @data_pointers: array of data pointers.
+   * 
+   * Makes @data_pointers point to the current scanline data. 
+   *
+   **/ 
   public
   void 
   get_current (self,

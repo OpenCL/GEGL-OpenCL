@@ -1,0 +1,35 @@
+<!-- ##### SECTION Title ##### -->
+GeglColorModelGray
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_color_model_gray_get_gray_index ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_gray_constructor ##### -->
+<para>
+
+</para>
+
+@self: 
+@has_alpha: 
+@Returns: 
+
+

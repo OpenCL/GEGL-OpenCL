@@ -1,0 +1,122 @@
+<!-- ##### SECTION Title ##### -->
+GeglObject
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### MACRO gegl_object_ref ##### -->
+<para>
+
+</para>
+
+@o: 
+
+
+<!-- ##### MACRO gegl_object_unref ##### -->
+<para>
+
+</para>
+
+@o: 
+
+
+<!-- ##### FUNCTION gegl_object_set_trace_refs ##### -->
+<para>
+
+</para>
+
+@self: 
+@trace: 
+
+
+<!-- ##### FUNCTION gegl_object_get_trace_refs ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+<!-- # Unused Parameters # -->
+@trace: 
+
+
+<!-- ##### FUNCTION gegl_object_ref_debug ##### -->
+<para>
+
+</para>
+
+@self: 
+@func: 
+@line: 
+
+
+<!-- ##### FUNCTION gegl_object_unref_debug ##### -->
+<para>
+
+</para>
+
+@self: 
+@func: 
+@line: 
+
+
+<!-- ##### FUNCTION gegl_object_add_interface ##### -->
+<para>
+
+</para>
+
+@self: 
+@interface_name: 
+@interface: 
+<!-- # Unused Parameters # -->
+@obj: 
+
+
+<!-- ##### FUNCTION gegl_object_query_interface ##### -->
+<para>
+
+</para>
+
+@self: 
+@interface_name: 
+@Returns: 
+<!-- # Unused Parameters # -->
+@obj: 
+
+
+<!-- ##### FUNCTION gegl_object_type_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_object_constructor ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### STRUCT GeglObjectPrivate ##### -->
+<para>
+
+</para>
+
+@trace_refs: 
+@logging: 
+

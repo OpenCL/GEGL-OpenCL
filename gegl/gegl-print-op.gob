@@ -1,24 +1,41 @@
 %h{
-#include "gegl-single-src-op.h"
+#include "gegl-statistics-op.h"
 %}
 %{
 #include "gegl-print-op.h"
 #include "gegl-print-op-private.h"
-#include "gegl-single-src-op-private.h"
+#include "gegl-statistics-op-private.h"
+#include "gegl-op-private.h"
 #include "gegl-node.h"
-#include "gegl-image-private.h"
+#include "gegl-object-private.h"
 #include "gegl-tile.h"
 #include "gegl-tile-iterator.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
 #include <stdio.h>
+
+#define MAX_PRINTED_CHARS_PER_CHANNEL 20
 %}
 
-class Gegl:Print:Op from Gegl:Single:Src:Op {
+class Gegl:Print:Op from Gegl:Statistics:Op {
 
+      private gchar * buffer;      /* buffer for printing scanline */ 
+      private gint buffer_size;     
+      private gchar * current;     /* current char pointer for buffer */ 
+      private gint left;           /* how much space is left in buffer */ 
+      private gboolean use_log;;   /* log or printf */ 
+
+  /**
+   * new:
+   * @src: input #GeglOp.
+   * 
+   * Creates a new #GeglPrintOp. 
+   *
+   * Returns: a new #GeglPrintOp.
+   **/ 
   public 
   GeglPrintOp *
-  new (GeglImage *src)
+  new (GeglOp *src)
   {
     GeglPrintOp * self = GEGL_PRINT_OP(GET_NEW);
 
@@ -36,39 +53,83 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
     return self;
   }
 
+
+  /**
+   * constructor: 
+   * @self: a #GeglPrintOp.
+   * @src: input #GeglOp.
+   *
+   * Initializes a #GeglPrintOp.
+   * 
+   * Returns: TRUE if constructed sucessfully.
+   **/
   protected 
   gboolean 
   constructor(self,
-              GeglImage *src)
+              GeglOp *src)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
 
-    /* Chain up */
-    if (!gegl_single_src_op_constructor (GEGL_SINGLE_SRC_OP(self),src))
-      return FALSE;
+    {
+      GList *inputs = NULL;
+      inputs = g_list_append(inputs,src);
 
+      /* Chain up */
+      if (!gegl_statistics_op_constructor (GEGL_STATISTICS_OP(self),inputs))
+        return FALSE;
+
+      g_list_free(inputs);
+
+      self->_priv->buffer = NULL;
+      self->_priv->use_log = TRUE;
+    }
     return TRUE;
   }
 
-  override(Gegl:Image)
+
+  /**
+   * destroy:
+   * @object:
+   * 
+   * Free memory allocated by this object.
+   **/ 
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+
+  /**
+   * prepare:
+   * @self_op: a #GeglOp.
+   * @requests: #GeglOpRequest list of inputs.
+   *
+   * Prepares for processing. Installs a scanline function pointer. 
+   *
+   **/
+  override(Gegl:Op)
   void
-  prepare(GeglImage *self_image,
+  prepare(GeglOp *self_op,
           GList * requests)
   {
-    GeglPointOpClass *point_op_class = 
-        GEGL_POINT_OP_CLASS(GTK_OBJECT(self_image)->klass);
+    GeglPrintOp *self = GEGL_PRINT_OP(self_op);
+    GeglStatisticsOpClass *statistics_op_class = 
+        GEGL_STATISTICS_OP_CLASS(GTK_OBJECT(self_op)->klass);
 
-    GeglImageRequest *src_request = 
-      (GeglImageRequest*)g_list_nth_data(requests,1); 
+    GeglOpRequest *src_request = 
+      (GeglOpRequest*)g_list_nth_data(requests,0); 
     GeglColorModel * src_cm = 
       gegl_tile_get_color_model (src_request->tile);
     g_return_if_fail (src_cm);
 
     {
-      GeglColorSpace colorspace = 
+      GeglColorSpace colorspace =
         gegl_color_model_color_space(src_cm);
-      GeglChannelDataType data_type = 
+      GeglChannelDataType data_type =
         gegl_color_model_data_type (src_cm);
 
       switch (colorspace)
@@ -77,16 +138,13 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
             switch (data_type)
               {
               case GEGL_U8:
-                point_op_class->scanline_func = 
-                  gegl_print_op_scanline_rgb_u8;
+                statistics_op_class->scanline_func = scanline_rgb_u8;
                 break;
               case GEGL_FLOAT:
-                point_op_class->scanline_func = 
-                  gegl_print_op_scanline_rgb_float;
+                statistics_op_class->scanline_func = scanline_rgb_float;
                 break;
               case GEGL_U16:
-                point_op_class->scanline_func = 
-                  gegl_print_op_scanline_rgb_u16;
+                statistics_op_class->scanline_func = scanline_rgb_u16;
                 break;
               default:
                 g_warning("gegl_print_op_prepare: Can't find data_type\n");    
@@ -98,16 +156,13 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
             switch (data_type)
               {
               case GEGL_U8:
-                point_op_class->scanline_func = 
-                  gegl_print_op_scanline_gray_u8;
+                statistics_op_class->scanline_func = scanline_gray_u8;
                 break;
               case GEGL_FLOAT:
-                point_op_class->scanline_func = 
-                  gegl_print_op_scanline_gray_float;
+                statistics_op_class->scanline_func = scanline_gray_float;
                 break;
               case GEGL_U16:
-                point_op_class->scanline_func = 
-                  gegl_print_op_scanline_gray_u16;
+                statistics_op_class->scanline_func = scanline_gray_u16;
                 break;
               default:
                 g_warning("gegl_print_op_prepare: Can't find data_type\n");    
@@ -119,14 +174,94 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
             break;
         }
     }
+
+    {
+      gint num_channels = gegl_color_model_num_channels(src_cm);
+      gint x = src_request->rect.x;
+      gint y = src_request->rect.y;
+      gint width = src_request->rect.w;
+      gint height = src_request->rect.w;
+      
+      /* Allocate a scanline char buffer for output */
+      self->_priv->buffer_size = width * (num_channels + 1) * 
+                                 MAX_PRINTED_CHARS_PER_CHANNEL;
+
+      self->_priv->buffer = g_new(gchar, self->_priv->buffer_size); 
+
+      if(self->_priv->use_log)
+        LOG_INFO("Printing GeglTile: %x area (x,y,w,h) = (%d,%d,%d,%d)",
+                 (guint)(src_request->tile),x,y,width,height);
+      else
+        printf("Printing GeglTile: %x area (x,y,w,h) = (%d,%d,%d,%d)", 
+                 (guint)(src_request->tile),x,y,width,height);
+    }
   } 
 
+  /**
+   * finish:
+   * @self_op: a #GeglOp.
+   * @requests: #GeglOpRequest list of inputs.
+   *
+   * Finish processing.
+   *
+   **/
+  override(Gegl:Op)
+  void
+  finish(GeglOp *self_op,
+         GList * requests)
+  {
+    GeglPrintOp *self = GEGL_PRINT_OP(self_op);
+
+    /* Delete the scanline char buffer used for output */ 
+    g_free(self->_priv->buffer); 
+  }
+
+
+  /**
+   * print:
+   * @self: a #GeglPrintOp.
+   * @format: the format for output.
+   *
+   * Adds the formatted output to the scanline output buffer.
+   *
+   **/
   private
   void
-  scanline_rgb_u8 (GeglPointOp *self_point_op,
+  print(self,
+        gchar *format,
+        ...)
+
+  {
+    gint written = 0;
+    va_list args;
+    va_start(args,format);
+
+    written = g_vsnprintf(self->_priv->current, self->_priv->left, format, args); 
+
+    va_end(args);
+
+    self->_priv->current += written; 
+    self->_priv->left -= written;
+  }
+
+
+  /**
+   * scanline_rgb_u8:
+   * @self_statistics_op: a #GeglStatisticsOp.
+   * @iters: #GeglTileIterators array. 
+   * @width: width of scanline. 
+   *
+   * Processes a scanline.
+   *
+   **/
+  private
+  void
+  scanline_rgb_u8 (GeglStatisticsOp *self_statistics_op,
                    GeglTileIterator **iters, 
                    gint width)
   {
+    GeglPrintOp *self = GEGL_PRINT_OP(self_statistics_op);
+
     GeglColorModel *src_cm = 
       gegl_tile_iterator_get_color_model(iters[1]);
 
@@ -144,35 +279,54 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
     if (src_has_alpha)
       src_alpha = src_data[3];
 
+    self->_priv->current = self->_priv->buffer;
+    self->_priv->left = self->_priv->buffer_size; 
     
     while (width--)
       {
-        printf("(");
-        printf ("%d ", *src_r) ;
-        printf ("%d ", *src_g) ;
-        printf ("%d ", *src_b) ;
+        print (self, "(");
+        print (self, "%d ", *src_r) ;
+        print (self, "%d ", *src_g) ;
+        print (self, "%d ", *src_b) ;
         if (src_has_alpha)
-          printf ("%d ", *src_alpha) ;
+          print (self, "%d ", *src_alpha) ;
         src_r++;
         src_g++;
         src_b++;
         if (src_has_alpha)
           src_alpha++;
 
-        printf(")");
+        print (self, ")");
 
       }
-      printf("\n");
+
+    print(self,"%c", (char)0);
+
+    if(self->_priv->use_log)
+      LOG_INFO("%s",self->_priv->buffer);
+    else
+      printf("%s", self->_priv->buffer);
   }
 
+  /**
+   * scanline_rgb_float:
+   * @self_statistics_op: a #GeglStatisticsOp.
+   * @iters: #GeglTileIterators array. 
+   * @width: width of scanline. 
+   *
+   * Processes a scanline.
+   *
+   **/
   private
   void
-  scanline_rgb_float (GeglPointOp *self_point_op,
+  scanline_rgb_float (GeglStatisticsOp *self_statistics_op,
                       GeglTileIterator **iters, 
                       gint width)
   {
-    GeglColorModel *src_cm = 
-      gegl_tile_iterator_get_color_model(iters[1]);
+    GeglPrintOp *self = GEGL_PRINT_OP(self_statistics_op);
+
+    GeglColorModel *src_cm =
+      gegl_tile_iterator_get_color_model(iters[0]);
 
     gfloat *src_data[4];
     gboolean src_has_alpha;
@@ -180,7 +334,7 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
 
     src_has_alpha = gegl_color_model_has_alpha(src_cm); 
 
-    gegl_tile_iterator_get_current (iters[1],
+    gegl_tile_iterator_get_current (iters[0],
                                      (gpointer*)src_data);
 
     src_r = src_data[0];
@@ -189,35 +343,59 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
     if (src_has_alpha)
       src_alpha = src_data[3];
 
-    
+    self->_priv->current = self->_priv->buffer;
+    self->_priv->left = self->_priv->buffer_size; 
+
     while (width--)
       {
-        printf("(");
-        printf ("%.3f ", *src_r) ;
-        printf ("%.3f ", *src_g) ;
-        printf ("%.3f ", *src_b) ;
+        print(self, "(");
+        print(self, "%.3f ", *src_r); 
+        print(self, "%.3f ", *src_g); 
+        print(self, "%.3f ", *src_b); 
+
         if (src_has_alpha)
-          printf ("%.3f ", *src_alpha) ;
+          {
+            print(self, "%.3f ", *src_alpha); 
+          }
+
         src_r++;
         src_g++;
         src_b++;
+
         if (src_has_alpha)
           src_alpha++;
 
-        printf(")");
-
+        print(self, ")"); 
       }
-      printf("\n");
+
+    print(self,"%c", (char)0);
+
+    if(self->_priv->use_log)
+      LOG_INFO("%s",self->_priv->buffer);
+    else
+      printf("%s", self->_priv->buffer);
+
   }
 
+
+  /**
+   * scanline_rgb_u16:
+   * @self_statistics_op: a #GeglStatisticsOp.
+   * @iters: #GeglTileIterators array. 
+   * @width: width of scanline. 
+   *
+   * Processes a scanline.
+   *
+   **/
   private
   void
-  scanline_rgb_u16 (GeglPointOp *self_point_op,
+  scanline_rgb_u16 (GeglStatisticsOp *self_statistics_op,
                     GeglTileIterator **iters, 
                     gint width)
   {
+    GeglPrintOp *self = GEGL_PRINT_OP(self_statistics_op);
     GeglColorModel *src_cm = 
-      gegl_tile_iterator_get_color_model(iters[1]);
+      gegl_tile_iterator_get_color_model(iters[0]);
 
     guint16 *src_data[4];
     gboolean src_has_alpha;
@@ -225,7 +403,7 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
 
     src_has_alpha = gegl_color_model_has_alpha(src_cm); 
 
-    gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
+    gegl_tile_iterator_get_current (iters[0], (gpointer*)src_data);
 
     src_r = src_data[0];
     src_g = src_data[1];
@@ -233,35 +411,55 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
     if (src_has_alpha)
       src_alpha = src_data[3];
 
+    self->_priv->current = self->_priv->buffer;
+    self->_priv->left = self->_priv->buffer_size; 
+    
     
     while (width--)
       {
- 	printf("(");
-	printf ("%d ", *src_r) ;
-	printf ("%d ", *src_g) ;
-	printf ("%d ", *src_b) ;
-	if (src_has_alpha)
-	  printf ("%d ", *src_alpha) ;
-	src_r++;
-	src_g++;
-	src_b++;
-	if (src_has_alpha)
-	  src_alpha++;
+        print (self, "(");
+        print (self, "%d ", *src_r) ;
+        print (self, "%d ", *src_g) ;
+        print (self, "%d ", *src_b) ;
+        if (src_has_alpha)
+          print (self, "%d ", *src_alpha) ;
+        src_r++;
+        src_g++;
+        src_b++;
+        if (src_has_alpha)
+          src_alpha++;
 
- 	printf(")");
+        print (self, ")");
 
       }
-      printf("\n");
+    print(self,"%c", (char)0);
+
+    if(self->_priv->use_log)
+      LOG_INFO("%s",self->_priv->buffer);
+    else
+      printf("%s", self->_priv->buffer);
+
   }
 
+
+  /**
+   * scanline_rgb_u8:
+   * @self_statistics_op: a #GeglStatisticsOp.
+   * @iters: #GeglTileIterators array. 
+   * @width: width of scanline. 
+   *
+   * Processes a scanline.
+   *
+   **/
   private
   void
-  scanline_gray_u8 (GeglPointOp *self_point_op,
+  scanline_gray_u8 (GeglStatisticsOp *self_statistics_op,
                    GeglTileIterator **iters, 
                    gint width)
-    {
+  {
+    GeglPrintOp *self = GEGL_PRINT_OP(self_statistics_op);
     GeglColorModel *src_cm = 
-      gegl_tile_iterator_get_color_model(iters[1]);
+      gegl_tile_iterator_get_color_model(iters[0]);
 
     guint8 *src_data[2];
     gboolean src_has_alpha;
@@ -269,37 +467,56 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
 
     src_has_alpha = gegl_color_model_has_alpha(src_cm); 
 
-    gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
+    gegl_tile_iterator_get_current (iters[0], (gpointer*)src_data);
 
     src_gray = src_data[0];
     if (src_has_alpha)
       src_alpha = src_data[1];
 
+    self->_priv->current = self->_priv->buffer;
+    self->_priv->left = self->_priv->buffer_size; 
+    
     
     while (width--)
       {
- 	printf("(");
-	printf ("%d ", *src_gray) ;
-	if (src_has_alpha)
-	  printf ("%d ", *src_alpha) ;
-	src_gray++;
-	if (src_has_alpha)
-	  src_alpha++;
+        print (self, "(");
+        print (self, "%d ", *src_gray) ;
+        if (src_has_alpha)
+          print (self, "%d ", *src_alpha) ;
+        src_gray++;
+        if (src_has_alpha)
+          src_alpha++;
 
- 	printf(")");
-
+        print (self, ")");
       }
-      printf("\n");
+    print(self,"%c", (char)0);
+
+    if(self->_priv->use_log)
+      LOG_INFO("%s",self->_priv->buffer);
+    else
+      printf("%s", self->_priv->buffer);
+
   }
 
+
+  /**
+   * scanline_gray_float:
+   * @self_statistics_op: a #GeglStatisticsOp.
+   * @iters: #GeglTileIterators array. 
+   * @width: width of scanline. 
+   *
+   * Processes a scanline.
+   *
+   **/
   private
   void
-  scanline_gray_float (GeglPointOp *self_point_op,
+  scanline_gray_float (GeglStatisticsOp *self_statistics_op,
                        GeglTileIterator **iters, 
                        gint width)
-    {
+  {
+    GeglPrintOp *self = GEGL_PRINT_OP(self_statistics_op);
     GeglColorModel *src_cm = 
-      gegl_tile_iterator_get_color_model(iters[1]);
+      gegl_tile_iterator_get_color_model(iters[0]);
 
     gfloat *src_data[2];
     gboolean src_has_alpha;
@@ -307,37 +524,57 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
 
     src_has_alpha = gegl_color_model_has_alpha(src_cm); 
 
-    gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
+    gegl_tile_iterator_get_current (iters[0], (gpointer*)src_data);
 
     src_gray = src_data[0];
     if (src_has_alpha)
       src_alpha = src_data[1];
 
+    self->_priv->current = self->_priv->buffer;
+    self->_priv->left = self->_priv->buffer_size; 
+    
     
     while (width--)
       {
- 	printf("(");
-	printf ("%.3f ", *src_gray) ;
-	if (src_has_alpha)
-	  printf ("%.3f ", *src_alpha) ;
-	src_gray++;
-	if (src_has_alpha)
-	  src_alpha++;
+        print (self, "(");
+        print (self, "%.3f ", *src_gray) ;
+        if (src_has_alpha)
+          print (self, "%.3f ", *src_alpha) ;
+        src_gray++;
+        if (src_has_alpha)
+          src_alpha++;
 
- 	printf(")");
+        print (self, ")");
 
       }
-      printf("\n");
+    print(self,"%c", (char)0);
+
+    if(self->_priv->use_log)
+      LOG_INFO("%s",self->_priv->buffer);
+    else
+      printf("%s", self->_priv->buffer);
+
   }
 
+
+  /**
+   * scanline_gray_u16:
+   * @self_statistics_op: a #GeglStatisticsOp.
+   * @iters: #GeglTileIterators array. 
+   * @width: width of scanline. 
+   *
+   * Processes a scanline.
+   *
+   **/
   private
   void
-  scanline_gray_u16 (GeglPointOp *self_point_op,
+  scanline_gray_u16 (GeglStatisticsOp *self_statistics_op,
                      GeglTileIterator **iters, 
                      gint width)
-    {
+  {
+    GeglPrintOp *self = GEGL_PRINT_OP(self_statistics_op);
     GeglColorModel *src_cm = 
-      gegl_tile_iterator_get_color_model(iters[1]);
+      gegl_tile_iterator_get_color_model(iters[0]);
 
     guint16 *src_data[2];
     gboolean src_has_alpha;
@@ -345,26 +582,35 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
 
     src_has_alpha = gegl_color_model_has_alpha(src_cm); 
 
-    gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
+    gegl_tile_iterator_get_current (iters[0], (gpointer*)src_data);
 
     src_gray = src_data[0];
     if (src_has_alpha)
       src_alpha = src_data[1];
 
+    self->_priv->current = self->_priv->buffer;
+    self->_priv->left = self->_priv->buffer_size; 
+    
     
     while (width--)
       {
- 	printf("(");
-	printf ("%d ", *src_gray) ;
-	if (src_has_alpha)
-	  printf ("%d ", *src_alpha) ;
-	src_gray++;
-	if (src_has_alpha)
-	  src_alpha++;
+        print (self, "(");
+        print (self, "%d ", *src_gray) ;
+        if (src_has_alpha)
+          print (self, "%d ", *src_alpha) ;
+        src_gray++;
+        if (src_has_alpha)
+          src_alpha++;
 
- 	printf(")");
+        print (self, ")");
 
       }
-      printf("\n");
+    print(self,"%c", (char)0);
+
+    if(self->_priv->use_log)
+      LOG_INFO("%s",self->_priv->buffer);
+    else
+      printf("%s", self->_priv->buffer);
+
   }
 }

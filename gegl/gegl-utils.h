@@ -37,6 +37,23 @@ gegl_rect_intersect(GeglRect *dest,
 gboolean
 gegl_rect_contains (GeglRect *r,
                     GeglRect *s);
+
+void
+gegl_log(GLogLevelFlags level,
+         gchar *file,
+         gint line,
+         gchar *function,
+         gchar *format,
+         ...);
+
+void
+gegl_logv(GLogLevelFlags level,
+         gchar *file,
+         gint line,
+         gchar *function,
+         gchar *format,
+         va_list args);
+
 gint
 gegl_channel_data_type_bytes (GeglChannelDataType data);
 

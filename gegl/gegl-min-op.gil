@@ -19,10 +19,20 @@
 
 class Gegl:Min:Op from Gegl:Dual:Src:Op {
 
+
+  /**
+   * new: 
+   * @src1: first input. 
+   * @src2: second input. 
+   *
+   * Creates a new #GeglMinOp.
+   * 
+   * Returns: a new #GeglMinOp.
+   **/ 
   public 
   GeglMinOp *
-  new (GeglImage *src1,
-       GeglImage *src2)       
+  new (GeglOp *src1,
+       GeglOp *src2)       
   {
     GeglMinOp * self = GEGL_MIN_OP(GET_NEW);
 
@@ -40,11 +50,22 @@ class Gegl:Min:Op from Gegl:Dual:Src:Op {
     return self;
   }
 
+
+  /**
+   * constructor: 
+   * @self: a #GeglMinOp.
+   * @src1: first input. 
+   * @src2: second input. 
+   * 
+   * Initializes a #GeglMinOp.
+   *
+   * Returns: TRUE if contstructed successful.
+   **/ 
   protected 
   gboolean 
   constructor(self, 
-              GeglImage *src1,
-              GeglImage *src2)
+              GeglOp *src1,
+              GeglOp *src2)
   {
     
     if(GEGL_OBJECT(self)->constructed) 
@@ -58,29 +79,48 @@ class Gegl:Min:Op from Gegl:Dual:Src:Op {
     return TRUE;
   }
 
-  override(Gegl:Image)
+
+  /**
+   * prepare:
+   * @self_op: a #GeglOp.
+   * @requests: #GeglOpRequest list.
+   *
+   * Prepares for image processing. Installs a scanline function pointer. 
+   *
+   **/
+  override(Gegl:Op)
   void
-  prepare(GeglImage *self_image,
+  prepare(GeglOp *self_op,
           GList * requests)
   {
     GeglPointOpClass *self_point_op_class = 
-      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_image)->klass);
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_op)->klass);
 
-    GeglImageRequest *dest_request = 
-      (GeglImageRequest*)g_list_nth_data(requests,0); 
+    GeglOpRequest *dest_request = 
+      (GeglOpRequest*)g_list_nth_data(requests,0); 
     GeglTile *dest = dest_request->tile;
     GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
     g_return_if_fail (dest_cm);
 
     /* Now make sure the correct scanline func is installed */
-    self_point_op_class->scanline_func = scanline_COLORSPACE_DATATYPE;        
+    self_point_op_class->scanline_func = scanline;        
   }
 
+
+  /**
+   * scanline:
+   * @self_point_op: a #GeglPointOp.
+   * @iters: #GeglTileIterators array. 
+   * @width: width of scanline.
+   *
+   * Processes a scanline.
+   *
+   **/
   private 
   void
-  scanline_COLORSPACE_DATATYPE (GeglPointOp *self_point_op,
-                                GeglTileIterator **iters,
-                                gint width)
+  scanline(GeglPointOp *self_point_op,
+           GeglTileIterator **iters,
+           gint width)
   {
     GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
     GeglColorModel *src1_cm = gegl_tile_iterator_get_color_model(iters[1]);

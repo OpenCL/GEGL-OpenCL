@@ -1,5 +1,5 @@
 %h{
-#include "gegl-node.h"
+#include "gegl-op.h"
 
 #ifndef __TYPEDEF_GEGL_COLOR__
 #define __TYPEDEF_GEGL_COLOR__
@@ -11,41 +11,22 @@ typedef struct _GeglColor  GeglColor;
 typedef struct _GeglColorModel  GeglColorModel;
 #endif
 
-#ifndef __TYPEDEF_GEGL_TILE__
-#define __TYPEDEF_GEGL_TILE__
-typedef struct _GeglTile  GeglTile;
-#endif
-
 %}
 
-%privateheader{
-
-#ifndef __TYPEDEF_GEGL_IMAGE_REQUEST__
-#define __TYPEDEF_GEGL_IMAGE_REQUEST__
-typedef struct _GeglImageRequest GeglImageRequest;
-#endif
-
-struct _GeglImageRequest 
-{
-  GeglTile *tile;
-  GeglRect rect; 
-};
-
-%}
 
 %{
 #include "gegl-image.h"
 #include "gegl-image-private.h"
+#include "gegl-op-private.h"
 #include "gegl-image-manager.h"
 #include "gegl-image-manager-private.h"  /*friend*/
 #include "gegl-node-private.h"
-#include "gegl-tile.h"
 #include "gegl-object-private.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
 %}
 
-class Gegl:Image from Gegl:Node {
+class Gegl:Image from Gegl:Op {
 
   private GeglColorModel *color_model;
 
@@ -55,7 +36,17 @@ class Gegl:Image from Gegl:Node {
   protected GeglRect cache_rect;   /* a valid computed result */
 
   private GeglColorModel *derived_color_model; /* derived color model */
+  private GeglImage *dest;         /* a dest to use */
 
+  /**
+   * constructor:
+   * @self: a #GeglImage.
+   * @inputs: #GeglImage list.
+   *
+   * Initializes the #GeglImage. Sets the color model to NULL.
+   *
+   * Returns: TRUE if constructed successfully.
+   **/
   protected 
   gboolean 
   constructor(self,
@@ -65,11 +56,12 @@ class Gegl:Image from Gegl:Node {
       return FALSE;
        
     /* Chain up */
-    if (!gegl_node_constructor (GEGL_NODE(self), inputs))
+    if (!gegl_op_constructor (GEGL_OP(self), inputs))
       return FALSE;
 
     self->_priv->color_model = NULL;
     self->_priv->derived_color_model = NULL;
+    self->_priv->dest = NULL;
 
     gegl_rect_set (&self->have_rect,0,0,0,0);
     gegl_rect_set (&self->need_rect,0,0,0,0);
@@ -79,6 +71,15 @@ class Gegl:Image from Gegl:Node {
     return TRUE;
   }
 
+
+  /**
+   * destroy:
+   * @object:
+   *
+   * Frees memory allocated by this object. Calls the #GeglImageManager to free
+   * any image data it has for this image. 
+   *
+   **/ 
   override (Gtk:Object) 
   void 
   destroy (GtkObject *object)
@@ -98,14 +99,32 @@ class Gegl:Image from Gegl:Node {
     PARENT_HANDLER (object)
   }
 
+
+  /**
+   * get_have_rect:
+   * @self: a #GeglImage
+   * @have_rect: returned rect.
+   *
+   * Gets the domain of definition computed during graph evalution.
+   *
+   **/ 
   public
   void 
   get_have_rect(self, 
-                GeglRect *have_rect)
+                GeglRect *have_rect) 
   {
-    gegl_rect_copy (have_rect, &self->have_rect);
+    gegl_rect_copy (have_rect, &self->have_rect); 
   }
+  
 
+  /**
+   * get_need_rect:
+   * @self: a #GeglImage.
+   * @need_rect: returned rect.   
+   *
+   * Gets the region of interest computed during graph evaluation.
+   *
+   **/ 
   public
   void
   get_need_rect(self, 
@@ -114,6 +133,15 @@ class Gegl:Image from Gegl:Node {
     gegl_rect_copy (need_rect, &self->need_rect);
   }
 
+
+  /**
+   * get_result_rect:
+   * @self: a #GeglImage.
+   * @result_rect: returned rect.   
+   *
+   * Gets the result region computed during graph evaluation.
+   *
+   **/ 
   public
   void
   get_result_rect(self, 
@@ -122,6 +150,15 @@ class Gegl:Image from Gegl:Node {
     gegl_rect_copy (result_rect, &self->result_rect);
   }
 
+
+  /**
+   * get_cache_rect:
+   * @self: a #GeglImage.
+   * @cache_rect: returned rect.   
+   *
+   * Gets the region cached as a result of the #GeglImage operation.
+   *
+   **/ 
   public
   void
   get_cache_rect(self, 
@@ -130,13 +167,32 @@ class Gegl:Image from Gegl:Node {
     gegl_rect_copy (cache_rect, &self->cache_rect);
   }
 
-  protected 
-  void
-  set_need_rect(self, GeglRect *need_rect)
+
+  /**
+   * get_dest:
+   * @self: a #GeglImage.
+   *
+   * Gets the #GeglImage to use as destination output buffer.
+   *
+   * Returns: A #GeglImage to use for the output 
+   **/ 
+  public
+  GeglImage * 
+  get_dest(self)
   {
-    gegl_rect_copy (&self->need_rect, need_rect);
+    return self->_priv->dest;
   }
 
+
+  /**
+   * color_model:
+   * @self: a #GeglImage.
+   *
+   * Gets the color model of this image. This may not be determined, if it has
+   * not been set explicitly or derived yet.  
+   *
+   * Returns: the #GeglColorModel, or NULL. 
+   **/ 
   public
   GeglColorModel *
   color_model(self)
@@ -146,6 +202,17 @@ class Gegl:Image from Gegl:Node {
            self->_priv->derived_color_model;
   }
 
+
+  /**
+   * set_color_model:
+   * @self: a #GeglImage.
+   * @cm: a #GeglColorModel.
+   * 
+   * Sets the color model explicitly for this image. This takes precedence over
+   * derived color models during graph evaluation. Set this when you want to
+   * force an image to have a particular color model.
+   *
+   **/ 
   public
   void
   set_color_model(self,
@@ -167,6 +234,16 @@ class Gegl:Image from Gegl:Node {
     self->_priv->derived_color_model = NULL;
   }
 
+
+  /**
+   * set_derived_color_model:
+   * @self: a #GeglImage.
+   * @cm: the derived #GeglColorModel.
+   *
+   * Sets a derived #GeglColorModel during graph evaluation. Typically called
+   * by subclasses once they determine what their derived color model is.
+   *
+   **/ 
   protected
   void
   set_derived_color_model(self,
@@ -183,98 +260,153 @@ class Gegl:Image from Gegl:Node {
       gegl_object_ref(GEGL_OBJECT(cm));
   }
 
-  public
-  gboolean
-  has_alpha(self)
+
+  /**
+   * set_need_rect:
+   * @self: a #GeglImage.
+   * @need_rect: set to this.
+   * 
+   * Sets the need rect of this image during graph evaluation.
+   *
+   **/ 
+  protected
+  void
+  set_need_rect(self, 
+                GeglRect *need_rect)
   {
-    return gegl_color_model_has_alpha (self->_priv->color_model);
+    if(need_rect)
+      gegl_rect_copy (&self->need_rect, need_rect);
+    else
+      gegl_rect_set (&self->need_rect, 0,0,G_MAXINT, G_MAXINT);
   }
 
-  protected 
+
+  /**
+   * set_dest:
+   * @self: a #GeglImage.
+   * @dest: a #GeglImage dest.
+   * 
+   * Sets the dest image for this image's output.
+   *
+   **/ 
+  protected
   void
-  compute_need_rect (self,
-                     gint i)
+  set_dest(self, 
+           GeglImage *dest)
   {
-    GeglImage *input = GEGL_IMAGE(gegl_node_get_nth_input(
-                                  GEGL_NODE(self),i));
-
-    if(input)
-      {
-        GeglRect preimage_rect;
-        GeglRect need_rect;
-
-        /* Compute the preimage on the input. */
-        compute_preimage(self,&self->need_rect,&preimage_rect,i);
-
-        /* Get the input's need_rect. */
-        get_need_rect(input,&need_rect);
-
-        /* If it isnt zero size then take union, since it 
-           must have multiple parents in graph. */
-        if (need_rect.w && 
-            need_rect.h)
-          {
-            GeglRect union_rect;
-            gegl_rect_union(&union_rect, &preimage_rect, &need_rect);
-            set_need_rect(input,&union_rect);
-          }
-        else
-          set_need_rect(input,&preimage_rect);
-      }
+    self->_priv->dest = dest;
   }
 
-  public
+
+  /**
+   * apply:
+   * @self: a #GeglImage.
+   * @dest: a destination #GeglImageBuffer for result.
+   * @roi: a region of interest.
+   *
+   * This is the main image processing routine. It evaluates the graph rooted
+   * on this image for pixels inside the @roi, and places the result in @dest.
+   * @dest may be NULL.
+   *
+   **/ 
+  override(Gegl:Op)
   void
-  get_pixels (self,
-              GeglImage *dest,
-              GeglRect *roi)
+  apply (GeglOp *self_op,
+         GeglImageBuffer *dest,
+         GeglRect *roi)
   {
     /* Get the singleton image manager. */
     GeglImageManager *image_manager = gegl_image_manager_instance();
 
-    /* Set the need rect of root. */
-    set_need_rect(self,roi);
-
-    /* Call image manager, which calls the ops pixel processing routines.  */
-    gegl_image_manager_get_pixels(image_manager,self,dest,roi);
+    /* Call image manager, which calls the image's processing routines.  */
+    gegl_image_manager_apply(image_manager, self_op, dest, roi);
   }
 
+
+  /**
+   * compute_derived_color_model:
+   * @self: a #GeglImage
+   * @inputs: a #GeglImage list.
+   *
+   * Computes a derived #GeglColorModel for this image. If the color model is
+   * already set explicitly, this routine has no effect.  Otherwise the color
+   * model is derived from the inputs' color models. Called by
+   * #GeglImageManager during graph evaluation.
+   *
+   **/
   virtual protected 
   void 
-  compute_result_rect (self)
+  compute_derived_color_model (self, 
+                               GList *inputs)
   {
-    /* By default just intersect result and need */
-    gegl_rect_intersect (&self->result_rect,
-                         &self->need_rect,
-                         &self->have_rect);
+    /* Only compute this if the color model is still not set */
+    if (!color_model(self))
+    {
+
+        /* Compute the color alpha space and data type from inputs */
+        GeglColorAlphaSpace space = gegl_utils_derived_color_alpha_space(inputs);
+        GeglChannelDataType type = gegl_utils_derived_channel_data_type(inputs);
+
+        /* Get a derived color model from the space and type */
+        GeglColorModel * derived = gegl_color_model_instance1(space,type);
+
+        /* Set the derived color model. */
+        set_derived_color_model (self,derived);
+
+    }
+
   }
 
-  virtual protected void compute_derived_color_model (self);
-  virtual protected void compute_have_rect (self);
-  virtual protected void compute_cache_rect (self);
-  virtual protected void compute_preimage (self, 
-                                           GeglRect *rect, 
-                                           GeglRect *preimage, 
+
+  /**
+   * compute_result_rect:
+   * @self: a #GeglImage.
+   * @inputs: a #GeglImage list.
+   *
+   * Computes the result_rect of this image based on its need and have rects.
+   * Called by #GeglImageManager during graph evaluation. 
+   *
+   **/ 
+  virtual protected void compute_result_rect (self, GList *inputs);
+
+
+  /**
+   * compute_have_rect:
+   * @self: a #GeglImage.
+   * @inputs: a #GeglImage list.
+   *
+   * Computes a have_rect of this Image based on the inputs' have_rects.
+   *
+   **/ 
+  virtual protected void compute_have_rect (self, GList *inputs);
+
+
+  /**
+   * compute_cache_rect:
+   * @self: a #GeglImage
+   * @inputs: a #GeglImage list.
+   *
+   * Computes a rect that indicates the cached area of the image's result. 
+   *
+   **/
+  virtual protected void compute_cache_rect (self, GList *inputs);
+
+
+  /**
+   * compute_preimage:
+   * @self: a #GeglImage.
+   * @rect: a rect on the #GeglImage.
+   * @preimage: returned preimage rect on ith input. 
+   * @i: which input.
+   * 
+   * Computes the @preimage of @rect on the ith input. This is the inverse map
+   * of @rect on the ith input. This routine is used to compute need rects.
+   *  
+   **/
+  virtual protected void compute_preimage (self,
+                                           GList *inputs,
+                                           GeglRect *rect,
+                                           GeglRect *preimage,
                                            gint i);
 
-  virtual protected
-  void
-  prepare (self, 
-           GList *request_list)
-  {
-  }
-
-  virtual protected 
-  void
-  apply (self,
-         GList *request_list)
-  {
-  }
-
-  virtual protected
-  void
-  finish (self,
-          GList *request_list)
-  {
-  }
 }

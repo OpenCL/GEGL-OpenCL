@@ -16,6 +16,7 @@ typedef struct _GeglColorModel  GeglColorModel;
 #include "gegl-image-buffer-private.h"
 #include "gegl-image-private.h"
 #include "gegl-color-model.h"
+#include "gegl-object-private.h"
 #include "gegl-utils.h"
 %}
 
@@ -24,6 +25,16 @@ class Gegl:Image:Buffer from Gegl:Image {
   protected gint width;
   protected gint height;
 
+  /**
+   * new:
+   * @cm: a #GeglColorModel.
+   * @w: width. 
+   * @h: height. 
+   * 
+   * Creates a #GeglImageBuffer. 
+   * 
+   * Returns: a new #GeglImageBuffer.
+   **/ 
   public
   GeglImageBuffer *       
   new(GeglColorModel *cm, 
@@ -46,6 +57,18 @@ class Gegl:Image:Buffer from Gegl:Image {
     return self;
   }
 
+
+  /**
+   * constructor:
+   * @self: a #GeglImageBuffer. 
+   * @cm: the #GeglColorModel of the image buffer. 
+   * @w: width. 
+   * @h: height. 
+   *
+   * Initializes a #GeglImageBuffer.
+   * 
+   * Returns: TRUE if constructed successfully.
+   **/ 
   protected 
   gboolean 
   constructor(self, 
@@ -70,6 +93,15 @@ class Gegl:Image:Buffer from Gegl:Image {
     return TRUE;
   }
 
+
+  /**
+   * get_width:
+   * @self: a #GeglImageBuffer. 
+   * 
+   * Gets the width of the image buffer.
+   *
+   * Returns: width of the image buffer.
+   **/ 
   public
   gint 
   get_width (self)
@@ -77,6 +109,15 @@ class Gegl:Image:Buffer from Gegl:Image {
     return self->width;
   }
 
+
+  /**
+   * get_height:
+   * @self: a #GeglImageBuffer. 
+   * 
+   * Gets the height of the image buffer.
+   *
+   * Returns: height of the image buffer.
+   **/ 
   public 
   gint 
   get_height (self)
@@ -84,17 +125,19 @@ class Gegl:Image:Buffer from Gegl:Image {
     return self->height;
   }
 
-  override (Gtk:Object) 
-  void 
-  destroy (GtkObject *object)
-  {
-    /* Chain up on destroy */
-    PARENT_HANDLER (object)
-  }
 
+  /**
+   * compute_have_rect:
+   * @self_image: a #GeglImage.
+   * @inputs: a #GeglImage list - should be NULL here.
+   *
+   * The image buffer's have rect is determined by its width, height. 
+   *
+   **/
   override (Gegl:Image)
   void 
-  compute_have_rect (GeglImage *self_image)
+  compute_have_rect (GeglImage *self_image, 
+                     GList *inputs)
   {
     GeglImageBuffer * self = GEGL_IMAGE_BUFFER(self_image);
     self_image->have_rect.x = 0;
@@ -103,16 +146,22 @@ class Gegl:Image:Buffer from Gegl:Image {
     self_image->have_rect.h = self->height;
   }
 
+
+  /**
+   * compute_result_rect:
+   * @self_image: a #GeglImage
+   * @inputs: a #GeglImage list - should be NULL here.
+   *
+   * Computes the result_rect of the image buffer. This is just the
+   * intersection of have and need rects. 
+   *
+   **/
   override (Gegl:Image)
   void 
-  compute_cache_rect (GeglImage *self_image)
+  compute_result_rect (GeglImage *self_image, GList *inputs)
   {
-    /* Completely cached since we are a leaf node */ 
-    GeglImageBuffer * self = GEGL_IMAGE_BUFFER(self_image);
-
-    self_image->cache_rect.x = 0;
-    self_image->cache_rect.y = 0;
-    self_image->cache_rect.w = self->width;
-    self_image->cache_rect.h = self->height;
+    gegl_rect_intersect (&self_image->result_rect,
+                         &self_image->need_rect,
+                         &self_image->have_rect);
   }
 }

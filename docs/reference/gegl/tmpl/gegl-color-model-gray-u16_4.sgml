@@ -1,0 +1,35 @@
+<!-- ##### SECTION Title ##### -->
+GeglColorModelGrayU16_4
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_color_model_gray_u16_4_new ##### -->
+<para>
+
+</para>
+
+@has_alpha: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_gray_u16_4_constructor ##### -->
+<para>
+
+</para>
+
+@self: 
+@has_alpha: 
+@Returns: 
+
+

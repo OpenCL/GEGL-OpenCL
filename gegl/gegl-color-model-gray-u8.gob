@@ -6,12 +6,21 @@
 #include "gegl-color-model-gray-u8-private.h"
 #include "gegl-color-model-gray-private.h"
 #include "gegl-color-model-private.h"
+#include "gegl-object-private.h"
 #include "gegl-color.h"
 #include <string.h>
 %}
 
 class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
 
+  /**
+   * new: 
+   * @has_alpha: TRUE if the color model has an alpha channel.
+   *
+   * Creates a #GeglColorModelGrayU8.
+   * 
+   * Returns: a new #GeglColorModelGrayU8.
+   **/
   public
   GeglColorModelGrayU8 *       
   new(gboolean has_alpha)
@@ -32,6 +41,16 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
     return self;
   }
   
+
+  /**
+   * constructor:
+   * @self: a #GeglColorModelGrayU8.
+   * @has_alpha: TRUE if the color model has an alpha channel.  
+   *
+   * Initializes a #GeglColorModelGrayU8.
+   * 
+   * Returns: TRUE if constructed successfully.
+   **/
   protected
   gboolean 
   constructor(self, 
@@ -66,16 +85,15 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
     return TRUE;
   }
   
-  override (Gtk:Object) 
-  void 
-  destroy (GtkObject *object)
-  {
-    /* Dispose of the data type string here */
 
-    /* Chain up on destroy */
-    PARENT_HANDLER (object)
-  }
-
+  /**
+   * color_model_type:
+   * @self_color_model: a #GeglColorModel
+   *
+   * Gets the #GeglColorModelType.
+   * 
+   * Returns: GEGL_COLOR_MODEL_TYPE_GRAYA_U8 or GEGL_COLOR_MODEL_TYPE_GRAY_U8.
+   **/
   override (Gegl:Color:Model)
   GeglColorModelType
   color_model_type(GeglColorModel *self_color_model)
@@ -85,6 +103,17 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
              GEGL_COLOR_MODEL_TYPE_GRAY_U8;
   }
 
+
+  /**
+   * set_color:
+   * @self_color_model: a #GeglColorModel
+   * @color: a Color to set.
+   * @constant: The #GeglColorConstant to use.
+   *
+   * Set @color to the @constant (eg white, black, green, red, etc) based on
+   * the context of this color model.   
+   *
+   **/
   override (Gegl:Color:Model) 
   void 
   set_color (GeglColorModel *self_color_model, 
@@ -146,6 +175,34 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
       }
    }
 
+
+  /**
+   * get_convert_interface_name: 
+   * @self_color_model: a #GeglColorModel
+   *
+   * Gets a the name of the converter interface that converts from GRAY_U8,
+   * "FromGrayU8".
+   *
+   * Returns: the string "FromGrayU8". 
+   **/
+  override (Gegl:Color:Model) 
+  gchar * 
+  get_convert_interface_name (GeglColorModel *cm) 
+  {
+    return g_strdup ("FromGrayU8"); 
+  }
+
+
+  /**
+   * convert_to_xyz: 
+   * @self_color_model: a #GeglColorModel.
+   * @dest_data: pointers to dest float xyz data.
+   * @src_data: pointers to src gray u8 data.
+   * @width: number of pixels to process.
+   *
+   * Converts from GRAY_U8 to XYZ. 
+   *
+   **/
   override (Gegl:Color:Model)
   void
   convert_to_xyz (GeglColorModel *self_color_model, 
@@ -196,6 +253,17 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
       }
   }
 
+
+  /**
+   * convert_from_xyz:
+   * @self: a #GeglColorModel.
+   * @dest_data: pointers to the dest gray u8 data..
+   * @src_data: pointers to the src float xyz data.
+   * @width: number of pixels to process.
+   *
+   * Converts from XYZ to GRAY_U8.
+   *
+   **/
   override (Gegl:Color:Model)
   void
   convert_from_xyz (GeglColorModel *self_color_model, 
@@ -259,13 +327,18 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
       }
   }
 
-  override (Gegl:Color:Model) 
-  gchar * 
-  get_converter_interface_name (GeglColorModel *cm) 
-  {
-    return g_strdup ("FromGrayU8"); 
-  }
 
+  /**
+   * from_gray_float:
+   * @self_color_model: a #GeglColorModel (GRAY_U8).
+   * @src_color_model:  a #GeglColorModel (GRAY_FLOAT).
+   * @data: pointers to the dest gray u8 data.
+   * @src_data: pointers to the src gray float data.
+   * @width: number of pixels to process.
+   *
+   * Converts from GRAY_FLOAT to GRAY_U8.
+   *
+   **/
   private
   void
   from_gray_float (GeglColorModel *self_color_model, 
@@ -304,6 +377,18 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
       } 
   }
 
+
+  /**
+   * from_rgb_u8:
+   * @self_color_model: a #GeglColorModel (GRAY_U8).
+   * @src_color_model:  a #GeglColorModel (RGB_U8).
+   * @data: pointers to the dest gray u8 data.
+   * @src_data: pointers to the src rgb u8 data.
+   * @width: number of pixels to process.
+   *
+   * Converts from RGB_U8 to GRAY_U8.
+   *
+   **/
   private
   void
   from_rgb_u8 (GeglColorModel *self_color_model, 
@@ -340,6 +425,18 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
       } 
   }
 
+
+  /**
+   * from_gray_u8:
+   * @self_color_model: a #GeglColorModel (GRAY_U8).
+   * @src_color_model:  a #GeglColorModel (GRAY_U8).
+   * @data: pointers to the dest gray u8 data.
+   * @src_data: pointers to the src gray u8 data.
+   * @width: number of pixels to process.
+   *
+   * Converts from GRAY_U8 to GRAY_U8.
+   *
+   **/
   private
   void
   from_gray_u8 (GeglColorModel *self_color_model, 
@@ -381,4 +478,5 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
         memcpy(g, src_g, row_bytes);  
       }
   }
+
 }

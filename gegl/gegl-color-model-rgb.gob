@@ -9,6 +9,7 @@ typedef struct _GeglColor GeglColor;
 #include "gegl-color-model-rgb.h"
 #include "gegl-color-model-rgb-private.h"
 #include "gegl-color-model-private.h"
+#include "gegl-object-private.h"
 #include "gegl-color.h"
 %}
 
@@ -18,6 +19,15 @@ class Gegl:Color:Model:Rgb from Gegl:Color:Model {
   protected gint green_index;
   protected gint blue_index;
 
+  /**
+   * constructor: 
+   * @self: a #GeglColorModelRgb
+   * @has_alpha: TRUE if the color model has an alpha channel.  
+   *
+   * Initializes a #GeglColorModelRgb.
+   * 
+   * Returns: TRUE if constructed successfully.
+   **/
   protected 
   gboolean 
   constructor(self, 
@@ -61,6 +71,13 @@ class Gegl:Color:Model:Rgb from Gegl:Color:Model {
     return TRUE;
   }
   
+  /**
+   * destroy:
+   * @object:
+   * 
+   * Frees memory allocated by this object. Free the name strings.
+   *
+   **/ 
   override (Gtk:Object) 
   void 
   destroy (GtkObject *object)
@@ -71,6 +88,15 @@ class Gegl:Color:Model:Rgb from Gegl:Color:Model {
     PARENT_HANDLER (object)
   }
 
+  /**
+   * color_alpha_space: 
+   * @self_color_model: a #GeglColorModel
+   *
+   * Gets the #GeglColorAlphaSpace of the color model.(eg RGB, RGBA, GRAY,
+   * GRAYA).
+   *
+   * Returns: The #GeglColorAlphaSpace of this color model.
+   **/
   override (Gegl:Color:Model)
   GeglColorAlphaSpace
   color_alpha_space(GeglColorModel *self_color_model)
@@ -81,6 +107,15 @@ class Gegl:Color:Model:Rgb from Gegl:Color:Model {
       return GEGL_COLOR_ALPHA_SPACE_RGB;
   }
 
+
+  /**
+   * get_red_index:
+   * @self: a #GeglColorModelRgb.
+   *
+   * Gets the index of the red channel.
+   *
+   * Returns: The index of of red channel.
+   **/
   public
   gint 
   get_red_index (self) 
@@ -88,6 +123,14 @@ class Gegl:Color:Model:Rgb from Gegl:Color:Model {
     return self->red_index; 
   }
 
+  /**
+   * get_green_index:
+   * @self: a #GeglColorModelRgb.
+   *
+   * Gets the index of the green channel.
+   *
+   * Returns: The index of of green channel.
+   **/
   public 
   gint 
   get_green_index (self)
@@ -95,10 +138,19 @@ class Gegl:Color:Model:Rgb from Gegl:Color:Model {
     return self->green_index; 
   }
 
+  /**
+   * get_blue_index:
+   * @self: a #GeglColorModelRgb.
+   *
+   * Gets the index of the blue channel.
+   *
+   * Returns: The index of of blue channel.
+   **/
   public
   gint 
   get_blue_index (self)
   { 
     return self->blue_index; 
   }
+
 }

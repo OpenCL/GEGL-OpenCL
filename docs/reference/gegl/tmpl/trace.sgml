@@ -1,0 +1,56 @@
+<!-- ##### SECTION Title ##### -->
+trace
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION trace_enter ##### -->
+<para>
+
+</para>
+
+@func: 
+
+
+<!-- ##### FUNCTION trace_exit ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION trace_begin ##### -->
+<para>
+
+</para>
+
+@format: 
+@Varargs: 
+
+
+<!-- ##### FUNCTION trace_end ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION trace_printf ##### -->
+<para>
+
+</para>
+
+@format: 
+@Varargs: 
+
+

@@ -6,8 +6,7 @@
 
      $ docs/make-todo TODO.xml > /dev/null
 
-     before committing, or you may screw up the online version.
-     The next new task number is #24 --> 
+     before committing, or you may screw up the online version.--> 
 <todo logourl="images/gegl.jpg">
   <title>Gegl Task list</title>
   <section>
@@ -19,21 +18,93 @@
         <p>
             This class is to hold the information for a node in an image graph
             dag and will have lists for the input and output nodes.  This class
-            will be responsible for keeping track of all the graph related things
-            for Nodes (images, ops). It will have lists for the inputs and
-            outputs and provide traversals for depth-first, breadth-first, and
-            topologically sorting. It will keep track of the reference counting
-            (via gtk ref counting) associated with adding inputs and outputs to
-            nodes, and check graphs for cycles. This means that it will be
-            possible to set up graphs and pass them around and delete them by
-            just deleting the root, since ref counting will take care of finding
-            and destroying nodes automatically.
+            will be responsible for keeping track of all the graph related
+            things for Nodes (images, ops). It will have lists for the inputs
+            and outputs and provide traversals for depth-first, breadth-first,
+            and topologically sorting. It will keep track of the reference
+            counting (via gtk ref counting) associated with adding inputs and
+            outputs to nodes, and check graphs for cycles. This means that it
+            will be possible to set up graphs and pass them around and delete
+            them by just deleting the root, since ref counting will take care
+            of finding and destroying nodes automatically.
         </p>
         <p>
-            Most of the above is finished. The only outstanding issue is detecting
-            cycles. DAGs are okay, and nodes may be shared in the
-            same and different graphs, but cycles are not allowed. When a node
-            is added to a graph, we need to check for any cycles. 
+            Most of the above is finished. One outstanding issue is detecting
+            cycles. DAGs are okay, and nodes may be shared in the same and
+            different graphs, but cycles are not allowed. When a node is added
+            to a graph, we need to check for any cycles. 
+        </p>
+        <p>
+            Added a flag (alt_input) to let nodes indicate which of their
+            inputs to use if a node is disabled or if a node is not an
+            GeglImage node (ie an image producing node). This allows nodes to
+            perform other kinds of operations besides image-producing ones.
+            Some examples of these would be things like PrintOp, StatisticsOps
+            SwitchOp, etc.
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="small" status="0%" target="0.0">
+      <title>In-place Buffers</title>
+      <description>
+        <p> 
+            A dest ImageBuffer can passed to root of a graph during
+            gegl_op_apply.  This buffer should be passed up the graph when
+            in-place operations are desired. This is similar to inherited
+            attributes when parsing.
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="small" status="0%" target="0.0">
+      <title>Allow disabling nodes</title>
+      <description>
+        <p> 
+            Allow nodes and part of graphs to be disabled/inactive, but still
+            part of the graph. Traversal would just skip these nodes, and any
+            data passed from below the node would be pulled through an inactive
+            node without affecting it. This would use the alt_input flag in the
+            Node class to let nodes specify an input to use instead of them
+            when they are disabled.  
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="small" status="0%" target="0.0">
+      <title>Fix Add,Mult,etc to commute</title>
+      <description>
+        <p> 
+           Currently A mult B is not the same as B mult A, since we are leaving
+           part of the full compositing equation: If (A,aA), (B,aB) (C,aC)
+           are three premultiplied images, then
+           <ul>
+             aC * C = (1-aB)*aA*A + (1-aA)*aB*B + f(A,B)  
+           </ul>
+           <ul>
+             aC = aB + aA - aB*aA                       
+           </ul>
+           where f(A,B) = A*B for mult. Currently we dont use the first two
+           terms of the first equation  correctly.  example:   If aA=1, aB=0,
+           then we should get just A, and if aB=1, aA=0, then we should get
+           just B. Compare the current MultOp.
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="small" status="0%" target="0.0">
+      <title>Add Automatic Color/Data Conversions</title>
+      <description>
+        <p>
+            There is some support in gegl-utils.c to figure out what color
+            model to use when the color model is "derived" from the inputs, but
+            it does not set up any color conversion ops automatically when
+            inputs dont match the outputs. This should be handled by the
+            ImageManager class during its graph traversal. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
@@ -43,12 +114,29 @@
       <title>Tests</title>
       <description>
         <p>
-            tests/testgeglfile.c is out of date, and doesnt compile with
-            the latest updates. testgeglfile should read in tiff images from
-            the command line, open them and perform tests similar to 
-            tests/testgegl.c,. Since testgegl.c is really only suitable for 
-            testing the ops on real small images (built by hand) and not read from files. 
-            testgeglfile should give a workout of the ops on more normal size images. 
+            tests/testgeglfile.c is out of date, and doesnt compile with the
+            latest updates. testgeglfile should read in tiff images from the
+            command line, open them and perform tests similar to
+            tests/testgegl.c,. Since testgegl.c is really only suitable for
+            testing the ops on real small images (built by hand) and not read
+            from files.  testgeglfile should give a workout of the ops on more
+            normal size images. 
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="big" status="30%" target="0.0">
+      <title>SwitchOp, RoiOp, other noni-GeglImage ops.</title>
+      <description>
+        <p> 
+           The inheritance for the Op class and subclasses allows ops which do
+           not produce an image output, but may perform other kinds of useful
+           operations necessarily. These ops can do any kind of operation that
+           depend on inputs and can be done in the prepare, process, finish
+           routines of the Op class. These non-image producing ops (ones which
+               dont write a destination image) should inherit from Op directly,
+           while image producers should all inherit from Image now.
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
@@ -73,9 +161,10 @@
             passed back to the ops by the GeglImageManager. 
         </p>
         <p>
-            By altering GeglDataBuffers, GeglTile, GeglTileImageManager (by subclassing
-            say) together with appropriate gil code it should be possible to 
-            support different data types and arrangements of data in memory. 
+            By altering GeglDataBuffers, GeglTile, GeglTileImageManager (by
+                subclassing say) together with appropriate gil code it should
+            be possible to support different data types and arrangements of
+            data in memory. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
@@ -86,17 +175,17 @@
       <description>
         <p>
             Gegl needs memory management classes in the form of cache with
-            swappable pages.  This will mean image data will be requested from a
-            cache manager, and we need schemes (ref counting,splay trees)
-            for deciding what to swap out. This will need to work with tiles. 
+            swappable pages.  This will mean image data will be requested from
+            a cache manager, and we need schemes (ref counting,splay trees) for
+            deciding what to swap out. This will need to work with tiles. 
         </p>
         <p>
             There is now GeglImageManager, GeglTileImageManager, GeglCache
             classes. GeglTileImageManager provides a tile based implementation
-            of the ImageManager and uses a GeglCache to store the tiles.  
-            The GeglCache currently just keeps track of Image and Op data
-            in a hash table. There is no disk swapping. We need to add swapping
-            code, replacement tile policies, and keep track of cache sizes. 
+            of the ImageManager and uses a GeglCache to store the tiles.  The
+            GeglCache currently just keeps track of Image and Op data in a hash
+            table. There is no disk swapping. We need to add swapping code,
+            replacement tile policies, and keep track of cache sizes. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
@@ -114,13 +203,10 @@
             currently only store tiles the size of the the result_rect of an
             ops computation.  So they dont actually implement a tile system
             where regions of an image/op are made up of many small tiles (like
-            64x64). This needs to be added to the current
+                64x64). This needs to be added to the current
             GeglTileImageManager. 
         </p>
         <p>
-            Should also add tile subclasses to handle constant tiles, 
-            which would be a constant color eg. Then we will need something
-            like a constant tile iterator as well.
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
@@ -142,29 +228,25 @@
       <title>AreaOp</title>
       <description>
         <p>
-            Area operations base class. This class will have to decide how
-            navigate the image. Assuming there is a tiling data scheme, this
-            class must implement how the image data is delivered to the lower
-            level classes so they can compute the results of the area op. This
-            probably will involve some cobbling of adjacent tiles. Also this
-            will need support from gil for dX,dY navigation and AreaIterators. 
+            Area operations base class. This class requests contiguous regions
+            from the ImageManager for doing area-based operations. The ImageManager
+            will need to cobble together tiles if the available tiles dont match
+            the requested ones. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
-      <title>Different TileIterator Classes </title>
+      <title>Iterator Classes </title>
       <description>
         <p>
-            The Iterator classes will probably need an base Iterator class
-            and then subclasses that iterate in different ways. Right now there
-            is a GeglTileIterator class which is basically a scanline
-            iterator over a portion of a tile. 
-        </p>
-        <p>
-            We need to add iterators that can iterator over constant tiles,
-            and iterate over images/tiles in different ways.
+            The Iterator classes will need to iterate over tiles and images in
+            different ways. Right now there is a GeglTileIterator class which
+            is basically a scanline iterator over a portion of a tile. The
+            TileImageManager will need an ImageIterator that iterates over
+            tiles of the image. The next, first, done, for these iterators
+            provide the next tile, first tile, etc  
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
@@ -210,6 +292,15 @@
         <p>
             Setup gtk-doc for doing documentation in gegl. This is DocBook style
             documentation.
+        </p>
+        <p>
+            This is started in gegl/docs/reference/gegl. Function arguments and
+            comments are extracted from the source code files.  Most private
+            routines, though documented in the source files, don't show up in
+            the generated html files, since gtk-doc only produces documentation
+            for public routines. We could put in args/comments for the
+            "private" routines, but it would be nice to fix gtk-doc to also
+            generate these. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>

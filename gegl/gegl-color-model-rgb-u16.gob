@@ -6,12 +6,21 @@
 #include "gegl-color-model-rgb-u16-private.h"
 #include "gegl-color-model-rgb-private.h"
 #include "gegl-color-model-private.h"
+#include "gegl-object-private.h"
 #include "gegl-color.h"
 #include <string.h>
 %}
 
 class Gegl:Color:Model:Rgb:U16 from Gegl:Color:Model:Rgb {
 
+  /**
+   * new: 
+   * @has_alpha: TRUE if the color model has an alpha channel.
+   *
+   * Creates a #GeglColorModelRgbU16.
+   * 
+   * Returns: a new #GeglColorModelRgbU16.
+   **/
   public
   GeglColorModelRgbU16 *       
   new(gboolean has_alpha)
@@ -32,6 +41,16 @@ class Gegl:Color:Model:Rgb:U16 from Gegl:Color:Model:Rgb {
     return self;
   }
   
+
+  /**
+   * constructor: 
+   * @self: a #GeglColorModelRgbU16.
+   * @has_alpha: TRUE if the color model has an alpha channel.  
+   *
+   * Initializes a #GeglColorModelRgbU16.
+   * 
+   * Returns: TRUE if constructed successfully.
+   **/
   protected
   gboolean 
   constructor(self, 
@@ -65,15 +84,17 @@ class Gegl:Color:Model:Rgb:U16 from Gegl:Color:Model:Rgb {
     }
     return TRUE;
   }
-  
-  override (Gtk:Object) 
-  void 
-  destroy (GtkObject *object)
-  {
-    /* Chain up on destroy */
-    PARENT_HANDLER (object)
-  }
 
+
+  /**
+   * color_model_type: 
+   * @self_color_model: a #GeglColorModel
+   *
+   * Gets the #GeglColorModelType.
+   * 
+   * Returns: GEGL_COLOR_MODEL_TYPE_RGBA_U16 or 
+   * GEGL_COLOR_MODEL_TYPE_RGB_U16.
+   **/
   override (Gegl:Color:Model)
   GeglColorModelType
   color_model_type(GeglColorModel *self_color_model)
@@ -83,6 +104,17 @@ class Gegl:Color:Model:Rgb:U16 from Gegl:Color:Model:Rgb {
              GEGL_COLOR_MODEL_TYPE_RGB_U16;
   }
 
+
+  /**
+   * set_color: 
+   * @self_color_model: a #GeglColorModel
+   * @color: a Color to set.
+   * @constant: The #GeglColorConstant to use.
+   *
+   * Set @color to the @constant (eg white, black, green, red, etc) based on
+   * the context of this color model.   
+   *
+   **/
   override (Gegl:Color:Model) 
   void 
   set_color (GeglColorModel *self_color_model, 
@@ -162,6 +194,34 @@ class Gegl:Color:Model:Rgb:U16 from Gegl:Color:Model:Rgb {
       }
   }
 
+
+  /**
+   * get_convert_interface_name: 
+   * @self_color_model: a #GeglColorModel
+   *
+   * Gets a the name of the converter interface that converts from
+   * RGB_U16, "FromRgbU16".
+   *
+   * Returns: the string "FromRgbU16". 
+   **/
+  override (Gegl:Color:Model) 
+  char * 
+  get_convert_interface_name (GeglColorModel *self_color_model) 
+  {
+    return g_strdup ("FromRgbU16");
+  }
+
+
+  /**
+   * convert_to_xyz: 
+   * @self_color_model: a #GeglColorModel
+   * @dest_data: pointers to dest float xyz data.
+   * @src_data: pointers to src rgb u16 data.
+   * @width: number of pixels to process.
+   *
+   * Converts from RGB_U16 to XYZ. 
+   *
+   **/
   override (Gegl:Color:Model)
   void
   convert_to_xyz (GeglColorModel *self_color_model, 
@@ -226,6 +286,17 @@ class Gegl:Color:Model:Rgb:U16 from Gegl:Color:Model:Rgb {
     }
   }
 
+
+  /**
+   * convert_from_xyz: 
+   * @self: a #GeglColorModel
+   * @dest_data: pointers to the dest rgb u16 data..
+   * @src_data: pointers to the src float xyz data.
+   * @width: number of pixels to process.
+   *
+   * Converts from XYZ to RGB_U16.
+   *
+   **/
   override (Gegl:Color:Model)
   void
   convert_from_xyz (GeglColorModel *self_color_model, 
@@ -289,13 +360,18 @@ class Gegl:Color:Model:Rgb:U16 from Gegl:Color:Model:Rgb {
       }
   }
 
-  override (Gegl:Color:Model) 
-  char * 
-  get_converter_interface_name (GeglColorModel *self_color_model) 
-  {
-    return g_strdup ("FromRgbU16"); 
-  }
 
+  /**
+   * from_rgb_float:
+   * @self_color_model: RGB_U16 #GeglColorModel.
+   * @src_color_model: RGB_FLOAT #GeglColorModel.
+   * @data: pointers to the dest rgb u16 data.
+   * @src_data: pointers to the src rgb float data.
+   * @width: number of pixels to process.
+   *
+   * Converts from RGB_FLOAT to RGB_U16.
+   *
+   **/
   private
   void
   from_rgb_float (GeglColorModel *self_color_model, 
@@ -343,6 +419,18 @@ class Gegl:Color:Model:Rgb:U16 from Gegl:Color:Model:Rgb {
       } 
   }
 
+
+  /**
+   * from_rgb_u8:
+   * @self_color_model: RGB_U16 #GeglColorModel.
+   * @src_color_model: RGB_U8 #GeglColorModel.
+   * @data: pointers to the dest rgb u16 data.
+   * @src_data: pointers to the src rgb u8 data.
+   * @width: number of pixels to process.
+   *
+   * Converts from RGB_U8 to RGB_U16.
+   *
+   **/
   private
   void
   from_rgb_u8 (GeglColorModel *self_color_model, 
@@ -383,6 +471,18 @@ class Gegl:Color:Model:Rgb:U16 from Gegl:Color:Model:Rgb {
       } 
   }
 
+
+  /**
+   * from_gray_u16:
+   * @self_color_model: RGB_U16 #GeglColorModel.
+   * @src_color_model: GRAY_U16 #GeglColorModel.
+   * @data: pointers to the dest rgb u16 data.
+   * @src_data: pointers to the src gray u16 data.
+   * @width: number of pixels to process.
+   *
+   * Converts from GRAY_U16 to RGB_U16.
+   *
+   **/
   private
   void
   from_gray_u16 (GeglColorModel *self_color_model, 
@@ -421,6 +521,18 @@ class Gegl:Color:Model:Rgb:U16 from Gegl:Color:Model:Rgb {
       } 
   }
 
+
+  /**
+   * from_rgb_u16:
+   * @self_color_model: RGB_U16 #GeglColorModel.
+   * @src_color_model: RGB_U16 #GeglColorModel.
+   * @data: pointers to dest rgb u16 data.
+   * @src_data: pointers to src rgb u16 data.
+   * @width: number of pixels to process.
+   *
+   * Copies from RGB_U16 to RGB_U16.
+   *
+   **/
   private
   void
   from_rgb_u16 (GeglColorModel *self_color_model, 
@@ -472,4 +584,5 @@ class Gegl:Color:Model:Rgb:U16 from Gegl:Color:Model:Rgb {
         memcpy(b, src_b, row_bytes);  
       }
   }
+
 }

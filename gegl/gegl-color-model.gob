@@ -9,8 +9,8 @@ typedef struct _GeglColor GeglColor;
 #define __TYPEDEF_GEGL_COLOR_MODEL__
 typedef struct _GeglColorModel  GeglColorModel;
 #endif
-typedef void (*ConvertFunc)(GeglColorModel *, 
-                    GeglColorModel *, 
+typedef void (*ConvertFunc)(GeglColorModel *,
+                    GeglColorModel *,
                     guchar **,
                     guchar **,
                     gint);
@@ -43,9 +43,20 @@ class Gegl:Color:Model from Gegl:Object {
   protected const char *alpha_string;    /* "Alpha" or "\0"          */
   protected const char *channel_data_type_name;  /*name of channel data type*/
 
+
+  /**
+   * constructor: 
+   * @self: a #GeglColorModel
+   * @has_alpha: TRUE if the color model has an alpha channel.  
+   *
+   * Initializes a #GeglColorModel.
+   * 
+   * Returns: TRUE if constructed successfully.
+   **/
   protected 
   gboolean 
-  constructor(self, gboolean has_alpha)
+  constructor(self, 
+              gboolean has_alpha)
   {
     if (GEGL_OBJECT(self)->constructed) 
        return FALSE;
@@ -56,13 +67,12 @@ class Gegl:Color:Model from Gegl:Object {
        
     self->colorspace = GEGL_COLOR_SPACE_NONE;
     self->data_type = GEGL_NONE;
-    self->bytes_per_channel = -1;
-    self->bytes_per_pixel = -1; 
-    self->num_channels = -1; 
-    self->num_colors = -1;
+    self->bytes_per_channel = 0;
+    self->bytes_per_pixel = 0; 
+    self->num_channels = 0; 
+    self->num_colors = 0;
     self->has_alpha = has_alpha;
-    self->alpha_channel = -1;
-    self->is_premultiplied = FALSE; 
+    self->alpha_channel = 0;
 
     self->is_additive = FALSE;
     self->is_subtractive = FALSE;
@@ -75,85 +85,229 @@ class Gegl:Color:Model from Gegl:Object {
     return TRUE;
   }
 
+
+  /**
+   * color_space:
+   * @self: a #GeglColorModel
+   * 
+   * Gets the color space of the color model. (eg RGB, GRAY)
+   *
+   * Returns: the #GeglColorSpace of this color model.
+   **/
   public 
   GeglColorSpace 
   color_space(self) 
-  { return self->colorspace; } 
+  { 
+    return self->colorspace; 
+  } 
 
+
+  /**
+   * data_type: 
+   * @self: a #GeglColorModel
+   * 
+   * Gets the channel data type of the color model. (eg U8, U16, FLOAT)
+   *
+   * Returns: #GeglChannelDataType of the color model.  
+   **/
   public
   GeglChannelDataType       
   data_type(self) 
-  { return self->data_type; }
+  { 
+    return self->data_type; 
+  }
 
+
+  /**
+   * bytes_per_channel: 
+   * @self: a #GeglColorModel
+   * 
+   * Gets the bytes per channel of the color model. 
+   *
+   * Returns: number of bytes per channel. 
+   **/
   public
   gint       
   bytes_per_channel(self) 
-  { return self->bytes_per_channel; }
+  { 
+    return self->bytes_per_channel; 
+  }
 
+
+  /**
+   * bytes_per_pixel: 
+   * @self: a #GeglColorModel
+   * 
+   * Gets the bytes per pixel of the color model. 
+   *
+   * Returns: number of bytes per pixel. 
+   **/
   public
   gint       
   bytes_per_pixel(self) 
-  { return self->bytes_per_pixel; }
+  { 
+    return self->bytes_per_pixel; 
+  }
 
+
+  /**
+   * num_channels: 
+   * @self: a #GeglColorModel
+   * 
+   * Gets the number of channels of the color model. 
+   *
+   * Returns: number of channels. 
+   **/
   public
   gint       
   num_channels(self) 
-  { return self->num_channels; }
+  { 
+    return self->num_channels; 
+  }
 
+
+  /**
+   * num_colors: 
+   * @self: a #GeglColorModel
+   * 
+   * Gets the number of color channels of the color model. 
+   *
+   * Returns: number of color channels. 
+   **/
   public
   gint       
   num_colors(self) 
-  { return self->num_colors; }
+  { 
+    return self->num_colors; 
+  }
 
+
+  /**
+   * has_alpha: 
+   * @self: a #GeglColorModel
+   * 
+   * Gets whether this color model has an alpha channel. 
+   *
+   * Returns: TRUE if color model has an alpha channel. 
+   **/
   public 
   gboolean       
   has_alpha(self) 
-  { return self->has_alpha; }
+  { 
+    return self->has_alpha; 
+  }
 
+
+  /**
+   * alpha_channel: 
+   * @self: a #GeglColorModel
+   * 
+   * Gets the alpha channel index.
+   *
+   * Returns: Alpha channel index. 
+   **/
   public 
   gint       
   alpha_channel(self) 
-  { return self->alpha_channel; }
+  { 
+    return self->alpha_channel; 
+  }
 
-  public 
-  gboolean        
-  is_premultiplied(self)
-  { return self->is_premultiplied; }
 
-  public 
-  void
-  set_is_premultiplied(self, 
-                       gboolean is_premultiplied)
-  { self->is_premultiplied = is_premultiplied ; }
-
+  /**
+   * color_alpha_space: 
+   * @self: a #GeglColorModel
+   *
+   * Gets the #GeglColorAlphaSpace of the color model.(eg RGB, RGBA, GRAY,
+   * GRAYA).
+   *
+   * Returns: The #GeglColorAlphaSpace of this color model.
+   **/
   virtual
   GeglColorAlphaSpace
   color_alpha_space (self);
 
+
+  /**
+   * color_model_type: 
+   * @self: a #GeglColorModel
+   *
+   * Gets the #GeglColorModelType. (roughly #GeglColorAlphaSpace plus
+   * #GeglChannelDataType)  
+   * 
+   * Returns: The #GeglColorModelType of this color model.
+   **/
   virtual
   GeglColorModelType
   color_model_type (self);
 
+
+  /**
+   * set_color: 
+   * @self: a #GeglColorModel
+   * @color: a Color to set.
+   * @constant: The #GeglColorConstant to use.
+   *
+   * Set @color to the @constant (eg white, black, green, red, etc) based on
+   * the context of this color model.   
+   *
+   **/
   virtual
   void
   set_color (self,
-             GeglColor *c,
+             GeglColor *color,
              GeglColorConstant constant);
 
+
+  /**
+   * convert_to_xyz: 
+   * @self: a #GeglColorModel
+   * @dest_data: pointers to dest float xyz data.
+   * @src_data: pointers to src data to convert from.
+   * @width: number of pixels to process.
+   *
+   * Converts from this color model to XYZ. Every color model must implement
+   * this.
+   *
+   **/
   virtual
   void
   convert_to_xyz (self,
                   gfloat **dest_data,
-		  guchar **src_data,
-		  gint width);
+                  guchar **src_data,
+                  gint width);
 
+
+  /**
+   * convert_from_xyz: 
+   * @self: a #GeglColorModel
+   * @dest_data: pointers to the dest to convert to.
+   * @src_data: pointers to the src float xyz data.
+   * @width: number of pixels to process.
+   *
+   * Converts from XYZ to this color model. Every color model must implement
+   * this.
+   *
+   **/
   virtual
   void
   convert_from_xyz (self,
                     guchar **dest_data,
-		    gfloat **src_data,
-		    gint width);
+                    gfloat **src_data,
+                    gint width);
+
+
+  /**
+   * get_convert_interface_name: 
+   * @self: a #GeglColorModel
+   *
+   * Gets a the name of the converter interface that converts to data
+   * of this color model.  
+   *
+   * Returns: a string that is the name of the converter interface. 
+   **/
   virtual
   gchar *
-  get_converter_interface_name (self); 
+  get_convert_interface_name (self); 
+
 }

@@ -18,9 +18,18 @@
 
 class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
 
+
+  /**
+   * new:
+   * @src: input #GeglOp.
+   * 
+   * Creates a new #GeglUnpremultOp. 
+   *
+   * Returns: a new #GeglUnpremultOp.
+   **/ 
   public 
   GeglUnpremultOp *
-  new (GeglImage *src)
+  new (GeglOp *src)
   {
     GeglUnpremultOp * self = GEGL_UNPREMULT_OP(GET_NEW);
 
@@ -38,10 +47,20 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
     return self;
   }
 
+
+  /**
+   * constructor: 
+   * @self: a #GeglUnpremultOp.
+   * @src: input #GeglOp.
+   *
+   * Initializes a #GeglUnpremultOp.
+   * 
+   * Returns: TRUE if constructed sucessfully.
+   **/
   protected 
   gboolean 
   constructor(self, 
-              GeglImage *src)
+              GeglOp *src)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -54,23 +73,24 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
     return TRUE;
   }
 
-  override (Gtk:Object) 
-  void 
-  destroy (GtkObject *object)
-  {
-    /* Chain up on destroy */
-    PARENT_HANDLER (object)
-  }
 
-  override(Gegl:Image)
+  /**
+   * prepare:
+   * @self_op: a #GeglOp.
+   * @requests: #GeglOpRequest list.
+   *
+   * Prepares for image processing. Installs a scanline function pointer. 
+   *
+   **/
+  override(Gegl:Op)
   void
-  prepare(GeglImage *self_image,
+  prepare(GeglOp *self_op,
           GList * requests)
   {
     GeglPointOpClass *self_point_op_class = 
-      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_image)->klass);
-    GeglImageRequest *dest_request = 
-      (GeglImageRequest*)g_list_nth_data(requests,0); 
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_op)->klass);
+    GeglOpRequest *dest_request = 
+      (GeglOpRequest*)g_list_nth_data(requests,0); 
     GeglTile *dest = dest_request->tile;
     GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
     g_return_if_fail(dest_cm);
@@ -78,8 +98,7 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
     {
       gboolean dest_has_alpha = gegl_color_model_has_alpha(dest_cm);
       if(dest_has_alpha)
-        self_point_op_class->scanline_func = 
-	        scanline_COLORSPACE_DATATYPE;
+        self_point_op_class->scanline_func = scanline;
       else
         {
           self_point_op_class->scanline_func = NULL;
@@ -88,11 +107,21 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
     }
   } 
 
+
+  /**
+   * scanline:
+   * @self_point_op: a #GeglPointOp.
+   * @iters: #GeglTileIterators array. 
+   * @width: width of scanline.
+   *
+   * Processes a scanline.
+   *
+   **/
   private
   void
-  scanline_COLORSPACE_DATATYPE (GeglPointOp *self_point_op,
-                                GeglTileIterator **iters,
-                                gint width)
+  scanline (GeglPointOp *self_point_op,
+            GeglTileIterator **iters,
+            gint width)
   {
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color,alpha);

@@ -1,0 +1,26 @@
+<!-- ##### SECTION Title ##### -->
+GeglPointOp
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_point_op_constructor ##### -->
+<para>
+
+</para>
+
+@self: 
+@inputs: 
+@Returns: 
+
+

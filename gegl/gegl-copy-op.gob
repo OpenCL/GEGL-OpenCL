@@ -10,8 +10,8 @@
 #include "gegl-copy-op.h"
 #include "gegl-copy-op-private.h"
 #include "gegl-single-src-op-private.h"
-#include "gegl-op-private.h"
 #include "gegl-image-private.h"
+#include "gegl-op-private.h"
 #include "gegl-tile.h"
 #include "gegl-tile-iterator.h"
 #include "gegl-utils.h"
@@ -23,9 +23,18 @@ class Gegl:Copy:Op from Gegl:Single:Src:Op {
   
   private ConvertFunc copy_func;
 
+
+  /**
+   * new: 
+   * @src: an input #GeglOp.
+   * 
+   * Creates a new #GeglCopyOp.
+   * 
+   * Returns: a new #GeglCopyOp.
+   **/
   public 
   GeglCopyOp *
-  new (GeglImage *src)
+  new (GeglOp *src)
   {
     GeglCopyOp * self = GEGL_COPY_OP(GET_NEW);
 
@@ -43,10 +52,20 @@ class Gegl:Copy:Op from Gegl:Single:Src:Op {
     return self;
   }
 
+
+  /**
+   * constructor:
+   * @self: a #GeglCopyOp.
+   * @src: an input #GeglOp.
+   *
+   * Initializes a #GeglCopyOp.
+   * 
+   * Returns: TRUE if constructed successfully. 
+   **/
   protected 
   gboolean 
   constructor(self, 
-              GeglImage *src)
+              GeglOp *src)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
@@ -61,52 +80,67 @@ class Gegl:Copy:Op from Gegl:Single:Src:Op {
     return TRUE;
   }
 
-  override (Gtk:Object) 
-  void 
-  destroy (GtkObject *object)
-  {
-    /* Chain up on destroy */
-    PARENT_HANDLER (object)
-  }
 
-  override(Gegl:Image)
+  /**
+   * prepare:
+   * @self_op: a #GeglImage.
+   * @requests: #GeglOpRequest list.
+   *
+   * Prepares for image processing. Finds a copy converter from the input to
+   * output. Input and output color models should match at this point. Sets up
+   * scanline function pointer.
+   *
+   **/
+  override(Gegl:Op)
   void
-  prepare(GeglImage *self_image,
+  prepare(GeglOp *self_op,
           GList * requests)
   {
-    GeglCopyOp *self = GEGL_COPY_OP(self_image);
+    GeglCopyOp *self = GEGL_COPY_OP(self_op);
     GeglPointOpClass *self_point_op_class = 
-      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_image)->klass);
-    GeglImageRequest *dest_request = 
-      (GeglImageRequest*)g_list_nth_data(requests,0); 
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_op)->klass);
+    GeglOpRequest *dest_request = 
+      (GeglOpRequest*)g_list_nth_data(requests,0); 
     GeglColorModel * dest_cm =
       gegl_tile_get_color_model (dest_request->tile);
-    GeglImageRequest *src_request =
-      (GeglImageRequest*)g_list_nth_data(requests,1); 
+    GeglOpRequest *src_request =
+      (GeglOpRequest*)g_list_nth_data(requests,1); 
     GeglColorModel * src_cm =
       gegl_tile_get_color_model (src_request->tile);
 
     g_return_if_fail(dest_cm);
     g_return_if_fail(src_cm);
+
+    /* The ColorModels should match now. */
     g_return_if_fail(dest_cm == src_cm);
 
       {
         /* Get the name of the interface that converts
            (ie copies) from src cm */ 
         gchar *converter_name = 
-          gegl_color_model_get_converter_interface_name (src_cm); 
+          gegl_color_model_get_convert_interface_name (src_cm); 
 
         /* Now get the copy func*/ 
-        self->_priv->copy_func = 
+        self->_priv->copy_func =
           (ConvertFunc)gegl_object_query_interface (GEGL_OBJECT(dest_cm), 
                                                     converter_name);   
         g_free (converter_name);
 
         /* Set the scanline version of this class to be called */
-        self_point_op_class->scanline_func = gegl_copy_op_scanline;
+        self_point_op_class->scanline_func = scanline;
       }
   }
 
+
+  /**
+   * scanline:
+   * @self_point_op: a #GeglPointOp.
+   * @iters: #GeglTileIterator array. 
+   * @width: width of scanline. 
+   *
+   * Processes a scanline. Calls the installed copy_func.
+   *
+   **/
   private 
   void
   scanline(GeglPointOp *self_point_op,

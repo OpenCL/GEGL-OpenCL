@@ -1,0 +1,161 @@
+<!-- ##### SECTION Title ##### -->
+gegl-utils
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_rect_set ##### -->
+<para>
+
+</para>
+
+@r: 
+@x: 
+@y: 
+@w: 
+@h: 
+
+
+<!-- ##### FUNCTION gegl_rect_equal ##### -->
+<para>
+
+</para>
+
+@r: 
+@s: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_rect_copy ##### -->
+<para>
+
+</para>
+
+@to: 
+@from: 
+
+
+<!-- ##### FUNCTION gegl_rect_union ##### -->
+<para>
+
+</para>
+
+@dest: 
+@src1: 
+@src2: 
+
+
+<!-- ##### FUNCTION gegl_rect_intersect ##### -->
+<para>
+
+</para>
+
+@dest: 
+@src1: 
+@src2: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_rect_contains ##### -->
+<para>
+
+</para>
+
+@r: 
+@s: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_channel_data_type_bytes ##### -->
+<para>
+
+</para>
+
+@data: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_manager_instance ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_instance ##### -->
+<para>
+
+</para>
+
+@type: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_instance1 ##### -->
+<para>
+
+</para>
+
+@color_alpha_space: 
+@data_type: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_instance2 ##### -->
+<para>
+
+</para>
+
+@color_space: 
+@data_type: 
+@has_alpha: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_init ##### -->
+<para>
+
+</para>
+
+@argc: 
+@argv: 
+
+
+<!-- ##### FUNCTION gegl_utils_derived_color_alpha_space ##### -->
+<para>
+
+</para>
+
+@inputs: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_utils_derived_channel_data_type ##### -->
+<para>
+
+</para>
+
+@inputs: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_utils_derived_color_space ##### -->
+<para>
+
+</para>
+
+@inputs: 
+@Returns: 
+
+

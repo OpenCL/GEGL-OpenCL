@@ -1,0 +1,53 @@
+<!-- ##### SECTION Title ##### -->
+GeglColorModelRgb
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_color_model_rgb_get_red_index ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_rgb_get_green_index ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_rgb_get_blue_index ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_color_model_rgb_constructor ##### -->
+<para>
+
+</para>
+
+@self: 
+@has_alpha: 
+@Returns: 
+
+

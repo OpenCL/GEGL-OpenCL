@@ -485,7 +485,7 @@ gegl_init (int *argc,
   gegl_init_color_models();
   g_atexit (gegl_exit);
   gegl_initialized = TRUE;
-  printf("in gegl_init\n");
+  gegl_log(G_LOG_LEVEL_DEBUG, __FILE__, __LINE__, "gegl_init", "doing gegl_init");
 }
 
 gint
@@ -603,3 +603,51 @@ gegl_rect_equal (GeglRect *r,
     return FALSE;
 }
 
+#define GEGL_LOG_DOMAIN "Gegl"
+
+void
+gegl_log(GLogLevelFlags level,
+         gchar *file,
+         gint line,
+         gchar *function,
+         gchar *format,
+         ...)
+{
+    va_list args;
+    va_start(args,format);
+    gegl_logv(level,file,line,function,format,args);
+    va_end(args);
+}
+
+void
+gegl_logv(GLogLevelFlags level,
+         gchar *file,
+         gint line,
+         gchar *function,
+         gchar *format,
+         va_list args)
+{
+    gchar *tabbed = NULL;
+    if (g_getenv("GEGL_LOG_LOCATIONS"))
+      {
+        /* log the file and line */
+        g_log(GEGL_LOG_DOMAIN,level, "%s:%d:", file, line);
+
+        /* and the function */
+        g_log(GEGL_LOG_DOMAIN,level, "%s", function);
+
+        g_log(GEGL_LOG_DOMAIN,level, " ");
+
+        /* move the regular output over a bit. */
+        tabbed = g_strconcat("\t\t\t\t", format, NULL);
+        g_logv(GEGL_LOG_DOMAIN,level, tabbed, args);
+
+        g_log(GEGL_LOG_DOMAIN,level, " ");
+
+        g_free(tabbed);
+      }
+    else
+      {
+        g_logv(GEGL_LOG_DOMAIN, level, format, args);
+      }
+}

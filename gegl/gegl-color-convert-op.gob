@@ -26,9 +26,19 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
   private GeglColorSpace color_space;       /* Convert to this space */
   private GeglChannelDataType data_type;    /* or this data type */
 
+
+  /**
+   * new: 
+   * @src: an input #GeglOp.
+   * @color_model: a #GeglColorModel to convert to.
+   *
+   * Creates a new #GeglColorConvertOp which converts to @color_model.
+   * 
+   * Returns: a new #GeglColorConvertOp.
+   **/
   public 
   GeglColorConvertOp *
-  new (GeglImage *src,
+  new (GeglOp *src,
        GeglColorModel *color_model)
   {
     GeglColorConvertOp * self = 
@@ -48,10 +58,21 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
     return self;
   }
 
+
+  /**
+   * constructor:
+   * @self: a #GeglConvertOp.
+   * @src: an input #GeglOp.
+   * @color_model: a #GeglColorModel to convert to.
+   *
+   * Initializes a #GeglConvertOp.
+   * 
+   * Returns: TRUE if constructed successfully. 
+   **/
   protected 
   gboolean 
   constructor(self,
-              GeglImage *src,
+              GeglOp *src,
               GeglColorModel *color_model)
   {
     g_return_val_if_fail(color_model, FALSE);
@@ -59,9 +80,19 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
                 GEGL_COLOR_SPACE_NONE, GEGL_NONE);
   }
 
+
+  /**
+   * new1: 
+   * @src: an input #GeglOp.
+   * @color_space: a #GeglColorSpace to convert to.
+   *
+   * Creates a new #GeglColorConvertOp which converts to @color_space.
+   * 
+   * Returns: a new #GeglColorConvertOp.
+   **/
   public
   GeglColorConvertOp *
-  new1 (GeglImage *src,
+  new1 (GeglOp *src,
         GeglColorSpace color_space)
   {
     GeglColorConvertOp * self = 
@@ -81,19 +112,40 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
     return self;
   }
   
+
+  /**
+   * constructor1:
+   * @self: a #GeglConvertOp.
+   * @src: an input #GeglOp.
+   * @color_space: a #GeglColorSpace to convert to.
+   * 
+   * Initializes a #GeglConvertOp.
+   *
+   * Returns: TRUE if constructed successfully. 
+   **/
   protected 
   gboolean 
   constructor1(self,
-               GeglImage *src,
+               GeglOp *src,
                GeglColorSpace color_space)
   {
     return common_constructor(self,src,NULL, 
         color_space, GEGL_NONE);
   }
 
+
+  /**
+   * new2: 
+   * @src: an input #GeglOp.
+   * @data_type: a #GeglChannelDataType to convert to.
+   *
+   * Creates a new #GeglColorConvertOp which converts to @data_type.
+   * 
+   * Returns: a new #GeglColorConvertOp.
+   **/
   public
   GeglColorConvertOp *
-  new2 (GeglImage *src,
+  new2 (GeglOp *src,
         GeglChannelDataType data_type)
   {
     GeglColorConvertOp * self = 
@@ -113,20 +165,45 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
     return self;
   }
   
+
+  /**
+   * constructor2:
+   * @self: a #GeglConvertOp.
+   * @src: an input #GeglOp.
+   * @data_type: a #GeglChannelDataType to convert to.
+   *
+   * Initializes a #GeglConvertOp. 
+   * 
+   * Returns: TRUE if constructed successfully. 
+   **/
   protected 
   gboolean 
   constructor2(self,
-               GeglImage *src,
+               GeglOp *src,
                GeglChannelDataType data_type)
   {
     return common_constructor(self,src,NULL,
         GEGL_COLOR_SPACE_NONE, data_type);
   }
 
+
+  /**
+   * common_constructor:
+   * @self: a #GeglConvertOp.
+   * @src: an input #GeglOp.
+   * @color_model: a #GeglColorModel to convert to.
+   * @color_space: a #GeglColorSpace to convert to.
+   * @data_type: a #GeglChannelDataType to convert to.
+   *
+   * Initializes a #GeglConvertOp using @color_model if set, otherwise it uses
+   * @color_space and @data_type 
+   * 
+   * Returns: TRUE if constructed successfully. 
+   **/
   private 
   gboolean 
   common_constructor(self,
-                     GeglImage *src,
+                     GeglOp *src,
                      GeglColorModel *color_model,
                      GeglColorSpace color_space,
                      GeglChannelDataType data_type)
@@ -146,9 +223,9 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
       /* Will set the convert_func in prepare */ 
       self->_priv->convert_func = NULL;
 
-      /* Set the color model for this op, we know what it is already.*/ 
       if (color_model)
         {
+          /* Set the color model in this case, we know what it is already.*/ 
           gegl_image_set_color_model(self_image,color_model);
 
           self->_priv->color_space = gegl_color_model_color_space(color_model);
@@ -156,6 +233,7 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
         }
       else
         {
+          /* Still dont know if it will have alpha or not */
           self->_priv->color_space = color_space;
           self->_priv->data_type = data_type;
         }
@@ -167,6 +245,13 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
     return TRUE;
   }
 
+
+  /**
+   * destroy:
+   * @object:
+   * 
+   * Frees xyz_data if used. 
+   **/ 
   override (Gtk:Object) 
   void 
   destroy (GtkObject *object)
@@ -178,16 +263,30 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
     PARENT_HANDLER (object)
   }
 
+
+  /**
+   * compute_derived_color_model:
+   * @self_image: #a GeglImage.
+   * @inputs: #a GeglImage list.
+   *
+   * If the color model is set for this op already, just return. Otherwise
+   * determine the color model from the input and the specified #GeglColorSpace
+   * and #GeglChannelDataType.
+   *  
+   **/
   override(Gegl:Image)
   void
-  compute_derived_color_model(GeglImage *self_image)
+  compute_derived_color_model(GeglImage *self_image, 
+                              GList *inputs)
   {
     GeglColorConvertOp *self = GEGL_COLOR_CONVERT_OP(self_image);
+
+    /* If the ColorModel is set already, just return */
     if (!gegl_image_color_model(self_image))
       {
         GeglColorModel *derived= NULL;
 
-        GeglImage *src = GEGL_IMAGE(gegl_node_get_nth_input(GEGL_NODE(self_image),0));
+        GeglImage *src = GEGL_IMAGE(g_list_nth_data(inputs,0));
         GeglColorModel *src_cm = gegl_image_color_model(src);
         GeglColorSpace src_space = gegl_color_model_color_space(src_cm); 
         GeglChannelDataType src_type = gegl_color_model_data_type(src_cm); 
@@ -212,6 +311,15 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
       }
   }
 
+
+  /**
+   * allocate_xyz_data:
+   * @self: a #GeglConvertOp.
+   * @width: scanline width.
+   *
+   * Allocate a scanline of xyz data.
+   *  
+   **/
   private
   void
   allocate_xyz_data (self,
@@ -223,6 +331,14 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
     g_malloc (sizeof(gfloat) * width); 
   }
 
+
+  /**
+   * free_xyz_data:
+   * @self: a #GeglConvertOp.
+   *
+   * Free the scanline of xyz data.
+   *  
+   **/
   private
   void
   free_xyz_data (self)
@@ -237,20 +353,31 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
       }	
   }
 
-  override (Gegl:Image) 
+  
+  /**
+   * prepare:
+   * @self_op:
+   * @requests: #GegOpRequest list
+   *
+   * Prepare for image processing. Try to find a converter from the input color
+   * model to the output color model. If there isnt one, convert to the desired
+   * color model using XYZ conversion.
+   *
+   **/
+  override (Gegl:Op) 
   void
-  prepare(GeglImage *self_image,
+  prepare(GeglOp *self_op,
           GList *requests)
   {
-    GeglColorConvertOp *self = GEGL_COLOR_CONVERT_OP(self_image);
-    GeglPointOpClass *self_point_op_class = 
-      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_image)->klass);
-    GeglImageRequest *dest_request = 
-      (GeglImageRequest*)g_list_nth_data(requests,0); 
+    GeglColorConvertOp *self = GEGL_COLOR_CONVERT_OP(self_op);
+    GeglPointOpClass *self_point_op_class =
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_op)->klass);
+    GeglOpRequest *dest_request =
+      (GeglOpRequest*)g_list_nth_data(requests,0); 
     GeglColorModel * dest_cm =
       gegl_tile_get_color_model (dest_request->tile);
-    GeglImageRequest *src_request =
-      (GeglImageRequest*)g_list_nth_data(requests,1); 
+    GeglOpRequest *src_request =
+      (GeglOpRequest*)g_list_nth_data(requests,1);
     GeglColorModel * src_cm =
       gegl_tile_get_color_model (src_request->tile);
 
@@ -258,14 +385,14 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
     g_return_if_fail(src_cm);
 
       {
-        /* Get the name of the interface that converts from src cm */ 
+        /* Get the name of the interface that converts from src cm */
         gchar *converter_name =
-            gegl_color_model_get_converter_interface_name (src_cm); 
+            gegl_color_model_get_convert_interface_name (src_cm);
 
-        /* Check to see if the dest cm implements this conversion*/ 
-        self->_priv->convert_func = 
-          (ConvertFunc)gegl_object_query_interface (GEGL_OBJECT(dest_cm), 
-                                                    converter_name);   
+        /* Check to see if the dest cm implements the converter */
+        self->_priv->convert_func =
+          (ConvertFunc)gegl_object_query_interface (GEGL_OBJECT(dest_cm),
+                                                    converter_name);
 
         g_free (converter_name);
 
@@ -273,14 +400,24 @@ class Gegl:Color:Convert:Op from Gegl:Single:Src:Op {
           {
             /* Allocate scanlines for the XYZ data */
             free_xyz_data (self);
-            allocate_xyz_data (self, dest_request->rect.w); 
+            allocate_xyz_data (self, dest_request->rect.w);
           }
 
         /* Set the scanline version of this class to be called */
-        self_point_op_class->scanline_func = gegl_color_convert_op_scanline;
+        self_point_op_class->scanline_func = scanline;
       }
   } 
 
+
+  /**
+   * scanline:
+   * @self_point_op: a #GeglPointOp.
+   * @iters: a #GeglTileIterator array. 
+   * @width: width of scanline.
+   *
+   * Process a scanline.
+   *
+   **/
   private 
   void
   scanline(GeglPointOp *self_point_op,
