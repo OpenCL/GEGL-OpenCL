@@ -1244,15 +1244,15 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
   t[0] = '\0';
 
   dest->num = 1; 
-  if (is_define && get_sym (src.string)->type == TYPE_C_VECTOR ||
-      (get_sym (src.string)->type == TYPE_C_A_VECTOR &&
-       !strcmp (src.string, get_sym (src.string)->string)))
+  if (is_define && (get_sym (src.string)->type == TYPE_C_VECTOR ||
+	(get_sym (src.string)->type == TYPE_C_A_VECTOR &&
+	!strcmp (src.string, get_sym (src.string)->string)))) 
     {
       dest->num = NUM_COLOR_CHANNEL;
       sprintf (tmp, "%s_c", get_sym (src.string)->string);
     }
-  else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR &&
-      !strcmp (src.string, get_sym (src.string)->string))) 
+  else if (is_define && get_sym (src.string)->type == TYPE_CA_VECTOR &&
+      !strcmp (src.string, get_sym (src.string)->string)) 
     {
       dest->num = NUM_COLOR_CHANNEL + 1;
       sprintf (tmp, "%s_ca", get_sym (src.string)->string);
