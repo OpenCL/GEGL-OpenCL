@@ -38,7 +38,8 @@ static GeglScanlineFunc get_scanline_function(GeglNoInput * no_input, GeglColorM
 
 static void fill_uint8 (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 static void fill_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
-static void fill_u16 (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
+// Not yet defined.  Commented out so that we can compile with -Wall -Werror
+//static void fill_u16 (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 
 static gpointer parent_class = NULL;
 

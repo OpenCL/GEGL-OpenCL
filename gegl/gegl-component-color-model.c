@@ -66,7 +66,7 @@ constructor (GType                  type,
              GObjectConstructParam *props)
 {
   gint i;
-  gint *bits;
+  //gint *bits;
   gint num_colors;
   gint num_channels;
   GType channel_type;

@@ -218,7 +218,7 @@ prepare (GeglFilter * filter)
   GValue *dest_value = gegl_op_get_output_data_value(GEGL_OP(filter), "dest");
   GeglImage *dest = (GeglImage*)g_value_get_object(dest_value);
   GeglColorModel * dest_cm = gegl_image_get_color_model (dest);
-  GeglColorSpace * dest_color_space = gegl_color_model_color_space(dest_cm);
+  //GeglColorSpace * dest_color_space = gegl_color_model_color_space(dest_cm);
   GeglCompClass *klass = GEGL_COMP_GET_CLASS(self);
 
   /* Get the appropriate scanline func from subclass */

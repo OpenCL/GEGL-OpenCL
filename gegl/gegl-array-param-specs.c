@@ -8,7 +8,7 @@ static void
 param_spec_float_array_set_default (GParamSpec *pspec,
                                     GValue     *value)
 {
-  GeglParamSpecFloatArray *spec = GEGL_PARAM_SPEC_FLOAT_ARRAY (pspec);
+  //GeglParamSpecFloatArray *spec = GEGL_PARAM_SPEC_FLOAT_ARRAY (pspec);
 
   value->data[0].v_int = 0;
   value->data[1].v_pointer = NULL;
@@ -18,7 +18,7 @@ static gboolean
 param_spec_float_array_validate (GParamSpec *pspec,
                                  GValue     *value)
 {
-  GeglParamSpecFloatArray *spec = GEGL_PARAM_SPEC_FLOAT_ARRAY (pspec);
+  //GeglParamSpecFloatArray *spec = GEGL_PARAM_SPEC_FLOAT_ARRAY (pspec);
   
   return FALSE; 
 }

@@ -68,7 +68,7 @@ class_init (GeglChannelsClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
-  GeglMultiImageOpClass *multi_image_op_class = GEGL_MULTI_IMAGE_OP_CLASS(klass);
+  //GeglMultiImageOpClass *multi_image_op_class = GEGL_MULTI_IMAGE_OP_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
   gobject_class->finalize = finalize;
@@ -118,7 +118,8 @@ validate_inputs  (GeglFilter *filter,
 {
   GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_data);
   {
-    GeglData * data = gegl_op_get_input_data(GEGL_OP(filter), "source");
+    //called for the side effects
+    gegl_op_get_input_data(GEGL_OP(filter), "source");
   }
 }
 
@@ -228,8 +229,8 @@ channels_rgb (GeglFilter * filter,
   GeglImageIterator *source = 
     gegl_scanline_processor_lookup_iterator(processor, "source");
   gfloat **s = (gfloat**)gegl_image_iterator_color_channels(source);
-  gfloat *sa = (gfloat*)gegl_image_iterator_alpha_channel(source);
-  gint s_color_chans = gegl_image_iterator_get_num_colors(source);
+  //gfloat *sa = (gfloat*)gegl_image_iterator_alpha_channel(source);
+  //gint s_color_chans = gegl_image_iterator_get_num_colors(source);
 
   GeglImageIterator *red = 
     gegl_scanline_processor_lookup_iterator(processor, "red");

@@ -14,7 +14,8 @@ static GeglData* get_nth_data(GeglOp *self, GArray *array, gint n);
 static GeglData* get_data(GeglOp *self, GArray *array, gchar * name);
 static gint get_data_index(GeglOp *self, GArray *array, gchar * name);
 
-static GList * make_data_list(GArray *array);
+//defined but not used.  This and the definition is commented out for now.
+//static GList * make_data_list(GArray *array);
 
 static void accept (GeglNode * node, GeglVisitor * visitor);
 
@@ -583,6 +584,7 @@ free_data(GeglOp *self,
     }
 }
 
+/*
 static GList *
 make_data_list(GArray *array)
 {
@@ -596,6 +598,7 @@ make_data_list(GArray *array)
     }
   return list;
 }
+*/
  
 void
 gegl_op_validate_input_data_array(GeglOp *self,

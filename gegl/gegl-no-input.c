@@ -63,7 +63,7 @@ static void
 class_init (GeglNoInputClass * klass)
 {
   GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
-  GeglImageOpClass *image_op_class = GEGL_IMAGE_OP_CLASS(klass);
+  //GeglImageOpClass *image_op_class = GEGL_IMAGE_OP_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 

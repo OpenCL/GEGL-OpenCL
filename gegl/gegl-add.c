@@ -145,8 +145,8 @@ validate_inputs  (GeglFilter *filter,
   GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_data);
 
   {
-    GeglData * output_data = gegl_op_get_output_data(GEGL_OP(filter), "dest");
-    GeglData * input_data = gegl_op_get_input_data(GEGL_OP(filter), "constant");
+    //GeglData * output_data = gegl_op_get_output_data(GEGL_OP(filter), "dest");
+    //GeglData * input_data = gegl_op_get_input_data(GEGL_OP(filter), "constant");
 
     /* Nothing to do here */
   }
