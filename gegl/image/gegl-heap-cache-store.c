@@ -24,6 +24,8 @@
 
 static void class_init(gpointer g_class,
                        gpointer class_data);
+static void dispose (GObject * object);
+static void finalize (GObject * object);
 static void instance_init(GTypeInstance *instance,
                           gpointer g_class);
 static void add (GeglCacheStore * self, GeglEntryRecord * record);
@@ -32,6 +34,8 @@ static void zap (GeglCacheStore* self, GeglEntryRecord* record);
 static gint64 size (GeglCacheStore* self);
 static GeglEntryRecord * pop (GeglCacheStore * self);
 static GeglEntryRecord * peek (GeglCacheStore * self);
+
+static gpointer parent_class;
 
 GType
 gegl_heap_cache_store_get_type(void)
@@ -80,13 +84,44 @@ class_init(gpointer g_class,
 	   gpointer class_data)
 {
   GeglCacheStoreClass * cache_store_class = GEGL_CACHE_STORE_CLASS(g_class);
-
+  GObjectClass * object_class = G_OBJECT_CLASS (g_class);
+  
   cache_store_class->add = add;
   cache_store_class->remove = remove;
   cache_store_class->zap = zap;
   cache_store_class->size = size;
   cache_store_class->pop = pop;
   cache_store_class->peek = peek;
+
+  object_class->dispose = dispose;
+  object_class->finalize = finalize;
+  
+  parent_class = g_type_class_peek_parent (g_class);
+}
+
+static void
+g_list_free_record (gpointer data, gpointer user_data)
+{
+  GeglEntryRecord * record = (GeglEntryRecord *)data;
+  gegl_entry_record_free (record);
+}
+
+static void
+dispose (GObject * object)
+{
+  GeglHeapCacheStore * self = GEGL_HEAP_CACHE_STORE (object);
+  if (! self->has_disposed )
+    {
+      self->has_disposed = TRUE;
+      g_list_foreach (self->record_head, g_list_free_record, NULL);
+      g_list_free (self->record_head);
+    }
+  
+}
+static void
+finalize (GObject * object)
+{
+  G_OBJECT_CLASS (parent_class)->finalize(object);
 }
 
 static void
@@ -96,6 +131,7 @@ instance_init(GTypeInstance *instance,
   GeglHeapCacheStore * self = GEGL_HEAP_CACHE_STORE (instance);
   self->size = 0;
   self->record_head = NULL;
+  self->has_disposed = FALSE;
 }
 
 static void

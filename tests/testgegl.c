@@ -27,7 +27,7 @@ extern Test * create_entry_record_test();
 extern Test * create_null_cache_store_test();
 extern Test * create_heap_cache_store_test();
 extern Test * create_swap_cache_store_test();
-
+extern Test * create_cache_mem_leaks_test();
 int
 main (int argc, char *argv[])
 {  
@@ -66,6 +66,7 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_heap_cache_store_test());
     cs_addTest(suite, create_swap_cache_store_test());
     cs_addTest(suite, create_buffer_caching_test());
+    cs_addTest(suite, create_cache_mem_leaks_test());
     cs_setStream(suite, stdout);
     cs_run(suite);
     cs_report(suite);

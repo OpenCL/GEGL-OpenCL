@@ -197,7 +197,10 @@ void foreach_dirty (gpointer key, gpointer value, gpointer user_data)
 {
   struct _GeglCacheStore * store = (struct _GeglCacheStore *) key;
   GeglStoreData * sdata = (GeglStoreData *)value;
-  sdata->dirty (store, sdata->data);
+  if (sdata->dirty != NULL)
+    {
+      sdata->dirty (store, sdata->data);
+    }
 }
 
 void

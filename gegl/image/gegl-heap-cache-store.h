@@ -45,6 +45,7 @@ struct _GeglHeapCacheStore
   GeglCacheStore parent;
   GList * record_head;
   gint64 size;
+  gboolean has_disposed;
 };
 
 typedef struct _GeglHeapCacheStoreClass GeglHeapCacheStoreClass;

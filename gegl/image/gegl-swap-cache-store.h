@@ -50,6 +50,7 @@ struct _GeglSwapCacheStore
   gint fd;
   GList * gaps;
   gint64 length;
+  gboolean has_disposed;
 };
 
 typedef struct _GeglSwapCacheStoreClass GeglSwapCacheStoreClass;

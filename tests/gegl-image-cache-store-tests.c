@@ -54,6 +54,7 @@ setup_cache_store_tests ( GeglCacheStore * store)
 void
 teardown_cache_store_tests ( void )
 {
+
   if (record1 != NULL)
     gegl_entry_record_free (record1);
   if (record2 != NULL)
@@ -62,6 +63,7 @@ teardown_cache_store_tests ( void )
     gegl_entry_record_free (record3);
   if (record4 != NULL)
     gegl_entry_record_free (record4);
+
   g_object_unref (entry1);
   g_object_unref (entry2);
   g_object_unref (entry3);
@@ -132,6 +134,11 @@ test_cache_store_size ( Test * test)
   gegl_cache_store_add (test_store, record4);
   size = gegl_cache_store_size (test_store);
   ct_test (test, size == (1024+2048+4096+8192) * sizeof(gint));
+
+  record1 = NULL;
+  record2 = NULL;
+  record3 = NULL;
+  record4 = NULL;
 }
 
 void
@@ -175,4 +182,9 @@ test_cache_store_peek (Test * test)
   gegl_cache_store_add (test_store, record4);
   rec = gegl_cache_store_peek (test_store);
   ct_test (test, rec == record1);
+
+  record1 = NULL;
+  record2 = NULL;
+  record3 = NULL;
+  record4 = NULL;
 }

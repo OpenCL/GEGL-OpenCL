@@ -51,6 +51,7 @@ static void class_init(gpointer g_class,
 static void instance_init(GTypeInstance *instance,
                           gpointer g_class);
 static void finalize(GObject *object);
+static void dispose(GObject *object);
 static void add (GeglCacheStore * self, GeglEntryRecord * record);
 static void remove (GeglCacheStore* self, GeglEntryRecord* record);
 static void zap (GeglCacheStore * store, GeglEntryRecord * record);
@@ -126,6 +127,25 @@ gegl_swap_cache_store_new (const gchar * template)
     }
   return new_store;
 }
+static void
+g_list_free_record (gpointer data, gpointer user_data)
+{
+  GeglEntryRecord * record = (GeglEntryRecord *)data;
+  gegl_entry_record_free (record);
+}
+
+static void
+dispose (GObject * object)
+{
+  GeglSwapCacheStore * self = GEGL_SWAP_CACHE_STORE (object);
+  if (! self->has_disposed )
+    {
+      self->has_disposed = TRUE;
+      g_list_foreach (self->record_head, g_list_free_record, NULL);
+      g_list_free (self->record_head);
+    }
+  
+}
 
 static void
 finalize(GObject *object)
@@ -155,7 +175,7 @@ class_init(gpointer g_class,
   cache_store_class->peek = peek;
   
   gobject_class->finalize = finalize;
-
+  gobject_class->dispose = dispose;
   parent_class = g_type_class_peek_parent (g_class);
 }
 
@@ -169,6 +189,7 @@ instance_init(GTypeInstance *instance,
   self->length = 0;
   self->gaps = NULL;
   self->filename = NULL;
+  self->has_disposed = FALSE;
 }
 
 static void

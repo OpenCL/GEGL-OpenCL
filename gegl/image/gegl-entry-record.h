@@ -48,8 +48,8 @@ struct _GeglEntryRecord
 };
 
 typedef void (*GeglStoreDataFunc) (struct _GeglCacheStore *, gpointer data);
-void gegl_entry_record_free (GeglEntryRecord * record);
 GeglEntryRecord * gegl_entry_record_new (struct _GeglCache * cache, struct _GeglCacheEntry * entry);
+void gegl_entry_record_free (GeglEntryRecord * record);
 void gegl_entry_record_set_cache (GeglEntryRecord * record,
 				  struct _GeglCache * cache);
 void gegl_entry_record_set_cache_store (GeglEntryRecord * record,
