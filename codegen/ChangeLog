@@ -1,9 +1,0 @@
-
-Tue Feb 22 16:26:59 PST 2000 caro@rhythm.com
-
-	* Initial check in of codegen dir
-
-	* This hopefully will become a parser that will create data type specific code from
-	generic code.
-
-

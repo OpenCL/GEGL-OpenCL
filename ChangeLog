@@ -1,3 +1,16 @@
+Wed Feb 23 12:13:42 EST 2000 calvinw@mindspring.com
+
+	* Cleaned up the initial codegen import.  
+
+
+Tue Feb 22 16:26:59 PST 2000 caro@rhythm.com
+
+	* Initial check in of codegen dir
+
+	* This hopefully will become a parser that will 
+	create data type specific code from generic code.
+
+
 Fri Feb 18 12:48:30 PST 2000 calvinw@mindspring.com
 
         * Added CompositePremultOp ,SingleSrcOp class

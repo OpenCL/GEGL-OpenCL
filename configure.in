@@ -23,6 +23,8 @@ AC_ARG_ENABLE(ansi, [  --enable-ansi           turn on strict ansi [default=no]]
 AC_PROG_CC
 AC_PROG_CPP
 AM_PROG_LIBTOOL
+AC_PROG_YACC
+AM_PROG_LEX
 
 AM_MAINTAINER_MODE
 
@@ -85,4 +87,5 @@ AC_SUBST(GEGL_LIBS)
 AC_OUTPUT([
 Makefile
 gegl/Makefile
+codegen/Makefile
 gegl-config], [case "$CONFIG_FILES" in *gegl-config*) chmod +x gegl-config;; esac])

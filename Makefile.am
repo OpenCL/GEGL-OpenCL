@@ -1,4 +1,4 @@
-SUBDIRS = gegl
+SUBDIRS = codegen gegl
 
 bin_SCRIPTS = \
 	gegl-config
