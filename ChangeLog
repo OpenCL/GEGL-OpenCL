@@ -1,15 +1,19 @@
+2003-11-28 21:20 Daniel Rogers <daniel@phasevelocity.org>
+	* configure.in
+	I Added a check for lcms.
+
+	* .cvsignore
+	A change to inform cvs of some eclipse project files to ignore.
+	
 2003-11-28 21:11 Daniel Rogers <daniel@phasevelocity.org>
 
-	This commit is solely style updates.
+	This commit is solely style updates.  This makes my files conform
+	to our coding standards.
 
 	* gegl/image/gegl-buffer-double.c
 	* gegl/image/gegl-buffer-double.h
 	* gegl/image/gegl-buffer.c
 	* gegl/image/gegl-buffer.h
-	* gegl/image/gegl-color-model.c
-	* gegl/image/gegl-color-model.h
-	* gegl/image/gegl-color-space-imp.h
-	* gegl/image/gegl-color-space.h
 	* gegl/image/gegl-component-sample-model.c
 	* gegl/image/gegl-component-sample-model.h
 	* gegl/image/gegl-init.c
@@ -22,8 +26,6 @@
 	* gegl/image/gegl-object.h
 	* gegl/image/gegl-sample-model.c
 	* gegl/image/gegl-sample-model.h
-	* gegl/image/gegl-tile-iterator.h
-	* gegl/image/gegl-tile.h
 	* gegl/image/gegl-utils.c
 	* gegl/image/gegl-utils.h
 

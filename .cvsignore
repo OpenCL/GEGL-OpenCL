@@ -26,4 +26,7 @@ stamp-h
 stamp-h.in
 .cdtproject
 .project
+.tm_project.cache
+gegl.prj
+gegl.pws
 
