@@ -67,7 +67,7 @@ class Gegl:Image:Iterator from Gegl:Object {
       /*Allocate data pointers array*/
       self->_priv->scanline_data = g_new(guchar*, num_channels);
 
-      get_current_rect(self, NULL);
+      /*get_current_rect(self, NULL);*/
     }
 
     return TRUE;

@@ -23,7 +23,6 @@ typedef enum
   COMPOSITE_OUT,
   COMPOSITE_ATOP,
   COMPOSITE_XOR,
-  COMPOSITE_PLUS
 }GeglCompositeMode;
 
 typedef enum

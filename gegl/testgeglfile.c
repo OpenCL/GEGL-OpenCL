@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkprivate.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <tiffio.h>
 
 #include "gegl-color-model-rgb-float.h"
@@ -24,7 +25,11 @@
 #include "gegl-light-op.h"
 
 static void
-create_preview(GtkWidget **window, GtkWidget **preview, int width, int height, gchar *name)
+create_preview(GtkWidget **window, 
+               GtkWidget **preview, 
+               int width, 
+               int height, 
+               gchar *name)
 {
         
   /* lets create the container window first */
@@ -40,35 +45,44 @@ create_preview(GtkWidget **window, GtkWidget **preview, int width, int height, g
 }
 
 static void
-display_image(GtkWidget *window, GtkWidget *preview, 
-                GeglImageBuffer* image_buffer,
-                GeglRect current_rect)
+display_image(GtkWidget *window, 
+              GtkWidget *preview, 
+              GeglImageBuffer* image_buffer,
+              GeglRect rect)
 {
   gint            w, h, num_chans;
   gfloat          **data_ptrs;
   int             i, j;
   guchar          *tmp;
-
-  num_chans = gegl_color_model_num_channels(gegl_image_buffer_color_model(image_buffer));
+  GeglRect        current_rect;
+  num_chans = gegl_color_model_num_channels(
+                gegl_image_buffer_color_model(image_buffer));
   data_ptrs = (gfloat**) g_malloc(sizeof(gfloat*) * num_chans);
-  h = current_rect.h;
-  w = current_rect.w;
+  h = rect.h;
+  w = rect.w;
   tmp = g_new(char, 3*w);
+
   { 
     GeglImageIterator *iterator = gegl_image_iterator_new(image_buffer);
-    for(i=0; i<h; i++){
-      gegl_image_iterator_get_scanline_data(iterator, (guchar**)data_ptrs);
-      
-      /* convert the data_ptrs */
-      /* uchar -> float -> unsigned 8bit */   
-      for(j=0; j<w; j++){
-	tmp[0 + 3*j] = data_ptrs[0][j] * 255;
-	tmp[1 + 3*j] = data_ptrs[1][j] * 255;
-	tmp[2 + 3*j] = data_ptrs[2][j] * 255;
-      }       
-      gtk_preview_draw_row(GTK_PREVIEW(preview), tmp, 0, i, w);
-      gegl_image_iterator_next_scanline(iterator);  
-     }
+    gegl_image_iterator_request_rect(iterator, &rect);
+    gegl_image_iterator_get_current_rect(iterator, &current_rect);
+
+    for(i=0; i<h; i++)
+      {
+	gegl_image_iterator_get_scanline_data(iterator, 
+                                             (guchar**)data_ptrs);
+
+	/* convert the data from float -> unsigned 8bit */   
+	for(j=0; j<w; j++)
+          {
+	    tmp[0 + 3*j] = data_ptrs[0][j] * 255;
+	    tmp[1 + 3*j] = data_ptrs[1][j] * 255;
+	    tmp[2 + 3*j] = data_ptrs[2][j] * 255;
+
+	  }       
+	gtk_preview_draw_row(GTK_PREVIEW(preview), tmp, 0, h-1-i, w);
+	gegl_image_iterator_next_scanline(iterator);  
+      }
     gegl_object_destroy (GEGL_OBJECT(iterator));
   }
 
@@ -80,238 +94,144 @@ display_image(GtkWidget *window, GtkWidget *preview,
     
 }       
 
-
 int
-main(int argc, char *argv[])
+main(int argc, 
+     char *argv[])
 {
-  GeglColorModel  	*color_model[3];
+  GeglColorModel  	*color_model[3]; /* 0 = dest, 1 = src1, 2 = src2 */
   GeglImageBuffer 	*image_buffer[3];
-  GeglImageIterator     *iterator[3];
-  GtkWidget       	*window[10];
-  GtkWidget       	*preview[10];
+  GtkWidget       	*window[3];
+  GtkWidget       	*preview[3];
   int             	i, j, k;
-  GeglRect        	requested_rect;
-  GeglRect        	current_rect[3];
+  GeglRect        	rect[3];
   gint            	num_chans;
   float           	*t;
   uint32          	width[3], height[3];
   GeglOp 		*op;
 #if 0
-  gchar	          	*win_name[] = {"REPLACE", "OVER", "IN",
-				"OUT", "ATOP", "XOR", "PLUS"};
-#else
-  gchar                 *win_name[] = {"MIN", "MAX", "MULT", "SUB", "DIFF",
+  gchar	          	*composite_mode_names[] = {"REPLACE", "OVER", "IN",
+				"OUT", "ATOP", "XOR"};
+  gchar                 *point_ops_names[] = {"MIN", "MAX", "MULT", "SUB", "DIFF",
 				"SCREEN", "DARK", "LIGHT"};        
-#endif		
+#endif
 
-  /* stuff for reading a image */
+  /* stuff for reading a tiff */
   guchar          *image_data;
   TIFF            *tif;   
   uint32          *image;
   guchar          img[4];
 
   gtk_init (&argc, &argv);
+
+  /* read in the 2 sources, src1 and src2 */ 
+
+  for(k=1; k<=2; k++)
+    {             
+      /* open the file */
+      tif = TIFFOpen(argv[k], "r");
+
+      /* get width and height */
+      TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width[k]);
+      TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height[k]);
+      
+      /* create the display window */
+      create_preview(&window[k], &preview[k], width[k], height[k], 
+                    (k==1)?"Src 1":"Src 2");
+
+      /* create the gegl image buffer */
+      color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+      image_buffer[k] = gegl_image_buffer_new(color_model[k], width[k], height[k]);
+      num_chans = gegl_color_model_num_channels(color_model[k]);
+      gegl_rect_set (&rect[k], 0,0, width[k], height[k]);
+	      
+      /* put the data from the image into image_data and make sure it is
+      in the right format rrr ggg bbb */
+      image = (uint32*) _TIFFmalloc(width[k] * height[k] * sizeof(uint32));
+      image_data = (guchar*) g_malloc(sizeof(guchar) * width[k] * height[k] *
+			      sizeof(float) * num_chans);
+      t = (float*) g_malloc(sizeof(float) * width[k] * height[k] * 4);
+
+      TIFFReadRGBAImage(tif, width[k], height[k], image, 0);
+      j=0;
+      for(i=0; i<width[k]*height[k]; i++)
+        {
+	  memcpy(img, &image[i], 4);
+	  t[j                     ] = ((float)img[0]) / 255.0;
+	  t[j+width[k]*height[k]  ] = ((float)img[1]) / 255.0;
+	  t[j+width[k]*height[k]*2] = ((float)img[2]) / 255.0;
+	  t[j+width[k]*height[k]*3] = ((float)img[3]) / 255.0;
+	  j++;  
+        }
+
+      memcpy(image_data, t, width[k] * height[k] * sizeof(float) * num_chans);
+      _TIFFfree(image);
+      TIFFClose(tif); 
+      g_free(t);
+
+      /* give the data to the gegl image buff */
+      gegl_image_buffer_set_data(image_buffer[k], image_data);
  
-  /* read in the two images */ 
-  for(k=0; k<3; k++){             
-    /* open the file */
-    tif = TIFFOpen(argv[k+1], "r");
+      
+      if(!k) g_free(image_data);
+    } 
 
-    /* get width and height */
-    TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width[k]);
-    TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height[k]);
-    
-    /* create the display window */
-    create_preview(&window[k], &preview[k], width[k], height[k],
-	(k==1)?"Background":"Foreground");
-
-    /* create the gegl image buff */
-    if(k)color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
-    else color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE)); 
-    image_buffer[k] = gegl_image_buffer_new(color_model[k], width[k], height[k]);
-    num_chans = gegl_color_model_num_channels(color_model[k]);
-	    
-    /* put the data from the image into image_data and make sure it is
-    in the right formate rrr ggg bbb */
-    image = (uint32*) _TIFFmalloc(width[k] * height[k] * sizeof(uint32));
-    image_data = (guchar*) g_malloc(sizeof(guchar) * width[k] * height[k] *
-			    sizeof(float) * num_chans);
-    t = (float*) g_malloc(sizeof(float) * width[k] * height[k] * 4);
-    TIFFReadRGBAImage(tif, width[k], height[k], image, 0);
-    j=0;
-    for(i=0; i<width[k]*height[k]; i++){
-      memcpy(img, &image[i], 4);
-      t[j                     ] = ((float)img[3]) / 255.0;
-      t[j+width[k]*height[k]  ] = ((float)img[2]) / 255.0;
-      t[j+width[k]*height[k]*2] = ((float)img[1]) / 255.0;
-      if(k) t[j+width[k]*height[k]*3] = ((float)img[0]) / 255.0;
-      else t[j+width[k]*height[k]*3] = 0.5;  
-      j++;  
-    }
-
-    memcpy(image_data, t, width[k] * height[k] * sizeof(float) * num_chans);
-    _TIFFfree(image);
-    TIFFClose(tif); 
-    g_free(t);
-
-    /* give the data to the gegl image buff */
-    gegl_image_buffer_set_data(image_buffer[k], image_data);
-    
-    if(!k) g_free(image_data);
-
-    /* init the rect */
-    requested_rect.x = 0;           requested_rect.y = 0;
-    requested_rect.w = width[k];    requested_rect.h = height[k];   
-   
-    iterator[k] = gegl_image_iterator_new(image_buffer[k]);
-    gegl_image_iterator_request_rect(iterator[k], &requested_rect);
-    gegl_image_iterator_get_current_rect(iterator[k], &current_rect[k]);
-    
-  } 
-  display_image(window[0], preview[0], image_buffer[0], current_rect[0]);
-  display_image(window[1], preview[1], image_buffer[1], current_rect[1]);
+  display_image(window[1], preview[1], image_buffer[1], rect[1]);
+  display_image(window[2], preview[2], image_buffer[2], rect[2]);
  
-  requested_rect.x = 0;           requested_rect.y = 0;
-  requested_rect.w = width[0];    requested_rect.h = height[0];
-
-  gegl_image_iterator_request_rect(iterator[0], &requested_rect);
-  gegl_image_iterator_get_current_rect(iterator[0], &current_rect[0]);
+  /* create the destination , same size as src 1 for now*/
   
-  requested_rect.x = 0;           requested_rect.y = 0;
-  requested_rect.w = width[1];    requested_rect.h = height[1];
-  gegl_image_iterator_request_rect(iterator[1], &requested_rect);
-  gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
+  width[0] = width[1];
+  height[0] = height[1];
+  color_model[0] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+  image_buffer[0] = gegl_image_buffer_new(color_model[0], width[0], height[0]);
+  num_chans = gegl_color_model_num_channels(color_model[0]);
+  gegl_rect_set (&rect[0], 0,0, width[0], height[0]);
 
-#if 0  
-  /* test the comp ops :) */ 
-  for(k=0; k<7; k++){
-    op = GEGL_OP(gegl_composite_op_new (image_buffer[1], image_buffer[0], 
-					    &(current_rect[1]), &(current_rect[0]),
-					    k, FALSE));
-    gegl_op_apply (op);   
-    
-    requested_rect.x = 0;           requested_rect.y = 0;
-    requested_rect.w = width[1];    requested_rect.h = height[1];
-    gegl_image_iterator_request_rect(iterator[1], &requested_rect);
-    gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
-    create_preview(&window[2+k], &preview[2+k], width[1], height[1], win_name[k]);  
-    display_image(window[2+k], preview[2+k], image_buffer[1], current_rect[1]);
-    gegl_image_buffer_set_data(image_buffer[1], image_data);
+#if 1  
+    /* testing the composite ops */ 
 
-  }
+	op = GEGL_OP(gegl_composite_op_new (image_buffer[0], 
+					    image_buffer[1], 
+					    image_buffer[2], 
+					    &rect[0], 
+					    &rect[1], 
+					    &rect[2], 
+					    COMPOSITE_OVER));
+	gegl_op_apply (op);   
+
+
+	   /* display the destination */ 
+	create_preview(&window[0], &preview[0], width[0], height[0], "dest");
+	display_image(window[0], preview[0], image_buffer[0], rect[0]);
 #endif
-#if 1
-  /* test the comp ops :) */
-      op = GEGL_OP(gegl_min_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
-                                    &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
-                                    ));
+
+#if 0 
+      op = GEGL_OP(gegl_min_op_new (image_buffer[0], 
+                                    image_buffer[1], 
+                                    image_buffer[2],
+                                    &(rect[0]), 
+                                    &(rect[1]), 
+                                    &(rect[2])));
       gegl_op_apply (op);
 		    
-      requested_rect.x = 0;           requested_rect.y = 0;
-      requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
-      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
-      create_preview(&window[2], &preview[2], width[1], height[1], win_name[0]);
-      display_image(window[2], preview[2], image_buffer[1], current_rect[1]);
-      gegl_image_buffer_set_data(image_buffer[1], image_data);
-     
-      op = GEGL_OP(gegl_max_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
-                                    &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
-                                    ));
-      gegl_op_apply (op);
-                    
-      requested_rect.x = 0;           requested_rect.y = 0;
-      requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
-      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
-      create_preview(&window[4], &preview[4], width[1], height[1], win_name[1]);
-      display_image(window[4], preview[4], image_buffer[1], current_rect[1]);
-      gegl_image_buffer_set_data(image_buffer[1], image_data);
+      /* display the destination */ 
+      create_preview(&window[0], &preview[0], width[0], height[0], "dest");
+      display_image(window[0], preview[0], image_buffer[0], rect[0]);
+#endif
 
-    
-      op = GEGL_OP(gegl_mult_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
-                                    &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
-                                    ));
-      gegl_op_apply (op);
-                    
-      requested_rect.x = 0;           requested_rect.y = 0;
-      requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
-      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
-      create_preview(&window[5], &preview[5], width[1], height[1], win_name[2]);
-      display_image(window[5], preview[5], image_buffer[1], current_rect[1]);
-      gegl_image_buffer_set_data(image_buffer[1], image_data);
+  gegl_object_destroy(GEGL_OBJECT(op));
+  for (k = 0; k < 3; k++)
+    {
+      gegl_object_destroy(GEGL_OBJECT(color_model[k]));
+      gegl_object_destroy(GEGL_OBJECT(image_buffer[k]));
+    }  
+  gtk_main();
+
+  return 0;
+}
 
 
-      op = GEGL_OP(gegl_diff_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
-                                    &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
-                                    ));
-      gegl_op_apply (op);
-                    
-      requested_rect.x = 0;           requested_rect.y = 0;
-      requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
-      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
-      create_preview(&window[6], &preview[6], width[1], height[1], win_name[3]);
-      display_image(window[6], preview[6], image_buffer[1], current_rect[1]);
-      gegl_image_buffer_set_data(image_buffer[1], image_data);
 
-
-      op = GEGL_OP(gegl_subtract_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
-                                    &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
-                                    ));
-      gegl_op_apply (op);
-                    
-      requested_rect.x = 0;           requested_rect.y = 0;
-      requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
-      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
-      create_preview(&window[7], &preview[7], width[1], height[1], win_name[4]);
-      display_image(window[7], preview[7], image_buffer[1], current_rect[1]);
-      gegl_image_buffer_set_data(image_buffer[1], image_data);
-      
-
-      op = GEGL_OP(gegl_screen_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
-	                            &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
-		                    ));
-      gegl_op_apply (op);
-	                        
-      requested_rect.x = 0;           requested_rect.y = 0;
-      requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
-      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
-      create_preview(&window[8], &preview[8], width[1], height[1], win_name[5]);
-      display_image(window[8], preview[8], image_buffer[1], current_rect[1]);
-      gegl_image_buffer_set_data(image_buffer[1], image_data);
-      						      
-      op = GEGL_OP(gegl_dark_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
-	                            &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
-		                    ));
-      gegl_op_apply (op);
-	                        
-      requested_rect.x = 0;           requested_rect.y = 0;
-      requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
-      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
-      create_preview(&window[9], &preview[9], width[1], height[1], win_name[6]);
-      display_image(window[9], preview[9], image_buffer[1], current_rect[1]);
-      gegl_image_buffer_set_data(image_buffer[1], image_data);
-
-
-      op = GEGL_OP(gegl_light_op_new (image_buffer[1], image_buffer[2], image_buffer[0],
-	                            &(current_rect[1]), &(current_rect[1]), &(current_rect[0])
-		                    ));
-      gegl_op_apply (op);
-	                        
-      requested_rect.x = 0;           requested_rect.y = 0;
-      requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
-      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
-      create_preview(&window[3], &preview[3], width[1], height[1], win_name[7]);
-      display_image(window[3], preview[3], image_buffer[1], current_rect[1]);
-      gegl_image_buffer_set_data(image_buffer[1], image_data);
-
-#endif  
 #if 0  
   /* create a buffer with all possible colors */
   {
@@ -442,12 +362,3 @@ main(int argc, char *argv[])
 
   }  
 #endif
-  
-  gtk_main();
-
-  gtk_object_destroy (GTK_OBJECT(image_buffer)); 
-  gtk_object_destroy (GTK_OBJECT(color_model)); 
-
-  return 0;
-}
-
