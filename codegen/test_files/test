@@ -1,8 +1,8 @@
 /* For testing comments */
 
 CODEGEN_DECL_BEGIN
-int i;
-float f;
+gint i;
+gfloat f;
 Chan a; 
 VectorChan d(color,alpha);
 VectorChan s(color,alpha);

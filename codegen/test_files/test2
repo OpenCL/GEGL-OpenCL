@@ -15,17 +15,19 @@ if (dest_has_alpha)
   {
     if (src1_has_alpha && src2_has_alpha)
       dest_alpha = MIN(src1_alpha, src2_alpha);
-    else if (src1_has_alpha)
-      dest_alpha = src1_alpha;
-    else if (src2_has_alpha)
-      dest_alpha = src2_alpha; 
+    else 
+      if (src1_has_alpha)
+        dest_alpha = src1_alpha;
+    else 
+      if (src2_has_alpha)
+        dest_alpha = src2_alpha; 
   }
-CODEGEN_BLOCK_BEGIN
+CODEGEN_BLOCK_END 
 
 CODEGEN_BLOCK_BEGIN
-if (src1_alpha == ZERO_CHAN || src1_alpha == WP)
+if ((src1_alpha == ZERO_CHAN) || (src1_alpha == WP))
     dest_color = src1_color;
 else
     dest_color = src1_color / src1_alpha;
 dest_alpha = src1_alpha;
-CODEGEN_BLOCK_BEGIN
+CODEGEN_BLOCK_END

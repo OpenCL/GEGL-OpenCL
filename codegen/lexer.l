@@ -5,18 +5,20 @@
 #include "parser.h" 
 #include <math.h>
 #include <ctype.h>
+int PREV;  
 
 %}
 
 %s			CODEGEN_DECL
 %s			CODEGEN_BLOCK
-
+%s			COMMENT 
 white   		[ \t]+
 indent			[\n][ ]*
 digit   		[0-9]
 integer 		{digit}+
 float   		{digit}*\.{integer}
 name    		[a-zA-Z][A-Z_a-z0-9]*
+
 
 %%
 
@@ -110,6 +112,10 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 				return FLOAT;
         			}
 
+<CODEGEN_DECL>"/*"		{ECHO; PREV=0; BEGIN COMMENT;}
+<CODEGEN_BLOCK>"/*"		{ECHO; PREV=1; BEGIN COMMENT;}
+<COMMENT>"*/"			{ECHO; if (PREV) BEGIN CODEGEN_BLOCK; else CODEGEN_DECL;} 
+
 <CODEGEN_DECL>"(color,alpha)"	return(COLOR_ALPHA);
 <CODEGEN_DECL>"(color)"		return(COLOR);
 
@@ -190,6 +196,7 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 "$" 				return 0; 
 <CODEGEN_DECL>.			return yytext[0];
 <CODEGEN_BLOCK>.		return yytext[0];
+<COMMENT>.			ECHO;
 .				ECHO;
 
 

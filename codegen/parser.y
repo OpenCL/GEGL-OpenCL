@@ -36,6 +36,7 @@ keyword_t keyword_tab[] = {
 {"default",    DEFAULT},
 {"do",         DO},
 {"else",       ELSE},
+{"float",      FLOAT},
 {"for",        FOR},
 {"gchar",      GCHAR},
 {"gfloat",     GFLOAT},
@@ -48,6 +49,7 @@ keyword_t keyword_tab[] = {
 {"gshort",     GSHORT},
 {"if",         IF},
 {"include",    INCLUDE}, 
+{"int",        INT},
 {"long",       LONG},
 {"real",       REAL},
 {"register",   REGISTER},
@@ -89,8 +91,8 @@ keyword_t keyword_tab[] = {
 
 /* keywords */
 %token	BREAK  CASE  CONST  CONTINUE  DEFAULT  DO	
-%token 	ELSE  FOR  GCHAR  GFLOAT  GINT  GOTO  GUCHAR  GUINT
-%token  GUINT8  GUINT16  GSHORT  IF  INCLUDE LONG  REAL  REGISTER
+%token 	ELSE  FLOAT FOR  GCHAR  GFLOAT  GINT  GOTO  GUCHAR  GUINT
+%token  GUINT8  GUINT16  GSHORT  IF  INCLUDE INT LONG  REAL  REGISTER
 %token  RETURN  SIGNED  SIZEOF  STATIC  STRUCT  SWITCH  TYPEDEF
 %token  UNION  UNSIGNED  VOID  VOLATILE  WHILE
 
@@ -107,6 +109,8 @@ keyword_t keyword_tab[] = {
 %left 		TIMES	DIVIDE
 %right		EQUAL	PLUS_EQUAL      MINUS_EQUAL     TIMES_EQUAL     DIVIDE_EQUAL 
 %right		POWER
+%right		EQ
+%right		OR  AND 
 %nonassoc	NEG
 
 %type   <elem> Expression
@@ -167,9 +171,9 @@ Line:
 		{ 
 		printf("%sdefault:", $1.string); 
 		}
-	| INDENT ELSE 				
+	| INDENT ELSE  				
 		{ 
-		printf("%selse ", $1.string); 
+		printf("%selse \n", $1.string); 
 		}
 	| INDENT FOR LT_PARENTHESIS Expression ';' Expression ';' Expression RT_PARENTHESIS
 		{ 
@@ -178,6 +182,10 @@ Line:
 	| INDENT IF LT_PARENTHESIS Expression RT_PARENTHESIS
                 { 
 		printf("%sif (%s)", $1.string, $4.string); 
+		}	
+	| INDENT ELSE IF LT_PARENTHESIS Expression RT_PARENTHESIS
+                { 
+		printf("%selse if (%s)", $1.string, $5.string); 
 		}	
  	| INDENT RETURN Expression ';'		
 		{ 
@@ -268,7 +276,10 @@ Line:
 		if (!strcmp($7.string, "1"))
 		  {
 		  if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
-		    sprintf (tmp, "%s%s%s_ca++;", $1.string, $4.string, $5.string);
+		    sprintf (tmp, "%s%s%s_c++;\n%sif (%s_a)\n%s  %s%s_a++", 
+		      $1.string, $4.string, $5.string, 
+		      $1.string, $5.string,
+		      $1.string, $4.string, $5.string);
 		  else
 		    sprintf (tmp, "%s%s%s_c++;", $1.string, $4.string, $5.string);
 		  
@@ -511,13 +522,27 @@ Definition:
                 sprintf (tmp,"%s%s", $1.string, $2.string);
                 strcpy($$.string, tmp);
                 }
-	| GINT Chan_List		
+	| GINT Int_List		
 		{ 
 		char tmp[256]; 
 		$$=$2; 
 		sprintf (tmp,"gint %s", $2.string);
                 strcpy($$.string, tmp); 
 		}
+	| INT Int_List
+		{
+           	char tmp[256];
+	        $$=$2;
+	        sprintf (tmp,"int %s", $2.string);
+	        strcpy($$.string, tmp);
+	        }
+	| FLOAT Float_List
+                {
+                char tmp[256];
+                $$=$2;
+                sprintf (tmp,"float %s", $2.string);
+                strcpy($$.string, tmp);
+                }
 	| GUINT Chan_List
 		{
            	char tmp[256];
@@ -844,6 +869,7 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
       {
       dest->num = 1;
       sprintf (tmp, "%s", src.string);
+      src.type = TYPE_SCALER; 
       }
     if (src.string[l-1] == 'c' && src.string[l-2] == '_')
       {
