@@ -532,12 +532,14 @@ Line:
 		  {
 		  if (get_sym ($4.string)->type == TYPE_C_A_VECTOR)
 		    {
+		    char t[20];
+		    strcpy (t, $4.string);  
 		    sprintf (tmp, "%s%s_c++;", $1.string, $4.string);  
 		    strcpy ($4.string, tmp);
 		    print_line($4);
-		    printf ("%sif (%s_has_%s)%s  %s_%s++;", $1.string, $4.string,
+		    printf ("%sif (%s_has_%s)%s  %s_%s++;", $1.string, t,
 			NAME_COLOR_CHAN[NUM_COLOR_CHAN],
-			$1.string, $4.string,
+			$1.string, t,
 			NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
 		    printf ("\n"); 
 		    }
@@ -560,12 +562,14 @@ Line:
 		    { 
 		    if (get_sym ($4.string)->type == TYPE_C_A_VECTOR)
 		      {
+		      char t[20];
+		      strcpy (t, $4.string);  
 		      sprintf (tmp, "%s%s%s_c += %s;", $1.string, $4.string, $6.string); 
 		      strcpy ($4.string, tmp);
 		      print_line($4); 
-		      printf ("%sif (%s_has_%s)%s  %s_%s += %s", $1.string, $4.string,
+		      printf ("%sif (%s_has_%s)%s  %s_%s += %s", $1.string, t,
 			 NAME_COLOR_CHAN[NUM_COLOR_CHAN], 
-			 $1.string, $4.string,  
+			 $1.string, t,  
 			 NAME_COLOR_CHAN[NUM_COLOR_CHAN],
 			 $6.string);
 		      printf ("\n"); 

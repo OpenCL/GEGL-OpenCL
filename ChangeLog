@@ -1,3 +1,10 @@
+Sun Mar 26 15:01:35 PST 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* parser.y: Fixed the iterators, I was printing out $4.string for the variable name 
+	but that string had been changed.
+
 Sun Mar 26 14:41:12 PST 2000 caro@rhythm.com
 
 	* check in for codegen
