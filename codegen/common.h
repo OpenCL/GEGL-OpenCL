@@ -45,7 +45,8 @@ typedef enum
   OP_EQUAL,
   OP_PARENTHESIS,
   OP_AND,
-  OP_OR   
+  OP_OR,    
+  OP_ADD
 }FUNCTION;
 
 

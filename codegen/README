@@ -20,5 +20,7 @@ VectorChan can be defined as a normal vector (VectorChan a[some int]), a color v
 
 To refer to only the color part of a color vector, one type vector_name_c, and to refer to the alpha part one type vector_name_a.
 
+Anything that is between /*codegen_copy codegen_copy*/ gets copied. Inside /*codegen_copy codegen_copy*/ the keyword CHAN gets substituted with the data type and the keyword HUE gets substitued with color space.
+ 
 Caroline Dahllof <caro@rhythm.com>
 

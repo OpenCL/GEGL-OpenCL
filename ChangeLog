@@ -1,3 +1,12 @@
+Tue Feb 29 19:33:03 PST 2000 caro@rhythm.com
+	
+	* Made more modifications to codegen, I am not
+	able to parse .gob files. Look at test_files/test5
+
+	* Look in README for more updates
+
+	* Added test_files/test5 
+
 Mon Feb 28 14:03:29 PST 2000 caro@rhythm.com
 	
 	* A lot of modifications and new stuff.

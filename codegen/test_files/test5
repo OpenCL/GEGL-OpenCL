@@ -1,0 +1,573 @@
+/*codegen_copy
+%h{
+#include "gegl-dual-src-op.h"
+%}
+%{
+#include "gegl-composite-op.h"
+#include "gegl-composite-op-private.h"
+#include "gegl-dual-src-op-private.h"
+#include "gegl-point-op-private.h"
+#include "gegl-op-private.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-iterator.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+#include <stdio.h> 
+%}
+
+class Gegl:Composite:Op from Gegl:Dual:Src:Op {
+
+  private GeglCompositeMode 	comp_mode;
+
+  public 
+  GeglCompositeOp *
+  new (GeglImageBuffer *dest, 
+       GeglImageBuffer *src1,
+       GeglImageBuffer *src2,       
+       GeglRect *dest_rect,
+       GeglRect *src1_rect,
+       GeglRect *src2_rect,
+       GeglCompositeMode mode)
+  {
+    GeglCompositeOp * self = GEGL_COMPOSITE_OP(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, dest, src1, src2, 
+                     dest_rect, src1_rect, src2_rect, mode))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self, 
+	      GeglImageBuffer *dest, 
+	      GeglImageBuffer *src1,
+	      GeglImageBuffer *src2,       
+	      GeglRect *dest_rect,
+	      GeglRect *src1_rect,
+	      GeglRect *src2_rect,
+	      GeglCompositeMode mode)
+  {
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+
+    /* Chain up */
+    if (!gegl_dual_src_op_constructor ( 
+           GEGL_DUAL_SRC_OP(self),dest, src1, src2, 
+           dest_rect, src1_rect, src2_rect))
+      return FALSE;
+
+    {
+      GeglPointOpClass *point_op_class = 
+	  GEGL_POINT_OP_CLASS(GTK_OBJECT(self)->klass);
+
+      GeglColorModel              *src1_cm, *src2_cm;
+      gboolean                    src1_has_alpha, src2_has_alpha;
+	
+      src1_cm = gegl_image_buffer_color_model (src1);
+      src1_has_alpha = gegl_color_model_has_alpha (src1_cm);
+
+      src2_cm = gegl_image_buffer_color_model (src2);
+      src2_has_alpha = gegl_color_model_has_alpha (src2_cm);
+
+      if ( src2_has_alpha && src1_has_alpha)
+	point_op_class->scanline_func = gegl_composite_op_HUEA_op_HUEA_CHAN;
+      else if ( src2_has_alpha && !src1_has_alpha )
+	point_op_class->scanline_func = gegl_composite_op_HUEA_op_HUE_CHAN;
+      else if ( !src2_has_alpha && src1_has_alpha )
+	point_op_class->scanline_func = gegl_composite_op_HUE_op_HUEA_CHAN;
+      else if ( !src2_has_alpha && !src1_has_alpha )
+	point_op_class->scanline_func = gegl_composite_op_HUE_op_HUE_CHAN;
+
+      self->_priv->comp_mode = mode;
+    }
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  private 
+  void
+  HUEA_op_HUEA_CHAN (GeglPointOp *point_op)
+  {
+    GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+codegen_copy*/
+    VectorChan *dest_data[4], *src1_data[4], *src2_data[4]; 
+    VectorChan *dest(_c_,_a_);
+    VectorChan *src1(_c_,_a_);
+    VectorChan *src2(_c_,_a_);
+    gfloat a, b, c, alpha;
+    guint width;  
+
+/*codegen_copy
+    width = point_opP->scanline_width;
+
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[0], 
+                      (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[1],
+                      (guchar**)src1_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[2],
+                      (guchar**)src2_data); 
+codegen_copy*/
+
+    dest = dest_data;
+
+    src1 = src1_data;
+
+    src2 = src2_data;
+
+/*codegen_copy
+    switch(self->_priv->comp_mode)
+codegen_copy*/
+      {
+      case COMPOSITE_REPLACE:
+	while (width--)
+	  {
+	    *dest++ = *src2++;
+	  }
+	break;
+      case COMPOSITE_OVER:
+	while (width--)
+	  {
+	    a = (1.0 - *src2_a) * *src1_a;
+	    b = *src2_a;
+	    alpha = a + b;
+
+	    *dest_a++ = alpha;
+	    src1_a++;
+	    src2_a++;
+
+	    if (alpha)
+	      {
+		c = 1.0 /alpha;
+
+		*dest_c++ = (a * *src1_c++ + b * *src2_c++) * c;
+	      }
+	    else
+	      {
+		*dest_c++ = *src1_c++;
+
+		src2_c++;
+	      }
+	  } 
+	break;
+      case COMPOSITE_IN:
+	while (width--)
+	  {
+	    alpha = *src1_a * *src2_a;
+
+	    *dest_a++ = alpha;
+	     src1_a++;
+	     src2_a++;
+
+	    if (alpha)
+	      {
+		*dest_c++ = *src2_c++;
+
+		src1_c++;
+	      }
+	    else
+	      {
+		*dest_c++ = *src1_c++;
+
+		src2_c++;
+	      } 
+	  }
+	break;
+      case COMPOSITE_OUT:
+	while (width--)
+	  {
+	    alpha = (1.0 - *src1_a) * *src2_a;
+
+	    *dest_a++ = alpha;
+	     src2_a++;
+	     src1_a++;
+
+	    if(alpha)
+	      {
+		*dest_c++ = *src2_c++;
+		
+		 src1_c++;
+	      } 
+	    else 
+	      {
+		*dest_c++ = *src1_c++;
+
+		 src2_c++;
+	      }
+	  }
+	break;
+      case COMPOSITE_ATOP:
+	while (width--)
+	  {
+	    a = 1.0 - *src2_a;
+	    b = *src2_a;
+	    alpha = *src1_a; 
+
+	    *dest_a++ = alpha;
+	     src2_a++;
+	     src1_a++;
+
+	    if(alpha)
+	      {
+		*dest_c++ = a * *src1_c++ + b * *src2_c++;
+	      } 
+	    else 
+	      {
+		*dest_c++ = *src1_c++;
+
+		 src2_c++;
+	      }
+	  }
+	break;
+      case COMPOSITE_XOR:
+	while (width--)
+	  {
+	    a = (1.0 - *src2_a) * *src1_a;
+	    b = (1.0 - *src1_a) * *src2_a;
+	    alpha  = a + b;
+
+	    *dest_a++ = alpha;
+	    src1_a++;
+	    src2_a++;
+
+	    if(alpha)
+	      {
+		c = 1.0 / alpha;
+
+		*dest_c++ = (a * *src1_c++ + b * *src2_c++) * c;
+	      } 
+	    else 
+	      {
+		*dest_c++ = *src1_c++;
+
+		 src2_c++;
+	      }
+	  }
+	break;
+      default:
+	break;
+      }	
+  }
+
+/*codegen_copy 
+  private
+  void
+  HUEA_op_HUE_CHAN (GeglPointOp *point_op)
+  {
+    GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+codegen_copy*/
+    VectorChan *dest_data[3], *src1_data[3], *src2_data[4]; 
+    VectorChan *dest(_c_); 
+    VectorChan *src1(_c_);
+    VectorChan *src2(_c_,_a_);
+    gfloat a, b, alpha;
+    guint width;
+
+/*codegen_copy
+    width = point_opP->scanline_width;
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[0], 
+                      (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[1],
+                      (guchar**)src1_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[2],
+                      (guchar**)src2_data); 
+codegen_copy*/
+
+    dest = dest_data;
+
+    src1 = src1_data;
+
+    src2 = src2_data;
+
+/*codegen_copy
+    switch(self->_priv->comp_mode)
+codegen_copy*/
+      {
+      case COMPOSITE_REPLACE:
+	while (width--)
+	  {
+	    *dest_c++ = *src2_c++;
+	  }
+	break;
+      case COMPOSITE_OVER:
+	while (width--)
+	  {
+	    a = (1.0 - *src2_a);
+	    b = *src2_a;
+
+	    src2_a++;
+
+	    *dest_c++ = (a * *src1_c++ + b * *src2_c++);
+	  } 
+	break;
+      case COMPOSITE_IN:
+	while (width--)
+	  {
+	    alpha = *src2_a;
+
+	    src2_a++;
+
+	    if (alpha)
+	      {
+		*dest_c++ = *src2_c++;
+
+		src1_c++;
+	      }
+	    else
+	      {
+		*dest_c++ = *src1_c++;
+
+		src2_c++;
+	      } 
+	  }
+	break;
+      case COMPOSITE_OUT:
+	while (width--)
+	  {
+	    *dest_c++ = *src1_c++;
+	  }
+	break;
+      case COMPOSITE_ATOP:
+	while (width--)
+	  {
+	    a = 1.0 - *src2_a;
+	    b = *src2_a;
+
+            src2_a++;
+
+	    *dest_c++ = a * *src1_c++ + b * *src2_c++;
+	  }
+	break;
+      case COMPOSITE_XOR:
+	while (width--)
+	  {
+	    *dest_c++ = *src1_c++;
+	  }
+	break;
+      default:
+	break;
+      }
+  }
+/*codegen_copy
+  private
+  void
+  HUE_op_HUEA_CHAN (GeglPointOp *point_op)
+  {
+    GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+codegen_copy*/
+
+    VectorChan *dest_data[4], *src1_data[4], *src2_data[3]; 
+    VectorChan *dest(_c_,_a_);
+    VectorChan *src1(_c_,_a_);
+    VectorChan *src2(_c_);
+    gfloat b, alpha;
+    guint width;
+
+/*codegen_copy
+    width = point_opP->scanline_width;
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[0], 
+                      (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[1],
+                      (guchar**)src1_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[2],
+                      (guchar**)src2_data); 
+codegen_copy*/ 
+    dest = dest_data;
+ 
+    src1 = src1_data;
+
+    src2 = src2_data;
+
+/*codegen_copy
+    switch(self->_priv->comp_mode)
+codegen_copy*/
+      {
+      case COMPOSITE_REPLACE:
+	while (width--)
+	  {
+	    *dest_c++ = *src2_c++;
+	    *dest_a++ = 1.0;
+	  }
+	break;
+      case COMPOSITE_OVER:
+	while (width--)
+	  {
+	    *dest_c++ = *src2_c++;
+	    *dest_a++ = 1.0;
+	  } 
+	break;
+      case COMPOSITE_IN:
+	while (width--)
+	  {
+	    alpha = *src1_a;
+
+	    *dest_a++ = alpha;
+	     src1_a++;
+
+	    if (alpha)
+	      {
+		*dest_c++ = *src2_c++;
+
+		src1_c++;
+	      }
+	    else
+	      {
+		*dest_c++ = *src1_c++;
+
+		src2_c++;
+	      } 
+	  }
+	break;
+      case COMPOSITE_OUT:
+	while (width--)
+	  {
+	    alpha = (1.0 - *src1_a);
+
+	    *dest_a++ = alpha;
+	     src1_a++;
+
+	    if(alpha)
+	      {
+		*dest_c++ = *src2_c++;
+		
+		 src1_c++;
+	      } 
+	    else 
+	      {
+		*dest_c++ = *src1_c++;
+
+		 src2_c++;
+	      }
+	  }
+	break;
+      case COMPOSITE_ATOP:
+	while (width--)
+	  {
+	    alpha = *src1_a; 
+
+	    *dest_a++ = alpha;
+	     src1_a++;
+
+	    if(alpha)
+	      {
+		*dest_c++ = *src2_c++;
+
+		 src1_c++;
+	      } 
+	    else 
+	      {
+		*dest_c++ = *src1_c++;
+
+		 src2_c++;
+	      }
+	  }
+	break;
+      case COMPOSITE_XOR:
+	while (width--)
+	  {
+	    b = (1.0 - *src1_a);
+	    alpha  = b;
+
+	    *dest_a++ = alpha;
+	    src1_a++;
+
+	    if(alpha)
+	      {
+		*dest_c++ =  *src2_c++;
+	      } 
+	    else 
+	      {
+		*dest_c++ = *src1_c++;
+
+		 src2_c++;
+	      }
+	  }
+	break;
+      default:
+	break;
+      }	
+  }
+
+/*codegen_copy
+  private 
+  void
+  HUE_op_HUE_CHAN (GeglPointOp *point_op)
+  {
+    GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)
+                                    (point_op->_priv); 
+codegen_copy*/ 
+
+    VectorChan *dest_data[3], *src1_data[3], *src2_data[3]; 
+    VectorChan *dest(_c_);
+    VectorChan *src1(_c_);
+    VectorChan *src2(_c_);
+    guint width;
+
+/*codegen_copy
+    width = point_opP->scanline_width;
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[0], 
+                      (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[1],
+                      (guchar**)src1_data); 
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[2],
+                      (guchar**)src2_data); 
+codegen_copy*/
+    dest = dest_data;
+ 
+    src1 = src2_data;
+
+    src2 = src2_data;
+
+/*codegen_copy
+    switch(self->_priv->comp_mode)
+codegen_copy*/
+      {
+      case COMPOSITE_REPLACE:
+      case COMPOSITE_OVER:
+      case COMPOSITE_IN:
+      case COMPOSITE_ATOP:
+	while (width--)
+	  {
+	    *dest_r++ = *src2_r++;
+	   }
+	break;
+      case COMPOSITE_OUT:
+      case COMPOSITE_XOR:
+	while (width--)
+	  {
+	    *dest_c++ = *src1_c++;
+	  }
+	break;
+      default:
+	break;
+      }	
+  }
+}

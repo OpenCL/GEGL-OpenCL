@@ -7,19 +7,19 @@ I_op_I ()
   switch (comp_mode)
   {
     case REPLACE:
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case OVER:
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case IN:
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case OUT:
       DEST.I = 0;
     case ATOP:
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case XOR:
       DEST.I = 0;
     case PLUS:
-      DEST.I = SRC.I + DEST.I;
+      DEST.I = src_c + DEST.I;
   }
 }
 
@@ -33,25 +33,25 @@ PREMULT_IA_op_PREMULT_IA()
   {
     case REPLACE:
       DEST.A = SRC.A;
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case OVER:
       DEST.A = SRC.A + DEST.A * (1-SRC.A);  
-      DEST.I = SRC.I + DEST.I * (1-SRC.A);
+      DEST.I = src_c + DEST.I * (1-SRC.A);
     case IN:
       DEST.A = SRC.A * DEST.A;
-      DEST.I = SRC.I * DEST.A;
+      DEST.I = src_c * DEST.A;
     case OUT:
       DEST.A = SRC.A * (1-DEST.A);
-      DEST.I = SRC.I * (1-DEST.A);
+      DEST.I = src_c * (1-DEST.A);
     case ATOP:
       DEST.A = SRC.A * DEST.A + DEST.A * (1-SRC.A);
-      DEST.I = SRC.I * DEST.A + DEST.I * (1-SRC.A);
+      DEST.I = src_c * DEST.A + DEST.I * (1-SRC.A);
     case XOR:
       DEST.A = SRC.A * (1-DEST.A) + DEST.A * (1-SRC.A);
-      DEST.I = SRC.I * (1-DEST.A) + DEST.I * (1-SRC.A);
+      DEST.I = src_c * (1-DEST.A) + DEST.I * (1-SRC.A);
     case PLUS:
       DEST.A = SRC.A + DEST.A; 
-      DEST.I = SRC.I + DEST.I;
+      DEST.I = src_c + DEST.I;
   }
 }
 
@@ -64,23 +64,23 @@ PREMULT_IA_op_I()
   {
     case REPLACE:
       DEST.A = 1; 
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case OVER:
       DEST.A = 1;
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case IN:
-      DEST.I = SRC.I * DEST.A;
+      DEST.I = src_c * DEST.A;
     case OUT:
       DEST.A = (1-DEST.A);
-      DEST.I = SRC.I * (1-DEST.A);
+      DEST.I = src_c * (1-DEST.A);
     case ATOP:
-      DEST.I = SRC.I * DEST.A;
+      DEST.I = src_c * DEST.A;
     case XOR:
       DEST.A = (1-DEST.A);
-      DEST.I = SRC.I * (1-DEST.A) + DEST.I;
+      DEST.I = src_c * (1-DEST.A) + DEST.I;
     case PLUS:
       DEST.A = 1 + DEST.A;
-      DEST.I = SRC.I + DEST.I;
+      DEST.I = src_c + DEST.I;
   }
 }
 
@@ -92,19 +92,19 @@ I_op_PREMULT_IA()
   switch (comp_mode)
   {
     case REPLACE:
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case OVER:
-      DEST.I = SRC.I + DEST.I * (1-SRC.A);
+      DEST.I = src_c + DEST.I * (1-SRC.A);
     case IN:
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case OUT:
       DEST.I = 0;
     case ATOP:
-      DEST.I = SRC.I + DEST.I * (1-SRC.A);
+      DEST.I = src_c + DEST.I * (1-SRC.A);
     case XOR:
       DEST.I = DEST.I * (1-SRC.A);
     case PLUS:
-      DEST.I = SRC.I + DEST.I;
+      DEST.I = src_c + DEST.I;
   }
 }
 
@@ -117,25 +117,25 @@ IA_op_IA()
   {
     case REPLACE:
       DEST.A = SRC.A;
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case OVER:
       A = SRC.A;
       B =  DEST.A * (1-SRC.A);
       DEST.A = A + B;
       if (DEST.A)
-      	DEST.I = (SRC.I * A + DEST.I * B) / DEST.A;
+      	DEST.I = (src_c * A + DEST.I * B) / DEST.A;
       else
 	DEST.I = 0;	
     case IN:
       DEST.A = SRC.A * DEST.A;
       if (DEST.A)
-	DEST.I = SRC.I;
+	DEST.I = src_c;
       else
 	DEST.I = 0;					 		   	
     case OUT:
       DEST.A = SRC.A * (1-DEST.A);
       if (DEST.A)
-	DEST.I = SRC.I;
+	DEST.I = src_c;
       else
 	DEST.I = 0;
     case ATOP:
@@ -143,7 +143,7 @@ IA_op_IA()
       B = DEST.A * (1-SRC.A); 
       DEST.A = A + B;
       if (DEST.A)
-      	DEST.I = SRC.I * A + DEST.I * B;
+      	DEST.I = src_c * A + DEST.I * B;
       else
 	DEST.I = 0;
     case XOR:
@@ -151,7 +151,7 @@ IA_op_IA()
       B = DEST.A * (1-SRC.A); 
       DEST.A = A + B;
       if(DEST.A)
-      	DEST.I = (SRC.I * A + DEST.I * B) / DEST.A;
+      	DEST.I = (src_c * A + DEST.I * B) / DEST.A;
       else
 	DEST.I = 0;
     case PLUS:
@@ -159,7 +159,7 @@ IA_op_IA()
       B = DEST.A; 
       DEST.A = A + B;
       if (DEST.A)
-      	DEST.I = (SRC.I * A + DEST.I * B) / DEST.A;
+      	DEST.I = (src_c * A + DEST.I * B) / DEST.A;
 	else
 	DEST.I = 0;
   }
@@ -174,38 +174,38 @@ PREMULT_IA_op_PREMULT_I()
   {
     case REPLACE:
       DEST.A = 1;
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case OVER:
       DEST.A = SRC.A;
       if (DEST.A)
-        DEST.I = SRC.I;
+        DEST.I = src_c;
       else
         DEST.I = 0;
     case IN:
       if (DEST.A)
-        DEST.I = SRC.I;
+        DEST.I = src_c;
       else
         DEST.I = 0;
     case OUT:
       DEST.A = (1-DEST.A);
       if (DEST.A)
-        DEST.I = SRC.I;
+        DEST.I = src_c;
       else
         DEST.I = 0;
     case ATOP:
       if (DEST.A)
-        DEST.I = SRC.I;
+        DEST.I = src_c;
       else
         DEST.I = 0;
     case XOR:
       DEST.A = 1-DEST.A;
       if(DEST.A)
-        DEST.I = SRC.I * A;
+        DEST.I = src_c * A;
       else
         DEST.I = 0;
     case PLUS:
       if (DEST.A)
-        DEST.I = (SRC.I + DEST.I * B) / DEST.A;
+        DEST.I = (src_c + DEST.I * B) / DEST.A;
         else
         DEST.I = 0;
   }
@@ -219,23 +219,23 @@ PREMULT_I_op_PREMULT_IA()
   switch (comp_mode)
   {
     case REPLACE:
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case OVER:
       A = SRC.A;
       B =  (1-SRC.A);
-      DEST.I = SRC.I * A + DEST.I * B;
+      DEST.I = src_c * A + DEST.I * B;
     case IN:
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case OUT:
-      DEST.I = SRC.I;
+      DEST.I = src_c;
     case ATOP:
       A = SRC.A;
       B = 1-SRC.A;
-      DEST.I = (SRC.I * A + DEST.I * B);
+      DEST.I = (src_c * A + DEST.I * B);
     case XOR:
       DEST.I = DEST.I * (1-SRC.A);
     case PLUS:
-      DEST.I = (SRC.I * SRC.A + DEST.I;
+      DEST.I = (src_c * SRC.A + DEST.I;
   }
 }
 

@@ -6,6 +6,7 @@
 #include <math.h>
 
 void comment (); 
+void codegen_copy (); 
 %}
 
 
@@ -76,6 +77,12 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 			yylval.elem.dtype = TYPE_FLOAT;
 			return(FloatChan);  
 			} 
+"/*"			{ 
+    			comment (); 
+			} 
+"/*codegen_copy"	{
+    			codegen_copy ();
+			}
 
 "MAX"			return(MAX);
 "MIN"			return(MIN);
@@ -107,9 +114,6 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 "<="			return(SMALLER_EQ);
 ">="			return(GREATER_EQ);
 "!"			return(NOT);
-"/*"			{ 
-    			comment (); 
-			} 
 "#"			return(POUND);
 "++"			return(ADD);
 "--"			return(SUBTRACT);
@@ -139,7 +143,7 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 %%
 
 void
-comment()
+comment ()
 {
   int c,c1;
   
@@ -159,3 +163,79 @@ loop:
   
   printf ("*/"); 
 }
+
+void 
+codegen_copy ()
+{
+ 
+  int c, c1[14], i=0;
+  char word[]={'o','d','e','g','e','n','_','c','o','p','y','*','/'}; 
+  char dt_word[]={'H','A','N'};  
+  char cs_word[]={'U', 'E'};
+  
+loop:
+  while (((c = input()) != 'c' && c != 'C' && c != 'H') && c != 0)
+    {
+    printf ("%c", (char)c);
+    }
+  i = 0;
+  if ((char)c == 'c')
+    {
+    while ((c1[i] = input()) == word[i] && c != 0) 
+    {
+    if (i == 12)
+      {
+      goto done;
+      } 
+    i++;
+    }
+    printf ("%c", (char)(c)); 
+    for (i=i; i>=0; i--)
+      {
+      unput(c1[i]);
+      }
+    goto loop; 
+
+    }
+
+  else if ((char)c == 'C')
+
+    {
+    while ((c1[i] = input()) == dt_word[i] && c != 0)
+      {
+      if (i == 2)
+        {
+        printf ("%s",_CHAN_);
+        goto loop; 
+        }
+      i++;
+      }
+    printf ("%c", (char)(c));
+    for (i=i; i>=0; i--)
+      {
+      unput(c1[i]);
+      }
+    goto loop;
+    }
+  else 
+    {
+    while ((c1[i] = input()) == cs_word[i] && c != 0)
+      {
+      if (i == 1)
+	{
+	printf ("%s",_NAME_COLOR_CHAN_);
+	goto loop;
+	}
+      i++;
+      }
+    printf ("%c", (char)(c));
+    for (i=i; i>=0; i--)
+      {
+      unput(c1[i]);
+      }
+    goto loop;
+    }
+done:
+}
+
+

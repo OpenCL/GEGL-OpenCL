@@ -20,6 +20,7 @@
 EXTERN char *_WP_;   
 EXTERN char *_WP_NORM_;       
 EXTERN char *_VectorChan_;      
+EXTERN char *_CHAN_;      
 EXTERN char *_Chan_;      
 EXTERN char *_FloatChan_;     	
 EXTERN char *_MIN_CHAN_;   
