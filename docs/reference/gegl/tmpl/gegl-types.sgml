@@ -14,6 +14,27 @@ gegl-types
 
 </para>
 
+<!-- ##### MACRO GEGL_TYPE_IMAGE_DATA ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO GEGL_DEFAULT_WIDTH ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO GEGL_DEFAULT_HEIGHT ##### -->
+<para>
+
+</para>
+
+
+
 <!-- ##### ENUM GeglColorSpace ##### -->
 <para>
 

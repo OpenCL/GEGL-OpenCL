@@ -1,5 +1,5 @@
 #include "gegl-node.h"
-#include "gegl-object.h"
+#include "gegl-visitor.h"
 #include <stdio.h>
 
 enum
@@ -11,6 +11,8 @@ enum
 static void class_init (GeglNodeClass * klass);
 static void init(GeglNode *self, GeglNodeClass *klass);
 static void finalize(GObject * self_object);
+
+static void accept(GeglNode * node, GeglVisitor * visitor);
 
 static GList* allocate_input_infos_list(GeglNode * self, gint num_inputs);
 static void free_input_infos_list(GeglNode * self);
@@ -58,6 +60,8 @@ class_init (GeglNodeClass * klass)
   parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->finalize = finalize;
+
+  klass->accept = accept;
 
   return;
 }
@@ -520,22 +524,21 @@ init_traversal (GeglNode * self)
 /**
  * gegl_node_traverse_depth_first:
  * @self: a #GeglNode.
- * @visit_func: function to call on each node.
- * @data: data to pass to each node.
+ * @visitor: a #GeglVisitor.
  * @init: init every descendant of this node. 
  *
  * Traverse the graph depth-first from this node through all descendants. 
  *
  **/
 void 
-gegl_node_traverse_depth_first (GeglNode * self, 
-                                GeglNodeTraverseFunc visit_func, 
-                                gpointer data, 
-                                gboolean init)
+gegl_node_traverse_depth_first(GeglNode * self, 
+                               GeglVisitor * visitor, 
+                               gboolean init)
 {
   GList *llink;
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (visitor != NULL);
 
   /* If its the first node, init everything below it */
   if(init)
@@ -547,29 +550,27 @@ gegl_node_traverse_depth_first (GeglNode * self,
     {
       GeglInputInfo *input_info = (GeglInputInfo *)llink->data;
       if(input_info->input && !input_info->input->visited) 
-          gegl_node_traverse_depth_first(input_info->input, visit_func, data, FALSE);
+          gegl_node_traverse_depth_first(input_info->input, visitor, FALSE);
 
       llink = g_list_next(llink);
     }
 
   /* Visit me last */
-  visit_func(self,data);
+  gegl_node_accept(self,visitor);
   self->visited = TRUE;
 }
 
 /**
  * gegl_node_traverse_breadth_first:
  * @self: a #GeglNode.
- * @visit_func: function to call on each node.
- * @data: data to pass to each node.
+ * @visitor: a #GeglVisitor.
  *
  * Traverse the graph breadth-first from this node through all descendants. 
  *
  **/
 void 
-gegl_node_traverse_breadth_first (GeglNode * self, 
-                                  GeglNodeTraverseFunc visit_func, 
-                                  gpointer data)
+gegl_node_traverse_breadth_first(GeglNode * self, 
+                                 GeglVisitor *visitor)
 {
   GList *queue = NULL; 
   GList *first;
@@ -617,7 +618,30 @@ gegl_node_traverse_breadth_first (GeglNode * self,
         }
 
       /* Visit the node */
-      visit_func(node,data);
+      gegl_node_accept(node,visitor);
       node->visited = TRUE;
     }
+}
+
+void      
+gegl_node_accept(GeglNode * self,
+                 GeglVisitor * visitor)
+{
+  GeglNodeClass *klass;
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (visitor != NULL);
+  g_return_if_fail (GEGL_IS_VISITOR(visitor));
+
+  klass = GEGL_NODE_GET_CLASS(self);
+
+  if(klass->accept)
+    (*klass->accept)(self, visitor);
+}
+
+static void              
+accept (GeglNode * node, 
+        GeglVisitor * visitor)
+{
+  gegl_visitor_visit_node(visitor, node);
 }

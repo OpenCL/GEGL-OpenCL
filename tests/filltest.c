@@ -149,7 +149,6 @@ fill_test_setup(Test *test)
                        "width", SAMPLED_IMAGE_WIDTH, 
                        "height", SAMPLED_IMAGE_HEIGHT,
                        NULL);  
-
   g_object_unref(rgb_float);
 }
 

@@ -24,6 +24,7 @@ struct _GeglObject {
        GObject __parent__;
 
        /*< private >*/
+       gchar * name;
        gboolean constructed;  
        gint testflag; 
 };
@@ -39,6 +40,10 @@ void          gegl_object_add_interface     (GeglObject * self,
                                              gpointer interface);
 gpointer      gegl_object_query_interface   (GeglObject * self, 
                                              const gchar * interface_name);
+void          gegl_object_set_name          (GeglObject * self, 
+                                             const gchar * name);
+G_CONST_RETURN gchar* 
+              gegl_object_get_name          (GeglObject * self);
 
 #ifdef __cplusplus
 }

@@ -86,7 +86,7 @@ class_init (GeglPrintClass * klass)
                                    g_param_spec_object ("input",
                                                         "Input",
                                                         "Input of GeglConstMult",
-                                                         GEGL_TYPE_OBJECT,
+                                                         GEGL_TYPE_OP,
                                                          G_PARAM_CONSTRUCT |
                                                          G_PARAM_READWRITE));
 
@@ -98,6 +98,13 @@ init (GeglPrint * self,
       GeglPrintClass * klass)
 {
   GeglNode * node = GEGL_NODE(self); 
+  GeglOp *op = GEGL_OP(self);
+  GValue * output_value;
+
+  gegl_op_set_num_output_values(op, 1);
+  output_value = gegl_op_get_nth_output_value(op,0);
+  g_value_init(output_value, GEGL_TYPE_IMAGE_DATA);
+
   self->buffer = NULL;
   self->use_log = TRUE;
   gegl_node_set_num_outputs(node, 1);

@@ -17,12 +17,6 @@ some color conversions, but aside from this dont do much.
 
 </para>
 
-<!-- ##### STRUCT GeglObject ##### -->
-<para>
-
-</para>
-
-
 <!-- ##### FUNCTION gegl_object_add_interface ##### -->
 <para>
 
@@ -42,4 +36,27 @@ some color conversions, but aside from this dont do much.
 @interface_name: 
 @Returns: 
 
+
+<!-- ##### FUNCTION gegl_object_set_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@name: 
+
+
+<!-- ##### FUNCTION gegl_object_get_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### ARG GeglObject:name ##### -->
+<para>
+
+</para>
 

@@ -37,19 +37,41 @@ B) and Comp as output. A is shared by both its outputs Blur and Mult.
 
 </para>
 
-<!-- ##### STRUCT GeglNode ##### -->
+<!-- ##### STRUCT GeglInputInfo ##### -->
 <para>
 
 </para>
 
+@input: 
+@index: 
 
-<!-- ##### USER_FUNCTION GeglNodeTraverseFunc ##### -->
+<!-- ##### FUNCTION gegl_node_set_nth_input_info ##### -->
 <para>
 
 </para>
 
-@node: 
-@data: 
+@self: 
+@input_info: 
+@n: 
+
+
+<!-- ##### FUNCTION gegl_node_get_nth_input_info ##### -->
+<para>
+
+</para>
+
+@self: 
+@n: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_get_nth_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@n: 
 @Returns: 
 
 
@@ -65,35 +87,31 @@ B) and Comp as output. A is shared by both its outputs Blur and Mult.
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_node_get_nth_input ##### -->
+<!-- ##### FUNCTION gegl_node_get_num_inputs ##### -->
 <para>
 
 </para>
 
 @self: 
-@n: 
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_node_traverse_depth_first ##### -->
+<!-- ##### FUNCTION gegl_node_get_num_outputs ##### -->
 <para>
 
 </para>
 
 @self: 
-@visit_func: 
-@data: 
-@init: 
+@Returns: 
 
 
-<!-- ##### FUNCTION gegl_node_traverse_breadth_first ##### -->
+<!-- ##### FUNCTION gegl_node_get_input_infos ##### -->
 <para>
 
 </para>
 
 @self: 
-@visit_func: 
-@data: 
+@Returns: 
 
 
 <!-- ##### FUNCTION gegl_node_get_outputs ##### -->
@@ -105,5 +123,57 @@ B) and Comp as output. A is shared by both its outputs Blur and Mult.
 @index_num_outputs: 
 @index: 
 @Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_accept ##### -->
+<para>
+
+</para>
+
+@self: 
+@visitor: 
+
+
+<!-- ##### FUNCTION gegl_node_traverse_depth_first ##### -->
+<para>
+
+</para>
+
+@self: 
+@visitor: 
+@init: 
+<!-- # Unused Parameters # -->
+@visit_func: 
+@data: 
+
+
+<!-- ##### FUNCTION gegl_node_traverse_breadth_first ##### -->
+<para>
+
+</para>
+
+@self: 
+@visitor: 
+<!-- # Unused Parameters # -->
+@visit_func: 
+@data: 
+
+
+<!-- ##### FUNCTION gegl_node_set_num_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@num_inputs: 
+
+
+<!-- ##### FUNCTION gegl_node_set_num_outputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@num_outputs: 
 
 

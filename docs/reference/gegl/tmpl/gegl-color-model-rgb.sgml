@@ -14,12 +14,6 @@ GeglColorModelRgb
 
 </para>
 
-<!-- ##### STRUCT GeglColorModelRgb ##### -->
-<para>
-
-</para>
-
-
 <!-- ##### FUNCTION gegl_color_model_rgb_get_red_index ##### -->
 <para>
 

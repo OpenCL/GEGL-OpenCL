@@ -25,12 +25,6 @@ to the ImageMgr implementation.
 
 </para>
 
-<!-- ##### STRUCT GeglSampledImage ##### -->
-<para>
-
-</para>
-
-
 <!-- ##### FUNCTION gegl_sampled_image_get_width ##### -->
 <para>
 

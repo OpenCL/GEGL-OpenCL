@@ -43,4 +43,5 @@
 #include <gegl-tile.h>
 #include <gegl-unpremult.h>
 #include <gegl-value-types.h>
+#include <gegl-visitor.h>
 #endif

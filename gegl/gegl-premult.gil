@@ -79,7 +79,7 @@ class_init (GeglPremultClass * klass)
                                    g_param_spec_object ("input",
                                                         "Input",
                                                         "Input of GeglPremult",
-                                                         GEGL_TYPE_OBJECT,
+                                                         GEGL_TYPE_OP,
                                                          G_PARAM_CONSTRUCT |
                                                          G_PARAM_READWRITE));
 

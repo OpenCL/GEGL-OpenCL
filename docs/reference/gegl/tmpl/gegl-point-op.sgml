@@ -90,9 +90,3 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
 
 </para>
 
-<!-- ##### STRUCT GeglPointOp ##### -->
-<para>
-
-</para>
-
-

@@ -73,7 +73,7 @@ class_init (GeglCompPremultClass * klass)
                                    g_param_spec_object ("input0",
                                                         "Input0",
                                                         "Input 0 of GeglCompPremult",
-                                                         GEGL_TYPE_OBJECT,
+                                                         GEGL_TYPE_OP,
                                                          G_PARAM_CONSTRUCT |
                                                          G_PARAM_READWRITE));
    
@@ -81,7 +81,7 @@ class_init (GeglCompPremultClass * klass)
                                    g_param_spec_object ("input1",
                                                         "Input1",
                                                         "Input 1 of GeglCompPremult",
-                                                         GEGL_TYPE_OBJECT,
+                                                         GEGL_TYPE_OP,
                                                          G_PARAM_CONSTRUCT |
                                                          G_PARAM_READWRITE));
   return;

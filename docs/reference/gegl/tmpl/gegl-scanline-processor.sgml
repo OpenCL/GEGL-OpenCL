@@ -14,24 +14,6 @@ GeglScanlineProcessor
 
 </para>
 
-<!-- ##### STRUCT GeglScanlineProcessor ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### USER_FUNCTION GeglScanlineFunc ##### -->
-<para>
-
-</para>
-
-@op: 
-@iters: 
-@width: 
-<!-- # Unused Parameters # -->
-@op_impl: 
-
-
 <!-- ##### FUNCTION gegl_scanline_processor_process ##### -->
 <para>
 

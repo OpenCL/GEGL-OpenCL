@@ -45,6 +45,16 @@ gegl-utils
 @from: 
 
 
+<!-- ##### FUNCTION gegl_rect_bounding_box ##### -->
+<para>
+
+</para>
+
+@dest: 
+@src1: 
+@src2: 
+
+
 <!-- ##### FUNCTION gegl_rect_intersect ##### -->
 <para>
 
@@ -119,6 +129,14 @@ gegl-utils
 @name: 
 @n_props: 
 @props: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_utils_get_filter_type ##### -->
+<para>
+
+</para>
+
 @Returns: 
 
 

@@ -91,7 +91,7 @@ class_init (GeglConstMultClass * klass)
                                    g_param_spec_object ("input",
                                                         "Input",
                                                         "Input of GeglConstMult",
-                                                         GEGL_TYPE_OBJECT,
+                                                         GEGL_TYPE_OP,
                                                          G_PARAM_CONSTRUCT |
                                                          G_PARAM_READWRITE));
 

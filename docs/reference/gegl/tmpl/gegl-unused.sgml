@@ -528,6 +528,126 @@ GeglSubtractImpl
 GeglUnpremultImpl
 
 
+<!-- ##### STRUCT GeglAdd ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglBuffer ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModelGray ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModelGrayFloat ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModelGrayU16 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModelGrayU8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModelRgb ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModelRgbFloat ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModelRgbU16 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModelRgbU8 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglComp ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglCompPremult ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglConstMult ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglCopy ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglDark ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglDiff ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglFill ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglFilter ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglImage ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### STRUCT GeglImageImpl ##### -->
 <para>
 
@@ -541,11 +661,56 @@ GeglUnpremultImpl
 
 @__parent__: 
 
+<!-- ##### STRUCT GeglLight ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglMax ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglMemBuffer ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglMin ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglMult ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglNode ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### ARG GeglNode:inputs ##### -->
 <para>
 
 </para>
 
+
+<!-- ##### USER_FUNCTION GeglNodeTraverseFunc ##### -->
+<para>
+
+</para>
+
+@node: 
+@data: 
+@Returns: 
 
 <!-- ##### ENUM GeglNodeVisitFlags ##### -->
 <para>
@@ -556,6 +721,18 @@ GeglUnpremultImpl
 @GEGL_NODE_VISIT_DISABLED: 
 @GEGL_NODE_VISIT_ALL: 
 @GEGL_NODE_VISIT_MASK: 
+
+<!-- ##### STRUCT GeglObject ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglOp ##### -->
+<para>
+
+</para>
+
 
 <!-- ##### ARG GeglOp:source0 ##### -->
 <para>
@@ -575,12 +752,82 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### STRUCT GeglPointOp ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglPremult ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglPrint ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglSampledImage ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### USER_FUNCTION GeglScanlineFunc ##### -->
+<para>
+
+</para>
+
+@op: 
+@iters: 
+@width: 
+@op_impl: 
+
+<!-- ##### STRUCT GeglScreen ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### STRUCT GeglSimpleImageMgr ##### -->
 <para>
 
 </para>
 
 @__parent__: 
+
+<!-- ##### STRUCT GeglStatOp ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglSubtract ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglTileIterator ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglTileMgr ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglUnpremult ##### -->
+<para>
+
+</para>
+
 
 <!-- ##### FUNCTION gegl_const_mult_impl_get_multiplier ##### -->
 <para>
@@ -613,6 +860,15 @@ GeglUnpremultImpl
 
 @self: 
 @fill_color: 
+
+<!-- ##### FUNCTION gegl_image_compute_derived_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@input_values: 
+@input_color_models: 
 
 <!-- ##### FUNCTION gegl_image_compute_have_rect ##### -->
 <para>

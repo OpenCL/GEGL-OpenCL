@@ -37,12 +37,6 @@ rects during graph evaluation.
 
 </para>
 
-<!-- ##### STRUCT GeglImage ##### -->
-<para>
-
-</para>
-
-
 <!-- ##### FUNCTION gegl_image_color_model ##### -->
 <para>
 
@@ -68,17 +62,6 @@ rects during graph evaluation.
 
 @self: 
 @cm: 
-
-
-<!-- ##### FUNCTION gegl_image_compute_derived_color_model ##### -->
-<para>
-
-</para>
-
-@self: 
-@input_values: 
-<!-- # Unused Parameters # -->
-@input_color_models: 
 
 
 <!-- ##### ARG GeglImage:colormodel ##### -->

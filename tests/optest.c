@@ -54,13 +54,13 @@ test_op_compute_have_rect(Test *test)
                               NULL);  
 
   /* Set the initial need rect in the output value */
-  output_value = gegl_op_get_output_value(op);
+  output_value = gegl_op_get_nth_output_value(op, 0);
   g_value_set_image_data_rect(output_value, &need_rect);
 
   /* Bounding box of inputs have rects, intersected with need rect */
   gegl_op_compute_have_rect(op, values);
 
-  output_value = gegl_op_get_output_value(op);
+  output_value = gegl_op_get_nth_output_value(op, 0);
   g_value_get_image_data_rect(output_value, &result_rect);
 
   /*                    
@@ -92,17 +92,16 @@ test_op_compute_need_rect(Test *test)
                               "num_outputs", 1,
                               NULL);  
 
-  output_value = gegl_op_get_output_value(op);
+  output_value = gegl_op_get_nth_output_value(op, 0);
   g_value_set_image_data(output_value, NULL, &area0); 
-
-  input_value = (GValue*)g_list_nth_data(values,0);
 
   /*                    
     (input)need_rect = (output) need_rect  
                      = AREA0 
   */
-  gegl_op_compute_need_rect(op, input_value, 0);
+  gegl_op_compute_need_rects(op, values);
 
+  input_value = (GValue*)g_list_nth_data(values,0);
   g_value_get_image_data_rect(input_value, &need_rect);
 
   /* The bounding box */ 

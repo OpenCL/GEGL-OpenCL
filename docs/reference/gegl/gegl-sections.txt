@@ -1,7 +1,6 @@
 <SECTION>
 <FILE>gegl-add</FILE>
 <TITLE>GeglAdd</TITLE>
-GeglAdd
 <SUBSECTION Standard>
 GEGL_ADD
 GEGL_IS_ADD
@@ -15,7 +14,6 @@ GEGL_ADD_GET_CLASS
 <SECTION>
 <FILE>gegl-buffer</FILE>
 <TITLE>GeglBuffer</TITLE>
-GeglBuffer
 gegl_buffer_get_bytes_per_buffer
 gegl_buffer_get_num_buffers
 gegl_buffer_get_data_pointers
@@ -39,7 +37,6 @@ GEGL_BUFFER_GET_CLASS
 <SECTION>
 <FILE>gegl-color-model-gray-float</FILE>
 <TITLE>GeglColorModelGrayFloat</TITLE>
-GeglColorModelGrayFloat
 <SUBSECTION Standard>
 GEGL_COLOR_MODEL_GRAY_FLOAT
 GEGL_IS_COLOR_MODEL_GRAY_FLOAT
@@ -53,7 +50,6 @@ GEGL_COLOR_MODEL_GRAY_FLOAT_GET_CLASS
 <SECTION>
 <FILE>gegl-color-model-gray-u16</FILE>
 <TITLE>GeglColorModelGrayU16</TITLE>
-GeglColorModelGrayU16
 <SUBSECTION Standard>
 GEGL_COLOR_MODEL_GRAY_U16
 GEGL_IS_COLOR_MODEL_GRAY_U16
@@ -67,7 +63,6 @@ GEGL_COLOR_MODEL_GRAY_U16_GET_CLASS
 <SECTION>
 <FILE>gegl-color-model-gray-u8</FILE>
 <TITLE>GeglColorModelGrayU8</TITLE>
-GeglColorModelGrayU8
 <SUBSECTION Standard>
 GEGL_COLOR_MODEL_GRAY_U8
 GEGL_IS_COLOR_MODEL_GRAY_U8
@@ -80,8 +75,8 @@ GEGL_COLOR_MODEL_GRAY_U8_GET_CLASS
 
 <SECTION>
 <FILE>gegl-color-model-gray</FILE>
+GeglColor
 <TITLE>GeglColorModelGray</TITLE>
-GeglColorModelGray
 gegl_color_model_gray_get_gray_index
 <SUBSECTION Standard>
 GEGL_COLOR_MODEL_GRAY
@@ -96,7 +91,6 @@ GEGL_COLOR_MODEL_GRAY_GET_CLASS
 <SECTION>
 <FILE>gegl-color-model-rgb-float</FILE>
 <TITLE>GeglColorModelRgbFloat</TITLE>
-GeglColorModelRgbFloat
 <SUBSECTION Standard>
 GEGL_COLOR_MODEL_RGB_FLOAT
 GEGL_IS_COLOR_MODEL_RGB_FLOAT
@@ -110,7 +104,6 @@ GEGL_COLOR_MODEL_RGB_FLOAT_GET_CLASS
 <SECTION>
 <FILE>gegl-color-model-rgb-u16</FILE>
 <TITLE>GeglColorModelRgbU16</TITLE>
-GeglColorModelRgbU16
 <SUBSECTION Standard>
 GEGL_COLOR_MODEL_RGB_U16
 GEGL_IS_COLOR_MODEL_RGB_U16
@@ -124,7 +117,6 @@ GEGL_COLOR_MODEL_RGB_U16_GET_CLASS
 <SECTION>
 <FILE>gegl-color-model-rgb-u8</FILE>
 <TITLE>GeglColorModelRgbU8</TITLE>
-GeglColorModelRgbU8
 <SUBSECTION Standard>
 GEGL_COLOR_MODEL_RGB_U8
 GEGL_IS_COLOR_MODEL_RGB_U8
@@ -138,7 +130,6 @@ GEGL_COLOR_MODEL_RGB_U8_GET_CLASS
 <SECTION>
 <FILE>gegl-color-model-rgb</FILE>
 <TITLE>GeglColorModelRgb</TITLE>
-GeglColorModelRgb
 gegl_color_model_rgb_get_red_index
 gegl_color_model_rgb_get_green_index
 gegl_color_model_rgb_get_blue_index
@@ -154,9 +145,8 @@ GEGL_COLOR_MODEL_RGB_GET_CLASS
 
 <SECTION>
 <FILE>gegl-color-model</FILE>
-<TITLE>GeglColorModel</TITLE>
-GeglColorModel
 GeglConvertFunc
+<TITLE>GeglColorModel</TITLE>
 gegl_color_model_register
 gegl_color_model_instance
 gegl_color_model_color_space
@@ -187,7 +177,6 @@ GEGL_COLOR_MODEL_GET_CLASS
 <SECTION>
 <FILE>gegl-color</FILE>
 <TITLE>GeglColor</TITLE>
-GeglColor
 gegl_color_get_channel_values
 gegl_color_get_color_model
 gegl_color_get_num_channels
@@ -205,23 +194,34 @@ GEGL_COLOR_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-copy</FILE>
-<TITLE>GeglCopy</TITLE>
-GeglCopy
+<FILE>gegl-comp-premult</FILE>
+<TITLE>GeglCompPremult</TITLE>
 <SUBSECTION Standard>
-GEGL_COPY
-GEGL_IS_COPY
-GEGL_TYPE_COPY
-gegl_copy_get_type
-GEGL_COPY_CLASS
-GEGL_IS_COPY_CLASS
-GEGL_COPY_GET_CLASS
+GEGL_COMP_PREMULT
+GEGL_IS_COMP_PREMULT
+GEGL_TYPE_COMP_PREMULT
+gegl_comp_premult_get_type
+GEGL_COMP_PREMULT_CLASS
+GEGL_IS_COMP_PREMULT_CLASS
+GEGL_COMP_PREMULT_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-comp</FILE>
+<TITLE>GeglComp</TITLE>
+<SUBSECTION Standard>
+GEGL_COMP
+GEGL_IS_COMP
+GEGL_TYPE_COMP
+gegl_comp_get_type
+GEGL_COMP_CLASS
+GEGL_IS_COMP_CLASS
+GEGL_COMP_GET_CLASS
 </SECTION>
 
 <SECTION>
 <FILE>gegl-const-mult</FILE>
 <TITLE>GeglConstMult</TITLE>
-GeglConstMult
 gegl_const_mult_get_multiplier
 gegl_const_mult_set_multiplier
 <SUBSECTION Standard>
@@ -235,37 +235,21 @@ GEGL_CONST_MULT_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-comp</FILE>
-<TITLE>GeglComp</TITLE>
-GeglComp
+<FILE>gegl-copy</FILE>
+<TITLE>GeglCopy</TITLE>
 <SUBSECTION Standard>
-GEGL_COMP
-GEGL_IS_COMP
-GEGL_TYPE_COMP
-gegl_comp_get_type
-GEGL_COMP_CLASS
-GEGL_IS_COMP_CLASS
-GEGL_COMP_GET_CLASS
-</SECTION>
-
-<SECTION>
-<FILE>gegl-comp-premult</FILE>
-<TITLE>GeglCompPremult</TITLE>
-GeglCompPremult
-<SUBSECTION Standard>
-GEGL_COMP_PREMULT
-GEGL_IS_COMP_PREMULT
-GEGL_TYPE_COMP_PREMULT
-gegl_comp_premult_get_type
-GEGL_COMP_PREMULT_CLASS
-GEGL_IS_COMP_PREMULT_CLASS
-GEGL_COMP_PREMULT_GET_CLASS
+GEGL_COPY
+GEGL_IS_COPY
+GEGL_TYPE_COPY
+gegl_copy_get_type
+GEGL_COPY_CLASS
+GEGL_IS_COPY_CLASS
+GEGL_COPY_GET_CLASS
 </SECTION>
 
 <SECTION>
 <FILE>gegl-dark</FILE>
 <TITLE>GeglDark</TITLE>
-GeglDark
 <SUBSECTION Standard>
 GEGL_DARK
 GEGL_IS_DARK
@@ -279,7 +263,6 @@ GEGL_DARK_GET_CLASS
 <SECTION>
 <FILE>gegl-diff</FILE>
 <TITLE>GeglDiff</TITLE>
-GeglDiff
 <SUBSECTION Standard>
 GEGL_DIFF
 GEGL_IS_DIFF
@@ -291,85 +274,8 @@ GEGL_DIFF_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-filter</FILE>
-<TITLE>GeglFilter</TITLE>
-GeglFilter
-gegl_filter_get_root
-gegl_filter_set_root
-gegl_filter_get_roi
-gegl_filter_set_roi
-gegl_filter_get_image
-gegl_filter_set_image
-<SUBSECTION Standard>
-GEGL_FILTER
-GEGL_IS_FILTER
-GEGL_TYPE_FILTER
-gegl_filter_get_type
-GEGL_FILTER_CLASS
-GEGL_IS_FILTER_CLASS
-GEGL_FILTER_GET_CLASS
-</SECTION>
-
-<SECTION>
-<FILE>gegl-light</FILE>
-<TITLE>GeglLight</TITLE>
-GeglLight
-<SUBSECTION Standard>
-GEGL_LIGHT
-GEGL_IS_LIGHT
-GEGL_TYPE_LIGHT
-gegl_light_get_type
-GEGL_LIGHT_CLASS
-GEGL_IS_LIGHT_CLASS
-GEGL_LIGHT_GET_CLASS
-</SECTION>
-
-<SECTION>
-<FILE>gegl-max</FILE>
-<TITLE>GeglMax</TITLE>
-GeglMax
-<SUBSECTION Standard>
-GEGL_MAX
-GEGL_IS_MAX
-GEGL_TYPE_MAX
-gegl_max_get_type
-GEGL_MAX_CLASS
-GEGL_IS_MAX_CLASS
-GEGL_MAX_GET_CLASS
-</SECTION>
-
-<SECTION>
-<FILE>gegl-min</FILE>
-<TITLE>GeglMin</TITLE>
-GeglMin
-<SUBSECTION Standard>
-GEGL_MIN
-GEGL_IS_MIN
-GEGL_TYPE_MIN
-gegl_min_get_type
-GEGL_MIN_CLASS
-GEGL_IS_MIN_CLASS
-GEGL_MIN_GET_CLASS
-</SECTION>
-
-<SECTION>
-<FILE>gegl-mult</FILE>
-<TITLE>GeglMult</TITLE>
-GeglMult
-<SUBSECTION Standard>
-GEGL_MULT
-GEGL_IS_MULT
-GEGL_TYPE_MULT
-gegl_mult_get_type
-GEGL_MULT_CLASS
-GEGL_IS_MULT_CLASS
-GEGL_MULT_GET_CLASS
-</SECTION>
-
-<SECTION>
 <FILE>gegl-fill</FILE>
 <TITLE>GeglFill</TITLE>
-GeglFill
 gegl_fill_get_fill_color
 gegl_fill_set_fill_color
 <SUBSECTION Standard>
@@ -383,52 +289,33 @@ GEGL_FILL_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-premult</FILE>
-<TITLE>GeglPremult</TITLE>
-GeglPremult
+<FILE>gegl-filter</FILE>
+<TITLE>GeglFilter</TITLE>
+gegl_filter_get_root
+gegl_filter_set_root
+gegl_filter_get_roi
+gegl_filter_set_roi
+gegl_filter_get_image
+gegl_filter_set_image
+gegl_filter_get_input_values
+gegl_filter_validate_input_values
+gegl_filter_validate_output_values
 <SUBSECTION Standard>
-GEGL_PREMULT
-GEGL_IS_PREMULT
-GEGL_TYPE_PREMULT
-gegl_premult_get_type
-GEGL_PREMULT_CLASS
-GEGL_IS_PREMULT_CLASS
-GEGL_PREMULT_GET_CLASS
-</SECTION>
-
-<SECTION>
-<FILE>gegl-screen</FILE>
-<TITLE>GeglScreen</TITLE>
-GeglScreen
-<SUBSECTION Standard>
-GEGL_SCREEN
-GEGL_IS_SCREEN
-GEGL_TYPE_SCREEN
-gegl_screen_get_type
-GEGL_SCREEN_CLASS
-GEGL_IS_SCREEN_CLASS
-GEGL_SCREEN_GET_CLASS
+GEGL_FILTER
+GEGL_IS_FILTER
+GEGL_TYPE_FILTER
+gegl_filter_get_type
+GEGL_FILTER_CLASS
+GEGL_IS_FILTER_CLASS
+GEGL_FILTER_GET_CLASS
 </SECTION>
 
 <SECTION>
 <FILE>gegl-image</FILE>
 <TITLE>GeglImage</TITLE>
-GeglImage
 gegl_image_color_model
 gegl_image_set_color_model
 gegl_image_set_derived_color_model
-gegl_image_compute_derived_color_model
-gegl_image_compute_have_rect
-gegl_image_compute_result_rect
-gegl_image_get_have_rect
-gegl_image_set_have_rect
-gegl_image_get_result_rect
-gegl_image_set_result_rect
-gegl_image_compute_preimage
-gegl_image_get_need_rect
-gegl_image_set_need_rect
-gegl_image_get_dest
-gegl_image_set_dest
 <SUBSECTION Standard>
 GEGL_IMAGE
 GEGL_IS_IMAGE
@@ -440,37 +327,34 @@ GEGL_IMAGE_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-subtract</FILE>
-<TITLE>GeglSubtract</TITLE>
-GeglSubtract
+<FILE>gegl-light</FILE>
+<TITLE>GeglLight</TITLE>
 <SUBSECTION Standard>
-GEGL_SUBTRACT
-GEGL_IS_SUBTRACT
-GEGL_TYPE_SUBTRACT
-gegl_subtract_get_type
-GEGL_SUBTRACT_CLASS
-GEGL_IS_SUBTRACT_CLASS
-GEGL_SUBTRACT_GET_CLASS
+GEGL_LIGHT
+GEGL_IS_LIGHT
+GEGL_TYPE_LIGHT
+gegl_light_get_type
+GEGL_LIGHT_CLASS
+GEGL_IS_LIGHT_CLASS
+GEGL_LIGHT_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-unpremult</FILE>
-<TITLE>GeglUnpremult</TITLE>
-GeglUnpremult
+<FILE>gegl-max</FILE>
+<TITLE>GeglMax</TITLE>
 <SUBSECTION Standard>
-GEGL_UNPREMULT
-GEGL_IS_UNPREMULT
-GEGL_TYPE_UNPREMULT
-gegl_unpremult_get_type
-GEGL_UNPREMULT_CLASS
-GEGL_IS_UNPREMULT_CLASS
-GEGL_UNPREMULT_GET_CLASS
+GEGL_MAX
+GEGL_IS_MAX
+GEGL_TYPE_MAX
+gegl_max_get_type
+GEGL_MAX_CLASS
+GEGL_IS_MAX_CLASS
+GEGL_MAX_GET_CLASS
 </SECTION>
 
 <SECTION>
 <FILE>gegl-mem-buffer</FILE>
 <TITLE>GeglMemBuffer</TITLE>
-GeglMemBuffer
 <SUBSECTION Standard>
 GEGL_MEM_BUFFER
 GEGL_IS_MEM_BUFFER
@@ -482,29 +366,48 @@ GEGL_MEM_BUFFER_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gegl-min</FILE>
+<TITLE>GeglMin</TITLE>
+<SUBSECTION Standard>
+GEGL_MIN
+GEGL_IS_MIN
+GEGL_TYPE_MIN
+gegl_min_get_type
+GEGL_MIN_CLASS
+GEGL_IS_MIN_CLASS
+GEGL_MIN_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-mult</FILE>
+<TITLE>GeglMult</TITLE>
+<SUBSECTION Standard>
+GEGL_MULT
+GEGL_IS_MULT
+GEGL_TYPE_MULT
+gegl_mult_get_type
+GEGL_MULT_CLASS
+GEGL_IS_MULT_CLASS
+GEGL_MULT_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gegl-node</FILE>
+GeglInputInfo
 <TITLE>GeglNode</TITLE>
-GeglNode
-GeglNodeVisitFlags
-GeglNodeTraverseFunc
-gegl_node_set_nth_input
+gegl_node_set_nth_input_info
+gegl_node_get_nth_input_info
 gegl_node_get_nth_input
-gegl_node_get_nth_output
-gegl_node_input_multiplicity
-gegl_node_output_multiplicity
-gegl_node_is_leaf
-gegl_node_is_root
-gegl_node_num_inputs
-gegl_node_get_enabled
-gegl_node_set_enabled
-gegl_node_num_outputs
-gegl_node_shared_count
+gegl_node_set_nth_input
+gegl_node_get_num_inputs
+gegl_node_get_num_outputs
+gegl_node_get_input_infos
+gegl_node_get_outputs
+gegl_node_accept
 gegl_node_traverse_depth_first
 gegl_node_traverse_breadth_first
-gegl_node_get_outputs
-gegl_node_get_inputs
-gegl_node_set_inputs
-gegl_node_inheriting_input
+gegl_node_set_num_inputs
+gegl_node_set_num_outputs
 <SUBSECTION Standard>
 GEGL_NODE
 GEGL_IS_NODE
@@ -518,9 +421,10 @@ GEGL_NODE_GET_CLASS
 <SECTION>
 <FILE>gegl-object</FILE>
 <TITLE>GeglObject</TITLE>
-GeglObject
 gegl_object_add_interface
 gegl_object_query_interface
+gegl_object_set_name
+gegl_object_get_name
 <SUBSECTION Standard>
 GEGL_OBJECT
 GEGL_IS_OBJECT
@@ -534,16 +438,17 @@ GEGL_OBJECT_GET_CLASS
 <SECTION>
 <FILE>gegl-op</FILE>
 <TITLE>GeglOp</TITLE>
-GeglOp
-gegl_op_prepare
-gegl_op_process
-gegl_op_finish
-gegl_op_get_alt_input
 gegl_op_apply
-gegl_op_get_source0
-gegl_op_set_source0
-gegl_op_get_source1
-gegl_op_set_source1
+gegl_op_apply_image
+gegl_op_apply_roi
+gegl_op_compute_need_rects
+gegl_op_compute_have_rect
+gegl_op_compute_derived_color_model
+gegl_op_evaluate
+gegl_op_set_num_output_values
+gegl_op_get_nth_output_value
+gegl_op_get_input_values
+gegl_op_get_output_values
 <SUBSECTION Standard>
 GEGL_OP
 GEGL_IS_OP
@@ -555,11 +460,23 @@ GEGL_OP_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gegl-param-specs</FILE>
+GEGL_TYPE_PARAM_INT
+GEGL_TYPE_PARAM_IMAGE_DATA
+GEGL_IS_PARAM_SPEC_IMAGE_DATA
+GEGL_PARAM_SPEC_IMAGE_DATA
+GeglParamSpecInt
+gegl_param_spec_int
+GeglParamSpecImageData
+gegl_param_spec_image_data
+<SUBSECTION Standard>
+GEGL_PARAM_SPEC_INT
+GEGL_IS_PARAM_SPEC_INT
+</SECTION>
+
+<SECTION>
 <FILE>gegl-point-op</FILE>
 <TITLE>GeglPointOp</TITLE>
-GeglPointOp
-gegl_point_op_get_nth_input_offset
-gegl_point_op_set_nth_input_offset
 <SUBSECTION Standard>
 GEGL_POINT_OP
 GEGL_IS_POINT_OP
@@ -571,9 +488,21 @@ GEGL_POINT_OP_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gegl-premult</FILE>
+<TITLE>GeglPremult</TITLE>
+<SUBSECTION Standard>
+GEGL_PREMULT
+GEGL_IS_PREMULT
+GEGL_TYPE_PREMULT
+gegl_premult_get_type
+GEGL_PREMULT_CLASS
+GEGL_IS_PREMULT_CLASS
+GEGL_PREMULT_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gegl-print</FILE>
 <TITLE>GeglPrint</TITLE>
-GeglPrint
 <SUBSECTION Standard>
 GEGL_PRINT
 GEGL_IS_PRINT
@@ -587,7 +516,6 @@ GEGL_PRINT_GET_CLASS
 <SECTION>
 <FILE>gegl-sampled-image</FILE>
 <TITLE>GeglSampledImage</TITLE>
-GeglSampledImage
 gegl_sampled_image_get_width
 gegl_sampled_image_get_height
 gegl_sampled_image_set_width
@@ -605,8 +533,6 @@ GEGL_SAMPLED_IMAGE_GET_CLASS
 <SECTION>
 <FILE>gegl-scanline-processor</FILE>
 <TITLE>GeglScanlineProcessor</TITLE>
-GeglScanlineProcessor
-GeglScanlineFunc
 gegl_scanline_processor_process
 <SUBSECTION Standard>
 GEGL_SCANLINE_PROCESSOR
@@ -619,9 +545,22 @@ GEGL_SCANLINE_PROCESSOR_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gegl-screen</FILE>
+<TITLE>GeglScreen</TITLE>
+<SUBSECTION Standard>
+GEGL_SCREEN
+GEGL_IS_SCREEN
+GEGL_TYPE_SCREEN
+gegl_screen_get_type
+GEGL_SCREEN_CLASS
+GEGL_IS_SCREEN_CLASS
+GEGL_SCREEN_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gegl-stat-op</FILE>
+GeglScanlineProcessor
 <TITLE>GeglStatOp</TITLE>
-GeglStatOp
 <SUBSECTION Standard>
 GEGL_STAT_OP
 GEGL_IS_STAT_OP
@@ -633,9 +572,21 @@ GEGL_STAT_OP_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gegl-subtract</FILE>
+<TITLE>GeglSubtract</TITLE>
+<SUBSECTION Standard>
+GEGL_SUBTRACT
+GEGL_IS_SUBTRACT
+GEGL_TYPE_SUBTRACT
+gegl_subtract_get_type
+GEGL_SUBTRACT_CLASS
+GEGL_IS_SUBTRACT_CLASS
+GEGL_SUBTRACT_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gegl-tile-iterator</FILE>
 <TITLE>GeglTileIterator</TITLE>
-GeglTileIterator
 gegl_tile_iterator_get_tile
 gegl_tile_iterator_get_rect
 gegl_tile_iterator_get_color_model
@@ -658,13 +609,12 @@ GEGL_TILE_ITERATOR_GET_CLASS
 <SECTION>
 <FILE>gegl-tile-mgr</FILE>
 <TITLE>GeglTileMgr</TITLE>
-GeglTileMgr
-gegl_tile_mgr_fetch_output_tile
-gegl_tile_mgr_fetch_input_tile
-gegl_tile_mgr_release_tiles
+gegl_tile_mgr_instance
+gegl_tile_mgr_install
+gegl_tile_mgr_validate_tile
+gegl_tile_mgr_validate_data
 gegl_tile_mgr_create_buffer
-gegl_tile_mgr_get_tile
-gegl_tile_mgr_make_tile
+gegl_tile_mgr_create_tile
 <SUBSECTION Standard>
 GEGL_TILE_MGR
 GEGL_IS_TILE_MGR
@@ -678,7 +628,6 @@ GEGL_TILE_MGR_GET_CLASS
 <SECTION>
 <FILE>gegl-tile</FILE>
 <TITLE>GeglTile</TITLE>
-GeglTile
 GeglOpRequest
 gegl_tile_get_buffer
 gegl_tile_get_area
@@ -700,11 +649,24 @@ GEGL_TILE_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gegl-unpremult</FILE>
+<TITLE>GeglUnpremult</TITLE>
+<SUBSECTION Standard>
+GEGL_UNPREMULT
+GEGL_IS_UNPREMULT
+GEGL_TYPE_UNPREMULT
+gegl_unpremult_get_type
+GEGL_UNPREMULT_CLASS
+GEGL_IS_UNPREMULT_CLASS
+GEGL_UNPREMULT_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gegl-utils</FILE>
 gegl_rect_set
 gegl_rect_equal
 gegl_rect_copy
-gegl_rect_union
+gegl_rect_bounding_box
 gegl_rect_intersect
 gegl_rect_contains
 gegl_channel_data_type_bytes
@@ -713,6 +675,7 @@ gegl_utils_derived_color_alpha_space
 gegl_utils_derived_channel_data_type
 gegl_utils_derived_color_space
 gegl_utils_construct_val
+gegl_utils_get_filter_type
 gegl_log
 gegl_logv
 LOG_DEBUG
@@ -725,7 +688,53 @@ GEGL_FLOAT_IS_ZERO
 </SECTION>
 
 <SECTION>
+<FILE>gegl-visitor</FILE>
+<TITLE>GeglVisitor</TITLE>
+gegl_visitor_visit_node
+gegl_visitor_visit_op
+gegl_visitor_visit_filter
+gegl_visitor_get_visits_list
+<SUBSECTION Standard>
+GEGL_VISITOR
+GEGL_IS_VISITOR
+GEGL_TYPE_VISITOR
+gegl_visitor_get_type
+GEGL_VISITOR_CLASS
+GEGL_IS_VISITOR_CLASS
+GEGL_VISITOR_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-bfs-visitor</FILE>
+<TITLE>GeglBfsVisitor</TITLE>
+<SUBSECTION Standard>
+GEGL_BFS_VISITOR
+GEGL_IS_BFS_VISITOR
+GEGL_TYPE_BFS_VISITOR
+gegl_bfs_visitor_get_type
+GEGL_BFS_VISITOR_CLASS
+GEGL_IS_BFS_VISITOR_CLASS
+GEGL_BFS_VISITOR_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-dfs-visitor</FILE>
+<TITLE>GeglDfsVisitor</TITLE>
+<SUBSECTION Standard>
+GEGL_DFS_VISITOR
+GEGL_IS_DFS_VISITOR
+GEGL_TYPE_DFS_VISITOR
+gegl_dfs_visitor_get_type
+GEGL_DFS_VISITOR_CLASS
+GEGL_IS_DFS_VISITOR_CLASS
+GEGL_DFS_VISITOR_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gegl-types</FILE>
+GEGL_TYPE_IMAGE_DATA
+GEGL_DEFAULT_WIDTH
+GEGL_DEFAULT_HEIGHT
 GeglColorSpace
 GeglColorAlphaSpace
 GeglColorModelType
@@ -736,6 +745,20 @@ GeglRect
 GeglPoint
 GeglDimension
 ROUND
+</SECTION>
+
+<SECTION>
+<FILE>gegl-value-types</FILE>
+GeglTile
+G_VALUE_HOLDS_IMAGE_DATA
+GeglImageData
+g_value_get_image_data
+g_value_set_image_data
+g_value_get_image_data_rect
+g_value_set_image_data_rect
+g_value_get_image_data_tile
+g_value_set_image_data_tile
+g_value_print_image_data
 </SECTION>
 
 <SECTION>

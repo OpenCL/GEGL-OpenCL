@@ -61,13 +61,13 @@ test_sampled_image_compute_have_rect(Test *test)
                                                     NULL);  
 
   /* Set the initial need rect in the output value */
-  output_value = gegl_op_get_output_value(GEGL_OP(sampled_image));
+  output_value = gegl_op_get_nth_output_value(GEGL_OP(sampled_image),0);
   g_value_set_image_data_rect(output_value, &need_rect);
 
   /* Bounding box of inputs have rects, intersected with need rect */
   gegl_op_compute_have_rect(GEGL_OP(sampled_image), NULL);
 
-  output_value = gegl_op_get_output_value(GEGL_OP(sampled_image));
+  output_value = gegl_op_get_nth_output_value(GEGL_OP(sampled_image),0);
   g_value_get_image_data_rect(output_value, &result_rect);
 
   /*                    

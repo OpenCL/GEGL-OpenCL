@@ -20,12 +20,6 @@ banks swapped to and from secondary storage.
 
 </para>
 
-<!-- ##### STRUCT GeglBuffer ##### -->
-<para>
-
-</para>
-
-
 <!-- ##### FUNCTION gegl_buffer_get_bytes_per_buffer ##### -->
 <para>
 

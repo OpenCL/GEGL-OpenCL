@@ -14,10 +14,40 @@ GeglTileMgr
 
 </para>
 
-<!-- ##### STRUCT GeglTileMgr ##### -->
+<!-- ##### FUNCTION gegl_tile_mgr_instance ##### -->
 <para>
 
 </para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_mgr_install ##### -->
+<para>
+
+</para>
+
+@tile_mgr: 
+
+
+<!-- ##### FUNCTION gegl_tile_mgr_validate_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@tile: 
+@area: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_mgr_validate_data ##### -->
+<para>
+
+</para>
+
+@self: 
+@tile: 
 
 
 <!-- ##### FUNCTION gegl_tile_mgr_create_buffer ##### -->
@@ -27,6 +57,17 @@ GeglTileMgr
 
 @self: 
 @tile: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_mgr_create_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@color_model: 
+@area: 
 @Returns: 
 
 

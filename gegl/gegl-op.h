@@ -24,10 +24,7 @@ struct _GeglOp
 
    /*< private >*/
 
-   GValue *output_value;
-   GParamSpec *output_param_spec;
-
-   GList *input_param_specs;
+   GList  *output_values;
 };
 
 typedef struct _GeglOpClass GeglOpClass;
@@ -40,6 +37,7 @@ struct _GeglOpClass
    void (* evaluate)               (GeglOp * self, 
                                     GList * output_values,
                                     GList * input_values);
+
    void (* prepare)                (GeglOp * self, 
                                     GList * output_values,
                                     GList * input_values);
@@ -50,34 +48,35 @@ struct _GeglOpClass
                                     GList * output_values,
                                     GList * input_values);
 
-   void (* compute_need_rect)      (GeglOp *self,
-                                    GValue *input_value,
-                                    gint i); 
+   void (* compute_need_rects)     (GeglOp *self,
+                                    GList *input_values);
    void (* compute_have_rect)      (GeglOp *self,
                                     GList * input_values); 
+   void (* compute_derived_color_model)  (GeglOp *self,
+                                          GList * input_values); 
 };
 
 GType     gegl_op_get_type                 (void);
-
 void      gegl_op_apply                    (GeglOp * self);
 void      gegl_op_apply_image              (GeglOp * self,
                                             GeglOp * image,
                                             GeglRect *roi);
 void      gegl_op_apply_roi                (GeglOp * self, 
                                             GeglRect *roi);
-
 void      gegl_op_compute_need_rects       (GeglOp * self,
                                             GList *input_values);
 void      gegl_op_compute_have_rect        (GeglOp * self,
                                             GList *input_values);
-void      gegl_op_compute_need_rect        (GeglOp * self,
-                                            GValue * input_value,
-                                            gint i);
-
+void      gegl_op_compute_derived_color_model(GeglOp * self,
+                                            GList *input_values);
 void      gegl_op_evaluate                 (GeglOp * self, 
                                             GList * output_values,
                                             GList * input_values);
-GValue *  gegl_op_get_output_value         (GeglOp *op); 
+void      gegl_op_set_num_output_values    (GeglOp * self, 
+                                            gint num_output_values);
+GValue *  gegl_op_get_nth_output_value     (GeglOp *op, gint n); 
+GList *   gegl_op_get_input_values         (GeglOp *self);
+GList *   gegl_op_get_output_values        (GeglOp *self);
 
 #ifdef __cplusplus
 }

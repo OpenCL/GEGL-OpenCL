@@ -73,7 +73,7 @@ class_init (GeglCopyClass * klass)
                                    g_param_spec_object ("input",
                                                         "Input",
                                                         "Input of GeglCopy",
-                                                         GEGL_TYPE_OBJECT,
+                                                         GEGL_TYPE_OP,
                                                          G_PARAM_CONSTRUCT |
                                                          G_PARAM_READWRITE));
 

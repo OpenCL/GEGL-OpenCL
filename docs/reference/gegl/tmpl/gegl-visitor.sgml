@@ -1,0 +1,52 @@
+<!-- ##### SECTION Title ##### -->
+GeglVisitor
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_visitor_visit_node ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+
+
+<!-- ##### FUNCTION gegl_visitor_visit_op ##### -->
+<para>
+
+</para>
+
+@self: 
+@op: 
+
+
+<!-- ##### FUNCTION gegl_visitor_visit_filter ##### -->
+<para>
+
+</para>
+
+@self: 
+@filter: 
+
+
+<!-- ##### FUNCTION gegl_visitor_get_visits_list ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+

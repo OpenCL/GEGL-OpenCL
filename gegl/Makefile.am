@@ -35,6 +35,7 @@ GEGL_GEN_SRC = \
   gegl-unpremult.c
 
 GEGL_SRC = \
+  gegl-bfs-visitor.c \
   gegl-buffer.c \
   gegl-color.c \
   gegl-color-model.c \
@@ -47,6 +48,7 @@ GEGL_SRC = \
   gegl-color-model-rgb-u8.c \
   gegl-color-model-rgb-u16.c \
   gegl-copy.c \
+  gegl-dfs-visitor.c \
   gegl-fill.c \
   gegl-filter.c \
   gegl-image.c \
@@ -63,11 +65,13 @@ GEGL_SRC = \
   gegl-tile.c \
   gegl-tile-iterator.c \
   gegl-tile-mgr.c \
-  gegl-value-types.c
+  gegl-value-types.c \
+  gegl-visitor.c
 
 
 GEGL_PUBLIC_HDRS = \
   gegl-add.h \
+  gegl-bfs-visitor.h \
   gegl-buffer.h \
   gegl-color.h \
   gegl-color-model.h \
@@ -85,6 +89,7 @@ GEGL_PUBLIC_HDRS = \
   gegl-copy.h \
   gegl-dark.h \
   gegl-diff.h \
+  gegl-dfs-visitor.h \
   gegl-fill.h \
   gegl-filter.h \
   gegl-image.h \
@@ -109,7 +114,8 @@ GEGL_PUBLIC_HDRS = \
   gegl-tile-iterator.h \
   gegl-tile-mgr.h \
   gegl-unpremult.h \
-  gegl-value-types.h
+  gegl-value-types.h \
+  gegl-visitor.h
 
 GEGL_NONCLASS_HDRS = \
   gegl-types.h \

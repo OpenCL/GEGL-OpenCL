@@ -226,6 +226,7 @@ compute_have_rect(GeglOp *op,
   GeglRect have_rect;
   GeglRect need_rect;
   GeglRect result_rect;
+  GValue * output_value = gegl_op_get_nth_output_value(op,0);
 
   have_rect.x = 0;
   have_rect.y = 0;
@@ -233,11 +234,11 @@ compute_have_rect(GeglOp *op,
   have_rect.h = self->height;
 
   /* Get the need rect. */
-  g_value_get_image_data_rect(op->output_value, &need_rect);
+  g_value_get_image_data_rect(output_value, &need_rect);
 
   /* Find the result rect. */
   gegl_rect_intersect(&result_rect, &have_rect, &need_rect);
 
   /* Store the result rect in the output value. */
-  g_value_set_image_data_rect(op->output_value, &result_rect);
+  g_value_set_image_data_rect(output_value, &result_rect);
 }

@@ -12,6 +12,7 @@ enum
 
 static void class_init        (GeglMockOpClass * klass);
 static void init (GeglMockOp * self, GeglMockOpClass * klass);
+static void finalize (GObject * gobject);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static gpointer parent_class = NULL;
@@ -50,6 +51,7 @@ class_init (GeglMockOpClass * klass)
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
   parent_class = g_type_class_peek_parent(klass);
 
+  gobject_class->finalize = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
@@ -75,14 +77,14 @@ class_init (GeglMockOpClass * klass)
                                    g_param_spec_object ("input0",
                                                         "Input0",
                                                         "Input 0 of this node",
-                                                         GEGL_TYPE_OBJECT,
+                                                         GEGL_TYPE_OP,
                                                          G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_INPUT1,
                                    g_param_spec_object ("input1",
                                                         "Input1",
                                                         "Input 1 of this node",
-                                                         GEGL_TYPE_OBJECT,
+                                                         GEGL_TYPE_OP,
                                                          G_PARAM_READWRITE));
 
 
@@ -93,11 +95,23 @@ init (GeglMockOp * self,
       GeglMockOpClass * klass)
 {
   GeglNode * node = GEGL_NODE(self);
+  GeglOp *op = GEGL_OP(self);
+  GValue *output_value;
 
-  node->num_inputs = 0;
-  node->num_outputs = 0;
+  gegl_node_set_num_outputs(node, 1);
+  gegl_node_set_num_inputs(node, 0);
+
+  gegl_op_set_num_output_values(op, 1);
+  output_value = gegl_op_get_nth_output_value(op, 0);
+  g_value_init(output_value, GEGL_TYPE_IMAGE_DATA);
 
   return;
+}
+
+static void
+finalize(GObject *gobject)
+{
+  G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
 static void

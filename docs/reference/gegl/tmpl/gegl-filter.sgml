@@ -14,12 +14,6 @@ GeglFilter
 
 </para>
 
-<!-- ##### STRUCT GeglFilter ##### -->
-<para>
-
-</para>
-
-
 <!-- ##### FUNCTION gegl_filter_get_root ##### -->
 <para>
 
@@ -72,6 +66,36 @@ GeglFilter
 
 @self: 
 @image: 
+
+
+<!-- ##### FUNCTION gegl_filter_get_input_values ##### -->
+<para>
+
+</para>
+
+@self: 
+@op: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_filter_validate_input_values ##### -->
+<para>
+
+</para>
+
+@self: 
+@op: 
+@input_values: 
+
+
+<!-- ##### FUNCTION gegl_filter_validate_output_values ##### -->
+<para>
+
+</para>
+
+@self: 
+@op: 
+@output_values: 
 
 
 <!-- ##### ARG GeglFilter:root ##### -->

@@ -21,7 +21,9 @@ MOCK_OBJECT_SRC = \
    gegl-mock-op.c \
    gegl-mock-op.h \
    gegl-mock-point-op.c \
-   gegl-mock-point-op.h
+   gegl-mock-point-op.h \
+   gegl-mock-visitor.c \
+   gegl-mock-visitor.h
 
 testgegl_SOURCES = \
    $(MOCK_OBJECT_SRC) \

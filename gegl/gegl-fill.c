@@ -21,7 +21,7 @@ static void finalize (GObject * gobject);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void compute_derived_color_model (GeglImage * image, GList * input_values);
+static void compute_derived_color_model (GeglOp * op, GList * input_values);
 
 static void prepare (GeglOp * op, GList * output_values, GList * input_values);
 
@@ -66,7 +66,6 @@ static void
 class_init (GeglFillClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-  GeglImageClass *image_class = GEGL_IMAGE_CLASS(klass);
   GeglOpClass *op_class = GEGL_OP_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
@@ -76,8 +75,7 @@ class_init (GeglFillClass * klass)
   gobject_class->get_property = get_property;
 
   op_class->prepare = prepare;
-
-  image_class->compute_derived_color_model = compute_derived_color_model;
+  op_class->compute_derived_color_model = compute_derived_color_model;
 
   g_object_class_install_property (gobject_class, PROP_FILLCOLOR,
                                    g_param_spec_object ("fillcolor",
@@ -148,13 +146,13 @@ set_property (GObject      *gobject,
 }
 
 static void 
-compute_derived_color_model (GeglImage * image, 
+compute_derived_color_model (GeglOp * op, 
                              GList * input_values)
 {
-  GeglFill* self = GEGL_FILL(image);
+  GeglFill* self = GEGL_FILL(op);
 
   GeglColorModel *fill_cm = gegl_color_get_color_model(self->fill_color);
-  gegl_image_set_derived_color_model(image, fill_cm);
+  gegl_image_set_derived_color_model(GEGL_IMAGE(op), fill_cm);
 }
 
 GeglColor * 

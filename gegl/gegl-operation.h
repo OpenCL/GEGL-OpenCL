@@ -28,7 +28,6 @@ struct _GeglFilter
    GeglOp __parent__;
 
    /*< private >*/
-
    GeglOp * root;
    GeglRect roi;
    GeglSampledImage *image;
@@ -52,6 +51,16 @@ GeglSampledImage*
           gegl_filter_get_image        (GeglFilter * self);
 void      gegl_filter_set_image        (GeglFilter * self, 
                                         GeglSampledImage *image);
+
+GList *   gegl_filter_get_input_values (GeglFilter *self, 
+                                        GeglOp *op);
+
+void gegl_filter_validate_input_values (GeglFilter *self, 
+                                        GeglOp * op, 
+                                        GList *input_values);
+void gegl_filter_validate_output_values (GeglFilter *self, 
+                                         GeglOp * op, 
+                                         GList *output_values);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

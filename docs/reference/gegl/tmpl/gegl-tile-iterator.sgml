@@ -14,12 +14,6 @@ GeglTileIterator
 
 </para>
 
-<!-- ##### STRUCT GeglTileIterator ##### -->
-<para>
-
-</para>
-
-
 <!-- ##### FUNCTION gegl_tile_iterator_get_tile ##### -->
 <para>
 

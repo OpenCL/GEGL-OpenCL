@@ -1,6 +1,7 @@
 #include <gegl.h>
 
 gegl_add_get_type
+gegl_bfs_visitor_get_type
 gegl_buffer_get_type
 gegl_color_model_gray_float_get_type
 gegl_color_model_gray_u16_get_type
@@ -17,6 +18,7 @@ gegl_comp_get_type
 gegl_const_mult_get_type
 gegl_copy_get_type
 gegl_dark_get_type
+gegl_dfs_visitor_get_type
 gegl_diff_get_type
 gegl_fill_get_type
 gegl_filter_get_type
@@ -41,3 +43,4 @@ gegl_tile_iterator_get_type
 gegl_tile_mgr_get_type
 gegl_tile_get_type
 gegl_unpremult_get_type
+gegl_visitor_get_type

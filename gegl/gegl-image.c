@@ -16,12 +16,11 @@ enum
 static void class_init (GeglImageClass * klass);
 static void init (GeglImage * self, GeglImageClass * klass);
 static void finalize(GObject * gobject);
-static GObject* constructor (GType type, guint n_props, GObjectConstructParam *props);
 
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void compute_derived_color_model (GeglImage * self, GList * input_values);
+static void compute_derived_color_model (GeglOp * op, GList * input_values);
 
 static gpointer parent_class = NULL;
 
@@ -57,14 +56,14 @@ static void
 class_init (GeglImageClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GeglOpClass *op_class = GEGL_OP_CLASS (klass);
   parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->finalize = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-  gobject_class->constructor = constructor;
 
-  klass->compute_derived_color_model = compute_derived_color_model;
+  op_class->compute_derived_color_model = compute_derived_color_model;
 
   g_object_class_install_property (gobject_class, PROP_COLOR_MODEL,
                                    g_param_spec_object ("colormodel",
@@ -81,18 +80,16 @@ static void
 init (GeglImage * self, 
       GeglImageClass * klass)
 {
+  GeglOp *op = GEGL_OP(self);
+  GValue * output_value;
+
+  gegl_op_set_num_output_values(op, 1);
+  output_value = gegl_op_get_nth_output_value(op,0);
+  g_value_init(output_value, GEGL_TYPE_IMAGE_DATA);
+
   self->color_model = NULL;
   self->derived_color_model = NULL;
   return;
-}
-
-static GObject*        
-constructor (GType                  type,
-             guint                  n_props,
-             GObjectConstructParam *props)
-{
-  GObject *gobject = G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
-  return gobject;
 }
 
 static void
@@ -201,30 +198,8 @@ gegl_image_set_color_model (GeglImage * self,
     g_object_ref(cm);
 }
 
-/**
- * gegl_image_compute_derived_color_model:
- * @self: a #GeglImage
- * @input_values: a list of input GValues.
- *
- * Computes a derived #GeglColorModel for this Image.
- *
- **/
-void
-gegl_image_compute_derived_color_model (GeglImage * self, 
-                                        GList * input_values)
-{
-   GeglImageClass *klass = GEGL_IMAGE_GET_CLASS(self);
-   g_return_if_fail (self != NULL);
-   g_return_if_fail (GEGL_IS_IMAGE (self));
-
-   klass = GEGL_IMAGE_GET_CLASS(self);
-
-   if(klass->compute_derived_color_model)
-      return (*klass->compute_derived_color_model)(self, input_values);
-}
-
 static void 
-compute_derived_color_model (GeglImage * self, 
+compute_derived_color_model (GeglOp * op, 
                              GList * input_values)
 {
   gint num_inputs = g_list_length(input_values);
@@ -237,7 +212,7 @@ compute_derived_color_model (GeglImage * self,
         {
           GeglTile * tile =  g_value_get_image_data_tile(input_value);
           GeglColorModel *cm = gegl_tile_get_color_model(tile);
-          gegl_image_set_derived_color_model(self, cm);
+          gegl_image_set_derived_color_model(GEGL_IMAGE(op), cm);
         }
     }
 }

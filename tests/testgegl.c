@@ -34,17 +34,19 @@ extern Test * create_value_test();
 int
 main (int argc, char *argv[])
 {  
-  g_type_init_with_debug_flags(G_TYPE_DEBUG_OBJECTS);
 
-  g_log_set_always_fatal(G_LOG_LEVEL_WARNING|
-                         G_LOG_LEVEL_CRITICAL|
-                         G_LOG_LEVEL_ERROR);
+  g_log_set_always_fatal (g_log_set_always_fatal (G_LOG_FATAL_MASK) |
+                                                 G_LOG_LEVEL_WARNING | 
+                                                 G_LOG_LEVEL_CRITICAL);
+  g_type_init_with_debug_flags (G_TYPE_DEBUG_OBJECTS);
 
   gegl_init(&argc, &argv);
 
   {
     Suite *suite = cs_create("GeglTestSuite");
 
+
+#if 1 
     cs_addTest(suite, create_add_test());
     cs_addTest(suite, create_buffer_test());
     cs_addTest(suite, create_color_test());
@@ -61,15 +63,14 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_op_test());
     cs_addTest(suite, create_point_op_test());
     cs_addTest(suite, create_print_test());
-    cs_addTest(suite, create_sampled_image_test());
     cs_addTest(suite, create_simpletree_test());
-    cs_addTest(suite, create_stat_op_test());
+    cs_addTest(suite, create_sampled_image_test());
     cs_addTest(suite, create_tile_test());
     cs_addTest(suite, create_tile_iterator_test());
     cs_addTest(suite, create_tile_mgr_test());
     cs_addTest(suite, create_value_test());
+#endif
 
-    
     cs_setStream(suite, stdout);
     cs_run(suite);
     cs_report(suite);

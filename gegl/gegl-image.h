@@ -44,9 +44,6 @@ typedef struct _GeglImageClass GeglImageClass;
 struct _GeglImageClass 
 {
    GeglOpClass __parent__;
-
-   void (* compute_derived_color_model)     (GeglImage * self, 
-                                             GList * input_values);
 };
 
 GType gegl_image_get_type                     (void);
@@ -58,9 +55,6 @@ void             gegl_image_set_color_model              (GeglImage * self,
 
 void             gegl_image_set_derived_color_model      (GeglImage * self, 
                                                           GeglColorModel * cm);
-
-void             gegl_image_compute_derived_color_model  (GeglImage * self, 
-                                                          GList * input_values);
 
 #ifdef __cplusplus
 }

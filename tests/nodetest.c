@@ -1,13 +1,13 @@
 #include <glib-object.h>
 #include "gegl.h"
 #include "gegl-mock-node.h"
+#include "gegl-mock-visitor.h"
 #include "ctest.h"
 #include "csuite.h"
 #include "testutils.h"
 
 static GeglNode *node0, *node1, *node2, *node3;
 static GeglNode *A,*B,*C,*D,*E,*F,*G,*H;
-static gint traversal_count;
 
 static void
 test_node_g_object_new(Test *test)
@@ -344,26 +344,6 @@ test_node_add_remove_nodes(Test *test)
 }
 
 
-gboolean 
-traverse_depth_first_whole_graph(GeglNode *node, gpointer data)
-{
-  Test * test = (Test*) data;
-  char * names[] = { "A", "B", "C", "D", "G", "F", "E" };  
-  ct_test (test, 0 == strcmp(g_object_get_data(G_OBJECT(node), "name"), names[traversal_count]));
-  traversal_count++;
-  return TRUE;
-} 
-
-gboolean 
-traverse_depth_first_part_graph(GeglNode *node, gpointer data)
-{
-  Test * test = (Test*) data;
-  char * names[] = { "A", "B", "C", "D" };  
-  ct_test (test, 0 == strcmp(g_object_get_data(G_OBJECT(node), "name"), names[traversal_count]));
-  traversal_count++;
-  return TRUE;
-} 
-
 /**
   From node_setup: 
 
@@ -377,35 +357,45 @@ traverse_depth_first_part_graph(GeglNode *node, gpointer data)
 
 **/
 static void
-test_depth_first_traversal(Test *test)
+test_depth_first_traversal_visitor(Test *test)
 {
-  traversal_count = 0;
-  gegl_node_traverse_depth_first (E, traverse_depth_first_whole_graph, test, TRUE); 
-  traversal_count = 0;
-  gegl_node_traverse_depth_first (D, traverse_depth_first_part_graph, test, TRUE);
+  {
+    gint i;
+    gchar * mock_visit_names[] = {"A", "B", "C", "D", "G", "F", "E"};  
+    GeglVisitor *mock_visitor = g_object_new(GEGL_TYPE_MOCK_VISITOR, NULL);  
+    GList * visits_list;
+
+    gegl_node_traverse_depth_first (E, mock_visitor, TRUE); 
+    visits_list = gegl_visitor_get_visits_list(mock_visitor);
+
+    for(i = 0; i < g_list_length(visits_list); i++)
+      {
+        gchar *name = (gchar*)g_list_nth_data(visits_list, i);
+        ct_test (test, 0 == strcmp(name, mock_visit_names[i]));
+      }
+
+    g_object_unref(mock_visitor);
+  }
+
+  {
+    gint i;
+    gchar * mock_visit_names[] = { "A", "B", "C", "D" };  
+    GeglVisitor *mock_visitor = g_object_new(GEGL_TYPE_MOCK_VISITOR, NULL);  
+    GList * visits_list;
+
+    gegl_node_traverse_depth_first (D, mock_visitor, TRUE); 
+    visits_list = gegl_visitor_get_visits_list(mock_visitor);
+
+    for(i = 0; i < g_list_length(visits_list); i++)
+      {
+        gchar *name = (gchar*)g_list_nth_data(visits_list, i);
+        ct_test (test, 0 == strcmp(name, mock_visit_names[i]));
+      }
+
+    g_object_unref(mock_visitor);
+  }
 }
 
-
-gboolean 
-traverse_breadth_first_whole_graph(GeglNode *node, gpointer data)
-{
-  Test * test = (Test*) data;
-  char * names[] = { "E", "D", "F", "B", "C", "G", "A" };  
-  ct_test (test, 0 == strcmp(g_object_get_data(G_OBJECT(node), "name"), names[traversal_count]));
-  traversal_count++;
-  return TRUE;
-} 
-
-gboolean 
-traverse_breadth_first_part_graph(GeglNode *node, gpointer data)
-{
-  Test * test = (Test*) data;
-  char * names[] = { "D", "B", "C", "A" };  
-  ct_test (test, 0 == strcmp(g_object_get_data(G_OBJECT(node), "name"), names[traversal_count]));
-  traversal_count++;
-  return TRUE;
-} 
-
 /**
   From node_setup: 
 
@@ -419,12 +409,43 @@ traverse_breadth_first_part_graph(GeglNode *node, gpointer data)
 
 **/
 static void
-test_breadth_first_traversal(Test *test)
+test_breadth_first_traversal_visitor(Test *test)
 {
-  traversal_count = 0;
-  gegl_node_traverse_breadth_first (E, traverse_breadth_first_whole_graph, test); 
-  traversal_count = 0;
-  gegl_node_traverse_breadth_first (D, traverse_breadth_first_part_graph, test); 
+  {
+    gint i;
+    gchar * mock_visit_names [] = { "E", "D", "F", "B", "C", "G", "A" };  
+    GeglVisitor *mock_visitor = g_object_new(GEGL_TYPE_MOCK_VISITOR, NULL);  
+    GList * visits_list;
+
+    gegl_node_traverse_breadth_first (E, mock_visitor); 
+    visits_list = gegl_visitor_get_visits_list(mock_visitor);
+
+    for(i = 0; i < g_list_length(visits_list); i++)
+      {
+        gchar *name = (gchar*)g_list_nth_data(visits_list, i);
+        ct_test (test, 0 == strcmp(name, mock_visit_names[i]));
+      }
+
+    g_object_unref(mock_visitor);
+  }
+
+  {
+    gint i;
+    gchar * mock_visit_names[] = { "D", "B", "C", "A" };  
+    GeglVisitor *mock_visitor = g_object_new(GEGL_TYPE_MOCK_VISITOR, NULL);  
+    GList * visits_list;
+
+    gegl_node_traverse_breadth_first (D, mock_visitor); 
+    visits_list = gegl_visitor_get_visits_list(mock_visitor);
+
+    for(i = 0; i < g_list_length(visits_list); i++)
+      {
+        gchar *name = (gchar*)g_list_nth_data(visits_list, i);
+        ct_test (test, 0 == strcmp(name, mock_visit_names[i]));
+      }
+
+    g_object_unref(mock_visitor);
+  }
 }
 
 static void
@@ -469,24 +490,43 @@ node_setup(Test *test)
   */
 
   {
-    A = g_object_new (GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);  
-    B = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 1,"num_outputs", 1, NULL);  
-    C = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 1,"num_outputs", 1, NULL);  
-    D = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 2,"num_outputs", 1, NULL);  
-    E = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 2, NULL);  
-    F = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 1,"num_outputs", 1, NULL);  
-    G = g_object_new (GEGL_TYPE_MOCK_NODE, "num_outputs", 1, NULL);  
-    H = g_object_new (GEGL_TYPE_MOCK_NODE, "num_inputs", 1, NULL);  
+    A = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "A", 
+                      "num_outputs", 1, 
+                      NULL);  
+    B = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "B", 
+                      "num_inputs", 1,
+                      "num_outputs", 1, 
+                      NULL);  
+    C = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "C", 
+                      "num_inputs", 1,
+                      "num_outputs", 1, 
+                      NULL);  
+    D = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "D", 
+                      "num_inputs", 2,
+                      "num_outputs", 1, 
+                      NULL);  
+    E = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "E", 
+                      "num_inputs", 2, 
+                      NULL);  
+    F = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "F", 
+                      "num_inputs", 1,
+                      "num_outputs", 1, 
+                      NULL);  
+    G = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "G", 
+                      "num_outputs", 1, 
+                      NULL);  
+    H = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "H", 
+                      "num_inputs", 1, 
+                      NULL);  
 
-
-    g_object_set_data(G_OBJECT(A), "name", "A");
-    g_object_set_data(G_OBJECT(B), "name", "B");
-    g_object_set_data(G_OBJECT(C), "name", "C");
-    g_object_set_data(G_OBJECT(D), "name", "D");
-    g_object_set_data(G_OBJECT(E), "name", "E");
-    g_object_set_data(G_OBJECT(F), "name", "F");
-    g_object_set_data(G_OBJECT(G), "name", "G");
-    g_object_set_data(G_OBJECT(H), "name", "H");
 
     gegl_node_set_nth_input(B, A, 0);
     gegl_node_set_nth_input(C, A, 0);
@@ -534,8 +574,8 @@ create_node_test()
   g_assert(ct_addTestFun(t, test_node_get_inputs));
   g_assert(ct_addTestFun(t, test_node_get_outputs));
   g_assert(ct_addTestFun(t, test_node_add_remove_nodes));
-  g_assert(ct_addTestFun(t, test_depth_first_traversal));
-  g_assert(ct_addTestFun(t, test_breadth_first_traversal));
+  g_assert(ct_addTestFun(t, test_depth_first_traversal_visitor));
+  g_assert(ct_addTestFun(t, test_breadth_first_traversal_visitor));
 
   return t;
 }

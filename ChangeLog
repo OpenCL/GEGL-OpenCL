@@ -1,3 +1,132 @@
+Wed Mar 27 22:53:38 EST 2002 calvinw@mindsping.com	
+
+	*gegl/gegl-bfs-visitor.c
+	*gegl/gegl-bfs-visitor.h
+	*gegl/gegl-dfs-visitor.c
+	*gegl/gegl-dfs-visitor.h
+	*gegl/gegl-visitor.c
+	*gegl/gegl-visitor.h
+
+	Made visitors for the traversal work done during evaluation of a graph.
+	These are regular GoF visitor patterns where the element classes are Node,
+	Op, and Filter.  The visitor classes are Visitor(abstract), BfsVisitor,
+	DfsVisitor, and have visit_node, visit_op, visit_filter methods that
+	specify the operations done on the nodes during traversal. A graph is
+	evaluated by traversing first breadth first to compute need rects and pass
+	down inherited attributes. This is followed by a depth first pass to
+	compute have rects, result rects, color models and to do the evaluation of
+	the node.
+
+	*gegl/Makefile.am
+	*gegl/gegl-comp-premult.gil
+	*gegl/gegl-comp.gil
+	*gegl/gegl-const-mult.gil
+	*gegl/gegl-copy.c
+	*gegl/gegl-dark.gil
+	*gegl/gegl-diff.gil
+	*gegl/gegl-fill.c
+	*gegl/gegl-filter.c
+	*gegl/gegl-filter.h
+	*gegl/gegl-image.c
+	*gegl/gegl-image.h
+	*gegl/gegl-light.gil
+	*gegl/gegl-max.gil
+	*gegl/gegl-min.gil
+	*gegl/gegl-mult.gil
+	*gegl/gegl-node.c
+	*gegl/gegl-node.h
+	*gegl/gegl-object.c
+	*gegl/gegl-object.h
+	*gegl/gegl-op.c
+	*gegl/gegl-op.h
+	*gegl/gegl-premult.gil
+	*gegl/gegl-print.c
+	*gegl/gegl-sampled-image.c
+	*gegl/gegl-screen.gil
+	*gegl/gegl-subtract.gil
+	*gegl/gegl-types.h
+	*gegl/gegl-unpremult.gil
+	*gegl/gegl.h
+
+	Updated these to use visitors above. Moved most of the traversal code out
+	of Filter and into the visitor classes.  
+
+	*tests/gegl-mock-visitor.c
+	*tests/gegl-mock-visitor.h
+
+	Test classes for visitor.
+
+	*tests/Makefile.am
+	*tests/filltest.c
+	*tests/gegl-mock-op.c
+	*tests/nodetest.c
+	*tests/objecttest.c
+	*tests/optest.c
+	*tests/sampledimagetest.c
+	*tests/testgegl.c
+
+	Update tests for visitor changes.
+
+	*docs/reference/gegl/tmpl/gegl-bfs-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-dfs-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-value-types.sgml
+	*docs/reference/gegl/tmpl/gegl-visitor.sgml
+
+	Added these.
+
+	*docs/reference/gegl/gegl-docs.sgml
+	*docs/reference/gegl/gegl-sections.txt
+	*docs/reference/gegl/gegl-undocumented.txt
+	*docs/reference/gegl/gegl.types
+	*docs/reference/gegl/tmpl/gegl-add.sgml
+	*docs/reference/gegl/tmpl/gegl-buffer.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-gray-float.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-gray-u16.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-gray-u8.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-gray.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-rgb-float.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-rgb-u16.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-rgb-u8.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-rgb.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model.sgml
+	*docs/reference/gegl/tmpl/gegl-color.sgml
+	*docs/reference/gegl/tmpl/gegl-comp-premult.sgml
+	*docs/reference/gegl/tmpl/gegl-comp.sgml
+	*docs/reference/gegl/tmpl/gegl-const-mult.sgml
+	*docs/reference/gegl/tmpl/gegl-copy.sgml
+	*docs/reference/gegl/tmpl/gegl-dark.sgml
+	*docs/reference/gegl/tmpl/gegl-diff.sgml
+	*docs/reference/gegl/tmpl/gegl-fill.sgml
+	*docs/reference/gegl/tmpl/gegl-filter.sgml
+	*docs/reference/gegl/tmpl/gegl-image.sgml
+	*docs/reference/gegl/tmpl/gegl-light.sgml
+	*docs/reference/gegl/tmpl/gegl-max.sgml
+	*docs/reference/gegl/tmpl/gegl-mem-buffer.sgml
+	*docs/reference/gegl/tmpl/gegl-min.sgml
+	*docs/reference/gegl/tmpl/gegl-mult.sgml
+	*docs/reference/gegl/tmpl/gegl-node.sgml
+	*docs/reference/gegl/tmpl/gegl-object.sgml
+	*docs/reference/gegl/tmpl/gegl-op.sgml
+	*docs/reference/gegl/tmpl/gegl-point-op.sgml
+	*docs/reference/gegl/tmpl/gegl-premult.sgml
+	*docs/reference/gegl/tmpl/gegl-print.sgml
+	*docs/reference/gegl/tmpl/gegl-sampled-image.sgml
+	*docs/reference/gegl/tmpl/gegl-scanline-processor.sgml
+	*docs/reference/gegl/tmpl/gegl-screen.sgml
+	*docs/reference/gegl/tmpl/gegl-stat-op.sgml
+	*docs/reference/gegl/tmpl/gegl-subtract.sgml
+	*docs/reference/gegl/tmpl/gegl-tile-iterator.sgml
+	*docs/reference/gegl/tmpl/gegl-tile-mgr.sgml
+	*docs/reference/gegl/tmpl/gegl-tile.sgml
+	*docs/reference/gegl/tmpl/gegl-types.sgml
+	*docs/reference/gegl/tmpl/gegl-unpremult.sgml
+	*docs/reference/gegl/tmpl/gegl-unused.sgml
+	*docs/reference/gegl/tmpl/gegl-utils.sgml
+
+	Documentation updates.
+
+
 Sat Mar 16 23:38:25 EST 2002 calvinw@mindspring.com
 
 	*gegl/Makefile.am
