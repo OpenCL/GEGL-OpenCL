@@ -934,6 +934,19 @@ init_image_data (char *indent)
       strcpy (e.string, tmp); 
       print_line (e);  
       }
+    if (symtab[i].type == TYPE_C_A_VECTOR && !symtab[i].inited) 
+      {
+      e = symtab[i];
+      symtab[i].inited = 1;
+      sprintf (tmp, "%s%s_c = %s_data_v;", indent, symtab[i].string, symtab[i].string);
+      strcpy (e.string, tmp); 
+      print_line (e); 
+      sprintf (tmp, "%sif (%s_has_a)%s  %s_a = %s_data[NUM_COLOR_CHAN];", 
+	  indent, symtab[i].string, indent, symtab[i].string, symtab[i].string);
+      strcpy (e.string, tmp);
+      print_line (e); 
+	
+      }
     if (symtab[i].type == TYPE_C_VECTOR && !symtab[i].inited)
       {
       e = symtab[i];
@@ -961,6 +974,8 @@ init_data_varible (char *s)
     }
   tmp[i*2  ] = '\0'; 
   printf ("\n%s%s *%s_data[%d];", tmp, DATATYPE_STR, s, e->num); 
+  printf ("\n%s int %s_has_alpha;", tmp, s); 
+
 }
 
 void
@@ -975,13 +990,15 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
     sprintf (tmp, "%s_c", get_sym (src.string)->string);
     dest->num = 3;
     }
-  else if (is_define && get_sym (src.string)->type == TYPE_CA_VECTOR && 
+  else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR ||
+	get_sym (src.string)->type == TYPE_C_A_VECTOR) && 
       !strcmp (src.string, get_sym (src.string)->string))
     {
     sprintf (tmp, "%s_ca", get_sym (src.string)->string);
     dest->num = 4;
     }
-  else if (is_define && get_sym (src.string)->type == TYPE_CA_VECTOR)
+  else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR ||
+	get_sym (src.string)->type == TYPE_C_A_VECTOR))
     {
     int l = strlen (src.string);
     if (src.string[l-1] == 'a' && src.string[l-2] == '_')
@@ -994,7 +1011,7 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
       dest->num = 3; 
       sprintf (tmp, "%s", src.string);
       }
-    } 
+    }
   else if (is_define && get_sym (src.string)->type == TYPE_VECTOR)
     sprintf (tmp, "%s_v", src.string);
   else if (!is_define && get_sym (src.string)->type == TYPE_VECTOR)
@@ -1037,6 +1054,15 @@ print_repeat (elem_t *dest, elem_t src, char *string)
       }
     sprintf (tmp, "%s %s_%s", t, string, NAME_COLOR_CHAN[NUM_COLOR_CHAN]); 
     }
+  else
+    {
+    for (i=0; i<NUM_COLOR_CHAN; i++)
+      {
+      sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHAN[i]);
+      strcpy(t, tmp);
+      }
+    sprintf (tmp, "%s %s_%s=NULL", t, string, NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
+    }
   strcpy (dest->string, tmp);
   
 }
@@ -1067,7 +1093,8 @@ print_line (elem_t src)
       else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
 	{
 	printf("[%d]", i);
-	k = src.num; 
+	if (src.type != TYPE_C_A_VECTOR)
+	  k = src.num; 
 	j++;
 	}
       else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
@@ -1530,7 +1557,6 @@ read_channel_names (char *chan_names)
     }
   
   NUM_COLOR_CHAN = i;
-
 }
 
 int

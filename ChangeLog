@@ -1,3 +1,9 @@
+Tue Mar 21 14:28:32 PST 2000 caro@rhythm.com
+
+	* I have added VectorCHan (color,alpha,has_alpha). This
+	means that I have added the varible, and changed the
+	init_data_image.
+
 Tue Mar 21 10:24:30 PST 2000 caro@rhythm.com
 	
 	* CHanged the arguments so that the last arg can be the
