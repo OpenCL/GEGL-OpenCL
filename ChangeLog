@@ -1,6 +1,12 @@
 Sun Sep 17 18:45:00 Garry R. Osgood <gosgood@idt.net>
 	*gegl/docs/pr_docs/introduction.tex
 	*gegl/docs/pr_docs/gimp.tex
+	Aligned doc structure and intro content overview
+	with Calvin's 09-17-2000 e-mail
+
+Sun Sep 17 18:45:00 Garry R. Osgood <gosgood@idt.net>
+	*gegl/docs/pr_docs/introduction.tex
+	*gegl/docs/pr_docs/gimp.tex
 	Changes to introduction, and document ordering, 
 	per Sept 16 2000 email to Caro, Calvin, Yosh. 
 
