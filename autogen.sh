@@ -104,31 +104,31 @@ if test x$AUTOMAKE != x; then
     check_version $VER $AUTOMAKE_REQUIRED_VERSION
 fi
 
-echo -n "checking for glib-gettextize >= $GLIB_REQUIRED_VERSION ... "
-if (glib-gettextize --version) < /dev/null > /dev/null 2>&1; then
-    VER=`glib-gettextize --version \
-         | grep glib-gettextize | sed "s/.* \([0-9.]*\)/\1/"`
-    check_version $VER $GLIB_REQUIRED_VERSION
-else
-    echo
-    echo "  You must have glib-gettextize installed to compile $PROJECT."
-    echo "  glib-gettextize is part of glib-2.0, so you should already"
-    echo "  have it. Make sure it is in your PATH."
-    DIE=1
-fi
+#echo -n "checking for glib-gettextize >= $GLIB_REQUIRED_VERSION ... "
+#if (glib-gettextize --version) < /dev/null > /dev/null 2>&1; then
+#    VER=`glib-gettextize --version \
+#         | grep glib-gettextize | sed "s/.* \([0-9.]*\)/\1/"`
+#    check_version $VER $GLIB_REQUIRED_VERSION
+#else
+#    echo
+#    echo "  You must have glib-gettextize installed to compile $PROJECT."
+#    echo "  glib-gettextize is part of glib-2.0, so you should already"
+#    echo "  have it. Make sure it is in your PATH."
+#    DIE=1
+#fi
 
-echo -n "checking for intltool >= $INTLTOOL_REQUIRED_VERSION ... "
-if (intltoolize --version) < /dev/null > /dev/null 2>&1; then
-    VER=`intltoolize --version \
-         | grep intltoolize | sed "s/.* \([0-9.]*\)/\1/"`
-    check_version $VER $INTLTOOL_REQUIRED_VERSION
-else
-    echo
-    echo "  You must have intltool installed to compile $PROJECT."
-    echo "  Get the latest version from"
-    echo "  ftp://ftp.gnome.org/pub/GNOME/sources/intltool/"
-    DIE=1
-fi
+#echo -n "checking for intltool >= $INTLTOOL_REQUIRED_VERSION ... "
+#if (intltoolize --version) < /dev/null > /dev/null 2>&1; then
+#    VER=`intltoolize --version \
+#         | grep intltoolize | sed "s/.* \([0-9.]*\)/\1/"`
+#    check_version $VER $INTLTOOL_REQUIRED_VERSION
+#else
+#    echo
+#    echo "  You must have intltool installed to compile $PROJECT."
+#    echo "  Get the latest version from"
+#    echo "  ftp://ftp.gnome.org/pub/GNOME/sources/intltool/"
+#    DIE=1
+#fi
 
 if test "$DIE" -eq 1; then
     echo
@@ -189,7 +189,7 @@ $AUTOMAKE --add-missing || exit 1
 autoconf || exit 1
 
 #glib-gettextize --copy --force || exit 1
-intltoolize --copy --force --automake || exit 1
+#intltoolize --copy --force --automake || exit 1
 
 cd $ORIGDIR
 
