@@ -1,0 +1,58 @@
+%h{
+#include "gegl-object.h"
+
+#ifndef __TYPEDEF_GEGL_IMAGE_MANAGER__
+#define __TYPEDEF_GEGL_IMAGE_MANAGER__
+typedef struct _GeglImageManager  GeglImageManager;
+#endif
+
+#ifndef __TYPEDEF_GEGL_IMAGE__
+#define __TYPEDEF_GEGL_IMAGE__
+typedef struct _GeglImage  GeglImage;
+#endif
+
+#ifndef __TYPEDEF_GEGL_TILE__
+#define __TYPEDEF_GEGL_TILE__
+typedef struct _GeglTile  GeglTile;
+#endif
+%}
+
+%{
+#include "gegl-image-manager.h"
+#include "gegl-image-manager-private.h"
+#include "gegl-object-private.h"
+#include "gegl-image.h"
+#include <stdio.h>
+%}
+
+class Gegl:Image:Manager from Gegl:Object {
+
+  protected 
+  gboolean 
+  constructor(self)
+  {
+    g_return_val_if_fail (!(GEGL_OBJECT(self)->constructed), FALSE);
+    
+    /* Chain up */
+    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+      return FALSE;
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    g_return_if_fail (object != NULL);
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  virtual protected void get_pixels (self, GeglImage *root, GeglImage *dest, GeglRect *roi);
+  virtual protected void delete_image (self, GeglImage *image);
+}
+
+%{
+%}
