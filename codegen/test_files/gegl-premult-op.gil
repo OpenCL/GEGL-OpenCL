@@ -115,7 +115,7 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
           }
         else
           {
-            dest_color = src_alpha * src_color;
+            dest_color = (Promote) src_alpha * src_color;
           }
         dest_alpha = src_alpha;
 

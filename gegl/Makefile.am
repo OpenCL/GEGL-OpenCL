@@ -270,7 +270,7 @@ tests: testgegl testgeglfile
 	$(GOB) $<
 
 %.gob: %.gil
-	../codegen/codegen --channel-names r,g,b --channel-data-file ../codegen/channel_data/float $< > $@ 
+	../codegen/codegen --channel-names r,g,b --channel-data-file ../codegen/channel_data/u16 $< > $@ 
 
 distclean-local: gilclean
 

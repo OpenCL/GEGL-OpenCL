@@ -149,7 +149,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN
 
-            a = (WP - src2_alpha) * src1_alpha;
+            a = (Promote)((WP - src2_alpha) * src1_alpha);
             b = src2_alpha;
             alpha = a + b;
 
@@ -157,7 +157,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
             if (alpha)
               {
-                dest_color = (a * src1_color  + b * src2_color)/alpha;
+                dest_color = (Promote)(a * src1_color + b * src2_color)/alpha;
               }
             else 
               {
@@ -176,7 +176,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN
 
-            alpha = src1_alpha * src2_alpha;
+            alpha = (Promote) src1_alpha * src2_alpha;
 
             dest_alpha = alpha;
 
@@ -201,7 +201,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN
 
-            alpha = (WP - src1_alpha) * src2_alpha;
+            alpha = (Promote) (WP - src1_alpha) * src2_alpha;
 
             dest_alpha = alpha;
 
@@ -234,7 +234,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
             if (alpha)
               {
-                dest_color = a * src1_color + b * src2_color;
+                dest_color = (Promote) a * src1_color + b * src2_color;
               }
             else 
               {
@@ -253,15 +253,15 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN
 
-            a = (WP - src2_alpha) * src1_alpha;
-            b = (WP - src1_alpha) * src2_alpha;
+            a = (Promote) (WP - src2_alpha) * src1_alpha;
+            b = (Promote) (WP - src1_alpha) * src2_alpha;
             alpha = a + b;
 
             dest_alpha = alpha;
 
             if (alpha)
               {
-                dest_color = (a * src1_color + b * src2_color)/alpha;
+                dest_color = (Promote) (a * src1_color + b * src2_color) / alpha;
               }
             else 
               {
@@ -329,7 +329,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
             a = (WP - src2_alpha);
             b = src2_alpha;
-            dest_color = (a * src1_color + b * src2_color);
+            dest_color = (Promote) (a * src1_color + b * src2_color);
 
 	    dX(dest,1);
 	    dX(src1,1);
@@ -380,7 +380,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
             a = WP - src2_alpha;
             b = src2_alpha;
-            dest_color = a * src1_color + b * src2_color;
+            dest_color = (Promote) (a * src1_color + b * src2_color);
 
 	    dX(dest,1);
 	    dX(src1,1);
@@ -493,7 +493,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
           {
             GENERIC_IMAGE_BLOCK_BEGIN 
 
-            alpha = (WP - src1_alpha);
+            alpha = WP - src1_alpha;
             dest_alpha = alpha;
             if (alpha)
               {
