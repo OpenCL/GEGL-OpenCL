@@ -1,3 +1,9 @@
+Feb 11 18:24:50 EST 2000 calvinw@mindspring.com
+
+	* removed the Iterator type routines from ImageBuffer. 
+  
+	* updated testgeglfile to use these new routines. 
+
 Fri Feb 11 17:38:13 EST 2000 calvinw@mindspring.com
 
 	* rm gegl-chancopy-op.gob (renamed it)

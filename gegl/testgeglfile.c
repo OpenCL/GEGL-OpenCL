@@ -8,6 +8,7 @@
 #include "gegl-color-model-gray-float.h"
 #include "gegl-color-model-gray-u8.h"
 #include "gegl-image-buffer.h"
+#include "gegl-image-iterator.h"
 #include "gegl-composite-op.h"
 #include "gegl-utils.h"
 #include "gegl-fill-op.h"
@@ -53,20 +54,23 @@ display_image(GtkWidget *window, GtkWidget *preview,
   h = current_rect.h;
   w = current_rect.w;
   
-  
-  for(i=0; i<h; i++){
-    gegl_image_buffer_get_scanline_data(image_buffer, (guchar**)data_ptrs);
-    
-    /* convert the data_ptrs */
-    /* uchar -> float -> unsigned 8bit */   
-    for(j=0; j<w; j++){
-      tmp[0] = data_ptrs[0][j] * 255;
-      tmp[1] = data_ptrs[1][j] * 255;
-      tmp[2] = data_ptrs[2][j] * 255;
+  { 
+    GeglImageIterator *iterator = gegl_image_iterator_new(image_buffer);
+    for(i=0; i<h; i++){
+      gegl_image_iterator_get_scanline_data(iterator, (guchar**)data_ptrs);
+      
+      /* convert the data_ptrs */
+      /* uchar -> float -> unsigned 8bit */   
+      for(j=0; j<w; j++){
+	tmp[0] = data_ptrs[0][j] * 255;
+	tmp[1] = data_ptrs[1][j] * 255;
+	tmp[2] = data_ptrs[2][j] * 255;
 
-      gtk_preview_draw_row(GTK_PREVIEW(preview), tmp, j, i, 1);
-    }       
-    gegl_image_buffer_next_scanline(image_buffer);  
+	gtk_preview_draw_row(GTK_PREVIEW(preview), tmp, j, i, 1);
+      }       
+      gegl_image_iterator_next_scanline(iterator);  
+      gegl_object_destroy (GEGL_OBJECT(iterator));
+     }
   }
 
   g_free(data_ptrs); 
@@ -82,6 +86,7 @@ main(int argc, char *argv[])
 {
   GeglColorModel  	*color_model[3];
   GeglImageBuffer 	*image_buffer[3];
+  GeglImageIterator     *iterator[3];
   GtkWidget       	*window[10];
   GtkWidget       	*preview[10];
   int             	i, j, k;
@@ -157,22 +162,25 @@ main(int argc, char *argv[])
     /* init the rect */
     requested_rect.x = 0;           requested_rect.y = 0;
     requested_rect.w = width[k];    requested_rect.h = height[k];   
+   
+    iterator[k] = gegl_image_iterator_new(image_buffer[k]);
+    gegl_image_iterator_request_rect(iterator[k], &requested_rect);
+    gegl_image_iterator_get_current_rect(iterator[k], &current_rect[k]);
     
-    gegl_image_buffer_request_rect(image_buffer[k], &requested_rect);
-    gegl_image_buffer_get_current_rect(image_buffer[k], &current_rect[k]);
   } 
   display_image(window[0], preview[0], image_buffer[0], current_rect[0]);
   display_image(window[1], preview[1], image_buffer[1], current_rect[1]);
  
   requested_rect.x = 0;           requested_rect.y = 0;
   requested_rect.w = width[0];    requested_rect.h = height[0];
-  gegl_image_buffer_request_rect(image_buffer[0], &requested_rect);
-  gegl_image_buffer_get_current_rect(image_buffer[0], &current_rect[0]);
+
+  gegl_image_iterator_request_rect(iterator[0], &requested_rect);
+  gegl_image_iterator_get_current_rect(iterator[0], &current_rect[0]);
   
   requested_rect.x = 0;           requested_rect.y = 0;
   requested_rect.w = width[1];    requested_rect.h = height[1];
-  gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
-  gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+  gegl_image_iterator_request_rect(iterator[1], &requested_rect);
+  gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
 
 #if 0  
   /* test the comp ops :) */ 
@@ -184,8 +192,8 @@ main(int argc, char *argv[])
     
     requested_rect.x = 0;           requested_rect.y = 0;
     requested_rect.w = width[1];    requested_rect.h = height[1];
-    gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
-    gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+    gegl_image_iterator_request_rect(iterator[1], &requested_rect);
+    gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
     create_preview(&window[2+k], &preview[2+k], width[1], height[1], win_name[k]);  
     display_image(window[2+k], preview[2+k], image_buffer[1], current_rect[1]);
     gegl_image_buffer_set_data(image_buffer[1], image_data);
@@ -201,8 +209,8 @@ main(int argc, char *argv[])
 		    
       requested_rect.x = 0;           requested_rect.y = 0;
       requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
-      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
+      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
       create_preview(&window[2], &preview[2], width[1], height[1], win_name[0]);
       display_image(window[2], preview[2], image_buffer[1], current_rect[1]);
       gegl_image_buffer_set_data(image_buffer[1], image_data);
@@ -214,8 +222,8 @@ main(int argc, char *argv[])
                     
       requested_rect.x = 0;           requested_rect.y = 0;
       requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
-      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
+      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
       create_preview(&window[4], &preview[4], width[1], height[1], win_name[1]);
       display_image(window[4], preview[4], image_buffer[1], current_rect[1]);
       gegl_image_buffer_set_data(image_buffer[1], image_data);
@@ -228,8 +236,8 @@ main(int argc, char *argv[])
                     
       requested_rect.x = 0;           requested_rect.y = 0;
       requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
-      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
+      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
       create_preview(&window[5], &preview[5], width[1], height[1], win_name[2]);
       display_image(window[5], preview[5], image_buffer[1], current_rect[1]);
       gegl_image_buffer_set_data(image_buffer[1], image_data);
@@ -242,8 +250,8 @@ main(int argc, char *argv[])
                     
       requested_rect.x = 0;           requested_rect.y = 0;
       requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
-      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
+      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
       create_preview(&window[6], &preview[6], width[1], height[1], win_name[3]);
       display_image(window[6], preview[6], image_buffer[1], current_rect[1]);
       gegl_image_buffer_set_data(image_buffer[1], image_data);
@@ -256,8 +264,8 @@ main(int argc, char *argv[])
                     
       requested_rect.x = 0;           requested_rect.y = 0;
       requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
-      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
+      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
       create_preview(&window[7], &preview[7], width[1], height[1], win_name[4]);
       display_image(window[7], preview[7], image_buffer[1], current_rect[1]);
       gegl_image_buffer_set_data(image_buffer[1], image_data);
@@ -270,8 +278,8 @@ main(int argc, char *argv[])
 	                        
       requested_rect.x = 0;           requested_rect.y = 0;
       requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
-      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
+      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
       create_preview(&window[8], &preview[8], width[1], height[1], win_name[5]);
       display_image(window[8], preview[8], image_buffer[1], current_rect[1]);
       gegl_image_buffer_set_data(image_buffer[1], image_data);
@@ -283,8 +291,8 @@ main(int argc, char *argv[])
 	                        
       requested_rect.x = 0;           requested_rect.y = 0;
       requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
-      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
+      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
       create_preview(&window[9], &preview[9], width[1], height[1], win_name[6]);
       display_image(window[9], preview[9], image_buffer[1], current_rect[1]);
       gegl_image_buffer_set_data(image_buffer[1], image_data);
@@ -297,8 +305,8 @@ main(int argc, char *argv[])
 	                        
       requested_rect.x = 0;           requested_rect.y = 0;
       requested_rect.w = width[1];    requested_rect.h = height[1];
-      gegl_image_buffer_request_rect(image_buffer[1], &requested_rect);
-      gegl_image_buffer_get_current_rect(image_buffer[1], &current_rect[1]);
+      gegl_image_iterator_request_rect(iterator[1], &requested_rect);
+      gegl_image_iterator_get_current_rect(iterator[1], &current_rect[1]);
       create_preview(&window[3], &preview[3], width[1], height[1], win_name[7]);
       display_image(window[3], preview[3], image_buffer[1], current_rect[1]);
       gegl_image_buffer_set_data(image_buffer[1], image_data);
