@@ -1,3 +1,9 @@
+Thu Jun  7 02:23:42 EDT 2001 calvinw@mindspring.com
+	*docs/geglClasses.html
+	*docs/images/image_request.png
+	*docs/images/image_to_image_manager_bridge.png
+	Updating the geglClasses.html doc to match the last checkin.
+
 Wed Jun  6 00:08:03 EDT 2001 calvinw@mindspring.com
 	
 	*gegl/gegl-statistics-op.gob
