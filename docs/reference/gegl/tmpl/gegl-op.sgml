@@ -146,6 +146,14 @@ Heres an example of setting up a Mult op and calling apply on it:
 @roi: 
 
 
+<!-- ##### FUNCTION gegl_op_init_attributes ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
 <!-- ##### FUNCTION gegl_op_get_nth_attributes ##### -->
 <para>
 

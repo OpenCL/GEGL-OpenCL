@@ -19,6 +19,7 @@ extern Test * create_copy_test();
 extern Test * create_dfs_visitor_test();
 extern Test * create_dfs_visitor_mult_out_test();
 extern Test * create_dump_visitor_test();
+extern Test * create_fade_test();
 extern Test * create_fill_test();
 extern Test * create_graph_apply_test();
 extern Test * create_graph_node_test();
@@ -26,20 +27,22 @@ extern Test * create_haverect_test();
 extern Test * create_image_test();
 extern Test * create_mem_buffer_test();
 extern Test * create_mem_image_mgr_test();
+extern Test * create_multiply_test();
 extern Test * create_needrect_test();
 extern Test * create_node_test();
 extern Test * create_node_mult_out_test();
 extern Test * create_object_test();
 extern Test * create_op_test();
+extern Test * create_pipe_test();
 extern Test * create_point_op_test();
 extern Test * create_print_test();
 extern Test * create_sampled_image_test();
 extern Test * create_simpletree_test();
-extern Test * create_stat_op_test();
+extern Test * create_tiled_image_test();
 extern Test * create_tile_iterator_test();
 extern Test * create_tile_mgr_test();
 extern Test * create_tile_test();
-extern Test * create_value_test();
+extern Test * create_value_tile_test();
 
 int
 main (int argc, char *argv[])
@@ -69,26 +72,29 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_dfs_visitor_mult_out_test());
     cs_addTest(suite, create_dfs_visitor_test());
     cs_addTest(suite, create_dump_visitor_test());
+    cs_addTest(suite, create_fade_test());
     cs_addTest(suite, create_fill_test());
     cs_addTest(suite, create_graph_apply_test());
     cs_addTest(suite, create_graph_node_test());
     cs_addTest(suite, create_haverect_test());
     cs_addTest(suite, create_image_test());
     cs_addTest(suite, create_mem_buffer_test());
+    cs_addTest(suite, create_multiply_test());
     cs_addTest(suite, create_needrect_test());
     cs_addTest(suite, create_node_test());
     cs_addTest(suite, create_node_mult_out_test());
     cs_addTest(suite, create_object_test());
     cs_addTest(suite, create_op_test());
+    cs_addTest(suite, create_pipe_test());
     cs_addTest(suite, create_point_op_test());
     cs_addTest(suite, create_print_test());
     cs_addTest(suite, create_simpletree_test());
     cs_addTest(suite, create_sampled_image_test());
-    cs_addTest(suite, create_stat_op_test());
+    cs_addTest(suite, create_tiled_image_test());
     cs_addTest(suite, create_tile_test());
     cs_addTest(suite, create_tile_iterator_test());
     cs_addTest(suite, create_tile_mgr_test());
-    cs_addTest(suite, create_value_test());
+    cs_addTest(suite, create_value_tile_test());
 #endif
 
     cs_setStream(suite, stdout);

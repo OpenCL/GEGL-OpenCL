@@ -18,7 +18,7 @@ test_simpletree_apply(Test *t)
 
          add  -> dest 
         /   \ 
-  const_mult fill2 
+  fade fill2 
       |
      fill1  
 
@@ -30,16 +30,16 @@ test_simpletree_apply(Test *t)
 
   */ 
 
-  GeglOp * fill1 = testutils_rgb_fill(.1,.2,.3); 
-  GeglOp * fill2 = testutils_rgb_fill(.5,.6,.7); 
+  GeglOp * fill1 = testutils_fill("RgbFloat",.1,.2,.3,0); 
+  GeglOp * fill2 = testutils_fill("RgbFloat",.5,.6,.7,0); 
 
-  GeglOp * const_mult = g_object_new (GEGL_TYPE_CONST_MULT,
+  GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
                                       "source", fill1,
                                       "multiplier", .5,
                                       NULL); 
 
   GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
-                               "source0", const_mult,
+                               "source0", fade,
                                "source1", fill2,
                                NULL);  
 
@@ -53,7 +53,7 @@ test_simpletree_apply(Test *t)
   ct_test(t, testutils_check_rgb_float_pixel_xy(GEGL_IMAGE(dest), 1, 1, .55, .7, .85));  
 
   g_object_unref(add);
-  g_object_unref(const_mult);
+  g_object_unref(fade);
 
   g_object_unref(fill1);
   g_object_unref(fill2);
@@ -70,7 +70,7 @@ test_simpletree_apply2(Test *t)
         /   \ 
      print  fill2 
       |
-  const_mult   
+  fade   
       |
      print
       |
@@ -84,20 +84,20 @@ test_simpletree_apply2(Test *t)
 
   */ 
 
-  GeglOp * fill1 = testutils_rgb_fill(.1,.2,.3); 
+  GeglOp * fill1 = testutils_fill("RgbFloat",.1,.2,.3,0); 
   GeglOp * print1 = g_object_new(GEGL_TYPE_PRINT,
                                  "source", fill1,
                                  NULL);
 
-  GeglOp * fill2 = testutils_rgb_fill(.5,.6,.7); 
+  GeglOp * fill2 = testutils_fill("RgbFloat",.5,.6,.7,0); 
 
-  GeglOp * const_mult = g_object_new (GEGL_TYPE_CONST_MULT,
-                                      "source", print1,
-                                      "multiplier", .5,
-                                      NULL); 
+  GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
+                                "source", print1,
+                                "multiplier", .5,
+                                NULL); 
 
   GeglOp * print2 = g_object_new(GEGL_TYPE_PRINT,
-                                 "source", const_mult,
+                                 "source", fade,
                                  NULL);
   GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
                                "source0", print2,
@@ -109,7 +109,7 @@ test_simpletree_apply2(Test *t)
   ct_test(t, testutils_check_rgb_float_pixel(GEGL_IMAGE(dest), .55, .7, .85));  
 
   g_object_unref(add);
-  g_object_unref(const_mult);
+  g_object_unref(fade);
   g_object_unref(fill1);
   g_object_unref(fill2);
   g_object_unref(print1);
@@ -123,7 +123,7 @@ test_simple_diamond_apply(Test *t)
   /* 
          add 
         /   \ 
-    cmult1 cmult2 
+    fade1 fade2 
        \    / 
         fill  
 
@@ -135,18 +135,18 @@ test_simple_diamond_apply(Test *t)
 
   */ 
 
-  GeglOp * fill = testutils_rgb_fill(.1,.2,.3); 
-  GeglOp * cmult1 = g_object_new (GEGL_TYPE_CONST_MULT,
+  GeglOp * fill = testutils_fill("RgbFloat",.1,.2,.3,0); 
+  GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
                                   "source", fill,
                                   "multiplier", .5,
                                   NULL); 
-  GeglOp * cmult2 = g_object_new (GEGL_TYPE_CONST_MULT,
+  GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
                                   "source", fill,
                                   "multiplier", 2.0,
                                   NULL); 
   GeglOp * add = g_object_new (GEGL_TYPE_ADD, 
-                               "source0", cmult1,
-                               "source1", cmult2,
+                               "source0", fade1,
+                               "source1", fade2,
                                NULL);  
 
   gegl_op_apply(add); 
@@ -154,8 +154,8 @@ test_simple_diamond_apply(Test *t)
   ct_test(t, testutils_check_rgb_float_pixel(GEGL_IMAGE(add), .25, .5, .75));  
 
   g_object_unref(add);
-  g_object_unref(cmult1);
-  g_object_unref(cmult2);
+  g_object_unref(fade1);
+  g_object_unref(fade2);
   g_object_unref(fill);
 }
 
@@ -163,9 +163,9 @@ static void
 test_simple_chain_apply(Test *t)
 {
   /* 
-      cmult2 
+      fade2 
         |  
-      cmult1  
+      fade1  
         |
       fill  
 
@@ -177,24 +177,24 @@ test_simple_chain_apply(Test *t)
 
   */ 
 
-  GeglOp * fill = testutils_rgb_fill(.1,.2,.3); 
+  GeglOp * fill = testutils_fill("RgbFloat",.1,.2,.3,0); 
 
-  GeglOp * cmult1 = g_object_new (GEGL_TYPE_CONST_MULT,
+  GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
                                       "source", fill,
                                       "multiplier", .5,
                                       NULL); 
 
-  GeglOp * cmult2 = g_object_new (GEGL_TYPE_CONST_MULT,
-                                      "source", cmult1,
+  GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
+                                      "source", fade1,
                                       "multiplier", .5,
                                       NULL); 
 
-  gegl_op_apply(cmult2); 
+  gegl_op_apply(fade2); 
 
-  ct_test(t, testutils_check_rgb_float_pixel(GEGL_IMAGE(cmult2), .025, .05, .075));  
+  ct_test(t, testutils_check_rgb_float_pixel(GEGL_IMAGE(fade2), .025, .05, .075));  
 
-  g_object_unref(cmult1);
-  g_object_unref(cmult2);
+  g_object_unref(fade1);
+  g_object_unref(fade2);
   g_object_unref(fill);
 }
 
@@ -203,7 +203,7 @@ test_simple_roi_change(Test *t)
 {
 
   /* 
-     cmult
+     fade
        |
      fill  
               
@@ -215,25 +215,25 @@ test_simple_roi_change(Test *t)
   */ 
 
   GeglRect roi = {0,0,1,1};
-  GeglOp * fill = testutils_rgb_fill(.1,.2,.3); 
-  GeglOp * cmult = g_object_new (GEGL_TYPE_CONST_MULT,
+  GeglOp * fill = testutils_fill("RgbFloat",.1,.2,.3,0); 
+  GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
                                       "source", fill,
                                       "multiplier", .5,
                                       NULL); 
 
-  gegl_op_apply_image(cmult, GEGL_OP(dest), &roi); 
+  gegl_op_apply_image(fade, GEGL_OP(dest), &roi); 
   ct_test(t, testutils_check_rgb_float_pixel_xy(GEGL_IMAGE(dest), 0, 0, .05, .1, .15));  
   
 
 #if 0
   /* Change the roi and try it again. */
   gegl_rect_set(&roi, 1,1,1,1); 
-  gegl_op_apply_image(cmult, GEGL_OP(dest), &roi); 
+  gegl_op_apply_image(fade, GEGL_OP(dest), &roi); 
   ct_test(t, testutils_check_rgb_float_pixel_xy(GEGL_IMAGE(dest), 1, 1, .05, .1, .15));  
 #endif
 
 
-  g_object_unref(cmult);
+  g_object_unref(fade);
   g_object_unref(fill);
 }
 
@@ -249,7 +249,6 @@ simpletree_test_setup(Test *test)
                        "height", SAMPLED_IMAGE_HEIGHT,
                        NULL);  
 
-  g_object_unref(rgb_float);
 }
 
 static void

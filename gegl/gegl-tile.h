@@ -56,6 +56,9 @@ void            gegl_tile_get_data_at           (GeglTile * self,
                                                  gpointer * data,
                                                  gint x,
                                                  gint y);
+gpointer*       gegl_tile_data_pointers         (GeglTile * self, 
+                                                 gint x, 
+                                                 gint y);
 
 gboolean        gegl_tile_alloc                 (GeglTile * self,
                                                  GeglRect * area,

@@ -1,17 +1,16 @@
 #include "gegl-const-mult.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-tile.h"
 #include "gegl-tile-iterator.h"
-#include "gegl-color-model.h"
 #include "gegl-utils.h"
-#include "gegl-attributes.h"
-#include "gegl-value-types.h"
-#include <stdio.h>
 
 enum
 {
   PROP_0, 
-  PROP_MULTIPLIER,
+  PROP_MULT0,
+  PROP_MULT1,
+  PROP_MULT2,
+  PROP_MULT3,
+  PROP_MULT4,
   PROP_LAST 
 };
 
@@ -20,15 +19,9 @@ static void init (GeglConstMult * self, GeglConstMultClass * klass);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void prepare (GeglFilter * filter, GList * output_attributes, GList *input_attributes);
+static GeglScanlineFunc get_scanline_func(GeglUnary * unary, GeglColorSpace space, GeglChannelDataType type);
 
-static void scanline_rgb_float (GeglFilter * filter, GeglTileIterator ** iters, gint width);
-static void scanline_rgb_u16 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
-static void scanline_rgb_u8 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
-
-static void scanline_gray_float (GeglFilter * filter, GeglTileIterator ** iters, gint width);
-static void scanline_gray_u16 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
-static void scanline_gray_u8 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static void const_mult_float (GeglFilter * filter, GeglTileIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -52,7 +45,7 @@ gegl_const_mult_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GEGL_TYPE_POINT_OP, 
+      type = g_type_register_static (GEGL_TYPE_UNARY, 
                                      "GeglConstMult", 
                                      &typeInfo, 
                                      0);
@@ -61,38 +54,79 @@ gegl_const_mult_get_type (void)
 }
 
 static void 
-init (GeglConstMult * self, 
-      GeglConstMultClass * klass)
-{
-  g_object_set(self, "num_inputs", 1, NULL);
-  return;
-}
-
-static void 
 class_init (GeglConstMultClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
-  GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
+  GeglUnaryClass *unary_class = GEGL_UNARY_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
-  filter_class->prepare = prepare;
+  unary_class->get_scanline_func = get_scanline_func;
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-   
-  g_object_class_install_property (gobject_class,
-                                   PROP_MULTIPLIER,
-                                   g_param_spec_float ("multiplier",
-                                                       "GeglConstMult Multiplier",
-                                                       "Multiply source pixels by constant multiplier",
-                                                       G_MINFLOAT, 
+
+  g_object_class_install_property (gobject_class, PROP_MULT0,
+                                   g_param_spec_float ("mult0",
+                                                       "Mult0",
+                                                       "Multiplier for 0th channel.",
+                                                       -G_MAXFLOAT,
                                                        G_MAXFLOAT,
                                                        1.0,
                                                        G_PARAM_READWRITE | 
                                                        G_PARAM_CONSTRUCT));
 
-  return;
+  g_object_class_install_property (gobject_class, PROP_MULT1,
+                                   g_param_spec_float ("mult1",
+                                                       "Mult1",
+                                                       "Multiplier for 1st channel.",
+                                                       -G_MAXFLOAT,
+                                                       G_MAXFLOAT,
+                                                       1.0,
+                                                       G_PARAM_READWRITE | 
+                                                       G_PARAM_CONSTRUCT));
+
+  g_object_class_install_property (gobject_class, PROP_MULT2,
+                                   g_param_spec_float ("mult2",
+                                                       "Mult2",
+                                                       "Multiplier for 2nd channel.",
+                                                       -G_MAXFLOAT,
+                                                       G_MAXFLOAT,
+                                                       1.0,
+                                                       G_PARAM_READWRITE | 
+                                                       G_PARAM_CONSTRUCT));
+
+  g_object_class_install_property (gobject_class, PROP_MULT3,
+                                   g_param_spec_float ("mult3",
+                                                       "Mult3",
+                                                       "Multiplier for 3rd channel.",
+                                                       -G_MAXFLOAT,
+                                                       G_MAXFLOAT,
+                                                       1.0,
+                                                       G_PARAM_READWRITE | 
+                                                       G_PARAM_CONSTRUCT));
+
+  g_object_class_install_property (gobject_class, PROP_MULT4,
+                                   g_param_spec_float ("mult4",
+                                                       "Mult4",
+                                                       "Multiplier for 4th channel.",
+                                                       -G_MAXFLOAT,
+                                                       G_MAXFLOAT,
+                                                       1.0,
+                                                       G_PARAM_READWRITE | 
+                                                       G_PARAM_CONSTRUCT));
+
+}
+
+static void 
+init (GeglConstMult * self, 
+      GeglConstMultClass * klass)
+{
+  self->mult0 = 1.0;
+  self->mult1 = 1.0;
+  self->mult2 = 1.0;
+  self->mult3 = 1.0;
+  self->mult4 = 1.0;
 }
 
 static void
@@ -101,12 +135,23 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglConstMult *self = GEGL_CONST_MULT (gobject);
-
+  GeglConstMult *const_mult = GEGL_CONST_MULT(gobject);
   switch (prop_id)
   {
-    case PROP_MULTIPLIER:
-      g_value_set_float (value, gegl_const_mult_get_multiplier(self));
+    case PROP_MULT0:
+      g_value_set_float(value, const_mult->mult0);  
+      break;
+    case PROP_MULT1:
+      g_value_set_float(value, const_mult->mult1);  
+      break;
+    case PROP_MULT2:
+      g_value_set_float(value, const_mult->mult2);  
+      break;
+    case PROP_MULT3:
+      g_value_set_float(value, const_mult->mult3);  
+      break;
+    case PROP_MULT4:
+      g_value_set_float(value, const_mult->mult4);  
       break;
     default:
       break;
@@ -119,400 +164,97 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglConstMult *self = GEGL_CONST_MULT (gobject);
-
+  GeglConstMult *const_mult = GEGL_CONST_MULT(gobject);
   switch (prop_id)
   {
-    case PROP_MULTIPLIER:
-      gegl_const_mult_set_multiplier (self,g_value_get_float(value));
+    case PROP_MULT0:
+      const_mult->mult0 = g_value_get_float(value);  
+      break;
+    case PROP_MULT1:
+      const_mult->mult1 = g_value_get_float(value);  
+      break;
+    case PROP_MULT2:
+      const_mult->mult2 = g_value_get_float(value);  
+      break;
+    case PROP_MULT3:
+      const_mult->mult3 = g_value_get_float(value);  
+      break;
+    case PROP_MULT4:
+      const_mult->mult4 = g_value_get_float(value);  
       break;
     default:
       break;
   }
 }
 
-gfloat
-gegl_const_mult_get_multiplier (GeglConstMult * self)
+/* scanline_funcs[data type] */
+static GeglScanlineFunc scanline_funcs[] = 
+{ 
+  NULL, 
+  NULL, 
+  const_mult_float, 
+  NULL 
+};
+
+static GeglScanlineFunc
+get_scanline_func(GeglUnary * unary,
+                  GeglColorSpace space,
+                  GeglChannelDataType type)
 {
-  g_return_val_if_fail (self != NULL, 0);
-  g_return_val_if_fail (GEGL_IS_CONST_MULT (self), 0);
-   
-  return self->multiplier;
+  return scanline_funcs[type];
 }
 
-void
-gegl_const_mult_set_multiplier(GeglConstMult * self, 
-                               gfloat multiplier)
-{
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_CONST_MULT (self));
-   
-  self->multiplier = multiplier;
-}
+static void                                                            
+const_mult_float (GeglFilter * filter,              
+            GeglTileIterator ** iters,        
+            gint width)                       
+{                                                                       
+  GeglConstMult * self = GEGL_CONST_MULT(filter);
+  gfloat mult0 = self->mult0;
+  gfloat mult1 = self->mult1;
+  gfloat mult2 = self->mult2;
+  gfloat mult3 = self->mult3;
 
-static void 
-prepare (GeglFilter * filter, 
-         GList * output_attributes,
-         GList * input_attributes)
-{
-  GeglPointOp *point_op = GEGL_POINT_OP(filter); 
-  GeglAttributes *dest_attributes = 
-    (GeglAttributes*)g_list_nth_data(output_attributes, 0); 
-  GeglTile *dest = (GeglTile *)g_value_get_object(dest_attributes->value);
-  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
+  gfloat **d = (gfloat**)gegl_tile_iterator_color_channels(iters[0]);
+  gfloat *da = (gfloat*)gegl_tile_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_tile_iterator_get_num_colors(iters[0]);
 
-  g_return_if_fail(dest_cm);
+  gfloat **a = (gfloat**)gegl_tile_iterator_color_channels(iters[1]);
+  gfloat *aa = (gfloat*)gegl_tile_iterator_alpha_channel(iters[1]);
+  gint a_color_chans = gegl_tile_iterator_get_num_colors(iters[1]);
 
-  /* Get correct scanline func for this color model */
+  gint alpha_mask = 0x0;
+
+  if(aa)
+    alpha_mask |= GEGL_A_ALPHA; 
+
   {
-    GeglChannelDataType type = gegl_color_model_data_type(dest_cm);
-    GeglColorSpace space = gegl_color_model_color_space(dest_cm);
+    gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;   
+    gfloat *d1 = (d_color_chans > 1) ? d[1]: NULL;
+    gfloat *d2 = (d_color_chans > 2) ? d[2]: NULL;
 
-    if(space == GEGL_COLOR_SPACE_RGB)
-      {
-        if(type == GEGL_FLOAT)
-          point_op->scanline_processor->func = scanline_rgb_float;        
-        else if(type == GEGL_U16)
-          point_op->scanline_processor->func = scanline_rgb_u16;        
-        else if(type == GEGL_U8)
-          point_op->scanline_processor->func = scanline_rgb_u8;        
-      }
-    else if(space == GEGL_COLOR_SPACE_GRAY)
-      {
-        if(type == GEGL_FLOAT)
-          point_op->scanline_processor->func = scanline_gray_float;        
-        else if(type == GEGL_U16)
-          point_op->scanline_processor->func = scanline_gray_u16;        
-        else if(type == GEGL_U8)
-          point_op->scanline_processor->func = scanline_gray_u8;        
-      }
-    else 
-      {
-        g_error("Color Space not supported for ADD");
+    gfloat *a0 = (a_color_chans > 0) ? a[0]: NULL;   
+    gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
+    gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
+
+    /* This needs to actually match multipliers to channels returned */
+    while(width--)                                                        
+      {                                                                   
+        switch(d_color_chans)
+          {
+            case 3: *d2++ = mult2 * *a2++;
+            case 2: *d1++ = mult1 * *a1++;
+            case 1: *d0++ = mult0 * *a0++;
+            case 0:        
+          }
+
+        if(alpha_mask == GEGL_A_ALPHA)
+          {
+              *da++ = mult3 * *aa++;
+          }
       }
   }
-}
 
-static void 
-scanline_rgb_float (GeglFilter * filter, 
-                    GeglTileIterator ** iters, 
-                    gint width)
-{
-  GeglConstMult *self = GEGL_CONST_MULT(filter);
-  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
-  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[1]);
-
-  gfloat *dest_data[4];
-  gboolean dest_has_alpha;
-  gfloat *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
-  gfloat *src_data[4];
-  gboolean src_has_alpha;
-  gfloat *src_r, *src_g, *src_b, *src_alpha=NULL;
-  float multiplier;
-
-  multiplier = self->multiplier;
-  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
-  src_has_alpha = gegl_color_model_has_alpha(src_cm); 
-
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
-  gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
-
-  dest_r = dest_data[0];
-  dest_g = dest_data[1];
-  dest_b = dest_data[2];
-  if (dest_has_alpha)
-    dest_alpha = dest_data[3];
-
-  src_r = src_data[0];
-  src_g = src_data[1];
-  src_b = src_data[2];
-  if (src_has_alpha)
-    src_alpha = src_data[3];
-
-
-  while (width--)
-    {
-      *dest_r = multiplier * *src_r;
-      *dest_g = multiplier * *src_g;
-      *dest_b = multiplier * *src_b;
-      if (dest_has_alpha)
-        *dest_alpha = multiplier * *src_alpha;
-      dest_r++;
-      dest_g++;
-      dest_b++;
-      if (dest_has_alpha)
-        dest_alpha++;
-
-      src_r++;
-      src_g++;
-      src_b++;
-      if (src_has_alpha)
-        src_alpha++;
-
-    }
-}
-
-static void 
-scanline_rgb_u16 (GeglFilter * filter, 
-                  GeglTileIterator ** iters, 
-                  gint width)
-{
-  GeglConstMult *self = GEGL_CONST_MULT(filter);
-  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
-  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[1]);
-
-  guint16 *dest_data[4];
-  gboolean dest_has_alpha;
-  guint16 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
-  guint16 *src_data[4];
-  gboolean src_has_alpha;
-  guint16 *src_r, *src_g, *src_b, *src_alpha=NULL;
-  float multiplier;
-
-  multiplier = self->multiplier;
-  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
-  src_has_alpha = gegl_color_model_has_alpha(src_cm); 
-
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
-  gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
-
-  dest_r = dest_data[0];
-  dest_g = dest_data[1];
-  dest_b = dest_data[2];
-  if (dest_has_alpha)
-    dest_alpha = dest_data[3];
-
-  src_r = src_data[0];
-  src_g = src_data[1];
-  src_b = src_data[2];
-  if (src_has_alpha)
-    src_alpha = src_data[3];
-
-
-  while (width--)
-    {
-      *dest_r = ROUND (multiplier * *src_r);
-      *dest_g = ROUND (multiplier * *src_g);
-      *dest_b = ROUND (multiplier * *src_b);
-      if (dest_has_alpha)
-        *dest_alpha = ROUND (multiplier * *src_alpha);
-      dest_r++;
-      dest_g++;
-      dest_b++;
-      if (dest_has_alpha)
-        dest_alpha++;
-
-      src_r++;
-      src_g++;
-      src_b++;
-      if (src_has_alpha)
-        src_alpha++;
-
-    }
-}
-
-static void 
-scanline_rgb_u8 (GeglFilter * filter, 
-                 GeglTileIterator ** iters, 
-                 gint width)
-{
-  GeglConstMult *self = GEGL_CONST_MULT(filter);
-  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
-  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[1]);
-
-  guint8 *dest_data[4];
-  gboolean dest_has_alpha;
-  guint8 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
-  guint8 *src_data[4];
-  gboolean src_has_alpha;
-  guint8 *src_r, *src_g, *src_b, *src_alpha=NULL;
-  float multiplier;
-
-  multiplier = self->multiplier;
-  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
-  src_has_alpha = gegl_color_model_has_alpha(src_cm); 
-
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
-  gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
-
-  dest_r = dest_data[0];
-  dest_g = dest_data[1];
-  dest_b = dest_data[2];
-  if (dest_has_alpha)
-    dest_alpha = dest_data[3];
-
-  src_r = src_data[0];
-  src_g = src_data[1];
-  src_b = src_data[2];
-  if (src_has_alpha)
-    src_alpha = src_data[3];
-
-
-  while (width--)
-    {
-      *dest_r = ROUND (multiplier * *src_r);
-      *dest_g = ROUND (multiplier * *src_g);
-      *dest_b = ROUND (multiplier * *src_b);
-      if (dest_has_alpha)
-        *dest_alpha = ROUND (multiplier * *src_alpha);
-      dest_r++;
-      dest_g++;
-      dest_b++;
-      if (dest_has_alpha)
-        dest_alpha++;
-
-      src_r++;
-      src_g++;
-      src_b++;
-      if (src_has_alpha)
-        src_alpha++;
-
-    }
-}
-
-static void 
-scanline_gray_float (GeglFilter * filter, 
-          GeglTileIterator ** iters, 
-          gint width)
-{
-  GeglConstMult *self = GEGL_CONST_MULT(filter);
-  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
-  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[1]);
-
-  gfloat *dest_data[2];
-  gboolean dest_has_alpha;
-  gfloat *dest_gray, *dest_alpha=NULL;
-  gfloat *src_data[2];
-  gboolean src_has_alpha;
-  gfloat *src_gray, *src_alpha=NULL;
-  float multiplier;
-
-  multiplier = self->multiplier;
-  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
-  src_has_alpha = gegl_color_model_has_alpha(src_cm); 
-
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
-  gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
-
-  dest_gray = dest_data[0];
-  if (dest_has_alpha)
-    dest_alpha = dest_data[1];
-
-  src_gray = src_data[0];
-  if (src_has_alpha)
-    src_alpha = src_data[1];
-
-
-  while (width--)
-    {
-      *dest_gray = multiplier * *src_gray;
-      if (dest_has_alpha)
-        *dest_alpha = multiplier * *src_alpha;
-      dest_gray++;
-      if (dest_has_alpha)
-        dest_alpha++;
-
-      src_gray++;
-      if (src_has_alpha)
-        src_alpha++;
-
-    }
-}
-
-static void 
-scanline_gray_u16 (GeglFilter * filter, 
-          GeglTileIterator ** iters, 
-          gint width)
-{
-  GeglConstMult *self = GEGL_CONST_MULT(filter);
-  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
-  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[1]);
-
-  guint16 *dest_data[2];
-  gboolean dest_has_alpha;
-  guint16 *dest_gray, *dest_alpha=NULL;
-  guint16 *src_data[2];
-  gboolean src_has_alpha;
-  guint16 *src_gray, *src_alpha=NULL;
-  float multiplier;
-
-  multiplier = self->multiplier;
-  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
-  src_has_alpha = gegl_color_model_has_alpha(src_cm); 
-
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
-  gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
-
-  dest_gray = dest_data[0];
-  if (dest_has_alpha)
-    dest_alpha = dest_data[1];
-
-  src_gray = src_data[0];
-  if (src_has_alpha)
-    src_alpha = src_data[1];
-
-
-  while (width--)
-    {
-      *dest_gray = ROUND (multiplier * *src_gray);
-      if (dest_has_alpha)
-        *dest_alpha = ROUND (multiplier * *src_alpha);
-      dest_gray++;
-      if (dest_has_alpha)
-        dest_alpha++;
-
-      src_gray++;
-      if (src_has_alpha)
-        src_alpha++;
-
-    }
-}
-
-static void 
-scanline_gray_u8 (GeglFilter * filter, 
-          GeglTileIterator ** iters, 
-          gint width)
-{
-  GeglConstMult *self = GEGL_CONST_MULT(filter);
-  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
-  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[1]);
-
-  guint8 *dest_data[2];
-  gboolean dest_has_alpha;
-  guint8 *dest_gray, *dest_alpha=NULL;
-  guint8 *src_data[2];
-  gboolean src_has_alpha;
-  guint8 *src_gray, *src_alpha=NULL;
-  float multiplier;
-
-  multiplier = self->multiplier;
-  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
-  src_has_alpha = gegl_color_model_has_alpha(src_cm); 
-
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
-  gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
-
-  dest_gray = dest_data[0];
-  if (dest_has_alpha)
-    dest_alpha = dest_data[1];
-
-  src_gray = src_data[0];
-  if (src_has_alpha)
-    src_alpha = src_data[1];
-
-
-  while (width--)
-    {
-      *dest_gray = ROUND (multiplier * *src_gray);
-      if (dest_has_alpha)
-        *dest_alpha = ROUND (multiplier * *src_alpha);
-      dest_gray++;
-      if (dest_has_alpha)
-        dest_alpha++;
-
-      src_gray++;
-      if (src_has_alpha)
-        src_alpha++;
-
-    }
-}
+  g_free(d);
+  g_free(a);
+}                                                                       

@@ -149,7 +149,6 @@ validate_inputs(GeglEvalVisitor *self,
                     "validating tile %p for %dth input of %s %p", 
                     tile, i, G_OBJECT_TYPE_NAME(filter), filter);
           gegl_tile_mgr_validate_data(tile_mgr, tile);
-          g_object_unref(tile_mgr);
         }
       else 
         {
@@ -216,9 +215,8 @@ validate_image_outputs(GeglEvalVisitor *self,
 
       if(!tile) 
         {
-          GeglTile * image_tile = GEGL_IMAGE(filter)->tile;
-          GeglColorModel *color_model = 
-            gegl_attributes_get_color_model(attributes);
+          GeglTile * image_tile = gegl_image_get_tile(GEGL_IMAGE(filter));
+          GeglColorModel *color_model = gegl_attributes_get_color_model(attributes);
 
           /* Check the image tile, see if its there */
           LOG_DEBUG("validate_outputs", 
@@ -229,32 +227,34 @@ validate_image_outputs(GeglEvalVisitor *self,
           if(!image_tile)
             {
               gegl_image_set_color_model(GEGL_IMAGE(filter) , color_model);
-              LOG_DEBUG("validate_outputs", 
+
+              LOG_DEBUG("validate_image_outputs", 
                         "creating output tile for %s %p", 
                         G_OBJECT_TYPE_NAME(filter), filter);
+              /* This refs the tile */
               image_tile = gegl_tile_mgr_create_tile(tile_mgr, 
                                                      color_model, 
                                                      &attributes->rect); 
+
               gegl_tile_mgr_validate_data (tile_mgr,image_tile); 
+
+              /* Transfer the ref to image */
+              gegl_image_set_tile(GEGL_IMAGE(filter), image_tile);
+              g_object_unref(image_tile);
             }
           else 
             {
               /* Validate the image tile. */
+              LOG_DEBUG("validate_image_outputs", 
+                        "validating output tile for %s %p", 
+                        G_OBJECT_TYPE_NAME(filter), filter);
               image_tile = gegl_tile_mgr_validate_tile(tile_mgr, 
                                                        image_tile, 
                                                        &attributes->rect, 
                                                        color_model);
+
+              gegl_image_set_tile(GEGL_IMAGE(filter), image_tile);
             }
-
-          LOG_DEBUG("validate_outputs", 
-                    "validated tile is %p for use by %s %p", 
-                    image_tile, G_OBJECT_TYPE_NAME(filter), filter);
-
-          /* Store the tile for this image op, and put in output value. */
-          GEGL_IMAGE(filter)->tile = image_tile;
-
-          LOG_DEBUG("validate_outputs", 
-                    "the image tile in filter is %p", image_tile);
 
           g_value_set_tile(attributes->value, image_tile);
         }
@@ -274,7 +274,5 @@ validate_image_outputs(GeglEvalVisitor *self,
           /* Put in output value. */
           g_value_set_tile(attributes->value, tile);
         }
-
-        g_object_unref(tile_mgr);
     }
 }

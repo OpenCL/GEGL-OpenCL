@@ -2,13 +2,15 @@
 #include    "gegl-utils.h"
 #include    "gegl-color-model.h"
 #include    "gegl-tile.h"
+#include    "gegl-tiled-image.h"
+#include    "gegl-copy.h"
 
 GType *gegl_param_spec_types = NULL;
 
 /* --- param spec functions --- */
 
 static void
-param_tile_init (GParamSpec *spec)
+param_spec_tile_init (GParamSpec *spec)
 {
   GeglParamSpecTile *tspec = GEGL_PARAM_SPEC_TILE(spec);
   gegl_rect_set(&tspec->rect,0,0,0,0);
@@ -16,32 +18,63 @@ param_tile_init (GParamSpec *spec)
 }
 
 static void
-param_tile_set_default (GParamSpec *pspec,
+param_spec_tile_set_default (GParamSpec *pspec,
 			            GValue     *value)
 {
   value->data[0].v_pointer = NULL;
 }
 
 static gboolean
-param_tile_validate (GParamSpec *pspec,
-		       GValue     *value)
+param_spec_tile_validate (GParamSpec *pspec,
+                          GValue     *value)
 {
   GeglParamSpecTile *tspec = GEGL_PARAM_SPEC_TILE (pspec);
   GeglTile *tile = value->data[0].v_pointer;
+  GeglRect *tspec_rect = &tspec->rect;
+  GeglRect tile_rect;
   guint changed = 0;
-  
-  if (tile && !g_value_type_compatible (G_OBJECT_TYPE (tile), G_PARAM_SPEC_VALUE_TYPE (tspec)))
-    {
-      g_object_unref (tile);
-      value->data[0].v_pointer = NULL;
-      changed++;
-    }
+
+  if(tile)
+    gegl_tile_get_area(tile, &tile_rect);
+
+  if(tile) 
+  {
+    /* Not compatible or tile rect doesnt contain tspec rect */
+    if(!g_value_type_compatible (G_OBJECT_TYPE (tile), G_PARAM_SPEC_VALUE_TYPE (tspec)) ||
+       !gegl_rect_contains(&tile_rect, tspec_rect))
+      {
+        g_object_unref (tile);
+        value->data[0].v_pointer = NULL;
+        changed++;
+      }
+    else if(tile->color_model != tspec->color_model)
+      {
+        GeglOp *source = g_object_new(GEGL_TYPE_TILED_IMAGE,
+                                      "tile", tile,
+                                      NULL);
+                                      
+        GeglOp *copy = g_object_new(GEGL_TYPE_COPY,
+                                    "colormodel", tspec->color_model,
+                                    "source", source, 
+                                    NULL);
+
+        /*g_print("color_models were different!\n");*/
+        gegl_op_apply(copy);
+
+        g_object_unref (tile);
+        value->data[0].v_pointer = g_object_ref(gegl_image_get_tile(GEGL_IMAGE(copy)));
+        g_object_unref(copy);
+        g_object_unref(source);
+        changed++;
+      }
+  }
   
   return changed;
+
 }
 
 static gint
-param_tile_values_cmp (GParamSpec   *pspec,
+param_spec_tile_values_cmp (GParamSpec   *pspec,
                          const GValue *value1,
                          const GValue *value2)
 {
@@ -51,6 +84,10 @@ param_tile_values_cmp (GParamSpec   *pspec,
   return p1 < p2 ? -1 : p1 > p2;
 }
 
+static void
+param_spec_tile_finalize (GParamSpec *pspec)
+{
+}
 
 void
 gegl_param_spec_types_init (void)
@@ -65,14 +102,14 @@ gegl_param_spec_types_init (void)
   {
     static GParamSpecTypeInfo pspec_info = 
       {
-        sizeof (GeglParamSpecTile),/* instance_size */
-        16,                        /* n_preallocs */
-        param_tile_init,           /* instance_init */
-        0x0,                       /* value_type */
-        NULL,                      /* finalize */
-        param_tile_set_default,    /* value_set_default */
-        param_tile_validate,       /* value_validate */
-        param_tile_values_cmp,     /* values_cmp */
+        sizeof (GeglParamSpecTile),     /* instance_size */
+        16,                             /* n_preallocs */
+        param_spec_tile_init,           /* instance_init */
+        0x0,                            /* value_type */
+        param_spec_tile_finalize,       /* finalize */
+        param_spec_tile_set_default,    /* value_set_default */
+        param_spec_tile_validate,       /* value_validate */
+        param_spec_tile_values_cmp,     /* values_cmp */
       };
 
     pspec_info.value_type = GEGL_TYPE_TILE;

@@ -58,6 +58,46 @@ GeglCompImpl
 GeglCompPremultImpl
 
 
+<!-- ##### SECTION ./tmpl/gegl-comp-premult.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-comp-premult.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-comp-premult.sgml:Short_Description ##### -->
+Composite two premultiplied images.
+
+
+<!-- ##### SECTION ./tmpl/gegl-comp-premult.sgml:Title ##### -->
+GeglCompPremult
+
+
+<!-- ##### SECTION ./tmpl/gegl-comps-template.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-comps-template.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-comps-template.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-comps-template.sgml:Title ##### -->
+GeglAtop
+
+
 <!-- ##### SECTION ./tmpl/gegl-const-mult-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -118,6 +158,26 @@ GeglCopyImpl
 GeglDarkImpl
 
 
+<!-- ##### SECTION ./tmpl/gegl-dark.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-dark.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-dark.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-dark.sgml:Title ##### -->
+GeglDark
+
+
 <!-- ##### SECTION ./tmpl/gegl-diff-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -136,6 +196,26 @@ GeglDarkImpl
 
 <!-- ##### SECTION ./tmpl/gegl-diff-impl.sgml:Title ##### -->
 GeglDiffImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-diff.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-diff.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-diff.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-diff.sgml:Title ##### -->
+GeglDiff
 
 
 <!-- ##### SECTION ./tmpl/gegl-fill-impl.sgml:Long_Description ##### -->
@@ -428,6 +508,26 @@ gegl-impl
 GeglLightImpl
 
 
+<!-- ##### SECTION ./tmpl/gegl-light.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-light.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-light.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-light.sgml:Title ##### -->
+GeglLight
+
+
 <!-- ##### SECTION ./tmpl/gegl-max-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -486,6 +586,26 @@ GeglMinImpl
 
 <!-- ##### SECTION ./tmpl/gegl-mult-impl.sgml:Title ##### -->
 GeglMultImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-mult.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-mult.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-mult.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-mult.sgml:Title ##### -->
+GeglMult
 
 
 <!-- ##### SECTION ./tmpl/gegl-op-impl.sgml:Long_Description ##### -->
@@ -648,6 +768,26 @@ GeglSimpleImageMgr
 GeglStatOpImpl
 
 
+<!-- ##### SECTION ./tmpl/gegl-stat-op.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-stat-op.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-stat-op.sgml:Short_Description ##### -->
+Abstract class for Filters without Image outputs
+
+
+<!-- ##### SECTION ./tmpl/gegl-stat-op.sgml:Title ##### -->
+GeglStatOp
+
+
 <!-- ##### SECTION ./tmpl/gegl-subtract-impl.sgml:Long_Description ##### -->
 <para>
 
@@ -702,6 +842,12 @@ GeglUnpremultImpl
 
 @pspec: 
 
+<!-- ##### MACRO GEGL_TYPE_IMAGE_DATA ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### MACRO GEGL_TYPE_PARAM_IMAGE_DATA ##### -->
 <para>
 
@@ -739,29 +885,13 @@ GeglUnpremultImpl
 </para>
 
 
-<!-- ##### STRUCT GeglAttributes ##### -->
+<!-- ##### ARG GeglBlend:premultiply ##### -->
 <para>
 
 </para>
 
-@value: 
-@param_spec: 
-@rect: 
-@color_model: 
 
 <!-- ##### STRUCT GeglBuffer ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglColor ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglColorModel ##### -->
 <para>
 
 </para>
@@ -821,6 +951,12 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### ARG GeglComp:composite-mode ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### ARG GeglComp:input0 ##### -->
 <para>
 
@@ -839,6 +975,12 @@ GeglUnpremultImpl
 </para>
 
 
+<!-- ##### ARG GeglCompPremult:composite-mode ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### ARG GeglCompPremult:input0 ##### -->
 <para>
 
@@ -850,6 +992,19 @@ GeglUnpremultImpl
 
 </para>
 
+
+<!-- ##### ENUM GeglCompositeMode ##### -->
+<para>
+
+</para>
+
+@GEGL_COMPOSITE_MODE_NONE: 
+@GEGL_COMPOSITE_MODE_REPLACE: 
+@GEGL_COMPOSITE_MODE_OVER: 
+@GEGL_COMPOSITE_MODE_IN: 
+@GEGL_COMPOSITE_MODE_OUT: 
+@GEGL_COMPOSITE_MODE_ATOP: 
+@GEGL_COMPOSITE_MODE_XOR: 
 
 <!-- ##### STRUCT GeglConnection ##### -->
 <para>
@@ -868,6 +1023,12 @@ GeglUnpremultImpl
 
 
 <!-- ##### ARG GeglConstMult:input ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GeglConstMult:multiplier ##### -->
 <para>
 
 </para>
@@ -1127,12 +1288,6 @@ GeglUnpremultImpl
 </para>
 
 
-<!-- ##### STRUCT GeglOp ##### -->
-<para>
-
-</para>
-
-
 <!-- ##### ARG GeglOp:source0 ##### -->
 <para>
 
@@ -1207,6 +1362,12 @@ GeglUnpremultImpl
 
 
 <!-- ##### STRUCT GeglSampledImage ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglScanlineProcessor ##### -->
 <para>
 
 </para>
@@ -1355,6 +1516,62 @@ GeglUnpremultImpl
 @value: 
 @tile: 
 
+<!-- ##### FUNCTION gegl_blend_get_premultiply ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_blend_set_premultiply ##### -->
+<para>
+
+</para>
+
+@self: 
+@premultiply: 
+
+<!-- ##### FUNCTION gegl_comp_get_composite_mode ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_comp_premult_get_composite_mode ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_comp_premult_set_composite_mode ##### -->
+<para>
+
+</para>
+
+@self: 
+@mode: 
+
+<!-- ##### FUNCTION gegl_comp_set_composite_mode ##### -->
+<para>
+
+</para>
+
+@self: 
+@mode: 
+
+<!-- ##### FUNCTION gegl_const_mult_get_multiplier ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
 <!-- ##### FUNCTION gegl_const_mult_impl_get_multiplier ##### -->
 <para>
 
@@ -1364,6 +1581,14 @@ GeglUnpremultImpl
 @Returns: 
 
 <!-- ##### FUNCTION gegl_const_mult_impl_set_multiplier ##### -->
+<para>
+
+</para>
+
+@self: 
+@multiplier: 
+
+<!-- ##### FUNCTION gegl_const_mult_set_multiplier ##### -->
 <para>
 
 </para>

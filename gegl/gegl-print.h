@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-stat-op.h"
+#include "gegl-pipe.h"
 
 #define GEGL_TYPE_PRINT               (gegl_print_get_type ())
 #define GEGL_PRINT(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PRINT, GeglPrint))
@@ -20,7 +20,7 @@ typedef struct _GeglPrint GeglPrint;
 #endif
 struct _GeglPrint 
 {
-    GeglStatOp stat_op;
+    GeglPipe pipe;
 
     /*< private >*/
     gchar * buffer;
@@ -33,7 +33,7 @@ struct _GeglPrint
 typedef struct _GeglPrintClass GeglPrintClass;
 struct _GeglPrintClass 
 {
-    GeglStatOpClass stat_op_class;
+    GeglPipeClass pipe_class;
 };
 
 GType           gegl_print_get_type             (void);

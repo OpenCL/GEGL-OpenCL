@@ -1,11 +1,9 @@
 #include "gegl-fill.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-tile.h"
-#include "gegl-tile-iterator.h"
 #include "gegl-color.h"
 #include "gegl-color-model.h"
+#include "gegl-tile-iterator.h"
 #include "gegl-utils.h"
-#include "gegl-value-types.h"
 
 enum
 {
@@ -22,16 +20,12 @@ static void get_property (GObject *gobject, guint prop_id, GValue *value, GParam
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
 static GeglColorModel * compute_derived_color_model (GeglFilter * filter, GList * input_color_models);
-static void compute_have_rect(GeglFilter * filter, GeglRect *have_rect, GList * input_have_rects);
 
-static void prepare (GeglFilter * filter, GList * attributes, GList * input_attributes);
+static GeglScanlineFunc get_scanline_func(GeglNoInput * no_input, GeglColorSpace space, GeglChannelDataType type);
 
-static void scanline_rgb_u8 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
-static void scanline_rgb_float (GeglFilter * filter, GeglTileIterator ** iters, gint width);
-static void scanline_rgb_u16 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
-static void scanline_gray_u8 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
-static void scanline_gray_float (GeglFilter * filter, GeglTileIterator ** iters, gint width);
-static void scanline_gray_u16 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static void fill_u8 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static void fill_float (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static void fill_u16 (GeglFilter * filter, GeglTileIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -55,7 +49,7 @@ gegl_fill_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GEGL_TYPE_POINT_OP , 
+      type = g_type_register_static (GEGL_TYPE_NO_INPUT, 
                                      "GeglFill", 
                                      &typeInfo, 
                                      0);
@@ -68,16 +62,17 @@ class_init (GeglFillClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
   GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
+  GeglNoInputClass *no_input_class = GEGL_NO_INPUT_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
-  gobject_class->finalize= finalize;
+  no_input_class->get_scanline_func = get_scanline_func;
+
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
+  gobject_class->finalize = finalize;
 
-  filter_class->prepare = prepare;
   filter_class->compute_derived_color_model = compute_derived_color_model;
-  filter_class->compute_have_rect = compute_have_rect;
 
   g_object_class_install_property (gobject_class, PROP_FILLCOLOR,
                                    g_param_spec_object ("fillcolor",
@@ -86,15 +81,14 @@ class_init (GeglFillClass * klass)
                                                          GEGL_TYPE_COLOR,
                                                          G_PARAM_CONSTRUCT |
                                                          G_PARAM_READWRITE));
-  return;
+
 }
 
 static void 
 init (GeglFill * self, 
       GeglFillClass * klass)
 {
-  g_object_set(self, "num_outputs", 1, NULL);
-  g_object_set(self, "num_inputs", 0, NULL);
+  self->fill_color = NULL;
 }
 
 static void
@@ -115,8 +109,7 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglFill *self = GEGL_FILL (gobject);
-
+  GeglFill *self = GEGL_FILL(gobject);
   switch (prop_id)
   {
     case PROP_FILLCOLOR:
@@ -133,8 +126,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglFill *self = GEGL_FILL (gobject);
-
+  GeglFill *self = GEGL_FILL(gobject);
   switch (prop_id)
   {
     case PROP_FILLCOLOR:
@@ -143,14 +135,6 @@ set_property (GObject      *gobject,
     default:
       break;
   }
-}
-
-static void 
-compute_have_rect(GeglFilter * op, 
-                  GeglRect *have_rect, 
-                  GList * input_have_rects)
-{ 
-  gegl_rect_set(have_rect, 0,0,GEGL_DEFAULT_WIDTH, GEGL_DEFAULT_HEIGHT);
 }
 
 static GeglColorModel * 
@@ -179,355 +163,140 @@ gegl_fill_set_fill_color (GeglFill * self,
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_FILL (self));
-   
-  self->fill_color = fill_color;
 
   if(fill_color)
-    g_object_ref(G_OBJECT(fill_color));
+    g_object_ref(fill_color);
+
+  if(self->fill_color)
+    g_object_unref(self->fill_color);
+   
+  self->fill_color = fill_color;
 }
 
-static void 
-prepare (GeglFilter * filter, 
-         GList * attributes,
-         GList * input_attributes)
-{
-  GeglFill * self = GEGL_FILL(filter); 
-  GeglPointOp *point_op = GEGL_POINT_OP(filter); 
-  GeglAttributes *dest_attributes = 
-    (GeglAttributes*)g_list_nth_data(attributes, 0); 
-  GeglTile *dest = (GeglTile*)g_value_get_object(dest_attributes->value);
-  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
-  GeglColorModel * fill_cm = gegl_color_get_color_model (self->fill_color);
+/* scanline_funcs[data type] */
+static GeglScanlineFunc scanline_funcs[] = 
+{ 
+  NULL, 
+  fill_u8, 
+  fill_float, 
+  fill_u16 
+};
 
-  g_return_if_fail (dest_cm == fill_cm);
+static GeglScanlineFunc
+get_scanline_func(GeglNoInput * no_input,
+                  GeglColorSpace space,
+                  GeglChannelDataType type)
+{
+  return scanline_funcs[type];
+}
+
+static void                                                            
+fill_float (GeglFilter * filter,              
+            GeglTileIterator ** iters,        
+            gint width)                       
+{                                                                       
+  GeglFill * self = GEGL_FILL(filter);
+  GeglChannelValue *fill_values = gegl_color_get_channel_values (self->fill_color);
+
+  gfloat **d = (gfloat**)gegl_tile_iterator_color_channels(iters[0]);
+  gfloat *da = (gfloat*)gegl_tile_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_tile_iterator_get_num_colors(iters[0]);
+  gboolean has_alpha = da ? TRUE: FALSE;
+  gint alpha = d_color_chans;   /* should get from color model */
 
   {
-    GeglColorSpace colorspace = gegl_color_model_color_space(fill_cm);
-    GeglChannelDataType data_type = gegl_color_model_data_type (fill_cm);
+    gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;   
+    gfloat *d1 = (d_color_chans > 1) ? d[1]: NULL;
+    gfloat *d2 = (d_color_chans > 2) ? d[2]: NULL;
 
-    switch (colorspace)
-      {
-        case GEGL_COLOR_SPACE_RGB:
-          switch (data_type)
-            {
-            case GEGL_FLOAT:
-              point_op->scanline_processor->func = scanline_rgb_float;
-              break;
-            case GEGL_U8:
-              point_op->scanline_processor->func = scanline_rgb_u8;
-              break;
-            case GEGL_U16:
-              point_op->scanline_processor->func = scanline_rgb_u16;
-              break;
-            default:
-              g_warning("prepare: Can't find data_type\n");    
-              break;
+    while(width--)                                                        
+      {                                                                   
+        switch(d_color_chans)
+          {
+            case 3: *d2++ = fill_values[2].f;
+            case 2: *d1++ = fill_values[1].f;
+            case 1: *d0++ = fill_values[0].f;
+            case 0:        
+          }
 
-            }
-          break;
-        case GEGL_COLOR_SPACE_GRAY:
-          switch (data_type)
-            {
-            case GEGL_FLOAT:
-              point_op->scanline_processor->func = scanline_gray_float;
-              break;
-            case GEGL_U8:
-              point_op->scanline_processor->func = scanline_gray_u8;
-              break;
-            case GEGL_U16:
-              point_op->scanline_processor->func = scanline_gray_u16;
-              break;
-            default:
-              g_warning("prepare: Can't find data_type\n");    
-              break;
-            }
-          break;
-        default:
-          g_warning("prepare: Can't find colorspace\n");    
-          break;
+        if(has_alpha)
+          *da++ = fill_values[alpha].f;
       }
   }
-}
 
-/**
- * scanline_rgb_u8:
- * @filter: a #GeglFilter.
- * @iters: #GeglTileIterators array. 
- * @width: width of scanline.
- *
- * Processes a scanline.
- *
- **/
-static void 
-scanline_rgb_u8 (GeglFilter * filter, 
-                 GeglTileIterator ** iters, 
-                 gint width)
-{
-  GeglFill *self = GEGL_FILL(filter);
-  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
+  g_free(d);
+}                                                                       
+
+static void                                                            
+fill_u16 (GeglFilter * filter,              
+          GeglTileIterator ** iters,        
+          gint width)                       
+{                                                                       
+  GeglFill * self = GEGL_FILL(filter);
   GeglChannelValue *fill_values = gegl_color_get_channel_values (self->fill_color);
 
-  guint8 *dest_data[4];
-  gboolean dest_has_alpha;
-  guint8 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
+  guint16 **d = (guint16**)gegl_tile_iterator_color_channels(iters[0]);
+  guint16 *da = (guint16*)gegl_tile_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_tile_iterator_get_num_colors(iters[0]);
+  gboolean has_alpha = da ? TRUE: FALSE;
+  gint alpha = d_color_chans;   /* should get from color model */
 
-  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
-  
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
+  {
+    guint16 *d0 = (d_color_chans > 0) ? d[0]: NULL;   
+    guint16 *d1 = (d_color_chans > 1) ? d[1]: NULL;
+    guint16 *d2 = (d_color_chans > 2) ? d[2]: NULL;
 
-  dest_r = dest_data[0];
-  dest_g = dest_data[1];
-  dest_b = dest_data[2];
-  if (dest_has_alpha)
-    dest_alpha = dest_data[3];
+    while(width--)                                                        
+      {                                                                   
+        switch(d_color_chans)
+          {
+            case 3: *d2++ = fill_values[2].u16;
+            case 2: *d1++ = fill_values[1].u16;
+            case 1: *d0++ = fill_values[0].u16;
+            case 0:        
+          }
 
-  /* Fill the dest with the fill color */
-  while (width--)
-    { 
-      *dest_r = fill_values[0].u8;
-      *dest_g = fill_values[1].u8;
-      *dest_b = fill_values[2].u8;
-      if (dest_has_alpha)
-        { 
-          *dest_alpha = fill_values[3].u8;
-        }
-      dest_r++;
-      dest_g++;
-      dest_b++;
-      if (dest_has_alpha)
-        dest_alpha++;
-    }
-}
+        if(has_alpha)
+          *da++ = fill_values[alpha].u16;
+      }
+  }
 
-/**
- * scanline_rgb_float:
- * @filter: a #GeglFilter.
- * @iters: #GeglTileIterators array. 
- * @width: width of scanline.
- *
- * Processes a scanline.
- *
- **/
-static void 
-scanline_rgb_float (GeglFilter * filter, 
-                    GeglTileIterator ** iters, 
-                    gint width)
-{
-  GeglFill *self = GEGL_FILL(filter);
-  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
+  g_free(d);
+}                                                                       
+
+static void                                                            
+fill_u8 (GeglFilter * filter,              
+         GeglTileIterator ** iters,        
+         gint width)                       
+{                                                                       
+  GeglFill * self = GEGL_FILL(filter);
   GeglChannelValue *fill_values = gegl_color_get_channel_values (self->fill_color);
 
-  gfloat *dest_data[4];
-  gboolean dest_has_alpha;
-  gfloat *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
+  guint8 **d = (guint8**)gegl_tile_iterator_color_channels(iters[0]);
+  guint8 *da = (guint8*)gegl_tile_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_tile_iterator_get_num_colors(iters[0]);
+  gboolean has_alpha = da ? TRUE: FALSE;
+  gint alpha = d_color_chans;   /* should get from color model */
 
-  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
-  
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
+  {
+    guint8 *d0 = (d_color_chans > 0) ? d[0]: NULL;   
+    guint8 *d1 = (d_color_chans > 1) ? d[1]: NULL;
+    guint8 *d2 = (d_color_chans > 2) ? d[2]: NULL;
 
-  dest_r = dest_data[0];
-  dest_g = dest_data[1];
-  dest_b = dest_data[2];
-  if (dest_has_alpha)
-    dest_alpha = dest_data[3];
+    while(width--)                                                        
+      {                                                                   
+        switch(d_color_chans)
+          {
+            case 3: *d2++ = fill_values[2].u8;
+            case 2: *d1++ = fill_values[1].u8;
+            case 1: *d0++ = fill_values[0].u8;
+            case 0:        
+          }
 
-  /* Fill the dest with the fill color */
+        if(has_alpha)
+          *da++ = fill_values[alpha].u8;
+      }
+  }
 
-  while (width--)
-    { 
-      *dest_r = fill_values[0].f;
-      *dest_g = fill_values[1].f;
-      *dest_b = fill_values[2].f;
-
-      if (dest_has_alpha)
-        { 
-          *dest_alpha = fill_values[3].f;
-        }
-      dest_r++;
-      dest_g++;
-      dest_b++;
-      if (dest_has_alpha)
-        dest_alpha++;
-    }
-}
-
-/**
- * scanline_rgb_u16:
- * @filter: a #GeglFilter.
- * @iters: #GeglTileIterators array. 
- * @width: width of scanline.
- *
- * Processes a scanline.
- *
- **/
-static void 
-scanline_rgb_u16 (GeglFilter * filter, 
-                  GeglTileIterator ** iters, 
-                  gint width)
-{
-  GeglFill *self = GEGL_FILL(filter);
-  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
-  GeglChannelValue *fill_values = gegl_color_get_channel_values (self->fill_color);
-
-  guint16 *dest_data[4];
-  gboolean dest_has_alpha;
-  guint16 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
-
-  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
-
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
-  dest_r = dest_data[0];
-  dest_g = dest_data[1];
-  dest_b = dest_data[2];
-  if (dest_has_alpha)
-    dest_alpha = dest_data[3];
-
-  /* Fill the dest with the fill color */
-  while (width--)
-    { 
-      *dest_r = fill_values[0].u16;
-      *dest_g = fill_values[1].u16;
-      *dest_b = fill_values[2].u16;
-      if (dest_has_alpha)
-        { 
-          *dest_alpha = fill_values[3].u16;
-        }
-      dest_r++;
-      dest_g++;
-      dest_b++;
-      if (dest_has_alpha)
-        dest_alpha++;
-    }
-}
-
-/**
- * scanline_gray_u8:
- * @filter: a #GeglFilter.
- * @iters: #GeglTileIterators array. 
- * @width: width of scanline.
- *
- * Processes a scanline.
- *
- **/
-static void 
-scanline_gray_u8 (GeglFilter * filter, 
-                  GeglTileIterator ** iters, 
-                  gint width)
-{
-  GeglFill *self = GEGL_FILL(filter);
-  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
-  GeglChannelValue *fill_values = gegl_color_get_channel_values (self->fill_color);
-
-  guint8 *dest_data[2];
-  gboolean dest_has_alpha;
-  guint8 *dest_gray, *dest_alpha=NULL;
-
-  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
-
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
-
-  dest_gray = dest_data[0];
-  if (dest_has_alpha)
-    dest_alpha = dest_data[1];
-
-  /* Fill the dest with the fill color */
-  while (width--)
-    { 
-      *dest_gray = fill_values[0].u8;
-      if (dest_has_alpha)
-        { 
-          *dest_alpha = fill_values[1].u8;
-        }
-      dest_gray++;
-      if (dest_has_alpha)
-        dest_alpha++;
-    }
-}
-
-/**
- * scanline_gray_float:
- * @filter: a #GeglFilter.
- * @iters: #GeglTileIterators array. 
- * @width: width of scanline.
- *
- * Processes a scanline.
- *
- **/
-static void 
-scanline_gray_float (GeglFilter * filter, 
-                     GeglTileIterator ** iters, 
-                     gint width)
-{
-  GeglFill *self = GEGL_FILL(filter);
-  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
-  GeglChannelValue *fill_values = gegl_color_get_channel_values (self->fill_color);
-
-  gfloat *dest_data[2];
-  gboolean dest_has_alpha;
-  gfloat *dest_gray, *dest_alpha=NULL;
-
-  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
-
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
-
-  dest_gray = dest_data[0];
-  if (dest_has_alpha)
-    dest_alpha = dest_data[1];
-
-  /* Fill the dest with the fill color */
-  while (width--)
-    { 
-      *dest_gray = fill_values[0].f;
-      if (dest_has_alpha)
-        { 
-          *dest_alpha = fill_values[1].f;
-        }
-      dest_gray++;
-      if (dest_has_alpha)
-        dest_alpha++;
-    }
-}
-
-/**
- * scanline_gray_u16:
- * @filter: a #GeglFilter.
- * @iters: #GeglTileIterators array. 
- * @width: width of scanline.
- *
- * Processes a scanline.
- *
- **/
-static void 
-scanline_gray_u16 (GeglFilter * filter, 
-                   GeglTileIterator ** iters, 
-                   gint width)
-{
-  GeglFill *self = GEGL_FILL(filter);
-  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
-  GeglChannelValue *fill_values = gegl_color_get_channel_values (self->fill_color);
-
-  guint16 *dest_data[2];
-  gboolean dest_has_alpha;
-  guint16 *dest_gray, *dest_alpha=NULL;
-
-  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
-
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
-
-  dest_gray = dest_data[0];
-  if (dest_has_alpha)
-    dest_alpha = dest_data[1];
-
-  /* Fill the dest with the fill color */
-  while (width--)
-    { 
-      *dest_gray = fill_values[0].u16;
-      if (dest_has_alpha)
-        { 
-          *dest_alpha = fill_values[1].u16;
-        }
-      dest_gray++;
-      if (dest_has_alpha)
-        dest_alpha++;
-    }
-}
+  g_free(d);
+}                                                                       

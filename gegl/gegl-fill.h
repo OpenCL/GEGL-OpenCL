@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-point-op.h"
+#include "gegl-no-input.h"
 
 #ifndef __TYPEDEF_GEGL_COLOR__
 #define __TYPEDEF_GEGL_COLOR__
@@ -25,19 +25,19 @@ typedef struct _GeglFill GeglFill;
 #endif
 struct _GeglFill 
 {
-    GeglPointOp point_op;
-
-    /*< private >*/
-    GeglColor * fill_color;
+   GeglNoInput no_input;
+   /*< private >*/
+   GeglColor * fill_color;
 };
 
 typedef struct _GeglFillClass GeglFillClass;
 struct _GeglFillClass 
 {
-    GeglPointOpClass point_op_class;
+   GeglNoInputClass no_input_class;
 };
 
-GType           gegl_fill_get_type              (void);
+GType            gegl_fill_get_type         (void);
+
 GeglColor *     gegl_fill_get_fill_color        (GeglFill * self);
 void            gegl_fill_set_fill_color        (GeglFill * self, 
                                                  GeglColor *fill_color);

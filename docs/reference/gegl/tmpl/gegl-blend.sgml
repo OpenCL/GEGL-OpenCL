@@ -1,0 +1,39 @@
+<!-- ##### SECTION Title ##### -->
+GeglBlend
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_blend_get_opacity ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_blend_set_opacity ##### -->
+<para>
+
+</para>
+
+@self: 
+@opacity: 
+
+
+<!-- ##### ARG GeglBlend:opacity ##### -->
+<para>
+
+</para>
+

@@ -36,7 +36,10 @@ test_image_g_object_get(Test *test)
 
   ct_test(test, color_model == cmodel);
 
-  g_object_unref(cmodel);
+  /*Have to unref this guy.*/
+  if(cmodel)
+   g_object_unref(cmodel);
+
   g_object_unref(image);
 }
 
@@ -62,7 +65,6 @@ image_test_setup(Test *test)
 static void
 image_test_teardown(Test *test)
 {
-  g_object_unref(color_model);
 }
 
 Test *

@@ -14,25 +14,27 @@ Multiply image by constant.
 
 </para>
 
-<!-- ##### FUNCTION gegl_const_mult_get_multiplier ##### -->
+<!-- ##### ARG GeglConstMult:mult0 ##### -->
 <para>
 
 </para>
 
-@self: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_const_mult_set_multiplier ##### -->
+<!-- ##### ARG GeglConstMult:mult1 ##### -->
 <para>
 
 </para>
 
-@self: 
-@multiplier: 
+<!-- ##### ARG GeglConstMult:mult2 ##### -->
+<para>
 
+</para>
 
-<!-- ##### ARG GeglConstMult:multiplier ##### -->
+<!-- ##### ARG GeglConstMult:mult3 ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglConstMult:mult4 ##### -->
 <para>
 
 </para>

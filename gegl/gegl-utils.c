@@ -61,13 +61,22 @@ gegl_init_color_models(void)
                                           NULL);
 
   gegl_color_model_register("RgbFloat", rgb_float);
-  gegl_color_model_register("RgbFloatAlpha", rgba_float);
+  gegl_color_model_register("RgbAlphaFloat", rgba_float);
   gegl_color_model_register("GrayFloat", gray_float);
-  gegl_color_model_register("GrayFloatAlpha", graya_float);
+  gegl_color_model_register("GrayAlphaFloat", graya_float);
   gegl_color_model_register("RgbU8", rgb_u8);
-  gegl_color_model_register("RgbU8Alpha", rgba_u8);
+  gegl_color_model_register("RgbAlphaU8", rgba_u8);
   gegl_color_model_register("GrayU8", gray_u8);
-  gegl_color_model_register("GrayU8Alpha", graya_u8);
+  gegl_color_model_register("GrayAlphaU8", graya_u8);
+
+  g_object_unref (rgb_float); 
+  g_object_unref (rgba_float); 
+  g_object_unref (gray_float); 
+  g_object_unref (graya_float); 
+  g_object_unref (rgb_u8); 
+  g_object_unref (rgba_u8); 
+  g_object_unref (gray_u8); 
+  g_object_unref (graya_u8); 
 }
 
 static
@@ -75,29 +84,21 @@ void
 gegl_free_color_models(void)
 {
   GeglColorModel * rgb_float = gegl_color_model_instance("RgbFloat");
-  GeglColorModel * rgba_float = gegl_color_model_instance("RgbFloatAlpha");
+  GeglColorModel * rgba_float = gegl_color_model_instance("RgbAlphaFloat");
   GeglColorModel * gray_float = gegl_color_model_instance("GrayFloat");
-  GeglColorModel * graya_float = gegl_color_model_instance("GrayFloatAlpha");
+  GeglColorModel * graya_float = gegl_color_model_instance("GrayAlphaFloat");
   GeglColorModel * rgb_u8 = gegl_color_model_instance("RgbU8");
-  GeglColorModel * rgba_u8 = gegl_color_model_instance("RgbU8Alpha");
+  GeglColorModel * rgba_u8 = gegl_color_model_instance("RgbAlphaU8");
   GeglColorModel * gray_u8 = gegl_color_model_instance("GrayU8");
-  GeglColorModel * graya_u8 = gegl_color_model_instance("GrayU8Alpha");
+  GeglColorModel * graya_u8 = gegl_color_model_instance("GrayAlphaU8");
 
   g_object_unref (rgb_float); 
-  g_object_unref (rgb_float); 
-  g_object_unref (rgba_float); 
   g_object_unref (rgba_float); 
   g_object_unref (gray_float); 
-  g_object_unref (gray_float); 
-  g_object_unref (graya_float); 
   g_object_unref (graya_float); 
   g_object_unref (rgb_u8); 
-  g_object_unref (rgb_u8); 
-  g_object_unref (rgba_u8); 
   g_object_unref (rgba_u8); 
   g_object_unref (gray_u8); 
-  g_object_unref (gray_u8); 
-  g_object_unref (graya_u8); 
   g_object_unref (graya_u8); 
 }
 
@@ -106,7 +107,6 @@ void
 gegl_exit(void)
 {
   GeglTileMgr *mgr = gegl_tile_mgr_instance();
-  g_object_unref(mgr);
   g_object_unref(mgr);
 
   gegl_free_color_models();
@@ -125,6 +125,7 @@ gegl_init (int *argc,
   {
     GeglTileMgr *mgr = g_object_new(GEGL_TYPE_TILE_MGR, NULL);
     gegl_tile_mgr_install(mgr);
+    g_object_unref(mgr);
   }
 
   g_atexit(gegl_exit);

@@ -50,8 +50,13 @@ GType           gegl_image_get_type             (void);
 GeglColorModel* gegl_image_color_model          (GeglImage * self);
 void            gegl_image_set_color_model      (GeglImage * self, 
                                                  GeglColorModel * cm);
-void          gegl_image_set_derived_color_model(GeglImage * self, 
+void            gegl_image_set_derived_color_model(GeglImage * self, 
                                                  GeglColorModel * cm);
+gint            gegl_image_set_channels_mask    (GeglImage *self, 
+                                                 gpointer *data);
+
+void gegl_image_set_tile (GeglImage * self, GeglTile *tile);
+GeglTile * gegl_image_get_tile (GeglImage * self);
 
 #ifdef __cplusplus
 }

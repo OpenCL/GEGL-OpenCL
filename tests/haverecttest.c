@@ -14,7 +14,7 @@ test_haverect_fill(Test *t)
 {
   GeglRect have_rect;
   GeglRect default_rect = {0,0,GEGL_DEFAULT_WIDTH, GEGL_DEFAULT_HEIGHT};
-  GeglOp * fill = testutils_rgb_fill(.1,.2,.3); 
+  GeglOp * fill = testutils_fill("RgbFloat", .1,.2,.3, 0); 
   gegl_filter_compute_have_rect(GEGL_FILTER(fill), &have_rect, NULL); 
   ct_test(t, gegl_rect_equal(&have_rect, &default_rect));  
   g_object_unref(fill);
@@ -64,7 +64,6 @@ haverect_test_setup(Test *test)
                        "height", SAMPLED_IMAGE_HEIGHT,
                        NULL);  
 
-  g_object_unref(rgb_float);
 }
 
 static void

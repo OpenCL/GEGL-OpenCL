@@ -1,6 +1,6 @@
-52% symbol docs coverage.
-90 symbols documented.
-82 not documented.
+58% function docs coverage.
+114 functions documented.
+81 not documented.
 
 
 GEGL_DEFAULT_HEIGHT
@@ -8,28 +8,17 @@ GEGL_DEFAULT_WIDTH
 GEGL_FLOAT_EPSILON
 GEGL_FLOAT_EQUAL
 GEGL_FLOAT_IS_ZERO
-GEGL_TYPE_IMAGE_DATA
-GeglChannelDataType
-GeglColorAlphaSpace
-GeglColorConstant
-GeglColorModelType
-GeglColorSpace
-GeglCompositeMode
-GeglConnector
-GeglConvertFunc
-GeglDimension
-GeglGraphInput
-GeglGraphOutput
-GeglNodeInfo
-GeglPoint
-GeglRect
-GeglScanlineFunc
-GeglScanlineProcessor
+GEGL_TYPE_PARAM_TILE
+G_VALUE_HOLDS_TILE
 LOG_DEBUG
 LOG_DIRECT
 LOG_INFO
 LOG_MSG
 ROUND
+g_value_dup_tile
+g_value_get_tile
+g_value_set_tile
+g_value_set_tile_take_ownership
 gegl_attributes_get_color_model
 gegl_attributes_get_rect
 gegl_attributes_new
@@ -37,6 +26,7 @@ gegl_attributes_print
 gegl_attributes_set_color_model
 gegl_attributes_set_rect
 gegl_buffer_alloc_data
+gegl_buffer_alloc_data_pointers
 gegl_buffer_get_ref_count
 gegl_buffer_ref
 gegl_buffer_set_bytes_per_buffer
@@ -49,8 +39,6 @@ gegl_color_model_instance
 gegl_color_model_register
 gegl_color_model_set_color_space_name
 gegl_color_model_set_has_alpha
-gegl_const_mult_get_multiplier
-gegl_const_mult_set_multiplier
 gegl_direct_log
 gegl_direct_logv
 gegl_dump_graph
@@ -58,10 +46,16 @@ gegl_dump_graph_msg
 gegl_dump_visitor_traverse
 gegl_fill_get_fill_color
 gegl_fill_set_fill_color
+gegl_graph_find_source
+gegl_image_get_tile
+gegl_image_set_channels_mask
 gegl_image_set_derived_color_model
+gegl_image_set_tile
 gegl_init
 gegl_log
 gegl_logv
+gegl_node_remove_sinks
+gegl_param_spec_tile
 gegl_rect_bounding_box
 gegl_rect_contains
 gegl_rect_copy
@@ -70,6 +64,8 @@ gegl_rect_equal_coords
 gegl_rect_intersect
 gegl_rect_set
 gegl_tile_alloc
+gegl_tile_data_pointers
+gegl_tile_iterator_get_num_colors
 gegl_tile_iterator_get_rect
 gegl_tile_iterator_set_rect
 gegl_tile_iterator_set_tile
@@ -80,8 +76,11 @@ gegl_tile_mgr_instance
 gegl_tile_set_area
 gegl_tile_set_color_model
 gegl_tile_validate_data
+gegl_tiled_image_get_tile
+gegl_tiled_image_set_tile
 gegl_utils_construct_val
 gegl_utils_derived_channel_data_type
 gegl_utils_derived_color_alpha_space
 gegl_utils_derived_color_space
+gegl_visitor_get_input_attributes
 gegl_visitor_set_discovered

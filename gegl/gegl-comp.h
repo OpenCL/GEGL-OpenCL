@@ -6,6 +6,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include "gegl-point-op.h"
+#include "gegl-scanline-processor.h"
 
 #define GEGL_TYPE_COMP               (gegl_comp_get_type ())
 #define GEGL_COMP(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COMP, GeglComp))
@@ -20,23 +21,26 @@ typedef struct _GeglComp GeglComp;
 #endif
 struct _GeglComp 
 {
-   GeglPointOp point_op;
+    GeglPointOp point_op;
 
-   /*< private >*/
-   GeglCompositeMode composite_mode; 
+    /*< private >*/
+    gboolean premultiply;
 };
 
 typedef struct _GeglCompClass GeglCompClass;
 struct _GeglCompClass 
 {
-   GeglPointOpClass point_op_class;
+    GeglPointOpClass point_op_class;
+
+    GeglScanlineFunc (*get_scanline_func)   (GeglComp *self,
+                                             GeglColorSpace space,
+                                             GeglChannelDataType type);
 };
 
-GType           gegl_comp_get_type              (void);
-GeglCompositeMode
-                gegl_comp_get_composite_mode    (GeglComp * self);
-void            gegl_comp_set_composite_mode    (GeglComp * self, 
-                                                 GeglCompositeMode mode);
+GType           gegl_comp_get_type          (void);
+gboolean        gegl_comp_get_premultiply    (GeglComp * self);
+void            gegl_comp_set_premultiply    (GeglComp * self, 
+                                              gboolean premultiply);
 
 #ifdef __cplusplus
 }

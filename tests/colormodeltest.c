@@ -15,24 +15,18 @@ test_color_model_g_object_new(Test *test)
     ct_test(test, GEGL_IS_COLOR_MODEL(color_model));
     ct_test(test, g_type_parent(GEGL_TYPE_COLOR_MODEL) == GEGL_TYPE_OBJECT);
     ct_test(test, !strcmp("GeglColorModel", g_type_name(GEGL_TYPE_COLOR_MODEL)));
-
-    g_object_unref(color_model);
   }
 
   {
     GeglColorModel *color_model = gegl_color_model_instance("RgbFloat"); 
     ct_test(test, color_model != NULL);
     ct_test(test, FALSE == gegl_color_model_has_alpha(color_model));
-
-    g_object_unref(color_model);
   }
 
   {
-    GeglColorModel *color_model = gegl_color_model_instance("RgbFloatAlpha"); 
+    GeglColorModel *color_model = gegl_color_model_instance("RgbAlphaFloat"); 
     ct_test(test, color_model != NULL);
     ct_test(test, TRUE == gegl_color_model_has_alpha(color_model));
-
-    g_object_unref(color_model);
   }
 }
 
@@ -46,19 +40,15 @@ test_color_model_g_object_get(Test *test)
     g_object_get(color_model, "hasalpha", &has_alpha, NULL);
 
     ct_test(test, FALSE == gegl_color_model_has_alpha(color_model));
-
-    g_object_unref(color_model);
   }
 
   {
     gboolean has_alpha;
-    GeglColorModel *color_model = gegl_color_model_instance("RgbFloatAlpha"); 
+    GeglColorModel *color_model = gegl_color_model_instance("RgbAlphaFloat"); 
 
     g_object_get(color_model, "hasalpha", &has_alpha, NULL);
 
     ct_test(test, TRUE == gegl_color_model_has_alpha(color_model));
-
-    g_object_unref(color_model);
   }
 }
 

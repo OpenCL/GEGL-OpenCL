@@ -14,13 +14,6 @@ gegl-types
 
 </para>
 
-<!-- ##### MACRO GEGL_TYPE_IMAGE_DATA ##### -->
-<para>
-
-</para>
-
-
-
 <!-- ##### MACRO GEGL_DEFAULT_WIDTH ##### -->
 <para>
 
@@ -55,6 +48,26 @@ gegl-types
 @GEGL_COLOR_ALPHA_SPACE_RGB: 
 @GEGL_COLOR_ALPHA_SPACE_RGBA: 
 
+<!-- ##### ENUM GeglAlphaFlags ##### -->
+<para>
+
+</para>
+
+@GEGL_ALPHA_NONE: 
+@GEGL_A_ALPHA: 
+@GEGL_B_ALPHA: 
+@GEGL_A_B_ALPHA: 
+
+<!-- ##### ENUM GeglFgBgAlphaFlags ##### -->
+<para>
+
+</para>
+
+@GEGL_NO_ALPHA: 
+@GEGL_FG_ALPHA: 
+@GEGL_BG_ALPHA: 
+@GEGL_FG_BG_ALPHA: 
+
 <!-- ##### ENUM GeglColorModelType ##### -->
 <para>
 
@@ -77,19 +90,6 @@ gegl-types
 @GEGL_COLOR_MODEL_TYPE_RGBA_U16: 
 @GEGL_COLOR_MODEL_TYPE_RGBA_U16_4: 
 @GEGL_COLOR_MODEL_TYPE_RGBA_FLOAT: 
-
-<!-- ##### ENUM GeglCompositeMode ##### -->
-<para>
-
-</para>
-
-@GEGL_COMPOSITE_MODE_NONE: 
-@GEGL_COMPOSITE_MODE_REPLACE: 
-@GEGL_COMPOSITE_MODE_OVER: 
-@GEGL_COMPOSITE_MODE_IN: 
-@GEGL_COMPOSITE_MODE_OUT: 
-@GEGL_COMPOSITE_MODE_ATOP: 
-@GEGL_COMPOSITE_MODE_XOR: 
 
 <!-- ##### ENUM GeglColorConstant ##### -->
 <para>

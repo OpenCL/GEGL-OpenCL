@@ -5,7 +5,9 @@
 GeglAttributes* 
 gegl_attributes_new() 
 {
-   return g_new0(GeglAttributes, 1);
+  GeglAttributes * attrs = g_new0(GeglAttributes, 1);
+  attrs->color_model = NULL;
+  return attrs;
 }
 
 void

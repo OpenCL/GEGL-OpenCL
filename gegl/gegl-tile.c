@@ -65,7 +65,6 @@ gegl_tile_get_type (void)
         0,
         (GInstanceInitFunc) init,
         &value_table,             /* value_table */
-        //NULL,             /* value_table */
       };
 
       type = g_type_register_static (GEGL_TYPE_OBJECT, "GeglTile", &typeInfo, 0);
@@ -132,9 +131,6 @@ finalize(GObject *gobject)
 {
   GeglTile *self = GEGL_TILE (gobject);
   unalloc(self);
-
-  if(self->color_model) 
-    g_object_ref(self->color_model);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
@@ -414,8 +410,6 @@ gegl_tile_set_color_model (GeglTile * self,
   g_return_if_fail (GEGL_IS_COLOR_MODEL (color_model));
 
   self->color_model = color_model;
-
-  g_object_ref(self->color_model);
 }
 
 /**
@@ -434,6 +428,7 @@ gegl_tile_get_data (GeglTile * self,
 {
    g_return_if_fail (self != NULL);
    g_return_if_fail (GEGL_IS_TILE (self));
+
    {
      gint i;
      gpointer * data_pointers = gegl_buffer_get_data_pointers(self->buffer);
@@ -443,6 +438,14 @@ gegl_tile_get_data (GeglTile * self,
       for(i=0; i < num_channels; i++)
         data[i] = data_pointers[i];
    }
+}
+
+gpointer *
+gegl_tile_alloc_data_pointers (GeglTile * self)
+{
+   g_return_val_if_fail (self != NULL, NULL);
+   g_return_val_if_fail (GEGL_IS_TILE (self), NULL);
+   return gegl_buffer_alloc_data_pointers(self->buffer);
 }
 
 /**
@@ -488,17 +491,42 @@ gegl_tile_get_data_at (GeglTile * self,
    }
 }
 
+gpointer * 
+gegl_tile_data_pointers (GeglTile * self, 
+                         gint x, 
+                         gint y)
+{
+   g_return_val_if_fail (self != NULL, NULL);
+   g_return_val_if_fail (GEGL_IS_TILE (self), NULL);
+   {
+      gint i;
+      gint x0 = x - self->area.x;
+      gint y0 = y - self->area.y;
+
+      gint num_channels = gegl_color_model_num_channels(self->color_model);
+      gint bytes_per_channel = gegl_color_model_bytes_per_channel(self->color_model);
+      gint channel_row_bytes = self->area.w * bytes_per_channel;
+      gpointer *data_pointers = gegl_tile_alloc_data_pointers(self);
+
+      /* Update the data pointers to point to (x,y) position */
+      for(i=0; i < num_channels; i++)
+        {
+          data_pointers[i] = (gpointer)((guchar*)data_pointers[i] + 
+                                        y0 * channel_row_bytes + 
+                                        x0 * bytes_per_channel);
+        }
+
+      return data_pointers;
+   }
+}
+
 static void 
 unalloc (GeglTile * self)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_TILE (self));
 
-  if (self->color_model)
-    {
-      g_object_unref(self->color_model);
-      self->color_model = NULL;
-    }
+  self->color_model = NULL;
 
   if (self->buffer)
     {
@@ -524,13 +552,10 @@ gegl_tile_alloc (GeglTile * self,
     unalloc(self);
 
     self->color_model = color_model;
-    g_object_ref(color_model);
     gegl_rect_copy(&self->area, area); 
 
     self->buffer = gegl_tile_mgr_create_buffer(tile_mgr, self); 
                                                      
-    g_object_unref(tile_mgr);
-
     if(!self->buffer)
       return FALSE;
 

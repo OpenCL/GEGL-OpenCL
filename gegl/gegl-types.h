@@ -4,8 +4,6 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#define GEGL_TYPE_IMAGE_DATA   G_TYPE_MAKE_FUNDAMENTAL(G_TYPE_RESERVED_USER_FIRST + 1) 
-
 #define GEGL_DEFAULT_WIDTH 64 
 #define GEGL_DEFAULT_HEIGHT 64 
 
@@ -27,6 +25,22 @@ typedef enum
 
 typedef enum
 {
+  GEGL_ALPHA_NONE    = 0, 
+  GEGL_A_ALPHA       = 1 << 0,
+  GEGL_B_ALPHA       = 1 << 1,
+  GEGL_A_B_ALPHA     = GEGL_A_ALPHA | GEGL_B_ALPHA
+} GeglAlphaFlags;
+
+typedef enum
+{
+  GEGL_NO_ALPHA  = 0, 
+  GEGL_FG_ALPHA       = 1 << 0,
+  GEGL_BG_ALPHA       = 1 << 1,
+  GEGL_FG_BG_ALPHA    = GEGL_FG_ALPHA | GEGL_BG_ALPHA
+} GeglFgBgAlphaFlags;
+
+typedef enum
+{
   GEGL_COLOR_MODEL_TYPE_NONE,
   GEGL_COLOR_MODEL_TYPE_GRAY_U8,
   GEGL_COLOR_MODEL_TYPE_GRAY_U16,
@@ -45,17 +59,6 @@ typedef enum
   GEGL_COLOR_MODEL_TYPE_RGBA_U16_4,
   GEGL_COLOR_MODEL_TYPE_RGBA_FLOAT
 }GeglColorModelType;
-
-typedef enum
-{
-  GEGL_COMPOSITE_MODE_NONE,
-  GEGL_COMPOSITE_MODE_REPLACE,
-  GEGL_COMPOSITE_MODE_OVER,
-  GEGL_COMPOSITE_MODE_IN,
-  GEGL_COMPOSITE_MODE_OUT,
-  GEGL_COMPOSITE_MODE_ATOP,
-  GEGL_COMPOSITE_MODE_XOR
-}GeglCompositeMode;
 
 typedef enum
 {

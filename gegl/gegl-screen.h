@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-point-op.h"
+#include "gegl-blend.h"
 
 #define GEGL_TYPE_SCREEN               (gegl_screen_get_type ())
 #define GEGL_SCREEN(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SCREEN, GeglScreen))
@@ -20,14 +20,14 @@ typedef struct _GeglScreen GeglScreen;
 #endif
 struct _GeglScreen 
 {
-   GeglPointOp point_op;
+   GeglBlend blend;
    /*< private >*/
 };
 
 typedef struct _GeglScreenClass GeglScreenClass;
 struct _GeglScreenClass 
 {
-   GeglPointOpClass point_op_class;
+   GeglBlendClass blend_class;
 };
 
 GType            gegl_screen_get_type         (void);

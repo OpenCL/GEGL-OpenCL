@@ -10,13 +10,6 @@
 
 GeglSampledImage * dest;
 
-static void dump_graph (GeglNode * node)
-{
-  GeglDumpVisitor *dump_visitor = g_object_new(GEGL_TYPE_DUMP_VISITOR, NULL);  
-  gegl_dump_visitor_traverse(dump_visitor, node); 
-  g_object_unref(dump_visitor);
-}
-
 static void
 test_fill_g_object_new(Test *test)
 {
@@ -25,7 +18,7 @@ test_fill_g_object_new(Test *test)
 
     ct_test(test, fill != NULL);
     ct_test(test, GEGL_IS_FILL(fill));
-    ct_test(test, g_type_parent(GEGL_TYPE_FILL) == GEGL_TYPE_POINT_OP);
+    ct_test(test, g_type_parent(GEGL_TYPE_FILL) == GEGL_TYPE_NO_INPUT);
     ct_test(test, !strcmp("GeglFill", g_type_name(GEGL_TYPE_FILL)));
 
     g_object_unref(fill);
@@ -61,7 +54,6 @@ test_fill_g_object_new(Test *test)
 
     g_object_unref(fill);
     g_object_unref(color);
-    g_object_unref(rgb_float);
   }
 }
 
@@ -83,19 +75,12 @@ test_fill_apply(Test *test)
     chans[1].f = .2;
     chans[2].f = .3;
 
-    dump_graph(GEGL_NODE(op));
-    LOG_DEBUG("calling apply", "");
-
-
     gegl_op_apply(op); 
-    dump_graph(GEGL_NODE(op));
-    LOG_DEBUG("back from apply", "");
 
     ct_test(test, testutils_check_rgb_float_pixel(GEGL_IMAGE(op), .1, .2, .3));  
 
     g_object_unref(op);
     g_object_unref(color);
-    g_object_unref(rgb_float);
   }
 }
 
@@ -124,7 +109,6 @@ test_fill_apply_roi(Test *test)
 
     g_object_unref(op);
     g_object_unref(color);
-    g_object_unref(rgb_float);
   }
 }
 
@@ -152,7 +136,6 @@ test_fill_apply_image(Test *test)
 
     g_object_unref(op);
     g_object_unref(color);
-    g_object_unref(rgb_float);
   }
 }
 
@@ -166,7 +149,6 @@ fill_test_setup(Test *test)
                        "height", SAMPLED_IMAGE_HEIGHT,
                        NULL);  
 
-  g_object_unref(rgb_float);
 }
 
 static void

@@ -46,32 +46,35 @@ testgegl_SOURCES = \
    dfsvisitormultouttest.c \
    dfsvisitortest.c \
    dumpvisitortest.c \
+   fadetest.c \
    filltest.c \
    graphapplytest.c \
    graphnodetest.c \
    haverecttest.c \
    imagetest.c \
    membuffertest.c \
+   multiplytest.c \
    needrecttest.c \
    nodetest.c \
    nodemultouttest.c \
    optest.c \
    objecttest.c \
+   pipetest.c \
    pointoptest.c \
    printtest.c \
    sampledimagetest.c \
    simpletreetest.c \
-   statoptest.c \
    testgegl.c \
    testutils.c \
+   tiledimagetest.c \
    tiletest.c \
    tileiteratortest.c \
    tilemgrtest.c \
-   valuetest.c
+   valuetiletest.c
 
 testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(DEPS)
-testgegl_LDADD = $(LDADDS) -lm
+testgegl_LDADD = $(LDADDS) -lm -lefence
 
 tests: dummy testgegl
 

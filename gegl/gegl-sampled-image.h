@@ -23,6 +23,8 @@ struct _GeglSampledImage
     GeglImage image;
 
     /*< private >*/
+    gint x;
+    gint y;
     gint width;  
     gint height;
 };

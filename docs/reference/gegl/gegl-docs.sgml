@@ -13,13 +13,10 @@
 <!ENTITY GeglColorModelRgb SYSTEM "sgml/gegl-color-model-rgb.sgml">
 <!ENTITY GeglColorModel SYSTEM "sgml/gegl-color-model.sgml">
 <!ENTITY GeglColor SYSTEM "sgml/gegl-color.sgml">
-<!ENTITY GeglCompPremult SYSTEM "sgml/gegl-comp-premult.sgml">
 <!ENTITY GeglComp SYSTEM "sgml/gegl-comp.sgml">
 <!ENTITY GeglConstMult SYSTEM "sgml/gegl-const-mult.sgml">
 <!ENTITY GeglCopy SYSTEM "sgml/gegl-copy.sgml">
-<!ENTITY GeglDark SYSTEM "sgml/gegl-dark.sgml">
 <!ENTITY GeglDfsVisitor SYSTEM "sgml/gegl-dfs-visitor.sgml">
-<!ENTITY GeglDiff SYSTEM "sgml/gegl-diff.sgml">
 <!ENTITY GeglDumpVisitor SYSTEM "sgml/gegl-dump-visitor.sgml">
 <!ENTITY GeglEvalBfsVisitor SYSTEM "sgml/gegl-eval-bfs-visitor.sgml">
 <!ENTITY GeglEvalDfsVisitor SYSTEM "sgml/gegl-eval-dfs-visitor.sgml">
@@ -29,33 +26,45 @@
 <!ENTITY GeglFilter SYSTEM "sgml/gegl-filter.sgml">
 <!ENTITY GeglGraphSetupVisitor SYSTEM "sgml/gegl-graph-setup-visitor.sgml">
 <!ENTITY GeglGraph SYSTEM "sgml/gegl-graph.sgml">
-<!ENTITY GeglImage SYSTEM "sgml/gegl-image.sgml">
-<!ENTITY GeglLight SYSTEM "sgml/gegl-light.sgml">
 <!ENTITY GeglMax SYSTEM "sgml/gegl-max.sgml">
 <!ENTITY GeglMemBuffer SYSTEM "sgml/gegl-mem-buffer.sgml">
 <!ENTITY GeglMin SYSTEM "sgml/gegl-min.sgml">
-<!ENTITY GeglMult SYSTEM "sgml/gegl-mult.sgml">
 <!ENTITY GeglNode SYSTEM "sgml/gegl-node.sgml">
 <!ENTITY GeglObject SYSTEM "sgml/gegl-object.sgml">
 <!ENTITY GeglOp SYSTEM "sgml/gegl-op.sgml">
+<!ENTITY gegl-gegl-param-specs SYSTEM "sgml/gegl-param-specs.sgml">
 <!ENTITY GeglPointOp SYSTEM "sgml/gegl-point-op.sgml">
 <!ENTITY GeglPremult SYSTEM "sgml/gegl-premult.sgml">
 <!ENTITY GeglPrint SYSTEM "sgml/gegl-print.sgml">
 <!ENTITY GeglSampledImage SYSTEM "sgml/gegl-sampled-image.sgml">
 <!ENTITY GeglScanlineProcessor SYSTEM "sgml/gegl-scanline-processor.sgml">
 <!ENTITY GeglScreen SYSTEM "sgml/gegl-screen.sgml">
-<!ENTITY GeglStatOp SYSTEM "sgml/gegl-stat-op.sgml">
 <!ENTITY GeglSubtract SYSTEM "sgml/gegl-subtract.sgml">
 <!ENTITY GeglTileIterator SYSTEM "sgml/gegl-tile-iterator.sgml">
 <!ENTITY GeglTileMgr SYSTEM "sgml/gegl-tile-mgr.sgml">
 <!ENTITY GeglTile SYSTEM "sgml/gegl-tile.sgml">
 <!ENTITY GeglUnpremult SYSTEM "sgml/gegl-unpremult.sgml">
-<!ENTITY GeglVisitor SYSTEM "sgml/gegl-visitor.sgml">
-<!ENTITY gegl-gegl-attributes SYSTEM "sgml/gegl-attributes.sgml">
-<!ENTITY gegl-gegl-param-specs SYSTEM "sgml/gegl-param-specs.sgml">
-<!ENTITY gegl-gegl-types SYSTEM "sgml/gegl-types.sgml">
 <!ENTITY gegl-gegl-utils SYSTEM "sgml/gegl-utils.sgml">
-<!ENTITY gegl-gegl-value-types SYSTEM "sgml/gegl-value-types.sgml">
+<!ENTITY GeglVisitor SYSTEM "sgml/gegl-visitor.sgml">
+<!ENTITY GeglImage SYSTEM "sgml/gegl-image.sgml">
+<!ENTITY GeglBlend SYSTEM "sgml/gegl-blend.sgml">
+<!ENTITY GeglDarken SYSTEM "sgml/gegl-darken.sgml">
+<!ENTITY GeglLighten SYSTEM "sgml/gegl-lighten.sgml">
+<!ENTITY GeglInside SYSTEM "sgml/gegl-inside.sgml">
+<!ENTITY GeglOutside SYSTEM "sgml/gegl-outside.sgml">
+<!ENTITY GeglPipe SYSTEM "sgml/gegl-pipe.sgml">
+<!ENTITY GeglTiledImage SYSTEM "sgml/gegl-tiled-image.sgml">
+<!ENTITY GeglOver SYSTEM "sgml/gegl-over.sgml">
+<!ENTITY GeglAtop SYSTEM "sgml/gegl-atop.sgml">
+<!ENTITY GeglXor SYSTEM "sgml/gegl-xor.sgml">
+<!ENTITY GeglMultiply SYSTEM "sgml/gegl-multiply.sgml">
+<!ENTITY GeglBinary SYSTEM "sgml/gegl-binary.sgml">
+<!ENTITY GeglDifference SYSTEM "sgml/gegl-difference.sgml">
+<!ENTITY GeglUnary SYSTEM "sgml/gegl-unary.sgml">
+<!ENTITY GeglFade SYSTEM "sgml/gegl-fade.sgml">
+<!ENTITY GeglNoInput SYSTEM "sgml/gegl-no-input.sgml">
+<!ENTITY gegl-gegl-attributes SYSTEM "sgml/gegl-attributes.sgml">
+<!ENTITY gegl-gegl-types SYSTEM "sgml/gegl-types.sgml">
 <!entity gegl-objecttree SYSTEM "sgml/tree_index.sgml">
 <!entity gegl-compiling SYSTEM "compiling.sgml">
 <!entity gegl-building SYSTEM "building.sgml">
@@ -78,35 +87,49 @@
 
   <chapter id="abstractops">
     <title>Abstract and Container Ops</title>
+    &GeglBlend;
+    &GeglBinary;
+    &GeglComp;
     &GeglFilter;
     &GeglGraph;
     &GeglImage;
+    &GeglNoInput;
     &GeglOp;
+    &GeglPipe;
     &GeglPointOp;
     &GeglScanlineProcessor;
-    &GeglStatOp;
+    &GeglUnary;
   </chapter>
 
   <chapter id="ops">
     <title>Operators</title>
     &GeglAdd;
-    &GeglCompPremult;
-    &GeglComp;
+    &GeglAtop;
     &GeglConstMult;
     &GeglCopy;
-    &GeglDark;
-    &GeglDiff;
-    &GeglFill;
-    &GeglLight;
+    &GeglDarken;
+    &GeglDifference;
+    &GeglFade;
+    &GeglInside;
+    &GeglLighten;
     &GeglMax;
     &GeglMin;
-    &GeglMult;
+    &GeglMultiply;
+    &GeglOutside;
+    &GeglOver;
     &GeglPremult;
     &GeglPrint;
-    &GeglSampledImage;
     &GeglScreen;
     &GeglSubtract;
     &GeglUnpremult;
+    &GeglXor;
+  </chapter>
+
+  <chapter id="images">
+    <title>Images</title>
+    &GeglFill;
+    &GeglSampledImage;
+    &GeglTiledImage;
   </chapter>
 
   <chapter id="evaluation">
@@ -159,6 +182,5 @@
     &gegl-gegl-param-specs;
     &gegl-gegl-types;
     &gegl-gegl-utils;
-    &gegl-gegl-value-types;
   </chapter>
 </book>

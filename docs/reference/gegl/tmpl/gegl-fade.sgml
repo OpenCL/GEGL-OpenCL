@@ -1,0 +1,39 @@
+<!-- ##### SECTION Title ##### -->
+GeglFade
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_fade_get_multiplier ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_fade_set_multiplier ##### -->
+<para>
+
+</para>
+
+@self: 
+@multiplier: 
+
+
+<!-- ##### ARG GeglFade:multiplier ##### -->
+<para>
+
+</para>
+

@@ -49,6 +49,34 @@ just returning their normal image data as output.
 @cm: 
 
 
+<!-- ##### FUNCTION gegl_image_set_channels_mask ##### -->
+<para>
+
+</para>
+
+@self: 
+@data: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_set_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@tile: 
+
+
+<!-- ##### FUNCTION gegl_image_get_tile ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
 <!-- ##### ARG GeglImage:colormodel ##### -->
 <para>
 

@@ -149,3 +149,13 @@ Abstract class for all visitors.
 @shared_count: 
 
 
+<!-- ##### FUNCTION gegl_visitor_get_input_attributes ##### -->
+<para>
+
+</para>
+
+@self: 
+@node: 
+@Returns: 
+
+

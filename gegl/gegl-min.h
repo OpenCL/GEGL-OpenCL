@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-point-op.h"
+#include "gegl-binary.h"
 
 #define GEGL_TYPE_MIN               (gegl_min_get_type ())
 #define GEGL_MIN(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_MIN, GeglMin))
@@ -20,14 +20,14 @@ typedef struct _GeglMin GeglMin;
 #endif
 struct _GeglMin 
 {
-   GeglPointOp point_op;
+   GeglBinary binary;
    /*< private >*/
 };
 
 typedef struct _GeglMinClass GeglMinClass;
 struct _GeglMinClass 
 {
-   GeglPointOpClass point_op_class;
+   GeglBinaryClass binary_class;
 };
 
 GType            gegl_min_get_type         (void);

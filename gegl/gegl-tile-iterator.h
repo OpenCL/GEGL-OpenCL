@@ -49,17 +49,22 @@ GeglTile *      gegl_tile_iterator_get_tile     (GeglTileIterator * self);
 void            gegl_tile_iterator_get_rect     (GeglTileIterator * self, 
                                                  GeglRect * rect);
 GeglColorModel *gegl_tile_iterator_get_color_model(GeglTileIterator * self);
+gint            gegl_tile_iterator_get_num_colors(GeglTileIterator * self);
+
 void            gegl_tile_iterator_first        (GeglTileIterator * self);
 void            gegl_tile_iterator_next         (GeglTileIterator * self);
 gboolean        gegl_tile_iterator_is_done      (GeglTileIterator * self);
 void            gegl_tile_iterator_get_current  (GeglTileIterator * self,
                                                  gpointer * data_pointers);
+gpointer *      gegl_tile_iterator_color_channels(GeglTileIterator *self);
+gpointer        gegl_tile_iterator_alpha_channel(GeglTileIterator *self);
 
 /* protected */
 void            gegl_tile_iterator_set_rect     (GeglTileIterator * self, 
                                                  GeglRect * rect);
 void            gegl_tile_iterator_set_tile     (GeglTileIterator * self, 
                                                  GeglTile * tile);
+
 
 #ifdef __cplusplus
 }

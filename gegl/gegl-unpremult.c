@@ -1,24 +1,14 @@
 #include "gegl-unpremult.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-tile.h"
 #include "gegl-tile-iterator.h"
-#include "gegl-color-model.h"
-#include "gegl-attributes.h"
 #include "gegl-utils.h"
-#include "gegl-value-types.h"
-#include <stdio.h>
-
-enum
-{
-  PROP_0, 
-  PROP_LAST 
-};
 
 static void class_init (GeglUnpremultClass * klass);
 static void init (GeglUnpremult * self, GeglUnpremultClass * klass);
 
-static void prepare (GeglFilter * filter, GList * output_attributes, GList *input_attributes);
-static void scanline (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static GeglScanlineFunc get_scanline_func(GeglUnary * unary, GeglColorSpace space, GeglChannelDataType type);
+
+static void unpremult_float (GeglFilter * filter, GeglTileIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -42,7 +32,7 @@ gegl_unpremult_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GEGL_TYPE_POINT_OP, 
+      type = g_type_register_static (GEGL_TYPE_UNARY, 
                                      "GeglUnpremult", 
                                      &typeInfo, 
                                      0);
@@ -51,114 +41,103 @@ gegl_unpremult_get_type (void)
 }
 
 static void 
+class_init (GeglUnpremultClass * klass)
+{
+  GeglUnaryClass *unary_class = GEGL_UNARY_CLASS(klass);
+
+  parent_class = g_type_class_peek_parent(klass);
+
+  unary_class->get_scanline_func = get_scanline_func;
+}
+
+static void 
 init (GeglUnpremult * self, 
       GeglUnpremultClass * klass)
 {
 }
 
-static void 
-class_init (GeglUnpremultClass * klass)
+/* scanline_funcs[data type] */
+static GeglScanlineFunc scanline_funcs[] = 
+{ 
+  NULL, 
+  NULL, 
+  unpremult_float, 
+  NULL 
+};
+
+static GeglScanlineFunc
+get_scanline_func(GeglUnary * unary,
+                  GeglColorSpace space,
+                  GeglChannelDataType type)
 {
-  GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
-
-  parent_class = g_type_class_peek_parent(klass);
-
-  filter_class->prepare = prepare;
+  return scanline_funcs[type];
 }
 
-static void 
-prepare (GeglFilter * filter, 
-         GList * output_attributes,
-         GList * input_attributes)
-{
-  GeglPointOp *point_op = GEGL_POINT_OP(filter); 
+static void                                                            
+unpremult_float (GeglFilter * filter,              
+               GeglTileIterator ** iters,        
+               gint width)                       
+{                                                                       
+  gfloat **d = (gfloat**)gegl_tile_iterator_color_channels(iters[0]);
+  gfloat *da = (gfloat*)gegl_tile_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_tile_iterator_get_num_colors(iters[0]);
 
-  GeglAttributes *dest_attributes = 
-    (GeglAttributes*)g_list_nth_data(output_attributes, 0); 
-  GeglTile *dest = (GeglTile *)g_value_get_object(dest_attributes->value);
-  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
+  gfloat **a = (gfloat**)gegl_tile_iterator_color_channels(iters[1]);
+  gfloat *aa = (gfloat*)gegl_tile_iterator_alpha_channel(iters[1]);
+  gint a_color_chans = gegl_tile_iterator_get_num_colors(iters[1]);
 
-  g_return_if_fail(dest_cm);
-
-  /* Get correct scanline func for this color model */
   {
-    gboolean dest_has_alpha = gegl_color_model_has_alpha(dest_cm);
-    if(dest_has_alpha)
-      point_op->scanline_processor->func = scanline;        
-    else
-      {
-        point_op->scanline_processor->func = NULL;        
-        g_warning("unpremult: prepare: dest has no alpha channel\n");
-      } 
+    gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;   
+    gfloat *d1 = (d_color_chans > 1) ? d[1]: NULL;
+    gfloat *d2 = (d_color_chans > 2) ? d[2]: NULL;
+
+    gfloat *a0 = (a_color_chans > 0) ? a[0]: NULL;   
+    gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
+    gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
+
+    while(width--)                                                        
+      {                                                                   
+        if(GEGL_FLOAT_EQUAL(*aa, 1.0))
+          {
+            switch(d_color_chans)
+              {
+                case 3: *d2++ = *a2++;
+                case 2: *d1++ = *a1++;
+                case 1: *d0++ = *a0++;
+                case 0:        
+              }
+
+            *da++ = *aa++;
+          }
+        else if(GEGL_FLOAT_EQUAL(*aa, 0.0))
+          {
+            switch(d_color_chans)
+              {
+                case 3: *d2++ = 0.0;
+                        a2++;
+                case 2: *d1++ = 0.0;
+                        a1++;
+                case 1: *d0++ = 0.0;
+                        a0++;
+                case 0:        
+              }
+            *da++ = *aa++;
+          }
+        else 
+          {
+            switch(d_color_chans)
+              {
+                case 3: *d2++ = *a2++ / *aa;
+                case 2: *d1++ = *a1++ / *aa;
+                case 1: *d0++ = *a0++ / *aa;
+                case 0:        
+              }
+
+            *da++ = *aa++;
+          }
+      }
   }
-}
 
-/**
- * scanline:
- * @self_op: a #GeglFilter.
- * @iters: #GeglTileIterators array. 
- * @width: width of scanline.
- *
- * Processes a scanline.
- *
- **/
-static void 
-scanline (GeglFilter * filter, 
-          GeglTileIterator ** iters, 
-          gint width)
-{
-  gfloat *dest_data[4];
-  gfloat *dest_r, *dest_g, *dest_b, *dest_alpha;
-  gfloat *src_data[4];
-  gfloat *src_r, *src_g, *src_b, *src_alpha;
-
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
-  gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
-
-  dest_r = dest_data[0];
-  dest_g = dest_data[1];
-  dest_b = dest_data[2];
-  dest_alpha = dest_data[3];
-
-  src_r = src_data[0];
-  src_g = src_data[1];
-  src_b = src_data[2];
-  src_alpha = src_data[3];
- 
-
-  while (width--)
-    {
- 
-      if (*src_alpha == 1.0)
-        {
-          *dest_r = *src_r;
-          *dest_g = *src_g;
-          *dest_b = *src_b;
-        }
-      else if (*src_alpha == 0.0)
-        {
-          *dest_r = 0.0;
-          *dest_g = 0.0;
-          *dest_b = 0.0;
-        }
-      else
-        {
-          *dest_r = (*src_r * 1.0) / *src_alpha;
-          *dest_g = (*src_g * 1.0) / *src_alpha;
-          *dest_b = (*src_b * 1.0) / *src_alpha;
-        }
- 
-        *dest_alpha = *src_alpha;
-             
-        dest_r++;
-        dest_g++;
-        dest_b++;
-        dest_alpha++;
-
-        src_r++;
-        src_g++;
-        src_b++;
-        src_alpha++;
-
-    }
-}
+  g_free(d);
+  g_free(a);
+}                                                                       

@@ -70,7 +70,6 @@ needrect_test_setup(Test *test)
                        "height", SAMPLED_IMAGE_HEIGHT,
                        NULL);  
 
-  g_object_unref(rgb_float);
 }
 
 static void

@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-point-op.h"
+#include "gegl-binary.h"
 
 #define GEGL_TYPE_ADD               (gegl_add_get_type ())
 #define GEGL_ADD(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_ADD, GeglAdd))
@@ -20,14 +20,14 @@ typedef struct _GeglAdd GeglAdd;
 #endif
 struct _GeglAdd 
 {
-   GeglPointOp point_op;
+   GeglBinary binary;
    /*< private >*/
 };
 
 typedef struct _GeglAddClass GeglAddClass;
 struct _GeglAddClass 
 {
-   GeglPointOpClass point_op_class;
+   GeglBinaryClass binary_class;
 };
 
 GType            gegl_add_get_type         (void);

@@ -1,8 +1,8 @@
 <!-- ##### SECTION Title ##### -->
-GeglCompPremult
+GeglOver
 
 <!-- ##### SECTION Short_Description ##### -->
-Composite two premultiplied images.
+
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
@@ -10,11 +10,6 @@ Composite two premultiplied images.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
-<para>
-
-</para>
-
-<!-- ##### ARG GeglCompPremult:composite-mode ##### -->
 <para>
 
 </para>

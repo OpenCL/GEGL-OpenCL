@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-point-op.h"
+#include "gegl-unary.h"
 
 #define GEGL_TYPE_PREMULT               (gegl_premult_get_type ())
 #define GEGL_PREMULT(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PREMULT, GeglPremult))
@@ -20,18 +20,18 @@ typedef struct _GeglPremult GeglPremult;
 #endif
 struct _GeglPremult 
 {
-   GeglPointOp point_op;
-
+   GeglUnary unary;
    /*< private >*/
 };
 
 typedef struct _GeglPremultClass GeglPremultClass;
 struct _GeglPremultClass 
 {
-   GeglPointOpClass point_op_class;
+   GeglUnaryClass unary_class;
 };
 
-GType           gegl_premult_get_type       (void);
+GType            gegl_premult_get_type         (void);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

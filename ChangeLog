@@ -1,3 +1,206 @@
+	Fri Sep 13 00:05:33 EDT 2002 calvinw@mindspring.com
+
+    Removed the composite nodes and broke these into Over, Atop, Inside,
+	Outside and Xor.  These all inherit from the Comp class. You can pass a
+	boolean to these to say whether the fg should be premultiplied before the
+	operation. 
+	
+	Next started to move some of the blend modes into separate classes. Normal,
+	Darken, Lighten, Multiply, Screen, Difference are examples of these.  They
+	all use (1-aB)*F + (1-aF)*B + aB * aF * f(F/aF, B/aB) where f(x,y)
+	describes the blending mode, and Foreground = (F, aF) Background = (B, aB)
+	are premultiplied.  These all extend Blend, so that you can pass an opacity
+	on the Foreground for each of these. These ops are the standard layer modes
+	in gimp. Will add soft light, hard light, exclusion, overlay, etc. to these.
+
+	Finally left the other binary ops under Binary. These are Max, Min, Add, 
+	Subtract, etc. These are just straight f(x,y) expressions. You can place
+	a multiplier (fade) on the second input to these to control the percent of
+	the second input to use.	
+	 
+	*gegl/Makefile.am
+	*gegl/gegl-add.c
+	*gegl/gegl-add.h
+	*gegl/gegl-attributes.c
+	*gegl/gegl-buffer.c
+	*gegl/gegl-buffer.h
+	*gegl/gegl-color-model.c
+	*gegl/gegl-color.c
+	*gegl/gegl-comp.c
+	*gegl/gegl-comp.h
+	*gegl/gegl-const-mult.c
+	*gegl/gegl-const-mult.h
+	*gegl/gegl-dump-visitor.c
+	*gegl/gegl-eval-visitor.c
+	*gegl/gegl-fill.c
+	*gegl/gegl-fill.h
+	*gegl/gegl-image.c
+	*gegl/gegl-image.h
+	*gegl/gegl-max.c
+	*gegl/gegl-max.h
+	*gegl/gegl-min.c
+	*gegl/gegl-min.h
+	*gegl/gegl-param-specs.c
+	*gegl/gegl-param-specs.h
+	*gegl/gegl-premult.c
+	*gegl/gegl-premult.h
+	*gegl/gegl-print.c
+	*gegl/gegl-print.h
+	*gegl/gegl-sampled-image.c
+	*gegl/gegl-sampled-image.h
+	*gegl/gegl-screen.c
+	*gegl/gegl-screen.h
+	*gegl/gegl-subtract.c
+	*gegl/gegl-subtract.h
+	*gegl/gegl-tile-iterator.c
+	*gegl/gegl-tile-iterator.h
+	*gegl/gegl-tile-mgr.c
+	*gegl/gegl-tile.c
+	*gegl/gegl-tile.h
+	*gegl/gegl-types.h
+	*gegl/gegl-unpremult.c
+	*gegl/gegl-unpremult.h
+	*gegl/gegl-utils.c
+	*gegl/gegl.h
+
+	Modified these.
+
+	*gegl/gegl-atop.c
+	*gegl/gegl-atop.h
+	*gegl/gegl-binary.c
+	*gegl/gegl-binary.h
+	*gegl/gegl-blend.c
+	*gegl/gegl-blend.h
+	*gegl/gegl-darken.c
+	*gegl/gegl-darken.h
+	*gegl/gegl-difference.c
+	*gegl/gegl-difference.h
+	*gegl/gegl-fade.c
+	*gegl/gegl-fade.h
+	*gegl/gegl-inside.c
+	*gegl/gegl-inside.h
+	*gegl/gegl-lighten.c
+	*gegl/gegl-lighten.h
+	*gegl/gegl-multiply.c
+	*gegl/gegl-multiply.h
+	*gegl/gegl-no-input.c
+	*gegl/gegl-no-input.h
+	*gegl/gegl-outside.c
+	*gegl/gegl-outside.h
+	*gegl/gegl-over.c
+	*gegl/gegl-over.h
+	*gegl/gegl-pipe.c
+	*gegl/gegl-pipe.h
+	*gegl/gegl-tiled-image.c
+	*gegl/gegl-tiled-image.h
+	*gegl/gegl-unary.c
+	*gegl/gegl-unary.h
+	*gegl/gegl-xor.c
+	*gegl/gegl-xor.h
+
+	Added.
+
+	*gegl/gegl-comp-premult.c
+	*gegl/gegl-comp-premult.h
+	*gegl/gegl-dark.c
+	*gegl/gegl-dark.h
+	*gegl/gegl-diff.c
+	*gegl/gegl-diff.h
+	*gegl/gegl-light.c
+	*gegl/gegl-light.h
+	*gegl/gegl-mult.c
+	*gegl/gegl-mult.h
+	*gegl/gegl-stat-op.c
+	*gegl/gegl-stat-op.h
+
+	*tests/Makefile.am
+	*tests/addtest.c
+	*tests/colormodeltest.c
+	*tests/colortest.c
+	*tests/constmulttest.c
+	*tests/copytest.c
+	*tests/dfsvisitortest.c
+	*tests/filltest.c
+	*tests/graphapplytest.c
+	*tests/haverecttest.c
+	*tests/imagetest.c
+	*tests/needrecttest.c
+	*tests/pointoptest.c
+	*tests/printtest.c
+	*tests/sampledimagetest.c
+	*tests/simpletreetest.c
+	*tests/statoptest.c
+	*tests/testgegl.c
+	*tests/testutils.c
+	*tests/testutils.h
+	*tests/tileiteratortest.c
+	*tests/tiletest.c
+
+	Updated the tests to match changes above. testutils was changed to handle
+	more colormodels.
+
+	*tests/valuetest.c
+	
+	Removed.
+
+	*tests/fadetest.c
+	*tests/multiplytest.c
+	*tests/pipetest.c
+	*tests/tiledimagetest.c
+	*tests/valuetiletest.c
+
+	New tests.
+
+	*docs/reference/gegl/gegl-docs.sgml
+	*docs/reference/gegl/gegl-sections.txt
+	*docs/reference/gegl/gegl-undocumented.txt
+	*docs/reference/gegl/gegl.types
+	*docs/reference/gegl/tmpl/gegl-attributes.sgml
+	*docs/reference/gegl/tmpl/gegl-buffer.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model-gray.sgml
+	*docs/reference/gegl/tmpl/gegl-comp.sgml
+	*docs/reference/gegl/tmpl/gegl-const-mult.sgml
+	*docs/reference/gegl/tmpl/gegl-graph.sgml
+	*docs/reference/gegl/tmpl/gegl-image.sgml
+	*docs/reference/gegl/tmpl/gegl-node.sgml
+	*docs/reference/gegl/tmpl/gegl-op.sgml
+	*docs/reference/gegl/tmpl/gegl-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-stat-op.sgml
+	*docs/reference/gegl/tmpl/gegl-tile-iterator.sgml
+	*docs/reference/gegl/tmpl/gegl-tile.sgml
+	*docs/reference/gegl/tmpl/gegl-types.sgml
+	*docs/reference/gegl/tmpl/gegl-unused.sgml
+	*docs/reference/gegl/tmpl/gegl-visitor.sgml
+
+	Updated.
+
+	*docs/reference/gegl/tmpl/gegl-atop.sgml
+	*docs/reference/gegl/tmpl/gegl-binary.sgml
+	*docs/reference/gegl/tmpl/gegl-blend.sgml
+	*docs/reference/gegl/tmpl/gegl-darken.sgml
+	*docs/reference/gegl/tmpl/gegl-difference.sgml
+	*docs/reference/gegl/tmpl/gegl-fade.sgml
+	*docs/reference/gegl/tmpl/gegl-inside.sgml
+	*docs/reference/gegl/tmpl/gegl-lighten.sgml
+	*docs/reference/gegl/tmpl/gegl-multiply.sgml
+	*docs/reference/gegl/tmpl/gegl-no-input.sgml
+	*docs/reference/gegl/tmpl/gegl-outside.sgml
+	*docs/reference/gegl/tmpl/gegl-over.sgml
+	*docs/reference/gegl/tmpl/gegl-pipe.sgml
+	*docs/reference/gegl/tmpl/gegl-tiled-image.sgml
+	*docs/reference/gegl/tmpl/gegl-unary.sgml
+	*docs/reference/gegl/tmpl/gegl-xor.sgml
+
+	New docs.
+
+	*docs/reference/gegl/tmpl/gegl-comp-premult.sgml
+	*docs/reference/gegl/tmpl/gegl-dark.sgml
+	*docs/reference/gegl/tmpl/gegl-diff.sgml
+	*docs/reference/gegl/tmpl/gegl-light.sgml
+	*docs/reference/gegl/tmpl/gegl-mult.sgml
+
+	Removed old docs.    
+
 Mon Aug 26 00:28:20 EDT 2002 calvinw@mindspring.com	
 
 	Updated Node class to incorporate multi-output nodes. Now nodes have a

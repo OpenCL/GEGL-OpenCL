@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-point-op.h"
+#include "gegl-binary.h"
 
 #define GEGL_TYPE_SUBTRACT               (gegl_subtract_get_type ())
 #define GEGL_SUBTRACT(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SUBTRACT, GeglSubtract))
@@ -20,14 +20,14 @@ typedef struct _GeglSubtract GeglSubtract;
 #endif
 struct _GeglSubtract 
 {
-   GeglPointOp point_op;
+   GeglBinary binary;
    /*< private >*/
 };
 
 typedef struct _GeglSubtractClass GeglSubtractClass;
 struct _GeglSubtractClass 
 {
-   GeglPointOpClass point_op_class;
+   GeglBinaryClass binary_class;
 };
 
 GType            gegl_subtract_get_type         (void);

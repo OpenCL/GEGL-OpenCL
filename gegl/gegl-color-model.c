@@ -34,6 +34,9 @@ gegl_color_model_register(gchar * color_model_name,
         return FALSE;
       }
 
+    /* Get the singleton ref for this color model. */
+    g_object_ref(color_model);
+
     gegl_color_model_set_color_space_name(color_model, color_model_name); 
     g_hash_table_insert(color_model_instances, 
                         (gpointer)gegl_color_model_get_color_space_name(color_model), 
@@ -45,6 +48,7 @@ gegl_color_model_register(gchar * color_model_name,
     if(cm != color_model)
       return FALSE;
   }
+
 
   return TRUE;
 } 
@@ -60,7 +64,6 @@ gegl_color_model_instance(gchar *color_model_name)
       return NULL;
     }
 
-  g_object_ref(G_OBJECT(color_model));
   return color_model;
 } 
 

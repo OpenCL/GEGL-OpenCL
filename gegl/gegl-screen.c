@@ -1,23 +1,14 @@
 #include "gegl-screen.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-color-model.h"
-#include "gegl-tile.h"
 #include "gegl-tile-iterator.h"
-#include "gegl-attributes.h"
 #include "gegl-utils.h"
-#include "gegl-value-types.h"
-
-enum
-{
-  PROP_0, 
-  PROP_LAST 
-};
 
 static void class_init (GeglScreenClass * klass);
 static void init (GeglScreen * self, GeglScreenClass * klass);
 
-static void prepare (GeglFilter * filter, GList * output_attributes, GList *input_attributes);
-static void scanline (GeglFilter * filter, GeglTileIterator ** iters, gint width);
+static GeglScanlineFunc get_scanline_func(GeglComp * comp, GeglColorSpace space, GeglChannelDataType type);
+
+static void fg_screen_bg_float (GeglFilter * filter, GeglTileIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -41,7 +32,7 @@ gegl_screen_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GEGL_TYPE_POINT_OP, 
+      type = g_type_register_static (GEGL_TYPE_BLEND, 
                                      "GeglScreen", 
                                      &typeInfo, 
                                      0);
@@ -52,132 +43,91 @@ gegl_screen_get_type (void)
 static void 
 class_init (GeglScreenClass * klass)
 {
-  GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
-
+  GeglCompClass *comp_class = GEGL_COMP_CLASS(klass);
   parent_class = g_type_class_peek_parent(klass);
-
-  filter_class->prepare = prepare;
+  comp_class->get_scanline_func = get_scanline_func;
 }
 
 static void 
 init (GeglScreen * self, 
       GeglScreenClass * klass)
 {
-  g_object_set(self, "num_inputs", 2, NULL);
 }
 
-static void 
-prepare (GeglFilter * filter, 
-         GList * output_attributes,
-         GList * input_attributes)
+/* scanline_funcs[data type] */
+static GeglScanlineFunc scanline_funcs[] = 
+{ 
+  NULL, 
+  NULL, 
+  fg_screen_bg_float, 
+  NULL 
+};
+
+static GeglScanlineFunc
+get_scanline_func(GeglComp * comp,
+                  GeglColorSpace space,
+                  GeglChannelDataType type)
 {
-  GeglPointOp *point_op = GEGL_POINT_OP(filter); 
-
-  GeglAttributes *dest_attributes = 
-    (GeglAttributes*)g_list_nth_data(output_attributes, 0); 
-  GeglTile *dest = (GeglTile *)g_value_get_object(dest_attributes->value);
-  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
-
-  g_return_if_fail(dest_cm);
-
-  /* Get correct scanline func for this color model */
-  point_op->scanline_processor->func = scanline;        
+  return scanline_funcs[type];
 }
 
-/**
- * scanline:
- * @self_op: a #GeglFilter
- * @iters: #GeglTileIterators array. 
- * @width: width of scanline.
- *
- * Processes a scanline.
- *
- **/
-static void 
-scanline (GeglFilter * filter, 
-          GeglTileIterator ** iters, 
-          gint width)
-{
-  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
-  GeglColorModel *src1_cm = gegl_tile_iterator_get_color_model(iters[1]);
-  GeglColorModel *src2_cm = gegl_tile_iterator_get_color_model(iters[2]);
 
-  gfloat *dest_data[4];
-  gboolean dest_has_alpha;
-  gfloat *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
-  gfloat *src1_data[4];
-  gboolean src1_has_alpha;
-  gfloat *src1_r, *src1_g, *src1_b, *src1_alpha=NULL;
-  gfloat *src2_data[4];
-  gboolean src2_has_alpha;
-  gfloat *src2_r, *src2_g, *src2_b, *src2_alpha=NULL;
+static void                                                            
+fg_screen_bg_float (GeglFilter * filter,              
+                      GeglTileIterator ** iters,        
+                      gint width)                       
+{                                                                       
+  gfloat **d = (gfloat**)gegl_tile_iterator_color_channels(iters[0]);
+  gfloat *da = (gfloat*)gegl_tile_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_tile_iterator_get_num_colors(iters[0]);
 
-  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
-  src1_has_alpha = gegl_color_model_has_alpha(src1_cm); 
-  src2_has_alpha = gegl_color_model_has_alpha(src2_cm); 
+  gfloat **b = (gfloat**)gegl_tile_iterator_color_channels(iters[1]);
+  gfloat *ba = (gfloat*)gegl_tile_iterator_alpha_channel(iters[1]);
+  gint b_color_chans = gegl_tile_iterator_get_num_colors(iters[1]);
 
-  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
-  gegl_tile_iterator_get_current (iters[1], (gpointer*)src1_data);
-  gegl_tile_iterator_get_current (iters[2], (gpointer*)src2_data);
+  gfloat **f = (gfloat**)gegl_tile_iterator_color_channels(iters[2]);
+  gfloat * fa = (gfloat*)gegl_tile_iterator_alpha_channel(iters[2]);
+  gint f_color_chans = gegl_tile_iterator_get_num_colors(iters[2]);
 
-  dest_r = dest_data[0];
-  dest_g = dest_data[1];
-  dest_b = dest_data[2];
-  if (dest_has_alpha)
-    dest_alpha = dest_data[3];
+  gint alpha_mask = 0x0;
 
-  src1_r = src1_data[0];
-  src1_g = src1_data[1];
-  src1_b = src1_data[2];
-  if (src1_has_alpha)
-    src1_alpha = src1_data[3];
+  if(ba) 
+    alpha_mask |= GEGL_BG_ALPHA; 
+  if(fa)
+    alpha_mask |= GEGL_FG_ALPHA; 
 
-  src2_r = src2_data[0];
-  src2_g = src2_data[1];
-  src2_b = src2_data[2];
-  if (src2_has_alpha)
-    src2_alpha = src2_data[3];
+  {
+    gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;   
+    gfloat *d1 = (d_color_chans > 1) ? d[1]: NULL;
+    gfloat *d2 = (d_color_chans > 2) ? d[2]: NULL;
 
-    
-  while (width--)
-    {
- 
-      *dest_r = 1.0 - (1.0 - *src1_r) * (1.0 - *src2_r);
-      *dest_g = 1.0 - (1.0 - *src1_g) * (1.0 - *src2_g);
-      *dest_b = 1.0 - (1.0 - *src1_b) * (1.0 - *src2_b);
-      if (dest_has_alpha)
-        {
-          if (src1_has_alpha && src2_has_alpha)
-            {
-              *dest_alpha = MIN (*src1_alpha,*src2_alpha);
-            }
-          else if (src1_has_alpha)
-            {
-              *dest_alpha = *src1_alpha;
-            }
-          else if (src2_has_alpha)
-            {
-              *dest_alpha = *src2_alpha;
-            }
-        }
- 
-      dest_r++;
-      dest_g++;
-      dest_b++;
-      if (dest_has_alpha)
-        dest_alpha++;
+    gfloat *b0 = (b_color_chans > 0) ? b[0]: NULL;   
+    gfloat *b1 = (b_color_chans > 1) ? b[1]: NULL;
+    gfloat *b2 = (b_color_chans > 2) ? b[2]: NULL;
 
-      src1_r++;
-      src1_g++;
-      src1_b++;
-      if (src1_has_alpha)
-        src1_alpha++;
+    gfloat *f0 = (f_color_chans > 0) ? f[0]: NULL;   
+    gfloat *f1 = (f_color_chans > 1) ? f[1]: NULL;
+    gfloat *f2 = (f_color_chans > 2) ? f[2]: NULL;
 
-      src2_r++;
-      src2_g++;
-      src2_b++;
-      if (src2_has_alpha)
-        src2_alpha++;
+    while(width--)                                                        
+      {                                                                   
+        switch(d_color_chans)
+          {
+            case 3: *d2++ = *b2 + *f2 + *b2++ * *f2++;   
+            case 2: *d1++ = *b1 + *f1 + *b1++ * *f1++;
+            case 1: *d0++ = *b0 + *f0 + *b0++ * *f0++;
+            case 0:        
+          }
 
-    }               
-}
+        if(alpha_mask == GEGL_FG_ALPHA || alpha_mask == GEGL_BG_ALPHA)
+          *da++ = 1; 
+        else if (alpha_mask == GEGL_FG_BG_ALPHA)
+          *da++ = *fa + *ba - *ba++ * *fa++; 
+
+      }
+  }
+
+  g_free(d);
+  g_free(b);
+  g_free(f);
+}                                                                       

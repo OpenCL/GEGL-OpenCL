@@ -1,0 +1,39 @@
+<!-- ##### SECTION Title ##### -->
+GeglBinary
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gegl_binary_get_fade ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_binary_set_fade ##### -->
+<para>
+
+</para>
+
+@self: 
+@fade: 
+
+
+<!-- ##### ARG GeglBinary:fade ##### -->
+<para>
+
+</para>
+

@@ -14,3 +14,39 @@ gegl-param-specs
 
 </para>
 
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO GEGL_TYPE_PARAM_TILE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### STRUCT GeglParamSpecTile ##### -->
+<para>
+
+</para>
+
+@pspec: 
+@rect: 
+@color_model: 
+
+<!-- ##### FUNCTION gegl_param_spec_tile ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@rect: 
+@color_model: 
+@flags: 
+@Returns: 
+
+

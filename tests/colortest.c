@@ -43,7 +43,6 @@ color_test_setup(Test *test)
 static void
 color_test_teardown(Test *test)
 {
-  g_object_unref(color_model);
 }
 
 Test *

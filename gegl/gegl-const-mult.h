@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-point-op.h"
+#include "gegl-unary.h"
 
 #define GEGL_TYPE_CONST_MULT               (gegl_const_mult_get_type ())
 #define GEGL_CONST_MULT(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CONST_MULT, GeglConstMult))
@@ -20,22 +20,24 @@ typedef struct _GeglConstMult GeglConstMult;
 #endif
 struct _GeglConstMult 
 {
-   GeglPointOp point_op;
+   GeglUnary unary;
 
    /*< private >*/
-   gfloat multiplier;
+   gfloat mult0;
+   gfloat mult1;
+   gfloat mult2;
+   gfloat mult3;
+   gfloat mult4;
+   gfloat mult5;
 };
 
 typedef struct _GeglConstMultClass GeglConstMultClass;
 struct _GeglConstMultClass 
 {
-   GeglPointOpClass point_op_class;
+   GeglUnaryClass unary_class;
 };
 
-GType           gegl_const_mult_get_type       (void);
-gfloat          gegl_const_mult_get_multiplier (GeglConstMult * self);
-void            gegl_const_mult_set_multiplier (GeglConstMult * self, 
-                                                gfloat multiplier);
+GType           gegl_const_mult_get_type         (void);
 
 #ifdef __cplusplus
 }

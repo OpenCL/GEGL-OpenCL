@@ -93,14 +93,8 @@ finalize(GObject *gobject)
 {
   GeglImage *self = GEGL_IMAGE(gobject);
 
-  if(self->color_model)
-    g_object_unref(self->color_model);
-
   if(self->tile)
     g_object_unref(self->tile);
-
-  if(self->derived_color_model)
-    g_object_unref(self->derived_color_model);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
@@ -147,6 +141,31 @@ get_property (GObject      *gobject,
   }
 }
 
+void
+gegl_image_set_tile (GeglImage * self,
+                     GeglTile *tile)
+{
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_IMAGE (self));
+
+  if(tile)
+   g_object_ref(tile);
+
+  if(self->tile)
+   g_object_unref(self->tile);
+
+  self->tile = tile;
+}
+
+GeglTile *
+gegl_image_get_tile (GeglImage * self)
+{
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (GEGL_IS_IMAGE (self), NULL);
+
+  return self->tile;
+}
+
 /**
  * gegl_image_color_model:
  * @self: a #GeglImage.
@@ -183,15 +202,17 @@ gegl_image_set_color_model (GeglImage * self,
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE (self));
 
-  /* Unref any old one */
-  if(self->color_model)
-    g_object_unref(self->color_model);
-
   /* Set the new color model */
   self->color_model = cm;
+}
 
-  if(cm)
-    g_object_ref(cm);
+gint 
+gegl_image_set_channels_mask(GeglImage *self,
+                             gpointer *data)
+{
+  g_return_val_if_fail (self != NULL, -1);
+  g_return_val_if_fail (GEGL_IS_IMAGE (self), -1);
+  return gegl_color_model_num_colors(self->color_model);
 }
 
 static GeglColorModel * 
@@ -218,13 +239,6 @@ gegl_image_set_derived_color_model (GeglImage * self,
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE (self));
 
-  /* Unref any old one */
-  if(self->derived_color_model)
-    g_object_unref(self->derived_color_model);
-
   /* Set the new color model */
   self->derived_color_model = cm;
-
-  if(self->derived_color_model)
-    g_object_ref(self->derived_color_model);
 }

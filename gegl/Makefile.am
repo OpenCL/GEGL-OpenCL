@@ -2,42 +2,12 @@ noinst_PROGRAMS =
 
 lib_LTLIBRARIES = libgegl.la
 
-GIL_FILES = \
-  gegl-add.gil \
-  gegl-comp-premult.gil \
-  gegl-comp.gil \
-  gegl-const-mult.gil \
-  gegl-dark.gil \
-  gegl-diff.gil \
-  gegl-light.gil \
-  gegl-max.gil \
-  gegl-min.gil \
-  gegl-mult.gil \
-  gegl-premult.gil \
-  gegl-screen.gil \
-  gegl-subtract.gil \
-  gegl-unpremult.gil
-
-GEGL_GEN_SRC = \
-  gegl-add.c \
-  gegl-comp-premult.c \
-  gegl-comp.c \
-  gegl-const-mult.c \
-  gegl-dark.c \
-  gegl-diff.c \
-  gegl-light.c \
-  gegl-max.c \
-  gegl-min.c \
-  gegl-mult.c \
-  gegl-premult.c \
-  gegl-screen.c \
-  gegl-subtract.c \
-  gegl-unpremult.c
-
 GEGL_SRC = \
-  GEGL_GEN_SRC \
-  gegl-attributes.c \
+  gegl-add.c \
+  gegl-atop.c \
   gegl-bfs-visitor.c \
+  gegl-binary.c \
+  gegl-blend.c \
   gegl-buffer.c \
   gegl-color.c \
   gegl-color-model.c \
@@ -49,98 +19,70 @@ GEGL_SRC = \
   gegl-color-model-rgb-float.c \
   gegl-color-model-rgb-u8.c \
   gegl-color-model-rgb-u16.c \
+  gegl-const-mult.c \
+  gegl-comp.c \
   gegl-copy.c \
+  gegl-darken.c \
   gegl-dfs-visitor.c \
+  gegl-difference.c \
   gegl-dump-visitor.c \
   gegl-eval-bfs-visitor.c \
   gegl-eval-dfs-visitor.c \
   gegl-eval-mgr.c \
   gegl-eval-visitor.c \
+  gegl-fade.c \
   gegl-fill.c \
   gegl-filter.c \
   gegl-graph.c \
   gegl-graph-setup-visitor.c \
   gegl-image.c \
+  gegl-inside.c \
+  gegl-lighten.c \
+  gegl-max.c \
   gegl-mem-buffer.c \
+  gegl-min.c \
+  gegl-multiply.c \
   gegl-node.c \
+  gegl-no-input.c \
   gegl-object.c \
+  gegl-over.c \
   gegl-op.c \
+  gegl-outside.c \
+  gegl-pipe.c \
+  gegl-premult.c \
   gegl-print.c \
-  gegl-param-specs.c \
   gegl-point-op.c \
   gegl-sampled-image.c \
   gegl-scanline-processor.c \
-  gegl-stat-op.c \
+  gegl-screen.c \
+  gegl-subtract.c \
+  gegl-tiled-image.c \
   gegl-tile.c \
   gegl-tile-iterator.c \
   gegl-tile-mgr.c \
-  gegl-value-types.c \
-  gegl-visitor.c
-
-
-GEGL_PUBLIC_HDRS = \
-  gegl-add.h \
-  gegl-attributes.h \
-  gegl-bfs-visitor.h \
-  gegl-buffer.h \
-  gegl-color.h \
-  gegl-color-model.h \
-  gegl-color-model-gray.h \
-  gegl-color-model-gray-float.h \
-  gegl-color-model-gray-u8.h \
-  gegl-color-model-gray-u16.h \
-  gegl-color-model-rgb.h \
-  gegl-color-model-rgb-float.h \
-  gegl-color-model-rgb-u8.h \
-  gegl-color-model-rgb-u16.h \
-  gegl-const-mult.h \
-  gegl-copy.h \
-  gegl-dfs-visitor.h \
-  gegl-dump-visitor.h \
-  gegl-eval-bfs-visitor.h \
-  gegl-eval-dfs-visitor.h \
-  gegl-eval-mgr.h \
-  gegl-eval-visitor.h \
-  gegl-fill.h \
-  gegl-filter.h \
-  gegl-graph.h \
-  gegl-graph-setup-visitor.h \
-  gegl-image.h \
-  gegl-mem-buffer.h \
-  gegl-mult.h \
-  gegl-node.h \
-  gegl-object.h \
-  gegl-op.h \
-  gegl-param-specs.h \
-  gegl-point-op.h \
-  gegl-print.h \
-  gegl-sampled-image.h \
-  gegl-scanline-processor.h \
-  gegl-stat-op.h \
-  gegl-tile.h \
-  gegl-tile-iterator.h \
-  gegl-tile-mgr.h \
-  gegl-value-types.h \
-  gegl-visitor.h
-
-GEGL_NONCLASS_HDRS = \
-  gegl-types.h \
-  gegl-utils.h
+  gegl-unpremult.c \
+  gegl-unary.c \
+  gegl-visitor.c \
+  gegl-xor.c
 
 GEGL_NONCLASS_SRC = \
+  gegl-attributes.c \
+  gegl-param-specs.c \
+  gegl-value-types.c \
   gegl-utils.c
 
+GEGL_PUBLIC_HDRS = \
+  gegl.h
+
 libgegl_la_SOURCES = \
-  $(GEGL_GEN_SRC) \
   $(GEGL_SRC) \
   $(GEGL_NONCLASS_SRC)
 
-
-BUILT_SOURCES = \
-  $(GEGL_GEN_SRC)
+#BUILT_SOURCES = \
+#  $(GEGL_GEN_SRC)
 
 INCLUDES = \
-	-I$(top_srcdir)		\
+	-I$(top_srcdir)	\
 	@GEGL_CFLAGS@
 
 LDFLAGS =  \
@@ -149,7 +91,7 @@ LDFLAGS =  \
 	@GEGL_LIBS@
 
 libgeglincludedir=$(includedir)/gegl-1.0/gegl
-libgeglinclude_HEADERS = $(GEGL_NONCLASS_HDRS) $(GEGL_PUBLIC_HDRS) 
+libgeglinclude_HEADERS = $(GEGL_PUBLIC_HDRS) 
 
 #%.c: %.gil
 #	../codegen/codegen --channel-names r,g,b --channel-data-file ../codegen/channel_data/float $< > $@

@@ -47,6 +47,15 @@ banks swapped to and from secondary storage.
 @Returns: 
 
 
+<!-- ##### FUNCTION gegl_buffer_alloc_data_pointers ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
 <!-- ##### FUNCTION gegl_buffer_unalloc_data ##### -->
 <para>
 

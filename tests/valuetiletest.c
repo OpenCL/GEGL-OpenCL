@@ -25,7 +25,6 @@ test_value_tile_set(Test *test)
 
   g_free(value);
 
-  g_object_unref(color_model);
   g_object_unref(tile);
 }
 
@@ -57,7 +56,6 @@ test_value_tile_copy(Test *test)
   g_free(dest_value);
   g_free(src_value);
 
-  g_object_unref(color_model);
   g_object_unref(tile);
 }
 
@@ -109,32 +107,104 @@ test_value_tile_compatible(Test *test)
   g_free(src_value);
   g_free(float_value);
 
-  g_object_unref(color_model);
   g_object_unref(src_tile);
   g_object_unref(dest_tile);
 }
 
 static void
-value_test_setup(Test *test)
+test_value_tile_param_spec_validate(Test *test)
+{
+  GeglTile *converted_tile;
+  gfloat converted_val;
+  GeglRect area = {0,0,AREA_WIDTH,AREA_HEIGHT};
+  GeglRect smaller_area = {0,0,AREA_WIDTH-1,AREA_HEIGHT};
+  GeglRect bigger_area = {0,0,AREA_WIDTH+1,AREA_HEIGHT};
+
+  GeglColorModel *rgb_float = gegl_color_model_instance("RgbFloat");
+  GeglColorModel *gray_float = gegl_color_model_instance("GrayFloat");
+
+  GeglOp *filled = testutils_rgb_float_sampled_image(AREA_WIDTH, 
+                                                     AREA_HEIGHT, 
+                                                     .1, .2, .3);
+  GeglTile *tile = gegl_image_get_tile(GEGL_IMAGE(filled));
+
+  GParamSpec *pspec0 = gegl_param_spec_tile("data0",
+                                            "Data0",
+                                            "data0",
+                                            &smaller_area,
+                                            rgb_float,
+                                            G_PARAM_READWRITE);
+
+  GParamSpec *pspec1 = gegl_param_spec_tile("data1",
+                                            "Data1",
+                                            "data1",
+                                            &bigger_area,
+                                            rgb_float,
+                                            G_PARAM_READWRITE);
+
+  GParamSpec *pspec2 = gegl_param_spec_tile("data2",
+                                            "Data2",
+                                            "data2",
+                                            &area,
+                                            gray_float,
+                                            G_PARAM_READWRITE);
+
+  GValue * value =  g_new0(GValue, 1); 
+  g_value_init(value, GEGL_TYPE_TILE);
+
+  /* tile rect contains spec rect */
+  g_value_set_tile(value, tile);
+  ct_test(test, !g_param_value_validate(pspec0, value)); /*returns true if modified*/
+
+  /* tile rect does not contain spec rect, cant validate */
+  g_value_set_tile(value, tile);
+  ct_test(test, g_param_value_validate(pspec1, value));
+  ct_test(test, NULL == g_value_get_tile(value));
+
+  /* color models are different, can validate after converting */
+  g_value_set_tile(value, tile);
+  ct_test(test, g_param_value_validate(pspec2, value));
+
+  /* This was an gray to rgb conversion */
+  converted_val = .3*.1 + .59*.2 + .11*.3;
+
+  converted_tile = g_value_get_tile(value);
+  ct_test(test, NULL != converted_tile);
+
+  ct_test(test, testutils_check_pixel_tile(converted_tile,  "GrayFloat", 
+                                           converted_val, 0, 0, 0));
+
+  g_value_unset(value);
+  g_free(value);
+
+  g_object_unref(filled);
+
+  g_param_spec_unref(pspec0);
+  g_param_spec_unref(pspec1);
+  g_param_spec_unref(pspec2);
+}
+
+static void
+value_tile_test_setup(Test *test)
 {
 }
 
 static void
-value_test_teardown(Test *test)
+value_tile_test_teardown(Test *test)
 {
 }
 
 Test *
-create_value_test()
+create_value_tile_test()
 {
-  Test* t = ct_create("GeglValueTest");
+  Test* t = ct_create("GeglValueTileTest");
 
-  g_assert(ct_addSetUp(t, value_test_setup));
-  g_assert(ct_addTearDown(t, value_test_teardown));
+  g_assert(ct_addSetUp(t, value_tile_test_setup));
+  g_assert(ct_addTearDown(t, value_tile_test_teardown));
   g_assert(ct_addTestFun(t, test_value_tile_set));
   g_assert(ct_addTestFun(t, test_value_tile_copy));
   g_assert(ct_addTestFun(t, test_value_tile_compatible));
-  g_assert(ct_addTestFun(t, test_value_tile_compatible));
+  g_assert(ct_addTestFun(t, test_value_tile_param_spec_validate));
 
   return t; 
 }

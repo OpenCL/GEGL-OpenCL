@@ -80,6 +80,7 @@ test_sampled_image_source_apply(Test *test)
   g_object_unref(image1);
 }
 
+
 static void
 sampled_image_test_setup(Test *test)
 {
@@ -89,7 +90,6 @@ sampled_image_test_setup(Test *test)
 static void
 sampled_image_test_teardown(Test *test)
 {
-  g_object_unref(color_model);
 }
 
 Test *

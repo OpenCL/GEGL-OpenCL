@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-point-op.h"
+#include "gegl-binary.h"
 
 #define GEGL_TYPE_MAX               (gegl_max_get_type ())
 #define GEGL_MAX(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_MAX, GeglMax))
@@ -20,13 +20,14 @@ typedef struct _GeglMax GeglMax;
 #endif
 struct _GeglMax 
 {
-   GeglPointOp point_op;
+   GeglBinary binary;
    /*< private >*/
 };
 
 typedef struct _GeglMaxClass GeglMaxClass;
-struct _GeglMaxClass {
-   GeglPointOpClass point_op_class;
+struct _GeglMaxClass 
+{
+   GeglBinaryClass binary_class;
 };
 
 GType            gegl_max_get_type         (void);

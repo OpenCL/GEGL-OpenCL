@@ -19,6 +19,7 @@ gegl_tile_mgr_install(GeglTileMgr *tile_mgr)
   g_return_if_fail (GEGL_IS_TILE_MGR (tile_mgr));
 
   /* Install this tile manager */
+  g_object_ref(tile_mgr);
   tile_mgr_singleton = tile_mgr;
 } 
 
@@ -31,7 +32,6 @@ gegl_tile_mgr_instance()
       return NULL;
     }
 
-  g_object_ref(tile_mgr_singleton);
   return tile_mgr_singleton;
 } 
 

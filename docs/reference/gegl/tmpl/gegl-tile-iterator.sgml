@@ -41,6 +41,15 @@ GeglTileIterator
 @Returns: 
 
 
+<!-- ##### FUNCTION gegl_tile_iterator_get_num_colors ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
 <!-- ##### FUNCTION gegl_tile_iterator_first ##### -->
 <para>
 
@@ -73,6 +82,24 @@ GeglTileIterator
 
 @self: 
 @data_pointers: 
+
+
+<!-- ##### FUNCTION gegl_tile_iterator_color_channels ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_tile_iterator_alpha_channel ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
 
 
 <!-- ##### FUNCTION gegl_tile_iterator_set_rect ##### -->

@@ -67,7 +67,6 @@ point_op_test_setup(Test *test)
 static void
 point_op_test_teardown(Test *test)
 {
-  g_object_unref(color_model);
 }
 
 Test *

@@ -1,5 +1,6 @@
 #include "gegl-sampled-image.h"
 #include "gegl-image.h"
+#include "gegl-tile.h"
 #include "gegl-tile-mgr.h"
 #include "gegl-color-model.h"
 #include "gegl-object.h"
@@ -105,26 +106,34 @@ constructor (GType                  type,
              guint                  n_props,
              GObjectConstructParam *props)
 {
-  GObject *gobject = G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
-  GeglSampledImage *self = GEGL_SAMPLED_IMAGE(gobject);
-  GeglImage *image = GEGL_IMAGE(gobject);
-  GeglColorModel * color_model = gegl_image_color_model(image);
-  GeglTileMgr *mgr = gegl_tile_mgr_instance();
-  GeglRect rect; 
+  {
+    GObject *gobject = G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
+    GeglSampledImage *self = GEGL_SAMPLED_IMAGE(gobject);
+    GeglImage *image = GEGL_IMAGE(gobject);
+    GeglColorModel * color_model = gegl_image_color_model(image);
 
-  gegl_rect_set(&rect, 0,0,self->width,self->height);
+    if(color_model) 
+      {
+        GeglTileMgr *mgr = gegl_tile_mgr_instance();
+        GeglTile *tile; 
+        GeglRect rect; 
 
-  LOG_DEBUG("sampled_image_constructor", "creating tile for %s %p", 
-            G_OBJECT_TYPE_NAME(self), self);
-  image->tile = gegl_tile_mgr_create_tile(mgr, color_model, &rect); 
+        gegl_rect_set(&rect, 0,0,self->width,self->height);
 
-  LOG_DEBUG("sampled_image_constructor", "validating tile %p for %s %p", 
-            image->tile, G_OBJECT_TYPE_NAME(self), self);
-  gegl_tile_mgr_validate_data(mgr, image->tile);
+        LOG_DEBUG("sampled_image_constructor", "creating tile for %s %p", 
+                  G_OBJECT_TYPE_NAME(self), self);
 
-  g_object_unref(mgr);
+        tile = gegl_tile_mgr_create_tile(mgr, color_model, &rect); 
+        gegl_image_set_tile(image, tile);
 
-  return gobject;
+        LOG_DEBUG("sampled_image_constructor", "validating tile %p for %s %p", 
+                  tile, G_OBJECT_TYPE_NAME(self), self);
+        gegl_tile_mgr_validate_data(mgr, tile);
+
+        g_object_unref(tile);
+      }
+    return gobject;
+  }
 }
 
 static void

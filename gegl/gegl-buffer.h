@@ -44,6 +44,7 @@ GType           gegl_buffer_get_type            (void);
 gint            gegl_buffer_get_bytes_per_buffer(GeglBuffer * self);
 gint            gegl_buffer_get_num_buffers     (GeglBuffer * self);
 gpointer *      gegl_buffer_get_data_pointers   (GeglBuffer * self);
+gpointer *      gegl_buffer_alloc_data_pointers (GeglBuffer * self);
 void            gegl_buffer_unalloc_data        (GeglBuffer * self);
 void            gegl_buffer_alloc_data          (GeglBuffer * self);
 void            gegl_buffer_ref                 (GeglBuffer * self);

@@ -29,4 +29,5 @@ GParamSpec*  gegl_param_spec_tile   (const gchar     *name,
                                      GeglRect        *rect,
                                      GeglColorModel  *color_model,
                                      GParamFlags     flags);
+
 #endif /* __GEGL_PARAM_SPECS_H__ */

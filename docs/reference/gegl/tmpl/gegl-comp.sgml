@@ -14,7 +14,25 @@ Composite two unpremultiplied images.
 
 </para>
 
-<!-- ##### ARG GeglComp:composite-mode ##### -->
+<!-- ##### FUNCTION gegl_comp_get_premultiply ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_comp_set_premultiply ##### -->
+<para>
+
+</para>
+
+@self: 
+@premultiply: 
+
+
+<!-- ##### ARG GeglComp:premultiply ##### -->
 <para>
 
 </para>

@@ -19,7 +19,7 @@ test_print_g_object_new(Test *test)
 
     ct_test(test, print != NULL);
     ct_test(test, GEGL_IS_PRINT(print));
-    ct_test(test, g_type_parent(GEGL_TYPE_PRINT) == GEGL_TYPE_STAT_OP);
+    ct_test(test, g_type_parent(GEGL_TYPE_PRINT) == GEGL_TYPE_PIPE);
     ct_test(test, !strcmp("GeglPrint", g_type_name(GEGL_TYPE_PRINT)));
 
     g_object_unref(print);
@@ -52,7 +52,6 @@ print_test_setup(Test *test)
                        "height", SAMPLED_IMAGE_HEIGHT,
                        NULL);  
 
-  g_object_unref(rgb_float);
 }
 
 static void

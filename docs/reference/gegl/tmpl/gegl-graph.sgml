@@ -77,6 +77,18 @@ Class for container of Ops.
 @graph_output_index: 
 
 
+<!-- ##### FUNCTION gegl_graph_find_source ##### -->
+<para>
+
+</para>
+
+@self: 
+@output: 
+@node: 
+@index: 
+@Returns: 
+
+
 <!-- ##### ARG GeglGraph:root ##### -->
 <para>
 

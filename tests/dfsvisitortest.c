@@ -49,6 +49,7 @@ test_dfs_visitor_traverse(Test *test)
     GList * visits_list;
 
     gegl_dfs_visitor_traverse(GEGL_DFS_VISITOR(mock_dfs_visitor), E); 
+
     visits_list = gegl_visitor_get_visits_list(GEGL_VISITOR(mock_dfs_visitor));
 
     ct_test (test, 7 == g_list_length(visits_list));

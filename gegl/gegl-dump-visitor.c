@@ -102,7 +102,7 @@ attributes_string(GeglOp *op)
     {
       tile_value = g_value_get_object(attributes->value);
       gegl_rect_copy(&rect, &attributes->rect);
-      if(attributes->color_model)
+      if(GEGL_IS_COLOR_MODEL(attributes->color_model))
         color_model_name = gegl_color_model_get_color_space_name(attributes->color_model);
     }
 

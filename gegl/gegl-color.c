@@ -82,9 +82,6 @@ finalize(GObject *gobject)
    /* Dispose of channels values array*/
    g_free(self->channel_values);
 
-   /* Unref the color model */
-   g_object_unref(self->color_model);
-
    G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
@@ -172,7 +169,6 @@ set_color_model (GeglColor * self,
   g_return_if_fail (GEGL_IS_COLOR_MODEL (color_model));
    
   self->color_model = color_model;
-  g_object_ref(color_model);
   self->num_channels = gegl_color_model_num_channels(color_model);
   self->channel_values = g_new (GeglChannelValue, self->num_channels);
 }

@@ -19,7 +19,7 @@ test_add_g_object_new(Test *test)
     GeglOp * add = g_object_new (GEGL_TYPE_ADD, NULL);  
 
     ct_test(test, GEGL_IS_ADD(add));
-    ct_test(test, g_type_parent(GEGL_TYPE_ADD) == GEGL_TYPE_POINT_OP);
+    ct_test(test, g_type_parent(GEGL_TYPE_BINARY) == GEGL_TYPE_POINT_OP);
     ct_test(test, !strcmp("GeglAdd", g_type_name(GEGL_TYPE_ADD)));
 
     g_object_unref(add);
@@ -111,7 +111,6 @@ add_test_setup(Test *test)
                        NULL);  
 
 
-  g_object_unref(rgb_float);
 }
 
 static void

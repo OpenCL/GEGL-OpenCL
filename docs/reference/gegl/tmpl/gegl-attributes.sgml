@@ -14,6 +14,28 @@ Attributes for an op.
 
 </para>
 
+<!-- ##### STRUCT GeglOp ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglAttributes ##### -->
+<para>
+
+</para>
+
+@value: 
+@param_spec: 
+@rect: 
+@color_model: 
+
 <!-- ##### FUNCTION gegl_attributes_new ##### -->
 <para>
 

@@ -50,8 +50,8 @@ test_copy_rgb_to_rgb_apply(Test *t)
 
     gegl_op_apply_image(copy, GEGL_OP(rgb_dest), NULL); 
 
-    ct_test(t, testutils_check_rgb_float_pixel(GEGL_IMAGE(rgb_dest), 
-                                      .1 ,.2 ,.3));  
+    ct_test(t, testutils_check_pixel(GEGL_IMAGE(rgb_dest), "RgbFloat", 
+                                     .1 , .2 , .3, 0));  
 
     g_object_unref(copy);
   }
@@ -67,8 +67,8 @@ test_copy_rgb_to_null_dest_apply(Test *t)
 
     gegl_op_apply_image(copy, NULL, NULL); 
 
-    ct_test(t, testutils_check_rgb_float_pixel(GEGL_IMAGE(copy), 
-                                     .1 ,.2 ,.3));  
+    ct_test(t, testutils_check_pixel(GEGL_IMAGE(copy), "RgbFloat", 
+                                     .1 , .2 , .3, 0));  
 
     g_object_unref(copy);
   }
@@ -86,11 +86,10 @@ test_copy_rgb_to_gray_null_dest_apply(Test *t)
 
     gegl_op_apply_image(copy, NULL, NULL); 
 
-    ct_test(t, testutils_check_gray_float_pixel(GEGL_IMAGE(copy), 
-                                     .3*.1 + .59*.2 + .11*.3));  
+    ct_test(t, testutils_check_pixel(GEGL_IMAGE(copy), "GrayFloat", 
+                                     .3*.1 + .59*.2 + .11*.3, 0,0,0));  
 
     g_object_unref(copy);
-    g_object_unref(gray_float);
   }
 }
 
@@ -106,8 +105,9 @@ test_copy_rgb_to_gray_apply(Test *t)
     gegl_op_apply_image(copy, GEGL_OP(gray_dest), NULL); 
 
     /* .3*r + .59*g + .11*b */
-    ct_test(t, testutils_check_gray_float_pixel(GEGL_IMAGE(gray_dest), 
-                                      .3*.1 + .59*.2 + .11*.3));  
+
+    ct_test(t, testutils_check_pixel(GEGL_IMAGE(gray_dest), "GrayFloat", 
+                                     .3*.1 + .59*.2 + .11*.3, 0,0,0));  
 
     g_object_unref(copy);
   }
@@ -117,9 +117,9 @@ static void
 copy_test_setup(Test *t)
 {
   /* source is a rgb float image */
-  source = testutils_rgb_float_sampled_image(SAMPLED_IMAGE_WIDTH, 
-                                       SAMPLED_IMAGE_HEIGHT, 
-                                       .1, .2, .3);
+  source = testutils_sampled_image("RgbFloat",
+                                         SAMPLED_IMAGE_WIDTH, SAMPLED_IMAGE_HEIGHT, 
+                                         .1, .2, .3, 0);
 
   {
     /* dest is a gray float image */
@@ -129,7 +129,6 @@ copy_test_setup(Test *t)
                               "width", SAMPLED_IMAGE_WIDTH, 
                               "height", SAMPLED_IMAGE_HEIGHT,
                               NULL);  
-    g_object_unref(gray_float);
   }
 
   {
@@ -140,7 +139,6 @@ copy_test_setup(Test *t)
                              "width", SAMPLED_IMAGE_WIDTH, 
                              "height", SAMPLED_IMAGE_HEIGHT,
                              NULL);  
-    g_object_unref(rgb_float);
   }
 }
 

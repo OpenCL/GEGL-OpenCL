@@ -217,8 +217,25 @@ gegl_buffer_get_data_pointers (GeglBuffer * self)
 {
   g_return_val_if_fail (self != NULL, (gpointer * )0);
   g_return_val_if_fail (GEGL_IS_BUFFER (self), (gpointer * )0);
-     
+
   return self->data_pointers;
+}
+
+gpointer * 
+gegl_buffer_alloc_data_pointers (GeglBuffer * self)
+{
+  gpointer * data_pointers = NULL;
+  gint i;
+
+  g_return_val_if_fail (self != NULL, (gpointer * )0);
+  g_return_val_if_fail (GEGL_IS_BUFFER (self), (gpointer * )0);
+
+  data_pointers = g_new(gpointer, self->num_buffers);
+
+  for(i=0 ; i < self->num_buffers; i++)
+    data_pointers[i] = self->data_pointers[i];
+
+  return data_pointers;
 }
 
 void 
