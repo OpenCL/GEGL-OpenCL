@@ -53,8 +53,8 @@ visit_property(GeglVisitor * visitor,
 {
   GEGL_VISITOR_CLASS(parent_class)->visit_property(visitor, property);
   {
-    GeglFilter *filter = gegl_property_get_filter(property);
 #if 0
+    GeglFilter *filter = gegl_property_get_filter(property);
     g_print("Visiting property %s from op %s\n", 
              gegl_property_get_name(property),
              gegl_object_get_name(GEGL_OBJECT(op)));

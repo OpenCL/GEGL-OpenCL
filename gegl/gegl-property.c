@@ -145,7 +145,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglProperty * property = GEGL_PROPERTY(gobject);
+  /*GeglProperty * property = GEGL_PROPERTY(gobject);*/
   switch (prop_id)
   {
     default:
@@ -159,7 +159,7 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglProperty * property = GEGL_PROPERTY(gobject);
+  /*GeglProperty * property = GEGL_PROPERTY(gobject);*/
   switch (prop_id)
   {
     default:

@@ -1,3 +1,11 @@
+2003-12-28 21:12 Daniel Rogers <daniel@phasevelocity.org>
+	* gegl/gegl-filter.c
+ 	* gegl/gegl-property.c
+  	* tests/gegl-mock-filter-0-1.c
+ 	* tests/gegl-mock-property-visitor.c
+	Trivial changes so that compiling with CFLAGS="-Wall -Werror"
+	won't fail.
+
 2003-12-28 20:49 Daniel Rogers <daniel@phasevelocity.org>
 	* gegl/image/Makefile.am
  	* gegl/image/gegl-buffer.c

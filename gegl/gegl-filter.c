@@ -77,8 +77,6 @@ init (GeglFilter * self,
 static void
 finalize(GObject *gobject)
 {
-  GeglFilter *self = GEGL_FILTER(gobject);
-
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 

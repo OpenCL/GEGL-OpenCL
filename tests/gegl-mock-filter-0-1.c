@@ -106,7 +106,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglMockFilter01 *self = GEGL_MOCK_FILTER_0_1(gobject);
+  /*GeglMockFilter01 *self = GEGL_MOCK_FILTER_0_1(gobject);*/
   switch (prop_id)
   {
     default:
