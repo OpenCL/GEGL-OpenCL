@@ -119,7 +119,7 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
                       point_opP->iterators[1],
                       (guchar**)src_data);
 
-    GENERIC_IMAGE_IMAGE_DATA_INIT; 
+    GENERIC_IMAGE_IMAGE_DATA_INIT 
 
     GENERIC_IMAGE_BLOCK_BEGIN
     while (width--)

@@ -106,14 +106,6 @@ class Gegl:Max:Op from Gegl:Dual:Src:Op {
     GeglDualSrcOpPrivate *dual_src_opP = 
         (GeglDualSrcOpPrivate *)(dual_src_op->_priv); 
 
-    gboolean dest_has_alpha = 
-       gegl_color_model_has_alpha(dual_src_opP->dest_cm); 
-    gboolean src1_has_alpha = 
-       gegl_color_model_has_alpha(dual_src_opP->src1_cm); 
-    gboolean src2_has_alpha = 
-       gegl_color_model_has_alpha(dual_src_opP->src2_cm); 
-
-
     GENERIC_IMAGE_DECL_BEGIN
     int width;
     VectorChan dest(color,alpha,has_alpha);
@@ -121,7 +113,15 @@ class Gegl:Max:Op from Gegl:Dual:Src:Op {
     VectorChan src2(color,alpha,has_alpha);
     GENERIC_IMAGE_DECL_END
 
+    dest_has_alpha = 
+       gegl_color_model_has_alpha(dual_src_opP->dest_cm); 
+    src1_has_alpha = 
+       gegl_color_model_has_alpha(dual_src_opP->src1_cm); 
+    src2_has_alpha = 
+       gegl_color_model_has_alpha(dual_src_opP->src2_cm); 
+
     width = point_opP->scanline_width;
+
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
                       (guchar**)dest_data);
@@ -140,7 +140,6 @@ class Gegl:Max:Op from Gegl:Dual:Src:Op {
     while (width--)
       {
       dest_color = MAX(src1_color, src2_color);
-
       if (dest_has_alpha)
     	{
  	if (src1_has_alpha && src2_has_alpha)
@@ -153,7 +152,7 @@ class Gegl:Max:Op from Gegl:Dual:Src:Op {
 	  } 
 	else if (src2_has_alpha)
 	  {   
-     	  dest_alpah = WP; 
+     	  dest_alpha = WP; 
 	  }
 	}
       dX(dest,1);

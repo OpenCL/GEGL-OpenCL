@@ -1,4 +1,3 @@
-
 %h{
 #include "gegl-dual-src-op.h"
 %}
@@ -133,7 +132,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
       case COMPOSITE_REPLACE:
        while (width--)
          {
-           dest_r = src2_r;
+           dest_color = src2_color;
 	   dX(dest,1);
 	   dX(src2,1); 
          }
@@ -142,14 +141,14 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
        while (width--)
          {
            a = (WP - src2_alpha) * src1_alpha;
-           b = src2_alpah;
+           b = src2_alpha;
            alpha = a + b;
 
-           dest_a = alpha;
+           dest_alpha = alpha;
 
            if (alpha)
              {
-              c = 1.0 / alpha;
+              c = WP / alpha;
 
               dest_color = (a * src1_color * WP + b * src2_color * WP) * c * WP;
              }
@@ -351,6 +350,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
       default:
        break;
       }
+    GENERIC_IMAGE_BLOCK_END 
   }
   private
   void
@@ -410,7 +410,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
          {
            alpha = src1_alpha;
 
-           dest_a = alpha;
+           dest_alpha = alpha;
 
            if (alpha)
              {
@@ -443,7 +443,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
              }
 	   dX(dest,1);
 	   dX(src1,1);
-	   dX9src2,1); 
+	   dX(src2,1); 
          }
        break;
       case COMPOSITE_ATOP:

@@ -129,7 +129,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
       GENERIC_IMAGE_BLOCK_BEGIN
       {
       case COMPOSITE_REPLACE:
-       while (width--)
+        while (width--) 
          {
        	 dest = src2;
 	 dX(dest,1);
@@ -227,7 +227,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
       
     switch(self->_priv->comp_mode)
       {
-      GENERIC_IMAGE_DECL_BEGIN
+      GENERIC_IMAGE_BLOCK_BEGIN
        case COMPOSITE_REPLACE:
          while (width--)
            {
@@ -258,7 +258,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
          while (width--)
            {
 	   dest = ZERO;
-	   dX(dest,1)
+	   dX(dest,1); 
            }
          break;
        case COMPOSITE_ATOP:
@@ -300,7 +300,7 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     VectorChan src2(color);
     float b;
     int width;
-    GENERIC_IMAGE_DECL_BEGIN
+    GENERIC_IMAGE_DECL_END 
 
     width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
@@ -322,9 +322,9 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
          while (width--)
            {
              dest_color = src2_color;
-             dest_alpha = 1.0;
-	     dX(dest);
-	     dX(src2); 
+             dest_alpha = WP;
+	     dX(dest,1);
+	     dX(src2,1); 
            }
          break;
        case COMPOSITE_OVER:
@@ -332,8 +332,8 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
            {
              dest_color = src2_color;
              dest_alpha = WP;
-	     dX(dest);
-	     dX(src2); 
+	     dX(dest,1);
+	     dX(src2,1); 
            } 
          break;
        case COMPOSITE_IN:
@@ -342,6 +342,9 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
              b = src1_alpha;
              dest_color = b * src2_color;
              dest_alpha = b;  
+             dX(dest,1);
+             dX(src1,1);
+             dX(src2,1); 
            }
          break;
        case COMPOSITE_OUT:
@@ -372,6 +375,9 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
              b = WP - src1_alpha;
              dest_color = b * src2_color;
              dest_alpha = b;
+	     dX(dest,1);
+	     dX(src1,1);
+	     dX(src2,1);
            }
          break;
        default:

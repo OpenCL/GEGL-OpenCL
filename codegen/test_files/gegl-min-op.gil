@@ -150,6 +150,7 @@ class Gegl:Min:Op from Gegl:Dual:Src:Op {
 	  {
 	  dest_alpha = src1_alpha;
 	  } 
+        else if (src2_has_alpha)
 	  {   
      	  dest_alpha = src2_alpha; 
 	  }

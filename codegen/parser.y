@@ -383,7 +383,7 @@ Line:
 		}
 	| INDENT ELSE INDENT_CURLY 				
 		{ 
-		printf("%selse \n%s", $1.string, $3.string); 
+		printf("%selse%s", $1.string, $3.string); 
 		}
 	| INDENT FOR LT_PARENTHESIS Expression ';' Expression ';' Expression RT_PARENTHESIS
 		{ 
@@ -987,7 +987,6 @@ init_image_data (char *indent)
       strcpy (e.string, tmp);
       print_line (e);
       }
-    printf ("\n"); 
     }
   
 }
