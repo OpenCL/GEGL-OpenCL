@@ -22,7 +22,7 @@ now these are set up in an initial traversal of the Graph when
 the root is set. 
         </p>
       </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
+      <contact></contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
@@ -33,7 +33,7 @@ Add an input to image op which represents an mask for the area
 affected by the operation.
         </p>
       </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
+      <contact></contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
@@ -43,7 +43,7 @@ affected by the operation.
 Work out a scheme for passing in-place image buffers along the ops.
         </p>
       </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
+      <contact></contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
@@ -54,7 +54,7 @@ Currently Scalar Data, Pixel Data as well as Channel Data can all
 be converted. Need to add Image Data conversions.
         </p>
       </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
+      <contact></contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
@@ -66,7 +66,7 @@ Data types that can be passed along ops. May want to pass Vector Data (
 vectors of pixels, vectors of scalars) or Matrix Data along as well. 
         </p>
       </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
+      <contact></contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
@@ -79,7 +79,7 @@ a portion of the image(ie. a tile). Need to provide iterators that
 can request other shaped areas for work. 
         </p>
       </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
+      <contact></contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
@@ -107,7 +107,7 @@ Some ICC profile based color models would be nice. This would allow
 adding more detailed color management support. 
         </p>
       </description>
-      <contact>&lt;gegl-developer@lists.xcf.berkeley.edu&gt;</contact>
+      <contact></contact>
     </entry>
 
     <entry size="big" status="0%" target="0.0">
@@ -120,7 +120,7 @@ manager, and we need schemes (ref counting, etc) for deciding what
 to swap out.
         </p>
       </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
+      <contact></contact>
     </entry>
 
     <entry size="big" status="0%" target="0.0">
@@ -133,7 +133,7 @@ these. Probably a work-pile scheme with a task manager doling out
 different roi pieces of the image to work on. 
         </p>
       </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
+      <contact></contact>
     </entry>
 
   </section> <!-- Gegl -->
@@ -150,7 +150,7 @@ There are color conversions included in the color space classes, but
 there are no conversion ops that use these conversions yet.  
         </p>
       </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
+      <contact></contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
@@ -160,7 +160,7 @@ there are no conversion ops that use these conversions yet.
 Add a copy op, that just copies from input to output.  
         </p>
       </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
+      <contact></contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
@@ -173,7 +173,7 @@ cobble together tiles if the available tiles dont match the
 requested ones. 
         </p>
       </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
+      <contact></contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
@@ -184,7 +184,7 @@ This item is for creating more non-image producing ops. For example
 switch op would pick one of its inputs and pass its data along.
         </p>
       </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
+      <contact></contact>
     </entry>
 
     <entry size="big" status="20%" target="0.0">
@@ -199,7 +199,7 @@ Multiply, Screen, Overlay, SoftLight, HardLight, ColorDodge, ColorBurn, Darken,
 Lighten, Difference, Exclusion modes.
         </p>
       </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
+      <contact></contact>
     </entry>
 
   </section> <!-- Ops -->
