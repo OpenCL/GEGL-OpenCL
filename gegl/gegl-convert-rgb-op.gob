@@ -106,6 +106,19 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
           break; 
          }
       break;
+      case GRAY:
+      switch(src_data_type){
+            /* confert from gray to rgb */
+        case FLOAT:
+          point_op_class->scanline_func = gegl_convert_op_GRAY_FLOAT;
+          break;
+        case U8:
+          point_op_class->scanline_func = gegl_convert_op_GRAY_U8;
+          break; 
+        default:
+          break;
+         }
+      break;
       default:
         /* convert from unknown to rgb */
         point_op_class->scanline_func = gegl_convert_op_UNKNOWN;
@@ -144,16 +157,12 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   /* Ok, we are converting from a RGB FLOAT image buffer
      to an RGB some data type image buffer
   */
-  gboolean has_alpha;
   guint width;
   guchar *dest_data[4], *src_data[4];
-  guchar *dest_r, *dest_g, *dest_b, *src_r, *src_g, *src_b;
-  GeglFillOp *self = GEGL_FILL_OP (point_op);
+  guchar *dest_r, *dest_g, *dest_b, *dest_a, *src_r, *src_g, *src_b, *src_a;
   GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);  
   GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
-
-  has_alpha = gegl_color_model_has_alpha(gegl_image_buffer_color_model (opP->image_buffers[0])) &&
-              gegl_color_model_has_alpha(gegl_image_buffer_color_model (opP->image_buffers[1]));
+  gboolean alpha;
 
   width = point_opP->scanline_width;
 
@@ -173,24 +182,49 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   dest_cm = gegl_image_buffer_color_model (opP->image_buffers[0]);
   dest_data_type = gegl_color_model_data_type (dest_cm);
 
+  /* find out if there is alpha */
+  src_cm = gegl_image_buffer_color_model (opP->image_buffers[1]);
+  alpha = gegl_color_model_has_alpha(dest_cm) && gegl_color_model_has_alpha(src_cm);
+
   /* lets case on the dest data type */
   switch(dest_data_type){
     case FLOAT:
       /* we done have to do anything, just put src into dest */
-      while(width--){
-                      *dest_r++ = *src_r++;
-                      *dest_g++ = *src_g++;
-                      *dest_b++ = *src_b++;
-        if(has_alpha) *(dest_data[3])++ = *(src_data[3])++;
-      }
+      if(alpha){
+        dest_a = dest_data[3];
+        src_a  = src_data[3];
+
+	while(width--){
+	  *dest_r++ = *src_r++;
+	  *dest_g++ = *src_g++;
+	  *dest_b++ = *src_b++;
+	}
+	}
+      else
+	while(width--){
+	  *dest_r++ = *src_r++;
+	  *dest_g++ = *src_g++;
+	  *dest_b++ = *src_b++;
+	}
     break;
     case U8:
-      while(width--){
-                      *dest_r++ = (float) *src_r++ / 255.0;
-                      *dest_g++ = (float) *src_g++ / 255.0;
-                      *dest_b++ = (float) *src_b++ / 255.0;
-                      if(has_alpha) *(dest_data[3])++ = (float) *(src_data[3])++ / 255.0;
-      }
+      if(alpha){
+        dest_a = dest_data[3];
+        src_a  = src_data[[3]];
+
+	while(width--){
+	  *dest_r++ = (float) *src_r++ / 255.0;
+	  *dest_g++ = (float) *src_g++ / 255.0;
+	  *dest_b++ = (float) *src_b++ / 255.0;
+	}
+	}
+      else
+	while(width--){
+	  *dest_r++ = *src_r++;
+	  *dest_g++ = *src_g++;
+	  *dest_b++ = *src_b++;
+	}
+
     break;
     default:
     break;
@@ -204,21 +238,18 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   /* Ok, we are converting from a RGB U8 image buffer
      to an RGB some data type image buffer
   */
-  gboolean has_alpha;
   guint width;
   guchar *dest_data[4], *src_data[4];
-  guchar *dest_r, *dest_g, *dest_b, *src_r, *src_g, *src_b;
-  GeglFillOp *self = GEGL_FILL_OP (point_op);
+  guchar *dest_r, *dest_g, *dest_b, *dest_a, *src_r, *src_g, *src_b, *src_a;
   GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);
   GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
+  gboolean alpha;
 
   gegl_image_buffer_get_scanline_data (opP->image_buffers[0],
                   (guchar**)dest_data);
   gegl_image_buffer_get_scanline_data (opP->image_buffers[1],
                   (guchar**)src_data);
 
-  has_alpha = gegl_color_model_has_alpha(gegl_image_buffer_color_model (opP->image_buffers[0])) &&
-              gegl_color_model_has_alpha(gegl_image_buffer_color_model (opP->image_buffers[1]));
 
   width = point_opP->scanline_width;
 
@@ -233,24 +264,50 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   dest_cm = gegl_image_buffer_color_model (opP->image_buffers[0]);
   dest_data_type = gegl_color_model_data_type (dest_cm);
 
+  /* find out if there is alpha */
+  src_cm = gegl_image_buffer_color_model (opP->image_buffers[1]);
+  alpha = gegl_color_model_has_alpha(dest_cm) && gegl_color_model_has_alpha(src_cm);
+
   /* lets case on the dest data type */
   switch(dest_data_type){
     case FLOAT:
       /* we done have to do anything, just put src into dest */
-      while(width--){
-        *dest_r++ = *src_r++ * 255.0;
-        *dest_g++ = *src_g++ * 255.0;
-        *dest_b++ = *src_b++ * 255.0;
-        if(has_alpha) *(dest_data[3])++ = *(src_data[3])++ * 255.0;
+      if(alpha){
+        dest_a = dest_data[3];
+        src_a  = src_data[3];
+ 
+        while(width--){
+          *dest_r++ = *src_r++ * 255.0;
+          *dest_g++ = *src_g++ * 255.0;
+          *dest_b++ = *src_b++ * 255.0;
+          *dest_a++ = *src_a++ * 255.0;
+        }
       }
+      else
+        while(width--){
+          *dest_r++ = *src_r++ * 255.0;
+          *dest_g++ = *src_g++ * 255.0;
+          *dest_b++ = *src_b++ * 255.0;
+        }
     break;
     case U8:
-      while(width--){
-        *dest_r++ = *src_r++;
-        *dest_g++ = *src_g++;
-        *dest_b++ = *src_b++;
-        if(has_alpha) *(dest_data[3])++ = *(src_data[3])++;
+      if(alpha){
+        dest_a = dest_data[3];
+        src_a  = src_data[[3]];
+
+        while(width--){
+          *dest_r++ = *src_r++;
+          *dest_g++ = *src_g++;
+          *dest_b++ = *src_b++;
+          *dest_a++ = *src_a++; 
+        }
       }
+      else
+        while(width--){
+          *dest_r++ = *src_r++;
+          *dest_g++ = *src_g++;
+          *dest_b++ = *src_b++;
+        } 
     break;
     default:
     break;
@@ -266,8 +323,7 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   */
   guint width;
   guchar *dest_data[4], *src_data[4];
-  guchar *dest_r, *dest_g, *dest_b, *src_r, *src_g, *src_b;
-  GeglFillOp *self = GEGL_FILL_OP (point_op);
+  guchar *dest_r, *dest_g, *dest_b, *dest_a, *src_r, *src_g, *src_b, *src_a;
   GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);
   GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
 
@@ -292,18 +348,41 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   /* lets case on the dest data type */
   switch(dest_data_type){
     case FLOAT:
-      while(width--){
-        *dest_r++ = *src_r++;
-        *dest_g++ = *src_g++;
-        *dest_b++ = *src_b++;
-      }
+       if(alpha){
+        dest_a = dest_data[3];
+        src_a  = src_data[[3]];
+
+        while(width--){
+          *dest_r++ = *src_r++;
+          *dest_g++ = *src_g++;
+          *dest_b++ = *src_b++;
+          *dest_a++ = *src_a++; 
+        }
+      else
+        while(width--){
+          *dest_r++ = *src_r++;
+          *dest_g++ = *src_g++;
+          *dest_b++ = *src_b++;
+        }
     break;
     case U8:
-      while(width--){
-        *dest_r++ = *src_r++ / 255.0;
-        *dest_g++ = *src_g++ / 255.0;
-        *dest_b++ = *src_b++ / 255.0;
+      if(alpha){
+        dest_a = dest_data[3];
+        src_a  = src_data[3];
+       
+        while(width--){
+          *dest_r++ = *src_r++ / 255.0;
+          *dest_g++ = *src_g++ / 255.0;
+          *dest_b++ = *src_b++ / 255.0;
+          *dest_a++ = *src_a++ / 255.0;
+        }
       }
+      else
+        while(width--){
+          *dest_r++ = *src_r++ / 255.0;
+          *dest_g++ = *src_g++ / 255.0;
+          *dest_b++ = *src_b++ / 255.0;
+        }
     break;
     default:
     break;
@@ -319,10 +398,10 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   */
   guint width;
   guchar *dest_data[4], *src_data[4];
-  guchar *dest_r, *dest_g, *dest_b, *src_r, *src_g, *src_b;
-  GeglFillOp *self = GEGL_FILL_OP (point_op);
+  guchar *dest_r, *dest_g, *dest_b, *dest_a, *src_r, *src_g, *src_b, *src_a;
   GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);
   GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
+  gboolean alpha; 
 
   width = point_opP->scanline_width;
 
@@ -342,22 +421,209 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   dest_cm = gegl_image_buffer_color_model (opP->image_buffers[0]);
   dest_data_type = gegl_color_model_data_type (dest_cm);
 
+  /* find out if there is alpha */
+  src_cm = gegl_image_buffer_color_model (opP->image_buffers[1]);
+  alpha = gegl_color_model_has_alpha(dest_cm) && gegl_color_model_has_alpha(src_cm);
+
   /* lets case on the dest data type */
   switch(dest_data_type){
     case FLOAT:
       /* we done have to do anything, just put src into dest */
-      while(width--){
-        *dest_r++ = *src_r++ * 255.0;
-        *dest_g++ = *src_g++ * 255.0;
-        *dest_b++ = *src_b++ * 255.0;
+      if(alpha){
+        dest_a = dest_data[3];
+        src_a  = src_data[3];
+
+        while(width--){
+          *dest_r++ = *src_r++ * 255.0;
+          *dest_g++ = *src_g++ * 255.0;
+          *dest_b++ = *src_b++ * 255.0;
+          *dest_a++ = *src_a++ * 255.0;
+        }
       }
+      else 
+        while(width--){
+          *dest_r++ = *src_r++ * 255.0;
+          *dest_g++ = *src_g++ * 255.0;
+          *dest_b++ = *src_b++ * 255.0;
+        }
+
     break;
     case U8:
-      while(width--){
-        *dest_r++ = *src_r++;
-        *dest_g++ = *src_g++;
-        *dest_b++ = *src_b++;
+       if(alpha){
+        dest_a = dest_data[3];
+        src_a  = src_data[3];
+
+        while(width--){
+          *dest_r++ = *src_r++;
+          *dest_g++ = *src_g++;
+          *dest_b++ = *src_b++;
+          *dest_a++ = *src_a++; 
+       }
+     }
+     else
+       while(width--){
+          *dest_r++ = *src_r++;
+          *dest_g++ = *src_g++;
+          *dest_b++ = *src_b++;
+       }
+
+    break;
+    default:
+    break;
+  }
+  }
+
+  private
+  void
+  GRAY_FLOAT (GeglPointOp *point_op)
+  {
+  /* Ok, we are converting from a HSV FLOAT image buffer
+     to an RGB some data type image buffer
+  */
+  guint width;
+  guchar *dest_data[4], *src_data[2];
+  guchar *dest_r, *dest_g, *dest_b, *dest_a, *src_g, *src_a;
+  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);
+  GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
+  gboolean alpha;
+
+  width = point_opP->scanline_width;
+
+  gegl_image_buffer_get_scanline_data (opP->image_buffers[0],
+                  (guchar**)dest_data);
+  gegl_image_buffer_get_scanline_data (opP->image_buffers[1],
+                  (guchar**)src_data);
+
+  dest_r = dest_data[0];
+  dest_g = dest_data[1];
+  dest_b = dest_data[2]; 
+  src_g = src_data[0];
+
+  /* find out what is the final data type */
+  dest_cm = gegl_image_buffer_color_model (opP->image_buffers[0]);
+  dest_data_type = gegl_color_model_data_type (dest_cm);
+
+  /* find out if there is alpha */
+  src_cm = gegl_image_buffer_color_model (opP->image_buffers[1]);
+  alpha = gegl_color_model_has_alpha(dest_cm) && gegl_color_model_has_alpha(src_cm);
+
+  /* lets case on the dest data type */
+  switch(dest_data_type){
+    case FLOAT:
+      if(alpha){
+        dest_a = dest_data[3];
+        src_a  = src_data[[3]];
+ 
+        while(width--){
+          *dest_r++ = *src_g;
+          *dest_g++ = *src_g;
+          *dest_b++ = *src_g++;
+          *dest_a++ = *src_a++;
+        }
       }
+      else
+       while(width--){
+          *dest_r++ = *src_g;
+          *dest_g++ = *src_g;
+          *dest_b++ = *src_g++;
+        } 
+    break;
+    case U8:
+      if(alpha){
+        dest_a = dest_data[3];
+        src_a  = src_data[1];
+ 
+        while(width--){
+          *dest_r++ = *src_g / 255.0;
+          *dest_g++ = *src_g / 255.0;
+          *dest_b++ = *src_g++ / 255.0;
+        }
+     }
+     else
+       while(width--){
+          *dest_r++ = *src_g / 255.0;
+          *dest_g++ = *src_g / 255.0;
+          *dest_b++ = *src_g++ / 255.0;
+        }
+    break;
+    default:
+    break;
+  }
+  }
+
+  private
+  void
+  GRAY_U8 (GeglPointOp *point_op)
+  {
+  /* Ok, we are converting from a GRAY U8 image buffer
+     to an RGB some data type image buffer
+  */
+  guint width;
+  guchar *dest_data[4], *src_data[2];
+  guchar *dest_r, *dest_g, *dest_b, *dest_a, *src_g, *src_a;
+  GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);
+  GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
+  gboolean alpha; 
+
+  width = point_opP->scanline_width;
+
+  gegl_image_buffer_get_scanline_data (opP->image_buffers[0],
+                  (guchar**)dest_data);
+  gegl_image_buffer_get_scanline_data (opP->image_buffers[1],
+                  (guchar**)src_data);
+
+  dest_r = dest_data[0];
+  dest_g = dest_data[1];
+  dest_b = dest_data[2];
+  src_g = src_data[0];
+
+  /* find out what is the final data type */
+  dest_cm = gegl_image_buffer_color_model (opP->image_buffers[0]);
+  dest_data_type = gegl_color_model_data_type (dest_cm);
+
+  /* find out if there is alpha */
+  src_cm = gegl_image_buffer_color_model (opP->image_buffers[1]);
+  alpha = gegl_color_model_has_alpha(dest_cm) && gegl_color_model_has_alpha(src_cm);
+
+  /* lets case on the dest data type */
+  switch(dest_data_type){
+    case FLOAT:
+      /* we done have to do anything, just put src into dest */
+      if(alpha){
+        dest_a = dest_data[3];
+        src_a  = src_data[1];
+ 
+        while(width--){
+          *dest_r++ = *src_g++ * 255.0;
+          *dest_g++ = *src_g++ * 255.0;
+          *dest_b++ = *src_g++ * 255.0;
+          *dest_a++ = *src_a++ * 255.0;
+        }
+      }
+      else
+        while(width--){
+          *dest_r++ = *src_g++ * 255.0;
+          *dest_g++ = *src_g++ * 255.0;
+          *dest_b++ = *src_g++ * 255.0;
+        } 
+    break;
+    case U8:
+      if(alpha){
+        dest_a = dest_data[3];
+        src_a  = src_data[1];
+        while(width--){
+         *dest_r++ = *src_g++;
+         *dest_g++ = *src_g++;
+         *dest_b++ = *src_g++;
+         *dest_a++ = *src_a++; 
+        }
+      }
+      else
+        while(width--){
+         *dest_r++ = *src_g++;
+         *dest_g++ = *src_g++;
+         *dest_b++ = *src_g++;
+        }
     break;
     default:
     break;
@@ -374,13 +640,12 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   guint width;
   guchar *dest_data[4], *src_data[4];
   gfloat *tmp_data; 
-  GeglFillOp *self = GEGL_FILL_OP (point_op);
   GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_pr iv);
   GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv);
 
   width = point_opP->scanline_width;
 
-  tmp_data = (gfloat*) g_malloc(sizeof(gfloat)*width*3);
+  tmp_data = (gfloat*) g_malloc(sizeof(gfloat)*width*4);
 
   gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
                 (guchar**)dest_data);
@@ -394,25 +659,6 @@ class Gegl:ConvertRGB:Op from Gegl:Point:Op {
   gegl_color_model_convert_to_xyz (src_cm, tmp_data, src_data);
   gegl_color_model_convert_from_xyz (dest_cm, dest_data, tmp_data);
 
-  /* do the alpha */
-  if(gegl_color_model_has_alpha(dest_cm) && gegl_color_model_has_alpha(src_cm)){
-    if(gegl_color_model_data_type (dest_cm) == gegl_color_model_data_type (src_cm)){
-      while(width--)
-        *(dest_data[3])++ = *(src_data[3])++;
-    }
-    else if(gegl_color_model_data_type (dest_cm) == FLOAT &&
-             gegl_color_model_data_type (src_cm)  == U8){
-       while(width--)
-        *(dest_data[3])++ = (float) *(src_data[3])++ / 255.0; 
-    }
-    else if(gegl_color_model_data_type (dest_cm) == U8 &&
-             gegl_color_model_data_type (src_cm)  == FLOAT){
-       while(width--)
-        *(dest_data[3])++ = *(src_data[3])++ * 255;
-    }
-  } 
-   
-  
   }
 
 }

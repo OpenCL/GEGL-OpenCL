@@ -9,6 +9,9 @@ GOB     = \
         gegl-color-model-rgb.gob \
         gegl-color-model-rgb-float.gob \
         gegl-color-model-rgb-u8.gob \
+        gegl-color-model-gray.gob \
+        gegl-color-model-gray-float.gob \
+        gegl-color-model-gray-u8.gob \
 	gegl-image-buffer.gob \
         gegl-op.gob \
         gegl-point-op.gob \
@@ -18,7 +21,9 @@ GOB     = \
         gegl-fill-op.gob \
 	gegl-composite-op.gob \
 	gegl-premult-op.gob \
-	gegl-unpremult-op.gob
+	gegl-unpremult-op.gob \
+	gegl-convert-rgb-op.gob \
+	gegl-convert-gray-op.gob
 	
 
 GOB_SRC = \
@@ -28,6 +33,9 @@ GOB_SRC = \
         gegl-color-model-rgb.c \
         gegl-color-model-rgb-float.c \
 	gegl-color-model-rgb-u8.c \
+        gegl-color-model-gray.c \
+        gegl-color-model-gray-float.c \
+        gegl-color-model-gray-u8.c \
         gegl-image-buffer.c \
         gegl-op.c \
         gegl-point-op.c \
@@ -37,7 +45,9 @@ GOB_SRC = \
         gegl-fill-op.c \
 	gegl-composite-op.c \
         gegl-premult-op.c \
-        gegl-unpremult-op.c
+        gegl-unpremult-op.c \
+	gegl-convert-rgb-op.c \
+        gegl-convert-gray-op.c
 
 GOB_PUBLIC_H = \
 	gegl-object.h \
@@ -46,6 +56,9 @@ GOB_PUBLIC_H = \
         gegl-color-model-rgb.h \
         gegl-color-model-rgb-float.h \
 	gegl-color-model-rgb-u8.h \
+        gegl-color-model-gray.h \
+        gegl-color-model-gray-float.h \
+        gegl-color-model-gray-u8.h \
         gegl-image-buffer.h \
         gegl-op.h \
         gegl-point-op.h \
@@ -55,7 +68,9 @@ GOB_PUBLIC_H = \
         gegl-fill-op.h \
 	gegl-composite-op.h \
         gegl-premult-op.h \
-        gegl-unpremult-op.h
+        gegl-unpremult-op.h \
+	gegl-convert-rgb-op.h \
+        gegl-convert-gray-op.h 
 
 
 

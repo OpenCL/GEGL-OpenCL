@@ -118,13 +118,13 @@ class Gegl:Color:Model from Gegl:Object {
   set_color (self, GeglColor *c, 
              GeglColorConstant constant);
 
-virtual
-void
-convert_to_xyz (self, gfloat **dest_data, guchar **src_data);
+  virtual
+  void
+  convert_to_xyz (self, gfloat **dest_data, guchar **src_data, gint width);
 
-virtual
-void
-convert_from_xyz (self, gfloat **dest_data, guchar **src_data);
+  virtual
+  void
+  convert_from_xyz (self, guchar **dest_data, gfloat *src_data, gint width);
 
 
 }

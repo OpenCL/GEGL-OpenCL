@@ -1,0 +1,77 @@
+%h{
+#include "gegl-color-model.h"
+#ifndef __TYPEDEF_GEGL_COLOR__
+#define __TYPEDEF_GEGL_COLOR__
+typedef struct _GeglColor GeglColor;
+#endif
+%}
+%{
+#include "gegl-color-model-gray.h"
+#include "gegl-color-model-gray-private.h"
+#include "gegl-color-model-private.h"
+#include "gegl-color.h"
+%}
+
+class Gegl:Color:Model:Gray from Gegl:Color:Model {
+
+  private gint gray_index;
+
+  protected 
+  gboolean 
+  constructor(self, gboolean has_alpha, gboolean is_premult)
+  {
+    GeglColorModelPrivate *color_modelP = 
+              (GeglColorModelPrivate*)(GEGL_COLOR_MODEL (self)->_priv);
+
+    if (GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+    
+    /* Chain up to superclass*/
+    if (!gegl_color_model_constructor (GEGL_COLOR_MODEL(self), has_alpha, is_premult))
+      return FALSE;
+
+    if (color_modelP->has_alpha)
+     {
+       color_modelP->alpha_channel = 1;
+       color_modelP->num_channels = 2;
+     }
+    else
+     {
+       color_modelP->alpha_channel = -1;
+       color_modelP->num_channels = 1;
+     }
+
+    /* We can set these here */
+    color_modelP->colorspace = GRAY;
+    color_modelP->is_additive = TRUE;
+    color_modelP->color_space_name = NULL;
+    
+    /* Allocate memory for these then --will need a destroy then */
+    color_modelP->channel_names = NULL;
+    color_modelP->color_space_name = NULL;
+
+    /* Right now just do the typical gray */ 
+
+    self->_priv->gray_index = 0;
+
+    return TRUE;
+  }
+  
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    /* Dispose of the all the strings here */
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  public
+  gint 
+  get_gray_index (self) 
+  { 
+    return self->_priv->gray_index; 
+  }
+
+}

@@ -10,6 +10,7 @@
 #include "gegl-op-private.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
+#include <stdio.h> 
 %}
 
 class Gegl:Composite:Op from Gegl:Point:Op {
@@ -102,17 +103,23 @@ class Gegl:Composite:Op from Gegl:Point:Op {
     if ( premult){	
 
       if ( bg_has_alpha && fg_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_PREMULT_RGBA_op_PREMULT_RGBA_FLOAT;
+        point_op_class->scanline_func = gegl_composite_op_premult_RGBA_op_premult_RGBA_FLOAT;
       else if ( !bg_has_alpha && !fg_has_alpha )
         point_op_class->scanline_func = gegl_composite_op_RGB_op_RGB_FLOAT;
-
+      else if ( bg_has_alpha && !fg_has_alpha )
+        point_op_class->scanline_func = gegl_composite_op_premult_RGBA_op_RGB_FLOAT;
+      else if ( !bg_has_alpha && fg_has_alpha )
+        point_op_class->scanline_func = gegl_composite_op_RGB_op_premult_RGBA_FLOAT;
     }else{
 
-    if ( bg_has_alpha && fg_has_alpha )
-      point_op_class->scanline_func = gegl_composite_op_UNPREMULT_RGBA_op_UNPREMULT_RGBA_FLOAT;
+      if ( bg_has_alpha && fg_has_alpha )
+        point_op_class->scanline_func = gegl_composite_op_RGBA_op_RGBA_FLOAT;
       else if ( !bg_has_alpha && !fg_has_alpha )
-      point_op_class->scanline_func = gegl_composite_op_RGB_op_RGB_FLOAT;
-
+        point_op_class->scanline_func = gegl_composite_op_RGB_op_RGB_FLOAT;
+      else if ( bg_has_alpha && !fg_has_alpha )
+        point_op_class->scanline_func = gegl_composite_op_RGBA_op_RGB_FLOAT;
+      else if ( !bg_has_alpha && fg_has_alpha )
+        point_op_class->scanline_func = gegl_composite_op_RGB_op_RGBA_FLOAT;
     }
     /* set comp mode */ 	
     selfP->comp_mode = mode;
@@ -131,7 +138,7 @@ class Gegl:Composite:Op from Gegl:Point:Op {
 
   private 
   void
-  PREMULT_RGBA_op_PREMULT_RGBA_FLOAT (GeglPointOp *point_op)
+  premult_RGBA_op_premult_RGBA_FLOAT (GeglPointOp *point_op)
   {
     guint               width;
     GeglCompositeMode   comp_mode;
@@ -225,9 +232,9 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         while (width--)
         {
           a = 1.0 - *fg_a++; 
-          *bg_r++ = a * *bg_r + *bg_a * *fg_r;
-          *bg_g++ = a * *bg_g + *bg_a * *fg_g;
-          *bg_b++ = a * *bg_b + *bg_a * *fg_b;
+          *bg_r++ = a * *bg_r + *bg_a * *fg_r++;
+          *bg_g++ = a * *bg_g + *bg_a * *fg_g++;
+          *bg_b++ = a * *bg_b + *bg_a * *fg_b++;
            bg_a++;
         }
       break;
@@ -244,10 +251,227 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       break;
     }	
   }
+ 
+  private
+  void
+  premult_RGBA_op_RGB_FLOAT (GeglPointOp *point_op)
+  {
+    guint               width;
+    GeglCompositeMode   comp_mode;
+    gfloat              *bg_r, *bg_g, *bg_b, *bg_a, *fg_r, *fg_g, *fg_b;
+    gfloat               a;
+    gfloat              *fg_data[3], *bg_data[4];
+
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
+
+    GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
+    GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
+
+    GeglOp *op = GEGL_OP (point_op);
+    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
+
+
+    width = point_opP->scanline_width;
+    comp_mode = selfP->comp_mode;
+
+    /* Initialize the data pointers to the scanline */
+    /* image_buffers[0] is the bg here */
+    gegl_image_buffer_get_scanline_data (
+                    opP->image_buffers[0],
+                    (guchar**)bg_data);
+    gegl_image_buffer_get_scanline_data (
+                    opP->image_buffers[1],
+                    (guchar**)fg_data);
+
+    /* Make r,g,b point to the image data */
+    bg_r = (gfloat*) bg_data[0];
+    bg_g = (gfloat*) bg_data[1];
+    bg_b = (gfloat*) bg_data[2];
+    bg_a = (gfloat*) bg_data[3];
+
+    fg_r = (gfloat*) fg_data[0];
+    fg_g = (gfloat*) fg_data[1];
+    fg_b = (gfloat*) fg_data[2];
+
+    switch(comp_mode){
+      case COMPOSITE_REPLACE:
+        while (width--)
+        {
+          *bg_r++ = *fg_r++;
+          *bg_g++ = *fg_g++;
+          *bg_b++ = *fg_b++;
+          *bg_a++ = 1.0;
+        }
+      break;
+      case COMPOSITE_OVER:
+        while (width--)
+        {
+          *bg_r++ = *fg_r++;
+          *bg_g++ = *fg_g++;
+          *bg_b++ = *fg_b++;
+          *bg_a++ = 1.0;
+        }
+      break;
+      case COMPOSITE_IN:
+        while (width--)
+        {
+          *bg_r++ = *fg_r++ * *bg_a;
+          *bg_g++ = *fg_g++ * *bg_a;
+          *bg_b++ = *fg_b++ * *bg_a++;
+        }
+      break;
+      case COMPOSITE_OUT:
+        while (width--)
+        {
+          a = 1.0 - *bg_a;
+          *bg_r++ = a * *fg_r++;
+          *bg_g++ = a * *fg_g++;
+          *bg_b++ = a * *fg_b++;
+          *bg_a++ = a;
+        }
+      break;
+      case COMPOSITE_XOR:
+        while (width--)
+        {
+          a = 1.0 - *bg_a;
+          *bg_r++ = a * *fg_r++;
+          *bg_g++ = a * *fg_g++;
+          *bg_b++ = a * *fg_b++;
+          *bg_a++ = a;
+        }
+      break;
+      case COMPOSITE_ATOP:
+        while (width--)
+        {
+          *bg_r++ = *bg_a * *fg_r++;
+          *bg_g++ = *bg_a * *fg_g++;
+          *bg_b++ = *bg_a * *fg_b++;
+           bg_a++;
+        }
+      break;
+      case COMPOSITE_PLUS:
+        while (width--)
+        {
+          *bg_r++ += *fg_r++;
+          *bg_g++ += *fg_g++;
+          *bg_b++ += *fg_b++;
+          *bg_a++ += 1.0;
+        }
+      break;
+      default:
+      break;
+    }  
+  }
 
   private
   void
-  UNPREMULT_RGBA_op_UNPREMULT_RGBA_FLOAT (GeglPointOp *point_op)
+  RGB_op_premult_RGBA_FLOAT (GeglPointOp *point_op)
+  {
+    guint               width;
+    GeglCompositeMode   comp_mode;
+    gfloat              *bg_r, *bg_g, *bg_b, *fg_r, *fg_g, *fg_b, *fg_a;
+    gfloat               a, b;
+    gfloat              *fg_data[4], *bg_data[3];
+
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
+
+    GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
+    GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
+
+    GeglOp *op = GEGL_OP (point_op);
+    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
+
+
+    width = point_opP->scanline_width;
+    comp_mode = selfP->comp_mode;
+
+    /* Initialize the data pointers to the scanline */
+    /* image_buffers[0] is the bg here */
+    gegl_image_buffer_get_scanline_data (
+                    opP->image_buffers[0],
+                    (guchar**)bg_data);
+    gegl_image_buffer_get_scanline_data (
+                    opP->image_buffers[1],
+                    (guchar**)fg_data);
+
+    /* Make r,g,b point to the image data */
+    bg_r = (gfloat*) bg_data[0];
+    bg_g = (gfloat*) bg_data[1];
+    bg_b = (gfloat*) bg_data[2];
+
+    fg_r = (gfloat*) fg_data[0];
+    fg_g = (gfloat*) fg_data[1];
+    fg_b = (gfloat*) fg_data[2];
+    fg_a = (gfloat*) fg_data[3];
+
+    switch(comp_mode){
+      case COMPOSITE_REPLACE:
+        while (width--)
+        {
+          *bg_r++ = *fg_r++;
+          *bg_g++ = *fg_g++;
+          *bg_b++ = *fg_b++;
+        }
+      break;
+      case COMPOSITE_OVER:
+        while (width--)
+        {
+          a = 1.0 - *fg_a++;
+          *bg_r++ = a * *bg_r + *fg_r++;
+          *bg_g++ = a * *bg_g + *fg_g++;
+          *bg_b++ = a * *bg_b + *fg_b++;
+        }
+      break;
+      case COMPOSITE_IN:
+        while (width--)
+        {
+          *bg_r++ = *fg_r++;
+          *bg_g++ = *fg_g++;
+          *bg_b++ = *fg_b++;
+        }
+      break;
+      case COMPOSITE_OUT:
+        while (width--)
+        {
+          *bg_r++ = 0.0;
+          *bg_g++ = 0.0;
+          *bg_b++ = 0.0;
+        }
+      break;
+      case COMPOSITE_XOR:
+        while (width--)
+        {
+          b = 1.0 - *fg_a++;
+          *bg_r++ *= b;
+          *bg_g++ *= b;
+          *bg_b++ *= b;
+        }
+      break;
+      case COMPOSITE_ATOP:
+        while (width--)
+        {
+          a = 1.0 - *fg_a++;
+          *bg_r++ = a * *bg_r + *fg_r++;
+          *bg_g++ = a * *bg_g + *fg_g++;
+          *bg_b++ = a * *bg_b + *fg_b++;
+        }
+      break;
+      case COMPOSITE_PLUS:
+        while (width--)
+        {
+          *bg_r++ += *fg_r++;
+          *bg_g++ += *fg_g++;
+          *bg_b++ += *fg_b++;
+        }
+      break;
+      default:
+      break;
+    }  
+  }
+
+  private
+  void
+  RGBA_op_RGBA_FLOAT (GeglPointOp *point_op)
   {
     guint               width;
     GeglCompositeMode   comp_mode;
@@ -313,7 +537,10 @@ class Gegl:Composite:Op from Gegl:Point:Op {
             *bg_g++ = 0;
             *bg_b++ = 0;
              bg_a++; 
-          }
+             fg_r++;
+	     fg_g++;
+             fg_b++;
+	  }
         }
       break;
       case COMPOSITE_IN:
@@ -328,6 +555,9 @@ class Gegl:Composite:Op from Gegl:Point:Op {
             *bg_r++ = 0;
             *bg_g++ = 0;
             *bg_b++ = 0;
+             fg_r++;
+             fg_g++;
+             fg_b++;
           }
         }
       break;
@@ -343,6 +573,9 @@ class Gegl:Composite:Op from Gegl:Point:Op {
             *bg_r++ = 0;
             *bg_g++ = 0;
             *bg_b++ = 0;
+             fg_r++;
+             fg_g++;
+             fg_b++;
           }
         }
       break;
@@ -362,6 +595,9 @@ class Gegl:Composite:Op from Gegl:Point:Op {
           *bg_g++ = 0;
           *bg_b++ = 0;
            bg_a++;
+           fg_r++;
+           fg_g++;
+           fg_b++;
         } 
       }
       break;
@@ -370,13 +606,16 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       {
         a = 1.0 - *fg_a++;
         if(*bg_a++){
-          *bg_r++ = a * *bg_r + *bg_a * *fg_r;
-          *bg_g++ = a * *bg_g + *bg_a * *fg_g;
-          *bg_b++ = a * *bg_b + *bg_a * *fg_b;
+          *bg_r++ = a * *bg_r + *bg_a * *fg_r++;
+          *bg_g++ = a * *bg_g + *bg_a * *fg_g++;
+          *bg_b++ = a * *bg_b + *bg_a * *fg_b++;
         } else {
           *bg_r++ = 0;
           *bg_g++ = 0;
           *bg_b++ = 0;
+           fg_r++;
+           fg_g++;
+           fg_b++;
         } 
       }
       break;
@@ -387,6 +626,272 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         *bg_g++ += *fg_g++;
         *bg_b++ += *fg_b++;
         *bg_a++ =  (*bg_a + *fg_a++) * .5;
+      }
+    break;
+    default:
+    break;
+    }
+  }
+  private
+  void
+  RGBA_op_RGB_FLOAT (GeglPointOp *point_op)
+  {
+    guint               width;
+    GeglCompositeMode   comp_mode;
+    gfloat              *bg_r, *bg_g, *bg_b, *bg_a, *fg_r, *fg_g, *fg_b;
+    gfloat              *fg_data[3], *bg_data[4];
+
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
+
+    GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
+    GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
+
+    GeglOp *op = GEGL_OP (point_op);
+    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
+
+
+    width = point_opP->scanline_width;
+    comp_mode = selfP->comp_mode;
+
+    /* Initialize the data pointers to the scanline */
+    /* image_buffers[0] is the bg here */
+    gegl_image_buffer_get_scanline_data (
+                  opP->image_buffers[0],
+                  (guchar**)bg_data);
+    gegl_image_buffer_get_scanline_data (
+                  opP->image_buffers[1],
+                  (guchar**)fg_data);
+
+    /* Make r,g,b point to the image data */
+    bg_r = (gfloat*) bg_data[0];
+    bg_g = (gfloat*) bg_data[1];
+    bg_b = (gfloat*) bg_data[2];
+    bg_a = (gfloat*) bg_data[3];
+
+    fg_r = (gfloat*) fg_data[0];
+    fg_g = (gfloat*) fg_data[1];
+    fg_b = (gfloat*) fg_data[2];
+
+    switch(comp_mode){
+      case COMPOSITE_REPLACE:
+        while (width--)
+        {
+          *bg_r++ = *fg_r++;
+          *bg_g++ = *fg_g++;
+          *bg_b++ = *fg_b++;
+        }
+      break;
+      case COMPOSITE_OVER:
+        while (width--)
+        {
+          *bg_a++ = 1.0;  
+          *bg_r++ = *fg_r++;
+          *bg_g++ = *fg_g++;
+          *bg_b++ = *fg_b++;
+        }
+      break;
+      case COMPOSITE_IN:
+        while (width--)
+        {
+          if(*bg_a++){
+            *bg_r++ = *fg_r++;
+            *bg_g++ = *fg_g++;
+            *bg_b++ = *fg_b++;
+          }else{
+            *bg_r++ = 0;
+            *bg_g++ = 0;
+            *bg_b++ = 0;
+            fg_r++;
+            fg_g++;
+            fg_b++;
+          }
+        }
+      break;
+      case COMPOSITE_OUT:
+      while (width--)
+        {
+          *bg_a = (1.0 - *bg_a);
+          if(*bg_a++){
+            *bg_r++ = *fg_r++;
+            *bg_g++ = *fg_g++;
+            *bg_b++ = *fg_b++;
+          } else {
+            *bg_r++ = 0;
+            *bg_g++ = 0;
+            *bg_b++ = 0;
+            fg_r++;
+            fg_g++;
+            fg_b++;
+          }
+        }
+      break;
+      case COMPOSITE_XOR:
+      while (width--)
+      {
+        *bg_a = (1.0 - *bg_a);
+        if(*bg_a++){
+          *bg_r++ = *fg_r++;
+          *bg_g++ = *fg_g++;
+          *bg_b++ = *fg_b++;
+        } else {
+          *bg_r++ = 0;
+          *bg_g++ = 0;
+          *bg_b++ = 0;
+           bg_a++;
+           fg_r++;
+           fg_g++;
+           fg_b++;
+        } 
+      }
+      break;
+      case COMPOSITE_ATOP:
+      while (width--)
+      {
+        if(*bg_a++){
+          *bg_r++ = *bg_a * *fg_r++;
+          *bg_g++ = *bg_a * *fg_g++;
+          *bg_b++ = *bg_a * *fg_b++;
+        } else {
+          *bg_r++ = 0;
+          *bg_g++ = 0;
+          *bg_b++ = 0;
+           fg_r++;
+           fg_g++;
+           fg_b++;
+        } 
+      }
+      break;
+      case COMPOSITE_PLUS:
+      while (width--)
+      {
+        *bg_r++ += *fg_r++;
+        *bg_g++ += *fg_g++;
+        *bg_b++ += *fg_b++;
+      }
+    break;
+    default:
+    break;
+    }
+  }
+  private
+  void
+  RGB_op_RGBA_FLOAT (GeglPointOp *point_op)
+  {
+    guint               width;
+    GeglCompositeMode   comp_mode;
+    gfloat              *bg_r, *bg_g, *bg_b, *fg_r, *fg_g, *fg_b, *fg_a;
+    gfloat              a, b;
+    gfloat              *fg_data[4], *bg_data[3];
+
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
+
+    GeglCompositeOp *self = GEGL_COMPOSITE_OP (point_op);
+    GeglCompositeOpPrivate *selfP = (GeglCompositeOpPrivate *)(self->_priv);
+
+    GeglOp *op = GEGL_OP (point_op);
+    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
+
+
+    width = point_opP->scanline_width;
+    comp_mode = selfP->comp_mode;
+
+    /* Initialize the data pointers to the scanline */
+    /* image_buffers[0] is the bg here */
+    gegl_image_buffer_get_scanline_data (
+                  opP->image_buffers[0],
+                  (guchar**)bg_data);
+    gegl_image_buffer_get_scanline_data (
+                  opP->image_buffers[1],
+                  (guchar**)fg_data);
+
+    /* Make r,g,b point to the image data */
+    bg_r = (gfloat*) bg_data[0];
+    bg_g = (gfloat*) bg_data[1];
+    bg_b = (gfloat*) bg_data[2];
+
+    fg_r = (gfloat*) fg_data[0];
+    fg_g = (gfloat*) fg_data[1];
+    fg_b = (gfloat*) fg_data[2];
+    fg_a = (gfloat*) fg_data[3];
+
+    switch(comp_mode){
+      case COMPOSITE_REPLACE:
+        while (width--)
+        {
+          *bg_r++ = *fg_r++;
+          *bg_g++ = *fg_g++;
+          *bg_b++ = *fg_b++;
+        }
+      break;
+      case COMPOSITE_OVER:
+        while (width--)
+        {
+          a = (1.0 - *fg_a);
+          b = *fg_a++;
+          *bg_r++ = a * *bg_r + b * *fg_r++;
+          *bg_g++ = a * *bg_g + b * *fg_g++;
+          *bg_b++ = a * *bg_b + b * *fg_b++;
+        }
+      break;
+      case COMPOSITE_IN:
+        while (width--)
+        {
+           a = *fg_a++;
+          if(a){
+            *bg_r++ = *fg_r++;
+            *bg_g++ = *fg_g++;
+            *bg_b++ = *fg_b++;
+          }else{
+            *bg_r++ = 0;
+            *bg_g++ = 0;
+            *bg_b++ = 0;
+            fg_r++;
+            fg_g++;
+            fg_b++;
+          }
+        }
+      break;
+      case COMPOSITE_OUT:
+      while (width--)
+        {
+          *bg_r++ = 0;
+          *bg_g++ = 0;
+          *bg_b++ = 0;
+        }
+      break;
+      case COMPOSITE_XOR:
+      while (width--)
+      {
+        b = (1.0 - *fg_a++);
+        if(b){
+          *bg_r++ = *bg_r;
+          *bg_g++ = *bg_g;
+          *bg_b++ = *bg_b;
+        } else {
+          *bg_r++ = 0;
+          *bg_g++ = 0;
+          *bg_b++ = 0;
+           fg_r++;
+           fg_g++;
+           fg_b++;
+        } 
+      }
+      break;
+      case COMPOSITE_ATOP:
+      while (width--)
+      {
+        a = 1.0 - *fg_a++;
+        *bg_r++ = a * *bg_r + *fg_r++;
+        *bg_g++ = a * *bg_g + *fg_g++;
+        *bg_b++ = a * *bg_b + *fg_b++;
+      }
+      break;
+      case COMPOSITE_PLUS:
+      while (width--)
+      {
+        *bg_r++ += *fg_r++;
+        *bg_g++ += *fg_g++;
+        *bg_b++ += *fg_b++;
       }
     break;
     default:

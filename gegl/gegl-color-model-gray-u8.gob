@@ -1,21 +1,21 @@
 %h{
-#include "gegl-color-model-rgb.h"
+#include "gegl-color-model-gray.h"
 %}
 %{
-#include "gegl-color-model-rgb-u8.h"
-#include "gegl-color-model-rgb-u8-private.h"
-#include "gegl-color-model-rgb-private.h"
+#include "gegl-color-model-gray-u8.h"
+#include "gegl-color-model-gray-u8-private.h"
+#include "gegl-color-model-gray-private.h"
 #include "gegl-color-model-private.h"
 #include "gegl-color.h"
 %}
 
-class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
+class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
 
   public
-  GeglColorModelRgbU8 *	
+  GeglColorModelGrayU8 *	
   new(gboolean has_alpha, gboolean is_premult)
   {
-    GeglColorModelRgbU8 * self = GEGL_COLOR_MODEL_RGB_U8(GET_NEW);
+    GeglColorModelGrayU8 * self = GEGL_COLOR_MODEL_GRAY_U8(GET_NEW);
   
     /*Call the constructor */
     if (!constructor(self, has_alpha, is_premult))
@@ -38,8 +38,8 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
         return FALSE;
     
     /* Chain up to superclass*/
-    if (!gegl_color_model_rgb_constructor (
-         GEGL_COLOR_MODEL_RGB(self), has_alpha, is_premult))
+    if (!gegl_color_model_gray_constructor (
+         GEGL_COLOR_MODEL_GRAY(self), has_alpha, is_premult))
         return FALSE;
 
     color_modelP->data_type = U8;
@@ -70,55 +70,41 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
     GeglChannelValue * channel_values = 
                        gegl_color_get_channel_values(color); 
     gboolean has_alpha = gegl_color_model_has_alpha (cm); 
-    GeglColorModelRgb * cm_rgb = GEGL_COLOR_MODEL_RGB(cm);
+    GeglColorModelGray * cm_gray = GEGL_COLOR_MODEL_GRAY(cm);
     
-    gint r = gegl_color_model_rgb_get_red_index (cm_rgb);
-    gint g = gegl_color_model_rgb_get_green_index (cm_rgb);
-    gint b = gegl_color_model_rgb_get_blue_index (cm_rgb);
-    gint a = gegl_color_model_alpha_channel (GEGL_COLOR_MODEL(cm_rgb));
+    gint g = gegl_color_model_gray_get_green_index (cm_gray);
+    gint a = gegl_color_model_alpha_channel (GEGL_COLOR_MODEL(cm_gray));
 
     switch (constant) 
       { 
         case COLOR_WHITE:
-          channel_values[r].u8 = 255;
           channel_values[g].u8 = 255;
-          channel_values[b].u8 = 255;
           if (has_alpha)
             channel_values[a].u8 = 255;
           break;
         case COLOR_BLACK:
-          channel_values[r].u8 = 0;
           channel_values[g].u8 = 0;
-          channel_values[b].u8 = 0;
           if (has_alpha)
             channel_values[a].u8 = 255;
           break;
         case COLOR_RED:
-          channel_values[r].u8 = 255;
-          channel_values[g].u8 = 0;
-          channel_values[b].u8 = 0;
+          channel_values[g].u8 = 0.3 * 255;
           if (has_alpha)
             channel_values[a].f = 255;
           break;
         case COLOR_GREEN:
-          channel_values[r].u8 = 0;
-          channel_values[g].u8 = 255;
-          channel_values[b].u8 = 0;
+          channel_values[g].u8 = 0.6 * 255;
           if (has_alpha)
             channel_values[a].u8 = 255;
           break;
         case COLOR_BLUE:
-          channel_values[r].u8 = 0;
-          channel_values[g].u8 = 0;
-          channel_values[b].u8 = 255;
+          channel_values[g].u8 = 0.1 * 255;
           if (has_alpha)
             channel_values[a].u8 = 255;
           break;
         case COLOR_GRAY:
         case COLOR_HALF_WHITE:
-          channel_values[r].u8 = 127;
           channel_values[g].u8 = 127;
-          channel_values[b].u8 = 127;
           if (has_alpha)
             channel_values[a].u8 = 255;
           break;
@@ -145,7 +131,7 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
   void
   convert_to_xyz (GeglColorModel *cm, gfloat *dest_data, guchar **src_data, gint width)
   {
-    /* the color datat in src_data is rgb_float */
+    /* the color datat in src_data is gray_float */
     /*
       __  __      __                                                          __  __  __
       | X  |      | 0.38106149108714790 0.32025712365352110 0.24834578525933100 | | R  |
@@ -163,41 +149,35 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
     gfloat m12 = 0.14297193020246480;
     gfloat m22 = 1.24172892629665500;
 
-    guint8 *r, *g, *b, *a;
-    gfloat R, G, B, A;
+    guint8 *g, *a;
+    gfloat G, A;
     gint i=0;
     gfloat tmp= 1.0/255.0;
 
     gboolean has_alpha = gegl_color_model_has_alpha(cm);
 
-    r = src_data[0];
-    g = src_data[1];
-    b = src_data[2];
+    g = src_data[0];
     
     if(has_alpha){
 
-    a = src_data[3];
+    a = src_data[1];
 
     while(width--)
     {
-      R = *r++ * tmp;
       G = *g++ * tmp;
-      B = *b++ * tmp; 
       A = *a++ * tmp;
-      dest_data[i++] = m00 * R + m10 * G + m20 * B;
-      dest_data[i++] = m01 * R + m11 * G + m21 * B;
-      dest_data[i++] = m02 * R + m12 * G + m22 * B;
+      dest_data[i++] = (m00 + m10 + m20) * G;
+      dest_data[i++] = (m01 + m11 + m21) * G;
+      dest_data[i++] = (m02 + m12 + m22) * G;
       dest_data[i++] = A;
     }
     } else {
     while(width--)
     {
-      R = *r++ * tmp;
       G = *g++ * tmp;
-      B = *b++ * tmp;
-      dest_data[i++] = m00 * R + m10 * G + m20 * B;
-      dest_data[i++] = m01 * R + m11 * G + m21 * B;
-      dest_data[i++] = m02 * R + m12 * G + m22 * B;
+      dest_data[i++] = (m00 + m10 + m20) * G;
+      dest_data[i++] = (m01 + m11 + m21) * G;
+      dest_data[i++] = (m02 + m12 + m22) * G;
     }
     }
   }
@@ -224,7 +204,7 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
     gfloat m12 =  0.03673691339553462;
     gfloat m22 =  0.81070942031648220;
 
-    guint8 *r, *g, *b, *a;
+    guint8 *g, *a;
     gint i=0;
 
     gboolean has_alpha = gegl_color_model_has_alpha(cm);
@@ -237,18 +217,18 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
 
     while(width--)
     {
-      *r++ = (m00 * src_data[i*4] + m10 * src_data[i*4+1] + m20 * src_data[i*4+2]) * 255;
-      *g++ = (m01 * src_data[i*4] + m11 * src_data[i*4+1] + m21 * src_data[i*4+2]) * 255;
-      *b++ = (m02 * src_data[i*4] + m12 * src_data[i*4+1] + m22 * src_data[i*4+2]) * 255;
-      *a++ = (src_data[i*4+3]) * 255;
+      *g    = (m00 * src_data[i*4] + m10 * src_data[i*4+1] + m20 * src_data[i*4+2]) * 255 * 0.3;
+      *g   += (m01 * src_data[i*4] + m11 * src_data[i*4+1] + m21 * src_data[i*4+2]) * 255 * 0.6;
+      *g++ += (m02 * src_data[i*4] + m12 * src_data[i*4+1] + m22 * src_data[i*4+2]) * 255 * 0.1;
+      *a++  = (src_data[i*4+3]) * 255;
       i++;
     }
     } else {
     while(width--)
     {
-      *r++ = (m00 * src_data[i*3] + m10 * src_data[i*3+1] + m20 * src_data[i*3+2]) * 255;
-      *g++ = (m01 * src_data[i*3] + m11 * src_data[i*3+1] + m21 * src_data[i*3+2]) * 255;
-      *b++ = (m02 * src_data[i*3] + m12 * src_data[i*3+1] + m22 * src_data[i*3+2]) * 255;
+      *g   += (m00 * src_data[i*3] + m10 * src_data[i*3+1] + m20 * src_data[i*3+2]) * 255 * 0.3;
+      *g   += (m01 * src_data[i*3] + m11 * src_data[i*3+1] + m21 * src_data[i*3+2]) * 255 * 0.6;
+      *g++ += (m02 * src_data[i*3] + m12 * src_data[i*3+1] + m22 * src_data[i*3+2]) * 255 * 0.1;
       i++;
     }
     }
