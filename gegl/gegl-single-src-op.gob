@@ -1,58 +1,26 @@
 %h{
 #include "gegl-point-op.h"
-
-#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
-#define __TYPEDEF_GEGL_COLOR_MODEL__
-typedef struct _GeglColorModel  GeglColorModel;
-#endif
-
-
 %}
 %{
 #include "gegl-single-src-op.h"
 #include "gegl-single-src-op-private.h"
 #include "gegl-point-op-private.h"
-#include "gegl-op-private.h"
-#include "gegl-object-private.h"
-#include "gegl-image-buffer.h"
-#include "gegl-color.h"
-#include "gegl-color-model.h"
-#include "gegl-utils.h"
-#include <stdio.h>
 %}
 
 class Gegl:Single:Src:Op from Gegl:Point:Op {
-  private GeglColorModel * dest_cm; 
-  private GeglColorModel * src_cm; 
   
   protected 
   gboolean 
   constructor(self, 
-               GeglImageBuffer *dest,
-                    GeglImageBuffer *src,
-              GeglRect *dest_rect,
-              GeglRect *src_rect)
+              GeglImage *src)
   {
-    GeglImageBuffer *image_buffers[2];
-    GeglRect rects[2];
-    
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
     
-    image_buffers[0] = dest;
-    image_buffers[1] = src;
-    gegl_rect_copy(&(rects[0]), dest_rect);
-    gegl_rect_copy(&(rects[1]), src_rect);
- 
     /* Chain up */
-    if (!gegl_point_op_constructor (
-         GEGL_POINT_OP(self), image_buffers, rects, 2))
+    if (!gegl_point_op_constructor (GEGL_POINT_OP(self), &src, 1))
       return FALSE;
 
-    {
-      self->_priv->dest_cm = gegl_image_buffer_color_model (dest);
-      self->_priv->src_cm = gegl_image_buffer_color_model (src);
-    }
     return TRUE;
   }
 

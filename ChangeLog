@@ -1,3 +1,20 @@
+Tue May 30 10:32:50 EDT 2000 calvinw@mindspring.com
+
+        * Many changes to Op, Image, ImageBuffer. Made Op and
+	ImageBuffer inherit from common Image class, so we can do
+	image chaining. (see doc/geglImageAndOp.html) 
+
+	* changes to doc/geglImageAndOp.html to describe the new
+	classes	
+
+	* some classes arent rewritten yet for this new stuff. 
+	All the color convert ops, copy_chan op, and most of 
+	the remaining point ops need converting (point ops will 
+	be just like MultOp).	
+
+	*added a files gegl/trace.[ch] useful for debugging 
+	get_pixels routine.
+
 Thu May 25 11:12:35 PDT 2000 caro@rhythm.com
 	
 	* check in for docs

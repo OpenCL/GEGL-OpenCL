@@ -7,7 +7,7 @@
 #include "gegl-dual-src-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
-#include "gegl-image-buffer.h"
+#include "gegl-image-private.h"
 #include "gegl-image-iterator.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
@@ -20,19 +20,14 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 
   public 
   GeglCompositePremultOp *
-  new (GeglImageBuffer *dest, 
-       GeglImageBuffer *src1,
-       GeglImageBuffer *src2,       
-       GeglRect *dest_rect,
-       GeglRect *src1_rect,
-       GeglRect *src2_rect,
+  new (GeglImage *src1,
+       GeglImage *src2,       
        GeglCompositeMode mode)
   {
     GeglCompositePremultOp * self = GEGL_COMPOSITE_PREMULT_OP(GET_NEW);
 
     /*Call the constructor */
-    if (!constructor(self, dest, src1, src2, 
-                     dest_rect, src1_rect, src2_rect, mode))
+    if (!constructor(self, src1, src2, mode))
       return NULL;
     
     /*Okay its constructed*/
@@ -44,12 +39,8 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
   protected 
   gboolean 
   constructor(self, 
-             GeglImageBuffer *dest, 
-             GeglImageBuffer *src1,
-             GeglImageBuffer *src2,       
-             GeglRect *dest_rect,
-             GeglRect *src1_rect,
-             GeglRect *src2_rect,
+             GeglImage *src1,
+             GeglImage *src2,       
              GeglCompositeMode mode)
   {
     if(GEGL_OBJECT(self)->constructed) 
@@ -57,39 +48,10 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 
     /* Chain up */
     if (!gegl_dual_src_op_constructor ( 
-           GEGL_DUAL_SRC_OP(self),dest, src1, src2, 
-           dest_rect, src1_rect, src2_rect))
+           GEGL_DUAL_SRC_OP(self), src1, src2))
       return FALSE;
 
-    {
-      GeglPointOpClass *point_op_class = 
-         GEGL_POINT_OP_CLASS(GTK_OBJECT(self)->klass);
-
-      GeglColorModel              *src1_cm, *src2_cm;
-      gboolean                    src1_has_alpha, src2_has_alpha;
-       
-      src1_cm = gegl_image_buffer_color_model (src1);
-      src1_has_alpha = gegl_color_model_has_alpha (src1_cm);
-
-      src2_cm = gegl_image_buffer_color_model (src2);
-      src2_has_alpha = gegl_color_model_has_alpha (src2_cm);
-
-      /* dest = src2 op src1 */ 
-      if ( src2_has_alpha && src1_has_alpha)
-        point_op_class->scanline_func = 
-                  gegl_composite_premult_op_COLORSPACEa_op_COLORSPACEa_DATATYPE;
-      else if ( src2_has_alpha && !src1_has_alpha )
-        point_op_class->scanline_func = 
-                  gegl_composite_premult_op_COLORSPACEa_op_COLORSPACE_DATATYPE;
-      else if ( !src2_has_alpha && src1_has_alpha )
-        point_op_class->scanline_func = 
-                  gegl_composite_premult_op_COLORSPACE_op_COLORSPACEa_DATATYPE;
-      else if ( !src2_has_alpha && !src1_has_alpha )
-        point_op_class->scanline_func = 
-                  gegl_composite_premult_op_COLORSPACE_op_COLORSPACE_DATATYPE;
-
-      self->_priv->comp_mode = mode;
-    }
+    self->_priv->comp_mode = mode;
     return TRUE;
   }
 
@@ -101,12 +63,56 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     PARENT_HANDLER (object)
   }
 
+  override(Gegl:Op)
+  void
+  compute_source_rois (GeglOp *op, GeglRect *roi) 
+  {
+    gegl_rect_copy(&op->_priv->source_rois[0],roi);    
+    gegl_rect_copy(&op->_priv->source_rois[1],roi);    
+  }
+
+  override(Gegl:Op)
+  void
+  prepare(GeglOp *op,
+          GeglImage *dest,
+	  GeglRect *roi)
+  {
+    GeglPointOp *point_op = GEGL_POINT_OP (op);
+    GeglPointOpClass *point_op_class = 
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+
+    gegl_op_save_alphas (op);
+
+      {
+	gboolean  s1_has_alpha = op->_priv->src_has_alpha[0]; 
+	gboolean  s2_has_alpha = op->_priv->src_has_alpha[1]; 
+       
+        /* dest = src2 op src1 */ 
+
+	if ( s2_has_alpha && s1_has_alpha)
+	  point_op_class->scanline_func = 
+	    gegl_composite_premult_op_COLORSPACEa_op_COLORSPACEa_DATATYPE;
+	else if ( s2_has_alpha && !s1_has_alpha )
+	  point_op_class->scanline_func = 
+	    gegl_composite_premult_op_COLORSPACEa_op_COLORSPACE_DATATYPE;
+	else if ( !s2_has_alpha && s1_has_alpha )
+	  point_op_class->scanline_func = 
+	    gegl_composite_premult_op_COLORSPACE_op_COLORSPACEa_DATATYPE;
+	else if ( !s2_has_alpha && !s1_has_alpha )
+	  point_op_class->scanline_func = 
+	    gegl_composite_premult_op_COLORSPACE_op_COLORSPACE_DATATYPE;
+      }
+  } 
+
   private 
   void
-  COLORSPACEa_op_COLORSPACEa_DATATYPE (GeglPointOp *point_op)
+  COLORSPACEa_op_COLORSPACEa_DATATYPE (GeglPointOp *point_op,
+				       GeglImageIterator *dest_iter, 
+				       GeglImageIterator **src_iters)
   {
-    GeglCompositePremultOp * self = GEGL_COMPOSITE_PREMULT_OP (point_op);
-    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+    GeglCompositePremultOp *self = 
+      GEGL_COMPOSITE_PREMULT_OP (point_op);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color,alpha);
@@ -114,18 +120,13 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     Pixel src2(color,alpha);
     Channel a, b;
     GENERIC_IMAGE_DECL_END
-    gint width = point_opP->scanline_width;
 
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[0], 
-                      (guchar**)dest_data);
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[1],
-                      (guchar**)src1_data);
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[2],
-                      (guchar**)src2_data); 
-
+    gegl_image_iterator_get_scanline_data (
+	dest_iter, (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data (
+	src_iters[0], (guchar**)src1_data);
+    gegl_image_iterator_get_scanline_data (
+	src_iters[1], (guchar**)src2_data);
 
     GENERIC_IMAGE_IMAGE_DATA_INIT
 
@@ -229,10 +230,13 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
  
   private 
   void
-  COLORSPACEa_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
+  COLORSPACEa_op_COLORSPACE_DATATYPE (GeglPointOp *point_op,
+				      GeglImageIterator *dest_iter, 
+				      GeglImageIterator **src_iters)
   {
-    GeglCompositePremultOp * self = GEGL_COMPOSITE_PREMULT_OP (point_op);
-    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+    GeglCompositePremultOp *self = 
+      GEGL_COMPOSITE_PREMULT_OP (point_op);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color); 
@@ -240,18 +244,13 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     Pixel src2(color,alpha);
     Channel a;
     GENERIC_IMAGE_DECL_END
-    gint width = point_opP->scanline_width;
 
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[0], 
-                      (guchar**)dest_data);
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[1],
-                      (guchar**)src1_data);
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[2],
-                      (guchar**)src2_data); 
-
+    gegl_image_iterator_get_scanline_data (
+	dest_iter, (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data (
+	src_iters[0], (guchar**)src1_data);
+    gegl_image_iterator_get_scanline_data (
+	src_iters[1], (guchar**)src2_data);
 
     GENERIC_IMAGE_IMAGE_DATA_INIT
       
@@ -347,10 +346,14 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 
   private 
   void
-  COLORSPACE_op_COLORSPACEa_DATATYPE (GeglPointOp *point_op)
+  COLORSPACE_op_COLORSPACEa_DATATYPE (GeglPointOp *point_op,
+				      GeglImageIterator *dest_iter, 
+				      GeglImageIterator **src_iters)
+
   {
-    GeglCompositePremultOp * self = GEGL_COMPOSITE_PREMULT_OP (point_op);
-    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+    GeglCompositePremultOp *self = 
+      GEGL_COMPOSITE_PREMULT_OP (point_op);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color,alpha);
@@ -358,17 +361,13 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     Pixel src2(color);
     Channel b;
     GENERIC_IMAGE_DECL_END 
-    gint width = point_opP->scanline_width;
 
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[0], 
-                      (guchar**)dest_data);
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[1],
-                      (guchar**)src1_data);
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[2],
-                      (guchar**)src2_data); 
+    gegl_image_iterator_get_scanline_data (
+	dest_iter, (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data (
+	src_iters[0], (guchar**)src1_data);
+    gegl_image_iterator_get_scanline_data (
+	src_iters[1], (guchar**)src2_data);
 
     GENERIC_IMAGE_IMAGE_DATA_INIT
 
@@ -473,30 +472,26 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 
   private 
   void
-  COLORSPACE_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
+  COLORSPACE_op_COLORSPACE_DATATYPE (GeglPointOp *point_op,
+				     GeglImageIterator *dest_iter, 
+				     GeglImageIterator **src_iters)
   {
-    GeglCompositePremultOp * self = GEGL_COMPOSITE_PREMULT_OP (point_op);
-    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)
-                                    (point_op->_priv); 
-
+    GeglCompositePremultOp *self = 
+      GEGL_COMPOSITE_PREMULT_OP (point_op);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color);
     Pixel src1(color);
     Pixel src2(color);
     GENERIC_IMAGE_DECL_END
-    gint width = point_opP->scanline_width;
 
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[0], 
-                      (guchar**)dest_data);
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[1],
-                      (guchar**)src1_data); 
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[2],
-                      (guchar**)src2_data); 
-
+    gegl_image_iterator_get_scanline_data (
+	dest_iter, (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data (
+	src_iters[0], (guchar**)src1_data);
+    gegl_image_iterator_get_scanline_data (
+	src_iters[1], (guchar**)src2_data);
 
     GENERIC_IMAGE_IMAGE_DATA_INIT
       

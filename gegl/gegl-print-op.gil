@@ -1,31 +1,30 @@
 %h{
-#include "gegl-single-src-op.h"
+#include "gegl-point-op.h"
 %}
 %{
-#include <stdio.h>
 #include "gegl-print-op.h"
 #include "gegl-print-op-private.h"
-#include "gegl-single-src-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
+#include "gegl-image-private.h"
 #include "gegl-image-iterator.h"
-#include "gegl-image-buffer.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
+#include <stdio.h>
 %}
 
-class Gegl:Print:Op from Gegl:Single:Src:Op {
+class Gegl:Print:Op from Gegl:Point:Op {
+
+  private gint unused;
 
   public 
   GeglPrintOp *
-  new (GeglImageBuffer *src, 
-       GeglRect *src_rect
-       )
+  new (void)
   {
     GeglPrintOp * self = GEGL_PRINT_OP(GET_NEW);
 
     /*Call the constructor */
-    if (!constructor(self, src, src_rect))
+    if (!constructor(self))
       return NULL;
     
     /*Okay its constructed*/
@@ -36,30 +35,19 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
 
   protected 
   gboolean 
-  constructor(self, 
-              GeglImageBuffer *src, 
-              GeglRect *src_rect)
+  constructor(self)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
 
     /* Chain up */
-    if (!gegl_single_src_op_constructor (
-          GEGL_SINGLE_SRC_OP(self), src, src, src_rect, src_rect))
+    if (!gegl_point_op_constructor (GEGL_POINT_OP(self),NULL,0))
       return FALSE;
-
 
     {
       GeglPointOp *point_op = GEGL_POINT_OP (self);
       GeglPointOpClass *point_op_class = 
-	GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
-      GeglColorModel *cm;
-      GeglColorSpace color_space;
-      GeglChannelDataType data_type;
-
-      cm = gegl_image_buffer_color_model (src);
-      data_type = gegl_color_model_data_type (cm);
-      color_space = gegl_color_model_color_space (cm);
+	  GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
 
       point_op_class->scanline_func = gegl_print_op_COLORSPACE_DATATYPE;        
     }
@@ -69,25 +57,23 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
 
   private
   void
-  COLORSPACE_DATATYPE (GeglPointOp *point_op)
+  COLORSPACE_DATATYPE (GeglPointOp *point_op,
+                       GeglImageIterator *dest_iter, 
+		       GeglImageIterator **src_iters)
   {
-    GeglPointOpPrivate *point_opP =
-        (GeglPointOpPrivate *)(point_op->_priv);
-    GeglSingleSrcOp *single_src_op = GEGL_SINGLE_SRC_OP(point_op); 
-    GeglSingleSrcOpPrivate *single_src_opP = 
-        (GeglSingleSrcOpPrivate *)(single_src_op->_priv); 
+    GeglImage *dest = GEGL_IMAGE(
+	gegl_image_iterator_get_image_buffer (dest_iter));
+    GeglColorModel *dest_cm = gegl_image_color_model (dest);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     GENERIC_IMAGE_DECL_BEGIN
-    Pixel src(color,alpha,has_alpha);
+    Pixel dest(color,alpha,has_alpha);
     GENERIC_IMAGE_DECL_END
-    gint width = point_opP->scanline_width;
 
-    src_has_alpha = gegl_color_model_has_alpha(
-                       single_src_opP->src_cm); 
+    dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
 
-    /* image_buffers[1] is the src here */
-    gegl_image_iterator_get_scanline_data (point_opP->iterators[1],
-                                        (guchar**)src_data);
+    gegl_image_iterator_get_scanline_data (dest_iter,
+                (guchar**)dest_data);
 
     GENERIC_IMAGE_IMAGE_DATA_INIT
     
@@ -95,13 +81,12 @@ class Gegl:Print:Op from Gegl:Single:Src:Op {
       {
  	printf("(");
 	GENERIC_IMAGE_CODE_BEGIN
-	PRINT (src); 
-	dX(src,1);
+	PRINT (dest); 
+	dX(dest,1);
         GENERIC_IMAGE_CODE_END
  	printf(")");
 
       }
       printf("\n");
-
   }
 }

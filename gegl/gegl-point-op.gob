@@ -14,58 +14,27 @@ typedef struct _GeglImageIterator  GeglImageIterator;
 #include "gegl-image-buffer.h"
 #include "gegl-image-iterator.h"
 #include "gegl-utils.h"
+#include "trace.h"
 %}
 
 class Gegl:Point:Op from Gegl:Op {
 
-  private gint scanline_width;             /*width of scanline*/
-  private GeglImageIterator **iterators;   /*image iterators point ops need*/
-  
+  private gint unused;
+
   protected 
   gboolean 
   constructor(self, 
-              GeglImageBuffer **image_buffers, 
-              GeglRect *rects, 
-              gint num_images)
+              GeglImage **sources, 
+              gint num_sources)
   {
-    GeglOp *op = GEGL_OP (self);
-    GeglOpClass *op_class = GEGL_OP_CLASS(GTK_OBJECT(op)->klass);
-
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
        
     /* Chain up */
     if (!gegl_op_constructor (GEGL_OP(self), 
-          image_buffers, rects, num_images))
+          sources, num_sources))
       return FALSE;
-   
-    {
-      gint i;
-      self->_priv->iterators = NULL;
-      self->_priv->scanline_width = 0;
- 
-      /* Get the iterator array */
-      self->_priv->iterators = g_new(GeglImageIterator*,num_images);
-
-      /* Make them NULL to start with */
-      for (i = 0; i < num_images; i++)
-       self->_priv->iterators[i] = NULL; 
-
-      /* Now get a new iterator for each image */
-      for (i = 0; i < num_images; i++)
-       self->_priv->iterators[i] = 
-          gegl_image_iterator_new (image_buffers[i]);
-
-    /*  
-      Now based on the color_models and data storage strategies,
-      we should install an appropriate point op apply function.
-      So far there is just one, since only one kind of data storage. 
-     */
-
-      /* Heres the apply for this kind of data storage */
-      op_class->apply = gegl_point_op_apply;  
-    }
-
+    
     return TRUE;
   }
 
@@ -73,85 +42,81 @@ class Gegl:Point:Op from Gegl:Op {
   void 
   destroy (GtkObject *object)
   {
-    GeglPointOp *self = GEGL_POINT_OP(object); 
-    GeglOp *op =  GEGL_OP(object);
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
-    gint i;
-
-    /* Free iterator array and iterators */
-    if (self->_priv->iterators)
-      {
-        /* Free the iterator objects */
-       for (i = 0; i < opP->num_images; i++)
-         if (self->_priv->iterators[i])
-          gegl_object_destroy(GEGL_OBJECT(self->_priv->iterators[i]));  
-        
-        /* Free the array */
-        g_free(self->_priv->iterators);
-      }
-
     /* Chain up on destroy */
     PARENT_HANDLER (object)
   }
 
-  private 
-  void
-  apply (GeglOp *op)
+  /* 
+     This is called once all inputs are ready 
+     Here is where an op would do its own custom
+     iterator scheme if it wanted to. 
+
+     This one just calls a scanline iterator for 
+     the dest rect. 
+
+  */ 
+
+  override (Gegl:Op)
+  void  
+  apply(GeglOp *op,
+        GeglImage *dest,
+        GeglRect *dest_rect) 
   {
-    gint i;
-    gint j;
+    GeglPointOp *point_op =  GEGL_POINT_OP(op);
+    GeglPointOpClass *point_op_class = 
+      GEGL_POINT_OP_CLASS (GTK_OBJECT(op)->klass);
 
-    GeglRect *rects = NULL;
+    gint i,j;
+    GeglRect * src_rects = g_new (GeglRect, op->_priv->num_sources);
+    GeglImageIterator **src_iters = g_new (GeglImageIterator*, 
+	                              op->_priv->num_sources);
+    GeglImageIterator *dest_iter;
+    gint height;
 
-    GeglOpPrivate *opP = (GeglOpPrivate *)(op->_priv);
-    GeglPointOp *self =  GEGL_POINT_OP(op);
-    GeglPointOpClass *self_class = 
-       GEGL_POINT_OP_CLASS (GTK_OBJECT(op)->klass);
-
-    rects = g_new(GeglRect, opP->num_images);
-
-    /* Tell each iterators what rect we plan to use*/
-    for (i = 0; i < opP->num_images; i++)
-      gegl_image_iterator_request_rect (
-              self->_priv->iterators[i], 
-              &(opP->rects[i]));
-
-    /* Now find out what the actual rects we receive are  */
-    for (i = 0; i < opP->num_images; i++)
-      gegl_image_iterator_get_current_rect ( 
-        self->_priv->iterators[i], &rects[i]);
-
-    /* 
-       We will have additional code here to decide
-       how to iterate for a this type of storage strategy. 
-       and so wind up with a loop over a bunch of
-       rects whose union is the entire region we
-       wish to process. Now we just do our one
-       rect which is the same as the one we requested. 
-    */
-
-    /* 
-      Set the scanline width (of the dest rect)
-      so our subclass(es) can retrieve it  
-    */
-    self->_priv->scanline_width = rects[0].w; 
-
-    /* Now iterate over the scanlines in the dest */
-    for(j = 0; j < rects[0].h; j++)  
+    /* Set up the source and dest iterators */
+    for (i = 0; i < op->_priv->num_sources; i++)
       {
-        /* Call the installed scanline func of subclass */
-        (self_class->scanline_func)(self);
-          
-        /* Advance all the iterators */
-        for (i = 0; i < opP->num_images; i++)
-          gegl_image_iterator_next_scanline (
-                self->_priv->iterators[i]);
-
+        src_iters[i] = gegl_image_iterator_new (
+	                 op->_priv->input_buffers[i],
+                         &(op->_priv->source_rois[i]));
       }
 
-    g_free (rects);   
+    dest_iter = gegl_image_iterator_new (
+	          GEGL_IMAGE_BUFFER(dest), dest_rect);
+
+    height = gegl_image_iterator_current_rect_height (dest_iter);
+
+    /* Now iterate over the scanlines in the dest */
+    for(j = 0; j < height; j++)  
+      {
+        /* Call the installed subclass scanline func */
+        (point_op_class->scanline_func)(point_op, 
+					dest_iter, 
+					src_iters);
+          
+        /* Advance all the source iterators */
+        for (i = 0; i < op->_priv->num_sources; i++)
+          gegl_image_iterator_next_scanline (src_iters[i]);
+
+        /* Advance the dest iterator */
+        gegl_image_iterator_next_scanline (dest_iter);
+      }
+
+    /* Free the source and dest iterators */
+    for (i = 0; i < op->_priv->num_sources; i++)
+      gegl_object_destroy (GEGL_OBJECT (src_iters[i])); 
+
+    gegl_object_destroy(GEGL_OBJECT (dest_iter));
+
+    /* Free the arrays of iters and rects */
+    g_free (src_iters);
+    g_free (src_rects);
   }
 
-  virtual private void scanline_func (self);
+  /* Subclasses install their own scanline funcs */
+  virtual private void 
+  scanline_func (self, 
+                 GeglImageIterator *dest_iter, 
+		 GeglImageIterator **src_iters);
 }
 

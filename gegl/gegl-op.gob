@@ -1,46 +1,62 @@
 %h{
-#include "gegl-object.h"
-#include "gegl-image-buffer.h"
+#include "gegl-image.h"
+#ifndef __TYPEDEF_GEGL_IMAGE_BUFFER__
+#define __TYPEDEF_GEGL_IMAGE_BUFFER__
+typedef struct _GeglImageBuffer  GeglImageBuffer;
+#endif
 %}
 %{
 #include "gegl-op.h"
 #include "gegl-op-private.h"
-#include "gegl-object-private.h"
+#include "gegl-image-private.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-iterator.h"
+#include "gegl-color-model.h"
 #include "gegl-utils.h"
+#include "trace.h"
 %}
 
-class Gegl:Op from Gegl:Object {
 
-  private GeglImageBuffer    **image_buffers;  /* dest, then sources */
-  private GeglRect *rects;                     /* dest rect, then sources rects */
-  private gint num_images;                     /* total dest + source images */
+class Gegl:Op from Gegl:Image {
+
+  private GeglImage **sources;         /* the input sources  (ops or images)*/
+  private GeglRect *source_rois;       /* rois of sources  */
+  private gint num_sources; 
+  private GeglImageBuffer **input_buffers;   /* actual data buffers for inputs */
+
+  private gboolean *src_has_alpha;         /*Do the sources have alphas*/ 
+  private gboolean has_alpha;              /*Does this op have alpha*/ 
 
   protected 
   gboolean 
   constructor(self, 
-              GeglImageBuffer **image_buffers, 
-              GeglRect *rects,
-              gint num_images)
+              GeglImage **sources, 
+	      gint num_sources)
   {
-    gint i;
-
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
        
     /* Chain up */
-    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+    if (!gegl_image_constructor (GEGL_IMAGE(self)))
       return FALSE;
 
-    self->_priv->image_buffers = g_new(GeglImageBuffer*,num_images);
-    self->_priv->rects = g_new(GeglRect,num_images);
-    self->_priv->num_images = num_images;
-   
-    for(i = 0; i < num_images; i++)
-      {
-        self->_priv->image_buffers[i] = image_buffers[i];
-        self->_priv->rects[i] = rects[i];
-      }
-       
+    {
+      gint i;
+
+      self->_priv->sources = g_new(GeglImage*,num_sources);
+      self->_priv->input_buffers = g_new(GeglImageBuffer*,num_sources);
+      self->_priv->src_has_alpha = g_new(gboolean, num_sources);
+      self->_priv->source_rois = g_new (GeglRect, num_sources);
+      self->_priv->num_sources = num_sources;
+
+      for (i = 0; i < num_sources; i++)
+	{
+          self->_priv->sources[i] = sources[i];
+          self->_priv->input_buffers[i] = NULL;
+          gegl_rect_set (&self->_priv->source_rois[i],0,0,0,0);
+        }	  
+    }
+
     return TRUE;
   }
 
@@ -48,16 +64,178 @@ class Gegl:Op from Gegl:Object {
   void 
   destroy (GtkObject *object)
   {
-    GeglOp *self = GEGL_OP(object); 
+    GeglOp *self = GEGL_OP(object);
 
-    /* Dispose of pointer arrays for images and rects */
-    g_free(self->_priv->image_buffers);
-    g_free(self->_priv->rects);
+    g_free (self->_priv->sources);
+    g_free (self->_priv->source_rois);
+    g_free (self->_priv->input_buffers);
+    g_free (self->_priv->src_has_alpha);
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)
   }
 
-  virtual void apply (self);
+  /* get pixels from input(s) and put in dest */
+  override (Gegl:Image)
+  GeglImage* 
+  get_pixels (GeglImage *self, 
+              GeglImage *dest, 
+	      GeglRect *roi)
+  {
+    GeglOp *self_op = GEGL_OP (self); 
+    GeglRect dest_rect;
+    gint i;
 
+#ifdef DEBUG_GET_PIXELS 
+    trace_begin("get_pixels %s", gtk_type_name(GTK_OBJECT_TYPE(self)));
+#endif
+
+    /* If dest exists but isnt writable return NULL */ 
+    if (dest && !gegl_image_is_writable (dest))
+       {
+	 g_warning("gegl_op_get_pixels: dest is not writable.\n");
+         return NULL; 
+       }
+
+    /* Determine all the source rois, from the passed roi */ 
+    gegl_op_compute_source_rois (self_op, roi); 
+
+    /* Ready each source input */ 
+    for (i = 0; i < self_op->_priv->num_sources; i++)    
+      {
+#ifdef DEBUG_GET_PIXELS 
+        g_print("Calling source %d\n", i);
+#endif
+
+        self_op->_priv->input_buffers[i] = GEGL_IMAGE_BUFFER(
+	                        gegl_image_get_pixels (
+				self_op->_priv->sources[i], 
+				NULL, 
+				&self_op->_priv->source_rois[i])); 
+      }
+
+#ifdef DEBUG_GET_PIXELS 
+    g_print("Done with sources\n");
+#endif
+
+    /* Set the color model of this op */
+    compute_color_model (self_op, dest);
+
+    /* Allocate a temp dest buffer for result if needed */
+    if (!dest)
+      {
+	 /* Allocate the dest (actually it is an ImageBuffer)*/  
+         dest = GEGL_IMAGE (gegl_image_buffer_new (
+		   self->_priv->color_model, 
+		   roi->w,
+		   roi->h));
+
+	 if(!dest)
+	   {
+	     g_warning("gegl_op_get_pixels: Cant allocate temp data\n");
+	     return NULL;
+	   }
+
+#ifdef DEBUG_GET_PIXELS 
+         g_print("Allocated temp buffer %x\n", dest);
+#endif
+         gegl_rect_set (&dest_rect,0,0,roi->w,roi->h);
+      }
+    else
+      gegl_rect_copy(&dest_rect, roi);
+
+#ifdef DEBUG_GET_PIXELS 
+    g_print("Call prepare\n");
+#endif
+    gegl_op_prepare (self_op,dest,&dest_rect);
+
+    /* Everything is ready, actually do the op */
+#ifdef DEBUG_GET_PIXELS 
+    g_print("Call apply\n");
+#endif
+    gegl_op_apply (self_op, dest, &dest_rect); 
+
+    /* Everything is ready, actually do the op */
+    for (i = 0; i < self_op->_priv->num_sources; i++)    
+      {
+	/* Free any non writable input data */ 
+        if (!gegl_image_is_writable(self_op->_priv->sources[i]))
+	  {
+#ifdef DEBUG_GET_PIXELS 
+            g_print("freeing input %d at %x\n", 
+	      i, self_op->_priv->input_buffers[i]);
+#endif
+            gegl_object_destroy(GEGL_OBJECT(
+		self_op->_priv->input_buffers[i]));
+	  }
+      }
+
+#ifdef DEBUG_GET_PIXELS 
+    trace_end();
+#endif
+    return dest;
+  }
+
+  private 
+  void
+  compute_color_model(self, 
+                      GeglImage *dest)
+  {
+    GeglImage * image = GEGL_IMAGE(self);
+
+    /* If there is a dest, take the colormodel from that */
+    if (dest != NULL)
+      image->_priv->color_model = gegl_image_color_model (dest); 
+
+    /* Otherwise, try to take it from an input */
+    if (!image->_priv->color_model) 
+      if (self->_priv->num_sources)
+        image->_priv->color_model = gegl_image_color_model(
+	                        self->_priv->sources[0]); 
+
+    if (!image->_priv->color_model)
+      g_warning("gegl_op_find_color_model: color_model is NULL\n");
+  }
+
+  protected 
+  void  
+  save_alphas(self)
+  {
+    GeglImage *self_image = GEGL_IMAGE(self);
+    GeglColorModel *src_cm;
+    GeglColorModel *dest_cm;
+    gint i;
+
+    for (i = 0; i < self->_priv->num_sources; i++)
+      {
+        src_cm = gegl_image_color_model (self->_priv->sources[i]);
+        self->_priv->src_has_alpha[i] = gegl_color_model_has_alpha (src_cm); 
+      }
+
+    dest_cm = self_image->_priv->color_model; 
+    self->_priv->has_alpha = gegl_color_model_has_alpha (dest_cm); 
+  }
+
+  override (Gegl:Image)
+  gboolean
+  is_writable(GeglImage *image)
+  {
+    return FALSE;
+  }
+                      
+  /* Copy pixels from src to me */
+  override (Gegl:Image) 
+  void 
+  copy_pixels (GeglImage *image, 
+               GeglRect  *image_rect, 
+	       GeglImage *src, 
+	       GeglRect  *src_rect)
+  {
+    g_warning("gegl_op_copy_pixels: Cant use copy_pixels on Ops\n");
+  }
+
+  /* routines subclasses may need to implement */
+  virtual protected void compute_source_rois (self, GeglRect *roi); 
+  virtual protected void prepare (self, GeglImage *dest, GeglRect *dest_rect);
+  virtual protected void apply (self, GeglImage *dest, GeglRect *dest_rect);
 }

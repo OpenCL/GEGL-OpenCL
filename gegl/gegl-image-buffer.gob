@@ -1,6 +1,5 @@
 %h{
-
-#include "gegl-object.h"
+#include "gegl-image.h"
 
 #ifndef __TYPEDEF_GEGL_COLOR__
 #define __TYPEDEF_GEGL_COLOR__
@@ -11,24 +10,18 @@ typedef struct _GeglColor  GeglColor;
 #define __TYPEDEF_GEGL_COLOR_MODEL__
 typedef struct _GeglColorModel  GeglColorModel;
 #endif
-
 %}
 %{
-
 #include "gegl-image-buffer.h"
 #include "gegl-image-buffer-private.h"
-#include "gegl-object-private.h"
+#include "gegl-image-private.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
-
 %}
 
-class Gegl:Image:Buffer from Gegl:Object {
+class Gegl:Image:Buffer from Gegl:Image {
 
-  private GeglColorModel *color_model;
-  private gint width;
-  private gint height;
-  private guchar *data;                    /* The data */    
+  private guchar **data;         /* channel data pointers */
 
   public
   GeglImageBuffer *       
@@ -50,97 +43,167 @@ class Gegl:Image:Buffer from Gegl:Object {
   gboolean 
   constructor(self, GeglColorModel *cm, gint w, gint h)
   {
-    gint bytes_per_channel;  
-    gint num_channels;
-    guint total_bytes;
-
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
        
     /* Chain up */
-    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+    if (!gegl_image_constructor (GEGL_IMAGE(self)))
       return FALSE;
 
-    bytes_per_channel = gegl_color_model_bytes_per_channel(cm);  
-    num_channels = gegl_color_model_num_channels(cm);
-    total_bytes = num_channels * bytes_per_channel * w * h;
-
-    self->_priv->data = g_new (guchar, total_bytes); 
-    if (!self->_priv->data) 
-      {
-        g_warning ("Couldnt allocate in %s: %d bytes\n", 
-                   gtk_type_name(GEGL_TYPE_IMAGE_BUFFER), total_bytes); 
-        self->_priv->color_model = NULL;
-        self->_priv->width = 0;
-        self->_priv->height = 0;
-        return FALSE;
-      }
-
-    self->_priv->color_model = cm;
-    self->_priv->width = w;
-    self->_priv->height = h;
-
-    return TRUE;
+    /* ImageBuffers set color model and allocate data when created */
+    gegl_image_set_color_model (GEGL_IMAGE(self),cm);
+    return alloc(self,w,h);
   }
 
   override (Gtk:Object) 
   void 
   destroy (GtkObject *object)
   {
+    GeglImageBuffer *self_image_buffer = GEGL_IMAGE_BUFFER(object);
 
-    GeglImageBuffer *self = GEGL_IMAGE_BUFFER (object);
-
-    /* Dispose of image memory and scanline pointer array*/
-    g_free(self->_priv->data);
+    free_data (self_image_buffer);
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)
   }
 
-  public 
-  gint 
-  get_width (self)
+  private
+  gboolean 
+  alloc(self, 
+        gint w,
+        gint h)
   {
-    return self->_priv->width;
+    GeglImage *image  = GEGL_IMAGE(self);
+    GeglColorModel *cm = image->_priv->color_model;
+    gint i;
+
+    if (!cm)
+      {
+        g_warning("gegl_image_buffer_alloc: color_model unknown\n");
+	return FALSE;
+      }
+
+    {
+      gint bpc = gegl_color_model_bytes_per_channel(cm);  
+      gint num_channels = gegl_color_model_bytes_per_channel(cm);
+      gint channel_bytes = bpc * w * h;
+
+      self->_priv->data = g_new(guchar *, num_channels);
+
+      for(i = 0; i < num_channels; i++)
+	{
+          self->_priv->data[i] = g_new (guchar, channel_bytes); 
+	  if (!self->_priv->data[i]) 
+	    {
+	      free_data(self);
+	      g_warning ("gegl_image_buffer_alloc: Cant alloc image data.\n"); 
+	      return FALSE;
+	    }
+	}
+
+      image->_priv->width = w;
+      image->_priv->height = h;
+    }
+
+    return TRUE;
   }
 
-  public 
-  gint 
-  get_height (self)
+  private
+  void
+  free_data(self) 
   {
-    return self->_priv->height;
+    GeglImage *image  = GEGL_IMAGE(self);
+    GeglColorModel *cm = image->_priv->color_model;
+    gint num_channels = gegl_color_model_bytes_per_channel(cm);
+    gint i;
+
+    for(i = 0; i < num_channels; i++)
+      {
+	if (self->_priv->data[i]) 
+	    g_free (self->_priv->data[i]);
+      }
+
+    if (self->_priv->data)
+      g_free (self->_priv->data); 
+
+    self->_priv->data = NULL;
+    image->_priv->width = 0;
+    image->_priv->height = 0;
+  }
+  
+  override (Gegl:Image)
+  gboolean
+  is_writable(GeglImage *image)
+  {
+    return TRUE;
   }
 
   public
-  guchar * 
-  get_data (self)
+  guchar ** 
+  get_data(self)
   {
     return self->_priv->data;
-  }
-
-  public
-  GeglColorModel * 
-  color_model(self) 
-  { 
-    return self->_priv->color_model; 
   }
 
   public
   void
   set_data(self, guchar *data)
   {
-    guint                       i, num;
-    GeglImageBufferPrivate      *selfP;
+    GeglImage *image  = GEGL_IMAGE(self);
+    GeglColorModel *cm = image->_priv->color_model;
 
-    selfP = (GeglImageBufferPrivate *)(self->_priv);
-    num  = gegl_color_model_num_channels(selfP->color_model);
-    num *= gegl_color_model_bytes_per_channel(selfP->color_model);
-    num *= selfP->width;
-    num *= selfP->height;
+    gint bpc = gegl_color_model_bytes_per_channel(cm);  
+    gint w = image->_priv->width;  
+    gint h = image->_priv->height;  
+    gint num_channels = gegl_color_model_bytes_per_channel(cm);
+    gint channel_bytes = bpc * w * h;
 
-    for(i=0; i<num; i++)
-      selfP->data[i] = data[i];
+    guchar *s;
+    guchar *d;
+    gint i,j;
 
+    for(i = 0; i < num_channels; i++)
+      {
+        d = self->_priv->data[i];
+	s = data + i * channel_bytes;
+
+	/* copy in the channel */
+	for(j = 0; j < channel_bytes; j++)
+	  *d++ = *s++;
+      }
   }
 
+  override (Gegl:Image)
+  GeglImage * 
+  get_pixels (GeglImage *self, 
+                   GeglImage *dest, 
+		   GeglRect *roi)
+  {
+    /* check for leaf of chain, just return */
+    if (dest == NULL) 
+      {
+	/*g_print("Found an image node %x\n", self);*/
+        return self;
+      }
+
+    if (!gegl_image_is_writable(dest))
+      {
+	g_warning("gegl_image_buffer_get_pixels: dest not writable\n");
+	return NULL;
+      }
+
+    /* copy pixels from me to dest */
+    g_warning("gegl_image_buffer_get_pixels: routine not implemented yet!\n");
+    return dest;
+  }
+
+  override (Gegl:Image)
+  void 
+  copy_pixels (GeglImage *self, 
+                    GeglRect *self_rect, 
+		    GeglImage *src, 
+		    GeglRect  *src_rect)
+  {
+    g_warning("gegl_image_buffer_copy_pixels: routine not implemented yet!\n");
+  }
 }

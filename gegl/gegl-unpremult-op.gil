@@ -7,7 +7,7 @@
 #include "gegl-single-src-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
-#include "gegl-image-buffer.h"
+#include "gegl-image-private.h"
 #include "gegl-image-iterator.h"
 #include "gegl-color.h"
 #include "gegl-color-model.h"
@@ -20,15 +20,12 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
   
   public 
   GeglUnpremultOp *
-  new (GeglImageBuffer *dest,
-       GeglImageBuffer *src,
-       GeglRect *dest_rect,
-       GeglRect *src_rect)
+  new (GeglImage *src)
   {
     GeglUnpremultOp * self = GEGL_UNPREMULT_OP(GET_NEW);
 
     /*Call the constructor */
-    if (!constructor(self, dest, src, dest_rect, src_rect))
+    if (!constructor(self, src)) 
       return NULL;
     
     /*Okay its constructed*/
@@ -40,33 +37,15 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
   protected 
   gboolean 
   constructor(self, 
-              GeglImageBuffer *dest,
-              GeglImageBuffer *src,
-              GeglRect *dest_rect,
-              GeglRect *src_rect) 
+              GeglImage *src)
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
     
     /* Chain up */
     if (!gegl_single_src_op_constructor (
-          GEGL_SINGLE_SRC_OP(self), dest, src, dest_rect, src_rect))
+          GEGL_SINGLE_SRC_OP(self), src))
       return FALSE;
-   {
-     GeglPointOpClass *point_op_class = 
-       GEGL_POINT_OP_CLASS(GTK_OBJECT(self)->klass);
-     GeglColorModel *cm = gegl_image_buffer_color_model (dest);
-     gboolean has_alpha = gegl_color_model_has_alpha(cm);
-      
-     if(has_alpha)
-       point_op_class->scanline_func = 
-         gegl_unpremult_op_scanline_COLORSPACE_DATATYPE;
-     else
-       {
-         g_warning("GeglPremultOp: dest has no alpha channel\n");
-         return FALSE;
-       } 
-    }
 
     return TRUE;
   }
@@ -79,26 +58,58 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
     PARENT_HANDLER (object)
   }
 
+  override(Gegl:Op)
+  void
+  compute_source_rois (GeglOp *op, GeglRect *roi) 
+  {
+    gegl_rect_copy(&op->_priv->source_rois[0],roi);    
+  }
+
+  override(Gegl:Op)
+  void
+  prepare(GeglOp *op,
+          GeglImage *dest,
+	  GeglRect *dest_rect)
+  {
+    GeglPointOp *point_op = GEGL_POINT_OP (op);
+    GeglPointOpClass *point_op_class = 
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+
+    /* Save these so we can get them quickly in scanline func
+       below */
+    gegl_op_save_alphas(op);
+
+    {
+      gboolean src_has_alpha = op->_priv->src_has_alpha[0];
+
+      if(src_has_alpha)
+	point_op_class->scanline_func = 
+	  gegl_unpremult_op_scanline_COLORSPACE_DATATYPE;
+      else
+	{
+	  point_op_class->scanline_func = NULL;
+	  g_warning("gegl_unpremult_op_prepare: dest has no alpha channel\n");
+	} 
+    }
+  } 
+
   private 
   void
-  scanline_COLORSPACE_DATATYPE (GeglPointOp *point_op)
+  scanline_COLORSPACE_DATATYPE (GeglPointOp *point_op,
+                                GeglImageIterator *dest_iter, 
+		                GeglImageIterator **src_iters)
   {
-    GeglPointOpPrivate *point_opP = 
-        (GeglPointOpPrivate *)(point_op->_priv); 
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color,alpha);
     Pixel src(color,alpha);
     GENERIC_IMAGE_DECL_END
 
-    gint width = point_opP->scanline_width;
-
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[0], 
-                      (guchar**)dest_data);
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[1],
-                      (guchar**)src_data);
+    gegl_image_iterator_get_scanline_data (dest_iter,
+                (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data (src_iters[0],
+                (guchar**)src_data);
 
     GENERIC_IMAGE_IMAGE_DATA_INIT 
 
@@ -123,7 +134,7 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
 	dX(dest,1);
 	dX(src,1); 
 
-        GENERIC_IMAGE_CODE_END;
+        GENERIC_IMAGE_CODE_END
       }
   }
 }

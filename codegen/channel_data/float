@@ -11,6 +11,6 @@ CHANNEL_CLAMP (x)	x
 WP_CLAMP (x)		CLAMP (x,0.0,1.0)
 CHANNEL_MULT (x,y)	x * y
 CHANNEL_ROUND (x)	x
-PRINT (x)		printf ("%.2f ", x) 
+PRINT (x)		printf ("%.3f ", x) 
 EXTERNAL_INIT (x)	x.f
 DT_MACROS_END
