@@ -1,14 +1,28 @@
+Wed Mar 29 17:05:22 EST 2000 calvinw@mindspring.com
+
+	* check in for codegen
+	
+	* removed some extra test files in codegen/test_files.  
+
+	* cleaned up codegen/channel_data files u8,u16,float,u16_4k   
+
+	* updated the html docs/genericImageLanguage.html,
+          genericChannelData.html. 
+       
+        * removed a .pregob file from gegl directory. Will use
+          .gil files for this.
+
 Wed Mar 29 11:10:13 PST 2000 caro@rhythm.com
 
 	* check in for codegen
 	
 	* fixed extra line problems
 
-	* i have create to new states for the lexer.l form
+	* i have create two new states for the lexer.l form
 	data_type state on can either go directly to arguments or 
 	definition depending on what token one has just read.
 
-	* updated README
+	* updated codegen/README
 	
 Tue Mar 28 18:55:22 PST 2000 caro@rhythm.com
 
@@ -20,7 +34,7 @@ Tue Mar 28 18:55:22 PST 2000 caro@rhythm.com
 
 Tue Mar 28 13:58:38 PST 2000 caro@rhythm.com
 
-	* chgeck in for codegen
+	* check in for codegen
 	
 	* I changed ROUND_CHANNEL to CHANNEL_ROUND in the following files:
 		- parser.y

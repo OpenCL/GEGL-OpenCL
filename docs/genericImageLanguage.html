@@ -98,9 +98,9 @@ CLASS="SECT1"
 
 <div CLASS="AUTHOR"><font size=+0>To generate code for a particular color
 model and data storage, the color model must specify details about the
-<b><tt>Channel</tt></b> data type and the names of the color channels.&nbsp;
-In addition some data storage details might be passed to the code generator
-(codegen) as well.</font>
+<b><tt>Channel</tt></b>
+data type and the names of the color channels.&nbsp; In addition some data
+storage details might be passed to the code generator (codegen) as well.</font>
 <p><font size=+0>The color model specification of the <b><tt>Channel</tt></b>
 data type is done by providing the definitions and macros from
 <a href="genericChannelData.html">Generic
@@ -173,8 +173,7 @@ in three forms:
 <p><b><tt>Pixel d(color,alpha);</tt></b>
 <br>&nbsp;</div>
 
-<div CLASS="SECT1">means <b><tt>d</tt></b> has both color both alpha channel<b><tt>.</tt></b>
-<br><b><tt></tt></b>&nbsp;</div>
+<div CLASS="SECT1">means <b><tt>d</tt></b> has both color both alpha channel<b><tt>.</tt></b></div>
 
 <div CLASS="SECT1">2)
 <p><b><tt>Pixel d(color);</tt></b>
@@ -195,34 +194,37 @@ alpha channel.</div>
 <br>Before processing any of the code blocks below the declaration block,
 the code generator (codegen) adds some additional variables implicitly
 for each of the above declarations. The extra variables are called <b><tt>d_color</tt></b>,
-<b><tt>d_alpha</tt></b> and <b><tt>d_has_alpha.
-</tt></b>This is so the
-programmer can use these expressions in the algorithm code. <b><tt>d_color
-</tt></b>is
-a vector shorthand for the color channels, <b><tt>d_alpha
-</tt></b>refers
-to just the alpha channel, and <b><tt>d_has_alpha </tt></b>is a boolean
-that is available to check for the optional alpha case.
+<b><tt>d_alpha</tt></b>
+and <b><tt>d_has_alpha.
+</tt></b>This is so the programmer can use these
+expressions in the algorithm code. <b><tt>d_color
+</tt></b>is a vector
+shorthand for the color channels, <b><tt>d_alpha
+</tt></b>refers to just
+the alpha channel, and <b><tt>d_has_alpha </tt></b>is a boolean that is
+available to check for the optional alpha case.
 <p>For
 <p><b><tt>Pixel d(color,alpha);</tt></b>
-<p>internally codgen&nbsp; "declares" all three of the variables&nbsp;
-<b><tt>Pixel d</tt></b>,&nbsp; <b><tt>Pixel d_color,</tt></b> and <b><tt>Channel
-d_alpha</tt></b> with <b><tt>d = (d_color,d_alpha)</tt></b>.
+<p>internally codgen&nbsp; "declares" all three of the variables <b><tt>Pixel
+d</tt></b>,&nbsp; <b><tt>Pixel d_color,</tt></b> and <b><tt>Channel d_alpha</tt></b>
+with <b><tt>d = (d_color,d_alpha)</tt></b>.
 <p>The dimension of the <b><tt>Pixel</tt></b> <b><tt>d_color</tt></b> is&nbsp;
 the number of color channels from the color model. The dimension of the
-<b><tt>Pixel</tt></b> <b><tt>d</tt> </b>is the number of color channels
-+ 1.&nbsp; And <b><tt>d_alpha
-</tt></b>is declared to be a <b><tt>Channel
+<b><tt>Pixeld</tt>
+</b>is the number of color channels + 1.&nbsp; And <b><tt>d_alpha
+</tt></b>is
+declared to be a <b><tt>Channel
 </tt></b>type since it is 1-dimensional.
 <p>For
 <p><b><tt>Pixel d(color);</tt></b>
 <p>internally codegen "declares" <b><tt>Pixel d</tt></b> and
-<tt><b>Pixel</b>
-<b>d_color</b></tt> with <b><tt>d = d_color</tt></b>.
+<b><tt>Pixeld_color</tt></b>
+with <b><tt>d = d_color</tt></b>.
 <p>Again the dimension of the <b><tt>Pixel</tt></b> <b><tt>d_color</tt></b>
 is number of color channels from the color model. The dimension of the
-<b><tt>Pixel d </tt></b>is equal to the dimension of <b><tt>d_color</tt></b>
-in this case.
+<b><tt>Pixel
+d </tt></b>is equal to the dimension of <b><tt>d_color</tt></b> in this
+case.
 <p>For
 <p><b><tt>Pixel d(color,alpha,has_alpha);</tt></b>
 <p>internally codegen "declares" <b><tt>Pixel d</tt></b>, <b><tt>Pixel
@@ -230,12 +232,14 @@ d_color,</tt></b> <b><tt>Channel d_alpha</tt></b> , and a <b><tt>boolean
 d_has_alpha</tt></b>. Here <b><tt>d = (d_color, d_alpha)</tt></b> .
 <p>The dimension of the <b><tt>Pixel</tt></b> <b><tt>d_color</tt></b> is&nbsp;
 the number of color channels from the color model. The dimension of the
-<b><tt>Pixel</tt></b> <b><tt>d</tt> </b>is the number of color channels
-+ 1.&nbsp; And <b><tt>d_alpha
-</tt></b>is declared to be a <b><tt>Channel
-</tt></b>type since it is 1-dimensional.&nbsp; The variable<b><tt> d_has_alpha
-</tt></b>is a boolean that must be set by the regular C code outside the
-generic code blocks and before the <b><tt>GENERIC_IMAGE_DATA_INIT</tt></b>
+<b><tt>Pixeld</tt>
+</b>is the number of color channels + 1.&nbsp; And <b><tt>d_alpha
+</tt></b>is
+declared to be a <b><tt>Channel
+</tt></b>type since it is 1-dimensional.&nbsp;
+The variable<b><tt> d_has_alpha
+</tt></b>is a boolean that must be set
+by the regular C code outside the generic code blocks and before the <b><tt>GENERIC_IMAGE_DATA_INIT</tt></b>
 marker<b><tt>.</tt></b>
 <p>Lets look at the code generated for each of the declarations above for
 some color models:
@@ -492,10 +496,11 @@ and
 and <b><tt>GENERIC_IMAGE_CODEGEN_END</tt></b> is generated once for each
 color model from the <b><tt>colormodels_file</tt></b>. For example if the
 <b><tt>colormodels_file
-</tt></b>contained the two color models <b><tt>rgb u8</tt></b> and <b><tt>rgb
-float</tt></b>, then two versions of the code would be generated, one for
-each of these color models. These versions of the code would be enumerated
-by the <b><tt>COLORSPACE </tt></b>and
+</tt></b>contained
+the two color models <b><tt>rgb u8</tt></b> and <b><tt>rgb float</tt></b>,
+then two versions of the code would be generated, one for each of these
+color models. These versions of the code would be enumerated by the <b><tt>COLORSPACE
+</tt></b>and
 <b><tt>DATATYPE
 </tt></b>substitutions
 in the name of the function <b><tt>some_function_COLORSPACE_DATATYPE.</tt></b></font></div>
@@ -527,13 +532,13 @@ and <b><tt>channel-names</tt></b> . The <b><tt>CHANNEL_DATA_FILE</tt></b>
 specifies the <b><tt>Channel</tt></b> data type and all the macros and
 definitions from the <a href="genericChannelData.html">Generic Channel
 Data </a>document. This is an ascii file described in&nbsp; the next section
-<a href="#Channel Data File">Channel Data File.</a> The <b><tt>COLOR_CHANNEL_NAMES
-</tt></b>argument
-is a comma separated list of color channel names of the color model. For
-example for
-<b><tt>rgb</tt></b> this would look like <b><tt>--channel-names
-red,green,blue</tt></b>. The color channel names are used for generating
-code involving color channels.</font>
+<a href="#Channel Data File">Channel
+Data File.</a> The <b><tt>COLOR_CHANNEL_NAMES
+</tt></b>argument is a comma
+separated list of color channel names of the color model. For example for
+<b><tt>rgb</tt></b>
+this would look like <b><tt>--channel-names red,green,blue</tt></b>. The
+color channel names are used for generating code involving color channels.</font>
 <br>
 <hr>
 <div 
@@ -560,15 +565,15 @@ guint8</font></tt></b>
 <br><b><tt><font size=+0>ZERO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 0</font></tt></b>
 <br><b><tt><font size=+0>CHANNEL_CLAMP(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CLAMP (x, 0, 255)</font></tt></b>
+CLAMP(x, 0, 255)</font></tt></b>
 <br><b><tt><font size=+0>WP_CLAMP(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CLAMP (x, 0, 255)</font></tt></b>
+CLAMP(x, 0, 255)</font></tt></b>
 <br><b><tt><font size=+0>CHANNEL_MULT(x,y)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 INT_MULT8(x,y)</font></tt></b>
 <br><b><tt><font size=+0>CHANNEL_ROUND(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 ROUND(x)</font></tt></b>
-<p>where <b><tt>INT_MULT8 </tt></b>and <b><tt>ROUND</tt></b> are the regular
-C macros for these expressions on the right hand side above.
+<p>where <b><tt>INT_MULT8</tt></b> , <b><tt>CLAMP,</tt></b> and <b><tt>ROUND</tt></b>
+are the regular C macros for these expressions on the right hand side above.
 <p><b><tt><font size=+0>2) float</font></tt></b>
 <p><b><tt><font size=+0>DATATYPE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 gfloat</font></tt></b>
@@ -585,14 +590,15 @@ FLT_MAX</font></tt></b>
 <br><b><tt><font size=+0>CHANNEL_CLAMP(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 x</font></tt></b>
 <br><b><tt><font size=+0>WP_CLAMP(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CLAMP (x, 0.0, 1.0)</font></tt></b>
+CLAMP(x, 0.0, 1.0)</font></tt></b>
 <br><b><tt><font size=+0>CHANNEL_MULT(x,y)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 x*y</font></tt></b>
 <br><b><tt><font size=+0>CHANNEL_ROUND(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 x</font></tt></b>
 <p><font size=+0>The <b><tt>CHANNEL_CLAMP</tt></b>, <b><tt>WP_CLAMP</tt></b>,
-<b><tt>CHANNEL_MULT</tt></b>, <b><tt>CHANNEL_ROUND</tt></b> macros above
-are all related to the definitions described in <a href="genericChannelData.html">Generic
+<b><tt>CHANNEL_MULT</tt></b>,
+<b><tt>CHANNEL_ROUND</tt></b>
+macros above are all related to the definitions described in <a href="genericChannelData.html">Generic
 Channel Data</a>.</font></div>
 </div>
 
@@ -626,8 +632,7 @@ then collects the lines between <b><tt>GENERIC_IMAGE_CODEGEN_BEGIN
 </tt></b>and
 <b><tt>GENERIC_IMAGE_CODEGEN_END</tt></b>
 and passes these to <b><tt>codegen</tt></b> with the appropriate colormodel
-information (channel-data-file and
-channel-names<b><tt>)</tt></b>. The
+information (channel-data-file and channel-names<b><tt>)</tt></b>. The
 preprocessing program continues through the original file calling <b><tt>codegen</tt></b>
 and generating code for each generic image language program. This preprocessing
 program also takes care of setting up any other code in the original file

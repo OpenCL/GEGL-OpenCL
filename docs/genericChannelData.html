@@ -175,27 +175,28 @@ of the above to reduce the operations.
 <h4>
 <u>examples:</u></h4>
 <b>1) <tt>uint8</tt></b> with <b><tt>WP = 255</tt></b>:
-<blockquote><b><tt>CHANNEL_MULT</tt></b> <b><tt>(x,y)&nbsp;&nbsp;&nbsp;
-INT_MULT8(x,y,t)</tt></b>
+<blockquote><b><tt>CHANNEL_MULT(x,y)&nbsp;&nbsp;&nbsp;&nbsp; INT_MULT8(x,y,t)</tt></b>
 <br><b><tt>WP_NORM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 1/255.0</tt></b>
-<br><b><tt>CHANNEL_ROUND (x)&nbsp;&nbsp;&nbsp;&nbsp; (int)((x) + .5)</tt></b>
-<br><b><tt>WP_CLAMP (x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><b><tt>CHANNEL_ROUND(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (int)((x) + .5)</tt></b>
+<br><b><tt>WP_CLAMP(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CLAMP(x, 0, 255)</tt></b>
-<br><b><tt>CHANNEL_CLAMP (x)&nbsp;&nbsp;&nbsp;&nbsp; CLAMP(x, 0, 255)</tt></b></blockquote>
-where<b><tt> INT_MULT8(x,y,t) </tt></b>is defined in C by something like
-this:
-<p><b><tt>#define INT_MULT8(x,y,t)&nbsp;((t) = (a) * (b) + 0x80, ((((t)
->> 8) + (t)) >> 8)</tt></b><b><tt></tt></b>
+<br><b><tt>CHANNEL_CLAMP(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CLAMP(x, 0, 255)</tt></b></blockquote>
+where<b><tt> INT_MULT8(x,y,t)</tt></b> on the right hand side is a regular
+C macro defined like this:
+<p><b><tt>#define INT_MULT8(x,y,t) ((t) = (a) * (b) + 0x80, ((((t) >> 8)
++ (t)) >> 8)</tt></b>
+<p>and <b><tt>CLAMP</tt></b> is also a regular C macro defined by:
+<p><b><tt>#define CLAMP(x,a,b) (((x) > (b)) ? (b) : (((x) &lt; (a)) ? (a)
+: (x))</tt></b>
 <p><b>2)</b> <b><tt>float </tt></b>with <b><tt>WP = 1.0</tt></b>:
-<blockquote><b><tt>CHANNEL_MULT (x,y)&nbsp;&nbsp;&nbsp; x * y</tt></b>
+<blockquote><b><tt>CHANNEL_MULT(x,y)&nbsp;&nbsp;&nbsp;&nbsp; x * y</tt></b>
 <br><b><tt>WP_NORM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 1.0</tt></b>
-<br><b><tt>CHANNEL_ROUND (x)&nbsp;&nbsp;&nbsp;&nbsp; x</tt></b>
-<br><b><tt>WP_CLAMP (x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br><b><tt>CHANNEL_ROUND(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt></b>
+<br><b><tt>WP_CLAMP(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CLAMP(x, 0.0, 1.0)</tt></b>
-<br><b><tt>CHANNEL_CLAMP (x)&nbsp;&nbsp;&nbsp;&nbsp; x</tt></b>
-<br>&nbsp;</blockquote>
+<br><b><tt>CHANNEL_CLAMP(x)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x</tt></b></blockquote>
 </div>
 
 <div 
@@ -223,7 +224,7 @@ variable.
 <h1>
 <b><u><font size=+0>multiplication</font></u></b></h1>
 <b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Channel * Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: CHANNEL_MULT (x,y)&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: CHANNEL_MULT(x,y)&nbsp; needs possible CHANNEL_CLAMP</tt></b>
 <br><b><tt>FloatChannel &lt;- FloatChannel * FloatChannel&nbsp; rewrite
 rule: WP_NORM * x * y&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
 <br><b><tt>FloatChannel &lt;- Channel * FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -266,7 +267,7 @@ rewrite rule: x + y&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
 <p><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 rewrite rule: x = y</tt></b>
 <br><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: x = CHANNEL_ROUND (y)</tt></b>
+rewrite rule: x = CHANNEL_ROUND(y)</tt></b>
 <br>&nbsp;</div>
 
 <div 
@@ -288,11 +289,11 @@ always needed depending for each algorithm. For floating cases the <b><tt>CHANNE
 no effect and just becomes the identity. The assignment rules in the last
 section make it possible to write integer channel values mixed with float
 values, and at the end if the result has become a <b><tt>FloatChannel</tt></b>,
-then a <b><tt>ROUND</tt></b> will be required upon assignment to a <b><tt>Channel
-</tt></b>variable.
-Again in the float case the <b><tt>ROUND</tt></b> macro is just the identity.
-The examples below show the generic expression and then underneath two
-examples of the corresponding generated code.
+then a <b><tt>CHANNEL_ROUND</tt></b> will be required upon assignment to
+a <b><tt>Channel
+</tt></b>variable. Again in the float case the <b><tt>CHANNEL_ROUND</tt></b>
+macro is just the identity. The examples below show the generic expression
+and then underneath two examples of the corresponding generated code.
 <div CLASS="SECT2">
 <h4>
 <u>examples:</u></h4>
@@ -347,7 +348,8 @@ examples of the corresponding generated code.
 <br><b><tt><font size=+1>3)</font></tt></b>
 <p><b><tt>/* generic version*/</tt></b>
 <div CLASS="SECT2"><b><tt>{</tt></b>
-<br><b><tt>&nbsp; Channel d, s1, s2, s3;</tt></b></div>
+<br><b><tt>&nbsp; Channel d, s1, s2, s3;</tt></b>
+<br><b><tt></tt></b>&nbsp;</div>
 
 <div CLASS="SECT2"><b><tt>&nbsp; d = (s1 + s2 + s3)/3;&nbsp;&nbsp; /* (Channel
 + Channel + Channel)/3 */</tt></b>
@@ -367,7 +369,8 @@ examples of the corresponding generated code.
 <br><b><tt>/* generic version */</tt></b>
 <br><b><tt>{</tt></b>
 <br><b><tt>&nbsp; Channel d, s1, s2, s;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* s a Channel, not a scalar! */</tt></b></div>
+/* s a Channel, not a scalar! */</tt></b>
+<br><b><tt></tt></b>&nbsp;</div>
 
 <div CLASS="SECT2"><b><tt>&nbsp; d = s * s1 + (WP-s) * s2;&nbsp;&nbsp;&nbsp;&nbsp;
 /* Channel * Channel + Channel * Channel */</tt></b>
@@ -389,7 +392,8 @@ examples of the corresponding generated code.
 <div CLASS="SECT2">&nbsp;
 <br><b><tt>/* generic version */</tt></b>
 <br><b><tt>{</tt></b>
-<br><b><tt>&nbsp; Channel d, s1, s2, s3;</tt></b></div>
+<br><b><tt>&nbsp; Channel d, s1, s2, s3;</tt></b>
+<br><b><tt></tt></b>&nbsp;</div>
 
 <div CLASS="SECT2"><b><tt>&nbsp; d = CHANNEL_CLAMP(s1 * s2 + s3);&nbsp;&nbsp;&nbsp;
 /* (Channel * Channel) + Channel */</tt></b>
@@ -408,12 +412,15 @@ examples of the corresponding generated code.
 <p><b><tt>/* generic version */</tt></b></div>
 <b><tt>{</tt></b>
 <div CLASS="SECT2"><b><tt>&nbsp; Channel d, s1, s2, s3;</tt></b>
-<br><b><tt>&nbsp; float weight = .333;</tt></b></div>
+<br><b><tt>&nbsp; float weight = .333;</tt></b>
+<br><b><tt></tt></b>&nbsp;</div>
 
 <div CLASS="SECT2"><b><tt>&nbsp; d = weight * (s1 + s2 + s3);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* float * (Channel + Channel + Channel) */</tt></b>
+/* Channel = float * (Channel + Channel + Channel) */</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* FloatChannel expression, so will ROUND*/</tt></b>
+/* Channel = FloatChannel */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/* rhs is FloatChannel so will involve CHANNEL_ROUND*/</tt></b>
 <br><b><tt>}</tt></b>
 <p><b><tt>/* u8 version after code generation*/</tt></b>
 <br><b><tt>{</tt></b>
@@ -552,8 +559,8 @@ CLASS="SECT2"
 <hr>
 <h1 CLASS="SECT2">
 <a NAME="Lex/Yacc"></a><font size=+2>Lex/Yacc</font></h1>
-See <a href="http://www.mindspring.com/~calvinw/genericImageLanguage.html">Generic
-Image Language </a>for details.</div>
+See <a href="genericImageLanguage.html">Generic Image Language </a>for
+details.</div>
 </div>
 
 <div 
@@ -574,8 +581,7 @@ CLASS="SECT1"
 <a NAME="References"></a><font size=+2>References</font></h1>
 
 <ul 
-><a href="http://www.mindspring.com/~calvinw/genericImageLanguage.html">Generic
-Image Language</a>
+><a href="genericImageLanguage.html">Generic Image Language</a>
 <br><a href="http://www.oreilly.com/catalog/lex">Lex &amp; Yacc</a>
 <br><a href="http://www.lysator.liu.se/c/ANSI-C-grammar-y.html">C code
 Yacc Parser</a>

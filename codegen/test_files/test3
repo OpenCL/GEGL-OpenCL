@@ -4,9 +4,9 @@ float f;
 Channel a; 
 Pixel d(color,alpha,has_alpha);
 Pixel s(color,alpha,has_alpha);
-Pixel s1(color,alpha), s2(color,alpha);
-Pixel s3(color,alpha,has_alpha); /*a comment*/
-
+Pixel s1(color,alpha); 
+Pixel s2(color,alpha);
+Pixel s3(color,alpha,has_alpha);
 GENERIC_IMAGE_DECL_END
 
 GENERIC_IMAGE_IMAGE_DATA_INIT

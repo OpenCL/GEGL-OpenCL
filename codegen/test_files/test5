@@ -1,149 +1,21 @@
-GENERIC_IMAGE_DECL_BEGIN    
-    Pixel dest(color,alpha);
-    Pixel src1(color,alpha);
-    Pixel src2(color,alpha);
-    Channel a, b, c, alpha;
-    int width;  
+GENERIC_IMAGE_DECL_BEGIN
+Pixel ca(color,alpha);
+Pixel c(color);
+Channel b;
+int i;
+float f; 
 GENERIC_IMAGE_DECL_END
 
-    width = point_opP->scanline_width;
+GENERIC_IMAGE_BLOCK_BEGIN
+ca = ca * ca;
+ca = b * ca;
+ca = i * ca;
+ca = f * ca;
+ca = (f * ca) * ca;
 
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[0], 
-                      (guchar**)dest_data);
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[1],
-                      (guchar**)src1_data);
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[2],
-                      (guchar**)src2_data); 
-
-
-
-    GENERIC_IMAGE_IMAGE_DATA_INIT
-
-    switch(self->_priv->comp_mode)
-    GENERIC_IMAGE_BLOCK_BEGIN
-      {
-      case COMPOSITE_REPLACE:
-       while (width--)
-         {
-           dest = src2;
-           dX(dest,1);
-           dX(src2,1);
-         }
-       break;
-      case COMPOSITE_OVER:
-       while (width--)
-         {
-           a = (WP - src2_alpha) * src1_alpha;
-           b = src2_alpha;
-           alpha = a + b;
-
-           dest_alpha = alpha;
-
-           if (alpha)
-             {
-              c = WP /alpha;
-
-              dest_color = (a * src1_color + b * src2_color) * c;
-             }
-           else
-             {
-              dest_color = src1_color;
-             }
-         dX(dest,1);
-        dX(src1,1);
-         dX(src2,1); 
-         } 
-       break;
-      case COMPOSITE_IN:
-       while (width--)
-         {
-           alpha = src1_alpha * src2_alpha;
-
-           dest_alpha = alpha;
-
-           if (alpha)
-             {
-              dest_color = src2_color;
-             }
-           else
-             {
-              dest_color = src1_color;
-             } 
-         dX(dest,1);
-        dX(src1,1);
-         dX(src2,1); 
-         }
-       break;
-      case COMPOSITE_OUT:
-       while (width--)
-         {
-           alpha = (WP - src1_alpha) * src2_alpha;
-
-           dest_alpha = alpha;
-
-           if(alpha)
-             {
-              dest_color = src2_color;
-             } 
-           else 
-             {
-              dest_color = src1_color;
-             }
-         dX(dest,1);
-        dX(src1,1);
-         dX(src2,1); 
-         }
-       break;
-      case COMPOSITE_ATOP:
-       while (width--)
-         {
-           a = WP - src2_alpha;
-           b = src2_alpha;
-           alpha = src1_alpha; 
-
-           dest_alpha = alpha;
-
-           if(alpha)
-             {
-              dest_color = a * src1_color + b * src2_color;
-             } 
-           else 
-             {
-              dest_color = src1_color;
-             }
-         dX(dest,1);
-        dX(src1,1);
-         dX(src2,1); 
-         }
-       break;
-      case COMPOSITE_XOR:
-       while (width--)
-         {
-           a = (WP - src2_alpha) * src1_alpha;
-           b = (WP - src1_alpha) * src2_alpha;
-           alpha  = a + b;
-
-           dest_alpha = alpha;
-
-           if(alpha)
-             {
-              c = WP / alpha;
-
-              dest_color = (a * src1_color + b * src2_color) * c;
-             } 
-           else 
-             {
-              dest_color = src1_color;
-             }
-         dX(dest,1);
-        dX(src1,1);
-         dX(src2,1); 
-         }
-       break;
-      default:
-       break;
-      }       
-     GENERIC_IMAGE_BLOCK_END
+ca = ca / ca;
+ca = b / ca;
+ca = i / ca;
+ca = f / ca;
+ca = (f * ca) / ca;
+GENERIC_IMAGE_BLOCK_END
