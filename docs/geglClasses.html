@@ -1,0 +1,698 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.61 [en] (X11; I; Linux 2.2.12-20 i686) [Netscape]">
+   <title>Gegl Classes</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#840084" alink="#0000FF">
+
+<div 
+CLASS="ARTICLE"
+>
+<div 
+CLASS="TITLEPAGE"
+>
+<h1 CLASS="TITLE">
+<a NAME="AEN2"></a><font size=+2>Gegl Classes</font></h1>
+
+<h3 CLASS="AUTHOR">
+<font size=+0>Calvin Williamson</font></h3>
+
+<div 
+CLASS="AFFILIATION"
+>
+<div 
+CLASS="ADDRESS"
+>
+<div CLASS="ADDRESS">calvinw@mindspring.com</div>
+</div>
+</div>
+
+<div CLASS="COPYRIGHT">&nbsp;</div>
+
+<div 
+CLASS="ABSTRACT"
+>This article describes some possible classes and
+architecture that are needed for an image processing library (gegl) built
+using GtkObjects. This library would be used initially for supporting gimp,
+so that gimp uses the gegl as its image processing lib. Some of the classes
+are new and some are reworkings of existing gimp objects. This document
+is intended to be very basic and general, and only tries to identify some
+of the major areas which might be important .&nbsp; Lots of classes and
+issues are not covered, and it is not meant to be exhaustive.&nbsp; Some
+of these issues and objects have come up before in other discussions on&nbsp;
+gimp-developer and elsewhere.&nbsp; It assumes a GtkObject inheritance
+model, but is not concerned with ui or ui widget classes. It will make
+use of signals, typed args and the other non-GtkWidget parts of the Gtk+
+where useful.&nbsp; Its currently resides in gnome CVS as gegl. Any feedback
+would&nbsp; be great (best to gimp-developer mailing list). Others involved
+with this page are Yosh, Jay Cox, and Caroline Dahlloff.</div>
+
+<hr></div>
+
+<div 
+CLASS="TOC"
+>
+<dl 
+>
+<dt>
+<b>GeglClasses</b></dt>
+
+<dt>
+<a href="#ColorSpace">GeglColorSpace</a></dt>
+
+<dt>
+<a href="#ColorModel">GeglColorModel</a></dt>
+
+<dt>
+<a href="#Color">GeglColor</a></dt>
+
+<dt>
+<a href="#Drawable">GeglDrawable</a></dt>
+
+<dt>
+<a href="#GraphicsState">GeglGraphicsState</a></dt>
+
+<dt>
+<a href="#ImageBuffer">GeglImageBuffer</a></dt>
+
+<dt>
+<a href="#DataStorage">GeglDataStorage</a></dt>
+
+<dt>
+<a href="#Operator">GeglOperator</a></dt>
+
+<br><br>
+<b>GimpClasses</b>
+<dt>
+<a href="#GimpDrawable">GimpDrawable</a></dt>
+
+<dt>
+<a href="#Layer">GimpLayer</a></dt>
+
+<dt>
+<a href="#Image">GimpImage</a></dt>
+</dl>
+</div>
+
+<div 
+CLASS="SECT1"
+>
+<h1 CLASS="SECT1">
+<a NAME="ColorSpace"></a><font size=+2>GeglColorSpace</font></h1>
+The GeglColorSpace identifies the type of color space for pixel data.
+<p>This corresponds roughly to RGB, GRAY, CMYK, INDEXED, CIE_XYZ, CIE_LAB,&nbsp;
+sRGB, HSV etc.&nbsp; Nothing is implied here about presence or absence
+of alpha channels, layout of the color channels in memory (interleaved
+vs planar, tiled vs un-tiled), or the channel data type of the components
+(8bit, 16bit, float). That information is handled by the GeglColorModel.&nbsp;
+The GeglColorSpace object just defines the general family of the color
+space. Its possible this object might just be a enum-ed constant,&nbsp;
+not a complete GtkObject.
+<br>&nbsp;</div>
+
+<div 
+CLASS="SECT1"
+>
+<hr>
+<h1 CLASS="SECT1">
+<a NAME="ColorModel"></a><font size=+2>GeglColorModel</font></h1>
+The GeglColorModel object is an abstract class that serves as the base
+class for different color models.
+<p>The important fields for a GeglColorModel are its GeglColorSpace, which
+identifies the color space family of the model, the channel data type (8bit,
+16bit, float) which gives infomation about the channel bit depth, and a
+field which indicates the presence or absence of an alpha channel.
+<p>Since color spaces can be defined in terms of ICC profiles, the corresponding
+GeglColorModel also keeps ICC profile information where appropriate.&nbsp;
+The CIE_XYZ based color model is used as a profile connection space, and
+color models must implement mappings to and from this color model.
+<p>GeglColorModels must be assigned to each object in the program that
+deals with pixel data. This includes things like images, layers, channels,
+masks, projections, offscreen buffers, colors, basically anything that
+could be interpreted as pixel data. It also applies to display,&nbsp; input&nbsp;
+and output devices (in the form of color profiles for monitors, scanners,
+printers).
+<p>Corresponding to each color model is a GeglColorConvertOp that handles
+the details of color conversion of an image from any color model to the
+specified one. These operators are all subclasses of the GeglPointOp class.&nbsp;
+Conversions between images whose color models are the same except for channel
+data type (ie conversions between different bit-depths) are also handled
+by this color conversion operator. (eg conversion from 8bit RGB to float
+RGB)
+<p>GeglColorModels determine the number of color channels, presence of
+alpha channels, and the data type of channel data for pixel data. However,&nbsp;
+pixel data buffers may be organized in memory in different ways.&nbsp;
+For example channel data may be packed or interleaved or each channel may
+be stored as a separate buffer. These different storage strategies are
+specified by a GeglDataStorage object.&nbsp; This object is actually responsible
+for providing pointers to data buffers and specifies how those pointers
+are updated during image processing. This provides some freedom for allowing&nbsp;
+different memory representations in some situations.
+<br>&nbsp;
+<h4>
+examples:</h4>
+Part of the color model tree:
+<p><b><tt>GeglColorModel</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorModelIndexed</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelIndexedU8</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorModelGray</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelU8Gray</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelU16Gray</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelFloatGray</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorModelRgb</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelU8Rgb</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelU16Rgb</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelFloatRgb</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorModelCmyk</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelU8Cmyk</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelU16Cmyk</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorModelCieXyz</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelU8CieXyz</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelU16CieXyz</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorModelsRgb</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelU8sRgb</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorModelHsv</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelU8Hsv</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorModelMultiChannel</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorModelFloatMultiChannel</tt></b>
+<p>Part of the operator tree:
+<p><b><tt>GeglOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglPointOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorConvertOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglColorConvertOpToIndexed</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglColorConvertOpToGray</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglColorConvertOpToRgb</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglColorConvertOpToCmyk</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglColorConvertOpToCieXyz</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglColorConvertOpTosRgb</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglColorConvertOpToHsv</tt></b>
+<br>&nbsp;
+<br>&nbsp;</div>
+
+<div 
+CLASS="SECT1"
+>
+<hr>
+<h1 CLASS="SECT1">
+<a NAME="Color"></a><font size=+2>GeglColor</font></h1>
+
+<div CLASS="SECT1">The GeglColor object is designed to hold a single pixel
+color value.
+<p>It is used for things like the current foreground or background color,
+and also for useful colors like WHITE, BLACK, RED, etc. that need to be
+passed to routines.&nbsp; GeglColor is general enough to handle any channel
+data type (8bit, 16bit, float), and replaces the use of arrays of unsigned
+chars that typically are used for colors.&nbsp; GeglColors have a pointer
+to a GeglColorModel that describes the interpretation of the components.&nbsp;
+They also have a pointer to an array of channel values that represent the
+components for the color value.
+<h4>
+examples:</h4>
+<b><tt>typedef union</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; guint8 u8;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; guint16 u16;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; gfloat f;</tt></b>
+<br><b><tt>}GeglChannelValue;</tt></b>
+<p><b><tt>GeglColor</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorModel *color_model;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglChannelValue *channel_values;</tt></b>
+<br><b><tt>};</tt></b>
+<br>&nbsp;
+<br>&nbsp;</div>
+
+<div 
+CLASS="SECT2"
+>
+<hr>
+<h1 CLASS="SECT2">
+<a NAME="Drawable"></a><font size=+2>GeglDrawable</font></h1>
+
+<div CLASS="SECT2">The GeglDrawable is the basic pixel data image object.
+It provides the highest level interface for image processing and manipulation.
+<p>Each GeglDrawable has a pointer to a GeglImageBuffer, which describes
+the actual pixel data for the drawable. GeglDrawables get their color model
+information from the color model of the GeglImageBuffer.</div>
+
+<div CLASS="SECT2">&nbsp;</div>
+
+<div CLASS="SECT2">Each GeglDrawable also has a pointer to a GeglGraphicsState
+which is used to set up image processing operations for that drawable.
+Whenever we wish to do image processing on a drawable, we set up an appropriate
+graphics state (including a current color, font, pen/brush style, affine
+transform, composite mode, clipping area, etc) and call the&nbsp; drawable's
+various image processing routines.</div>
+
+<div CLASS="SECT2">&nbsp;
+<br>Note that GeglDrawables outlined here need not be part of a GimpImage
+(either a layer or channel of a GimpImage).&nbsp; They can also be one
+of the miscellaneous offscreen image buffers which need image processing
+during the course of things. (eg. brushes, patterns, projection buffers,
+grayscale masks, etc).&nbsp; For example, you might want to prepare a brush
+pixmap using a bunch of operations before applying the result to a destination
+paint layer.&nbsp; Also projections would be examples of&nbsp; GeglDrawables
+as well.To do the layer compositing for a projection, you would set up
+the graphics state for the projection GeglDrawable for each successive
+layer composite (depending on whether the layer was an image , text, an
+effect, etc)&nbsp; and apply the layer to the projection.</div>
+
+<div CLASS="SECT2">
+<h4>
+examples:</h4>
+</div>
+Part of the gegl drawable and gimp tree:
+
+<p CLASS="SECT2"><b><tt>GeglDrawable</tt></b>
+<div CLASS="SECT2"><b><tt>&nbsp;&nbsp;&nbsp; GimpDrawable</tt></b></div>
+
+<div CLASS="SECT2"><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GimpChannel</tt></b></div>
+
+<div CLASS="SECT2"><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GimpLayerMask</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GimpBrush</tt></b></div>
+
+<div CLASS="SECT2"><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GimpBrushGenerated</tt></b></div>
+
+<div CLASS="SECT2"><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GimpBrushHose</tt></b></div>
+
+<div CLASS="SECT2"><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GimpBrushPixmap</tt></b></div>
+
+<div CLASS="SECT2"><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GimpBrushPipe</tt></b>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (Note: GimpLayer is not a
+GeglDrawable since it may be an image, text, or an image operation)
+<br>&nbsp;
+<p><b><tt>GeglDrawable</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; /* data */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ...</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglGraphicsState *graphics_state;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglImageBuffer *image_buffer;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ...</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>/* Some methods */</tt></b>
+<p><b><tt>/* Draws a text string at (x,y) in the current font */</tt></b>
+<div CLASS="SECT2"><b><tt>gegl_drawable_draw_text (GeglDrawable *d, String
+string, gint x, gint y);</tt></b></div>
+
+<div CLASS="SECT2">&nbsp;
+<br><b><tt>/* Draws a stroke using current pen, brush along shape outline*/</tt></b></div>
+
+<div CLASS="SECT2"><b><tt>gegl_drawable_draw_shape (GeglDrawable *d, GeglShape
+*shape);</tt></b></div>
+
+<div CLASS="SECT2">&nbsp;
+<br><b><tt>/* Composites a source image onto drawable using current composite
+mode */</tt></b></div>
+
+<div CLASS="SECT2"><b><tt>gegl_drawable_apply_image(GeglDrawable *d, GeglImageBuffer
+* source_image);</tt></b>
+<p><b><tt>/* Fills a shape with the current color */</tt></b></div>
+
+<div CLASS="SECT2"><b><tt>gegl_drawable_fill (GeglDrawable *d, GeglShape
+*shape);</tt></b></div>
+</div>
+
+<div CLASS="SECT2">&nbsp;</div>
+
+<div CLASS="SECT2">&nbsp;</div>
+</div>
+
+<div 
+CLASS="SECT2"
+>
+<hr>
+<h1 CLASS="SECT2">
+<a NAME="GraphicsState"></a><font size=+2>GeglGraphicsState</font></h1>
+This object describes the current graphics state of a GeglDrawable. It
+is used to describe the context of graphics operations done to the drawable.
+This object has fields for current colors, pen or brush, font, affine transformormation,
+clipping area, and compositing rules.
+<h4>
+examples:</h4>
+<b><tt>GeglGraphicsState</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; /* data */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ...</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglColor *fg_color;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglColor *bg_color;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglBrush *brush;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglFont *font;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglTransform *transform;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglShape *clip_shape;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglCompositeMode comp_mode;&nbsp;&nbsp;
+/*eg one of the Porter-Duff composite modes*/</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ...</tt></b>
+<br><b><tt>}</tt></b></div>
+
+<div 
+CLASS="SECT2"
+>
+<hr>
+<h1 CLASS="SECT2">
+<a NAME="ImageBuffer"></a><font size=+2>GeglImageBuffer</font></h1>
+This object describes image buffers that hold pixel data.
+<p>The GeglImageBuffer has pointers to the GeglColorModel which describes
+the color model interpretation of its channels and to a GeglDataStorage
+object which specifies the actual representation of the data buffers in
+memory.
+<p>The GeglDataStorage object must be consistent with the GeglColorModel,&nbsp;
+but is not completely determined by it.&nbsp; Eg the GeglDataStorage object
+specifies if the channel data is packed, or interleaved, or stored as separate
+channels. Any of these could be consistent with a chosen GeglColorModel.
+<p>Also the GeglImageBuffer gets pointers to the data buffer(s) from the
+GeglDataStorage object, and through it the image operation GeglOps can
+get pointers to data, and update those during image processing.
+<h4>
+examples:</h4>
+<b><tt>GeglImageBuffer</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; /* data */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ...</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorModel *color_model;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglDataStorage *storage;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ...</tt></b>
+<br><b><tt>}</tt></b></div>
+
+<div 
+CLASS="SECT2"
+>
+<hr>
+<h1 CLASS="SECT2">
+<a NAME="DataStorage"></a><font size=+2>GeglDataStorage</font></h1>
+This object specifies the representation in memory for the data buffers
+of a GeglImageBuffer.
+<p>It also provides pointers to the data, and keeps track of updating those
+pointers during image processing operations. Possible arrangements include
+packed, interleaved, planar, tiled, etc.</div>
+</div>
+
+<div 
+CLASS="SECT1"
+>
+<hr>
+<h1 CLASS="SECT1">
+<a NAME="Operator"></a><font size=+2>GeglOperator</font></h1>
+
+<div CLASS="SECT1">This is the fundamental base class that covers image
+processing operations.
+<p>All pixel processing operators are subclassses of this class. Each subclass
+implements routines for pixel processing for various color models and data
+storage strategies.&nbsp; Also each subclass has initialization routines
+for setting up the parameters that are necessary for that image processing
+operation. Parameters include the source input image(s),&nbsp; destination
+output image, and any other parameters that govern the algorithm for the
+operator.
+<p>The basic GeglOps are divided into subclasses as well.&nbsp; These middle
+level objects divide the operators according to how they derive their results
+for a destination image. Some operators are point processes (The destination
+output at (x,y) depends only on source input(s) at (x,y) ). Others need
+a fixed size area around the (x,y) of the sources. (convolutions, kernal
+operations).&nbsp; Still others need the entire source image for operation
+(transforms, warps). These objects provide a place to implement common
+image access operations for operators that derive from them. These objects
+need to work with region or other kinds of iterators to request portions
+or tiles of images to work on, or must specify how they need to access
+images to work.
+<p>Finally the actual leaves of the GeglOp tree are classes that provide
+implementations of the algorithms. These implementations may be autogenerated
+in some fashion based on the color model and data storage of the various
+sources and destination.&nbsp; Something along the lines of a pseudo-code
+macro or template-based description or a lex/yacc of the algorithm language
+is used to generate the actual code for the needed color models and data
+storage cases.&nbsp;&nbsp; Implementing a new color model/data storage
+case would involve providing definitions of the macros or templates or
+whatever for that color model/data storage.</div>
+
+<div CLASS="SECT1">
+<h4>
+examples:</h4>
+Here's a portion of the operator tree:</div>
+
+<div CLASS="SECT1"><b><tt>GeglOperator</tt></b></div>
+
+<div CLASS="SECT1"><b><tt>&nbsp;&nbsp;&nbsp; GeglAreaOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglConvolveOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglBlurOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglSharpenOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglLaplaceOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglSobelOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglRobertsonOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglKernalOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglKernalMedianOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglKernalMaxOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglKernalMinOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglPointOp</tt></b></div>
+
+<div CLASS="SECT1"><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglSingleSrcOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglThresholdOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglEqualizeOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglBrightnessOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglEqualizeOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglContrastOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglPosterizeOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglInvertOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglSaturationOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglColorConvertOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglColorConvertOpToRgb</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglColorConvertOpToCmyk</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglColorConvertOpToHsv</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglColorConvertOpToCiexyz</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglMultiSrcOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglAddOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglSubtractOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglMultOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglMinOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglMaxOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglDivOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglAbsDiffOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglCompositeOp</tt></b></div>
+
+<div CLASS="SECT1"><b><tt>&nbsp;&nbsp;&nbsp; GeglGeometricOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglAffineTransformOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglWarpOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglStatisticsOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglHistogramOp</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglMeanOp</tt></b></div>
+</div>
+
+<div 
+CLASS="SECT1"
+>
+<hr>
+<h1 CLASS="SECT1">
+<a NAME="GimpDrawable"></a><font size=+2>GimpDrawable</font></h1>
+
+<div CLASS="SECT1">The GimpDrawable would inherit from GeglDrawable .&nbsp;
+In addtion to its inherited gegl drawable fields it would have fields for
+things like IDs,Tattoos and Parasites and other gimp app specific things.
+<h4>
+examples:</h4>
+<b><tt>GimpDrawable extends GeglDrawable</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp; /* data */</tt></b>
+<br><b><tt>&nbsp;&nbsp; ...</tt></b>
+<br><b><tt>&nbsp;&nbsp; guint32 ID;</tt></b>
+<br><b><tt>&nbsp;&nbsp; guint32 Tattoo;</tt></b>
+<br><b><tt>&nbsp;&nbsp; ParasiteList *parasites;</tt></b>
+<p><b><tt>&nbsp;&nbsp; /* preview info */</tt></b>
+<br><b><tt>&nbsp;&nbsp; ...</tt></b>
+<br><b><tt>};</tt></b>
+<p>
+<hr></div>
+</div>
+
+<div 
+CLASS="SECT1"
+>
+<div 
+CLASS="FORMALPARA"
+>
+<h1 CLASS="SECT1">
+<a NAME="Layer"></a><font size=+2>GimpLayer</font></h1>
+
+<div CLASS="SECT1">The GimpLayer object is one element in the GimpImage's
+layer stack. Layers may be anything that can be composited onto a base
+image projection according to some standard compositing methods and modes.&nbsp;
+The projection should be a GeglDrawable.
+<h4>
+examples:</h4>
+A portion of the GimpLayer tree:
+<p><b><tt>GimpLayer</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GimpDrawableLayer</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GimpOpLayer</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GimpTextLayer</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GimpShapeLayer</tt></b>
+<p><b><tt>GimpDrawableLayer</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglDrawable *drawable;&nbsp; /*maybe should
+be a GimpDrawable instead, which is a GeglDrawable*/</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>GimpPointOpLayer</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglOp *op;</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>GimpTextLayer</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglText *text;</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>GimpShapeLayer</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglShape *shape;</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>GimpLayer</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; /* data */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; gint x,y;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/*layer offset*/</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GimpLayerMask *layer_mask;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglCompositeMode comp_mode;&nbsp;&nbsp;
+/*layer apply mode*/</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>GimpLayerClass</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; /* virtual methods */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; (*composite)(GimpLayer *layer, GeglDrawable
+*projection);</tt></b>
+<br><b><tt>}</tt></b>
+<p>How the subclasses implement the composite method:
+<p>&nbsp;<b><tt>/* GimpDrawableLayer */</tt></b>
+<br><b><tt>gimp_drawable_layer_composite(GimpLayer * layer, GeglDrawable
+* projection)</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglDrawable * drawable = GIMP_DRAWABLE_LAYER(layer)->drawable;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglImageBuffer *image_buffer = gegl_drawable_get_image_buffer
+(drawable);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglGraphicsState *gs = gegl_drawable_graphics_state(projection);</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* Code to set the projection's graphics state
+with the layer's composite mode */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ...</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* composite the image on the projection*/</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; gegl_drawable_apply_image(projection, image_buffer);</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>/* GimpOpLayer */</tt></b>
+<br><b><tt>gimp_op_layer_composite(GimpLayer * layer, GeglDrawable * projection)</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglOp * op = GIMP_OP_LAYER(layer)->op;</tt></b>
+<br>&nbsp;
+<p><b><tt>&nbsp;&nbsp;&nbsp; /*Set up the projection as the dest image
+of the op*/</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /*Apply the op*/</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; gegl_op_apply(op);</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>/* GimpTextLayer */</tt></b>
+<br><b><tt>gimp_text_layer_composite(GimpLayer * layer, GeglDrawable *
+projection)</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglText * text = GIMP_TEXT_LAYER(layer)->text;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglGraphicsState *gs = gegl_drawable_graphics_state(projection);</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* Set up the projection's graphics state
+with the text font and layer's composite mode, etc */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ...</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* Apply the text to the projection */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; gegl_drawable_draw_text (projection, string,
+layer->x,layer->y);</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>/* GimpShapeLayer */</tt></b>
+<br><b><tt>gimp_shape_layer_composite(GimpLayer * layer, GeglDrawable *
+projection)</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglShape * shape = GIMP_SHAPE_LAYER(layer)->shape;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglGraphicsState&nbsp; *gs = gegl_drawable_graphics_state(projection);</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* Set up the projection's graphics state
+and translate the shape to layer->x, layer->y */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ...</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* Draw the shape stroke */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; gegl_drawable_draw_shape (projection,shape);</tt></b>
+<br><b><tt>}</tt></b>
+<p>
+<hr>
+<h1 CLASS="SECT1">
+<a NAME="Image"></a><font size=+2>GimpImage</font></h1>
+
+<div CLASS="SECT1">The GimpImage would hold GimpLayers as its layers objects,
+and each GimpLayer would essentially be a GeglDrawable, GeglOp, etc.&nbsp;
+The projection for the GimpImage would be a GeglDrawable, and the channels
+would all be GimpChannels which are GimpDrawables (which are GeglDrawables
+themselves) that have grayscale color models and display colors and opacities.
+<h4>
+examples:</h4>
+<b><tt>GimpImage</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; /* data */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ...</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglColorModel *color_model;&nbsp;&nbsp;&nbsp;&nbsp;
+/* a base color model */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GimpLayer **layers;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/* layers */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GimpChannels **channels;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/* auxiliary channels */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglDrawable *projection;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/* the composited layers */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; ...</tt></b>
+<br><b><tt>};</tt></b></div>
+
+<hr></div>
+</div>
+</div>
+
+<div 
+CLASS="SECT1"
+>&nbsp;
+<h1 CLASS="SECT1">
+<a NAME="References"></a><font size=+2>References</font></h1>
+
+<ul 
+><a href="http://techpubs.sgi.com/library/dynaweb_bin/ebt-bin/0650/nph-infosrch.cgi/infosrchtpl/SGI_Developer/IL_PG/@InfoSearch__BookTextView/44">SGI
+Image Vision Library </a>.
+<br><a href="http://java.sun.com/products/java-media/2D/">Java2d API</a>.
+<br><a href="http://java.sun.com/products/java-media/jai/">Java Advanced
+Imaging API</a>.
+<p><a href="http://www.color.org/">ICC Home Page.</a>
+<br><a href="http://techpubs.sgi.com/library/dynaweb_bin/ebt-bin/0650/nph-infosrch.cgi/infosrchtpl/SGI_Developer/ClrMgmntSys/@InfoSearch__BookTextView/37">SGI
+coloratura library.<br>
+<br>
+</a><a href="http://www.5z.com/jirka/gob.html">Gtk+ Object Builder</a></ul>
+</div>
+</div>
+
+</body>
+</html>

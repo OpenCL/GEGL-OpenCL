@@ -1,3 +1,24 @@
+Mon Mar 27 15:07:24 EST 2000 calvinw@mindspring.com
+
+	* check in for codegen
+
+        * updated these files:
+          codegen/test_files/gegl-screen-op.gil
+          codegen/test_files/gegl-dark-op.gil
+          codegen/test_files/gegl-light-op.gil
+          codegen/test_files/gegl-composite-premult-op.gil
+        
+          Put in the wrapper part of for the generic image
+          language programs
+          GENERIC_IMAGE_PROGRAM
+          GENERIC_IMAGE_CODEGEN_BEGIN
+          GENERIC_IMAGE_CODEGEN_END
+     
+        * added docs directory and these html docs:
+          docs/geglClasses.html 
+          docs/genericChannelData.html 
+          docs/genericImageLanguage.html 
+
 Sun Mar 26 15:01:35 PST 2000 caro@rhythm.com
 
 	* check in for codegen

@@ -74,14 +74,19 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
       src2_cm = gegl_image_buffer_color_model (src2);
       src2_has_alpha = gegl_color_model_has_alpha (src2_cm);
 
+      /* dest = src2 op src1 */ 
       if ( src2_has_alpha && src1_has_alpha)
-       point_op_class->scanline_func = gegl_composite_premult_op_RGBA_op_RGBA_FLOAT;
+        point_op_class->scanline_func = 
+                  gegl_composite_premult_op_COLORSPACEa_op_COLORSPACEa_DATATYPE;
       else if ( src2_has_alpha && !src1_has_alpha )
-       point_op_class->scanline_func = gegl_composite_premult_op_RGBA_op_RGB_FLOAT;
+        point_op_class->scanline_func = 
+                  gegl_composite_premult_op_COLORSPACEa_op_COLORSPACE_DATATYPE;
       else if ( !src2_has_alpha && src1_has_alpha )
-       point_op_class->scanline_func = gegl_composite_premult_op_RGB_op_RGBA_FLOAT;
+        point_op_class->scanline_func = 
+                  gegl_composite_premult_op_COLORSPACE_op_COLORSPACEa_DATATYPE;
       else if ( !src2_has_alpha && !src1_has_alpha )
-       point_op_class->scanline_func = gegl_composite_premult_op_RGB_op_RGB_FLOAT;
+        point_op_class->scanline_func = 
+                  gegl_composite_premult_op_COLORSPACE_op_COLORSPACE_DATATYPE;
 
       self->_priv->comp_mode = mode;
     }
@@ -96,9 +101,11 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     PARENT_HANDLER (object)
   }
 
+  GENERIC_IMAGE_PROGRAM colormodels_file
   private 
   void
-  RGBA_op_RGBA_FLOAT (GeglPointOp *point_op)
+  COLORSPACEa_op_COLORSPACEa_DATATYPE (GeglPointOp *point_op)
+  GENERIC_IMAGE_CODEGEN_BEGIN
   {
     GeglCompositePremultOp * self = GEGL_COMPOSITE_PREMULT_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
@@ -107,11 +114,10 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     VectorChan dest(color,alpha);
     VectorChan src1(color,alpha);
     VectorChan src2(color,alpha);
-    float a, b;
-    int width;
+    Chan a, b;
     GENERIC_IMAGE_DECL_END
+    gint width = point_opP->scanline_width;
 
-    width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
                       (guchar**)dest_data);
@@ -126,79 +132,109 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     GENERIC_IMAGE_IMAGE_DATA_INIT
 
     switch(self->_priv->comp_mode)
-      GENERIC_IMAGE_BLOCK_BEGIN
       {
       case COMPOSITE_REPLACE:
         while (width--) 
-         {
-       	 dest = src2;
-	 dX(dest,1);
-	 dX(src2,1); 
-         }
-       break;
+          {
+            GENERIC_IMAGE_BLOCK_BEGIN
+
+	    dest = src2;
+
+	    dX(dest,1);
+	    dX(src2,1); 
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
       case COMPOSITE_OVER:
-       while (width--)
-         {
-	 a = WP - src2_alpha;
-	 dest = a * src1 + src2;
-	 dX(dest,1);
-	 dX(src1,1);
-	 dX(src2,1); 
-         } 
-       break;
+	while (width--)
+	  {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+	    a = WP - src2_alpha;
+	    dest = a * src1 + src2;
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+	    GENERIC_IMAGE_BLOCK_END     
+	  } 
+	break;
       case COMPOSITE_IN:
-       while (width--)
-         {
-	 b = src1_alpha;
-       	 dest = b * src2;
-	 dX(dest,1);
-	 dX(src1,1);
-	 dX(src2,1);
-         }
-       break;
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+	    b = src1_alpha;
+	    dest = b * src2;
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1);
+
+	    GENERIC_IMAGE_BLOCK_END     
+	  }
+        break;
       case COMPOSITE_OUT:
-       while (width--)
-         {
-       	 b = WP - src1_alpha;
-       
-     	 dest = b * src2;
-	 dX(dest,1);
-	 dX(src1,1);
-	 dX(src2,1); 
-         }
-       break;
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+	    b = WP - src1_alpha;
+	    dest = b * src2;
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
       case COMPOSITE_ATOP:
-       while (width--)
-         {
- 	 a = WP - src2_alpha; 
-	 b = src1_alpha; 
-	 dest_color = a * src1_color + b * src2_color;
-	 dest_alpha = b;
-	 dX(dest,1);
-	 dX(src1,1);
-	 dX(src2,1); 
-         }
-       break;
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+	    a = WP - src2_alpha; 
+	    b = src1_alpha; 
+	    dest_color = a * src1_color + b * src2_color;
+	    dest_alpha = b;
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
       case COMPOSITE_XOR:
-       while (width--)
-         {
-       	 a = WP - src2_alpha;
-     	 b = WP - src1_alpha; 
-   	 dest = a * src1 + b * src2;
-	 dX(dest,1);
-	 dX(src1,1);
-	 dX(src2,1); 
-         }
-       break;
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+	    a = WP - src2_alpha;
+	    b = WP - src1_alpha; 
+	    dest = a * src1 + b * src2;
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
       default:
-       break;
+        break;
       }  
-    GENERIC_IMAGE_BLOCK_END     
   }
+  GENERIC_IMAGE_CODEGEN_END
  
-  private
+  GENERIC_IMAGE_PROGRAM colormodels_file
+  private 
   void
-  RGBA_op_RGB_FLOAT (GeglPointOp *point_op)
+  COLORSPACEa_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
+  GENERIC_IMAGE_CODEGEN_BEGIN
   {
     GeglCompositePremultOp * self = GEGL_COMPOSITE_PREMULT_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
@@ -207,11 +243,10 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     VectorChan dest(color); 
     VectorChan src1(color);
     VectorChan src2(color,alpha);
-    float a;
-    int width;
+    Chan a;
     GENERIC_IMAGE_DECL_END
-    
-    width = point_opP->scanline_width;
+    gint width = point_opP->scanline_width;
+
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
                       (guchar**)dest_data);
@@ -227,69 +262,100 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
       
     switch(self->_priv->comp_mode)
       {
-      GENERIC_IMAGE_BLOCK_BEGIN
-       case COMPOSITE_REPLACE:
-         while (width--)
-           {
-	   dest_color = src2_color;
-       	   dX(dest,1);
-	   dX(src2,1); 
-           }
-         break;
-       case COMPOSITE_OVER:
-         while (width--)
-           {
-	   a = WP - src2_a;
-       	   dest_color = a * src1_color + src2_color;
-	   dX(dest,1);
-	   dX(src1,1);
-	   dX(src2,1); 
-           } 
-         break;
-       case COMPOSITE_IN:
-         while (width--)
-           {
-	   dest_color = src2_color;
-       	   dX(dest,1);
-	   dX(src2,1);
-           }
-         break;
-       case COMPOSITE_OUT:
-         while (width--)
-           {
-	   dest = ZERO;
-	   dX(dest,1); 
-           }
-         break;
-       case COMPOSITE_ATOP:
-         while (width--)
-           {
-             a = WP - src2_alpha; 
-             dest_color = a * src1_color + src2_color;
-	     dX(dest,1);
-	     dX(src1,1);
-	     dX(src2,1);
-           }
-         break;
-       case COMPOSITE_XOR:
-         while (width--)
-           {
-             a = WP - src2_a; 
-             dest_color = a * src1_color;
-             dX(dest,1);
-	     dX(src1,1);
-	     dX(src2,1);
-	   }
-         break;
-       default:
-         break;
-      } 
-    GENERIC_IMAGE_BLOCK_END  
-  }
+      case COMPOSITE_REPLACE:
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
 
-  private
+            dest_color = src2_color;
+
+	    dX(dest,1);
+	    dX(src2,1); 
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
+      case COMPOSITE_OVER:
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+	    a = WP - src2_a;
+	    dest_color = a * src1_color + src2_color;
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
+      case COMPOSITE_IN:
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+	    dest_color = src2_color;
+
+	    dX(dest,1);
+	    dX(src2,1);
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
+      case COMPOSITE_OUT:
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+	    dest = ZERO;
+
+	    dX(dest,1); 
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
+      case COMPOSITE_ATOP:
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+            a = WP - src2_alpha; 
+            dest_color = a * src1_color + src2_color;
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1);
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
+      case COMPOSITE_XOR:
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+            a = WP - src2_a; 
+            dest_color = a * src1_color;
+
+            dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1);
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
+      default:
+        break;
+      } 
+  }
+  GENERIC_IMAGE_CODEGEN_END
+
+  GENERIC_IMAGE_PROGRAM colormodels_file
+  private 
   void
-  RGB_op_RGBA_FLOAT (GeglPointOp *point_op)
+  COLORSPACE_op_COLORSPACEa_DATATYPE (GeglPointOp *point_op)
+  GENERIC_IMAGE_CODEGEN_BEGIN
   {
     GeglCompositePremultOp * self = GEGL_COMPOSITE_PREMULT_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
@@ -298,11 +364,10 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     VectorChan dest(color,alpha);
     VectorChan src1(color,alpha);
     VectorChan src2(color);
-    float b;
-    int width;
+    Chan b;
     GENERIC_IMAGE_DECL_END 
+    gint width = point_opP->scanline_width;
 
-    width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
                       (guchar**)dest_data);
@@ -317,78 +382,109 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 
     switch(self->_priv->comp_mode)
       {
-      GENERIC_IMAGE_BLOCK_BEGIN
-       case COMPOSITE_REPLACE:
-         while (width--)
-           {
-             dest_color = src2_color;
-             dest_alpha = WP;
-	     dX(dest,1);
-	     dX(src2,1); 
-           }
-         break;
-       case COMPOSITE_OVER:
-         while (width--)
-           {
-             dest_color = src2_color;
-             dest_alpha = WP;
-	     dX(dest,1);
-	     dX(src2,1); 
-           } 
-         break;
-       case COMPOSITE_IN:
-         while (width--)
-           {
-             b = src1_alpha;
-             dest_color = b * src2_color;
-             dest_alpha = b;  
-             dX(dest,1);
-             dX(src1,1);
-             dX(src2,1); 
-           }
-         break;
-       case COMPOSITE_OUT:
-         while (width--)
-           {
-             b = WP - src1_alpha;
-             dest_color = b * src2_color;
-             dest_alpha = b;  
-	     dX(dest,1);
-	     dX(src1,1); 
-	     dX(src2,1); 
-           }
-         break;
-       case COMPOSITE_ATOP:
-         while (width--)
-           {
-             b = src1_alpha; 
-             dest_color =  b * src2_color;
-             dest_alpha =  b;
-	     dX(dest,1);
-	     dX(src1,1);
-	     dX(src2,1);
-           }
-         break;
-       case COMPOSITE_XOR:
-         while (width--)
-           {
-             b = WP - src1_alpha;
-             dest_color = b * src2_color;
-             dest_alpha = b;
-	     dX(dest,1);
-	     dX(src1,1);
-	     dX(src2,1);
-           }
-         break;
-       default:
-         break;
-      } 
-   GENERIC_IMAGE_BLOCK_END  
-  }
+      case COMPOSITE_REPLACE:
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
 
+            dest_color = src2_color;
+            dest_alpha = WP;
+
+	    dX(dest,1);
+	    dX(src2,1); 
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
+      case COMPOSITE_OVER:
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+            dest_color = src2_color;
+            dest_alpha = WP;
+
+	    dX(dest,1);
+	    dX(src2,1); 
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
+      case COMPOSITE_IN:
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+            b = src1_alpha;
+            dest_color = b * src2_color;
+            dest_alpha = b;  
+
+            dX(dest,1);
+            dX(src1,1);
+            dX(src2,1); 
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
+      case COMPOSITE_OUT:
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+            b = WP - src1_alpha;
+            dest_color = b * src2_color;
+            dest_alpha = b;  
+
+	    dX(dest,1);
+	    dX(src1,1); 
+	    dX(src2,1); 
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
+      case COMPOSITE_ATOP:
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+            b = src1_alpha; 
+            dest_color =  b * src2_color;
+            dest_alpha =  b;
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1);
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
+      case COMPOSITE_XOR:
+        while (width--)
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+            b = WP - src1_alpha;
+            dest_color = b * src2_color;
+            dest_alpha = b;
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1);
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
+        break;
+      default:
+        break;
+      } 
+  }
+  GENERIC_IMAGE_CODEGEN_END
+
+  GENERIC_IMAGE_PROGRAM colormodels_file
   private 
   void
-  RGB_op_RGB_FLOAT (GeglPointOp *point_op)
+  COLORSPACE_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
+  GENERIC_IMAGE_CODEGEN_BEGIN
   {
     GeglCompositePremultOp * self = GEGL_COMPOSITE_PREMULT_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)
@@ -399,10 +495,9 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
     VectorChan dest(color);
     VectorChan src1(color);
     VectorChan src2(color);
-    int width;
     GENERIC_IMAGE_DECL_END
+    gint width = point_opP->scanline_width;
 
-    width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
                       (guchar**)dest_data);
@@ -416,33 +511,41 @@ class Gegl:Composite:Premult:Op from Gegl:Dual:Src:Op {
 
     GENERIC_IMAGE_IMAGE_DATA_INIT
       
-      
     switch(self->_priv->comp_mode)
       {
-      GENERIC_IMAGE_BLOCK_BEGIN
       case COMPOSITE_REPLACE:
       case COMPOSITE_OVER:
       case COMPOSITE_IN:
       case COMPOSITE_ATOP:
         while (width--)
-         {
-           dest_color = src2_color;
-	   dX(dest,1);
-	   dX(src1,1);
-	   dX(src2,1); 
-         }
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+	    dest_color = src2_color;
+
+	    dX(dest,1);
+	    dX(src1,1);
+	    dX(src2,1); 
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
         break;
       case COMPOSITE_OUT:
       case COMPOSITE_XOR:
         while (width--)
-         {
-           dest_color = ZERO; 
-	   dX(dest,1);
-         }
+          {
+	    GENERIC_IMAGE_BLOCK_BEGIN
+
+            dest_color = ZERO; 
+
+	    dX(dest,1);
+
+	    GENERIC_IMAGE_BLOCK_END     
+          }
         break;
       default:
         break;
-      GENERIC_IMAGE_BLOCK_END
       }
   }
+  GENERIC_IMAGE_CODEGEN_END
 }

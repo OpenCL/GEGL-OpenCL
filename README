@@ -1,13 +1,17 @@
-Webpages for Gegl:
+Webpages for Gegl (or see the docs dir): 
 
 http://www.mindspring.com/~calvinw/geglClasses.html
-http://www.mindspring.com/~calvinw/geglChannelData.html
+http://www.mindspring.com/~calvinw/genericChannelData.html
+http://www.mindspring.com/~calvinw/genericImageLanguage.html
 
 If possible, you should use Gob 0.92.3 (in gnome cvs or from
 http://ftp.5z.com/pub/gob/) or later with gegl. Earlier
 versions of Gob may not work as well.
 
 For more information on gob see http://www.5z.com/jirka/gob.html. 
+
+
+About the use of private, protected and public as used by gob:
 
 Gob allows "private", "protected" and "public" variables and
 methods.  In gegl we use these keywords as follows:
@@ -40,6 +44,11 @@ In short, methods are like in C++. And for variables, gob
 "private" means C++-protected and there is no gob "protected"
 used in gegl.
 
+
+
+
+
+
 There is some support for remaking generated .c and .h files
 automatically.  Look in gegl/gegl/Makefile.am for rules at the
 bottom.
@@ -59,6 +68,6 @@ There is a PrintOp for debugging. See testgegl.c for details.
 
 The testgeglfile program has code for reading tiffs and
 displaying images in a gtk window. You can use this for testing
-op classes as well.
+op classes as well. 
 
 calvinw@mindspring.com
