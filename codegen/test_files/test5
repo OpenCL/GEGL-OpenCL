@@ -75,13 +75,13 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
       src2_has_alpha = gegl_color_model_has_alpha (src2_cm);
 
       if ( src2_has_alpha && src1_has_alpha)
-       point_op_class->scanline_func = gegl_composite_op_HUEA_op_HUEA_CHAN;
+       point_op_class->scanline_func = gegl_composite_op_COLORSPACEA_op_COLORSPACEA_DATATYPE;
       else if ( src2_has_alpha && !src1_has_alpha )
-       point_op_class->scanline_func = gegl_composite_op_HUEA_op_HUE_CHAN;
+       point_op_class->scanline_func = gegl_composite_op_COLORSPACEA_op_COLORSPACE_DATATYPE;
       else if ( !src2_has_alpha && src1_has_alpha )
-       point_op_class->scanline_func = gegl_composite_op_HUE_op_HUEA_CHAN;
+       point_op_class->scanline_func = gegl_composite_op_COLORSPACE_op_COLORSPACEA_DATATYPE;
       else if ( !src2_has_alpha && !src1_has_alpha )
-       point_op_class->scanline_func = gegl_composite_op_HUE_op_HUE_CHAN;
+       point_op_class->scanline_func = gegl_composite_op_COLORSPACE_op_COLORSPACE_DATATYPE;
 
       self->_priv->comp_mode = mode;
     }
@@ -98,15 +98,15 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
   private 
   void
-  HUEA_op_HUEA_CHAN (GeglPointOp *point_op)
+  COLORSPACEA_op_COLORSPACEA_DATATYPE (GeglPointOp *point_op)
   {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
 
 CODEGEN_DECL_BEGIN    
-    VectorChan *dest(color,alpha);
-    VectorChan *src1(color,alpha);
-    VectorChan *src2(color,alpha);
+    VectorChan dest(color,alpha);
+    VectorChan src1(color,alpha);
+    VectorChan src2(color,alpha);
     gfloat a, b, c, alpha;
     guint width;  
 CODEGEN_DECL_END
@@ -131,126 +131,119 @@ CODEGEN_BLOCK_BEGIN
       case COMPOSITE_REPLACE:
        while (width--)
          {
-           *dest++ = *src2++;
+           dest = src2;
+           dX(dest,1);
+           dX(src2,1);
          }
        break;
       case COMPOSITE_OVER:
        while (width--)
          {
-           a = (1.0 - *src2_a) * *src1_a;
-           b = *src2_a;
+           a = (1.0 - src2_a) * src1_a;
+           b = src2_a;
            alpha = a + b;
 
-           *dest_a++ = alpha;
-           src1_a++;
-           src2_a++;
+           dest_a = alpha;
 
            if (alpha)
              {
               c = 1.0 /alpha;
 
-              *dest_c++ = (a * *src1_c++ + b * *src2_c++) * c;
+              dest_c = (a * src1_c + b * src2_c) * c;
              }
            else
              {
-              *dest_c++ = *src1_c++;
-
-              src2_c++;
+              dest_c = src1_c;
              }
+         dX(dest,1);
+	 dX(src1,1);
+         dX(src2,1); 
          } 
        break;
       case COMPOSITE_IN:
        while (width--)
          {
-           alpha = *src1_a * *src2_a;
+           alpha = src1_a * src2_a;
 
-           *dest_a++ = alpha;
-            src1_a++;
-            src2_a++;
+           dest_a = alpha;
 
            if (alpha)
              {
-              *dest_c++ = *src2_c++;
-
-              src1_c++;
+              dest_c = src2_c;
              }
            else
              {
-              *dest_c++ = *src1_c++;
-
-              src2_c++;
+              dest_c = src1_c;
              } 
+         dX(dest,1);
+	 dX(src1,1);
+         dX(src2,1); 
          }
        break;
       case COMPOSITE_OUT:
        while (width--)
          {
-           alpha = (1.0 - *src1_a) * *src2_a;
+           alpha = (1.0 - src1_a) * src2_a;
 
-           *dest_a++ = alpha;
-            src2_a++;
-            src1_a++;
+           dest_a = alpha;
 
            if(alpha)
              {
-              *dest_c++ = *src2_c++;
-              
-               src1_c++;
+              dest_c = src2_c;
              } 
            else 
              {
-              *dest_c++ = *src1_c++;
-
-               src2_c++;
+              dest_c = src1_c;
              }
+         dX(dest,1);
+	 dX(src1,1);
+         dX(src2,1); 
          }
        break;
       case COMPOSITE_ATOP:
        while (width--)
          {
-           a = 1.0 - *src2_a;
-           b = *src2_a;
-           alpha = *src1_a; 
+           a = 1.0 - src2_a;
+           b = src2_a;
+           alpha = src1_a; 
 
-           *dest_a++ = alpha;
-            src2_a++;
-            src1_a++;
+           dest_a = alpha;
 
            if(alpha)
              {
-              *dest_c++ = a * *src1_c++ + b * *src2_c++;
+              dest_c = a * src1_c + b * src2_c;
              } 
            else 
              {
-              *dest_c++ = *src1_c++;
-
-               src2_c++;
+              dest_c = src1_c;
              }
+         dX(dest,1);
+	 dX(src1,1);
+         dX(src2,1); 
          }
        break;
       case COMPOSITE_XOR:
        while (width--)
          {
-           a = (1.0 - *src2_a) * *src1_a;
-           b = (1.0 - *src1_a) * *src2_a;
+           a = (1.0 - src2_a) * src1_a;
+           b = (1.0 - src1_a) * src2_a;
            alpha  = a + b;
 
-           *dest_a++ = alpha;
-           src1_a++;
-           src2_a++;
+           dest_a = alpha;
 
            if(alpha)
              {
               c = 1.0 / alpha;
 
-              *dest_c++ = (a * *src1_c++ + b * *src2_c++) * c;
+              dest_c = (a * src1_c + b * src2_c) * c;
              } 
            else 
              {
-              *dest_c++ = *src1_c++;
-
-               src2_c++;
+              dest_c = src1_c;
              }
+         dX(dest,1);
+	 dX(src1,1);
+         dX(src2,1); 
          }
        break;
       default:
@@ -261,7 +254,7 @@ CODEGEN_BLOCK_END
 
   private
   void
-  HUEA_op_HUE_CHAN (GeglPointOp *point_op)
+  COLORSPACEA_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
   {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
@@ -361,7 +354,7 @@ CODEGEN_BLOCK_END
 
   private
   void
-  HUE_op_HUEA_CHAN (GeglPointOp *point_op)
+  COLORSPACE_op_COLORSPACEA_DATATYPE (GeglPointOp *point_op)
   {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
@@ -501,7 +494,7 @@ CODEGEN_BLOCK_END
 
   private 
   void
-  HUE_op_HUE_CHAN (GeglPointOp *point_op)
+  COLORSPACE_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
   {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)

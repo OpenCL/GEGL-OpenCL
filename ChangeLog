@@ -1,3 +1,10 @@
+Tue Mar  7 15:03:42 PST 2000 caro@rhythm.com
+	
+	* This version will now parse files that have the
+	syntaxed described on Calvin's webpages.
+
+	* I have introduced the varible ZERO
+
 Mon Mar  6 12:22:44 PST 2000 caro@rhythm.com
 
 	* started to add the INIT_PIXEL_DATA

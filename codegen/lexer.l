@@ -23,7 +23,7 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 "CODEGEN_DECL_BEGIN"		BEGIN CODEGEN_DECL;
 				
 "CODEGEN_BLOCK_BEGIN"		BEGIN CODEGEN_BLOCK;
-"CODEGEN_IMAGE_DATA_INIT" 	init_image_data (); 	
+{indent}"CODEGEN_IMAGE_DATA_INIT" 	init_image_data (yylval.elem.string); 	
 "COLORSPACE"			printf ("%s", _COLORSPACE_);
 "Colorspace"			printf ("%s", _Colorspace_);
 "colorspace"                    printf ("%s", _colorspace_);
@@ -59,6 +59,12 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 				yylval.elem.type = TYPE_SCALER;
 				return(ZERO_CHAN);
 				}
+<CODEGEN_BLOCK>"ZERO"		{
+    				strcpy(yylval.elem.string, _ZERO_);
+				yylval.elem.dtype = TYPE_CHAN;
+			        yylval.elem.type = TYPE_VECTOR;
+				return ZERO; 	
+				} 
 <CODEGEN_DECL>"VectorChan"	{
 				strcpy(yylval.elem.string, _VectorChan_);
 				yylval.elem.dtype = TYPE_CHAN;
@@ -106,6 +112,9 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 
 <CODEGEN_DECL>"(color,alpha)"	return(COLOR_ALPHA);
 <CODEGEN_DECL>"(color)"		return(COLOR);
+
+<CODEGEN_BLOCK>"dX"		return(ITERATOR_X);
+<CODEGEN_BLOCK>"dXY"            return(ITERATOR_XY);
 
 <CODEGEN_BLOCK>"MAX"		return(MAX);
 <CODEGEN_BLOCK>"MIN"		return(MIN);
