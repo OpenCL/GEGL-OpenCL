@@ -1130,7 +1130,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
       break; 
     }
  
-  if (src1.dtype == src2.dtype && src2.dtype == TYPE_CHAN)
+  if (src1.dtype == src2.dtype)
    dest->dtype = TYPE_CHAN;
   else if (op == OP_EQUAL)
     dest->dtype = src1.dtype; 
