@@ -4,7 +4,6 @@ GeglTile
 <!-- ##### SECTION Short_Description ##### -->
 GeglTile represents an area of an GeglImage.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 This object describes a chunk of image data that corresponds to a portion of

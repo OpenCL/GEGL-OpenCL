@@ -2,7 +2,7 @@
 GeglBuffer
 
 <!-- ##### SECTION Short_Description ##### -->
-Abstract Base class for memory buffers. 
+Abstract Base class for memory buffers.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>

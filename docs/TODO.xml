@@ -7,7 +7,7 @@
      $ docs/make-todo TODO.xml > /dev/null
 
      before committing, or you may screw up the online version.--> 
-<todo logourl="images/gegl.jpg">
+<todo logourl="gegl.jpg">
   <title>Gegl Task list</title>
   <section>
     <title>Gegl</title>
@@ -16,31 +16,81 @@
       <title>GeglNode</title>
       <description>
         <p>
-            This class is to hold the information for a node in an image graph
-            dag and will have lists for the input and output nodes.  This class
-            will be responsible for keeping track of all the graph related
-            things for Nodes (images, ops). It will have lists for the inputs
-            and outputs and provide traversals for depth-first, breadth-first,
-            and topologically sorting. It will keep track of the reference
-            counting (via gtk ref counting) associated with adding inputs and
-            outputs to nodes, and check graphs for cycles. This means that it
-            will be possible to set up graphs and pass them around and delete
-            them by just deleting the root, since ref counting will take care
-            of finding and destroying nodes automatically.
+            Still need to add code to check for cycles as nodes are added to a
+            graph.
         </p>
         <p>
-            Most of the above is finished. One outstanding issue is detecting
-            cycles. DAGs are okay, and nodes may be shared in the same and
-            different graphs, but cycles are not allowed. When a node is added
-            to a graph, we need to check for any cycles. 
+            Also need support for nodes to have multiple outputs. The
+            inputs form a list and the outputs are a list of lists, since each
+            output of a node can be attached to by any number of outputs.  An
+            example of a multiple output node might be a channel splitter that
+            separates an RGB image into R,G,B channels. This is a 1-input
+            3-output node.
         </p>
         <p>
-            Added a flag (alt_input) to let nodes indicate which of their
-            inputs to use if a node is disabled or if a node is not an
-            GeglImage node (ie an image producing node). This allows nodes to
-            perform other kinds of operations besides image-producing ones.
-            Some examples of these would be things like PrintOp, StatisticsOps
-            SwitchOp, etc.
+            Nodes then specify their number of inputs and the number of
+            outputs, when created.
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="medium" status="0%" target="0.0">
+      <title>GeglFilter</title>
+      <description>
+        <p>
+           This class will extend from Node and allows one to group a
+           collection of nodes or a complete graph into a single Op. That way
+           pre-defined graphs can be used as single nodes or ops in other
+           graphs.   
+        </p>
+        <p>
+           This probably means moving some of the code in the ImageMgr classes
+           into this Filter class instead. 
+        </p>
+        <p>
+           Filter needs to specify which outputs of the nodes it holds it
+           wishes to export and which inputs it will have. The Filter takes
+           care of attaching the inputs from the outside with the appropriate
+           inputs to the nodes it contains as well as making sure that the
+           outputs it wishes to export get placed in its outputs, and passed
+           along the graph to outside the Filter. 
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="small" status="0%" target="0.0">
+      <title>GeglOp</title>
+      <description>
+        <p> 
+          Op, Filter, and the other simple ops (Add, Mult, etc) should form a
+          GoF composite design pattern where Filter is the container like class
+          and can hold other Ops, or a graph of ops, and the other simple ops
+          are just leaves of the composite pattern.  The evaluate method in Op
+          will be the method that subclasses override to accomplish the op's
+          processing.  Evaluate in Filter will do the traversal on the ops it
+          contains.  Evaluate in the simple ops will call the prepare, process,
+          and finish routines that do the actual image processing. The current
+          prepare, process, and finish methods in Op are called by the default
+          implementation of evaluate in Op.  
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="medium" status="20%" target="0.0">
+      <title>GeglOp</title>
+      <description>
+        <p>
+          Need to add list of outputs and inputs of each Op, something like
+          GValues with GParamSpecs that describe what the outputs and inputs of
+          each op are and allow some automatic conversion when these are passed
+          from output of one op to the input of another. 
+        </p>
+        <p>
+          Also change prepare, process, finish to be passed the a list of GValue inputs 
+          to process (instead of OpRequests).
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
@@ -51,7 +101,7 @@
       <description>
         <p> 
             A dest ImageBuffer can passed to root of a graph during
-            gegl_op_apply.  This buffer should be passed up the graph when
+            gegl_op_apply.  This buffer should be passed along the graph when
             in-place operations are desired. This is similar to inherited
             attributes when parsing.
         </p>
@@ -100,43 +150,41 @@
       <title>Add Automatic Color/Data Conversions</title>
       <description>
         <p>
-            There is some support in gegl-utils.c to figure out what color
-            model to use when the color model is "derived" from the inputs, but
-            it does not set up any color conversion ops automatically when
-            inputs dont match the outputs. This should be handled by the
-            ImageManager class during its graph traversal. 
+            Need to decide exactly where to do color model/data conversions
+            when color model models of inputs differ from color models of the
+            outputs. Currently color conversion ops are not set up
+            automatically when inputs dont match the outputs. This should be
+            handled by the ImageMgr (or maybe Filter) class during graph
+            traversal. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
     <entry size="small" status="0%" target="0.0">
-      <title>Tests</title>
+      <title>Unit Tests</title>
       <description>
         <p>
-            tests/testgeglfile.c is out of date, and doesnt compile with the
-            latest updates. testgeglfile should read in tiff images from the
-            command line, open them and perform tests similar to
-            tests/testgegl.c,. Since testgegl.c is really only suitable for
-            testing the ops on real small images (built by hand) and not read
-            from files.  testgeglfile should give a workout of the ops on more
-            normal size images. 
+            There is a suite of unit tests in tests directory now. These use
+            the testsuite C-unit testing framework included in the tools
+            directory. Many examples of how the gegl classes work are included
+            here and it is recommended that these be run all the time while
+            developing. There is lots of room to think about how to organize
+            the tests and how they should work. There is a simple example of
+            the framework in CUJ Sept 2000 issue. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
     <entry size="big" status="30%" target="0.0">
-      <title>SwitchOp, RoiOp, other noni-GeglImage ops.</title>
+      <title>SwitchOp, RoiOp, Non image producing Ops.</title>
       <description>
         <p> 
-           The inheritance for the Op class and subclasses allows ops which do
-           not produce an image output, but may perform other kinds of useful
-           operations necessarily. These ops can do any kind of operation that
-           depend on inputs and can be done in the prepare, process, finish
-           routines of the Op class. These non-image producing ops (ones which
-               dont write a destination image) should inherit from Op directly,
-           while image producers should all inherit from Image now.
+            It is important to test the new Op class and its subclasses by
+            constructing the Op classes that have other types of outputs beside
+            image outputs. Eg scalar outputs, histograms, etc. and also
+            multiple output ops as well.
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
@@ -155,58 +203,34 @@
             library for some ideas. 
         </p>
         <p>
-            There is now a class called GeglDataBuffer which will contain
-            "banks" of data. These are used by GeglTile to hold its image data.
+            There is now a class called GeglBuffer which holds "banks" of data. 
+            These are used by GeglTile to hold its image data.
             GeglTile represents "chunk of image data", and is the thing
-            passed back to the ops by the GeglImageManager. 
-        </p>
-        <p>
-            By altering GeglDataBuffers, GeglTile, GeglTileImageManager (by
-                subclassing say) together with appropriate gil code it should
-            be possible to support different data types and arrangements of
-            data in memory. 
+            passed back to the ops by the ImageMgr. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
     <entry size="big" status="25%" target="0.0">
-      <title>Memory,Cache Manager classes</title>
+      <title>Memory, Cache Manager classes</title>
       <description>
         <p>
             Gegl needs memory management classes in the form of cache with
             swappable pages.  This will mean image data will be requested from
-            a cache manager, and we need schemes (ref counting,splay trees) for
+            a cache manager, and we need schemes (ref counting, etc) for
             deciding what to swap out. This will need to work with tiles. 
-        </p>
-        <p>
-            There is now GeglImageManager, GeglTileImageManager, GeglCache
-            classes. GeglTileImageManager provides a tile based implementation
-            of the ImageManager and uses a GeglCache to store the tiles.  The
-            GeglCache currently just keeps track of Image and Op data in a hash
-            table. There is no disk swapping. We need to add swapping code,
-            replacement tile policies, and keep track of cache sizes. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
     <entry size="big" status="30%" target="0.0">
-      <title> Tile Classes</title>
+      <title>Tile Mgr</title>
       <description>
         <p>
             Tile and tile management classes. Want to allow variable size tiles
             for gegl. 
-        </p>
-        <p>
-            We now have GeglTile and GeglTileImageManager classes. They
-            currently only store tiles the size of the the result_rect of an
-            ops computation.  So they dont actually implement a tile system
-            where regions of an image/op are made up of many small tiles (like
-                64x64). This needs to be added to the current
-            GeglTileImageManager. 
-        </p>
-        <p>
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
@@ -217,7 +241,7 @@
       <description>
         <p>
             Basic multi-threading support for image ops, and scheduler/task
-            management classes. These should be added in the ImageManager,
+            management classes. These should be added in the ImageMgr,
             which is the appropriate class for managing these.
         </p>
       </description>
@@ -225,7 +249,7 @@
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
-      <title>AreaOp</title>
+      <title>AreaOps</title>
       <description>
         <p>
             Area operations base class. This class requests contiguous regions
@@ -281,26 +305,6 @@
         <p>
             Some ICC profile based color models would be nice. This would allow
             adding more detailed color management support. 
-        </p>
-      </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
-    </entry>
-
-    <entry size="small" status="0%" target="0.0">
-      <title>Gtk-doc Setup</title>
-      <description>
-        <p>
-            Setup gtk-doc for doing documentation in gegl. This is DocBook style
-            documentation.
-        </p>
-        <p>
-            This is started in gegl/docs/reference/gegl. Function arguments and
-            comments are extracted from the source code files.  Most private
-            routines, though documented in the source files, don't show up in
-            the generated html files, since gtk-doc only produces documentation
-            for public routines. We could put in args/comments for the
-            "private" routines, but it would be nice to fix gtk-doc to also
-            generate these. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>

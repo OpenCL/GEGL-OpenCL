@@ -9,20 +9,16 @@
 <body text="#000000" bgcolor="#FFFFFF" link="#4D7F7E" vlink="#551A8B" alink="#FF0000">
 
 <hr WIDTH="100%">
-<br><font color="#62A2A1"><font size=-1><a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
+<br><font color="#62A2A1"><font size=-1><a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="#news">NEWS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#mailing lists">MAILING
 LISTS&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="TODO.html">CURRENT
-TASKS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#authors">AUTHORS&nbsp;&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-<a href="#reference">REFERENCES</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
+TODO</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#reference">REFERENCES</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="#getting gegl">GETTING GEGL</a></font></font>
 <br>
 <hr WIDTH="100%">
 <p><img SRC="images/gegl.jpg" NOSAVE height=62 width=160>
 <p><font color="#000000">GEGL -- Gimp 'E' Graphical Library --- is an image
-processing library based on GtkObjects.&nbsp; This library will be designed
+processing library based on GObjects.&nbsp; This library will be designed
 to handle various image processing tasks needed in Gimp initially, but
 should be useful&nbsp; to other apps as well.&nbsp; It will handle color
 spaces and data types&nbsp; in a general way, and allow new color models/data
@@ -32,7 +28,7 @@ Classes for point, area, geometric and statistics operations will be included,
 as well as color conversion ops for converting images between color models.&nbsp;
 Memory management and image classes are planned as well.&nbsp; It includes
 a method for writing generic image processing routines (Generic Image Language)
-and generating specific data type and colormodel code (Codegen) from this.</font>
+and generating specific data type and colormodel code&nbsp; from this.</font>
 <p><font color="#000000">GEGL is still in a very early phase, and many
 classes are under construction. There is no official release yet, but you
 can <a href="#getting gegl">get it from anonymous cvs.</a></font>
@@ -53,12 +49,10 @@ for handling multiple data types in GEGL.</li>
 <li>
 <a href="genericImageLanguage.html">Generic Image Language </a>, a description
 of a generic image processing coding in GEGL.</li>
-
-<li>
-<a href="codegen.html">Codegen</a>, the lex/yacc program that generates
-code for the Generic Image Language.</li>
 </ul>
-
+There is also gtk-docs for gegl apis available from the cvs version in
+docs/reference/gegl. You will have to build them using gtk-doc.
+<br>
 <hr WIDTH="100%">
 <br><a NAME="news"></a><b>News</b>
 <br>&nbsp;
@@ -72,9 +66,9 @@ code for the Generic Image Language.</li>
 <tr>
 <td>7/26/2000</td>
 
-<td>gimpSiggraph2000 meeting. Gegl was discussed some, but the focus was
-mostly on how to encourage studios to become involved with gimp in a more
-fundamental way.&nbsp;</td>
+<td>gimpSiggraph2000&nbsp; Gegl was discussed some, but the focus was mostly
+on how to encourage studios to become involved with gimp in a more fundamental
+way.&nbsp;</td>
 </tr>
 
 <tr>
@@ -87,6 +81,25 @@ fundamental way.&nbsp;</td>
 <td>1/18/2001</td>
 
 <td>&nbsp;Work-in-progress talk on Gegl by Manish Singh at linux.conf.au.</td>
+</tr>
+
+<tr>
+<td>6/6/2001</td>
+
+<td>gtk-docs for gegl set up.</td>
+</tr>
+
+<tr>
+<td>8/16/2001</td>
+
+<td>BoF at Siggraph 2001</td>
+</tr>
+
+<tr>
+<td>12/9/2001</td>
+
+<td>Gegl converts to GObject and Glib2.0.&nbsp; Added unit tests. Removed
+GOB dependency.</td>
 </tr>
 </table>
 
@@ -129,36 +142,42 @@ working directory, issue the command:
 <p>>cvs get gegl
 <p>You can also <a href="http://cvs.gnome.org/bonsai/rview.cgi?cvsroot=/cvs/gnome&dir=gegl">browse
 the cvs source</a> through the web using bonsai.
-<p>You will need a recent version of glib and gtk+ and <a href="http://www.5z.com/jirka/gob.html">gob</a>.
-You will also need a lex/yacc (or flex/bison) pair.
-<p>
-<hr WIDTH="100%">
-<br><a NAME="authors"></a><b>Authors </b>(listed alphabetical)
-<p>Jay Cox &lt;<a href="mailto:jaycox@gimp.org">jaycox@gimp.org</a>>
-<br>Caroline Dahllof &lt;<a href="mailto:caro@rhythm.com">caro@rhythm.com</a>>
-<br>Manish Singh &lt;<a href="mailto: yosh@gimp.org">yosh@gimp.org</a>>
-<br>Calvin Williamson &lt;<a href="mailto:calvinw@mindspring.com">calvinw@mindspring.com</a>>
+<p>You will need a recent version of glib, 1.3.9 or better. You will also
+need a lex/yacc (or flex/bison) pair.
 <p>
 <hr WIDTH="100%">
 <br><a NAME="reference"></a><b>References</b>
-<p><a href="http://www.gimp.org">GIMP website</a>
+<p>Gimp related:
+<br><a href="http://www.gimp.org">GIMP website</a>
 <br><a href="http://film.gimp.org">film.gimp.org - using gimp for high
 color resolution film work</a>
-<br><a href="http://siggraph.gimp.org">GIMP at SIGGRAPH 2000</a>
 <br><a href="http://www.gimp.org/gimpcon/review.html">GimpCon2000 review
 -discussion of gimp2.0, gegl</a>
+<p>Other libraries/applications
+<br><a href="http://techpubs.sgi.com:80/library/tpl/cgi-bin/browse.cgi?coll=0650&db=bks&cmd=toc&pth=/SGI_Developer/IL_PG">SGI
+ImageVision libary</a>
+<br><a href="http://java.sun.com/products/java-media/jai/">Java Advanced
+Imaging API</a>
+<br><a href="http://www.gstreamer.net/">GStreamer</a>
+<br><a href="http://beast.gtk.org/">Beast/Bse -audio synthesis</a>
+<br><a href="http://kogs-www.informatik.uni-hamburg.de/~koethe/vigra/">Vigra
+1.0 Image Processing library</a>
+<p>Articles/Books
+<br><a href="http://www.ddj.com/print/documentID=13096">A Memory Constrained
+Image Processing Architecture, Mayur Patel, DDJ July 97</a>
 <br><a href="http://www.acm.org/pubs/citations/proceedings/graph/192161/p147-shantzis/">A
 Model for Efficient and Flexible Image Computing, Michael Shantzis, Siggraph
 94</a>
-<br><a href="http://techpubs.sgi.com:80/library/tpl/cgi-bin/browse.cgi?coll=0650&db=bks&cmd=toc&pth=/SGI_Developer/IL_PG">SGI
-ImageVision libary</a>
-<br><a href="http://www.5z.com/jirka/gob.html">GtkObjectBuilder</a>
-<br><a href="http://kogs-www.informatik.uni-hamburg.de/~koethe/vigra/">Vigra
-1.0 Image Processing library</a>
+<br><a href="http://www.amazon.com/exec/obidos/ASIN/0240804554/qid=1013747007/sr=2-1/ref=sr_2_1/002-5999383-5916044">Digital
+Compositing for Film and Video by Steve Wright</a>
+<br><a href="http://www.amazon.com/exec/obidos/ASIN/0121339602/qid%3D1013747094/ref%3Dsr%5F11%5F0%5F1/002-5999383-5916044">The
+Art and Science of Digital Compositing by Ron Brinkman</a>
+<br><a href="http://www.amazon.com/exec/obidos/ASIN/0201634260/002-5999383-5916044">Digital
+Color Management by Giorgianni Madden</a>
+<br>&nbsp;
 <p>
 <hr WIDTH="100%">
-<center><font size=-2>Caroline Dahllof &lt;caro@rhythm.com></font>
-<br><font size=-2>Calvin Williamson&lt;calvinw@mindspring.com></font></center>
+<center><font size=-2>Calvin Williamson&lt;calvinw@mindspring.com></font></center>
 
 </body>
 </html>

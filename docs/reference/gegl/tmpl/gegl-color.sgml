@@ -4,7 +4,6 @@ GeglColor
 <!-- ##### SECTION Short_Description ##### -->
 The basic color object in gegl.
 
-
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 The Color object is designed to hold single pixel color values. It is used for
