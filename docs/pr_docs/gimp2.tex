@@ -1,14 +1,14 @@
-GIMP 2.0 will consist of numerous library, making GIMP modular and easy to maintain.   
+GIMP 2.0 will consist of numerous library, making GIMP modular and easy to maintain and add features.   
 \begin{itemize}
-\item {\em gegl} Graphics kernel used by GIMP.
-\item {\em libgimpjunk} Various stuff (Junk yoU Need Kommonly)
+\item {\em gegl} Will contain all the image procesing operations. This library is discussed in Chapter 3.
 \item {\em libgimpcore} Contains all non-UI logic
 \item {\em libgimpcoreui} Core UI widget not usable by plug-ins such as canvas widget
-\item {\em libgimpapp} GIMP application kernel
+\item {\em libgimpwidget} core-independent widget use such as building libgimpui widget
 \item {\em libui} UI widget used to build plug-in and application UI
+\item {\em libgimpapp} GIMP application kernel
 \item {\em libgimpext} Communication library between plug-ins and application
-\item {\em libgimpwidget} core-independent widget use such as building libui widget
-\item {\em libgimpiface} contains the interfaces for libgimpui and libgimpcoreui
+\item {\em libgimpiface} contains the interfaces for libgimpui and libgimpcore
+\item {\em libgimpjunk} Various stuff (Junk yoU Need Kommonly)
 \end{itemize}
 
 ((GIMP 2.0 will consist of a number of libraries providing the different

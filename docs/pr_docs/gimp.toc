@@ -3,11 +3,11 @@
 \contentsline {section}{\numberline {2.1}GimpCon}{8}
 \contentsline {section}{\numberline {2.2}GIMP 2.0 Design Features}{9}
 \contentsline {subsection}{\numberline {2.2.1}GEGL}{9}
-\contentsline {subsection}{\numberline {2.2.2}Layer Trees}{9}
+\contentsline {subsection}{\numberline {2.2.2}Layer Trees}{10}
 \contentsline {subsection}{\numberline {2.2.3}GIMP Core and Plugin Interfaces}{10}
 \contentsline {subsection}{\numberline {2.2.4}Common Object Resource Broker Architecture}{10}
 \contentsline {subsection}{\numberline {2.2.5}Parallelization}{10}
-\contentsline {subsection}{\numberline {2.2.6}The Application}{10}
+\contentsline {subsection}{\numberline {2.2.6}The Application}{11}
 \contentsline {chapter}{\numberline {3}GEGL}{12}
 \contentsline {section}{\numberline {3.1}High Level Design}{12}
 \contentsline {section}{\numberline {3.2}Low Level Design}{12}
@@ -30,4 +30,4 @@
 \contentsline {section}{\numberline {B.3}Some GIMP Problems}{21}
 \contentsline {section}{\numberline {B.4}Future of GIMP at Rhythm \& Hues}{22}
 \contentsline {chapter}{\numberline {C}Contributing to GIMP}{23}
-\contentsline {chapter}{\numberline {D}More Information}{24}
+\contentsline {chapter}{\numberline {D}More Information}{25}

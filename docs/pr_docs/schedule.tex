@@ -1,49 +1,77 @@
 
 \begin{itemize}
-\item {\em App}
-\item {\em UI}
-\item {\em Paint core}
+\item {\bf libgimpcore} will interface with gegl. does all the non-ui stuff
+\item {\bf libgimpcoreui} contains the starting building blocks for all the ui. it
+is like xwindows is for motif
+\item {\bf libgimpui} this is the actuall interface for gimp. it is build from
+the gimpwidget. 
+\item {\bf libgimpwidget} this is build on top of gimpcoreui. it contains all the
+ui widgets. will these widget be smart enough to display themselves in the
+right data range???
+\item {\bf libgimpiface} this is an interface to the core and the ui for the
+plug-in.
+\item {\bf libgimpplugin} this is the plug-in library
+\item {\bf libgimpextapp} this is a communication interface that the application
+will use to comunicate with the plug-in
+\item {\bf libgimpapp} this is the application for the gimp
+\item {\bf libgimpjunk} contains random support things
 \end{itemize}
+
 \begin{flushleft}		
 \begin{tabular}{|l|p{3cm}|p{5cm}|p{2cm}|l|}\hline
 \multicolumn{5}{|c|}{\rule[-3mm]{0mm}{8mm} \large \bf Schedule for GIMP 2.0}\\  
 \hline
-Order & Task & Description & Library & Cost\\ \hline 
+Order & Task & Description & Library & Cost\\ 
+\hline 
 
-1 & Area Operation & Classes for common area operations in GEGL (convolve, kernel ops) & GEGL & 120h\\
 \hline
-1 & GIMP App & Design core code for GIMP. Implement a stripped down version of the core. & GIMPCore & 80h\\
-\hline
-2 & Geometric Operations & Classes for common geometric operations such as scaling, transformation. & GEGL & 120h\\
-\hline
-2 & Basic Image Classes & Write classes for GimpImage, GimpDrawable, GimpLayer, GimpChannel. & GIMPCore & 160h\\
+\multicolumn{5}{|c|}{GIMP Internal Schedule}\\
 \hline 
-3 & GIMP UI & Design how the UI will support all the different data types and color models. Implement a main component 
-of the UI. & GIMPCoreUI, GIMPUI, GIMPWidget & 120h\\
-\hline 
-3 & GIMP paint core & Design the paint core. Implement a stripped down version of the paint core. & GIMPCore & 80h\\
+1 & Gimp core & Design the core of GIMP & gimpcore & xh\\
 \hline
-4 & Event Manager & Add an event/task manager to the app. This component will allow communication between the UI, the paint core, and the app & GIMPCore & 120h\\
+2 & Basic Image Classes & Write classes for GimpImage, GimpDrawable, GimpLayer, GimpChannel. & gimpcore & 160h\\
 \hline 
-4 & GIMP tools & Write the basic tools such as paint, clone, simple edit tools. & GIMPCore & 80h\\
+2 & MicroGimp core & Implement the core for MircoGIMP & gimpcore & xh\\
 \hline
 
-8 & UI cont & Continue implementing the different component & GIMPWidget, GIMPUI & 160h\\
+\multicolumn{5}{|c|}{UI Schedule}\\
+\hline 
+1 & Gimp core ui & Design and implement. & gimpcoreui & xh\\
 \hline
-8 & GIL Specialization & Mechanism for allowing partial specialization in GIL code & GEGL & 120h\\
+2 & Widget & Design the widget taking into an acount how they will handle the different data types. & gimpwidget &xh\\
 \hline
-9 & Point Operations & Classes for LUT operations & GEGL & 120h\\
+3 & MicroGimp UI & Implement the UI for a stripped down GIMP. This involved implementing the widget necessary for this& gimpui, gimpwidget & xh\\
 \hline
-8 & Preprocessor for codegen & Make another abstraction for gil & GEGL & 80h\\
+
+
+\multicolumn{5}{|c|}{Plug-in Schedule}\\
+\hline 
+4 & Event Manager & Add an event/task manager to the app. This component will allow communication between the UI, the paint core, and the app & gimpcore & 120h\\
+\hline 
+4 & GIMP tools & Write the basic tools such as paint, clone, simple edit tools. & gimpcore & 80h\\
 \hline
-8 & Memory Management & Investigate trade-offs among tile-, micro tile-, and divide-and-conquer memory-management schemes. Integrate chosen model with GEGL & GEGL & 300h\\
+8 & Interface for plug-in & Create and design and interface for plug-in developers that takes advantage of gegl & plug-in & 500h\\
 \hline
-8 & Multi-thread support & This involves making most image operations multi-threaded and assure that all operations are thread safe. & GEGL & 200h\\  
+8 & Undo history & Create a new undo tree & gimp & 100h\\
 \hline
-8 & Interface for plug-in & Create and design and interface for plug-in developers that takes advantage of gegl & PLUG-IN & 500h\\
+
+\multicolumn{5}{|c|}{GEGL Schedule}\\
 \hline
-8 & Undo history & Create a new undo tree & GIMP & 100h\\
+1 & Area Operation & Classes for common area operations in GEGL (convolve, kernel ops) & gegl & 120h\\
 \hline
+2 & Geometric Operations & Classes for common geometric operations such as scaling, transformation. & gegl & 120h\\
+\hline
+8 & GIL Specialization & Mechanism for allowing partial specialization in GIL code & gegl & 120h\\
+\hline
+9 & Point Operations & Classes for LUT operations & gegl & 120h\\
+\hline
+8 & Preprocessor for codegen & Make another abstraction for gil & gegl & 80h\\
+\hline
+8 & Memory Management & Investigate trade-offs among tile-, micro tile-, and divide-and-conquer memory-management schemes. Integrate chosen model with GEGL & gegl & 300h\\
+\hline
+8 & Multi-thread support & This involves making most image operations multi-threaded and assure that all operations are thread safe. & gegl & 200h\\  
+\hline
+
  
 \multicolumn{4}{|r|}{Total man-hours} & 2460h\\
 \hline
