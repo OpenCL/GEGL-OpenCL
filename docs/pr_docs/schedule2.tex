@@ -14,9 +14,9 @@ painting, editing, compositing, color conversions.
 After MicroGIMP is built and tested as a small production tool, the rest of the
 major GIMP libraries will be built. These libraries include the various GIMP UI
 libs and the core code for GIMP's graphics objects (Images, Layers, Channels,
-Drawables). GIMPs task management (rendering pipeline), libraries for plugin
-communication  as well as GIMPs component for scripting (PDB, Procedural Data
-Base) are all included here.  
+Drawables). GIMPs task management (rendering pipeline), libraries for
+plugin communication  as well as GIMPs component for scripting (PDB,
+Procedural Database) are all included here.  
 
 \begin{flushleft}		
 \begin{tabular}{|p{2cm}|p{5cm}|p{2cm}|l|}\hline
@@ -38,13 +38,13 @@ MicroGimp-tools & Write first test tools: paint, clone, simple edit tools  & gim
 
 \multicolumn{4}{|c|}{\bf GEGL}\\
 \hline
-Area Operation & Classes for common area operations in GEGL (convolve, kernel ops) & gegl & 120h\\
+\raggedright{Area\\ Operation} & Classes for common area operations in GEGL (convolve, kernel ops) & gegl & 120h\\
 \hline
 \raggedright{Geometric\\ Operations} & Classes for common geometric operations such as scaling, transformation. & gegl & 120h\\
 \hline
-GIL Specialization & Mechanism for allowing partial specialization in GIL code & gegl & 120h\\
+\raggedright{GIL\\ Specialization} & Mechanism for allowing partial specialization in GIL code & gegl & 120h\\
 \hline
-Point Operations & Classes for LUT operations & gegl & 120h\\
+\raggedright{Point\\ Operations} & Classes for LUT operations & gegl & 120h\\
 \hline
 \raggedright{Preprocessor for\\ codegen} & Generates colormodel and data type code from GIL specifications & gegl & 80h\\
 \hline
@@ -55,7 +55,7 @@ Point Operations & Classes for LUT operations & gegl & 120h\\
 
 \multicolumn{4}{|c|}{\bf GIMP}\\
 \hline 
-Image, Drawable, Layer, Channel & Complete Image, Drawable, Layer, Channel classes. The basic core classes used in gimp & gimpcore & 160h\\
+\raggedright{Image, Drawable,\\ Layer, Channel} & Complete Image, Drawable, Layer, Channel classes. The basic core classes used in GIMP & gimpcore & 160h\\
 \hline 
 Widgets UI & Build utility widgets for use in other UI libs  & gimpwidgets & 200h\\
 \hline
@@ -63,9 +63,9 @@ Core UI & Private widgets not shared with plugins & gimpcoreui & 120h\\
 \hline
 Gimp UI & Widgets shared with plugins & gimpui & 200h\\
 \hline 
-Painting tools & Paint, Airbrush, Erase, Blur... etc & gimpcore, gimpui & 120h \\
+Painting tools & Paint, Airbrush, Erase, Blur etc & gimpcore, gimpui & 120h \\
 \hline 
-Editing tools & Rect Select, Free select, Bezier... & gimpcore, gimpui & 120h \\
+\raggedright{Editing \\tools} & Rect Select, Free select, Bezier etc & gimpcore, gimpui & 120h \\
 \hline 
 \end{tabular}
 
@@ -78,18 +78,18 @@ Task & Description & Library & Cost\\
 \hline 
 Resize tools & Scale, Resize, Transform... & gimpcore, gimpui & 80h \\
 \hline 
-Image Adjustment tools & Brightness, Levels, Histogram & gimpcore, gimpui & 120h\\
+\raggedright{Image\\ Adjustment tools} & Brightness, Levels, Histogram & gimpcore, gimpui & 120h\\
 \hline
-Gimp Render Pipeline & Gimp task management code to manage calls to gegl, ui tasks, io & gimpcore, ggegl & 120h \\
+\raggedright{GIMP\\ Render Pipeline} & GIMP task management code to manage calls to gegl, ui tasks, io & gimpcore, gegl & 120h \\
 \hline 
 Generic UI & Widgets for multiple data types & gimpwidgets, gimpcoreui, gimpui & 120h\\
 \hline
 Undo & Build undo history mechanism & gimpcore & 100h\\
 \hline
-Plugin libraries & Corba based design for communication between plugins and gimp & gimpext, gimpiface & 300h\\
+\raggedright{Plugin\\libraries} & Corba based design for communication between plugins and GIMP & gimpext, gimpiface & 300h\\
 \hline
 
-\multicolumn{3}{|r|}{Total man-hours} & \\
+\multicolumn{3}{|r|}{Total man-hours} & 3100\\
 \hline
 \end{tabular}
 \end{flushleft}
