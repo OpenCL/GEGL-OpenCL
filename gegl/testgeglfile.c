@@ -6,8 +6,6 @@
 
 #include "gegl-color-model-rgb-float.h"
 #include "gegl-color-model-rgb-u8.h"
-#include "gegl-color-model-rgb-u16.h"
-#include "gegl-color-model-rgb-u16_4.h"
 #include "gegl-color-model-gray-float.h"
 #include "gegl-color-model-gray-u8.h"
 #include "gegl-image-buffer.h"
