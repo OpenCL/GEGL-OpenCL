@@ -1570,7 +1570,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
     case OP_EQUAL:
 
       /* error checking */
-      if (src1.num != src2.num && !(src1.num > src2.num && src2.num < 2))
+      if (src1.num != src2.num && !(src1.num > src2.num && src2.num < 1))
 	{
 	  yyerror("ERROR: You trying to assign a varible to another varible
 	      and they have different number of channels");
@@ -1912,7 +1912,7 @@ main (int argc, char **argv)
 {
   int i=1;
   /* uncomment this to see lexer and parser debug info */
-  /*  yydebug = 1; */  
+  /* yydebug = 1;*/   
   
   if (argc < 5)
     {

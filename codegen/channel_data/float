@@ -11,5 +11,5 @@ CHANNEL_CLAMP (x)	x
 WP_CLAMP (x)		CLAMP (x,0.0,1.0)
 CHANNEL_MULT (x,y)	x * y
 CHANNEL_ROUND (x)	x
-PRINT (x)		printf ("%f", x); 
+PRINT (x)		printf ("%f", *x); 
 DATATYPE_END

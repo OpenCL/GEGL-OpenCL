@@ -15,7 +15,9 @@ GIL_FILES = \
 	gegl-screen-op.gil 				\
 	gegl-dark-op.gil 				\
 	gegl-light-op.gil 				\
-	gegl-subtract-op.gil
+	gegl-subtract-op.gil				\
+	gegl-print-op.gil				\
+	gegl-fill-op.gil
 
 GIL_GEN_GOB = \
 	gegl-composite-op.gob				\
@@ -30,7 +32,9 @@ GIL_GEN_GOB = \
 	gegl-screen-op.gob				\
 	gegl-dark-op.gob				\
 	gegl-light-op.gob				\
-	gegl-subtract-op.gob
+	gegl-subtract-op.gob				\
+	gegl-print-op.gob				\
+	gegl-fill-op.gob
 
 NONGEN_GOB = \
 	gegl-object.gob					\
@@ -51,10 +55,8 @@ NONGEN_GOB = \
 	gegl-point-op.gob				\
 	gegl-dual-src-op.gob				\
 	gegl-single-src-op.gob				\
-	gegl-print-op.gob				\
 	gegl-color.gob					\
 	gegl-graphics-state.gob				\
-	gegl-fill-op.gob				\
 	gegl-color-convert-op.gob			\
 	gegl-color-convert-connection-op.gob		\
 	gegl-color-convert-to-gray-u8-op.gob            \
@@ -89,10 +91,8 @@ GOB_GEN_PUBLIC_HDRS = \
 	gegl-point-op.h					\
 	gegl-dual-src-op.h				\
 	gegl-single-src-op.h				\
-	gegl-print-op.h					\
 	gegl-color.h					\
 	gegl-graphics-state.h				\
-	gegl-fill-op.h					\
 	gegl-composite-op.h				\
 	gegl-composite-premult-op.h			\
 	gegl-premult-op.h				\
@@ -117,7 +117,9 @@ GOB_GEN_PUBLIC_HDRS = \
 	gegl-screen-op.h				\
 	gegl-dark-op.h					\
 	gegl-light-op.h					\
-	gegl-subtract-op.h
+	gegl-subtract-op.h				\
+	gegl-print-op.h					\
+	gegl-fill-op.h
 
 GOB_GEN_PRIVATE_HDRS = \
 	gegl-object-private.h				\
@@ -138,10 +140,8 @@ GOB_GEN_PRIVATE_HDRS = \
 	gegl-point-op-private.h				\
 	gegl-dual-src-op-private.h			\
 	gegl-single-src-op-private.h			\
-	gegl-print-op-private.h				\
 	gegl-color-private.h				\
 	gegl-graphics-state-private.h			\
-	gegl-fill-op-private.h				\
 	gegl-composite-op-private.h			\
 	gegl-composite-premult-op-private.h		\
 	gegl-premult-op-private.h			\
@@ -166,7 +166,9 @@ GOB_GEN_PRIVATE_HDRS = \
 	gegl-screen-op-private.h 			\
 	gegl-dark-op-private.h 				\
 	gegl-light-op-private.h				\
-	gegl-subtract-op-private.h
+	gegl-subtract-op-private.h			\
+	gegl-print-op-private.h				\
+	gegl-fill-op-private.h
 
 GOB_GEN_SRC = \
 	gegl-object.c					\
@@ -187,10 +189,8 @@ GOB_GEN_SRC = \
 	gegl-point-op.c					\
 	gegl-dual-src-op.c				\
 	gegl-single-src-op.c				\
-	gegl-print-op.c					\
 	gegl-color.c					\
 	gegl-graphics-state.c				\
-	gegl-fill-op.c					\
 	gegl-composite-op.c				\
 	gegl-composite-premult-op.c			\
 	gegl-premult-op.c				\
@@ -215,7 +215,9 @@ GOB_GEN_SRC = \
 	gegl-screen-op.c				\
 	gegl-dark-op.c					\
 	gegl-light-op.c					\
-	gegl-subtract-op.c
+	gegl-subtract-op.c				\
+	gegl-print-op.c					\
+	gegl-fill-op.c
 
 NONGOB_HDRS = \
 	gegl-types.h	\
@@ -255,7 +257,7 @@ DEPS = libgegl.la
 LDADDS = libgegl.la
 
 testgegl_SOURCES = testgegl.c
-testgegl_LDFLAGS =
+testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(DEPS)
 testgegl_LDADD = $(LDADDS) -lm
 

@@ -67,43 +67,7 @@ class Gegl:Print:Op from Gegl:Point:Op {
       data_type = gegl_color_model_data_type (cm);
       color_space = gegl_color_model_color_space (cm);
 
-      switch (color_space)
-       {
-       case GRAY:
-         switch (data_type)
-           {
-           case U8:
-             point_op_class->scanline_func = gegl_print_op_GRAY_U8;
-             break;
-           case FLOAT:
-             point_op_class->scanline_func = gegl_print_op_GRAY_FLOAT;        
-             break;
-           default:
-             g_warning("PrintOp: Color Model data type none or unknown\n");
-             point_op_class->scanline_func = NULL;        
-             return FALSE;
-           } 
-         break;
-       case RGB:
-         switch (data_type)
-           {
-           case U8:
-             point_op_class->scanline_func = gegl_print_op_RGB_U8;
-             break;
-           case FLOAT:
-             point_op_class->scanline_func = gegl_print_op_RGB_FLOAT;        
-             break;
-           default:
-             g_warning("PrintOp: Color Model data type none or unknown\n");
-             point_op_class->scanline_func = NULL;        
-             return FALSE;
-           } 
-         break;
-       default:
-         g_warning("PrintOp: Color Model data type none or unknown\n");
-         point_op_class->scanline_func = NULL;        
-         return FALSE;
-       } 
+      point_op_class->scanline_func = gegl_print_op_COLORSPACE_DATATYPE;        
     }
 
     return TRUE;
@@ -131,7 +95,7 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
     /* image_buffers[0] is the dest here */
     gegl_image_iterator_get_scanline_data (point_opP->iterators[0],
-                                        (guchar**)channels);
+                                        (guchar**)src_data);
 
     /* Make r,g,b point to the dest image data */
     GENERIC_IMAGE_IMAGE_DATA_INIT

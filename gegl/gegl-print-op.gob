@@ -67,86 +67,15 @@ class Gegl:Print:Op from Gegl:Point:Op {
       data_type = gegl_color_model_data_type (cm);
       color_space = gegl_color_model_color_space (cm);
 
-      switch (color_space)
-       {
-       case GRAY:
-         switch (data_type)
-           {
-           case U8:
-             point_op_class->scanline_func = gegl_print_op_GRAY_U8;
-             break;
-           case FLOAT:
-             point_op_class->scanline_func = gegl_print_op_GRAY_FLOAT;        
-             break;
-           default:
-             g_warning("PrintOp: Color Model data type none or unknown\n");
-             point_op_class->scanline_func = NULL;        
-             return FALSE;
-           } 
-         break;
-       case RGB:
-         switch (data_type)
-           {
-           case U8:
-             point_op_class->scanline_func = gegl_print_op_RGB_U8;
-             break;
-           case FLOAT:
-             point_op_class->scanline_func = gegl_print_op_RGB_FLOAT;        
-             break;
-           default:
-             g_warning("PrintOp: Color Model data type none or unknown\n");
-             point_op_class->scanline_func = NULL;        
-             return FALSE;
-           } 
-         break;
-       default:
-         g_warning("PrintOp: Color Model data type none or unknown\n");
-         point_op_class->scanline_func = NULL;        
-         return FALSE;
-       } 
+      point_op_class->scanline_func = gegl_print_op_COLORSPACE_DATATYPE;        
     }
 
     return TRUE;
   }
 
-  private 
-  void
-  RGB_FLOAT (GeglPointOp *point_op)
-  {
-     /*
-        Whats the algorithm for this code?       
-        PRINT DEST 
-
-     */
-
-    guint width;
-    gfloat * channels[3]; 
-    gfloat *r, *g, *b;
-       
-    GeglPointOpPrivate *point_opP = 
-      (GeglPointOpPrivate *)(point_op->_priv); 
-
-    width = point_opP->scanline_width;
-
-    /* image_buffers[0] is the dest here */
-    gegl_image_iterator_get_scanline_data (point_opP->iterators[0], 
-       (guchar**)channels);
-
-    /* Make r,g,b point to the dest image data */
-
-    r = channels[0];
-    g = channels[1];
-    b = channels[2];
-
-    while (width--)
-      printf("(%.2f %0.2f %0.2f) "  , *r++, *g++, *b++);
-
-    printf("\n");
-  }
-
   private
   void
-  RGB_U8 (GeglPointOp *point_op)
+  COLORSPACE_DATATYPE (GeglPointOp *point_op)
   {
      /*
         Whats the algorithm for this code?
@@ -154,9 +83,10 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
      */
 
+    gfloat *src_data[4];
+    gboolean src_has_alpha;
+    gfloat *src_r, *src_g, *src_b, *src_alpha=NULL;
     guint width;
-    guint8 *channels[3];
-    guint8 *r, *g, *b;
 
     GeglPointOpPrivate *point_opP =
         (GeglPointOpPrivate *)(point_op->_priv);
@@ -165,84 +95,25 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
     /* image_buffers[0] is the dest here */
     gegl_image_iterator_get_scanline_data (point_opP->iterators[0],
-                                        (guchar**)channels);
+                                        (guchar**)src_data);
 
     /* Make r,g,b point to the dest image data */
+    src_r = src_data[0];
+    src_g = src_data[1];
+    src_b = src_data[2];
+    if (src_has_alpha)
+      src_alpha = src_data[3];
 
-    r = channels[0];
-    g = channels[1];
-    b = channels[2];
-
+    
     while (width--)
-      printf("(%d %d %d) "  , *r++, *g++, *b++);
+      {
+	printf ("%f", *src_r); 
+	printf ("%f", *src_g); 
+	printf ("%f", *src_b); 
+	if (src_has_alpha)
+	printf ("%f", *src_alpha); 
+ 	printf("\n");
+      }
 
-    printf("\n");
   }
-
-  private 
-  void
-  GRAY_FLOAT (GeglPointOp *point_op)
-  {
-     /*
-        Whats the algorithm for this code?       
-        PRINT DEST 
-
-     */
-
-    guint width;
-    gfloat * channels[1]; 
-    gfloat *g;
-       
-    GeglPointOpPrivate *point_opP = 
-      (GeglPointOpPrivate *)(point_op->_priv); 
-
-    width = point_opP->scanline_width;
-
-    /* image_buffers[0] is the dest here */
-    gegl_image_iterator_get_scanline_data (point_opP->iterators[0], 
-       (guchar**)channels);
-
-    /* Make g point to the dest image data */
-
-    g = channels[0];
-
-    while (width--)
-      printf("(%0.2f) ", *g++);
-
-    printf("\n");
-  }
-
-  private
-  void
-  GRAY_U8 (GeglPointOp *point_op)
-  {
-     /*
-        Whats the algorithm for this code?
-        PRINT DEST
-
-     */
-
-    guint width;
-    guint8 *channels[1];
-    guint8 *g;
-
-    GeglPointOpPrivate *point_opP =
-        (GeglPointOpPrivate *)(point_op->_priv);
-
-    width = point_opP->scanline_width;
-
-    /* image_buffers[0] is the dest here */
-    gegl_image_iterator_get_scanline_data (point_opP->iterators[0],
-                                        (guchar**)channels);
-
-    /* Make g point to the dest image data */
-
-    g = channels[0];
-
-    while (width--)
-      printf("(%d) ", *g++);
-
-    printf("\n");
-  }
-
 }
