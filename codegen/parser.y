@@ -532,20 +532,20 @@ Line:
 		  {
 		  if (get_sym ($4.string)->type == TYPE_C_A_VECTOR)
 		    {
-		    printf ("%sif (%s_has_%s)%s  *%s_%s++;", $1.string, $4.string,
+		    printf ("%sif (%s_has_%s)%s  %s_%s++;", $1.string, $4.string,
 			NAME_COLOR_CHAN[NUM_COLOR_CHAN],
 			$1.string, $4.string,
 			NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
-		    sprintf (tmp, "%s*%s_c++;", 
+		    sprintf (tmp, "%s%s_c++;", 
 		      $1.string, $4.string);  
 		    }
 		  else if (get_sym ($4.string)->type == TYPE_CA_VECTOR)
 		    {
-		    sprintf (tmp, "%s*%s_c++;", 
+		    sprintf (tmp, "%s%s_ca++;", 
 		      $1.string, $4.string);  
 		    }
 		  else
-		    sprintf (tmp, "%s*%s_c++;", $1.string, $4.string);
+		    sprintf (tmp, "%s%s_c++;", $1.string, $4.string);
 		  
 		  }
 		  else
@@ -561,10 +561,10 @@ Line:
 		      }
 		    else if (get_sym ($4.string)->type == TYPE_CA_VECTOR)
 		      {
-		      sprintf (tmp, "%s*%s_ca += %s;", $1.string, $4.string, $6.string); 
+		      sprintf (tmp, "%s%s_ca += %s;", $1.string, $4.string, $6.string); 
 		      }
 		    else
-		      sprintf (tmp, "%s*%s_c += %s;", $1.string, $4.string, $6.string); 
+		      sprintf (tmp, "%s%s_c += %s;", $1.string, $4.string, $6.string); 
 		    }
 		strcpy ($4.string, tmp);
 		print_line($4); 	
@@ -599,8 +599,11 @@ Expression:
 		} 	 
 	| Expression COMPARE Expression  	
 		{ 
-		char tmp[256]; 
-		$$=$3; 
+		char tmp[256];
+	        if ($3.num)	
+		  $$=$3; 
+		else
+		  $$=$1;
 		sprintf (tmp,"%s %s %s", $1.string, $2.string, $3.string);
                 strcpy($$.string, tmp); 
 		} 	 
@@ -984,6 +987,7 @@ init_image_data (char *indent)
       strcpy (e.string, tmp);
       print_line (e);
       }
+    printf ("\n"); 
     }
   
 }
@@ -1116,7 +1120,8 @@ print_line (elem_t src)
   int l = strlen (src.string);
  
   if (src.type>1 || (src.type && src.num == NUM_COLOR_CHAN)) /* if it is a vector */ 
-  for (i=0; i<k; i++)
+    {
+    for (i=0; i<k; i++)
     {
     for(j=0; j<l; j++)
       {
@@ -1149,6 +1154,8 @@ print_line (elem_t src)
 	printf("%c", src.string[j]);
 	}
       }
+    }
+    printf("\n"); 
     }
   else if (src.type)
     for (i=0; i<src.num; i++)

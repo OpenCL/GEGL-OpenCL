@@ -1,0 +1,163 @@
+%h{
+#include "gegl-dual-src-op.h"
+%}
+%{
+#include "gegl-dark-op.h"
+#include "gegl-dark-op-private.h"
+#include "gegl-dual-src-op-private.h"
+#include "gegl-point-op-private.h"
+#include "gegl-op-private.h"
+#include "gegl-object-private.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-iterator.h"
+#include "gegl-color.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+#include <stdio.h>
+%}
+
+
+class Gegl:Dark:Op from Gegl:Dual:Src:Op {
+
+  public 
+  GeglDarkOp *
+  new (GeglImageBuffer *dest, 
+       GeglImageBuffer *src1,
+       GeglImageBuffer *src2,       
+       GeglRect *dest_rect,
+       GeglRect *src1_rect,
+       GeglRect *src2_rect)
+  {
+    GeglDarkOp * self = GEGL_DARK_OP(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, dest, src1, src2, 
+                     dest_rect, src1_rect, src2_rect))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self, 
+               GeglImageBuffer *dest,
+                    GeglImageBuffer *src1,
+              GeglImageBuffer *src2,
+              GeglRect *dest_rect,
+              GeglRect *src1_rect,
+              GeglRect *src2_rect)        
+  {
+    GeglPointOp *point_op = GEGL_POINT_OP (self);
+    GeglPointOpClass *point_op_class = 
+        GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+    
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+    
+    /* Chain up */
+    if (!gegl_dual_src_op_constructor ( 
+           GEGL_DUAL_SRC_OP(self),dest, src1, src2, 
+           dest_rect, src1_rect, src2_rect))
+      return FALSE;
+
+    {
+      point_op_class->scanline_func = gegl_dark_op_RGB_FLOAT;        
+    }
+
+    return TRUE;
+  }
+
+  private 
+  void
+  RGB_FLOAT (GeglPointOp *point_op)
+  {
+    /*
+      Whats the algorithm for this code?       
+     
+     {
+       int dest_has_alpha; 
+       int src1_has_alpha; 
+       int src2_has_alpha; 
+
+       Chan dest;
+       Chan src1;
+       Chan src2;
+
+       dest = MIN(src1, src2);
+       if (dest_has_alpha)
+         {
+           if (src1_has_alpha && src2_has_alpha)
+             dest_a = MIN(src1_a, src2_a);
+           else if (src1_has_alpha)
+             dest_a = src1_a;
+           else if (src2_has_alpha)
+             dest_a = src2_a; 
+         } 
+     }
+
+    */ 
+    GeglPointOpPrivate *point_opP = 
+        (GeglPointOpPrivate *)(point_op->_priv); 
+    GeglDualSrcOp *dual_src_op = GEGL_DUAL_SRC_OP(point_op); 
+    GeglDualSrcOpPrivate *dual_src_opP = 
+        (GeglDualSrcOpPrivate *)(dual_src_op->_priv); 
+
+    gboolean dest_has_alpha = 
+       gegl_color_model_has_alpha(dual_src_opP->dest_cm); 
+    gboolean src1_has_alpha = 
+       gegl_color_model_has_alpha(dual_src_opP->src1_cm); 
+    gboolean src2_has_alpha = 
+       gegl_color_model_has_alpha(dual_src_opP->src2_cm); 
+
+
+    GENERIC_IMAGE_DECL_BEGIN
+    int width;
+    VectorChan dest(color,alpha,has_alpha);
+    VectorChan src1(color,alpha,has_alpha);
+    VectorChan src2(color,alpha,has_alpha);
+    GENERIC_IMAGE_DECL_END
+    
+    width = point_opP->scanline_width;
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[0], 
+                      (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[1],
+                      (guchar**)src1_data);
+    gegl_image_iterator_get_scanline_data ( 
+                      point_opP->iterators[2],
+                      (guchar**)src2_data); 
+    
+
+    GENERIC_IMAGE_IMAGE_DATA_INIT
+      
+    GENERIC_IMAGE_BLOCK_BEGIN
+    while (width--)
+      {
+      dest_color = MIN(src1_color, src2_color);
+      if (dest_has_alpha)
+	{
+	if (src1_has_alpha && src2_has_alpha)
+       	  {
+     	  dest_alpha = MIN(src1_alpha, src2_alpha);
+    	  }       
+   	else if (src1_has_alpha)
+	  {
+  	  dest_alpha = src1_alpha;
+	  }
+ 	else if (src2_has_alpha)
+	  {
+	  dest_alpha = src2_alpha;
+	  } 
+  	} 
+  
+      dX(dest,1);
+      dX(src1,1);
+      dX(src2,1);
+    }               
+  }
+}

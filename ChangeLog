@@ -1,3 +1,28 @@
+Fri Mar 24 18:13:39 PST 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* added a lot of .gil test files:
+		gegl-composite-op.gil
+		gegl-composite-premult-op.gil
+		gegl-dark-op.gil
+		gegl-diff-op.gil 
+		gegl-light-op.gil 
+		gegl-max-op.gil 
+		gegl-min-op.gil     
+		gegl-premult-op.gil 
+		gegl-screen-op.gil   
+		gegl-unpremult-op.gil   
+
+	* codegen/parser.y fixed the problem of adding * for the
+	dX functions.
+
+	* codegen/parser.y added a new line after each vectorchan
+	in image data init
+
+	* added a new line after each expantion of a vectorchan
+
+
 Fri Mar 24 11:36:55 EST 2000 calvinw@mindspring.com 
 	
 	* codegen/test_files Updated most of the test_files
