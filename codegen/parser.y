@@ -14,7 +14,7 @@ void print_value (elem_t *dest, elem_t src);
 void print_name (elem_t *dest, elem_t src, TYPE_DECL is_define);
 void print_pixel_variable (elem_t *dest, elem_t src, char *string); 
 void print_line (elem_t src);
-void print (char *string, char *template, char **varible, int num);
+void print_with_template (char *string, char *template, char **varible, int num);
 void set_dtype (elem_t e, DATA_TYPE dtype);
 void set_svtype (elem_t e, SV_TYPE svtype);
 void set_num (elem_t e, int n);
@@ -220,6 +220,9 @@ DT_Line:
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
 
+		while ($5.string[i] == '\t' || $5.string[i] == ' ')
+		  i++;
+		
 		for(i=i; i<len; i++)
 		  {
 		  loop1:
@@ -263,15 +266,17 @@ DT_Line:
 		}
 	| DT_WP_CLAMP LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
-		int i=0, j=0, len, sublen, flag;
+		int i=0, j=0, len, sublen;
 		char tmp[255];
 		char sub[255];
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
 
+		while ($5.string[i] == '\t' || $5.string[i] == ' ')
+		  i++;
+		
 		for(i=i; i<len; i++)
 		  {
-		  flag = 0;
 		  
 		  loop2:
 		 
@@ -289,19 +294,23 @@ DT_Line:
 
 		  if (i<=len-sublen)
 		    { 
-		    strncpy (sub, &($5.string[i]), sublen); 
-		    flag = 1;
-		    }
-		  if (flag && !strcmp ($3.string, sub))
-		    {
-		    strcpy (&(tmp[j]), "$1");
-		    i += sublen-1;
-		    j += 2; 
+		      strncpy (sub, &($5.string[i]), sublen); 
+		      if (!strcmp ($3.string, sub))
+			{
+			  strcpy (&(tmp[j]), "$1");
+			  i += sublen-1;
+			  j += 2; 
+			}
+		      else
+			{
+			  tmp[j] = (char) ($5.string[i]);
+			  j++;
+			}
 		    }
 		  else
 		    {
-		    tmp[j] = (char) ($5.string[i]); 
-		    j++; 
+		      tmp[j] = (char) ($5.string[i]); 
+		      j++; 
 		    }
 		  }
 		tmp[j] = '\0'; 
@@ -317,6 +326,9 @@ DT_Line:
 		sublen1 = strlen ($3.string);
 		sublen2 = strlen ($5.string);
 
+		while ($7.string[i] == '\t' || $7.string[i] == ' ')
+		  i++;
+		
 		for(i=i; i<len; i++)
 		  {
 		  flag1 = flag2 = 0;
@@ -371,16 +383,17 @@ DT_Line:
 		}
 	| DT_CHANNEL_ROUND LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
-		int i=0, j=0, len, sublen, flag;
+		int i=0, j=0, len, sublen;
 		char tmp[255];
 		char sub[255];
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
+		
+		while ($5.string[i] == '\t' || $5.string[i] == ' ')
+		  i++;
 
 		for(i=i; i<len; i++)
 		  {
-		  flag = 0;
-
 		  loop4:
 		 
 		  if (i<=len-2)
@@ -397,21 +410,25 @@ DT_Line:
 
 		  if (i<=len-sublen)
 		    {
-		    strncpy (sub, &($5.string[i]), sublen); 
-		    flag = 1;
-		    }
-		  
-		  if (flag && !strcmp ($3.string, sub))
-		    {
-		    strcpy (&(tmp[j]), "$1");
-		    i += sublen-1;
-		    j += 2; 
+		      strncpy (sub, &($5.string[i]), sublen); 
+		      if (!strcmp ($3.string, sub))
+			{
+			  strcpy (&(tmp[j]), "$1");
+			  i += sublen-1;
+			  j += 2; 
+			}
+		      else
+			{
+			  tmp[j] = (char) ($5.string[i]); 
+			  j++; 
+			}
 		    }
 		  else
 		    {
-		    tmp[j] = (char) ($5.string[i]); 
-		    j++; 
+		      tmp[j] = (char) ($5.string[i]);
+		      j++;
 		    }
+
 		  }
 		if (tmp[j-1] == '\\') tmp[j-1] = '\0'; 
 		tmp[j] = '\0'; 
@@ -419,16 +436,17 @@ DT_Line:
 		}
 	| DT_PRINT LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
-		int i=0, j=0, len, sublen, flag;
+		int i=0, j=0, len, sublen;
 		char tmp[255];
 		char sub[255];
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
 
+		while ($5.string[i] == '\t' || $5.string[i] == ' ')
+		  i++;
+		
 		for(i=i; i<len; i++)
 		  {
-		  flag = 0;
-
 		  loop5:
 		 
 		  if (i<=len-2)
@@ -445,21 +463,25 @@ DT_Line:
 
 		  if (i<=len-sublen)
 		    {
-		    strncpy (sub, &($5.string[i]), sublen); 
-		    flag = 1;
-		    }
-		  
-		  if (flag && !strcmp ($3.string, sub))
-		    {
-		    strcpy (&(tmp[j]), "$1");
-		    i += sublen-1;
-		    j += 2; 
+		      strncpy (sub, &($5.string[i]), sublen); 
+		      if (!strcmp ($3.string, sub))
+			{
+			  strcpy (&(tmp[j]), "$1");
+			  i += sublen-1;
+			  j += 2; 
+			}
+		      else
+			{
+			  tmp[j] = (char) ($5.string[i]); 
+			  j++; 
+			}
 		    }
 		  else
 		    {
-		    tmp[j] = (char) ($5.string[i]); 
-		    j++; 
+		      tmp[j] = (char) ($5.string[i]);
+		      j++;
 		    }
+
 		  }
 		if (tmp[j-1] == '\\') tmp[j-1] = '\0'; 
 		tmp[j] = '\0'; 
@@ -480,108 +502,108 @@ Line:
 	; 
 	| "\n" 				
 		{ 
-		printf("==>\n"); 
+		  printf("==>\n"); 
 		}
 	| INDENT 
 		{
-		printf("%s ", $1.string); 
+		  printf("%s ", $1.string); 
 		}
 	| INDENT_CURLY
 		{
-		printf("%s", $1.string); 
+		  printf("%s", $1.string); 
 		}
 	| VOID				
 		{ 
-		printf("void "); 
+		  printf("void "); 
 		}
 	| INDENT LT_CURLY			
 		{ 
-		printf("%s{", $1.string); 
+		  printf("%s{", $1.string); 
 		}
 	| INDENT RT_CURLY                      
 		{ 
-		printf("%s}", $1.string); 
+		  printf("%s}", $1.string); 
 		} 
 	| INDENT BREAK ';'  			
 		{ 
-		printf("%sbreak;", $1.string); 
+		  printf("%sbreak;", $1.string); 
 		} 			
 	| INDENT CASE NAME ':'  		
 		{ 
-		printf("%scase %s:", $1.string, $3.string); 
+	 	  printf("%scase %s:", $1.string, $3.string); 
 		}
        	| INDENT DEFAULT ':' 	 		
 		{ 
-		printf("%sdefault:", $1.string); 
+		  printf("%sdefault:", $1.string); 
 		}
 	| INDENT ELSE INDENT_CURLY 				
 		{ 
-		printf("%selse%s", $1.string, $3.string); 
+		  printf("%selse%s", $1.string, $3.string); 
 		}
 	| INDENT FOR LT_PARENTHESIS Expression ';' Expression ';' Expression RT_PARENTHESIS
 		{ 
-		printf("%sfor (%s; %s; %s)", $1.string, $4.string, $6.string, $8.string); 
+		  printf("%sfor (%s; %s; %s)", $1.string, $4.string, $6.string, $8.string); 
 		}
 	| INDENT IF LT_PARENTHESIS Expression RT_PARENTHESIS INDENT_CURLY
                 {
-	        char tmp[256];	
-		sprintf(tmp, "%sif (%s)%s", $1.string, $4.string, $6.string);
-		strcpy ($4.string, tmp);
-		print_line ($4); 
+	          char tmp[256];	
+		  sprintf(tmp, "%sif (%s)%s", $1.string, $4.string, $6.string);
+		  strcpy ($4.string, tmp);
+		  print_line ($4); 
 		}
 	| INDENT ELSE IF LT_PARENTHESIS Expression RT_PARENTHESIS INDENT_CURLY
                 {
-	        char tmp[256]; 	
-		sprintf (tmp, "%selse if (%s)%s", $1.string, $5.string, $7.string); 
-		strcpy ($5.string, tmp);
-		print_line ($5); 
+	          char tmp[256]; 	
+		  sprintf (tmp, "%selse if (%s)%s", $1.string, $5.string, $7.string); 
+		  strcpy ($5.string, tmp);
+		  print_line ($5); 
 		}
  	| INDENT RETURN Expression ';'		
 		{ 
-		printf ("%sreturn (%s);", $1.string, $3.string); 
+		  printf ("%sreturn (%s);", $1.string, $3.string); 
 		}	
 	| INDENT SWITCH LT_PARENTHESIS Expression RT_PARENTHESIS
                 { 
-		char tmp[256];
-		sprintf (tmp, "%sswitch (%s)", $1.string, $4.string); 
-		strcpy ($4.string, tmp);
-		print_line ($4); 
+		  char tmp[256];
+		  sprintf (tmp, "%sswitch (%s)", $1.string, $4.string); 
+		  strcpy ($4.string, tmp);
+		  print_line ($4); 
 		}
 	| INDENT WHILE LT_PARENTHESIS Expression RT_PARENTHESIS INDENT_CURLY
                 { 
-		char tmp[256];
-		sprintf (tmp,"%swhile (%s)%s", $1.string, $4.string, $6.string); 
-		strcpy ($4.string, tmp);
-		print_line ($4);
+		  char tmp[256];
+		  sprintf (tmp,"%swhile (%s)%s", $1.string, $4.string, $6.string); 
+		  strcpy ($4.string, tmp);
+		  print_line ($4);
 		} 	
 	| INDENT WHILE LT_PARENTHESIS Expression RT_PARENTHESIS
                 { 
-		printf("%swhile (%s)%s  {", $1.string, $4.string, $1.string); 
+		  printf("%swhile (%s)%s  {", $1.string, $4.string, $1.string); 
 		} 	
 	| INDENT Definition ';' 		
 		{ 
-		printf("%s%s;", $1.string, $2.string); 
+		  printf("%s%s;", $1.string, $2.string); 
 		} 
 	| INDENT NAME EQUAL Expression ';'  	
 		{
-	        char tmp[256];
-		int i; 
-		elem_t e; 	
-		print_name (&e, $2, NOT_DECL); 
-		do_op_three (&e, e, $4, OP_EQUAL); 
-		if (get_sym ($2.string)->svtype == TYPE_CA_VECTOR ||
-		    get_sym ($2.string)->svtype == TYPE_C_VECTOR ||
-		    get_sym ($2.string)->svtype == TYPE_C_A_VECTOR) 
-		  {
-		  sprintf(tmp, "*%s", e.string); 
-		  strcpy(e.string, tmp); 
-		  }
-		sprintf (tmp, "%s%s;", $1.string, e.string);   
-		strcpy (e.string, tmp); 
-		print_line (e);
-	           
-	 	if (get_sym ($2.string)->svtype == TYPE_C_A_VECTOR && 
-		  !strcmp (get_sym ($2.string)->string, $2.string))
+		  char tmp[256];
+		  int i; 
+		  elem_t e; 	
+		  print_name (&e, $2, NOT_DECL); 
+		  do_op_three (&e, e, $4, OP_EQUAL); 
+		  if (get_sym ($2.string)->svtype == TYPE_CA_VECTOR ||
+		      get_sym ($2.string)->svtype == TYPE_C_VECTOR ||
+		      get_sym ($2.string)->svtype == TYPE_C_A_VECTOR) 
+		    {
+		      sprintf(tmp, "*%s", e.string); 
+		      strcpy(e.string, tmp); 
+		    }
+		  sprintf (tmp, "%s%s;", $1.string, e.string);   
+		  strcpy (e.string, tmp); 
+		  print_line (e);
+
+		  if (get_sym ($2.string)->svtype == TYPE_C_A_VECTOR && 
+		      !strcmp (get_sym ($2.string)->string, $2.string))
 		    {
 		      i = strlen (tmp);
 		      while (i != 1)
@@ -595,150 +617,78 @@ Line:
 		      e.num = 1;
 		      print_line (e);
 		    }
-		
-		} 
-	| INDENT NAME PLUS_EQUAL Expression ';'  	
-		{ 
-	        char tmp[256];
-		elem_t e; 	
-		print_name (&e, $2, NOT_DECL); 
-		if (get_sym ($2.string)->svtype == TYPE_CA_VECTOR ||
-		    get_sym ($2.string)->svtype == TYPE_C_VECTOR ||
-		    get_sym ($2.string)->svtype == TYPE_C_A_VECTOR) 
-		  {
-		  sprintf(tmp, "*%s", e.string); 
-		  strcpy(e.string, tmp); 
-		  }
-		do_op_three (&$2, e, $4, OP_PLUS); 
-		do_op_three (&e, e, $2, OP_EQUAL); 
-		sprintf (tmp, "%s%s;", $1.string, e.string);   
-		strcpy ($2.string, tmp); 
-		print_line ($2); 
-		} 
-	| INDENT NAME MINUS_EQUAL Expression ';'  	
-		{ 
-	        char tmp[256];
-		elem_t e; 	
-		print_name (&e, $2, NOT_DECL); 
-		if (get_sym ($2.string)->svtype == TYPE_CA_VECTOR ||
-		    get_sym ($2.string)->svtype == TYPE_C_VECTOR ||
-		    get_sym ($2.string)->svtype == TYPE_C_A_VECTOR) 
-		  {
-		  sprintf(tmp, "*%s", e.string); 
-		  strcpy(e.string, tmp); 
-		  }
-		do_op_three (&$2, e, $4, OP_PLUS); 
-		do_op_three (&e, e, $2, OP_EQUAL); 
-		sprintf (tmp, "%s%s;", $1.string, e.string);   
-		strcpy ($2.string, tmp); 
-		print_line ($2); 
-		} 
-	| INDENT NAME TIMES_EQUAL Expression ';'  	
-		{ 
-	        char tmp[256];
-		elem_t e; 	
-		print_name (&e, $2, NOT_DECL); 
-		if (get_sym ($2.string)->svtype == TYPE_CA_VECTOR ||
-		    get_sym ($2.string)->svtype == TYPE_C_VECTOR ||
-		    get_sym ($2.string)->svtype == TYPE_C_A_VECTOR) 
-		  {
-		  sprintf(tmp, "*%s", e.string); 
-		  strcpy(e.string, tmp); 
-		  }
-		do_op_three (&$2, e, $4, OP_PLUS); 
-		do_op_three (&e, e, $2, OP_EQUAL); 
-		sprintf (tmp, "%s%s;", $1.string, e.string);   
-		strcpy ($2.string, tmp); 
-		print_line ($2); 
-		} 
-	| INDENT NAME DIVIDE_EQUAL Expression ';'  	
-		{ 
-	        char tmp[256];
-		elem_t e; 	
-		print_name (&e, $2, NOT_DECL); 
-		if (get_sym ($2.string)->svtype == TYPE_CA_VECTOR ||
-		    get_sym ($2.string)->svtype == TYPE_C_VECTOR ||
-		    get_sym ($2.string)->svtype == TYPE_C_A_VECTOR) 
-		  {
-		  sprintf(tmp, "*%s", e.string); 
-		  strcpy(e.string, tmp); 
-		  }
-		do_op_three (&$2, e, $4, OP_PLUS); 
-		do_op_three (&e, e, $2, OP_EQUAL); 
-		sprintf (tmp, "%s%s;", $1.string, e.string);   
-		strcpy ($2.string, tmp); 
-		print_line ($2); 
+
 		} 
 	| INDENT Expression ';'   		
 		{
-	        char tmp[256];	
-		sprintf (tmp, "%s%s;", $1.string, $2.string);   
-	 	strcpy ($2.string, tmp); 	
-		print_line($2); 
+		  char tmp[256];	
+		  sprintf (tmp, "%s%s;", $1.string, $2.string);   
+		  strcpy ($2.string, tmp); 	
+		  print_line($2); 
 		}
 	| INDENT ITERATOR_X LT_PARENTHESIS NAME ',' INT RT_PARENTHESIS ';'
 		{
-		char tmp[256];
-		if (!strcmp($6.string, "1"))
-		  {
-		  if (get_sym ($4.string)->svtype == TYPE_C_A_VECTOR)
+		  char tmp[256];
+		  if (!strcmp($6.string, "1"))
 		    {
-		    char t[20];
-		    strcpy (t, $4.string);  
-		    sprintf (tmp, "%s%s$c++;", $1.string, $4.string);  
-		    strcpy ($4.string, tmp);
-		    print_line($4);
-		    printf ("%sif (%s_has_%s)%s  %s_%s++;", $1.string, t,
-			NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
-			$1.string, t,
-			NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
-		    printf ("\n"); 
+		      if (get_sym ($4.string)->svtype == TYPE_C_A_VECTOR)
+			{
+			  char t[20];
+			  strcpy (t, $4.string);  
+			  sprintf (tmp, "%s%s$c++;", $1.string, $4.string);  
+			  strcpy ($4.string, tmp);
+			  print_line($4);
+			  printf ("%sif (%s_has_%s)%s  %s_%s++;", $1.string, t,
+			      NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
+			      $1.string, t,
+			      NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);
+			  printf ("\n"); 
+			}
+		      else if (get_sym ($4.string)->svtype == TYPE_CA_VECTOR)
+			{
+			  sprintf (tmp, "%s%s$ca++;", $1.string, $4.string);  
+			  strcpy ($4.string, tmp);
+			  print_line($4); 
+			  printf ("\n"); 
+			}
+		      else
+			{
+			  sprintf (tmp, "%s%s$c++;", $1.string, $4.string);
+			  strcpy ($4.string, tmp);
+			  print_line($4); 
+			  printf ("\n");  
+			}
 		    }
-		  else if (get_sym ($4.string)->svtype == TYPE_CA_VECTOR)
-		    {
-		    sprintf (tmp, "%s%s$ca++;", $1.string, $4.string);  
-		    strcpy ($4.string, tmp);
-		    print_line($4); 
-		    printf ("\n"); 
-		    }
-		  else
-                    {
-		    sprintf (tmp, "%s%s$c++;", $1.string, $4.string);
-		    strcpy ($4.string, tmp);
-		    print_line($4); 
-		    printf ("\n");  
-		    }
-		  }
 		  else
 		    { 
-		    if (get_sym ($4.string)->svtype == TYPE_C_A_VECTOR)
-		      {
-		      char t[20];
-		      strcpy (t, $4.string);  
-		      sprintf (tmp, "%s%s%s$c += %s;", $1.string, $4.string, $6.string); 
-		      strcpy ($4.string, tmp);
-		      print_line($4); 
-		      printf ("%sif (%s_has_%s)%s  %s_%s += %s;", $1.string, t,
-			 NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL], 
-			 $1.string, t,  
-			 NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
-			 $6.string);
-		      printf ("\n"); 
-		      }
-		    else if (get_sym ($4.string)->svtype == TYPE_CA_VECTOR)
-		      {
-		      sprintf (tmp, "%s%s$ca += %s;", $1.string, $4.string, $6.string); 
-		      strcpy ($4.string, tmp);
-		      print_line($4); 
-		      printf ("\n"); 
-		      }
-		    else
-		      {
-		      sprintf (tmp, "%s%s$c += %s;", $1.string, $4.string, $6.string); 
-		      strcpy ($4.string, tmp);
-		      print_line($4); 
-		      printf ("\n"); 
-                      } 
+		      if (get_sym ($4.string)->svtype == TYPE_C_A_VECTOR)
+			{
+			  char t[20];
+			  strcpy (t, $4.string);  
+			  sprintf (tmp, "%s%s%s$c += %s;", $1.string, $4.string, $6.string); 
+			  strcpy ($4.string, tmp);
+			  print_line($4); 
+			  printf ("%sif (%s_has_%s)%s  %s_%s += %s;", $1.string, t,
+			      NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL], 
+			      $1.string, t,  
+			      NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL],
+			      $6.string);
+			  printf ("\n"); 
+			}
+		      else if (get_sym ($4.string)->svtype == TYPE_CA_VECTOR)
+			{
+			  sprintf (tmp, "%s%s$ca += %s;", $1.string, $4.string, $6.string); 
+			  strcpy ($4.string, tmp);
+			  print_line($4); 
+			  printf ("\n"); 
+			}
+		      else
+			{
+			  sprintf (tmp, "%s%s$c += %s;", $1.string, $4.string, $6.string); 
+			  strcpy ($4.string, tmp);
+			  print_line($4); 
+			  printf ("\n"); 
+			} 
 		    }
 		}
 	| INDENT ITERATOR_X LT_PARENTHESIS NAME ',' NAME RT_PARENTHESIS ';'
@@ -826,7 +776,7 @@ Line:
 		      strcpy ($4.string, tmp);
 		    }
 		  t[0] = $4.string;
-		  print (tmp, PRINT_STR, t, 1);
+		  print_with_template (tmp, PRINT_STR, t, 1);
 		  sprintf ($4.string, "%s%s;", $1.string, tmp);
 		  print_line ($4);
 		  if (get_sym (t2)->svtype == TYPE_C_A_VECTOR)
@@ -839,7 +789,7 @@ Line:
 		      else
 			sprintf (tmp, "%s$a", t2);
 		      t[0] = tmp;
-		      print (t2, PRINT_STR, t, 1);
+		      print_with_template (t2, PRINT_STR, t, 1);
 		      sprintf ($4.string, "%s;", t2);
 		      $4.num = 1;
 		      print_line ($4);
@@ -1244,7 +1194,7 @@ init_image_data (char *indent)
   /* go through all the symbols find all the pixel variables */
   for (i=0; i<cur_nsyms; i++)
     {
-      if (symtab[i].inited)
+      if (!symtab[i].inited)
 	switch (symtab[i].svtype)
 	  {
 	  case TYPE_CA_VECTOR:
@@ -1276,7 +1226,6 @@ init_image_data (char *indent)
 	    printf ("\n"); 
 	    break;
 	  default:
-	    exit (1);
 	    break; 
 	  }
     }
@@ -1379,13 +1328,13 @@ print_name (elem_t *dest, elem_t src, TYPE_DECL is_decl)
 	sprintf (tmp, "%s", src.string);
     }
 
-  dest->dtype = src.dtype;
-  dest->svtype  = src.svtype;
   if(is_decl == DECL)
     {
       dest->inited = 0;
       dest->num   = src.num;
     }  
+  dest->dtype = src.dtype;
+  dest->svtype  = src.svtype;
   strcpy (dest->string, tmp);
 }
 
@@ -1552,13 +1501,13 @@ print_value (elem_t *dest, elem_t src)
 }
 
 void
-print (char *string, char *template, char *varible[], int num)
+print_with_template (char *string, char *template, char *varible[], int num)
 {
 
   int i, j=0, k, len, *len_varible;
   len = strlen (template);
 
-  len_varible = (int*) malloc (sizeof(int)*num);
+  len_varible = (int*) malloc (sizeof (int) * num);
 
   for (i=0; i<num; i++)
     {
@@ -1596,11 +1545,11 @@ do_op_two (elem_t *dest, elem_t src, FUNCTION op)
       break;
     case OP_CHANNEL_CLAMP:
       t[0] = src.string; 
-      print (tmp, CHANNEL_CLAMP_STR, t, 1); 
+      print_with_template (tmp, CHANNEL_CLAMP_STR, t, 1); 
       break; 
     case OP_WP_CLAMP:
       t[0] = src.string; 
-      print (tmp, WP_CLAMP_STR, t, 1); 
+      print_with_template (tmp, WP_CLAMP_STR, t, 1); 
       break;
     default:
       break; 
@@ -1656,7 +1605,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	    {	
 	      t[0] = src1.string;
 	      t[1] = src2.string;
-	      print (tmp, CHANNEL_MULT_STR, t, 2); 
+	      print_with_template (tmp, CHANNEL_MULT_STR, t, 2); 
 	    }
 	  else
 	    sprintf (tmp, "%s * %s", src1.string, src2.string);
@@ -1748,7 +1697,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      break;
 	    case TYPE_FLOAT:
 	      t[0] = src2.string;
-	      print (tmp, CHANNEL_ROUND_STR, t, 1); 
+	      print_with_template (tmp, CHANNEL_ROUND_STR, t, 1); 
 	      strcpy (dest->string, tmp);
 	      sprintf (tmp, "%s = %s", src1.string, dest->string);
 	      break;
@@ -1757,7 +1706,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      break;
 	    case TYPE_CHANNELFLOAT:
 	      t[0] = src2.string;
-	      print (tmp, CHANNEL_ROUND_STR, t, 1); 
+	      print_with_template (tmp, CHANNEL_ROUND_STR, t, 1); 
 	      strcpy (dest->string, tmp);
 	      sprintf (tmp, "%s = %s", src1.string, dest->string);
 	      break;
