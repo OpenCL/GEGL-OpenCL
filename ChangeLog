@@ -1,3 +1,12 @@
+2003-12-06 19:27 Daniel Rogers <daniel@phasevelocity.org>
+	* gegl/image/gegl-buffer.c
+	* gegl/image/gegl-cache-entry.c
+	* gegl/image/gegl-cache-entry.h
+	* gegl/image/gegl-cache.h
+	This fixes some bugs with the proposed cache api and provides a
+	lot of documentation on the object.  It documents the contracts
+	any implementation of GeglCache should follow.
+	
 2003-12-06 12:26 Daniel Rogers <daniel@phasevelocity.org>
 	* gegl/image/Makefile.am
 	* gegl/image/gegl-buffer-double.c

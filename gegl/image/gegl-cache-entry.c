@@ -56,8 +56,7 @@ instance_init(GTypeInstance *instance,
 	      gpointer g_class)
 {
   GeglCacheEntry *self = GEGL_CACHE_ENTRY(instance);
-  self->hash_code=0;
-  self->entry_id=0;
+  self->cache_hints=NULL;
 }
 
 gsize

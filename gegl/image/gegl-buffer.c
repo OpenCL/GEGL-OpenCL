@@ -160,8 +160,6 @@ cache_entry_init (GTypeInstance *instance,
 {
   GeglBufferCacheEntry * self = GEGL_BUFFER_CACHE_ENTRY(instance);
   GeglCacheEntry * entry = GEGL_CACHE_ENTRY(instance);
-  entry->hash_code=0;
-  entry->entry_id=0;
   self->banks=NULL;
   self->num_banks=0;
   self->bank_length=0;
@@ -208,7 +206,6 @@ cache_entry_new (GeglBuffer* buffer) {
   entry->banks=buffer->banks;
   entry->num_banks=buffer->num_banks;
   entry->bank_length=(buffer->elements_per_bank)*(buffer->bytes_per_element);
-  cache_entry->hash_code=GPOINTER_TO_INT(buffer);
   return entry;
 }
 

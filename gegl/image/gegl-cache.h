@@ -22,7 +22,6 @@
 #ifndef GEGL_CACHE_H
 #define GEGL_CACHE_H
 
-#include "gegl-buffer.h"
 #include "gegl-cache-entry.h"
 
 #define GEGL_TYPE_CACHE               (gegl_cache_get_type ())
@@ -41,34 +40,145 @@ struct _GeglCache
   gboolean persistent;
   gsize soft_limit;
   gsize hard_limit;
-  struct _GeglCache* next_cache;
 };
 
 typedef struct _GeglCacheClass GeglCacheClass;
 struct _GeglCacheClass
 {
   GObjectClass parent_class;
+  gboolean (*try_put) (GeglCache * cache,
+		       GeglCacheEntry * entry,
+		       gsize * entry_id);
+  gsize (*put) (GeglCache * cache,
+		gsize * entry_id,
+		GeglCacheEntry * entry);
+  gint (*fetch) (GeglCache * cache,
+		 gsize entry_id,
+		 GeglCacheEntry ** entry);
+  void (*mark_as_dirty) (GeglCache * cache,
+			 gsize entry_id);
+  void (*flush) (GeglCache * cache,
+		 gsize entry_id);
+  /* Chain up on set_soft_limit and set_hard_limit. */
+  void (*set_soft_limit) (GeglCache * cache);
+  void (*set_hard_limit) (GeglCache * cache);
 };
 
 enum GeglFetchResults {
   GEGL_FETCH_SUCCEEDED,
+  GEGL_FETCH_EXPIRED,
   GEGL_FETCH_NO_EXIST,
 };
 
+enum GeglPutResults {
+  GEGL_PUT_SUCCEEDED,
+  GEGL_PUT_EXISTS,
+  GEGL_PUT_WOULD_BLOCK,
+};
+/*
+ * Instantiate a new cache.  If a cache is persistent then you are
+ * always gaurenteed to be able to retrieve a tile you put in.
+ * 
+ * soft_limit is the limit which, when exceeded, may cause the cache
+ * to begin expiring tiles without blocking.  This may do other things
+ * as well, like compressing tiles, expiring old, non-dirty, still in
+ * use tiles or generally any operation appropiate for an almost full
+ * cache.
+ *
+ * hard_limit is the limit which the cache may not exceed.  Any
+ * attempt to exceed this limit will cause put() to block until
+ * put()ing the new tile will not exceed hard_limit.  If the cache is
+ * persistent, then this may block forever.  If the cache is not
+ * persistent then this should force an immediate (and possibly
+ * time-expensive) expiring of tiles from the cache.
+ *
+ * Both hard_limit or soft_limit may be set to zero, in which case one
+ * or the other is ignored.  If hard_limit and soft_limit are both
+ * zero the cache should be effectively unlimited.  Whether or not it
+ * is should depend on the details of the cache and the physical
+ * limits of the hardware invovled.  (this means that unlimited caches
+ * can potentially recover from out of memory errors by gracefully
+ * expiring entries, or blocking on put).
+ */
 GeglCache *gegl_cache_new (gsize soft_limit,
 			   gsize hard_limit,
 			   gboolean persistent);
+/*
+ * This is the same as put, except will returns GEGL_PUT_WOULD_BLOCK
+ * if the put operation would have blocked
+ */
 gboolean gegl_cache_try_put (GeglCache * cache,
 			     GeglCacheEntry * entry,
 			     gsize * entry_id);
-
+/*
+ * This tries puts an entry into the cache.  The first time an entry
+ * is placed into a cache, *entry_id should be 0.  If put succeeds,
+ * then entry_id will point to the entry_id for this entry.  The
+ * entry_id is used to refer to all future operations regarding this
+ * entry. gegl_cache_put returns an enum GeglPutResults that describes
+ * the result of this operation.
+ *
+ * Once you put an entry into the cache, you should call
+ * g_object_unref().  You must not dereference an entry yourself after
+ * it is put into the cache.
+ *
+ * After an entry is fetch'ed, the cache may keep around stale copies
+ * of this entry if it is reasonable for the cache to do so.  As such,
+ * all subsequent put()s of the same entry should reuse the same
+ * entry_id.
+ *
+ * If someone tries to put() with an entry_id that is already in the
+ * cache, then put() will return GEGL_PUT_EXISTS and fail to put the
+ * entry into the cache.  This indicates a bug, and should not be used
+ * to pick an entry_id.
+ *
+ * Also, don't put the same entry into more than one cache.  That
+ * would be silly
+ */
 gint gegl_cache_put (GeglCache * cache,
-		     GeglCacheEntry * entry,
-		     gsize * entry_id);
-
+		     gsize * entry_id,
+		     GeglCacheEntry * entry);
+/*
+ * This attempts to fetch an entry from the cache.  entry_id is the
+ * entry_id that was assigned by put().  If the entry has been expired
+ * from the cache and no longer exists in any useable form, then this
+ * will return GEGL_FETCH_EXPIRED.  If the entry doesn't exist in the
+ * cache at all, then this will return GEGL_NO_EXIST.  This probably
+ * indicates a bug.
+ *
+ * There is no need to call g_object_ref() after calling fetch(),
+ * fetch() will do this for you.
+ *
+ */
 gint gegl_cache_fetch (GeglCache * cache,
-		       gsize * entry_id,
+		       gsize entry_id,
 		       GeglCacheEntry ** entry);
-void gegl_cache_mark_as_dirty (GeglCache * cache, gsize * entry_id);
+/*
+ * Use mark_as_dirty to indicate that the cache should discard any
+ * saved state (like on-disk representations) assocated with entry_id.
+ * Always call mark_as_dirty() if you modify and entry _before_ you
+ * put it back into a cache.
+ *
+ * You should only mark something as dirty if it has been put() into
+ * the cache previously (thus entry_id is a valid id), has been pulled
+ * from the cache with fetch(), and the id has not been flush()ed.
+ */
+void gegl_cache_mark_as_dirty (GeglCache * cache, gsize entry_id);
+/*
+ * flush() will cause entry_id to be invalidated, allowing it to be
+ * potentially reassigned to another Entry as well as causing any
+ * stored state associated with that entry_id to be freed.  Always
+ * call this when you are done entirely with an entry.  If you do try
+ * and put an entry back into this cache, you must let put() reassign
+ * a new entry_id by initalizing the entry_id passed to put() to zero.
+ *
+ * Once flush() is called, any fetch()es called with the same entry_id
+ * will fail with GEGL_FETCH_NO_EXIST, unless the entry_id has been
+ * reassigned, in which case the results would be even worse.
+ */
+void gegl_cache_flush (GeglCache * cache,
+		       gsize entry_id);
+
+
 
 #endif

@@ -47,11 +47,8 @@ typedef struct _GeglCacheEntry GeglCacheEntry;
 struct _GeglCacheEntry
 {
   GeglObject object;
-  gsize hash_code;
-  /* entry_id is the id number used to retrieve and manipulate this
-   * object while in the cache.
-   */
-  gsize entry_id;
+  /* a hint for the future */
+  GHashTable* cache_hints;
 };
 
 typedef struct _GeglCacheEntryClass GeglCacheEntryClass;
