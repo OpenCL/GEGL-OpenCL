@@ -68,6 +68,7 @@ int     cur_nsyms=0;
 %union
 {
   elem_t  elem;
+  token_t tok;
 }
 
 
@@ -81,7 +82,9 @@ int     cur_nsyms=0;
 %token  <elem> INDENT
 %token  <elem> POUND
 %token  <elem> INDENT_CURLY  
-
+%token  <tok>  COMPARE 
+%token  <tok>  MIN_MAX
+%token  <tok>  ADD_SUB
 /* keywords */
 %token	BOOLEAN BREAK  CASE  CHAR CONST  CONTINUE  DEFAULT  DO	
 %token 	ELSE  FLOAT FOR GOTO 
@@ -112,7 +115,6 @@ int     cur_nsyms=0;
 %type   <elem> Float_List
 %type   <elem> Chan_List
 %type   <elem> VectorChan_List
-%type   <elem> PoundInclDef
 %type	<elem> Star 
 %type	<elem> Star2  
 
@@ -142,10 +144,6 @@ Line:
 	| VOID				
 		{ 
 		printf("void "); 
-		}
-	| POUND PoundInclDef 		
-		{ 
-		printf("#%s ", $2.string); 
 		}
 	| INDENT LT_CURLY			
 		{ 
@@ -324,24 +322,6 @@ Line:
 	;
 
 	
-PoundInclDef:
-	  INCLUDE '"' NAME '.' NAME '"' 
-		{ 
-		char tmp[256]; 
-		$$=$3; 
-		sprintf (tmp,"include \"%s.%s\" ", $3.string, 
-	      	$5.string);
-                strcpy($$.string, tmp); 
-		}
-	| INCLUDE '<' NAME '.' NAME '>' 
-		{ 
-		char tmp[256]; 
-		$$=$3; 
-		sprintf (tmp,"include <%s.%s> ", $3.string, $5.string);
-	        strcpy($$.string, tmp); 
-		}
-	;
-
 Expression:
 	  Expression PLUS Expression	
 		{ 
@@ -363,16 +343,13 @@ Expression:
 		$$=$1; 
 		do_op_three (&$$, $1, $3, OP_DIVIDE); 
 		} 	 
-	| Expression AND Expression  	
+	| Expression COMPARE Expression  	
 		{ 
-		$$=$1; 
-		do_op_three (&$$, $1, $3, OP_AND); 
+		char tmp[256]; 
+		$$=$3; 
+		sprintf (tmp,"%s %s %s", $1.string, $2.string, $3.string);
+                strcpy($$.string, tmp); 
 		} 	 
-	| Expression OR Expression  	
-		{ 
-		$$=$1; 
-		do_op_three (&$$, $1, $3, OP_OR); 
-		}
 	| MINUS Expression %prec NEG	
 		{ 
 		$$=$2; 
@@ -380,8 +357,10 @@ Expression:
 		} 
 	| LT_PARENTHESIS Expression RT_PARENTHESIS
 		{ 
+	        char tmp[256];	
 		$$=$2; 
-		do_op_two (&$$, $2, OP_PARENTHESIS);
+		sprintf (tmp,"(%s)", $2.string);
+		strcpy($$.string, tmp);
 		} 
 	| WP_CLAMP LT_PARENTHESIS Expression RT_PARENTHESIS
 		{ 
@@ -393,62 +372,19 @@ Expression:
 		$$=$3; 
 		do_op_two (&$$, $3, OP_CHAN_CLAMP); 
 		} 
-	| MIN LT_PARENTHESIS Expression ',' Expression RT_PARENTHESIS
-                { 
-		$$=$3; 
-		do_op_three (&$$, $3, $5, OP_MIN); 
-		}
-	| MAX LT_PARENTHESIS Expression ',' Expression RT_PARENTHESIS
-                { 
-		$$=$3; 
-		do_op_three (&$$, $3, $5, OP_MAX); 
-		}
 	| ABS LT_PARENTHESIS Expression RT_PARENTHESIS
-                { 
+                {
+	        char tmp[256];	
 		$$=$3; 
-		do_op_two (&$$, $3, OP_ABS); 
+		sprintf (tmp,"ABS (%s)", $3.string);
+		strcpy($$.string, tmp);
 		} 
-	| Expression EQ Expression	
-		{ 
+	| MIN_MAX LT_PARENTHESIS Expression ',' Expression RT_PARENTHESIS
+                { 
 		char tmp[256]; 
 		$$=$3; 
-		sprintf (tmp,"%s == %s", $1.string, $3.string);
-                strcpy($$.string, tmp); 
-		}
-	| Expression NOT_EQ Expression	
-		{ 
-		char tmp[256]; 
-		$$=$3; 
-		sprintf (tmp,"%s != %s", $1.string, $3.string); 
+		sprintf (tmp,"%s (%s,%s)", $1.string, $3.string, $5.string);
 	        strcpy($$.string, tmp); 
-		}
-	| Expression SMALLER Expression	
-		{ 
-		char tmp[256]; 
-		$$=$3; 
-		sprintf (tmp,"%s < %s", $1.string, $3.string); 
-                strcpy($$.string, tmp); 
-		}
-	| Expression GREATER Expression	
-		{ 
-		char tmp[256]; 
-		$$=$3; 
-		sprintf (tmp,"%s > %s", $1.string, $3.string); 
-	        strcpy($$.string, tmp); 
-		}
-	| Expression SMALLER_EQ Expression	
-		{ 
-		char tmp[256]; 
-		$$=$3; 
-		sprintf (tmp,"%s <= %s", $1.string, $3.string); 
-	  	strcpy($$.string, tmp); 
-		}
-	| Expression GREATER_EQ Expression	
-		{ 
-		char tmp[256]; 
-		$$=$3; 
-		sprintf (tmp,"%s >= %s", $1.string, $3.string);
-	        strcpy($$.string, tmp);	
 		}
 	| NOT Expression		
 		{ 
@@ -457,19 +393,12 @@ Expression:
 		sprintf (tmp,"!%s", $2.string);
 	        strcpy($$.string, tmp); 
 		}
-	| Expression ADD		
+	| Expression ADD_SUB		
 		{ 
 		char tmp[256];
 	        $$=$1;
-	        sprintf (tmp,"%s++", $1.string);
+	        sprintf (tmp,"%s%s", $1.string,$2.string);
 	        strcpy($$.string, tmp);
-		} 
-	| Expression SUBTRACT		
-		{ 
-		char tmp[256]; 
-		$$=$1; 
-		sprintf (tmp,"%s--", $1.string);
-	        strcpy($$.string, tmp); 
 		} 
 	| Star NAME				
 		{ 
@@ -1008,12 +937,6 @@ do_op_two (elem_t *dest, elem_t src, FUNCTION op)
   case OP_WP_CLAMP:
     sprintf (tmp, "%s%s%s", WP_CLAMP_PRE, src.string, WP_CLAMP_SUF);
     break;
-  case OP_PARENTHESIS:
-    sprintf (tmp, "(%s)", src.string);
-    break;
-  case OP_ABS:
-    sprintf (tmp, "ABS (%s)", src.string);
-    break;
   default:
     break; 
   }
@@ -1080,18 +1003,6 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	else
 	  sprintf (tmp, "%s / %s", src1.string, src2.string);
 	}
-      break;
-    case OP_AND:
-      sprintf (tmp, "%s && %s", src1.string, src2.string);
-      break;
-    case OP_OR:
-      sprintf (tmp, "%s || %s", src1.string, src2.string);
-      break;
-    case OP_MIN:
-      sprintf (tmp, "MIN (%s,%s)", src1.string, src2.string);
-      break;
-    case OP_MAX:
-      sprintf (tmp, "MAX (%s,%s)", src1.string, src2.string);
       break;
     case OP_EQUAL:
   	
@@ -1394,7 +1305,11 @@ read_data_types (char *filename)
       {
       int i = 0; 
       while ((value[i] = (char) fgetc (file)) != '\n')
-	i++;
+	{
+	if (value[i] != '\t')
+	  i++;
+	}
+      value[i] = '\0'; 
       if (value[0] == '"' && value[1] == '"')
         CHAN_CLAMP_PRE = (char *) strdup ("");
       else
@@ -1404,7 +1319,11 @@ read_data_types (char *filename)
       {
       int i = 0; 
       while ((value[i] = (char) fgetc (file)) != '\n')
-	i++;
+	{
+	if (value[i] != '\t')
+	  i++;
+	}
+      value[i] = '\0'; 
       if (value[0] == '"' && value[1] == '"')
         CHAN_CLAMP_SUF = (char *) strdup ("");
       else
@@ -1414,7 +1333,11 @@ read_data_types (char *filename)
       {
       int i = 0; 
       while ((value[i] = (char) fgetc (file)) != '\n')
-	i++;
+	{
+	if (value[i] != '\t')
+	  i++;
+	}
+      value[i] = '\0'; 
       if (value[0] == '"' && value[1] == '"')
         WP_CLAMP_PRE = (char *) strdup ("");
       else
@@ -1424,7 +1347,11 @@ read_data_types (char *filename)
       {
       int i = 0; 
       while ((value[i] = (char) fgetc (file)) != '\n')
-	i++;
+	{
+	if (value[i] != '\t')
+	  i++;
+	}
+      value[i] = '\0'; 
       if (value[0] == '"' && value[1] == '"')
         WP_CLAMP_SUF = (char *) strdup ("");
       else
@@ -1448,7 +1375,11 @@ read_data_types (char *filename)
       {
       int i = 0; 
       while ((value[i] = (char) fgetc (file)) != '\n')
-	i++;
+	{
+	if (value[i] != '\t')
+	  i++;
+	}
+      value[i] = '\0'; 
       if (value[0] == '"' && value[1] == '"')
        CHAN_MULT_MID = (char *) strdup ("");
       else
@@ -1458,7 +1389,11 @@ read_data_types (char *filename)
       {
       int i = 0; 
       while ((value[i] = (char) fgetc (file)) != '\n')
-	i++;
+	{
+	if (value[i] != '\t')
+	  i++;
+	}
+      value[i] = '\0'; 
       if (value[0] == '"' && value[1] == '"')
         CHAN_MULT_SUF = (char *) strdup ("");
       else
@@ -1468,7 +1403,11 @@ read_data_types (char *filename)
       {
       int i = 0; 
       while ((value[i] = (char) fgetc (file)) != '\n')
-	i++;
+	{
+	if (value[i] != '\t')
+	  i++;
+	}
+      value[i] = '\0'; 
       if (value[0] == '"' && value[1] == '"')
         ROUND_PRE = (char *) strdup ("");
       else
@@ -1478,7 +1417,11 @@ read_data_types (char *filename)
       {
       int i = 0; 
       while ((value[i] = (char) fgetc (file)) != '\n')
-	i++;
+	{
+	if (value[i] != '\t')
+	  i++;
+	}
+      value[i] = '\0'; 
       if (value[0] == '"' && value[1] == '"')
         ROUND_SUF = (char *) strdup ("");
       else

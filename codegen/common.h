@@ -40,15 +40,9 @@ typedef enum
   OP_TIMES,
   OP_DIVIDE,
   OP_NEG, 
-  OP_MAX,
-  OP_MIN,
-  OP_ABS, 
   OP_WP_CLAMP,
   OP_CHAN_CLAMP, 
   OP_EQUAL,
-  OP_PARENTHESIS,
-  OP_AND,
-  OP_OR,    
 }FUNCTION;
 
 
@@ -68,6 +62,11 @@ typedef struct
   char 	word[20];	
   int	token;
 }keyword_t;
+
+typedef struct
+{
+  char	string[20];
+}token_t;
 
 #ifdef  _LEXER_C_
 int SCOPE = 0;

@@ -1,3 +1,13 @@
+Thu Mar 16 12:09:30 PST 2000 caro@rhythm.com
+
+	* This check in is for codegen
+	* I have created a new structre called token_t and some new tokens 
+	(COMPARE, MIN_MAX, ADD_SUB). These to new additions have allowed me to
+	remove all the specific tokens for ==,!=,<,>,<=,>=,&,&&,|,||,MIN,MAX,++,--.
+	The grammer look for the new tokens which is assoicated with the new struct
+	so the grammar knows what to print. 
+	* Fixed how parser.y reads the data file.
+	
 Wed Mar 15 16:51:50 PST 2000 caro@rhythm.com
 
 	* fixed bugs

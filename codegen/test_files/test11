@@ -108,16 +108,16 @@ class Gegl:Screen:Op from Gegl:Dual:Src:Op {
         (GeglDualSrcOpPrivate *)(dual_src_op->_priv); 
 
 
-    CODEGEN_DECL_BEGIN
-    guint width ;
+    GENERIC_IMAGE_DECL_BEGIN
+    int width ;
 
     VectorChan dest(color,alpha);
     VectorChan src1(color,alpha);
     VectorChan src2(color,alpha);
-    gboolean dest_has_alpha;  
-    gboolean src1_has_alpha;  
-    gboolean src2_has_alpha;  
-    CODEGEN_DECL_END
+    boolean dest_has_alpha;  
+    boolean src1_has_alpha;  
+    boolean src2_has_alpha;  
+    GENERIC_IMAGE_DECL_END
 
     dest_has_alpha = 
        gegl_color_model_has_alpha(dual_src_opP->dest_cm); 
@@ -137,9 +137,9 @@ class Gegl:Screen:Op from Gegl:Dual:Src:Op {
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
     
-    CODEGEN_INIT_IMAGE_DATA
+    GENERIC_IMAGE_IMAGE_DATA_INIT
 
-    CODEGEN_BLOCK_BEGIN
+    GENERIC_IMAGE_BLOCK_BEGIN
     while (width--)
     {
       dest_color = WP - ((WP - src1_color) * (WP - src2_color));
@@ -151,14 +151,18 @@ class Gegl:Screen:Op from Gegl:Dual:Src:Op {
              dest_alpha = MIN(src1_alpha, src2_alpha);
            }       
          else if (src1_has_alpha)
-           dest_alpha = src1_alpha;
+           {
+             dest_alpha = src1_alpha;
+           }
          else if (src2_has_alpha)
-           dest_alpha = src2_alpha; 
+           {
+             dest_alpha = src2_alpha; 
+           } 
        }
       dX(dest,1);
       dX(src1,1);
       dX(src2,1); 
     }               
-    CODEGEN_BLOCK_END 
+    GENERIC_IMAGE_BLOCK_END 
   }
 }

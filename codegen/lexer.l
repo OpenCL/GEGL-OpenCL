@@ -116,8 +116,14 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 <GENERIC_IMAGE_BLOCK>"dX"		return(ITERATOR_X);
 <GENERIC_IMAGE_BLOCK>"dXY"            	return(ITERATOR_XY);
 
-<GENERIC_IMAGE_BLOCK>"MAX"		return(MAX);
-<GENERIC_IMAGE_BLOCK>"MIN"		return(MIN);
+<GENERIC_IMAGE_BLOCK>"MAX"		{	
+    					strcpy (yylval.tok.string, yytext); 
+    					return (MIN_MAX);
+					}
+<GENERIC_IMAGE_BLOCK>"MIN"		{	
+    					strcpy (yylval.tok.string, yytext); 
+    					return (MIN_MAX);
+					}
 <GENERIC_IMAGE_BLOCK>"ABS"		return(ABS); 
 <GENERIC_IMAGE_BLOCK>"CHAN_CLAMP"	return(CHAN_CLAMP);
 <GENERIC_IMAGE_BLOCK>"WP_CLAMP"    	return(WP_CLAMP);
@@ -147,18 +153,47 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 <GENERIC_IMAGE_BLOCK>"-="		return(MINUS_EQUAL); 
 <GENERIC_IMAGE_BLOCK>"*="		return(TIMES_EQUAL); 
 <GENERIC_IMAGE_BLOCK>"/="		return(DIVIDE_EQUAL); 
-<GENERIC_IMAGE_BLOCK>"&&"		return(AND);
-<GENERIC_IMAGE_BLOCK>"||"		return(OR);
-<GENERIC_IMAGE_BLOCK>"=="		return(EQ);
-<GENERIC_IMAGE_BLOCK>"!="		return(NOT_EQ);
-<GENERIC_IMAGE_BLOCK>"<"		return(SMALLER);
-<GENERIC_IMAGE_BLOCK>">"		return(GREATER);
-<GENERIC_IMAGE_BLOCK>"<="		return(SMALLER_EQ);
-<GENERIC_IMAGE_BLOCK>">="		return(GREATER_EQ);
+<GENERIC_IMAGE_BLOCK>"&&"		{
+    					strcpy (yylval.tok.string, yytext); 
+    					return (COMPARE);
+					}
+<GENERIC_IMAGE_BLOCK>"||"		{
+    					strcpy (yylval.tok.string, yytext); 
+    					return (COMPARE);
+					}
+<GENERIC_IMAGE_BLOCK>"=="		{
+    					strcpy (yylval.tok.string, yytext); 
+    					return (COMPARE);
+					}
+<GENERIC_IMAGE_BLOCK>"!="		{
+    					strcpy (yylval.tok.string, yytext); 
+    					return (COMPARE);
+					}
+<GENERIC_IMAGE_BLOCK>"<"		{
+    					strcpy (yylval.tok.string, yytext); 
+    					return (COMPARE);
+					}
+<GENERIC_IMAGE_BLOCK>">"		{
+    					strcpy (yylval.tok.string, yytext); 
+    					return (COMPARE);
+					}
+<GENERIC_IMAGE_BLOCK>"<="		{
+    					strcpy (yylval.tok.string, yytext); 
+    					return (COMPARE);
+					}
+<GENERIC_IMAGE_BLOCK>">="		{	
+    					strcpy (yylval.tok.string, yytext); 
+    					return (COMPARE);
+					}
 <GENERIC_IMAGE_BLOCK>"!"		return(NOT);
-<GENERIC_IMAGE_BLOCK>"#"		return(POUND);
-<GENERIC_IMAGE_BLOCK>"++"		return(ADD);
-<GENERIC_IMAGE_BLOCK>"--"		return(SUBTRACT);
+<GENERIC_IMAGE_BLOCK>"++"		{
+    					strcpy (yylval.tok.string, yytext); 
+    					return (ADD_SUB);
+					}
+<GENERIC_IMAGE_BLOCK>"--"		{
+    					strcpy (yylval.tok.string, yytext); 
+    					return (ADD_SUB);
+					}
 
 <GENERIC_IMAGE_DECL>{name}  		{
 					int keyword = get_keyword (yytext);
