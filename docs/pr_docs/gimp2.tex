@@ -1,9 +1,7 @@
 GIMP 2.0 will not any longer be a monolithic application with a small plug-in library wrapped around it, but a number of libraries providing the different functionalities of the core, the interface and the plug-in communication layer. The actual GIMP application will only have to put all this together and provide a nice user interface. 
 
-
 The actual pixel manipulation will be done using GEGL, the Gimp Graphics Library. GEGL abstracts from the color-space and color depth (8 bit, 16 bit, float, double) and provides generic data types like channel or color. The algorithms implemented using these abstract types are converted to the actual C code using a code-generator. That way it's easy to add additional data types and optimizations like support for MMX or AltiVec later without having to hack each and every operation by hand. 
 
- 
 What used to be a simple layer stack in GIMP 1.x, which is combined using layer modes (Normal, Combine, Difference, ...) will, with the help of GEGL, become a rendering pipeline which can be thought of as a tree of layers which is viewed from its root. The nodes of the tree are operators with an arbitrary number of inputs and outputs. These inputs and outputs access rectangular regions of pixel-data, the edges of the tree. Each edge (comparable to the layers we have now) can hold its data internally as pixels, vectors, text or whatever and only needs to provide a well-defined interface so it can be plugged into the rendering pipeline. A similar approach will be used for the operators: Simple functions like color corrections or blur filters as well as affine transformations and more complex effects are possible. 
 
  
