@@ -65,6 +65,7 @@ inline static gint g_array_max_gint(GArray* array);
 static gpointer parent_class;
 
 enum {
+  PROP_0,
   PROP_PIXEL_STRIDE,
   PROP_SCANLINE_STRIDE,
   PROP_BANK_OFFSETS,
@@ -172,8 +173,23 @@ static GObject*
 constructor(GType type,
             guint n_construct_properties,
             GObjectConstructParam *construct_properties) {
+  
   GObject* new_object=G_OBJECT_CLASS(parent_class)->constructor(type, n_construct_properties, construct_properties);
+  GeglComponentSampleModel* csm=(GeglComponentSampleModel*)new_object;
+  GeglSampleModel* sample_model=(GeglSampleModel*)new_object;
+  
+  if (csm->band_indicies) {
+    gint num_indexed_bands=csm->band_indicies->len;
+    if (num_indexed_bands!=sample_model->num_bands) {
+      goto LABEL_failure;
+    }
+  }
   return new_object;
+
+ LABEL_failure:
+  g_object_unref(new_object);
+  g_warning("GeglComponentSampleModel: Inconsistant argument types in the constructor");
+  return NULL;
 }
 
 static void finalize(GObject *object) {
@@ -281,6 +297,10 @@ set_sample_double(const GeglSampleModel* sample_model,
 
 static GArray*
 g_array_copy_gint(const GArray* src) {
+  if (src == NULL) {
+    return NULL;
+  }
+
   GArray* dst=g_array_new(FALSE,FALSE,sizeof(gint));
   gint i;
   for (i=0;i<src->len;i++) {

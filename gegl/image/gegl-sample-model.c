@@ -25,10 +25,11 @@
 static gpointer parent_class;
 
 enum {
-    PROP_WIDTH,
-    PROP_HEIGHT,
-    PROP_NUM_BANDS,
-    PROP_LAST
+  PROP_0,
+  PROP_WIDTH,
+  PROP_HEIGHT,
+  PROP_NUM_BANDS,
+  PROP_LAST
 };
 
 static void instance_init(GTypeInstance *instance,
