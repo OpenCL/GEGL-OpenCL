@@ -6,7 +6,7 @@
  *    the Free Software Foundation; either version 2 of the License, or
  *    (at your option) any later version.
  *
- *    Foobar is distributed in the hope that it will be useful,
+ *    GEGL is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU General Public License for more details.
@@ -42,6 +42,7 @@ struct _GeglSampleModel
     gint width;
     gint height;
     gint num_bands;
+    GArray* sample_normalizers;
 };
 
 typedef struct _GeglSampleModelClass GeglSampleModelClass;
@@ -103,6 +104,28 @@ void gegl_sample_model_set_sample_double(const GeglSampleModel* self,
                                          gint band,
                                          gdouble sample,
                                          GeglBuffer* buffer);
+
+gdouble gegl_sample_model_get_sample_normalized(const GeglSampleModel * self,
+                                                gint x,
+                                                gint y,
+                                                gint band,
+                                                const GeglBuffer* buffer);
+void gegl_sample_model_set_sample_normalized(const GeglSampleModel * self,
+                                             gint x,
+                                             gint y,
+                                             gint band,
+                                             gdouble sample,
+                                             GeglBuffer* buffer);
+gdouble* gegl_sample_model_get_pixel_normalized(const GeglSampleModel * self,
+                                                gint x,
+                                                gint y,
+                                                gdouble* d_array,
+                                                const GeglBuffer* buffer);
+void gegl_sample_model_set_pixel_normalized(const GeglSampleModel* self,
+                                            gint x,
+                                            gint y,
+                                            const gdouble* d_array,
+                                            GeglBuffer* buffer);
 GeglBuffer* gegl_sample_model_create_buffer(const GeglSampleModel* self,
                                             TransferType type);
 gboolean gegl_sample_model_check_buffer(const GeglSampleModel* self,
