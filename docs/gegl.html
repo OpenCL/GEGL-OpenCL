@@ -8,86 +8,60 @@
 <body text="#000000" bgcolor="#FFFFFF" link="#4D7F7E" vlink="#551A8B" alink="#FF0000">
 
 <hr WIDTH="100%">
-<br><font color="#62A2A1"><font size=-1><a href="http://www.gegl.org">HOME</a><a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp;
-<a href="#news">NEWS</a><a href="#mailing lists">MAILING LISTS&nbsp;</a>&nbsp;&nbsp;
-<a href="#tasks">CURRENT TASKS&nbsp;</a>&nbsp; <a href="#authors">AUTHORS
-</a><a href="#reference">REFERENCE</a></font></font>
+<br><font color="#62A2A1"><font size=-1><a href="gegl.html">HOME</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="#news">NEWS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#mailing lists">MAILING
+LISTS&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#tasks">CURRENT
+TASKS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#authors">AUTHORS&nbsp;&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#reference">
+REFERENCES</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#getting gegl">GETTING&nbsp;GEGL</a></font></font>
 <br>
 <hr WIDTH="100%">
 <p><img SRC="gegl.jpg" NOSAVE height=62 width=160>
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
 <p><font color="#000000">GEGL -- Gimp 'E' Graphical Library --- is an image</font><font color="#33CCFF">
 </font><font color="#000000">processing library based on GtkObjects. This
-library has been designed initially to handle various image processing
-tasks needed in Gimp, but should be useful&nbsp; to other apps as well.
-It is designed to treat different color models and data types&nbsp; in
-a general way.&nbsp; It includes a way of creating chains (or trees) of
-image operations and evaluating these in a demand-driven way.&nbsp; Classes
-for point, area, geometric and statistics operations are provided, as well
-as color conversion ops for converting images between color models.&nbsp;
-Memory management and image classes are included. It also includes a method
-for writing generic image processing routines (Generic Image Language)
-and generating specific data type and colormodel code (Codegen) from this.</font>
+library has been designed to handle various image processing tasks needed
+in Gimp initially, but should be useful&nbsp; to other apps as well. It
+is designed to treat different color models and data types&nbsp; in a general
+way.&nbsp; It includes a way of creating chains (or trees) of image operations
+and evaluating these in a demand-driven way.&nbsp; Classes for point, area,
+geometric and statistics operations are provided, as well as color conversion
+ops for converting images between color models.&nbsp; Memory management
+and image classes are included. It also includes a method for writing generic
+image processing routines (Generic Image Language) and generating specific
+data type and colormodel code (Codegen) from this.</font>
 <p>
 <hr WIDTH="100%">
-<br><a NAME="docs"></a>
-<br><b>Documents</b>
-<p><a href="http://www.mindspring.com/~calvinw/geglClasses.html">Gegl Classes</a>
-<br><a href="http://www.mindspring.com/~calvinw/genericImageLanguage.html">Generic
-Image Language</a>
-<br><a href="http://www.mindspring.com/~calvinw/genericChannelData.html">Generic
-Channel Data</a>
-<br>Codegen
+<br><a NAME="docs"></a><b>Documents</b>
+<p>These documents all describe various parts of gegl. They are included
+in cvs in the docs directory as well as here.
+<p><a href="geglClasses.html">Gegl Classes</a>
+<br><a href="geglImageAndOp.html">GeglImage and Op classes</a>
+<br><a href="genericImageLanguage.html">Generic Image Language</a>
+<br><a href="genericChannelData.html">Generic Channel Data</a>
+<br><a href="codegen.html">Codegen</a>
 <p>
 <hr WIDTH="100%">
-<br><a NAME="news"></a>
-<br><b>News</b>
-<br>&nbsp;
+<br><a NAME="news"></a><b>News</b>
 <br>&nbsp;
 <table BORDER WIDTH="100%" NOSAVE >
 <tr ALIGN=LEFT VALIGN=TOP NOSAVE>
-<td ALIGN=LEFT VALIGN=TOP WIDTH="2%" NOSAVE></td>
+<td ALIGN=LEFT VALIGN=TOP WIDTH="2%" NOSAVE>20-6-2000</td>
 
-<td ALIGN=LEFT VALIGN=TOP NOSAVE></td>
-</tr>
-
-<tr>
-<td></td>
-
-<td></td>
-</tr>
-
-<tr>
-<td></td>
-
-<td></td>
-</tr>
-
-<tr>
-<td></td>
-
-<td></td>
+<td ALIGN=LEFT VALIGN=TOP NOSAVE>This page comes on-line.</td>
 </tr>
 </table>
 
 <p>
 <hr WIDTH="100%">
-<br><a NAME="mailing lists"></a>
-<br><b>Mailing Lists</b>
+<br><a NAME="mailing lists"></a><b>Mailing Lists</b>
 <p>GEGL's developers mailing list is <a href="mailto: gegldev@gegl.org">gegldev@gegl.org</a>.
 To sign up please email Manish Singh &lt;<a href="mailto:yosh@gimp.org">yosh@gimp.org</a>>.
 There is also the <a href="http://www.gimp.org/mailing_list.html">GIMP's
-developers mailing list and an users mailing list</a>.
+developers mailing list and a users mailing list</a>.
 <p>
 <hr WIDTH="100%">
-<br><a NAME="schedual"></a>
-<br><b>Schedule</b>
-<p>
-<hr WIDTH="100%">
-<br><a NAME="tasks"></a>
-<br><b><font color="#000000">Current Tasks</font></b>
+<br><a NAME="tasks"></a><font color="#000000"><b>Current Tasks</b> (<a href="geglTasks.html#Current Tasks">list
+with details</a>)</font>
 <table BORDER COLS=1 WIDTH="100%" NOSAVE >
 <tr>
 <td><a href="geglTasks.html#1 Update GeglColorConvertOp">#1 Update GeglColorConvertOp</a>
@@ -172,29 +146,53 @@ individual color channels.</td>
 </tr>
 </table>
 
-<p><b><font color="#000000">Finished Tasks</font></b><b><font color="#000000"></font></b>
+<p><b><font color="#000000">Finished Tasks (<a href="geglTasks.html#Finished Tasks">list</a>)</font></b>
+<br>
+<hr WIDTH="100%">
+<br><a NAME="schedual"></a><b>Schedule</b><b></b>
 <p>
 <hr WIDTH="100%">
-<br><a NAME="authors"></a>
-<br><b>Authors </b>(listed alphabetical)
+<p><a NAME="getting gegl"></a><b>Getting Gegl</b>
+<p>Gegl is available from the gnome cvs site. You can get it through anonymous
+cvs. There are no official releases yet. To access the tree you need to
+first set up your CVSROOT enviroment variable so that cvs knows where to
+go to grab the source from. The proper value for CVSROOT is:
+<p>:pserver:anonymous@anoncvs.gnome.org:/cvs/gnome
+<p>For example, in csh:
+<p>>setenv CVSROOT :pserver:anonymous@anoncvs.gnome.org:/cvs/gnome
+<p>In a bourne shell descendant (e.g. bash) the following syntax has to
+be used :
+<p>>export CVSROOT=':pserver:anonymous@anoncvs.gnome.org:/cvs/gnome'
+<p>Next, the first time the source tree is checked out, a cvs login is
+needed.
+<p>>cvs login
+<p>This will ask you for a password. There is no password so just enter
+a carriage return. To get the tree and place it in a subdir of your current
+working directory, issue the command:
+<p>>cvs get gegl
+<p>You can also <a href="http://cvs.gnome.org/bonsai/rview.cgi?cvsroot=/cvs/gnome&dir=gegl">browse
+the cvs source</a> through the web using bonsai.
+<p>You will need a recent version of glib and gtk+ as well.
+<p>
+<hr WIDTH="100%">
+<p><a NAME="authors"></a><b>Authors </b>(listed alphabetical)
 <p>Jay Cox &lt;<a href="mailto:jaycox@gimp.org">jaycox@gimp.org</a>>
 <br>Caroline Dahllof &lt;<a href="mailto:caro@rhythm.com">caro@rhythm.com</a>>
 <br>Manish Singh &lt;<a href="mailto: yosh@gimp.org">yosh@gimp.org</a>>
 <br>Calvin Williamson &lt;<a href="mailto:calvinw@mindspring.com">calvinw@mindspring.com</a>>
 <p>
 <hr WIDTH="100%">
-<br><a NAME="reference"></a>
-<br><b>Reference</b>
-<p><a href="http://www.gimp.org">GIMP</a>
-<br><a href="http://siggraph.gimp.org">GIMP at SIGGRAPH</a>
+<br><a NAME="reference"></a><b>References</b>
+<p><a href="http://www.gimp.org">GIMP website</a>
+<br><a href="http://film.gimp.org">film.gimp.org - using gimp for high
+color resolution film work</a>
+<br><a href="http://siggraph.gimp.org">GIMP at SIGGRAPH 2000</a>
+<br><a href="http://www.gimp.org/gimpcon/review.html">GimpCon2000 review
+-discussion of gimp2.0, gegl</a>
+<br><a href="http://siggraph.gimp.org"></a>&nbsp;
 <p>
 <hr WIDTH="100%">
 <center><font size=-2>Caroline Dahllof &lt;caro@rhythm.com></font></center>
 
-<p><br>
-<br>
-<br>
-<br>
-<br>
 </body>
 </html>
