@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE PointOp SYSTEM "geglopgen.dtd">
+
+
+<PointOp name="subtract"  arguments="const Buffer src1, const Buffer src2">
+  <description>
+The subtract function subtracts the values of each pixel in the second image
+buffer from the corosponding pixel value in the first image buffer placing
+the results in the dest image buffer.
+  </description>
+  <author>Jay Cox</author>
+  <copyright>2000, Jay Cox</copyright>
+  <license>GPL</license>
+
+  <variables>
+    /* This function don't need no variables */
+  </variables>
+  <constructor>
+  </constructor>
+  <destructor>
+  </destructor>
+  <PointProcessor precision="all" colormodel="all">
+    <variables>
+    /* This function don't need no variables */
+    </variables>
+    <per_pixel>     
+    /* This function don't need no per pixel */
+    </per_pixel>
+    <per_color>
+<![CDATA[
+       dest = CHANNEL_CLAMP((SignedPromote)src1 - src2);
+]]>
+    </per_color>
+    <per_alpha>
+<![CDATA[
+      dest = MIN(src1, src2);
+]]>
+    </per_alpha>
+    <cleanup>
+    /* no cleanup needed for this function */
+    </cleanup>
+  </PointProcessor>
+</PointOp>

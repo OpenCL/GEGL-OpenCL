@@ -1,0 +1,45 @@
+<!-- DTD for gegl opgen -->
+
+<!ELEMENT PointOp (description?,
+                   author,
+                   copyright,
+                   license+,
+                   libraries?,
+                   includes?,
+                   variables?,
+                   constructor?,
+                   destructor?,
+                   PointProcessor+)
+>
+
+<!ATTLIST PointOp    name        ID     #REQUIRED>
+<!ATTLIST PointOp    arguments   CDATA  #REQUIRED>
+<!ATTLIST PointOp    language    (c|cpp|perl|python|lisp) "c">
+
+<!ELEMENT PointProcessor (variables?,
+                          setup?,
+                          per_pixel?,
+                          per_color?,
+                          per_alpha?,
+                          cleanup?)
+>
+
+<!ATTLIST PointProcessor    precision   (U8|U16|FLOAT|all) 'all'>
+<!ATTLIST PointProcessor    colormodel
+         (BW|RGB|XYZ|CMYK|INDEXED|additive|subtractive|intensity|all)  'all'>
+
+
+<!ELEMENT description    (#PCDATA)*>
+<!ELEMENT author         (#PCDATA)*>
+<!ELEMENT copyright      (#PCDATA)*>
+<!ELEMENT variables      (#PCDATA)*>
+<!ELEMENT license        (#PCDATA)*>
+<!ELEMENT constructor    (#PCDATA)*>
+<!ELEMENT destructor     (#PCDATA)*>
+<!ELEMENT setup          (#PCDATA)*>
+<!ELEMENT per_pixel      (#PCDATA)*>
+<!ELEMENT per_color      (#PCDATA)*>
+<!ELEMENT per_alpha      (#PCDATA)*>
+<!ELEMENT cleanup        (#PCDATA)*>
+
+

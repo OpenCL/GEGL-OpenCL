@@ -1,3 +1,20 @@
+2001-02-04  Jay Cox  <jaycox@gimp.org>
+
+	* opgen/README
+	* opgen/geglopgen.dtd
+	* opgen/geglgen.pl
+	* opgen/subtract.xml
+	* opgen/Gegl/Config.pm
+	* opgen/Gegl/Op.pm
+	* opgen/Gegl/PointOp.pm
+	* opgen/Gegl/PointProcessor.pm
+	* opgen/Gegl/XML.pm
+	* opgen/Gegl/XML/PointOp.pm
+	* opgen/Gegl/XML/PointProcessor.pm
+	Initial Checkin for opgen.  Opgen generates gegl-operators from
+	XML files.  The code it generates isn't good enough to compile,
+	but it is pretty close.
+
 Wed Jan 24 01:27:38 EST 2001 calvinw@mindspring.com
 	*Makefile.am
 	*configure.in
