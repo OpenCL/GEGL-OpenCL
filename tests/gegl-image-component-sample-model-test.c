@@ -21,6 +21,7 @@
 
 #include "image/gegl-component-sample-model.h"
 #include "image/gegl-buffer-double.h"
+#include "image/gegl-normalizer-mult.h"
 
 #include <glib.h>
 
@@ -29,7 +30,7 @@
 #include <string.h>
 
 static void
-test_component_sample_model_g_object_new(Test *test) {
+test_g_object_new(Test *test) {
   GeglComponentSampleModel* csm=g_object_new(GEGL_TYPE_COMPONENT_SAMPLE_MODEL,
 					     "width",64,
 					     "height",64,
@@ -47,7 +48,7 @@ test_component_sample_model_g_object_new(Test *test) {
 
 
 static void
-test_component_sample_model_properties(Test* test) {
+test_properties(Test* test) {
   GArray* bank_offsets=g_array_new(FALSE,FALSE,sizeof(gint));
   const gint offset=3;
   g_array_append_val(bank_offsets,offset);
@@ -92,7 +93,7 @@ test_component_sample_model_properties(Test* test) {
 
 
 static void
-test_component_sample_model_pixel_interleaving(Test* test) {
+test_pixel_interleaving(Test* test) {
   gint width=64;
   gint height=128;
   gint num_bands=3;
@@ -182,7 +183,7 @@ test_component_sample_model_pixel_interleaving(Test* test) {
 }
 
 static void
-test_component_sample_model_band_interleaving(Test* test) {
+test_band_interleaving(Test* test) {
   gint width=64;
   gint height=128;
   gint num_bands=3;
@@ -229,22 +230,22 @@ test_component_sample_model_band_interleaving(Test* test) {
     }
   }
   gboolean all_OK=TRUE;
-  for (y=0;y<height;y++) {
-    for (x=0;x<width;x++) {
-      for (band=0;band<num_bands;band++) {
-	if (gegl_sample_model_get_sample_double(sample_model,x,y,band,buffer) != (x+y+band)) {
-	  all_OK=FALSE;
-	  break;
-	}
-      }
-      if (all_OK==FALSE) {
-	break;
-      }
+    for (y=0;y<height;y++) {
+        for (x=0;x<width;x++) {
+            for (band=0;band<num_bands;band++) {
+	           if (gegl_sample_model_get_sample_double(sample_model,x,y,band,buffer) != (x+y+band)) {
+	               all_OK=FALSE;
+	               break;
+	           }
+            }
+            if (all_OK==FALSE) {
+	           break;
+            }
+        }
+        if (all_OK==FALSE) {
+            break;
+        }
     }
-    if (all_OK==FALSE) {
-      break;
-    }
-  }
 
   ct_test(test,all_OK==TRUE);
   
@@ -276,6 +277,71 @@ test_component_sample_model_band_interleaving(Test* test) {
   g_object_unref(csm);
   return;
 }
+
+static void 
+test_normalizers(Test* test)
+{
+    GArray* normalizers=g_array_new(FALSE,FALSE,sizeof(GeglNormalizer*));
+    GeglNormalizer* nor0=g_object_new(GEGL_TYPE_NORMALIZER_MULT,
+                                      "alpha",2.0,
+                                      NULL);
+    GeglNormalizer* nor1=g_object_new(GEGL_TYPE_NORMALIZER_MULT,
+                                      "alpha",3.0,
+                                      NULL);
+    GeglNormalizer* nor2=g_object_new(GEGL_TYPE_NORMALIZER_MULT,
+                                      "alpha",4.0,
+                                      NULL);
+    g_array_append_val(normalizers,nor0);
+    g_array_append_val(normalizers,nor1);
+    g_array_append_val(normalizers,nor2);
+    
+    gint width=64;
+    gint height=128;
+    gint num_bands=3;
+    GeglComponentSampleModel* csm=
+                              g_object_new(GEGL_TYPE_COMPONENT_SAMPLE_MODEL,
+                                           "num_bands",num_bands,
+                                           "width",width,
+                                           "height",height,
+                                           "pixel_stride",num_bands,
+                                           "scanline_stride",num_bands*width,
+                                           "normalizers",normalizers,
+                                           NULL);
+    GeglSampleModel* sample_model=GEGL_SAMPLE_MODEL(csm);
+    GeglBufferDouble* buffer_double=(GeglBufferDouble*)gegl_sample_model_create_buffer(sample_model,TYPE_DOUBLE);
+    GeglBuffer* buffer=GEGL_BUFFER(buffer_double);
+    gint x,y,band;
+    for (y=0;y<height;y++) {
+        for (x=0;x<width;x++) {
+            for (band=0;band<num_bands;band++) {
+                gegl_sample_model_set_sample_double(sample_model,x,y,band,x+y+band,buffer);
+            }
+        }
+    }
+    gboolean all_OK=TRUE;
+    gdouble sample,nor_sample;
+    for (y=0;y<height;y++) {
+        for (x=0;x<width;x++) {
+            for (band=0;band<num_bands;band++) {
+                sample=gegl_sample_model_get_sample_double(sample_model,x,y,band,buffer);
+                nor_sample=gegl_sample_model_get_sample_normalized(sample_model,x,y,band,buffer);
+                if (nor_sample != (sample * (band+2))) {
+                    all_OK=FALSE;
+                    break;
+                }
+            }
+            if (all_OK==FALSE) {
+            break;
+        }
+    }
+    if (all_OK==FALSE) {
+      break;
+    }
+  }
+
+  ct_test(test,all_OK==TRUE);
+}
+
 Test *
 create_component_sample_model_test()
 {
@@ -283,10 +349,11 @@ create_component_sample_model_test()
   
   //g_assert(ct_addSetUp(t, color_test_setup));
   //g_assert(ct_addTearDown(t, color_test_teardown));
-  g_assert(ct_addTestFun(t, test_component_sample_model_g_object_new));
-  g_assert(ct_addTestFun(t, test_component_sample_model_properties));
-  g_assert(ct_addTestFun(t, test_component_sample_model_pixel_interleaving));
-  g_assert(ct_addTestFun(t, test_component_sample_model_band_interleaving));
+  g_assert(ct_addTestFun(t, test_g_object_new));
+  g_assert(ct_addTestFun(t, test_properties));
+  g_assert(ct_addTestFun(t, test_pixel_interleaving));
+  g_assert(ct_addTestFun(t, test_band_interleaving));
+  g_assert(ct_addTestFun(t, test_normalizers));
   return t; 
 }
 
