@@ -1,3 +1,10 @@
+Tue Mar 28 12:12:39 PST 2000 caro@rhythm.com
+
+	* check in for codegen
+
+	* lexer.l I have changed it so that the lexer will look for the token Channnel
+	instead of Chan and Pixel instead of VectorChan  
+
 Tue Mar 28 11:21:30 PST 2000 caro@rhythm.com
 
 	* check in for codegen

@@ -102,12 +102,12 @@ rm			[\t \n]*
 			        	yylval.elem.type = TYPE_VECTOR;
 					return ZERO; 	
 					} 
-<GENERIC_IMAGE_DECL>"VectorChan"	{
+<GENERIC_IMAGE_DECL>"Pixel"		{
 					strcpy(yylval.elem.string, DATATYPE_STR);
 					yylval.elem.dtype = TYPE_CHANNEL;
 					return(VectorChan);
 					}
-<GENERIC_IMAGE_DECL>"Chan"		{
+<GENERIC_IMAGE_DECL>"Channel"		{
     					strcpy(yylval.elem.string, DATATYPE_STR);
 					yylval.elem.dtype = TYPE_CHANNEL;
 					return(Chan);
