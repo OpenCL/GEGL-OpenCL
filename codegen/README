@@ -23,6 +23,63 @@ To refer to only the color part of a color vector, one type vector_name_c, and t
 Anything that is between /*codegen_copy codegen_copy*/ gets copied. Inside /*codegen_copy codegen_copy*/ the keyword CHAN gets substituted with the data type and the keyword HUE gets substitued with color space (all in upper case).
 
 *** note *** that indent does not quite work correctly. For the program to run correctly the first line must either be a empty line or a line with a comment. This is due to the fact that indent looks for a newline and then spaces. I tried making indent only look for spaces but then the program would not run if there was not a space.
+
+===
+Outline of what should happen
+
+For area not between BEGIN and END there are key words that get substituded by specific strings. The keyworks are:
+COLORSPACE (ie RGB, HSV, ...)
+DATATYPE (ie U8, FLOAT, ...)
+CLASS (ie composite, min, ...)
+
+When have a templet with the key words above and then with the below information create a .gob.
+
+Example for Unpremult. 
+{
+CLASS 			UNPREMULT
+SUPERCLASS		SINGLE
+CONSTRUCTOR		(/*specify any extra varibles that
+			are passed in -- these will become private*/)
+{
+	IF(SRC_HAS_ALPHA)
+ 	  RGBA_FLOAT;
+	ELSE
+	  %{
+	   {
+	   g_warning("GeglPremultOp: dest has no alpha channel\n");
+           return FALSE;
+	   }
+	   %}
+}
+
+FUNCTION:RGBA_FLOAT
+{
+	BEGIN_DEC
+	VectorChan dest;
+	VectorChan src;
+	END_DEC
+
+	INIT_PIXEL
+
+	LOOP(WIDTH)
+	{
+	BEGIN_GENERIC
+	if (src_a == CHAN_ZERO || src_a == WP)
+         {
+            dest = src;
+         }
+        else
+         {
+            dest = src / src_a;
+          }
+        dest_a = src_a;
+	END_GENERIC
+	}
+	
+}
+
+}
+
  
 Caroline Dahllof <caro@rhythm.com>
 

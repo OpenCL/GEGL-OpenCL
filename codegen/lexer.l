@@ -10,6 +10,7 @@ void comment ();
 void codegen_copy (); 
 %}
 
+%s			CODEGEN
 
 white   		[ \t]+
 indent			[\n][ ]*
@@ -20,11 +21,11 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 
 %%
 
-{indent}	 	{
+<CODEGEN>{indent}	 	{
   			strcpy(yylval.elem.string, yytext);
 			return INDENT;
 			}
-{white} 		; /* ignore white space */
+<CODEGEN>{white} 		; /* ignore white space */
 
 {integer} 		{ 
             		/* found an int */
@@ -34,7 +35,7 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
             		return INT;
           		} 
 
-{float} 		{ 
+<CODEGEN>{float} 		{ 
           		/* found a float */
           		strcpy(yylval.elem.string, yytext);
                 	yylval.elem.type = TYPE_SCALER;

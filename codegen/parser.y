@@ -505,67 +505,68 @@ Definition:
 
 	;
 
-FloatChan_List:
-	 FloatChan_List ',' FloatChan_List             
-		{ 
-		char tmp[256]; 
-		$$=$3;
-                sprintf (tmp, "%s, %s", $1.string, $3.string);
-                strcpy($$.string, tmp); 
-		}
-        | Star NAME                          
-		{ 
-		char tmp[256]; 
-		set_dtype($2, TYPE_FLOAT); 
-		set_type($2, TYPE_SCALER); 
-	        set_num ($2, 1); 	
-	  	$$=$2; 
-		print_name (&$$, $2, DEFINE);
-		sprintf(tmp, "%s%s", $1.string, $$.string); 
-		strcpy($$.string, tmp); 
-		}
-        | Star NAME EQUAL FLOAT              
-		{ 
-		char tmp[256]; 
-		set_dtype($2, TYPE_FLOAT);
-                set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-                sprintf ($$.string, "%s=%s", $2.string, $4.string);
-                $$.dtype = $2.dtype; 
-		sprintf(tmp, "%s%s", $1.string, $$.string); 
-		strcpy($$.string, tmp); 
-		}
-        | Star NAME EQUAL INT                
-		{ 
-		char tmp[256]; 
-		set_dtype($2, TYPE_FLOAT);
-                set_type($2, TYPE_SCALER);
-	        set_num ($2, 1); 	
-                sprintf ($$.string, "%s=%s", $2.string, $4.string);
-                $$.dtype = $2.dtype; 
-		sprintf(tmp, "%s%s", $1.string, $$.string); 
-		strcpy($$.string, tmp); 
-		}
-        | Star NAME LT_SQUARE INT RT_SQUARE
-		{
-		char tmp[256];
-		set_dtype($2, TYPE_FLOAT); 
-		set_type($2, TYPE_VECTOR);
-		set_num($2, atoi ($4.string)); 
-	        $$=$2;
-		print_name (&$$, $2, DEFINE);
-		sprintf (tmp, "%s%s", $1.string, $$.string); 
-		strcpy ($$.string, tmp); 
-		}	
-        ;
 
 Chan_List:
-          Chan_List ',' Chan_List            
+	Chan_List ',' Chan_List
+		{
+		char tmp[256];
+		sprintf(tmp, "%s, %s", $1.string, $3.string);
+		strcpy($$.string, tmp);
+		
+		/*
+          Star NAME ',' Chan_List              
 		{ 
 		char tmp[256]; 
-		$$=$3;
-                sprintf (tmp, "%s, %s", $1.string, $3.string);
+		set_dtype($2, TYPE_CHAN);
+                set_type($2, TYPE_SCALER);
+                set_num ($2, 1);
+                $$=$2;
+                print_name (&$$, $2, NOT_DEFINE);
+                sprintf(tmp, "%s%s", $1.string, $$.string);
+                strcpy($$.string, tmp);
+                sprintf (tmp, "%s, %s", $$.string, $4.string);
                 strcpy($$.string, tmp); 
+		}
+        | Star NAME EQUAL INT ',' Chan_List              
+		{ 
+		char tmp[256]; 
+		set_dtype($2, TYPE_CHAN);
+                set_type($2, TYPE_SCALER);
+                set_num ($2, 1);
+                $$=$2;
+                print_name (&$$, $2, NOT_DEFINE);
+                sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+                strcpy($$.string, tmp);
+                sprintf (tmp, "%s, %s", $$.string, $6.string);
+                strcpy($$.string, tmp); 
+		}
+        | Star NAME EQUAL FLOAT ',' Chan_List              
+		{ 
+		char tmp[256]; 
+		set_dtype($2, TYPE_CHAN);
+                set_type($2, TYPE_SCALER);
+                set_num ($2, 1);
+                $$=$2;
+                print_name (&$$, $2, NOT_DEFINE);
+                sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+                strcpy($$.string, tmp);
+                sprintf (tmp, "%s, %s", $$.string, $6.string);
+                strcpy($$.string, tmp); 
+		}
+	| Star NAME LT_SQUARE INT RT_SQUARE ',' Chan_List
+                {
+                char tmp[256];
+                set_dtype($2, TYPE_CHAN);
+                set_type($2, TYPE_VECTOR);
+                set_num($2, atoi ($4.string));
+                $$=$2;
+                print_name (&$$, $2, DEFINE);
+                sprintf (tmp, "%s%s", $1.string, $$.string);
+                strcpy ($$.string, tmp);
+		sprintf (tmp, "%s, %s", $$.string, $7.string);
+		strcpy($$.string, tmp);
+                } 
+		*/
 		}
         | Star NAME                          
 		{
@@ -584,9 +585,9 @@ Chan_List:
 		set_dtype($2, TYPE_CHAN);
                 set_type($2, TYPE_SCALER);
 	        set_num ($2, 1); 	
-                sprintf ($$.string, "%s=%s", $2.string, $4.string);
-                $$.dtype = $2.dtype; 
-		sprintf(tmp, "%s%s", $1.string, $$.string);
+		$$=$2; 
+		print_name (&$$, $2, NOT_DEFINE);
+		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
 		strcpy($$.string, tmp);
 		}
         | Star NAME EQUAL INT                
@@ -595,15 +596,122 @@ Chan_List:
 		set_dtype($2, TYPE_CHAN);
                 set_type($2, TYPE_SCALER);
 	        set_num ($2, 1); 	
-                sprintf ($$.string, "%s=%s", $2.string, $4.string);
-                $$.dtype = $2.dtype; 
-		sprintf(tmp, "%s%s", $1.string, $$.string);
+		$$=$2; 
+		print_name (&$$, $2, NOT_DEFINE);
+		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
 		strcpy($$.string, tmp);
 		}
         | Star NAME LT_SQUARE INT RT_SQUARE
 		{
 		char tmp[256];
 		set_dtype($2, TYPE_CHAN); 
+		set_type($2, TYPE_VECTOR);
+		set_num($2, atoi ($4.string)); 
+	        $$=$2;
+		print_name (&$$, $2, DEFINE);
+		sprintf (tmp, "%s%s", $1.string, $$.string); 
+		strcpy ($$.string, tmp); 
+		}	
+        ;
+FloatChan_List:
+	FloatChan_List ',' FloatChan_List
+		{
+		char tmp[256];
+		sprintf(tmp, "%s, %s", $1.string, $3.string);
+		strcpy($$.string, tmp);
+
+		/*
+          Star NAME ',' FloatChan_List              
+		{ 
+		char tmp[256]; 
+		set_dtype($2, TYPE_FLOAT);
+                set_type($2, TYPE_SCALER);
+                set_num ($2, 1);
+                $$=$2;
+                print_name (&$$, $2, NOT_DEFINE);
+                sprintf(tmp, "%s%s", $1.string, $$.string);
+                strcpy($$.string, tmp);
+                sprintf (tmp, "%s, %s", $$.string, $4.string);
+                strcpy($$.string, tmp); 
+		}
+        | Star NAME EQUAL INT ',' FloatChan_List              
+		{ 
+		char tmp[256]; 
+		set_dtype($2, TYPE_FLOAT);
+                set_type($2, TYPE_SCALER);
+                set_num ($2, 1);
+                $$=$2;
+                print_name (&$$, $2, NOT_DEFINE);
+                sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+                strcpy($$.string, tmp);
+                sprintf (tmp, "%s, %s", $$.string, $6.string);
+                strcpy($$.string, tmp); 
+		}
+        | Star NAME EQUAL FLOAT ',' FloatChan_List              
+		{ 
+		char tmp[256]; 
+		set_dtype($2, TYPE_FLOAT);
+                set_type($2, TYPE_SCALER);
+                set_num ($2, 1);
+                $$=$2;
+                print_name (&$$, $2, NOT_DEFINE);
+                sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+                strcpy($$.string, tmp);
+                sprintf (tmp, "%s, %s", $$.string, $6.string);
+                strcpy($$.string, tmp); 
+		}
+	| Star NAME LT_SQUARE INT RT_SQUARE ',' FloatChan_List
+                {
+                char tmp[256];
+		set_dtype($2, TYPE_FLOAT);
+                set_type($2, TYPE_VECTOR);
+                set_num($2, atoi ($4.string));
+                $$=$2;
+                print_name (&$$, $2, DEFINE);
+                sprintf (tmp, "%s%s", $1.string, $$.string);
+                strcpy ($$.string, tmp);
+		sprintf (tmp, "%s, %s", $$.string, $7.string);
+		strcpy($$.string, tmp);
+                } 
+		*/
+		}
+        | Star NAME                          
+		{
+	        char tmp[256];	
+		set_dtype($2, TYPE_FLOAT);
+		set_type($2, TYPE_SCALER);
+	        set_num ($2, 1); 	
+	  	$$=$2; 
+		print_name (&$$, $2, NOT_DEFINE);
+		sprintf(tmp, "%s%s", $1.string, $$.string);
+		strcpy($$.string, tmp);
+		}
+        | Star NAME EQUAL FLOAT              
+		{ 
+		char tmp[256];
+		set_dtype($2, TYPE_FLOAT);
+                set_type($2, TYPE_SCALER);
+	        set_num ($2, 1); 	
+		$$=$2; 
+		print_name (&$$, $2, NOT_DEFINE);
+		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+		strcpy($$.string, tmp);
+		}
+        | Star NAME EQUAL INT                
+		{ 
+		char tmp[256];
+		set_dtype($2, TYPE_FLOAT);
+                set_type($2, TYPE_SCALER);
+	        set_num ($2, 1); 	
+		$$=$2; 
+		print_name (&$$, $2, NOT_DEFINE);
+		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
+		strcpy($$.string, tmp);
+		}
+        | Star NAME LT_SQUARE INT RT_SQUARE
+		{
+		char tmp[256];
+		set_dtype($2, TYPE_FLOAT);
 		set_type($2, TYPE_VECTOR);
 		set_num($2, atoi ($4.string)); 
 	        $$=$2;
@@ -647,6 +755,7 @@ VectorChan_List:
 
 Star:
 		{
+		$$.string[0] = '\0'; 
 		}
 	| TIMES Star
 		{

@@ -1,3 +1,4 @@
+
 %h{
 #include "gegl-dual-src-op.h"
 %}
@@ -103,12 +104,14 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
 
-    gfloat *dest_data[4], *src1_data[4], *src2_data[4]; 
-    gfloat *dest_r, *dest_g, *dest_b, *dest_a=NULL;
-    gfloat *src1_r, *src1_g, *src1_b, *src1_a=NULL;
-    gfloat *src2_r, *src2_g, *src2_b, *src2_a=NULL;
+    float *dest_data[4], *src1_data[4], *src2_data[4];
+    float  *dest_r, *dest_g, *dest_b, *dest_a;
+    float  *src1_r, *src1_g, *src1_b, *src1_a;
+    float  *src2_r, *src2_g, *src2_b, *src2_a;
     gfloat a, b, c, alpha;
-    guint width = point_opP->scanline_width;
+    guint width;
+
+    width = point_opP->scanline_width;
 
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
@@ -119,6 +122,8 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
+
+
 
     dest_r = dest_data[0];
     dest_g = dest_data[1];
@@ -136,6 +141,8 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
     src2_a = src2_data[3];
 
     switch(self->_priv->comp_mode)
+
+
       {
       case COMPOSITE_REPLACE:
        while (width--)
@@ -159,13 +166,13 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
            if (alpha)
              {
-              c = 1.0 /alpha;
+              c = 1.0 / alpha;
 
-              *dest_r++ = (a * *src1_r++ + b * *src2_r++) * c;
-              *dest_g++ = (a * *src1_g++ + b * *src2_g++) * c;
-              *dest_b++ = (a * *src1_b++ + b * *src2_b++) * c;
+              *dest_r++ = (a * *src1_r++ * 1.0 + b * *src2_r++ * 1.0) * c * 1.0;
+              *dest_g++ = (a * *src1_g++ * 1.0 + b * *src2_g++ * 1.0) * c * 1.0;
+              *dest_b++ = (a * *src1_b++ * 1.0 + b * *src2_b++ * 1.0) * c * 1.0;
              }
-           else
+           else 
              {
               *dest_r++ = *src1_r++;
               *dest_g++ = *src1_g++;
@@ -175,12 +182,12 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
               src2_g++;
               src2_b++;
              }
-         } 
+         }
        break;
       case COMPOSITE_IN:
        while (width--)
          {
-           alpha = *src1_a * *src2_a;
+           alpha = *src1_a**src2_a;
 
            *dest_a++ = alpha;
             src1_a++;
@@ -196,7 +203,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
               src1_g++;
               src1_b++;
              }
-           else
+           else 
              {
               *dest_r++ = *src1_r++;
               *dest_g++ = *src1_g++;
@@ -205,7 +212,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
               src2_r++;
               src2_g++;
               src2_b++;
-             } 
+             }
          }
        break;
       case COMPOSITE_OUT:
@@ -217,7 +224,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             src2_a++;
             src1_a++;
 
-           if(alpha)
+           if (alpha)
              {
               *dest_r++ = *src2_r++;
               *dest_g++ = *src2_g++;
@@ -226,7 +233,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
                src1_r++;
                src1_g++;
                src1_b++;
-             } 
+             }
            else 
              {
               *dest_r++ = *src1_r++;
@@ -244,18 +251,18 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
          {
            a = 1.0 - *src2_a;
            b = *src2_a;
-           alpha = *src1_a; 
+           alpha = *src1_a;
 
            *dest_a++ = alpha;
             src2_a++;
             src1_a++;
 
-           if(alpha)
+           if (alpha)
              {
-              *dest_r++ = a * *src1_r++ + b * *src2_r++;
-              *dest_g++ = a * *src1_g++ + b * *src2_g++;
-              *dest_b++ = a * *src1_b++ + b * *src2_b++;
-             } 
+              *dest_r++ = a * *src1_r++ + b * *src2_r++ * 1.0;
+              *dest_g++ = a * *src1_g++ + b * *src2_g++ * 1.0;
+              *dest_b++ = a * *src1_b++ + b * *src2_b++ * 1.0;
+             }
            else 
              {
               *dest_r++ = *src1_r++;
@@ -273,20 +280,20 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
          {
            a = (1.0 - *src2_a) * *src1_a;
            b = (1.0 - *src1_a) * *src2_a;
-           alpha  = a + b;
+           alpha = a + b;
 
            *dest_a++ = alpha;
            src1_a++;
            src2_a++;
 
-           if(alpha)
+           if (alpha)
              {
               c = 1.0 / alpha;
 
-              *dest_r++ = (a * *src1_r++ + b * *src2_r++) * c;
-              *dest_g++ = (a * *src1_g++ + b * *src2_g++) * c;
-              *dest_b++ = (a * *src1_b++ + b * *src2_b++) * c;
-             } 
+              *dest_r++ = (a * *src1_r++ * 1.0 + b * *src2_r++ * 1.0) * c * 1.0;
+              *dest_g++ = (a * *src1_g++ * 1.0 + b * *src2_g++ * 1.0) * c * 1.0;
+              *dest_b++ = (a * *src1_b++ * 1.0 + b * *src2_b++ * 1.0) * c * 1.0;
+             }
            else 
              {
               *dest_r++ = *src1_r++;
@@ -301,7 +308,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
        break;
       default:
        break;
-      }       
+      }
   }
  
   private
@@ -311,13 +318,15 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
 
-    gfloat *dest_data[3], *src1_data[3], *src2_data[4]; 
-    gfloat *dest_r, *dest_g, *dest_b; 
-    gfloat *src1_r, *src1_g, *src1_b;
-    gfloat *src2_r, *src2_g, *src2_b, *src2_a=NULL;
-    gfloat a, b, alpha;
-    guint width = point_opP->scanline_width;
 
+    float *dest_data[3], *src1_data[3], *src2_data[4];
+    float  *dest_r, *dest_g, *dest_b;
+    float  *src1_r, *src1_g, *src1_b;
+    float  *src2_r, *src2_g, *src2_b, *src2_a;
+    gfloat a, b, alpha;
+    guint width;
+
+    width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
                       (guchar**)dest_data);
@@ -328,20 +337,24 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
 
-    dest_r = (gfloat*) dest_data[0];
-    dest_g = (gfloat*) dest_data[1];
-    dest_b = (gfloat*) dest_data[2];
- 
-    src1_r = (gfloat*) src1_data[0];
-    src1_g = (gfloat*) src1_data[1];
-    src1_b = (gfloat*) src1_data[2];
 
-    src2_r = (gfloat*) src2_data[0];
-    src2_g = (gfloat*) src2_data[1];
-    src2_b = (gfloat*) src2_data[2];
-    src2_a = (gfloat*) src2_data[3];
+
+    dest_r = dest_data[0];
+    dest_g = dest_data[1];
+    dest_b = dest_data[2];
+
+    src1_r = src1_data[0];
+    src1_g = src1_data[1];
+    src1_b = src1_data[2];
+
+    src2_r = src2_data[0];
+    src2_g = src2_data[1];
+    src2_b = src2_data[2];
+    src2_a = src2_data[3];
 
     switch(self->_priv->comp_mode)
+
+
       {
       case COMPOSITE_REPLACE:
        while (width--)
@@ -359,10 +372,10 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
            src2_a++;
 
-           *dest_r++ = (a * *src1_r++ + b * *src2_r++);
-           *dest_g++ = (a * *src1_g++ + b * *src2_g++);
-           *dest_b++ = (a * *src1_b++ + b * *src2_b++);
-         } 
+           *dest_r++ = (a * *src1_r++ * 1.0 + b * *src2_r++ * 1.0);
+           *dest_g++ = (a * *src1_g++ * 1.0 + b * *src2_g++ * 1.0);
+           *dest_b++ = (a * *src1_b++ * 1.0 + b * *src2_b++ * 1.0);
+         }
        break;
       case COMPOSITE_IN:
        while (width--)
@@ -381,7 +394,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
               src1_g++;
               src1_b++;
              }
-           else
+           else 
              {
               *dest_r++ = *src1_r++;
               *dest_g++ = *src1_g++;
@@ -390,7 +403,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
               src2_r++;
               src2_g++;
               src2_b++;
-             } 
+             }
          }
        break;
       case COMPOSITE_OUT:
@@ -409,9 +422,9 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
             src2_a++;
 
-           *dest_r++ = a * *src1_r++ + b * *src2_r++;
-           *dest_g++ = a * *src1_g++ + b * *src2_g++;
-           *dest_b++ = a * *src1_b++ + b * *src2_b++;
+           *dest_r++ = a * *src1_r++ + b * *src2_r++ * 1.0;
+           *dest_g++ = a * *src1_g++ + b * *src2_g++ * 1.0;
+           *dest_b++ = a * *src1_b++ + b * *src2_b++ * 1.0;
          }
        break;
       case COMPOSITE_XOR:
@@ -426,7 +439,6 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
        break;
       }
   }
-
   private
   void
   RGB_op_RGBA_FLOAT (GeglPointOp *point_op)
@@ -434,13 +446,16 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
 
-    gfloat *dest_data[4], *src1_data[4], *src2_data[3]; 
-    gfloat *dest_r, *dest_g, *dest_b, *dest_a=NULL;
-    gfloat *src1_r, *src1_g, *src1_b, *src1_a=NULL;
-    gfloat *src2_r, *src2_g, *src2_b;
-    gfloat b, alpha;
-    guint width = point_opP->scanline_width;
 
+
+    float *dest_data[4], *src1_data[4], *src2_data[3];
+    float  *dest_r, *dest_g, *dest_b, *dest_a;
+    float  *src1_r, *src1_g, *src1_b, *src1_a;
+    float  *src2_r, *src2_g, *src2_b;
+    gfloat b, alpha;
+    guint width;
+
+    width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
                       (guchar**)dest_data);
@@ -451,21 +466,24 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
 
-    dest_r = (gfloat*) dest_data[0];
-    dest_g = (gfloat*) dest_data[1];
-    dest_b = (gfloat*) dest_data[2];
-    dest_a = (gfloat*) dest_data[3];
- 
-    src1_r = (gfloat*) src1_data[0];
-    src1_g = (gfloat*) src1_data[1];
-    src1_b = (gfloat*) src1_data[2];
-    src1_a = (gfloat*) src1_data[3];
 
-    src2_r = (gfloat*) src2_data[0];
-    src2_g = (gfloat*) src2_data[1];
-    src2_b = (gfloat*) src2_data[2];
+    dest_r = dest_data[0];
+    dest_g = dest_data[1];
+    dest_b = dest_data[2];
+    dest_a = dest_data[3];
+ 
+    src1_r = src1_data[0];
+    src1_g = src1_data[1];
+    src1_b = src1_data[2];
+    src1_a = src1_data[3];
+
+    src2_r = src2_data[0];
+    src2_g = src2_data[1];
+    src2_b = src2_data[2];
 
     switch(self->_priv->comp_mode)
+
+
       {
       case COMPOSITE_REPLACE:
        while (width--)
@@ -483,7 +501,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
            *dest_g++ = *src2_g++;
            *dest_b++ = *src2_b++;
            *dest_a++ = 1.0;
-         } 
+         }
        break;
       case COMPOSITE_IN:
        while (width--)
@@ -503,7 +521,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
               src1_g++;
               src1_b++;
              }
-           else
+           else 
              {
               *dest_r++ = *src1_r++;
               *dest_g++ = *src1_g++;
@@ -512,7 +530,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
               src2_r++;
               src2_g++;
               src2_b++;
-             } 
+             }
          }
        break;
       case COMPOSITE_OUT:
@@ -523,7 +541,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
            *dest_a++ = alpha;
             src1_a++;
 
-           if(alpha)
+           if (alpha)
              {
               *dest_r++ = *src2_r++;
               *dest_g++ = *src2_g++;
@@ -532,7 +550,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
                src1_r++;
                src1_g++;
                src1_b++;
-             } 
+             }
            else 
              {
               *dest_r++ = *src1_r++;
@@ -548,12 +566,12 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
       case COMPOSITE_ATOP:
        while (width--)
          {
-           alpha = *src1_a; 
+           alpha = *src1_a;
 
            *dest_a++ = alpha;
             src1_a++;
 
-           if(alpha)
+           if (alpha)
              {
               *dest_r++ = *src2_r++;
               *dest_g++ = *src2_g++;
@@ -562,7 +580,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
                src1_r++;
                src1_g++;
                src1_b++;
-             } 
+             }
            else 
              {
               *dest_r++ = *src1_r++;
@@ -579,17 +597,17 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
        while (width--)
          {
            b = (1.0 - *src1_a);
-           alpha  = b;
+           alpha = b;
 
            *dest_a++ = alpha;
            src1_a++;
 
-           if(alpha)
+           if (alpha)
              {
-              *dest_r++ =  *src2_r++;
-              *dest_g++ =  *src2_g++;
-              *dest_b++ =  *src2_b++;
-             } 
+              *dest_r++ = *src2_r++;
+              *dest_g++ = *src2_g++;
+              *dest_b++ = *src2_b++;
+             }
            else 
              {
               *dest_r++ = *src1_r++;
@@ -604,7 +622,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
        break;
       default:
        break;
-      }       
+      }
   }
 
   private 
@@ -615,13 +633,15 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)
                                     (point_op->_priv); 
 
-    guint width = point_opP->scanline_width;
 
-    gfloat *dest_data[3], *src1_data[3], *src2_data[3]; 
-    gfloat *dest_r, *dest_g, *dest_b;
-    gfloat *src1_r, *src1_g, *src1_b;
-    gfloat *src2_r, *src2_g, *src2_b;
 
+    float *dest_data[3], *src1_data[3], *src2_data[3];
+    float  *dest_r, *dest_g, *dest_b;
+    float  *src1_r, *src1_g, *src1_b;
+    float  *src2_r, *src2_g, *src2_b;
+    guint width;
+
+    width = point_opP->scanline_width;
     gegl_image_iterator_get_scanline_data ( 
                       point_opP->iterators[0], 
                       (guchar**)dest_data);
@@ -632,19 +652,22 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
 
-    dest_r = (gfloat*) dest_data[0];
-    dest_g = (gfloat*) dest_data[1];
-    dest_b = (gfloat*) dest_data[2];
- 
-    src1_r = (gfloat*) src2_data[0];
-    src1_g = (gfloat*) src2_data[1];
-    src1_b = (gfloat*) src2_data[2];
 
-    src2_r = (gfloat*) src2_data[0];
-    src2_g = (gfloat*) src2_data[1];
-    src2_b = (gfloat*) src2_data[2];
+    dest_r = dest_data[0];
+    dest_g = dest_data[1];
+    dest_b = dest_data[2];
+ 
+    src1_r = src2_data[0];
+    src1_g = src2_data[1];
+    src1_b = src2_data[2];
+
+    src2_r = src2_data[0];
+    src2_g = src2_data[1];
+    src2_b = src2_data[2];
 
     switch(self->_priv->comp_mode)
+
+
       {
       case COMPOSITE_REPLACE:
       case COMPOSITE_OVER:
@@ -653,8 +676,6 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
        while (width--)
          {
            *dest_r++ = *src2_r++;
-           *dest_g++ = *src2_g++;
-           *dest_b++ = *src2_b++;
           }
        break;
       case COMPOSITE_OUT:
@@ -668,6 +689,6 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
        break;
       default:
        break;
-      }       
+      }
   }
 }
