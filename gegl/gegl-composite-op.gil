@@ -255,13 +255,13 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
             a = (WP - src2_alpha) * src1_alpha;
             b = (WP - src1_alpha) * src2_alpha;
-            alpha = a + b;
+            alpha = (Promote) a + b;
 
             dest_alpha = alpha;
 
             if (alpha)
               {
-                dest_color = (a * src1_color + b * src2_color)/alpha;
+                dest_color = (Promote) (a * src1_color + b * src2_color)/alpha;
               }
             else 
               {

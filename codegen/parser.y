@@ -1809,7 +1809,7 @@ main (int argc, char **argv)
 {
   int i=1;
   /* uncomment this to see lexer and parser debug info */
-    yydebug = 1;  
+  /*  yydebug = 1; */  
   
   if (argc < 5)
     {
