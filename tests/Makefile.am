@@ -27,7 +27,7 @@ IMAGELDADDS = @STRIP_BEGIN@ \
 	$(TESTLDADDS) \
 	$(top_builddir)/gegl/image/libimage.la \
 @STRIP_END@
-	
+
 MOCK_OBJECT_SRC = \
    gegl-mock-bfs-visitor.c \
    gegl-mock-bfs-visitor.h \
@@ -113,10 +113,11 @@ testgegl_DEPENDENCIES = $(GEGLDEPS)
 testgegl_LDADD = $(GEGLLDADDS) -lm
 
 testimage_SOURCES = testimage.c \
-                                    gegl-image-buffer-double-test.c 
+                    gegl-image-buffer-double-test.c \
+		    gegl-image-component-sample-model-test.c
 
 testimage_LDFLAGS= -g  \
-								 @DEP_LIBS@
+                  @DEP_LIBS@
 
 testimage_DEPENDENCIES = $(IMAGEDEPS)
 

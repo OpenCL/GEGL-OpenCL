@@ -6,7 +6,7 @@
 #include "csuite.h"
 
 extern Test * create_buffer_double_test();
-
+extern Test* create_component_sample_model_test();
 
 int
 main (int argc, char *argv[])
@@ -26,6 +26,7 @@ main (int argc, char *argv[])
 
 #if 1 
     cs_addTest(suite, create_buffer_double_test());
+    cs_addTest(suite, create_component_sample_model_test());
 #endif
 
     cs_setStream(suite, stdout);
