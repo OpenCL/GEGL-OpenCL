@@ -84,22 +84,22 @@ gegl_color_model_factory (GeglColorSpace space,
 {
   switch (space)
     {
-    case GRAY:
+    case GEGL_GRAY:
       switch (data)
        {
-       case U8:
+       case GEGL_U8:
          return GEGL_COLOR_MODEL(gegl_color_model_gray_u8_new(has_alpha));
-       case FLOAT:
+       case GEGL_FLOAT:
          return GEGL_COLOR_MODEL(gegl_color_model_gray_float_new(has_alpha));
        default:
          return NULL;
        } 
-    case RGB:
+    case GEGL_RGB:
       switch (data)
        {
-       case U8:
+       case GEGL_U8:
          return GEGL_COLOR_MODEL(gegl_color_model_rgb_u8_new(has_alpha));
-       case FLOAT:
+       case GEGL_FLOAT:
          return GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(has_alpha));
        default:
          return NULL;

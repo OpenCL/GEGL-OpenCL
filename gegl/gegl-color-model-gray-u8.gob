@@ -48,7 +48,7 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
     {
       GeglColorModel *self_color_model = GEGL_COLOR_MODEL (self);
 
-      self_color_model->data_type = U8;
+      self_color_model->data_type = GEGL_U8;
       self_color_model->channel_data_type_name = NULL;
       self_color_model->bytes_per_channel = sizeof(guint8);
       self_color_model->bytes_per_pixel = 
@@ -92,44 +92,44 @@ class Gegl:Color:Model:Gray:U8 from Gegl:Color:Model:Gray {
 
     switch (constant) 
       { 
-        case COLOR_WHITE:
+        case GEGL_COLOR_WHITE:
           channel_values[g].u8 = 255;
           if (has_alpha)
             channel_values[a].u8 = 255;
           break;
-        case COLOR_BLACK:
+        case GEGL_COLOR_BLACK:
           channel_values[g].u8 = 0;
           if (has_alpha)
             channel_values[a].u8 = 255;
           break;
-        case COLOR_RED:
+        case GEGL_COLOR_RED:
           channel_values[g].u8 = CLAMP(ROUND(0.3 * 255),0,255);
           if (has_alpha)
             channel_values[a].f = 255;
           break;
-        case COLOR_GREEN:
+        case GEGL_COLOR_GREEN:
           channel_values[g].u8 = CLAMP(ROUND(0.59 * 255),0,255);
           if (has_alpha)
             channel_values[a].u8 = 255;
           break;
-        case COLOR_BLUE:
+        case GEGL_COLOR_BLUE:
           channel_values[g].u8 = CLAMP(ROUND(0.11 * 255),0,255);
           if (has_alpha)
             channel_values[a].u8 = 255;
           break;
-        case COLOR_GRAY:
-        case COLOR_HALF_WHITE:
+        case GEGL_COLOR_GRAY:
+        case GEGL_COLOR_HALF_WHITE:
           channel_values[g].u8 = 127;
           if (has_alpha)
             channel_values[a].u8 = 255;
           break;
-        case COLOR_WHITE_TRANSPARENT:
+        case GEGL_COLOR_WHITE_TRANSPARENT:
           channel_values[g].u8 = 255;
           if (!has_alpha)
             channel_values[a].u8 = 0;
           break;
-        case COLOR_TRANSPARENT:
-        case COLOR_BLACK_TRANSPARENT:
+        case GEGL_COLOR_TRANSPARENT:
+        case GEGL_COLOR_BLACK_TRANSPARENT:
           channel_values[g].u8 = 0;
           if (has_alpha)
             channel_values[a].u8 = 0;

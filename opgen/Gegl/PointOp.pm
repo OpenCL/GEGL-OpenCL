@@ -68,7 +68,7 @@ HERE
     print <<HERE;
 
     /* Chain up */
-    if (!gegl_n_src_op_constructor (GEGL_N_SRC_OP(self), inputs)
+    if (!gegl_n_src_op_constructor (GEGL_N_SRC_OP(self), inputs))
       return FALSE;
 
     return TRUE;
@@ -113,7 +113,7 @@ HERE
 	      }
 	  }
       }
-    print "  }\n\n";
+    print "\n  }\n\n";
   }
 
 sub print_prepare

@@ -205,7 +205,7 @@ HERE
     else
     {
       print "              default:\n";
-      print "                dest_alpha = CHANNEL_MAX;\n";
+      print "                dest_alpha = WP;\n";
     }
 
 print <<HERE;
@@ -228,7 +228,6 @@ HERE
       ${cleanup}
       /* ---------- </user cleanup> ---------- */
     }
-  }
 HERE
 
 
@@ -281,7 +280,7 @@ sub my_bit_alpha
       {
         unless ($i & $num)
         {
-          $tmp =~ s/${_}_alpha/CHANNEL_MAX/g;
+          $tmp =~ s/${_}_alpha/WP/g;
         }
         $i = $i << 1;
       }

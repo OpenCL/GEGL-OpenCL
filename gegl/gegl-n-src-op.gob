@@ -60,8 +60,8 @@ class Gegl:N:Src:Op from Gegl:Point:Op
     GeglNSrcOpClass  *self_n_src_op_class = 
       GEGL_N_SRC_OP_CLASS(GTK_OBJECT(self_n_src_op)->klass);
 
-    GeglChannelDataType datatype   = U8;  /* FIXME */
-    GeglColorSpace      colorspace = RGB; /* FIXME */
+    GeglChannelDataType datatype   = GEGL_U8;  /* FIXME */
+    GeglColorSpace      colorspace = GEGL_RGB; /* FIXME */
 
 
     GList *list;

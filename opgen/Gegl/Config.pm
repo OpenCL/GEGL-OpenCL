@@ -19,7 +19,7 @@ package Gegl;
 			   enum  => "GEGL_U16"
 			},
 	      u16_4k => {
-			   enum  => "GEGL_U16_4k"
+			   enum  => "GEGL_U16_4"
 			}
 	     );
 

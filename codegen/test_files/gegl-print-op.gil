@@ -69,13 +69,13 @@ class Gegl:Print:Op from Gegl:Point:Op {
 
       switch (color_space)
        {
-       case GRAY:
+       case GEGL_GRAY:
          switch (data_type)
            {
-           case U8:
+           case GEGL_U8:
              point_op_class->scanline_func = gegl_print_op_GRAY_U8;
              break;
-           case FLOAT:
+           case GEGL_FLOAT:
              point_op_class->scanline_func = gegl_print_op_GRAY_FLOAT;        
              break;
            default:
@@ -84,13 +84,13 @@ class Gegl:Print:Op from Gegl:Point:Op {
              return FALSE;
            } 
          break;
-       case RGB:
+       case GEGL_RGB:
          switch (data_type)
            {
-           case U8:
+           case GEGL_U8:
              point_op_class->scanline_func = gegl_print_op_RGB_U8;
              break;
-           case FLOAT:
+           case GEGL_FLOAT:
              point_op_class->scanline_func = gegl_print_op_RGB_FLOAT;        
              break;
            default:

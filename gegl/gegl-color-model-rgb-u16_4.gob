@@ -46,7 +46,7 @@ class Gegl:Color:Model:Rgb:U16_4 from Gegl:Color:Model:Rgb {
     {
       GeglColorModel *self_color_model = GEGL_COLOR_MODEL (self);
 
-      self_color_model->data_type = U16_4;
+      self_color_model->data_type = GEGL_U16_4;
       self_color_model->channel_data_type_name = NULL;
       self_color_model->bytes_per_channel = sizeof(guint16);
       self_color_model->bytes_per_pixel = 

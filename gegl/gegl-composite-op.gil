@@ -130,7 +130,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
     switch(self->_priv->comp_mode)
       {
-      case COMPOSITE_REPLACE:
+      case GEGL_COMPOSITE_REPLACE:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN
@@ -154,7 +154,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END
           }
         break;
-      case COMPOSITE_OVER:
+      case GEGL_COMPOSITE_OVER:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN
@@ -181,7 +181,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END
           }
         break;
-      case COMPOSITE_IN:
+      case GEGL_COMPOSITE_IN:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN
@@ -206,7 +206,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END
           }
         break;
-      case COMPOSITE_OUT:
+      case GEGL_COMPOSITE_OUT:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN
@@ -231,7 +231,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END
           }
         break;
-      case COMPOSITE_ATOP:
+      case GEGL_COMPOSITE_ATOP:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN
@@ -258,7 +258,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END
           }
         break;
-      case COMPOSITE_XOR:
+      case GEGL_COMPOSITE_XOR:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN
@@ -317,7 +317,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
     switch(self->_priv->comp_mode)
       {
-      case COMPOSITE_REPLACE:
+      case GEGL_COMPOSITE_REPLACE:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 
@@ -331,7 +331,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END 
 	  }
         break;
-      case COMPOSITE_OVER:
+      case GEGL_COMPOSITE_OVER:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 
@@ -348,7 +348,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END 
           }
         break;
-      case COMPOSITE_IN:
+      case GEGL_COMPOSITE_IN:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 
@@ -362,7 +362,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END 
           }
         break;
-      case COMPOSITE_OUT:
+      case GEGL_COMPOSITE_OUT:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 
@@ -376,7 +376,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END 
           }
         break;
-      case COMPOSITE_ATOP:
+      case GEGL_COMPOSITE_ATOP:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 
@@ -393,7 +393,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END 
           }
        break;
-      case COMPOSITE_XOR:
+      case GEGL_COMPOSITE_XOR:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 
@@ -441,7 +441,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
     switch(self->_priv->comp_mode)
       {
-      case COMPOSITE_REPLACE:
+      case GEGL_COMPOSITE_REPLACE:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 
@@ -456,7 +456,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END 
           }
         break;
-      case COMPOSITE_OVER:
+      case GEGL_COMPOSITE_OVER:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 
@@ -471,7 +471,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END 
           }
         break;
-      case COMPOSITE_IN:
+      case GEGL_COMPOSITE_IN:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 
@@ -495,7 +495,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END 
           }
        break;
-      case COMPOSITE_OUT:
+      case GEGL_COMPOSITE_OUT:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 
@@ -519,7 +519,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END 
           }
         break;
-      case COMPOSITE_ATOP:
+      case GEGL_COMPOSITE_ATOP:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 
@@ -543,7 +543,7 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END 
           }
        break;
-      case COMPOSITE_XOR:
+      case GEGL_COMPOSITE_XOR:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 
@@ -598,10 +598,10 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
 
     switch(self->_priv->comp_mode)
       {
-      case COMPOSITE_REPLACE:
-      case COMPOSITE_OVER:
-      case COMPOSITE_IN:
-      case COMPOSITE_ATOP:
+      case GEGL_COMPOSITE_REPLACE:
+      case GEGL_COMPOSITE_OVER:
+      case GEGL_COMPOSITE_IN:
+      case GEGL_COMPOSITE_ATOP:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 
@@ -615,8 +615,8 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
             GENERIC_IMAGE_CODE_END 
        	  }
         break;
-      case COMPOSITE_OUT:
-      case COMPOSITE_XOR:
+      case GEGL_COMPOSITE_OUT:
+      case GEGL_COMPOSITE_XOR:
         while (width--)
           {
             GENERIC_IMAGE_CODE_BEGIN 

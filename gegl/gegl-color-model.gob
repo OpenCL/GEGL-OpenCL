@@ -24,8 +24,8 @@ typedef void (*ConvertFunc)(GeglColorModel *,
 
 class Gegl:Color:Model from Gegl:Object {
 
-  protected GeglColorSpace  colorspace;       /*RGB, GRAY, CMYK, etc*/
-  protected GeglChannelDataType data_type;    /*FLOAT, U8, U16, etc*/
+  protected GeglColorSpace  colorspace;       /* RGB, GRAY, CMYK, etc*/
+  protected GeglChannelDataType data_type;    /* FLOAT, U8, U16, etc*/
 
   protected gint       bytes_per_channel;
   protected gint       bytes_per_pixel;  
@@ -55,8 +55,8 @@ class Gegl:Color:Model from Gegl:Object {
     if (!gegl_object_constructor (GEGL_OBJECT(self)))
        return FALSE;
        
-    self->colorspace = COLORSPACE_NONE;
-    self->data_type = DATATYPE_NONE;
+    self->colorspace = GEGL_COLORSPACE_NONE;
+    self->data_type = GEGL_DATATYPE_NONE;
     self->bytes_per_channel = -1;
     self->bytes_per_pixel = -1; 
     self->num_channels = -1; 

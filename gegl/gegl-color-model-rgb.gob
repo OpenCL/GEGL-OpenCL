@@ -44,7 +44,7 @@ class Gegl:Color:Model:Rgb from Gegl:Color:Model {
      }
 
     /* We can set these here */
-    self_color_model->colorspace = RGB;
+    self_color_model->colorspace = GEGL_RGB;
     self_color_model->is_additive = TRUE;
     self_color_model->color_space_name = NULL;
     

@@ -1,3 +1,22 @@
+2001-02-10  Jay Cox  <jaycox@gimp.org>
+
+	* codegen/test_files/gegl-print-op.gil
+	* gegl/gegl-color-*.gob
+	* gegl/gegl-composite-op.gil
+	* gegl/gegl-composite-premult-op.gil
+	* gegl/gegl-fill-op.gil
+	* gegl/gegl-n-src-op.gil
+	* gegl/gegl-print-op.gil
+	* gegl/gegl-utils.c
+	* gegl/gegl-types.h
+	Add a GEGL_ prefix to the enums defined in gegl-types.h
+
+	* opgen/Gegl/Config.pm
+	* opgen/Gegl/Op.pm
+	* opgen/Gegl/PointOp.pm
+	* opgen/Gegl/PointProcessor.pm
+	Fix some bugs in the output.
+
 2001-02-09  Jay Cox  <jaycox@gimp.org>
 
 	* opgen/Gegl/PointProcessor.pm

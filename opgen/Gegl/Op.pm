@@ -91,6 +91,7 @@ sub print_class
     $op->print_prepare();
     $op->print_class_specific();
 # print tail end junk
+    print "\n}\n";
   }
 
 
@@ -110,6 +111,7 @@ sub print_headers
 %{
 #include "gegl-n-src-op.h"
 #include "gegl-$op->{name}-op.h"
+#include "gegl-$op->{name}-op-private.h"
 #include "gegl-image-iterator.h"
 #include "gegl-color.h"
 #include "gegl-color-model.h"

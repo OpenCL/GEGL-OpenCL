@@ -47,7 +47,7 @@ class Gegl:Color:Model:Gray:Float from Gegl:Color:Model:Gray {
         return FALSE;
     {
       GeglColorModel *self_color_model = GEGL_COLOR_MODEL (self);
-      self_color_model->data_type = FLOAT;
+      self_color_model->data_type = GEGL_FLOAT;
       self_color_model->channel_data_type_name = NULL;
       self_color_model->bytes_per_channel = sizeof(float);
       self_color_model->bytes_per_pixel = 
@@ -92,44 +92,44 @@ class Gegl:Color:Model:Gray:Float from Gegl:Color:Model:Gray {
 
     switch (constant) 
       { 
-        case COLOR_WHITE:
+        case GEGL_COLOR_WHITE:
           channel_values[g].f = 1.0;
           if (has_alpha)
             channel_values[a].f = 1.0;
           break;
-        case COLOR_BLACK:
+        case GEGL_COLOR_BLACK:
           channel_values[g].f = 0.0;
           if (has_alpha)
             channel_values[a].f = 1.0;
           break;
-        case COLOR_RED:
+        case GEGL_COLOR_RED:
           channel_values[g].f = 0.3;
           if (has_alpha)
             channel_values[a].f = 1.0;
           break;
-        case COLOR_GREEN:
+        case GEGL_COLOR_GREEN:
           channel_values[g].f = 0.59;
           if (has_alpha)
             channel_values[a].f = 1.0;
           break;
-        case COLOR_BLUE:
+        case GEGL_COLOR_BLUE:
           channel_values[g].f = 0.11;
           if (has_alpha)
             channel_values[a].f = 1.0;
           break;
-        case COLOR_GRAY:
-        case COLOR_HALF_WHITE:
+        case GEGL_COLOR_GRAY:
+        case GEGL_COLOR_HALF_WHITE:
           channel_values[g].f = 0.5;
           if (has_alpha)
             channel_values[a].f = 1.0;
           break;
-        case COLOR_WHITE_TRANSPARENT:
+        case GEGL_COLOR_WHITE_TRANSPARENT:
           channel_values[g].f = 1.0;
           if (!has_alpha)
             channel_values[a].f = 0.0;
           break;
-        case COLOR_TRANSPARENT:
-        case COLOR_BLACK_TRANSPARENT:
+        case GEGL_COLOR_TRANSPARENT:
+        case GEGL_COLOR_BLACK_TRANSPARENT:
           channel_values[g].f = 0.0;
           if (has_alpha)
             channel_values[a].f = 0.0;
