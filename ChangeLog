@@ -1,3 +1,9 @@
+2000-03-16  Jay Cox  <jaycox@earthlink.net>
+
+	* gegl/gegl-image-iterator.gob: call get_current_rect in the
+	constructor so that the scanline_data is initialized properly.
+	* gegl/testgeglfile.c: Optomized and fixed a bug in display_image.
+
 Thu Mar 16 16:04:32 PST 2000 caro@rhythm.com
 	
 	* added error messages.

@@ -47,13 +47,13 @@ display_image(GtkWidget *window, GtkWidget *preview,
   gint            w, h, num_chans;
   gfloat          **data_ptrs;
   int             i, j;
-  guchar          tmp[3];
+  guchar          *tmp;
 
   num_chans = gegl_color_model_num_channels(gegl_image_buffer_color_model(image_buffer));
   data_ptrs = (gfloat**) g_malloc(sizeof(gfloat*) * num_chans);
   h = current_rect.h;
   w = current_rect.w;
-  
+  tmp = g_new(char, 3*w);
   { 
     GeglImageIterator *iterator = gegl_image_iterator_new(image_buffer);
     for(i=0; i<h; i++){
@@ -62,18 +62,18 @@ display_image(GtkWidget *window, GtkWidget *preview,
       /* convert the data_ptrs */
       /* uchar -> float -> unsigned 8bit */   
       for(j=0; j<w; j++){
-	tmp[0] = data_ptrs[0][j] * 255;
-	tmp[1] = data_ptrs[1][j] * 255;
-	tmp[2] = data_ptrs[2][j] * 255;
-
-	gtk_preview_draw_row(GTK_PREVIEW(preview), tmp, j, i, 1);
+	tmp[0 + 3*j] = data_ptrs[0][j] * 255;
+	tmp[1 + 3*j] = data_ptrs[1][j] * 255;
+	tmp[2 + 3*j] = data_ptrs[2][j] * 255;
       }       
+      gtk_preview_draw_row(GTK_PREVIEW(preview), tmp, 0, i, w);
       gegl_image_iterator_next_scanline(iterator);  
-      gegl_object_destroy (GEGL_OBJECT(iterator));
      }
+    gegl_object_destroy (GEGL_OBJECT(iterator));
   }
 
   g_free(data_ptrs); 
+  g_free(tmp); 
   
   /* display the window */
   gtk_widget_show_all(window);

@@ -66,6 +66,8 @@ class Gegl:Image:Iterator from Gegl:Object {
      
       /*Allocate data pointers array*/
       self->_priv->scanline_data = g_new(guchar*, num_channels);
+
+      get_current_rect(self, NULL);
     }
 
     return TRUE;
@@ -122,7 +124,8 @@ class Gegl:Image:Iterator from Gegl:Object {
     gint plane_bytes = bytes_per_channel * width * height; 
 
     /* Copy our private current rect to the one passed in */ 
-    gegl_rect_copy (current_rect, &(self->_priv->current_rect));
+    if (current_rect != NULL)
+      gegl_rect_copy (current_rect, &(self->_priv->current_rect));
 
     /* This also sets the scanline index to first scanline of rect */ 
     self->_priv->scanline = 0;
