@@ -3,8 +3,8 @@
 #include "gegl-image-buffer.h"
 %}
 %{
-#include "gegl-subtract-op.h"
-#include "gegl-subtract-op-private.h"
+#include "gegl-add-op.h"
+#include "gegl-add-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
 #include "gegl-object-private.h"
@@ -15,11 +15,11 @@
 %}
 
 
-class Gegl:Subtract:Op from Gegl:Point:Op {
+class Gegl:Add:Op from Gegl:Point:Op {
 
   
   public 
-  GeglSubtractOp *
+  GeglAddOp *
   new (GeglImageBuffer *dest, 
        GeglImageBuffer *src1,
        GeglImageBuffer *src2,       
@@ -27,7 +27,7 @@ class Gegl:Subtract:Op from Gegl:Point:Op {
        GeglRect *src1_rect,
        GeglRect *src2_rect)
   {
-    GeglSubtractOp * self = GEGL_SUBTRACT_OP(GET_NEW);
+    GeglAddOp * self = GEGL_ADD_OP(GET_NEW);
 
     /*Call the constructor */
     if (!constructor(self, dest, src1, src2, dest_rect, src1_rect, src2_rect))
@@ -89,13 +89,13 @@ class Gegl:Subtract:Op from Gegl:Point:Op {
 	switch (data_type)
 	  {
 	  case U8:
-	    point_op_class->scanline_func = gegl_subtract_op_GRAY_U8;
+	    point_op_class->scanline_func = gegl_add_op_GRAY_U8;
 	    break;
 	  case FLOAT:
-	    point_op_class->scanline_func = gegl_subtract_op_GRAY_FLOAT; 	
+	    point_op_class->scanline_func = gegl_add_op_GRAY_FLOAT; 	
 	    break;
 	  default:
-	    g_warning("SubtractOp: Color Model data type none or unknown\n");
+	    g_warning("AddOp: Color Model data type none or unknown\n");
 	    point_op_class->scanline_func = NULL; 	
 	    return FALSE;
 	  } 
@@ -104,19 +104,19 @@ class Gegl:Subtract:Op from Gegl:Point:Op {
 	switch (data_type)
 	  {
 	  case U8:
-	    point_op_class->scanline_func = gegl_subtract_op_RGB_U8;
+	    point_op_class->scanline_func = gegl_add_op_RGB_U8;
 	    break;
 	  case FLOAT:
-	    point_op_class->scanline_func = gegl_subtract_op_RGB_FLOAT; 	
+	    point_op_class->scanline_func = gegl_add_op_RGB_FLOAT; 	
 	    break;
 	  default:
-	    g_warning("SubtractOp: Color Model data type none or unknown\n");
+	    g_warning("AddOp: Color Model data type none or unknown\n");
 	    point_op_class->scanline_func = NULL; 	
 	    return FALSE;
 	  } 
 	break;
       default:
-	g_warning("SubtractOp: Color Model data type none or unknown\n");
+	g_warning("AddOp: Color Model data type none or unknown\n");
 	point_op_class->scanline_func = NULL; 	
 	return FALSE;
       } 
@@ -138,7 +138,7 @@ class Gegl:Subtract:Op from Gegl:Point:Op {
   {
     /*
       Whats the algorithm for this code?	
-      DEST = ABS(SRC1, SRC2) 
+      DEST = SRC1 + SRC2  
 
     */ 
     guint width;
@@ -177,12 +177,12 @@ class Gegl:Subtract:Op from Gegl:Point:Op {
     if(src2_has_alpha) src2_a = src2_data[3];
 
 
-    /* Subtract the dest with the subtract color */
+    /* Add the dest with the add color */
     while (width--)
     {
-      *dest_r++ = CLAMP(*src1_r - *src2_r,0,1);
-      *dest_g++ = CLAMP(*src1_g - *src2_g,0,1);
-      *dest_b++ = CLAMP(*src1_b - *src2_b,0,1);
+      *dest_r++ = CLAMP(*src1_r + *src2_r,0,1);
+      *dest_g++ = CLAMP(*src1_g + *src2_g,0,1);
+      *dest_b++ = CLAMP(*src1_b + *src2_b,0,1);
       src1_r++;
       src1_g++;
       src1_b++;
@@ -193,14 +193,14 @@ class Gegl:Subtract:Op from Gegl:Point:Op {
 	{
 	if (src1_has_alpha && src2_has_alpha)
 	  {
-	  *dest_a++ = MIN(*src1_a, *src2_a);
+	  *dest_a++ = CLAMP(*src1_a + *src2_a,0,1);
 	  src1_a++;
 	  src2_a++;
 	  }	
     	else if (src1_has_alpha)
-	  *dest_a++ = *src1_a++;
+	  *dest_a++ = 1.0;
 	else if (src2_has_alpha)
-	  *dest_a++ = *src2_a++; 
+	  *dest_a++ = 1.0; 
 	} 
     } 		
   }
@@ -217,7 +217,7 @@ class Gegl:Subtract:Op from Gegl:Point:Op {
   {
     /*
       Whats the algorithm for this code?	
-      DEST = ABS(SRC1, SRC2) 
+      DEST = SRC1 + SRC2  
 
     */ 
     guint width;
@@ -250,24 +250,24 @@ class Gegl:Subtract:Op from Gegl:Point:Op {
     if(src2_has_alpha) src2_a = src2_data[1];
 
 
-    /* Subtract the dest with the subtract color */
+    /* Add the dest with the add color */
     while (width--)
     {
-      *dest_g++ = CLAMP(*src1_g - *src2_g,0,1);
+      *dest_g++ = CLAMP(*src1_g + *src2_g,0,1);
       src1_g++;
       src2_g++;
       if (dest_has_alpha)
 	{
 	if (src1_has_alpha && src2_has_alpha)
 	  {
-	  *dest_a++ = MIN(*src1_a, *src2_a);
+	  *dest_a++ = CLAMP(*src1_a + *src2_a,0,1);
 	  src1_a++;
 	  src2_a++;
 	  }	
     	else if (src1_has_alpha)
-	  *dest_a++ = *src1_a++;
+	  *dest_a++ = 1.0;
 	else if (src2_has_alpha)
-	  *dest_a++ = *src2_a++; 
+	  *dest_a++ = 1.0; 
 	} 
     } 		
   }

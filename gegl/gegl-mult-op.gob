@@ -64,18 +64,9 @@ class Gegl:Mult:Op from Gegl:Point:Op {
     image_buffers[0] = dest;
     image_buffers[1] = src1;
     image_buffers[2] = src2;
-    rects[0].x = dest_rect->x;
-    rects[0].y = dest_rect->y;
-    rects[0].w = dest_rect->w;
-    rects[0].h = dest_rect->h;
-    rects[1].x = src1_rect->x;
-    rects[1].y = src1_rect->y;
-    rects[1].w = src1_rect->w;
-    rects[1].h = src1_rect->h;
-    rects[2].x = src2_rect->x;
-    rects[2].y = src2_rect->y;
-    rects[2].w = src2_rect->w;
-    rects[2].h = src2_rect->h;
+    gegl_rect_copy (&(rects[0]), dest_rect);
+    gegl_rect_copy (&(rects[1]), src1_rect);
+    gegl_rect_copy (&(rects[2]), src2_rect);
  
     /* Chain up */
     if (!gegl_point_op_constructor (
@@ -152,16 +143,16 @@ class Gegl:Mult:Op from Gegl:Point:Op {
     */ 
     guint width;
     gfloat *dest_data[4], *src1_data[4], *src2_data[4]; 
-    gfloat *dest_r, *dest_g, *dest_b, *dest_a;
-    gfloat *src1_r, *src1_g, *src1_b, *src1_a;
-    gfloat *src2_r, *src2_g, *src2_b, *src2_a;
+    gfloat *dest_r, *dest_g, *dest_b, *dest_a=NULL;
+    gfloat *src1_r, *src1_g, *src1_b, *src1_a=NULL;
+    gfloat *src2_r, *src2_g, *src2_b, *src2_a=NULL;
     gboolean dest_has_alpha, src1_has_alpha, src2_has_alpha; 
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
     GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv); 
 
-    dest_has_alpha = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[0]));
-    src1_has_alpha = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[1]));
-    src2_has_alpha = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[2]));
+    dest_has_alpha = gegl_color_model_has_alpha (gegl_image_buffer_color_model (opP->image_buffers[0]));
+    src1_has_alpha = gegl_color_model_has_alpha (gegl_image_buffer_color_model (opP->image_buffers[1]));
+    src2_has_alpha = gegl_color_model_has_alpha (gegl_image_buffer_color_model (opP->image_buffers[2]));
 
     width = point_opP->scanline_width;
 
@@ -225,16 +216,16 @@ class Gegl:Mult:Op from Gegl:Point:Op {
     */ 
     guint width;
     gfloat *dest_data[4], *src1_data[4], *src2_data[4]; 
-    gfloat *dest_g, *dest_a;
-    gfloat *src1_g, *src1_a;
-    gfloat *src2_g, *src2_a;
+    gfloat *dest_g, *dest_a=NULL;
+    gfloat *src1_g, *src1_a=NULL;
+    gfloat *src2_g, *src2_a=NULL;
     gboolean dest_has_alpha, src1_has_alpha, src2_has_alpha; 
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
     GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv); 
 
-    dest_has_alpha = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[0]));
-    src1_has_alpha = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[1]));
-    src2_has_alpha = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[2]));
+    dest_has_alpha = gegl_color_model_has_alpha (gegl_image_buffer_color_model (opP->image_buffers[0]));
+    src1_has_alpha = gegl_color_model_has_alpha (gegl_image_buffer_color_model (opP->image_buffers[1]));
+    src2_has_alpha = gegl_color_model_has_alpha (gegl_image_buffer_color_model (opP->image_buffers[2]));
 
     width = point_opP->scanline_width;
 

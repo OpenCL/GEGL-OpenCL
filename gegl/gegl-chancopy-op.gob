@@ -1,0 +1,192 @@
+%h{
+#include "gegl-point-op.h"
+#include "gegl-image-buffer.h"
+%}
+%{
+#include "gegl-chancopy-op.h"
+#include "gegl-chancopy-op-private.h"
+#include "gegl-point-op-private.h"
+#include "gegl-op-private.h"
+#include "gegl-object-private.h"
+#include "gegl-color.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+#include "gegl-types.h" 
+#include <stdio.h>
+%}
+
+
+class Gegl:ChanCopy:Op from Gegl:Point:Op {
+
+  private gint **chan_index;
+  private gint  nindex;
+  
+  public 
+  GeglChanCopyOp *
+  new (GeglImageBuffer *dest, 
+       GeglImageBuffer *src,
+       GeglRect *dest_rect,
+       GeglRect *src_rect,
+       gint **chan_index,
+       gint nindex)
+  {
+    GeglChanCopyOp * self = GEGL_CHANCOPY_OP(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, dest, src, dest_rect, src_rect, chan_index, nindex))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self, 
+  	      GeglImageBuffer *dest,
+       	      GeglImageBuffer *src,
+              GeglRect *dest_rect,
+              GeglRect *src_rect,
+              gint **chan_index,
+	      gint nindex)
+  {
+    gint i, num; 
+    GeglImageBuffer *image_buffers[2];
+    GeglRect rects[2];
+    GeglChannelDataType dest_data_type, src_data_type;
+    GeglColorModel *dest_cm, *src_cm; 
+    GeglPointOp *point_op = GEGL_POINT_OP (self);
+    GeglPointOpClass *point_op_class = 
+        GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+    
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+    
+    image_buffers[0] = dest;
+    image_buffers[1] = src;
+    gegl_rect_copy(&(rects[0]), dest_rect);
+    gegl_rect_copy(&(rects[1]), src_rect);
+ 
+    /* Chain up */
+    if (!gegl_point_op_constructor (
+         GEGL_POINT_OP(self), image_buffers, rects, 2))
+      return FALSE;
+
+    /*
+      Now based on the image buffers's color model(s)/data storage(s)
+      choose one of our scanline funcs to install
+      This is where some "autogeneration" happens.
+    */ 
+
+    dest_cm = gegl_image_buffer_color_model (dest);
+    dest_data_type = gegl_color_model_data_type (dest_cm);
+    src_cm = gegl_image_buffer_color_model (src);
+    src_data_type = gegl_color_model_data_type (src_cm);
+
+    if (dest_data_type != src_data_type)
+      {	
+	g_warning("ChanCopyOp: Color Model data type none or unknown\n");
+        point_op_class->scanline_func = NULL;   
+        return FALSE;
+      }
+   
+    if (nindex > gegl_color_model_num_channels (gegl_image_buffer_color_model (src)))
+      {
+        g_warning("ChanCopyOp: Color Model data type none or unknown\n");
+        point_op_class->scanline_func = NULL;
+        return FALSE;
+      }
+ 
+    num = gegl_color_model_num_channels (gegl_image_buffer_color_model (dest)); 
+    for (i=0; i<nindex; i++)
+      {
+        if (num<*chan_index[i]) 
+          {
+            g_warning("ChanCopyOp: Color Model data type none or unknown\n");
+            point_op_class->scanline_func = NULL;
+            return FALSE;
+          }       
+      }
+
+    switch (dest_data_type)
+      {
+      case U8:
+	point_op_class->scanline_func = gegl_chancopy_op_CP_U8;
+	break;
+      case FLOAT:
+	point_op_class->scanline_func = gegl_chancopy_op_CP_FLOAT; 	
+	break;
+      default:
+	g_warning("ChanCopyOp: Color Model data type none or unknown\n");
+	point_op_class->scanline_func = NULL; 	
+	return FALSE;
+      } 
+
+    /* store values */
+    self->_priv->chan_index = chan_index; 
+    self->_priv->nindex = nindex;
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  private 
+  void
+  CP_FLOAT (GeglPointOp *point_op)
+  {
+    /*
+      Whats the algorithm for this code?	
+      DEST = CHANCOPY(SRC1, SRC2)  
+
+    */ 
+    guint width;
+    gfloat **dest_data, **src_data; 
+    gint dest_nchan, src_nchan, i, j; 
+    gint **index, nindex; 
+    GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
+    GeglOpPrivate *opP = (GeglOpPrivate *)(GEGL_OP(point_op)->_priv); 
+    GeglChanCopyOp *self = GEGL_CHANCOPY_OP (point_op);
+
+    width = point_opP->scanline_width;
+    dest_nchan = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[0]));
+    src_nchan = gegl_color_model_num_channels (gegl_image_buffer_color_model (opP->image_buffers[1]));
+
+    dest_data = (gfloat**) g_malloc(sizeof(gfloat*) * dest_nchan);
+    src_data  = (gfloat**) g_malloc(sizeof(gfloat*) * src_nchan);
+ 	
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[0], 
+                                      (guchar**)dest_data);
+    gegl_image_buffer_get_scanline_data (opP->image_buffers[1],
+                                      (guchar**)src_data);
+    
+    index = self->_priv->chan_index;
+    nindex = self->_priv->nindex;  
+
+	
+    /* ChanCopy the dest with the chancopy color */
+    for (j=0; j<width; j++)
+    {
+      for (i=0; i<nindex; i++)
+        dest_data[*(index[i])][j] = src_data[i][j];     
+    } 		
+  
+  g_free(dest_data);
+  g_free(src_data); 	
+  
+  }
+
+  private
+  void
+  CP_U8 (GeglPointOp *point_op)
+  {
+  } 
+}
+
