@@ -1,3 +1,17 @@
+Fri May  5 16:14:21 PDT 2000 caro@rhythm.com
+
+	* check in for gegl 
+
+	* I have rm gegl-fill-op.gob and added the file
+	gegl-fill-op.gil.
+
+	* I have changed the Makefile.am to reflect the
+	above changed.
+
+	* check in for codegen
+
+	* changed test_files/gegl-fill-op.gil
+
 Fri May  5 12:56:33 PDT 2000 caro@rhythm.com
 
         * check in for codegen
