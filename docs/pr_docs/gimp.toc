@@ -18,5 +18,5 @@
 \contentsline {section}{\numberline {4.4}The future of GIMP at Rhythm \& Hues}{11}
 \contentsline {chapter}{\numberline {5}Schedule}{12}
 \contentsline {chapter}{\numberline {6}How the cooperation would work}{13}
-\contentsline {chapter}{\numberline {7}Conclusion}{15}
-\contentsline {section}{\numberline {7.1}More information}{15}
+\contentsline {chapter}{\numberline {7}Conclusion}{14}
+\contentsline {section}{\numberline {7.1}More information}{14}
