@@ -60,7 +60,7 @@ rm			[\t \n]*
 <ARGUMENTS>")"				{BEGIN DEFINITION; return RT_PARENTHESIS;}  
 
 
-<GENERIC_IMAGE_CODE>{indent}"{"	{
+<GENERIC_IMAGE_CODE>{indent}"{"		{
     					SCOPE++; 
     					strcpy(yylval.elem.string, yytext);
 					return INDENT_CURLY;
@@ -159,7 +159,7 @@ rm			[\t \n]*
 					}
 <GENERIC_IMAGE_CODE>"EXTERNAL_INIT"	BEGIN EXTERNAL_VARIABLE; 	
 
-<GENERIC_IMAGE_CODE>"(Promote)"	return(PROMOTE_TYPE); 
+<GENERIC_IMAGE_CODE>"(Promote)"		return(PROMOTE_TYPE); 
 <GENERIC_IMAGE_CODE>"(SignedPromote)"	return(SIGNED_PROMOTE_TYPE); 
 <GENERIC_IMAGE_CODE>"ABS"		return(ABS); 
 <GENERIC_IMAGE_CODE>"PRINT"		return(PRINT); 
@@ -167,28 +167,28 @@ rm			[\t \n]*
 <GENERIC_IMAGE_CODE>"WP_CLAMP"    	return(WP_CLAMP);
 
 
-<GENERIC_IMAGE_CODE>"+"		return(PLUS);
-<GENERIC_IMAGE_CODE>"-"		return(MINUS);
+<GENERIC_IMAGE_CODE>"+"			return(PLUS);
+<GENERIC_IMAGE_CODE>"-"			return(MINUS);
 <GENERIC_IMAGE_DECL>"*"			return(TIMES);
-<GENERIC_IMAGE_CODE>"*"		return(TIMES);
-<GENERIC_IMAGE_CODE>"/"		return(DIVIDE);
-<GENERIC_IMAGE_CODE>"^"		return(POWER);
-<GENERIC_IMAGE_CODE>"("		return(LT_PARENTHESIS);
-<GENERIC_IMAGE_CODE>")"		return(RT_PARENTHESIS);
+<GENERIC_IMAGE_CODE>"*"			return(TIMES);
+<GENERIC_IMAGE_CODE>"/"			return(DIVIDE);
+<GENERIC_IMAGE_CODE>"^"			return(POWER);
+<GENERIC_IMAGE_CODE>"("			return(LT_PARENTHESIS);
+<GENERIC_IMAGE_CODE>")"			return(RT_PARENTHESIS);
 <EXTERNAL_VARIABLE>"("			;
 <EXTERNAL_VARIABLE>")"			BEGIN GENERIC_IMAGE_CODE;
-<GENERIC_IMAGE_CODE>"{"		{SCOPE ++; return(LT_CURLY);}
-<GENERIC_IMAGE_CODE>"}"		{SCOPE --; rm_varibles (SCOPE); return(RT_CURLY); } 
+<GENERIC_IMAGE_CODE>"{"			{SCOPE ++; return(LT_CURLY);}
+<GENERIC_IMAGE_CODE>"}"			{SCOPE --; rm_sym_from_symtab (SCOPE); return(RT_CURLY); } 
 <GENERIC_IMAGE_DECL>"{"			{SCOPE ++; ECHO;}
-<GENERIC_IMAGE_DECL>"}"			{SCOPE --; rm_varibles (SCOPE); ECHO;} 
+<GENERIC_IMAGE_DECL>"}"			{SCOPE --; rm_sym_from_symtab (SCOPE); ECHO;} 
 "{"					{SCOPE ++; ECHO;}
-"}"					{SCOPE --; rm_varibles (SCOPE); ECHO;} 
+"}"					{SCOPE --; rm_sym_from_symtab (SCOPE); ECHO;} 
 <GENERIC_IMAGE_DECL>"["			return(LT_SQUARE);
-<GENERIC_IMAGE_CODE>"["		return(LT_SQUARE);
+<GENERIC_IMAGE_CODE>"["			return(LT_SQUARE);
 <GENERIC_IMAGE_DECL>"]"			return(RT_SQUARE); 
-<GENERIC_IMAGE_CODE>"]"		return(RT_SQUARE); 
+<GENERIC_IMAGE_CODE>"]"			return(RT_SQUARE); 
 <GENERIC_IMAGE_DECL>"="			return(EQUAL); 
-<GENERIC_IMAGE_CODE>"="		return(EQUAL); 
+<GENERIC_IMAGE_CODE>"="			return(EQUAL); 
 <GENERIC_IMAGE_CODE>"+="		return(PLUS_EQUAL); 
 <GENERIC_IMAGE_CODE>"-="		return(MINUS_EQUAL); 
 <GENERIC_IMAGE_CODE>"*="		return(TIMES_EQUAL); 
@@ -209,11 +209,11 @@ rm			[\t \n]*
     					strcpy (yylval.tok.string, yytext); 
     					return (COMPARE);
 					}
-<GENERIC_IMAGE_CODE>"<"		{
+<GENERIC_IMAGE_CODE>"<"			{
     					strcpy (yylval.tok.string, yytext); 
     					return (COMPARE);
 					}
-<GENERIC_IMAGE_CODE>">"		{
+<GENERIC_IMAGE_CODE>">"			{
     					strcpy (yylval.tok.string, yytext); 
     					return (COMPARE);
 					}
@@ -225,7 +225,7 @@ rm			[\t \n]*
     					strcpy (yylval.tok.string, yytext); 
     					return (COMPARE);
 					}
-<GENERIC_IMAGE_CODE>"!"		return(NOT);
+<GENERIC_IMAGE_CODE>"!"			return(NOT);
 <GENERIC_IMAGE_CODE>"++"		{
     					strcpy (yylval.tok.string, yytext); 
     					return (ADD_SUB);
@@ -285,15 +285,14 @@ rm			[\t \n]*
 					return DT_NAME;
 					}
 <DT_MACROS>{Name}			{
-      					dt_keyword_t keywd;
-      					keywd = get_dt_keyword (yytext);
-				        if (keywd.token == -1) 	
+      					dt_keyword_t *keywd;
+      					if(!(keywd = get_dt_keyword (yytext)))
 					  return 0;
-					if (keywd.arg)
+					if (keywd->arg)
 					  BEGIN ARGUMENTS;
 					else
 					  BEGIN DEFINITION;
-					return keywd.token;
+					return keywd->token;
 					}
 <EXTERNAL_VARIABLE>{name}		{
     					yylval.elem.num = 0;

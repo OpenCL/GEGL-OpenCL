@@ -1,3 +1,14 @@
+Sun May 14 19:26:54 PDT 2000 caro@rhythm.com
+
+	* check in for docs
+	
+	* added stuff to slides.tex
+
+	* check in for codegen
+
+	* changed code in lexer.l, parser.y, common.h to
+	clean up
+
 Fri May 12 18:21:40 PDT 2000 caro@rhythm.com
 
 	* check in for docs

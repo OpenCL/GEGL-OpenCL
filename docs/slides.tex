@@ -91,7 +91,7 @@
 \talktitle\\*[1 in]
 }
 \author{
-\color{headingcolor}\LARGE Caroline Dahll\"{o}f <caro@rhythm.com>\\*[.5 in]}
+\color{headingcolor}\LARGE Caroline Dahll\"{o}f \\ caro@rhythm.com \\*[.5 in]}
 \talkdate
 \maketitle
 
@@ -108,20 +108,20 @@
 
 \nfoil{What is the problem?}
 \begin{itemize}
-\item Different datatypes and color models
+\item Different data types and color models
 \item Promotion
 \item Overflow 
 \end{itemize}
 
 \nfoil{How we solves it?}
 \begin{itemize}
-\item Gimp Independent Language
+\item Generic Image Language (GIL) 
 \item Codegen
 \end{itemize}
 
-\nfoil{Gimp Independent Language}
+\nfoil{Generic Image Language}
 \begin{itemize}
-\item Data type and color model independent
+\item Independent of data type and color model 
 \item Uses macros for data type or color model specific operations
 \item Easy to read and write 
 \end{itemize}
@@ -164,7 +164,7 @@ GENERIC\_IMAGE\_BLOCK\_END\\
 \item GENERIC\_IMAGE\_DECL\_BEGIN\\ ... \\GENERIC\_IMAGE\_DECL\_END 
 \item Pixel variable-name (color,alpha,has\_alpha)
 \item Channel variable-name 
-\item normal data types
+\item int, float  
 \end{itemize}
 
 \nfoil{Initialization Block}
@@ -175,33 +175,47 @@ GENERIC\_IMAGE\_BLOCK\_END\\
 \nfoil{Code Block}
 \begin{itemize}
 \item GENERIC\_IMAGE\_CODE\_BEGIN\\ ... \\GENERIC\_IMAGE\_CODE\_END
-\item Pixel varibles (variable-name[]/\_color/\_alpha
-\item DT Macros  
+\item Pixel variables (variable-name[]/\_color/\_alpha)
+\item DT Macros 
+\item Promotion  
 \end{itemize}
 
 \nfoil{DT Macros}
 \begin{itemize}
+\item Data types
+\begin{itemize}
 \item DATATYPE
 \item PROMOTE\_TYPE
 \item SIGNED\_PROMOTE\_TYPE
+\end{itemize}
+\item Channel Constants
+\begin{itemize}
 \item WP
 \item WP\_NORM
 \item CHANNEL\_MIN
 \item CHANNEL\_MAX
+\end{itemize}
+\item Channel Operations
+\begin{itemize}
 \item CHANNEL\_CLAMP (x)
 \item WP\_CLAMP (x)
 \item CHANNEL\_MULT (x,y)
 \item CHANNEL\_ROUND (x)
+\end{itemize}
+\item Iterator operations
+\begin{itemize}
+\item dX(Pixel,x) 
+\item dY(Pixel,x) 
+\end{itemize}
 \item PRINT (x)
 \item EXTERNAL\_INIT (x)
-\item dX(Pixel,x) 
 \end{itemize}
 
 \nfoil{Codegen}
 \begin{itemize}
-\item Parses Gimp Independent Language
-\item Creates data type and color model specific code
-\item Independ of data type and color model 
+\item Parses Generic Image Language
+\item Creates data type and color model dependent code
+\item Independent of data type and color model 
 \end{itemize}
 
 \nfoil{How to run Codegen}
@@ -211,37 +225,41 @@ codegen --channel-names COLOR\_CHANNEL\_NAMES\\
 \hspace{4em}--channel-data-file CHANNEL\_DATA\_FILE 
 \end{flushleft}
 
-\nfoil{Channel names}
+\nfoil{Color Channel names}
 \begin{itemize}
-\item Sepreated by ','
+\item Separated by ','
 \item Always adds an alpha channel
 \end{itemize}
 
 \nfoil{Channel data file}
 \begin{itemize}
 \item Data type specific code for DT Macros
-\item u16\_4k example:\\
-DT\_MACROS\_BEGIN
-DATATYPE\hfill guint16
-PROMOTE\_TYPE (guint32)  
-SIGNED\_PROMOTE\_TYPE (gint32)  
-WP 4095UL
-WP\_NORM (1/4095.0)
-CHANNEL\_MIN 0
-CHANNEL\_MAX 65535
-ZERO 0UL
-CHANNEL\_CLAMP (x) CLAMP (x,0,65535)
-WP\_CLAMP (x) CLAMP (x,0,4095)
-CHANNEL\_MULT (x,y) (x * y)/4095UL
-CHANNEL\_ROUND (x) ROUND (x)
-PRINT (x) printf (" %uh", x);
-EXTERNAL\_INIT (x) x.u16\_k 
+\item Example of 16bit 4K WP 
+\tt
+\small 
+\begin{tabbing}
+DT\_MACROS\_BEGIN\\ 
+\hspace*{0.5cm}\=DATATYPE \=\hspace{7cm}\= guint16 \\ 
+\>PROMOTE\_TYPE \>\> (guint32)\\  
+\>SIGNED\_PROMOTE\_TYPE \>\> (gint32)\\  
+\>WP \>\> 4095UL\\ 
+\>WP\_NORM \>\> (1/4095.0)\\ 
+\>CHANNEL\_MIN \>\> 0\\ 
+\>CHANNEL\_MAX \>\> 65535\\ 
+\>ZERO \>\> 0UL\\ 
+\>CHANNEL\_CLAMP (x) \>\> CLAMP (x,0,65535)\\ 
+\>WP\_CLAMP (x) \>\> CLAMP (x,0,4095)\\ 
+\>CHANNEL\_MULT (x,y) \>\> (x * y)/4095UL\\ 
+\>CHANNEL\_ROUND (x) \>\> ROUND (x)\\ 
+\>PRINT (x) \>\> printf (" \%uh", x)\\ 
+\>EXTERNAL\_INIT (x) \>\> x.u16\_k\\ 
 DT\_MACROS\_END
+\end{tabbing}
 \end{itemize}
 
 \nfoil{Implementation detail}
 \begin{itemize}
-\item Writen in Flex \& Bison 
+\item Written in Flex \& Bison 
 \end{itemize}
 
 \nfoil{Flex}

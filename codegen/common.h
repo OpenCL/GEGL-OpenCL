@@ -14,9 +14,9 @@
 
 typedef enum
 {
-  DEFINE,
-  NOT_DEFINE
-}TYPE_DEF;
+  DECL,
+  NOT_DECL
+}TYPE_DECL;
 
 /* DATA TYPES */
 typedef enum
@@ -93,9 +93,9 @@ elem_t  	add_sym (char *s, char scope);
 elem_t*	 	get_sym (char *sym); 
 void		init_image_data (char *indent); 
 int 		get_keyword (char *s); 
-dt_keyword_t 	get_dt_keyword (char *s); 
+dt_keyword_t* 	get_dt_keyword (char *s); 
 int		yylex (); 
-void    	rm_varibles (char scope); 
+void    	rm_sym_from_symtab (char scope); 
 
 void open_file (char *filename);
 void close_file ();

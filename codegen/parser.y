@@ -8,19 +8,18 @@
 #include <stdlib.h>
    
     
-void do_op_one (elem_t *dest, FUNCTION op);
 void do_op_two (elem_t *dest, elem_t src, FUNCTION op);
 void do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op);
 void print_value (elem_t *dest, elem_t src);
-void print_name (elem_t *dest, elem_t src, TYPE_DEF is_define);
-void print_repeat (elem_t *dest, elem_t src, char *string); 
+void print_name (elem_t *dest, elem_t src, TYPE_DECL is_define);
+void print_pixel_variable (elem_t *dest, elem_t src, char *string); 
 void print_line (elem_t src);
 void print (char *string, char *template, char **varible, int num);
 void set_dtype (elem_t e, DATA_TYPE dtype);
 void set_svtype (elem_t e, SV_TYPE svtype);
 void set_num (elem_t e, int n);
 void read_channel_names (char *chan_names); 
-void init_data_varible (char *s);
+void add_pixel_variables (char *s);
 
 int yyerror (char *s); 
 
@@ -163,7 +162,6 @@ DT_Line:
 		while ($2.string[i] == '\t' || $2.string[i] == ' ')
 		  i++; 
 		DATATYPE_STR = (char *) strdup (&($2.string[i]));
-		DATATYPE_STR[strlen (DATATYPE_STR)] = '\0';   
 		}
 	| DT_PROMOTE_TYPE DT_STRING  
 		{
@@ -171,7 +169,6 @@ DT_Line:
 		while ($2.string[i] == '\t' || $2.string[i] == ' ')
 		  i++; 
 		PROMOTE_TYPE_STR = (char *) strdup (&($2.string[i]));
-		PROMOTE_TYPE_STR[strlen (PROMOTE_TYPE_STR)] = '\0';   
 		}
 	| DT_SIGNED_PROMOTE_TYPE DT_STRING  
 		{
@@ -179,7 +176,6 @@ DT_Line:
 		while ($2.string[i] == '\t' || $2.string[i] == ' ')
 		  i++; 
 		SIGNED_PROMOTE_TYPE_STR = (char *) strdup (&($2.string[i]));
-		SIGNED_PROMOTE_TYPE_STR[strlen (SIGNED_PROMOTE_TYPE_STR)] = '\0';   
 		}
 	| DT_WP DT_STRING
 		{
@@ -187,7 +183,6 @@ DT_Line:
 		while ($2.string[i] == '\t' || $2.string[i] == ' ')
 		  i++; 
 		WP_STR = (char *) strdup (&($2.string[i]));
-		WP_STR[strlen (WP_STR)] = '\0';   
 		}
 	| DT_WP_NORM DT_STRING
 		{
@@ -195,7 +190,6 @@ DT_Line:
 		while ($2.string[i] == '\t' || $2.string[i] == ' ')
 		  i++; 
 		WP_NORM_STR = (char *) strdup (&($2.string[i]));
-		WP_NORM_STR[strlen (WP_NORM_STR)] = '\0';   
 		}
 	| DT_CHANNEL_MIN DT_STRING
 		{
@@ -203,7 +197,6 @@ DT_Line:
 		while ($2.string[i] == '\t' || $2.string[i] == ' ')
 		  i++; 
 		CHANNEL_MIN_STR = (char *) strdup (&($2.string[i]));
-		CHANNEL_MIN_STR[strlen (CHANNEL_MIN_STR)] = '\0';   
 		}
 	| DT_CHANNEL_MAX DT_STRING
 		{
@@ -211,7 +204,6 @@ DT_Line:
 		while ($2.string[i] == '\t' || $2.string[i] == ' ')
 		  i++; 
 		CHANNEL_MAX_STR = (char *) strdup (&($2.string[i]));
-		CHANNEL_MAX_STR[strlen (CHANNEL_MAX_STR)] = '\0';   
 		}
 	| DT_ZERO DT_STRING
 		{
@@ -219,24 +211,17 @@ DT_Line:
 		while ($2.string[i] == '\t' || $2.string[i] == ' ')
 		  i++; 
 		ZERO_STR = (char *) strdup (&($2.string[i]));
-		ZERO_STR[strlen (ZERO_STR)] = '\0';   
 		}
 	| DT_CHANNEL_CLAMP LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
-		int i=0, j=0, len, sublen, flag;
+		int i=0, j=0, len, sublen;
 		char tmp[255];
 		char sub[255];
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
 
-		while ($5.string[i] == '\t' || $5.string[i] == ' ')
-		  i++;
-		while ($5.string[i] == '\\' && $5.string[i+1] == '\n')
-		  i += 2;
-
 		for(i=i; i<len; i++)
 		  {
-		  flag = 0;
 		  loop1:
 		 
 		  if (i<=len-2)
@@ -253,19 +238,24 @@ DT_Line:
 		  
 		  if (i<=len-sublen)
 		    {
-		    strncpy (sub, &($5.string[i]), sublen);
-		    flag = 1; 
-		    }
-		  if (flag && !strcmp ($3.string, sub))
-		    {
-		    strcpy (&(tmp[j]), "$1");
-		    i += sublen-1;
-		    j += 2; 
+		      strncpy (sub, &($5.string[i]), sublen);
+		      if (!strcmp ($3.string, sub))
+			{
+			  strcpy (&(tmp[j]), "$1");
+			  i += sublen-1;
+			  j += 2; 
+			}
+		      else
+			{
+			  tmp[j] = (char) ($5.string[i]);
+			  j++;
+			}
+						  
 		    }
 		  else
 		    {
-		    tmp[j] = (char) ($5.string[i]); 
-		    j++; 
+		      tmp[j] = (char) ($5.string[i]); 
+		      j++; 
 		    }
 		  }
 		tmp[j] = '\0'; 
@@ -278,11 +268,6 @@ DT_Line:
 		char sub[255];
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
-
-		while ($5.string[i] == '\t' || $5.string[i] == ' ')
-		  i++;
-		while ($5.string[i] == '\\' && $5.string[i+1] == '\n')
-		  i += 2;
 
 		for(i=i; i<len; i++)
 		  {
@@ -331,11 +316,6 @@ DT_Line:
 		len = strlen ($7.string);
 		sublen1 = strlen ($3.string);
 		sublen2 = strlen ($5.string);
-
-		while ($7.string[i] == '\t' || $7.string[i] == ' ')
-		  i++;
-		while ($7.string[i] == '\\' && $7.string[i+1] == '\n')
-		  i += 2;
 
 		for(i=i; i<len; i++)
 		  {
@@ -397,12 +377,6 @@ DT_Line:
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
 
-		while ($5.string[i] == '\t' || $5.string[i] == ' ')
-		 i++;
-		while ($5.string[i] == '\\' && $5.string[i+1] == '\n')
-		  i += 2;
-
-
 		for(i=i; i<len; i++)
 		  {
 		  flag = 0;
@@ -450,12 +424,6 @@ DT_Line:
 		char sub[255];
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
-
-		while ($5.string[i] == '\t' || $5.string[i] == ' ')
-		 i++;
-		while ($5.string[i] == '\\' && $5.string[i+1] == '\n')
-		  i += 2;
-
 
 		for(i=i; i<len; i++)
 		  {
@@ -599,7 +567,7 @@ Line:
 	        char tmp[256];
 		int i; 
 		elem_t e; 	
-		print_name (&e, $2, NOT_DEFINE); 
+		print_name (&e, $2, NOT_DECL); 
 		do_op_three (&e, e, $4, OP_EQUAL); 
 		if (get_sym ($2.string)->svtype == TYPE_CA_VECTOR ||
 		    get_sym ($2.string)->svtype == TYPE_C_VECTOR ||
@@ -633,7 +601,7 @@ Line:
 		{ 
 	        char tmp[256];
 		elem_t e; 	
-		print_name (&e, $2, NOT_DEFINE); 
+		print_name (&e, $2, NOT_DECL); 
 		if (get_sym ($2.string)->svtype == TYPE_CA_VECTOR ||
 		    get_sym ($2.string)->svtype == TYPE_C_VECTOR ||
 		    get_sym ($2.string)->svtype == TYPE_C_A_VECTOR) 
@@ -651,7 +619,7 @@ Line:
 		{ 
 	        char tmp[256];
 		elem_t e; 	
-		print_name (&e, $2, NOT_DEFINE); 
+		print_name (&e, $2, NOT_DECL); 
 		if (get_sym ($2.string)->svtype == TYPE_CA_VECTOR ||
 		    get_sym ($2.string)->svtype == TYPE_C_VECTOR ||
 		    get_sym ($2.string)->svtype == TYPE_C_A_VECTOR) 
@@ -669,7 +637,7 @@ Line:
 		{ 
 	        char tmp[256];
 		elem_t e; 	
-		print_name (&e, $2, NOT_DEFINE); 
+		print_name (&e, $2, NOT_DECL); 
 		if (get_sym ($2.string)->svtype == TYPE_CA_VECTOR ||
 		    get_sym ($2.string)->svtype == TYPE_C_VECTOR ||
 		    get_sym ($2.string)->svtype == TYPE_C_A_VECTOR) 
@@ -687,7 +655,7 @@ Line:
 		{ 
 	        char tmp[256];
 		elem_t e; 	
-		print_name (&e, $2, NOT_DEFINE); 
+		print_name (&e, $2, NOT_DECL); 
 		if (get_sym ($2.string)->svtype == TYPE_CA_VECTOR ||
 		    get_sym ($2.string)->svtype == TYPE_C_VECTOR ||
 		    get_sym ($2.string)->svtype == TYPE_C_A_VECTOR) 
@@ -851,7 +819,7 @@ Line:
 		  char t2[256];
 		  char *t[1];
 		  strcpy (t2, $4.string);
-		  print_name (&$4, $4, NOT_DEFINE);
+		  print_name (&$4, $4, NOT_DECL);
 		  if ($4.svtype > 1)
 		    {
 		      sprintf (tmp, "*%s", $4.string);
@@ -975,7 +943,7 @@ Expression:
 		{ 
 		char tmp[256];
 		$$=$1; 
-		print_name(&$$, $1, NOT_DEFINE); 
+		print_name(&$$, $1, NOT_DECL); 
 		if (get_sym ($1.string)->svtype == TYPE_CA_VECTOR ||
 		    get_sym ($1.string)->svtype == TYPE_C_VECTOR ||
 		    get_sym ($1.string)->svtype == TYPE_C_A_VECTOR) 
@@ -1067,7 +1035,7 @@ Channel_List:
 		set_svtype($1, TYPE_SCALER);
 	        set_num ($1, 1); 	
 	  	$$=$1; 
-		print_name (&$$, $1, NOT_DEFINE);
+		print_name (&$$, $1, DECL);
 		}
         | NAME EQUAL FLOAT              
 		{ 
@@ -1076,7 +1044,7 @@ Channel_List:
                 set_svtype($1, TYPE_SCALER);
 	        set_num ($1, 1); 	
 		$$=$1; 
-		print_name (&$$, $1, NOT_DEFINE);
+		print_name (&$$, $1, DECL);
 		sprintf(tmp, "%s=%s", $$.string, $3.string);
 		strcpy($$.string, tmp);
 		}
@@ -1087,7 +1055,7 @@ Channel_List:
                 set_svtype($1, TYPE_SCALER);
 	        set_num ($1, 1); 	
 		$$=$1; 
-		print_name (&$$, $1, NOT_DEFINE);
+		print_name (&$$, $1, DECL);
 		sprintf(tmp, "%s=%s", $$.string, $3.string);
 		strcpy($$.string, tmp);
 		}
@@ -1098,7 +1066,7 @@ Channel_List:
 		set_svtype($1, TYPE_VECTOR);
 		set_num($1, atoi ($3.string)); 
 	        $$=$1;
-		print_name (&$$, $1, DEFINE);
+		print_name (&$$, $1, DECL);
 		strcpy ($$.string, tmp); 
 		}	
         ;
@@ -1115,7 +1083,7 @@ Int_List:
 		set_svtype($1, TYPE_SCALER);
 	        set_num ($1, 1); 	
 	  	$$=$1; 
-		print_name (&$$, $1, NOT_DEFINE);
+		print_name (&$$, $1, DECL);
 		}
         | NAME EQUAL FLOAT              
 		{ 
@@ -1124,7 +1092,7 @@ Int_List:
                 set_svtype($1, TYPE_SCALER);
 	        set_num ($1, 1); 	
 		$$=$1; 
-		print_name (&$$, $1, NOT_DEFINE);
+		print_name (&$$, $1, DECL);
 		sprintf(tmp, "%s=%s", $$.string, $3.string);
 		strcpy($$.string, tmp);
 		}
@@ -1135,7 +1103,7 @@ Int_List:
                 set_svtype($1, TYPE_SCALER);
 	        set_num ($1, 1); 	
 		$$=$1; 
-		print_name (&$$, $1, NOT_DEFINE);
+		print_name (&$$, $1, DECL);
 		sprintf(tmp, "%s=%s", $$.string, $3.string);
 		strcpy($$.string, tmp);
 		}
@@ -1146,7 +1114,7 @@ Int_List:
 		set_svtype($1, TYPE_VECTOR);
 		set_num($1, atoi ($3.string)); 
 	        $$=$1;
-		print_name (&$$, $1, DEFINE);
+		print_name (&$$, $1, DECL);
 		strcpy ($$.string, tmp); 
 		}	
         ;
@@ -1163,7 +1131,7 @@ Float_List:
 		set_svtype($1, TYPE_SCALER);
 	        set_num ($1, 1); 	
 	  	$$=$1; 
-		print_name (&$$, $1, NOT_DEFINE);
+		print_name (&$$, $1, DECL);
 		}
         | NAME EQUAL FLOAT              
 		{ 
@@ -1172,7 +1140,7 @@ Float_List:
                 set_svtype($1, TYPE_SCALER);
 	        set_num ($1, 1); 	
 		$$=$1; 
-		print_name (&$$, $1, NOT_DEFINE);
+		print_name (&$$, $1, DECL);
 		sprintf(tmp, "%s=%s", $$.string, $3.string);
 		strcpy($$.string, tmp);
 		}
@@ -1183,7 +1151,7 @@ Float_List:
                 set_svtype($1, TYPE_SCALER);
 	        set_num ($1, 1); 	
 		$$=$1; 
-		print_name (&$$, $1, NOT_DEFINE);
+		print_name (&$$, $1, DECL);
 		sprintf(tmp, "%s=%s", $$.string, $3.string);
 		strcpy($$.string, tmp);
 		}
@@ -1194,7 +1162,7 @@ Float_List:
 		set_svtype($1, TYPE_VECTOR);
 		set_num($1, atoi ($3.string)); 
 	        $$=$1;
-		print_name (&$$, $1, DEFINE);
+		print_name (&$$, $1, DECL);
 		strcpy ($$.string, tmp); 
 		}	
         ;
@@ -1214,10 +1182,10 @@ Pixel_List:
 		set_svtype($1, TYPE_C_VECTOR);
 		set_num($1, NUM_COLOR_CHANNEL);
 	  	$$=$1; 
-		print_name (&$$, $1, DEFINE);
+		print_name (&$$, $1, DECL);
 		sprintf(tmp, "*%s", $$.string); 
-		print_repeat (&$$, $1, tmp); 
-		init_data_varible ($1.string); 
+		print_pixel_variable (&$$, $1, tmp); 
+		add_pixel_variables ($1.string); 
 		}
 	| NAME COLOR_ALPHA
 		{
@@ -1226,10 +1194,10 @@ Pixel_List:
 		set_svtype($1, TYPE_CA_VECTOR);
 		set_num($1, NUM_COLOR_CHANNEL+1); 
 		$$=$1;
-		print_name (&$$, $1, DEFINE);
+		print_name (&$$, $1, DECL);
 		sprintf(tmp, "*%s", $$.string); 
-		print_repeat (&$$, $1, tmp); 
-		init_data_varible ($1.string); 
+		print_pixel_variable (&$$, $1, tmp); 
+		add_pixel_variables ($1.string); 
 		}
 	| NAME COLOR_MAYBE_ALPHA
 		{
@@ -1238,10 +1206,10 @@ Pixel_List:
 		set_svtype($1, TYPE_C_A_VECTOR);
 		set_num($1, NUM_COLOR_CHANNEL+1);
 		$$=$1;
-		print_name (&$$, $1, DEFINE);
+		print_name (&$$, $1, DECL);
 		sprintf(tmp, "*%s", $$.string);
-		print_repeat (&$$, $1, tmp);
-		init_data_varible ($1.string); 
+		print_pixel_variable (&$$, $1, tmp);
+		add_pixel_variables ($1.string); 
 		}
 	;
 
@@ -1251,7 +1219,7 @@ Pixel_List:
 #include <stdio.h>
 
 void
-rm_varibles (char scope)
+rm_sym_from_symtab (char scope)
 {
   int i;
 
@@ -1264,7 +1232,6 @@ rm_varibles (char scope)
 	  i--; 
 	}
     }
-
 }
 
 void 
@@ -1277,44 +1244,47 @@ init_image_data (char *indent)
   /* go through all the symbols find all the pixel variables */
   for (i=0; i<cur_nsyms; i++)
     {
-      if (symtab[i].svtype == TYPE_CA_VECTOR && !symtab[i].inited) 
-	{
-	  e = symtab[i];
-	  symtab[i].inited = 1;
-	  sprintf (tmp, "%s%s$ca = %s_data$v;", indent, symtab[i].string, symtab[i].string);
-	  strcpy (e.string, tmp); 
-	  print_line (e);  
-	  printf ("\n"); 
-	}
-      if (symtab[i].svtype == TYPE_C_A_VECTOR && !symtab[i].inited) 
-	{
-	  e = symtab[i];
-	  symtab[i].inited = 1;
-	  sprintf (tmp, "%s%s$c = %s_data$v;", indent, symtab[i].string, symtab[i].string);
-	  strcpy (e.string, tmp); 
-	  print_line (e); 
-	  sprintf (tmp, "%sif (%s_has$a)%s  %s$a = %s_data[%d];", 
-	      indent, symtab[i].string, indent, symtab[i].string, symtab[i].string, NUM_COLOR_CHANNEL);
-	  strcpy (e.string, tmp);
-	  print_line (e); 
-	  printf ("\n"); 
-	}
-      if (symtab[i].svtype == TYPE_C_VECTOR && !symtab[i].inited)
-	{
-	  e = symtab[i];
-	  symtab[i].inited = 1;
-	  sprintf (tmp, "%s%s$c = %s_data$v;", indent, symtab[i].string, symtab[i].string);
-	  strcpy (e.string, tmp);
-	  print_line (e);
-	  printf ("\n"); 
-	}
+      if (symtab[i].inited)
+	switch (symtab[i].svtype)
+	  {
+	  case TYPE_CA_VECTOR:
+	    e = symtab[i];
+	    symtab[i].inited = 1;
+	    sprintf (tmp, "%s%s$ca = %s_data$v;", indent, symtab[i].string, symtab[i].string);
+	    strcpy (e.string, tmp); 
+	    print_line (e);  
+	    printf ("\n"); 
+	    break;
+	  case TYPE_C_A_VECTOR:
+	    e = symtab[i];
+	    symtab[i].inited = 1;
+	    sprintf (tmp, "%s%s$c = %s_data$v;", indent, symtab[i].string, symtab[i].string);
+	    strcpy (e.string, tmp); 
+	    print_line (e); 
+	    sprintf (tmp, "%sif (%s_has$a)%s  %s$a = %s_data[%d];", 
+		indent, symtab[i].string, indent, symtab[i].string, symtab[i].string, NUM_COLOR_CHANNEL);
+	    strcpy (e.string, tmp);
+	    print_line (e); 
+	    printf ("\n"); 
+	    break;
+	  case TYPE_C_VECTOR: 
+	    e = symtab[i];
+	    symtab[i].inited = 1;
+	    sprintf (tmp, "%s%s$c = %s_data$v;", indent, symtab[i].string, symtab[i].string);
+	    strcpy (e.string, tmp);
+	    print_line (e);
+	    printf ("\n"); 
+	    break;
+	  default:
+	    exit (1);
+	    break; 
+	  }
     }
-
 }
 
 
 void
-init_data_varible (char *s)
+add_pixel_variables (char *s)
 {
   int i; 
   char tmp[20], name[20]; 
@@ -1325,18 +1295,9 @@ init_data_varible (char *s)
       tmp[i*2  ] = ' ';
       tmp[i*2+1] = ' ';
     }
-  tmp[i*2  ] = '\0'; 
+  tmp[i*2  ] = '\0';
+
   printf ("\n%s%s *%s_data[%d];", tmp, DATATYPE_STR, s, e->num);
-    /*{
-     elem_t e;
-     sprintf (name, "%s_pixelstride", s);
-     e = add_sym (name, SCOPE);
-     set_dtype (e, TYPE_INT);
-     set_svtype (e, TYPE_SCALER);
-     set_num (e, 1);
-     printf ("\n%sgint %s;", tmp, name); 
-    }*/ 
-  /*printf ("\n%s%s *%s_rowstride[%d];", tmp, DATATYPE_STR, s, e->num);*/
   if (e->svtype == TYPE_C_A_VECTOR)
     {  
       elem_t e; 
@@ -1348,63 +1309,88 @@ init_data_varible (char *s)
       printf ("\n%sgboolean %s;", tmp, name); 
 
     }
+    /*{
+     elem_t e;
+     sprintf (name, "%s_pixelstride", s);
+     e = add_sym (name, SCOPE);
+     set_dtype (e, TYPE_INT);
+     set_svtype (e, TYPE_SCALER);
+     set_num (e, 1);
+     printf ("\n%sgint %s;", tmp, name); 
+    }*/ 
+  /*printf ("\n%s%s *%s_rowstride[%d];", tmp, DATATYPE_STR, s, e->num);*/
 }
 
 void
-print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
+print_name (elem_t *dest, elem_t src, TYPE_DECL is_decl)
 {
   char tmp[256],t[256];
   t[0] = '\0';
   dest->num = 1; 
 
-  if (is_define && (get_sym (src.string)->svtype == TYPE_C_VECTOR ||
-	(get_sym (src.string)->svtype == TYPE_C_A_VECTOR &&
-	!strcmp (src.string, get_sym (src.string)->string)))) 
+  if (is_decl == NOT_DECL)
     {
-      dest->num = NUM_COLOR_CHANNEL;
-      sprintf (tmp, "%s$c", get_sym (src.string)->string);
-    }
-  else if (is_define && get_sym (src.string)->svtype == TYPE_CA_VECTOR &&
-      !strcmp (src.string, get_sym (src.string)->string)) 
-    {
-      dest->num = NUM_COLOR_CHANNEL + 1;
-      sprintf (tmp, "%s$ca", get_sym (src.string)->string);
-    }
-  else if (is_define && (get_sym (src.string)->svtype == TYPE_CA_VECTOR ||
-	get_sym (src.string)->svtype == TYPE_C_A_VECTOR))
-    {
-      int l = strlen (src.string);
-      if (src.string[l-1] == 'a' && src.string[l-2] == '$')
+      if (get_sym (src.string)->svtype == TYPE_C_VECTOR ||
+	  (get_sym (src.string)->svtype == TYPE_C_A_VECTOR &&
+	  !strcmp (src.string, get_sym (src.string)->string))) 
 	{
-	  dest->num = 1;
+	  dest->num = NUM_COLOR_CHANNEL;
+	  sprintf (tmp, "%s$c", get_sym (src.string)->string);
+	}
+      else if (get_sym (src.string)->svtype == TYPE_CA_VECTOR &&
+	       !strcmp (src.string, get_sym (src.string)->string)) 
+	{
+	  dest->num = NUM_COLOR_CHANNEL + 1;
+	  sprintf (tmp, "%s$ca", get_sym (src.string)->string);
+	}
+      else if (get_sym (src.string)->svtype == TYPE_CA_VECTOR ||
+	       get_sym (src.string)->svtype == TYPE_C_A_VECTOR)
+	{
+	  int l = strlen (src.string);
+	  if (src.string[l-1] == 'a' && 
+	      src.string[l-2] == '$')
+	    {
+	      dest->num = 1;
+	      sprintf (tmp, "%s", src.string);
+	    }
+	  if (src.string[l-1] == 'c' && 
+	      src.string[l-2] == '$')
+	    {
+	      dest->num = NUM_COLOR_CHANNEL; 
+	      sprintf (tmp, "%s", src.string);
+	    }
+	}
+      else if (get_sym (src.string)->svtype == TYPE_VECTOR)
+	{
+	  dest->num = get_sym (src.string)->num; 
+	  sprintf (tmp, "%s$v", src.string);
+	}
+      else
+	{
+	  dest->num = 1; 
 	  sprintf (tmp, "%s", src.string);
 	}
-      if (src.string[l-1] == 'c' && src.string[l-2] == '$')
-	{
-	  dest->num = NUM_COLOR_CHANNEL; 
-	  sprintf (tmp, "%s", src.string);
-	}
     }
-  else if (is_define && get_sym (src.string)->svtype == TYPE_VECTOR)
+  else 
     {
-      dest->num = get_sym (src.string)->num; 
-      sprintf (tmp, "%s$v", src.string);
+      if (get_sym (src.string)->svtype == TYPE_VECTOR)
+	sprintf (tmp, "%s[%d]", src.string, get_sym (src.string)->num);
+      else
+	sprintf (tmp, "%s", src.string);
     }
-  else if (!is_define && get_sym (src.string)->svtype == TYPE_VECTOR)
-    sprintf (tmp, "%s[%d]", src.string, get_sym (src.string)->num);
-  else
-    sprintf (tmp, "%s", src.string);
 
   dest->dtype = src.dtype;
   dest->svtype  = src.svtype;
-  if(!is_define)
-    dest->num   = src.num;  
+  if(is_decl == DECL)
+    {
+      dest->inited = 0;
+      dest->num   = src.num;
+    }  
   strcpy (dest->string, tmp);
-  dest->inited = 0;
 }
 
 void
-print_repeat (elem_t *dest, elem_t src, char *string)
+print_pixel_variable (elem_t *dest, elem_t src, char *string)
 {
 
   int i; 
@@ -1802,19 +1788,11 @@ void
 set_dtype (elem_t e, DATA_TYPE dtype)
 {
   int   i;
-  char *s = strdup(e.string); 
-  i = strlen(s);
-  if (i>2)
-    if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '$')
-      {
-	s[i-1] = '\0';
-	s[i-2] = '\0'; 
-      } 
 
   for (i=0; i<cur_nsyms; i++)
     {
       /* is it already here? */
-      if(!strcmp(symtab[i].string, s))
+      if(!strcmp(symtab[i].string, e.string))
 	{
 	  symtab[i].dtype = dtype;
 	  return;
@@ -1834,14 +1812,6 @@ void
 set_svtype (elem_t e, SV_TYPE svtype)
 {
   int   i;
-  char *s = strdup(e.string); 
-  i = strlen(s);
-  if (i>2)
-    if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '$')
-      {
-	s[i-1] = '\0';
-	s[i-2] = '\0'; 
-      } 
 
   for (i=0; i<cur_nsyms; i++)
     {
@@ -1887,17 +1857,16 @@ set_num (elem_t e, int n)
 
 /* look up a symbol table entry, add if not present */
 elem_t
-add_sym (char *ss, char scope)
+add_sym (char *s, char scope)
 {
   int	i; 
-  char *s = strdup(ss);
 
   for (i=0; i<cur_nsyms; i++) 
     {
       /* is it already here? */
-      if(!strcmp(symtab[i].string, s)){
+      if(!strcmp (symtab[i].string, s)){
 	    printf ("\n%s\n", s); 
-	    yyerror("Error: Varible already declared");
+	    yyerror ("Error: Varible already declared");
 	    exit(1);
 
       }
@@ -1905,11 +1874,11 @@ add_sym (char *ss, char scope)
 
   if (cur_nsyms == NSYMS) 
     {
-      yyerror("Too many symbols");
+      yyerror ("Too many symbols");
       exit(1);      /* cannot continue */
     }
 
-  strcpy(symtab[cur_nsyms].string, ss);
+  strcpy (symtab[cur_nsyms].string, s);
   symtab[cur_nsyms].scope = scope;  
   symtab[cur_nsyms].inited = 0; 
   cur_nsyms++; 
@@ -1918,13 +1887,12 @@ add_sym (char *ss, char scope)
 }
 
 elem_t* 
-get_sym (char *ss)
+get_sym (char *s)
 {
 
   int   i;
-  char s[255];
+  char c[255];
 
-  strcpy (s, ss);
 
   for (i=0; i<cur_nsyms; i++)
     {
@@ -1933,36 +1901,29 @@ get_sym (char *ss)
 	return &(symtab[i]);
     }
 
-  i = strlen(s);
-  if (i>10)
-    if (!strcmp ("_has_alpha", &(s[i-10])))  
-      {
-	ss[i-6] = '\0'; 
-	sprintf (s, "%s$%s", ss, NAME_COLOR_CHANNEL[NUM_COLOR_CHANNEL]);  
-	strcpy (ss, s); 
-	goto find;
-      }
+  strcpy (c, s);
 
+  i = strlen(s);
   if (i>6)
     if (!strcmp ("_color", &(s[i-6])) || !strcmp ("_alpha", &(s[i-6])))
       {
-	s[i-6] = '\0';
-	ss[i-4] = '\0';
-	ss[i-6] = '$'; 
+	c[i-6] = '\0';
+	s[i-4] = '\0';
+	s[i-6] = '$'; 
 	goto find;
       }
 
   if (i>2)
     if ((s[i-1] == 'a' || s[i-1] == 'c') && s[i-2] == '$')
       {
-	s[i-2] = '\0';
+	c[i-2] = '\0';
       } 
 
 find:
   for (i=0; i<cur_nsyms; i++)
     {
       /* is it already here? */
-      if(!strcmp(symtab[i].string, s))
+      if(!strcmp(symtab[i].string, c))
 	return &(symtab[i]);
 
     }
@@ -1988,23 +1949,21 @@ get_keyword (char *keywd)
   return -1; 
 }
 
-dt_keyword_t
+dt_keyword_t*
 get_dt_keyword (char *keywd)
 {
 
   int i=0; 
-  dt_keyword_t e;
-  e.arg = 9;
 
   while (dt_keyword_tab[i].arg != 9)
     {
       if (!strcmp (dt_keyword_tab[i].word, keywd))
-	return dt_keyword_tab[i];
+	return &(dt_keyword_tab[i]);
       else
 	i ++;
     }
 
-  return e; 
+  return NULL; 
 }
 
 
@@ -2017,6 +1976,7 @@ read_channel_names (char *chan_names)
 
   if (!(tmp = (char*) strtok (chan_names, ",")))
     {
+      yyerror("Error: reading channel names");
       exit (0);
     }
 
@@ -2045,7 +2005,7 @@ main (int argc, char **argv)
 {
   int i=1;
   /* uncomment this to see lexer and parser debug info */
-  /* yydebug = 1; */    
+  /* yydebug = 1;*/    
   
   if (argc < 5)
     {
