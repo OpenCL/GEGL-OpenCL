@@ -124,6 +124,7 @@ free_entry_data (gpointer data, gpointer user_data)
       g_object_unref(record->data);
     }
   g_free (record);
+  /* g_message ("EntryRecord %d freed.", GPOINTER_TO_SIZE(record)); */
 }
 
 
@@ -136,18 +137,19 @@ instance_init (GTypeInstance *instance,
   mem_cache->stored_entries=NULL;
   mem_cache->discarded_entries = NULL;
   mem_cache->fetched_entries = NULL;
+  mem_cache->has_disposed = FALSE;
 }
 
 static void
 finalize(GObject *object)
 {
+  G_OBJECT_CLASS (g_type_class_peek_parent (GEGL_MEMORY_CACHE_GET_CLASS (object)))->finalize(object);
 }
 
 static void dispose (GObject *object)
 {
   GeglMemoryCache* self=GEGL_MEMORY_CACHE(object);
-  static gboolean has_disposed=FALSE;
-  if (!has_disposed)
+  if (!self->has_disposed)
     {
       g_list_foreach(self->discarded_entries,free_entry_data,NULL);
       g_list_free(self->discarded_entries);
@@ -158,8 +160,9 @@ static void dispose (GObject *object)
       self->discarded_entries = NULL;
       self->fetched_entries = NULL;
       self->stored_entries = NULL;
-      has_disposed = TRUE;
+      self->has_disposed = TRUE;
     }
+  G_OBJECT_CLASS (g_type_class_peek_parent (GEGL_MEMORY_CACHE_GET_CLASS (object)))->dispose(object);
 }
 
 static gint
@@ -238,6 +241,7 @@ put (GeglCache * cache,
   if (*entry_id == 0)
     {
       record = g_new (EntryRecord, 1);
+      /* g_message ("EntryRecord %d allocated.", GPOINTER_TO_SIZE(record)); */
       record->data = entry;
       record->status = STORED;
       record->magic_number = cache;
@@ -330,6 +334,5 @@ flush (GeglCache * cache,
       g_warning ("GeglMemoryCache: unhandled status type in flush()");
       break;
     }
-    free_entry_data(link->data,NULL);
-    g_list_free (link);
+  free_entry_data(record,NULL);
 }

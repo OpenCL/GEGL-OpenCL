@@ -30,6 +30,7 @@ static GObject *constructor (GType type,
 			     guint n_construct_properties,
 			     GObjectConstructParam * construct_properties);
 static void finalize (GObject * object);
+static void dispose (GObject * object);
 static void get_property (GObject * object,
 			  guint property_id,
 			  GValue * value, GParamSpec * pspec);
@@ -119,6 +120,7 @@ class_init (gpointer g_class, gpointer class_data)
   gob_class->set_property = set_property;
   gob_class->constructor = constructor;
   gob_class->finalize = finalize;
+  gob_class->dispose = dispose;
 
   g_object_class_install_property (gob_class, PROP_PIXEL_STRIDE,
 				   g_param_spec_int ("pixel_stride",
@@ -163,6 +165,7 @@ instance_init (GTypeInstance * instance, gpointer g_class)
   csm->scanline_stride = 0;
   csm->bank_offsets = NULL;
   csm->band_indices = NULL;
+  csm->is_disposed = FALSE;
 }
 
 static GObject *
@@ -289,6 +292,19 @@ get_max_bands_per_bank (const GeglComponentSampleModel * csm)
     }
   return max_bands_per_bank;
 }
+
+static void
+dispose (GObject * object)
+{
+  GeglComponentSampleModel * self = GEGL_COMPONENT_SAMPLE_MODEL (object);
+  if (!self->is_disposed)
+    {
+      self->is_disposed = TRUE;
+    }
+  G_OBJECT_CLASS (g_type_class_peek_parent (GEGL_COMPONENT_SAMPLE_MODEL_GET_CLASS
+					    (object)))->dispose(object);
+}
+
 static void
 finalize (GObject * object)
 {
@@ -297,11 +313,11 @@ finalize (GObject * object)
   GeglComponentSampleModel *csm = (GeglComponentSampleModel *) object;
   if (csm->bank_offsets != NULL)
     {
-      g_array_free (csm->bank_offsets, FALSE);
+      g_array_free (csm->bank_offsets, TRUE);
     }
   if (csm->band_indices != NULL)
     {
-      g_array_free (csm->band_indices, FALSE);
+      g_array_free (csm->band_indices, TRUE);
     }
 
   G_OBJECT_CLASS (parent_class)->finalize (object);

@@ -48,6 +48,7 @@ struct _GeglComponentSampleModel
    * this flag indicates chunky (all bands mapped to one bank) or planer (all bands mapped to different banks)
    */
   gboolean all_to_one;
+  gboolean is_disposed;
 };
 
 typedef struct _GeglComponentSampleModelClass GeglComponentSampleModelClass;

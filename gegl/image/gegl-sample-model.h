@@ -45,6 +45,7 @@ struct _GeglSampleModel
   gint height;
   gint num_bands;
   GArray *normalizers;
+  gboolean is_disposed;
 };
 
 typedef struct _GeglSampleModelClass GeglSampleModelClass;

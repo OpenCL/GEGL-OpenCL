@@ -65,8 +65,8 @@ test_properties(Test* test) {
 					     "bank_offsets",bank_offsets,
 					     "band_indices",band_indices,
 					     NULL);
-  g_array_free(bank_offsets,FALSE);
-  g_array_free(band_indices,FALSE);
+  g_array_free(bank_offsets,TRUE);
+  g_array_free(band_indices,TRUE);
 
   gint width;
   gint height;
@@ -204,7 +204,7 @@ test_band_interleaving(Test* test) {
 					     "scanline_stride",width,
 					     "band_indices", band_indices,
 					     NULL);
-  g_array_free(band_indices,FALSE);
+  g_array_free(band_indices,TRUE);
   GeglSampleModel* sample_model=GEGL_SAMPLE_MODEL(csm);
   ct_test(test,gegl_sample_model_check_buffer(sample_model,buffer)==TRUE);
   
@@ -342,9 +342,7 @@ test_normalizers(Test* test)
 
   ct_test(test,all_OK==TRUE);
 
-  g_object_unref(nor0);
-  g_object_unref(nor1);
-  g_object_unref(nor2);
+  /* g_array_free (normalizers, TRUE); */
   g_object_unref(csm);
   g_object_unref(buffer_double);
 }

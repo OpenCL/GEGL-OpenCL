@@ -59,6 +59,7 @@ test_mock_cache_entry_flatten_tests(Test *test)
     {
       ct_test (test, (mock_entry->data)[i] == i);
     }
+  g_object_unref (mock_entry);
 }
 
 

@@ -47,6 +47,7 @@ static void class_init (gpointer g_class, gpointer class_data);
 static void get_property (GObject * object,
 			  guint property_id,
 			  GValue * value, GParamSpec * pspec);
+static void dispose (GObject * object);
 static void set_property (GObject * object,
 			  guint property_id,
 			  const GValue * value, GParamSpec * pspec);
@@ -122,6 +123,7 @@ instance_init (GTypeInstance * instance, gpointer g_class)
   sample_model->width = 0;
   sample_model->height = 0;
   sample_model->num_bands = 0;
+  sample_model->is_disposed = FALSE;
 }
 
 static void
@@ -139,6 +141,7 @@ class_init (gpointer g_class, gpointer class_data)
 
   object_class->get_property = get_property;
   object_class->set_property = set_property;
+  object_class->dispose = dispose;
 
   g_object_class_install_property (object_class, PROP_WIDTH,
 				   g_param_spec_int ("width",
@@ -179,6 +182,30 @@ class_init (gpointer g_class, gpointer class_data)
 
   parent_class = g_type_class_peek_parent (g_class);
 
+}
+
+static void
+dispose (GObject * object)
+{
+  GeglSampleModel * self = GEGL_SAMPLE_MODEL (object);
+  if (! self->is_disposed )
+    {
+      if (self->normalizers != NULL)
+	{
+	  GeglNormalizer ** norm_array = (GeglNormalizer **)self->normalizers->data;
+	  int i;
+	  for (i=0;i<(self->normalizers->len);i++)
+	    {
+	      g_object_unref (norm_array[i]);
+	      /*g_message ("GeglSampleModel:dispose normalizer %d unreffed", GPOINTER_TO_SIZE(norm_array[i]));*/
+	    }
+	  g_array_free (self->normalizers, TRUE);
+	  self->normalizers = NULL;
+	}
+      self->is_disposed = TRUE;
+    }
+  /* g_message ("GeglSampleModel dispose run"); */
+  G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void

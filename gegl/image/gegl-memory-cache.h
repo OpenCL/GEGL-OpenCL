@@ -29,7 +29,7 @@
 #define GEGL_MEMORY_CACHE_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_MEMORY_CACHE, GeglMemoryCacheClass))
 #define GEGL_IS_MEMORY_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_MEMORY_CACHE))
 #define GEGL_IS_MEMORY_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_MEMORY_CACHE))
-#define GEGL_MEMORY_CACHE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MEMORY_CACHE, GeglMemoryCacheClassClass))
+#define GEGL_MEMORY_CACHE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MEMORY_CACHE, GeglMemoryCacheClass))
 
 GType gegl_memory_cache_get_type(void);
 
@@ -41,6 +41,7 @@ struct _GeglMemoryCache
   GList* fetched_entries;
   GList* discarded_entries;
   guint64 current_size;
+  gboolean has_disposed;
 };
 
 typedef struct _GeglMemoryCacheClass GeglMemoryCacheClass;
