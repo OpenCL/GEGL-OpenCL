@@ -1,3 +1,8 @@
+2004-02-12 22:20 Michael Schumacher <schumaml@gnome.org>
+	* tests/Makefile.am
+	Added $(EXEEXT) to TESTS = testgegl. With this change, building
+	GEGL out of the box with MinGW on Win32 is successful.
+
 2004-1-4 00:49 Daniel Rogers <daniel@phasevelocity.org>
 	* gegl/image/gegl-component-sample-model.c
 	* gegl/image/gegl-component-sample-model.h

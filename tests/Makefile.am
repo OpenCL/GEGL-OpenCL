@@ -70,7 +70,7 @@ testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(GEGLDEPS)
 testgegl_LDADD = $(GEGLLDADDS) -lm
 
-TESTS = testgegl
+TESTS = testgegl$(EXEEXT)
 
 EXTRA_PROGRAMS = $(TESTS) 
 
