@@ -1,0 +1,47 @@
+<!-- ##### SECTION Title ##### -->
+gegl-m-source-value-types
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### VARIABLE GEGL_TYPE_M_SOURCE ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO G_VALUE_HOLDS_M_SOURCE ##### -->
+<para>
+
+</para>
+
+@value: 
+
+
+<!-- ##### FUNCTION gegl_m_source_value_types_init ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION g_value_get_m_source ##### -->
+<para>
+
+</para>
+
+@value: 
+@n: 
+@Returns: 
+
+

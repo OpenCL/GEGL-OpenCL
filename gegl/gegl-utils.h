@@ -12,9 +12,9 @@ void     gegl_rect_bounding_box (GeglRect *dest, GeglRect *src1, GeglRect *src2)
 gboolean gegl_rect_intersect    (GeglRect *dest, GeglRect *src1, GeglRect *src2);
 gboolean gegl_rect_contains     (GeglRect *r, GeglRect *s); 
 
-void gegl_log_debug(gchar *function, gchar * format, ...);
-void gegl_log_info(gchar *function, gchar * format, ...);
-void gegl_log_message(gchar *function, gchar * format, ...);
+void gegl_log_debug(gchar *file, gint line, gchar *function, gchar * format, ...);
+void gegl_log_info(gchar *file, gint line, gchar *function, gchar * format, ...);
+void gegl_log_message(gchar *file, gint line, gchar *function, gchar * format, ...);
 void gegl_log_direct(gchar * format, ...);
 
 #define GEGL_FLOAT_EPSILON                       (1e-5)

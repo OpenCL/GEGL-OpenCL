@@ -6,9 +6,8 @@
 enum
 {
   PROP_0, 
-  PROP_INPUT_IMAGE_A,
-  PROP_INPUT_IMAGE_B,
-  PROP_FADE_FLOAT,
+  PROP_SOURCE_0,
+  PROP_SOURCE_1,
   PROP_LAST 
 };
 
@@ -65,17 +64,17 @@ class_init (GeglMockPointOpClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  g_object_class_install_property (gobject_class, PROP_INPUT_IMAGE_A,
+  g_object_class_install_property (gobject_class, PROP_SOURCE_0,
                g_param_spec_object ("source-0",
-                                    "InputImageA",
-                                    "The input image a",
+                                    "Source0",
+                                    "The source 0",
                                      GEGL_TYPE_OP,
                                      G_PARAM_WRITABLE));
 
-  g_object_class_install_property (gobject_class, PROP_INPUT_IMAGE_B,
+  g_object_class_install_property (gobject_class, PROP_SOURCE_1,
                g_param_spec_object ("source-1",
-                                    "InputImageB",
-                                    "The input image b",
+                                    "Source1",
+                                    "The source 1",
                                      GEGL_TYPE_OP,
                                      G_PARAM_WRITABLE));
 }
@@ -111,16 +110,16 @@ set_property (GObject      *gobject,
   GeglMockPointOp *self = GEGL_MOCK_POINT_OP(gobject);
   switch (prop_id)
   {
-    case PROP_INPUT_IMAGE_A:
+    case PROP_SOURCE_0:
       {
-        GeglNode *input = (GeglNode*)g_value_get_object(value);
-        gegl_node_set_source(GEGL_NODE(self), input, 0);  
+        GeglNode *source = (GeglNode*)g_value_get_object(value);
+        gegl_node_set_source(GEGL_NODE(self), source, 0);  
       }
       break;
-    case PROP_INPUT_IMAGE_B:
+    case PROP_SOURCE_1:
       {
-        GeglNode *input = (GeglNode*)g_value_get_object(value);
-        gegl_node_set_source(GEGL_NODE(self), input, 1);  
+        GeglNode *source = (GeglNode*)g_value_get_object(value);
+        gegl_node_set_source(GEGL_NODE(self), source, 1);  
       }
       break;
     default:
@@ -134,7 +133,7 @@ scanline (GeglFilter * op,
           GeglScanlineProcessor *processor,
           gint width)
 {
-  gegl_log_debug("scanline", "MockPointOp scanline was called");
+  gegl_log_debug(__FILE__, __LINE__,"scanline", "MockPointOp scanline was called");
 }
 
 static void 
@@ -147,5 +146,5 @@ prepare (GeglFilter * filter)
 static void 
 finish (GeglFilter * filter) 
 {
-  gegl_log_debug("finish", "MockPointOp finish was called");
+  gegl_log_debug(__FILE__, __LINE__,"finish", "MockPointOp finish was called");
 }

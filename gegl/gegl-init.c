@@ -202,6 +202,7 @@ static void
 gegl_value_types_init (void)
 {
   gegl_input_value_types_init();
+  gegl_m_source_value_types_init();
   gegl_channel_value_types_init();
   gegl_pixel_value_types_init();
 }
@@ -217,6 +218,7 @@ static void
 gegl_param_spec_types_init (void)
 {
   gegl_input_param_spec_types_init();
+  gegl_m_source_param_spec_types_init();
   gegl_channel_param_spec_types_init();
   gegl_pixel_param_spec_types_init();
   gegl_image_param_spec_types_init();

@@ -94,6 +94,8 @@ gegl-utils
 
 </para>
 
+@file: 
+@line: 
 @function: 
 @format: 
 @Varargs: 
@@ -104,6 +106,8 @@ gegl-utils
 
 </para>
 
+@file: 
+@line: 
 @function: 
 @format: 
 @Varargs: 
@@ -114,6 +118,8 @@ gegl-utils
 
 </para>
 
+@file: 
+@line: 
 @function: 
 @format: 
 @Varargs: 

@@ -1,0 +1,66 @@
+<!-- ##### SECTION Title ##### -->
+GeglMultiImageOp
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglMultiImageOp ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglMultiImageOpClass ##### -->
+<para>
+
+</para>
+
+@filter_class: 
+@compute_need_rects: 
+@compute_have_rect: 
+@compute_color_model: 
+
+<!-- ##### FUNCTION gegl_multi_image_op_compute_need_rects ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_multi_image_op_compute_have_rect ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_multi_image_op_compute_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### ARG GeglMultiImageOp:m-source ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglMultiImageOp:source ##### -->
+<para>
+
+</para>
+

@@ -133,8 +133,10 @@ an op that just adds the components of the inputs it is passed.
 </para>
 
 @self: 
-@n: 
+@input: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@n: 
 
 
 <!-- ##### FUNCTION gegl_node_set_source ##### -->
@@ -144,44 +146,31 @@ an op that just adds the components of the inputs it is passed.
 
 @self: 
 @source: 
+@input: 
+<!-- # Unused Parameters # -->
 @n: 
 
 
-<!-- ##### FUNCTION gegl_node_get_num_sinks ##### -->
+<!-- ##### FUNCTION gegl_node_set_m_source ##### -->
 <para>
 
 </para>
 
 @self: 
+@source: 
+@input: 
+@output: 
+
+
+<!-- ##### FUNCTION gegl_node_get_m_source ##### -->
+<para>
+
+</para>
+
+@self: 
+@input: 
+@output: 
 @Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_get_sink ##### -->
-<para>
-
-</para>
-
-@self: 
-@n: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_get_sink_input ##### -->
-<para>
-
-</para>
-
-@self: 
-@n: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gegl_node_unlink ##### -->
-<para>
-
-</para>
-
-@self: 
 
 
 <!-- ##### FUNCTION gegl_node_remove_sources ##### -->
@@ -192,7 +181,47 @@ an op that just adds the components of the inputs it is passed.
 @self: 
 
 
+<!-- ##### FUNCTION gegl_node_get_num_sinks ##### -->
+<para>
+
+</para>
+
+@self: 
+@output: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_get_sink ##### -->
+<para>
+
+</para>
+
+@self: 
+@output: 
+@n: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_node_get_sink_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@output: 
+@n: 
+@Returns: 
+
+
 <!-- ##### FUNCTION gegl_node_remove_sinks ##### -->
+<para>
+
+</para>
+
+@self: 
+
+
+<!-- ##### FUNCTION gegl_node_unlink ##### -->
 <para>
 
 </para>

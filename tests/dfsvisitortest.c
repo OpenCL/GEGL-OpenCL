@@ -187,21 +187,21 @@ test_dfs_visitor_simple_shared(Test *test)
                                 "name", "B", 
                                 "num_inputs", 1,
                                 "num_outputs", 1, 
-                                "input-0", A,
+                                "source-0", A,
                                 NULL);
 
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                 "name", "C", 
                                 "num_inputs", 1,
                                 "num_outputs", 1, 
-                                "input-0", B,
+                                "source-0", B,
                                 NULL);
 
     GeglNode *D = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                 "name", "D", 
                                 "num_inputs", 2,
-                                "input-0", B,
-                                "input-1", C,
+                                "source-0", B,
+                                "source-1", C,
                                 NULL);  
 
     gint i;
@@ -456,16 +456,16 @@ dfs_visitor_setup(Test *test)
                       "name", "U", 
                       "num_outputs", 1,
                       "num_inputs", 2,
-                      "input-0", W,
-                      "input-1", NULL,
+                      "source-0", W,
+                      "source-1", NULL,
                       NULL);  
 
     T = g_object_new (GEGL_TYPE_MOCK_NODE, 
                       "name", "T", 
                       "num_inputs", 3,
-                      "input-0", U,
-                      "input-1", NULL,
-                      "input-2", V,
+                      "source-0", U,
+                      "source-1", NULL,
+                      "source-2", V,
                       NULL);  
   }
 }

@@ -129,7 +129,7 @@ add_test_teardown(Test *test)
 Test *
 create_add_test_float()
 {
-  Test* t = ct_create("GeglAddPixelFloat");
+  Test* t = ct_create("GeglAddTestFloat");
 
   g_assert(ct_addSetUp(t, add_test_setup));
   g_assert(ct_addTearDown(t, add_test_teardown));

@@ -43,19 +43,31 @@ GType           gegl_node_get_type              (void);
 gint            gegl_node_get_num_inputs        (GeglNode * self);
 gint            gegl_node_get_num_outputs       (GeglNode * self);
 
-GeglNode *      gegl_node_get_source            (GeglNode * self, 
-                                                 gint n);
+GeglNode*       gegl_node_get_source            (GeglNode * self, 
+                                                 gint input);
 void            gegl_node_set_source            (GeglNode * self, 
                                                  GeglNode * source,
-                                                 gint n);
-gint            gegl_node_get_num_sinks         (GeglNode * self);
+                                                 gint input);
+void            gegl_node_set_m_source          (GeglNode * self, 
+                                                 GeglNode * source, 
+                                                 gint input,
+                                                 gint output);
+GeglNode*       gegl_node_get_m_source          (GeglNode * self, 
+                                                 gint input,
+                                                 gint *output);
+void            gegl_node_remove_sources        (GeglNode *self); 
+
+gint            gegl_node_get_num_sinks         (GeglNode * self, 
+                                                 gint output);
 GeglNode*       gegl_node_get_sink              (GeglNode * self,
+                                                 gint output,
                                                  gint n);
 gint            gegl_node_get_sink_input        (GeglNode * self,
+                                                 gint output,
                                                  gint n);
-void            gegl_node_unlink                (GeglNode * self);
-void            gegl_node_remove_sources        (GeglNode *self); 
 void            gegl_node_remove_sinks          (GeglNode *self); 
+
+void            gegl_node_unlink                (GeglNode * self);
 
 /* protected */
 void            gegl_node_set_num_inputs        (GeglNode * self,

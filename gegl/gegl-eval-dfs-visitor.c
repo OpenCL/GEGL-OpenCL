@@ -2,6 +2,7 @@
 #include "gegl-filter.h"
 #include "gegl-graph.h"
 #include "gegl-image-op.h"
+#include "gegl-multi-image-op.h"
 #include "gegl-color-model.h"
 #include "gegl-image.h"
 #include "gegl-image-data.h"
@@ -112,9 +113,9 @@ visit_filter(GeglVisitor * visitor,
 {
   GEGL_VISITOR_CLASS(parent_class)->visit_filter(visitor, filter);
 
-  gegl_log_debug("visit_filter", 
-            "computing have rect for %s %p", 
-            G_OBJECT_TYPE_NAME(filter),filter);
+  gegl_log_debug(__FILE__, __LINE__, "visit_filter", 
+                 "computing have rect for %s %p", 
+                 G_OBJECT_TYPE_NAME(filter),filter);
 
   if(GEGL_IS_IMAGE_OP(filter))
     {
@@ -130,7 +131,21 @@ visit_filter(GeglVisitor * visitor,
       gegl_image_op_compute_have_rect(GEGL_IMAGE_OP(filter));
     }
 
-  gegl_log_debug("visit_filter", 
+  if(GEGL_IS_MULTI_IMAGE_OP(filter))
+    {
+      GArray *collected_data = 
+          gegl_visitor_collect_input_data(visitor, GEGL_NODE(filter));
+
+      gegl_op_validate_input_data_array(GEGL_OP(filter), 
+                                        collected_data, 
+                                        &validate_have_rect);
+    
+      g_array_free(collected_data, TRUE);
+      /* Now compute the have rect for the output data */
+      gegl_multi_image_op_compute_have_rect(GEGL_MULTI_IMAGE_OP(filter));
+    }
+
+  gegl_log_debug(__FILE__, __LINE__,"visit_filter", 
             "computing derived color_model for %s %p", 
             G_OBJECT_TYPE_NAME(filter), filter);
 
@@ -147,6 +162,21 @@ visit_filter(GeglVisitor * visitor,
 
       /* Now compute the color model for the output data */
       gegl_image_op_compute_color_model(GEGL_IMAGE_OP(filter));
+    }
+
+  if(GEGL_IS_MULTI_IMAGE_OP(filter))
+    {
+      GArray *collected_data = 
+          gegl_visitor_collect_input_data(visitor, GEGL_NODE(filter));
+
+      gegl_op_validate_input_data_array(GEGL_OP(filter), 
+                                        collected_data, 
+                                        &validate_color_model);
+    
+      g_array_free(collected_data, TRUE);
+
+      /* Now compute the color model for the output data */
+      gegl_multi_image_op_compute_color_model(GEGL_MULTI_IMAGE_OP(filter));
     }
 }
 

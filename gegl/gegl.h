@@ -6,6 +6,7 @@
 #include <gegl-binary.h>
 #include <gegl-blend.h>
 #include <gegl-channel-data.h>
+#include <gegl-channels.h>
 #include <gegl-color.h>
 #include <gegl-color-data.h>
 #include <gegl-color-model.h>
@@ -45,6 +46,7 @@
 #include <gegl-max.h>
 #include <gegl-min.h>
 #include <gegl-mult.h>
+#include <gegl-multi-image-op.h>
 #include <gegl-multiply.h>
 #include <gegl-no-input.h>
 #include <gegl-node.h>

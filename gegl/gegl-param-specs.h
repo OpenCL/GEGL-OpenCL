@@ -7,5 +7,6 @@
 #include "gegl-pixel-param-specs.h"
 #include "gegl-image-param-specs.h"
 #include "gegl-input-param-specs.h"
+#include "gegl-m-source-param-specs.h"
 
 #endif /* __GEGL_PARAM_SPECS_H__ */

@@ -135,10 +135,10 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self)
   gint num_outputs = gegl_node_get_num_outputs(GEGL_NODE(self->op));
 
 #if 1 
-  gegl_log_debug("processor_process", 
+  gegl_log_debug(__FILE__, __LINE__,"processor_process", 
                  "%s %p", G_OBJECT_TYPE_NAME(self->op), self->op); 
 
-  gegl_log_debug("processor_process", 
+  gegl_log_debug(__FILE__, __LINE__,"processor_process", 
                  "inputs %d outputs %d", num_inputs, num_outputs); 
 #endif
 
@@ -163,14 +163,14 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self)
     GeglRect rect;
     gegl_image_data_get_rect(image_data, &rect);
 
-    gegl_log_debug("processor_process", 
+    gegl_log_debug(__FILE__, __LINE__,"processor_process", 
                    "width height %d %d", rect.w, rect.h);
 
     /* Iterate over the scanlines */
     for(i=0; i < rect.h; i++)
       {
         /*
-        gegl_log_debug("processor_process", 
+        gegl_log_debug(__FILE__, __LINE__,"processor_process", 
                        "doing scanline %d", i);
         */
 

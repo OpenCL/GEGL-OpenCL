@@ -156,8 +156,8 @@ compute_have_rect(GeglImageOp *self)
 
   gegl_rect_set(&have_rect, 0,0,0,0);
 
-  gegl_log_debug("compute_have_rect", "%s %p", 
-            G_OBJECT_TYPE_NAME(self), self); 
+  gegl_log_debug(__FILE__, __LINE__, "compute_have_rect", 
+                 "%s %p", G_OBJECT_TYPE_NAME(self), self); 
 
   for(i = 0; i < num_inputs; i++)
     {
@@ -175,8 +175,10 @@ compute_have_rect(GeglImageOp *self)
     }
 
   gegl_image_data_set_rect(GEGL_IMAGE_DATA(output_data),&have_rect);
-  gegl_log_debug("compute_have_rect", "have rect is x y w h is %d %d %d %d", 
-             have_rect.x, have_rect.y, have_rect.w, have_rect.h);
+
+  gegl_log_debug(__FILE__, __LINE__,"compute_have_rect", 
+                 "have rect is x y w h is %d %d %d %d", 
+                 have_rect.x, have_rect.y, have_rect.w, have_rect.h);
 }
 
 void
@@ -215,12 +217,13 @@ compute_need_rects(GeglImageOp *self)
                                  &need_rect, 
                                  &input_need_rect);
 
-          gegl_log_debug("compute_need_rect", "need rect for input %d is (x y w h) = (%d %d %d %d)", 
-                     i, 
-                     input_need_rect.x, 
-                     input_need_rect.y, 
-                     input_need_rect.w, 
-                     input_need_rect.h);
+          gegl_log_debug(__FILE__, __LINE__, "compute_need_rect", 
+                         "need rect for input %d is (x y w h) = (%d %d %d %d)", 
+                         i, 
+                         input_need_rect.x, 
+                         input_need_rect.y, 
+                         input_need_rect.w, 
+                         input_need_rect.h); 
 
           gegl_image_data_set_rect(input_image_data, &input_need_rect);
         }

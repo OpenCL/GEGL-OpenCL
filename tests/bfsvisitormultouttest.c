@@ -31,12 +31,12 @@ test_bfs_visitor_mult_out_simple_chain(Test *test)
                                 "name", "B", 
                                 "num_inputs", 1,
                                 "num_outputs", 2, 
-                                "input-0", A,
+                                "source-0", A,
                                 NULL);
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                 "name", "C", 
                                 "num_inputs", 1,
-                                "input-0", B,
+                                "source-0", B,
                                 "source0_output", 1,
                                 NULL);  
 
@@ -87,14 +87,14 @@ test_bfs_visitor_mult_out_simple_chain2(Test *test)
                                 "name", "B", 
                                 "num_inputs", 1,
                                 "num_outputs", 2, 
-                                "input-0", A,
+                                "source-0", A,
                                 NULL);
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                 "name", "C", 
                                 "num_inputs", 2,
-                                "input-0", B,
+                                "source-0", B,
                                 "source0_output", 0,
-                                "input-1", B,
+                                "source-1", B,
                                 "source1_output", 1,
                                 NULL);  
 
@@ -148,22 +148,22 @@ test_bfs_visitor_mult_out_simple_chain3(Test *test)
                                 "name", "B", 
                                 "num_inputs", 1,
                                 "num_outputs", 2, 
-                                "input-0", A,
+                                "source-0", A,
                                 NULL);
 
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                 "name", "C", 
                                 "num_inputs", 1,
                                 "num_outputs", 1, 
-                                "input-0", B,
+                                "source-0", B,
                                 "source0_output", 1,
                                 NULL);
 
     GeglNode *D = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                 "name", "D", 
                                 "num_inputs", 2,
-                                "input-0", B,
-                                "input-1", C,
+                                "source-0", B,
+                                "source-1", C,
                                 NULL);  
 
     gint i;
@@ -216,26 +216,26 @@ test_bfs_visitor_mult_out_simple_chain4(Test *test)
                                 "name", "B", 
                                 "num_inputs", 1,
                                 "num_outputs", 2, 
-                                "input-0", A,
+                                "source-0", A,
                                 NULL);
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                 "name", "C", 
                                 "num_inputs", 1,
                                 "num_outputs", 1, 
-                                "input-0", B,
+                                "source-0", B,
                                 NULL);
     GeglNode *D = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                 "name", "D", 
                                 "num_inputs", 1,
                                 "num_outputs", 1, 
-                                "input-0", B,
+                                "source-0", B,
                                 "source0_output", 1,
                                 NULL);
     GeglNode *E = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                 "name", "E", 
                                 "num_inputs", 2,
-                                "input-0", C,
-                                "input-1", D,
+                                "source-0", C,
+                                "source-1", D,
                                 NULL);  
 
     gint i;

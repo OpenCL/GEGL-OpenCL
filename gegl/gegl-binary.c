@@ -3,6 +3,7 @@
 #include "gegl-scalar-data.h"
 #include "gegl-color-model.h"
 #include "gegl-param-specs.h"
+#include "gegl-value-types.h"
 #include "gegl-image.h"
 
 enum
@@ -10,6 +11,8 @@ enum
   PROP_0, 
   PROP_SOURCE_0,
   PROP_SOURCE_1,
+  PROP_M_SOURCE_0,
+  PROP_M_SOURCE_1,
   PROP_FADE,
   PROP_LAST 
 };
@@ -83,6 +86,18 @@ class_init (GeglBinaryClass * klass)
                                      GEGL_TYPE_OP,
                                      G_PARAM_WRITABLE));
 
+  g_object_class_install_property (gobject_class, PROP_M_SOURCE_0,
+             gegl_param_spec_m_source ("m-source-0",
+                                        "MSource0",
+                                        "The m-source 0",
+                                        G_PARAM_WRITABLE));
+
+  g_object_class_install_property (gobject_class, PROP_M_SOURCE_1,
+             gegl_param_spec_m_source ("m-source-1",
+                                        "MSource1",
+                                        "The m-source 1",
+                                        G_PARAM_WRITABLE));
+
   g_object_class_install_property(gobject_class, PROP_FADE, 
               g_param_spec_float ("fade",
                                   "Fade",
@@ -144,6 +159,22 @@ set_property (GObject      *gobject,
         GeglNode *source = (GeglNode*)g_value_get_object(value);
         gint index = gegl_op_get_input_data_index(GEGL_OP(self), "source-1");
         gegl_node_set_source(GEGL_NODE(self), source, index);  
+      }
+      break;
+    case PROP_M_SOURCE_0:
+      {
+        gint output;
+        GeglNode *source = g_value_get_m_source(value, &output);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(self), "source-0");
+        gegl_node_set_m_source(GEGL_NODE(self), source, index, output);  
+      }
+      break;
+    case PROP_M_SOURCE_1:
+      {
+        gint output;
+        GeglNode *source = g_value_get_m_source(value, &output);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(self), "source-1");
+        gegl_node_set_m_source(GEGL_NODE(self), source, index, output);  
       }
       break;
     case PROP_FADE:

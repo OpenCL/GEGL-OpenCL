@@ -1,11 +1,16 @@
 #include "gegl-mock-op.h"
+#include "../gegl/gegl-value-types.h"
+#include "../gegl/gegl-param-specs.h"
 
 enum
 {
   PROP_0, 
-  PROP_INPUT_0,
-  PROP_INPUT_1,
-  PROP_INPUT_2,
+  PROP_SOURCE_0,
+  PROP_SOURCE_1,
+  PROP_SOURCE_2,
+  PROP_M_SOURCE_0,
+  PROP_M_SOURCE_1,
+  PROP_M_SOURCE_2,
   PROP_LAST 
 };
 
@@ -55,27 +60,45 @@ class_init (GeglMockOpClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  g_object_class_install_property (gobject_class, PROP_INPUT_0,
-               g_param_spec_object ("input-0",
-                                    "Input0",
-                                    "The input 0",
+  g_object_class_install_property (gobject_class, PROP_SOURCE_0,
+               g_param_spec_object ("source-0",
+                                    "Source0",
+                                    "The source 0",
                                      GEGL_TYPE_OP,
                                      G_PARAM_WRITABLE));
 
-  g_object_class_install_property (gobject_class, PROP_INPUT_1,
-               g_param_spec_object ("input-1",
-                                    "Input1",
-                                    "The input 1",
+  g_object_class_install_property (gobject_class, PROP_SOURCE_1,
+               g_param_spec_object ("source-1",
+                                    "Source1",
+                                    "The source 1",
                                      GEGL_TYPE_OP,
                                      G_PARAM_WRITABLE));
 
-  g_object_class_install_property (gobject_class, PROP_INPUT_2,
-               g_param_spec_object ("input-2",
-                                    "Input2",
-                                    "The input 2",
+  g_object_class_install_property (gobject_class, PROP_SOURCE_2,
+               g_param_spec_object ("source-2",
+                                    "Source2",
+                                    "The source 2",
                                      GEGL_TYPE_OP,
                                      G_PARAM_WRITABLE));
 
+  g_object_class_install_property (gobject_class, PROP_M_SOURCE_0,
+             gegl_param_spec_m_source ("m-source-0",
+                                        "MSource0",
+                                        "Multi source 0",
+                                        G_PARAM_WRITABLE));
+
+  g_object_class_install_property (gobject_class, PROP_M_SOURCE_1,
+             gegl_param_spec_m_source ("m-source-1",
+                                        "MSource1",
+                                        "Multi source 1",
+                                        G_PARAM_WRITABLE));
+
+
+  g_object_class_install_property (gobject_class, PROP_M_SOURCE_2,
+             gegl_param_spec_m_source ("m-source-2",
+                                        "MSource2",
+                                        "Multi source 2",
+                                        G_PARAM_WRITABLE));
 }
 
 static void 
@@ -113,22 +136,43 @@ set_property (GObject      *gobject,
   GeglMockOp *self = GEGL_MOCK_OP(gobject);
   switch (prop_id)
   {
-    case PROP_INPUT_0:
+    case PROP_SOURCE_0:
       {
-        GeglNode *input = (GeglNode*)g_value_get_object(value);
-        gegl_node_set_source(GEGL_NODE(self), input, 0);  
+        GeglNode *source = (GeglNode*)g_value_get_object(value);
+        gegl_node_set_source(GEGL_NODE(self), source, 0);  
       }
       break;
-    case PROP_INPUT_1:
+    case PROP_SOURCE_1:
       {
-        GeglNode *input = (GeglNode*)g_value_get_object(value);
-        gegl_node_set_source(GEGL_NODE(self), input, 1);  
+        GeglNode *source = (GeglNode*)g_value_get_object(value);
+        gegl_node_set_source(GEGL_NODE(self), source, 1);  
       }
       break;
-    case PROP_INPUT_2:
+    case PROP_SOURCE_2:
       {
-        GeglNode *input = (GeglNode*)g_value_get_object(value);
-        gegl_node_set_source(GEGL_NODE(self), input, 2);  
+        GeglNode *source = (GeglNode*)g_value_get_object(value);
+        gegl_node_set_source(GEGL_NODE(self), source, 2);  
+      }
+      break;
+    case PROP_M_SOURCE_0:
+      {
+        gint output;
+        GeglNode *source = g_value_get_m_source(value, &output);
+        gegl_node_set_m_source(GEGL_NODE(self), source, 0, output);  
+      }
+      break;
+    case PROP_M_SOURCE_1:
+      {
+        gint output;
+        GeglNode *source = g_value_get_m_source(value, &output);
+        gegl_node_set_m_source(GEGL_NODE(self), source, 1, output);  
+      }
+      break;
+    case PROP_M_SOURCE_2:
+      {
+        gint output;
+        GeglNode *source = g_value_get_m_source(value, &output);
+        gegl_node_set_m_source(GEGL_NODE(self), source, 2, output);  
       }
       break;
     default:

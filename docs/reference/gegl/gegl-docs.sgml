@@ -25,6 +25,7 @@
 <!ENTITY GeglCopy SYSTEM "xml/gegl-copy.xml">
 <!ENTITY GeglDarken SYSTEM "xml/gegl-darken.xml">
 <!ENTITY GeglBuffer SYSTEM "xml/gegl-buffer.xml">
+<!ENTITY GeglChannels SYSTEM "xml/gegl-channels.xml">
 <!ENTITY GeglChannelSpaceFloat SYSTEM "xml/gegl-channel-space-float.xml">
 <!ENTITY GeglChannelSpace SYSTEM "xml/gegl-channel-space.xml">
 <!ENTITY GeglChannelSpaceU8 SYSTEM "xml/gegl-channel-space-uint8.xml">
@@ -53,6 +54,7 @@
 <!ENTITY GeglMax SYSTEM "xml/gegl-max.xml">
 <!ENTITY GeglMin SYSTEM "xml/gegl-min.xml">
 <!ENTITY GeglMult SYSTEM "xml/gegl-mult.xml">
+<!ENTITY GeglMultiImageOp SYSTEM "xml/gegl-multi-image-op.xml">
 <!ENTITY GeglMultiply SYSTEM "xml/gegl-multiply.xml">
 <!ENTITY GeglNoInput SYSTEM "xml/gegl-no-input.xml">
 <!ENTITY GeglNode SYSTEM "xml/gegl-node.xml">
@@ -190,6 +192,7 @@
       &GeglFilter;
       &GeglGraph;
       &GeglImageOp;
+      &GeglMultiImageOp;
       &GeglNoInput;
       &GeglOp;
       &GeglPipe;
@@ -202,6 +205,7 @@
       <title>Operators</title>
       &GeglAdd;
       &GeglAtop;
+      &GeglChannels;
       &GeglColor;
       &GeglCopy;
       &GeglDarken;

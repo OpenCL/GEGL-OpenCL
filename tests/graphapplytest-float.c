@@ -288,7 +288,7 @@ test_graph_apply_add_graph_and_graph(Test *t)
             /    \ 
            /      \
       --------    -------------
-     | fade   |  |    iadd1     |
+     | fade   |  |    iadd1    |
      |   |    |  |   /    \    |  
      | color1 |  |color2 color3| 
      ---------   --------------

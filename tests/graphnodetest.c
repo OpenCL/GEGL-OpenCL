@@ -13,6 +13,17 @@
 static GeglNode *A,*B,*C,*D,*E,*F,*G;
 static GeglNode *H,*I,*J,*K,*L,*M,*N;
 
+static void
+test_graph_node_num_inputs(Test *test)
+{
+  {
+    ct_test(test, 1 == gegl_node_get_num_inputs(GEGL_NODE(L)));
+    ct_test(test, 1 == gegl_node_get_num_outputs(GEGL_NODE(L)));
+    ct_test(test, 2 == gegl_node_get_num_inputs(GEGL_NODE(A)));
+    ct_test(test, 0 == gegl_node_get_num_outputs(GEGL_NODE(A)));
+  }
+}
+
 /**
 
   From setup: 
@@ -82,67 +93,6 @@ static void
 graph_node_setup(Test *test)
 {
   /*
-                   M     
-                 /   \
-                /     \ 
-           ---------   N 
-   graph L |   K   |    
-           |  / \  |     
-           | I   J |
-           | |     |
-           |null   | 
-           ---------
-               |
-               H 
-
-  */
-
-  {
-    H = g_object_new (GEGL_TYPE_MOCK_NODE, 
-                      "name", "H", 
-                      "num_outputs", 1,
-                      NULL);  
-    I = g_object_new (GEGL_TYPE_MOCK_NODE, 
-                      "name", "I", 
-                      "num_outputs", 1,
-                      "num_inputs", 1,
-                      NULL);  
-    J = g_object_new (GEGL_TYPE_MOCK_NODE, 
-                      "num_outputs", 1,
-                      "name", "J", 
-                      NULL);  
-    K = g_object_new (GEGL_TYPE_MOCK_NODE, 
-                      "name", "K", 
-                      "num_outputs", 1,
-                      "num_inputs", 2,
-                      "input-0", I,
-                      "input-1", J,
-                      NULL);  
-    M = g_object_new (GEGL_TYPE_MOCK_NODE, 
-                      "name", "M", 
-                      "num_inputs", 2, 
-                      NULL);  
-    N = g_object_new (GEGL_TYPE_MOCK_NODE, 
-                      "name", "N", 
-                      "num_outputs", 1,
-                      NULL);  
-
-    /*
-    gegl_node_set_source(K, I, 0);
-    gegl_node_set_source(K, J, 1);
-    */
-
-    L = g_object_new (GEGL_TYPE_GRAPH, 
-                      "name", "L", 
-                      "root", K, 
-                      NULL);  
-
-    gegl_node_set_source(L, H, 0);
-    gegl_node_set_source(M, L, 0);
-    gegl_node_set_source(M, N, 1);
-  }
-
-  /*
            -------------
    graph A |   B       |    
            |  / \      |     
@@ -195,6 +145,63 @@ graph_node_setup(Test *test)
     gegl_node_set_source(A, F, 0);
     gegl_node_set_source(A, G, 1);
   }
+
+  /*
+                   M     
+                 /   \
+                /     \ 
+           ---------   N 
+   graph L |   K   |    
+           |  / \  |     
+           | I   J |
+           | |     |
+           |null   | 
+           ---------
+               |
+               H 
+
+  */
+
+  {
+    H = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "H", 
+                      "num_outputs", 1,
+                      NULL);  
+    I = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "I", 
+                      "num_outputs", 1,
+                      "num_inputs", 1,
+                      NULL);  
+    J = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "num_outputs", 1,
+                      "name", "J", 
+                      NULL);  
+    K = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "K", 
+                      "num_outputs", 1,
+                      "num_inputs", 2,
+                      "source-0", I,
+                      "source-1", J,
+                      NULL);  
+    M = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "M", 
+                      "num_inputs", 2, 
+                      NULL);  
+    N = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "N", 
+                      "num_outputs", 1,
+                      NULL);  
+
+    L = g_object_new (GEGL_TYPE_GRAPH, 
+                      "name", "L", 
+                      "root", K, 
+                      NULL);  
+
+    gegl_node_set_source(L, H, 0);
+    gegl_node_set_source(M, L, 0);
+    gegl_node_set_source(M, N, 1);
+  }
+
 }
 
 static void
@@ -226,6 +233,7 @@ create_graph_node_test()
   g_assert(ct_addTearDown(t, graph_node_teardown));
 
 #if 1 
+  g_assert(ct_addTestFun(t, test_graph_node_num_inputs));
   g_assert(ct_addTestFun(t, test_graph_node_lookup_source));
   g_assert(ct_addTestFun(t, test_graph_node_lookup_two_sources));
 #endif

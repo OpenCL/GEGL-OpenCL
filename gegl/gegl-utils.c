@@ -155,27 +155,39 @@ gegl_rect_equal_coords (GeglRect *r,
 
 #define GEGL_LOG_DOMAIN "Gegl"
 
-void gegl_log_debug(gchar *function, gchar * format, ...)
+void gegl_log_debug(gchar *file,
+                    gint line,
+                    gchar *function,
+                    gchar * format, 
+                    ...)
 {
   va_list args;
   va_start(args,format);
-  gegl_logv(G_LOG_LEVEL_DEBUG,__FILE__,__LINE__,function, format, args);
+  gegl_logv(G_LOG_LEVEL_DEBUG, file, line, function, format, args);
   va_end(args);
 }
 
-void gegl_log_info(gchar *function, gchar * format, ...)
+void gegl_log_info(gchar *file,
+                   gint line,
+                   gchar *function, 
+                   gchar * format, 
+                   ...)
 {
   va_list args;
   va_start(args,format);
-  gegl_logv(G_LOG_LEVEL_INFO,__FILE__,__LINE__,function, format, args);
+  gegl_logv(G_LOG_LEVEL_INFO,file,line,function, format, args);
   va_end(args);
 }
 
-void gegl_log_message(gchar *function, gchar * format, ...)
+void gegl_log_message(gchar *file,
+                      gint line,
+                      gchar *function, 
+                      gchar * format, 
+                      ...)
 {
   va_list args;
   va_start(args,format);
-  gegl_logv(G_LOG_LEVEL_MESSAGE,__FILE__,__LINE__,function, format, args);
+  gegl_logv(G_LOG_LEVEL_MESSAGE,file,line,function, format, args);
   va_end(args);
 }
 
@@ -237,8 +249,8 @@ gegl_direct_log(GLogLevelFlags level,
 
 void
 gegl_direct_logv(GLogLevelFlags level,
-         gchar *format,
-         va_list args)
+                 gchar *format,
+                 va_list args)
 {
     if (g_getenv("GEGL_LOG_ON"))
       {

@@ -827,12 +827,14 @@ gegl_node_get_num_inputs
 gegl_node_get_num_outputs
 gegl_node_get_source
 gegl_node_set_source
+gegl_node_set_m_source
+gegl_node_get_m_source
+gegl_node_remove_sources
 gegl_node_get_num_sinks
 gegl_node_get_sink
 gegl_node_get_sink_input
-gegl_node_unlink
-gegl_node_remove_sources
 gegl_node_remove_sinks
+gegl_node_unlink
 gegl_node_set_num_inputs
 gegl_node_set_num_outputs
 gegl_node_add_input
@@ -1255,6 +1257,65 @@ GEGL_XOR_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gegl-m-source-param-specs</FILE>
+GEGL_TYPE_PARAM_M_SOURCE
+GeglParamSpecMSource
+gegl_param_spec_m_source
+gegl_m_source_param_spec_types_init
+<SUBSECTION Standard>
+GEGL_PARAM_SPEC_M_SOURCE
+GEGL_IS_PARAM_SPEC_M_SOURCE
+</SECTION>
+
+<SECTION>
+<FILE>gegl-multi-image-op</FILE>
+GeglMultiImageOp
+GeglMultiImageOpClass
+<TITLE>GeglMultiImageOp</TITLE>
+gegl_multi_image_op_compute_need_rects
+gegl_multi_image_op_compute_have_rect
+gegl_multi_image_op_compute_color_model
+<SUBSECTION Standard>
+GEGL_MULTI_IMAGE_OP
+GEGL_IS_MULTI_IMAGE_OP
+GEGL_TYPE_MULTI_IMAGE_OP
+gegl_multi_image_op_get_type
+GEGL_MULTI_IMAGE_OP_CLASS
+GEGL_IS_MULTI_IMAGE_OP_CLASS
+GEGL_MULTI_IMAGE_OP_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-color-alpha</FILE>
+GeglPointOp
+GeglPointOpClass
+<TITLE>GeglPointOp</TITLE>
+<SUBSECTION Standard>
+GEGL_POINT_OP
+GEGL_IS_POINT_OP
+GEGL_TYPE_POINT_OP
+gegl_point_op_get_type
+GEGL_POINT_OP_CLASS
+GEGL_IS_POINT_OP_CLASS
+GEGL_POINT_OP_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>gegl-channels</FILE>
+GeglChannels
+GeglChannelsClass
+<TITLE>GeglChannels</TITLE>
+<SUBSECTION Standard>
+GEGL_CHANNELS
+GEGL_IS_CHANNELS
+GEGL_TYPE_CHANNELS
+gegl_channels_get_type
+GEGL_CHANNELS_CLASS
+GEGL_IS_CHANNELS_CLASS
+GEGL_CHANNELS_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gegl-channel-value-types</FILE>
 GEGL_TYPE_CHANNEL_FLOAT
 GEGL_TYPE_CHANNEL_UINT8
@@ -1334,5 +1395,13 @@ ROUND
 
 <SECTION>
 <FILE>gegl</FILE>
+</SECTION>
+
+<SECTION>
+<FILE>gegl-m-source-value-types</FILE>
+GEGL_TYPE_M_SOURCE
+G_VALUE_HOLDS_M_SOURCE
+gegl_m_source_value_types_init
+g_value_get_m_source
 </SECTION>
 

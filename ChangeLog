@@ -1,3 +1,61 @@
+Aug  1 13:57:09 EDT 2003  calvinw@mindspring.com
+
+	Added basic multi-output support. Introduced m-sources, which stands for 
+	sources that have multiple outputs, like a channels splitter. New tests
+	show how the m-sources work.  
+  
+	*gegl/gegl-channels.c
+	*gegl/gegl-channels.h
+	*gegl/gegl-m-source-param-specs.c
+	*gegl/gegl-m-source-param-specs.h
+	*gegl/gegl-m-source-value-types.c
+	*gegl/gegl-m-source-value-types.h
+	*gegl/gegl-multi-image-op.c
+	*gegl/gegl-multi-image-op.h
+	*tests/channelstest-float.c
+	*tests/multipleoutputstest.c
+
+	Changed the following to do multi-output support.
+
+	*docs/reference/gegl/tmpl/gegl-binary.sgml
+	*docs/reference/gegl/tmpl/gegl-comp.sgml
+	*docs/reference/gegl/tmpl/gegl-node.sgml
+	*docs/reference/gegl/tmpl/gegl-unary.sgml
+	*docs/reference/gegl/tmpl/gegl-utils.sgml
+	*gegl/Makefile.am
+	*gegl/gegl-binary.c
+	*gegl/gegl-comp.c
+	*gegl/gegl-eval-bfs-visitor.c
+	*gegl/gegl-eval-dfs-visitor.c
+	*gegl/gegl-eval-mgr.c
+	*gegl/gegl-image-op.c
+	*gegl/gegl-init.c
+	*gegl/gegl-input-value-types.c
+	*gegl/gegl-node.c
+	*gegl/gegl-node.h
+	*gegl/gegl-param-specs.h
+	*gegl/gegl-print.c
+	*gegl/gegl-scanline-processor.c
+	*gegl/gegl-unary.c
+	*gegl/gegl-utils.c
+	*gegl/gegl-utils.h
+	*gegl/gegl-value-types.h
+	*gegl/gegl.h
+	*tests/Makefile.am
+	*tests/addtest-float.c
+	*tests/bfsvisitormultouttest.c
+	*tests/bfsvisitortest.c
+	*tests/dfsvisitormultouttest.c
+	*tests/dfsvisitortest.c
+	*tests/gegl-mock-node.c
+	*tests/gegl-mock-op.c
+	*tests/gegl-mock-point-op.c
+	*tests/graphapplytest-float.c
+	*tests/graphnodetest.c
+	*tests/nodetest.c
+	*tests/optest.c
+	*tests/testgegl.c
+
 Jul 11 14:04:15 EDT 2003  calvinw@mindspring.com 
 
 	Changed ScanlineProcessor so that it keeps a hash table of iterators. This

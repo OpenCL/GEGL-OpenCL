@@ -6,12 +6,16 @@
 #include "gegl-color-model.h"
 #include "gegl-color-space.h"
 #include "gegl-channel-space.h"
+#include "gegl-param-specs.h"
+#include "gegl-value-types.h"
 
 enum
 {
   PROP_0, 
   PROP_BACKGROUND,
   PROP_FOREGROUND,
+  PROP_M_BACKGROUND,
+  PROP_M_FOREGROUND,
   PROP_PREMULTIPLY,
   PROP_LAST 
 };
@@ -85,6 +89,18 @@ class_init (GeglCompClass * klass)
                                      GEGL_TYPE_OP,
                                      G_PARAM_WRITABLE));
 
+  g_object_class_install_property (gobject_class, PROP_M_BACKGROUND,
+             gegl_param_spec_m_source ("m-background",
+                                        "MBackground",
+                                        "The m-background",
+                                        G_PARAM_WRITABLE));
+
+  g_object_class_install_property (gobject_class, PROP_M_FOREGROUND,
+             gegl_param_spec_m_source ("m-foreground",
+                                        "MForeground",
+                                        "The m-foreground",
+                                        G_PARAM_WRITABLE));
+
   g_object_class_install_property (gobject_class, PROP_PREMULTIPLY,
              g_param_spec_boolean ("premultiply",
                                    "Premultiply",
@@ -145,6 +161,22 @@ set_property (GObject      *gobject,
         GeglNode *foreground = (GeglNode*)g_value_get_object(value);
         gint index = gegl_op_get_input_data_index(GEGL_OP(comp), "foreground");
         gegl_node_set_source(GEGL_NODE(comp), foreground, index);  
+      }
+      break;
+    case PROP_M_BACKGROUND:
+      {
+        gint output;
+        GeglNode *background = g_value_get_m_source(value, &output);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(comp), "background");
+        gegl_node_set_m_source(GEGL_NODE(comp), background, index, output);  
+      }
+      break;
+    case PROP_M_FOREGROUND:
+      {
+        gint output;
+        GeglNode *foreground = g_value_get_m_source(value, &output);
+        gint index = gegl_op_get_input_data_index(GEGL_OP(comp), "foreground");
+        gegl_node_set_m_source(GEGL_NODE(comp), foreground, index, output);  
       }
       break;
     case PROP_PREMULTIPLY:

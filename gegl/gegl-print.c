@@ -105,11 +105,11 @@ prepare (GeglFilter * filter)
       self->buffer = g_new(gchar, self->buffer_size); 
 
       /*
-      gegl_log_info("prepare", "buffer_size is %d", self->buffer_size); 
+      gegl_log_info(__FILE__, __LINE__, "prepare", "buffer_size is %d", self->buffer_size); 
       */
 
       if(self->use_log)
-        gegl_log_info("prepare", 
+        gegl_log_info(__FILE__, __LINE__,"prepare", 
                  "Printing GeglImage: %p area (x,y,w,h) = (%d,%d,%d,%d)",
                  src,x,y,width,height);
       else
@@ -149,7 +149,8 @@ print (GeglPrint * self,
   }
 
 /*
-  gegl_log_debug("print", "total written : %d", self->buffer_size - self->left);
+  gegl_log_debug(__FILE__, __LINE__, "print", 
+                 "total written : %d", self->buffer_size - self->left);
 */
 }
 
@@ -259,7 +260,7 @@ print_float (GeglFilter * filter,
     print(self,"%c", (char)0);
 
     if(self->use_log)
-      gegl_log_info("print_float","%s",self->buffer);
+      gegl_log_info(__FILE__, __LINE__,"print_float","%s",self->buffer);
     else
       printf("%s", self->buffer);
   }

@@ -44,6 +44,7 @@ value_collect_input (GValue      *value,
                      GTypeCValue *collect_values,
                      guint        collect_flags)
 {
+  g_assert(n_collect_values == 2);
   value->data[0].v_int = collect_values[0].v_int;
   if(collect_values[1].v_pointer)
     {

@@ -51,6 +51,7 @@ testgegl_SOURCES = \
    buffertest.c \
    channelfloatvaluetest.c \
    channelspacetest.c \
+   channelstest-float.c \
    channeluint8valuetest.c \
    channelvaluetest.c \
    checkoptest.c \
@@ -76,6 +77,7 @@ testgegl_SOURCES = \
    imagetest.c \
    mockpropertiesfiltertest.c \
    multiplytest-float.c \
+   multipleoutputstest.c \
    multtest-float.c \
    multtest-uint8.c \
    needrecttest.c \
@@ -107,6 +109,3 @@ EXTRA_PROGRAMS = $(TESTS)
   
 all: check 
 
-dummy:
-	cd $(top_builddir)/gegl \
-	&& $(MAKE) $(AM_MAKEFLAGS)

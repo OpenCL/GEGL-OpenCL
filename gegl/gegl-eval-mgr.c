@@ -25,9 +25,9 @@ static void set_property (GObject *gobject, guint prop_id, const GValue *value, 
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *param_spec);
 
 static void evaluate (GeglEvalMgr * self);
-static void eval_bfs_visitor(GeglEvalMgr *self); 
-static void eval_dfs_visitor(GeglEvalMgr *self); 
-static void eval_visitor(GeglEvalMgr *self); 
+
+static void bfs_visitor(GeglEvalMgr *self, GType type); 
+static void dfs_visitor(GeglEvalMgr *self, GType type); 
 
 static gpointer parent_class = NULL;
 
@@ -85,8 +85,6 @@ class_init (GeglEvalMgrClass * klass)
                                                         "roi",
                                                         "Region of interest for eval_mgr",
                                                          G_PARAM_READWRITE));
-
-  return;
 }
 
 static void 
@@ -95,8 +93,6 @@ init (GeglEvalMgr * self,
 {
   self->root = NULL;
   gegl_rect_set(&self->roi,0,0,GEGL_DEFAULT_WIDTH,GEGL_DEFAULT_HEIGHT);
-
-  return;
 }
 
 static void
@@ -244,61 +240,53 @@ static void
 evaluate (GeglEvalMgr * self) 
 {
   /* Get the root and set roi on it */
-  GeglData * data = gegl_op_get_output_data(GEGL_OP(self->root), "dest");
-  if(data && GEGL_IS_IMAGE_DATA(data))
+  gint i;
+  gint num_outputs = gegl_node_get_num_outputs(GEGL_NODE(self->root));
+  for(i=0; i < num_outputs; i++)
     {
-      GeglImageData *image_data = GEGL_IMAGE_DATA(data);
-      gegl_image_data_set_rect(image_data, &self->roi);
+      GeglData * data = gegl_op_get_nth_output_data(GEGL_OP(self->root), i);
+      if(data && GEGL_IS_IMAGE_DATA(data))
+        {
+          GeglImageData *image_data = GEGL_IMAGE_DATA(data);
+          gegl_image_data_set_rect(image_data, &self->roi);
+        }
     }
 
+#if 0
+  gegl_log_debug(__FILE__, __LINE__, "evaluate", 
+                "begin bfs for %s %p", G_OBJECT_TYPE_NAME(self->root), self);
+#endif
+
   /* This part computes need rects, breadth first. */
-  gegl_log_debug("evaluate", 
-            "begin bfs for %s %p", 
-            G_OBJECT_TYPE_NAME(self->root), 
-            self);
-  eval_bfs_visitor(self);
+  bfs_visitor(self, GEGL_TYPE_EVAL_BFS_VISITOR);
+
+  gegl_log_debug(__FILE__, __LINE__,"evaluate", 
+                 "begin dfs for %s %p", G_OBJECT_TYPE_NAME(self->root), self);
 
   /* This part computes have rects, color models, depth first. */
-  gegl_log_debug("evaluate", 
-            "begin dfs for %s %p", 
-            G_OBJECT_TYPE_NAME(self->root), 
-            self);
-  eval_dfs_visitor(self);
+  dfs_visitor(self, GEGL_TYPE_EVAL_DFS_VISITOR);
+
+  gegl_log_debug(__FILE__, __LINE__,"evaluate", 
+                 "begin evaluate dfs for %s %p", G_OBJECT_TYPE_NAME(self->root), self);
 
   /* This part does the evaluation of the ops, depth first. */
-  gegl_log_debug("evaluate", 
-            "begin evaluate dfs for %s %p", 
-            G_OBJECT_TYPE_NAME(self->root), 
-            self);
-  eval_visitor(self);
+  dfs_visitor(self, GEGL_TYPE_EVAL_VISITOR);
 }
 
 static void 
-eval_bfs_visitor(GeglEvalMgr *self) 
+bfs_visitor(GeglEvalMgr *self, 
+            GType type) 
 {
-  GeglEvalBfsVisitor * eval_bfs_visitor = 
-    g_object_new(GEGL_TYPE_EVAL_BFS_VISITOR, NULL); 
-  gegl_bfs_visitor_traverse(GEGL_BFS_VISITOR(eval_bfs_visitor), 
-                            GEGL_NODE(self->root));
-  g_object_unref(eval_bfs_visitor);
+  GeglBfsVisitor * bfs_visitor = g_object_new(type, NULL); 
+  gegl_bfs_visitor_traverse(bfs_visitor, GEGL_NODE(self->root));
+  g_object_unref(bfs_visitor);
 }
 
 static void 
-eval_dfs_visitor(GeglEvalMgr *self) 
+dfs_visitor(GeglEvalMgr *self,
+            GType type) 
 {
-  GeglEvalDfsVisitor * eval_dfs_visitor = 
-    g_object_new(GEGL_TYPE_EVAL_DFS_VISITOR, NULL); 
-  gegl_dfs_visitor_traverse(GEGL_DFS_VISITOR(eval_dfs_visitor), 
-                            GEGL_NODE(self->root));
-  g_object_unref(eval_dfs_visitor);
-}
-
-static void 
-eval_visitor(GeglEvalMgr *self) 
-{
-  GeglEvalVisitor * eval_visitor = 
-    g_object_new(GEGL_TYPE_EVAL_VISITOR, NULL); 
-  gegl_dfs_visitor_traverse(GEGL_DFS_VISITOR(eval_visitor), 
-                            GEGL_NODE(self->root));
-  g_object_unref(eval_visitor);
+  GeglDfsVisitor * dfs_visitor = g_object_new(type, NULL); 
+  gegl_dfs_visitor_traverse(dfs_visitor, GEGL_NODE(self->root));
+  g_object_unref(dfs_visitor);
 }

@@ -13,6 +13,7 @@ GEGL_SRC = \
   gegl-channel-space.c \
   gegl-channel-space-float.c \
   gegl-channel-space-uint8.c \
+  gegl-channels.c \
   gegl-color.c \
   gegl-color-data.c \
   gegl-color-model.c \
@@ -47,6 +48,7 @@ GEGL_SRC = \
   gegl-max.c \
   gegl-min.c \
   gegl-mult.c \
+  gegl-multi-image-op.c \
   gegl-multiply.c \
   gegl-no-input.c \
   gegl-node.c \
@@ -78,6 +80,8 @@ GEGL_NONCLASS_SRC = \
   gegl-init.c \
   gegl-input-value-types.c \
   gegl-input-param-specs.c \
+  gegl-m-source-value-types.c \
+  gegl-m-source-param-specs.c \
   gegl-pixel-param-specs.c \
   gegl-pixel-value-types.c \
   gegl-utils.c
