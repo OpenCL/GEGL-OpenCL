@@ -1,3 +1,16 @@
+Tue Mar 28 13:58:38 PST 2000 caro@rhythm.com
+
+	* chgeck in for codegen
+	
+	* I changed ROUND_CHANNEL to CHANNEL_ROUND in the following files:
+		- parser.y
+		- lexer.l
+		- data_types.h
+		- channel_data/*
+
+	* I also made both END tokes for the lexer.l eat up all \n. It
+	as giving me some extra new lines otherwise. 
+
 Tue Mar 28 12:12:39 PST 2000 caro@rhythm.com
 
 	* check in for codegen

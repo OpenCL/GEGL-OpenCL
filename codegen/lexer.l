@@ -57,7 +57,7 @@ rm			[\t \n]*
 <DATA_TYPE>"CHANNEL_CLAMP"		return DT_CHANNEL_CLAMP;
 <DATA_TYPE>"WP_CLAMP"			return DT_WP_CLAMP;
 <DATA_TYPE>"CHANNEL_MULT"		return DT_CHANNEL_MULT;
-<DATA_TYPE>"ROUND_CHANNEL"		return DT_ROUND_CHANNEL;
+<DATA_TYPE>"CHANNEL_ROUND"		return DT_CHANNEL_ROUND;
 <DATA_TYPE>","				return DT_COMMA; 
 <DATA_TYPE>"("				return LT_PARENTHESIS;
 <DATA_TYPE>")"				return RT_PARENTHESIS; 
@@ -81,11 +81,11 @@ rm			[\t \n]*
 <GENERIC_IMAGE_DECL>{white} 		; 
 <GENERIC_IMAGE_BLOCK>{white} 		; 
 
-<GENERIC_IMAGE_DECL>{indent}"GENERIC_IMAGE_DECL_END" 	{
+<GENERIC_IMAGE_DECL>{rm}"GENERIC_IMAGE_DECL_END" 	{
     							print_info ("\n/*Generic Image Decl End */\n");
 							BEGIN 0;
 							}
-<GENERIC_IMAGE_BLOCK>{indent}"GENERIC_IMAGE_BLOCK_END" 	{
+<GENERIC_IMAGE_BLOCK>{rm}"GENERIC_IMAGE_BLOCK_END" 	{
     							print_info ("\n/*Generic Image Block End */\n");
 							BEGIN 0;
 							}

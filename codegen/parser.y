@@ -118,7 +118,7 @@ int     cur_nsyms=0;
 
 /* tokens for data types */
 %token  DT_DATATYPE  DT_WP  DT_WP_NORM  DT_MIN_CHANNEL DT_MAX_CHANNEL
-%token  DT_ZERO  DT_CHANNEL_CLAMP  DT_WP_CLAMP  DT_CHANNEL_MULT  DT_ROUND_CHANNEL DT_COMMA 
+%token  DT_ZERO  DT_CHANNEL_CLAMP  DT_WP_CLAMP  DT_CHANNEL_MULT  DT_CHANNEL_ROUND DT_COMMA 
 %token  <tok> DT_NAME
 %token  <tok> DT_STRING
 
@@ -304,7 +304,7 @@ DT_Line:
 		tmp[j] = '\0'; 
 		CHANNEL_MULT_STR = (char *) strdup (tmp); 
 		}
-	| DT_ROUND_CHANNEL LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
+	| DT_CHANNEL_ROUND LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
 		int i=0, j=0, len, sublen, flag;
 		char tmp[255];
@@ -338,7 +338,7 @@ DT_Line:
 		    }
 		  }
 		tmp[j] = '\0'; 
-		ROUND_CHANNEL_STR = (char *) strdup (tmp); 
+		CHANNEL_ROUND_STR = (char *) strdup (tmp); 
 		}
 	;
 
@@ -347,11 +347,11 @@ Line:
 	; 
 	| "\n" 				
 		{ 
-		printf("\n"); 
+		printf("==>\n"); 
 		}
-	| INDENT
+	| INDENT 
 		{
-		printf("%s", $1.string); 
+		printf("%s ", $1.string); 
 		}
 	| INDENT_CURLY
 		{
@@ -555,7 +555,7 @@ Line:
 		    sprintf (tmp, "%s%s_c++;", $1.string, $4.string);
 		    strcpy ($4.string, tmp);
 		    print_line($4); 
-		    printf ("\n"); 
+		    printf ("\n");  
 		    }
 		  }
 		  else
@@ -1409,7 +1409,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      break;
 	    case TYPE_FLOAT:
 	      t[0] = src2.string;
-	      print (tmp, ROUND_CHANNEL_STR, t, 1); 
+	      print (tmp, CHANNEL_ROUND_STR, t, 1); 
 	      strcpy (dest->string, tmp);
 	      sprintf (tmp, "%s = %s", src1.string, dest->string);
 	      break;
@@ -1418,7 +1418,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      break;
 	    case TYPE_CHANNELFLOAT:
 	      t[0] = src2.string;
-	      print (tmp, ROUND_CHANNEL_STR, t, 1); 
+	      print (tmp, CHANNEL_ROUND_STR, t, 1); 
 	      strcpy (dest->string, tmp);
 	      sprintf (tmp, "%s = %s", src1.string, dest->string);
 	      break;

@@ -29,7 +29,7 @@ EXTERN char  *WP_CLAMP_STR;
 
 EXTERN char  *CHANNEL_MULT_STR;        
 
-EXTERN char  *ROUND_CHANNEL_STR;	
+EXTERN char  *CHANNEL_ROUND_STR;	
 
 /* these are related to the color space */
 EXTERN int    NUM_COLOR_CHANNEL;
