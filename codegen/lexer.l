@@ -31,9 +31,14 @@ string			\".*\"
 "DATATYPE_BEGIN"			BEGIN DATA_TYPE;  
 "GENERIC_IMAGE_DECL_BEGIN"		BEGIN GENERIC_IMAGE_DECL;
 "GENERIC_IMAGE_BLOCK_BEGIN"		BEGIN GENERIC_IMAGE_BLOCK;
+{indent}"GENERIC_IMAGE_IMAGE_DATA_INIT" {
+  					char tmp[255];
+					strcpy (tmp, yytext);
+					tmp[strlen (tmp) - strlen ("GENERIC_IMAGE_IMAGE_DATA_INIT")] = '\0'; 
+  					init_image_data (tmp);
+					}	
 
 <DATA_TYPE>"DATATYPE_END"		BEGIN 0;
-<DATA_TYPE>{white}			;
 <DATA_TYPE>"DATATYPE"			return DT_DATATYPE;
 <DATA_TYPE>"WP"				return DT_WP;
 <DATA_TYPE>"WP_NORM"			return DT_WP_NORM;
@@ -47,17 +52,7 @@ string			\".*\"
 <DATA_TYPE>","				return DT_COMMA; 
 <DATA_TYPE>"("				return LT_PARENTHESIS;
 <DATA_TYPE>")"				return RT_PARENTHESIS; 
-<DATA_TYPE>{name}			{
-    					strcpy (yylval.tok.string, yytext);
-					return DT_NAME;
-					}
-<DATA_TYPE>{string}			{
-    					strcpy (yylval.tok.string, yytext);
-					return DT_STRING;
-					}
 
-
-{indent}"GENERIC_IMAGE_IMAGE_DATA_INIT" init_image_data (yylval.elem.string); 	
 
 <GENERIC_IMAGE_BLOCK>{indent}"{"	{
     					SCOPE++; 
@@ -73,9 +68,11 @@ string			\".*\"
 					return INDENT;
 					}
 
+<DATA_TYPE>{indent}			;         	
 			    	 	
 <GENERIC_IMAGE_DECL>{white} 		; 
 <GENERIC_IMAGE_BLOCK>{white} 		; 
+<DATA_TYPE>{white}			;
 
 <GENERIC_IMAGE_DECL>"GENERIC_IMAGE_DECL_END" 	BEGIN 0;
 <GENERIC_IMAGE_BLOCK>"GENERIC_IMAGE_BLOCK_END" 	BEGIN 0;
@@ -271,11 +268,21 @@ string			\".*\"
 			    		break; 		  
 			  		}
           				}
+<DATA_TYPE>{name}			{
+    					strcpy (yylval.tok.string, yytext);
+					return DT_NAME;
+					}
+<DATA_TYPE>{string}			{
+    					strcpy (yylval.tok.string, yytext);
+					return DT_STRING;
+					}
+
 
 "$" 					return 0; 
 <GENERIC_IMAGE_DECL>.			return yytext[0];
 <GENERIC_IMAGE_BLOCK>.			return yytext[0];
 <COMMENT>.				ECHO;
+<DATA_TYPE>.				; 
 .					ECHO;
 
 

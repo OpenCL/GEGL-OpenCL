@@ -10,5 +10,3 @@ WP_CLAMP (i)		"CLAMP (i,0,255)"
 CHAN_MULT (a,b)	        "((t) = (a) * (b) + 0x80, ((((t) >> 8) + (t)) >> 8)" 	
 ROUND (i)		"ROUND (i)" 
 DATATYPE_END
-	
-

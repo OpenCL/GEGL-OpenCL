@@ -1,7 +1,18 @@
+Tue Mar 21 17:03:19 PST 2000 caro@rhythm.com
+
+	* fixed the indent problem with the 
+	GENERIC_IMAGE_IMAGE_DATA_INIT
+
+	* fixed the problem of reading just one char for data files
+
+	* rm the extra lines generatyed at the top of the files
+
 Tue Mar 21 16:23:10 PST 2000 caro@rhythm.com
 
 	* Fixed the problem of always genercating _ha_alpha
+
 	* Inited the value .inited
+
 	* Fixed test file test2, test5
 
 Tue Mar 21 14:28:32 PST 2000 caro@rhythm.com

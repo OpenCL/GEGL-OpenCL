@@ -176,7 +176,7 @@ DT_Line:
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
 
-		for(i=1; i<len-sublen-1; i++)
+		for(i=1; i<=len-sublen-1; i++)
 		  {
 		  strncpy (sub, &($5.string[i]), sublen); 
 		  if (! strcmp ($3.string, sub))
@@ -207,7 +207,7 @@ DT_Line:
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
 
-		for(i=1; i<len-sublen-1; i++)
+		for(i=1; i<=len-sublen-1; i++)
 		  {
 		  strncpy (sub, &($5.string[i]), sublen); 
 		  if (! strcmp ($3.string, sub))
@@ -286,7 +286,7 @@ DT_Line:
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
 
-		for(i=1; i<len-sublen-1; i++)
+		for(i=1; i<=len-sublen-1; i++)
 		  {
 		  strncpy (sub, &($5.string[i]), sublen); 
 		  if (! strcmp ($3.string, sub))

@@ -10,5 +10,3 @@ WP_CLAMP (j)		"j"
 CHAN_MULT (i,j)		"i * j"
 ROUND (i)		"i"
 DATATYPE_END
-	
-
