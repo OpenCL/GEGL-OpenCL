@@ -24,6 +24,8 @@ noinst_LTLIBRARIES = libimage.la
 IMAGE_SRC = \
   gegl-buffer.c \
   gegl-buffer-double.c \
+  gegl-normalizer.c \
+  gegl-normalizer-mult.c \
   gegl-sample-model.c \
   gegl-component-sample-model.c \
   gegl-object.c \

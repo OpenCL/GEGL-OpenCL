@@ -12,7 +12,7 @@
  *    GNU General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with Foobar; if not, write to the Free Software
+ *    along with GEGL; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  *  Copyright 2003 Daniel S. Rogers
@@ -42,7 +42,7 @@ struct _GeglSampleModel
     gint width;
     gint height;
     gint num_bands;
-    GArray* sample_normalizers;
+    GArray* normalizers;
 };
 
 typedef struct _GeglSampleModelClass GeglSampleModelClass;
@@ -60,6 +60,27 @@ struct _GeglSampleModelClass
 			   gint y, 
 			   const gdouble* dArray, 
 			   GeglBuffer* buffer);
+  gdouble (*get_sample_normalized)(const GeglSampleModel * self,
+                                   gint x,
+                                   gint y,
+                                   gint band,
+                                   const GeglBuffer* buffer);
+  void (*set_sample_normalized)(const GeglSampleModel * self,
+                                gint x,
+                                gint y,
+                                gint band,
+                                gdouble sample,
+                                GeglBuffer* buffer);
+  gdouble* (*get_pixel_normalized)(const GeglSampleModel * self,
+                                   gint x,
+                                   gint y,
+                                   gdouble* d_array,
+                                   const GeglBuffer* buffer);
+  void (*set_pixel_normalized)(const GeglSampleModel* self,
+                               gint x,
+                               gint y,
+                               const gdouble* d_array,
+                               GeglBuffer* buffer);
   
   //pure virtual functions (i.e. you _must_ provide an implementation)
   gdouble (*get_sample_double)(const GeglSampleModel* self,
