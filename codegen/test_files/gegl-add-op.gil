@@ -74,11 +74,9 @@ class Gegl:Add:Op from Gegl:Dual:Src:Op {
     return TRUE;
   }
 
-  GENERIC_IMAGE_PROGRAM colormodels_file
   private 
   void
   scanline_COLORSPACE_DATATYPE (GeglPointOp *point_op)
-  GENERIC_IMAGE_CODEGEN_BEGIN
   {
     GeglPointOpPrivate *point_opP = 
         (GeglPointOpPrivate *)(point_op->_priv); 
@@ -140,5 +138,4 @@ class Gegl:Add:Op from Gegl:Dual:Src:Op {
         GENERIC_IMAGE_BLOCK_BEGIN  
       }               
   }
-  GENERIC_IMAGE_CODEGEN_END
 }

@@ -128,15 +128,26 @@ test_composite_ops( GeglImageBuffer ** src_image_buffer,
 
   for (i = 0; i< 6; i++) 
     {
-      op = GEGL_OP(gegl_composite_premult_op_new (dest_image_buffer,
-	    				  src_image_buffer[0], 
+      op = GEGL_OP(gegl_composite_op_new (dest_image_buffer, 
+					  src_image_buffer[0], 
 					  src_image_buffer[1], 
 					  &src_rect[1], 
 					  &dest_rect, 
 					  &src_rect[0], 
 					  i));
+      gegl_op_apply (op);   
+      gegl_object_destroy (GEGL_OBJECT(op));
+
+#if 1 
+      op = GEGL_OP(gegl_premult_op_new(dest_image_buffer, 
+                                       dest_image_buffer,
+                                       &dest_rect,
+                                       &dest_rect));
+
 
       gegl_op_apply (op);   
+      gegl_object_destroy (GEGL_OBJECT(op));
+#endif
 
       /* display the destination */ 
       create_preview (&dest_window[i], &dest_preview[i], width, height, mode_names[i]);
@@ -263,6 +274,7 @@ main(int argc,
   TIFF            *tif;   
   uint32          *image;
   guchar          img[4];
+  guchar          r,g,b,a;
   gint            plane_size;
 
   gtk_init (&argc, &argv);
@@ -296,12 +308,17 @@ main(int argc,
       plane_size = src_width[k] * src_height[k];
       for(i=0; i<plane_size; i++)
         {
-	  memcpy(img, &image[i], 4);
+	  /*memcpy(img, &image[i], 4);*/
+          
+          r = TIFFGetR(image[i]);
+          g = TIFFGetG(image[i]);
+          b = TIFFGetB(image[i]);
+          a = TIFFGetA(image[i]);
 
-	  t[j             ] = ((float)img[3]) / 255.0;
-	  t[j+plane_size  ] = ((float)img[2]) / 255.0;
-	  t[j+plane_size*2] = ((float)img[1]) / 255.0;
-	  t[j+plane_size*3] = ((float)img[0]) / 255.0;
+	  t[j             ] = ((float)r) / 255.0;
+	  t[j+plane_size  ] = ((float)g) / 255.0;
+	  t[j+plane_size*2] = ((float)b) / 255.0;
+	  t[j+plane_size*3] = ((float)a) / 255.0;
 	  j++;  
         }
 
@@ -320,8 +337,8 @@ main(int argc,
       display_image(src_window[k], src_preview[k], src_image_buffer[k], src_rect[k]);
     } 
      
-  /*test_composite_ops (src_image_buffer, src_width, src_height, src_rect);*/
-  test_point_ops (src_image_buffer, src_width, src_height, src_rect);
+  test_composite_ops (src_image_buffer, src_width, src_height, src_rect);
+  /*test_point_ops (src_image_buffer, src_width, src_height, src_rect);*/
 
   for (k = 0; k < 2; k++)
     {

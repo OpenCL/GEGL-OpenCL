@@ -79,11 +79,9 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
     PARENT_HANDLER (object)
   }
 
-  GENERIC_IMAGE_PROGRAM colormodels_file
   private 
   void
   scanline_COLORSPACE_DATATYPE (GeglPointOp *point_op)
-  GENERIC_IMAGE_CODEGEN_BEGIN
   {
     GeglPointOpPrivate *point_opP = 
         (GeglPointOpPrivate *)(point_op->_priv); 
@@ -124,5 +122,4 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
         GENERIC_IMAGE_BLOCK_END;
       }
   }
-  GENERIC_IMAGE_CODEGEN_END
 }

@@ -224,45 +224,45 @@ variable.
 <h1>
 <b><u><font size=+0>multiplication</font></u></b></h1>
 <b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Channel * Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: CHANNEL_MULT(x,y)&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: CHANNEL_MULT(x,y)</tt></b>
 <br><b><tt>FloatChannel &lt;- FloatChannel * FloatChannel&nbsp; rewrite
-rule: WP_NORM * x * y&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rule: WP_NORM * x * y</tt></b>
 <br><b><tt>FloatChannel &lt;- Channel * FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: WP_NORM * x * y&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: WP_NORM * x * y</tt></b>
 <br><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Channel / Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: ((x&nbsp; * WP) / y)&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: ((x&nbsp; * WP) / y)</tt></b>
 <br><b><tt>FloatChannel &lt;- FloatChannel / FloatChannel&nbsp; rewrite
-rule: ((x&nbsp; * WP) / y)&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rule: ((x&nbsp; * WP) / y)</tt></b>
 <br><b><tt>FloatChannel &lt;- FloatChannel / Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: ((x&nbsp; * WP) / y)&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: ((x&nbsp; * WP) / y)</tt></b>
 <br><b><tt>FloatChannel &lt;- Channel / FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: ((x&nbsp; * WP) / y)&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: ((x&nbsp; * WP) / y)</tt></b>
 <p><b><u>scalar multiplication</u></b>
 <p><b><tt>FloatChannel &lt;- float * Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: a * x&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: a * x</tt></b>
 <br><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- int * Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: a * x&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: a * x</tt></b>
 <br><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- uint * Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: a * x&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: a * x</tt></b>
 <p><b><tt>FloatChannel &lt;- float * FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: a * x&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: a * x</tt></b>
 <br><b><tt>FloatChannel &lt;- int * FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: a * x&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: a * x</tt></b>
 <br><b><tt>FloatChannel &lt;- uint * FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: a * x&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: a * x</tt></b>
 <p><b><tt>FloatChannel &lt;- Channel / float&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: x / a&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: x / a</tt></b>
 <br><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Channel / uint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 rewrite rule: x / a</tt></b>
 <br><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Channel / int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 rewrite rule: x / a</tt></b>
 <p><b><u>addition</u></b>
 <p><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;- Channel + Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: x + y&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: x + y</tt></b>
 <br><b><tt>FloatChannel &lt;- FloatChannel + FloatChannel&nbsp; rewrite
-rule: x + y&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rule: x + y</tt></b>
 <br><b><tt>FloatChannel &lt;- Channel + FloatChannel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-rewrite rule: x + y&nbsp;&nbsp; needs possible CHANNEL_CLAMP</tt></b>
+rewrite rule: x + y</tt></b>
 <p><b><u>assignment</u></b>
 <p><b><tt>Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = Channel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 rewrite rule: x = y</tt></b>
@@ -348,8 +348,7 @@ and then underneath two examples of the corresponding generated code.
 <br><b><tt><font size=+1>3)</font></tt></b>
 <p><b><tt>/* generic version*/</tt></b>
 <div CLASS="SECT2"><b><tt>{</tt></b>
-<br><b><tt>&nbsp; Channel d, s1, s2, s3;</tt></b>
-<br><b><tt></tt></b>&nbsp;</div>
+<br><b><tt>&nbsp; Channel d, s1, s2, s3;</tt></b></div>
 
 <div CLASS="SECT2"><b><tt>&nbsp; d = (s1 + s2 + s3)/3;&nbsp;&nbsp; /* (Channel
 + Channel + Channel)/3 */</tt></b>
@@ -369,8 +368,7 @@ and then underneath two examples of the corresponding generated code.
 <br><b><tt>/* generic version */</tt></b>
 <br><b><tt>{</tt></b>
 <br><b><tt>&nbsp; Channel d, s1, s2, s;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* s a Channel, not a scalar! */</tt></b>
-<br><b><tt></tt></b>&nbsp;</div>
+/* s a Channel, not a scalar! */</tt></b></div>
 
 <div CLASS="SECT2"><b><tt>&nbsp; d = s * s1 + (WP-s) * s2;&nbsp;&nbsp;&nbsp;&nbsp;
 /* Channel * Channel + Channel * Channel */</tt></b>
@@ -392,8 +390,7 @@ and then underneath two examples of the corresponding generated code.
 <div CLASS="SECT2">&nbsp;
 <br><b><tt>/* generic version */</tt></b>
 <br><b><tt>{</tt></b>
-<br><b><tt>&nbsp; Channel d, s1, s2, s3;</tt></b>
-<br><b><tt></tt></b>&nbsp;</div>
+<br><b><tt>&nbsp; Channel d, s1, s2, s3;</tt></b></div>
 
 <div CLASS="SECT2"><b><tt>&nbsp; d = CHANNEL_CLAMP(s1 * s2 + s3);&nbsp;&nbsp;&nbsp;
 /* (Channel * Channel) + Channel */</tt></b>
@@ -412,8 +409,7 @@ and then underneath two examples of the corresponding generated code.
 <p><b><tt>/* generic version */</tt></b></div>
 <b><tt>{</tt></b>
 <div CLASS="SECT2"><b><tt>&nbsp; Channel d, s1, s2, s3;</tt></b>
-<br><b><tt>&nbsp; float weight = .333;</tt></b>
-<br><b><tt></tt></b>&nbsp;</div>
+<br><b><tt>&nbsp; float weight = .333;</tt></b></div>
 
 <div CLASS="SECT2"><b><tt>&nbsp; d = weight * (s1 + s2 + s3);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 /* Channel = float * (Channel + Channel + Channel) */</tt></b>

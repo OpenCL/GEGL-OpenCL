@@ -2,7 +2,37 @@ noinst_PROGRAMS = testgegl testgeglfile
 
 lib_LTLIBRARIES = libgegl.la
 
-GOB_SRC = \
+GIL_FILES = \
+	gegl-composite-op.gil 				\
+	gegl-composite-premult-op.gil 			\
+	gegl-premult-op.gil 				\
+	gegl-unpremult-op.gil 				\
+	gegl-add-op.gil					\
+	gegl-min-op.gil					\
+	gegl-max-op.gil					\
+	gegl-mult-op.gil 				\
+	gegl-diff-op.gil 				\
+	gegl-screen-op.gil 				\
+	gegl-dark-op.gil 				\
+	gegl-light-op.gil 				\
+	gegl-subtract-op.gil
+
+GIL_GEN_GOB = \
+	gegl-composite-op.gob				\
+	gegl-composite-premult-op.gob			\
+	gegl-premult-op.gob				\
+	gegl-unpremult-op.gob				\
+	gegl-add-op.gob					\
+	gegl-min-op.gob					\
+	gegl-max-op.gob					\
+	gegl-mult-op.gob				\
+	gegl-diff-op.gob				\
+	gegl-screen-op.gob				\
+	gegl-dark-op.gob				\
+	gegl-light-op.gob				\
+	gegl-subtract-op.gob
+
+NONGEN_GOB = \
 	gegl-object.gob					\
 	gegl-drawable.gob				\
 	gegl-color-model.gob				\
@@ -21,10 +51,6 @@ GOB_SRC = \
 	gegl-color.gob					\
 	gegl-graphics-state.gob				\
 	gegl-fill-op.gob				\
-	gegl-composite-op.gob				\
-	gegl-composite-premult-op.gob			\
-	gegl-premult-op.gob				\
-	gegl-unpremult-op.gob				\
 	gegl-color-convert-op.gob			\
 	gegl-color-convert-connection-op.gob		\
 	gegl-color-convert-to-gray-u8-op.gob            \
@@ -32,19 +58,11 @@ GOB_SRC = \
 	gegl-color-convert-to-rgb-u8-op.gob             \
 	gegl-color-convert-to-rgb-float-op.gob		\
 	gegl-copy-chan-op.gob				\
-	gegl-image-iterator.gob				\
-	gegl-add-op.gob					\
-	gegl-min-op.gob					\
-	gegl-max-op.gob					\
-	gegl-mult-op.gob				\
-	gegl-diff-op.gob				\
-	gegl-screen-op.gob				\
-	gegl-dark-op.gob				\
-	gegl-light-op.gob				\
-	gegl-subtract-op.gob
+	gegl-image-iterator.gob
 
+GOB_FILES = $(GIL_GEN_GOB) $(NONGEN_GOB)
 
-GOB_GEN_PUBLIC = \
+GOB_GEN_PUBLIC_HDRS = \
 	gegl-object.h					\
 	gegl-drawable.h					\
 	gegl-color-model.h				\
@@ -83,92 +101,91 @@ GOB_GEN_PUBLIC = \
 	gegl-screen-op.h				\
 	gegl-dark-op.h					\
 	gegl-light-op.h					\
-	gegl-subtract-op.h 
+	gegl-subtract-op.h
 
-
+GOB_GEN_PRIVATE_HDRS = \
+	gegl-object-private.h				\
+	gegl-drawable-private.h				\
+	gegl-color-model-private.h			\
+	gegl-color-model-gray-private.h			\
+	gegl-color-model-gray-u8-private.h		\
+	gegl-color-model-gray-float-private.h		\
+	gegl-color-model-rgb-private.h			\
+	gegl-color-model-rgb-u8-private.h		\
+	gegl-color-model-rgb-float-private.h		\
+	gegl-image-buffer-private.h			\
+	gegl-op-private.h				\
+	gegl-point-op-private.h				\
+	gegl-dual-src-op-private.h			\
+	gegl-single-src-op-private.h			\
+	gegl-print-op-private.h				\
+	gegl-color-private.h				\
+	gegl-graphics-state-private.h			\
+	gegl-fill-op-private.h				\
+	gegl-composite-op-private.h			\
+	gegl-composite-premult-op-private.h		\
+	gegl-premult-op-private.h			\
+	gegl-unpremult-op-private.h			\
+	gegl-color-convert-op-private.h			\
+	gegl-color-convert-connection-op-private.h	\
+	gegl-color-convert-to-gray-u8-op-private.h      \
+	gegl-color-convert-to-gray-float-op-private.h   \
+	gegl-color-convert-to-rgb-u8-op-private.h       \
+	gegl-color-convert-to-rgb-float-op-private.h	\
+	gegl-image-iterator-private.h			\
+	gegl-copy-chan-op-private.h			\
+	gegl-add-op-private.h				\
+	gegl-min-op-private.h				\
+	gegl-max-op-private.h				\
+	gegl-mult-op-private.h 				\
+	gegl-diff-op-private.h 				\
+	gegl-screen-op-private.h 			\
+	gegl-dark-op-private.h 				\
+	gegl-light-op-private.h				\
+	gegl-subtract-op-private.h
 
 GOB_GEN_SRC = \
 	gegl-object.c					\
-	gegl-object-private.h				\
 	gegl-drawable.c					\
-	gegl-drawable-private.h				\
 	gegl-color-model.c				\
-	gegl-color-model-private.h			\
 	gegl-color-model-gray.c				\
-	gegl-color-model-gray-private.h			\
 	gegl-color-model-gray-u8.c			\
-	gegl-color-model-gray-u8-private.h		\
 	gegl-color-model-gray-float.c			\
-	gegl-color-model-gray-float-private.h		\
 	gegl-color-model-rgb.c				\
-	gegl-color-model-rgb-private.h			\
 	gegl-color-model-rgb-u8.c			\
-	gegl-color-model-rgb-u8-private.h		\
 	gegl-color-model-rgb-float.c			\
-	gegl-color-model-rgb-float-private.h		\
 	gegl-image-buffer.c				\
-	gegl-image-buffer-private.h			\
 	gegl-op.c					\
-	gegl-op-private.h				\
 	gegl-point-op.c					\
-	gegl-point-op-private.h				\
 	gegl-dual-src-op.c				\
-	gegl-dual-src-op-private.h			\
 	gegl-single-src-op.c				\
-	gegl-single-src-op-private.h			\
 	gegl-print-op.c					\
-	gegl-print-op-private.h				\
 	gegl-color.c					\
-	gegl-color-private.h				\
 	gegl-graphics-state.c				\
-	gegl-graphics-state-private.h			\
 	gegl-fill-op.c					\
-	gegl-fill-op-private.h				\
 	gegl-composite-op.c				\
-	gegl-composite-op-private.h			\
 	gegl-composite-premult-op.c			\
-	gegl-composite-premult-op-private.h		\
 	gegl-premult-op.c				\
-	gegl-premult-op-private.h			\
 	gegl-unpremult-op.c				\
-	gegl-unpremult-op-private.h			\
 	gegl-color-convert-op.c				\
-	gegl-color-convert-op-private.h			\
 	gegl-color-convert-connection-op.c		\
-	gegl-color-convert-connection-op-private.h	\
 	gegl-color-convert-to-gray-u8-op.c		\
-	gegl-color-convert-to-gray-u8-op-private.h      \
 	gegl-color-convert-to-gray-float-op.c		\
-	gegl-color-convert-to-gray-float-op-private.h   \
 	gegl-color-convert-to-rgb-u8-op.c		\
-	gegl-color-convert-to-rgb-u8-op-private.h       \
 	gegl-color-convert-to-rgb-float-op.c		\
-	gegl-color-convert-to-rgb-float-op-private.h	\
 	gegl-image-iterator.c				\
-	gegl-image-iterator-private.h			\
 	gegl-copy-chan-op.c				\
-	gegl-copy-chan-op-private.h			\
 	gegl-add-op.c					\
-	gegl-add-op-private.h				\
 	gegl-min-op.c					\
-	gegl-min-op-private.h				\
 	gegl-max-op.c 					\
-	gegl-max-op-private.h				\
 	gegl-mult-op.c					\
-	gegl-mult-op-private.h 				\
 	gegl-diff-op.c					\
-	gegl-diff-op-private.h 				\
 	gegl-screen-op.c				\
-	gegl-screen-op-private.h 			\
 	gegl-dark-op.c					\
-	gegl-dark-op-private.h 				\
 	gegl-light-op.c					\
-	gegl-light-op-private.h				\
-	gegl-subtract-op.c				\
-	gegl-subtract-op-private.h 
+	gegl-subtract-op.c
 
-
-NONGOB_PUBLIC = \
+NONGOB_HDRS = \
 	gegl-types.h	\
 	gegl-utils.h
 
@@ -176,16 +193,24 @@ NONGOB_SRC = \
 	gegl-utils.c
 
 libgegl_la_SOURCES = \
-	$(NONGOB_SRC)	\
-	$(GOB_GEN_SRC)	\
-	$(GOB_SRC)
+        $(GIL_FILES) \
+	$(GIL_GEN_GOB) \
+	$(GOB_GEN_SRC) \
+	$(GOB_GEN_PUBLIC_HDRS) \
+	$(GOB_GEN_PRIVATE_HDRS) \
+	$(NONGOB_HDRS) \
+	$(NONGOB_SRC)
 
-BUILT_SOURCES = $(GOB_GEN_SRC) $(GOB_GEN_PUBLIC)
+BUILT_SOURCES = \
+	$(GIL_GEN_GOB) \
+	$(GOB_GEN_SRC) \
+	$(GOB_GEN_PUBLIC_HDRS) \
+	$(GOB_GEN_PRIVATE_HDRS)
 
 libgegl_la_LDFLAGS = -version-info @GEGL_VERSION_INFO@
 
 libgeglincdir = $(includedir)/gegl
-libgeglinc_HEADERS = $(NONGOB_PUBLIC) $(GOB_GEN_PUBLIC) 
+libgeglinc_HEADERS = $(NONGOB_HDRS) $(GOB_GEN_PUBLIC_HDRS) 
 
 AM_CPPFLAGS = \
 	-DGEGL_COMPILATION
@@ -212,7 +237,17 @@ tests: testgegl testgeglfile
 %.c %.h: %.gob
 	$(GOB) $<
 
-distclean-local: gobclean
+%.gob: %.gil
+	../codegen/codegen --channel-names r,g,b --channel-data-file ../codegen/channel_data/float $< > $@ 
+
+distclean-local: gilclean
+
+hello:
+	echo "hello"
+
+gilclean:
+	rm -f $(GIL_GEN_GOB)
+	rm -f $(GOB_GEN_SRC) $(GOB_GEN_PUBLIC_HDRS) $(GOB_GEN_PRIVATE_HDRS)
 
 gobclean:
-	rm -f $(GOB_GEN_SRC) $(GOB_GEN_PUBLIC)
+	rm -f $(GOB_GEN_SRC) $(GOB_GEN_PUBLIC_HDRS) $(GOB_GEN_PRIVATE_HDRS)
