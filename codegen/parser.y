@@ -19,7 +19,6 @@ void print (char *string, char *template, char **varible, int num);
 void set_dtype (elem_t e, DATA_TYPE dtype);
 void set_type (elem_t e, DATA_TYPE dtype);
 void set_num (elem_t e, int n);
-void read_data_types (char *filename);
 void read_channel_names (char *chan_names); 
 void init_data_varible (char *s);
 
@@ -170,16 +169,22 @@ DT_Line:
 		}
 	| DT_CHAN_CLAMP LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
-		int i,j=0, len, sublen;
+		int i, j=0, len, sublen, flag;
 		char tmp[255];
 		char sub[255];
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
 
-		for(i=1; i<=len-sublen-1; i++)
+		for(i=1; i<len-1; i++)
 		  {
-		  strncpy (sub, &($5.string[i]), sublen); 
-		  if (! strcmp ($3.string, sub))
+		  flag = 0;
+		  
+		  if (i<len-sublen)
+		    {
+		    strncpy (sub, &($5.string[i]), sublen);
+		    flag = 1; 
+		    }
+		  if (flag && !strcmp ($3.string, sub))
 		    {
 		    strcpy (&(tmp[j]), "$1");
 		    i += sublen-1;
@@ -190,27 +195,28 @@ DT_Line:
 		    tmp[j] = (char) ($5.string[i]); 
 		    j++; 
 		    }
-		  }
-		for (; i<len-1; i++)
-		  {
-		  tmp[j] = (char) ($5.string[i]);
-		  j++; 
 		  }
 		tmp[j] = '\0'; 
 		CHAN_CLAMP_STR = (char *) strdup (tmp); 
 		}
 	| DT_WP_CLAMP LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
-		int i,j=0, len, sublen;
+		int i, j=0, len, sublen, flag;
 		char tmp[255];
 		char sub[255];
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
 
-		for(i=1; i<=len-sublen-1; i++)
+		for(i=1; i<=len-1; i++)
 		  {
-		  strncpy (sub, &($5.string[i]), sublen); 
-		  if (! strcmp ($3.string, sub))
+		  flag = 0;
+		  
+		  if (i<len-sublen)
+		    { 
+		    strncpy (sub, &($5.string[i]), sublen); 
+		    flag = 1;
+		    }
+		  if (flag && !strcmp ($3.string, sub))
 		    {
 		    strcpy (&(tmp[j]), "$1");
 		    i += sublen-1;
@@ -221,11 +227,6 @@ DT_Line:
 		    tmp[j] = (char) ($5.string[i]); 
 		    j++; 
 		    }
-		  }
-		for (; i<len-1; i++)
-		  {
-		  tmp[j] = (char) ($5.string[i]);
-		  j++; 
 		  }
 		tmp[j] = '\0'; 
 		WP_CLAMP_STR = (char *) strdup (tmp); 
@@ -280,7 +281,7 @@ DT_Line:
 		}
 	| DT_ROUND LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
-		int i,j=0, len, sublen;
+		int i, j=0, len, sublen, flag;
 		char tmp[255];
 		char sub[255];
 		len = strlen ($5.string);
@@ -288,8 +289,15 @@ DT_Line:
 
 		for(i=1; i<=len-sublen-1; i++)
 		  {
-		  strncpy (sub, &($5.string[i]), sublen); 
-		  if (! strcmp ($3.string, sub))
+		  flag = 0;
+		  
+		  if (i<len-sublen)
+		    {
+		    strncpy (sub, &($5.string[i]), sublen); 
+		    flag = 1;
+		    }
+		  
+		  if (flag && !strcmp ($3.string, sub))
 		    {
 		    strcpy (&(tmp[j]), "$1");
 		    i += sublen-1;
@@ -300,11 +308,6 @@ DT_Line:
 		    tmp[j] = (char) ($5.string[i]); 
 		    j++; 
 		    }
-		  }
-		for (; i<len-1; i++)
-		  {
-		  tmp[j] = (char) ($5.string[i]);
-		  j++; 
 		  }
 		tmp[j] = '\0'; 
 		ROUND_STR = (char *) strdup (tmp); 
@@ -975,7 +978,7 @@ init_data_varible (char *s)
     }
   tmp[i*2  ] = '\0'; 
   printf ("\n%s%s *%s_data[%d];", tmp, DATATYPE_STR, s, e->num);
-  if (e->dtype == TYPE_C_A_VECTOR)  
+  if (e->type == TYPE_C_A_VECTOR)  
     printf ("\n%sint %s_has_%s;", tmp, s, NAME_COLOR_CHAN[NUM_COLOR_CHAN]); 
 
 }
@@ -1554,12 +1557,6 @@ get_keyword (char *keywd)
   return -1; 
 }
   
-
-void
-read_data_types (char *filename)
-{
-
-}
 
 void
 read_channel_names (char *chan_names)
