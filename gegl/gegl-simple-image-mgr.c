@@ -1,10 +1,8 @@
 #include "gegl-simple-image-mgr.h"
 #include "gegl-image.h"    
-#include "gegl-tile-mgr.h"    
 #include "gegl-sampled-image.h"
-#include "gegl-sampled-image-impl.h"
+#include "gegl-tile-mgr.h"    
 #include "gegl-mem-buffer.h"
-#include "gegl-image-impl.h"    
 #include "gegl-tile.h"
 #include "gegl-utils.h"
 
@@ -26,7 +24,7 @@ static void free_input_have_rects_list(GList *have_rects);
 static GList * make_input_color_models_list (GList *inputs);
 static void free_input_color_models_list(GList *color_models);
 
-static void add_image (GeglImageMgr * self_image_mgr, GeglImageImpl * image_impl);
+static void add_image (GeglImageMgr * self_image_mgr, GeglImage * image);
 
 static gpointer parent_class = NULL;
 static GeglSimpleImageMgr * simple_image_mgr_singleton = NULL;
@@ -120,18 +118,12 @@ apply (GeglImageMgr      *self_image_mgr,
        GeglRect          *roi)
 {
   GeglSimpleImageMgr *self = GEGL_SIMPLE_IMAGE_MGR(self_image_mgr);
-  GeglOpImpl * op_impl = gegl_op_get_op_impl(root);
-  GeglImageImpl * dest_image_impl = NULL;
   g_return_if_fail(root);
 
   LOG_DEBUG("apply", 
-            "Top of apply: root op: %s(%x) op_impl: %s(%x)", 
+            "Top of apply: root op: %s(%x)", 
             G_OBJECT_TYPE_NAME(root),
-            (guint)root, 
-            G_OBJECT_TYPE_NAME(op_impl),
-            (guint)op_impl);
-
-  g_object_unref(op_impl);
+            (guint)root);
 
   /* Figure out what roi to use. */
   if (roi)
@@ -152,14 +144,7 @@ apply (GeglImageMgr      *self_image_mgr,
     gegl_image_set_need_rect(root_image,&self->roi);
 
     /* Set the dest of the root */
-    if(dest)
-      {
-        dest_image_impl = GEGL_IMAGE_IMPL(gegl_op_get_op_impl(GEGL_OP(dest)));
-        gegl_image_set_dest(root_image,dest_image_impl);
-        g_object_unref(dest_image_impl);
-      }
-    else
-      gegl_image_set_dest(root_image,NULL);
+    gegl_image_set_dest(root_image,(GeglImage*)dest);
   }
 
   LOG_DEBUG("apply", 
@@ -430,37 +415,32 @@ compute_op (GeglSimpleImageMgr *self,
   GeglTile *output_tile;
   GeglTileMgr * tile_mgr = GEGL_IMAGE_MGR(self)->tile_mgr; 
   GList *request_list = NULL;
-  GeglOpImpl *op_impl = gegl_op_get_op_impl(op);
   GList * image_inputs = find_image_inputs(GEGL_NODE(op)); 
   gint num_inputs = g_list_length(image_inputs);
   GeglOpRequest *requests;
   gint first_source_index;
 
   LOG_DEBUG("compute_op",
-            "op %x type %s op_impl %x type %s", 
+            "op %x type %s", 
             (guint)op, 
-             G_OBJECT_TYPE_NAME(op),
-            (guint)op_impl, 
-             G_OBJECT_TYPE_NAME(op_impl));
+             G_OBJECT_TYPE_NAME(op));
 
   if(GEGL_IS_IMAGE(op))
     {
-      GeglImageImpl *output_image_impl = NULL;
-      GeglImageImpl *dest = NULL;
+      GeglImage *dest = gegl_image_get_dest(GEGL_IMAGE(op));
+      GeglImage *image_output = NULL;
       requests = g_new(GeglOpRequest,num_inputs+1);
       first_source_index = 1;
 
-      dest = gegl_image_get_dest(GEGL_IMAGE(op));
-
-      if (!dest)
-        output_image_impl = GEGL_IMAGE_IMPL(op_impl);
-      else
-        output_image_impl = dest;
+      if(dest)
+        image_output = dest;
+      else  
+        image_output = GEGL_IMAGE(op);
 
       LOG_DEBUG("compute_op",
-                "output image op_impl %x type %s",  
-                (guint)output_image_impl,
-                G_OBJECT_TYPE_NAME(output_image_impl));  
+                "output image %x type %s",  
+                (guint)image_output,
+                G_OBJECT_TYPE_NAME(image_output));  
 
       LOG_DEBUG("compute_op", 
                 "fetching dest tile");
@@ -470,7 +450,7 @@ compute_op (GeglSimpleImageMgr *self,
       /* Fetch the output tile */
       output_tile = gegl_tile_mgr_fetch_output_tile(tile_mgr, 
                                                     op, 
-                                                    output_image_impl, 
+                                                    image_output, 
                                                     &result_rect);
 
       if(dest)
@@ -494,7 +474,6 @@ compute_op (GeglSimpleImageMgr *self,
   for(i = 0 ; i < num_inputs; i++)
     {
       GeglImage *image_input = (GeglImage*)g_list_nth_data(image_inputs,i);
-      GeglImageImpl *input_image_impl = GEGL_IMAGE_IMPL(gegl_op_get_op_impl(GEGL_OP(image_input)));
       GeglRect preimage_rect;
       GeglTile *input_tile;
 
@@ -510,10 +489,8 @@ compute_op (GeglSimpleImageMgr *self,
 
       /* Fetch the input tile. */
       input_tile = gegl_tile_mgr_fetch_input_tile(tile_mgr, 
-                                                  input_image_impl, 
+                                                  image_input, 
                                                   &preimage_rect);
-
-      g_object_unref(input_image_impl);
 
       if(!input_tile)
         LOG_DEBUG("compute_op", 
@@ -530,19 +507,19 @@ compute_op (GeglSimpleImageMgr *self,
             "%s", 
             "Calling prepare"); 
 
-  gegl_op_impl_prepare(op_impl, request_list);
+  gegl_op_prepare(op, request_list);
 
   LOG_DEBUG("compute_op", 
             "%s", 
             "Calling process"); 
 
-  gegl_op_impl_process(op_impl, request_list);
+  gegl_op_process(op, request_list);
 
   LOG_DEBUG("compute_op", 
             "%s", 
             "Calling finish"); 
 
-  gegl_op_impl_finish(op_impl, request_list);
+  gegl_op_finish(op, request_list);
 
   /* Release all inputs. */
   gegl_tile_mgr_release_tiles(tile_mgr, request_list);
@@ -555,7 +532,6 @@ compute_op (GeglSimpleImageMgr *self,
   if(image_inputs)
     g_list_free(image_inputs);
 
-  g_object_unref(op_impl);
 }
 
 /**
@@ -583,38 +559,37 @@ set_request (GeglSimpleImageMgr * self,
 
 GeglTile *
 gegl_simple_image_mgr_get_tile (GeglSimpleImageMgr * self, 
-                                    GeglImageImpl * image_impl)
+                                GeglImage * image)
 {
-  GeglTile * tile = image_impl->tile;
-  return tile; 
+  return image->tile;
 }
 
 static void 
 add_image (GeglImageMgr * self_image_mgr, 
-           GeglImageImpl * image_impl)
+           GeglImage * image)
 {
   GeglSimpleImageMgr *self = GEGL_SIMPLE_IMAGE_MGR(self_image_mgr);
 
   /* For an SampledImage, make sure the Tile and data are allocated. */
-  if(GEGL_IS_SAMPLED_IMAGE_IMPL(image_impl))
+  if(GEGL_IS_SAMPLED_IMAGE(image))
     {
-      GeglSampledImageImpl * sampled_image_impl = GEGL_SAMPLED_IMAGE_IMPL(image_impl);
+      GeglSampledImage* sampled_image = GEGL_SAMPLED_IMAGE(image);
       GeglTile * tile = NULL;
-      gint width = gegl_sampled_image_impl_get_width(sampled_image_impl);
-      gint height = gegl_sampled_image_impl_get_height(sampled_image_impl);
+      gint width = gegl_sampled_image_get_width(sampled_image);
+      gint height = gegl_sampled_image_get_height(sampled_image);
       GeglRect area;
       gegl_rect_set(&area,0,0,width,height);
 
       LOG_DEBUG("add_image", 
                 "Making tile for %x", 
-                (guint)image_impl);
+                (guint)image);
 
-      /* Allocate a tile for this image_impl. */
-      tile = gegl_tile_mgr_make_tile(GEGL_IMAGE_MGR(self)->tile_mgr, image_impl, &area); 
+      /* Allocate a tile for this image. */
+      tile = gegl_tile_mgr_make_tile(GEGL_IMAGE_MGR(self)->tile_mgr, image, &area); 
       
       /* Make sure data is allocated. */
       LOG_DEBUG("add_image",
-                "allocating tile(%x) for SampledImageImpl", 
+                "allocating tile(%x) for SampledImage", 
                 (guint)tile);
 
       gegl_tile_validate_data(tile);

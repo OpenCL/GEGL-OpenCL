@@ -22,6 +22,7 @@ struct _GeglConstMult {
    GeglPointOp __parent__;
 
    /*< private >*/
+   gfloat multiplier;
 };
 
 typedef struct _GeglConstMultClass GeglConstMultClass;

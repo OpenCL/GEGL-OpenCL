@@ -39,8 +39,8 @@ extra_files =
 
 # CFLAGS and LDFLAGS for compiling scan program. Only needed
 # if $(DOC_MODULE).types is non-empty.
-GTKDOC_CFLAGS = -I$(top_srcdir)/gegl @GTK_CFLAGS@
-GTKDOC_LIBS= $(top_builddir)/gegl/.libs/libgegl.a @GTK_LIBS@
+GTKDOC_CFLAGS = -I$(top_srcdir)/gegl @GEGL_CFLAGS@
+GTKDOC_LIBS= $(top_builddir)/gegl/.libs/libgegl.a @GEGL_LIBS@
 
 # Commands for compiling and linking 
 GTKDOC_CC=$(LIBTOOL) --mode=compile $(CC)
@@ -80,7 +80,7 @@ all-local: html-build.stamp
 scan-build.stamp: $(HFILE_GLOB)
 	@echo '*** Scanning header files ***'
 	if grep -l '^..*$$' $(srcdir)/$(DOC_MODULE).types > /dev/null ; then \
-	    CC="$(GTKDOC_CC)" LD="$(GTKDOC_LD)" CFLAGS="$(GTKDOC_CFLAGS)" LDFLAGS="$(GTKDOC_LIBS)" gtkdoc-scangobj --module=$(DOC_MODULE) --output-dir=$(srcdir) ; \
+	    CC="$(GTKDOC_CC)" LD="$(GTKDOC_LD)" CFLAGS="$(GTKDOC_CFLAGS)" LDFLAGS="$(GTKDOC_LIBS)" gtkdoc-scangobj --nogtkinit --module=$(DOC_MODULE) --output-dir=$(srcdir) ; \
 	else \
 	    cd $(srcdir) ; \
 	    for i in $(SCANOBJ_FILES) ; do \

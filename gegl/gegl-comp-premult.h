@@ -20,7 +20,9 @@ typedef struct _GeglCompPremult GeglCompPremult;
 #endif
 struct _GeglCompPremult {
    GeglPointOp __parent__;
+
    /*< private >*/
+   GeglCompositeMode comp_mode; 
 };
 
 typedef struct _GeglCompPremultClass GeglCompPremultClass;

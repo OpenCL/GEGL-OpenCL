@@ -12,9 +12,9 @@ extern "C" {
 typedef struct _GeglTile GeglTile;
 #endif
 
-#ifndef __TYPEDEF_GEGL_IMAGE_IMPL__
-#define __TYPEDEF_GEGL_IMAGE_IMPL__
-typedef struct _GeglImageImpl GeglImageImpl;
+#ifndef __TYPEDEF_GEGL_IMAGE__
+#define __TYPEDEF_GEGL_IMAGE__
+typedef struct _GeglImage GeglImage;
 #endif
 
 #define GEGL_TYPE_SIMPLE_IMAGE_MGR               (gegl_simple_image_mgr_get_type ())
@@ -44,7 +44,7 @@ struct _GeglSimpleImageMgrClass {
 GType         gegl_simple_image_mgr_get_type            (void);
 
 GeglTile *    gegl_simple_image_mgr_get_tile            (GeglSimpleImageMgr * self, 
-                                                             GeglImageImpl * image_impl);
+                                                         GeglImage * image);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -22,6 +22,8 @@ struct _GeglSampledImage {
    GeglImage __parent__;
 
    /*< private >*/
+   gint width;  
+   gint height;
 };
 
 typedef struct _GeglSampledImageClass GeglSampledImageClass;

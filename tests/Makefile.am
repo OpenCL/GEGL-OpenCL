@@ -12,18 +12,14 @@ DEPS = ../gegl/libgegl.la ../tools/testsuite/libtestsuite.la
 LDADDS = ../gegl/libgegl.la ../tools/testsuite/libtestsuite.la
 
 testgegl_SOURCES = \
-   addimpltest.c \
    addtest.c \
    buffertest.c \
    colortest.c \
    colormodeltest.c \
    colormodelrgbtest.c \
    colormodelrgbfloattest.c \
-   constmultimpltest.c \
    constmulttest.c \
    copytest.c \
-   opimpltest.c \
-   fillimpltest.c \
    filltest.c \
    imagemgrtest.c \
    imagetest.c \
@@ -32,15 +28,11 @@ testgegl_SOURCES = \
    objecttest.c \
    optest.c \
    pointoptest.c \
-   pointopimpltest.c \
    printtest.c \
-   printimpltest.c \
    sampledimagetest.c \
-   sampledimageimpltest.c \
    simpleimagemgrtest.c \
    simpletreetest.c \
    statoptest.c \
-   statopimpltest.c \
    testgegl.c \
    testutils.c \
    tileiteratortest.c \

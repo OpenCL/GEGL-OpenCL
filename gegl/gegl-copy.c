@@ -1,11 +1,18 @@
 #include "gegl-copy.h"
-#include "gegl-copy-impl.h"
+#include "gegl-scanline-processor.h"
 #include "gegl-tile.h"
 #include "gegl-tile-iterator.h"
 #include "gegl-utils.h"
 
 static void class_init (GeglCopyClass * klass);
 static void init (GeglCopy * self, GeglCopyClass * klass);
+static void finalize (GObject *gobject);
+
+static void allocate_xyz_data (GeglCopy * self, gint width);
+static void free_xyz_data (GeglCopy * self);
+
+static void prepare (GeglOp * self_op, GList * requests);
+static void scanline (GeglOp * self_op, GeglTileIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -40,16 +47,28 @@ gegl_copy_get_type (void)
 static void 
 class_init (GeglCopyClass * klass)
 {
-  parent_class = g_type_class_peek_parent(klass);
-  return;
+   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+   GeglOpClass *op_class = GEGL_OP_CLASS (klass);
+
+   parent_class = g_type_class_peek_parent(klass);
+
+   gobject_class->finalize = finalize;
+
+   op_class->prepare = prepare;
+
+   return;
 }
 
 static void 
 init (GeglCopy * self, 
       GeglCopyClass * klass)
 {
-  GeglOp * self_op = GEGL_OP(self); 
-  self_op->op_impl = g_object_new(GEGL_TYPE_COPY_IMPL, NULL);
+  gint i;
+  GeglOp * self_op = GEGL_OP(self);
+
+  self->convert_func = NULL;
+  for(i = 0; i < 4; i++)
+    self->float_xyz_data[i] = NULL;
 
   {
     GeglNode * self_node = GEGL_NODE(self); 
@@ -60,4 +79,142 @@ init (GeglCopy * self,
   }
 
   return;
+}
+
+static void
+finalize(GObject *gobject)
+{
+   GeglCopy *self = GEGL_COPY (gobject);
+
+   free_xyz_data (self);
+
+   G_OBJECT_CLASS(parent_class)->finalize(gobject);
+}
+
+/**
+ * allocate_xyz_data:
+ * @self: a #GeglCopy.
+ * @width: scanline width.
+ *
+ * Allocate a scanline of xyz data.
+ *
+ **/
+static void 
+allocate_xyz_data (GeglCopy * self, 
+                   gint width)
+{
+  gint i;
+
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_COPY (self));
+
+  for(i = 0; i < 4; i++)
+    self->float_xyz_data[i] = 
+  g_malloc (sizeof(gfloat) * width); 
+}
+
+/**
+ * free_xyz_data:
+ * @self: a #GeglCopy.
+ *
+ * Free the scanline of xyz data.
+ *
+ **/
+static void 
+free_xyz_data (GeglCopy * self)
+{
+  gint i;
+
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_COPY (self));
+
+  for(i = 0; i < 4; i++)
+    {
+      if (self->float_xyz_data[i]) 
+        g_free (self->float_xyz_data[i]);
+
+      self->float_xyz_data[i] = NULL; 
+    }   
+}
+
+static void 
+prepare (GeglOp * self_op, 
+         GList * requests)
+{
+  GeglCopy *self = GEGL_COPY(self_op);
+  GeglPointOp *self_point_op = GEGL_POINT_OP(self_op);
+  GeglOpRequest *dest_request = (GeglOpRequest*)g_list_nth_data(requests,0); 
+  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest_request->tile);
+  GeglOpRequest *src_request = (GeglOpRequest*)g_list_nth_data(requests,1);
+  GeglColorModel * src_cm = gegl_tile_get_color_model (src_request->tile);
+
+  g_return_if_fail(dest_cm);
+  g_return_if_fail(src_cm);
+
+  {
+    /* Get the name of the interface that converts from src cm */
+    gchar *converter_name = gegl_color_model_get_convert_interface_name (src_cm);
+
+    /* Check to see if the dest cm implements the converter */
+    self->convert_func =
+      (GeglConvertFunc)gegl_object_query_interface (GEGL_OBJECT(dest_cm),
+                                                    converter_name);
+
+    g_free (converter_name);
+
+    if (!self->convert_func)
+      {
+        /* Allocate scanlines for the XYZ data */
+        free_xyz_data (self);
+        allocate_xyz_data (self, dest_request->rect.w);
+      }
+
+    /* Set the scanline version of this class to be called */
+    self_point_op->scanline_processor->func = scanline;
+  }
+}
+
+/**
+ * scanline:
+ * @self_op: a #GeglOp.
+ * @iters: a #GeglTileIterator array. 
+ * @width: width of scanline.
+ *
+ * Process a scanline.
+ *
+ **/
+static void 
+scanline (GeglOp * self_op, 
+          GeglTileIterator ** iters, 
+          gint width)
+{
+  GeglCopy *self = GEGL_COPY (self_op);
+  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
+  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[1]);
+  guint dest_nchans = gegl_color_model_num_channels (dest_cm);
+  guint src_nchans = gegl_color_model_num_channels (src_cm);
+  guchar ** dest_data = g_malloc (sizeof(guchar*) * dest_nchans);
+  guchar ** src_data = g_malloc (sizeof(guchar*) * src_nchans);
+
+  gegl_tile_iterator_get_current(iters[0], (gpointer*)dest_data);
+  gegl_tile_iterator_get_current(iters[1], (gpointer*)src_data);
+
+  /* Call the converter if installed, else do XYZ conversion */ 
+     
+  if (self->convert_func) 
+    (self->convert_func) (dest_cm, src_cm, dest_data, src_data, width); 
+  else
+    {
+      gegl_color_model_convert_to_xyz (src_cm, 
+                                       self->float_xyz_data, 
+                                       src_data, 
+                                       width);
+      gegl_color_model_convert_from_xyz (dest_cm, 
+                                         dest_data, 
+                                         self->float_xyz_data , 
+                                         width);
+    }
+
+  g_free (dest_data);
+  g_free (src_data);
 }

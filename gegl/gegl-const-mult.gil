@@ -1,0 +1,207 @@
+#include "gegl-const-mult.h"
+#include "gegl-scanline-processor.h"
+#include "gegl-image-mgr.h"
+#include "gegl-tile.h"
+#include "gegl-tile-iterator.h"
+#include "gegl-color-model.h"
+#include "gegl-utils.h"
+#include <stdio.h>
+
+enum
+{
+  PROP_0, 
+  PROP_MULTIPLIER,
+  PROP_LAST 
+};
+
+static void class_init (GeglConstMultClass * klass);
+static void init (GeglConstMult * self, GeglConstMultClass * klass);
+static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
+static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
+
+static void prepare (GeglOp * self_op, GList * requests);
+static void scanline (GeglOp * self_op, GeglTileIterator ** iters, gint width);
+
+static gpointer parent_class = NULL;
+
+GType
+gegl_const_mult_get_type (void)
+{
+  static GType type = 0;
+
+  if (!type)
+    {
+      static const GTypeInfo typeInfo =
+      {
+        sizeof (GeglConstMultClass),
+        (GBaseInitFunc) NULL,
+        (GBaseFinalizeFunc) NULL,
+        (GClassInitFunc) class_init,
+        (GClassFinalizeFunc) NULL,
+        NULL,
+        sizeof (GeglConstMult),
+        0,
+        (GInstanceInitFunc) init,
+      };
+
+      type = g_type_register_static (GEGL_TYPE_POINT_OP, 
+                                     "GeglConstMult", 
+                                     &typeInfo, 
+                                     0);
+    }
+    return type;
+}
+
+static void 
+init (GeglConstMult * self, 
+      GeglConstMultClass * klass)
+{
+  GeglNode * self_node = GEGL_NODE(self); 
+  GList * inputs = g_list_append(NULL, NULL);
+  self_node->num_inputs = 1;
+  gegl_node_set_inputs(self_node, inputs);
+  g_list_free(inputs);
+
+  return;
+}
+
+static void 
+class_init (GeglConstMultClass * klass)
+{
+  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
+
+  parent_class = g_type_class_peek_parent(klass);
+
+  op_class->prepare = prepare;
+
+  gobject_class->set_property = set_property;
+  gobject_class->get_property = get_property;
+   
+  g_object_class_install_property (gobject_class,
+                                   PROP_MULTIPLIER,
+                                   g_param_spec_float ("multiplier",
+                                                       "GeglConstMult Multiplier",
+                                                       "Multiply input pixels by constant multiplier",
+                                                       G_MINFLOAT, 
+                                                       G_MAXFLOAT,
+                                                       1.0,
+                                                       G_PARAM_READWRITE | 
+                                                       G_PARAM_CONSTRUCT));
+
+  return;
+}
+
+static void
+get_property (GObject      *gobject,
+              guint         prop_id,
+              GValue       *value,
+              GParamSpec   *pspec)
+{
+  GeglConstMult *self = GEGL_CONST_MULT (gobject);
+
+  switch (prop_id)
+  {
+    case PROP_MULTIPLIER:
+        g_value_set_float (value, gegl_const_mult_get_multiplier(self));
+      break;
+    default:
+      break;
+  }
+}
+
+static void
+set_property (GObject      *gobject,
+              guint         prop_id,
+              const GValue *value,
+              GParamSpec   *pspec)
+{
+  GeglConstMult *self = GEGL_CONST_MULT (gobject);
+
+  switch (prop_id)
+  {
+    case PROP_MULTIPLIER:
+        gegl_const_mult_set_multiplier (self,g_value_get_float(value));
+      break;
+    default:
+      break;
+  }
+}
+
+gfloat
+gegl_const_mult_get_multiplier (GeglConstMult * self)
+{
+  g_return_val_if_fail (self != NULL, 0);
+  g_return_val_if_fail (GEGL_IS_CONST_MULT (self), 0);
+   
+  return self->multiplier;
+}
+
+void
+gegl_const_mult_set_multiplier(GeglConstMult * self, 
+                                    gfloat multiplier)
+{
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_CONST_MULT (self));
+   
+  self->multiplier = multiplier;
+}
+
+static void 
+prepare (GeglOp * self_op, 
+         GList * requests)
+{
+  GeglPointOp *self_point_op = GEGL_POINT_OP(self_op);
+  GeglOpRequest *dest_request = (GeglOpRequest*)g_list_nth_data(requests,0); 
+
+  GeglTile *dest = dest_request->tile;
+  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
+
+  g_return_if_fail(dest_cm);
+
+  /* Get correct scanline func for this color model */
+  self_point_op->scanline_processor->func = scanline;        
+}
+
+/**
+ * scanline:
+ * @self_op: a #GeglOp.
+ * @iters: #GeglTileIterators array. 
+ * @width: width of scanline.
+ *
+ * Processes a scanline.
+ *
+ **/
+static void 
+scanline (GeglOp * self_op, 
+          GeglTileIterator ** iters, 
+          gint width)
+{
+  GeglConstMult *self = GEGL_CONST_MULT(self_op);
+  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
+  GeglColorModel *src_cm = gegl_tile_iterator_get_color_model(iters[1]);
+
+  GENERIC_IMAGE_DECL_BEGIN
+  Pixel dest(color,alpha,has_alpha);
+  Pixel src(color,alpha,has_alpha);
+  float multiplier;
+  GENERIC_IMAGE_DECL_END
+
+  multiplier = self->multiplier;
+  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
+  src_has_alpha = gegl_color_model_has_alpha(src_cm); 
+
+  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
+  gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
+
+  GENERIC_IMAGE_IMAGE_DATA_INIT
+
+  while (width--)
+    {
+      GENERIC_IMAGE_CODE_BEGIN
+      dest = multiplier * src; 
+      dX(dest,1);
+      dX(src,1);
+      GENERIC_IMAGE_CODE_END
+    }
+}

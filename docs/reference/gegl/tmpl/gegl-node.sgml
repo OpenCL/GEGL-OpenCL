@@ -2,17 +2,46 @@
 GeglNode
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Abstract graph node class for operator graphs.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This is the Abstract graph node class for Gegl. Since we want graphs to be able to
+share nodes, image graphs in gegl are directed acyclic graphs, with inputs
+(children) and outputs (parents).  If nodes of an image graph are all distinct,
+the graph is a simple tree. Leaf nodes have no inputs and root nodes have no
+outputs.  Shared nodes have multiple outputs. Normal GObject reference counting
+is used to keep track of references to nodes.
+</para>
+<para>
+The Node class manages adding and removing parents and children. It also has
+methods for traversing image graphs (breadth-first, depth-first), detecting
+cycles in graphs and topological sorting. Freeing a root node will free nodes
+that descend from the root when there are no other objects holding references
+to these nodes. When a node descends from more than one root (ie its part of
+two or more image graphs) it wont be deleted when a graph is deleted since
+its reference count will not be zero.
+</para>
+<para>
+Heres a simple example of an image graph for Comp(Blur(A), Mult(A,B)):
+</para>
+<graphic fileref="../images/chain.png"></graphic>
+<para>
+Here Comp (eg a composite over) is a root node, A and B are SampledImage leaf
+nodes, Blur has A as input and Comp as output, and Mult has two inputs (A and
+B) and Comp as output. A is shared by both its outputs Blur and Mult.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglNode ##### -->
+<para>
+
+</para>
+
 
 <!-- ##### ENUM GeglNodeVisitFlags ##### -->
 <para>

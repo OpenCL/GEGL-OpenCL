@@ -1,7 +1,6 @@
 #include "gegl-tile-mgr.h"    
 #include "gegl-sampled-image.h"
 #include "gegl-color-model.h"
-#include "gegl-sampled-image-impl.h"
 #include "gegl-tile.h"
 #include "gegl-utils.h"
 #include "gegl-mem-buffer.h"    
@@ -10,11 +9,11 @@ static void class_init (GeglTileMgrClass * klass);
 static void init (GeglTileMgr * self, GeglTileMgrClass * klass);
 static void finalize (GObject * self_object);
 
-static GeglTile * fetch_output_tile (GeglTileMgr * self, GeglOp * node, GeglImageImpl * dest_impl, GeglRect * area);
-static GeglTile * fetch_input_tile (GeglTileMgr * self, GeglImageImpl * input_impl, GeglRect * area);
-static GeglTile * make_tile (GeglTileMgr * self, GeglImageImpl* image_impl, GeglRect * area);
+static GeglTile * fetch_output_tile (GeglTileMgr * self, GeglOp * node, GeglImage * dest, GeglRect * area);
+static GeglTile * fetch_input_tile (GeglTileMgr * self, GeglImage * input, GeglRect * area);
+static GeglTile * make_tile (GeglTileMgr * self, GeglImage* image, GeglRect * area);
 static void release_tiles (GeglTileMgr * self, GList * request_list);
-static GeglTile * get_tile (GeglTileMgr * self, GeglImageImpl * image_impl);
+static GeglTile * get_tile (GeglTileMgr * self, GeglImage * image);
 static GeglBuffer * create_buffer (GeglTileMgr * self, GeglTile *tile);
 
 static gpointer parent_class = NULL;
@@ -83,7 +82,7 @@ finalize(GObject *gobject)
  * gegl_tile_mgr_fetch_output_tile:
  * @self: a #GeglTileMgr. 
  * @op: #GeglOp we are computing. 
- * @dest: #GeglImageImpl to use to get tiles. 
+ * @dest: #GeglImage to use to get tiles. 
  * @area: #GeglRect of tile needed.
  *
  * Fetch a tile for the passed image and area.
@@ -93,7 +92,7 @@ finalize(GObject *gobject)
 GeglTile * 
 gegl_tile_mgr_fetch_output_tile (GeglTileMgr * self, 
                                  GeglOp * op, 
-                                 GeglImageImpl* dest_impl, 
+                                 GeglImage* dest, 
                                  GeglRect * area)
 {
   g_return_val_if_fail (self != NULL, NULL);
@@ -103,7 +102,7 @@ gegl_tile_mgr_fetch_output_tile (GeglTileMgr * self,
     GeglTileMgrClass *klass = GEGL_TILE_MGR_GET_CLASS(self);
 
     if(klass->fetch_output_tile)
-      return (*klass->fetch_output_tile)(self,op,dest_impl,area);
+      return (*klass->fetch_output_tile)(self,op,dest,area);
     else
       return NULL; 
   }
@@ -112,20 +111,20 @@ gegl_tile_mgr_fetch_output_tile (GeglTileMgr * self,
 static GeglTile * 
 fetch_output_tile (GeglTileMgr * self, 
                    GeglOp * op, 
-                   GeglImageImpl * dest_impl, 
+                   GeglImage * dest, 
                    GeglRect * area)
 {
-  GeglTile *tile = (GeglTile*) dest_impl->tile; 
+  GeglTile *tile = (GeglTile*) dest->tile; 
 
   if(!tile)
     {
       LOG_DEBUG("fetch_output_tile", 
                 "Didnt find a tile for this dest, make one");
-      tile = make_tile(self, dest_impl, area);
+      tile = make_tile(self, dest, area);
     }
   else 
     {
-      GeglColorModel *dest_color_model = gegl_image_impl_color_model(dest_impl);
+      GeglColorModel *dest_color_model = gegl_image_color_model(dest);
       GeglColorModel *tile_color_model = gegl_tile_get_color_model(tile);
       GeglRect tile_rect;
       gegl_tile_get_area(tile, &tile_rect);
@@ -133,10 +132,10 @@ fetch_output_tile (GeglTileMgr * self,
       LOG_DEBUG("fetch_output_tile", 
                 "Found output tile for dest");
 
-      if(GEGL_IS_SAMPLED_IMAGE_IMPL(dest_impl)) 
+      if(GEGL_IS_SAMPLED_IMAGE(dest)) 
         {
           LOG_DEBUG("fetch_output_tile",
-                    "dest is an SampledImageImpl");
+                    "dest is an SampledImage");
           if(!gegl_rect_contains(&tile_rect, area))
             {
               LOG_INFO("fetch_output_tile",
@@ -194,8 +193,8 @@ fetch_output_tile (GeglTileMgr * self,
  **/
 GeglTile * 
 gegl_tile_mgr_fetch_input_tile (GeglTileMgr * self, 
-                               GeglImageImpl * input_impl, 
-                               GeglRect * area)
+                                GeglImage * input, 
+                                GeglRect * area)
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_TILE_MGR (self), NULL);
@@ -204,7 +203,7 @@ gegl_tile_mgr_fetch_input_tile (GeglTileMgr * self,
     GeglTileMgrClass *klass = GEGL_TILE_MGR_GET_CLASS(self);
 
     if(klass->fetch_input_tile)
-      return (*klass->fetch_input_tile)(self,input_impl,area);
+      return (*klass->fetch_input_tile)(self,input,area);
     else
       return NULL;
   }
@@ -212,10 +211,10 @@ gegl_tile_mgr_fetch_input_tile (GeglTileMgr * self,
 
 static GeglTile * 
 fetch_input_tile (GeglTileMgr * self, 
-                  GeglImageImpl * input_impl, 
+                  GeglImage * input, 
                   GeglRect * area)
 {
-  GeglTile *tile = input_impl->tile; 
+  GeglTile *tile = input->tile; 
 
   /* If this doesnt find the input, we are in trouble */ 
   if(!tile)
@@ -256,7 +255,7 @@ release_tiles (GeglTileMgr * self,
 
 GeglTile *
 gegl_tile_mgr_get_tile (GeglTileMgr * self, 
-                       GeglImageImpl * image_impl)
+                       GeglImage * image)
 {
   g_return_val_if_fail (self != NULL, NULL);
   g_return_val_if_fail (GEGL_IS_TILE_MGR (self), NULL);
@@ -264,7 +263,7 @@ gegl_tile_mgr_get_tile (GeglTileMgr * self,
     GeglTileMgrClass *klass = GEGL_TILE_MGR_GET_CLASS(self);
 
     if(klass->get_tile)
-      return (*klass->get_tile)(self,image_impl);
+      return (*klass->get_tile)(self,image);
     else
       return NULL;
   }
@@ -272,9 +271,9 @@ gegl_tile_mgr_get_tile (GeglTileMgr * self,
 
 GeglTile *
 get_tile (GeglTileMgr * self, 
-          GeglImageImpl * image_impl)
+          GeglImage * image)
 {
-  return image_impl->tile;
+  return image->tile;
 }
 
 GeglBuffer *  
@@ -314,7 +313,7 @@ create_buffer (GeglTileMgr * self,
 
 GeglTile *  
 gegl_tile_mgr_make_tile (GeglTileMgr * self, 
-                         GeglImageImpl* image_impl, 
+                         GeglImage* image, 
                          GeglRect * area)
 {
   g_return_val_if_fail (self != NULL, NULL);
@@ -323,7 +322,7 @@ gegl_tile_mgr_make_tile (GeglTileMgr * self,
     GeglTileMgrClass *klass = GEGL_TILE_MGR_GET_CLASS(self);
 
     if(klass->make_tile)
-      return (*klass->make_tile)(self,image_impl,area);
+      return (*klass->make_tile)(self,image,area);
     else
       return NULL;
   }
@@ -331,22 +330,22 @@ gegl_tile_mgr_make_tile (GeglTileMgr * self,
 
 static GeglTile * 
 make_tile (GeglTileMgr * self, 
-           GeglImageImpl* image_impl, 
+           GeglImage* image, 
            GeglRect * area)
 {
   g_return_val_if_fail (self != NULL, (GeglTile * )0);
   g_return_val_if_fail (GEGL_IS_TILE_MGR (self), (GeglTile * )0);
 
   /* Create tile. */
-  image_impl->tile = g_object_new (GEGL_TYPE_TILE, 
-                                   "area", area, 
-                                   "colormodel", gegl_image_impl_color_model(image_impl),
-                                   NULL);  
+  image->tile = g_object_new (GEGL_TYPE_TILE, 
+                              "area", area, 
+                              "colormodel", gegl_image_color_model(image),
+                              NULL);  
 
 
   LOG_DEBUG("make_tile", 
             "making tile %x for image %x", 
-            (guint)image_impl->tile, (guint)image_impl);
+            (guint)image->tile, (guint)image);
 
-  return image_impl->tile;
+  return image->tile;
 }

@@ -14,25 +14,7 @@ GeglTileMgr
 
 </para>
 
-<!-- ##### STRUCT GeglTile ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglOp ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglBuffer ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglImageImpl ##### -->
+<!-- ##### STRUCT GeglTileMgr ##### -->
 <para>
 
 </para>
@@ -86,8 +68,10 @@ GeglTileMgr
 </para>
 
 @self: 
-@image_impl: 
+@image: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@image_impl: 
 
 
 <!-- ##### FUNCTION gegl_tile_mgr_make_tile ##### -->
@@ -96,8 +80,10 @@ GeglTileMgr
 </para>
 
 @self: 
-@image_impl: 
+@image: 
 @area: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@image_impl: 
 
 

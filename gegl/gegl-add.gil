@@ -1,0 +1,141 @@
+#include "gegl-add.h"
+#include "gegl-scanline-processor.h"
+#include "gegl-color-model.h"
+#include "gegl-tile.h"
+#include "gegl-tile-iterator.h"
+#include "gegl-utils.h"
+
+static void class_init (GeglAddClass * klass);
+static void init (GeglAdd * self, GeglAddClass * klass);
+static void prepare (GeglOp * self_op, GList * requests);
+static void scanline (GeglOp * self_op, GeglTileIterator ** iters, gint width);
+
+static gpointer parent_class = NULL;
+
+GType
+gegl_add_get_type (void)
+{
+  static GType type = 0;
+
+  if (!type)
+    {
+      static const GTypeInfo typeInfo =
+      {
+        sizeof (GeglAddClass),
+        (GBaseInitFunc) NULL,
+        (GBaseFinalizeFunc) NULL,
+        (GClassInitFunc) class_init,
+        (GClassFinalizeFunc) NULL,
+        NULL,
+        sizeof (GeglAdd),
+        0,
+        (GInstanceInitFunc) init,
+      };
+
+      type = g_type_register_static (GEGL_TYPE_POINT_OP, 
+                                     "GeglAdd", 
+                                     &typeInfo, 
+                                     0);
+    }
+    return type;
+}
+
+static void 
+class_init (GeglAddClass * klass)
+{
+  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
+
+  parent_class = g_type_class_peek_parent(klass);
+
+  op_class->prepare = prepare;
+  return;
+}
+
+static void 
+init (GeglAdd * self, 
+      GeglAddClass * klass)
+{
+  GeglNode * self_node = GEGL_NODE(self); 
+  GList * inputs = g_list_append(NULL, NULL);
+  inputs = g_list_append(inputs, NULL);
+  self_node->num_inputs = 2;
+  gegl_node_set_inputs(self_node, inputs);
+  g_list_free(inputs);
+}
+
+static void 
+prepare (GeglOp * self_op, 
+         GList * requests)
+{
+  GeglPointOp *self_point_op = GEGL_POINT_OP(self_op);
+  GeglOpRequest *dest_request = (GeglOpRequest*)g_list_nth_data(requests,0); 
+  GeglTile *dest = dest_request->tile;
+  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
+  g_return_if_fail (dest_cm);
+
+  /* Now make sure the correct scanline func is installed */
+  self_point_op->scanline_processor->func = scanline;
+}
+
+/**
+ * scanline:
+ * @self_op: a #GeglOp
+ * @iters: #GeglTileIterators array. 
+ * @width: width of scanline.
+ *
+ * Processes a scanline.
+ *
+ **/
+static void 
+scanline (GeglOp * self_op, 
+          GeglTileIterator ** iters, 
+          gint width)
+{
+  GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
+  GeglColorModel *src1_cm = gegl_tile_iterator_get_color_model(iters[1]);
+  GeglColorModel *src2_cm = gegl_tile_iterator_get_color_model(iters[2]);
+
+  GENERIC_IMAGE_DECL_BEGIN
+  Pixel dest(color,alpha,has_alpha);
+  Pixel src1(color,alpha,has_alpha);
+  Pixel src2(color,alpha,has_alpha);
+  GENERIC_IMAGE_DECL_END
+
+  dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
+  src1_has_alpha = gegl_color_model_has_alpha(src1_cm); 
+  src2_has_alpha = gegl_color_model_has_alpha(src2_cm); 
+
+  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
+  gegl_tile_iterator_get_current (iters[1], (gpointer*)src1_data);
+  gegl_tile_iterator_get_current (iters[2], (gpointer*)src2_data);
+  
+  GENERIC_IMAGE_IMAGE_DATA_INIT
+    
+  while (width--)
+    {
+      GENERIC_IMAGE_CODE_BEGIN  
+
+      dest_color = CHANNEL_CLAMP((Promote)src1_color + src2_color);
+      if (dest_has_alpha)
+        {
+          if (src1_has_alpha && src2_has_alpha)
+            {
+              dest_alpha = CHANNEL_CLAMP ((Promote)src1_alpha + src2_alpha);
+            }
+          else if (src1_has_alpha)
+            {
+              dest_alpha = WP;
+            }
+          else if (src2_has_alpha)
+            {
+              dest_alpha = WP;
+            }
+        }
+
+      dX(dest,1);
+      dX(src1,1);
+      dX(src2,1);
+
+      GENERIC_IMAGE_CODE_END
+    }               
+}

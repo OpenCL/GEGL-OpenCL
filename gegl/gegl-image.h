@@ -12,9 +12,9 @@ extern "C" {
 typedef struct _GeglColorModel  GeglColorModel;
 #endif
 
-#ifndef __TYPEDEF_GEGL_IMAGE_IMPL__
-#define __TYPEDEF_GEGL_IMAGE_IMPL__
-typedef struct _GeglImageImpl GeglImageImpl;
+#ifndef __TYPEDEF_GEGL_TILE__
+#define __TYPEDEF_GEGL_TILE__
+typedef struct _GeglTile  GeglTile;
 #endif
 
 #define GEGL_TYPE_IMAGE               (gegl_image_get_type ())
@@ -32,12 +32,17 @@ struct _GeglImage {
    GeglOp __parent__;
 
    /*< private >*/
+
+   /* intrinsic data */
+   GeglColorModel * color_model;
+   GeglTile * tile;
+
+   /* extrinsic data */
    GeglRect have_rect;
    GeglRect need_rect;
    GeglRect result_rect;
    GeglColorModel * derived_color_model;
-   gboolean color_model_is_derived;
-   GeglImageImpl * dest;
+   GeglImage* dest;
 };
 
 typedef struct _GeglImageClass GeglImageClass;
@@ -59,50 +64,51 @@ struct _GeglImageClass {
                                              gint i);
 };
 
-GType            gegl_image_get_type                     (void);
+GType gegl_image_get_type                     (void);
+
 GeglColorModel*  gegl_image_color_model                  (GeglImage * self);
 void             gegl_image_set_color_model              (GeglImage * self, 
-                                                             GeglColorModel * cm);
+                                                          GeglColorModel * cm);
 
-GeglColorModel*  gegl_image_derived_color_model          (GeglImage * self);
+
 void             gegl_image_set_derived_color_model      (GeglImage * self, 
-                                                             GeglColorModel * cm);
+                                                          GeglColorModel * cm);
 
 void             gegl_image_compute_derived_color_model  (GeglImage * self, 
-                                                             GList * input_color_models);
+                                                          GList * input_color_models);
 
 void             gegl_image_compute_have_rect (GeglImage * self, 
-                                                  GeglRect * have_rect, 
-                                                  GList * inputs_have_rects);
+                                               GeglRect * have_rect, 
+                                               GList * inputs_have_rects);
 
 void             gegl_image_compute_result_rect (GeglImage * self, 
-                                                    GeglRect * result_rect, 
-                                                    GeglRect * need_rect, 
-                                                    GeglRect * have_rect);
+                                                 GeglRect * result_rect, 
+                                                 GeglRect * need_rect, 
+                                                 GeglRect * have_rect);
 
 void             gegl_image_get_have_rect    (GeglImage   * self, 
-                                                 GeglRect * have_rect);
+                                              GeglRect * have_rect);
 void             gegl_image_set_have_rect    (GeglImage   * self, 
-                                                 GeglRect * have_rect);
+                                              GeglRect * have_rect);
 void             gegl_image_get_result_rect  (GeglImage   * self, 
-                                                 GeglRect * result_rect);
+                                              GeglRect * result_rect);
 void             gegl_image_set_result_rect  (GeglImage   * self, 
-                                                 GeglRect * result_rect);
+                                              GeglRect * result_rect);
 
 void             gegl_image_compute_preimage (GeglImage * self, 
-                                                 GeglRect * preimage, 
-                                                 GeglRect * rect, 
-                                                 gint i);
+                                              GeglRect * preimage, 
+                                              GeglRect * rect, 
+                                              gint i);
 
 void             gegl_image_get_need_rect    (GeglImage   * self, 
-                                                 GeglRect * need_rect);
+                                              GeglRect * need_rect);
 void             gegl_image_set_need_rect    (GeglImage   * self, 
-                                                 GeglRect * need_rect);
+                                              GeglRect * need_rect);
 
-GeglImageImpl*   gegl_image_get_dest         (GeglImage *self);
+GeglImage*       gegl_image_get_dest         (GeglImage *self);
 
 void             gegl_image_set_dest         (GeglImage *self,
-                                                 GeglImageImpl *dest);
+                                              GeglImage *dest);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

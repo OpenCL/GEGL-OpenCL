@@ -12,9 +12,9 @@ extern "C" {
 typedef struct _GeglSampledImage  GeglSampledImage;
 #endif
 
-#ifndef __TYPEDEF_GEGL_IMAGE_IMPL__
-#define __TYPEDEF_GEGL_IMAGE_IMPL__
-typedef struct _GeglImageImpl  GeglImageImpl;
+#ifndef __TYPEDEF_GEGL_TILE_MGR__
+#define __TYPEDEF_GEGL_TILE_MGR__
+typedef struct _GeglTileMgr  GeglTileMgr;
 #endif
 
 #ifndef __TYPEDEF_GEGL_OP__
@@ -22,9 +22,9 @@ typedef struct _GeglImageImpl  GeglImageImpl;
 typedef struct _GeglOp  GeglOp;
 #endif
 
-#ifndef __TYPEDEF_GEGL_TILE_MGR__
-#define __TYPEDEF_GEGL_TILE_MGR__
-typedef struct _GeglTileMgr GeglTileMgr;
+#ifndef __TYPEDEF_GEGL_IMAGE__
+#define __TYPEDEF_GEGL_IMAGE__
+typedef struct _GeglImage  GeglImage;
 #endif
 
 #define GEGL_TYPE_IMAGE_MGR               (gegl_image_mgr_get_type ())
@@ -54,9 +54,9 @@ struct _GeglImageMgrClass {
                                                      GeglSampledImage * dest, 
                                                      GeglRect * roi);
    void         (* delete_image)                    (GeglImageMgr * self, 
-                                                     GeglImageImpl * image_impl);
+                                                     GeglImage * image);
    void         (* add_image)                       (GeglImageMgr * self, 
-                                                     GeglImageImpl * image_impl);
+                                                     GeglImage* image);
 };
 
 void               gegl_image_mgr_install           (GeglImageMgr *image_mgr);
@@ -68,9 +68,9 @@ void               gegl_image_mgr_apply             (GeglImageMgr * self,
                                                          GeglSampledImage * dest, 
                                                          GeglRect * roi);
 void               gegl_image_mgr_delete_image      (GeglImageMgr * self, 
-                                                         GeglImageImpl * image_impl);
+                                                         GeglImage * image);
 void               gegl_image_mgr_add_image         (GeglImageMgr * self, 
-                                                         GeglImageImpl * image_impl);
+                                                         GeglImage * image);
 GeglTileMgr *      gegl_image_mgr_get_tile_mgr      (GeglImageMgr * self);
 
 #ifdef __cplusplus

@@ -23,7 +23,7 @@ test_const_mult_g_object_new(Test *test)
     ct_test(test, const_mult != NULL);
     ct_test(test, GEGL_IS_CONST_MULT(const_mult));
     ct_test(test, g_type_parent(GEGL_TYPE_CONST_MULT) == GEGL_TYPE_POINT_OP);
-    ct_test(test, !strcmp("GeglConstMultImpl", g_type_name(GEGL_TYPE_CONST_MULT_IMPL)));
+    ct_test(test, !strcmp("GeglConstMult", g_type_name(GEGL_TYPE_CONST_MULT)));
 
     g_object_unref(const_mult);
   }

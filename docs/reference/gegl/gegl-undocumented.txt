@@ -1,6 +1,6 @@
-52% function docs coverage.
+57% function docs coverage.
 82 functions documented.
-77 not documented.
+61 not documented.
 
 
 GEGL_FLOAT_EPSILON
@@ -21,17 +21,10 @@ gegl_color_model_instance
 gegl_color_model_register
 gegl_color_model_set_has_alpha
 gegl_const_mult_get_multiplier
-gegl_const_mult_impl_get_multiplier
-gegl_const_mult_impl_set_multiplier
 gegl_const_mult_set_multiplier
 gegl_fill_get_fill_color
-gegl_fill_impl_get_fill_color
-gegl_fill_impl_set_fill_color
 gegl_fill_set_fill_color
-gegl_image_derived_color_model
 gegl_image_get_dest
-gegl_image_impl_color_model
-gegl_image_impl_set_color_model
 gegl_image_mgr_get_tile_mgr
 gegl_image_mgr_install
 gegl_image_mgr_instance
@@ -40,16 +33,11 @@ gegl_image_set_dest
 gegl_init
 gegl_log
 gegl_logv
-gegl_op_get_op_impl
 gegl_op_get_source0
 gegl_op_get_source1
-gegl_op_impl_get_num_inputs
-gegl_op_set_op_impl
 gegl_op_set_source0
 gegl_op_set_source1
 gegl_point_op_get_nth_input_offset
-gegl_point_op_impl_get_nth_input_offset
-gegl_point_op_impl_set_nth_input_offset
 gegl_point_op_set_nth_input_offset
 gegl_rect_contains
 gegl_rect_copy
@@ -57,10 +45,6 @@ gegl_rect_equal
 gegl_rect_intersect
 gegl_rect_set
 gegl_rect_union
-gegl_sampled_image_impl_get_height
-gegl_sampled_image_impl_get_width
-gegl_sampled_image_impl_set_height
-gegl_sampled_image_impl_set_width
 gegl_sampled_image_set_height
 gegl_sampled_image_set_width
 gegl_scanline_processor_process

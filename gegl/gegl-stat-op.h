@@ -7,6 +7,11 @@ extern "C" {
 
 #include "gegl-op.h"
 
+#ifndef __TYPEDEF_GEGL_SCANLINE_PROCESSOR__
+#define __TYPEDEF_GEGL_SCANLINE_PROCESSOR__
+typedef struct _GeglScanlineProcessor  GeglScanlineProcessor;
+#endif
+
 #define GEGL_TYPE_STAT_OP               (gegl_stat_op_get_type ())
 #define GEGL_STAT_OP(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_STAT_OP, GeglStatOp))
 #define GEGL_STAT_OP_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_STAT_OP, GeglStatOpClass))
@@ -22,6 +27,7 @@ struct _GeglStatOp {
    GeglOp __parent__;
 
    /*< private >*/
+   GeglScanlineProcessor * scanline_processor;
 };
 
 typedef struct _GeglStatOpClass GeglStatOpClass;

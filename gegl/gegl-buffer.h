@@ -5,7 +5,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include <glib-object.h>
 #include "gegl-object.h"
 
 #define GEGL_TYPE_BUFFER               (gegl_buffer_get_type ())
@@ -20,7 +19,7 @@ extern "C" {
 typedef struct _GeglBuffer  GeglBuffer;
 #endif
 struct _GeglBuffer {
-   GeglObject __parent__;
+   GeglObject parent;
 
    /*< private >*/
    gpointer * data_pointers; 
@@ -31,7 +30,7 @@ struct _GeglBuffer {
 
 typedef struct _GeglBufferClass GeglBufferClass;
 struct _GeglBufferClass {
-   GeglObjectClass __parent__;
+   GeglObjectClass parent;
 
    void (* unalloc_data) (GeglBuffer * self);
    void (* alloc_data) (GeglBuffer * self);

@@ -6,7 +6,30 @@ GeglImage
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This class is the main abstract class for the image producing operations. Image
+and its subclasses all "produce" an output image by operating on inputs and
+placing the result in some output buffer. Examples are PointOps (composites,
+LUT operations, etc), AreaOps (convolutions) and GeometricOps (transforms
+and warps).  These are all typically non-leaf nodes and have one or more
+inputs (There are some Ops without image inputs though-for example Noise
+ops).  SampledImages are a special kind of Image. They have no inputs,
+and are just leaf nodes in image graphs.  They  "produce" their output by
+just returning their normal image data as output.
+</para>
+<para>
+Images have ColorModels which describe the color model of their output image.
+Subclasses of Image override compute_derived_color_model to calculate a
+ColorModel from the inputs when one has not been explicitly set.
+</para>
+<para>
+The Image class also stores information that makes image calculations more
+efficient. Domains of definitions (called have_rects) and regions of interest
+(called need_rects) are kept in this class. have_rects are defined for leaves
+and are passed towards the root, and need_rects are passed from the root
+towards the leaves. In compiler speak, have_rects are synthesized attributes,
+and need_rects are inherited attributes. Subclasses of Image implement
+compute_have_rect, compute_preimage and compute_result_rect to compute these
+rects during graph evaluation.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -14,13 +37,7 @@ GeglImage
 
 </para>
 
-<!-- ##### STRUCT GeglColorModel ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglImageImpl ##### -->
+<!-- ##### STRUCT GeglImage ##### -->
 <para>
 
 </para>
@@ -42,15 +59,6 @@ GeglImage
 
 @self: 
 @cm: 
-
-
-<!-- ##### FUNCTION gegl_image_derived_color_model ##### -->
-<para>
-
-</para>
-
-@self: 
-@Returns: 
 
 
 <!-- ##### FUNCTION gegl_image_set_derived_color_model ##### -->

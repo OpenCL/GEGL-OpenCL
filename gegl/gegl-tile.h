@@ -12,14 +12,14 @@ extern "C" {
 typedef struct _GeglBuffer  GeglBuffer;
 #endif
 
-#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
-#define __TYPEDEF_GEGL_COLOR_MODEL__
-typedef struct _GeglColorModel  GeglColorModel;
-#endif
-
 #ifndef __TYPEDEF_GEGL_IMAGE__
 #define __TYPEDEF_GEGL_IMAGE__
 typedef struct _GeglImage  GeglImage;
+#endif
+
+#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
+#define __TYPEDEF_GEGL_COLOR_MODEL__
+typedef struct _GeglColorModel  GeglColorModel;
 #endif
 
 #define GEGL_TYPE_TILE               (gegl_tile_get_type ())

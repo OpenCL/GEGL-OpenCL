@@ -22,6 +22,11 @@ struct _GeglPrint {
    GeglStatOp __parent__;
 
    /*< private >*/
+   gchar * buffer;
+   gint buffer_size;
+   gchar * current;
+   gint left;
+   gboolean use_log;
 };
 
 typedef struct _GeglPrintClass GeglPrintClass;

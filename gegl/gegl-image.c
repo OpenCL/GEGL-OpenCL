@@ -1,5 +1,7 @@
 #include "gegl-image.h"
-#include "gegl-image-impl.h"
+#include "gegl-op.h"
+#include "gegl-image-mgr.h"
+#include "gegl-object.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
 
@@ -13,8 +15,10 @@ enum
 static void class_init (GeglImageClass * klass);
 static void init (GeglImage * self, GeglImageClass * klass);
 static void finalize(GObject * gobject);
+
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
+
 static void compute_derived_color_model (GeglImage * self, GList * input_color_models);
 
 static gpointer parent_class = NULL;
@@ -77,8 +81,9 @@ static void
 init (GeglImage * self, 
       GeglImageClass * klass)
 {
+  self->color_model = NULL;
+
   self->derived_color_model = NULL;
-  self->color_model_is_derived = TRUE;
   self->dest = NULL;
   return;
 }
@@ -87,6 +92,12 @@ static void
 finalize(GObject *gobject)
 {
   GeglImage *self = GEGL_IMAGE(gobject);
+
+  if(self->color_model)
+    g_object_unref(self->color_model);
+
+  if(self->tile)
+    g_object_unref(self->tile);
 
   if(self->derived_color_model)
     g_object_unref(self->derived_color_model);
@@ -150,8 +161,12 @@ get_property (GObject      *gobject,
 GeglColorModel * 
 gegl_image_color_model (GeglImage * self)
 {
-  GeglImageImpl * image_impl = GEGL_IMAGE_IMPL(GEGL_OP(self)->op_impl);
-  return gegl_image_impl_color_model(image_impl);
+  g_return_val_if_fail (self != NULL, NULL);
+  g_return_val_if_fail (GEGL_IS_IMAGE (self), NULL);
+
+  return self->color_model ? 
+         self->color_model :
+         self->derived_color_model;
 }
 
 /**
@@ -168,33 +183,18 @@ void
 gegl_image_set_color_model (GeglImage * self, 
                             GeglColorModel * cm)
 {
-  GeglImageImpl * image_impl = GEGL_IMAGE_IMPL(GEGL_OP(self)->op_impl);
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_IMAGE (self));
+
+  /* Unref any old one */
+  if(self->color_model)
+    g_object_unref(self->color_model);
+
+  /* Set the new color model */
+  self->color_model = cm;
 
   if(cm)
-    self->color_model_is_derived = FALSE;
-  else
-    self->color_model_is_derived = TRUE;
-
-  gegl_image_impl_set_color_model(image_impl, cm);
-}
-
-GeglColorModel * 
-gegl_image_derived_color_model (GeglImage * self)
-{
-  return self->derived_color_model;
-}
-
-void 
-gegl_image_set_derived_color_model (GeglImage * self, 
-                                       GeglColorModel * cm)
-{
-  if(self->derived_color_model)
-    g_object_unref(self->derived_color_model);
-
-  self->derived_color_model = cm;
-
-  if(self->derived_color_model)
-    g_object_ref(self->derived_color_model);
+    g_object_ref(cm);
 }
 
 /**
@@ -208,7 +208,7 @@ gegl_image_set_derived_color_model (GeglImage * self,
  **/
 void
 gegl_image_compute_derived_color_model (GeglImage * self, 
-                                           GList * input_color_models)
+                                        GList * input_color_models)
 {
    g_return_if_fail (self != NULL);
    g_return_if_fail (GEGL_IS_IMAGE (self));
@@ -225,15 +225,31 @@ static void
 compute_derived_color_model (GeglImage * self, 
                              GList * input_color_models)
 {
-  GeglImageImpl * image_impl = GEGL_IMAGE_IMPL(GEGL_OP(self)->op_impl);
-  GeglColorModel * cm = gegl_image_impl_color_model(image_impl);
-
-  gegl_image_set_derived_color_model(self, cm);
-
-  if(self->color_model_is_derived)
-    gegl_image_impl_set_color_model(image_impl, cm);
-
+  if(input_color_models)
+    {
+      GeglColorModel * cm = (GeglColorModel*)(input_color_models->data);
+      gegl_image_set_derived_color_model(self, cm);
+    }
 }
+
+void 
+gegl_image_set_derived_color_model (GeglImage * self, 
+                                    GeglColorModel * cm)
+{
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_IMAGE (self));
+
+  /* Unref any old one */
+  if(self->derived_color_model)
+    g_object_unref(self->derived_color_model);
+
+  /* Set the new color model */
+  self->derived_color_model = cm;
+
+  if(self->derived_color_model)
+    g_object_ref(self->derived_color_model);
+}
+
 
 /**
  * gegl_image_get_have_rect:
@@ -245,7 +261,7 @@ compute_derived_color_model (GeglImage * self,
  **/
 void 
 gegl_image_get_have_rect (GeglImage * self, 
-                             GeglRect * have_rect)
+                          GeglRect * have_rect)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE (self));
@@ -263,7 +279,7 @@ gegl_image_get_have_rect (GeglImage * self,
  **/
 void 
 gegl_image_set_have_rect (GeglImage * self, 
-                             GeglRect * have_rect)
+                          GeglRect * have_rect)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE (self));
@@ -281,7 +297,7 @@ gegl_image_set_have_rect (GeglImage * self,
  **/
 void 
 gegl_image_get_result_rect (GeglImage * self, 
-                               GeglRect * result_rect)
+                            GeglRect * result_rect)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE (self));
@@ -299,7 +315,7 @@ gegl_image_get_result_rect (GeglImage * self,
  **/
 void 
 gegl_image_set_result_rect (GeglImage * self, 
-                               GeglRect * result_rect)
+                            GeglRect * result_rect)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE (self));
@@ -319,8 +335,8 @@ gegl_image_set_result_rect (GeglImage * self,
  **/
 void 
 gegl_image_compute_have_rect (GeglImage * self, 
-                                 GeglRect * have_rect, 
-                                 GList * inputs_have_rects)
+                              GeglRect * have_rect, 
+                              GList * inputs_have_rects)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE (self));
@@ -346,9 +362,9 @@ gegl_image_compute_have_rect (GeglImage * self,
  **/
 void 
 gegl_image_compute_result_rect (GeglImage * self, 
-                                   GeglRect * result_rect, 
-                                   GeglRect * need_rect, 
-                                   GeglRect * have_rect)
+                                GeglRect * result_rect, 
+                                GeglRect * need_rect, 
+                                GeglRect * have_rect)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE (self));
@@ -371,7 +387,7 @@ gegl_image_compute_result_rect (GeglImage * self,
  **/
 void 
 gegl_image_get_need_rect (GeglImage * self, 
-                             GeglRect * need_rect)
+                          GeglRect * need_rect)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE(self));
@@ -389,7 +405,7 @@ gegl_image_get_need_rect (GeglImage * self,
  **/
 void 
 gegl_image_set_need_rect (GeglImage * self, 
-                             GeglRect * need_rect)
+                          GeglRect * need_rect)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE (self));
@@ -401,7 +417,7 @@ gegl_image_set_need_rect (GeglImage * self,
  * gegl_image_compute_preimage:
  * @self: a #GeglImage.
  * @preimage: returned preimage rect on ith input. 
- * @rect: a rect on the #GeglOpImpl.
+ * @rect: a rect on the #GeglImage.
  * @i: which input.
  *
  * Computes the @preimage of @rect on the ith input. This is the inverse map
@@ -410,9 +426,9 @@ gegl_image_set_need_rect (GeglImage * self,
  **/
 void 
 gegl_image_compute_preimage (GeglImage * self, 
-                                GeglRect * preimage, 
-                                GeglRect * rect, 
-                                gint i)
+                             GeglRect * preimage, 
+                             GeglRect * rect, 
+                             gint i)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE (self));
@@ -425,7 +441,7 @@ gegl_image_compute_preimage (GeglImage * self,
   }
 }
 
-GeglImageImpl* 
+GeglImage* 
 gegl_image_get_dest (GeglImage *self)
 {
   g_return_val_if_fail (self != NULL, NULL);
@@ -439,7 +455,7 @@ gegl_image_get_dest (GeglImage *self)
 
 void             
 gegl_image_set_dest (GeglImage *self,
-                  GeglImageImpl *dest)
+                     GeglImage *dest)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE (self));

@@ -14,13 +14,7 @@ GeglSimpleImageMgr
 
 </para>
 
-<!-- ##### STRUCT GeglTile ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglImageImpl ##### -->
+<!-- ##### STRUCT GeglSimpleImageMgr ##### -->
 <para>
 
 </para>
@@ -32,7 +26,9 @@ GeglSimpleImageMgr
 </para>
 
 @self: 
-@image_impl: 
+@image: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@image_impl: 
 
 

@@ -6,18 +6,10 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include "gegl-object.h"
+#include "gegl-op.h"
+#include "gegl-tile-iterator.h"
 
-#ifndef __TYPEDEF_GEGL_OP_IMPL__
-#define __TYPEDEF_GEGL_OP_IMPL__
-typedef struct _GeglOpImpl GeglOpImpl;
-#endif
-
-#ifndef __TYPEDEF_GEGL_TILE_ITERATOR__
-#define __TYPEDEF_GEGL_TILE_ITERATOR__
-typedef struct _GeglTileIterator GeglTileIterator;
-#endif
-
-typedef void (*GeglScanlineFunc)(GeglOpImpl *op_impl,
+typedef void (*GeglScanlineFunc)(GeglOp *op,
                                  GeglTileIterator ** iters, 
                                  gint width);
 
@@ -39,7 +31,7 @@ struct _GeglScanlineProcessor {
 
    /*< private >*/
    GeglScanlineFunc func;
-   GeglOpImpl *op_impl;
+   GeglOp *op;
 };
 
 typedef struct _GeglScanlineProcessorClass GeglScanlineProcessorClass;

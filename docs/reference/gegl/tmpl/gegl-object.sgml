@@ -2,10 +2,14 @@
 GeglObject
 
 <!-- ##### SECTION Short_Description ##### -->
+Base class for gegl.
 
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
+This is the base class for gegl.  All gegl classes extend from this class.
+GeglObjects have a construction flag, keep track of pointers to interfaces for
+some color conversions, but aside from this dont do much.
 
 </para>
 
@@ -13,6 +17,12 @@ GeglObject
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglObject ##### -->
+<para>
+
+</para>
+
 
 <!-- ##### FUNCTION gegl_object_add_interface ##### -->
 <para>

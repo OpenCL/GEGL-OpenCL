@@ -2,11 +2,20 @@
 GeglTile
 
 <!-- ##### SECTION Short_Description ##### -->
+GeglTile represents an area of an GeglImage.
 
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This object describes a chunk of image data that corresponds to a portion of
+image space. It represents image data for an Image or SampledImage. Tiles have
+ColorModels and pointers to Buffers. They return pointers to the underlying
+data and provide (through TileIterators) different ways to traverse the data.
+The number of banks a Tile's Buffer has depends on the type of Tile it is.
+Packed data Tiles will have just a Buffer with one bank, while separated
+channel Tiles may have a Buffer with banks for each channel.  Tiles are the
+basic image data structure the ImageMgr passes back to Ops in their prepare,
+process, and finish routines.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -14,19 +23,7 @@ GeglTile
 
 </para>
 
-<!-- ##### STRUCT GeglBuffer ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglColorModel ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglImage ##### -->
+<!-- ##### STRUCT GeglTile ##### -->
 <para>
 
 </para>

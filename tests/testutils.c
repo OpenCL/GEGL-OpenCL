@@ -80,10 +80,8 @@ gboolean
 check_rgb_float_pixel(GeglImage *dest, gfloat a, gfloat b, gfloat c)
 {
   gfloat *data[3];
-  GeglImageImpl * image_impl = (GeglImageImpl*)gegl_op_get_op_impl(GEGL_OP(dest));
   GeglImageMgr *image_mgr = gegl_image_mgr_instance();
-  GeglTile *tile = gegl_simple_image_mgr_get_tile(GEGL_SIMPLE_IMAGE_MGR(image_mgr), image_impl); 
-  g_object_unref(image_impl);
+  GeglTile *tile = gegl_simple_image_mgr_get_tile(GEGL_SIMPLE_IMAGE_MGR(image_mgr), dest); 
   g_object_unref(image_mgr);
   gegl_tile_get_data_at(tile, (gpointer*)data, 0,0);
 
@@ -99,10 +97,8 @@ gboolean
 check_gray_float_pixel(GeglImage *dest, gfloat a)
 {
   gfloat *data[1];
-  GeglImageImpl * image_impl = (GeglImageImpl*)gegl_op_get_op_impl(GEGL_OP(dest));
   GeglImageMgr *image_mgr = gegl_image_mgr_instance();
-  GeglTile *tile = gegl_simple_image_mgr_get_tile(GEGL_SIMPLE_IMAGE_MGR(image_mgr), image_impl); 
-  g_object_unref(image_impl);
+  GeglTile *tile = gegl_simple_image_mgr_get_tile(GEGL_SIMPLE_IMAGE_MGR(image_mgr), dest); 
   g_object_unref(image_mgr);
   gegl_tile_get_data_at(tile, (gpointer*)data, 0,0);
 

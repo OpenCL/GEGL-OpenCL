@@ -7,17 +7,10 @@ extern "C" {
 
 #include "gegl-node.h"
 
-
 #ifndef __TYPEDEF_GEGL_SAMPLED_IMAGE__
 #define __TYPEDEF_GEGL_SAMPLED_IMAGE__
 typedef struct _GeglSampledImage  GeglSampledImage;
 #endif
-
-#ifndef __TYPEDEF_GEGL_OP_IMPL__
-#define __TYPEDEF_GEGL_OP_IMPL__
-typedef struct _GeglOpImpl GeglOpImpl;
-#endif
-
 
 #define GEGL_TYPE_OP               (gegl_op_get_type ())
 #define GEGL_OP(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OP, GeglOp))
@@ -35,13 +28,26 @@ struct _GeglOp {
 
    /*< private >*/
    gint alt_input;
-   GeglOpImpl * op_impl;
 };
 
 typedef struct _GeglOpClass GeglOpClass;
 struct _GeglOpClass {
    GeglNodeClass __parent__;
+
+   void (* prepare)                (GeglOp * self, 
+                                    GList * request_list);
+   void (* process)                (GeglOp * self, 
+                                    GList * request_list);
+   void (* finish)                 (GeglOp * self, 
+                                    GList * request_list);
 };
+
+void      gegl_op_prepare              (GeglOp * self, 
+                                        GList * request_list);
+void      gegl_op_process              (GeglOp * self, 
+                                        GList * request_list);
+void      gegl_op_finish               (GeglOp * self, 
+                                        GList * request_list);
 
 GType            gegl_op_get_type         (void);
 gint             gegl_op_get_alt_input    (GeglOp * self);
@@ -55,10 +61,6 @@ void             gegl_op_set_source0      (GeglOp *op,
 GeglOp*          gegl_op_get_source1      (GeglOp *self);
 void             gegl_op_set_source1      (GeglOp *op, 
                                            GeglOp *source1);
-
-GeglOpImpl*        gegl_op_get_op_impl         (GeglOp *self);
-void               gegl_op_set_op_impl         (GeglOp *self,
-                                                GeglOpImpl *op_impl);
 
 #ifdef __cplusplus
 }

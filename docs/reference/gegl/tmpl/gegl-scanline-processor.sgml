@@ -14,13 +14,7 @@ GeglScanlineProcessor
 
 </para>
 
-<!-- ##### STRUCT GeglOpImpl ##### -->
-<para>
-
-</para>
-
-
-<!-- ##### STRUCT GeglTileIterator ##### -->
+<!-- ##### STRUCT GeglScanlineProcessor ##### -->
 <para>
 
 </para>
@@ -31,9 +25,11 @@ GeglScanlineProcessor
 
 </para>
 
-@op_impl: 
+@op: 
 @iters: 
 @width: 
+<!-- # Unused Parameters # -->
+@op_impl: 
 
 
 <!-- ##### FUNCTION gegl_scanline_processor_process ##### -->

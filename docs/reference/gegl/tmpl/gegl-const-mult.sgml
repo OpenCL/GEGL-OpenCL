@@ -14,6 +14,12 @@ GeglConstMult
 
 </para>
 
+<!-- ##### STRUCT GeglConstMult ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### FUNCTION gegl_const_mult_get_multiplier ##### -->
 <para>
 

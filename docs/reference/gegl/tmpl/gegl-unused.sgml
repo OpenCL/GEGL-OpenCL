@@ -1,0 +1,626 @@
+<!-- ##### SECTION ./tmpl/gegl-add-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-add-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-add-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-add-impl.sgml:Title ##### -->
+GeglAddImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-comp-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-comp-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-comp-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-comp-impl.sgml:Title ##### -->
+GeglCompImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-comp-premult-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-comp-premult-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-comp-premult-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-comp-premult-impl.sgml:Title ##### -->
+GeglCompPremultImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-const-mult-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-const-mult-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-const-mult-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-const-mult-impl.sgml:Title ##### -->
+GeglConstMultImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-copy-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-copy-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-copy-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-copy-impl.sgml:Title ##### -->
+GeglCopyImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-dark-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-dark-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-dark-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-dark-impl.sgml:Title ##### -->
+GeglDarkImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-diff-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-diff-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-diff-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-diff-impl.sgml:Title ##### -->
+GeglDiffImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-fill-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-fill-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-fill-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-fill-impl.sgml:Title ##### -->
+GeglFillImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-image-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-image-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-image-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-image-impl.sgml:Title ##### -->
+GeglImageImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-impl.sgml:Title ##### -->
+gegl-impl
+
+
+<!-- ##### SECTION ./tmpl/gegl-light-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-light-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-light-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-light-impl.sgml:Title ##### -->
+GeglLightImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-max-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-max-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-max-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-max-impl.sgml:Title ##### -->
+GeglMaxImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-min-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-min-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-min-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-min-impl.sgml:Title ##### -->
+GeglMinImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-mult-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-mult-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-mult-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-mult-impl.sgml:Title ##### -->
+GeglMultImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-op-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-op-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-op-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-op-impl.sgml:Title ##### -->
+GeglOpImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-point-op-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-point-op-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-point-op-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-point-op-impl.sgml:Title ##### -->
+GeglPointOpImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-premult-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-premult-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-premult-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-premult-impl.sgml:Title ##### -->
+GeglPremultImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-print-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-print-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-print-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-print-impl.sgml:Title ##### -->
+GeglPrintImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-sampled-image-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-sampled-image-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-sampled-image-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-sampled-image-impl.sgml:Title ##### -->
+GeglSampledImageImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-screen-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-screen-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-screen-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-screen-impl.sgml:Title ##### -->
+GeglScreenImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-stat-op-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-stat-op-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-stat-op-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-stat-op-impl.sgml:Title ##### -->
+GeglStatOpImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-subtract-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-subtract-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-subtract-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-subtract-impl.sgml:Title ##### -->
+GeglSubtractImpl
+
+
+<!-- ##### SECTION ./tmpl/gegl-unpremult-impl.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-unpremult-impl.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gegl-unpremult-impl.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gegl-unpremult-impl.sgml:Title ##### -->
+GeglUnpremultImpl
+
+
+<!-- ##### STRUCT GeglImageImpl ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglOpImpl ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_const_mult_impl_get_multiplier ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_const_mult_impl_set_multiplier ##### -->
+<para>
+
+</para>
+
+@self: 
+@multiplier: 
+
+<!-- ##### FUNCTION gegl_fill_impl_get_fill_color ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_fill_impl_set_fill_color ##### -->
+<para>
+
+</para>
+
+@self: 
+@fill_color: 
+
+<!-- ##### FUNCTION gegl_image_derived_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_image_impl_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_image_impl_set_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@cm: 
+
+<!-- ##### FUNCTION gegl_op_get_op_impl ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_impl_finish ##### -->
+<para>
+
+</para>
+
+@self: 
+@request_list: 
+
+<!-- ##### FUNCTION gegl_op_impl_get_num_inputs ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_op_impl_prepare ##### -->
+<para>
+
+</para>
+
+@self: 
+@request_list: 
+
+<!-- ##### FUNCTION gegl_op_impl_process ##### -->
+<para>
+
+</para>
+
+@self: 
+@request_list: 
+
+<!-- ##### FUNCTION gegl_op_set_op_impl ##### -->
+<para>
+
+</para>
+
+@self: 
+@op_impl: 
+
+<!-- ##### FUNCTION gegl_point_op_impl_get_nth_input_offset ##### -->
+<para>
+
+</para>
+
+@self: 
+@i: 
+@point: 
+
+<!-- ##### FUNCTION gegl_point_op_impl_set_nth_input_offset ##### -->
+<para>
+
+</para>
+
+@self: 
+@i: 
+@point: 
+
+<!-- ##### FUNCTION gegl_sampled_image_impl_get_height ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_sampled_image_impl_get_width ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+<!-- ##### FUNCTION gegl_sampled_image_impl_set_height ##### -->
+<para>
+
+</para>
+
+@self: 
+@height: 
+
+<!-- ##### FUNCTION gegl_sampled_image_impl_set_width ##### -->
+<para>
+
+</para>
+
+@self: 
+@width: 
+

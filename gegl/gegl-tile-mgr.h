@@ -22,9 +22,9 @@ typedef struct _GeglOp GeglOp;
 typedef struct _GeglBuffer GeglBuffer;
 #endif
 
-#ifndef __TYPEDEF_GEGL_IMAGE_IMPL__
-#define __TYPEDEF_GEGL_IMAGE_IMPL__
-typedef struct _GeglImageImpl GeglImageImpl;
+#ifndef __TYPEDEF_GEGL_IMAGE__
+#define __TYPEDEF_GEGL_IMAGE__
+typedef struct _GeglImage GeglImage;
 #endif
 
 #define GEGL_TYPE_TILE_MGR               (gegl_tile_mgr_get_type ())
@@ -50,19 +50,19 @@ struct _GeglTileMgrClass {
 
    GeglTile * (* fetch_output_tile)  (GeglTileMgr * self,  
                                       GeglOp * op, 
-                                      GeglImageImpl * dest, 
+                                      GeglImage * dest, 
                                       GeglRect * area);
    GeglTile * (* fetch_input_tile)   (GeglTileMgr * self, 
-                                      GeglImageImpl * input, 
+                                      GeglImage * input, 
                                       GeglRect * area);
    void       (* release_tiles)       (GeglTileMgr * self, 
                                        GList * request_list);
    GeglTile * (* get_tile)           (GeglTileMgr * self, 
-                                      GeglImageImpl *image_impl);
+                                      GeglImage* image);
    GeglBuffer * (* create_buffer)    (GeglTileMgr * self, 
                                       GeglTile * tile);
    GeglTile * (*make_tile)           (GeglTileMgr * self, 
-                                      GeglImageImpl* image_impl, 
+                                      GeglImage* image, 
                                       GeglRect * area);
 };
 
@@ -70,19 +70,19 @@ struct _GeglTileMgrClass {
 GType         gegl_tile_mgr_get_type            (void);
 GeglTile *    gegl_tile_mgr_fetch_output_tile   (GeglTileMgr * self, 
                                                 GeglOp * op, 
-                                                GeglImageImpl * dest, 
+                                                GeglImage * dest, 
                                                 GeglRect * area);
 GeglTile *    gegl_tile_mgr_fetch_input_tile    (GeglTileMgr * self, 
-                                                GeglImageImpl * input, 
+                                                GeglImage * input, 
                                                 GeglRect * area);
 void          gegl_tile_mgr_release_tiles        (GeglTileMgr * self, 
                                                   GList * request_list);
 GeglBuffer *  gegl_tile_mgr_create_buffer       (GeglTileMgr * self, 
                                                  GeglTile * tile);
 GeglTile *    gegl_tile_mgr_get_tile            (GeglTileMgr * self, 
-                                                GeglImageImpl * image_impl);
+                                                GeglImage * image);
 GeglTile *    gegl_tile_mgr_make_tile           (GeglTileMgr * self, 
-                                                 GeglImageImpl* image_impl, 
+                                                 GeglImage* image, 
                                                  GeglRect * area);
 #ifdef __cplusplus
 }

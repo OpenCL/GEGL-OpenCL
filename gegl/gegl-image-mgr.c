@@ -126,7 +126,7 @@ gegl_image_mgr_apply (GeglImageMgr * self,
  **/
 void 
 gegl_image_mgr_add_image (GeglImageMgr * self, 
-                              GeglImageImpl * image)
+                          GeglImage * image)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE_MGR (self));
@@ -148,7 +148,7 @@ gegl_image_mgr_add_image (GeglImageMgr * self,
  **/
 void 
 gegl_image_mgr_delete_image (GeglImageMgr * self, 
-                                 GeglImageImpl * image)
+                             GeglImage * image)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_IMAGE_MGR (self));

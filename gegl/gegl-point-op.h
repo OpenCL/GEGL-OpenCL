@@ -7,6 +7,11 @@ extern "C" {
 
 #include "gegl-image.h"
 
+#ifndef __TYPEDEF_GEGL_SCANLINE_PROCESSOR__
+#define __TYPEDEF_GEGL_SCANLINE_PROCESSOR__
+typedef struct _GeglScanlineProcessor  GeglScanlineProcessor;
+#endif
+
 #define GEGL_TYPE_POINT_OP               (gegl_point_op_get_type ())
 #define GEGL_POINT_OP(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_POINT_OP, GeglPointOp))
 #define GEGL_POINT_OP_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_POINT_OP, GeglPointOpClass))
@@ -22,6 +27,8 @@ struct _GeglPointOp {
    GeglImage __parent__;
 
    /*< private >*/
+   GeglPoint * input_offsets;
+   GeglScanlineProcessor * scanline_processor;
 };
 
 typedef struct _GeglPointOpClass GeglPointOpClass;

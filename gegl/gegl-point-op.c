@@ -1,12 +1,20 @@
 #include "gegl-point-op.h"
-#include "gegl-point-op-impl.h"
+#include "gegl-scanline-processor.h"
+#include "gegl-color-model.h"
+#include "gegl-tile.h"
+#include "gegl-tile-iterator.h"
 #include "gegl-utils.h"
 
 static void class_init (GeglPointOpClass * klass);
+static void init (GeglPointOp * self, GeglPointOpClass * klass);
+static GObject* constructor (GType type, guint n_props, GObjectConstructParam *props);
+static void finalize (GObject * gobject);
+
 static void compute_preimage (GeglImage * self_op, GeglRect * preimage, GeglRect * rect, gint i);
 static void compute_have_rect (GeglImage * self_op, GeglRect *have_rect, GList * input_have_rects);
 static void compute_result_rect (GeglImage * self_op, GeglRect * result_rect, GeglRect * need_rect, GeglRect *have_rect);
-static void compute_derived_color_model (GeglImage * self, GList * input_color_models);
+
+static void process (GeglOp * self, GList * request_list);
 
 static gpointer parent_class = NULL;
 
@@ -27,7 +35,7 @@ gegl_point_op_get_type (void)
         NULL,
         sizeof (GeglPointOp),
         0,
-        (GInstanceInitFunc) NULL,
+        (GInstanceInitFunc) init,
       };
 
       type = g_type_register_static (GEGL_TYPE_IMAGE , 
@@ -41,16 +49,63 @@ gegl_point_op_get_type (void)
 static void 
 class_init (GeglPointOpClass * klass)
 {
+  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
   GeglImageClass *image_class = GEGL_IMAGE_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
+  gobject_class->finalize = finalize;
+  gobject_class->constructor = constructor;
+
+  op_class->process = process;
+
   image_class->compute_preimage = compute_preimage;
   image_class->compute_have_rect = compute_have_rect;
   image_class->compute_result_rect = compute_result_rect;
-  image_class->compute_derived_color_model = compute_derived_color_model;
 
   return;
+}
+
+static void 
+init (GeglPointOp * self, 
+      GeglPointOpClass * klass)
+{
+  self->scanline_processor = g_object_new(GEGL_TYPE_SCANLINE_PROCESSOR,NULL);
+  self->scanline_processor->op = GEGL_OP(self);
+  return;
+}
+
+static GObject*        
+constructor (GType                  type,
+             guint                  n_props,
+             GObjectConstructParam *props)
+{
+  GObject *gobject = G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
+  GeglPointOp *self = GEGL_POINT_OP(gobject);
+  GeglNode *self_node = GEGL_NODE(gobject);
+  gint i;
+  gint num_inputs = gegl_node_num_inputs(self_node);
+  self->input_offsets = g_new (GeglPoint, num_inputs);
+
+  for (i = 0; i < num_inputs; i++)
+  {
+    self->input_offsets[i].x = 0;
+    self->input_offsets[i].y = 0;
+  }     
+
+  return gobject;
+}
+
+static void 
+finalize (GObject * gobject)
+{
+  GeglPointOp * self_point_op = GEGL_POINT_OP(gobject);
+
+  g_free(self_point_op->input_offsets); 
+  g_object_unref(self_point_op->scanline_processor);
+
+  G_OBJECT_CLASS (parent_class)->finalize (gobject);
 }
 
 void             
@@ -58,8 +113,18 @@ gegl_point_op_get_nth_input_offset  (GeglPointOp * self,
                                      gint i,
                                      GeglPoint *point)
 {
-  GeglPointOpImpl * point_op_impl = GEGL_POINT_OP_IMPL(GEGL_OP(self)->op_impl);
-  gegl_point_op_impl_get_nth_input_offset (point_op_impl, i, point);
+  g_return_if_fail(self);
+  g_return_if_fail(point);
+
+  {
+    GeglNode * self_node = GEGL_NODE(self);
+
+    if (i >= gegl_node_num_inputs(self_node) || i < 0)
+      g_warning("Cant get offset of %d th input", i);
+
+    point->x = self->input_offsets[i].x;
+    point->y = self->input_offsets[i].y;
+  }
 }
 
 void             
@@ -67,8 +132,26 @@ gegl_point_op_set_nth_input_offset  (GeglPointOp * self,
                                      gint i,
                                      GeglPoint * point)
 {
-  GeglPointOpImpl * point_op_impl = GEGL_POINT_OP_IMPL(GEGL_OP(self)->op_impl);
-  gegl_point_op_impl_set_nth_input_offset (point_op_impl, i, point);
+  g_return_if_fail(self);
+  g_return_if_fail(point);
+
+  {
+    GeglNode * self_node = GEGL_NODE(self);
+
+    if (i >= gegl_node_num_inputs(self_node) || i < 0)
+      g_warning("Cant get offset of %d th input", i);
+
+    self->input_offsets[i].x = point->x;
+    self->input_offsets[i].y = point->y;
+  }
+}
+
+static void 
+process (GeglOp * self_op, 
+         GList * requests)
+{
+  GeglPointOp *self =  GEGL_POINT_OP(self_op);
+  gegl_scanline_processor_process(self->scanline_processor, requests);
 }
 
 static void 
@@ -133,18 +216,4 @@ compute_result_rect (GeglImage * self_image,
 {
   /* By default just intersect result and need */
   gegl_rect_intersect (result_rect, need_rect, have_rect);
-}
-
-static void 
-compute_derived_color_model (GeglImage * self, 
-                             GList * input_color_models)
-{
-  GeglImageImpl * image_impl = GEGL_IMAGE_IMPL(GEGL_OP(self)->op_impl);
-  GeglColorModel * cm = (GeglColorModel*)(input_color_models->data);
-
-  gegl_image_set_derived_color_model(self, cm);
-
-  if(self->color_model_is_derived)
-    gegl_image_impl_set_color_model(image_impl, cm);
-
 }

@@ -2,17 +2,29 @@
 GeglBuffer
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Abstract Base class for memory buffers. 
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+Buffers are the basic memory buffer objects for gegl.  Buffers have an array of
+pointers of data banks.  Each bank of a Buffer has a size in bytes. The number
+of banks is determined by the Tile and ColorModel that creates the Buffer. The
+Buffer has no knowledge of the type of data in the buffer, aside from the
+number of banks and the the number of bytes in each buffer. An ImageMgr
+implementing swapping would use a subclass of Buffer that can have its data
+banks swapped to and from secondary storage.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### STRUCT GeglBuffer ##### -->
+<para>
+
+</para>
+
 
 <!-- ##### FUNCTION gegl_buffer_get_bytes_per_buffer ##### -->
 <para>

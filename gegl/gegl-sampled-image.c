@@ -1,7 +1,8 @@
 #include "gegl-sampled-image.h"
-#include "gegl-sampled-image-impl.h"
+#include "gegl-image.h"
 #include "gegl-image-mgr.h"
 #include "gegl-color-model.h"
+#include "gegl-object.h"
 #include "gegl-utils.h"
 
 enum
@@ -15,6 +16,7 @@ enum
 static void class_init (GeglSampledImageClass * klass);
 static void init(GeglSampledImage *self, GeglSampledImageClass *klass);
 static GObject* constructor (GType type, guint n_props, GObjectConstructParam *props);
+
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
@@ -93,8 +95,6 @@ static void
 init (GeglSampledImage * self, 
       GeglSampledImageClass * klass)
 {
-  GeglOp *self_op = GEGL_OP(self);
-  self_op->op_impl = g_object_new(GEGL_TYPE_SAMPLED_IMAGE_IMPL, NULL);  
   return;
 }
 
@@ -104,10 +104,10 @@ constructor (GType                  type,
              GObjectConstructParam *props)
 {
   GObject *gobject = G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
-  GeglOp *self_op = GEGL_OP(gobject);
+  GeglImage *self_image = GEGL_IMAGE(gobject);
 
   GeglImageMgr *mgr = gegl_image_mgr_instance();
-  gegl_image_mgr_add_image(mgr, GEGL_IMAGE_IMPL(self_op->op_impl));
+  gegl_image_mgr_add_image(mgr, self_image);
   g_object_unref(mgr);
 
   return gobject;
@@ -165,50 +165,42 @@ get_property (GObject      *gobject,
  * gegl_sampled_image_get_width:
  * @self: a #GeglSampledImage. 
  *
- * Gets the width of the image buffer.
+ * Gets the width of the sampled image.
  *
- * Returns: width of the image buffer.
+ * Returns: width of the sampled image.
  **/
 gint 
 gegl_sampled_image_get_width (GeglSampledImage * self)
 {
-    GeglSampledImageImpl * sampled_image_impl = 
-      GEGL_SAMPLED_IMAGE_IMPL(GEGL_OP(self)->op_impl);
-    return gegl_sampled_image_impl_get_width(sampled_image_impl);
+  return self->width;
 }
 
 void
 gegl_sampled_image_set_width (GeglSampledImage * self, 
-                             gint width)
+                                    gint width)
 {
-  GeglSampledImageImpl * sampled_image_impl = 
-    GEGL_SAMPLED_IMAGE_IMPL(GEGL_OP(self)->op_impl);
-  gegl_sampled_image_impl_set_width (sampled_image_impl, width);
+  self->width = width;
 }
 
 /**
  * gegl_sampled_image_get_height:
  * @self: a #GeglSampledImage. 
  *
- * Gets the height of the image buffer.
+ * Gets the height of the sampled image.
  *
- * Returns: height of the image buffer.
+ * Returns: height of the sampled image.
  **/
 gint 
 gegl_sampled_image_get_height (GeglSampledImage * self)
 {
-  GeglSampledImageImpl * sampled_image_impl = 
-    GEGL_SAMPLED_IMAGE_IMPL(GEGL_OP(self)->op_impl);
-  return gegl_sampled_image_impl_get_height(sampled_image_impl);
+  return self->height;
 }
 
 void
 gegl_sampled_image_set_height (GeglSampledImage * self, 
-                              gint height)
+                               gint height)
 {
-  GeglSampledImageImpl * sampled_image_impl = 
-    GEGL_SAMPLED_IMAGE_IMPL(GEGL_OP(self)->op_impl);
-  gegl_sampled_image_impl_set_height(sampled_image_impl, height);
+  self->height = height;
 }
 
 static void 
@@ -216,12 +208,11 @@ compute_have_rect (GeglImage * self_image,
                    GeglRect * have_rect,
                    GList * input_have_rects)
 {
-  GeglOp * self_op = GEGL_OP(self_image);
-  GeglSampledImageImpl * sampled_image_impl = GEGL_SAMPLED_IMAGE_IMPL(self_op->op_impl);
+  GeglSampledImage * self = GEGL_SAMPLED_IMAGE(self_image);
   have_rect->x = 0;
   have_rect->y = 0;
-  have_rect->w = gegl_sampled_image_impl_get_width(sampled_image_impl);
-  have_rect->h = gegl_sampled_image_impl_get_height(sampled_image_impl);
+  have_rect->w = self->width;
+  have_rect->h = self->height;
 }
 
 static void 

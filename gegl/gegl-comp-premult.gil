@@ -1,0 +1,547 @@
+#include "gegl-comp-premult.h"
+#include "gegl-scanline-processor.h"
+#include "gegl-color-model.h"
+#include "gegl-tile.h"
+#include "gegl-tile-iterator.h"
+#include "gegl-utils.h"
+
+static void class_init (GeglCompPremultClass * klass);
+static void init (GeglCompPremult * self, GeglCompPremultClass * klass);
+static void prepare (GeglOp * self_op, GList * requests);
+
+static void scanline_ca_op_ca (GeglOp * self_op, GeglTileIterator ** iters, gint width);
+static void scanline_ca_op_c (GeglOp * self_op, GeglTileIterator ** iters, gint width);
+static void scanline_c_op_ca (GeglOp * self_op, GeglTileIterator ** iters, gint width);
+static void scanline_c_op_c (GeglOp * self_op, GeglTileIterator ** iters, gint width);
+
+static gpointer parent_class = NULL;
+
+GType
+gegl_comp_premult_get_type (void)
+{
+  static GType type = 0;
+
+  if (!type)
+    {
+      static const GTypeInfo typeInfo =
+      {
+        sizeof (GeglCompPremultClass),
+        (GBaseInitFunc) NULL,
+        (GBaseFinalizeFunc) NULL,
+        (GClassInitFunc) class_init,
+        (GClassFinalizeFunc) NULL,
+        NULL,
+        sizeof (GeglCompPremult),
+        0,
+        (GInstanceInitFunc) init,
+      };
+
+      type = g_type_register_static (GEGL_TYPE_POINT_OP, 
+                                     "GeglCompPremult", 
+                                     &typeInfo, 
+                                     0);
+    }
+    return type;
+}
+
+static void 
+class_init (GeglCompPremultClass * klass)
+{
+  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
+
+  parent_class = g_type_class_peek_parent(klass);
+
+  op_class->prepare = prepare;
+  return;
+}
+
+static void 
+init (GeglCompPremult * self, 
+      GeglCompPremultClass * klass)
+{
+  self->comp_mode = GEGL_COMPOSITE_OVER;
+
+  {
+    GeglNode * self_node = GEGL_NODE(self); 
+    GList * inputs = g_list_append(NULL, NULL);
+    inputs = g_list_append(inputs, NULL);
+    self_node->num_inputs = 2;
+    gegl_node_set_inputs(self_node, inputs);
+    g_list_free(inputs);
+  }
+  return;
+}
+
+static void 
+prepare (GeglOp * self_op, 
+         GList * requests)
+{
+  GeglPointOp *self_point_op = GEGL_POINT_OP(self_op);
+
+  GeglOpRequest *dest_request = (GeglOpRequest*)g_list_nth_data(requests,0); 
+  GeglTile *dest = dest_request->tile;
+  GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
+
+  GeglOpRequest *s1_request = (GeglOpRequest*)g_list_nth_data(requests,1); 
+  GeglTile *s1 = s1_request->tile;
+  GeglColorModel * s1_cm = gegl_tile_get_color_model (s1);
+
+  GeglOpRequest *s2_request = (GeglOpRequest*)g_list_nth_data(requests,2); 
+  GeglTile *s2 = s2_request->tile;
+  GeglColorModel * s2_cm = gegl_tile_get_color_model (s2);
+
+  g_return_if_fail (dest_cm);
+  g_return_if_fail (s1_cm);
+  g_return_if_fail (s2_cm);
+
+    {
+      gboolean  s1_has_alpha = gegl_color_model_has_alpha(s1_cm);
+      gboolean  s2_has_alpha = gegl_color_model_has_alpha(s2_cm); 
+
+      /* dest = src2 op src1 */ 
+
+      if ( s2_has_alpha && s1_has_alpha)
+        self_point_op->scanline_processor->func = scanline_ca_op_ca;
+      else if ( s2_has_alpha && !s1_has_alpha )
+        self_point_op->scanline_processor->func = scanline_ca_op_c;
+      else if ( !s2_has_alpha && s1_has_alpha )
+        self_point_op->scanline_processor->func = scanline_c_op_ca;
+      else if ( !s2_has_alpha && !s1_has_alpha )
+        self_point_op->scanline_processor->func = scanline_c_op_c;
+   }
+}
+
+/**
+ * scanline_ca_op_ca:
+ * @self_op: #a GeglOp. 
+ * @iters: array of TileIterators. 
+ * @width: width of scanline. 
+ *
+ * Process an color_alpha op color_alpha scanline. 
+ *
+ **/
+static void 
+scanline_ca_op_ca (GeglOp * self_op, 
+                   GeglTileIterator ** iters, 
+                   gint width)
+{
+  GeglCompPremult *self = GEGL_COMP_PREMULT(self_op);
+  GENERIC_IMAGE_DECL_BEGIN
+  Pixel dest(color,alpha);
+  Pixel src1(color,alpha);
+  Pixel src2(color,alpha);
+  Channel a, b;
+  GENERIC_IMAGE_DECL_END
+
+  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
+  gegl_tile_iterator_get_current (iters[1], (gpointer*)src1_data);
+  gegl_tile_iterator_get_current (iters[2], (gpointer*)src2_data);
+
+  GENERIC_IMAGE_IMAGE_DATA_INIT
+
+  switch(self->comp_mode)
+    {
+    case GEGL_COMPOSITE_REPLACE:
+      while (width--) 
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          dest = src2;
+
+          dX(dest,1);
+          dX(src2,1); 
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_OVER:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          a = WP - src2_alpha;
+          dest = a * src1 + src2;
+
+          dX(dest,1);
+          dX(src1,1);
+          dX(src2,1); 
+
+          GENERIC_IMAGE_CODE_END     
+        } 
+      break;
+    case GEGL_COMPOSITE_IN:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          b = src1_alpha;
+          dest = b * src2;
+
+          dX(dest,1);
+          dX(src1,1);
+          dX(src2,1);
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_OUT:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          b = WP - src1_alpha;
+          dest = b * src2;
+
+          dX(dest,1);
+          dX(src1,1);
+          dX(src2,1); 
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_ATOP:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          a = WP - src2_alpha; 
+          b = src1_alpha; 
+          dest_color = a * src1_color + b * src2_color;
+          dest_alpha = b;
+
+          dX(dest,1);
+          dX(src1,1);
+          dX(src2,1); 
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_XOR:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          a = WP - src2_alpha;
+          b = WP - src1_alpha; 
+          dest = a * src1 + b * src2;
+
+          dX(dest,1);
+          dX(src1,1);
+          dX(src2,1); 
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    default:
+      break;
+    }  
+}
+
+/**
+ * scanline_ca_op_c:
+ * @self_op: #a GeglOp. 
+ * @iters: array of TileIterators. 
+ * @width: width of scanline. 
+ *
+ * Process color_alpha op color scanline. 
+ *
+ **/
+static void 
+scanline_ca_op_c (GeglOp * self_op, 
+                  GeglTileIterator ** iters, 
+                  gint width)
+{
+  GeglCompPremult *self = GEGL_COMP_PREMULT(self_op);
+  GENERIC_IMAGE_DECL_BEGIN
+  Pixel dest(color); 
+  Pixel src1(color);
+  Pixel src2(color,alpha);
+  Channel a;
+  GENERIC_IMAGE_DECL_END
+
+  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
+  gegl_tile_iterator_get_current (iters[1], (gpointer*)src1_data);
+  gegl_tile_iterator_get_current (iters[2], (gpointer*)src2_data);
+
+  GENERIC_IMAGE_IMAGE_DATA_INIT
+    
+  switch(self->comp_mode)
+    {
+    case GEGL_COMPOSITE_REPLACE:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          dest_color = src2_color;
+
+          dX(dest,1);
+          dX(src2,1); 
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_OVER:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          a = WP - src2_alpha;
+          dest_color = a * src1_color + src2_color;
+
+          dX(dest,1);
+          dX(src1,1);
+          dX(src2,1); 
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_IN:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          dest_color = src2_color;
+
+          dX(dest,1);
+          dX(src2,1);
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_OUT:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          dest = ZERO;
+
+          dX(dest,1); 
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_ATOP:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          a = WP - src2_alpha; 
+          dest_color = a * src1_color + src2_color;
+
+          dX(dest,1);
+          dX(src1,1);
+          dX(src2,1);
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_XOR:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          a = WP - src2_alpha; 
+          dest_color = a * src1_color;
+
+          dX(dest,1);
+          dX(src1,1);
+          dX(src2,1);
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    default:
+      break;
+    } 
+}
+
+/**
+ * scanline_c_op_ca:
+ * @self_op: #a GeglOp. 
+ * @iters: array of TileIterators. 
+ * @width: width of scanline. 
+ *
+ * Process color op color_alpha scanline. 
+ *
+ **/
+static void 
+scanline_c_op_ca (GeglOp * self_op, 
+                  GeglTileIterator ** iters, 
+                  gint width)
+{
+  GeglCompPremult *self = GEGL_COMP_PREMULT(self_op);
+  GENERIC_IMAGE_DECL_BEGIN
+  Pixel dest(color,alpha);
+  Pixel src1(color,alpha);
+  Pixel src2(color);
+  Channel b;
+  GENERIC_IMAGE_DECL_END 
+
+  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
+  gegl_tile_iterator_get_current (iters[1], (gpointer*)src1_data);
+  gegl_tile_iterator_get_current (iters[2], (gpointer*)src2_data);
+
+  GENERIC_IMAGE_IMAGE_DATA_INIT
+
+  switch(self->comp_mode)
+    {
+    case GEGL_COMPOSITE_REPLACE:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          dest_color = src2_color;
+          dest_alpha = WP;
+
+          dX(dest,1);
+          dX(src2,1); 
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_OVER:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          dest_color = src2_color;
+          dest_alpha = WP;
+
+          dX(dest,1);
+          dX(src2,1); 
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_IN:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          b = src1_alpha;
+          dest_color = b * src2_color;
+          dest_alpha = b;  
+
+          dX(dest,1);
+          dX(src1,1);
+          dX(src2,1); 
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_OUT:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          b = WP - src1_alpha;
+          dest_color = b * src2_color;
+          dest_alpha = b;  
+
+          dX(dest,1);
+          dX(src1,1); 
+          dX(src2,1); 
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_ATOP:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          b = src1_alpha; 
+          dest_color = b * src2_color;
+          dest_alpha = b;
+
+          dX(dest,1);
+          dX(src1,1);
+          dX(src2,1);
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_XOR:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+
+          b = WP - src1_alpha;
+          dest_color = b * src2_color;
+          dest_alpha = b;
+
+          dX(dest,1);
+          dX(src1,1);
+          dX(src2,1);
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    default:
+      break;
+    } 
+
+}
+
+/**
+ * scanline_c_op_c:
+ * @self_op: #a GeglOp. 
+ * @iters: array of TileIterators. 
+ * @width: width of scanline. 
+ *
+ * Process color op color scanline. 
+ *
+ **/
+static void 
+scanline_c_op_c (GeglOp * self_op, 
+                 GeglTileIterator ** iters, 
+                 gint width)
+{
+  GeglCompPremult *self = GEGL_COMP_PREMULT(self_op);
+  GENERIC_IMAGE_DECL_BEGIN
+  Pixel dest(color);
+  Pixel src1(color);
+  Pixel src2(color);
+  GENERIC_IMAGE_DECL_END
+
+  gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
+  gegl_tile_iterator_get_current (iters[1], (gpointer*)src1_data);
+  gegl_tile_iterator_get_current (iters[2], (gpointer*)src2_data);
+
+  GENERIC_IMAGE_IMAGE_DATA_INIT
+    
+  switch(self->comp_mode)
+    {
+    case GEGL_COMPOSITE_REPLACE:
+    case GEGL_COMPOSITE_OVER:
+    case GEGL_COMPOSITE_IN:
+    case GEGL_COMPOSITE_ATOP:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+          dest_color = src2_color;
+
+          dX(dest,1);
+          dX(src1,1);
+          dX(src2,1); 
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    case GEGL_COMPOSITE_OUT:
+    case GEGL_COMPOSITE_XOR:
+      while (width--)
+        {
+          GENERIC_IMAGE_CODE_BEGIN
+          dest_color = ZERO; 
+
+          dX(dest,1);
+
+          GENERIC_IMAGE_CODE_END     
+        }
+      break;
+    default:
+      break;
+    }
+
+}

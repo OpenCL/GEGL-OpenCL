@@ -1,11 +1,9 @@
 #include "gegl-op.h"
-#include "gegl-op-impl.h"
 #include "gegl-node.h"
 #include "gegl-object.h"
 #include "gegl-sampled-image.h"
 #include "gegl-image-mgr.h"
 #include "gegl-utils.h"
-#include <gobject/gvaluecollector.h>
 
 enum
 {
@@ -18,8 +16,10 @@ enum
 static void class_init (GeglOpClass * klass);
 static void init (GeglOp * self, GeglOpClass * klass);
 static void finalize(GObject * gobject);
+
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
+
 static gpointer parent_class = NULL;
 
 GType
@@ -61,6 +61,10 @@ class_init (GeglOpClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
+  klass->prepare = NULL;
+  klass->process = NULL;
+  klass->finish = NULL;
+
   g_object_class_install_property (gobject_class, PROP_SOURCE0,
                                    g_param_spec_object ("source0",
                                                         "Source0",
@@ -85,7 +89,6 @@ init (GeglOp * self,
       GeglOpClass * klass)
 {
   self->alt_input = 0;
-  self->op_impl = NULL;
   return;
 }
 
@@ -93,9 +96,6 @@ static void
 finalize(GObject *gobject)
 {
   GeglOp *self = GEGL_OP (gobject);
-
-  if(self->op_impl) 
-    g_object_unref(self->op_impl);
 
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
@@ -150,32 +150,68 @@ get_property (GObject      *gobject,
   }
 }
 
-GeglOpImpl*      
-gegl_op_get_op_impl (GeglOp *self) 
+/**
+ * gegl_op_prepare:
+ * @self: a #GeglOp.
+ * @request_list: #GeglOpRequest list.
+ *
+ *  Prepares to do the op. Subclasses set up for the op here.
+ *  Inputs are completely determined when this is called.  
+ *
+ **/
+void 
+gegl_op_prepare (GeglOp * self, 
+                     GList * request_list)
 {
-  g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (GEGL_IS_OP (self), NULL);
-
-  if(self->op_impl)
-    g_object_ref(self->op_impl);
-
-  return self->op_impl;
-}
-
-void             
-gegl_op_set_op_impl (GeglOp *self,
-                  GeglOpImpl *op_impl)
-{
+  GeglOpClass *klass;
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_OP (self));
+  klass = GEGL_OP_GET_CLASS(self);
 
-  if (self->op_impl)
-    g_object_unref(self->op_impl);
+  if(klass->prepare)
+    (*klass->prepare)(self,request_list);
+}
 
-  self->op_impl = op_impl;
+/**
+ * gegl_op_process:
+ * @self: a #GeglOp.
+ * @request_list: #GeglOpRequest list.
+ *
+ *  Does the op.
+ *
+ **/
+void 
+gegl_op_process (GeglOp * self, 
+                     GList * request_list)
+{
+  GeglOpClass *klass;
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_OP (self));
+  klass = GEGL_OP_GET_CLASS(self);
 
-  if (op_impl)
-    g_object_ref(op_impl);
+  if(klass->process)
+    (*klass->process)(self,request_list);
+}
+
+/**
+ * gegl_op_finish:
+ * @self: a #GeglOp.
+ * @request_list: #GeglOpRequest list.
+ *
+ * Cleans up after the op.
+ *
+ **/
+void 
+gegl_op_finish (GeglOp * self, 
+                    GList * request_list)
+{
+  GeglOpClass *klass;
+  g_return_if_fail (self != NULL);
+  g_return_if_fail (GEGL_IS_OP (self));
+  klass = GEGL_OP_GET_CLASS(self);
+
+  if(klass->finish)
+    (*klass->finish)(self,request_list);
 }
 
 /**

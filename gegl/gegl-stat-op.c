@@ -1,6 +1,7 @@
 #include "gegl-stat-op.h"
-#include "gegl-stat-op-impl.h"
-#include "gegl-color-model.h"
+#include "gegl-scanline-processor.h"
+#include "gegl-tile.h"
+#include "gegl-tile-iterator.h"
 #include "gegl-utils.h"
 
 enum
@@ -12,6 +13,8 @@ enum
 static void class_init (GeglStatOpClass * klass);
 static void init (GeglStatOp * self, GeglStatOpClass * klass);
 static void finalize(GObject * gobject);
+
+static void process (GeglOp * self_op, GList * requests);
 
 static gpointer parent_class = NULL;
 
@@ -47,9 +50,13 @@ static void
 class_init (GeglStatOpClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
+
   parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->finalize = finalize;
+
+  op_class->process = process;
 
   return;
 }
@@ -58,11 +65,23 @@ static void
 init (GeglStatOp * self, 
       GeglStatOpClass * klass)
 {
+  self->scanline_processor = g_object_new(GEGL_TYPE_SCANLINE_PROCESSOR,NULL);
+  self->scanline_processor->op = GEGL_OP(self);
   return;
 }
 
 static void
 finalize(GObject *gobject)
 {
+  GeglStatOp * self_stat_op = GEGL_STAT_OP(gobject);
+  g_object_unref(self_stat_op->scanline_processor);
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
+}
+
+static void 
+process (GeglOp * self_impl, 
+         GList * requests)
+{
+  GeglStatOp *self =  GEGL_STAT_OP(self_impl);
+  gegl_scanline_processor_process(self->scanline_processor, requests);
 }

@@ -52,8 +52,8 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
   GeglTileIterator **iters = g_new (GeglTileIterator*, num_requests);
 
   LOG_DEBUG("processor_process", 
-            "op_impl %x is %s", 
-            (guint)self->op_impl, G_OBJECT_TYPE_NAME(self->op_impl));
+            "op %x is %s", 
+            (guint)self->op, G_OBJECT_TYPE_NAME(self->op));
 
   /* Get tile iterators for dest and sources. */
   for (i = 0; i < num_requests; i++)
@@ -97,7 +97,7 @@ gegl_scanline_processor_process (GeglScanlineProcessor * self,
                 j);
 
       /* Call the subclass scanline func. */
-      (self->func)(self->op_impl, iters, width);
+      (self->func)(self->op, iters, width);
 
       /* Advance all the scanlines. */
       for (i = 0; i < num_requests; i++)
