@@ -115,8 +115,8 @@ int     cur_nsyms=0;
 %type   <elem> Float_List
 %type   <elem> Chan_List
 %type   <elem> VectorChan_List
-%type	<elem> Star 
-%type	<elem> Star2  
+%type	<elem> PointerVecChan		/* This is for VectorChan, it adds an extra * */ 
+%type	<elem> Pointer  
 
 %start	Input
 
@@ -213,7 +213,7 @@ Line:
 		{ 
 		printf("%s%s;", $1.string, $2.string); 
 		} 
-	| INDENT Star NAME EQUAL Expression ';'  	
+	| INDENT PointerVecChan NAME EQUAL Expression ';'  	
 		{
 	        char tmp[256];
 		elem_t e; 	
@@ -229,7 +229,7 @@ Line:
 		strcpy ($3.string, tmp); 
 		print_line ($3); 
 		} 
-	| INDENT Star NAME PLUS_EQUAL Expression ';'  	
+	| INDENT PointerVecChan NAME PLUS_EQUAL Expression ';'  	
 		{ 
 		elem_t tmp; 
 	        char t[256]; 	
@@ -240,7 +240,7 @@ Line:
 	        strcpy ($3.string, t);	
 		print_line ($3); 
 		} 
-	| INDENT Star NAME MINUS_EQUAL Expression ';'  	
+	| INDENT PointerVecChan NAME MINUS_EQUAL Expression ';'  	
 		{ 
 		elem_t tmp; 
 	        char t[256]; 	
@@ -251,7 +251,7 @@ Line:
 	        strcpy ($3.string, t);	
 		print_line ($3); 
 		} 
-	| INDENT Star NAME TIMES_EQUAL Expression ';'  	
+	| INDENT PointerVecChan NAME TIMES_EQUAL Expression ';'  	
 		{ 
 		elem_t tmp; 
 	        char t[256]; 	
@@ -262,7 +262,7 @@ Line:
 	        strcpy ($3.string, t);	
 		print_line ($3); 
 		} 
-	| INDENT Star NAME DIVIDE_EQUAL Expression ';'  	
+	| INDENT PointerVecChan NAME DIVIDE_EQUAL Expression ';'  	
 		{ 
 		elem_t tmp; 
 	        char t[256]; 	
@@ -280,7 +280,7 @@ Line:
 	 	strcpy ($2.string, tmp); 	
 		print_line($2); 
 		}
-	| INDENT ITERATOR_X LT_PARENTHESIS Star2 NAME ',' INT RT_PARENTHESIS ';'
+	| INDENT ITERATOR_X LT_PARENTHESIS Pointer NAME ',' INT RT_PARENTHESIS ';'
 		{
 		char tmp[256];
 		if (!strcmp($7.string, "1"))
@@ -315,7 +315,7 @@ Line:
 		strcpy ($5.string, tmp);
 		print_line($5); 	
 		}
-	| INDENT ITERATOR_XY LT_PARENTHESIS Star2 NAME ',' INT ',' INT RT_PARENTHESIS ';' 
+	| INDENT ITERATOR_XY LT_PARENTHESIS Pointer NAME ',' INT ',' INT RT_PARENTHESIS ';' 
 		{
 	
 		}	
@@ -400,7 +400,7 @@ Expression:
 	        sprintf (tmp,"%s%s", $1.string,$2.string);
 	        strcpy($$.string, tmp);
 		} 
-	| Star NAME				
+	| PointerVecChan NAME				
 		{ 
 		char tmp[256];
 		$$=$2; 
@@ -480,7 +480,7 @@ Chan_List:
 		sprintf(tmp, "%s, %s", $1.string, $3.string);
 		strcpy($$.string, tmp);
 		}
-        | Star2 NAME                          
+        | Pointer NAME                          
 		{
 	        char tmp[256];	
 		set_dtype($2, TYPE_CHAN); 
@@ -491,7 +491,7 @@ Chan_List:
 		sprintf(tmp, "%s%s", $1.string, $$.string);
 		strcpy($$.string, tmp);
 		}
-        | Star2 NAME EQUAL FLOAT              
+        | Pointer NAME EQUAL FLOAT              
 		{ 
 		char tmp[256];
 		set_dtype($2, TYPE_CHAN);
@@ -502,7 +502,7 @@ Chan_List:
 		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
 		strcpy($$.string, tmp);
 		}
-        | Star2 NAME EQUAL INT                
+        | Pointer NAME EQUAL INT                
 		{ 
 		char tmp[256];
 		set_dtype($2, TYPE_CHAN);
@@ -513,7 +513,7 @@ Chan_List:
 		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
 		strcpy($$.string, tmp);
 		}
-        | Star2 NAME LT_SQUARE INT RT_SQUARE
+        | Pointer NAME LT_SQUARE INT RT_SQUARE
 		{
 		char tmp[256];
 		set_dtype($2, TYPE_CHAN); 
@@ -532,7 +532,7 @@ Int_List:
 		sprintf(tmp, "%s, %s", $1.string, $3.string);
 		strcpy($$.string, tmp);
 		}
-        | Star2 NAME                          
+        | Pointer NAME                          
 		{
 	        char tmp[256];	
 		set_dtype($2, TYPE_INT); 
@@ -543,7 +543,7 @@ Int_List:
 		sprintf(tmp, "%s%s", $1.string, $$.string);
 		strcpy($$.string, tmp);
 		}
-        | Star2 NAME EQUAL FLOAT              
+        | Pointer NAME EQUAL FLOAT              
 		{ 
 		char tmp[256];
 		set_dtype($2, TYPE_INT);
@@ -554,7 +554,7 @@ Int_List:
 		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
 		strcpy($$.string, tmp);
 		}
-        | Star2 NAME EQUAL INT                
+        | Pointer NAME EQUAL INT                
 		{ 
 		char tmp[256];
 		set_dtype($2, TYPE_INT);
@@ -565,7 +565,7 @@ Int_List:
 		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
 		strcpy($$.string, tmp);
 		}
-        | Star2 NAME LT_SQUARE INT RT_SQUARE
+        | Pointer NAME LT_SQUARE INT RT_SQUARE
 		{
 		char tmp[256];
 		set_dtype($2, TYPE_INT); 
@@ -584,7 +584,7 @@ Float_List:
 		sprintf(tmp, "%s, %s", $1.string, $3.string);
 		strcpy($$.string, tmp);
 		}
-        | Star2 NAME                          
+        | Pointer NAME                          
 		{
 	        char tmp[256];	
 		set_dtype($2, TYPE_FLOAT);
@@ -595,7 +595,7 @@ Float_List:
 		sprintf(tmp, "%s%s", $1.string, $$.string);
 		strcpy($$.string, tmp);
 		}
-        | Star2 NAME EQUAL FLOAT              
+        | Pointer NAME EQUAL FLOAT              
 		{ 
 		char tmp[256];
 		set_dtype($2, TYPE_FLOAT);
@@ -606,7 +606,7 @@ Float_List:
 		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
 		strcpy($$.string, tmp);
 		}
-        | Star2 NAME EQUAL INT                
+        | Pointer NAME EQUAL INT                
 		{ 
 		char tmp[256];
 		set_dtype($2, TYPE_FLOAT);
@@ -617,7 +617,7 @@ Float_List:
 		sprintf(tmp, "%s%s=%s", $1.string, $$.string, $4.string);
 		strcpy($$.string, tmp);
 		}
-        | Star2 NAME LT_SQUARE INT RT_SQUARE
+        | Pointer NAME LT_SQUARE INT RT_SQUARE
 		{
 		char tmp[256];
 		set_dtype($2, TYPE_FLOAT);
@@ -638,7 +638,7 @@ VectorChan_List:
                 sprintf (tmp, "%s, %s", $1.string, $3.string);
                 strcpy($$.string, tmp); 
 		}
-        | Star NAME COLOR                         
+        | PointerVecChan NAME COLOR                         
 		{ 
 		char tmp[256];
 		set_dtype($2, TYPE_CHAN); 
@@ -650,7 +650,7 @@ VectorChan_List:
 		print_repeat (&$$, $2, tmp); 
 		init_data_varible ($2.string); 
 		}
-	| Star NAME COLOR_ALPHA
+	| PointerVecChan NAME COLOR_ALPHA
 		{
 		char tmp[256];
 		set_dtype($2, TYPE_CHAN);
@@ -662,7 +662,7 @@ VectorChan_List:
 		print_repeat (&$$, $2, tmp); 
 		init_data_varible ($2.string); 
 		}
-	| Star NAME
+	| PointerVecChan NAME
 		{
 		char tmp[256];
 		set_dtype($2, TYPE_CHAN);
@@ -676,8 +676,9 @@ VectorChan_List:
 		}
 	;
 
-Star:		{ $$.string[0] = '*'; $$.string[1] = '\0'; 	}
-	| TIMES Star
+PointerVecChan:		
+		{ $$.string[0] = '*'; $$.string[1] = '\0'; 	}
+	| TIMES PointerVecChan
 		{
 		$$ = $2; 
 		sprintf ($$.string, "*%s", $2.string);
@@ -689,8 +690,8 @@ Star:		{ $$.string[0] = '*'; $$.string[1] = '\0'; 	}
 		
 	; 
 	
-Star2:	{$$.string[0] = '\0';}
-	| TIMES Star
+Pointer:	{$$.string[0] = '\0';}
+	| TIMES Pointer 
 		{
 	        $$ = $2;
 	        sprintf ($$.string, "*%s", $2.string);

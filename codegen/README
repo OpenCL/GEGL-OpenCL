@@ -1,16 +1,35 @@
 README
 ======
 
-This is a program that parses a file with generic code (not data type specific) and creates a file with data type specific code. 
-
-To run the program type:
-codegen --channel-names NAME,NAME,NAME  --channel-data-file FILE_NAME  
-
-For more information please look at:
-
+This program parses a fuke with generic code (not data type or color space specific) and created a file that is data type and color space specific. To find out more about the syntax that the program understand look at these pages:
 http://www.mindspring.com/~calvinw/genericImageLanguage.html
 http://www.mindspring.com/~calvinw/genericChannelData.html
 
+To run the program type:
+codegen --channel-names NAME,NAME,NAME  --channel-data-file FILE_NAME  
+	FILE_NAME: is a file that contains the data type specific information.
+	Look at FLOAT, UINT8, and UINT16
+	NAME,NAME,NAME: is a list of the channel names. The names are seperated by
+	',' and no spaces. You must always specify and alpha. If you only specify
+	one name it will assume that that is the name of the alpha channel. 
+
+
+This program has 4 files; lexer.l, parser.y, common.h, and data_type.h
+
+The over all flow of the program goes like this. parser.y contains the main of the program and starts by parsing the command line. It will read the channel-data-file, and initialize all the varibles in data_type.h with the read values. It will also parse the channel-names and set NUM_COLOR_CHAN and NAME_COLOR_CHAN. It then calls yyparse.
+
+lexer.l has 4 states: the initial state, GENERIC_IMAGE_DECL, GENERIC_IMAGE_BLOCK, and COMMENT. 
+
+	inital state ---------GENERIC_IMAGE_DECL_BEGIN---> GENERIC_IMAGE_DECL
+	inital state ---------GENERIC_IMAGE_BLOCK_BEGIN--> GENERIC_IMAGE_BLOCK
+	GENERIC_IMAGE_DECL ---GENERIC_IMAGE_DECL_END-----> inital state
+	GENERIC_IMAGE_BLOCK---GENERIC_IMAGE_BLOCK_END----> inital state
+
+	GENERIC_IMAGE_DECL ---/*-->COMMENT--*/-->GENERIC_IMAGE_DECL
+	GENERIC_IMAGE_BLOCK --/*-->COMMENT--*/-->GENERIC_IMAGE_BLOCK
+
+			
+		
 ===
  
 Caroline Dahllof <caro@rhythm.com>

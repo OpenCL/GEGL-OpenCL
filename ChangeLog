@@ -1,3 +1,11 @@
+Thu Mar 16 15:55:18 PST 2000 caro@rhythm.com
+
+	* This is for codegen
+
+	* I updated the README
+
+	* Made the token indent in lexer.l take \t
+
 Thu Mar 16 12:09:30 PST 2000 caro@rhythm.com
 
 	* This check in is for codegen

@@ -125,7 +125,7 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
 
     GENERIC_IMAGE_BLOCK_BEGIN
     while (width--)
-      {
+	{
          if (src_alpha == ZERO)
           {
             dest_color = ZERO;

@@ -15,7 +15,7 @@ int PREV;
 %s			GENERIC_IMAGE_BLOCK
 %s			COMMENT 
 white   		[ \t]+
-indent			[\n][ ]*
+indent			[\n][ \t]*
 digit   		[0-9]
 integer 		{digit}+
 float   		{digit}*\.{integer}
