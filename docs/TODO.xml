@@ -10,290 +10,90 @@
 <todo logourl="gegl.jpg">
   <title>Gegl Task list</title>
   <section>
-    <title>Gegl</title>
+    <title>Gegl Architecture</title>
 
-    <entry size="medium" status="80%" target="0.0">
-      <title>GeglNode</title>
+    <entry size="small" status="0%" target="0.0">
+      <title>GeglGraph Inputs to Interior Node Inputs</title>
       <description>
         <p>
-            Still need to add code to check for cycles as nodes are added to a
-            graph.
-        </p>
-        <p>
-            Also need support for nodes to have multiple outputs. The
-            inputs form a list and the outputs are a list of lists, since each
-            output of a node can be attached to by any number of outputs.  An
-            example of a multiple output node might be a channel splitter that
-            separates an RGB image into R,G,B channels. This is a 1-input
-            3-output node.
-        </p>
-        <p>
-            Nodes then specify their number of inputs and the number of
-            outputs, when created.
+GeglGraph needs a better method for specifying the correspondence
+of inputs of interior nodes to the inputs of the Graph. Right
+now these are set up in an initial traversal of the Graph when
+the root is set. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
-      <title>GeglGraph</title>
-      <description>
-        <p>
-           This class extend from Node and allows one to group a
-           collection of nodes or a complete graph into a single Op. That way
-           pre-defined graphs can be used as single nodes or ops in other
-           graphs.   
-        </p>
-        <p>
-           This probably means moving some of the code in the ImageMgr classes
-           into this Filter class instead. 
-        </p>
-        <p>
-           Filter needs to specify which outputs of the nodes it holds it
-           wishes to export and which inputs it will have. The Filter takes
-           care of attaching the inputs from the outside with the appropriate
-           inputs to the nodes it contains as well as making sure that the
-           outputs it wishes to export get placed in its outputs, and passed
-           along the graph to outside the Filter. 
-        </p>
-      </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
-    </entry>
-
-    <entry size="small" status="0%" target="0.0">
-      <title>GeglOp</title>
+      <title>Masks for Image Op</title>
       <description>
         <p> 
-          Op, Filter, and the other simple ops (Add, Mult, etc) should form a
-          GoF composite design pattern where Filter is the container like class
-          and can hold other Ops, or a graph of ops, and the other simple ops
-          are just leaves of the composite pattern.  The evaluate method in Op
-          will be the method that subclasses override to accomplish the op's
-          processing.  Evaluate in Filter will do the traversal on the ops it
-          contains.  Evaluate in the simple ops will call the prepare, process,
-          and finish routines that do the actual image processing. The current
-          prepare, process, and finish methods in Op are called by the default
-          implementation of evaluate in Op.  
+Add an input to image op which represents an mask for the area
+affected by the operation.
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
-    <entry size="medium" status="20%" target="0.0">
-      <title>GeglOp</title>
-      <description>
-        <p>
-          Need to add list of outputs and inputs of each Op, something like
-          GValues with GParamSpecs that describe what the outputs and inputs of
-          each op are and allow some automatic conversion when these are passed
-          from output of one op to the input of another. 
-        </p>
-        <p>
-          Also change prepare, process, finish to be passed the a list of GValue inputs 
-          to process (instead of OpRequests).
-        </p>
-      </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
-    </entry>
-
-    <entry size="small" status="0%" target="0.0">
+    <entry size="medium" status="0%" target="0.0">
       <title>In-place Buffers</title>
       <description>
         <p> 
-            A dest ImageBuffer can passed to root of a graph during
-            gegl_op_apply.  This buffer should be passed along the graph when
-            in-place operations are desired. This is similar to inherited
-            attributes when parsing.
-        </p>
-      </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
-    </entry>
-
-    <entry size="small" status="0%" target="0.0">
-      <title>Allow disabling nodes</title>
-      <description>
-        <p> 
-            Allow nodes and part of graphs to be disabled/inactive, but still
-            part of the graph. Traversal would just skip these nodes, and any
-            data passed from below the node would be pulled through an inactive
-            node without affecting it. This would use the alt_input flag in the
-            Node class to let nodes specify an input to use instead of them
-            when they are disabled.  
-        </p>
-      </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
-    </entry>
-
-    <entry size="small" status="0%" target="0.0">
-      <title>Fix Add,Mult,etc to commute</title>
-      <description>
-        <p> 
-           Currently A mult B is not the same as B mult A, since we are leaving
-           part of the full compositing equation: If (A,aA), (B,aB) (C,aC)
-           are three premultiplied images, then
-           <ul>
-             aC * C = (1-aB)*aA*A + (1-aA)*aB*B + f(A,B)  
-           </ul>
-           <ul>
-             aC = aB + aA - aB*aA                       
-           </ul>
-           where f(A,B) = A*B for mult. Currently we dont use the first two
-           terms of the first equation  correctly.  example:   If aA=1, aB=0,
-           then we should get just A, and if aB=1, aA=0, then we should get
-           just B. Compare the current MultOp.
-        </p>
-      </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
-    </entry>
-
-    <entry size="small" status="0%" target="0.0">
-      <title>Add Automatic Color/Data Conversions</title>
-      <description>
-        <p>
-            Need to decide exactly where to do color model/data conversions
-            when color model models of inputs differ from color models of the
-            outputs. Currently color conversion ops are not set up
-            automatically when inputs dont match the outputs. This should be
-            handled by the ImageMgr (or maybe Filter) class during graph
-            traversal. 
-        </p>
-      </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
-    </entry>
-
-    <entry size="small" status="0%" target="0.0">
-      <title>Unit Tests</title>
-      <description>
-        <p>
-            There is a suite of unit tests in tests directory now. These use
-            the testsuite C-unit testing framework included in the tools
-            directory. Many examples of how the gegl classes work are included
-            here and it is recommended that these be run all the time while
-            developing. There is lots of room to think about how to organize
-            the tests and how they should work. There is a simple example of
-            the framework in CUJ Sept 2000 issue. 
-        </p>
-      </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
-    </entry>
-
-    <entry size="big" status="30%" target="0.0">
-      <title>SwitchOp, RoiOp, Non image producing Ops.</title>
-      <description>
-        <p> 
-            It is important to test the new Op class and its subclasses by
-            constructing the Op classes that have other types of outputs beside
-            image outputs. Eg scalar outputs, histograms, etc. and also
-            multiple output ops as well.
-        </p>
-      </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
-    </entry>
-
-    <entry size="big" status="30%" target="0.0">
-      <title> Data Storage Types</title>
-      <description>
-        <p>
-            Gegl will have a standard data storage type. The details of this
-            still needs to be determined. It would be best if the choice of
-            underlying data storage can be kept as independent as possible of
-            the details of the operator algorithms. Of course this is a
-            difficult problem, but see the 
-            <a href="http://kogs-www.informatik.uni-hamburg.de/~koethe/vigra/">Vigra</a>
-            library for some ideas. 
-        </p>
-        <p>
-            There is now a class called GeglBuffer which holds "banks" of data. 
-            These are used by GeglTile to hold its image data.
-            GeglTile represents "chunk of image data", and is the thing
-            passed back to the ops by the ImageMgr. 
-        </p>
-      </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
-    </entry>
-
-    <entry size="big" status="25%" target="0.0">
-      <title>Memory, Cache Manager classes</title>
-      <description>
-        <p>
-            Gegl needs memory management classes in the form of cache with
-            swappable pages.  This will mean image data will be requested from
-            a cache manager, and we need schemes (ref counting, etc) for
-            deciding what to swap out. This will need to work with tiles. 
-        </p>
-      </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
-    </entry>
-
-    <entry size="big" status="30%" target="0.0">
-      <title>Tile Mgr</title>
-      <description>
-        <p>
-            Tile and tile management classes. Want to allow variable size tiles
-            for gegl. 
-        </p>
-      </description>
-      <contact>&lt;gegldev@gegl.org&gt;</contact>
-    </entry>
-
-    <entry size="big" status="0%" target="0.0">
-      <title>Multi-Threading Support</title>
-      <description>
-        <p>
-            Basic multi-threading support for image ops, and scheduler/task
-            management classes. These should be added in the ImageMgr,
-            which is the appropriate class for managing these.
+Work out a scheme for passing in-place image buffers along the ops.
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
-      <title>AreaOps</title>
+      <title>Automatic Image Data Conversions</title>
       <description>
         <p>
-            Area operations base class. This class requests contiguous regions
-            from the ImageManager for doing area-based operations. The ImageManager
-            will need to cobble together tiles if the available tiles dont match
-            the requested ones. 
+Currently Scalar Data, Pixel Data as well as Channel Data can all
+be converted. Need to add Image Data conversions.
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
-      <title>Iterator Classes </title>
+      <title>More Data Types</title>
       <description>
         <p>
-            The Iterator classes will need to iterate over tiles and images in
-            different ways. Right now there is a GeglTileIterator class which
-            is basically a scanline iterator over a portion of a tile. The
-            TileImageManager will need an ImageIterator that iterates over
-            tiles of the image. The next, first, done, for these iterators
-            provide the next tile, first tile, etc  
+Currently have Scalar Data, Pixel Data, Channel Data, and Image Data as 
+Data types that can be passed along ops. May want to pass Vector Data (
+vectors of pixels, vectors of scalars) or Matrix Data along as well. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
-
     <entry size="medium" status="0%" target="0.0">
-      <title>Additional ColorModels</title>
+      <title>Additional Image Iterators</title>
       <description>
         <p>
-            Need to fill out details of more of the color models, and the
-            corresponding color conversion ops. Also complete a color model
-            "promotion" and conversion scheme for use when doing automatic
-            color conversion. ie if inputs to some 2-input op are rgb u8 and
-            cmyk u8 then the output is rgb u8.
+Need to create more image iterator details. Right now there is a
+ImageIterator class which is basically a iterator over scanlines of
+a portion of the image(ie. a tile). Need to provide iterators that
+can request other shaped areas for work. 
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
 
-            Some of this is done. See the compute_derived_color_model routine
-            in GeglImage. This uses some "inheritance trees" for color spaces,
-            channel data types, etc in gegl-utils.c as well. Look at the routine
-            implemented in gegl-op.gob for details.
+    <entry size="medium" status="0%" target="0.0">
+      <title>Additional ColorSpaces and ColorModels</title>
+      <description>
+        <p>
+Need to fill out details of more of the color models, and the
+corresponding color conversion ops. Also complete a color model
+"promotion" and conversion scheme for use when doing automatic
+color conversion. ie if inputs to some 2-input op are rgb u8 and
+cmyk u8 then the output is rgb u8.
         </p>
         <ul>
-            More color models, and color conversion ops: 
+            Possible color models: 
             <li> GeglColorModelIndexed </li>
             <li> GeglColorModelCmyk </li>
             <li> GeglColorModelCieXyz </li>
@@ -303,8 +103,34 @@
             <li> GeglColorModelMultiChannel </li>             
         </ul>
         <p>
-            Some ICC profile based color models would be nice. This would allow
-            adding more detailed color management support. 
+Some ICC profile based color models would be nice. This would allow
+adding more detailed color management support. 
+        </p>
+      </description>
+      <contact>&lt;gegl-developer@lists.xcf.berkeley.edu&gt;</contact>
+    </entry>
+
+    <entry size="big" status="0%" target="0.0">
+      <title>Memory, Cache Manager</title>
+      <description>
+        <p>
+Memory management classes in the form of cache with swappable
+pages.  This will mean data buffers will be requested from a cache
+manager, and we need schemes (ref counting, etc) for deciding what
+to swap out.
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="big" status="0%" target="0.0">
+      <title>Multi-Threading Support</title>
+      <description>
+        <p>
+Basic multi-threading support and scheduler/task management. This
+should be added in the EvalMgr, which is the appropriate place for
+these. Probably a work-pile scheme with a task manager doling out
+different roi pieces of the image to work on. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
@@ -313,87 +139,69 @@
   </section> <!-- Gegl -->
 
   <section>
-    <title>Gil</title>
 
-    <entry size="medium" status="30%" target="0.0">
-      <title>Abstract Syntax Trees for gil</title>
-      <description>
-        <p>
-            We need to extend codegen to create abstract syntax trees, so that
-            we can do better code generation, type checking and so on.  See gil
-            subdirectory for a simple example.  This will eventually replace
-            codegen. The new code generator will be just called "gil" and will
-            be something that can be used to do various tasks that depend on
-            traversing the gil ast. It will use glib and GNodes for creating
-            the asts from lex/yacc, and GHashtables for the symbol table. The
-            gil syntax will mostly stay the same, but we get a more powerful
-            code generator/language.
-        </p>
-        <p>
-            Currently the example builds asts for simple C-like expressions and
-            code blocks.
-        </p>
-      </description>
-      <contact>Calvin Williamson &lt;calvinw@mindspring.com&gt;</contact>
-    </entry>
+    <title>Ops</title>
 
     <entry size="medium" status="0%" target="0.0">
-      <title>Gil support for AreaOps</title>
+      <title>Color Conversion Ops</title>
       <description>
-        <p>
-           Gil will need to understand how to get rowstrides and access pixels.
-           This involves making sure gil can interpret gil built-in dY function
-           calls.
+        <p> 
+There are color conversions included in the color space classes, but
+there are no conversion ops that use these conversions yet.  
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
-      <title>Gil Channels Support</title>
+      <title>Copy Op</title>
       <description>
-        <p>
-           Gil currently has no way to reference individual color channnels ie
-           red, green, blue for rgb color model. This is needed for Ops that
-           will write gil code and will want a standard way to refer to the
-           color channels.  
+        <p> 
+Add a copy op, that just copies from input to output.  
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
-  </section> <!-- Gil -->
-
-  <section>
-    <title>Opgen</title>
-
     <entry size="medium" status="0%" target="0.0">
-      <title>Opgen Issues</title>
+      <title>Area Op</title>
       <description>
         <p>
-          Opgen generates gegl-operators from XML files.
+Area operations base class. This class requests contiguous regions
+from of the image for doing area-based operations. Will need to
+cobble together tiles if the available tiles dont match the
+requested ones. 
         </p>
-        <ul>
-            <li>
-              Write documentation for opgen.
-            </li>
-            <li>
-              Add license entities for gpl, lgpl, bsd, etc?
-            </li>
-            <li>
-              Figure out how we tell GIL to generate multiple versions of the
-              point processing functions
-            </li>
-            <li>
-              Figure out how we code with specific colors (ie red, green, blue, cyan...)
-            </li>
-            <li>
-              Automatic code indentation?
-            </li>
-        </ul>
       </description>
-      <contact>Jay Cox &lt;jaycox@gimp.org&gt;</contact>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
-  </section> <!-- Opgen -->
+    <entry size="medium" status="0%" target="0.0">
+      <title>SwitchOp, RoiOp, Non Image Producing Ops.</title>
+      <description>
+        <p> 
+This item is for creating more non-image producing ops. For example
+switch op would pick one of its inputs and pass its data along.
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="big" status="20%" target="0.0">
+      <title>More Blend Ops</title>
+      <description>
+        <p> 
+Assume (A,aA) (B,aB) (C,aC) all premultiplied. Blend ops use the 
+formula C = (1-aB)*A + (1-aA)*B + aA*aB*f(A/aA,B/aB). 
+For example, when f(x,y) = x*y, you get C = (1-aB)*A + (1-aA)*B + A*B
+and aC = aB + aC - aB*aC. Need to finish at least Normal, Compatible,
+Multiply, Screen, Overlay, SoftLight, HardLight, ColorDodge, ColorBurn, Darken,
+Lighten, Difference, Exclusion modes.
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+  </section> <!-- Ops -->
+
 </todo>

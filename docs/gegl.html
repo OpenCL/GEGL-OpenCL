@@ -2,165 +2,68 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="Author" content="Caroline Dahllof">
    <meta name="GENERATOR" content="Mozilla/4.76 [en] (X11; U; Linux 2.2.16-22 i686) [Netscape]">
-   <title>GEGL --- GIMP 'E' Graphical Library</title>
+   <title>GEGL -- Generic Graphical Library</title>
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#4D7F7E" vlink="#551A8B" alink="#FF0000">
 
 <hr WIDTH="100%">
-<br><font color="#62A2A1"><font size=-1><a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp;
+<br><font color="#62A2A1"><font size=-1><a href="#docs">DOCUMENTS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-<a href="#news">NEWS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#mailing lists">MAILING
-LISTS&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="TODO.html">CURRENT
-TODO</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#reference">REFERENCES</a>&nbsp;&nbsp;
+<a href="#mailing lists">MAILING LISTS&nbsp;</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-<a href="#getting gegl">GETTING GEGL</a></font></font>
+<a href="TODO.html">CURRENT TODO</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+<a href="#getting gegl">GETTING
+GEGL</a>&nbsp;&nbsp;&nbsp;&nbsp; 
+<a href="#reference">REFERENCES</a></font></font>
 <br>
 <hr WIDTH="100%">
 <p><img SRC="images/gegl.jpg" NOSAVE height=62 width=160>
-<p><font color="#000000">GEGL -- Gimp 'E' Graphical Library --- is an image
-processing library based on GObjects.&nbsp; This library will be designed
-to handle various image processing tasks needed in Gimp initially, but
-should be useful&nbsp; to other apps as well.&nbsp; It will handle color
-spaces and data types&nbsp; in a general way, and allow new color models/data
-types to be added easily. It will include a way of creating chains (or
-trees) of image operations and evaluating these in a demand-driven way.&nbsp;
-Classes for point, area, geometric and statistics operations will be included,
-as well as color conversion ops for converting images between color models.&nbsp;
-Memory management and image classes are planned as well.&nbsp; It includes
-a method for writing generic image processing routines (Generic Image Language)
-and generating specific data type and colormodel code&nbsp; from this.</font>
-<p><font color="#000000">GEGL is still in a very early phase, and many
-classes are under construction. There is no official release yet, but you
-can <a href="#getting gegl">get it from anonymous cvs.</a></font>
+<p><font color="#000000">Gegl -- Generic Graphical Library --- is an image
+processing library based on GObjects. This library will be designed to
+handle various image processing tasks needed in Gimp initially, but should
+be useful&nbsp; to other apps as well. It will handle color spaces and
+data types&nbsp; in a general way, and allow new color models/data types
+to be added easily. It will include a way of creating chains (or trees)
+of image operations and evaluating these in a demand-driven way. Classes
+for point, area, geometric and statistics operations will be included,
+as well as color conversion ops for converting images between color models.
+Memory management and image classes are planned as well.</font>
+<p><font color="#000000">Gegl is still in a very early phase, and many
+classes are under construction. There is no official release yet.</font>
 <p>
 <hr WIDTH="100%">
 <br><a NAME="docs"></a><b>Documents</b>
-<p>These documents all describe various parts of gegl. They are included
-in cvs in the docs directory as well as here.
+<p>The following documentation is available for Gegl:
 <ul>
 <li>
-<a href="geglClasses.html">Gegl Classes</a>, a short description of the
-main gegl classes.</li>
-
-<li>
-<a href="genericChannelData.html">Generic Channel Data</a>, a technique
-for handling multiple data types in GEGL.</li>
-
-<li>
-<a href="genericImageLanguage.html">Generic Image Language </a>, a description
-of a generic image processing coding in GEGL.</li>
+<a href="reference/gegl/html/index.html">gtk-docs</a> for Gegl. This is
+the best place to learn how Gegl works.</li>
 </ul>
-There is also gtk-docs for gegl apis available from the cvs version in
-docs/reference/gegl. You will have to build them using gtk-doc.
-<br>
-<hr WIDTH="100%">
-<br><a NAME="news"></a><b>News</b>
-<br>&nbsp;
-<table BORDER WIDTH="100%" NOSAVE >
-<tr ALIGN=LEFT VALIGN=TOP NOSAVE>
-<td ALIGN=LEFT VALIGN=TOP WIDTH="2%" NOSAVE>6/21/2000</td>
 
-<td ALIGN=LEFT VALIGN=TOP NOSAVE>This page comes on-line.</td>
-</tr>
-
-<tr>
-<td>7/26/2000</td>
-
-<td>gimpSiggraph2000&nbsp; Gegl was discussed some, but the focus was mostly
-on how to encourage studios to become involved with gimp in a more fundamental
-way.&nbsp;</td>
-</tr>
-
-<tr>
-<td>12/25/2000</td>
-
-<td>Gimp1.2 ships. gtkobject-ifying of Gimp1.4 begins. Future of gimp <a href="http://www.mail-archive.com/gimp-developer%40scam.xcf.berkeley.edu/msg03656.html">discussed.</a></td>
-</tr>
-
-<tr>
-<td>1/18/2001</td>
-
-<td>&nbsp;Work-in-progress talk on Gegl by Manish Singh at linux.conf.au.</td>
-</tr>
-
-<tr>
-<td>6/6/2001</td>
-
-<td>gtk-docs for gegl set up.</td>
-</tr>
-
-<tr>
-<td>8/16/2001</td>
-
-<td>BoF at Siggraph 2001</td>
-</tr>
-
-<tr>
-<td>12/9/2001</td>
-
-<td>Gegl converts to GObject and Glib2.0.&nbsp; Added unit tests. Removed
-GOB dependency.</td>
-</tr>
-
-<tr>
-<td>3/2002</td>
-
-<td>Article by Robin Rowe on film-gimp and gegl in Linux Journal(March)</td>
-</tr>
-</table>
-
-<p>
 <hr WIDTH="100%">
 <br><a NAME="mailing lists"></a><b>Mailing Lists</b>
-<p>GEGL's developers mailing list is <a href="mailto: gegldev@gegl.org">gegldev@gegl.org</a>.
-To sign up please email Manish Singh &lt;<a href="mailto:yosh@gimp.org">yosh@gimp.org</a>>.
-There is also the <a href="http://www.gimp.org/mailing_list.html">GIMP's
-developers mailing list and a users mailing list</a>.
+<p>&nbsp;Information for the Gegl developers mailing list is <a href="reference/gegl/html/gegl-Mailinglists.html">here</a>.
+This is primarily for developers working on Gegl itself.
 <p>
 <hr WIDTH="100%">
-<br><a NAME="tasks"></a><b><font color="#000000">Current Tasks</font></b>
-<br><font color="#000000">Current tasks are listed <a href="TODO.html">here</a>.
+<br><a NAME="tasks"></a><b><font color="#000000">Current TODO</font></b>
+<p><font color="#000000">Current TODO is <a href="TODO.html">here</a>.
 This list is updated from cvs when docs/TODO.xml is commited. The html
 is generated from docs/make-todo. Developers should keep this list up-to-date.</font>
 <p>
 <hr WIDTH="100%">
-<br><a NAME="schedual"></a><b>Schedule</b>
-<br>&nbsp;Milestones for releases will go here.
-<p>
-<hr WIDTH="100%">
 <br><a NAME="getting gegl"></a><b>Getting Gegl</b>
 <p>Gegl is available from the gnome cvs site. You can get it through anonymous
-cvs. There are no official releases yet. To access the tree you need to
-first set up your CVSROOT enviroment variable so that cvs knows where to
-go to grab the source from. The proper value for CVSROOT is:
-<p>:pserver:anonymous@anoncvs.gnome.org:/cvs/gnome
-<p>For example, in csh:
-<p>>setenv CVSROOT :pserver:anonymous@anoncvs.gnome.org:/cvs/gnome
-<p>In a bourne shell descendant (e.g. bash) the following syntax has to
-be used :
-<p>>export CVSROOT=':pserver:anonymous@anoncvs.gnome.org:/cvs/gnome'
-<p>Next, the first time the source tree is checked out, a cvs login is
-needed.
-<p>>cvs login
-<p>This will ask you for a password. There is no password so just enter
-a carriage return. To get the tree and place it in a subdir of your current
-working directory, issue the command:
-<p>>cvs get gegl
-<p>You can also <a href="http://cvs.gnome.org/bonsai/rview.cgi?cvsroot=/cvs/gnome&dir=gegl">browse
-the cvs source</a> through the web using bonsai.
-<p>You will need a recent version of glib, 1.3.9 or better. You will also
-need a lex/yacc (or flex/bison) pair.
+cvs as described <a href="reference/gegl/html/gegl-cvs.html">here</a>.
 <p>
 <hr WIDTH="100%">
 <br><a NAME="reference"></a><b>References</b>
 <p>Gimp related:
 <br><a href="http://www.gimp.org">GIMP website</a>
-<br><a href="http://film.gimp.org">film.gimp.org - using gimp for high
-color resolution film work</a>
 <br><a href="http://www.gimp.org/gimpcon/review.html">GimpCon2000 review
 -discussion of gimp2.0, gegl</a>
+<br><a href="http://filmgimp.sourceforge.net">FilmGimp</a>
 <p>Other libraries/applications
 <br><a href="http://techpubs.sgi.com:80/library/tpl/cgi-bin/browse.cgi?coll=0650&db=bks&cmd=toc&pth=/SGI_Developer/IL_PG">SGI
 ImageVision libary</a>
@@ -186,7 +89,5 @@ Color Management by Giorgianni Madden</a>
 <br>&nbsp;
 <p>
 <hr WIDTH="100%">
-<center><font size=-2>Calvin Williamson&lt;calvinw@mindspring.com></font></center>
-
 </body>
 </html>

@@ -7,5 +7,5 @@ Name: Gegl
 Description: Gegl Graphical Library 
 Version: @VERSION@
 Requires: @GLIB_PACKAGES@
-Libs: -L${libdir} -lgegl
+Libs: -L${libdir} -lgegl-@GEGL_API_VERSION@
 Cflags: -I${includedir}/gegl-1.0

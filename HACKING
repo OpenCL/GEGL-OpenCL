@@ -1,6 +1,6 @@
 The cvs version of Gegl is known to work with the following autotools:
 
-- GNU autoconf 2.52
+- GNU autoconf 2.53
 - GNU automake 1.4-p1
 - GNU libtool 1.4
 - GNU gettext 0.10.40
@@ -18,11 +18,12 @@ gegl> ./autogen.sh
 Basically this does the following for you (but see autogen.sh for exactly what
 is happening):
 
-gegl> aclocal; automake; autoconf; configure
+gegl> aclocal 
+gegl> automake 
+gegl> autoconf 
+gegl> configure
 
 Before running autogen.sh, make sure you have libtool in your path.  
-
-Also configure is called with --disable-shared by default.
 
 Note that autogen.sh runs configure for you.  If you wish to pass options like
 --prefix=/usr to configure you can give those options to autogen.sh and they

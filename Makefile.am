@@ -1,6 +1,6 @@
 # Process this file with automake to create Makefile.in.
 
-SUBDIRS = tools gegl tests docs
+SUBDIRS = gegl tools tests docs
 
 EXTRA_DIST = 			\
 	gegl-uninstalled.pc.in	\

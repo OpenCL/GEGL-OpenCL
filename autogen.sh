@@ -79,8 +79,7 @@ autoconf
 cd $ORIGDIR
 
 if test -z "$AUTOGEN_SUBDIR_MODE"; then
-        $srcdir/configure --disable-shared --enable-maintainer-mode "$@"
-
+        $srcdir/configure --enable-gtk-doc --enable-maintainer-mode "$@"
         echo 
         echo "Now type 'make' to compile $PROJECT."
 fi

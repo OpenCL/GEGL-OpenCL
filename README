@@ -9,9 +9,9 @@ Gegl
 
 When you type make in the top dir, the following should occur:
 
-1)In the tools/testsuite subdir, a xUnit testing tool gets built. 
+1)In the gegl subdir, libgegl gets made.
 
-2)In the gegl subdir, regular C and header files get compiled into the gegl lib.
+2)In the tools/testsuite subdir, a xUnit testing tool gets built. 
 
 3)In the tests subdir, gegl unit tests get built and run, using the testsuite
 tool built in step 1) above.
@@ -30,13 +30,5 @@ abstract syntax trees using it.
 
 2)In gil/tests the unit tests for libgil are built and run. These use the
 testsuite library built above for Gegl.
-
-codegen
--------------
-
-If you want use this old tool to generate code, see the file codegen/README,
-there is an example of its usage there. It is disabled right now and it is
-likely that early versions of gegl will not use any code generation. It will
-be replaced by gil in the future.
 
 calvinw@mindspring.com
