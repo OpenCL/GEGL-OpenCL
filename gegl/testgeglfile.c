@@ -8,6 +8,8 @@
 #include "gegl-composite-op.h"
 #include "gegl-utils.h"
 #include "gegl-fill-op.h"
+#include "gegl-color-model.h"
+#include "gegl-color-model-rgb.h"
 
 static void
 create_preview(GtkWidget **window, GtkWidget **preview, int width, int height, gchar *name)
@@ -174,22 +176,44 @@ main(int argc, char *argv[])
  
   /* test the convert op */
   /* create a buffer with all possible colors */
-  /*{
-    gfloat img_buf = (gfloat*) g_malloc(sizeof(gfloat)*4*255*255*255*255);
-    gint i, j;
-    for(i=0; i<4; i++)
-    for(j=0; j<255; j++){
-      img_buff[i*255+j] = ((gfloat)j)/255.0;
-    }
-    gegl_image_buffer_set_data(image_buffer[2], (guchar**)&img_buf);
+  {
+     GeglColorModel *cm = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+     gfloat dest[4];
+     gfloat **src, *s;
+     gint w=1;
+     gint i, j, k, a;
+     gfloat I, J, K, A, T;
+     gfloat sum=0;
+     T = 1.0/ 255.0;
+     s = (gfloat*) g_malloc(sizeof(gfloat)*4);
+     src = (gfloat**) g_malloc(sizeof(gfloat*)*4);
+     for(i=0; i<4;i++)
+	src[i] = &s[i];
+  
+     for(i=0; i<255; i++)
+     for(j=0; j<255; j++)
+     for(k=0; k<255; k++)
+     for(a=0; a<255; a++){
+       I = i * T;
+       J = j * T;
+       K = k * T;
+       A = a * T;
+             
+       (src[0][0]) = I;
+       (src[1][0]) = J;
+       (src[2][0]) = K;
+       (src[3][0]) = A;
+       /*printf("(%.2f %.2f %.2f %.2f) ", src[0][0], src[1][0], src[2][0], src[3][0]);
+       */gegl_color_model_convert_to_xyz(cm, dest, (guchar**)src, w);
+       /*printf("(%.2f %.2f %.2f %.2f) ", dest[0], dest[1], dest[2], dest[3]);
+       */gegl_color_model_convert_from_xyz(cm, (guchar**)src, dest, w);
+       /*printf("(%.2f %.2f %.2f %.2f)\n", src[0][0], src[1][0], src[2][0], src[3][0]);
+       */sum += (src[0][0]-I)*(src[0][0]-I) + (src[1][0]-J)*(src[1][0]-J) + 
+              (src[2][0]-K)*(src[2][0]-K) + (src[3][0]-A)*(src[3][0]-A);
+     }
+     printf("\n %.2f\n", sum);
 
-    op = GEGL_OP(gegl_convert_op_new (image_buffer[2], image_buffer[3],
-                                            &(current_rect[2]), &(current_rect[3]),
-                                            ));
-    gegl_op_apply (op);
-
-     
-  } */ 
+  }  
   gtk_main();
 
   gtk_object_destroy (GTK_OBJECT(image_buffer)); 

@@ -1,7 +1,16 @@
+Thu Jan 27 13:05:25 PST 2000 caro@rhythm.com
+
+    * Changed varible names in gegl-composite-op
+
+    * Created a gegl-composite-op.pregob
+
 Wed Jan 26 14:05:54 PST 2000 caro@rhythm.com
+
     * Fixed some bugs in gegl-color_model-gray
       and gegl-convert-rgb/gray-op 
+
 Wed Jan 26 13:42:07 PST 2000 caro@rhythm.com
+
     * Forgot to add gegl-convert-gray.gob
 
 Wed Jan 26 13:03:51 PST 2000  caro@rhythm.com

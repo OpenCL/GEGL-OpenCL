@@ -93,34 +93,33 @@ class Gegl:Composite:Op from Gegl:Point:Op {
     dest_cm = gegl_image_buffer_color_model (dest);
     dest_num_channels =  gegl_color_model_num_channels (dest_cm);
     dest_has_alpha = gegl_color_model_has_alpha (dest_cm);
-    dest_is_premult = gegl_color_model_is_premultiplied (dest_cm);
+    dest_is_premult = gegl_color_model_is_premultiplied(dest_cm);
 
     src_cm = gegl_image_buffer_color_model (src);
     src_num_channels =  gegl_color_model_num_channels (src_cm);
     src_has_alpha = gegl_color_model_has_alpha (src_cm);
-    src_is_premult = gegl_color_model_is_premultiplied (src_cm);
+    src_is_premult = gegl_color_model_is_premultiplied(src_cm);
 
-    if ( premult)	
-    {
+    if ( premult){	
+
       if ( dest_has_alpha && src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_premult_RGBA_op_premult_RGBA_FLOAT;
+        point_op_class->scanline_func = gegl_composite_op_premult_IA_op_premult_IA_FLOAT;
       else if ( !dest_has_alpha && !src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_RGB_op_RGB_FLOAT;
+        point_op_class->scanline_func = gegl_composite_op_I_op_I_FLOAT;
       else if ( dest_has_alpha && !src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_premult_RGBA_op_RGB_FLOAT;
+        point_op_class->scanline_func = gegl_composite_op_premult_IA_op_I_FLOAT;
       else if ( !dest_has_alpha && src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_RGB_op_premult_RGBA_FLOAT;
-    }
-    else
-    {
+        point_op_class->scanline_func = gegl_composite_op_I_op_premult_IA_FLOAT;
+    }else{
+
       if ( dest_has_alpha && src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_RGBA_op_RGBA_FLOAT;
+        point_op_class->scanline_func = gegl_composite_op_IA_op_IA_FLOAT;
       else if ( !dest_has_alpha && !src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_RGB_op_RGB_FLOAT;
+        point_op_class->scanline_func = gegl_composite_op_I_op_I_FLOAT;
       else if ( dest_has_alpha && !src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_RGBA_op_RGB_FLOAT;
+        point_op_class->scanline_func = gegl_composite_op_IA_op_I_FLOAT;
       else if ( !dest_has_alpha && src_has_alpha )
-        point_op_class->scanline_func = gegl_composite_op_RGB_op_RGBA_FLOAT;
+        point_op_class->scanline_func = gegl_composite_op_I_op_IA_FLOAT;
     }
     /* set comp mode */ 	
     selfP->comp_mode = mode;
@@ -139,13 +138,13 @@ class Gegl:Composite:Op from Gegl:Point:Op {
 
   private 
   void
-  premult_RGBA_op_premult_RGBA_FLOAT (GeglPointOp *point_op)
+  premult_IA_op_premult_IA_FLOAT (GeglPointOp *point_op)
   {
     guint               width;
     GeglCompositeMode   comp_mode;
-    gfloat              *dest_r, *dest_g, *dest_b, *dest_a, *src_r, *src_g, *src_b, *src_a;
-    gfloat               a, b;
-    gfloat              *src_data[4], *dest_data[4];
+    DATATYPE            *dest_i, *dest_a, *src_i, *src_a;
+    DATATYPE            a, b;
+    DATATYPE            *src_data[4], *dest_data[4];
 
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
 
@@ -169,23 +168,17 @@ class Gegl:Composite:Op from Gegl:Point:Op {
                     (guchar**)src_data);
 
     /* Make r,g,b point to the image data */
-    dest_r = (gfloat*) dest_data[0];
-    dest_g = (gfloat*) dest_data[1];
-    dest_b = (gfloat*) dest_data[2];
-    dest_a = (gfloat*) dest_data[3];
+    dest_i = (DATATYPE*) dest_data[0];
+    dest_a = (DATATYPE*) dest_data[3];
  
-    src_r = (gfloat*) src_data[0];
-    src_g = (gfloat*) src_data[1];
-    src_b = (gfloat*) src_data[2];
-    src_a = (gfloat*) src_data[3];
+    src_i = (DATATYPE*) src_data[0];
+    src_a = (DATATYPE*) src_data[3];
 
     switch(comp_mode){
       case COMPOSITE_REPLACE:
         while (width--)
         {
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          *dest_i++ = *src_i++;
           *dest_a++ = *src_a++;
         }
       break;
@@ -193,18 +186,14 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         while (width--)
         {
           a = 1.0 - *src_a;
-          *dest_r++ = a * *dest_r + *src_r++;
-          *dest_g++ = a * *dest_g + *src_g++;
-          *dest_b++ = a * *dest_b + *src_b++;
+          *dest_i++ = a * *dest_i + *src_i++;
           *dest_a++ = a * *dest_a + *src_a++;
         } 
       break;
       case COMPOSITE_IN:
         while (width--)
         {
-          *dest_r++ = *src_r++ * *dest_a;
-          *dest_g++ = *src_g++ * *dest_a;
-          *dest_b++ = *src_b++ * *dest_a;
+          *dest_i++ = *src_i++ * *dest_a;
           *dest_a++ = *src_a++ * *dest_a;  
         }
       break;
@@ -212,9 +201,7 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         while (width--)
         {
           a = 1.0 - *dest_a;
-          *dest_r++ = a * *src_r++;
-          *dest_g++ = a * *src_g++;
-          *dest_b++ = a * *src_b++;
+          *dest_i++ = a * *src_i++;
           *dest_a++ = a * *src_a++;  
         }
       break;
@@ -223,9 +210,7 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         {
           a = 1.0 - *dest_a;
           b = 1.0 - *src_a; 
-          *dest_r++ = a * *src_r++ + b * *dest_r;
-          *dest_g++ = a * *src_g++ + b * *dest_g;
-          *dest_b++ = a * *src_b++ + b * *dest_b;
+          *dest_i++ = a * *src_i++ + b * *dest_i;
           *dest_a++ = a * *src_a++ + b * *dest_a;
         }
       break;
@@ -233,18 +218,14 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         while (width--)
         {
           a = 1.0 - *src_a++; 
-          *dest_r++ = a * *dest_r + *dest_a * *src_r++;
-          *dest_g++ = a * *dest_g + *dest_a * *src_g++;
-          *dest_b++ = a * *dest_b + *dest_a * *src_b++;
+          *dest_i++ = a * *dest_i + *dest_a * *src_i++;
            dest_a++;
         }
       break;
       case COMPOSITE_PLUS:
         while (width--)
         {
-          *dest_r++ += *src_r++;
-          *dest_g++ += *src_g++;
-          *dest_b++ += *src_b++;
+          *dest_i++ += *src_i++;
           *dest_a++ += *src_a++;
         }
       break;
@@ -255,13 +236,13 @@ class Gegl:Composite:Op from Gegl:Point:Op {
  
   private
   void
-  premult_RGBA_op_RGB_FLOAT (GeglPointOp *point_op)
+  premult_IA_op_I_FLOAT (GeglPointOp *point_op)
   {
     guint               width;
     GeglCompositeMode   comp_mode;
-    gfloat              *dest_r, *dest_g, *dest_b, *dest_a, *src_r, *src_g, *src_b;
-    gfloat               a;
-    gfloat              *src_data[3], *dest_data[4];
+    DATATYPE              *dest_i, *dest_a, *src_i;
+    DATATYPE               a;
+    DATATYPE              *src_data[3], *dest_data[4];
 
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
 
@@ -285,49 +266,37 @@ class Gegl:Composite:Op from Gegl:Point:Op {
                     (guchar**)src_data);
 
     /* Make r,g,b point to the image data */
-    dest_r = (gfloat*) dest_data[0];
-    dest_g = (gfloat*) dest_data[1];
-    dest_b = (gfloat*) dest_data[2];
-    dest_a = (gfloat*) dest_data[3];
+    dest_i = (DATATYPE*) dest_data[0];
+    dest_a = (DATATYPE*) dest_data[3];
 
-    src_r = (gfloat*) src_data[0];
-    src_g = (gfloat*) src_data[1];
-    src_b = (gfloat*) src_data[2];
+    src_i = (DATATYPE*) src_data[0];
 
     switch(comp_mode){
       case COMPOSITE_REPLACE:
         while (width--)
         {
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          *dest_i++ = *src_i++;
           *dest_a++ = 1.0;
         }
       break;
       case COMPOSITE_OVER:
         while (width--)
         {
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          *dest_i++ = *src_i++;
           *dest_a++ = 1.0;
         }
       break;
       case COMPOSITE_IN:
         while (width--)
         {
-          *dest_r++ = *src_r++ * *dest_a;
-          *dest_g++ = *src_g++ * *dest_a;
-          *dest_b++ = *src_b++ * *dest_a++;
+          *dest_i++ = *src_i++ * *dest_a;
         }
       break;
       case COMPOSITE_OUT:
         while (width--)
         {
           a = 1.0 - *dest_a;
-          *dest_r++ = a * *src_r++;
-          *dest_g++ = a * *src_g++;
-          *dest_b++ = a * *src_b++;
+          *dest_i++ = a * *src_i++;
           *dest_a++ = a;
         }
       break;
@@ -335,27 +304,21 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         while (width--)
         {
           a = 1.0 - *dest_a;
-          *dest_r++ = a * *src_r++;
-          *dest_g++ = a * *src_g++;
-          *dest_b++ = a * *src_b++;
+          *dest_i++ = a * *src_i++;
           *dest_a++ = a;
         }
       break;
       case COMPOSITE_ATOP:
         while (width--)
         {
-          *dest_r++ = *dest_a * *src_r++;
-          *dest_g++ = *dest_a * *src_g++;
-          *dest_b++ = *dest_a * *src_b++;
+          *dest_i++ = *dest_a * *src_i++;
            dest_a++;
         }
       break;
       case COMPOSITE_PLUS:
         while (width--)
         {
-          *dest_r++ += *src_r++;
-          *dest_g++ += *src_g++;
-          *dest_b++ += *src_b++;
+          *dest_i++ += *src_i++;
           *dest_a++ += 1.0;
         }
       break;
@@ -366,13 +329,13 @@ class Gegl:Composite:Op from Gegl:Point:Op {
 
   private
   void
-  RGB_op_premult_RGBA_FLOAT (GeglPointOp *point_op)
+  I_op_premult_IA_FLOAT (GeglPointOp *point_op)
   {
     guint               width;
     GeglCompositeMode   comp_mode;
-    gfloat              *dest_r, *dest_g, *dest_b, *src_r, *src_g, *src_b, *src_a;
-    gfloat               a, b;
-    gfloat              *src_data[4], *dest_data[3];
+    DATATYPE              *dest_i, *src_i, *src_a;
+    DATATYPE               a, b;
+    DATATYPE              *src_data[4], *dest_data[3];
 
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
 
@@ -396,73 +359,55 @@ class Gegl:Composite:Op from Gegl:Point:Op {
                     (guchar**)src_data);
 
     /* Make r,g,b point to the image data */
-    dest_r = (gfloat*) dest_data[0];
-    dest_g = (gfloat*) dest_data[1];
-    dest_b = (gfloat*) dest_data[2];
+    dest_i = (DATATYPE*) dest_data[0];
 
-    src_r = (gfloat*) src_data[0];
-    src_g = (gfloat*) src_data[1];
-    src_b = (gfloat*) src_data[2];
-    src_a = (gfloat*) src_data[3];
+    src_i = (DATATYPE*) src_data[0];
+    src_a = (DATATYPE*) src_data[3];
 
     switch(comp_mode){
       case COMPOSITE_REPLACE:
         while (width--)
         {
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          *dest_i++ = *src_i++;
         }
       break;
       case COMPOSITE_OVER:
         while (width--)
         {
           a = 1.0 - *src_a++;
-          *dest_r++ = a * *dest_r + *src_r++;
-          *dest_g++ = a * *dest_g + *src_g++;
-          *dest_b++ = a * *dest_b + *src_b++;
+          *dest_i++ = a * *dest_i + *src_i++;
         }
       break;
       case COMPOSITE_IN:
         while (width--)
         {
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          *dest_i++ = *src_i++;
         }
       break;
       case COMPOSITE_OUT:
         while (width--)
         {
-          *dest_r++ = 0.0;
-          *dest_g++ = 0.0;
-          *dest_b++ = 0.0;
+          *dest_i++ = 0.0;
         }
       break;
       case COMPOSITE_XOR:
         while (width--)
         {
           b = 1.0 - *src_a++;
-          *dest_r++ *= b;
-          *dest_g++ *= b;
-          *dest_b++ *= b;
+          *dest_i++ *= b;
         }
       break;
       case COMPOSITE_ATOP:
         while (width--)
         {
           a = 1.0 - *src_a++;
-          *dest_r++ = a * *dest_r + *src_r++;
-          *dest_g++ = a * *dest_g + *src_g++;
-          *dest_b++ = a * *dest_b + *src_b++;
+          *dest_i++ = a * *dest_i + *src_i++;
         }
       break;
       case COMPOSITE_PLUS:
         while (width--)
         {
-          *dest_r++ += *src_r++;
-          *dest_g++ += *src_g++;
-          *dest_b++ += *src_b++;
+          *dest_i++ += *src_i++;
         }
       break;
       default:
@@ -472,13 +417,13 @@ class Gegl:Composite:Op from Gegl:Point:Op {
 
   private
   void
-  RGBA_op_RGBA_FLOAT (GeglPointOp *point_op)
+  IA_op_IA_FLOAT (GeglPointOp *point_op)
   {
     guint               width;
     GeglCompositeMode   comp_mode;
-    gfloat              *dest_r, *dest_g, *dest_b, *dest_a, *src_r, *src_g, *src_b, *src_a;
-    gfloat              a, b, c;
-    gfloat              *src_data[4], *dest_data[4];
+    DATATYPE              *dest_i, *dest_a, *src_i, *src_a;
+    DATATYPE              a, b, c;
+    DATATYPE              *src_data[4], *dest_data[4];
 
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
 
@@ -502,23 +447,17 @@ class Gegl:Composite:Op from Gegl:Point:Op {
                   (guchar**)src_data);
 
     /* Make r,g,b point to the image data */
-    dest_r = (gfloat*) dest_data[0];
-    dest_g = (gfloat*) dest_data[1];
-    dest_b = (gfloat*) dest_data[2];
-    dest_a = (gfloat*) dest_data[3];
+    dest_i = (DATATYPE*) dest_data[0];
+    dest_a = (DATATYPE*) dest_data[3];
 
-    src_r = (gfloat*) src_data[0];
-    src_g = (gfloat*) src_data[1];
-    src_b = (gfloat*) src_data[2];
-    src_a = (gfloat*) src_data[3];
+    src_i = (DATATYPE*) src_data[0];
+    src_a = (DATATYPE*) src_data[3];
 
     switch(comp_mode){
       case COMPOSITE_REPLACE:
         while (width--)
         {
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          *dest_i++ = *src_i++;
           *dest_a++ = *src_a++;
         }
       break;
@@ -528,23 +467,14 @@ class Gegl:Composite:Op from Gegl:Point:Op {
           a = (1.0 - *src_a) * *dest_a;
           b = *src_a++;
           *dest_a   = a + b;
-          if(*dest_a)
-          {
+          if(*dest_a){
             c = 1.0 / *dest_a++;
-            *dest_r++ = (a * *dest_r + b * *src_r++) * c;
-            *dest_g++ = (a * *dest_g + b * *src_g++) * c;
-            *dest_b++ = (a * *dest_b + b * *src_b++) * c;
-          }
-          else
-          {
-            *dest_r++ = 0;
-            *dest_g++ = 0;
-            *dest_b++ = 0;
+            *dest_i++ = (a * *dest_i + b * *src_i++) * c;
+          }else{
+            *dest_i++ = 0;
              dest_a++; 
-             src_r++;
-	     src_g++;
-             src_b++;
-          }
+             src_i++;
+	  }
         }
       break;
       case COMPOSITE_IN:
@@ -552,16 +482,10 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         {
           *dest_a *= *src_a++;
           if(*dest_a++){
-            *dest_r++ = *src_r++;
-            *dest_g++ = *src_g++;
-            *dest_b++ = *src_b++;
+            *dest_i++ = *src_i++;
           }else{
-            *dest_r++ = 0;
-            *dest_g++ = 0;
-            *dest_b++ = 0;
-             src_r++;
-             src_g++;
-             src_b++;
+            *dest_i++ = 0;
+             src_i++;
           }
         }
       break;
@@ -570,16 +494,10 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         {
           *dest_a = (1.0 - *dest_a) * *src_a++;
           if(*dest_a++){
-            *dest_r++ = *src_r++;
-            *dest_g++ = *src_g++;
-            *dest_b++ = *src_b++;
+            *dest_i++ = *src_i++;
           } else {
-            *dest_r++ = 0;
-            *dest_g++ = 0;
-            *dest_b++ = 0;
-             src_r++;
-             src_g++;
-             src_b++;
+            *dest_i++ = 0;
+             src_i++;
           }
         }
       break;
@@ -591,17 +509,11 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         *dest_a = a + b;
         if(*dest_a){
           c = 1.0 / *dest_a++;
-          *dest_r++ = (a * *src_r++ + b * *dest_r) * c;
-          *dest_g++ = (a * *src_g++ + b * *dest_g) * c;
-          *dest_b++ = (a * *src_b++ + b * *dest_b) * c;
+          *dest_i++ = (a * *src_i++ + b * *dest_i) * c;
         } else {
-          *dest_r++ = 0;
-          *dest_g++ = 0;
-          *dest_b++ = 0;
+          *dest_i++ = 0;
            dest_a++;
-           src_r++;
-           src_g++;
-           src_b++;
+           src_i++;
         } 
       }
       break;
@@ -610,25 +522,17 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       {
         a = 1.0 - *src_a++;
         if(*dest_a++){
-          *dest_r++ = a * *dest_r + *dest_a * *src_r++;
-          *dest_g++ = a * *dest_g + *dest_a * *src_g++;
-          *dest_b++ = a * *dest_b + *dest_a * *src_b++;
+          *dest_i++ = a * *dest_i + *dest_a * *src_i++;
         } else {
-          *dest_r++ = 0;
-          *dest_g++ = 0;
-          *dest_b++ = 0;
-           src_r++;
-           src_g++;
-           src_b++;
+          *dest_i++ = 0;
+           src_i++;
         } 
       }
       break;
       case COMPOSITE_PLUS:
       while (width--)
       {
-        *dest_r++ += *src_r++;
-        *dest_g++ += *src_g++;
-        *dest_b++ += *src_b++;
+        *dest_i++ += *src_i++;
         *dest_a++ =  (*dest_a + *src_a++) * .5;
       }
     break;
@@ -638,12 +542,12 @@ class Gegl:Composite:Op from Gegl:Point:Op {
   }
   private
   void
-  RGBA_op_RGB_FLOAT (GeglPointOp *point_op)
+  IA_op_I_FLOAT (GeglPointOp *point_op)
   {
     guint               width;
     GeglCompositeMode   comp_mode;
-    gfloat              *dest_r, *dest_g, *dest_b, *dest_a, *src_r, *src_g, *src_b;
-    gfloat              *src_data[3], *dest_data[4];
+    DATATYPE              *dest_i, dest_a, *src_i;
+    DATATYPE              *src_data[3], *dest_data[4];
 
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
 
@@ -667,47 +571,32 @@ class Gegl:Composite:Op from Gegl:Point:Op {
                   (guchar**)src_data);
 
     /* Make r,g,b point to the image data */
-    dest_r = (gfloat*) dest_data[0];
-    dest_g = (gfloat*) dest_data[1];
-    dest_b = (gfloat*) dest_data[2];
-    dest_a = (gfloat*) dest_data[3];
+    dest_i = (DATATYPE*) dest_data[0];
 
-    src_r = (gfloat*) src_data[0];
-    src_g = (gfloat*) src_data[1];
-    src_b = (gfloat*) src_data[2];
+    src_i = (DATATYPE*) src_data[0];
 
     switch(comp_mode){
       case COMPOSITE_REPLACE:
         while (width--)
         {
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          *dest_i++ = *src_i++;
         }
       break;
       case COMPOSITE_OVER:
         while (width--)
         {
           *dest_a++ = 1.0;  
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          *dest_i++ = *src_i++;
         }
       break;
       case COMPOSITE_IN:
         while (width--)
         {
           if(*dest_a++){
-            *dest_r++ = *src_r++;
-            *dest_g++ = *src_g++;
-            *dest_b++ = *src_b++;
+            *dest_i++ = *src_i++;
           }else{
-            *dest_r++ = 0;
-            *dest_g++ = 0;
-            *dest_b++ = 0;
-            src_r++;
-            src_g++;
-            src_b++;
+            *dest_i++ = 0;
+            src_i++;
           }
         }
       break;
@@ -716,16 +605,10 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         {
           *dest_a = (1.0 - *dest_a);
           if(*dest_a++){
-            *dest_r++ = *src_r++;
-            *dest_g++ = *src_g++;
-            *dest_b++ = *src_b++;
+            *dest_i++ = *src_i++;
           } else {
-            *dest_r++ = 0;
-            *dest_g++ = 0;
-            *dest_b++ = 0;
-            src_r++;
-            src_g++;
-            src_b++;
+            *dest_i++ = 0;
+            src_i++;
           }
         }
       break;
@@ -734,17 +617,11 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       {
         *dest_a = (1.0 - *dest_a);
         if(*dest_a++){
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          *dest_i++ = *src_i++;
         } else {
-          *dest_r++ = 0;
-          *dest_g++ = 0;
-          *dest_b++ = 0;
+          *dest_i++ = 0;
            dest_a++;
-           src_r++;
-           src_g++;
-           src_b++;
+           src_i++;
         } 
       }
       break;
@@ -752,25 +629,17 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       while (width--)
       {
         if(*dest_a++){
-          *dest_r++ = *dest_a * *src_r++;
-          *dest_g++ = *dest_a * *src_g++;
-          *dest_b++ = *dest_a * *src_b++;
+          *dest_i++ = *dest_a * *src_i++;
         } else {
-          *dest_r++ = 0;
-          *dest_g++ = 0;
-          *dest_b++ = 0;
-           src_r++;
-           src_g++;
-           src_b++;
+          *dest_i++ = 0;
+           src_i++;
         } 
       }
       break;
       case COMPOSITE_PLUS:
       while (width--)
       {
-        *dest_r++ += *src_r++;
-        *dest_g++ += *src_g++;
-        *dest_b++ += *src_b++;
+        *dest_i++ += *src_i++;
       }
     break;
     default:
@@ -779,13 +648,13 @@ class Gegl:Composite:Op from Gegl:Point:Op {
   }
   private
   void
-  RGB_op_RGBA_FLOAT (GeglPointOp *point_op)
+  I_op_IA_FLOAT (GeglPointOp *point_op)
   {
     guint               width;
     GeglCompositeMode   comp_mode;
-    gfloat              *dest_r, *dest_g, *dest_b, *src_r, *src_g, *src_b, *src_a;
-    gfloat              a, b;
-    gfloat              *src_data[4], *dest_data[3];
+    DATATYPE            *dest_i, *src_i, *src_a;
+    DATATYPE            a, b;
+    DATATYPE            *src_data[NUMCHAN], *dest_data[NUMCHAN];
 
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv);
 
@@ -809,22 +678,16 @@ class Gegl:Composite:Op from Gegl:Point:Op {
                   (guchar**)src_data);
 
     /* Make r,g,b point to the image data */
-    dest_r = (gfloat*) dest_data[0];
-    dest_g = (gfloat*) dest_data[1];
-    dest_b = (gfloat*) dest_data[2];
+    dest_i = (DATATYPE*) dest_data[0];
 
-    src_r = (gfloat*) src_data[0];
-    src_g = (gfloat*) src_data[1];
-    src_b = (gfloat*) src_data[2];
-    src_a = (gfloat*) src_data[3];
+    src_i = (DATATYPE*) src_data[0];
+    src_a = (DATATYPE*) src_data[3];
 
     switch(comp_mode){
       case COMPOSITE_REPLACE:
         while (width--)
         {
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          *dest_i++ = *src_i++;
         }
       break;
       case COMPOSITE_OVER:
@@ -832,9 +695,7 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         {
           a = (1.0 - *src_a);
           b = *src_a++;
-          *dest_r++ = a * *dest_r + b * *src_r++;
-          *dest_g++ = a * *dest_g + b * *src_g++;
-          *dest_b++ = a * *dest_b + b * *src_b++;
+          *dest_i++ = a * *dest_i + b * *src_i++;
         }
       break;
       case COMPOSITE_IN:
@@ -842,25 +703,17 @@ class Gegl:Composite:Op from Gegl:Point:Op {
         {
            a = *src_a++;
           if(a){
-            *dest_r++ = *src_r++;
-            *dest_g++ = *src_g++;
-            *dest_b++ = *src_b++;
+            *dest_i++ = *src_i++;
           }else{
-            *dest_r++ = 0;
-            *dest_g++ = 0;
-            *dest_b++ = 0;
-            src_r++;
-            src_g++;
-            src_b++;
+            *dest_i++ = 0;
+            src_i++;
           }
         }
       break;
       case COMPOSITE_OUT:
       while (width--)
         {
-          *dest_r++ = 0;
-          *dest_g++ = 0;
-          *dest_b++ = 0;
+          *dest_i++ = 0;
         }
       break;
       case COMPOSITE_XOR:
@@ -868,16 +721,10 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       {
         b = (1.0 - *src_a++);
         if(b){
-          *dest_r++ = *dest_r;
-          *dest_g++ = *dest_g;
-          *dest_b++ = *dest_b;
+          *dest_i++ = *dest_i;
         } else {
-          *dest_r++ = 0;
-          *dest_g++ = 0;
-          *dest_b++ = 0;
-           src_r++;
-           src_g++;
-           src_b++;
+          *dest_i++ = 0;
+           src_i++;
         } 
       }
       break;
@@ -885,17 +732,13 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       while (width--)
       {
         a = 1.0 - *src_a++;
-        *dest_r++ = a * *dest_r + *src_r++;
-        *dest_g++ = a * *dest_g + *src_g++;
-        *dest_b++ = a * *dest_b + *src_b++;
+        *dest_i++ = a * *dest_i + *src_i++;
       }
       break;
       case COMPOSITE_PLUS:
       while (width--)
       {
-        *dest_r++ += *src_r++;
-        *dest_g++ += *src_g++;
-        *dest_b++ += *src_b++;
+        *dest_i++ += *src_i++;
       }
     break;
     default:
@@ -906,12 +749,12 @@ class Gegl:Composite:Op from Gegl:Point:Op {
 
   private 
   void
-  RGB_op_RGB_FLOAT (GeglPointOp *point_op)
+  I_op_I_DATATYPE (GeglPointOp *point_op)
   {
-    guint               width;
+    guint               i,width;
     GeglCompositeMode   comp_mode;
-    gfloat              *dest_r, *dest_g, *dest_b, *src_r, *src_g, *src_b;
-    gfloat              *dest_data[3], *src_data[3];
+    DATATYPE            *dest_i[NUMCHAN], *src_i[NUMCHAN];
+    DATATYPE            *dest_data[NUMCHAN], *src_data[NUMCHAN];
 
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
 
@@ -935,69 +778,58 @@ class Gegl:Composite:Op from Gegl:Point:Op {
                   (guchar**)src_data);
 
     /* Make r,g,b point to the image data */
-    dest_r = (gfloat*) dest_data[0];
-    dest_g = (gfloat*) dest_data[1];
-    dest_b = (gfloat*) dest_data[2];
+    dest_i = (DATATYPE*) dest_data[0];
  
-    src_r = (gfloat*) src_data[0];
-    src_g = (gfloat*) src_data[1];
-    src_b = (gfloat*) src_data[2];
+    src_i = (DATATYPE*) src_data[0];
     
     switch(comp_mode){
       case COMPOSITE_REPLACE:
         while (width--)
         {
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          for(i=0; i<NUMCHAN; i++)
+            *(dest_i[i])++ = *(src_i[i])++;
         }
       break;
       case COMPOSITE_OVER:
         while (width--)
         {
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          for(i=0; i<NUMCHAN; i++)
+            *(dest_i[i])++ = *(src_i[i])++;
         } 
       break;
       case COMPOSITE_IN:
         while (width--)
         {
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          for(i=0; i<NUMCHAN; i++)
+            *(dest_i[i])++ = *(src_i[i])++;
         }
       break;
       case COMPOSITE_OUT:
         while (width--)
         {
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          for(i=0; i<NUMCHAN; i++)
+            *(dest_i[i])++ = *(src_i[i])++;
         }
       break;
       case COMPOSITE_XOR:
         while (width--)
         {
-          *dest_r++ = 0.0; 
-          *dest_g++ = 0.0;
-          *dest_b++ = 0.0;
+          for(i=0; i<NUMCHAN; i++)
+            *(dest_i[i])++ = 0.0; 
         }
       break;
       case COMPOSITE_ATOP:
         while (width--)
         {
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
+          for(i=0; i<NUMCHAN; i++)
+            *(dest_i[i])++ = *(src_i[i])++;
         }
       break;
       case COMPOSITE_PLUS:
         while (width--)
         {
-          *dest_r++ += *src_r++;
-          *dest_g++ += *src_g++;
-          *dest_b++ += *src_b++;
+          for(i=0; i<NUMCHAN; i++)
+            *(dest_i[i])++ += *(src_i[i])++;
         }
       break;
       default:

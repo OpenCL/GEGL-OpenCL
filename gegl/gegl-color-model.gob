@@ -120,7 +120,7 @@ class Gegl:Color:Model from Gegl:Object {
 
   virtual
   void
-  convert_to_xyz (self, gfloat **dest_data, guchar **src_data, gint width);
+  convert_to_xyz (self, gfloat *dest_data, guchar **src_data, gint width);
 
   virtual
   void
