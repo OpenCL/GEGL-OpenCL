@@ -10,9 +10,9 @@
 # directly.
 
 
-PROJECT="The GIMP"
+PROJECT="GEGL"
 TEST_TYPE=-d
-FILE=plug-ins
+FILE=tests
 
 LIBTOOL_REQUIRED_VERSION=1.3.4
 LIBTOOL_WIN32=1.5
@@ -156,7 +156,7 @@ fi
 if test -z "$ACLOCAL_FLAGS"; then
 
     acdir=`$ACLOCAL --print-ac-dir`
-    m4list="glib-2.0.m4 glib-gettext.m4 gtk-2.0.m4 intltool.m4 pkg.m4"
+    m4list="glib-2.0.m4 glib-gettext.m4 intltool.m4 pkg.m4"
 
     for file in $m4list
     do
@@ -183,12 +183,12 @@ fi
 libtoolize --force || exit 1
 
 # optionally feature autoheader
-(autoheader --version)  < /dev/null > /dev/null 2>&1 && autoheader || exit 1
+#(autoheader --version)  < /dev/null > /dev/null 2>&1 && autoheader || exit 1
 
 $AUTOMAKE --add-missing || exit 1
 autoconf || exit 1
 
-glib-gettextize --copy --force || exit 1
+#glib-gettextize --copy --force || exit 1
 intltoolize --copy --force --automake || exit 1
 
 cd $ORIGDIR
