@@ -1,6 +1,6 @@
 30% symbol docs coverage.
 127 symbols documented.
-290 not documented.
+292 not documented.
 
 
 GEGL_DEFAULT_HEIGHT
@@ -89,6 +89,8 @@ GeglComponentColorModelClass
 GeglComponentStorage
 GeglComponentStorageClass
 GeglConnector
+GeglCopy
+GeglCopyClass
 GeglDarken
 GeglDarkenClass
 GeglData

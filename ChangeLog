@@ -1,7 +1,30 @@
+Mon Feb 24 23:58:36 EST 2003 calvinw@mindspring.com
+
+	Patch from Daniel Rogers (daniel@phasevelocity.org) for Copy op. 
+
+	Modified these:
+
+	*docs/reference/gegl/gegl-docs.sgml
+	*docs/reference/gegl/gegl-sections.txt
+	*docs/reference/gegl/gegl-undocumented.txt
+	*docs/reference/gegl/gegl.types
+	*gegl/Makefile.am
+	*gegl/gegl.h
+	*tests/Makefile.am
+	*tests/testgegl.c
+
+	Added these:
+
+	*docs/reference/gegl/tmpl/gegl-copy.sgml
+	*gegl/gegl-copy.c
+	*gegl/gegl-copy.h
+	*tests/copytest-rgb-float.c
+	*tests/copytest-rgb-uint8.c
+
 Tue Feb 11 20:23:24 EST 2003 calvinw@mindspring.com
 
 	Renamed some classes:  
-		data-space -> channel-data-space 
+		data-space -> channel-space 
 		data-buffer -> buffer 
 		image -> image-op
 		image-buffer -> image 

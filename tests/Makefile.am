@@ -55,6 +55,8 @@ testgegl_SOURCES = \
    colorspacetest.c \
    colortest-rgb-float.c \
    colortest-rgb-uint8.c \
+   copytest-rgb-float.c \
+   copytest-rgb-uint8.c \
    dfsvisitortest.c \
    dumpvisitortest.c \
    fadetest-rgb-float.c \

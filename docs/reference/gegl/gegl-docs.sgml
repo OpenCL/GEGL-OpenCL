@@ -22,6 +22,7 @@
 <!ENTITY GeglComp SYSTEM "xml/gegl-comp.xml">
 <!ENTITY GeglComponentColorModel SYSTEM "xml/gegl-component-color-model.xml">
 <!ENTITY GeglComponentStorage SYSTEM "xml/gegl-component-storage.xml">
+<!ENTITY GeglCopy SYSTEM "xml/gegl-copy.xml">
 <!ENTITY GeglDarken SYSTEM "xml/gegl-darken.xml">
 <!ENTITY GeglBuffer SYSTEM "xml/gegl-buffer.xml">
 <!ENTITY GeglChannelSpaceFloat SYSTEM "xml/gegl-channel-space-float.xml">
@@ -201,6 +202,7 @@
       &GeglAdd;
       &GeglAtop;
       &GeglColor;
+      &GeglCopy;
       &GeglDarken;
       &GeglDifference;
       &GeglFade;

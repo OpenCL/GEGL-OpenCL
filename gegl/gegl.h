@@ -15,6 +15,7 @@
 #include <gegl-comp.h>
 #include <gegl-component-storage.h>
 #include <gegl-component-color-model.h>
+#include <gegl-copy.h>
 #include <gegl-darken.h>
 #include <gegl-data.h>
 #include <gegl-buffer.h>

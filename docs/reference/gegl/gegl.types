@@ -18,6 +18,7 @@ gegl_color_space_rgb_get_type
 gegl_comp_get_type 
 gegl_component_color_model_get_type 
 gegl_component_storage_get_type 
+gegl_copy_get_type
 gegl_darken_get_type 
 gegl_data_get_type 
 gegl_dfs_visitor_get_type 

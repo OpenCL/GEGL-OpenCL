@@ -22,6 +22,7 @@ GEGL_SRC = \
   gegl-comp.c \
   gegl-component-color-model.c \
   gegl-component-storage.c \
+  gegl-copy.c \
   gegl-darken.c \
   gegl-data.c \
   gegl-dfs-visitor.c \

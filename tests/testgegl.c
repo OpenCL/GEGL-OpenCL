@@ -16,6 +16,8 @@ extern Test * create_color_model_test();
 extern Test * create_color_space_test();
 extern Test * create_color_test_rgb_float();
 extern Test * create_color_test_rgb_uint8();
+extern Test * create_copy_test_rgb_float();
+extern Test * create_copy_test_rgb_uint8();
 extern Test * create_dump_visitor_test();
 extern Test * create_channel_space_test();
 extern Test * create_buffer_test();
@@ -81,6 +83,8 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_buffer_test());
     cs_addTest(suite, create_dfs_visitor_test());
     cs_addTest(suite, create_dump_visitor_test());
+    cs_addTest(suite, create_copy_test_rgb_float());
+    cs_addTest(suite, create_copy_test_rgb_uint8());
     cs_addTest(suite, create_fade_test_rgb_float());
     cs_addTest(suite, create_fade_test_rgb_uint8());
     cs_addTest(suite, create_graph_apply_test_rgb_float());

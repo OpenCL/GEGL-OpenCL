@@ -1228,6 +1228,21 @@ GEGL_XOR_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>gegl-copy</FILE>
+GeglCopy
+GeglCopyClass
+<TITLE>GeglCopy</TITLE>
+<SUBSECTION Standard>
+GEGL_COPY
+GEGL_IS_COPY
+GEGL_TYPE_COPY
+gegl_copy_get_type
+GEGL_COPY_CLASS
+GEGL_IS_COPY_CLASS
+GEGL_COPY_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>gegl-color-data</FILE>
 <TITLE>GeglColorData</TITLE>
 GeglColorData
