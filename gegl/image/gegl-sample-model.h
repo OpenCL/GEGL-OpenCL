@@ -1,0 +1,104 @@
+/*
+ *   This file is part of GEGL.
+ *
+ *    GEGL is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    Foobar is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with Foobar; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  Copyright 2003 Daniel S. Rogers
+ *
+ */
+
+#ifndef GEGL_SAMPLE_MODEL_H
+#define GEGL_SAMPLE_MODEL_H
+
+#include "gegl-object.h"
+#include "gegl-buffer.h"
+
+#define GEGL_TYPE_SAMPLE_MODEL               (gegl_sample_model_get_type ())
+#define GEGL_SAMPLE_MODEL(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SAMPLE_MODEL, GeglSampleModel))
+#define GEGL_SAMPLE_MODEL_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_SAMPLE_MODEL, GeglSampleModelClass))
+#define GEGL_IS_SAMPLE_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_SAMPLE_MODEL))
+#define GEGL_IS_SAMPLE_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_SAMPLE_MODEL))
+#define GEGL_SAMPLE_MODEL_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SAMPLE_MODEL, GeglSampleModelClass))
+
+GType gegl_sample_model_get_type(void);
+
+typedef struct _GeglSampleModel GeglSampleModel;
+struct _GeglSampleModel
+{
+    GeglObject parent;
+    /* private */
+    gint width;
+    gint height;
+    gint num_bands;
+};
+
+typedef struct _GeglSampleModelClass GeglSampleModelClass;
+struct _GeglSampleModelClass
+{
+	GeglObjectClass parent_class;
+    gdouble* (*get_pixel_double)(GeglSampleModel* self,
+                                 gint x, 
+                                 gint y, 
+                                 gdouble* dArray, 
+                                 GeglBuffer* buffer);
+    void (*set_pixel_double)(GeglSampleModel* self,
+                             gint x, 
+                             gint y, 
+                             gdouble* dArray, 
+                             GeglBuffer* buffer);
+
+// virtual functions (i.e. you _must_ provide an implementation
+    gdouble (*get_sample_double)(GeglSampleModel* self,
+                                 gint x, 
+                                 gint y, 
+                                 gint band, 
+                                 GeglBuffer* buffer);
+    void (*set_sample_double)(GeglSampleModel* self,
+                             gint x, 
+                             gint y, 
+                             gint band,
+                             gdouble sample, 
+                             GeglBuffer* buffer);
+    void (*create_buffer)(GeglSampleModel* self,
+                          TransferType type);
+};
+
+gint gegl_sample_model_get_num_bands(GeglSampleModel* self);
+gint gegl_sample_model_get_width(GeglSampleModel* self);
+gint gegl_sample_model_get_height(GeglSampleModel* self);
+gdouble* gegl_sample_model_get_pixel_double(GeglSampleModel* self,
+                                            gint x,
+                                            gint y,
+                                            gdouble* dArray,
+                                            GeglBuffer* buffer);
+void gegl_sample_model_set_pixel_double(GeglSampleModel* self,
+                                        gint x,
+                                        gint y,
+                                        gdouble* dArray,
+                                        GeglBuffer* buffer);
+gdouble gegl_sample_model_get_sample_double(GeglSampleModel* self,
+                                            gint x,
+                                            gint y,
+                                            gint band,
+                                            GeglBuffer* buffer);
+void gegl_sample_model_set_sample_double(GeglSampleModel* self,
+                                         gint x,
+                                         gint y,
+                                         gint band,
+                                         gdouble sample,
+                                         GeglBuffer* buffer);
+GeglBuffer* gegl_sample_model_create_buffer(GeglSampleModel* self,
+                                            TransferType type);
+#endif // GEGL_SAMPLE_MODEL_H
