@@ -58,8 +58,8 @@ rm			[\t \n]*
   					init_image_data (tmp);
 					}	
 <DATA_TYPE>{indent}			;         	
-<DATA_TYPE>{rm}"DATATYPE_END""\n"	{BEGIN 0;} 
-      
+<DATA_TYPE>{rm}"DATATYPE_END"{rm}	BEGIN 0; 
+
 <ARGUMENTS>","				return DT_COMMA; 
 <ARGUMENTS>"("				return LT_PARENTHESIS;
 <ARGUMENTS>")"				{BEGIN DEFINITION; return RT_PARENTHESIS;}  
@@ -305,12 +305,15 @@ rm			[\t \n]*
 					}
 
 
-{indent}"$" 				{BEGIN 0; return 0;} 
+{rm}"$" 				{BEGIN 0; return 0;} 
 "$"					{BEGIN 0; return 0;} 
 <GENERIC_IMAGE_DECL>.			return yytext[0];
 <GENERIC_IMAGE_BLOCK>.			return yytext[0];
 <COMMENT>.				ECHO;
-<DATA_TYPE>.				; 
+<DATA_TYPE>.				;
+<ARGUMENTS>.				;
+<DEFINITION>.				;
+
 .					ECHO; 	
 
 

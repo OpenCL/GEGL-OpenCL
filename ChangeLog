@@ -1,3 +1,11 @@
+Mon Apr  3 13:22:41 PDT 2000 caro@rhythm.com\
+
+	* check in for codegen
+
+	* lexer.l made sure that all the stated that read the
+	channel files rm all extra tokens that they dont use for
+	its grammar. 
+	
 Mon Apr  3 11:52:38 PDT 2000 caro@rhythm.com
 
 	* check in for codegen
