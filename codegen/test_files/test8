@@ -11,12 +11,12 @@ COLORSPACEa_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
     GeglCompositePremultOp * self = GEGL_COMPOSITE_PREMULT_OP (point_op);
     GeglPointOpPrivate *point_opP = (GeglPointOpPrivate *)(point_op->_priv); 
 
-    CODEGEN_DECL_BEGIN
+    GENERIC_IMAGE_DECL_BEGIN
     VectorChan dest(color);
     VectorChan src1(color);
     VectorChan src2(color,alpha);
     Chan a;
-    CODEGEN_DECL_END
+    GENERIC_IMAGE_DECL_END
 
     guint width = point_opP->scanline_width;
 
@@ -30,19 +30,19 @@ COLORSPACEa_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
                       point_opP->iterators[2],
                       (guchar**)src2_data); 
 
-    CODEGEN_IMAGE_DATA_INIT
+    GENERIC_IMAGE_IMAGE_DATA_INIT
 
-     CODEGEN_BLOCK_BEGIN
+     GENERIC_IMAGE_BLOCK_BEGIN
      dest = src2_color;
 
      dX(dest,1);
      dX(src2,1);
-     CODEGEN_BLOCK_END
+     GENERIC_IMAGE_BLOCK_END
 }
 
 ---end example---
 
-outputs something like this in the CODEGENBLOCK:
+outputs something like this in the GENERIC_IMAGEBLOCK:
 
 while (width--)
            {

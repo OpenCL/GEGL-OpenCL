@@ -1,15 +1,15 @@
 
 /* Another test file */
 
-CODEGEN_DECL_BEGIN
+GENERIC_IMAGE_DECL_BEGIN
 VectorChan ca(color,alpha);
 VectorChan c(color);
 Chan b;
 int i;
 float f; 
-CODEGEN_DECL_END
+GENERIC_IMAGE_DECL_END
 
-CODEGEN_BLOCK_BEGIN
+GENERIC_IMAGE_BLOCK_BEGIN
 ca = ca * ca;
 ca = b * ca;
 ca = i * ca;
@@ -22,5 +22,5 @@ ca = i / ca;
 ca = f / ca;
 ca = (f * ca) / ca;
 
-CODEGEN_BLOCK_END
+GENERIC_IMAGE_BLOCK_END
 

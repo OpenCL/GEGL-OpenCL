@@ -111,12 +111,9 @@ class Gegl:Screen:Op from Gegl:Dual:Src:Op {
     GENERIC_IMAGE_DECL_BEGIN
     int width ;
 
-    VectorChan dest(color,alpha);
-    VectorChan src1(color,alpha);
-    VectorChan src2(color,alpha);
-    boolean dest_has_alpha;  
-    boolean src1_has_alpha;  
-    boolean src2_has_alpha;  
+    VectorChan dest(color,alpha,has_alpha);
+    VectorChan src1(color,alpha,has_alpha);
+    VectorChan src2(color,alpha,has_alpha);
     GENERIC_IMAGE_DECL_END
 
     dest_has_alpha = 

@@ -1,6 +1,6 @@
 /* fldskjflksjd sdfjlskfjlsdkfjdslkjfsldkfjdlskf */
 {
-       CODEGEN_DECL_BEGIN
+       GENERIC_IMAGE_DECL_BEGIN
  
        Chan a ;
        VectorChan s(color,alpha); 
@@ -11,9 +11,9 @@
        VectorChan c(color,alpha);
        Chan g[4], h[2];
        Chan f;
-       CODEGEN_DECL_END
+       GENERIC_IMAGE_DECL_END
 
-       CODEGEN_BLOCK_BEGIN
+       GENERIC_IMAGE_BLOCK_BEGIN
 
              d = s1 * s2;
 
@@ -88,6 +88,6 @@
 
               g = h;
 
-       CODEGEN_BLOCK_END
+       GENERIC_IMAGE_BLOCK_END
 
 }

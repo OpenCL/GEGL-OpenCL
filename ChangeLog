@@ -1,3 +1,9 @@
+Tue Mar 21 18:11:07 PST 2000 caro@rhythm.com
+
+	* fixed the rpoblem with has_alpha. In the 
+	get_sym function it would not recornise a has_alpha
+	varible.
+
 Tue Mar 21 17:03:19 PST 2000 caro@rhythm.com
 
 	* fixed the indent problem with the 
