@@ -1,3 +1,16 @@
+Tue May 30 18:04:27 PDT 2000 caro@rhythm.com
+
+	* check int for docs
+
+	* added pictures for the r-n-h slides.
+
+	* check in for gegl
+
+	* change the ops to that they would work with the new
+	design.
+
+	* change Makefile.am
+
 Tue May 30 13:51:40 PDT 2000 caro@rhythm.com
 
 	* check in for docs

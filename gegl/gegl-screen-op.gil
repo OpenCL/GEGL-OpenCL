@@ -7,8 +7,7 @@
 #include "gegl-dual-src-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
-#include "gegl-object-private.h"
-#include "gegl-image-buffer.h"
+#include "gegl-image-private.h"
 #include "gegl-image-iterator.h"
 #include "gegl-color.h"
 #include "gegl-color-model.h"
@@ -21,18 +20,13 @@ class Gegl:Screen:Op from Gegl:Dual:Src:Op {
 
   public 
   GeglScreenOp *
-  new (GeglImageBuffer *dest, 
-       GeglImageBuffer *src1,
-       GeglImageBuffer *src2,       
-       GeglRect *dest_rect,
-       GeglRect *src1_rect,
-       GeglRect *src2_rect)
+  new (GeglImage *src1,
+       GeglImage *src2)       
   {
     GeglScreenOp * self = GEGL_SCREEN_OP(GET_NEW);
 
     /*Call the constructor */
-    if (!constructor(self, dest, src1, src2, 
-                     dest_rect, src1_rect, src2_rect))
+    if (!constructor(self, src1, src2))
       return NULL;
     
     /*Okay its constructed*/
@@ -44,69 +38,73 @@ class Gegl:Screen:Op from Gegl:Dual:Src:Op {
   protected 
   gboolean 
   constructor(self, 
-              GeglImageBuffer *dest,
-              GeglImageBuffer *src1,
-              GeglImageBuffer *src2,
-              GeglRect *dest_rect,
-              GeglRect *src1_rect,
-              GeglRect *src2_rect)        
+              GeglImage *src1,
+              GeglImage *src2)
   {
-    GeglPointOp *point_op = GEGL_POINT_OP (self);
-    GeglPointOpClass *point_op_class = 
-        GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
     
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
     
     /* Chain up */
-    if (!gegl_dual_src_op_constructor ( 
-           GEGL_DUAL_SRC_OP(self),dest, src1, src2, 
-           dest_rect, src1_rect, src2_rect))
+    if (!gegl_dual_src_op_constructor (
+	  GEGL_DUAL_SRC_OP(self),src1, src2))
       return FALSE;
-
-    {
-      /* codegen preprocessor puts in "switch" on color_models file  */ 
-
-      point_op_class->scanline_func = 
-        gegl_screen_op_scanline_COLORSPACE_DATATYPE;        
-    }
 
     return TRUE;
   }
 
+  override(Gegl:Op)
+  void
+  compute_source_rois (GeglOp *op, GeglRect *roi) 
+  {
+    gegl_rect_copy(&op->_priv->source_rois[0],roi);    
+    gegl_rect_copy(&op->_priv->source_rois[1],roi);    
+  }
+
+  override(Gegl:Op)
+  void
+  prepare(GeglOp *op,
+          GeglImage *dest,
+	  GeglRect *dest_rect)
+  {
+    GeglPointOp *point_op = GEGL_POINT_OP (op);
+    GeglPointOpClass *point_op_class = 
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+
+    /* Save the alphas so we can get them quickly in 
+       in the scanline func */
+    gegl_op_save_alphas(op);
+
+    /* Now make sure the correct scanline func is installed */
+    point_op_class->scanline_func = 
+      gegl_screen_op_scanline_COLORSPACE_DATATYPE;        
+  } 
+
   private 
   void
-  scanline_COLORSPACE_DATATYPE (GeglPointOp *point_op)
+  scanline_COLORSPACE_DATATYPE (GeglPointOp *point_op,
+                       GeglImageIterator *dest_iter, 
+		       GeglImageIterator **src_iters)
   {
-    GeglPointOpPrivate *point_opP = 
-        (GeglPointOpPrivate *)(point_op->_priv); 
-    GeglDualSrcOp *dual_src_op = GEGL_DUAL_SRC_OP(point_op); 
-    GeglDualSrcOpPrivate *dual_src_opP = 
-        (GeglDualSrcOpPrivate *)(dual_src_op->_priv); 
+    GeglOp *op = GEGL_OP(point_op);
+    guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color,alpha,has_alpha);
     Pixel src1(color,alpha,has_alpha);
     Pixel src2(color,alpha,has_alpha);
     GENERIC_IMAGE_DECL_END
-    gint width = point_opP->scanline_width;
 
-    dest_has_alpha = gegl_color_model_has_alpha(
-                       dual_src_opP->dest_cm); 
-    src1_has_alpha = gegl_color_model_has_alpha(
-                       dual_src_opP->src1_cm); 
-    src2_has_alpha = gegl_color_model_has_alpha(
-                       dual_src_opP->src2_cm); 
+    dest_has_alpha = op->_priv->has_alpha; 
+    src1_has_alpha = op->_priv->src_has_alpha[0]; 
+    src2_has_alpha = op->_priv->src_has_alpha[1]; 
 
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[0], 
-                      (guchar**)dest_data);
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[1],
-                      (guchar**)src1_data);
-    gegl_image_iterator_get_scanline_data ( 
-                      point_opP->iterators[2],
-                      (guchar**)src2_data); 
+    gegl_image_iterator_get_scanline_data (
+	dest_iter, (guchar**)dest_data);
+    gegl_image_iterator_get_scanline_data (
+	src_iters[0], (guchar**)src1_data);
+    gegl_image_iterator_get_scanline_data (
+	src_iters[1], (guchar**)src2_data);
     
     GENERIC_IMAGE_IMAGE_DATA_INIT
       
@@ -115,25 +113,25 @@ class Gegl:Screen:Op from Gegl:Dual:Src:Op {
         GENERIC_IMAGE_CODE_BEGIN  
 
         dest_color = WP - (WP - src1_color) * (WP - src2_color);
-	if (dest_has_alpha)
- 	  {
-	    if (src1_has_alpha && src2_has_alpha)
-	      {
-	        dest_alpha = MIN(src1_alpha, src2_alpha);
-	      }       
-	    else if (src1_has_alpha)
-	      {
-	        dest_alpha = src1_alpha;
-	      }
-	    else if (src2_has_alpha)
-	      {
-	        dest_alpha = src2_alpha; 
-	      } 
- 	  }
+        if (dest_has_alpha)
+          {
+            if (src1_has_alpha && src2_has_alpha)
+              {
+                dest_alpha = MIN(src1_alpha, src2_alpha);
+              }
+            else if (src1_has_alpha)
+              {
+                dest_alpha = src1_alpha;
+              }
+            else if (src2_has_alpha)
+              {
+                dest_alpha = src2_alpha;
+              }
+          }
 
-	dX(dest,1);
-	dX(src1,1);
-	dX(src2,1); 
+        dX(dest,1);
+        dX(src1,1);
+        dX(src2,1);
 
         GENERIC_IMAGE_CODE_END
       }               

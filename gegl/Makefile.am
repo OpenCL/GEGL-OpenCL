@@ -6,6 +6,13 @@ GIL_FILES = \
   gegl-fill-op.gil \
   gegl-print-op.gil \
   gegl-mult-op.gil \
+  gegl-add-op.gil \
+  gegl-subtract-op.gil \
+  gegl-max-op.gil \
+  gegl-min-op.gil \
+  gegl-dark-op.gil \
+  gegl-screen-op.gil \
+  gegl-light-op.gil \
   gegl-premult-op.gil \
   gegl-unpremult-op.gil \
   gegl-composite-premult-op.gil \
@@ -16,6 +23,13 @@ GIL_GEN_GOB = \
   gegl-fill-op.gob \
   gegl-print-op.gob \
   gegl-mult-op.gob \
+  gegl-add-op.gob \
+  gegl-subtract-op.gob \
+  gegl-max-op.gob \
+  gegl-min-op.gob \
+  gegl-dark-op.gob \
+  gegl-screen-op.gob \
+  gegl-light-op.gob \
   gegl-premult-op.gob \
   gegl-unpremult-op.gob \
   gegl-composite-premult-op.gob \
@@ -69,6 +83,13 @@ GOB_GEN_PUBLIC_HDRS = \
   gegl-fill-op.h \
   gegl-print-op.h \
   gegl-mult-op.h \
+  gegl-add-op.h \
+  gegl-subtract-op.h \
+  gegl-max-op.h \
+  gegl-min-op.h \
+  gegl-dark-op.h \
+  gegl-screen-op.h \
+  gegl-light-op.h \
   gegl-premult-op.h \
   gegl-unpremult-op.h \
   gegl-composite-premult-op.h \
@@ -100,6 +121,13 @@ GOB_GEN_PRIVATE_HDRS = \
   gegl-fill-op-private.h \
   gegl-print-op-private.h \
   gegl-mult-op-private.h \
+  gegl-add-op-private.h \
+  gegl-subtract-op-private.h \
+  gegl-max-op-private.h \
+  gegl-min-op-private.h \
+  gegl-dark-op-private.h \
+  gegl-screen-op-private.h \
+  gegl-light-op-private.h \
   gegl-premult-op-private.h \
   gegl-unpremult-op-private.h \
   gegl-composite-premult-op-private.h \
@@ -131,6 +159,13 @@ GOB_GEN_SRC = \
   gegl-fill-op.c \
   gegl-print-op.c \
   gegl-mult-op.c \
+  gegl-add-op.c \
+  gegl-subtract-op.c \
+  gegl-max-op.c \
+  gegl-min-op.c \
+  gegl-dark-op.c \
+  gegl-screen-op.c \
+  gegl-light-op.c \
   gegl-premult-op.c \
   gegl-unpremult-op.c \
   gegl-composite-premult-op.c \
