@@ -79,44 +79,44 @@ class Gegl:Color:Model:Gray:U16_4 from Gegl:Color:Model:Gray {
 
     switch (constant) 
       { 
-        case COLOR_WHITE:
+        case GEGL_COLOR_WHITE:
           channel_values[g].u16_4 = 4095;
           if (has_alpha)
             channel_values[a].u16_4 = 4095;
           break;
-        case COLOR_BLACK:
+        case GEGL_COLOR_BLACK:
           channel_values[g].u16_4 = 0;
           if (has_alpha)
             channel_values[a].u16_4 = 4095;
           break;
-        case COLOR_RED:
+        case GEGL_COLOR_RED:
           channel_values[g].u16_4 = CLAMP(ROUND(0.3 * 4095),0,4095);
           if (has_alpha)
             channel_values[a].f = 4095;
           break;
-        case COLOR_GREEN:
+        case GEGL_COLOR_GREEN:
           channel_values[g].u16_4 = CLAMP(ROUND(0.59 * 4095),0,4095);
           if (has_alpha)
             channel_values[a].u16_4 = 4095;
           break;
-        case COLOR_BLUE:
+        case GEGL_COLOR_BLUE:
           channel_values[g].u16_4 = CLAMP(ROUND(0.11 * 4095),0,4095);
           if (has_alpha)
             channel_values[a].u16_4 = 4095;
           break;
-        case COLOR_GRAY:
-        case COLOR_HALF_WHITE:
+        case GEGL_COLOR_GRAY:
+        case GEGL_COLOR_HALF_WHITE:
           channel_values[g].u16_4 = 2048;
           if (has_alpha)
             channel_values[a].u16_4 = 4095;
           break;
-        case COLOR_WHITE_TRANSPARENT:
+        case GEGL_COLOR_WHITE_TRANSPARENT:
           channel_values[g].u16_4 = 4095;
           if (!has_alpha)
             channel_values[a].u16_4 = 0;
           break;
-        case COLOR_TRANSPARENT:
-        case COLOR_BLACK_TRANSPARENT:
+        case GEGL_COLOR_TRANSPARENT:
+        case GEGL_COLOR_BLACK_TRANSPARENT:
           channel_values[g].u16_4 = 0;
           if (has_alpha)
             channel_values[a].u16_4 = 0;

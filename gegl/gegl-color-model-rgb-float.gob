@@ -74,6 +74,15 @@ class Gegl:Color:Model:Rgb:Float from Gegl:Color:Model:Rgb {
     PARENT_HANDLER (object)
   }
 
+  override (Gegl:Color:Model)
+  GeglColorModelType
+  color_model_type(GeglColorModel *self_color_model)
+  {
+    return self_color_model->has_alpha ?
+             GEGL_COLOR_MODEL_TYPE_RGBA_FLOAT:
+             GEGL_COLOR_MODEL_TYPE_RGB_FLOAT;
+  }
+
   override (Gegl:Color:Model) 
   void 
   set_color (GeglColorModel *self_color_model, 

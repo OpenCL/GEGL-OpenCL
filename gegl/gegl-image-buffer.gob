@@ -16,11 +16,13 @@ typedef struct _GeglColorModel  GeglColorModel;
 #include "gegl-image-buffer-private.h"
 #include "gegl-image-private.h"
 #include "gegl-color-model.h"
-#include "gegl-copy-op.h"
 #include "gegl-utils.h"
 %}
 
 class Gegl:Image:Buffer from Gegl:Image {
+
+  protected gint width;
+  protected gint height;
 
   public
   GeglImageBuffer *       
@@ -58,10 +60,28 @@ class Gegl:Image:Buffer from Gegl:Image {
     if (!gegl_image_constructor (GEGL_IMAGE(self),NULL))
       return FALSE;
 
-    /* ImageBuffers set their color model and allocate data when created */
+    /* ImageBuffers set their color model when created */
     gegl_image_set_color_model (GEGL_IMAGE(self),cm);
 
-    return gegl_image_alloc(GEGL_IMAGE(self),w,h);
+    /* Set the size as well */
+    self->width = w;
+    self->height = h;
+
+    return TRUE;
+  }
+
+  public
+  gint 
+  get_width (self)
+  {
+    return self->width;
+  }
+
+  public 
+  gint 
+  get_height (self)
+  {
+    return self->height;
   }
 
   override (Gtk:Object) 
@@ -72,66 +92,27 @@ class Gegl:Image:Buffer from Gegl:Image {
     PARENT_HANDLER (object)
   }
 
-  public
-  void
-  set_data(self, 
-           guchar *data)
+  override (Gegl:Image)
+  void 
+  compute_have_rect (GeglImage *self_image)
   {
-    GeglImage *self_image  = GEGL_IMAGE(self);
-    GeglColorModel *cm = gegl_image_color_model(self_image);
-
-    gint bpc = gegl_color_model_bytes_per_channel(cm);  
-    gint w = self_image->width;  
-    gint h = self_image->height;  
-    gint num_channels = gegl_color_model_bytes_per_channel(cm);
-    gint channel_bytes = bpc * w * h;
-
-    guchar *s, *d;
-    gint i,j;
-    guchar **data_ptrs = gegl_image_get_data(self_image);
-
-    for(i = 0; i < num_channels; i++)
-      {
-        d = data_ptrs[i];
-        s = data + i * channel_bytes;
-
-        /* copy in the channel */
-        for(j = 0; j < channel_bytes; j++)
-	      *d++ = *s++;
-      }
+    GeglImageBuffer * self = GEGL_IMAGE_BUFFER(self_image);
+    self_image->have_rect.x = 0;
+    self_image->have_rect.y = 0;
+    self_image->have_rect.w = self->width;
+    self_image->have_rect.h = self->height;
   }
 
   override (Gegl:Image)
-  GeglImage * 
-  get_pixels (GeglImage *self_image,
-              GeglImage *dest,
-              GeglRect *roi)
-  {
-    if (dest && !GEGL_IS_IMAGE_BUFFER(dest))
-      {
-        g_warning("gegl_image_buffer_get_pixels: dest not image buffer\n");
-        return NULL;
-      }
-    else if (!dest)  /* just a leaf of a tree */
-      {
-        return self_image;
-      }
-    else
-      copy_pixels (GEGL_IMAGE_BUFFER(dest), roi, 
-                   GEGL_IMAGE_BUFFER(self_image), roi);   
-  
-   return dest;
-  }
-
-  public
   void 
-  copy_pixels (GeglImageBuffer *self, 
-               GeglRect *self_rect, 
-               GeglImageBuffer *src, 
-               GeglRect  *src_rect)
+  compute_cache_rect (GeglImage *self_image)
   {
-    GeglImage * op = GEGL_IMAGE(gegl_copy_op_new (GEGL_IMAGE(src)));
-    gegl_image_get_pixels (op, GEGL_IMAGE(self), self_rect);
-    gtk_object_unref (GTK_OBJECT(op));
+    /* Completely cached since we are a leaf node */ 
+    GeglImageBuffer * self = GEGL_IMAGE_BUFFER(self_image);
+
+    self_image->cache_rect.x = 0;
+    self_image->cache_rect.y = 0;
+    self_image->cache_rect.w = self->width;
+    self_image->cache_rect.h = self->height;
   }
 }

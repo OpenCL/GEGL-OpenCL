@@ -1,18 +1,12 @@
 %h{
 #include "gegl-image.h"
-#ifndef __TYPEDEF_GEGL_IMAGE_BUFFER__
-#define __TYPEDEF_GEGL_IMAGE_BUFFER__
-typedef struct _GeglImageBuffer  GeglImageBuffer;
-#endif
 %}
 %{
 #include "gegl-op.h"
 #include "gegl-op-private.h"
 #include "gegl-image-private.h"
 #include "gegl-node.h"
-#include "gegl-image-buffer.h"
-#include "gegl-image-iterator.h"
-#include "gegl-color-model.h"
+#include "gegl-node-private.h"
 #include "gegl-utils.h"
 #include "trace.h"
 %}
@@ -20,8 +14,6 @@ typedef struct _GeglImageBuffer  GeglImageBuffer;
 class Gegl:Op from Gegl:Image {
 
   protected GeglPoint *input_offsets;   /* offsets of inputs-relative to this op */ 
-  protected gboolean *input_has_alpha;
-  protected gboolean has_alpha;
 
   protected 
   gboolean 
@@ -39,7 +31,6 @@ class Gegl:Op from Gegl:Image {
       gint i;
       gint num_inputs = g_list_length(inputs);
 
-      self->input_has_alpha = g_new(gboolean, num_inputs);
       self->input_offsets = g_new (GeglPoint, num_inputs);
 
       for (i = 0; i < num_inputs; i++)
@@ -59,181 +50,38 @@ class Gegl:Op from Gegl:Image {
     GeglOp *self = GEGL_OP(object);
 
     g_free (self->input_offsets);
-    g_free (self->input_has_alpha);
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)
   }
 
-  override (Gegl:Image)
-  GeglImage* 
-  get_pixels (GeglImage *self_image, 
-              GeglImage *dest, 
-              GeglRect *roi)
-  {
-    GeglOp *self = GEGL_OP (self_image); 
-    GeglNode *self_node = GEGL_NODE (self_image); 
-    gint num_inputs = gegl_node_num_inputs(self_node);
-    GeglImage *input;
-    gint i;
-
-#ifdef DEBUG_GET_PIXELS 
-    trace_begin("get_pixels %s", gtk_type_name(GTK_OBJECT_TYPE(self)));
-#endif
-
-    /* If dest exists but isnt an image buffer return NULL */ 
-    if (dest && !GEGL_IS_IMAGE_BUFFER(dest))
-      {
-         g_warning("gegl_op_get_pixels: dest not image buffer.\n");
-         return NULL; 
-      }
-
-    /* The roi becomes our need_rect */
-    gegl_rect_copy (&self_image->need_rect, roi); 
-
-    /* Ready each source input */ 
-    for (i = 0; i < num_inputs; i++)    
-      {
-        GeglRect need_rect;
-
-        /* Compute the need_rect of the ith input */
-        gegl_image_compute_need_rect (self_image, &need_rect, i);
-
-#ifdef DEBUG_GET_PIXELS 
-        g_print("Calling source %d\n", i);
-#endif
-	
-        /* Call the input's get_pixels, pass it its need_rect */
-        input = GEGL_IMAGE(gegl_node_get_nth_input(self_node,i));
-        gegl_image_get_pixels (input, NULL, &need_rect); 
-      }
-
-#ifdef DEBUG_GET_PIXELS 
-    g_print("Done with inputs\n");
-#endif
-
-    /* Set the color model of this op */
-    compute_color_model (self, dest);
-
-    /* Compute the have rect and result rect */
-    gegl_image_compute_have_rect (self_image);
-    gegl_image_compute_result_rect (self_image);
-
-    /* Allocate a buffer for result if necessary */
-    if (!dest)
-      {
-         gint w = self_image->result_rect.w;
-         gint h = self_image->result_rect.h;
-
-         if(!gegl_image_alloc (self_image, w, h))
-           {
-             g_warning("gegl_op_get_pixels: Cant allocate dest data\n");
-             return NULL;
-           }
-
-         dest = self_image;
-
-#ifdef DEBUG_GET_PIXELS 
-         g_print("Allocated dest buffer size: %d, %d \n", w, h);
-#endif
-      }
-
-#ifdef DEBUG_GET_PIXELS 
-    g_print("Call prepare\n");
-#endif
-    prepare (self,dest,&self_image->result_rect);
-
-    /* Everything is ready, actually do the op */
-#ifdef DEBUG_GET_PIXELS 
-    g_print("Call apply\n");
-#endif
-    apply (self, dest, &self_image->result_rect); 
-
-    /* Everything is done, free the inputs */
-    for (i = 0; i < num_inputs; i++)    
-      {
-	    /* Free any input data */ 
-        input = GEGL_IMAGE(gegl_node_get_nth_input(self_node,i));
-        if (!GEGL_IS_IMAGE_BUFFER(input))
-        {
-#ifdef DEBUG_GET_PIXELS 
-          g_print("freeing input %d \n", i); 
-#endif
-          gegl_image_free_data(input);
-        }
-      }
-
-#ifdef DEBUG_GET_PIXELS 
-    trace_end();
-#endif
-    return dest;
-  }
-
-  private 
+  override(Gegl:Image)
   void
-  compute_color_model(self, 
-                      GeglImage *dest)
+  compute_derived_color_model(GeglImage *self_image)
   {
-    GeglImage * self_image = GEGL_IMAGE(self);
-    GeglNode * self_node = GEGL_NODE(self);
-    gint num_inputs = gegl_node_num_inputs(self_node);
-    GeglColorModel * cm;
-
-    /* If there is a dest, take the colormodel from that */
-    if (dest != NULL)
+    /* Only compute this if the color model is not set */
+    if (!gegl_image_color_model(self_image))
       {
-        cm = gegl_image_color_model (dest); 
-        gegl_image_set_color_model(self_image,cm);
+        GList *inputs = gegl_node_get_inputs(GEGL_NODE(self_image));
+
+        /* Compute the color alpha space and data type from inputs */
+        GeglColorAlphaSpace space = gegl_utils_derived_color_alpha_space(inputs);
+        GeglChannelDataType type = gegl_utils_derived_channel_data_type(inputs);
+        GeglColorModel * derived = gegl_color_model_instance1(space,type);
+
+        /* Set the derived color model. */ 
+        gegl_image_set_derived_color_model (self_image,derived);
       }
-
-    /* Otherwise, try to take it from an input */
-    cm = gegl_image_color_model(self_image);
-    if (!cm) 
-      if (num_inputs)
-        {
-          GeglImage *input0 = GEGL_IMAGE(gegl_node_get_nth_input(self_node,0));
-          cm = gegl_image_color_model(input0);
-          gegl_image_set_color_model(self_image,cm);
-        }
-
-    if (!cm)
-      g_warning("gegl_op_find_color_model: color_model is NULL\n");
-  }
-
-  protected 
-  void  
-  save_alphas(self)
-  {
-    GeglImage *self_image = GEGL_IMAGE(self);
-    GeglNode *self_node = GEGL_NODE(self);
-    gint num_inputs = gegl_node_num_inputs(self_node);
-    GeglColorModel *src_cm;
-    GeglColorModel *dest_cm;
-    GeglImage *input;
-    gint i;
-
-    for (i = 0; i < num_inputs; i++)
-      {
-        input = GEGL_IMAGE(gegl_node_get_nth_input(self_node,i));
-        src_cm = gegl_image_color_model (input);
-        self->input_has_alpha[i] = gegl_color_model_has_alpha (src_cm); 
-      }
-
-    dest_cm = gegl_image_color_model(self_image); 
-    self->has_alpha = gegl_color_model_has_alpha (dest_cm); 
   }
 
   public
   void
   set_offset(self, 
-             int x,
-             int y, 
-	     int index)
+             gint x,
+             gint y, 
+	         gint index)
   {
     self->input_offsets[index].x = x;
     self->input_offsets[index].y = y;
   }
-
-  virtual protected void prepare (self, GeglImage *dest, GeglRect *result_rect);
-  virtual protected void apply (self, GeglImage *dest, GeglRect *result_rect);
 }

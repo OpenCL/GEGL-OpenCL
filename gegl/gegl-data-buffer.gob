@@ -1,0 +1,107 @@
+%h{
+#include "gegl-object.h"
+%}
+%{
+#include "gegl-data-buffer.h"
+#include "gegl-data-buffer-private.h"
+#include "gegl-object-private.h"
+#include <stdio.h>
+%}
+
+class Gegl:Data:Buffer from Gegl:Object {
+
+  private gpointer *data_pointers;  /*pointers to data buffers*/
+  private gint bytes_per_buffer;    /*bytes in each buffer*/ 
+  private gint num_buffers;         /*number of buffers*/
+  private gint bytes;               /*total bytes*/ 
+
+  public 
+  GeglDataBuffer * 
+  new(gint bytes_per_buffer,
+      gint num_buffers)
+  {
+    GeglDataBuffer * self = GEGL_DATA_BUFFER(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self,bytes_per_buffer,num_buffers))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    /* ref and sink it */
+    gegl_object_ref(GEGL_OBJECT(self));
+    gtk_object_sink(GTK_OBJECT(self));
+
+    return self;
+  }
+
+  protected
+  gboolean
+  constructor(self,
+              gint bytes_per_buffer,
+              gint num_buffers)
+  {
+    g_return_val_if_fail (!(GEGL_OBJECT(self)->constructed), FALSE);
+
+    /* Chain up */
+    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+      return FALSE;
+
+    self->_priv->data_pointers = NULL;
+
+    {
+      gint i;
+      self->_priv->bytes_per_buffer = bytes_per_buffer;
+      self->_priv->data_pointers = g_new(gpointer,num_buffers);
+
+      for(i = 0; i < num_buffers; i++)
+        self->_priv->data_pointers[i] = g_new(guchar,bytes_per_buffer);
+
+      self->_priv->bytes = bytes_per_buffer * num_buffers;
+    }
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    GeglDataBuffer *self = GEGL_DATA_BUFFER(object);
+
+    if (self->_priv->data_pointers)
+      {
+        gint i;
+        for(i = 0; i < self->_priv->num_buffers; i++)
+          g_free(self->_priv->data_pointers[i]);
+
+        g_free(self->_priv->data_pointers);
+        self->_priv->data_pointers = NULL;
+      }
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  public
+  gint
+  get_bytes(self)
+  {
+    return self->_priv->bytes;
+  }
+
+  public
+  gint
+  get_num_buffers(self)
+  {
+    return self->_priv->num_buffers;
+  }
+
+  public
+  gpointer*
+  get_data_pointers(self)
+  {
+    return self->_priv->data_pointers;
+  }
+}

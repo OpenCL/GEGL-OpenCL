@@ -7,7 +7,8 @@
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
 #include "gegl-image-private.h"
-#include "gegl-image-iterator.h"
+#include "gegl-tile.h"
+#include "gegl-tile-iterator.h"
 #include "gegl-color.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
@@ -44,19 +45,19 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   constructor(self, 
               GeglColor *color)
   {
-    if(GEGL_OBJECT(self)->constructed) 
+    g_return_val_if_fail(color,FALSE);
+
+    if(GEGL_OBJECT(self)->constructed)
       return FALSE;
     
     /* Chain up */
     if (!gegl_point_op_constructor (GEGL_POINT_OP(self), NULL))
       return FALSE;
 
-    {
-      /* Allocate a color and set its channels to the passed one */  
-      GeglColorModel *color_cm = gegl_color_get_color_model (color);
-      self->_priv->fill_color = gegl_color_new (color_cm); 
-      gegl_color_set (self->_priv->fill_color, color);
-    }
+
+    /* Keep a reference to the color */
+    gegl_object_ref(GEGL_OBJECT(color));
+    self->_priv->fill_color = color; 
 
     return TRUE;
   }
@@ -67,33 +68,49 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   {
     GeglFillOp * self = GEGL_FILL_OP(self_object); 
 
-    /* Dispose of the fill color*/
+    /* Delete the reference to the color*/
     gegl_object_unref(GEGL_OBJECT(self->_priv->fill_color));
 
     /* Chain up on destroy */
     PARENT_HANDLER (self_object)
   }
 
-  override(Gegl:Op)
-  void
-  prepare(GeglOp *self_op,
-          GeglImage *dest,
-          GeglRect *dest_rect)
+  override (Gegl:Image)
+  void 
+  compute_derived_color_model(GeglImage *self_image) 
   {
-    /* Save these so we can get them quickly in scanline func
-       below */
-    gegl_op_save_alphas(self_op);
+    GeglFillOp * self = GEGL_FILL_OP(self_image); 
+    GeglColorModel *fill_color_cm = 
+          gegl_color_get_color_model(self->_priv->fill_color);
+
+    gegl_image_set_derived_color_model(self_image,fill_color_cm);
+  }
+
+  override(Gegl:Image)
+  void
+  prepare(GeglImage *self_image,
+          GList * requests)
+  {
+    GeglFillOp * self = GEGL_FILL_OP(self_image); 
+    GeglPointOpClass *self_point_op_class = 
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(self)->klass);
+
+    GeglImageRequest *dest_request = 
+      (GeglImageRequest*)g_list_nth_data(requests,0); 
+    GeglTile *dest = dest_request->tile;
+    GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
+    GeglColorModel * fill_cm = 
+      gegl_color_get_color_model (self->_priv->fill_color);
+
+    g_return_if_fail (dest_cm == fill_cm);
 
     {
-      GeglPointOpClass *self_point_op_class = 
-	    GEGL_POINT_OP_CLASS(GTK_OBJECT(self_op)->klass);
-      GeglColorModel * dest_cm = gegl_image_color_model (dest);
-      GeglColorSpace colorspace = gegl_color_model_color_space(dest_cm);
-      GeglChannelDataType data_type = gegl_color_model_data_type (dest_cm);
+      GeglColorSpace colorspace = gegl_color_model_color_space(fill_cm);
+      GeglChannelDataType data_type = gegl_color_model_data_type (fill_cm);
 
       switch (colorspace)
         {
-          case GEGL_RGB:
+          case GEGL_COLOR_SPACE_RGB:
             switch (data_type)
               {
               case GEGL_U8:
@@ -108,17 +125,13 @@ class Gegl:Fill:Op from Gegl:Point:Op {
                 self_point_op_class->scanline_func = 
                   gegl_fill_op_scanline_rgb_u16;
                 break;
-              case GEGL_U16_4:
-                self_point_op_class->scanline_func = 
-                  gegl_fill_op_scanline_rgb_u16_4;
-                break;
               default:
                 g_warning("gegl_fill_op_prepare: Can't find data_type\n");    
                 break;
 
               }
             break;
-          case GEGL_GRAY:
+          case GEGL_COLOR_SPACE_GRAY:
             switch (data_type)
               {
               case GEGL_U8:
@@ -132,10 +145,6 @@ class Gegl:Fill:Op from Gegl:Point:Op {
               case GEGL_U16:
                 self_point_op_class->scanline_func = 
                   gegl_fill_op_scanline_gray_u16;
-                break;
-              case GEGL_U16_4:
-                self_point_op_class->scanline_func = 
-                  gegl_fill_op_scanline_gray_u16_4;
                 break;
               default:
                 g_warning("gegl_fill_op_prepare: Can't find data_type\n");    
@@ -152,30 +161,28 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   private
   void
   scanline_rgb_u8 (GeglPointOp *self_point_op,
-                   GeglImageIterator *dest_iter, 
-                   GeglImageIterator **src_iters)
+                   GeglTileIterator **iters,
+                   gint width)
   {
-    GeglOp *self_op = GEGL_OP(self_point_op);
-    GeglFillOp *self = GEGL_FILL_OP (self_point_op);
+    GeglFillOp *self = GEGL_FILL_OP(self_point_op);
+    GeglColorModel *dest_cm = 
+      gegl_tile_iterator_get_color_model(iters[0]);
     GeglChannelValue *fill_values = 
       gegl_color_get_channel_values (self->_priv->fill_color);
-    guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     guint8 *dest_data[4];
     gboolean dest_has_alpha;
     guint8 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
  
-    dest_has_alpha = self_op->has_alpha; 
+    dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
     
-    gegl_image_iterator_get_scanline_data (dest_iter,
-                (guchar**)dest_data);
+    gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
 
     dest_r = dest_data[0];
     dest_g = dest_data[1];
     dest_b = dest_data[2];
     if (dest_has_alpha)
       dest_alpha = dest_data[3];
-
 
     /* Fill the dest with the fill color */
     while (width--)
@@ -198,23 +205,22 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   private
   void
   scanline_rgb_float (GeglPointOp *self_point_op,
-                      GeglImageIterator *dest_iter, 
-                      GeglImageIterator **src_iters)
+                      GeglTileIterator **iters,
+                      gint width)
   {
-    GeglOp *self_op = GEGL_OP(self_point_op);
-    GeglFillOp *self = GEGL_FILL_OP (self_point_op);
+    GeglFillOp *self = GEGL_FILL_OP(self_point_op);
+    GeglColorModel *dest_cm = 
+      gegl_tile_iterator_get_color_model(iters[0]);
     GeglChannelValue *fill_values = 
       gegl_color_get_channel_values (self->_priv->fill_color);
-    guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     gfloat *dest_data[4];
     gboolean dest_has_alpha;
     gfloat *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
- 
-    dest_has_alpha = self_op->has_alpha; 
+
+    dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
     
-    gegl_image_iterator_get_scanline_data (dest_iter,
-                (guchar**)dest_data);
+    gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
 
     dest_r = dest_data[0];
     dest_g = dest_data[1];
@@ -222,13 +228,13 @@ class Gegl:Fill:Op from Gegl:Point:Op {
     if (dest_has_alpha)
       dest_alpha = dest_data[3];
 
-
     /* Fill the dest with the fill color */
     while (width--)
       { 
         *dest_r = fill_values[0].f;
         *dest_g = fill_values[1].f;
         *dest_b = fill_values[2].f;
+
         if (dest_has_alpha)
           { 
             *dest_alpha = fill_values[3].f;
@@ -244,24 +250,22 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   private
   void
   scanline_rgb_u16 (GeglPointOp *self_point_op,
-                    GeglImageIterator *dest_iter, 
-                    GeglImageIterator **src_iters)
+                    GeglTileIterator **iters,
+                    gint width)
   {
-    GeglOp *self_op = GEGL_OP(self_point_op);
-    GeglFillOp *self = GEGL_FILL_OP (self_point_op);
+    GeglFillOp *self = GEGL_FILL_OP(self_point_op);
+    GeglColorModel *dest_cm = 
+      gegl_tile_iterator_get_color_model(iters[0]);
     GeglChannelValue *fill_values = 
       gegl_color_get_channel_values (self->_priv->fill_color);
-    guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     guint16 *dest_data[4];
     gboolean dest_has_alpha;
     guint16 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
- 
-    dest_has_alpha = self_op->has_alpha; 
-    
-    gegl_image_iterator_get_scanline_data (dest_iter,
-                (guchar**)dest_data);
 
+    dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
+ 
+    gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
     dest_r = dest_data[0];
     dest_g = dest_data[1];
     dest_b = dest_data[2];
@@ -288,69 +292,23 @@ class Gegl:Fill:Op from Gegl:Point:Op {
 
   private
   void
-  scanline_rgb_u16_4 (GeglPointOp *self_point_op,
-                      GeglImageIterator *dest_iter, 
-                      GeglImageIterator **src_iters)
-  {
-    GeglOp *self_op = GEGL_OP(self_point_op);
-    GeglFillOp *self = GEGL_FILL_OP (self_point_op);
-    GeglChannelValue *fill_values = 
-      gegl_color_get_channel_values (self->_priv->fill_color);
-    guint width = gegl_image_iterator_scanline_width (dest_iter);
-
-    guint16 *dest_data[4];
-    gboolean dest_has_alpha;
-    guint16 *dest_r, *dest_g, *dest_b, *dest_alpha=NULL;
- 
-    dest_has_alpha = self_op->has_alpha; 
-    
-    gegl_image_iterator_get_scanline_data (dest_iter,
-                (guchar**)dest_data);
-
-    dest_r = dest_data[0];
-    dest_g = dest_data[1];
-    dest_b = dest_data[2];
-    if (dest_has_alpha)
-      dest_alpha = dest_data[3];
-
-    /* Fill the dest with the fill color */
-    while (width--)
-      { 
-        *dest_r = fill_values[0].u16_4;
-        *dest_g = fill_values[1].u16_4;
-        *dest_b = fill_values[2].u16_4;
-        if (dest_has_alpha)
-          { 
-           *dest_alpha = fill_values[3].u16_4;
-          }
-        dest_r++;
-        dest_g++;
-        dest_b++;
-        if (dest_has_alpha)
-          dest_alpha++;
-      }
-  } 
-
-  private
-  void
   scanline_gray_u8 (GeglPointOp *self_point_op,
-                    GeglImageIterator *dest_iter, 
-                    GeglImageIterator **src_iters)
+                    GeglTileIterator **iters,
+                    gint width)
   {
-    GeglOp *self_op = GEGL_OP(self_point_op);
-    GeglFillOp *self = GEGL_FILL_OP (self_point_op);
+    GeglFillOp *self = GEGL_FILL_OP(self_point_op);
+    GeglColorModel *dest_cm = 
+      gegl_tile_iterator_get_color_model(iters[0]);
     GeglChannelValue *fill_values = 
       gegl_color_get_channel_values (self->_priv->fill_color);
-    guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     guint8 *dest_data[2];
     gboolean dest_has_alpha;
     guint8 *dest_gray, *dest_alpha=NULL;
+
+    dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
  
-    dest_has_alpha = self_op->has_alpha; 
-    
-    gegl_image_iterator_get_scanline_data (dest_iter,
-                (guchar**)dest_data);
+    gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
 
     dest_gray = dest_data[0];
     if (dest_has_alpha)
@@ -373,23 +331,22 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   private
   void
   scanline_gray_float (GeglPointOp *self_point_op,
-                       GeglImageIterator *dest_iter, 
-                       GeglImageIterator **src_iters)
+                       GeglTileIterator **iters,
+                       gint width)
   {
-    GeglOp *self_op = GEGL_OP(self_point_op);
-    GeglFillOp *self = GEGL_FILL_OP (self_point_op);
+    GeglFillOp *self = GEGL_FILL_OP(self_point_op);
+    GeglColorModel *dest_cm = 
+      gegl_tile_iterator_get_color_model(iters[0]);
     GeglChannelValue *fill_values = 
       gegl_color_get_channel_values (self->_priv->fill_color);
-    guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     gfloat *dest_data[2];
     gboolean dest_has_alpha;
     gfloat *dest_gray, *dest_alpha=NULL;
- 
-    dest_has_alpha = self_op->has_alpha; 
-    
-    gegl_image_iterator_get_scanline_data (dest_iter,
-                (guchar**)dest_data);
+
+    dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
+
+    gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
 
     dest_gray = dest_data[0];
     if (dest_has_alpha)
@@ -412,23 +369,22 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   private
   void
   scanline_gray_u16 (GeglPointOp *self_point_op,
-                     GeglImageIterator *dest_iter, 
-		             GeglImageIterator **src_iters)
+                     GeglTileIterator **iters,
+                     gint width)
   {
-    GeglOp *self_op = GEGL_OP(self_point_op);
-    GeglFillOp *self = GEGL_FILL_OP (self_point_op);
+    GeglFillOp *self = GEGL_FILL_OP(self_point_op);
+    GeglColorModel *dest_cm = 
+      gegl_tile_iterator_get_color_model(iters[0]);
     GeglChannelValue *fill_values = 
       gegl_color_get_channel_values (self->_priv->fill_color);
-    guint width = gegl_image_iterator_scanline_width (dest_iter);
 
     guint16 *dest_data[2];
     gboolean dest_has_alpha;
     guint16 *dest_gray, *dest_alpha=NULL;
+
+    dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
  
-    dest_has_alpha = self_op->has_alpha; 
-    
-    gegl_image_iterator_get_scanline_data (dest_iter,
-                (guchar**)dest_data);
+    gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
 
     dest_gray = dest_data[0];
     if (dest_has_alpha)
@@ -446,44 +402,5 @@ class Gegl:Fill:Op from Gegl:Point:Op {
         if (dest_has_alpha)
           dest_alpha++;
       }
-  } 
-
-  private
-  void
-  scanline_gray_u16_4 (GeglPointOp *self_point_op,
-                       GeglImageIterator *dest_iter, 
-                       GeglImageIterator **src_iters)
-  {
-    GeglOp *self_op = GEGL_OP(self_point_op);
-    GeglFillOp *self = GEGL_FILL_OP (self_point_op);
-    GeglChannelValue *fill_values = 
-      gegl_color_get_channel_values (self->_priv->fill_color);
-    guint width = gegl_image_iterator_scanline_width (dest_iter);
-
-    guint16 *dest_data[2];
-    gboolean dest_has_alpha;
-    guint16 *dest_gray, *dest_alpha=NULL;
- 
-    dest_has_alpha = self_op->has_alpha; 
-    
-    gegl_image_iterator_get_scanline_data (dest_iter,
-                (guchar**)dest_data);
-
-    dest_gray = dest_data[0];
-    if (dest_has_alpha)
-      dest_alpha = dest_data[1];
-
-    /* Fill the dest with the fill color */
-    while (width--)
-    { 
-      *dest_gray = fill_values[0].u16_4;
-      if (dest_has_alpha)
-	    { 
-	      *dest_alpha = fill_values[1].u16_4;
-        }
-      dest_gray++;
-      if (dest_has_alpha)
-        dest_alpha++;
-    }
   } 
 }

@@ -5,13 +5,40 @@
 
 typedef enum
 {
-  GEGL_COLORSPACE_NONE,
-  GEGL_GRAY,
-  GEGL_RGB,
-  GEGL_CMYK,
-  GEGL_XYZ,
-  GEGL_HSV,
-} GeglColorSpace;
+  GEGL_COLOR_SPACE_NONE,
+  GEGL_COLOR_SPACE_GRAY,
+  GEGL_COLOR_SPACE_RGB
+}GeglColorSpace;
+
+typedef enum
+{
+  GEGL_COLOR_ALPHA_SPACE_NONE,
+  GEGL_COLOR_ALPHA_SPACE_GRAY,
+  GEGL_COLOR_ALPHA_SPACE_GRAYA,
+  GEGL_COLOR_ALPHA_SPACE_RGB,
+  GEGL_COLOR_ALPHA_SPACE_RGBA
+}GeglColorAlphaSpace;
+
+typedef enum
+{
+  GEGL_COLOR_MODEL_TYPE_NONE,
+  GEGL_COLOR_MODEL_TYPE_GRAY_U8,
+  GEGL_COLOR_MODEL_TYPE_GRAY_U16,
+  GEGL_COLOR_MODEL_TYPE_GRAY_U16_4,
+  GEGL_COLOR_MODEL_TYPE_GRAY_FLOAT,
+  GEGL_COLOR_MODEL_TYPE_GRAYA_U8,
+  GEGL_COLOR_MODEL_TYPE_GRAYA_U16,
+  GEGL_COLOR_MODEL_TYPE_GRAYA_U16_4,
+  GEGL_COLOR_MODEL_TYPE_GRAYA_FLOAT,
+  GEGL_COLOR_MODEL_TYPE_RGB_U8,
+  GEGL_COLOR_MODEL_TYPE_RGB_U16,
+  GEGL_COLOR_MODEL_TYPE_RGB_U16_4,
+  GEGL_COLOR_MODEL_TYPE_RGB_FLOAT,
+  GEGL_COLOR_MODEL_TYPE_RGBA_U8,
+  GEGL_COLOR_MODEL_TYPE_RGBA_U16,
+  GEGL_COLOR_MODEL_TYPE_RGBA_U16_4,
+  GEGL_COLOR_MODEL_TYPE_RGBA_FLOAT
+}GeglColorModelType;
 
 typedef enum
 {
@@ -35,11 +62,11 @@ typedef enum
   GEGL_COLOR_TRANSPARENT,
   GEGL_COLOR_WHITE_TRANSPARENT,
   GEGL_COLOR_BLACK_TRANSPARENT
-} GeglColorConstant;
+}GeglColorConstant;
 
 typedef enum
 {
-  GEGL_DATATYPE_NONE,
+  GEGL_NONE,
   GEGL_U8,
   GEGL_FLOAT,
   GEGL_U16,
@@ -51,11 +78,10 @@ typedef union
   guint8 u8;
   gfloat f;
   guint16 u16;
-  guint16 u16_4; 
+  guint16 u16_4;
 }GeglChannelValue;
 
 typedef struct _GeglRect GeglRect;
-
 struct _GeglRect
 {
   gint x;
@@ -69,6 +95,13 @@ struct _GeglPoint
 {
   gint x;
   gint y;
+};
+
+typedef struct _GeglDimension GeglDimension;
+struct _GeglDimension
+{
+  gint width;
+  gint height;
 };
 
 #define ROUND(x) ((x)>0 ? (gint)((x)+.5) : (gint)((x)-.5))

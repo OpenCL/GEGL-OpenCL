@@ -27,7 +27,7 @@ class Gegl:Color:Model:Gray from Gegl:Color:Model {
       return FALSE;
     
     /* Chain up to superclass*/
-    if (!gegl_color_model_constructor (GEGL_COLOR_MODEL(self), has_alpha))
+    if (!gegl_color_model_constructor (self_color_model, has_alpha))
       return FALSE;
 
     if (self_color_model->has_alpha)
@@ -42,7 +42,7 @@ class Gegl:Color:Model:Gray from Gegl:Color:Model {
      }
 
     /* We can set these here */
-    self_color_model->colorspace = GEGL_GRAY;
+    self_color_model->colorspace = GEGL_COLOR_SPACE_GRAY;
     self_color_model->is_additive = TRUE;
     self_color_model->color_space_name = NULL;
     
@@ -65,6 +65,16 @@ class Gegl:Color:Model:Gray from Gegl:Color:Model {
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)
+  }
+
+  override (Gegl:Color:Model)
+  GeglColorAlphaSpace
+  color_alpha_space(GeglColorModel *self_color_model)
+  {
+    if (self_color_model->has_alpha)
+      return GEGL_COLOR_ALPHA_SPACE_GRAYA;
+    else
+      return GEGL_COLOR_ALPHA_SPACE_GRAY;
   }
 
   public

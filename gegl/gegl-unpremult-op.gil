@@ -8,7 +8,8 @@
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
 #include "gegl-image-private.h"
-#include "gegl-image-iterator.h"
+#include "gegl-tile.h"
+#include "gegl-tile-iterator.h"
 #include "gegl-color.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
@@ -17,7 +18,6 @@
 
 class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
 
-  
   public 
   GeglUnpremultOp *
   new (GeglImage *src)
@@ -62,51 +62,45 @@ class Gegl:Unpremult:Op from Gegl:Single:Src:Op {
     PARENT_HANDLER (object)
   }
 
-  override(Gegl:Op)
+  override(Gegl:Image)
   void
-  prepare(GeglOp *self_op,
-          GeglImage *dest,
-          GeglRect *dest_rect)
+  prepare(GeglImage *self_image,
+          GList * requests)
   {
-    GeglPointOp *self_point_op = GEGL_POINT_OP (self_op);
     GeglPointOpClass *self_point_op_class = 
-      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_point_op)->klass);
-
-    /* Save these so we can get them quickly in scanline func
-       below */
-    gegl_op_save_alphas(self_op);
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_image)->klass);
+    GeglImageRequest *dest_request = 
+      (GeglImageRequest*)g_list_nth_data(requests,0); 
+    GeglTile *dest = dest_request->tile;
+    GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
+    g_return_if_fail(dest_cm);
 
     {
-      gboolean src_has_alpha = self_op->input_has_alpha[0];
-
-      if(src_has_alpha)
-	    self_point_op_class->scanline_func = 
-	        gegl_unpremult_op_scanline_COLORSPACE_DATATYPE;
+      gboolean dest_has_alpha = gegl_color_model_has_alpha(dest_cm);
+      if(dest_has_alpha)
+        self_point_op_class->scanline_func = 
+	        scanline_COLORSPACE_DATATYPE;
       else
         {
           self_point_op_class->scanline_func = NULL;
-          g_warning("gegl_unpremult_op_prepare: dest has no alpha channel\n");
+          g_warning("gegl_premult_op_prepare: dest has no alpha channel\n");
         } 
     }
   } 
 
-  private 
+  private
   void
   scanline_COLORSPACE_DATATYPE (GeglPointOp *self_point_op,
-                                GeglImageIterator *dest_iter, 
-                                GeglImageIterator **src_iters)
+                                GeglTileIterator **iters,
+                                gint width)
   {
-    guint width = gegl_image_iterator_scanline_width (dest_iter);
-
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color,alpha);
     Pixel src(color,alpha);
     GENERIC_IMAGE_DECL_END
 
-    gegl_image_iterator_get_scanline_data (dest_iter,
-                (guchar**)dest_data);
-    gegl_image_iterator_get_scanline_data (src_iters[0],
-                (guchar**)src_data);
+    gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
+    gegl_tile_iterator_get_current (iters[1], (gpointer*)src_data);
 
     GENERIC_IMAGE_IMAGE_DATA_INIT 
 

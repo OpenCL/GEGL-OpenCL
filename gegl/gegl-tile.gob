@@ -1,0 +1,163 @@
+%h{
+#include "gegl-object.h"
+
+#ifndef __TYPEDEF_GEGL_DATA_BUFFER__
+#define __TYPEDEF_GEGL_DATA_BUFFER__
+typedef struct _GeglDataBuffer  GeglDataBuffer;
+#endif
+
+#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
+#define __TYPEDEF_GEGL_COLOR_MODEL__
+typedef struct _GeglColorModel  GeglColorModel;
+#endif
+
+#ifndef __TYPEDEF_GEGL_IMAGE__
+#define __TYPEDEF_GEGL_IMAGE__
+typedef struct _GeglImage  GeglImage;
+#endif
+
+%}
+%{
+#include "gegl-tile.h"
+#include "gegl-tile-private.h"
+#include "gegl-object-private.h"
+#include "gegl-color-model.h"
+#include "gegl-data-buffer.h"
+#include "gegl-utils.h"
+#include <stdio.h>
+%}
+
+class Gegl:Tile from Gegl:Object {
+
+  private GeglDataBuffer *buffer;         /*actual data buffer */
+  private GeglColorModel *color_model;    /*color model of this tile*/
+  private GeglRect  area;                 /*area of image space */
+
+  public 
+  GeglTile *
+  new(GeglRect *area,
+      GeglColorModel *color_model) 
+  {
+    GeglTile * self = GEGL_TILE(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self,area,color_model))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    /* ref and sink it */
+    gegl_object_ref(GEGL_OBJECT(self));
+    gtk_object_sink(GTK_OBJECT(self));
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self,
+              GeglRect *area,
+              GeglColorModel *color_model) 
+  {
+    g_return_val_if_fail (!(GEGL_OBJECT(self)->constructed), FALSE);
+    g_return_val_if_fail (area, FALSE);
+    g_return_val_if_fail (color_model, FALSE);
+
+    /* Chain up */
+    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+      return FALSE;
+
+    {
+      gint num_channels = gegl_color_model_num_channels(color_model);
+      GeglChannelDataType data_type = gegl_color_model_data_type(color_model);
+      gint bytes_per_chan = gegl_channel_data_type_bytes(data_type);
+      gint channel_bytes = area->w * area->h * bytes_per_chan;
+
+      self->_priv->color_model = color_model;
+      gegl_object_ref(GEGL_OBJECT(color_model));
+
+      self->_priv->buffer = gegl_data_buffer_new(channel_bytes,num_channels);
+      gegl_rect_copy(&self->_priv->area, area); 
+    }
+
+    /*gegl_object_set_trace_refs(GEGL_OBJECT(self),TRUE);*/
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    GeglTile *self = GEGL_TILE(object);
+
+    gegl_object_unref(GEGL_OBJECT(self->_priv->buffer));
+    gegl_object_unref(GEGL_OBJECT(self->_priv->color_model));
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  public
+  void
+  get_area(self, 
+           GeglRect *area)
+  {
+    gegl_rect_copy(area,&self->_priv->area);
+  }
+
+  public
+  GeglColorModel * 
+  get_color_model(self)
+  {
+    return self->_priv->color_model;
+  }
+
+  public
+  void
+  get_data(self,
+           gpointer *data)
+  {
+    gint i;
+    gpointer * data_pointers =
+      gegl_data_buffer_get_data_pointers(self->_priv->buffer);
+    gint num_channels = 
+      gegl_color_model_num_channels(self->_priv->color_model);
+
+    /* Copy the data pointers into the passed array */
+    for(i=0; i < num_channels; i++)
+      data[i] = data_pointers[i];
+  }
+
+  public
+  void
+  get_data_at(self,
+              gpointer *data,
+              gint x,
+              gint y)
+  {
+    gint i;
+    gint x0 = x - self->_priv->area.x;
+    gint y0 = y - self->_priv->area.y;
+
+    gint num_channels = 
+      gegl_color_model_num_channels(self->_priv->color_model);
+    gint bytes_per_channel = 
+      gegl_color_model_bytes_per_channel(self->_priv->color_model);
+    gint channel_row_bytes = self->_priv->area.w * bytes_per_channel;
+
+    /*g_print("get_data_at: %d %d\n", x0,y0); */
+    /* Get data pointers for beginning of tile. */
+    get_data(self,data);
+
+    /* Update the data pointers to point to (x,y) position */
+    for(i=0; i < num_channels; i++)
+      {
+        data[i] = (gpointer)((guchar*)data[i] +
+                              y0 * channel_row_bytes +
+                              x0 * bytes_per_channel);
+      }
+
+  }
+}

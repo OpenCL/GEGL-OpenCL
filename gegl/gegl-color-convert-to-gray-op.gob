@@ -42,8 +42,9 @@ class Gegl:Color:Convert:To:Gray:Op from Gegl:Color:Convert:Op {
       return FALSE;
    
     /* Chain up */
-    if (!gegl_color_convert_op_constructor ( 
-                   GEGL_COLOR_CONVERT_OP (self), src))
+    if (!gegl_color_convert_op_constructor1 (
+                   GEGL_COLOR_CONVERT_OP (self), 
+                   src, GEGL_COLOR_SPACE_GRAY))
       return FALSE;
     return TRUE;
   }

@@ -75,6 +75,15 @@ class Gegl:Color:Model:Gray:U16 from Gegl:Color:Model:Gray {
     PARENT_HANDLER (object)
   }
 
+  override (Gegl:Color:Model)
+  GeglColorModelType
+  color_model_type(GeglColorModel *self_color_model)
+  {
+    return self_color_model->has_alpha ? 
+             GEGL_COLOR_MODEL_TYPE_GRAYA_U16:
+             GEGL_COLOR_MODEL_TYPE_GRAY_U16;
+  }
+
   override (Gegl:Color:Model) 
   void 
   set_color (GeglColorModel *self_color_model, 

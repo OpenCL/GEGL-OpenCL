@@ -1,18 +1,45 @@
 %h{
 #include "gegl-node.h"
+
 #ifndef __TYPEDEF_GEGL_COLOR__
 #define __TYPEDEF_GEGL_COLOR__
 typedef struct _GeglColor  GeglColor;
 #endif
+
 #ifndef __TYPEDEF_GEGL_COLOR_MODEL__
 #define __TYPEDEF_GEGL_COLOR_MODEL__
 typedef struct _GeglColorModel  GeglColorModel;
 #endif
+
+#ifndef __TYPEDEF_GEGL_TILE__
+#define __TYPEDEF_GEGL_TILE__
+typedef struct _GeglTile  GeglTile;
+#endif
+
 %}
+
+%privateheader{
+
+#ifndef __TYPEDEF_GEGL_IMAGE_REQUEST__
+#define __TYPEDEF_GEGL_IMAGE_REQUEST__
+typedef struct _GeglImageRequest GeglImageRequest;
+#endif
+
+struct _GeglImageRequest 
+{
+  GeglTile *tile;
+  GeglRect rect; 
+};
+
+%}
+
 %{
 #include "gegl-image.h"
 #include "gegl-image-private.h"
+#include "gegl-image-manager.h"
+#include "gegl-image-manager-private.h"  /*friend*/
 #include "gegl-node-private.h"
+#include "gegl-tile.h"
 #include "gegl-object-private.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
@@ -22,36 +49,32 @@ class Gegl:Image from Gegl:Node {
 
   private GeglColorModel *color_model;
 
-  protected gint width;
-  protected gint height;
+  protected GeglRect have_rect;    /* domain of definition */
+  protected GeglRect need_rect;    /* region of interest */
+  protected GeglRect result_rect;  /* intersection of need and have rects */
+  protected GeglRect cache_rect;   /* a valid computed result */
 
-  private guchar **data;           /* actual channel data pointers  */
-  protected GeglRect data_rect;    /* data represents this sub rect */
-
-  protected GeglRect have_rect;    /* ie the domain of definition   */
-  protected GeglRect need_rect;    /*roi info passed down from root */
-  protected GeglRect result_rect;  /*result - based on needRect,haveRect */
+  private GeglColorModel *derived_color_model; /* derived color model */
 
   protected 
   gboolean 
   constructor(self,
               GList *inputs)
   {
-    if(GEGL_OBJECT(self)->constructed) 
+    if(GEGL_OBJECT(self)->constructed)
       return FALSE;
        
     /* Chain up */
     if (!gegl_node_constructor (GEGL_NODE(self), inputs))
       return FALSE;
 
-    self->width = 0;
-    self->height = 0;
     self->_priv->color_model = NULL;
-    self->_priv->data = NULL;
+    self->_priv->derived_color_model = NULL;
 
     gegl_rect_set (&self->have_rect,0,0,0,0);
     gegl_rect_set (&self->need_rect,0,0,0,0);
     gegl_rect_set (&self->result_rect,0,0,0,0);
+    gegl_rect_set (&self->cache_rect,0,0,0,0);
 
     return TRUE;
   }
@@ -61,154 +84,197 @@ class Gegl:Image from Gegl:Node {
   destroy (GtkObject *object)
   {
     GeglImage *self = GEGL_IMAGE(object);
-    free_data (self);
+
+    /* Give the image manager a chance to handle tiles. */
+    GeglImageManager *image_manager = gegl_image_manager_instance();
+    gegl_image_manager_delete_image(image_manager,self); 
 
     if(self->_priv->color_model)
       gegl_object_unref(GEGL_OBJECT(self->_priv->color_model));
-
-    self->_priv->color_model = NULL;
+    if(self->_priv->derived_color_model)
+      gegl_object_unref(GEGL_OBJECT(self->_priv->derived_color_model));
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)
   }
 
-  protected
-  gboolean 
-  alloc(self, 
-        gint w,
-        gint h)
-  {
-    GeglColorModel *cm = self->_priv->color_model;
-    gint i;
-
-    if (self->_priv->data)
-      {
-        free_data(self);
-      }
-
-    if (!cm)
-      {
-        g_warning("gegl_image_alloc: color_model unknown\n");
-        return FALSE;
-      }
-
-    {
-      gint bpc = gegl_color_model_bytes_per_channel(cm);  
-      gint num_channels = gegl_color_model_num_channels(cm);
-      gint channel_bytes = bpc * w * h;
-
-      self->_priv->data = g_new(guchar *, num_channels);
-
-      for(i = 0; i < num_channels; i++)
-        {
-          self->_priv->data[i] = g_new (guchar, channel_bytes); 
-          if (!self->_priv->data[i]) 
-            {
-              free_data(self);
-              g_warning ("gegl_image_alloc: Cant alloc image data.\n"); 
-              return FALSE;
-            }
-        }
-
-      self->width = w;
-      self->height = h;
-
-      /* The domain of definition by default is the whole thing */
-      gegl_rect_set (&self->have_rect,0,0,w,h);
-    }
-
-    return TRUE;
-  }
-
-  protected
-  void
-  free_data(self) 
-  {
-    GeglColorModel *cm = self->_priv->color_model;
-    gint num_channels = gegl_color_model_num_channels(cm);
-    gint i;
-
-    if (self->_priv->data)
-      {
-        for(i = 0; i < num_channels; i++)
-          {
-            if (self->_priv->data[i]) 
-            g_free (self->_priv->data[i]);
-          }
-        g_free (self->_priv->data); 
-      }
-
-    self->_priv->data = NULL;
-    self->width = 0;
-    self->height = 0;
-    gegl_rect_set (&self->have_rect,0,0,0,0);
-  }
-
   public
   void 
-  get_have_rect(self, GeglRect *have_rect)
+  get_have_rect(self, 
+                GeglRect *have_rect)
   {
     gegl_rect_copy (have_rect, &self->have_rect);
   }
 
   public
-  void 
-  set_have_rect(self, GeglRect *have_rect)
+  void
+  get_need_rect(self, 
+                GeglRect *need_rect)
   {
-    gegl_rect_copy (&self->have_rect, have_rect);
+    gegl_rect_copy (need_rect, &self->need_rect);
   }
 
   public
-  guchar ** 
-  get_data(self)
+  void
+  get_result_rect(self, 
+                  GeglRect *result_rect)
   {
-    return self->_priv->data;
-  }
-
-  public 
-  gint 
-  get_width (self)
-  {
-    return self->width;
-  }
-
-  public 
-  gint 
-  get_height (self)
-  {
-    return self->height;
+    gegl_rect_copy (result_rect, &self->result_rect);
   }
 
   public
-  GeglColorModel * 
-  color_model(self) 
-  { 
-    return self->_priv->color_model; 
+  void
+  get_cache_rect(self, 
+                 GeglRect *cache_rect)
+  {
+    gegl_rect_copy (cache_rect, &self->cache_rect);
+  }
+
+  protected 
+  void
+  set_need_rect(self, GeglRect *need_rect)
+  {
+    gegl_rect_copy (&self->need_rect, need_rect);
   }
 
   public
-  gboolean 
-  has_alpha(self) 
+  GeglColorModel *
+  color_model(self)
   {
-    return gegl_color_model_has_alpha (self->_priv->color_model); 
+    return self->_priv->color_model ? 
+           self->_priv->color_model : 
+           self->_priv->derived_color_model;
   }
 
   public
   void
   set_color_model(self,
-                  GeglColorModel *cm) 
-  { 
+                  GeglColorModel *cm)
+  {
     /* Unref any old one */
     if(self->_priv->color_model)
-      gegl_object_unref(GEGL_OBJECT(self->_priv->color_model)); 
+      gegl_object_unref(GEGL_OBJECT(self->_priv->color_model));
 
-    /* Set and ref the new one */
-    self->_priv->color_model = cm; 
-    gegl_object_ref(GEGL_OBJECT(cm));
+    /* Set the new color model */
+    self->_priv->color_model = cm;
+    if(cm)
+      gegl_object_ref(GEGL_OBJECT(cm));
+
+    /* Set the derived one to NULL */
+    if(self->_priv->derived_color_model)
+      gegl_object_unref(GEGL_OBJECT(self->_priv->derived_color_model));
+
+    self->_priv->derived_color_model = NULL;
   }
 
-  virtual public GeglImage * get_pixels (self, GeglImage *dest, GeglRect *dest_roi);
-  virtual protected void compute_have_rect (self); 
-  virtual protected void compute_need_rect (self, GeglRect *need_rect, gint index); 
-  virtual protected void compute_result_rect (self); 
+  protected
+  void
+  set_derived_color_model(self,
+                          GeglColorModel *cm)
+  {
+    /* Unref any old one */
+    if(self->_priv->derived_color_model)
+      gegl_object_unref(GEGL_OBJECT(self->_priv->derived_color_model));
+
+    /* Set the new color model */
+    self->_priv->derived_color_model = cm;
+
+    if(cm)
+      gegl_object_ref(GEGL_OBJECT(cm));
+  }
+
+  public
+  gboolean
+  has_alpha(self)
+  {
+    return gegl_color_model_has_alpha (self->_priv->color_model);
+  }
+
+  protected 
+  void
+  compute_need_rect (self,
+                     gint i)
+  {
+    GeglImage *input = GEGL_IMAGE(gegl_node_get_nth_input(
+                                  GEGL_NODE(self),i));
+
+    if(input)
+      {
+        GeglRect preimage_rect;
+        GeglRect need_rect;
+
+        /* Compute the preimage on the input. */
+        compute_preimage(self,&self->need_rect,&preimage_rect,i);
+
+        /* Get the input's need_rect. */
+        get_need_rect(input,&need_rect);
+
+        /* If it isnt zero size then take union, since it 
+           must have multiple parents in graph. */
+        if (need_rect.w && 
+            need_rect.h)
+          {
+            GeglRect union_rect;
+            gegl_rect_union(&union_rect, &preimage_rect, &need_rect);
+            set_need_rect(input,&union_rect);
+          }
+        else
+          set_need_rect(input,&preimage_rect);
+      }
+  }
+
+  public
+  void
+  get_pixels (self,
+              GeglImage *dest,
+              GeglRect *roi)
+  {
+    /* Get the singleton image manager. */
+    GeglImageManager *image_manager = gegl_image_manager_instance();
+
+    /* Set the need rect of root. */
+    set_need_rect(self,roi);
+
+    /* Call image manager, which calls the ops pixel processing routines.  */
+    gegl_image_manager_get_pixels(image_manager,self,dest,roi);
+  }
+
+  virtual protected 
+  void 
+  compute_result_rect (self)
+  {
+    /* By default just intersect result and need */
+    gegl_rect_intersect (&self->result_rect,
+                         &self->need_rect,
+                         &self->have_rect);
+  }
+
+  virtual protected void compute_derived_color_model (self);
+  virtual protected void compute_have_rect (self);
+  virtual protected void compute_cache_rect (self);
+  virtual protected void compute_preimage (self, 
+                                           GeglRect *rect, 
+                                           GeglRect *preimage, 
+                                           gint i);
+
+  virtual protected
+  void
+  prepare (self, 
+           GList *request_list)
+  {
+  }
+
+  virtual protected 
+  void
+  apply (self,
+         GList *request_list)
+  {
+  }
+
+  virtual protected
+  void
+  finish (self,
+          GList *request_list)
+  {
+  }
 }

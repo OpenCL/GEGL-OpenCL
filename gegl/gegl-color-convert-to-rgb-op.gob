@@ -34,16 +34,16 @@ class Gegl:Color:Convert:To:Rgb:Op from Gegl:Color:Convert:Op {
 
   protected
   gboolean 
-  constructor(self, 
+  constructor(self,
               GeglImage *src) 
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
    
     /* Chain up */
-    if (!gegl_color_convert_op_constructor ( 
+    if (!gegl_color_convert_op_constructor1 (
                    GEGL_COLOR_CONVERT_OP (self), 
-		   src))
+                   src, GEGL_COLOR_SPACE_RGB))
       return FALSE;
     return TRUE;
   }

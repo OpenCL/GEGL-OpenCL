@@ -1,0 +1,137 @@
+%h{
+#include "gegl-object.h"
+
+#ifndef __TYPEDEF_GEGL_TILE__
+#define __TYPEDEF_GEGL_TILE__
+typedef struct _GeglTile GeglTile;
+#endif
+
+#ifndef __TYPEDEF_GEGL_COLOR_MODEL__
+#define __TYPEDEF_GEGL_COLOR_MODEL__ 
+typedef struct _GeglColorModel  GeglColorModel;
+#endif
+%}
+%{
+#include "gegl-tile-iterator.h"
+#include "gegl-tile-iterator-private.h"
+#include "gegl-object-private.h"
+#include "gegl-tile.h"
+#include "gegl-utils.h"
+%}
+
+class Gegl:Tile:Iterator from Gegl:Object {
+
+  private GeglTile *tile;           /* The tile we iterate over */
+  private GeglRect rect;            /* The portion of tile we want - in image coords */
+  private gint current;             /* The current index in [0,rect.height-1] */
+
+  public
+  GeglTileIterator *
+  new(GeglTile *tile,
+      GeglRect *rect)
+  {
+    GeglTileIterator * self = GEGL_TILE_ITERATOR(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self, tile, rect))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    /* Ref and sink it */
+    gegl_object_ref(GEGL_OBJECT(self));
+    gtk_object_sink(GTK_OBJECT(self));
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor (self, 
+               GeglTile *tile,
+	           GeglRect *rect)
+  {
+    if(GEGL_OBJECT(self)->constructed) 
+      return FALSE;
+       
+    /* Chain up */
+    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+      return FALSE;
+
+    {
+      self->_priv->current = 0;
+      gegl_rect_copy(&self->_priv->rect, rect);
+      self->_priv->tile = tile;
+
+      /* Ref the tile */
+      gegl_object_ref(GEGL_OBJECT(tile));
+
+    }
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    GeglTileIterator *self = GEGL_TILE_ITERATOR (object);
+
+    /* Unref the tile */
+    gegl_object_unref(GEGL_OBJECT(self->_priv->tile));
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  public
+  GeglTile *
+  get_tile(self)
+  {
+    return self->_priv->tile;
+  }
+
+  public
+  GeglColorModel *
+  get_color_model(self)
+  {
+    return gegl_tile_get_color_model(self->_priv->tile);
+  }
+
+  public
+  void
+  first(self)
+  {
+    self->_priv->current = 0;
+  }
+
+  public
+  void 
+  next(self)
+  {
+    self->_priv->current++;
+  }
+
+  public
+  gboolean 
+  is_done(self)
+  {
+    if (self->_priv->current < self->_priv->rect.h) 
+      return FALSE;
+    else
+      return TRUE;
+  }
+  
+  public
+  void 
+  get_current (self,
+               gpointer* data_pointers) 
+  {
+    /* Just pass the data pointers through to the tile data*/
+    gegl_tile_get_data_at(self->_priv->tile, 
+                          data_pointers, 
+                          self->_priv->rect.x, 
+                          self->_priv->rect.y + self->_priv->current);  
+
+  }
+}

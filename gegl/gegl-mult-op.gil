@@ -8,7 +8,8 @@
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
 #include "gegl-image-private.h"
-#include "gegl-image-iterator.h"
+#include "gegl-tile.h"
+#include "gegl-tile-iterator.h"
 #include "gegl-color.h"
 #include "gegl-color-model.h"
 #include "gegl-utils.h"
@@ -57,35 +58,33 @@ class Gegl:Mult:Op from Gegl:Dual:Src:Op {
     return TRUE;
   }
 
-  override(Gegl:Op)
+  override(Gegl:Image)
   void
-  prepare(GeglOp *op,
-          GeglImage *dest,
-          GeglRect *dest_rect)
+  prepare(GeglImage *self_image,
+          GList * requests)
   {
-    GeglPointOp *point_op = GEGL_POINT_OP (op);
-    GeglPointOpClass *point_op_class = 
-      GEGL_POINT_OP_CLASS(GTK_OBJECT(point_op)->klass);
+    GeglPointOpClass *self_point_op_class = 
+      GEGL_POINT_OP_CLASS(GTK_OBJECT(self_image)->klass);
 
-    /* Save the alphas so we can get them quickly in 
-       in the scanline func */
-    gegl_op_save_alphas(op);
+    GeglImageRequest *dest_request = 
+      (GeglImageRequest*)g_list_nth_data(requests,0); 
+    GeglTile *dest = dest_request->tile;
+    GeglColorModel * dest_cm = gegl_tile_get_color_model (dest);
+    g_return_if_fail (dest_cm);
 
     /* Now make sure the correct scanline func is installed */
-    point_op_class->scanline_func = 
-      gegl_mult_op_scanline_COLORSPACE_DATATYPE;        
-  } 
+    self_point_op_class->scanline_func = scanline_COLORSPACE_DATATYPE;        
+  }
 
   private 
   void
   scanline_COLORSPACE_DATATYPE (GeglPointOp *self_point_op,
-                                GeglImageIterator *dest_iter, 
-                                GeglImageIterator **src_iters)
+                                GeglTileIterator **iters,
+                                gint width)
   {
-    guint width = gegl_image_iterator_scanline_width (dest_iter);
-    GeglImage *dest = gegl_image_iterator_get_image(dest_iter);
-    GeglImage *src1 = gegl_image_iterator_get_image(src_iters[0]);
-    GeglImage *src2 = gegl_image_iterator_get_image(src_iters[1]);
+    GeglColorModel *dest_cm = gegl_tile_iterator_get_color_model(iters[0]);
+    GeglColorModel *src1_cm = gegl_tile_iterator_get_color_model(iters[1]);
+    GeglColorModel *src2_cm = gegl_tile_iterator_get_color_model(iters[2]);
 
     GENERIC_IMAGE_DECL_BEGIN
     Pixel dest(color,alpha,has_alpha);
@@ -93,17 +92,14 @@ class Gegl:Mult:Op from Gegl:Dual:Src:Op {
     Pixel src2(color,alpha,has_alpha);
     GENERIC_IMAGE_DECL_END
 
-    dest_has_alpha = gegl_image_has_alpha(dest); 
-    src1_has_alpha = gegl_image_has_alpha(src1); 
-    src2_has_alpha = gegl_image_has_alpha(src2); 
+    dest_has_alpha = gegl_color_model_has_alpha(dest_cm); 
+    src1_has_alpha = gegl_color_model_has_alpha(src1_cm); 
+    src2_has_alpha = gegl_color_model_has_alpha(src2_cm); 
 
-    gegl_image_iterator_get_scanline_data (
-        dest_iter, (guchar**)dest_data);
-    gegl_image_iterator_get_scanline_data (
-        src_iters[0], (guchar**)src1_data);
-    gegl_image_iterator_get_scanline_data (
-        src_iters[1], (guchar**)src2_data);
-    
+    gegl_tile_iterator_get_current (iters[0], (gpointer*)dest_data);
+    gegl_tile_iterator_get_current (iters[1], (gpointer*)src1_data);
+    gegl_tile_iterator_get_current (iters[2], (gpointer*)src2_data);
+
     GENERIC_IMAGE_IMAGE_DATA_INIT
       
     while (width--)

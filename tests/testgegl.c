@@ -3,116 +3,44 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "gegl-add-op.h"
+#include "gegl-cache.h"
 #include "gegl-color.h"
+#include "gegl-color-convert-op.h"
 #include "gegl-color-model-rgb-u8.h"
 #include "gegl-color-model-rgb-float.h"
 #include "gegl-color-model-rgb-u16.h"
 #include "gegl-color-model-gray-u8.h"
 #include "gegl-color-model-gray-float.h"
 #include "gegl-color-model-gray-u16.h"
-#include "gegl-copy-op.h"
-#include "gegl-image-buffer.h"
-#include "gegl-color-convert-to-rgb-op.h"
-#include "gegl-color-convert-to-gray-op.h"
-#include "gegl-add-op.h"
 #include "gegl-composite-op.h"
 #include "gegl-composite-premult-op.h"
+#include "gegl-copy-op.h"
 #include "gegl-dark-op.h"
 #include "gegl-diff-op.h"
+#include "gegl-fill-op.h"
+#include "gegl-image-buffer.h"
 #include "gegl-light-op.h"
 #include "gegl-max-op.h"
 #include "gegl-min-op.h"
 #include "gegl-mult-op.h"
+#include "gegl-premult-op.h"
+#include "gegl-print-op.h"
 #include "gegl-screen-op.h"
 #include "gegl-subtract-op.h"
-#include "gegl-premult-op.h"
+#include "gegl-tile-image-manager.h"
+#include "gegl-tile.h"
 #include "gegl-test-op.h"
 #include "gegl-unpremult-op.h"
-#include "gegl-fill-op.h"
-#include "gegl-print-op.h"
 #include "gegl-utils.h"
 
-/* global color models */
-GeglColorModel * gRgba_u8 = NULL;
-GeglColorModel * gRgba_u16 = NULL;
-GeglColorModel * gRgba_float = NULL;
-GeglColorModel * gGraya_u8 = NULL;
-GeglColorModel * gGraya_u16 = NULL;
-GeglColorModel * gGraya_float = NULL;
-GeglColorModel * gRgb_u8 = NULL;
-GeglColorModel * gRgb_u16 = NULL;
-GeglColorModel * gRgb_float = NULL;
-GeglColorModel * gGray_u8 = NULL;
-GeglColorModel * gGray_u16 = NULL;
-GeglColorModel * gGray_float = NULL;
-
-void
-init_color_models(void)
+GeglImage * 
+fill_op_new(GeglColorModel *cm,
+            gfloat a, 
+            gfloat b,
+            gfloat c,
+            gfloat d)
 {
-  gRgba_u8 = GEGL_COLOR_MODEL (gegl_color_model_rgb_u8_new(TRUE));
-  gRgba_u16 = GEGL_COLOR_MODEL (gegl_color_model_rgb_u16_new(TRUE));
-  gRgba_float = GEGL_COLOR_MODEL (gegl_color_model_rgb_float_new(TRUE));
-  gGraya_u8 = GEGL_COLOR_MODEL (gegl_color_model_gray_u8_new(TRUE));
-  gGraya_u16 = GEGL_COLOR_MODEL (gegl_color_model_gray_u16_new(TRUE));
-  gGraya_float = GEGL_COLOR_MODEL (gegl_color_model_gray_float_new(TRUE));
-  gRgb_u8 = GEGL_COLOR_MODEL (gegl_color_model_rgb_u8_new(FALSE));
-  gRgb_u16 = GEGL_COLOR_MODEL (gegl_color_model_rgb_u16_new(FALSE));
-  gRgb_float = GEGL_COLOR_MODEL (gegl_color_model_rgb_float_new(FALSE));
-  gGray_u8 = GEGL_COLOR_MODEL (gegl_color_model_gray_u8_new(FALSE));
-  gGray_u16 = GEGL_COLOR_MODEL (gegl_color_model_gray_u16_new(FALSE));
-  gGray_float = GEGL_COLOR_MODEL (gegl_color_model_gray_float_new(FALSE));
-}
-
-void
-free_color_models(void)
-{
-  gegl_object_unref (GEGL_OBJECT(gRgba_u8)); 
-  gegl_object_unref (GEGL_OBJECT(gRgba_u16)); 
-  gegl_object_unref (GEGL_OBJECT(gRgba_float)); 
-  gegl_object_unref (GEGL_OBJECT(gGraya_u8)); 
-  gegl_object_unref (GEGL_OBJECT(gGraya_u16)); 
-  gegl_object_unref (GEGL_OBJECT(gGraya_float)); 
-  gegl_object_unref (GEGL_OBJECT(gRgb_u8)); 
-  gegl_object_unref (GEGL_OBJECT(gRgb_u16)); 
-  gegl_object_unref (GEGL_OBJECT(gRgb_float)); 
-  gegl_object_unref (GEGL_OBJECT(gGray_u8)); 
-  gegl_object_unref (GEGL_OBJECT(gGray_u16)); 
-  gegl_object_unref (GEGL_OBJECT(gGray_float)); 
-}
-
-void
-print_image (GeglImage *d,
-              gint x,
-              gint y,
-              gint w,
-              gint h)
-{
-  GeglImage * op = GEGL_IMAGE(gegl_print_op_new()); 
-  GeglRect roi;
-  printf("Image %p, rect (%d,%d,%d,%d)\n", d,x,y,w,h); 
-  gegl_rect_set (&roi, x,y,w,h);
-  gegl_image_get_pixels (op, d, &roi);
-  gegl_object_unref (GEGL_OBJECT(op)); 
-  return;
-}
-
-void
-print_image_all (GeglImage *image)
-{
-  gint w = gegl_image_get_width(image);
-  gint h = gegl_image_get_height(image);
-  print_image(image,0,0,w,h);
-} 
-
-void 
-fill_image(GeglImage *image,
-           GeglRect *rect,
-           gfloat a, 
-           gfloat b,
-           gfloat c,
-           gfloat d)
-{
-  GeglColorModel *cm = gegl_image_color_model(image);
   gint num_chan = gegl_color_model_num_channels(cm);
   GeglColor *color = gegl_color_new (cm);
   GeglChannelValue * chans = gegl_color_get_channel_values(color);
@@ -128,11 +56,27 @@ fill_image(GeglImage *image,
     chans[3].f = d;
 
   op = GEGL_IMAGE(gegl_fill_op_new (color)); 
-  gegl_image_get_pixels (op, image, rect);
-
-  gegl_object_unref (GEGL_OBJECT(op));
   gegl_object_unref (GEGL_OBJECT(color));
+
+  return op;
 } 
+
+void
+print_image (GeglImage *d,
+              gint x,
+              gint y,
+              gint w,
+              gint h)
+{
+  GeglImage * print = GEGL_IMAGE(gegl_print_op_new(d)); 
+  GeglRect roi;
+  gegl_rect_set (&roi, x,y,w,h);
+
+  printf("Image %x, rect (%d,%d,%d,%d)\n", (gint)d,x,y,w,h); 
+  gegl_image_get_pixels (print, NULL, &roi);
+  gegl_object_unref (GEGL_OBJECT(print));
+  return;
+}
 
 typedef enum
 {
@@ -228,7 +172,6 @@ composite_op_factory (CompositeOpType type,
     case COMP_ATOP:
        *type_name = g_strdup("atop");
        return GEGL_IMAGE(gegl_composite_op_new (s0, s1, GEGL_COMPOSITE_ATOP)); 
-       
     case COMP_IN:
        *type_name = g_strdup("in");
        return GEGL_IMAGE(gegl_composite_op_new (s0, s1, GEGL_COMPOSITE_IN)); 
@@ -268,6 +211,38 @@ composite_op_factory (CompositeOpType type,
 }
 
 void
+fill_image(GeglImageBuffer *image_buffer,
+            gfloat a, 
+            gfloat b,
+            gfloat c,
+            gfloat d)
+{
+  GeglColorModel *cm = gegl_image_color_model(GEGL_IMAGE(image_buffer));
+  gint num_chan = gegl_color_model_num_channels(cm);
+  GeglColor *color = gegl_color_new (cm);
+  GeglChannelValue * chans = gegl_color_get_channel_values(color);
+  GeglImage *fill = GEGL_IMAGE(gegl_fill_op_new (color)); 
+  gint width = gegl_image_buffer_get_width(image_buffer);
+  gint height = gegl_image_buffer_get_height(image_buffer);
+  GeglRect roi;
+  gegl_rect_set(&roi, 0,0,width,height);
+
+  /* Fill image with (a,b,c,d) */
+  chans[0].f = a;
+  if (num_chan > 1)
+    chans[1].f = b;
+  if (num_chan > 2)
+    chans[2].f = c;
+  if (num_chan > 3)
+    chans[3].f = d;
+
+  gegl_image_get_pixels (fill,GEGL_IMAGE(image_buffer),&roi);
+
+  gegl_object_unref (GEGL_OBJECT(color));
+  gegl_object_unref(GEGL_OBJECT(fill));
+} 
+
+void
 test_single_src_point_op(SingleSrcPointOpType type, 
                          GeglColorModel *cm,
                          gint width, 
@@ -277,22 +252,21 @@ test_single_src_point_op(SingleSrcPointOpType type,
   GeglImage *B = GEGL_IMAGE(gegl_image_buffer_new(cm,width,height));
   GeglImage *op = single_src_point_op_factory(type, A);
   GeglRect rect;
-
   gegl_rect_set(&rect, 0,0,width,height);
 
   /* Set up A */
-  fill_image(A, &rect, .1, .2, .3, .4);
+  fill_image(GEGL_IMAGE_BUFFER(A), .1, .2, .3, .4);
   printf("A is: ");
-  print_image_all(A);
+  print_image(A, 0,0,width,height);
 
   /* Clear B */
-  fill_image(B, &rect, 0.0, 0.0, 0.0, 0.0);
+  fill_image(GEGL_IMAGE_BUFFER(B), 0.0, 0.0, 0.0, 0.0);
 
   /* Do the operation, put in B */
   gegl_image_get_pixels (op, B, &rect);
   printf("\n");
   printf("Result of %s: ", gegl_node_get_name(GEGL_NODE(op)));
-  print_image_all(B);
+  print_image(B, 0,0,width,height);
   printf("\n");
 
   gegl_object_unref (GEGL_OBJECT(op));
@@ -315,24 +289,24 @@ test_dual_src_point_op(DualSrcPointOpType type,
   gegl_rect_set(&rect, 0,0,width,height);
 
   /* Set up A */
-  fill_image(A, &rect, .1, .2, .3, .4);
+  fill_image(GEGL_IMAGE_BUFFER(A), .1, .2, .3, .4);
   printf("A is: ");
-  print_image_all(A);
-
+  print_image(A, 0,0,width,height);
   /* Set up B */
-  fill_image(B, &rect, .5, .6, .7, .8);
+  fill_image(GEGL_IMAGE_BUFFER(B), .5, .6, .7, .8);
   printf("\n");
   printf("B is: ");
-  print_image_all(B);
+  print_image(B, 0,0,width,height);
 
   /* Clear C */
-  fill_image(C, &rect, 0.0, 0.0, 0.0, 0.0);
+  fill_image(GEGL_IMAGE_BUFFER(C), 0.0, 0.0, 0.0, 0.0);
+
 
   /* Do the operation, put in C */
   gegl_image_get_pixels (op, C, &rect);
   printf("\n");
   printf("Result of %s: ", gegl_node_get_name(GEGL_NODE(op)));
-  print_image_all(C);
+  print_image(C, 0,0,width,height);
   printf("\n");
 
   gegl_object_unref (GEGL_OBJECT(op));
@@ -359,24 +333,24 @@ test_composite_op(CompositeOpType type,
   gegl_rect_set(&rect, 0,0,width,height);
 
   /* Set up A */
-  fill_image(A, &rect, .1, .2, .3, .4);
+  fill_image(GEGL_IMAGE_BUFFER(A), .1, .2, .3, .4);
   printf("A is: ");
-  print_image_all(A);
+  print_image(A, 0,0,width,height);
 
   /* Set up B */
-  fill_image(B, &rect, .5, .6, .7, .8);
+  fill_image(GEGL_IMAGE_BUFFER(B), .5, .6, .7, .8);
   printf("\n");
   printf("B is: ");
-  print_image_all(B);
+  print_image(B, 0,0,width,height);
 
   /* Clear C */
-  fill_image(C, &rect, 0.0, 0.0, 0.0, 0.0);
+  fill_image(GEGL_IMAGE_BUFFER(C), 0.0, 0.0, 0.0, 0.0);
 
   /* Do the operation, put in C */
   gegl_image_get_pixels (op, C, &rect);
   printf("\n");
   printf("Result of %s %s: ", gegl_node_get_name(GEGL_NODE(op)), type_name);
-  print_image_all(C);
+  print_image(C, 0,0,width,height);
   printf("\n");
 
   gegl_object_unref (GEGL_OBJECT(op));
@@ -388,578 +362,339 @@ test_composite_op(CompositeOpType type,
 
 
 void
-point_ops_and_chains (void)
+fill_buffer_and_print (void)
 {
-  /* This is a test of some simple point ops and op chains */    
+  GeglImage *fill; 
+  GeglImage *print; 
+  GeglColorModel *cm = gegl_color_model_instance(
+                            GEGL_COLOR_MODEL_TYPE_RGB_FLOAT);
+  GeglImage *buffer = GEGL_IMAGE(gegl_image_buffer_new(cm,2,2));
+  GeglRect roi;
+  gegl_rect_set(&roi,0,0,2,2);
 
-    GeglColorModel *cm = GEGL_COLOR_MODEL (gegl_color_model_rgb_float_new(TRUE));
-    GeglImage *A;
-    GeglImage *B;
-    GeglImage *C;
+  /*
 
-    A = GEGL_IMAGE(gegl_image_buffer_new(cm,2,2));
-    B = GEGL_IMAGE(gegl_image_buffer_new(cm,2,2));
-    C = GEGL_IMAGE(gegl_image_buffer_new(cm,2,2));
-    {
-      GeglImage *op1, *op2; 
-      GeglRect roi;
+    fill -> buffer 
 
-      gegl_rect_set(&roi,0,0,2,2);
+    print
+     |
+    buffer
 
-      /* Set up A */
-      fill_image(A, &roi, .1, .2, .3, .4);
-      printf("A is: ");
-      print_image_all(A);
+  */ 
 
-      /* Set up B */
-      fill_image(B, &roi, .5, .6, .7, .8);
-      printf("\n");
-      printf("B is: ");
-      print_image_all(B);
+  fill = fill_op_new(cm, .1, .2, .3, .4);
 
-      /* Clear C */
-      fill_image(C, &roi, 0.0, 0.0, 0.0, 0.0);
+  gegl_image_get_pixels (fill,buffer,&roi);
 
-      /* 
-	 This next tests the following chain of ops/images:
+  /* print it */
+  print = GEGL_IMAGE(gegl_print_op_new(buffer)); 
+  gegl_image_get_pixels (print,NULL,&roi);
 
-	 A  B 
-	  \/
-	  op1  (op1 is a CompositePremultOp with OVER mode) 
-	   |
-	  op2  (op2 is a TestOp, which is just division by 2) 
-
-	  Then we evaluate the tree on destination image C
-      */
-
-      /* Note: B over A is given by (1-alphaB)*cA + cB */
-      op1 = GEGL_IMAGE(gegl_composite_premult_op_new (A,B,GEGL_COMPOSITE_OVER)); 
-      op2 = GEGL_IMAGE(gegl_test_op_new (op1)); 
-      gegl_rect_set (&roi, 0,0,2,2);
-      gegl_image_get_pixels (op2, C, &roi);
-      printf("\n");
-      printf("Result of Test(CompPremult(A,B,OVER)): ");
-      print_image_all(C);
-      printf("\n");
-
-      gegl_object_unref (GEGL_OBJECT(op2));
-      gegl_object_unref (GEGL_OBJECT(op1));
-
-    }
-    gegl_object_unref (GEGL_OBJECT(A));
-    gegl_object_unref (GEGL_OBJECT(B));
-    gegl_object_unref (GEGL_OBJECT(C));
-    gegl_object_unref (GEGL_OBJECT(cm));
+  gegl_object_unref (GEGL_OBJECT(print));
+  gegl_object_unref (GEGL_OBJECT(fill));
+  gegl_object_unref (GEGL_OBJECT(buffer));
 }
 
-#if 0
-void 
-fillop_and_printop (void)
-{
-  GeglColorModel *cm = 
-    GEGL_COLOR_MODEL (gegl_color_model_rgb_float_new(FALSE)); 
-  GeglImage *src = GEGL_IMAGE(gegl_image_buffer_new(cm,2,2));
-  GeglImage *dest = GEGL_IMAGE(gegl_image_buffer_new(cm,2,2));
-
-  {
-    GeglImage *op; 
-    GeglRect roi;
-    GeglColor *c = gegl_color_new (cm);
-
-    /* Fill the 2 x 2 image with black */
-    gegl_color_set_constant (c, COLOR_BLACK);
-    op =  GEGL_IMAGE(gegl_fill_op_new (c));
-    gegl_rect_set (&roi, 0,0,2,2);
-    gegl_image_get_pixels (op, dest, &roi);
-    gegl_object_unref (GEGL_OBJECT(op)); 
-
-    /* Fill the 1 x 1 subimage at (0,0) with blue */
-    gegl_color_set_constant (c, COLOR_BLUE);
-    op =  GEGL_IMAGE(gegl_fill_op_new (c));
-    gegl_rect_set (&roi, 0,0,1,1);
-    gegl_image_get_pixels (op, dest, &roi);
-    gegl_object_unref (GEGL_OBJECT(op)); 
-
-    /* Fill the 1 x 1 subimage at (1,1) with red */
-    gegl_color_set_constant (c, COLOR_RED);
-    op =  GEGL_IMAGE(gegl_fill_op_new (c));
-    gegl_rect_set (&roi, 1,1,1,1);
-    gegl_image_get_pixels (op, dest, &roi);
-    gegl_object_unref (GEGL_OBJECT(op)); 
-
-    /* Print out the results */
-    print_result (dest,0,0,2,2);
-
-    gegl_object_unref (GEGL_OBJECT(c));
-  }
-
-  gegl_object_unref (GEGL_OBJECT(src));
-  gegl_object_unref (GEGL_OBJECT(dest));
-  gegl_object_unref (GEGL_OBJECT(cm));
-}
-#endif
-
-#if 0
 void
-copy_ops (void)
+simple_fill(void)
 {
-    GeglImage *op; 
-    GeglRect roi;
-    GeglChannelValue * chans;
+  GeglImage *fill; 
+  GeglImage *print; 
+  GeglColorModel *cm = gegl_color_model_instance(
+                            GEGL_COLOR_MODEL_TYPE_RGB_FLOAT);
+  GeglRect roi;
+  gegl_rect_set(&roi,0,0,2,2);
 
-    GeglColorModel *A_cm = 
-      GEGL_COLOR_MODEL (gegl_color_model_rgb_float_new(FALSE));
-    GeglColorModel *B_cm = 
-      GEGL_COLOR_MODEL (gegl_color_model_rgb_float_new(FALSE));
-    GeglColorModel *C_cm = 
-      GEGL_COLOR_MODEL (gegl_color_model_rgb_u8_new(FALSE));
-    GeglColorModel *D_cm = 
-      GEGL_COLOR_MODEL (gegl_color_model_rgb_u8_new(FALSE));
-    GeglColorModel *E_cm = 
-      GEGL_COLOR_MODEL (gegl_color_model_rgb_u16_new(FALSE));
-    GeglColorModel *F_cm = 
-      GEGL_COLOR_MODEL (gegl_color_model_rgb_u16_new(FALSE));
+  /*
+    print
+      |
+    fill  
 
-    GeglImage *A = GEGL_IMAGE(gegl_image_buffer_new(A_cm,2,2));
-    GeglImage *B = GEGL_IMAGE(gegl_image_buffer_new(B_cm,2,2));
-    GeglImage *C = GEGL_IMAGE(gegl_image_buffer_new(C_cm,2,2));
-    GeglImage *D = GEGL_IMAGE(gegl_image_buffer_new(D_cm,2,2));
-    GeglImage *E = GEGL_IMAGE(gegl_image_buffer_new(E_cm,2,2));
-    GeglImage *F = GEGL_IMAGE(gegl_image_buffer_new(F_cm,2,2));
+  */ 
 
-    GeglColor *A_color = gegl_color_new (A_cm);
-    GeglColor *B_color = gegl_color_new (B_cm);
-    GeglColor *C_color = gegl_color_new (C_cm);
-    GeglColor *D_color = gegl_color_new (D_cm);
-    GeglColor *E_color = gegl_color_new (E_cm);
-    GeglColor *F_color = gegl_color_new (F_cm);
+  fill = fill_op_new(cm, .1, .2, .3, .4);
+  print = GEGL_IMAGE(gegl_print_op_new(fill)); 
 
-    chans = gegl_color_get_channel_values(A_color);
-    chans[0].f = .1;
-    chans[1].f = .2;
-    chans[2].f = .3;
+  gegl_image_get_pixels (print,NULL,&roi);
 
-    /* Fill A with (.1,.2,.3) */
-    op = GEGL_IMAGE(gegl_fill_op_new (A_color)); 
-    gegl_rect_set (&roi, 0,0,2,2);
-    gegl_image_get_pixels (op, A, &roi);
-    gegl_object_unref (GEGL_OBJECT(op));
-    printf("A is: \n");
-    print_result (A,0,0,2,2);
-
-    chans = gegl_color_get_channel_values(B_color);
-    chans[0].f = .4;
-    chans[1].f = .5;
-    chans[2].f = .6;
-
-    /* Fill B with (.4.,.5,.6) */
-    op =  GEGL_IMAGE(gegl_fill_op_new (B_color)); 
-    gegl_rect_set (&roi, 0,0,2,2);
-    gegl_image_get_pixels (op, B, &roi);
-    gegl_object_unref (GEGL_OBJECT(op));
-    printf("B is: \n");
-    print_result (B,0,0,2,2);
-
-    /* Copy B to A, rgb_float->rgb_float */
-    op = GEGL_IMAGE(gegl_copy_op_new (B)); 
-    gegl_rect_set (&roi, 0,0,2,2);
-    gegl_image_get_pixels (op, A, &roi);
-    gegl_object_unref (GEGL_OBJECT(op));
-    printf("Copy B to A:\n");
-    print_result (A,0,0,2,2);
-
-    chans = gegl_color_get_channel_values(C_color);
-    chans[0].u8 = 1;
-    chans[1].u8 = 2;
-    chans[2].u8 = 3;
-
-    /* Fill C with (1,2,3)*/
-    op = GEGL_IMAGE(gegl_fill_op_new (C_color)); 
-    gegl_rect_set (&roi, 0,0,2,2);
-    gegl_image_get_pixels (op, C, &roi);
-    gegl_object_unref (GEGL_OBJECT(op));
-    printf("C is: \n");
-    print_result (C,0,0,2,2);
-
-    chans = gegl_color_get_channel_values(D_color);
-    chans[0].u8 = 4;
-    chans[1].u8 = 5;
-    chans[2].u8 = 6;
-
-    /* Fill D with (4,5,6) */
-    op =  GEGL_IMAGE(gegl_fill_op_new (D_color)); 
-    gegl_rect_set (&roi, 0,0,2,2);
-    gegl_image_get_pixels (op, D, &roi);
-    gegl_object_unref (GEGL_OBJECT(op));
-    printf("D is: \n");
-    print_result (D,0,0,2,2);
-
-    /* Copy D to C, rgb_u8->rgb_u8 */
-    op = GEGL_IMAGE(gegl_copy_op_new (D)); 
-    gegl_rect_set (&roi, 0,0,2,2);
-    gegl_image_get_pixels (op, C, &roi);
-    gegl_object_unref (GEGL_OBJECT(op));
-    printf("Copy D to C:\n");
-    print_result (C,0,0,2,2);
-
-    chans = gegl_color_get_channel_values(E_color);
-    chans[0].u16 = 1000;
-    chans[1].u16 = 2000;
-    chans[2].u16 = 3000;
-
-    /* Fill E with (1000,2000,3000)*/
-    op = GEGL_IMAGE(gegl_fill_op_new (E_color)); 
-    gegl_rect_set (&roi, 0,0,2,2);
-    gegl_image_get_pixels (op, E, &roi);
-    gegl_object_unref (GEGL_OBJECT(op));
-    printf("E is: \n");
-    print_result (E,0,0,2,2);
-
-    chans = gegl_color_get_channel_values(F_color);
-    chans[0].u16 = 4000;
-    chans[1].u16 = 5000;
-    chans[2].u16 = 6000;
-
-    /* Fill F with (4000,5000,6000) */
-    op =  GEGL_IMAGE(gegl_fill_op_new (F_color)); 
-    gegl_rect_set (&roi, 0,0,2,2);
-    gegl_image_get_pixels (op, F, &roi);
-    gegl_object_unref (GEGL_OBJECT(op));
-    printf("F is: \n");
-    print_result (F,0,0,2,2);
-
-    /* Copy F to E, rgb_u16->rgb_u16 */
-    op = GEGL_IMAGE(gegl_copy_op_new (F)); 
-    gegl_rect_set (&roi, 0,0,2,2);
-    gegl_image_get_pixels (op, E, &roi);
-    gegl_object_unref (GEGL_OBJECT(op));
-    printf("Copy F to E:\n");
-    print_result (E,0,0,2,2);
-
-    gegl_object_unref (GEGL_OBJECT(A_cm));
-    gegl_object_unref (GEGL_OBJECT(B_cm));
-    gegl_object_unref (GEGL_OBJECT(C_cm));
-    gegl_object_unref (GEGL_OBJECT(D_cm));
-    gegl_object_unref (GEGL_OBJECT(E_cm));
-    gegl_object_unref (GEGL_OBJECT(F_cm));
-    gegl_object_unref (GEGL_OBJECT(A));
-    gegl_object_unref (GEGL_OBJECT(B));
-    gegl_object_unref (GEGL_OBJECT(C));
-    gegl_object_unref (GEGL_OBJECT(D));
-    gegl_object_unref (GEGL_OBJECT(E));
-    gegl_object_unref (GEGL_OBJECT(F));
-    gegl_object_unref (GEGL_OBJECT(A_color));
-    gegl_object_unref (GEGL_OBJECT(B_color));
-    gegl_object_unref (GEGL_OBJECT(C_color));
-    gegl_object_unref (GEGL_OBJECT(D_color));
-    gegl_object_unref (GEGL_OBJECT(E_color));
-    gegl_object_unref (GEGL_OBJECT(F_color));
+  gegl_object_unref (GEGL_OBJECT(print));
+  gegl_object_unref (GEGL_OBJECT(fill));
 }
-#endif
 
-#if 0
+void
+linear_chain_test(void)
+{
+  GeglImage *fill;
+  GeglImage *test1, *test2;
+  GeglImage *print;
+  GeglColorModel *cm = gegl_color_model_instance(
+                            GEGL_COLOR_MODEL_TYPE_RGB_FLOAT);
+  GeglImage *buffer = GEGL_IMAGE(gegl_image_buffer_new(cm,2,2));
+  GeglRect roi;
+  gegl_rect_set(&roi,0,0,2,2);
+
+  /*
+    test2 -> buffer 
+      |   
+    test1
+      |
+    fill  
+
+  */ 
+
+  fill = fill_op_new(cm, .1, .2, .3, .4);
+
+  test1 = GEGL_IMAGE(gegl_test_op_new(fill)); 
+  test2 = GEGL_IMAGE(gegl_test_op_new(test1)); 
+
+  gegl_image_get_pixels (test2,buffer,&roi);
+
+  /* print it */
+  print = GEGL_IMAGE(gegl_print_op_new(buffer)); 
+  gegl_image_get_pixels (print,NULL,&roi);
+
+  gegl_object_unref (GEGL_OBJECT(print));
+  gegl_object_unref (GEGL_OBJECT(fill));
+  gegl_object_unref (GEGL_OBJECT(test1));
+  gegl_object_unref (GEGL_OBJECT(test2));
+  gegl_object_unref (GEGL_OBJECT(buffer));
+}
+
+void
+simple_tree(void)
+{
+  GeglImage *fill1, *fill2;
+  GeglImage *add;
+  GeglImage *print;
+  GeglImage *test;
+  GeglColorModel *cm = gegl_color_model_instance(
+                            GEGL_COLOR_MODEL_TYPE_RGB_FLOAT);
+  GeglImage *buffer = GEGL_IMAGE(gegl_image_buffer_new(cm,2,2));
+  GeglRect roi;
+  gegl_rect_set(&roi,0,0,2,2);
+
+  /*
+
+        add -> buffer
+        /  \ 
+    test   fill2 
+      |
+    fill1  
+
+  */ 
+
+  fill1 = fill_op_new(cm, .1, .2, .3, .4);
+  fill2 = fill_op_new(cm, .5, .6, .7, .8);
+
+  test = GEGL_IMAGE(gegl_test_op_new(fill1)); 
+
+  add = GEGL_IMAGE(gegl_add_op_new(fill2,test)); 
+
+  gegl_image_get_pixels (add,buffer,&roi);
+
+  /* print buffer */
+  print = GEGL_IMAGE(gegl_print_op_new(buffer)); 
+  gegl_image_get_pixels (print,NULL,&roi);
+
+  gegl_object_unref (GEGL_OBJECT(print));
+  gegl_object_unref (GEGL_OBJECT(fill1));
+  gegl_object_unref (GEGL_OBJECT(test));
+  gegl_object_unref (GEGL_OBJECT(fill2));
+  gegl_object_unref (GEGL_OBJECT(add));
+  gegl_object_unref (GEGL_OBJECT(buffer));
+}
+
 void
 color_convert_ops (void)
 {
-      GeglImage *op; 
-      GeglRect roi;
-      GeglChannelValue * chans;
+  GeglColorModel *cm1 =
+    gegl_color_model_instance(GEGL_COLOR_MODEL_TYPE_RGB_FLOAT);
+  GeglColorModel *cm2 =
+    gegl_color_model_instance(GEGL_COLOR_MODEL_TYPE_GRAY_FLOAT);
 
-    GeglColorModel *A_cm = 
-      GEGL_COLOR_MODEL (gegl_color_model_gray_float_new(FALSE));
-    GeglColorModel *B_cm = 
-      GEGL_COLOR_MODEL (gegl_color_model_rgb_float_new(FALSE));
-    GeglColorModel *C_cm = 
-      GEGL_COLOR_MODEL (gegl_color_model_gray_u8_new(FALSE));
-    GeglColorModel *D_cm = 
-      GEGL_COLOR_MODEL (gegl_color_model_rgb_u8_new(FALSE));
-    GeglColorModel *E_cm = 
-      GEGL_COLOR_MODEL (gegl_color_model_gray_u16_new(FALSE));
-    GeglColorModel *F_cm = 
-      GEGL_COLOR_MODEL (gegl_color_model_rgb_u16_new(FALSE));
+  GeglImage *fill_op; 
+  GeglImage *print_op; 
+  GeglImage *convert_op; 
+  GeglImage *buffer1 = GEGL_IMAGE(gegl_image_buffer_new(cm1,2,2));
+  GeglImage *buffer2 = GEGL_IMAGE(gegl_image_buffer_new(cm2,2,2));
+  GeglRect roi;
+  gegl_rect_set(&roi,0,0,2,2);
 
-    GeglImage *A = GEGL_IMAGE(gegl_image_buffer_new(A_cm,2,2));
-    GeglImage *B = GEGL_IMAGE(gegl_image_buffer_new(B_cm,2,2));
-    GeglImage *C = GEGL_IMAGE(gegl_image_buffer_new(C_cm,2,2));
-    GeglImage *D = GEGL_IMAGE(gegl_image_buffer_new(D_cm,2,2));
-    GeglImage *E = GEGL_IMAGE(gegl_image_buffer_new(E_cm,2,2));
-    GeglImage *F = GEGL_IMAGE(gegl_image_buffer_new(F_cm,2,2));
+  /* fill buffer1 */ 
+  fill_op = fill_op_new(cm1, .1, .2, .3, .4);
+  gegl_image_get_pixels (fill_op,buffer1,&roi);
 
-    GeglColor *A_color = gegl_color_new (A_cm);
-    GeglColor *B_color = gegl_color_new (B_cm);
-    GeglColor *C_color = gegl_color_new (C_cm);
-    GeglColor *D_color = gegl_color_new (D_cm);
-    GeglColor *E_color = gegl_color_new (E_cm);
-    GeglColor *F_color = gegl_color_new (F_cm);
+  /* color convert, put in buffer2 */
+  convert_op = GEGL_IMAGE(gegl_color_convert_op_new(buffer1, cm2));
+  gegl_image_get_pixels (convert_op,buffer2,&roi);
 
-      chans = gegl_color_get_channel_values(A_color);
-      chans[0].f = .1;
+  /* print buffer2 */
+  print_op = GEGL_IMAGE(gegl_print_op_new(buffer2));
+  gegl_image_get_pixels (print_op,NULL,&roi);
 
-      /* Fill A with .1 */
-      op = GEGL_IMAGE(gegl_fill_op_new (A_color)); 
-      gegl_rect_set (&roi, 0,0,2,2);
-      gegl_image_get_pixels (op, A, &roi);
-      gegl_object_unref (GEGL_OBJECT(op));
-      printf("A (gray_float) is: \n");
-      print_result (A,0,0,2,2);
-
-      chans = gegl_color_get_channel_values(B_color);
-      chans[0].f = .2;
-      chans[1].f = .3;
-      chans[2].f = .4;
-
-      /* Fill B with (.2.,.3,.4) */
-      op =  GEGL_IMAGE(gegl_fill_op_new (B_color)); 
-      gegl_rect_set (&roi, 0,0,2,2);
-      gegl_image_get_pixels (op, B, &roi);
-      gegl_object_unref (GEGL_OBJECT(op));
-      printf("B (rgb_float) is: \n");
-      print_result (B,0,0,2,2);
-
-      chans = gegl_color_get_channel_values(C_color);
-      chans[0].u8 = 55;
-
-      /* Convert B to A, rgb_float->gray_float (direct) */
-      op = GEGL_IMAGE(gegl_color_convert_to_gray_op_new (B)); 
-      gegl_rect_set (&roi, 0,0,2,2);
-      gegl_image_get_pixels (op, A, &roi);
-      gegl_object_unref (GEGL_OBJECT(op));
-      printf("Convert B to A, rgb_float->gray_float (direct):\n");
-      print_result (A,0,0,2,2);
-
-      /* Fill C with 55 */
-      op = GEGL_IMAGE(gegl_fill_op_new (C_color)); 
-      gegl_rect_set (&roi, 0,0,2,2);
-      gegl_image_get_pixels (op, C, &roi);
-      gegl_object_unref (GEGL_OBJECT(op));
-      printf("C (gray_u8) is: \n");
-      print_result (C,0,0,2,2);
-
-      /* Convert B to C, rgb_float->gray_u8 (XYZ conversion)  */
-      op = GEGL_IMAGE(gegl_color_convert_to_gray_op_new (B)); 
-      gegl_rect_set (&roi, 0,0,2,2);
-      gegl_image_get_pixels (op, C, &roi);
-      gegl_object_unref (GEGL_OBJECT(op));
-      printf("Convert B to C, rgb_float->gray_u8 (XYZ conversion):\n");
-      print_result (C,0,0,2,2);
-
-      chans = gegl_color_get_channel_values(D_color);
-      chans[0].u8 = 10;
-      chans[1].u8 = 20;
-      chans[2].u8 = 30;
-
-      /* Fill D with (10,20,30) */
-      op = GEGL_IMAGE(gegl_fill_op_new (D_color)); 
-      gegl_rect_set (&roi, 0,0,2,2);
-      gegl_image_get_pixels (op, D, &roi);
-      gegl_object_unref (GEGL_OBJECT(op));
-      printf("D (rgb_u8) is: \n");
-      print_result (D,0,0,2,2);
-
-      chans = gegl_color_get_channel_values(E_color);
-      chans[0].u16 = 5000;
-
-      /* Fill E with 5000 */
-      op = GEGL_IMAGE(gegl_fill_op_new (E_color)); 
-      gegl_rect_set (&roi, 0,0,2,2);
-      gegl_image_get_pixels (op, E, &roi);
-      gegl_object_unref (GEGL_OBJECT(op));
-      printf("E (gray_u16) is: \n");
-      print_result (E,0,0,2,2);
-
-      chans = gegl_color_get_channel_values(F_color);
-      chans[0].u16 = 1000;
-      chans[1].u16 = 2000;
-      chans[2].u16 = 3000;
-
-      /* Fill F with (1000,2000,3000) */
-      op = GEGL_IMAGE(gegl_fill_op_new (F_color)); 
-      gegl_rect_set (&roi, 0,0,2,2);
-      gegl_image_get_pixels (op, F, &roi);
-      gegl_object_unref (GEGL_OBJECT(op));
-      printf("F (rgb_u16) is: \n");
-      print_result (F,0,0,2,2);
-
-      /* Convert B to F, rgb_float->rgb_u16 (direct)  */
-      op = GEGL_IMAGE(gegl_color_convert_to_rgb_op_new (B)); 
-      gegl_rect_set (&roi, 0,0,2,2);
-      gegl_image_get_pixels (op, F, &roi);
-      gegl_object_unref (GEGL_OBJECT(op));
-      printf("Convert B to F, rgb_float->rgb_u16 (direct):\n");
-      print_result (F,0,0,2,2);
-
-      /* Convert B to E, rgb_float->gray_u16 (XYZ)  */
-      op = GEGL_IMAGE(gegl_color_convert_to_gray_op_new (B)); 
-      gegl_rect_set (&roi, 0,0,2,2);
-      gegl_image_get_pixels (op, E, &roi);
-      gegl_object_unref (GEGL_OBJECT(op));
-      printf("Convert B to E, rgb_float->gray_u16 (XYZ):\n");
-      print_result (E,0,0,2,2);
-
-    gegl_object_unref (GEGL_OBJECT(A_cm));
-    gegl_object_unref (GEGL_OBJECT(B_cm));
-    gegl_object_unref (GEGL_OBJECT(C_cm));
-    gegl_object_unref (GEGL_OBJECT(D_cm));
-    gegl_object_unref (GEGL_OBJECT(E_cm));
-    gegl_object_unref (GEGL_OBJECT(F_cm));
-    gegl_object_unref (GEGL_OBJECT(A));
-    gegl_object_unref (GEGL_OBJECT(B));
-    gegl_object_unref (GEGL_OBJECT(C));
-    gegl_object_unref (GEGL_OBJECT(D));
-    gegl_object_unref (GEGL_OBJECT(E));
-    gegl_object_unref (GEGL_OBJECT(F));
-    gegl_object_unref (GEGL_OBJECT(A_color));
-    gegl_object_unref (GEGL_OBJECT(B_color));
-    gegl_object_unref (GEGL_OBJECT(C_color));
-    gegl_object_unref (GEGL_OBJECT(D_color));
-    gegl_object_unref (GEGL_OBJECT(E_color));
-    gegl_object_unref (GEGL_OBJECT(F_color));
+  gegl_object_unref (GEGL_OBJECT(print_op));
+  gegl_object_unref (GEGL_OBJECT(convert_op));
+  gegl_object_unref (GEGL_OBJECT(fill_op));
+  gegl_object_unref (GEGL_OBJECT(buffer2));
+  gegl_object_unref (GEGL_OBJECT(buffer1));
 }
-#endif
 
-#if 0
 void
-copy_chan_ops(void)
+copy_ops(void)
 {
+  GeglColorModel *cm =
+    gegl_color_model_instance(GEGL_COLOR_MODEL_TYPE_RGB_FLOAT);
 
-  /* This stuff is not up to date (1-22-01). Needs to be fixed. */
+  GeglImage *fill_op; 
+  GeglImage *print_op; 
+  GeglImage *copy_op; 
+  GeglImage *buffer1 = GEGL_IMAGE(gegl_image_buffer_new(cm,2,2));
+  GeglImage *buffer2 = GEGL_IMAGE(gegl_image_buffer_new(cm,2,2));
+  GeglRect roi;
+  gegl_rect_set(&roi,0,0,2,2);
 
-#if 0   /* This is a test of GeglCopyChanOp */ 
+  /* fill buffer1 */ 
+  fill_op = fill_op_new(cm, .1, .2, .3, .4);
+  gegl_image_get_pixels (fill_op,buffer1,&roi);
 
-  GeglColorModel *dest_cm = GEGL_COLOR_MODEL(
-			  gegl_color_model_rgb_float_new(FALSE));
-  GeglImageBuffer *dest = gegl_image_buffer_new(dest_cm,5,5);
+  /* copy op, put in buffer2 */
+  copy_op = GEGL_IMAGE(gegl_copy_op_new(buffer1)); 
+  gegl_image_get_pixels (copy_op,buffer2,&roi);
 
-  GeglColorModel *src_cm = GEGL_COLOR_MODEL(
-			  gegl_color_model_rgb_float_new(FALSE));
-  GeglImageBuffer *src = gegl_image_buffer_new(src_cm,5,5);
+  /* print buffer2 */
+  print_op = GEGL_IMAGE(gegl_print_op_new(buffer2));
+  gegl_image_get_pixels (print_op,NULL,&roi);
 
-  /* Fill the whole 5 x 5 src image with RED */
-  {
-    GeglOp *op;
-    GeglRect r;
-    GeglColor *c = gegl_color_new (dest_cm);
-    gegl_color_set_constant (c, COLOR_RED);
-
-    gegl_rect_set (&r, 0,0,5,5);
-    op = GEGL_OP (gegl_fill_op_new (src, &r, c));
-
-    gegl_op_apply (op);
-
-    gegl_object_unref (GEGL_OBJECT(op)); 
-    gegl_object_unref (GEGL_OBJECT(c)); 
-  }
-
-  /* Fill the whole 5 x 5 dest image with GREEN */
-  {
-    GeglOp *op;
-    GeglRect r;
-    GeglColor *c = gegl_color_new (dest_cm);
-    gegl_color_set_constant (c, COLOR_GREEN);
-
-    gegl_rect_set (&r, 0,0,5,5);
-    op = GEGL_OP (gegl_fill_op_new (dest, &r, c));
-
-    gegl_op_apply (op);
-
-    gegl_object_unref (GEGL_OBJECT(op)); 
-    gegl_object_unref (GEGL_OBJECT(c)); 
-  }
-
-  /* Copy red src chan to green dest chan */
-  {
-    GeglOp *op;
-    GeglRect r;
-    gint channel_indices[4] = {0, 1, 0, -1};
-
-    gegl_rect_set (&r, 0,0,5,5);
-    op = GEGL_OP (gegl_copychan_op_new (dest, src, &r, &r, channel_indices));
-
-    gegl_op_apply (op);
-
-    gegl_object_unref (GEGL_OBJECT(op)); 
-  }
-
-  /* Print out the image values for the src */
-  {
-    GeglOp *op;
-    GeglRect r;
-    gegl_rect_set (&r, 0,0,5,5);
-    op =  GEGL_OP (gegl_print_op_new (src, &r));
-    gegl_op_apply (op);
-    gegl_object_unref (GEGL_OBJECT(op)); 
-  }
-
-  /* Print out the image values for the dest*/
-  {
-    GeglOp *op;
-    GeglRect r;
-    gegl_rect_set (&r, 0,0,5,5);
-    op =  GEGL_OP (gegl_print_op_new (dest, &r));
-    gegl_op_apply (op);
-    gegl_object_unref (GEGL_OBJECT(op)); 
-  }
-
-  gegl_object_unref (GEGL_OBJECT(src)); 
-  gegl_object_unref (GEGL_OBJECT(src_cm)); 
-  gegl_object_unref (GEGL_OBJECT(dest)); 
-  gegl_object_unref (GEGL_OBJECT(dest_cm)); 
-#endif
+  gegl_object_unref (GEGL_OBJECT(print_op));
+  gegl_object_unref (GEGL_OBJECT(copy_op));
+  gegl_object_unref (GEGL_OBJECT(fill_op));
+  gegl_object_unref (GEGL_OBJECT(buffer2));
+  gegl_object_unref (GEGL_OBJECT(buffer1));
 }
-#endif
 
+void
+color_model_attributes_tests (void)
+{
+  GList *list = NULL;
+  GeglColorModel *cm1 =
+    gegl_color_model_instance(GEGL_COLOR_MODEL_TYPE_RGB_U8);
+  GeglColorModel *cm2 =
+    gegl_color_model_instance(GEGL_COLOR_MODEL_TYPE_GRAY_U16);
+  GeglColorModel *cm3 =
+    gegl_color_model_instance(GEGL_COLOR_MODEL_TYPE_GRAY_FLOAT);
 
+  GeglImage *image1 = GEGL_IMAGE(gegl_image_buffer_new(cm1,2,2));
+  GeglImage *image2 = GEGL_IMAGE(gegl_image_buffer_new(cm2,2,2));
+  GeglImage *image3 = GEGL_IMAGE(gegl_image_buffer_new(cm3,2,2));
+
+  GeglColorSpace space1 = gegl_color_model_color_space(cm1);
+  GeglColorSpace space2 = gegl_color_model_color_space(cm2);
+  GeglColorSpace space3 = gegl_color_model_color_space(cm3);
+
+  printf("actual color space1 is %d\n", space1);
+  printf("actual color space2 is %d\n", space2);
+  printf("actual color space3 is %d\n", space3);
+
+  list = g_list_append(list, image1);
+  list = g_list_append(list, image2);
+  list = g_list_append(list, image3);
+
+    {
+      GeglColorSpace space = gegl_utils_derived_color_space(list);
+      GeglChannelDataType  type = gegl_utils_derived_channel_data_type(list);
+      GeglColorAlphaSpace  caspace = gegl_utils_derived_color_alpha_space(list);
+
+      printf("derived color space is %d\n", space);
+      printf("derived data type is %d\n", type);
+      printf("derived color alpha space is %d\n", caspace);
+    }
+
+  g_list_free(list);
+  gegl_object_unref (GEGL_OBJECT(image1));
+  gegl_object_unref (GEGL_OBJECT(image2));
+  gegl_object_unref (GEGL_OBJECT(image3));
+
+}
+
+void
+dual_src_point_ops(void)
+{
+  GeglColorModel *rgb_float = gegl_color_model_instance(
+                            GEGL_COLOR_MODEL_TYPE_RGB_FLOAT);
+
+  gint w = 2;
+  gint h = 2;
+
+  test_dual_src_point_op (ADD,rgb_float,w,h);
+  test_dual_src_point_op (DARK,rgb_float,w,h);
+  test_dual_src_point_op (DIFF,rgb_float,w,h);
+  test_dual_src_point_op (LIGHT,rgb_float,w,h);
+  test_dual_src_point_op (MIN,rgb_float,w,h);
+  test_dual_src_point_op (MAX,rgb_float,w,h);
+  test_dual_src_point_op (MULT,rgb_float,w,h);
+  test_dual_src_point_op (SUBTRACT,rgb_float,w,h);
+  test_dual_src_point_op (SCREEN,rgb_float,w,h);
+}
+
+void
+single_src_point_ops(void)
+{
+  GeglColorModel *rgba_float = gegl_color_model_instance(
+                            GEGL_COLOR_MODEL_TYPE_RGBA_FLOAT);
+  gint w = 2;
+  gint h = 2;
+
+  test_single_src_point_op (PREMULT,rgba_float,w,h);
+  test_single_src_point_op (TEST,rgba_float,w,h);
+  test_single_src_point_op (UNPREMULT,rgba_float,w,h);
+}
+
+void
+test_composite_ops(void)
+{
+  GeglColorModel *rgba_float = gegl_color_model_instance(
+                            GEGL_COLOR_MODEL_TYPE_RGBA_FLOAT);
+  gint w = 2;
+  gint h = 2;
+
+  test_composite_op (COMP_ATOP,rgba_float,rgba_float,w,h);
+  test_composite_op (COMP_IN,rgba_float,rgba_float,w,h);
+  test_composite_op (COMP_OUT,rgba_float,rgba_float,w,h);
+  test_composite_op (COMP_OVER,rgba_float,rgba_float,w,h);
+  test_composite_op (COMP_REPLACE,rgba_float,rgba_float,w,h);
+  test_composite_op (COMP_XOR,rgba_float,rgba_float,w,h);
+  test_composite_op (COMP_PREMULT_ATOP,rgba_float,rgba_float,w,h);
+  test_composite_op (COMP_PREMULT_IN,rgba_float,rgba_float,w,h);
+  test_composite_op (COMP_PREMULT_OUT,rgba_float,rgba_float,w,h);
+  test_composite_op (COMP_PREMULT_OVER,rgba_float,rgba_float,w,h);
+  test_composite_op (COMP_PREMULT_REPLACE,rgba_float,rgba_float,w,h);
+  test_composite_op (COMP_PREMULT_XOR,rgba_float,rgba_float,w,h);
+}
 
 int
 main (int argc, char *argv[])
 {  
   /*Makes efence work*/
-  gint w = 2;
-  gint h = 2;
-
   int *p = malloc(sizeof(int) * 2); 
   p = NULL;
 
   gtk_init (&argc, &argv);
+  gegl_init(&argc, &argv);
 
-  init_color_models();
+  /* simple_tree(); */
 
-  test_dual_src_point_op (ADD,gRgb_float,w,h);
-  test_dual_src_point_op (DARK,gRgb_float,w,h);
-  test_dual_src_point_op (DIFF,gRgb_float,w,h);
-  test_dual_src_point_op (LIGHT,gRgb_float,w,h);
-  test_dual_src_point_op (MIN,gRgb_float,w,h);
-  test_dual_src_point_op (MAX,gRgb_float,w,h);
-  test_dual_src_point_op (MULT,gRgb_float,w,h);
-  test_dual_src_point_op (SUBTRACT,gRgb_float,w,h);
-  test_dual_src_point_op (SCREEN,gRgb_float,w,h);
-
-  test_single_src_point_op (PREMULT,gRgba_float,w,h);
-  test_single_src_point_op (TEST,gRgba_float,w,h);
-  test_single_src_point_op (UNPREMULT,gRgba_float,w,h);
-
-  test_composite_op (COMP_ATOP,gRgba_float,gRgba_float,w,h);
-  test_composite_op (COMP_IN,gRgba_float,gRgba_float,w,h);
-  test_composite_op (COMP_OUT,gRgba_float,gRgba_float,w,h);
-  test_composite_op (COMP_OVER,gRgba_float,gRgba_float,w,h);
-  test_composite_op (COMP_REPLACE,gRgba_float,gRgba_float,w,h);
-  test_composite_op (COMP_XOR,gRgba_float,gRgba_float,w,h);
-  test_composite_op (COMP_PREMULT_ATOP,gRgba_float,gRgba_float,w,h);
-  test_composite_op (COMP_PREMULT_IN,gRgba_float,gRgba_float,w,h);
-  test_composite_op (COMP_PREMULT_OUT,gRgba_float,gRgba_float,w,h);
-  test_composite_op (COMP_PREMULT_OVER,gRgba_float,gRgba_float,w,h);
-  test_composite_op (COMP_PREMULT_REPLACE,gRgba_float,gRgba_float,w,h);
-  test_composite_op (COMP_PREMULT_XOR,gRgba_float,gRgba_float,w,h);
-
-  free_color_models();
-
-#if 0
   /* some tests */
-  fillop_and_printop();
-  point_ops_and_chains();
+#if 1 
+  simple_fill();
+  fill_buffer_and_print();
+  linear_chain_test();
+  simple_tree();
   color_convert_ops();
   copy_ops();
-  copy_chans_ops();
+  color_model_attributes_tests();
+  dual_src_point_ops();
+  single_src_point_ops();
+  test_composite_ops();
 #endif
 
   return 0;

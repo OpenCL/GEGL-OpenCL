@@ -1,0 +1,181 @@
+%h{
+#include "gegl-object.h"
+
+#ifndef __TYPEDEF_GEGL_IMAGE__
+#define __TYPEDEF_GEGL_IMAGE__
+typedef struct _GeglImage  GeglImage;
+#endif
+
+#ifndef __TYPEDEF_GEGL_TILE__
+#define __TYPEDEF_GEGL_TILE__
+typedef struct _GeglTile  GeglTile;
+#endif
+
+#ifndef __TYPEDEF_GEGL_TILE_KEY__
+#define __TYPEDEF_GEGL_TILE_KEY__
+typedef struct _GeglTileKey  GeglTileKey;
+#endif
+
+%}
+%{
+#include "gegl-cache.h"
+#include "gegl-cache-private.h"
+#include "gegl-object-private.h"
+#include "gegl-tile.h"
+#include "gegl-tile-image-manager.h"
+#include "gegl-color-model.h"
+#include "gegl-image.h"
+#include <stdio.h>
+%}
+
+class Gegl:Cache from Gegl:Object {
+
+  private GHashTable  *hash;
+
+  public
+  GeglCache*
+  new(void)
+  {
+    GeglCache * self = GEGL_CACHE(GET_NEW);
+
+    /*Call the constructor */
+    if (!constructor(self))
+      return NULL;
+    
+    /*Okay its constructed*/
+    GEGL_OBJECT(self)->constructed = TRUE;
+
+    /* ref and sink it */
+    gegl_object_ref(GEGL_OBJECT(self));
+    gtk_object_sink(GTK_OBJECT(self));
+
+    return self;
+  }
+
+  protected 
+  gboolean 
+  constructor(self)
+  {
+    g_return_val_if_fail (!(GEGL_OBJECT(self)->constructed), FALSE);
+       
+    /* Chain up */
+    if (!gegl_object_constructor (GEGL_OBJECT(self)))
+      return FALSE;
+
+    self->_priv->hash = g_hash_table_new(key_hash_func, compare_key);
+
+    return TRUE;
+  }
+
+  override (Gtk:Object) 
+  void 
+  destroy (GtkObject *object)
+  {
+    GeglCache *self = GEGL_CACHE(object);
+    g_return_if_fail (object != NULL);
+
+    /* Free the hash table */
+    g_hash_table_destroy(self->_priv->hash);
+
+    /* Chain up on destroy */
+    PARENT_HANDLER (object)
+  }
+
+  public
+  void
+  print(self)
+  {
+    g_print("cache hash table entries: \n");
+    g_hash_table_foreach(self->_priv->hash, print_entry,NULL);
+  }
+
+  private
+  void
+  print_entry(gpointer key,
+              gpointer value,
+              gpointer user_data)
+ {
+    GeglTileKey *k = (GeglTileKey*)key;
+    g_print("key: %x  tile: %x\n", (guint)(k->image), (guint)value);
+ }
+
+  public
+  GeglTile * 
+  lookup_tile(self,
+              GeglTileKey * key)
+  {
+    return (GeglTile*)g_hash_table_lookup(self->_priv->hash, key);
+  }
+
+  public
+  void
+  insert_tile(self,
+              GeglTileKey * key,
+              GeglTile *tile)
+  {
+    GeglTileKey *new_key = key_dup(self,key);
+
+    /* Ref the tile */
+    /*gegl_object_ref(GEGL_OBJECT(tile));*/
+
+    /* Put it in the table */
+    g_hash_table_insert(self->_priv->hash, new_key,tile);
+  }
+
+  public
+  GeglTile *
+  remove_tile(self,
+              GeglTileKey *key)
+  {
+    GeglTile * tile = NULL;
+    GeglTileKey *orig_key = NULL;
+    g_hash_table_lookup_extended(self->_priv->hash,
+                                 key,
+                                 (gpointer*)&orig_key,
+                                 (gpointer*)&tile);
+    if(tile)
+      {
+        g_hash_table_remove(self->_priv->hash,orig_key);
+        g_free(orig_key);
+        
+        /* Unref the tile */
+        /*gegl_object_unref(GEGL_OBJECT(tile));*/
+      }
+
+    return tile;
+  }
+
+  private
+  GeglTileKey*
+  key_dup(self,
+          GeglTileKey* key)
+  {
+    GeglTileKey *new_key = g_new(GeglTileKey,1);
+
+    new_key->image = key->image;
+
+    return new_key;
+  }
+
+  private
+  gint
+  compare_key(gconstpointer a,
+              gconstpointer b)
+  {
+    const GeglTileKey *a_key = (GeglTileKey*)a;
+    const GeglTileKey *b_key = (GeglTileKey*)b;
+
+    if(a_key->image == b_key->image) 
+      return TRUE;
+    else
+      return FALSE; 
+  }
+
+  private
+  guint
+  key_hash_func(gconstpointer key)
+  {
+    GeglTileKey *k = (GeglTileKey*)key;
+    return GPOINTER_TO_UINT(k->image);
+  }
+}

@@ -1,3 +1,85 @@
+Sun May  6 21:16:42 EDT 2001 calvinw@mindspring.com
+
+	Added:
+
+	*gegl/gegl-cache.gob
+	*gegl/gegl-data-buffer.gob
+	*gegl/gegl-image-manager.gob
+	*gegl/gegl-tile.gob
+	*gegl/gegl-tile-image-manager.gob
+	*gegl/gegl-tile-iterator.gob
+
+    These are new classes:
+
+	GeglImageManager (and GeglTileImageManager)-these deal with setting up
+	ops, and fetching tiles from the cache to pass to the ops.	
+	
+	GeglCache-stores tiles and passes them to GeglTileImageManager 
+
+	GeglDataBuffer-banks of data. GeglTiles have these.
+	
+	GeglTile-image data chunks. Can be any size, have a colormodel, 
+    and are the things that get passed back to ops prepare,apply,finish
+	routines. GeglTiles have pointers to data buffers that hold the 
+	actual data.	
+
+	GeglTileIterator- a scanline iterator over a portion of a GeglTile
+	
+	More docs on all these upcoming shortly.
+
+	Updated:
+
+	*gegl/Makefile.am
+	*gegl/gegl-add-op.gil
+	*gegl/gegl-color-convert-op.gob
+	*gegl/gegl-color-convert-to-gray-op.gob
+	*gegl/gegl-color-convert-to-rgb-op.gob
+	*gegl/gegl-color-model-gray-float.gob
+	*gegl/gegl-color-model-gray-u16.gob
+	*gegl/gegl-color-model-gray-u16_4.gob
+	*gegl/gegl-color-model-gray-u8.gob
+	*gegl/gegl-color-model-gray.gob
+	*gegl/gegl-color-model-rgb-float.gob
+	*gegl/gegl-color-model-rgb-u16.gob
+	*gegl/gegl-color-model-rgb-u16_4.gob
+	*gegl/gegl-color-model-rgb-u8.gob
+	*gegl/gegl-color-model-rgb.gob
+	*gegl/gegl-color-model.gob
+	*gegl/gegl-composite-op.gil
+	*gegl/gegl-composite-premult-op.gil
+	*gegl/gegl-copy-op.gob
+	*gegl/gegl-dark-op.gil
+	*gegl/gegl-diff-op.gil
+	*gegl/gegl-fill-op.gob
+	*gegl/gegl-image-buffer.gob
+	*gegl/gegl-image.gob
+	*gegl/gegl-light-op.gil
+	*gegl/gegl-max-op.gil
+	*gegl/gegl-min-op.gil
+	*gegl/gegl-mult-op.gil
+	*gegl/gegl-n-src-op.gob
+	*gegl/gegl-object.gob
+	*gegl/gegl-op.gob
+	*gegl/gegl-point-op.gob
+	*gegl/gegl-premult-op.gil
+	*gegl/gegl-print-op.gob
+	*gegl/gegl-screen-op.gil
+	*gegl/gegl-subtract-op.gil
+	*gegl/gegl-test-op.gil
+	*gegl/gegl-types.h
+	*gegl/gegl-unpremult-op.gil
+	*gegl/gegl-utils.c
+	*gegl/gegl-utils.h
+	*tests/Makefile.am
+	*tests/testgegl.c
+
+	-made all these work with the new ImageManager, Tiles, etc.
+
+    Removed:
+	*gegl/gegl-image-iterator.h
+
+	-this is replaced by the tile iterators. 
+
 2001-02-19  Jay Cox  <jaycox@gimp.org>
 
 	* opgen/test-op.xml: new test operator

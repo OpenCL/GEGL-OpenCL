@@ -27,7 +27,7 @@ class Gegl:Object from Gtk:Object {
   gboolean       
   constructor(self)
   {
-    self->_priv->trace_refs = FALSE;
+    self->_priv->trace_refs = FALSE; 
     return TRUE;
   }
 
@@ -116,5 +116,12 @@ class Gegl:Object from Gtk:Object {
 		  const gchar* interface_name)
   {       
     return gtk_object_get_data((GtkObject*)obj, interface_name);
+  }
+
+  public 
+  gchar * 
+  type_name (self)
+  {
+     return gtk_type_name (GTK_OBJECT_TYPE (self));
   }
 }

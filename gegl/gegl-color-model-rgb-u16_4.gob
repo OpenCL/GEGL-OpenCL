@@ -66,6 +66,15 @@ class Gegl:Color:Model:Rgb:U16_4 from Gegl:Color:Model:Rgb {
     PARENT_HANDLER (object)
   }
 
+  override (Gegl:Color:Model)
+  GeglColorModelType
+  color_model_type(GeglColorModel *self_color_model)
+  {
+    return self_color_model->has_alpha ?
+             GEGL_COLOR_MODEL_TYPE_RGBA_U16_4:
+             GEGL_COLOR_MODEL_TYPE_RGB_U16_4;
+  }
+
   override (Gegl:Color:Model) 
   void 
   set_color (GeglColorModel *self_color_model, 
@@ -84,58 +93,58 @@ class Gegl:Color:Model:Rgb:U16_4 from Gegl:Color:Model:Rgb {
 
     switch (constant) 
       { 
-        case COLOR_WHITE:
+        case GEGL_COLOR_WHITE:
           channel_values[r].u16_4 = 4095; 
           channel_values[g].u16_4 = 4095;
           channel_values[b].u16_4 = 4095;
           if (has_alpha)
             channel_values[a].u16_4 = 4095;
           break;
-        case COLOR_BLACK:
+        case GEGL_COLOR_BLACK:
           channel_values[r].u16_4 = 0;
           channel_values[g].u16_4 = 0;
           channel_values[b].u16_4 = 0;
           if (has_alpha)
             channel_values[a].u16_4 = 4095;
           break;
-        case COLOR_RED:
+        case GEGL_COLOR_RED:
           channel_values[r].u16_4 = 4095;
           channel_values[g].u16_4 = 0;
           channel_values[b].u16_4 = 0;
           if (has_alpha)
             channel_values[a].f = 4095;
           break;
-        case COLOR_GREEN:
+        case GEGL_COLOR_GREEN:
           channel_values[r].u16_4 = 0;
           channel_values[g].u16_4 = 4095;
           channel_values[b].u16_4 = 0;
           if (has_alpha)
             channel_values[a].u16_4 = 4095;
           break;
-        case COLOR_BLUE:
+        case GEGL_COLOR_BLUE:
           channel_values[r].u16_4 = 0;
           channel_values[g].u16_4 = 0;
           channel_values[b].u16_4 = 4095;
           if (has_alpha)
             channel_values[a].u16_4 = 4095;
           break;
-        case COLOR_GRAY:
-        case COLOR_HALF_WHITE:
+        case GEGL_COLOR_GRAY:
+        case GEGL_COLOR_HALF_WHITE:
           channel_values[r].u16_4 = 2048;
           channel_values[g].u16_4 = 2048;
           channel_values[b].u16_4 = 2048;
           if (has_alpha)
             channel_values[a].u16_4 = 4095;
           break;
-        case COLOR_WHITE_TRANSPARENT:
+        case GEGL_COLOR_WHITE_TRANSPARENT:
           channel_values[r].u16_4 = 4095;
           channel_values[g].u16_4 = 4095;
           channel_values[b].u16_4 = 4095;
           if (!has_alpha)
             channel_values[a].u16_4 = 0;
           break;
-        case COLOR_TRANSPARENT:
-        case COLOR_BLACK_TRANSPARENT:
+        case GEGL_COLOR_TRANSPARENT:
+        case GEGL_COLOR_BLACK_TRANSPARENT:
           channel_values[r].u16_4 = 0;
           channel_values[g].u16_4 = 0;
           channel_values[b].u16_4 = 0;

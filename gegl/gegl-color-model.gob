@@ -37,7 +37,6 @@ class Gegl:Color:Model from Gegl:Object {
 
   protected gboolean   is_additive;      /* bigger is brighter  */
   protected gboolean   is_subtractive;   /* bigger is darker    */
-  protected guint      ID;               /* a unique id */
 
   protected const char**channel_names;   /* name of each channel */
   protected const char *color_space_name;/* name of this color space */
@@ -55,8 +54,8 @@ class Gegl:Color:Model from Gegl:Object {
     if (!gegl_object_constructor (GEGL_OBJECT(self)))
        return FALSE;
        
-    self->colorspace = GEGL_COLORSPACE_NONE;
-    self->data_type = GEGL_DATATYPE_NONE;
+    self->colorspace = GEGL_COLOR_SPACE_NONE;
+    self->data_type = GEGL_NONE;
     self->bytes_per_channel = -1;
     self->bytes_per_pixel = -1; 
     self->num_channels = -1; 
@@ -72,7 +71,6 @@ class Gegl:Color:Model from Gegl:Object {
     self->color_space_name = NULL;
     self->alpha_string = NULL;
     self->channel_data_type_name = NULL;
-    self->ID = -1;
 
     return TRUE;
   }
@@ -119,35 +117,43 @@ class Gegl:Color:Model from Gegl:Object {
 
   public 
   gboolean        
-  is_premultiplied(self) 
+  is_premultiplied(self)
   { return self->is_premultiplied; }
 
   public 
   void
   set_is_premultiplied(self, 
-                       gboolean is_premultiplied) 
+                       gboolean is_premultiplied)
   { self->is_premultiplied = is_premultiplied ; }
 
-  virtual 
-  void 
-  set_color (self, 
-             GeglColor *c, 
+  virtual
+  GeglColorAlphaSpace
+  color_alpha_space (self);
+
+  virtual
+  GeglColorModelType
+  color_model_type (self);
+
+  virtual
+  void
+  set_color (self,
+             GeglColor *c,
              GeglColorConstant constant);
 
   virtual
   void
-  convert_to_xyz (self, 
-                  gfloat **dest_data, 
-		  guchar **src_data, 
+  convert_to_xyz (self,
+                  gfloat **dest_data,
+		  guchar **src_data,
 		  gint width);
 
   virtual
   void
-  convert_from_xyz (self, 
-                    guchar **dest_data, 
-		    gfloat **src_data, 
+  convert_from_xyz (self,
+                    guchar **dest_data,
+		    gfloat **src_data,
 		    gint width);
-  virtual 
-  gchar * 
+  virtual
+  gchar *
   get_converter_interface_name (self); 
 }
