@@ -212,7 +212,7 @@ main (int argc, char *argv[])
           gint channel_indices[4] = {0, 1, 0, -1};
 
 	  gegl_rect_set (&r, 0,0,5,5);
-	  op = GEGL_OP (gegl_copy_chan_op_new (dest, src, &r, &r, channel_indices));
+	  op = GEGL_OP (gegl_copychan_op_new (dest, src, &r, &r, channel_indices));
 
 	  gegl_op_apply (op);
 

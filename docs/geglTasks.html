@@ -57,7 +57,7 @@ testgeglfile -Make gegl test programs use the new Image class structure.</b>
 <tr>
 <td><a NAME="6 copy_pixels, get_pixels"></a><b>#6 copy_pixels, get_pixels
 - Implement these for ImageBuffer and Op classes.</b>
-<br>Owner: none
+<br>Owner: caro@rhythm.com
 <br>Some of these routines need to be finished. In particular the Op classes
 should return an error on copy_pixels since they are not writable and copy_pixels
 is supposed to copy from a passed Image to the Image represented by this
@@ -166,6 +166,20 @@ Drawable, GraphicsState classes- Remove these classes from the tree.</b>
 <br>Owner: caro@rhythm.com
 <br>Gegl doesnt need these classes at present. This might be useful in
 some future version of gegl, but these are higher level classes.</td>
+</tr>
+
+<tr>
+<td><a NAME="2 Update GeglCopyChanOp"></a><b>#2 Update GeglCopyChanOp -
+Make CopyChanOp use the new Image class structure.</b>
+<br>Owner: caro@rhythm.com
+<br>The new CopyChanOp doesnt use the new Op class (Op and ImageBuffer
+inherit from Image now).</td>
+</tr>
+
+<tr>
+<td><b>#3 Update testgegl, testgeglfile -Make gegl test programs use the
+new Image class structure.</b>
+<br>Owner: caro@rhythm.com</td>
 </tr>
 </table>
 </div>

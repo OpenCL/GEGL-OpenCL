@@ -1,3 +1,11 @@
+Tue Jun 27 18:42:39 PDT 2000 caro@rhythm.com
+
+	* updated docs/gegl.html and geglTasks.html
+
+	* fixed bugs in gegl/gegl-copychan-op.gob
+
+	* added test code for copychan in testgeglfile.c
+
 Mon Jun 26 15:35:34 PDT 2000 caro@rhythm.com
 
 	* changed links in docs/gegl.html and codegen.html

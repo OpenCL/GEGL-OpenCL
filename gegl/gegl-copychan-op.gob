@@ -19,15 +19,17 @@
 class Gegl:CopyChan:Op from Gegl:Point:Op {
 
   private gint *copychan_index;
+  private gint num;
+
   
   public 
   GeglCopyChanOp *
-  new (gint *copychan_index)
+  new (gint *copychan_index, gint num)
   {
     GeglCopyChanOp * self = GEGL_COPYCHAN_OP(GET_NEW);
 
     /*Call the constructor */
-    if (!constructor (self,copychan_index))
+    if (!constructor (self, copychan_index, num))
       return NULL;
     
     /*Okay its constructed*/
@@ -39,8 +41,11 @@ class Gegl:CopyChan:Op from Gegl:Point:Op {
   protected 
   gboolean 
   constructor(self, 
-              gint *copychan_index)
+              gint *copychan_index,
+	      gint num)
   {
+    int i;
+
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;
     
@@ -57,6 +62,13 @@ class Gegl:CopyChan:Op from Gegl:Point:Op {
 
     }
 
+    self->_priv->copychan_index = (gint*) g_malloc (sizeof(gint) *num);
+    self->_priv->num = num;
+    
+    for (i=0; i<num; i++)
+      {
+	self->_priv->copychan_index[i] = copychan_index[i]; 
+      }
     return TRUE;
   }
 
@@ -64,9 +76,10 @@ class Gegl:CopyChan:Op from Gegl:Point:Op {
   void 
   destroy (GtkObject *object)
   {
-    GeglCopyChanOp * self = GEGL_COPYCHAN_OP(object); 
-
-    gegl_object_destroy(GEGL_OBJECT(self->_priv->copychan_index));
+    /*GeglCopyChanOp * self = GEGL_COPYCHAN_OP(object); 
+*/ 
+ 
+   /***** destroy the index array ****/ 
 
     /* Chain up on destroy */
     PARENT_HANDLER (object)
@@ -78,8 +91,8 @@ class Gegl:CopyChan:Op from Gegl:Point:Op {
                        GeglImageIterator *dest_iter, 
 		       GeglImageIterator **src_iters)
   {
-    gint i, j; 
-    gchar **dest_data, **src_data, **src_indexed;
+    gint i, j, k=0; 
+    gchar *dest_data[4], *dest_indexed[4];
     GeglCopyChanOp *self = GEGL_COPYCHAN_OP (point_op);
     GeglImage *dest = GEGL_IMAGE (gegl_image_iterator_get_image_buffer (dest_iter));
     GeglColorModel *dest_cm = gegl_image_color_model (dest);
@@ -88,31 +101,32 @@ class Gegl:CopyChan:Op from Gegl:Point:Op {
     gint bpc = gegl_color_model_bytes_per_channel (dest_cm);
     gint dest_nchans = gegl_color_model_num_channels (dest_cm); 
     gint *index = self->_priv->copychan_index;
- 
+  
     gegl_image_iterator_get_scanline_data (dest_iter,
                 (guchar**)dest_data);
-    gegl_image_iterator_get_scanline_data (src_iters[0],
-                (guchar**)src_data);
 
-
-    for (i = 0; i < dest_nchans; i++)
+    for (i = 0; i<dest_nchans; i++)
       { 
+
 	if (index[i] != GEGL_COPY_CHAN_OP_CHANNEL_NONE)
-	  src_indexed[i] = src_data[index[i]];  
+	  dest_indexed[i] = dest_data[index[i]];  
 	else 
-	  src_indexed[i] = NULL;  
+	  dest_indexed[i] = NULL;  
       }
 
     /* CopyChan the dest with the copychan color */
     while (width--)
       {
-
 	for (i = 0; i < dest_nchans; i++)
 	  {
 	    if (index[i] != GEGL_COPY_CHAN_OP_CHANNEL_NONE)
-	      for (j = 0; j < bpc; j++) 
-		*dest_data[i]++  = *src_indexed[i]++;  
+	      for (j = 0; j < bpc; j++); 
+	    { 
+	      dest_data[i][k]  = dest_indexed[i][k];  
+	      k++; 
+	    }
 	  }
     }
-  } 
+  }
+  
 }
