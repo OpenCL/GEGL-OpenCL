@@ -110,9 +110,10 @@ Test *
 create_buffer_double_test()
 {
   Test* t = ct_create("GeglBufferDoubleTest");
-  
-//  g_assert(ct_addSetUp(t, color_test_setup));
-//  g_assert(ct_addTearDown(t, color_test_teardown));
+  /*
+    g_assert(ct_addSetUp(t, color_test_setup));
+    g_assert(ct_addTearDown(t, color_test_teardown));
+  */
   g_assert(ct_addTestFun(t, test_buffer_double_g_object_new));
   g_assert(ct_addTestFun(t, test_buffer_double_factory));
   g_assert(ct_addTestFun(t, test_buffer_double_properties));

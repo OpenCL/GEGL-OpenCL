@@ -18,8 +18,10 @@ extern Test * create_mock_filter_2_2_test();
 extern Test * create_node_connections_test();
 extern Test * create_property_connections_test();
 extern Test * create_update_property_test();
+extern Test * create_memory_cache_test();
 extern Test * create_buffer_double_test();
-extern Test* create_component_sample_model_test();
+extern Test * create_component_sample_model_test();
+extern Test * create_mock_cache_entry_test();
 
 int
 main (int argc, char *argv[])
@@ -50,8 +52,10 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_node_connections_test());
     cs_addTest(suite, create_property_connections_test());
     cs_addTest(suite, create_update_property_test());
+    cs_addTest(suite, create_memory_cache_test());
     cs_addTest(suite, create_buffer_double_test());
     cs_addTest(suite, create_component_sample_model_test());
+    cs_addTest(suite, create_mock_cache_entry_test());
 
     cs_setStream(suite, stdout);
     cs_run(suite);

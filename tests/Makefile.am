@@ -37,30 +37,33 @@ MOCK_OBJECT_SRC = \
     gegl-mock-object.c \
     gegl-mock-object.h \
     gegl-mock-property-visitor.c \
-    gegl-mock-property-visitor.h
+    gegl-mock-property-visitor.h \
+	gegl-image-mock-cache-entry.c
 
 EXTRA_SRC =
 
 testgegl_SOURCES = \
-    $(MOCK_OBJECT_SRC) \
-    $(EXTRA_SRC) \
-    bfspropertyvisitortest.c \
-    dfsnodevisitortest.c \
-    dfspropertyvisitortest.c \
-    graphtest.c \
-    mockimagefiltertest.c \
-    mockfilter01test.c \
-    mockfilter11test.c \
-    mockfilter12test.c \
-    mockfilter21test.c \
-    mockfilter22test.c \
-    nodeconnectionstest.c \
-    objecttest.c \
-    propertyconnectionstest.c \
-    testgegl.c \
-    updatepropertytest.c \
-    gegl-image-buffer-double-test.c \
-    gegl-image-component-sample-model-test.c
+	$(MOCK_OBJECT_SRC) \
+	$(EXTRA_SRC) \
+	bfspropertyvisitortest.c \
+	dfsnodevisitortest.c \
+	dfspropertyvisitortest.c \
+	graphtest.c \
+	mockimagefiltertest.c \
+	mockfilter01test.c \
+	mockfilter11test.c \
+	mockfilter12test.c \
+	mockfilter21test.c \
+	mockfilter22test.c \
+	nodeconnectionstest.c \
+	objecttest.c \
+	propertyconnectionstest.c \
+	testgegl.c \
+	updatepropertytest.c \
+	gegl-image-memory-cache-test.c \
+	gegl-image-buffer-double-test.c \
+	gegl-image-component-sample-model-test.c \
+	gegl-image-mock-cache-entry-test.c
 
 testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(GEGLDEPS)

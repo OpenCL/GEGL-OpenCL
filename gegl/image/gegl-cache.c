@@ -89,6 +89,13 @@ class_init(gpointer g_class,
 							0,
 							G_PARAM_CONSTRUCT_ONLY |
 							G_PARAM_READWRITE));
+  g_object_class_install_property (g_class, PROP_PERSISTENT,
+				   g_param_spec_boolean ("persistent",
+							 "Persistent",
+							 "A flag which indicates whether this cache is persistent",
+							 FALSE,
+							 G_PARAM_CONSTRUCT_ONLY |
+							 G_PARAM_READWRITE));
 }
 
 static void
@@ -117,6 +124,9 @@ get_property(GObject *object,
     case PROP_HARD_LIMIT:
       g_value_set_uint64 (value, self->hard_limit);
       break;
+    case PROP_PERSISTENT:
+      g_value_set_boolean (value, self->persistent);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
@@ -137,6 +147,9 @@ set_property(GObject *object,
       break;
     case PROP_HARD_LIMIT:
       self->hard_limit = g_value_get_uint64 (value);
+      break;
+    case PROP_PERSISTENT:
+      self->persistent = g_value_get_boolean (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);

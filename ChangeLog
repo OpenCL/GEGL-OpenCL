@@ -1,3 +1,21 @@
+2003-12-31 22:52 Daniel Rogers <daniel@phasevelocity.org>
+
+ 	* tests/Makefile.am
+ 	* tests/gegl-image-buffer-double-test.c
+ 	* tests/gegl-image-memory-cache-test.c
+ 	* tests/gegl-image-mock-cache-entry-test.c
+ 	* tests/gegl-image-mock-cache-entry.c
+ 	* tests/gegl-image-mock-cache-entry.h
+ 	* tests/testgegl.c
+
+	A fairly complete test of the abstract class GeglCacheEntry (using
+	a minimal subclass) and the beginings of a test of the
+	GeglMemoryCache.
+
+	* gegl/image/gegl-cache.c
+
+	This adds a property for the persistent flag.
+
 2003-12-28 21:12 Daniel Rogers <daniel@phasevelocity.org>
 	* gegl/gegl-filter.c
  	* gegl/gegl-property.c
