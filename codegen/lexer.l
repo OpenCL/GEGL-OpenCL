@@ -24,8 +24,8 @@ integer 		{digit}+
 float   		{digit}*\.{integer}
 name    		[a-zA-Z][A-Z_a-z0-9]*
 Name			[A-Z][_A-Z0-9]*
-string			\".*\"	
-
+string			[^\t].*	
+space			[]*[\t]+
 %%
 
 "DATATYPE_BEGIN"			BEGIN DATA_TYPE;  
@@ -72,7 +72,6 @@ string			\".*\"
 			    	 	
 <GENERIC_IMAGE_DECL>{white} 		; 
 <GENERIC_IMAGE_BLOCK>{white} 		; 
-<DATA_TYPE>{white}			;
 
 <GENERIC_IMAGE_DECL>"GENERIC_IMAGE_DECL_END" 	BEGIN 0;
 <GENERIC_IMAGE_BLOCK>"GENERIC_IMAGE_BLOCK_END" 	BEGIN 0;
@@ -272,7 +271,7 @@ string			\".*\"
     					strcpy (yylval.tok.string, yytext);
 					return DT_NAME;
 					}
-<DATA_TYPE>{string}			{
+<DATA_TYPE>{space}{string}			{
     					strcpy (yylval.tok.string, yytext);
 					return DT_STRING;
 					}

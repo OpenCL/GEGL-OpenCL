@@ -1,3 +1,21 @@
+Wed Mar 22 18:07:30 PST 2000 caro@rhythm.com
+
+	* codegen. I have changed parer.y and lexer.l so
+	that the data file can have any numbers of tabs 
+	before the actual string.
+
+Wed Mar 22 17:21:58 PST 2000 caro@rhythm.com
+
+	* codegen I have rm the necessity of haveing "" around
+	the strings in the data files. I have changed both lexer.l
+	and parser.y to complish this.
+
+Wed Mar 22 16:10:12 PST 2000 caro@rhythm.com
+
+	* codegen/parser.y: I have fixed the problem with 
+	do_op_three. The problem was the doing operations on
+	different varibles with different number of elements.
+
 Wed Mar 22 16:10:12 PST 2000 caro@rhythm.com
 
 	* codegen/parser.y: I have fixed the problem with 

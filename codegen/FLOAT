@@ -1,12 +1,12 @@
 DATATYPE_BEGIN
-DATATYPE		"gfloat"
-WP 			"1.0"
-WP_NORM			"1.0"
-MIN_CHAN		"FLOAT_MIN"	
-MAX_CHAN		"FLOAT_MAX"	
-ZERO			"0"
-CHAN_CLAMP (i)		"i"
-WP_CLAMP (j)		"j"
-CHAN_MULT (i,j)		"i * j"
-ROUND (i)		"i"
+DATATYPE		gfloat
+WP			1.0
+WP_NORM			1.0
+MIN_CHAN		FLOAT_MIN	
+MAX_CHAN		FLOAT_MAX	
+ZERO			0
+CHAN_CLAMP (i)		i
+WP_CLAMP (j)		j
+CHAN_MULT (i,j)			i * j
+ROUND (i)		i
 DATATYPE_END

@@ -139,47 +139,68 @@ DT_Line:
 	;
 	| DT_DATATYPE DT_STRING  
 		{
-		DATATYPE_STR = (char *) strdup (&($2.string[1]));
-		DATATYPE_STR[strlen (DATATYPE_STR)-1] = '\0';   
+		int i=0;
+		while ($2.string[i] == '\t' || $2.string[i] == ' ')
+		  i++; 
+		DATATYPE_STR = (char *) strdup (&($2.string[i]));
+		DATATYPE_STR[strlen (DATATYPE_STR)] = '\0';   
 		}
 	| DT_WP DT_STRING
 		{
-		WP_STR = (char *) strdup (&($2.string[1]));
-		WP_STR[strlen (WP_STR)-1] = '\0';   
+		int i=0;
+		while ($2.string[i] == '\t' || $2.string[i] == ' ')
+		  i++; 
+		WP_STR = (char *) strdup (&($2.string[i]));
+		WP_STR[strlen (WP_STR)] = '\0';   
 		}
 	| DT_WP_NORM DT_STRING
 		{
-		WP_NORM_STR = (char *) strdup (&($2.string[1]));
-		WP_NORM_STR[strlen (WP_NORM_STR)-1] = '\0';   
+		int i=0;
+		while ($2.string[i] == '\t' || $2.string[i] == ' ')
+		  i++; 
+		WP_NORM_STR = (char *) strdup (&($2.string[i]));
+		WP_NORM_STR[strlen (WP_NORM_STR)] = '\0';   
 		}
 	| DT_MIN_CHAN DT_STRING
 		{
-		MIN_CHAN_STR = (char *) strdup (&($2.string[1]));
-		MIN_CHAN_STR[strlen (MIN_CHAN_STR)-1] = '\0';   
+		int i=0;
+		while ($2.string[i] == '\t' || $2.string[i] == ' ')
+		  i++; 
+		MIN_CHAN_STR = (char *) strdup (&($2.string[i]));
+		MIN_CHAN_STR[strlen (MIN_CHAN_STR)] = '\0';   
 		}
 	| DT_MAX_CHAN DT_STRING
 		{
-		MAX_CHAN_STR = (char *) strdup (&($2.string[1]));
-		MAX_CHAN_STR[strlen (MAX_CHAN_STR)-1] = '\0';   
+		int i=0;
+		while ($2.string[i] == '\t' || $2.string[i] == ' ')
+		  i++; 
+		MAX_CHAN_STR = (char *) strdup (&($2.string[i]));
+		MAX_CHAN_STR[strlen (MAX_CHAN_STR)] = '\0';   
 		}
 	| DT_ZERO DT_STRING
 		{
-		ZERO_STR = (char *) strdup (&($2.string[1]));
-		ZERO_STR[strlen (ZERO_STR)-1] = '\0';   
+		int i=0;
+		while ($2.string[i] == '\t' || $2.string[i] == ' ')
+		  i++; 
+		ZERO_STR = (char *) strdup (&($2.string[i]));
+		ZERO_STR[strlen (ZERO_STR)] = '\0';   
 		}
 	| DT_CHAN_CLAMP LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
-		int i, j=0, len, sublen, flag;
+		int i=0, j=0, len, sublen, flag;
 		char tmp[255];
 		char sub[255];
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
 
-		for(i=1; i<len-1; i++)
+		while ($5.string[i] == '\t' || $5.string[i] == ' ')
+		  i++;
+
+		for(i=i; i<len; i++)
 		  {
 		  flag = 0;
 		  
-		  if (i<len-sublen)
+		  if (i<=len-sublen)
 		    {
 		    strncpy (sub, &($5.string[i]), sublen);
 		    flag = 1; 
@@ -201,17 +222,20 @@ DT_Line:
 		}
 	| DT_WP_CLAMP LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
-		int i, j=0, len, sublen, flag;
+		int i=0, j=0, len, sublen, flag;
 		char tmp[255];
 		char sub[255];
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
 
-		for(i=1; i<=len-1; i++)
+		while ($5.string[i] == '\t' || $5.string[i] == ' ')
+		  i++;
+
+		for(i=i; i<len; i++)
 		  {
 		  flag = 0;
 		  
-		  if (i<len-sublen)
+		  if (i<=len-sublen)
 		    { 
 		    strncpy (sub, &($5.string[i]), sublen); 
 		    flag = 1;
@@ -233,7 +257,7 @@ DT_Line:
 		}
 	| DT_CHAN_MULT LT_PARENTHESIS DT_NAME DT_COMMA DT_NAME RT_PARENTHESIS DT_STRING    
 		{
-		int i,j=0, len, sublen1, sublen2, flag1, flag2;
+		int i=0,j=0, len, sublen1, sublen2, flag1, flag2;
 		char tmp[255];
 		char sub1[255];
 		char sub2[255];
@@ -241,16 +265,19 @@ DT_Line:
 		sublen1 = strlen ($3.string);
 		sublen2 = strlen ($5.string);
 
-		for(i=1; i<len-1; i++)
+		while ($7.string[i] == '\t' || $7.string[i] == ' ')
+		  i++;
+
+		for(i=i; i<len; i++)
 		  {
 		  flag1 = flag2 = 0;
 
-		  if (i<len-sublen1)
+		  if (i<=len-sublen1)
 		    {
 		    strncpy (sub1, &($7.string[i]), sublen1);
 		    flag1 = 1;
 		    }
-		  if (i<len-sublen2)
+		  if (i<=len-sublen2)
 		    {
 		    strncpy (sub2, &($7.string[i]), sublen2);
 		    flag2 = 1;
@@ -281,17 +308,20 @@ DT_Line:
 		}
 	| DT_ROUND LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
 		{
-		int i, j=0, len, sublen, flag;
+		int i=0, j=0, len, sublen, flag;
 		char tmp[255];
 		char sub[255];
 		len = strlen ($5.string);
 		sublen = strlen ($3.string);
 
-		for(i=1; i<=len-sublen-1; i++)
+		while ($5.string[i] == '\t' || $5.string[i] == ' ')
+		  i++;
+
+		for(i=i; i<len; i++)
 		  {
 		  flag = 0;
 		  
-		  if (i<len-sublen)
+		  if (i<=len-sublen)
 		    {
 		    strncpy (sub, &($5.string[i]), sublen); 
 		    flag = 1;
@@ -408,7 +438,8 @@ Line:
 		print_name (&e, $3, NOT_DEFINE); 
 		do_op_three (&e, e, $5, OP_EQUAL); 
 		if (get_sym ($3.string)->type == TYPE_CA_VECTOR ||
-		    get_sym ($3.string)->type == TYPE_C_VECTOR) 
+		    get_sym ($3.string)->type == TYPE_C_VECTOR ||
+		    get_sym ($3.string)->type == TYPE_C_A_VECTOR) 
 		  {
 		  sprintf(tmp, "%s%s", $2.string, e.string); 
 		  strcpy(e.string, tmp); 
@@ -603,7 +634,8 @@ Expression:
 		$$=$2; 
 		print_name(&$$, $2, NOT_DEFINE); 
 		if (get_sym ($2.string)->type == TYPE_CA_VECTOR ||
-		    get_sym ($2.string)->type == TYPE_C_VECTOR) 
+		    get_sym ($2.string)->type == TYPE_C_VECTOR ||
+		    get_sym ($2.string)->type == TYPE_C_A_VECTOR) 
 		  {
 		  sprintf(tmp, "%s%s", $1.string, $$.string); 
 		  strcpy($$.string, tmp); 
@@ -997,14 +1029,14 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
   if (is_define && get_sym (src.string)->type == TYPE_C_VECTOR)
     {
     sprintf (tmp, "%s_c", get_sym (src.string)->string);
-    dest->num = 3;
+    dest->num = NUM_COLOR_CHAN;
     }
   else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR ||
 	get_sym (src.string)->type == TYPE_C_A_VECTOR) && 
       !strcmp (src.string, get_sym (src.string)->string))
     {
     sprintf (tmp, "%s_ca", get_sym (src.string)->string);
-    dest->num = 4;
+    dest->num = NUM_COLOR_CHAN +1;
     }
   else if (is_define && (get_sym (src.string)->type == TYPE_CA_VECTOR ||
 	get_sym (src.string)->type == TYPE_C_A_VECTOR))
@@ -1017,7 +1049,7 @@ print_name (elem_t *dest, elem_t src, TYPE_DEF is_define)
       }
     if (src.string[l-1] == 'c' && src.string[l-2] == '_')
       {
-      dest->num = 3; 
+      dest->num = NUM_COLOR_CHAN; 
       sprintf (tmp, "%s", src.string);
       }
     }
@@ -1221,7 +1253,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
   char *t[9]; 
 
   /* error checking */
-  if (src1.num != src2.num  && src1.num && src2.num)
+  if (src1.num != src2.num && src1.num && src2.num && src1.num != 1 && src2.num != 1)
     {
     yyerror("ERROR: you are trying to preform an operation on vector variables
 	that dont have the same number of channels");
@@ -1231,9 +1263,21 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
   switch (op)
     {
     case OP_PLUS:
+      if (src1.num != src2.num && src1.num && src2.num)
+       	{
+	yyerror("ERROR: you are trying to preform an operation on vector variables
+	    that dont have the same number of channels");
+	  exit(1);
+	}
       sprintf (tmp, "%s + %s", src1.string, src2.string);
       break;
     case OP_MINUS:
+      if (src1.num != src2.num && src1.num && src2.num)
+	{
+	yyerror("ERROR: you are trying to preform an operation on vector variables
+	    that dont have the same number of channels");
+	  exit(1);
+	}
       sprintf (tmp, "%s - %s", src1.string, src2.string);
       break;
     case OP_TIMES:
@@ -1279,7 +1323,7 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
     case OP_EQUAL:
   	
       /* error checking */
-      if (src1.num != src2.num && !(src1.num > src2.num && src2.num == 1))
+      if (src1.num != src2.num && !(src1.num > src2.num && src2.num < 2))
 	{
 	yyerror("ERROR: You trying to assign a varible to another varible
 	    and they have different number of channels");
