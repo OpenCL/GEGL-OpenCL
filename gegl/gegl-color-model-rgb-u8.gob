@@ -219,7 +219,7 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
    /*
       __  __      __                               __  __  __
       | R  |      | 3.240479   -1.537150   -0.498535 | | X  |
-      | G  |   =  |-0.969256    1.875992    0.041556 | | Y  |
+      | G  |   =  |-0.969256    1.875991    0.041556 | | Y  |
       | B  |      | 0.055648   -0.204043    1.057311 | | Z  |
       --  --      ---                             ---- --  --
     */
@@ -255,11 +255,11 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
       
     while (width--)
       {
-        *dest_r++ = (m00 * *src_x + m10 * *src_y + m20 * *src_z) * 255;
-        *dest_g++ = (m01 * *src_x + m11 * *src_y + m21 * *src_z) * 255;
-        *dest_b++ = (m02 * *src_x++ + m12 * *src_y++ + m22 * *src_z++) * 255;
+        *dest_r++ = ROUND((m00 * *src_x + m10 * *src_y + m20 * *src_z) * 255);
+        *dest_g++ = ROUND((m01 * *src_x + m11 * *src_y + m21 * *src_z) * 255);
+        *dest_b++ = ROUND((m02 * *src_x++ + m12 * *src_y++ + m22 * *src_z++) * 255);
         if (has_alpha)
-          *dest_a++ = *src_a++ * 255;
+          *dest_a++ = ROUND(*src_a++ * 255);
       }
   }
 
@@ -328,7 +328,7 @@ class Gegl:Color:Model:Rgb:U8 from Gegl:Color:Model:Rgb {
 
     while (width--)
       {
-	*dest_g++ = *src_r++ * 0.3 + *src_g++ * 0.6 + *src_b++ * 0.1;
+	*dest_g++ = ROUND(*src_r++ * 0.3 + *src_g++ * 0.6 + *src_b++ * 0.1);
 	if (has_alpha)
 	  *dest_a++ = *src_a++;
       } 

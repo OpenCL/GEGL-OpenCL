@@ -242,11 +242,15 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       case COMPOSITE_PLUS:
         while (width--)
         {
-          *dest_r++ += *src_r++;
-          *dest_g++ += *src_g++;
-          *dest_b++ += *src_b++;
-          *dest_a++ += *src_a++;
-        }
+          *dest_r++ = CLAMP(*dest_r + *src_r, 0, 1);
+          *dest_g++ = CLAMP(*dest_g + *src_g, 0, 1);
+          *dest_b++ = CLAMP(*dest_b + *src_b, 0, 1);
+          *dest_a++ = CLAMP(*dest_a + *src_a, 0, 1);
+           src_r++;
+	   src_g++;
+	   src_b++;
+	   src_a++; 
+	}
       break;
       default:
       break;
@@ -353,10 +357,13 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       case COMPOSITE_PLUS:
         while (width--)
         {
-          *dest_r++ += *src_r++;
-          *dest_g++ += *src_g++;
-          *dest_b++ += *src_b++;
-          *dest_a++ += 1.0;
+          *dest_r++ = CLAMP(*dest_r + *src_r, 0, 1);
+          *dest_g++ = CLAMP(*dest_g + *src_g, 0, 1);
+          *dest_b++ = CLAMP(*dest_b + *src_b, 0, 1);
+          *dest_a++ = 1.0;
+	   src_r++;
+           src_g++;
+           src_b++;
         }
       break;
       default:
@@ -460,10 +467,13 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       case COMPOSITE_PLUS:
         while (width--)
         {
-          *dest_r++ += *src_r++;
-          *dest_g++ += *src_g++;
-          *dest_b++ += *src_b++;
-        }
+          *dest_r++ = CLAMP(*dest_r + *src_r, 0, 1);
+          *dest_g++ = CLAMP(*dest_g + *src_g, 0, 1);
+          *dest_b++ = CLAMP(*dest_b + *src_b, 0, 1);
+           src_r++;
+           src_g++;
+           src_b++;
+	}
       break;
       default:
       break;
@@ -608,11 +618,11 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       case COMPOSITE_ATOP:
       while (width--)
       {
-        a = 1.0 - *dest_a;
-        if(*src_a){
-          *dest_r++ = a * *dest_r + *dest_a * *src_r++;
-          *dest_g++ = a * *dest_g + *dest_a * *src_g++;
-          *dest_b++ = a * *dest_b + *dest_a * *src_b++;
+        a = 1.0 - *src_a++;
+        if(*dest_a++){
+          *dest_r++ = a * *dest_r + *src_a * *src_r++;
+          *dest_g++ = a * *dest_g + *src_a * *src_g++;
+          *dest_b++ = a * *dest_b + *src_a * *src_b++;
         } else {
           *dest_r++ = 0;
           *dest_g++ = 0;
@@ -621,16 +631,19 @@ class Gegl:Composite:Op from Gegl:Point:Op {
            src_g++;
            src_b++;
         } 
-        *dest_a++ = *src_a++; 
       }
       break;
       case COMPOSITE_PLUS:
       while (width--)
       {
-        *dest_r++ += *src_r++;
-        *dest_g++ += *src_g++;
-        *dest_b++ += *src_b++;
-        *dest_a++ =  (*dest_a + *src_a++) * .5;
+        *dest_r++ = CLAMP(*dest_r + *src_r, 0, 1);
+        *dest_g++ = CLAMP(*dest_g + *src_g, 0, 1);
+        *dest_b++ = CLAMP(*dest_b + *src_b, 0, 1);
+        *dest_a++ = CLAMP(*dest_a + *src_a, 0, 1);
+         src_r++;
+         src_g++;
+	 src_b++;
+	 src_a++;
       }
     break;
     default:
@@ -744,7 +757,6 @@ class Gegl:Composite:Op from Gegl:Point:Op {
           *dest_r++ = 0;
           *dest_g++ = 0;
           *dest_b++ = 0;
-           dest_a++;
            src_r++;
            src_g++;
            src_b++;
@@ -754,18 +766,32 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       case COMPOSITE_ATOP:
       while (width--)
       {
-          *dest_r++ = *dest_a * *src_r++;
-          *dest_g++ = *dest_a * *src_g++;
-          *dest_b++ = *dest_a * *src_b++;
-          *dest_a++ = 1;
+	if (*dest_a++)
+	  {
+	  *dest_r++ = *src_r++;
+	  *dest_g++ = *src_g++;
+	  *dest_b++ = *src_b++;
+	  } 
+	else 
+	  {
+	  *dest_r++ = 0;
+	  *dest_g++ = 0;
+	  *dest_b++ = 0;
+	  src_r++;
+	  src_g++;
+	  src_b++;
+	  }
       }
       break;
       case COMPOSITE_PLUS:
       while (width--)
       {
-        *dest_r++ += *src_r++;
-        *dest_g++ += *src_g++;
-        *dest_b++ += *src_b++;
+        *dest_r++ = CLAMP(*dest_r + *src_r, 0, 1);
+        *dest_g++ = CLAMP(*dest_g + *src_g, 0, 1);
+        *dest_b++ = CLAMP(*dest_b + *src_b, 0, 1);
+         src_r++;
+         src_g++;
+         src_b++;
       }
       break;
       default:
@@ -880,26 +906,21 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       case COMPOSITE_ATOP:
       while (width--)
       {
-        if(*src_a++){
-          *dest_r++ = *src_r++;
-          *dest_g++ = *src_g++;
-          *dest_b++ = *src_b++;
-        } else {
-          *dest_r++ = 0;
-          *dest_g++ = 0;
-          *dest_b++ = 0;
-           src_r++;
-           src_g++;
-           src_b++;
-        } 
+        a = 1.0 - *src_a;
+        *dest_r++ = a * *dest_r + *src_a * *src_r++;
+        *dest_g++ = a * *dest_g + *src_a * *src_g++;
+	*dest_b++ = a * *dest_b + *src_a++ * *src_b++;
       }
       break;
       case COMPOSITE_PLUS:
       while (width--)
       {
-        *dest_r++ += *src_r++;
-        *dest_g++ += *src_g++;
-        *dest_b++ += *src_b++;
+        *dest_r++ = CLAMP(*dest_r + *src_r, 0, 1);
+        *dest_g++ = CLAMP(*dest_g + *src_g, 0, 1);
+        *dest_b++ = CLAMP(*dest_b + *src_b, 0, 1);
+         src_r++;
+         src_g++;
+         src_b++;
       }
     break;
     default:
@@ -999,10 +1020,13 @@ class Gegl:Composite:Op from Gegl:Point:Op {
       case COMPOSITE_PLUS:
         while (width--)
         {
-          *dest_r++ += *src_r++;
-          *dest_g++ += *src_g++;
-          *dest_b++ += *src_b++;
-        }
+          *dest_r++ = CLAMP(*dest_r + *src_r, 0, 1);
+          *dest_g++ = CLAMP(*dest_g + *src_g, 0, 1);
+          *dest_b++ = CLAMP(*dest_b + *src_b, 0, 1);
+           src_r++;
+           src_g++;
+           src_b++;
+	}
       break;
       default:
       break;

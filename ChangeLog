@@ -1,3 +1,10 @@
+Mon Jan 31 17:48:34 PST 2000 caro@rhythm.com
+
+        * fixed bugs in gegl-composite-op. It should work now.
+
+	* tested the torgb, togray, tou8, tofloat function in
+	gegl-color-model. They seem to work fine.
+
 Mon Jan 31 14:11:17 EST 2000 calvinw@mindspring.com
 
 	*fixed bugs in destroy methods of all convert-ops:  

@@ -4,6 +4,9 @@
 #include <tiffio.h>
 
 #include "gegl-color-model-rgb-float.h"
+#include "gegl-color-model-rgb-u8.h"
+#include "gegl-color-model-gray-float.h"
+#include "gegl-color-model-gray-u8.h"
 #include "gegl-image-buffer.h"
 #include "gegl-composite-op.h"
 #include "gegl-utils.h"
@@ -106,7 +109,8 @@ main(int argc, char *argv[])
 	(k==1)?"Background":"Foreground");
 
     /* create the gegl image buff */
-    color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+    if(k)color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(FALSE, FALSE));
+    else color_model[k] = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, FALSE)); 
     image_buffer[k] = gegl_image_buffer_new(color_model[k], width[k], height[k]);
     num_chans = gegl_color_model_num_channels(color_model[k]);
 	    
@@ -174,47 +178,135 @@ main(int argc, char *argv[])
     gegl_image_buffer_set_data(image_buffer[1], image_data);
 
   }
- 
-  /* test the convert op */
+  
   /* create a buffer with all possible colors */
-/*  {
-     GeglColorModel *cm = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
-     gfloat dest[4];
-     gfloat **src, *s;
+  {
+	
+     GeglColorModel *rgb_float_cm, *rgb_u8_cm, *gray_float_cm, *gray_u8_cm; 
+     gfloat **xyz, *ss;
+     gfloat **rgbfloat, *s, **grayfloat, *g;
+     guint8 **rgbu8, *su8, **grayu8, *gu8;
      gint w=1;
      gint i, j, k, a;
      gfloat I, J, K, A, T;
-     gfloat sum=0;
-     T = 1.0/ 255.0;
+     gfloat sum0=0, sum2=0, sum4=0, sum5=0, sum6=0;
+     guint8 sum1=0, sum3=0, sum7=0;
+     rgb_float_cm = GEGL_COLOR_MODEL(gegl_color_model_rgb_float_new(TRUE, TRUE));
+     rgb_u8_cm = GEGL_COLOR_MODEL(gegl_color_model_rgb_u8_new(TRUE, TRUE));
+     gray_float_cm = GEGL_COLOR_MODEL(gegl_color_model_gray_float_new(TRUE, TRUE));
+     gray_u8_cm = GEGL_COLOR_MODEL(gegl_color_model_gray_u8_new(TRUE, TRUE));
+     T = 1.0 / 255.0;
      s = (gfloat*) g_malloc(sizeof(gfloat)*4);
-     src = (gfloat**) g_malloc(sizeof(gfloat*)*4);
-     for(i=0; i<4;i++)
-	src[i] = &s[i];
-  
-     for(i=0; i<255; i++)
-     for(j=0; j<255; j++)
-     for(k=0; k<255; k++)
-     for(a=0; a<255; a++){
+     rgbfloat = (gfloat**) g_malloc(sizeof(gfloat*)*4);
+     su8 = (guint8*) g_malloc(sizeof(guint8)*4);
+     rgbu8 = (guint8**) g_malloc(sizeof(guint8*)*4);
+     ss = (gfloat*) g_malloc(sizeof(gfloat)*4);
+     xyz = (gfloat**) g_malloc(sizeof(gfloat*)*4);
+     
+     g = (gfloat*) g_malloc(sizeof(gfloat)*2);
+     grayfloat = (gfloat**) g_malloc(sizeof(gfloat*)*2);
+     gu8 = (guint8*) g_malloc(sizeof(guint8)*2);
+     grayu8 = (guint8**) g_malloc(sizeof(guint8*)*2);
+
+     for(i=0; i<2; i++){
+       grayfloat[i] = &g[i];
+       grayu8[i] = &gu8[i];
+     }
+     for(i=0; i<4;i++){
+	rgbfloat[i] = &s[i];
+  	rgbu8[i] = &su8[i];
+	xyz[i] = &ss[i];
+     }
+
+     for(i=0; i<255; i+=100)
+     for(j=0; j<255; j+=100)
+     for(k=0; k<255; k+=100)
+     for(a=0; a<255; a+=100){
        I = i * T;
        J = j * T;
        K = k * T;
        A = a * T;
              
-       (src[0][0]) = I;
-       (src[1][0]) = J;
-       (src[2][0]) = K;
-       (src[3][0]) = A;
-       printf("(%.2f %.2f %.2f %.2f) ", src[0][0], src[1][0], src[2][0], src[3][0]);
-       gegl_color_model_convert_to_xyz(cm, dest, (guchar**)src, w);
-       printf("(%.2f %.2f %.2f %.2f) ", dest[0], dest[1], dest[2], dest[3]);
-       gegl_color_model_convert_from_xyz(cm, (guchar**)src, dest, w);
-       printf("(%.2f %.2f %.2f %.2f)\n", src[0][0], src[1][0], src[2][0], src[3][0]);
-       sum += (src[0][0]-I)*(src[0][0]-I) + (src[1][0]-J)*(src[1][0]-J) + 
-              (src[2][0]-K)*(src[2][0]-K) + (src[3][0]-A)*(src[3][0]-A);
-     }
-     printf("\n %.2f\n", sum);
+       (rgbfloat[0][0]) = I;
+       (rgbfloat[1][0]) = J;
+       (rgbfloat[2][0]) = K;
+       (rgbfloat[3][0]) = A;
+       (grayfloat[0][0]) = I;
+       (grayfloat[1][0]) = A; 
+       (rgbu8[0][0]) = i;
+       (rgbu8[1][0]) = j;
+       (rgbu8[2][0]) = k;
+       (rgbu8[3][0]) = a;
+       (grayu8[0][0]) = i;
+       (grayu8[1][0]) = a;
 
-  }  */
+
+       /* rgb float -> xyz float -> rgb float */
+       gegl_color_model_convert_to_xyz(rgb_float_cm, xyz, (guchar**)rgbfloat, w);
+       gegl_color_model_convert_from_xyz(rgb_float_cm, (guchar**)rgbfloat, xyz, w);
+       sum0 += (rgbfloat[0][0]-I)*(rgbfloat[0][0]-I) + (rgbfloat[1][0]-J)*(rgbfloat[1][0]-J) + 
+               (rgbfloat[2][0]-K)*(rgbfloat[2][0]-K) + (rgbfloat[3][0]-A)*(rgbfloat[3][0]-A);
+
+       /* rgb u8 -> xyz float -> rgb u8 */
+       gegl_color_model_convert_to_xyz(rgb_u8_cm, xyz, (guchar**)rgbu8, w);
+       gegl_color_model_convert_from_xyz(rgb_u8_cm, (guchar**)rgbu8, xyz, w);
+       sum1 += (rgbu8[0][0]-i)*(rgbu8[0][0]-i) + (rgbu8[1][0]-j)*(rgbu8[1][0]-j) +
+               (rgbu8[2][0]-k)*(rgbu8[2][0]-k) + (rgbu8[3][0]-a)*(rgbu8[3][0]-a);
+
+       /* gray float -> xyz float -> gray float */
+       gegl_color_model_convert_to_xyz(gray_float_cm, xyz, (guchar**)grayfloat, w);
+       gegl_color_model_convert_from_xyz(gray_float_cm, (guchar**)grayfloat, xyz, w);
+       sum2 += (grayfloat[0][0]-I)*(grayfloat[0][0]-I) + 
+               (grayfloat[1][0]-A)*(grayfloat[1][0]-A);
+       
+       /* gray u8 -> xyz float -> gray u8 */
+       gegl_color_model_convert_to_xyz(gray_u8_cm, xyz, (guchar**)grayu8, w);
+       gegl_color_model_convert_from_xyz(gray_u8_cm, (guchar**)grayu8, xyz, w);
+       sum3 += (grayu8[0][0]-i)*(grayu8[0][0]-i) + 
+               (grayu8[1][0]-a)*(grayu8[1][0]-a);
+
+       /* rgb float -> rgb u8 -> rgb float */
+       (rgbfloat[0][0]) = I;
+       (rgbfloat[1][0]) = J;
+       (rgbfloat[2][0]) = K;
+       (rgbfloat[3][0]) = A;
+       gegl_color_model_convert_to_u8(rgb_float_cm, (guchar**)rgbu8, (guchar**)rgbfloat, w);
+       gegl_color_model_convert_to_float(rgb_u8_cm, (guchar**)rgbfloat, (guchar**)rgbu8, w);
+       sum4 += (rgbfloat[0][0]-I)*(rgbfloat[0][0]-I) + (rgbfloat[1][0]-J)*(rgbfloat[1][0]-J) +
+               (rgbfloat[2][0]-K)*(rgbfloat[2][0]-K) + (rgbfloat[3][0]-A)*(rgbfloat[3][0]-A);
+
+       /* gray float -> gray u8 -> gray float */
+       (grayfloat[0][0]) = I;
+       (grayfloat[1][0]) = A;
+       gegl_color_model_convert_to_u8(gray_float_cm, (guchar**)grayu8, (guchar**)grayfloat, w);
+       gegl_color_model_convert_to_float(gray_u8_cm, (guchar**)grayfloat, (guchar**)grayu8, w);
+       sum5 += (grayfloat[0][0]-I)*(grayfloat[0][0]-I) + 
+               (grayfloat[1][0]-A)*(grayfloat[1][0]-A);
+
+       /* rgb float -> gray float -> rgb float */
+       (rgbfloat[0][0]) = I;
+       (rgbfloat[1][0]) = J;
+       (rgbfloat[2][0]) = K;
+       (rgbfloat[3][0]) = A;
+       gegl_color_model_convert_to_gray(rgb_float_cm, (guchar**)grayfloat, (guchar**)rgbfloat, w);
+       gegl_color_model_convert_to_rgb(gray_float_cm, (guchar**)rgbfloat, (guchar**)grayfloat, w);
+       sum6 += (rgbfloat[0][0]-I)*(rgbfloat[0][0]-I) + (rgbfloat[1][0]-J)*(rgbfloat[1][0]-J) +
+               (rgbfloat[2][0]-K)*(rgbfloat[2][0]-K) + (rgbfloat[3][0]-A)*(rgbfloat[3][0]-A);
+
+       /* rgb u8 -> gray u8 -> rgb u8 */
+       (rgbu8[0][0]) = i;
+       (rgbu8[1][0]) = j;
+       (rgbu8[2][0]) = k;
+       (rgbu8[3][0]) = a;
+       gegl_color_model_convert_to_gray(rgb_u8_cm, (guchar**)grayu8, (guchar**)rgbu8, w);
+       gegl_color_model_convert_to_rgb(gray_u8_cm, (guchar**)rgbu8, (guchar**)grayu8, w);
+       sum7 += (rgbu8[0][0]-I)*(rgbu8[0][0]-I) + (rgbu8[1][0]-J)*(rgbu8[1][0]-J) +
+               (rgbu8[2][0]-K)*(rgbu8[2][0]-K) + (rgbu8[3][0]-A)*(rgbu8[3][0]-A);
+
+     }
+     printf("\n %.2f %d %.2f %d %.2f %.2f %.2f %d\n", sum0, sum1, sum2, sum3, sum4, sum5, sum6, sum7);
+
+  }  
   gtk_main();
 
   gtk_object_destroy (GTK_OBJECT(image_buffer)); 
