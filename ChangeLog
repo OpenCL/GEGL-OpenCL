@@ -1,8 +1,14 @@
+Sun Sep 17 18:45:00 Garry R. Osgood <gosgood@idt.net>
+	*gegl/docs/pr_docs/introduction.tex
+	*gegl/docs/pr_docs/gimp.tex
+	Changes to introduction, and document ordering, 
+	per Sept 16 2000 email to Caro, Calvin, Yosh. 
+
 Sat Sep 16 14:15:00 2000 Garry R. Osgood <gosgood@idt.net>
 	*gegl/docs/pr_docs/schedule.tex 
 	 Minor typos. Tabulated hours. Memory 
 	 management issues cribbed from Shantzis 
-         1994 compositing paper, a 
+	 1994 compositing paper, a 
 	 turf very similar to GEGL.
 
 Sat Sep  2 18:16:30 EDT 2000 calvinw@mindspring.com

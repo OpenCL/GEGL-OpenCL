@@ -11,7 +11,7 @@ calvinw@mindspring.com
 yosh@gimp.org
 \and Garry Osgood\\
 gosgood@idt.net}
-\date{August 2000}
+\date{September 22, 2000}
 \maketitle
 \end{titlepage}
 \tableofcontents
@@ -27,83 +27,120 @@ gosgood@idt.net}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Introduction}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{ch:Introduction}
 \input{introduction.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{GIMP}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Future of GIMP} 
-\input{gimp_future.tex}
-\section{GIMP 2.0}
+\chapter{GIMP 1.2}
+\label{ch:GIMP}
+\input{intro_gimp.tex}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{GIMP 2.0 Design Review}
+\label{ch:GIMP_2.0}
 \input{gimp2.tex}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{GEGL}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{ch:GEGL}
 \input{intro_gegl.tex}
+
 \section{High Level Design}
+\label{sec:High_Level_Design}
 \input{higher_level_design_gegl.tex}
+
 \section{Low Level Design}
+\label{sec:Low_Level_Design}
 \input{lower_level_design_gegl.tex}
+
 \section{Current State}
+\label{sec:Current_State}
 \input{current_state_gegl.tex}
+
 \section{Future of GEGL}
+\label{sec:Future_of_GEGL}
 \input{future_gegl.tex}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Schedules}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Schedule}
+\label{ch:Schedule}
 \input{schedule.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Conclusion}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{ch:Conclusion}
 \input{conclution}
-\section{More Information}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\appendix
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{GIMP at Rhythm \& Hues Studios}
+\label{ch:GIMP_at_Rhythm_Hues}
+\input{intro_rnh.tex}
+
+\section{Why Rhythm \& Hues uses GIMP}
+\label{sec:Why_Rhythm_Hues_uses_GIMP}
+\input{rnh_why.tex}
+
+\section{How GIMP is used at Rhythm \& Hues}
+\label{sec:How_GIMP_is_used_at_Rhythm_Hues}
+\input{rnh_what.tex}
+
+\section{Some GIMP Problems}
+\label{sec:Some_GIMP_Problems}
+\input{rnh_fail.tex}
+
+\section{Future of GIMP at Rhythm \& Hues} 
+\label{sec:Future_of_GIMP_at_Rhythm_Hues}
+\input{rnh_dir.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{History of GIMP}
+\label{ch:History_of_GIMP} 
+\input{history_gimp.tex}
+
+\section{GIMP 1.2}
+\label{sec:GIMP_1.2}
+\input{gimp1.2.tex}
+
+\section{Film Version of GIMP} 
+\label{sec:Film_Version_of_GIMP}
+\input{gimp_film.tex}
+
+\section{Future of GIMP} 
+\label{sec:Future_of_GIMP}
+\input{gimp_future.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{GIMP License}
+\label{ch:GIMP_License}
+\input{gimp_license.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Working Together on GIMP Development}
+\label{ch:Working_Together_on_GIMP_Development}
+\input{cooperation.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{More Information}
+\label{ch:More_Information}
 \input{more_info.tex}
+
 {
 \small
 \bibliographystyle{plain}
 \bibliography{paint}
 }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\appendix
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{GIMP Versions, Licenses}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{History of GIMP} 
-\input{history_gimp.tex}
-\section{GIMP 1.2}
-\input{gimp1.2.tex}
-\section{Film Version of GIMP} 
-\input{gimp_film.tex}
-\section{GIMP License}
-\input{gimp_license.tex}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{GIMP at Rhythm \& Hues Studios}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{intro_rnh.tex}
-\section{Why Rhythm \& Hues uses GIMP}
-\input{rnh_why.tex}
-\section{How GIMP is used at Rhythm \& Hues}
-\input{rnh_what.tex}
-\section{Some GIMP Problems}
-\input{rnh_fail.tex}
-\section{Future of GIMP at Rhythm \& Hues} 
-\input{rnh_dir.tex}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Working Together on GIMP development}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{cooperation.tex}
 
 \end{document}

@@ -1,43 +1,123 @@
-
-For high color resolution film work the ability to edit frames in a paint
-package with minimal color data loss is extremely important. If a single frame
-from a scene must be edited in a package whose format doesn't match the native
-format of the image file, it means the entire scene must be opened and saved in
-that paint package to ensure consistent color throughout.  Problems like these
-are common in working with 16-bit/channel data types in film production. Each
-16-bit data type makes a different choice for dynamic range, white point and so
-on. With each studio or package with its own version of these data types
-finding a paint package that can handle a particular type or choice and can be
-installed on every machine is difficult.
-
-The General Image Manipulation Program (GIMP) ~\cite{http://www.gimp.org} is an
+The General Image Manipulation Program (GIMP) ~(http://www.gimp.org) is an
 open source paint program that is freely available, can be adapted and used in
 many different situations and can be installed on most Unix and Windows
-machines. This makes it a perfect candidate to solve problems like the above.
-
-Recently, GIMP and Rhythm \& Hues developers ported a version of GIMP 1.0.4 to
-use floating point/16-bit data types. This 16-bit version of GIMP was intended
-to test GIMP in a film production environment and to investigate changes
-needed to support high bit depths in future versions of GIMP. Although still
-missing some important features, this version has proven that GIMP has the
-potential of becoming a serious tool for film and high color resolution work.
-This film version is currently used in production at Rhythm and Hues Studios.
+machines. The eight bit version is a staple of the Linux desk top; the Windows
+community is finding GIMP an inexpensive alternative to consumer paint programs.
 
 With the unstable future of many of the current 16-bit off-the-shelf paint
-programs, GIMP is an attractive option because it is open source, and actively
-maintained. This document outlines how studios could contribute resources
-(defined as programmers, time, tools, documentation, or users) to help further
-the GIMP project and what kind of work is involved with this effort.
+programs, GIMP is also an attractive option for the film industry - adapted,
+of course, to the special needs of that industry. 
 
-Section 2 describes current GIMP versions and plans for future versions.
-Section 3 describes the image processing library GEGL, intended for future
-versions of GIMP. Section 4 describes how GIMP is used in production now at
-Rhythm and Hues Studios. Section 5 describes how studios could contribute
-resources and help further the development of GIMP as a serious production
-paint tool.
+\begin{enumerate}
 
-This document is an invitation to join an already existing group of GIMP
-contributers, programmers and supporters. While we are describing some uses of
-GIMP for film production use, as with most open source projects there are
-interests of all kinds involved. It is clear though that a general purpose
-actively maintained and configurable paint tool is in the interest of everyone.
+\item because it is open source paint program, GIMP is free in the sense of
+intellectual freedom. Permission does not need to be sought to modify
+the program to fulfill particular purposes. Recently, GIMP and Rhythm
+\& Hues developers ported a version of GIMP 1.0.4 to use floating
+point/16-bit data types. This 16-bit version of GIMP was intended to
+test its capabilities in a film production environment and to
+investigate changes needed to support high bit depths in future
+versions of GIMP. In conducting these tests, Rhythm \& Hues developers
+were not captive to the development shedule of third-party
+vendors. They understood their needs and commenced exploratory
+development.
+
+Although still missing some important features, this version has
+proven that GIMP has the potential of becoming a serious tool for film
+and high color resolution work.  This film version is currently used
+in production at Rhythm \& Hues Studios. Appendix \ref{ch:GIMP_at_Rhythm_Hues} 
+``GIMP at Rhythm \& Hues Studios'' describes GIMP's
+current and projected use there.
+
+\item GIMP is among one of the most actively maintained open source projects
+on the planet. There are active mailing lists and chat channels
+dedicated to GIMP users and developers. There are a dozen GIMP book
+titles that support the rank beginner and the graphics professional,
+and more titles are due. This constitutes a virtual support
+organization which makes no annual support contract demands. Competent
+support from a core GIMP developer or power user is typically one
+e-mail away.
+
+\end{enumerate}
+
+But GIMP is not free in a monetary sense. 
+
+Rhythm \& Hues invested programmer talent, floor space, and equipment,
+all costs to its business. Further, at some juncture it deployed its
+experimental GIMP on a project; that program had to add value before
+deadline arrival, so, to some degree, R \& H put a production schedule
+at risk, and the back-out and fallback planning also constituted a
+production cost. And, more generally, every individual involved in the
+support of GIMP contribute time and talent. This expenditure is not
+without cost to these individuals. Presumably these individuals get
+something back for their effort. For many professionals, recognition
+of the ``neat hack'' accrues an award of recognition that money can't
+buy. 
+
+Obviously, costs distribute themselves differently in an Open Source
+project, challenging bean counting and project management customs, but
+costs clearly exist, and there is no reason to believe they cannot
+become substantial. As with any effort, costs associated with
+deploying GIMP have to be identified and weighed against benefits.
+
+We believe the benefits accrued in using GIMP far outweigh the costs,
+and this document outlines why we believe this to be so. The only
+question in our minds is whether the benefit arrives sooner or
+later. To that end, we discuss the expected costs of future GIMPs and
+suggest how an infusion of help from the film industry can bring those
+benefits to the table sooner rather than later.
+
+\begin{enumerate}
+
+\item Chapter \ref{ch:GIMP} ``GIMP'' reviews the 1.2 release and discusses
+why it is not the ``out-of-box'' GIMP for either the film industry or 
+future GIMP development. 
+
+\item Chapter \ref{ch:GIMP_2.0} ``GIMP 2.0 Design Review'' outlines the thinking
+of the GimpCon 2000 conference, held in Berlin last June  and which
+arrived at the basic architecture of GIMP 2,0. Not only can this GIMP
+be the platform for the general consumer, but it can be the platform for
+professional industries as well. Open Source Discovers Modular Design.
+
+\item Chapter \ref{ch:GEGL} ``GEGL'' reviews the most concretely realized 
+component of GIMP 2.0, the GEGL library. GEGL will be the heart of
+the GIMP 2.0 rendering pipeline 
+
+\item Chapter \ref{ch:Schedule} ``Schedule'' reviews what we think GIMP 2.0
+will cost in terms of man-hours. We may be missing scaling factors
+here, but we think we have the relative proportions correct.
+
+\item Chapter \ref{ch:Conclusion}, ``Conclusion'' claims that 
+GIMP 2.0 will be written. Being anxious kids at heart, we'd like it
+written sooner rather than later, and we think principle GIMP users
+feel the same way too. We even think that principle GIMP users
+can accelerate GIMP 2.0's gestation period.
+
+\end{enumerate}
+
+For background, we offer a number of appendices:
+
+\begin{enumerate}
+
+\item Appendix  \ref{ch:GIMP_at_Rhythm_Hues}  ``GIMP at Rhythm \& Hues Studios''
+goes into greater detail of the use of HOLLYWOOD GIMP in a production
+setting. GIMP did not meet all needs of all people, it was found unable to
+slice bread, but it did remove wires and more. That experiment gave the 
+authors the courage to write this document.
+
+\item Appendix  \ref{ch:History_of_GIMP} ``History of Gimp'' is a thumbnail of GIMP
+from version 0.54 to the 2.0 version first discussed at GimpCon 2000 in Berlin.
+
+\item Appendix \ref{ch:GIMP_License} ``The GIMP License'' reviews the GNU General Public License.
+GIMP is not in the public domain; it is available under a license so
+designed that sources issued under its rubric remain free in the
+``freedom,'' but not ``monetary'' sense.
+
+\item Appendix \ref{ch:Working_Together_on_GIMP_Development} ``Working Together on GIMP Development''
+considers how studios could contribute resources (defined as programmers, time,
+tools, documentation, or users) to help further the GIMP project and
+what kind of work is involved with this effort.
+
+\item \ref{ch:More_Information} ``More Information'' is an edited version of our favorite links page ;)
+
+\end{enumerate}
