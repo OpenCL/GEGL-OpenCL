@@ -2,9 +2,9 @@ GIMP 2.0 will consist of the following libraries:
 \begin{itemize}
 \item {\em gegl} -- Image processing library. 
 \item {\em libgimpcore} -- Core code, includes main GIMP objects and classes.  
-\item {\em libgimpcoreui} -- Private widgets needed by app, not exported to plugins. 
-\item {\em libgimpui} -- Widgets available for both app and plugins. 
-\item {\em libgimpwidget} -- Utility widgets used in building the other ui libaries. 
+\item {\em libgimpcoreui} -- Private widgets needed by app, not exported to plug-ins. 
+\item {\em libgimpui} -- Widgets available for both app and plug-ins. 
+\item {\em libgimpwidget} -- Utility widgets used in building the other UI libraries. 
 \item {\em libgimpapp} -- Actual GIMP app.
 \item {\em libgimpext} -- Communication library between plug-ins and application.
 \item {\em libgimpiface} -- Interfaces for libgimpui and libgimpcore.
@@ -14,7 +14,7 @@ GIMP 2.0 will consist of the following libraries:
 \subsection{GEGL}
 
 Pixel manipulation will be done using GEGL (Generic Graphics Library -- Chapter
-3). GEGL abstracts the color model and color depth (8 bit, 16 bit, float) and
+3). GEGL abstracts the color model and color depth (8-bit, 16-bit, float) and
 provides generic data types for channels or colors.  The algorithms implemented
 using these abstract types are converted to the actual C code using a
 code-generator. That way it's easier to add additional data types and color
@@ -23,7 +23,7 @@ models and optimizations.
 Chapter
 \ref{ch:GEGL} has a more detailed description of this library.
 
-\subsection{GIMP Core and Plugin Interfaces}
+\subsection{GIMP Core and Plug-in Interfaces}
 
 Built on top of this, the GIMP core will implement objects like images, tools,
 layers, channels, brushes etc. The interfaces of these high level objects will
@@ -33,11 +33,11 @@ the objects for the plug-in library will be auto-generated from the object
 descriptions.  This will give plug-in developers an object-oriented interface
 instead of the simple procedural approach GIMP uses now.
 
-This architecture also allows reuse of UI-elements from the core ui libraries
+This architecture also allows reuse of UI-elements from the core UI libraries
 in plug-ins and provides a clean model-view separation. By exporting the
 internal object structure to the plug-ins it will become possible to implement
 operators, tools or complete layer types as plug-ins. For example one could
-create plugin vector tools for vector layers in with this design.
+create plug-in vector tools for vector layers in with this design.
 
 \subsection{Layer Trees}
  

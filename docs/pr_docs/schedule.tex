@@ -1,5 +1,5 @@
 
-The schedule for achieving GIMP2.0 is broken into three main parts. 
+The schedule for achieving GIMP 2.0 is broken into three main parts. 
 
 The first part involves the development of GEGL. Since GEGL is a low-level
 library to be used by GIMP, work for it can proceed somewhat independent of
@@ -11,7 +11,7 @@ and will include some simple paint, retouch and editing tools, enough to
 provide first tests of each of the major areas of functionality for GIMP:
 painting, editing, compositing, color conversions. 
 
-After MicroGimp is built and tested as a small production tool, the rest of the
+After MicroGIMP is built and tested as a small production tool, the rest of the
 major GIMP libraries will be built. These libraries include the various GIMP UI
 libs and the core code for GIMP's graphics objects (Images, Layers, Channels,
 Drawables). GIMPs task management (rendering pipeline), libraries for plugin
@@ -19,66 +19,65 @@ communication  as well as GIMPs component for scripting (PDB, Procedural Data
 Base) are all included here.  
 
 \begin{flushleft}		
-\begin{tabular}{|l|p{3cm}|p{5cm}|p{2cm}|l|}\hline
-\multicolumn{5}{|c|}{\rule[-3mm]{0mm}{8mm} \large \bf Schedule for GIMP 2.0}\\  
+\begin{tabular}{|p{3cm}|p{4.5cm}|p{2cm}|l|}\hline
+\multicolumn{4}{|c|}{\rule[-3mm]{0mm}{8mm} \large \bf Schedule for GIMP 2.0}\\  
 \hline
-Order & Task & Description & Library & Cost\\ 
+Task & Description & Library & Cost\\ 
 \hline 
 
-\multicolumn{5}{|c|}{\bf GIMP Internal Schedule}\\
-\hline 
-1 & GIMP core & Design the core of GIMP & gimpcore & 80h\\
-\hline 
-2 & MicroGimp core & Implement the core for MircoGIMP, such as GimpImage, GimpDrawable, GimpLayer, GimpChannel. & gimpcore & 100h\\
+\multicolumn{4}{|c|}{\bf GEGL Schedule}\\
 \hline
-2 & GIMP app & Design the app & gimpapp & 80h\\
-\hline 
-3 & MicroGIMP app & Implement a strip down app. This include tools such as the edit tools, clone, paint & gimpapp & 100h\\
-\hline 
-4 & Finish the core & Finish implementing the core & gimpcore & 160h\\
+Area Operation & Classes for common area operations in GEGL (convolve, kernel ops) & gegl & 120h\\
 \hline
-5 & Finish the app & Finish implementing the app & gimpapp & 160h\\
-\hline 
-8 & Undo history & Create a new undo tree & gimpcore & 100h\\
+Geometric Operations & Classes for common geometric operations such as scaling, transformation. & gegl & 120h\\
 \hline
-
-\multicolumn{5}{|c|}{\bf UI Schedule}\\
-\hline 
-1 & Gimp core ui & Design and implement. & gimpcoreui & 90h\\
+GIL Specialization & Mechanism for allowing partial specialization in GIL code & gegl & 120h\\
 \hline
-2 & Widget & Design the widget taking into an acount how they will handle the different data types. & gimpwidget &100h\\
+Point Operations & Classes for LUT operations & gegl & 120h\\
 \hline
-3 & MicroGimp UI & Implement the UI for a stripped down GIMP. This involved implementing the widget necessary for this& gimpui, gimpwidget & 100h\\
+Preprocessor for codegen & Make another abstraction for gil & gegl & 80h\\
 \hline
-4 & Finish Widget & Finish implementing all the Widget & gimpwidget & 300h\\
+Memory Management & Investigate trade-offs among tile-, micro tile-, and divide-and-conquer memory-management schemes. Integrate chosen model with GEGL & gegl & 300h\\
 \hline
-5 & Finish UI & Finish the UI & gimpui & 140h\\
-\hline 
-
-\multicolumn{5}{|c|}{\bf Plug-in Schedule}\\
-\hline
-6 & Plug-in interface & Design and implement the interface for the plug-ins & gimpiface, gimpplugins, gimpextapp & 500h\\ 
+Multi-thread support & This involves making most image operations multi-threaded and assure that all operations are thread safe. & gegl & 200h\\  
 \hline
 
-\multicolumn{5}{|c|}{\bf GEGL Schedule}\\
+\multicolumn{4}{|c|}{\bf GIMP Internal Schedule}\\
+\hline 
+GIMP core & Design the core of GIMP & gimpcore & 80h\\
+\hline 
+MicroGimp core & Implement the core for MircoGIMP, such as GimpImage, GimpDrawable, GimpLayer, GimpChannel. & gimpcore & 100h\\
 \hline
-1 & Area Operation & Classes for common area operations in GEGL (convolve, kernel ops) & gegl & 120h\\
+GIMP app & Design the app & gimpapp & 80h\\
+\hline 
+MicroGIMP app & Implement a strip down app. This include tools such as the edit tools, clone, paint & gimpapp & 100h\\
+\hline 
+Finish the core & Finish implementing the core & gimpcore & 160h\\
 \hline
-2 & Geometric Operations & Classes for common geometric operations such as scaling, transformation. & gegl & 120h\\
-\hline
-8 & GIL Specialization & Mechanism for allowing partial specialization in GIL code & gegl & 120h\\
-\hline
-8 & Point Operations & Classes for LUT operations & gegl & 120h\\
-\hline
-8 & Preprocessor for codegen & Make another abstraction for gil & gegl & 80h\\
-\hline
-8 & Memory Management & Investigate trade-offs among tile-, micro tile-, and divide-and-conquer memory-management schemes. Integrate chosen model with GEGL & gegl & 300h\\
-\hline
-8 & Multi-thread support & This involves making most image operations multi-threaded and assure that all operations are thread safe. & gegl & 200h\\  
+Finish the app & Finish implementing the app & gimpapp & 160h\\
+\hline 
+Undo history & Create a new undo tree & gimpcore & 100h\\
 \hline
 
+\multicolumn{4}{|c|}{\bf UI Schedule}\\
+\hline 
+Gimp core ui & Design and implement. & gimpcoreui & 90h\\
+\hline
+Widget & Design the widget taking into an acount how they will handle the different data types. & gimpwidget &100h\\
+\hline
+MicroGimp UI & Implement the UI for a stripped down GIMP. This involved implementing the widget necessary for this& gimpui, gimpwidget & 100h\\
+\hline
+Finish Widget & Finish implementing all the Widget & gimpwidget & 300h\\
+\hline
+Finish UI & Finish the UI & gimpui & 140h\\
+\hline 
+
+\multicolumn{4}{|c|}{\bf Plug-in Schedule}\\
+\hline
+Plug-in interface & Design and implement the interface for the plug-ins & gimpiface, gimpplugins, gimpextapp & 500h\\ 
+\hline
  
-\multicolumn{4}{|r|}{Total man-hours} & 3070h\\
+\multicolumn{3}{|r|}{Total man-hours} & 3070h\\
 \hline
 \end{tabular}
 \end{flushleft}
