@@ -5,6 +5,7 @@
 %{
 #include "gegl-color-convert-to-rgb-u8-op.h"
 #include "gegl-color-convert-to-rgb-u8-op-private.h"
+#include "gegl-color-convert-op-private.h"
 #include "gegl-point-op-private.h"
 #include "gegl-op-private.h"
 #include "gegl-color.h"
