@@ -19,8 +19,8 @@ The <literal>rect</literal> and <literal>colormodel</literal> fields of
 ImageOp is evaluated. This happens during preliminary breadth-first and 
 depth-first passes of the graph that the #GeglEvalMgr makes before the 
 actual Op evaluation pass. During these passes #GeglEvalMgr calls
-gegl_image_op_evaluate_have_rect(), gegl_image_op_evaluate_need_rects(),
-and gegl_image_op_evaluate_color_model(). These in turn call virtual
+gegl_image_op_compute_have_rect(), gegl_image_op_compute_need_rects(),
+and gegl_image_op_compute_color_model(). These in turn call virtual
 methods on ImageOp, which subclasses override to fill in their 
 versions of these calculations:
 <variablelist>
@@ -37,15 +37,15 @@ procedurally defined op like Noise could be infinite.
         </listitem>
   </varlistentry>
   <varlistentry>
-      <term>compute_need_rect()</term>
+      <term>compute_need_rects()</term>
         <listitem>
          <para>
-Calculates the need rect of an image input of this op. This is the region of
-interest for the input based on that of the op.  For example a convolution op
+Calculates the need rects of each image input of this op. This is the region of
+interest for the input image based on that of the op.  For example a convolution op
 requires a need rect on its input which is bigger by a border of half the width
-of the kernal size. The input of a point op has a need rect which exactly the
-same size as the op, since each pixel in a point op is determined by a
-corresponding pixel in the input.
+of the kernel size. The input of a point op has a need rect which is exactly the
+same size as the op, since each pixel at (x,y) in a point op is determined by a
+corresponding pixel at (x,y) in the input.
          </para>
          <para>
          </para>
@@ -64,19 +64,12 @@ Synthesizes the color model of the op based on the inputs.
 
 <para>
 Need rects are calculated in a breadth-first pass of the graph by the 
-GeglEvalMgr, and so are passed from root to leaves.
+#GeglEvalMgr, and so are passed from root to leaves.
 Have rects and color models are calculated in a depth-first
 pass and so are passed from leaves to the root.
 These are like inherited and synthesized attributes in compiler
 terminology.  Doing these rect calculations this way leads to more
 efficient calculations and avoids overcomputing.
-</para>
-
-<para>
-The ImageOp also has a pointer to an image buffer that it creates to store its
-result. This is the #GeglImage field <literal>image</literal>.  This object
-holds things like the color model, and details about the storage type and
-tiles. 
 </para>
 
 <!-- ##### SECTION See_Also ##### -->

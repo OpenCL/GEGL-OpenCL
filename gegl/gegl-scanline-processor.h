@@ -16,11 +16,11 @@ extern "C" {
 #define GEGL_IS_SCANLINE_PROCESSOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_SCANLINE_PROCESSOR))
 #define GEGL_SCANLINE_PROCESSOR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SCANLINE_PROCESSOR, GeglScanlineProcessorClass))
 
+typedef struct _GeglScanlineProcessor GeglScanlineProcessor;
 typedef void (*GeglScanlineFunc)(GeglFilter *op,
-                                 GeglImageIterator ** iters, 
+                                 GeglScanlineProcessor *processor,
                                  gint width);
 
-typedef struct _GeglScanlineProcessor GeglScanlineProcessor;
 struct _GeglScanlineProcessor 
 {
    GeglObject object;
@@ -28,6 +28,7 @@ struct _GeglScanlineProcessor
    /*< private >*/
    GeglScanlineFunc func;
    GeglFilter *op;
+   GHashTable * iterators;
 };
 
 typedef struct _GeglScanlineProcessorClass GeglScanlineProcessorClass;
@@ -39,6 +40,9 @@ struct _GeglScanlineProcessorClass
 GType gegl_scanline_processor_get_type   (void);
 
 void gegl_scanline_processor_process(GeglScanlineProcessor  *self);
+GeglImageIterator * 
+     gegl_scanline_processor_lookup_iterator(GeglScanlineProcessor *self,
+                                        const gchar *name);
 
 #ifdef __cplusplus
 }

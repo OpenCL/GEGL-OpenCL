@@ -18,7 +18,7 @@ static void prepare (GeglFilter * filter);
 static void finish (GeglFilter * filter);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-static void scanline (GeglFilter * op, GeglImageIterator ** iters, gint width);
+static void scanline (GeglFilter * op, GeglScanlineProcessor *processor, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -131,7 +131,7 @@ set_property (GObject      *gobject,
 
 static void 
 scanline (GeglFilter * op,
-          GeglImageIterator ** iters,
+          GeglScanlineProcessor *processor,
           gint width)
 {
   gegl_log_debug("scanline", "MockPointOp scanline was called");

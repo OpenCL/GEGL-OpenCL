@@ -34,9 +34,9 @@ static void compute_color_model (GeglImageOp * image_op);
 
 static GeglScanlineFunc get_scanline_func(GeglNoInput * no_input, GeglColorSpaceType space, GeglChannelSpaceType type);
 
-static void color_uint8 (GeglFilter * filter, GeglImageIterator ** iters, gint width);
-static void color_float (GeglFilter * filter, GeglImageIterator ** iters, gint width);
-static void color_u16 (GeglFilter * filter, GeglImageIterator ** iters, gint width);
+static void color_uint8 (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
+static void color_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
+static void color_u16 (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -299,17 +299,21 @@ get_scanline_func(GeglNoInput * no_input,
 
 static void                                                            
 color_float(GeglFilter * filter,              
-            GeglImageIterator ** iters,        
+            GeglScanlineProcessor *processor,
             gint width)                       
 {                                                                       
   GeglColor * self = GEGL_COLOR(filter);
-  GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
-  gfloat *pixel = (gfloat*)g_value_pixel_get_data(data_value);
-  gfloat **d = (gfloat**)gegl_image_iterator_color_channels(iters[0]);
-  gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
+
+  GeglImageIterator *dest = 
+    gegl_scanline_processor_lookup_iterator(processor, "dest");
+  gfloat **d = (gfloat**)gegl_image_iterator_color_channels(dest);
+  gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(dest);
+  gint d_color_chans = gegl_image_iterator_get_num_colors(dest);
   gboolean has_alpha = da ? TRUE: FALSE;
   gint alpha = d_color_chans;   /* should get from color model */
+
+  GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
+  gfloat *pixel = (gfloat*)g_value_pixel_get_data(data_value);
 
   {
     gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;   
@@ -376,17 +380,22 @@ color_float(GeglFilter * filter,
 
 static void                                                            
 color_u16 (GeglFilter * filter,              
-           GeglImageIterator ** iters,        
+           GeglScanlineProcessor *processor,
            gint width)                       
 {
   GeglColor * self = GEGL_COLOR(filter);
-  GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
-  guint16 *pixel = (guint16*)g_value_pixel_get_data(data_value);
-  guint16 **d = (guint16**)gegl_image_iterator_color_channels(iters[0]);
-  guint16 *da = (guint16*)gegl_image_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
+
+  GeglImageIterator *dest = 
+    gegl_scanline_processor_lookup_iterator(processor, "dest");
+  guint16 **d = (guint16**)gegl_image_iterator_color_channels(dest);
+  guint16 *da = (guint16*)gegl_image_iterator_alpha_channel(dest);
+  gint d_color_chans = gegl_image_iterator_get_num_colors(dest);
   gboolean has_alpha = da ? TRUE: FALSE;
   gint alpha = d_color_chans;   /* should get from color model */
+
+  GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
+  guint16 *pixel = (guint16*)g_value_pixel_get_data(data_value);
+
 
   {
     guint16 *d0 = (d_color_chans > 0) ? d[0]: NULL;   
@@ -449,17 +458,21 @@ color_u16 (GeglFilter * filter,
 
 static void                                                            
 color_uint8 (GeglFilter * filter,              
-         GeglImageIterator ** iters,        
-         gint width)                       
+             GeglScanlineProcessor *processor,
+             gint width)                       
 {
   GeglColor * self = GEGL_COLOR(filter);
-  GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
-  guint8 *pixel = (guint8*)g_value_pixel_get_data(data_value);
-  guint8 **d = (guint8**)gegl_image_iterator_color_channels(iters[0]);
-  guint8 *da = (guint8*)gegl_image_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
+
+  GeglImageIterator *dest = 
+    gegl_scanline_processor_lookup_iterator(processor, "dest");
+  guint8 **d = (guint8**)gegl_image_iterator_color_channels(dest);
+  guint8 *da = (guint8*)gegl_image_iterator_alpha_channel(dest);
+  gint d_color_chans = gegl_image_iterator_get_num_colors(dest);
   gboolean has_alpha = da ? TRUE: FALSE;
   gint alpha = d_color_chans;   /* should get from color model */
+
+  GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
+  guint8 *pixel = (guint8*)g_value_pixel_get_data(data_value);
 
   {
     guint8 *d0 = (d_color_chans > 0) ? d[0]: NULL;   

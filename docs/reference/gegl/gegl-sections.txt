@@ -1070,11 +1070,12 @@ GEGL_SCALAR_DATA_GET_CLASS
 
 <SECTION>
 <FILE>gegl-scanline-processor</FILE>
-GeglScanlineFunc
 GeglScanlineProcessor
+GeglScanlineFunc
 GeglScanlineProcessorClass
 <TITLE>GeglScanlineProcessor</TITLE>
 gegl_scanline_processor_process
+gegl_scanline_processor_lookup_iterator
 <SUBSECTION Standard>
 GEGL_SCANLINE_PROCESSOR
 GEGL_IS_SCANLINE_PROCESSOR

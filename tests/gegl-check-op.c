@@ -380,8 +380,8 @@ check_op_float(GeglCheckOp *self,
 
 static void
 check_op_uint8(GeglCheckOp *self,
-            GeglImageIterator *iter,
-            gint x)
+               GeglImageIterator *iter,
+               gint x)
 {
   GValue *pixel_value = gegl_op_get_input_data_value(GEGL_OP(self), "pixel");
   guint8 *data = (guint8*)g_value_pixel_get_data(pixel_value);

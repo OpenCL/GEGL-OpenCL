@@ -1,5 +1,6 @@
 #include "gegl-add.h"
 #include "gegl-image-iterator.h"
+#include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
 #include "gegl-param-specs.h"
 #include "gegl-value-types.h"
@@ -24,8 +25,8 @@ static void validate_inputs  (GeglFilter *filter, GArray *collected_data);
 
 static GeglScanlineFunc get_scanline_func(GeglUnary * unary, GeglColorSpaceType space, GeglChannelSpaceType type);
 
-static void add_float (GeglFilter * filter, GeglImageIterator ** iters, gint width);
-static void add_uint8 (GeglFilter * filter, GeglImageIterator ** iters, gint width);
+static void add_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
+static void add_uint8 (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -152,7 +153,7 @@ set_property (GObject      *gobject,
 
 static void 
 validate_inputs  (GeglFilter *filter, 
-                        GArray *collected_data)
+                  GArray *collected_data)
 {
   GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_data);
 
@@ -201,21 +202,25 @@ get_scanline_func(GeglUnary * unary,
 
 static void                                                            
 add_float (GeglFilter * filter,              
-           GeglImageIterator ** iters,        
+           GeglScanlineProcessor *processor,
            gint width)                       
 {                                                                       
   GeglAdd * self = GEGL_ADD(filter);
 
+  GeglImageIterator *dest = 
+    gegl_scanline_processor_lookup_iterator(processor, "dest");
+  gfloat **d = (gfloat**)gegl_image_iterator_color_channels(dest);
+  gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(dest);
+  gint d_color_chans = gegl_image_iterator_get_num_colors(dest);
+
+  GeglImageIterator *source = 
+    gegl_scanline_processor_lookup_iterator(processor, "source");
+  gfloat **a = (gfloat**)gegl_image_iterator_color_channels(source);
+  gfloat *aa = (gfloat*)gegl_image_iterator_alpha_channel(source);
+  gint a_color_chans = gegl_image_iterator_get_num_colors(source);
+
   GValue *value = gegl_op_get_input_data_value(GEGL_OP(self), "constant"); 
   gfloat* data = (gfloat*)g_value_pixel_get_data(value);
-
-  gfloat **d = (gfloat**)gegl_image_iterator_color_channels(iters[0]);
-  gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
-
-  gfloat **a = (gfloat**)gegl_image_iterator_color_channels(iters[1]);
-  gfloat *aa = (gfloat*)gegl_image_iterator_alpha_channel(iters[1]);
-  gint a_color_chans = gegl_image_iterator_get_num_colors(iters[1]);
 
   gint alpha_mask = 0x0;
 
@@ -288,21 +293,25 @@ add_float (GeglFilter * filter,
 
 static void                                                            
 add_uint8 (GeglFilter * filter,              
-           GeglImageIterator ** iters,        
+           GeglScanlineProcessor *processor,
            gint width)                       
 {                                                                       
   GeglAdd * self = GEGL_ADD(filter);
 
+  GeglImageIterator *dest = 
+    gegl_scanline_processor_lookup_iterator(processor, "dest");
+  guint8 **d = (guint8**)gegl_image_iterator_color_channels(dest);
+  guint8 *da = (guint8*)gegl_image_iterator_alpha_channel(dest);
+  gint d_color_chans = gegl_image_iterator_get_num_colors(dest);
+
+  GeglImageIterator *source = 
+    gegl_scanline_processor_lookup_iterator(processor, "source");
+  guint8 **a = (guint8**)gegl_image_iterator_color_channels(source);
+  guint8 *aa = (guint8*)gegl_image_iterator_alpha_channel(source);
+  gint a_color_chans = gegl_image_iterator_get_num_colors(source);
+
   GValue *value = gegl_op_get_input_data_value(GEGL_OP(self), "constant"); 
   guint8* data = (guint8*)g_value_pixel_get_data(value);
-
-  guint8 **d = (guint8**)gegl_image_iterator_color_channels(iters[0]);
-  guint8 *da = (guint8*)gegl_image_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
-
-  guint8 **a = (guint8**)gegl_image_iterator_color_channels(iters[1]);
-  guint8 *aa = (guint8*)gegl_image_iterator_alpha_channel(iters[1]);
-  gint a_color_chans = gegl_image_iterator_get_num_colors(iters[1]);
 
   gint alpha_mask = 0x0;
 

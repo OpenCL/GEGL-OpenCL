@@ -79,12 +79,10 @@ test_add_apply(Test *test)
                              NULL);
 
   gegl_op_apply(add); 
-#if 0
   ct_test(test, testutils_check_pixel_rgb_float(GEGL_IMAGE_OP(add), 
                                           R0 + ADD0, 
                                           G0 + ADD1, 
                                           B0 + ADD2));  
-#endif
   g_object_unref(add);
 }
 

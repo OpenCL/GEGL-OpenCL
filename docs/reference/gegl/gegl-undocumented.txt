@@ -1,6 +1,6 @@
 28% symbol docs coverage.
 112 symbols documented.
-288 not documented.
+289 not documented.
 
 
 GEGL_DEFAULT_HEIGHT
@@ -285,6 +285,7 @@ gegl_rect_equal
 gegl_rect_equal_coords
 gegl_rect_intersect
 gegl_rect_set
+gegl_scanline_processor_lookup_iterator
 gegl_storage_create_buffer
 gegl_tile_data_pointers
 gegl_tile_get_height

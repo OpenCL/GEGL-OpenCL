@@ -1,8 +1,59 @@
+Jul 11 14:04:15 EDT 2003  calvinw@mindspring.com 
+
+	Changed ScanlineProcessor so that it keeps a hash table of iterators. This
+	means that ops ask the processor to look up the iterator for them.
+	So we dont pass the array of iterators to the scanline functions, just
+	pass the processor instead. Different types of ops (area, geometric, etc)
+	will have processors that organize their iterators in different ways. 
+
+	Changed all the scanline functions to match this. 
+
+	*gegl/gegl-add.c
+	*gegl/gegl-atop.c
+	*gegl/gegl-color.c
+	*gegl/gegl-copy.c
+	*gegl/gegl-darken.c
+	*gegl/gegl-difference.c
+	*gegl/gegl-fade.c
+	*gegl/gegl-i-add.c
+	*gegl/gegl-i-mult.c
+	*gegl/gegl-inside.c
+	*gegl/gegl-lighten.c
+	*gegl/gegl-max.c
+	*gegl/gegl-min.c
+	*gegl/gegl-mult.c
+	*gegl/gegl-multiply.c
+	*gegl/gegl-normal.c
+	*gegl/gegl-outside.c
+	*gegl/gegl-over.c
+	*gegl/gegl-premult.c
+	*gegl/gegl-print.c
+	*gegl/gegl-scanline-processor.c
+	*gegl/gegl-scanline-processor.h
+	*gegl/gegl-screen.c
+	*gegl/gegl-subtract.c
+	*gegl/gegl-unpremult.c
+	*gegl/gegl-xor.c
+	*tests/addtest-float.c
+	*tests/gegl-check-op.c
+	*tests/gegl-mock-point-op.c
+
+	Updated docs about the changes above:
+
+	*docs/reference/gegl/gegl-sections.txt
+	*docs/reference/gegl/gegl-undocumented.txt
+	*docs/reference/gegl/tmpl/gegl-eval-mgr.sgml
+	*docs/reference/gegl/tmpl/gegl-filter.sgml
+	*docs/reference/gegl/tmpl/gegl-image-op.sgml
+	*docs/reference/gegl/tmpl/gegl-op.sgml
+	*docs/reference/gegl/tmpl/gegl-scanline-processor.sgml
+
+
 Thu Jul 10 11:28:24 EDT 2003 calvinw@mindspring.com
 
 	Changed GLists in Node and Op to GArray's. Updated everyone
 	else to use these now as well. Fixed some compile errors from
-    David Neary <dneary@free.fr>. 
+	David Neary <dneary@free.fr>. 
 
 	*gegl/gegl-add.c
 	*gegl/gegl-atop.c

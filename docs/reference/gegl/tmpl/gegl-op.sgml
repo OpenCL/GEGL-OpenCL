@@ -221,7 +221,7 @@ correspond to bundles of regular glib properties, installed for each input
 that needs to handle several different versions of the data being passed
 in a property. As an example let's look at <xref linkend="genericproperties"/> 
 where #GeglColor sets up the bundle of glib properties that correspond to it's 
-input data "pixel". During the class_init() method of #GeglOp we register a 
+input data "pixel". During the class_init() method of #GeglColor we register a 
 regular glib property for each version of the pixel that is needed.
 <example id="genericproperties"> 
 <title>Pixel property for ColorOp.</title>
@@ -239,9 +239,9 @@ class_init (GeglColorClass * klass)
     gegl_param_spec_pixel_rgb_float ("pixel-rgb-float",
                                      "Pixel-Rgb-Float",
                                      "The pixel-rgb-float pixel",
-                                     0.0, 1.0,
-                                     0.0, 1.0,
-                                     0.0, 1.0,
+                                     -G_MAXFLOAT, G_MAXFLOAT,
+                                     -G_MAXFLOAT, G_MAXFLOAT,
+                                     -G_MAXFLOAT, G_MAXFLOAT,
                                      0.0, 0.0, 0.0,
                                      G_PARAM_READWRITE));
 
@@ -249,9 +249,9 @@ class_init (GeglColorClass * klass)
     gegl_param_spec_pixel_rgba_float ("pixel-rgba-float",
                                      "Pixel-Rgba-Float",
                                      "The pixel-rgba-float pixel",
-                                     0.0, 1.0,
-                                     0.0, 1.0,
-                                     0.0, 1.0,
+                                     -G_MAXFLOAT, G_MAXFLOAT,
+                                     -G_MAXFLOAT, G_MAXFLOAT,
+                                     -G_MAXFLOAT, G_MAXFLOAT,
                                      0.0, 1.0,
                                      0.0, 0.0, 0.0, 0.0,
                                      G_PARAM_READWRITE));

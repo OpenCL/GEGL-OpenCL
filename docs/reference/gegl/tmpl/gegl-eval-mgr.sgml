@@ -17,10 +17,11 @@ EvalMgr makes three passes over the graph.
       <term>#GeglEvalBfsVisitor</term>
         <listitem>
          <para>
-The first pass is breadth-first and propagates the region of
-interest information from the root towards the leaves. Each #GeglImageOp in the
-graph is called by the visitor to set the need rects of its image inputs. This
-happens in gegl_image_op_evaluate_need_rects().
+The first pass is breadth-first and propagates any "inherited" attributes 
+that need to be passed from root to leaves. Region of interest information 
+(need_rects) is an example of this.  Each #GeglImageOp in the
+graph is called by the visitor to set the need_rects of its image inputs. This
+happens in gegl_image_op_compute_need_rects().
          </para>
         </listitem>
   </varlistentry>
@@ -28,12 +29,13 @@ happens in gegl_image_op_evaluate_need_rects().
       <term>#GeglEvalDfsVisitor</term>
         <listitem>
           <para>
-The second pass is depth-first and propagates domain of
-definition information from the leaves towards the root. Each ImageOp in the
-graph is called by the visitor to set its have rect based on those of its image
-inputs.  This happens in gegl_image_op_evaluate_have_rect(). This pass also
-sets the color models of each #GeglImageOp based on those of its inputs. This
-happens in gegl_image_op_evaluate_color_model().
+The second pass is depth-first and propagates "synthesized" attributes from 
+leaves to the root.  Domain of definition information (have_rects) and 
+color model information are an examples of this. Each ImageOp in the graph is 
+called by the visitor to set its have_rect based on those of its image inputs.  
+This happens in gegl_image_op_compute_have_rect(). This pass also sets the color 
+models of each #GeglImageOp based on those of its inputs. This happens in 
+gegl_image_op_compute_color_model().
           </para>
         </listitem>
   </varlistentry>
@@ -43,10 +45,11 @@ happens in gegl_image_op_evaluate_color_model().
          <para>
 This final depth-first pass actually does the evaluation of the
 graph. For each #GeglFilter it finds, the visitor calls gegl_filter_validate_inputs(),
-gegl_filter_validate_outputs() and gegl_filter_evaluate(). For each #GeglGraph
+gegl_filter_validate_outputs() and then gegl_filter_evaluate(). For each #GeglGraph
 it finds it traverses the ops contained by the #GeglGraph. This visitor keeps
 track of where it is in the hierarchy of Graphs so that it can find sources for
-nodes in a graph that have no source for a particular input. 
+nodes in a graph that have no source for a particular input because they
+are interior to a graph. See #GeglGraph for this. 
          </para>
         </listitem>
   </varlistentry>

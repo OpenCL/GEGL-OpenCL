@@ -8,7 +8,7 @@ static void init (GeglUnpremult * self, GeglUnpremultClass * klass);
 
 static GeglScanlineFunc get_scanline_func(GeglUnary * unary, GeglColorSpaceType space, GeglChannelSpaceType type);
 
-static void unpremult_float (GeglFilter * filter, GeglImageIterator ** iters, gint width);
+static void unpremult_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -76,16 +76,20 @@ get_scanline_func(GeglUnary * unary,
 
 static void                                                            
 unpremult_float (GeglFilter * filter,              
-               GeglImageIterator ** iters,        
-               gint width)                       
+                 GeglScanlineProcessor *processor,
+                 gint width)                       
 {                                                                       
-  gfloat **d = (gfloat**)gegl_image_iterator_color_channels(iters[0]);
-  gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
+  GeglImageIterator *dest = 
+    gegl_scanline_processor_lookup_iterator(processor, "dest");
+  gfloat **d = (gfloat**)gegl_image_iterator_color_channels(dest);
+  gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(dest);
+  gint d_color_chans = gegl_image_iterator_get_num_colors(dest);
 
-  gfloat **a = (gfloat**)gegl_image_iterator_color_channels(iters[1]);
-  gfloat *aa = (gfloat*)gegl_image_iterator_alpha_channel(iters[1]);
-  gint a_color_chans = gegl_image_iterator_get_num_colors(iters[1]);
+  GeglImageIterator *source = 
+    gegl_scanline_processor_lookup_iterator(processor, "source");
+  gfloat **a = (gfloat**)gegl_image_iterator_color_channels(source);
+  gfloat *aa = (gfloat*)gegl_image_iterator_alpha_channel(source);
+  gint a_color_chans = gegl_image_iterator_get_num_colors(source);
 
   {
     gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;   

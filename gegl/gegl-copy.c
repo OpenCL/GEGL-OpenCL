@@ -18,10 +18,10 @@ static void class_init (GeglCopyClass * klass);
 
 static GeglScanlineFunc get_scanline_func(GeglUnary * unary, GeglColorSpaceType space, GeglChannelSpaceType type);
 
-static void copy_general (GeglFilter * filter, GeglImageIterator ** iters, gint byte_width);
-inline static void copy_float   (GeglFilter * filter, GeglImageIterator ** iters, gint width);
-inline static void copy_uint8   (GeglFilter * filter, GeglImageIterator ** iters, gint width);
-inline static void copy_uint16  (GeglFilter * filter, GeglImageIterator ** iters, gint width);
+static void copy_general (GeglFilter * filter, GeglScanlineProcessor *processor, gint byte_width);
+inline static void copy_float   (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
+inline static void copy_uint8   (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
+inline static void copy_uint16  (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -84,16 +84,20 @@ get_scanline_func(GeglUnary * unary,
 
 static void
 copy_general (GeglFilter * filter,
-              GeglImageIterator ** iters,
+              GeglScanlineProcessor *processor,
               gint byte_width)
 {
-  gpointer * d = gegl_image_iterator_color_channels(iters[0]);
-  gpointer da = gegl_image_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
+  GeglImageIterator *dest = 
+    gegl_scanline_processor_lookup_iterator(processor, "dest");
+  gpointer * d = gegl_image_iterator_color_channels(dest);
+  gpointer da = gegl_image_iterator_alpha_channel(dest);
+  gint d_color_chans = gegl_image_iterator_get_num_colors(dest);
 
-  gpointer * a = gegl_image_iterator_color_channels(iters[1]);
-  gpointer aa = gegl_image_iterator_alpha_channel(iters[1]);
-  gint a_color_chans = gegl_image_iterator_get_num_colors(iters[1]);
+  GeglImageIterator *source = 
+    gegl_scanline_processor_lookup_iterator(processor, "source");
+  gpointer * a = gegl_image_iterator_color_channels(source);
+  gpointer aa = gegl_image_iterator_alpha_channel(source);
+  gint a_color_chans = gegl_image_iterator_get_num_colors(source);
 
   gint alpha_mask = 0x0;
 
@@ -134,24 +138,24 @@ copy_general (GeglFilter * filter,
 
 inline static void
 copy_float (GeglFilter * filter,
-            GeglImageIterator ** iters,
+            GeglScanlineProcessor *processor,
             gint width)
 {
-  copy_general(filter,iters,width * sizeof(gfloat));
+  copy_general(filter, processor, width * sizeof(gfloat));
 }
 
 inline static void
 copy_uint8 (GeglFilter * filter,
-            GeglImageIterator ** iters,
+            GeglScanlineProcessor *processor,
             gint width)
 {
-  copy_general(filter,iters,width * sizeof(guint8));
+  copy_general(filter, processor, width * sizeof(guint8));
 }
 
 inline static void
 copy_uint16 (GeglFilter * filter,
-             GeglImageIterator ** iters,
+             GeglScanlineProcessor *processor,
              gint width)
 {
-  copy_general(filter,iters,width * sizeof(guint16));
+  copy_general(filter, processor, width * sizeof(guint16));
 }

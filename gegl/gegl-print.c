@@ -20,7 +20,7 @@ static void finish (GeglFilter * filter);
 static GeglScanlineFunc get_scanline_func(GeglPipe * pipe, GeglColorSpaceType space, GeglChannelSpaceType type);
 static void print (GeglPrint * self, gchar * format, ...);
 
-static void print_float (GeglFilter * filter, GeglImageIterator ** iters, gint width);
+static void print_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -172,14 +172,16 @@ get_scanline_func(GeglPipe *pipe,
 
 static void 
 print_float (GeglFilter * filter, 
-             GeglImageIterator ** iters, 
+             GeglScanlineProcessor *processor,
              gint width)
 {
   GeglPrint *self = GEGL_PRINT(filter);
-  gfloat **a = (gfloat**)gegl_image_iterator_color_channels(iters[0]);
-  gfloat *aa = (gfloat*)gegl_image_iterator_alpha_channel(iters[0]);
-  gint a_color_chans = gegl_image_iterator_get_num_colors(iters[0]);
 
+  GeglImageIterator *source = 
+    gegl_scanline_processor_lookup_iterator(processor, "source");
+  gfloat **a = (gfloat**)gegl_image_iterator_color_channels(source);
+  gfloat *aa = (gfloat*)gegl_image_iterator_alpha_channel(source);
+  gint a_color_chans = gegl_image_iterator_get_num_colors(source);
   gint alpha_mask = 0x0;
 
   if(aa)
