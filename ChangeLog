@@ -1,3 +1,8 @@
+2000-05-31  Jay Cox  <jaycox@gimp.org>
+
+	* docs/geglImageAndOp.html: Added a little to the geglIterator
+	section.
+
 Tue May 30 18:04:27 PDT 2000 caro@rhythm.com
 
 	* check int for docs

@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.61 [en] (X11; I; Linux 2.2.12-20 i686) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (X11; I; Linux 2.2.13 i686) [Netscape]">
    <title>Gegl Image Classes</title>
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -19,7 +19,7 @@ CLASS="TITLEPAGE"
 <div CLASS="AUTHOR"><font size=+0><b>Calvin Williamson&nbsp;</b>&nbsp;
 calvinw@mindspring.com</font></div>
 
-<div CLASS="AUTHOR"><font size=+0><b>Jay Cox&nbsp;</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<div CLASS="AUTHOR"><font size=+0><b>Jay Cox&nbsp;</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </font>jaycox@gimp.org</div>
 <b>Caroline Dahll&ouml;f</b>&nbsp;&nbsp;&nbsp;&nbsp; caro@rhythm.com
 <br>&nbsp;
@@ -133,11 +133,13 @@ style)
 <p>There is a fundamental difference between Ops and ImageBuffers though.
 Ops cant have data "copied" into them from the outside. They arent writable.
 You can write to ImageBuffers, but not to Ops. So Ops will implement <b><tt>copy_pixels
-</tt></b>by returning an error<b><tt>. </tt></b>But ImageBuffers will implement
-<b><tt>copy_pixels </tt></b>so that passed src data is copied to the ImageBuffer<b><tt>.</tt></b>
-Essentially Ops can produce image data only by pulling and operating on
-their inputs (<b><tt>get_pixels</tt></b>), never by "copying "data directly
-in.</div>
+</tt></b>by
+returning an error<b><tt>. </tt></b>But ImageBuffers will implement
+<b><tt>copy_pixels
+</tt></b>so
+that passed src data is copied to the ImageBuffer<b><tt>.</tt></b> Essentially
+Ops can produce image data only by pulling and operating on their inputs
+(<b><tt>get_pixels</tt></b>), never by "copying "data directly in.</div>
 
 <div 
 CLASS="SECT1"
@@ -291,8 +293,8 @@ or other storages and caches and handle other&nbsp; memory management issues.
 <p><b><tt>class GeglImageBuffer from GeglImage</tt></b>
 <br><b><tt>{</tt></b>
 <br><b><tt>&nbsp; private guchar **data;&nbsp;&nbsp;&nbsp; /* channel data
-pointers */</tt></b><b><tt></tt></b>
-<p><b><tt>&nbsp; /* data and methods */</tt></b><b><tt></tt></b>
+pointers */</tt></b>
+<p><b><tt>&nbsp; /* data and methods */</tt></b>
 <p><b><tt>&nbsp; /* Heres the ImageBuffer's version of get_pixels */</tt></b>
 <br><b><tt>&nbsp; GeglImage *</tt></b>
 <br><b><tt>&nbsp; get_pixels (GeglImage *self,</tt></b>
@@ -306,18 +308,18 @@ it is one */</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; if (dest == NULL)</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return self;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt></b><b><tt></tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt></b>
 <p><b><tt>&nbsp;&nbsp;&nbsp; if (!gegl_image_is_writable(dest))</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g_warning("gegl_image_buffer_get_pixels:
 dest not writable\n");</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return NULL;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt></b><b><tt></tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; /* Otherwise copy pixels from me to dest */</tt></b><b><tt></tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* Otherwise copy pixels from me to dest */</tt></b>
 <p><b><tt>&nbsp;&nbsp;&nbsp; g_warning("gegl_image_buffer_get_pixels: routine
 not implemented yet!\n");</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; return dest;</tt></b>
-<br><b><tt>&nbsp; }</tt></b><b><tt></tt></b>
+<br><b><tt>&nbsp; }</tt></b>
 <p><b><tt>&nbsp; void</tt></b>
 <br><b><tt>&nbsp; copy_pixels (GeglImage *self,</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -328,7 +330,7 @@ GeglImage *src,</tt></b>
 GeglRect&nbsp; *src_rect)</tt></b>
 <br><b><tt>&nbsp; {</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; /* This will write to self from src */</tt></b>
-<br><b><tt>&nbsp; }</tt></b><b><tt></tt></b>
+<br><b><tt>&nbsp; }</tt></b>
 <p><b><tt>&nbsp; boolean is_writable(self)</tt></b>
 <br><b><tt>&nbsp; {</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp; return TRUE;</tt></b>
@@ -362,28 +364,100 @@ an array of pointers to the channels for the current scanline.</div>
 <div CLASS="SECT2">&nbsp;
 <br><b><tt>GeglIterator</tt></b>
 <br><b><tt>{</tt></b>
-<br><b><tt>&nbsp; private GeglImageBuffer *image_buffer;&nbsp;&nbsp;&nbsp;
-/* image buffer we point to */</tt></b>
 <br><b><tt>&nbsp; private GeglRect current_rect;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 /* the rect we work on */</tt></b>
 <br><b><tt>&nbsp; private int current_scanline;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 /* current scanline in the rect */</tt></b>
 <br><b><tt>&nbsp; private unsigned char *scanline_data[];&nbsp;&nbsp; /*
 pointers to scanline data */</tt></b>
-<p><b><tt>&nbsp; GeglIterator * new(GeglImageBuffer *buffer,</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglRect *rect)</tt></b>
+<p><b><tt>&nbsp; GeglIterator * new(GeglRect *rect)</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; {</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current_rect = rect;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; image_buffer = buffer;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current_scanline = 0;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b><b><tt></tt></b>
+<p><b><tt>&nbsp; /* TODO: Destroy functions */</tt></b>
 <p><b><tt>&nbsp; /* These update current scanline and pointers to data
 */</tt></b>
-<br><b><tt>&nbsp;</tt></b>
-<br><b><tt>&nbsp; void next_scanline (self);</tt></b>
-<br><b><tt>&nbsp; void begin_scanline (self);</tt></b>
-<br><b><tt>&nbsp; void get_scanline_data (self, guchar **data_ptrs);</tt></b>
+<p><b><tt>&nbsp; void next_scanline (self) = 0;</tt></b>
+<br><b><tt>&nbsp; void goto_scanline (self, int scanline) = 0;</tt></b>
+<br><b><tt>&nbsp; void get_scanline_data (self, Pixel **data_ptrs) = 0;</tt></b>
+<br><b><tt></tt></b>&nbsp;<b><tt></tt></b>
+<p><b><tt>&nbsp; boolean writeable() = 0;</tt></b>
 <br><b><tt>}</tt></b>
+<p><b><tt>GeglImageBufferIterator from GeglIterator</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>/* Ultimatly The Image Buffer Iterator will ref a tile in the
+image buffer</tt></b>
+<br><b><tt>&nbsp;&nbsp; and unref it when it is finished */</tt></b>
+<br><b><tt>&nbsp; private GeglImageBuffer *image_buffer;&nbsp;&nbsp;&nbsp;
+/* image buffer we point to */</tt></b>
+<br><b><tt>&nbsp; GeglImageBufferIterator * new(GeglImageBuffer *buffer,</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+GeglRect *rect) : GelgImage(rect)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; {</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; image_buffer = buffer;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
+<br><b><tt>&nbsp; void next_scanline(self)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; {</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (current_scanline &lt;
+current_rect->height - 1)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current_scanline++;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
+<br><b><tt>&nbsp; void goto_scanline(self, int scanline)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; {</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g_return_if_fail(scanline
+>= 0);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g_return_if_fail(scanline
+&lt; current_rect->height);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current_scanline = scanline;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
+<p><b><tt>&nbsp; void get_scanline_data(self, Pixel **data_ptrs)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; {</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (int i = 0; i &lt; image_buffer->num_channels;
+i++)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_ptrs[i] = image_buffer->get_channel(scanline
++ current_rect->y, i)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
++ image_buffer->cm->bytes_per_channel * current_rect->x;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
+<br><b><tt>&nbsp; boolean writeable()</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; {</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return image_buffer->writeable();</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
+<br><b><tt>}</tt></b>
+<p><b><tt>GeglConstantIterator from GeglIterator</tt></b>
+<br><b><tt>{</tt></b>
+<br><b><tt>&nbsp; void *channels[];</tt></b>
+<br><b><tt>&nbsp; GeglConstantIterator * new(GeglColor color, GeglRect
+*rect) : GelgImage(rect)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; {</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; channels = g_new(void *,
+color->num_channels);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (int i = 0; i &lt;
+color->num_channels; i++);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; channels[i]
+= g_new(char, color->bytes_per_channel;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* TODO: fill channels
+with the passed in color */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
+<br><b><tt>&nbsp; void next_scanline(self)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; { /* do nothing*/</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
+<br><b><tt>&nbsp; void goto_scanline(self, int scanline)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; { /* do nothing */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
+<p><b><tt>&nbsp; void get_scanline_data(self, Pixel **data_ptrs)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; {</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (int i = 0; i &lt; image_buffer->num_channels;
+i++)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; data_ptrs[i] = channels[i];</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b><b><tt></tt></b>
+<p><b><tt>&nbsp; boolean writeable()</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; {</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return FALSE;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
+<br><b><tt>}</tt></b>
+<br>&nbsp;
 <p>
 <hr>
 <h1 CLASS="SECT2">
