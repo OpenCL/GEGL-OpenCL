@@ -53,7 +53,7 @@ testgegl_SOURCES = \
 
 testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(DEPS)
-testgegl_LDADD = $(LDADDS) -lm -lefence
+testgegl_LDADD = $(LDADDS) -lm
 
 tests: dummy testgegl
 
