@@ -1,9 +1,3 @@
-Heres another odd one:
-
-This example (just save to a file then run with UINT8 rgb)
-
----start example---
-
 private
 void
 COLORSPACEa_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
@@ -13,7 +7,7 @@ COLORSPACEa_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
 
     GENERIC_IMAGE_DECL_BEGIN
     VectorChan dest(color);
-    VectorChan src1(color);
+    VectorChan src1(color,alpha,has_alpha);
     VectorChan src2(color,alpha);
     Chan a;
     GENERIC_IMAGE_DECL_END
@@ -39,41 +33,3 @@ COLORSPACEa_op_COLORSPACE_DATATYPE (GeglPointOp *point_op)
      dX(src2,1);
      GENERIC_IMAGE_BLOCK_END
 }
-
----end example---
-
-outputs something like this in the GENERIC_IMAGEBLOCK:
-
-while (width--)
-           {
-
-
-             *dest_r = *src2_r;
-             *dest_g = *src2_g;
-             *dest_b = *src2_b;
-
-*dest_r++;
-*dest_g++;
-*dest_b++;
-*src2_r++;
-*src2_g++;
-*src2_b++;
-*src2_a++;
-           }
-
-
-It should be outputting this 
-
-dest_r++;
-dest_g++;
-dest_b++;
-
-src2_r++;
-src2_g++;
-src2_b++;
-src2_a++;
-
-as the algorithm is written (even though src2_a is unused).
-
-
-Calvin

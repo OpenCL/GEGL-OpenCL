@@ -1,3 +1,8 @@
+Fri Mar 24 11:36:55 EST 2000 calvinw@mindspring.com 
+	
+	* codegen/test_files Updated most of the test_files
+          test,test2-8.  
+
 Thu Mar 23 17:53:28 PST 2000 caro@rhythm.com
 	
 	* codegen/lexer.l I made sure that the extra

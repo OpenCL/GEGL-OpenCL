@@ -11,18 +11,35 @@ dest_color = MIN(src1_color, src2_color);
 if (dest_has_alpha)
   {
     if (src1_has_alpha && src2_has_alpha)
-      dest_alpha = MIN(src1_alpha, src2_alpha);
+      {
+        dest_alpha = MIN(src1_alpha, src2_alpha);
+      }
     else if (src1_has_alpha)
+      { 
         dest_alpha = src1_alpha;
+      } 
     else if (src2_has_alpha)
+      {
         dest_alpha = src2_alpha; 
+      }
   }
 GENERIC_IMAGE_BLOCK_END 
 
 GENERIC_IMAGE_BLOCK_BEGIN
-if ((src1_alpha == ZERO_CHAN) || (src1_alpha == WP))
-    dest_color = src1_color;
+if (src1_alpha == ZERO || src1_alpha == WP)
+   {
+     dest_color = src1_color;
+   }
 else
+   {
     dest_color = src1_color / src1_alpha;
+   }
 dest_alpha = src1_alpha;
+GENERIC_IMAGE_BLOCK_END
+
+GENERIC_IMAGE_BLOCK_BEGIN
+if (src1_alpha == ZERO)
+   {
+     dest_color = WP;
+   }
 GENERIC_IMAGE_BLOCK_END

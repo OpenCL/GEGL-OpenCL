@@ -123,17 +123,17 @@ d = d / a;
 GENERIC_IMAGE_BLOCK_END
 
 /*
-d_color / a;
+d_color = d_color / a;
 d = d / a;
 */
 GENERIC_IMAGE_BLOCK_BEGIN
-d_color / a;
+d_color = d_color / a;
 d = d / a;
 GENERIC_IMAGE_BLOCK_END
 
-/* d = d + 5.0; */
+/* d = d + WP; */
 GENERIC_IMAGE_BLOCK_BEGIN
-d = d + 5.0;
+d = d + WP;
 GENERIC_IMAGE_BLOCK_END
 
 /* d = ZERO */

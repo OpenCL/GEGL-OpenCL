@@ -1,5 +1,3 @@
-/* For testing comments */
-
 GENERIC_IMAGE_DECL_BEGIN
 int i;
 float f;
@@ -13,128 +11,14 @@ GENERIC_IMAGE_DECL_END
 
 GENERIC_IMAGE_IMAGE_DATA_INIT
 
-
-/* d = s1 * s2; */
+/* d = s1 * s2 * s3; */
 GENERIC_IMAGE_BLOCK_BEGIN
-d = s1 * s2;
+d = s1 * (s2 * s3);
 GENERIC_IMAGE_BLOCK_END
-
-
-/* d = CHAN_CLAMP(s1 + s2); */
-GENERIC_IMAGE_BLOCK_BEGIN
-d = CHAN_CLAMP(s1 + s2);
-GENERIC_IMAGE_BLOCK_END
-
-
-/* d = CHAN_CLAMP (5 *s); */
-GENERIC_IMAGE_BLOCK_BEGIN
-d = CHAN_CLAMP (5 *s);
-GENERIC_IMAGE_BLOCK_END
-
-/* d = (s1 + s2 + s3)/3; */
-GENERIC_IMAGE_BLOCK_BEGIN
-d = (s1 + s2 + s3)/3;
-GENERIC_IMAGE_BLOCK_END
-
-
-/* d = s * s1 + (WP-s) * s2; */
-GENERIC_IMAGE_BLOCK_BEGIN
-d = s * s1 + (WP-s) * s2;
-GENERIC_IMAGE_BLOCK_END
-
-
-/*d = .333 * (s1 + s2 + s3);*/ 
-GENERIC_IMAGE_BLOCK_BEGIN
-d = .333 * (s1 + s2 + s3); 
-GENERIC_IMAGE_BLOCK_END
-
-
-/* d = CHAN_CLAMP(s1 * s2 + s3); */
-GENERIC_IMAGE_BLOCK_BEGIN
-d = CHAN_CLAMP(s1 * s2 + s3);
-GENERIC_IMAGE_BLOCK_END
-
 
 /* d = WP - ((WP - s1) * (WP - s2)); */
 GENERIC_IMAGE_BLOCK_BEGIN
 d = WP - ((WP - s1) * (WP - s2));
-GENERIC_IMAGE_BLOCK_END
-
-
-/* d = MAX(s1, s2); */
-GENERIC_IMAGE_BLOCK_BEGIN
-d = MAX(s1, s2);
-GENERIC_IMAGE_BLOCK_END
-
-
-/* d = CHAN_CLAMP(s1 - s2) */;
-GENERIC_IMAGE_BLOCK_BEGIN
-d = CHAN_CLAMP(s1 - s2);
-GENERIC_IMAGE_BLOCK_END
-
-
-/* d = ABS(s1 - s2); */
-GENERIC_IMAGE_BLOCK_BEGIN
-d = ABS(s1 - s2);
-GENERIC_IMAGE_BLOCK_END
-
-
-/* d = MIN(s1, s2); */
-GENERIC_IMAGE_BLOCK_BEGIN
-d = MIN(s1, s2);
-GENERIC_IMAGE_BLOCK_END
-
-
-/*
-d_color = CHAN_CLAMP(s1_color + s2_color);
-d_alpha = s1_alpha;
-*/
-GENERIC_IMAGE_BLOCK_BEGIN
-d_color = CHAN_CLAMP(s1_color + s2_color);
-d_alpha = WP;
-GENERIC_IMAGE_BLOCK_END
-
-
-/* d_color = d_alpha * d_color; */
-GENERIC_IMAGE_BLOCK_BEGIN
-d_color = d_alpha * d_color;
-GENERIC_IMAGE_BLOCK_END
-
-/* d_color = d_color / d_alpha; */
-GENERIC_IMAGE_BLOCK_BEGIN
-d_color = d_color / d_alpha;
-GENERIC_IMAGE_BLOCK_END
-
-/*
-d = d / 5.0;
-d_color = d_color / 5;
-d_color / a;
-d = d / a;
-*/
-GENERIC_IMAGE_BLOCK_BEGIN
-d = d / 5.0;
-d_color = d_color / 5;
-d_color / a;
-d = d / a;
-GENERIC_IMAGE_BLOCK_END
-
-/*
-d_color / a;
-d = d / a;
-*/
-GENERIC_IMAGE_BLOCK_BEGIN
-d_color / a;
-d = d / a;
-GENERIC_IMAGE_BLOCK_END
-
-/* d = d + 5.0; */
-GENERIC_IMAGE_BLOCK_BEGIN
-d = d + 5.0;
-GENERIC_IMAGE_BLOCK_END
-
-/* d = ZERO */
-GENERIC_IMAGE_BLOCK_BEGIN
-d = ZERO;
 GENERIC_IMAGE_BLOCK_END
 
 /* 
@@ -152,3 +36,7 @@ dX(s2,2);
 dX(s3,3);
 GENERIC_IMAGE_BLOCK_END
 
+/* d = s1 * s2 + s3; */
+GENERIC_IMAGE_BLOCK_BEGIN
+d = s1 * s2 + s3;
+GENERIC_IMAGE_BLOCK_END
