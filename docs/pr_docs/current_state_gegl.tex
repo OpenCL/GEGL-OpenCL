@@ -1,0 +1,15 @@
+GEGL is currently in a development stage, and work is ongoing for most of the
+major classes.
+
+The basic image and operator classes that provide the underlying structure for
+creating and processing chains of image operations have been written. The
+generic approach to writing image algorithms using the Generic Image Language
+has been implemented for the case of point operators using lex/yacc to generate
+code for some common color models.  Also the color model inheritance classes
+and accompanying data/colorspace converters which provide support for a range
+of ColorModels and a general way of converting between these during image
+processing has been written as well.
+
+The memory management issues of caching and tiling, as well as efficient
+computation of chains of operations using regions of interests and domains of
+definition are under current development.
