@@ -1,3 +1,10 @@
+2004-3-13 07:31 Daniel Rogers <daniel@phasevelocity.org>
+
+	* tests/gegl-image-mock-cache-entry.c
+
+	Fix chaining up in the finalizer for GeglMockCacheEntry.
+	Fixes bug #136997
+	
 2004-03-03  Sven Neumann  <sven@gimp.org>
 
 	* tests/Makefile.am (EXTRA_PROGRAMS): can't use $(TESTS) here any

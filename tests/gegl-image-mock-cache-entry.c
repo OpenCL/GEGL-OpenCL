@@ -31,6 +31,8 @@ static gsize flattened_size (const GeglCacheEntry* self);
 static void flatten (GeglCacheEntry* self, gpointer buffer, gsize length);
 static void unflatten (GeglCacheEntry* self, const gpointer buffer, gsize length);
 
+static gpointer parent_class;
+
 GType
 gegl_mock_cache_entry_get_type (void)
 {
@@ -78,6 +80,7 @@ class_init(gpointer g_class,
   cache_entry_class->unflatten = unflatten;
 
   object_class->finalize = finalize;
+  parent_class = g_type_class_peek_parent (g_class);
 }
 
 static void
@@ -99,6 +102,7 @@ finalize(GObject *object)
       mock_entry->data = NULL;
       mock_entry->data_length = 0;
     }
+  G_OBJECT_CLASS (parent_class)->finalize(object);
 }
 
 static gsize
