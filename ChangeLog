@@ -1,3 +1,16 @@
+Mon Mar 20 17:04:58 PST 2000 caro@rhythm.com
+	
+	* changed the lexer and the parser so that it will
+	handle vectorchan that maybe has alpha.
+
+	* i have updated the way codegen handles its data file
+	so that it will read the file correctly
+
+	* all the global char * varibles have now _STR at their end
+
+	* the lexer has now a special state to read data files. the data
+	file is processed by the lexer and parser.
+
 Sat Mar 18 18:56:30 EST 2000 calvinw@mindspring.com
 
 	* testgeglfile.c - more improvements.   Added back the tests for 

@@ -83,6 +83,9 @@ int 	get_keyword (char *s);
 int	yylex (); 
 void    rm_varibles (char scope); 
 
+void open_file (char *filename);
+void close_file ();
+
 
 #endif
 

@@ -16,25 +16,20 @@
 #undef  _PARSER_Y_
 #endif
 
-EXTERN char  *WP;   
-EXTERN char  *WP_NORM;       
-EXTERN char  *DATATYPE;      
-EXTERN char  *MIN_CHAN;   
-EXTERN char  *MAX_CHAN;      
-EXTERN char  *ZERO; 
+EXTERN char  *DATATYPE_STR;      
+EXTERN char  *WP_STR;   
+EXTERN char  *WP_NORM_STR;       
+EXTERN char  *MIN_CHAN_STR;   
+EXTERN char  *MAX_CHAN_STR;      
+EXTERN char  *ZERO_STR; 
 
-EXTERN char  *CHAN_CLAMP_PRE;		
-EXTERN char  *CHAN_CLAMP_SUF;	
+EXTERN char  *CHAN_CLAMP_STR;		
 
-EXTERN char  *WP_CLAMP_PRE;
-EXTERN char  *WP_CLAMP_SUF;
+EXTERN char  *WP_CLAMP_STR;
 
-EXTERN char  *CHAN_MULT_PRE;        
-EXTERN char  *CHAN_MULT_MID;       
-EXTERN char  *CHAN_MULT_SUF;       
+EXTERN char  *CHAN_MULT_STR;        
 
-EXTERN char  *ROUND_PRE;	
-EXTERN char  *ROUND_SUF;
+EXTERN char  *ROUND_STR;	
 
 /* these are related to the color space */
 EXTERN int    NUM_COLOR_CHAN;

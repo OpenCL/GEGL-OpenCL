@@ -15,6 +15,7 @@ void print_value (elem_t *dest, elem_t src);
 void print_name (elem_t *dest, elem_t src, TYPE_DEF is_define);
 void print_repeat (elem_t *dest, elem_t src, char *string); 
 void print_line (elem_t src);
+void print (char *string, char *template, char **varible, int num);
 void set_dtype (elem_t e, DATA_TYPE dtype);
 void set_type (elem_t e, DATA_TYPE dtype);
 void set_num (elem_t e, int n);
@@ -23,7 +24,7 @@ void read_channel_names (char *chan_names);
 void init_data_varible (char *s);
 
 int yyerror (char *s); 
-    
+
 #define NSYMS 100           /* maximum number of symbols */
 elem_t  symtab[NSYMS];
 int     cur_nsyms=0;
@@ -75,8 +76,8 @@ int     cur_nsyms=0;
 %token 	<elem> NAME
 %token	<elem> FLOAT
 %token	<elem> INT
-%token  <elem> WHITE_PT 
-%token  <elem> ZERO_VAL  
+%token  <elem> WP 
+%token  <elem> ZERO  
 %token  <elem> VectorChan
 %token  <elem> Chan
 %token  <elem> INDENT
@@ -99,7 +100,7 @@ int     cur_nsyms=0;
 %token  EQUAL PLUS_EQUAL MINUS_EQUAL TIMES_EQUAL DIVIDE_EQUAL
 %token  AND OR EQ NOT_EQ SMALLER GREATER SMALLER_EQ GREATER_EQ NOT ADD SUBTRACT  
 
-%token  COLOR  COLOR_ALPHA  ITERATOR_X  ITERATOR_XY  
+%token  COLOR  COLOR_ALPHA  COLOR_MAYBE_ALPHA  ITERATOR_X  ITERATOR_XY  
 
 %left 		PLUS	MINUS
 %left 		TIMES	DIVIDE
@@ -118,6 +119,12 @@ int     cur_nsyms=0;
 %type	<elem> PointerVecChan		/* This is for VectorChan, it adds an extra * */ 
 %type	<elem> Pointer  
 
+/* tokens for data types */
+%token  DT_DATATYPE  DT_WP  DT_WP_NORM  DT_MIN_CHAN DT_MAX_CHAN
+%token  DT_ZERO  DT_CHAN_CLAMP  DT_WP_CLAMP  DT_CHAN_MULT  DT_ROUND DT_COMMA 
+%token  <tok> DT_NAME
+%token  <tok> DT_STRING
+
 %start	Input
 
 %%
@@ -125,8 +132,190 @@ int     cur_nsyms=0;
 Input:	
 	
 	| Input	Line
+	| Input DT_Line 
 	;
 
+	
+DT_Line:
+	;
+	| DT_DATATYPE DT_STRING  
+		{
+		DATATYPE_STR = (char *) strdup (&($2.string[1]));
+		DATATYPE_STR[strlen (DATATYPE_STR)-1] = '\0';   
+		}
+	| DT_WP DT_STRING
+		{
+		WP_STR = (char *) strdup (&($2.string[1]));
+		WP_STR[strlen (WP_STR)-1] = '\0';   
+		}
+	| DT_WP_NORM DT_STRING
+		{
+		WP_NORM_STR = (char *) strdup (&($2.string[1]));
+		WP_NORM_STR[strlen (WP_NORM_STR)-1] = '\0';   
+		}
+	| DT_MIN_CHAN DT_STRING
+		{
+		MIN_CHAN_STR = (char *) strdup (&($2.string[1]));
+		MIN_CHAN_STR[strlen (MIN_CHAN_STR)-1] = '\0';   
+		}
+	| DT_MAX_CHAN DT_STRING
+		{
+		MAX_CHAN_STR = (char *) strdup (&($2.string[1]));
+		MAX_CHAN_STR[strlen (MAX_CHAN_STR)-1] = '\0';   
+		}
+	| DT_ZERO DT_STRING
+		{
+		ZERO_STR = (char *) strdup (&($2.string[1]));
+		ZERO_STR[strlen (ZERO_STR)-1] = '\0';   
+		}
+	| DT_CHAN_CLAMP LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
+		{
+		int i,j=0, len, sublen;
+		char tmp[255];
+		char sub[255];
+		len = strlen ($5.string);
+		sublen = strlen ($3.string);
+
+		for(i=1; i<len-sublen-1; i++)
+		  {
+		  strncpy (sub, &($5.string[i]), sublen); 
+		  if (! strcmp ($3.string, sub))
+		    {
+		    strcpy (&(tmp[j]), "$1");
+		    i += sublen-1;
+		    j += 2; 
+		    }
+		  else
+		    {
+		    tmp[j] = (char) ($5.string[i]); 
+		    j++; 
+		    }
+		  }
+		for (; i<len-1; i++)
+		  {
+		  tmp[j] = (char) ($5.string[i]);
+		  j++; 
+		  }
+		tmp[j] = '\0'; 
+		CHAN_CLAMP_STR = (char *) strdup (tmp); 
+		printf ("%s", CHAN_CLAMP_STR); 	
+		}
+	| DT_WP_CLAMP LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
+		{
+		int i,j=0, len, sublen;
+		char tmp[255];
+		char sub[255];
+		len = strlen ($5.string);
+		sublen = strlen ($3.string);
+
+		for(i=1; i<len-sublen-1; i++)
+		  {
+		  strncpy (sub, &($5.string[i]), sublen); 
+		  if (! strcmp ($3.string, sub))
+		    {
+		    strcpy (&(tmp[j]), "$1");
+		    i += sublen-1;
+		    j += 2; 
+		    }
+		  else
+		    {
+		    tmp[j] = (char) ($5.string[i]); 
+		    j++; 
+		    }
+		  }
+		for (; i<len-1; i++)
+		  {
+		  tmp[j] = (char) ($5.string[i]);
+		  j++; 
+		  }
+		tmp[j] = '\0'; 
+		WP_CLAMP_STR = (char *) strdup (tmp); 
+		printf ("%s", WP_CLAMP_STR); 	
+		}
+	| DT_CHAN_MULT LT_PARENTHESIS DT_NAME DT_COMMA DT_NAME RT_PARENTHESIS DT_STRING    
+		{
+		int i,j=0, len, sublen1, sublen2, flag1, flag2;
+		char tmp[255];
+		char sub1[255];
+		char sub2[255];
+		len = strlen ($7.string);
+		sublen1 = strlen ($3.string);
+		sublen2 = strlen ($5.string);
+
+		for(i=1; i<len-1; i++)
+		  {
+		  flag1 = flag2 = 0;
+
+		  if (i<len-sublen1)
+		    {
+		    strncpy (sub1, &($7.string[i]), sublen1);
+		    flag1 = 1;
+		    }
+		  if (i<len-sublen2)
+		    {
+		    strncpy (sub2, &($7.string[i]), sublen2);
+		    flag2 = 1;
+		    }
+
+		  if (flag1 && !strcmp ($3.string, sub1))
+		    {
+		    strcpy (&(tmp[j]), "$1");
+		    i += sublen1-1;
+		    j += 2;
+		    flag2=0;  
+		    }
+	          else if (flag2 && !strcmp ($5.string, sub2))
+		    {
+		    strcpy (&(tmp[j]), "$2");
+		    i += sublen2-1;
+		    j += 2; 
+		    }
+		  else
+		    {
+		    tmp[j] = (char) ($7.string[i]); 
+		    j++; 
+		    }
+		  }
+		
+		tmp[j] = '\0'; 
+		CHAN_MULT_STR = (char *) strdup (tmp); 
+		printf ("%s", CHAN_MULT_STR); 	
+		}
+	| DT_ROUND LT_PARENTHESIS DT_NAME RT_PARENTHESIS DT_STRING    
+		{
+		int i,j=0, len, sublen;
+		char tmp[255];
+		char sub[255];
+		len = strlen ($5.string);
+		sublen = strlen ($3.string);
+
+		for(i=1; i<len-sublen-1; i++)
+		  {
+		  strncpy (sub, &($5.string[i]), sublen); 
+		  if (! strcmp ($3.string, sub))
+		    {
+		    strcpy (&(tmp[j]), "$1");
+		    i += sublen-1;
+		    j += 2; 
+		    }
+		  else
+		    {
+		    tmp[j] = (char) ($5.string[i]); 
+		    j++; 
+		    }
+		  }
+		for (; i<len-1; i++)
+		  {
+		  tmp[j] = (char) ($5.string[i]);
+		  j++; 
+		  }
+		tmp[j] = '\0'; 
+		ROUND_STR = (char *) strdup (tmp); 
+		printf ("%s", ROUND_STR); 	
+		}
+	;
+
+	
 Line:
 	; 
 	| "\n" 				
@@ -285,12 +474,17 @@ Line:
 		char tmp[256];
 		if (!strcmp($7.string, "1"))
 		  {
-		  if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
+		  if (get_sym ($5.string)->type == TYPE_C_A_VECTOR)
 		    {
 		    printf ("%sif (%s_%s)%s  %s%s_%s++;", $1.string, $5.string,
 			NAME_COLOR_CHAN[NUM_COLOR_CHAN],
 			$1.string, $4.string, $5.string,
 			NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
+		    sprintf (tmp, "%s%s%s_c++;", 
+		      $1.string, $4.string, $5.string);  
+		    }
+		  else if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
+		    {
 		    sprintf (tmp, "%s%s%s_c++;", 
 		      $1.string, $4.string, $5.string);  
 		    }
@@ -300,13 +494,17 @@ Line:
 		  }
 		  else
 		    { 
-		    if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
+		    if (get_sym ($5.string)->type == TYPE_C_A_VECTOR)
 		      {
 		      printf ("%sif (%s_%s)%s  %s%s_%s += %s", $1.string, $5.string,
 			 NAME_COLOR_CHAN[NUM_COLOR_CHAN], 
 			 $1.string, $4.string, $5.string, 
 			 NAME_COLOR_CHAN[NUM_COLOR_CHAN],
 			 $7.string);
+		      sprintf (tmp, "%s%s%s_c += %s;", $1.string, $4.string, $5.string, $7.string); 
+		      }
+		    else if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
+		      {
 		      sprintf (tmp, "%s%s%s_ca += %s;", $1.string, $4.string, $5.string, $7.string); 
 		      }
 		    else
@@ -422,12 +620,12 @@ Expression:
 		$$=$1; 
 		print_value(&$$, $1); 
 		} 
-	| WHITE_PT				
+	| WP				
 		{ 
 		$$=$1; 
 		print_value(&$$, $1); 
 		}
-	| ZERO_VAL
+	| ZERO
 		{
 		$$=$1;
 		print_value(&$$, $1); 
@@ -662,7 +860,7 @@ VectorChan_List:
 		print_repeat (&$$, $2, tmp); 
 		init_data_varible ($2.string); 
 		}
-	| PointerVecChan NAME
+	| PointerVecChan NAME COLOR_MAYBE_ALPHA
 		{
 		char tmp[256];
 		set_dtype($2, TYPE_CHAN);
@@ -766,7 +964,7 @@ init_data_varible (char *s)
     tmp[i*2+1] = ' ';
     }
   tmp[i*2  ] = '\0'; 
-  printf ("\n%s%s *%s_data[%d];", tmp, DATATYPE, s, e->num); 
+  printf ("\n%s%s *%s_data[%d];", tmp, DATATYPE_STR, s, e->num); 
 }
 
 void
@@ -924,19 +1122,54 @@ print_value (elem_t *dest, elem_t src)
 }
 
 void
+print (char *string, char *template, char *varible[], int num)
+{
+ 
+  int i, j=0, k, len, *len_varible;
+  len = strlen (template);
+
+  len_varible = (int*) malloc (sizeof(int)*num);
+  
+  for (i=0; i<num; i++)
+    {
+    len_varible[i] = strlen (varible[i]); 
+    }
+  
+  for (i=0; i<len-1; i++)
+    {
+    if (template[i] == '$' && isdigit ((int) template[i+1]))
+      {
+      k = (int) atoi (&(template[i+1]))-1; 
+      strcpy (&(string[j]), varible[k]);
+      j += len_varible[k];
+      i ++; 
+      }
+    else 
+      {
+      string[j] = template[i];
+      j ++; 
+      }
+    }
+  string[j] = template[i];  
+  string[j+1] = '\0';  
+}
+void
 do_op_two (elem_t *dest, elem_t src, FUNCTION op)
 {
   char tmp[256];
+  char *t[1]; 
   switch (op)
   {
   case OP_NEG:
     sprintf (tmp, "-%s", src.string);
     break;
   case OP_CHAN_CLAMP:
-    sprintf (tmp, "%s%s%s", CHAN_CLAMP_PRE, src.string, CHAN_CLAMP_SUF);  
+    t[0] = src.string; 
+    print (tmp, CHAN_CLAMP_STR, t, 1); 
     break; 
   case OP_WP_CLAMP:
-    sprintf (tmp, "%s%s%s", WP_CLAMP_PRE, src.string, WP_CLAMP_SUF);
+    t[0] = src.string; 
+    print (tmp, WP_CLAMP_STR, t, 1); 
     break;
   default:
     break; 
@@ -953,7 +1186,8 @@ void
 do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 {
   char tmp[256];
-  
+  char *t[2]; 
+
   /* error checking */
   if (src1.num != src2.num  && src1.num != 1 && src2.num != 1)
     {
@@ -976,14 +1210,18 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
       else if ( src1.dtype == TYPE_CHAN || src2.dtype == TYPE_CHAN)
 	{	
       	if (src1.dtype >= TYPE_CHAN && src2.dtype >= TYPE_CHAN)
-	  sprintf (tmp, "%s%s%s%s%s", CHAN_MULT_PRE, src1.string, CHAN_MULT_MID, src2.string, CHAN_MULT_SUF);
+	  {	
+      	  t[0] = src1.string;
+	  t[1] = src2.string;
+	  print (tmp, CHAN_MULT_STR, t, 2); 
+	  }
 	else
 	  sprintf (tmp, "%s * %s", src1.string, src2.string);
 	}
       else
 	{	
        	if (src1.dtype >= TYPE_CHAN && src2.dtype >= TYPE_CHAN)
-	  sprintf (tmp, "%s * %s * %s", src1.string, src2.string, WP_NORM); 
+	  sprintf (tmp, "%s * %s * %s", src1.string, src2.string, WP_NORM_STR); 
 	else
 	  sprintf (tmp, "%s * %s", src1.string, src2.string);
 	}
@@ -994,14 +1232,14 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
       else if ( src1.dtype == TYPE_CHAN || src2.dtype == TYPE_CHAN)
 	{
 	if (src1.dtype >= TYPE_CHAN &&  src2.dtype >= TYPE_CHAN)
-      	  sprintf (tmp, "(%s * %s) / %s", src1.string, WP, src2.string);
+      	  sprintf (tmp, "(%s * %s) / %s", src1.string, WP_STR, src2.string);
 	else
 	  sprintf (tmp, "%s / %s", src1.string, src2.string);
 	}
       else
 	{	
        	if (src1.dtype >= TYPE_CHAN &&  src2.dtype >= TYPE_CHAN)
-	  sprintf (tmp, "(%s * %s) / %s", src1.string, WP, src2.string); 
+	  sprintf (tmp, "(%s * %s) / %s", src1.string, WP_STR, src2.string); 
 	else
 	  sprintf (tmp, "%s / %s", src1.string, src2.string);
 	}
@@ -1054,13 +1292,19 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
 	    case TYPE_FLOAT:
-	      sprintf (tmp, "%s = %s%s%s", src1.string, ROUND_PRE, src2.string, ROUND_SUF);
+	      t[0] = src2.string;
+	      print (tmp, CHAN_MULT_STR, t, 1); 
+	      strcpy (dest->string, tmp);
+	      sprintf (tmp, "%s = %s", src1.string, dest->string);
 	      break;
 	    case TYPE_CHAN:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
 	    case TYPE_CHANFLOAT:
-              sprintf (tmp, "%s = %s%s%s", src1.string, ROUND_PRE, src2.string, ROUND_SUF);	      
+	      t[0] = src2.string;
+	      print (tmp, CHAN_MULT_STR, t, 1); 
+	      strcpy (dest->string, tmp);
+	      sprintf (tmp, "%s = %s", src1.string, dest->string);
 	      break;
 	   }			     
           break;
@@ -1267,173 +1511,6 @@ void
 read_data_types (char *filename)
 {
 
-  char value[255], token[255]; 
-  FILE *file;
-  
-  file = fopen (filename, "r"); 
-
-  while (fscanf (file, "%s", &token) == 1)
-    {
-    if (!strcmp (token, "WP"))
-      {
-      fscanf (file, "%s", &value);
-      WP = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "WP_NORM"))
-      {
-      fscanf (file, "%s", &value);
-      WP_NORM = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "DATATYPE"))
-      {
-      fscanf (file, "%s", &value);
-      DATATYPE = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "MIN_CHAN"))
-      {
-      fscanf (file, "%s", &value);
-      MIN_CHAN = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "MAX_CHAN"))
-      {
-      fscanf (file, "%s", &value);
-      MAX_CHAN = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "ZERO"))
-      {
-      fscanf (file, "%s", &value);
-      ZERO = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "CHAN_CLAMP_PRE"))
-      {
-      int i = 0; 
-      while ((value[i] = (char) fgetc (file)) != '\n')
-	{
-	if (value[i] != '\t')
-	  i++;
-	}
-      value[i] = '\0'; 
-      if (value[0] == '"' && value[1] == '"')
-        CHAN_CLAMP_PRE = (char *) strdup ("");
-      else
-	CHAN_CLAMP_PRE = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "CHAN_CLAMP_SUF"))
-      {
-      int i = 0; 
-      while ((value[i] = (char) fgetc (file)) != '\n')
-	{
-	if (value[i] != '\t')
-	  i++;
-	}
-      value[i] = '\0'; 
-      if (value[0] == '"' && value[1] == '"')
-        CHAN_CLAMP_SUF = (char *) strdup ("");
-      else
-	CHAN_CLAMP_SUF = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "WP_CLAMP_PRE"))
-      {
-      int i = 0; 
-      while ((value[i] = (char) fgetc (file)) != '\n')
-	{
-	if (value[i] != '\t')
-	  i++;
-	}
-      value[i] = '\0'; 
-      if (value[0] == '"' && value[1] == '"')
-        WP_CLAMP_PRE = (char *) strdup ("");
-      else
-	WP_CLAMP_PRE = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "WP_CLAMP_SUF"))
-      {
-      int i = 0; 
-      while ((value[i] = (char) fgetc (file)) != '\n')
-	{
-	if (value[i] != '\t')
-	  i++;
-	}
-      value[i] = '\0'; 
-      if (value[0] == '"' && value[1] == '"')
-        WP_CLAMP_SUF = (char *) strdup ("");
-      else
-	WP_CLAMP_SUF = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "CHAN_MULT_PRE"))
-      {
-      int i = 0; 
-      while ((value[i] = (char) fgetc (file)) != '\n')
-	{
-	if (value[i] != '\t')
-	  i++;
-	}
-      value[i] = '\0'; 
-      if (value[0] == '"' && value[1] == '"')
-        CHAN_MULT_PRE = (char *) strdup ("");
-      else
-	CHAN_MULT_PRE = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "CHAN_MULT_MID"))
-      {
-      int i = 0; 
-      while ((value[i] = (char) fgetc (file)) != '\n')
-	{
-	if (value[i] != '\t')
-	  i++;
-	}
-      value[i] = '\0'; 
-      if (value[0] == '"' && value[1] == '"')
-       CHAN_MULT_MID = (char *) strdup ("");
-      else
-       CHAN_MULT_MID = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "CHAN_MULT_SUF"))
-      {
-      int i = 0; 
-      while ((value[i] = (char) fgetc (file)) != '\n')
-	{
-	if (value[i] != '\t')
-	  i++;
-	}
-      value[i] = '\0'; 
-      if (value[0] == '"' && value[1] == '"')
-        CHAN_MULT_SUF = (char *) strdup ("");
-      else
-	CHAN_MULT_SUF = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "ROUND_PRE"))
-      {
-      int i = 0; 
-      while ((value[i] = (char) fgetc (file)) != '\n')
-	{
-	if (value[i] != '\t')
-	  i++;
-	}
-      value[i] = '\0'; 
-      if (value[0] == '"' && value[1] == '"')
-        ROUND_PRE = (char *) strdup ("");
-      else
-	ROUND_PRE = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "ROUND_SUF"))
-      {
-      int i = 0; 
-      while ((value[i] = (char) fgetc (file)) != '\n')
-	{
-	if (value[i] != '\t')
-	  i++;
-	}
-      value[i] = '\0'; 
-      if (value[0] == '"' && value[1] == '"')
-        ROUND_SUF = (char *) strdup ("");
-      else
-	ROUND_SUF = (char *) strdup (value); 
-      }
-    token[0] = '\0';  
-    }
-	
-  fclose(file); 
 }
 
 void
@@ -1473,7 +1550,7 @@ main (int argc, char **argv)
 {
   int i=1;
   yydebug = 1; 
-  if (argc != 5)
+  if (argc != 6)
     {
     printf ("ERROR: need to specify a file and channel names\n");
     return -1; 
@@ -1484,7 +1561,9 @@ main (int argc, char **argv)
     if (!strcmp (argv[i], "--channel-data-file"))
       {
       i++;
-      read_data_types (argv[i]);
+      open_file (argv[i]);
+      yyparse ();
+      close_file ();  
       }
     if (!strcmp (argv[i], "--channel-names"))
       {
@@ -1492,8 +1571,10 @@ main (int argc, char **argv)
       read_channel_names (argv[i]); 
       }
     i++; 
-    }  
+    } 
+  open_file (argv[5]);  
   yyparse();
+  close_file (); 
 
   return 0; 
 }

@@ -8,26 +8,57 @@
 #include "parser.h" 
 #include <math.h>
 #include <ctype.h>
+#include <stdio.h>
+
 int PREV;  
 %}
 
 %s			GENERIC_IMAGE_DECL
 %s			GENERIC_IMAGE_BLOCK
 %s			COMMENT 
+%s			DATA_TYPE 
 white   		[ \t]+
 indent			[\n][ \t]*
 digit   		[0-9]
 integer 		{digit}+
 float   		{digit}*\.{integer}
 name    		[a-zA-Z][A-Z_a-z0-9]*
-
+string			\".*\"	
 
 %%
 
+"DATATYPE_BEGIN"			BEGIN DATA_TYPE;  
 "GENERIC_IMAGE_DECL_BEGIN"		BEGIN GENERIC_IMAGE_DECL;
-				
 "GENERIC_IMAGE_BLOCK_BEGIN"		BEGIN GENERIC_IMAGE_BLOCK;
-{indent}"GENERIC_IMAGE_IMAGE_DATA_INIT" 	init_image_data (yylval.elem.string); 	
+
+<DATA_TYPE>"DATATYPE_END"		BEGIN 0;
+<DATA_TYPE>{white}			;
+<DATA_TYPE>"DATATYPE"			return DT_DATATYPE;
+<DATA_TYPE>"WP"				return DT_WP;
+<DATA_TYPE>"WP_NORM"			return DT_WP_NORM;
+<DATA_TYPE>"MIN_CHAN"			return DT_MIN_CHAN;
+<DATA_TYPE>"MAX_CHAN"                   return DT_MAX_CHAN;
+<DATA_TYPE>"ZERO"			return DT_ZERO; 
+<DATA_TYPE>"CHAN_CLAMP"			return DT_CHAN_CLAMP;
+<DATA_TYPE>"WP_CLAMP"			return DT_WP_CLAMP;
+<DATA_TYPE>"CHAN_MULT"			return DT_CHAN_MULT;
+<DATA_TYPE>"ROUND"			return DT_ROUND;
+<DATA_TYPE>","				return DT_COMMA; 
+<DATA_TYPE>"("				return LT_PARENTHESIS;
+<DATA_TYPE>")"				return RT_PARENTHESIS; 
+<DATA_TYPE>{name}			{
+    					ECHO; 
+    					strcpy (yylval.tok.string, yytext);
+					return DT_NAME;
+					}
+<DATA_TYPE>{string}			{
+    					ECHO; 
+    					strcpy (yylval.tok.string, yytext);
+					return DT_STRING;
+					}
+
+
+{indent}"GENERIC_IMAGE_IMAGE_DATA_INIT" init_image_data (yylval.elem.string); 	
 
 <GENERIC_IMAGE_BLOCK>{indent}"{"	{
     					SCOPE++; 
@@ -51,24 +82,24 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 <GENERIC_IMAGE_BLOCK>"GENERIC_IMAGE_BLOCK_END" 	BEGIN 0;
 
 <GENERIC_IMAGE_BLOCK>"WP"		{
-					strcpy(yylval.elem.string, WP);
+					strcpy(yylval.elem.string, WP_STR);
                 			yylval.elem.dtype = TYPE_CHAN;
 					yylval.elem.type = TYPE_SCALER;
-					return(WHITE_PT); 
+					return(WP); 
 					}
 <GENERIC_IMAGE_BLOCK>"ZERO"		{
-    					strcpy(yylval.elem.string, ZERO);
+    					strcpy(yylval.elem.string, ZERO_STR);
 					yylval.elem.dtype = TYPE_CHAN;
 			        	yylval.elem.type = TYPE_VECTOR;
-					return ZERO_VAL; 	
+					return ZERO; 	
 					} 
 <GENERIC_IMAGE_DECL>"VectorChan"	{
-					strcpy(yylval.elem.string, DATATYPE);
+					strcpy(yylval.elem.string, DATATYPE_STR);
 					yylval.elem.dtype = TYPE_CHAN;
 					return(VectorChan);
 					}
 <GENERIC_IMAGE_DECL>"Chan"		{
-    					strcpy(yylval.elem.string, DATATYPE);
+    					strcpy(yylval.elem.string, DATATYPE_STR);
 					yylval.elem.dtype = TYPE_CHAN;
 					return(Chan);
 					}
@@ -110,8 +141,9 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
     					else BEGIN GENERIC_IMAGE_DECL;
 					} 
 
-<GENERIC_IMAGE_DECL>"(color,alpha)"	return(COLOR_ALPHA);
-<GENERIC_IMAGE_DECL>"(color)"		return(COLOR);
+<GENERIC_IMAGE_DECL>"(color,alpha,has_alpha)"	return(COLOR_MAYBE_ALPHA);
+<GENERIC_IMAGE_DECL>"(color,alpha)"		return(COLOR_ALPHA);
+<GENERIC_IMAGE_DECL>"(color)"			return(COLOR);
 
 <GENERIC_IMAGE_BLOCK>"dX"		return(ITERATOR_X);
 <GENERIC_IMAGE_BLOCK>"dXY"            	return(ITERATOR_XY);
@@ -235,3 +267,14 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 
 %%
 
+void
+open_file (char *filename)
+{
+  yyin = fopen (filename, "r"); 
+}
+
+void
+close_file ()
+{
+ fclose (yyin); 
+}
