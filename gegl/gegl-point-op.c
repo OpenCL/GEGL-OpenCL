@@ -1,5 +1,5 @@
 #include "gegl-point-op.h"
-#include "gegl-attributes.h"
+#include "gegl-data.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-utils.h"
 
@@ -7,7 +7,7 @@ static void class_init (GeglPointOpClass * klass);
 static void init (GeglPointOp * self, GeglPointOpClass * klass);
 static void finalize (GObject * gobject);
 
-static void process (GeglFilter * self_op, GeglAttributes * attributes, GList * input_attributes);
+static void process (GeglFilter * self_op, GList * output_data_list, GList * input_data_list);
 
 static gpointer parent_class = NULL;
 
@@ -74,11 +74,11 @@ finalize (GObject * gobject)
 
 static void 
 process (GeglFilter * filter, 
-         GeglAttributes * attributes,
-         GList * input_attributes)
+         GList * output_data_list,
+         GList * input_data_list)
 {
   GeglPointOp *self =  GEGL_POINT_OP(filter);
   gegl_scanline_processor_process(self->scanline_processor, 
-                                  attributes,
-                                  input_attributes);
+                                  output_data_list,
+                                  input_data_list);
 }

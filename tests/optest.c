@@ -37,7 +37,7 @@ test_op_g_object_new_source0(Test *test)
                       NULL);  
     A = g_object_new (GEGL_TYPE_MOCK_OP, 
                       "num_inputs", 1,
-                      "source0", B, 
+                      "input", 0, B, 
                       NULL);  
 
     ct_test(test, 1 == gegl_node_get_num_outputs(B)); 

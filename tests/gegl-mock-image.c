@@ -49,6 +49,4 @@ static void
 init (GeglMockImage * self, 
       GeglMockImageClass * klass)
 {
-  g_object_set(self, "num_inputs", 0, NULL);
-  g_object_set(self, "num_outputs", 1, NULL);
 }

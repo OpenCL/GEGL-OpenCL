@@ -1,7 +1,8 @@
 #include "gegl-eval-mgr.h"
 #include "gegl-node.h"
 #include "gegl-op.h"
-#include "gegl-attributes.h"
+#include "gegl-image-buffer-data.h"
+#include "gegl-param-specs.h"
 #include "gegl-visitor.h"
 #include "gegl-eval-bfs-visitor.h"
 #include "gegl-eval-dfs-visitor.h"
@@ -20,8 +21,8 @@ static void class_init (GeglEvalMgrClass * klass);
 static void init (GeglEvalMgr * self, GeglEvalMgrClass * klass);
 static void finalize(GObject * gobject);
 
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
+static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *param_spec);
+static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *param_spec);
 
 static void evaluate (GeglEvalMgr * self);
 static void eval_bfs_visitor(GeglEvalMgr *self); 
@@ -242,10 +243,12 @@ static void
 evaluate (GeglEvalMgr * self) 
 {
   /* Get the root and set roi on it */
-  GeglAttributes * attr = gegl_op_get_attributes(GEGL_OP(self->root));
-
-  if(attr)
-    gegl_attributes_set_rect(attr, &self->roi);
+  GeglData * data = gegl_op_get_output_data(GEGL_OP(self->root), 0);
+  if(data && GEGL_IS_IMAGE_BUFFER_DATA(data))
+    {
+      GeglImageBufferData *image_buffer_data = GEGL_IMAGE_BUFFER_DATA(data);
+      gegl_rect_copy(&image_buffer_data->rect, &self->roi);
+    }
 
   /* This part computes need rects, breadth-first setup */
   LOG_DEBUG("evaluate", 

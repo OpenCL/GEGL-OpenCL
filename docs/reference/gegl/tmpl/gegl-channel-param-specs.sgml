@@ -14,6 +14,12 @@ gegl-channel-param-specs
 
 </para>
 
+<!-- ##### VARIABLE GEGL_TYPE_PARAM_CHANNEL ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### VARIABLE GEGL_TYPE_PARAM_CHANNEL_UINT8 ##### -->
 <para>
 
@@ -24,6 +30,22 @@ gegl-channel-param-specs
 <para>
 
 </para>
+
+
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_CHANNEL_UINT8 ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
+<!-- ##### MACRO GEGL_PARAM_SPEC_CHANNEL_UINT8 ##### -->
+<para>
+
+</para>
+
+@pspec: 
 
 
 <!-- ##### MACRO GEGL_IS_PARAM_SPEC_CHANNEL_FLOAT ##### -->
@@ -41,6 +63,13 @@ gegl-channel-param-specs
 
 @pspec: 
 
+
+<!-- ##### STRUCT GeglParamSpecChannel ##### -->
+<para>
+
+</para>
+
+@pspec: 
 
 <!-- ##### STRUCT GeglParamSpecChannelUInt8 ##### -->
 <para>
@@ -61,6 +90,18 @@ gegl-channel-param-specs
 @minimum: 
 @maximum: 
 @default_value: 
+
+<!-- ##### FUNCTION gegl_param_spec_channel ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@flags: 
+@Returns: 
+
 
 <!-- ##### FUNCTION gegl_param_spec_channel_uint8 ##### -->
 <para>

@@ -1,4 +1,4 @@
-#include "gegl-image-data.h"
+#include "gegl-image-buffer.h"
 #include "gegl-object.h"
 #include "gegl-color-model.h"
 #include "gegl-tile.h"
@@ -11,8 +11,8 @@ enum
   PROP_LAST 
 };
 
-static void class_init (GeglImageDataClass * klass);
-static void init (GeglImageData *self, GeglImageDataClass * klass);
+static void class_init (GeglImageBufferClass * klass);
+static void init (GeglImageBuffer *self, GeglImageBufferClass * klass);
 static GObject* constructor (GType type, guint n_props, GObjectConstructParam *props);
 static void finalize(GObject * gobject);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
@@ -21,7 +21,7 @@ static void get_property (GObject *gobject, guint prop_id, GValue *value, GParam
 static gpointer parent_class = NULL;
 
 GType
-gegl_image_data_get_type (void)
+gegl_image_buffer_get_type (void)
 {
   static GType type = 0;
 
@@ -29,20 +29,20 @@ gegl_image_data_get_type (void)
     {
       static const GTypeInfo typeInfo =
       {
-        sizeof (GeglImageDataClass),
+        sizeof (GeglImageBufferClass),
         (GBaseInitFunc) NULL,
         (GBaseFinalizeFunc) NULL,
         (GClassInitFunc) class_init,
         (GClassFinalizeFunc) NULL,
         NULL,                       
-        sizeof (GeglImageData),
+        sizeof (GeglImageBuffer),
         0,
         (GInstanceInitFunc) init,
         NULL,             /* value_table */
       };
 
       type = g_type_register_static (GEGL_TYPE_OBJECT, 
-                                     "GeglImageData", 
+                                     "GeglImageBuffer", 
                                      &typeInfo, 
                                      0);
     }
@@ -51,7 +51,7 @@ gegl_image_data_get_type (void)
 }
 
 static void 
-class_init (GeglImageDataClass * klass)
+class_init (GeglImageBufferClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
 
@@ -65,7 +65,7 @@ class_init (GeglImageDataClass * klass)
   g_object_class_install_property (gobject_class, PROP_COLOR_MODEL,
                                    g_param_spec_object ("color_model",
                                                         "ColorModel",
-                                                        "The GeglImageData's color model",
+                                                        "The GeglImageBuffer's color model",
                                                          GEGL_TYPE_COLOR_MODEL,
                                                          G_PARAM_CONSTRUCT |
                                                          G_PARAM_READWRITE));
@@ -73,8 +73,8 @@ class_init (GeglImageDataClass * klass)
 }
 
 static void 
-init (GeglImageData * self, 
-      GeglImageDataClass * klass)
+init (GeglImageBuffer * self, 
+      GeglImageBufferClass * klass)
 {
 }
 
@@ -90,7 +90,7 @@ constructor (GType                  type,
 static void
 finalize(GObject *gobject)
 {
-  GeglImageData *self = GEGL_IMAGE_DATA (gobject);
+  GeglImageBuffer *self = GEGL_IMAGE_BUFFER (gobject);
 
   if(self->tile)
     g_object_unref(self->tile);
@@ -104,12 +104,12 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglImageData *self = GEGL_IMAGE_DATA (gobject);
+  GeglImageBuffer *self = GEGL_IMAGE_BUFFER (gobject);
 
   switch (prop_id)
   {
     case PROP_COLOR_MODEL:
-      gegl_image_data_set_color_model(self, (GeglColorModel*)g_value_get_object(value));
+      gegl_image_buffer_set_color_model(self, (GeglColorModel*)g_value_get_object(value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
@@ -123,12 +123,12 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglImageData *self = GEGL_IMAGE_DATA (gobject);
+  GeglImageBuffer *self = GEGL_IMAGE_BUFFER (gobject);
 
   switch (prop_id)
   {
     case PROP_COLOR_MODEL:
-      g_value_set_object (value, (GObject*)gegl_image_data_get_color_model(self));
+      g_value_set_object (value, (GObject*)gegl_image_buffer_get_color_model(self));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
@@ -137,20 +137,20 @@ get_property (GObject      *gobject,
 }
 
 GeglTile *    
-gegl_image_data_get_tile (GeglImageData * self)
+gegl_image_buffer_get_tile (GeglImageBuffer * self)
 {
   g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (GEGL_IS_IMAGE_DATA (self), NULL);
+  g_return_val_if_fail (GEGL_IS_IMAGE_BUFFER (self), NULL);
 
   return self->tile;
 }
 
 void            
-gegl_image_data_set_tile (GeglImageData * self,
+gegl_image_buffer_set_tile (GeglImageBuffer * self,
                             GeglTile *tile)
 {
   g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_IMAGE_DATA (self));
+  g_return_if_fail (GEGL_IS_IMAGE_BUFFER (self));
 
   if(tile)
     g_object_ref(tile);
@@ -162,26 +162,26 @@ gegl_image_data_set_tile (GeglImageData * self,
 }
 
 GeglColorModel*   
-gegl_image_data_get_color_model (GeglImageData * self)
+gegl_image_buffer_get_color_model (GeglImageBuffer * self)
 {
   g_return_val_if_fail (self != NULL, NULL);
-  g_return_val_if_fail (GEGL_IS_IMAGE_DATA (self), NULL);
+  g_return_val_if_fail (GEGL_IS_IMAGE_BUFFER (self), NULL);
 
   return self->color_model;
 }
 
 void 
-gegl_image_data_set_color_model (GeglImageData * self, 
+gegl_image_buffer_set_color_model (GeglImageBuffer * self, 
                                GeglColorModel * color_model)
 {
   g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_IMAGE_DATA (self));
+  g_return_if_fail (GEGL_IS_IMAGE_BUFFER (self));
 
   self->color_model = color_model;
 }
 
 void
-gegl_image_data_create_tile (GeglImageData * self, 
+gegl_image_buffer_create_tile (GeglImageBuffer * self, 
                                GeglColorModel * color_model,
                                GeglRect * area)
 {
@@ -189,12 +189,12 @@ gegl_image_data_create_tile (GeglImageData * self,
   GeglTile * tile;
 
   g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_IMAGE_DATA(self));
+  g_return_if_fail (GEGL_IS_IMAGE_BUFFER(self));
   g_return_if_fail (color_model != NULL);
   g_return_if_fail (GEGL_IS_COLOR_MODEL(color_model));
   g_return_if_fail (area != NULL);
 
-  gegl_image_data_set_color_model(self, color_model);
+  gegl_image_buffer_set_color_model(self, color_model);
 
   storage = gegl_color_model_create_storage(self->color_model, area->w, area->h);
   tile = g_object_new (GEGL_TYPE_TILE, 
@@ -205,7 +205,7 @@ gegl_image_data_create_tile (GeglImageData * self,
                          "storage", storage,
                          NULL);  
 
-  gegl_image_data_set_tile(self, tile);
+  gegl_image_buffer_set_tile(self, tile);
 
   g_object_unref(storage);
   g_object_unref(tile);

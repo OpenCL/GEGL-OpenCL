@@ -3,18 +3,21 @@
 #include "gegl-op.h"
 #include "gegl-filter.h"
 #include "gegl-graph.h"
-#include "gegl-image-data.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-buffer-data.h"
 #include "gegl-image.h"
 #include "gegl-color-model.h"
 #include "gegl-color-space.h"
 #include "gegl-data-space.h"
+#include "gegl-data.h"
+#include "gegl-param-specs.h"
 #include <stdio.h> 
 
 static void class_init (GeglDumpVisitorClass * klass);
 static void init (GeglDumpVisitor * self, GeglDumpVisitorClass * klass);
 
 static gchar * make_tabs(gint num); 
-static GString* attributes_string(GeglOp *op);
+static GString* data_string(GeglOp *op);
 
 static void visit_node (GeglVisitor *visitor, GeglNode * node);
 static void visit_filter (GeglVisitor *visitor, GeglFilter * filter);
@@ -85,32 +88,34 @@ make_tabs(gint num)
 }
 
 static GString* 
-attributes_string(GeglOp *op)
+data_string(GeglOp *op)
 {
   GeglRect rect = {0,0,0,0};
   char *color_model_name = "None";
-  GObject* image_data_value = NULL;
-
-  GeglAttributes * attributes = gegl_op_get_attributes(op); 
+  GObject* image_buffer_value = NULL;
+  GeglData * data = gegl_op_get_output_data(op, 0); 
 
   /*
-      attr addr [value (x,y,w,h) cm] 
+      data addr [value (x,y,w,h) cm] 
   */
 
   GString *string = g_string_new("");
 
-  if(attributes)
+  if(GEGL_IS_IMAGE_BUFFER_DATA(data))
     {
-      image_data_value = g_value_get_object(attributes->value);
-      gegl_rect_copy(&rect, &attributes->rect);
-      if(GEGL_IS_COLOR_MODEL(attributes->color_model))
-        color_model_name = gegl_color_model_name(attributes->color_model);
+      GeglImageBufferData *image_buffer_data = GEGL_IMAGE_BUFFER_DATA(data);
+      GeglColorModel *color_model = gegl_image_buffer_data_get_color_model(image_buffer_data);
+
+      image_buffer_value = g_value_get_object(data->value);
+      gegl_rect_copy(&rect, &image_buffer_data->rect);
+      if(color_model)
+        color_model_name = gegl_color_model_name(color_model);
     }
 
   g_string_printf(string, 
-                  "attr %p [%p (%d,%d,%d,%d) %s]",
-                  attributes,
-                  image_data_value,
+                  "data %p [%p (%d,%d,%d,%d) %s]",
+                  data,
+                  image_buffer_value,
                   rect.x, rect.y, rect.w, rect.h,
                   color_model_name);
 
@@ -177,7 +182,7 @@ visit_filter(GeglVisitor * visitor,
 {
   gchar * spaces;
   GeglDumpVisitor * self = GEGL_DUMP_VISITOR(visitor);
-  GString *attrs_string = attributes_string(GEGL_OP(filter));
+  GString *data_list_string = data_string(GEGL_OP(filter));
 
   GEGL_VISITOR_CLASS(parent_class)->visit_filter(GEGL_VISITOR(self), filter);
 
@@ -185,34 +190,34 @@ visit_filter(GeglVisitor * visitor,
 
   if(GEGL_IS_IMAGE(filter)) 
   {
-    GeglImageData * image_data = gegl_image_get_image_data(GEGL_IMAGE(filter));
-    GeglColorModel * image_data_colormodel = image_data ? gegl_image_data_get_color_model(image_data) : NULL;
-    gchar * image_data_colormodel_name = image_data_colormodel ? 
-       g_strdup(gegl_color_model_name(image_data_colormodel)):
+    GeglImageBuffer * image_buffer = gegl_image_get_image_buffer(GEGL_IMAGE(filter));
+    GeglColorModel * image_buffer_colormodel = image_buffer ? gegl_image_buffer_get_color_model(image_buffer) : NULL;
+    gchar * image_buffer_colormodel_name = image_buffer_colormodel ? 
+       g_strdup(gegl_color_model_name(image_buffer_colormodel)):
        g_strdup("None");
 
     /* 
-       name typename addr attr addr [value (x,y,w,h) cm] image_data addr cm 
+       name typename addr data addr [value (x,y,w,h) cm] image_buffer addr cm 
     */
 
-    LOG_DIRECT("%s%s %s %p image_data %p colormodel %s",
+    LOG_DIRECT("%s%s %s %p image_buffer %p colormodel %s",
                spaces,   
                G_OBJECT_TYPE_NAME(filter), 
                gegl_object_get_name(GEGL_OBJECT(filter)), 
                filter,
-               image_data, 
-               image_data_colormodel_name);
+               image_buffer, 
+               image_buffer_colormodel_name);
 
     LOG_DIRECT("%s        (%s)",
                spaces,   
-               attrs_string->str);
+               data_list_string->str);
 
-    g_free(image_data_colormodel_name);
+    g_free(image_buffer_colormodel_name);
   }
   else 
   {
     /* 
-       name typename addr attr addr [value (x,y,w,h) cm]
+       name typename addr data addr [value (x,y,w,h) cm]
     */
     LOG_DIRECT("%s%s %s %p",
                spaces,   
@@ -222,10 +227,10 @@ visit_filter(GeglVisitor * visitor,
 
     LOG_DIRECT("%s    (%s)",
                spaces,   
-               attrs_string->str);
+               data_list_string->str);
   }
 
-  g_string_free(attrs_string, TRUE);
+  g_string_free(data_list_string, TRUE);
   g_free(spaces);
 }
 
@@ -237,7 +242,7 @@ visit_graph(GeglVisitor * visitor,
   GeglDumpVisitor * self = GEGL_DUMP_VISITOR(visitor);
   GeglGraph *prev_graph = visitor->graph;
   gchar * spaces;
-  GString *attrs_string = attributes_string(GEGL_OP(graph));
+  GString *data_list_string = data_string(GEGL_OP(graph));
 
   spaces = make_tabs(self->tabs);
 
@@ -249,9 +254,9 @@ visit_graph(GeglVisitor * visitor,
 
   LOG_DIRECT("%s        (%s)",
              spaces,   
-             attrs_string->str);
+             data_list_string->str);
 
-  g_string_free(attrs_string, TRUE);
+  g_string_free(data_list_string, TRUE);
 
   LOG_DIRECT("%s{", spaces);
   self->tabs++;

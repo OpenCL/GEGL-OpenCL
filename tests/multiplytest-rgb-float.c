@@ -40,7 +40,7 @@ test_multiply_properties(Test *test)
 
     ct_test(test, NULL == gegl_node_get_source(GEGL_NODE(multiply), 0));
     ct_test(test, NULL == gegl_node_get_source(GEGL_NODE(multiply), 1));
-    ct_test(test, 2 == gegl_node_get_num_inputs(GEGL_NODE(multiply)));
+    ct_test(test, 4 == gegl_node_get_num_inputs(GEGL_NODE(multiply)));
     ct_test(test, 1 == gegl_node_get_num_outputs(GEGL_NODE(multiply)));
 
     g_object_unref(multiply);
@@ -48,8 +48,8 @@ test_multiply_properties(Test *test)
 
   {
     GeglOp * multiply = g_object_new (GEGL_TYPE_MULTIPLY, 
-                                      "source0", source0,
-                                      "source1", source1,
+                                      "input", 0, source0,
+                                      "input", 1, source1,
                                       NULL);  
 
     ct_test(test, source0 == (GeglOp*)gegl_node_get_source(GEGL_NODE(multiply), 0));
@@ -70,8 +70,8 @@ test_multiply_apply(Test *test)
     */
 
     GeglOp * multiply = g_object_new (GEGL_TYPE_MULTIPLY, 
-                                      "source0", source0,
-                                      "source1", source1,
+                                      "input", 0, source0,
+                                      "input", 1, source1,
                                       NULL);  
 
     gegl_op_apply(multiply); 
@@ -102,8 +102,8 @@ test_multiply_apply_rgba_float(Test *test)
     */
 
     GeglOp * multiply = g_object_new (GEGL_TYPE_MULTIPLY, 
-                                      "source0", source0_rgba,
-                                      "source1", source1_rgba,
+                                      "input", 0, source0_rgba,
+                                      "input", 1, source1_rgba,
                                       NULL);  
 
     gegl_op_apply(multiply); 
@@ -139,9 +139,9 @@ multiply_test_teardown(Test *test)
 }
 
 Test *
-create_multiply_test_pixel_rgb_float()
+create_multiply_test_rgb_float()
 {
-  Test* t = ct_create("GeglMultiplyTestPixelRgbFloat");
+  Test* t = ct_create("GeglMultiplyTestRgbFloat");
 
   g_assert(ct_addSetUp(t, multiply_test_setup));
   g_assert(ct_addTearDown(t, multiply_test_teardown));

@@ -41,6 +41,7 @@ testgegl_SOURCES = \
    bfsvisitortest.c \
    channelfloatvaluetest.c \
    channeluint8valuetest.c \
+   channelvaluetest.c \
    checktest.c \
    colormodeltest.c \
    colorspacetest.c \
@@ -60,8 +61,8 @@ testgegl_SOURCES = \
    imulttest-rgb-float.c \
    imulttest-rgb-uint8.c \
    imagetest.c \
-   imagedataiteratortest.c \
-   imagedatatest.c \
+   imagebufferiteratortest.c \
+   imagebuffertest.c \
    multiplytest-rgb-float.c \
    multtest-rgb-float.c \
    multtest-rgb-uint8.c \
@@ -90,3 +91,6 @@ testgegl_LDADD = $(LDADDS) -lm
 TESTS = testgegl
 
 EXTRA_PROGRAMS = $(TESTS)
+  
+all:
+

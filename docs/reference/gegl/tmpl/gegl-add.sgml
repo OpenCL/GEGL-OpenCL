@@ -32,12 +32,12 @@ Add two images.
 @constant: 
 
 
-<!-- ##### ARG GeglAdd:constant-float ##### -->
+<!-- ##### ARG GeglAdd:constant-rgb-float ##### -->
 <para>
 
 </para>
 
-<!-- ##### ARG GeglAdd:constant-uint8 ##### -->
+<!-- ##### ARG GeglAdd:constant-rgb-uint8 ##### -->
 <para>
 
 </para>

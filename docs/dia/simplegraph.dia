@@ -198,7 +198,7 @@
           <point val="11.655,11.0113"/>
         </attribute>
         <attribute name="obj_bb">
-          <rectangle val="11.605,10.9613;15.1867,14.5429"/>
+          <rectangle val="11.605,10.9613;15.1867,14.543"/>
         </attribute>
         <attribute name="elem_corner">
           <point val="11.655,11.0113"/>
@@ -227,7 +227,7 @@
           <point val="8.005,11.0113"/>
         </attribute>
         <attribute name="obj_bb">
-          <rectangle val="7.955,10.9613;11.5367,14.5429"/>
+          <rectangle val="7.955,10.9613;11.5367,14.543"/>
         </attribute>
         <attribute name="elem_corner">
           <point val="8.005,11.0113"/>
@@ -394,7 +394,7 @@
           <point val="7.955,15.2613"/>
         </attribute>
         <attribute name="obj_bb">
-          <rectangle val="7.905,15.2113;11.4867,18.7929"/>
+          <rectangle val="7.905,15.2113;11.4867,18.793"/>
         </attribute>
         <attribute name="elem_corner">
           <point val="7.955,15.2613"/>
@@ -423,7 +423,7 @@
           <point val="7.955,16.4613"/>
         </attribute>
         <attribute name="obj_bb">
-          <rectangle val="7.905,16.4113;11.4867,19.9929"/>
+          <rectangle val="7.905,16.4113;11.4867,19.993"/>
         </attribute>
         <attribute name="elem_corner">
           <point val="7.955,16.4613"/>
@@ -452,7 +452,7 @@
           <point val="11.605,15.8613"/>
         </attribute>
         <attribute name="obj_bb">
-          <rectangle val="11.555,15.8113;15.1367,19.3929"/>
+          <rectangle val="11.555,15.8113;15.1367,19.393"/>
         </attribute>
         <attribute name="elem_corner">
           <point val="11.605,15.8613"/>
@@ -619,7 +619,7 @@
           <point val="15.35,13.0513"/>
         </attribute>
         <attribute name="obj_bb">
-          <rectangle val="15.3,13.0013;18.8817,16.5829"/>
+          <rectangle val="15.3,13.0013;18.8817,16.583"/>
         </attribute>
         <attribute name="elem_corner">
           <point val="15.35,13.0513"/>
@@ -648,7 +648,7 @@
           <point val="15.35,14.2513"/>
         </attribute>
         <attribute name="obj_bb">
-          <rectangle val="15.3,14.2013;18.8817,17.7829"/>
+          <rectangle val="15.3,14.2013;18.8817,17.783"/>
         </attribute>
         <attribute name="elem_corner">
           <point val="15.35,14.2513"/>
@@ -677,7 +677,7 @@
           <point val="19,13.6513"/>
         </attribute>
         <attribute name="obj_bb">
-          <rectangle val="18.95,13.6013;22.5317,17.1829"/>
+          <rectangle val="18.95,13.6013;22.5317,17.183"/>
         </attribute>
         <attribute name="elem_corner">
           <point val="19,13.6513"/>
@@ -844,7 +844,7 @@
           <point val="4.155,12.3513"/>
         </attribute>
         <attribute name="obj_bb">
-          <rectangle val="4.105,12.3013;7.68668,15.8829"/>
+          <rectangle val="4.105,12.3013;7.68668,15.883"/>
         </attribute>
         <attribute name="elem_corner">
           <point val="4.155,12.3513"/>
@@ -1011,7 +1011,7 @@
           <point val="4.205,16.9013"/>
         </attribute>
         <attribute name="obj_bb">
-          <rectangle val="4.155,16.8513;7.73668,20.4329"/>
+          <rectangle val="4.155,16.8513;7.73668,20.433"/>
         </attribute>
         <attribute name="elem_corner">
           <point val="4.205,16.9013"/>
@@ -1050,9 +1050,6 @@
       <attribute name="numcp">
         <int val="1"/>
       </attribute>
-      <attribute name="line_width">
-        <real val="0.1"/>
-      </attribute>
       <attribute name="end_arrow">
         <enum val="1"/>
       </attribute>
@@ -1080,9 +1077,6 @@
       </attribute>
       <attribute name="numcp">
         <int val="1"/>
-      </attribute>
-      <attribute name="line_width">
-        <real val="0.1"/>
       </attribute>
       <attribute name="end_arrow">
         <enum val="1"/>
@@ -1112,9 +1106,6 @@
       <attribute name="numcp">
         <int val="1"/>
       </attribute>
-      <attribute name="line_width">
-        <real val="0.1"/>
-      </attribute>
       <attribute name="end_arrow">
         <enum val="1"/>
       </attribute>
@@ -1142,9 +1133,6 @@
       </attribute>
       <attribute name="numcp">
         <int val="1"/>
-      </attribute>
-      <attribute name="line_width">
-        <real val="0.1"/>
       </attribute>
       <attribute name="end_arrow">
         <enum val="1"/>
@@ -1174,9 +1162,6 @@
       <attribute name="numcp">
         <int val="1"/>
       </attribute>
-      <attribute name="line_width">
-        <real val="0.1"/>
-      </attribute>
       <attribute name="end_arrow">
         <enum val="1"/>
       </attribute>
@@ -1193,15 +1178,15 @@
     </object>
     <object type="Standard - Text" version="0" id="O50">
       <attribute name="obj_pos">
-        <point val="17.56,15.6713"/>
+        <point val="17.81,15.6713"/>
       </attribute>
       <attribute name="obj_bb">
-        <rectangle val="17.56,14.8713;20.6082,15.8713"/>
+        <rectangle val="17.81,14.8713;20.2825,15.8713"/>
       </attribute>
       <attribute name="text">
         <composite type="text">
           <attribute name="string">
-            <string>#Comp#</string>
+            <string>#Over#</string>
           </attribute>
           <attribute name="font">
             <font name="Helvetica-Bold"/>
@@ -1210,7 +1195,7 @@
             <real val="1"/>
           </attribute>
           <attribute name="pos">
-            <point val="17.56,15.6713"/>
+            <point val="17.81,15.6713"/>
           </attribute>
           <attribute name="color">
             <color val="#000000"/>
@@ -1256,12 +1241,12 @@
         <point val="10.65,17.8113"/>
       </attribute>
       <attribute name="obj_bb">
-        <rectangle val="10.65,17.0113;12.8801,18.0113"/>
+        <rectangle val="10.65,17.0113;12.7892,18.0113"/>
       </attribute>
       <attribute name="text">
         <composite type="text">
           <attribute name="string">
-            <string>#Mult#</string>
+            <string>#Max#</string>
           </attribute>
           <attribute name="font">
             <font name="Helvetica-Bold"/>

@@ -1,6 +1,6 @@
 #include "gegl-max.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-image-data-iterator.h"
+#include "gegl-image-buffer-iterator.h"
 #include "gegl-utils.h"
 
 static void class_init (GeglMaxClass * klass);
@@ -8,7 +8,7 @@ static void init (GeglMax * self, GeglMaxClass * klass);
 
 static GeglScanlineFunc get_scanline_func(GeglBinary * binary, GeglColorSpaceType space, GeglDataSpaceType type);
 
-static void a_max_b_float (GeglFilter * filter, GeglImageDataIterator ** iters, gint width);
+static void a_max_b_float (GeglFilter * filter, GeglImageBufferIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -73,22 +73,22 @@ get_scanline_func(GeglBinary * binary,
 
 static void                                                            
 a_max_b_float (GeglFilter * filter,              
-               GeglImageDataIterator ** iters,        
+               GeglImageBufferIterator ** iters,        
                gint width)                       
 {                                                                       
   GeglBinary * binary = GEGL_BINARY(filter);
 
-  gfloat **d = (gfloat**)gegl_image_data_iterator_color_channels(iters[0]);
-  gfloat *da = (gfloat*)gegl_image_data_iterator_alpha_channel(iters[0]);
-  gint d_color_chans = gegl_image_data_iterator_get_num_colors(iters[0]);
+  gfloat **d = (gfloat**)gegl_image_buffer_iterator_color_channels(iters[0]);
+  gfloat *da = (gfloat*)gegl_image_buffer_iterator_alpha_channel(iters[0]);
+  gint d_color_chans = gegl_image_buffer_iterator_get_num_colors(iters[0]);
 
-  gfloat **b = (gfloat**)gegl_image_data_iterator_color_channels(iters[1]);
-  gfloat *ba = (gfloat*)gegl_image_data_iterator_alpha_channel(iters[1]);
-  gint b_color_chans = gegl_image_data_iterator_get_num_colors(iters[1]);
+  gfloat **b = (gfloat**)gegl_image_buffer_iterator_color_channels(iters[1]);
+  gfloat *ba = (gfloat*)gegl_image_buffer_iterator_alpha_channel(iters[1]);
+  gint b_color_chans = gegl_image_buffer_iterator_get_num_colors(iters[1]);
 
-  gfloat **a = (gfloat**)gegl_image_data_iterator_color_channels(iters[2]);
-  gfloat *aa = (gfloat*)gegl_image_data_iterator_alpha_channel(iters[2]);
-  gint a_color_chans = gegl_image_data_iterator_get_num_colors(iters[2]);
+  gfloat **a = (gfloat**)gegl_image_buffer_iterator_color_channels(iters[2]);
+  gfloat *aa = (gfloat*)gegl_image_buffer_iterator_alpha_channel(iters[2]);
+  gint a_color_chans = gegl_image_buffer_iterator_get_num_colors(iters[2]);
 
   gint alpha_mask = 0x0;
   gfloat fade = binary->fade;

@@ -1,9 +1,10 @@
 #include "gegl-blend.h"
-#include "gegl-attributes.h"
+#include "gegl-data.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
-#include "gegl-image-data.h"
-#include "gegl-image-data-iterator.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-buffer-iterator.h"
+#include "gegl-scalar-data.h"
 #include "gegl-utils.h"
 
 enum
@@ -52,12 +53,24 @@ static void
 class_init (GeglBlendClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
+  /* op properties */
+  gegl_op_class_install_input_data_property(op_class, 
+                                       g_param_spec_float ("opacity",
+                                                           "Opacity",
+                                                           "Opacity of this blend.",
+                                                           0.0, 
+                                                           1.0,
+                                                           1.0,
+                                                           G_PARAM_PRIVATE)); 
+
+  /* regular properties */
   g_object_class_install_property (gobject_class, PROP_OPACITY,
                                    g_param_spec_float ("opacity",
                                                        "Opacity",
@@ -73,6 +86,9 @@ static void
 init (GeglBlend * self, 
       GeglBlendClass * klass)
 {
+  /* Opacity input. */
+  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "opacity", 3);
+
   self->opacity = 1.0;
 }
 
@@ -89,6 +105,7 @@ get_property (GObject      *gobject,
       g_value_set_float(value, gegl_blend_get_opacity(blend));  
       break;
     default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
   }
 }
@@ -106,6 +123,7 @@ set_property (GObject      *gobject,
       gegl_blend_set_opacity(blend, g_value_get_float(value));  
       break;
     default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, prop_id, pspec);
       break;
   }
 }

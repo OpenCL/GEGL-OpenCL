@@ -1,0 +1,42 @@
+<!-- ##### SECTION Title ##### -->
+GeglPixelData
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_pixel_data_get_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_pixel_data_set_color_model ##### -->
+<para>
+
+</para>
+
+@self: 
+@color_model: 
+
+

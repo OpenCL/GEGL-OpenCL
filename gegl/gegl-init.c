@@ -3,7 +3,7 @@
 #include "gegl-color-space-rgb.h"
 #include "gegl-color-space-gray.h"
 #include "gegl-data-space-float.h"
-#include "gegl-data-space-u8.h"
+#include "gegl-data-space-uint8.h"
 #include "gegl-component-color-model.h"
 #include "gegl-param-specs.h"
 #include "gegl-value-types.h"
@@ -40,13 +40,13 @@ void
 gegl_init_data_spaces(void)
 {
   GeglDataSpace * flt = g_object_new(GEGL_TYPE_DATA_SPACE_FLOAT, NULL);
-  GeglDataSpace * u8 = g_object_new(GEGL_TYPE_DATA_SPACE_U8, NULL);
+  GeglDataSpace * uint8 = g_object_new(GEGL_TYPE_DATA_SPACE_UINT8, NULL);
 
   gegl_data_space_register(flt);
-  gegl_data_space_register(u8);
+  gegl_data_space_register(uint8);
 
   g_object_unref (flt); 
-  g_object_unref (u8); 
+  g_object_unref (uint8); 
 }
 
 static
@@ -54,10 +54,10 @@ void
 gegl_free_data_spaces(void)
 {
   GeglDataSpace * flt = gegl_data_space_instance("float");
-  GeglDataSpace * u8 = gegl_data_space_instance("u8");
+  GeglDataSpace * uint8 = gegl_data_space_instance("uint8");
 
   g_object_unref (flt); 
-  g_object_unref (u8); 
+  g_object_unref (uint8); 
 }
 
 static
@@ -67,9 +67,9 @@ gegl_init_color_models(void)
   GeglColorSpace * rgb = gegl_color_space_instance("rgb");
   GeglColorSpace * gray = gegl_color_space_instance("gray");
   GeglDataSpace * flt = gegl_data_space_instance("float");
-  GeglDataSpace * u8 = gegl_data_space_instance("u8");
+  GeglDataSpace * uint8 = gegl_data_space_instance("uint8");
 
-  GeglColorModel * pixel_rgb_float = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
+  GeglColorModel * rgb_float = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                           "color_space", rgb,
                                           "data_space", flt,
                                           NULL);
@@ -91,71 +91,70 @@ gegl_init_color_models(void)
                                             "has_alpha", TRUE,
                                             NULL);
 
-  GeglColorModel * rgb_u8 = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
+  GeglColorModel * rgb_uint8 = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                        "color_space", rgb,
-                                       "data_space", u8,
+                                       "data_space", uint8,
                                        NULL);
 
-  GeglColorModel * rgba_u8 = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
+  GeglColorModel * rgba_uint8 = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                         "color_space", rgb,
-                                        "data_space", u8,
+                                        "data_space", uint8,
                                         "has_alpha", TRUE,
                                         NULL);
 
-  GeglColorModel * gray_u8 = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
+  GeglColorModel * gray_uint8 = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                         "color_space", gray,
-                                        "data_space", u8,
+                                        "data_space", uint8,
                                         NULL);
 
-  GeglColorModel * graya_u8 = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
+  GeglColorModel * graya_uint8 = g_object_new(GEGL_TYPE_COMPONENT_COLOR_MODEL, 
                                          "color_space", gray,
-                                         "data_space", u8,
+                                         "data_space", uint8,
                                          "has_alpha", TRUE,
                                          NULL);
 
-  gegl_color_model_register(pixel_rgb_float);
+  gegl_color_model_register(rgb_float);
   gegl_color_model_register(rgba_float);
   gegl_color_model_register(gray_float);
   gegl_color_model_register(graya_float);
-  gegl_color_model_register(rgb_u8);
-  gegl_color_model_register(rgba_u8);
-  gegl_color_model_register(gray_u8);
-  gegl_color_model_register(graya_u8);
+  gegl_color_model_register(rgb_uint8);
+  gegl_color_model_register(rgba_uint8);
+  gegl_color_model_register(gray_uint8);
+  gegl_color_model_register(graya_uint8);
 
-  g_object_unref (pixel_rgb_float); 
+  g_object_unref (rgb_float); 
   g_object_unref (rgba_float); 
   g_object_unref (gray_float); 
   g_object_unref (graya_float); 
-  g_object_unref (rgb_u8); 
-  g_object_unref (rgba_u8); 
-  g_object_unref (gray_u8); 
-  g_object_unref (graya_u8); 
+  g_object_unref (rgb_uint8); 
+  g_object_unref (rgba_uint8); 
+  g_object_unref (gray_uint8); 
+  g_object_unref (graya_uint8); 
 }
 
 static
 void
 gegl_free_color_models(void)
 {
-  GeglColorModel * pixel_rgb_float = gegl_color_model_instance("rgb-float");
+  GeglColorModel * rgb_float = gegl_color_model_instance("rgb-float");
   GeglColorModel * rgba_float = gegl_color_model_instance("rgba-float");
   GeglColorModel * gray_float = gegl_color_model_instance("gray-float");
   GeglColorModel * graya_float = gegl_color_model_instance("graya-float");
-  GeglColorModel * rgb_u8 = gegl_color_model_instance("rgb-u8");
-  GeglColorModel * rgba_u8 = gegl_color_model_instance("rgba-u8");
-  GeglColorModel * gray_u8 = gegl_color_model_instance("gray-u8");
-  GeglColorModel * graya_u8 = gegl_color_model_instance("graya-u8");
+  GeglColorModel * rgb_uint8 = gegl_color_model_instance("rgb-uint8");
+  GeglColorModel * rgba_uint8 = gegl_color_model_instance("rgba-uint8");
+  GeglColorModel * gray_uint8 = gegl_color_model_instance("gray-uint8");
+  GeglColorModel * graya_uint8 = gegl_color_model_instance("graya-uint8");
 
-  g_object_unref (pixel_rgb_float); 
+  g_object_unref (rgb_float); 
   g_object_unref (rgba_float); 
   g_object_unref (gray_float); 
   g_object_unref (graya_float); 
-  g_object_unref (rgb_u8); 
-  g_object_unref (rgba_u8); 
-  g_object_unref (gray_u8); 
-  g_object_unref (graya_u8); 
+  g_object_unref (rgb_uint8); 
+  g_object_unref (rgba_uint8); 
+  g_object_unref (gray_uint8); 
+  g_object_unref (graya_uint8); 
 }
 
-GType GEGL_TYPE_SCALAR = 0;
 GType GEGL_TYPE_CHANNEL = 0;
 GType GEGL_TYPE_PIXEL = 0;
 
@@ -177,19 +176,6 @@ gegl_fundamental_types_init(void)
   };
   const GTypeFundamentalInfo finfo = { G_TYPE_FLAG_DERIVABLE, };
   GType type;
-
-#if 0
-
-  g_assert (GEGL_TYPE_SCALAR == 0);
-  GEGL_TYPE_SCALAR = G_TYPE_MAKE_FUNDAMENTAL(49);
-  type = g_type_register_fundamental (GEGL_TYPE_SCALAR, 
-                                      "GeglScalar", 
-                                      &info, 
-                                      &finfo, 
-                                      G_TYPE_FLAG_ABSTRACT);
-
-  g_assert (type == GEGL_TYPE_SCALAR);
-#endif
 
   g_assert (GEGL_TYPE_CHANNEL == 0);
   GEGL_TYPE_CHANNEL = G_TYPE_MAKE_FUNDAMENTAL(49);
@@ -215,6 +201,7 @@ gegl_fundamental_types_init(void)
 static void
 gegl_value_types_init (void)
 {
+  gegl_input_value_types_init();
   gegl_channel_value_types_init();
   gegl_pixel_value_types_init();
 }
@@ -229,9 +216,10 @@ gegl_value_transform_init(void)
 static void
 gegl_param_spec_types_init (void)
 {
+  gegl_input_param_spec_types_init();
   gegl_channel_param_spec_types_init();
   gegl_pixel_param_spec_types_init();
-  gegl_image_data_param_spec_types_init();
+  gegl_image_buffer_param_spec_types_init();
 }
 
 static

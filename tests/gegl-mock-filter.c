@@ -1,6 +1,8 @@
 #include "gegl-mock-filter.h"
 #include "gegl-param-specs.h"
 #include "gegl-value-types.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-buffer-data.h"
 
 enum
 {
@@ -56,11 +58,20 @@ static void
 class_init (GeglMockFilterClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
+
   parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
   gobject_class->finalize = finalize;
+
+  /* op properties */
+  gegl_op_class_install_output_data_property(op_class, 
+                                gegl_param_spec_image_buffer("output-image", 
+                                                            "OutputImage",
+                                                            "Image output",
+                                                            G_PARAM_PRIVATE));
 
   g_object_class_install_property (gobject_class, PROP_GLIB_FLOAT,
                                    g_param_spec_float ("glib-float",
@@ -134,8 +145,7 @@ static void
 init (GeglMockFilter * self, 
       GeglMockFilterClass * klass)
 {
-  g_object_set(self, "num_outputs", 0, NULL);
-  g_object_set(self, "num_inputs", 0, NULL);
+  gegl_op_add_output(GEGL_OP(self), GEGL_TYPE_IMAGE_BUFFER_DATA, "output-image", 0);
 
   self->channel = g_new0(GValue, 1); 
   g_value_init(self->channel, GEGL_TYPE_CHANNEL_FLOAT);

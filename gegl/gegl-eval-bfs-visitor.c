@@ -1,8 +1,11 @@
 #include "gegl-eval-bfs-visitor.h"
 #include "gegl-filter.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-buffer-data.h"
 #include "gegl-node.h"
 #include "gegl-graph.h"
-#include "gegl-attributes.h"
+#include "gegl-data.h"
+#include "gegl-param-specs.h"
 #include "gegl-value-types.h"
 
 static void class_init (GeglEvalBfsVisitorClass * klass);
@@ -78,35 +81,43 @@ compute_need_rects(GeglEvalBfsVisitor * self,
   gint num_inputs = gegl_node_get_num_inputs(GEGL_NODE(filter)); 
   gint i; 
 
-  GList * input_attributes_list = 
-    gegl_visitor_get_input_attributes(visitor, GEGL_NODE(filter));
+  GList * input_data_list = 
+    gegl_visitor_collect_data_list(visitor, GEGL_NODE(filter));
 
-  /* Warning: using the 0th output attributes only */
-  GeglAttributes *attributes = 
-    gegl_op_get_attributes(GEGL_OP(filter));
+  GeglData *data = 
+    gegl_op_get_output_data(GEGL_OP(filter), 0);
 
   for(i = 0 ; i < num_inputs; i++) 
     {
-      GeglRect need_rect;
-      GeglRect input_need_rect;
+      GeglData *input_data = 
+        (GeglData*)g_list_nth_data(input_data_list, i); 
+      
+      if(GEGL_IS_IMAGE_BUFFER_DATA(input_data))
+        {
+          GeglRect need_rect;
+          GeglRect input_need_rect;
 
-      GeglAttributes *input_attributes = 
-        (GeglAttributes*)g_list_nth_data(input_attributes_list, i); 
+          GeglImageBufferData *image_buffer_data = GEGL_IMAGE_BUFFER_DATA(data);
+          GeglImageBufferData *input_image_buffer_data = GEGL_IMAGE_BUFFER_DATA(input_data);
 
-      gegl_attributes_get_rect(attributes, &need_rect);
-      gegl_attributes_get_rect(input_attributes, &input_need_rect);
+          gegl_rect_copy(&need_rect, &image_buffer_data->rect);
+          gegl_rect_copy(&input_need_rect, &input_image_buffer_data->rect);
 
-      /* Compute the need rect of this input */
-      gegl_filter_compute_need_rect(filter, &input_need_rect, &need_rect, i); 
+          /* Compute the need rect of this input */
+          gegl_filter_compute_need_rect(filter, &input_need_rect, &need_rect, i); 
 
-      /* Store it in the inputs attributes */
-      gegl_attributes_set_rect(input_attributes, &input_need_rect);
+          /* Store it in the inputs data */
+
+          gegl_rect_copy(&input_image_buffer_data->rect, &input_need_rect);
+        }
     }
+
+  g_list_free(input_data_list);
 }
 
 static void      
 visit_filter(GeglVisitor * visitor,
-         GeglFilter *filter)
+             GeglFilter *filter)
 {
   GeglEvalBfsVisitor *self = GEGL_EVAL_BFS_VISITOR(visitor); 
 

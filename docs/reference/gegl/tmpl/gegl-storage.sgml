@@ -14,6 +14,12 @@ GeglStorage
 
 </para>
 
+<!-- ##### STRUCT GeglDataBuffer ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### FUNCTION gegl_storage_data_type_bytes ##### -->
 <para>
 

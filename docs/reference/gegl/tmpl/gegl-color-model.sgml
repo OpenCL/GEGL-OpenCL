@@ -14,6 +14,24 @@ GeglColorModel
 
 </para>
 
+<!-- ##### STRUCT GeglColorSpace ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglDataSpace ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglStorage ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### FUNCTION gegl_color_model_register ##### -->
 <para>
 

@@ -1,4 +1,4 @@
-#include "gegl-data-space-u8.h"
+#include "gegl-data-space-uint8.h"
 #include "gegl-object.h"
 #include "gegl-value-types.h"
 
@@ -12,7 +12,7 @@ static void convert_value_from_float (GeglDataSpace * data_space, GValue *dest, 
 static gpointer parent_class = NULL;
 
 GType
-gegl_data_space_u8_get_type (void)
+gegl_data_space_uint8_get_type (void)
 {
   static GType type = 0;
 
@@ -57,8 +57,8 @@ init (GeglDataSpaceU8 * self,
       GeglDataSpaceU8Class * klass)
 {
   GeglDataSpace *data_space = GEGL_DATA_SPACE(self);
-  data_space->data_space_type = GEGL_DATA_SPACE_U8;
-  data_space->name = g_strdup("u8");
+  data_space->data_space_type = GEGL_DATA_SPACE_UINT8;
+  data_space->name = g_strdup("uint8");
   data_space->is_channel_data = TRUE;
   data_space->bits = 8;
 }

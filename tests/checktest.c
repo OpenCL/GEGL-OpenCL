@@ -37,11 +37,11 @@ test_check_pixel_rgb_float(Test *test)
 
     /* This is what testutils_check_pixel_rgb_float does */
     {
-      GeglImageData * image_data = gegl_image_get_image_data(GEGL_IMAGE(constant));
+      GeglImageBuffer * image_buffer = gegl_image_get_image_buffer(GEGL_IMAGE(constant));
       GeglOp * check = g_object_new(GEGL_TYPE_CHECK, 
                                     "pixel-rgb-float", .1, .2, .3, 
                                     "x", 0, "y", 0,
-                                    "image_data", image_data,
+                                    "image_buffer", image_buffer,
                                     NULL);
       gegl_op_apply(check); 
 
@@ -69,11 +69,11 @@ test_check_rgb_uint8(Test *test)
 
     /* This is what testutils_check_rgb_uint8 does */
     {
-      GeglImageData * image_data = gegl_image_get_image_data(GEGL_IMAGE(constant));
+      GeglImageBuffer * image_buffer = gegl_image_get_image_buffer(GEGL_IMAGE(constant));
       GeglOp * check = g_object_new(GEGL_TYPE_CHECK, 
                                     "pixel-rgb-uint8", 1, 2, 3, 
                                     "x", 0, "y", 0,
-                                    "image_data", image_data,
+                                    "image_buffer", image_buffer,
                                     NULL);
       gegl_op_apply(check); 
 

@@ -1,13 +1,13 @@
 #include    "gegl-channel-param-specs.h"
-#include    "gegl-param-specs.h"
-#include    "gegl-value-types.h"
+#include    "gegl-channel-value-types.h"
 #include    "gegl-utils.h"
-#include    "gegl-image-data.h"
+#include    "gegl-image-buffer.h"
 #include    "gegl-color-model.h"
 #include    "gegl-color-model.h"
 #include    "gegl-color-space.h"
 #include    "gegl-data-space.h"
 
+GType GEGL_TYPE_PARAM_CHANNEL = 0;
 GType GEGL_TYPE_PARAM_CHANNEL_UINT8 = 0;
 GType GEGL_TYPE_PARAM_CHANNEL_FLOAT = 0;
 
@@ -53,9 +53,36 @@ param_spec_channel_float_validate (GParamSpec *pspec,
   return value->data[1].v_float != oval;
 }
 
+static gboolean
+param_spec_channel_validate (GParamSpec *pspec,
+                             GValue     *value)
+{
+  return FALSE;
+}
+
 void
 gegl_channel_param_spec_types_init (void)
 {
+  {
+    static GParamSpecTypeInfo pspec_info = 
+      {
+        sizeof (GeglParamSpecChannel),        /* instance_size */
+        16,                                   /* n_preallocs */
+        NULL,                                 /* instance_init */
+        0x0,                                  /* value_type */
+        NULL,                                 /* finalize */
+        NULL,                                 /* value_set_default */
+        param_spec_channel_validate,          /* value_validate */
+        NULL,                                 /* values_cmp */
+      };
+
+    pspec_info.value_type = GEGL_TYPE_CHANNEL;
+    GEGL_TYPE_PARAM_CHANNEL = 
+      g_param_type_register_static ("GeglParamChannel", &pspec_info);
+    g_assert (GEGL_TYPE_PARAM_CHANNEL == 
+              g_type_from_name("GeglParamChannel"));
+  }
+
   {
     static GParamSpecTypeInfo pspec_info = 
       {
@@ -95,6 +122,20 @@ gegl_channel_param_spec_types_init (void)
     g_assert (GEGL_TYPE_PARAM_CHANNEL_FLOAT == 
               g_type_from_name("GeglParamChannelFloat"));
   }
+}
+
+GParamSpec*
+gegl_param_spec_channel (const gchar *name,
+                         const gchar *nick,
+                         const gchar *blurb,
+                         GParamFlags  flags)
+{
+  GeglParamSpecChannel *spec;
+
+  spec = g_param_spec_internal (GEGL_TYPE_PARAM_CHANNEL, 
+                                 name, nick, blurb, flags);
+
+  return G_PARAM_SPEC (spec);
 }
 
 GParamSpec*

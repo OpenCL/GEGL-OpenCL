@@ -1,0 +1,48 @@
+<!-- ##### SECTION Title ##### -->
+gegl-input-param-specs
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### VARIABLE GEGL_TYPE_PARAM_INPUT ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglParamSpecInput ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+<!-- ##### FUNCTION gegl_param_spec_input ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@flags: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_input_param_spec_types_init ##### -->
+<para>
+
+</para>
+
+
+

@@ -34,13 +34,13 @@ test_mult_g_object_properties(Test *test)
 {
   {
     GeglMult * mult = g_object_new (GEGL_TYPE_MULT, 
-                                    "source", source,
+                                    "input", 0, source,
                                     "mult0", MULT0, 
                                     "mult1", MULT1, 
                                     "mult2", MULT2, 
                                     NULL);  
 
-    ct_test(test, 1 == gegl_node_get_num_inputs(GEGL_NODE(mult)));
+    ct_test(test, 5 == gegl_node_get_num_inputs(GEGL_NODE(mult)));
     ct_test(test, source == (GeglOp*)gegl_node_get_source(GEGL_NODE(mult), 0));
 
     g_object_unref(mult);
@@ -49,7 +49,7 @@ test_mult_g_object_properties(Test *test)
   {
     gfloat mult0, mult1, mult2;
     GeglMult * mult = g_object_new (GEGL_TYPE_MULT, 
-                                    "source", source,
+                                    "input", 0, source,
                                     "mult0", MULT0, 
                                     "mult1", MULT1, 
                                     "mult2", MULT2, 
@@ -74,7 +74,7 @@ test_mult_apply(Test *test)
 {
   {
     GeglOp *mult = g_object_new(GEGL_TYPE_MULT,
-                                "source", source,
+                                "input", 0, source,
                                 "mult0", MULT0, 
                                 "mult1", MULT1, 
                                 "mult2", MULT2,
@@ -90,14 +90,14 @@ test_mult_apply(Test *test)
 
   {
     GeglOp *mult1 = g_object_new(GEGL_TYPE_MULT,
-                                 "source", source,
+                                 "input", 0, source,
                                  "mult0", MULT0, 
                                  "mult1", MULT1, 
                                  "mult2", MULT2,
                                  NULL);
 
     GeglOp *mult2 = g_object_new(GEGL_TYPE_MULT,
-                                 "source", mult1,
+                                 "input", 0, mult1,
                                  "mult0", MULT0, 
                                  "mult1", MULT1, 
                                  "mult2", MULT2,
@@ -131,9 +131,9 @@ mult_test_teardown(Test *test)
 }
 
 Test *
-create_mult_test_pixel_rgb_float()
+create_mult_test_rgb_float()
 {
-  Test* t = ct_create("GeglMultTestPixelRgbFloat");
+  Test* t = ct_create("GeglMultTestRgbFloat");
 
   g_assert(ct_addSetUp(t, mult_test_setup));
   g_assert(ct_addTearDown(t, mult_test_teardown));

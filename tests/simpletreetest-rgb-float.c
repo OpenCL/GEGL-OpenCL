@@ -34,13 +34,13 @@ test_simple_tree_apply(Test *t)
                                  NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
-                                "source", color1,
+                                "input", 0, color1,
                                 "multiplier", .5,
                                 NULL); 
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD, 
-                                "source0", fade,
-                                "source1", color2,
+                                "input", 0, fade,
+                                "input", 1, color2,
                                 NULL);  
 
   gegl_op_apply(iadd); 
@@ -88,7 +88,7 @@ test_simple_tree_apply_with_prints(Test *t)
                                  NULL); 
 
   GeglOp * print1 = g_object_new(GEGL_TYPE_PRINT,
-                                 "source", color1,
+                                 "input", 0, color1,
                                  NULL);
 
   GeglOp * color2 = g_object_new(GEGL_TYPE_COLOR, 
@@ -98,17 +98,17 @@ test_simple_tree_apply_with_prints(Test *t)
                                  NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
-                                "source", print1,
+                                "input", 0, print1,
                                 "multiplier", .5,
                                 NULL); 
 
   GeglOp * print2 = g_object_new(GEGL_TYPE_PRINT,
-                                 "source", fade,
+                                 "input", 0, fade,
                                  NULL);
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD, 
-                                "source0", print2,
-                                "source1", color2,
+                                "input", 0, print2,
+                                "input", 1, color2,
                                 NULL);  
 
   gegl_op_apply(iadd); 
@@ -149,18 +149,18 @@ test_simple_diamond_apply(Test *t)
                                 NULL); 
 
   GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
-                                 "source", color,
+                                 "input", 0, color,
                                  "multiplier", .5,
                                  NULL); 
 
   GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
-                                 "source", color,
+                                 "input", 0, color,
                                  "multiplier", 2.0,
                                  NULL); 
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD, 
-                                "source0", fade1,
-                                "source1", fade2,
+                                "input", 0, fade1,
+                                "input", 1, fade2,
                                 NULL);  
 
   gegl_op_apply(iadd); 
@@ -198,12 +198,12 @@ test_simple_chain_apply(Test *t)
                                 NULL); 
 
   GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
-                                 "source", color,
+                                 "input", 0, color,
                                  "multiplier", .5,
                                  NULL); 
 
   GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
-                                 "source", fade1,
+                                 "input", 0, fade1,
                                  "multiplier", .5,
                                  NULL); 
 
@@ -227,9 +227,9 @@ simple_tree_test_teardown(Test *test)
 }
 
 Test *
-create_simple_tree_test_pixel_rgb_float()
+create_simple_tree_test_rgb_float()
 {
-  Test* t = ct_create("GeglSimpleTreeTestPixelRgbFloat");
+  Test* t = ct_create("GeglSimpleTreeTestRgbFloat");
 
   g_assert(ct_addSetUp(t, simple_tree_test_setup));
   g_assert(ct_addTearDown(t, simple_tree_test_teardown));

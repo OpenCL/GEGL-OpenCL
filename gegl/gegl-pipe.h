@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gegl-filter.h"
+#include "gegl-image.h"
 #include "gegl-scanline-processor.h"
 
 #define GEGL_TYPE_PIPE               (gegl_pipe_get_type ())
@@ -21,7 +21,7 @@ typedef struct _GeglPipe GeglPipe;
 #endif
 struct _GeglPipe 
 {
-    GeglFilter filter;
+    GeglImage image;
 
     /*< private >*/
     GeglScanlineProcessor * scanline_processor;
@@ -30,7 +30,7 @@ struct _GeglPipe
 typedef struct _GeglPipeClass GeglPipeClass;
 struct _GeglPipeClass 
 {
-    GeglFilterClass filter_class;
+    GeglImageClass image_class;
 
     GeglScanlineFunc (*get_scanline_func)   (GeglPipe *self,
                                              GeglColorSpaceType space,

@@ -5,7 +5,7 @@
 #include "testutils.h"
 #include <string.h>
 
-static GeglImageData * image_data;
+static GeglImageBuffer * image_buffer;
 
 #define TILE_WIDTH 2 
 #define TILE_HEIGHT 2 
@@ -20,44 +20,44 @@ static GeglRect tile_rect = {TILE_X, TILE_Y, TILE_WIDTH, TILE_HEIGHT};
 static GeglRect iter_area = {ITER_AREA_X,ITER_AREA_Y,ITER_AREA_WIDTH,ITER_AREA_HEIGHT};
 
 static void
-test_image_data_iterator_g_object_new(Test *test)
+test_image_buffer_iterator_g_object_new(Test *test)
 {
   {
-    GeglImageDataIterator * iterator = g_object_new (GEGL_TYPE_IMAGE_DATA_ITERATOR, 
-                                                     "image_data", image_data,
+    GeglImageBufferIterator * iterator = g_object_new (GEGL_TYPE_IMAGE_BUFFER_ITERATOR, 
+                                                     "image_buffer", image_buffer,
                                                      "area", &iter_area,
                                                      NULL);  
 
     ct_test(test, iterator != NULL);
-    ct_test(test, GEGL_IS_IMAGE_DATA_ITERATOR(iterator));
-    ct_test(test, g_type_parent(GEGL_TYPE_IMAGE_DATA_ITERATOR) == GEGL_TYPE_OBJECT);
-    ct_test(test, !strcmp("GeglImageDataIterator", g_type_name(GEGL_TYPE_IMAGE_DATA_ITERATOR)));
+    ct_test(test, GEGL_IS_IMAGE_BUFFER_ITERATOR(iterator));
+    ct_test(test, g_type_parent(GEGL_TYPE_IMAGE_BUFFER_ITERATOR) == GEGL_TYPE_OBJECT);
+    ct_test(test, !strcmp("GeglImageBufferIterator", g_type_name(GEGL_TYPE_IMAGE_BUFFER_ITERATOR)));
 
     g_object_unref(iterator);
   }
 }
 
 static void
-test_image_data_iterator_properties(Test *test)
+test_image_buffer_iterator_properties(Test *test)
 {
   {
     GeglRect area;
     gpointer * color_chans;
     GeglColorModel *rgba_float = gegl_color_model_instance("rgba-float");
-    GeglImageDataIterator * iterator = g_object_new (GEGL_TYPE_IMAGE_DATA_ITERATOR, 
-                                                     "image_data", image_data,
+    GeglImageBufferIterator * iterator = g_object_new (GEGL_TYPE_IMAGE_BUFFER_ITERATOR, 
+                                                     "image_buffer", image_buffer,
                                                      "area", &iter_area,
                                                      NULL);  
 
-    ct_test(test, image_data == gegl_image_data_iterator_get_image_data(iterator));
-    ct_test(test, rgba_float == gegl_image_data_iterator_get_color_model(iterator));
-    ct_test(test, 3 == gegl_image_data_iterator_get_num_colors(iterator));
-    ct_test(test, NULL != gegl_image_data_iterator_alpha_channel(iterator));
-    color_chans = gegl_image_data_iterator_color_channels(iterator);
+    ct_test(test, image_buffer == gegl_image_buffer_iterator_get_image_buffer(iterator));
+    ct_test(test, rgba_float == gegl_image_buffer_iterator_get_color_model(iterator));
+    ct_test(test, 3 == gegl_image_buffer_iterator_get_num_colors(iterator));
+    ct_test(test, NULL != gegl_image_buffer_iterator_alpha_channel(iterator));
+    color_chans = gegl_image_buffer_iterator_color_channels(iterator);
     ct_test(test, NULL != color_chans);
     g_free(color_chans);
 
-    gegl_image_data_iterator_get_rect(iterator, &area);
+    gegl_image_buffer_iterator_get_rect(iterator, &area);
 
     ct_test(test, area.x == ITER_AREA_X);
     ct_test(test, area.y == ITER_AREA_Y);
@@ -69,19 +69,19 @@ test_image_data_iterator_properties(Test *test)
 }
 
 static void
-test_image_data_iterator_color_alpha_channels(Test *test)
+test_image_buffer_iterator_color_alpha_channels(Test *test)
 {
   {
-    GeglImageDataIterator * iterator = g_object_new (GEGL_TYPE_IMAGE_DATA_ITERATOR, 
-                                                     "image_data", image_data,
+    GeglImageBufferIterator * iterator = g_object_new (GEGL_TYPE_IMAGE_BUFFER_ITERATOR, 
+                                                     "image_buffer", image_buffer,
                                                      "area", &iter_area,
                                                      NULL);  
 
-    GeglTile * tile = gegl_image_data_get_tile(image_data);
+    GeglTile * tile = gegl_image_buffer_get_tile(image_buffer);
     GeglDataBuffer *data_buffer = gegl_tile_get_data_buffer(tile);
     gfloat ** banks = (gfloat**)gegl_data_buffer_banks_data(data_buffer);
-    gfloat ** color_chans = (gfloat**)gegl_image_data_iterator_color_channels(iterator);
-    gfloat * alpha_chan = (gfloat*)gegl_image_data_iterator_alpha_channel(iterator);
+    gfloat ** color_chans = (gfloat**)gegl_image_buffer_iterator_color_channels(iterator);
+    gfloat * alpha_chan = (gfloat*)gegl_image_buffer_iterator_alpha_channel(iterator);
 
     /* 
        In the data buffer we have (as floats):
@@ -114,30 +114,30 @@ test_image_data_iterator_color_alpha_channels(Test *test)
 }
 
 static void
-image_data_iterator_test_setup(Test *test)
+image_buffer_iterator_test_setup(Test *test)
 {
-  image_data = g_object_new (GEGL_TYPE_IMAGE_DATA, NULL);  
-  gegl_image_data_create_tile(image_data, 
+  image_buffer = g_object_new (GEGL_TYPE_IMAGE_BUFFER, NULL);  
+  gegl_image_buffer_create_tile(image_buffer, 
                                 gegl_color_model_instance("rgba-float"), 
                                 &tile_rect);
 }
 
 static void
-image_data_iterator_test_teardown(Test *test)
+image_buffer_iterator_test_teardown(Test *test)
 {
-  g_object_unref(image_data);
+  g_object_unref(image_buffer);
 }
 
 Test *
-create_image_data_iterator_test()
+create_image_buffer_iterator_test()
 {
-  Test* t = ct_create("GeglImageDataIteratorTest");
+  Test* t = ct_create("GeglImageBufferIteratorTest");
 
-  g_assert(ct_addSetUp(t, image_data_iterator_test_setup));
-  g_assert(ct_addTearDown(t, image_data_iterator_test_teardown));
-  g_assert(ct_addTestFun(t, test_image_data_iterator_g_object_new));
-  g_assert(ct_addTestFun(t, test_image_data_iterator_properties));
-  g_assert(ct_addTestFun(t, test_image_data_iterator_color_alpha_channels));
+  g_assert(ct_addSetUp(t, image_buffer_iterator_test_setup));
+  g_assert(ct_addTearDown(t, image_buffer_iterator_test_teardown));
+  g_assert(ct_addTestFun(t, test_image_buffer_iterator_g_object_new));
+  g_assert(ct_addTestFun(t, test_image_buffer_iterator_properties));
+  g_assert(ct_addTestFun(t, test_image_buffer_iterator_color_alpha_channels));
 
   return t; 
 }

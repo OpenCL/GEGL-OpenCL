@@ -4,14 +4,24 @@
 #include <glib-object.h>
 #include "gegl-utils.h"
 
+extern GType GEGL_TYPE_PARAM_CHANNEL;
 extern GType GEGL_TYPE_PARAM_CHANNEL_UINT8;
 extern GType GEGL_TYPE_PARAM_CHANNEL_FLOAT;
+
+#define GEGL_IS_PARAM_SPEC_CHANNEL(pspec)       (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_CHANNEL))
+#define GEGL_PARAM_SPEC_CHANNEL(pspec)          (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_CHANNEL, GeglParamSpecChannel))
 
 #define GEGL_IS_PARAM_SPEC_CHANNEL_UINT8(pspec)       (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_CHANNEL_UINT8))
 #define GEGL_PARAM_SPEC_CHANNEL_UINT8(pspec)          (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_CHANNEL_UINT8, GeglParamSpecChannelUInt8))
 
 #define GEGL_IS_PARAM_SPEC_CHANNEL_FLOAT(pspec)       (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_CHANNEL_FLOAT))
 #define GEGL_PARAM_SPEC_CHANNEL_FLOAT(pspec)          (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_CHANNEL_FLOAT, GeglParamSpecChannelFloat))
+
+typedef struct _GeglParamSpecChannel     GeglParamSpecChannel;
+struct _GeglParamSpecChannel
+{
+  GParamSpec pspec;
+};
 
 typedef struct _GeglParamSpecChannelUInt8     GeglParamSpecChannelUInt8;
 struct _GeglParamSpecChannelUInt8
@@ -32,6 +42,11 @@ struct _GeglParamSpecChannelFloat
   gfloat maximum;
   gfloat default_value;
 };
+
+GParamSpec*  gegl_param_spec_channel   (const gchar     *name,
+                                        const gchar     *nick,
+                                        const gchar     *blurb,
+                                        GParamFlags     flags);
 
 GParamSpec*  gegl_param_spec_channel_uint8   (const gchar     *name,
                                               const gchar     *nick,

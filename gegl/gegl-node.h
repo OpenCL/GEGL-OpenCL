@@ -41,11 +41,11 @@ struct _GeglNode
     GeglObject object;
 
     /*< private >*/
-    gint     num_inputs;
-    GeglConnector   *connectors;
+    gint    num_inputs;
+    GList  *inputs;
 
     gint    num_outputs;
-    GList  *sinks;
+    GList  *outputs;
 
     gboolean enabled;
 };
@@ -80,15 +80,19 @@ void            gegl_node_unlink                (GeglNode * self);
 void            gegl_node_remove_sources        (GeglNode *self); 
 void            gegl_node_remove_sinks          (GeglNode *self); 
 
-void            gegl_node_accept                (GeglNode * self, 
-                                                 GeglVisitor * visitor);
-
 /* protected */
-GList*          gegl_node_get_sinks             (GeglNode * self);
 void            gegl_node_set_num_inputs        (GeglNode * self,
                                                  gint num_inputs);
 void            gegl_node_set_num_outputs       (GeglNode * self,
                                                  gint num_outputs);
+void            gegl_node_add_input             (GeglNode *self, 
+                                                 gint n);
+void            gegl_node_add_output            (GeglNode *self, 
+                                                 gint n);
+void            gegl_node_free_inputs           (GeglNode * self);
+void            gegl_node_free_outputs          (GeglNode * self);
+void            gegl_node_accept                (GeglNode * self, 
+                                                 GeglVisitor * visitor);
                                                                  
 #ifdef __cplusplus
 }

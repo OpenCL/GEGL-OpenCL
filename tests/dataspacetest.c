@@ -38,25 +38,25 @@ test_data_space_float(Test *test)
 }
 
 static void
-test_data_space_u8(Test *test)
+test_data_space_uint8(Test *test)
 {
   {
-    GeglDataSpace * data_space = g_object_new (GEGL_TYPE_DATA_SPACE_U8, NULL);  
+    GeglDataSpace * data_space = g_object_new (GEGL_TYPE_DATA_SPACE_UINT8, NULL);  
 
-    ct_test(test, GEGL_DATA_SPACE_U8 == gegl_data_space_data_space_type(data_space)); 
+    ct_test(test, GEGL_DATA_SPACE_UINT8 == gegl_data_space_data_space_type(data_space)); 
     ct_test(test, 8 == gegl_data_space_bits(data_space)); 
     ct_test(test, TRUE == gegl_data_space_is_channel_data(data_space)); 
-    ct_test(test, !strcmp("u8", gegl_data_space_name(data_space)));
+    ct_test(test, !strcmp("uint8", gegl_data_space_name(data_space)));
 
     g_object_unref(data_space);
   }
 }
 
 static void
-test_data_space_u8_convert_to_float(Test *test)
+test_data_space_uint8_convert_to_float(Test *test)
 {
   {
-    GeglDataSpace * data_space = g_object_new (GEGL_TYPE_DATA_SPACE_U8, NULL);  
+    GeglDataSpace * data_space = g_object_new (GEGL_TYPE_DATA_SPACE_UINT8, NULL);  
     gfloat dest;
     guint8 src = 1;
 
@@ -72,10 +72,10 @@ test_data_space_u8_convert_to_float(Test *test)
 }
 
 static void
-test_data_space_u8_convert_from_float(Test *test)
+test_data_space_uint8_convert_from_float(Test *test)
 {
   {
-    GeglDataSpace * data_space = g_object_new (GEGL_TYPE_DATA_SPACE_U8, NULL);  
+    GeglDataSpace * data_space = g_object_new (GEGL_TYPE_DATA_SPACE_UINT8, NULL);  
     gfloat src;
     guint8 dest;
 
@@ -119,9 +119,9 @@ create_data_space_test()
   g_assert(ct_addTearDown(t, data_space_test_teardown));
   g_assert(ct_addTestFun(t, test_data_space_g_object_new));
   g_assert(ct_addTestFun(t, test_data_space_float));
-  g_assert(ct_addTestFun(t, test_data_space_u8));
-  g_assert(ct_addTestFun(t, test_data_space_u8_convert_to_float));
-  g_assert(ct_addTestFun(t, test_data_space_u8_convert_from_float));
+  g_assert(ct_addTestFun(t, test_data_space_uint8));
+  g_assert(ct_addTestFun(t, test_data_space_uint8_convert_to_float));
+  g_assert(ct_addTestFun(t, test_data_space_uint8_convert_from_float));
 #endif
 
   return t; 

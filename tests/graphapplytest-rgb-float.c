@@ -38,7 +38,7 @@ test_graph_apply(Test *t)
                                  NULL); 
 
   GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
-                                 "source", color,
+                                 "input", 0, color,
                                  "multiplier", .5,
                                  NULL); 
 
@@ -48,7 +48,7 @@ test_graph_apply(Test *t)
 
   GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
                                  "multiplier", .5,
-                                 "source", graph,
+                                 "input", 0, graph,
                                  NULL); 
                         
 
@@ -95,7 +95,7 @@ test_graph_apply_with_source(Test *t)
 
   GeglOp * graph = g_object_new (GEGL_TYPE_GRAPH,
                                  "root", fade, 
-                                 "source", color,
+                                 "input", 0, color,
                                  NULL);
 
   gegl_op_apply(graph); 
@@ -147,11 +147,11 @@ test_graph_apply_with_source_and_output(Test *t)
 
   GeglOp * graph = g_object_new (GEGL_TYPE_GRAPH,
                                  "root", fade1, 
-                                 "source", color,
+                                 "input", 0, color,
                                  NULL);
 
   GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
-                                 "source", graph,
+                                 "input", 0, graph,
                                  "multiplier", .5,
                                  NULL); 
 
@@ -208,17 +208,17 @@ test_graph_apply_with_2_ops_source_and_output(Test *t)
                                  NULL); 
 
   GeglOp * fade2 = g_object_new (GEGL_TYPE_FADE,
-                                 "source", fade1,
+                                 "input", 0, fade1,
                                  "multiplier", .5,
                                  NULL); 
 
   GeglOp * graph = g_object_new (GEGL_TYPE_GRAPH,
                                  "root", fade2, 
-                                 "source", color,
+                                 "input", 0, color,
                                  NULL);
 
   GeglOp * fade3 = g_object_new (GEGL_TYPE_FADE,
-                                 "source", graph,
+                                 "input", 0, graph,
                                  "multiplier", .5,
                                  NULL); 
 
@@ -268,7 +268,7 @@ test_graph_apply_add_graph_and_color(Test *t)
                                   NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
-                                "source", color1,
+                                "input", 0, color1,
                                 "multiplier", .5,
                                 NULL); 
 
@@ -281,10 +281,10 @@ test_graph_apply_add_graph_and_color(Test *t)
                                   NULL); 
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD, 
-                                "source0", graph,
-                                "source1", color2,
+                                "input", 0, graph,
+                                "input", 1, color2,
                                 NULL);  
-                        
+
   gegl_op_apply(iadd); 
 
   ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(iadd), .45, .6, .75));  
@@ -304,7 +304,7 @@ test_graph_apply_add_graph_and_graph(Test *t)
             /    \ 
            /      \
       --------    -------------
-     | fade   |  |    add1     |
+     | fade   |  |    iadd1     |
      |   |    |  |   /    \    |  
      | color1 |  |color2 color3| 
      ---------   --------------
@@ -331,7 +331,7 @@ test_graph_apply_add_graph_and_graph(Test *t)
                                   NULL); 
 
   GeglOp * fade = g_object_new (GEGL_TYPE_FADE,
-                                "source", color1,
+                                "input", 0, color1,
                                 "multiplier", .5,
                                 NULL); 
 
@@ -348,8 +348,8 @@ test_graph_apply_add_graph_and_graph(Test *t)
                                   NULL); 
 
   GeglOp * iadd1 = g_object_new (GEGL_TYPE_I_ADD,
-                                 "source0", color2,
-                                 "source1", color3,
+                                 "input", 0, color2,
+                                 "input", 1, color3,
                                  NULL); 
 
   GeglOp * graph2 = g_object_new (GEGL_TYPE_GRAPH,
@@ -357,10 +357,11 @@ test_graph_apply_add_graph_and_graph(Test *t)
                                   NULL);
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD,
-                               "source0", graph1,
-                               "source1", graph2,
+                               "input", 0, graph1,
+                               "input", 1, graph2,
                                NULL); 
                         
+
   gegl_op_apply(iadd); 
 
   ct_test(t, testutils_check_pixel_rgb_float(GEGL_IMAGE(iadd), 1.15, 1.4, 1.65));  
@@ -426,18 +427,18 @@ test_graph_apply_with_2_sources(Test *t)
                                  NULL); 
 
   GeglOp * iadd = g_object_new (GEGL_TYPE_I_ADD,
-                                "source0", fade2,
-                                "source1", fade3,
+                                "input", 0, fade2,
+                                "input", 1, fade3,
                                 NULL); 
 
   GeglOp * graph = g_object_new (GEGL_TYPE_GRAPH,
                                  "root", iadd, 
-                                 "source0", color1,
-                                 "source1", color2,
+                                 "input", 0, color1,
+                                 "input", 2, color2,
                                  NULL);
 
   GeglOp * fade1 = g_object_new (GEGL_TYPE_FADE,
-                                 "source", graph,
+                                 "input", 0, graph,
                                  "multiplier", .5,
                                  NULL); 
 
@@ -465,9 +466,9 @@ graph_apply_test_teardown(Test *test)
 }
 
 Test *
-create_graph_apply_test_pixel_rgb_float()
+create_graph_apply_test_rgb_float()
 {
-  Test* t = ct_create("GeglGraphApplyTestPixelRgbFloat");
+  Test* t = ct_create("GeglGraphApplyTestRgbFloat");
 
   g_assert(ct_addSetUp(t, graph_apply_test_setup));
   g_assert(ct_addTearDown(t, graph_apply_test_teardown));

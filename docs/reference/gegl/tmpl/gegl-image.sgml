@@ -22,6 +22,18 @@ just returning their normal image data as output.
 
 </para>
 
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglImageBuffer ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### FUNCTION gegl_image_color_model ##### -->
 <para>
 
@@ -49,16 +61,16 @@ just returning their normal image data as output.
 @cm: 
 
 
-<!-- ##### FUNCTION gegl_image_set_image_data ##### -->
+<!-- ##### FUNCTION gegl_image_set_image_buffer ##### -->
 <para>
 
 </para>
 
 @self: 
-@image_data: 
+@image_buffer: 
 
 
-<!-- ##### FUNCTION gegl_image_get_image_data ##### -->
+<!-- ##### FUNCTION gegl_image_get_image_buffer ##### -->
 <para>
 
 </para>

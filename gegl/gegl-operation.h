@@ -6,7 +6,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include "gegl-op.h"
-#include "gegl-attributes.h"
 
 #ifndef __TYPEDEF_GEGL_COLOR_MODEL__
 #define __TYPEDEF_GEGL_COLOR_MODEL__
@@ -37,24 +36,23 @@ struct _GeglFilterClass
    GeglOpClass op_class;
                                     
    void (* evaluate)                (GeglFilter * self, 
-                                     GeglAttributes * attributes,
-                                     GList * input_attributes);
+                                     GList * output_data_list,
+                                     GList * input_data_list);
    void (* prepare)                 (GeglFilter * self, 
-                                     GeglAttributes * attributes,
-                                     GList * input_attributes);
+                                     GList * output_data_list,
+                                     GList * input_data_list);
    void (* process)                 (GeglFilter * self, 
-                                     GeglAttributes * attributes,
-                                     GList * input_attributes);
+                                     GList * output_data_list,
+                                     GList * input_data_list);
    void (* finish)                  (GeglFilter * self, 
-                                     GeglAttributes * attributes,
-                                     GList * input_attributes);
+                                     GList * output_data_list,
+                                     GList * input_data_list);
 
    void (* validate_inputs)         (GeglFilter *self,
-                                     GList *input_attributes);
-
+                                     GList *data_list);
    void (* validate_outputs)        (GeglFilter *self,
-                                     GeglAttributes *attributes);
-
+                                     GList *output_data_list);
+   /* change these to an interface */
    void (* compute_need_rect)       (GeglFilter *self,
                                      GeglRect *input_need_rect,
                                      GeglRect *need_rect,
@@ -78,13 +76,15 @@ void            gegl_filter_compute_have_rect   (GeglFilter * self,
 GeglColorModel*  
          gegl_filter_compute_derived_color_model(GeglFilter * self, 
                                                  GList * input_color_models);
-void            gegl_filter_evaluate            (GeglFilter * self, 
-                                                 GeglAttributes * attributes,
-                                                 GList * input_attributes);
+
 void            gegl_filter_validate_inputs     (GeglFilter * self, 
-                                                 GList * input_attributes);
+                                                 GList * data_list);
 void            gegl_filter_validate_outputs    (GeglFilter * self, 
-                                                 GeglAttributes * attributes);
+                                                 GList * output_data_list);
+
+void            gegl_filter_evaluate            (GeglFilter * self, 
+                                                 GList * output_data_list,
+                                                 GList * input_data_list);
 
 #ifdef __cplusplus
 }

@@ -9,9 +9,9 @@
 #include <tiffio.h>
 
 #include "gegl-color-model-pixel-rgb-float.h"
-#include "gegl-color-model-rgb-u8.h"
+#include "gegl-color-model-rgb-uint8.h"
 #include "gegl-color-model-gray-float.h"
-#include "gegl-color-model-gray-u8.h"
+#include "gegl-color-model-gray-uint8.h"
 #include "gegl-image-buffer.h"
 #include "gegl-image-iterator.h"
 #include "gegl-composite-op.h"
@@ -107,7 +107,7 @@ display_image(GtkWidget *window,
 		tmp[2 + 3*j] = ROUND(CLAMP(data_ptrs1[2][j],0.0,1.0) * 255);
 	      }
 	    break;
-	  case GEGL_U8:
+	  case GEGL_UINT8:
 	    gegl_image_iterator_get_scanline_data(iterator, 
 		(guchar**)data_ptrs2);
 
@@ -476,7 +476,7 @@ test_point_ops( GeglImageBuffer ** src_image_buffer,
 }
 
 guchar *
-read_tiff_image_data (TIFF *tif,
+read_tiff_image_buffer (TIFF *tif,
 		      gint width,
 		      gint height,
 		      gint num_chans,
@@ -489,18 +489,18 @@ read_tiff_image_data (TIFF *tif,
   guint16           	*t3=NULL;
   guint16           	*t4=NULL;
   uint32          *image;
-  guchar          *image_data;
+  guchar          *image_buffer;
   guchar          r,g,b,a; 
   gint            plane_size;
   gint            channel_bytes = 0;
 
-  /* Create an appropriate image_data for passing to gegl_image_buffer */  
+  /* Create an appropriate image_buffer for passing to gegl_image_buffer */  
   switch (data_type) 
     {
     case GEGL_FLOAT:
       channel_bytes = sizeof(float);
       break;
-    case GEGL_U8:
+    case GEGL_UINT8:
       channel_bytes = sizeof(guint8);
       break;
     case GEGL_U16:
@@ -513,22 +513,22 @@ read_tiff_image_data (TIFF *tif,
       break; 
     }
 
-  image_data = (guchar*)g_malloc(width * height * channel_bytes * num_chans);
+  image_buffer = (guchar*)g_malloc(width * height * channel_bytes * num_chans);
 
   /* Initialize some data pointers */
   switch (data_type) 
     {
     case GEGL_FLOAT:
-      t1 = (gfloat *)image_data;
+      t1 = (gfloat *)image_buffer;
       break;
-    case GEGL_U8:
-      t2 = (guint8 *)image_data;
+    case GEGL_UINT8:
+      t2 = (guint8 *)image_buffer;
       break;
     case GEGL_U16:
-      t3 = (guint16 *)image_data;
+      t3 = (guint16 *)image_buffer;
       break;
     case GEGL_U16_4:
-      t4 = (guint16 *)image_data;
+      t4 = (guint16 *)image_buffer;
       break;
     default:
       break; 
@@ -539,7 +539,7 @@ read_tiff_image_data (TIFF *tif,
   image = (uint32*) _TIFFmalloc(width* height * sizeof(uint32));
   TIFFReadRGBAImage(tif, width, height, image, 0);
 
-  /* Convert the abgr packed uint32s to image_data format 
+  /* Convert the abgr packed uint32s to image_buffer format 
      suitable for passing to a GeglImageBuffer. */
 
   j=0;
@@ -561,7 +561,7 @@ read_tiff_image_data (TIFF *tif,
 	    t1[j+plane_size*3] = a / 255.0;
 	  j++;
 	  break; 
-	case GEGL_U8:
+	case GEGL_UINT8:
 	  t2[j             ] = r;
 	  t2[j+plane_size  ] = g;
 	  t2[j+plane_size*2] = b;
@@ -591,7 +591,7 @@ read_tiff_image_data (TIFF *tif,
       
     }
     _TIFFfree(image);
-    return image_data;
+    return image_buffer;
 }
 	      
 int
@@ -607,7 +607,7 @@ main(int argc,
   int             	k;
   gint            	num_chans;
   TIFF                  *tif;   
-  guchar                *image_data = NULL;
+  guchar                *image_buffer = NULL;
   guint16               samples_per_pixel;
   GeglChannelDataType   data_type = GEGL_FLOAT;
   gboolean              has_alpha = FALSE;
@@ -621,9 +621,9 @@ main(int argc,
 	{
 	  data_type = GEGL_FLOAT;
 	}
-      else if (!strcmp (argv[3], "u8"))
+      else if (!strcmp (argv[3], "uint8"))
 	{
-	  data_type = GEGL_U8;
+	  data_type = GEGL_UINT8;
 	}
       else if (!strcmp (argv[3], "u16"))
 	{
@@ -674,8 +674,8 @@ main(int argc,
         
       num_chans = gegl_color_model_num_channels(src_color_model[k]);
 
-      /* get an image_data buffer we can pass to GeglImageBuffer */
-      image_data = read_tiff_image_data (tif, 
+      /* get an image_buffer buffer we can pass to GeglImageBuffer */
+      image_buffer = read_tiff_image_buffer (tif, 
 	                                     src_width[k], 
                                          src_height[k], 
                                          num_chans, 
@@ -689,8 +689,8 @@ main(int argc,
       TIFFClose(tif); 
 
       /* pass the image data to the GeglImageBuffer */
-      gegl_image_buffer_set_data(src_image_buffer[k], image_data);
-      g_free(image_data);
+      gegl_image_buffer_set_data(src_image_buffer[k], image_buffer);
+      g_free(image_buffer);
 
 
       /* If srcs should be unpremultiplied before any ops are called,

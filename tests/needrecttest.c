@@ -14,7 +14,6 @@ test_needrect_op(Test *t)
 
   GeglOp * op = g_object_new (GEGL_TYPE_MOCK_FILTER, 
                               "num_inputs", 2,
-                              "num_outputs", 1,
                               NULL);  
  
   gegl_rect_set(&need_rect, 0,0,5,5);
@@ -39,7 +38,6 @@ test_needrect_op_source_needrect_set(Test *t)
 
   GeglOp * op = g_object_new (GEGL_TYPE_MOCK_FILTER, 
                               "num_inputs", 2,
-                              "num_outputs", 1,
                               NULL);  
  
   gegl_rect_set(&need_rect, 1,1,5,5);

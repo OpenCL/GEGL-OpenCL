@@ -1,0 +1,56 @@
+<!-- ##### SECTION Title ##### -->
+gegl-image-buffer-param-specs
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_PARAM_IMAGE_BUFFER ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglParamSpecImageBuffer ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+<!-- ##### FUNCTION gegl_param_spec_image_buffer ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@flags: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_image_buffer_param_spec_types_init ##### -->
+<para>
+
+</para>
+
+
+

@@ -155,7 +155,7 @@ value_lcopy_pixel_rgba_float (const GValue *value,
 static void
 value_init_pixel_rgb_uint8 (GValue *value)
 {
-  value->data[0].v_pointer = gegl_color_model_instance("rgb-u8");
+  value->data[0].v_pointer = gegl_color_model_instance("rgb-uint8");
   value->data[1].v_pointer = g_new(guint8, 3); 
 }
 
@@ -186,7 +186,7 @@ value_collect_pixel_rgb_uint8 (GValue      *value,
 {
   guint8 *uint8_p = g_new(guint8, 3); 
 
-  value->data[0].v_pointer = gegl_color_model_instance("rgb-u8");
+  value->data[0].v_pointer = gegl_color_model_instance("rgb-uint8");
 
   uint8_p[0] = collect_values[0].v_int;
   uint8_p[1] = collect_values[1].v_int;
@@ -636,7 +636,7 @@ g_value_set_pixel_rgb_uint8 (GValue *value,
 {
   g_return_if_fail (G_VALUE_HOLDS_PIXEL_RGB_UINT8 (value));
   g_return_if_fail (value->data[0].v_pointer == 
-                    gegl_color_model_instance("rgb-u8"));
+                    gegl_color_model_instance("rgb-uint8"));
 
   {
     guint8 *uint8_p = value->data[1].v_pointer;
@@ -655,7 +655,7 @@ g_value_get_pixel_rgb_uint8 (const GValue *value,
 {
   g_return_if_fail (G_VALUE_HOLDS_PIXEL_RGB_UINT8 (value));
   g_return_if_fail (value->data[0].v_pointer == 
-                    gegl_color_model_instance("rgb-u8"));
+                    gegl_color_model_instance("rgb-uint8"));
   {
     guint8 *uint8_p = value->data[1].v_pointer;
 
@@ -674,7 +674,7 @@ g_value_set_pixel_rgba_uint8 (GValue *value,
 {
   g_return_if_fail (G_VALUE_HOLDS_PIXEL_RGBA_UINT8 (value));
   g_return_if_fail (value->data[0].v_pointer == 
-                    gegl_color_model_instance("rgba-u8"));
+                    gegl_color_model_instance("rgba-uint8"));
 
   {
     guint8 *uint8_p = value->data[1].v_pointer;
@@ -695,7 +695,7 @@ g_value_get_pixel_rgba_uint8 (const GValue *value,
 {
   g_return_if_fail (G_VALUE_HOLDS_PIXEL_RGB_UINT8 (value));
   g_return_if_fail (value->data[0].v_pointer == 
-                    gegl_color_model_instance("rgba-u8"));
+                    gegl_color_model_instance("rgba-uint8"));
   {
     guint8 *uint8_p = value->data[1].v_pointer;
 

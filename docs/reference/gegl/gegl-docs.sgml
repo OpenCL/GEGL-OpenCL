@@ -5,6 +5,7 @@
 <!ENTITY GeglBfsVisitor SYSTEM "sgml/gegl-bfs-visitor.sgml">
 <!ENTITY GeglBinary SYSTEM "sgml/gegl-binary.sgml">
 <!ENTITY GeglBlend SYSTEM "sgml/gegl-blend.sgml">
+<!ENTITY gegl-gegl-channel-param-specs SYSTEM "sgml/gegl-channel-param-specs.sgml">
 <!ENTITY GeglColorModel SYSTEM "sgml/gegl-color-model.sgml">
 <!ENTITY GeglColorSpaceGray SYSTEM "sgml/gegl-color-space-gray.sgml">
 <!ENTITY GeglColorSpaceRgb SYSTEM "sgml/gegl-color-space-rgb.sgml">
@@ -16,7 +17,6 @@
 <!ENTITY GeglDarken SYSTEM "sgml/gegl-darken.sgml">
 <!ENTITY GeglDataBuffer SYSTEM "sgml/gegl-data-buffer.sgml">
 <!ENTITY GeglDataSpaceFloat SYSTEM "sgml/gegl-data-space-float.sgml">
-<!ENTITY GeglDataSpaceU8 SYSTEM "sgml/gegl-data-space-u8.sgml">
 <!ENTITY GeglDataSpace SYSTEM "sgml/gegl-data-space.sgml">
 <!ENTITY GeglDfsVisitor SYSTEM "sgml/gegl-dfs-visitor.sgml">
 <!ENTITY GeglDifference SYSTEM "sgml/gegl-difference.sgml">
@@ -31,8 +31,11 @@
 <!ENTITY GeglGraph SYSTEM "sgml/gegl-graph.sgml">
 <!ENTITY GeglIAdd SYSTEM "sgml/gegl-i-add.sgml">
 <!ENTITY GeglIMult SYSTEM "sgml/gegl-i-mult.sgml">
-<!ENTITY GeglImageDataIterator SYSTEM "sgml/gegl-image-data-iterator.sgml">
-<!ENTITY GeglImageData SYSTEM "sgml/gegl-image-data.sgml">
+<!ENTITY GeglImageBufferIterator SYSTEM "sgml/gegl-image-buffer-iterator.sgml">
+<!ENTITY GeglImageBufferData SYSTEM "sgml/gegl-image-buffer-data.sgml">
+<!ENTITY gegl-gegl-image-buffer-param-specs SYSTEM "sgml/gegl-image-buffer-param-specs.sgml">
+<!ENTITY GeglImageBuffer SYSTEM "sgml/gegl-image-buffer.sgml">
+<!ENTITY GeglData SYSTEM "sgml/gegl-data.sgml">
 <!ENTITY GeglImage SYSTEM "sgml/gegl-image.sgml">
 <!ENTITY GeglInside SYSTEM "sgml/gegl-inside.sgml">
 <!ENTITY GeglLighten SYSTEM "sgml/gegl-lighten.sgml">
@@ -47,6 +50,7 @@
 <!ENTITY GeglOutside SYSTEM "sgml/gegl-outside.sgml">
 <!ENTITY GeglOver SYSTEM "sgml/gegl-over.sgml">
 <!ENTITY GeglPipe SYSTEM "sgml/gegl-pipe.sgml">
+<!ENTITY gegl-gegl-pixel-param-specs SYSTEM "sgml/gegl-pixel-param-specs.sgml">
 <!ENTITY GeglPointOp SYSTEM "sgml/gegl-point-op.sgml">
 <!ENTITY GeglPremult SYSTEM "sgml/gegl-premult.sgml">
 <!ENTITY GeglPrint SYSTEM "sgml/gegl-print.sgml">
@@ -60,14 +64,16 @@
 <!ENTITY gegl-gegl-utils SYSTEM "sgml/gegl-utils.sgml">
 <!ENTITY GeglVisitor SYSTEM "sgml/gegl-visitor.sgml">
 <!ENTITY GeglXor SYSTEM "sgml/gegl-xor.sgml">
-<!ENTITY gegl-gegl-channel-param-specs SYSTEM "sgml/gegl-channel-param-specs.sgml">
-<!ENTITY gegl-gegl-pixel-param-specs SYSTEM "sgml/gegl-pixel-param-specs.sgml">
-<!ENTITY gegl-gegl-image-data-param-specs SYSTEM "sgml/gegl-image-data-param-specs.sgml">
-<!ENTITY gegl-gegl-attributes SYSTEM "sgml/gegl-attributes.sgml">
-<!ENTITY gegl-gegl-types SYSTEM "sgml/gegl-types.sgml">
+<!ENTITY GeglPixelData SYSTEM "sgml/gegl-pixel-data.sgml">
+<!ENTITY GeglChannelData SYSTEM "sgml/gegl-channel-data.sgml">
+<!ENTITY GeglScalarData SYSTEM "sgml/gegl-scalar-data.sgml">
+<!ENTITY gegl-gegl-input-param-specs SYSTEM "sgml/gegl-input-param-specs.sgml">
+<!ENTITY GeglDataSpaceU8 SYSTEM "sgml/gegl-data-space-uint8.sgml">
 <!ENTITY gegl-gegl-channel-value-types SYSTEM "sgml/gegl-channel-value-types.sgml">
-<!ENTITY gegl-gegl-pixel-value-types SYSTEM "sgml/gegl-pixel-value-types.sgml">
 <!ENTITY gegl-gegl-init SYSTEM "sgml/gegl-init.sgml">
+<!ENTITY gegl-gegl-pixel-value-types SYSTEM "sgml/gegl-pixel-value-types.sgml">
+<!ENTITY gegl-gegl-types SYSTEM "sgml/gegl-types.sgml">
+<!ENTITY gegl-gegl-input-value-types SYSTEM "sgml/gegl-input-value-types.sgml">
 <!entity gegl-objecttree SYSTEM "sgml/tree_index.sgml">
 <!entity gegl-compiling SYSTEM "compiling.sgml">
 <!entity gegl-building SYSTEM "building.sgml">
@@ -96,11 +102,10 @@
     &GeglFilter;
     &GeglGraph;
     &GeglImage;
-    &GeglNoInput;
     &GeglOp;
     &GeglPipe;
     &GeglPointOp;
-    &GeglScanlineProcessor;
+    &GeglNoInput;
     &GeglUnary;
   </chapter>
 
@@ -110,8 +115,8 @@
     &GeglAtop;
     &GeglColor;
     &GeglDarken;
-    &GeglDifference;
     &GeglFade;
+    &GeglDifference;
     &GeglIAdd;
     &GeglIMult;
     &GeglInside;
@@ -124,6 +129,7 @@
     &GeglOver;
     &GeglPremult;
     &GeglPrint;
+    &GeglScanlineProcessor;
     &GeglScreen;
     &GeglSubtract;
     &GeglUnpremult;
@@ -150,38 +156,49 @@
   <chapter id="colormodel">
     <title>Color Models and Color Spaces</title>
     &GeglColorModel;
-    &GeglColorSpace;
-    &GeglColorSpaceRgb;
     &GeglColorSpaceGray;
+    &GeglColorSpaceRgb;
+    &GeglColorSpace;
     &GeglComponentColorModel;
+    &GeglComponentStorage;
+  </chapter>
+
+  <chapter id="data">
+    <title>Data</title>
+    &GeglData;
+    &GeglPixelData;
+    &GeglChannelData;
+    &GeglImageBufferData;
+    &GeglScalarData;
   </chapter>
 
   <chapter id="dataspace">
-    <title>Data Spaces</title>
-    &GeglDataSpace;
+    <title>Channel Data Spaces</title>
     &GeglDataSpaceFloat;
     &GeglDataSpaceU8;
+    &GeglDataSpace;
   </chapter>
 
   <chapter id="imagedata">
     <title>Image Data and Storage</title>
     &GeglDataBuffer;
+    &GeglImageBuffer;
+    &GeglImageBufferIterator;
     &GeglStorage;
-    &GeglComponentStorage;
-    &GeglImageData;
-    &GeglImageDataIterator;
     &GeglTile;
   </chapter>
 
   <chapter id="misc">
     <title>Misc</title>
     &gegl-gegl-channel-param-specs;
+    &gegl-gegl-image-buffer-param-specs;
     &gegl-gegl-pixel-param-specs;
-    &gegl-gegl-image-data-param-specs;
-    &gegl-gegl-attributes;
-    &gegl-gegl-types;
+    &gegl-gegl-utils;
+    &gegl-gegl-input-param-specs;
     &gegl-gegl-channel-value-types;
-    &gegl-gegl-pixel-value-types;
     &gegl-gegl-init;
+    &gegl-gegl-pixel-value-types;
+    &gegl-gegl-types;
+    &gegl-gegl-input-value-types;
   </chapter>
 </book>

@@ -4,7 +4,7 @@
 #include "gegl-color-space-rgb.h"
 #include "gegl-color-space-gray.h"
 #include "gegl-data-space-float.h"
-#include "gegl-data-space-u8.h"
+#include "gegl-data-space-uint8.h"
 #include "gegl-component-color-model.h"
 #include "gegl-param-specs.h"
 #include "gegl-value-types.h"

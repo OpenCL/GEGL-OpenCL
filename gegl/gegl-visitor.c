@@ -390,27 +390,27 @@ visit_graph(GeglVisitor * self,
 }
 
 GList * 
-gegl_visitor_get_input_attributes(GeglVisitor *self,
-                                  GeglNode *node)
+gegl_visitor_collect_data_list(GeglVisitor *self,
+                            GeglNode *node)
 {
-  GList * input_attributes_list = NULL;
+  GList * input_data_list = NULL;
   gint i;
   gint num_inputs = gegl_node_get_num_inputs(node);
 
   for(i = 0 ; i < num_inputs; i++) 
     {
-      GeglAttributes *input_attributes;
       GeglNode *source = gegl_node_get_source(node, i);
 
       /* Try the graph instead. */
-      if(!source) 
+      if(!source && self->graph) 
         source = gegl_graph_find_source(self->graph, node, i); 
 
-      input_attributes = gegl_op_get_attributes(GEGL_OP(source)); 
-
-      input_attributes_list = 
-        g_list_append(input_attributes_list, input_attributes);
+      if(source) 
+        {
+          GeglData *input_data = gegl_op_get_output_data(GEGL_OP(source), 0); 
+          input_data_list = g_list_append(input_data_list, input_data);
+        }
     }
 
-  return input_attributes_list;
+  return input_data_list;
 }

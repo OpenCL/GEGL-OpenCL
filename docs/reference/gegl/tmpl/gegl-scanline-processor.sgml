@@ -32,9 +32,13 @@ Scanline processor helper class.
 </para>
 
 @self: 
+@output_data_list: 
+@input_data_list: 
+<!-- # Unused Parameters # -->
+@param: 
+@input_param: 
 @attributes: 
 @input_attributes: 
-<!-- # Unused Parameters # -->
 @output_attributes: 
 @output_values: 
 @input_values: 

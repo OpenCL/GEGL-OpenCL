@@ -52,8 +52,6 @@ static void
 init (GeglMockOp * self, 
       GeglMockOpClass * klass)
 {
-  g_object_set(self, "num_outputs", 0, NULL);
-  g_object_set(self, "num_inputs", 0, NULL);
 }
 
 static void

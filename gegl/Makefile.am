@@ -8,8 +8,7 @@ GEGL_SRC = \
   gegl-bfs-visitor.c \
   gegl-binary.c \
   gegl-blend.c \
-  gegl-channel-value-types.c \
-  gegl-channel-param-specs.c \
+  gegl-channel-data.c \
   gegl-color.c \
   gegl-color-model.c \
   gegl-color-space.c \
@@ -22,7 +21,7 @@ GEGL_SRC = \
   gegl-data-buffer.c \
   gegl-data-space.c \
   gegl-data-space-float.c \
-  gegl-data-space-u8.c \
+  gegl-data-space-uint8.c \
   gegl-dfs-visitor.c \
   gegl-difference.c \
   gegl-dump-visitor.c \
@@ -37,11 +36,10 @@ GEGL_SRC = \
   gegl-i-add.c \
   gegl-i-mult.c \
   gegl-image.c \
-  gegl-image-data.c \
-  gegl-image-data-param-specs.c \
-  gegl-image-data-iterator.c \
+  gegl-image-buffer.c \
+  gegl-image-buffer-data.c \
+  gegl-image-buffer-iterator.c \
   gegl-inside.c \
-  gegl-init.c \
   gegl-lighten.c \
   gegl-max.c \
   gegl-min.c \
@@ -53,12 +51,13 @@ GEGL_SRC = \
   gegl-op.c \
   gegl-over.c \
   gegl-outside.c \
+  gegl-data.c \
   gegl-pipe.c \
-  gegl-pixel-value-types.c \
-  gegl-pixel-param-specs.c \
+  gegl-pixel-data.c \
   gegl-point-op.c \
   gegl-premult.c \
   gegl-print.c \
+  gegl-scalar-data.c \
   gegl-scanline-processor.c \
   gegl-screen.c \
   gegl-storage.c \
@@ -70,7 +69,14 @@ GEGL_SRC = \
   gegl-xor.c
 
 GEGL_NONCLASS_SRC = \
-  gegl-attributes.c \
+  gegl-channel-param-specs.c \
+  gegl-channel-value-types.c \
+  gegl-image-buffer-param-specs.c \
+  gegl-init.c \
+  gegl-input-value-types.c \
+  gegl-input-param-specs.c \
+  gegl-pixel-param-specs.c \
+  gegl-pixel-value-types.c \
   gegl-utils.c
 
 GEGL_PUBLIC_HDRS = \

@@ -22,6 +22,18 @@ process, and finish routines.
 
 </para>
 
+<!-- ##### STRUCT GeglDataBuffer ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglStorage ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### FUNCTION gegl_tile_get_data_buffer ##### -->
 <para>
 

@@ -14,6 +14,30 @@ Abstract class for all visitors.
 
 </para>
 
+<!-- ##### STRUCT GeglNode ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglOp ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglFilter ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglGraph ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### STRUCT GeglNodeInfo ##### -->
 <para>
 
@@ -149,7 +173,7 @@ Abstract class for all visitors.
 @shared_count: 
 
 
-<!-- ##### FUNCTION gegl_visitor_get_input_attributes ##### -->
+<!-- ##### FUNCTION gegl_visitor_collect_data_list ##### -->
 <para>
 
 </para>

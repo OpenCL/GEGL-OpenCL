@@ -9,10 +9,14 @@
 typedef struct _GeglColorModel GeglColorModel;
 #endif
 
+extern GType GEGL_TYPE_PARAM_PIXEL;
 extern GType GEGL_TYPE_PARAM_PIXEL_RGB_UINT8;
 extern GType GEGL_TYPE_PARAM_PIXEL_RGBA_UINT8;
 extern GType GEGL_TYPE_PARAM_PIXEL_RGB_FLOAT;
 extern GType GEGL_TYPE_PARAM_PIXEL_RGBA_FLOAT;
+
+#define GEGL_IS_PARAM_SPEC_PIXEL(pspec)       (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_PIXEL))
+#define GEGL_PARAM_SPEC_PIXEL(pspec)          (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_PIXEL, GeglParamSpecPixel))
 
 #define GEGL_IS_PARAM_SPEC_PIXEL_RGB_UINT8(pspec)   (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_PIXEL_RGB_UINT8))
 #define GEGL_PARAM_SPEC_PIXEL_RGB_UINT8(pspec)      (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_PIXEL_RGB_UINT8, GeglParamSpecPixelRgbUInt8))
@@ -25,6 +29,12 @@ extern GType GEGL_TYPE_PARAM_PIXEL_RGBA_FLOAT;
 
 #define GEGL_IS_PARAM_SPEC_PIXEL_RGBA_FLOAT(pspec)  (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_PIXEL_RGBA_FLOAT))
 #define GEGL_PARAM_SPEC_PIXEL_RGBA_FLOAT(pspec)      (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_PIXEL_RGBA_FLOAT, GeglParamSpecPixelRgbaFloat))
+
+typedef struct _GeglParamSpecPixel     GeglParamSpecPixel;
+struct _GeglParamSpecPixel
+{
+  GParamSpec pspec;
+};
 
 typedef struct _GeglParamSpecPixelRgbUInt8     GeglParamSpecPixelRgbUInt8;
 struct _GeglParamSpecPixelRgbUInt8
@@ -99,6 +109,11 @@ struct _GeglParamSpecPixelRgbaFloat
   gfloat default_blue;
   gfloat default_alpha;
 };
+
+GParamSpec*  gegl_param_spec_pixel   (const gchar     *name,
+                                      const gchar     *nick,
+                                      const gchar     *blurb,
+                                      GParamFlags     flags);
 
 GParamSpec*  gegl_param_spec_pixel_rgb_uint8   (const gchar     *name,
                                                 const gchar     *nick,

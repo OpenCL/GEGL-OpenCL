@@ -1,11 +1,11 @@
 #include "gegl-no-input.h"
-#include "gegl-attributes.h"
+#include "gegl-data.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
 #include "gegl-color-space.h"
 #include "gegl-data-space.h"
-#include "gegl-image-data.h"
-#include "gegl-image-data-iterator.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-buffer-iterator.h"
 #include "gegl-utils.h"
 
 enum
@@ -20,7 +20,7 @@ static void get_property (GObject *gobject, guint prop_id, GValue *value, GParam
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void compute_have_rect(GeglFilter * filter, GeglRect *have_rect, GList * input_have_rects);
 
-static void prepare (GeglFilter * filter, GeglAttributes * attributes, GList *input_attributes);
+static void prepare (GeglFilter * filter, GList *output_data_list, GList *input_data_list);
 
 static gpointer parent_class = NULL;
 
@@ -73,7 +73,6 @@ static void
 init (GeglNoInput * self, 
       GeglNoInputClass * klass)
 {
-  g_object_set(self, "num_inputs", 0, NULL);
 }
 
 static void
@@ -112,15 +111,15 @@ compute_have_rect(GeglFilter * op,
 
 static void 
 prepare (GeglFilter * filter, 
-         GeglAttributes * output_attributes,
-         GList * input_attributes)
+         GList * output_data_list,
+         GList * input_data_list)
 {
   GeglPointOp *point_op = GEGL_POINT_OP(filter);
   GeglNoInput *self = GEGL_NO_INPUT(filter);
 
-  GeglAttributes *dest_attr = output_attributes;
-  GeglImageData *dest = (GeglImageData*)g_value_get_object(dest_attr->value);
-  GeglColorModel * dest_cm = gegl_image_data_get_color_model (dest);
+  GeglData *dest_data = g_list_nth_data(output_data_list, 0);
+  GeglImageBuffer *dest = (GeglImageBuffer*)g_value_get_object(dest_data->value);
+  GeglColorModel * dest_cm = gegl_image_buffer_get_color_model (dest);
   GeglColorSpace * dest_cs = gegl_color_model_color_space(dest_cm);
   GeglDataSpace * dest_ds = gegl_color_model_data_space(dest_cm);
 

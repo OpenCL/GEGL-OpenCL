@@ -1,3 +1,209 @@
+Dec 20 00:33:13 EST 2002 calvinw@mindspring.com
+
+	Renamed GeglAttribute to GeglData and expanded these to have subclasses
+	for PixelData, ChannelData, ImageData, and ScalarData. Now there are nodes and
+	ops, with the data classes representing the data that is passed through the
+	graph during evaluation. Also added op properties to represent the various
+	generic input and output data for each of the ops. Regular gobject data
+	specific properties will map to some generic data property. The data properties
+	are held in the op class. Renamed previous ImageData to ImageBuffer.   	
+
+	Added these:
+	*docs/reference/gegl/images/node_2inputs_1output.png
+	*docs/reference/gegl/tmpl/gegl-image-buffer-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-input-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-input-value-types.sgml
+	*docs/reference/gegl/tmpl/gegl-image-buffer-iterator.sgml
+	*docs/reference/gegl/tmpl/gegl-image-buffer-data.sgml
+	*docs/reference/gegl/tmpl/gegl-data-space-uint8.sgml
+	*docs/reference/gegl/tmpl/gegl-image-buffer.sgml
+	*docs/reference/gegl/tmpl/gegl-data.sgml
+	*docs/reference/gegl/tmpl/gegl-pixel-data.sgml
+	*docs/reference/gegl/tmpl/gegl-channel-data.sgml
+	*docs/reference/gegl/tmpl/gegl-scalar-data.sgml
+	*gegl/gegl-image-buffer-iterator.c
+	*gegl/gegl-image-buffer-iterator.h
+	*gegl/gegl-image-buffer-data.h
+	*gegl/gegl-image-buffer-param-specs.h
+	*gegl/gegl-image-buffer.c
+	*gegl/gegl-image-buffer.h
+	*gegl/gegl-data.c
+	*gegl/gegl-data.h
+	*gegl/gegl-scalar-data.c
+	*gegl/gegl-pixel-data.c
+	*gegl/gegl-pixel-data.h
+	*gegl/gegl-channel-data.c
+	*gegl/gegl-channel-data.h
+	*gegl/gegl-image-buffer-data.c
+	*gegl/gegl-scalar-data.h
+	*gegl/gegl-image-buffer-param-specs.c
+	*gegl/gegl-input-param-specs.c
+	*gegl/gegl-input-param-specs.h
+	*gegl/gegl-input-value-types.h
+	*gegl/gegl-input-value-types.c
+	*gegl/gegl-data-space-uint8.c
+	*gegl/gegl-data-space-uint8.h
+	*tests/imagebuffertest.c
+	*tests/gegl-mock-param-filter.c
+	*tests/gegl-mock-param-filter.h
+	*tests/imagebufferiteratortest.c
+	*tests/channelvaluetest.c
+	
+	Removed these:
+	*docs/reference/gegl/tmpl/gegl-image-data-iterator.sgml
+	*docs/reference/gegl/tmpl/gegl-image-data-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-image-data.sgml
+	*gegl/gegl-attributes.c
+	*gegl/gegl-attributes.h
+	*gegl/gegl-data-space-u8.c
+	*gegl/gegl-data-space-u8.h
+	*gegl/gegl-image-data-iterator.c
+	*gegl/gegl-image-data-iterator.h
+	*gegl/gegl-image-data-param-specs.c
+	*gegl/gegl-image-data-param-specs.h
+	*gegl/gegl-image-data.c
+	*gegl/gegl-image-data.h
+	*tests/imagedataiteratortest.c
+	*tests/imagedatatest.c
+		
+	Modified these as described above:
+	*gegl/Makefile.am
+	*gegl/gegl-add.c
+	*gegl/gegl-atop.c
+	*gegl/gegl-binary.c
+	*gegl/gegl-blend.c
+	*gegl/gegl-channel-param-specs.c
+	*gegl/gegl-channel-param-specs.h
+	*gegl/gegl-channel-value-types.c
+	*gegl/gegl-color.c
+	*gegl/gegl-comp.c
+	*gegl/gegl-darken.c
+	*gegl/gegl-dfs-visitor.c
+	*gegl/gegl-difference.c
+	*gegl/gegl-dump-visitor.c
+	*gegl/gegl-eval-bfs-visitor.c
+	*gegl/gegl-eval-dfs-visitor.c
+	*gegl/gegl-eval-mgr.c
+	*gegl/gegl-eval-visitor.c
+	*gegl/gegl-fade.c
+	*gegl/gegl-filter.c
+	*gegl/gegl-filter.h
+	*gegl/gegl-graph.c
+	*gegl/gegl-i-add.c
+	*gegl/gegl-i-mult.c
+	*gegl/gegl-image.c
+	*gegl/gegl-image.h
+	*gegl/gegl-init.c
+	*gegl/gegl-inside.c
+	*gegl/gegl-lighten.c
+	*gegl/gegl-max.c
+	*gegl/gegl-min.c
+	*gegl/gegl-mult.c
+	*gegl/gegl-multiply.c
+	*gegl/gegl-no-input.c
+	*gegl/gegl-node.c
+	*gegl/gegl-node.h
+	*gegl/gegl-op.c
+	*gegl/gegl-op.h
+	*gegl/gegl-outside.c
+	*gegl/gegl-over.c
+	*gegl/gegl-param-specs.h
+	*gegl/gegl-pipe.c
+	*gegl/gegl-pipe.h
+	*gegl/gegl-pixel-param-specs.c
+	*gegl/gegl-pixel-param-specs.h
+	*gegl/gegl-pixel-value-types.c
+	*gegl/gegl-point-op.c
+	*gegl/gegl-premult.c
+	*gegl/gegl-print.c
+	*gegl/gegl-scanline-processor.c
+	*gegl/gegl-scanline-processor.h
+	*gegl/gegl-screen.c
+	*gegl/gegl-subtract.c
+	*gegl/gegl-types.h
+	*gegl/gegl-unary.c
+	*gegl/gegl-unpremult.c
+	*gegl/gegl-utils.c
+	*gegl/gegl-value-types.h
+	*gegl/gegl-visitor.c
+	*gegl/gegl-visitor.h
+	*gegl/gegl-xor.c
+	*gegl/gegl.h
+
+	Updated tests: 
+	*tests/Makefile.am
+	*tests/addtest-rgb-float.c
+	*tests/addtest-rgb-uint8.c
+	*tests/bfsvisitormultouttest.c
+	*tests/bfsvisitortest.c
+	*tests/checktest.c
+	*tests/colormodeltest.c
+	*tests/colortest-rgb-float.c
+	*tests/dataspacetest.c
+	*tests/dfsvisitormultouttest.c
+	*tests/dfsvisitortest.c
+	*tests/fadetest-rgb-float.c
+	*tests/fadetest-rgb-uint8.c
+	*tests/gegl-check.c
+	*tests/gegl-check.h
+	*tests/gegl-mock-filter.c
+	*tests/gegl-mock-image.c
+	*tests/gegl-mock-node.c
+	*tests/gegl-mock-op.c
+	*tests/gegl-mock-point-op.c
+	*tests/graphapplytest-rgb-float.c
+	*tests/graphnodetest.c
+	*tests/haverecttest.c
+	*tests/iaddtest-rgb-float.c
+	*tests/iaddtest-rgb-uint8.c
+	*tests/imulttest-rgb-float.c
+	*tests/imulttest-rgb-uint8.c
+	*tests/multiplytest-rgb-float.c
+	*tests/multtest-rgb-float.c
+	*tests/multtest-rgb-uint8.c
+	*tests/needrecttest.c
+	*tests/nodetest.c
+	*tests/optest.c
+	*tests/paramtest.c
+	*tests/pipetest.c
+	*tests/pixelrgbuint8valuetest.c
+	*tests/pointoptest.c
+	*tests/printtest.c
+	*tests/simpletreetest-rgb-float.c
+	*tests/testgegl.c
+	*tests/testgeglfile.c
+	*tests/testutils.c
+	*tests/valueimagedatatest.c
+
+	Updated docs:
+	*docs/dia/simplegraph.dia
+	*docs/reference/gegl/gegl-docs.sgml
+	*docs/reference/gegl/gegl-sections.txt
+	*docs/reference/gegl/gegl-undocumented.txt
+	*docs/reference/gegl/gegl.types
+	*docs/reference/gegl/images/simplegraph.png
+	*docs/reference/gegl/tmpl/gegl-add.sgml
+	*docs/reference/gegl/tmpl/gegl-attributes.sgml
+	*docs/reference/gegl/tmpl/gegl-channel-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-color-model.sgml
+	*docs/reference/gegl/tmpl/gegl-component-color-model.sgml
+	*docs/reference/gegl/tmpl/gegl-eval-mgr.sgml
+	*docs/reference/gegl/tmpl/gegl-filter.sgml
+	*docs/reference/gegl/tmpl/gegl-graph-setup-visitor.sgml
+	*docs/reference/gegl/tmpl/gegl-image.sgml
+	*docs/reference/gegl/tmpl/gegl-node.sgml
+	*docs/reference/gegl/tmpl/gegl-op.sgml
+	*docs/reference/gegl/tmpl/gegl-pixel-param-specs.sgml
+	*docs/reference/gegl/tmpl/gegl-pixel-value-types.sgml
+	*docs/reference/gegl/tmpl/gegl-point-op.sgml
+	*docs/reference/gegl/tmpl/gegl-scanline-processor.sgml
+	*docs/reference/gegl/tmpl/gegl-storage.sgml
+	*docs/reference/gegl/tmpl/gegl-tile.sgml
+	*docs/reference/gegl/tmpl/gegl-types.sgml
+	*docs/reference/gegl/tmpl/gegl-unused.sgml
+	*docs/reference/gegl/tmpl/gegl-utils.sgml
+	*docs/reference/gegl/tmpl/gegl-visitor.sgml
+
 Wed Nov 13 23:32:58 EST 2002 calvinw@mindspring.com
 	
 	Created gegl-init.c and moved all init code out of gegl-utils. Then

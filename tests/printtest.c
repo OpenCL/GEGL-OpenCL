@@ -33,7 +33,7 @@ static void
 test_print_apply(Test *test)
 {
   GeglOp *print = g_object_new(GEGL_TYPE_PRINT,
-                               "source", source,
+                               "input", 0, source,
                                NULL);
 
   gegl_op_apply(print); 

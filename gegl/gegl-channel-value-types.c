@@ -26,7 +26,7 @@ GType GEGL_TYPE_CHANNEL4_FLOAT = 0;
 static void
 value_init_channel_uint8 (GValue *value)
 {
-  value->data[0].v_pointer = gegl_data_space_instance("u8");
+  value->data[0].v_pointer = gegl_data_space_instance("uint8");
   value->data[1].v_uint = 0; 
 }
 
@@ -49,7 +49,7 @@ value_collect_channel_uint8 (GValue      *value,
                      GTypeCValue *collect_values,
                      guint        collect_flags)
 {
-  value->data[0].v_pointer = gegl_data_space_instance("u8");
+  value->data[0].v_pointer = gegl_data_space_instance("uint8");
   value->data[1].v_uint = collect_values[0].v_int;
   return NULL;
 }
@@ -220,7 +220,7 @@ g_value_set_channel_uint8 (GValue *value,
 {
   g_return_if_fail (G_VALUE_HOLDS_CHANNEL_UINT8 (value));
   g_return_if_fail (value->data[0].v_pointer == 
-                    gegl_data_space_instance("u8"));
+                    gegl_data_space_instance("uint8"));
 
   value->data[1].v_uint = v_uint8;
 }
@@ -230,7 +230,7 @@ g_value_get_channel_uint8 (const GValue *value)
 {
   g_return_val_if_fail (G_VALUE_HOLDS_CHANNEL_UINT8 (value), 0);
   g_return_val_if_fail (value->data[0].v_pointer == 
-                        gegl_data_space_instance("u8"), 0);
+                        gegl_data_space_instance("uint8"), 0);
 
   return (guint8)value->data[1].v_uint;
 }
@@ -267,7 +267,7 @@ g_value_channel_print(GValue * value)
 
   LOG_DIRECT("data space name is %s", name);
 
-  if(data_space == gegl_data_space_instance("u8"))
+  if(data_space == gegl_data_space_instance("uint8"))
     LOG_DIRECT("value is %d", value->data[1].v_uint);
   else if(data_space == gegl_data_space_instance("float"))
     LOG_DIRECT("value is %f", value->data[1].v_float);

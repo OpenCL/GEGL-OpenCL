@@ -1,0 +1,50 @@
+<!-- ##### SECTION Title ##### -->
+GeglData
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_data_get_value ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_data_get_param_spec ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_data_set_param_spec ##### -->
+<para>
+
+</para>
+
+@self: 
+@param_spec: 
+
+
+<!-- ##### ARG GeglData:param-spec ##### -->
+<para>
+
+</para>
+

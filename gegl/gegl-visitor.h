@@ -105,8 +105,8 @@ gint            gegl_visitor_get_shared_count   (GeglVisitor *self,
 void            gegl_visitor_set_shared_count   (GeglVisitor *self, 
                                                  GeglNode *node, 
                                                  gint shared_count);
-GList *        gegl_visitor_get_input_attributes(GeglVisitor *self,
-                                                 GeglNode *node);
+GList *        gegl_visitor_collect_data_list(GeglVisitor *self,
+                                          GeglNode *node);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

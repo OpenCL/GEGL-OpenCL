@@ -10,6 +10,7 @@
 static GeglNode *A,*B,*C,*D,*E,*F,*G;
 static GeglNode *H,*I,*J,*K,*L,*M,*N;
 static GeglNode *O,*P,*Q,*R,*S;
+static GeglNode *T,*U,*V,*W;
 
 static void
 test_bfs_visitor_g_object_new(Test *test)
@@ -182,21 +183,21 @@ test_bfs_visitor_simple_shared(Test *test)
                                 "name", "B", 
                                 "num_inputs", 1,
                                 "num_outputs", 1, 
-                                "source0", A,
+                                "input", 0, A,
                                 NULL);
 
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                 "name", "C", 
                                 "num_inputs", 1,
                                 "num_outputs", 1, 
-                                "source0", B,
+                                "input", 0, B,
                                 NULL);
 
     GeglNode *D = g_object_new (GEGL_TYPE_MOCK_NODE, 
                                 "name", "D", 
                                 "num_inputs", 2,
-                                "source0", B,
-                                "source1", C,
+                                "input", 0, B,
+                                "input", 1, C,
                                 NULL);  
 
     gint i;
@@ -220,6 +221,43 @@ test_bfs_visitor_simple_shared(Test *test)
     g_object_unref(B);
     g_object_unref(C);
     g_object_unref(D);
+  }
+}
+
+/**
+
+  From setup: 
+
+          T 
+         /|\ 
+        / | \ 
+       U null V  
+      /|
+     W null
+
+**/
+static void
+test_bfs_visitor_traverse_with_nulls(Test *test)
+{
+  {
+    gint i;
+    gchar * visit_names[] = {"T", "U", "V", "W"};  
+    GeglMockBfsVisitor *mock_bfs_visitor = g_object_new(GEGL_TYPE_MOCK_BFS_VISITOR, NULL);  
+    GList * visits_list;
+
+    gegl_bfs_visitor_traverse(GEGL_BFS_VISITOR(mock_bfs_visitor), T); 
+
+    visits_list = gegl_visitor_get_visits_list(GEGL_VISITOR(mock_bfs_visitor));
+
+    ct_test (test, 4 == g_list_length(visits_list));
+    for(i = 0; i < g_list_length(visits_list); i++)
+      {
+        GeglNode *node = (GeglNode*)g_list_nth_data(visits_list, i);
+        const gchar *name = gegl_object_get_name(GEGL_OBJECT(node));
+        ct_test (test, 0 == strcmp(name, visit_names[i]));
+      }
+
+    g_object_unref(mock_bfs_visitor);
   }
 }
 
@@ -387,6 +425,43 @@ bfs_visitor_setup(Test *test)
     gegl_node_set_source(Q, R, 0);
     gegl_node_set_source(R, S, 0);
   }
+
+  /*
+          T 
+         /| \ 
+        / |  \ 
+       U null V  
+      /|
+     W null
+  */
+
+  {
+    W = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "W", 
+                      "num_outputs", 1,
+                      NULL);  
+
+    V = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "V", 
+                      "num_outputs", 1,
+                      NULL);  
+
+    U = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "U", 
+                      "num_outputs", 1,
+                      "num_inputs", 2,
+                      "input", 0, W,
+                      "input", 1, NULL,
+                      NULL);  
+
+    T = g_object_new (GEGL_TYPE_MOCK_NODE, 
+                      "name", "T", 
+                      "num_inputs", 3,
+                      "input", 0, U,
+                      "input", 1, NULL,
+                      "input", 2, V,
+                      NULL);  
+  }
 }
 
 static void
@@ -411,6 +486,11 @@ bfs_visitor_teardown(Test *test)
   g_object_unref(Q);
   g_object_unref(R);
   g_object_unref(S);
+  g_object_unref(T);
+  g_object_unref(U);
+  g_object_unref(V);
+  g_object_unref(W);
+
 }
 
 Test *
@@ -427,6 +507,7 @@ create_bfs_visitor_test()
   g_assert(ct_addTestFun(t, test_bfs_visitor_traverse_diamond));
   g_assert(ct_addTestFun(t, test_bfs_visitor_traverse_graph));
   g_assert(ct_addTestFun(t, test_bfs_visitor_simple_shared));
+  g_assert(ct_addTestFun(t, test_bfs_visitor_traverse_with_nulls));
 
 #endif
 

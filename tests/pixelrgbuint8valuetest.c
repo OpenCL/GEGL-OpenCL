@@ -242,7 +242,7 @@ test_pixel_rgb_uint8_pixel_get_color_model(Test *test)
   g_value_init(value, GEGL_TYPE_PIXEL_RGB_UINT8);
   color_model = g_value_pixel_get_color_model(value);
 
-  ct_test(test, color_model == gegl_color_model_instance("rgb-u8"));
+  ct_test(test, color_model == gegl_color_model_instance("rgb-uint8"));
 
   g_value_unset(value);
   g_free(value);

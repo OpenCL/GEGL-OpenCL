@@ -1,11 +1,11 @@
 #include    "gegl-pixel-param-specs.h"
-#include    "gegl-param-specs.h"
-#include    "gegl-value-types.h"
+#include    "gegl-pixel-value-types.h"
 #include    "gegl-utils.h"
 #include    "gegl-color-model.h"
 #include    "gegl-color-space.h"
 #include    "gegl-data-space.h"
 
+GType GEGL_TYPE_PARAM_PIXEL = 0;
 GType GEGL_TYPE_PARAM_PIXEL_RGB_UINT8 = 0;
 GType GEGL_TYPE_PARAM_PIXEL_RGBA_UINT8 = 0;
 GType GEGL_TYPE_PARAM_PIXEL_RGB_FLOAT = 0;
@@ -145,9 +145,47 @@ param_spec_pixel_rgba_float_validate (GParamSpec *pspec,
          (old_alpha != p[3]);  
 }
 
+static gboolean
+param_spec_pixel_validate (GParamSpec *pspec,
+                           GValue     *value)
+{
+#if 0
+  GeglParamSpecPixel *spec = GEGL_PARAM_SPEC_PIXEL (pspec);
+  gchar *property_name = g_strconcat(pspec->name, 
+                                     "-",
+                                     gegl_color_model_name(spec->color_model), 
+                                     NULL);
+  GParamSpec *derived_param_spec = 
+    g_object_class_find_property(spec->owner_class, property_name);
+
+  return g_param_value_validate(derived_param_spec, value); 
+#endif
+  return FALSE;
+}
+
 void
 gegl_pixel_param_spec_types_init (void)
 {
+  {
+    static GParamSpecTypeInfo pspec_info = 
+      {
+        sizeof (GeglParamSpecPixel),          /* instance_size */
+        16,                                   /* n_preallocs */
+        NULL,                                 /* instance_init */
+        0x0,                                  /* value_type */
+        NULL,                                 /* finalize */
+        NULL,                                 /* value_set_default */
+        param_spec_pixel_validate,            /* value_validate */
+        NULL,                                 /* values_cmp */
+      };
+
+    pspec_info.value_type = GEGL_TYPE_PIXEL;
+    GEGL_TYPE_PARAM_PIXEL = 
+      g_param_type_register_static ("GeglParamPixel", &pspec_info);
+    g_assert (GEGL_TYPE_PARAM_PIXEL == 
+              g_type_from_name("GeglParamPixel"));
+  }
+
   {
     static GParamSpecTypeInfo pspec_info = 
       {
@@ -227,6 +265,20 @@ gegl_pixel_param_spec_types_init (void)
     g_assert (GEGL_TYPE_PARAM_PIXEL_RGBA_FLOAT == 
               g_type_from_name("GeglParamPixelRgbaFloat"));
   }
+}
+
+GParamSpec*
+gegl_param_spec_pixel (const gchar *name,
+                       const gchar *nick,
+                       const gchar *blurb,
+                       GParamFlags  flags)
+{
+  GeglParamSpecPixel *spec;
+
+  spec = g_param_spec_internal (GEGL_TYPE_PARAM_PIXEL, 
+                                 name, nick, blurb, flags);
+
+  return G_PARAM_SPEC (spec);
 }
 
 GParamSpec*  

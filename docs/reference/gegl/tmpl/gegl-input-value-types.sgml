@@ -1,0 +1,53 @@
+<!-- ##### SECTION Title ##### -->
+gegl-input-value-types
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GeglNode ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_INPUT ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO G_VALUE_HOLDS_INPUT ##### -->
+<para>
+
+</para>
+
+@value: 
+
+
+<!-- ##### FUNCTION gegl_input_value_types_init ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION g_value_get_input ##### -->
+<para>
+
+</para>
+
+@value: 
+@n: 
+@Returns: 
+
+

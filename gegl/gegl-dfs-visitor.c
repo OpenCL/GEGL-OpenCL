@@ -1,5 +1,5 @@
 #include "gegl-dfs-visitor.h"
-#include "gegl-attributes.h"
+#include "gegl-data.h"
 #include "gegl-node.h"
 #include "gegl-op.h"
 #include "gegl-graph.h"

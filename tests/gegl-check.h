@@ -7,9 +7,9 @@ extern "C" {
 
 #include "gegl-filter.h"
 
-#ifndef __TYPEDEF_GEGL_IMAGE_DATA__
-#define __TYPEDEF_GEGL_IMAGE_DATA__
-typedef struct _GeglImageData GeglImageData;
+#ifndef __TYPEDEF_GEGL_IMAGE_BUFFER__
+#define __TYPEDEF_GEGL_IMAGE_BUFFER__
+typedef struct _GeglImageBuffer GeglImageBuffer;
 #endif
 
 #define GEGL_TYPE_CHECK               (gegl_check_get_type ())
@@ -28,7 +28,7 @@ struct _GeglCheck
     GeglFilter filter;
 
     /*< private >*/
-    GeglImageData *image_data;
+    GeglImageBuffer *image_buffer;
     GValue *pixel;
     gboolean success;
     gint x;
@@ -47,8 +47,8 @@ gboolean gegl_check_get_success(GeglCheck *self);
 void gegl_check_get_pixel (GeglCheck * self, GValue *pixel);
 void gegl_check_set_pixel (GeglCheck * self, GValue *pixel);
 
-void gegl_check_set_image_data (GeglCheck * self, GeglImageData *image_data);
-GeglImageData * gegl_check_get_image_data (GeglCheck * self);
+void gegl_check_set_image_buffer (GeglCheck * self, GeglImageBuffer *image_buffer);
+GeglImageBuffer * gegl_check_get_image_buffer (GeglCheck * self);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

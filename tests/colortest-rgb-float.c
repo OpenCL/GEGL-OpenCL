@@ -123,9 +123,9 @@ color_test_teardown(Test *test)
 }
 
 Test *
-create_color_test_pixel_rgb_float()
+create_color_test_rgb_float()
 {
-  Test* t = ct_create("GeglColorTestPixelRgbFloat");
+  Test* t = ct_create("GeglColorTestRgbFloat");
 
   g_assert(ct_addSetUp(t, color_test_setup));
   g_assert(ct_addTearDown(t, color_test_teardown));

@@ -1,0 +1,33 @@
+<!-- ##### SECTION Title ##### -->
+GeglChannelData
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglDataSpace ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gegl_channel_data_get_data_space ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+

@@ -59,7 +59,6 @@ test_haverect_op(Test *t)
 
   GeglFilter * source = g_object_new (GEGL_TYPE_MOCK_FILTER, 
                                       "num_inputs", 2,
-                                      "num_outputs", 1,
                                       NULL);  
 
   GList * have_rects = NULL;

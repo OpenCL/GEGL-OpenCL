@@ -7,17 +7,12 @@ extern "C" {
 
 #include "gegl-object.h"
 #include "gegl-filter.h"
-#include "gegl-image-data-iterator.h"
+#include "gegl-image-buffer-iterator.h"
 
 typedef void (*GeglScanlineFunc)(GeglFilter *op,
-                                 GeglImageDataIterator ** iters, 
+                                 GeglImageBufferIterator ** iters, 
                                  gint width);
 
-
-#ifndef __TYPEDEF_GEGL_ATTRIBUTES__
-#define __TYPEDEF_GEGL_ATTRIBUTES__
-typedef struct _GeglAttributes GeglAttributes;
-#endif
 
 #define GEGL_TYPE_SCANLINE_PROCESSOR               (gegl_scanline_processor_get_type ())
 #define GEGL_SCANLINE_PROCESSOR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SCANLINE_PROCESSOR, GeglScanlineProcessor))
@@ -49,8 +44,8 @@ struct _GeglScanlineProcessorClass
 GType gegl_scanline_processor_get_type   (void);
 
 void gegl_scanline_processor_process(GeglScanlineProcessor  *self,
-                                     GeglAttributes * attributes,
-                                     GList * input_attributes);
+                                     GList * output_data_list,
+                                     GList * input_data_list);
 
 #ifdef __cplusplus
 }

@@ -13,7 +13,7 @@ test_pipe_g_object_new(Test *test)
 
     ct_test(test, pipe != NULL);
     ct_test(test, GEGL_IS_PIPE(pipe));
-    ct_test(test, g_type_parent(GEGL_TYPE_PIPE) == GEGL_TYPE_FILTER);
+    ct_test(test, g_type_parent(GEGL_TYPE_PIPE) == GEGL_TYPE_IMAGE);
     ct_test(test, !strcmp("GeglPipe", g_type_name(GEGL_TYPE_PIPE)));
 
     g_object_unref(pipe);

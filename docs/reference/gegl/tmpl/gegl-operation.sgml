@@ -44,6 +44,12 @@ code then chooses some Filter downstream and calls gegl_filter_evaluate on it.
 
 </para>
 
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### FUNCTION gegl_filter_compute_need_rect ##### -->
 <para>
 
@@ -75,22 +81,15 @@ code then chooses some Filter downstream and calls gegl_filter_evaluate on it.
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_filter_evaluate ##### -->
-<para>
-
-</para>
-
-@self: 
-@attributes: 
-@input_attributes: 
-
-
 <!-- ##### FUNCTION gegl_filter_validate_inputs ##### -->
 <para>
 
 </para>
 
 @self: 
+@data_list: 
+<!-- # Unused Parameters # -->
+@input_param: 
 @input_attributes: 
 
 
@@ -100,8 +99,25 @@ code then chooses some Filter downstream and calls gegl_filter_evaluate on it.
 </para>
 
 @self: 
-@attributes: 
+@output_data_list: 
 <!-- # Unused Parameters # -->
+@param: 
+@attributes: 
 @output_attributes: 
+
+
+<!-- ##### FUNCTION gegl_filter_evaluate ##### -->
+<para>
+
+</para>
+
+@self: 
+@output_data_list: 
+@input_data_list: 
+<!-- # Unused Parameters # -->
+@param: 
+@input_param: 
+@attributes: 
+@input_attributes: 
 
 

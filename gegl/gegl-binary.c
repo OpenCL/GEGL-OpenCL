@@ -1,11 +1,14 @@
 #include "gegl-binary.h"
-#include "gegl-attributes.h"
+#include "gegl-data.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-color-model.h"
 #include "gegl-color-space.h"
 #include "gegl-data-space.h"
-#include "gegl-image-data.h"
-#include "gegl-image-data-iterator.h"
+#include "gegl-param-specs.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-buffer-data.h"
+#include "gegl-scalar-data.h"
+#include "gegl-image-buffer-iterator.h"
 #include "gegl-utils.h"
 
 enum
@@ -20,7 +23,7 @@ static void init (GeglBinary * self, GeglBinaryClass * klass);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 
-static void prepare (GeglFilter * filter, GeglAttributes * output_attributes, GList *input_attributes);
+static void prepare (GeglFilter * filter, GList * output_data_list, GList *input_data_list);
 
 static gpointer parent_class = NULL;
 
@@ -56,6 +59,7 @@ static void
 class_init (GeglBinaryClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+  GeglOpClass *op_class = GEGL_OP_CLASS(klass);
   GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
 
   parent_class = g_type_class_peek_parent(klass);
@@ -67,23 +71,49 @@ class_init (GeglBinaryClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  g_object_class_install_property (gobject_class, PROP_FADE,
-                                   g_param_spec_float ("fade",
-                                                       "Fade",
-                                                       "Fade on B.",
-                                                       0.0, 
-                                                       G_MAXFLOAT,
-                                                       1.0,
-                                                       G_PARAM_READWRITE | 
-                                                       G_PARAM_CONSTRUCT));
+  /* op properties */
+  gegl_op_class_install_input_data_property (op_class, 
+                              g_param_spec_float ("fade",
+                                                  "Fade",
+                                                  "Fade on B.",
+                                                  0.0, 
+                                                  G_MAXFLOAT,
+                                                  1.0,
+                                                  G_PARAM_PRIVATE));
+  gegl_op_class_install_input_data_property (op_class, 
+                              gegl_param_spec_image_buffer("input-image-a", 
+                                                         "InputImageA",
+                                                         "InputImage A",
+                                                         G_PARAM_PRIVATE));
+  gegl_op_class_install_input_data_property (op_class, 
+                              gegl_param_spec_image_buffer("input-image-b", 
+                                                         "InputImageB",
+                                                         "Input Image B",
+                                                         G_PARAM_PRIVATE));
 
+  /* gobject properties */
+  g_object_class_install_property(gobject_class, PROP_FADE, 
+                                  g_param_spec_float ("fade",
+                                                      "Fade",
+                                                      "Fade on B.",
+                                                      0.0, 
+                                                      G_MAXFLOAT,
+                                                      1.0,
+                                                      G_PARAM_CONSTRUCT | 
+                                                      G_PARAM_READWRITE));
 }
 
 static void 
 init (GeglBinary * self, 
       GeglBinaryClass * klass)
 {
-  g_object_set(self, "num_inputs", 2, NULL);
+  /* Add image inputs and fade. */
+  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_IMAGE_BUFFER_DATA, "input-image-a", 0);
+  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_IMAGE_BUFFER_DATA, "input-image-b", 1);
+  gegl_op_add_input(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "fade", 2);
+
+
+  self->fade = 1.0;
 }
 
 static void
@@ -159,15 +189,15 @@ gegl_binary_set_fade (GeglBinary * self,
 
 static void 
 prepare (GeglFilter * filter, 
-         GeglAttributes * output_attributes,
-         GList * input_attributes)
+         GList * output_data_list,
+         GList * input_data_list)
 {
   GeglPointOp *point_op = GEGL_POINT_OP(filter);
   GeglBinary *self = GEGL_BINARY(filter);
 
-  GeglAttributes *dest_attr = output_attributes;
-  GeglImageData *dest = (GeglImageData*)g_value_get_object(dest_attr->value);
-  GeglColorModel * dest_cm = gegl_image_data_get_color_model (dest);
+  GeglData *dest_data = g_list_nth_data(output_data_list, 0);
+  GeglImageBuffer *dest = (GeglImageBuffer*)g_value_get_object(dest_data->value);
+  GeglColorModel * dest_cm = gegl_image_buffer_get_color_model (dest);
   GeglColorSpace * dest_cs = gegl_color_model_color_space(dest_cm);
   GeglDataSpace * dest_ds = gegl_color_model_data_space(dest_cm);
 

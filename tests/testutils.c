@@ -20,11 +20,11 @@ testutils_check_pixel_rgb_float_xy(GeglImage *image,
 {
   gboolean success;
 
-  GeglImageData * image_data = gegl_image_get_image_data(image);
+  GeglImageBuffer * image_buffer = gegl_image_get_image_buffer(image);
   GeglOp * check = g_object_new(GEGL_TYPE_CHECK, 
                                 "pixel-rgb-float", a, b, c, 
                                 "x", x, "y", y,
-                                "image_data", image_data,
+                                "image_buffer", image_buffer,
                                 NULL);
   gegl_op_apply(check); 
 
@@ -51,11 +51,11 @@ testutils_check_rgb_uint8_xy(GeglImage *image,
 {
   gboolean success;
 
-  GeglImageData * image_data = gegl_image_get_image_data(image);
+  GeglImageBuffer * image_buffer = gegl_image_get_image_buffer(image);
   GeglOp * check = g_object_new(GEGL_TYPE_CHECK, 
                                 "pixel-rgb-uint8", a, b, c, 
                                 "x", x, "y", y,
-                                "image_data", image_data,
+                                "image_buffer", image_buffer,
                                 NULL);
   gegl_op_apply(check); 
 

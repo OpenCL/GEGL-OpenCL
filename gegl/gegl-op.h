@@ -6,7 +6,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include "gegl-node.h"
-#include "gegl-attributes.h"
+#include "gegl-data.h"
 
 #define GEGL_TYPE_OP               (gegl_op_get_type ())
 #define GEGL_OP(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OP, GeglOp))
@@ -24,28 +24,59 @@ struct _GeglOp
     GeglNode node;
 
     /*< private >*/
-    GeglAttributes * attributes;
+    GList *input_data_list;
+    GList *output_data_list;
 };
 
 typedef struct _GeglOpClass GeglOpClass;
 struct _GeglOpClass 
 {
     GeglNodeClass node_class;
-  
-    void (*init_attributes)      (GeglOp *self);
-    void (*free_attributes)      (GeglOp *self);
-
 };
+
+void            gegl_op_class_install_input_data_property  (GeglOpClass *class,
+                                                 GParamSpec   *pspec);
+GParamSpec*     gegl_op_class_find_input_data_property (GeglOpClass *class,
+			                                     const gchar  *property_name);
+GParamSpec**    gegl_op_class_list_input_data_properties (GeglOpClass *class,
+                                                 guint *n_properties_p);
                  
+void            gegl_op_class_install_output_data_property (GeglOpClass *class,
+                                                 GParamSpec   *pspec);
+GParamSpec*     gegl_op_class_find_output_data_property (GeglOpClass *class,
+			                                     const gchar  *property_name);
+GParamSpec**    gegl_op_class_list_output_data_properties (GeglOpClass *class,
+                                                 guint  *n_properties_p);
+
 GType           gegl_op_get_type                (void);
 void            gegl_op_apply                   (GeglOp * self);
 void            gegl_op_apply_roi               (GeglOp * self, 
                                                  GeglRect *roi);
 
-void            gegl_op_init_attributes         (GeglOp *self);
-void            gegl_op_free_attributes         (GeglOp * self);
+void            gegl_op_add_input_data         (GeglOp *self,
+                                                 GeglData *data,
+                                                 gint n);
+void            gegl_op_add_output_data        (GeglOp *self,
+                                                 GeglData *data,
+                                                 gint n);
+void            gegl_op_add_input               (GeglOp *self,
+                                                 GType data_type,
+                                                 gchar *name,
+                                                 gint n);
+void            gegl_op_add_output              (GeglOp *self, 
+                                                 GType data_type,
+                                                 gchar *name,
+                                                 gint n);
 
-GeglAttributes* gegl_op_get_attributes          (GeglOp *self); 
+GeglData*      gegl_op_get_input_data           (GeglOp *self, 
+                                                 gint n);
+GeglData*      gegl_op_get_output_data          (GeglOp *self, 
+                                                 gint n);
+void            gegl_op_free_input_data_list    (GeglOp * self);
+void            gegl_op_free_output_data_list   (GeglOp * self);
+
+GList *         gegl_op_get_input_data_list     (GeglOp *self);
+GList *         gegl_op_get_output_data_list    (GeglOp *self);
 
 #ifdef __cplusplus
 }

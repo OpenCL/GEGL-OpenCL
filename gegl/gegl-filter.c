@@ -4,7 +4,7 @@
 #include "gegl-visitor.h"
 #include "gegl-utils.h"
 #include "gegl-value-types.h"
-#include "gegl-image-data.h"
+#include "gegl-image-buffer.h"
 
 enum
 {
@@ -14,15 +14,14 @@ enum
 
 static void class_init (GeglFilterClass * klass);
 static void init (GeglFilter * self, GeglFilterClass * klass);
-static void finalize(GObject * gobject);
 
 static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
 static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 
-static void init_attributes(GeglOp *op);
-static void free_attributes(GeglFilter *self);
+static void evaluate (GeglFilter * self, GList * output_data_list, GList * input_data_list);
 
-static void evaluate (GeglFilter * self, GeglAttributes * attributes, GList * input_attributes);
+static void validate_inputs (GeglFilter * self, GList * data_list);
+static void validate_outputs (GeglFilter * self, GList * output_data_list);
 
 static void compute_have_rect(GeglFilter *self, GeglRect *have_rect, GList * input_have_rects);
 static void compute_need_rect(GeglFilter *self, GeglRect *input_need_rect, GeglRect * need_rect, gint i);
@@ -65,17 +64,13 @@ class_init (GeglFilterClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
   GeglNodeClass *node_class = GEGL_NODE_CLASS (klass);
-  GeglOpClass *op_class = GEGL_OP_CLASS (klass);
 
   parent_class = g_type_class_peek_parent(klass);
 
-  gobject_class->finalize = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
   node_class->accept = accept;
-
-  op_class->init_attributes = init_attributes;
 
   klass->compute_need_rect = compute_need_rect;
   klass->compute_have_rect = compute_have_rect;
@@ -87,8 +82,8 @@ class_init (GeglFilterClass * klass)
   klass->process = NULL;
   klass->finish = NULL;
 
-  klass->validate_inputs = NULL;
-  klass->validate_outputs = NULL;
+  klass->validate_inputs = validate_inputs;
+  klass->validate_outputs = validate_outputs;
 
   return;
 }
@@ -98,16 +93,6 @@ init (GeglFilter * self,
       GeglFilterClass * klass)
 {
   return;
-}
-
-static void
-finalize(GObject *gobject)
-{
-  GeglFilter *self = GEGL_FILTER(gobject);
-
-  free_attributes(self);
-
-  G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
 static void
@@ -134,41 +119,6 @@ get_property (GObject      *gobject,
     default:
       break;
   }
-}
-
-static void
-free_attributes(GeglFilter *self) 
-{
-  GeglOp *op = GEGL_OP(self);
-  if(op->attributes)
-    {
-       g_value_unset(op->attributes->value);
-       g_free(op->attributes->value);
-       g_free(op->attributes);
-       op->attributes = NULL;
-    }
-}
-
-static void
-init_attributes(GeglOp *op)
-{
-  GeglFilter *self = GEGL_FILTER(op);
-
-  g_return_if_fail (op != NULL);
-  g_return_if_fail (GEGL_IS_FILTER(op));
-
-  /* Free any old attributes */
-  free_attributes(self);
-
-  /* Free and re-allocate the attributes */
-  GEGL_OP_CLASS(parent_class)->init_attributes(op);
-
-  /* Now allocate the attribute value and init */
-  if(op->attributes)
-    {
-      op->attributes->value = g_new0(GValue, 1);
-      g_value_init(op->attributes->value, GEGL_TYPE_IMAGE_DATA);
-    }
 }
 
 /**
@@ -206,16 +156,16 @@ compute_derived_color_model (GeglFilter * filter,
 /**
  * gegl_filter_evaluate:
  * @self: a #GeglFilter.
- * @attributes: List of output attributes.
- * @input_attributes: List of input attributes.
+ * @output_data_list: List of output data.
+ * @input_data_list: List of input data_list.
  *
  * Evaluate the filter.
  * 
  **/
 void      
 gegl_filter_evaluate (GeglFilter * self, 
-                      GeglAttributes * attributes,
-                      GList * input_attributes)
+                      GList * output_data_list,
+                      GList * input_data_list)
 {
   GeglFilterClass *klass;
   g_return_if_fail (self != NULL);
@@ -224,13 +174,13 @@ gegl_filter_evaluate (GeglFilter * self,
 
   if(klass->evaluate)
     (*klass->evaluate)(self, 
-                       attributes, 
-                       input_attributes);
+                       output_data_list, 
+                       input_data_list);
 }
 
 void      
 gegl_filter_validate_inputs (GeglFilter * self, 
-                             GList * input_attributes)
+                             GList * data_list)
 {
   GeglFilterClass *klass;
   g_return_if_fail (self != NULL);
@@ -238,12 +188,18 @@ gegl_filter_validate_inputs (GeglFilter * self,
   klass = GEGL_FILTER_GET_CLASS(self);
 
   if(klass->validate_inputs)
-    (*klass->validate_inputs)(self, input_attributes);
+    (*klass->validate_inputs)(self, data_list);
+}
+
+static void
+validate_inputs(GeglFilter *self,
+                GList *data_list)
+{
 }
 
 void      
 gegl_filter_validate_outputs (GeglFilter * self, 
-                              GeglAttributes * attributes)
+                              GList * output_data_list)
 {
   GeglFilterClass *klass;
   g_return_if_fail (self != NULL);
@@ -251,13 +207,19 @@ gegl_filter_validate_outputs (GeglFilter * self,
   klass = GEGL_FILTER_GET_CLASS(self);
 
   if(klass->validate_outputs)
-    (*klass->validate_outputs)(self, attributes);
+    (*klass->validate_outputs)(self, output_data_list);
+}
+
+static void
+validate_outputs(GeglFilter *self,
+                 GList *output_data_list)
+{
 }
 
 static void      
 evaluate (GeglFilter * self, 
-          GeglAttributes * attributes,
-          GList * input_attributes)
+          GList * output_data_list,
+          GList * input_data_list)
 {
   GeglFilterClass *klass;
   g_return_if_fail (self != NULL);
@@ -266,18 +228,18 @@ evaluate (GeglFilter * self,
 
   if(klass->prepare)
     (*klass->prepare)(self, 
-                      attributes, 
-                      input_attributes);
+                      output_data_list, 
+                      input_data_list);
 
   if(klass->process)
     (*klass->process)(self, 
-                      attributes, 
-                      input_attributes);
+                      output_data_list, 
+                      input_data_list);
 
   if(klass->finish)
     (*klass->finish)(self, 
-                     attributes, 
-                     input_attributes);
+                     output_data_list, 
+                     input_data_list);
 }
 
 /**

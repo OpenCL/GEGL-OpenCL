@@ -14,6 +14,12 @@ GeglEvalMgr
 
 </para>
 
+<!-- ##### STRUCT GeglNode ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### FUNCTION gegl_eval_mgr_get_root ##### -->
 <para>
 

@@ -1,7 +1,6 @@
 #include "gegl-mock-point-op.h"
 #include "gegl-scanline-processor.h"
-#include "gegl-image-data-iterator.h"
-#include "gegl-attributes.h"
+#include "gegl-image-buffer-iterator.h"
 
 enum
 {
@@ -11,9 +10,9 @@ enum
 
 static void class_init (GeglMockPointOpClass * klass);
 static void init(GeglMockPointOp *self, GeglMockPointOpClass *klass);
-static void prepare (GeglFilter * op, GeglAttributes * output_attributes, GList * input_attributes);
-static void finish (GeglFilter * op, GeglAttributes * output_attributes, GList * input_attributes);
-static void scanline (GeglFilter * op, GeglImageDataIterator ** iters, gint width);
+static void prepare (GeglFilter * op, GList * output_params, GList * input_param);
+static void finish (GeglFilter * op, GList * output_params, GList * input_param);
+static void scanline (GeglFilter * op, GeglImageBufferIterator ** iters, gint width);
 
 static gpointer parent_class = NULL;
 
@@ -60,12 +59,13 @@ static void
 init (GeglMockPointOp * self, 
       GeglMockPointOpClass * klass)
 {
-  g_object_set(self, "num_inputs", 2, NULL);
+  gegl_node_add_input(GEGL_NODE(self), 0);
+  gegl_node_add_input(GEGL_NODE(self), 1);
 }
 
 static void 
 scanline (GeglFilter * op,
-          GeglImageDataIterator ** iters,
+          GeglImageBufferIterator ** iters,
           gint width)
 {
   LOG_DEBUG("scanline", "MockPointOp scanline was called");
@@ -73,19 +73,19 @@ scanline (GeglFilter * op,
 
 static void 
 prepare                (GeglFilter * op, 
-                        GeglAttributes * output_attributes,
-                        GList * input_attributes)
+                        GList * output_params,
+                        GList * input_params)
 {
   GeglPointOp *point_op = GEGL_POINT_OP(op); 
   point_op->scanline_processor->func = scanline;
 
-  LOG_DEBUG("prepare", "input_attributes length is %d", g_list_length(input_attributes));
+  LOG_DEBUG("prepare", "input_params length is %d", g_list_length(input_params));
 }
 
 static void 
 finish                (GeglFilter * op, 
-                       GeglAttributes * outpu_attributes,
-                       GList * input_attributes)
+                       GList * output_params,
+                       GList * input_params)
 {
   LOG_DEBUG("finish", "MockPointOp finish was called");
 }

@@ -14,6 +14,18 @@ gegl-pixel-param-specs
 
 </para>
 
+<!-- ##### STRUCT GeglColorModel ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### VARIABLE GEGL_TYPE_PARAM_PIXEL ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### VARIABLE GEGL_TYPE_PARAM_PIXEL_RGB_UINT8 ##### -->
 <para>
 
@@ -46,31 +58,15 @@ gegl-pixel-param-specs
 @pspec: 
 
 
-<!-- ##### MACRO GEGL_IS_PARAM_SPEC_PIXEL_RGBA_UINT8 ##### -->
-<para>
-
-</para>
-
-@pspec: 
-
-
-<!-- ##### MACRO GEGL_IS_PARAM_SPEC_PIXEL_RGB_FLOAT ##### -->
-<para>
-
-</para>
-
-@pspec: 
-
-
-<!-- ##### MACRO GEGL_IS_PARAM_SPEC_PIXEL_RGBA_FLOAT ##### -->
-<para>
-
-</para>
-
-@pspec: 
-
-
 <!-- ##### MACRO GEGL_PARAM_SPEC_PIXEL_RGB_UINT8 ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_PIXEL_RGBA_UINT8 ##### -->
 <para>
 
 </para>
@@ -86,7 +82,23 @@ gegl-pixel-param-specs
 @pspec: 
 
 
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_PIXEL_RGB_FLOAT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
 <!-- ##### MACRO GEGL_PARAM_SPEC_PIXEL_RGB_FLOAT ##### -->
+<para>
+
+</para>
+
+@pspec: 
+
+
+<!-- ##### MACRO GEGL_IS_PARAM_SPEC_PIXEL_RGBA_FLOAT ##### -->
 <para>
 
 </para>
@@ -101,6 +113,13 @@ gegl-pixel-param-specs
 
 @pspec: 
 
+
+<!-- ##### STRUCT GeglParamSpecPixel ##### -->
+<para>
+
+</para>
+
+@pspec: 
 
 <!-- ##### STRUCT GeglParamSpecPixelRgbUInt8 ##### -->
 <para>
@@ -171,6 +190,18 @@ gegl-pixel-param-specs
 @default_green: 
 @default_blue: 
 @default_alpha: 
+
+<!-- ##### FUNCTION gegl_param_spec_pixel ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@flags: 
+@Returns: 
+
 
 <!-- ##### FUNCTION gegl_param_spec_pixel_rgb_uint8 ##### -->
 <para>

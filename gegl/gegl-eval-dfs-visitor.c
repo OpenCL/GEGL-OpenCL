@@ -1,13 +1,13 @@
 #include "gegl-eval-dfs-visitor.h"
 #include "gegl-filter.h"
 #include "gegl-graph.h"
-#include "gegl-value-types.h"
 #include "gegl-image.h"
 #include "gegl-color-model.h"
-#include "gegl-image-data.h"
-#include "gegl-attributes.h"
-#include "gegl-utils.h"
+#include "gegl-image-buffer.h"
+#include "gegl-image-buffer-data.h"
+#include "gegl-param-specs.h"
 #include "gegl-value-types.h"
+#include "gegl-utils.h"
 
 static void class_init (GeglEvalDfsVisitorClass * klass);
 static void init (GeglEvalDfsVisitor * self, GeglEvalDfsVisitorClass * klass);
@@ -106,36 +106,41 @@ compute_have_rect(GeglEvalDfsVisitor * self,
   GeglRect result_rect;
   GeglRect need_rect;
   GList * input_have_rects = NULL;
-  GList * input_attributes_list = 
-    gegl_visitor_get_input_attributes(visitor, GEGL_NODE(filter));
-
-  GeglAttributes *attributes = 
-    gegl_op_get_attributes(GEGL_OP(filter)); 
+  GList * input_data_list = 
+    gegl_visitor_collect_data_list(visitor, GEGL_NODE(filter));
+  GeglData *data = 
+    gegl_op_get_output_data(GEGL_OP(filter), 0); 
 
   for(i = 0; i < num_inputs; i++)
     {
-      GeglAttributes *input_attributes = 
-        (GeglAttributes*)g_list_nth_data(input_attributes_list, i); 
+      GeglData *input_data = 
+        (GeglData*)g_list_nth_data(input_data_list, i); 
 
-      input_have_rects = g_list_append(input_have_rects, &input_attributes->rect); 
+      if(GEGL_IS_IMAGE_BUFFER_DATA(input_data))
+        {
+          GeglImageBufferData *input_image_buffer_data = GEGL_IMAGE_BUFFER_DATA(input_data);
+          input_have_rects = g_list_append(input_have_rects, &input_image_buffer_data->rect); 
+        }
     }
 
 
-  if(attributes)
+  if(data)
     {
+      GeglImageBufferData *image_buffer_data = GEGL_IMAGE_BUFFER_DATA(data);
+
       /* Pass these and let node compute have rect */
       gegl_filter_compute_have_rect(filter, &have_rect, input_have_rects); 
 
       /* Intersect the have and the need rect to get the result rect */
-      gegl_attributes_get_rect(attributes, &need_rect);
+      gegl_rect_copy(&need_rect, &image_buffer_data->rect);
       gegl_rect_intersect(&result_rect, &need_rect, &have_rect);
 
       /* Store this result rect */
-      gegl_attributes_set_rect(attributes, &result_rect);
+      gegl_rect_copy(&image_buffer_data->rect, &result_rect);
     }
 
   g_list_free(input_have_rects);
-  g_list_free(input_attributes_list);
+  g_list_free(input_data_list);
 }
 
 static void
@@ -147,32 +152,34 @@ compute_derived_color_model(GeglEvalDfsVisitor * self,
   gint i;
   GList * input_color_models = NULL;
   GeglColorModel *color_model;
-  GList * input_attributes_list = 
-    gegl_visitor_get_input_attributes(visitor, GEGL_NODE(filter));
-
-  GeglAttributes *attributes = 
-    gegl_op_get_attributes(GEGL_OP(filter)); 
+  GList * input_data_list = 
+    gegl_visitor_collect_data_list(visitor, GEGL_NODE(filter));
+  GeglData *data = 
+    gegl_op_get_output_data(GEGL_OP(filter), 0); 
 
   /* Collect the color models of the inputs. */
   for(i = 0; i < num_inputs; i++)
     {
-      GeglAttributes *input_attributes = 
-        (GeglAttributes*)g_list_nth_data(input_attributes_list, i); 
+      GeglData *input_data = 
+        (GeglData*)g_list_nth_data(input_data_list, i); 
 
-      GeglColorModel *input_color_model = 
-        gegl_attributes_get_color_model(input_attributes); 
-
-      input_color_models = g_list_append(input_color_models, input_color_model); 
+      if(GEGL_IS_IMAGE_BUFFER_DATA(input_data))
+        {
+          GeglImageBufferData *input_image_buffer_data = GEGL_IMAGE_BUFFER_DATA(input_data);
+          GeglColorModel *input_color_model = input_image_buffer_data->color_model; 
+          input_color_models = g_list_append(input_color_models, input_color_model); 
+        }
     }
 
-  if(attributes)
+  if(data)
     {
+      GeglImageBufferData *image_buffer_data = GEGL_IMAGE_BUFFER_DATA(data);
       color_model = gegl_filter_compute_derived_color_model(filter, input_color_models); 
-      gegl_attributes_set_color_model(attributes, color_model);
+      image_buffer_data->color_model = color_model;
     }
 
   g_list_free(input_color_models);
-  g_list_free(input_attributes_list);
+  g_list_free(input_data_list);
 }
 
 static void      
