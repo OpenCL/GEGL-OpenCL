@@ -33,7 +33,6 @@
 
 GType gegl_cache_get_type(void);
 
-
 /*
  * GeglCache
  *
@@ -67,8 +66,10 @@ struct _GeglCache
 {
   GObject parent;
   gboolean persistent;
-  gsize soft_limit;
-  gsize hard_limit;
+  /* These need to be really big even on 32 bit platforms 
+    to allow for the large limits on the bigfile interface. */
+  guint64 soft_limit;
+  guint64 hard_limit;
 
 };
 
@@ -76,10 +77,10 @@ typedef struct _GeglCacheClass GeglCacheClass;
 struct _GeglCacheClass
 {
   GObjectClass parent_class;
-  gsize (*try_put) (GeglCache * cache,
+  gint (*try_put) (GeglCache * cache,
 		    GeglCacheEntry * entry,
 		    gsize * entry_id);
-  gsize (*put) (GeglCache * cache,
+  gint (*put) (GeglCache * cache,
 		GeglCacheEntry * entry,
 		gsize * entry_id);
   gint (*fetch) (GeglCache * cache,
@@ -95,18 +96,16 @@ enum GeglFetchResults {
   GEGL_FETCH_SUCCEEDED,
   GEGL_FETCH_INVALID,
   GEGL_FETCH_EXPIRED,
-  GEGL_FETCH_NO_EXIST,
 };
 
 enum GeglPutResults {
   GEGL_PUT_SUCCEEDED,
   GEGL_PUT_INVALID,
-  GEGL_PUT_EXISTS,
   GEGL_PUT_WOULD_BLOCK,
 };
 
 /*
- * This is the same as put, except will returns GEGL_PUT_WOULD_BLOCK
+ * This is the same as put, except will return GEGL_PUT_WOULD_BLOCK
  * if the put operation would have blocked
  */
 gint gegl_cache_try_put (GeglCache * cache,
@@ -121,24 +120,22 @@ gint gegl_cache_try_put (GeglCache * cache,
  * the result of this operation.
  *
  * Once you put an entry into the cache, you should call
- * g_object_unref().  You must not dereference an entry yourself after
- * it is put into the cache.
+ * g_object_unref().  You must not keep a refrence for yourself to an
+ * entry after it is put into the cache.
  *
  * After an entry is fetch'ed, the cache may keep around stale copies
  * of this entry if it is reasonable for the cache to do so.  As such,
  * all subsequent put()s of the same entry should reuse the same
  * entry_id.
  *
- * If someone tries to put() with an entry_id that is already in the
- * cache, then put() will return GEGL_PUT_EXISTS and fail to put the
- * entry into the cache.  This indicates a bug, and should not be used
- * to pick an entry_id.
+ * Don't try to put() an entry_id that is already in the
+ * cache.
  *
  * Also, don't put the same entry into more than one cache.  That
  * would be silly.
  *
- * On falure, entry_id will be 0, which is always an invalid entry_id.
- * Entry_id is also globally unique to a single process space.
+ * On falure, entry_id will be untouched.  Entry_id is also globally
+ * unique to a single process space (i.e. it's a pointer).
  */
 gint gegl_cache_put (GeglCache * cache,
 		     GeglCacheEntry * entry,
@@ -147,9 +144,8 @@ gint gegl_cache_put (GeglCache * cache,
  * This attempts to fetch an entry from the cache.  entry_id is the
  * entry_id that was assigned by put().  If the entry has been expired
  * from the cache and no longer exists in any useable form, then this
- * will return GEGL_FETCH_EXPIRED.  If the entry doesn't exist in the
- * cache at all, then this will return GEGL_NO_EXIST.  This probably
- * indicates a bug.
+ * will return GEGL_FETCH_EXPIRED.  Don't fetch() an entry that you
+ * didn't put() into the cache.  That would be bad.
  *
  * There is no need to call g_object_ref() after calling fetch(),
  * fetch() will do this for you.
@@ -173,13 +169,12 @@ void gegl_cache_mark_as_dirty (GeglCache * cache, gsize entry_id);
  * flush() will cause entry_id to be invalidated, allowing it to be
  * potentially reassigned to another Entry as well as causing any
  * stored state associated with that entry_id to be freed.  Always
- * call this when you are done entirely with an entry.  If you do try
- * and put an entry back into this cache, you must let put() reassign
- * a new entry_id by initalizing the entry_id passed to put() to zero.
+ * call this when you are done entirely with an entry (even if that
+ * entry was EXPIED).  If you do try and put an entry back into this
+ * cache, you must let put() reassign a new entry_id by initalizing
+ * the entry_id passed to put() to zero.
  *
- * Once flush() is called, any fetch()es called with the same entry_id
- * will fail with GEGL_FETCH_NO_EXIST, unless the entry_id has been
- * reassigned, in which case the results would be even worse.
+ * Once flush() is called, don't fetch() the entry again.
  */
 void gegl_cache_flush (GeglCache * cache,
 		       gsize entry_id);

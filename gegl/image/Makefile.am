@@ -26,6 +26,7 @@ IMAGE_SRC = \
 	gegl-buffer-double.c \
 	gegl-cache-entry.c \
 	gegl-cache.c \
+	gegl-memory-cache.c \
 	gegl-normalizer.c \
 	gegl-normalizer-mult.c \
 	gegl-sample-model.c \

@@ -12,10 +12,6 @@ static void set_property(GObject *object,
                          guint property_id,
                          const GValue *value,
                          GParamSpec *pspec);
-/* 
- * I am not acutally going to do anything with these properties until
- * I figure out how to handle gsize properties portably
- */
 enum {
   PROP_0,
   PROP_SOFT_LIMIT,
@@ -75,8 +71,24 @@ class_init(gpointer g_class,
   g_object_class->get_property=get_property;
   g_object_class->set_property=set_property;
 
-
-  
+  g_object_class_install_property (g_class, PROP_SOFT_LIMIT,
+				   g_param_spec_uint64 ("soft_limit",
+							"Soft Limit",
+							"Soft Limit of this GeglCache",
+							0,
+							G_MAXUINT64,
+							0,
+							G_PARAM_CONSTRUCT_ONLY |
+							G_PARAM_READWRITE));
+  g_object_class_install_property (g_class, PROP_HARD_LIMIT,
+				   g_param_spec_uint64 ("hard_limit",
+							"Hard Limit",
+							"Hard Limit in bytes of this GeglCache",
+							0,
+							G_MAXUINT64,
+							0,
+							G_PARAM_CONSTRUCT_ONLY |
+							G_PARAM_READWRITE));
 }
 
 static void
@@ -95,7 +107,20 @@ get_property(GObject *object,
 	     GValue *value,
 	     GParamSpec *pspec)
 {
-  /* FIXME: Figure out how to portably handle a gsize property */
+  GeglCache *self = GEGL_CACHE (object);
+
+  switch (property_id)
+    {
+    case PROP_SOFT_LIMIT:
+      g_value_set_uint64 (value, self->soft_limit);
+      break;
+    case PROP_HARD_LIMIT:
+      g_value_set_uint64 (value, self->hard_limit);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      break;
+    }
 }
 static void
 set_property(GObject *object,
@@ -103,7 +128,20 @@ set_property(GObject *object,
 	     const GValue *value,
 	     GParamSpec *pspec)
 {
-  /* FIXME: Figure out how to portably handle a gsize property */
+  GeglCache *self = GEGL_CACHE (object);
+
+  switch (property_id)
+    {
+    case PROP_SOFT_LIMIT:
+      self->soft_limit = g_value_get_uint64 (value);
+      break;
+    case PROP_HARD_LIMIT:
+      self->hard_limit = g_value_get_uint64 (value);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      break;
+    }
 }
 
 gint

@@ -58,6 +58,7 @@ extern "C"
     gint num_banks;
     gint bytes_per_element;
     TransferType transfer_type;
+    GeglCache* cache;
     /* <private> */
     gpointer *banks;
     /*
@@ -69,8 +70,7 @@ extern "C"
      */
     gshort share_count;
     gshort lock_count;
-    GeglCache* cache;
-    gsize unique_id;
+    gsize entry_id;
   };
 
   typedef struct _GeglBufferClass GeglBufferClass;
@@ -115,7 +115,7 @@ extern "C"
    * copies of this buffer.  Always make sure source is acquired and
    * locked when calling this.
    */
-  GeglBuffer *gegl_buffer_unshare (const GeglBuffer * source);
+  GeglBuffer *gegl_buffer_unshare (GeglBuffer * source);
 
   /* a buffer is finalized if the share_count is zero, but the ref_count
    * is non-zero.  This might happen if some g_object_ref references were
@@ -157,12 +157,7 @@ extern "C"
    * is always on the heap.
    */
   void gegl_buffer_detach(GeglBuffer * self);
-  /*
-   * A number that uniquly identifies a buffer.
-   * This probably just returns the pointer to the buffer,
-   * cast to a gsize;  A good hash value too.
-   */
-  gsize gegl_buffer_get_unique_id (const GeglBuffer* self);
+
     
   
 #ifdef __cplusplus

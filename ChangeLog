@@ -1,3 +1,15 @@
+2003-12-28 20:49 Daniel Rogers <daniel@phasevelocity.org>
+	* gegl/image/Makefile.am
+ 	* gegl/image/gegl-buffer.c
+ 	* gegl/image/gegl-buffer.h
+ 	* gegl/image/gegl-cache.c
+ 	* gegl/image/gegl-cache.h
+ 	* gegl/image/gegl-memory-cache.c
+ 	* gegl/image/gegl-memory-cache.h
+	The implements gegl-buffer's cache interation, and implements a
+	concrete cache, gegl-memory-cache.  Both of these are _completely_
+	untested.  Writing tests for them is my next task.
+	
 2003-12-28 10:16 Daniel Rogers <daniel@phasevelocity.org>
 	* gegl/image/gegl-init.c
 	* gegl/image/gegl-init.h
