@@ -29,10 +29,7 @@ IMAGE_SRC = \
 	gegl-normalizer.c \
 	gegl-normalizer-mult.c \
 	gegl-sample-model.c \
-	gegl-component-sample-model.c \
-	gegl-object.c \
-	gegl-utils.c \
-	gegl-init.c
+	gegl-component-sample-model.c
 
 libimage_la_SOURCES = \
 	$(IMAGE_SRC)

@@ -2,6 +2,8 @@ noinst_PROGRAMS =
 
 SUBDIRS = image
 
+libimage = $(top_builddir)/gegl/image/libimage.la
+
 lib_LTLIBRARIES = libgegl-1.0.la
 
 GEGL_SRC = \
@@ -26,6 +28,8 @@ GEGL_PUBLIC_HDRS = \
 libgegl_1_0_la_SOURCES = \
   $(GEGL_SRC) \
   $(GEGL_NONCLASS_SRC)
+
+libgegl_1_0_la_LIBADD = $(libimage)
 
 #BUILT_SOURCES = \
 #  $(GEGL_GEN_SRC)

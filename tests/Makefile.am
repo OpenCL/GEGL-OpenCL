@@ -11,21 +11,12 @@ GEGLDEPS = \
 	$(TESTDEPS) \
 	$(top_builddir)/gegl/@gegltargetlib@
 
-IMAGEDEPS = \
-	$(TESTDEPS) \
-	$(top_builddir)/gegl/image/libimage.la
-
 TESTLDADDS = \
     $(top_builddir)/tools/testsuite/libtestsuite.la
 
 GEGLLDADDS = @STRIP_BEGIN@ \
 	$(TESTLDADDS) \
 	$(top_builddir)/gegl/@gegltargetlib@ \
-@STRIP_END@
-
-IMAGELDADDS = @STRIP_BEGIN@ \
-	$(TESTLDADDS) \
-	$(top_builddir)/gegl/image/libimage.la \
 @STRIP_END@
 
 MOCK_OBJECT_SRC = \
@@ -67,24 +58,15 @@ testgegl_SOURCES = \
     objecttest.c \
     propertyconnectionstest.c \
     testgegl.c \
-    updatepropertytest.c
+    updatepropertytest.c \
+    gegl-image-buffer-double-test.c \
+    gegl-image-component-sample-model-test.c
 
 testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(GEGLDEPS)
 testgegl_LDADD = $(GEGLLDADDS) -lm
 
-testimage_SOURCES = testimage.c \
-                    gegl-image-buffer-double-test.c \
-		    gegl-image-component-sample-model-test.c
-
-testimage_LDFLAGS= -g  \
-                  @DEP_LIBS@
-
-testimage_DEPENDENCIES = $(IMAGEDEPS)
-
-testimage_LDADD = $(IMAGELDADDS) -lm 
-
-TESTS = testgegl testimage
+TESTS = testgegl
 
 EXTRA_PROGRAMS = $(TESTS) 
 

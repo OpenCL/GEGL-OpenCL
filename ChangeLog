@@ -1,3 +1,26 @@
+2003-12-28 10:16 Daniel Rogers <daniel@phasevelocity.org>
+	* gegl/image/gegl-init.c
+	* gegl/image/gegl-init.h
+ 	* gegl/image/gegl-object.c
+	* gegl/image/gegl-object.h
+	* gegl/image/gegl-utils.c
+	* gegl/image/gegl-utils.h
+	Removed becasue the conflicting types between libimage and libgegl
+	have been removed.  Libgegl and libimage can now be linked to one
+	another.
+
+	* gegl/Makefile.am
+ 	* gegl/image/Makefile.am
+	Altered the build system of libgegl and libimage so that libimage
+	is an uninstalled convience library, as originally intended.
+
+	* tests/Makefile.am
+    	* tests/testgegl.c
+   	* tests/testimage.c
+	Removed the seperated test binary for libimage and incorporated
+	the tests into testgegl, since libimage and libgegl can be linked
+	to one another again.
+	
 2003-12-22 Manish Singh <yosh@gimp.org>
 
 	* tests/gegl-image-component-sample-model-test.c 
