@@ -2048,7 +2048,7 @@ main (int argc, char **argv)
   /* uncomment this to see lexer and parser debug info */
   /* yydebug = 1; */    
   
-  if (argc < 7)
+  if (argc < 5)
     {
       printf ("ERROR: need to specify a file and channel names\n");
       return -1; 
@@ -2076,8 +2076,8 @@ main (int argc, char **argv)
       i++; 
     }
 
-  if (argc == 8) 
-    open_file (argv[7]);  
+  if (argc == 6) 
+    open_file (argv[5]);  
 
   else 
     open_file ("stdin");

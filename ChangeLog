@@ -1,3 +1,17 @@
+Fri May  5 12:56:33 PDT 2000 caro@rhythm.com
+
+        * check in for codegen
+
+        * rm the pixel data dir
+
+        * changed parser.y so that it do no longer expect
+        a pixel data file
+
+        * for gegl
+
+        * changed Makefile.am so that it does not include
+        the pixel data file
+
 Fri May  5 11:16:42 PDT 2000 caro@rhythm.com
 
 	* check in for codegen
