@@ -74,12 +74,10 @@ int     cur_nsyms=0;
 %token 	<elem> NAME
 %token	<elem> FLOAT
 %token	<elem> INT
-%token  <elem> WP 
-%token  <elem> ZERO_CHAN  
-%token  <elem> ZERO  
+%token  <elem> WHITE_PT 
+%token  <elem> ZERO_VAL  
 %token  <elem> VectorChan
 %token  <elem> Chan
-%token  <elem> FloatChan 
 %token  <elem> INDENT
 %token  <elem> POUND
 %token  <elem> INDENT_CURLY  
@@ -292,9 +290,9 @@ Line:
 		  if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
 		    {
 		    printf ("%sif (%s_%s)%s  %s%s_%s++;", $1.string, $5.string,
-			_NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_],
+			NAME_COLOR_CHAN[NUM_COLOR_CHAN],
 			$1.string, $4.string, $5.string,
-			_NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_]);
+			NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
 		    sprintf (tmp, "%s%s%s_c++;", 
 		      $1.string, $4.string, $5.string);  
 		    }
@@ -307,9 +305,9 @@ Line:
 		    if (get_sym ($5.string)->type == TYPE_CA_VECTOR)
 		      {
 		      printf ("%sif (%s_%s)%s  %s%s_%s += %s", $1.string, $5.string,
-			 _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_], 
+			 NAME_COLOR_CHAN[NUM_COLOR_CHAN], 
 			 $1.string, $4.string, $5.string, 
-			 _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_],
+			 NAME_COLOR_CHAN[NUM_COLOR_CHAN],
 			 $7.string);
 		      sprintf (tmp, "%s%s%s_ca += %s;", $1.string, $4.string, $5.string, $7.string); 
 		      }
@@ -498,17 +496,12 @@ Expression:
 		$$=$1; 
 		print_value(&$$, $1); 
 		} 
-	| WP				
+	| WHITE_PT				
 		{ 
 		$$=$1; 
 		print_value(&$$, $1); 
 		}
-	| ZERO_CHAN			
-		{ 
-		$$=$1; 
-		print_value(&$$, $1); 
-		}
-	| ZERO
+	| ZERO_VAL
 		{
 		$$=$1;
 		print_value(&$$, $1); 
@@ -724,7 +717,7 @@ VectorChan_List:
 		char tmp[256];
 		set_dtype($2, TYPE_CHAN); 
 		set_type($2, TYPE_C_VECTOR);
-		set_num($2, _NUM_COLOR_CHAN_);
+		set_num($2, NUM_COLOR_CHAN);
 	  	$$=$2; 
 		print_name (&$$, $2, DEFINE);
 		sprintf(tmp, "%s%s", $1.string, $$.string); 
@@ -736,7 +729,7 @@ VectorChan_List:
 		char tmp[256];
 		set_dtype($2, TYPE_CHAN);
 		set_type($2, TYPE_CA_VECTOR);
-		set_num($2, _NUM_COLOR_CHAN_+1); 
+		set_num($2, NUM_COLOR_CHAN+1); 
 		$$=$2;
 		print_name (&$$, $2, DEFINE);
 		sprintf(tmp, "%s%s", $1.string, $$.string); 
@@ -748,7 +741,7 @@ VectorChan_List:
 		char tmp[256];
 		set_dtype($2, TYPE_CHAN);
 		set_type($2, TYPE_C_A_VECTOR);
-		set_num($2, _NUM_COLOR_CHAN_+1);
+		set_num($2, NUM_COLOR_CHAN+1);
 		$$=$2;
 		print_name (&$$, $2, DEFINE);
 		sprintf(tmp, "%s%s", $1.string, $$.string);
@@ -846,7 +839,7 @@ init_data_varible (char *s)
     tmp[i*2+1] = ' ';
     }
   tmp[i*2  ] = '\0'; 
-  printf ("\n%s%s *%s_data[%d];", tmp, _Chan_, s, e->num); 
+  printf ("\n%s%s *%s_data[%d];", tmp, DATATYPE, s, e->num); 
 }
 
 void
@@ -907,21 +900,21 @@ print_repeat (elem_t *dest, elem_t src, char *string)
 
   if (get_sym (src.string)->type == TYPE_C_VECTOR)
     {
-    for (i=0; i<_NUM_COLOR_CHAN_-1; i++)
+    for (i=0; i<NUM_COLOR_CHAN-1; i++)
       {
-      sprintf (tmp, "%s %s_%s,", t, string, _NAME_COLOR_CHAN_[i]);
+      sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHAN[i]);
       strcpy(t, tmp); 
       }
-    sprintf (tmp, "%s %s_%s", t, string, _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_-1]); 
+    sprintf (tmp, "%s %s_%s", t, string, NAME_COLOR_CHAN[NUM_COLOR_CHAN-1]); 
     }
   else if (get_sym (src.string)->type == TYPE_CA_VECTOR)
     {
-    for (i=0; i<_NUM_COLOR_CHAN_; i++)
+    for (i=0; i<NUM_COLOR_CHAN; i++)
       {
-      sprintf (tmp, "%s %s_%s,", t, string, _NAME_COLOR_CHAN_[i]);
+      sprintf (tmp, "%s %s_%s,", t, string, NAME_COLOR_CHAN[i]);
       strcpy(t, tmp);
       }
-    sprintf (tmp, "%s %s_%s", t, string, _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_]); 
+    sprintf (tmp, "%s %s_%s", t, string, NAME_COLOR_CHAN[NUM_COLOR_CHAN]); 
     }
   strcpy (dest->string, tmp);
   
@@ -933,21 +926,21 @@ print_line (elem_t src)
   int i,j,k=1;
   int l = strlen (src.string);
  
-  if (src.type>1 || (src.type && src.num == _NUM_COLOR_CHAN_)) /* if it is a vector */ 
+  if (src.type>1 || (src.type && src.num == NUM_COLOR_CHAN)) /* if it is a vector */ 
   for (i=0; i<k; i++)
     {
     for(j=0; j<l; j++)
       {
       if (j < l-2 && src.string[j] == '_' && src.string[j+1] == 'c' && src.string[j+2] == 'a')
 	{
-	printf("_%s", _NAME_COLOR_CHAN_[i]);
-	k = _NUM_COLOR_CHAN_ + 1;
+	printf("_%s", NAME_COLOR_CHAN[i]);
+	k = NUM_COLOR_CHAN + 1;
 	j += 2;
 	}
       else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'c')
 	{
-	printf("_%s", _NAME_COLOR_CHAN_[i]);
-	k = _NUM_COLOR_CHAN_; 	
+	printf("_%s", NAME_COLOR_CHAN[i]);
+	k = NUM_COLOR_CHAN; 	
 	j++;
 	}
       else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'v')
@@ -958,7 +951,7 @@ print_line (elem_t src)
 	}
       else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
 	{
-	printf("_%s", _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_]);
+	printf("_%s", NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
         j++; 	
 	}
       else
@@ -979,7 +972,7 @@ print_line (elem_t src)
 	  }
 	else if (j < l-1 && src.string[j] == '_' && src.string[j+1] == 'a')
 	  {
-	  printf("_%s", _NAME_COLOR_CHAN_[_NUM_COLOR_CHAN_]);
+	  printf("_%s", NAME_COLOR_CHAN[NUM_COLOR_CHAN]);
 	  j++;
 	  }
 	else
@@ -1013,10 +1006,10 @@ do_op_two (elem_t *dest, elem_t src, FUNCTION op)
     sprintf (tmp, "-%s", src.string);
     break;
   case OP_CHAN_CLAMP:
-    sprintf (tmp, "%s%s%s", _CHAN_CLAMP_PRE_, src.string, _CHAN_CLAMP_SUF_);  
+    sprintf (tmp, "%s%s%s", CHAN_CLAMP_PRE, src.string, CHAN_CLAMP_SUF);  
     break; 
   case OP_WP_CLAMP:
-    sprintf (tmp, "%s%s%s", _WP_CLAMP_PRE_, src.string, _WP_CLAMP_SUF_);
+    sprintf (tmp, "%s%s%s", WP_CLAMP_PRE, src.string, WP_CLAMP_SUF);
     break;
   case OP_PARENTHESIS:
     sprintf (tmp, "(%s)", src.string);
@@ -1065,14 +1058,14 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
       else if ( src1.dtype == TYPE_CHAN || src2.dtype == TYPE_CHAN)
 	{	
       	if (src1.dtype >= TYPE_CHAN && src2.dtype >= TYPE_CHAN)
-	  sprintf (tmp, "%s%s%s%s%s", _TIMES_VV_PRE_, src1.string, _TIMES_VV_MID_, src2.string, _TIMES_VV_SUF_);
+	  sprintf (tmp, "%s%s%s%s%s", CHAN_MULT_PRE, src1.string, CHAN_MULT_MID, src2.string, CHAN_MULT_SUF);
 	else
-	  sprintf (tmp, "%s%s%s%s%s", _TIMES_VS_PRE_, src1.string, _TIMES_VS_MID_, src2.string, _TIMES_VS_SUF_);
+	  sprintf (tmp, "%s * %s", src1.string, src2.string);
 	}
       else
 	{	
        	if (src1.dtype >= TYPE_CHAN && src2.dtype >= TYPE_CHAN)
-	  sprintf (tmp, "%s * %s * %s", src1.string, src2.string, _WP_NORM_); 
+	  sprintf (tmp, "%s * %s * %s", src1.string, src2.string, WP_NORM); 
 	else
 	  sprintf (tmp, "%s * %s", src1.string, src2.string);
 	}
@@ -1083,14 +1076,14 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
       else if ( src1.dtype == TYPE_CHAN || src2.dtype == TYPE_CHAN)
 	{
 	if (src1.dtype >= TYPE_CHAN &&  src2.dtype >= TYPE_CHAN)
-      	  sprintf (tmp, "(%s * %s) / %s", src1.string, _WP_, src2.string);
+      	  sprintf (tmp, "(%s * %s) / %s", src1.string, WP, src2.string);
 	else
 	  sprintf (tmp, "%s / %s", src1.string, src2.string);
 	}
       else
 	{	
        	if (src1.dtype >= TYPE_CHAN &&  src2.dtype >= TYPE_CHAN)
-	  sprintf (tmp, "(%s * %s) / %s", src1.string, _WP_, src2.string); 
+	  sprintf (tmp, "(%s * %s) / %s", src1.string, WP, src2.string); 
 	else
 	  sprintf (tmp, "%s / %s", src1.string, src2.string);
 	}
@@ -1154,13 +1147,13 @@ do_op_three (elem_t *dest, elem_t src1, elem_t src2, FUNCTION op)
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
 	    case TYPE_FLOAT:
-	      sprintf (tmp, "%s = %s%s%s", src1.string, _EQUAL_CFC_PRE_, src2.string, _EQUAL_CFC_SUF_);
+	      sprintf (tmp, "%s = %s%s%s", src1.string, ROUND_PRE, src2.string, ROUND_SUF);
 	      break;
 	    case TYPE_CHAN:
 	      sprintf (tmp, "%s = %s", src1.string, src2.string);
 	      break;
 	    case TYPE_CHANFLOAT:
-              sprintf (tmp, "%s = %s%s%s", src1.string, _EQUAL_CFC_PRE_, src2.string, _EQUAL_CFC_SUF_);	      
+              sprintf (tmp, "%s = %s%s%s", src1.string, ROUND_PRE, src2.string, ROUND_SUF);	      
 	      break;
 	   }			     
           break;
@@ -1374,110 +1367,80 @@ read_data_types (char *filename)
 
   while (fscanf (file, "%s", &token) == 1)
     {
-    if (!strcmp (token, "_WP_"))
+    if (!strcmp (token, "WP"))
       {
       fscanf (file, "%s", &value);
-      _WP_ = (char *) strdup (value); 
+      WP = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_WP_NORM_"))
+    else if (!strcmp (token, "WP_NORM"))
       {
       fscanf (file, "%s", &value);
-      _WP_NORM_ = (char *) strdup (value); 
+      WP_NORM = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_VectorChan_"))
+    else if (!strcmp (token, "DATATYPE"))
       {
       fscanf (file, "%s", &value);
-      _VectorChan_ = (char *) strdup (value); 
+      DATATYPE = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_Chan_"))
+    else if (!strcmp (token, "MIN_CHAN"))
       {
       fscanf (file, "%s", &value);
-      _Chan_ = (char *) strdup (value); 
+      MIN_CHAN = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_FloatChan_"))
+    else if (!strcmp (token, "MAX_CHAN"))
       {
       fscanf (file, "%s", &value);
-      _FloatChan_ = (char *) strdup (value); 
+      MAX_CHAN = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_MIN_CHAN_"))
+    else if (!strcmp (token, "ZERO"))
       {
       fscanf (file, "%s", &value);
-      _MIN_CHAN_ = (char *) strdup (value); 
+      ZERO = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_MAX_CHAN_"))
+    else if (!strcmp (token, "CHAN_CLAMP_PRE"))
       {
       fscanf (file, "%s", &value);
-      _MAX_CHAN_ = (char *) strdup (value); 
+      CHAN_CLAMP_PRE = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_ZERO_CHAN_"))
+    else if (!strcmp (token, "CHAN_CLAMP_SUF"))
       {
       fscanf (file, "%s", &value);
-      _ZERO_CHAN_ = (char *) strdup (value); 
+      CHAN_CLAMP_SUF = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_ZERO_"))
+    else if (!strcmp (token, "WP_CLAMP_PRE"))
       {
       fscanf (file, "%s", &value);
-      _ZERO_ = (char *) strdup (value); 
+      WP_CLAMP_PRE = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_CHAN_CLAMP_PRE_"))
+    else if (!strcmp (token, "WP_CLAMP_SUF"))
       {
       fscanf (file, "%s", &value);
-      _CHAN_CLAMP_PRE_ = (char *) strdup (value); 
+      WP_CLAMP_SUF = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_CHAN_CLAMP_SUF_"))
+    else if (!strcmp (token, "CHAN_MULT_PRE"))
       {
       fscanf (file, "%s", &value);
-      _CHAN_CLAMP_SUF_ = (char *) strdup (value); 
+      CHAN_MULT_PRE = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_WP_CLAMP_PRE_"))
+    else if (!strcmp (token, "CHAN_MULT_MID"))
       {
       fscanf (file, "%s", &value);
-      _WP_CLAMP_PRE_ = (char *) strdup (value); 
+      CHAN_MULT_MID = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_WP_CLAMP_SUF_"))
+    else if (!strcmp (token, "CHAN_MULT_SUF"))
       {
       fscanf (file, "%s", &value);
-      _WP_CLAMP_SUF_ = (char *) strdup (value); 
+      CHAN_MULT_SUF = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_TIMES_VS_PRE_"))
+    else if (!strcmp (token, "ROUND_PRE"))
       {
       fscanf (file, "%s", &value);
-      _TIMES_VS_PRE_ = (char *) strdup (value); 
+      ROUND_PRE = (char *) strdup (value); 
       }
-    else if (!strcmp (token, "_TIMES_VS_MID_"))
+    else if (!strcmp (token, "ROUND_SUF"))
       {
       fscanf (file, "%s", &value);
-      _TIMES_VS_MID_ = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "_TIMES_VS_SUF_"))
-      {
-      fscanf (file, "%s", &value);
-      _TIMES_VS_SUF_ = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "_TIMES_VV_PRE_"))
-      {
-      fscanf (file, "%s", &value);
-      _TIMES_VV_PRE_ = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "_TIMES_VV_MID_"))
-      {
-      fscanf (file, "%s", &value);
-      _TIMES_VV_MID_ = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "_TIMES_VV_SUF_"))
-      {
-      fscanf (file, "%s", &value);
-      _TIMES_VV_SUF_ = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "_EQUAL_CFC_PRE_"))
-      {
-      fscanf (file, "%s", &value);
-      _EQUAL_CFC_PRE_ = (char *) strdup (value); 
-      }
-    else if (!strcmp (token, "_EQUAL_CFC_SUF_"))
-      {
-      fscanf (file, "%s", &value);
-      _EQUAL_CFC_SUF_ = (char *) strdup (value); 
+      ROUND_SUF = (char *) strdup (value); 
       }
     token[0] = '\0';  
     }
@@ -1497,15 +1460,15 @@ read_channel_names (char *chan_names)
     exit (0);
     }
 
-  _NAME_COLOR_CHAN_[i] = tmp;
+  NAME_COLOR_CHAN[i] = tmp;
 
   while ((tmp = (char*) strtok (NULL, ",")))
     {
     i++;
-    _NAME_COLOR_CHAN_[i] = tmp; 
+    NAME_COLOR_CHAN[i] = tmp; 
     }
   
-  _NUM_COLOR_CHAN_ = i;
+  NUM_COLOR_CHAN = i;
 
 }
 

@@ -4,26 +4,13 @@ README
 This is a program that parses a file with generic code (not data type specific) and creates a file with data type specific code. 
 
 To run the program type:
-codegen [data type] [color space] < input file > output file
+codegen --channel-names NAME,NAME,NAME  --channel-data-file FILE_NAME  
 
-	[data type] 	The current options are FLOAT, UINT8, and  UINT16.
-	[color space]	This is a string of characters, the program assumes that each
-			character is a channel. For example if you typed rgb, it would assume
-			that there are 3 color channels names r, g, and b. The alpha channel is
-			assumed. 
-	input file  	The are various files in the dir test_files 
+For more information please look at:
 
+http://www.mindspring.com/~calvinw/genericImageLanguage.html
+http://www.mindspring.com/~calvinw/genericChannelData.html
 
-We have various key words that represent data types. We have Chan, FloatChan, and VectorChan. Chan and VectorChan are the same data type as the passed in data type and FloatChan is a float. Note: you cannot declare FloatChan, in a calulation a Chan can become a FloatChan.
-
-VectorChan can be defined as a color vector with out alpha (VectorChan v(color)), or a color vector with alpha (VectorChan v(color,alpha)). 
-
-When you declate varibles to be used in the generic code, make sure to surround the varible decleration with CODEGEN_DELC_BEGIN/END. The generic algorithm should be surrounded by CODEGEN_BLOCK_BEGIN?END. CODEGEN_IMAGE_DATA_INIT inits the VectorChan with data. 
-
-*** note *** that indent does not quite work correctly. For the program to run correctly the first line must either be a empty line or a line with a comment. This is due to the fact that indent looks for a newline and then spaces. I tried making indent only look for spaces but then the program would not run if there was not a space.
-
-*** for more specific information look at:
-www.mindspring.com/~calvinw/
 ===
  
 Caroline Dahllof <caro@rhythm.com>

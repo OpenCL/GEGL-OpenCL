@@ -16,36 +16,29 @@
 #undef  _PARSER_Y_
 #endif
 
-EXTERN char  *_WP_;   
-EXTERN char  *_WP_NORM_;       
-EXTERN char  *_VectorChan_;      
-EXTERN char  *_Chan_;      
-EXTERN char  *_FloatChan_;     	
-EXTERN char  *_MIN_CHAN_;   
-EXTERN char  *_MAX_CHAN_;      
-EXTERN char  *_ZERO_CHAN_; 
-EXTERN char  *_ZERO_; 
+EXTERN char  *WP;   
+EXTERN char  *WP_NORM;       
+EXTERN char  *DATATYPE;      
+EXTERN char  *MIN_CHAN;   
+EXTERN char  *MAX_CHAN;      
+EXTERN char  *ZERO; 
 
-EXTERN char  *_CHAN_CLAMP_PRE_;		
-EXTERN char  *_CHAN_CLAMP_SUF_;	
+EXTERN char  *CHAN_CLAMP_PRE;		
+EXTERN char  *CHAN_CLAMP_SUF;	
 
-EXTERN char  *_WP_CLAMP_PRE_;
-EXTERN char  *_WP_CLAMP_SUF_;
+EXTERN char  *WP_CLAMP_PRE;
+EXTERN char  *WP_CLAMP_SUF;
 
-EXTERN char  *_TIMES_VS_PRE_;	
-EXTERN char  *_TIMES_VS_MID_;
-EXTERN char  *_TIMES_VS_SUF_;
+EXTERN char  *CHAN_MULT_PRE;        
+EXTERN char  *CHAN_MULT_MID;       
+EXTERN char  *CHAN_MULT_SUF;       
 
-EXTERN char  *_TIMES_VV_PRE_;        
-EXTERN char  *_TIMES_VV_MID_;       
-EXTERN char  *_TIMES_VV_SUF_;       
-
-EXTERN char  *_EQUAL_CFC_PRE_;	
-EXTERN char  *_EQUAL_CFC_SUF_;
+EXTERN char  *ROUND_PRE;	
+EXTERN char  *ROUND_SUF;
 
 /* these are related to the color space */
-EXTERN int    _NUM_COLOR_CHAN_;
-EXTERN char *_NAME_COLOR_CHAN_[20];
+EXTERN int    NUM_COLOR_CHAN;
+EXTERN char  *NAME_COLOR_CHAN[20];
 
 #undef  EXTERN
 

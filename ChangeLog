@@ -1,3 +1,9 @@
+Wed Mar 15 14:44:05 PST 2000 caro@rhythm.com
+
+	* I have added the data files UINT8 and UINT16
+
+	* I have changed the names of the GLOBAL varibles.
+
 Wed Mar 15 10:30:38 PST 2000 caro@rhythm.com
 
 	* to run codegen type

@@ -51,38 +51,27 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 <GENERIC_IMAGE_BLOCK>"GENERIC_IMAGE_BLOCK_END" 	BEGIN 0;
 
 <GENERIC_IMAGE_BLOCK>"WP"		{
-					strcpy(yylval.elem.string, _WP_);
+					strcpy(yylval.elem.string, WP);
                 			yylval.elem.dtype = TYPE_CHAN;
 					yylval.elem.type = TYPE_SCALER;
-					return(WP); 
-					}
-<GENERIC_IMAGE_BLOCK>"ZERO_CHAN"	{
-    					strcpy(yylval.elem.string, _ZERO_CHAN_);
-					yylval.elem.dtype = TYPE_CHAN;
-					yylval.elem.type = TYPE_SCALER;
-					return(ZERO_CHAN);
+					return(WHITE_PT); 
 					}
 <GENERIC_IMAGE_BLOCK>"ZERO"		{
-    					strcpy(yylval.elem.string, _ZERO_);
+    					strcpy(yylval.elem.string, ZERO);
 					yylval.elem.dtype = TYPE_CHAN;
 			        	yylval.elem.type = TYPE_VECTOR;
-					return ZERO; 	
+					return ZERO_VAL; 	
 					} 
 <GENERIC_IMAGE_DECL>"VectorChan"	{
-					strcpy(yylval.elem.string, _VectorChan_);
+					strcpy(yylval.elem.string, DATATYPE);
 					yylval.elem.dtype = TYPE_CHAN;
 					return(VectorChan);
 					}
 <GENERIC_IMAGE_DECL>"Chan"		{
-    					strcpy(yylval.elem.string, _Chan_);
+    					strcpy(yylval.elem.string, DATATYPE);
 					yylval.elem.dtype = TYPE_CHAN;
 					return(Chan);
 					}
-<GENERIC_IMAGE_DECL>"FloatChan"		{
-					strcpy(yylval.elem.string, _FloatChan_);
-					yylval.elem.dtype = TYPE_FLOAT;
-					return(FloatChan);  
-					} 
 
 <GENERIC_IMAGE_DECL>{integer}		{ 
             				/* found an int */
