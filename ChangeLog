@@ -1,3 +1,9 @@
+Thu Mar 23 17:53:28 PST 2000 caro@rhythm.com
+	
+	* codegen/lexer.l I made sure that the extra
+	\n, \t, '', thta can be left over from a 
+	state token was removed.
+
 Thu Mar 23 17:42:53 PST 2000 caro@rhythm.com
 
 	* codegen/parser.y in function get_sym. I fixed the

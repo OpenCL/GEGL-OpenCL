@@ -26,7 +26,7 @@ name    		[a-zA-Z][A-Z_a-z0-9]*
 Name			[A-Z][_A-Z0-9]*
 string			[^\t].*	
 space			[]*[\t]+
-rm			[\t \n]*
+rm			[\t \n]* 
 %%
 
 {rm}"DATATYPE_BEGIN"			BEGIN DATA_TYPE;  
@@ -73,8 +73,8 @@ rm			[\t \n]*
 <GENERIC_IMAGE_DECL>{white} 		; 
 <GENERIC_IMAGE_BLOCK>{white} 		; 
 
-<GENERIC_IMAGE_DECL>"GENERIC_IMAGE_DECL_END" 	BEGIN 0;
-<GENERIC_IMAGE_BLOCK>"GENERIC_IMAGE_BLOCK_END" 	BEGIN 0;
+<GENERIC_IMAGE_DECL>{rm}"GENERIC_IMAGE_DECL_END" 	BEGIN 0;
+<GENERIC_IMAGE_BLOCK>{rm}"GENERIC_IMAGE_BLOCK_END" 	BEGIN 0;
 
 <GENERIC_IMAGE_BLOCK>"WP"		{
 					strcpy(yylval.elem.string, WP_STR);
