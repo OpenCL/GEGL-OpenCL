@@ -8,13 +8,13 @@
 
      before committing, or you may screw up the online version.
      The next new task number is #24 --> 
-<todo logourl="gegl.jpg">
+<todo logourl="images/gegl.jpg">
   <title>Gegl Task list</title>
   <section>
     <title>Gegl</title>
 
-    <entry size="medium" status="70%" target="0.0">
-      <title>GeglNode object</title>
+    <entry size="medium" status="80%" target="0.0">
+      <title>GeglNode</title>
       <description>
         <p>
             This class is to hold the information for a node in an image graph
@@ -29,24 +29,32 @@
             just deleting the root, since ref counting will take care of finding
             and destroying nodes automatically.
         </p>
-      </description>
-      <contact>Calvin Williamson &lt;calvinw@mindspring.com&gt;</contact>
-    </entry>
-
-    <entry size="small" status="0%" target="0.0">
-      <title>Tests for GeglCopyOp,etc</title>
-      <description>
         <p>
-            The tests/testgegl.c and tests/testgeglfile.c need updates for
-            testing GeglCopyOp, GeglCopyChanOp, and GeglColorConvertOps. There
-            is some code for these in testgegl.c but it was commented out after
-            the latest changes to libgegl.
+            Most of the above is finished. The only outstanding issue is detecting
+            cycles. DAGs are okay, and nodes may be shared in the
+            same and different graphs, but cycles are not allowed. When a node
+            is added to a graph, we need to check for any cycles. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
-    <entry size="big" status="0%" target="0.0">
+    <entry size="small" status="0%" target="0.0">
+      <title>Tests</title>
+      <description>
+        <p>
+            tests/testgeglfile.c is out of date, and doesnt compile with
+            the latest updates. testgeglfile should read in tiff images from
+            the command line, open them and perform tests similar to 
+            tests/testgegl.c,. Since testgegl.c is really only suitable for 
+            testing the ops on real small images (built by hand) and not read from files. 
+            testgeglfile should give a workout of the ops on more normal size images. 
+        </p>
+      </description>
+      <contact>&lt;gegldev@gegl.org&gt;</contact>
+    </entry>
+
+    <entry size="big" status="30%" target="0.0">
       <title> Data Storage Types</title>
       <description>
         <p>
@@ -59,15 +67,21 @@
             library for some ideas. 
         </p>
         <p>
-            Right now GeglImage has pointers to each channel of image data and
-            the entire image data resides in memory. This needs to change to
-            the tiled, paging scheme before proceeding too much farther. 
+            There is now a class called GeglDataBuffer which will contain
+            "banks" of data. These are used by GeglTile to hold its image data.
+            GeglTile represents "chunk of image data", and is the thing
+            passed back to the ops by the GeglImageManager. 
+        </p>
+        <p>
+            By altering GeglDataBuffers, GeglTile, GeglTileImageManager (by subclassing
+            say) together with appropriate gil code it should be possible to 
+            support different data types and arrangements of data in memory. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
-    <entry size="big" status="0%" target="0.0">
+    <entry size="big" status="25%" target="0.0">
       <title>Memory,Cache Manager classes</title>
       <description>
         <p>
@@ -76,16 +90,37 @@
             cache manager, and we need schemes (ref counting,splay trees)
             for deciding what to swap out. This will need to work with tiles. 
         </p>
+        <p>
+            There is now GeglImageManager, GeglTileImageManager, GeglCache
+            classes. GeglTileImageManager provides a tile based implementation
+            of the ImageManager and uses a GeglCache to store the tiles.  
+            The GeglCache currently just keeps track of Image and Op data
+            in a hash table. There is no disk swapping. We need to add swapping
+            code, replacement tile policies, and keep track of cache sizes. 
+        </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
     </entry>
 
-    <entry size="big" status="0%" target="0.0">
+    <entry size="big" status="30%" target="0.0">
       <title> Tile Classes</title>
       <description>
         <p>
             Tile and tile management classes. Want to allow variable size tiles
             for gegl. 
+        </p>
+        <p>
+            We now have GeglTile and GeglTileImageManager classes. They
+            currently only store tiles the size of the the result_rect of an
+            ops computation.  So they dont actually implement a tile system
+            where regions of an image/op are made up of many small tiles (like
+            64x64). This needs to be added to the current
+            GeglTileImageManager. 
+        </p>
+        <p>
+            Should also add tile subclasses to handle constant tiles, 
+            which would be a constant color eg. Then we will need something
+            like a constant tile iterator as well.
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
@@ -96,7 +131,8 @@
       <description>
         <p>
             Basic multi-threading support for image ops, and scheduler/task
-            management classes.
+            management classes. These should be added in the ImageManager,
+            which is the appropriate class for managing these.
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
@@ -118,13 +154,17 @@
     </entry>
 
     <entry size="medium" status="0%" target="0.0">
-      <title>ImageIterator Classes </title>
+      <title>Different TileIterator Classes </title>
       <description>
         <p>
-            The ImageIterator classes will probably need an base Iterator class
+            The Iterator classes will probably need an base Iterator class
             and then subclasses that iterate in different ways. Right now there
-            is a GeglImageIterator class which is basically a scanline
-            iterator. 
+            is a GeglTileIterator class which is basically a scanline
+            iterator over a portion of a tile. 
+        </p>
+        <p>
+            We need to add iterators that can iterator over constant tiles,
+            and iterate over images/tiles in different ways.
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>
@@ -140,8 +180,14 @@
             "promotion" and conversion scheme for use when doing automatic
             color conversion. ie if inputs to some 2-input op are rgb u8 and
             cmyk u8 then the output is rgb u8.
+
+            Some of this is done. See the compute_derived_color_model routine
+            in GeglImage. This uses some "inheritance trees" for color spaces,
+            channel data types, etc in gegl-utils.c as well. Look at the routine
+            implemented in gegl-op.gob for details.
         </p>
         <ul>
+            More color models, and color conversion ops: 
             <li> GeglColorModelIndexed </li>
             <li> GeglColorModelCmyk </li>
             <li> GeglColorModelCieXyz </li>
@@ -151,7 +197,8 @@
             <li> GeglColorModelMultiChannel </li>             
         </ul>
         <p>
-            Some ICC profile color models would be nice. 
+            Some ICC profile based color models would be nice. This would allow
+            adding more detailed color management support. 
         </p>
       </description>
       <contact>&lt;gegldev@gegl.org&gt;</contact>

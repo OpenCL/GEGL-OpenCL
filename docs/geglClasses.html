@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.61 [en] (X11; I; Linux 2.2.12-20 i686) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.76 [en] (X11; U; Linux 2.2.16-22 i686) [Netscape]">
    <title>Gegl Classes</title>
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -14,7 +14,7 @@ CLASS="ARTICLE"
 CLASS="TITLEPAGE"
 >
 <h1 CLASS="TITLE">
-<a NAME="GeglClasses"></a><font size=+2>Gegl Classes</font></h1>
+<font size=+2>Gegl Classes</font></h1>
 
 <h3 CLASS="AUTHOR">
 <font size=+0>Calvin Williamson</font></h3>
@@ -35,7 +35,7 @@ CLASS="ADDRESS"
 CLASS="ABSTRACT"
 >This document describes basic architecture for
 an image processing library (<b>gegl</b>) built using Gtk/GObjects.&nbsp;
-This library is intended to cover basic image operartions for image editing
+This library is intended to cover basic image operations for image editing
 applications (like gimp).&nbsp; It assumes a Gtk/GObject inheritance model.
 Currently gegl uses the Gtk Object Builder (gob) for generating GtkObjects.&nbsp;
 Feedback is welcome. (gegldev@gegl.org mailing list). Others involved with
@@ -56,8 +56,7 @@ These classes currently have implementations in gegl:</dt>
 <br><b><tt>&nbsp;&nbsp;&nbsp; <a href="#GeglImage">GeglImage</a></tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#GeglImageBuffer">GeglImageBuffer</a></tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="#GeglOp">GeglOp</a></tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-<a href="#GeglPointOp">GeglPointOp</a></tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglPointOp</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 GeglSingleSrcOp</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -118,7 +117,13 @@ GeglColorModelGrayU8</tt></b>
 GeglColorModelGrayU16</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 GeglColorModelGrayFloat</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; GeglImageIterator</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; <a href="#GeglImageManager">GeglImageManager</a></tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglTileImageManagger</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; <a href="#GeglTile">GeglTile</a></tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglTileIterator</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglCache</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; <a href="#GeglDataBuffer">GeglDataBuffer</a></tt></b>
+<br>&nbsp;
 <p>
 <hr><a NAME="GeglObject"></a><b><font size=+2>GeglObject</font></b>
 <p>This is the base class for gegl. It keeps track of some high level gegl
@@ -137,24 +142,20 @@ acyclic graphs, with inputs (children) and outputs (parents).&nbsp; If
 nodes of an image graph are all distinct, the graph is a simple tree. Leaf
 nodes have no inputs (children) and root nodes have no outputs (parents).&nbsp;
 Shared nodes have multiple parents. Normal Gtk/GObject reference counting
-is used to keep track of references to nodes. The GeglNode class manages
-adding and removing parents and children .&nbsp; It also has methods for
-traversing image graphs (breadth-first, depth-first),&nbsp; detecting cycles
-in graphs and topological sorting. Freeing a root node will free nodes
-that descend from the root when there are no other objects holding references
-to these nodes. When a node descends from more than one root (ie its part
-of two or more image graphs) it wont be deleted since its reference count
-will not be zero.
-<p>Heres a simple example of an image graph for comp(blur(A), mult(A,B))
+is used to keep track of references to nodes.
+<p>The Node class manages adding and removing parents and children .&nbsp;
+It also has methods for traversing image graphs (breadth-first, depth-first),&nbsp;
+detecting cycles in graphs and topological sorting. Freeing a root node
+will free nodes that descend from the root when there are no other objects
+holding references to these nodes. When a node descends from more than
+one root (ie its part of two or more image graphs) it wont be deleted when
+a graph is deleted since its reference count will not be zero.
+<p>Heres a simple example of an image graph for Comp(Blur(A), Mult(A,B))
 :
-<p><b><tt>&nbsp;&nbsp; comp</tt></b>
-<br><b><tt>&nbsp; /&nbsp;&nbsp; \</tt></b>
-<br><b><tt>blur&nbsp; mult</tt></b>
-<br><b><tt>&nbsp; \&nbsp; /&nbsp;&nbsp; \</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; A&nbsp;&nbsp;&nbsp;&nbsp; B</tt></b>
-<p>Here comp (eg composite over) is the root node, A and B are leaf nodes,
-and blur, mult are nodes with both children and parent(s). A is shared
-by the blur and mult.
+<p><img SRC="images/chain.png" NOSAVE height=139 width=118>
+<p>Here Comp (eg composite over) is the root node, A and B<b><tt> </tt></b>are
+ImageBuffer leaf nodes, and Blur, Mult are nodes with both children and
+parent(s). A is shared by the Blur<tt> </tt>and mult<b><tt>.</tt></b>
 <br>&nbsp;</div>
 
 <div 
@@ -164,315 +165,296 @@ CLASS="SECT1"
 CLASS="SECT2"
 >
 <hr><a NAME="GeglImage"></a><font size=+2><b>GeglImag</b>e</font>
-<p>This class is the main base class for GeglOps and GeglImageBuffers.&nbsp;
-Common features of ops and image buffers are stored here. GeglImage has
-"data" buffers which hold the output results of ops or image buffers. Ops
-"produce" this data by operating on inputs and placing the result in the
-GeglImage data buffer. GeglImageBuffers&nbsp; "produce" an output by just
-returning their image data as the GeglImage "data" buffer. GeglImage also
-has a colormodel field that identifies the colormodel of the output of
-the op or image buffer.
-<p>Since they have no inputs, GeglImageBuffers are leaf nodes in image
-graphs. GeglOps are typically non leaf nodes (there are ops with no inputs
-though)&nbsp; and have one or more inputs. The most important routine in
-GeglImage is the virtual method gegl_image_get_pixels. This is the method
-that is called to "produce" pixels&nbsp; for an Image.&nbsp; gegl_image_get_pixels
-is called on the root of the an image graph to recursively calculate the
-entire graph. A call to gegl_image_get_pixels for a node causes a depth-first&nbsp;
-traversal of the graph from that node down and with gegl_image_get_pixels
-called on each input of the node. Once the inputs are finished the node
-performs its operation and places its result in its data buffer.&nbsp;
-In this way data is pulled from the leaves of the graph towards the root.
-<p>The GeglImage class also keeps some information that makes image calculations
+<p>This class is the main base class for Ops and ImageBuffers.&nbsp; Common
+features of ops and image buffers are stored here.&nbsp; Images have the
+ability to "produce" outputs by operating on inputs and and placing the
+result in some buffer.&nbsp; Ops "produce" their output as a result of
+performing an image operation on inputs.&nbsp; ImageBuffers&nbsp; "produce"
+their output by just returning their normal image data as output.
+<p>The most important routine in Image is get_pixels, which is the routine&nbsp;
+which asks an Image to produce the output from its inputs, possibly placing
+the result in a passed destination buffer. get_pixels is also passed a
+region of interest (roi), which restricts image processing to an area.
+Calling get_pixels on the root of an image graph will result in processing
+the entire graph (in depth-first, or some other topological sort order).
+Images are processed from the leaves of the graph towards the root, with
+each node waiting until inputs are computed before computing its output.&nbsp;
+Once the inputs are finished the node performs its operation and places
+its result in a data buffer.
+<p>ImageBuffers are a special kind of Image. They have no inputs, and so
+are leaf nodes in image graphs. Ops are typically non-leaf nodes (but there
+are some Ops without inputs)&nbsp; and have one or more inputs.
+<p>The Image class also keeps information that makes image calculations
 more efficient. Domains of definitions (called have_rects) and regions
-of interest (called need_rects) are kept in this class. Domains of definition
-are defined for leaves and are passed towards the root, and regions of
-interest are passed from the root towards the leaves. (See Shantzis for
-an explanation of these terms). In compiler speak, domains of definition
-are examples of a synthesized attribute. Rois are examples of inherited
-attributes.
+of interest (called need_rects) are kept in this class. have_rects are
+defined for leaves and are passed towards the root, and need_rects are
+passed from the root towards the leaves. (See Shantzis for an explanation
+of these terms). In compiler speak, have_rects are synthesized attributes,
+and need_rects are inherited attributes.
 <p>Heres an example of setting up an operation (mult) and calling get_pixels
 :
-<p><b><tt><font size=-1>&nbsp;</font> GeglImage *A = GEGL_IMAGE(gegl_image_buffer_new(color_model,w,h));</tt></b>
-<br><b><tt>&nbsp; GeglImage *B = GEGL_IMAGE(gegl_image_buffer_new(color_model,w,h));</tt></b>
-<br><b><tt>&nbsp; GeglImage *C = GEGL_IMAGE(gegl_image_buffer_new(color_model,w,h));</tt></b>
-<p><b><tt>&nbsp; GeglImage * op = GEGL_IMAGE(gegl_mult_op_new (A,B));</tt></b>
-<br><b><tt>&nbsp; gegl_rect_set (&amp;roi_rect, 0,0,w,h);</tt></b>
-<br><b><tt>&nbsp; gegl_image_get_pixels (op, C, &amp;roi_rect);</tt></b>
-<br><b><tt>&nbsp; gegl_object_unref (GEGL_OBJECT(op));</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; GeglRect roi;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; /* Get three ImageBuffers to use */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglImage *A = GEGL_IMAGE(gegl_image_buffer_new(color_model,w,h));</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglImage *B = GEGL_IMAGE(gegl_image_buffer_new(color_model,w,h));</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglImage *C = GEGL_IMAGE(gegl_image_buffer_new(color_model,w,h));</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* Set up</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; op</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; / \</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A&nbsp;&nbsp; B</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglImage * op = GEGL_IMAGE(gegl_mult_op_new
+(A,B));</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* Call get_pixels to do the operation */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; gegl_rect_set (&amp;roi, 0,0,w,h);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; gegl_image_get_pixels (op, C, &amp;roi);</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; gegl_object_unref (GEGL_OBJECT(op));</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; gegl_object_unref (GEGL_OBJECT(A));</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; gegl_object_unref (GEGL_OBJECT(B));</tt></b>
 <p>
-<hr><a NAME="GeglOp"></a><b><font size=+2>GeglOp</font></b>
+<hr><a NAME="GeglImageManager"></a><b><font size=+2>GeglImageManager</font></b>
+<p>This class handles details of computing the image graph. When Image's
+get_pixels is called, the Image retrieves the singleton ImageManager instance
+and calls the ImageManager get_pixels passing itself along as the root
+of the image graph. The ImageManager sets up the graph for traversal, fetches
+image data for each Op to use, and takes care of storing the results again
+somewhere once the Ops are finished. Separating the details of the graph
+traversal and data management from the Op's image processing lets us extend
+both parts. We can subclass ImageManager to provide different memory management
+schemes or arrange for data to be delivered to the Ops in different ways.
+For example, a TileImageManager would present requests to the Image in
+pages or Tiles of a certain size.
+<p>The ImageManager decides how to traverse the graph, and also if any
+preliminary passes over the graph are necessary.&nbsp; For example the
+TileImageManager computes the region of interest (or need_rect) and domains
+of definition (have_rects) on nodes in preliminary breadth-first and depth-first
+traversals. Also ColorModels and data types are derived on Images which
+do not have these explicitly set. Eventually the ImageManager calls all
+the nodes in the image graph (in Image's prepare ,apply, and finish routines)
+and passes image data for use as output and inputs. Finally after an operation
+for a node is complete the ImageManager decides what to do with the output.
+For example it could cache it in memory or swap it to disk.
+<p>Below is a picture of the Image and ImageManager classes. The design
+of the ImageManager is intended to follow the Bridge Pattern.(GoF Design
+Patterns)
+<p><img SRC="images/image_to_image_manager_bridge.png" NOSAVE height=347 width=770>
+<br>&nbsp;
+<p>The Image's prepare, apply, and finish routines all take a GList of
+ImageRequests. This list of ImageRequests tells the Image which areas on
+the inputs and output it will be processing and also which data buffers
+to use.&nbsp;&nbsp; The output is given first in the list, followed by
+any inputs. Each ImageRequest is made up of a region to use (Area) together
+with some image data (Tile) . The Tile corresponds to an area of image
+space and Area is the subportion of that Tile to use or process during
+the operation. Tiles used here are just thought of as "chunks of image
+data", and may be of any size. They might correspond to what is usually
+called "pages" or they might be the entire data of the Image. It depends
+on the way the ImageManager in question organizes things.
+<p>Here is a picture of an ImageRequest:
+<p><img SRC="images/image_request.png" NOSAVE height=247 width=400>
+<p>Note that Op nodes may receive ImageRequests that correspond to any
+area of its image space, and do not have an intrinsic width and height.
+So it is legal to ask an Op to compute its result anywhere in the plane.
+ImageBuffers, which correspond more to in-memory representations of image
+files, do have a width and height.&nbsp; Of course if the area you request
+is outside of the have_rects (domain of definitions) of the inputs to the
+Op then you will likely just get a zero-valued output.
+<p>
+<hr>
+<br><a NAME="GeglOp"></a><b><font size=+2>GeglOp</font></b>
 <br>&nbsp;</div>
 
 <div CLASS="SECT1">This is the fundamental class for image operations.
-Specific image operations all inherit from GeglOp . Subclasses implement
-the virtual gegl_op_apply that represents the effect of the operator on
-its input images.&nbsp;&nbsp; Also each subclass implements an initialization&nbsp;
-routine (gegl_op_prepare) for setting up the operaton based on the input
-images and other parameters.
-<p>The GeglOps are divided into four main subclasses.&nbsp; These classes
-arise from the way operators compute their outputs.
+Specific image operations all inherit from Op.&nbsp; Subclasses override
+Image's apply routine and this is the actual routine that does image processing
+and produces an output.&nbsp;&nbsp; Most subclasses of Op implement an
+initialization&nbsp; routine (prepare) for setting up details of the operaton
+based on parameters and inputs. For example subclasses of PointOp set up
+a function pointer to be called on individual scanlines. These scanline
+routines are then called from PointOp's implementation of apply.
+<p>The Ops are divided into four main subclasses.&nbsp; These classes arise
+from the way operators compute their outputs.
 <ul>
 <li>
-GeglPointOps are point processes. For these, the output pixel at (x,y)
-depends only on source input(s) at (x,y) .</li>
+PointOps are point processes. For these, the output pixel at (x,y) depends
+only on source input(s) at (x,y) .</li>
 
 <li>
-GeglAreaOps are area operations. The result output (x,y) for these is determined
-by a fixed size area around the (x,y) of the sources. (convolutions, kernal
+AreaOps are area operations. The result output (x,y) for these is determined
+by a fixed size area around the (x,y) of the sources. (convolutions, kernel
 operations).</li>
 
 <li>
-GeglGeometricOps determine values at (x,y) based on some geometric transform
+GeometricOps determine values at (x,y) based on some geometric transform
 or warp of inputs.</li>
 
 <li>
-GeglStatisticsOps collect information about the image (histograms, means,
-etc).</li>
+StatisticsOps collect information about the image (histograms, means, etc).</li>
 </ul>
-GeglPointOps are further divided into classes for single and multi-input
-operations.&nbsp; GeglPointOps implement the apply method of GeglOp to
-request tiles and operate on scanlines. Classes that inherit from GeglPointOp
-implement and install pointers to scanline routines (gegl_point_scanline_func)
-that process data on a single scanline.&nbsp; Aside from setup and parameter
-maintenance this scanline function is the only real routine for many of
-the ops that inherit from GeglPointOp.
-<p>The final code for implementations (in gegl_op_apply or gegl_point_op_scanline_func
-) for specific image operators&nbsp; is autogenerated by the C code generator
-gil&nbsp; (currently codegen) based on the generic description of the algorithm,&nbsp;
-the color models, and the data types of the inputs and outputs.
-<p>Here's the implementation of get_pixels in GeglOp:
-<p><b><tt>override (Gegl:Image)</tt></b>
-<br><b><tt>GeglImage*</tt></b>
-<br><b><tt>get_pixels (GeglImage *self_image,</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglImage *dest,</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglRect *roi)</tt></b>
+As mentioned above, PointOp implements an apply that is called for each
+Op that inherits from PointOp. The apply is passed a GList of ImageRequests
+as discussed in the section on the ImageManager . PointOp then creates
+TileIterators for each of the Tiles and Areas in the requests list. A TileIterator
+provides a way to iterate over scanlines of a subportion of a Tile.&nbsp;
+The PointOp updates the TileIterators and calls the installed scanline
+function of the subclass for each scanline returned from the the iterator.
+<p>Here's the implementation of apply in PointOp:
+<p><b><tt>&nbsp; override (Gegl:Image)</tt></b>
+<br><b><tt>&nbsp; void</tt></b>
+<br><b><tt>&nbsp; apply(GeglImage *self_image,</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GList *requests)</tt></b>
 <br><b><tt>&nbsp; {</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; GeglOp *self = GEGL_OP (self_image);</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; GeglNode *self_node = GEGL_NODE (self_image);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglImageRequest * request;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; gint i,j;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; gint width, height;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglPointOp *self =&nbsp; GEGL_POINT_OP(self_image);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglPointOpClass *self_class =</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GEGL_POINT_OP_CLASS
+(GTK_OBJECT(self_image)->klass);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglNode *self_node = GEGL_NODE(self_image);</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; gint num_inputs = gegl_node_num_inputs(self_node);</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; GeglImage *input;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; gint i;</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; /* If dest exists but isnt an image buffer
-return NULL */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; if (dest &amp;&amp; !GEGL_IS_IMAGE_BUFFER(dest))</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g_warning("gegl_op_get_pixels:
-dest not image buffer.\n");</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return NULL;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; /* The roi becomes our need_rect */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; gegl_rect_copy (&amp;self->need_rect, roi);</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; /* Ready each source input */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; for (i = 0; i &lt; num_inputs; i++)</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglRect need_rect;</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Compute the need_rect
-of the ith input */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; compute_need_rect
-(self, &amp;need_rect, i);</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Call the input's
-get_pixels, pass it its need_rect */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; input = GEGL_IMAGE(gegl_node_get_nth_input(self_node,i));</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gegl_image_get_pixels
-(input, NULL, &amp;need_rect);</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; /* Set the color model of this op */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; compute_color_model (self, dest);</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; /* Compute the have rect and result rect */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; compute_have_rect (self);</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; compute_result_rect (self);</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; /* Allocate a buffer for result if necessary
+<br><b><tt>&nbsp;&nbsp;&nbsp; GeglTileIterator **iters = g_new (GeglTileIterator*,
+num_inputs+1);</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* Get tile iterators for dest and sources.
 */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; if (!dest)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; for (i = 0; i &lt; num_inputs+1; i++)</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gint w = self->result_rect.w;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gint h = self->result_rect.h;</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(!gegl_image_alloc
-(self_image, w, h))</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; request = (GeglImageRequest*)g_list_nth_data(requests,i);</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Get the tile,
+if it is not NULL */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(request->tile)</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 {</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-g_warning("gegl_op_get_pixels: Cant allocate dest data\n");</tt></b>
+iters[i] = gegl_tile_iterator_new (request->tile, &amp;request->rect);</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-return NULL;</tt></b>
+gegl_tile_iterator_first (iters[i]);</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 }</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dest = self_image;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+iters[i] = NULL;</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; /* Prepare to do the operation */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; prepare (self,dest,&amp;self->result_rect);</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; /* Everything is ready, actually do the op
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* Get the height and width of dest rect we
+want to process */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; request = (GeglImageRequest*)g_list_nth_data(requests,0);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; width = request->rect.w;</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; height = request->rect.h;</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* Now iterate over the scanlines in the dest.
 */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; apply (self, dest, &amp;self->result_rect);</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; /* Everything is done, free the inputs */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; for (i = 0; i &lt; num_inputs; i++)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; for(j=0; j &lt; height; j++)</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Call the subclass
+scanline func. */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (self_class->scanline_func)(self,
+iters, width);</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Advance all the
+scanlines. */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (i = 0; i &lt;
+num_inputs+1; i++)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* Free any input data */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; input = GEGL_IMAGE(gegl_node_get_nth_input(self_node,i));</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (!GEGL_IS_IMAGE_BUFFER(input))</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gegl_image_free_data(input);</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt></b>
+if(iters[i])</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+gegl_tile_iterator_next(iters[i]);</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* Free the iterators */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; for (i = 0; i &lt; num_inputs+1; i++)</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (iters[i])</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gegl_object_unref
+(GEGL_OBJECT (iters[i]));</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp; return dest;</tt></b>
+<p><b><tt>&nbsp;&nbsp;&nbsp; /* Free the array of iterator pointers */</tt></b>
+<br><b><tt>&nbsp;&nbsp;&nbsp; g_free (iters);</tt></b>
 <br><b><tt>&nbsp; }</tt></b>
-<p>Finally GeglColorConvertOp is the base class for color model conversion
-classes. Every color conversion op is a single source point op that converts
-from the color model of the input source to the color model of the output
-buffer. Specific color conversion ops query the color model of the output
-for a converter function that can convert from the color model of the source
-to the color model of the output. When no converter is found, then a default
-conversion from the source to CIE_XYZ and from CIE_XYZ to the output color
-model is used.&nbsp; The actual color conversion routines are located in
-the GeglColorModel classes. When inputs and outputs have color models that
-are different, ops should automatically insert whatever color conversion
-op to bring inputs and their color models into sync with the output color
-model.
-<br>
+<p>The final code for implementations of specific image operators (eg in
+scanline_funcs) may be autogenerated by the code generator gil&nbsp; (currently
+codegen) based on the generic description of the algorithm,&nbsp; the color
+models, and the data types of the inputs and outputs. It should be possible
+to allow for "specialized" data types/color model algorithms&nbsp; that
+are not autogenerated in cases where finer tuning over optimization is
+desired, or where autogeneration is just impossible (like LUT operations
+on small bitdepth channels vs floating point channels)
+<p>ColorConvertOp is the base class for color model conversions. Every
+ColorConvertOp is a single source op that converts from the color model
+of the input source to the color model of the output buffer. Specific ColorConvertOps
+query the color model of the output for a converter function that can convert
+from the color model of the source to the color model of the output. When
+no converter is found, then a default conversion from the source to CIE_XYZ
+and from CIE_XYZ to the output color model is used.&nbsp; The actual color
+conversion routines are located in the ColorModel classes. When inputs
+and outputs have color models that are different, the ImageManager will
+automatically inserts whatever ColorConvertOps are necessary to bring inputs
+and their color models into sync with the output color model.
+<p>
 <hr><a NAME="GeglImageBuffer"></a><b><font size=+2>GeglImageBuffer</font></b>
 <br>&nbsp;</div>
-This object describes normal image data, and represents leaf input nodes
-for image graphs. GeglImageBuffer sets its color model and allocates storage
-for pixels when it is initially created.&nbsp; get_pixels for GeglImageBuffer
-basically just returns itself when called. If a destination buffer is passed
-as the desired output for get_pixels, then the original data for the GeglImageBuffer
-is copied to the supplied destination output buffer.
-<p>Here's the implementation of get_pixels for GeglImageBuffer:
-<p><b><tt>override (Gegl:Image)</tt></b>
-<br><b><tt>GeglImage *</tt></b>
-<br><b><tt>get_pixels (GeglImage *self_image,</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglImage *dest,</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglRect *roi)</tt></b>
-<br><b><tt>{</tt></b>
-<br><b><tt>&nbsp; if (dest &amp;&amp; !GEGL_IS_IMAGE_BUFFER(dest))</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; {</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; g_warning("gegl_image_buffer_get_pixels:
-dest not image buffer\n");</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return NULL;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
-<br><b><tt>&nbsp; else if (!dest)&nbsp; /* just a leaf of a tree */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; {</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return self_image;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
-<br><b><tt>&nbsp; else</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; copy_pixels (GEGL_IMAGE_BUFFER(dest), roi,</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GEGL_IMAGE_BUFFER(self_image), roi);</tt></b>
-<p><b><tt>&nbsp;return dest;</tt></b>
-<br><b><tt>}</tt></b>
-<p><b><tt>public void</tt></b>
-<br><b><tt>copy_pixels (GeglImageBuffer *self,</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglRect *self_rect,</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglImageBuffer *src,</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-GeglRect&nbsp; *src_rect)</tt></b>
-<br><b><tt>{</tt></b>
-<br><b><tt>&nbsp; GeglImage * op = GEGL_IMAGE(gegl_copy_op_new (GEGL_IMAGE(src)));</tt></b>
-<br><b><tt>&nbsp; gegl_image_get_pixels (op, GEGL_IMAGE(self), self_rect);</tt></b>
-<br><b><tt>&nbsp; gtk_object_unref (GTK_OBJECT(op));</tt></b>
-<br><b><tt>}</tt></b>
-<br>&nbsp;
-<p>
-<hr>
-<h1>
-<a NAME="GeglPointOp"></a><font size=+2>GeglPointOp</font></h1>
-
+This object describes what is usually thought of as normal image data.&nbsp;
+ImageBuffer is the basic writable image data object. They occur as leaf
+nodes for image graphs and are used as inputs for Ops.&nbsp; An ImageBuffer
+sets its ColorModel when it is created and has a width and height.&nbsp;
+ImageBuffer doesnt actually have an operation to perform during get_pixels,
+its output is basically just itself.&nbsp; ImageBuffers may be passed to
+any get_pixels routine as the destination buffer for an&nbsp; Op. This
+is how ImageBuffers are written to.&nbsp; Since ImageBuffers have a width
+and height, this determines their domain of definition (have_rects).&nbsp;
+During the evaluation of an image graph, these have_rects are propagated
+back up the graph towards the root.&nbsp; Depending on the ImageManager,
+image data for an ImageBuffer may be stored in different ways. This is
+left up to the ImageManager implementation. TileImageManager stores an
+ImageBuffer in "pages" or Tiles, which may be swapped out or cached.
 <div 
 CLASS="SECT1"
 >
 <div CLASS="SECT1">
-<div CLASS="SECT1">This class provides basic functionality for all point
-operations. There are routines to calculate default values for the need_rects
-and have_rects, which subclasses may override if necessary. Most subclasses
-can use the default calculations of these given in this class. GeglPointOp
-also includes an implementation of gegl_op_apply, which is responsible
-for getting image data pointers to the inputs and output and calling the
-installed scanline function for each line.&nbsp; The scanline function
-that subclasses must install is called gegl_point_op_scanline_func.&nbsp;
-GeglPointOp will also request a list of tiles to iterate over when tiles
-are introduced as the "data" buffers for GeglImage. The apply function
-below doesnt show this yet.
-<p>Here is the GeglPointOp apply function (called from gegl_op_get_pixels):
-<p><b><tt>override (Gegl:Op)</tt></b>
-<br><b><tt>void</tt></b>
-<br><b><tt>apply(GeglOp *self_op,</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglImage *dest,</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GeglRect *result_rect)</tt></b>
-<br><b><tt>{</tt></b>
-<br><b><tt>&nbsp; GeglPointOp *self =&nbsp; GEGL_POINT_OP(self_op);</tt></b>
-<br><b><tt>&nbsp; GeglPointOpClass *self_class =&nbsp; GEGL_POINT_OP_CLASS
-(GTK_OBJECT(self_op)->klass);</tt></b>
-<br><b><tt>&nbsp; GeglNode *self_node = GEGL_NODE(self_op);</tt></b>
-<br><b><tt>&nbsp; gint num_inputs = gegl_node_num_inputs(self_node);</tt></b>
-<br><b><tt>&nbsp; GeglImage *input;</tt></b>
-<br><b><tt>&nbsp; GeglRect rect;</tt></b>
-<br><b><tt>&nbsp; gint i,j;</tt></b>
-<br><b><tt>&nbsp; gint height;</tt></b>
-<br><b><tt>&nbsp; GeglImageIterator **src_iters = g_new (GeglImageIterator*,
-num_inputs);</tt></b>
-<br><b><tt>&nbsp; GeglImageIterator *dest_iter;</tt></b>
-<p><b><tt>&nbsp; /* Set up the source and dest iterators */</tt></b>
-<br><b><tt>&nbsp; for (i = 0; i &lt; num_inputs; i++)</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; {</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gegl_rect_copy (&amp;rect, &amp;self_op->result_rect);</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rect.x -= self_op->input_offsets[i].x;</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rect.y -= self_op->input_offsets[i].y;</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; input = GEGL_IMAGE(gegl_node_get_nth_input(self_node,i));</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; src_iters[i] = gegl_image_iterator_new
-(input, &amp;rect);</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
-<p><b><tt>&nbsp; dest_iter = gegl_image_iterator_new (dest, result_rect);</tt></b>
-<br><b><tt>&nbsp; height = gegl_image_iterator_current_rect_height (dest_iter);</tt></b>
-<p><b><tt>&nbsp; /* Now iterate over the scanlines in the dest */</tt></b>
-<br><b><tt>&nbsp; for(j = 0; j &lt; height; j++)</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; {</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Call the installed subclass
-scanline func */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (self_class->scanline_func)(self,
-dest_iter, src_iters);</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Advance all the source iterators
-*/</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (i = 0; i &lt; num_inputs;
-i++)</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gegl_image_iterator_next_scanline
-(src_iters[i]);</tt></b>
-<p><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Advance the dest iterator */</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; gegl_image_iterator_next_scanline
-(dest_iter);</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; }</tt></b>
-<p><b><tt>&nbsp; /* Free the source and dest iterators */</tt></b>
-<br><b><tt>&nbsp; for (i = 0; i &lt; num_inputs; i++)</tt></b>
-<br><b><tt>&nbsp;&nbsp;&nbsp; gtk_object_unref (GTK_OBJECT (src_iters[i]));</tt></b>
-<br><b><tt>&nbsp; gegl_object_unref(GEGL_OBJECT (dest_iter));</tt></b>
-<p><b><tt>&nbsp; /* Free the arrays of iters and rects */</tt></b>
-<br><b><tt>&nbsp; g_free (src_iters);</tt></b>
-<br><b><tt>}</tt></b>
+<div CLASS="SECT1">
+<div CLASS="SECT1">&nbsp;</div>
+
+<hr>
+<h1 CLASS="SECT1">
+<a NAME="GeglTile"></a><font size=+2>GeglTile</font></h1>
+
+<div CLASS="SECT1">This object describes a chunk of image data that corresponds
+to a portion of image space. It represents image data for an Op or ImageBuffer.
+Tiles have ColorModels and pointers to DataBuffers. They return pointers
+to the underlying data and provide (through TileIterators) different ways
+to traverse the data.&nbsp; The number of banks a Tile's DataBuffer has
+depends on the type of Tile it is.&nbsp; Packed data Tiles will have just
+a DataBuffer with one bank, while separated channel Tiles may have a DataBuffer
+with banks for each channel.&nbsp; Tiles are the basic image data structure
+the ImageManager passes back to Ops in its prepare, apply, and finish routines.
 <p>
+<hr>
+<h1 CLASS="SECT1">
+<a NAME="GeglDataBuffer"></a><font size=+2>GeglDataBuffer</font></h1>
+
+<div CLASS="SECT1">DataBuffers hold an array of pointers to data banks.&nbsp;
+Each bank of a DataBuffer has a size in bytes. The number of banks is determined
+by the Tile that has the DataBuffer. The DataBuffer has no knowledge of
+the type of data in the buffer.&nbsp; An ImageManager that uses swapping
+can transfer data from a DataBuffer to secondary storage.&nbsp;&nbsp;</div>
+
+<div CLASS="SECT1">&nbsp;
+<br>
 <hr>
 <h1 CLASS="SECT1">
 <a NAME="GeglColor"></a><font size=+2>GeglColor</font></h1>
 
-<div CLASS="SECT1">The GeglColor object is designed to hold single pixel
-color values. It is used for things like the current foreground or background
+<div CLASS="SECT1">The Color object is designed to hold single pixel color
+values. It is used for things like the current foreground or background
 color, and also for color constants like WHITE, BLACK, RED, etc.&nbsp;
-It is left to the individual GeglColorModels to determine what each of
-these constants means in its particular case. GeglColor is generic enough
-to handle any channel data type (8bit, 16bit, float).&nbsp; GeglColors
-have a pointer to a GeglColorModel that describes the interpretation of
-the components.&nbsp; They also have a pointer to an array of channel values
-that represent the components for the color value. GeglColors are for operations
-that need a small number of colors (like for a fill) to specify some color
-related action. For large numbers of colors, use an actual GeglImageBuffer
-with an appropriate color model and data type, etc.
-<p>Heres the GeglColor object:
+It is left to the individual ColorModels to determine what each of these
+constants means in a particular case. Color is generic enough to handle
+any channel data type (8bit, 16bit, float).&nbsp; Colors have pointers
+to ColorModels that describe the interpretation of the components.&nbsp;
+They also have a pointer to an array of channel values that represent the
+components for the color value. Colors are for operations that need a small
+number of colors (like for a fill) to specify some color related action.
+For large numbers of colors, use an actual ImageBuffer with an appropriate
+color model and data type, etc.
+<p>Heres the Color object:
 <p><b><tt>typedef union</tt></b>
 <br><b><tt>{</tt></b>
 <br><b><tt>&nbsp;&nbsp;&nbsp; guint8 u8;</tt></b>
@@ -486,71 +468,34 @@ with an appropriate color model and data type, etc.
 /* components */</tt></b>
 <br><b><tt>&nbsp; private gint num_channels;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 /* number of channels*/</tt></b>
-<br><b><tt>}</tt></b>
-<br>&nbsp;</div>
+<br><b><tt>}</tt></b></div>
+</div>
 
 <hr></div>
+</div>
 </div>
 </div>
 
 <h1 CLASS="SECT1">
 <a NAME="GeglColorModel"></a><font size=+2>GeglColorModel</font></h1>
-GeglColorModel and its subclasses contain information about color models
-for image data.
-<p><b><tt>class Gegl:Color:Model from Gegl:Object {</tt></b>
-<p><b><tt>&nbsp; protected GeglColorSpace&nbsp; colorspace;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/*RGB, GRAY, CMYK, etc*/</tt></b>
-<br><b><tt>&nbsp; protected GeglChannelDataType data_type;&nbsp;&nbsp;&nbsp;
-/*FLOAT, U8, U16, etc*/</tt></b>
-<p><b><tt>&nbsp; protected gint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bytes_per_channel;</tt></b>
-<br><b><tt>&nbsp; protected gint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bytes_per_pixel;</tt></b>
-<br><b><tt>&nbsp; protected gint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; num_channels;&nbsp;&nbsp;&nbsp;&nbsp;
-/* total number of channels */</tt></b>
-<br><b><tt>&nbsp; protected gint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; num_colors;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* number of color channels */</tt></b>
-<br><b><tt>&nbsp; protected gboolean&nbsp;&nbsp; has_alpha;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* is there an alpha&nbsp;&nbsp; */</tt></b>
-<br><b><tt>&nbsp; protected gint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; alpha_channel;&nbsp;&nbsp;&nbsp;
-/* alpha channel index */</tt></b>
-<br><b><tt>&nbsp; protected gboolean&nbsp;&nbsp; is_premultiplied; /* model
-represents premultiplied*/</tt></b>
-<p><b><tt>&nbsp; protected gboolean&nbsp;&nbsp; is_additive;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* bigger is brighter&nbsp; */</tt></b>
-<br><b><tt>&nbsp; protected gboolean&nbsp;&nbsp; is_subtractive;&nbsp;&nbsp;
-/* bigger is darker&nbsp;&nbsp;&nbsp; */</tt></b>
-<br><b><tt>&nbsp; protected guint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ID;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-/* a unique id */</tt></b>
-<p><b><tt>&nbsp; protected const char**channel_names;&nbsp;&nbsp; /* name
-of each channel */</tt></b>
-<br><b><tt>&nbsp; protected const char *color_space_name;/* name of this
-color space */</tt></b>
-<br><b><tt>&nbsp; protected const char *alpha_string;&nbsp;&nbsp;&nbsp;
-/* "Alpha" or "\0"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-*/</tt></b>
-<br><b><tt>&nbsp; protected const char *channel_data_type_name;&nbsp; /*name
-of channel data type*/</tt></b>
-<p><b><tt>&nbsp; ...</tt></b>
-<br><b><tt>}</tt></b>
-<p>The CeglColorSpace corresponds to spaces like RGB, GRAY, CMYK, INDEXED,
-CIE_XYZ, CIE_LAB,&nbsp; sRGB, HSV etc.&nbsp; The data type of the color
-model is given in the data_type field.
-<p>Color models can be defined in terms of ICC profiles, the corresponding
-subclasss of GeglColorModel may have ICC profile information where appropriate.&nbsp;
-The CIE_XYZ based color model is used as a profile connection space, and
-color models must implement mappings to and from this color model.
-<p>Corresponding to the immediate subclasses of GeglColorModel&nbsp; (eg
-GeglColorModelRgb) are matching GeglColorConvertOps (eg GeglColorConvertToRgbOp)
-that handle the details of color conversion of images from any color model
-to the specified one. These operators are subclasses of the GeglSingleSourceOp.&nbsp;
-Conversions between images whose color models are the same except for the
-channel data type (ie conversions between different bit-depths) are also
-handled by this color conversion operator. (eg conversion from rgb 8bit
-to rgb float)
-<p>GeglColorModels determine the number of color channels, presence of
-alpha channels, and the data type of channel data for pixel data. However,&nbsp;
-data buffers for image data may be organized in memory in different ways.&nbsp;
-The GeglColorModel doesnt specify details of the memory storage strategy.
-<br>&nbsp;
+ColorModel and its subclasses describe the different color image data types.
+ColorModels have a ColorSpace, a ChannelDataType, and fields that describe
+the nunber of channels, bytes per channel, names of channels,&nbsp; presence
+of alpha channels, and color conversion routines.
+<p>The ColorSpace corresponds to spaces like RGB, GRAY, CMYK, INDEXED,
+CIE_XYZ, CIE_LAB,&nbsp; sRGB, HSV etc.&nbsp; The data type of a color model
+corresponds to channel bitdepth.&nbsp; Color models can be defined in terms
+of ICC profiles, and corresponding subclasses of&nbsp; ColorModel may have
+ICC profile information where appropriate.&nbsp; The CIE_XYZ based color
+model is used as a profile connection space, and color models must implement
+mappings to and from this color model.
+<p>Corresponding to concrete subclasses of ColorModel&nbsp; (eg ColorModelRgb)
+are matching ColorConvertOps (eg ColorConvertToRgbOp) that handle the details
+of color conversion of images from any source color model to the specified
+one. Conversions between images whose color models are the same except
+for the channel data type (ie conversions between different bit-depths)
+are also handled by this color conversion operator. (eg conversion from
+rgb 8bit to rgb float)
 <h4>
 examples:</h4>
 Part of the (only partially implemented) color model tree:
@@ -613,7 +558,7 @@ CLASS="TOC"
 <dl 
 >
 <h1>
-<a NAME="GeglNode"></a><b><font size=+2>Blend ops for Gegl</font></b></h1>
+<a NAME="BlendOps"></a><b><font size=+2>Blend ops for Gegl</font></b></h1>
 </dl>
 </div>
 
@@ -627,6 +572,7 @@ are as follows
 premultiplied. Then:
 <p><b><tt>aC * C = (1-aB) * aA * A + (1-aA) * aB * B + aA * aB * f(A,B)</tt></b>
 <br><b><tt>aC =&nbsp; aA + aB - aA * aB</tt></b>
+<p><b><tt>Mode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; f(A,B)</tt></b>
 <p><b><tt>1)Normal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B</tt></b>
 <br><b><tt>2)Multiply&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A*B</tt></b>
 <br><b><tt>3)Screen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1-(1-A)*(1-B)</tt></b>
@@ -658,10 +604,11 @@ A=0</tt></b>
 1 - (1-A)/B</tt></b>
 <br><b><tt>9)Darken&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; min(A,B)</tt></b>
 <br><b><tt>10)Lighten&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; max(A,B)</tt></b>
-<br><b><tt>11)Difference&nbsp;&nbsp; |A-B|</tt></b><b><tt></tt></b>
+<br><b><tt>11)Difference&nbsp;&nbsp; |A-B|</tt></b>
 <p>Some of these might not be quite right (eg SoftLight). Compare versions
 from recent Ghostscript cvs <a href="http://cvs.sourceforge.net/cgi-bin/cvsweb.cgi/gs/src/gxblend.c?rev=1.2&content-type=text/x-cvsweb-markup&cvsroot=ghostscript">here.
-</a>Also compare the descriptions in <a href="http://partners.adobe.com/asn/developer/technotes/acrobatpdf.html">Adobe
+</a>Also
+compare the descriptions in <a href="http://partners.adobe.com/asn/developer/technotes/acrobatpdf.html">Adobe
 PDF&nbsp; spec</a>, and the <a href="http://www.w3.org/TR/SVG/filters.html#feBlend">SVG
 spec</a> as well.</div>
 
