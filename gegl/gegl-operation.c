@@ -19,65 +19,35 @@
  *
  */
 
-#include "gegl-filter.h"
-#include "gegl-property.h"
 #include <string.h>
 
-static void class_init (GeglFilterClass * klass);
-static void init (GeglFilter * self, GeglFilterClass * klass);
-static void finalize(GObject * gobject);
+#include "gegl-filter.h"
+#include "gegl-property.h"
 
-static gpointer parent_class = NULL;
+static void gegl_filter_class_init (GeglFilterClass *klass);
+static void gegl_filter_init       (GeglFilter      *self);
+static void finalize               (GObject         *gobject);
 
-GType
-gegl_filter_get_type (void)
-{
-  static GType type = 0;
 
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-      {
-        sizeof (GeglFilterClass),
-        (GBaseInitFunc) NULL,
-        (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) class_init,
-        (GClassFinalizeFunc) NULL,
-        NULL,
-        sizeof (GeglFilter),
-        0,
-        (GInstanceInitFunc) init,
-        NULL
-      };
-
-      type = g_type_register_static (GEGL_TYPE_NODE ,
-                                     "GeglFilter",
-                                     &typeInfo,
-                                     G_TYPE_FLAG_ABSTRACT);
-    }
-    return type;
-}
+G_DEFINE_TYPE(GeglFilter, gegl_filter, GEGL_TYPE_NODE)
 
 static void
-class_init (GeglFilterClass * klass)
+gegl_filter_class_init (GeglFilterClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-
-  parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->finalize = finalize;
 }
 
 static void
-init (GeglFilter * self,
-      GeglFilterClass * klass)
+gegl_filter_init (GeglFilter *self)
 {
 }
 
 static void
-finalize(GObject *gobject)
+finalize (GObject *gobject)
 {
-  G_OBJECT_CLASS(parent_class)->finalize(gobject);
+  G_OBJECT_CLASS (gegl_filter_parent_class)->finalize (gobject);
 }
 
 /**

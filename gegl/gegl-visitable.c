@@ -18,9 +18,13 @@
  *  Copyright 2003 Calvin Williamson
  *
  */
-#include "gegl-visitable.h"
+
 #include <string.h>
+
 #include <glib-object.h>
+
+#include "gegl-visitable.h"
+
 
 GType
 gegl_visitable_get_type (void)

@@ -31,68 +31,35 @@ enum
   PROP_LAST
 };
 
-static void class_init (GeglPropertyClass * klass);
-static void init (GeglProperty *self, GeglPropertyClass * klass);
-static void finalize(GObject * gobject);
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
+static void     gegl_property_class_init (GeglPropertyClass *klass);
+static void     gegl_property_init       (GeglProperty      *self);
+static void     finalize                 (GObject           *gobject);
+static void     set_property             (GObject           *gobject,
+                                          guint              prop_id,
+                                          const GValue      *value,
+                                          GParamSpec        *pspec);
+static void     get_property             (GObject           *gobject,
+                                          guint              prop_id,
+                                          GValue            *value,
+                                          GParamSpec        *pspec);
+static void     visitable_init           (gpointer           ginterface,
+                                          gpointer           interface_data);
+static void     visitable_accept         (GeglVisitable     *visitable,
+                                          GeglVisitor       *visitor);
+static GList*   visitable_depends_on     (GeglVisitable     *visitable);
+static gboolean visitable_needs_visiting (GeglVisitable     *visitable);
 
-static void visitable_init (gpointer ginterface, gpointer interface_data);
-static void visitable_accept (GeglVisitable *visitable, GeglVisitor *visitor);
-static GList* visitable_depends_on(GeglVisitable *visitable);
-static gboolean visitable_needs_visiting (GeglVisitable *visitable);
 
-static gpointer parent_class = NULL;
-
-GType
-gegl_property_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-      {
-        sizeof (GeglPropertyClass),
-        (GBaseInitFunc) NULL,
-        (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) class_init,
-        (GClassFinalizeFunc) NULL,
-        NULL,
-        sizeof (GeglProperty),
-        0,
-        (GInstanceInitFunc) init,
-        NULL,             /* value_table */
-      };
-
-      static const GInterfaceInfo visitable_info =
-      {
-         (GInterfaceInitFunc) visitable_init,
-         NULL,
-         NULL
-      };
-
-      type = g_type_register_static (GEGL_TYPE_OBJECT,
-                                     "GeglProperty",
-                                     &typeInfo,
-                                     0);
-
-      g_type_add_interface_static (type,
-                                   GEGL_TYPE_VISITABLE,
-                                   &visitable_info);
-
-    }
-
-    return type;
-}
+G_DEFINE_TYPE_WITH_CODE (GeglProperty, gegl_property, GEGL_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (GEGL_TYPE_VISITABLE,
+                                                visitable_init))
 
 static void
-class_init (GeglPropertyClass * klass)
+gegl_property_class_init (GeglPropertyClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-  parent_class = g_type_class_peek_parent(klass);
 
-  gobject_class->finalize = finalize;
+  gobject_class->finalize     = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
@@ -107,8 +74,7 @@ class_init (GeglPropertyClass * klass)
 }
 
 static void
-init (GeglProperty * self,
-      GeglPropertyClass * klass)
+gegl_property_init (GeglProperty *self)
 {
   self->param_spec = NULL;
   self->filter = NULL;
@@ -136,7 +102,7 @@ finalize(GObject *gobject)
 
   g_assert(self->connections == NULL);
 
-  G_OBJECT_CLASS(parent_class)->finalize(gobject);
+  G_OBJECT_CLASS (gegl_property_parent_class)->finalize (gobject);
 }
 
 static void

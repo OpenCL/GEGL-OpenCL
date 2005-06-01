@@ -31,90 +31,73 @@ struct _GeglVisitInfo
   gint shared_count;
 };
 
-static void class_init (GeglVisitorClass * klass);
-static void init (GeglVisitor * self, GeglVisitorClass * klass);
-static void finalize(GObject *gobject);
+static void           gegl_visitor_class_init  (GeglVisitorClass *klass);
+static void           gegl_visitor_init        (GeglVisitor      *self);
+static void           finalize                 (GObject          *gobject);
+static void           init_dfs_traversal       (GeglVisitor      *self,
+                                                GeglVisitable    *visitable);
+static void           dfs_traverse             (GeglVisitor      *self,
+                                                GeglVisitable    *visitable);
+static void           init_bfs_traversal       (GeglVisitor      *self,
+                                                GeglVisitable    *visitable);
+static void           visit_info_value_destroy (gpointer          data);
+static void           insert                   (GeglVisitor      *self,
+                                                GeglVisitable    *visitable);
+static GeglVisitInfo* lookup                   (GeglVisitor      *self,
+                                                GeglVisitable    *visitable);
+static gboolean       get_visited              (GeglVisitor      *self,
+                                                GeglVisitable    *visitable);
+static void           set_visited              (GeglVisitor      *self,
+                                                GeglVisitable    *visitable,
+                                                gboolean          visited);
+static gboolean       get_discovered           (GeglVisitor      *self,
+                                                GeglVisitable    *visitable);
+static void           set_discovered           (GeglVisitor      *self,
+                                                GeglVisitable    *visitable,
+                                                gboolean          discovered);
+static gint           get_shared_count         (GeglVisitor      *self,
+                                                GeglVisitable    *visitable);
+static void           set_shared_count         (GeglVisitor      *self,
+                                                GeglVisitable    *visitable,
+                                                gint              shared_count);
+static void           visit_property           (GeglVisitor      *self,
+                                                GeglProperty     *property);
+static void           visit_node               (GeglVisitor      *self,
+                                                GeglNode         *node);
 
-static void init_dfs_traversal (GeglVisitor * self, GeglVisitable * visitable);
-static void dfs_traverse(GeglVisitor * self, GeglVisitable * visitable);
-static void init_bfs_traversal (GeglVisitor * self, GeglVisitable * visitable);
 
-static void visit_info_value_destroy(gpointer data);
+G_DEFINE_TYPE (GeglVisitor, gegl_visitor, GEGL_TYPE_OBJECT)
 
-static void insert (GeglVisitor *self, GeglVisitable *visitable);
-static GeglVisitInfo* lookup (GeglVisitor *self, GeglVisitable *visitable);
-static gboolean get_visited        (GeglVisitor *self, GeglVisitable *visitable);
-static void set_visited        (GeglVisitor *self, GeglVisitable *visitable, gboolean visited);
-static gboolean get_discovered     (GeglVisitor *self, GeglVisitable *visitable);
-static void set_discovered     (GeglVisitor *self, GeglVisitable *visitable, gboolean discovered);
-static gint get_shared_count   (GeglVisitor *self, GeglVisitable *visitable);
-static void set_shared_count   (GeglVisitor *self, GeglVisitable *visitable, gint shared_count);
-
-static void visit_property(GeglVisitor * self, GeglProperty *property);
-static void visit_node(GeglVisitor * self, GeglNode *node);
-
-static gpointer parent_class = NULL;
-
-GType
-gegl_visitor_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-      {
-        sizeof (GeglVisitorClass),
-        (GBaseInitFunc) NULL,
-        (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) class_init,
-        (GClassFinalizeFunc) NULL,
-        NULL,
-        sizeof (GeglVisitor),
-        0,
-        (GInstanceInitFunc) init,
-        NULL
-      };
-
-      type = g_type_register_static (GEGL_TYPE_OBJECT,
-                                     "GeglVisitor",
-                                     &typeInfo,
-                                     G_TYPE_FLAG_ABSTRACT);
-    }
-    return type;
-}
 
 static void
-class_init (GeglVisitorClass * klass)
+gegl_visitor_class_init (GeglVisitorClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-  parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->finalize = finalize;
-  klass->visit_property = visit_property;
-  klass->visit_node = visit_node;
+
+  klass->visit_property   = visit_property;
+  klass->visit_node       = visit_node;
 }
 
 static void
-init (GeglVisitor * self,
-      GeglVisitorClass * klass)
+gegl_visitor_init (GeglVisitor *self)
 {
   self->visits_list = NULL;
-  self->hash = g_hash_table_new_full(g_direct_hash,
-                                     g_direct_equal,
-                                     NULL,
-                                     visit_info_value_destroy);
+  self->hash = g_hash_table_new_full (g_direct_hash, g_direct_equal,
+                                      NULL,
+                                      visit_info_value_destroy);
 }
 
 static void
-finalize(GObject *gobject)
+finalize (GObject *gobject)
 {
-  GeglVisitor * self = GEGL_VISITOR(gobject);
+  GeglVisitor *self = GEGL_VISITOR (gobject);
 
-  g_list_free(self->visits_list);
-  g_hash_table_destroy(self->hash);
+  g_list_free (self->visits_list);
+  g_hash_table_destroy (self->hash);
 
-  G_OBJECT_CLASS(parent_class)->finalize(gobject);
+  G_OBJECT_CLASS (gegl_visitor_parent_class)->finalize (gobject);
 }
 
 static GeglVisitInfo *

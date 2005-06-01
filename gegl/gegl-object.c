@@ -20,6 +20,7 @@
  */
 
 #include <glib-object.h>
+
 #include "gegl-object.h"
 
 enum
@@ -29,50 +30,29 @@ enum
   PROP_LAST
 };
 
-static void class_init        (GeglObjectClass * klass);
-static GObject* constructor   (GType type, guint n_props, GObjectConstructParam *props);
-static void init (GeglObject * self, GeglObjectClass * klass);
-static void finalize(GObject * gobject);
+static void     gegl_object_class_init (GeglObjectClass       *klass);
+static void     gegl_object_init       (GeglObject            *self);
+static GObject* constructor            (GType                  type,
+                                        guint                  n_props,
+                                        GObjectConstructParam *props);
+static void     finalize               (GObject               *gobject);
+static void     set_property           (GObject               *gobject,
+                                        guint                  prop_id,
+                                        const GValue          *value,
+                                        GParamSpec            *pspec);
+static void     get_property           (GObject               *gobject,
+                                        guint                  prop_id,
+                                        GValue                *value,
+                                        GParamSpec            *pspec);
 
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
 
-static gpointer parent_class = NULL;
+G_DEFINE_TYPE (GeglObject, gegl_object, G_TYPE_OBJECT)
 
-GType
-gegl_object_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-      {
-        sizeof (GeglObjectClass),
-        (GBaseInitFunc) NULL,
-        (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) class_init,
-        (GClassFinalizeFunc) NULL,
-        NULL,
-        sizeof (GeglObject),
-        0,
-        (GInstanceInitFunc) init,
-        NULL
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT,
-                                     "GeglObject",
-                                     &typeInfo,
-                                     G_TYPE_FLAG_ABSTRACT);
-    }
-    return type;
-}
 
 static void
-class_init (GeglObjectClass * klass)
+gegl_object_class_init (GeglObjectClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-  parent_class = g_type_class_peek_parent(klass);
 
   gobject_class->constructor = constructor;
   gobject_class->finalize = finalize;
@@ -90,11 +70,9 @@ class_init (GeglObjectClass * klass)
 }
 
 static void
-init (GeglObject * self,
-      GeglObjectClass * klass)
+gegl_object_init (GeglObject *self)
 {
   self->name = NULL;
-  return;
 }
 
 static void
@@ -105,7 +83,7 @@ finalize(GObject *gobject)
   if(self->name)
    g_free(self->name);
 
-  G_OBJECT_CLASS(parent_class)->finalize(gobject);
+  G_OBJECT_CLASS (gegl_object_parent_class)->finalize (gobject);
 }
 
 static GObject*
@@ -113,7 +91,8 @@ constructor (GType                  type,
              guint                  n_props,
              GObjectConstructParam *props)
 {
-  GObject *gobject = G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
+  GObjectClass *class = G_OBJECT_CLASS (gegl_object_parent_class);
+  GObject *gobject = class->constructor (type, n_props, props);
   GeglObject *self = GEGL_OBJECT(gobject);
   self->constructed = TRUE;
   return gobject;

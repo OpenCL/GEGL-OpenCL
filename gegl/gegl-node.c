@@ -33,78 +33,48 @@ enum
   PROP_LAST
 };
 
-static void class_init (GeglNodeClass * klass);
-static void init(GeglNode *self, GeglNodeClass *klass);
-static void finalize(GObject * self_object);
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
+static void            gegl_node_class_init     (GeglNodeClass *klass);
+static void            gegl_node_init           (GeglNode      *self);
+static void            finalize                 (GObject       *self_object);
+static void            set_property             (GObject       *gobject,
+                                                 guint          prop_id,
+                                                 const GValue  *value,
+                                                 GParamSpec    *pspec);
+static void            get_property             (GObject       *gobject,
+                                                 guint          prop_id,
+                                                 GValue        *value,
+                                                 GParamSpec    *pspec);
+static void            free_properties          (GeglNode      *self);
+static gboolean        properties_exist         (GeglNode      *sink,
+                                                 const gchar   *sink_prop_name,
+                                                 GeglNode      *source,
+                                                 const gchar   *source_prop_name);
+static GeglConnection *find_connection          (GeglNode      *sink,
+                                                 GeglProperty  *sink_prop);
+static void            visitable_init           (gpointer       ginterface,
+                                                 gpointer       interface_data);
+static void            visitable_accept         (GeglVisitable *visitable,
+                                                 GeglVisitor   *visitor);
+static GList*          visitable_depends_on     (GeglVisitable *visitable);
+static gboolean        visitable_needs_visiting (GeglVisitable *visitable);
 
-static void free_properties (GeglNode *self);
-static gboolean properties_exist(GeglNode *sink, const gchar *sink_prop_name, GeglNode *source, const gchar *source_prop_name);
-static GeglConnection * find_connection(GeglNode *sink, GeglProperty *sink_prop);
 
-static void visitable_init (gpointer ginterface, gpointer interface_data);
-static void visitable_accept (GeglVisitable *visitable, GeglVisitor *visitor);
-static GList* visitable_depends_on(GeglVisitable *visitable);
-static gboolean visitable_needs_visiting(GeglVisitable *visitable);
-
-static gpointer parent_class = NULL;
-
-GType
-gegl_node_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-      {
-        sizeof (GeglNodeClass),
-        (GBaseInitFunc) NULL,
-        (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) class_init,
-        (GClassFinalizeFunc) NULL,
-        NULL,
-        sizeof (GeglNode),
-        0,
-        (GInstanceInitFunc) init,
-        NULL
-      };
-
-      static const GInterfaceInfo visitable_info =
-      {
-         (GInterfaceInitFunc) visitable_init,
-         NULL,
-         NULL
-      };
-
-      type = g_type_register_static (GEGL_TYPE_OBJECT,
-                                     "GeglNode",
-                                     &typeInfo,
-                                     G_TYPE_FLAG_ABSTRACT);
-
-      g_type_add_interface_static (type,
-                                   GEGL_TYPE_VISITABLE,
-                                   &visitable_info);
-    }
-    return type;
-}
+G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, GEGL_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (GEGL_TYPE_VISITABLE,
+                                                visitable_init))
 
 static void
-class_init (GeglNodeClass * klass)
+gegl_node_class_init (GeglNodeClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-  parent_class = g_type_class_peek_parent(klass);
-
-  gobject_class->finalize = finalize;
+  gobject_class->finalize     = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 }
 
 static void
-init (GeglNode * self,
-      GeglNodeClass * klass)
+gegl_node_init (GeglNode *self)
 {
   self->properties = NULL;
   self->input_properties = NULL;
@@ -140,7 +110,7 @@ finalize(GObject *gobject)
   g_list_free(self->input_properties);
   g_list_free(self->output_properties);
 
-  G_OBJECT_CLASS(parent_class)->finalize(gobject);
+  G_OBJECT_CLASS (gegl_node_parent_class)->finalize(gobject);
 }
 
 static void

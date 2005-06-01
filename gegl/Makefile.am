@@ -7,15 +7,15 @@ libimage = $(top_builddir)/gegl/image/libimage.la
 lib_LTLIBRARIES = libgegl-1.0.la
 
 GEGL_SRC = \
-	gegl-graph.c		\
 	gegl-eval-mgr.c		\
 	gegl-eval-visitor.c	\
 	gegl-filter.c		\
-	gegl-visitor.c		\
+	gegl-graph.c		\
 	gegl-node.c		\
 	gegl-object.c		\
 	gegl-property.c		\
-	gegl-visitable.c
+	gegl-visitable.c	\
+	gegl-visitor.c
 
 GEGL_NONCLASS_SRC = \
 	gegl-connection.c	\
