@@ -1,5 +1,9 @@
 2005-06-02  Sven Neumann  <sven@gimp.org>
 
+	* gegl/gegl.h: added copyright header.
+
+2005-06-02  Sven Neumann  <sven@gimp.org>
+
 	* autogen.sh
 	* configure.in: look for a file that is actually being compiled.
 
