@@ -1,6 +1,6 @@
 INCLUDES = \
-	-I$(top_srcdir)/gil/gil \
-	-I$(top_srcdir)/tools/testsuite \
+	-I$(top_srcdir)/gil/gil		\
+	-I$(top_srcdir)/tools/testsuite	\
 	@DEP_CFLAGS@
 
 noinst_PROGRAMS = testgil
@@ -9,27 +9,27 @@ DEPS = ../gil/libgil.a ../../tools/testsuite/libtestsuite.la
 LDADDS = ../gil/libgil.a ../../tools/testsuite/libtestsuite.la
 
 MOCK_OBJECT_SRC = \
-   gil-mock-bfs-visitor.c \
-   gil-mock-bfs-visitor.h \
-   gil-mock-dfs-visitor.c \
-   gil-mock-dfs-visitor.h \
-   gil-mock-node.c \
-   gil-mock-node.h \
-   gil-mock-visitor.c \
-   gil-mock-visitor.h
+	gil-mock-bfs-visitor.c	\
+	gil-mock-bfs-visitor.h	\
+	gil-mock-dfs-visitor.c	\
+	gil-mock-dfs-visitor.h	\
+	gil-mock-node.c		\
+	gil-mock-node.h		\
+	gil-mock-visitor.c	\
+	gil-mock-visitor.h
 
 testgil_SOURCES = \
-   $(MOCK_OBJECT_SRC) \
-   bfsvisitortest.c \
-   binaryoptest.c \
-   blocktest.c \
-   constanttest.c \
-   dfsvisitortest.c \
-   exprstatementtest.c \
-   nodetest.c \
-   testgil.c \
-   unaryoptest.c \
-   variabletest.c
+	$(MOCK_OBJECT_SRC)	\
+	bfsvisitortest.c	\
+	binaryoptest.c		\
+	blocktest.c		\
+	constanttest.c		\
+	dfsvisitortest.c	\
+	exprstatementtest.c	\
+	nodetest.c		\
+	testgil.c		\
+	unaryoptest.c		\
+	variabletest.c
 
 testgil_LDFLAGS = -g @DEP_LIBS@
 testgil_DEPENDENCIES = $(DEPS)

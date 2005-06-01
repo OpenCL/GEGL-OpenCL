@@ -7,27 +7,27 @@ libimage = $(top_builddir)/gegl/image/libimage.la
 lib_LTLIBRARIES = libgegl-1.0.la
 
 GEGL_SRC = \
-  gegl-graph.c \
-  gegl-eval-mgr.c \
-  gegl-eval-visitor.c \
-  gegl-filter.c \
-  gegl-visitor.c \
-  gegl-node.c \
-  gegl-object.c \
-  gegl-property.c \
-  gegl-visitable.c
+	gegl-graph.c		\
+	gegl-eval-mgr.c		\
+	gegl-eval-visitor.c	\
+	gegl-filter.c		\
+	gegl-visitor.c		\
+	gegl-node.c		\
+	gegl-object.c		\
+	gegl-property.c		\
+	gegl-visitable.c
 
 GEGL_NONCLASS_SRC = \
-  gegl-connection.c \
-  gegl-init.c \
-  gegl-utils.c
+	gegl-connection.c	\
+	gegl-init.c		\
+	gegl-utils.c
 
 GEGL_PUBLIC_HDRS = \
-  gegl.h
+	gegl.h
 
 libgegl_1_0_la_SOURCES = \
-  $(GEGL_SRC) \
-  $(GEGL_NONCLASS_SRC)
+	$(GEGL_SRC)		\
+	$(GEGL_NONCLASS_SRC)
 
 libgegl_1_0_la_LIBADD = $(libimage)
 

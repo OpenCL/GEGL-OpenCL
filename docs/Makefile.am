@@ -1,3 +1,5 @@
 SUBDIRS=reference
 
-EXTRA_DIST = make-todo
+EXTRA_DIST = \
+	ChangeLog	\
+	make-todo

@@ -10,18 +10,18 @@ bin_PROGRAMS =
 lib_LIBRARIES = libgil.a
 
 libgil_a_SOURCES = \
-    gil-bfs-visitor.c \
-    gil-binary-op.c \
-    gil-block.c \
-    gil-constant.c \
-    gil-dfs-visitor.c \
-    gil-expr-statement.c \
-    gil-expression.c \
-    gil-node.c \
-    gil-statement.c \
-    gil-unary-op.c \
-    gil-variable.c \
-    gil-visitor.c
+	gil-bfs-visitor.c	\
+	gil-binary-op.c		\
+	gil-block.c		\
+	gil-constant.c		\
+	gil-dfs-visitor.c	\
+	gil-expr-statement.c	\
+	gil-expression.c	\
+	gil-node.c		\
+	gil-statement.c		\
+	gil-unary-op.c		\
+	gil-variable.c		\
+	gil-visitor.c
 
 LDADD = \
 	-lm \

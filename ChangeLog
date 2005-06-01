@@ -1,3 +1,12 @@
+2005-06-01  Michael Natterer  <mitch@gimp.org>
+
+	* docs/Makefile.am
+	* gegl/Makefile.am
+	* gegl/image/Makefile.am
+	* gil/gil/Makefile.am
+	* gil/tests/Makefile.am
+	* tests/Makefile.am: whitespace and formatting cleanup.
+
 2005-06-01  Sven Neumann  <sven@gimp.org>
 
 	* gegl/gegl-eval-mgr.c
