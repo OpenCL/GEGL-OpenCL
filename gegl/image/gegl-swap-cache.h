@@ -38,7 +38,7 @@ GType gegl_swap_cache_get_type(void) G_GNUC_CONST;
 typedef struct _GeglSwapCache GeglSwapCache;
 struct _GeglSwapCache
 {
-  GeglCache parent;
+  GeglCache parent_instance;
   GeglSwapCacheStore * stored;
   GeglHeapCacheStore * heap_stored;
   gsize heap_capacity;

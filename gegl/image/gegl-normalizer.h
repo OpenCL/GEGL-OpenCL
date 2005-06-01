@@ -36,7 +36,7 @@ GType gegl_normalizer_get_type (void) G_GNUC_CONST;
 typedef struct _GeglNormalizer GeglNormalizer;
 struct _GeglNormalizer
 {
-  GeglObject parent;
+  GeglObject parent_instance;
 
 };
 

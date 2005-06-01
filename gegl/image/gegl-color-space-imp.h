@@ -36,7 +36,7 @@ GType gegl_color_space_imp_get_type (void) G_GNUC_CONST;
 typedef struct _GeglColorSpaceImp GeglColorSpaceImp;
 struct _GeglColorSpaceImp
 {
-  GeglObject parent;
+  GeglObject parent_instance;
 };
 
 typedef struct _GeglColorSpaceImpClass GeglColorSpaceImpClass;

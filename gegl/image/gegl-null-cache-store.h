@@ -42,7 +42,7 @@ GType gegl_null_cache_store_get_type(void) G_GNUC_CONST;
 typedef struct _GeglNullCacheStore GeglNullCacheStore;
 struct _GeglNullCacheStore
 {
-  GeglCacheStore parent;
+  GeglCacheStore parent_instance;
   GeglCacheStatus status;
   GList * record_head;
 };

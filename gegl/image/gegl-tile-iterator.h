@@ -34,7 +34,7 @@ GType gegl_tile_iterator_get_type (void) G_GNUC_CONST;
 typedef struct _GeglTileIterator GeglTileIterator;
 struct _GeglTileIterator
 {
-  GeglObject parent;
+  GeglObject parent_instance;
   GeglRect bounds;
   gint x;
   gint y;

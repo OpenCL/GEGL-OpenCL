@@ -42,7 +42,7 @@ GType gegl_swap_cache_store_get_type(void) G_GNUC_CONST;
 typedef struct _GeglSwapCacheStore GeglSwapCacheStore;
 struct _GeglSwapCacheStore
 {
-  GeglCacheStore parent;
+  GeglCacheStore parent_instance;
   GList * record_head;
   gint64 size;
   gchar * filename;

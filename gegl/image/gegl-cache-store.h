@@ -37,7 +37,7 @@ GType gegl_cache_store_get_type(void) G_GNUC_CONST;
 typedef struct _GeglCacheStore GeglCacheStore;
 struct _GeglCacheStore
 {
-  GObject parent;
+  GObject parent_instance;
 };
 
 typedef struct _GeglCacheStoreClass GeglCacheStoreClass;

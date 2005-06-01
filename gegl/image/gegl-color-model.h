@@ -35,7 +35,7 @@ GType gegl_color_model_get_type (void) G_GNUC_CONST;
 typedef struct _GeglColorModel GeglColorModel;
 struct _GeglColorModel
 {
-  GeglObject parent;
+  GeglObject parent_instance;
   gint *color_channels;
   gint alpha_channel;
   gint num_colors;

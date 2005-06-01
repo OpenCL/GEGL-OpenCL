@@ -36,7 +36,7 @@ GType gegl_component_sample_model_get_type (void) G_GNUC_CONST;
 typedef struct _GeglComponentSampleModel GeglComponentSampleModel;
 struct _GeglComponentSampleModel
 {
-  GeglSampleModel parent;
+  GeglSampleModel parent_instance;
   /* protected */
   gint pixel_stride;
   gint scanline_stride;

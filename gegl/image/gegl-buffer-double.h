@@ -36,7 +36,7 @@ GType gegl_buffer_double_get_type (void) G_GNUC_CONST;
 typedef struct _GeglBufferDouble GeglBufferDouble;
 struct _GeglBufferDouble
 {
-  GeglBuffer parent;
+  GeglBuffer parent_instance;
 };
 
 typedef struct _GeglBufferDoubleClass GeglBufferDoubleClass;

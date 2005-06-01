@@ -60,7 +60,7 @@ typedef enum
 typedef struct _GeglCache GeglCache;
 struct _GeglCache
 {
-  GObject parent;
+  GObject parent_instance;
   GeglCacheStore* fetched_store;
   GeglCacheStore* discard_store;
   gboolean has_disposed;

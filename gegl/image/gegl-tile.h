@@ -41,7 +41,7 @@ GType gegl_tile_get_type (void) G_GNUC_CONST;
 typedef struct _GeglTile GeglTile;
 struct _GeglTile
 {
-  GeglObject parent;
+  GeglObject parent_instance;
 
   /* x_offset and y_offset represent the origin of this tile
      in the image's coordinate system.

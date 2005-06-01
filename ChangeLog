@@ -1,6 +1,12 @@
 2005-06-01  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/image/*.h
+	* tests/gegl-image-mock-cache-entry.h: s/parent/parent_instance/g.
+	Fix previous commit.
+
+2005-06-01  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/image/*.h
 	* tests/gegl-image-mock-cache-entry.h: use standard include guard
 	#defines.
 

@@ -53,7 +53,7 @@ enum GeglColorSpaceVarient
 typedef struct _GeglColorSpace GeglColorSpace;
 struct _GeglColorSpace
 {
-  GeglObject parent;
+  GeglObject parent_instance;
   void *implementation_data;
   gchar *name;
   gint num_colors;

@@ -36,7 +36,7 @@ GType gegl_mock_cache_entry_get_type (void) G_GNUC_CONST;
 typedef struct _GeglMockCacheEntry GeglMockCacheEntry;
 struct _GeglMockCacheEntry
 {
-  GeglCacheEntry parent;
+  GeglCacheEntry parent_instance;
   gsize data_length;
   gint* data;
 };

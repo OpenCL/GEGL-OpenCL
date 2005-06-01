@@ -36,7 +36,7 @@ GType gegl_normalizer_mult_get_type (void) G_GNUC_CONST;
 typedef struct _GeglNormalizerMult GeglNormalizerMult;
 struct _GeglNormalizerMult
 {
-  GeglNormalizer parent;
+  GeglNormalizer parent_instance;
   gdouble alpha;
 };
 

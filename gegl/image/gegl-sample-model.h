@@ -39,7 +39,7 @@ GType gegl_sample_model_get_type (void) G_GNUC_CONST;
 typedef struct _GeglSampleModel GeglSampleModel;
 struct _GeglSampleModel
 {
-  GeglObject parent;
+  GeglObject parent_instance;
   /* private */
   gint width;
   gint height;
