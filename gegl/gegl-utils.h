@@ -5,12 +5,12 @@
 #include "gegl-types.h"
 
 void     gegl_rect_set          (GeglRect *r, gint x, gint y, guint w, guint h);
-gboolean gegl_rect_equal        (GeglRect *r, GeglRect *s); 
+gboolean gegl_rect_equal        (GeglRect *r, GeglRect *s);
 gboolean gegl_rect_equal_coords (GeglRect *r, gint x, gint y, gint w, gint h);
 void     gegl_rect_copy         (GeglRect *to, GeglRect *from);
 void     gegl_rect_bounding_box (GeglRect *dest, GeglRect *src1, GeglRect *src2);
 gboolean gegl_rect_intersect    (GeglRect *dest, GeglRect *src1, GeglRect *src2);
-gboolean gegl_rect_contains     (GeglRect *r, GeglRect *s); 
+gboolean gegl_rect_contains     (GeglRect *r, GeglRect *s);
 
 void gegl_log_debug(gchar *file, gint line, gchar *function, gchar * format, ...);
 void gegl_log_info(gchar *file, gint line, gchar *function, gchar * format, ...);

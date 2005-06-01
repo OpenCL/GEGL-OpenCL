@@ -26,15 +26,15 @@ gil_block_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GIL_TYPE_STATEMENT, 
-                                     "GilBlock", 
-                                     &typeInfo, 
+      type = g_type_register_static (GIL_TYPE_STATEMENT,
+                                     "GilBlock",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GilBlockClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -45,8 +45,8 @@ class_init (GilBlockClass * klass)
   return;
 }
 
-static void 
-init (GilBlock * self, 
+static void
+init (GilBlock * self,
       GilBlockClass * klass)
 {
   return;

@@ -32,10 +32,10 @@ extern Test * create_swap_cache_mem_leaks_test();
 
 int
 main (int argc, char *argv[])
-{  
+{
 
   g_log_set_always_fatal (g_log_set_always_fatal (G_LOG_FATAL_MASK) |
-                                                 G_LOG_LEVEL_WARNING | 
+                                                 G_LOG_LEVEL_WARNING |
                                                  G_LOG_LEVEL_CRITICAL);
   g_type_init_with_debug_flags (G_TYPE_DEBUG_OBJECTS);
 

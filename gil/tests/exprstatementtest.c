@@ -8,7 +8,7 @@ static void
 test_expr_statement_g_object_new(Test *test)
 {
   {
-    GilExprStatement * expr_statement = g_object_new (GIL_TYPE_EXPR_STATEMENT, NULL);  
+    GilExprStatement * expr_statement = g_object_new (GIL_TYPE_EXPR_STATEMENT, NULL);
 
     ct_test(test, expr_statement != NULL);
     ct_test(test, GIL_IS_EXPR_STATEMENT(expr_statement));
@@ -20,28 +20,28 @@ test_expr_statement_g_object_new(Test *test)
 
   {
     /* A = B + 1.5 */
-    GilConstant * constant = g_object_new(GIL_TYPE_CONSTANT, 
-                                          "type", GIL_FLOAT, 
-                                          "float", 1.5, 
-                                          NULL); 
-    GilVariable * B = g_object_new(GIL_TYPE_VARIABLE, 
-                                   "name", "B", 
-                                   NULL); 
+    GilConstant * constant = g_object_new(GIL_TYPE_CONSTANT,
+                                          "type", GIL_FLOAT,
+                                          "float", 1.5,
+                                          NULL);
+    GilVariable * B = g_object_new(GIL_TYPE_VARIABLE,
+                                   "name", "B",
+                                   NULL);
 
-    GilBinaryOp * bin_op = g_object_new (GIL_TYPE_BINARY_OP, 
-                                         "op", GIL_PLUS, 
+    GilBinaryOp * bin_op = g_object_new (GIL_TYPE_BINARY_OP,
+                                         "op", GIL_PLUS,
                                          "left_operand", B,
                                          "right_operand", constant,
-                                         NULL);  
+                                         NULL);
 
-    GilVariable * A = g_object_new(GIL_TYPE_VARIABLE, 
+    GilVariable * A = g_object_new(GIL_TYPE_VARIABLE,
                                    "name", "A",
                                    NULL);
 
-    GilExprStatement * expr_statement = g_object_new (GIL_TYPE_EXPR_STATEMENT, 
+    GilExprStatement * expr_statement = g_object_new (GIL_TYPE_EXPR_STATEMENT,
                                                       "left_expr", A,
                                                       "right_expr", bin_op,
-                                                      NULL);  
+                                                      NULL);
 
     g_object_unref(expr_statement);
     g_object_unref(A);
@@ -80,7 +80,7 @@ create_expr_statement_test()
   g_assert(ct_addSetUp(t, expr_statement_setup));
   g_assert(ct_addTearDown(t, expr_statement_teardown));
 
-#if 1 
+#if 1
   g_assert(ct_addTestFun(t, test_expr_statement_g_object_new));
   g_assert(ct_addTestFun(t, test_expr_statement_g_object_get));
   g_assert(ct_addTestFun(t, test_expr_statement_g_object_set));

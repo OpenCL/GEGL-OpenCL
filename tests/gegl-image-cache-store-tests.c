@@ -122,11 +122,11 @@ test_cache_store_size ( Test * test)
   gegl_cache_store_add (test_store, record1);
   size = gegl_cache_store_size (test_store);
   ct_test (test, size == (1024) * sizeof(gint));
-  
+
   gegl_cache_store_add (test_store, record2);
   size = gegl_cache_store_size (test_store);
   ct_test (test, size == (1024+2048) * sizeof(gint));
-  
+
   gegl_cache_store_add (test_store, record3);
   size = gegl_cache_store_size (test_store);
   ct_test (test, size == (1024+2048+4096) * sizeof(gint));
@@ -145,7 +145,7 @@ void
 test_cache_store_pop (Test * test)
 {
   GeglEntryRecord * rec;
-  
+
   gegl_cache_store_add (test_store, record1);
   gegl_cache_store_add (test_store, record2);
   gegl_cache_store_add (test_store, record3);

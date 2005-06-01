@@ -1,7 +1,7 @@
 /* ctest.c: Implements the CTest Framework.
    Taken from Chuck Allison's "The Simplest Automated
    Unit Test Framework That Could Possibly Work" C/C++ Users
-   Journal Sept 2000. www.cuj.com 
+   Journal Sept 2000. www.cuj.com
  */
 
 #include "ctest.h"

@@ -27,7 +27,7 @@ struct _GilMockVisitorClass {
        GilVisitorClass __parent__;
 };
 
-GType         gil_mock_visitor_get_type          (void); 
+GType         gil_mock_visitor_get_type          (void);
 
 #ifdef __cplusplus
 }

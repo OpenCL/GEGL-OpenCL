@@ -4,9 +4,9 @@
 
 enum
 {
-  PROP_0, 
+  PROP_0,
   PROP_OUTPUT0,
-  PROP_LAST 
+  PROP_LAST
 };
 
 static void class_init (GeglMockFilter01Class * klass);
@@ -38,15 +38,15 @@ gegl_mock_filter_0_1_get_type (void)
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_FILTER, 
-                                     "GeglMockFilter01", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_FILTER,
+                                     "GeglMockFilter01",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglMockFilter01Class * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -71,14 +71,14 @@ class_init (GeglMockFilter01Class * klass)
 
 }
 
-static void 
-init (GeglMockFilter01 * self, 
+static void
+init (GeglMockFilter01 * self,
       GeglMockFilter01Class * klass)
 {
   GeglFilter *filter = GEGL_FILTER(self);
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-  gegl_filter_create_property(filter, 
+  gegl_filter_create_property(filter,
      g_object_class_find_property(gobject_class, "output0"));
 }
 
@@ -114,8 +114,8 @@ set_property (GObject      *gobject,
   }
 }
 
-static gboolean 
-evaluate (GeglFilter *filter, 
+static gboolean
+evaluate (GeglFilter *filter,
          const gchar *output_prop)
 {
   GeglMockFilter01 *self = GEGL_MOCK_FILTER_0_1(filter);

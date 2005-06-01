@@ -48,21 +48,21 @@ gegl_heap_cache_get_type (void)
 	  sizeof (GeglHeapCacheClass),
 	  NULL, /*base_init*/
 	  NULL, /* base_finalize */
-	  
+	
 	  /* classed types, instantiated types */
 	  class_init, /* class_init */
 	  NULL, /* class_finalize */
 	  NULL, /* class_data */
-	  
+	
 	  /* instantiated types */
 	  sizeof(GeglHeapCache),
 	  0, /* n_preallocs */
 	  instance_init, /* instance_init */
-	  
+	
 	  /* value handling */
 	  NULL /* value_table */
 	};
-      
+
       type = g_type_register_static (GEGL_TYPE_CACHE ,
 				     "GeglHeapCache",
 				     &typeInfo,
@@ -103,7 +103,7 @@ instance_init(GTypeInstance *instance,
 	      gpointer g_class)
 {
   GeglHeapCache * self = GEGL_HEAP_CACHE (instance);
-  
+
   self->capacity = 0;
   self->is_persistent = FALSE;
   self->stored = gegl_heap_cache_store_new ();
@@ -114,7 +114,7 @@ finalize (GObject * object)
 {
   GeglHeapCache * self = GEGL_HEAP_CACHE (object);
   g_object_unref (G_OBJECT(self->stored));
-  
+
   G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
@@ -167,7 +167,7 @@ size (GeglCache* cache)
 {
   GeglHeapCache * self = GEGL_HEAP_CACHE (cache);
   return gegl_cache_store_size (GEGL_CACHE_STORE(self->stored));
-  
+
 }
 
 gint64

@@ -13,14 +13,14 @@
 static void
 test_update_property(Test *test)
 {
-  /* 
+  /*
      -
      A
   */
 
   {
     gint output0;
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
 
     gegl_node_apply(A, "output0");
     g_object_get(A, "output0", &output0, NULL);
@@ -29,21 +29,21 @@ test_update_property(Test *test)
     g_object_unref(A);
   }
 
-  /* 
+  /*
      -
      B
      +
-         <--- Test passing the property from output to input 
+         <--- Test passing the property from output to input
               (like visit_property in EvalComputeVisitor)
      -
      A
   */
   {
-    GValue value = {0}; 
+    GValue value = {0};
     gint input0;
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);
 
     g_value_init(&value, G_TYPE_INT);
 
@@ -60,19 +60,19 @@ test_update_property(Test *test)
   }
 
 
-  /* 
+  /*
      -      2( = 2*1)
-     B      
-     +      1 
+     B
+     +      1
      |
      -      1
-     A       
+     A
   */
   {
     gint output0;
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_apply(B, "output0");
@@ -84,23 +84,23 @@ test_update_property(Test *test)
     g_object_unref(B);
   }
 
-  /* 
-     -   4 
+  /*
+     -   4
      C
-     +   2 
+     +   2
      |
-     -   2 
+     -   2
      B
-     +   1 
+     +   1
      |
-     -   1 
-     A 
+     -   1
+     A
   */
   {
     gint output0;
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "C", NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "C", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(C, "input0", B, "output0");
@@ -117,23 +117,23 @@ test_update_property(Test *test)
 
 #if 0
 
-  /* 
-       - 
-       B 
+  /*
+       -
+       B
       + +
-      \ / 
-       - 
+      \ /
+       -
        A
   */
 
   {
-    gchar * visit_order[] = { "A.output0", 
+    gchar * visit_order[] = { "A.output0",
                               "B.input0",
                               "B.input1",
-                              "B.output0" };  
+                              "B.output0" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "B", NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "B", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(B, "input1", A, "output0");
@@ -144,31 +144,31 @@ test_update_property(Test *test)
     g_object_unref(B);
   }
 
-  /* 
+  /*
        -
-       C 
+       C
       + +
-        / 
+        /
        -
        B
       + +
-      \ 
+      \
        -
        A
   */
 
   {
     gchar * visit_order[] = { "C.input0",
-                              "A.output0", 
+                              "A.output0",
                               "B.input0",
                               "B.input1",
                               "B.output0",
                               "C.input1",
-                              "C.output0" };  
+                              "C.output0" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "B", NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "C", NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "C", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(C, "input1", B, "output0");
@@ -180,15 +180,15 @@ test_update_property(Test *test)
     g_object_unref(C);
   }
 
-  /* 
+  /*
        -
-       C 
+       C
       + +
-      | |  
+      | |
       - -
        B
       + +
-      \ / 
+      \ /
        -
        A
   */
@@ -201,11 +201,11 @@ test_update_property(Test *test)
                               "C.input0",
                               "B.output1",
                               "C.input1",
-                              "C.output0" };  
+                              "C.output0" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_2_2, "name", "B", NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "C", NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_2_2, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "C", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(B, "input1", A, "output0");
@@ -219,26 +219,26 @@ test_update_property(Test *test)
     g_object_unref(C);
   }
 
-  /* 
-       - 
-       B 
+  /*
+       -
+       B
       + +
       | |
       - -
-       A 
-       + 
+       A
+       +
   */
 
   {
-    gchar * visit_order[] = { "A.input0", 
+    gchar * visit_order[] = { "A.input0",
                               "A.output0",
                               "B.input0",
                               "A.output1",
                               "B.input1",
-                              "B.output0" };  
+                              "B.output0" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_2, "name", "A", NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "B", NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_2, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "B", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(B, "input1", A, "output1");
@@ -249,30 +249,30 @@ test_update_property(Test *test)
     g_object_unref(B);
   }
 
-  /* 
+  /*
       -
-      C 
-     + + 
-     | | 
+      C
+     + +
+     | |
      | -
      | B
      | +
-     \ / 
+     \ /
       -
-      A 
+      A
   */
 
   {
-    gchar * visit_order[] = { "A.output0", 
+    gchar * visit_order[] = { "A.output0",
                               "C.input0",
                               "B.input0",
                               "B.output0",
                               "C.input1",
-                              "C.output0" };  
+                              "C.output0" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "C", NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "C", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(C, "input1", B, "output0");
@@ -285,17 +285,17 @@ test_update_property(Test *test)
     g_object_unref(C);
   }
 
-  /* 
+  /*
       -
-      D 
-     + + 
-     | | 
+      D
+     + +
+     | |
      | -
      | C
      | +
-     \ / 
+     \ /
       -
-      B 
+      B
       +
       |
       -
@@ -305,7 +305,7 @@ test_update_property(Test *test)
   */
 
   {
-    gchar * visit_order[] = { "A.input0", 
+    gchar * visit_order[] = { "A.input0",
                               "A.output0",
                               "B.input0",
                               "B.output0",
@@ -313,12 +313,12 @@ test_update_property(Test *test)
                               "C.input0",
                               "C.output0",
                               "D.input1",
-                              "D.output0" };  
+                              "D.output0" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "A", NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "C", NULL);  
-    GeglNode *D = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "D", NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "C", NULL);
+    GeglNode *D = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "D", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(C, "input0", B, "output0");
@@ -333,37 +333,37 @@ test_update_property(Test *test)
     g_object_unref(D);
   }
 
-  /* 
+  /*
       -
       D
-     + + 
-     | | 
-     | - 
+     + +
+     | |
+     | -
      | C
      | +
      | |
      | -
      | B
      | +
-     \ / 
+     \ /
       -
-      A 
+      A
   */
 
   {
-    gchar * visit_order[] = { "A.output0", 
+    gchar * visit_order[] = { "A.output0",
                               "D.input0",
                               "B.input0",
                               "B.output0",
                               "C.input0",
                               "C.output0",
                               "D.input1",
-                              "D.output0" };  
+                              "D.output0" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "C", NULL);  
-    GeglNode *D = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "D", NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "C", NULL);
+    GeglNode *D = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "D", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(C, "input0", B, "output0");
@@ -379,16 +379,16 @@ test_update_property(Test *test)
   }
 
   /*
-      B 
+      B
       +
       |
       -
      ---
     |   |  <----graph with A as child
-    | - | 
-    | A | 
-    | + | 
-    |   | 
+    | - |
+    | A |
+    | + |
+    |   |
      ---
       +
       |
@@ -397,16 +397,16 @@ test_update_property(Test *test)
 
   */
   {
-    gchar * visit_order[] = { "C.output0", 
+    gchar * visit_order[] = { "C.output0",
                               "A.input0",
                               "A.output0",
                               "B.input0",
-                              "B.output0" };  
+                              "B.output0" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "A", NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "C", NULL);  
-    GeglNode *D = g_object_new (GEGL_TYPE_GRAPH, "name", "D", NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "C", NULL);
+    GeglNode *D = g_object_new (GEGL_TYPE_GRAPH, "name", "D", NULL);
 
     GeglProperty *output0 = gegl_node_get_property(A, "output0");
     GeglProperty *input0 = gegl_node_get_property(A, "input0");
@@ -449,9 +449,9 @@ create_update_property_test()
   g_assert(ct_addSetUp(t, test_setup));
   g_assert(ct_addTearDown(t, test_teardown));
 
-#if 1 
+#if 1
   g_assert(ct_addTestFun(t, test_update_property));
 #endif
-                                     
-  return t; 
+
+  return t;
 }

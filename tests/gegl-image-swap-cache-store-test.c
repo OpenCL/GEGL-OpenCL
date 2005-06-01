@@ -58,11 +58,11 @@ Test *
 create_swap_cache_store_test()
 {
   Test* t = ct_create("GeglSwapCacheStoreTest");
-  
-  
+
+
   g_assert(ct_addSetUp(t, setup));
   g_assert(ct_addTearDown(t, teardown));
-  
+
   g_assert(ct_addTestFun(t, test_swap_cache_store_new));
   g_assert(ct_addTestFun(t, test_cache_store_add_remove));
   g_assert(ct_addTestFun(t, test_cache_store_zap));
@@ -70,5 +70,5 @@ create_swap_cache_store_test()
   g_assert(ct_addTestFun(t, test_cache_store_pop));
   g_assert(ct_addTestFun(t, test_cache_store_peek));
 
-  return t; 
+  return t;
 }

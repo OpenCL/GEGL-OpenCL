@@ -16,20 +16,20 @@ typedef struct _GilType GilType;
 
 typedef struct _GilArrayType GilArrayType;
 struct _GilArrayType
-{       
+{
   GilType *element_type;  /*element type*/
 };
 
 typedef struct _GilFunctionType GilFunctionType;
 struct _GilFunctionType
-{       
+{
   GilType * return_type;    /*return GilType*/
   GList * arguments;        /*argument GilTypes*/
 };
 
 typedef struct _GilRecordType GilRecordType;
 struct _GilRecordType
-{       
+{
   GList * fields;           /*list of GilProductEntrys*/
 };
 

@@ -117,7 +117,7 @@ test_gegl_memory_cache_caching(Test* test)
 	      results = gegl_cache_fetch (cache, id, &entry);
 	      mock_entry = GEGL_MOCK_CACHE_ENTRY (entry);
 	      ct_test (test, results == GEGL_FETCH_SUCCEEDED);
-	      	      
+	      	
 	      for (k=0;k<1024;k++)
 		{
 		  if (mock_entry->data[k] != j)
@@ -189,13 +189,13 @@ test_gegl_memory_cache_caching(Test* test)
 	}
     }
   g_object_unref (cache);
-  
+
 }
 Test *
 create_memory_cache_test()
 {
   Test* t = ct_create("GeglMemoryCacheTest");
-  
+
   /*
     g_assert(ct_addSetUp(t, color_test_setup));
     g_assert(ct_addTearDown(t, color_test_teardown));
@@ -203,5 +203,5 @@ create_memory_cache_test()
   g_assert(ct_addTestFun(t, test_gegl_memory_cache_g_object_new));
   g_assert(ct_addTestFun(t, test_gegl_memory_cache_properties));
   g_assert(ct_addTestFun(t, test_gegl_memory_cache_caching));
-  return t; 
+  return t;
 }

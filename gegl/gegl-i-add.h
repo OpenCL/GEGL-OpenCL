@@ -15,14 +15,14 @@ extern "C" {
 #define GEGL_I_ADD_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_I_ADD, GeglIAddClass))
 
 typedef struct _GeglIAdd GeglIAdd;
-struct _GeglIAdd 
+struct _GeglIAdd
 {
    GeglBinary binary;
    /*< private >*/
 };
 
 typedef struct _GeglIAddClass GeglIAddClass;
-struct _GeglIAddClass 
+struct _GeglIAddClass
 {
    GeglBinaryClass binary_class;
 };

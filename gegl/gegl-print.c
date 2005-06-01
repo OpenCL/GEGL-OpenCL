@@ -46,15 +46,15 @@ gegl_print_get_type (void)
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_PIPE, 
-                                     "GeglPrint", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_PIPE,
+                                     "GeglPrint",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglPrintClass * klass)
 {
   GeglFilterClass *filter_class = GEGL_FILTER_CLASS(klass);
@@ -68,16 +68,16 @@ class_init (GeglPrintClass * klass)
   filter_class->finish = finish;
 }
 
-static void 
-init (GeglPrint * self, 
+static void
+init (GeglPrint * self,
       GeglPrintClass * klass)
 {
   self->buffer = NULL;
   self->use_log = TRUE;
 }
 
-static void 
-prepare (GeglFilter * filter) 
+static void
+prepare (GeglFilter * filter)
 {
   GeglPrint *self = GEGL_PRINT(filter);
 
@@ -98,36 +98,36 @@ prepare (GeglFilter * filter)
       gint y = rect.y;
       gint width = rect.w;
       gint height = rect.h;
-      
+
       /* Allocate a scanline char buffer for output */
       self->buffer_size = width * (num_channels + 1) * MAX_PRINTED_CHARS_PER_CHANNEL;
-      self->buffer = g_new(gchar, self->buffer_size); 
+      self->buffer = g_new(gchar, self->buffer_size);
 
       /*
-      gegl_log_info(__FILE__, __LINE__, "prepare", "buffer_size is %d", self->buffer_size); 
+      gegl_log_info(__FILE__, __LINE__, "prepare", "buffer_size is %d", self->buffer_size);
       */
 
       if(self->use_log)
-        gegl_log_info(__FILE__, __LINE__,"prepare", 
+        gegl_log_info(__FILE__, __LINE__,"prepare",
                  "Printing GeglImage: %p area (x,y,w,h) = (%d,%d,%d,%d)",
                  src,x,y,width,height);
       else
-        printf("Printing GeglImage: %p area (x,y,w,h) = (%d,%d,%d,%d)", 
+        printf("Printing GeglImage: %p area (x,y,w,h) = (%d,%d,%d,%d)",
                  (gpointer)src,x,y,width,height);
     }
   }
 }
 
-static void 
-finish (GeglFilter * filter) 
+static void
+finish (GeglFilter * filter)
 {
   GeglPrint *self = GEGL_PRINT(filter);
-  g_free(self->buffer); 
+  g_free(self->buffer);
 }
 
-static void 
-print (GeglPrint * self, 
-       gchar * format, 
+static void
+print (GeglPrint * self,
+       gchar * format,
        ...)
 {
   g_return_if_fail (self != NULL);
@@ -135,20 +135,20 @@ print (GeglPrint * self,
 
   {
     gint written = 0;
-     
+
     va_list args;
     va_start(args,format);
 
-    written = g_vsnprintf(self->current, self->left, format, args); 
+    written = g_vsnprintf(self->current, self->left, format, args);
 
     va_end(args);
 
-    self->current += written; 
+    self->current += written;
     self->left -= written;
   }
 
 /*
-  gegl_log_debug(__FILE__, __LINE__, "print", 
+  gegl_log_debug(__FILE__, __LINE__, "print",
                  "total written : %d", self->buffer_size - self->left);
 */
 }
@@ -168,14 +168,14 @@ get_scanline_function(GeglPipe * pipe,
 }
 
 
-static void 
-print_float (GeglFilter * filter, 
+static void
+print_float (GeglFilter * filter,
              GeglScanlineProcessor *processor,
              gint width)
 {
   GeglPrint *self = GEGL_PRINT(filter);
 
-  GeglImageIterator *source = 
+  GeglImageIterator *source =
     gegl_scanline_processor_lookup_iterator(processor, "source");
   gfloat **a = (gfloat**)gegl_image_iterator_color_channels(source);
   gfloat *aa = (gfloat*)gegl_image_iterator_alpha_channel(source);
@@ -183,73 +183,73 @@ print_float (GeglFilter * filter,
   gint alpha_mask = 0x0;
 
   if(aa)
-    alpha_mask |= GEGL_A_ALPHA; 
+    alpha_mask |= GEGL_A_ALPHA;
 
   self->current = self->buffer;
-  self->left = self->buffer_size; 
+  self->left = self->buffer_size;
 
   {
-    gfloat *a0 = (a_color_chans > 0) ? a[0]: NULL;   
+    gfloat *a0 = (a_color_chans > 0) ? a[0]: NULL;
     gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
     gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
     switch(a_color_chans)
       {
-        case 3: 
+        case 3:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 print(self, "(");
                 print(self, "%.3f ", *a0++);
                 print(self, "%.3f ", *a1++);
-                print(self, "%.3f ", *a2++); 
-                print(self, "%.3f ", *aa++); 
-                print(self, ")"); 
+                print(self, "%.3f ", *a2++);
+                print(self, "%.3f ", *aa++);
+                print(self, ")");
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 print(self, "(");
                 print(self, "%.3f ", *a0++);
                 print(self, "%.3f ", *a1++);
-                print(self, "%.3f ", *a2++); 
-                print(self, ")"); 
+                print(self, "%.3f ", *a2++);
+                print(self, ")");
               }
           break;
-        case 2: 
+        case 2:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 print(self, "(");
                 print(self, "%.3f ", *a0++);
                 print(self, "%.3f ", *a1++);
-                print(self, "%.3f ", *aa++); 
-                print(self, ")"); 
+                print(self, "%.3f ", *aa++);
+                print(self, ")");
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 print(self, "(");
                 print(self, "%.3f ", *a0++);
                 print(self, "%.3f ", *a1++);
-                print(self, ")"); 
+                print(self, ")");
               }
           break;
-        case 1: 
+        case 1:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 print(self, "(");
                 print(self, "%.3f ", *a0++);
-                print(self, "%.3f ", *aa++); 
-                print(self, ")"); 
+                print(self, "%.3f ", *aa++);
+                print(self, ")");
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 print(self, "(");
                 print(self, "%.3f ", *a0++);
-                print(self, ")"); 
+                print(self, ")");
               }
           break;
       }

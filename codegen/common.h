@@ -9,7 +9,7 @@
 #include "data_type.h"
 
 #ifndef DEBUG
-#define DEBUG 0  
+#define DEBUG 0
 #endif
 
 typedef enum
@@ -28,12 +28,12 @@ typedef enum
 }DATA_TYPE;
 
 typedef enum
-{ 
+{
   TYPE_SCALER,
-  TYPE_VECTOR, 
+  TYPE_VECTOR,
   TYPE_C_VECTOR,
-  TYPE_CA_VECTOR,  
-  TYPE_C_A_VECTOR,  
+  TYPE_CA_VECTOR,
+  TYPE_C_A_VECTOR,
 }SV_TYPE;
 
 /* FUNCTIONS */
@@ -43,9 +43,9 @@ typedef enum
   OP_MINUS,
   OP_TIMES,
   OP_DIVIDE,
-  OP_NEG, 
+  OP_NEG,
   OP_WP_CLAMP,
-  OP_CHANNEL_CLAMP, 
+  OP_CHANNEL_CLAMP,
   OP_EQUAL,
 }FUNCTION;
 
@@ -55,10 +55,10 @@ typedef struct
 {
   DATA_TYPE 	dtype;
   char          string[256];
-  SV_TYPE	svtype; 
-  int		num; 
-  char		inited; 
-  char          scope; 
+  SV_TYPE	svtype;
+  int		num;
+  char		inited;
+  char          scope;
 }elem_t;
 
 typedef struct
@@ -81,21 +81,21 @@ typedef struct
 
 #ifdef  _LEXER_C_
 int SCOPE = 0;
-char gegl_pixel[256]; 
+char gegl_pixel[256];
 #undef  _LEXER_C_
 #else
 extern int SCOPE;
-extern char gegl_pixel[]; 
+extern char gegl_pixel[];
 #endif
 
 
 elem_t  	add_sym (char *s, char scope);
-elem_t*	 	get_sym (char *sym); 
-void		init_image_data (char *indent); 
-int 		get_keyword (char *s); 
-dt_keyword_t* 	get_dt_keyword (char *s); 
-int		yylex (); 
-void    	rm_sym_from_symtab (char scope); 
+elem_t*	 	get_sym (char *sym);
+void		init_image_data (char *indent);
+int 		get_keyword (char *s);
+dt_keyword_t* 	get_dt_keyword (char *s);
+int		yylex ();
+void    	rm_sym_from_symtab (char scope);
 
 void open_file (char *filename);
 void close_file ();

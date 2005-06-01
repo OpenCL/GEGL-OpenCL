@@ -9,12 +9,12 @@
 
 enum
 {
-  PROP_0, 
+  PROP_0,
   PROP_MULT0,
   PROP_MULT1,
   PROP_MULT2,
   PROP_MULT3,
-  PROP_LAST 
+  PROP_LAST
 };
 
 static void class_init (GeglMultClass * klass);
@@ -50,15 +50,15 @@ gegl_mult_get_type (void)
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_UNARY, 
-                                     "GeglMult", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_UNARY,
+                                     "GeglMult",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglMultClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
@@ -108,8 +108,8 @@ class_init (GeglMultClass * klass)
                                    G_PARAM_READWRITE));
 }
 
-static void 
-init (GeglMult * self, 
+static void
+init (GeglMult * self,
       GeglMultClass * klass)
 {
   gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_SCALAR_DATA, "mult0");
@@ -130,25 +130,25 @@ get_property (GObject      *gobject,
     case PROP_MULT0:
       {
         GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult0");
-        g_value_set_float(value, g_value_get_float(data_value));  
+        g_value_set_float(value, g_value_get_float(data_value));
       }
       break;
     case PROP_MULT1:
       {
         GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult1");
-        g_value_set_float(value, g_value_get_float(data_value));  
+        g_value_set_float(value, g_value_get_float(data_value));
       }
       break;
     case PROP_MULT2:
       {
         GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult2");
-        g_value_set_float(value, g_value_get_float(data_value));  
+        g_value_set_float(value, g_value_get_float(data_value));
       }
       break;
     case PROP_MULT3:
       {
         GValue *data_value = gegl_op_get_input_data_value(GEGL_OP(self), "mult3");
-        g_value_set_float(value, g_value_get_float(data_value));  
+        g_value_set_float(value, g_value_get_float(data_value));
       }
       break;
     default:
@@ -203,20 +203,20 @@ get_scanline_function(GeglUnary * unary,
 }
 
 
-static void                                                            
-mult_float (GeglFilter * filter,              
+static void
+mult_float (GeglFilter * filter,
             GeglScanlineProcessor *processor,
-            gint width)                       
-{                                                                       
+            gint width)
+{
   GeglMult * self = GEGL_MULT(filter);
 
-  GeglImageIterator *dest = 
+  GeglImageIterator *dest =
     gegl_scanline_processor_lookup_iterator(processor, "dest");
   gfloat **d = (gfloat**)gegl_image_iterator_color_channels(dest);
   gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(dest);
   gint d_color_chans = gegl_image_iterator_get_num_colors(dest);
 
-  GeglImageIterator *source = 
+  GeglImageIterator *source =
     gegl_scanline_processor_lookup_iterator(processor, "source");
   gfloat **a = (gfloat**)gegl_image_iterator_color_channels(source);
   gfloat *aa = (gfloat*)gegl_image_iterator_alpha_channel(source);
@@ -230,20 +230,20 @@ mult_float (GeglFilter * filter,
   gint alpha_mask = 0x0;
 
   gfloat mult[4];
-  mult[0] = g_value_get_float(mult0_value); 
-  mult[1] = g_value_get_float(mult1_value); 
-  mult[2] = g_value_get_float(mult2_value); 
-  mult[3] = g_value_get_float(mult3_value); 
+  mult[0] = g_value_get_float(mult0_value);
+  mult[1] = g_value_get_float(mult1_value);
+  mult[2] = g_value_get_float(mult2_value);
+  mult[3] = g_value_get_float(mult3_value);
 
   if(aa)
-    alpha_mask |= GEGL_A_ALPHA; 
+    alpha_mask |= GEGL_A_ALPHA;
 
   {
-    gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;   
+    gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;
     gfloat *d1 = (d_color_chans > 1) ? d[1]: NULL;
     gfloat *d2 = (d_color_chans > 2) ? d[2]: NULL;
 
-    gfloat *a0 = (a_color_chans > 0) ? a[0]: NULL;   
+    gfloat *a0 = (a_color_chans > 0) ? a[0]: NULL;
     gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
     gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
@@ -251,48 +251,48 @@ mult_float (GeglFilter * filter,
 
     switch(d_color_chans)
       {
-        case 3: 
+        case 3:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = mult[0] * *a0++;
                 *d1++ = mult[1] * *a1++;
                 *d2++ = mult[2] * *a2++;
                 *da++ = mult[3] * *aa++;
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = mult[0] * *a0++;
                 *d1++ = mult[1] * *a1++;
                 *d2++ = mult[2] * *a2++;
               }
           break;
-        case 2: 
+        case 2:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = mult[0] * *a0++;
                 *d1++ = mult[1] * *a1++;
                 *da++ = mult[3] * *aa++;
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = mult[0] * *a0++;
                 *d1++ = mult[1] * *a1++;
               }
           break;
-        case 1: 
+        case 1:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = mult[0] * *a0++;
                 *da++ = mult[3] * *aa++;
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = mult[0] * *a0++;
               }
           break;
@@ -301,22 +301,22 @@ mult_float (GeglFilter * filter,
 
   g_free(d);
   g_free(a);
-}                                                                       
+}
 
-static void                                                            
-mult_uint8 (GeglFilter * filter,              
+static void
+mult_uint8 (GeglFilter * filter,
             GeglScanlineProcessor *processor,
-            gint width)                       
-{                                                                       
+            gint width)
+{
   GeglMult * self = GEGL_MULT(filter);
 
-  GeglImageIterator *dest = 
+  GeglImageIterator *dest =
     gegl_scanline_processor_lookup_iterator(processor, "dest");
   guint8 **d = (guint8**)gegl_image_iterator_color_channels(dest);
   guint8 *da = (guint8*)gegl_image_iterator_alpha_channel(dest);
   gint d_color_chans = gegl_image_iterator_get_num_colors(dest);
 
-  GeglImageIterator *source = 
+  GeglImageIterator *source =
     gegl_scanline_processor_lookup_iterator(processor, "source");
   guint8 **a = (guint8**)gegl_image_iterator_color_channels(source);
   guint8 *aa = (guint8*)gegl_image_iterator_alpha_channel(source);
@@ -330,20 +330,20 @@ mult_uint8 (GeglFilter * filter,
   gint alpha_mask = 0x0;
 
   gfloat mult[4];
-  mult[0] = g_value_get_float(mult0_value); 
-  mult[1] = g_value_get_float(mult1_value); 
-  mult[2] = g_value_get_float(mult2_value); 
-  mult[3] = g_value_get_float(mult3_value); 
+  mult[0] = g_value_get_float(mult0_value);
+  mult[1] = g_value_get_float(mult1_value);
+  mult[2] = g_value_get_float(mult2_value);
+  mult[3] = g_value_get_float(mult3_value);
 
   if(aa)
-    alpha_mask |= GEGL_A_ALPHA; 
+    alpha_mask |= GEGL_A_ALPHA;
 
   {
-    guint8 *d0 = (d_color_chans > 0) ? d[0]: NULL;   
+    guint8 *d0 = (d_color_chans > 0) ? d[0]: NULL;
     guint8 *d1 = (d_color_chans > 1) ? d[1]: NULL;
     guint8 *d2 = (d_color_chans > 2) ? d[2]: NULL;
 
-    guint8 *a0 = (a_color_chans > 0) ? a[0]: NULL;   
+    guint8 *a0 = (a_color_chans > 0) ? a[0]: NULL;
     guint8 *a1 = (a_color_chans > 1) ? a[1]: NULL;
     guint8 *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
@@ -351,48 +351,48 @@ mult_uint8 (GeglFilter * filter,
 
     switch(d_color_chans)
       {
-        case 3: 
+        case 3:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255); a0++;
                 *d1++ = CLAMP((gint)(mult[1] * *a1 + .5), 0, 255); a1++;
                 *d2++ = CLAMP((gint)(mult[2] * *a2 + .5), 0, 255); a2++;
                 *da++ = CLAMP((gint)(mult[3] * *aa + .5), 0, 255); aa++;
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255); a0++;
                 *d1++ = CLAMP((gint)(mult[1] * *a1 + .5), 0, 255); a1++;
                 *d2++ = CLAMP((gint)(mult[2] * *a2 + .5), 0, 255); a2++;
               }
           break;
-        case 2: 
+        case 2:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255); a0++;
                 *d1++ = CLAMP((gint)(mult[1] * *a1 + .5), 0, 255); a1++;
                 *da++ = CLAMP((gint)(mult[3] * *aa + .5), 0, 255); aa++;
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255); a0++;
                 *d1++ = CLAMP((gint)(mult[1] * *a1 + .5), 0, 255); a1++;
               }
           break;
-        case 1: 
+        case 1:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255); a0++;
                 *da++ = CLAMP((gint)(mult[3] * *aa + .5), 0, 255); aa++;
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = CLAMP((gint)(mult[0] * *a0 + .5), 0, 255); a0++;
               }
           break;
@@ -401,4 +401,4 @@ mult_uint8 (GeglFilter * filter,
 
   g_free(d);
   g_free(a);
-}                                                                       
+}

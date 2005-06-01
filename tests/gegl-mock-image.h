@@ -16,7 +16,7 @@ extern "C" {
 
 typedef struct _GeglMockImage GeglMockImage;
 
-struct _GeglMockImage 
+struct _GeglMockImage
 {
   GeglObject object;
 
@@ -27,7 +27,7 @@ struct _GeglMockImage
 };
 
 typedef struct _GeglMockImageClass GeglMockImageClass;
-struct _GeglMockImageClass 
+struct _GeglMockImageClass
 {
   GeglObjectClass object_class;
 };

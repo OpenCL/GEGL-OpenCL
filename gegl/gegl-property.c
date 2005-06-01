@@ -26,9 +26,9 @@
 
 enum
 {
-  PROP_0, 
-  PROP_PARAM_SPEC, 
-  PROP_LAST 
+  PROP_0,
+  PROP_PARAM_SPEC,
+  PROP_LAST
 };
 
 static void class_init (GeglPropertyClass * klass);
@@ -58,26 +58,26 @@ gegl_property_get_type (void)
         (GBaseFinalizeFunc) NULL,
         (GClassInitFunc) class_init,
         (GClassFinalizeFunc) NULL,
-        NULL,                       
+        NULL,
         sizeof (GeglProperty),
         0,
         (GInstanceInitFunc) init,
         NULL,             /* value_table */
       };
 
-      static const GInterfaceInfo visitable_info = 
-      { 
+      static const GInterfaceInfo visitable_info =
+      {
          (GInterfaceInitFunc) visitable_init,
-         NULL,  
+         NULL,
          NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_OBJECT, 
-                                     "GeglProperty", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_OBJECT,
+                                     "GeglProperty",
+                                     &typeInfo,
                                      0);
 
-      g_type_add_interface_static (type, 
+      g_type_add_interface_static (type,
                                    GEGL_TYPE_VISITABLE,
                                    &visitable_info);
 
@@ -86,7 +86,7 @@ gegl_property_get_type (void)
     return type;
 }
 
-static void 
+static void
 class_init (GeglPropertyClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -106,8 +106,8 @@ class_init (GeglPropertyClass * klass)
                                        */
 }
 
-static void 
-init (GeglProperty * self, 
+static void
+init (GeglProperty * self,
       GeglPropertyClass * klass)
 {
   self->param_spec = NULL;
@@ -176,7 +176,7 @@ gegl_property_get_param_spec (GeglProperty * self)
 }
 
 void
-gegl_property_set_param_spec (GeglProperty * self, 
+gegl_property_set_param_spec (GeglProperty * self,
                               GParamSpec *param_spec)
 {
   g_return_if_fail (GEGL_IS_PROPERTY (self));
@@ -185,7 +185,7 @@ gegl_property_set_param_spec (GeglProperty * self,
 }
 
 GeglConnection *
-gegl_property_connect(GeglProperty *sink,  
+gegl_property_connect(GeglProperty *sink,
                       GeglProperty *source)
 {
   GeglConnection *connection;
@@ -193,7 +193,7 @@ gegl_property_connect(GeglProperty *sink,
   g_return_val_if_fail (GEGL_IS_PROPERTY (source), NULL);
 
   connection = gegl_connection_new(NULL, sink, NULL, source);
-  
+
   sink->connections = g_list_append(sink->connections, connection);
   source->connections = g_list_append(source->connections, connection);
 
@@ -244,8 +244,8 @@ gegl_property_get_depends_on(GeglProperty *self)
 {
   GList *depends_on = NULL;
 
-  if(gegl_property_is_input(self) && 
-     gegl_property_num_connections(self) == 1) 
+  if(gegl_property_is_input(self) &&
+     gegl_property_num_connections(self) == 1)
     {
       GeglConnection *connection = g_list_nth_data(self->connections, 0);
 
@@ -274,8 +274,8 @@ gegl_property_get_connected_to (GeglProperty * self)
 {
   g_return_val_if_fail (GEGL_IS_PROPERTY (self), NULL);
 
-  if(gegl_property_is_input(self) && 
-     gegl_property_num_connections(self) == 1) 
+  if(gegl_property_is_input(self) &&
+     gegl_property_num_connections(self) == 1)
     {
       GeglConnection *connection = g_list_nth_data(self->connections, 0);
       return gegl_connection_get_source_prop(connection);
@@ -294,15 +294,15 @@ gegl_property_set_filter (GeglProperty * self,
   self->filter = filter;
 }
 
-gboolean        
+gboolean
 gegl_property_is_dirty (GeglProperty * self)
 {
   g_return_val_if_fail (GEGL_IS_PROPERTY (self), TRUE);
   return self->dirty;
 }
 
-void            
-gegl_property_set_dirty (GeglProperty * self, 
+void
+gegl_property_set_dirty (GeglProperty * self,
                          gboolean flag)
 {
   g_return_if_fail (GEGL_IS_PROPERTY (self));
@@ -321,8 +321,8 @@ gegl_property_is_input (GeglProperty * self)
   return GEGL_PROPERTY_INPUT & self->param_spec->flags;
 }
 
-static void              
-visitable_accept (GeglVisitable * visitable, 
+static void
+visitable_accept (GeglVisitable * visitable,
                   GeglVisitor * visitor)
 {
   gegl_visitor_visit_property(visitor, GEGL_PROPERTY(visitable));

@@ -50,15 +50,15 @@ gegl_filter_get_type (void)
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_NODE , 
-                                     "GeglFilter", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_NODE ,
+                                     "GeglFilter",
+                                     &typeInfo,
                                      G_TYPE_FLAG_ABSTRACT);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglFilterClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -68,8 +68,8 @@ class_init (GeglFilterClass * klass)
   gobject_class->finalize = finalize;
 }
 
-static void 
-init (GeglFilter * self, 
+static void
+init (GeglFilter * self,
       GeglFilterClass * klass)
 {
 }
@@ -92,18 +92,18 @@ void
 gegl_filter_create_property(GeglFilter *self,
                         GParamSpec *param_spec)
 {
-  GeglProperty * property; 
+  GeglProperty * property;
   g_return_if_fail(GEGL_IS_FILTER(self));
   g_return_if_fail(param_spec);
 
-  property = g_object_new (GEGL_TYPE_PROPERTY, NULL); 
+  property = g_object_new (GEGL_TYPE_PROPERTY, NULL);
   gegl_property_set_param_spec(property, param_spec);
   gegl_property_set_filter(property, self);
   gegl_node_add_property(GEGL_NODE(self), property);
 }
 
-gboolean           
-gegl_filter_evaluate (GeglFilter *self, 
+gboolean
+gegl_filter_evaluate (GeglFilter *self,
                       const gchar *output_prop)
 {
   GeglFilterClass *klass;

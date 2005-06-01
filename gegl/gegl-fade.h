@@ -15,7 +15,7 @@ extern "C" {
 #define GEGL_FADE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_FADE, GeglFadeClass))
 
 typedef struct _GeglFade GeglFade;
-struct _GeglFade 
+struct _GeglFade
 {
    GeglUnary unary;
 
@@ -23,7 +23,7 @@ struct _GeglFade
 };
 
 typedef struct _GeglFadeClass GeglFadeClass;
-struct _GeglFadeClass 
+struct _GeglFadeClass
 {
    GeglUnaryClass unary_class;
 };

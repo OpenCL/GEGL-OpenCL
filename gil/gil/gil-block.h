@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gil-statement.h" 
+#include "gil-statement.h"
 
 #define GIL_TYPE_BLOCK               (gil_block_get_type ())
 #define GIL_BLOCK(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIL_TYPE_BLOCK, GilBlock))
@@ -19,7 +19,7 @@ extern "C" {
 typedef struct _GilBlock  GilBlock;
 #endif
 
-struct _GilBlock 
+struct _GilBlock
 {
     GilStatement     __parent__;
 
@@ -27,7 +27,7 @@ struct _GilBlock
 };
 
 typedef struct _GilBlockClass GilBlockClass;
-struct _GilBlockClass 
+struct _GilBlockClass
 {
    GilStatementClass __parent__;
 };

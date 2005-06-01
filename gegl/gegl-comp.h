@@ -17,7 +17,7 @@ extern "C" {
 #define GEGL_COMP_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COMP, GeglCompClass))
 
 typedef struct _GeglComp GeglComp;
-struct _GeglComp 
+struct _GeglComp
 {
     GeglPointOp point_op;
 
@@ -25,7 +25,7 @@ struct _GeglComp
 };
 
 typedef struct _GeglCompClass GeglCompClass;
-struct _GeglCompClass 
+struct _GeglCompClass
 {
     GeglPointOpClass point_op_class;
 

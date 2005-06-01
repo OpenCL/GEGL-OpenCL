@@ -28,15 +28,15 @@ gegl_mock_node_visitor_get_type (void)
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_VISITOR, 
-                                     "GeglMockNodeVisitor", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_VISITOR,
+                                     "GeglMockNodeVisitor",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglMockNodeVisitorClass * klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
@@ -46,7 +46,7 @@ class_init (GeglMockNodeVisitorClass * klass)
   visitor_class->visit_node = visit_node;
 }
 
-static void      
+static void
 visit_node(GeglVisitor * visitor,
            GeglNode *node)
 {

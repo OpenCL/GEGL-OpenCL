@@ -63,7 +63,7 @@ extern "C"
     gpointer *banks;
     /*
      * Share count is basically a reference count.
-     * However it really is only keeping track of the 
+     * However it really is only keeping track of the
      * number of refrences that care about accessing
      * the data.  Updates to share_count should
      * update refcount atomicly.
@@ -84,7 +84,7 @@ extern "C"
 				     gint index);
     void (*set_element_double) (GeglBuffer * self, gint bank, gint index,
 				gdouble elem);
-    
+
   };
 
   TransferType gegl_buffer_get_transfer_type (const GeglBuffer * self);
@@ -161,8 +161,8 @@ extern "C"
    */
   void gegl_buffer_detach(GeglBuffer * self);
 
-    
-  
+
+
 #ifdef __cplusplus
 }
 #endif				/* __cplusplus */

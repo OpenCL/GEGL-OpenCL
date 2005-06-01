@@ -29,15 +29,15 @@ gegl_mock_property_visitor_get_type (void)
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_VISITOR, 
-                                     "GeglMockPropertyVisitor", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_VISITOR,
+                                     "GeglMockPropertyVisitor",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglMockPropertyVisitorClass * klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
@@ -47,7 +47,7 @@ class_init (GeglMockPropertyVisitorClass * klass)
   visitor_class->visit_property = visit_property;
 }
 
-static void      
+static void
 visit_property(GeglVisitor * visitor,
                GeglProperty *property)
 {
@@ -55,7 +55,7 @@ visit_property(GeglVisitor * visitor,
   {
 #if 0
     GeglFilter *filter = gegl_property_get_filter(property);
-    g_print("Visiting property %s from op %s\n", 
+    g_print("Visiting property %s from op %s\n",
              gegl_property_get_name(property),
              gegl_object_get_name(GEGL_OBJECT(op)));
 #endif

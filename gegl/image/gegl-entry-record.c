@@ -107,7 +107,7 @@ gegl_entry_record_set_cache (GeglEntryRecord * record,
     }
   record->cache = cache;
   g_object_add_weak_pointer (G_OBJECT (cache), (gpointer *)&(record->cache));
-  
+
 }
 
 void
@@ -162,12 +162,12 @@ gegl_entry_record_add_store_data_full (GeglEntryRecord * record,
 				       GeglStoreDataFunc free_data,
 				       GeglStoreDataFunc dirty)
 {
-  GeglStoreData * sdata = gegl_store_data_new (data, free_data, dirty); 
+  GeglStoreData * sdata = gegl_store_data_new (data, free_data, dirty);
   g_hash_table_insert (record->store_data, store, sdata);
   g_object_weak_ref (G_OBJECT(store), store_weak_notify, record);
 }
 
-void  
+void
 gegl_entry_record_remove_store_data (GeglEntryRecord * record,
 				     struct _GeglCacheStore * store,
 				     gboolean free_data)

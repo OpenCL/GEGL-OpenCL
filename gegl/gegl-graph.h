@@ -20,7 +20,7 @@
  */
 #ifndef __GEGL_GRAPH_H__
 #define __GEGL_GRAPH_H__
-                                                
+
 #include "gegl-node.h"
 
 #ifdef __cplusplus
@@ -36,7 +36,7 @@ extern "C" {
 
 typedef struct _GeglGraph GeglGraph;
 
-struct _GeglGraph 
+struct _GeglGraph
 {
    GeglNode node;
 
@@ -45,7 +45,7 @@ struct _GeglGraph
 };
 
 typedef struct _GeglGraphClass GeglGraphClass;
-struct _GeglGraphClass 
+struct _GeglGraphClass
 {
    GeglNodeClass node_class;
 };
@@ -54,7 +54,7 @@ GType           gegl_graph_get_type            (void);
 GeglNode*       gegl_graph_add_child           (GeglGraph *self, GeglNode *child);
 GeglNode*       gegl_graph_remove_child        (GeglGraph *self, GeglNode *child);
 GeglNode*       gegl_graph_get_nth_child       (GeglGraph *self, gint n);
-GList*          gegl_graph_get_children        (GeglGraph *self); 
+GList*          gegl_graph_get_children        (GeglGraph *self);
 void            gegl_graph_remove_children     (GeglGraph *self);
 gint            gegl_graph_num_children        (GeglGraph *self);
 

@@ -2,10 +2,10 @@
 
 enum
 {
-  PROP_0, 
+  PROP_0,
   PROP_LEFT_EXPR,
   PROP_RIGHT_EXPR,
-  PROP_LAST 
+  PROP_LAST
 };
 
 static void class_init (GilExprStatementClass * klass);
@@ -36,15 +36,15 @@ gil_expr_statement_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GIL_TYPE_STATEMENT, 
-                                     "GilExprStatement", 
-                                     &typeInfo, 
+      type = g_type_register_static (GIL_TYPE_STATEMENT,
+                                     "GilExprStatement",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GilExprStatementClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -71,8 +71,8 @@ class_init (GilExprStatementClass * klass)
   return;
 }
 
-static void 
-init (GilExprStatement * self, 
+static void
+init (GilExprStatement * self,
       GilExprStatementClass * klass)
 {
   GilNode * node = GIL_NODE(self);
@@ -98,12 +98,12 @@ set_property (GObject      *gobject,
   {
     case PROP_LEFT_EXPR:
       {
-        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 0);  
+        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 0);
       }
       break;
     case PROP_RIGHT_EXPR:
       {
-        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 1);  
+        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 1);
       }
       break;
     default:
@@ -123,12 +123,12 @@ get_property (GObject      *gobject,
   {
     case PROP_LEFT_EXPR:
       {
-        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 0));  
+        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 0));
       }
       break;
     case PROP_RIGHT_EXPR:
       {
-        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 1));  
+        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 1));
       }
       break;
     default:

@@ -51,21 +51,21 @@ gegl_swap_cache_get_type (void)
 	  sizeof(GeglSwapCacheClass),
 	  NULL, /*base_init*/
 	  NULL, /* base_finalize */
-	  
+	
 	  /* classed types, instantiated types */
 	  class_init, /* class_init */
 	  NULL, /* class_finalize */
 	  NULL, /* class_data */
-	  
+	
 	  /* instantiated types */
 	  sizeof(GeglSwapCache),
 	  0, /* n_preallocs */
 	  instance_init, /* instance_init */
-	  
+	
 	  /* value handling */
 	  NULL /* value_table */
 	};
-      
+
       type = g_type_register_static (GEGL_TYPE_CACHE ,
 				     "GeglSwapCache",
 				     &typeInfo,
@@ -80,7 +80,7 @@ class_init(gpointer g_class,
 {
   GeglCacheClass* cache_class = GEGL_CACHE_CLASS(g_class);
   GObjectClass* object_class = G_OBJECT_CLASS(g_class);
-  
+
   cache_class->insert_record = insert_record;
   cache_class->check_room_for = check_room_for;
   cache_class->size = size;
@@ -99,7 +99,7 @@ instance_init(GTypeInstance *instance,
 	      gpointer g_class)
 {
   GeglSwapCache * self = GEGL_SWAP_CACHE (instance);
-  
+
   self->heap_capacity = 0;
   self->has_disposed = FALSE;
   self->heap_stored = gegl_heap_cache_store_new ();
@@ -121,7 +121,7 @@ dispose (GObject * object)
 static void
 finalize (GObject * object) {
   G_OBJECT_CLASS(parent_class)->finalize(object);
-  
+
 }
 
 GeglSwapCache*
@@ -138,7 +138,7 @@ void
 insert_record (GeglCache* cache,
 	       GeglEntryRecord* record)
 {
-  /* 
+  /*
    * We are guaranteed, at this point, that either the heap cache can
    * hold the item and room in it has been made
    */
@@ -156,7 +156,7 @@ check_room_for (GeglCache* cache, gint64 size)
    * 1. size unable to fit in the heap_stored cache.
    * 2. heap_stored full.
    * 3. heap_stored not full.
-   * 
+   *
    * I assume that the swap cache store can never be full.  This is,
    * to say the least, a simplification, though not so bad in the land
    * of huge disks.
@@ -183,7 +183,7 @@ size (GeglCache* cache)
 {
   GeglSwapCache * self = GEGL_SWAP_CACHE (cache);
   return gegl_cache_store_size (GEGL_CACHE_STORE(self->stored));
-  
+
 }
 
 gint64

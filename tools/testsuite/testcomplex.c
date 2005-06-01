@@ -35,12 +35,12 @@ void test_complex_add(Test* pTest)
   ct_test(pTest, 1 == 2);
 }
 
-void complex_test_setup() 
+void complex_test_setup()
 {
   printf("complex_setup\n");
 }
 
-void complex_test_teardown() 
+void complex_test_teardown()
 {
   printf("complex_teardown\n");
 }
@@ -53,7 +53,7 @@ create_complex_tests()
   assert(ct_addTearDown(t, complex_test_teardown));
   assert(ct_addTestFun(t, test_complex_equal));
   assert(ct_addTestFun(t, test_complex_add));
-  return t; 
+  return t;
 }
 
 typedef struct
@@ -78,11 +78,11 @@ void test_vector_equal(Test* pTest)
 {
   vector v = {1.0, 1.0, 1.0};
 
-  ct_test(pTest, v.x == v1.x && 
+  ct_test(pTest, v.x == v1.x &&
                  v.y == v1.y &&
                  v.z == v1.z );
 
-  ct_test(pTest, !(v.x == v2.x && 
+  ct_test(pTest, !(v.x == v2.x &&
                    v.y == v2.y &&
                    v.z == v2.x) );
 
@@ -92,17 +92,17 @@ void test_vector_add(Test* pTest)
 {
   vector v = v_add(v1, v2);
 
-  ct_test(pTest, v.x == v3.x && 
+  ct_test(pTest, v.x == v3.x &&
                  v.y == v3.y &&
                  v.z == v3.z );
 }
 
-void vector_test_setup() 
+void vector_test_setup()
 {
   printf("vector_setup\n");
 }
 
-void vector_test_teardown() 
+void vector_test_teardown()
 {
   printf("vector_teardown\n");
 }
@@ -115,14 +115,14 @@ create_vector_tests()
   assert(ct_addTearDown(t, vector_test_teardown));
   assert(ct_addTestFun(t, test_vector_equal));
   assert(ct_addTestFun(t, test_vector_add));
-  return t; 
+  return t;
 }
 
 int main()
 {
   Suite *suite = cs_create("TestSuite");
-  assert(cs_addTest(suite, create_complex_tests()));  
-  assert(cs_addTest(suite, create_vector_tests()));  
+  assert(cs_addTest(suite, create_complex_tests()));
+  assert(cs_addTest(suite, create_vector_tests()));
   cs_setStream(suite, stdout);
   cs_run(suite);
   cs_report(suite);

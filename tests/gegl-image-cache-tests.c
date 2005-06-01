@@ -87,7 +87,7 @@ create_const_entries (gint num_entries, gint num_elements)
 {
   GeglMockCacheEntry ** entries = g_new (GeglMockCacheEntry *, num_entries);
   gint i=0;
-  
+
   for (i=0;i<num_entries;i++)
     {
       entries[i] = gegl_mock_cache_entry_new (num_elements);
@@ -97,16 +97,16 @@ create_const_entries (gint num_entries, gint num_elements)
 
 GeglMockCacheEntry **
 create_prime_entries (gint num_entires)
-{ 
+{
   GeglMockCacheEntry ** entries = g_new (GeglMockCacheEntry *, num_entries);
   gint i=0;
-  
+
   for (i=0;i<num_entries;i++)
     {
       entries[i] = gegl_mock_cache_entry_new (primes[i]);
     }
   return entries;
-  
+
 }
 
 static void
@@ -247,13 +247,13 @@ gegl_cache_leak_test1 (Test * test)
   fetch_entries (cache, entries, entry_ids, 0, 5, test);
   unfetch_entries (cache, entries, entry_ids, 0, 5, test);
   flush_entries (cache, entries, entry_ids, 0, 5, test);
- 
+
 }
 
 void
 gegl_cache_leak_test2 (Test * test)
 {
-  
+
 
   gint i;
   gsize entry_ids[20];
@@ -336,7 +336,7 @@ gegl_cache_leak_test5 (Test * test)
   flush_entries (cache, entries, entry_ids, 5, 10, test);
   put_entries (cache, entries, entry_ids, 15, 20, test);
   fetch_entries (cache, entries, entry_ids, 10, 20, test);
-  
+
 }
 
 void

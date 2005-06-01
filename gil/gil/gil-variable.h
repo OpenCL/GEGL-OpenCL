@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gil-expression.h" 
+#include "gil-expression.h"
 
 #define GIL_TYPE_VARIABLE               (gil_variable_get_type ())
 #define GIL_VARIABLE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIL_TYPE_VARIABLE, GilVariable))
@@ -19,7 +19,7 @@ extern "C" {
 typedef struct _GilVariable  GilVariable;
 #endif
 
-struct _GilVariable 
+struct _GilVariable
 {
     GilExpression     __parent__;
 
@@ -29,7 +29,7 @@ struct _GilVariable
 };
 
 typedef struct _GilVariableClass GilVariableClass;
-struct _GilVariableClass 
+struct _GilVariableClass
 {
    GilExpressionClass __parent__;
 };

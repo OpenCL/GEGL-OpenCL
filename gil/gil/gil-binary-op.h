@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gil-expression.h" 
+#include "gil-expression.h"
 
 #define GIL_TYPE_BINARY_OP               (gil_binary_op_get_type ())
 #define GIL_BINARY_OP(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIL_TYPE_BINARY_OP, GilBinaryOp))
@@ -19,7 +19,7 @@ extern "C" {
 typedef struct _GilBinaryOp  GilBinaryOp;
 #endif
 
-struct _GilBinaryOp 
+struct _GilBinaryOp
 {
     GilExpression     __parent__;
 
@@ -28,7 +28,7 @@ struct _GilBinaryOp
 };
 
 typedef struct _GilBinaryOpClass GilBinaryOpClass;
-struct _GilBinaryOpClass 
+struct _GilBinaryOpClass
 {
    GilExpressionClass __parent__;
 };
@@ -36,7 +36,7 @@ struct _GilBinaryOpClass
 GType             gil_binary_op_get_type     (void);
 
 GilBinaryOpType   gil_binary_op_get_op       (GilBinaryOp * self);
-void              gil_binary_op_set_op       (GilBinaryOp * self, 
+void              gil_binary_op_set_op       (GilBinaryOp * self,
                                               GilBinaryOpType op);
 
 #ifdef __cplusplus

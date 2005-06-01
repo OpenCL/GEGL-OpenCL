@@ -32,7 +32,7 @@ static void
 test_heap_cache_store_new (Test * test)
 {
   GeglHeapCacheStore * heap_store;
-  
+
   heap_store = gegl_heap_cache_store_new ();
   ct_test(test, GEGL_IS_HEAP_CACHE_STORE(heap_store) == TRUE);
   ct_test(test, g_type_parent(GEGL_TYPE_HEAP_CACHE_STORE) == GEGL_TYPE_CACHE_STORE);
@@ -59,11 +59,11 @@ Test *
 create_heap_cache_store_test()
 {
   Test* t = ct_create("GeglHeapCacheStoreTest");
-  
-  
+
+
   g_assert(ct_addSetUp(t, setup));
   g_assert(ct_addTearDown(t, teardown));
-  
+
   g_assert(ct_addTestFun(t, test_heap_cache_store_new));
   g_assert(ct_addTestFun(t, test_cache_store_add_remove));
   g_assert(ct_addTestFun(t, test_cache_store_zap));
@@ -71,5 +71,5 @@ create_heap_cache_store_test()
   g_assert(ct_addTestFun(t, test_cache_store_pop));
   g_assert(ct_addTestFun(t, test_cache_store_peek));
 
-  return t; 
+  return t;
 }

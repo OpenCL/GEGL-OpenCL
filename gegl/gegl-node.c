@@ -29,8 +29,8 @@
 
 enum
 {
-  PROP_0, 
-  PROP_LAST 
+  PROP_0,
+  PROP_LAST
 };
 
 static void class_init (GeglNodeClass * klass);
@@ -71,26 +71,26 @@ gegl_node_get_type (void)
         NULL
       };
 
-      static const GInterfaceInfo visitable_info = 
-      { 
+      static const GInterfaceInfo visitable_info =
+      {
          (GInterfaceInitFunc) visitable_init,
-         NULL,  
+         NULL,
          NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_OBJECT, 
-                                     "GeglNode", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_OBJECT,
+                                     "GeglNode",
+                                     &typeInfo,
                                      G_TYPE_FLAG_ABSTRACT);
 
-      g_type_add_interface_static (type, 
+      g_type_add_interface_static (type,
                                    GEGL_TYPE_VISITABLE,
                                    &visitable_info);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglNodeClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -102,8 +102,8 @@ class_init (GeglNodeClass * klass)
   gobject_class->get_property = get_property;
 }
 
-static void 
-init (GeglNode * self, 
+static void
+init (GeglNode * self,
       GeglNodeClass * klass)
 {
   self->properties = NULL;
@@ -189,7 +189,7 @@ get_property (GObject      *gobject,
  *
  * Get a property.
  *
- * Returns: A #GeglProperty. 
+ * Returns: A #GeglProperty.
  **/
 GeglProperty *
 gegl_node_get_property(GeglNode *self,
@@ -213,7 +213,7 @@ gegl_node_get_property(GeglNode *self,
  * gegl_node_get_properties:
  * @self: a #GeglNode.
  *
- * Returns: A list of #GeglProperty. 
+ * Returns: A list of #GeglProperty.
  **/
 GList *
 gegl_node_get_properties(GeglNode *self)
@@ -226,7 +226,7 @@ gegl_node_get_properties(GeglNode *self)
  * gegl_node_get_input_properties:
  * @self: a #GeglNode.
  *
- * Returns: A list of #GeglProperty. 
+ * Returns: A list of #GeglProperty.
  **/
 GList *
 gegl_node_get_input_properties(GeglNode *self)
@@ -239,7 +239,7 @@ gegl_node_get_input_properties(GeglNode *self)
  * gegl_node_get_output_properties:
  * @self: a #GeglNode.
  *
- * Returns: A list of #GeglProperty. 
+ * Returns: A list of #GeglProperty.
  **/
 GList *
 gegl_node_get_output_properties(GeglNode *self)
@@ -281,7 +281,7 @@ gegl_node_remove_property(GeglNode *self,
 }
 
 static gboolean
-properties_exist(GeglNode *sink, 
+properties_exist(GeglNode *sink,
                  const gchar *sink_prop_name,
                  GeglNode *source,
                  const gchar *source_prop_name)
@@ -304,7 +304,7 @@ properties_exist(GeglNode *sink,
 }
 
 static GeglConnection *
-find_connection(GeglNode *sink, 
+find_connection(GeglNode *sink,
                 GeglProperty *sink_prop)
 {
   GList *llink;
@@ -324,8 +324,8 @@ find_connection(GeglNode *sink,
   return NULL;
 }
 
-gboolean            
-gegl_node_connect (GeglNode *sink, 
+gboolean
+gegl_node_connect (GeglNode *sink,
                    const gchar *sink_prop_name,
                    GeglNode *source,
                    const gchar *source_prop_name)
@@ -350,8 +350,8 @@ gegl_node_connect (GeglNode *sink,
     }
 }
 
-gboolean            
-gegl_node_disconnect (GeglNode *sink, 
+gboolean
+gegl_node_disconnect (GeglNode *sink,
                       const gchar *sink_prop_name,
                       GeglNode *source,
                       const gchar *source_prop_name)
@@ -365,7 +365,7 @@ gegl_node_disconnect (GeglNode *sink,
     {
       GeglProperty *sink_prop = gegl_node_get_property(sink, sink_prop_name);
       GeglProperty *source_prop = gegl_node_get_property(source, source_prop_name);
-      GeglConnection * connection = find_connection(sink, sink_prop); 
+      GeglConnection * connection = find_connection(sink, sink_prop);
 
       if(!connection)
         return FALSE;
@@ -381,7 +381,7 @@ gegl_node_disconnect (GeglNode *sink,
     }
 }
 
-void            
+void
 gegl_node_disconnect_sources (GeglNode *self)
 {
   while(1)
@@ -405,7 +405,7 @@ gegl_node_disconnect_sources (GeglNode *self)
   }
 }
 
-void            
+void
 gegl_node_disconnect_sinks (GeglNode *self)
 {
   while(1)
@@ -433,11 +433,11 @@ gegl_node_disconnect_sinks (GeglNode *self)
  * gegl_node_num_sinks:
  * @self: a #GeglNode.
  *
- * Gets the number of sinks 
+ * Gets the number of sinks
  *
- * Returns: number of sinks 
+ * Returns: number of sinks
  **/
-gint 
+gint
 gegl_node_num_sinks (GeglNode * self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
@@ -448,11 +448,11 @@ gegl_node_num_sinks (GeglNode * self)
  * gegl_node_num_sources:
  * @self: a #GeglNode.
  *
- * Gets the number of source 
+ * Gets the number of source
  *
- * Returns: number of sources 
+ * Returns: number of sources
  **/
-gint 
+gint
 gegl_node_num_sources (GeglNode * self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
@@ -465,9 +465,9 @@ gegl_node_num_sources (GeglNode * self)
  *
  * Gets the number of inputs.
  *
- * Returns: number of inputs. 
+ * Returns: number of inputs.
  **/
-gint 
+gint
 gegl_node_get_num_input_props (GeglNode * self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
@@ -480,9 +480,9 @@ gegl_node_get_num_input_props (GeglNode * self)
  *
  * Gets the number of outputs.
  *
- * Returns: number of outputs. 
+ * Returns: number of outputs.
  **/
-gint 
+gint
 gegl_node_get_num_output_props (GeglNode * self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
@@ -497,7 +497,7 @@ gegl_node_get_num_output_props (GeglNode * self)
  *
  * Returns: list of sink connections.
  **/
-GList * 
+GList *
 gegl_node_get_sinks (GeglNode * self)
 {
   return self->sinks;
@@ -511,18 +511,18 @@ gegl_node_get_sinks (GeglNode * self)
  *
  * Returns: list of source connections.
  **/
-GList * 
+GList *
 gegl_node_get_sources (GeglNode * self)
 {
   return self->sources;
 }
 
-void            
-gegl_node_apply  (GeglNode *self, 
+void
+gegl_node_apply  (GeglNode *self,
                   const gchar *output_prop_name)
 {
   g_return_if_fail(GEGL_IS_NODE(self));
-  
+
   GeglEvalMgr *eval_mgr = g_object_new(GEGL_TYPE_EVAL_MGR, NULL);
   gegl_eval_mgr_apply(eval_mgr, self, output_prop_name);
   g_object_unref(eval_mgr);
@@ -549,8 +549,8 @@ gegl_node_get_depends_on(GeglNode *self)
   return depends_on;
 }
 
-static void              
-visitable_accept (GeglVisitable * visitable, 
+static void
+visitable_accept (GeglVisitable * visitable,
                   GeglVisitor * visitor)
 {
   gegl_visitor_visit_node(visitor, GEGL_NODE(visitable));

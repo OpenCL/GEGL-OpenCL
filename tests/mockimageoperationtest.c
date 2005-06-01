@@ -10,7 +10,7 @@ static void
 test_mock_image_filter_g_object_new(Test *test)
 {
   {
-    GeglNode * mock_image_filter = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER, NULL);  
+    GeglNode * mock_image_filter = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER, NULL);
 
     ct_test(test, GEGL_IS_MOCK_IMAGE_FILTER(mock_image_filter));
     ct_test(test, g_type_parent(GEGL_TYPE_MOCK_IMAGE_FILTER) == GEGL_TYPE_FILTER);
@@ -24,7 +24,7 @@ static void
 test_mock_image_filter_num_properties(Test *test)
 {
   {
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER, NULL);  
+    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER, NULL);
 
     ct_test(test, 2 == gegl_node_get_num_input_props(a));
     ct_test(test, 1 == gegl_node_get_num_output_props(a));
@@ -37,7 +37,7 @@ static void
 test_mock_image_filter_property_names(Test *test)
 {
   {
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER, NULL);  
+    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER, NULL);
     GeglProperty *output = gegl_node_get_property(a, "output");
     GeglProperty *input0 = gegl_node_get_property(a, "input0");
 
@@ -52,16 +52,16 @@ static void
 test_mock_image_filter_g_object_properties(Test *test)
 {
   {
-    GeglMockImage *input0 = g_object_new(GEGL_TYPE_MOCK_IMAGE, 
-                                         "length", 3, 
-                                         "default-pixel", 1, 
+    GeglMockImage *input0 = g_object_new(GEGL_TYPE_MOCK_IMAGE,
+                                         "length", 3,
+                                         "default-pixel", 1,
                                          NULL);
-    GeglMockImage *output; 
+    GeglMockImage *output;
     gint *output_data;
 
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER, 
-                                "input1", 2, 
-                                NULL);  
+    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER,
+                                "input1", 2,
+                                NULL);
 
     g_object_set(a, "input0", input0, NULL);
     gegl_node_apply(a, "output");
@@ -84,14 +84,14 @@ test_mock_image_filter_chain(Test *test)
   /*
           - [6,6,6] output
           B
-         + + 
-        /   \   
+         + +
+        /   \
        -     3
        A
-      + + 
-     /   \ 
+      + +
+     /   \
    image  2
-  [1,1,1] 
+  [1,1,1]
 
    A takes an "image" with "pixels" 1,1,1 and multiplies
    each "pixel" by 2. Then B takes each image pixel value
@@ -99,24 +99,24 @@ test_mock_image_filter_chain(Test *test)
    are [6,6,6]
 
   */
-    
+
   {
-    GeglMockImage *output; 
+    GeglMockImage *output;
     gint *output_data;
 
-    GeglMockImage *image = g_object_new(GEGL_TYPE_MOCK_IMAGE, 
-                                        "length", 3, 
-                                        "default-pixel", 1, 
+    GeglMockImage *image = g_object_new(GEGL_TYPE_MOCK_IMAGE,
+                                        "length", 3,
+                                        "default-pixel", 1,
                                         NULL);
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER, 
-                                "input0", image, 
-                                "input1", 2, 
-                                NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER,
+                                "input0", image,
+                                "input1", 2,
+                                NULL);
 
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER, 
-                                "input1", 3, 
-                                NULL);  
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER,
+                                "input1", 3,
+                                NULL);
 
     gegl_node_connect(B, "input0", A, "output");
     gegl_node_apply(B, "output");
@@ -141,42 +141,42 @@ test_mock_image_filter_chain2(Test *test)
   /*
           - [12,12,12]
           B
-         + + 
-        /   \   
-       -     - (2*3) 
+         + +
+        /   \
+       -     - (2*3)
        A     C
-     +   +   +   
-   image 2   3 
+     +   +   +
+   image 2   3
   [1,1,1]
 
-   A takes an "image" and multiplies the pixel values by 2, 
+   A takes an "image" and multiplies the pixel values by 2,
    then passes this to input0 of B. Meanwhile C takes the
    input scalar value 3 and multiplies it by 2 and passes that
    int scalar value to input1 of B. Then B multiplies the
-   image input0 by the scalar 6 to provide an output image 
+   image input0 by the scalar 6 to provide an output image
    with values 12,12,12.
   */
-    
+
   {
-    GeglMockImage *output; 
+    GeglMockImage *output;
     gint *output_data;
 
-    GeglMockImage *image = g_object_new(GEGL_TYPE_MOCK_IMAGE, 
-                                        "length", 3, 
-                                        "default-pixel", 1, 
+    GeglMockImage *image = g_object_new(GEGL_TYPE_MOCK_IMAGE,
+                                        "length", 3,
+                                        "default-pixel", 1,
                                         NULL);
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER, 
-                                "input0", image, 
-                                "input1", 2, 
-                                NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER,
+                                "input0", image,
+                                "input1", 2,
+                                NULL);
 
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER, 
-                                NULL);  
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_IMAGE_FILTER,
+                                NULL);
 
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, 
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1,
                                 "input0", 3,
-                                NULL);  
+                                NULL);
 
     gegl_node_connect(B, "input0", A, "output");
     gegl_node_connect(B, "input1", C, "output0");
@@ -216,7 +216,7 @@ create_mock_image_filter_test()
   g_assert(ct_addSetUp(t, test_setup));
   g_assert(ct_addTearDown(t, test_teardown));
 
-#if 1 
+#if 1
   g_assert(ct_addTestFun(t, test_mock_image_filter_g_object_new));
   g_assert(ct_addTestFun(t, test_mock_image_filter_num_properties));
   g_assert(ct_addTestFun(t, test_mock_image_filter_property_names));
@@ -224,6 +224,6 @@ create_mock_image_filter_test()
   g_assert(ct_addTestFun(t, test_mock_image_filter_chain));
   g_assert(ct_addTestFun(t, test_mock_image_filter_chain2));
 #endif
-                                     
-  return t; 
+
+  return t;
 }

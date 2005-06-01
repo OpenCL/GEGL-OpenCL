@@ -33,7 +33,7 @@ gegl_swap_cache_new_test (Test * test)
   ct_test(test, GEGL_IS_SWAP_CACHE(swap_cache));
   ct_test(test, g_type_parent(GEGL_TYPE_SWAP_CACHE) == GEGL_TYPE_CACHE);
   ct_test(test, !strcmp("GeglSwapCache", g_type_name(GEGL_TYPE_SWAP_CACHE)));
-  
+
   g_object_unref(swap_cache);
 
 }
@@ -68,5 +68,5 @@ create_swap_cache_mem_leaks_test()
   g_assert(ct_addTestFun(t, gegl_cache_leak_test4));
   g_assert(ct_addTestFun(t, gegl_cache_leak_test5));
   g_assert(ct_addTestFun(t, gegl_cache_leak_test6));
-  return t; 
+  return t;
 }

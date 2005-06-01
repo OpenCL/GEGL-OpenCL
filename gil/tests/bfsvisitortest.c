@@ -13,7 +13,7 @@ static void
 test_bfs_visitor_g_object_new(Test *test)
 {
   {
-    GilMockBfsVisitor * mock_bfs_visitor = g_object_new (GIL_TYPE_MOCK_BFS_VISITOR, NULL);  
+    GilMockBfsVisitor * mock_bfs_visitor = g_object_new (GIL_TYPE_MOCK_BFS_VISITOR, NULL);
 
     ct_test(test, mock_bfs_visitor != NULL);
     ct_test(test, GIL_IS_MOCK_BFS_VISITOR(mock_bfs_visitor));
@@ -25,15 +25,15 @@ test_bfs_visitor_g_object_new(Test *test)
 }
 
 /**
-  From node_setup: 
+  From node_setup:
 
-         E 
-        / \ 
-       D   F 
-      /\    \ 
-     B  C    G 
+         E
+        / \
+       D   F
+      /\    \
+     B  C    G
      | /
-     A 
+     A
 
 **/
 static void
@@ -41,11 +41,11 @@ test_bfs_visitor_traverse(Test *test)
 {
   {
     gint i;
-    gchar * visit_names [] = { "E", "D", "F", "B", "C", "G", "A" };  
-    GilMockBfsVisitor *mock_bfs_visitor = g_object_new(GIL_TYPE_MOCK_BFS_VISITOR, NULL);  
+    gchar * visit_names [] = { "E", "D", "F", "B", "C", "G", "A" };
+    GilMockBfsVisitor *mock_bfs_visitor = g_object_new(GIL_TYPE_MOCK_BFS_VISITOR, NULL);
     GList * visits_list;
 
-    gil_bfs_visitor_traverse (GIL_BFS_VISITOR(mock_bfs_visitor), E); 
+    gil_bfs_visitor_traverse (GIL_BFS_VISITOR(mock_bfs_visitor), E);
     visits_list = gil_visitor_get_visits_list(GIL_VISITOR(mock_bfs_visitor));
 
     for(i = 0; i < g_list_length(visits_list); i++)
@@ -59,11 +59,11 @@ test_bfs_visitor_traverse(Test *test)
 
   {
     gint i;
-    gchar * visit_names[] = { "D", "B", "C", "A" };  
-    GilMockBfsVisitor *mock_bfs_visitor = g_object_new(GIL_TYPE_MOCK_BFS_VISITOR, NULL);  
+    gchar * visit_names[] = { "D", "B", "C", "A" };
+    GilMockBfsVisitor *mock_bfs_visitor = g_object_new(GIL_TYPE_MOCK_BFS_VISITOR, NULL);
     GList * visits_list;
 
-    gil_bfs_visitor_traverse (GIL_BFS_VISITOR(mock_bfs_visitor), D); 
+    gil_bfs_visitor_traverse (GIL_BFS_VISITOR(mock_bfs_visitor), D);
     visits_list = gil_visitor_get_visits_list(GIL_VISITOR(mock_bfs_visitor));
 
     for(i = 0; i < g_list_length(visits_list); i++)
@@ -77,15 +77,15 @@ test_bfs_visitor_traverse(Test *test)
 }
 
 /**
-    O 
+    O
     |\
-    | P 
+    | P
     | |
-    | Q 
-    |/ 
-    R 
+    | Q
+    |/
+    R
     |
-    S 
+    S
 
 **/
 static void
@@ -93,11 +93,11 @@ test_bfs_visitor_traverse_diamond(Test *test)
 {
   {
     gint i;
-    gchar * visit_names [] = {"O", "P", "Q", "R", "S"};  
-    GilMockBfsVisitor *mock_bfs_visitor = g_object_new(GIL_TYPE_MOCK_BFS_VISITOR, NULL);  
+    gchar * visit_names [] = {"O", "P", "Q", "R", "S"};
+    GilMockBfsVisitor *mock_bfs_visitor = g_object_new(GIL_TYPE_MOCK_BFS_VISITOR, NULL);
     GList * visits_list;
 
-    gil_bfs_visitor_traverse (GIL_BFS_VISITOR(mock_bfs_visitor), O); 
+    gil_bfs_visitor_traverse (GIL_BFS_VISITOR(mock_bfs_visitor), O);
     visits_list = gil_visitor_get_visits_list(GIL_VISITOR(mock_bfs_visitor));
 
     for(i = 0; i < g_list_length(visits_list); i++)
@@ -115,43 +115,43 @@ bfs_visitor_setup(Test *test)
 {
 
   /*
-         E 
-        / \ 
-       D   F 
-      /\    \ 
-     B  C    G 
+         E
+        / \
+       D   F
+      /\    \
+     B  C    G
      | /
-     A 
+     A
 
   */
 
   {
-    A = g_object_new (GIL_TYPE_MOCK_NODE, 
-                      "name", "A", 
-                      NULL);  
-    B = g_object_new (GIL_TYPE_MOCK_NODE, 
-                      "name", "B", 
+    A = g_object_new (GIL_TYPE_MOCK_NODE,
+                      "name", "A",
+                      NULL);
+    B = g_object_new (GIL_TYPE_MOCK_NODE,
+                      "name", "B",
                       "num_children", 1,
-                      NULL);  
-    C = g_object_new (GIL_TYPE_MOCK_NODE, 
-                      "name", "C", 
+                      NULL);
+    C = g_object_new (GIL_TYPE_MOCK_NODE,
+                      "name", "C",
                       "num_children", 1,
-                      NULL);  
-    D = g_object_new (GIL_TYPE_MOCK_NODE, 
-                      "name", "D", 
+                      NULL);
+    D = g_object_new (GIL_TYPE_MOCK_NODE,
+                      "name", "D",
                       "num_children", 2,
-                      NULL);  
-    E = g_object_new (GIL_TYPE_MOCK_NODE, 
-                      "name", "E", 
-                      "num_children", 2, 
-                      NULL);  
-    F = g_object_new (GIL_TYPE_MOCK_NODE, 
-                      "name", "F", 
+                      NULL);
+    E = g_object_new (GIL_TYPE_MOCK_NODE,
+                      "name", "E",
+                      "num_children", 2,
+                      NULL);
+    F = g_object_new (GIL_TYPE_MOCK_NODE,
+                      "name", "F",
                       "num_children", 1,
-                      NULL);  
-    G = g_object_new (GIL_TYPE_MOCK_NODE, 
-                      "name", "G", 
-                      NULL);  
+                      NULL);
+    G = g_object_new (GIL_TYPE_MOCK_NODE,
+                      "name", "G",
+                      NULL);
 
 
     gil_node_set_nth_child(B, A, 0);
@@ -165,41 +165,41 @@ bfs_visitor_setup(Test *test)
   }
 
 /**
-    O 
+    O
     |\
-    | P 
+    | P
     | |
-    | Q 
-    |/ 
-    R 
+    | Q
+    |/
+    R
     |
-    S 
+    S
 
 **/
   {
-    O = g_object_new (GIL_TYPE_MOCK_NODE, 
-                      "name", "O", 
-                      "num_children", 2, 
-                      NULL);  
+    O = g_object_new (GIL_TYPE_MOCK_NODE,
+                      "name", "O",
+                      "num_children", 2,
+                      NULL);
 
-    P = g_object_new (GIL_TYPE_MOCK_NODE, 
-                      "name", "P", 
-                      "num_children", 1, 
-                      NULL);  
+    P = g_object_new (GIL_TYPE_MOCK_NODE,
+                      "name", "P",
+                      "num_children", 1,
+                      NULL);
 
-    Q = g_object_new (GIL_TYPE_MOCK_NODE, 
-                      "name", "Q", 
-                      "num_children", 1, 
-                      NULL);  
+    Q = g_object_new (GIL_TYPE_MOCK_NODE,
+                      "name", "Q",
+                      "num_children", 1,
+                      NULL);
 
-    R = g_object_new (GIL_TYPE_MOCK_NODE, 
-                      "name", "R", 
-                      "num_children", 1, 
-                      NULL);  
+    R = g_object_new (GIL_TYPE_MOCK_NODE,
+                      "name", "R",
+                      "num_children", 1,
+                      NULL);
 
-    S = g_object_new (GIL_TYPE_MOCK_NODE, 
-                      "name", "S", 
-                      NULL);  
+    S = g_object_new (GIL_TYPE_MOCK_NODE,
+                      "name", "S",
+                      NULL);
 
     gil_node_set_nth_child(O, R, 0);
     gil_node_set_nth_child(O, P, 1);
@@ -236,7 +236,7 @@ create_bfs_visitor_test()
   g_assert(ct_addSetUp(t, bfs_visitor_setup));
   g_assert(ct_addTearDown(t, bfs_visitor_teardown));
 
-#if 1 
+#if 1
   g_assert(ct_addTestFun(t, test_bfs_visitor_g_object_new));
   g_assert(ct_addTestFun(t, test_bfs_visitor_traverse));
   g_assert(ct_addTestFun(t, test_bfs_visitor_traverse_diamond));

@@ -4,9 +4,9 @@
 
 enum
 {
-  PROP_0, 
-  PROP_NAME, 
-  PROP_LAST 
+  PROP_0,
+  PROP_NAME,
+  PROP_LAST
 };
 
 static void class_init (GilNodeClass * klass);
@@ -18,7 +18,7 @@ static void get_property (GObject *gobject, guint prop_id, GValue *value, GParam
 static void accept(GilNode * node, GilVisitor * visitor);
 
 static void allocate_children(GilNode *self, gint num_children);
-static void free_children(GilNode * self); 
+static void free_children(GilNode * self);
 
 static gpointer parent_class = NULL;
 
@@ -42,15 +42,15 @@ gil_node_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (G_TYPE_OBJECT, 
-                                     "GilNode", 
-                                     &typeInfo, 
+      type = g_type_register_static (G_TYPE_OBJECT,
+                                     "GilNode",
+                                     &typeInfo,
                                      G_TYPE_FLAG_ABSTRACT);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GilNodeClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -67,15 +67,15 @@ class_init (GilNodeClass * klass)
                                    g_param_spec_string ("name",
                                                         "Name",
                                                         "The Node's name",
-                                                        "", 
+                                                        "",
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE));
 
   return;
 }
 
-static void 
-init (GilNode * self, 
+static void
+init (GilNode * self,
       GilNodeClass * klass)
 {
   self->children = NULL;
@@ -105,7 +105,7 @@ set_property (GObject      *gobject,
   switch (prop_id)
   {
     case PROP_NAME:
-      gil_node_set_name(node, g_value_get_string(value));  
+      gil_node_set_name(node, g_value_get_string(value));
       break;
     default:
       break;
@@ -122,15 +122,15 @@ get_property (GObject      *gobject,
   switch (prop_id)
   {
     case PROP_NAME:
-      g_value_set_string(value, gil_node_get_name(node));  
+      g_value_set_string(value, gil_node_get_name(node));
       break;
     default:
       break;
   }
 }
 
-void 
-gil_node_set_name (GilNode * self, 
+void
+gil_node_set_name (GilNode * self,
                    const gchar * name)
 {
   g_return_if_fail (self != NULL);
@@ -148,41 +148,41 @@ gil_node_get_name (GilNode * self)
   return self->name;
 }
 
-GilNode * 
-gil_node_get_nth_child (GilNode * self, 
+GilNode *
+gil_node_get_nth_child (GilNode * self,
                         gint n)
 {
   GList *llink = NULL;
   g_return_if_fail(self != NULL);
-  g_return_if_fail(n >= 0 && n < g_list_length(self->children)); 
+  g_return_if_fail(n >= 0 && n < g_list_length(self->children));
 
   llink = g_list_nth(self->children, n);
   return (GilNode*)llink->data;
 }
 
 void
-gil_node_set_nth_child(GilNode * self, 
-                       GilNode * child, 
+gil_node_set_nth_child(GilNode * self,
+                       GilNode * child,
                        gint n)
 {
   GList *llink = NULL;
   GilNode * old_child;
   g_return_if_fail(self != NULL);
-  g_return_if_fail(n >= 0 && n < g_list_length(self->children)); 
+  g_return_if_fail(n >= 0 && n < g_list_length(self->children));
 
   llink = g_list_nth(self->children, n);
   old_child = (GilNode*)llink->data;
 
   if(old_child)
     g_object_unref(old_child);
-  
+
   if(child)
     g_object_ref(child);
 
   llink->data = child;
 }
 
-gint 
+gint
 gil_node_get_num_children (GilNode * self)
 {
   g_return_val_if_fail (self != NULL, -1);
@@ -201,8 +201,8 @@ gil_node_set_num_children (GilNode * self,
   allocate_children(self, num_children);
 }
 
-static void 
-allocate_children(GilNode *self, 
+static void
+allocate_children(GilNode *self,
                 gint num_children)
 {
   gint i;
@@ -240,7 +240,7 @@ gil_node_append_child(GilNode *self,
     g_object_ref(child);
 }
 
-void      
+void
 gil_node_accept(GilNode * self,
                  GilVisitor * visitor)
 {
@@ -256,8 +256,8 @@ gil_node_accept(GilNode * self,
     (*klass->accept)(self, visitor);
 }
 
-static void              
-accept (GilNode * node, 
+static void
+accept (GilNode * node,
         GilVisitor * visitor)
 {
   gil_visitor_visit_node(visitor, node);

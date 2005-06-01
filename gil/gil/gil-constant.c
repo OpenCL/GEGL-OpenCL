@@ -6,7 +6,7 @@ enum
   PROP_TYPE,
   PROP_INT,
   PROP_FLOAT,
-  PROP_LAST 
+  PROP_LAST
 };
 
 static void class_init (GilConstantClass * klass);
@@ -37,15 +37,15 @@ gil_constant_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GIL_TYPE_EXPRESSION, 
-                                     "GilConstant", 
-                                     &typeInfo, 
+      type = g_type_register_static (GIL_TYPE_EXPRESSION,
+                                     "GilConstant",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GilConstantClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -88,10 +88,10 @@ class_init (GilConstantClass * klass)
   return;
 }
 
-static void 
-init (GilConstant * self, 
+static void
+init (GilConstant * self,
       GilConstantClass * klass)
-{  
+{
   self->type = GIL_TYPE_NONE;
   return;
 }
@@ -114,17 +114,17 @@ set_property (GObject      *gobject,
   {
     case PROP_TYPE:
       {
-        gil_constant_set_const_type(constant, (GilType)g_value_get_int(value));  
+        gil_constant_set_const_type(constant, (GilType)g_value_get_int(value));
       }
       break;
     case PROP_INT:
       {
-        gil_constant_set_int(constant, g_value_get_int(value));  
+        gil_constant_set_int(constant, g_value_get_int(value));
       }
       break;
     case PROP_FLOAT:
       {
-        gil_constant_set_float(constant, g_value_get_float(value));  
+        gil_constant_set_float(constant, g_value_get_float(value));
       }
       break;
     default:
@@ -144,17 +144,17 @@ get_property (GObject      *gobject,
   {
     case PROP_TYPE:
       {
-        g_value_set_int(value, (gint)gil_constant_get_const_type(constant));  
+        g_value_set_int(value, (gint)gil_constant_get_const_type(constant));
       }
       break;
     case PROP_INT:
       {
-        g_value_set_int(value, gil_constant_get_int(constant));  
+        g_value_set_int(value, gil_constant_get_int(constant));
       }
       break;
     case PROP_FLOAT:
       {
-        g_value_set_float(value, gil_constant_get_float(constant));  
+        g_value_set_float(value, gil_constant_get_float(constant));
       }
       break;
     default:
@@ -172,7 +172,7 @@ gil_constant_get_const_type (GilConstant * self)
 }
 
 void
-gil_constant_set_const_type (GilConstant * self, 
+gil_constant_set_const_type (GilConstant * self,
                              GilType type)
 {
   g_return_if_fail (self != NULL);
@@ -182,7 +182,7 @@ gil_constant_set_const_type (GilConstant * self,
   self->type = type;
 }
 
-gint 
+gint
 gil_constant_get_int (GilConstant * self)
 {
   g_return_val_if_fail (self != NULL, 0);
@@ -205,7 +205,7 @@ gil_constant_set_int (GilConstant * self,
   self->value.int_value = int_value;
 }
 
-gfloat 
+gfloat
 gil_constant_get_float (GilConstant * self)
 {
   g_return_val_if_fail (self != NULL, 0);

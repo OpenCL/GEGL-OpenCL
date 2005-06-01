@@ -2,10 +2,10 @@
 
 enum
 {
-  PROP_0, 
+  PROP_0,
   PROP_OP,
   PROP_OPERAND,
-  PROP_LAST 
+  PROP_LAST
 };
 
 static void class_init (GilUnaryOpClass * klass);
@@ -36,15 +36,15 @@ gil_unary_op_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GIL_TYPE_EXPRESSION, 
-                                     "GilUnaryOp", 
-                                     &typeInfo, 
+      type = g_type_register_static (GIL_TYPE_EXPRESSION,
+                                     "GilUnaryOp",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GilUnaryOpClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -76,8 +76,8 @@ class_init (GilUnaryOpClass * klass)
   return;
 }
 
-static void 
-init (GilUnaryOp * self, 
+static void
+init (GilUnaryOp * self,
       GilUnaryOpClass * klass)
 {
   GilNode * node = GIL_NODE(self);
@@ -105,12 +105,12 @@ set_property (GObject      *gobject,
   {
     case PROP_OP:
       {
-        gil_unary_op_set_op(unary_op, g_value_get_int(value));  
+        gil_unary_op_set_op(unary_op, g_value_get_int(value));
       }
       break;
     case PROP_OPERAND:
       {
-        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 0);  
+        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 0);
       }
       break;
     default:
@@ -131,12 +131,12 @@ get_property (GObject      *gobject,
   {
     case PROP_OP:
       {
-        g_value_set_int(value, gil_unary_op_get_op(unary_op));  
+        g_value_set_int(value, gil_unary_op_get_op(unary_op));
       }
       break;
     case PROP_OPERAND:
       {
-        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 0));  
+        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 0));
       }
       break;
     default:
@@ -153,8 +153,8 @@ gil_unary_op_get_op (GilUnaryOp * self)
   return self->op;
 }
 
-void 
-gil_unary_op_set_op (GilUnaryOp * self, 
+void
+gil_unary_op_set_op (GilUnaryOp * self,
                      GilUnaryOpType op)
 {
   g_return_if_fail (self != NULL);

@@ -18,21 +18,21 @@ gegl_cache_entry_get_type (void)
 	  sizeof(GeglCacheEntryClass),
 	  NULL, /*base_init*/
 	  NULL, /* base_finalize */
-	  
+	
 	  /* classed types, instantiated types */
 	  class_init, /* class_init */
 	  NULL, /* class_finalize */
 	  NULL, /* class_data */
-	  
+	
 	  /* instantiated types */
 	  sizeof(GeglCacheEntry),
 	  0, /* n_preallocs */
 	  instance_init, /* instance_init */
-	  
+	
 	  /* value handling */
 	  NULL /* value_table */
 	};
-      
+
       type = g_type_register_static (G_TYPE_OBJECT ,
 				     "GeglCacheEntry",
 				     &typeInfo,
@@ -64,7 +64,7 @@ gegl_cache_entry_flattened_size (const GeglCacheEntry* self)
 {
   g_return_val_if_fail(self != NULL, 0);
   g_return_val_if_fail(GEGL_IS_CACHE_ENTRY(self),0);
-  
+
   GeglCacheEntryClass * class=GEGL_CACHE_ENTRY_GET_CLASS(self);
   g_return_val_if_fail(class->flattened_size != NULL,0);
   return class->flattened_size(self);
@@ -77,7 +77,7 @@ gegl_cache_entry_flatten (GeglCacheEntry* self,
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_CACHE_ENTRY(self));
-  
+
   GeglCacheEntryClass * class=GEGL_CACHE_ENTRY_GET_CLASS(self);
   g_return_if_fail (class->flatten != NULL);
   g_return_if_fail (gegl_cache_entry_flattened_size (self) <= length);
@@ -91,7 +91,7 @@ gegl_cache_entry_unflatten (GeglCacheEntry* self,
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_CACHE_ENTRY(self));
-  
+
   GeglCacheEntryClass * class=GEGL_CACHE_ENTRY_GET_CLASS(self);
   g_return_if_fail (class->unflatten != NULL);
   g_return_if_fail (gegl_cache_entry_flattened_size (self) <= length);
@@ -103,7 +103,7 @@ gegl_cache_entry_discard (GeglCacheEntry* self)
 {
   g_return_if_fail (self != NULL);
   g_return_if_fail (GEGL_IS_CACHE_ENTRY(self));
-  
+
   GeglCacheEntryClass * class=GEGL_CACHE_ENTRY_GET_CLASS(self);
   g_return_if_fail (class->discard != NULL);
   class->discard (self);

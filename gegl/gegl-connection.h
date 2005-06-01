@@ -26,7 +26,7 @@
 
 typedef struct _GeglConnection  GeglConnection;
 
-GeglConnection *gegl_connection_new             (GeglNode *sink, 
+GeglConnection *gegl_connection_new             (GeglNode *sink,
                                                  GeglProperty * sink_prop,
                                                  GeglNode *source,
                                                  GeglProperty *source_prop);
@@ -39,7 +39,7 @@ void            gegl_connection_set_sink_node   (GeglConnection *connection,
                                                  GeglNode *sink);
 void            gegl_connection_set_sink_prop   (GeglConnection *connection,
                                                  GeglProperty *sink_prop);
-void            gegl_connection_set_source_node (GeglConnection *connection, 
+void            gegl_connection_set_source_node (GeglConnection *connection,
                                                  GeglNode *source);
 void            gegl_connection_set_source_prop (GeglConnection *connection,
                                                  GeglProperty *source_prop);

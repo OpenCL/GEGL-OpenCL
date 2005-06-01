@@ -11,7 +11,7 @@
 static void
 test_node_connections(Test *test)
 {
-  /* 
+  /*
        -
        B
        +
@@ -20,14 +20,14 @@ test_node_connections(Test *test)
        A
 
   */
-     
+
   {
     GList *sources;
     GList *sinks;
     GeglConnection *connection;
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
     GeglProperty *output0 = gegl_node_get_property(A, "output0");
     GeglProperty *input0 = gegl_node_get_property(B, "input0");
 
@@ -37,17 +37,17 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_num_sources(A));
     ct_test(test, 0 == gegl_node_num_sinks(B));
     ct_test(test, 1 == gegl_node_num_sources(B));
-    ct_test(test, 1 == gegl_property_num_connections(output0));  
-    ct_test(test, 1 == gegl_property_num_connections(input0));  
+    ct_test(test, 1 == gegl_property_num_connections(output0));
+    ct_test(test, 1 == gegl_property_num_connections(input0));
     ct_test(test, output0 == gegl_property_get_connected_to(input0));
 
     sinks = gegl_node_get_sinks(A);
-    connection = g_list_nth_data(sinks, 0); 
+    connection = g_list_nth_data(sinks, 0);
     ct_test(test, A == gegl_connection_get_source_node(connection));
     ct_test(test, output0 == gegl_connection_get_source_prop(connection));
-    
+
     sources = gegl_node_get_sources(B);
-    connection = g_list_nth_data(sources, 0); 
+    connection = g_list_nth_data(sources, 0);
     ct_test(test, B == gegl_connection_get_sink_node(connection));
     ct_test(test, input0 == gegl_connection_get_sink_prop(connection));
 
@@ -57,26 +57,26 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_num_sources(A));
     ct_test(test, 0 == gegl_node_num_sinks(B));
     ct_test(test, 0 == gegl_node_num_sources(B));
-    ct_test(test, 0 == gegl_property_num_connections(output0));  
-    ct_test(test, 0 == gegl_property_num_connections(input0));  
+    ct_test(test, 0 == gegl_property_num_connections(output0));
+    ct_test(test, 0 == gegl_property_num_connections(input0));
 
     g_object_unref(A);
     g_object_unref(B);
   }
 
-  /* 
+  /*
         -
-        C 
+        C
        + +
-       \ 
+       \
         -
-        A 
-     
+        A
+
   */
 
   {
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, NULL);
     GeglProperty *output0 = gegl_node_get_property(A, "output0");
     GeglProperty *input0 = gegl_node_get_property(C, "input0");
     GeglProperty *input1 = gegl_node_get_property(C, "input1");
@@ -87,9 +87,9 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_num_sources(A));
     ct_test(test, 0 == gegl_node_num_sinks(C));
     ct_test(test, 1 == gegl_node_num_sources(C));
-    ct_test(test, 1 == gegl_property_num_connections(output0));  
-    ct_test(test, 1 == gegl_property_num_connections(input0));  
-    ct_test(test, 0 == gegl_property_num_connections(input1));  
+    ct_test(test, 1 == gegl_property_num_connections(output0));
+    ct_test(test, 1 == gegl_property_num_connections(input0));
+    ct_test(test, 0 == gegl_property_num_connections(input1));
     ct_test(test, output0 == gegl_property_get_connected_to(input0));
 
     gegl_node_disconnect(C, "input0", A, "output0");
@@ -98,27 +98,27 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_num_sources(A));
     ct_test(test, 0 == gegl_node_num_sinks(C));
     ct_test(test, 0 == gegl_node_num_sources(C));
-    ct_test(test, 0 == gegl_property_num_connections(output0));  
-    ct_test(test, 0 == gegl_property_num_connections(input0));  
-    ct_test(test, 0 == gegl_property_num_connections(input1));  
+    ct_test(test, 0 == gegl_property_num_connections(output0));
+    ct_test(test, 0 == gegl_property_num_connections(input0));
+    ct_test(test, 0 == gegl_property_num_connections(input1));
 
     g_object_unref(A);
     g_object_unref(C);
   }
 
-  /* 
+  /*
        -
-       C 
+       C
       + +
-        / 
+        /
        -
-       A 
-     
+       A
+
   */
 
   {
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, NULL);
     GeglProperty *output0 = gegl_node_get_property(A, "output0");
     GeglProperty *input0 = gegl_node_get_property(C, "input0");
     GeglProperty *input1 = gegl_node_get_property(C, "input1");
@@ -129,9 +129,9 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_num_sources(A));
     ct_test(test, 0 == gegl_node_num_sinks(C));
     ct_test(test, 1 == gegl_node_num_sources(C));
-    ct_test(test, 1 == gegl_property_num_connections(output0));  
-    ct_test(test, 0 == gegl_property_num_connections(input0));  
-    ct_test(test, 1 == gegl_property_num_connections(input1));  
+    ct_test(test, 1 == gegl_property_num_connections(output0));
+    ct_test(test, 0 == gegl_property_num_connections(input0));
+    ct_test(test, 1 == gegl_property_num_connections(input1));
     ct_test(test, output0 == gegl_property_get_connected_to(input1));
 
     gegl_node_disconnect(C, "input1", A, "output0");
@@ -140,27 +140,27 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_num_sources(A));
     ct_test(test, 0 == gegl_node_num_sinks(C));
     ct_test(test, 0 == gegl_node_num_sources(C));
-    ct_test(test, 0 == gegl_property_num_connections(output0));  
-    ct_test(test, 0 == gegl_property_num_connections(input0));  
-    ct_test(test, 0 == gegl_property_num_connections(input1));  
+    ct_test(test, 0 == gegl_property_num_connections(output0));
+    ct_test(test, 0 == gegl_property_num_connections(input0));
+    ct_test(test, 0 == gegl_property_num_connections(input1));
 
     g_object_unref(A);
     g_object_unref(C);
   }
 
-  /* 
+  /*
        -
-       C 
+       C
       + +
-      \ / 
+      \ /
        -
-       A 
-     
+       A
+
   */
 
   {
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, NULL);
     GeglProperty *output0 = gegl_node_get_property(A, "output0");
     GeglProperty *input0 = gegl_node_get_property(C, "input0");
     GeglProperty *input1 = gegl_node_get_property(C, "input1");
@@ -172,9 +172,9 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_num_sources(A));
     ct_test(test, 0 == gegl_node_num_sinks(C));
     ct_test(test, 2 == gegl_node_num_sources(C));
-    ct_test(test, 2 == gegl_property_num_connections(output0));  
-    ct_test(test, 1 == gegl_property_num_connections(input0));  
-    ct_test(test, 1 == gegl_property_num_connections(input1));  
+    ct_test(test, 2 == gegl_property_num_connections(output0));
+    ct_test(test, 1 == gegl_property_num_connections(input0));
+    ct_test(test, 1 == gegl_property_num_connections(input1));
     ct_test(test, output0 == gegl_property_get_connected_to(input0));
     ct_test(test, output0 == gegl_property_get_connected_to(input1));
 
@@ -185,31 +185,31 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_num_sources(A));
     ct_test(test, 0 == gegl_node_num_sinks(C));
     ct_test(test, 0 == gegl_node_num_sources(C));
-    ct_test(test, 0 == gegl_property_num_connections(output0));  
-    ct_test(test, 0 == gegl_property_num_connections(input0));  
-    ct_test(test, 0 == gegl_property_num_connections(input1));  
+    ct_test(test, 0 == gegl_property_num_connections(output0));
+    ct_test(test, 0 == gegl_property_num_connections(input0));
+    ct_test(test, 0 == gegl_property_num_connections(input1));
 
     g_object_unref(A);
     g_object_unref(C);
   }
 
-  /* 
+  /*
        -
-       C 
+       C
       + +
-      | | 
+      | |
       - -
       A B
-     
+
   */
 
   {
     GList *sources;
     GeglConnection *connection;
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, NULL);
     GeglProperty *Aoutput0 = gegl_node_get_property(A, "output0");
     GeglProperty *Boutput0 = gegl_node_get_property(B, "output0");
     GeglProperty *input0 = gegl_node_get_property(C, "input0");
@@ -222,22 +222,22 @@ test_node_connections(Test *test)
     ct_test(test, 1 == gegl_node_num_sinks(B));
     ct_test(test, 2 == gegl_node_num_sources(C));
 
-    ct_test(test, 1 == gegl_property_num_connections(Aoutput0));  
-    ct_test(test, 1 == gegl_property_num_connections(Boutput0));  
-    ct_test(test, 1 == gegl_property_num_connections(input0));  
-    ct_test(test, 1 == gegl_property_num_connections(input1));  
+    ct_test(test, 1 == gegl_property_num_connections(Aoutput0));
+    ct_test(test, 1 == gegl_property_num_connections(Boutput0));
+    ct_test(test, 1 == gegl_property_num_connections(input0));
+    ct_test(test, 1 == gegl_property_num_connections(input1));
     ct_test(test, Aoutput0 == gegl_property_get_connected_to(input0));
     ct_test(test, Boutput0 == gegl_property_get_connected_to(input1));
 
     sources = gegl_node_get_sources(C);
 
-    connection = g_list_nth_data(sources, 0); 
+    connection = g_list_nth_data(sources, 0);
     ct_test(test, C == gegl_connection_get_sink_node(connection));
     ct_test(test, A == gegl_connection_get_source_node(connection));
     ct_test(test, Aoutput0 == gegl_connection_get_source_prop(connection));
     ct_test(test, input0 == gegl_connection_get_sink_prop(connection));
 
-    connection = g_list_nth_data(sources, 1); 
+    connection = g_list_nth_data(sources, 1);
     ct_test(test, C == gegl_connection_get_sink_node(connection));
     ct_test(test, B == gegl_connection_get_source_node(connection));
     ct_test(test, Boutput0 == gegl_connection_get_source_prop(connection));
@@ -249,29 +249,29 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_num_sinks(B));
     ct_test(test, 0 == gegl_node_num_sources(C));
 
-    ct_test(test, 0 == gegl_property_num_connections(Aoutput0));  
-    ct_test(test, 0 == gegl_property_num_connections(Boutput0));  
-    ct_test(test, 0 == gegl_property_num_connections(input0));  
-    ct_test(test, 0 == gegl_property_num_connections(input1));  
+    ct_test(test, 0 == gegl_property_num_connections(Aoutput0));
+    ct_test(test, 0 == gegl_property_num_connections(Boutput0));
+    ct_test(test, 0 == gegl_property_num_connections(input0));
+    ct_test(test, 0 == gegl_property_num_connections(input1));
 
     g_object_unref(A);
     g_object_unref(B);
     g_object_unref(C);
   }
 
-  /* 
+  /*
      -   -
-     B   C 
+     B   C
      +   +
-      \ / 
+      \ /
        -
-       A 
+       A
   */
 
   {
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
 
     GeglProperty *output0 = gegl_node_get_property(A, "output0");
     GeglProperty *Binput0 = gegl_node_get_property(B, "input0");
@@ -283,9 +283,9 @@ test_node_connections(Test *test)
     ct_test(test, 2 == gegl_node_num_sinks(A));
     ct_test(test, 1 == gegl_node_num_sources(B));
     ct_test(test, 1 == gegl_node_num_sources(C));
-    ct_test(test, 2 == gegl_property_num_connections(output0));  
-    ct_test(test, 1 == gegl_property_num_connections(Binput0));  
-    ct_test(test, 1 == gegl_property_num_connections(Cinput0));  
+    ct_test(test, 2 == gegl_property_num_connections(output0));
+    ct_test(test, 1 == gegl_property_num_connections(Binput0));
+    ct_test(test, 1 == gegl_property_num_connections(Cinput0));
     ct_test(test, output0 == gegl_property_get_connected_to(Binput0));
     ct_test(test, output0 == gegl_property_get_connected_to(Cinput0));
 
@@ -294,9 +294,9 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_num_sinks(A));
     ct_test(test, 0 == gegl_node_num_sources(B));
     ct_test(test, 0 == gegl_node_num_sources(C));
-    ct_test(test, 0 == gegl_property_num_connections(output0));  
-    ct_test(test, 0 == gegl_property_num_connections(Binput0));  
-    ct_test(test, 0 == gegl_property_num_connections(Cinput0));  
+    ct_test(test, 0 == gegl_property_num_connections(output0));
+    ct_test(test, 0 == gegl_property_num_connections(Binput0));
+    ct_test(test, 0 == gegl_property_num_connections(Cinput0));
 
     g_object_unref(A);
     g_object_unref(B);
@@ -322,9 +322,9 @@ create_node_connections_test()
   g_assert(ct_addSetUp(t, node_connections_test_setup));
   g_assert(ct_addTearDown(t, node_connections_test_teardown));
 
-#if 1 
+#if 1
   g_assert(ct_addTestFun(t, test_node_connections));
 #endif
-                                     
-  return t; 
+
+  return t;
 }

@@ -10,13 +10,13 @@
 
 enum
 {
-  PROP_0, 
+  PROP_0,
   PROP_BACKGROUND,
   PROP_FOREGROUND,
   PROP_M_BACKGROUND,
   PROP_M_FOREGROUND,
   PROP_PREMULTIPLY,
-  PROP_LAST 
+  PROP_LAST
 };
 
 static void class_init (GeglCompClass * klass);
@@ -50,15 +50,15 @@ gegl_comp_get_type (void)
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_POINT_OP , 
-                                     "GeglComp", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_POINT_OP ,
+                                     "GeglComp",
+                                     &typeInfo,
                                      G_TYPE_FLAG_ABSTRACT);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglCompClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
@@ -105,12 +105,12 @@ class_init (GeglCompClass * klass)
                                    "Premultiply",
                                    "Premultiply the foreground.",
                                    FALSE,
-                                   G_PARAM_CONSTRUCT | 
+                                   G_PARAM_CONSTRUCT |
                                    G_PARAM_READWRITE));
 }
 
-static void 
-init (GeglComp * self, 
+static void
+init (GeglComp * self,
       GeglCompClass * klass)
 {
   gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_IMAGE_DATA, "background");
@@ -152,14 +152,14 @@ set_property (GObject      *gobject,
       {
         GeglNode *background = (GeglNode*)g_value_get_object(value);
         gint index = gegl_op_get_input_data_index(GEGL_OP(comp), "background");
-        gegl_node_set_source(GEGL_NODE(comp), background, index);  
+        gegl_node_set_source(GEGL_NODE(comp), background, index);
       }
       break;
     case PROP_FOREGROUND:
       {
         GeglNode *foreground = (GeglNode*)g_value_get_object(value);
         gint index = gegl_op_get_input_data_index(GEGL_OP(comp), "foreground");
-        gegl_node_set_source(GEGL_NODE(comp), foreground, index);  
+        gegl_node_set_source(GEGL_NODE(comp), foreground, index);
       }
       break;
     case PROP_M_BACKGROUND:
@@ -167,7 +167,7 @@ set_property (GObject      *gobject,
         gint output;
         GeglNode *background = g_value_get_m_source(value, &output);
         gint index = gegl_op_get_input_data_index(GEGL_OP(comp), "background");
-        gegl_node_set_m_source(GEGL_NODE(comp), background, index, output);  
+        gegl_node_set_m_source(GEGL_NODE(comp), background, index, output);
       }
       break;
     case PROP_M_FOREGROUND:
@@ -175,7 +175,7 @@ set_property (GObject      *gobject,
         gint output;
         GeglNode *foreground = g_value_get_m_source(value, &output);
         gint index = gegl_op_get_input_data_index(GEGL_OP(comp), "foreground");
-        gegl_node_set_m_source(GEGL_NODE(comp), foreground, index, output);  
+        gegl_node_set_m_source(GEGL_NODE(comp), foreground, index, output);
       }
       break;
     case PROP_PREMULTIPLY:
@@ -187,8 +187,8 @@ set_property (GObject      *gobject,
   }
 }
 
-static void 
-validate_inputs  (GeglFilter *filter, 
+static void
+validate_inputs  (GeglFilter *filter,
                   GArray *collected_data)
 {
   GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_data);
@@ -209,8 +209,8 @@ validate_inputs  (GeglFilter *filter,
 }
 
 
-static void 
-prepare (GeglFilter * filter) 
+static void
+prepare (GeglFilter * filter)
 {
   GeglPointOp *point_op = GEGL_POINT_OP(filter);
   GeglComp *self = GEGL_COMP(filter);
@@ -223,7 +223,7 @@ prepare (GeglFilter * filter)
 
   /* Get the appropriate scanline func from subclass */
   if(klass->get_scanline_function)
-    point_op->scanline_processor->func = 
+    point_op->scanline_processor->func =
         klass->get_scanline_function(self, dest_cm);
   else
     g_print("Cant find scanline func\n");

@@ -19,7 +19,7 @@
  *
  */
 #ifndef __GEGL_VISITABLE_H__
-#define __GEGL_VISITABLE_H__ 
+#define __GEGL_VISITABLE_H__
 
 #include <glib-object.h>
 #include <glib.h>

@@ -2,12 +2,12 @@
 #include "gilsymbol.h"
 
 GilSymbol * gil_symbol_new(gchar * name,
-                           GilSymbolKind kind, 
+                           GilSymbolKind kind,
                            GilType *type,
                            gint scope)
 {
    GilSymbol *symbol = g_new(GilSymbol,1);
-   symbol->name = g_strdup(name); 
+   symbol->name = g_strdup(name);
    symbol->kind = kind;
    symbol->type = type;
    symbol->scope = scope;
@@ -16,7 +16,7 @@ GilSymbol * gil_symbol_new(gchar * name,
 
 void gil_symbol_delete(GilSymbol * symbol)
 {
-   g_free(symbol->name); 
+   g_free(symbol->name);
    g_free(symbol);
 }
 

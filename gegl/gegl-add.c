@@ -10,9 +10,9 @@
 
 enum
 {
-  PROP_0, 
+  PROP_0,
   PROP_CONSTANT,
-  PROP_LAST 
+  PROP_LAST
 };
 
 static void class_init (GeglAddClass * klass);
@@ -52,15 +52,15 @@ gegl_add_get_type (void)
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_UNARY, 
-                                     "GeglAdd", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_UNARY,
+                                     "GeglAdd",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglAddClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
@@ -86,8 +86,8 @@ class_init (GeglAddClass * klass)
                                      G_PARAM_READWRITE));
 }
 
-static void 
-init (GeglAdd * self, 
+static void
+init (GeglAdd * self,
       GeglAddClass * klass)
 {
   gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_COLOR_DATA, "constant");
@@ -138,8 +138,8 @@ set_property (GObject      *gobject,
   }
 }
 
-static void 
-validate_inputs  (GeglFilter *filter, 
+static void
+validate_inputs  (GeglFilter *filter,
                   GArray *collected_data)
 {
   GEGL_FILTER_CLASS(parent_class)->validate_inputs(filter, collected_data);
@@ -171,20 +171,20 @@ get_scanline_function(GeglUnary * unary,
 }
 
 
-static void                                                            
-add_float (GeglFilter * filter,              
+static void
+add_float (GeglFilter * filter,
            GeglScanlineProcessor *processor,
-           gint width)                       
-{                                                                       
+           gint width)
+{
   GeglAdd * self = GEGL_ADD(filter);
 
-  GeglImageIterator *dest = 
+  GeglImageIterator *dest =
     gegl_scanline_processor_lookup_iterator(processor, "dest");
   gfloat **d = (gfloat**)gegl_image_iterator_color_channels(dest);
   gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(dest);
   gint d_color_chans = gegl_image_iterator_get_num_colors(dest);
 
-  GeglImageIterator *source = 
+  GeglImageIterator *source =
     gegl_scanline_processor_lookup_iterator(processor, "source");
   gfloat **a = (gfloat**)gegl_image_iterator_color_channels(source);
   gfloat *aa = (gfloat*)gegl_image_iterator_alpha_channel(source);
@@ -197,62 +197,62 @@ add_float (GeglFilter * filter,
   gint alpha_mask = 0x0;
 
   if(aa)
-    alpha_mask |= GEGL_A_ALPHA; 
+    alpha_mask |= GEGL_A_ALPHA;
 
 
   {
-    gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;   
+    gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;
     gfloat *d1 = (d_color_chans > 1) ? d[1]: NULL;
     gfloat *d2 = (d_color_chans > 2) ? d[2]: NULL;
 
-    gfloat *a0 = (a_color_chans > 0) ? a[0]: NULL;   
+    gfloat *a0 = (a_color_chans > 0) ? a[0]: NULL;
     gfloat *a1 = (a_color_chans > 1) ? a[1]: NULL;
     gfloat *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
     switch(d_color_chans)
       {
-        case 3: 
+        case 3:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = *a0++ + data[0];
                 *d1++ = *a1++ + data[1];
                 *d2++ = *a2++ + data[2];
                 *da++ = *aa++ + data[3];
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = *a0++ + data[0];
                 *d1++ = *a1++ + data[1];
                 *d2++ = *a2++ + data[2];
               }
           break;
-        case 2: 
+        case 2:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = *a0++ + data[0];
                 *d1++ = *a1++ + data[1];
                 *da++ = *aa++ + data[3];
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = *a0++ + data[0];
                 *d1++ = *a1++ + data[1];
               }
           break;
-        case 1: 
+        case 1:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = *a0++ + data[0];
                 *da++ = *aa++ + data[3];
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = *a0++ + data[0];
               }
           break;
@@ -263,22 +263,22 @@ add_float (GeglFilter * filter,
   g_free(a);
 
   g_free(data);
-}                                                                       
+}
 
-static void                                                            
-add_uint8 (GeglFilter * filter,              
+static void
+add_uint8 (GeglFilter * filter,
            GeglScanlineProcessor *processor,
-           gint width)                       
-{                                                                       
+           gint width)
+{
   GeglAdd * self = GEGL_ADD(filter);
 
-  GeglImageIterator *dest = 
+  GeglImageIterator *dest =
     gegl_scanline_processor_lookup_iterator(processor, "dest");
   guint8 **d = (guint8**)gegl_image_iterator_color_channels(dest);
   guint8 *da = (guint8*)gegl_image_iterator_alpha_channel(dest);
   gint d_color_chans = gegl_image_iterator_get_num_colors(dest);
 
-  GeglImageIterator *source = 
+  GeglImageIterator *source =
     gegl_scanline_processor_lookup_iterator(processor, "source");
   guint8 **a = (guint8**)gegl_image_iterator_color_channels(source);
   guint8 *aa = (guint8*)gegl_image_iterator_alpha_channel(source);
@@ -295,38 +295,38 @@ add_uint8 (GeglFilter * filter,
   /* This should be somewhere else, not here. */
   for(i=0; i < num_components; i++)
     {
-      gint channel = ROUND(255 * float_data[i]); 
+      gint channel = ROUND(255 * float_data[i]);
       data[i] = CLAMP(channel, 0, 255);
     }
 
   g_free(float_data);
 
   if(aa)
-    alpha_mask |= GEGL_A_ALPHA; 
+    alpha_mask |= GEGL_A_ALPHA;
 
   {
-    guint8 *d0 = (d_color_chans > 0) ? d[0]: NULL;   
+    guint8 *d0 = (d_color_chans > 0) ? d[0]: NULL;
     guint8 *d1 = (d_color_chans > 1) ? d[1]: NULL;
     guint8 *d2 = (d_color_chans > 2) ? d[2]: NULL;
 
-    guint8 *a0 = (a_color_chans > 0) ? a[0]: NULL;   
+    guint8 *a0 = (a_color_chans > 0) ? a[0]: NULL;
     guint8 *a1 = (a_color_chans > 1) ? a[1]: NULL;
     guint8 *a2 = (a_color_chans > 2) ? a[2]: NULL;
 
     switch(d_color_chans)
       {
-        case 3: 
+        case 3:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = CLAMP(*a0 + data[0], 0, 255); a0++;
                 *d1++ = CLAMP(*a1 + data[1], 0, 255); a1++;
                 *d2++ = CLAMP(*a2 + data[2], 0, 255); a2++;
                 *da++ = CLAMP(*aa + data[3], 0, 255); aa++;
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
 
                 *d0++ = CLAMP(*a0 + data[0], 0, 255); a0++;
                 *d1++ = CLAMP(*a1 + data[1], 0, 255); a1++;
@@ -335,29 +335,29 @@ add_uint8 (GeglFilter * filter,
           break;
         case 2:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = CLAMP(*a0 + data[0], 0, 255); a0++;
                 *d1++ = CLAMP(*a1 + data[1], 0, 255); a1++;
                 *da++ = CLAMP(*aa + data[3], 0, 255); aa++;
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = CLAMP(*a0 + data[0], 0, 255); a0++;
                 *d1++ = CLAMP(*a1 + data[1], 0, 255); a1++;
               }
           break;
         case 1:
           if(alpha_mask == GEGL_A_ALPHA)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = CLAMP(*a0 + data[0], 0, 255); a0++;
                 *da++ = CLAMP(*aa + data[3], 0, 255); aa++;
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = CLAMP(*a0 + data[0], 0, 255); a0++;
               }
         break;
@@ -367,4 +367,4 @@ add_uint8 (GeglFilter * filter,
   g_free(d);
   g_free(a);
   g_free(data);
-}                                                                       
+}

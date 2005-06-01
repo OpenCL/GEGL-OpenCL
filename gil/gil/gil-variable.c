@@ -2,10 +2,10 @@
 
 enum
 {
-  PROP_0, 
+  PROP_0,
   PROP_VARIABLE,
   PROP_TYPE,
-  PROP_LAST 
+  PROP_LAST
 };
 
 static void class_init (GilVariableClass * klass);
@@ -36,15 +36,15 @@ gil_variable_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GIL_TYPE_EXPRESSION, 
-                                     "GilVariable", 
-                                     &typeInfo, 
+      type = g_type_register_static (GIL_TYPE_EXPRESSION,
+                                     "GilVariable",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GilVariableClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -59,7 +59,7 @@ class_init (GilVariableClass * klass)
                                    g_param_spec_string ("variable",
                                                         "Variable",
                                                         "This is the Variable name",
-                                                        "", 
+                                                        "",
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE));
 
@@ -76,11 +76,11 @@ class_init (GilVariableClass * klass)
   return;
 }
 
-static void 
-init (GilVariable * self, 
+static void
+init (GilVariable * self,
       GilVariableClass * klass)
 {
-  self->type = GIL_TYPE_NONE; 
+  self->type = GIL_TYPE_NONE;
   return;
 }
 
@@ -100,10 +100,10 @@ set_property (GObject      *gobject,
   switch (prop_id)
   {
     case PROP_VARIABLE:
-      gil_variable_set_name(variable, g_value_get_string(value));  
+      gil_variable_set_name(variable, g_value_get_string(value));
       break;
     case PROP_TYPE:
-      gil_variable_set_variable_type(variable, g_value_get_int(value));  
+      gil_variable_set_variable_type(variable, g_value_get_int(value));
       break;
     default:
       break;
@@ -120,10 +120,10 @@ get_property (GObject      *gobject,
   switch (prop_id)
   {
     case PROP_VARIABLE:
-      g_value_set_string(value, gil_variable_get_name(variable));  
+      g_value_set_string(value, gil_variable_get_name(variable));
       break;
     case PROP_TYPE:
-      g_value_set_int(value, gil_variable_get_variable_type(variable));  
+      g_value_set_int(value, gil_variable_get_variable_type(variable));
       break;
     default:
       break;
@@ -139,8 +139,8 @@ gil_variable_get_variable_type (GilVariable * self)
   return self->type;
 }
 
-void 
-gil_variable_set_variable_type (GilVariable * self, 
+void
+gil_variable_set_variable_type (GilVariable * self,
                                 GilType type)
 {
   g_return_if_fail (self != NULL);
@@ -150,8 +150,8 @@ gil_variable_set_variable_type (GilVariable * self,
   self->type = type;
 }
 
-void 
-gil_variable_set_name (GilVariable * self, 
+void
+gil_variable_set_name (GilVariable * self,
                        const gchar * name)
 {
   g_return_if_fail (self != NULL);

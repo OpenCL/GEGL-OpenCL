@@ -34,7 +34,7 @@ gegl_heap_cache_new_test (Test * test)
   ct_test(test, GEGL_IS_HEAP_CACHE(heap_cache));
   ct_test(test, g_type_parent(GEGL_TYPE_HEAP_CACHE) == GEGL_TYPE_CACHE);
   ct_test(test, !strcmp("GeglHeapCache", g_type_name(GEGL_TYPE_HEAP_CACHE)));
-  
+
   g_object_unref(heap_cache);
 }
 
@@ -66,5 +66,5 @@ create_heap_cache_mem_leaks_test()
   g_assert(ct_addTestFun(t, gegl_cache_leak_test4));
   g_assert(ct_addTestFun(t, gegl_cache_leak_test5));
   g_assert(ct_addTestFun(t, gegl_cache_leak_test6));
-  return t; 
+  return t;
 }

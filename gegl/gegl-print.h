@@ -15,7 +15,7 @@ extern "C" {
 #define GEGL_PRINT_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_PRINT, GeglPrintClass))
 
 typedef struct _GeglPrint GeglPrint;
-struct _GeglPrint 
+struct _GeglPrint
 {
     GeglPipe pipe;
 
@@ -28,7 +28,7 @@ struct _GeglPrint
 };
 
 typedef struct _GeglPrintClass GeglPrintClass;
-struct _GeglPrintClass 
+struct _GeglPrintClass
 {
     GeglPipeClass pipe_class;
 };

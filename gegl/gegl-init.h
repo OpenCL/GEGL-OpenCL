@@ -23,6 +23,6 @@
 
 #include <glib-object.h>
 
-void                gegl_init (int *argc, char ***argv); 
+void                gegl_init (int *argc, char ***argv);
 
 #endif /* __GEGL_INIT_H__ */

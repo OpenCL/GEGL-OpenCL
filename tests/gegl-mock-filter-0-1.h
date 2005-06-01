@@ -15,7 +15,7 @@ extern "C" {
 #define GEGL_MOCK_FILTER_0_1_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MOCK_FILTER_0_1, GeglMockFilter01Class))
 
 typedef struct _GeglMockFilter01  GeglMockFilter01;
-struct _GeglMockFilter01 
+struct _GeglMockFilter01
 {
     GeglFilter       filter;
 
@@ -24,7 +24,7 @@ struct _GeglMockFilter01
 };
 
 typedef struct _GeglMockFilter01Class GeglMockFilter01Class;
-struct _GeglMockFilter01Class 
+struct _GeglMockFilter01Class
 {
    GeglFilterClass filter_class;
 };

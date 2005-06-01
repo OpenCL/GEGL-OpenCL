@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gil-statement.h" 
+#include "gil-statement.h"
 
 #define GIL_TYPE_EXPR_STATEMENT               (gil_expr_statement_get_type ())
 #define GIL_EXPR_STATEMENT(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIL_TYPE_EXPR_STATEMENT, GilExprStatement))
@@ -19,7 +19,7 @@ extern "C" {
 typedef struct _GilExprStatement  GilExprStatement;
 #endif
 
-struct _GilExprStatement 
+struct _GilExprStatement
 {
     GilStatement     __parent__;
 
@@ -27,7 +27,7 @@ struct _GilExprStatement
 };
 
 typedef struct _GilExprStatementClass GilExprStatementClass;
-struct _GilExprStatementClass 
+struct _GilExprStatementClass
 {
    GilStatementClass __parent__;
 };

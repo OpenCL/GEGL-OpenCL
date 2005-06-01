@@ -2,10 +2,10 @@
 
 enum
 {
-  PROP_0, 
-  PROP_LENGTH, 
-  PROP_DEFAULT_PIXEL, 
-  PROP_LAST 
+  PROP_0,
+  PROP_LENGTH,
+  PROP_DEFAULT_PIXEL,
+  PROP_LAST
 };
 
 static void class_init (GeglMockImageClass * klass);
@@ -31,16 +31,16 @@ gegl_mock_image_get_type (void)
         (GBaseFinalizeFunc) NULL,
         (GClassInitFunc) class_init,
         (GClassFinalizeFunc) NULL,
-        NULL,                       
+        NULL,
         sizeof (GeglMockImage),
         0,
         (GInstanceInitFunc) init,
         NULL,             /* value_table */
       };
 
-      type = g_type_register_static (GEGL_TYPE_OBJECT, 
-                                     "GeglMockImage", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_OBJECT,
+                                     "GeglMockImage",
+                                     &typeInfo,
                                      0);
 
     }
@@ -48,7 +48,7 @@ gegl_mock_image_get_type (void)
     return type;
 }
 
-static void 
+static void
 class_init (GeglMockImageClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -80,8 +80,8 @@ class_init (GeglMockImageClass * klass)
                                   G_PARAM_READWRITE));
 }
 
-static void 
-init (GeglMockImage * self, 
+static void
+init (GeglMockImage * self,
       GeglMockImageClass * klass)
 {
   self->data = NULL;
@@ -89,7 +89,7 @@ init (GeglMockImage * self,
   self->default_pixel = 0;
 }
 
-static GObject*        
+static GObject*
 constructor (GType                  type,
              guint                  n_props,
              GObjectConstructParam *props)
@@ -102,7 +102,7 @@ constructor (GType                  type,
   self->data = g_new(gint, self->length);
   data = self->data;
 
-  for(i = 0; i < self->length; i++) 
+  for(i = 0; i < self->length; i++)
     data[i] = self->default_pixel;
 
   return gobject;
@@ -165,7 +165,7 @@ gegl_mock_image_get_data(GeglMockImage *self)
   return self->data;
 }
 
-gint 
+gint
 gegl_mock_image_get_length(GeglMockImage *self)
 {
   g_return_val_if_fail(GEGL_IS_MOCK_IMAGE(self), -1);

@@ -8,10 +8,10 @@
 #include <stdio.h>
 #define bool int
 #ifndef TRUE
-#define TRUE 1 
+#define TRUE 1
 #endif
-#ifndef FALSE 
-#define FALSE 0 
+#ifndef FALSE
+#define FALSE 0
 #endif
 
 #define ct_test(test, cond) \

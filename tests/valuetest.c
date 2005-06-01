@@ -6,7 +6,7 @@
 static void
 test_value_set(Test *test)
 {
-  GValue *value =  g_new0(GValue, 1); 
+  GValue *value =  g_new0(GValue, 1);
   g_value_init(value, G_TYPE_INT);
   g_value_set_int(value, 233);
 
@@ -57,7 +57,7 @@ test_float_array_value_set(Test *test)
   const gfloat *channels = NULL;
   gint length;
 
-  GValue *value =  g_new0(GValue, 1); 
+  GValue *value =  g_new0(GValue, 1);
   g_value_init(value, GEGL_TYPE_FLOAT_ARRAY);
 
   g_value_set_float_array(value, 3, &array[0]);
@@ -90,11 +90,11 @@ create_value_test()
   g_assert(ct_addSetUp(t, value_test_setup));
   g_assert(ct_addTearDown(t, value_test_teardown));
 
-#if 1 
+#if 1
   g_assert(ct_addTestFun(t, test_value_set));
   g_assert(ct_addTestFun(t, test_value_compatible));
   g_assert(ct_addTestFun(t, test_float_array_value_set));
 #endif
 
-  return t; 
+  return t;
 }

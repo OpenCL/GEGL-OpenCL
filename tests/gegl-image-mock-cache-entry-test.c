@@ -34,7 +34,7 @@ test_mock_cache_entry_g_object_new(Test *test)
   ct_test(test, g_type_parent(GEGL_TYPE_MOCK_CACHE_ENTRY) == GEGL_TYPE_CACHE_ENTRY);
   ct_test(test, g_type_parent(GEGL_TYPE_CACHE_ENTRY) == G_TYPE_OBJECT);
   ct_test(test, !strcmp("GeglCacheEntry", g_type_name(GEGL_TYPE_CACHE_ENTRY)));
-  
+
   g_object_unref(mock_entry);
 }
 
@@ -47,7 +47,7 @@ test_mock_cache_entry_flatten_tests(Test *test)
   gint i;
   memcpy (mock_entry->data, test_array, 5 * sizeof(gint));
   gint * flattened = g_new (gint, 5);
-  
+
   ct_test(test, gegl_cache_entry_flattened_size(cache_entry) == 5 * sizeof(gint));
   gegl_cache_entry_flatten (cache_entry, flattened, sizeof(gint) * 5);
   for (i=0;i<5;i++)
@@ -76,5 +76,5 @@ create_mock_cache_entry_test()
   */
   g_assert(ct_addTestFun(t, test_mock_cache_entry_g_object_new));
   g_assert(ct_addTestFun(t, test_mock_cache_entry_flatten_tests));
-  return t; 
+  return t;
 }

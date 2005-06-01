@@ -2,11 +2,11 @@
 
 enum
 {
-  PROP_0, 
+  PROP_0,
   PROP_NUM_CHILDREN,
   PROP_CHILD0,
   PROP_CHILD1,
-  PROP_LAST 
+  PROP_LAST
 };
 
 static void class_init (GilMockNodeClass * klass);
@@ -41,7 +41,7 @@ gil_mock_node_get_type (void)
     return type;
 }
 
-static void 
+static void
 class_init (GilMockNodeClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -76,8 +76,8 @@ class_init (GilMockNodeClass * klass)
   return;
 }
 
-static void 
-init (GilMockNode * self, 
+static void
+init (GilMockNode * self,
       GilMockNodeClass * klass)
 {
   return;
@@ -95,17 +95,17 @@ set_property (GObject      *gobject,
   {
     case PROP_NUM_CHILDREN:
       {
-        gil_node_set_num_children(node, g_value_get_int(value));  
+        gil_node_set_num_children(node, g_value_get_int(value));
       }
       break;
     case PROP_CHILD0:
       {
-        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 0);  
+        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 0);
       }
       break;
     case PROP_CHILD1:
       {
-        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 1);  
+        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 1);
       }
       break;
     default:
@@ -125,17 +125,17 @@ get_property (GObject      *gobject,
   {
     case PROP_NUM_CHILDREN:
       {
-        g_value_set_int(value, gil_node_get_num_children(node));  
+        g_value_set_int(value, gil_node_get_num_children(node));
       }
       break;
     case PROP_CHILD0:
       {
-        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 0));  
+        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 0));
       }
       break;
     case PROP_CHILD1:
       {
-        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 1));  
+        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 1));
       }
       break;
     default:

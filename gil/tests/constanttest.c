@@ -8,7 +8,7 @@ static void
 test_constant_g_object_new(Test *test)
 {
   {
-    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT, NULL);  
+    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT, NULL);
 
     ct_test(test, constant != NULL);
     ct_test(test, GIL_IS_CONSTANT(constant));
@@ -19,18 +19,18 @@ test_constant_g_object_new(Test *test)
   }
 
   {
-    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT, 
+    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT,
                                            "type", GIL_INT,
-                                           "int" , 10, 
-                                           NULL);  
+                                           "int" , 10,
+                                           NULL);
     g_object_unref(constant);
   }
 
   {
-    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT, 
+    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT,
                                            "type", GIL_FLOAT,
-                                           "float" , 1.5, 
-                                           NULL);  
+                                           "float" , 1.5,
+                                           NULL);
     g_object_unref(constant);
   }
 }
@@ -39,20 +39,20 @@ static void
 test_constant_g_object_get(Test *test)
 {
   {
-    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT, 
-                                           "type", GIL_INT, 
-                                           "int" , 2, 
-                                           NULL);  
+    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT,
+                                           "type", GIL_INT,
+                                           "int" , 2,
+                                           NULL);
     ct_test(test, GIL_INT == gil_constant_get_const_type(constant));
     ct_test(test, 2 == gil_constant_get_int(constant));
     g_object_unref(constant);
   }
 
   {
-    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT, 
-                                           "type", GIL_FLOAT, 
-                                           "float" , 1.5, 
-                                           NULL);  
+    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT,
+                                           "type", GIL_FLOAT,
+                                           "float" , 1.5,
+                                           NULL);
     ct_test(test, GIL_FLOAT == gil_constant_get_const_type(constant));
     ct_test(test, 1.5 == gil_constant_get_float(constant));
     g_object_unref(constant);
@@ -64,20 +64,20 @@ static void
 test_constant_g_object_set(Test *test)
 {
   {
-    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT, 
-                                           "type", GIL_INT, 
-                                           NULL);  
-    gil_constant_set_int(constant, 10); 
+    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT,
+                                           "type", GIL_INT,
+                                           NULL);
+    gil_constant_set_int(constant, 10);
     ct_test(test, GIL_INT == gil_constant_get_const_type(constant));
     ct_test(test, 10 == gil_constant_get_int(constant));
     g_object_unref(constant);
   }
 
   {
-    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT, 
-                                           "type", GIL_FLOAT, 
-                                           NULL);  
-    gil_constant_set_float(constant, 1.5); 
+    GilConstant * constant = g_object_new (GIL_TYPE_CONSTANT,
+                                           "type", GIL_FLOAT,
+                                           NULL);
+    gil_constant_set_float(constant, 1.5);
     ct_test(test, GIL_FLOAT == gil_constant_get_const_type(constant));
     ct_test(test, 1.5 == gil_constant_get_float(constant));
     g_object_unref(constant);
@@ -102,7 +102,7 @@ create_constant_test()
   g_assert(ct_addSetUp(t, constant_setup));
   g_assert(ct_addTearDown(t, constant_teardown));
 
-#if 1 
+#if 1
   g_assert(ct_addTestFun(t, test_constant_g_object_new));
   g_assert(ct_addTestFun(t, test_constant_g_object_get));
   g_assert(ct_addTestFun(t, test_constant_g_object_set));

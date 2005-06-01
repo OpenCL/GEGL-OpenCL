@@ -15,18 +15,18 @@ extern "C" {
 #define GEGL_MOCK_NODE_VISITOR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MOCK_NODE_VISITOR, GeglMockNodeVisitorClass))
 
 typedef struct _GeglMockNodeVisitor GeglMockNodeVisitor;
-struct _GeglMockNodeVisitor 
+struct _GeglMockNodeVisitor
 {
        GeglVisitor visitor;
 };
 
 typedef struct _GeglMockNodeVisitorClass GeglMockNodeVisitorClass;
-struct _GeglMockNodeVisitorClass 
+struct _GeglMockNodeVisitorClass
 {
        GeglVisitorClass visitor_class;
 };
 
-GType         gegl_mock_node_visitor_get_type          (void); 
+GType         gegl_mock_node_visitor_get_type          (void);
 
 #ifdef __cplusplus
 }

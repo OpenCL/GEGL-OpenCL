@@ -32,7 +32,7 @@ static void
 test_null_cache_store_new (Test * test)
 {
   GeglNullCacheStore * null_store;
-  
+
   null_store = gegl_null_cache_store_new (GEGL_DISCARDED);
   ct_test(test, GEGL_IS_NULL_CACHE_STORE(null_store) == TRUE);
   ct_test(test, g_type_parent(GEGL_TYPE_NULL_CACHE_STORE) == GEGL_TYPE_CACHE_STORE);
@@ -59,16 +59,16 @@ Test *
 create_null_cache_store_test()
 {
   Test* t = ct_create("GeglNullCacheStoreTest");
-  
-  
+
+
   g_assert(ct_addSetUp(t, setup));
   g_assert(ct_addTearDown(t, teardown));
-  
+
   g_assert(ct_addTestFun(t, test_null_cache_store_new));
   g_assert(ct_addTestFun(t, test_cache_store_add_remove));
   g_assert(ct_addTestFun(t, test_cache_store_zap));
   g_assert(ct_addTestFun(t, test_cache_store_pop));
   g_assert(ct_addTestFun(t, test_cache_store_peek));
 
-  return t; 
+  return t;
 }

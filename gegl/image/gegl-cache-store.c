@@ -38,21 +38,21 @@ gegl_cache_store_get_type (void)
 	  sizeof (GeglCacheStoreClass),
 	  NULL, /*base_init*/
 	  NULL, /* base_finalize */
-	  
+	
 	  /* classed types, instantiated types */
 	  class_init, /* class_init */
 	  NULL, /* class_finalize */
 	  NULL, /* class_data */
-	  
+	
 	  /* instantiated types */
 	  sizeof(GeglCacheStore),
 	  0, /* n_preallocs */
 	  instance_init, /* instance_init */
-	  
+	
 	  /* value handling */
 	  NULL /* value_table */
 	};
-      
+
       type = g_type_register_static (G_TYPE_OBJECT ,
 				     "GeglCacheStore",
 				     &typeInfo,

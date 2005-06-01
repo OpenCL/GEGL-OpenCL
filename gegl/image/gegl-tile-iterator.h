@@ -98,7 +98,7 @@ gdouble *gegl_tile_iterator_get_colors_amult (GeglTileIterator * self,
 					      gdouble * pixel);
 void gegl_tile_iterator_set_colors_amult (GeglTileIterator * self,
 					  const gdouble * pixel);
-/* 
+/*
  * Get and set the entire pixel.  Use the color model of the tile to
  * determine what goes where.
  */
@@ -106,7 +106,7 @@ void gegl_tile_iterator_set_pixel (GeglTileIterator * self,
 				   const gdouble * pixel);
 gdouble *gegl_tile_iterator_get_pixel (GeglTileIterator * self, gdouble * pixel);
 
-/* 
+/*
  * These are the navigation functions.
  */
 void gegl_tile_iterator_start_lines (GeglTileIterator * self);

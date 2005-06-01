@@ -49,22 +49,22 @@ gegl_eval_mgr_get_type (void)
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_OBJECT , 
-                                     "GeglEvalMgr", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_OBJECT ,
+                                     "GeglEvalMgr",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglEvalMgrClass * klass)
 {
   parent_class = g_type_class_peek_parent(klass);
 }
 
-static void 
-init (GeglEvalMgr * self, 
+static void
+init (GeglEvalMgr * self,
       GeglEvalMgrClass * klass)
 {
 }
@@ -76,8 +76,8 @@ init (GeglEvalMgr * self,
  * Update this property.
  *
  **/
-void 
-gegl_eval_mgr_apply (GeglEvalMgr * self, 
+void
+gegl_eval_mgr_apply (GeglEvalMgr * self,
                      GeglNode *root,
                      const gchar *property_name)
 {
@@ -93,8 +93,8 @@ gegl_eval_mgr_apply (GeglEvalMgr * self,
 
 #if 0
   /* This part does the evaluation of the ops, depth first. */
-  gegl_log_debug(__FILE__, __LINE__,"eval_mgr_apply", 
-                 "begin eval-compute for node: %s %p property: %s", 
+  gegl_log_debug(__FILE__, __LINE__,"eval_mgr_apply",
+                 "begin eval-compute for node: %s %p property: %s",
                  G_OBJECT_TYPE_NAME(root), root, property_name);
 #endif
 

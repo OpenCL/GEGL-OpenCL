@@ -43,7 +43,7 @@ struct _SwapGap
  * This global defines the amount a swap file should be extended by.
  * Currently 4MB
  */
-static const gint64 SWAP_EXTEND = 4*1024*1024; 
+static const gint64 SWAP_EXTEND = 4*1024*1024;
 static gpointer parent_class;
 
 static void class_init(gpointer g_class,
@@ -81,21 +81,21 @@ gegl_swap_cache_store_get_type(void)
 	  sizeof(GeglSwapCacheStoreClass),
 	  NULL, /*base_init*/
 	  NULL, /* base_finalize */
-	  
+	
 	  /* classed types, instantiated types */
 	  class_init, /* class_init */
 	  NULL, /* class_finalize */
 	  NULL, /* class_data */
-	  
+	
 	  /* instantiated types */
 	  sizeof(GeglSwapCacheStore),
 	  0, /* n_preallocs */
 	  instance_init, /* instance_init */
-	  
+	
 	  /* value handling */
 	  NULL /* value_table */
 	};
-      
+
       type = g_type_register_static (GEGL_TYPE_CACHE_STORE ,
 				     "GeglSwapCacheStore",
 				     &typeInfo,
@@ -115,7 +115,7 @@ gegl_swap_cache_store_new (const gchar * template)
       g_error("g_mkstemp failed to create the a temporary file using template \"%s\"", template);
       g_object_unref (new_store);
       new_store = NULL;
-    } 
+    }
   else
     {
       new_store->fd = fd;
@@ -144,7 +144,7 @@ dispose (GObject * object)
       g_list_foreach (self->record_head, g_list_free_record, NULL);
       g_list_free (self->record_head);
     }
-  
+
 }
 
 static void
@@ -166,14 +166,14 @@ class_init(gpointer g_class,
 {
   GeglCacheStoreClass * cache_store_class = GEGL_CACHE_STORE_CLASS(g_class);
   GObjectClass * gobject_class = g_class;
-  
+
   cache_store_class->add = add;
   cache_store_class->remove = remove;
   cache_store_class->zap = zap;
   cache_store_class->size = size;
   cache_store_class->pop = pop;
   cache_store_class->peek = peek;
-  
+
   gobject_class->finalize = finalize;
   gobject_class->dispose = dispose;
   parent_class = g_type_class_peek_parent (g_class);
@@ -197,7 +197,7 @@ add (GeglCacheStore * store, GeglEntryRecord * record)
 {
   GeglSwapCacheStore * self = GEGL_SWAP_CACHE_STORE (store);
   SwapStoreData * store_data = NULL;
-  
+
   store_data = attach_record (self, record);
   g_return_if_fail (store_data != NULL);
   swap_in (self, record->entry, store_data);
@@ -340,7 +340,7 @@ swap_zap (GeglSwapCacheStore * self, GeglCacheEntry * entry, SwapStoreData * sto
     {
       gap_list_add_gap(self, store_data->offset, store_data->length);
     }
-  
+
   store_data->offset = -1;
   store_data->length = -1;
 }
@@ -360,7 +360,7 @@ swap_out (GeglSwapCacheStore * self, GeglCacheEntry * entry, SwapStoreData * sto
    * There are plenty of things that can go wrong with mmap.  It
    * should really be error checked here.
    */
-  
+
   buffer = g_new (gchar, store_data->length);
   g_io_channel_seek_position (self->channel, store_data->offset, G_SEEK_SET, &err);
   if (err != NULL)
@@ -420,7 +420,7 @@ detach_record(GeglSwapCacheStore * self, GeglEntryRecord * record)
   self->size -= gegl_cache_entry_flattened_size (record->entry);
   gegl_entry_record_set_cache_store (record, NULL);
   record->status = GEGL_UNDEFINED;
-  
+
 }
 
 static gint
@@ -436,7 +436,7 @@ find_sized_gap (gconstpointer data, gconstpointer userdata)
     {
       return -1;
     }
-  
+
 }
 static gint
 find_after_gap (gconstpointer data, gconstpointer userdata)
@@ -529,7 +529,7 @@ gap_list_add_gap(GeglSwapCacheStore * self, gint64 offset, gsize length)
 	      new = before;
 	    }
 	}
-      
+
       if (after != NULL)
 	{
 	  SwapGap * after_gap = (SwapGap *)after->data;

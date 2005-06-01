@@ -18,7 +18,7 @@
  *  Copyright 2003 Calvin Williamson
  *
  */
-#include "gegl-visitable.h" 
+#include "gegl-visitable.h"
 #include <string.h>
 #include <glib-object.h>
 
@@ -32,20 +32,20 @@ gegl_visitable_get_type (void)
       static const GTypeInfo type_info =
       {
         sizeof (GeglVisitableClass),
-        (GBaseInitFunc) NULL,         
+        (GBaseInitFunc) NULL,
         (GBaseFinalizeFunc) NULL,
         (GClassInitFunc) NULL,
         (GClassFinalizeFunc) NULL,
-        NULL,                       
+        NULL,
         0,
         0,
         (GInstanceInitFunc) NULL,
-        NULL,           
+        NULL,
       };
 
-      type = g_type_register_static (G_TYPE_INTERFACE, 
-                                    "GeglVisitable", 
-                                     &type_info, 
+      type = g_type_register_static (G_TYPE_INTERFACE,
+                                    "GeglVisitable",
+                                     &type_info,
                                      0);
 
       g_type_interface_add_prerequisite (type, GEGL_TYPE_OBJECT);

@@ -4,7 +4,7 @@
 
 /* Various tree traversal functions */
 
-static void 
+static void
 print_tabs(int tabs) {
    int i;
    for (i = 0; i < tabs; i++)
@@ -13,8 +13,8 @@ print_tabs(int tabs) {
 
 
 void
-gil_print_ast(GNode *node, 
-              gint tabs) 
+gil_print_ast(GNode *node,
+              gint tabs)
 {
   GilNodeData * data;
   if (!node) return;
@@ -23,19 +23,19 @@ gil_print_ast(GNode *node,
 
   print_tabs(tabs);
   printf("(");
-  switch (data->kind) 
+  switch (data->kind)
   {
-    case GIL_NODE_KIND_INT_CONST: 
+    case GIL_NODE_KIND_INT_CONST:
        /* int leaf node: print "int" then the value on the one line */
        printf("int const %d", data->value.intVal);
        printf(")");
        break;
-    case GIL_NODE_KIND_FLOAT_CONST: 
+    case GIL_NODE_KIND_FLOAT_CONST:
        /* int leaf node: print "int" then the value on the one line */
        printf("float const %f", data->value.floatVal);
        printf(")");
        break;
-    case GIL_NODE_KIND_ID:      
+    case GIL_NODE_KIND_ID:
        /* string leaf node: print "id" then the string on the one line */
        printf("id %s", data->value.idVal);
        printf(")");
@@ -67,7 +67,7 @@ gil_print_ast(GNode *node,
           printf(")");
           break;
         }
-    case GIL_NODE_KIND_STATEMENT_LIST:      
+    case GIL_NODE_KIND_STATEMENT_LIST:
        {
          int num_children = g_node_n_children(node);
          int i;
@@ -83,7 +83,7 @@ gil_print_ast(GNode *node,
          printf(")");
        }
        break;
-    case GIL_NODE_KIND_BLOCK:      
+    case GIL_NODE_KIND_BLOCK:
        {
           GNode *n1 = g_node_nth_child(node,0);
 
@@ -105,14 +105,14 @@ gil_print_ast(GNode *node,
 }
 
 #if 0
-int 
-gil_evaluate(GNode *root) 
+int
+gil_evaluate(GNode *root)
 {
     GilNodeData * data;
     if (!node) return 0;
 
     data = node->data;
-    switch(data->kind) 
+    switch(data->kind)
     {
       default:
         return 0;
@@ -126,13 +126,13 @@ gil_evaluate(GNode *root)
           GNode *n3 = g_node_nth_child(node,2);
           guint num_nodes = g_node_n_children(node);
 
-          switch(data->value.opVal) 
+          switch(data->value.opVal)
           {
             default:
                 return 0;
-            case WHILE:     
-                            while(gil_evaluate(n1)) 
-                                gil_evaluate(n2); 
+            case WHILE:
+                            while(gil_evaluate(n1))
+                                gil_evaluate(n2);
                             return 0;
 
             case IF:        if (gil_evaluate(n1))
@@ -140,9 +140,9 @@ gil_evaluate(GNode *root)
                             else if (num_nodes > 2)
                                 gil_evaluate(n3);
                             return 0;
-            case PRINT:     printf("%d\n", gil_evaluate(n1)); 
+            case PRINT:     printf("%d\n", gil_evaluate(n1));
                             return 0;
-            case ';':       gil_evaluate(n1); 
+            case ';':       gil_evaluate(n1);
                             return gil_evaluate(n2);
             case '=':       return sym[((GilNodeData*)(n1->data))->value.idVal] = gil_evaluate(n2);
             case UMINUS:    return -gil_evaluate(n1);

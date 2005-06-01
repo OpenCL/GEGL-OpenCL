@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gil-expression.h" 
+#include "gil-expression.h"
 
 #define GIL_TYPE_CONSTANT               (gil_constant_get_type ())
 #define GIL_CONSTANT(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIL_TYPE_CONSTANT, GilConstant))
@@ -19,30 +19,30 @@ extern "C" {
 typedef struct _GilConstant  GilConstant;
 #endif
 
-struct _GilConstant 
+struct _GilConstant
 {
     GilExpression     __parent__;
 
     /*< private >*/
-    GilType  type; 
-    GilValue value; 
+    GilType  type;
+    GilValue value;
 };
 
 typedef struct _GilConstantClass GilConstantClass;
-struct _GilConstantClass 
+struct _GilConstantClass
 {
    GilExpressionClass __parent__;
 };
 
 GType             gil_constant_get_type                  (void);
 GilType           gil_constant_get_const_type (GilConstant * self);
-void              gil_constant_set_const_type (GilConstant * self, 
+void              gil_constant_set_const_type (GilConstant * self,
                                                GilType type);
 gint              gil_constant_get_int (GilConstant * self);
-void              gil_constant_set_int (GilConstant * self, 
+void              gil_constant_set_int (GilConstant * self,
                                         gint int_value);
 gfloat            gil_constant_get_float (GilConstant * self);
-void              gil_constant_set_float (GilConstant * self, 
+void              gil_constant_set_float (GilConstant * self,
                                           gfloat float_value);
 
 #ifdef __cplusplus

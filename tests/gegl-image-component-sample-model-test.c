@@ -42,7 +42,7 @@ test_g_object_new(Test *test) {
   ct_test(test, GEGL_IS_COMPONENT_SAMPLE_MODEL(csm));
   ct_test(test, g_type_parent(GEGL_TYPE_COMPONENT_SAMPLE_MODEL) == GEGL_TYPE_SAMPLE_MODEL);
   ct_test(test, !strcmp("GeglComponentSampleModel", g_type_name(GEGL_TYPE_COMPONENT_SAMPLE_MODEL)));
-  
+
   g_object_unref(csm);
 }
 
@@ -73,7 +73,7 @@ test_properties(Test* test) {
   gint num_bands;
   gint pixel_stride;
   gint scanline_stride;
-  
+
   GObject* object=G_OBJECT(csm);
   g_object_get(object,"width",&width,"height",&height,"num_bands",&num_bands,
 	       "pixel_stride",&pixel_stride,"scanline_stride",
@@ -110,13 +110,13 @@ test_pixel_interleaving(Test* test) {
 					     "scanline_stride",num_bands*width,
 					     NULL);
   GeglSampleModel* sample_model=GEGL_SAMPLE_MODEL(csm);
-  
+
   ct_test(test,gegl_sample_model_check_buffer(sample_model,buffer)==TRUE);
-  
+
   GeglBuffer* new_buffer=gegl_sample_model_create_buffer(sample_model,TYPE_DOUBLE);
-  
+
   ct_test(test,gegl_sample_model_check_buffer(sample_model,new_buffer)==TRUE);
-  
+
   gint num_banks1,num_banks2,num_elements1,num_elements2;
 
   g_object_get(buffer,"num_banks",&num_banks1,"elements_per_bank",&num_elements1,NULL);
@@ -150,12 +150,12 @@ test_pixel_interleaving(Test* test) {
       break;
     }
   }
-  
+
   ct_test(test,all_OK==TRUE);
-  
+
   gdouble** banks=(gdouble**)gegl_buffer_get_banks(buffer);
   gdouble* bank=banks[0];
-  
+
   all_OK=TRUE;
   for (y=0;y<height;y++) {
     for (x=0;x<width;x++) {
@@ -192,7 +192,7 @@ test_band_interleaving(Test* test) {
 					       "elements_per_bank", width*height,
 					       NULL);
   GeglBuffer* buffer=GEGL_BUFFER(buffer_double);
-  
+
   GArray* band_indices=g_array_new(FALSE,FALSE,sizeof(gint));
   gint data[3]={0,1,2};
   g_array_append_vals(band_indices,data,3);
@@ -207,16 +207,16 @@ test_band_interleaving(Test* test) {
   g_array_free(band_indices,TRUE);
   GeglSampleModel* sample_model=GEGL_SAMPLE_MODEL(csm);
   ct_test(test,gegl_sample_model_check_buffer(sample_model,buffer)==TRUE);
-  
+
   GeglBuffer* new_buffer=gegl_sample_model_create_buffer(sample_model,TYPE_DOUBLE);
-  
+
   ct_test(test,gegl_sample_model_check_buffer(sample_model,new_buffer)==TRUE);
-  
+
   gint num_banks1,num_banks2,num_elements1,num_elements2;
 
   g_object_get(buffer,"num_banks",&num_banks1,"elements_per_bank",&num_elements1,NULL);
   g_object_get(buffer,"num_banks",&num_banks2,"elements_per_bank",&num_elements2,NULL);
-  
+
   ct_test(test,num_banks1 == num_banks2);
   ct_test(test,num_elements1 == num_elements2);
 
@@ -248,11 +248,11 @@ test_band_interleaving(Test* test) {
     }
 
   ct_test(test,all_OK==TRUE);
-  
+
   gdouble** banks=(gdouble**)gegl_buffer_get_banks(buffer);
 
   all_OK=TRUE;
-  
+
   //here is the actual band interleaved specific part
 
   for (y=0;y<height;y++) {
@@ -271,14 +271,14 @@ test_band_interleaving(Test* test) {
     }
   }
   ct_test(test,all_OK==TRUE);
-  
+
   g_object_unref(new_buffer);
   g_object_unref(buffer);
   g_object_unref(csm);
   return;
 }
 
-static void 
+static void
 test_normalizers(Test* test)
 {
     GArray* normalizers=g_array_new(FALSE,FALSE,sizeof(GeglNormalizer*));
@@ -351,13 +351,13 @@ Test *
 create_component_sample_model_test()
 {
   Test* t = ct_create("GeglComponentSampleModelTest");
-  
+
   g_assert(ct_addTestFun(t, test_g_object_new));
   g_assert(ct_addTestFun(t, test_properties));
   g_assert(ct_addTestFun(t, test_pixel_interleaving));
   g_assert(ct_addTestFun(t, test_band_interleaving));
   g_assert(ct_addTestFun(t, test_normalizers));
 
-  return t; 
+  return t;
 }
 

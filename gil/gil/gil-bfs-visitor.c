@@ -4,7 +4,7 @@
 static void class_init (GilBfsVisitorClass * klass);
 static void init (GilBfsVisitor * self, GilBfsVisitorClass * klass);
 
-static void init_traversal (GilBfsVisitor * self, GilNode * node); 
+static void init_traversal (GilBfsVisitor * self, GilNode * node);
 static gpointer parent_class = NULL;
 
 GType
@@ -27,29 +27,29 @@ gil_bfs_visitor_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GIL_TYPE_VISITOR, 
-                                     "GilBfsVisitor", 
-                                     &typeInfo, 
+      type = g_type_register_static (GIL_TYPE_VISITOR,
+                                     "GilBfsVisitor",
+                                     &typeInfo,
                                      G_TYPE_FLAG_ABSTRACT);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GilBfsVisitorClass * klass)
 {
   parent_class = g_type_class_peek_parent(klass);
 }
 
-static void 
-init (GilBfsVisitor * self, 
+static void
+init (GilBfsVisitor * self,
       GilBfsVisitorClass * klass)
 {
 }
 
-static void 
-init_traversal (GilBfsVisitor * self, 
-                GilNode * node) 
+static void
+init_traversal (GilBfsVisitor * self,
+                GilNode * node)
 {
   GilVisitor * visitor;
   gint num_children;
@@ -59,7 +59,7 @@ init_traversal (GilBfsVisitor * self,
   g_return_if_fail (GIL_IS_BFS_VISITOR (self));
   g_return_if_fail (node);
   g_return_if_fail (GIL_IS_NODE (node));
-   
+
   visitor = GIL_VISITOR(self);
   gil_visitor_node_insert(visitor, node);
 
@@ -78,10 +78,10 @@ init_traversal (GilBfsVisitor * self,
           if(!node_info)
            init_traversal(self, child);
 
-          shared_count = gil_visitor_get_shared_count(visitor, child); 
+          shared_count = gil_visitor_get_shared_count(visitor, child);
           shared_count++;
-          gil_visitor_set_shared_count(visitor, 
-                                       child, 
+          gil_visitor_set_shared_count(visitor,
+                                       child,
                                        shared_count);
         }
     }
@@ -92,14 +92,14 @@ init_traversal (GilBfsVisitor * self,
  * @self: a #GilBfsVisitor
  * @node: a #GilNode.
  *
- * Traverse the graph breadth-first from this node through all descendants. 
+ * Traverse the graph breadth-first from this node through all descendants.
  *
  **/
-void 
-gil_bfs_visitor_traverse(GilBfsVisitor *self, 
-                         GilNode * node) 
+void
+gil_bfs_visitor_traverse(GilBfsVisitor *self,
+                         GilNode * node)
 {
-  GList *queue = NULL; 
+  GList *queue = NULL;
   GList *first;
   gint shared_count;
   GilVisitor * visitor;
@@ -110,13 +110,13 @@ gil_bfs_visitor_traverse(GilBfsVisitor *self,
   g_return_if_fail (GIL_IS_NODE (node));
 
   visitor = GIL_VISITOR(self);
- 
+
   /* Init all nodes */
-  init_traversal(self, node);  
+  init_traversal(self, node);
 
   /* Initialize the queue with this node */
   queue = g_list_append(queue,(gpointer)node);
-  
+
   /* Mark node as "discovered" */
   gil_visitor_set_discovered(visitor, node, TRUE);
 
@@ -146,19 +146,19 @@ gil_bfs_visitor_traverse(GilBfsVisitor *self,
         for(i = 0; i < num_children; i++)
           {
             GilNode * child = gil_node_get_nth_child(node, i);
-            if(child) 
+            if(child)
               {
                 shared_count = gil_visitor_get_shared_count(visitor, child);
                 shared_count--;
                 gil_visitor_set_shared_count(visitor, child, shared_count);
               }
-            
+
             /* Add any undiscovered child to the queue at end,
                but skip any null nodes */
             if (child)
               {
                 gint discovered = gil_visitor_get_discovered(visitor, child);
-                if(!discovered) 
+                if(!discovered)
                   {
                     queue = g_list_append(queue, (gpointer)child);
 

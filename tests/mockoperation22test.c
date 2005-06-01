@@ -9,7 +9,7 @@ static void
 test_mock_filter_2_2_g_object_new(Test *test)
 {
   {
-    GeglNode * mock_filter_2_2 = g_object_new (GEGL_TYPE_MOCK_FILTER_2_2, NULL);  
+    GeglNode * mock_filter_2_2 = g_object_new (GEGL_TYPE_MOCK_FILTER_2_2, NULL);
 
     ct_test(test, GEGL_IS_MOCK_FILTER_2_2(mock_filter_2_2));
     ct_test(test, g_type_parent(GEGL_TYPE_MOCK_FILTER_2_2) == GEGL_TYPE_FILTER);
@@ -23,7 +23,7 @@ static void
 test_mock_filter_2_2_g_object_properties(Test *test)
 {
   {
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_FILTER_2_2, NULL);  
+    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_FILTER_2_2, NULL);
     gint i;
 
     g_object_get(a, "output0", &i, NULL);
@@ -52,7 +52,7 @@ static void
 test_mock_filter_2_2_num_properties(Test *test)
 {
   {
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_FILTER_2_2, NULL);  
+    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_FILTER_2_2, NULL);
 
     ct_test(test, 2 == gegl_node_get_num_input_props(a));
     ct_test(test, 2 == gegl_node_get_num_output_props(a));
@@ -65,7 +65,7 @@ static void
 test_mock_filter_2_2_property_names(Test *test)
 {
   {
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_FILTER_2_2, NULL);  
+    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_FILTER_2_2, NULL);
     GeglProperty *output0 = gegl_node_get_property(a, "output0");
     GeglProperty *output1 = gegl_node_get_property(a, "output1");
     GeglProperty *input0 = gegl_node_get_property(a, "input0");
@@ -99,12 +99,12 @@ create_mock_filter_2_2_test()
   g_assert(ct_addSetUp(t, mock_filter_2_2_test_setup));
   g_assert(ct_addTearDown(t, mock_filter_2_2_test_teardown));
 
-#if 1 
+#if 1
   g_assert(ct_addTestFun(t, test_mock_filter_2_2_g_object_new));
   g_assert(ct_addTestFun(t, test_mock_filter_2_2_g_object_properties));
   g_assert(ct_addTestFun(t, test_mock_filter_2_2_num_properties));
   g_assert(ct_addTestFun(t, test_mock_filter_2_2_property_names));
 #endif
-                                     
-  return t; 
+
+  return t;
 }

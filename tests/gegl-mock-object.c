@@ -24,15 +24,15 @@ gegl_mock_object_get_type (void)
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_OBJECT, 
-                                     "GeglMockObject", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_OBJECT,
+                                     "GeglMockObject",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglMockObjectClass * klass)
 {
   parent_class = g_type_class_peek_parent(klass);

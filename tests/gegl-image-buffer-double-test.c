@@ -51,10 +51,10 @@ test_buffer_double_properties(Test* test) {
     gint elements_per_bank;
     g_object_get(object, "num_banks",&num_banks,NULL);
     ct_test(test, num_banks == 42);
-    
+
     g_object_get(object, "elements_per_bank",&elements_per_bank,NULL);
     ct_test(test, elements_per_bank == 47);
-    
+
     g_object_unref(buffer_double);
 }
 
@@ -88,7 +88,7 @@ test_buffer_double_get_set(Test* test) {
       break;
     }
   }
-  
+
   ct_test(test,all_ok==TRUE);
 
   g_object_unref(buffer_double);
@@ -102,7 +102,7 @@ test_buffer_double_factory(Test* test) {
 					    "elements_per_bank",256,
 					    NULL);
     ct_test(test,GEGL_IS_BUFFER_DOUBLE(buffer_double));
-    
+
     g_object_unref(buffer_double);
 }
 
@@ -118,5 +118,5 @@ create_buffer_double_test()
   g_assert(ct_addTestFun(t, test_buffer_double_factory));
   g_assert(ct_addTestFun(t, test_buffer_double_properties));
   g_assert(ct_addTestFun(t, test_buffer_double_get_set));
-  return t; 
+  return t;
 }

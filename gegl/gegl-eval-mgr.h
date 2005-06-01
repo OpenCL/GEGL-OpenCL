@@ -36,7 +36,7 @@ extern "C" {
 #define GEGL_EVAL_MGR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_EVAL_MGR, GeglEvalMgrClass))
 
 typedef struct _GeglEvalMgr GeglEvalMgr;
-struct _GeglEvalMgr 
+struct _GeglEvalMgr
 {
    GeglObject object;
 
@@ -44,13 +44,13 @@ struct _GeglEvalMgr
 };
 
 typedef struct _GeglEvalMgrClass GeglEvalMgrClass;
-struct _GeglEvalMgrClass 
+struct _GeglEvalMgrClass
 {
    GeglObjectClass object_class;
 };
 
 GType           gegl_eval_mgr_get_type          (void);
-void            gegl_eval_mgr_apply             (GeglEvalMgr * self, 
+void            gegl_eval_mgr_apply             (GeglEvalMgr * self,
                                                  GeglNode *root,
                                                  const gchar *property_name);
 

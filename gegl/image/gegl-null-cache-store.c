@@ -44,21 +44,21 @@ gegl_null_cache_store_get_type(void)
 	  sizeof(GeglNullCacheStoreClass),
 	  NULL, /*base_init*/
 	  NULL, /* base_finalize */
-	  
+	
 	  /* classed types, instantiated types */
 	  class_init, /* class_init */
 	  NULL, /* class_finalize */
 	  NULL, /* class_data */
-	  
+	
 	  /* instantiated types */
 	  sizeof(GeglNullCacheStore),
 	  0, /* n_preallocs */
 	  instance_init, /* instance_init */
-	  
+	
 	  /* value handling */
 	  NULL /* value_table */
 	};
-      
+
       type = g_type_register_static (GEGL_TYPE_CACHE_STORE ,
 				     "GeglNullCacheStore",
 				     &typeInfo,
@@ -106,7 +106,7 @@ add (GeglCacheStore * store, GeglEntryRecord * record)
   GList* record_list = g_list_append (NULL, record);
   self->record_head = g_list_concat(self->record_head, record_list);
   gegl_entry_record_add_store_data (record, store, record_list);
-  
+
   record->status = self->status;
   if (record->entry != NULL)
     {

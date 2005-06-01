@@ -15,14 +15,14 @@ extern "C" {
 #define GEGL_MULTIPLY_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MULTIPLY, GeglMultiplyClass))
 
 typedef struct _GeglMultiply GeglMultiply;
-struct _GeglMultiply 
+struct _GeglMultiply
 {
    GeglBlend blend;
    /*< private >*/
 };
 
 typedef struct _GeglMultiplyClass GeglMultiplyClass;
-struct _GeglMultiplyClass 
+struct _GeglMultiplyClass
 {
    GeglBlendClass blend_class;
 };

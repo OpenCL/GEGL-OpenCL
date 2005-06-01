@@ -45,7 +45,7 @@ typedef enum
 
 typedef struct _GeglProperty GeglProperty;
 
-struct _GeglProperty 
+struct _GeglProperty
 {
   GeglObject object;
 
@@ -57,7 +57,7 @@ struct _GeglProperty
 };
 
 typedef struct _GeglPropertyClass GeglPropertyClass;
-struct _GeglPropertyClass 
+struct _GeglPropertyClass
 {
   GeglObjectClass object_class;
 };
@@ -66,7 +66,7 @@ GType           gegl_property_get_type              (void);
 const gchar *   gegl_property_get_name              (GeglProperty * self);
 
 
-void            gegl_property_set_param_spec        (GeglProperty * self, 
+void            gegl_property_set_param_spec        (GeglProperty * self,
                                                      GParamSpec *param_spec);
 
 GList *         gegl_property_get_depends_on        (GeglProperty *self);
@@ -81,10 +81,10 @@ gboolean        gegl_property_is_input              (GeglProperty * self);
 GeglProperty*   gegl_property_get_connected_to      (GeglProperty * self);
 
 gboolean        gegl_property_is_dirty              (GeglProperty * self);
-void            gegl_property_set_dirty             (GeglProperty * self, 
+void            gegl_property_set_dirty             (GeglProperty * self,
                                                      gboolean flag);
 
-struct _GeglConnection* gegl_property_connect       (GeglProperty * sink, 
+struct _GeglConnection* gegl_property_connect       (GeglProperty * sink,
                                                      GeglProperty *source);
 void            gegl_property_disconnect            (GeglProperty * sink,
                                                      GeglProperty * source,
@@ -94,7 +94,7 @@ GList *         gegl_property_get_connections       (GeglProperty *self);
 gint            gegl_property_num_connections       (GeglProperty *self);
 
 GParamSpec *    gegl_property_get_param_spec        (GeglProperty * self);
-void            gegl_property_set_param_spec        (GeglProperty * self, 
+void            gegl_property_set_param_spec        (GeglProperty * self,
                                                      GParamSpec *param_spec);
 #ifdef __cplusplus
 }

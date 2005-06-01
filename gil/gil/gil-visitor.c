@@ -30,15 +30,15 @@ gil_visitor_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (G_TYPE_OBJECT, 
-                                     "GilVisitor", 
-                                     &typeInfo, 
+      type = g_type_register_static (G_TYPE_OBJECT,
+                                     "GilVisitor",
+                                     &typeInfo,
                                      G_TYPE_FLAG_ABSTRACT);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GilVisitorClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -46,11 +46,11 @@ class_init (GilVisitorClass * klass)
 
   gobject_class->finalize = finalize;
 
-  klass->visit_node = visit_node; 
+  klass->visit_node = visit_node;
 }
 
-static void 
-init (GilVisitor * self, 
+static void
+init (GilVisitor * self,
       GilVisitorClass * klass)
 {
   self->visits_list = NULL;
@@ -58,18 +58,18 @@ init (GilVisitor * self,
   self->nodes_hash = g_hash_table_new_full(g_direct_hash,
                                            g_direct_equal,
                                            NULL,
-                                           node_info_value_destroy); 
+                                           node_info_value_destroy);
 }
 
 static void
 finalize(GObject *gobject)
-{  
+{
   GilVisitor * self = GIL_VISITOR(gobject);
 
   g_list_free(self->visits_list);
   g_list_free(self->visits_objects_list);
   g_hash_table_destroy(self->nodes_hash);
-     
+
   G_OBJECT_CLASS(parent_class)->finalize(gobject);
 }
 
@@ -183,7 +183,7 @@ node_info_value_destroy(gpointer data)
 }
 
 
-void      
+void
 gil_visitor_visit_node(GilVisitor * self,
                         GilNode *node)
 {
@@ -199,7 +199,7 @@ gil_visitor_visit_node(GilVisitor * self,
     (*klass->visit_node)(self, node);
 }
 
-static void      
+static void
 visit_node(GilVisitor * self,
            GilNode *node)
 {

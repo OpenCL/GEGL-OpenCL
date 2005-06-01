@@ -157,7 +157,7 @@ cache_entry_class_init (gpointer g_class,
   cache_entry_class->flatten=cache_entry_flatten;
   cache_entry_class->unflatten=cache_entry_unflatten;
   cache_entry_class->discard = cache_entry_discard;
-  
+
   cache_entry_parent_class = g_type_class_peek_parent (g_class);
 }
 
@@ -169,7 +169,7 @@ cache_entry_finalize (GObject * gobject)
     {
       free_banks (self->banks, self->num_banks, self->bank_length);
     }
-  G_OBJECT_CLASS(cache_entry_parent_class)->finalize (gobject); 
+  G_OBJECT_CLASS(cache_entry_parent_class)->finalize (gobject);
 }
 
 static void
@@ -233,7 +233,7 @@ cache_entry_set (GeglBufferCacheEntry * self, GeglBuffer * buffer)
 {
   self->banks=buffer->banks;
   self->num_banks=buffer->num_banks;
-  self->bank_length=(buffer->elements_per_bank)*(buffer->bytes_per_element);  
+  self->bank_length=(buffer->elements_per_bank)*(buffer->bytes_per_element);
 }
 
 static void
@@ -296,7 +296,7 @@ static void
 finalize (GObject * gobject)
 {
   GeglBuffer *self = GEGL_BUFFER (gobject);
-  
+
   if (self->banks != NULL)
     {
       free_banks (self->banks,self->num_banks,(self->bytes_per_element)*(self->elements_per_bank));
@@ -418,7 +418,7 @@ free_banks (gpointer* banks, gsize num_banks, gsize bank_length)
  *
  * Gets the elements per bank.
  *
- * Returns: number of elements per bank. 
+ * Returns: number of elements per bank.
  **/
 gint
 gegl_buffer_get_elements_per_bank (const GeglBuffer * self)
@@ -435,7 +435,7 @@ gegl_buffer_get_elements_per_bank (const GeglBuffer * self)
  *
  * Gets the number of banks.
  *
- * Returns: number of banks. 
+ * Returns: number of banks.
  **/
 gint
 gegl_buffer_get_num_banks (const GeglBuffer * self)
@@ -452,7 +452,7 @@ gegl_buffer_get_num_banks (const GeglBuffer * self)
  *
  * Gets the data pointers.
  *
- * Returns: pointers to the buffers. 
+ * Returns: pointers to the buffers.
  **/
 gpointer *
 gegl_buffer_get_banks (const GeglBuffer * self)
@@ -558,7 +558,7 @@ gegl_buffer_unshare (GeglBuffer * source)
 				   "elements_per_bank", source->elements_per_bank,
 				   "num_banks", source->num_banks,
 				   "cache", source->cache, NULL);
-  gegl_buffer_lock (new_buffer); 
+  gegl_buffer_lock (new_buffer);
   for (i=0;i<(source->num_banks);i++)
     {
       memcpy(new_buffer->banks[i], source->banks[i],

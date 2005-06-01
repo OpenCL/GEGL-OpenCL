@@ -5,14 +5,14 @@
 #include "testutils.h"
 #include <string.h>
 
-#define MULTIPLIER .5 
+#define MULTIPLIER .5
 
 #define R0 80
 #define G0 160
 #define B0 240
 
-#define IMAGE_OP_WIDTH 1 
-#define IMAGE_OP_HEIGHT 1 
+#define IMAGE_OP_WIDTH 1
+#define IMAGE_OP_HEIGHT 1
 
 static GeglOp * source;
 
@@ -20,7 +20,7 @@ static void
 test_fade_g_object_new(Test *test)
 {
   {
-    GeglFade * fade = g_object_new (GEGL_TYPE_FADE, NULL);  
+    GeglFade * fade = g_object_new (GEGL_TYPE_FADE, NULL);
 
     ct_test(test, fade != NULL);
     ct_test(test, GEGL_IS_FADE(fade));
@@ -35,10 +35,10 @@ static void
 test_fade_g_object_properties(Test *test)
 {
   {
-    GeglFade * fade = g_object_new (GEGL_TYPE_FADE, 
-                                    "multiplier", MULTIPLIER, 
+    GeglFade * fade = g_object_new (GEGL_TYPE_FADE,
+                                    "multiplier", MULTIPLIER,
                                     "source", source,
-                                     NULL);  
+                                     NULL);
 
     ct_test(test, 2 == gegl_node_get_num_inputs(GEGL_NODE(fade)));
     ct_test(test, source == (GeglOp*)gegl_node_get_source(GEGL_NODE(fade), 0));
@@ -47,7 +47,7 @@ test_fade_g_object_properties(Test *test)
   }
 
   {
-    GeglFade * fade = g_object_new (GEGL_TYPE_FADE, NULL);  
+    GeglFade * fade = g_object_new (GEGL_TYPE_FADE, NULL);
 
     g_object_set(fade, "multiplier", MULTIPLIER, NULL);
 
@@ -56,9 +56,9 @@ test_fade_g_object_properties(Test *test)
 
   {
     gfloat multiplier;
-    GeglFade * fade = g_object_new (GEGL_TYPE_FADE, 
-                                    "multiplier", MULTIPLIER, 
-                                    NULL);  
+    GeglFade * fade = g_object_new (GEGL_TYPE_FADE,
+                                    "multiplier", MULTIPLIER,
+                                    NULL);
 
     g_object_get(fade, "multiplier", &multiplier, NULL);
 
@@ -78,14 +78,14 @@ test_fade_apply(Test *test)
                                 "multiplier", MULTIPLIER,
                                 NULL);
 
-    gegl_op_apply(fade); 
+    gegl_op_apply(fade);
 
-   
-    r = CLAMP((gint)(R0 * MULTIPLIER + .5), 0, 255); 
-    g = CLAMP((gint)(G0 * MULTIPLIER + .5), 0, 255); 
-    b = CLAMP((gint)(B0 * MULTIPLIER + .5), 0, 255); 
 
-    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(fade), r, g, b)); 
+    r = CLAMP((gint)(R0 * MULTIPLIER + .5), 0, 255);
+    g = CLAMP((gint)(G0 * MULTIPLIER + .5), 0, 255);
+    b = CLAMP((gint)(B0 * MULTIPLIER + .5), 0, 255);
+
+    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(fade), r, g, b));
     g_object_unref(fade);
   }
 
@@ -101,17 +101,17 @@ test_fade_apply(Test *test)
                                  "source", fade1,
                                  NULL);
 
-    gegl_op_apply(fade2); 
+    gegl_op_apply(fade2);
 
-    r = CLAMP((gint)(R0 * MULTIPLIER + .5), 0, 255); 
-    g = CLAMP((gint)(G0 * MULTIPLIER + .5), 0, 255); 
-    b = CLAMP((gint)(B0 * MULTIPLIER + .5), 0, 255); 
+    r = CLAMP((gint)(R0 * MULTIPLIER + .5), 0, 255);
+    g = CLAMP((gint)(G0 * MULTIPLIER + .5), 0, 255);
+    b = CLAMP((gint)(B0 * MULTIPLIER + .5), 0, 255);
 
-    r = CLAMP((gint)(r * MULTIPLIER + .5), 0, 255); 
-    g = CLAMP((gint)(g * MULTIPLIER + .5), 0, 255); 
-    b = CLAMP((gint)(b * MULTIPLIER + .5), 0, 255); 
+    r = CLAMP((gint)(r * MULTIPLIER + .5), 0, 255);
+    g = CLAMP((gint)(g * MULTIPLIER + .5), 0, 255);
+    b = CLAMP((gint)(b * MULTIPLIER + .5), 0, 255);
 
-    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(fade2), r, g, b)); 
+    ct_test(test, testutils_check_rgb_uint8(GEGL_IMAGE_OP(fade2), r, g, b));
 
     g_object_unref(fade1);
     g_object_unref(fade2);
@@ -121,15 +121,15 @@ test_fade_apply(Test *test)
 static void
 fade_test_setup(Test *test)
 {
-  GeglColor *color = g_object_new(GEGL_TYPE_COLOR, 
-                                  "rgb-float", R0/255.0, G0/255.0, B0/255.0, 
+  GeglColor *color = g_object_new(GEGL_TYPE_COLOR,
+                                  "rgb-float", R0/255.0, G0/255.0, B0/255.0,
                                   NULL);
-  source = g_object_new(GEGL_TYPE_FILL, 
-                        "width", IMAGE_OP_WIDTH, 
-                        "height", IMAGE_OP_HEIGHT, 
+  source = g_object_new(GEGL_TYPE_FILL,
+                        "width", IMAGE_OP_WIDTH,
+                        "height", IMAGE_OP_HEIGHT,
                         "fill-color", color,
                         "image-data-type", "rgb-uint8",
-                        NULL); 
+                        NULL);
   g_object_unref(color);
 }
 
@@ -147,11 +147,11 @@ create_fade_test_uint8()
   g_assert(ct_addSetUp(t, fade_test_setup));
   g_assert(ct_addTearDown(t, fade_test_teardown));
 
-#if 1 
+#if 1
   g_assert(ct_addTestFun(t, test_fade_g_object_new));
   g_assert(ct_addTestFun(t, test_fade_g_object_properties));
   g_assert(ct_addTestFun(t, test_fade_apply));
 #endif
 
-  return t; 
+  return t;
 }

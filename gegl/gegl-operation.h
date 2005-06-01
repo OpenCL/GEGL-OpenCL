@@ -36,14 +36,14 @@ extern "C" {
 #define GEGL_FILTER_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_FILTER, GeglFilterClass))
 
 typedef struct _GeglFilter GeglFilter;
-struct _GeglFilter 
+struct _GeglFilter
 {
     GeglNode node;
     /*< private >*/
 };
 
 typedef struct _GeglFilterClass GeglFilterClass;
-struct _GeglFilterClass 
+struct _GeglFilterClass
 {
     GeglNodeClass node_class;
     gboolean (*evaluate)(GeglFilter *self, const gchar *output_prop);
@@ -52,7 +52,7 @@ struct _GeglFilterClass
 GType           gegl_filter_get_type            (void);
 void            gegl_filter_create_property     (GeglFilter *self,
                                                  GParamSpec *param_spec);
-gboolean        gegl_filter_evaluate            (GeglFilter *self, 
+gboolean        gegl_filter_evaluate            (GeglFilter *self,
                                                  const gchar *output_prop);
 #ifdef __cplusplus
 }

@@ -50,15 +50,15 @@ gegl_eval_visitor_get_type (void)
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_VISITOR, 
-                                     "GeglEvalVisitor", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_VISITOR,
+                                     "GeglEvalVisitor",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglEvalVisitorClass * klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
@@ -68,7 +68,7 @@ class_init (GeglEvalVisitorClass * klass)
   visitor_class->visit_property = visit_property;
 }
 
-static void      
+static void
 visit_property(GeglVisitor * visitor,
                GeglProperty *property)
 {
@@ -77,7 +77,7 @@ visit_property(GeglVisitor * visitor,
   {
     GeglFilter *filter = gegl_property_get_filter(property);
 #if 0
-    g_print("Compute Visitor: Visiting property %s from filter %s\n", 
+    g_print("Compute Visitor: Visiting property %s from filter %s\n",
              gegl_property_get_name(property),
              gegl_object_get_name(GEGL_OBJECT(filter)));
 #endif
@@ -99,12 +99,12 @@ visit_property(GeglVisitor * visitor,
 
             g_value_init(&value, G_PARAM_SPEC_VALUE_TYPE(prop_spec));
 
-            g_object_get_property(G_OBJECT(source), 
-                                  gegl_property_get_name(source_prop), 
+            g_object_get_property(G_OBJECT(source),
+                                  gegl_property_get_name(source_prop),
                                   &value);
-            g_object_set_property(G_OBJECT(filter), 
-                                  gegl_property_get_name(property), 
-                                  &value); 
+            g_object_set_property(G_OBJECT(filter),
+                                  gegl_property_get_name(property),
+                                  &value);
 
           }
       }

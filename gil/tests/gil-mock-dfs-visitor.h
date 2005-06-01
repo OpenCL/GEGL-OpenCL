@@ -27,7 +27,7 @@ struct _GilMockDfsVisitorClass {
        GilDfsVisitorClass __parent__;
 };
 
-GType         gil_mock_dfs_visitor_get_type          (void); 
+GType         gil_mock_dfs_visitor_get_type          (void);
 
 #ifdef __cplusplus
 }

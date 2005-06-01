@@ -8,7 +8,7 @@
 static void
 test_object_g_object_new(Test *test)
 {
-  GeglObject *object = g_object_new (GEGL_TYPE_MOCK_OBJECT, NULL);  
+  GeglObject *object = g_object_new (GEGL_TYPE_MOCK_OBJECT, NULL);
 
   ct_test(test, object  != NULL);
   ct_test(test, GEGL_IS_OBJECT(object));
@@ -26,9 +26,9 @@ static void
 test_object_g_object_new_name(Test *test)
 {
   gchar * name = "hello";
-  GeglObject *object = g_object_new (GEGL_TYPE_MOCK_OBJECT, 
-                                     "name", name, 
-                                     NULL);  
+  GeglObject *object = g_object_new (GEGL_TYPE_MOCK_OBJECT,
+                                     "name", name,
+                                     NULL);
 
   ct_test(test, !strcmp("hello", gegl_object_get_name(object)));
   g_object_unref(object);
@@ -54,5 +54,5 @@ create_object_test()
   g_assert(ct_addTestFun(t, test_object_g_object_new));
   g_assert(ct_addTestFun(t, test_object_g_object_new_name));
 
-  return t; 
+  return t;
 }

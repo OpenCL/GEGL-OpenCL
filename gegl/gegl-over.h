@@ -15,7 +15,7 @@ extern "C" {
 #define GEGL_OVER_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OVER, GeglOverClass))
 
 typedef struct _GeglOver GeglOver;
-struct _GeglOver 
+struct _GeglOver
 {
    GeglComp comp;
 
@@ -23,7 +23,7 @@ struct _GeglOver
 };
 
 typedef struct _GeglOverClass GeglOverClass;
-struct _GeglOverClass 
+struct _GeglOverClass
 {
    GeglCompClass comp_class;
 };

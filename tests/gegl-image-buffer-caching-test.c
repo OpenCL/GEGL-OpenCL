@@ -70,7 +70,7 @@ test_buffer_caching(Test *test) {
   gegl_buffer_detach (buffer);
 
   gegl_buffer_attach (buffer, cache);
-  
+
   gegl_buffer_attach (another_buffer, cache);
 
   gegl_buffer_lock (buffer);
@@ -98,5 +98,5 @@ create_buffer_caching_test()
     g_assert(ct_addTearDown(t, color_test_teardown));
   */
   g_assert(ct_addTestFun(t, test_buffer_caching));
-  return t; 
+  return t;
 }

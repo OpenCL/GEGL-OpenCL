@@ -31,7 +31,7 @@ gegl_exit(void)
 }
 
 void
-gegl_init (int *argc, 
+gegl_init (int *argc,
            char ***argv)
 {
   if (gegl_initialized)

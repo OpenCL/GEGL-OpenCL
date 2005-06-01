@@ -15,12 +15,12 @@
 
 enum
 {
-  PROP_0, 
+  PROP_0,
   PROP_WIDTH,
   PROP_HEIGHT,
   PROP_FILL_COLOR,
   PROP_IMAGE_DATA_TYPE,
-  PROP_LAST 
+  PROP_LAST
 };
 
 static void class_init (GeglFillClass * klass);
@@ -64,26 +64,26 @@ gegl_fill_get_type (void)
         NULL
       };
 
-      static const GInterfaceInfo image_op_interface_info = 
-      { 
+      static const GInterfaceInfo image_op_interface_info =
+      {
          (GInterfaceInitFunc) image_op_interface_init,
-         NULL,  
+         NULL,
          NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_NO_INPUT, 
-                                     "GeglFill", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_NO_INPUT,
+                                     "GeglFill",
+                                     &typeInfo,
                                      0);
 
-      g_type_add_interface_static (type, 
+      g_type_add_interface_static (type,
                                    GEGL_TYPE_IMAGE_OP_INTERFACE,
                                    &image_op_interface_info);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglFillClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
@@ -147,8 +147,8 @@ image_op_interface_init (gpointer ginterface,
   interface->compute_color_model = compute_color_model;
 }
 
-static void 
-init (GeglFill * self, 
+static void
+init (GeglFill * self,
       GeglFillClass * klass)
 {
   gegl_op_add_input_data(GEGL_OP(self), GEGL_TYPE_COLOR_DATA, "fill-color");
@@ -283,14 +283,14 @@ get_scanline_function(GeglNoInput * no_input,
   return NULL;
 }
 
-static void                                                            
-fill_float(GeglFilter * filter,              
+static void
+fill_float(GeglFilter * filter,
             GeglScanlineProcessor *processor,
-            gint width)                       
-{                                                                       
+            gint width)
+{
   GeglFill * self = GEGL_FILL(filter);
 
-  GeglImageIterator *dest = 
+  GeglImageIterator *dest =
     gegl_scanline_processor_lookup_iterator(processor, "dest");
   gfloat **d = (gfloat**)gegl_image_iterator_color_channels(dest);
   gfloat *da = (gfloat*)gegl_image_iterator_alpha_channel(dest);
@@ -303,24 +303,24 @@ fill_float(GeglFilter * filter,
   gfloat *pixel = gegl_color_data_get_components(GEGL_COLOR_DATA(data), &num_components);
 
   {
-    gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;   
+    gfloat *d0 = (d_color_chans > 0) ? d[0]: NULL;
     gfloat *d1 = (d_color_chans > 1) ? d[1]: NULL;
     gfloat *d2 = (d_color_chans > 2) ? d[2]: NULL;
 
     switch(d_color_chans)
       {
-        case 3: 
+        case 3:
           if(has_alpha)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = pixel[0];
                 *d1++ = pixel[1];
                 *d2++ = pixel[2];
                 *da++ = pixel[alpha];
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = pixel[0];
                 *d1++ = pixel[1];
                 *d2++ = pixel[2];
@@ -328,29 +328,29 @@ fill_float(GeglFilter * filter,
           break;
         case 2:
           if(has_alpha)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = pixel[0];
                 *d1++ = pixel[1];
                 *da++ = pixel[alpha];
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = pixel[0];
                 *d1++ = pixel[1];
               }
           break;
         case 1:
           if(has_alpha)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = pixel[0];
                 *da++ = pixel[alpha];
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = pixel[0];
               }
           break;
@@ -359,17 +359,17 @@ fill_float(GeglFilter * filter,
 
   g_free(pixel);
   g_free(d);
-}                                                                       
+}
 
 
-static void                                                            
-fill_uint8 (GeglFilter * filter,              
+static void
+fill_uint8 (GeglFilter * filter,
              GeglScanlineProcessor *processor,
-             gint width)                       
+             gint width)
 {
   GeglFill * self = GEGL_FILL(filter);
 
-  GeglImageIterator *dest = 
+  GeglImageIterator *dest =
     gegl_scanline_processor_lookup_iterator(processor, "dest");
   guint8 **d = (guint8**)gegl_image_iterator_color_channels(dest);
   guint8 *da = (guint8*)gegl_image_iterator_alpha_channel(dest);
@@ -387,61 +387,61 @@ fill_uint8 (GeglFilter * filter,
   /* This should be somewhere else, not here. */
   for(i=0; i < num_components; i++)
     {
-      gint channel = ROUND(255 * pix[i]); 
+      gint channel = ROUND(255 * pix[i]);
       pixel[i] = CLAMP(channel, 0, 255);
     }
-   
+
   g_free(pix);
 
   {
-    guint8 *d0 = (d_color_chans > 0) ? d[0]: NULL;   
+    guint8 *d0 = (d_color_chans > 0) ? d[0]: NULL;
     guint8 *d1 = (d_color_chans > 1) ? d[1]: NULL;
     guint8 *d2 = (d_color_chans > 2) ? d[2]: NULL;
 
     switch(d_color_chans)
       {
-        case 3: 
+        case 3:
           if(has_alpha)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = pixel[0];
                 *d1++ = pixel[1];
                 *d2++ = pixel[2];
                 *da++ = pixel[alpha];
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = pixel[0];
                 *d1++ = pixel[1];
                 *d2++ = pixel[2];
               }
           break;
-        case 2: 
+        case 2:
           if(has_alpha)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = pixel[0];
                 *d1++ = pixel[1];
                 *da++ = pixel[alpha];
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = pixel[0];
                 *d1++ = pixel[1];
               }
           break;
-        case 1: 
+        case 1:
           if(has_alpha)
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = pixel[0];
                 *da++ = pixel[alpha];
               }
           else
-            while(width--)                                                        
-              {                                                                   
+            while(width--)
+              {
                 *d0++ = pixel[0];
               }
           break;

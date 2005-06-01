@@ -2,9 +2,9 @@
 
 enum
 {
-  PROP_0, 
-  PROP_POSITION, 
-  PROP_LAST 
+  PROP_0,
+  PROP_POSITION,
+  PROP_LAST
 };
 
 static void class_init (GilStatementClass * klass);
@@ -35,15 +35,15 @@ gil_statement_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GIL_TYPE_NODE, 
-                                     "GilStatement", 
-                                     &typeInfo, 
+      type = g_type_register_static (GIL_TYPE_NODE,
+                                     "GilStatement",
+                                     &typeInfo,
                                      G_TYPE_FLAG_ABSTRACT);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GilStatementClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -66,8 +66,8 @@ class_init (GilStatementClass * klass)
   return;
 }
 
-static void 
-init (GilStatement * self, 
+static void
+init (GilStatement * self,
       GilStatementClass * klass)
 {
   return;
@@ -91,7 +91,7 @@ set_property (GObject      *gobject,
   {
     case PROP_POSITION:
       {
-        gil_statement_set_position(statement, g_value_get_int(value));  
+        gil_statement_set_position(statement, g_value_get_int(value));
       }
       break;
     default:
@@ -111,7 +111,7 @@ get_property (GObject      *gobject,
   {
     case PROP_POSITION:
       {
-        g_value_set_int(value, gil_statement_get_position(statement));  
+        g_value_set_int(value, gil_statement_get_position(statement));
       }
       break;
     default:
@@ -119,7 +119,7 @@ get_property (GObject      *gobject,
   }
 }
 
-gint 
+gint
 gil_statement_get_position (GilStatement * self)
 {
   g_return_val_if_fail (self != NULL, -1);

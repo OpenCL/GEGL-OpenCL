@@ -15,7 +15,7 @@ extern "C" {
 #define GEGL_MULT_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MULT, GeglMultClass))
 
 typedef struct _GeglMult GeglMult;
-struct _GeglMult 
+struct _GeglMult
 {
    GeglUnary unary;
 
@@ -23,7 +23,7 @@ struct _GeglMult
 };
 
 typedef struct _GeglMultClass GeglMultClass;
-struct _GeglMultClass 
+struct _GeglMultClass
 {
    GeglUnaryClass unary_class;
 };

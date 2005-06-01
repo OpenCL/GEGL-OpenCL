@@ -36,18 +36,18 @@ extern "C" {
 #define GEGL_EVAL_VISITOR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_EVAL_VISITOR, GeglEvalVisitorClass))
 
 typedef struct _GeglEvalVisitor GeglEvalVisitor;
-struct _GeglEvalVisitor 
+struct _GeglEvalVisitor
 {
        GeglVisitor visitor;
 };
 
 typedef struct _GeglEvalVisitorClass GeglEvalVisitorClass;
-struct _GeglEvalVisitorClass 
+struct _GeglEvalVisitorClass
 {
        GeglVisitorClass visitor_class;
 };
 
-GType         gegl_eval_visitor_get_type          (void); 
+GType         gegl_eval_visitor_get_type          (void);
 
 #ifdef __cplusplus
 }

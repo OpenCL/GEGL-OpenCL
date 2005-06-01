@@ -25,7 +25,7 @@ typedef struct _GilVisitor  GilVisitor;
 typedef struct _GilNode  GilNode;
 #endif
 
-struct _GilNode 
+struct _GilNode
 {
     GObject     __parent__;
 
@@ -35,33 +35,33 @@ struct _GilNode
 };
 
 typedef struct _GilNodeClass GilNodeClass;
-struct _GilNodeClass 
+struct _GilNodeClass
 {
    GObjectClass __parent__;
 
-   void (* accept)        (GilNode * self, 
+   void (* accept)        (GilNode * self,
                            GilVisitor * visitor);
 
 };
 
 GType             gil_node_get_type                  (void);
-GilNode*          gil_node_get_nth_child             (GilNode * self, 
+GilNode*          gil_node_get_nth_child             (GilNode * self,
                                                       gint n);
-void              gil_node_set_nth_child             (GilNode * self, 
+void              gil_node_set_nth_child             (GilNode * self,
                                                       GilNode * child,
                                                       gint n);
 gint              gil_node_get_num_children          (GilNode * self);
 void              gil_node_set_num_children          (GilNode * self,
                                                       gint num_children);
 
-void              gil_node_accept                    (GilNode * self, 
+void              gil_node_accept                    (GilNode * self,
                                                       GilVisitor * visitor);
 
-void              gil_node_set_name                  (GilNode * self, 
+void              gil_node_set_name                  (GilNode * self,
                                                       const gchar * name);
-G_CONST_RETURN gchar* 
+G_CONST_RETURN gchar*
                   gil_node_get_name                  (GilNode * self);
-void              gil_node_append_child              (GilNode *self, 
+void              gil_node_append_child              (GilNode *self,
                                                       GilNode *child);
 #ifdef __cplusplus
 }

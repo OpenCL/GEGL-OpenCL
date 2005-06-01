@@ -17,14 +17,14 @@ extern "C" {
 typedef struct _GeglAdd GeglAdd;
 typedef struct _GeglAddClass GeglAddClass;
 
-struct _GeglAdd 
+struct _GeglAdd
 {
    GeglUnary unary;
 
    /*< private >*/
 };
 
-struct _GeglAddClass 
+struct _GeglAddClass
 {
    GeglUnaryClass unary_class;
 };

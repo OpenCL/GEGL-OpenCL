@@ -38,26 +38,26 @@ extern "C" {
 #define GEGL_OBJECT_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OBJECT, GeglObjectClass))
 
 typedef struct _GeglObject GeglObject;
-struct _GeglObject 
+struct _GeglObject
 {
     GObject gobject;
 
     /*< private >*/
     gchar * name;
-    gboolean constructed;  
-    gint testflag; 
+    gboolean constructed;
+    gint testflag;
 };
 
 typedef struct _GeglObjectClass GeglObjectClass;
-struct _GeglObjectClass 
+struct _GeglObjectClass
 {
     GObjectClass gobject_class;
 };
 
-GType           gegl_object_get_type            (void); 
-void            gegl_object_set_name            (GeglObject * self, 
+GType           gegl_object_get_type            (void);
+void            gegl_object_set_name            (GeglObject * self,
                                                  const gchar * name);
-G_CONST_RETURN gchar* 
+G_CONST_RETURN gchar*
                 gegl_object_get_name            (GeglObject * self);
 
 #ifdef __cplusplus

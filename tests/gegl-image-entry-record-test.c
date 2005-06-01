@@ -30,7 +30,7 @@ test_gegl_entry_record_new (Test * test)
 {
   GeglMockCacheEntry * entry;
   GeglEntryRecord * record;
-  
+
   entry = gegl_mock_cache_entry_new (1024);
   record = gegl_entry_record_new (NULL, GEGL_CACHE_ENTRY(entry));
   ct_test(test, record != NULL);
@@ -43,11 +43,11 @@ Test *
 create_entry_record_test()
 {
   Test* t = ct_create("GeglEntryRecordTest");
-  
+
   /*
     g_assert(ct_addSetUp(t, setup));
     g_assert(ct_addTearDown(t, teardown));
   */
   g_assert(ct_addTestFun(t, test_gegl_entry_record_new));
-  return t; 
+  return t;
 }

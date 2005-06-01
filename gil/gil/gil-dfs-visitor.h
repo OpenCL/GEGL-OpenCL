@@ -18,21 +18,21 @@ extern "C" {
 #define __TYPEDEF_GIL_DFS_VISITOR__
 typedef struct _GilDfsVisitor GilDfsVisitor;
 #endif
-struct _GilDfsVisitor 
+struct _GilDfsVisitor
 {
        GilVisitor __parent__;
 };
 
 typedef struct _GilDfsVisitorClass GilDfsVisitorClass;
-struct _GilDfsVisitorClass 
+struct _GilDfsVisitorClass
 {
    GilVisitorClass __parent__;
 };
 
-GType         gil_dfs_visitor_get_type          (void); 
+GType         gil_dfs_visitor_get_type          (void);
 
-void          gil_dfs_visitor_traverse(GilDfsVisitor * self, 
-                                       GilNode * node); 
+void          gil_dfs_visitor_traverse(GilDfsVisitor * self,
+                                       GilNode * node);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

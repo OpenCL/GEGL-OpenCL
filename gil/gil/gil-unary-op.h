@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gil-expression.h" 
+#include "gil-expression.h"
 
 #define GIL_TYPE_UNARY_OP               (gil_unary_op_get_type ())
 #define GIL_UNARY_OP(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIL_TYPE_UNARY_OP, GilUnaryOp))
@@ -19,7 +19,7 @@ extern "C" {
 typedef struct _GilUnaryOp  GilUnaryOp;
 #endif
 
-struct _GilUnaryOp 
+struct _GilUnaryOp
 {
     GilExpression     __parent__;
 
@@ -28,14 +28,14 @@ struct _GilUnaryOp
 };
 
 typedef struct _GilUnaryOpClass GilUnaryOpClass;
-struct _GilUnaryOpClass 
+struct _GilUnaryOpClass
 {
    GilExpressionClass __parent__;
 };
 
 GType             gil_unary_op_get_type     (void);
 GilUnaryOpType    gil_unary_op_get_op       (GilUnaryOp * self);
-void              gil_unary_op_set_op       (GilUnaryOp * self, 
+void              gil_unary_op_set_op       (GilUnaryOp * self,
                                              GilUnaryOpType op);
 
 #ifdef __cplusplus

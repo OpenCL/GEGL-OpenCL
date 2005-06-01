@@ -76,7 +76,7 @@ struct _GeglCacheClass
   gint64 (*size) (GeglCache* cache);
   gint64 (*capacity) (GeglCache* cache);
   gboolean (*is_persistent) (GeglCache* cache);
-  
+
   /* protected virtual */
   void (*insert_record) (GeglCache* cache,
 			 GeglEntryRecord* record);

@@ -59,21 +59,21 @@ gegl_cache_get_type (void)
 	  sizeof (GeglCacheClass),
 	  NULL, /*base_init*/
 	  NULL, /* base_finalize */
-	  
+	
 	  /* classed types, instantiated types */
 	  class_init, /* class_init */
 	  NULL, /* class_finalize */
 	  NULL, /* class_data */
-	  
+	
 	  /* instantiated types */
 	  sizeof(GeglCache),
 	  0, /* n_preallocs */
 	  instance_init, /* instance_init */
-	  
+	
 	  /* value handling */
 	  NULL /* value_table */
 	};
-      
+
       type = g_type_register_static (G_TYPE_OBJECT ,
 				     "GeglCache",
 				     &typeInfo,
@@ -95,7 +95,7 @@ class_init(gpointer g_class,
   class->flush = flush;
   class->discard = discard;
   class->mark_as_dirty = mark_as_dirty;
-  
+
   class->insert_record=NULL;
   class->check_room_for = NULL;
   class->size = NULL;
@@ -144,7 +144,7 @@ gegl_cache_put (GeglCache * cache,
   g_return_val_if_fail (GEGL_IS_CACHE(cache), GEGL_PUT_INVALID);
   g_return_val_if_fail (GEGL_IS_CACHE_ENTRY(entry), GEGL_PUT_INVALID);
   g_return_val_if_fail (entry_id != NULL, GEGL_PUT_INVALID);
-  
+
   GeglCacheClass * class=GEGL_CACHE_GET_CLASS (cache);
   g_return_val_if_fail (class->put != NULL, GEGL_PUT_INVALID);
   return class->put (cache, entry, entry_id);
@@ -155,7 +155,7 @@ gegl_cache_fetch (GeglCache * cache,
 		  GeglCacheEntry ** entry)
 {
   g_return_val_if_fail (GEGL_IS_CACHE(cache), GEGL_FETCH_INVALID);
-  
+
   GeglCacheClass * class=GEGL_CACHE_GET_CLASS (cache);
   g_return_val_if_fail (class->fetch != NULL, GEGL_FETCH_INVALID);
   return class->fetch (cache, entry_id, entry);
@@ -166,7 +166,7 @@ gegl_cache_unfetch (GeglCache * cache,
 		  GeglCacheEntry * entry)
 {
   g_return_val_if_fail (GEGL_IS_CACHE(cache), GEGL_FETCH_INVALID);
-  
+
   GeglCacheClass * class=GEGL_CACHE_GET_CLASS (cache);
   g_return_val_if_fail (class->unfetch != NULL, GEGL_FETCH_INVALID);
   return class->unfetch (cache, entry_id, entry);
@@ -268,7 +268,7 @@ put (GeglCache * cache,
   GeglEntryRecord* record;
   gsize new_size=gegl_cache_entry_flattened_size (entry);
   gboolean has_room_for;
-  
+
   has_room_for = gegl_cache_check_room_for (cache, new_size);
 
   if (!has_room_for)
@@ -304,7 +304,7 @@ fetch (GeglCache * cache,
       return GEGL_FETCH_EXPIRED;
     }
   g_object_ref (entry);
-  
+
   g_return_val_if_fail (entry != NULL, GEGL_FETCH_INVALID);
   gegl_cache_store_remove (record->store, record);
 
@@ -321,10 +321,10 @@ unfetch (GeglCache* cache,
 	 GeglCacheEntry * entry)
 {
   GeglEntryRecord * record = GSIZE_TO_POINTER (entry_id);
-  
+
   g_return_val_if_fail (record->cache == cache, GEGL_FETCH_INVALID);
   g_return_val_if_fail (record->status == GEGL_FETCHED, GEGL_FETCH_INVALID);
-  
+
   g_object_ref (entry);
   record->entry = entry;
   gegl_cache_store_remove (record->store, record);
@@ -339,7 +339,7 @@ flush (GeglCache * cache,
 {
   GeglEntryRecord * record;
   g_return_if_fail (entry_id != 0);
-  
+
   record = GSIZE_TO_POINTER (entry_id);
   gegl_cache_flush_internal (cache, record);
   gegl_cache_store_remove (record->store, record);

@@ -19,7 +19,7 @@ extern "C" {
 typedef struct _GilMockNode  GilMockNode;
 #endif
 
-struct _GilMockNode 
+struct _GilMockNode
 {
     GilNode       __parent__;
 
@@ -27,7 +27,7 @@ struct _GilMockNode
 };
 
 typedef struct _GilMockNodeClass GilMockNodeClass;
-struct _GilMockNodeClass 
+struct _GilMockNodeClass
 {
    GilNodeClass __parent__;
 };

@@ -2,11 +2,11 @@
 
 enum
 {
-  PROP_0, 
+  PROP_0,
   PROP_OP,
   PROP_LEFT_OPERAND,
   PROP_RIGHT_OPERAND,
-  PROP_LAST 
+  PROP_LAST
 };
 
 static void class_init (GilBinaryOpClass * klass);
@@ -37,15 +37,15 @@ gil_binary_op_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GIL_TYPE_EXPRESSION, 
-                                     "GilBinaryOp", 
-                                     &typeInfo, 
+      type = g_type_register_static (GIL_TYPE_EXPRESSION,
+                                     "GilBinaryOp",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GilBinaryOpClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -84,8 +84,8 @@ class_init (GilBinaryOpClass * klass)
   return;
 }
 
-static void 
-init (GilBinaryOp * self, 
+static void
+init (GilBinaryOp * self,
       GilBinaryOpClass * klass)
 {
   GilNode * node = GIL_NODE(self);
@@ -113,17 +113,17 @@ set_property (GObject      *gobject,
   {
     case PROP_OP:
       {
-        gil_binary_op_set_op(binary_op, g_value_get_int(value));  
+        gil_binary_op_set_op(binary_op, g_value_get_int(value));
       }
       break;
     case PROP_LEFT_OPERAND:
       {
-        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 0);  
+        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 0);
       }
       break;
     case PROP_RIGHT_OPERAND:
       {
-        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 1);  
+        gil_node_set_nth_child(node, (GilNode*)g_value_get_object(value), 1);
       }
       break;
     default:
@@ -144,17 +144,17 @@ get_property (GObject      *gobject,
   {
     case PROP_OP:
       {
-        g_value_set_int(value, gil_binary_op_get_op(binary_op));  
+        g_value_set_int(value, gil_binary_op_get_op(binary_op));
       }
       break;
     case PROP_LEFT_OPERAND:
       {
-        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 0));  
+        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 0));
       }
       break;
     case PROP_RIGHT_OPERAND:
       {
-        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 1));  
+        g_value_set_object(value, (GObject*)gil_node_get_nth_child(node, 1));
       }
       break;
     default:
@@ -171,8 +171,8 @@ gil_binary_op_get_op (GilBinaryOp * self)
   return self->op;
 }
 
-void 
-gil_binary_op_set_op (GilBinaryOp * self, 
+void
+gil_binary_op_set_op (GilBinaryOp * self,
                       GilBinaryOpType op)
 {
   g_return_if_fail (self != NULL);

@@ -4,15 +4,15 @@
 #include <glib-2.0/glib.h>
 
 /* Node kinds */
-typedef enum 
-{ 
-  GIL_NODE_KIND_INT_CONST, 
-  GIL_NODE_KIND_FLOAT_CONST, 
-  GIL_NODE_KIND_ID, 
-  GIL_NODE_KIND_OP,             
-  GIL_NODE_KIND_STATEMENT_LIST, 
-  GIL_NODE_KIND_DECLARATION_LIST, 
-  GIL_NODE_KIND_BLOCK 
+typedef enum
+{
+  GIL_NODE_KIND_INT_CONST,
+  GIL_NODE_KIND_FLOAT_CONST,
+  GIL_NODE_KIND_ID,
+  GIL_NODE_KIND_OP,
+  GIL_NODE_KIND_STATEMENT_LIST,
+  GIL_NODE_KIND_DECLARATION_LIST,
+  GIL_NODE_KIND_BLOCK
 } GilNodeKind;
 
 /* Values for each node */
@@ -26,8 +26,8 @@ union _GilNodeValue
 };
 
 /* Data for the GNodes - a kind and a value */
-typedef struct _GilNodeData GilNodeData; 
-struct _GilNodeData 
+typedef struct _GilNodeData GilNodeData;
+struct _GilNodeData
 {	
    GilNodeKind kind;        /* the kind of node */
    GilNodeValue value;      /* union of node values */
@@ -46,7 +46,7 @@ GNode *gil_node_block_new(void);
 GNode *gil_node_new(GilNodeData *node_data, gint nops, ...);
 
 /* Free nodes and data */
-void gil_node_free(GNode *node, gpointer data); 
-gboolean gil_node_free_data(GNode *node, gpointer data); 
+void gil_node_free(GNode *node, gpointer data);
+gboolean gil_node_free_data(GNode *node, gpointer data);
 
 #endif

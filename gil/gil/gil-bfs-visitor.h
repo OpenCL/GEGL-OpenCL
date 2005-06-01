@@ -18,20 +18,20 @@ extern "C" {
 #define __TYPEDEF_GIL_BFS_VISITOR__
 typedef struct _GilBfsVisitor GilBfsVisitor;
 #endif
-struct _GilBfsVisitor 
+struct _GilBfsVisitor
 {
        GilVisitor __parent__;
 };
 
 typedef struct _GilBfsVisitorClass GilBfsVisitorClass;
-struct _GilBfsVisitorClass 
+struct _GilBfsVisitorClass
 {
    GilVisitorClass __parent__;
 };
 
-GType         gil_bfs_visitor_get_type          (void); 
-void          gil_bfs_visitor_traverse          (GilBfsVisitor *self, 
-                                                  GilNode * node); 
+GType         gil_bfs_visitor_get_type          (void);
+void          gil_bfs_visitor_traverse          (GilBfsVisitor *self,
+                                                  GilNode * node);
 
 #ifdef __cplusplus
 }

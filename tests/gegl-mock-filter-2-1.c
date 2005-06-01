@@ -3,11 +3,11 @@
 
 enum
 {
-  PROP_0, 
+  PROP_0,
   PROP_OUTPUT0,
   PROP_INPUT0,
   PROP_INPUT1,
-  PROP_LAST 
+  PROP_LAST
 };
 
 static void class_init (GeglMockFilter21Class * klass);
@@ -38,15 +38,15 @@ gegl_mock_filter_2_1_get_type (void)
         NULL
       };
 
-      type = g_type_register_static (GEGL_TYPE_FILTER, 
-                                     "GeglMockFilter21", 
-                                     &typeInfo, 
+      type = g_type_register_static (GEGL_TYPE_FILTER,
+                                     "GeglMockFilter21",
+                                     &typeInfo,
                                      0);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GeglMockFilter21Class * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -72,7 +72,7 @@ class_init (GeglMockFilter21Class * klass)
                                   0,
                                   1000,
                                   500,
-                                  G_PARAM_CONSTRUCT | 
+                                  G_PARAM_CONSTRUCT |
                                   G_PARAM_READWRITE |
                                   GEGL_PROPERTY_INPUT));
 
@@ -83,23 +83,23 @@ class_init (GeglMockFilter21Class * klass)
                                   0,
                                   1000,
                                   500,
-                                  G_PARAM_CONSTRUCT | 
+                                  G_PARAM_CONSTRUCT |
                                   G_PARAM_READWRITE |
                                   GEGL_PROPERTY_INPUT));
 }
 
-static void 
-init (GeglMockFilter21 * self, 
+static void
+init (GeglMockFilter21 * self,
       GeglMockFilter21Class * klass)
 {
   GeglFilter *filter = GEGL_FILTER(self);
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-  gegl_filter_create_property(filter, 
+  gegl_filter_create_property(filter,
     g_object_class_find_property(gobject_class, "output0"));
-  gegl_filter_create_property(filter, 
+  gegl_filter_create_property(filter,
     g_object_class_find_property(gobject_class, "input0"));
-  gegl_filter_create_property(filter, 
+  gegl_filter_create_property(filter,
     g_object_class_find_property(gobject_class, "input1"));
 }
 

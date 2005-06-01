@@ -58,7 +58,7 @@ struct _GeglTile
   const GeglColorSpace * color_space;
   /* <private> */
   GeglBuffer * buffer;
-  
+
 };
 
 typedef struct _GeglTileClass GeglTileClass;

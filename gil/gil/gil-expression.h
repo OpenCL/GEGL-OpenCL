@@ -5,7 +5,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "gil-node.h" 
+#include "gil-node.h"
 
 #define GIL_TYPE_EXPRESSION               (gil_expression_get_type ())
 #define GIL_EXPRESSION(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIL_TYPE_EXPRESSION, GilExpression))
@@ -19,7 +19,7 @@ extern "C" {
 typedef struct _GilExpression  GilExpression;
 #endif
 
-struct _GilExpression 
+struct _GilExpression
 {
     GilNode     __parent__;
 
@@ -27,7 +27,7 @@ struct _GilExpression
 };
 
 typedef struct _GilExpressionClass GilExpressionClass;
-struct _GilExpressionClass 
+struct _GilExpressionClass
 {
    GilNodeClass __parent__;
 };

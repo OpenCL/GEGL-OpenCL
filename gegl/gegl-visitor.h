@@ -40,7 +40,7 @@ extern "C" {
 #define GEGL_VISITOR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_VISITOR, GeglVisitorClass))
 
 typedef struct _GeglVisitor GeglVisitor;
-struct _GeglVisitor 
+struct _GeglVisitor
 {
    GeglObject object;
 
@@ -49,7 +49,7 @@ struct _GeglVisitor
 };
 
 typedef struct _GeglVisitorClass GeglVisitorClass;
-struct _GeglVisitorClass 
+struct _GeglVisitorClass
 {
    GeglObjectClass object_class;
 
@@ -59,7 +59,7 @@ struct _GeglVisitorClass
                                     GeglNode * node);
 };
 
-GType           gegl_visitor_get_type           (void); 
+GType           gegl_visitor_get_type           (void);
 GList *         gegl_visitor_get_visits_list    (GeglVisitor *self);
 void            gegl_visitor_visit_visitable    (GeglVisitor *self,
                                                      struct _GeglVisitable *visitable);
@@ -67,10 +67,10 @@ void            gegl_visitor_visit_property     (GeglVisitor * self,
                                                      GeglProperty *property);
 void            gegl_visitor_visit_node         (GeglVisitor * self,
                                                      GeglNode *node);
-void            gegl_visitor_dfs_traverse       (GeglVisitor * self, 
-                                                     struct _GeglVisitable * visitable); 
-void            gegl_visitor_bfs_traverse       (GeglVisitor * self, 
-                                                     struct _GeglVisitable * visitable); 
+void            gegl_visitor_dfs_traverse       (GeglVisitor * self,
+                                                     struct _GeglVisitable * visitable);
+void            gegl_visitor_bfs_traverse       (GeglVisitor * self,
+                                                     struct _GeglVisitable * visitable);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

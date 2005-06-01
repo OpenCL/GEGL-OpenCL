@@ -12,7 +12,7 @@ static void
 test_graph_g_object_new(Test *test)
 {
   {
-    GeglNode * graph = g_object_new (GEGL_TYPE_GRAPH, NULL);  
+    GeglNode * graph = g_object_new (GEGL_TYPE_GRAPH, NULL);
 
     ct_test(test, GEGL_IS_GRAPH(graph));
     ct_test(test, g_type_parent(GEGL_TYPE_GRAPH) == GEGL_TYPE_NODE);
@@ -26,8 +26,8 @@ static void
 test_graph(Test *test)
 {
   {
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
-    GeglGraph *graph = g_object_new (GEGL_TYPE_GRAPH, NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
+    GeglGraph *graph = g_object_new (GEGL_TYPE_GRAPH, NULL);
 
     gegl_graph_add_child(graph, A);
     ct_test(test, 1 == gegl_graph_num_children(graph));
@@ -44,23 +44,23 @@ static void
 test_graph_properties(Test *test)
 {
   /*
-      B 
+      B
       +
       |
       -
      ---
     |   |  <----graph with A as child
-    | - | 
-    | A | 
-    | + | 
-    |   | 
+    | - |
+    | A |
+    | + |
+    |   |
      ---
       +
   */
   {
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
-    GeglGraph *graph = g_object_new (GEGL_TYPE_GRAPH, NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
+    GeglGraph *graph = g_object_new (GEGL_TYPE_GRAPH, NULL);
     GeglProperty *output0 = gegl_node_get_property(A, "output0");
     GeglProperty *input0 = gegl_node_get_property(A, "input0");
 
@@ -92,16 +92,16 @@ test_graph_properties(Test *test)
   }
 
   /*
-      B 
+      B
       +
       |
       -
      ---
     |   |  <----graph with A as child
-    | - | 
-    | A | 
-    | + | 
-    |   | 
+    | - |
+    | A |
+    | + |
+    |   |
      ---
       +
       |
@@ -110,10 +110,10 @@ test_graph_properties(Test *test)
 
   */
   {
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, NULL);  
-    GeglNode *D = g_object_new (GEGL_TYPE_GRAPH, NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, NULL);
+    GeglNode *D = g_object_new (GEGL_TYPE_GRAPH, NULL);
 
     GeglProperty *output0 = gegl_node_get_property(A, "output0");
     GeglProperty *input0 = gegl_node_get_property(A, "input0");
@@ -165,16 +165,16 @@ static void
 test_graph_property_visitors(Test *test)
 {
   /*
-      B 
+      B
       +
       |
       -
      ---
     |   |  <----graph with A as child
-    | - | 
-    | A | 
-    | + | 
-    |   | 
+    | - |
+    | A |
+    | + |
+    |   |
      ---
       +
       |
@@ -183,10 +183,10 @@ test_graph_property_visitors(Test *test)
 
   */
   {
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);  
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, NULL);  
-    GeglNode *D = g_object_new (GEGL_TYPE_GRAPH, NULL);  
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, NULL);
+    GeglNode *D = g_object_new (GEGL_TYPE_GRAPH, NULL);
 
     GeglProperty *output0 = gegl_node_get_property(A, "output0");
     GeglProperty *input0 = gegl_node_get_property(A, "input0");
@@ -229,12 +229,12 @@ create_graph_test()
   g_assert(ct_addSetUp(t, setup));
   g_assert(ct_addTearDown(t, teardown));
 
-#if 1 
+#if 1
   g_assert(ct_addTestFun(t, test_graph_g_object_new));
   g_assert(ct_addTestFun(t, test_graph));
   g_assert(ct_addTestFun(t, test_graph_properties));
   g_assert(ct_addTestFun(t, test_graph_property_visitors));
 #endif
-                                     
-  return t; 
+
+  return t;
 }

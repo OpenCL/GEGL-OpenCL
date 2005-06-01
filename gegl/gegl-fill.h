@@ -15,7 +15,7 @@ extern "C" {
 #define GEGL_FILL_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_FILL, GeglFillClass))
 
 typedef struct _GeglFill GeglFill;
-struct _GeglFill 
+struct _GeglFill
 {
    GeglNoInput no_input;
 
@@ -23,7 +23,7 @@ struct _GeglFill
 };
 
 typedef struct _GeglFillClass GeglFillClass;
-struct _GeglFillClass 
+struct _GeglFillClass
 {
    GeglNoInputClass no_input_class;
 };

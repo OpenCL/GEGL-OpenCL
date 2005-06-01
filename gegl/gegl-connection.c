@@ -45,52 +45,52 @@ gegl_connection_new(GeglNode *sink,
   return connection;
 }
 
-GeglNode *      
+GeglNode *
 gegl_connection_get_source_node (GeglConnection *connection)
 {
   return connection->source;
 }
 
-void      
+void
 gegl_connection_set_source_node (GeglConnection *connection,
                                  GeglNode *source)
 {
   connection->source = source;
 }
 
-GeglNode *      
+GeglNode *
 gegl_connection_get_sink_node (GeglConnection *connection)
 {
   return connection->sink;
 }
 
-void      
+void
 gegl_connection_set_sink_node (GeglConnection *connection,
                                GeglNode *sink)
 {
   connection->sink = sink;
 }
 
-GeglProperty *      
+GeglProperty *
 gegl_connection_get_sink_prop (GeglConnection *connection)
 {
   return connection->sink_prop;
 }
 
-void      
+void
 gegl_connection_set_sink_prop (GeglConnection *connection,
                                GeglProperty *sink_prop)
 {
   connection->sink_prop = sink_prop;
 }
 
-GeglProperty *      
+GeglProperty *
 gegl_connection_get_source_prop (GeglConnection *connection)
 {
   return connection->source_prop;
 }
 
-void      
+void
 gegl_connection_set_source_prop (GeglConnection *connection,
                                  GeglProperty *source_prop)
 {

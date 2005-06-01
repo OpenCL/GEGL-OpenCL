@@ -38,7 +38,7 @@ struct _GeglProperty;
 
 typedef struct _GeglNode  GeglNode;
 
-struct _GeglNode 
+struct _GeglNode
 {
     GeglObject object;
 
@@ -54,17 +54,17 @@ struct _GeglNode
 };
 
 typedef struct _GeglNodeClass GeglNodeClass;
-struct _GeglNodeClass 
+struct _GeglNodeClass
 {
     GeglObjectClass object_class;
 };
 
 GType           gegl_node_get_type              (void);
-void            gegl_node_add_property          (GeglNode *self, 
+void            gegl_node_add_property          (GeglNode *self,
                                                  struct _GeglProperty *property);
 void            gegl_node_remove_property       (GeglNode *self,
                                                  struct _GeglProperty *property);
-struct _GeglProperty *gegl_node_get_property    (GeglNode *self, 
+struct _GeglProperty *gegl_node_get_property    (GeglNode *self,
                                                  const gchar *name);
 GList*          gegl_node_get_properties        (GeglNode *self);
 GList*          gegl_node_get_input_properties  (GeglNode *self);
@@ -75,22 +75,22 @@ GList*          gegl_node_get_sinks             (GeglNode *self);
 GList*          gegl_node_get_sources           (GeglNode *self);
 gint            gegl_node_num_sources           (GeglNode *self);
 gint            gegl_node_num_sinks             (GeglNode *self);
-gboolean        gegl_node_connect               (GeglNode *sink, 
+gboolean        gegl_node_connect               (GeglNode *sink,
                                                  const gchar *sink_prop_name,
                                                  GeglNode *source,
                                                  const gchar *source_prop_name);
-gboolean        gegl_node_disconnect            (GeglNode *sink, 
+gboolean        gegl_node_disconnect            (GeglNode *sink,
                                                  const gchar *sink_prop_name,
                                                  GeglNode *source,
                                                  const gchar *source_prop_name);
 void            gegl_node_disconnect_sinks      (GeglNode *self);
 void            gegl_node_disconnect_sources    (GeglNode *self);
 GList*          gegl_node_get_depends_on        (GeglNode *self);
-void            gegl_node_apply                 (GeglNode *self, 
+void            gegl_node_apply                 (GeglNode *self,
                                                  const gchar *output_prop_name);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-                
+
 #endif

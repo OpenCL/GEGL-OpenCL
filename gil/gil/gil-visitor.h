@@ -23,18 +23,18 @@ typedef struct _GilNode GilNode;
 #define __TYPEDEF_GIL_NODE_INFO__
 typedef struct _GilNodeInfo GilNodeInfo;
 #endif
-struct _GilNodeInfo 
+struct _GilNodeInfo
 {
   gboolean visited;
   gboolean discovered;
   gint shared_count;
-}; 
+};
 
 #ifndef __TYPEDEF_GIL_VISITOR__
 #define __TYPEDEF_GIL_VISITOR__
 typedef struct _GilVisitor GilVisitor;
 #endif
-struct _GilVisitor 
+struct _GilVisitor
 {
        GObject __parent__;
 
@@ -44,7 +44,7 @@ struct _GilVisitor
 };
 
 typedef struct _GilVisitorClass GilVisitorClass;
-struct _GilVisitorClass 
+struct _GilVisitorClass
 {
    GObjectClass __parent__;
 
@@ -52,19 +52,19 @@ struct _GilVisitorClass
                           GilNode * node);
 };
 
-GType         gil_visitor_get_type          (void); 
+GType         gil_visitor_get_type          (void);
 
 void          gil_visitor_visit_node        (GilVisitor *self,
                                              GilNode * node);
 GList *       gil_visitor_get_visits_list   (GilVisitor *self);
 GList *       gil_visitor_get_visits_objects_list   (GilVisitor *self);
 
-void          gil_visitor_node_insert       (GilVisitor *self, 
+void          gil_visitor_node_insert       (GilVisitor *self,
                                               GilNode *node);
-GilNodeInfo* gil_visitor_node_lookup       (GilVisitor *self, 
+GilNodeInfo* gil_visitor_node_lookup       (GilVisitor *self,
                                               GilNode *node);
 
-gboolean      gil_visitor_get_visited       (GilVisitor *self, 
+gboolean      gil_visitor_get_visited       (GilVisitor *self,
                                               GilNode *node);
 void          gil_visitor_set_visited       (GilVisitor *self,
                                               GilNode *node,
@@ -76,8 +76,8 @@ void          gil_visitor_set_discovered    (GilVisitor *self,
                                               gboolean discovered);
 gint          gil_visitor_get_shared_count  (GilVisitor *self,
                                               GilNode *node);
-void          gil_visitor_set_shared_count  (GilVisitor *self, 
-                                              GilNode *node, 
+void          gil_visitor_set_shared_count  (GilVisitor *self,
+                                              GilNode *node,
                                               gint shared_count);
 #ifdef __cplusplus
 }

@@ -26,15 +26,15 @@ gil_expression_get_type (void)
         (GInstanceInitFunc) init,
       };
 
-      type = g_type_register_static (GIL_TYPE_NODE, 
-                                     "GilExpression", 
-                                     &typeInfo, 
+      type = g_type_register_static (GIL_TYPE_NODE,
+                                     "GilExpression",
+                                     &typeInfo,
                                      G_TYPE_FLAG_ABSTRACT);
     }
     return type;
 }
 
-static void 
+static void
 class_init (GilExpressionClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
@@ -45,8 +45,8 @@ class_init (GilExpressionClass * klass)
   return;
 }
 
-static void 
-init (GilExpression * self, 
+static void
+init (GilExpression * self,
       GilExpressionClass * klass)
 {
   return;
