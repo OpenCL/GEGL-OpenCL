@@ -6,28 +6,44 @@ libimage = $(top_builddir)/gegl/image/libimage.la
 
 lib_LTLIBRARIES = libgegl-1.0.la
 
-GEGL_SRC = \
+GEGL_sources = \
+	gegl-connection.c	\
 	gegl-eval-mgr.c		\
 	gegl-eval-visitor.c	\
 	gegl-filter.c		\
 	gegl-graph.c		\
+	gegl-init.c		\
 	gegl-node.c		\
 	gegl-object.c		\
 	gegl-property.c		\
+	gegl-utils.c		\
 	gegl-visitable.c	\
 	gegl-visitor.c
 
-GEGL_NONCLASS_SRC = \
-	gegl-connection.c	\
-	gegl-init.c		\
-	gegl-utils.c
+GEGL_broken_sources = \
+	gegl-add.c		\
+	gegl-comp.c		\
+	gegl-fade.c		\
+	gegl-fill.c		\
+	gegl-i-add.c		\
+	gegl-mult.c		\
+	gegl-multiply.c		\
+	gegl-over.c		\
+	gegl-print.c
 
-GEGL_PUBLIC_HDRS = \
+GEGL_public_headers = \
 	gegl.h
+	gegl-connection.h	\
+	gegl-filter.h		\
+	gegl-graph.h		\
+	gegl-init.h		\
+	gegl-node.h		\
+	gegl-object.h		\
+	gegl-property.h		\
+	gegl-visitable.h	\
+	gegl-visitor.h
 
-libgegl_1_0_la_SOURCES = \
-	$(GEGL_SRC)		\
-	$(GEGL_NONCLASS_SRC)
+libgegl_1_0_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 
 libgegl_1_0_la_LIBADD = $(libimage)
 
@@ -43,7 +59,7 @@ AM_LDFLAGS =  \
 
 libgeglincludedir = $(includedir)/gegl-1.0/gegl
 
-libgeglinclude_HEADERS = $(GEGL_PUBLIC_HDRS) 
+libgeglinclude_HEADERS = $(GEGL_public_headers) 
 
 
 #BUILT_SOURCES = \

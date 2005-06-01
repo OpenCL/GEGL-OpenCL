@@ -1,3 +1,8 @@
+2005-06-02  Sven Neumann  <sven@gimp.org>
+
+	* gegl/Makefile.am: added a list of files that doesn't compile.
+	Also list all public headers.
+
 2005-06-01  Sven Neumann  <sven@gimp.org>
 
 	* gegl/Makefile.am
