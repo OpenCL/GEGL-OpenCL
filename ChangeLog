@@ -1,3 +1,12 @@
+2005-06-01  Sven Neumann  <sven@gimp.org>
+
+	* Makefile.am
+	* configure.in
+	* gegl.spec.in: removed the spec file as we did in gimp.
+
+	* autogen.sh: check for gegl/gegl-add.c instead of for an ambiguous
+	directory.
+
 2005-06-01  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/image/*.h

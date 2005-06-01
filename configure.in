@@ -2,17 +2,9 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.54)
 
-AC_INIT(ChangeLog)
-
-dnl ==========================================================================
-dnl
-dnl If you add a version number here, you *must* add an AC_SUBST line for
-dnl it too, or it will never make it into the spec file!
-dnl
-dnl ==========================================================================
+AC_INIT(gegl/gegl-add.c)
 
 GLIB_REQUIRED_VERSION=2.6.4
-AC_SUBST(GLIB_REQUIRED_VERSION)
 
 dnl ==========================================================================
 dnl                              Versioning              
@@ -209,5 +201,4 @@ docs/reference/gegl/Makefile
 docs/reference/gegl/version.xml
 gegl.pc
 gegl-uninstalled.pc
-gegl.spec
 ])
