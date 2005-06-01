@@ -2,29 +2,6 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 
-<!ENTITY GeglBuffer SYSTEM "xml/gegl-buffer.xml">
-<!ENTITY GeglBufferDouble SYSTEM "xml/gegl-buffer-double.xml">
-<!ENTITY GeglCacheEntry SYSTEM "xml/gegl-cache-entry.xml">
-<!ENTITY GeglCache SYSTEM "xml/gegl-cache.xml">
-<!ENTITY GeglColorModel SYSTEM "xml/gegl-color-model.xml">
-<!ENTITY GeglColorSpaceImp SYSTEM "xml/gegl-color-space-imp.xml">
-<!ENTITY GeglColorSpace SYSTEM "xml/gegl-color-space.xml">
-<!ENTITY GeglComponentSampleModel SYSTEM "xml/gegl-component-sample-model.xml">
-<!ENTITY GeglEvalMgr SYSTEM "xml/gegl-eval-mgr.xml">
-<!ENTITY GeglEvalVisitor SYSTEM "xml/gegl-eval-visitor.xml">
-<!ENTITY GeglFilter SYSTEM "xml/gegl-filter.xml">
-<!ENTITY GeglGraph SYSTEM "xml/gegl-graph.xml">
-<!ENTITY GeglNode SYSTEM "xml/gegl-node.xml">
-<!ENTITY GeglNormalizer SYSTEM "xml/gegl-normalizer.xml">
-<!ENTITY GeglNormalizerMult SYSTEM "xml/gegl-normalizer-mult.xml">
-<!ENTITY GeglObject SYSTEM "xml/gegl-object.xml">
-<!ENTITY GeglProperty SYSTEM "xml/gegl-property.xml">
-<!ENTITY GeglSampleModel SYSTEM "xml/gegl-sample-model.xml">
-<!ENTITY GeglTile SYSTEM "xml/gegl-tile.xml">
-<!ENTITY GeglTileIterator SYSTEM "xml/gegl-tile-iterator.xml">
-<!ENTITY GeglVisitor SYSTEM "xml/gegl-visitor.xml">
-<!ENTITY GeglVisitable SYSTEM "xml/gegl-visitable.xml">
-<!ENTITY gegl-objecttree SYSTEM "xml/tree_index.sgml">
 <!ENTITY gegl-cvs SYSTEM "cvs.sgml">
 <!ENTITY gegl-prerequisites SYSTEM "prerequisites.sgml">
 <!ENTITY gegl-configuring SYSTEM "configuring.sgml">
@@ -111,32 +88,32 @@
         development and hence unstable.
         </para>
       </partintro>
-      &gegl-cvs;
-      &gegl-prerequisites;
-      &gegl-configuring;
-      &gegl-compiling;
-      &gegl-unittests;
-      &gegl-debugging;
-      &gegl-mailinglists;
+      <xi:include href="cvs.sgml"/>
+      <xi:include href="prerequisites.sgml"/>
+      <xi:include href="configuring.sgml"/>
+      <xi:include href="compiling.sgml"/>
+      <xi:include href="unittests.sgml"/>
+      <xi:include href="debugging.sgml"/>
+      <xi:include href="mailinglists.sgml"/>
   </part>
 
   <part id="geglobjects">
     <title>Gegl Objects</title>
     <chapter>
       <title>Object Hierarchy</title>
-    &gegl-objecttree;
+      <xi:include href="xml/tree_index.sgml"/>
     </chapter>
 
     <chapter id="object">
       <title>Object</title>
-      &GeglObject;
+      <xi:include href="xml/gegl-object.xml"/>
     </chapter>
 
     <chapter id="abstractops">
       <title>Abstract and Container Ops</title>
-      &GeglNode;
-      &GeglFilter;
-      &GeglGraph;
+      <xi:include href="xml/gegl-node.xml"/>
+      <xi:include href="xml/gegl-filter.xml"/>
+      <xi:include href="xml/gegl-graph.xml"/>
     </chapter>
 
     <chapter id="ops">
@@ -145,32 +122,32 @@
 
     <chapter id="visitors">
       <title>Visitors</title>
-      &GeglVisitor;
+      <xi:include href="xml/gegl-visitor.xml"/>
     </chapter>
 
     <chapter id="evaluation">
       <title>Evaluation Manager and Visitors</title>
-      &GeglEvalMgr;
-      &GeglEvalVisitor;
+      <xi:include href="xml/gegl-eval-mgr.xml"/>
+      <xi:include href="xml/gegl-eval-visitor.xml"/>
     </chapter>
 
     <chapter id="image">
       <title>Images, Storage and Buffers</title>
-      &GeglBuffer;
-      &GeglBufferDouble;
-      &GeglCache;
-      &GeglCacheEntry;
-      &GeglComponentSampleModel;
-      &GeglNormalizer;
-      &GeglNormalizerMult;
-      &GeglSampleModel;
-      &GeglTile;
-      &GeglTileIterator;
+      <xi:include href="xml/gegl-buffer.xml"/>
+      <xi:include href="xml/gegl-buffer-double.xml"/>
+      <xi:include href="xml/gegl-cache.xml"/>
+      <xi:include href="xml/gegl-cache-entry.xml"/>
+      <xi:include href="xml/gegl-component-sample-model.xml"/>
+      <xi:include href="xml/gegl-normalizer.xml"/>
+      <xi:include href="xml/gegl-normalizer-mult.xml"/>
+      <xi:include href="xml/gegl-sample-model.xml"/>
+      <xi:include href="xml/gegl-tile.xml"/>
+      <xi:include href="xml/gegl-tile-iterator.xml"/>
     </chapter>
 
     <chapter id="property">
       <title>Properties</title>
-      &GeglProperty;
+      <xi:include href="xml/gegl-property.xml"/>
     </chapter>
 
     <chapter id="paramspecs">
@@ -183,9 +160,9 @@
 
     <chapter id="colors">
       <title>Colors, ColorSpaces, ColorModels</title>
-      &GeglColorModel;
-      &GeglColorSpace;
-      &GeglColorSpaceImp;
+      <xi:include href="xml/gegl-color-model.xml"/>
+      <xi:include href="xml/gegl-color-space.xml"/>
+      <xi:include href="xml/gegl-color-space-imp.xml"/>
     </chapter>
 
   </part>

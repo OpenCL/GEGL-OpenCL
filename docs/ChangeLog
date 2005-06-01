@@ -1,5 +1,9 @@
 2005-06-01  Sven Neumann  <sven@gimp.org>
 
+	* reference/gegl/gegl-docs.sgml: use XInclude instead of entities.
+
+2005-06-01  Sven Neumann  <sven@gimp.org>
+
 	* reference/gegl/Makefile.am
 	* reference/gegl/version.xml.in: removed ...
 
