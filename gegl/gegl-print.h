@@ -33,7 +33,7 @@ struct _GeglPrintClass
     GeglPipeClass pipe_class;
 };
 
-GType           gegl_print_get_type             (void);
+GType           gegl_print_get_type             (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

@@ -29,7 +29,7 @@ struct _GeglAddClass
    GeglUnaryClass unary_class;
 };
 
-GType           gegl_add_get_type         (void);
+GType           gegl_add_get_type         (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

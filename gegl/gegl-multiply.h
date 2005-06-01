@@ -27,7 +27,7 @@ struct _GeglMultiplyClass
    GeglBlendClass blend_class;
 };
 
-GType            gegl_multiply_get_type         (void);
+GType            gegl_multiply_get_type         (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

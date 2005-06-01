@@ -26,7 +26,7 @@ struct _GeglMockObjectClass
        GeglObjectClass object;
 };
 
-GType         gegl_mock_object_get_type          (void);
+GType         gegl_mock_object_get_type          (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

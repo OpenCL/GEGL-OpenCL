@@ -32,7 +32,7 @@ struct _GeglMockImageFilterClass
    GeglFilterClass filter_class;
 };
 
-GType             gegl_mock_image_filter_get_type                  (void);
+GType             gegl_mock_image_filter_get_type                  (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

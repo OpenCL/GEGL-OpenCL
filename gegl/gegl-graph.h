@@ -50,7 +50,7 @@ struct _GeglGraphClass
    GeglNodeClass node_class;
 };
 
-GType           gegl_graph_get_type            (void);
+GType           gegl_graph_get_type            (void) G_GNUC_CONST;
 GeglNode*       gegl_graph_add_child           (GeglGraph *self, GeglNode *child);
 GeglNode*       gegl_graph_remove_child        (GeglGraph *self, GeglNode *child);
 GeglNode*       gegl_graph_get_nth_child       (GeglGraph *self, gint n);

@@ -47,7 +47,7 @@ struct _GeglEvalVisitorClass
        GeglVisitorClass visitor_class;
 };
 
-GType         gegl_eval_visitor_get_type          (void);
+GType         gegl_eval_visitor_get_type          (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

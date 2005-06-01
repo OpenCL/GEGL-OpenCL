@@ -29,7 +29,7 @@
 #define GEGL_IS_TILE_ITERATOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE_ITERATOR))
 #define GEGL_TILE_ITERATOR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE_ITERATOR, GeglTileIteratorClass))
 
-GType gegl_tile_iterator_get_type (void);
+GType gegl_tile_iterator_get_type (void) G_GNUC_CONST;
 
 typedef struct _GeglTileIterator GeglTileIterator;
 struct _GeglTileIterator

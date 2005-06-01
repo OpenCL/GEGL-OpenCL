@@ -29,7 +29,7 @@
 #define GEGL_IS_COLOR_SPACE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_COLOR_SPACE))
 #define GEGL_COLOR_SPACE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COLOR_SPACE, GeglColorSpaceClass))
 
-GType gegl_color_space_get_type (void);
+GType gegl_color_space_get_type (void) G_GNUC_CONST;
 
 enum GeglColorSpaceIntent
 {

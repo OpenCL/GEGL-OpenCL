@@ -41,7 +41,7 @@ struct _GeglVisitableClass
   gboolean (*needs_visiting) (GeglVisitable *interface);
 };
 
-GType gegl_visitable_get_type (void);
+GType gegl_visitable_get_type (void) G_GNUC_CONST;
 
 void gegl_visitable_accept (GeglVisitable   *interface, GeglVisitor *visitor);
 GList *gegl_visitable_depends_on(GeglVisitable *interface);

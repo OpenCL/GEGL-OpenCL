@@ -62,7 +62,7 @@ struct _GeglPropertyClass
   GeglObjectClass object_class;
 };
 
-GType           gegl_property_get_type              (void);
+GType           gegl_property_get_type              (void) G_GNUC_CONST;
 const gchar *   gegl_property_get_name              (GeglProperty * self);
 
 

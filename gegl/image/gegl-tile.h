@@ -36,7 +36,7 @@
 #define GEGL_IS_TILE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_TILE))
 #define GEGL_TILE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_TILE, GeglTileClass))
 
-GType gegl_tile_get_type (void);
+GType gegl_tile_get_type (void) G_GNUC_CONST;
 
 typedef struct _GeglTile GeglTile;
 struct _GeglTile

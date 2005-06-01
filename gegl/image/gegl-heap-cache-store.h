@@ -32,7 +32,7 @@
 #define GEGL_IS_HEAP_CACHE_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_HEAP_CACHE_STORE))
 #define GEGL_HEAP_CACHE_STORE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_HEAP_CACHE_STORE, GeglHeapCacheStoreClass))
 
-GType gegl_heap_cache_store_get_type(void);
+GType gegl_heap_cache_store_get_type(void) G_GNUC_CONST;
 
 /*
  * GeglCache

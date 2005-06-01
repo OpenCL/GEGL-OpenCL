@@ -27,7 +27,7 @@ struct _GeglIAddClass
    GeglBinaryClass binary_class;
 };
 
-GType            gegl_i_add_get_type         (void);
+GType            gegl_i_add_get_type         (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

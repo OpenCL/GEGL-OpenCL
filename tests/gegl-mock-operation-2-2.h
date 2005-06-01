@@ -33,7 +33,7 @@ struct _GeglMockFilter22Class
    GeglFilterClass filter_class;
 };
 
-GType             gegl_mock_filter_2_2_get_type                  (void);
+GType             gegl_mock_filter_2_2_get_type                  (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

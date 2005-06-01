@@ -30,7 +30,7 @@
 #define GEGL_IS_COLOR_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_COLOR_MODEL))
 #define GEGL_COLOR_MODEL_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COLOR_MODEL, GeglColorModelClass))
 
-GType gegl_color_model_get_type (void);
+GType gegl_color_model_get_type (void) G_GNUC_CONST;
 
 typedef struct _GeglColorModel GeglColorModel;
 struct _GeglColorModel

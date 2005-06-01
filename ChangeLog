@@ -1,5 +1,9 @@
 2005-06-01  Michael Natterer  <mitch@gimp.org>
 
+	* */*.h: added G_GNUC_CONST to all get_type() functions.
+
+2005-06-01  Michael Natterer  <mitch@gimp.org>
+
 	* */*.[ch]: removed trailing whitespace.
 
 2005-06-01  Michael Natterer  <mitch@gimp.org>

@@ -31,7 +31,7 @@
 #define GEGL_IS_MOCK_CACHE_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_MOCK_CACHE_ENTRY))
 #define GEGL_MOCK_CACHE_ENTRY_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MOCK_CACHE_ENTRY, GeglMockCacheEntryClass))
 
-GType gegl_mock_cache_entry_get_type (void);
+GType gegl_mock_cache_entry_get_type (void) G_GNUC_CONST;
 
 typedef struct _GeglMockCacheEntry GeglMockCacheEntry;
 struct _GeglMockCacheEntry

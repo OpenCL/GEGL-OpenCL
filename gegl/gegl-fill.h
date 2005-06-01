@@ -28,7 +28,7 @@ struct _GeglFillClass
    GeglNoInputClass no_input_class;
 };
 
-GType           gegl_fill_get_type         (void);
+GType           gegl_fill_get_type         (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

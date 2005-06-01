@@ -49,7 +49,7 @@ struct _GeglEvalMgrClass
    GeglObjectClass object_class;
 };
 
-GType           gegl_eval_mgr_get_type          (void);
+GType           gegl_eval_mgr_get_type          (void) G_GNUC_CONST;
 void            gegl_eval_mgr_apply             (GeglEvalMgr * self,
                                                  GeglNode *root,
                                                  const gchar *property_name);

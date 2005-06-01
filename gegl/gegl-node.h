@@ -59,7 +59,7 @@ struct _GeglNodeClass
     GeglObjectClass object_class;
 };
 
-GType           gegl_node_get_type              (void);
+GType           gegl_node_get_type              (void) G_GNUC_CONST;
 void            gegl_node_add_property          (GeglNode *self,
                                                  struct _GeglProperty *property);
 void            gegl_node_remove_property       (GeglNode *self,

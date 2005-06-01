@@ -28,7 +28,7 @@ struct _GeglFadeClass
    GeglUnaryClass unary_class;
 };
 
-GType            gegl_fade_get_type         (void);
+GType            gegl_fade_get_type         (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

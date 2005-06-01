@@ -33,7 +33,7 @@ struct _GeglCompClass
                                               GeglColorModel *cm);
 };
 
-GType           gegl_comp_get_type          (void);
+GType           gegl_comp_get_type          (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

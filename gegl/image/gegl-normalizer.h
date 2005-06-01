@@ -31,7 +31,7 @@
 #define GEGL_IS_NORMALIZER_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NORMALIZER))
 #define GEGL_NORMALIZER_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NORMALIZER, GeglNormalizerClass))
 
-GType gegl_normalizer_get_type (void);
+GType gegl_normalizer_get_type (void) G_GNUC_CONST;
 
 typedef struct _GeglNormalizer GeglNormalizer;
 struct _GeglNormalizer

@@ -26,7 +26,7 @@ struct _GeglMockPropertyVisitorClass
        GeglVisitorClass visitor_class;
 };
 
-GType         gegl_mock_property_visitor_get_type          (void);
+GType         gegl_mock_property_visitor_get_type          (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

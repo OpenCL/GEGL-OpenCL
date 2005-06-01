@@ -28,7 +28,7 @@ struct _GeglOverClass
    GeglCompClass comp_class;
 };
 
-GType           gegl_over_get_type         (void);
+GType           gegl_over_get_type         (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

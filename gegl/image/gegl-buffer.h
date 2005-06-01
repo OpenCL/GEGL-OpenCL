@@ -37,7 +37,7 @@ extern "C"
 #define GEGL_IS_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_BUFFER))
 #define GEGL_BUFFER_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BUFFER, GeglBufferClass))
 
-  GType gegl_buffer_get_type (void);
+  GType gegl_buffer_get_type (void) G_GNUC_CONST;
 
 /* I hate type enums.  This is what JAI does, and I just do what
  * they do for now, and try to figure out something better later.

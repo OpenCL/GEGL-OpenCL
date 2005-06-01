@@ -49,7 +49,7 @@ struct _GeglFilterClass
     gboolean (*evaluate)(GeglFilter *self, const gchar *output_prop);
 };
 
-GType           gegl_filter_get_type            (void);
+GType           gegl_filter_get_type            (void) G_GNUC_CONST;
 void            gegl_filter_create_property     (GeglFilter *self,
                                                  GParamSpec *param_spec);
 gboolean        gegl_filter_evaluate            (GeglFilter *self,

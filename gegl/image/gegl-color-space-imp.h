@@ -31,7 +31,7 @@
 #define GEGL_IS_COLOR_SPACE_IMP_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_COLOR_SPACE_IMP))
 #define GEGL_COLOR_SPACE_IMP_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COLOR_SPACE_IMP, GeglColorSpaceImpClass))
 
-GType gegl_color_space_imp_get_type (void);
+GType gegl_color_space_imp_get_type (void) G_GNUC_CONST;
 
 typedef struct _GeglColorSpaceImp GeglColorSpaceImp;
 struct _GeglColorSpaceImp

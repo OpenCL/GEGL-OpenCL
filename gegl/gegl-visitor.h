@@ -59,7 +59,7 @@ struct _GeglVisitorClass
                                     GeglNode * node);
 };
 
-GType           gegl_visitor_get_type           (void);
+GType           gegl_visitor_get_type           (void) G_GNUC_CONST;
 GList *         gegl_visitor_get_visits_list    (GeglVisitor *self);
 void            gegl_visitor_visit_visitable    (GeglVisitor *self,
                                                      struct _GeglVisitable *visitable);

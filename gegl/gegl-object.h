@@ -54,7 +54,7 @@ struct _GeglObjectClass
     GObjectClass gobject_class;
 };
 
-GType           gegl_object_get_type            (void);
+GType           gegl_object_get_type            (void) G_GNUC_CONST;
 void            gegl_object_set_name            (GeglObject * self,
                                                  const gchar * name);
 G_CONST_RETURN gchar*

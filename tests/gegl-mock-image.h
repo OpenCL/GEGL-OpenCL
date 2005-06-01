@@ -32,7 +32,7 @@ struct _GeglMockImageClass
   GeglObjectClass object_class;
 };
 
-GType           gegl_mock_image_get_type              (void);
+GType           gegl_mock_image_get_type              (void) G_GNUC_CONST;
 
 gint * gegl_mock_image_get_data(GeglMockImage *self);
 gint gegl_mock_image_get_length(GeglMockImage *self);
