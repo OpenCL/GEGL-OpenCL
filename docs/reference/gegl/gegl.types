@@ -1,9 +1,25 @@
 #include <gegl.h>
+
+gegl_buffer_double_get_type
+gegl_buffer_get_type
+gegl_cache_entry_get_type
+gegl_cache_get_type
+gegl_cache_store_get_type
+gegl_component_sample_model_get_type
+gegl_eval_mgr_get_type
 gegl_eval_visitor_get_type
 gegl_filter_get_type
 gegl_graph_get_type
+gegl_heap_cache_get_type
+gegl_heap_cache_store_get_type
 gegl_node_get_type
+gegl_normalizer_get_type
+gegl_normalizer_mult_get_type
+gegl_null_cache_store_get_type
 gegl_object_get_type
 gegl_property_get_type
+gegl_sample_model_get_type
+gegl_swap_cache_get_type
+gegl_swap_cache_store_get_type
 gegl_visitable_get_type
 gegl_visitor_get_type

@@ -19,7 +19,7 @@ GeglColorSpaceImp
 
 </para>
 
-@parent: 
+@parent_instance: 
 
 <!-- ##### STRUCT GeglColorSpaceImpClass ##### -->
 <para>

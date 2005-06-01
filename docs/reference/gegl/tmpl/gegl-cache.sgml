@@ -19,10 +19,6 @@ GeglCache
 
 </para>
 
-@parent: 
-@fetched_store: 
-@discard_store: 
-@has_disposed: 
 
 <!-- ##### STRUCT GeglCacheClass ##### -->
 <para>

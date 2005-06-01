@@ -19,8 +19,11 @@ GeglNormalizerMult
 
 </para>
 
-@parent: 
-@alpha: 
+
+<!-- ##### ARG GeglNormalizerMult:alpha ##### -->
+<para>
+
+</para>
 
 <!-- ##### STRUCT GeglNormalizerMultClass ##### -->
 <para>

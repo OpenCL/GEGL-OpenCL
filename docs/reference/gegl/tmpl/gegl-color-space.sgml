@@ -19,7 +19,7 @@ GeglColorSpace
 
 </para>
 
-@parent: 
+@parent_instance: 
 @implementation_data: 
 @name: 
 @num_colors: 

@@ -19,7 +19,7 @@ GeglTileIterator
 
 </para>
 
-@parent: 
+@parent_instance: 
 @bounds: 
 @x: 
 @y: 

@@ -38,7 +38,7 @@
 <!ENTITY gegl-debugging SYSTEM "debugging.sgml">
 <!ENTITY gegl-bugs SYSTEM "bugs.sgml">
 <!ENTITY gegl-mailinglists SYSTEM "mailinglists.sgml">
-<!ENTITY version SYSTEM "version.xml">
+<!ENTITY version SYSTEM "version">
 
 ]>
 <book id="index">

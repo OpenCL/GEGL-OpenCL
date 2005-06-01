@@ -19,8 +19,6 @@ GeglCacheEntry
 
 </para>
 
-@object: 
-@cache_hints: 
 
 <!-- ##### STRUCT GeglCacheEntryClass ##### -->
 <para>

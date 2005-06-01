@@ -19,7 +19,6 @@ GeglNormalizer
 
 </para>
 
-@parent: 
 
 <!-- ##### STRUCT GeglNormalizerClass ##### -->
 <para>

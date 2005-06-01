@@ -17,5 +17,5 @@ sgml-build.stamp
 sgml.stamp
 tmpl-build.stamp
 tmpl.stamp
-version.xml
+version
 xml

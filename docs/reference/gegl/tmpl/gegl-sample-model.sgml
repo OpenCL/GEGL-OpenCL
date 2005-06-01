@@ -19,12 +19,26 @@ GeglSampleModel
 
 </para>
 
-@parent: 
-@width: 
-@height: 
-@num_bands: 
-@normalizers: 
-@is_disposed: 
+
+<!-- ##### ARG GeglSampleModel:height ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglSampleModel:normalizers ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglSampleModel:num-bands ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglSampleModel:width ##### -->
+<para>
+
+</para>
 
 <!-- ##### STRUCT GeglSampleModelClass ##### -->
 <para>

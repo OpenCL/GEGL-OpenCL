@@ -19,7 +19,7 @@ GeglTile
 
 </para>
 
-@parent: 
+@parent_instance: 
 @x_offset: 
 @y_offset: 
 @sample_model: 

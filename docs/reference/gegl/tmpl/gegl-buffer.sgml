@@ -27,19 +27,21 @@ GeglBuffer
 
 </para>
 
-@object: 
-@elements_per_bank: 
-@num_banks: 
-@bytes_per_element: 
-@transfer_type: 
-@cache: 
-@banks: 
-@share_count: 
-@lock_count: 
-@entry_id: 
-@entry: 
-@has_expired: 
-@has_disposed: 
+
+<!-- ##### ARG GeglBuffer:cache ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglBuffer:elements-per-bank ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglBuffer:num-banks ##### -->
+<para>
+
+</para>
 
 <!-- ##### STRUCT GeglBufferClass ##### -->
 <para>

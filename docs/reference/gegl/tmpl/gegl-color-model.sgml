@@ -19,7 +19,7 @@ GeglColorModel
 
 </para>
 
-@parent: 
+@parent_instance: 
 @color_channels: 
 @alpha_channel: 
 @num_colors: 

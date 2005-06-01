@@ -19,13 +19,26 @@ GeglComponentSampleModel
 
 </para>
 
-@parent: 
-@pixel_stride: 
-@scanline_stride: 
-@bank_offsets: 
-@band_indices: 
-@all_to_one: 
-@is_disposed: 
+
+<!-- ##### ARG GeglComponentSampleModel:band-indices ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglComponentSampleModel:bank-offsets ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglComponentSampleModel:pixel-stride ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglComponentSampleModel:scanline-stride ##### -->
+<para>
+
+</para>
 
 <!-- ##### STRUCT GeglComponentSampleModelClass ##### -->
 <para>

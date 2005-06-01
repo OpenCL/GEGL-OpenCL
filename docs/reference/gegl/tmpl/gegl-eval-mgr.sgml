@@ -67,7 +67,6 @@ are interior to a graph. See #GeglGraph for this.
 
 </para>
 
-@object: 
 
 <!-- ##### STRUCT GeglEvalMgrClass ##### -->
 <para>

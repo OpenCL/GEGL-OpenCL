@@ -19,7 +19,6 @@ GeglBufferDouble
 
 </para>
 
-@parent: 
 
 <!-- ##### STRUCT GeglBufferDoubleClass ##### -->
 <para>
