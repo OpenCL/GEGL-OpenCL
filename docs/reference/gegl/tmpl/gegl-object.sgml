@@ -9,18 +9,21 @@ GeglObject
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
-
 
 <!-- ##### STRUCT GeglObject ##### -->
 <para>
 
 </para>
 
+
+<!-- ##### ARG GeglObject:name ##### -->
+<para>
+
+</para>
 
 <!-- ##### STRUCT GeglObjectClass ##### -->
 <para>
@@ -46,9 +49,4 @@ GeglObject
 @self: 
 @Returns: 
 
-
-<!-- ##### ARG GeglObject:name ##### -->
-<para>
-
-</para>
 

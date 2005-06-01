@@ -220,7 +220,6 @@ gegl_buffer_lock
 gegl_buffer_unlock
 gegl_buffer_attach
 gegl_buffer_detach
-gegl_buffer_get_unique_id
 <SUBSECTION Standard>
 GEGL_BUFFER
 GEGL_IS_BUFFER
@@ -234,13 +233,11 @@ GEGL_BUFFER_GET_CLASS
 <SECTION>
 <FILE>gegl-cache-entry</FILE>
 GeglCacheEntry
-GeglCacheExpireFunc
 GeglCacheEntryClass
 <TITLE>GeglCacheEntry</TITLE>
 gegl_cache_entry_flattened_size
 gegl_cache_entry_flatten
 gegl_cache_entry_unflatten
-gegl_cache_entry_set_expire_fuction
 <SUBSECTION Standard>
 GEGL_CACHE_ENTRY
 GEGL_IS_CACHE_ENTRY
@@ -256,7 +253,6 @@ GEGL_CACHE_ENTRY_GET_CLASS
 GeglCache
 GeglCacheClass
 <TITLE>GeglCache</TITLE>
-gegl_cache_try_put
 gegl_cache_put
 gegl_cache_fetch
 gegl_cache_mark_as_dirty
@@ -384,23 +380,6 @@ gegl_normalizer_get_type
 GEGL_NORMALIZER_CLASS
 GEGL_IS_NORMALIZER_CLASS
 GEGL_NORMALIZER_GET_CLASS
-</SECTION>
-
-<SECTION>
-<FILE>gegl-object</FILE>
-GeglObject
-GeglObjectClass
-<TITLE>GeglObject</TITLE>
-gegl_object_set_name
-gegl_object_get_name
-<SUBSECTION Standard>
-GEGL_OBJECT
-GEGL_IS_OBJECT
-GEGL_TYPE_OBJECT
-gegl_object_get_type
-GEGL_OBJECT_CLASS
-GEGL_IS_OBJECT_CLASS
-GEGL_OBJECT_GET_CLASS
 </SECTION>
 
 <SECTION>

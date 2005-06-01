@@ -1,0 +1,7 @@
+2005-06-01  Sven Neumann  <sven@gimp.org>
+
+	* reference/gegl/gegl-sections.txt: some cleanup.
+
+	* reference/gegl/gegl-undocumented.txt: removed from CVS.
+
+	* reference/gegl/tmpl/*.sgml: regenerated.

@@ -9,12 +9,20 @@ GeglCache
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
 
+<!-- ##### STRUCT GeglCache ##### -->
+<para>
+
+</para>
+
+@parent: 
+@fetched_store: 
+@discard_store: 
+@has_disposed: 
 
 <!-- ##### STRUCT GeglCacheClass ##### -->
 <para>

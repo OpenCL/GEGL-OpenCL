@@ -2,6 +2,7 @@ Makefile
 Makefile.in
 gegl-decl-list.txt
 gegl-decl.txt
+gegl-undocumented.txt
 gegl-unused.txt
 gegl.args
 gegl.hierarchy
