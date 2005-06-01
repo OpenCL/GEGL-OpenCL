@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_BUFFER_DOUBLE_H
-#define GEGL_BUFFER_DOUBLE_H
+#ifndef __GEGL_BUFFER_DOUBLE_H__
+#define __GEGL_BUFFER_DOUBLE_H__
 
 #include "gegl-buffer.h"
 

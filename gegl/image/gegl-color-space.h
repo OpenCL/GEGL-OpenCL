@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_COLOR_SPACE_H
-#define GEGL_COLOR_SPACE_H
+#ifndef __GEGL_COLOR_SPACE_H__
+#define __GEGL_COLOR_SPACE_H__
 
 #define GEGL_TYPE_COLOR_SPACE               (gegl_color_space_get_type ())
 #define GEGL_COLOR_SPACE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR_SPACE, GeglColorSpace))

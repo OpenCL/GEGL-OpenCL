@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_CACHE_H
-#define GEGL_CACHE_H
+#ifndef __GEGL_CACHE_H__
+#define __GEGL_CACHE_H__
 
 #include "gegl-cache-entry.h"
 #include "gegl-cache-store.h"

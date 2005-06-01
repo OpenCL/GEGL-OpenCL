@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_COLOR_SPACE_IMP_H
-#define GEGL_COLOR_SPACE_IMP_H
+#ifndef __GEGL_COLOR_SPACE_IMP_H__
+#define __GEGL_COLOR_SPACE_IMP_H__
 
 #include "gegl-object.h"
 

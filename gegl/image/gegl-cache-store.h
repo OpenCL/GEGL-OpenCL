@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_CACHE_STORE_H
-#define GEGL_CACHE_STORE_H
+#ifndef __GEGL_CACHE_STORE_H__
+#define __GEGL_CACHE_STORE_H__
 
 #include <glib.h>
 #include "gegl-entry-record.h"

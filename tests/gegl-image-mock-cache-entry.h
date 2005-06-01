@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_MOCK_CACHE_ENTRY_H
-#define GEGL_MOCK_CACHE_ENTRY_H
+#ifndef __GEGL_MOCK_CACHE_ENTRY_H__
+#define __GEGL_MOCK_CACHE_ENTRY_H__
 
 #include "image/gegl-cache-entry.h"
 

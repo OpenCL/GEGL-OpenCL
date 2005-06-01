@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_SAMPLE_MODEL_H
-#define GEGL_SAMPLE_MODEL_H
+#ifndef __GEGL_SAMPLE_MODEL_H__
+#define __GEGL_SAMPLE_MODEL_H__
 
 #include "gegl-object.h"
 #include "gegl-buffer.h"

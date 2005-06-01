@@ -21,8 +21,8 @@
 
 #include "gegl-object.h"
 
-#ifndef GEGL_NORMALIZER_H
-#define GEGL_NORMALIZER_H
+#ifndef __GEGL_NORMALIZER_H__
+#define __GEGL_NORMALIZER_H__
 
 #define GEGL_TYPE_NORMALIZER               (gegl_normalizer_get_type ())
 #define GEGL_NORMALIZER(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NORMALIZER, GeglNormalizer))

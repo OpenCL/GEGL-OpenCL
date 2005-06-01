@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_TILE_ITERATOR_H
-#define GEGL_TILE_ITERATOR_H
+#ifndef __GEGL_TILE_ITERATOR_H__
+#define __GEGL_TILE_ITERATOR_H__
 
 #define GEGL_TYPE_TILE_ITERATOR               (gegl_tile_iterator_get_type ())
 #define GEGL_TILE_ITERATOR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_TILE_ITERATOR, GeglTileIterator))

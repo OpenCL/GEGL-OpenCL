@@ -1,5 +1,11 @@
 2005-06-01  Michael Natterer  <mitch@gimp.org>
 
+	* gegl/image/*.h
+	* tests/gegl-image-mock-cache-entry.h: use standard include guard
+	#defines.
+
+2005-06-01  Michael Natterer  <mitch@gimp.org>
+
 	* docs/Makefile.am
 	* gegl/Makefile.am
 	* gegl/image/Makefile.am

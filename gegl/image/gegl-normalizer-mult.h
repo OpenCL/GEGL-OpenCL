@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_NORMALIZER_MULT_H
-#define GEGL_NORMALIZER_MULT_H
+#ifndef __GEGL_NORMALIZER_MULT_H__
+#define __GEGL_NORMALIZER_MULT_H__
 
 #include "gegl-normalizer.h"
 

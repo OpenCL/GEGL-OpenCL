@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_COLOR_MODEL_H
-#define GEGL_COLOR_MODEL_H
+#ifndef __GEGL_COLOR_MODEL_H__
+#define __GEGL_COLOR_MODEL_H__
 
 
 #define GEGL_TYPE_COLOR_MODEL               (gegl_color_model_get_type ())

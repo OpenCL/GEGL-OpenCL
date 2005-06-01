@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_CACHE_ENTRY_H
-#define GEGL_CACHE_ENTRY_H
+#ifndef __GEGL_CACHE_ENTRY_H__
+#define __GEGL_CACHE_ENTRY_H__
 
 #include "gegl-object.h"
 #include "gegl-entry-record.h"

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_SWAP_CACHE_H
-#define GEGL_SWAP_CACHE_H
+#ifndef __GEGL_SWAP_CACHE_H__
+#define __GEGL_SWAP_CACHE_H__
 
 #include "gegl-cache.h"
 #include "gegl-swap-cache-store.h"

@@ -19,17 +19,17 @@
  *
  */
 
-#ifndef GEGL_HEAP_CACHE_H
-#define GEGL_HEAP_CACHE_H
+#ifndef __GEGL_HEAP_CACHE_H__
+#define __GEGL_HEAP_CACHE_H__
 
 #include "gegl-cache.h"
 #include "gegl-heap-cache-store.h"
 
-#define GEGL_TYPE_HEAP_CACHE          (gegl_heap_cache_get_type ())
+#define __GEGL_TYPE_H__EAP_CACHE          (gegl_heap_cache_get_type ())
 #define GEGL_HEAP_CACHE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CACHE, GeglHeapCache))
 #define GEGL_HEAP_CACHE_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CACHE, GeglHeapCacheClass))
-#define GEGL_IS_HEAP_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CACHE))
-#define GEGL_IS_HEAP_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CACHE))
+#define __GEGL_IS_H__EAP_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CACHE))
+#define __GEGL_IS_H__EAP_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CACHE))
 #define GEGL_HEAP_CACHE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CACHE, GeglHeapCacheClass))
 
 GType gegl_heap_cache_get_type(void) G_GNUC_CONST;

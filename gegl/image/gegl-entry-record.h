@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_ENTRY_RECORD_H
-#define GEGL_ENTRY_RECORD_H
+#ifndef __GEGL_ENTRY_RECORD_H__
+#define __GEGL_ENTRY_RECORD_H__
 
 #include <glib-object.h>
 

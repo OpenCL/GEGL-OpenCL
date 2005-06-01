@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_TILE_H
-#define GEGL_TILE_H
+#ifndef __GEGL_TILE_H__
+#define __GEGL_TILE_H__
 
 #include "../gegl-types.h"
 #include "gegl-buffer.h"

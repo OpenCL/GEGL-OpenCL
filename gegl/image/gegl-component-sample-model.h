@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GEGL_COMPONENT_SAMPLE_MODEL_H
-#define GEGL_COMPONENT_SAMPLE_MODEL_H
+#ifndef __GEGL_COMPONENT_SAMPLE_MODEL_H__
+#define __GEGL_COMPONENT_SAMPLE_MODEL_H__
 
 #include "gegl-sample-model.h"
 
