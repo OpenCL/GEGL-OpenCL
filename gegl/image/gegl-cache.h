@@ -22,18 +22,9 @@
 #ifndef __GEGL_CACHE_H__
 #define __GEGL_CACHE_H__
 
-#include "gegl-cache-entry.h"
-#include "gegl-cache-store.h"
-#include "gegl-entry-record.h"
+#include "gegl-object.h"
 
-#define GEGL_TYPE_CACHE               (gegl_cache_get_type ())
-#define GEGL_CACHE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CACHE, GeglCache))
-#define GEGL_CACHE_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CACHE, GeglCacheClass))
-#define GEGL_IS_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CACHE))
-#define GEGL_IS_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CACHE))
-#define GEGL_CACHE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CACHE, GeglCacheClass))
-
-GType gegl_cache_get_type(void) G_GNUC_CONST;
+G_BEGIN_DECLS
 
 
 typedef enum
@@ -52,73 +43,88 @@ typedef enum
 } GeglPutResults;
 
 
-/*
- * GeglCache
- *
- */
+#define GEGL_TYPE_CACHE            (gegl_cache_get_type ())
+#define GEGL_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CACHE, GeglCache))
+#define GEGL_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CACHE, GeglCacheClass))
+#define GEGL_IS_CACHE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CACHE))
+#define GEGL_IS_CACHE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CACHE))
+#define GEGL_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CACHE, GeglCacheClass))
 
-typedef struct _GeglCache GeglCache;
-struct _GeglCache
-{
-  GObject parent_instance;
-  GeglCacheStore* fetched_store;
-  GeglCacheStore* discard_store;
-  gboolean has_disposed;
-};
 
 typedef struct _GeglCacheClass GeglCacheClass;
+
+struct _GeglCache
+{
+  GObject         parent_instance;
+
+  GeglCacheStore *fetched_store;
+  GeglCacheStore *discard_store;
+  gboolean        has_disposed;
+};
+
 struct _GeglCacheClass
 {
   GObjectClass parent_class;
-  GeglPutResults (*put) (GeglCache * cache,
-			 GeglCacheEntry * entry,
-			 gsize * entry_id);
-  GeglFetchResults (*fetch) (GeglCache * cache,
-			     gsize entry_id,
-			     GeglCacheEntry ** entry);
-  GeglFetchResults (*unfetch) (GeglCache * cache,
-			       gsize entry_id,
-			       GeglCacheEntry * entry);
-  void (*flush) (GeglCache * cache,
-		 gsize entry_id);
-  void (*mark_as_dirty) (GeglCache * cache,
-			 gsize entry_id);
+
+  GeglPutResults   (* put)            (GeglCache       *cache,
+                                       GeglCacheEntry  *entry,
+                                       gsize           *entry_id);
+  GeglFetchResults (* fetch)          (GeglCache       *cache,
+                                       gsize            ntry_id,
+                                       GeglCacheEntry **entry);
+  GeglFetchResults (* unfetch)        (GeglCache       *cache,
+                                       gsize            entry_id,
+                                       GeglCacheEntry  *entry);
+  void             (* flush)          (GeglCache       *cache,
+                                       gsize            entry_id);
+  void             (* mark_as_dirty)  (GeglCache       *cache,
+                                       gsize            entry_id);
   /* protected */
-  void (*discard) (GeglCache* cache,
-		   GeglEntryRecord * record);
+  void             (* discard)        (GeglCache       *cache,
+                                       GeglEntryRecord *record);
   /* virtual */
-  gint64 (*size) (GeglCache* cache);
-  gint64 (*capacity) (GeglCache* cache);
-  gboolean (*is_persistent) (GeglCache* cache);
+  gint64           (* size)           (GeglCache       *cache);
+  gint64           (* capacity)       (GeglCache       *cache);
+  gboolean         (* is_persistent)  (GeglCache       *cache);
 
   /* protected virtual */
-  void (*insert_record) (GeglCache* cache,
-			 GeglEntryRecord* record);
-  gboolean (*check_room_for) (GeglCache* cache, gint64 size);
-  void (*flush_internal) (GeglCache * cache,
-			  GeglEntryRecord * record);
+  void             (* insert_record)  (GeglCache       *cache,
+                                       GeglEntryRecord *record);
+  gboolean         (* check_room_for) (GeglCache       *cache,
+                                       gint64           size);
+  void             (* flush_internal) (GeglCache       *cache,
+                                       GeglEntryRecord *record);
 };
 
 
-gint gegl_cache_put (GeglCache * cache,
-		     GeglCacheEntry * entry,
-		     gsize * entry_id);
-GeglFetchResults gegl_cache_fetch (GeglCache * cache,
-		       gsize entry_id,
-		       GeglCacheEntry ** entry);
-GeglFetchResults gegl_cache_unfetch (GeglCache * cache,
-				     gsize entry_id,
-				     GeglCacheEntry * entry);
-void gegl_cache_mark_as_dirty (GeglCache * cache, gsize entry_id);
-void gegl_cache_flush (GeglCache * cache,
-		       gsize entry_id);
-void gegl_cache_flush_internal (GeglCache * cache, GeglEntryRecord * record);
-void gegl_cache_discard (GeglCache * cache, GeglEntryRecord * record);
-gint64 gegl_cache_size (GeglCache* cache);
-gint64 gegl_cache_capacity (GeglCache* cache);
-gboolean gegl_cache_is_persistent (GeglCache* cache);
-void gegl_cache_insert_record (GeglCache* cache,
-			       GeglEntryRecord* record);
-gboolean gegl_cache_check_room_for (GeglCache* cache, gint64 size);
+GType            gegl_cache_get_type       (void) G_GNUC_CONST;
 
-#endif
+gint             gegl_cache_put            (GeglCache        *cache,
+                                            GeglCacheEntry   *entry,
+                                            gsize            *entry_id);
+GeglFetchResults gegl_cache_fetch          (GeglCache        *cache,
+                                            gsize             entry_id,
+                                            GeglCacheEntry  **entry);
+GeglFetchResults gegl_cache_unfetch        (GeglCache        *cache,
+                                            gsize             entry_id,
+                                            GeglCacheEntry   *entry);
+void             gegl_cache_mark_as_dirty  (GeglCache        *cache,
+                                            gsize             entry_id);
+void             gegl_cache_flush          (GeglCache        *cache,
+                                            gsize             entry_id);
+void             gegl_cache_flush_internal (GeglCache        *cache,
+                                            GeglEntryRecord  *record);
+void             gegl_cache_discard        (GeglCache        *cache,
+                                            GeglEntryRecord  *record);
+gint64           gegl_cache_size           (GeglCache        *cache);
+gint64           gegl_cache_capacity       (GeglCache        *cache);
+gboolean         gegl_cache_is_persistent  (GeglCache        *cache);
+void             gegl_cache_insert_record  (GeglCache        *cache,
+                                            GeglEntryRecord  *record);
+gboolean         gegl_cache_check_room_for (GeglCache        *cache,
+                                            gint64            size);
+
+
+G_END_DECLS
+
+#endif /* __GEGL_CACHE_H__ */

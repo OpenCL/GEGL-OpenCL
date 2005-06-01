@@ -19,22 +19,17 @@
  *
  */
 
-#include "gegl-buffer.h"
-#include "gegl-cache-entry.h"
-
 #include <stdarg.h>
 #include <string.h>
 
-/* these are needed for the factory method*/
+#include <glib-object.h>
+
+#include "gegl-image-types.h"
+
+#include "gegl-buffer.h"
 #include "gegl-buffer-double.h"
-
-
-#define GEGL_TYPE_BUFFER_CACHE_ENTRY               (cache_entry_get_type ())
-#define GEGL_BUFFER_CACHE_ENTRY(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER_CACHE_ENTRY, GeglBufferCacheEntry))
-#define GEGL_BUFFER_CACHE_ENTRY_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_BUFFER_CACHE_ENTRY, GeglBufferCacheEntryClass))
-#define GEGL_IS_BUFFER_CACHE_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_BUFFER_CACHE_ENTRY))
-#define GEGL_IS_BUFFER_CACHE_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_BUFFER_CACHE_ENTRY))
-#define GEGL_BUFFER_CACHE_ENTRY_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BUFFER_CACHE_ENTRY, GeglBufferCacheEntryClass))
+#include "gegl-cache.h"
+#include "gegl-cache-entry.h"
 
 enum
 {
@@ -45,45 +40,71 @@ enum
   PROP_LAST
 };
 
-typedef struct _GeglBufferCacheEntry GeglBufferCacheEntry;
-struct _GeglBufferCacheEntry {
-  GeglCacheEntry parent;
+#define GEGL_TYPE_BUFFER_CACHE_ENTRY               (cache_entry_get_type ())
+#define GEGL_BUFFER_CACHE_ENTRY(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER_CACHE_ENTRY, GeglBufferCacheEntry))
+#define GEGL_BUFFER_CACHE_ENTRY_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_BUFFER_CACHE_ENTRY, GeglBufferCacheEntryClass))
+#define GEGL_IS_BUFFER_CACHE_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_BUFFER_CACHE_ENTRY))
+#define GEGL_IS_BUFFER_CACHE_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_BUFFER_CACHE_ENTRY))
+#define GEGL_BUFFER_CACHE_ENTRY_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BUFFER_CACHE_ENTRY, GeglBufferCacheEntryClass))
+
+typedef struct _GeglBufferCacheEntry      GeglBufferCacheEntry;
+typedef struct _GeglBufferCacheEntryClass GeglBufferCacheEntryClass;
+
+struct _GeglBufferCacheEntry
+{
+  GeglCacheEntry  parent_instance;
+
   gpointer * banks;
   gsize num_banks;
   gsize bank_length;
 };
-typedef struct _GeglBufferCacheEntryClass GeglBufferCacheEntryClass;
-struct _GeglBufferCacheEntryClass {
-  GeglCacheEntryClass parent;
+
+struct _GeglBufferCacheEntryClass
+{
+  GeglCacheEntryClass  parent_class;
 };
 
 static gpointer cache_entry_parent_class;
 
-static void cache_entry_class_init (gpointer g_class,
-				    gpointer class_data);
-static void cache_entry_init (GTypeInstance *instance,
-			      gpointer g_class);
-static void cache_entry_finalize (GObject * gobject);
-static gsize cache_entry_flattened_size (const GeglCacheEntry * self);
-static void cache_entry_flatten (GeglCacheEntry * self, gpointer buffer, gsize length);
-static void cache_entry_unflatten (GeglCacheEntry* self, gpointer buffer, gsize length);
-static GType cache_entry_get_type (void);
-static void cache_entry_discard (GeglCacheEntry * self);
-static GeglBufferCacheEntry * cache_entry_new (GeglBuffer* buffer);
-static void cache_entry_set (GeglBufferCacheEntry * self, GeglBuffer * buffer);
-static void class_init (GeglBufferClass * klass);
-static void init (GeglBuffer * self, GeglBufferClass * klass);
-static void finalize (GObject * gobject);
-static void dispose (GObject * gobejct);
-static GObject *constructor (GType type, guint n_props,
-			     GObjectConstructParam * props);
-static void get_property (GObject * gobject, guint prop_id, GValue * value,
-			  GParamSpec * pspec);
-static void set_property (GObject * gobject, guint prop_id,
-			  const GValue * value, GParamSpec * pspec);
+static void                  cache_entry_class_init     (gpointer               g_class,
+                                                         gpointer               class_data);
+static void                  cache_entry_init           (GTypeInstance         *instance,
+                                                         gpointer               g_class);
+static void                  cache_entry_finalize       (GObject               *gobject);
+static gsize                 cache_entry_flattened_size (const GeglCacheEntry  *self);
+static void                  cache_entry_flatten        (GeglCacheEntry        *self,
+                                                         gpointer               buffer,
+                                                         gsize                  length);
+static void                  cache_entry_unflatten      (GeglCacheEntry        *self,
+                                                         gpointer               buffer,
+                                                         gsize                  length);
+static GType                 cache_entry_get_type       (void);
+static void                  cache_entry_discard        (GeglCacheEntry        *self);
+static GeglBufferCacheEntry *cache_entry_new            (GeglBuffer            *buffer);
+static void                  cache_entry_set            (GeglBufferCacheEntry  *self,
+                                                         GeglBuffer            *buffer);
+static void                  class_init                 (GeglBufferClass       *klass);
+static void                  init                       (GeglBuffer            *self,
+                                                         GeglBufferClass       *klass);
+static void                  finalize                   (GObject               *gobject);
+static void                  dispose                    (GObject               *gobejct);
+static GObject *             constructor                (GType                  type,
+                                                         guint                  n_props,
+                                                         GObjectConstructParam *props);
+static void                  get_property               (GObject               *gobject,
+                                                         guint                  prop_id,
+                                                         GValue                *value,
+                                                         GParamSpec            *pspec);
+static void                  set_property               (GObject               *gobject,
+                                                         guint                  prop_id,
+                                                         const GValue          *value,
+                                                         GParamSpec            *pspec);
+static gpointer *            alloc_banks                (gsize                  num_banks,
+                                                         gsize                  bank_length);
+static void                  free_banks                 (gpointer              *banks,
+                                                         gsize                  num_banks,
+                                                         gsize                  bank_length);
 
-static gpointer *alloc_banks (gsize num_banks, gsize bank_length);
-static void free_banks (gpointer* banks, gsize num_banks, gsize bank_length);
 
 static gpointer parent_class = NULL;
 
@@ -515,6 +536,14 @@ gegl_buffer_create (TransferType type, const gchar * first_property_name, ...)
 }
 
 
+/**
+ * gegl_buffer_acquire:
+ * @self:
+ *
+ * Acquire a reference and increment the share count.  Use this when
+ * you wish to indicate you want a reference and are interested in the
+ * buffer data.
+ **/
 void
 gegl_buffer_acquire (GeglBuffer * self)
 {
@@ -524,6 +553,14 @@ gegl_buffer_acquire (GeglBuffer * self)
   ++(self->share_count);
 }
 
+/**
+ * gegl_buffer_release:
+ * @self:
+ *
+ * Release a reference and decrement the share count.  Use this to
+ * indicate you are finished with the buffer if and only if you
+ * acquired your reference with gegl_buffer_acquire
+ **/
 void
 gegl_buffer_release (GeglBuffer * self)
 {
@@ -544,6 +581,20 @@ gegl_buffer_release (GeglBuffer * self)
   g_object_unref(object);
 }
 
+/**
+ * gegl_buffer_unshare:
+ * @source:
+ *
+ * This gives you an unshared copy of the buffer source.  This copy is
+ * acquired and locked. This may be source, if source has a
+ * share_count of 1.  If a new buffer is allocated, then source is
+ * unlocked and unacquired exactly once.  Always make a copy before
+ * writing to the banks, unless you want to write to all shared copies
+ * of this buffer.  Always make sure source is acquired and locked
+ * when calling this.
+ *
+ * Return value:
+ **/
 GeglBuffer *
 gegl_buffer_unshare (GeglBuffer * source)
 {
@@ -569,12 +620,35 @@ gegl_buffer_unshare (GeglBuffer * source)
   return new_buffer;
 }
 
+/**
+ * gegl_buffer_is_finalized:
+ * @source: the buffer
+ *
+ * a buffer is finalized if the share_count is zero, but the ref_count
+ * is non-zero.  This might happen if some g_object_ref references were
+ * still around after all gegl_buffer_acquire references had been released.
+ *
+ * One should only acquire references that were acquired when handed to you.
+ * In otherwords if someone hands you a reference that they acquired with
+ * g_object_ref, don't gegl_buffer_acquire it.  That would be bad.
+
+ * Return value: %TRUE if the buffer is finalized.
+ **/
 gboolean
 gegl_buffer_is_finalized(const GeglBuffer * source)
 {
   return (source->share_count <= 0);
 }
 
+/**
+ * gegl_buffer_lock:
+ * @self:
+ *
+ * This locks the buffer into memory. As long as the buffer has at
+ * least one lock held on it, the banks are gaurenteed to be on the
+ * heap.  Locks can be nested.  Always unlock as many times as you
+ * locked.
+ **/
 void
 gegl_buffer_lock(GeglBuffer* self)
 {
@@ -598,6 +672,19 @@ gegl_buffer_lock(GeglBuffer* self)
     }
 }
 
+/**
+ * gegl_buffer_unlock:
+ * @self:
+ * @is_dirty:
+ *
+ * Once a buffer is completely unlocked, it is pushed into the cache,
+ * if it exists.  Otherwise it stays on the heap and is released when
+ * the share_count goes to zero.  is_dirty indicates whether to
+ * destroy any disk-resident copies of this tile.  If you are unsure,
+ * TRUE is the safe answer.  If is_dirty is false the disk-resident
+ * copy (if it exists) of the tile may be reused.  is_dirty is
+ * immediatly propagated to the cache, not stored in the buffer.
+ **/
 void
 gegl_buffer_unlock(GeglBuffer* self, gboolean is_dirty)
 {
@@ -649,6 +736,15 @@ gegl_buffer_unlock(GeglBuffer* self, gboolean is_dirty)
     }
 }
 
+/**
+ * gegl_buffer_attach:
+ * @self:  the buffer
+ * @cache: the cache to attach the buffer to
+ *
+ * Indicate that this buffer should use the GeglCache cache for any of
+ * its cache operations.  The persistance of this buffer directly
+ * reflects the persistence settings of the cache.
+ **/
 void
 gegl_buffer_attach(GeglBuffer * self, GeglCache * cache)
 {
@@ -663,6 +759,14 @@ gegl_buffer_attach(GeglBuffer * self, GeglCache * cache)
   gegl_buffer_unlock (self, TRUE);
 }
 
+/**
+ * gegl_buffer_detach:
+ * @self: the buffer
+ *
+ * Detach this buffer from its cache.  This indicates that this buffer
+ * is no longer cached.  Doing this will mean that the buffer is
+ * always on the heap.
+ **/
 void
 gegl_buffer_detach(GeglBuffer * self)
 {

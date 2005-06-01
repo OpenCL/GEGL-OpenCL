@@ -19,33 +19,42 @@
  *
  */
 
+#include <glib-object.h>
+
+#include "gegl-image-types.h"
+
 #include "gegl-cache.h"
+#include "gegl-cache-entry.h"
 #include "gegl-cache-store.h"
+#include "gegl-entry-record.h"
 #include "gegl-null-cache-store.h"
 
-static void class_init(gpointer g_class,
-                       gpointer class_data);
-static void instance_init(GTypeInstance *instance,
-                          gpointer g_class);
-static void dispose (GObject * object);
-static void finalize (GObject * object);
-static GeglPutResults put (GeglCache * cache,
-			   GeglCacheEntry * entry,
-			   gsize * entry_id);
-static GeglFetchResults fetch (GeglCache * cache,
-			       gsize entry_id,
-			       GeglCacheEntry ** entry);
-static GeglFetchResults unfetch (GeglCache* cache,
-				 gsize entry_id,
-				 GeglCacheEntry * entry);
-static  void flush (GeglCache * cache,
-		    gsize entry_id);
-static void discard (GeglCache * cache,
-		     GeglEntryRecord * record);
-static void mark_as_dirty (GeglCache * cache,
-			   gsize entry_id);
+
+static void             class_init    (gpointer          g_class,
+                                       gpointer          class_data);
+static void             instance_init (GTypeInstance    *instance,
+                                       gpointer          g_class);
+static void             dispose       (GObject          *object);
+static void             finalize      (GObject          *object);
+static GeglPutResults   put           (GeglCache        *cache,
+                                       GeglCacheEntry   *entry,
+                                       gsize            *entry_id);
+static GeglFetchResults fetch         (GeglCache        *cache,
+                                       gsize             entry_id,
+                                       GeglCacheEntry  **entry);
+static GeglFetchResults unfetch       (GeglCache        *cache,
+                                       gsize             entry_id,
+                                       GeglCacheEntry   *entry);
+static  void            flush         (GeglCache        *cache,
+                                       gsize             entry_id);
+static void             discard       (GeglCache        *cache,
+                                       GeglEntryRecord  *record);
+static void             mark_as_dirty (GeglCache        *cache,
+                                       gsize             entry_id);
+
 
 static gpointer parent_class;
+
 
 GType
 gegl_cache_get_type (void)

@@ -23,38 +23,41 @@
 #define __GEGL_HEAP_CACHE_H__
 
 #include "gegl-cache.h"
-#include "gegl-heap-cache-store.h"
 
-#define GEGL_TYPE_HEAP_CACHE          (gegl_heap_cache_get_type ())
-#define GEGL_HEAP_CACHE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CACHE, GeglHeapCache))
-#define GEGL_HEAP_CACHE_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CACHE, GeglHeapCacheClass))
-#define GEGL_IS_HEAP_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CACHE))
-#define GEGL_IS_HEAP_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CACHE))
-#define GEGL_HEAP_CACHE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CACHE, GeglHeapCacheClass))
+G_BEGIN_DECLS
 
-GType gegl_heap_cache_get_type(void) G_GNUC_CONST;
 
-/*
- * GeglHeapCache
- *
- */
+#define GEGL_TYPE_HEAP_CACHE            (gegl_heap_cache_get_type ())
+#define GEGL_HEAP_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CACHE, GeglHeapCache))
+#define GEGL_HEAP_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CACHE, GeglHeapCacheClass))
+#define GEGL_IS_HEAP_CACHE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CACHE))
+#define GEGL_IS_HEAP_CACHE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CACHE))
+#define GEGL_HEAP_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CACHE, GeglHeapCacheClass))
 
-typedef struct _GeglHeapCache GeglHeapCache;
-struct _GeglHeapCache
-{
-  GeglCache parent_instance;
-  GeglHeapCacheStore * stored;
-  gsize capacity;
-  gboolean is_persistent;
-};
 
 typedef struct _GeglHeapCacheClass GeglHeapCacheClass;
+
+struct _GeglHeapCache
+{
+  GeglCache           parent_instance;
+
+  GeglHeapCacheStore *stored;
+  gsize               capacity;
+  gboolean            is_persistent;
+};
+
 struct _GeglHeapCacheClass
 {
-  GeglCacheClass parent_class;
+  GeglCacheClass  parent_class;
 
 };
 
-GeglHeapCache * gegl_heap_cache_new (gsize capacity, gboolean is_persistent);
+GType           gegl_heap_cache_get_type (void) G_GNUC_CONST;
 
-#endif
+GeglHeapCache * gegl_heap_cache_new      (gsize    capacity,
+                                          gboolean is_persistent);
+
+
+G_END_DECLS
+
+#endif /* __GEGL_HEAP_CACHE_H__ */

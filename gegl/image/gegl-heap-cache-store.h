@@ -22,38 +22,41 @@
 #ifndef __GEGL_HEAP_CACHE_STORE_H__
 #define __GEGL_HEAP_CACHE_STORE_H__
 
-#include "gegl-entry-record.h"
 #include "gegl-cache-store.h"
 
-#define GEGL_TYPE_HEAP_CACHE_STORE               (gegl_heap_cache_store_get_type ())
-#define GEGL_HEAP_CACHE_STORE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_HEAP_CACHE_STORE, GeglHeapCacheStore))
-#define GEGL_HEAP_CACHE_STORE_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_HEAP_CACHE_STORE, GeglHeapCacheStoreClass))
-#define GEGL_IS_HEAP_CACHE_STORE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_HEAP_CACHE_STORE))
-#define GEGL_IS_HEAP_CACHE_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_HEAP_CACHE_STORE))
-#define GEGL_HEAP_CACHE_STORE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_HEAP_CACHE_STORE, GeglHeapCacheStoreClass))
+G_BEGIN_DECLS
 
-GType gegl_heap_cache_store_get_type(void) G_GNUC_CONST;
 
-/*
- * GeglCache
- *
- */
+#define GEGL_TYPE_HEAP_CACHE_STORE            (gegl_heap_cache_store_get_type ())
+#define GEGL_HEAP_CACHE_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_HEAP_CACHE_STORE, GeglHeapCacheStore))
+#define GEGL_HEAP_CACHE_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_HEAP_CACHE_STORE, GeglHeapCacheStoreClass))
+#define GEGL_IS_HEAP_CACHE_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_HEAP_CACHE_STORE))
+#define GEGL_IS_HEAP_CACHE_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_HEAP_CACHE_STORE))
+#define GEGL_HEAP_CACHE_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_HEAP_CACHE_STORE, GeglHeapCacheStoreClass))
 
-typedef struct _GeglHeapCacheStore GeglHeapCacheStore;
-struct _GeglHeapCacheStore
-{
-  GeglCacheStore parent_instance;
-  GList * record_head;
-  gint64 size;
-  gboolean has_disposed;
-};
 
 typedef struct _GeglHeapCacheStoreClass GeglHeapCacheStoreClass;
+
+struct _GeglHeapCacheStore
+{
+  GeglCacheStore  parent_instance;
+
+  GList          *record_head;
+  gint64          size;
+  gboolean        has_disposed;
+};
+
 struct _GeglHeapCacheStoreClass
 {
   GeglCacheStoreClass parent_class;
 };
 
-GeglHeapCacheStore * gegl_heap_cache_store_new (void);
 
-#endif
+GType                gegl_heap_cache_store_get_type (void) G_GNUC_CONST;
+
+GeglHeapCacheStore * gegl_heap_cache_store_new      (void);
+
+
+G_END_DECLS
+
+#endif /* __GEGL_HEAP_CACHE_STORE_H__ */

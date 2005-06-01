@@ -19,10 +19,16 @@
  *
  */
 
-#include "gegl-swap-cache-store.h"
-#include "gegl-cache-entry.h"
-
 #include <unistd.h>
+
+#include <glib-object.h>
+
+#include "gegl-image-types.h"
+
+#include "gegl-cache-entry.h"
+#include "gegl-entry-record.h"
+#include "gegl-swap-cache-store.h"
+
 
 typedef struct _SwapStoreData SwapStoreData;
 struct _SwapStoreData
@@ -39,6 +45,49 @@ struct _SwapGap
   gint64 end;
 };
 
+
+static void             class_init       (gpointer            g_class,
+                                          gpointer            class_data);
+static void             instance_init    (GTypeInstance      *instance,
+                                          gpointer            g_class);
+static void             finalize         (GObject            *object);
+static void             dispose          (GObject            *object);
+static void             add              (GeglCacheStore     *self,
+                                          GeglEntryRecord    *record);
+static void             remove           (GeglCacheStore     *self,
+                                          GeglEntryRecord    *record);
+static void             zap              (GeglCacheStore     *store,
+                                          GeglEntryRecord    *record);
+static gint64           size             (GeglCacheStore     *self);
+static GeglEntryRecord *pop              (GeglCacheStore     *self);
+static GeglEntryRecord *peek             (GeglCacheStore     *self);
+static void             swap_data_free   (GeglCacheStore     *store,
+                                          GeglEntryRecord    *record,
+                                          SwapStoreData      *store_data);
+static void             swap_data_dirty  (GeglCacheStore     *store,
+                                          GeglEntryRecord    *record,
+                                          void               *data);
+static SwapStoreData *  swap_data_new    (void);
+static void             swap_in          (GeglSwapCacheStore *self,
+                                          GeglCacheEntry     *entry,
+                                          SwapStoreData      *store_data);
+static void             swap_out         (GeglSwapCacheStore *self,
+                                          GeglCacheEntry     *entry,
+                                          SwapStoreData      *store_data);
+static void             swap_zap         (GeglSwapCacheStore *self,
+                                          GeglCacheEntry     *entry,
+                                          SwapStoreData      *store_data);
+static gint64           gap_list_get_gap (GeglSwapCacheStore *self,
+                                          gsize               length);
+static void             gap_list_add_gap (GeglSwapCacheStore *self,
+                                          gint64              offset,
+                                          gsize               length);
+static SwapStoreData *  attach_record    (GeglSwapCacheStore *self,
+                                          GeglEntryRecord    *record);
+static void             detach_record    (GeglSwapCacheStore *self,
+                                          GeglEntryRecord    *record);
+
+
 /*
  * This global defines the amount a swap file should be extended by.
  * Currently 4MB
@@ -46,28 +95,6 @@ struct _SwapGap
 static const gint64 SWAP_EXTEND = 4*1024*1024;
 static gpointer parent_class;
 
-static void class_init(gpointer g_class,
-                       gpointer class_data);
-static void instance_init(GTypeInstance *instance,
-                          gpointer g_class);
-static void finalize(GObject *object);
-static void dispose(GObject *object);
-static void add (GeglCacheStore * self, GeglEntryRecord * record);
-static void remove (GeglCacheStore* self, GeglEntryRecord* record);
-static void zap (GeglCacheStore * store, GeglEntryRecord * record);
-static gint64 size (GeglCacheStore* self);
-static GeglEntryRecord * pop (GeglCacheStore * self);
-static GeglEntryRecord * peek (GeglCacheStore * self);
-static void swap_data_free (GeglCacheStore * store, GeglEntryRecord * record, SwapStoreData * store_data);
-static void swap_data_dirty (GeglCacheStore * store, GeglEntryRecord * record, void * data);
-static SwapStoreData * swap_data_new (void);
-static void swap_in (GeglSwapCacheStore * self, GeglCacheEntry * entry, SwapStoreData * store_data);
-static void swap_out (GeglSwapCacheStore * self, GeglCacheEntry * entry, SwapStoreData * store_data);
-static void swap_zap (GeglSwapCacheStore * self, GeglCacheEntry * entry, SwapStoreData * store_data);
-static gint64 gap_list_get_gap(GeglSwapCacheStore * self, gsize length);
-static void gap_list_add_gap(GeglSwapCacheStore * self, gint64 offset, gsize length);
-static SwapStoreData * attach_record(GeglSwapCacheStore * self, GeglEntryRecord * record);
-static void detach_record(GeglSwapCacheStore * self, GeglEntryRecord * record);
 
 GType
 gegl_swap_cache_store_get_type(void)
@@ -103,6 +130,7 @@ gegl_swap_cache_store_get_type(void)
     }
   return type;
 }
+
 GeglSwapCacheStore *
 gegl_swap_cache_store_new (const gchar * template)
 {
@@ -127,6 +155,7 @@ gegl_swap_cache_store_new (const gchar * template)
     }
   return new_store;
 }
+
 static void
 g_list_free_record (gpointer data, gpointer user_data)
 {
@@ -239,6 +268,7 @@ pop (GeglCacheStore * store)
   remove (store, record);
   return record;
 }
+
 static GeglEntryRecord *
 peek (GeglCacheStore * store)
 {
@@ -255,11 +285,13 @@ peek (GeglCacheStore * store)
   g_return_val_if_fail (record != NULL, NULL);
   return record;
 }
+
 static void
 swap_data_free (GeglCacheStore * store, GeglEntryRecord * record, SwapStoreData * store_data)
 {
   g_free (store_data);
 }
+
 static void
 swap_data_dirty (GeglCacheStore * store, GeglEntryRecord * record, void * data)
 {
@@ -438,6 +470,7 @@ find_sized_gap (gconstpointer data, gconstpointer userdata)
     }
 
 }
+
 static gint
 find_after_gap (gconstpointer data, gconstpointer userdata)
 {

@@ -22,42 +22,53 @@
 #ifndef __GEGL_CACHE_STORE_H__
 #define __GEGL_CACHE_STORE_H__
 
-#include <glib.h>
-#include "gegl-entry-record.h"
+G_BEGIN_DECLS
 
-#define GEGL_TYPE_CACHE_STORE               (gegl_cache_store_get_type ())
-#define GEGL_CACHE_STORE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CACHE_STORE, GeglCacheStore))
-#define GEGL_CACHE_STORE_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CACHE_STORE, GeglCacheStoreClass))
-#define GEGL_IS_CACHE_STORE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CACHE_STORE))
-#define GEGL_IS_CACHE_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CACHE_STORE))
-#define GEGL_CACHE_STORE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CACHE_STORE, GeglCacheStoreClass))
 
-GType gegl_cache_store_get_type(void) G_GNUC_CONST;
+#define GEGL_TYPE_CACHE_STORE            (gegl_cache_store_get_type ())
+#define GEGL_CACHE_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CACHE_STORE, GeglCacheStore))
+#define GEGL_CACHE_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CACHE_STORE, GeglCacheStoreClass))
+#define GEGL_IS_CACHE_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CACHE_STORE))
+#define GEGL_IS_CACHE_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CACHE_STORE))
+#define GEGL_CACHE_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CACHE_STORE, GeglCacheStoreClass))
 
-typedef struct _GeglCacheStore GeglCacheStore;
-struct _GeglCacheStore
-{
-  GObject parent_instance;
-};
 
 typedef struct _GeglCacheStoreClass GeglCacheStoreClass;
-struct _GeglCacheStoreClass
-{
-  GObjectClass parent_class;
 
-  void (*add) (GeglCacheStore * self, GeglEntryRecord * record);
-  void (*remove) (GeglCacheStore* self, GeglEntryRecord* record);
-  void (*zap) (GeglCacheStore * self, GeglEntryRecord * record);
-  gint64 (*size) (GeglCacheStore* self);
-  GeglEntryRecord * (*pop) (GeglCacheStore * self);
-  GeglEntryRecord * (*peek) (GeglCacheStore * self);
+struct _GeglCacheStore
+{
+  GObject  parent_instance;
 };
 
-void gegl_cache_store_add (GeglCacheStore * self, GeglEntryRecord * record);
-void gegl_cache_store_remove (GeglCacheStore * self, GeglEntryRecord * record);
-void gegl_cache_store_zap (GeglCacheStore * self, GeglEntryRecord * record);
-gint64 gegl_cache_store_size (GeglCacheStore * self);
-GeglEntryRecord * gegl_cache_store_pop (GeglCacheStore * self);
-GeglEntryRecord * gegl_cache_store_peek (GeglCacheStore * self);
+struct _GeglCacheStoreClass
+{
+  GObjectClass  parent_class;
 
-#endif
+  void              (* add)    (GeglCacheStore  *self,
+                                GeglEntryRecord *record);
+  void              (* remove) (GeglCacheStore  *self,
+                                GeglEntryRecord *record);
+  void              (* zap)    (GeglCacheStore  *self,
+                                GeglEntryRecord *record);
+  gint64            (* size)   (GeglCacheStore  *self);
+  GeglEntryRecord * (* pop)    (GeglCacheStore  *self);
+  GeglEntryRecord * (* peek)   (GeglCacheStore  *self);
+};
+
+
+GType             gegl_cache_store_get_type (void) G_GNUC_CONST;
+
+void              gegl_cache_store_add      (GeglCacheStore  *self,
+                                             GeglEntryRecord *record);
+void              gegl_cache_store_remove   (GeglCacheStore  *self,
+                                             GeglEntryRecord *record);
+void              gegl_cache_store_zap      (GeglCacheStore  *self,
+                                             GeglEntryRecord *record);
+gint64            gegl_cache_store_size     (GeglCacheStore  *self);
+GeglEntryRecord * gegl_cache_store_pop      (GeglCacheStore  *self);
+GeglEntryRecord * gegl_cache_store_peek     (GeglCacheStore  *self);
+
+
+G_END_DECLS
+
+#endif /* __GEGL_CACHE_STORE_H__ */

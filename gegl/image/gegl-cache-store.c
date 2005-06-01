@@ -19,13 +19,19 @@
  *
  */
 
+#include <glib-object.h>
+
+#include "gegl-image-types.h"
+
 #include "gegl-cache-store.h"
 
 
-static void class_init(gpointer g_class,
-                       gpointer class_data);
-static void instance_init(GTypeInstance *instance,
-                          gpointer g_class);
+static void class_init    (gpointer       g_class,
+                           gpointer       class_data);
+static void instance_init (GTypeInstance *instance,
+                           gpointer       g_class);
+
+
 GType
 gegl_cache_store_get_type (void)
 {
@@ -61,46 +67,6 @@ gegl_cache_store_get_type (void)
   return type;
 }
 
-
-void
-gegl_cache_store_add (GeglCacheStore * self, GeglEntryRecord * record)
-{
-  GeglCacheStoreClass * class;
-  g_return_if_fail (self != NULL);
-  class = GEGL_CACHE_STORE_GET_CLASS (self);
-  g_return_if_fail (class != NULL);
-  g_return_if_fail (class->add != NULL);
-  class->add(self, record);
-}
-void gegl_cache_store_remove (GeglCacheStore * self, GeglEntryRecord * record)
-{
-  GeglCacheStoreClass * class;
-  g_return_if_fail (self != NULL);
-  class = GEGL_CACHE_STORE_GET_CLASS (self);
-  g_return_if_fail (class != NULL);
-  g_return_if_fail (class->remove != NULL);
-  class->remove (self, record);
-}
-void gegl_cache_store_zap (GeglCacheStore * self, GeglEntryRecord * record)
-{
-  GeglCacheStoreClass * class;
-  g_return_if_fail (self != NULL);
-  class = GEGL_CACHE_STORE_GET_CLASS (self);
-  g_return_if_fail (class != NULL);
-  g_return_if_fail (class->zap != NULL);
-  class->zap (self, record);
-}
-gint64 gegl_cache_store_size (GeglCacheStore * self)
-{
-  GeglCacheStoreClass * class;
-  g_return_val_if_fail (self != NULL, 0);
-  class = GEGL_CACHE_STORE_GET_CLASS (self);
-  g_return_val_if_fail (class != NULL, 0);
-  g_return_val_if_fail (class->size != NULL, 0);
-  return class->size (self);
-}
-
-
 static void
 class_init(gpointer g_class,
 	   gpointer class_data)
@@ -117,6 +83,47 @@ instance_init(GTypeInstance *instance,
 {
 }
 
+void
+gegl_cache_store_add (GeglCacheStore * self, GeglEntryRecord * record)
+{
+  GeglCacheStoreClass * class;
+  g_return_if_fail (self != NULL);
+  class = GEGL_CACHE_STORE_GET_CLASS (self);
+  g_return_if_fail (class != NULL);
+  g_return_if_fail (class->add != NULL);
+  class->add(self, record);
+}
+
+void gegl_cache_store_remove (GeglCacheStore * self, GeglEntryRecord * record)
+{
+  GeglCacheStoreClass * class;
+  g_return_if_fail (self != NULL);
+  class = GEGL_CACHE_STORE_GET_CLASS (self);
+  g_return_if_fail (class != NULL);
+  g_return_if_fail (class->remove != NULL);
+  class->remove (self, record);
+}
+
+void gegl_cache_store_zap (GeglCacheStore * self, GeglEntryRecord * record)
+{
+  GeglCacheStoreClass * class;
+  g_return_if_fail (self != NULL);
+  class = GEGL_CACHE_STORE_GET_CLASS (self);
+  g_return_if_fail (class != NULL);
+  g_return_if_fail (class->zap != NULL);
+  class->zap (self, record);
+}
+
+gint64 gegl_cache_store_size (GeglCacheStore * self)
+{
+  GeglCacheStoreClass * class;
+  g_return_val_if_fail (self != NULL, 0);
+  class = GEGL_CACHE_STORE_GET_CLASS (self);
+  g_return_val_if_fail (class != NULL, 0);
+  g_return_val_if_fail (class->size != NULL, 0);
+  return class->size (self);
+}
+
 GeglEntryRecord *
 gegl_cache_store_pop (GeglCacheStore * self)
 {
@@ -127,6 +134,7 @@ gegl_cache_store_pop (GeglCacheStore * self)
   g_return_val_if_fail (class->pop != NULL, NULL);
   return class->pop (self);
 }
+
 GeglEntryRecord *
 gegl_cache_store_peek (GeglCacheStore * self)
 {

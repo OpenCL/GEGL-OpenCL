@@ -24,26 +24,33 @@
 
 #include "gegl-buffer.h"
 
-#define GEGL_TYPE_BUFFER_DOUBLE               (gegl_buffer_double_get_type ())
-#define GEGL_BUFFER_DOUBLE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER_DOUBLE, GeglBufferDouble))
-#define GEGL_BUFFER_DOUBLE_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_BUFFER_DOUBLE, GeglBufferDoubleClass))
-#define GEGL_IS_BUFFER_DOUBLE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_BUFFER_DOUBLE))
-#define GEGL_IS_BUFFER_DOUBLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_BUFFER_DOUBLE))
-#define GEGL_BUFFER_DOUBLE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BUFFER_DOUBLE, GeglBufferDoubleClass))
+G_BEGIN_DECLS
 
-GType gegl_buffer_double_get_type (void) G_GNUC_CONST;
 
-typedef struct _GeglBufferDouble GeglBufferDouble;
-struct _GeglBufferDouble
-{
-  GeglBuffer parent_instance;
-};
+#define GEGL_TYPE_BUFFER_DOUBLE            (gegl_buffer_double_get_type ())
+#define GEGL_BUFFER_DOUBLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER_DOUBLE, GeglBufferDouble))
+#define GEGL_BUFFER_DOUBLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_BUFFER_DOUBLE, GeglBufferDoubleClass))
+#define GEGL_IS_BUFFER_DOUBLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_BUFFER_DOUBLE))
+#define GEGL_IS_BUFFER_DOUBLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_BUFFER_DOUBLE))
+#define GEGL_BUFFER_DOUBLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BUFFER_DOUBLE, GeglBufferDoubleClass))
+
 
 typedef struct _GeglBufferDoubleClass GeglBufferDoubleClass;
+
+struct _GeglBufferDouble
+{
+  GeglBuffer  parent_instance;
+};
+
 struct _GeglBufferDoubleClass
 {
-  GeglBufferClass parent_class;
+  GeglBufferClass  parent_class;
 };
 
 
-#endif
+GType   gegl_buffer_double_get_type (void) G_GNUC_CONST;
+
+
+G_END_DECLS
+
+#endif /* __GEGL_BUFFER_DOUBLE_H__ */

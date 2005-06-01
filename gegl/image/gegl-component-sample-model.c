@@ -19,46 +19,13 @@
  *
  */
 
+#include <glib-object.h>
+
+#include "gegl-image-types.h"
+
+#include "gegl-buffer.h"
 #include "gegl-component-sample-model.h"
 
-#include "glib.h"
-
-/* overridden fuctions */
-static void class_init (gpointer g_class, gpointer class_data);
-static void instance_init (GTypeInstance * instance, gpointer g_class);
-static GObject *constructor (GType type,
-			     guint n_construct_properties,
-			     GObjectConstructParam * construct_properties);
-static void finalize (GObject * object);
-static void dispose (GObject * object);
-static void get_property (GObject * object,
-			  guint property_id,
-			  GValue * value, GParamSpec * pspec);
-static void set_property (GObject * object,
-			  guint property_id,
-			  const GValue * value, GParamSpec * pspec);
-static gdouble get_sample_double (const GeglSampleModel * self,
-				  gint x,
-				  gint y,
-				  gint band, const GeglBuffer * buffer);
-static void set_sample_double (const GeglSampleModel * self,
-			       gint x,
-			       gint y,
-			       gint band,
-			       gdouble sample, GeglBuffer * buffer);
-static GeglBuffer *create_buffer (const GeglSampleModel * self,
-				  TransferType type);
-static gboolean check_buffer (const GeglSampleModel * self,
-			      const GeglBuffer * buffer);
-
-/* private functions */
-
-static GArray *g_array_copy_gint (const GArray * src);
-inline static gint g_array_max_gint (GArray * array);
-static gint get_max_bands_per_bank (const GeglComponentSampleModel * csm);
-
-
-static gpointer parent_class;
 
 enum
 {
@@ -69,6 +36,47 @@ enum
   PROP_BAND_INDICES,
   PROP_LAST
 };
+
+
+static void        class_init             (gpointer                        g_class,
+                                           gpointer                        class_data);
+static void        instance_init          (GTypeInstance                  *instance,
+                                           gpointer                        g_class);
+static GObject *   constructor            (GType                           type,
+                                           guint                           n_construct_properties,
+                                           GObjectConstructParam          *construct_properties);
+static void        finalize               (GObject                        *object);
+static void        dispose                (GObject                        *object);
+static void        get_property           (GObject                        *object,
+                                           guint                           property_id,
+                                           GValue                         *value,
+                                           GParamSpec                     *pspec);
+static void        set_property           (GObject                        *object,
+                                           guint                           property_id,
+                                           const GValue                   *value,
+                                           GParamSpec                     *pspec);
+static gdouble     get_sample_double      (const GeglSampleModel          *self,
+                                           gint                            x,
+                                           gint                            y,
+                                           gint                            band,
+                                           const GeglBuffer               *buffer);
+static void        set_sample_double      (const GeglSampleModel          *self,
+                                           gint                            x,
+                                           gint                            y,
+                                           gint                            band,
+                                           gdouble                         sample,
+                                           GeglBuffer                     *buffer);
+static GeglBuffer *create_buffer          (const GeglSampleModel          *self,
+                                           TransferType                    type);
+static gboolean    check_buffer           (const GeglSampleModel          *self,
+                                           const GeglBuffer               *buffer);
+static GArray *    g_array_copy_gint      (const GArray                   *src);
+inline static gint g_array_max_gint       (GArray                         *array);
+static gint        get_max_bands_per_bank (const GeglComponentSampleModel *csm);
+
+
+static gpointer parent_class;
+
 
 GType
 gegl_component_sample_model_get_type (void)

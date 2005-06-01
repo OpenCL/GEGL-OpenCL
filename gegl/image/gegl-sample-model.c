@@ -27,10 +27,13 @@
  */
 
 #include <glib-object.h>
+
+#include "gegl-image-types.h"
+
+#include "gegl-buffer.h"
 #include "gegl-sample-model.h"
 #include "gegl-normalizer.h"
 
-static gpointer parent_class;
 
 enum
 {
@@ -42,46 +45,58 @@ enum
   PROP_LAST
 };
 
-static void instance_init (GTypeInstance * instance, gpointer g_class);
-static void class_init (gpointer g_class, gpointer class_data);
-static void get_property (GObject * object,
-			  guint property_id,
-			  GValue * value, GParamSpec * pspec);
-static void dispose (GObject * object);
-static void set_property (GObject * object,
-			  guint property_id,
-			  const GValue * value, GParamSpec * pspec);
-static gdouble *get_pixel_double_default (const GeglSampleModel * self,
-					  gint x,
-					  gint y,
-					  gdouble * dArray,
-					  const GeglBuffer * buffer);
-static void
-set_pixel_double_default (const GeglSampleModel * self,
-			  gint x,
-			  gint y,
-			  const gdouble * dArray, GeglBuffer * buffer);
-static gdouble get_sample_normalized (const GeglSampleModel * self,
-				      gint x,
-				      gint y,
-				      gint band, const GeglBuffer * buffer);
-static void set_sample_normalized (const GeglSampleModel * self,
-				   gint x,
-				   gint y,
-				   gint band,
-				   gdouble sample, GeglBuffer * buffer);
-static gdouble *get_pixel_normalized (const GeglSampleModel * self,
-				      gint x,
-				      gint y,
-				      gdouble * d_array,
-				      const GeglBuffer * buffer);
-static void set_pixel_normalized (const GeglSampleModel * self,
-				  gint x,
-				  gint y,
-				  const gdouble * d_array,
-				  GeglBuffer * buffer);
-static GeglNormalizer *get_normalizer (const GeglSampleModel * self,
-				       gint band);
+
+static void            instance_init            (GTypeInstance         *instance,
+                                                 gpointer               g_class);
+static void            class_init               (gpointer               g_class,
+                                                 gpointer               class_data);
+static void            get_property             (GObject               *object,
+                                                 guint                  property_id,
+                                                 GValue                *value,
+                                                 GParamSpec            *pspec);
+static void            dispose                  (GObject               *object);
+static void            set_property             (GObject               *object,
+                                                 guint                  property_id,
+                                                 const GValue          *value,
+                                                 GParamSpec            *pspec);
+static gdouble *       get_pixel_double_default (const GeglSampleModel *self,
+                                                 gint                   x,
+                                                 gint                   y,
+                                                 gdouble               *dArray,
+                                                 const GeglBuffer      *buffer);
+static void            set_pixel_double_default (const GeglSampleModel *self,
+                                                 gint                   x,
+                                                 gint                   y,
+                                                 const gdouble         *dArray,
+                                                 GeglBuffer            *buffer);
+static gdouble         get_sample_normalized    (const GeglSampleModel *self,
+                                                 gint                   x,
+                                                 gint                   y,
+                                                 gint                   band,
+                                                 const GeglBuffer      *buffer);
+static void            set_sample_normalized    (const GeglSampleModel *self,
+                                                 gint                   x,
+                                                 gint                   y,
+                                                 gint                   band,
+                                                 gdouble                sample,
+                                                 GeglBuffer            *buffer);
+static gdouble *       get_pixel_normalized     (const GeglSampleModel *self,
+                                                 gint                   x,
+                                                 gint                   y,
+                                                 gdouble               *d_array,
+                                                 const GeglBuffer      *buffer);
+static void            set_pixel_normalized     (const GeglSampleModel *self,
+                                                 gint                   x,
+                                                 gint                   y,
+                                                 const gdouble         *d_array,
+                                                 GeglBuffer            *buffer);
+static GeglNormalizer *get_normalizer           (const GeglSampleModel *self,
+                                                 gint                   band);
+
+
+static gpointer parent_class;
+
+
 GType
 gegl_sample_model_get_type (void)
 {

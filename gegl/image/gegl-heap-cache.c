@@ -19,23 +19,33 @@
  *
  */
 
+#include <glib-object.h>
+
+#include "gegl-image-types.h"
+
 #include "gegl-heap-cache.h"
+#include "gegl-heap-cache-store.h"
+
+
+static void     class_init     (gpointer         g_class,
+                                gpointer         class_data);
+static void     instance_init  (GTypeInstance   *instance,
+                                gpointer         g_class);
+static void     finalize       (GObject         *object);
+static void     insert_record  (GeglCache       *cache,
+                                GeglEntryRecord *record);
+static gboolean check_room_for (GeglCache       *cache,
+                                gint64           size);
+static gint64   size           (GeglCache       *cache);
+static gint64   capacity       (GeglCache       *cache);
+static gboolean is_persistent  (GeglCache       *cache);
+static void     flush_internal (GeglCache       *cache,
+                                GeglEntryRecord *record);
+
 
 static gpointer parent_class;
 
-static void class_init(gpointer g_class,
-                       gpointer class_data);
-static void instance_init(GTypeInstance *instance,
-                          gpointer g_class);
-static void finalize (GObject * object);
-static void insert_record (GeglCache* cache,
-		       GeglEntryRecord* record);
-static gboolean check_room_for (GeglCache* cache, gint64 size);
-static gint64 size (GeglCache* cache);
-static gint64 capacity (GeglCache* cache);
-static gboolean is_persistent (GeglCache* cache);
-static void flush_internal (GeglCache * cache,
-		     GeglEntryRecord * record);
+
 GType
 gegl_heap_cache_get_type (void)
 {
@@ -98,6 +108,7 @@ class_init(gpointer g_class,
 
   parent_class = g_type_class_peek_parent (g_class);
 }
+
 static void
 instance_init(GTypeInstance *instance,
 	      gpointer g_class)
@@ -162,6 +173,7 @@ check_room_for (GeglCache* cache, gint64 size)
   /* conditions 3, 4 and 5 */
   return TRUE;
 }
+
 gint64
 size (GeglCache* cache)
 {
@@ -183,6 +195,7 @@ is_persistent (GeglCache* cache)
   GeglHeapCache * self = GEGL_HEAP_CACHE (cache);
   return self->is_persistent;
 }
+
 void
 flush_internal (GeglCache * cache,
 		GeglEntryRecord * record)

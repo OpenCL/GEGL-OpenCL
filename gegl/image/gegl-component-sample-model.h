@@ -24,51 +24,55 @@
 
 #include "gegl-sample-model.h"
 
-#define GEGL_TYPE_COMPONENT_SAMPLE_MODEL               (gegl_component_sample_model_get_type ())
-#define GEGL_COMPONENT_SAMPLE_MODEL(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COMPONENT_SAMPLE_MODEL, GeglComponentSampleModel))
-#define GEGL_COMPONENT_SAMPLE_MODEL_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_COMPONENT_SAMPLE_MODEL, GeglComponentSampleModelClass))
-#define GEGL_IS_COMPONENT_SAMPLE_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_COMPONENT_SAMPLE_MODEL))
-#define GEGL_IS_COMPONENT_SAMPLE_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_COMPONENT_SAMPLE_MODEL))
-#define GEGL_COMPONENT_SAMPLE_MODEL_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COMPONENT_SAMPLE_MODEL, GeglComponentSampleModelClass))
+G_BEGIN_DECLS
 
-GType gegl_component_sample_model_get_type (void) G_GNUC_CONST;
 
-typedef struct _GeglComponentSampleModel GeglComponentSampleModel;
-struct _GeglComponentSampleModel
-{
-  GeglSampleModel parent_instance;
-  /* protected */
-  gint pixel_stride;
-  gint scanline_stride;
-  GArray *bank_offsets;
-  GArray *band_indices;
-  /* private */
-  /*
-   * this class supports either chunky or planer, not something in between.
-   * this flag indicates chunky (all bands mapped to one bank) or planer (all bands mapped to different banks)
-   */
-  gboolean all_to_one;
-  gboolean is_disposed;
-};
+#define GEGL_TYPE_COMPONENT_SAMPLE_MODEL            (gegl_component_sample_model_get_type ())
+#define GEGL_COMPONENT_SAMPLE_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COMPONENT_SAMPLE_MODEL, GeglComponentSampleModel))
+#define GEGL_COMPONENT_SAMPLE_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_COMPONENT_SAMPLE_MODEL, GeglComponentSampleModelClass))
+#define GEGL_IS_COMPONENT_SAMPLE_MODEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_COMPONENT_SAMPLE_MODEL))
+#define GEGL_IS_COMPONENT_SAMPLE_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_COMPONENT_SAMPLE_MODEL))
+#define GEGL_COMPONENT_SAMPLE_MODEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COMPONENT_SAMPLE_MODEL, GeglComponentSampleModelClass))
+
 
 typedef struct _GeglComponentSampleModelClass GeglComponentSampleModelClass;
+
+struct _GeglComponentSampleModel
+{
+  GeglSampleModel  parent_instance;
+
+  /* protected */
+  gint             pixel_stride;
+  gint             scanline_stride;
+  GArray          *bank_offsets;
+  GArray          *band_indices;
+
+  /* private */
+  /*
+   * this class supports either chunky or planer, not something in
+   * between.  this flag indicates chunky (all bands mapped to one
+   * bank) or planer (all bands mapped to different banks)
+   */
+  gboolean         all_to_one;
+  gboolean         is_disposed;
+};
+
 struct _GeglComponentSampleModelClass
 {
   GeglSampleModelClass parent_class;
 };
 
-gint gegl_component_sample_model_get_pixel_stride (const
-						   GeglComponentSampleModel *
-						   self);
-gint gegl_component_sample_model_get_scanline_stride (const
-						      GeglComponentSampleModel
-						      * self);
-gint gegl_component_sample_model_get_bank_offset (const
-						  GeglComponentSampleModel *
-						  self, gint bank);
-gint gegl_component_sample_model_get_band_index (const
-						 GeglComponentSampleModel *
-						 self, gint band);
+
+GType   gegl_component_sample_model_get_type            (void) G_GNUC_CONST;
+
+gint    gegl_component_sample_model_get_pixel_stride    (const GeglComponentSampleModel *self);
+gint    gegl_component_sample_model_get_scanline_stride (const GeglComponentSampleModel *self);
+gint    gegl_component_sample_model_get_bank_offset     (const GeglComponentSampleModel *self,
+                                                         gint                            bank);
+gint    gegl_component_sample_model_get_band_index      (const GeglComponentSampleModel *self,
+                                                         gint                            band);
 
 
-#endif
+G_END_DECLS
+
+#endif /* __GEGL_COMPONENT_SAMPLE_MODEL_H__ */

@@ -19,23 +19,35 @@
  *
  */
 
+#include <glib-object.h>
+
+#include "gegl-image-types.h"
+
 #include "gegl-entry-record.h"
 #include "gegl-cache-entry.h"
 #include "gegl-cache.h"
 
+
 typedef struct _GeglStoreData GeglStoreData;
 struct _GeglStoreData
 {
-  gpointer data;
+  gpointer          data;
   GeglStoreDataFunc free;
   GeglStoreDataFunc dirty;
 };
 
-static GeglStoreData * gegl_store_data_new (void * data,
-					    GeglStoreDataFunc free,
-					    GeglStoreDataFunc dirty);
-static void gegl_store_data_free (GeglStoreData * sdata, GeglEntryRecord* record, GeglCacheStore * cache_store,  gboolean free_data);
-static void store_weak_notify (gpointer data, GObject * where_the_object_was);
+static GeglStoreData *gegl_store_data_new  (void              *data,
+                                            GeglStoreDataFunc  free,
+                                            GeglStoreDataFunc  dirty);
+static void           gegl_store_data_free (GeglStoreData     *sdata,
+                                            GeglEntryRecord   *record,
+                                            GeglCacheStore    *cache_store,
+                                            gboolean           free_data);
+static void           store_weak_notify    (gpointer           data,
+                                            GObject           *where_the_object_was);
+
+
+
 static gboolean
 free_and_remove (gpointer key, gpointer value, gpointer user_data)
 {

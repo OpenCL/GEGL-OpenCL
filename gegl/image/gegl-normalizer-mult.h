@@ -24,26 +24,37 @@
 
 #include "gegl-normalizer.h"
 
-#define GEGL_TYPE_NORMALIZER_MULT               (gegl_normalizer_mult_get_type ())
-#define GEGL_NORMALIZER_MULT(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NORMALIZER_MULT, GeglNormalizerMult))
-#define GEGL_NORMALIZER_MULT_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NORMALIZER_MULT, GeglNormalizerMultClass))
-#define GEGL_IS_NORMALIZER_MULT(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NORMALIZER_MULT))
-#define GEGL_IS_NORMALIZER_MULT_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NORMALIZER_MULT))
-#define GEGL_NORMALIZER_MULT_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NORMALIZER_MULT, GeglNormalizerMultClass))
+G_BEGIN_DECLS
+
+
+#define GEGL_TYPE_NORMALIZER_MULT            (gegl_normalizer_mult_get_type ())
+#define GEGL_NORMALIZER_MULT(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NORMALIZER_MULT, GeglNormalizerMult))
+#define GEGL_NORMALIZER_MULT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NORMALIZER_MULT, GeglNormalizerMultClass))
+#define GEGL_IS_NORMALIZER_MULT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NORMALIZER_MULT))
+#define GEGL_IS_NORMALIZER_MULT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NORMALIZER_MULT))
+#define GEGL_NORMALIZER_MULT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NORMALIZER_MULT, GeglNormalizerMultClass))
+
+
+typedef struct _GeglNormalizerMult      GeglNormalizerMult;
+typedef struct _GeglNormalizerMultClass GeglNormalizerMultClass;
+
+struct _GeglNormalizerMult
+{
+  GeglNormalizer  parent_instance;
+
+  gdouble         alpha;
+};
+
+struct _GeglNormalizerMultClass
+{
+  GeglNormalizerClass  parent_class;
+};
+
 
 GType gegl_normalizer_mult_get_type (void) G_GNUC_CONST;
 
-typedef struct _GeglNormalizerMult GeglNormalizerMult;
-struct _GeglNormalizerMult
-{
-  GeglNormalizer parent_instance;
-  gdouble alpha;
-};
 
-typedef struct _GeglNormalizerMultClass GeglNormalizerMultClass;
-struct _GeglNormalizerMultClass
-{
-  GeglNormalizerClass parent_class;
-};
+G_END_DECLS
 
-#endif
+#endif /* __GEGL_NORMALIZER_MULT_H__ */
+

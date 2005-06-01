@@ -1,7 +1,11 @@
 #include "gegl-color-model.h"
 
-static void class_init (gpointer g_class, gpointer class_data);
-static void instance_init (GTypeInstance * instance, gpointer g_class);
+
+static void class_init    (gpointer       g_class,
+                           gpointer       class_data);
+static void instance_init (GTypeInstance *instance,
+                           gpointer       g_class);
+
 
 GType
 gegl_color_model_get_type (void)
@@ -39,7 +43,8 @@ static void
 class_init (gpointer g_class, gpointer class_data)
 {
   GObjectClass *object_class = g_class;
-object_class->}
+}
+
 static void
 instance_init (GTypeInstance * instance, gpointer g_class)
 {

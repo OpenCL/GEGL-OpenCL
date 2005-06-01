@@ -23,34 +23,42 @@
 #define __GEGL_SWAP_CACHE_H__
 
 #include "gegl-cache.h"
-#include "gegl-swap-cache-store.h"
-#include "gegl-heap-cache-store.h"
 
-#define GEGL_TYPE_SWAP_CACHE               (gegl_swap_cache_get_type ())
-#define GEGL_SWAP_CACHE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SWAP_CACHE, GeglSwapCache))
-#define GEGL_SWAP_CACHE_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_SWAP_CACHE, GeglMemoryCacheClass))
-#define GEGL_IS_SWAP_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_SWAP_CACHE))
-#define GEGL_IS_SWAP_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_SWAP_CACHE))
-#define GEGL_SWAP_CACHE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SWAP_CACHE, GeglSwapCacheClass))
+G_BEGIN_DECLS
 
-GType gegl_swap_cache_get_type(void) G_GNUC_CONST;
 
-typedef struct _GeglSwapCache GeglSwapCache;
-struct _GeglSwapCache
-{
-  GeglCache parent_instance;
-  GeglSwapCacheStore * stored;
-  GeglHeapCacheStore * heap_stored;
-  gsize heap_capacity;
-  gboolean has_disposed;
-};
+#define GEGL_TYPE_SWAP_CACHE            (gegl_swap_cache_get_type ())
+#define GEGL_SWAP_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SWAP_CACHE, GeglSwapCache))
+#define GEGL_SWAP_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_SWAP_CACHE, GeglMemoryCacheClass))
+#define GEGL_IS_SWAP_CACHE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_SWAP_CACHE))
+#define GEGL_IS_SWAP_CACHE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_SWAP_CACHE))
+#define GEGL_SWAP_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SWAP_CACHE, GeglSwapCacheClass))
+
 
 typedef struct _GeglSwapCacheClass GeglSwapCacheClass;
-struct _GeglSwapCacheClass
+
+struct _GeglSwapCache
 {
-  GeglCacheClass parent_class;
+  GeglCache           parent_instance;
+
+  GeglSwapCacheStore *stored;
+  GeglHeapCacheStore *heap_stored;
+  gsize               heap_capacity;
+  gboolean            has_disposed;
 };
 
-GeglSwapCache* gegl_swap_cache_new (gchar* filename_template, gint64 heap_capacity);
+struct _GeglSwapCacheClass
+{
+  GeglCacheClass  parent_class;
+};
 
-#endif
+
+GType           gegl_swap_cache_get_type(void) G_GNUC_CONST;
+
+GeglSwapCache * gegl_swap_cache_new     (gchar  *filename_template,
+                                         gint64  heap_capacity);
+
+
+G_END_DECLS
+
+#endif /* __GEGL_SWAP_CACHE_H__ */

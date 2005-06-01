@@ -23,7 +23,9 @@
 #define __GEGL_CACHE_ENTRY_H__
 
 #include "gegl-object.h"
-#include "gegl-entry-record.h"
+
+G_BEGIN_DECLS
+
 
 /* GeglCacheEntry
  *
@@ -34,48 +36,67 @@
  * virtual methods and pass a GeglCacheEntry into the GeglCache
  */
 
-#define GEGL_TYPE_CACHE_ENTRY               (gegl_cache_entry_get_type ())
-#define GEGL_CACHE_ENTRY(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CACHE_ENTRY, GeglCacheEntry))
-#define GEGL_CACHE_ENTRY_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CACHE_ENTRY, GeglCacheEntryClass))
-#define GEGL_IS_CACHE_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CACHE_ENTRY))
-#define GEGL_IS_CACHE_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CACHE_ENTRY))
-#define GEGL_CACHE_ENTRY_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CACHE_ENTRY, GeglCacheEntryClass))
+#define GEGL_TYPE_CACHE_ENTRY            (gegl_cache_entry_get_type ())
+#define GEGL_CACHE_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CACHE_ENTRY, GeglCacheEntry))
+#define GEGL_CACHE_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CACHE_ENTRY, GeglCacheEntryClass))
+#define GEGL_IS_CACHE_ENTRY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CACHE_ENTRY))
+#define GEGL_IS_CACHE_ENTRY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CACHE_ENTRY))
+#define GEGL_CACHE_ENTRY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CACHE_ENTRY, GeglCacheEntryClass))
 
-GType gegl_cache_entry_get_type (void) G_GNUC_CONST;
-
-typedef struct _GeglCacheEntry GeglCacheEntry;
-struct _GeglCacheEntry
-{
-  GeglObject object;
-  GHashTable* cache_hints;
-};
 
 typedef struct _GeglCacheEntryClass GeglCacheEntryClass;
+
+struct _GeglCacheEntry
+{
+  GeglObject  parent_instance;
+
+  GHashTable *cache_hints;
+};
+
 struct _GeglCacheEntryClass
 {
-  GeglObjectClass object_class;
-  gsize (*flattened_size) (const GeglCacheEntry* self);
-  void (*flatten) (GeglCacheEntry* self, gpointer buffer, gsize length);
-  void (*unflatten) (GeglCacheEntry* self, const gpointer buffer, gsize length);
-  void (*discard) (GeglCacheEntry * self);
+  GeglObjectClass  parent_class;
+
+  gsize (* flattened_size) (const GeglCacheEntry *self);
+  void  (* flatten)        (GeglCacheEntry       *self,
+                            gpointer              buffer,
+                            gsize                 length);
+  void  (* unflatten)      (GeglCacheEntry       *self,
+                            const gpointer        buffer,
+                            gsize                 length);
+  void  (* discard)        (GeglCacheEntry       *self);
 };
+
+
+GType gegl_cache_entry_get_type       (void) G_GNUC_CONST;
 
 /*
  * The serialized length of the buffer needed to serialize this entry
  */
-gsize gegl_cache_entry_flattened_size (const GeglCacheEntry* self);
+gsize gegl_cache_entry_flattened_size (const GeglCacheEntry *self);
+
 /*
  * The function to serialize this data.  Once an entry has been
  * serialized it should free its data.
  */
-void gegl_cache_entry_flatten (GeglCacheEntry* self, gpointer buffer, gsize length);
+void  gegl_cache_entry_flatten        (GeglCacheEntry       *self,
+                                       gpointer              buffer,
+                                       gsize                 length);
+
 /*
  * The function to unserialize this data
  */
-void gegl_cache_entry_unflatten (GeglCacheEntry* self, gpointer buffer, gsize length);
+void  gegl_cache_entry_unflatten      (GeglCacheEntry       *self,
+                                       gpointer              buffer,
+                                       gsize                 length);
+
 /*
  * This function simply discard the cache entry data.  This is useful
  * for swap that isn't dirty.
  */
-void gegl_cache_entry_discard (GeglCacheEntry * self);
-#endif
+void  gegl_cache_entry_discard        (GeglCacheEntry       *self);
+
+
+G_END_DECLS
+
+#endif /* __GEGL_CACHE_ENTRY_H__ */

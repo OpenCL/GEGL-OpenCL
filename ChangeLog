@@ -1,6 +1,33 @@
+2005-06-02  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/image/gegl-image-types.h: new file.
+
+	* gegl/image/Makefile.am: add it. Also add all headers to SOURCES.
+
+	* gegl/image/gegl-buffer-double.[ch]
+	* gegl/image/gegl-buffer.[ch]
+	* gegl/image/gegl-cache-entry.[ch]
+	* gegl/image/gegl-cache-store.[ch]
+	* gegl/image/gegl-cache.[ch]
+	* gegl/image/gegl-color-model.[ch]
+	* gegl/image/gegl-color-space.h
+	* gegl/image/gegl-component-sample-model.[ch]
+	* gegl/image/gegl-entry-record.[ch]
+	* gegl/image/gegl-heap-cache-store.[ch]
+	* gegl/image/gegl-heap-cache.[ch]
+	* gegl/image/gegl-normalizer-mult.[ch]
+	* gegl/image/gegl-normalizer.h
+	* gegl/image/gegl-null-cache-store.[ch]
+	* gegl/image/gegl-sample-model.[ch]
+	* gegl/image/gegl-swap-cache-store.[ch]
+	* gegl/image/gegl-swap-cache.[ch]
+	* gegl/image/gegl-tile-iterator.h
+	* gegl/image/gegl-tile.h: added coding style in all headers.
+	Include cleanup. Some indentation and cleanup in the .c files.
+
 2005-06-02  Sven Neumann  <sven@gimp.org>
 
-	* gegl/Makefile.am: added a list of files that doesn't compile.
+	* gegl/Makefile.am: added a list of files that don't compile.
 	Also list all public headers.
 
 2005-06-01  Sven Neumann  <sven@gimp.org>

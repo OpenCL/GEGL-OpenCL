@@ -19,18 +19,28 @@
  *
  */
 
+#include <glib-object.h>
+
+#include "gegl-image-types.h"
+
+#include "gegl-entry-record.h"
 #include "gegl-null-cache-store.h"
 
-static void class_init(gpointer g_class,
-                       gpointer class_data);
-static void instance_init(GTypeInstance *instance,
-                          gpointer g_class);
-static void add (GeglCacheStore * self, GeglEntryRecord * record);
-static void remove (GeglCacheStore* self, GeglEntryRecord* record);
-static void zap (GeglCacheStore* self, GeglEntryRecord* record);
-static gint64 size (GeglCacheStore* self);
-static GeglEntryRecord * pop (GeglCacheStore * self);
-static GeglEntryRecord * peek (GeglCacheStore * self);
+
+static void             class_init    (gpointer         g_class,
+                                       gpointer         class_data);
+static void             instance_init (GTypeInstance   *instance,
+                                       gpointer         g_class);
+static void             add           (GeglCacheStore  *self,
+                                       GeglEntryRecord *record);
+static void             remove        (GeglCacheStore  *self,
+                                       GeglEntryRecord *record);
+static void             zap           (GeglCacheStore  *self,
+                                       GeglEntryRecord *record);
+static gint64           size          (GeglCacheStore  *self);
+static GeglEntryRecord *pop           (GeglCacheStore  *self);
+static GeglEntryRecord *peek          (GeglCacheStore  *self);
+
 
 GType
 gegl_null_cache_store_get_type(void)
@@ -66,6 +76,7 @@ gegl_null_cache_store_get_type(void)
     }
   return type;
 }
+
 GeglNullCacheStore *
 gegl_null_cache_store_new (GeglCacheStatus status)
 {
@@ -73,7 +84,6 @@ gegl_null_cache_store_new (GeglCacheStatus status)
   new_store->status = status;
   return new_store;
 }
-
 
 static void
 class_init(gpointer g_class,
@@ -125,6 +135,7 @@ remove (GeglCacheStore* store, GeglEntryRecord* record)
   gegl_entry_record_set_cache_store (record, NULL);
   record->status = GEGL_UNDEFINED;
 }
+
 static void
 zap (GeglCacheStore* store, GeglEntryRecord* record)
 {
@@ -148,6 +159,7 @@ static GeglEntryRecord * pop (GeglCacheStore * store)
   remove(store, record);
   return record;
 }
+
 static GeglEntryRecord * peek (GeglCacheStore * store)
 {
   GeglNullCacheStore * self = GEGL_NULL_CACHE_STORE (store);

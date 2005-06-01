@@ -22,44 +22,47 @@
 #ifndef __GEGL_SWAP_CACHE_STORE_H__
 #define __GEGL_SWAP_CACHE_STORE_H__
 
-#include "gegl-entry-record.h"
 #include "gegl-cache-store.h"
 
-#define GEGL_TYPE_SWAP_CACHE_STORE               (gegl_swap_cache_store_get_type ())
-#define GEGL_SWAP_CACHE_STORE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SWAP_CACHE_STORE, GeglSwapCacheStore))
-#define GEGL_SWAP_CACHE_STORE_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_SWAP_CACHE_STORE, GeglSwapCacheStoreClass))
-#define GEGL_IS_SWAP_CACHE_STORE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_SWAP_CACHE_STORE))
-#define GEGL_IS_SWAP_CACHE_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_SWAP_CACHE_STORE))
-#define GEGL_SWAP_CACHE_STORE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SWAP_CACHE_STORE, GeglSwapCacheStoreClass))
+G_BEGIN_DECLS
 
-GType gegl_swap_cache_store_get_type(void) G_GNUC_CONST;
 
-/*
- * GeglCache
- *
- */
+#define GEGL_TYPE_SWAP_CACHE_STORE            (gegl_swap_cache_store_get_type ())
+#define GEGL_SWAP_CACHE_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_SWAP_CACHE_STORE, GeglSwapCacheStore))
+#define GEGL_SWAP_CACHE_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_SWAP_CACHE_STORE, GeglSwapCacheStoreClass))
+#define GEGL_IS_SWAP_CACHE_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_SWAP_CACHE_STORE))
+#define GEGL_IS_SWAP_CACHE_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_SWAP_CACHE_STORE))
+#define GEGL_SWAP_CACHE_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SWAP_CACHE_STORE, GeglSwapCacheStoreClass))
 
-typedef struct _GeglSwapCacheStore GeglSwapCacheStore;
-struct _GeglSwapCacheStore
-{
-  GeglCacheStore parent_instance;
-  GList * record_head;
-  gint64 size;
-  gchar * filename;
-  GIOChannel * channel;
-  gint fd;
-  GList * gaps;
-  gint64 length;
-  gboolean has_disposed;
-};
 
 typedef struct _GeglSwapCacheStoreClass GeglSwapCacheStoreClass;
+
+struct _GeglSwapCacheStore
+{
+  GeglCacheStore  parent_instance;
+
+  GList          *record_head;
+  gint64          size;
+  gchar          *filename;
+  GIOChannel     *channel;
+  gint            fd;
+  GList          *gaps;
+  gint64          length;
+  gboolean        has_disposed;
+};
+
 struct _GeglSwapCacheStoreClass
 {
   GeglCacheStoreClass parent_class;
 };
 
-GeglSwapCacheStore * gegl_swap_cache_store_new (const gchar * template);
-gint64 gegl_swap_cache_length (GeglSwapCacheStore * self);
 
-#endif
+GType                gegl_swap_cache_store_get_type (void) G_GNUC_CONST;
+
+GeglSwapCacheStore * gegl_swap_cache_store_new      (const gchar        *template);
+gint64               gegl_swap_cache_length         (GeglSwapCacheStore *self);
+
+
+G_END_DECLS
+
+#endif /* __GEGL_SWAP_CACHE_STORE_H__ */

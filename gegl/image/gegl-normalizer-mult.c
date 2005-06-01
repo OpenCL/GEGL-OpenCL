@@ -18,23 +18,9 @@
  *  Copyright 2003 Daniel S. Rogers
  *
  */
+
 #include "gegl-normalizer-mult.h"
 
-static void class_init (gpointer g_class, gpointer class_data);
-static void instance_init (GTypeInstance * instance, gpointer g_class);
-static void get_property (GObject * object,
-			  guint property_id,
-			  GValue * value, GParamSpec * pspec);
-static void set_property (GObject * object,
-			  guint property_id,
-			  const GValue * value, GParamSpec * pspec);
-
-static gdouble *normalize (const GeglNormalizer * self,
-			   const gdouble * unnor_data, gdouble * nor_data,
-			   gint length, gint stride);
-static gdouble *unnormalize (const GeglNormalizer * self,
-			     const gdouble * nor_data, gdouble * unnor_data,
-			     gint length, gint stride);
 
 enum
 {
@@ -42,6 +28,30 @@ enum
   PROP_ALPHA,
   PROP_LAST
 };
+
+static void     class_init    (gpointer              g_class,
+                               gpointer              class_data);
+static void     instance_init (GTypeInstance        *instance,
+                               gpointer              g_class);
+static void     get_property  (GObject              *object,
+                               guint                 property_id,
+                               GValue               *value,
+                               GParamSpec           *pspec);
+static void     set_property  (GObject              *object,
+                               guint                 property_id,
+                               const GValue         *value,
+                               GParamSpec           *pspec);
+static gdouble *normalize     (const GeglNormalizer *self,
+                               const gdouble        *unnor_data,
+                               gdouble              *nor_data,
+                               gint                  length,
+                               gint                  stride);
+static gdouble *unnormalize   (const GeglNormalizer *self,
+                               const gdouble        *nor_data,
+                               gdouble              *unnor_data,
+                               gint                  length,
+                               gint                  stride);
+
 
 GType
 gegl_normalizer_mult_get_type (void)

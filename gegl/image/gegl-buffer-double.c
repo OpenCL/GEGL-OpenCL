@@ -19,19 +19,31 @@
  *
  */
 
+#include <glib-object.h>
+
+#include "gegl-image-types.h"
+
 #include "gegl-buffer-double.h"
 
-static void instance_init (GTypeInstance * instance, gpointer g_class);
-static void class_init (gpointer g_class, gpointer class_data);
-static GObject *constructor (GType type,
-			     guint n_construct_properties,
-			     GObjectConstructParam * construct_properties);
-static gdouble get_element_double (const GeglBuffer * self, gint bank,
-				   gint index);
-static void set_element_double (GeglBuffer * self, gint bank, gint index,
-				gdouble elem);
+
+static void     class_init         (gpointer               g_class,
+                                    gpointer               class_data);
+static void     instance_init      (GTypeInstance         *instance,
+                                    gpointer               g_class);
+static GObject *constructor        (GType                  type,
+                                    guint                  n_construct_properties,
+                                    GObjectConstructParam *construct_properties);
+static gdouble  get_element_double (const GeglBuffer      *self,
+                                    gint                   bank,
+                                    gint                   index);
+static void     set_element_double (GeglBuffer            *self,
+                                    gint                   bank,
+                                    gint                   index,
+                                    gdouble                elem);
+
 
 static gpointer parent_class;
+
 
 GType
 gegl_buffer_double_get_type (void)

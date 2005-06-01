@@ -22,37 +22,40 @@
 #ifndef __GEGL_NULL_CACHE_STORE_H__
 #define __GEGL_NULL_CACHE_STORE_H__
 
-#include "gegl-entry-record.h"
 #include "gegl-cache-store.h"
 
-#define GEGL_TYPE_NULL_CACHE_STORE               (gegl_null_cache_store_get_type ())
-#define GEGL_NULL_CACHE_STORE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NULL_CACHE_STORE, GeglNullCacheStore))
-#define GEGL_NULL_CACHE_STORE_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NULL_CACHE_STORE, GeglNullCacheStoreClass))
-#define GEGL_IS_NULL_CACHE_STORE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NULL_CACHE_STORE))
-#define GEGL_IS_NULL_CACHE_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NULL_CACHE_STORE))
-#define GEGL_NULL_CACHE_STORE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NULL_CACHE_STORE, GeglNullCacheStoreClass))
+G_BEGIN_DECLS
 
-GType gegl_null_cache_store_get_type(void) G_GNUC_CONST;
 
-/*
- * GeglCache
- *
- */
+#define GEGL_TYPE_NULL_CACHE_STORE            (gegl_null_cache_store_get_type ())
+#define GEGL_NULL_CACHE_STORE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NULL_CACHE_STORE, GeglNullCacheStore))
+#define GEGL_NULL_CACHE_STORE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NULL_CACHE_STORE, GeglNullCacheStoreClass))
+#define GEGL_IS_NULL_CACHE_STORE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NULL_CACHE_STORE))
+#define GEGL_IS_NULL_CACHE_STORE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NULL_CACHE_STORE))
+#define GEGL_NULL_CACHE_STORE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NULL_CACHE_STORE, GeglNullCacheStoreClass))
 
-typedef struct _GeglNullCacheStore GeglNullCacheStore;
-struct _GeglNullCacheStore
-{
-  GeglCacheStore parent_instance;
-  GeglCacheStatus status;
-  GList * record_head;
-};
 
 typedef struct _GeglNullCacheStoreClass GeglNullCacheStoreClass;
-struct _GeglNullCacheStoreClass
+
+struct _GeglNullCacheStore
 {
-  GeglCacheStoreClass parent_class;
+  GeglCacheStore   parent_instance;
+
+  GeglCacheStatus  status;
+  GList           *record_head;
 };
 
-GeglNullCacheStore * gegl_null_cache_store_new (GeglCacheStatus status);
+struct _GeglNullCacheStoreClass
+{
+  GeglCacheStoreClass  parent_class;
+};
 
-#endif
+
+GType                gegl_null_cache_store_get_type (void) G_GNUC_CONST;
+
+GeglNullCacheStore * gegl_null_cache_store_new      (GeglCacheStatus status);
+
+
+G_END_DECLS
+
+#endif /* __GEGL_NULL_CACHE_STORE_H__ */

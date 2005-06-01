@@ -19,47 +19,62 @@
  *
  */
 
-#include "gegl-object.h"
-
 #ifndef __GEGL_NORMALIZER_H__
 #define __GEGL_NORMALIZER_H__
 
-#define GEGL_TYPE_NORMALIZER               (gegl_normalizer_get_type ())
-#define GEGL_NORMALIZER(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NORMALIZER, GeglNormalizer))
-#define GEGL_NORMALIZER_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NORMALIZER, GeglNormalizerClass))
-#define GEGL_IS_NORMALIZER(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NORMALIZER))
-#define GEGL_IS_NORMALIZER_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NORMALIZER))
-#define GEGL_NORMALIZER_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NORMALIZER, GeglNormalizerClass))
+#include "gegl-object.h"
 
-GType gegl_normalizer_get_type (void) G_GNUC_CONST;
+G_BEGIN_DECLS
 
-typedef struct _GeglNormalizer GeglNormalizer;
+
+#define GEGL_TYPE_NORMALIZER            (gegl_normalizer_get_type ())
+#define GEGL_NORMALIZER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NORMALIZER, GeglNormalizer))
+#define GEGL_NORMALIZER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NORMALIZER, GeglNormalizerClass))
+#define GEGL_IS_NORMALIZER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NORMALIZER))
+#define GEGL_IS_NORMALIZER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NORMALIZER))
+#define GEGL_NORMALIZER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NORMALIZER, GeglNormalizerClass))
+
+
+typedef struct _GeglNormalizer      GeglNormalizer;
+typedef struct _GeglNormalizerClass GeglNormalizerClass;
+
 struct _GeglNormalizer
 {
-  GeglObject parent_instance;
-
+  GeglObject  parent_instance;
 };
 
-typedef struct _GeglNormalizerClass GeglNormalizerClass;
 struct _GeglNormalizerClass
 {
-  GeglObjectClass parent_class;
-  gdouble *(*normalize) (const GeglNormalizer * self,
-			 const gdouble * unnor_data, gdouble * nor_data,
-			 gint length, gint stride);
-  gdouble *(*unnormalize) (const GeglNormalizer * self,
-			   const gdouble * nor_data, gdouble * unnor_data,
-			   gint length, gint stride);
+  GeglObjectClass  parent_class;
+
+  gdouble * (* normalize)   (const GeglNormalizer *self,
+                             const gdouble        *unnor_data,
+                             gdouble              *nor_data,
+                             gint                  length,
+                             gint                  stride);
+  gdouble * (* unnormalize) (const GeglNormalizer *self,
+                             const gdouble        *nor_data,
+                             gdouble              *unnor_data,
+                             gint                  length,
+                             gint                  stride);
 };
 
-gdouble *gegl_normalizer_normalize (const GeglNormalizer * self,
-				    const gdouble * unnor_data,
-				    gdouble * nor_data, gint length,
-				    gint stride);
-gdouble *gegl_normalizer_unnormalize (const GeglNormalizer * self,
-				      const gdouble * nor_data,
-				      gdouble * unnor_data, gint length,
-				      gint stride);
+
+GType     gegl_normalizer_get_type    (void) G_GNUC_CONST;
+
+gdouble * gegl_normalizer_normalize   (const GeglNormalizer *self,
+                                       const gdouble        *unnor_data,
+                                       gdouble              *nor_data,
+                                       gint                  length,
+                                       gint                  stride);
+gdouble * gegl_normalizer_unnormalize (const GeglNormalizer *self,
+                                       const gdouble        *nor_data,
+                                       gdouble              *unnor_data,
+                                       gint                  length,
+                                       gint                  stride);
 
 
-#endif
+G_END_DECLS
+
+#endif /* __GEGL_NORMALIZER_H__ */
+

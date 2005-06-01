@@ -19,25 +19,34 @@
  *
  */
 
+#include <glib-object.h>
+
+#include "gegl-image-types.h"
+
+#include "gegl-heap-cache-store.h"
 #include "gegl-swap-cache.h"
+#include "gegl-swap-cache-store.h"
 
-static void class_init(gpointer g_class,
-		       gpointer class_data);
-static void instance_init(GTypeInstance *instance,
-                          gpointer g_class);
 
-static void finalize (GObject * object);
-static void dispose (GObject * object);
-static void insert_record (GeglCache* cache,
-			   GeglEntryRecord* record);
-static gboolean check_room_for (GeglCache* cache, gint64 size);
-static gint64 size (GeglCache* cache);
-static gint64 capacity (GeglCache* cache);
-static gboolean is_persistent (GeglCache* cache);
-static void flush_internal (GeglCache * cache,
-			    GeglEntryRecord * record);
+static void     class_init     (gpointer         g_class,
+                                gpointer         class_data);
+static void     instance_init  (GTypeInstance   *instance,
+                                gpointer         g_class);
+static void     finalize       (GObject         *object);
+static void     dispose        (GObject         *object);
+static void     insert_record  (GeglCache       *cache,
+                                GeglEntryRecord *record);
+static gboolean check_room_for (GeglCache       *cache,
+                                gint64           size);
+static gint64   size           (GeglCache       *cache);
+static gint64   capacity       (GeglCache       *cache);
+static gboolean is_persistent  (GeglCache       *cache);
+static void     flush_internal (GeglCache       *cache,
+                                GeglEntryRecord *record);
+
 
 static gpointer parent_class;
+
 
 GType
 gegl_swap_cache_get_type (void)
@@ -178,6 +187,7 @@ check_room_for (GeglCache* cache, gint64 size)
   /* condition 2 and 3 */
   return TRUE;
 }
+
 gint64
 size (GeglCache* cache)
 {
@@ -197,6 +207,7 @@ is_persistent (GeglCache* cache)
 {
   return TRUE;
 }
+
 void
 flush_internal (GeglCache * cache,
 		GeglEntryRecord * record)

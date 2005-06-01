@@ -19,23 +19,34 @@
  *
  */
 
-#include "gegl-heap-cache-store.h"
-#include "gegl-cache-entry.h"
+#include <glib-object.h>
 
-static void class_init(gpointer g_class,
-                       gpointer class_data);
-static void dispose (GObject * object);
-static void finalize (GObject * object);
-static void instance_init(GTypeInstance *instance,
-                          gpointer g_class);
-static void add (GeglCacheStore * self, GeglEntryRecord * record);
-static void remove (GeglCacheStore* self, GeglEntryRecord* record);
-static void zap (GeglCacheStore* self, GeglEntryRecord* record);
-static gint64 size (GeglCacheStore* self);
-static GeglEntryRecord * pop (GeglCacheStore * self);
-static GeglEntryRecord * peek (GeglCacheStore * self);
+#include "gegl-image-types.h"
+
+#include "gegl-cache-entry.h"
+#include "gegl-heap-cache-store.h"
+#include "gegl-entry-record.h"
+
+
+static void             class_init    (gpointer         g_class,
+                                       gpointer         class_data);
+static void             dispose       (GObject         *object);
+static void             finalize      (GObject         *object);
+static void             instance_init (GTypeInstance   *instance,
+                                       gpointer         g_class);
+static void             add           (GeglCacheStore  *self,
+                                       GeglEntryRecord *record);
+static void             remove        (GeglCacheStore  *self,
+                                       GeglEntryRecord *record);
+static void             zap           (GeglCacheStore  *self,
+                                       GeglEntryRecord *record);
+static gint64           size          (GeglCacheStore  *self);
+static GeglEntryRecord *pop           (GeglCacheStore  *self);
+static GeglEntryRecord *peek          (GeglCacheStore  *self);
+
 
 static gpointer parent_class;
+
 
 GType
 gegl_heap_cache_store_get_type(void)
@@ -71,11 +82,11 @@ gegl_heap_cache_store_get_type(void)
     }
   return type;
 }
+
 GeglHeapCacheStore *
 gegl_heap_cache_store_new (void)
 {
-  GeglHeapCacheStore * new_store = g_object_new (GEGL_TYPE_HEAP_CACHE_STORE, NULL);
-  return new_store;
+  return g_object_new (GEGL_TYPE_HEAP_CACHE_STORE, NULL);
 }
 
 
@@ -117,11 +128,13 @@ dispose (GObject * object)
       g_list_free (self->record_head);
     }
 
+  G_OBJECT_CLASS (parent_class)->dispose (object);
 }
+
 static void
 finalize (GObject * object)
 {
-  G_OBJECT_CLASS (parent_class)->finalize(object);
+  G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
@@ -180,6 +193,7 @@ static GeglEntryRecord * pop (GeglCacheStore * store)
     }
   return record;
 }
+
 static GeglEntryRecord * peek (GeglCacheStore * store)
 {
   GeglHeapCacheStore * self = GEGL_HEAP_CACHE_STORE (store);

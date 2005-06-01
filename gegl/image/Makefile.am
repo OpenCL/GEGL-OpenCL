@@ -22,26 +22,46 @@
 noinst_LTLIBRARIES = libimage.la
 
 IMAGE_SRC = \
-	gegl-buffer.c		\
-	gegl-buffer-double.c	\
-	gegl-cache-entry.c	\
-	gegl-entry-record.c	\
-	gegl-cache.c		\
-	gegl-cache-store.c	\
-	gegl-null-cache-store.c	\
-	gegl-heap-cache-store.c	\
-	gegl-swap-cache-store.c	\
-	gegl-heap-cache.c	\
-	gegl-swap-cache.c	\
-	gegl-normalizer.c	\
-	gegl-normalizer-mult.c	\
-	gegl-sample-model.c	\
-	gegl-component-sample-model.c
+	gegl-buffer-double.c		\
+	gegl-buffer.c			\
+	gegl-cache-entry.c		\
+	gegl-cache-store.c		\
+	gegl-cache.c			\
+	gegl-component-sample-model.c	\
+	gegl-entry-record.c		\
+	gegl-heap-cache-store.c		\
+	gegl-heap-cache.c		\
+	gegl-normalizer-mult.c		\
+	gegl-normalizer.c		\
+	gegl-null-cache-store.c		\
+	gegl-sample-model.c		\
+	gegl-swap-cache-store.c		\
+	gegl-swap-cache.c
+
+IMAGE_HDR = \
+	gegl-image-types.h		\
+	\
+	gegl-buffer-double.h		\
+	gegl-buffer.h			\
+	gegl-cache-entry.h		\
+	gegl-cache-store.h		\
+	gegl-cache.h			\
+	gegl-component-sample-model.h	\
+	gegl-entry-record.h		\
+	gegl-heap-cache-store.h		\
+	gegl-heap-cache.h		\
+	gegl-normalizer-mult.h		\
+	gegl-normalizer.h		\
+	gegl-null-cache-store.h		\
+	gegl-sample-model.h		\
+	gegl-swap-cache-store.h		\
+	gegl-swap-cache.h
 
 libimage_la_SOURCES = \
-	$(IMAGE_SRC)
+	$(IMAGE_SRC)	\
+	$(IMAGE_HDR)
 
 INCLUDES = \
-	-I$(top_srcdir)	\
-	-I../ \
+	-I$(top_srcdir)		\
+	-I$(top_srcdir)/gegl	\
 	@DEP_CFLAGS@
