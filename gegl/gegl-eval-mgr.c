@@ -23,49 +23,20 @@
 #include "gegl-visitable.h"
 #include "gegl-property.h"
 
-static void class_init (GeglEvalMgrClass * klass);
-static void init (GeglEvalMgr * self, GeglEvalMgrClass * klass);
+static void gegl_eval_mgr_class_init (GeglEvalMgrClass *klass);
+static void gegl_eval_mgr_init       (GeglEvalMgr      *self);
 
-static gpointer parent_class = NULL;
 
-GType
-gegl_eval_mgr_get_type (void)
+G_DEFINE_TYPE(GeglEvalMgr, gegl_eval_mgr, GEGL_TYPE_OBJECT)
+
+
+static void
+gegl_eval_mgr_class_init (GeglEvalMgrClass * klass)
 {
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-      {
-        sizeof (GeglEvalMgrClass),
-        (GBaseInitFunc) NULL,
-        (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) class_init,
-        (GClassFinalizeFunc) NULL,
-        NULL,
-        sizeof (GeglEvalMgr),
-        0,
-        (GInstanceInitFunc) init,
-        NULL
-      };
-
-      type = g_type_register_static (GEGL_TYPE_OBJECT ,
-                                     "GeglEvalMgr",
-                                     &typeInfo,
-                                     0);
-    }
-    return type;
 }
 
 static void
-class_init (GeglEvalMgrClass * klass)
-{
-  parent_class = g_type_class_peek_parent(klass);
-}
-
-static void
-init (GeglEvalMgr * self,
-      GeglEvalMgrClass * klass)
+gegl_eval_mgr_init (GeglEvalMgr *self)
 {
 }
 
@@ -80,7 +51,7 @@ init (GeglEvalMgr * self,
  **/
 void
 gegl_eval_mgr_apply (GeglEvalMgr * self,
-                     GeglNode *root,
+                     GeglNode    *root,
                      const gchar *property_name)
 {
   GeglVisitor *visitor;

@@ -1,5 +1,11 @@
 2005-06-01  Sven Neumann  <sven@gimp.org>
 
+	* gegl/gegl-eval-mgr.c
+	* gegl/gegl-eval-visitor.c
+	* gegl/gegl-graph.c: use G_DEFINE_TYPE macros, some cleanup.
+
+2005-06-01  Sven Neumann  <sven@gimp.org>
+
 	* configure.in: some cleanup; renamed generated file version.xml
 	to version.
 
