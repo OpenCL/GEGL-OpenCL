@@ -1,3 +1,9 @@
+2005-06-01  Sven Neumann  <sven@gimp.org>
+
+	* gegl/gegl-eval-mgr.c
+	* gegl/gegl-filter.c
+	* gegl/image/gegl-cache.h: fixes to gtk-doc comments.
+
 2005-06-01  Michael Natterer  <mitch@gimp.org>
 
 	* */*.h: added G_GNUC_CONST to all get_type() functions.

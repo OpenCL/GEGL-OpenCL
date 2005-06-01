@@ -35,8 +35,22 @@
 
 GType gegl_cache_get_type(void) G_GNUC_CONST;
 
-typedef enum GeglPutResults_ GeglPutResults;
-typedef enum GeglFetchResults_ GeglFetchResults;
+
+typedef enum
+{
+  GEGL_FETCH_SUCCEEDED,
+  GEGL_FETCH_INVALID,
+  GEGL_FETCH_EXPIRED,
+} GeglFetchResults;
+
+typedef enum
+{
+  GEGL_PUT_SUCCEEDED,
+  GEGL_PUT_INVALID,
+  GEGL_PUT_CACHE_FULL,
+  GEGL_PUT_WOULD_BLOCK,
+} GeglPutResults;
+
 
 /*
  * GeglCache
@@ -83,19 +97,6 @@ struct _GeglCacheClass
   gboolean (*check_room_for) (GeglCache* cache, gint64 size);
   void (*flush_internal) (GeglCache * cache,
 			  GeglEntryRecord * record);
-};
-
-enum GeglFetchResults_ {
-  GEGL_FETCH_SUCCEEDED,
-  GEGL_FETCH_INVALID,
-  GEGL_FETCH_EXPIRED,
-};
-
-enum GeglPutResults_ {
-  GEGL_PUT_SUCCEEDED,
-  GEGL_PUT_INVALID,
-  GEGL_PUT_CACHE_FULL,
-  GEGL_PUT_WOULD_BLOCK,
 };
 
 

@@ -83,7 +83,7 @@ finalize(GObject *gobject)
 /**
  * gegl_filter_create_property:
  * @self: a #GeglFilter.
- * @name: property name.
+ * @param_spec:
  *
  * Create a property.
  *

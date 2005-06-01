@@ -72,6 +72,8 @@ init (GeglEvalMgr * self,
 /**
  * gegl_eval_mgr_apply:
  * @self: a #GeglEvalMgr.
+ * @root:
+ * @property_name:
  *
  * Update this property.
  *
