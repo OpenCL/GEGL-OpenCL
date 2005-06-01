@@ -31,9 +31,6 @@ libgegl_1_0_la_SOURCES = \
 
 libgegl_1_0_la_LIBADD = $(libimage)
 
-#BUILT_SOURCES = \
-#  $(GEGL_GEN_SRC)
-
 INCLUDES = \
 	-I$(top_srcdir)	\
 	@DEP_CFLAGS@
@@ -43,8 +40,14 @@ AM_LDFLAGS =  \
 	-no-undefined \
 	@DEP_LIBS@
 
-libgeglincludedir=$(includedir)/gegl-1.0/gegl
+
+libgeglincludedir = $(includedir)/gegl-1.0/gegl
+
 libgeglinclude_HEADERS = $(GEGL_PUBLIC_HDRS) 
+
+
+#BUILT_SOURCES = \
+#  $(GEGL_GEN_SRC)
 
 #%.c: %.gil
 #	../codegen/codegen --channel-names r,g,b --channel-data-file ../codegen/channel_data/float $< > $@
