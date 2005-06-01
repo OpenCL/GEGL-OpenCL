@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "gil-binary-op.h"
 
 enum

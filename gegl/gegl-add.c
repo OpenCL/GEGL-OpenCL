@@ -1,3 +1,7 @@
+#include "config.h"
+
+#include <string.h>
+
 #include "gegl-add.h"
 #include "gegl-image-iterator.h"
 #include "gegl-scanline-processor.h"
@@ -6,7 +10,7 @@
 #include "gegl-value-types.h"
 #include "gegl-color.h"
 #include "gegl-color-data.h"
-#include <string.h>
+
 
 enum
 {
@@ -15,21 +19,32 @@ enum
   PROP_LAST
 };
 
-static void class_init (GeglAddClass * klass);
-static void init (GeglAdd * self, GeglAddClass * klass);
+static void             class_init            (GeglAddClass          *klass);
+static void             init                  (GeglAdd               *self,
+                                               GeglAddClass          *klass);
+static void             finalize              (GObject               *gobject);
+static void             get_property          (GObject               *gobject,
+                                               guint                  prop_id,
+                                               GValue                *value,
+                                               GParamSpec            *pspec);
+static void             set_property          (GObject               *gobject,
+                                               guint                  prop_id,
+                                               const GValue          *value,
+                                               GParamSpec            *pspec);
+static void             validate_inputs       (GeglFilter            *filter,
+                                               GArray                *collected_data);
+static GeglScanlineFunc get_scanline_function (GeglUnary             *unary,
+                                               GeglColorModel        *cm);
+static void             add_float             (GeglFilter            *filter,
+                                               GeglScanlineProcessor *processor,
+                                               gint                   width);
+static void             add_uint8             (GeglFilter            *filter,
+                                               GeglScanlineProcessor *processor,
+                                               gint                   width);
 
-static void finalize (GObject * gobject);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-
-static void validate_inputs  (GeglFilter *filter, GArray *collected_data);
-
-static GeglScanlineFunc get_scanline_function(GeglUnary * unary, GeglColorModel *cm);
-
-static void add_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
-static void add_uint8 (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 
 static gpointer parent_class = NULL;
+
 
 GType
 gegl_add_get_type (void)

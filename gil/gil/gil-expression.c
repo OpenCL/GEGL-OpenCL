@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "gil-expression.h"
 
 static void class_init (GilExpressionClass * klass);

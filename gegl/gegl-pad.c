@@ -18,6 +18,9 @@
  *  Copyright 2003 Calvin Williamson
  *
  */
+
+#include "config.h"
+
 #include "gegl-property.h"
 #include "gegl-visitor.h"
 #include "gegl-utils.h"

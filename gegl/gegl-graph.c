@@ -20,6 +20,8 @@
  *
  */
 
+#include "config.h"
+
 #include "gegl-graph.h"
 #include "gegl-visitable.h"
 #include "gegl-property.h"

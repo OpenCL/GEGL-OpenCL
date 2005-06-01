@@ -26,6 +26,8 @@
  * arguments.
  */
 
+#include "config.h"
+
 #include <glib-object.h>
 
 #include "gegl-image-types.h"

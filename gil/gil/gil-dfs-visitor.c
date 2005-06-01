@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "gil-dfs-visitor.h"
 #include "gil-node.h"
 

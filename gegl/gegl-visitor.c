@@ -20,16 +20,21 @@
  *
  */
 
+#include "config.h"
+
 #include "gegl-visitor.h"
 #include "gegl-visitable.h"
 
+
 typedef struct _GeglVisitInfo GeglVisitInfo;
+
 struct _GeglVisitInfo
 {
   gboolean visited;
   gboolean discovered;
-  gint shared_count;
+  gint     shared_count;
 };
+
 
 static void           gegl_visitor_class_init  (GeglVisitorClass *klass);
 static void           gegl_visitor_init        (GeglVisitor      *self);

@@ -20,6 +20,8 @@
  *
  */
 
+#include "config.h"
+
 #include "gegl-init.h"
 
 static gboolean gegl_initialized = FALSE;

@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "gil-expr-statement.h"
 
 enum

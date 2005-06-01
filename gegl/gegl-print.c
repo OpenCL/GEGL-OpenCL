@@ -1,3 +1,8 @@
+#include "config.h"
+
+#include <stdio.h>
+#include <string.h>
+
 #include "gegl-print.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-image.h"
@@ -8,22 +13,26 @@
 #include "gegl-value-types.h"
 #include "gegl-data.h"
 #include "gegl-param-specs.h"
-#include <stdio.h>
-#include <string.h>
 
 #define MAX_PRINTED_CHARS_PER_CHANNEL 20
 
-static void class_init (GeglPrintClass * klass);
-static void init (GeglPrint * self, GeglPrintClass * klass);
-static void prepare (GeglFilter * filter);
-static void finish (GeglFilter * filter);
+static void             class_init            (GeglPrintClass        *klass);
+static void             init                  (GeglPrint             *self,
+                                               GeglPrintClass        *klass);
+static void             prepare               (GeglFilter            *filter);
+static void             finish                (GeglFilter            *filter);
+static GeglScanlineFunc get_scanline_function (GeglPipe              *pipe,
+                                               GeglColorModel        *cm);
+static void             print                 (GeglPrint             *self,
+                                               gchar                 *format,
+                                               ...);
+static void             print_float           (GeglFilter            *filter,
+                                               GeglScanlineProcessor *processor,
+                                               gint                   width);
 
-static GeglScanlineFunc get_scanline_function(GeglPipe * pipe, GeglColorModel *cm);
-static void print (GeglPrint * self, gchar * format, ...);
-
-static void print_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 
 static gpointer parent_class = NULL;
+
 
 GType
 gegl_print_get_type (void)

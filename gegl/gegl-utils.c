@@ -1,10 +1,27 @@
+#include "config.h"
+
 #include "gegl-utils.h"
 #include "gegl-types.h"
 
-void gegl_log(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, ...);
-void gegl_logv(GLogLevelFlags level, gchar *file, gint line, gchar *function, gchar *format, va_list args);
-void gegl_direct_log(GLogLevelFlags level, gchar *format, ...);
-void gegl_direct_logv(GLogLevelFlags level, gchar *format, va_list args);
+void gegl_log         (GLogLevelFlags  level,
+                       gchar          *file,
+                       gint            line,
+                       gchar          *function,
+                       gchar          *format,
+                       ...);
+void gegl_logv        (GLogLevelFlags  level,
+                       gchar          *file,
+                       gint            line,
+                       gchar          *function,
+                       gchar          *format,
+                       va_list         args);
+void gegl_direct_log  (GLogLevelFlags  level,
+                       gchar          *format,
+                       ...);
+void gegl_direct_logv (GLogLevelFlags  level,
+                       gchar          *format,
+                       va_list         args);
+
 
 inline gint
 _gegl_float_epsilon_zero (float value)

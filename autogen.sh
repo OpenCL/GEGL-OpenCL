@@ -246,7 +246,7 @@ else
 fi
 
 # optionally feature autoheader
-#(autoheader --version)  < /dev/null > /dev/null 2>&1 && autoheader || exit 1
+(autoheader --version)  < /dev/null > /dev/null 2>&1 && autoheader || exit 1
 
 $AUTOMAKE --add-missing || exit 1
 autoconf || exit 1

@@ -56,6 +56,7 @@ AC_SUBST(LT_CURRENT_MINUS_AGE)
 dnl ==========================================================================
 
 AM_INIT_AUTOMAKE(gegl,$GEGL_VERSION)
+AM_CONFIG_HEADER(config.h)
 
 dnl Checks for programs.
 AC_PROG_CC

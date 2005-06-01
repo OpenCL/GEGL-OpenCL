@@ -1,17 +1,25 @@
+#include "config.h"
+
+#include <string.h>
+
 #include "gegl-over.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-image-iterator.h"
 #include "gegl-utils.h"
-#include <string.h>
 
-static void class_init (GeglOverClass * klass);
-static void init (GeglOver * self, GeglOverClass * klass);
 
-static GeglScanlineFunc get_scanline_function(GeglComp * comp, GeglColorModel *cm);
+static void             class_init            (GeglOverClass         *klass);
+static void             init                  (GeglOver              *self,
+                                               GeglOverClass         *klass);
+static GeglScanlineFunc get_scanline_function (GeglComp              *comp,
+                                               GeglColorModel        *cm);
+static void             fg_over_bg_float      (GeglFilter            *filter,
+                                               GeglScanlineProcessor *processor,
+                                               gint                   width);
 
-static void fg_over_bg_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 
 static gpointer parent_class = NULL;
+
 
 GType
 gegl_over_get_type (void)

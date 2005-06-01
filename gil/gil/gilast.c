@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <stdio.h>
 #include "gilast.h"
 #include "gil-node.h"

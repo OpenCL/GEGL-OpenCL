@@ -19,6 +19,8 @@
  *
  */
 
+#include "config.h"
+
 #include <string.h>
 
 #include "gegl-filter.h"

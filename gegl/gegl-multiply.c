@@ -1,17 +1,25 @@
+#include "config.h"
+
+#include <string.h>
+
 #include "gegl-multiply.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-image-iterator.h"
 #include "gegl-utils.h"
-#include <string.h>
 
-static void class_init (GeglMultiplyClass * klass);
-static void init (GeglMultiply * self, GeglMultiplyClass * klass);
 
-static GeglScanlineFunc get_scanline_function(GeglComp * comp, GeglColorModel *cm);
+static void             class_init            (GeglMultiplyClass     *klass);
+static void             init                  (GeglMultiply          *self,
+                                               GeglMultiplyClass     *klass);
+static GeglScanlineFunc get_scanline_function (GeglComp              *comp,
+                                               GeglColorModel        *cm);
+static void             fg_multiply_bg_float  (GeglFilter            *filter,
+                                               GeglScanlineProcessor *processor,
+                                               gint                   width);
 
-static void fg_multiply_bg_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 
 static gpointer parent_class = NULL;
+
 
 GType
 gegl_multiply_get_type (void)

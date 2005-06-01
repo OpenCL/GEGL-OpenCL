@@ -19,10 +19,13 @@
  *
  */
 
+#include "config.h"
+
 #include "gegl-eval-visitor.h"
 #include "gegl-node.h"
 #include "gegl-property.h"
 #include "gegl-visitable.h"
+
 
 static void gegl_eval_visitor_class_init (GeglEvalVisitorClass *klass);
 static void visit_property               (GeglVisitor          *visitor,

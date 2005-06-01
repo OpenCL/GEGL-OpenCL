@@ -18,14 +18,19 @@
  *  Copyright 2003 Calvin Williamson
  *
  */
+
+#include "config.h"
+
+#include <stdio.h>
+#include <string.h>
+
 #include "gegl-node.h"
 #include "gegl-visitor.h"
 #include "gegl-visitable.h"
 #include "gegl-property.h"
 #include "gegl-connection.h"
 #include "gegl-eval-mgr.h"
-#include <stdio.h>
-#include <string.h>
+
 
 enum
 {

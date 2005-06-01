@@ -1,5 +1,13 @@
 2005-06-02  Michael Natterer  <mitch@gimp.org>
 
+	* autogen.sh: call autoheader.
+
+	* configure.in: added AM_CONFIG_HEADER().
+
+	* */*.c: #include "config.h"
+
+2005-06-02  Michael Natterer  <mitch@gimp.org>
+
 	* gegl/image/gegl-image-types.h: new file.
 
 	* gegl/image/Makefile.am: add it. Also add all headers to SOURCES.

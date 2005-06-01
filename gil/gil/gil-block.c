@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "gil-block.h"
 
 static void class_init (GilBlockClass * klass);

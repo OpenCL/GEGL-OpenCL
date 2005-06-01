@@ -19,6 +19,8 @@
  *
  */
 
+#include "config.h"
+
 #include "gegl-connection.h"
 
 struct _GeglConnection

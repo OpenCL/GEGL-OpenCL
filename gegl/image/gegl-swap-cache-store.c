@@ -19,6 +19,8 @@
  *
  */
 
+#include "config.h"
+
 #include <unistd.h>
 
 #include <glib-object.h>

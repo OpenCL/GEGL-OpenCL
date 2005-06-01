@@ -1,17 +1,28 @@
+#include "config.h"
+
+#include <string.h>
+
 #include "gegl-i-add.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-image-iterator.h"
 #include "gegl-utils.h"
-#include <string.h>
 
-static void class_init (GeglIAddClass * klass);
-static void init (GeglIAdd * self, GeglIAddClass * klass);
 
-static GeglScanlineFunc get_scanline_function(GeglBinary * binary, GeglColorModel *cm);
+static void             class_init            (GeglIAddClass         *klass);
+static void             init                  (GeglIAdd              *self,
+                                               GeglIAddClass         *klass);
+static GeglScanlineFunc get_scanline_function (GeglBinary            *binary,
+                                               GeglColorModel        *cm);
+static void             a_iadd_b_float        (GeglFilter            *filter,
+                                               GeglScanlineProcessor *processor,
+                                               gint                   width);
+static void             a_iadd_b_uint8        (GeglFilter            *filter,
+                                               GeglScanlineProcessor *processor,
+                                               gint                   width);
 
-static void a_iadd_b_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
-static void a_iadd_b_uint8 (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
+
 static gpointer parent_class = NULL;
+
 
 GType
 gegl_i_add_get_type (void)

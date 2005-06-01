@@ -1,3 +1,7 @@
+#include "config.h"
+
+#include <string.h>
+
 #include "gegl-mult.h"
 #include "gegl-scanline-processor.h"
 #include "gegl-image-iterator.h"
@@ -5,7 +9,6 @@
 #include "gegl-value-types.h"
 #include "gegl-param-specs.h"
 #include "gegl-utils.h"
-#include <string.h>
 
 enum
 {
@@ -17,17 +20,29 @@ enum
   PROP_LAST
 };
 
-static void class_init (GeglMultClass * klass);
-static void init (GeglMult * self, GeglMultClass * klass);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
+static void             class_init            (GeglMultClass         *klass);
+static void             init                  (GeglMult              *self,
+                                               GeglMultClass         *klass);
+static void             get_property          (GObject               *gobject,
+                                               guint                  prop_id,
+                                               GValue                *value,
+                                               GParamSpec            *pspec);
+static void             set_property          (GObject               *gobject,
+                                               guint                  prop_id,
+                                               const GValue          *value,
+                                               GParamSpec            *pspec);
+static GeglScanlineFunc get_scanline_function (GeglUnary             *unary,
+                                               GeglColorModel        *cm);
+static void             mult_float            (GeglFilter            *filter,
+                                               GeglScanlineProcessor *processor,
+                                               gint                   width);
+static void             mult_uint8            (GeglFilter            *filter,
+                                               GeglScanlineProcessor *processor,
+                                               gint                   width);
 
-static GeglScanlineFunc get_scanline_function(GeglUnary * unary, GeglColorModel *cm);
-
-static void mult_float (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
-static void mult_uint8 (GeglFilter * filter, GeglScanlineProcessor *processor, gint width);
 
 static gpointer parent_class = NULL;
+
 
 GType
 gegl_mult_get_type (void)

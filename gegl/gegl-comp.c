@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "gegl-comp.h"
 #include "gegl-image-data.h"
 #include "gegl-scalar-data.h"
@@ -19,15 +21,24 @@ enum
   PROP_LAST
 };
 
-static void class_init (GeglCompClass * klass);
-static void init (GeglComp * self, GeglCompClass * klass);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-static void validate_inputs  (GeglFilter *filter, GArray *collected_data);
+static void class_init      (GeglCompClass *klass);
+static void init            (GeglComp      *self,
+                             GeglCompClass *klass);
+static void get_property    (GObject       *gobject,
+                             guint          prop_id,
+                             GValue        *value,
+                             GParamSpec    *pspec);
+static void set_property    (GObject       *gobject,
+                             guint          prop_id,
+                             const GValue  *value,
+                             GParamSpec    *pspec);
+static void validate_inputs (GeglFilter    *filter,
+                             GArray        *collected_data);
+static void prepare         (GeglFilter    *filter);
 
-static void prepare (GeglFilter * filter);
 
 static gpointer parent_class = NULL;
+
 
 GType
 gegl_comp_get_type (void)
