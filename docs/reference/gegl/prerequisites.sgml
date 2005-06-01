@@ -1,29 +1,29 @@
 <refentry id="gegl-prerequisites" revision="15 Jan 2003">
 <refmeta>
-<refentrytitle>Prerequisites for Gegl</refentrytitle>
+<refentrytitle>Prerequisites for GEGL</refentrytitle>
 <manvolnum>3</manvolnum>
-<refmiscinfo>Gegl Library</refmiscinfo>
+<refmiscinfo>GEGL Library</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname>Prerequisites for Gegl</refname>
+<refname>Prerequisites for GEGL</refname>
 <refpurpose>
-Dependencies for building and installing Gegl 
+Dependencies for building and installing GEGL 
 </refpurpose>
 </refnamediv>
 
   <refsect1 id="prerequisites">
-    <title>Prerequisites for Gegl on UNIX-like systems</title>
+    <title>Prerequisites for GEGL on UNIX-like systems</title>
     <para>
-      Before you configure and build Gegl you need various tools and libraries
+      Before you configure and build GEGL you need various tools and libraries
       installed on your system. These are described below. For the exact
       version of the each tool required refer to the file called HACKING in the
-      top level Gegl directory. The <filename>configure</filename> 
+      top level GEGL directory. The <filename>configure</filename> 
       (or <filename>autogen.sh</filename>) script will also tell you if 
       you are missing some of these when you run it. 
     </para>
     <para>
-      These are the dependencies for building Gegl:
+      These are the dependencies for building GEGL:
     </para>
     <itemizedlist>
     <listitem>
@@ -42,11 +42,11 @@ Dependencies for building and installing Gegl
 	<para>
 	  <ulink url="http://www.freedesktop.org/software/pkgconfig/">
       <command>pkg-config</command></ulink>: This is a tool for tracking 
-      the compilation flags needed for libraries that are used by the Gegl 
+      the compilation flags needed for libraries that are used by the GEGL 
       libraries. (For each library, a small <literal>.pc</literal> text file 
       is installed in a standard location that contains the compilation flags needed 
       for that library along with version number information.)  The 
-      version of <command>pkg-config</command> needed to build Gegl 
+      version of <command>pkg-config</command> needed to build GEGL 
       can usually be found in <filename>dependencies</filename> directory at the 
       <ulink url="ftp://ftp.gtk.org/pub/gtk/v2.2/">GTK+ FTP site.</ulink>
 	</para>
@@ -54,7 +54,7 @@ Dependencies for building and installing Gegl
       <listitem>
 	<para>
 	  <ulink url="http://www.gnu.org/software/make">GNU
-	  <command>make</command></ulink>: Gegl will mostly work with 
+	  <command>make</command></ulink>: GEGL will mostly work with 
       different versions of <command>make</command>, however, there tends 
       to be a few incompatibilities, so it is recommended to
 	  install the GNU version if you don't already have it on 
@@ -66,8 +66,8 @@ Dependencies for building and installing Gegl
 	<para>
 	  GLib: This is an object and type system available
       from the <ulink url="http://www.gtk.org">GTK+</ulink> project. 
-      Gegl uses the GObject base class from GLib as superclass
-      for all Gegl classes. GLib provides a property system for 
+      GEGL uses the GObject base class from GLib as superclass
+      for all GEGL classes. GLib provides a property system for 
       describing attributes of objects, support for callbacks (signals) 
       and interfaces (GInterface). There is also support for many common 
       data types and utilities. The correct version can usually be found at the  
@@ -80,7 +80,7 @@ Dependencies for building and installing Gegl
   <refsect1 id="buildingprerequisites">
     <title>Building Prerequisites</title>
     <para>
-      For the most part the prerequisites for Gegl are similar to those 
+      For the most part the prerequisites for GEGL are similar to those 
       for building GLib.
     </para>
     <para>
@@ -96,8 +96,9 @@ Dependencies for building and installing Gegl
     <para>
       Next build and install GLib. Follow the
       steps of <literal>configure</literal>, <literal>make</literal>,
-      <literal>make install</literal>. If you're lucky, this will all go smoothly, 
-      and you'll be ready to <link linkend="gegl-configuring">configure Gegl</link>.
+      <literal>make install</literal>. If you're lucky, this will all
+      go smoothly, and you'll be ready
+      to <link linkend="gegl-configuring">configure GEGL</link>.
     </para>
     <para>
       If one of the <filename>configure</filename> scripts fails or running

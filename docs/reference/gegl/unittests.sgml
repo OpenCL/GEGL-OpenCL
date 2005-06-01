@@ -1,22 +1,22 @@
 <refentry id="gegl-unittests" revision="14 Jan 2003">
 <refmeta>
-<refentrytitle>Running Unit Tests for Gegl</refentrytitle>
+<refentrytitle>Running Unit Tests for GEGL</refentrytitle>
 <manvolnum>3</manvolnum>
-<refmiscinfo>Gegl Library</refmiscinfo>
+<refmiscinfo>GEGL Library</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname>Running Unit Tests for Gegl</refname>
+<refname>Running Unit Tests for GEGL</refname>
 <refpurpose>
-Compiling and running the unit tests for Gegl.
+Compiling and running the unit tests for GEGL.
 </refpurpose>
 </refnamediv>
 
 <refsect1>
-<title>Running Unit Tests for Gegl</title>
+<title>Running Unit Tests for GEGL</title>
 
 <para>
-Gegl comes with an extensive set of unit tests used for development and 
+GEGL comes with an extensive set of unit tests used for development and 
 testing. These can be found in the <filename>tests</filename> directory. 
 The unit test framework that is used is found in the
 <filename>tools/testsuite</filename>. You can also read more about it in this
@@ -24,19 +24,19 @@ The unit test framework that is used is found in the
 CUJ article</ulink> as well. There is an example <filename>testcomplex.c</filename> 
 in the <filename>tools/testsuite</filename> directory which illustrates how
 the library is used. Make sure that <filename>libtestsuite</filename> gets built 
-before running the Gegl unit tests.
+before running the GEGL unit tests.
 </para>
 
 <para>
-To run the unit tests for Gegl cd to the tests directory and do
+To run the unit tests for GEGL cd to the tests directory and do
 the following:
 <programlisting>
 $ cd tests
 $ make check
 </programlisting>
-This causes the unit tests listed in <filename>testgegl.c</filename> to be compiled 
-and run. If you want to change the tests that get run or add some, you can do
-that in <filename>testgegl.c</filename>.
+This causes the unit tests listed in <filename>testgegl.c</filename>
+to be compiled and run. If you want to change the tests that get run
+or add some, you can do that in <filename>testgegl.c</filename>.
 </para>
 
 </refsect1>
@@ -120,18 +120,19 @@ test_image_g_object_new(Test *test)
 }
 </programlisting>
 </example>
-Here a <link linkend="GeglImage">GeglImage</link> object is created 
-then there four tests are run. The first tests the image is not NULL. The second makes
-sure the object is a <link linkend="GeglImage">GeglImage</link>. 
-Next the parent type is tested
-to make sure it is a <link linkend="GeglObject">GeglObject</link>. 
-Finally the type name
-for <link linkend="GeglImage">GeglImage</link> is tested to make sure 
-it is "GeglImage". Any test failures are reported by the ct_test function. 
+Here a <link linkend="GeglImage">GeglImage</link> object is created
+then there four tests are run. The first tests the image is not
+NULL. The second makes sure the object is
+a <link linkend="GeglImage">GeglImage</link>.  Next the parent type is
+tested to make sure it is
+a <link linkend="GeglObject">GeglObject</link>.  Finally the type name
+for <link linkend="GeglImage">GeglImage</link> is tested to make sure
+it is "GeglImage". Any test failures are reported by the ct_test
+function.
 </para>
 
 <para>
-Unit tests are a great way to learn how Gegl objects work as well. Here's
+Unit tests are a great way to learn how GEGL objects work as well. Here's
 some of the best examples to look at next:
 <variablelist>
   <varlistentry>

@@ -5,14 +5,14 @@
 <book id="index" xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <bookinfo>
-    <title>Gegl Reference Manual</title>
+    <title>GEGL Reference Manual</title>
     <releaseinfo>
-      for Gegl <xi:include href="version" parse="text"/>
+      for GEGL <xi:include href="version" parse="text"/>
     </releaseinfo>
   </bookinfo>
 
   <part id="gegl">
-    <title>Gegl Overview</title>
+    <title>GEGL Overview</title>
       <partintro>
         <para>
         GEGL (GEneric Graphical Library) is an image processing
@@ -36,14 +36,14 @@
         </para>
 
         <para>
-        Gegl consists of the following:
+        GEGL consists of the following:
           <variablelist>
 
             <varlistentry>
-              <term>Gegl</term>
+              <term>GEGL Library</term>
               <listitem>
 	      <para>
-		The Gegl library itself contains
+		The GEGL library itself contains
 		image <firstterm>operators</firstterm>, such
 		as <link linkend="GeglOver">GeglOver</link> and
 		<link linkend="GeglAdd">GeglAdd</link>, which describe
@@ -56,7 +56,7 @@
             <term>Unit Tests</term>
             <listitem>
 	      <para>
-		The unit tests for the Gegl library used for
+		The unit tests for the GEGL library used for
 		development and testing.
             </para></listitem>
             </varlistentry>
@@ -67,13 +67,13 @@
   </part>
 
   <part id="developer">
-    <title>Gegl Developer Information</title>
+    <title>GEGL Developer Information</title>
       <partintro>
         <para>
-        This section contains information about obtaining Gegl from
+        This section contains information about obtaining GEGL from
         CVS and configuring it for development. There is information
-        about unit testing and installing Gegl for testing.  There are
-        no releases of Gegl yet, and many parts are still in early
+        about unit testing and installing GEGL for testing.  There are
+        no releases of GEGL yet, and many parts are still in early
         development and hence unstable.
         </para>
       </partintro>
@@ -86,8 +86,8 @@
       <xi:include href="mailinglists.sgml"/>
   </part>
 
-  <part id="geglobjects">
-    <title>Gegl Objects</title>
+  <part id="gegl-objects">
+    <title>GEGL Objects</title>
     <chapter>
       <title>Object Hierarchy</title>
       <xi:include href="xml/tree_index.sgml"/>
@@ -156,8 +156,8 @@
 
   </part>
 
-  <part  id="geglmisc">
-    <title>Gegl Miscellaneous</title>
+  <part id="gegl-misc">
+    <title>GEGL Miscellaneous</title>
   </part>
 
 </book>

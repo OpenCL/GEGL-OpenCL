@@ -1,3 +1,13 @@
+2005-06-02  Sven Neumann  <sven@gimp.org>
+
+	* reference/gegl/cvs.sgml
+	* reference/gegl/debugging.sgml
+	* reference/gegl/gegl-docs.sgml
+	* reference/gegl/mailinglists.sgml
+	* reference/gegl/prerequisites.sgml
+	* reference/gegl/unittests.sgml
+	* reference/gegl/tmpl/gegl-visitor.sgml: write GEGL in all caps.
+
 2005-06-01  Sven Neumann  <sven@gimp.org>
 
 	* reference/gegl/gegl-docs.sgml: use XInclude instead of entities.

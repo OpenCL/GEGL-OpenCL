@@ -1,26 +1,26 @@
 <refentry id="gegl-Mailinglists" revision="14 Jan 2003">
 <refmeta>
-<refentrytitle>Mailing lists for Gegl</refentrytitle>
+<refentrytitle>Mailing lists for GEGL</refentrytitle>
 <manvolnum>3</manvolnum>
-<refmiscinfo>Gegl Library</refmiscinfo>
+<refmiscinfo>GEGL Library</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname>Mailing Lists for Gegl</refname>
+<refname>Mailing Lists for GEGL</refname>
 <refpurpose>
-Mailing list info for Gegl. 
+Mailing list info for GEGL. 
 </refpurpose>
 </refnamediv>
 
 <refsect1>
-<title>Mailing Lists for Gegl</title>
+<title>Mailing Lists for GEGL</title>
 
 <para>
 You can subscribe to gegl-developer and view the archives
 <ulink url="https://lists.XCF.Berkeley.EDU/mailman/listinfo/gegl-developer">
 here</ulink>.
-The Gegl developer list is the appropriate place to ask development questions,
-and get more information about Gegl development in general. You can email this 
+The GEGL developer list is the appropriate place to ask development questions,
+and get more information about GEGL development in general. You can email this 
 list at <ulink url="mailto:gegldev@gegl.org"> gegldev@gegl.org</ulink>.
 </para>
 

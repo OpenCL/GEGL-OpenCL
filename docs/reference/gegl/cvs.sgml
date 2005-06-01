@@ -1,28 +1,30 @@
 <refentry id="gegl-cvs" revision="14 Jan 2003">
 <refmeta>
-<refentrytitle>Getting Gegl from CVS</refentrytitle>
+<refentrytitle>Getting GEGL from CVS</refentrytitle>
 <manvolnum>3</manvolnum>
-<refmiscinfo>Gegl Library</refmiscinfo>
+<refmiscinfo>GEGL Library</refmiscinfo>
 </refmeta>
 
 <refnamediv>
-<refname>Getting Gegl from CVS</refname>
+<refname>Getting GEGL from CVS</refname>
 <refpurpose>
-Obtaining Gegl from anonymous CVS.
+Obtaining GEGL from anonymous CVS.
 </refpurpose>
 </refnamediv>
 
 <refsect1>
-<title>Getting Gegl from CVS on Unix-like Systems</title>
+<title>Getting GEGL from CVS on Unix-like Systems</title>
 
 <para>
-Gegl is available from the gnome CVS site. You can get it through anonymous
-CVS. To access the tree you need to first set up your CVSROOT enviroment variable 
-so that CVS knows where to go to grab the source from. 
+GEGL is available from the gnome CVS site. You can get it through
+anonymous CVS. To access the tree you need to first set up your
+CVSROOT enviroment variable so that CVS knows where to go to grab the
+source from.
 </para>
 
 <para>
-The following interactive bash shell commands shows how to get it from anonymous CVS:
+The following interactive bash shell commands shows how to get it from
+anonymous CVS:
 <programlisting>
 $ export CVSROOT=':pserver:anonymous@anoncvs.gnome.org:/cvs/gnome'
 $ cvs login
@@ -30,16 +32,16 @@ $ cvs login
 </para>
 
 <para>
-This will ask you for a password. There is no password so just enter a carriage
-return. To get the tree and place it in a subdir of your current working
-directory, issue the command:
+This will ask you for a password. There is no password so just enter a
+carriage return. To get the tree and place it in a subdir of your
+current working directory, issue the command:
 <programlisting>
 $ cvs -z3 checkout gegl
 </programlisting>
 </para>
 
 <para>
-Next you are ready to configure and compile Gegl.
+Next you are ready to configure and compile GEGL.
 </para>
 
 </refsect1>
