@@ -1,10 +1,6 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
-<!--
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
-               "file:///home/calvinw/develop/gegl/docbook/docbkx412/docbookx.dtd" [
--->
 
 <!ENTITY GeglBuffer SYSTEM "xml/gegl-buffer.xml">
 <!ENTITY GeglBufferDouble SYSTEM "xml/gegl-buffer-double.xml">
@@ -38,33 +34,37 @@
 <!ENTITY gegl-debugging SYSTEM "debugging.sgml">
 <!ENTITY gegl-bugs SYSTEM "bugs.sgml">
 <!ENTITY gegl-mailinglists SYSTEM "mailinglists.sgml">
-<!ENTITY version SYSTEM "version">
-
 ]>
-<book id="index">
+
+<book id="index" xmlns:xi="http://www.w3.org/2001/XInclude">
+
   <bookinfo>
     <title>Gegl Reference Manual</title>
-    <releaseinfo>for Gegl &version;</releaseinfo>
+    <releaseinfo>
+      for Gegl <xi:include href="version" parse="text"/>
+    </releaseinfo>
   </bookinfo>
 
   <part id="gegl">
     <title>Gegl Overview</title>
       <partintro>
         <para>
-        GEGL (GEneric Graphical Library) is an image processing library based on
-        GObjects. This library is designed to handle various image processing tasks
-        needed in Gimp initially, but should be useful to other apps as well. It
-        handles color spaces and data types in a general way, and allows adding new
-        color models/data types easily. It includes a way of creating chains (or trees)
-        of image operations and evaluating these in a demand-driven way. Classes for
-        point, area, geometric and statistics operations are included, as well as
-        color conversion ops for converting images between color models. It has
-        memory management and image classes as well.
+        GEGL (GEneric Graphical Library) is an image processing
+        library based on GObjects. This library is designed to handle
+        various image processing tasks needed in Gimp initially, but
+        should be useful to other apps as well. It handles color
+        spaces and data types in a general way, and allows adding new
+        color models/data types easily. It includes a way of creating
+        chains (or trees) of image operations and evaluating these in
+        a demand-driven way. Classes for point, area, geometric and
+        statistics operations are included, as well as color
+        conversion ops for converting images between color models. It
+        has memory management and image classes as well.
         </para>
         <para>
-        GEGL is still in early development and is not ready for use as a library.
-        This documentation is intended for GEGL developers and is not intended
-        to be complete. 
+        GEGL is still in early development and is not ready for use as
+        a library.  This documentation is intended for GEGL developers
+        and is not intended to be complete.
         </para>
         <para>
         </para>
@@ -74,19 +74,24 @@
           <variablelist>
 
             <varlistentry>
-            <term>Gegl</term>
-            <listitem><para>
-            The Gegl library itself contains image <firstterm>operators</firstterm>,
-            such as <link linkend="GeglOver">GeglOver</link> and 
-            <link linkend="GeglAdd">GeglAdd</link>, which describe image operations 
-            with inputs and outputs.  
-            </para></listitem>
+              <term>Gegl</term>
+              <listitem>
+	      <para>
+		The Gegl library itself contains
+		image <firstterm>operators</firstterm>, such
+		as <link linkend="GeglOver">GeglOver</link> and
+		<link linkend="GeglAdd">GeglAdd</link>, which describe
+		image operations with inputs and outputs.
+              </para>
+	      </listitem>
             </varlistentry>
 
             <varlistentry>
             <term>Unit Tests</term>
-            <listitem><para>
-            The unit tests for the Gegl library used for development and testing.  
+            <listitem>
+	      <para>
+		The unit tests for the Gegl library used for
+		development and testing.
             </para></listitem>
             </varlistentry>
 
@@ -99,11 +104,11 @@
     <title>Gegl Developer Information</title>
       <partintro>
         <para>
-        This section contains information about obtaining Gegl from 
-        CVS and configuring it for development. There is 
-        information about unit testing and installing Gegl for testing.
-        There are no releases of Gegl yet, and many parts are still
-        in early development and hence unstable.
+        This section contains information about obtaining Gegl from
+        CVS and configuring it for development. There is information
+        about unit testing and installing Gegl for testing.  There are
+        no releases of Gegl yet, and many parts are still in early
+        development and hence unstable.
         </para>
       </partintro>
       &gegl-cvs;
