@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.54)
 
-AC_INIT(gegl/gegl-add.c)
+AC_INIT(gegl/gegl-init.c)
 
 GLIB_REQUIRED_VERSION=2.6.4
 

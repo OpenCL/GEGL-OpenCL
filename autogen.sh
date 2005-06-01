@@ -12,7 +12,7 @@
 
 PROJECT="GEGL"
 TEST_TYPE=-f
-FILE=gegl/gegl-add.c
+FILE=gegl/gegl-init.c
 
 LIBTOOL_REQUIRED_VERSION=1.4
 LIBTOOL_WIN32=1.5

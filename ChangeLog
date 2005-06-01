@@ -1,3 +1,8 @@
+2005-06-02  Sven Neumann  <sven@gimp.org>
+
+	* autogen.sh
+	* configure.in: look for a file that is actually being compiled.
+
 2005-06-02  Michael Natterer  <mitch@gimp.org>
 
 	* autogen.sh: call autoheader.

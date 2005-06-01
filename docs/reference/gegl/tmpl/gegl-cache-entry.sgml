@@ -25,7 +25,7 @@ GeglCacheEntry
 
 </para>
 
-@object_class: 
+@parent_class: 
 @flattened_size: 
 @flatten: 
 @unflatten: 
