@@ -1,3 +1,15 @@
+2005-06-01  Michael Natterer  <mitch@gimp.org>
+
+	* autogen.sh
+	* configure.in: updates, mostly taken from gimp. Bumped required
+	versions to something sane.
+
+	* acinclude.m4: new file containing the gtk-doc stuff, just as in
+	gimp.
+
+	* tests/gegl-image-cache-tests.o: was for some reason added to
+	CVS, removed it.
+
 2005-06-01  Sven Neumann  <sven@gimp.org>
 
 	* gegl/image/gegl-buffer.h

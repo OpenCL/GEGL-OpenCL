@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.53)
+AC_PREREQ(2.54)
 
 AC_INIT(ChangeLog)
 
@@ -11,7 +11,7 @@ dnl it too, or it will never make it into the spec file!
 dnl
 dnl ==========================================================================
 
-GLIB_REQUIRED_VERSION=2.2.0
+GLIB_REQUIRED_VERSION=2.6.4
 AC_SUBST(GLIB_REQUIRED_VERSION)
 
 dnl ==========================================================================
@@ -159,12 +159,21 @@ if test x$enable_gtk_doc = xyes ; then
   fi
 fi
 
+
+######################################
+# Checks for gtk-doc and docbook-tools
+######################################
+
+GTK_DOC_CHECK([1.0])
+
 dnl NOTE: We need to use a separate automake conditional for this
 dnl   	  to make this work with the tarballs.
 AM_CONDITIONAL(ENABLE_GTK_DOC, test x$enable_gtk_doc = xyes)
 
 AC_CHECK_PROGS(PERL, perl5 perl)
 
+
+################
 # Check for lcms
 ################
  

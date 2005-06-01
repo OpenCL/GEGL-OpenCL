@@ -14,12 +14,12 @@ PROJECT="GEGL"
 TEST_TYPE=-d
 FILE=tests
 
-LIBTOOL_REQUIRED_VERSION=1.3.4
+LIBTOOL_REQUIRED_VERSION=1.4
 LIBTOOL_WIN32=1.5
 AUTOCONF_REQUIRED_VERSION=2.54
-AUTOMAKE_REQUIRED_VERSION=1.6
+AUTOMAKE_REQUIRED_VERSION=1.7
 GLIB_REQUIRED_VERSION=2.0.0
-INTLTOOL_REQUIRED_VERSION=0.17
+INTLTOOL_REQUIRED_VERSION=0.31
 
 
 srcdir=`dirname $0`
@@ -59,15 +59,51 @@ esac
 
 echo -n "checking for libtool >= $LIBTOOL_REQUIRED_VERSION ... "
 if (libtoolize --version) < /dev/null > /dev/null 2>&1; then
-    VER=`libtoolize --version \
-         | grep libtool | sed "s/.* \([0-9.]*\)[-a-z0-9]*$/\1/"`
-    check_version $VER $LIBTOOL_REQUIRED_VERSION
+   LIBTOOLIZE=libtoolize
+elif (glibtoolize --version) < /dev/null > /dev/null 2>&1; then
+   LIBTOOLIZE=glibtoolize
 else
     echo
     echo "  You must have libtool installed to compile $PROJECT."
     echo "  Install the appropriate package for your distribution,"
     echo "  or get the source tarball at ftp://ftp.gnu.org/pub/gnu/"
-    DIE=1;
+    echo
+    DIE=1
+fi
+
+if test x$LIBTOOLIZE != x; then
+    VER=`$LIBTOOLIZE --version \
+         | grep libtool | sed "s/.* \([0-9.]*\)[-a-z0-9]*$/\1/"`
+    check_version $VER $LIBTOOL_REQUIRED_VERSION
+fi
+
+# check if gtk-doc is explicitely disabled
+for ag_option in $AUTOGEN_CONFIGURE_ARGS $@
+do
+  case $ag_option in
+    -disable-gtk-doc | --disable-gtk-doc)
+    enable_gtk_doc=no
+  ;;
+  esac
+done
+
+if test x$enable_gtk_doc = xno; then
+  echo "skipping test for gtkdocize"
+else
+  echo -n "checking for gtkdocize ... "
+  if (gtkdocize --version) < /dev/null > /dev/null 2>&1; then
+      echo "yes"
+  else
+      echo
+      echo "  You must have gtk-doc installed to compile $PROJECT."
+      echo "  Install the appropriate package for your distribution,"
+      echo "  or get the source tarball at"
+      echo "  http://ftp.gnome.org/pub/GNOME/sources/gtk-doc/"
+      echo "  You can also use the option --disable-gtk-doc to skip"
+      echo "  this test but then you will not be able to generate a"
+      echo "  configure script that can build the API documentation."
+      DIE=1
+  fi
 fi
 
 echo -n "checking for autoconf >= $AUTOCONF_REQUIRED_VERSION ... "
@@ -79,22 +115,29 @@ else
     echo
     echo "  You must have autoconf installed to compile $PROJECT."
     echo "  Download the appropriate package for your distribution,"
-    echo "  or get the source tarball at ftp://ftp.gnu.org/pub/gnu/"
+    echo "  or get the source tarball at ftp://ftp.gnu.org/pub/gnu/autoconf/"
+    echo
     DIE=1;
 fi
+
 
 echo -n "checking for automake >= $AUTOMAKE_REQUIRED_VERSION ... "
 if (automake-1.7 --version) < /dev/null > /dev/null 2>&1; then
    AUTOMAKE=automake-1.7
    ACLOCAL=aclocal-1.7
-elif (automake-1.6 --version) < /dev/null > /dev/null 2>&1; then
-   AUTOMAKE=automake-1.6
-   ACLOCAL=aclocal-1.6
+elif (automake-1.8 --version) < /dev/null > /dev/null 2>&1; then
+   AUTOMAKE=automake-1.8
+   ACLOCAL=aclocal-1.8
+   AUTOMAKE_REQUIRED_VERSION=1.8.3
+elif (automake-1.9 --version) < /dev/null > /dev/null 2>&1; then
+   AUTOMAKE=automake-1.9
+   ACLOCAL=aclocal-1.9
 else
     echo
-    echo "  You must have automake 1.6 or 1.7 installed to compile $PROJECT."
-    echo "  Get ftp://ftp.gnu.org/pub/gnu/automake/automake-1.7.3.tar.gz"
-    echo "  (or a newer version if it is available)"
+    echo "  You must have automake 1.7 or newer installed to compile $PROJECT."
+    echo "  Download the appropriate package for your distribution,"
+    echo "  or get the source tarball at ftp://ftp.gnu.org/pub/gnu/automake/"
+    echo
     DIE=1
 fi
 
@@ -103,6 +146,7 @@ if test x$AUTOMAKE != x; then
          | grep automake | sed "s/.* \([0-9.]*\)[-a-z0-9]*$/\1/"`
     check_version $VER $AUTOMAKE_REQUIRED_VERSION
 fi
+
 
 #echo -n "checking for glib-gettextize >= $GLIB_REQUIRED_VERSION ... "
 #if (glib-gettextize --version) < /dev/null > /dev/null 2>&1; then
@@ -146,12 +190,19 @@ test $TEST_TYPE $FILE || {
 }
 
 
+echo
+echo "I am going to run ./configure with the following arguments:"
+echo
+echo "  --enable-maintainer-mode $AUTOGEN_CONFIGURE_ARGS $@"
+echo
+
 if test -z "$*"; then
-    echo
-    echo "I am going to run ./configure with no arguments - if you wish "
-    echo "to pass any to it, please specify them on the $0 command line."
+    echo "If you wish to pass additional arguments, please specify them "
+    echo "on the $0 command line or set the AUTOGEN_CONFIGURE_ARGS "
+    echo "environment variable."
     echo
 fi
+
 
 if test -z "$ACLOCAL_FLAGS"; then
 
@@ -180,7 +231,19 @@ if test $RC -ne 0; then
    exit 1
 fi
 
-libtoolize --force || exit 1
+$LIBTOOLIZE --force || exit 1
+
+if test x$enable_gtk_doc = xno; then
+    if test -f gtk-doc.make; then :; else
+       echo "EXTRA_DIST = missing-gtk-doc" > gtk-doc.make
+    fi
+    echo "WARNING: You have disabled gtk-doc."
+    echo "         As a result, you will not be able to generate the API"
+    echo "         documentation and 'make dist' will not work."
+    echo
+else
+    gtkdocize || exit $?
+fi
 
 # optionally feature autoheader
 #(autoheader --version)  < /dev/null > /dev/null 2>&1 && autoheader || exit 1
@@ -191,14 +254,16 @@ autoconf || exit 1
 #glib-gettextize --copy --force || exit 1
 #intltoolize --copy --force --automake || exit 1
 
+
 cd $ORIGDIR
 
-if $srcdir/configure --enable-maintainer-mode --enable-gtk-doc "$@"; then
-  echo
-  echo "Now type 'make' to compile $PROJECT."
-else
+$srcdir/configure --enable-maintainer-mode $AUTOGEN_CONFIGURE_ARGS "$@"
+RC=$?
+if test $RC -ne 0; then
   echo
   echo "Configure failed or did not finish!"
-  exit 1
+  exit $RC
 fi
 
+echo
+echo "Now type 'make' to compile $PROJECT."
