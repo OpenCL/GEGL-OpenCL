@@ -1,3 +1,13 @@
+2005-06-01  Sven Neumann  <sven@gimp.org>
+
+	* gegl/image/gegl-buffer.h
+	* gegl/image/gegl-swap-cache-store.c
+	* gegl/image/gegl-swap-cache.c: fixed typos in comments.
+
+2005-06-01  Sven Neumann  <sven@gimp.org>
+
+	Tagged all files GEGL_BEFORE_CLEANUP.
+
 2004-3-25 19:36 Daniel Rogers <daniel@phasevelocity.org>
 
 	* gegl/image/Makefile.am

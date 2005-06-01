@@ -243,7 +243,7 @@ static GeglEntryRecord *
 peek (GeglCacheStore * store)
 {
   /*
-   * Peek here doesn't return a valid entry.  Sincne it is still in
+   * Peek here doesn't return a valid entry.  Since it is still in
    * the store, it is still swapped out.
    */
   GeglSwapCacheStore * self = GEGL_SWAP_CACHE_STORE (store);
@@ -300,7 +300,8 @@ swap_in (GeglSwapCacheStore * self, GeglCacheEntry * entry, SwapStoreData * stor
     {
       /*
        * This means that there is some old, clean data on the disk
-       * already.  No swap_in necessary.  Just discard the old gegl_cache_entry data;
+       * already.  No swap_in necessary.  Just discard the old
+       * gegl_cache_entry data;
        */
       gegl_cache_entry_discard (entry);
       return;
@@ -352,7 +353,7 @@ swap_out (GeglSwapCacheStore * self, GeglCacheEntry * entry, SwapStoreData * sto
   gsize bytes_read;
   GError * err = NULL;
   /*
-   * stupid mmap needing offset ot be a multiple of page size.
+   * stupid mmap needing offset to be a multiple of page size.
    * I wonder if this is efficient. I don't know the overhead of mmap.
    */
   /*

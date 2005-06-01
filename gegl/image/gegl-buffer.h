@@ -138,7 +138,7 @@ extern "C"
 
   /*
    * Once a buffer is completely unlocked, it is pushed into the
-   * cache, if it exists.  Otherwise it says on the heap and is
+   * cache, if it exists.  Otherwise it stays on the heap and is
    * released when the share_count goes to zero.  is_dirty indicates
    * whether to destroy any disk-resident copies of this tile.  If you
    * are unsure, TRUE is the safe answer.  If is_dirty is false the

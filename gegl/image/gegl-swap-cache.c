@@ -139,7 +139,7 @@ insert_record (GeglCache* cache,
 	       GeglEntryRecord* record)
 {
   /* 
-   * We are garenteed, at this point, that either the heap cache can
+   * We are guaranteed, at this point, that either the heap cache can
    * hold the item and room in it has been made
    */
 
