@@ -1,23 +1,22 @@
-INCLUDES = @STRIP_BEGIN@ \
-	-I$(top_srcdir)/gegl \
+
+INCLUDES = \
+	-I$(top_srcdir)/gegl		\
 	-I$(top_srcdir)/tools/testsuite \
-	@DEP_CFLAGS@ \
-@STRIP_END@
+	@DEP_CFLAGS@
 
 TESTDEPS = \
 	$(top_builddir)/tools/testsuite/libtestsuite.la
 
 GEGLDEPS = \
-	$(TESTDEPS) \
+	$(TESTDEPS)			\
 	$(top_builddir)/gegl/@gegltargetlib@
 
 TESTLDADDS = \
 	$(top_builddir)/tools/testsuite/libtestsuite.la
 
-GEGLLDADDS = @STRIP_BEGIN@ \
-	$(TESTLDADDS) \
-	$(top_builddir)/gegl/@gegltargetlib@ \
-@STRIP_END@
+GEGLLDADDS = \
+	$(TESTLDADDS)			\
+	$(top_builddir)/gegl/@gegltargetlib@
 
 MOCK_OBJECT_SRC = \
 	gegl-mock-image-filter.c	\
@@ -39,8 +38,6 @@ MOCK_OBJECT_SRC = \
 	gegl-mock-property-visitor.c	\
 	gegl-mock-property-visitor.h	\
 	gegl-image-mock-cache-entry.c
-
-EXTRA_SRC =
 
 testgegl_SOURCES = \
 	$(MOCK_OBJECT_SRC)				\
@@ -80,6 +77,3 @@ testgegl_LDADD = $(GEGLLDADDS) -lm
 TESTS = testgegl$(EXEEXT)
 
 EXTRA_PROGRAMS = testgegl
-
-
-all: check 

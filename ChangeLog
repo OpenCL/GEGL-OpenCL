@@ -1,5 +1,10 @@
 2005-06-01  Sven Neumann  <sven@gimp.org>
 
+	* tests/Makefile.am: don't run the tests from the all target; use
+	'make check' to run them.
+
+2005-06-01  Sven Neumann  <sven@gimp.org>
+
 	* configure.in: added --enable-debug and --enable-profile options
 	as we use in gimp.
 
