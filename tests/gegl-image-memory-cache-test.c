@@ -117,7 +117,7 @@ test_gegl_memory_cache_caching(Test* test)
 	      results = gegl_cache_fetch (cache, id, &entry);
 	      mock_entry = GEGL_MOCK_CACHE_ENTRY (entry);
 	      ct_test (test, results == GEGL_FETCH_SUCCEEDED);
-	      	
+
 	      for (k=0;k<1024;k++)
 		{
 		  if (mock_entry->data[k] != j)

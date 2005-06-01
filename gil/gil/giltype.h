@@ -54,7 +54,7 @@ struct _GilProductEntry
     GilType *type;      /*entry's regular type */
 };
 
-/* Constructors */			
+/* Constructors */
 GilType *   gil_type_simple_new(GilTypeCons cons);
 GilType *   gil_type_array_new(GilType *element_type);
 GilType *   gil_type_function_new(GilType * return_type,

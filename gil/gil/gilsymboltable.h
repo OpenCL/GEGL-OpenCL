@@ -7,7 +7,7 @@
 typedef struct _GilSymbolTable GilSymbolTable;
 struct _GilSymbolTable
 {
-	gint scope;		
+	gint scope;
 	GList *local_tables;  /*a table for each scope*/
 };
 

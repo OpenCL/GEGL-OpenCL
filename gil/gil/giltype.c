@@ -52,7 +52,7 @@ gil_type_product_entry_append(gchar *name,
     return g_list_append(list,entry);
 }
 
-void	
+void
 gil_type_print(GilType *type)
 {
     printf("not implemented yet\n");

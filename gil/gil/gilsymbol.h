@@ -18,7 +18,7 @@ struct _GilSymbol
   gchar *name;
 	GilSymbolKind kind;
 	GilType *type;
-	gint scope;		
+	gint scope;
 };
 
 GilSymbol * gil_symbol_new(gchar *name, GilSymbolKind kind, GilType *type, gint scope);

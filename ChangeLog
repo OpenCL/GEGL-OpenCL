@@ -1,5 +1,9 @@
 2005-06-01  Sven Neumann  <sven@gimp.org>
 
+	* */*.[ch]: removed leftover trailing whitespace.
+
+2005-06-01  Sven Neumann  <sven@gimp.org>
+
 	* tests/Makefile.am: don't run the tests from the all target; use
 	'make check' to run them.
 

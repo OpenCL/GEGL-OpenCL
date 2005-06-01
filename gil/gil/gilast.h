@@ -28,7 +28,7 @@ union _GilNodeValue
 /* Data for the GNodes - a kind and a value */
 typedef struct _GilNodeData GilNodeData;
 struct _GilNodeData
-{	
+{
    GilNodeKind kind;        /* the kind of node */
    GilNodeValue value;      /* union of node values */
 };

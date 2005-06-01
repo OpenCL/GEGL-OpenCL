@@ -28,7 +28,7 @@ typedef enum
 
 typedef struct _GilStatement GilStatement;
 struct _GilStatement
-{	
+{
    GilStatementKind kind;   /* the kind of node */
    union
    {

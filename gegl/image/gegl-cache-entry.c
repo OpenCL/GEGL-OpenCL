@@ -18,17 +18,17 @@ gegl_cache_entry_get_type (void)
 	  sizeof(GeglCacheEntryClass),
 	  NULL, /*base_init*/
 	  NULL, /* base_finalize */
-	
+
 	  /* classed types, instantiated types */
 	  class_init, /* class_init */
 	  NULL, /* class_finalize */
 	  NULL, /* class_data */
-	
+
 	  /* instantiated types */
 	  sizeof(GeglCacheEntry),
 	  0, /* n_preallocs */
 	  instance_init, /* instance_init */
-	
+
 	  /* value handling */
 	  NULL /* value_table */
 	};

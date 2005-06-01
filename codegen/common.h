@@ -1,6 +1,6 @@
 /*
 	FILE:	common.h
-	DESC:	defines structs, enum 	
+	DESC:	defines structs, enum
 */
 
 #ifndef _COMMON_H_
@@ -63,7 +63,7 @@ typedef struct
 
 typedef struct
 {
-  char 	word[20];	
+  char 	word[20];
   int	token;
 }keyword_t;
 

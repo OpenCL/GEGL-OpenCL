@@ -48,17 +48,17 @@ gegl_mock_cache_entry_get_type (void)
 	  sizeof(GeglMockCacheEntryClass),
 	  NULL, /*base_init*/
 	  NULL, /* base_finalize */
-	
+
 	  /* classed types, instantiated types */
 	  class_init, /* class_init */
 	  NULL, /* class_finalize */
 	  NULL, /* class_data */
-	
+
 	  /* instantiated types */
 	  sizeof(GeglMockCacheEntry),
 	  0, /* n_preallocs */
 	  instance_init, /* instance_init */
-	
+
 	  /* value handling */
 	  NULL /* value_table */
 	};
