@@ -1,11 +1,5 @@
-YFLAGS = -d -t -v
-SUBDIRS =
-
-AM_CFLAGS = -g
 
 INCLUDES = @DEP_CFLAGS@
-
-bin_PROGRAMS =
 
 lib_LIBRARIES = libgil.a
 
@@ -38,6 +32,8 @@ LDADD = \
 #    libgil.la \
 #	@GEGL_LIBS@ \
 #	@LEXLIB@
+
+YFLAGS = -d -t -v
 
 #BUILT_SOURCES = lexer.c parse.c parse.h
 

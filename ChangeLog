@@ -1,5 +1,13 @@
 2005-06-01  Sven Neumann  <sven@gimp.org>
 
+	* configure.in: added --enable-debug and --enable-profile options
+	as we use in gimp.
+
+	* codegen/Makefile.am
+	* gil/gil/Makefile.am: cleanup.
+
+2005-06-01  Sven Neumann  <sven@gimp.org>
+
 	* Makefile.am
 	* configure.in
 	* gegl.spec.in: removed the spec file as we did in gimp.

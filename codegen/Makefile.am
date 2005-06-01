@@ -1,22 +1,15 @@
-#YACCFLAGS += -d -t
-YFLAGS = -d -t
-SUBDIRS =
-CFLAGS = -g
-
 INCLUDES =
 
-bin_PROGRAMS = 
 noinst_PROGRAMS = codegen  
-EXTRA_PROGRAMS =
 
-codegen_SOURCES = 	\
-	data_type.h \
-	lexer.l \
+codegen_SOURCES = \
+	data_type.h	\
+	lexer.l		\
 	parser.y
 
-codegen_LDADD = \
-	-lm \
-	-lfl
+codegen_LDADD = -lm -lfl
+
+YFLAGS = -d -t
 
 BUILT_SOURCES = lexer.c parser.c parser.h
 
