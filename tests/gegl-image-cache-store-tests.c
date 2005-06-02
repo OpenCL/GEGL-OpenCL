@@ -19,11 +19,18 @@
  *
  */
 
+#include <glib-object.h>
+
+#include "image/gegl-image-types.h"
+
 #include "image/gegl-cache-store.h"
 #include "image/gegl-entry-record.h"
+
 #include "gegl-image-mock-cache-entry.h"
+
 #include "ctest.h"
 #include "csuite.h"
+
 
 static GeglCacheStore * test_store;
 static GeglEntryRecord * record1;

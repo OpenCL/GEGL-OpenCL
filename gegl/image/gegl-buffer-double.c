@@ -28,80 +28,35 @@
 #include "gegl-buffer-double.h"
 
 
-static void     class_init         (gpointer               g_class,
-                                    gpointer               class_data);
-static void     instance_init      (GTypeInstance         *instance,
-                                    gpointer               g_class);
-static GObject *constructor        (GType                  type,
-                                    guint                  n_construct_properties,
-                                    GObjectConstructParam *construct_properties);
-static gdouble  get_element_double (const GeglBuffer      *self,
-                                    gint                   bank,
-                                    gint                   index);
-static void     set_element_double (GeglBuffer            *self,
-                                    gint                   bank,
-                                    gint                   index,
-                                    gdouble                elem);
+static void     gegl_buffer_double_class_init (GeglBufferDoubleClass *klass);
+static void     gegl_buffer_double_init       (GeglBufferDouble      *self);
+static gdouble  get_element_double            (const GeglBuffer      *self,
+                                               gint                   bank,
+                                               gint                   index);
+static void     set_element_double            (GeglBuffer            *self,
+                                               gint                   bank,
+                                               gint                   index,
+                                               gdouble                elem);
 
 
-static gpointer parent_class;
+G_DEFINE_TYPE(GeglBufferDouble, gegl_buffer_double, GEGL_TYPE_BUFFER)
 
 
-GType
-gegl_buffer_double_get_type (void)
+static void
+gegl_buffer_double_class_init (GeglBufferDoubleClass *klass)
 {
-  static GType type = 0;
-  if (!type)
-    {
-      static const GTypeInfo typeInfo = {
-	/* interface types, classed types, instantiated types */
-	sizeof (GeglBufferDoubleClass),
-	NULL,
-	NULL,
+  GeglBufferClass *buffer_class = GEGL_BUFFER_CLASS (klass);
 
-	/* classed types, instantiated types */
-	class_init,
-	NULL,
-	NULL,
-
-	/* instantiated types */
-	sizeof (GeglBufferDouble),
-	10,
-	instance_init,
-
-	/* value handling */
-	NULL
-      };
-
-      type = g_type_register_static (GEGL_TYPE_BUFFER,
-				     "GeglBufferDouble", &typeInfo, 0);
-    }
-  return type;
+  buffer_class->get_element_double = get_element_double;
+  buffer_class->set_element_double = set_element_double;
 }
 
 static void
-class_init (gpointer g_class, gpointer class_data)
+gegl_buffer_double_init (GeglBufferDouble *self)
 {
-  GeglBufferDoubleClass *klass = g_class;
-  GeglBufferClass *buffer_class = GEGL_BUFFER_CLASS (klass);
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GeglBuffer *buffer = GEGL_BUFFER (self);
 
-  parent_class = g_type_class_peek_parent (g_class);
-
-  object_class->constructor = constructor;
-  buffer_class->get_element_double = get_element_double;
-  buffer_class->set_element_double = set_element_double;
-
-}
-
-static GObject *
-constructor (GType type,
-	     guint n_construct_properties,
-	     GObjectConstructParam * construct_properties)
-{
-  return G_OBJECT_CLASS (parent_class)->constructor (type,
-						     n_construct_properties,
-						     construct_properties);
+  buffer->bytes_per_element = sizeof (gdouble);
 }
 
 static void
@@ -124,12 +79,4 @@ get_element_double (const GeglBuffer * self, gint bank, gint index)
   g_return_val_if_fail (self->elements_per_bank > index, 0.0);
 
   return ((gdouble **) self->banks)[bank][index];
-}
-
-static void
-instance_init (GTypeInstance * instance, gpointer g_class)
-{
-  GeglBufferDouble *self = (GeglBufferDouble *) instance;
-  GeglBuffer *parent = GEGL_BUFFER (self);
-  parent->bytes_per_element = sizeof (gdouble);
 }

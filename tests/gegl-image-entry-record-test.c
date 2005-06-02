@@ -19,11 +19,17 @@
  *
  */
 
+#include <string.h>
+
+#include <glib-object.h>
+
+#include "image/gegl-image-types.h"
+
 #include "image/gegl-entry-record.h"
 #include "gegl-image-mock-cache-entry.h"
+
 #include "ctest.h"
 #include "csuite.h"
-#include <string.h>
 
 static void
 test_gegl_entry_record_new (Test * test)

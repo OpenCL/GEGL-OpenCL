@@ -19,15 +19,19 @@
  *
  */
 
+#include <string.h>
+
+#include <glib-object.h>
+
+#include "image/gegl-image-types.h"
+
 #include "image/gegl-component-sample-model.h"
 #include "image/gegl-buffer-double.h"
 #include "image/gegl-normalizer-mult.h"
 
-#include <glib.h>
-
 #include "ctest.h"
 #include "csuite.h"
-#include <string.h>
+
 
 static void
 test_g_object_new(Test *test) {

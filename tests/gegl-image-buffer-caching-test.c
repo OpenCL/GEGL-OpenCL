@@ -19,12 +19,17 @@
  *
  */
 
+#include <string.h>
+
+#include <glib-object.h>
+
+#include "image/gegl-image-types.h"
+
 #include "image/gegl-buffer-double.h"
 #include "image/gegl-heap-cache.h"
 
 #include "ctest.h"
 #include "csuite.h"
-#include <string.h>
 
 static void
 test_buffer_caching(Test *test) {

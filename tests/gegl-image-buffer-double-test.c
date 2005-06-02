@@ -19,11 +19,17 @@
  *
  */
 
-#include "image/gegl-buffer-double.h"
+#include <string.h>
 
 #include "ctest.h"
 #include "csuite.h"
-#include <string.h>
+
+#include <glib-object.h>
+
+#include "image/gegl-image-types.h"
+
+#include "image/gegl-buffer-double.h"
+
 
 static void
 test_buffer_double_g_object_new(Test *test) {

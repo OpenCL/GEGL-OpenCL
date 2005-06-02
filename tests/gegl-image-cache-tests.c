@@ -19,7 +19,12 @@
  *
  */
 
+#include <glib-object.h>
+
+#include "image/gegl-image-types.h"
+
 #include "gegl-image-cache-tests.h"
+
 
 static GeglCache * cache;
 static GeglMockCacheEntry ** entries;

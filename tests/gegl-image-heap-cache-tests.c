@@ -19,12 +19,19 @@
  *
  */
 
+#include <string.h>
+
+#include <glib-object.h>
+
+#include "image/gegl-image-types.h"
+
 #include "image/gegl-heap-cache.h"
+#include "image/gegl-cache.h"
+
 #include "gegl-image-cache-tests.h"
 #include "gegl-image-mock-cache-entry.h"
-#include "image/gegl-cache.h"
+
 #include "ctest.h"
-#include "string.h"
 
 static void
 gegl_heap_cache_new_test (Test * test)

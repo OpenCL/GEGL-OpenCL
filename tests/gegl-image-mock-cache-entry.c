@@ -19,8 +19,13 @@
  *
  */
 
-#include "gegl-image-mock-cache-entry.h"
 #include <string.h>
+
+#include "glib-object.h"
+
+#include "image/gegl-image-types.h"
+
+#include "gegl-image-mock-cache-entry.h"
 
 static void class_init(gpointer g_class,
                        gpointer class_data);

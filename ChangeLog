@@ -1,3 +1,10 @@
+2005-06-02  Sven Neumann  <sven@gimp.org>
+
+	* gegl/image/gegl-buffer-double.c
+	* gegl/image/gegl-buffer.c: use G_DEFINE_TYPE macros, some cleanup.
+
+	* tests/gegl-image-*.c: fixed includes.
+
 2005-06-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* TODO: file added.
