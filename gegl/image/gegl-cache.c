@@ -32,102 +32,58 @@
 #include "gegl-null-cache-store.h"
 
 
-static void             class_init    (gpointer          g_class,
-                                       gpointer          class_data);
-static void             instance_init (GTypeInstance    *instance,
-                                       gpointer          g_class);
-static void             dispose       (GObject          *object);
-static void             finalize      (GObject          *object);
-static GeglPutResults   put           (GeglCache        *cache,
-                                       GeglCacheEntry   *entry,
-                                       gsize            *entry_id);
-static GeglFetchResults fetch         (GeglCache        *cache,
-                                       gsize             entry_id,
-                                       GeglCacheEntry  **entry);
-static GeglFetchResults unfetch       (GeglCache        *cache,
-                                       gsize             entry_id,
-                                       GeglCacheEntry   *entry);
-static  void            flush         (GeglCache        *cache,
-                                       gsize             entry_id);
-static void             discard       (GeglCache        *cache,
-                                       GeglEntryRecord  *record);
-static void             mark_as_dirty (GeglCache        *cache,
-                                       gsize             entry_id);
+static void                 gegl_cache_class_init (GeglCacheClass   *klass);
+static void                 gegl_cache_init       (GeglCache        *self);
+static void                 dispose               (GObject          *object);
+static GeglPutResults       put                   (GeglCache        *cache,
+                                                   GeglCacheEntry   *entry,
+                                                   gsize            *entry_id);
+static GeglFetchResults     fetch                 (GeglCache        *cache,
+                                                   gsize             entry_id,
+                                                   GeglCacheEntry  **entry);
+static GeglFetchResults     unfetch               (GeglCache        *cache,
+                                                   gsize             entry_id,
+                                                   GeglCacheEntry   *entry);
+static  void                flush                 (GeglCache        *cache,
+                                                   gsize             entry_id);
+static void                 discard               (GeglCache        *cache,
+                                                   GeglEntryRecord  *record);
+static void                 mark_as_dirty         (GeglCache        *cache,
+                                                   gsize             entry_id);
 
 
-static gpointer parent_class;
 
+G_DEFINE_ABSTRACT_TYPE (GeglCache, gegl_cache, G_TYPE_OBJECT)
 
-GType
-gegl_cache_get_type (void)
-{
-  static GType type=0;
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-	{
-	  /* interface types, classed types, instantiated types */
-	  sizeof (GeglCacheClass),
-	  NULL, /*base_init*/
-	  NULL, /* base_finalize */
-
-	  /* classed types, instantiated types */
-	  class_init, /* class_init */
-	  NULL, /* class_finalize */
-	  NULL, /* class_data */
-
-	  /* instantiated types */
-	  sizeof(GeglCache),
-	  0, /* n_preallocs */
-	  instance_init, /* instance_init */
-
-	  /* value handling */
-	  NULL /* value_table */
-	};
-
-      type = g_type_register_static (G_TYPE_OBJECT ,
-				     "GeglCache",
-				     &typeInfo,
-				     G_TYPE_FLAG_ABSTRACT);
-    }
-  return type;
-}
 
 static void
-class_init(gpointer g_class,
-	   gpointer class_data)
+gegl_cache_class_init (GeglCacheClass *klass)
 {
-  GeglCacheClass * class = GEGL_CACHE_CLASS(g_class);
-  GObjectClass * object_class = G_OBJECT_CLASS (g_class);
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  class->put = put;
-  class->fetch = fetch;
-  class->unfetch = unfetch;
-  class->flush = flush;
-  class->discard = discard;
-  class->mark_as_dirty = mark_as_dirty;
-
-  class->insert_record=NULL;
-  class->check_room_for = NULL;
-  class->size = NULL;
-  class->capacity = NULL;
-  class->is_persistent = NULL;
-  class->flush_internal = NULL;
-
-  object_class->finalize = finalize;
   object_class->dispose = dispose;
 
-  parent_class = g_type_class_peek_parent (g_class);
+  klass->put            = put;
+  klass->fetch          = fetch;
+  klass->unfetch        = unfetch;
+  klass->flush          = flush;
+  klass->discard        = discard;
+  klass->mark_as_dirty  = mark_as_dirty;
+
+  klass->insert_record  = NULL;
+  klass->check_room_for = NULL;
+  klass->size           = NULL;
+  klass->capacity       = NULL;
+  klass->is_persistent  = NULL;
+  klass->flush_internal = NULL;
 }
 
 static void
-instance_init(GTypeInstance *instance,
-	      gpointer g_class)
+gegl_cache_init (GeglCache *self)
 {
-  GeglCache * self = GEGL_CACHE(instance);
-  self->fetched_store = GEGL_CACHE_STORE(gegl_null_cache_store_new (GEGL_FETCHED));
-  self->discard_store = GEGL_CACHE_STORE(gegl_null_cache_store_new (GEGL_DISCARDED));
-  self->has_disposed = FALSE;
+  self->fetched_store = GEGL_CACHE_STORE (gegl_null_cache_store_new (GEGL_FETCHED));
+  self->discard_store = GEGL_CACHE_STORE (gegl_null_cache_store_new (GEGL_DISCARDED));
+  self->has_disposed  = FALSE;
 }
 
 static void
@@ -140,11 +96,6 @@ dispose (GObject * object)
       g_object_unref (self->fetched_store);
       g_object_unref (self->discard_store);
     }
-}
-static void
-finalize (GObject * object)
-{
-  G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 
 gint

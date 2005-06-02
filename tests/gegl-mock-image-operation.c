@@ -1,6 +1,11 @@
-#include "gegl-mock-image-filter.h"
-#include "../gegl/gegl-property.h"
 #include <string.h>
+
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
+#include "gegl-mock-image-filter.h"
+#include "gegl-property.h"
 
 enum
 {

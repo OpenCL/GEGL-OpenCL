@@ -28,71 +28,37 @@
 #include "gegl-cache-store.h"
 
 
-static void class_init    (gpointer       g_class,
-                           gpointer       class_data);
-static void instance_init (GTypeInstance *instance,
-                           gpointer       g_class);
+static void gegl_cache_store_class_init (GeglCacheStoreClass *klass);
+static void gegl_cache_store_init       (GeglCacheStore      *self);
 
 
-GType
-gegl_cache_store_get_type (void)
+G_DEFINE_ABSTRACT_TYPE (GeglCacheStore, gegl_cache_store, G_TYPE_OBJECT)
+
+
+static void
+gegl_cache_store_class_init (GeglCacheStoreClass *klass)
 {
-  static GType type=0;
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-	{
-	  /* interface types, classed types, instantiated types */
-	  sizeof (GeglCacheStoreClass),
-	  NULL, /*base_init*/
-	  NULL, /* base_finalize */
-
-	  /* classed types, instantiated types */
-	  class_init, /* class_init */
-	  NULL, /* class_finalize */
-	  NULL, /* class_data */
-
-	  /* instantiated types */
-	  sizeof(GeglCacheStore),
-	  0, /* n_preallocs */
-	  instance_init, /* instance_init */
-
-	  /* value handling */
-	  NULL /* value_table */
-	};
-
-      type = g_type_register_static (G_TYPE_OBJECT ,
-				     "GeglCacheStore",
-				     &typeInfo,
-				     G_TYPE_FLAG_ABSTRACT);
-    }
-  return type;
+  klass->add    = NULL;
+  klass->remove = NULL;
+  klass->size   = NULL;
 }
 
 static void
-class_init(gpointer g_class,
-	   gpointer class_data)
-{
-  GeglCacheStoreClass * class = GEGL_CACHE_STORE_CLASS (g_class);
-  class->add = NULL;
-  class->remove = NULL;
-  class->size = NULL;
-}
-
-static void
-instance_init(GTypeInstance *instance,
-	      gpointer g_class)
+gegl_cache_store_init (GeglCacheStore *self)
 {
 }
 
 void
 gegl_cache_store_add (GeglCacheStore * self, GeglEntryRecord * record)
 {
-  GeglCacheStoreClass * class;
-  g_return_if_fail (self != NULL);
+  GeglCacheStoreClass *class;
+
+  g_return_if_fail (GEGL_IS_CACHE_STORE (self));
+
   class = GEGL_CACHE_STORE_GET_CLASS (self);
-  g_return_if_fail (class != NULL);
+
   g_return_if_fail (class->add != NULL);
+
   class->add(self, record);
 }
 

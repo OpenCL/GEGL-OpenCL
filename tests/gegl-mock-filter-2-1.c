@@ -1,5 +1,13 @@
+#include <string.h>
+
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
+#include "gegl-property.h"
+
 #include "gegl-mock-filter-2-1.h"
-#include "../gegl/gegl-property.h"
+
 
 enum
 {

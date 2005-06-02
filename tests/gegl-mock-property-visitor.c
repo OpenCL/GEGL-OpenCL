@@ -1,7 +1,13 @@
-#include "gegl-mock-property-visitor.h"
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
 #include "gegl-node.h"
 #include "gegl-property.h"
 #include "gegl-visitable.h"
+
+#include "gegl-mock-property-visitor.h"
+
 
 static void class_init (GeglMockPropertyVisitorClass * klass);
 static void visit_property (GeglVisitor *visitor, GeglProperty * property);

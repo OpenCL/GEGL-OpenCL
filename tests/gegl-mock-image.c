@@ -1,3 +1,7 @@
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
 #include "gegl-mock-image.h"
 
 enum

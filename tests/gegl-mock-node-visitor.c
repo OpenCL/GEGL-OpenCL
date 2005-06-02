@@ -1,6 +1,12 @@
-#include "gegl-mock-node-visitor.h"
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
 #include "gegl-node.h"
 #include "gegl-visitable.h"
+
+#include "gegl-mock-node-visitor.h"
+
 
 static void class_init (GeglMockNodeVisitorClass * klass);
 static void visit_node (GeglVisitor *visitor, GeglNode * node);

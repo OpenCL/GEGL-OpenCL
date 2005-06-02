@@ -1,4 +1,9 @@
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
 #include "gegl-mock-object.h"
+
 
 static void class_init        (GeglMockObjectClass * klass);
 static gpointer parent_class = NULL;

@@ -1,3 +1,12 @@
+2005-06-02  Sven Neumann  <sven@gimp.org>
+
+	* gegl/image/gegl-cache-entry.c
+	* gegl/image/gegl-cache-store.c
+	* gegl/image/gegl-cache.c
+	* gegl/image/gegl-null-cache-store.c: use G_DEFINE_TYPE macros, cleanup.
+
+	* tests/gegl-mock-*.c: fixed includes.
+
 2005-06-02  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/gegl-connection.[ch]

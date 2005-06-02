@@ -29,10 +29,9 @@
 #include "gegl-null-cache-store.h"
 
 
-static void             class_init    (gpointer         g_class,
-                                       gpointer         class_data);
-static void             instance_init (GTypeInstance   *instance,
-                                       gpointer         g_class);
+static void   gegl_null_cache_store_class_init (GeglNullCacheStoreClass *klass);
+static void   gegl_null_cache_store_init       (GeglNullCacheStore      *self);
+
 static void             add           (GeglCacheStore  *self,
                                        GeglEntryRecord *record);
 static void             remove        (GeglCacheStore  *self,
@@ -44,70 +43,37 @@ static GeglEntryRecord *pop           (GeglCacheStore  *self);
 static GeglEntryRecord *peek          (GeglCacheStore  *self);
 
 
-GType
-gegl_null_cache_store_get_type(void)
+G_DEFINE_TYPE (GeglNullCacheStore, gegl_null_cache_store, GEGL_TYPE_CACHE_STORE)
+
+
+static void
+gegl_null_cache_store_class_init (GeglNullCacheStoreClass *klass)
 {
-  static GType type=0;
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-	{
-	  /* interface types, classed types, instantiated types */
-	  sizeof(GeglNullCacheStoreClass),
-	  NULL, /*base_init*/
-	  NULL, /* base_finalize */
+  GeglCacheStoreClass *store_class = GEGL_CACHE_STORE_CLASS (klass);
 
-	  /* classed types, instantiated types */
-	  class_init, /* class_init */
-	  NULL, /* class_finalize */
-	  NULL, /* class_data */
+  store_class->add    = add;
+  store_class->remove = remove;
+  store_class->size   = size;
+  store_class->pop    = pop;
+  store_class->peek   = peek;
+  store_class->zap    = zap;
+}
 
-	  /* instantiated types */
-	  sizeof(GeglNullCacheStore),
-	  0, /* n_preallocs */
-	  instance_init, /* instance_init */
-
-	  /* value handling */
-	  NULL /* value_table */
-	};
-
-      type = g_type_register_static (GEGL_TYPE_CACHE_STORE ,
-				     "GeglNullCacheStore",
-				     &typeInfo,
-				     0);
-    }
-  return type;
+static void
+gegl_null_cache_store_init (GeglNullCacheStore *self)
+{
+  self->status      = GEGL_UNDEFINED;
+  self->record_head = NULL;
 }
 
 GeglNullCacheStore *
 gegl_null_cache_store_new (GeglCacheStatus status)
 {
-  GeglNullCacheStore * new_store = g_object_new (GEGL_TYPE_NULL_CACHE_STORE, NULL);
-  new_store->status = status;
-  return new_store;
-}
+  GeglNullCacheStore *store = g_object_new (GEGL_TYPE_NULL_CACHE_STORE, NULL);
 
-static void
-class_init(gpointer g_class,
-	   gpointer class_data)
-{
-  GeglCacheStoreClass * cache_store_class = GEGL_CACHE_STORE_CLASS(g_class);
+  store->status = status;
 
-  cache_store_class->add=add;
-  cache_store_class->remove = remove;
-  cache_store_class->size = size;
-  cache_store_class->pop = pop;
-  cache_store_class->peek = peek;
-  cache_store_class->zap = zap;
-}
-
-static void
-instance_init(GTypeInstance *instance,
-	      gpointer g_class)
-{
-  GeglNullCacheStore * self = GEGL_NULL_CACHE_STORE (instance);
-  self->status = GEGL_UNDEFINED;
-  self->record_head = NULL;
+  return store;
 }
 
 static void
