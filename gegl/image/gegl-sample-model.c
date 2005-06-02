@@ -48,10 +48,9 @@ enum
 };
 
 
-static void            instance_init            (GTypeInstance         *instance,
-                                                 gpointer               g_class);
-static void            class_init               (gpointer               g_class,
-                                                 gpointer               class_data);
+static void            gegl_sample_model_class_init (GeglSampleModelClass *klass);
+static void            gegl_sample_model_init       (GeglSampleModel      *self);
+
 static void            get_property             (GObject               *object,
                                                  guint                  property_id,
                                                  GValue                *value,
@@ -96,69 +95,24 @@ static GeglNormalizer *get_normalizer           (const GeglSampleModel *self,
                                                  gint                   band);
 
 
-static gpointer parent_class;
+G_DEFINE_TYPE (GeglSampleModel, gegl_sample_model, GEGL_TYPE_OBJECT)
 
-
-GType
-gegl_sample_model_get_type (void)
-{
-  static GType type = 0;
-  if (!type)
-    {
-      static const GTypeInfo typeInfo = {
-	/* interface types, classed types, instantiated types */
-	sizeof (GeglSampleModelClass),
-	NULL,			/* base_init */
-	NULL,			/* base_finalize */
-
-	/* classed types, instantiated types */
-	class_init,		/* class_init */
-	NULL,			/* class_finalize */
-	NULL,			/* class_data */
-
-	/* instantiated types */
-	sizeof (GeglSampleModel),
-	0,			/* n_preallocs */
-	instance_init,		/* instance_init */
-
-	/* value handling */
-	NULL			/* value_table */
-      };
-
-      type = g_type_register_static (GEGL_TYPE_OBJECT,
-				     "GeglSampleModel",
-				     &typeInfo, G_TYPE_FLAG_ABSTRACT);
-    }
-  return type;
-}
 
 static void
-instance_init (GTypeInstance * instance, gpointer g_class)
+gegl_sample_model_class_init (GeglSampleModelClass *klass)
 {
-  GeglSampleModel *sample_model = (GeglSampleModel *) instance;
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  sample_model->width = 0;
-  sample_model->height = 0;
-  sample_model->num_bands = 0;
-  sample_model->is_disposed = FALSE;
-}
+  object_class->get_property   = get_property;
+  object_class->set_property   = set_property;
+  object_class->dispose        = dispose;
 
-static void
-class_init (gpointer g_class, gpointer class_data)
-{
-  GeglSampleModelClass *sm_class = (GeglSampleModelClass *) g_class;
-  GObjectClass *object_class = (GObjectClass *) g_class;
-
-  sm_class->get_pixel_double = get_pixel_double_default;
-  sm_class->set_pixel_double = set_pixel_double_default;
-  sm_class->get_sample_normalized = get_sample_normalized;
-  sm_class->set_sample_normalized = set_sample_normalized;
-  sm_class->get_pixel_normalized = get_pixel_normalized;
-  sm_class->set_pixel_normalized = set_pixel_normalized;
-
-  object_class->get_property = get_property;
-  object_class->set_property = set_property;
-  object_class->dispose = dispose;
+  klass->get_pixel_double      = get_pixel_double_default;
+  klass->set_pixel_double      = set_pixel_double_default;
+  klass->get_sample_normalized = get_sample_normalized;
+  klass->set_sample_normalized = set_sample_normalized;
+  klass->get_pixel_normalized  = get_pixel_normalized;
+  klass->set_pixel_normalized  = set_pixel_normalized;
 
   g_object_class_install_property (object_class, PROP_WIDTH,
 				   g_param_spec_int ("width",
@@ -195,10 +149,15 @@ class_init (gpointer g_class, gpointer class_data)
 							 G_PARAM_CONSTRUCT_ONLY
 							 |
 							 G_PARAM_READWRITE));
+}
 
-
-  parent_class = g_type_class_peek_parent (g_class);
-
+static void
+gegl_sample_model_init (GeglSampleModel *self)
+{
+  self->width       = 0;
+  self->height      = 0;
+  self->num_bands   = 0;
+  self->is_disposed = FALSE;
 }
 
 static void
@@ -222,7 +181,7 @@ dispose (GObject * object)
       self->is_disposed = TRUE;
     }
   /* g_message ("GeglSampleModel dispose run"); */
-  G_OBJECT_CLASS (parent_class)->dispose (object);
+  G_OBJECT_CLASS (gegl_sample_model_parent_class)->dispose (object);
 }
 
 static void

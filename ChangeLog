@@ -1,5 +1,10 @@
 2005-06-02  Sven Neumann  <sven@gimp.org>
 
+	* gegl/image/gegl-component-sample-model.c
+	* gegl/image/gegl-sample-model.c: use G_DEFINE_TYPE, cleanup.
+
+2005-06-02  Sven Neumann  <sven@gimp.org>
+
 	* gegl/image/Makefile.am: list unused (uncompiled) files.
 
 	* gegl/image/gegl-color-model.c: use G_DEFINE_TYPE, cleanup.

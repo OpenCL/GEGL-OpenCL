@@ -40,10 +40,9 @@ enum
 };
 
 
-static void        class_init             (gpointer                        g_class,
-                                           gpointer                        class_data);
-static void        instance_init          (GTypeInstance                  *instance,
-                                           gpointer                        g_class);
+static void  gegl_component_sample_model_class_init (GeglComponentSampleModelClass *klass);
+static void  gegl_component_sample_model_init       (GeglComponentSampleModel      *self);
+
 static GObject *   constructor            (GType                           type,
                                            guint                           n_construct_properties,
                                            GObjectConstructParam          *construct_properties);
@@ -77,62 +76,28 @@ inline static gint g_array_max_gint       (GArray                         *array
 static gint        get_max_bands_per_bank (const GeglComponentSampleModel *csm);
 
 
-static gpointer parent_class;
+G_DEFINE_TYPE (GeglComponentSampleModel, gegl_component_sample_model,
+               GEGL_TYPE_SAMPLE_MODEL)
 
-
-GType
-gegl_component_sample_model_get_type (void)
-{
-  static GType type = 0;
-  if (!type)
-    {
-      static const GTypeInfo typeInfo = {
-	/* interface types, classed types, instantiated types */
-	sizeof (GeglComponentSampleModelClass),
-	NULL,			/* base_init */
-	NULL,			/* base_finalize */
-
-	/* classed types, instantiated types */
-	class_init,		/* class_init */
-	NULL,			/* class_finalize */
-	NULL,			/* class_data */
-
-	/* instantiated types */
-	sizeof (GeglComponentSampleModel),
-	0,			/* n_preallocs */
-	instance_init,		/* instance_init */
-
-	/* value handling */
-	NULL			/* value_table */
-      };
-
-      type = g_type_register_static (GEGL_TYPE_SAMPLE_MODEL,
-				     "GeglComponentSampleModel",
-				     &typeInfo, 0);
-    }
-  return type;
-}
 
 static void
-class_init (gpointer g_class, gpointer class_data)
+gegl_component_sample_model_class_init (GeglComponentSampleModelClass *klass)
 {
-  GeglSampleModelClass *sm_class = g_class;
-  GObjectClass *gob_class = g_class;
+  GeglSampleModelClass *sm_class     = GEGL_SAMPLE_MODEL_CLASS (klass);
+  GObjectClass         *object_class = G_OBJECT_CLASS (klass);
 
-  parent_class = g_type_class_peek_parent (sm_class);
+  object_class->get_property  = get_property;
+  object_class->set_property  = set_property;
+  object_class->constructor   = constructor;
+  object_class->finalize      = finalize;
+  object_class->dispose       = dispose;
 
   sm_class->get_sample_double = get_sample_double;
   sm_class->set_sample_double = set_sample_double;
-  sm_class->create_buffer = create_buffer;
-  sm_class->check_buffer = check_buffer;
+  sm_class->create_buffer     = create_buffer;
+  sm_class->check_buffer      = check_buffer;
 
-  gob_class->get_property = get_property;
-  gob_class->set_property = set_property;
-  gob_class->constructor = constructor;
-  gob_class->finalize = finalize;
-  gob_class->dispose = dispose;
-
-  g_object_class_install_property (gob_class, PROP_PIXEL_STRIDE,
+  g_object_class_install_property (object_class, PROP_PIXEL_STRIDE,
 				   g_param_spec_int ("pixel_stride",
 						     "Pixel Stride",
 						     "Distance in number of buffer elements between two samples for the same band and the same scanline.",
@@ -141,7 +106,7 @@ class_init (gpointer g_class, gpointer class_data)
 						     0,
 						     G_PARAM_CONSTRUCT_ONLY |
 						     G_PARAM_READWRITE));
-  g_object_class_install_property (gob_class, PROP_SCANLINE_STRIDE,
+  g_object_class_install_property (object_class, PROP_SCANLINE_STRIDE,
 				   g_param_spec_int ("scanline_stride",
 						     "Scanline Stride",
 						     "Distance in number of buffer elements between a sample and the sample in the same column and the next scanline.",
@@ -150,14 +115,14 @@ class_init (gpointer g_class, gpointer class_data)
 						     0,
 						     G_PARAM_CONSTRUCT_ONLY |
 						     G_PARAM_READWRITE));
-  g_object_class_install_property (gob_class, PROP_BANK_OFFSETS,
+  g_object_class_install_property (object_class, PROP_BANK_OFFSETS,
 				   g_param_spec_pointer ("bank_offsets",
 							 "Bank Offsets",
 							 "A GArray* of gints containing the offsets in buffer elements from the begining of a bank, to the first sample in the bank.",
 							 G_PARAM_CONSTRUCT_ONLY
 							 |
 							 G_PARAM_READWRITE));
-  g_object_class_install_property (gob_class, PROP_BAND_INDICES,
+  g_object_class_install_property (object_class, PROP_BAND_INDICES,
 				   g_param_spec_pointer ("band_indices",
 							 "Band Indices",
 							 "A GArray* of gints containing the indices of the bands that hold each bank.  There should be one for each band.",
@@ -166,16 +131,15 @@ class_init (gpointer g_class, gpointer class_data)
 							 G_PARAM_READWRITE));
 
 }
-static void
-instance_init (GTypeInstance * instance, gpointer g_class)
-{
-  GeglComponentSampleModel *csm = (GeglComponentSampleModel *) instance;
 
-  csm->pixel_stride = 0;
-  csm->scanline_stride = 0;
-  csm->bank_offsets = NULL;
-  csm->band_indices = NULL;
-  csm->is_disposed = FALSE;
+static void
+gegl_component_sample_model_init (GeglComponentSampleModel *self)
+{
+  self->pixel_stride    = 0;
+  self->scanline_stride = 0;
+  self->bank_offsets    = NULL;
+  self->band_indices    = NULL;
+  self->is_disposed     = FALSE;
 }
 
 static GObject *
@@ -183,10 +147,9 @@ constructor (GType type,
 	     guint n_construct_properties,
 	     GObjectConstructParam * construct_properties)
 {
-
-  GObject *new_object =
-    G_OBJECT_CLASS (parent_class)->constructor (type, n_construct_properties,
-						construct_properties);
+  GObjectClass *class = G_OBJECT_CLASS (gegl_component_sample_model_parent_class);
+  GObject *new_object = class->constructor (type, n_construct_properties,
+                                            construct_properties);
   GeglComponentSampleModel *csm = (GeglComponentSampleModel *) new_object;
   GeglSampleModel *sample_model = (GeglSampleModel *) new_object;
 
@@ -330,8 +293,7 @@ finalize (GObject * object)
       g_array_free (csm->band_indices, TRUE);
     }
 
-  G_OBJECT_CLASS (parent_class)->finalize (object);
-
+  G_OBJECT_CLASS (gegl_component_sample_model_parent_class)->finalize (object);
 }
 
 static void
