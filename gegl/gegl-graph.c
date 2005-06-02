@@ -30,21 +30,21 @@
 #include "gegl-property.h"
 #include "gegl-visitor.h"
 
+
 enum
 {
-  PROP_0,
-  PROP_LAST
+  PROP_0
 };
 
 static void gegl_graph_class_init (GeglGraphClass *klass);
 static void gegl_graph_init       (GeglGraph      *self);
-static void finalize              (GObject        *gobject);
-static void set_property          (GObject        *gobject,
-                                   guint           prop_id,
+static void finalize              (GObject        *object);
+static void set_property          (GObject        *object,
+                                   guint           property_id,
                                    const GValue   *value,
                                    GParamSpec     *pspec);
-static void get_property          (GObject        *gobject,
-                                   guint           prop_id,
+static void get_property          (GObject        *object,
+                                   guint           property_id,
                                    GValue         *value,
                                    GParamSpec     *pspec);
 
@@ -55,11 +55,11 @@ G_DEFINE_TYPE(GeglGraph, gegl_graph, GEGL_TYPE_NODE)
 static void
 gegl_graph_class_init (GeglGraphClass *klass)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  gobject_class->finalize     = finalize;
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
+  object_class->finalize     = finalize;
+  object_class->set_property = set_property;
+  object_class->get_property = get_property;
 }
 
 static void
@@ -69,9 +69,9 @@ gegl_graph_init (GeglGraph *self)
 }
 
 static void
-finalize(GObject *gobject)
+finalize (GObject *object)
 {
-  GeglGraph *self = GEGL_GRAPH (gobject);
+  GeglGraph *self = GEGL_GRAPH (object);
   GeglNode  *node = GEGL_NODE (self);
 
   while (node->properties)
@@ -83,45 +83,48 @@ finalize(GObject *gobject)
 
   gegl_graph_remove_children (self);
 
-  G_OBJECT_CLASS (gegl_graph_parent_class)->finalize (gobject);
+  G_OBJECT_CLASS (gegl_graph_parent_class)->finalize (object);
 }
 
 static void
-set_property (GObject      *gobject,
-              guint         prop_id,
+set_property (GObject      *object,
+              guint         property_id,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  switch (prop_id)
-  {
+  switch (property_id)
+    {
     default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
-  }
+    }
 }
 
 static void
-get_property (GObject      *gobject,
-              guint         prop_id,
+get_property (GObject      *object,
+              guint         property_id,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  switch (prop_id)
-  {
+  switch (property_id)
+    {
     default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
-  }
+    }
 }
 
 void
-gegl_graph_remove_children(GeglGraph *self)
+gegl_graph_remove_children (GeglGraph *self)
 {
   g_return_if_fail (GEGL_IS_GRAPH (self));
-  while(1)
-    {
-      GeglNode *child = gegl_graph_get_nth_child(self, 0);
 
-      if(child)
-        gegl_graph_remove_child(self, child);
+  while (TRUE)
+    {
+      GeglNode *child = gegl_graph_get_nth_child (self, 0);
+
+      if (child)
+        gegl_graph_remove_child (self, child);
       else
         break;
     }
@@ -133,8 +136,9 @@ gegl_graph_add_child (GeglGraph *self,
 {
   g_return_val_if_fail (GEGL_IS_GRAPH (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
-  self->children = g_list_append(self->children, child);
-  g_object_ref(child);
+
+  self->children = g_list_append (self->children, g_object_ref (child));
+
   return child;
 }
 
@@ -144,8 +148,10 @@ gegl_graph_remove_child (GeglGraph *self,
 {
   g_return_val_if_fail (GEGL_IS_GRAPH (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
-  self->children = g_list_remove(self->children, child);
-  g_object_unref(child);
+
+  self->children = g_list_remove (self->children, child);
+  g_object_unref (child);
+
   return child;
 }
 
@@ -153,21 +159,23 @@ gint
 gegl_graph_num_children (GeglGraph *self)
 {
   g_return_val_if_fail (GEGL_IS_GRAPH (self), -1);
-  return g_list_length(self->children);
-}
 
+  return g_list_length (self->children);
+}
 
 GeglNode *
 gegl_graph_get_nth_child (GeglGraph *self,
                           gint       n)
 {
   g_return_val_if_fail (GEGL_IS_GRAPH (self), NULL);
-  return g_list_nth_data(self->children, n);
+
+  return g_list_nth_data (self->children, n);
 }
 
 GList *
-gegl_graph_get_children  (GeglGraph *self)
+gegl_graph_get_children (GeglGraph *self)
 {
   g_return_val_if_fail (GEGL_IS_GRAPH (self), NULL);
+
   return self->children;
 }

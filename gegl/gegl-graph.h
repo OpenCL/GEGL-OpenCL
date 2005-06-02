@@ -18,6 +18,7 @@
  *  Copyright 2003 Calvin Williamson
  *
  */
+
 #ifndef __GEGL_GRAPH_H__
 #define __GEGL_GRAPH_H__
 

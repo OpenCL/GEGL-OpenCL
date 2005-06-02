@@ -1,4 +1,3 @@
-
 /*
  *   This file is part of GEGL.
  *
@@ -22,15 +21,15 @@
 
 #include "config.h"
 
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
 #include "gegl-init.h"
+
 
 static gboolean gegl_initialized = FALSE;
 
-static
-void
-gegl_exit(void)
-{
-}
 
 void
 gegl_init (int *argc,
@@ -39,6 +38,10 @@ gegl_init (int *argc,
   if (gegl_initialized)
     return;
 
-  g_atexit(gegl_exit);
   gegl_initialized = TRUE;
+}
+
+void
+gegl_exit (void)
+{
 }

@@ -52,10 +52,8 @@ gegl_visitable_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_INTERFACE,
-                                    "GeglVisitable",
-                                     &type_info,
-                                     0);
+      type = g_type_register_static (G_TYPE_INTERFACE, "GeglVisitable",
+                                     &type_info, 0);
 
       g_type_interface_add_prerequisite (type, GEGL_TYPE_OBJECT);
     }
@@ -64,41 +62,50 @@ gegl_visitable_get_type (void)
 }
 
 void
-gegl_visitable_accept (GeglVisitable   *interface,
-                       GeglVisitor * visitor)
+gegl_visitable_accept (GeglVisitable *interface,
+                       GeglVisitor   *visitor)
 {
   GeglVisitableClass *interface_class;
+
   g_return_if_fail (GEGL_IS_VISITABLE (interface));
+
   interface_class = GEGL_VISITABLE_GET_CLASS (interface);
+
   g_object_ref (interface);
   interface_class->accept (interface, visitor);
   g_object_unref (interface);
 }
 
 GList *
-gegl_visitable_depends_on (GeglVisitable   *interface)
+gegl_visitable_depends_on (GeglVisitable *interface)
 {
   GeglVisitableClass *interface_class;
-  GList *depends_on = NULL;
+  GList              *depends_on = NULL;
 
   g_return_val_if_fail (GEGL_IS_VISITABLE (interface), NULL);
+
   interface_class = GEGL_VISITABLE_GET_CLASS (interface);
+
   g_object_ref (interface);
   depends_on = interface_class->depends_on (interface);
   g_object_unref (interface);
+
   return depends_on;
 }
 
 gboolean
-gegl_visitable_needs_visiting (GeglVisitable   *interface)
+gegl_visitable_needs_visiting (GeglVisitable *interface)
 {
   GeglVisitableClass *interface_class;
-  gboolean needs_visiting;
+  gboolean            needs_visiting;
 
   g_return_val_if_fail (GEGL_IS_VISITABLE (interface), FALSE);
+
   interface_class = GEGL_VISITABLE_GET_CLASS (interface);
+
   g_object_ref (interface);
-  needs_visiting = interface_class->needs_visiting(interface);
+  needs_visiting = interface_class->needs_visiting (interface);
   g_object_unref (interface);
+
   return needs_visiting;
 }

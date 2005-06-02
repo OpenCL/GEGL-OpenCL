@@ -34,20 +34,20 @@ enum
   PROP_NAME
 };
 
-static void     gegl_object_class_init (GeglObjectClass       *klass);
-static void     gegl_object_init       (GeglObject            *self);
-static GObject* constructor            (GType                  type,
-                                        guint                  n_props,
-                                        GObjectConstructParam *props);
-static void     finalize               (GObject               *gobject);
-static void     set_property           (GObject               *gobject,
-                                        guint                  prop_id,
-                                        const GValue          *value,
-                                        GParamSpec            *pspec);
-static void     get_property           (GObject               *gobject,
-                                        guint                  prop_id,
-                                        GValue                *value,
-                                        GParamSpec            *pspec);
+static void      gegl_object_class_init (GeglObjectClass       *klass);
+static void      gegl_object_init       (GeglObject            *self);
+static GObject * constructor            (GType                  type,
+                                         guint                  n_props,
+                                         GObjectConstructParam *props);
+static void      finalize               (GObject               *gobject);
+static void      set_property           (GObject               *gobject,
+                                         guint                  prop_id,
+                                         const GValue          *value,
+                                         GParamSpec            *pspec);
+static void      get_property           (GObject               *gobject,
+                                         guint                  prop_id,
+                                         GValue                *value,
+                                         GParamSpec            *pspec);
 
 
 G_DEFINE_TYPE (GeglObject, gegl_object, G_TYPE_OBJECT)
@@ -58,8 +58,8 @@ gegl_object_class_init (GeglObjectClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-  gobject_class->constructor = constructor;
-  gobject_class->finalize = finalize;
+  gobject_class->constructor  = constructor;
+  gobject_class->finalize     = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
@@ -70,7 +70,6 @@ gegl_object_class_init (GeglObjectClass * klass)
                                                         "",
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE));
-
 }
 
 static void
@@ -80,12 +79,12 @@ gegl_object_init (GeglObject *self)
 }
 
 static void
-finalize(GObject *gobject)
+finalize (GObject *gobject)
 {
-  GeglObject * self = GEGL_OBJECT(gobject);
+  GeglObject * self = GEGL_OBJECT (gobject);
 
-  if(self->name)
-   g_free(self->name);
+  if (self->name)
+    g_free (self->name);
 
   G_OBJECT_CLASS (gegl_object_parent_class)->finalize (gobject);
 }
@@ -95,45 +94,56 @@ constructor (GType                  type,
              guint                  n_props,
              GObjectConstructParam *props)
 {
-  GObjectClass *class = G_OBJECT_CLASS (gegl_object_parent_class);
-  GObject *gobject = class->constructor (type, n_props, props);
-  GeglObject *self = GEGL_OBJECT(gobject);
+  GObject    *object;
+  GeglObject *self;
+
+  object = G_OBJECT_CLASS (gegl_object_parent_class)->constructor (type,
+                                                                   n_props,
+                                                                   props);
+
+  self = GEGL_OBJECT (object);
+
   self->constructed = TRUE;
-  return gobject;
+
+  return object;
 }
 
 static void
 set_property (GObject      *gobject,
-              guint         prop_id,
+              guint         property_id,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglObject * object = GEGL_OBJECT(gobject);
-  switch (prop_id)
-  {
+  GeglObject *object = GEGL_OBJECT (gobject);
+
+  switch (property_id)
+    {
     case PROP_NAME:
-      gegl_object_set_name(object, g_value_get_string(value));
+      gegl_object_set_name (object, g_value_get_string (value));
       break;
     default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
-  }
+    }
 }
 
 static void
 get_property (GObject      *gobject,
-              guint         prop_id,
+              guint         property_id,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglObject * object = GEGL_OBJECT(gobject);
-  switch (prop_id)
-  {
+  GeglObject *object = GEGL_OBJECT (gobject);
+
+  switch (property_id)
+    {
     case PROP_NAME:
-      g_value_set_string(value, gegl_object_get_name(object));
+      g_value_set_string (value, gegl_object_get_name (object));
       break;
     default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
-  }
+    }
 }
 
 /**
@@ -142,15 +152,19 @@ get_property (GObject      *gobject,
  * @name: a string
  *
  * Sets the name for this object.
- *
  **/
 void
-gegl_object_set_name (GeglObject * self,
-                      const gchar * name)
+gegl_object_set_name (GeglObject  *self,
+                      const gchar *name)
 {
   g_return_if_fail (GEGL_IS_OBJECT (self));
 
-  self->name = g_strdup(name);
+  if (self->name)
+    g_free (self->name);
+
+  self->name = g_strdup (name);
+
+  g_object_notify (G_OBJECT (self), "name");
 }
 
 /**
@@ -161,7 +175,7 @@ gegl_object_set_name (GeglObject * self,
  *
  * Returns: a string for the name of this object.
  **/
-G_CONST_RETURN gchar*
+const gchar*
 gegl_object_get_name (GeglObject * self)
 {
   g_return_val_if_fail (GEGL_IS_OBJECT (self), NULL);

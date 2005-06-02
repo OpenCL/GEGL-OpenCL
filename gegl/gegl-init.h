@@ -18,11 +18,18 @@
  *  Copyright 2003 Calvin Williamson
  *
  */
+
 #ifndef __GEGL_INIT_H__
 #define __GEGL_INIT_H__
 
-#include <glib-object.h>
+G_BEGIN_DECLS
 
-void                gegl_init (int *argc, char ***argv);
+
+void   gegl_init (gint    *argc,
+                  gchar ***argv);
+void   gegl_exit (void);
+
+
+G_END_DECLS
 
 #endif /* __GEGL_INIT_H__ */

@@ -30,23 +30,24 @@
 
 struct _GeglConnection
 {
-  GeglNode * sink;
+  GeglNode     *sink;
   GeglProperty *sink_prop;
 
-  GeglNode * source;
+  GeglNode     *source;
   GeglProperty *source_prop;
 };
 
 GeglConnection *
-gegl_connection_new(GeglNode *sink,
-                    GeglProperty *sink_prop,
-                    GeglNode *source,
-                    GeglProperty *source_prop)
+gegl_connection_new (GeglNode     *sink,
+                     GeglProperty *sink_prop,
+                     GeglNode     *source,
+                     GeglProperty *source_prop)
 {
-  GeglConnection *connection = g_new(GeglConnection, 1);
-  connection->sink = sink;
-  connection->sink_prop = sink_prop;
-  connection->source = source;
+  GeglConnection *connection = g_new0 (GeglConnection, 1);
+
+  connection->sink        = sink;
+  connection->sink_prop   = sink_prop;
+  connection->source      = source;
   connection->source_prop = source_prop;
 
   return connection;
@@ -60,7 +61,7 @@ gegl_connection_get_source_node (GeglConnection *connection)
 
 void
 gegl_connection_set_source_node (GeglConnection *connection,
-                                 GeglNode *source)
+                                 GeglNode       *source)
 {
   connection->source = source;
 }
@@ -73,7 +74,7 @@ gegl_connection_get_sink_node (GeglConnection *connection)
 
 void
 gegl_connection_set_sink_node (GeglConnection *connection,
-                               GeglNode *sink)
+                               GeglNode       *sink)
 {
   connection->sink = sink;
 }
@@ -86,7 +87,7 @@ gegl_connection_get_sink_prop (GeglConnection *connection)
 
 void
 gegl_connection_set_sink_prop (GeglConnection *connection,
-                               GeglProperty *sink_prop)
+                               GeglProperty   *sink_prop)
 {
   connection->sink_prop = sink_prop;
 }
@@ -99,7 +100,7 @@ gegl_connection_get_source_prop (GeglConnection *connection)
 
 void
 gegl_connection_set_source_prop (GeglConnection *connection,
-                                 GeglProperty *source_prop)
+                                 GeglProperty   *source_prop)
 {
   connection->source_prop = source_prop;
 }

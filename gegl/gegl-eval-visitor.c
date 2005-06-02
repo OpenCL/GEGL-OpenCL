@@ -67,29 +67,31 @@ visit_property (GeglVisitor  *visitor,
           gegl_object_get_name(GEGL_OBJECT(filter)));
 #endif
 
-  if(gegl_property_is_output(property))
+  if (gegl_property_is_output (property))
     {
-      gboolean success;
-      const gchar *property_name = gegl_property_get_name(property);
-      success = gegl_filter_evaluate(filter, property_name);
+      const gchar *property_name = gegl_property_get_name (property);
+      gboolean     success;
+
+      success = gegl_filter_evaluate (filter, property_name);
     }
-  else if(gegl_property_is_input(property))
+  else if (gegl_property_is_input (property))
     {
-      GeglProperty *source_prop = gegl_property_get_connected_to(property);
-      if(source_prop)
+      GeglProperty *source_prop = gegl_property_get_connected_to (property);
+
+      if (source_prop)
         {
-          GValue value = {0};
-          GParamSpec *prop_spec = gegl_property_get_param_spec(property);
-          GeglFilter *source = gegl_property_get_filter(source_prop);
+          GValue      value     = { 0 };
+          GParamSpec *prop_spec = gegl_property_get_param_spec (property);
+          GeglFilter *source    = gegl_property_get_filter (source_prop);
 
-          g_value_init(&value, G_PARAM_SPEC_VALUE_TYPE(prop_spec));
+          g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (prop_spec));
 
-          g_object_get_property(G_OBJECT(source),
-                                gegl_property_get_name(source_prop),
-                                &value);
-          g_object_set_property(G_OBJECT(filter),
-                                gegl_property_get_name(property),
-                                &value);
+          g_object_get_property (G_OBJECT(source),
+                                 gegl_property_get_name (source_prop),
+                                 &value);
+          g_object_set_property (G_OBJECT (filter),
+                                 gegl_property_get_name (property),
+                                 &value);
         }
     }
 }

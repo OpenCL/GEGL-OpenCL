@@ -63,29 +63,31 @@ finalize (GObject *gobject)
  * @param_spec:
  *
  * Create a property.
- *
  **/
 void
-gegl_filter_create_property(GeglFilter *self,
-                        GParamSpec *param_spec)
+gegl_filter_create_property (GeglFilter *self,
+                             GParamSpec *param_spec)
 {
-  GeglProperty * property;
-  g_return_if_fail(GEGL_IS_FILTER(self));
-  g_return_if_fail(param_spec);
+  GeglProperty *property;
+
+  g_return_if_fail (GEGL_IS_FILTER (self));
+  g_return_if_fail (param_spec);
 
   property = g_object_new (GEGL_TYPE_PROPERTY, NULL);
-  gegl_property_set_param_spec(property, param_spec);
-  gegl_property_set_filter(property, self);
-  gegl_node_add_property(GEGL_NODE(self), property);
+  gegl_property_set_param_spec (property, param_spec);
+  gegl_property_set_filter (property, self);
+  gegl_node_add_property (GEGL_NODE (self), property);
 }
 
 gboolean
-gegl_filter_evaluate (GeglFilter *self,
+gegl_filter_evaluate (GeglFilter  *self,
                       const gchar *output_prop)
 {
   GeglFilterClass *klass;
+
   g_return_val_if_fail (GEGL_IS_FILTER (self), FALSE);
 
-  klass = GEGL_FILTER_GET_CLASS(self);
-  return klass->evaluate(self, output_prop);
+  klass = GEGL_FILTER_GET_CLASS (self);
+
+  return klass->evaluate (self, output_prop);
 }

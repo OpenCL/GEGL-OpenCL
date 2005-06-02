@@ -1,7 +1,30 @@
+/*
+ *   This file is part of GEGL.
+ *
+ *    GEGL is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    GEGL is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with GEGL; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #include "config.h"
+
+#include <glib-object.h>
+
+#include "gegl-types.h"
 
 #include "gegl-utils.h"
 #include "gegl-types.h"
+
 
 void gegl_log         (GLogLevelFlags  level,
                        gchar          *file,
@@ -58,17 +81,18 @@ gegl_rect_bounding_box (GeglRect *dest,
   gboolean s2_has_area = src2->w && src2->h;
 
   if( !s1_has_area &&  !s2_has_area)
-      gegl_rect_set(dest,0,0,0,0);
+    gegl_rect_set (dest, 0, 0, 0, 0);
   else if(!s1_has_area)
-      gegl_rect_copy(dest,src2);
+    gegl_rect_copy (dest, src2);
   else if(!s2_has_area)
-      gegl_rect_copy(dest,src1);
+    gegl_rect_copy (dest, src1);
 
   {
     gint x1 = MIN(src1->x, src2->x);
     gint x2 = MAX(src1->x + src1->w, src2->x + src2->w);
     gint y1 = MIN(src1->y, src2->y);
     gint y2 = MAX(src1->y + src1->h, src2->y + src2->h);
+
     dest->x = x1;
     dest->y = y1;
     dest->w = x2 - x1;
@@ -77,9 +101,9 @@ gegl_rect_bounding_box (GeglRect *dest,
 }
 
 gboolean
-gegl_rect_intersect(GeglRect *dest,
-                    GeglRect *src1,
-                    GeglRect *src2)
+gegl_rect_intersect (GeglRect *dest,
+                     GeglRect *src1,
+                     GeglRect *src2)
 {
   gint x1, x2, y1, y2;
 

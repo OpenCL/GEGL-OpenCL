@@ -56,22 +56,21 @@ gegl_eval_mgr_init (GeglEvalMgr *self)
  * @property_name:
  *
  * Update this property.
- *
  **/
 void
-gegl_eval_mgr_apply (GeglEvalMgr * self,
+gegl_eval_mgr_apply (GeglEvalMgr *self,
                      GeglNode    *root,
                      const gchar *property_name)
 {
-  GeglVisitor *visitor;
+  GeglVisitor  *visitor;
   GeglProperty *property;
 
   g_return_if_fail (GEGL_IS_EVAL_MGR (self));
   g_return_if_fail (GEGL_IS_NODE (root));
 
-  g_object_ref(root);
+  g_object_ref (root);
 
-  property = gegl_node_get_property(root, property_name);
+  property = gegl_node_get_property (root, property_name);
 
 #if 0
   /* This part does the evaluation of the ops, depth first. */
@@ -80,9 +79,9 @@ gegl_eval_mgr_apply (GeglEvalMgr * self,
                  G_OBJECT_TYPE_NAME(root), root, property_name);
 #endif
 
-  visitor = g_object_new(GEGL_TYPE_EVAL_VISITOR, NULL);
-  gegl_visitor_dfs_traverse(visitor, GEGL_VISITABLE(property));
-  g_object_unref(visitor);
+  visitor = g_object_new (GEGL_TYPE_EVAL_VISITOR, NULL);
+  gegl_visitor_dfs_traverse (visitor, GEGL_VISITABLE(property));
+  g_object_unref (visitor);
 
-  g_object_unref(root);
+  g_object_unref (root);
 }

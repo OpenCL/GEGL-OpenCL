@@ -14,11 +14,12 @@
  *    You should have received a copy of the GNU General Public License
  *    along with GEGL; if not, write to the Free Software
  *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
 
 #ifndef __GEGL_TYPES_H__
 #define __GEGL_TYPES_H__
+
+G_BEGIN_DECLS
 
 
 typedef struct _GeglConnection  GeglConnection;
@@ -32,7 +33,10 @@ typedef struct _GeglVisitable   GeglVisitable; /* dummy typedef */
 typedef struct _GeglVisitor     GeglVisitor;
 
 
-typedef struct _GeglRect GeglRect;
+typedef struct _GeglRect      GeglRect;
+typedef struct _GeglPoint     GeglPoint;
+typedef struct _GeglDimension GeglDimension;
+
 struct _GeglRect
 {
   gint x;
@@ -41,20 +45,19 @@ struct _GeglRect
   gint h;
 };
 
-typedef struct _GeglPoint GeglPoint;
 struct _GeglPoint
 {
   gint x;
   gint y;
 };
 
-typedef struct _GeglDimension GeglDimension;
 struct _GeglDimension
 {
   gint width;
   gint height;
 };
 
-#define ROUND(x) ((x)>0 ? (gint)((x)+.5) : (gint)((x)-.5))
+
+G_END_DECLS
 
 #endif /* __GEGL_TYPES_H__ */

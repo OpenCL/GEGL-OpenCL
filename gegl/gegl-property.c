@@ -32,6 +32,7 @@
 #include "gegl-connection.h"
 #include "gegl-visitable.h"
 
+
 enum
 {
   PROP_0,
@@ -39,23 +40,23 @@ enum
   PROP_LAST
 };
 
-static void     gegl_property_class_init (GeglPropertyClass *klass);
-static void     gegl_property_init       (GeglProperty      *self);
-static void     finalize                 (GObject           *gobject);
-static void     set_property             (GObject           *gobject,
-                                          guint              prop_id,
-                                          const GValue      *value,
-                                          GParamSpec        *pspec);
-static void     get_property             (GObject           *gobject,
-                                          guint              prop_id,
-                                          GValue            *value,
-                                          GParamSpec        *pspec);
-static void     visitable_init           (gpointer           ginterface,
-                                          gpointer           interface_data);
-static void     visitable_accept         (GeglVisitable     *visitable,
-                                          GeglVisitor       *visitor);
-static GList*   visitable_depends_on     (GeglVisitable     *visitable);
-static gboolean visitable_needs_visiting (GeglVisitable     *visitable);
+static void       gegl_property_class_init (GeglPropertyClass *klass);
+static void       gegl_property_init       (GeglProperty      *self);
+static void       finalize                 (GObject           *gobject);
+static void       set_property             (GObject           *gobject,
+                                            guint              prop_id,
+                                            const GValue      *value,
+                                            GParamSpec        *pspec);
+static void       get_property             (GObject           *gobject,
+                                            guint              prop_id,
+                                            GValue            *value,
+                                            GParamSpec        *pspec);
+static void       visitable_init           (gpointer           ginterface,
+                                            gpointer           interface_data);
+static void       visitable_accept         (GeglVisitable     *visitable,
+                                            GeglVisitor       *visitor);
+static GList    * visitable_depends_on     (GeglVisitable     *visitable);
+static gboolean   visitable_needs_visiting (GeglVisitable     *visitable);
 
 
 G_DEFINE_TYPE_WITH_CODE (GeglProperty, gegl_property, GEGL_TYPE_OBJECT,
@@ -84,10 +85,10 @@ gegl_property_class_init (GeglPropertyClass * klass)
 static void
 gegl_property_init (GeglProperty *self)
 {
-  self->param_spec = NULL;
-  self->filter = NULL;
+  self->param_spec  = NULL;
+  self->filter      = NULL;
   self->connections = NULL;
-  self->dirty = TRUE;
+  self->dirty       = TRUE;
 }
 
 static void
@@ -96,19 +97,17 @@ visitable_init (gpointer ginterface,
 {
   GeglVisitableClass *visitable_class = ginterface;
 
-  g_assert (G_TYPE_FROM_INTERFACE (ginterface) == GEGL_TYPE_VISITABLE);
-
-  visitable_class->accept = visitable_accept;
-  visitable_class->depends_on = visitable_depends_on;
+  visitable_class->accept         = visitable_accept;
+  visitable_class->depends_on     = visitable_depends_on;
   visitable_class->needs_visiting = visitable_needs_visiting;
 }
 
 static void
-finalize(GObject *gobject)
+finalize (GObject *gobject)
 {
-  GeglProperty *self = GEGL_PROPERTY(gobject);
+  GeglProperty *self = GEGL_PROPERTY (gobject);
 
-  g_assert(self->connections == NULL);
+  g_assert (self->connections == NULL);
 
   G_OBJECT_CLASS (gegl_property_parent_class)->finalize (gobject);
 }
@@ -120,11 +119,12 @@ set_property (GObject      *gobject,
               GParamSpec   *pspec)
 {
   /*GeglProperty * property = GEGL_PROPERTY(gobject);*/
+
   switch (prop_id)
-  {
+    {
     default:
       break;
-  }
+    }
 }
 
 static void
@@ -134,15 +134,16 @@ get_property (GObject      *gobject,
               GParamSpec   *pspec)
 {
   /*GeglProperty * property = GEGL_PROPERTY(gobject);*/
+
   switch (prop_id)
-  {
+    {
     default:
       break;
-  }
+    }
 }
 
 GParamSpec *
-gegl_property_get_param_spec (GeglProperty * self)
+gegl_property_get_param_spec (GeglProperty *self)
 {
   g_return_val_if_fail (GEGL_IS_PROPERTY (self), NULL);
 
@@ -150,8 +151,8 @@ gegl_property_get_param_spec (GeglProperty * self)
 }
 
 void
-gegl_property_set_param_spec (GeglProperty * self,
-                              GParamSpec *param_spec)
+gegl_property_set_param_spec (GeglProperty *self,
+                              GParamSpec   *param_spec)
 {
   g_return_if_fail (GEGL_IS_PROPERTY (self));
 
@@ -159,53 +160,55 @@ gegl_property_set_param_spec (GeglProperty * self,
 }
 
 GeglConnection *
-gegl_property_connect(GeglProperty *sink,
-                      GeglProperty *source)
+gegl_property_connect (GeglProperty *sink,
+                       GeglProperty *source)
 {
   GeglConnection *connection;
+
   g_return_val_if_fail (GEGL_IS_PROPERTY (sink), NULL);
   g_return_val_if_fail (GEGL_IS_PROPERTY (source), NULL);
 
-  connection = gegl_connection_new(NULL, sink, NULL, source);
+  connection = gegl_connection_new (NULL, sink, NULL, source);
 
-  sink->connections = g_list_append(sink->connections, connection);
-  source->connections = g_list_append(source->connections, connection);
+  sink->connections   = g_list_append (sink->connections, connection);
+  source->connections = g_list_append (source->connections, connection);
 
   return connection;
 }
 
 void
-gegl_property_disconnect (GeglProperty *sink,
-                          GeglProperty *source,
+gegl_property_disconnect (GeglProperty   *sink,
+                          GeglProperty   *source,
                           GeglConnection *connection)
 {
   g_return_if_fail (GEGL_IS_PROPERTY (sink));
   g_return_if_fail (GEGL_IS_PROPERTY (source));
 
-  g_assert(sink == gegl_connection_get_sink_prop(connection));
-  g_assert(source == gegl_connection_get_source_prop(connection));
+  g_assert (sink == gegl_connection_get_sink_prop (connection));
+  g_assert (source == gegl_connection_get_source_prop (connection));
 
-  sink->connections = g_list_remove(sink->connections, connection);
-  source->connections = g_list_remove(source->connections, connection);
+  sink->connections   = g_list_remove (sink->connections, connection);
+  source->connections = g_list_remove (source->connections, connection);
 }
 
-GList*
-gegl_property_get_connections (GeglProperty * self)
+GList *
+gegl_property_get_connections (GeglProperty *self)
 {
   g_return_val_if_fail (GEGL_IS_PROPERTY (self), NULL);
+
   return self->connections;
 }
 
 gint
-gegl_property_num_connections (GeglProperty * self)
+gegl_property_num_connections (GeglProperty *self)
 {
   g_return_val_if_fail (GEGL_IS_PROPERTY (self), -1);
 
-  return g_list_length(self->connections);
+  return g_list_length (self->connections);
 }
 
-GeglFilter*
-gegl_property_get_filter (GeglProperty * self)
+GeglFilter *
+gegl_property_get_filter (GeglProperty *self)
 {
   g_return_val_if_fail (GEGL_IS_PROPERTY (self), NULL);
 
@@ -214,22 +217,24 @@ gegl_property_get_filter (GeglProperty * self)
 
 /* List should be freed */
 GList *
-gegl_property_get_depends_on(GeglProperty *self)
+gegl_property_get_depends_on (GeglProperty *self)
 {
   GList *depends_on = NULL;
 
-  if(gegl_property_is_input(self) &&
-     gegl_property_num_connections(self) == 1)
+  if (gegl_property_is_input (self) &&
+      gegl_property_num_connections (self) == 1)
     {
-      GeglConnection *connection = g_list_nth_data(self->connections, 0);
+      GeglConnection *connection = g_list_nth_data (self->connections, 0);
 
-      if(connection)
-        depends_on = g_list_append(depends_on, gegl_connection_get_source_prop(connection));
+      if (connection)
+        depends_on = g_list_append (depends_on,
+                                    gegl_connection_get_source_prop (connection));
     }
-  else if(gegl_property_is_output(self))
+  else if (gegl_property_is_output (self))
     {
-      GList *input_properties = gegl_node_get_input_properties(GEGL_NODE(self->filter));
-      depends_on = g_list_copy(input_properties);
+      GList *input_properties = gegl_node_get_input_properties (GEGL_NODE (self->filter));
+
+      depends_on = g_list_copy (input_properties);
     }
 
   return depends_on;
@@ -240,7 +245,7 @@ gegl_property_get_name (GeglProperty * self)
 {
   g_return_val_if_fail (GEGL_IS_PROPERTY (self), NULL);
 
-  return g_param_spec_get_name(self->param_spec);
+  return g_param_spec_get_name (self->param_spec);
 }
 
 GeglProperty *
@@ -248,19 +253,20 @@ gegl_property_get_connected_to (GeglProperty * self)
 {
   g_return_val_if_fail (GEGL_IS_PROPERTY (self), NULL);
 
-  if(gegl_property_is_input(self) &&
-     gegl_property_num_connections(self) == 1)
+  if (gegl_property_is_input (self) &&
+      gegl_property_num_connections (self) == 1)
     {
-      GeglConnection *connection = g_list_nth_data(self->connections, 0);
-      return gegl_connection_get_source_prop(connection);
+      GeglConnection *connection = g_list_nth_data (self->connections, 0);
+
+      return gegl_connection_get_source_prop (connection);
     }
 
   return NULL;
 }
 
 void
-gegl_property_set_filter (GeglProperty * self,
-                          GeglFilter *filter)
+gegl_property_set_filter (GeglProperty *self,
+                          GeglFilter   *filter)
 {
   g_return_if_fail (GEGL_IS_PROPERTY (self));
   g_return_if_fail (GEGL_IS_FILTER (filter));
@@ -269,49 +275,53 @@ gegl_property_set_filter (GeglProperty * self,
 }
 
 gboolean
-gegl_property_is_dirty (GeglProperty * self)
+gegl_property_is_dirty (GeglProperty *self)
 {
   g_return_val_if_fail (GEGL_IS_PROPERTY (self), TRUE);
+
   return self->dirty;
 }
 
 void
-gegl_property_set_dirty (GeglProperty * self,
-                         gboolean flag)
+gegl_property_set_dirty (GeglProperty *self,
+                         gboolean      flag)
 {
   g_return_if_fail (GEGL_IS_PROPERTY (self));
+
   self->dirty = flag;
 }
 
 gboolean
-gegl_property_is_output (GeglProperty * self)
+gegl_property_is_output (GeglProperty *self)
 {
   return GEGL_PROPERTY_OUTPUT & self->param_spec->flags;
 }
 
 gboolean
-gegl_property_is_input (GeglProperty * self)
+gegl_property_is_input (GeglProperty *self)
 {
   return GEGL_PROPERTY_INPUT & self->param_spec->flags;
 }
 
 static void
-visitable_accept (GeglVisitable * visitable,
-                  GeglVisitor * visitor)
+visitable_accept (GeglVisitable *visitable,
+                  GeglVisitor   *visitor)
 {
-  gegl_visitor_visit_property(visitor, GEGL_PROPERTY(visitable));
+  gegl_visitor_visit_property (visitor, GEGL_PROPERTY (visitable));
 }
 
 static GList *
-visitable_depends_on(GeglVisitable *visitable)
+visitable_depends_on (GeglVisitable *visitable)
 {
-  GeglProperty * property = GEGL_PROPERTY(visitable);
-  return gegl_property_get_depends_on(property);
+  GeglProperty *property = GEGL_PROPERTY (visitable);
+
+  return gegl_property_get_depends_on (property);
 }
 
 static gboolean
-visitable_needs_visiting(GeglVisitable *visitable)
+visitable_needs_visiting (GeglVisitable *visitable)
 {
-  GeglProperty * property = GEGL_PROPERTY(visitable);
-  return gegl_property_is_dirty(property);
+  GeglProperty *property = GEGL_PROPERTY (visitable);
+
+  return gegl_property_is_dirty (property);
 }

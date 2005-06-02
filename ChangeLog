@@ -1,3 +1,20 @@
+2005-06-03  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/gegl-connection.[ch]
+	* gegl/gegl-eval-mgr.[ch]
+	* gegl/gegl-eval-visitor.c
+	* gegl/gegl-filter.c
+	* gegl/gegl-graph.[ch]
+	* gegl/gegl-init.[ch]
+	* gegl/gegl-node.[ch]
+	* gegl/gegl-object.c
+	* gegl/gegl-property.c
+	* gegl/gegl-types.h
+	* gegl/gegl-utils.[ch]
+	* gegl/gegl-visitable.c
+	* gegl/gegl-visitor.c
+	* gegl/gegl.h: more cleanup.
+
 2005-06-02  Sven Neumann  <sven@gimp.org>
 
 	* gegl/image/gegl-component-sample-model.c
