@@ -86,7 +86,7 @@ be called directly. This is all handled automatically during graph evaluation.
 
 </para>
 
-@node_class: 
+@parent_class: 
 @evaluate: 
 
 <!-- ##### FUNCTION gegl_filter_create_property ##### -->

@@ -33,7 +33,7 @@ GeglProperty
 
 </para>
 
-@object_class: 
+@parent_class: 
 
 <!-- ##### FUNCTION gegl_property_get_name ##### -->
 <para>

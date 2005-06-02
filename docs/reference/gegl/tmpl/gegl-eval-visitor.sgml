@@ -34,5 +34,5 @@ is done if the inputs don't match the needs of the #GeglFilter.
 
 </para>
 
-@visitor_class: 
+@parent_class: 
 

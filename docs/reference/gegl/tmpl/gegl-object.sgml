@@ -30,7 +30,7 @@ GeglObject
 
 </para>
 
-@gobject_class: 
+@parent_class: 
 
 <!-- ##### FUNCTION gegl_object_set_name ##### -->
 <para>

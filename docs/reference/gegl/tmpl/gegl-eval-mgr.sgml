@@ -73,7 +73,7 @@ are interior to a graph. See #GeglGraph for this.
 
 </para>
 
-@object_class: 
+@parent_class: 
 
 <!-- ##### FUNCTION gegl_eval_mgr_apply ##### -->
 <para>

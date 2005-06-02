@@ -52,7 +52,7 @@ routine finds inputs C and B when used for A, and D when used for B.
 
 </para>
 
-@object_class: 
+@parent_class: 
 @visit_property: 
 @visit_node: 
 

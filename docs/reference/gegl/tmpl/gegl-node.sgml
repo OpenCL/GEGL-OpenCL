@@ -106,7 +106,7 @@ an op that just adds the components of the inputs it is passed.
 
 </para>
 
-@object_class: 
+@parent_class: 
 
 <!-- ##### FUNCTION gegl_node_add_property ##### -->
 <para>
