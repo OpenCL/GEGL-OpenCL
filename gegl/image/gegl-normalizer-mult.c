@@ -35,10 +35,9 @@ enum
   PROP_LAST
 };
 
-static void     class_init    (gpointer              g_class,
-                               gpointer              class_data);
-static void     instance_init (GTypeInstance        *instance,
-                               gpointer              g_class);
+static void gegl_normalizer_mult_class_init (GeglNormalizerMultClass *klass);
+static void gegl_normalizer_mult_init       (GeglNormalizerMult      *self);
+
 static void     get_property  (GObject              *object,
                                guint                 property_id,
                                GValue               *value,
@@ -58,49 +57,20 @@ static gdouble *unnormalize   (const GeglNormalizer *self,
                                gint                  length,
                                gint                  stride);
 
+G_DEFINE_TYPE (GeglNormalizerMult, gegl_normalizer_mult, GEGL_TYPE_NORMALIZER)
 
-GType
-gegl_normalizer_mult_get_type (void)
-{
-  static GType type = 0;
-  if (!type)
-    {
-      static const GTypeInfo typeInfo = {
-	/* interface types, classed types, instantiated types */
-	sizeof (GeglNormalizerMultClass),
-	NULL,			/* base_init */
-	NULL,			/* base_finalize */
-
-	/* classed types, instantiated types */
-	class_init,		/* class_init */
-	NULL,			/* class_finalize */
-	NULL,			/* class_data */
-
-	/* instantiated types */
-	sizeof (GeglNormalizerMult),
-	0,			/* n_preallocs */
-	instance_init,		/* instance_init */
-
-	/* value handling */
-	NULL			/* value_table */
-      };
-
-      type = g_type_register_static (GEGL_TYPE_NORMALIZER,
-				     "GeglNormalizerMult", &typeInfo, 0);
-    }
-  return type;
-}
 
 static void
-class_init (gpointer g_class, gpointer class_data)
+gegl_normalizer_mult_class_init (GeglNormalizerMultClass *klass)
 {
-  GObjectClass *object_class = (GObjectClass *) g_class;
-  GeglNormalizerClass *class = (GeglNormalizerClass *) g_class;
-  class->normalize = normalize;
-  class->unnormalize = unnormalize;
+  GObjectClass        *object_class     = G_OBJECT_CLASS (klass);
+  GeglNormalizerClass *normalizer_class = GEGL_NORMALIZER_CLASS (klass);
 
-  object_class->get_property = get_property;
-  object_class->set_property = set_property;
+  object_class->get_property    = get_property;
+  object_class->set_property    = set_property;
+
+  normalizer_class->normalize   = normalize;
+  normalizer_class->unnormalize = unnormalize;
 
   g_object_class_install_property (object_class, PROP_ALPHA,
 				   g_param_spec_double ("alpha",
@@ -111,7 +81,12 @@ class_init (gpointer g_class, gpointer class_data)
 							1,
 							G_PARAM_CONSTRUCT |
 							G_PARAM_READWRITE));
-  return;
+}
+
+static void
+gegl_normalizer_mult_init (GeglNormalizerMult *self)
+{
+  self->alpha = 0.0;
 }
 
 static void
@@ -146,13 +121,6 @@ set_property (GObject * object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
     }
-}
-
-static void
-instance_init (GTypeInstance * instance, gpointer g_class)
-{
-  GeglNormalizerMult *self = (GeglNormalizerMult *) instance;
-  self->alpha = 0.0;
 }
 
 static gdouble *

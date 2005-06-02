@@ -27,48 +27,23 @@
 
 #include "gegl-normalizer.h"
 
-GType gegl_normalizer_get_type (void);
-static void class_init (gpointer g_class, gpointer class_data);
+static void  gegl_normalizer_class_init (GeglNormalizerClass *klass);
+static void  gegl_normalizer_init       (GeglNormalizer      *self);
 
-GType
-gegl_normalizer_get_type (void)
+
+G_DEFINE_ABSTRACT_TYPE (GeglNormalizer, gegl_normalizer, GEGL_TYPE_OBJECT)
+
+
+static void
+gegl_normalizer_class_init (GeglNormalizerClass *klass)
 {
-  static GType type = 0;
-  if (!type)
-    {
-      static const GTypeInfo typeInfo = {
-	/* interface types, classed types, instantiated types */
-	sizeof (GeglNormalizerClass),
-	NULL,			/* base_init */
-	NULL,			/* base_finalize */
-
-	/* classed types, instantiated types */
-	class_init,		/* class_init */
-	NULL,			/* class_finalize */
-	NULL,			/* class_data */
-
-	/* instantiated types */
-	sizeof (GeglNormalizer),
-	0,			/* n_preallocs */
-	NULL,			/* instance_init */
-
-	/* value handling */
-	NULL			/* value_table */
-      };
-
-      type = g_type_register_static (GEGL_TYPE_OBJECT,
-				     "GeglNormalizer",
-				     &typeInfo, G_TYPE_FLAG_ABSTRACT);
-    }
-  return type;
+  klass->normalize   = NULL;
+  klass->unnormalize = NULL;
 }
 
 static void
-class_init (gpointer g_class, gpointer class_data)
+gegl_normalizer_init (GeglNormalizer *self)
 {
-  GeglNormalizerClass *class = GEGL_NORMALIZER_CLASS (g_class);
-  class->normalize = NULL;
-  class->unnormalize = NULL;
 }
 
 gdouble *
@@ -89,18 +64,23 @@ gegl_normalizer_normalize (const GeglNormalizer * self,
 }
 
 gdouble *
-gegl_normalizer_unnormalize (const GeglNormalizer * self,
-			     const gdouble * nor_data,
-			     gdouble * unnor_data, gint length, gint stride)
+gegl_normalizer_unnormalize (const GeglNormalizer *self,
+			     const gdouble        *nor_data,
+			     gdouble              *unnor_data,
+                             gint                  length,
+                             gint                  stride)
 {
-  GeglNormalizerClass *class = GEGL_NORMALIZER_GET_CLASS (self);
+  GeglNormalizerClass *class;
+
   g_return_val_if_fail (GEGL_IS_NORMALIZER (self), NULL);
   g_return_val_if_fail (unnor_data != NULL, NULL);
+
+  class = GEGL_NORMALIZER_GET_CLASS (self);
+
   g_return_val_if_fail (class->unnormalize != NULL, NULL);
 
-  if (nor_data == NULL)
-    {
-      nor_data = g_new (gdouble, length);
-    }
+  if (! nor_data)
+    nor_data = g_new (gdouble, length);
+
   return class->unnormalize (self, nor_data, unnor_data, length, stride);
 }

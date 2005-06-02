@@ -1,3 +1,8 @@
+2005-06-02  Sven Neumann  <sven@gimp.org>
+
+	* gegl/image/gegl-normalizer-mult.c
+	* gegl/image/gegl-normalizer.c: use G_DEFINE_TYPE, cleanup.
+
 2005-06-03  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/gegl-connection.[ch]
