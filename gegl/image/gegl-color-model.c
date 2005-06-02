@@ -3,58 +3,25 @@
 #include "gegl-color-model.h"
 
 
-static void class_init    (gpointer       g_class,
-                           gpointer       class_data);
-static void instance_init (GTypeInstance *instance,
-                           gpointer       g_class);
+static void gegl_color_model_class_init (GeglColorModelClass *klass);
+static void gegl_color_model_init       (GeglColorModel      *self);
 
 
-GType
-gegl_color_model_get_type (void)
+G_DEFINE_TYPE(GeglColorModel, gegl_color_model, G_TYPE_OBJECT)
+
+
+static void
+gegl_color_model_class_init (GeglColorModelClass *klass)
 {
-  static GType type = 0;
-  if (!type)
-    {
-      static const GTypeInfo typeInfo = {
-	/* interface types, classed types, instantiated types */
-	sizeof (GeglColorModelClass),
-	NULL,			/* base_init */
-	NULL,			/* base_finalize */
-
-	/* classed types, instantiated types */
-	class_init,		/* class_init */
-	NULL,			/* class_finalize */
-	NULL,			/* class_data */
-
-	/* instantiated types */
-	sizeof (GeglColorModel),
-	0,			/* n_preallocs */
-	instance_init,		/* instance_init */
-
-	/* value handling */
-	NULL			/* value_table */
-      };
-
-      type = g_type_register_static (ParentTypeNum
-				     "GeglColorModel", &typeInfo, 0);
-    }
-  return type;
 }
 
 static void
-class_init (gpointer g_class, gpointer class_data)
+gegl_color_model_init (GeglColorModel *self)
 {
-  GObjectClass *object_class = g_class;
-}
-
-static void
-instance_init (GTypeInstance * instance, gpointer g_class)
-{
-  GeglColorModel *self = g_class;
   self->color_channels = NULL;
-  self->alpha = (-1);
-  self->num_colors = 0;
-  self->is_lum_channl = NULL;
+  self->alpha          = -1;
+  self->num_colors     = 0;
+  self->is_lum_channl  = NULL;
 }
 
 gint

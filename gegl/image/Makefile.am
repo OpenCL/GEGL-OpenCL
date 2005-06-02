@@ -21,7 +21,7 @@
 
 noinst_LTLIBRARIES = libimage.la
 
-IMAGE_SRC = \
+IMAGE_sources = \
 	gegl-buffer-double.c		\
 	gegl-buffer.c			\
 	gegl-cache-entry.c		\
@@ -38,7 +38,7 @@ IMAGE_SRC = \
 	gegl-swap-cache-store.c		\
 	gegl-swap-cache.c
 
-IMAGE_HDR = \
+IMAGE_headers = \
 	gegl-image-types.h		\
 	\
 	gegl-buffer-double.h		\
@@ -57,9 +57,12 @@ IMAGE_HDR = \
 	gegl-swap-cache-store.h		\
 	gegl-swap-cache.h
 
-libimage_la_SOURCES = \
-	$(IMAGE_SRC)	\
-	$(IMAGE_HDR)
+IMAGE_unused_sources = \
+	gegl-color-model.c		\
+	gegl-color-model.h		\
+	gegl-color-space-impl.h
+
+libimage_la_SOURCES = $(IMAGE_sources) $(IMAGE_headers)
 
 INCLUDES = \
 	-I$(top_srcdir)		\
