@@ -30,10 +30,9 @@
 #include "gegl-swap-cache-store.h"
 
 
-static void     class_init     (gpointer         g_class,
-                                gpointer         class_data);
-static void     instance_init  (GTypeInstance   *instance,
-                                gpointer         g_class);
+static void     gegl_swap_cache_class_init (GeglSwapCacheClass *klass);
+static void     gegl_swap_cache_init       (GeglSwapCache      *self);
+
 static void     finalize       (GObject         *object);
 static void     dispose        (GObject         *object);
 static void     insert_record  (GeglCache       *cache,
@@ -47,92 +46,55 @@ static void     flush_internal (GeglCache       *cache,
                                 GeglEntryRecord *record);
 
 
-static gpointer parent_class;
+G_DEFINE_TYPE (GeglSwapCache, gegl_swap_cache, GEGL_TYPE_CACHE)
 
-
-GType
-gegl_swap_cache_get_type (void)
-{
-  static GType type=0;
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-	{
-	  /* interface types, classed types, instantiated types */
-	  sizeof(GeglSwapCacheClass),
-	  NULL, /*base_init*/
-	  NULL, /* base_finalize */
-
-	  /* classed types, instantiated types */
-	  class_init, /* class_init */
-	  NULL, /* class_finalize */
-	  NULL, /* class_data */
-
-	  /* instantiated types */
-	  sizeof(GeglSwapCache),
-	  0, /* n_preallocs */
-	  instance_init, /* instance_init */
-
-	  /* value handling */
-	  NULL /* value_table */
-	};
-
-      type = g_type_register_static (GEGL_TYPE_CACHE ,
-				     "GeglSwapCache",
-				     &typeInfo,
-				     0);
-    }
-  return type;
-}
 
 static void
-class_init(gpointer g_class,
-	   gpointer class_data)
+gegl_swap_cache_class_init (GeglSwapCacheClass *klass)
 {
-  GeglCacheClass* cache_class = GEGL_CACHE_CLASS(g_class);
-  GObjectClass* object_class = G_OBJECT_CLASS(g_class);
+  GeglCacheClass *cache_class  = GEGL_CACHE_CLASS (klass);
+  GObjectClass   *object_class = G_OBJECT_CLASS (klass);
 
-  cache_class->insert_record = insert_record;
+  cache_class->insert_record  = insert_record;
   cache_class->check_room_for = check_room_for;
-  cache_class->size = size;
-  cache_class->capacity = capacity;
-  cache_class->is_persistent = is_persistent;
+  cache_class->size           = size;
+  cache_class->capacity       = capacity;
+  cache_class->is_persistent  = is_persistent;
   cache_class->flush_internal = flush_internal;
 
-  object_class->dispose = dispose;
-  object_class->finalize=finalize;
-
-  parent_class = g_type_class_peek_parent (g_class);
+  object_class->dispose       = dispose;
+  object_class->finalize      = finalize;
 }
 
 static void
-instance_init(GTypeInstance *instance,
-	      gpointer g_class)
+gegl_swap_cache_init (GeglSwapCache *self)
 {
-  GeglSwapCache * self = GEGL_SWAP_CACHE (instance);
-
   self->heap_capacity = 0;
-  self->has_disposed = FALSE;
-  self->heap_stored = gegl_heap_cache_store_new ();
-  self->stored = NULL;
+  self->has_disposed  = FALSE;
+  self->heap_stored   = gegl_heap_cache_store_new ();
+  self->stored        = NULL;
 }
 
 static void
-dispose (GObject * object)
+dispose (GObject *object)
 {
-  GeglSwapCache * self = GEGL_SWAP_CACHE (object);
-  if (!self->has_disposed) {
-    self->has_disposed = TRUE;
-    g_object_unref (G_OBJECT(self->stored));
-    g_object_unref (G_OBJECT(self->heap_stored));
-  }
-  G_OBJECT_CLASS(parent_class)->dispose(object);
+  GeglSwapCache *self = GEGL_SWAP_CACHE (object);
+
+  if (!self->has_disposed)
+    {
+      self->has_disposed = TRUE;
+
+      g_object_unref (self->stored);
+      g_object_unref (self->heap_stored);
+    }
+
+  G_OBJECT_CLASS (gegl_swap_cache_parent_class)->dispose (object);
 }
 
 static void
-finalize (GObject * object) {
-  G_OBJECT_CLASS(parent_class)->finalize(object);
-
+finalize (GObject *object)
+{
+  G_OBJECT_CLASS (gegl_swap_cache_parent_class)->finalize (object);
 }
 
 GeglSwapCache*

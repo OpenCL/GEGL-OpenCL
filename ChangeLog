@@ -1,5 +1,10 @@
 2005-06-03  Sven Neumann  <sven@gimp.org>
 
+	* gegl/image/gegl-swap-cache-store.c
+	* gegl/image/gegl-swap-cache.c: use G_DEFINE_TYPE, cleanup.
+
+2005-06-03  Sven Neumann  <sven@gimp.org>
+
 	* gegl/image/gegl-heap-cache-store.c
 	* gegl/image/gegl-heap-cache.c: use G_DEFINE_TYPE, cleanup.
 
