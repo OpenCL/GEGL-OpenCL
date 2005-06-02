@@ -21,7 +21,12 @@
 
 #include "config.h"
 
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
 #include "gegl-connection.h"
+
 
 struct _GeglConnection
 {

@@ -24,6 +24,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
 #include "gegl-node.h"
 #include "gegl-visitor.h"
 #include "gegl-visitable.h"

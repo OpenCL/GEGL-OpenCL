@@ -24,38 +24,41 @@
 
 #include "gegl-node.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
-#define GEGL_TYPE_FILTER               (gegl_filter_get_type ())
-#define GEGL_FILTER(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_FILTER, GeglFilter))
-#define GEGL_FILTER_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_FILTER, GeglFilterClass))
-#define GEGL_IS_FILTER(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_FILTER))
-#define GEGL_IS_FILTER_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_FILTER))
-#define GEGL_FILTER_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_FILTER, GeglFilterClass))
 
-typedef struct _GeglFilter GeglFilter;
-struct _GeglFilter
-{
-    GeglNode node;
-    /*< private >*/
-};
+#define GEGL_TYPE_FILTER            (gegl_filter_get_type ())
+#define GEGL_FILTER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_FILTER, GeglFilter))
+#define GEGL_FILTER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_FILTER, GeglFilterClass))
+#define GEGL_IS_FILTER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_FILTER))
+#define GEGL_IS_FILTER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_FILTER))
+#define GEGL_FILTER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_FILTER, GeglFilterClass))
+
 
 typedef struct _GeglFilterClass GeglFilterClass;
-struct _GeglFilterClass
+
+struct _GeglFilter
 {
-    GeglNodeClass node_class;
-    gboolean (*evaluate)(GeglFilter *self, const gchar *output_prop);
+  GeglNode  parent_instance;
 };
 
-GType           gegl_filter_get_type            (void) G_GNUC_CONST;
-void            gegl_filter_create_property     (GeglFilter *self,
-                                                 GParamSpec *param_spec);
-gboolean        gegl_filter_evaluate            (GeglFilter *self,
-                                                 const gchar *output_prop);
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+struct _GeglFilterClass
+{
+  GeglNodeClass parent_class;
 
-#endif
+  gboolean (* evaluate) (GeglFilter  *self,
+                         const gchar *output_prop);
+};
+
+
+GType      gegl_filter_get_type        (void) G_GNUC_CONST;
+
+void       gegl_filter_create_property (GeglFilter  *self,
+                                        GParamSpec  *param_spec);
+gboolean   gegl_filter_evaluate        (GeglFilter  *self,
+                                        const gchar *output_prop);
+
+
+G_END_DECLS
+
+#endif /* __GEGL_FILTER_H__ */

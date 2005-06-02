@@ -22,11 +22,9 @@
 #define __GEGL_EVAL_MGR_H__
 
 #include "gegl-object.h"
-#include "gegl-node.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
+
 
 #define GEGL_TYPE_EVAL_MGR               (gegl_eval_mgr_get_type ())
 #define GEGL_EVAL_MGR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_EVAL_MGR, GeglEvalMgr))
@@ -35,27 +33,27 @@ extern "C" {
 #define GEGL_IS_EVAL_MGR_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_EVAL_MGR))
 #define GEGL_EVAL_MGR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_EVAL_MGR, GeglEvalMgrClass))
 
-typedef struct _GeglEvalMgr GeglEvalMgr;
-struct _GeglEvalMgr
-{
-   GeglObject object;
-
-   /*< private >*/
-};
 
 typedef struct _GeglEvalMgrClass GeglEvalMgrClass;
-struct _GeglEvalMgrClass
+
+struct _GeglEvalMgr
 {
-   GeglObjectClass object_class;
+  GeglObject  parent_instance;
 };
 
-GType           gegl_eval_mgr_get_type          (void) G_GNUC_CONST;
-void            gegl_eval_mgr_apply             (GeglEvalMgr * self,
-                                                 GeglNode *root,
-                                                 const gchar *property_name);
+struct _GeglEvalMgrClass
+{
+  GeglObjectClass  parent_class;
+};
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
 
-#endif
+GType   gegl_eval_mgr_get_type (void) G_GNUC_CONST;
+
+void    gegl_eval_mgr_apply    (GeglEvalMgr *self,
+                                GeglNode    *root,
+                                const gchar *property_name);
+
+
+G_END_DECLS
+
+#endif /* __GEGL_EVAL_MGR_H__ */

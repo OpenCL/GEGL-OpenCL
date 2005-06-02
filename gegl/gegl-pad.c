@@ -21,6 +21,11 @@
 
 #include "config.h"
 
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
+#include "gegl-filter.h"
 #include "gegl-property.h"
 #include "gegl-visitor.h"
 #include "gegl-utils.h"

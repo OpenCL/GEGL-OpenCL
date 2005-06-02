@@ -18,33 +18,41 @@
  *  Copyright 2003 Calvin Williamson
  *
  */
+
 #ifndef __GEGL_VISITABLE_H__
 #define __GEGL_VISITABLE_H__
 
-#include <glib-object.h>
-#include <glib.h>
-#include "gegl-visitor.h"
+G_BEGIN_DECLS
 
-#define GEGL_TYPE_VISITABLE   (gegl_visitable_get_type ())
-#define GEGL_VISITABLE(obj)   (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_VISITABLE, GeglVisitable))
-#define GEGL_IS_VISITABLE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_VISITABLE))
+
+#define GEGL_TYPE_VISITABLE           (gegl_visitable_get_type ())
+#define GEGL_VISITABLE(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_VISITABLE, GeglVisitable))
+#define GEGL_IS_VISITABLE(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_VISITABLE))
 #define GEGL_VISITABLE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GEGL_TYPE_VISITABLE, GeglVisitableClass))
 
-typedef struct _GeglVisitable      GeglVisitable;
+
 typedef struct _GeglVisitableClass GeglVisitableClass;
+
 struct _GeglVisitableClass
 {
-  GTypeInterface base_interface;
+  GTypeInterface  base_interface;
 
-  void  (*accept) (GeglVisitable *interface, GeglVisitor *visitor);
-  GList *(*depends_on) (GeglVisitable *interface);
-  gboolean (*needs_visiting) (GeglVisitable *interface);
+  void       (* accept)         (GeglVisitable *interface,
+                                 GeglVisitor   *visitor);
+  GList    * (* depends_on)     (GeglVisitable *interface);
+  gboolean   (* needs_visiting) (GeglVisitable *interface);
 };
 
-GType gegl_visitable_get_type (void) G_GNUC_CONST;
 
-void gegl_visitable_accept (GeglVisitable   *interface, GeglVisitor *visitor);
-GList *gegl_visitable_depends_on(GeglVisitable *interface);
-gboolean gegl_visitable_needs_visiting(GeglVisitable *interface);
+GType      gegl_visitable_get_type       (void) G_GNUC_CONST;
 
-#endif
+void       gegl_visitable_accept         (GeglVisitable *interface,
+                                          GeglVisitor   *visitor);
+GList    * gegl_visitable_depends_on     (GeglVisitable *interface);
+gboolean   gegl_visitable_needs_visiting (GeglVisitable *interface);
+
+
+
+G_END_DECLS
+
+#endif /* __GEGL_VISITABLE_H__ */

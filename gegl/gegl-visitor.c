@@ -1,4 +1,3 @@
-
 /*
  *   This file is part of GEGL.
  *
@@ -22,6 +21,12 @@
 
 #include "config.h"
 
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
+#include "gegl-node.h"
+#include "gegl-property.h"
 #include "gegl-visitor.h"
 #include "gegl-visitable.h"
 

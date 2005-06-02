@@ -22,6 +22,10 @@
 #ifndef __GEGL_H__
 #define __GEGL_H__
 
+#include <glib-object.h>
+
+#include <gegl-types.h>
+
 #include <gegl-connection.h>
 #include <gegl-filter.h>
 #include <gegl-graph.h>

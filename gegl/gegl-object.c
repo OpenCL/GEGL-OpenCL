@@ -23,13 +23,15 @@
 
 #include <glib-object.h>
 
+#include "gegl-types.h"
+
 #include "gegl-object.h"
+
 
 enum
 {
   PROP_0,
-  PROP_NAME,
-  PROP_LAST
+  PROP_NAME
 };
 
 static void     gegl_object_class_init (GeglObjectClass       *klass);

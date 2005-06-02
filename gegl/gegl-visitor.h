@@ -23,14 +23,9 @@
 #define __GEGL_VISITOR_H__
 
 #include "gegl-object.h"
-#include "gegl-property.h"
-#include "gegl-node.h"
 
-struct _GeglVisitable;
+G_BEGIN_DECLS
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 
 #define GEGL_TYPE_VISITOR               (gegl_visitor_get_type ())
 #define GEGL_VISITOR(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_VISITOR, GeglVisitor))
@@ -39,40 +34,43 @@ extern "C" {
 #define GEGL_IS_VISITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_VISITOR))
 #define GEGL_VISITOR_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_VISITOR, GeglVisitorClass))
 
-typedef struct _GeglVisitor GeglVisitor;
-struct _GeglVisitor
-{
-   GeglObject object;
-
-   GList * visits_list;
-   GHashTable *hash;
-};
 
 typedef struct _GeglVisitorClass GeglVisitorClass;
-struct _GeglVisitorClass
-{
-   GeglObjectClass object_class;
 
-   void (* visit_property)         (GeglVisitor *self,
-                                    GeglProperty * property);
-   void (* visit_node)             (GeglVisitor *self,
-                                    GeglNode * node);
+struct _GeglVisitor
+{
+  GeglObject  parent_instance;
+
+  GList      *visits_list;
+  GHashTable *hash;
 };
 
-GType           gegl_visitor_get_type           (void) G_GNUC_CONST;
-GList *         gegl_visitor_get_visits_list    (GeglVisitor *self);
-void            gegl_visitor_visit_visitable    (GeglVisitor *self,
-                                                     struct _GeglVisitable *visitable);
-void            gegl_visitor_visit_property     (GeglVisitor * self,
-                                                     GeglProperty *property);
-void            gegl_visitor_visit_node         (GeglVisitor * self,
-                                                     GeglNode *node);
-void            gegl_visitor_dfs_traverse       (GeglVisitor * self,
-                                                     struct _GeglVisitable * visitable);
-void            gegl_visitor_bfs_traverse       (GeglVisitor * self,
-                                                     struct _GeglVisitable * visitable);
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+struct _GeglVisitorClass
+{
+  GeglObjectClass  parent_class;
 
-#endif
+  void (* visit_property) (GeglVisitor  *self,
+                           GeglProperty *property);
+  void (* visit_node)     (GeglVisitor  *self,
+                           GeglNode     *node);
+};
+
+
+GType    gegl_visitor_get_type         (void) G_GNUC_CONST;
+
+GList  * gegl_visitor_get_visits_list (GeglVisitor   *self);
+void     gegl_visitor_visit_visitable (GeglVisitor   *self,
+                                       GeglVisitable *visitable);
+void     gegl_visitor_visit_property  (GeglVisitor   *self,
+                                       GeglProperty  *property);
+void     gegl_visitor_visit_node      (GeglVisitor   *self,
+                                       GeglNode      *node);
+void     gegl_visitor_dfs_traverse    (GeglVisitor   *self,
+                                       GeglVisitable *visitable);
+void     gegl_visitor_bfs_traverse    (GeglVisitor   *self,
+                                       GeglVisitable *visitable);
+
+
+G_END_DECLS
+
+#endif /* __GEGL_VISITOR_H__ */

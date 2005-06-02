@@ -21,8 +21,13 @@
 
 #include "config.h"
 
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
 #include "gegl-eval-mgr.h"
 #include "gegl-eval-visitor.h"
+#include "gegl-node.h"
 #include "gegl-visitable.h"
 #include "gegl-property.h"
 

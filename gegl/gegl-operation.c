@@ -23,8 +23,13 @@
 
 #include <string.h>
 
+#include <glib-object.h>
+
+#include "gegl-types.h"
+
 #include "gegl-filter.h"
 #include "gegl-property.h"
+
 
 static void gegl_filter_class_init (GeglFilterClass *klass);
 static void gegl_filter_init       (GeglFilter      *self);

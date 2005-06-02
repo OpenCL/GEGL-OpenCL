@@ -19,6 +19,12 @@
  *
  */
 
+#include "config.h"
+
+#include <glib-object.h>
+
+#include "gegl-image-types.h"
+
 #include "gegl-normalizer.h"
 
 GType gegl_normalizer_get_type (void);

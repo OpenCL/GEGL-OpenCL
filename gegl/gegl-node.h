@@ -18,79 +18,78 @@
  *  Copyright 2003 Calvin Williamson
  *
  */
+
 #ifndef __GEGL_NODE_H__
 #define __GEGL_NODE_H__
 
 #include "gegl-object.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+G_BEGIN_DECLS
 
-struct _GeglProperty;
 
-#define GEGL_TYPE_NODE               (gegl_node_get_type ())
-#define GEGL_NODE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
-#define GEGL_NODE_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NODE, GeglNodeClass))
-#define GEGL_IS_NODE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NODE))
-#define GEGL_IS_NODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NODE))
-#define GEGL_NODE_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NODE, GeglNodeClass))
+#define GEGL_TYPE_NODE            (gegl_node_get_type ())
+#define GEGL_NODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
+#define GEGL_NODE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NODE, GeglNodeClass))
+#define GEGL_IS_NODE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NODE))
+#define GEGL_IS_NODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NODE))
+#define GEGL_NODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NODE, GeglNodeClass))
 
-typedef struct _GeglNode  GeglNode;
+
+typedef struct _GeglNodeClass GeglNodeClass;
 
 struct _GeglNode
 {
-    GeglObject object;
+  GeglObject  parent_instance;
 
-    /*< private >*/
-    GList *properties;
-    GList *input_properties;
-    GList *output_properties;
+  /*< private >*/
+  GList      *properties;
+  GList      *input_properties;
+  GList      *output_properties;
 
-    GList *sources;
-    GList *sinks;
+  GList      *sources;
+  GList      *sinks;
 
-    gboolean enabled;
+  gboolean    enabled;
 };
 
-typedef struct _GeglNodeClass GeglNodeClass;
 struct _GeglNodeClass
 {
-    GeglObjectClass object_class;
+  GeglObjectClass  parent_class;
 };
 
-GType           gegl_node_get_type              (void) G_GNUC_CONST;
-void            gegl_node_add_property          (GeglNode *self,
-                                                 struct _GeglProperty *property);
-void            gegl_node_remove_property       (GeglNode *self,
-                                                 struct _GeglProperty *property);
-struct _GeglProperty *gegl_node_get_property    (GeglNode *self,
-                                                 const gchar *name);
-GList*          gegl_node_get_properties        (GeglNode *self);
-GList*          gegl_node_get_input_properties  (GeglNode *self);
-GList*          gegl_node_get_output_properties (GeglNode *self);
-gint            gegl_node_get_num_input_props   (GeglNode *self);
-gint            gegl_node_get_num_output_props  (GeglNode *self);
-GList*          gegl_node_get_sinks             (GeglNode *self);
-GList*          gegl_node_get_sources           (GeglNode *self);
-gint            gegl_node_num_sources           (GeglNode *self);
-gint            gegl_node_num_sinks             (GeglNode *self);
-gboolean        gegl_node_connect               (GeglNode *sink,
-                                                 const gchar *sink_prop_name,
-                                                 GeglNode *source,
-                                                 const gchar *source_prop_name);
-gboolean        gegl_node_disconnect            (GeglNode *sink,
-                                                 const gchar *sink_prop_name,
-                                                 GeglNode *source,
-                                                 const gchar *source_prop_name);
-void            gegl_node_disconnect_sinks      (GeglNode *self);
-void            gegl_node_disconnect_sources    (GeglNode *self);
-GList*          gegl_node_get_depends_on        (GeglNode *self);
-void            gegl_node_apply                 (GeglNode *self,
-                                                 const gchar *output_prop_name);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
+GType         gegl_node_get_type              (void) G_GNUC_CONST;
 
-#endif
+void          gegl_node_add_property          (GeglNode     *self,
+                                               GeglProperty *property);
+void          gegl_node_remove_property       (GeglNode     *self,
+                                               GeglProperty *property);
+GeglProperty *gegl_node_get_property          (GeglNode     *self,
+                                               const gchar  *name);
+GList*        gegl_node_get_properties        (GeglNode     *self);
+GList*        gegl_node_get_input_properties  (GeglNode     *self);
+GList*        gegl_node_get_output_properties (GeglNode     *self);
+gint          gegl_node_get_num_input_props   (GeglNode     *self);
+gint          gegl_node_get_num_output_props  (GeglNode     *self);
+GList*        gegl_node_get_sinks             (GeglNode     *self);
+GList*        gegl_node_get_sources           (GeglNode     *self);
+gint          gegl_node_num_sources           (GeglNode     *self);
+gint          gegl_node_num_sinks             (GeglNode     *self);
+gboolean      gegl_node_connect               (GeglNode     *sink,
+                                               const gchar  *sink_prop_name,
+                                               GeglNode     *source,
+                                               const gchar  *source_prop_name);
+gboolean      gegl_node_disconnect            (GeglNode     *sink,
+                                               const gchar  *sink_prop_name,
+                                               GeglNode     *source,
+                                               const gchar  *source_prop_name);
+void          gegl_node_disconnect_sinks      (GeglNode     *self);
+void          gegl_node_disconnect_sources    (GeglNode     *self);
+GList*        gegl_node_get_depends_on        (GeglNode     *self);
+void          gegl_node_apply                 (GeglNode     *self,
+                                               const gchar  *output_prop_name);
+
+
+G_END_DECLS
+
+#endif /* __GEGL_NODE_H__ */
