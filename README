@@ -12,8 +12,8 @@ The graph
 -----------------------------------------------------------------------------
 
 Operations are the nodes of the graph, along the edges image data/buffers
-flow. Operations are chained together by storing which outputpad provides
-the imagedata to be used within the operation on an input pad. The number
+flow. Operations are chained together by storing which output pad provides
+the image data to be used within the operation on an input pad. The number
 of pads available for input/output can be queried from the nodes.
 
 Before processing the graph the desired output sinks should be set to active
@@ -31,7 +31,7 @@ by the operation, i.e. setting a blur radius, the properties are gobject
 properties.
 
 A general way to attach key/value pairs might be useful, some name, author,
-license are useful metadata.
+license are useful meta data.
 
 
 About the processing
@@ -41,13 +41,13 @@ When deciding which portion of the graph should be run, a list of active
 nodes is provided, all operations that are connected to these active nodes
 will be processed.
 
-The edges of the graph is examined in toplogical order. If the destination
-operation of the edge isn't able to use any of the dataformats provided by the
+The edges of the graph is examined in topological order. If the destination
+operation of the edge isn't able to use any of the data formats provided by the
 source operation, a pixel representation conversion operations is automatically
 inserted.
 
-The order of scheduling when processing might have inpact on performance due to
-locality of memory accesses in conseqetive operations.
+The order of scheduling when processing might have impact on performance due to
+locality of memory accesses in consecutive operations.
 
 Other transformations might also happen on the graph, to collapse affine
 transformations or providing utility functionality to provide caching. These
@@ -67,7 +67,7 @@ for connection to other operations.
 Source
     No input pad
     One output pad
-    Example: png loader, webcam
+    Example: PNG loader, webcam
 
 Filter
     One input pad
@@ -77,7 +77,7 @@ Filter
 Sink
     One input pad
     No output pad
-    Example: png save, display
+    Example: PNG save, display
 
 Composition
     Two or more input pads
@@ -87,20 +87,20 @@ Composition
 Decomposition
     One input pad
     Two or more output pads
-    Example: rgb to CIE lab conversion with decomposing (should be
+    Example: RGB to CIE lab conversion with decomposing (should be
     implemented with extract_L op extract_A op and extract_B op instead,
     but used here to have an example)
 
 Core operations
     some operations might be included with the core of GEGL since GEGL itself
-    depends on them being available, examples are NOP nodes, the pixelformat
+    depends on them being available, examples are NOP nodes, the pixel format
     conversion operation, NULL sink, and the blank buffer source. Some of these
     are hidden from the user whilst others are used for graph transformations
     prior to processing.
 
 Base operations
     The operations guaranteed to be present in a GEGL implementation are
-    consdiered base operations, these include the porter duff operations.
+    considered base operations, these include the porter duff operations.
 
 
 Extending GEGL
@@ -119,7 +119,7 @@ What GEGL is not
 
 A cure for world peace, (at least not until after world domination).
 
-A generic framework for passing datatypes around in a graph, what is passed
+A generic framework for passing data types around in a graph, what is passed
 around in the graph is single images, nothing else.
 
 Not a stream processing framework, although being graph based, it should
@@ -129,5 +129,5 @@ gstreamer and mlt.
 Written in lowercase.
 
 Going to have a rapidly evolving application side API. Since it uses a simple
-datamodel as its interface; applications should be able to rely on the API
+data model as its interface; applications should be able to rely on the API
 not changing.
