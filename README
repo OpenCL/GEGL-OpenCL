@@ -1,34 +1,133 @@
-Webpages for Gegl (also see the docs dir): 
+.---. .--- .---. .
+| __  |__  | __  |
+|   | |    |   | |
+`---| `--- `---| `---                                           a rough guide
+=============================================================================
 
-http://www.gegl.org
+GEGL is a library facilitating the creation, manipulation and processing
+of directed acyclic graphs of image processing operations.
 
-Building:
 
-Gegl
--------------
+The graph
+-----------------------------------------------------------------------------
 
-When you type make in the top dir, the following should occur:
+Operations are the nodes of the graph, along the edges image data/buffers
+flow. Operations are chained together by storing which outputpad provides
+the imagedata to be used within the operation on an input pad. The number
+of pads available for input/output can be queried from the nodes.
 
-1)In the gegl subdir, libgegl gets made.
+Before processing the graph the desired output sinks should be set to active
+by providing a GList of sink operations that are desired.
 
-2)In the tools/testsuite subdir, a xUnit testing tool gets built. 
 
-3)In the tests subdir, gegl unit tests get built and run, using the testsuite
-tool built in step 1) above.
+The operations
+-----------------------------------------------------------------------------
 
-gil (generic image language)
--------------
+GEGL should provide a way to query which operations are available, this
+list of available operations is comparable to The GIMPs PDB.
 
-This is the experimental new code generation tool.
+Each operation has properties that can be used to control the processing done
+by the operation, i.e. setting a blur radius, the properties are gobject
+properties.
 
-When you type make in the gil dir, the following should occur:
+A general way to attach key/value pairs might be useful, some name, author,
+license are useful metadata.
 
-1)In the gil/gil subdir, the (experimental) libgil is built.  This requires
-flex/bison (or lex/yacc) installed somewhere. libgil is not used yet, but there
-are some unit tests in gil/tests that show how to build simple expression
-abstract syntax trees using it.
 
-2)In gil/tests the unit tests for libgil are built and run. These use the
-testsuite library built above for Gegl.
+About the processing
+-----------------------------------------------------------------------------
 
-calvinw@mindspring.com
+When deciding which portion of the graph should be run, a list of active
+nodes is provided, all operations that are connected to these active nodes
+will be processed.
+
+The edges of the graph is examined in toplogical order. If the destination
+operation of the edge isn't able to use any of the dataformats provided by the
+source operation, a pixel representation conversion operations is automatically
+inserted.
+
+The order of scheduling when processing might have inpact on performance due to
+locality of memory accesses in conseqetive operations.
+
+Other transformations might also happen on the graph, to collapse affine
+transformations or providing utility functionality to provide caching. These
+temporary internal nodes should not be exposed in the data model seen through
+the public API.
+
+The graph is processed in topological order.
+
+
+Operation categories 
+-----------------------------------------------------------------------------
+
+All nodes in the graph are operations, when dividing the operations into
+categories it is done based on what input and output pads are available
+for connection to other operations.
+
+Source
+    No input pad
+    One output pad
+    Example: png loader, webcam
+
+Filter
+    One input pad
+    One output pad
+    Example: brightness and contrast, blur, threshold
+
+Sink
+    One input pad
+    No output pad
+    Example: png save, display
+
+Composition
+    Two or more input pads
+    One output pad
+    Example: porter-duff and other compositing operators, displacement map
+
+Decomposition
+    One input pad
+    Two or more output pads
+    Example: rgb to CIE lab conversion with decomposing (should be
+    implemented with extract_L op extract_A op and extract_B op instead,
+    but used here to have an example)
+
+Core operations
+    some operations might be included with the core of GEGL since GEGL itself
+    depends on them being available, examples are NOP nodes, the pixelformat
+    conversion operation, NULL sink, and the blank buffer source. Some of these
+    are hidden from the user whilst others are used for graph transformations
+    prior to processing.
+
+Base operations
+    The operations guaranteed to be present in a GEGL implementation are
+    consdiered base operations, these include the porter duff operations.
+
+
+Extending GEGL
+-----------------------------------------------------------------------------
+
+The functionality of GEGL is in the operations, by writing a new operation
+conforming to the GEGL extension API, GEGL operations are gmodules.
+
+Initially development of new operations should be discouraged except from
+the core developers since this API might be expected to change after the
+top-level GEGL API is frozen.
+
+
+What GEGL is not
+-----------------------------------------------------------------------------
+
+A cure for world peace, (at least not until after world domination).
+
+A generic framework for passing datatypes around in a graph, what is passed
+around in the graph is single images, nothing else.
+
+Not a stream processing framework, although being graph based, it should
+be easy to integrate with graph/ producer-consumer based frameworks like
+gstreamer and mlt.
+
+Written in lowercase.
+
+Going to have a rapidly evolving application side API. Since it uses a simple
+datamodel as its interface; applications should be able to rely on the API
+not changing.
