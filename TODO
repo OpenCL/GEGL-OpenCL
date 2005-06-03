@@ -25,13 +25,6 @@ gegl/
             (code from gegl/image/ describing color-model and sample-model)
         buffer/
             (the content that previously lived in a folder called image)
-        graph/ (contents maybe)
-            gegl-graph.*
-            gegl-connection.*
-            gegl-print.*
-            gegl-node.*
-            gegl-visitor.*
-            gegl-visitable.*
         evaluate/
             gegl-eval-mgr.*
             gegl-eval-visitor.*
@@ -40,6 +33,12 @@ gegl/
         core-ops/
             (_nop, _tee, _proxy, _null) statically compiled into the library
         gegl-init.*
+        gegl-graph.*
+        gegl-connection.*
+        gegl-print.*
+        gegl-node.*
+        gegl-visitor.*
+        gegl-visitable.*
     base-ops/
         (porter-duff, blank, gaussian blur, brightness+contrast)
     docs/
