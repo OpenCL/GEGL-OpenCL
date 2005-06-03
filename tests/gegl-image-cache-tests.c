@@ -26,25 +26,26 @@
 #include "gegl-image-cache-tests.h"
 
 
-static GeglCache * cache;
-static GeglMockCacheEntry ** entries;
+static GeglCache           *cache;
+static GeglMockCacheEntry **entries;
 
-const gint num_entries = 20;
-const gint min_cache_size = 10000 * sizeof(gint) * 20;
-static const gint num_primes = 100;
+const gint num_entries     = 20;
+const gint min_cache_size  = 10000 * sizeof (gint) * 20;
+
 static const gint primes[] =
 {
-9923, 6833, 3943, 8669, 1259, 4679, 8707, 8887, 9391, 1621,
-9829, 6121, 5527, 1907, 3221, 2293, 1933, 4799, 7589, 5501,
-1151, 1019, 6983, 4153, 3371, 5443, 1423, 5303, 3119, 6197,
-7753, 7883, 1663, 7907, 2851, 2861, 5849, 3613, 1091, 5939,
-7549, 7603, 7321, 5323, 2683, 1117, 6379, 3001, 3541, 3067,
-9049, 9439, 9551, 1291, 8807, 2381, 9431, 5003, 2777, 7489,
-1543, 9839, 4139, 2579, 1861, 2999, 6269, 9311, 4909, 5419,
-4201, 2341, 2221, 7477, 4937, 7127, 6841, 4561, 8243, 5483,
-9689, 3517, 9851, 6043, 7993, 7247, 8219, 8537, 9257, 7517,
-9377, 7963, 6367, 7639, 2699, 7789, 9203, 3847, 4409, 4159
+  9923, 6833, 3943, 8669, 1259, 4679, 8707, 8887, 9391, 1621,
+  9829, 6121, 5527, 1907, 3221, 2293, 1933, 4799, 7589, 5501,
+  1151, 1019, 6983, 4153, 3371, 5443, 1423, 5303, 3119, 6197,
+  7753, 7883, 1663, 7907, 2851, 2861, 5849, 3613, 1091, 5939,
+  7549, 7603, 7321, 5323, 2683, 1117, 6379, 3001, 3541, 3067,
+  9049, 9439, 9551, 1291, 8807, 2381, 9431, 5003, 2777, 7489,
+  1543, 9839, 4139, 2579, 1861, 2999, 6269, 9311, 4909, 5419,
+  4201, 2341, 2221, 7477, 4937, 7127, 6841, 4561, 8243, 5483,
+  9689, 3517, 9851, 6043, 7993, 7247, 8219, 8537, 9257, 7517,
+  9377, 7963, 6367, 7639, 2699, 7789, 9203, 3847, 4409, 4159
 };
+static const gint num_primes = G_N_ELEMENTS(primes);
 
 static void
 free_entries (GeglMockCacheEntry ** entries);
@@ -101,7 +102,7 @@ create_const_entries (gint num_entries, gint num_elements)
 }
 
 GeglMockCacheEntry **
-create_prime_entries (gint num_entires)
+create_prime_entries (gint num_entries)
 {
   GeglMockCacheEntry ** entries = g_new (GeglMockCacheEntry *, num_entries);
   gint i=0;

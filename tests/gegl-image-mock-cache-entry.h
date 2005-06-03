@@ -24,21 +24,21 @@
 
 #include "image/gegl-cache-entry.h"
 
-#define GEGL_TYPE_MOCK_CACHE_ENTRY               (gegl_mock_cache_entry_get_type ())
-#define GEGL_MOCK_CACHE_ENTRY(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_MOCK_CACHE_ENTRY, GeglMockCacheEntry))
-#define GEGL_MOCK_CACHE_ENTRY_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_MOCK_CACHE_ENTRY, GeglMockCacheEntryClass))
-#define GEGL_IS_MOCK_CACHE_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_MOCK_CACHE_ENTRY))
-#define GEGL_IS_MOCK_CACHE_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_MOCK_CACHE_ENTRY))
-#define GEGL_MOCK_CACHE_ENTRY_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MOCK_CACHE_ENTRY, GeglMockCacheEntryClass))
 
-GType gegl_mock_cache_entry_get_type (void) G_GNUC_CONST;
+#define GEGL_TYPE_MOCK_CACHE_ENTRY            (gegl_mock_cache_entry_get_type ())
+#define GEGL_MOCK_CACHE_ENTRY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_MOCK_CACHE_ENTRY, GeglMockCacheEntry))
+#define GEGL_MOCK_CACHE_ENTRY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_MOCK_CACHE_ENTRY, GeglMockCacheEntryClass))
+#define GEGL_IS_MOCK_CACHE_ENTRY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_MOCK_CACHE_ENTRY))
+#define GEGL_IS_MOCK_CACHE_ENTRY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_MOCK_CACHE_ENTRY))
+#define GEGL_MOCK_CACHE_ENTRY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MOCK_CACHE_ENTRY, GeglMockCacheEntryClass))
+
 
 typedef struct _GeglMockCacheEntry GeglMockCacheEntry;
 struct _GeglMockCacheEntry
 {
-  GeglCacheEntry parent_instance;
-  gsize data_length;
-  gint* data;
+  GeglCacheEntry  parent_instance;
+  gsize           data_length;
+  gint           *data;
 };
 
 typedef struct _GeglMockCacheEntryClass GeglMockCacheEntryClass;
@@ -47,6 +47,10 @@ struct _GeglMockCacheEntryClass
   GeglCacheEntryClass parent_class;
 };
 
-GeglMockCacheEntry * gegl_mock_cache_entry_new (gsize length);
+
+GType                gegl_mock_cache_entry_get_type (void) G_GNUC_CONST;
+
+GeglMockCacheEntry * gegl_mock_cache_entry_new      (gsize length);
+
 
 #endif

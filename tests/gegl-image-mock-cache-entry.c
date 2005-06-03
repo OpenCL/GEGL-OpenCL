@@ -27,105 +27,76 @@
 
 #include "gegl-image-mock-cache-entry.h"
 
-static void class_init(gpointer g_class,
-                       gpointer class_data);
-static void instance_init(GTypeInstance *instance,
-                          gpointer g_class);
-static void finalize(GObject *object);
-static gsize flattened_size (const GeglCacheEntry* self);
-static void flatten (GeglCacheEntry* self, gpointer buffer, gsize length);
-static void unflatten (GeglCacheEntry* self, const gpointer buffer, gsize length);
-static void discard (GeglCacheEntry * entry);
+static void  gegl_mock_cache_entry_class_init (GeglMockCacheEntryClass *klass);
+static void  gegl_mock_cache_entry_init       (GeglMockCacheEntry      *self);
 
-static gpointer parent_class;
 
-static gpointer parent_class;
+static void  finalize       (GObject              *object);
+static gsize flattened_size (const GeglCacheEntry *self);
+static void  flatten        (GeglCacheEntry       *self,
+                             gpointer              buffer,
+                             gsize                 length);
+static void  unflatten      (GeglCacheEntry       *self,
+                             const gpointer        buffer,
+                             gsize                 length);
+static void  discard        (GeglCacheEntry       *entry);
 
-GType
-gegl_mock_cache_entry_get_type (void)
-{
-  static GType type=0;
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-	{
-	  /* interface types, classed types, instantiated types */
-	  sizeof(GeglMockCacheEntryClass),
-	  NULL, /*base_init*/
-	  NULL, /* base_finalize */
 
-	  /* classed types, instantiated types */
-	  class_init, /* class_init */
-	  NULL, /* class_finalize */
-	  NULL, /* class_data */
+G_DEFINE_TYPE(GeglMockCacheEntry, gegl_mock_cache_entry, GEGL_TYPE_CACHE_ENTRY)
 
-	  /* instantiated types */
-	  sizeof(GeglMockCacheEntry),
-	  0, /* n_preallocs */
-	  instance_init, /* instance_init */
-
-	  /* value handling */
-	  NULL /* value_table */
-	};
-
-      type = g_type_register_static (GEGL_TYPE_CACHE_ENTRY ,
-				     "GeglMockCacheEntry",
-				     &typeInfo,
-				     0);
-    }
-  return type;
-}
 
 static void
-class_init(gpointer g_class,
-	   gpointer class_data)
+gegl_mock_cache_entry_class_init (GeglMockCacheEntryClass *klass)
 {
-  GeglCacheEntryClass * cache_entry_class = GEGL_CACHE_ENTRY_CLASS(g_class);
-  GObjectClass * object_class = G_OBJECT_CLASS(g_class);
+  GeglCacheEntryClass *cache_entry_class = GEGL_CACHE_ENTRY_CLASS (klass);
+  GObjectClass        *object_class      = G_OBJECT_CLASS (klass);
+
+  object_class->finalize            = finalize;
 
   cache_entry_class->flattened_size = flattened_size;
-  cache_entry_class->flatten = flatten;
-  cache_entry_class->unflatten = unflatten;
-  cache_entry_class->discard = discard;
-
-  object_class->finalize = finalize;
-  parent_class = g_type_class_peek_parent (g_class);
+  cache_entry_class->flatten        = flatten;
+  cache_entry_class->unflatten      = unflatten;
+  cache_entry_class->discard        = discard;
 }
 
 static void
-instance_init(GTypeInstance *instance,
-                          gpointer g_class)
+gegl_mock_cache_entry_init (GeglMockCacheEntry *self)
 {
-  GeglMockCacheEntry * mock_entry = GEGL_MOCK_CACHE_ENTRY (instance);
-  mock_entry->data = NULL;
-  mock_entry->data_length = 0;
+  self->data        = NULL;
+  self->data_length = 0;
 }
 
 static void
-finalize(GObject *object)
+finalize (GObject *object)
 {
   GeglMockCacheEntry * mock_entry = GEGL_MOCK_CACHE_ENTRY (object);
+
   if (mock_entry->data != NULL)
     {
       g_free (mock_entry->data);
-      mock_entry->data = NULL;
+
+      mock_entry->data        = NULL;
       mock_entry->data_length = 0;
     }
-  G_OBJECT_CLASS (parent_class)->finalize(object);
+
+  G_OBJECT_CLASS (gegl_mock_cache_entry_parent_class)->finalize (object);
 }
 
 static gsize
 flattened_size (const GeglCacheEntry* self)
 {
-  GeglMockCacheEntry * mock_entry = GEGL_MOCK_CACHE_ENTRY (self);
+  GeglMockCacheEntry *mock_entry = GEGL_MOCK_CACHE_ENTRY (self);
+
   return mock_entry->data_length * sizeof (gint);
 }
 
 static void
 flatten (GeglCacheEntry* self, gpointer buffer, gsize length)
 {
-  GeglMockCacheEntry * mock_entry = GEGL_MOCK_CACHE_ENTRY (self);
+  GeglMockCacheEntry *mock_entry = GEGL_MOCK_CACHE_ENTRY (self);
+
   memcpy(buffer, mock_entry->data, mock_entry->data_length * sizeof (gint));
+
   if (mock_entry->data != NULL)
     {
       g_free (mock_entry->data);
@@ -136,20 +107,22 @@ flatten (GeglCacheEntry* self, gpointer buffer, gsize length)
 static void
 unflatten (GeglCacheEntry* self, const gpointer buffer, gsize length)
 {
-  GeglMockCacheEntry * mock_entry = GEGL_MOCK_CACHE_ENTRY (self);
+  GeglMockCacheEntry *mock_entry = GEGL_MOCK_CACHE_ENTRY (self);
+
   g_return_if_fail (length >= mock_entry->data_length * sizeof (gint));
-  if (mock_entry->data != NULL)
-    {
-      g_free (mock_entry->data);
-    }
+
+  if (mock_entry->data)
+    g_free (mock_entry->data);
+
   mock_entry->data = g_new (gint, mock_entry->data_length);
-  memcpy(mock_entry->data, buffer, mock_entry->data_length * sizeof (gint));
+  memcpy (mock_entry->data, buffer, mock_entry->data_length * sizeof (gint));
 }
 
 static void
 discard (GeglCacheEntry * self)
 {
-  GeglMockCacheEntry * mock_entry = GEGL_MOCK_CACHE_ENTRY (self);
+  GeglMockCacheEntry *mock_entry = GEGL_MOCK_CACHE_ENTRY (self);
+
   if (mock_entry->data != NULL)
     {
       g_free (mock_entry->data);
@@ -160,8 +133,10 @@ discard (GeglCacheEntry * self)
 GeglMockCacheEntry *
 gegl_mock_cache_entry_new (gsize length)
 {
-  GeglMockCacheEntry * self = g_object_new (GEGL_TYPE_MOCK_CACHE_ENTRY, NULL);
-  self->data = g_new (gint, length);
+  GeglMockCacheEntry *self = g_object_new (GEGL_TYPE_MOCK_CACHE_ENTRY, NULL);
+
+  self->data        = g_new (gint, length);
   self->data_length = length;
+
   return self;
 }
