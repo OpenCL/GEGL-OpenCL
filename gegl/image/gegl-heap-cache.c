@@ -47,20 +47,11 @@ static void     flush_internal (GeglCache       *cache,
 G_DEFINE_TYPE (GeglHeapCache, gegl_heap_cache, GEGL_TYPE_CACHE)
 
 
-GeglHeapCache *
-gegl_heap_cache_new (gsize capacity, gboolean is_persistent)
-{
-  GeglHeapCache * self = g_object_new (GEGL_TYPE_HEAP_CACHE, NULL);
-  self->is_persistent = is_persistent;
-  self->capacity = capacity;
-  return self;
-}
-
 static void
 gegl_heap_cache_class_init (GeglHeapCacheClass *klass)
 {
-  GeglCacheClass *cache_class  = GEGL_CACHE_CLASS (klass);
   GObjectClass   *object_class = G_OBJECT_CLASS (klass);
+  GeglCacheClass *cache_class  = GEGL_CACHE_CLASS (klass);
 
   object_class->finalize      = finalize;
 
@@ -90,18 +81,34 @@ finalize (GObject *object)
   G_OBJECT_CLASS (gegl_heap_cache_parent_class)->finalize (object);
 }
 
-void
-insert_record (GeglCache* cache,
-	       GeglEntryRecord* record)
+GeglHeapCache *
+gegl_heap_cache_new (gsize    capacity,
+                     gboolean is_persistent)
 {
-  GeglHeapCache * self = GEGL_HEAP_CACHE (cache);
-  gegl_cache_store_add(GEGL_CACHE_STORE(self->stored), record);
+  GeglHeapCache *self = g_object_new (GEGL_TYPE_HEAP_CACHE, NULL);
+
+  self->is_persistent = is_persistent;
+  self->capacity      = capacity;
+
+  return self;
+}
+
+void
+insert_record (GeglCache       *cache,
+	       GeglEntryRecord *record)
+{
+  GeglHeapCache *self = GEGL_HEAP_CACHE (cache);
+
+  gegl_cache_store_add (GEGL_CACHE_STORE (self->stored), record);
 }
 
 gboolean
-check_room_for (GeglCache* cache, gint64 size)
+check_room_for (GeglCache *cache,
+                gint64     size)
 {
-  GeglHeapCache * self = GEGL_HEAP_CACHE (cache);
+  GeglHeapCache *self = GEGL_HEAP_CACHE (cache);
+  gint64         cache_size;
+
   /*
    * The conditions I need to check for is:
    * 1. size unable to fit in the cache.
@@ -115,7 +122,9 @@ check_room_for (GeglCache* cache, gint64 size)
       /* condition 1 */
       return FALSE;
     }
-  gint64 cache_size = gegl_cache_size (cache);
+
+  cache_size = gegl_cache_size (cache);
+
   if ((cache_size + size) > self->capacity)
     {
       if (self->is_persistent)
@@ -123,42 +132,49 @@ check_room_for (GeglCache* cache, gint64 size)
 	  /* condition 2 */
 	  return FALSE;
 	}
+
       while (cache_size + size > self->capacity)
 	{
-	  GeglEntryRecord * record;
+	  GeglEntryRecord *record;
+
 	  record = gegl_cache_store_peek (GEGL_CACHE_STORE(self->stored));
+
 	  gegl_cache_discard (cache, record);
+
 	  cache_size = gegl_cache_size (cache);
 	}
     }
+
   /* conditions 3, 4 and 5 */
   return TRUE;
 }
 
 gint64
-size (GeglCache* cache)
+size (GeglCache *cache)
 {
-  GeglHeapCache * self = GEGL_HEAP_CACHE (cache);
-  return gegl_cache_store_size (GEGL_CACHE_STORE(self->stored));
+  GeglHeapCache *self = GEGL_HEAP_CACHE (cache);
 
+  return gegl_cache_store_size (GEGL_CACHE_STORE (self->stored));
 }
 
 gint64
 capacity (GeglCache* cache)
 {
-  GeglHeapCache * self = GEGL_HEAP_CACHE (cache);
+  GeglHeapCache *self = GEGL_HEAP_CACHE (cache);
+
   return self->capacity;
 }
 
 gboolean
-is_persistent (GeglCache* cache)
+is_persistent (GeglCache *cache)
 {
-  GeglHeapCache * self = GEGL_HEAP_CACHE (cache);
+  GeglHeapCache *self = GEGL_HEAP_CACHE (cache);
+
   return self->is_persistent;
 }
 
 void
-flush_internal (GeglCache * cache,
-		GeglEntryRecord * record)
+flush_internal (GeglCache       *cache,
+		GeglEntryRecord *record)
 {
 }

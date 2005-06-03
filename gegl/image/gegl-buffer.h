@@ -61,7 +61,6 @@ struct _GeglBuffer
   gsize           entry_id;
   GeglCacheEntry *entry;
   gboolean        has_expired;
-  gboolean        has_disposed;
 };
 
 struct _GeglBufferClass

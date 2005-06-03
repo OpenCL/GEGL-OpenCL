@@ -49,7 +49,8 @@ gegl_cache_store_init (GeglCacheStore *self)
 }
 
 void
-gegl_cache_store_add (GeglCacheStore * self, GeglEntryRecord * record)
+gegl_cache_store_add (GeglCacheStore  *self,
+                      GeglEntryRecord *record)
 {
   GeglCacheStoreClass *class;
 
@@ -59,57 +60,77 @@ gegl_cache_store_add (GeglCacheStore * self, GeglEntryRecord * record)
 
   g_return_if_fail (class->add != NULL);
 
-  class->add(self, record);
+  class->add (self, record);
 }
 
-void gegl_cache_store_remove (GeglCacheStore * self, GeglEntryRecord * record)
+void
+gegl_cache_store_remove (GeglCacheStore  *self,
+                         GeglEntryRecord *record)
 {
-  GeglCacheStoreClass * class;
+  GeglCacheStoreClass *class;
+
   g_return_if_fail (self != NULL);
+
   class = GEGL_CACHE_STORE_GET_CLASS (self);
-  g_return_if_fail (class != NULL);
+
   g_return_if_fail (class->remove != NULL);
+
   class->remove (self, record);
 }
 
-void gegl_cache_store_zap (GeglCacheStore * self, GeglEntryRecord * record)
+void
+gegl_cache_store_zap (GeglCacheStore  *self,
+                      GeglEntryRecord *record)
 {
-  GeglCacheStoreClass * class;
+  GeglCacheStoreClass *class;
+
   g_return_if_fail (self != NULL);
+
   class = GEGL_CACHE_STORE_GET_CLASS (self);
-  g_return_if_fail (class != NULL);
+
   g_return_if_fail (class->zap != NULL);
+
   class->zap (self, record);
 }
 
-gint64 gegl_cache_store_size (GeglCacheStore * self)
+gint64
+gegl_cache_store_size (GeglCacheStore *self)
 {
-  GeglCacheStoreClass * class;
+  GeglCacheStoreClass *class;
+
   g_return_val_if_fail (self != NULL, 0);
+
   class = GEGL_CACHE_STORE_GET_CLASS (self);
-  g_return_val_if_fail (class != NULL, 0);
+
   g_return_val_if_fail (class->size != NULL, 0);
+
   return class->size (self);
 }
 
 GeglEntryRecord *
-gegl_cache_store_pop (GeglCacheStore * self)
+gegl_cache_store_pop (GeglCacheStore *self)
 {
-  GeglCacheStoreClass * class;
+  GeglCacheStoreClass *class;
+
   g_return_val_if_fail (self != NULL, NULL);
+
   class = GEGL_CACHE_STORE_GET_CLASS (self);
-  g_return_val_if_fail (class != NULL, NULL);
+
   g_return_val_if_fail (class->pop != NULL, NULL);
+
   return class->pop (self);
 }
 
 GeglEntryRecord *
-gegl_cache_store_peek (GeglCacheStore * self)
+gegl_cache_store_peek (GeglCacheStore *self)
 {
-  GeglCacheStoreClass * class;
+  GeglCacheStoreClass *class;
+
   g_return_val_if_fail (self != NULL, NULL);
+
   class = GEGL_CACHE_STORE_GET_CLASS (self);
-  g_return_val_if_fail (class != NULL, NULL);
+
   g_return_val_if_fail (class->pop != NULL, NULL);
+
   return class->peek (self);
 }

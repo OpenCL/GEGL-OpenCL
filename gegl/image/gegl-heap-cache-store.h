@@ -43,7 +43,6 @@ struct _GeglHeapCacheStore
 
   GList          *record_head;
   gint64          size;
-  gboolean        has_disposed;
 };
 
 struct _GeglHeapCacheStoreClass

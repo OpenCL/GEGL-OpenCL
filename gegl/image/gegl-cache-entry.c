@@ -61,40 +61,49 @@ gegl_cache_entry_flattened_size (const GeglCacheEntry* self)
 }
 
 void
-gegl_cache_entry_flatten (GeglCacheEntry* self,
-			  gpointer buffer,
-			  gsize length)
+gegl_cache_entry_flatten (GeglCacheEntry *self,
+			  gpointer        buffer,
+			  gsize           length)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_CACHE_ENTRY(self));
+  GeglCacheEntryClass *class;
 
-  GeglCacheEntryClass * class=GEGL_CACHE_ENTRY_GET_CLASS(self);
+  g_return_if_fail (GEGL_IS_CACHE_ENTRY (self));
+
+  class = GEGL_CACHE_ENTRY_GET_CLASS (self);
+
   g_return_if_fail (class->flatten != NULL);
   g_return_if_fail (gegl_cache_entry_flattened_size (self) <= length);
+
   class->flatten (self, buffer, length);
 }
 
 void
-gegl_cache_entry_unflatten (GeglCacheEntry* self,
-			    gpointer buffer,
-			    gsize length)
+gegl_cache_entry_unflatten (GeglCacheEntry *self,
+			    gpointer        buffer,
+			    gsize           length)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_CACHE_ENTRY(self));
+  GeglCacheEntryClass *class;
 
-  GeglCacheEntryClass * class=GEGL_CACHE_ENTRY_GET_CLASS(self);
+  g_return_if_fail (GEGL_IS_CACHE_ENTRY (self));
+
+  class = GEGL_CACHE_ENTRY_GET_CLASS (self);
+
   g_return_if_fail (class->unflatten != NULL);
   g_return_if_fail (gegl_cache_entry_flattened_size (self) <= length);
+
   class->unflatten (self, buffer, length);
 }
 
 void
-gegl_cache_entry_discard (GeglCacheEntry* self)
+gegl_cache_entry_discard (GeglCacheEntry *self)
 {
-  g_return_if_fail (self != NULL);
-  g_return_if_fail (GEGL_IS_CACHE_ENTRY(self));
+  GeglCacheEntryClass *class;
 
-  GeglCacheEntryClass * class=GEGL_CACHE_ENTRY_GET_CLASS(self);
+  g_return_if_fail (GEGL_IS_CACHE_ENTRY (self));
+
+  class = GEGL_CACHE_ENTRY_GET_CLASS (self);
+
   g_return_if_fail (class->discard != NULL);
+
   class->discard (self);
 }

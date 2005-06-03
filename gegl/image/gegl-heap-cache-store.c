@@ -70,27 +70,20 @@ gegl_heap_cache_store_class_init (GeglHeapCacheStoreClass *klass)
 static void
 gegl_heap_cache_store_init (GeglHeapCacheStore *self)
 {
-  self->size         = 0;
-  self->record_head  = NULL;
-  self->has_disposed = FALSE;
-}
-
-static void
-g_list_free_record (gpointer data, gpointer user_data)
-{
-  GeglEntryRecord * record = (GeglEntryRecord *)data;
-  gegl_entry_record_free (record);
+  self->size        = 0;
+  self->record_head = NULL;
 }
 
 static void
 dispose (GObject * object)
 {
   GeglHeapCacheStore * self = GEGL_HEAP_CACHE_STORE (object);
-  if (! self->has_disposed )
+
+  if (self->record_head)
     {
-      self->has_disposed = TRUE;
-      g_list_foreach (self->record_head, g_list_free_record, NULL);
+      g_list_foreach (self->record_head, (GFunc) gegl_entry_record_free, NULL);
       g_list_free (self->record_head);
+      self->record_head = NULL;
     }
 
   G_OBJECT_CLASS (gegl_heap_cache_store_parent_class)->dispose (object);
@@ -109,60 +102,83 @@ gegl_heap_cache_store_new (void)
 }
 
 static void
-add (GeglCacheStore * store, GeglEntryRecord * record)
+add (GeglCacheStore  *store,
+     GeglEntryRecord *record)
 {
-  GeglHeapCacheStore * self = GEGL_HEAP_CACHE_STORE (store);
+  GeglHeapCacheStore *self = GEGL_HEAP_CACHE_STORE (store);
+  GList              *record_list;
+
   gegl_entry_record_set_cache_store (record, store);
-  GList* record_list = g_list_append (NULL, record);
-  self->record_head = g_list_concat(self->record_head, record_list);
+
+  record_list = g_list_append (NULL, record);
+
+  self->record_head = g_list_concat (self->record_head, record_list);
+
   gegl_entry_record_add_store_data (record, store, record_list);
 
   self->size += gegl_cache_entry_flattened_size (record->entry);
+
   record->status = GEGL_STORED;
 }
 
-static void remove (GeglCacheStore* store, GeglEntryRecord* record)
+static void
+remove (GeglCacheStore  *store,
+        GeglEntryRecord *record)
 {
-  GeglHeapCacheStore * self = GEGL_HEAP_CACHE_STORE (store);
-  GList * record_list = gegl_entry_record_get_store_data (record, store);
+  GeglHeapCacheStore *self = GEGL_HEAP_CACHE_STORE (store);
+  GList              *record_list;
+
+  record_list = gegl_entry_record_get_store_data (record, store);
+
   self->record_head = g_list_delete_link (self->record_head, record_list);
+
   gegl_entry_record_remove_store_data (record, store, FALSE);
   gegl_entry_record_set_cache_store (record, NULL);
   self->size -= gegl_cache_entry_flattened_size (record->entry);
+
   record->status = GEGL_UNDEFINED;
 }
 
-static void zap (GeglCacheStore* store, GeglEntryRecord* record)
+static void
+zap (GeglCacheStore  *store,
+     GeglEntryRecord *record)
 {
   remove (store, record);
+
   gegl_entry_record_free (record);
 }
 
 static gint64
-size (GeglCacheStore* store)
+size (GeglCacheStore *store)
 {
-  GeglHeapCacheStore * self = GEGL_HEAP_CACHE_STORE (store);
+  GeglHeapCacheStore *self = GEGL_HEAP_CACHE_STORE (store);
+
   return self->size;
 }
 
-static GeglEntryRecord * pop (GeglCacheStore * store)
+static GeglEntryRecord *
+pop (GeglCacheStore *store)
 {
-  GeglEntryRecord * record = peek (store);
-  if (record != NULL)
-    {
-      remove (store, record);
-    }
+  GeglEntryRecord *record = peek (store);
+
+  if (record)
+    remove (store, record);
+
   return record;
 }
 
-static GeglEntryRecord * peek (GeglCacheStore * store)
+static GeglEntryRecord *
+peek (GeglCacheStore *store)
 {
-  GeglHeapCacheStore * self = GEGL_HEAP_CACHE_STORE (store);
-  if (self->record_head == NULL)
-    {
-      return NULL;
-    }
-  GeglEntryRecord * record = self->record_head->data;
+  GeglHeapCacheStore *self = GEGL_HEAP_CACHE_STORE (store);
+  GeglEntryRecord    *record;
+
+  if (! self->record_head)
+    return NULL;
+
+  record = self->record_head->data;
+
   g_return_val_if_fail (record != NULL, NULL);
+
   return record;
 }

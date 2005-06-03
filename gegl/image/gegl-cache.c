@@ -83,248 +83,326 @@ gegl_cache_init (GeglCache *self)
 {
   self->fetched_store = GEGL_CACHE_STORE (gegl_null_cache_store_new (GEGL_FETCHED));
   self->discard_store = GEGL_CACHE_STORE (gegl_null_cache_store_new (GEGL_DISCARDED));
-  self->has_disposed  = FALSE;
 }
 
 static void
-dispose (GObject * object)
+dispose (GObject *object)
 {
-  GeglCache * self = GEGL_CACHE(object);
-  if (!self->has_disposed)
+  GeglCache *self = GEGL_CACHE (object);
+
+  if (self->fetched_store)
     {
-      self->has_disposed = TRUE;
       g_object_unref (self->fetched_store);
-      g_object_unref (self->discard_store);
+      self->fetched_store = NULL;
     }
+
+  if (self->discard_store)
+    {
+      g_object_unref (self->discard_store);
+      self->discard_store = NULL;
+    }
+
+  G_OBJECT_CLASS (gegl_cache_parent_class)->dispose (object);
 }
 
 gint
-gegl_cache_put (GeglCache * cache,
-		GeglCacheEntry * entry,
-		gsize * entry_id)
+gegl_cache_put (GeglCache      *cache,
+		GeglCacheEntry *entry,
+		gsize          *entry_id)
 {
-  g_return_val_if_fail (GEGL_IS_CACHE(cache), GEGL_PUT_INVALID);
-  g_return_val_if_fail (GEGL_IS_CACHE_ENTRY(entry), GEGL_PUT_INVALID);
+  GeglCacheClass *class;
+
+  g_return_val_if_fail (GEGL_IS_CACHE (cache), GEGL_PUT_INVALID);
+  g_return_val_if_fail (GEGL_IS_CACHE_ENTRY (entry), GEGL_PUT_INVALID);
   g_return_val_if_fail (entry_id != NULL, GEGL_PUT_INVALID);
 
-  GeglCacheClass * class=GEGL_CACHE_GET_CLASS (cache);
+  class = GEGL_CACHE_GET_CLASS (cache);
+
   g_return_val_if_fail (class->put != NULL, GEGL_PUT_INVALID);
+
   return class->put (cache, entry, entry_id);
 }
-GeglFetchResults
-gegl_cache_fetch (GeglCache * cache,
-		  gsize entry_id,
-		  GeglCacheEntry ** entry)
-{
-  g_return_val_if_fail (GEGL_IS_CACHE(cache), GEGL_FETCH_INVALID);
 
-  GeglCacheClass * class=GEGL_CACHE_GET_CLASS (cache);
+GeglFetchResults
+gegl_cache_fetch (GeglCache       *cache,
+		  gsize            entry_id,
+		  GeglCacheEntry **entry)
+{
+  GeglCacheClass *class;
+
+  g_return_val_if_fail (GEGL_IS_CACHE (cache), GEGL_FETCH_INVALID);
+
+  class = GEGL_CACHE_GET_CLASS (cache);
+
   g_return_val_if_fail (class->fetch != NULL, GEGL_FETCH_INVALID);
+
   return class->fetch (cache, entry_id, entry);
 }
-GeglFetchResults
-gegl_cache_unfetch (GeglCache * cache,
-		  gsize entry_id,
-		  GeglCacheEntry * entry)
-{
-  g_return_val_if_fail (GEGL_IS_CACHE(cache), GEGL_FETCH_INVALID);
 
-  GeglCacheClass * class=GEGL_CACHE_GET_CLASS (cache);
+GeglFetchResults
+gegl_cache_unfetch (GeglCache      *cache,
+                    gsize           entry_id,
+                    GeglCacheEntry *entry)
+{
+  GeglCacheClass *class;
+
+  g_return_val_if_fail (GEGL_IS_CACHE (cache), GEGL_FETCH_INVALID);
+
+  class = GEGL_CACHE_GET_CLASS (cache);
+
   g_return_val_if_fail (class->unfetch != NULL, GEGL_FETCH_INVALID);
+
   return class->unfetch (cache, entry_id, entry);
 }
-void gegl_cache_mark_as_dirty (GeglCache * cache,
-			       gsize entry_id)
+
+void
+gegl_cache_mark_as_dirty (GeglCache *cache,
+                          gsize      entry_id)
 {
-  g_return_if_fail (GEGL_IS_CACHE(cache));
-  GeglCacheClass * class=GEGL_CACHE_GET_CLASS (cache);
+  GeglCacheClass *class;
+
+  g_return_if_fail (GEGL_IS_CACHE (cache));
+
+  class = GEGL_CACHE_GET_CLASS (cache);
+
   g_return_if_fail (class->mark_as_dirty != NULL);
-  class->mark_as_dirty(cache, entry_id);
+
+  class->mark_as_dirty (cache, entry_id);
 }
 
-void gegl_cache_insert_record (GeglCache* cache,
-			       GeglEntryRecord* record)
+void
+gegl_cache_insert_record (GeglCache       *cache,
+                          GeglEntryRecord *record)
 {
-  g_return_if_fail (GEGL_IS_CACHE(cache));
-  GeglCacheClass * class=GEGL_CACHE_GET_CLASS (cache);
+  GeglCacheClass *class;
+
+  g_return_if_fail (GEGL_IS_CACHE (cache));
+
+  class = GEGL_CACHE_GET_CLASS (cache);
+
   g_return_if_fail (class->insert_record != NULL);
-  class->insert_record(cache, record);
+
+  class->insert_record (cache, record);
 }
 
-void gegl_cache_flush (GeglCache * cache,
-		       gsize entry_id)
+void
+gegl_cache_flush (GeglCache *cache,
+                  gsize      entry_id)
 {
-  g_return_if_fail (GEGL_IS_CACHE(cache));
-  GeglCacheClass * class=GEGL_CACHE_GET_CLASS (cache);
+  GeglCacheClass *class;
+
+  g_return_if_fail (GEGL_IS_CACHE (cache));
+
+  class = GEGL_CACHE_GET_CLASS (cache);
+
   g_return_if_fail (class->flush != NULL);
+
   class->flush (cache, entry_id);
 }
 
-void gegl_cache_flush_internal (GeglCache * cache,
-				GeglEntryRecord * record)
+void
+gegl_cache_flush_internal (GeglCache       *cache,
+                           GeglEntryRecord *record)
 {
+  GeglCacheClass *class;
+
   g_return_if_fail (cache != NULL);
   g_return_if_fail (record != NULL);
-  GeglCacheClass * class = GEGL_CACHE_GET_CLASS (cache);
+
+  class = GEGL_CACHE_GET_CLASS (cache);
+
   g_return_if_fail (class->flush_internal != NULL);
+
   class->flush_internal (cache, record);
 }
 
 gboolean
-gegl_cache_check_room_for (GeglCache* cache, gint64 size)
+gegl_cache_check_room_for (GeglCache *cache,
+                           gint64     size)
 {
+  GeglCacheClass *class;
+
   g_return_val_if_fail (cache != NULL, FALSE);
-  GeglCacheClass * class = GEGL_CACHE_GET_CLASS (cache);
+
+  class = GEGL_CACHE_GET_CLASS (cache);
+
   g_return_val_if_fail (class->check_room_for != NULL, FALSE);
+
   return class->check_room_for (cache, size);
 }
 
 gint64
 gegl_cache_size (GeglCache* cache)
 {
+  GeglCacheClass *class;
+
   g_return_val_if_fail (cache !=NULL, 0);
-  GeglCacheClass * class = GEGL_CACHE_GET_CLASS (cache);
+
+  class = GEGL_CACHE_GET_CLASS (cache);
 
   g_return_val_if_fail (class->size != NULL, 0);
+
   return class->size (cache);
 }
 
 gint64
-gegl_cache_capacity (GeglCache* cache)
+gegl_cache_capacity (GeglCache *cache)
 {
-  GeglCacheClass * class;
+  GeglCacheClass *class;
+
   g_return_val_if_fail (cache != NULL, 0);
+
   class = GEGL_CACHE_GET_CLASS (cache);
+
   g_return_val_if_fail (class->capacity != NULL, 0);
+
   return class->capacity (cache);
 }
 
 gboolean
-gegl_cache_is_persistent (GeglCache* cache)
+gegl_cache_is_persistent (GeglCache *cache)
 {
-  GeglCacheClass * class;
+  GeglCacheClass *class;
+
   g_return_val_if_fail (cache != NULL, FALSE);
+
   class = GEGL_CACHE_GET_CLASS (cache);
+
   g_return_val_if_fail (class->is_persistent != NULL, FALSE);
+
   return class->is_persistent(cache);
 }
 
 void
-gegl_cache_discard (GeglCache * cache, GeglEntryRecord * record)
+gegl_cache_discard (GeglCache       *cache,
+                    GeglEntryRecord *record)
 {
+  GeglCacheClass *class;
+
   g_return_if_fail (cache != NULL);
   g_return_if_fail (record != NULL);
   g_return_if_fail (record->cache == cache);
 
-  GeglCacheClass * class = GEGL_CACHE_GET_CLASS (cache);
+  class = GEGL_CACHE_GET_CLASS (cache);
+
   g_return_if_fail (class->discard != NULL);
+
   class->discard (cache, record);
 }
 
 static GeglPutResults
-put (GeglCache * cache,
-     GeglCacheEntry * entry,
-     gsize * entry_id)
+put (GeglCache      *cache,
+     GeglCacheEntry *entry,
+     gsize          *entry_id)
 {
 
-  GeglEntryRecord* record;
-  gsize new_size=gegl_cache_entry_flattened_size (entry);
-  gboolean has_room_for;
+  GeglEntryRecord *record;
+  gsize            new_size = gegl_cache_entry_flattened_size (entry);
 
-  has_room_for = gegl_cache_check_room_for (cache, new_size);
-
-  if (!has_room_for)
-    {
-      return GEGL_PUT_CACHE_FULL;
-    }
+  if (! gegl_cache_check_room_for (cache, new_size))
+    return GEGL_PUT_CACHE_FULL;
 
   if (*entry_id != 0)
     {
-      g_error("put called with non-zero entry_id.");
+      g_error ("put called with non-zero entry_id.");
       return GEGL_PUT_INVALID;
     }
+
   record = gegl_entry_record_new (cache, entry);
-  *entry_id = GPOINTER_TO_SIZE(record);
+
+  *entry_id = GPOINTER_TO_SIZE (record);
+
   gegl_cache_insert_record (cache, record);
 
   return GEGL_PUT_SUCCEEDED;
-
 }
 
 static GeglFetchResults
-fetch (GeglCache * cache,
-       gsize entry_id,
-       GeglCacheEntry ** entry_handle)
+fetch (GeglCache       *cache,
+       gsize            entry_id,
+       GeglCacheEntry **entry_handle)
 {
 
-  GeglEntryRecord * record = GSIZE_TO_POINTER (entry_id);
-  GeglCacheEntry* entry = record->entry;
+  GeglEntryRecord *record = GSIZE_TO_POINTER (entry_id);
+  GeglCacheEntry  *entry  = record->entry;
+
   g_return_val_if_fail (record->cache == cache,GEGL_FETCH_INVALID);
+
   *entry_handle = NULL;
+
   if (record->status == GEGL_DISCARDED)
-    {
-      return GEGL_FETCH_EXPIRED;
-    }
+    return GEGL_FETCH_EXPIRED;
+
   g_object_ref (entry);
 
   g_return_val_if_fail (entry != NULL, GEGL_FETCH_INVALID);
+
   gegl_cache_store_remove (record->store, record);
 
-  gegl_entry_record_set_cache_store(record, cache->fetched_store);
+  gegl_entry_record_set_cache_store (record, cache->fetched_store);
   gegl_cache_store_add (cache->fetched_store, record);
 
   *entry_handle=entry;
+
   return GEGL_FETCH_SUCCEEDED;
 }
 
 static GeglFetchResults
-unfetch (GeglCache* cache,
-	 gsize entry_id,
-	 GeglCacheEntry * entry)
+unfetch (GeglCache      *cache,
+	 gsize           entry_id,
+	 GeglCacheEntry *entry)
 {
-  GeglEntryRecord * record = GSIZE_TO_POINTER (entry_id);
+  GeglEntryRecord *record = GSIZE_TO_POINTER (entry_id);
 
   g_return_val_if_fail (record->cache == cache, GEGL_FETCH_INVALID);
   g_return_val_if_fail (record->status == GEGL_FETCHED, GEGL_FETCH_INVALID);
 
   g_object_ref (entry);
+
   record->entry = entry;
+
   gegl_cache_store_remove (record->store, record);
   gegl_entry_record_set_cache_store (record, NULL);
   gegl_cache_insert_record (cache, record);
+
   return GEGL_FETCH_SUCCEEDED;
 }
 
 static void
-flush (GeglCache * cache,
-       gsize entry_id)
+flush (GeglCache *cache,
+       gsize      entry_id)
 {
-  GeglEntryRecord * record;
+  GeglEntryRecord *record;
+
   g_return_if_fail (entry_id != 0);
 
   record = GSIZE_TO_POINTER (entry_id);
+
   gegl_cache_flush_internal (cache, record);
   gegl_cache_store_remove (record->store, record);
   gegl_entry_record_set_cache_store (record, NULL);
   gegl_entry_record_free (record);
 }
 
-
 static void
-discard (GeglCache * cache,
-	 GeglEntryRecord * record)
+discard (GeglCache       *cache,
+	 GeglEntryRecord *record)
 {
 
   gegl_cache_store_remove (record->store, record);
-  gegl_entry_record_set_cache_store(record, cache->discard_store);
-  gegl_cache_store_add(cache->discard_store, record);
+  gegl_entry_record_set_cache_store (record, cache->discard_store);
+  gegl_cache_store_add (cache->discard_store, record);
 }
 
 static void
-mark_as_dirty (GeglCache * cache, gsize entry_id)
+mark_as_dirty (GeglCache *cache,
+               gsize      entry_id)
 {
-  GeglEntryRecord * record;
+  GeglEntryRecord *record;
+
   g_return_if_fail (entry_id != 0);
+
   record = GSIZE_TO_POINTER (entry_id);
+
   gegl_entry_record_dirty (record);
 }

@@ -1,3 +1,13 @@
+2005-06-03  Michael Natterer  <mitch@gimp.org>
+
+	* gegl/image/gegl-buffer.[ch]
+	* gegl/image/gegl-cache-entry.c
+	* gegl/image/gegl-cache-store.c
+	* gegl/image/gegl-cache.[ch]
+	* gegl/image/gegl-heap-cache-store.[ch]
+	* gegl/image/gegl-heap-cache.c
+	* gegl/image/gegl-null-cache-store.c: lots of cleanup.
+
 2005-06-03  Sven Neumann  <sven@gimp.org>
 
 	* gegl/image/gegl-normalizer.c

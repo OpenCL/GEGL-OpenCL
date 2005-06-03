@@ -59,7 +59,6 @@ struct _GeglCache
 
   GeglCacheStore *fetched_store;
   GeglCacheStore *discard_store;
-  gboolean        has_disposed;
 };
 
 struct _GeglCacheClass
