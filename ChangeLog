@@ -1,15 +1,15 @@
 2005-06-03  Sven Neumann  <sven@gimp.org>
 
 	* gegl/Makefile.am
-	* gegl/gegl-add.c
-	* gegl/gegl-comp.c
-	* gegl/gegl-fade.c
-	* gegl/gegl-fill.c
-	* gegl/gegl-i-add.c
-	* gegl/gegl-mult.c
-	* gegl/gegl-multiply.c
-	* gegl/gegl-over.c
-	* gegl/gegl-print.c: removed these files. They depend on
+	* gegl/gegl-add.[ch]
+	* gegl/gegl-comp.[ch]
+	* gegl/gegl-fade.[ch]
+	* gegl/gegl-fill.[ch]
+	* gegl/gegl-i-add.[ch]
+	* gegl/gegl-mult.[ch]
+	* gegl/gegl-multiply.[ch]
+	* gegl/gegl-over.[ch]
+	* gegl/gegl-print.[ch]: removed these files. They depend on
 	non-existant classes and the implementation is incorrect anyway.
 
 2005-06-03  Sven Neumann  <sven@gimp.org>
