@@ -1,5 +1,9 @@
 2005-06-03  Michael Natterer  <mitch@gimp.org>
 
+	* gegl/gegl-property.c: cleanup.
+
+2005-06-03  Michael Natterer  <mitch@gimp.org>
+
 	* gegl/image/gegl-buffer.[ch]
 	* gegl/image/gegl-cache-entry.c
 	* gegl/image/gegl-cache-store.c

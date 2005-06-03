@@ -36,19 +36,18 @@
 enum
 {
   PROP_0,
-  PROP_PARAM_SPEC,
-  PROP_LAST
+  PROP_PARAM_SPEC
 };
 
 static void       gegl_property_class_init (GeglPropertyClass *klass);
 static void       gegl_property_init       (GeglProperty      *self);
 static void       finalize                 (GObject           *gobject);
 static void       set_property             (GObject           *gobject,
-                                            guint              prop_id,
+                                            guint              property_id,
                                             const GValue      *value,
                                             GParamSpec        *pspec);
 static void       get_property             (GObject           *gobject,
-                                            guint              prop_id,
+                                            guint              property_id,
                                             GValue            *value,
                                             GParamSpec        *pspec);
 static void       visitable_init           (gpointer           ginterface,
@@ -113,31 +112,33 @@ finalize (GObject *gobject)
 }
 
 static void
-set_property (GObject      *gobject,
-              guint         prop_id,
+set_property (GObject      *object,
+              guint         property_id,
               const GValue *value,
               GParamSpec   *pspec)
 {
   /*GeglProperty * property = GEGL_PROPERTY(gobject);*/
 
-  switch (prop_id)
+  switch (property_id)
     {
     default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
     }
 }
 
 static void
-get_property (GObject      *gobject,
-              guint         prop_id,
+get_property (GObject      *object,
+              guint         property_id,
               GValue       *value,
               GParamSpec   *pspec)
 {
   /*GeglProperty * property = GEGL_PROPERTY(gobject);*/
 
-  switch (prop_id)
+  switch (property_id)
     {
     default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
     }
 }
