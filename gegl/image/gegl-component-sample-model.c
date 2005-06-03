@@ -98,37 +98,37 @@ gegl_component_sample_model_class_init (GeglComponentSampleModelClass *klass)
   sm_class->check_buffer      = check_buffer;
 
   g_object_class_install_property (object_class, PROP_PIXEL_STRIDE,
-				   g_param_spec_int ("pixel_stride",
-						     "Pixel Stride",
-						     "Distance in number of buffer elements between two samples for the same band and the same scanline.",
-						     0,
-						     G_MAXINT,
-						     0,
-						     G_PARAM_CONSTRUCT_ONLY |
-						     G_PARAM_READWRITE));
+                                   g_param_spec_int ("pixel_stride",
+                                                     "Pixel Stride",
+                                                     "Distance in number of buffer elements between two samples for the same band and the same scanline.",
+                                                     0,
+                                                     G_MAXINT,
+                                                     0,
+                                                     G_PARAM_CONSTRUCT_ONLY |
+                                                     G_PARAM_READWRITE));
   g_object_class_install_property (object_class, PROP_SCANLINE_STRIDE,
-				   g_param_spec_int ("scanline_stride",
-						     "Scanline Stride",
-						     "Distance in number of buffer elements between a sample and the sample in the same column and the next scanline.",
-						     0,
-						     G_MAXINT,
-						     0,
-						     G_PARAM_CONSTRUCT_ONLY |
-						     G_PARAM_READWRITE));
+                                   g_param_spec_int ("scanline_stride",
+                                                     "Scanline Stride",
+                                                     "Distance in number of buffer elements between a sample and the sample in the same column and the next scanline.",
+                                                     0,
+                                                     G_MAXINT,
+                                                     0,
+                                                     G_PARAM_CONSTRUCT_ONLY |
+                                                     G_PARAM_READWRITE));
   g_object_class_install_property (object_class, PROP_BANK_OFFSETS,
-				   g_param_spec_pointer ("bank_offsets",
-							 "Bank Offsets",
-							 "A GArray* of gints containing the offsets in buffer elements from the begining of a bank, to the first sample in the bank.",
-							 G_PARAM_CONSTRUCT_ONLY
-							 |
-							 G_PARAM_READWRITE));
+                                   g_param_spec_pointer ("bank_offsets",
+                                                         "Bank Offsets",
+                                                         "A GArray* of gints containing the offsets in buffer elements from the begining of a bank, to the first sample in the bank.",
+                                                         G_PARAM_CONSTRUCT_ONLY
+                                                         |
+                                                         G_PARAM_READWRITE));
   g_object_class_install_property (object_class, PROP_BAND_INDICES,
-				   g_param_spec_pointer ("band_indices",
-							 "Band Indices",
-							 "A GArray* of gints containing the indices of the bands that hold each bank.  There should be one for each band.",
-							 G_PARAM_CONSTRUCT_ONLY
-							 |
-							 G_PARAM_READWRITE));
+                                   g_param_spec_pointer ("band_indices",
+                                                         "Band Indices",
+                                                         "A GArray* of gints containing the indices of the bands that hold each bank.  There should be one for each band.",
+                                                         G_PARAM_CONSTRUCT_ONLY
+                                                         |
+                                                         G_PARAM_READWRITE));
 
 }
 
@@ -144,8 +144,8 @@ gegl_component_sample_model_init (GeglComponentSampleModel *self)
 
 static GObject *
 constructor (GType type,
-	     guint n_construct_properties,
-	     GObjectConstructParam * construct_properties)
+             guint n_construct_properties,
+             GObjectConstructParam * construct_properties)
 {
   GObjectClass *class = G_OBJECT_CLASS (gegl_component_sample_model_parent_class);
   GObject *new_object = class->constructor (type, n_construct_properties,
@@ -158,9 +158,9 @@ constructor (GType type,
     {
       gint num_indexed_bands = csm->band_indices->len;
       if (num_indexed_bands != sample_model->num_bands)
-	{
-	  goto LABEL_failure;
-	}
+        {
+          goto LABEL_failure;
+        }
     }
   /* now check that all banks are mapped to one bank or all bands are mapped to a single bank */
   /* these affect how we access data */
@@ -170,20 +170,20 @@ constructor (GType type,
       gint i;
       gint bi0 = g_array_index (csm->band_indices, gint, 0);
       for (i = 0; i < csm->band_indices->len; i++)
-	{
-	  if (g_array_index (csm->band_indices, gint, i) != bi0)
-	    {
-	      csm->all_to_one = FALSE;
-	      break;
-	    }
-	}
+        {
+          if (g_array_index (csm->band_indices, gint, i) != bi0)
+            {
+              csm->all_to_one = FALSE;
+              break;
+            }
+        }
       if (csm->all_to_one == FALSE)
-	{
-	  if (get_max_bands_per_bank (csm) != 1)
-	    {
-	      goto LABEL_failure;
-	    }
-	}
+        {
+          if (get_max_bands_per_bank (csm) != 1)
+            {
+              goto LABEL_failure;
+            }
+        }
     }
 
   /* since we support row major order and column major order (depending on the length of pixel_stride */
@@ -211,16 +211,16 @@ constructor (GType type,
   if (csm->pixel_stride < csm->scanline_stride)
     {
       if ((sample_model->width) * (csm->pixel_stride) > csm->scanline_stride)
-	{
-	  goto LABEL_failure;
-	}
+        {
+          goto LABEL_failure;
+        }
     }
   else
     {
       if ((sample_model->height) * (csm->scanline_stride) > csm->pixel_stride)
-	{
-	  goto LABEL_failure;
-	}
+        {
+          goto LABEL_failure;
+        }
     }
 
   return new_object;
@@ -247,21 +247,21 @@ get_max_bands_per_bank (const GeglComponentSampleModel * csm)
       gint j;
       bands_per_bank = 0;
       for (j = start; j < csm->band_indices->len; j++)
-	{
-	  if (g_array_index (csm->band_indices, gint, j) ==
-	      g_array_index (csm->band_indices, gint, start))
-	    {
-	      bands_per_bank++;
-	    }
-	}
+        {
+          if (g_array_index (csm->band_indices, gint, j) ==
+              g_array_index (csm->band_indices, gint, start))
+            {
+              bands_per_bank++;
+            }
+        }
       max_bands_per_bank =
-	(bands_per_bank >
-	 max_bands_per_bank) ? bands_per_bank : max_bands_per_bank;
+        (bands_per_bank >
+         max_bands_per_bank) ? bands_per_bank : max_bands_per_bank;
       start++;
       if (((csm->band_indices->len) - start) <= max_bands_per_bank)
-	{
-	  break;
-	}
+        {
+          break;
+        }
     }
   return max_bands_per_bank;
 }
@@ -275,7 +275,7 @@ dispose (GObject * object)
       self->is_disposed = TRUE;
     }
   G_OBJECT_CLASS (g_type_class_peek_parent (GEGL_COMPONENT_SAMPLE_MODEL_GET_CLASS
-					    (object)))->dispose(object);
+                                            (object)))->dispose(object);
 }
 
 static void
@@ -298,7 +298,7 @@ finalize (GObject * object)
 
 static void
 get_property (GObject * object,
-	      guint property_id, GValue * value, GParamSpec * pspec)
+              guint property_id, GValue * value, GParamSpec * pspec)
 {
   GeglComponentSampleModel *self = (GeglComponentSampleModel *) object;
 
@@ -306,12 +306,12 @@ get_property (GObject * object,
     {
     case PROP_PIXEL_STRIDE:
       g_value_set_int (value,
-		       gegl_component_sample_model_get_pixel_stride (self));
+                       gegl_component_sample_model_get_pixel_stride (self));
       break;
     case PROP_SCANLINE_STRIDE:
       g_value_set_int (value,
-		       gegl_component_sample_model_get_scanline_stride
-		       (self));
+                       gegl_component_sample_model_get_scanline_stride
+                       (self));
       break;
     case PROP_BANK_OFFSETS:
       g_value_set_pointer (value, self->bank_offsets);
@@ -327,7 +327,7 @@ get_property (GObject * object,
 
 static void
 set_property (GObject * object,
-	      guint property_id, const GValue * value, GParamSpec * pspec)
+              guint property_id, const GValue * value, GParamSpec * pspec)
 {
   GeglComponentSampleModel *self = GEGL_COMPONENT_SAMPLE_MODEL (object);
 
@@ -341,11 +341,11 @@ set_property (GObject * object,
       break;
     case PROP_BANK_OFFSETS:
       self->bank_offsets =
-	g_array_copy_gint ((GArray *) g_value_get_pointer (value));
+        g_array_copy_gint ((GArray *) g_value_get_pointer (value));
       break;
     case PROP_BAND_INDICES:
       self->band_indices =
-	g_array_copy_gint ((GArray *) g_value_get_pointer (value));
+        g_array_copy_gint ((GArray *) g_value_get_pointer (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -356,7 +356,7 @@ set_property (GObject * object,
 
 static gdouble
 get_sample_double (const GeglSampleModel * sample_model,
-		   gint x, gint y, gint band, const GeglBuffer * buffer)
+                   gint x, gint y, gint band, const GeglBuffer * buffer)
 {
   GeglComponentSampleModel *self = (GeglComponentSampleModel *) sample_model;
   g_return_val_if_fail (check_buffer (sample_model, buffer), 0.0);
@@ -378,8 +378,8 @@ get_sample_double (const GeglSampleModel * sample_model,
 
 static void
 set_sample_double (const GeglSampleModel * sample_model,
-		   gint x,
-		   gint y, gint band, gdouble sample, GeglBuffer * buffer)
+                   gint x,
+                   gint y, gint band, gdouble sample, GeglBuffer * buffer)
 {
   GeglComponentSampleModel *self = (GeglComponentSampleModel *) sample_model;
   g_return_if_fail (check_buffer (sample_model, buffer));
@@ -449,7 +449,7 @@ create_buffer (const GeglSampleModel * sample_model, TransferType type)
     max_offset + (sample_model->height) * (sample_model->width) * min_stride;
 
   return gegl_buffer_create (type, "num_banks", num_banks,
-			     "elements_per_bank", elements_per_bank, NULL);
+                             "elements_per_bank", elements_per_bank, NULL);
 }
 
 static gboolean
@@ -502,16 +502,16 @@ g_array_max_gint (GArray * array)
   for (i = 0; i < array->len; i++)
     {
       max =
-	(g_array_index (array, gint, i) < max) ? max : g_array_index (array,
-								      gint,
-								      i);
+        (g_array_index (array, gint, i) < max) ? max : g_array_index (array,
+                                                                      gint,
+                                                                      i);
     }
   return max;
 }
 
 gint
 gegl_component_sample_model_get_pixel_stride (const GeglComponentSampleModel *
-					      self)
+                                              self)
 {
   g_return_val_if_fail (GEGL_IS_COMPONENT_SAMPLE_MODEL (self), 0);
 
@@ -520,8 +520,8 @@ gegl_component_sample_model_get_pixel_stride (const GeglComponentSampleModel *
 
 gint
 gegl_component_sample_model_get_scanline_stride (const
-						 GeglComponentSampleModel *
-						 self)
+                                                 GeglComponentSampleModel *
+                                                 self)
 {
   g_return_val_if_fail (GEGL_IS_COMPONENT_SAMPLE_MODEL (self), 0);
   return self->scanline_stride;
@@ -530,7 +530,7 @@ gegl_component_sample_model_get_scanline_stride (const
 
 gint
 gegl_component_sample_model_get_bank_offset (const GeglComponentSampleModel *
-					     self, gint bank)
+                                             self, gint bank)
 {
   g_return_val_if_fail (GEGL_IS_COMPONENT_SAMPLE_MODEL (self), 0);
 
@@ -545,7 +545,7 @@ gegl_component_sample_model_get_bank_offset (const GeglComponentSampleModel *
 
 gint
 gegl_component_sample_model_get_band_index (const GeglComponentSampleModel *
-					    self, gint band)
+                                            self, gint band)
 {
   g_return_val_if_fail (GEGL_IS_COMPONENT_SAMPLE_MODEL (self), 0);
   if (self->band_indices == NULL)

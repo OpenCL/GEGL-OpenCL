@@ -122,10 +122,10 @@ free_entries (GeglMockCacheEntry ** entries)
   for (i=0;i<num_entries;i++)
     {
       if (entries[i] != NULL)
-	{
-	  g_object_unref (entries[i]);
-	  entries[i] = NULL;
-	}
+        {
+          g_object_unref (entries[i]);
+          entries[i] = NULL;
+        }
     }
   g_free (entries);
   return;
@@ -133,11 +133,11 @@ free_entries (GeglMockCacheEntry ** entries)
 
 static void
 put_entries (GeglCache * cache,
-	     GeglMockCacheEntry ** entries,
-	     gsize entry_ids[],
-	     gint start,
-	     gint end,
-	     Test * test)
+             GeglMockCacheEntry ** entries,
+             gsize entry_ids[],
+             gint start,
+             gint end,
+             Test * test)
 {
   GeglPutResults put_results;
   gint i;
@@ -152,11 +152,11 @@ put_entries (GeglCache * cache,
 
 static void
 fetch_entries (GeglCache * cache,
-	       GeglMockCacheEntry ** entries,
-	       gsize entry_ids[],
-	       gint start,
-	       gint end,
-	       Test * test)
+               GeglMockCacheEntry ** entries,
+               gsize entry_ids[],
+               gint start,
+               gint end,
+               Test * test)
 {
   GeglFetchResults fetch_results;
   gint i;
@@ -171,11 +171,11 @@ fetch_entries (GeglCache * cache,
 
 static void
 unfetch_entries (GeglCache * cache,
-		 GeglMockCacheEntry ** entries,
-		 gsize entry_ids[],
-		 gint start,
-		 gint end,
-		 Test * test)
+                 GeglMockCacheEntry ** entries,
+                 gsize entry_ids[],
+                 gint start,
+                 gint end,
+                 Test * test)
 {
   GeglFetchResults fetch_results;
   gint i;
@@ -191,11 +191,11 @@ unfetch_entries (GeglCache * cache,
 
 static void
 dirty_entries (GeglCache * cache,
-	       GeglMockCacheEntry ** entries,
-	       gsize entry_ids[],
-	       gint start,
-	       gint end,
-	       Test * test)
+               GeglMockCacheEntry ** entries,
+               gsize entry_ids[],
+               gint start,
+               gint end,
+               Test * test)
 {
   gint i;
   for (i=start;i<end;i++)
@@ -206,11 +206,11 @@ dirty_entries (GeglCache * cache,
 
 static void
 flush_entries (GeglCache * cache,
-	       GeglMockCacheEntry ** entries,
-	       gsize entry_ids[],
-	       gint start,
-	       gint end,
-	       Test * test)
+               GeglMockCacheEntry ** entries,
+               gsize entry_ids[],
+               gint start,
+               gint end,
+               Test * test)
 {
   gint i;
   for (i=start;i<end;i++)

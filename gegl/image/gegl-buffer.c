@@ -240,26 +240,26 @@ gegl_buffer_class_init (GeglBufferClass *klass)
   object_class->constructor  = constructor;
 
   g_object_class_install_property (object_class, PROP_ELEMENTS_PER_BANK,
-				   g_param_spec_int ("elements_per_bank",
-						     "Elements Per Bank",
-						     "GeglBuffer elements in each bank",
-						     0, G_MAXINT, 0,
-						     G_PARAM_CONSTRUCT_ONLY |
-						     G_PARAM_READWRITE));
+                                   g_param_spec_int ("elements_per_bank",
+                                                     "Elements Per Bank",
+                                                     "GeglBuffer elements in each bank",
+                                                     0, G_MAXINT, 0,
+                                                     G_PARAM_CONSTRUCT_ONLY |
+                                                     G_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_NUM_BANKS,
-				   g_param_spec_int ("num_banks",
-						     "Number of Banks ",
-						     "GeglBuffer number of banks",
-						     0, G_MAXINT, 0,
-						     G_PARAM_CONSTRUCT_ONLY |
-						     G_PARAM_READWRITE));
+                                   g_param_spec_int ("num_banks",
+                                                     "Number of Banks ",
+                                                     "GeglBuffer number of banks",
+                                                     0, G_MAXINT, 0,
+                                                     G_PARAM_CONSTRUCT_ONLY |
+                                                     G_PARAM_READWRITE));
   g_object_class_install_property (object_class, PROP_CACHE,
-				   g_param_spec_pointer ("cache",
-							 "The Cache",
-							 "The cache that backs this GeglBuffer",
-							 G_PARAM_CONSTRUCT_ONLY |
-							 G_PARAM_READWRITE));
+                                   g_param_spec_pointer ("cache",
+                                                         "The Cache",
+                                                         "The cache that backs this GeglBuffer",
+                                                         G_PARAM_CONSTRUCT_ONLY |
+                                                         G_PARAM_READWRITE));
 
 }
 
@@ -329,7 +329,7 @@ dispose (GObject *object)
 
 static void
 set_property (GObject      *object,
-	      guint         prop_id,
+              guint         prop_id,
               const GValue *value,
               GParamSpec   *pspec)
 {
@@ -354,7 +354,7 @@ set_property (GObject      *object,
 
 static void
 get_property (GObject    *object,
-	      guint       prop_id,
+              guint       prop_id,
               GValue     *value,
               GParamSpec *pspec)
 {
@@ -464,7 +464,7 @@ gegl_buffer_get_banks (const GeglBuffer *self)
 gdouble
 gegl_buffer_get_element_double (const GeglBuffer *self,
                                 gint              bank,
-				gint              index)
+                                gint              index)
 {
   GeglBufferClass *klass;
 
@@ -479,7 +479,7 @@ gegl_buffer_get_element_double (const GeglBuffer *self,
 
 void
 gegl_buffer_set_element_double (GeglBuffer *self,
-				gint        bank,
+                                gint        bank,
                                 gint        index,
                                 gdouble     elem)
 {
@@ -564,13 +564,13 @@ gegl_buffer_release (GeglBuffer *self)
   if (self->share_count == 0)
     {
       if (self->cache)
-	{
-	  if (self->entry_id != 0)
-	    {
-	      gegl_cache_flush (self->cache, self->entry_id);
-	      self->entry_id = 0;
-	    }
-	}
+        {
+          if (self->entry_id != 0)
+            {
+              gegl_cache_flush (self->cache, self->entry_id);
+              self->entry_id = 0;
+            }
+        }
     }
 
   g_object_unref (self);
@@ -602,9 +602,9 @@ gegl_buffer_unshare (GeglBuffer *source)
     return source;
 
   new_buffer = gegl_buffer_create (source->transfer_type,
-				   "elements_per_bank", source->elements_per_bank,
-				   "num_banks",         source->num_banks,
-				   "cache",             source->cache,
+                                   "elements_per_bank", source->elements_per_bank,
+                                   "num_banks",         source->num_banks,
+                                   "cache",             source->cache,
                                    NULL);
 
   gegl_buffer_lock (new_buffer);
@@ -667,12 +667,12 @@ gegl_buffer_lock (GeglBuffer *self)
                                         &self->entry);
 
       if (fetch_results == GEGL_FETCH_EXPIRED)
-	{
-	  gegl_cache_flush (self->cache, self->entry_id);
-	  self->entry_id = 0;
-	  self->has_expired = TRUE;
-	  return;
-	}
+        {
+          gegl_cache_flush (self->cache, self->entry_id);
+          self->entry_id = 0;
+          self->has_expired = TRUE;
+          return;
+        }
 
       g_return_if_fail (fetch_results == GEGL_FETCH_SUCCEEDED);
 
@@ -721,37 +721,37 @@ gegl_buffer_unlock (GeglBuffer *self,
   if (self->lock_count == 0)
     {
       if (self->entry == NULL)
-	{
-	  self->entry = GEGL_CACHE_ENTRY (cache_entry_new (self));
-	}
+        {
+          self->entry = GEGL_CACHE_ENTRY (cache_entry_new (self));
+        }
       else
-	{
-	  GeglBufferCacheEntry *buffer_entry;
+        {
+          GeglBufferCacheEntry *buffer_entry;
 
-	  buffer_entry = GEGL_BUFFER_CACHE_ENTRY (self->entry);
+          buffer_entry = GEGL_BUFFER_CACHE_ENTRY (self->entry);
 
-	  cache_entry_set (buffer_entry, self);
-	}
+          cache_entry_set (buffer_entry, self);
+        }
 
       self->banks = NULL;
 
       if (self->entry_id == 0)
-	{
-	  gint put_results = gegl_cache_put (self->cache,
-					     self->entry,
-					     &self->entry_id);
-	  g_return_if_fail (put_results == GEGL_PUT_SUCCEEDED);
-	}
+        {
+          gint put_results = gegl_cache_put (self->cache,
+                                             self->entry,
+                                             &self->entry_id);
+          g_return_if_fail (put_results == GEGL_PUT_SUCCEEDED);
+        }
       else
-	{
-	  GeglFetchResults fetch_results;
+        {
+          GeglFetchResults fetch_results;
 
-	  fetch_results = gegl_cache_unfetch (self->cache,
-					      self->entry_id,
-					      self->entry);
+          fetch_results = gegl_cache_unfetch (self->cache,
+                                              self->entry_id,
+                                              self->entry);
 
-	  g_return_if_fail (fetch_results == GEGL_FETCH_SUCCEEDED);
-	}
+          g_return_if_fail (fetch_results == GEGL_FETCH_SUCCEEDED);
+        }
 
       g_object_unref (self->entry);
       self->entry = NULL;

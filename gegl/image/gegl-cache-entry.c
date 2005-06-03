@@ -62,8 +62,8 @@ gegl_cache_entry_flattened_size (const GeglCacheEntry* self)
 
 void
 gegl_cache_entry_flatten (GeglCacheEntry *self,
-			  gpointer        buffer,
-			  gsize           length)
+                          gpointer        buffer,
+                          gsize           length)
 {
   GeglCacheEntryClass *class;
 
@@ -79,8 +79,8 @@ gegl_cache_entry_flatten (GeglCacheEntry *self,
 
 void
 gegl_cache_entry_unflatten (GeglCacheEntry *self,
-			    gpointer        buffer,
-			    gsize           length)
+                            gpointer        buffer,
+                            gsize           length)
 {
   GeglCacheEntryClass *class;
 

@@ -115,40 +115,40 @@ gegl_sample_model_class_init (GeglSampleModelClass *klass)
   klass->set_pixel_normalized  = set_pixel_normalized;
 
   g_object_class_install_property (object_class, PROP_WIDTH,
-				   g_param_spec_int ("width",
-						     "Width",
-						     "Width of the buffer described by this sample model",
-						     0,
-						     G_MAXINT,
-						     0,
-						     G_PARAM_CONSTRUCT_ONLY |
-						     G_PARAM_READWRITE));
+                                   g_param_spec_int ("width",
+                                                     "Width",
+                                                     "Width of the buffer described by this sample model",
+                                                     0,
+                                                     G_MAXINT,
+                                                     0,
+                                                     G_PARAM_CONSTRUCT_ONLY |
+                                                     G_PARAM_READWRITE));
   g_object_class_install_property (object_class, PROP_HEIGHT,
-				   g_param_spec_int ("height",
-						     "Height",
-						     "Height of the buffer described by this sample model",
-						     0,
-						     G_MAXINT,
-						     0,
-						     G_PARAM_CONSTRUCT_ONLY |
-						     G_PARAM_READWRITE));
+                                   g_param_spec_int ("height",
+                                                     "Height",
+                                                     "Height of the buffer described by this sample model",
+                                                     0,
+                                                     G_MAXINT,
+                                                     0,
+                                                     G_PARAM_CONSTRUCT_ONLY |
+                                                     G_PARAM_READWRITE));
 
   g_object_class_install_property (object_class, PROP_NUM_BANDS,
-				   g_param_spec_int ("num_bands",
-						     "Number of Bands",
-						     "Number of Bands in the buffer described by this sample model",
-						     0,
-						     G_MAXINT,
-						     0,
-						     G_PARAM_CONSTRUCT_ONLY |
-						     G_PARAM_READWRITE));
+                                   g_param_spec_int ("num_bands",
+                                                     "Number of Bands",
+                                                     "Number of Bands in the buffer described by this sample model",
+                                                     0,
+                                                     G_MAXINT,
+                                                     0,
+                                                     G_PARAM_CONSTRUCT_ONLY |
+                                                     G_PARAM_READWRITE));
   g_object_class_install_property (object_class, PROP_NORMALIZERS,
-				   g_param_spec_pointer ("normalizers",
-							 "Normalizer Array",
-							 "Pointer to a GArray of Normalizer objects for each band",
-							 G_PARAM_CONSTRUCT_ONLY
-							 |
-							 G_PARAM_READWRITE));
+                                   g_param_spec_pointer ("normalizers",
+                                                         "Normalizer Array",
+                                                         "Pointer to a GArray of Normalizer objects for each band",
+                                                         G_PARAM_CONSTRUCT_ONLY
+                                                         |
+                                                         G_PARAM_READWRITE));
 }
 
 static void
@@ -167,17 +167,17 @@ dispose (GObject * object)
   if (! self->is_disposed )
     {
       if (self->normalizers != NULL)
-	{
-	  GeglNormalizer ** norm_array = (GeglNormalizer **)self->normalizers->data;
-	  int i;
-	  for (i=0;i<(self->normalizers->len);i++)
-	    {
-	      g_object_unref (norm_array[i]);
-	      /*g_message ("GeglSampleModel:dispose normalizer %d unreffed", GPOINTER_TO_SIZE(norm_array[i]));*/
-	    }
-	  g_array_free (self->normalizers, TRUE);
-	  self->normalizers = NULL;
-	}
+        {
+          GeglNormalizer ** norm_array = (GeglNormalizer **)self->normalizers->data;
+          int i;
+          for (i=0;i<(self->normalizers->len);i++)
+            {
+              g_object_unref (norm_array[i]);
+              /*g_message ("GeglSampleModel:dispose normalizer %d unreffed", GPOINTER_TO_SIZE(norm_array[i]));*/
+            }
+          g_array_free (self->normalizers, TRUE);
+          self->normalizers = NULL;
+        }
       self->is_disposed = TRUE;
     }
   /* g_message ("GeglSampleModel dispose run"); */
@@ -186,7 +186,7 @@ dispose (GObject * object)
 
 static void
 get_property (GObject * gobject, guint property_id, GValue * value,
-	      GParamSpec * pspec)
+              GParamSpec * pspec)
 {
   GeglSampleModel *self = (GeglSampleModel *) gobject;
   switch (property_id)
@@ -212,7 +212,7 @@ get_property (GObject * gobject, guint property_id, GValue * value,
 
 static void
 set_property (GObject * object, guint property_id, const GValue * value,
-	      GParamSpec * pspec)
+              GParamSpec * pspec)
 {
   GeglSampleModel *self = (GeglSampleModel *) object;
   switch (property_id)
@@ -261,10 +261,10 @@ gegl_sample_model_get_height (const GeglSampleModel * self)
 
 gdouble *
 gegl_sample_model_get_pixel_double (const GeglSampleModel * self,
-				    gint x,
-				    gint y,
-				    gdouble * dArray,
-				    const GeglBuffer * buffer)
+                                    gint x,
+                                    gint y,
+                                    gdouble * dArray,
+                                    const GeglBuffer * buffer)
 {
   g_return_val_if_fail (GEGL_IS_SAMPLE_MODEL (self), NULL);
   g_return_val_if_fail (dArray != NULL, NULL);
@@ -283,15 +283,15 @@ gegl_sample_model_get_pixel_double (const GeglSampleModel * self,
 
 static gdouble *
 get_pixel_double_default (const GeglSampleModel * self,
-			  gint x,
-			  gint y, gdouble * dArray, const GeglBuffer * buffer)
+                          gint x,
+                          gint y, gdouble * dArray, const GeglBuffer * buffer)
 {
   int i = 0;
   gdouble *dArray_pos = dArray;
   for (i = 0; i < self->num_bands; i++)
     {
       *dArray_pos =
-	gegl_sample_model_get_sample_double (self, x, y, i, buffer);
+        gegl_sample_model_get_sample_double (self, x, y, i, buffer);
       dArray_pos++;
     }
   return dArray;
@@ -299,10 +299,10 @@ get_pixel_double_default (const GeglSampleModel * self,
 
 void
 gegl_sample_model_set_pixel_double (const GeglSampleModel * self,
-				    gint x,
-				    gint y,
-				    const gdouble * dArray,
-				    GeglBuffer * buffer)
+                                    gint x,
+                                    gint y,
+                                    const gdouble * dArray,
+                                    GeglBuffer * buffer)
 {
   g_return_if_fail (GEGL_IS_SAMPLE_MODEL (self));
   g_return_if_fail (dArray != NULL);
@@ -321,8 +321,8 @@ gegl_sample_model_set_pixel_double (const GeglSampleModel * self,
 
 static void
 set_pixel_double_default (const GeglSampleModel * self,
-			  gint x,
-			  gint y, const gdouble * dArray, GeglBuffer * buffer)
+                          gint x,
+                          gint y, const gdouble * dArray, GeglBuffer * buffer)
 {
   /* already bounds check the arguments in the non-static accessor. */
   int i = 0;
@@ -336,7 +336,7 @@ set_pixel_double_default (const GeglSampleModel * self,
 
 static gdouble
 get_sample_normalized (const GeglSampleModel * self,
-		       gint x, gint y, gint band, const GeglBuffer * buffer)
+                       gint x, gint y, gint band, const GeglBuffer * buffer)
 {
   GeglNormalizer *normalizer = get_normalizer (self, band);
   gdouble sample =
@@ -347,8 +347,8 @@ get_sample_normalized (const GeglSampleModel * self,
 
 static void
 set_sample_normalized (const GeglSampleModel * self,
-		       gint x,
-		       gint y, gint band, gdouble sample, GeglBuffer * buffer)
+                       gint x,
+                       gint y, gint band, gdouble sample, GeglBuffer * buffer)
 {
   GeglNormalizer *normalizer = get_normalizer (self, band);
   if (normalizer != NULL)
@@ -361,8 +361,8 @@ set_sample_normalized (const GeglSampleModel * self,
 
 static gdouble *
 get_pixel_normalized (const GeglSampleModel * self,
-		      gint x,
-		      gint y, gdouble * nor_data, const GeglBuffer * buffer)
+                      gint x,
+                      gint y, gdouble * nor_data, const GeglBuffer * buffer)
 {
   int i = 0;
   if (nor_data == NULL)
@@ -374,18 +374,18 @@ get_pixel_normalized (const GeglSampleModel * self,
     {
       GeglNormalizer *normalizer = get_normalizer (self, i);
       if (normalizer != NULL)
-	{
-	  gegl_normalizer_normalize (normalizer, nor_data, nor_data, 1,
-				     self->num_bands);
-	}
+        {
+          gegl_normalizer_normalize (normalizer, nor_data, nor_data, 1,
+                                     self->num_bands);
+        }
     }
   return nor_data;
 }
 
 static void
 set_pixel_normalized (const GeglSampleModel * self,
-		      gint x,
-		      gint y, const gdouble * nor_data, GeglBuffer * buffer)
+                      gint x,
+                      gint y, const gdouble * nor_data, GeglBuffer * buffer)
 {
   int i = 0;
   gdouble unnor_data[self->num_bands];
@@ -393,11 +393,11 @@ set_pixel_normalized (const GeglSampleModel * self,
   if (self->normalizers != NULL)
     {
       for (i = 0; i < self->num_bands; i++)
-	{
-	  GeglNormalizer *normalizer = get_normalizer (self, i);
-	  gegl_normalizer_unnormalize (normalizer, nor_data, unnor_data, 1,
-				       self->num_bands);
-	}
+        {
+          GeglNormalizer *normalizer = get_normalizer (self, i);
+          gegl_normalizer_unnormalize (normalizer, nor_data, unnor_data, 1,
+                                       self->num_bands);
+        }
       gegl_sample_model_set_pixel_double (self, x, y, unnor_data, buffer);
     }
   else
@@ -408,9 +408,9 @@ set_pixel_normalized (const GeglSampleModel * self,
 
 gdouble
 gegl_sample_model_get_sample_double (const GeglSampleModel * self,
-				     gint x,
-				     gint y,
-				     gint band, const GeglBuffer * buffer)
+                                     gint x,
+                                     gint y,
+                                     gint band, const GeglBuffer * buffer)
 {
   g_return_val_if_fail (GEGL_IS_SAMPLE_MODEL (self), 0.0);
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), 0.0);
@@ -430,10 +430,10 @@ gegl_sample_model_get_sample_double (const GeglSampleModel * self,
 
 void
 gegl_sample_model_set_sample_double (const GeglSampleModel * self,
-				     gint x,
-				     gint y,
-				     gint band,
-				     gdouble sample, GeglBuffer * buffer)
+                                     gint x,
+                                     gint y,
+                                     gint band,
+                                     gdouble sample, GeglBuffer * buffer)
 {
   g_return_if_fail (GEGL_IS_SAMPLE_MODEL (self));
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
@@ -472,9 +472,9 @@ get_normalizer (const GeglSampleModel * self, gint band)
 
 gdouble
 gegl_sample_model_get_sample_normalized (const GeglSampleModel * self,
-					 gint x,
-					 gint y,
-					 gint band, const GeglBuffer * buffer)
+                                         gint x,
+                                         gint y,
+                                         gint band, const GeglBuffer * buffer)
 {
   g_return_val_if_fail (self, 0.0);
   GeglSampleModelClass *class = GEGL_SAMPLE_MODEL_GET_CLASS (self);
@@ -483,10 +483,10 @@ gegl_sample_model_get_sample_normalized (const GeglSampleModel * self,
 
 void
 gegl_sample_model_set_sample_normalized (const GeglSampleModel * self,
-					 gint x,
-					 gint y,
-					 gint band,
-					 gdouble sample, GeglBuffer * buffer)
+                                         gint x,
+                                         gint y,
+                                         gint band,
+                                         gdouble sample, GeglBuffer * buffer)
 {
   g_return_if_fail (self != NULL);
   GeglSampleModelClass *class = GEGL_SAMPLE_MODEL_GET_CLASS (self);
@@ -496,10 +496,10 @@ gegl_sample_model_set_sample_normalized (const GeglSampleModel * self,
 
 gdouble *
 gegl_sample_model_get_pixel_normalized (const GeglSampleModel * self,
-					gint x,
-					gint y,
-					gdouble * nor_data,
-					const GeglBuffer * buffer)
+                                        gint x,
+                                        gint y,
+                                        gdouble * nor_data,
+                                        const GeglBuffer * buffer)
 {
   g_return_val_if_fail (self != NULL, NULL);
   GeglSampleModelClass *class = GEGL_SAMPLE_MODEL_GET_CLASS (self);
@@ -508,10 +508,10 @@ gegl_sample_model_get_pixel_normalized (const GeglSampleModel * self,
 
 void
 gegl_sample_model_set_pixel_normalized (const GeglSampleModel * self,
-					gint x,
-					gint y,
-					const gdouble * nor_data,
-					GeglBuffer * buffer)
+                                        gint x,
+                                        gint y,
+                                        const gdouble * nor_data,
+                                        GeglBuffer * buffer)
 {
   g_return_if_fail (self != NULL);
   GeglSampleModelClass *class = GEGL_SAMPLE_MODEL_GET_CLASS (self);
@@ -520,7 +520,7 @@ gegl_sample_model_set_pixel_normalized (const GeglSampleModel * self,
 
 GeglBuffer *
 gegl_sample_model_create_buffer (const GeglSampleModel * self,
-				 TransferType type)
+                                 TransferType type)
 {
 
   g_return_val_if_fail (GEGL_IS_SAMPLE_MODEL (self), NULL);
@@ -538,7 +538,7 @@ gegl_sample_model_create_buffer (const GeglSampleModel * self,
 
 gboolean
 gegl_sample_model_check_buffer (const GeglSampleModel * self,
-				const GeglBuffer * buffer)
+                                const GeglBuffer * buffer)
 {
   g_return_val_if_fail (GEGL_IS_SAMPLE_MODEL (self), FALSE);
   GeglSampleModelClass *class = GEGL_SAMPLE_MODEL_GET_CLASS (self);

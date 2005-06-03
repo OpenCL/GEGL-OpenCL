@@ -95,7 +95,7 @@ gegl_heap_cache_new (gsize    capacity,
 
 void
 insert_record (GeglCache       *cache,
-	       GeglEntryRecord *record)
+               GeglEntryRecord *record)
 {
   GeglHeapCache *self = GEGL_HEAP_CACHE (cache);
 
@@ -128,21 +128,21 @@ check_room_for (GeglCache *cache,
   if ((cache_size + size) > self->capacity)
     {
       if (self->is_persistent)
-	{
-	  /* condition 2 */
-	  return FALSE;
-	}
+        {
+          /* condition 2 */
+          return FALSE;
+        }
 
       while (cache_size + size > self->capacity)
-	{
-	  GeglEntryRecord *record;
+        {
+          GeglEntryRecord *record;
 
-	  record = gegl_cache_store_peek (GEGL_CACHE_STORE(self->stored));
+          record = gegl_cache_store_peek (GEGL_CACHE_STORE(self->stored));
 
-	  gegl_cache_discard (cache, record);
+          gegl_cache_discard (cache, record);
 
-	  cache_size = gegl_cache_size (cache);
-	}
+          cache_size = gegl_cache_size (cache);
+        }
     }
 
   /* conditions 3, 4 and 5 */
@@ -175,6 +175,6 @@ is_persistent (GeglCache *cache)
 
 void
 flush_internal (GeglCache       *cache,
-		GeglEntryRecord *record)
+                GeglEntryRecord *record)
 {
 }

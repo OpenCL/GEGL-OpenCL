@@ -39,13 +39,13 @@ test_buffer_caching(Test *test) {
   */
 
   GeglBuffer * buffer = gegl_buffer_create (TYPE_DOUBLE,
-					    "num_banks", 4,
-					    "elements_per_bank", 1024,
-					    NULL);
+                                            "num_banks", 4,
+                                            "elements_per_bank", 1024,
+                                            NULL);
   GeglBuffer * another_buffer = gegl_buffer_create (TYPE_DOUBLE,
-						    "num_banks", 4,
-						    "elements_per_bank", 1024,
-						    NULL);
+                                                    "num_banks", 4,
+                                                    "elements_per_bank", 1024,
+                                                    NULL);
   GeglBuffer * buffer_copy;
   GeglCache * cache;
 
@@ -56,9 +56,9 @@ test_buffer_caching(Test *test) {
   gegl_buffer_release (buffer_copy);
 
   buffer = gegl_buffer_create (TYPE_DOUBLE,
-			       "num_banks", 4,
-			       "elements_per_bank", 1024,
-			       NULL);
+                               "num_banks", 4,
+                               "elements_per_bank", 1024,
+                               NULL);
   gegl_buffer_acquire (buffer);
   buffer_copy = buffer;
 

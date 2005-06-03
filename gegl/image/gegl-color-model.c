@@ -26,14 +26,14 @@ gegl_color_model_init (GeglColorModel *self)
 
 gint
 gegl_color_model_is_color_channel (const GeglSampleModel * self,
-				   gint channel_num)
+                                   gint channel_num)
 {
 
 }
 void
 gegl_color_model_set_color_channels (GeglSampleModel * self, gint * bands,
-				     gboolean * has_lum_info,
-				     gint num_colors);
+                                     gboolean * has_lum_info,
+                                     gint num_colors);
 gboolean gegl_color_model_has_alpha (const GeglSampleModel * self);
 gint gegl_color_model_get_alpha (const GeglSampleModel * self);
 void gegl_color_model_set_alpha (const GeglSampleModel * self);

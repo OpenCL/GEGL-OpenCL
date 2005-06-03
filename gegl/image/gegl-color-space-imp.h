@@ -44,25 +44,25 @@ struct _GeglColorSpaceImpClass
 {
   GeglObjectClass parent_class;
   GeglImage *(*convert_tile) (const GeglColorSpaceImp * imp, GeglTile * input,
-			      const GeglColorSpace * destination_space,
-			      GeglColorSpaceIntent intent);
+                              const GeglColorSpace * destination_space,
+                              GeglColorSpaceIntent intent);
   GeglColorSpace *(*create_from_profile) (const GeglColorSpaceImp * imp,
-					  gchar * icc_filename);
+                                          gchar * icc_filename);
   GeglColorSpace *(*create_from_profile_mem) (const GeglColorSpaceImp * imp,
-					      void *profile);
+                                              void *profile);
   GeglColorSpace *(*create_from_id) (const GeglColorSpaceImp * imp,
-				     gint colorspace_id);
+                                     gint colorspace_id);
 };
 
 GeglImage *gegl_color_space_imp_convert_image (const GeglColorSpaceImp * imp,
-					       GeglImage * input,
-					       const GeglColorSpace destination_space,
-					       GeglColorSpaceIntent intent);
+                                               GeglImage * input,
+                                               const GeglColorSpace destination_space,
+                                               GeglColorSpaceIntent intent);
 GeglColorSpace *gegl_color_space_imp_create_from_profile (const GeglColorSpaceImp * imp,
-							  gchar * icc_filename);
+                                                          gchar * icc_filename);
 GeglColorSpace *gegl_color_space_imp_create_from_profile_mem (
                                   const GeglColorSpaceImp * imp,
-							      void *profile);
+                                                              void *profile);
 GeglColorSpace *gegl_color_space_imp_create_from_id (
                              const GeglColorSpaceImp * imp,
                              gint colorspace_id);

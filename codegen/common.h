@@ -1,6 +1,6 @@
 /*
-	FILE:	common.h
-	DESC:	defines structs, enum
+        FILE:   common.h
+        DESC:   defines structs, enum
 */
 
 #ifndef _COMMON_H_
@@ -53,30 +53,30 @@ typedef enum
 /* ELEMENT */
 typedef struct
 {
-  DATA_TYPE 	dtype;
+  DATA_TYPE     dtype;
   char          string[256];
-  SV_TYPE	svtype;
-  int		num;
-  char		inited;
+  SV_TYPE       svtype;
+  int           num;
+  char          inited;
   char          scope;
 }elem_t;
 
 typedef struct
 {
-  char 	word[20];
-  int	token;
+  char  word[20];
+  int   token;
 }keyword_t;
 
 typedef struct
 {
-  char	string[20];
+  char  string[20];
 }token_t;
 
 typedef struct
 {
   char  word[20];
-  char	arg;
-  int	token;
+  char  arg;
+  int   token;
 }dt_keyword_t;
 
 #ifdef  _LEXER_C_
@@ -89,13 +89,13 @@ extern char gegl_pixel[];
 #endif
 
 
-elem_t  	add_sym (char *s, char scope);
-elem_t*	 	get_sym (char *sym);
-void		init_image_data (char *indent);
-int 		get_keyword (char *s);
-dt_keyword_t* 	get_dt_keyword (char *s);
-int		yylex ();
-void    	rm_sym_from_symtab (char scope);
+elem_t          add_sym (char *s, char scope);
+elem_t*         get_sym (char *sym);
+void            init_image_data (char *indent);
+int             get_keyword (char *s);
+dt_keyword_t*   get_dt_keyword (char *s);
+int             yylex ();
+void            rm_sym_from_symtab (char scope);
 
 void open_file (char *filename);
 void close_file ();

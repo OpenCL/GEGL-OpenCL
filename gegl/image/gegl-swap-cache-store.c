@@ -468,9 +468,9 @@ gap_list_get_gap(GeglSwapCacheStore * self, gsize length)
       extend_amount = length > SWAP_EXTEND ? length : SWAP_EXTEND;
       g_io_channel_seek_position (self->channel, extend_amount, G_SEEK_END, &err);
       if (err !=NULL)
-	{
-	  g_error (err->message);
-	}
+        {
+          g_error (err->message);
+        }
       offset = self->length;
       self->length += extend_amount;
       gap_list_add_gap(self, offset+length, self->length);
@@ -480,13 +480,13 @@ gap_list_get_gap(GeglSwapCacheStore * self, gsize length)
       SwapGap * gap = (SwapGap *)found_link->data;
       offset = gap->start;
       if ((gap->end - gap->start) == length)
-	{
-	  self->gaps = g_list_remove_link (self->gaps, found_link);
-	}
+        {
+          self->gaps = g_list_remove_link (self->gaps, found_link);
+        }
       else
-	{
-	  gap->start += (length + 1);
-	}
+        {
+          gap->start += (length + 1);
+        }
     }
   return offset;
 }
@@ -514,50 +514,50 @@ gap_list_add_gap(GeglSwapCacheStore * self, gint64 offset, gsize length)
       GList * new = NULL;
       before = g_list_previous(after);
       if (before != NULL)
-	{
-	  SwapGap * before_gap = (SwapGap *)before->data;
-	  /*check for curruption*/
-	  if (before_gap->end >= new_gap->start)
-	    {
-	      g_error("Gap List corruption");
-	    }
-	  /*merge with the previous gap, if they touch*/
-	  if (before_gap->end + 1 == new_gap->start)
-	    {
-	      before_gap->end = new_gap->end;
-	      g_free (new_gap);
-	      new_gap = before_gap;
-	      new = before;
-	    }
-	}
+        {
+          SwapGap * before_gap = (SwapGap *)before->data;
+          /*check for curruption*/
+          if (before_gap->end >= new_gap->start)
+            {
+              g_error("Gap List corruption");
+            }
+          /*merge with the previous gap, if they touch*/
+          if (before_gap->end + 1 == new_gap->start)
+            {
+              before_gap->end = new_gap->end;
+              g_free (new_gap);
+              new_gap = before_gap;
+              new = before;
+            }
+        }
 
       if (after != NULL)
-	{
-	  SwapGap * after_gap = (SwapGap *)after->data;
-	  /*check for corruption*/
-	  if (after_gap->start <= new_gap->end)
-	    {
-	      g_error("Gap list corruption");
-	    }
-	  /*merge with next gap if they touch*/
-	  if ((new_gap->end+1) == after_gap->start)
-	    {
-	      /*merge gaps*/
-	      after_gap->start = new_gap->start;
-	      /*free new if it was merged from a previous gap*/
-	      if (new != NULL)
-		{
-		  self->gaps = g_list_remove_link(self->gaps, new);
-		  g_free (new->data);
-		  g_list_free(new);
-		}
-	      new = after;
-	      new_gap = after_gap;
-	    }
-	}
+        {
+          SwapGap * after_gap = (SwapGap *)after->data;
+          /*check for corruption*/
+          if (after_gap->start <= new_gap->end)
+            {
+              g_error("Gap list corruption");
+            }
+          /*merge with next gap if they touch*/
+          if ((new_gap->end+1) == after_gap->start)
+            {
+              /*merge gaps*/
+              after_gap->start = new_gap->start;
+              /*free new if it was merged from a previous gap*/
+              if (new != NULL)
+                {
+                  self->gaps = g_list_remove_link(self->gaps, new);
+                  g_free (new->data);
+                  g_list_free(new);
+                }
+              new = after;
+              new_gap = after_gap;
+            }
+        }
       if (new == NULL)
-	{
-	  self->gaps = g_list_insert_before (self->gaps, after, new_gap);
-	}
+        {
+          self->gaps = g_list_insert_before (self->gaps, after, new_gap);
+        }
     }
 }

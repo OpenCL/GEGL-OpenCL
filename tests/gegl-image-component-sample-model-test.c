@@ -36,12 +36,12 @@
 static void
 test_g_object_new(Test *test) {
   GeglComponentSampleModel* csm=g_object_new(GEGL_TYPE_COMPONENT_SAMPLE_MODEL,
-					     "width",64,
-					     "height",64,
-					     "num_bands",3,
-					     "pixel_stride",3,
-					     "scanline_stride",196,
-					     NULL);
+                                             "width",64,
+                                             "height",64,
+                                             "num_bands",3,
+                                             "pixel_stride",3,
+                                             "scanline_stride",196,
+                                             NULL);
   ct_test(test,csm!=NULL);
   ct_test(test, GEGL_IS_COMPONENT_SAMPLE_MODEL(csm));
   ct_test(test, g_type_parent(GEGL_TYPE_COMPONENT_SAMPLE_MODEL) == GEGL_TYPE_SAMPLE_MODEL);
@@ -61,14 +61,14 @@ test_properties(Test* test) {
   g_array_append_vals(band_indices,band_indices_data,3);
 
   GeglComponentSampleModel* csm=g_object_new(GEGL_TYPE_COMPONENT_SAMPLE_MODEL,
-					     "width",64,
-					     "height",128,
-					     "num_bands",3,
-					     "pixel_stride",3,
-					     "scanline_stride",64*3,
-					     "bank_offsets",bank_offsets,
-					     "band_indices",band_indices,
-					     NULL);
+                                             "width",64,
+                                             "height",128,
+                                             "num_bands",3,
+                                             "pixel_stride",3,
+                                             "scanline_stride",64*3,
+                                             "bank_offsets",bank_offsets,
+                                             "band_indices",band_indices,
+                                             NULL);
   g_array_free(bank_offsets,TRUE);
   g_array_free(band_indices,TRUE);
 
@@ -80,9 +80,9 @@ test_properties(Test* test) {
 
   GObject* object=G_OBJECT(csm);
   g_object_get(object,"width",&width,"height",&height,"num_bands",&num_bands,
-	       "pixel_stride",&pixel_stride,"scanline_stride",
-	       &scanline_stride,"bank_offsets",&bank_offsets,"band_indices",
-	       &band_indices,NULL);
+               "pixel_stride",&pixel_stride,"scanline_stride",
+               &scanline_stride,"bank_offsets",&bank_offsets,"band_indices",
+               &band_indices,NULL);
   ct_test(test,width==64);
   ct_test(test,height==128);
   ct_test(test,pixel_stride == 3);
@@ -102,17 +102,17 @@ test_pixel_interleaving(Test* test) {
   gint height=128;
   gint num_bands=3;
   GeglBufferDouble* buffer_double=g_object_new(GEGL_TYPE_BUFFER_DOUBLE,
-					       "num_banks", 1,
-					       "elements_per_bank", width*height*num_bands,
-					       NULL);
+                                               "num_banks", 1,
+                                               "elements_per_bank", width*height*num_bands,
+                                               NULL);
   GeglBuffer* buffer=GEGL_BUFFER(buffer_double);
   GeglComponentSampleModel* csm=g_object_new(GEGL_TYPE_COMPONENT_SAMPLE_MODEL,
-					     "num_bands",num_bands,
-					     "width",width,
-					     "height",height,
-					     "pixel_stride",num_bands,
-					     "scanline_stride",num_bands*width,
-					     NULL);
+                                             "num_bands",num_bands,
+                                             "width",width,
+                                             "height",height,
+                                             "pixel_stride",num_bands,
+                                             "scanline_stride",num_bands*width,
+                                             NULL);
   GeglSampleModel* sample_model=GEGL_SAMPLE_MODEL(csm);
 
   ct_test(test,gegl_sample_model_check_buffer(sample_model,buffer)==TRUE);
@@ -133,7 +133,7 @@ test_pixel_interleaving(Test* test) {
   for (y=0;y<height;y++) {
     for (x=0;x<width;x++) {
       for (band=0;band<num_bands;band++) {
-	gegl_sample_model_set_sample_double(sample_model,x,y,band,x+y+band,buffer);
+        gegl_sample_model_set_sample_double(sample_model,x,y,band,x+y+band,buffer);
       }
     }
   }
@@ -141,13 +141,13 @@ test_pixel_interleaving(Test* test) {
   for (y=0;y<height;y++) {
     for (x=0;x<width;x++) {
       for (band=0;band<num_bands;band++) {
-	if (gegl_sample_model_get_sample_double(sample_model,x,y,band,buffer) != (x+y+band)) {
-	  all_OK=FALSE;
-	  break;
-	}
+        if (gegl_sample_model_get_sample_double(sample_model,x,y,band,buffer) != (x+y+band)) {
+          all_OK=FALSE;
+          break;
+        }
       }
       if (all_OK==FALSE) {
-	break;
+        break;
       }
     }
     if (all_OK==FALSE) {
@@ -164,14 +164,14 @@ test_pixel_interleaving(Test* test) {
   for (y=0;y<height;y++) {
     for (x=0;x<width;x++) {
       for (band=0;band<num_bands;band++) {
-	//this breaks if num_bands != pixel_stride
-	//and scanline_stride != width*num_bands
-	if (bank[y*width*num_bands+x*num_bands+band] != (x+y+band)) {
-	  all_OK=FALSE;
-	}
+        //this breaks if num_bands != pixel_stride
+        //and scanline_stride != width*num_bands
+        if (bank[y*width*num_bands+x*num_bands+band] != (x+y+band)) {
+          all_OK=FALSE;
+        }
       }
       if (all_OK==FALSE) {
-	break;
+        break;
       }
     }
     if (all_OK==FALSE) {
@@ -192,22 +192,22 @@ test_band_interleaving(Test* test) {
   gint height=128;
   gint num_bands=3;
   GeglBufferDouble* buffer_double=g_object_new(GEGL_TYPE_BUFFER_DOUBLE,
-					       "num_banks", num_bands,
-					       "elements_per_bank", width*height,
-					       NULL);
+                                               "num_banks", num_bands,
+                                               "elements_per_bank", width*height,
+                                               NULL);
   GeglBuffer* buffer=GEGL_BUFFER(buffer_double);
 
   GArray* band_indices=g_array_new(FALSE,FALSE,sizeof(gint));
   gint data[3]={0,1,2};
   g_array_append_vals(band_indices,data,3);
   GeglComponentSampleModel* csm=g_object_new(GEGL_TYPE_COMPONENT_SAMPLE_MODEL,
-					     "num_bands",num_bands,
-					     "width",width,
-					     "height",height,
-					     "pixel_stride",1,
-					     "scanline_stride",width,
-					     "band_indices", band_indices,
-					     NULL);
+                                             "num_bands",num_bands,
+                                             "width",width,
+                                             "height",height,
+                                             "pixel_stride",1,
+                                             "scanline_stride",width,
+                                             "band_indices", band_indices,
+                                             NULL);
   g_array_free(band_indices,TRUE);
   GeglSampleModel* sample_model=GEGL_SAMPLE_MODEL(csm);
   ct_test(test,gegl_sample_model_check_buffer(sample_model,buffer)==TRUE);
@@ -229,7 +229,7 @@ test_band_interleaving(Test* test) {
     for (y=0;y<height;y++) {
     for (x=0;x<width;x++) {
       for (band=0;band<num_bands;band++) {
-	gegl_sample_model_set_sample_double(sample_model,x,y,band,x+y+band,buffer);
+        gegl_sample_model_set_sample_double(sample_model,x,y,band,x+y+band,buffer);
       }
     }
   }
@@ -237,13 +237,13 @@ test_band_interleaving(Test* test) {
     for (y=0;y<height;y++) {
         for (x=0;x<width;x++) {
             for (band=0;band<num_bands;band++) {
-	           if (gegl_sample_model_get_sample_double(sample_model,x,y,band,buffer) != (x+y+band)) {
-	               all_OK=FALSE;
-	               break;
-	           }
+                   if (gegl_sample_model_get_sample_double(sample_model,x,y,band,buffer) != (x+y+band)) {
+                       all_OK=FALSE;
+                       break;
+                   }
             }
             if (all_OK==FALSE) {
-	           break;
+                   break;
             }
         }
         if (all_OK==FALSE) {
@@ -262,12 +262,12 @@ test_band_interleaving(Test* test) {
   for (y=0;y<height;y++) {
     for (x=0;x<width;x++) {
       for (band=0;band<num_bands;band++) {
-	if (banks[band][y*width+x] != x+y+band) {
-	  all_OK=FALSE;
-	}
+        if (banks[band][y*width+x] != x+y+band) {
+          all_OK=FALSE;
+        }
       }
       if (all_OK==FALSE) {
-	break;
+        break;
       }
     }
     if (all_OK==FALSE) {

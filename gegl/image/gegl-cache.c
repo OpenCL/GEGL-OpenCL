@@ -107,8 +107,8 @@ dispose (GObject *object)
 
 gint
 gegl_cache_put (GeglCache      *cache,
-		GeglCacheEntry *entry,
-		gsize          *entry_id)
+                GeglCacheEntry *entry,
+                gsize          *entry_id)
 {
   GeglCacheClass *class;
 
@@ -125,8 +125,8 @@ gegl_cache_put (GeglCache      *cache,
 
 GeglFetchResults
 gegl_cache_fetch (GeglCache       *cache,
-		  gsize            entry_id,
-		  GeglCacheEntry **entry)
+                  gsize            entry_id,
+                  GeglCacheEntry **entry)
 {
   GeglCacheClass *class;
 
@@ -349,8 +349,8 @@ fetch (GeglCache       *cache,
 
 static GeglFetchResults
 unfetch (GeglCache      *cache,
-	 gsize           entry_id,
-	 GeglCacheEntry *entry)
+         gsize           entry_id,
+         GeglCacheEntry *entry)
 {
   GeglEntryRecord *record = GSIZE_TO_POINTER (entry_id);
 
@@ -386,7 +386,7 @@ flush (GeglCache *cache,
 
 static void
 discard (GeglCache       *cache,
-	 GeglEntryRecord *record)
+         GeglEntryRecord *record)
 {
 
   gegl_cache_store_remove (record->store, record);

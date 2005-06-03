@@ -33,16 +33,16 @@
 
 static void
 test_buffer_double_g_object_new(Test *test) {
-	GeglBuffer* buffer_double=g_object_new(GEGL_TYPE_BUFFER_DOUBLE,
-					       "num_banks",1,
-					       "elements_per_bank",400,
-					       NULL);
-	ct_test(test,buffer_double!=NULL);
-	ct_test(test, GEGL_IS_BUFFER_DOUBLE(buffer_double));
-	ct_test(test, g_type_parent(GEGL_TYPE_BUFFER_DOUBLE) == GEGL_TYPE_BUFFER);
-	ct_test(test, !strcmp("GeglBufferDouble", g_type_name(GEGL_TYPE_BUFFER_DOUBLE)));
+        GeglBuffer* buffer_double=g_object_new(GEGL_TYPE_BUFFER_DOUBLE,
+                                               "num_banks",1,
+                                               "elements_per_bank",400,
+                                               NULL);
+        ct_test(test,buffer_double!=NULL);
+        ct_test(test, GEGL_IS_BUFFER_DOUBLE(buffer_double));
+        ct_test(test, g_type_parent(GEGL_TYPE_BUFFER_DOUBLE) == GEGL_TYPE_BUFFER);
+        ct_test(test, !strcmp("GeglBufferDouble", g_type_name(GEGL_TYPE_BUFFER_DOUBLE)));
 
-	g_object_unref(buffer_double);
+        g_object_unref(buffer_double);
 }
 
 
@@ -67,9 +67,9 @@ test_buffer_double_properties(Test* test) {
 static void
 test_buffer_double_get_set(Test* test) {
   GeglBufferDouble* buffer_double=g_object_new(GEGL_TYPE_BUFFER_DOUBLE,
-					       "num_banks", 10,
-					       "elements_per_bank", 10,
-					       NULL);
+                                               "num_banks", 10,
+                                               "elements_per_bank", 10,
+                                               NULL);
   GeglBuffer* buffer=GEGL_BUFFER(buffer_double);
   gint bank;
   gint element;
@@ -85,9 +85,9 @@ test_buffer_double_get_set(Test* test) {
   for (bank=0;bank<10;bank++) {
     for (element=0;element<10;element++) {
       if (gegl_buffer_get_element_double(buffer,bank,element) !=
-	  bank+element) {
-	all_ok=FALSE;
-	break;
+          bank+element) {
+        all_ok=FALSE;
+        break;
       }
     }
     if (all_ok==FALSE) {
@@ -104,9 +104,9 @@ static void
 test_buffer_double_factory(Test* test) {
     GeglBufferDouble* buffer_double=
       (GeglBufferDouble*)gegl_buffer_create(TYPE_DOUBLE,
-					    "num_banks",1,
-					    "elements_per_bank",256,
-					    NULL);
+                                            "num_banks",1,
+                                            "elements_per_bank",256,
+                                            NULL);
     ct_test(test,GEGL_IS_BUFFER_DOUBLE(buffer_double));
 
     g_object_unref(buffer_double);

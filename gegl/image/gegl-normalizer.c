@@ -49,8 +49,8 @@ gegl_normalizer_init (GeglNormalizer *self)
 
 gdouble *
 gegl_normalizer_normalize (const GeglNormalizer *self,
-			   const gdouble        *unnor_data,
-			   gdouble              *nor_data,
+                           const gdouble        *unnor_data,
+                           gdouble              *nor_data,
                            gint                  length,
                            gint                  stride)
 {
@@ -71,8 +71,8 @@ gegl_normalizer_normalize (const GeglNormalizer *self,
 
 gdouble *
 gegl_normalizer_unnormalize (const GeglNormalizer *self,
-			     const gdouble        *nor_data,
-			     gdouble              *unnor_data,
+                             const gdouble        *nor_data,
+                             gdouble              *unnor_data,
                              gint                  length,
                              gint                  stride)
 {

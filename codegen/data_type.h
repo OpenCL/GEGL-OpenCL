@@ -1,6 +1,6 @@
 /*
-	FILE:	data_type.h
-	DESC:	holds all the macros for all the data types
+        FILE:   data_type.h
+        DESC:   holds all the macros for all the data types
 */
 #ifndef _DATA_TYPE_H_
 #define _DATA_TYPE_H_

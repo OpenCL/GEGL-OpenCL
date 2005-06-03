@@ -92,7 +92,7 @@ gegl_entry_record_free (GeglEntryRecord * record)
 
 GeglEntryRecord *
 gegl_entry_record_new (GeglCache * cache,
-		       GeglCacheEntry* entry)
+                       GeglCacheEntry* entry)
 {
   /*g_return_val_if_fail (cache != NULL, NULL);*/
   g_return_val_if_fail (entry != NULL, NULL);
@@ -113,7 +113,7 @@ gegl_entry_record_new (GeglCache * cache,
 
 void
 gegl_entry_record_set_cache (GeglEntryRecord * record,
-			     GeglCache * cache)
+                             GeglCache * cache)
 {
   if (record->cache != NULL)
     {
@@ -126,7 +126,7 @@ gegl_entry_record_set_cache (GeglEntryRecord * record,
 
 void
 gegl_entry_record_set_cache_store (GeglEntryRecord * record,
-				   GeglCacheStore * store)
+                                   GeglCacheStore * store)
 {
   if (record->store != NULL)
     {
@@ -141,8 +141,8 @@ gegl_entry_record_set_cache_store (GeglEntryRecord * record,
 
 static GeglStoreData *
 gegl_store_data_new (void * data,
-		     GeglStoreDataFunc free,
-		     GeglStoreDataFunc dirty)
+                     GeglStoreDataFunc free,
+                     GeglStoreDataFunc dirty)
 {
   GeglStoreData * sdata = g_new (GeglStoreData, 1);
   sdata->free = free;
@@ -163,18 +163,18 @@ gegl_store_data_free (GeglStoreData * sdata, GeglEntryRecord * record, GeglCache
 
 void
 gegl_entry_record_add_store_data (GeglEntryRecord * record,
-				  struct _GeglCacheStore * store,
-				  gpointer data)
+                                  struct _GeglCacheStore * store,
+                                  gpointer data)
 {
   gegl_entry_record_add_store_data_full (record, store, data, NULL, NULL);
 }
 
 void
 gegl_entry_record_add_store_data_full (GeglEntryRecord * record,
-				       struct _GeglCacheStore * store,
-				       gpointer data,
-				       GeglStoreDataFunc free_data,
-				       GeglStoreDataFunc dirty)
+                                       struct _GeglCacheStore * store,
+                                       gpointer data,
+                                       GeglStoreDataFunc free_data,
+                                       GeglStoreDataFunc dirty)
 {
   GeglStoreData * sdata = gegl_store_data_new (data, free_data, dirty);
   g_hash_table_insert (record->store_data, store, sdata);
@@ -183,8 +183,8 @@ gegl_entry_record_add_store_data_full (GeglEntryRecord * record,
 
 void
 gegl_entry_record_remove_store_data (GeglEntryRecord * record,
-				     struct _GeglCacheStore * store,
-				     gboolean free_data)
+                                     struct _GeglCacheStore * store,
+                                     gboolean free_data)
 {
   GeglStoreData * data;
   data = g_hash_table_lookup (record->store_data, store);
@@ -195,7 +195,7 @@ gegl_entry_record_remove_store_data (GeglEntryRecord * record,
 
 gpointer
 gegl_entry_record_get_store_data (GeglEntryRecord * record,
-				  struct _GeglCacheStore * store)
+                                  struct _GeglCacheStore * store)
 {
   g_return_val_if_fail (record != NULL, NULL);
   GeglStoreData * data;

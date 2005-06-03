@@ -64,5 +64,5 @@ GList *     gil_type_product_entry_append(gchar *name,
                                           GilType *type,
                                           GList *list);
 
-void	gil_type_print(GilType *type);
+void    gil_type_print(GilType *type);
 #endif

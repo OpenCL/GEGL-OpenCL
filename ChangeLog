@@ -1,5 +1,31 @@
 2005-06-03  Sven Neumann  <sven@gimp.org>
 
+	* codegen/common.h
+	* codegen/data_type.h
+	* gegl/image/gegl-buffer.c
+	* gegl/image/gegl-cache-entry.c
+	* gegl/image/gegl-cache.c
+	* gegl/image/gegl-color-model.c
+	* gegl/image/gegl-color-space-imp.h
+	* gegl/image/gegl-component-sample-model.c
+	* gegl/image/gegl-entry-record.c
+	* gegl/image/gegl-heap-cache.c
+	* gegl/image/gegl-normalizer-mult.c
+	* gegl/image/gegl-normalizer.c
+	* gegl/image/gegl-sample-model.c
+	* gegl/image/gegl-swap-cache-store.c
+	* gegl/image/gegl-swap-cache.c
+	* gil/gil/gilsymbol.h
+	* gil/gil/gilsymboltable.h
+	* gil/gil/giltype.h
+	* tests/gegl-image-buffer-caching-test.c
+	* tests/gegl-image-buffer-double-test.c
+	* tests/gegl-image-cache-tests.c
+	* tests/gegl-image-component-sample-model-test.c
+	* tests/gegl-image-memory-cache-test.c: converted tabs to spaces.
+
+2005-06-03  Sven Neumann  <sven@gimp.org>
+
 	* gegl/image/Makefile.am (IMAGE_unused_sources): added gegl-tile.h
 	and gegl-tile-iterator.h.
 

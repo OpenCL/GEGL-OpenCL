@@ -74,14 +74,14 @@ gegl_normalizer_mult_class_init (GeglNormalizerMultClass *klass)
   normalizer_class->unnormalize = unnormalize;
 
   g_object_class_install_property (object_class, PROP_ALPHA,
-				   g_param_spec_double ("alpha",
-							"Multiplier",
-							"The multiplier used to rescale the sample",
-							G_MINDOUBLE,
-							G_MAXDOUBLE,
-							1,
-							G_PARAM_CONSTRUCT |
-							G_PARAM_READWRITE));
+                                   g_param_spec_double ("alpha",
+                                                        "Multiplier",
+                                                        "The multiplier used to rescale the sample",
+                                                        G_MINDOUBLE,
+                                                        G_MAXDOUBLE,
+                                                        1,
+                                                        G_PARAM_CONSTRUCT |
+                                                        G_PARAM_READWRITE));
 }
 
 static void
@@ -92,7 +92,7 @@ gegl_normalizer_mult_init (GeglNormalizerMult *self)
 
 static void
 get_property (GObject    *object,
-	      guint       property_id,
+              guint       property_id,
               GValue     *value,
               GParamSpec *pspec)
 {
@@ -112,7 +112,7 @@ get_property (GObject    *object,
 
 static void
 set_property (GObject      *object,
-	      guint         property_id,
+              guint         property_id,
               const GValue *value,
               GParamSpec   *pspec)
 {
@@ -132,8 +132,8 @@ set_property (GObject      *object,
 
 static gdouble *
 normalize (const GeglNormalizer *normalizer,
-	   const gdouble        *unnor_data,
-	   gdouble              *nor_data,
+           const gdouble        *unnor_data,
+           gdouble              *nor_data,
            gint                  length,
            gint                  stride)
 {
@@ -155,8 +155,8 @@ normalize (const GeglNormalizer *normalizer,
 
 static gdouble *
 unnormalize (const GeglNormalizer *normalizer,
-	     const gdouble        *nor_data,
-	     gdouble              *unnor_data,
+             const gdouble        *nor_data,
+             gdouble              *unnor_data,
              gint                  length,
              gint                  stride)
 {

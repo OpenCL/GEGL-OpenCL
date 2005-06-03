@@ -99,7 +99,7 @@ finalize (GObject *object)
 
 GeglSwapCache*
 gegl_swap_cache_new (gchar* filename_template,
-		     gint64 heap_size)
+                     gint64 heap_size)
 {
   GeglSwapCache * self = g_object_new(GEGL_TYPE_SWAP_CACHE, NULL);
   self->stored = gegl_swap_cache_store_new (filename_template);
@@ -109,7 +109,7 @@ gegl_swap_cache_new (gchar* filename_template,
 
 void
 insert_record (GeglCache* cache,
-	       GeglEntryRecord* record)
+               GeglEntryRecord* record)
 {
   /*
    * We are guaranteed, at this point, that either the heap cache can
@@ -174,6 +174,6 @@ is_persistent (GeglCache* cache)
 
 void
 flush_internal (GeglCache * cache,
-		GeglEntryRecord * record)
+                GeglEntryRecord * record)
 {
 }

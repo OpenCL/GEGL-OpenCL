@@ -511,7 +511,6 @@ gegl_init
 GeglRect
 GeglPoint
 GeglDimension
-ROUND
 </SECTION>
 
 <SECTION>
