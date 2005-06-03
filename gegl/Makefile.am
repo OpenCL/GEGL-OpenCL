@@ -20,17 +20,6 @@ GEGL_sources = \
 	gegl-visitable.c	\
 	gegl-visitor.c
 
-GEGL_broken_sources = \
-	gegl-add.c		\
-	gegl-comp.c		\
-	gegl-fade.c		\
-	gegl-fill.c		\
-	gegl-i-add.c		\
-	gegl-mult.c		\
-	gegl-multiply.c		\
-	gegl-over.c		\
-	gegl-print.c
-
 GEGL_public_headers = \
 	gegl.h
 	gegl-connection.h	\
