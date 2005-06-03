@@ -1,3 +1,7 @@
+2005-06-04  Sven Neumann  <sven@gimp.org>
+
+	* tools/testsuite/Makefile.am: run testcomplex from 'make check'.
+
 2005-06-03  Sven Neumann  <sven@gimp.org>
 
 	* codegen/common.h
