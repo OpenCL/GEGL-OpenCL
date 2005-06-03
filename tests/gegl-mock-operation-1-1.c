@@ -17,90 +17,69 @@ enum
   PROP_LAST
 };
 
-static void class_init (GeglMockFilter11Class * klass);
-static void init(GeglMockFilter11 *self, GeglMockFilter11Class *klass);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
+static void gegl_mock_filter_1_1_class_init (GeglMockFilter11Class *klass);
+static void gegl_mock_filter_1_1_init       (GeglMockFilter11      *self);
 
-static gboolean evaluate (GeglFilter *filter, const gchar *output_prop);
+static void     get_property (GObject      *gobject,
+                              guint         prop_id,
+                              GValue       *value,
+                              GParamSpec   *pspec);
+static void     set_property (GObject      *gobject,
+                              guint         prop_id,
+                              const GValue *value,
+                              GParamSpec   *pspec);
+static gboolean evaluate     (GeglFilter   *filter,
+                              const gchar  *output_prop);
 
-static gpointer parent_class = NULL;
 
-GType
-gegl_mock_filter_1_1_get_type (void)
-{
-  static GType type = 0;
+G_DEFINE_TYPE (GeglMockFilter11, gegl_mock_filter_1_1, GEGL_TYPE_FILTER)
 
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-      {
-        sizeof (GeglMockFilter11Class),
-        (GBaseInitFunc) NULL,
-        (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) class_init,
-        (GClassFinalizeFunc) NULL,
-        NULL,
-        sizeof (GeglMockFilter11),
-        0,
-        (GInstanceInitFunc) init,
-        NULL
-      };
-
-      type = g_type_register_static (GEGL_TYPE_FILTER,
-                                     "GeglMockFilter11",
-                                     &typeInfo,
-                                     0);
-    }
-    return type;
-}
 
 static void
-class_init (GeglMockFilter11Class * klass)
+gegl_mock_filter_1_1_class_init (GeglMockFilter11Class *klass)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GObjectClass    *object_class = G_OBJECT_CLASS (klass);
   GeglFilterClass *filter_class = GEGL_FILTER_CLASS (klass);
 
-  parent_class = g_type_class_peek_parent(klass);
-
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
+  object_class->set_property = set_property;
+  object_class->get_property = get_property;
 
   filter_class->evaluate = evaluate;
 
-  g_object_class_install_property (gobject_class, PROP_OUTPUT0,
-               g_param_spec_int ("output0",
-                                 "Output0",
-                                 "An output0 property",
-                                  0,
-                                  1000,
-                                  0,
-                                  G_PARAM_READABLE |
-                                  GEGL_PROPERTY_OUTPUT));
+  g_object_class_install_property (object_class, PROP_OUTPUT0,
+                                   g_param_spec_int ("output0",
+                                                     "Output0",
+                                                     "An output0 property",
+                                                     0,
+                                                     1000,
+                                                     0,
+                                                     G_PARAM_READABLE |
+                                                     GEGL_PROPERTY_OUTPUT));
 
-  g_object_class_install_property (gobject_class, PROP_INPUT0,
-               g_param_spec_int ("input0",
-                                 "Input0",
-                                 "An input0 property",
-                                  0,
-                                  1000,
-                                  100,
-                                  G_PARAM_CONSTRUCT |
-                                  G_PARAM_READWRITE |
-                                  GEGL_PROPERTY_INPUT));
+  g_object_class_install_property (object_class, PROP_INPUT0,
+                                   g_param_spec_int ("input0",
+                                                     "Input0",
+                                                     "An input0 property",
+                                                     0,
+                                                     1000,
+                                                     100,
+                                                     G_PARAM_CONSTRUCT |
+                                                     G_PARAM_READWRITE |
+                                                     GEGL_PROPERTY_INPUT));
 }
 
 static void
-init (GeglMockFilter11 * self,
-      GeglMockFilter11Class * klass)
+gegl_mock_filter_1_1_init (GeglMockFilter11 *self)
 {
-  GeglFilter *filter = GEGL_FILTER(self);
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GeglFilter   *filter       = GEGL_FILTER(self);
+  GObjectClass *object_class = G_OBJECT_GET_CLASS (self);
 
-  gegl_filter_create_property(filter,
-    g_object_class_find_property(gobject_class, "output0"));
-  gegl_filter_create_property(filter,
-    g_object_class_find_property(gobject_class, "input0"));
+  gegl_filter_create_property (filter,
+                               g_object_class_find_property (object_class,
+                                                             "output0"));
+  gegl_filter_create_property (filter,
+                               g_object_class_find_property (object_class,
+                                                             "input0"));
 }
 
 static void

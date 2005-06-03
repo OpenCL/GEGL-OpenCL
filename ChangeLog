@@ -1,5 +1,13 @@
 2005-06-03  Sven Neumann  <sven@gimp.org>
 
+	* tests/gegl-mock-filter-0-1.c
+	* tests/gegl-mock-filter-1-1.c
+	* tests/gegl-mock-filter-1-2.c
+	* tests/gegl-mock-filter-2-1.c
+	* tests/gegl-mock-filter-2-2.c: use G_DEFINE_TYPE, cleanup.
+
+2005-06-03  Sven Neumann  <sven@gimp.org>
+
 	* tests/gegl-image-mock-cache-entry.[ch]: use G_DEFINE_TYPE, cleanup.
 
 	* tests/gegl-image-cache-tests.c: fixed a typo.
