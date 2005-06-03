@@ -12,94 +12,74 @@ enum
   PROP_LAST
 };
 
-static void class_init (GeglMockImageClass * klass);
-static void init (GeglMockImage *self, GeglMockImageClass * klass);
-static GObject* constructor (GType type, guint n_props, GObjectConstructParam *props);
-static void finalize(GObject * gobject);
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
+static void     gegl_mock_image_class_init (GeglMockImageClass *klass);
+static void     gegl_mock_image_init       (GeglMockImage      *self);
 
-static gpointer parent_class = NULL;
+static GObject* constructor  (GType                  type,
+                              guint                  n_props,
+                              GObjectConstructParam *props);
+static void     finalize     (GObject               *gobject);
+static void     set_property (GObject               *gobject,
+                              guint                  prop_id,
+                              const GValue          *value,
+                              GParamSpec            *pspec);
+static void     get_property (GObject               *gobject,
+                              guint                  prop_id,
+                              GValue                *value,
+                              GParamSpec            *pspec);
 
-GType
-gegl_mock_image_get_type (void)
+
+
+G_DEFINE_TYPE (GeglMockImage, gegl_mock_image, GEGL_TYPE_OBJECT)
+
+
+static void
+gegl_mock_image_class_init (GeglMockImageClass * klass)
 {
-  static GType type = 0;
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-      {
-        sizeof (GeglMockImageClass),
-        (GBaseInitFunc) NULL,
-        (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) class_init,
-        (GClassFinalizeFunc) NULL,
-        NULL,
-        sizeof (GeglMockImage),
-        0,
-        (GInstanceInitFunc) init,
-        NULL,             /* value_table */
-      };
+  object_class->finalize     = finalize;
+  object_class->constructor  = constructor;
+  object_class->set_property = set_property;
+  object_class->get_property = get_property;
 
-      type = g_type_register_static (GEGL_TYPE_OBJECT,
-                                     "GeglMockImage",
-                                     &typeInfo,
-                                     0);
+  g_object_class_install_property (object_class, PROP_LENGTH,
+                                   g_param_spec_int ("length",
+                                                     "Length",
+                                                     "Length of MockImage",
+                                                     0,
+                                                     65535,
+                                                     0,
+                                                     G_PARAM_CONSTRUCT |
+                                                     G_PARAM_READWRITE));
 
-    }
-
-    return type;
+  g_object_class_install_property (object_class, PROP_DEFAULT_PIXEL,
+                                   g_param_spec_int ("default-pixel",
+                                                     "DefaultPixel",
+                                                     "Default pixel value",
+                                                     0,
+                                                     65535,
+                                                     0,
+                                                     G_PARAM_CONSTRUCT |
+                                                     G_PARAM_READWRITE));
 }
 
 static void
-class_init (GeglMockImageClass * klass)
+gegl_mock_image_init (GeglMockImage *self)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-  parent_class = g_type_class_peek_parent(klass);
-
-  gobject_class->finalize = finalize;
-  gobject_class->constructor = constructor;
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-
-  g_object_class_install_property (gobject_class, PROP_LENGTH,
-               g_param_spec_int ("length",
-                                 "Length",
-                                 "Length of MockImage",
-                                  0,
-                                  65535,
-                                  0,
-                                  G_PARAM_CONSTRUCT |
-                                  G_PARAM_READWRITE));
-
-  g_object_class_install_property (gobject_class, PROP_DEFAULT_PIXEL,
-               g_param_spec_int ("default-pixel",
-                                 "DefaultPixel",
-                                 "Default pixel value",
-                                  0,
-                                  65535,
-                                  0,
-                                  G_PARAM_CONSTRUCT |
-                                  G_PARAM_READWRITE));
-}
-
-static void
-init (GeglMockImage * self,
-      GeglMockImageClass * klass)
-{
-  self->data = NULL;
-  self->length = 0;
+  self->data          = NULL;
+  self->length        = 0;
   self->default_pixel = 0;
 }
 
-static GObject*
+static GObject *
 constructor (GType                  type,
              guint                  n_props,
              GObjectConstructParam *props)
 {
-  GObject *gobject = G_OBJECT_CLASS (parent_class)->constructor (type, n_props, props);
-  GeglMockImage *self = GEGL_MOCK_IMAGE(gobject);
+  GObjectClass  *class  = G_OBJECT_CLASS (gegl_mock_image_parent_class);
+  GObject       *object = class->constructor (type, n_props, props);
+  GeglMockImage *self   = GEGL_MOCK_IMAGE (object);
   gint i;
   gint *data;
 
@@ -109,26 +89,27 @@ constructor (GType                  type,
   for(i = 0; i < self->length; i++)
     data[i] = self->default_pixel;
 
-  return gobject;
+  return object;
 }
 
 static void
-finalize(GObject *gobject)
+finalize(GObject *object)
 {
-  GeglMockImage *self = GEGL_MOCK_IMAGE(gobject);
+  GeglMockImage *self = GEGL_MOCK_IMAGE(object);
 
   g_free(self->data);
 
-  G_OBJECT_CLASS(parent_class)->finalize(gobject);
+  G_OBJECT_CLASS (gegl_mock_image_parent_class)->finalize(object);
 }
 
 static void
-set_property (GObject      *gobject,
+set_property (GObject      *object,
               guint         prop_id,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglMockImage *self = GEGL_MOCK_IMAGE(gobject);
+  GeglMockImage *self = GEGL_MOCK_IMAGE(object);
+
   switch (prop_id)
   {
     case PROP_LENGTH:
@@ -143,12 +124,13 @@ set_property (GObject      *gobject,
 }
 
 static void
-get_property (GObject      *gobject,
+get_property (GObject      *object,
               guint         prop_id,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglMockImage *self = GEGL_MOCK_IMAGE(gobject);
+  GeglMockImage *self = GEGL_MOCK_IMAGE(object);
+
   switch (prop_id)
   {
     case PROP_LENGTH:

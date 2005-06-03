@@ -1,5 +1,13 @@
 2005-06-03  Sven Neumann  <sven@gimp.org>
 
+	* tests/gegl-mock-image-filter.c
+	* tests/gegl-mock-image.c
+	* tests/gegl-mock-node-visitor.c
+	* tests/gegl-mock-object.c
+	* tests/gegl-mock-property-visitor.c: use G_DEFINE_TYPE, cleanup.
+
+2005-06-03  Sven Neumann  <sven@gimp.org>
+
 	* tests/gegl-mock-filter-0-1.c
 	* tests/gegl-mock-filter-1-1.c
 	* tests/gegl-mock-filter-1-2.c

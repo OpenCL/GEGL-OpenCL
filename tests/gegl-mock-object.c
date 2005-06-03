@@ -5,40 +5,19 @@
 #include "gegl-mock-object.h"
 
 
-static void class_init        (GeglMockObjectClass * klass);
-static gpointer parent_class = NULL;
+static void gegl_mock_object_class_init (GeglMockObjectClass *klass);
+static void gegl_mock_object_init       (GeglMockObject      *self);
 
-GType
-gegl_mock_object_get_type (void)
+
+G_DEFINE_TYPE (GeglMockObject, gegl_mock_object, GEGL_TYPE_OBJECT)
+
+
+static void
+gegl_mock_object_class_init (GeglMockObjectClass *klass)
 {
-  static GType type = 0;
-
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-      {
-        sizeof (GeglMockObjectClass),
-        (GBaseInitFunc) NULL,
-        (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) class_init,
-        (GClassFinalizeFunc) NULL,
-        NULL,
-        sizeof (GeglMockObject),
-        0,
-        (GInstanceInitFunc) NULL,
-        NULL
-      };
-
-      type = g_type_register_static (GEGL_TYPE_OBJECT,
-                                     "GeglMockObject",
-                                     &typeInfo,
-                                     0);
-    }
-    return type;
 }
 
 static void
-class_init (GeglMockObjectClass * klass)
+gegl_mock_object_init (GeglMockObject *self)
 {
-  parent_class = g_type_class_peek_parent(klass);
 }

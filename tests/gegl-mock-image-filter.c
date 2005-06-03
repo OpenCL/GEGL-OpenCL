@@ -16,123 +16,106 @@ enum
   PROP_LAST
 };
 
-static void class_init (GeglMockImageFilterClass * klass);
-static void init(GeglMockImageFilter *self, GeglMockImageFilterClass *klass);
-static void finalize(GObject *gobject);
-static void get_property (GObject *gobject, guint prop_id, GValue *value, GParamSpec *pspec);
-static void set_property (GObject *gobject, guint prop_id, const GValue *value, GParamSpec *pspec);
-static gboolean evaluate (GeglFilter *filter, const gchar *output_prop);
 
-static gpointer parent_class = NULL;
+static void  gegl_mock_image_filter_class_init (GeglMockImageFilterClass *klass);
+static void  gegl_mock_image_filter_init       (GeglMockImageFilter      *self);
 
-GType
-gegl_mock_image_filter_get_type (void)
-{
-  static GType type = 0;
+static void     finalize     (GObject      *gobject);
+static void     get_property (GObject      *gobject,
+                              guint         prop_id,
+                              GValue       *value,
+                              GParamSpec   *pspec);
+static void     set_property (GObject      *gobject,
+                              guint         prop_id,
+                              const GValue *value,
+                              GParamSpec   *pspec);
+static gboolean evaluate     (GeglFilter   *filter,
+                              const gchar  *output_prop);
 
-  if (!type)
-    {
-      static const GTypeInfo typeInfo =
-      {
-        sizeof (GeglMockImageFilterClass),
-        (GBaseInitFunc) NULL,
-        (GBaseFinalizeFunc) NULL,
-        (GClassInitFunc) class_init,
-        (GClassFinalizeFunc) NULL,
-        NULL,
-        sizeof (GeglMockImageFilter),
-        0,
-        (GInstanceInitFunc) init,
-        NULL
-      };
 
-      type = g_type_register_static (GEGL_TYPE_FILTER,
-                                     "GeglMockImageFilter",
-                                     &typeInfo,
-                                     0);
-    }
-    return type;
-}
+
+G_DEFINE_TYPE (GeglMockImageFilter, gegl_mock_image_filter, GEGL_TYPE_FILTER)
+
 
 static void
-class_init (GeglMockImageFilterClass * klass)
+gegl_mock_image_filter_class_init (GeglMockImageFilterClass * klass)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GObjectClass    *object_class = G_OBJECT_CLASS (klass);
   GeglFilterClass *filter_class = GEGL_FILTER_CLASS (klass);
 
-  parent_class = g_type_class_peek_parent(klass);
-
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-  gobject_class->finalize = finalize;
+  object_class->set_property = set_property;
+  object_class->get_property = get_property;
+  object_class->finalize     = finalize;
 
   filter_class->evaluate = evaluate;
 
-  g_object_class_install_property (gobject_class, PROP_OUTPUT,
-               g_param_spec_object ("output",
-                                 "Output",
-                                 "An output property",
-                                  GEGL_TYPE_MOCK_IMAGE,
-                                  G_PARAM_READABLE |
-                                  GEGL_PROPERTY_OUTPUT));
+  g_object_class_install_property (object_class, PROP_OUTPUT,
+                                   g_param_spec_object ("output",
+                                                        "Output",
+                                                        "An output property",
+                                                        GEGL_TYPE_MOCK_IMAGE,
+                                                        G_PARAM_READABLE |
+                                                        GEGL_PROPERTY_OUTPUT));
 
-  g_object_class_install_property (gobject_class, PROP_INPUT0,
-               g_param_spec_object ("input0",
-                                 "Input0",
-                                 "An input0 property",
-                                  GEGL_TYPE_MOCK_IMAGE,
-                                  G_PARAM_CONSTRUCT |
-                                  G_PARAM_READWRITE |
-                                  GEGL_PROPERTY_INPUT));
+  g_object_class_install_property (object_class, PROP_INPUT0,
+                                   g_param_spec_object ("input0",
+                                                        "Input0",
+                                                        "An input0 property",
+                                                        GEGL_TYPE_MOCK_IMAGE,
+                                                        G_PARAM_CONSTRUCT |
+                                                        G_PARAM_READWRITE |
+                                                        GEGL_PROPERTY_INPUT));
 
-  g_object_class_install_property (gobject_class, PROP_INPUT1,
-               g_param_spec_int ("input1",
-                                 "Input1",
-                                 "An input1 property",
-                                  0,
-                                  1000,
-                                  500,
-                                  G_PARAM_CONSTRUCT |
-                                  G_PARAM_READWRITE |
-                                  GEGL_PROPERTY_INPUT));
+  g_object_class_install_property (object_class, PROP_INPUT1,
+                                   g_param_spec_int ("input1",
+                                                     "Input1",
+                                                     "An input1 property",
+                                                     0,
+                                                     1000,
+                                                     500,
+                                                     G_PARAM_CONSTRUCT |
+                                                     G_PARAM_READWRITE |
+                                                     GEGL_PROPERTY_INPUT));
 }
 
 static void
-init (GeglMockImageFilter * self,
-      GeglMockImageFilterClass * klass)
+gegl_mock_image_filter_init (GeglMockImageFilter *self)
 {
-  GeglFilter *filter = GEGL_FILTER(self);
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GeglFilter   *filter       = GEGL_FILTER (self);
+  GObjectClass *object_class = G_OBJECT_GET_CLASS (self);
 
-  gegl_filter_create_property(filter,
-    g_object_class_find_property(gobject_class, "output"));
-  gegl_filter_create_property(filter,
-    g_object_class_find_property(gobject_class, "input0"));
-  gegl_filter_create_property(filter,
-    g_object_class_find_property(gobject_class, "input1"));
+  gegl_filter_create_property (filter,
+                               g_object_class_find_property (object_class,
+                                                             "output"));
+  gegl_filter_create_property (filter,
+                               g_object_class_find_property (object_class,
+                                                             "input0"));
+  gegl_filter_create_property (filter,
+                               g_object_class_find_property (object_class,
+                                                             "input1"));
 
   self->input0 = NULL;
   self->output = NULL;
 }
 
 static void
-finalize(GObject *gobject)
+finalize (GObject *object)
 {
-  GeglMockImageFilter * self = GEGL_MOCK_IMAGE_FILTER(gobject);
+  GeglMockImageFilter *self = GEGL_MOCK_IMAGE_FILTER (object);
 
-  if(self->output)
-    g_object_unref(self->output);
+  if (self->output)
+    g_object_unref (self->output);
 
-  G_OBJECT_CLASS(parent_class)->finalize(gobject);
+  G_OBJECT_CLASS (gegl_mock_image_filter_parent_class)->finalize (object);
 }
 
 static void
-get_property (GObject      *gobject,
+get_property (GObject      *object,
               guint         prop_id,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglMockImageFilter *self = GEGL_MOCK_IMAGE_FILTER(gobject);
+  GeglMockImageFilter *self = GEGL_MOCK_IMAGE_FILTER (object);
 
   switch (prop_id)
   {
@@ -151,12 +134,13 @@ get_property (GObject      *gobject,
 }
 
 static void
-set_property (GObject      *gobject,
+set_property (GObject      *object,
               guint         prop_id,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglMockImageFilter *self = GEGL_MOCK_IMAGE_FILTER(gobject);
+  GeglMockImageFilter *self = GEGL_MOCK_IMAGE_FILTER (object);
+
   switch (prop_id)
   {
     case PROP_INPUT0:
