@@ -1,3 +1,8 @@
+2005-06-03  Sven Neumann  <sven@gimp.org>
+
+	* gegl/image/Makefile.am (IMAGE_unused_sources): added gegl-tile.h
+	and gegl-tile-iterator.h.
+
 2005-06-03  Michael Natterer  <mitch@gimp.org>
 
 	* gegl/gegl-property.c: cleanup.

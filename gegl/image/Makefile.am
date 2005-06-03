@@ -60,7 +60,9 @@ IMAGE_headers = \
 IMAGE_unused_sources = \
 	gegl-color-model.c		\
 	gegl-color-model.h		\
-	gegl-color-space-impl.h
+	gegl-color-space-impl.h		\
+	gegl-tile.h			\
+	gegl-tile-iterator.h
 
 libimage_la_SOURCES = $(IMAGE_sources) $(IMAGE_headers)
 
