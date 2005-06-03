@@ -38,24 +38,25 @@ enum
 static void gegl_normalizer_mult_class_init (GeglNormalizerMultClass *klass);
 static void gegl_normalizer_mult_init       (GeglNormalizerMult      *self);
 
-static void     get_property  (GObject              *object,
-                               guint                 property_id,
-                               GValue               *value,
-                               GParamSpec           *pspec);
-static void     set_property  (GObject              *object,
-                               guint                 property_id,
-                               const GValue         *value,
-                               GParamSpec           *pspec);
-static gdouble *normalize     (const GeglNormalizer *self,
-                               const gdouble        *unnor_data,
-                               gdouble              *nor_data,
-                               gint                  length,
-                               gint                  stride);
-static gdouble *unnormalize   (const GeglNormalizer *self,
-                               const gdouble        *nor_data,
-                               gdouble              *unnor_data,
-                               gint                  length,
-                               gint                  stride);
+static void      get_property  (GObject              *object,
+                                guint                 property_id,
+                                GValue               *value,
+                                GParamSpec           *pspec);
+static void      set_property  (GObject              *object,
+                                guint                 property_id,
+                                const GValue         *value,
+                                GParamSpec           *pspec);
+static gdouble * normalize     (const GeglNormalizer *self,
+                                const gdouble        *unnor_data,
+                                gdouble              *nor_data,
+                                gint                  length,
+                                gint                  stride);
+static gdouble * unnormalize   (const GeglNormalizer *self,
+                                const gdouble        *nor_data,
+                                gdouble              *unnor_data,
+                                gint                  length,
+                                gint                  stride);
+
 
 G_DEFINE_TYPE (GeglNormalizerMult, gegl_normalizer_mult, GEGL_TYPE_NORMALIZER)
 
@@ -90,16 +91,19 @@ gegl_normalizer_mult_init (GeglNormalizerMult *self)
 }
 
 static void
-get_property (GObject * object,
-	      guint property_id, GValue * value, GParamSpec * pspec)
+get_property (GObject    *object,
+	      guint       property_id,
+              GValue     *value,
+              GParamSpec *pspec)
 {
-  GeglNormalizerMult *self = (GeglNormalizerMult *) object;
+  GeglNormalizerMult *self = GEGL_NORMALIZER_MULT (object);
 
   switch (property_id)
     {
     case PROP_ALPHA:
       g_value_set_double (value, self->alpha);
       break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
@@ -107,16 +111,19 @@ get_property (GObject * object,
 }
 
 static void
-set_property (GObject * object,
-	      guint property_id, const GValue * value, GParamSpec * pspec)
+set_property (GObject      *object,
+	      guint         property_id,
+              const GValue *value,
+              GParamSpec   *pspec)
 {
-  GeglNormalizerMult *self = (GeglNormalizerMult *) object;
+  GeglNormalizerMult *self = GEGL_NORMALIZER_MULT (object);
 
   switch (property_id)
     {
     case PROP_ALPHA:
       self->alpha = g_value_get_double (value);
       break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
@@ -124,38 +131,48 @@ set_property (GObject * object,
 }
 
 static gdouble *
-normalize (const GeglNormalizer * normalizer,
-	   const gdouble * unnor_data,
-	   gdouble * nor_data, gint length, gint stride)
+normalize (const GeglNormalizer *normalizer,
+	   const gdouble        *unnor_data,
+	   gdouble              *nor_data,
+           gint                  length,
+           gint                  stride)
 {
-  GeglNormalizerMult *self = (GeglNormalizerMult *) normalizer;
-  gdouble *nor_i = nor_data;
-  const gdouble *unnor_i = unnor_data;
-  int i;
+  GeglNormalizerMult *self    = GEGL_NORMALIZER_MULT (normalizer);
+  gdouble            *nor_i   = nor_data;
+  const gdouble      *unnor_i = unnor_data;
+  gint                i;
+
   for (i = 0; i < length; i++)
     {
-      (*nor_i) = (*unnor_i) * (self->alpha);
+      *nor_i = *unnor_i * (self->alpha);
+
       nor_i += stride;
       unnor_i += stride;
     }
+
   return nor_data;
 }
 
 static gdouble *
-unnormalize (const GeglNormalizer * normalizer,
-	     const gdouble * nor_data,
-	     gdouble * unnor_data, gint length, gint stride)
+unnormalize (const GeglNormalizer *normalizer,
+	     const gdouble        *nor_data,
+	     gdouble              *unnor_data,
+             gint                  length,
+             gint                  stride)
 {
-  GeglNormalizerMult *self = (GeglNormalizerMult *) normalizer;
-  double alpha_inv = 1 / (self->alpha);
-  const gdouble *nor_i = nor_data;
-  gdouble *unnor_i = unnor_data;
-  int i;
+  GeglNormalizerMult *self      = GEGL_NORMALIZER_MULT (normalizer);
+  const gdouble      *nor_i     = nor_data;
+  gdouble            *unnor_i   = unnor_data;
+  double              alpha_inv = 1 / (self->alpha);
+  gint                i;
+
   for (i = 0; i < length; i++)
     {
-      (*unnor_i) = (*nor_i) * alpha_inv;
+      *unnor_i = *nor_i * alpha_inv;
+
       unnor_i += stride;
       nor_i += stride;
     }
+
   return unnor_data;
 }

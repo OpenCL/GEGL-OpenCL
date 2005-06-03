@@ -27,6 +27,7 @@
 
 #include "gegl-normalizer.h"
 
+
 static void  gegl_normalizer_class_init (GeglNormalizerClass *klass);
 static void  gegl_normalizer_init       (GeglNormalizer      *self);
 
@@ -47,19 +48,24 @@ gegl_normalizer_init (GeglNormalizer *self)
 }
 
 gdouble *
-gegl_normalizer_normalize (const GeglNormalizer * self,
-			   const gdouble * unnor_data,
-			   gdouble * nor_data, gint length, gint stride)
+gegl_normalizer_normalize (const GeglNormalizer *self,
+			   const gdouble        *unnor_data,
+			   gdouble              *nor_data,
+                           gint                  length,
+                           gint                  stride)
 {
-  GeglNormalizerClass *class = GEGL_NORMALIZER_GET_CLASS (self);
+  GeglNormalizerClass *class;
+
   g_return_val_if_fail (GEGL_IS_NORMALIZER (self), NULL);
   g_return_val_if_fail (unnor_data != NULL, NULL);
+
+  class = GEGL_NORMALIZER_GET_CLASS (self);
+
   g_return_val_if_fail (class->normalize != NULL, NULL);
 
-  if (nor_data == NULL)
-    {
-      nor_data = g_new (gdouble, length);
-    }
+  if (! nor_data)
+    nor_data = g_new (gdouble, length);
+
   return class->normalize (self, unnor_data, nor_data, length, stride);
 }
 

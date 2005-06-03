@@ -1,3 +1,8 @@
+2005-06-03  Sven Neumann  <sven@gimp.org>
+
+	* gegl/image/gegl-normalizer.c
+	* gegl/image/gegl-normalizer-mult.c: code cleanup.
+
 2005-06-03  Øyvind Kolås  <pippin@gimp.org>
 
 	* TODO: moved graph related files up a level.
