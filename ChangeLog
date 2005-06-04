@@ -1,5 +1,9 @@
 2005-06-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* TODO: updated directory restructuring plan.
+
+2005-06-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* README: expand DAG at first usage.
 	* TODO: in the directory restructuring, specify where gmodules lives.
 
