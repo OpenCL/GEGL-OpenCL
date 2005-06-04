@@ -35,12 +35,12 @@ gegl/
         operation/
             (the operation base class, as well as derived convenience classes
             for point ops, area ops, sources, sinks, filters etc.)
+        pdb/
         operations-core/
-            (_nop, _tee, _proxy, _null) internal operaions, maybe gmodules.
+            (_nop, _tee, _proxy, _null) internal operations, maybe gmodules.
         gegl-init.*
         gegl-graph.*
         gegl-connection.*
-        gegl-print.*
         gegl-node.*
         gegl-visitor.*
         gegl-visitable.*
