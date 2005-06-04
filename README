@@ -5,7 +5,7 @@
 =============================================================================
 
 GEGL is a library facilitating the creation, manipulation and processing
-of directed acyclic graphs of image processing operations.
+of DAGs, directed acyclic graphs, of image processing operations.
 
 
 The graph

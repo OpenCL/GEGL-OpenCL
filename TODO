@@ -11,7 +11,11 @@ make sense to do them.
 Code cleanup
 -----------------------------------------------------------------------------
 
-Coding style fixes, usage of gobject macros, removal of dead code.
+ - Coding style fixes
+ - usage of gobject macros
+ - removal of dead code (
+
+
 
 
 Directory restructering
@@ -30,7 +34,7 @@ gegl/
             gegl-eval-visitor.*
         operation/
             (the actual glue code for tying in processing plug-ins)
-        core-ops/
+        operations-core/ (gmodules)
             (_nop, _tee, _proxy, _null) statically compiled into the library
         gegl-init.*
         gegl-graph.*
@@ -39,7 +43,7 @@ gegl/
         gegl-node.*
         gegl-visitor.*
         gegl-visitable.*
-    base-ops/
+    operations-base/ (gmodules)
         (porter-duff, blank, gaussian blur, brightness+contrast)
     docs/
 
