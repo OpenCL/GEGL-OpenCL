@@ -1,4 +1,8 @@
 2005-06-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-property.h: remove duplicate gegl_property_set_param_spec.
+
+2005-06-05  Øyvind Kolås  <pippin@gimp.org>
 	
 	* gegl/gegl-property.h: indentation cleanup from previous commit.
 
