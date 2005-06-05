@@ -415,7 +415,7 @@ gegl_node_disconnect_sinks (GeglNode *self)
  * Returns: number of sinks
  **/
 gint
-gegl_node_num_sinks (GeglNode *self)
+gegl_node_get_num_sinks (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
@@ -423,7 +423,7 @@ gegl_node_num_sinks (GeglNode *self)
 }
 
 /**
- * gegl_node_num_sources:
+ * gegl_node_get_num_sources:
  * @self: a #GeglNode.
  *
  * Gets the number of source
@@ -431,7 +431,7 @@ gegl_node_num_sinks (GeglNode *self)
  * Returns: number of sources
  **/
 gint
-gegl_node_num_sources (GeglNode *self)
+gegl_node_get_num_sources (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 

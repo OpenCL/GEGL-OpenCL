@@ -73,18 +73,18 @@ test_graph_properties(Test *test)
 
     gegl_node_connect(B, "input0", GEGL_NODE(graph), "output0");
 
-    ct_test(test, 0 == gegl_node_num_sinks(A));
-    ct_test(test, 1 == gegl_node_num_sinks(GEGL_NODE(graph)));
-    ct_test(test, 1 == gegl_node_num_sources(B));
+    ct_test(test, 0 == gegl_node_get_num_sinks(A));
+    ct_test(test, 1 == gegl_node_get_num_sinks(GEGL_NODE(graph)));
+    ct_test(test, 1 == gegl_node_get_num_sources(B));
 
     ct_test(test, output0 == gegl_node_get_property(GEGL_NODE(graph), "output0"));
     ct_test(test, GEGL_FILTER(A) == gegl_property_get_filter(output0));
 
     gegl_node_disconnect(B, "input0", GEGL_NODE(graph), "output0");
 
-    ct_test(test, 0 == gegl_node_num_sinks(A));
-    ct_test(test, 0 == gegl_node_num_sinks(GEGL_NODE(graph)));
-    ct_test(test, 0 == gegl_node_num_sources(B));
+    ct_test(test, 0 == gegl_node_get_num_sinks(A));
+    ct_test(test, 0 == gegl_node_get_num_sinks(GEGL_NODE(graph)));
+    ct_test(test, 0 == gegl_node_get_num_sources(B));
 
     g_object_unref(A);
     g_object_unref(B);
@@ -128,12 +128,12 @@ test_graph_properties(Test *test)
     gegl_node_connect(B, "input0", D, "output0");
     gegl_node_connect(D, "input0", C, "output0");
 
-    ct_test(test, 0 == gegl_node_num_sinks(A));
-    ct_test(test, 0 == gegl_node_num_sources(A));
-    ct_test(test, 1 == gegl_node_num_sources(B));
-    ct_test(test, 1 == gegl_node_num_sinks(C));
-    ct_test(test, 1 == gegl_node_num_sinks(D));
-    ct_test(test, 1 == gegl_node_num_sources(D));
+    ct_test(test, 0 == gegl_node_get_num_sinks(A));
+    ct_test(test, 0 == gegl_node_get_num_sources(A));
+    ct_test(test, 1 == gegl_node_get_num_sources(B));
+    ct_test(test, 1 == gegl_node_get_num_sinks(C));
+    ct_test(test, 1 == gegl_node_get_num_sinks(D));
+    ct_test(test, 1 == gegl_node_get_num_sources(D));
 
     ct_test(test, output0 == gegl_node_get_property(D, "output0"));
     ct_test(test, (GeglFilter*)A == gegl_property_get_filter(output0));
@@ -144,12 +144,12 @@ test_graph_properties(Test *test)
     gegl_node_disconnect(B, "input0", D, "output0");
     gegl_node_disconnect(D, "input0", C, "output0");
 
-    ct_test(test, 0 == gegl_node_num_sinks(A));
-    ct_test(test, 0 == gegl_node_num_sources(A));
-    ct_test(test, 0 == gegl_node_num_sources(B));
-    ct_test(test, 0 == gegl_node_num_sinks(C));
-    ct_test(test, 0 == gegl_node_num_sinks(D));
-    ct_test(test, 0 == gegl_node_num_sources(D));
+    ct_test(test, 0 == gegl_node_get_num_sinks(A));
+    ct_test(test, 0 == gegl_node_get_num_sources(A));
+    ct_test(test, 0 == gegl_node_get_num_sources(B));
+    ct_test(test, 0 == gegl_node_get_num_sinks(C));
+    ct_test(test, 0 == gegl_node_get_num_sinks(D));
+    ct_test(test, 0 == gegl_node_get_num_sources(D));
 
     ct_test(test, 1 == gegl_node_get_num_output_props(D));
     ct_test(test, 1 == gegl_node_get_num_input_props(D));

@@ -39,17 +39,18 @@ typedef struct _GeglNodeClass GeglNodeClass;
 
 struct _GeglNode
 {
-  GeglObject  parent_instance;
+  GeglObject     parent_instance;
 
   /*< private >*/
-  GList      *properties;
-  GList      *input_properties;
-  GList      *output_properties;
+  
+  GList         *properties;
+  GList         *input_properties;
+  GList         *output_properties;
 
-  GList      *sources;
-  GList      *sinks;
+  GList         *sources;
+  GList         *sinks;
 
-  gboolean    enabled;
+  gboolean       enabled;
 };
 
 struct _GeglNodeClass
@@ -73,8 +74,8 @@ gint           gegl_node_get_num_input_props   (GeglNode     *self);
 gint           gegl_node_get_num_output_props  (GeglNode     *self);
 GList        * gegl_node_get_sinks             (GeglNode     *self);
 GList        * gegl_node_get_sources           (GeglNode     *self);
-gint           gegl_node_num_sources           (GeglNode     *self);
-gint           gegl_node_num_sinks             (GeglNode     *self);
+gint           gegl_node_get_num_sources       (GeglNode     *self);
+gint           gegl_node_get_num_sinks         (GeglNode     *self);
 gboolean       gegl_node_connect               (GeglNode     *sink,
                                                 const gchar  *sink_prop_name,
                                                 GeglNode     *source,

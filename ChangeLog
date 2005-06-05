@@ -1,3 +1,8 @@
+2005-06-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-node.[ch]
+	* tests/*.c: s/gegl_node_num_s/gegl_node_get_num_s/
+
 2005-06-04  Øyvind Kolås  <pippin@gimp.org>
 
 	* TODO: updated directory restructuring plan.
