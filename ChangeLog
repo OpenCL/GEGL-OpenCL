@@ -1,4 +1,8 @@
 2005-06-05  Øyvind Kolås  <pippin@gimp.org>
+	
+	* gegl/gegl-property.h: indentation cleanup from previous commit.
+
+2005-06-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-property.[ch]
 	* tests/*.c: s/property_num_/property_get_num_/

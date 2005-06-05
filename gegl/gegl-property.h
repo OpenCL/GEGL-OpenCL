@@ -61,31 +61,31 @@ struct _GeglPropertyClass
 };
 
 
-GType            gegl_property_get_type              (void) G_GNUC_CONST;
+GType            gegl_property_get_type             (void) G_GNUC_CONST;
 
-const gchar    * gegl_property_get_name         (GeglProperty   *self);
-void             gegl_property_set_param_spec   (GeglProperty   *self,
-                                                 GParamSpec     *param_spec);
-GList          * gegl_property_get_depends_on   (GeglProperty   *self);
-GeglFilter     * gegl_property_get_filter       (GeglProperty   *self);
-void             gegl_property_set_filter       (GeglProperty   *self,
-                                                 GeglFilter     *filter);
-gboolean         gegl_property_is_output        (GeglProperty   *self);
-gboolean         gegl_property_is_input         (GeglProperty   *self);
-GeglProperty   * gegl_property_get_connected_to (GeglProperty   *self);
-gboolean         gegl_property_is_dirty         (GeglProperty   *self);
-void             gegl_property_set_dirty        (GeglProperty   *self,
-                                                 gboolean        flag);
-GeglConnection * gegl_property_connect          (GeglProperty   *sink,
-                                                 GeglProperty   *source);
-void             gegl_property_disconnect       (GeglProperty   *sink,
-                                                 GeglProperty   *source,
-                                                 GeglConnection *connection);
-GList          * gegl_property_get_connections  (GeglProperty   *self);
-gint             gegl_property_get_num_connections  (GeglProperty   *self);
-GParamSpec     * gegl_property_get_param_spec   (GeglProperty   *self);
-void             gegl_property_set_param_spec   (GeglProperty   *self,
-                                                 GParamSpec     *param_spec);
+const gchar    * gegl_property_get_name            (GeglProperty   *self);
+void             gegl_property_set_param_spec      (GeglProperty   *self,
+                                                    GParamSpec     *param_spec);
+GList          * gegl_property_get_depends_on      (GeglProperty   *self);
+GeglFilter     * gegl_property_get_filter          (GeglProperty   *self);
+void             gegl_property_set_filter          (GeglProperty   *self,
+                                                    GeglFilter     *filter);
+gboolean         gegl_property_is_output           (GeglProperty   *self);
+gboolean         gegl_property_is_input            (GeglProperty   *self);
+GeglProperty   * gegl_property_get_connected_to    (GeglProperty   *self);
+gboolean         gegl_property_is_dirty            (GeglProperty   *self);
+void             gegl_property_set_dirty           (GeglProperty   *self,
+                                                    gboolean        flag);
+GeglConnection * gegl_property_connect             (GeglProperty   *sink,
+                                                    GeglProperty   *source);
+void             gegl_property_disconnect          (GeglProperty   *sink,
+                                                    GeglProperty   *source,
+                                                    GeglConnection *connection);
+GList          * gegl_property_get_connections     (GeglProperty   *self);
+gint             gegl_property_get_num_connections (GeglProperty   *self);
+GParamSpec     * gegl_property_get_param_spec      (GeglProperty   *self);
+void             gegl_property_set_param_spec      (GeglProperty   *self,
+                                                    GParamSpec     *param_spec);
 
 
 G_END_DECLS
