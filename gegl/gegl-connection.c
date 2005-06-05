@@ -35,6 +35,8 @@ struct _GeglConnection
 
   GeglNode     *source;
   GeglProperty *source_prop;
+
+  /*XXX: here is a nice place to store the negotiated Pixel Format representation */
 };
 
 GeglConnection *

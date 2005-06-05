@@ -1,5 +1,16 @@
 2005-06-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-property.[ch]
+	* tests/*.c: s/property_num_/property_get_num_/
+
+	* gegl/gegl-graph.[ch]
+	* tests/*.c: s/graph_num_/graph_get_num_/
+
+	* gegl/gegl-connection.c: add comment about where to store data from
+	pixel format negotiation.
+
+2005-06-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.[ch]
 	* tests/*.c: s/gegl_node_num_s/gegl_node_get_num_s/
 

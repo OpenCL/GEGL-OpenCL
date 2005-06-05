@@ -37,8 +37,8 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_get_num_sources(A));
     ct_test(test, 0 == gegl_node_get_num_sinks(B));
     ct_test(test, 1 == gegl_node_get_num_sources(B));
-    ct_test(test, 1 == gegl_property_num_connections(output0));
-    ct_test(test, 1 == gegl_property_num_connections(input0));
+    ct_test(test, 1 == gegl_property_get_num_connections(output0));
+    ct_test(test, 1 == gegl_property_get_num_connections(input0));
     ct_test(test, output0 == gegl_property_get_connected_to(input0));
 
     sinks = gegl_node_get_sinks(A);
@@ -57,8 +57,8 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_get_num_sources(A));
     ct_test(test, 0 == gegl_node_get_num_sinks(B));
     ct_test(test, 0 == gegl_node_get_num_sources(B));
-    ct_test(test, 0 == gegl_property_num_connections(output0));
-    ct_test(test, 0 == gegl_property_num_connections(input0));
+    ct_test(test, 0 == gegl_property_get_num_connections(output0));
+    ct_test(test, 0 == gegl_property_get_num_connections(input0));
 
     g_object_unref(A);
     g_object_unref(B);
@@ -87,9 +87,9 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_get_num_sources(A));
     ct_test(test, 0 == gegl_node_get_num_sinks(C));
     ct_test(test, 1 == gegl_node_get_num_sources(C));
-    ct_test(test, 1 == gegl_property_num_connections(output0));
-    ct_test(test, 1 == gegl_property_num_connections(input0));
-    ct_test(test, 0 == gegl_property_num_connections(input1));
+    ct_test(test, 1 == gegl_property_get_num_connections(output0));
+    ct_test(test, 1 == gegl_property_get_num_connections(input0));
+    ct_test(test, 0 == gegl_property_get_num_connections(input1));
     ct_test(test, output0 == gegl_property_get_connected_to(input0));
 
     gegl_node_disconnect(C, "input0", A, "output0");
@@ -98,9 +98,9 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_get_num_sources(A));
     ct_test(test, 0 == gegl_node_get_num_sinks(C));
     ct_test(test, 0 == gegl_node_get_num_sources(C));
-    ct_test(test, 0 == gegl_property_num_connections(output0));
-    ct_test(test, 0 == gegl_property_num_connections(input0));
-    ct_test(test, 0 == gegl_property_num_connections(input1));
+    ct_test(test, 0 == gegl_property_get_num_connections(output0));
+    ct_test(test, 0 == gegl_property_get_num_connections(input0));
+    ct_test(test, 0 == gegl_property_get_num_connections(input1));
 
     g_object_unref(A);
     g_object_unref(C);
@@ -129,9 +129,9 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_get_num_sources(A));
     ct_test(test, 0 == gegl_node_get_num_sinks(C));
     ct_test(test, 1 == gegl_node_get_num_sources(C));
-    ct_test(test, 1 == gegl_property_num_connections(output0));
-    ct_test(test, 0 == gegl_property_num_connections(input0));
-    ct_test(test, 1 == gegl_property_num_connections(input1));
+    ct_test(test, 1 == gegl_property_get_num_connections(output0));
+    ct_test(test, 0 == gegl_property_get_num_connections(input0));
+    ct_test(test, 1 == gegl_property_get_num_connections(input1));
     ct_test(test, output0 == gegl_property_get_connected_to(input1));
 
     gegl_node_disconnect(C, "input1", A, "output0");
@@ -140,9 +140,9 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_get_num_sources(A));
     ct_test(test, 0 == gegl_node_get_num_sinks(C));
     ct_test(test, 0 == gegl_node_get_num_sources(C));
-    ct_test(test, 0 == gegl_property_num_connections(output0));
-    ct_test(test, 0 == gegl_property_num_connections(input0));
-    ct_test(test, 0 == gegl_property_num_connections(input1));
+    ct_test(test, 0 == gegl_property_get_num_connections(output0));
+    ct_test(test, 0 == gegl_property_get_num_connections(input0));
+    ct_test(test, 0 == gegl_property_get_num_connections(input1));
 
     g_object_unref(A);
     g_object_unref(C);
@@ -172,9 +172,9 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_get_num_sources(A));
     ct_test(test, 0 == gegl_node_get_num_sinks(C));
     ct_test(test, 2 == gegl_node_get_num_sources(C));
-    ct_test(test, 2 == gegl_property_num_connections(output0));
-    ct_test(test, 1 == gegl_property_num_connections(input0));
-    ct_test(test, 1 == gegl_property_num_connections(input1));
+    ct_test(test, 2 == gegl_property_get_num_connections(output0));
+    ct_test(test, 1 == gegl_property_get_num_connections(input0));
+    ct_test(test, 1 == gegl_property_get_num_connections(input1));
     ct_test(test, output0 == gegl_property_get_connected_to(input0));
     ct_test(test, output0 == gegl_property_get_connected_to(input1));
 
@@ -185,9 +185,9 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_get_num_sources(A));
     ct_test(test, 0 == gegl_node_get_num_sinks(C));
     ct_test(test, 0 == gegl_node_get_num_sources(C));
-    ct_test(test, 0 == gegl_property_num_connections(output0));
-    ct_test(test, 0 == gegl_property_num_connections(input0));
-    ct_test(test, 0 == gegl_property_num_connections(input1));
+    ct_test(test, 0 == gegl_property_get_num_connections(output0));
+    ct_test(test, 0 == gegl_property_get_num_connections(input0));
+    ct_test(test, 0 == gegl_property_get_num_connections(input1));
 
     g_object_unref(A);
     g_object_unref(C);
@@ -222,10 +222,10 @@ test_node_connections(Test *test)
     ct_test(test, 1 == gegl_node_get_num_sinks(B));
     ct_test(test, 2 == gegl_node_get_num_sources(C));
 
-    ct_test(test, 1 == gegl_property_num_connections(Aoutput0));
-    ct_test(test, 1 == gegl_property_num_connections(Boutput0));
-    ct_test(test, 1 == gegl_property_num_connections(input0));
-    ct_test(test, 1 == gegl_property_num_connections(input1));
+    ct_test(test, 1 == gegl_property_get_num_connections(Aoutput0));
+    ct_test(test, 1 == gegl_property_get_num_connections(Boutput0));
+    ct_test(test, 1 == gegl_property_get_num_connections(input0));
+    ct_test(test, 1 == gegl_property_get_num_connections(input1));
     ct_test(test, Aoutput0 == gegl_property_get_connected_to(input0));
     ct_test(test, Boutput0 == gegl_property_get_connected_to(input1));
 
@@ -249,10 +249,10 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_get_num_sinks(B));
     ct_test(test, 0 == gegl_node_get_num_sources(C));
 
-    ct_test(test, 0 == gegl_property_num_connections(Aoutput0));
-    ct_test(test, 0 == gegl_property_num_connections(Boutput0));
-    ct_test(test, 0 == gegl_property_num_connections(input0));
-    ct_test(test, 0 == gegl_property_num_connections(input1));
+    ct_test(test, 0 == gegl_property_get_num_connections(Aoutput0));
+    ct_test(test, 0 == gegl_property_get_num_connections(Boutput0));
+    ct_test(test, 0 == gegl_property_get_num_connections(input0));
+    ct_test(test, 0 == gegl_property_get_num_connections(input1));
 
     g_object_unref(A);
     g_object_unref(B);
@@ -283,9 +283,9 @@ test_node_connections(Test *test)
     ct_test(test, 2 == gegl_node_get_num_sinks(A));
     ct_test(test, 1 == gegl_node_get_num_sources(B));
     ct_test(test, 1 == gegl_node_get_num_sources(C));
-    ct_test(test, 2 == gegl_property_num_connections(output0));
-    ct_test(test, 1 == gegl_property_num_connections(Binput0));
-    ct_test(test, 1 == gegl_property_num_connections(Cinput0));
+    ct_test(test, 2 == gegl_property_get_num_connections(output0));
+    ct_test(test, 1 == gegl_property_get_num_connections(Binput0));
+    ct_test(test, 1 == gegl_property_get_num_connections(Cinput0));
     ct_test(test, output0 == gegl_property_get_connected_to(Binput0));
     ct_test(test, output0 == gegl_property_get_connected_to(Cinput0));
 
@@ -294,9 +294,9 @@ test_node_connections(Test *test)
     ct_test(test, 0 == gegl_node_get_num_sinks(A));
     ct_test(test, 0 == gegl_node_get_num_sources(B));
     ct_test(test, 0 == gegl_node_get_num_sources(C));
-    ct_test(test, 0 == gegl_property_num_connections(output0));
-    ct_test(test, 0 == gegl_property_num_connections(Binput0));
-    ct_test(test, 0 == gegl_property_num_connections(Cinput0));
+    ct_test(test, 0 == gegl_property_get_num_connections(output0));
+    ct_test(test, 0 == gegl_property_get_num_connections(Binput0));
+    ct_test(test, 0 == gegl_property_get_num_connections(Cinput0));
 
     g_object_unref(A);
     g_object_unref(B);

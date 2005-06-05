@@ -82,7 +82,7 @@ void             gegl_property_disconnect       (GeglProperty   *sink,
                                                  GeglProperty   *source,
                                                  GeglConnection *connection);
 GList          * gegl_property_get_connections  (GeglProperty   *self);
-gint             gegl_property_num_connections  (GeglProperty   *self);
+gint             gegl_property_get_num_connections  (GeglProperty   *self);
 GParamSpec     * gegl_property_get_param_spec   (GeglProperty   *self);
 void             gegl_property_set_param_spec   (GeglProperty   *self,
                                                  GParamSpec     *param_spec);

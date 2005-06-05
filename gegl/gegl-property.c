@@ -201,7 +201,7 @@ gegl_property_get_connections (GeglProperty *self)
 }
 
 gint
-gegl_property_num_connections (GeglProperty *self)
+gegl_property_get_num_connections (GeglProperty *self)
 {
   g_return_val_if_fail (GEGL_IS_PROPERTY (self), -1);
 
@@ -223,7 +223,7 @@ gegl_property_get_depends_on (GeglProperty *self)
   GList *depends_on = NULL;
 
   if (gegl_property_is_input (self) &&
-      gegl_property_num_connections (self) == 1)
+      gegl_property_get_num_connections (self) == 1)
     {
       GeglConnection *connection = g_list_nth_data (self->connections, 0);
 
@@ -255,7 +255,7 @@ gegl_property_get_connected_to (GeglProperty * self)
   g_return_val_if_fail (GEGL_IS_PROPERTY (self), NULL);
 
   if (gegl_property_is_input (self) &&
-      gegl_property_num_connections (self) == 1)
+      gegl_property_get_num_connections (self) == 1)
     {
       GeglConnection *connection = g_list_nth_data (self->connections, 0);
 

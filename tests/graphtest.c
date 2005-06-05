@@ -30,10 +30,10 @@ test_graph(Test *test)
     GeglGraph *graph = g_object_new (GEGL_TYPE_GRAPH, NULL);
 
     gegl_graph_add_child(graph, A);
-    ct_test(test, 1 == gegl_graph_num_children(graph));
+    ct_test(test, 1 == gegl_graph_get_num_children(graph));
 
     gegl_graph_remove_child(graph, A);
-    ct_test(test, 0 == gegl_graph_num_children(graph));
+    ct_test(test, 0 == gegl_graph_get_num_children(graph));
 
     g_object_unref(A);
     g_object_unref(graph);

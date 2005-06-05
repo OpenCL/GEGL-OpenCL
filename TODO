@@ -33,6 +33,7 @@ gegl/
             gegl-eval-mgr.*
             gegl-eval-visitor.*
         operation/
+            gegl-filter.* (should be renamed gegl-operation.* after move)
             (the operation base class, as well as derived convenience classes
             for point ops, area ops, sources, sinks, filters etc.)
         pdb/

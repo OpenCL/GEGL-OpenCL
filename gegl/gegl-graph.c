@@ -156,7 +156,7 @@ gegl_graph_remove_child (GeglGraph *self,
 }
 
 gint
-gegl_graph_num_children (GeglGraph *self)
+gegl_graph_get_num_children (GeglGraph *self)
 {
   g_return_val_if_fail (GEGL_IS_GRAPH (self), -1);
 
