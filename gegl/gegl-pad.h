@@ -64,8 +64,6 @@ struct _GeglPropertyClass
 GType            gegl_property_get_type             (void) G_GNUC_CONST;
 
 const gchar    * gegl_property_get_name            (GeglProperty   *self);
-void             gegl_property_set_param_spec      (GeglProperty   *self,
-                                                    GParamSpec     *param_spec);
 GList          * gegl_property_get_depends_on      (GeglProperty   *self);
 GeglFilter     * gegl_property_get_filter          (GeglProperty   *self);
 void             gegl_property_set_filter          (GeglProperty   *self,
