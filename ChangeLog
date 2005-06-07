@@ -1,3 +1,8 @@
+2005-06-07  Jakub Steiner <jimmac@ximian.com>
+
+	* docs/images/gegl-logo.svg: Proposed logo for the library. Feel
+	  free to change
+	
 2005-06-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-property.h: remove duplicate gegl_property_set_param_spec.
