@@ -26,9 +26,9 @@ input of A provides the Graph's first input, and the input
 of D is the Graph's second input.
 </para>
 <para>
-Since a Graph is not a #GeglFilter, it does not have an evaluate method.
+Since a Graph is not a #GeglOperation, it does not have an evaluate method.
 During evaluation, the #GeglEvalMgr handles this by instead calling evaluate on
-each #GeglFilter in the interior of the Graph when it encounters one.  When it
+each #GeglOperation in the interior of the Graph when it encounters one.  When it
 comes to evaluating a Node like A or D in
 <xref linkend="graph"/> it must somehow provide an input for these nodes from
 the exterior of the Graph. It does this using gegl_graph_find_source(), which

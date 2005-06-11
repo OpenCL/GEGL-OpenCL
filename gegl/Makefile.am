@@ -10,11 +10,11 @@ GEGL_sources = \
 	gegl-connection.c	\
 	gegl-eval-mgr.c		\
 	gegl-eval-visitor.c	\
-	gegl-filter.c		\
 	gegl-graph.c		\
 	gegl-init.c		\
 	gegl-node.c		\
 	gegl-object.c		\
+	gegl-operation.c        \
 	gegl-property.c		\
 	gegl-utils.c		\
 	gegl-visitable.c	\
@@ -23,11 +23,11 @@ GEGL_sources = \
 GEGL_public_headers = \
 	gegl.h
 	gegl-connection.h	\
-	gegl-filter.h		\
 	gegl-graph.h		\
 	gegl-init.h		\
 	gegl-node.h		\
 	gegl-object.h		\
+	gegl-operation.h        \
 	gegl-property.h		\
 	gegl-visitable.h	\
 	gegl-visitor.h

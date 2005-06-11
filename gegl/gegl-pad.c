@@ -25,7 +25,7 @@
 
 #include "gegl-types.h"
 
-#include "gegl-filter.h"
+#include "gegl-operation.h"
 #include "gegl-property.h"
 #include "gegl-visitor.h"
 #include "gegl-utils.h"
@@ -85,7 +85,7 @@ static void
 gegl_property_init (GeglProperty *self)
 {
   self->param_spec  = NULL;
-  self->filter      = NULL;
+  self->operation      = NULL;
   self->connections = NULL;
   self->dirty       = TRUE;
 }
@@ -208,12 +208,12 @@ gegl_property_get_num_connections (GeglProperty *self)
   return g_list_length (self->connections);
 }
 
-GeglFilter *
-gegl_property_get_filter (GeglProperty *self)
+GeglOperation *
+gegl_property_get_operation (GeglProperty *self)
 {
   g_return_val_if_fail (GEGL_IS_PROPERTY (self), NULL);
 
-  return self->filter;
+  return self->operation;
 }
 
 /* List should be freed */
@@ -233,7 +233,7 @@ gegl_property_get_depends_on (GeglProperty *self)
     }
   else if (gegl_property_is_output (self))
     {
-      GList *input_properties = gegl_node_get_input_properties (GEGL_NODE (self->filter));
+      GList *input_properties = gegl_node_get_input_properties (GEGL_NODE (self->operation));
 
       depends_on = g_list_copy (input_properties);
     }
@@ -266,13 +266,13 @@ gegl_property_get_connected_to (GeglProperty * self)
 }
 
 void
-gegl_property_set_filter (GeglProperty *self,
-                          GeglFilter   *filter)
+gegl_property_set_operation (GeglProperty *self,
+                          GeglOperation   *operation)
 {
   g_return_if_fail (GEGL_IS_PROPERTY (self));
-  g_return_if_fail (GEGL_IS_FILTER (filter));
+  g_return_if_fail (GEGL_IS_OPERATION (operation));
 
-  self->filter = filter;
+  self->operation = operation;
 }
 
 gboolean

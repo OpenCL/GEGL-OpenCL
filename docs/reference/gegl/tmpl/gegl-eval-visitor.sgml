@@ -8,14 +8,14 @@ A depth first visitor for evaluation.
 <para>
 This visitor is setup by the #GeglEvalMgr to do the depth first pass of the
 graph that does the actual evaluation of the ops. During this pass, the
-EvalVisitor calls gegl_filter_validate_inputs(),
-gegl_filter_validate_outputs(), and then gegl_filter_evaluate() for each
-#GeglFilter it finds. gegl_filter_evaluate() is where each #GeglFilter does its
+EvalVisitor calls gegl_operation_validate_inputs(),
+gegl_operation_validate_outputs(), and then gegl_operation_evaluate() for each
+#GeglOperation it finds. gegl_operation_evaluate() is where each #GeglOperation does its
 image processing. The validate methods do things like make sure the data is the
 correct type, and if it is image data that it is prepared for the operation.
 This might swap data in that was swapped out, or create buffers if they don't
-exist yet. gegl_filter_validate_inputs() is also where any conversion of inputs
-is done if the inputs don't match the needs of the #GeglFilter.
+exist yet. gegl_operation_validate_inputs() is also where any conversion of inputs
+is done if the inputs don't match the needs of the #GeglOperation.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->

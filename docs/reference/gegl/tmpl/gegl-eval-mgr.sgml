@@ -44,8 +44,8 @@ gegl_image_op_compute_color_model().
         <listitem>
          <para>
 This final depth-first pass actually does the evaluation of the
-graph. For each #GeglFilter it finds, the visitor calls gegl_filter_validate_inputs(),
-gegl_filter_validate_outputs() and then gegl_filter_evaluate(). For each #GeglGraph
+graph. For each #GeglOperation it finds, the visitor calls gegl_operation_validate_inputs(),
+gegl_operation_validate_outputs() and then gegl_operation_evaluate(). For each #GeglGraph
 it finds it traverses the ops contained by the #GeglGraph. This visitor keeps
 track of where it is in the hierarchy of Graphs so that it can find sources for
 nodes in a graph that have no source for a particular input because they

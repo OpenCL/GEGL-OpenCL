@@ -9,7 +9,7 @@ Abstract visitor class
 This is the abstract visitor class for GEGL. It defines the common
 functionality for all visitors, and is an example of the visitor pattern (GoF,
 design patterns). It has virtual methods for visiting various node types,
-visit_node(), visit_op(), visit_filter(), and visit_graph() which subclasses
+visit_node(), visit_op(), visit_operation(), and visit_graph() which subclasses
 override to describe what they do on visiting these types of nodes.   
 </para>
 <para>

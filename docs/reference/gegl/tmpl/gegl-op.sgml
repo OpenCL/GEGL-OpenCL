@@ -68,10 +68,10 @@ flag is set.
 </para>
 </refsect2>
 <refsect2>
-<title>Op, Filter, Graph</title>
+<title>Op, Operation, Graph</title>
 <para>
-Op is the common superclass of #GeglFilter and #GeglGraph. This forms a composite 
-or container design pattern (GoF Design Patterns), with #GeglFilter as the "leaf" or 
+Op is the common superclass of #GeglOperation and #GeglGraph. This forms a composite 
+or container design pattern (GoF Design Patterns), with #GeglOperation as the "leaf" or 
 atomic class, and #GeglGraph as the "composite" or container class. This is
 shown in <xref linkend="composite"/>.
 <figure id="composite">
@@ -80,9 +80,9 @@ shown in <xref linkend="composite"/>.
 </figure>
 </para>
 <para>
-So <link linkend="GeglFilter">GeglFilter</link>s are the primitive image
+So <link linkend="GeglOperation">GeglOperation</link>s are the primitive image
 processing objects in Gegl and <link linkend="GeglGraph">GeglGraph</link>s 
-are containers of other filters and graphs. A #GeglGraph could describe 
+are containers of other operations and graphs. A #GeglGraph could describe 
 a chain or tree of Ops.
 </para>
 </refsect2>

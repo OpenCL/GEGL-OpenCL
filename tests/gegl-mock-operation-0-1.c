@@ -6,7 +6,7 @@
 
 #include "gegl-property.h"
 
-#include "gegl-mock-filter-0-1.h"
+#include "gegl-mock-operation-0-1.h"
 
 
 enum
@@ -16,8 +16,8 @@ enum
   PROP_LAST
 };
 
-static void gegl_mock_filter_0_1_class_init (GeglMockFilter01Class *klass);
-static void gegl_mock_filter_0_1_init       (GeglMockFilter01      *self);
+static void gegl_mock_operation_0_1_class_init (GeglMockOperation01Class *klass);
+static void gegl_mock_operation_0_1_init       (GeglMockOperation01      *self);
 
 static void     get_property (GObject      *gobject,
                               guint         prop_id,
@@ -27,23 +27,23 @@ static void     set_property (GObject      *gobject,
                               guint         prop_id,
                               const GValue *value,
                               GParamSpec   *pspec);
-static gboolean evaluate     (GeglFilter   *filter,
+static gboolean evaluate     (GeglOperation   *operation,
                               const gchar  *output_prop);
 
 
-G_DEFINE_TYPE (GeglMockFilter01, gegl_mock_filter_0_1, GEGL_TYPE_FILTER)
+G_DEFINE_TYPE (GeglMockOperation01, gegl_mock_operation_0_1, GEGL_TYPE_OPERATION)
 
 
 static void
-gegl_mock_filter_0_1_class_init (GeglMockFilter01Class *klass)
+gegl_mock_operation_0_1_class_init (GeglMockOperation01Class *klass)
 {
   GObjectClass    *object_class = G_OBJECT_CLASS (klass);
-  GeglFilterClass *filter_class = GEGL_FILTER_CLASS (klass);
+  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  filter_class->evaluate = evaluate;
+  operation_class->evaluate = evaluate;
 
   g_object_class_install_property (object_class, PROP_OUTPUT0,
                                    g_param_spec_int ("output0",
@@ -57,11 +57,11 @@ gegl_mock_filter_0_1_class_init (GeglMockFilter01Class *klass)
 }
 
 static void
-gegl_mock_filter_0_1_init (GeglMockFilter01 *self)
+gegl_mock_operation_0_1_init (GeglMockOperation01 *self)
 {
-  GeglFilter *filter = GEGL_FILTER(self);
+  GeglOperation *operation = GEGL_OPERATION(self);
 
-  gegl_filter_create_property (filter,
+  gegl_operation_create_property (operation,
                                g_object_class_find_property (G_OBJECT_GET_CLASS (self),
                                                              "output0"));
 }
@@ -72,7 +72,7 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglMockFilter01 *self = GEGL_MOCK_FILTER_0_1(gobject);
+  GeglMockOperation01 *self = GEGL_MOCK_OPERATION_0_1(gobject);
 
   switch (prop_id)
   {
@@ -90,7 +90,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  /*GeglMockFilter01 *self = GEGL_MOCK_FILTER_0_1(gobject);*/
+  /*GeglMockOperation01 *self = GEGL_MOCK_OPERATION_0_1(gobject);*/
   switch (prop_id)
   {
     default:
@@ -99,10 +99,10 @@ set_property (GObject      *gobject,
 }
 
 static gboolean
-evaluate (GeglFilter *filter,
+evaluate (GeglOperation *operation,
          const gchar *output_prop)
 {
-  GeglMockFilter01 *self = GEGL_MOCK_FILTER_0_1(filter);
+  GeglMockOperation01 *self = GEGL_MOCK_OPERATION_0_1(operation);
 
   if(strcmp("output0", output_prop))
     return FALSE;

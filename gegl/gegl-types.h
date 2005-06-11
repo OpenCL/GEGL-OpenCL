@@ -25,7 +25,7 @@ G_BEGIN_DECLS
 typedef struct _GeglConnection  GeglConnection;
 typedef struct _GeglEvalMgr     GeglEvalMgr;
 typedef struct _GeglEvalVisitor GeglEvalVisitor;
-typedef struct _GeglFilter      GeglFilter;
+typedef struct _GeglOperation   GeglOperation;
 typedef struct _GeglGraph       GeglGraph;
 typedef struct _GeglNode        GeglNode;
 typedef struct _GeglProperty    GeglProperty;

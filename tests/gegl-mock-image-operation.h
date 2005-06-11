@@ -1,24 +1,24 @@
-#ifndef __GEGL_MOCK_IMAGE_FILTER_H__
-#define __GEGL_MOCK_IMAGE_FILTER_H__
+#ifndef __GEGL_MOCK_IMAGE_OPERATION_H__
+#define __GEGL_MOCK_IMAGE_OPERATION_H__
 
-#include "../gegl/gegl-filter.h"
+#include "../gegl/gegl-operation.h"
 #include "gegl-mock-image.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-#define GEGL_TYPE_MOCK_IMAGE_FILTER               (gegl_mock_image_filter_get_type ())
-#define GEGL_MOCK_IMAGE_FILTER(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_MOCK_IMAGE_FILTER, GeglMockImageFilter))
-#define GEGL_MOCK_IMAGE_FILTER_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_MOCK_IMAGE_FILTER, GeglMockImageFilterClass))
-#define GEGL_IS_MOCK_IMAGE_FILTER(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_MOCK_IMAGE_FILTER))
-#define GEGL_IS_MOCK_IMAGE_FILTER_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_MOCK_IMAGE_FILTER))
-#define GEGL_MOCK_IMAGE_FILTER_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MOCK_IMAGE_FILTER, GeglMockImageFilterClass))
+#define GEGL_TYPE_MOCK_IMAGE_OPERATION               (gegl_mock_image_operation_get_type ())
+#define GEGL_MOCK_IMAGE_OPERATION(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_MOCK_IMAGE_OPERATION, GeglMockImageOperation))
+#define GEGL_MOCK_IMAGE_OPERATION_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_MOCK_IMAGE_OPERATION, GeglMockImageOperationClass))
+#define GEGL_IS_MOCK_IMAGE_OPERATION(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_MOCK_IMAGE_OPERATION))
+#define GEGL_IS_MOCK_IMAGE_OPERATION_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_MOCK_IMAGE_OPERATION))
+#define GEGL_MOCK_IMAGE_OPERATION_GET_CLASS(obj)     (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_MOCK_IMAGE_OPERATION, GeglMockImageOperationClass))
 
-typedef struct _GeglMockImageFilter  GeglMockImageFilter;
-struct _GeglMockImageFilter
+typedef struct _GeglMockImageOperation  GeglMockImageOperation;
+struct _GeglMockImageOperation
 {
-    GeglFilter       filter;
+    GeglOperation       operation;
 
     /*< private >*/
     GeglMockImage *output;
@@ -26,13 +26,13 @@ struct _GeglMockImageFilter
     gint input1;
 };
 
-typedef struct _GeglMockImageFilterClass GeglMockImageFilterClass;
-struct _GeglMockImageFilterClass
+typedef struct _GeglMockImageOperationClass GeglMockImageOperationClass;
+struct _GeglMockImageOperationClass
 {
-   GeglFilterClass filter_class;
+   GeglOperationClass operation_class;
 };
 
-GType             gegl_mock_image_filter_get_type                  (void) G_GNUC_CONST;
+GType             gegl_mock_image_operation_get_type                  (void) G_GNUC_CONST;
 
 #ifdef __cplusplus
 }

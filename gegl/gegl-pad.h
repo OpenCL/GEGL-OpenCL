@@ -50,7 +50,7 @@ struct _GeglProperty
 
   /*< private >*/
   GParamSpec *param_spec;
-  GeglFilter *filter;
+  GeglOperation *operation;
   GList      *connections;
   gboolean    dirty;
 };
@@ -65,9 +65,9 @@ GType            gegl_property_get_type             (void) G_GNUC_CONST;
 
 const gchar    * gegl_property_get_name            (GeglProperty   *self);
 GList          * gegl_property_get_depends_on      (GeglProperty   *self);
-GeglFilter     * gegl_property_get_filter          (GeglProperty   *self);
-void             gegl_property_set_filter          (GeglProperty   *self,
-                                                    GeglFilter     *filter);
+GeglOperation     * gegl_property_get_operation          (GeglProperty   *self);
+void             gegl_property_set_operation          (GeglProperty   *self,
+                                                    GeglOperation     *operation);
 gboolean         gegl_property_is_output           (GeglProperty   *self);
 gboolean         gegl_property_is_input            (GeglProperty   *self);
 GeglProperty   * gegl_property_get_connected_to    (GeglProperty   *self);

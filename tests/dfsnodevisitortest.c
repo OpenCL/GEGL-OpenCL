@@ -1,11 +1,11 @@
 #include <glib-object.h>
 #include "gegl.h"
 #include "gegl-mock-node-visitor.h"
-#include "gegl-mock-filter-0-1.h"
-#include "gegl-mock-filter-1-1.h"
-#include "gegl-mock-filter-1-2.h"
-#include "gegl-mock-filter-2-1.h"
-#include "gegl-mock-filter-2-2.h"
+#include "gegl-mock-operation-0-1.h"
+#include "gegl-mock-operation-1-1.h"
+#include "gegl-mock-operation-1-2.h"
+#include "gegl-mock-operation-2-1.h"
+#include "gegl-mock-operation-2-2.h"
 #include "ctest.h"
 #include "csuite.h"
 #include <string.h>
@@ -59,9 +59,9 @@ test_dfs_node_visitor(Test *test)
                               "B",
                               "C" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "B", NULL);
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "C", NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "C", NULL);
 
     gegl_node_connect(C, "input0", A, "output0");
     gegl_node_connect(C, "input1", B, "output0");
@@ -90,9 +90,9 @@ test_dfs_node_visitor(Test *test)
                               "B",
                               "C" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "C", NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "C", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(C, "input0", B, "output0");
@@ -117,8 +117,8 @@ test_dfs_node_visitor(Test *test)
     gchar * visit_order[] = { "A",
                               "B" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "B", NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "B", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(B, "input1", A, "output0");
@@ -148,9 +148,9 @@ test_dfs_node_visitor(Test *test)
                               "B",
                               "C" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "B", NULL);
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "C", NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "C", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(C, "input1", B, "output0");
@@ -181,9 +181,9 @@ test_dfs_node_visitor(Test *test)
                               "B",
                               "C" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_2_2, "name", "B", NULL);
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "C", NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_2, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "C", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(B, "input1", A, "output0");
@@ -212,8 +212,8 @@ test_dfs_node_visitor(Test *test)
     gchar * visit_order[] = { "A",
                               "B" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_2, "name", "A", NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "B", NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_2, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "B", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(B, "input1", A, "output1");
@@ -242,9 +242,9 @@ test_dfs_node_visitor(Test *test)
                               "B",
                               "C" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "C", NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "C", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(C, "input1", B, "output0");
@@ -282,10 +282,10 @@ test_dfs_node_visitor(Test *test)
                               "C",
                               "D" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "A", NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "C", NULL);
-    GeglNode *D = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "D", NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "C", NULL);
+    GeglNode *D = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "D", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(C, "input0", B, "output0");
@@ -323,10 +323,10 @@ test_dfs_node_visitor(Test *test)
                               "C",
                               "D" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "C", NULL);
-    GeglNode *D = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "D", NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "C", NULL);
+    GeglNode *D = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "D", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(C, "input0", B, "output0");
@@ -361,13 +361,13 @@ test_dfs_node_visitor(Test *test)
                               "F",
                               "E" };
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "A", NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "B", NULL);
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "C", NULL);
-    GeglNode *D = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "D", NULL);
-    GeglNode *E = g_object_new (GEGL_TYPE_MOCK_FILTER_2_1, "name", "E", NULL);
-    GeglNode *F = g_object_new (GEGL_TYPE_MOCK_FILTER_1_1, "name", "F", NULL);
-    GeglNode *G = g_object_new (GEGL_TYPE_MOCK_FILTER_0_1, "name", "G", NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "A", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "B", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "C", NULL);
+    GeglNode *D = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "D", NULL);
+    GeglNode *E = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "E", NULL);
+    GeglNode *F = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "F", NULL);
+    GeglNode *G = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "G", NULL);
 
     gegl_node_connect(B, "input0", A, "output0");
     gegl_node_connect(D, "input0", B, "output0");

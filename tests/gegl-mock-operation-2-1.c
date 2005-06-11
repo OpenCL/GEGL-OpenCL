@@ -6,7 +6,7 @@
 
 #include "gegl-property.h"
 
-#include "gegl-mock-filter-2-1.h"
+#include "gegl-mock-operation-2-1.h"
 
 
 enum
@@ -18,8 +18,8 @@ enum
   PROP_LAST
 };
 
-static void  gegl_mock_filter_2_1_class_init (GeglMockFilter21Class *klass);
-static void  gegl_mock_filter_2_1_init       (GeglMockFilter21      *self);
+static void  gegl_mock_operation_2_1_class_init (GeglMockOperation21Class *klass);
+static void  gegl_mock_operation_2_1_init       (GeglMockOperation21      *self);
 
 static void  get_property (GObject      *gobject,
                            guint         prop_id,
@@ -31,11 +31,11 @@ static void  set_property (GObject      *gobject,
                            GParamSpec   *pspec);
 
 
-G_DEFINE_TYPE (GeglMockFilter21, gegl_mock_filter_2_1, GEGL_TYPE_FILTER)
+G_DEFINE_TYPE (GeglMockOperation21, gegl_mock_operation_2_1, GEGL_TYPE_OPERATION)
 
 
 static void
-gegl_mock_filter_2_1_class_init (GeglMockFilter21Class * klass)
+gegl_mock_operation_2_1_class_init (GeglMockOperation21Class * klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -76,18 +76,18 @@ gegl_mock_filter_2_1_class_init (GeglMockFilter21Class * klass)
 }
 
 static void
-gegl_mock_filter_2_1_init (GeglMockFilter21 *self)
+gegl_mock_operation_2_1_init (GeglMockOperation21 *self)
 {
-  GeglFilter   *filter       = GEGL_FILTER (self);
+  GeglOperation   *operation       = GEGL_OPERATION (self);
   GObjectClass *object_class = G_OBJECT_GET_CLASS (self);
 
-  gegl_filter_create_property (filter,
+  gegl_operation_create_property (operation,
                                g_object_class_find_property (object_class,
                                                              "output0"));
-  gegl_filter_create_property (filter,
+  gegl_operation_create_property (operation,
                                g_object_class_find_property (object_class,
                                                              "input0"));
-  gegl_filter_create_property (filter,
+  gegl_operation_create_property (operation,
                                g_object_class_find_property (object_class,
                                                              "input1"));
 }
@@ -98,7 +98,7 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglMockFilter21 *self = GEGL_MOCK_FILTER_2_1(gobject);
+  GeglMockOperation21 *self = GEGL_MOCK_OPERATION_2_1(gobject);
 
   switch (prop_id)
   {
@@ -122,7 +122,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglMockFilter21 *self = GEGL_MOCK_FILTER_2_1(gobject);
+  GeglMockOperation21 *self = GEGL_MOCK_OPERATION_2_1(gobject);
   switch (prop_id)
   {
     case PROP_INPUT0:

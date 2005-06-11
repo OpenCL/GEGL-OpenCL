@@ -1,24 +1,24 @@
 <!-- ##### SECTION Title ##### -->
-GeglFilter
+GeglOperation
 
 <!-- ##### SECTION Short_Description ##### -->
 The primitive image processing object.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-Filters are the primitive image processing objects in Gegl. Every Filter has
+Operations are the primitive image processing objects in Gegl. Every Operation has
 methods to process the input data and turn it into output data.  
-Filters also have methods to to validate the input and output data before
+Operations also have methods to to validate the input and output data before
 the actual processing is done.  All the methods for processing 
 and validating data above are called by the #GeglEvalMgr during
 various passes it makes over the graph.
 </para>
 
 <para>
-The most important of these methods is gegl_filter_evaluate(). This 
-method calls back to the particular subclass of Filter to do the actual 
+The most important of these methods is gegl_operation_evaluate(). This 
+method calls back to the particular subclass of Operation to do the actual 
 image processing in three stages, prepare(), process(), and finish(). These are 
-all virtual methods of Filter that should be overridden by subclasses. 
+all virtual methods of Operation that should be overridden by subclasses. 
 </para>
 
 <variablelist>
@@ -54,10 +54,10 @@ all virtual methods of Filter that should be overridden by subclasses.
 </variablelist>
 
 <para>
-In addition to evaluation methods, Filters has validation methods for both input
-and output data. These are called gegl_filter_validate_inputs() and
-gegl_filter_validate_outputs(). These will be called by the #GeglEvalMgr just
-before gegl_filter_evaluate(). Subclasses should override the virtual
+In addition to evaluation methods, Operations has validation methods for both input
+and output data. These are called gegl_operation_validate_inputs() and
+gegl_operation_validate_outputs(). These will be called by the #GeglEvalMgr just
+before gegl_operation_evaluate(). Subclasses should override the virtual
 validate_inputs() and validate_outputs() and do validation for the Op's 
 input data or output data.  This is where inputs can be converted 
 if necessary for use in this Op. For example an input image data may need 
@@ -65,7 +65,7 @@ to be converted from RGB to GRAY to match the color model of the Op.
 </para>
 
 <para>
-All the methods described above in Filter should only ever be called from 
+All the methods described above in Operation should only ever be called from 
 the #GeglEvalMgr and its visitors during graph traversal. None of them should 
 be called directly. This is all handled automatically during graph evaluation. 
 </para>
@@ -75,13 +75,13 @@ be called directly. This is all handled automatically during graph evaluation.
 
 </para>
 
-<!-- ##### STRUCT GeglFilter ##### -->
+<!-- ##### STRUCT GeglOperation ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### STRUCT GeglFilterClass ##### -->
+<!-- ##### STRUCT GeglOperationClass ##### -->
 <para>
 
 </para>
@@ -89,7 +89,7 @@ be called directly. This is all handled automatically during graph evaluation.
 @parent_class: 
 @evaluate: 
 
-<!-- ##### FUNCTION gegl_filter_create_property ##### -->
+<!-- ##### FUNCTION gegl_operation_create_property ##### -->
 <para>
 
 </para>
@@ -98,7 +98,7 @@ be called directly. This is all handled automatically during graph evaluation.
 @param_spec: 
 
 
-<!-- ##### FUNCTION gegl_filter_evaluate ##### -->
+<!-- ##### FUNCTION gegl_operation_evaluate ##### -->
 <para>
 
 </para>

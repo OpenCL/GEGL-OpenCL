@@ -26,7 +26,7 @@
 #include "gegl-types.h"
 
 #include "gegl-eval-visitor.h"
-#include "gegl-filter.h"
+#include "gegl-operation.h"
 #include "gegl-node.h"
 #include "gegl-property.h"
 #include "gegl-visitable.h"
@@ -57,14 +57,14 @@ static void
 visit_property (GeglVisitor  *visitor,
                 GeglProperty *property)
 {
-  GeglFilter *filter = gegl_property_get_filter(property);
+  GeglOperation *operation = gegl_property_get_operation(property);
 
   GEGL_VISITOR_CLASS (gegl_eval_visitor_parent_class)->visit_property (visitor,
                                                                        property);
 #if 0
-  g_print("Compute Visitor: Visiting property %s from filter %s\n",
+  g_print("Compute Visitor: Visiting property %s from operation %s\n",
           gegl_property_get_name(property),
-          gegl_object_get_name(GEGL_OBJECT(filter)));
+          gegl_object_get_name(GEGL_OBJECT(operation)));
 #endif
 
   if (gegl_property_is_output (property))
@@ -72,7 +72,7 @@ visit_property (GeglVisitor  *visitor,
       const gchar *property_name = gegl_property_get_name (property);
       gboolean     success;
 
-      success = gegl_filter_evaluate (filter, property_name);
+      success = gegl_operation_evaluate (operation, property_name);
     }
   else if (gegl_property_is_input (property))
     {
@@ -82,14 +82,14 @@ visit_property (GeglVisitor  *visitor,
         {
           GValue      value     = { 0 };
           GParamSpec *prop_spec = gegl_property_get_param_spec (property);
-          GeglFilter *source    = gegl_property_get_filter (source_prop);
+          GeglOperation *source    = gegl_property_get_operation (source_prop);
 
           g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (prop_spec));
 
           g_object_get_property (G_OBJECT(source),
                                  gegl_property_get_name (source_prop),
                                  &value);
-          g_object_set_property (G_OBJECT (filter),
+          g_object_set_property (G_OBJECT (operation),
                                  gegl_property_get_name (property),
                                  &value);
         }

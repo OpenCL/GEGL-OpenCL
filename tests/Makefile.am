@@ -19,18 +19,18 @@ GEGLLDADDS = \
 	$(top_builddir)/gegl/@gegltargetlib@
 
 MOCK_OBJECT_SRC = \
-	gegl-mock-image-filter.c	\
+	gegl-mock-image-operation.c	\
 	gegl-mock-image.c		\
-	gegl-mock-filter-0-1.c		\
-	gegl-mock-filter-0-1.h		\
-	gegl-mock-filter-1-1.c		\
-	gegl-mock-filter-1-1.h		\
-	gegl-mock-filter-1-2.c		\
-	gegl-mock-filter-1-2.h		\
-	gegl-mock-filter-2-1.c		\
-	gegl-mock-filter-2-1.h		\
-	gegl-mock-filter-2-2.c		\
-	gegl-mock-filter-2-2.h		\
+	gegl-mock-operation-0-1.c	\
+	gegl-mock-operation-0-1.h	\
+	gegl-mock-operation-1-1.c	\
+	gegl-mock-operation-1-1.h	\
+	gegl-mock-operation-1-2.c	\
+	gegl-mock-operation-1-2.h	\
+	gegl-mock-operation-2-1.c	\
+	gegl-mock-operation-2-1.h	\
+	gegl-mock-operation-2-2.c	\
+	gegl-mock-operation-2-2.h	\
 	gegl-mock-node-visitor.c	\
 	gegl-mock-node-visitor.h	\
 	gegl-mock-object.c		\
@@ -46,12 +46,12 @@ testgegl_SOURCES = \
 	dfsnodevisitortest.c				\
 	dfspropertyvisitortest.c			\
 	graphtest.c					\
-	mockimagefiltertest.c				\
-	mockfilter01test.c				\
-	mockfilter11test.c				\
-	mockfilter12test.c				\
-	mockfilter21test.c				\
-	mockfilter22test.c				\
+	mockimageoperationtest.c			\
+	mockoperation01test.c				\
+	mockoperation11test.c				\
+	mockoperation12test.c				\
+	mockoperation21test.c				\
+	mockoperation22test.c				\
 	nodeconnectionstest.c				\
 	objecttest.c					\
 	propertyconnectionstest.c			\

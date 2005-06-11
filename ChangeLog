@@ -5,6 +5,65 @@
 	
 2005-06-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-filter.[ch]
+	history.
+	* tests/mockfilter01test.c
+	* tests/mockfilter11test.c
+	* tests/mockfilter12test.c
+	* tests/mockfilter21test.c
+	* tests/mockfilter22test.c
+	* docs/reference/gegl/tmpl/gegl-filter.sgml
+	* tests/mockfilter01test.c
+	* tests/mockfilter11test.c
+	* tests/mockfilter12test.c
+	* tests/mockfilter21test.c
+	* tests/mockfilter22test.c
+	* tests/mockimagefiltertest.c: removed
+
+	* gegl/gegl-operation.[ch]:
+	* docs/reference/gegl/tmpl/gegl-eval-mgr.sgml
+	* docs/reference/gegl/tmpl/gegl-eval-visitor.sgml
+	* docs/reference/gegl/tmpl/gegl-graph.sgml
+	* docs/reference/gegl/tmpl/gegl-op.sgml
+	* docs/reference/gegl/tmpl/gegl-operation.sgml
+	* docs/reference/gegl/tmpl/gegl-property.sgml
+	* docs/reference/gegl/tmpl/gegl-visitor.sgml
+	* gegl/Makefile.am
+	* gegl/gegl-eval-visitor.c
+	* gegl/gegl-property.c
+	* gegl/gegl-property.h
+	* gegl/gegl-types.h
+	* gegl/gegl.h
+	* tests/Makefile.am
+	* tests/bfspropertyvisitortest.c
+	* tests/dfsnodevisitortest.c
+	* tests/dfspropertyvisitortest.c
+	* tests/gegl-mock-image-operation.c
+	* tests/gegl-mock-image-operation.h
+	* tests/gegl-mock-operation-0-1.c
+	* tests/gegl-mock-operation-0-1.h
+	* tests/gegl-mock-operation-1-1.c
+	* tests/gegl-mock-operation-1-1.h
+	* tests/gegl-mock-operation-1-2.c
+	* tests/gegl-mock-operation-1-2.h
+	* tests/gegl-mock-operation-2-1.c
+	* tests/gegl-mock-operation-2-1.h
+	* tests/gegl-mock-operation-2-2.c
+	* tests/gegl-mock-operation-2-2.h
+	* tests/gegl-mock-property-visitor.c
+	* tests/graphtest.c
+	* tests/mockimageoperationtest.c
+	* tests/mockoperation01test.c
+	* tests/mockoperation11test.c
+	* tests/mockoperation12test.c
+	* tests/mockoperation21test.c
+	* tests/mockoperation22test.c
+	* tests/nodeconnectionstest.c
+	* tests/testgegl.c
+	* tests/updatepropertytest.c: refactoring filter->operation
+
+2005-06-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-property.h: remove duplicate gegl_property_set_param_spec.
 
 2005-06-05  Øyvind Kolås  <pippin@gimp.org>

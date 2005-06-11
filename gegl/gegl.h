@@ -27,7 +27,7 @@
 #include <gegl-types.h>
 
 #include <gegl-connection.h>
-#include <gegl-filter.h>
+#include <gegl-operation.h>
 #include <gegl-graph.h>
 #include <gegl-init.h>
 #include <gegl-node.h>

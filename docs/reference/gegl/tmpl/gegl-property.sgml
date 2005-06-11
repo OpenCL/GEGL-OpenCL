@@ -62,7 +62,7 @@ GeglProperty
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_property_get_filter ##### -->
+<!-- ##### FUNCTION gegl_property_get_operation ##### -->
 <para>
 
 </para>
@@ -71,13 +71,13 @@ GeglProperty
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_property_set_filter ##### -->
+<!-- ##### FUNCTION gegl_property_set_operation ##### -->
 <para>
 
 </para>
 
 @self: 
-@filter: 
+@operation: 
 
 
 <!-- ##### FUNCTION gegl_property_is_output ##### -->
