@@ -1,12 +1,13 @@
-2005-06-07  Jakub Steiner <jimmac@ximian.com>
+2005-06-11  Øyvind Kolås  <pippin@gimp.org>
 
-	* docs/images/gegl-logo.svg: Proposed logo for the library. Feel
-	  free to change
-	
-2005-06-05  Øyvind Kolås  <pippin@gimp.org>
+	* gegl/Makefile.am: fixed newline escaping problem, added
+	gegl-types.h and gegl-utils.h
+	to list of installed headers.
+	* gegl.pc.in: change the include path to .../gegl-1.0/gegl.
+
+2005-06-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-filter.[ch]
-	history.
 	* tests/mockfilter01test.c
 	* tests/mockfilter11test.c
 	* tests/mockfilter12test.c
@@ -61,6 +62,12 @@
 	* tests/nodeconnectionstest.c
 	* tests/testgegl.c
 	* tests/updatepropertytest.c: refactoring filter->operation
+
+2005-06-07  Jakub Steiner <jimmac@ximian.com>
+
+	* docs/images/gegl-logo.svg: Proposed logo for the library. Feel
+	  free to change
+	
 
 2005-06-05  Øyvind Kolås  <pippin@gimp.org>
 

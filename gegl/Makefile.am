@@ -21,7 +21,7 @@ GEGL_sources = \
 	gegl-visitor.c
 
 GEGL_public_headers = \
-	gegl.h
+	gegl.h			\
 	gegl-connection.h	\
 	gegl-graph.h		\
 	gegl-init.h		\
@@ -29,6 +29,8 @@ GEGL_public_headers = \
 	gegl-object.h		\
 	gegl-operation.h        \
 	gegl-property.h		\
+	gegl-types.h		\
+	gegl-utils.h		\
 	gegl-visitable.h	\
 	gegl-visitor.h
 
