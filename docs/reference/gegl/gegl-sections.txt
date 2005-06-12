@@ -8,7 +8,7 @@ gegl_graph_remove_child
 gegl_graph_get_nth_child
 gegl_graph_get_children
 gegl_graph_remove_children
-gegl_graph_num_children
+gegl_graph_get_num_children
 <SUBSECTION Standard>
 GEGL_GRAPH
 GEGL_IS_GRAPH
@@ -62,8 +62,8 @@ GeglPropertyClass
 gegl_property_get_name
 gegl_property_set_param_spec
 gegl_property_get_depends_on
-gegl_property_get_filter
-gegl_property_set_filter
+gegl_property_get_operation
+gegl_property_set_operation
 gegl_property_is_output
 gegl_property_is_input
 gegl_property_get_connected_to
@@ -168,20 +168,20 @@ GEGL_EVAL_MGR_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-filter</FILE>
-GeglFilter
-GeglFilterClass
-<TITLE>GeglFilter</TITLE>
-gegl_filter_create_property
-gegl_filter_evaluate
+<FILE>gegl-operation</FILE>
+GeglOperation
+GeglOperationClass
+<TITLE>GeglOperation</TITLE>
+gegl_operation_create_property
+gegl_operation_evaluate
 <SUBSECTION Standard>
-GEGL_FILTER
-GEGL_IS_FILTER
-GEGL_TYPE_FILTER
-gegl_filter_get_type
-GEGL_FILTER_CLASS
-GEGL_IS_FILTER_CLASS
-GEGL_FILTER_GET_CLASS
+GEGL_OPERATION
+GEGL_IS_OPERATION
+GEGL_TYPE_OPERATION
+gegl_operation_get_type
+GEGL_OPERATION_CLASS
+GEGL_IS_OPERATION_CLASS
+GEGL_OPERATION_GET_CLASS
 </SECTION>
 
 <SECTION>

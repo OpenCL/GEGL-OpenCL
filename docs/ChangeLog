@@ -1,3 +1,11 @@
+2005-06-12  Sven Neumann  <sven@gimp.org>
+
+	* reference/gegl/gegl-docs.sgml
+	* reference/gegl/gegl-sections.txt
+	* reference/gegl/gegl.types: GeglFilter -> GeglOperation.
+
+	* reference/gegl/tmpl/gegl-graph.sgml: regenerated.
+
 2005-06-02  Sven Neumann  <sven@gimp.org>
 
 	* reference/gegl/cvs.sgml

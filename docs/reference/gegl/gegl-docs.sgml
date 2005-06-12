@@ -101,7 +101,7 @@
     <chapter id="abstractops">
       <title>Abstract and Container Ops</title>
       <xi:include href="xml/gegl-node.xml"/>
-      <xi:include href="xml/gegl-filter.xml"/>
+      <xi:include href="xml/gegl-operation.xml"/>
       <xi:include href="xml/gegl-graph.xml"/>
     </chapter>
 

@@ -150,7 +150,7 @@ passing a root. Here the root for the Graph is <literal>fade1</literal>.
 @self: 
 
 
-<!-- ##### FUNCTION gegl_graph_num_children ##### -->
+<!-- ##### FUNCTION gegl_graph_get_num_children ##### -->
 <para>
 
 </para>
