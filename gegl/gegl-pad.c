@@ -26,7 +26,7 @@
 #include "gegl-types.h"
 
 #include "gegl-operation.h"
-#include "gegl-property.h"
+#include "gegl-pad.h"
 #include "gegl-visitor.h"
 #include "gegl-utils.h"
 #include "gegl-connection.h"
@@ -39,31 +39,31 @@ enum
   PROP_PARAM_SPEC
 };
 
-static void       gegl_property_class_init (GeglPropertyClass *klass);
-static void       gegl_property_init       (GeglProperty      *self);
-static void       finalize                 (GObject           *gobject);
-static void       set_property             (GObject           *gobject,
-                                            guint              property_id,
-                                            const GValue      *value,
-                                            GParamSpec        *pspec);
-static void       get_property             (GObject           *gobject,
-                                            guint              property_id,
-                                            GValue            *value,
-                                            GParamSpec        *pspec);
-static void       visitable_init           (gpointer           ginterface,
-                                            gpointer           interface_data);
-static void       visitable_accept         (GeglVisitable     *visitable,
-                                            GeglVisitor       *visitor);
-static GList    * visitable_depends_on     (GeglVisitable     *visitable);
-static gboolean   visitable_needs_visiting (GeglVisitable     *visitable);
+static void       gegl_pad_class_init      (GeglPadClass  *klass);
+static void       gegl_pad_init            (GeglPad       *self);
+static void       finalize                 (GObject       *gobject);
+static void       set_property             (GObject       *gobject,
+                                            guint          pad_id,
+                                            const GValue  *value,
+                                            GParamSpec    *pspec);
+static void       get_property             (GObject       *gobject,
+                                            guint          pad_id,
+                                            GValue        *value,
+                                            GParamSpec    *pspec);
+static void       visitable_init           (gpointer       ginterface,
+                                            gpointer       interface_data);
+static void       visitable_accept         (GeglVisitable *visitable,
+                                            GeglVisitor   *visitor);
+static GList    * visitable_depends_on     (GeglVisitable *visitable);
+static gboolean   visitable_needs_visiting (GeglVisitable *visitable);
 
 
-G_DEFINE_TYPE_WITH_CODE (GeglProperty, gegl_property, GEGL_TYPE_OBJECT,
+G_DEFINE_TYPE_WITH_CODE (GeglPad, gegl_pad, GEGL_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (GEGL_TYPE_VISITABLE,
                                                 visitable_init))
 
 static void
-gegl_property_class_init (GeglPropertyClass * klass)
+gegl_pad_class_init (GeglPadClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
@@ -75,17 +75,17 @@ gegl_property_class_init (GeglPropertyClass * klass)
   g_object_class_install_property (gobject_class, PROP_PARAM_SPEC,
                    g_param_spec_param ("param_spec",
                                        "ParamSpec",
-                                       "Param spec for the property",
+                                       "Param spec for the pad",
                                        ????,
                                        G_PARAM_READWRITE));
                                        */
 }
 
 static void
-gegl_property_init (GeglProperty *self)
+gegl_pad_init (GeglPad *self)
 {
   self->param_spec  = NULL;
-  self->operation      = NULL;
+  self->operation   = NULL;
   self->connections = NULL;
   self->dirty       = TRUE;
 }
@@ -104,70 +104,70 @@ visitable_init (gpointer ginterface,
 static void
 finalize (GObject *gobject)
 {
-  GeglProperty *self = GEGL_PROPERTY (gobject);
+  GeglPad *self = GEGL_PAD (gobject);
 
   g_assert (self->connections == NULL);
 
-  G_OBJECT_CLASS (gegl_property_parent_class)->finalize (gobject);
+  G_OBJECT_CLASS (gegl_pad_parent_class)->finalize (gobject);
 }
 
 static void
 set_property (GObject      *object,
-              guint         property_id,
+              guint         pad_id,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  /*GeglProperty * property = GEGL_PROPERTY(gobject);*/
+  /*GeglPad * pad = GEGL_PAD(gobject);*/
 
-  switch (property_id)
+  switch (pad_id)
     {
     default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, pad_id, pspec);
       break;
     }
 }
 
 static void
-get_property (GObject      *object,
-              guint         property_id,
-              GValue       *value,
-              GParamSpec   *pspec)
+get_property (GObject    *object,
+              guint       pad_id,
+              GValue     *value,
+              GParamSpec *pspec)
 {
-  /*GeglProperty * property = GEGL_PROPERTY(gobject);*/
+  /*GeglPad * pad = GEGL_PAD(gobject);*/
 
-  switch (property_id)
+  switch (pad_id)
     {
     default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, pad_id, pspec);
       break;
     }
 }
 
 GParamSpec *
-gegl_property_get_param_spec (GeglProperty *self)
+gegl_pad_get_param_spec (GeglPad *self)
 {
-  g_return_val_if_fail (GEGL_IS_PROPERTY (self), NULL);
+  g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
 
   return self->param_spec;
 }
 
 void
-gegl_property_set_param_spec (GeglProperty *self,
-                              GParamSpec   *param_spec)
+gegl_pad_set_param_spec (GeglPad    *self,
+                         GParamSpec *param_spec)
 {
-  g_return_if_fail (GEGL_IS_PROPERTY (self));
+  g_return_if_fail (GEGL_IS_PAD (self));
 
   self->param_spec = param_spec;
 }
 
 GeglConnection *
-gegl_property_connect (GeglProperty *sink,
-                       GeglProperty *source)
+gegl_pad_connect (GeglPad *sink,
+                  GeglPad *source)
 {
   GeglConnection *connection;
 
-  g_return_val_if_fail (GEGL_IS_PROPERTY (sink), NULL);
-  g_return_val_if_fail (GEGL_IS_PROPERTY (source), NULL);
+  g_return_val_if_fail (GEGL_IS_PAD (sink), NULL);
+  g_return_val_if_fail (GEGL_IS_PAD (source), NULL);
 
   connection = gegl_connection_new (NULL, sink, NULL, source);
 
@@ -178,12 +178,12 @@ gegl_property_connect (GeglProperty *sink,
 }
 
 void
-gegl_property_disconnect (GeglProperty   *sink,
-                          GeglProperty   *source,
-                          GeglConnection *connection)
+gegl_pad_disconnect (GeglPad        *sink,
+                     GeglPad        *source,
+                     GeglConnection *connection)
 {
-  g_return_if_fail (GEGL_IS_PROPERTY (sink));
-  g_return_if_fail (GEGL_IS_PROPERTY (source));
+  g_return_if_fail (GEGL_IS_PAD (sink));
+  g_return_if_fail (GEGL_IS_PAD (source));
 
   g_assert (sink == gegl_connection_get_sink_prop (connection));
   g_assert (source == gegl_connection_get_source_prop (connection));
@@ -193,37 +193,37 @@ gegl_property_disconnect (GeglProperty   *sink,
 }
 
 GList *
-gegl_property_get_connections (GeglProperty *self)
+gegl_pad_get_connections (GeglPad *self)
 {
-  g_return_val_if_fail (GEGL_IS_PROPERTY (self), NULL);
+  g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
 
   return self->connections;
 }
 
 gint
-gegl_property_get_num_connections (GeglProperty *self)
+gegl_pad_get_num_connections (GeglPad *self)
 {
-  g_return_val_if_fail (GEGL_IS_PROPERTY (self), -1);
+  g_return_val_if_fail (GEGL_IS_PAD (self), -1);
 
   return g_list_length (self->connections);
 }
 
 GeglOperation *
-gegl_property_get_operation (GeglProperty *self)
+gegl_pad_get_operation (GeglPad *self)
 {
-  g_return_val_if_fail (GEGL_IS_PROPERTY (self), NULL);
+  g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
 
   return self->operation;
 }
 
 /* List should be freed */
 GList *
-gegl_property_get_depends_on (GeglProperty *self)
+gegl_pad_get_depends_on (GeglPad *self)
 {
   GList *depends_on = NULL;
 
-  if (gegl_property_is_input (self) &&
-      gegl_property_get_num_connections (self) == 1)
+  if (gegl_pad_is_input (self) &&
+      gegl_pad_get_num_connections (self) == 1)
     {
       GeglConnection *connection = g_list_nth_data (self->connections, 0);
 
@@ -231,31 +231,31 @@ gegl_property_get_depends_on (GeglProperty *self)
         depends_on = g_list_append (depends_on,
                                     gegl_connection_get_source_prop (connection));
     }
-  else if (gegl_property_is_output (self))
+  else if (gegl_pad_is_output (self))
     {
-      GList *input_properties = gegl_node_get_input_properties (GEGL_NODE (self->operation));
+      GList *input_pads = gegl_node_get_input_pads (GEGL_NODE (self->operation));
 
-      depends_on = g_list_copy (input_properties);
+      depends_on = g_list_copy (input_pads);
     }
 
   return depends_on;
 }
 
 const gchar *
-gegl_property_get_name (GeglProperty * self)
+gegl_pad_get_name (GeglPad *self)
 {
-  g_return_val_if_fail (GEGL_IS_PROPERTY (self), NULL);
+  g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
 
   return g_param_spec_get_name (self->param_spec);
 }
 
-GeglProperty *
-gegl_property_get_connected_to (GeglProperty * self)
+GeglPad *
+gegl_pad_get_connected_to (GeglPad *self)
 {
-  g_return_val_if_fail (GEGL_IS_PROPERTY (self), NULL);
+  g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
 
-  if (gegl_property_is_input (self) &&
-      gegl_property_get_num_connections (self) == 1)
+  if (gegl_pad_is_input (self) &&
+      gegl_pad_get_num_connections (self) == 1)
     {
       GeglConnection *connection = g_list_nth_data (self->connections, 0);
 
@@ -266,63 +266,65 @@ gegl_property_get_connected_to (GeglProperty * self)
 }
 
 void
-gegl_property_set_operation (GeglProperty *self,
-                          GeglOperation   *operation)
+gegl_pad_set_operation (GeglPad       *self,
+                        GeglOperation *operation)
 {
-  g_return_if_fail (GEGL_IS_PROPERTY (self));
+  g_return_if_fail (GEGL_IS_PAD (self));
   g_return_if_fail (GEGL_IS_OPERATION (operation));
 
   self->operation = operation;
 }
 
 gboolean
-gegl_property_is_dirty (GeglProperty *self)
+gegl_pad_is_dirty (GeglPad *self)
 {
-  g_return_val_if_fail (GEGL_IS_PROPERTY (self), TRUE);
+  g_return_val_if_fail (GEGL_IS_PAD (self), TRUE);
 
   return self->dirty;
 }
 
 void
-gegl_property_set_dirty (GeglProperty *self,
-                         gboolean      flag)
+gegl_pad_set_dirty (GeglPad  *self,
+                    gboolean  flag)
 {
-  g_return_if_fail (GEGL_IS_PROPERTY (self));
+  g_return_if_fail (GEGL_IS_PAD (self));
 
   self->dirty = flag;
 }
 
 gboolean
-gegl_property_is_output (GeglProperty *self)
+gegl_pad_is_output (GeglPad *self)
 {
-  return GEGL_PROPERTY_OUTPUT & self->param_spec->flags;
+  return GEGL_PAD_OUTPUT & self->param_spec->flags;
 }
 
 gboolean
-gegl_property_is_input (GeglProperty *self)
+gegl_pad_is_input (GeglPad *self)
 {
-  return GEGL_PROPERTY_INPUT & self->param_spec->flags;
+  return GEGL_PAD_INPUT & self->param_spec->flags;
 }
 
 static void
 visitable_accept (GeglVisitable *visitable,
                   GeglVisitor   *visitor)
 {
-  gegl_visitor_visit_property (visitor, GEGL_PROPERTY (visitable));
+  gegl_visitor_visit_pad (visitor, GEGL_PAD (visitable));
 }
 
 static GList *
 visitable_depends_on (GeglVisitable *visitable)
 {
-  GeglProperty *property = GEGL_PROPERTY (visitable);
+  GeglPad *pad = GEGL_PAD (visitable);
 
-  return gegl_property_get_depends_on (property);
+  return gegl_pad_get_depends_on (pad);
 }
 
 static gboolean
 visitable_needs_visiting (GeglVisitable *visitable)
 {
-  GeglProperty *property = GEGL_PROPERTY (visitable);
+  GeglPad *pad = GEGL_PAD (visitable);
 
-  return gegl_property_is_dirty (property);
+  return gegl_pad_is_dirty (pad);
 }
+
+

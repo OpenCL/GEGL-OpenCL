@@ -14,14 +14,14 @@
 static gboolean
 do_visitor_and_check_visit_order(gchar **visit_order,
                                  gint length,
-                                 gchar *prop_name,
+                                 gchar *pad_name,
                                  GeglNode *node)
 {
   gint i;
   GList *visits_list = NULL;
-  GeglProperty *property = gegl_node_get_property(node, prop_name);
+  GeglPad     *pad = gegl_node_get_pad (node, pad_name);
   GeglVisitor *  visitor = g_object_new(GEGL_TYPE_MOCK_PROPERTY_VISITOR, NULL);
-  gegl_visitor_dfs_traverse(visitor, GEGL_VISITABLE(property));
+  gegl_visitor_dfs_traverse(visitor, GEGL_VISITABLE(pad));
 
   visits_list = gegl_visitor_get_visits_list(visitor);
 
@@ -30,20 +30,20 @@ do_visitor_and_check_visit_order(gchar **visit_order,
 
   for(i = 0; i < length; i++)
     {
-      GeglProperty *property = (GeglProperty*)g_list_nth_data(visits_list, i);
-      GeglOperation *operation = gegl_property_get_operation(property);
+      GeglPad *pad = (GeglPad*)g_list_nth_data(visits_list, i);
+      GeglOperation *operation = gegl_pad_get_operation(pad);
       const gchar *node_name = gegl_object_get_name(GEGL_OBJECT(operation));
-      gchar *property_name =
-        g_strconcat(node_name, ".", gegl_property_get_name(property), NULL);
+      gchar *pad_name =
+        g_strconcat(node_name, ".", gegl_pad_get_name(pad), NULL);
 
-      if(0 != strcmp(property_name, visit_order[i]))
+      if(0 != strcmp(pad_name, visit_order[i]))
         {
-          g_free(property_name);
+          g_free(pad_name);
           g_object_unref(visitor);
           return FALSE;
         }
 
-      g_free(property_name);
+      g_free(pad_name);
     }
 
   g_object_unref(visitor);
@@ -408,12 +408,12 @@ test_dfs_property_visitor(Test *test)
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "C", NULL);
     GeglNode *D = g_object_new (GEGL_TYPE_GRAPH, "name", "D", NULL);
 
-    GeglProperty *output0 = gegl_node_get_property(A, "output0");
-    GeglProperty *input0 = gegl_node_get_property(A, "input0");
+    GeglPad *output0 = gegl_node_get_pad(A, "output0");
+    GeglPad *input0 = gegl_node_get_pad(A, "input0");
 
     gegl_graph_add_child(GEGL_GRAPH(D), A);
-    gegl_node_add_property(D, output0);
-    gegl_node_add_property(D, input0);
+    gegl_node_add_pad(D, output0);
+    gegl_node_add_pad(D, input0);
 
     gegl_node_connect(B, "input0", D, "output0");
     gegl_node_connect(D, "input0", C, "output0");

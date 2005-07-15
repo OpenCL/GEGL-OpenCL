@@ -29,7 +29,7 @@
 #include "gegl-eval-visitor.h"
 #include "gegl-node.h"
 #include "gegl-visitable.h"
-#include "gegl-property.h"
+#include "gegl-pad.h"
 
 
 static void gegl_eval_mgr_class_init (GeglEvalMgrClass *klass);
@@ -60,27 +60,27 @@ gegl_eval_mgr_init (GeglEvalMgr *self)
 void
 gegl_eval_mgr_apply (GeglEvalMgr *self,
                      GeglNode    *root,
-                     const gchar *property_name)
+                     const gchar *pad_name)
 {
   GeglVisitor  *visitor;
-  GeglProperty *property;
+  GeglPad      *pad;
 
   g_return_if_fail (GEGL_IS_EVAL_MGR (self));
   g_return_if_fail (GEGL_IS_NODE (root));
 
   g_object_ref (root);
 
-  property = gegl_node_get_property (root, property_name);
+  pad = gegl_node_get_pad (root, pad_name);
 
 #if 0
   /* This part does the evaluation of the ops, depth first. */
   gegl_log_debug(__FILE__, __LINE__,"eval_mgr_apply",
-                 "begin eval-compute for node: %s %p property: %s",
-                 G_OBJECT_TYPE_NAME(root), root, property_name);
+                 "begin eval-compute for node: %s %p pad: %s",
+                 G_OBJECT_TYPE_NAME(root), root, pad_name);
 #endif
 
   visitor = g_object_new (GEGL_TYPE_EVAL_VISITOR, NULL);
-  gegl_visitor_dfs_traverse (visitor, GEGL_VISITABLE(property));
+  gegl_visitor_dfs_traverse (visitor, GEGL_VISITABLE(pad));
   g_object_unref (visitor);
 
   g_object_unref (root);

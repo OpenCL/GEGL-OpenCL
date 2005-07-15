@@ -408,12 +408,12 @@ test_update_property(Test *test)
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "C", NULL);
     GeglNode *D = g_object_new (GEGL_TYPE_GRAPH, "name", "D", NULL);
 
-    GeglProperty *output0 = gegl_node_get_property(A, "output0");
-    GeglProperty *input0 = gegl_node_get_property(A, "input0");
+    GeglPad *output0 = gegl_node_get_pad(A, "output0");
+    GeglPad *input0 = gegl_node_get_pad(A, "input0");
 
     gegl_graph_add_child(GEGL_GRAPH(D), A);
-    gegl_node_add_property(D, output0);
-    gegl_node_add_property(D, input0);
+    gegl_node_add_pad(D, output0);
+    gegl_node_add_pad(D, input0);
 
     gegl_node_connect(B, "input0", D, "output0");
     gegl_node_connect(D, "input0", C, "output0");

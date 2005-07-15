@@ -28,7 +28,7 @@
 #include "gegl-types.h"
 
 #include "gegl-operation.h"
-#include "gegl-property.h"
+#include "gegl-pad.h"
 
 
 static void gegl_operation_class_init (GeglOperationClass *klass);
@@ -65,18 +65,18 @@ finalize (GObject *gobject)
  * Create a property.
  **/
 void
-gegl_operation_create_property (GeglOperation *self,
-                                GParamSpec    *param_spec)
+gegl_operation_create_pad (GeglOperation *self,
+                           GParamSpec    *param_spec)
 {
-  GeglProperty *property;
+  GeglPad *pad;
 
   g_return_if_fail (GEGL_IS_OPERATION (self));
   g_return_if_fail (param_spec);
 
-  property = g_object_new (GEGL_TYPE_PROPERTY, NULL);
-  gegl_property_set_param_spec (property, param_spec);
-  gegl_property_set_operation (property, self);
-  gegl_node_add_property (GEGL_NODE (self), property);
+  pad = g_object_new (GEGL_TYPE_PAD, NULL);
+  gegl_pad_set_param_spec (pad, param_spec);
+  gegl_pad_set_operation (pad, self);
+  gegl_node_add_pad (GEGL_NODE (self), pad);
 }
 
 gboolean

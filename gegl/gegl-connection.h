@@ -26,21 +26,21 @@ G_BEGIN_DECLS
 
 
 GeglConnection * gegl_connection_new             (GeglNode       *sink,
-                                                  GeglProperty   *sink_prop,
+                                                  GeglPad        *sink_prop,
                                                   GeglNode       *source,
-                                                  GeglProperty   *source_prop);
+                                                  GeglPad        *source_prop);
 GeglNode       * gegl_connection_get_source_node (GeglConnection *connection);
 GeglNode       * gegl_connection_get_sink_node   (GeglConnection *connection);
-GeglProperty   * gegl_connection_get_source_prop (GeglConnection *connection);
-GeglProperty   * gegl_connection_get_sink_prop   (GeglConnection *connection);
+GeglPad        * gegl_connection_get_source_prop (GeglConnection *connection);
+GeglPad        * gegl_connection_get_sink_prop   (GeglConnection *connection);
 void             gegl_connection_set_sink_node   (GeglConnection *connection,
                                                   GeglNode       *sink);
 void             gegl_connection_set_sink_prop   (GeglConnection *connection,
-                                                  GeglProperty   *sink_prop);
+                                                  GeglPad        *sink_prop);
 void             gegl_connection_set_source_node (GeglConnection *connection,
                                                   GeglNode       *source);
 void             gegl_connection_set_source_prop (GeglConnection *connection,
-                                                  GeglProperty   *source_prop);
+                                                  GeglPad        *source_prop);
 
 
 G_END_DECLS

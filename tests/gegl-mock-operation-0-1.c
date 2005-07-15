@@ -4,7 +4,7 @@
 
 #include "gegl-types.h"
 
-#include "gegl-property.h"
+#include "gegl-pad.h"
 
 #include "gegl-mock-operation-0-1.h"
 
@@ -53,7 +53,7 @@ gegl_mock_operation_0_1_class_init (GeglMockOperation01Class *klass)
                                                      1000,
                                                      0,
                                                      G_PARAM_READABLE |
-                                                     GEGL_PROPERTY_OUTPUT));
+                                                     GEGL_PAD_OUTPUT));
 }
 
 static void
@@ -61,7 +61,7 @@ gegl_mock_operation_0_1_init (GeglMockOperation01 *self)
 {
   GeglOperation *operation = GEGL_OPERATION(self);
 
-  gegl_operation_create_property (operation,
+  gegl_operation_create_pad (operation,
                                g_object_class_find_property (G_OBJECT_GET_CLASS (self),
                                                              "output0"));
 }

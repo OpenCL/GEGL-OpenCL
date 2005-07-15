@@ -30,20 +30,20 @@
 
 struct _GeglConnection
 {
-  GeglNode     *sink;
-  GeglProperty *sink_prop;
+  GeglNode *sink;
+  GeglPad  *sink_prop;
 
-  GeglNode     *source;
-  GeglProperty *source_prop;
+  GeglNode *source;
+  GeglPad  *source_prop;
 
   /*XXX: here is a nice place to store the negotiated Pixel Format representation */
 };
 
 GeglConnection *
-gegl_connection_new (GeglNode     *sink,
-                     GeglProperty *sink_prop,
-                     GeglNode     *source,
-                     GeglProperty *source_prop)
+gegl_connection_new (GeglNode *sink,
+                     GeglPad  *sink_prop,
+                     GeglNode *source,
+                     GeglPad  *source_prop)
 {
   GeglConnection *connection = g_new0 (GeglConnection, 1);
 
@@ -81,7 +81,7 @@ gegl_connection_set_sink_node (GeglConnection *connection,
   connection->sink = sink;
 }
 
-GeglProperty *
+GeglPad *
 gegl_connection_get_sink_prop (GeglConnection *connection)
 {
   return connection->sink_prop;
@@ -89,12 +89,12 @@ gegl_connection_get_sink_prop (GeglConnection *connection)
 
 void
 gegl_connection_set_sink_prop (GeglConnection *connection,
-                               GeglProperty   *sink_prop)
+                               GeglPad        *sink_prop)
 {
   connection->sink_prop = sink_prop;
 }
 
-GeglProperty *
+GeglPad *
 gegl_connection_get_source_prop (GeglConnection *connection)
 {
   return connection->source_prop;
@@ -102,7 +102,7 @@ gegl_connection_get_source_prop (GeglConnection *connection)
 
 void
 gegl_connection_set_source_prop (GeglConnection *connection,
-                                 GeglProperty   *source_prop)
+                                 GeglPad        *source_prop)
 {
   connection->source_prop = source_prop;
 }

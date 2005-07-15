@@ -15,7 +15,7 @@ GEGL_sources = \
 	gegl-node.c		\
 	gegl-object.c		\
 	gegl-operation.c        \
-	gegl-property.c		\
+	gegl-pad.c		\
 	gegl-utils.c		\
 	gegl-visitable.c	\
 	gegl-visitor.c
@@ -28,7 +28,7 @@ GEGL_public_headers = \
 	gegl-node.h		\
 	gegl-object.h		\
 	gegl-operation.h        \
-	gegl-property.h		\
+	gegl-pad.h		\
 	gegl-types.h		\
 	gegl-utils.h		\
 	gegl-visitable.h	\

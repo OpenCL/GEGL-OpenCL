@@ -1,3 +1,28 @@
+2005-07-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-property.[ch]: removed
+	* gegl/gegl-pad.[ch]: resurrected from gegl-property.[ch]
+	* gegl-connection.c
+	* gegl-connection.h
+	* gegl-eval-mgr.c
+	* gegl-eval-mgr.h
+	* gegl-eval-visitor.c
+	* gegl-eval-visitor.h
+	* gegl-graph.c
+	* gegl-graph.h
+	* gegl-node.c
+	* gegl-node.h
+	* gegl-operation.c
+	* gegl-operation.h
+	* gegl-pad.c
+	* gegl-pad.h
+	* gegl-types.h
+	* gegl-visitor.c
+	* gegl-visitor.h
+	* gegl.h: renaming property to pad.
+	* tests/*.[ch]: fix to reflect API changes, further cleanup
+          is needed, renaming of files etc. But not enough time right now.
+	
 2005-06-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/Makefile.am: fixed newline escaping problem, added

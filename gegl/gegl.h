@@ -32,7 +32,7 @@
 #include <gegl-init.h>
 #include <gegl-node.h>
 #include <gegl-object.h>
-#include <gegl-property.h>
+#include <gegl-pad.h>
 #include <gegl-utils.h>
 #include <gegl-visitable.h>
 #include <gegl-visitor.h>

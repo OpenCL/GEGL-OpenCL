@@ -22,31 +22,31 @@ test_property_connections(Test *test)
                                              0, 1000,
                                              0,
                                              G_PARAM_READABLE |
-                                             GEGL_PROPERTY_OUTPUT);
+                                             GEGL_PAD_OUTPUT);
 
     GParamSpec *b_pspec = g_param_spec_int ("b", "B",
                                              "Property called b",
                                              0, 1000,
                                              0,
                                              G_PARAM_READWRITE |
-                                             GEGL_PROPERTY_INPUT);
+                                             GEGL_PAD_INPUT);
 
 
-    GeglProperty *a = g_object_new (GEGL_TYPE_PROPERTY, NULL);
-    GeglProperty *b = g_object_new (GEGL_TYPE_PROPERTY, NULL);
+    GeglPad *a = g_object_new (GEGL_TYPE_PAD, NULL);
+    GeglPad *b = g_object_new (GEGL_TYPE_PAD, NULL);
 
-    gegl_property_set_param_spec(a, a_pspec);
-    gegl_property_set_param_spec(b, b_pspec);
+    gegl_pad_set_param_spec(a, a_pspec);
+    gegl_pad_set_param_spec(b, b_pspec);
 
-    connection = gegl_property_connect(b, a);
+    connection = gegl_pad_connect(b, a);
 
-    ct_test(test, 1 == gegl_property_get_num_connections(a));
-    ct_test(test, 1 == gegl_property_get_num_connections(b));
+    ct_test(test, 1 == gegl_pad_get_num_connections(a));
+    ct_test(test, 1 == gegl_pad_get_num_connections(b));
 
-    gegl_property_disconnect(b, a, connection);
+    gegl_pad_disconnect(b, a, connection);
 
-    ct_test(test, 0 == gegl_property_get_num_connections(a));
-    ct_test(test, 0 == gegl_property_get_num_connections(b));
+    ct_test(test, 0 == gegl_pad_get_num_connections(a));
+    ct_test(test, 0 == gegl_pad_get_num_connections(b));
 
     g_object_unref(a);
     g_object_unref(b);
@@ -71,53 +71,53 @@ test_property_connections(Test *test)
                                              0, 1000,
                                              0,
                                              G_PARAM_READABLE |
-                                             GEGL_PROPERTY_OUTPUT);
+                                             GEGL_PAD_OUTPUT);
 
     GParamSpec *b_pspec = g_param_spec_int ("b", "B",
                                              "Property called b",
                                              0, 1000,
                                              0,
                                              G_PARAM_READWRITE |
-                                             GEGL_PROPERTY_INPUT);
+                                             GEGL_PAD_INPUT);
 
     GParamSpec *c_pspec = g_param_spec_int ("c", "C",
                                              "Property called c",
                                              0, 1000,
                                              0,
                                              G_PARAM_READWRITE |
-                                             GEGL_PROPERTY_INPUT);
+                                             GEGL_PAD_INPUT);
 
-    GeglProperty *a = g_object_new (GEGL_TYPE_PROPERTY, NULL);
-    GeglProperty *b = g_object_new (GEGL_TYPE_PROPERTY, NULL);
-    GeglProperty *c = g_object_new (GEGL_TYPE_PROPERTY, NULL);
+    GeglPad *a = g_object_new (GEGL_TYPE_PAD, NULL);
+    GeglPad *b = g_object_new (GEGL_TYPE_PAD, NULL);
+    GeglPad *c = g_object_new (GEGL_TYPE_PAD, NULL);
 
-    gegl_property_set_param_spec(a, a_pspec);
-    gegl_property_set_param_spec(b, b_pspec);
-    gegl_property_set_param_spec(c, c_pspec);
+    gegl_pad_set_param_spec(a, a_pspec);
+    gegl_pad_set_param_spec(b, b_pspec);
+    gegl_pad_set_param_spec(c, c_pspec);
 
-    connection1 = gegl_property_connect(b, a);
+    connection1 = gegl_pad_connect(b, a);
 
-    ct_test(test, 1 == gegl_property_get_num_connections(a));
-    ct_test(test, 1 == gegl_property_get_num_connections(b));
-    ct_test(test, 0 == gegl_property_get_num_connections(c));
+    ct_test(test, 1 == gegl_pad_get_num_connections(a));
+    ct_test(test, 1 == gegl_pad_get_num_connections(b));
+    ct_test(test, 0 == gegl_pad_get_num_connections(c));
 
-    connection2 = gegl_property_connect(c, a);
+    connection2 = gegl_pad_connect(c, a);
 
-    ct_test(test, 2 == gegl_property_get_num_connections(a));
-    ct_test(test, 1 == gegl_property_get_num_connections(b));
-    ct_test(test, 1 == gegl_property_get_num_connections(c));
+    ct_test(test, 2 == gegl_pad_get_num_connections(a));
+    ct_test(test, 1 == gegl_pad_get_num_connections(b));
+    ct_test(test, 1 == gegl_pad_get_num_connections(c));
 
-    gegl_property_disconnect(b, a, connection1);
+    gegl_pad_disconnect(b, a, connection1);
 
-    ct_test(test, 1 == gegl_property_get_num_connections(a));
-    ct_test(test, 0 == gegl_property_get_num_connections(b));
-    ct_test(test, 1 == gegl_property_get_num_connections(c));
+    ct_test(test, 1 == gegl_pad_get_num_connections(a));
+    ct_test(test, 0 == gegl_pad_get_num_connections(b));
+    ct_test(test, 1 == gegl_pad_get_num_connections(c));
 
-    gegl_property_disconnect(c, a, connection2);
+    gegl_pad_disconnect(c, a, connection2);
 
-    ct_test(test, 0 == gegl_property_get_num_connections(a));
-    ct_test(test, 0 == gegl_property_get_num_connections(b));
-    ct_test(test, 0 == gegl_property_get_num_connections(c));
+    ct_test(test, 0 == gegl_pad_get_num_connections(a));
+    ct_test(test, 0 == gegl_pad_get_num_connections(b));
+    ct_test(test, 0 == gegl_pad_get_num_connections(c));
 
     g_object_unref(a);
     g_object_unref(b);
@@ -145,7 +145,7 @@ property_connections_test_teardown(Test *test)
 Test *
 create_property_connections_test()
 {
-  Test* t = ct_create("GeglPropertyConnectionsTest");
+  Test* t = ct_create("GeglPadConnectionsTest");
 
   g_assert(ct_addSetUp(t, property_connections_test_setup));
   g_assert(ct_addTearDown(t, property_connections_test_teardown));

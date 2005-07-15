@@ -26,7 +26,7 @@
 #include "gegl-types.h"
 
 #include "gegl-node.h"
-#include "gegl-property.h"
+#include "gegl-pad.h"
 #include "gegl-visitor.h"
 #include "gegl-visitable.h"
 
@@ -70,8 +70,8 @@ static gint           get_shared_count         (GeglVisitor      *self,
 static void           set_shared_count         (GeglVisitor      *self,
                                                 GeglVisitable    *visitable,
                                                 gint              shared_count);
-static void           visit_property           (GeglVisitor      *self,
-                                                GeglProperty     *property);
+static void           visit_pad                (GeglVisitor      *self,
+                                                GeglPad          *pad);
 static void           visit_node               (GeglVisitor      *self,
                                                 GeglNode         *node);
 
@@ -86,8 +86,8 @@ gegl_visitor_class_init (GeglVisitorClass *klass)
 
   gobject_class->finalize = finalize;
 
-  klass->visit_property   = visit_property;
-  klass->visit_node       = visit_node;
+  klass->visit_pad  = visit_pad;
+  klass->visit_node = visit_node;
 }
 
 static void
@@ -422,25 +422,25 @@ gegl_visitor_bfs_traverse (GeglVisitor   *self,
 }
 
 void
-gegl_visitor_visit_property (GeglVisitor  *self,
-                             GeglProperty *property)
+gegl_visitor_visit_pad (GeglVisitor  *self,
+                        GeglPad      *pad)
 {
   GeglVisitorClass *klass;
 
   g_return_if_fail (GEGL_IS_VISITOR (self));
-  g_return_if_fail (GEGL_IS_PROPERTY (property));
+  g_return_if_fail (GEGL_IS_PAD (pad));
 
   klass = GEGL_VISITOR_GET_CLASS (self);
 
-  if (klass->visit_property)
-    klass->visit_property (self, property);
+  if (klass->visit_pad)
+    klass->visit_pad (self, pad);
 }
 
 static void
-visit_property (GeglVisitor  *self,
-                GeglProperty *property)
+visit_pad (GeglVisitor  *self,
+           GeglPad      *pad)
 {
-  self->visits_list = g_list_append (self->visits_list, property);
+  self->visits_list = g_list_append (self->visits_list, pad);
 }
 
 void

@@ -41,8 +41,8 @@ test_mock_operation_0_1_num_properties(Test *test)
   {
     GeglNode *a = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, NULL);
 
-    ct_test(test, 0 == gegl_node_get_num_input_props(a));
-    ct_test(test, 1 == gegl_node_get_num_output_props(a));
+    ct_test(test, 0 == gegl_node_get_num_input_pads(a));
+    ct_test(test, 1 == gegl_node_get_num_output_pads(a));
 
     g_object_unref(a);
   }
@@ -53,7 +53,7 @@ test_mock_operation_0_1_property_names(Test *test)
 {
   {
     GeglNode *a = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, NULL);
-    GeglProperty *output0 = gegl_node_get_property(a, "output0");
+    GeglPad *output0 = gegl_node_get_pad(a, "output0");
 
     ct_test(test, output0 != NULL);
 

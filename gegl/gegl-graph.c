@@ -27,7 +27,7 @@
 
 #include "gegl-graph.h"
 #include "gegl-visitable.h"
-#include "gegl-property.h"
+#include "gegl-pad.h"
 #include "gegl-visitor.h"
 
 
@@ -74,11 +74,11 @@ finalize (GObject *object)
   GeglGraph *self = GEGL_GRAPH (object);
   GeglNode  *node = GEGL_NODE (self);
 
-  while (node->properties)
+  while (node->pads)
     {
-      GeglProperty *property = g_list_nth_data (node->properties, 0);
+      GeglPad *pad = g_list_nth_data (node->pads, 0);
 
-      node->properties = g_list_remove (node->properties, property);
+      node->pads = g_list_remove (node->pads, pad);
     }
 
   gegl_graph_remove_children (self);

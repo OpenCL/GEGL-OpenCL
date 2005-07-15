@@ -49,10 +49,10 @@ struct _GeglVisitorClass
 {
   GeglObjectClass  parent_class;
 
-  void (* visit_property) (GeglVisitor  *self,
-                           GeglProperty *property);
-  void (* visit_node)     (GeglVisitor  *self,
-                           GeglNode     *node);
+  void (* visit_pad)  (GeglVisitor  *self,
+                       GeglPad      *pad);
+  void (* visit_node) (GeglVisitor  *self,
+                       GeglNode     *node);
 };
 
 
@@ -61,8 +61,8 @@ GType    gegl_visitor_get_type         (void) G_GNUC_CONST;
 GList  * gegl_visitor_get_visits_list (GeglVisitor   *self);
 void     gegl_visitor_visit_visitable (GeglVisitor   *self,
                                        GeglVisitable *visitable);
-void     gegl_visitor_visit_property  (GeglVisitor   *self,
-                                       GeglProperty  *property);
+void     gegl_visitor_visit_pad       (GeglVisitor   *self,
+                                       GeglPad       *pad);
 void     gegl_visitor_visit_node      (GeglVisitor   *self,
                                        GeglNode      *node);
 void     gegl_visitor_dfs_traverse    (GeglVisitor   *self,

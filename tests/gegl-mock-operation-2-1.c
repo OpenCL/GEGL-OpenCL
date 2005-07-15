@@ -4,7 +4,7 @@
 
 #include "gegl-types.h"
 
-#include "gegl-property.h"
+#include "gegl-pad.h"
 
 #include "gegl-mock-operation-2-1.h"
 
@@ -50,7 +50,7 @@ gegl_mock_operation_2_1_class_init (GeglMockOperation21Class * klass)
                                                      1000,
                                                      0,
                                                      G_PARAM_READABLE |
-                                                     GEGL_PROPERTY_OUTPUT));
+                                                     GEGL_PAD_OUTPUT));
 
   g_object_class_install_property (object_class, PROP_INPUT0,
                                    g_param_spec_int ("input0",
@@ -61,7 +61,7 @@ gegl_mock_operation_2_1_class_init (GeglMockOperation21Class * klass)
                                                      500,
                                                      G_PARAM_CONSTRUCT |
                                                      G_PARAM_READWRITE |
-                                                     GEGL_PROPERTY_INPUT));
+                                                     GEGL_PAD_INPUT));
 
   g_object_class_install_property (object_class, PROP_INPUT1,
                                    g_param_spec_int ("input1",
@@ -72,7 +72,7 @@ gegl_mock_operation_2_1_class_init (GeglMockOperation21Class * klass)
                                                      500,
                                                      G_PARAM_CONSTRUCT |
                                                      G_PARAM_READWRITE |
-                                                     GEGL_PROPERTY_INPUT));
+                                                     GEGL_PAD_INPUT));
 }
 
 static void
@@ -81,13 +81,13 @@ gegl_mock_operation_2_1_init (GeglMockOperation21 *self)
   GeglOperation   *operation       = GEGL_OPERATION (self);
   GObjectClass *object_class = G_OBJECT_GET_CLASS (self);
 
-  gegl_operation_create_property (operation,
+  gegl_operation_create_pad (operation,
                                g_object_class_find_property (object_class,
                                                              "output0"));
-  gegl_operation_create_property (operation,
+  gegl_operation_create_pad (operation,
                                g_object_class_find_property (object_class,
                                                              "input0"));
-  gegl_operation_create_property (operation,
+  gegl_operation_create_pad (operation,
                                g_object_class_find_property (object_class,
                                                              "input1"));
 }

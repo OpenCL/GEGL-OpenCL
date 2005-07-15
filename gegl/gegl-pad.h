@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __GEGL_PROPERTY_H__
-#define __GEGL_PROPERTY_H__
+#ifndef __GEGL_PAD_H__
+#define __GEGL_PAD_H__
 
 #include "gegl-object.h"
 
@@ -29,63 +29,63 @@ G_BEGIN_DECLS
 
 typedef enum
 {
-  GEGL_PROPERTY_OUTPUT  = 1 << G_PARAM_USER_SHIFT,
-  GEGL_PROPERTY_INPUT   = 1 << (G_PARAM_USER_SHIFT + 1)
-} GeglPropertyType;
+  GEGL_PAD_OUTPUT  = 1 << G_PARAM_USER_SHIFT,
+  GEGL_PAD_INPUT   = 1 << (G_PARAM_USER_SHIFT + 1)
+} GeglPadType;
 
 
-#define GEGL_TYPE_PROPERTY            (gegl_property_get_type ())
-#define GEGL_PROPERTY(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROPERTY, GeglProperty))
-#define GEGL_PROPERTY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_PROPERTY, GeglPropertyClass))
-#define GEGL_IS_PROPERTY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PROPERTY))
-#define GEGL_IS_PROPERTY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_PROPERTY))
-#define GEGL_PROPERTY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_PROPERTY, GeglPropertyClass))
+#define GEGL_TYPE_PAD            (gegl_pad_get_type ())
+#define GEGL_PAD(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PAD, GeglPad))
+#define GEGL_PAD_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_PAD, GeglPadClass))
+#define GEGL_IS_PAD(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PAD))
+#define GEGL_IS_PAD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_PAD))
+#define GEGL_PAD_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_PAD, GeglPadClass))
 
 
-typedef struct _GeglPropertyClass GeglPropertyClass;
+typedef struct _GeglPadClass GeglPadClass;
 
-struct _GeglProperty
+struct _GeglPad
 {
-  GeglObject  parent_instance;
+  GeglObject     parent_instance;
 
   /*< private >*/
-  GParamSpec *param_spec;
+  GParamSpec    *param_spec;
   GeglOperation *operation;
-  GList      *connections;
-  gboolean    dirty;
+  GList         *connections;
+  gboolean       dirty;
 };
 
-struct _GeglPropertyClass
+struct _GeglPadClass
 {
   GeglObjectClass  parent_class;
 };
 
 
-GType            gegl_property_get_type             (void) G_GNUC_CONST;
+GType            gegl_pad_get_type            (void) G_GNUC_CONST;
 
-const gchar    * gegl_property_get_name            (GeglProperty   *self);
-GList          * gegl_property_get_depends_on      (GeglProperty   *self);
-GeglOperation     * gegl_property_get_operation          (GeglProperty   *self);
-void             gegl_property_set_operation          (GeglProperty   *self,
-                                                    GeglOperation     *operation);
-gboolean         gegl_property_is_output           (GeglProperty   *self);
-gboolean         gegl_property_is_input            (GeglProperty   *self);
-GeglProperty   * gegl_property_get_connected_to    (GeglProperty   *self);
-gboolean         gegl_property_is_dirty            (GeglProperty   *self);
-void             gegl_property_set_dirty           (GeglProperty   *self,
-                                                    gboolean        flag);
-GeglConnection * gegl_property_connect             (GeglProperty   *sink,
-                                                    GeglProperty   *source);
-void             gegl_property_disconnect          (GeglProperty   *sink,
-                                                    GeglProperty   *source,
-                                                    GeglConnection *connection);
-GList          * gegl_property_get_connections     (GeglProperty   *self);
-gint             gegl_property_get_num_connections (GeglProperty   *self);
-GParamSpec     * gegl_property_get_param_spec      (GeglProperty   *self);
-void             gegl_property_set_param_spec      (GeglProperty   *self,
-                                                    GParamSpec     *param_spec);
+const gchar    * gegl_pad_get_name            (GeglPad        *self);
+GList          * gegl_pad_get_depends_on      (GeglPad        *self);
+GeglOperation  * gegl_pad_get_operation       (GeglPad        *self);
+void             gegl_pad_set_operation       (GeglPad        *self,
+                                               GeglOperation  *operation);
+gboolean         gegl_pad_is_output           (GeglPad        *self);
+gboolean         gegl_pad_is_input            (GeglPad        *self);
+GeglPad        * gegl_pad_get_connected_to    (GeglPad        *self);
+gboolean         gegl_pad_is_dirty            (GeglPad        *self);
+void             gegl_pad_set_dirty           (GeglPad        *self,
+                                               gboolean        flag);
+GeglConnection * gegl_pad_connect             (GeglPad        *sink,
+                                               GeglPad        *source);
+void             gegl_pad_disconnect          (GeglPad        *sink,
+                                               GeglPad        *source,
+                                               GeglConnection *connection);
+GList          * gegl_pad_get_connections     (GeglPad        *self);
+gint             gegl_pad_get_num_connections (GeglPad        *self);
+GParamSpec     * gegl_pad_get_param_spec      (GeglPad        *self);
+void             gegl_pad_set_param_spec      (GeglPad        *self,
+                                               GParamSpec     *param_spec);
 
 
 G_END_DECLS
 
-#endif /* __GEGL_PROPERTY_H__ */
+#endif /* __GEGL_PAD_H__ */

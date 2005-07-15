@@ -28,13 +28,13 @@
 #include "gegl-eval-visitor.h"
 #include "gegl-operation.h"
 #include "gegl-node.h"
-#include "gegl-property.h"
+#include "gegl-pad.h"
 #include "gegl-visitable.h"
 
 
 static void gegl_eval_visitor_class_init (GeglEvalVisitorClass *klass);
-static void visit_property               (GeglVisitor          *visitor,
-                                          GeglProperty         *property);
+static void visit_pad                    (GeglVisitor          *visitor,
+                                          GeglPad              *pad);
 
 
 G_DEFINE_TYPE(GeglEvalVisitor, gegl_eval_visitor, GEGL_TYPE_VISITOR)
@@ -45,7 +45,7 @@ gegl_eval_visitor_class_init (GeglEvalVisitorClass *klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
 
-  visitor_class->visit_property = visit_property;
+  visitor_class->visit_pad = visit_pad;
 }
 
 static void
@@ -54,43 +54,43 @@ gegl_eval_visitor_init (GeglEvalVisitor *visitor)
 }
 
 static void
-visit_property (GeglVisitor  *visitor,
-                GeglProperty *property)
+visit_pad (GeglVisitor *visitor,
+           GeglPad     *pad)
 {
-  GeglOperation *operation = gegl_property_get_operation(property);
+  GeglOperation *operation = gegl_pad_get_operation (pad);
 
-  GEGL_VISITOR_CLASS (gegl_eval_visitor_parent_class)->visit_property (visitor,
-                                                                       property);
+  GEGL_VISITOR_CLASS (gegl_eval_visitor_parent_class)->visit_pad (visitor,
+                                                                       pad);
 #if 0
-  g_print("Compute Visitor: Visiting property %s from operation %s\n",
-          gegl_property_get_name(property),
+  g_print("Compute Visitor: Visiting pad %s from operation %s\n",
+          gegl_pad_get_name(pad),
           gegl_object_get_name(GEGL_OBJECT(operation)));
 #endif
 
-  if (gegl_property_is_output (property))
+  if (gegl_pad_is_output (pad))
     {
-      const gchar *property_name = gegl_property_get_name (property);
+      const gchar *pad_name = gegl_pad_get_name (pad);
       gboolean     success;
 
-      success = gegl_operation_evaluate (operation, property_name);
+      success = gegl_operation_evaluate (operation, pad_name);
     }
-  else if (gegl_property_is_input (property))
+  else if (gegl_pad_is_input (pad))
     {
-      GeglProperty *source_prop = gegl_property_get_connected_to (property);
+      GeglPad *source_pad = gegl_pad_get_connected_to (pad);
 
-      if (source_prop)
+      if (source_pad)
         {
           GValue      value     = { 0 };
-          GParamSpec *prop_spec = gegl_property_get_param_spec (property);
-          GeglOperation *source    = gegl_property_get_operation (source_prop);
+          GParamSpec *prop_spec = gegl_pad_get_param_spec (pad);
+          GeglOperation *source    = gegl_pad_get_operation (source_pad);
 
           g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (prop_spec));
 
           g_object_get_property (G_OBJECT(source),
-                                 gegl_property_get_name (source_prop),
+                                 gegl_pad_get_name (source_pad),
                                  &value);
           g_object_set_property (G_OBJECT (operation),
-                                 gegl_property_get_name (property),
+                                 gegl_pad_get_name (pad),
                                  &value);
         }
     }

@@ -31,7 +31,7 @@
 #include "gegl-node.h"
 #include "gegl-visitor.h"
 #include "gegl-visitable.h"
-#include "gegl-property.h"
+#include "gegl-pad.h"
 #include "gegl-connection.h"
 #include "gegl-eval-mgr.h"
 
@@ -52,12 +52,12 @@ static void            get_property             (GObject       *gobject,
                                                  guint          prop_id,
                                                  GValue        *value,
                                                  GParamSpec    *pspec);
-static gboolean        properties_exist         (GeglNode      *sink,
-                                                 const gchar   *sink_prop_name,
+static gboolean        pads_exist         (GeglNode      *sink,
+                                                 const gchar   *sink_pad_name,
                                                  GeglNode      *source,
-                                                 const gchar   *source_prop_name);
+                                                 const gchar   *source_pad_name);
 static GeglConnection *find_connection          (GeglNode      *sink,
-                                                 GeglProperty  *sink_prop);
+                                                 GeglPad       *sink_pad);
 static void            visitable_init           (gpointer       ginterface,
                                                  gpointer       interface_data);
 static void            visitable_accept         (GeglVisitable *visitable,
@@ -83,9 +83,9 @@ gegl_node_class_init (GeglNodeClass * klass)
 static void
 gegl_node_init (GeglNode *self)
 {
-  self->properties        = NULL;
-  self->input_properties  = NULL;
-  self->output_properties = NULL;
+  self->pads        = NULL;
+  self->input_pads  = NULL;
+  self->output_pads = NULL;
   self->sinks             = NULL;
   self->sources           = NULL;
   self->enabled           = TRUE;
@@ -110,15 +110,15 @@ finalize (GObject *gobject)
   gegl_node_disconnect_sources (self);
   gegl_node_disconnect_sinks (self);
 
-  if (self->properties)
+  if (self->pads)
     {
-      g_list_foreach (self->properties, (GFunc) g_object_unref, NULL);
-      g_list_free (self->properties);
-      self->properties = NULL;
+      g_list_foreach (self->pads, (GFunc) g_object_unref, NULL);
+      g_list_free (self->pads);
+      self->pads = NULL;
     }
 
-  g_list_free (self->input_properties);
-  g_list_free (self->output_properties);
+  g_list_free (self->input_pads);
+  g_list_free (self->output_pads);
 
   G_OBJECT_CLASS (gegl_node_parent_class)->finalize (gobject);
 }
@@ -152,25 +152,25 @@ get_property (GObject    *gobject,
 }
 
 /**
- * gegl_node_get_property:
+ * gegl_node_get_pad:
  * @self: a #GeglNode.
  * @name: property name.
  *
  * Get a property.
  *
- * Returns: A #GeglProperty.
+ * Returns: A #GeglPad.
  **/
-GeglProperty *
-gegl_node_get_property (GeglNode    *self,
-                        const gchar *name)
+GeglPad *
+gegl_node_get_pad (GeglNode    *self,
+                   const gchar *name)
 {
   GList *list;
 
-  for (list = self->properties; list; list = g_list_next (list))
+  for (list = self->pads; list; list = g_list_next (list))
     {
-      GeglProperty *property = list->data;
+      GeglPad *property = list->data;
 
-      if (! strcmp (name, gegl_property_get_name (property)))
+      if (! strcmp (name, gegl_pad_get_name (property)))
         return property;
     }
 
@@ -178,94 +178,94 @@ gegl_node_get_property (GeglNode    *self,
 }
 
 /**
- * gegl_node_get_properties:
+ * gegl_node_get_pads:
  * @self: a #GeglNode.
  *
- * Returns: A list of #GeglProperty.
+ * Returns: A list of #GeglPad.
  **/
 GList *
-gegl_node_get_properties (GeglNode *self)
+gegl_node_get_pads (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
-  return self->properties;
+  return self->pads;
 }
 
 /**
- * gegl_node_get_input_properties:
+ * gegl_node_get_input_pads:
  * @self: a #GeglNode.
  *
- * Returns: A list of #GeglProperty.
+ * Returns: A list of #GeglPad.
  **/
 GList *
-gegl_node_get_input_properties (GeglNode *self)
+gegl_node_get_input_pads (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
-  return self->input_properties;
+  return self->input_pads;
 }
 
 /**
- * gegl_node_get_output_properties:
+ * gegl_node_get_output_pads:
  * @self: a #GeglNode.
  *
- * Returns: A list of #GeglProperty.
+ * Returns: A list of #GeglPad.
  **/
 GList *
-gegl_node_get_output_properties (GeglNode *self)
+gegl_node_get_output_pads (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
-  return self->output_properties;
+  return self->output_pads;
 }
 
 void
-gegl_node_add_property (GeglNode     *self,
-                        GeglProperty *property)
+gegl_node_add_pad (GeglNode *self,
+                   GeglPad  *pad)
 {
   g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail (GEGL_IS_PROPERTY (property));
+  g_return_if_fail (GEGL_IS_PAD (pad));
 
-  self->properties = g_list_append (self->properties, property);
+  self->pads = g_list_append (self->pads, pad);
 
-  if (gegl_property_is_output (property))
-    self->output_properties = g_list_append (self->output_properties, property);
+  if (gegl_pad_is_output (pad))
+    self->output_pads = g_list_append (self->output_pads, pad);
 
-  if (gegl_property_is_input (property))
-    self->input_properties = g_list_append (self->input_properties, property);
+  if (gegl_pad_is_input (pad))
+    self->input_pads = g_list_append (self->input_pads, pad);
 }
 
 void
-gegl_node_remove_property (GeglNode     *self,
-                           GeglProperty *property)
+gegl_node_remove_pad (GeglNode *self,
+                      GeglPad  *pad)
 {
   g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail (GEGL_IS_PROPERTY (property));
+  g_return_if_fail (GEGL_IS_PAD (pad));
 
-  self->properties = g_list_remove (self->properties, property);
+  self->pads = g_list_remove (self->pads, pad);
 
-  if (gegl_property_is_output (property))
-    self->output_properties = g_list_remove (self->output_properties, property);
+  if (gegl_pad_is_output (pad))
+    self->output_pads = g_list_remove (self->output_pads, pad);
 
-  if (gegl_property_is_input (property))
-    self->input_properties = g_list_remove (self->input_properties, property);
+  if (gegl_pad_is_input (pad))
+    self->input_pads = g_list_remove (self->input_pads, pad);
 }
 
 static gboolean
-properties_exist (GeglNode    *sink,
-                  const gchar *sink_prop_name,
-                  GeglNode    *source,
-                  const gchar *source_prop_name)
+pads_exist (GeglNode    *sink,
+            const gchar *sink_prop_name,
+            GeglNode    *source,
+            const gchar *source_prop_name)
 {
-  GeglProperty *sink_prop   = gegl_node_get_property (sink, sink_prop_name);
-  GeglProperty *source_prop = gegl_node_get_property (source, source_prop_name);
+  GeglPad *sink_prop   = gegl_node_get_pad (sink, sink_prop_name);
+  GeglPad *source_prop = gegl_node_get_pad (source, source_prop_name);
 
-  if (!sink_prop || !gegl_property_is_input (sink_prop))
+  if (!sink_prop || !gegl_pad_is_input (sink_prop))
     {
       g_warning ("Can't find sink property %s", sink_prop_name);
       return FALSE;
     }
-  else if (!source_prop || !gegl_property_is_output (source_prop))
+  else if (!source_prop || !gegl_pad_is_output (source_prop))
     {
       g_warning ("Can't find source property %s", source_prop_name);
       return FALSE;
@@ -276,7 +276,7 @@ properties_exist (GeglNode    *sink,
 
 static GeglConnection *
 find_connection (GeglNode     *sink,
-                 GeglProperty *sink_prop)
+                 GeglPad *sink_prop)
 {
   GList *list;
 
@@ -302,13 +302,13 @@ gegl_node_connect (GeglNode    *sink,
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
   g_return_val_if_fail (GEGL_IS_NODE (source), FALSE);
 
-  if (properties_exist (sink, sink_prop_name, source, source_prop_name))
+  if (pads_exist (sink, sink_prop_name, source, source_prop_name))
     {
-      GeglProperty   *sink_prop   = gegl_node_get_property (sink,
+      GeglPad   *sink_prop   = gegl_node_get_pad (sink,
                                                             sink_prop_name);
-      GeglProperty   *source_prop = gegl_node_get_property (source,
+      GeglPad   *source_prop = gegl_node_get_pad (source,
                                                             source_prop_name);
-      GeglConnection *connection  = gegl_property_connect (sink_prop,
+      GeglConnection *connection  = gegl_pad_connect (sink_prop,
                                                            source_prop);
 
       gegl_connection_set_sink_node (connection, sink);
@@ -332,18 +332,18 @@ gegl_node_disconnect (GeglNode    *sink,
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
   g_return_val_if_fail (GEGL_IS_NODE (source), FALSE);
 
-  if (properties_exist (sink, sink_prop_name, source, source_prop_name))
+  if (pads_exist (sink, sink_prop_name, source, source_prop_name))
     {
-      GeglProperty   *sink_prop   = gegl_node_get_property (sink,
+      GeglPad   *sink_prop   = gegl_node_get_pad (sink,
                                                             sink_prop_name);
-      GeglProperty   *source_prop = gegl_node_get_property (source,
+      GeglPad   *source_prop = gegl_node_get_pad (source,
                                                             source_prop_name);
       GeglConnection *connection  = find_connection (sink, sink_prop);
 
       if (! connection)
         return FALSE;
 
-      gegl_property_disconnect (sink_prop, source_prop, connection);
+      gegl_pad_disconnect (sink_prop, source_prop, connection);
 
       sink->sources = g_list_remove (sink->sources, connection);
       source->sinks = g_list_remove (source->sinks, connection);
@@ -367,10 +367,10 @@ gegl_node_disconnect_sources (GeglNode *self)
         {
           GeglNode *sink = gegl_connection_get_sink_node (connection);
           GeglNode *source = gegl_connection_get_source_node (connection);
-          GeglProperty *sink_prop = gegl_connection_get_sink_prop (connection);
-          GeglProperty *source_prop = gegl_connection_get_source_prop (connection);
-          const gchar *sink_prop_name = gegl_property_get_name (sink_prop);
-          const gchar *source_prop_name = gegl_property_get_name (source_prop);
+          GeglPad *sink_prop = gegl_connection_get_sink_prop (connection);
+          GeglPad *source_prop = gegl_connection_get_source_prop (connection);
+          const gchar *sink_prop_name = gegl_pad_get_name (sink_prop);
+          const gchar *source_prop_name = gegl_pad_get_name (source_prop);
 
           g_assert (self == sink);
 
@@ -392,10 +392,10 @@ gegl_node_disconnect_sinks (GeglNode *self)
         {
           GeglNode *sink = gegl_connection_get_sink_node (connection);
           GeglNode *source = gegl_connection_get_source_node (connection);
-          GeglProperty *sink_prop = gegl_connection_get_sink_prop (connection);
-          GeglProperty *source_prop = gegl_connection_get_source_prop (connection);
-          const gchar *sink_prop_name = gegl_property_get_name (sink_prop);
-          const gchar *source_prop_name = gegl_property_get_name (source_prop);
+          GeglPad *sink_prop = gegl_connection_get_sink_prop (connection);
+          GeglPad *source_prop = gegl_connection_get_source_prop (connection);
+          const gchar *sink_prop_name = gegl_pad_get_name (sink_prop);
+          const gchar *source_prop_name = gegl_pad_get_name (source_prop);
 
           g_assert (self == source);
 
@@ -439,7 +439,7 @@ gegl_node_get_num_sources (GeglNode *self)
 }
 
 /**
- * gegl_node_get_num_input_props:
+ * gegl_node_get_num_input_pads:
  * @self: a #GeglNode.
  *
  * Gets the number of inputs.
@@ -447,15 +447,15 @@ gegl_node_get_num_sources (GeglNode *self)
  * Returns: number of inputs.
  **/
 gint
-gegl_node_get_num_input_props (GeglNode *self)
+gegl_node_get_num_input_pads (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
-  return g_list_length (self->input_properties);
+  return g_list_length (self->input_pads);
 }
 
 /**
- * gegl_node_get_num_output_props:
+ * gegl_node_get_num_output_pads:
  * @self: a #GeglNode.
  *
  * Gets the number of outputs.
@@ -463,11 +463,11 @@ gegl_node_get_num_input_props (GeglNode *self)
  * Returns: number of outputs.
  **/
 gint
-gegl_node_get_num_output_props (GeglNode *self)
+gegl_node_get_num_output_pads (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
-  return g_list_length (self->output_properties);
+  return g_list_length (self->output_pads);
 }
 
 /**
