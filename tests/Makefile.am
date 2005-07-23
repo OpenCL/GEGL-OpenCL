@@ -35,16 +35,16 @@ MOCK_OBJECT_SRC = \
 	gegl-mock-node-visitor.h	\
 	gegl-mock-object.c		\
 	gegl-mock-object.h		\
-	gegl-mock-property-visitor.c	\
-	gegl-mock-property-visitor.h	\
+	gegl-mock-pad-visitor.c		\
+	gegl-mock-pad-visitor.h		\
 	gegl-image-mock-cache-entry.c
 
 testgegl_SOURCES = \
 	$(MOCK_OBJECT_SRC)				\
 	$(EXTRA_SRC)					\
-	bfspropertyvisitortest.c			\
+	bfspadvisitortest.c				\
 	dfsnodevisitortest.c				\
-	dfspropertyvisitortest.c			\
+	dfspadvisitortest.c				\
 	graphtest.c					\
 	mockimageoperationtest.c			\
 	mockoperation01test.c				\
@@ -54,9 +54,9 @@ testgegl_SOURCES = \
 	mockoperation22test.c				\
 	nodeconnectionstest.c				\
 	objecttest.c					\
-	propertyconnectionstest.c			\
+	padconnectionstest.c				\
 	testgegl.c					\
-	updatepropertytest.c				\
+	updatepadtest.c					\
 	gegl-image-buffer-double-test.c			\
 	gegl-image-component-sample-model-test.c	\
 	gegl-image-mock-cache-entry-test.c		\

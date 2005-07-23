@@ -6,7 +6,7 @@
 #include "gegl-pad.h"
 #include "gegl-visitable.h"
 
-#include "gegl-mock-property-visitor.h"
+#include "gegl-mock-pad-visitor.h"
 
 
 static void gegl_mock_pad_visitor_class_init (GeglMockPadVisitorClass *klass);

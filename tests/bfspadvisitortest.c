@@ -1,6 +1,6 @@
 #include <glib-object.h>
 #include "gegl.h"
-#include "gegl-mock-property-visitor.h"
+#include "gegl-mock-pad-visitor.h"
 #include "gegl-mock-operation-0-1.h"
 #include "gegl-mock-operation-1-1.h"
 #include "gegl-mock-operation-1-2.h"
