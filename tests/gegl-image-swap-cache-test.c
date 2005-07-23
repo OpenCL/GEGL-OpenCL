@@ -67,7 +67,7 @@ teardown_prime(Test * test)
 Test *
 create_swap_cache_mem_leaks_test()
 {
-  Test* t = ct_create("GegSwapCache Test");
+  Test* t = ct_create("GeglSwapCache Test");
   g_assert(ct_addSetUp(t, setup_prime));
   g_assert(ct_addTearDown(t, teardown_prime));
 

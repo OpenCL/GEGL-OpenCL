@@ -63,7 +63,7 @@ teardown_const (Test * test)
 Test *
 create_heap_cache_mem_leaks_test()
 {
-  Test* t = ct_create("GegHeapCache Test");
+  Test* t = ct_create("GeglHeapCache Test");
   g_assert(ct_addSetUp(t, setup_const));
   g_assert(ct_addTearDown(t, teardown_const));
 
