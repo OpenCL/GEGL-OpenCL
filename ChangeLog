@@ -57,7 +57,6 @@
 	* tests/gegl-image-swap-cache-test.c: s/Geg/Gegl/ in the registration
 	of tests.
 
->>>>>>> 1.274
 2005-07-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-property.[ch]: removed
