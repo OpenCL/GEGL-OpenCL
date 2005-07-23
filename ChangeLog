@@ -6,12 +6,14 @@
 	* tests/gegl-mock-property-visitor.h
 	* tests/propertyconnectiontest.c
 	* tests/updatepropertytest.c: removed
+
 	* tests/bfspadtest.c
 	* tests/dfspadtest.c
 	* tests/gegl-mock-pad-visitor.c
 	* tests/gegl-mock-pad-visitor.h
 	* tests/padconnectiontest.c
 	* tests/updatepadtest.c: added and modified to reflect this change.
+
 	* tests/Makefile.am: modified accordingly
 
 2005-07-22  Øyvind Kolås  <pippin@gimp.org>
