@@ -42,6 +42,8 @@ struct _GeglNode
   GeglObject     parent_instance;
 
   /*< private >*/
+
+  GeglOperation *operation;
   
   GList         *pads;
   GList         *input_pads;

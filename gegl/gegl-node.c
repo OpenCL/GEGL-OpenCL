@@ -38,7 +38,8 @@
 
 enum
 {
-  PROP_0
+  PROP_0,
+  PROP_OPERATION
 };
 
 static void            gegl_node_class_init     (GeglNodeClass *klass);
@@ -65,6 +66,10 @@ static void            visitable_accept         (GeglVisitable *visitable,
 static GList*          visitable_depends_on     (GeglVisitable *visitable);
 static gboolean        visitable_needs_visiting (GeglVisitable *visitable);
 
+static void            gegl_node_set_operation  (GeglNode      *self,
+                                                 const gchar   *operation);
+static const gchar *   gegl_node_get_operation  (GeglNode      *self);
+
 
 G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, GEGL_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (GEGL_TYPE_VISITABLE,
@@ -78,6 +83,14 @@ gegl_node_class_init (GeglNodeClass * klass)
   gobject_class->finalize     = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
+
+  g_object_class_install_property (gobject_class, PROP_OPERATION,
+                                   g_param_spec_string ("operation",
+                                   "Operation Type",
+                                   "The type of the associated GeglOperation",
+                                   "nop",
+                                   G_PARAM_CONSTRUCT |
+                                   G_PARAM_READWRITE));
 }
 
 static void
@@ -131,6 +144,9 @@ set_property (GObject      *gobject,
 {
   switch (property_id)
     {
+    case PROP_OPERATION:
+      gegl_node_set_operation (GEGL_NODE (gobject), g_value_get_string (value));
+      break; 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
@@ -145,6 +161,9 @@ get_property (GObject    *gobject,
 {
   switch (property_id)
     {
+    case PROP_OPERATION:
+      g_value_set_string (value, gegl_node_get_operation (GEGL_NODE (gobject)));
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
@@ -551,4 +570,40 @@ static gboolean
 visitable_needs_visiting (GeglVisitable *visitable)
 {
   return TRUE;
+}
+
+static void
+gegl_node_set_operation (GeglNode      *self,
+                         const gchar   *operation)
+{
+  if (self->operation)
+    g_object_unref (self->operation);
+
+  if (!strcmp (operation, "nop"))
+    {
+#if 0
+      self->operation = g_object_new (GEGL_TYPE_NOP_OPERATION);
+      g_evil_bless (G_OBJECT (self));
+      g_evil_transmogrify (G_OBJECT (self), "GeglNode-nop");
+#endif
+    }
+  else if (!strcmp (operation, "null"))
+    {
+    }
+#if 0
+      
+      self->input_pads = self->operation->input_pads;
+      self->output_pads = self->operation->output_pads;
+
+      self->operation.properties.each {|prop|
+        make sure self has the same properties
+      }
+#endif
+}
+
+static const gchar *
+gegl_node_get_operation (GeglNode      *self)
+{ 
+  const gchar *type_name = G_OBJECT_TYPE_NAME (self);
+  return &(type_name[9]);
 }
