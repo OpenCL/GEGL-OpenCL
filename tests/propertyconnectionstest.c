@@ -5,7 +5,7 @@
 #include <string.h>
 
 static void
-test_property_connections(Test *test)
+test_pad_connections(Test *test)
 {
 
   /*
@@ -133,25 +133,25 @@ test_property_connections(Test *test)
 }
 
 static void
-property_connections_test_setup(Test *test)
+pad_connections_test_setup(Test *test)
 {
 }
 
 static void
-property_connections_test_teardown(Test *test)
+pad_connections_test_teardown(Test *test)
 {
 }
 
 Test *
-create_property_connections_test()
+create_pad_connections_test()
 {
   Test* t = ct_create("GeglPadConnectionsTest");
 
-  g_assert(ct_addSetUp(t, property_connections_test_setup));
-  g_assert(ct_addTearDown(t, property_connections_test_teardown));
+  g_assert(ct_addSetUp(t, pad_connections_test_setup));
+  g_assert(ct_addTearDown(t, pad_connections_test_teardown));
 
 #if 1
-  g_assert(ct_addTestFun(t, test_property_connections));
+  g_assert(ct_addTestFun(t, test_pad_connections));
 #endif
 
   return t;

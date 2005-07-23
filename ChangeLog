@@ -1,3 +1,26 @@
+2005-07-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* tests/bfspropertyvisitortest.c
+	* tests/dfspropertyvisitortest.c
+	* tests/gegl-mock-property-visitor.c
+	* tests/gegl-mock-property-visitor.h
+	* tests/mockoperation01test.c
+	* tests/mockoperation11test.c
+	* tests/mockoperation12test.c
+	* tests/mockoperation21test.c
+	* tests/mockoperation22test.c
+	* tests/propertyconnectionstest.c
+	* tests/testgegl.c
+	* tests/updatepropertytest.c: Replaced occurences of property where
+	pad is meant from variable, class and function names in source. File
+	renaming is still pending.
+
+2005-07-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* tests/gegl-image-heap-cache-tests.c
+	* tests/gegl-image-swap-cache-test.c: s/Geg/Gegl/ in the registration
+	of tests.
+
 2005-07-22  Øyvind Kolås <pippin@gimp.org>
 
 	* tests/gegl-image-heap-cache-tests.c
@@ -26,8 +49,7 @@
 	* gegl-visitor.c
 	* gegl-visitor.h
 	* gegl.h: renaming property to pad.
-	* tests/*.[ch]: fix to reflect API changes, further cleanup
-          is needed, renaming of files etc. But not enough time right now.
+	* tests/*.[ch]: fix to make the test suite work with API changes.
 	
 2005-06-11  Øyvind Kolås  <pippin@gimp.org>
 

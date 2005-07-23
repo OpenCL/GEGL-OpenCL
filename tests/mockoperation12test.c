@@ -58,7 +58,7 @@ test_mock_operation_1_2_num_properties(Test *test)
 }
 
 static void
-test_mock_operation_1_2_property_names(Test *test)
+test_mock_operation_1_2_pad_names(Test *test)
 {
   {
     GeglNode *a = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_2, NULL);
@@ -96,7 +96,7 @@ create_mock_operation_1_2_test()
   g_assert(ct_addTestFun(t, test_mock_operation_1_2_g_object_new));
   g_assert(ct_addTestFun(t, test_mock_operation_1_2_g_object_properties));
   g_assert(ct_addTestFun(t, test_mock_operation_1_2_num_properties));
-  g_assert(ct_addTestFun(t, test_mock_operation_1_2_property_names));
+  g_assert(ct_addTestFun(t, test_mock_operation_1_2_pad_names));
 #endif
 
   return t;

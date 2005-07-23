@@ -5,9 +5,9 @@
 #include "ctest.h"
 #include "csuite.h"
 
-extern Test * create_bfs_property_visitor_test();
+extern Test * create_bfs_pad_visitor_test();
 extern Test * create_graph_test();
-extern Test * create_dfs_property_visitor_test();
+extern Test * create_dfs_pad_visitor_test();
 extern Test * create_dfs_node_visitor_test();
 extern Test * create_mock_image_operation_test();
 extern Test * create_mock_operation_0_1_test();
@@ -16,8 +16,8 @@ extern Test * create_mock_operation_1_2_test();
 extern Test * create_mock_operation_2_1_test();
 extern Test * create_mock_operation_2_2_test();
 extern Test * create_node_connections_test();
-extern Test * create_property_connections_test();
-extern Test * create_update_property_test();
+extern Test * create_pad_connections_test();
+extern Test * create_update_pad_test();
 /* extern Test * create_memory_cache_test(); */
 extern Test * create_buffer_double_test();
 extern Test * create_component_sample_model_test();
@@ -46,9 +46,9 @@ main (int argc, char *argv[])
   {
     Suite *suite = cs_create("GeglTestSuite");
 
-    cs_addTest(suite, create_bfs_property_visitor_test());
+    cs_addTest(suite, create_bfs_pad_visitor_test());
     cs_addTest(suite, create_graph_test());
-    cs_addTest(suite, create_dfs_property_visitor_test());
+    cs_addTest(suite, create_dfs_pad_visitor_test());
     cs_addTest(suite, create_dfs_node_visitor_test());
     cs_addTest(suite, create_mock_image_operation_test());
     cs_addTest(suite, create_mock_operation_0_1_test());
@@ -57,8 +57,8 @@ main (int argc, char *argv[])
     cs_addTest(suite, create_mock_operation_2_1_test());
     cs_addTest(suite, create_mock_operation_2_2_test());
     cs_addTest(suite, create_node_connections_test());
-    cs_addTest(suite, create_property_connections_test());
-    cs_addTest(suite, create_update_property_test());
+    cs_addTest(suite, create_pad_connections_test());
+    cs_addTest(suite, create_update_pad_test());
     /* cs_addTest(suite, create_memory_cache_test()); */
     cs_addTest(suite, create_buffer_double_test());
     cs_addTest(suite, create_component_sample_model_test());

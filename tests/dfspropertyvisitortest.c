@@ -12,46 +12,46 @@
 
 
 static gboolean
-do_visitor_and_check_visit_order(gchar **visit_order,
-                                 gint length,
-                                 gchar *pad_name,
-                                 GeglNode *node)
+do_visitor_and_check_visit_order (gchar   **visit_order,
+                                  gint      length,
+                                  gchar    *pad_name,
+                                  GeglNode *node)
 {
   gint i;
-  GList *visits_list = NULL;
-  GeglPad     *pad = gegl_node_get_pad (node, pad_name);
-  GeglVisitor *  visitor = g_object_new(GEGL_TYPE_MOCK_PROPERTY_VISITOR, NULL);
-  gegl_visitor_dfs_traverse(visitor, GEGL_VISITABLE(pad));
+  GList       *visits_list = NULL;
+  GeglPad     *pad         = gegl_node_get_pad (node, pad_name);
+  GeglVisitor *visitor     = g_object_new (GEGL_TYPE_MOCK_PAD_VISITOR, NULL);
+  gegl_visitor_dfs_traverse (visitor, GEGL_VISITABLE (pad));
 
-  visits_list = gegl_visitor_get_visits_list(visitor);
+  visits_list = gegl_visitor_get_visits_list (visitor);
 
-  if(length != (gint)g_list_length(visits_list))
-      return FALSE;
+  if (length != (gint)g_list_length (visits_list))
+    return FALSE;
 
-  for(i = 0; i < length; i++)
+  for (i = 0; i < length; i++)
     {
-      GeglPad *pad = (GeglPad*)g_list_nth_data(visits_list, i);
-      GeglOperation *operation = gegl_pad_get_operation(pad);
-      const gchar *node_name = gegl_object_get_name(GEGL_OBJECT(operation));
+      GeglPad       *pad       = (GeglPad*) g_list_nth_data (visits_list, i);
+      GeglOperation *operation = gegl_pad_get_operation (pad);
+      const gchar   *node_name = gegl_object_get_name (GEGL_OBJECT (operation));
       gchar *pad_name =
-        g_strconcat(node_name, ".", gegl_pad_get_name(pad), NULL);
+        g_strconcat (node_name, ".", gegl_pad_get_name (pad), NULL);
 
-      if(0 != strcmp(pad_name, visit_order[i]))
+      if(0 != strcmp (pad_name, visit_order[i]))
         {
-          g_free(pad_name);
-          g_object_unref(visitor);
+          g_free (pad_name);
+          g_object_unref (visitor);
           return FALSE;
         }
 
-      g_free(pad_name);
+      g_free (pad_name);
     }
 
-  g_object_unref(visitor);
+  g_object_unref (visitor);
   return TRUE;
 }
 
 static void
-test_dfs_property_visitor(Test *test)
+test_dfs_pad_visitor (Test *test)
 {
   /*
        -
@@ -73,14 +73,14 @@ test_dfs_property_visitor(Test *test)
     GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "B", NULL);
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "C", NULL);
 
-    gegl_node_connect(C, "input0", A, "output0");
-    gegl_node_connect(C, "input1", B, "output0");
+    gegl_node_connect (C, "input0", A, "output0");
+    gegl_node_connect (C, "input1", B, "output0");
 
-    ct_test(test, do_visitor_and_check_visit_order(visit_order, 5, "output0", C));
+    ct_test (test, do_visitor_and_check_visit_order (visit_order, 5, "output0", C));
 
-    g_object_unref(A);
-    g_object_unref(B);
-    g_object_unref(C);
+    g_object_unref (A);
+    g_object_unref (B);
+    g_object_unref (C);
   }
 
   /*
@@ -106,14 +106,14 @@ test_dfs_property_visitor(Test *test)
     GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "B", NULL);
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "C", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(C, "input0", B, "output0");
+    gegl_node_connect (B, "input0", A, "output0");
+    gegl_node_connect (C, "input0", B, "output0");
 
-    ct_test(test, do_visitor_and_check_visit_order(visit_order, 5, "output0", C));
+    ct_test (test, do_visitor_and_check_visit_order (visit_order, 5, "output0", C));
 
-    g_object_unref(A);
-    g_object_unref(B);
-    g_object_unref(C);
+    g_object_unref (A);
+    g_object_unref (B);
+    g_object_unref (C);
   }
 
 
@@ -135,13 +135,13 @@ test_dfs_property_visitor(Test *test)
     GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "A", NULL);
     GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "B", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(B, "input1", A, "output0");
+    gegl_node_connect (B, "input0", A, "output0");
+    gegl_node_connect (B, "input1", A, "output0");
 
-    ct_test(test, do_visitor_and_check_visit_order(visit_order, 4, "output0", B));
+    ct_test (test, do_visitor_and_check_visit_order (visit_order, 4, "output0", B));
 
-    g_object_unref(A);
-    g_object_unref(B);
+    g_object_unref (A);
+    g_object_unref (B);
   }
 
   /*
@@ -170,14 +170,14 @@ test_dfs_property_visitor(Test *test)
     GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "B", NULL);
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "C", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(C, "input1", B, "output0");
+    gegl_node_connect (B, "input0", A, "output0");
+    gegl_node_connect (C, "input1", B, "output0");
 
-    ct_test(test, do_visitor_and_check_visit_order(visit_order, 7, "output0", C));
+    ct_test (test, do_visitor_and_check_visit_order (visit_order, 7, "output0", C));
 
-    g_object_unref(A);
-    g_object_unref(B);
-    g_object_unref(C);
+    g_object_unref (A);
+    g_object_unref (B);
+    g_object_unref (C);
   }
 
   /*
@@ -207,16 +207,16 @@ test_dfs_property_visitor(Test *test)
     GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_2, "name", "B", NULL);
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "C", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(B, "input1", A, "output0");
-    gegl_node_connect(C, "input0", B, "output0");
-    gegl_node_connect(C, "input1", B, "output1");
+    gegl_node_connect (B, "input0", A, "output0");
+    gegl_node_connect (B, "input1", A, "output0");
+    gegl_node_connect (C, "input0", B, "output0");
+    gegl_node_connect (C, "input1", B, "output1");
 
-    ct_test(test, do_visitor_and_check_visit_order(visit_order, 8, "output0", C));
+    ct_test (test, do_visitor_and_check_visit_order (visit_order, 8, "output0", C));
 
-    g_object_unref(A);
-    g_object_unref(B);
-    g_object_unref(C);
+    g_object_unref (A);
+    g_object_unref (B);
+    g_object_unref (C);
   }
 
   /*
@@ -240,13 +240,13 @@ test_dfs_property_visitor(Test *test)
     GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_2, "name", "A", NULL);
     GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "B", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(B, "input1", A, "output1");
+    gegl_node_connect (B, "input0", A, "output0");
+    gegl_node_connect (B, "input1", A, "output1");
 
-    ct_test(test, do_visitor_and_check_visit_order(visit_order, 6, "output0", B));
+    ct_test (test, do_visitor_and_check_visit_order (visit_order, 6, "output0", B));
 
-    g_object_unref(A);
-    g_object_unref(B);
+    g_object_unref (A);
+    g_object_unref (B);
   }
 
   /*
@@ -274,15 +274,15 @@ test_dfs_property_visitor(Test *test)
     GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "B", NULL);
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "C", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(C, "input1", B, "output0");
-    gegl_node_connect(C, "input0", A, "output0");
+    gegl_node_connect (B, "input0", A, "output0");
+    gegl_node_connect (C, "input1", B, "output0");
+    gegl_node_connect (C, "input0", A, "output0");
 
-    ct_test(test, do_visitor_and_check_visit_order(visit_order, 6, "output0", C));
+    ct_test (test, do_visitor_and_check_visit_order (visit_order, 6, "output0", C));
 
-    g_object_unref(A);
-    g_object_unref(B);
-    g_object_unref(C);
+    g_object_unref (A);
+    g_object_unref (B);
+    g_object_unref (C);
   }
 
   /*
@@ -320,17 +320,17 @@ test_dfs_property_visitor(Test *test)
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "C", NULL);
     GeglNode *D = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "D", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(C, "input0", B, "output0");
-    gegl_node_connect(D, "input0", B, "output0");
-    gegl_node_connect(D, "input1", C, "output0");
+    gegl_node_connect (B, "input0", A, "output0");
+    gegl_node_connect (C, "input0", B, "output0");
+    gegl_node_connect (D, "input0", B, "output0");
+    gegl_node_connect (D, "input1", C, "output0");
 
-    ct_test(test, do_visitor_and_check_visit_order(visit_order, 9, "output0", D));
+    ct_test (test, do_visitor_and_check_visit_order (visit_order, 9, "output0", D));
 
-    g_object_unref(A);
-    g_object_unref(B);
-    g_object_unref(C);
-    g_object_unref(D);
+    g_object_unref (A);
+    g_object_unref (B);
+    g_object_unref (C);
+    g_object_unref (D);
   }
 
   /*
@@ -365,17 +365,17 @@ test_dfs_property_visitor(Test *test)
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, "name", "C", NULL);
     GeglNode *D = g_object_new (GEGL_TYPE_MOCK_OPERATION_2_1, "name", "D", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(C, "input0", B, "output0");
-    gegl_node_connect(D, "input1", C, "output0");
-    gegl_node_connect(D, "input0", A, "output0");
+    gegl_node_connect (B, "input0", A, "output0");
+    gegl_node_connect (C, "input0", B, "output0");
+    gegl_node_connect (D, "input1", C, "output0");
+    gegl_node_connect (D, "input0", A, "output0");
 
-    ct_test(test, do_visitor_and_check_visit_order(visit_order, 8, "output0", D));
+    ct_test (test, do_visitor_and_check_visit_order (visit_order, 8, "output0", D));
 
-    g_object_unref(A);
-    g_object_unref(B);
-    g_object_unref(C);
-    g_object_unref(D);
+    g_object_unref (A);
+    g_object_unref (B);
+    g_object_unref (C);
+    g_object_unref (D);
   }
 
   /*
@@ -408,48 +408,48 @@ test_dfs_property_visitor(Test *test)
     GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, "name", "C", NULL);
     GeglNode *D = g_object_new (GEGL_TYPE_GRAPH, "name", "D", NULL);
 
-    GeglPad *output0 = gegl_node_get_pad(A, "output0");
-    GeglPad *input0 = gegl_node_get_pad(A, "input0");
+    GeglPad *output0 = gegl_node_get_pad (A, "output0");
+    GeglPad *input0  = gegl_node_get_pad (A, "input0");
 
-    gegl_graph_add_child(GEGL_GRAPH(D), A);
-    gegl_node_add_pad(D, output0);
-    gegl_node_add_pad(D, input0);
+    gegl_graph_add_child (GEGL_GRAPH(D), A);
+    gegl_node_add_pad (D, output0);
+    gegl_node_add_pad (D, input0);
 
-    gegl_node_connect(B, "input0", D, "output0");
-    gegl_node_connect(D, "input0", C, "output0");
+    gegl_node_connect (B, "input0", D, "output0");
+    gegl_node_connect (D, "input0", C, "output0");
 
-    ct_test(test, do_visitor_and_check_visit_order(visit_order, 5, "output0", B));
+    ct_test (test, do_visitor_and_check_visit_order (visit_order, 5, "output0", B));
 
-    gegl_node_disconnect(B, "input0", D, "output0");
-    gegl_node_disconnect(D, "input0", C, "output0");
+    gegl_node_disconnect (B, "input0", D, "output0");
+    gegl_node_disconnect (D, "input0", C, "output0");
 
-    g_object_unref(A);
-    g_object_unref(B);
-    g_object_unref(C);
-    g_object_unref(D);
+    g_object_unref (A);
+    g_object_unref (B);
+    g_object_unref (C);
+    g_object_unref (D);
   }
 }
 
 static void
-dfs_property_visitor_test_setup(Test *test)
+dfs_pad_visitor_test_setup (Test *test)
 {
 }
 
 static void
-dfs_property_visitor_test_teardown(Test *test)
+dfs_pad_visitor_test_teardown (Test *test)
 {
 }
 
 Test *
-create_dfs_property_visitor_test()
+create_dfs_pad_visitor_test()
 {
   Test* t = ct_create("GeglDfsPropertyVisitorTest");
 
-  g_assert(ct_addSetUp(t, dfs_property_visitor_test_setup));
-  g_assert(ct_addTearDown(t, dfs_property_visitor_test_teardown));
+  g_assert(ct_addSetUp(t, dfs_pad_visitor_test_setup));
+  g_assert(ct_addTearDown(t, dfs_pad_visitor_test_teardown));
 
 #if 1
-  g_assert(ct_addTestFun(t, test_dfs_property_visitor));
+  g_assert(ct_addTestFun(t, test_dfs_pad_visitor));
 #endif
 
   return t;

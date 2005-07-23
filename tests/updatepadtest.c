@@ -11,7 +11,7 @@
 
 
 static void
-test_update_property(Test *test)
+test_update_pad (Test *test)
 {
   /*
      -
@@ -432,25 +432,25 @@ test_update_property(Test *test)
 }
 
 static void
-test_setup(Test *test)
+test_setup (Test *test)
 {
 }
 
 static void
-test_teardown(Test *test)
+test_teardown (Test *test)
 {
 }
 
 Test *
-create_update_property_test()
+create_update_pad_test()
 {
-  Test* t = ct_create("GeglUpdatePropertyTest");
+  Test* t = ct_create ("GeglUpdatePropertyTest");
 
-  g_assert(ct_addSetUp(t, test_setup));
-  g_assert(ct_addTearDown(t, test_teardown));
+  g_assert (ct_addSetUp(t, test_setup));
+  g_assert (ct_addTearDown(t, test_teardown));
 
 #if 1
-  g_assert(ct_addTestFun(t, test_update_property));
+  g_assert (ct_addTestFun(t, test_update_pad));
 #endif
 
   return t;

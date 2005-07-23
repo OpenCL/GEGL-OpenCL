@@ -9,18 +9,18 @@
 #include "gegl-mock-property-visitor.h"
 
 
-static void gegl_mock_property_visitor_class_init (GeglMockPropertyVisitorClass *klass);
-static void gegl_mock_property_visitor_init       (GeglMockPropertyVisitor      *self);
+static void gegl_mock_pad_visitor_class_init (GeglMockPadVisitorClass *klass);
+static void gegl_mock_pad_visitor_init       (GeglMockPadVisitor      *self);
 
 static void visit_pad (GeglVisitor *visitor, GeglPad *pad);
 
 
-G_DEFINE_TYPE (GeglMockPropertyVisitor, gegl_mock_property_visitor,
+G_DEFINE_TYPE (GeglMockPadVisitor, gegl_mock_pad_visitor,
                GEGL_TYPE_VISITOR)
 
 
 static void
-gegl_mock_property_visitor_class_init (GeglMockPropertyVisitorClass *klass)
+gegl_mock_pad_visitor_class_init (GeglMockPadVisitorClass *klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
 
@@ -28,7 +28,7 @@ gegl_mock_property_visitor_class_init (GeglMockPropertyVisitorClass *klass)
 }
 
 static void
-gegl_mock_property_visitor_init (GeglMockPropertyVisitor *self)
+gegl_mock_pad_visitor_init (GeglMockPadVisitor *self)
 {
 }
 
@@ -36,13 +36,13 @@ static void
 visit_pad (GeglVisitor *visitor,
            GeglPad     *pad)
 {
-  GEGL_VISITOR_CLASS (gegl_mock_property_visitor_parent_class)->visit_pad (visitor, pad);
+  GEGL_VISITOR_CLASS (gegl_mock_pad_visitor_parent_class)->visit_pad (visitor, pad);
 
 #if 0
   {
-    GeglOperation *operation = gegl_pad_get_operation (property);
-    g_print ("Visiting property %s from op %s\n",
-             gegl_pad_get_name (property),
+    GeglOperation *operation = gegl_pad_get_operation (pad);
+    g_print ("Visiting pad %s from op %s\n",
+             gegl_pad_get_name (pad),
              gegl_object_get_name (GEGL_OBJECT (operation)));
   }
 #endif
