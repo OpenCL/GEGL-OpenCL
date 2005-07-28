@@ -1,3 +1,7 @@
+2005-07-28  Sven Neumann  <sven@gimp.org>
+
+	* AUTHORS: collected a list of contributors from the ChangeLog.
+
 2005-07-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* tests/bfspropertytest.c
