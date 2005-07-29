@@ -1,3 +1,10 @@
+2005-07-29  Sven Neumann  <sven@gimp.org>
+
+	* gegl/gegl-operation.[ch]: declared gegl_operation_asscociate and
+	removed the unused return value.
+
+	* gegl/gegl.h: sort alphabetically.
+
 2005-07-29  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-node.[ch]

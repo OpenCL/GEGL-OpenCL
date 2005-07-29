@@ -95,11 +95,24 @@ an op that just adds the components of the inputs it is passed.
 
 </para>
 
+<!-- ##### SECTION Stability_Level ##### -->
+
+
 <!-- ##### STRUCT GeglNode ##### -->
 <para>
 
 </para>
 
+
+<!-- ##### ARG GeglNode:operation ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GeglNode:operation-object ##### -->
+<para>
+
+</para>
 
 <!-- ##### STRUCT GeglNodeClass ##### -->
 <para>
@@ -108,21 +121,21 @@ an op that just adds the components of the inputs it is passed.
 
 @parent_class: 
 
-<!-- ##### FUNCTION gegl_node_add_property ##### -->
+<!-- ##### FUNCTION gegl_node_add_pad ##### -->
 <para>
 
 </para>
 
 @self: 
-@property: 
+@pad: 
 
 
-<!-- ##### FUNCTION gegl_node_remove_property ##### -->
+<!-- ##### FUNCTION gegl_node_remove_pad ##### -->
 <para>
 
 </para>
 
 @self: 
-@property: 
+@pad: 
 
 

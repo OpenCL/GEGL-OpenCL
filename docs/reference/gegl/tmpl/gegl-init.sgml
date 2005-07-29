@@ -16,6 +16,9 @@ gegl-init
 </para>
 
 
+<!-- ##### SECTION Stability_Level ##### -->
+
+
 <!-- ##### FUNCTION gegl_init ##### -->
 <para>
 

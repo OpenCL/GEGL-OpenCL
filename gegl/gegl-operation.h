@@ -86,21 +86,23 @@ void
 gegl_operation_create_pad (GeglOperation *self,
                            GParamSpec    *param_spec);
 
-/* let the PADs have the formats accepted,.. sharing of pads between ops and nodes,
- * or is that overkill?
+/* let the PADs have the formats accepted,..
+ * sharing of pads between ops and nodes, or is that overkill?
  */
 
-G_GNUC_CONST GType   gegl_operation_get_type (void);
-void                 gegl_operation_set_name (GeglOperation *self,
-                                              const gchar   *name);
-const gchar        * gegl_operation_get_name (GeglOperation *self);
-gboolean             gegl_operation_evaluate (GeglOperation *self,
-                                              const gchar   *output_pad);
-gboolean             gegl_operation_register (GeglOperation *self,
-                                              GeglNode      *node);
-GeglNode           * gegl_operation_get_node (GeglOperation *self);
-void                 gegl_operation_set_node (GeglOperation *self,
-                                              GeglNode      *node);
+GType         gegl_operation_get_type  (void) G_GNUC_CONST;
+void          gegl_operation_set_name  (GeglOperation *self,
+                                        const gchar   *name);
+const gchar * gegl_operation_get_name  (GeglOperation *self);
+gboolean      gegl_operation_evaluate  (GeglOperation *self,
+                                        const gchar   *output_pad);
+void          gegl_operation_associate (GeglOperation *self,
+                                        GeglNode      *node);
+gboolean      gegl_operation_register  (GeglOperation *self,
+                                        GeglNode      *node);
+GeglNode    * gegl_operation_get_node  (GeglOperation *self);
+void          gegl_operation_set_node  (GeglOperation *self,
+                                        GeglNode      *node);
 
 G_END_DECLS
 

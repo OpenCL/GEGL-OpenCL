@@ -41,6 +41,9 @@ routine finds inputs C and B when used for A, and D when used for B.
 
 </para>
 
+<!-- ##### SECTION Stability_Level ##### -->
+
+
 <!-- ##### STRUCT GeglVisitor ##### -->
 <para>
 
@@ -53,7 +56,7 @@ routine finds inputs C and B when used for A, and D when used for B.
 </para>
 
 @parent_class: 
-@visit_property: 
+@visit_pad: 
 @visit_node: 
 
 <!-- ##### FUNCTION gegl_visitor_get_visits_list ##### -->
@@ -74,13 +77,13 @@ routine finds inputs C and B when used for A, and D when used for B.
 @visitable: 
 
 
-<!-- ##### FUNCTION gegl_visitor_visit_property ##### -->
+<!-- ##### FUNCTION gegl_visitor_visit_pad ##### -->
 <para>
 
 </para>
 
 @self: 
-@property: 
+@pad: 
 
 
 <!-- ##### FUNCTION gegl_visitor_visit_node ##### -->

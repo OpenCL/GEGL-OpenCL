@@ -75,6 +75,9 @@ be called directly. This is all handled automatically during graph evaluation.
 
 </para>
 
+<!-- ##### SECTION Stability_Level ##### -->
+
+
 <!-- ##### STRUCT GeglOperation ##### -->
 <para>
 
@@ -87,9 +90,14 @@ be called directly. This is all handled automatically during graph evaluation.
 </para>
 
 @parent_class: 
+@query_in_pad_fmt: 
+@query_out_pad_fmt: 
+@set_in_pad_fmt: 
+@set_out_pad_fmt: 
 @evaluate: 
+@associate: 
 
-<!-- ##### FUNCTION gegl_operation_create_property ##### -->
+<!-- ##### FUNCTION gegl_operation_create_pad ##### -->
 <para>
 
 </para>
@@ -104,9 +112,10 @@ be called directly. This is all handled automatically during graph evaluation.
 </para>
 
 @self: 
-@output_prop: 
+@output_pad: 
 @Returns: 
 <!-- # Unused Parameters # -->
+@output_prop: 
 @data_outputs: 
 @data_inputs: 
 

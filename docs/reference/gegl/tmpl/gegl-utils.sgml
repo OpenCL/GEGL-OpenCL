@@ -16,6 +16,9 @@ gegl-utils
 </para>
 
 
+<!-- ##### SECTION Stability_Level ##### -->
+
+
 <!-- ##### FUNCTION gegl_rect_set ##### -->
 <para>
 

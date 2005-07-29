@@ -185,14 +185,14 @@ associate (GeglOperation *self)
   return;
 }
 
-gboolean
+void
 gegl_operation_associate (GeglOperation *self,
                           GeglNode      *node)
 {
   GeglOperationClass *klass;
 
-  g_return_val_if_fail (GEGL_IS_OPERATION (self), FALSE);
-  g_return_val_if_fail (GEGL_IS_NODE (node), FALSE);
+  g_return_if_fail (GEGL_IS_OPERATION (self));
+  g_return_if_fail (GEGL_IS_NODE (node));
 
   klass = GEGL_OPERATION_GET_CLASS (self);
 
@@ -206,6 +206,7 @@ gegl_operation_get_node (GeglOperation *self)
 {
   return self->node;
 }
+
 void
 gegl_operation_set_node (GeglOperation *self,
                          GeglNode      *node)

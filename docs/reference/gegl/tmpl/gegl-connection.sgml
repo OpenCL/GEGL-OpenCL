@@ -14,6 +14,9 @@ gegl-connection
 
 </para>
 
+<!-- ##### SECTION Stability_Level ##### -->
+
+
 <!-- ##### STRUCT GeglConnection ##### -->
 <para>
 

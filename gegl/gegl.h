@@ -27,11 +27,11 @@
 #include <gegl-types.h>
 
 #include <gegl-connection.h>
-#include <gegl-operation.h>
 #include <gegl-graph.h>
 #include <gegl-init.h>
 #include <gegl-node.h>
 #include <gegl-object.h>
+#include <gegl-operation.h>
 #include <gegl-pad.h>
 #include <gegl-utils.h>
 #include <gegl-visitable.h>

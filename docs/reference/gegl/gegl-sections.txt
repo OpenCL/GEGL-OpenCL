@@ -24,8 +24,8 @@ GEGL_GRAPH_GET_CLASS
 GeglNode
 GeglNodeClass
 <TITLE>GeglNode</TITLE>
-gegl_node_add_property
-gegl_node_remove_property
+gegl_node_add_pad
+gegl_node_remove_pad
 <SUBSECTION Standard>
 GEGL_NODE
 GEGL_IS_NODE
@@ -54,29 +54,27 @@ GEGL_OBJECT_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-property</FILE>
-GeglPropertyType
-GeglProperty
-GeglPropertyClass
-<TITLE>GeglProperty</TITLE>
-gegl_property_get_name
-gegl_property_set_param_spec
-gegl_property_get_depends_on
-gegl_property_get_operation
-gegl_property_set_operation
-gegl_property_is_output
-gegl_property_is_input
-gegl_property_get_connected_to
-gegl_property_is_dirty
-gegl_property_set_dirty
+<FILE>gegl-pad</FILE>
+GeglPadType
+GeglPad
+GeglPadClass
+<TITLE>GeglPad</TITLE>
+gegl_pad_get_name
+gegl_pad_set_param_spec
+gegl_pad_get_depends_on
+gegl_pad_is_output
+gegl_pad_is_input
+gegl_pad_get_connected_to
+gegl_pad_is_dirty
+gegl_pad_set_dirty
 <SUBSECTION Standard>
-GEGL_PROPERTY
-GEGL_IS_PROPERTY
-GEGL_TYPE_PROPERTY
-gegl_property_get_type
-GEGL_PROPERTY_CLASS
-GEGL_IS_PROPERTY_CLASS
-GEGL_PROPERTY_GET_CLASS
+GEGL_PAD
+GEGL_IS_PAD
+GEGL_TYPE_PAD
+gegl_pad_get_type
+GEGL_PAD_CLASS
+GEGL_IS_PAD_CLASS
+GEGL_PAD_GET_CLASS
 </SECTION>
 
 <SECTION>
@@ -122,7 +120,7 @@ GeglVisitorClass
 <TITLE>GeglVisitor</TITLE>
 gegl_visitor_get_visits_list
 gegl_visitor_visit_visitable
-gegl_visitor_visit_property
+gegl_visitor_visit_pad
 gegl_visitor_visit_node
 gegl_visitor_dfs_traverse
 gegl_visitor_bfs_traverse
@@ -137,42 +135,11 @@ GEGL_VISITOR_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>gegl-eval-visitor</FILE>
-GeglEvalVisitor
-GeglEvalVisitorClass
-<TITLE>GeglEvalVisitor</TITLE>
-<SUBSECTION Standard>
-GEGL_EVAL_VISITOR
-GEGL_IS_EVAL_VISITOR
-GEGL_TYPE_EVAL_VISITOR
-gegl_eval_visitor_get_type
-GEGL_EVAL_VISITOR_CLASS
-GEGL_IS_EVAL_VISITOR_CLASS
-GEGL_EVAL_VISITOR_GET_CLASS
-</SECTION>
-
-<SECTION>
-<FILE>gegl-eval-mgr</FILE>
-GeglEvalMgr
-GeglEvalMgrClass
-<TITLE>GeglEvalMgr</TITLE>
-gegl_eval_mgr_apply
-<SUBSECTION Standard>
-GEGL_EVAL_MGR
-GEGL_IS_EVAL_MGR
-GEGL_TYPE_EVAL_MGR
-gegl_eval_mgr_get_type
-GEGL_EVAL_MGR_CLASS
-GEGL_IS_EVAL_MGR_CLASS
-GEGL_EVAL_MGR_GET_CLASS
-</SECTION>
-
-<SECTION>
 <FILE>gegl-operation</FILE>
 GeglOperation
 GeglOperationClass
 <TITLE>GeglOperation</TITLE>
-gegl_operation_create_property
+gegl_operation_create_pad
 gegl_operation_evaluate
 <SUBSECTION Standard>
 GEGL_OPERATION

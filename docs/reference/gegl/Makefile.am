@@ -28,7 +28,9 @@ HFILE_GLOB = $(DOC_SOURCE_DIR)/*.h
 CFILE_GLOB = $(DOC_SOURCE_DIR)/*.c
 
 # Headers to ignore
-IGNORE_HFILES =
+IGNORE_HFILES =	\
+	gegl-eval-mgr.h				\
+	gegl-eval-visitor.h
 
 # Images to copy into HTML directory
 HTML_IMAGES = \

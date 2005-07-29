@@ -114,12 +114,6 @@
       <xi:include href="xml/gegl-visitor.xml"/>
     </chapter>
 
-    <chapter id="evaluation">
-      <title>Evaluation Manager and Visitors</title>
-      <xi:include href="xml/gegl-eval-mgr.xml"/>
-      <xi:include href="xml/gegl-eval-visitor.xml"/>
-    </chapter>
-
     <chapter id="image">
       <title>Images, Storage and Buffers</title>
       <xi:include href="xml/gegl-buffer.xml"/>
@@ -134,9 +128,9 @@
       <xi:include href="xml/gegl-tile-iterator.xml"/>
     </chapter>
 
-    <chapter id="property">
-      <title>Properties</title>
-      <xi:include href="xml/gegl-property.xml"/>
+    <chapter id="pad">
+      <title>Pads</title>
+      <xi:include href="xml/gegl-pad.xml"/>
     </chapter>
 
     <chapter id="paramspecs">
