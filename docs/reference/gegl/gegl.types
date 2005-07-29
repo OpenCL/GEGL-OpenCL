@@ -17,7 +17,7 @@ gegl_normalizer_mult_get_type
 gegl_null_cache_store_get_type
 gegl_object_get_type
 gegl_operation_get_type
-gegl_property_get_type
+gegl_pad_get_type
 gegl_sample_model_get_type
 gegl_swap_cache_get_type
 gegl_swap_cache_store_get_type
