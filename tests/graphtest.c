@@ -26,13 +26,13 @@ static void
 test_graph(Test *test)
 {
   {
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation11", NULL);
     GeglGraph *graph = g_object_new (GEGL_TYPE_GRAPH, NULL);
 
-    gegl_graph_add_child(graph, A);
+    gegl_graph_add_child (graph, A);
     ct_test(test, 1 == gegl_graph_get_num_children(graph));
 
-    gegl_graph_remove_child(graph, A);
+    gegl_graph_remove_child (graph, A);
     ct_test(test, 0 == gegl_graph_get_num_children(graph));
 
     g_object_unref(A);
@@ -58,9 +58,10 @@ test_graph_properties(Test *test)
       +
   */
   {
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation11", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation11", NULL);
     GeglGraph *graph = g_object_new (GEGL_TYPE_GRAPH, NULL);
+
     GeglPad *output0 = gegl_node_get_pad(A, "output0");
     GeglPad *input0 = gegl_node_get_pad(A, "input0");
 
@@ -78,7 +79,7 @@ test_graph_properties(Test *test)
     ct_test(test, 1 == gegl_node_get_num_sources(B));
 
     ct_test(test, output0 == gegl_node_get_pad(GEGL_NODE(graph), "output0"));
-    ct_test(test, GEGL_OPERATION(A) == gegl_pad_get_operation(output0));
+    ct_test(test, GEGL_NODE(A) == gegl_pad_get_node(output0));
 
     gegl_node_disconnect(B, "input0", GEGL_NODE(graph), "output0");
 
@@ -110,9 +111,9 @@ test_graph_properties(Test *test)
 
   */
   {
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, NULL);
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation11", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation11", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation01", NULL);
     GeglNode *D = g_object_new (GEGL_TYPE_GRAPH, NULL);
 
     GeglPad *output0 = gegl_node_get_pad(A, "output0");
@@ -136,10 +137,10 @@ test_graph_properties(Test *test)
     ct_test(test, 1 == gegl_node_get_num_sources(D));
 
     ct_test(test, output0 == gegl_node_get_pad(D, "output0"));
-    ct_test(test, (GeglOperation*)A == gegl_pad_get_operation(output0));
+    ct_test(test, A == gegl_pad_get_node (output0));
 
     ct_test(test, input0 == gegl_node_get_pad(D, "input0"));
-    ct_test(test, (GeglOperation*)A == gegl_pad_get_operation(input0));
+    ct_test(test, A == gegl_pad_get_node (input0));
 
     gegl_node_disconnect(B, "input0", D, "output0");
     gegl_node_disconnect(D, "input0", C, "output0");
@@ -183,9 +184,9 @@ test_graph_property_visitors(Test *test)
 
   */
   {
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, NULL);
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation11", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation11", NULL);
+    GeglNode *C = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation01", NULL);
     GeglNode *D = g_object_new (GEGL_TYPE_GRAPH, NULL);
 
     GeglPad *output0 = gegl_node_get_pad(A, "output0");

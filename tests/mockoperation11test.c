@@ -23,29 +23,29 @@ static void
 test_mock_operation_1_1_g_object_properties(Test *test)
 {
   {
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, NULL);
+    GeglNode *a = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation11", NULL);
     gint i;
 
     /* Initially the default input is 100 */
-    g_object_get(a, "input0", &i, NULL);
+    gegl_node_get (a, "input0", &i, NULL);
     ct_test(test, i == 100);
 
     gegl_node_apply(a, "output0");
 
     /* So the first output should be 2 * 100 */
-    g_object_get(a, "output0", &i, NULL);
+    gegl_node_get (a, "output0", &i, NULL);
     ct_test(test, i == 200);
 
     /* Change the input to 2 */
-    g_object_set(a, "input0", 2, NULL);
-    g_object_get(a, "input0", &i, NULL);
+    gegl_node_set (a, "input0", 2, NULL);
+    gegl_node_get (a, "input0", &i, NULL);
 
     ct_test(test, i == 2);
 
     gegl_node_apply(a, "output0");
 
     /* Now the new output should be 2 * 2 */
-    g_object_get(a, "output0", &i, NULL);
+    gegl_node_get (a, "output0", &i, NULL);
     ct_test(test, i == 4);
 
     g_object_unref(a);
@@ -56,7 +56,7 @@ static void
 test_mock_operation_1_1_num_properties(Test *test)
 {
   {
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, NULL);
+    GeglNode *a = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation11", NULL);
 
     ct_test(test, 1 == gegl_node_get_num_input_pads(a));
     ct_test(test, 1 == gegl_node_get_num_output_pads(a));
@@ -69,7 +69,7 @@ static void
 test_mock_operation_1_1_pad_names(Test *test)
 {
   {
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1, NULL);
+    GeglNode *a = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation11", NULL);
     GeglPad *output0 = gegl_node_get_pad(a, "output0");
     GeglPad *input0 = gegl_node_get_pad(a, "input0");
 

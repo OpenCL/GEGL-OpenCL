@@ -57,7 +57,8 @@ static void
 visit_pad (GeglVisitor *visitor,
            GeglPad     *pad)
 {
-  GeglOperation *operation = gegl_pad_get_operation (pad);
+  GeglNode      *node      = gegl_pad_get_node (pad);
+  GeglOperation *operation = node->operation;
 
   GEGL_VISITOR_CLASS (gegl_eval_visitor_parent_class)->visit_pad (visitor,
                                                                        pad);
@@ -72,6 +73,7 @@ visit_pad (GeglVisitor *visitor,
       const gchar *pad_name = gegl_pad_get_name (pad);
       gboolean     success;
 
+      /* XXX: this is probably correct anyways */
       success = gegl_operation_evaluate (operation, pad_name);
     }
   else if (gegl_pad_is_input (pad))
@@ -82,7 +84,7 @@ visit_pad (GeglVisitor *visitor,
         {
           GValue      value     = { 0 };
           GParamSpec *prop_spec = gegl_pad_get_param_spec (pad);
-          GeglOperation *source    = gegl_pad_get_operation (source_pad);
+          GeglOperation *source = gegl_pad_get_node (source_pad)->operation;
 
           g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (prop_spec));
 

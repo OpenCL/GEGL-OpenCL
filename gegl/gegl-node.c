@@ -29,6 +29,7 @@
 #include "gegl-types.h"
 
 #include "gegl-node.h"
+#include "gegl-operation.h"
 #include "gegl-visitor.h"
 #include "gegl-visitable.h"
 #include "gegl-pad.h"
@@ -39,36 +40,39 @@
 enum
 {
   PROP_0,
-  PROP_OPERATION
+  PROP_OPERATION,
+  PROP_OPERATION_OBJECT
 };
 
-static void            gegl_node_class_init     (GeglNodeClass *klass);
-static void            gegl_node_init           (GeglNode      *self);
-static void            finalize                 (GObject       *self_object);
-static void            set_property             (GObject       *gobject,
-                                                 guint          prop_id,
-                                                 const GValue  *value,
-                                                 GParamSpec    *pspec);
-static void            get_property             (GObject       *gobject,
-                                                 guint          prop_id,
-                                                 GValue        *value,
-                                                 GParamSpec    *pspec);
-static gboolean        pads_exist         (GeglNode      *sink,
-                                                 const gchar   *sink_pad_name,
-                                                 GeglNode      *source,
-                                                 const gchar   *source_pad_name);
-static GeglConnection *find_connection          (GeglNode      *sink,
-                                                 GeglPad       *sink_pad);
-static void            visitable_init           (gpointer       ginterface,
-                                                 gpointer       interface_data);
-static void            visitable_accept         (GeglVisitable *visitable,
-                                                 GeglVisitor   *visitor);
-static GList*          visitable_depends_on     (GeglVisitable *visitable);
-static gboolean        visitable_needs_visiting (GeglVisitable *visitable);
+static void            gegl_node_class_init           (GeglNodeClass *klass);
+static void            gegl_node_init                 (GeglNode      *self);
+static void            finalize                       (GObject       *self_object);
+static void            set_property                   (GObject       *gobject,
+                                                       guint          prop_id,
+                                                       const GValue  *value,
+                                                       GParamSpec    *pspec);
+static void            get_property                   (GObject       *gobject,
+                                                       guint          prop_id,
+                                                       GValue        *value,
+                                                       GParamSpec    *pspec);
+static gboolean        pads_exist                     (GeglNode      *sink,
+                                                       const gchar   *sink_pad_name,
+                                                       GeglNode      *source,
+                                                       const gchar   *source_pad_name);
+static GeglConnection *find_connection                (GeglNode      *sink,
+                                                       GeglPad       *sink_pad);
+static void            visitable_init                 (gpointer       ginterface,
+                                                       gpointer       interface_data);
+static void            visitable_accept               (GeglVisitable *visitable,
+                                                       GeglVisitor   *visitor);
+static GList*          visitable_depends_on           (GeglVisitable *visitable);
+static gboolean        visitable_needs_visiting       (GeglVisitable *visitable);
 
-static void            gegl_node_set_operation  (GeglNode      *self,
-                                                 const gchar   *operation);
-static const gchar *   gegl_node_get_operation  (GeglNode      *self);
+static void            gegl_node_set_operation        (GeglNode      *self,
+                                                       const gchar   *operation);
+static void            gegl_node_set_operation_object (GeglNode      *self,
+                                                       GeglOperation *operation);
+static const gchar *   gegl_node_get_operation        (GeglNode      *self);
 
 
 G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, GEGL_TYPE_OBJECT,
@@ -84,13 +88,21 @@ gegl_node_class_init (GeglNodeClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
+  g_object_class_install_property (gobject_class, PROP_OPERATION_OBJECT,
+                                   g_param_spec_object ("operation-object",
+                                   "Operation Object",
+                                   "The type of the associated GeglOperation",
+                                   GEGL_TYPE_OPERATION,
+                                   G_PARAM_WRITABLE |
+                                   G_PARAM_CONSTRUCT));
   g_object_class_install_property (gobject_class, PROP_OPERATION,
                                    g_param_spec_string ("operation",
                                    "Operation Type",
-                                   "The type of the associated GeglOperation",
-                                   "nop",
+                                   "The kind of associated GeglOperation",
+                                   "",
                                    G_PARAM_CONSTRUCT |
                                    G_PARAM_READWRITE));
+
 }
 
 static void
@@ -99,9 +111,10 @@ gegl_node_init (GeglNode *self)
   self->pads        = NULL;
   self->input_pads  = NULL;
   self->output_pads = NULL;
-  self->sinks             = NULL;
-  self->sources           = NULL;
-  self->enabled           = TRUE;
+  self->sinks       = NULL;
+  self->sources     = NULL;
+  self->operation   = NULL;
+  self->enabled     = TRUE;
 }
 
 static void
@@ -145,7 +158,11 @@ set_property (GObject      *gobject,
   switch (property_id)
     {
     case PROP_OPERATION:
+
       gegl_node_set_operation (GEGL_NODE (gobject), g_value_get_string (value));
+      break; 
+    case PROP_OPERATION_OBJECT:
+      gegl_node_set_operation_object (GEGL_NODE (gobject), g_value_get_object (value));
       break; 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -312,6 +329,8 @@ find_connection (GeglNode     *sink,
   return NULL;
 }
 
+#include <stdio.h>
+
 gboolean
 gegl_node_connect (GeglNode    *sink,
                    const gchar *sink_prop_name,
@@ -320,7 +339,7 @@ gegl_node_connect (GeglNode    *sink,
 {
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
   g_return_val_if_fail (GEGL_IS_NODE (source), FALSE);
-
+  
   if (pads_exist (sink, sink_prop_name, source, source_prop_name))
     {
       GeglPad   *sink_prop   = gegl_node_get_pad (sink,
@@ -572,38 +591,159 @@ visitable_needs_visiting (GeglVisitable *visitable)
   return TRUE;
 }
 
+/**
+ * gegl_operation_create_property:
+ * @self: a #GeglOperation.
+ * @param_spec:
+ *
+ * Create a property.
+ **/
+void
+gegl_node_create_pad (GeglNode   *self,
+                      GParamSpec *param_spec)
+{
+  GeglPad *pad;
+
+  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (param_spec);
+
+  pad = g_object_new (GEGL_TYPE_PAD, NULL);
+  gegl_pad_set_param_spec (pad, param_spec);
+  gegl_pad_set_node (pad, self);
+  gegl_node_add_pad (self, pad);
+}
+
+gboolean
+gegl_node_evaluate (GeglNode    *self,
+                    const gchar *output_pad)
+{
+  g_return_val_if_fail (GEGL_IS_NODE (self), FALSE);
+  g_return_val_if_fail (GEGL_IS_OPERATION (self->operation), FALSE);
+
+  return gegl_operation_evaluate (self->operation, output_pad);
+}
+
 static void
 gegl_node_set_operation (GeglNode      *self,
-                         const gchar   *operation)
+                         const gchar   *operation_name)
 {
+
+  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (operation_name);
+
+  if (operation_name && operation_name[0])
+    {
+      GType         type;
+      GeglOperation *operation;
+
+      type = g_type_from_name (operation_name);
+      
+      if (!type)
+        {
+          g_warning ("Eeeeek failed to find types %s", operation_name);
+          return;
+        }
+
+      operation = g_object_new (g_type_from_name (operation_name), NULL);
+      gegl_node_set_operation_object (self, operation);
+      g_object_unref (operation);
+    }
+}
+
+static void
+gegl_node_set_operation_object (GeglNode      *self,
+                                GeglOperation *operation)
+{
+  g_return_if_fail (GEGL_IS_NODE (self));
+
+  if (!operation)
+    return;
+
+  g_return_if_fail (GEGL_IS_OPERATION (operation));
+
   if (self->operation)
     g_object_unref (self->operation);
 
-  if (!strcmp (operation, "nop"))
-    {
-#if 0
-      self->operation = g_object_new (GEGL_TYPE_NOP_OPERATION);
-      g_evil_bless (G_OBJECT (self));
-      g_evil_transmogrify (G_OBJECT (self), "GeglNode-nop");
-#endif
-    }
-  else if (!strcmp (operation, "null"))
-    {
-    }
-#if 0
-      
-      self->input_pads = self->operation->input_pads;
-      self->output_pads = self->operation->output_pads;
-
-      self->operation.properties.each {|prop|
-        make sure self has the same properties
-      }
-#endif
+  g_object_ref (operation);
+  self->operation = operation;
+  gegl_operation_associate (operation, self);
 }
 
 static const gchar *
 gegl_node_get_operation (GeglNode      *self)
 { 
-  const gchar *type_name = G_OBJECT_TYPE_NAME (self);
+  const gchar *type_name = G_OBJECT_TYPE_NAME (self->operation);
   return &(type_name[9]);
+}
+
+
+void
+gegl_node_set (GeglNode     *self,
+               const gchar  *first_property_name,
+               ...)
+{
+  GeglOperation *operation = self->operation;
+  va_list        var_args;
+
+  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (GEGL_IS_OPERATION (operation));
+
+  va_start (var_args, first_property_name);
+  g_object_set_valist (G_OBJECT (operation), first_property_name, var_args);
+  va_end (var_args);
+}
+
+void
+gegl_node_get (GeglNode    *self,
+               const gchar *first_property_name,
+               ...) 
+{
+  GeglOperation *operation = self->operation;
+  va_list        var_args;
+
+  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (GEGL_IS_OPERATION (operation));
+
+  va_start (var_args, first_property_name);
+  g_object_get_valist (G_OBJECT (operation), first_property_name, var_args);
+  va_end (var_args);
+}
+
+void
+gegl_node_set_valist (GeglNode     *self,
+                      const gchar  *first_property_name,
+                      va_list       var_args)
+{
+  GeglOperation *operation = self->operation;
+
+  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (GEGL_IS_OPERATION (operation));
+  g_return_if_fail (operation->node == self);
+
+  g_object_ref (self);
+  g_object_ref (operation);
+
+  g_object_unref (operation);
+  g_object_unref (self);
+}
+
+void
+gegl_node_get_valist (GeglNode    *object,
+                      const gchar *first_property_name,
+                      va_list      var_args)
+{
+}
+
+void
+gegl_node_set_property (GeglNode     *object,
+                        const gchar  *property_name,
+                        const GValue *value)
+{
+}
+
+void
+gegl_node_get_property (GeglNode    *object,
+                        const gchar *property_name,
+                        GValue      *value)
+{
 }

@@ -30,6 +30,7 @@ static void     set_property (GObject      *gobject,
                               GParamSpec   *pspec);
 static gboolean evaluate     (GeglOperation   *operation,
                               const gchar  *output_prop);
+static void     associate    (GeglOperation *operation);
 
 
 G_DEFINE_TYPE (GeglMockOperation11, gegl_mock_operation_1_1, GEGL_TYPE_OPERATION)
@@ -45,6 +46,7 @@ gegl_mock_operation_1_1_class_init (GeglMockOperation11Class *klass)
   object_class->get_property = get_property;
 
   operation_class->evaluate = evaluate;
+  operation_class->associate = associate;
 
   g_object_class_install_property (object_class, PROP_OUTPUT0,
                                    g_param_spec_int ("output0",
@@ -70,6 +72,10 @@ gegl_mock_operation_1_1_class_init (GeglMockOperation11Class *klass)
 
 static void
 gegl_mock_operation_1_1_init (GeglMockOperation11 *self)
+{
+}
+static void
+associate (GeglOperation *self)
 {
   GeglOperation   *operation       = GEGL_OPERATION(self);
   GObjectClass *object_class = G_OBJECT_GET_CLASS (self);

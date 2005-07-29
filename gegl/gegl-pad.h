@@ -50,7 +50,7 @@ struct _GeglPad
 
   /*< private >*/
   GParamSpec    *param_spec;
-  GeglOperation *operation;
+  GeglNode      *node;
   GList         *connections;
   gboolean       dirty;
 };
@@ -65,9 +65,9 @@ GType            gegl_pad_get_type            (void) G_GNUC_CONST;
 
 const gchar    * gegl_pad_get_name            (GeglPad        *self);
 GList          * gegl_pad_get_depends_on      (GeglPad        *self);
-GeglOperation  * gegl_pad_get_operation       (GeglPad        *self);
-void             gegl_pad_set_operation       (GeglPad        *self,
-                                               GeglOperation  *operation);
+GeglNode       * gegl_pad_get_node            (GeglPad        *self);
+void             gegl_pad_set_node            (GeglPad        *self,
+                                               GeglNode       *node);
 gboolean         gegl_pad_is_output           (GeglPad        *self);
 gboolean         gegl_pad_is_input            (GeglPad        *self);
 GeglPad        * gegl_pad_get_connected_to    (GeglPad        *self);

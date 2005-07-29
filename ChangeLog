@@ -1,3 +1,38 @@
+2005-07-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-node.[ch]
+	* gegl/gegl-operation.[ch]: Refactored to use compostion instead
+	of inheritance for node<->operation relation.
+	* gegl/gegl-pad.c 
+	* gegl/gegl-pad.h 
+	* gegl/gegl-eval-visitor.c: Modified to reflect changes.
+
+	* tools/make-init-types.sh: Added a tool to generate a function to
+	reference all types.
+
+	* tests/Makefile.am: Added rules to make gegl-tests-init-types.c
+	* tests/testgegl.c: Added referencing of built in types, do stack
+	trace upon crash.
+	
+	* tests/bfspadvisitortest.c:
+	* tests/dfsnodevisitortest.c:
+	* tests/dfspadvisitortest.c:
+	* tests/gegl-image-buffer-double-test.c:
+	* tests/gegl-mock-image-operation.c:
+	* tests/gegl-mock-operation-0-1.c:
+	* tests/gegl-mock-operation-1-1.c:
+	* tests/gegl-mock-operation-2-1.c:
+	* tests/gegl-mock-operation-2-2.c:
+	* tests/graphtest.c:
+	* tests/mockimageoperationtest.c:
+	* tests/mockoperation01test.c:
+	* tests/mockoperation11test.c:
+	* tests/mockoperation12test.c:
+	* tests/mockoperation21test.c:
+	* tests/mockoperation22test.c:
+	* tests/nodeconnectiontest.c:
+	* tests/updatepadtest.c: Changed to accomodate refactoring.
+
 2005-07-28  Sven Neumann  <sven@gimp.org>
 
 	* AUTHORS: collected a list of contributors from the ChangeLog.

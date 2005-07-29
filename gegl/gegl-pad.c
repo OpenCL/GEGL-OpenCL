@@ -25,7 +25,7 @@
 
 #include "gegl-types.h"
 
-#include "gegl-operation.h"
+#include "gegl-node.h"
 #include "gegl-pad.h"
 #include "gegl-visitor.h"
 #include "gegl-utils.h"
@@ -85,7 +85,7 @@ static void
 gegl_pad_init (GeglPad *self)
 {
   self->param_spec  = NULL;
-  self->operation   = NULL;
+  self->node        = NULL;
   self->connections = NULL;
   self->dirty       = TRUE;
 }
@@ -208,12 +208,12 @@ gegl_pad_get_num_connections (GeglPad *self)
   return g_list_length (self->connections);
 }
 
-GeglOperation *
-gegl_pad_get_operation (GeglPad *self)
+GeglNode *
+gegl_pad_get_node (GeglPad *self)
 {
   g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
 
-  return self->operation;
+  return self->node;
 }
 
 /* List should be freed */
@@ -233,7 +233,7 @@ gegl_pad_get_depends_on (GeglPad *self)
     }
   else if (gegl_pad_is_output (self))
     {
-      GList *input_pads = gegl_node_get_input_pads (GEGL_NODE (self->operation));
+      GList *input_pads = gegl_node_get_input_pads (self->node);
 
       depends_on = g_list_copy (input_pads);
     }
@@ -266,13 +266,13 @@ gegl_pad_get_connected_to (GeglPad *self)
 }
 
 void
-gegl_pad_set_operation (GeglPad       *self,
-                        GeglOperation *operation)
+gegl_pad_set_node (GeglPad  *self,
+                   GeglNode *node)
 {
   g_return_if_fail (GEGL_IS_PAD (self));
-  g_return_if_fail (GEGL_IS_OPERATION (operation));
+  g_return_if_fail (GEGL_IS_NODE (node));
 
-  self->operation = operation;
+  self->node = node;
 }
 
 gboolean

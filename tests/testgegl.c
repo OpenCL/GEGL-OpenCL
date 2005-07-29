@@ -30,18 +30,32 @@ extern Test * create_swap_cache_store_test();
 extern Test * create_heap_cache_mem_leaks_test();
 extern Test * create_swap_cache_mem_leaks_test();
 
+extern void gegl_tests_init_types (void);
+
+static void
+log_handler (const gchar    *log_domain,
+             GLogLevelFlags  log_level,
+             const gchar    *message,
+             gpointer        user_data)
+{
+  g_log_default_handler (log_domain, log_level, message, user_data);
+  g_on_error_stack_trace ("testgegl");
+}
+
 int
 main (int argc, char *argv[])
 {
 
   g_log_set_always_fatal (g_log_set_always_fatal (G_LOG_FATAL_MASK) |
-                                                 G_LOG_LEVEL_WARNING |
-                                                 G_LOG_LEVEL_CRITICAL);
+                                                  G_LOG_LEVEL_WARNING |
+                                                  G_LOG_LEVEL_CRITICAL);
   g_type_init_with_debug_flags (G_TYPE_DEBUG_OBJECTS);
 
   gegl_init(&argc, &argv);
 
-  gegl_log_direct("Hello there");
+  g_log_set_default_handler (log_handler, NULL);
+
+  gegl_tests_init_types ();
 
   {
     Suite *suite = cs_create("GeglTestSuite");

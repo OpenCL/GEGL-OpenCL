@@ -29,6 +29,7 @@ static void  set_property (GObject      *gobject,
                            guint         prop_id,
                            const GValue *value,
                            GParamSpec   *pspec);
+static void   associate   (GeglOperation *operation);
 
 
 G_DEFINE_TYPE (GeglMockOperation21, gegl_mock_operation_2_1, GEGL_TYPE_OPERATION)
@@ -37,10 +38,14 @@ G_DEFINE_TYPE (GeglMockOperation21, gegl_mock_operation_2_1, GEGL_TYPE_OPERATION
 static void
 gegl_mock_operation_2_1_class_init (GeglMockOperation21Class * klass)
 {
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
+  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
+  
   object_class->set_property = set_property;
   object_class->get_property = get_property;
+  operation_class->associate = associate;
+  
 
   g_object_class_install_property (object_class, PROP_OUTPUT0,
                                    g_param_spec_int ("output0",
@@ -78,7 +83,14 @@ gegl_mock_operation_2_1_class_init (GeglMockOperation21Class * klass)
 static void
 gegl_mock_operation_2_1_init (GeglMockOperation21 *self)
 {
-  GeglOperation   *operation       = GEGL_OPERATION (self);
+}
+
+#include <stdio.h>
+
+static void
+associate (GeglOperation *self)
+{
+  GeglOperation *operation = GEGL_OPERATION (self);
   GObjectClass *object_class = G_OBJECT_GET_CLASS (self);
 
   gegl_operation_create_pad (operation,

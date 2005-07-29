@@ -37,10 +37,10 @@ test_buffer_double_g_object_new(Test *test) {
                                                "num_banks",1,
                                                "elements_per_bank",400,
                                                NULL);
-        ct_test(test,buffer_double!=NULL);
-        ct_test(test, GEGL_IS_BUFFER_DOUBLE(buffer_double));
-        ct_test(test, g_type_parent(GEGL_TYPE_BUFFER_DOUBLE) == GEGL_TYPE_BUFFER);
-        ct_test(test, !strcmp("GeglBufferDouble", g_type_name(GEGL_TYPE_BUFFER_DOUBLE)));
+        ct_test (test, buffer_double!=NULL);
+        ct_test (test, GEGL_IS_BUFFER_DOUBLE(buffer_double));
+        ct_test (test, g_type_parent(GEGL_TYPE_BUFFER_DOUBLE) == GEGL_TYPE_BUFFER);
+        ct_test (test, !strcmp("GeglBufferDouble", g_type_name(GEGL_TYPE_BUFFER_DOUBLE)));
 
         g_object_unref(buffer_double);
 }

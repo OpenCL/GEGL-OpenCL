@@ -23,13 +23,13 @@ static void
 test_mock_operation_0_1_g_object_properties(Test *test)
 {
   {
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, NULL);
+    GeglNode *a = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation01", NULL);
     gint i;
 
-    gegl_node_apply(a, "output0");
-    g_object_get(a, "output0", &i, NULL);
+    gegl_node_apply (a, "output0");
+    gegl_node_get (a, "output0", &i, NULL);
 
-    ct_test(test, i == 1);
+    ct_test (test, i == 1);
 
     g_object_unref(a);
   }
@@ -39,7 +39,7 @@ static void
 test_mock_operation_0_1_num_properties(Test *test)
 {
   {
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, NULL);
+    GeglNode *a = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation01", NULL);
 
     ct_test(test, 0 == gegl_node_get_num_input_pads(a));
     ct_test(test, 1 == gegl_node_get_num_output_pads(a));
@@ -52,7 +52,7 @@ static void
 test_mock_operation_0_1_pad_names(Test *test)
 {
   {
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_OPERATION_0_1, NULL);
+    GeglNode *a = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation01", NULL);
     GeglPad *output0 = gegl_node_get_pad(a, "output0");
 
     ct_test(test, output0 != NULL);

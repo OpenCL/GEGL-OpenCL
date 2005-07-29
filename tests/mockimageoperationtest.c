@@ -10,9 +10,9 @@ static void
 test_mock_image_operation_g_object_new(Test *test)
 {
   {
-    GeglNode * mock_image_operation = g_object_new (GEGL_TYPE_MOCK_IMAGE_OPERATION, NULL);
+    GeglNode * mock_image_operation = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockImageOperation", NULL);
 
-    ct_test(test, GEGL_IS_MOCK_IMAGE_OPERATION(mock_image_operation));
+    //ct_test(test, GEGL_IS_MOCK_IMAGE_OPERATION(mock_image_operation));
     ct_test(test, g_type_parent(GEGL_TYPE_MOCK_IMAGE_OPERATION) == GEGL_TYPE_OPERATION);
     ct_test(test, !strcmp("GeglMockImageOperation", g_type_name(GEGL_TYPE_MOCK_IMAGE_OPERATION)));
 
@@ -24,7 +24,7 @@ static void
 test_mock_image_operation_num_properties(Test *test)
 {
   {
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_IMAGE_OPERATION, NULL);
+    GeglNode *a = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockImageOperation", NULL);
 
     ct_test(test, 2 == gegl_node_get_num_input_pads(a));
     ct_test(test, 1 == gegl_node_get_num_output_pads(a));
@@ -37,7 +37,7 @@ static void
 test_mock_image_operation_property_names(Test *test)
 {
   {
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_IMAGE_OPERATION, NULL);
+    GeglNode *a = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockImageOperation", NULL);
     GeglPad *output = gegl_node_get_pad(a, "output");
     GeglPad *input0 = gegl_node_get_pad(a, "input0");
 
@@ -59,13 +59,12 @@ test_mock_image_operation_g_object_properties(Test *test)
     GeglMockImage *output;
     gint *output_data;
 
-    GeglNode *a = g_object_new (GEGL_TYPE_MOCK_IMAGE_OPERATION,
-                                "input1", 2,
-                                NULL);
+    GeglNode *a = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockImageOperation", NULL);
+    gegl_node_set (a, "input1", 2, NULL);
+    gegl_node_set (a, "input0", input0, NULL);
 
-    g_object_set(a, "input0", input0, NULL);
     gegl_node_apply(a, "output");
-    g_object_get(a, "output", &output, NULL);
+    gegl_node_get (a, "output", &output, NULL);
 
     output_data = gegl_mock_image_get_data(output);
 
@@ -109,19 +108,16 @@ test_mock_image_operation_chain(Test *test)
                                         "default-pixel", 1,
                                         NULL);
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_IMAGE_OPERATION,
-                                "input0", image,
-                                "input1", 2,
-                                NULL);
+    GeglNode *A = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockImageOperation", NULL);
+    GeglNode *B = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockImageOperation", NULL);
 
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_IMAGE_OPERATION,
-                                "input1", 3,
-                                NULL);
+    gegl_node_set (A, "input0", image, "input1", 2, NULL);
+    gegl_node_set (B, "input1", 3, NULL);
 
     gegl_node_connect(B, "input0", A, "output");
     gegl_node_apply(B, "output");
 
-    g_object_get(B, "output", &output, NULL);
+    gegl_node_get (B, "output", &output, NULL);
 
     output_data = gegl_mock_image_get_data(output);
 
@@ -166,35 +162,32 @@ test_mock_image_operation_chain2(Test *test)
                                         "default-pixel", 1,
                                         NULL);
 
-    GeglNode *A = g_object_new (GEGL_TYPE_MOCK_IMAGE_OPERATION,
-                                "input0", image,
-                                "input1", 2,
-                                NULL);
+    GeglNode *A, *B, *C;
+     
+    A = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockImageOperation", NULL);
+    gegl_node_set (A, "input0", image,
+                      "input1", 2, NULL);
+    B = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockImageOperation", NULL);
+    C = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation11", NULL);
+    gegl_node_set (C, "input0", 3, NULL);
 
-    GeglNode *B = g_object_new (GEGL_TYPE_MOCK_IMAGE_OPERATION,
-                                NULL);
+    gegl_node_connect (B, "input0", A, "output");
+    gegl_node_connect (B, "input1", C, "output0");
 
-    GeglNode *C = g_object_new (GEGL_TYPE_MOCK_OPERATION_1_1,
-                                "input0", 3,
-                                NULL);
+    gegl_node_apply (B, "output");
 
-    gegl_node_connect(B, "input0", A, "output");
-    gegl_node_connect(B, "input1", C, "output0");
+    gegl_node_get (B, "output", &output, NULL);
 
-    gegl_node_apply(B, "output");
+    output_data = gegl_mock_image_get_data (output);
 
-    g_object_get(B, "output", &output, NULL);
+    ct_test (test, output_data[0] == 12);
+    ct_test (test, output_data[1] == 12);
+    ct_test (test, output_data[2] == 12);
 
-    output_data = gegl_mock_image_get_data(output);
-
-    ct_test(test, output_data[0] == 12);
-    ct_test(test, output_data[1] == 12);
-    ct_test(test, output_data[2] == 12);
-
-    g_object_unref(A);
-    g_object_unref(B);
-    g_object_unref(C);
-    g_object_unref(output);
+    g_object_unref (A);
+    g_object_unref (B);
+    g_object_unref (C);
+    g_object_unref (output);
   }
 }
 

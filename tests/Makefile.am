@@ -68,7 +68,8 @@ testgegl_SOURCES = \
 	gegl-image-swap-cache-store-test.c		\
 	gegl-image-buffer-caching-test.c		\
 	gegl-image-heap-cache-tests.c			\
-	gegl-image-swap-cache-test.c
+	gegl-image-swap-cache-test.c			\
+	gegl-tests-init-types.c
 
 testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(GEGLDEPS)
@@ -77,3 +78,6 @@ testgegl_LDADD = $(GEGLLDADDS) -lm
 TESTS = testgegl$(EXEEXT)
 
 EXTRA_PROGRAMS = testgegl
+
+gegl-tests-init-types.c: ../tools/make-init-types.sh *.h
+	../tools/make-init-types.sh gegl_tests> gegl-tests-init-types.c

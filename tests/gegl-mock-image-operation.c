@@ -31,6 +31,7 @@ static void     set_property (GObject      *gobject,
                               GParamSpec   *pspec);
 static gboolean evaluate     (GeglOperation   *operation,
                               const gchar  *output_prop);
+static void     associate    (GeglOperation *operation);
 
 
 
@@ -48,6 +49,7 @@ gegl_mock_image_operation_class_init (GeglMockImageOperationClass * klass)
   object_class->finalize     = finalize;
 
   operation_class->evaluate = evaluate;
+  operation_class->associate = associate;
 
   g_object_class_install_property (object_class, PROP_OUTPUT,
                                    g_param_spec_object ("output",
@@ -81,7 +83,14 @@ gegl_mock_image_operation_class_init (GeglMockImageOperationClass * klass)
 static void
 gegl_mock_image_operation_init (GeglMockImageOperation *self)
 {
-  GeglOperation   *operation       = GEGL_OPERATION (self);
+  self->input0 = NULL;
+  self->output = NULL;
+}
+
+static void
+associate (GeglOperation *self)
+{
+  GeglOperation   *operation = GEGL_OPERATION (self);
   GObjectClass *object_class = G_OBJECT_GET_CLASS (self);
 
   gegl_operation_create_pad (operation,
@@ -93,9 +102,6 @@ gegl_mock_image_operation_init (GeglMockImageOperation *self)
   gegl_operation_create_pad (operation,
                                g_object_class_find_property (object_class,
                                                              "input1"));
-
-  self->input0 = NULL;
-  self->output = NULL;
 }
 
 static void

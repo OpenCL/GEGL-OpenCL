@@ -22,6 +22,7 @@
 #ifndef __GEGL_OPERATION_H__
 #define __GEGL_OPERATION_H__
 
+#include "gegl-object.h"
 #include "gegl-node.h"
 
 G_BEGIN_DECLS
@@ -34,30 +35,72 @@ G_BEGIN_DECLS
 #define GEGL_IS_OPERATION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_OPERATION))
 #define GEGL_OPERATION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OPERATION, GeglOperationClass))
 
+#define MAX_PADS        16
+#define MAX_INPUT_PADS  MAX_PADS
+#define MAX_OUTPUT_PADS MAX_PADS
 
 typedef struct _GeglOperationClass GeglOperationClass;
 
 struct _GeglOperation
 {
-  GeglNode  parent_instance;
+  GeglObject parent_instance;
+
+  /*< private >*/
+  GeglNode *node;  /* the node that this operation object is communicated
+                      with through */
+  gchar    *name;
+  gboolean  constructed;
+
+  gint input_pads;
+  gint output_pads;
+  gint required_input_pads;
+  gint in_pad_fmt[MAX_INPUT_PADS];
+  gint out_pad_fmt[MAX_OUTPUT_PADS];
 };
 
 struct _GeglOperationClass
 {
-  GeglNodeClass parent_class;
+  GeglObjectClass  parent_class;
 
-  gboolean (* evaluate) (GeglOperation  *self,
-                         const gchar    *output_prop);
+  gint     (*query_in_pad_fmt)  (GeglOperation *operation,
+                                 gint pad_no,
+                                 gint fmt);
+  gint     (*query_out_pad_fmt) (GeglOperation *operation,
+                                 gint no,
+                                 gint fmt);
+  gint     (*set_in_pad_fmt)    (GeglOperation *operation,
+                                 gint no,
+                                 gint fmt);
+  gint     (*set_out_pad_fmt)   (GeglOperation *operation,
+                                 gint no,
+                                 gint fmt);
+
+  gboolean (*evaluate)          (GeglOperation *operation,
+                                 const gchar   *output_pad);
+
+  void     (*associate)         (GeglOperation *operation);
 };
 
 
-GType      gegl_operation_get_type        (void) G_GNUC_CONST;
+void
+gegl_operation_create_pad (GeglOperation *self,
+                           GParamSpec    *param_spec);
 
-void       gegl_operation_create_property (GeglOperation  *self,
-                                           GParamSpec     *param_spec);
-gboolean   gegl_operation_evaluate        (GeglOperation  *self,
-                                           const gchar    *output_prop);
+/* let the PADs have the formats accepted,.. sharing of pads between ops and nodes,
+ * or is that overkill?
+ */
 
+G_GNUC_CONST GType   gegl_operation_get_type (void);
+void                 gegl_operation_set_name (GeglOperation *self,
+                                              const gchar   *name);
+const gchar        * gegl_operation_get_name (GeglOperation *self);
+gboolean             gegl_operation_evaluate (GeglOperation *self,
+                                              const gchar   *output_pad);
+gboolean             gegl_operation_register (GeglOperation *self,
+                                              GeglNode      *node);
+GeglNode           * gegl_operation_get_node (GeglOperation *self);
+void                 gegl_operation_set_node (GeglOperation *self,
+                                              GeglNode      *node);
 
 G_END_DECLS
 
