@@ -1,0 +1,112 @@
+<!-- ##### SECTION Title ##### -->
+GeglPad
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### ENUM GeglPadType ##### -->
+<para>
+
+</para>
+
+@GEGL_PAD_OUTPUT: 
+@GEGL_PAD_INPUT: 
+
+<!-- ##### STRUCT GeglPad ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GeglPadClass ##### -->
+<para>
+
+</para>
+
+@parent_class: 
+
+<!-- ##### FUNCTION gegl_pad_get_name ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_pad_set_param_spec ##### -->
+<para>
+
+</para>
+
+@self: 
+@param_spec: 
+
+
+<!-- ##### FUNCTION gegl_pad_get_depends_on ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_pad_is_output ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_pad_is_input ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_pad_get_connected_to ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_pad_is_dirty ##### -->
+<para>
+
+</para>
+
+@self: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gegl_pad_set_dirty ##### -->
+<para>
+
+</para>
+
+@self: 
+@flag: 
+
+
