@@ -100,10 +100,6 @@ void          gegl_operation_associate (GeglOperation *self,
                                         GeglNode      *node);
 gboolean      gegl_operation_register  (GeglOperation *self,
                                         GeglNode      *node);
-GeglNode    * gegl_operation_get_node  (GeglOperation *self);
-void          gegl_operation_set_node  (GeglOperation *self,
-                                        GeglNode      *node);
-
 G_END_DECLS
 
 #endif /* __GEGL_OPERATION_H__ */

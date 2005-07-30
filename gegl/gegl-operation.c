@@ -50,8 +50,8 @@ static void      get_property              (GObject               *gobject,
                                             GParamSpec            *pspec);
 static void      associate                 (GeglOperation         *self);
 
-G_DEFINE_TYPE (GeglOperation, gegl_operation, GEGL_TYPE_OBJECT)
 
+G_DEFINE_TYPE (GeglOperation, gegl_operation, GEGL_TYPE_OBJECT)
 
 static void
 gegl_operation_class_init (GeglOperationClass * klass)
@@ -197,28 +197,6 @@ gegl_operation_associate (GeglOperation *self,
   klass = GEGL_OPERATION_GET_CLASS (self);
 
   g_assert (klass->associate);
-  gegl_operation_set_node (self, node);
+  self->node = node;
   klass->associate (self);
-}
-
-GeglNode *
-gegl_operation_get_node (GeglOperation *self)
-{
-  return self->node;
-}
-
-void
-gegl_operation_set_node (GeglOperation *self,
-                         GeglNode      *node)
-{
-  if (self->node)
-    {
-      g_object_unref (node);
-      self->node = NULL;
-    }
-  if (node)
-    {
-      g_object_ref (node);
-      self->node = node;
-    }
 }

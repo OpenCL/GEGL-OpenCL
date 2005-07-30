@@ -1,5 +1,9 @@
 2005-07-30  Øyvind Kolås  <pipipn@gimp.org>
 
+	* gegl/gegl-operation.[ch]: removed gegl_operation_{set|get}_node.
+
+2005-07-30  Øyvind Kolås  <pipipn@gimp.org>
+
 	* gegl/gegl-node.[ch]: Finished gegl_node_set and gegl_node_get
 	operations.
 	* gegl/gegl-graph.[ch]: added gegl_graph_create_node()
