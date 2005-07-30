@@ -52,28 +52,36 @@ static void
 test_mock_image_operation_g_object_properties(Test *test)
 {
   {
-    GeglMockImage *input0 = g_object_new(GEGL_TYPE_MOCK_IMAGE,
-                                         "length", 3,
-                                         "default-pixel", 1,
-                                         NULL);
+    GeglGraph     *gegl;
+    GeglMockImage *image;
+    GeglNode      *a;
     GeglMockImage *output;
-    gint *output_data;
-
-    GeglNode *a = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockImageOperation", NULL);
-    gegl_node_set (a, "input1", 2, NULL);
-    gegl_node_set (a, "input0", input0, NULL);
-
-    gegl_node_apply(a, "output");
+    gint          *output_data;
+ 
+    gegl   = g_object_new(GEGL_TYPE_GRAPH, NULL);
+    image  = g_object_new(GEGL_TYPE_MOCK_IMAGE,
+                          "length", 3,
+                          "default-pixel", 1,
+                          NULL);
+    a = gegl_graph_create_node (gegl,
+                                "operation", "GeglMockImageOperation",
+                                "input1", 2, 
+                                "input0", image,
+                                NULL);
+    gegl_node_apply (a, "output"); /* just set the graph in read out mode instead,
+                                      and query the property
+                                    */
     gegl_node_get (a, "output", &output, NULL);
 
-    output_data = gegl_mock_image_get_data(output);
+    output_data = gegl_mock_image_get_data (output);
 
     ct_test(test, output_data[0] == 2);
     ct_test(test, output_data[1] == 2);
     ct_test(test, output_data[2] == 2);
 
-    g_object_unref(a);
     g_object_unref(output);
+    g_object_unref(image);
+    g_object_unref(gegl);
   }
 }
 
@@ -100,24 +108,33 @@ test_mock_image_operation_chain(Test *test)
   */
 
   {
+    GeglGraph     *gegl;
+    gint          *output_data;
+    GeglMockImage *image;
+    GeglNode      *A, *B;
     GeglMockImage *output;
-    gint *output_data;
 
-    GeglMockImage *image = g_object_new(GEGL_TYPE_MOCK_IMAGE,
-                                        "length", 3,
-                                        "default-pixel", 1,
-                                        NULL);
+    gegl   = g_object_new (GEGL_TYPE_GRAPH, NULL);
 
-    GeglNode *A = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockImageOperation", NULL);
-    GeglNode *B = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockImageOperation", NULL);
+    image  = g_object_new (GEGL_TYPE_MOCK_IMAGE,
+                           "length",        3,
+                           "default-pixel", 1,
+                           NULL);
 
-    gegl_node_set (A, "input0", image, "input1", 2, NULL);
-    gegl_node_set (B, "input1", 3, NULL);
+    A = gegl_graph_create_node (gegl,
+                                "operation", "GeglMockImageOperation", 
+                                "input0",    image,
+                                "input1",    2,
+                                NULL);
+    B = gegl_graph_create_node (gegl,
+                                "operation", "GeglMockImageOperation",
+                                "input1",    3,
+                                NULL);
+    gegl_node_connect (B, "input0", A, "output");
 
-    gegl_node_connect(B, "input0", A, "output");
-    gegl_node_apply(B, "output");
 
-    gegl_node_get (B, "output", &output, NULL);
+    gegl_node_apply   (B, "output");
+    gegl_node_get     (B, "output", &output, NULL);
 
     output_data = gegl_mock_image_get_data(output);
 
@@ -125,9 +142,10 @@ test_mock_image_operation_chain(Test *test)
     ct_test(test, output_data[1] == 6);
     ct_test(test, output_data[2] == 6);
 
-    g_object_unref(A);
-    g_object_unref(B);
-    g_object_unref(output);
+    g_object_unref(output); /* maybe the gegl can act as the buffer factory as well? */
+    g_object_unref (image);
+    g_object_unref (gegl); 
+
   }
 }
 

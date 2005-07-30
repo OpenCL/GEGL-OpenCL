@@ -51,20 +51,20 @@ struct _GeglGraphClass
 };
 
 
-GType      gegl_graph_get_type        (void) G_GNUC_CONST;
+GType      gegl_graph_get_type         (void) G_GNUC_CONST;
 
-GeglNode * gegl_graph_add_child       (GeglGraph *self,
-                                       GeglNode  *child);
-GeglNode * gegl_graph_remove_child    (GeglGraph *self,
-                                       GeglNode  *child);
-GeglNode * gegl_graph_get_nth_child   (GeglGraph *self,
-                                       gint       n);
-GList    * gegl_graph_get_children    (GeglGraph *self);
-void       gegl_graph_remove_children (GeglGraph *self);
-gint       gegl_graph_get_num_children    (GeglGraph *self);
-
-
-
+GeglNode * gegl_graph_add_child        (GeglGraph    *self,
+                                        GeglNode     *child);
+GeglNode * gegl_graph_remove_child     (GeglGraph    *self,
+                                        GeglNode     *child);
+GeglNode * gegl_graph_get_nth_child    (GeglGraph    *self,
+                                        gint          n);
+GList    * gegl_graph_get_children     (GeglGraph    *self);
+void       gegl_graph_remove_children  (GeglGraph    *self);
+gint       gegl_graph_get_num_children (GeglGraph    *self);
+GeglNode * gegl_graph_create_node      (GeglGraph    *self,
+                                        const gchar  *first_property_name,
+                                        ...);
 G_END_DECLS
 
 #endif /* __GEGL_GRAPH_H__ */

@@ -25,7 +25,7 @@
 #include <string.h>
 
 #include <glib-object.h>
-
+#include <gobject/gvaluecollector.h>
 #include "gegl-types.h"
 
 #include "gegl-node.h"
@@ -627,7 +627,6 @@ static void
 gegl_node_set_operation (GeglNode      *self,
                          const gchar   *operation_name)
 {
-
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (operation_name);
 
@@ -682,14 +681,13 @@ gegl_node_set (GeglNode     *self,
                const gchar  *first_property_name,
                ...)
 {
-  GeglOperation *operation = self->operation;
   va_list        var_args;
 
   g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail (GEGL_IS_OPERATION (operation));
 
   va_start (var_args, first_property_name);
-  g_object_set_valist (G_OBJECT (operation), first_property_name, var_args);
+  gegl_node_set_valist (self, first_property_name, var_args);
+  //g_object_set_valist (G_OBJECT (self->operation), first_property_name, var_args);
   va_end (var_args);
 }
 
@@ -698,52 +696,185 @@ gegl_node_get (GeglNode    *self,
                const gchar *first_property_name,
                ...) 
 {
-  GeglOperation *operation = self->operation;
   va_list        var_args;
 
   g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail (GEGL_IS_OPERATION (operation));
+  g_return_if_fail (GEGL_IS_OPERATION (self->operation));
 
   va_start (var_args, first_property_name);
-  g_object_get_valist (G_OBJECT (operation), first_property_name, var_args);
+  gegl_node_get_valist (self, first_property_name, var_args);
+  //g_object_get_valist (G_OBJECT (self->operation), first_property_name, var_args);
   va_end (var_args);
 }
+
+#include <stdio.h>
 
 void
 gegl_node_set_valist (GeglNode     *self,
                       const gchar  *first_property_name,
                       va_list       var_args)
 {
-  GeglOperation *operation = self->operation;
+  const gchar *property_name;
 
   g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail (GEGL_IS_OPERATION (operation));
-  g_return_if_fail (operation->node == self);
 
   g_object_ref (self);
-  g_object_ref (operation);
 
-  g_object_unref (operation);
+  g_object_freeze_notify (G_OBJECT (self));
+
+  property_name = first_property_name;
+  while (property_name)
+    {
+      GValue      value = {0, };
+      GParamSpec *pspec = NULL;
+      gchar      *error = NULL;
+
+      if (!strcmp (property_name, "operation"))
+        {
+          const gchar *operation_name;
+        
+          if (first_property_name != property_name)
+            {
+              g_warning (
+                "%s: attempt to change opertation type, and not first property in list.", G_STRFUNC);
+
+              break;
+            }
+          operation_name = va_arg (var_args, gchar*);
+          gegl_node_set_operation (self, operation_name);
+        }
+      else 
+        {
+          if (self->operation)
+            {
+              pspec = g_object_class_find_property (
+                G_OBJECT_GET_CLASS (G_OBJECT (self->operation)), property_name);
+            }
+          if (!pspec)
+            {
+              g_warning ("%s: operation class '%s' has no property named: '%s'",
+               G_STRFUNC,
+               G_OBJECT_TYPE_NAME (self->operation),
+               property_name);
+              break;
+            }
+          if (!(pspec->flags & G_PARAM_WRITABLE))
+            {
+              g_warning ("%s: property (%s of operation class '%s' is not writable",
+               G_STRFUNC,
+               pspec->name,
+               G_OBJECT_TYPE_NAME (self->operation));
+              break;
+            }
+
+          g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+          G_VALUE_COLLECT(&value, var_args, 0, &error);
+          if (error)
+            {
+              g_warning ("%s: %s", G_STRFUNC, error);
+              g_free (error);
+              g_value_unset (&value);
+              break;
+            }
+          g_object_set_property (G_OBJECT (self->operation), property_name, &value);
+        }
+
+      property_name = va_arg (var_args, gchar*);
+    }
+  g_object_thaw_notify (G_OBJECT (self));
+
   g_object_unref (self);
 }
 
 void
-gegl_node_get_valist (GeglNode    *object,
+gegl_node_get_valist (GeglNode    *self,
                       const gchar *first_property_name,
                       va_list      var_args)
 {
+  const gchar *property_name;
+
+  g_return_if_fail (G_IS_OBJECT (self));
+
+  g_object_ref (self);
+
+  property_name = first_property_name;
+
+  while (property_name)
+    {
+      GValue value = {0 , };
+      GParamSpec *pspec;
+      gchar      *error;
+      
+      pspec = g_object_class_find_property (
+         G_OBJECT_GET_CLASS (G_OBJECT (self->operation)), property_name);
+
+      if (!pspec)
+        {
+          g_warning ("%s: operation class '%s' has no property named '%s'",
+           G_STRFUNC,
+           G_OBJECT_TYPE_NAME (self->operation),
+           property_name);
+          break;
+        }
+      if (!(pspec->flags & G_PARAM_READABLE))
+        {
+          g_warning ("%s: property '%s' of operation class '%s' is not readable",
+           G_STRFUNC,
+           property_name,
+           G_OBJECT_TYPE_NAME (self->operation));
+        }
+      g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+
+      gegl_node_get_property (self, property_name, &value);
+      G_VALUE_LCOPY (&value, var_args, 0, &error);
+      if (error)
+        {
+          g_warning ("%s: %s", G_STRFUNC, error);
+          g_free (error);
+          g_value_unset (&value);
+          break;
+        }
+      g_value_unset (&value);
+
+      property_name = va_arg (var_args, gchar*);
+    }
+  g_object_unref (self);
 }
 
 void
-gegl_node_set_property (GeglNode     *object,
+gegl_node_set_property (GeglNode     *self,
                         const gchar  *property_name,
                         const GValue *value)
 {
+  if (!strcmp (property_name, "operation"))
+    {
+      gegl_node_set_operation (self, g_value_get_string (value));
+    }
+  else
+    {
+      if (self->operation)
+        {
+          g_object_set_property (G_OBJECT (self->operation),
+                property_name, value);
+        }
+    }
 }
 
 void
-gegl_node_get_property (GeglNode    *object,
+gegl_node_get_property (GeglNode    *self,
                         const gchar *property_name,
                         GValue      *value)
 {
+  if (!strcmp (property_name, "operation"))
+    {
+      g_value_set_string (value, gegl_node_get_operation (self));
+    }
+  else
+    {
+      if (self->operation)
+        {
+          g_object_get_property (G_OBJECT (self->operation),
+                property_name, value);
+        }
+    }
 }

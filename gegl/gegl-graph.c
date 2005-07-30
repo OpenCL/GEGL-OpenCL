@@ -30,7 +30,6 @@
 #include "gegl-pad.h"
 #include "gegl-visitor.h"
 
-
 enum
 {
   PROP_0
@@ -179,3 +178,30 @@ gegl_graph_get_children (GeglGraph *self)
 
   return self->children;
 }
+
+/*
+ *  returns a freshly created node, owned by the graph, and thus freed with it
+ */
+GeglNode *
+gegl_graph_create_node      (GeglGraph *self,
+                             const gchar  *first_property_name,
+                             ...)
+{
+  GeglNode    *node;
+  va_list      var_args;
+  const gchar *name; 
+  
+  g_return_val_if_fail (GEGL_IS_GRAPH (self), NULL);
+
+  node = g_object_new (GEGL_TYPE_NODE, NULL);
+  gegl_graph_add_child (self, node);
+
+  name = first_property_name;
+  va_start (var_args, first_property_name);
+  gegl_node_set_valist (node, first_property_name, var_args);
+  va_end (var_args);
+
+  g_object_unref (node);
+  return node;
+}
+

@@ -1,9 +1,15 @@
-2005-07-29  Sven Neumann  <sven@gimp.org>
+2005-07-30  Øyvind Kolås  <pipipn@gimp.org>
 
-	* gegl/gegl-operation.[ch]: declared gegl_operation_asscociate and
-	removed the unused return value.
-
-	* gegl/gegl.h: sort alphabetically.
+	* gegl/gegl-node.[ch]: Finished gegl_node_set and gegl_node_get
+	operations.
+	* gegl/gegl-graph.[ch]: added gegl_graph_create_node()
+	* tests/
+	* tests/bfspadvisitortest.o
+	* tests/dfspadvisitortest.o
+	* tests/gegl-mock-pad-visitor.o
+	* tests/mockimageoperationtest.c
+	* tests/padconnectionstest.o
+	* tests/updatepadtest.o: modified to use above mentioned api's.
 
 2005-07-29  Øyvind Kolås  <pippin@gimp.org>
 
