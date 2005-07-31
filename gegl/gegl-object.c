@@ -94,18 +94,16 @@ constructor (GType                  type,
              guint                  n_props,
              GObjectConstructParam *props)
 {
-  GObject    *object;
+  GObject    *gobject;
   GeglObject *self;
 
-  object = G_OBJECT_CLASS (gegl_object_parent_class)->constructor (type,
+  gobject = G_OBJECT_CLASS (gegl_object_parent_class)->constructor (type,
                                                                    n_props,
                                                                    props);
-
-  self = GEGL_OBJECT (object);
-
+  self = GEGL_OBJECT (gobject);
   self->constructed = TRUE;
 
-  return object;
+  return gobject;
 }
 
 static void
@@ -114,15 +112,15 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglObject *object = GEGL_OBJECT (gobject);
+  GeglObject *self = GEGL_OBJECT (gobject);
 
   switch (property_id)
     {
     case PROP_NAME:
-      gegl_object_set_name (object, g_value_get_string (value));
+      gegl_object_set_name (self, g_value_get_string (value));
       break;
     default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
     }
 }
@@ -133,22 +131,22 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglObject *object = GEGL_OBJECT (gobject);
+  GeglObject *self = GEGL_OBJECT (gobject);
 
   switch (property_id)
     {
     case PROP_NAME:
-      g_value_set_string (value, gegl_object_get_name (object));
+      g_value_set_string (value, gegl_object_get_name (self));
       break;
     default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
     }
 }
 
 /**
  * gegl_object_set_name:
- * @self: a #GeglObject.
+ * @object: a #GeglObject.
  * @name: a string
  *
  * Sets the name for this object.
@@ -169,14 +167,14 @@ gegl_object_set_name (GeglObject  *self,
 
 /**
  * gegl_object_get_name:
- * @self: a #GeglObject.
+ * @object: a #GeglObject.
  *
  * Gets the name for this object.
  *
  * Returns: a string for the name of this object.
  **/
 const gchar*
-gegl_object_get_name (GeglObject * self)
+gegl_object_get_name (GeglObject *self)
 {
   g_return_val_if_fail (GEGL_IS_OBJECT (self), NULL);
 

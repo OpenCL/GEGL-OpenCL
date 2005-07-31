@@ -444,7 +444,7 @@ visit_pad (GeglVisitor  *self,
 }
 
 void
-gegl_visitor_visit_node (GeglVisitor *self,
+gegl_self_visit_node (GeglVisitor *self,
                          GeglNode    *node)
 {
   GeglVisitorClass *klass;
