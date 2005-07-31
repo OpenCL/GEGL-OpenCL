@@ -170,10 +170,10 @@ gegl_rect_equal (GeglRect *r,
 
 gboolean
 gegl_rect_equal_coords (GeglRect *r,
-                        gint x,
-                        gint y,
-                        gint w,
-                        gint h)
+                        gint      x,
+                        gint      y,
+                        gint      w,
+                        gint      h)
 {
   if (r->x == x &&
       r->y == y &&
@@ -186,11 +186,11 @@ gegl_rect_equal_coords (GeglRect *r,
 
 #define GEGL_LOG_DOMAIN "Gegl"
 
-void gegl_log_debug(gchar *file,
-                    gint line,
-                    gchar *function,
-                    gchar * format,
-                    ...)
+void gegl_log_debug (gchar *file,
+                     gint   line,
+                     gchar *function,
+                     gchar *format,
+                     ...)
 {
   va_list args;
   va_start(args,format);
@@ -198,11 +198,11 @@ void gegl_log_debug(gchar *file,
   va_end(args);
 }
 
-void gegl_log_info(gchar *file,
-                   gint line,
-                   gchar *function,
-                   gchar * format,
-                   ...)
+void gegl_log_info (gchar *file,
+                    gint   line,
+                    gchar *function,
+                    gchar *format,
+                    ...)
 {
   va_list args;
   va_start(args,format);
@@ -210,11 +210,11 @@ void gegl_log_info(gchar *file,
   va_end(args);
 }
 
-void gegl_log_message(gchar *file,
-                      gint line,
-                      gchar *function,
-                      gchar * format,
-                      ...)
+void gegl_log_message (gchar *file,
+                       gint   line,
+                       gchar *function,
+                       gchar *format,
+                       ...)
 {
   va_list args;
   va_start(args,format);
@@ -222,7 +222,8 @@ void gegl_log_message(gchar *file,
   va_end(args);
 }
 
-void gegl_log_direct(gchar * format, ...)
+void gegl_log_direct (gchar *format,
+                      ...)
 {
   va_list args;
   va_start(args,format);
@@ -231,12 +232,12 @@ void gegl_log_direct(gchar * format, ...)
 }
 
 void
-gegl_log(GLogLevelFlags level,
-         gchar *file,
-         gint line,
-         gchar *function,
-         gchar *format,
-         ...)
+gegl_log (GLogLevelFlags  level,
+          gchar          *file,
+          gint            line,
+          gchar          *function,
+          gchar          *format,
+          ...)
 {
     va_list args;
     va_start(args,format);
@@ -245,12 +246,12 @@ gegl_log(GLogLevelFlags level,
 }
 
 void
-gegl_logv(GLogLevelFlags level,
-         gchar *file,
-         gint line,
-         gchar *function,
-         gchar *format,
-         va_list args)
+gegl_logv (GLogLevelFlags  level,
+           gchar          *file,
+           gint            line,
+           gchar          *function,
+           gchar          *format,
+           va_list         args)
 {
     if (g_getenv("GEGL_LOG_ON"))
       {
@@ -268,9 +269,9 @@ gegl_logv(GLogLevelFlags level,
 }
 
 void
-gegl_direct_log(GLogLevelFlags level,
-         gchar *format,
-         ...)
+gegl_direct_log (GLogLevelFlags  level,
+                 gchar          *format,
+                 ...)
 {
     va_list args;
     va_start(args,format);
@@ -279,9 +280,9 @@ gegl_direct_log(GLogLevelFlags level,
 }
 
 void
-gegl_direct_logv(GLogLevelFlags level,
-                 gchar *format,
-                 va_list args)
+gegl_direct_logv (GLogLevelFlags  level,
+                  gchar          *format,
+                  va_list         args)
 {
     if (g_getenv("GEGL_LOG_ON"))
       {

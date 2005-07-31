@@ -1,5 +1,13 @@
 2005-07-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-graph.c
+	* gegl/gegl-node.c
+	* gegl/gegl-types.h
+	* gegl/gegl-utils.c
+	* gegl/gegl-visitor.c: reindented.
+
+2005-07-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* ChangeLog: added missing entry.
 
 2005-07-31  Øyvind Kolås  <pippin@gimp.org>

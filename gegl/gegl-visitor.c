@@ -422,8 +422,8 @@ gegl_visitor_bfs_traverse (GeglVisitor   *self,
 }
 
 void
-gegl_visitor_visit_pad (GeglVisitor  *self,
-                        GeglPad      *pad)
+gegl_visitor_visit_pad (GeglVisitor *self,
+                        GeglPad     *pad)
 {
   GeglVisitorClass *klass;
 
@@ -437,15 +437,15 @@ gegl_visitor_visit_pad (GeglVisitor  *self,
 }
 
 static void
-visit_pad (GeglVisitor  *self,
-           GeglPad      *pad)
+visit_pad (GeglVisitor *self,
+           GeglPad     *pad)
 {
   self->visits_list = g_list_append (self->visits_list, pad);
 }
 
 void
 gegl_self_visit_node (GeglVisitor *self,
-                         GeglNode    *node)
+                      GeglNode    *node)
 {
   GeglVisitorClass *klass;
 

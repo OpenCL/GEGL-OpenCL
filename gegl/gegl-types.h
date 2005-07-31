@@ -33,9 +33,9 @@ typedef struct _GeglVisitable   GeglVisitable; /* dummy typedef */
 typedef struct _GeglVisitor     GeglVisitor;
 
 
-typedef struct _GeglRect      GeglRect;
-typedef struct _GeglPoint     GeglPoint;
-typedef struct _GeglDimension GeglDimension;
+typedef struct _GeglRect        GeglRect;
+typedef struct _GeglPoint       GeglPoint;
+typedef struct _GeglDimension   GeglDimension;
 
 struct _GeglRect
 {

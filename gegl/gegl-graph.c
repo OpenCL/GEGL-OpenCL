@@ -186,9 +186,9 @@ gegl_graph_get_children (GeglGraph *self)
  *  returns a freshly created node, owned by the graph, and thus freed with it
  */
 GeglNode *
-gegl_graph_create_node      (GeglGraph   *self,
-                             const gchar *first_property_name,
-                             ...)
+gegl_graph_create_node (GeglGraph   *self,
+                        const gchar *first_property_name,
+                        ...)
 {
   GeglNode    *node;
   va_list      var_args;

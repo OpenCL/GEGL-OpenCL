@@ -311,7 +311,7 @@ pads_exist (GeglNode    *sink,
 
 static GeglConnection *
 find_connection (GeglNode     *sink,
-                 GeglPad *sink_prop)
+                 GeglPad      *sink_prop)
 {
   GList *list;
 
@@ -676,8 +676,8 @@ gegl_node_get_operation (GeglNode      *self)
 
 
 void
-gegl_node_set (GeglNode     *self,
-               const gchar  *first_property_name,
+gegl_node_set (GeglNode    *self,
+               const gchar *first_property_name,
                ...)
 {
   va_list        var_args;
@@ -909,8 +909,8 @@ gegl_node_get_property (GeglNode    *self,
 /* returns a freshly allocated list of the properties of the object, does not list
  * the regular gobject properties of GeglNode ('name' and 'operation') */
 GParamSpec**
-gegl_node_list_properties   (GeglNode     *self,
-                             guint        *n_properties_p)
+gegl_node_list_properties (GeglNode *self,
+                           guint    *n_properties_p)
 {
   GParamSpec **pspecs;
 
