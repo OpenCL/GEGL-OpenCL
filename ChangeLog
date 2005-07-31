@@ -6,6 +6,7 @@
 
 	* tests/bfspadvisitortest.o
 	* tests/dfspadvisitortest.o
+	* tests/gegl-mock-pad-visitor.o
 	* tests/padconnectionstest.o
 	* tests/updatepadtest.o: removed from repository
 
