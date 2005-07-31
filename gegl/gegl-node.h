@@ -62,55 +62,56 @@ struct _GeglNodeClass
 
 
 
-GType      gegl_node_get_type            (void) G_GNUC_CONST;
+GType         gegl_node_get_type            (void) G_GNUC_CONST;
 
-void       gegl_node_add_pad             (GeglNode     *self,
-                                              GeglPad      *pad);
-void       gegl_node_remove_pad          (GeglNode     *self,
-                                              GeglPad      *pad);
-GeglPad  * gegl_node_get_pad             (GeglNode     *self,
-                                          const gchar  *name);
-GList    * gegl_node_get_pads            (GeglNode     *self);
-GList    * gegl_node_get_input_pads      (GeglNode     *self);
-GList    * gegl_node_get_output_pads     (GeglNode     *self);
-gint       gegl_node_get_num_input_pads  (GeglNode     *self);
-gint       gegl_node_get_num_output_pads (GeglNode     *self);
-GList    * gegl_node_get_sinks           (GeglNode     *self);
-GList    * gegl_node_get_sources         (GeglNode     *self);
-gint       gegl_node_get_num_sources     (GeglNode     *self);
-gint       gegl_node_get_num_sinks       (GeglNode     *self);
-gboolean   gegl_node_connect             (GeglNode     *sink,
-                                          const gchar  *sink_pad_name,
-                                          GeglNode     *source,
-                                          const gchar  *source_pad_name);
-gboolean   gegl_node_disconnect          (GeglNode     *sink,
-                                          const gchar  *sink_pad_name,
-                                          GeglNode     *source,
-                                          const gchar  *source_pad_name);
-void       gegl_node_disconnect_sinks    (GeglNode     *self);
-void       gegl_node_disconnect_sources  (GeglNode     *self);
-GList    * gegl_node_get_depends_on      (GeglNode     *self);
-void       gegl_node_apply               (GeglNode     *self,
-                                          const gchar  *output_pad_name);
-void       gegl_node_set                 (GeglNode     *self,
-                                          const gchar  *first_property_name,
-                                          ...);
-void       gegl_node_get                 (GeglNode     *self,
-                                          const gchar  *first_property_name,
-                                          ...);
-void       gegl_node_set_valist          (GeglNode     *object,
-                                          const gchar  *first_property_name,
-                                          va_list       var_args);
-void       gegl_node_get_valist          (GeglNode     *object,
-                                          const gchar  *first_property_name,
-                                          va_list       var_args);
-void       gegl_node_set_property        (GeglNode     *object,
-                                          const gchar  *property_name,
-                                          const GValue *value);
-void       gegl_node_get_property        (GeglNode     *object,
-                                          const gchar  *property_name,
-                                          GValue       *value);
-                                               
+void          gegl_node_add_pad             (GeglNode     *self,
+                                             GeglPad      *pad);
+void          gegl_node_remove_pad          (GeglNode     *self,
+                                             GeglPad      *pad);
+GeglPad     * gegl_node_get_pad             (GeglNode     *self,
+                                             const gchar  *name);
+GList       * gegl_node_get_pads            (GeglNode     *self);
+GList       * gegl_node_get_input_pads      (GeglNode     *self);
+GList       * gegl_node_get_output_pads     (GeglNode     *self);
+gint          gegl_node_get_num_input_pads  (GeglNode     *self);
+gint          gegl_node_get_num_output_pads (GeglNode     *self);
+GList       * gegl_node_get_sinks           (GeglNode     *self);
+GList       * gegl_node_get_sources         (GeglNode     *self);
+gint          gegl_node_get_num_sources     (GeglNode     *self);
+gint          gegl_node_get_num_sinks       (GeglNode     *self);
+gboolean      gegl_node_connect             (GeglNode     *sink,
+                                             const gchar  *sink_pad_name,
+                                             GeglNode     *source,
+                                             const gchar  *source_pad_name);
+gboolean      gegl_node_disconnect          (GeglNode     *sink,
+                                             const gchar  *sink_pad_name,
+                                             GeglNode     *source,
+                                             const gchar  *source_pad_name);
+void          gegl_node_disconnect_sinks    (GeglNode     *self);
+void          gegl_node_disconnect_sources  (GeglNode     *self);
+GList       * gegl_node_get_depends_on      (GeglNode     *self);
+void          gegl_node_apply               (GeglNode     *self,
+                                             const gchar  *output_pad_name);
+void          gegl_node_set                 (GeglNode     *self,
+                                             const gchar  *first_property_name,
+                                             ...);
+void          gegl_node_get                 (GeglNode     *self,
+                                             const gchar  *first_property_name,
+                                             ...);
+void          gegl_node_set_valist          (GeglNode     *object,
+                                             const gchar  *first_property_name,
+                                             va_list       var_args);
+void          gegl_node_get_valist          (GeglNode     *object,
+                                             const gchar  *first_property_name,
+                                             va_list       var_args);
+void          gegl_node_set_property        (GeglNode     *object,
+                                             const gchar  *property_name,
+                                             const GValue *value);
+void          gegl_node_get_property        (GeglNode     *object,
+                                             const gchar  *property_name,
+                                             GValue       *value);
+GParamSpec ** gegl_node_list_properties     (GeglNode     *self,
+                                             guint        *n_properties);
 
 G_END_DECLS
 

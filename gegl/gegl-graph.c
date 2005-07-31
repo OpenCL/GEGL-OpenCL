@@ -171,20 +171,23 @@ gegl_graph_get_nth_child (GeglGraph *self,
   return g_list_nth_data (self->children, n);
 }
 
+/*
+ * Returns a copy of the graphs internal list of nodes 
+ */
 GList *
 gegl_graph_get_children (GeglGraph *self)
 {
   g_return_val_if_fail (GEGL_IS_GRAPH (self), NULL);
 
-  return self->children;
+  return g_list_copy (self->children);
 }
 
 /*
  *  returns a freshly created node, owned by the graph, and thus freed with it
  */
 GeglNode *
-gegl_graph_create_node      (GeglGraph *self,
-                             const gchar  *first_property_name,
+gegl_graph_create_node      (GeglGraph   *self,
+                             const gchar *first_property_name,
                              ...)
 {
   GeglNode    *node;

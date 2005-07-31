@@ -33,7 +33,7 @@
 
 
 static void gegl_eval_visitor_class_init (GeglEvalVisitorClass *klass);
-static void visit_pad                    (GeglVisitor          *visitor,
+static void visit_pad                    (GeglVisitor          *self,
                                           GeglPad              *pad);
 
 
@@ -49,19 +49,18 @@ gegl_eval_visitor_class_init (GeglEvalVisitorClass *klass)
 }
 
 static void
-gegl_eval_visitor_init (GeglEvalVisitor *visitor)
+gegl_eval_visitor_init (GeglEvalVisitor *self)
 {
 }
 
 static void
-visit_pad (GeglVisitor *visitor,
+visit_pad (GeglVisitor *self,
            GeglPad     *pad)
 {
   GeglNode      *node      = gegl_pad_get_node (pad);
   GeglOperation *operation = node->operation;
 
-  GEGL_VISITOR_CLASS (gegl_eval_visitor_parent_class)->visit_pad (visitor,
-                                                                       pad);
+  GEGL_VISITOR_CLASS (gegl_eval_visitor_parent_class)->visit_pad (self, pad);
 #if 0
   g_print("Compute Visitor: Visiting pad %s from operation %s\n",
           gegl_pad_get_name(pad),

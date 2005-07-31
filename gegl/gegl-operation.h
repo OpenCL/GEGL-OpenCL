@@ -43,7 +43,7 @@ typedef struct _GeglOperationClass GeglOperationClass;
 
 struct _GeglOperation
 {
-  GeglObject parent_instance;
+  GObject parent_instance;
 
   /*< private >*/
   GeglNode *node;  /* the node that this operation object is communicated
@@ -60,25 +60,25 @@ struct _GeglOperation
 
 struct _GeglOperationClass
 {
-  GeglObjectClass  parent_class;
+  GObjectClass  parent_class;
 
-  gint     (*query_in_pad_fmt)  (GeglOperation *operation,
+  gint     (*query_in_pad_fmt)  (GeglOperation *self,
                                  gint pad_no,
                                  gint fmt);
-  gint     (*query_out_pad_fmt) (GeglOperation *operation,
+  gint     (*query_out_pad_fmt) (GeglOperation *self,
                                  gint no,
                                  gint fmt);
-  gint     (*set_in_pad_fmt)    (GeglOperation *operation,
+  gint     (*set_in_pad_fmt)    (GeglOperation *self,
                                  gint no,
                                  gint fmt);
-  gint     (*set_out_pad_fmt)   (GeglOperation *operation,
+  gint     (*set_out_pad_fmt)   (GeglOperation *self,
                                  gint no,
                                  gint fmt);
 
-  gboolean (*evaluate)          (GeglOperation *operation,
+  gboolean (*evaluate)          (GeglOperation *self,
                                  const gchar   *output_pad);
 
-  void     (*associate)         (GeglOperation *operation);
+  void     (*associate)         (GeglOperation *self);
 };
 
 

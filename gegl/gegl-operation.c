@@ -51,7 +51,7 @@ static void      get_property              (GObject               *gobject,
 static void      associate                 (GeglOperation         *self);
 
 
-G_DEFINE_TYPE (GeglOperation, gegl_operation, GEGL_TYPE_OBJECT)
+G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
 
 static void
 gegl_operation_class_init (GeglOperationClass * klass)
@@ -75,7 +75,7 @@ gegl_operation_init (GeglOperation *self)
 static void
 finalize (GObject *gobject)
 {
-  GeglOperation * self = GEGL_OPERATION (gobject);
+  GeglOperation *self = GEGL_OPERATION (gobject);
 
   if (self->name)
     g_free (self->name);
@@ -181,7 +181,7 @@ gegl_operation_evaluate (GeglOperation *self,
 static void
 associate (GeglOperation *self)
 {
-  fprintf (stderr, "kilroy was here (%p)\n", self);
+  fprintf (stderr, "kilroy was at What The Hack (%p)\n", self);
   return;
 }
 

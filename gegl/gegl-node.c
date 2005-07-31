@@ -67,7 +67,6 @@ static void            visitable_accept               (GeglVisitable *visitable,
                                                        GeglVisitor   *visitor);
 static GList*          visitable_depends_on           (GeglVisitable *visitable);
 static gboolean        visitable_needs_visiting       (GeglVisitable *visitable);
-
 static void            gegl_node_set_operation        (GeglNode      *self,
                                                        const gchar   *operation);
 static void            gegl_node_set_operation_object (GeglNode      *self,
@@ -512,7 +511,7 @@ gegl_node_get_num_output_pads (GeglNode *self)
  * gegl_node_get_sinks:
  * @self: a #GeglNode.
  *
- * Gets list of sink connections attached to this node.
+ * Gets list of sink connections attached to this self.
  *
  * Returns: list of sink connections.
  **/
@@ -580,9 +579,9 @@ visitable_accept (GeglVisitable *visitable,
 GList *
 visitable_depends_on (GeglVisitable *visitable)
 {
-  GeglNode *node = GEGL_NODE (visitable);
+  GeglNode *self = GEGL_NODE (visitable);
 
-  return gegl_node_get_depends_on (node);
+  return gegl_node_get_depends_on (self);
 }
 
 static gboolean
@@ -672,7 +671,7 @@ static const gchar *
 gegl_node_get_operation (GeglNode      *self)
 { 
   const gchar *type_name = G_OBJECT_TYPE_NAME (self->operation);
-  return &(type_name[9]);
+  return &(type_name[0]);
 }
 
 
@@ -687,7 +686,6 @@ gegl_node_set (GeglNode     *self,
 
   va_start (var_args, first_property_name);
   gegl_node_set_valist (self, first_property_name, var_args);
-  //g_object_set_valist (G_OBJECT (self->operation), first_property_name, var_args);
   va_end (var_args);
 }
 
@@ -703,7 +701,6 @@ gegl_node_get (GeglNode    *self,
 
   va_start (var_args, first_property_name);
   gegl_node_get_valist (self, first_property_name, var_args);
-  //g_object_get_valist (G_OBJECT (self->operation), first_property_name, var_args);
   va_end (var_args);
 }
 
@@ -742,6 +739,22 @@ gegl_node_set_valist (GeglNode     *self,
             }
           operation_name = va_arg (var_args, gchar*);
           gegl_node_set_operation (self, operation_name);
+        }
+      else if (!strcmp (property_name, "name"))
+        {
+          pspec = g_object_class_find_property (
+             G_OBJECT_GET_CLASS (G_OBJECT (self)), property_name);
+
+          g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+          G_VALUE_COLLECT(&value, var_args, 0, &error);
+          if (error)
+            {
+              g_warning ("%s: %s", G_STRFUNC, error);
+              g_free (error);
+              g_value_unset (&value);
+              break;
+            }
+          g_object_set_property (G_OBJECT (self), property_name, &value);
         }
       else 
         {
@@ -804,25 +817,34 @@ gegl_node_get_valist (GeglNode    *self,
       GValue value = {0 , };
       GParamSpec *pspec;
       gchar      *error;
-      
-      pspec = g_object_class_find_property (
-         G_OBJECT_GET_CLASS (G_OBJECT (self->operation)), property_name);
 
-      if (!pspec)
+      if (!strcmp (property_name, "operation") ||
+          !strcmp (property_name, "name"))
         {
-          g_warning ("%s: operation class '%s' has no property named '%s'",
-           G_STRFUNC,
-           G_OBJECT_TYPE_NAME (self->operation),
-           property_name);
-          break;
+          pspec = g_object_class_find_property (
+             G_OBJECT_GET_CLASS (G_OBJECT (self)), property_name);
         }
-      if (!(pspec->flags & G_PARAM_READABLE))
+      else
         {
-          g_warning ("%s: property '%s' of operation class '%s' is not readable",
-           G_STRFUNC,
-           property_name,
-           G_OBJECT_TYPE_NAME (self->operation));
-        }
+        pspec = g_object_class_find_property (
+           G_OBJECT_GET_CLASS (G_OBJECT (self->operation)), property_name);
+
+        if (!pspec)
+          {
+            g_warning ("%s: operation class '%s' has no property named '%s'",
+             G_STRFUNC,
+             G_OBJECT_TYPE_NAME (self->operation),
+             property_name);
+            break;
+          }
+        if (!(pspec->flags & G_PARAM_READABLE))
+          {
+            g_warning ("%s: property '%s' of operation class '%s' is not readable",
+             G_STRFUNC,
+             property_name,
+             G_OBJECT_TYPE_NAME (self->operation));
+          }
+      }
       g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
 
       gegl_node_get_property (self, property_name, &value);
@@ -846,9 +868,11 @@ gegl_node_set_property (GeglNode     *self,
                         const gchar  *property_name,
                         const GValue *value)
 {
-  if (!strcmp (property_name, "operation"))
+  if (!strcmp (property_name, "operation") ||
+      !strcmp (property_name, "name"))
     {
-      gegl_node_set_operation (self, g_value_get_string (value));
+      g_object_set_property (G_OBJECT (self),
+                             property_name, value);
     }
   else
     {
@@ -865,9 +889,12 @@ gegl_node_get_property (GeglNode    *self,
                         const gchar *property_name,
                         GValue      *value)
 {
-  if (!strcmp (property_name, "operation"))
+  if (!strcmp (property_name, "operation") ||
+      !strcmp (property_name, "name")
+   )
     {
-      g_value_set_string (value, gegl_node_get_operation (self));
+      g_object_get_property (G_OBJECT (self),
+                             property_name, value);
     }
   else
     {
@@ -878,3 +905,17 @@ gegl_node_get_property (GeglNode    *self,
         }
     }
 }
+
+/* returns a freshly allocated list of the properties of the object, does not list
+ * the regular gobject properties of GeglNode ('name' and 'operation') */
+GParamSpec**
+gegl_node_list_properties   (GeglNode     *self,
+                             guint        *n_properties_p)
+{
+  GParamSpec **pspecs;
+
+  pspecs = g_object_class_list_properties (G_OBJECT_GET_CLASS (self->operation), n_properties_p);
+
+  return pspecs;
+}
+
