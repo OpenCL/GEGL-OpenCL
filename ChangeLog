@@ -1,3 +1,7 @@
+2005-07-31  Sven Neumann  <sven@gimp.org>
+
+	* gegl/gegl-visitor.c (gegl_visitor_visit_node): fixed function name.
+
 2005-07-31  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-graph.c
