@@ -1,3 +1,10 @@
+2005-07-30  Øyvind Kolås  <pippin@gimp.org>
+
+	* tests/bfspadvisitortest.o
+	* tests/dfspadvisitortest.o
+	* tests/padconnectionstest.o
+	* tests/updatepadtest.o: removed from repository
+
 2005-07-30  Øyvind Kolås  <pipipn@gimp.org>
 
 	* gegl/gegl-operation.[ch]: removed gegl_operation_{set|get}_node.
