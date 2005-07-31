@@ -1,9 +1,24 @@
-2005-07-30  Øyvind Kolås  <pippin@gimp.org>
+2005-07-31  Øyvind Kolås  <pippin@gimp.org>
+
+	* ChangeLog: added missing entry.
+
+2005-07-31  Øyvind Kolås  <pippin@gimp.org>
 
 	* tests/bfspadvisitortest.o
 	* tests/dfspadvisitortest.o
 	* tests/padconnectionstest.o
 	* tests/updatepadtest.o: removed from repository
+
+2005-07-31  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-connection.[c]
+	* gegl/gegl-eval-mgr.c
+	* gegl/gegl-eval-visitor.c
+	* gegl/gegl-graph.c
+	* gegl/gegl-object.[ch] : Make consistent use of using self as the object
+	instance. of GeglObject.
+	* gegl/gegl-node.[c]: added gegl_node_list_properties ()
+	* gegl/gegl-operation.[ch]: Made descendant class of GObject instead
 
 2005-07-30  Øyvind Kolås  <pipipn@gimp.org>
 
