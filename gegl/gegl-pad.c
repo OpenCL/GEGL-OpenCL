@@ -113,32 +113,32 @@ finalize (GObject *gobject)
 
 static void
 set_property (GObject      *object,
-              guint         pad_id,
+              guint         property_id,
               const GValue *value,
               GParamSpec   *pspec)
 {
   /*GeglPad * pad = GEGL_PAD(gobject);*/
 
-  switch (pad_id)
+  switch (property_id)
     {
     default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, pad_id, pspec);
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
     }
 }
 
 static void
 get_property (GObject    *object,
-              guint       pad_id,
+              guint       property_id,
               GValue     *value,
               GParamSpec *pspec)
 {
   /*GeglPad * pad = GEGL_PAD(gobject);*/
 
-  switch (pad_id)
+  switch (property_id)
     {
     default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, pad_id, pspec);
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
     }
 }
@@ -314,17 +314,15 @@ visitable_accept (GeglVisitable *visitable,
 static GList *
 visitable_depends_on (GeglVisitable *visitable)
 {
-  GeglPad *pad = GEGL_PAD (visitable);
+  GeglPad *self = GEGL_PAD (visitable);
 
-  return gegl_pad_get_depends_on (pad);
+  return gegl_pad_get_depends_on (self);
 }
 
 static gboolean
 visitable_needs_visiting (GeglVisitable *visitable)
 {
-  GeglPad *pad = GEGL_PAD (visitable);
+  GeglPad *self = GEGL_PAD (visitable);
 
-  return gegl_pad_is_dirty (pad);
+  return gegl_pad_is_dirty (self);
 }
-
-

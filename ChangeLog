@@ -16,7 +16,8 @@
 	* gegl/gegl-eval-mgr.c
 	* gegl/gegl-eval-visitor.c
 	* gegl/gegl-graph.c
-	* gegl/gegl-object.[ch] : Make consistent use of using self as the object
+	* gegl/gegl-object.[ch] 
+	* gegl/gegl-pad.[ch]: Make consistent use of using self as the object
 	instance. of GeglObject.
 	* gegl/gegl-node.[c]: added gegl_node_list_properties ()
 	* gegl/gegl-operation.[ch]: Made descendant class of GObject instead
