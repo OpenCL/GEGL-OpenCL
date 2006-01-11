@@ -3,7 +3,6 @@ The cvs version of gegl is known to work with the following autotools:
 - GNU autoconf 2.53
 - GNU automake 1.7.5
 - GNU libtool 1.4.3
-- GNU gettext 0.10.40
 
 Other versions of these tools probably work. Probably the tools that
 work for current versions of glib will work for gegl as well. 

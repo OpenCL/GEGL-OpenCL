@@ -39,9 +39,9 @@ check_version ()
 }
 
 echo
-echo "I am testing that you have the required versions of libtool, autoconf," 
-echo "automake, glib-gettextize and intltoolize. This test is not foolproof,"
-echo "so if anything goes wrong, see the file HACKING for more information..."
+echo "I am testing that you have the required versions of libtool, autoconf" 
+echo "and automake. This test is not foolproof, so if anything goes wrong,"
+echo "see the file HACKING for more information..."
 echo
 
 DIE=0
@@ -122,16 +122,16 @@ fi
 
 
 echo -n "checking for automake >= $AUTOMAKE_REQUIRED_VERSION ... "
-if (automake-1.7 --version) < /dev/null > /dev/null 2>&1; then
-   AUTOMAKE=automake-1.7
-   ACLOCAL=aclocal-1.7
+if (automake-1.9 --version) < /dev/null > /dev/null 2>&1; then
+   AUTOMAKE=automake-1.9
+   ACLOCAL=aclocal-1.9
 elif (automake-1.8 --version) < /dev/null > /dev/null 2>&1; then
    AUTOMAKE=automake-1.8
    ACLOCAL=aclocal-1.8
    AUTOMAKE_REQUIRED_VERSION=1.8.3
-elif (automake-1.9 --version) < /dev/null > /dev/null 2>&1; then
-   AUTOMAKE=automake-1.9
-   ACLOCAL=aclocal-1.9
+elif (automake-1.7 --version) < /dev/null > /dev/null 2>&1; then
+   AUTOMAKE=automake-1.7
+   ACLOCAL=aclocal-1.7
 else
     echo
     echo "  You must have automake 1.7 or newer installed to compile $PROJECT."
@@ -146,7 +146,6 @@ if test x$AUTOMAKE != x; then
          | grep automake | sed "s/.* \([0-9.]*\)[-a-z0-9]*$/\1/"`
     check_version $VER $AUTOMAKE_REQUIRED_VERSION
 fi
-
 
 #echo -n "checking for glib-gettextize >= $GLIB_REQUIRED_VERSION ... "
 #if (glib-gettextize --version) < /dev/null > /dev/null 2>&1; then
@@ -207,7 +206,7 @@ fi
 if test -z "$ACLOCAL_FLAGS"; then
 
     acdir=`$ACLOCAL --print-ac-dir`
-    m4list="glib-2.0.m4 glib-gettext.m4 intltool.m4 pkg.m4"
+    m4list="glib-2.0.m4 pkg.m4" # glib-gettext.m4 intltool.m4
 
     for file in $m4list
     do
