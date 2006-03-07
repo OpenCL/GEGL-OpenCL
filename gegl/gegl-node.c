@@ -145,6 +145,12 @@ finalize (GObject *gobject)
   g_list_free (self->input_pads);
   g_list_free (self->output_pads);
 
+  if (self->operation)
+    {
+      g_object_unref (self->operation);
+      self->operation = NULL;
+    }
+
   G_OBJECT_CLASS (gegl_node_parent_class)->finalize (gobject);
 }
 
