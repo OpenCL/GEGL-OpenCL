@@ -1,3 +1,11 @@
+2006-03-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-node.c: (pads_exist), (gegl_node_set_operation),
+	(gegl_node_set_valist), (gegl_node_get_valist): Improved error
+	reporting, set Operation type to "OpNop" if type lookup fails (the
+	name of this operation will probably change, and it currently only
+	exists outside GEGL.)
+
 2006-03-07  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-node.c: (finalize): unref associated operation in

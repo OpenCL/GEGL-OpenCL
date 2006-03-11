@@ -303,12 +303,16 @@ pads_exist (GeglNode    *sink,
 
   if (!sink_prop || !gegl_pad_is_input (sink_prop))
     {
-      g_warning ("Can't find sink property %s", sink_prop_name);
+      g_warning ("%s: '%s' has no sink property named '%s'.",
+           G_STRFUNC,
+           G_OBJECT_TYPE_NAME (sink->operation), sink_prop_name);
       return FALSE;
     }
   else if (!source_prop || !gegl_pad_is_output (source_prop))
     {
-      g_warning ("Can't find source property %s", source_prop_name);
+      g_warning ("%s: '%s' has no source property named '%s'.",
+           G_STRFUNC,
+           G_OBJECT_TYPE_NAME (source->operation), source_prop_name);
       return FALSE;
     }
 
@@ -644,7 +648,14 @@ gegl_node_set_operation (GeglNode      *self,
       
       if (!type)
         {
-          g_warning ("Eeeeek failed to find types %s", operation_name);
+          g_warning ("%s: GEGL failed to set operation type '%s'",
+              G_STRFUNC, operation_name);
+
+          /* Set a NOP operation, hoping that at least parts of the processing chain
+           * does what the user intended
+           */
+          if (strcmp (operation_name, "OpNop"))
+             gegl_node_set_operation (self, "OpNop");
           return;
         }
 
@@ -771,7 +782,7 @@ gegl_node_set_valist (GeglNode     *self,
             }
           if (!pspec)
             {
-              g_warning ("%s: operation class '%s' has no property named: '%s'",
+              g_warning ("%s: operation '%s' has no property named '%s'",
                G_STRFUNC,
                G_OBJECT_TYPE_NAME (self->operation),
                property_name);
@@ -779,7 +790,7 @@ gegl_node_set_valist (GeglNode     *self,
             }
           if (!(pspec->flags & G_PARAM_WRITABLE))
             {
-              g_warning ("%s: property (%s of operation class '%s' is not writable",
+              g_warning ("%s: property '%s' of operation '%s' is not writable",
                G_STRFUNC,
                pspec->name,
                G_OBJECT_TYPE_NAME (self->operation));
@@ -837,7 +848,7 @@ gegl_node_get_valist (GeglNode    *self,
 
         if (!pspec)
           {
-            g_warning ("%s: operation class '%s' has no property named '%s'",
+            g_warning ("%s: operation '%s' has no property named '%s'",
              G_STRFUNC,
              G_OBJECT_TYPE_NAME (self->operation),
              property_name);
@@ -845,7 +856,7 @@ gegl_node_get_valist (GeglNode    *self,
           }
         if (!(pspec->flags & G_PARAM_READABLE))
           {
-            g_warning ("%s: property '%s' of operation class '%s' is not readable",
+            g_warning ("%s: property '%s' of operation '%s' is not readable",
              G_STRFUNC,
              property_name,
              G_OBJECT_TYPE_NAME (self->operation));
