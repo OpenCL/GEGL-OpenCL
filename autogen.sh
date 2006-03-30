@@ -9,17 +9,23 @@
 # tools and you shouldn't use this script.  Just call ./configure
 # directly.
 
+ACLOCAL=${ACLOCAL-aclocal-1.9}
+AUTOCONF=${AUTOCONF-autoconf}
+AUTOHEADER=${AUTOHEADER-autoheader}
+AUTOMAKE=${AUTOMAKE-automake-1.9}
+LIBTOOLIZE=${LIBTOOLIZE-libtoolize}
 
-PROJECT="GEGL"
-TEST_TYPE=-f
-FILE=gegl/gegl-init.c
-
-LIBTOOL_REQUIRED_VERSION=1.4
-LIBTOOL_WIN32=1.5
 AUTOCONF_REQUIRED_VERSION=2.54
 AUTOMAKE_REQUIRED_VERSION=1.7
 GLIB_REQUIRED_VERSION=2.2.0
 INTLTOOL_REQUIRED_VERSION=0.31
+LIBTOOL_REQUIRED_VERSION=1.4
+LIBTOOL_WIN32=1.5
+
+
+PROJECT="GEGL"
+TEST_TYPE=-f
+FILE=gegl/gegl-init.c
 
 
 srcdir=`dirname $0`
@@ -30,18 +36,47 @@ cd $srcdir
 
 check_version ()
 {
-    if expr $1 \>= $2 > /dev/null; then
-	echo "yes (version $1)"
+    VERSION_A=$1
+    VERSION_B=$2
+
+    save_ifs="$IFS"
+    IFS=.
+    set dummy $VERSION_A 0 0 0
+    MAJOR_A=$2
+    MINOR_A=$3
+    MICRO_A=$4
+    set dummy $VERSION_B 0 0 0
+    MAJOR_B=$2
+    MINOR_B=$3
+    MICRO_B=$4
+    IFS="$save_ifs"
+
+    if expr "$MAJOR_A" = "$MAJOR_B" > /dev/null; then
+        if expr "$MINOR_A" \> "$MINOR_B" > /dev/null; then
+           echo "yes (version $VERSION_A)"
+        elif expr "$MINOR_A" = "$MINOR_B" > /dev/null; then
+            if expr "$MICRO_A" \>= "$MICRO_B" > /dev/null; then
+               echo "yes (version $VERSION_A)"
+            else
+                echo "Too old (version $VERSION_A)"
+                DIE=1
+            fi
+        else
+            echo "Too old (version $VERSION_A)"
+            DIE=1
+        fi
+    elif expr "$MAJOR_A" \> "$MAJOR_B" > /dev/null; then
+	echo "Major version might be too new ($VERSION_A)"
     else
-	echo "Too old (found version $1)!"
+	echo "Too old (version $VERSION_A)"
 	DIE=1
     fi
 }
 
 echo
-echo "I am testing that you have the required versions of libtool, autoconf" 
-echo "and automake. This test is not foolproof, so if anything goes wrong,"
-echo "see the file HACKING for more information..."
+echo "I am testing that you have the tools required to build the"
+echo "$PROJECT from CVS. This test is not foolproof,"
+echo "so if anything goes wrong, see the file HACKING for more information..."
 echo
 
 DIE=0
@@ -58,8 +93,8 @@ esac
 
 
 echo -n "checking for libtool >= $LIBTOOL_REQUIRED_VERSION ... "
-if (libtoolize --version) < /dev/null > /dev/null 2>&1; then
-   LIBTOOLIZE=libtoolize
+if ($LIBTOOLIZE --version) < /dev/null > /dev/null 2>&1; then
+   LIBTOOLIZE=$LIBTOOLIZE
 elif (glibtoolize --version) < /dev/null > /dev/null 2>&1; then
    LIBTOOLIZE=glibtoolize
 else
@@ -107,8 +142,8 @@ else
 fi
 
 echo -n "checking for autoconf >= $AUTOCONF_REQUIRED_VERSION ... "
-if (autoconf --version) < /dev/null > /dev/null 2>&1; then
-    VER=`autoconf --version \
+if ($AUTOCONF --version) < /dev/null > /dev/null 2>&1; then
+    VER=`$AUTOCONF --version | head -n 1 \
          | grep -iw autoconf | sed "s/.* \([0-9.]*\)[-a-z0-9]*$/\1/"`
     check_version $VER $AUTOCONF_REQUIRED_VERSION
 else
@@ -122,7 +157,10 @@ fi
 
 
 echo -n "checking for automake >= $AUTOMAKE_REQUIRED_VERSION ... "
-if (automake-1.9 --version) < /dev/null > /dev/null 2>&1; then
+if ($AUTOMAKE --version) < /dev/null > /dev/null 2>&1; then
+   AUTOMAKE=$AUTOMAKE
+   ACLOCAL=$ACLOCAL
+elif (automake-1.9 --version) < /dev/null > /dev/null 2>&1; then
    AUTOMAKE=automake-1.9
    ACLOCAL=aclocal-1.9
 elif (automake-1.8 --version) < /dev/null > /dev/null 2>&1; then
@@ -134,7 +172,7 @@ elif (automake-1.7 --version) < /dev/null > /dev/null 2>&1; then
    ACLOCAL=aclocal-1.7
 else
     echo
-    echo "  You must have automake 1.7 or newer installed to compile $PROJECT."
+    echo "  You must have automake $AUTOMAKE_REQUIRED_VERSION or newer installed to compile $PROJECT."
     echo "  Download the appropriate package for your distribution,"
     echo "  or get the source tarball at ftp://ftp.gnu.org/pub/gnu/automake/"
     echo
@@ -147,7 +185,8 @@ if test x$AUTOMAKE != x; then
     check_version $VER $AUTOMAKE_REQUIRED_VERSION
 fi
 
-#echo -n "checking for glib-gettextize >= $GLIB_REQUIRED_VERSION ... "
+
+#echo -n "checking for glib-gettextize ... "
 #if (glib-gettextize --version) < /dev/null > /dev/null 2>&1; then
 #    VER=`glib-gettextize --version \
 #         | grep glib-gettextize | sed "s/.* \([0-9.]*\)/\1/"`
@@ -157,8 +196,10 @@ fi
 #    echo "  You must have glib-gettextize installed to compile $PROJECT."
 #    echo "  glib-gettextize is part of glib-2.0, so you should already"
 #    echo "  have it. Make sure it is in your PATH."
+#    echo
 #    DIE=1
 #fi
+
 
 #echo -n "checking for intltool >= $INTLTOOL_REQUIRED_VERSION ... "
 #if (intltoolize --version) < /dev/null > /dev/null 2>&1; then
@@ -170,6 +211,7 @@ fi
 #    echo "  You must have intltool installed to compile $PROJECT."
 #    echo "  Get the latest version from"
 #    echo "  ftp://ftp.gnome.org/pub/GNOME/sources/intltool/"
+#    echo
 #    DIE=1
 #fi
 
@@ -215,22 +257,24 @@ if test -z "$ACLOCAL_FLAGS"; then
 	    echo "WARNING: aclocal's directory is $acdir, but..."
             echo "         no file $acdir/$file"
             echo "         You may see fatal macro warnings below."
-            echo "         If these files are installed in /some/dir, set the ACLOCAL_FLAGS "
-            echo "         environment variable to \"-I /some/dir\", or install"
-            echo "         $acdir/$file."
+            echo "         If these files are installed in /some/dir, set the "
+            echo "         ACLOCAL_FLAGS environment variable to \"-I /some/dir\""
+            echo "         or install $acdir/$file."
             echo
         fi
     done
 fi
 
+rm -rf autom4te.cache
+
 $ACLOCAL $ACLOCAL_FLAGS
 RC=$?
 if test $RC -ne 0; then
    echo "$ACLOCAL gave errors. Please fix the error conditions and try again."
-   exit 1
+   exit $RC
 fi
 
-$LIBTOOLIZE --force || exit 1
+$LIBTOOLIZE --force || exit $?
 
 if test x$enable_gtk_doc = xno; then
     if test -f gtk-doc.make; then :; else
@@ -245,13 +289,13 @@ else
 fi
 
 # optionally feature autoheader
-(autoheader --version)  < /dev/null > /dev/null 2>&1 && autoheader || exit 1
+($AUTOHEADER --version)  < /dev/null > /dev/null 2>&1 && $AUTOHEADER || exit 1
 
-$AUTOMAKE --add-missing || exit 1
-autoconf || exit 1
+$AUTOMAKE --add-missing || exit $?
+$AUTOCONF || exit $?
 
-#glib-gettextize --copy --force || exit 1
-#intltoolize --copy --force --automake || exit 1
+#glib-gettextize --copy --force || exit $?
+#intltoolize --copy --force --automake || exit $?
 
 
 cd $ORIGDIR
