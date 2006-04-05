@@ -1,3 +1,9 @@
+2006-04-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-node.c: (gegl_node_set_valist), (gegl_node_get_valist):
+	Made va_list setters/getter error message tolerant to nodes without
+	associated operation object.
+
 2006-03-30  Manish Singh  <yosh@gimp.org>
 
 	* autogen.sh: sync up with GIMP's autogen.sh. Should fix #336534.

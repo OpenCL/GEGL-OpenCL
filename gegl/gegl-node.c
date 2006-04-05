@@ -784,7 +784,7 @@ gegl_node_set_valist (GeglNode     *self,
             {
               g_warning ("%s: operation '%s' has no property named '%s'",
                G_STRFUNC,
-               G_OBJECT_TYPE_NAME (self->operation),
+               self->operation!=NULL?G_OBJECT_TYPE_NAME (self->operation):"unknown",
                property_name);
               break;
             }
@@ -850,7 +850,7 @@ gegl_node_get_valist (GeglNode    *self,
           {
             g_warning ("%s: operation '%s' has no property named '%s'",
              G_STRFUNC,
-             G_OBJECT_TYPE_NAME (self->operation),
+             self->operation!=NULL?G_OBJECT_TYPE_NAME (self->operation):"unknown",
              property_name);
             break;
           }
