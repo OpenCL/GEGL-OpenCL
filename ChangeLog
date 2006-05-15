@@ -1,3 +1,33 @@
+2006-05-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-connection.c,
+	  gegl/gegl-connection.h,
+	  gegl/gegl-eval-mgr.c,
+	  gegl/gegl-eval-mgr.h,
+	  gegl/gegl-eval-visitor.c,
+	  gegl/gegl-eval-visitor.h,
+	  gegl/gegl-graph.c,
+	  gegl/gegl-graph.h,
+	  gegl/gegl-init.c,
+	  gegl/gegl-init.h,
+	  gegl/gegl-node.c,
+	  gegl/gegl-node.h,
+	  gegl/gegl-object.c,
+	  gegl/gegl-object.h,
+	  gegl/gegl-operation.c,
+	  gegl/gegl-operation.h,
+	  gegl/gegl-pad.c,
+	  gegl/gegl-pad.h,
+	  gegl/gegl-types.h,
+	  gegl/gegl-utils.c,
+	  gegl/gegl-utils.h,
+	  gegl/gegl-visitable.c,
+	  gegl/gegl-visitable.h,
+	  gegl/gegl-visitor.c,
+	  gegl/gegl-visitor.h,
+	  gegl/gegl.h: changed license in source files to LGPL, it was
+	  mistakingly applied as GPL 2003-12-21.
+
 2006-04-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-node.c: (gegl_node_set_valist), (gegl_node_get_valist):
