@@ -15,7 +15,8 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * Copyright 2003 Calvin Williamson, Øyvind Kolås
+ * Copyright 2003 Calvin Williamson
+ *           2006 Øyvind Kolås
  */
 
 #ifndef __GEGL_NODE_H__
@@ -24,7 +25,6 @@
 #include "gegl-object.h"
 
 G_BEGIN_DECLS
-
 
 #define GEGL_TYPE_NODE            (gegl_node_get_type ())
 #define GEGL_NODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
@@ -43,6 +43,12 @@ struct _GeglNode
   /*< private >*/
 
   GeglOperation *operation;
+
+  GeglRect       have_rect;
+  GeglRect       need_rect;
+  gboolean       is_root;
+  GeglRect       result_rect;
+  GeglRect       comp_rect;
   
   GList         *pads;
   GList         *input_pads;
@@ -58,8 +64,6 @@ struct _GeglNodeClass
 {
   GeglObjectClass  parent_class;
 };
-
-
 
 GType         gegl_node_get_type            (void) G_GNUC_CONST;
 
@@ -91,6 +95,9 @@ void          gegl_node_disconnect_sources  (GeglNode     *self);
 GList       * gegl_node_get_depends_on      (GeglNode     *self);
 void          gegl_node_apply               (GeglNode     *self,
                                              const gchar  *output_pad_name);
+void          gegl_node_apply_roi           (GeglNode     *self,
+                                             const gchar  *output_pad_name,
+                                             GeglRect     *roi);
 void          gegl_node_set                 (GeglNode     *self,
                                              const gchar  *first_property_name,
                                              ...);
@@ -111,7 +118,27 @@ void          gegl_node_get_property        (GeglNode     *object,
                                              GValue       *value);
 GParamSpec ** gegl_node_list_properties     (GeglNode     *self,
                                              guint        *n_properties);
+GeglRect    * gegl_node_get_have_rect       (GeglNode     *node);
+void          gegl_node_set_have_rect       (GeglNode     *node,
+                                             gint          x,
+                                             gint          y,
+                                             gint          width,
+                                             gint          height);
+GeglRect    * gegl_node_get_need_rect       (GeglNode     *node);
+void          gegl_node_set_need_rect       (GeglNode     *node,
+                                             gint          x,
+                                             gint          y,
+                                             gint          width,
+                                             gint          height);
+void          gegl_node_set_comp_rect       (GeglNode     *node,
+                                             gint          x,
+                                             gint          y,
+                                             gint          width,
+                                             gint          height);
 
+const gchar * gegl_node_get_op_type_name    (GeglNode     *node);
+
+const gchar * gegl_node_get_debug_name      (GeglNode     *node);
 G_END_DECLS
 
 #endif /* __GEGL_NODE_H__ */

@@ -16,10 +16,14 @@
  * Boston, MA 02110-1301, USA.
  *
  * Copyright 2003 Calvin Williamson
+ *           2005, 2006 Øyvind Kolås
  */
 
 #include "config.h"
+
 #include <glib-object.h>
+#include <string.h>
+
 #include "gegl-types.h"
 #include "gegl-operation.h"
 #include "gegl-node.h"
@@ -28,7 +32,7 @@
 
 enum
 {
-  PROP_0,
+  PROP_0
 };
 
 static void      gegl_operation_class_init (GeglOperationClass    *klass);
@@ -47,6 +51,10 @@ static void      get_property              (GObject               *gobject,
                                             GParamSpec            *pspec);
 static void      associate                 (GeglOperation         *self);
 
+static gboolean calc_have_rect (GeglOperation *self);
+static gboolean calc_need_rect (GeglOperation *self);
+static gboolean calc_comp_rect (GeglOperation *self);
+static gboolean calc_result_rect (GeglOperation *self);
 
 G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
 
@@ -61,6 +69,10 @@ gegl_operation_class_init (GeglOperationClass * klass)
   gobject_class->get_property = get_property;
   
   klass->associate = associate;
+  klass->calc_have_rect = calc_have_rect;
+  klass->calc_need_rect = calc_need_rect;
+  klass->calc_comp_rect = calc_comp_rect;
+  klass->calc_result_rect = calc_result_rect;
 }
 
 static void
@@ -173,12 +185,59 @@ gegl_operation_evaluate (GeglOperation *self,
   return klass->evaluate (self, output_pad);
 }
 
+gboolean
+gegl_operation_calc_have_rect (GeglOperation *self)
+{
+  GeglOperationClass *klass;
+
+  klass = GEGL_OPERATION_GET_CLASS (self);
+  if (klass->calc_have_rect)
+    return klass->calc_have_rect (self);
+  return FALSE;
+}
+
+gboolean
+gegl_operation_calc_need_rect (GeglOperation *self)
+{
+  GeglOperationClass *klass;
+
+  klass = GEGL_OPERATION_GET_CLASS (self);
+
+  if (klass->calc_need_rect)
+    return klass->calc_need_rect (self);
+  return FALSE;
+}
+
+gboolean
+gegl_operation_calc_comp_rect (GeglOperation *self)
+{
+  GeglOperationClass *klass;
+
+  klass = GEGL_OPERATION_GET_CLASS (self);
+
+  if (klass->calc_comp_rect)
+    return klass->calc_comp_rect (self);
+  return FALSE;
+}
+
+gboolean
+gegl_operation_calc_result_rect (GeglOperation *self)
+{
+  GeglOperationClass *klass;
+
+  klass = GEGL_OPERATION_GET_CLASS (self);
+
+  if (klass->calc_result_rect)
+    return klass->calc_result_rect (self);
+  return FALSE;
+}
+
 #include <stdio.h>
 
 static void
 associate (GeglOperation *self)
 {
-  fprintf (stderr, "kilroy was at What The Hack (%p)\n", self);
+  fprintf (stderr, "kilroy was at What The Hack (%p)\n", (void*)self);
   return;
 }
 
@@ -197,3 +256,195 @@ gegl_operation_associate (GeglOperation *self,
   self->node = node;
   klass->associate (self);
 }
+
+void
+gegl_operation_set_have_rect (GeglOperation *operation,
+                              gint           x,
+                              gint           y,
+                              gint           width,
+                              gint           height)
+{
+  g_assert (operation);
+  g_assert (operation->node);
+  gegl_node_set_have_rect (operation->node, x, y, width, height);
+}
+
+GeglRect *
+gegl_operation_get_have_rect (GeglOperation *operation,
+                              const gchar   *input_pad_name)
+{
+  GeglPad *pad;
+  g_assert (operation && 
+            operation->node &&
+            input_pad_name);
+  pad = gegl_node_get_pad (operation->node, input_pad_name);
+  g_assert (pad);
+  pad = gegl_pad_get_connected_to (pad);
+  g_assert (gegl_pad_get_node (pad));
+  
+  return gegl_node_get_have_rect (gegl_pad_get_node (pad));
+}
+
+void
+gegl_operation_set_need_rect (GeglOperation *operation,
+                              gint           x,
+                              gint           y,
+                              gint           width,
+                              gint           height)
+{
+  g_assert (operation);
+  g_assert (operation->node);
+  gegl_node_set_need_rect (operation->node, x, y, width, height);
+}
+
+void
+gegl_operation_set_comp_rect (GeglOperation *operation,
+                              gint           x,
+                              gint           y,
+                              gint           width,
+                              gint           height)
+{
+  g_assert (operation);
+  g_assert (operation->node);
+  gegl_node_set_comp_rect (operation->node, x, y, width, height);
+}
+
+#include "gegl-connection.h"
+#include "gegl-pad.h"
+
+GeglPad *
+gegl_pad_get_connected_to2 (GeglPad *self)
+{
+  g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
+
+  g_warning ("trouble");
+
+  if (gegl_pad_is_output (self) &&
+      (gegl_pad_get_num_connections (self) == 1 ||
+      gegl_pad_get_num_connections (self) == 2))
+    {
+      GeglConnection *connection = g_list_nth_data (self->connections, 0);
+
+
+      return gegl_connection_get_sink_prop (connection);
+    }
+
+  g_error ("Nothing connected to pad '%s' of a '%s'",
+       g_param_spec_get_name (self->param_spec),
+       gegl_node_get_debug_name (self->node));
+  
+  g_assert (0);
+
+  return NULL;
+}
+
+GeglRect *
+gegl_operation_get_need_rect (GeglOperation *operation,
+                              const gchar   *output_pad_name)
+{
+  /* FIXME: should use the union of all needed rects */
+  GeglPad *pad;
+  g_assert (operation && 
+            operation->node &&
+            output_pad_name);
+  pad = gegl_node_get_pad (operation->node, output_pad_name);
+  g_assert (pad);
+  pad = gegl_pad_get_connected_to2 (pad);
+  g_assert (pad);
+  g_assert (gegl_pad_get_node (pad));
+  
+  return gegl_node_get_need_rect (gegl_pad_get_node (pad));
+}
+
+
+static gboolean
+calc_have_rect (GeglOperation *self)
+{
+  g_warning ("Op '%s' has no proper have_rect function",
+     G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
+  return FALSE;
+}
+
+static gboolean
+calc_need_rect (GeglOperation *self)
+{
+  g_warning ("Op '%s' has no proper need_rect function",
+     G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
+  return FALSE;
+}
+
+static gboolean
+calc_comp_rect (GeglOperation *self)
+{
+
+  GeglRect *result = gegl_operation_result_rect (self);
+  if (!result)
+    return FALSE;
+  gegl_operation_set_comp_rect (self,
+     result->x, result->y,
+     result->w, result->h);
+
+  return TRUE;
+
+  g_warning ("Op '%s' has no proper comp_rect function",
+     G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
+}
+
+#include "gegl/gegl-utils.h"
+
+static gboolean
+calc_result_rect (GeglOperation *self)
+{
+  GeglNode *node = self->node;
+  g_assert (node);
+
+  gegl_rect_intersect (&node->result_rect, &node->have_rect, &node->need_rect);
+  /*g_warning ("Op '%s' has no proper result_rect function",
+     G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));*/
+  if(0)g_warning ("%i,%i %ix%i  "
+" %i,%i %ix%i  "
+" %i,%i %ix%i",
+   node->result_rect.x, 
+   node->result_rect.y, 
+   node->result_rect.w, 
+   node->result_rect.h,
+   node->have_rect.x, 
+   node->have_rect.y, 
+   node->have_rect.w, 
+   node->have_rect.h,
+   node->need_rect.x, 
+   node->need_rect.y, 
+   node->need_rect.w, 
+   node->need_rect.h);
+  return FALSE;
+}
+
+GeglRect *
+gegl_operation_need_rect     (GeglOperation *operation)
+{
+  g_assert (operation);
+  g_assert (operation->node);
+  return &operation->node->need_rect;
+}
+GeglRect *
+gegl_operation_have_rect     (GeglOperation *operation)
+{
+  g_assert (operation);
+  g_assert (operation->node);
+  return &operation->node->have_rect;
+}
+GeglRect *
+gegl_operation_result_rect   (GeglOperation *operation)
+{
+  g_assert (operation);
+  g_assert (operation->node);
+  return &operation->node->result_rect;
+}
+GeglRect *
+gegl_operation_comp_rect     (GeglOperation *operation)
+{
+  g_assert (operation);
+  g_assert (operation->node);
+  return &operation->node->comp_rect;
+}
+

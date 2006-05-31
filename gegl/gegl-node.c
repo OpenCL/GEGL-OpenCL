@@ -15,7 +15,8 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * Copyright 2003 Calvin Williamson, Øyvind Kolås
+ * Copyright 2003 Calvin Williamson
+ *           2006 Øyvind Kolås
  */
 
 #include "config.h"
@@ -302,16 +303,14 @@ pads_exist (GeglNode    *sink,
 
   if (!sink_prop || !gegl_pad_is_input (sink_prop))
     {
-      g_warning ("%s: '%s' has no sink property named '%s'.",
-           G_STRFUNC,
-           G_OBJECT_TYPE_NAME (sink->operation), sink_prop_name);
+      g_warning ("Can't find sink property %s of %s", sink_prop_name,
+                  gegl_node_get_debug_name (sink));
       return FALSE;
     }
   else if (!source_prop || !gegl_pad_is_output (source_prop))
     {
-      g_warning ("%s: '%s' has no source property named '%s'.",
-           G_STRFUNC,
-           G_OBJECT_TYPE_NAME (source->operation), source_prop_name);
+      g_warning ("Can't find source property %s of %s", source_prop_name,
+                  gegl_node_get_debug_name (source));
       return FALSE;
     }
 
@@ -545,6 +544,20 @@ gegl_node_get_sources (GeglNode *self)
 }
 
 void
+gegl_node_apply_roi (GeglNode    *self,
+                     const gchar *output_pad_name,
+                     GeglRect    *roi)
+{
+  GeglEvalMgr *eval_mgr;
+
+  g_return_if_fail (GEGL_IS_NODE (self));
+  eval_mgr = g_object_new (GEGL_TYPE_EVAL_MGR, NULL);
+  eval_mgr->roi = *roi;
+  gegl_eval_mgr_apply (eval_mgr, self, output_pad_name);
+  g_object_unref (eval_mgr);
+}
+
+void
 gegl_node_apply (GeglNode    *self,
                  const gchar *output_prop_name)
 {
@@ -632,10 +645,10 @@ gegl_node_evaluate (GeglNode    *self,
 }
 
 static void
-gegl_node_set_operation (GeglNode      *self,
+gegl_node_set_operation (GeglNode      *node,
                          const gchar   *operation_name)
 {
-  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (GEGL_IS_NODE (node));
   g_return_if_fail (operation_name);
 
   if (operation_name && operation_name[0])
@@ -647,19 +660,14 @@ gegl_node_set_operation (GeglNode      *self,
       
       if (!type)
         {
-          g_warning ("%s: GEGL failed to set operation type '%s'",
-              G_STRFUNC, operation_name);
-
-          /* Set a NOP operation, hoping that at least parts of the processing chain
-           * does what the user intended
-           */
+          g_warning ("Failed to set operation type %s, using OpNop", operation_name);
           if (strcmp (operation_name, "OpNop"))
-             gegl_node_set_operation (self, "OpNop");
+            gegl_node_set_operation (node, "OpNop");
           return;
         }
 
       operation = g_object_new (g_type_from_name (operation_name), NULL);
-      gegl_node_set_operation_object (self, operation);
+      gegl_node_set_operation_object (node, operation);
       g_object_unref (operation);
     }
 }
@@ -689,7 +697,6 @@ gegl_node_get_operation (GeglNode      *self)
   const gchar *type_name = G_OBJECT_TYPE_NAME (self->operation);
   return &(type_name[0]);
 }
-
 
 void
 gegl_node_set (GeglNode    *self,
@@ -781,15 +788,13 @@ gegl_node_set_valist (GeglNode     *self,
             }
           if (!pspec)
             {
-              g_warning ("%s: operation '%s' has no property named '%s'",
-               G_STRFUNC,
-               self->operation!=NULL?G_OBJECT_TYPE_NAME (self->operation):"unknown",
-               property_name);
+              g_warning ("%s:%s has no property named: '%s'",
+               G_STRFUNC, gegl_node_get_debug_name (self), property_name);
               break;
             }
           if (!(pspec->flags & G_PARAM_WRITABLE))
             {
-              g_warning ("%s: property '%s' of operation '%s' is not writable",
+              g_warning ("%s: property (%s of operation class '%s' is not writable",
                G_STRFUNC,
                pspec->name,
                G_OBJECT_TYPE_NAME (self->operation));
@@ -847,15 +852,13 @@ gegl_node_get_valist (GeglNode    *self,
 
         if (!pspec)
           {
-            g_warning ("%s: operation '%s' has no property named '%s'",
-             G_STRFUNC,
-             self->operation!=NULL?G_OBJECT_TYPE_NAME (self->operation):"unknown",
-             property_name);
+              g_warning ("%s:%s has no property named: '%s'",
+               G_STRFUNC, gegl_node_get_debug_name (self), property_name);
             break;
           }
         if (!(pspec->flags & G_PARAM_READABLE))
           {
-            g_warning ("%s: property '%s' of operation '%s' is not readable",
+            g_warning ("%s: property '%s' of operation class '%s' is not readable",
              G_STRFUNC,
              property_name,
              G_OBJECT_TYPE_NAME (self->operation));
@@ -935,3 +938,85 @@ gegl_node_list_properties (GeglNode *self,
   return pspecs;
 }
 
+const gchar *
+gegl_node_get_op_type_name    (GeglNode     *node)
+{
+  if (node == NULL)
+    {
+      g_warning ("NULL node passed in");
+      return "NULL node passd in";
+    }
+  if (node->operation == NULL)
+    {
+      g_warning ("No op associated");
+      return "No op associated";
+    }
+  return g_type_name_from_instance ((GTypeInstance*)(node->operation));
+}
+void
+gegl_node_set_have_rect (GeglNode    *node,
+                         gint         x,
+                         gint         y,
+                         gint         width,
+                         gint         height)
+{
+  g_assert (node);
+  node->have_rect.x = x;
+  node->have_rect.y = y;
+  node->have_rect.w = width;
+  node->have_rect.h = height;
+}
+
+GeglRect *
+gegl_node_get_have_rect (GeglNode    *node)
+{
+  return &node->have_rect;
+}
+
+void
+gegl_node_set_need_rect (GeglNode    *node,
+                         gint         x,
+                         gint         y,
+                         gint         width,
+                         gint         height)
+{
+  g_assert (node);
+  node->need_rect.x = x;
+  node->need_rect.y = y;
+  node->need_rect.w = width;
+  node->need_rect.h = height;
+}
+
+void
+gegl_node_set_comp_rect (GeglNode    *node,
+                         gint         x,
+                         gint         y,
+                         gint         width,
+                         gint         height)
+{
+  g_assert (node);
+  node->comp_rect.x = x;
+  node->comp_rect.y = y;
+  node->comp_rect.w = width;
+  node->comp_rect.h = height;
+}
+
+
+GeglRect *
+gegl_node_get_need_rect (GeglNode    *node)
+{
+  return &node->need_rect;
+}
+
+const gchar *
+gegl_node_get_debug_name (GeglNode     *node)
+{
+  static gchar ret_buf[512];
+  if (gegl_object_get_name (GEGL_OBJECT (node))!=NULL &&
+      gegl_object_get_name (GEGL_OBJECT (node))[0] != '\0')
+    sprintf (ret_buf, "%s named %s", gegl_node_get_op_type_name (node),
+                                     gegl_object_get_name (GEGL_OBJECT (node)));
+  else
+    sprintf (ret_buf, "%s", gegl_node_get_op_type_name (node));
+  return ret_buf;
+}

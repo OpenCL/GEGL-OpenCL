@@ -15,7 +15,8 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * Copyright 2003 Calvin Williamson, Øyvind Kolås
+ * Copyright 2003 Calvin Williamson
+ *           2005, 2006 Øyvind Kolås
  */
 
 #ifndef __GEGL_OPERATION_H__
@@ -78,27 +79,69 @@ struct _GeglOperationClass
                                  const gchar   *output_pad);
 
   void     (*associate)         (GeglOperation *self);
+
+  gboolean (*calc_have_rect)    (GeglOperation *self);
+  gboolean (*calc_need_rect)    (GeglOperation *self);
+  gboolean (*calc_result_rect)  (GeglOperation *self);
+  gboolean (*calc_comp_rect)    (GeglOperation *self);
 };
 
 
-void
-gegl_operation_create_pad (GeglOperation *self,
-                           GParamSpec    *param_spec);
 
-/* let the PADs have the formats accepted,..
- * sharing of pads between ops and nodes, or is that overkill?
+GType         gegl_operation_get_type       (void) G_GNUC_CONST;
+
+void          gegl_operation_set_name       (GeglOperation *self,
+                                             const gchar   *name);
+const gchar * gegl_operation_get_name       (GeglOperation *self);
+gboolean      gegl_operation_evaluate       (GeglOperation *self,
+                                             const gchar   *output_pad);
+void          gegl_operation_associate      (GeglOperation *self,
+                                             GeglNode      *node);
+gboolean      gegl_operation_register       (GeglOperation *self,
+                                             GeglNode      *node);
+void          gegl_operation_create_pad     (GeglOperation *self,
+                                             GParamSpec    *param_spec);
+gboolean      gegl_operation_calc_have_rect (GeglOperation *self);
+gboolean      gegl_operation_calc_need_rect (GeglOperation *self);
+gboolean      gegl_operation_calc_result_rect (GeglOperation *self);
+gboolean      gegl_operation_calc_comp_rect (GeglOperation *self);
+
+/* this method defined for the Operation, even though it acts on the Node.
+ * The rationale for this is that the knowledge for setting the rect
+ * belongs on the Op side of the Node/Op pair
  */
+void gegl_operation_set_have_rect (GeglOperation *operation,
+                                   gint           x,
+                                   gint           y,
+                                   gint           width,
+                                   gint           height);
+GeglRect *gegl_operation_get_have_rect (GeglOperation *operation,
+                                        const gchar   *input_pad_name);
 
-GType         gegl_operation_get_type  (void) G_GNUC_CONST;
-void          gegl_operation_set_name  (GeglOperation *self,
-                                        const gchar   *name);
-const gchar * gegl_operation_get_name  (GeglOperation *self);
-gboolean      gegl_operation_evaluate  (GeglOperation *self,
-                                        const gchar   *output_pad);
-void          gegl_operation_associate (GeglOperation *self,
-                                        GeglNode      *node);
-gboolean      gegl_operation_register  (GeglOperation *self,
-                                        GeglNode      *node);
+void gegl_operation_set_need_rect (GeglOperation *operation,
+                                   gint           x,
+                                   gint           y,
+                                   gint           width,
+                                   gint           height);
+void
+gegl_operation_set_comp_rect (GeglOperation *operation,
+                              gint           x,
+                              gint           y,
+                              gint           width,
+                              gint           height);
+
+GeglRect *gegl_operation_get_need_rect (GeglOperation *operation,
+                                        const gchar   *output_pad_name);
+
+
+
+GeglRect *gegl_operation_need_rect     (GeglOperation *operation);
+GeglRect *gegl_operation_have_rect     (GeglOperation *operation);
+GeglRect *gegl_operation_result_rect   (GeglOperation *operation);
+GeglRect *gegl_operation_comp_rect     (GeglOperation *operation);
+
+
+
 G_END_DECLS
 
 #endif /* __GEGL_OPERATION_H__ */
