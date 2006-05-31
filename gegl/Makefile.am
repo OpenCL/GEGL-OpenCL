@@ -7,17 +7,21 @@ libimage = $(top_builddir)/gegl/image/libimage.la
 lib_LTLIBRARIES = libgegl-1.0.la
 
 GEGL_sources = \
-	gegl-connection.c	\
-	gegl-eval-mgr.c		\
-	gegl-eval-visitor.c	\
-	gegl-graph.c		\
-	gegl-init.c		\
-	gegl-node.c		\
-	gegl-object.c		\
-	gegl-operation.c        \
-	gegl-pad.c		\
-	gegl-utils.c		\
-	gegl-visitable.c	\
+	gegl-connection.c		\
+	gegl-cr-visitor.c		\
+	gegl-debug-rect-visitor.c	\
+	gegl-eval-mgr.c			\
+	gegl-eval-visitor.c		\
+	gegl-graph.c			\
+	gegl-have-visitor.c		\
+	gegl-init.c			\
+	gegl-need-visitor.c		\
+	gegl-node.c			\
+	gegl-object.c			\
+	gegl-operation.c        	\
+	gegl-pad.c			\
+	gegl-utils.c			\
+	gegl-visitable.c		\
 	gegl-visitor.c
 
 GEGL_public_headers = \

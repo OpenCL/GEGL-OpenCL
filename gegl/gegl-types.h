@@ -16,6 +16,7 @@
  * Boston, MA 02110-1301, USA.
  *
  * Copyright 2003 Calvin Williamson
+ *           2006 Øyvind Kolås
  */
 
 #ifndef __GEGL_TYPES_H__
@@ -25,11 +26,15 @@ G_BEGIN_DECLS
 
 
 typedef struct _GeglConnection  GeglConnection;
+typedef struct _GeglCRVisitor   GeglCRVisitor;
+typedef struct _GeglDebugRectVisitor   GeglDebugRectVisitor;
 typedef struct _GeglEvalMgr     GeglEvalMgr;
 typedef struct _GeglEvalVisitor GeglEvalVisitor;
-typedef struct _GeglOperation   GeglOperation;
 typedef struct _GeglGraph       GeglGraph;
+typedef struct _GeglHaveVisitor GeglHaveVisitor;
+typedef struct _GeglNeedVisitor GeglNeedVisitor;
 typedef struct _GeglNode        GeglNode;
+typedef struct _GeglOperation   GeglOperation;
 typedef struct _GeglPad         GeglPad;
 typedef struct _GeglVisitable   GeglVisitable; /* dummy typedef */
 typedef struct _GeglVisitor     GeglVisitor;

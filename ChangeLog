@@ -1,5 +1,18 @@
 2006-05-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/Makefile.am: added new classes.
+	* gegl/gegl-types.h: Added types for the new classes.
+	* gegl/gegl-eval-mgr.h: added the ROI being requested to the instance
+	struct of the eval manager.
+	* gegl/gegl-eval-mgr.c: Traverse the graph for have, need, and compute/result
+	rectangles for the region of interest computation.
+	* gegl/gegl-debug-rect-visitor.[ch]:
+	* gegl/gegl-cr-visitor.[ch]:
+	* gegl/gegl-have-visitor.[ch]:
+	* gegl/gegl-need-visitor.[ch]:
+
+2006-05-31  Øyvind Kolås  <pippin@gimp.org>
+
 	Added infrastructure to compute ROI as outlined in:
 	http://portal.acm.org/citation.cfm?id=192191 to Node and Operation
 	classes. (these code paths needs to be untangled at some point).
