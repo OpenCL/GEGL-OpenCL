@@ -36,8 +36,7 @@ MOCK_OBJECT_SRC = \
 	gegl-mock-object.c		\
 	gegl-mock-object.h		\
 	gegl-mock-pad-visitor.c		\
-	gegl-mock-pad-visitor.h		\
-	gegl-image-mock-cache-entry.c
+	gegl-mock-pad-visitor.h	
 
 testgegl_SOURCES = \
 	$(MOCK_OBJECT_SRC)				\

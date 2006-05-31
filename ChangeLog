@@ -1,3 +1,27 @@
+2006-05-31  Øyvind Kolås  <pippin@gimp.org>
+	
+	Removed gegl/image related tests.
+
+	* tests/gegl-image-buffer-caching-test.c,
+	* tests/gegl-image-buffer-double-test.c,
+	* tests/gegl-image-cache-store-tests.c,
+	* tests/gegl-image-cache-store-tests.h,
+	* tests/gegl-image-cache-tests.c,
+	* tests/gegl-image-cache-tests.h,
+	* tests/gegl-image-component-sample-model-test.c,
+	* tests/gegl-image-entry-record-test.c,
+	* tests/gegl-image-heap-cache-store-test.c,
+	* tests/gegl-image-heap-cache-tests.c,
+	* tests/gegl-image-memory-cache-test.c,
+	* tests/gegl-image-mock-cache-entry-test.c,
+	* tests/gegl-image-mock-cache-entry.c,
+	* tests/gegl-image-mock-cache-entry.h,
+	* tests/gegl-image-null-cache-store-test.c,
+	* tests/gegl-image-swap-cache-store-test.c,
+	* tests/gegl-image-swap-cache-test.c: Removed.
+	* tests/Makefile.am,
+	* tests/testgegl.c: (main): Changed to reflect test removal.
+
 2006-05-31  Sven Neumann  <sven@gimp.org>
 
 	* configure.in: define G_DISABLE_DEPRECATED if compiling against
