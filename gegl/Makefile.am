@@ -1,5 +1,9 @@
 noinst_PROGRAMS =
 
+SUBDIRS = buffer
+
+libbuffer = $(top_builddir)/gegl/buffer/libbuffer.la
+
 lib_LTLIBRARIES = libgegl-1.0.la
 
 GEGL_sources = \
@@ -35,6 +39,8 @@ GEGL_public_headers = \
 	gegl-visitor.h
 
 libgegl_1_0_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
+
+libgegl_1_0_la_LIBADD = $(libbuffer)
 
 INCLUDES = \
 	-I$(top_srcdir)	\
