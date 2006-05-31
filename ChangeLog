@@ -1,4 +1,130 @@
 2006-05-31  Øyvind Kolås  <pippin@gimp.org>
+
+	Added new tiled buffer implementation.
+
+	* configure.in:
+	* gegl/Makefile.am:
+	* gegl/buffer/: new directory
+	* gegl/buffer/Makefile.am:
+	* gegl/buffer/gegl-buffer-allocator.c:
+	(gegl_buffer_allocator_class_init), (gegl_buffer_allocator_init),
+	(gegl_buffer_alloc), (gegl_buffer_new_from_format):
+	* gegl/buffer/gegl-buffer-allocator.h:
+	* gegl/buffer/gegl-buffer-types.h:
+	* gegl/buffer/gegl-buffer.c: (indice), (toff), (needed_tiles),
+	(needed_width), (get_property), (set_property),
+	(gegl_buffer_dispose), (gegl_buffer_backend),
+	(gegl_buffer_storage), (gegl_buffer_constructor), (get_tile),
+	(gegl_buffer_class_init), (gegl_buffer_init),
+	(gegl_buffer_void_tile), (gegl_buffer_idle),
+	(gegl_buffer_get_format), (gegl_buffer_add_dirty),
+	(gegl_buffer_flush_dirty), (gegl_buffer_is_dirty),
+	(gegl_buffer_iterate), (gegl_buffer_set), (gegl_buffer_get):
+	* gegl/buffer/gegl-buffer.h:
+	* gegl/buffer/gegl-storage.c: (get_property), (set_property),
+	(gegl_storage_dispose), (gegl_storage_constructor),
+	(gegl_storage_class_init), (gegl_storage_init):
+	* gegl/buffer/gegl-storage.h:
+	* gegl/buffer/gegl-tile-abyss.c: (finalize), (get_tile), (message),
+	(get_property), (set_property), (constructor),
+	(gegl_tile_abyss_class_init), (gegl_tile_abyss_init):
+	* gegl/buffer/gegl-tile-abyss.h:
+	* gegl/buffer/gegl-tile-backend.c: (get_property), (set_property),
+	(constructor), (gegl_tile_backend_class_init),
+	(gegl_tile_backend_init):
+	* gegl/buffer/gegl-tile-backend.h:
+	* gegl/buffer/gegl-tile-cache.c: (finalize), (dispose), (get_tile),
+	(message), (get_property), (set_property),
+	(gegl_tile_cache_class_init), (gegl_tile_cache_init),
+	(gegl_tile_cache_new), (gegl_tile_cache_wash),
+	(gegl_tile_cache_get_tile), (gegl_tile_cache_has_tile),
+	(gegl_tile_cache_trim), (gegl_tile_cache_void),
+	(gegl_tile_cache_insert):
+	* gegl/buffer/gegl-tile-cache.h:
+	* gegl/buffer/gegl-tile-empty.c: (finalize), (get_tile),
+	(get_property), (set_property), (constructor),
+	(gegl_tile_empty_class_init), (gegl_tile_empty_init):
+	* gegl/buffer/gegl-tile-empty.h:
+	* gegl/buffer/gegl-tile-log.c: (get_tile), (message),
+	(gegl_tile_log_class_init), (gegl_tile_log_init):
+	* gegl/buffer/gegl-tile-log.h:
+	* gegl/buffer/gegl-tile-mem.c: (mem_entry_new),
+	(mem_entry_destroy), (mem_bank_new), (mem_bank_destroy),
+	(mem_priv_new), (mem_priv_destroy), (mem_priv_get_tile),
+	(mem_priv_set_tile), (mem_priv_void_tile), (get_tile), (set_tile),
+	(void_tile), (message), (set_property), (get_property), (finalize),
+	(gegl_tile_mem_class_init), (gegl_tile_mem_init):
+	* gegl/buffer/gegl-tile-mem.h:
+	* gegl/buffer/gegl-tile-store.c: (get_tile), (message),
+	(gegl_tile_store_class_init), (gegl_tile_store_init),
+	(gegl_tile_store_get_tile), (gegl_tile_store_message):
+	* gegl/buffer/gegl-tile-store.h:
+	* gegl/buffer/gegl-tile-trait.c: (dispose), (get_tile), (message),
+	(get_property), (set_property), (gegl_tile_trait_class_init),
+	(gegl_tile_trait_init):
+	* gegl/buffer/gegl-tile-trait.h:
+	* gegl/buffer/gegl-tile-traits.c: (gegl_tile_traits_nuke_cache),
+	(dispose), (finalize), (get_tile), (message),
+	(gegl_tile_traits_class_init), (gegl_tile_traits_init),
+	(gegl_tile_traits_rebind), (gegl_tile_traits_add),
+	(gegl_tile_traits_get_first):
+	* gegl/buffer/gegl-tile-traits.h:
+	* gegl/buffer/gegl-tile.c: (get_property), (set_property),
+	(dispose), (gegl_tile_class_init), (gegl_tile_init),
+	(gegl_tile_new_from_data), (gegl_tile_dup), (gegl_tile_new),
+	(gegl_tile_unclone), (gegl_tile_lock), (gegl_tile_unlock),
+	(gegl_tile_is_stored), (gegl_tile_void), (gegl_tile_cpy),
+	(gegl_tile_swp), (gegl_tile_get_data), (gegl_tile_store):
+	* gegl/buffer/gegl-tile.h:
+
+2006-05-31  Øyvind Kolås  <pippin@gimp.org>
+
+	Removed old buffer implementation, a tile management system, built to
+	coexist with babl will replace it.
+
+	* configure.in,
+	* gegl/Makefile.am,
+	* gegl/image/.cvsignore,
+	* gegl/image/Makefile.am,
+	* gegl/image/gegl-buffer-double.c,
+	* gegl/image/gegl-buffer-double.h,
+	* gegl/image/gegl-buffer.c,
+	* gegl/image/gegl-buffer.h,
+	* gegl/image/gegl-cache-entry.c,
+	* gegl/image/gegl-cache-entry.h,
+	* gegl/image/gegl-cache-store.c,
+	* gegl/image/gegl-cache-store.h,
+	* gegl/image/gegl-cache.c,
+	* gegl/image/gegl-cache.h,
+	* gegl/image/gegl-color-model.c,
+	* gegl/image/gegl-color-model.h,
+	* gegl/image/gegl-color-space-imp.h,
+	* gegl/image/gegl-color-space.h,
+	* gegl/image/gegl-component-sample-model.c,
+	* gegl/image/gegl-component-sample-model.h,
+	* gegl/image/gegl-entry-record.c,
+	* gegl/image/gegl-entry-record.h,
+	* gegl/image/gegl-heap-cache-store.c,
+	* gegl/image/gegl-heap-cache-store.h,
+	* gegl/image/gegl-heap-cache.c,
+	* gegl/image/gegl-heap-cache.h,
+	* gegl/image/gegl-image-types.h,
+	* gegl/image/gegl-normalizer-mult.c,
+	* gegl/image/gegl-normalizer-mult.h,
+	* gegl/image/gegl-normalizer.c,
+	* gegl/image/gegl-normalizer.h,
+	* gegl/image/gegl-null-cache-store.c,
+	* gegl/image/gegl-null-cache-store.h,
+	* gegl/image/gegl-sample-model.c,
+	* gegl/image/gegl-sample-model.h,
+	* gegl/image/gegl-swap-cache-store.c,
+	* gegl/image/gegl-swap-cache-store.h,
+	* gegl/image/gegl-swap-cache.c,
+	* gegl/image/gegl-swap-cache.h,
+	* gegl/image/gegl-tile-iterator.h,
+	* gegl/image/gegl-tile.h: Removed.
+
+2006-05-31  Øyvind Kolås  <pippin@gimp.org>
 	
 	Removed gegl/image related tests.
 
