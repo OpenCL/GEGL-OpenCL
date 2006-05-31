@@ -208,7 +208,6 @@ gil/Makefile
 gil/gil/Makefile
 gil/tests/Makefile
 gegl/Makefile
-gegl/image/Makefile
 tools/Makefile
 tools/testsuite/Makefile
 tests/Makefile
