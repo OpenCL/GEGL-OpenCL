@@ -1,11 +1,16 @@
+2006-05-31  Sven Neumann  <sven@gimp.org>
+
+	* configure.in: define G_DISABLE_DEPRECATED if compiling against
+	glib <= 2.11.
+
 2006-05-31  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/Makefile.am: added new classes.
 	* gegl/gegl-types.h: Added types for the new classes.
 	* gegl/gegl-eval-mgr.h: added the ROI being requested to the instance
 	struct of the eval manager.
-	* gegl/gegl-eval-mgr.c: Traverse the graph for have, need, and compute/result
-	rectangles for the region of interest computation.
+	* gegl/gegl-eval-mgr.c: Traverse the graph for have, need, and
+	compute/result rectangles for the region of interest computation.
 	* gegl/gegl-debug-rect-visitor.[ch]:
 	* gegl/gegl-cr-visitor.[ch]:
 	* gegl/gegl-have-visitor.[ch]:

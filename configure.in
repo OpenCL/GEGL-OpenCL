@@ -136,13 +136,32 @@ AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION, :,
 *** GLIB is always available from ftp://ftp.gtk.org/.]),
   gobject gmodule)
 
-PKG_CHECK_MODULES(DEP, glib-2.0 >= $GLIB_REQUIRED_VERSION $GLIB_PACKAGES, , AC_MSG_ERROR([
+PKG_CHECK_MODULES(DEP,
+	          glib-2.0 >= $GLIB_REQUIRED_VERSION $GLIB_PACKAGES, ,
+                  AC_MSG_ERROR([
         *** GLib not found. You can find it on ftp://ftp.gtk.org
         *** Errors follow:
             $DEP_PKG_ERRORS]))
 
 # Rerun PKG_CONFIG to add gthread-2.0 cflags, but not libs
 DEP_CFLAGS=`$PKG_CONFIG --cflags $GLIB_PACKAGES gthread-2.0`
+
+
+#########################
+# Disable deprecated APIs
+#########################
+
+AC_MSG_CHECKING([if GLib is version 2.11.0 or newer])
+if $PKG_CONFIG --atleast-version=2.11.0 glib-2.0; then
+  have_glib_2_11=yes
+else
+  have_glib_2_11=no
+fi
+AC_MSG_RESULT($have_glib_2_11)
+
+if test "x$have_glib_2_11" != "xyes"; then
+  CPPFLAGS="${CPPFLAGS} -DG_DISABLE_DEPRECATED"
+fi
 
 
 gegltargetlib=libgegl-$GEGL_API_VERSION.la
