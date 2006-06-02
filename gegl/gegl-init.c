@@ -19,6 +19,7 @@
  */
 
 #include "config.h"
+#include <babl.h>
 #include <glib-object.h>
 #include "gegl-types.h"
 #include "gegl-init.h"
@@ -33,11 +34,13 @@ gegl_init (int *argc,
 {
   if (gegl_initialized)
     return;
-
+  g_type_init ();
+  babl_init ();
   gegl_initialized = TRUE;
 }
 
 void
 gegl_exit (void)
 {
+  babl_destroy ();
 }

@@ -39,7 +39,7 @@ struct _GeglTileBackend
   GeglTileStore  parent_instance;
   gint           tile_width;
   gint           tile_height;
-  void          *babl_format;   /* defaults to the babl format "rgba8" */
+  void          *format;        /* defaults to the babl format "R'G'B'A u8" */
   gint           px_size;       /* size of a single pixel in bytes */
   gint           tile_size;     /* size of an entire tile in bytes */
 };

@@ -44,12 +44,12 @@ libgegl_1_0_la_LIBADD = $(libbuffer)
 
 INCLUDES = \
 	-I$(top_srcdir)	\
-	@DEP_CFLAGS@
+	@DEP_CFLAGS@ @BABL_CFLAGS@
 
 AM_LDFLAGS =  \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)	\
 	-no-undefined \
-	@DEP_LIBS@
+	@DEP_LIBS@ @BABL_LIBS@
 
 
 libgeglincludedir = $(includedir)/gegl-1.0/gegl

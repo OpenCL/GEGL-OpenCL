@@ -21,6 +21,7 @@
 #include <glib-object.h>
 
 #include "gegl-buffer-types.h"
+#include <babl.h>
 
 #ifndef _GEGL_BUFFER_H
 #define _GEGL_BUFFER_H
@@ -62,16 +63,12 @@ struct _GeglBufferClass
 GType         gegl_buffer_get_type           (void) G_GNUC_CONST;
 
 
-void          gegl_buffer_set                (GeglBuffer *buffer,
-                                              guchar     *src);
-
-void          gegl_buffer_get                (GeglBuffer *buffer,
-                                              guchar     *dst);
 
 void        * gegl_buffer_get_format         (GeglBuffer *buffer);
 
 gint          gegl_buffer_px_size            (GeglBuffer *buffer);
 
+gint          gegl_buffer_size               (GeglBuffer *buffer);
 
 /***********************/
 
@@ -90,4 +87,18 @@ gboolean      gegl_buffer_is_dirty           (GeglBuffer *buffer,
                                               gint        x,
                                               gint        y);
 
+
+void          gegl_buffer_set                  (GeglBuffer *buffer,
+                                                void       *src);
+
+void          gegl_buffer_get                  (GeglBuffer *buffer,
+                                                void       *dst);
+
+void          gegl_buffer_set_fmt (GeglBuffer  *buffer,
+                                                void       *src,
+                                                void       *format);
+
+void          gegl_buffer_get_fmt             (GeglBuffer *buffer,
+                                               void       *dst,
+                                               void       *format);
 #endif

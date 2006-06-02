@@ -21,6 +21,7 @@
 #include <glib-object.h>
 #include <string.h>
 
+#include <babl.h>
 #include "gegl-tile-store.h"
 #include "gegl-tile-backend.h"
 
@@ -32,7 +33,8 @@ enum {
   PROP_TILE_WIDTH,
   PROP_TILE_HEIGHT,
   PROP_PX_SIZE,
-  PROP_TILE_SIZE
+  PROP_TILE_SIZE,
+  PROP_FORMAT
 };
 
 static void
@@ -56,6 +58,8 @@ get_property (GObject    *gobject,
       case PROP_PX_SIZE:
         g_value_set_int (value, backend->px_size);
         break;
+      case PROP_FORMAT:
+        break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -77,6 +81,9 @@ set_property (GObject      *gobject,
       case PROP_TILE_HEIGHT:
         backend->tile_height = g_value_get_int (value);
         return;
+      case PROP_FORMAT:
+        backend->format = g_value_get_pointer (value);
+        break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -97,8 +104,9 @@ constructor (GType                  type,
   g_assert (backend->tile_width > 0 &&
             backend->tile_height > 0);
 
-  /* FIXME: use information from the babl format */
-  backend->px_size = 4;
+  g_assert (backend->format);
+  backend->px_size = ((Babl*)(backend->format))->format.bytes_per_pixel;
+  
   backend->tile_size = backend->tile_width * backend->tile_height * backend->px_size;
   
   return object;
@@ -133,6 +141,10 @@ gegl_tile_backend_class_init (GeglTileBackendClass * klass)
                                    g_param_spec_int ("px-size", "px-size", "Size of a single pixel in bytes",
                                                      0, G_MAXINT, 0,
                                                      G_PARAM_READABLE));
+  g_object_class_install_property (gobject_class, PROP_FORMAT,
+                                   g_param_spec_pointer ("format", "format", "babl format",
+                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_CONSTRUCT));
 }
 
 static void

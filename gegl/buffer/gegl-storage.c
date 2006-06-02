@@ -32,7 +32,7 @@
 #include "gegl-tile-log.h"
 
 G_DEFINE_TYPE(GeglStorage, gegl_storage, GEGL_TYPE_TILE_TRAITS)
-#define TILE_SIZE 128
+#define TILE_SIZE 64
 
 static GObjectClass *parent_class = NULL;
 
@@ -54,33 +54,33 @@ get_property (GObject    *gobject,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglStorage *buffer = GEGL_STORAGE (gobject);
+  GeglStorage *storage = GEGL_STORAGE (gobject);
   switch(property_id)
     {
       case PROP_WIDTH:
-        g_value_set_int (value, buffer->width);
+        g_value_set_int (value, storage->width);
         break;
       case PROP_HEIGHT:
-        g_value_set_int (value, buffer->height);
+        g_value_set_int (value, storage->height);
         break;
       case PROP_TILE_WIDTH:
-        g_value_set_int (value, buffer->tile_width);
+        g_value_set_int (value, storage->tile_width);
         break;
       case PROP_TILE_HEIGHT:
-        g_value_set_int (value, buffer->tile_height);
+        g_value_set_int (value, storage->tile_height);
         break;
       case PROP_TILE_SIZE:
-        g_value_set_int (value, buffer->tile_size);
+        g_value_set_int (value, storage->tile_size);
         break;
       case PROP_PX_SIZE:
-        g_value_set_int (value, buffer->px_size);
+        g_value_set_int (value, storage->px_size);
         break;
       case PROP_PATH:
-        if (buffer->path != NULL)
-          g_value_set_string (value, buffer->path);
+        if (storage->path != NULL)
+          g_value_set_string (value, storage->path);
         break;
       case PROP_FORMAT:
-        g_value_set_pointer (value, buffer->format);
+        g_value_set_pointer (value, storage->format);
         break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -94,34 +94,34 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglStorage *buffer= GEGL_STORAGE (gobject);
+  GeglStorage *storage = GEGL_STORAGE (gobject);
   switch(property_id)
     {
       case PROP_WIDTH:
-        buffer->width = g_value_get_int (value);
+        storage->width = g_value_get_int (value);
         return;
       case PROP_HEIGHT:
-        buffer->height = g_value_get_int (value);
+        storage->height = g_value_get_int (value);
         return;
       case PROP_TILE_WIDTH:
-        buffer->tile_width= g_value_get_int (value);
+        storage->tile_width= g_value_get_int (value);
         break;
       case PROP_TILE_HEIGHT:
-        buffer->tile_height = g_value_get_int (value);
+        storage->tile_height = g_value_get_int (value);
         break;
       case PROP_TILE_SIZE:
-        buffer->tile_size = g_value_get_int (value);
+        storage->tile_size = g_value_get_int (value);
         break;
       case PROP_PX_SIZE:
-        buffer->px_size = g_value_get_int (value);
+        storage->px_size = g_value_get_int (value);
         break;
       case PROP_PATH:
-        if (buffer->path)
-          g_free (buffer->path);
-        buffer->path = g_strdup (g_value_get_string (value));
+        if (storage->path)
+          g_free (storage->path);
+        storage->path = g_strdup (g_value_get_string (value));
         break;
       case PROP_FORMAT:
-        buffer->format = g_value_get_pointer (value);
+        storage->format = g_value_get_pointer (value);
         break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -132,10 +132,10 @@ set_property (GObject      *gobject,
 static void
 gegl_storage_dispose (GObject *object)
 {
-  GeglStorage *buffer;
+  GeglStorage *storage;
   GeglTileTrait *trait;
 
-  buffer = (GeglStorage*) object;
+  storage = (GeglStorage*) object;
   trait = GEGL_TILE_TRAIT (object);
 
   (* G_OBJECT_CLASS (parent_class)->dispose) (object);
@@ -163,6 +163,7 @@ gegl_storage_constructor (GType                  type,
                 "source", g_object_new (GEGL_TYPE_TILE_DISK_STORE,
                                         "tile-width",  storage->tile_width,
                                         "tile-height", storage->tile_height,
+                                        "format", storage->format,
                                         "path", storage->path,
                                         NULL),
                 NULL);
@@ -174,6 +175,7 @@ gegl_storage_constructor (GType                  type,
                 "source", g_object_new (GEGL_TYPE_TILE_MEM_STORE,
                                         "tile-width",  storage->tile_width,
                                         "tile-height", storage->tile_height,
+                                        "format", storage->format,
                                         NULL),
                 NULL);
     }

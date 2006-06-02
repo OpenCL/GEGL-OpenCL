@@ -32,9 +32,12 @@ BUFFER_headers = \
     gegl-tile-traits.h
 
 libbuffer_la_SOURCES = $(BUFFER_sources) $(BUFFER_headers)
+libbufferinclude_HEADERS = $(BUFFER_headers)
+
+libbufferincludedir = $(includedir)/gegl-1.0/gegl/
 
 INCLUDES = \
 	   -I$(top_srcdir)	\
 	   -I$(top_srcdir)/gegl	\
-	   @DEP_CFLAGS@
+	   @DEP_CFLAGS@ @BABL_CFLAGS@
 

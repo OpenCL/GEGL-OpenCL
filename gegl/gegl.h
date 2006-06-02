@@ -35,5 +35,6 @@
 #include <gegl-utils.h>
 #include <gegl-visitable.h>
 #include <gegl-visitor.h>
+#include <gegl-buffer.h>
 
 #endif  /* __GEGL_H__ */

@@ -1,11 +1,3 @@
-/* For the storeback mechanism to work when shifted, both the shiftcount (or just
- * the shifted tile indices) as well as the modulo remainder needs to be stored for
- * the unref'ing of the tile.
- *
- * shifting should be transparent to the buffer code,.. or is the acess truely unnaligned?
- * 
- */
-
 /* This file is part of GEGL.
  *
  * This library is free software; you can redistribute it and/or
@@ -545,7 +537,7 @@ void *gegl_buffer_get_format      (GeglBuffer *buffer)
   g_assert (buffer);
   if (buffer->format != NULL)
     return buffer->format;
-  return gegl_buffer_backend (buffer)->babl_format;
+  return gegl_buffer_backend (buffer)->format;
 }
 
 void
@@ -575,22 +567,38 @@ gegl_buffer_is_dirty (GeglBuffer *buffer,
                                   GEGL_TILE_IS_DIRTY, x, y, z, NULL);
 }
 
+
+gint gegl_buffer_px_size (GeglBuffer *buffer)
+{
+  return gegl_buffer_storage (buffer)->px_size;
+}
+
+gint gegl_buffer_size (GeglBuffer *buffer)
+{
+  return gegl_buffer_storage (buffer)->px_size * buffer->width * buffer->height;
+}
+
 /* the setter and getter were merged into a single buf iterator,
  * this iterator should be refactored to provide a linear buffer object
  * that is iterating. Making it easier to reuse for other optimized traversals.
+ *
+ * babl conversion should probably be done on a tile by tile, or even scanline by
+ * scanline basis instead of allocating large temporary buffers. (using babl for "memcpy")
  */
 
 #include <string.h>
 
+
 static void
 gegl_buffer_iterate (GeglBuffer *buffer,
-                     guchar     *buf,
+                     void       *buf,
                      gboolean    write)
 {
   gint width       = buffer->width;
   gint height      = buffer->height;
   gint tile_width  = gegl_buffer_storage (buffer)->tile_width;
   gint tile_height = gegl_buffer_storage (buffer)->tile_height;
+  gint px_size     = gegl_buffer_px_size (buffer);
   gint bufy        = 0;
 
   while (bufy < height)
@@ -621,8 +629,8 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                                   row++)
                 {
                   gint pixels;
-                  guchar *bp = (buf) + ((bufy + row - offsety) * width + bufx) * 4;
-                  guchar *tp = (dst) + (row * tile_width + offsetx) * 4;
+                  guchar *bp = ((guchar*)buf) + ((bufy + row - offsety) * width + bufx) * px_size;
+                  guchar *tp = ((guchar*)dst) + (row * tile_width + offsetx) * px_size;
 
                   if (width + offsetx - bufx < tile_width)
                     pixels = (width + offsetx - bufx) - offsetx;
@@ -630,9 +638,9 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                     pixels = tile_width - offsetx;
 
                   if (write)
-                    memcpy (tp, bp, pixels * 4);
+                    memcpy (tp, bp, pixels * px_size);
                   else
-                    memcpy (bp, tp, pixels * 4);
+                    memcpy (bp, tp, pixels * px_size);
                 }
             }
           if (write)
@@ -647,7 +655,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 
 void
 gegl_buffer_set (GeglBuffer *buffer,
-                 guchar     *src)
+                 void       *src)
 {
   gboolean write;
   gegl_buffer_iterate (buffer, src, write = TRUE);
@@ -655,8 +663,57 @@ gegl_buffer_set (GeglBuffer *buffer,
 
 void
 gegl_buffer_get (GeglBuffer *buffer,
-                 guchar     *dst)
+                 void       *dst)
 {
   gboolean write;
   gegl_buffer_iterate (buffer, dst, write = FALSE);
 }
+
+#ifdef BABL
+#undef BABL
+#endif
+
+#define BABL(o)     ((Babl*)(o))
+
+#ifdef FMTPXS
+#undef FMTPXS
+#endif
+#define FMTPXS(fmt) (BABL(fmt)->format.bytes_per_pixel)
+
+void
+gegl_buffer_set_fmt (GeglBuffer *buffer,
+                     void       *src,
+                     void       *format)
+{
+  guchar *tmp;
+
+  if (buffer->format == format)
+    {
+      gegl_buffer_set (buffer, src);
+    }
+  tmp = g_malloc (gegl_buffer_size (buffer));
+  g_assert (tmp);
+  babl_process (babl_fish (format, buffer->format),
+                src, tmp, buffer->width * buffer->height);
+  gegl_buffer_set (buffer, tmp);
+  g_free (tmp);
+}
+
+void
+gegl_buffer_get_fmt (GeglBuffer *buffer,
+                     void       *dst,
+                     void       *format)
+{
+  guchar *tmp;
+  if (buffer->format == format)
+    {
+      gegl_buffer_get (buffer, dst);
+    }
+  tmp = g_malloc (gegl_buffer_size (buffer));
+  g_assert (tmp);
+  gegl_buffer_get (buffer, tmp);
+  babl_process (babl_fish (buffer->format, format),
+                tmp, dst, buffer->width * buffer->height);
+  g_free (tmp);
+}
+

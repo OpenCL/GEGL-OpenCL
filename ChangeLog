@@ -1,5 +1,30 @@
 2006-06-02  Øyvind Kolås  <pippin@gimp.org>
 
+	Made the gegl-buffer babl aware.
+
+	* configure.in: Added babl as a dependency
+	* gegl.pc.in: Added babl as a dependency
+	* gegl/Makefile.am: Added babl to includes / LDFLAGS
+	* gegl/buffer/Makefile.am: Install header files (just dumping then in
+	the GEGL dir for now).
+
+	* gegl/buffer/gegl-buffer.[ch]: (gegl_buffer_get_format),
+	(gegl_buffer_px_size), (gegl_buffer_size), (gegl_buffer_iterate),
+	(gegl_buffer_set), (gegl_buffer_get), (gegl_buffer_set_fmt),
+	(gegl_buffer_get_fmt): Added methods to set/get linear buffers through
+	babl backed conversions.
+	* gegl/buffer/gegl-storage.c: (get_property), (set_property),
+	(gegl_storage_dispose), (gegl_storage_constructor): completing renaming from
+	buffer->storage.
+	* gegl/buffer/gegl-tile-backend.c: (get_property), (set_property),
+	(constructor), (gegl_tile_backend_class_init):
+	* gegl/buffer/gegl-tile-backend.h: correctly set format when passed in
+	to constructor.
+	* gegl/gegl-init.c: (gegl_init), (gegl_exit): init/deinit babl.
+	* gegl/gegl.h: include gegl-buffer as well.
+
+2006-06-02  Øyvind Kolås  <pippin@gimp.org>
+
 	Made child rectangles be computed correctly when there are multiple
 	outputs from a node.
 

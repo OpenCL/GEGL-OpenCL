@@ -201,6 +201,10 @@ AC_CHECK_LIB(lcms, cmsCreateProofingTransform, [
 AC_SUBST(LCMS_LIBS)
 AM_CONDITIONAL(HAVE_LCMS, test $have_lcms = yes)
 
+PKG_CHECK_MODULES(BABL, babl >= 0.0)
+AC_SUBST(BABL_CFLAGS)
+AC_SUBST(BABL_LIBS)
+
 
 AC_OUTPUT([
 Makefile
