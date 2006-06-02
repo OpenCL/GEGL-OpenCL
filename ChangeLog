@@ -1,3 +1,8 @@
+2006-06-02  Sven Neumann  <sven@gimp.org>
+
+	* configure.in: no need to AC_SUBST the variables set by
+	PKG_CHECK_MODULES().
+
 2006-06-02  Øyvind Kolås  <pippin@gimp.org>
 
 	Made the gegl-buffer babl aware.
@@ -14,8 +19,8 @@
 	(gegl_buffer_get_fmt): Added methods to set/get linear buffers through
 	babl backed conversions.
 	* gegl/buffer/gegl-storage.c: (get_property), (set_property),
-	(gegl_storage_dispose), (gegl_storage_constructor): completing renaming from
-	buffer->storage.
+	(gegl_storage_dispose), (gegl_storage_constructor): completing renaming
+	from buffer->storage.
 	* gegl/buffer/gegl-tile-backend.c: (get_property), (set_property),
 	(constructor), (gegl_tile_backend_class_init):
 	* gegl/buffer/gegl-tile-backend.h: correctly set format when passed in
