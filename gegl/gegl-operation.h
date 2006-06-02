@@ -130,10 +130,9 @@ gegl_operation_set_comp_rect (GeglOperation *operation,
                               gint           width,
                               gint           height);
 
-GeglRect *gegl_operation_get_need_rect (GeglOperation *operation,
-                                        const gchar   *output_pad_name);
-
-
+gboolean  gegl_operation_get_requested_rect (GeglOperation *operation,
+                                             const gchar *output_pad_name,
+                                             GeglRect    *rect /*written to*/);
 
 GeglRect *gegl_operation_need_rect     (GeglOperation *operation);
 GeglRect *gegl_operation_have_rect     (GeglOperation *operation);

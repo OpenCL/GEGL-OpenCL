@@ -309,51 +309,15 @@ gegl_operation_set_comp_rect (GeglOperation *operation,
   gegl_node_set_comp_rect (operation->node, x, y, width, height);
 }
 
-#include "gegl-connection.h"
-#include "gegl-pad.h"
-
-GeglPad *
-gegl_pad_get_connected_to2 (GeglPad *self)
+gboolean
+gegl_operation_get_requested_rect (GeglOperation *operation,
+                                   const gchar   *output_pad_name,
+                                   GeglRect      *rect)
 {
-  g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
-
-  g_warning ("trouble");
-
-  if (gegl_pad_is_output (self) &&
-      (gegl_pad_get_num_connections (self) == 1 ||
-      gegl_pad_get_num_connections (self) == 2))
-    {
-      GeglConnection *connection = g_list_nth_data (self->connections, 0);
-
-
-      return gegl_connection_get_sink_prop (connection);
-    }
-
-  g_error ("Nothing connected to pad '%s' of a '%s'",
-       g_param_spec_get_name (self->param_spec),
-       gegl_node_get_debug_name (self->node));
-  
-  g_assert (0);
-
-  return NULL;
-}
-
-GeglRect *
-gegl_operation_get_need_rect (GeglOperation *operation,
-                              const gchar   *output_pad_name)
-{
-  /* FIXME: should use the union of all needed rects */
-  GeglPad *pad;
   g_assert (operation && 
             operation->node &&
             output_pad_name);
-  pad = gegl_node_get_pad (operation->node, output_pad_name);
-  g_assert (pad);
-  pad = gegl_pad_get_connected_to2 (pad);
-  g_assert (pad);
-  g_assert (gegl_pad_get_node (pad));
-  
-  return gegl_node_get_need_rect (gegl_pad_get_node (pad));
+  return gegl_node_get_requested_rect (operation->node, output_pad_name, rect);
 }
 
 

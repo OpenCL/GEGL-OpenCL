@@ -35,6 +35,7 @@
 #include "gegl-pad.h"
 #include "gegl-connection.h"
 #include "gegl-eval-mgr.h"
+#include "gegl-utils.h"
 
 
 enum
@@ -1007,6 +1008,67 @@ gegl_node_get_need_rect (GeglNode    *node)
 {
   return &node->need_rect;
 }
+
+#include "gegl-connection.h"
+#include "gegl-pad.h"
+
+
+
+static GList *consumer_nodes (GeglPad *output_pad)
+{
+  GList *ret = NULL;
+  GList *connections;
+  g_return_val_if_fail (GEGL_IS_PAD (output_pad), NULL);
+
+  g_assert (gegl_pad_is_output (output_pad));
+
+  connections = gegl_pad_get_connections (output_pad);
+  while (connections)
+    {
+      GeglPad  *far_input = gegl_connection_get_sink_prop (connections->data);
+      GeglNode *node = gegl_pad_get_node (far_input);
+
+      if (node)
+        ret = g_list_append (ret, node);
+      connections = g_list_next (connections);
+    }
+  return ret;
+}
+
+
+gboolean
+gegl_node_get_requested_rect (GeglNode    *node,
+                              const gchar *output_pad_name,
+                              GeglRect    *rect /* written to */)
+{
+  GeglPad *pad;
+  GeglRect rct = {0,0,0,0};
+  GList   *child_nodes;
+
+  g_assert (node);
+  g_assert (output_pad_name);
+  g_assert (rect);
+
+  pad = gegl_node_get_pad (node, output_pad_name);
+  g_assert (pad);
+
+  child_nodes = consumer_nodes (pad);
+  
+  g_assert (child_nodes);
+  /* for each need rect set for each of the downstream nodes */
+
+  while (child_nodes)
+    {
+      GeglRect *child_need = gegl_node_get_need_rect (child_nodes->data);
+      gegl_rect_bounding_box (&rct, child_need, &rct);
+      /*rct = *child_need;*/
+      child_nodes = g_list_remove (child_nodes, child_nodes->data);
+    }
+
+  *rect = rct;
+  return TRUE;
+}
+
 
 const gchar *
 gegl_node_get_debug_name (GeglNode     *node)

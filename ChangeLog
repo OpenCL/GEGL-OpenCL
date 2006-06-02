@@ -1,3 +1,12 @@
+2006-06-02  Øyvind Kolås  <pippin@gimp.org>
+
+	Made child rectangles be computed correctly when there are multiple
+	outputs from a node.
+
+	* gegl/gegl-node.[ch]: (consumer_nodes),
+	(gegl_node_get_requested_rect): Correctly sum up child requests.
+	* gegl/gegl-operation.[ch]: (gegl_operation_get_requested_rect):
+
 2006-05-31  Øyvind Kolås  <pippin@gimp.org>
 
 	Added new tiled buffer implementation.
