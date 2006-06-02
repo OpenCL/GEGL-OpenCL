@@ -1,3 +1,9 @@
+2006-06-02  Øyvind Kolås  <pippin@gimp.org>
+
+	* TODO: updated the roadmap (made notes about what things are done,
+	it seems like we've come a long way since the TODO file was added
+	one year ago.
+
 2006-06-02  Sven Neumann  <sven@gimp.org>
 
 	* configure.in: no need to AC_SUBST the variables set by
