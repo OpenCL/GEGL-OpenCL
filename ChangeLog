@@ -1,5 +1,12 @@
 2006-06-03  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-allocator.c:
+	(gegl_buffer_allocator_init), (gegl_buffer_alloc): Increased safety
+	distances in allocation. There are geometric out of bounds accesses
+	without this.
+
+2006-06-03  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor),
 	(gegl_buffer_iterate_fmt), (gegl_buffer_set), (gegl_buffer_get),
 	(gegl_buffer_set_fmt), (gegl_buffer_get_fmt): Removed the need for

@@ -39,7 +39,7 @@ static void
 gegl_buffer_allocator_init (GeglBufferAllocator *allocator)
 {
   allocator->x_used =0 ;
-  allocator->y_used =0 ;
+  allocator->y_used = 20000 ;
 }
 
 
@@ -60,8 +60,8 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
   /*gint needed_width = ((width-1)/tile_width+1)*tile_width;
    * FIXME: compensating for something that probably is abyss issues
    */
-  gint needed_width = ((width-1)/tile_width+42)*tile_width;
-  gint needed_height = ((height-1)/tile_height+42)*tile_height;
+  gint needed_width = ((width-1)/tile_width+142)*tile_width;
+  gint needed_height = ((height-1)/tile_height+142)*tile_height;
 
   gint shift_x;
   gint shift_y;
