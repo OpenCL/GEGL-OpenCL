@@ -1,5 +1,13 @@
 2006-06-03  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor),
+	(gegl_buffer_iterate_fmt), (gegl_buffer_set), (gegl_buffer_get),
+	(gegl_buffer_set_fmt), (gegl_buffer_get_fmt): Removed the need for
+	a temporary buffer, but use babl for converting scanlines from tile to
+	buffer.
+
+2006-06-03  Øyvind Kolås  <pippin@gimp.org>
+
 	Made it possible to enable output of debug rectangles if the
 	enviroment variable GEGL_DEBUG_RECTS is set.
 

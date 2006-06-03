@@ -346,7 +346,7 @@ gegl_buffer_constructor (GType                  type,
   * have a enough tiles to be scanline iteratable.
   */ 
 
-  if (buffer->width < 1<<14)
+  if (buffer->width < 1<<14 && 0)
     gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_CACHE,
                                                 "size", 
                                                 needed_tiles (buffer->width, tile_width)+1,
@@ -578,28 +578,51 @@ gint gegl_buffer_size (GeglBuffer *buffer)
   return gegl_buffer_storage (buffer)->px_size * buffer->width * buffer->height;
 }
 
-/* the setter and getter were merged into a single buf iterator,
- * this iterator should be refactored to provide a linear buffer object
- * that is iterating. Making it easier to reuse for other optimized traversals.
- *
+/*
  * babl conversion should probably be done on a tile by tile, or even scanline by
  * scanline basis instead of allocating large temporary buffers. (using babl for "memcpy")
  */
 
 #include <string.h>
 
+#ifdef BABL
+#undef BABL
+#endif
 
-static void
-gegl_buffer_iterate (GeglBuffer *buffer,
-                     void       *buf,
-                     gboolean    write)
+#define BABL(o)     ((Babl*)(o))
+
+#ifdef FMTPXS
+#undef FMTPXS
+#endif
+#define FMTPXS(fmt) (BABL(fmt)->format.bytes_per_pixel)
+
+/* the setter and getter were merged into a single buf iterator,
+ * this iterator should be refactored to provide a linear buffer object
+ * that is iterating. Making it easier to reuse for other optimized traversals.
+ */
+static void inline
+gegl_buffer_iterate_fmt (GeglBuffer *buffer,
+                         void       *buf,
+                         gboolean    write,
+                         BablFormat *format)
 {
   gint width       = buffer->width;
   gint height      = buffer->height;
   gint tile_width  = gegl_buffer_storage (buffer)->tile_width;
   gint tile_height = gegl_buffer_storage (buffer)->tile_height;
   gint px_size     = gegl_buffer_px_size (buffer);
+  gint bpx_size    = FMTPXS (format);
   gint bufy        = 0;
+  Babl *fish;
+
+  if (write)
+    {
+      fish = babl_fish (format, buffer->format);
+    }
+  else
+    {
+      fish = babl_fish (buffer->format, format);
+    }
 
   while (bufy < height)
     {
@@ -622,14 +645,15 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 
           dst = gegl_tile_get_data (tile);
             {
-              /* FIXME: use memcpy, and handle different formats */
               gint row;
               for (row = offsety; row < tile_height &&
                                   bufy + row - offsety < height;
                                   row++)
                 {
                   gint pixels;
-                  guchar *bp = ((guchar*)buf) + ((bufy + row - offsety) * width + bufx) * px_size;
+                  /* TODO: move the constants of these offset calculations out of the inner loop */
+
+                  guchar *bp = ((guchar*)buf) + ((bufy + row - offsety) * width + bufx) * bpx_size;
                   guchar *tp = ((guchar*)dst) + (row * tile_width + offsetx) * px_size;
 
                   if (width + offsetx - bufx < tile_width)
@@ -637,10 +661,27 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                   else
                     pixels = tile_width - offsetx;
 
-                  if (write)
-                    memcpy (tp, bp, pixels * px_size);
+                  /* recheck time:
+                   *   with memcpy on equal format: 53.708s   52.823s   53.169s
+                   *   using babl for everything:   1m12.898s 1m13.424s
+                   *
+                   *  babl seems to be slower than a memcpy, is this a bug?
+                   */
+                  
+                  if (format == buffer->format)
+                    {
+                      if (write)
+                        memcpy (tp, bp, pixels * px_size);
+                      else
+                        memcpy (bp, tp, pixels * px_size);
+                    }
                   else
-                    memcpy (bp, tp, pixels * px_size);
+                    {
+                      if (write)
+                        babl_process (fish, bp, tp, pixels);
+                      else
+                        babl_process (fish, tp, bp, pixels);
+                    }
                 }
             }
           if (write)
@@ -658,7 +699,7 @@ gegl_buffer_set (GeglBuffer *buffer,
                  void       *src)
 {
   gboolean write;
-  gegl_buffer_iterate (buffer, src, write = TRUE);
+  gegl_buffer_iterate_fmt (buffer, src, write = TRUE, buffer->format);
 }
 
 void
@@ -666,37 +707,17 @@ gegl_buffer_get (GeglBuffer *buffer,
                  void       *dst)
 {
   gboolean write;
-  gegl_buffer_iterate (buffer, dst, write = FALSE);
+  gegl_buffer_iterate_fmt (buffer, dst, write = FALSE, buffer->format);
 }
 
-#ifdef BABL
-#undef BABL
-#endif
-
-#define BABL(o)     ((Babl*)(o))
-
-#ifdef FMTPXS
-#undef FMTPXS
-#endif
-#define FMTPXS(fmt) (BABL(fmt)->format.bytes_per_pixel)
 
 void
 gegl_buffer_set_fmt (GeglBuffer *buffer,
                      void       *src,
                      void       *format)
 {
-  guchar *tmp;
-
-  if (buffer->format == format)
-    {
-      gegl_buffer_set (buffer, src);
-    }
-  tmp = g_malloc (gegl_buffer_size (buffer));
-  g_assert (tmp);
-  babl_process (babl_fish (format, buffer->format),
-                src, tmp, buffer->width * buffer->height);
-  gegl_buffer_set (buffer, tmp);
-  g_free (tmp);
+  gboolean write;
+  gegl_buffer_iterate_fmt (buffer, src, write = TRUE, format);
 }
 
 void
@@ -704,16 +725,6 @@ gegl_buffer_get_fmt (GeglBuffer *buffer,
                      void       *dst,
                      void       *format)
 {
-  guchar *tmp;
-  if (buffer->format == format)
-    {
-      gegl_buffer_get (buffer, dst);
-    }
-  tmp = g_malloc (gegl_buffer_size (buffer));
-  g_assert (tmp);
-  gegl_buffer_get (buffer, tmp);
-  babl_process (babl_fish (buffer->format, format),
-                tmp, dst, buffer->width * buffer->height);
-  g_free (tmp);
+  gboolean write;
+  gegl_buffer_iterate_fmt (buffer, dst, write = FALSE, format);
 }
-
