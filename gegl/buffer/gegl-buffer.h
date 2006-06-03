@@ -65,10 +65,8 @@ GType         gegl_buffer_get_type           (void) G_GNUC_CONST;
 
 
 void        * gegl_buffer_get_format         (GeglBuffer *buffer);
-
+gint          gegl_buffer_pixels             (GeglBuffer *buffer);
 gint          gegl_buffer_px_size            (GeglBuffer *buffer);
-
-gint          gegl_buffer_size               (GeglBuffer *buffer);
 
 /***********************/
 

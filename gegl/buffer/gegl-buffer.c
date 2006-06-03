@@ -567,15 +567,14 @@ gegl_buffer_is_dirty (GeglBuffer *buffer,
                                   GEGL_TILE_IS_DIRTY, x, y, z, NULL);
 }
 
+gint gegl_buffer_pixels (GeglBuffer *buffer)
+{
+  return buffer->width * buffer->height;
+}
 
 gint gegl_buffer_px_size (GeglBuffer *buffer)
 {
   return gegl_buffer_storage (buffer)->px_size;
-}
-
-gint gegl_buffer_size (GeglBuffer *buffer)
-{
-  return gegl_buffer_storage (buffer)->px_size * buffer->width * buffer->height;
 }
 
 /*
