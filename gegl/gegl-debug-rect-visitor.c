@@ -62,7 +62,6 @@ visit_node (GeglVisitor *self,
   GeglOperation *operation = node->operation;
 
   GEGL_VISITOR_CLASS (gegl_debug_rect_visitor_parent_class)->visit_node (self, node);
-  g_print("%s\n", G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (operation)));
 
 #if 0
   clog_col (0,0,0,0.05);
@@ -82,13 +81,20 @@ visit_node (GeglVisitor *self,
              node->result_rect.h);
 #endif
   
-  g_print("\thave: %ix%i %i,%i\n", node->have_rect.w, node->have_rect.h,
-                                   node->have_rect.x, node->have_rect.y);
-  g_print("\tneed: %ix%i %i,%i\n", node->need_rect.w, node->need_rect.h,
-                                   node->need_rect.x, node->need_rect.y);
-  g_print("\tresult: %ix%i %i,%i\n", node->result_rect.w, node->result_rect.h,
-                                   node->result_rect.x, node->result_rect.y);
-  g_print("\tcomp: %ix%i %i,%i\n", node->comp_rect.w, node->comp_rect.h,
-                                   node->comp_rect.x, node->comp_rect.y);
+  g_warning (
+    "%s\n" 
+    "\thave: %ix%i %i,%i\n" 
+    "\tneed: %ix%i %i,%i\n" 
+    "\tresult: %ix%i %i,%i\n" 
+    "\tcomp: %ix%i %i,%i",   
+   G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (operation)),
+  node->have_rect.w, node->have_rect.h,
+  node->have_rect.x, node->have_rect.y,
+  node->need_rect.w, node->need_rect.h,
+  node->need_rect.x, node->need_rect.y,
+  node->result_rect.w, node->result_rect.h,
+  node->result_rect.x, node->result_rect.y,
+  node->comp_rect.w, node->comp_rect.h,
+  node->comp_rect.x, node->comp_rect.y);
   
 }

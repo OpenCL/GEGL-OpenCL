@@ -35,6 +35,7 @@
 #include "gegl-operation.h"
 #include "gegl-visitable.h"
 #include "gegl-pad.h"
+#include <stdlib.h>
 
 
 static void gegl_eval_mgr_class_init (GeglEvalMgrClass *klass);
@@ -121,7 +122,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
    */
   root->result_rect = self->roi;
   
-  if(0)
+  if(getenv("GEGL_DEBUG_RECTS")!=NULL)
     gegl_visitor_dfs_traverse (debug_rect_visitor, GEGL_VISITABLE(root));
   g_object_unref (debug_rect_visitor);
   eval_visitor = g_object_new (GEGL_TYPE_EVAL_VISITOR, NULL);

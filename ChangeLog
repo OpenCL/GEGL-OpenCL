@@ -1,3 +1,18 @@
+2006-06-03  Øyvind Kolås  <pippin@gimp.org>
+
+	Made it possible to enable output of debug rectangles if the
+	enviroment variable GEGL_DEBUG_RECTS is set.
+
+	* gegl/gegl-debug-rect-visitor.c: (visit_node):
+	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
+
+2006-06-03  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* gegl/gegl-debug-rect-visitor.c: (visit_node):
+	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
+
 2006-06-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* TODO: updated the roadmap (made notes about what things are done,
