@@ -1,5 +1,15 @@
 2006-06-03  Øyvind Kolås  <pippin@gimp.org>
 
+	* README: borught slightly more in sync with rest of GEGL.
+
+2006-06-03  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.[ch]:
+	    (gegl_buffer_size): removed.
+	  (gegl_buffer_pixels): added.
+
+2006-06-03  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-allocator.c:
 	(gegl_buffer_allocator_init), (gegl_buffer_alloc): Increased safety
 	distances in allocation. There are geometric out of bounds accesses

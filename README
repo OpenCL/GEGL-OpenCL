@@ -4,6 +4,7 @@
 `---| `--- `---| `---                                           a rough guide
 =============================================================================
 
+GEGL is a image processing library. 
 GEGL is a library facilitating the creation, manipulation and processing
 of DAGs, directed acyclic graphs, of image processing operations.
 
@@ -11,51 +12,25 @@ of DAGs, directed acyclic graphs, of image processing operations.
 The graph
 -----------------------------------------------------------------------------
 
-Operations are the nodes of the graph, along the edges image data/buffers
-flow. Operations are chained together by storing which output pad provides
-the image data to be used within the operation on an input pad. The number
-of pads available for input/output can be queried from the nodes.
-
-Before processing the graph the desired output sinks should be set to active
-by providing a GList of sink operations that are desired.
+Algorithms created with GEGL are expressed as graphs of nodes. The nodes
+have associated image processing operations. A node has output and input
+pads which can be connected, the generated data from one node can be used
+as the input for many others.
 
 
 The operations
 -----------------------------------------------------------------------------
 
-GEGL should provide a way to query which operations are available, this
-list of available operations is comparable to The GIMPs PDB.
-
-Each operation has properties that can be used to control the processing done
-by the operation, i.e. setting a blur radius, the properties are gobject
-properties.
-
-A general way to attach key/value pairs might be useful, some name, author,
-license are useful meta data.
+Operations are gobjects, the API to extend gegl is not frozen in any way yet
+but already now it should be easy to extend GEGL with new operations.
 
 
 About the processing
 -----------------------------------------------------------------------------
 
-When deciding which portion of the graph should be run, a list of active
-nodes is provided, all operations that are connected to these active nodes
-will be processed.
-
-The edges of the graph is examined in topological order. If the destination
-operation of the edge isn't able to use any of the data formats provided by the
-source operation, a pixel representation conversion operations is automatically
-inserted.
-
-The order of scheduling when processing might have impact on performance due to
-locality of memory accesses in consecutive operations.
-
-Other transformations might also happen on the graph, to collapse affine
-transformations or providing utility functionality to provide caching. These
-temporary internal nodes should not be exposed in the data model seen through
-the public API.
-
-The graph is processed in topological order.
-
+To make GEGL process data you request a rectangular region of an node's output
+pad to be rendered into a provided linear buffer, of any (supported by babl)
+pixel representation.
 
 Operation categories 
 -----------------------------------------------------------------------------
@@ -101,33 +76,3 @@ Core operations
 Base operations
     The operations guaranteed to be present in a GEGL implementation are
     considered base operations, these include the porter duff operations.
-
-
-Extending GEGL
------------------------------------------------------------------------------
-
-The functionality of GEGL is in the operations, by writing a new operation
-conforming to the GEGL extension API, GEGL operations are gmodules.
-
-Initially development of new operations should be discouraged except from
-the core developers since this API might be expected to change after the
-top-level GEGL API is frozen.
-
-
-What GEGL is not
------------------------------------------------------------------------------
-
-A cure for world peace, (at least not until after world domination).
-
-A generic framework for passing data types around in a graph, what is passed
-around in the graph is single images, nothing else.
-
-Not a stream processing framework, although being graph based, it should
-be easy to integrate with graph/ producer-consumer based frameworks like
-gstreamer and mlt.
-
-Written in lowercase.
-
-Going to have a rapidly evolving application side API. Since it uses a simple
-data model as its interface; applications should be able to rely on the API
-not changing.
