@@ -1,3 +1,15 @@
+2006-06-05  Øyvind Kolås  <pippin@gimp.org>
+
+	Added instrumentation for buffer allocations, and voiding of the
+	reserved data for bottom level buffers.
+
+	* gegl/buffer/gegl-buffer.[ch]:
+		(gegl_buffer_stats): prints,. buffer allocation statistics.
+	        (gegl_buffer_dispose): record stats
+		(gegl_buffer_constructor),
+	(gegl_buffer_init), (gegl_buffer_iterate_fmt), (gegl_buffer_set),
+	(gegl_buffer_void):
+
 2006-06-04  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer-allocator.h: add prototoype for get_type

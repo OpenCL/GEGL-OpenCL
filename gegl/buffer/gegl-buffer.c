@@ -53,6 +53,7 @@ enum {
 };
 
 
+
 static inline gint
 indice (gint i,
         gint stride)
@@ -178,6 +179,20 @@ set_property (GObject      *gobject,
     }
 }
 
+static gint allocated_buffers = 0;
+static gint de_allocated_buffers = 0;
+
+void gegl_buffer_stats (void)
+{
+  g_warning ("Buffer statistics: allocated:%i deallocated:%i balance:%i",
+            allocated_buffers, de_allocated_buffers, allocated_buffers-de_allocated_buffers);
+}
+
+#include "gegl-buffer-allocator.h"
+
+#include <string.h>
+
+static void gegl_buffer_void (GeglBuffer *buffer);
 static void
 gegl_buffer_dispose (GObject *object)
 {
@@ -187,6 +202,13 @@ gegl_buffer_dispose (GObject *object)
   buffer = (GeglBuffer*) object;
   trait = GEGL_TILE_TRAIT (object);
 
+  if (trait->source &&
+      GEGL_IS_BUFFER_ALLOCATOR (trait->source))
+    {
+      gegl_buffer_void (buffer);
+    }
+
+  de_allocated_buffers++;
   (* G_OBJECT_CLASS (parent_class)->dispose) (object);
 }
 
@@ -271,6 +293,7 @@ gegl_buffer_constructor (GType                  type,
       g_object_set (buffer,
                     "source", source,
                     NULL);
+      g_object_unref (source);
 
       g_assert (source);
       backend = gegl_buffer_backend (GEGL_BUFFER (source));
@@ -346,7 +369,7 @@ gegl_buffer_constructor (GType                  type,
   * have a enough tiles to be scanline iteratable.
   */ 
 
-  if (buffer->width < 1<<14 && 0)
+  if (buffer->width < 1<<14)
     gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_CACHE,
                                                 "size", 
                                                 needed_tiles (buffer->width, tile_width)+1,
@@ -510,6 +533,7 @@ gegl_buffer_init (GeglBuffer *buffer)
   buffer->total_shift_x = 0;
   buffer->total_shift_y = 0;
   buffer->format = NULL;
+  allocated_buffers++;
 }
 
 gboolean
@@ -623,6 +647,12 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
       fish = babl_fish (buffer->format, format);
     }
 
+  /* before move:  36.850s 36.579
+   * one move out: 36.481s 36.338s 36.205
+   *
+   * saving for moving the 
+   */
+
   while (bufy < height)
     {
       gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
@@ -631,34 +661,34 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
 
       while (bufx < width)
         {
+          gint      pixels;
           gint      tiledx  = buffer->x + bufx + buffer->total_shift_x;
           gint      offsetx = toff (tiledx, tile_width);
           GeglTile *tile    = gegl_tile_store_get_tile (GEGL_TILE_STORE (buffer), 
                                   indice(tiledx,tile_width), indice(tiledy,tile_height),
                                   0);
-          guchar   *dst;
-
-
+          guchar   *dst, *tp, *bp;
+         
           if (write)
             gegl_tile_lock (tile);
 
           dst = gegl_tile_get_data (tile);
+
+          if (width + offsetx - bufx < tile_width)
+            pixels = (width + offsetx - bufx) - offsetx;
+          else
+            pixels = tile_width - offsetx;
+
+          tp = ((guchar*)dst) + (offsety * tile_width + offsetx) * px_size;
+          bp = ((guchar*)buf) + ((bufy) * width + bufx) * bpx_size;
+
             {
               gint row;
               for (row = offsety; row < tile_height &&
                                   bufy + row - offsety < height;
                                   row++)
                 {
-                  gint pixels;
                   /* TODO: move the constants of these offset calculations out of the inner loop */
-
-                  guchar *bp = ((guchar*)buf) + ((bufy + row - offsety) * width + bufx) * bpx_size;
-                  guchar *tp = ((guchar*)dst) + (row * tile_width + offsetx) * px_size;
-
-                  if (width + offsetx - bufx < tile_width)
-                    pixels = (width + offsetx - bufx) - offsetx;
-                  else
-                    pixels = tile_width - offsetx;
 
                   /* recheck time:
                    *   with memcpy on equal format: 53.708s   52.823s   53.169s
@@ -681,6 +711,9 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
                       else
                         babl_process (fish, tp, bp, pixels);
                     }
+
+                  tp += tile_width * px_size;
+                  bp += width * bpx_size;
                 }
             }
           if (write)
@@ -699,6 +732,36 @@ gegl_buffer_set (GeglBuffer *buffer,
 {
   gboolean write;
   gegl_buffer_iterate_fmt (buffer, src, write = TRUE, buffer->format);
+}
+
+static void
+gegl_buffer_void (GeglBuffer *buffer)
+{
+  gint width       = buffer->width;
+  gint height      = buffer->height;
+  gint tile_width  = gegl_buffer_storage (buffer)->tile_width;
+  gint tile_height = gegl_buffer_storage (buffer)->tile_height;
+  gint bufy        = 0;
+
+  while (bufy < height)
+    {
+      gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
+      gint offsety = toff (tiledy, tile_height);
+      gint bufx    = 0;
+
+      while (bufx < width)
+        {
+          gint      tiledx  = buffer->x + bufx + buffer->total_shift_x;
+          gint      offsetx = toff (tiledx, tile_width);
+
+          gegl_tile_store_message (GEGL_TILE_STORE (buffer),
+                                  GEGL_TILE_VOID, 
+                                  indice(tiledx,tile_width), indice(tiledy,tile_height),0,
+                                  NULL);
+          bufx += (tile_width - offsetx);
+        }
+      bufy += (tile_height - offsety);
+    }
 }
 
 void

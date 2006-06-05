@@ -68,24 +68,6 @@ void        * gegl_buffer_get_format         (GeglBuffer *buffer);
 gint          gegl_buffer_pixels             (GeglBuffer *buffer);
 gint          gegl_buffer_px_size            (GeglBuffer *buffer);
 
-/***********************/
-
-gboolean      gegl_buffer_idle               (GeglBuffer *gegl_buffer);
-
-GeglStorage * gegl_buffer_storage            (GeglBuffer *buffer);
-
-/* Dirt handling */
-void          gegl_buffer_add_dirty          (GeglBuffer *gegl_buffer,
-                                              gint        x,
-                                              gint        y);
-
-void          gegl_buffer_flush_dirty        (GeglBuffer *buffer);
-
-gboolean      gegl_buffer_is_dirty           (GeglBuffer *buffer,
-                                              gint        x,
-                                              gint        y);
-
-
 void          gegl_buffer_set                  (GeglBuffer *buffer,
                                                 void       *src);
 
@@ -99,4 +81,24 @@ void          gegl_buffer_set_fmt (GeglBuffer  *buffer,
 void          gegl_buffer_get_fmt             (GeglBuffer *buffer,
                                                void       *dst,
                                                void       *format);
+
+GeglStorage * gegl_buffer_storage            (GeglBuffer *buffer);
+
+/* the following are remnants of how horizon used the precursor of the
+ * tile manager for it's purposes. For now it is not used
+
+gboolean      gegl_buffer_idle               (GeglBuffer *gegl_buffer);
+
+
+void          gegl_buffer_add_dirty          (GeglBuffer *gegl_buffer,
+                                              gint        x,
+                                              gint        y);
+
+void          gegl_buffer_flush_dirty        (GeglBuffer *buffer);
+
+gboolean      gegl_buffer_is_dirty           (GeglBuffer *buffer,
+                                              gint        x,
+                                              gint        y);
+*/
+
 #endif
