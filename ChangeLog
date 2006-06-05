@@ -1,5 +1,10 @@
 2006-06-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-allocator.h: add prototoype for get_type
+	function.
+
+2006-06-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-allocator.c: store allocators for different
 	pixel formats in a hash.
 

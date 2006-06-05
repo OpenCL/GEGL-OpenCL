@@ -47,6 +47,8 @@ struct _GeglBufferAllocatorClass
   GeglBufferClass parent_class;
 };
 
+GType         gegl_buffer_allocator_get_type           (void) G_GNUC_CONST;
+
 #if 0
 /** should be split out into a seperate subclass **/
 GeglBuffer * gegl_buffer_alloc  (GeglBufferAllocator *allocator,
