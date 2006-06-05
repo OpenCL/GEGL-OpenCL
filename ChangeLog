@@ -1,4 +1,9 @@
 2006-06-04  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-allocator.c: store allocators for different
+	pixel formats in a hash.
+
+2006-06-04  Øyvind Kolås  <pippin@gimp.org>
 	
 	* gegl/gegl-operation.c: (gegl_operation_have_rect): return NULL
 	if node not connected to another node.

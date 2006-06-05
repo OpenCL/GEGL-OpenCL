@@ -115,7 +115,7 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
     }
 }
 
-static GeglBufferAllocator *a_rgba8 = NULL;
+static GHashTable *allocators = NULL;
 
 GeglBuffer *
 gegl_buffer_new_from_format (void *babl_format,
@@ -126,20 +126,23 @@ gegl_buffer_new_from_format (void *babl_format,
 {
   GeglBufferAllocator *allocator = NULL;
 
+  if (!allocators)
+    allocators = g_hash_table_new (NULL, NULL);
+
   /* aquire a GeglBufferAllocator */
       /* iterate list of existing */
-      allocator = a_rgba8;
+      allocator = g_hash_table_lookup (allocators, babl_format);
       /* if no match, create new */
       if (allocator == NULL)
         {
           GeglStorage *storage = g_object_new (GEGL_TYPE_STORAGE,
                                                "format", babl_format,
                                                NULL);
-          a_rgba8 = g_object_new (GEGL_TYPE_BUFFER_ALLOCATOR,
+          allocator = g_object_new (GEGL_TYPE_BUFFER_ALLOCATOR,
                                   "source", storage,
                                   NULL);
           g_object_unref (storage);
-          allocator = a_rgba8;
+          g_hash_table_insert (allocators, babl_format, allocator);
         }
   /* check if we already have a GeglBufferAllocator for the needed tile slice */
   return gegl_buffer_alloc (allocator, x, y, width, height);
