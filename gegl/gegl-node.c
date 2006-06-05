@@ -91,7 +91,7 @@ gegl_node_class_init (GeglNodeClass * klass)
   g_object_class_install_property (gobject_class, PROP_OPERATION_OBJECT,
                                    g_param_spec_object ("operation-object",
                                    "Operation Object",
-                                   "The type of the associated GeglOperation",
+                                   "The associated GeglOperation instance",
                                    GEGL_TYPE_OPERATION,
                                    G_PARAM_WRITABLE |
                                    G_PARAM_CONSTRUCT));
