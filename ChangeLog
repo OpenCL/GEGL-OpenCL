@@ -1,4 +1,9 @@
-2006-06-03  Øyvind Kolås  <pippin@gimp.org>
+2006-06-04  Øyvind Kolås  <pippin@gimp.org>
+	
+	* gegl/gegl-operation.c: (gegl_operation_have_rect): return NULL
+	if node not connected to another node.
+
+2006-06-04  Øyvind Kolås  <pippin@gimp.org>
 
 	* README: borught slightly more in sync with rest of GEGL.
 

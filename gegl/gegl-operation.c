@@ -280,6 +280,8 @@ gegl_operation_get_have_rect (GeglOperation *operation,
   pad = gegl_node_get_pad (operation->node, input_pad_name);
   g_assert (pad);
   pad = gegl_pad_get_connected_to (pad);
+  if (!pad)
+    return NULL;
   g_assert (gegl_pad_get_node (pad));
   
   return gegl_node_get_have_rect (gegl_pad_get_node (pad));
