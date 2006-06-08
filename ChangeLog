@@ -1,3 +1,8 @@
+2006-06-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply): temporary(?) hack to
+	make output ghost pads possible for GeglGraphs.
+
 2006-06-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-node.c: (gegl_node_class_init): changed blurb of

@@ -86,6 +86,10 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
 
   pad = gegl_node_get_pad (root, pad_name);
 
+  /* Redirect if the pad doesn't really belong to the root node (this is a hack and should have a better infrastructure) */
+  if (pad->node != root)
+    root = pad->node;
+
 #if 0
   /* This part does the evaluation of the ops, depth first. */
   gegl_log_debug(__FILE__, __LINE__,"eval_mgr_apply",
