@@ -1,3 +1,14 @@
+2006-06-10  Øyvind Kolås  <pippin@gimp.org>
+
+        When finally voiding (freeing) tiles associated with buffers
+        do it in a finalize handler and not in the dispose handler 
+        (the same tiles were sometimes being voided multiple times).
+
+	* gegl/buffer/gegl-buffer.c:
+          (gegl_buffer_dispose): moved to
+          (gegl_buffer_finalize),
+	  (gegl_buffer_class_init): s/dispose/finalize.
+
 2006-06-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply): temporary(?) hack to

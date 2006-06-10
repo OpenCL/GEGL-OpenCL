@@ -193,8 +193,9 @@ void gegl_buffer_stats (void)
 #include <string.h>
 
 static void gegl_buffer_void (GeglBuffer *buffer);
+
 static void
-gegl_buffer_dispose (GObject *object)
+gegl_buffer_finalize (GObject *object)
 {
   GeglBuffer *buffer;
   GeglTileTrait *trait;
@@ -209,7 +210,7 @@ gegl_buffer_dispose (GObject *object)
     }
 
   de_allocated_buffers++;
-  (* G_OBJECT_CLASS (parent_class)->dispose) (object);
+  (* G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
 
 static GeglTileBackend *
@@ -459,7 +460,7 @@ gegl_buffer_class_init (GeglBufferClass *class)
   tile_store_class = (GeglTileStoreClass*) class;
 
   parent_class = g_type_class_peek_parent (class);
-  gobject_class->dispose = gegl_buffer_dispose;
+  gobject_class->finalize = gegl_buffer_finalize;
   gobject_class->constructor = gegl_buffer_constructor;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
@@ -622,6 +623,9 @@ gint gegl_buffer_px_size (GeglBuffer *buffer)
 /* the setter and getter were merged into a single buf iterator,
  * this iterator should be refactored to provide a linear buffer object
  * that is iterating. Making it easier to reuse for other optimized traversals.
+ *
+ * babl conversion should probably be done on a tile by tile, or even scanline by
+ * scanline basis instead of allocating large temporary buffers. (using babl for "memcpy")
  */
 static void inline
 gegl_buffer_iterate_fmt (GeglBuffer *buffer,
@@ -790,3 +794,4 @@ gegl_buffer_get_fmt (GeglBuffer *buffer,
   gboolean write;
   gegl_buffer_iterate_fmt (buffer, dst, write = FALSE, format);
 }
+
