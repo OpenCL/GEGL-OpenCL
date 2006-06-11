@@ -15,27 +15,14 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * Copyright 2003 Calvin Williamson
+ * Copyright 2006 Øyvind Kolås
  */
 
-#ifndef __GEGL_H__
-#define __GEGL_H__
-
-#include <glib-object.h>
+#ifndef GEGL_XML_H
+#define GEGL_XML_H
 
 #include <gegl-types.h>
 
-#include <gegl-connection.h>
-#include <gegl-graph.h>
-#include <gegl-init.h>
-#include <gegl-node.h>
-#include <gegl-object.h>
-#include <gegl-operation.h>
-#include <gegl-pad.h>
-#include <gegl-utils.h>
-#include <gegl-visitable.h>
-#include <gegl-visitor.h>
-#include <gegl-buffer.h>
-#include <gegl-xml.h>
+GeglNode *gegl_xml_parse (const gchar *xmldata);
 
-#endif  /* __GEGL_H__ */
+#endif

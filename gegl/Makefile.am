@@ -22,7 +22,8 @@ GEGL_sources = \
 	gegl-pad.c			\
 	gegl-utils.c			\
 	gegl-visitable.c		\
-	gegl-visitor.c
+	gegl-visitor.c			\
+	gegl-xml.c
 
 GEGL_public_headers = \
 	gegl.h			\
@@ -36,7 +37,8 @@ GEGL_public_headers = \
 	gegl-types.h		\
 	gegl-utils.h		\
 	gegl-visitable.h	\
-	gegl-visitor.h
+	gegl-visitor.h		\
+	gegl-xml.h
 
 libgegl_1_0_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 
