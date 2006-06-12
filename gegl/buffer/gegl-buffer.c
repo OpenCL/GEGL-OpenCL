@@ -431,9 +431,6 @@ get_tile (GeglTileStore *tile_store,
   GeglTileTraits *traits = GEGL_TILE_TRAITS (tile_store);
   GeglTileStore  *source = GEGL_TILE_TRAIT (tile_store)->source;
   GeglTile       *tile   = NULL;
-  GeglStorage    *storage = gegl_buffer_storage (GEGL_BUFFER (tile_store));
-  gint tile_width = storage->tile_width;
-  gint tile_height = storage->tile_height;
 
   if (traits->chain!=NULL)
     tile = gegl_tile_store_get_tile (GEGL_TILE_STORE (traits->chain->data),
@@ -458,9 +455,7 @@ get_tile (GeglTileStore *tile_store,
        * precise shifts.
        */
       {
-        tile_width = tile_height;
-
-        tile->storage = storage;
+        tile->storage = gegl_buffer_storage (GEGL_BUFFER (tile_store));
         tile->storage_x = x;
         tile->storage_y = y;
         tile->storage_z = z;

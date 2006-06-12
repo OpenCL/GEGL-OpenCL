@@ -1,5 +1,11 @@
 2006-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: (get_tile): removed unused variables.
+
+2006-06-12  Øyvind Kolås  <pippin@gimp.org>
+
+	Added instrumentation to voiding of tiles.
+
 	* gegl/buffer/gegl-buffer-allocator.c: (gegl_buffer_alloc): reduced
 	abyss safety margins.
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_dispose): moved back here
@@ -9,9 +15,6 @@
 	(dbg_dealloc), (mem_entry_destroy), (mem_priv_set_tile),
 	(mem_priv_void_tile), (void_tile): Added instrumentation to tile chunk
 	allocations. Fixed voiding handler.
-
-
-	* gegl/gegl-init.c: (gegl_exit):
 
 2006-06-12  Øyvind Kolås  <pippin@gimp.org>
 
