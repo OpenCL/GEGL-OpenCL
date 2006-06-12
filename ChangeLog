@@ -1,5 +1,20 @@
 2006-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-allocator.c: (gegl_buffer_alloc): reduced
+	abyss safety margins.
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_dispose): moved back here
+	from finalize, but doing a nasty hack to make sure we're only run
+	once.
+	* gegl/buffer/gegl-tile-mem.c: (gegl_tile_mem_stats), (dbg_alloc),
+	(dbg_dealloc), (mem_entry_destroy), (mem_priv_set_tile),
+	(mem_priv_void_tile), (void_tile): Added instrumentation to tile chunk
+	allocations. Fixed voiding handler.
+
+
+	* gegl/gegl-init.c: (gegl_exit):
+
+2006-06-12  Øyvind Kolås  <pippin@gimp.org>
+
 	Made abyss behavior correct in detailed mode as well.
 
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor),

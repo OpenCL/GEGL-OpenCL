@@ -198,7 +198,7 @@ void gegl_buffer_stats (void)
 static void gegl_buffer_void (GeglBuffer *buffer);
 
 static void
-gegl_buffer_finalize (GObject *object)
+gegl_buffer_dispose (GObject *object)
 {
   GeglBuffer *buffer;
   GeglTileTrait *trait;
@@ -210,10 +210,11 @@ gegl_buffer_finalize (GObject *object)
       GEGL_IS_BUFFER_ALLOCATOR (trait->source))
     {
       gegl_buffer_void (buffer);
+      trait->source = NULL; /* this might be a dangerous way of marking that we have already voided */
     }
 
   de_allocated_buffers++;
-  (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  (* G_OBJECT_CLASS (parent_class)->dispose) (object);
 }
 
 static GeglTileBackend *
@@ -378,10 +379,6 @@ gegl_buffer_constructor (GType                  type,
        GeglRect self;
        gegl_rect_intersect (&self, &parent, &request);
 
-       if (self.h==0)
-         {
-          g_warning ("%i %i %i %i %i %i", buffer->abyss_height, parent.y, parent.h, buffer->shift_y, buffer->height, buffer->y);
-         }
        buffer->abyss_x = self.x;
        buffer->abyss_y = self.y;
        buffer->abyss_width = self.w;
@@ -453,7 +450,7 @@ get_tile (GeglTileStore *tile_store,
       tile->z = z;
       tile->buffer  = GEGL_BUFFER (tile_store);
 
-      /* storing information in tile, to enable the finalize
+      /* storing information in tile, to enable the dispose
        * function of the tile instance to "hook" back to the storage with correct coordinates.
        * 
        * this used to involve the shifting that had occured through TILE_OFFSETS, the shift
@@ -485,7 +482,7 @@ gegl_buffer_class_init (GeglBufferClass *class)
   tile_store_class = (GeglTileStoreClass*) class;
 
   parent_class = g_type_class_peek_parent (class);
-  gobject_class->finalize = gegl_buffer_finalize;
+  gobject_class->dispose = gegl_buffer_dispose;
   gobject_class->constructor = gegl_buffer_constructor;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
@@ -840,6 +837,7 @@ gegl_buffer_void (GeglBuffer *buffer)
   gint tile_height = gegl_buffer_storage (buffer)->tile_height;
   gint bufy        = 0;
 
+
   while (bufy < height)
     {
       gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
@@ -852,9 +850,9 @@ gegl_buffer_void (GeglBuffer *buffer)
           gint      offsetx = toff (tiledx, tile_width);
 
           gegl_tile_store_message (GEGL_TILE_STORE (buffer),
-                                  GEGL_TILE_VOID, 
-                                  indice(tiledx,tile_width), indice(tiledy,tile_height),0,
-                                  NULL);
+                                   GEGL_TILE_VOID, 
+                                   indice(tiledx,tile_width), indice(tiledy,tile_height),0,
+                                   NULL);
           bufx += (tile_width - offsetx);
         }
       bufy += (tile_height - offsety);

@@ -29,6 +29,35 @@
 G_DEFINE_TYPE(GeglTileMem, gegl_tile_mem, GEGL_TYPE_TILE_BACKEND)
 static GObjectClass *parent_class = NULL;
 
+
+static gint allocs=0;
+static gint mem_size=0;
+static gint max_allocs=0;
+static gint max_mem_size=0;
+
+void gegl_tile_mem_stats (void)
+{
+  g_warning ("leaked: %i chunks (%f mb)  peak: %i (%i bytes %fmb))",
+     allocs, mem_size/1024/1024.0, max_allocs, max_mem_size, max_mem_size/1024/1024.0);
+}
+
+static void dbg_alloc(int size)
+{
+  allocs++;
+  mem_size+=size;
+  if (allocs>max_allocs)
+    max_allocs=allocs;
+  if (mem_size>max_mem_size)
+    max_mem_size=mem_size;
+}
+static void dbg_dealloc(int size)
+{
+  allocs--;
+  mem_size-=size;
+}
+
+
+
 typedef struct _MemEntry MemEntry;
 typedef struct _MemBank MemBank;
 typedef struct _MemPriv MemPriv;
@@ -37,6 +66,7 @@ struct _MemEntry {
   gint    x;
   gint    y;
   gint    z;
+  gint    size;
   guchar *offset; 
 };
 
@@ -52,6 +82,7 @@ static void mem_entry_destroy (gpointer self, gpointer foo)
   MemEntry *entry = (MemEntry*)self;
   if (entry->offset!= NULL)
     g_free (entry->offset);
+  dbg_dealloc (entry->size);
   g_free (self);
 }
 
@@ -160,7 +191,9 @@ static gboolean mem_priv_set_tile (MemPriv *priv,
       entry->y=y;
       entry->z=z;
       entry->offset = g_malloc (size);
+      entry->size = size;
       bank->entries = g_slist_prepend (bank->entries, entry);
+      dbg_alloc (size);
     }
   memcpy (entry->offset, data, size);
   return TRUE;
@@ -169,9 +202,7 @@ static gboolean mem_priv_set_tile (MemPriv *priv,
 static gboolean mem_priv_void_tile (MemPriv *priv,
                                     gint     x,
                                     gint     y,
-                                    gint     z,
-                                    guchar  *data,
-                                    gint     size)
+                                    gint     z)
 {
   MemEntry *entry = NULL;
   GSList *banks = priv->banks;
@@ -260,8 +291,7 @@ gboolean void_tile (GeglTileStore *store,
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
   GeglTileMem     *tile_mem = GEGL_TILE_MEM (backend);
 
-  mem_priv_void_tile ((MemPriv*)tile_mem->priv, x, y, z,
-                      tile->data, backend->tile_size);
+  mem_priv_void_tile ((MemPriv*)tile_mem->priv, x, y, z);
   return TRUE;
 }
 
