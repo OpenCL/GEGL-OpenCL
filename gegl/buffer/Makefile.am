@@ -4,7 +4,6 @@ BUFFER_sources = \
     gegl-buffer-allocator.c	\
     gegl-buffer.c		\
     gegl-storage.c		\
-    gegl-tile-abyss.c		\
     gegl-tile-backend.c		\
     gegl-tile.c			\
     gegl-tile-cache.c		\
@@ -20,7 +19,6 @@ BUFFER_headers = \
     gegl-buffer.h		\
     gegl-buffer-types.h		\
     gegl-storage.h		\
-    gegl-tile-abyss.h		\
     gegl-tile-backend.h		\
     gegl-tile-cache.h		\
     gegl-tile-empty.h		\

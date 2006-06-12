@@ -18,6 +18,8 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
+/* abyss should be represented in the same way as shifting */
+
 #include <glib.h>
 #include <glib/gstdio.h>
 
@@ -30,8 +32,9 @@
 #include "gegl-tile-cache.h"
 #include "gegl-tile-log.h"
 #include "gegl-tile-empty.h"
-#include "gegl-tile-abyss.h"
 #include "gegl-buffer-allocator.h"
+#include "gegl-types.h"
+#include "gegl-utils.h"
 
 G_DEFINE_TYPE(GeglBuffer, gegl_buffer, GEGL_TYPE_TILE_TRAITS)
 
@@ -244,6 +247,8 @@ gegl_buffer_storage (GeglBuffer *buffer)
     return (GeglStorage *)tmp;
 }
 
+void babl_backtrack (void);
+
 static GObject *
 gegl_buffer_constructor (GType                  type,
                          guint                  n_params,
@@ -331,6 +336,11 @@ gegl_buffer_constructor (GType                  type,
       buffer->abyss_y = buffer->y;
       buffer->abyss_width = buffer->width;
       buffer->abyss_height = buffer->height;
+
+      if (buffer->height == 0)
+        {
+          g_warning ("making empty buf");
+        }
     }
   else if (buffer->abyss_width == 0 &&
            buffer->abyss_height == 0)
@@ -341,7 +351,44 @@ gegl_buffer_constructor (GType                  type,
        buffer->abyss_width,
        buffer->abyss_height);
     }
+  else if (buffer->abyss_width == -1 ||
+           buffer->abyss_height == -1)
+    {
+       buffer->abyss_x = GEGL_BUFFER (source)->abyss_x - buffer->shift_x;
+       buffer->abyss_y = GEGL_BUFFER (source)->abyss_y - buffer->shift_y;
+       buffer->abyss_width = GEGL_BUFFER (source)->abyss_width;
+       buffer->abyss_height = GEGL_BUFFER (source)->abyss_height;
+    }
 
+   /* intersect our own abyss with parent's abyss if it exists
+    */
+   if (GEGL_IS_BUFFER (source))
+     {
+       GeglRect parent = {
+         GEGL_BUFFER (source)->abyss_x - buffer->shift_x,
+         GEGL_BUFFER (source)->abyss_y - buffer->shift_y,
+         GEGL_BUFFER (source)->abyss_width,
+         GEGL_BUFFER (source)->abyss_height};
+       GeglRect request = {
+         buffer->abyss_x,
+         buffer->abyss_y,
+         buffer->abyss_width,
+         buffer->abyss_height
+       };
+       GeglRect self;
+       gegl_rect_intersect (&self, &parent, &request);
+
+       if (self.h==0)
+         {
+          g_warning ("%i %i %i %i %i %i", buffer->abyss_height, parent.y, parent.h, buffer->shift_y, buffer->height, buffer->y);
+         }
+       buffer->abyss_x = self.x;
+       buffer->abyss_y = self.y;
+       buffer->abyss_width = self.w;
+       buffer->abyss_height = self.h;
+     }
+
+  /* compute our own total shift */
   if (GEGL_IS_BUFFER (source))
     {
       GeglBuffer *source_buf;
@@ -350,7 +397,6 @@ gegl_buffer_constructor (GType                  type,
 
       buffer->total_shift_x = source_buf->total_shift_x;
       buffer->total_shift_y = source_buf->total_shift_y;
-
     }
   else
     {
@@ -375,27 +421,6 @@ gegl_buffer_constructor (GType                  type,
                                                 "size", 
                                                 needed_tiles (buffer->width, tile_width)+1,
                                                 NULL));
-
-
-  if (buffer->abyss_width != -1 )
-    {
-      gint tile_x, tile_y;
-      gint toff_x, toff_y;
-
-      tile_x = indice (buffer->abyss_x + buffer->total_shift_x, tile_width);
-      tile_y = indice (buffer->abyss_y + buffer->total_shift_y, tile_height);
-      toff_x = toff   (buffer->abyss_x + buffer->total_shift_x, tile_width);
-      toff_y = toff   (buffer->abyss_y + buffer->total_shift_y, tile_height);
-
-      gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_ABYSS,
-                                                  "backend", backend,
-                                                  "x",  tile_x-1,
-                                                  "y",  tile_y-1,
-                                                  "width",  needed_tiles (buffer->abyss_width - (tile_width-toff_x), tile_width) + 2,
-                                                  "height", needed_tiles (buffer->abyss_height - (tile_height-toff_y), tile_height) + 2,
-                                                  NULL));
-
-    }
 
   return object;
 }
@@ -533,6 +558,10 @@ gegl_buffer_init (GeglBuffer *buffer)
   buffer->shift_y = 0;
   buffer->total_shift_x = 0;
   buffer->total_shift_y = 0;
+  buffer->abyss_x = 0;
+  buffer->abyss_y = 0;
+  buffer->abyss_width = 0;
+  buffer->abyss_height = 0;
   buffer->format = NULL;
   allocated_buffers++;
 }
@@ -657,72 +686,136 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
    * saving for moving the 
    */
 
+  /*g_warning ("%i %i", buffer->abyss_y, buffer->abyss_height);*/
+
   while (bufy < height)
     {
       gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
       gint offsety = toff (tiledy, tile_height);
       gint bufx    = 0;
 
+      if (!(buffer->y + bufy + (tile_height) >= buffer->abyss_y &&
+            buffer->y + bufy < buffer->abyss_y+ buffer->abyss_height))
+        {
+          if (!write)
+            {
+              guchar *bp = ((guchar*)buf) + ((bufy) * width) * bpx_size;
+              memset (bp, 0x00, buffer->width * bpx_size);
+            }
+        }
+      else
+
       while (bufx < width)
         {
-          gint      pixels;
           gint      tiledx  = buffer->x + bufx + buffer->total_shift_x;
           gint      offsetx = toff (tiledx, tile_width);
-          GeglTile *tile    = gegl_tile_store_get_tile (GEGL_TILE_STORE (buffer), 
-                                  indice(tiledx,tile_width), indice(tiledy,tile_height),
-                                  0);
-          guchar   *dst, *tp, *bp;
-         
-          if (write)
-            gegl_tile_lock (tile);
+          gint      pixels;
+          guchar   *bp;
 
-          dst = gegl_tile_get_data (tile);
+          bp = ((guchar*)buf) + ((bufy) * width + bufx) * bpx_size;
 
           if (width + offsetx - bufx < tile_width)
             pixels = (width + offsetx - bufx) - offsetx;
           else
             pixels = tile_width - offsetx;
 
-          tp = ((guchar*)dst) + (offsety * tile_width + offsetx) * px_size;
-          bp = ((guchar*)buf) + ((bufy) * width + bufx) * bpx_size;
-
+          if (!(buffer->x + bufx + (tile_width) >= buffer->abyss_x &&
+                buffer->x + bufx < buffer->abyss_x+ buffer->abyss_width))
             {
               gint row;
-              for (row = offsety; row < tile_height &&
-                                  bufy + row - offsety < height;
-                                  row++)
+              if (!write)
                 {
-                  /* TODO: move the constants of these offset calculations out of the inner loop */
-
-                  /* recheck time:
-                   *   with memcpy on equal format: 53.708s   52.823s   53.169s
-                   *   using babl for everything:   1m12.898s 1m13.424s
-                   *
-                   *  babl seems to be slower than a memcpy, is this a bug?
-                   */
-                  
-                  if (format == buffer->format)
+                  for (row = offsety; row < tile_height &&
+                                      bufy + row - offsety < height;
+                                      row++)
                     {
-                      if (write)
-                        memcpy (tp, bp, pixels * px_size);
-                      else
-                        memcpy (bp, tp, pixels * px_size);
+                      memset (bp, 0x00, pixels * bpx_size);
+                      bp += width * bpx_size;
                     }
-                  else
-                    {
-                      if (write)
-                        babl_process (fish, bp, tp, pixels);
-                      else
-                        babl_process (fish, tp, bp, pixels);
-                    }
-
-                  tp += tile_width * px_size;
-                  bp += width * bpx_size;
                 }
             }
-          if (write)
-            gegl_tile_unlock (tile);
-          g_object_unref (G_OBJECT (tile));
+          else
+            {
+              guchar   *tile_base, *tp;
+              GeglTile *tile    = gegl_tile_store_get_tile (GEGL_TILE_STORE (buffer), 
+                                      indice(tiledx,tile_width), indice(tiledy,tile_height),
+                                      0);
+              if (!tile)
+                {
+                  g_warning ("didn't get tile, trying to continue");
+                  bufx += (tile_width - offsetx);
+                  continue;
+                }
+             
+              if (write)
+                gegl_tile_lock (tile);
+
+              tile_base = gegl_tile_get_data (tile);
+
+
+              tp = ((guchar*)tile_base) + (offsety * tile_width + offsetx) * px_size;
+
+                {
+                  gint row;
+                  for (row = offsety; row < tile_height &&
+                                      bufy + row - offsety < height;
+                                      row++)
+                    {
+                      /* TODO: move the constants of these offset calculations out of the inner loop */
+
+                      /* recheck time:
+                       *   with memcpy on equal format: 53.708s   52.823s   53.169s
+                       *   using babl for everything:   1m12.898s 1m13.424s
+                       *
+                       *  babl seems to be slower than a memcpy, is this a bug?
+                       */
+                      
+                      if ((buffer->y + bufy + (row-offsety) >= buffer->abyss_y &&
+                           buffer->y + bufy + (row-offsety) <  buffer->abyss_y + buffer->abyss_height)
+                       )
+                        {
+                          if (format == buffer->format)
+                            {
+                              if (write)
+                                memcpy (tp, bp, pixels * px_size);
+                              else
+                                memcpy (bp, tp, pixels * px_size);
+                            }
+                          else
+                            {
+                              if (write)
+                                babl_process (fish, bp, tp, pixels);
+                              else
+                                babl_process (fish, tp, bp, pixels);
+                          }
+                        }
+                      else if (!write)
+                        {
+                          memset (bp, 0x00, pixels * bpx_size);
+                        }
+
+                      if (!write)
+                        {
+                          if ((buffer->x + bufx)-(buffer->abyss_x)<0)
+                            {
+                              memset (bp, 0x00, bpx_size * ((buffer->x + bufx)-(buffer->abyss_x))*-1);
+                            }
+                          if ((buffer->abyss_x+buffer->abyss_width)-
+                              (buffer->x + bufx + pixels)<0)
+                            {
+                              gint diff = ((buffer->abyss_x+buffer->abyss_width)-(buffer->x + bufx + pixels))*-1;
+                              memset (bp + (pixels-diff)*bpx_size, 0x00, bpx_size * diff);
+                            }
+                        }
+
+                      tp += tile_width * px_size;
+                      bp += width * bpx_size;
+                    }
+                }
+              if (write)
+                gegl_tile_unlock (tile);
+              g_object_unref (G_OBJECT (tile));
+            }
           
           bufx += (tile_width - offsetx);
         }
