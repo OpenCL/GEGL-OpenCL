@@ -1,3 +1,9 @@
+2006-06-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_dispose): do not set the
+	trait->source = NULL when disposing it leads to leaks, for now just
+	accept that the buffer might be vodied multiple times.
+
 2006-06-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.c: (get_tile): removed unused variables.

@@ -210,7 +210,9 @@ gegl_buffer_dispose (GObject *object)
       GEGL_IS_BUFFER_ALLOCATOR (trait->source))
     {
       gegl_buffer_void (buffer);
+#if 0
       trait->source = NULL; /* this might be a dangerous way of marking that we have already voided */
+#endif
     }
 
   de_allocated_buffers++;
