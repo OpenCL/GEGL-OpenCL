@@ -48,7 +48,6 @@ struct _GeglOperation
   /*< private >*/
   GeglNode *node;  /* the node that this operation object is communicated
                       with through */
-  gchar    *name;
   gboolean  constructed;
 
   gint input_pads;
@@ -61,6 +60,7 @@ struct _GeglOperation
 struct _GeglOperationClass
 {
   GObjectClass  parent_class;
+  gchar    *name;
 
   gint     (*query_in_pad_fmt)  (GeglOperation *self,
                                  gint pad_no,
@@ -90,8 +90,9 @@ struct _GeglOperationClass
 
 GType         gegl_operation_get_type       (void) G_GNUC_CONST;
 
-void          gegl_operation_set_name       (GeglOperation *self,
-                                             const gchar   *name);
+void          gegl_operation_class_set_name (GeglOperationClass *self,
+                                             const gchar        *name);
+
 const gchar * gegl_operation_get_name       (GeglOperation *self);
 gboolean      gegl_operation_evaluate       (GeglOperation *self,
                                              const gchar   *output_pad);
@@ -138,7 +139,6 @@ GeglRect *gegl_operation_need_rect     (GeglOperation *operation);
 GeglRect *gegl_operation_have_rect     (GeglOperation *operation);
 GeglRect *gegl_operation_result_rect   (GeglOperation *operation);
 GeglRect *gegl_operation_comp_rect     (GeglOperation *operation);
-
 
 
 G_END_DECLS

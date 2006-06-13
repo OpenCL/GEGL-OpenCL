@@ -29,26 +29,11 @@
 #include "gegl-node.h"
 #include "gegl-pad.h"
 
-
-enum
-{
-  PROP_0
-};
-
 static void      gegl_operation_class_init (GeglOperationClass    *klass);
 static void      gegl_operation_init       (GeglOperation         *self);
 static GObject * constructor               (GType                  type,
                                             guint                  n_props,
                                             GObjectConstructParam *props);
-static void      finalize                  (GObject               *gobject);
-static void      set_property              (GObject               *gobject,
-                                            guint                  prop_id,
-                                            const GValue          *value,
-                                            GParamSpec            *pspec);
-static void      get_property              (GObject               *gobject,
-                                            guint                  prop_id,
-                                            GValue                *value,
-                                            GParamSpec            *pspec);
 static void      associate                 (GeglOperation         *self);
 
 static gboolean calc_have_rect (GeglOperation *self);
@@ -64,10 +49,9 @@ gegl_operation_class_init (GeglOperationClass * klass)
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
   gobject_class->constructor  = constructor;
-  gobject_class->finalize     = finalize;
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-  
+ 
+  klass->name = NULL;  /* an operation class with name == NULL is not included
+                          when doing operation lookup by name */
   klass->associate = associate;
   klass->calc_have_rect = calc_have_rect;
   klass->calc_need_rect = calc_need_rect;
@@ -78,18 +62,6 @@ gegl_operation_class_init (GeglOperationClass * klass)
 static void
 gegl_operation_init (GeglOperation *self)
 {
-  self->name = NULL;
-}
-
-static void
-finalize (GObject *gobject)
-{
-  GeglOperation *self = GEGL_OPERATION (gobject);
-
-  if (self->name)
-    g_free (self->name);
-
-  G_OBJECT_CLASS (gegl_operation_parent_class)->finalize (gobject);
 }
 
 static GObject*
@@ -109,38 +81,6 @@ constructor (GType                  type,
   self->constructed = TRUE;
 
   return object;
-}
-
-static void
-set_property (GObject      *gobject,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
-  GeglOperation *object = GEGL_OPERATION (gobject);
-
-  switch (property_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-      break;
-    }
-}
-
-static void
-get_property (GObject      *gobject,
-              guint         property_id,
-              GValue       *value,
-              GParamSpec   *pspec)
-{
-  GeglOperation *object = GEGL_OPERATION (gobject);
-
-  switch (property_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-      break;
-    }
 }
 
 /**
@@ -414,3 +354,17 @@ gegl_operation_comp_rect     (GeglOperation *operation)
   return &operation->node->comp_rect;
 }
 
+void
+gegl_operation_class_set_name (GeglOperationClass *klass,
+                               const gchar        *new_name)
+{
+  if (klass->name)
+    g_free (klass->name);
+  klass->name = g_strdup (new_name);
+}
+
+const gchar *
+gegl_operation_get_name (GeglOperation *operation)
+{
+  return GEGL_OPERATION_GET_CLASS (operation)->name;
+}

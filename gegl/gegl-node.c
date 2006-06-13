@@ -41,8 +41,8 @@
 enum
 {
   PROP_0,
-  PROP_OPERATION,
-  PROP_OPERATION_OBJECT
+  PROP_OP_CLASS,
+  PROP_OPERATION
 };
 
 static void            gegl_node_class_init           (GeglNodeClass *klass);
@@ -68,11 +68,11 @@ static void            visitable_accept               (GeglVisitable *visitable,
                                                        GeglVisitor   *visitor);
 static GList*          visitable_depends_on           (GeglVisitable *visitable);
 static gboolean        visitable_needs_visiting       (GeglVisitable *visitable);
-static void            gegl_node_set_operation        (GeglNode      *self,
-                                                       const gchar   *operation);
 static void            gegl_node_set_operation_object (GeglNode      *self,
                                                        GeglOperation *operation);
-static const gchar *   gegl_node_get_operation        (GeglNode      *self);
+static void            gegl_node_set_op_class         (GeglNode      *self,
+                                                       const gchar   *op_class);
+static const gchar *   gegl_node_get_op_class         (GeglNode      *self);
 
 
 G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, GEGL_TYPE_OBJECT,
@@ -88,21 +88,20 @@ gegl_node_class_init (GeglNodeClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  g_object_class_install_property (gobject_class, PROP_OPERATION_OBJECT,
-                                   g_param_spec_object ("operation-object",
+  g_object_class_install_property (gobject_class, PROP_OPERATION,
+                                   g_param_spec_object ("operation",
                                    "Operation Object",
                                    "The associated GeglOperation instance",
                                    GEGL_TYPE_OPERATION,
                                    G_PARAM_WRITABLE |
                                    G_PARAM_CONSTRUCT));
-  g_object_class_install_property (gobject_class, PROP_OPERATION,
-                                   g_param_spec_string ("operation",
+  g_object_class_install_property (gobject_class, PROP_OP_CLASS,
+                                   g_param_spec_string ("class",
                                    "Operation Type",
-                                   "The kind of associated GeglOperation",
+                                   "The type of associated GeglOperation",
                                    "",
                                    G_PARAM_CONSTRUCT |
                                    G_PARAM_READWRITE));
-
 }
 
 static void
@@ -163,11 +162,10 @@ set_property (GObject      *gobject,
 {
   switch (property_id)
     {
-    case PROP_OPERATION:
-
-      gegl_node_set_operation (GEGL_NODE (gobject), g_value_get_string (value));
+    case PROP_OP_CLASS:
+      gegl_node_set_op_class (GEGL_NODE (gobject), g_value_get_string (value));
       break; 
-    case PROP_OPERATION_OBJECT:
+    case PROP_OPERATION:
       gegl_node_set_operation_object (GEGL_NODE (gobject), g_value_get_object (value));
       break; 
     default:
@@ -184,8 +182,8 @@ get_property (GObject    *gobject,
 {
   switch (property_id)
     {
-    case PROP_OPERATION:
-      g_value_set_string (value, gegl_node_get_operation (GEGL_NODE (gobject)));
+    case PROP_OP_CLASS:
+      g_value_set_string (value, gegl_node_get_op_class (GEGL_NODE (gobject)));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -645,29 +643,69 @@ gegl_node_evaluate (GeglNode    *self,
   return gegl_operation_evaluate (self->operation, output_pad);
 }
 
+static GType g_type_from_op_class2 (GType parent,
+                                    const gchar *op_class)
+{
+  GType ret = 0;
+  GType *types;
+  guint  count;
+  gint   no;
+
+  types = g_type_children (parent, &count);
+  if (!types)
+    return 0;
+  for (no=0; no < count; no++)
+    {
+      GeglOperationClass *klass = g_type_class_ref (types[no]);
+
+      if (klass->name != NULL &&
+          !strcmp (klass->name, op_class))
+        {
+          ret = types[no];
+          g_type_class_unref (klass);
+          g_free (types);
+          return ret;
+        }
+      else
+        {
+          ret = g_type_from_op_class2 (types[no], op_class);
+        }
+      g_type_class_unref (klass);
+      if (ret!=0)
+        break;
+    }
+  g_free (types);
+  return ret;
+}
+
+static GType g_type_from_op_class (const gchar *op_class)
+{
+  return g_type_from_op_class2 (GEGL_TYPE_OPERATION, op_class);
+}
+
 static void
-gegl_node_set_operation (GeglNode      *node,
-                         const gchar   *operation_name)
+gegl_node_set_op_class (GeglNode      *node,
+                        const gchar   *op_class)
 {
   g_return_if_fail (GEGL_IS_NODE (node));
-  g_return_if_fail (operation_name);
+  g_return_if_fail (op_class);
 
-  if (operation_name && operation_name[0])
+  if (op_class && op_class[0])
     {
       GType         type;
       GeglOperation *operation;
 
-      type = g_type_from_name (operation_name);
+      type = g_type_from_op_class (op_class);
       
       if (!type)
         {
-          g_warning ("Failed to set operation type %s, using OpNop", operation_name);
-          if (strcmp (operation_name, "OpNop"))
-            gegl_node_set_operation (node, "OpNop");
+          g_warning ("Failed to set operation type %s, using a passthrough op instead", op_class);
+          if (strcmp (op_class, "nop"))
+            gegl_node_set_op_class (node, "nop");
           return;
         }
 
-      operation = g_object_new (g_type_from_name (operation_name), NULL);
+      operation = g_object_new (type, NULL);
       gegl_node_set_operation_object (node, operation);
       g_object_unref (operation);
     }
@@ -693,10 +731,11 @@ gegl_node_set_operation_object (GeglNode      *self,
 }
 
 static const gchar *
-gegl_node_get_operation (GeglNode      *self)
-{ 
-  const gchar *type_name = G_OBJECT_TYPE_NAME (self->operation);
-  return &(type_name[0]);
+gegl_node_get_op_class (GeglNode      *self)
+{
+  if (!self->operation)
+    return NULL;
+  return GEGL_OPERATION_GET_CLASS (self->operation)->name;
 }
 
 void
@@ -750,19 +789,19 @@ gegl_node_set_valist (GeglNode     *self,
       GParamSpec *pspec = NULL;
       gchar      *error = NULL;
 
-      if (!strcmp (property_name, "operation"))
+      if (!strcmp (property_name, "class"))
         {
-          const gchar *operation_name;
+          const gchar *op_class;
         
           if (first_property_name != property_name)
             {
               g_warning (
-                "%s: attempt to change opertation type, and not first property in list.", G_STRFUNC);
+                "%s: attempt to change opertation type(class), and not first property in list.", G_STRFUNC);
 
               break;
             }
-          operation_name = va_arg (var_args, gchar*);
-          gegl_node_set_operation (self, operation_name);
+          op_class = va_arg (var_args, gchar*);
+          gegl_node_set_op_class (self, op_class);
         }
       else if (!strcmp (property_name, "name"))
         {
@@ -840,7 +879,7 @@ gegl_node_get_valist (GeglNode    *self,
       GParamSpec *pspec;
       gchar      *error;
 
-      if (!strcmp (property_name, "operation") ||
+      if (!strcmp (property_name, "class") ||
           !strcmp (property_name, "name"))
         {
           pspec = g_object_class_find_property (
@@ -888,7 +927,7 @@ gegl_node_set_property (GeglNode     *self,
                         const gchar  *property_name,
                         const GValue *value)
 {
-  if (!strcmp (property_name, "operation") ||
+  if (!strcmp (property_name, "class") ||
       !strcmp (property_name, "name"))
     {
       g_object_set_property (G_OBJECT (self),
@@ -909,7 +948,7 @@ gegl_node_get_property (GeglNode    *self,
                         const gchar *property_name,
                         GValue      *value)
 {
-  if (!strcmp (property_name, "operation") ||
+  if (!strcmp (property_name, "class") ||
       !strcmp (property_name, "name")
    )
     {

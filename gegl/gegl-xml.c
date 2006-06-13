@@ -101,7 +101,7 @@ static void start_element (GMarkupParseContext *context,
   else if (!strcmp (element_name, "node"))
     {
       GeglNode *new = gegl_graph_create_node (pd->gegl,
-             "operation", name2val (a, v, "class"),
+             "class", name2val (a, v, "class"),
              NULL);
       g_assert (new);
 
