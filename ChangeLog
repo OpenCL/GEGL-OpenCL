@@ -1,5 +1,14 @@
 2006-06-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-allocator.[ch]:
+	  (gegl_buffer_allocators_free): New function, 
+	  Free the underlying tiled buffers used as allocation pools for various
+	  pixel formats.
+	* gegl/gegl-init.c: (gegl_exit): Call the above function, as well as
+	a, ifdefed out block that enable dumping of buffer/tile stats.
+
+2006-06-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-xml.c: (gegl_xml_parse): redirect the output pad (this
 	hack leads to leaking of buffers at the moment. Graphs needs the
 	ability to route output from one of the interior nodes.

@@ -49,15 +49,7 @@ struct _GeglBufferAllocatorClass
 
 GType         gegl_buffer_allocator_get_type           (void) G_GNUC_CONST;
 
-#if 0
-/** should be split out into a seperate subclass **/
-GeglBuffer * gegl_buffer_alloc  (GeglBufferAllocator *allocator,
-                                 gint  x,
-                                 gint  y,
-                                 gint  width,
-                                 gint  height,
-                                 gint  shift_x);
-#endif
+void gegl_buffer_allocators_free (void);
 
 GeglBuffer *
 gegl_buffer_new_from_format (void *babl_format,

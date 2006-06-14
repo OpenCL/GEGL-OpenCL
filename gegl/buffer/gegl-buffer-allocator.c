@@ -148,3 +148,21 @@ gegl_buffer_new_from_format (void *babl_format,
   return gegl_buffer_alloc (allocator, x, y, width, height);
 }
 
+static void free_allocator (gpointer key,
+                            gpointer value,
+                            gpointer user_data)
+{
+  GObject *allocator = value;
+  g_object_unref (allocator);
+}
+
+void
+gegl_buffer_allocators_free (void)
+{
+  if (allocators)
+    {
+      g_hash_table_foreach (allocators, free_allocator, NULL);
+      g_hash_table_destroy (allocators);
+      allocators = NULL;
+    }
+}
