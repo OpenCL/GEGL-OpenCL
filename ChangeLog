@@ -1,3 +1,9 @@
+2006-06-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-xml.c: (gegl_xml_parse): redirect the output pad (this
+	hack leads to leaking of buffers at the moment. Graphs needs the
+	ability to route output from one of the interior nodes.
+
 2006-06-13  Øyvind Kolås  <pippin@gimp.org>
 
 	Register a name for the operations, and use that through a "class"

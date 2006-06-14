@@ -265,7 +265,7 @@ GeglNode *gegl_xml_parse (const gchar *xmldata)
   
   ret = GEGL_NODE (pd->gegl);
   /* hacky redirect */
-  gegl_node_add_pad (ret, gegl_node_get_pad (pd->root, "process"));
+  gegl_node_add_pad (ret, gegl_node_get_pad (pd->root, "output"));
   g_free (pd);
   return ret;
 }
