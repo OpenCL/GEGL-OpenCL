@@ -693,8 +693,16 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
         {
           if (!write)
             {
+              gint row;
               guchar *bp = ((guchar*)buf) + ((bufy) * width) * bpx_size;
-              memset (bp, 0x00, buffer->width * bpx_size);
+
+              for (row = offsety;
+                   row < tile_height && bufy + row - offsety < height;
+                   row++)
+                {
+                  memset (bp, 0x00, buffer->width * bpx_size);
+                  bp += buffer->width * bpx_size;
+                }
             }
         }
       else
