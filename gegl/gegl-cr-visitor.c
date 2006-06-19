@@ -63,4 +63,5 @@ visit_node (GeglVisitor *self,
 
   gegl_operation_calc_result_rect (operation);
   gegl_operation_calc_comp_rect (operation);
+  node->refs = gegl_node_get_num_sinks (node);
 }

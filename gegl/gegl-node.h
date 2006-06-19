@@ -57,6 +57,10 @@ struct _GeglNode
   GList         *sources;
   GList         *sinks;
 
+  gint           refs;      /*< set to number of nodes that depends on it before evaluation begins,
+                                each time data is fetched from the op the reference count is dropped,
+                                when it drops to zero, the op is asked to clean it's pads
+                             */
   gboolean       enabled;
 };
 

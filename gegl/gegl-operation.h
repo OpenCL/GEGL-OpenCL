@@ -59,6 +59,7 @@ struct _GeglOperationClass
                                  const gchar   *output_pad);
 
   void     (*associate)         (GeglOperation *self);
+  void     (*clean_pads)        (GeglOperation *self);
 
   gboolean (*calc_have_rect)    (GeglOperation *self);
   gboolean (*calc_need_rect)    (GeglOperation *self);
@@ -82,6 +83,7 @@ gboolean      gegl_operation_register       (GeglOperation *self,
                                              GeglNode      *node);
 void          gegl_operation_create_pad     (GeglOperation *self,
                                              GParamSpec    *param_spec);
+void          gegl_operation_clean_pads     (GeglOperation *self);
 gboolean      gegl_operation_calc_have_rect (GeglOperation *self);
 gboolean      gegl_operation_calc_need_rect (GeglOperation *self);
 gboolean      gegl_operation_calc_result_rect (GeglOperation *self);

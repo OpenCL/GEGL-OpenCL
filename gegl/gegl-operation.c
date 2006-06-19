@@ -35,6 +35,7 @@ static GObject * constructor               (GType                  type,
                                             guint                  n_props,
                                             GObjectConstructParam *props);
 static void      associate                 (GeglOperation         *self);
+static void      clean_pads                (GeglOperation *self);
 
 static gboolean calc_have_rect (GeglOperation *self);
 static gboolean calc_need_rect (GeglOperation *self);
@@ -53,6 +54,7 @@ gegl_operation_class_init (GeglOperationClass * klass)
   klass->name = NULL;  /* an operation class with name == NULL is not included
                           when doing operation lookup by name */
   klass->associate = associate;
+  klass->clean_pads = clean_pads;
   klass->calc_have_rect = calc_have_rect;
   klass->calc_need_rect = calc_need_rect;
   klass->calc_comp_rect = calc_comp_rect;
@@ -192,6 +194,28 @@ gegl_operation_associate (GeglOperation *self,
   g_assert (klass->associate);
   self->node = node;
   klass->associate (self);
+}
+
+
+/* this virtual method is here to clean up (unref) output
+ * pads when all other nodes that depend on the data on
+ * an output pad have used the data
+ */
+static void
+clean_pads (GeglOperation *self)
+{
+  g_warning ("Don't know how to clean pads of %s", gegl_node_get_debug_name (self->node));
+  return;
+}
+
+void
+gegl_operation_clean_pads (GeglOperation *self)
+{
+  GeglOperationClass *klass;
+  g_return_if_fail (GEGL_IS_OPERATION (self));
+  klass = GEGL_OPERATION_GET_CLASS (self);
+  g_assert (klass->clean_pads);
+  klass->clean_pads (self);
 }
 
 void

@@ -112,6 +112,7 @@ gegl_node_init (GeglNode *self)
   self->sinks       = NULL;
   self->sources     = NULL;
   self->operation   = NULL;
+  self->refs        = 0;
   self->enabled     = TRUE;
 }
 

@@ -92,6 +92,10 @@ visit_pad (GeglVisitor *self,
           g_object_set_property (G_OBJECT (operation),
                                  gegl_pad_get_name (pad),
                                  &value);
+          if (--gegl_pad_get_node (source_pad)->refs==0)
+            {
+              gegl_operation_clean_pads (source);
+            }
         }
     }
 }

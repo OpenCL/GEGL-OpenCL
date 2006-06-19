@@ -1,5 +1,30 @@
 2006-06-20  Øyvind Kolås  <pippin@gimp.org>
 
+	Reduced the memory usage of GEGL significantly by freeing up temporary
+	buffers immediatly when they are no longer needed.
+
+	* gegl/gegl-node.[ch]: added refs member to GeglNode struct, which
+	indicates how many references (uses) of this nodes pads will occur in
+	a processing of the composition.
+	* gegl/gegl-cr-visitor.c: (visit_node): set refs to the number of
+						sinks at the same time as
+						computation of comp and
+						result rects.
+	* gegl/gegl-debug-rect-visitor.c: (visit_node): output the number of
+							refs when showing
+							debug information.
+	* gegl/gegl-eval-visitor.c: (visit_pad): decrement node->refs, and
+						 invoke
+						 operation->clean_pads() when
+						 it drops to 0
+	* gegl/gegl-operation.[ch]: (gegl_operation_class_init),
+	(gegl_operation_associate), (clean_pads),
+	(gegl_operation_clean_pads): Added virtual method clean_pads() which
+				     unrefs the data stored at the output pads
+				     when it is no longer needed.
+
+2006-06-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile.c: (gegl_tile_lock), (gegl_tile_unlock):
 	commented out call to dirtying, since it is not in use at the moment.
 
