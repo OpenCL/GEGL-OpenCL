@@ -42,3 +42,10 @@ GEGL operation API freeze
 -----------------------------------------------------------------------------
 
 At some point the plug-in api for GEGL should be declared stable.
+
+Multithreading
+-----------------------------------------------------------------------------
+Make it possible to have multiple evaluations of the graph happening at the
+same time. (both the way the visitor pattern is implemented, and the reference
+counting for immediate freeing of buffers assumes a single thread of operation
+at the moment.)

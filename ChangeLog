@@ -1,3 +1,7 @@
+2006-06-19  Øyvind Kolås  <pippin@gimp.org>
+
+	* TODO: multithreading of evaluation.
+
 2006-06-20  Øyvind Kolås  <pippin@gimp.org>
 
 	Reduced the memory usage of GEGL significantly by freeing up temporary
@@ -12,6 +16,9 @@
 						result rects.
 	* gegl/gegl-debug-rect-visitor.c: (visit_node): output the number of
 							refs when showing
+	* gegl/gegl-operation.[ch]: (gegl_operation_class_init),
+	(gegl_operation_associate), (clean_pads),
+	(gegl_operation_clean_pads):
 							debug information.
 	* gegl/gegl-eval-visitor.c: (visit_pad): decrement node->refs, and
 						 invoke
