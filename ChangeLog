@@ -1,5 +1,10 @@
 2006-06-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* TODO: removed finished tasks, added refactoring of buffer
+	implementation to support multiple backends.
+
+2006-06-19  Øyvind Kolås  <pippin@gimp.org>
+
 	Added the ability to have one input, and one output ghost pad for a
 	graph. At the moment it uses the "nop" operation, and thus only works
 	for buffer pads. This works for simple uses of embedding graphs/trees

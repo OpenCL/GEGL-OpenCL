@@ -4,80 +4,14 @@
 `---| `--- `---| `---                                                 roadmap
 =============================================================================
 
-
-A list of things to be done, roughly sorted in the order that might
-make sense to do them.
-
-Code cleanup
------------------------------------------------------------------------------
-
- - Coding style fixes (done)
- - usage of gobject macros (done)
- - removal of dead code, what should happen to gil and friends?, the
-   ideas behind it are still valid, and would probably be faster than
-   fallbacks in many cases.
-
-
-Directory restructering
------------------------------------------------------------------------------
-
-A proposal for more directories in the source tree.
-
-gegl/
-    gegl/
-        (files for lib init, and interacting with the graph)
-        buffer/
-            (the content that previously lived in a folder called image)
-        operation/
-            base classes for point ops, compositor, sources, sinks etc.
-        operations-core/
-            (_nop, _tee, _proxy, _null) internal operations, maybe gmodules.
-    operations-base/ (gmodules)
-        (porter-duff, blank, gaussian blur, brightness+contrast)
-    docs/
-
-API shakeup
------------------------------------------------------------------------------
-
-Document the publically exported header of GEGL, create some minimal test
-applications for reading images, doing some filtering and compositing as
-well as writing the result back out. (done (outside the gegl module))
-
-
-gggl buffers and simple operations
------------------------------------------------------------------------------
-
-The first step towards a working processing engine, could operate on a single
-pixel representation using a linear gggl buffer, this should probably be
-done using a floating point buffer. Using a single buffer type will postpone
-the issue of colorspace negotation. At this point some simple will need
-to be implemented to allow testing. (done (what was presented at the first LGM)
-
-
-ROI calculations
------------------------------------------------------------------------------
-
-Making the nodes use have rects and need rects. As described in
-http://www.acm.org/pubs/citations/proceedings/graph/192161/p147-shantzis/
-(done)
-
-
 GEGL buffers
 -----------------------------------------------------------------------------
 
 Replace/augment the functionality provided by the linear gggl buffers with
-tile based cached GEGL buffers.
-(done, based on the work from horizon)
+tile based cached GEGL buffers. (done, based on the work from horizon)
 
-
-Pixelformat conversion library
------------------------------------------------------------------------------
-
-Extract the code used in gggl's color format proxy code to a separate library
-for reuse, this will provide the base for adding a pixel format negotiation
-pass to the processing.
-(done, is now in the CVS module babl)
-
+Make GeglBuffer be an interface (or a container containing a TiledBackend,
+LinearBackend GimpTileManagerBackend).
 
 Pixel format negotation
 -----------------------------------------------------------------------------
@@ -91,27 +25,18 @@ Right now all computation is done in 32bit floating point RGBA,. allowing
 operations to have different pixelformat evalutae handlers,. and capabilities
 that are reference tested against the floating point is important.
 
-
-gggl2GEGL
+Optimized paths
 -----------------------------------------------------------------------------
 
-Migration of useful ops from gggl to GEGL.
+Add the ability to choose different implementations of the ops at runtime,
+for insance using cairo/glitz/generated code. This should is closely related
+to the pixel format negotiation.
 
-
-cairo speedup
------------------------------------------------------------------------------
-
-Implement alternate codepaths using cairo for 8bit versions, this will
-eventually lead to the capability of using OpenGL through GEGL, cairo and glitz
-to do hardware accelerated rendering of the projection for common usages.
-
-
-GIMP plug-in operation
+GIMP plug-in proxy op.
 -----------------------------------------------------------------------------
 
 A GEGL operation acting as a proxy to legacy gimp plug-ins will drag a lot
 of the existing GIMP functionality along.
-
 
 GEGL operation API freeze
 -----------------------------------------------------------------------------
