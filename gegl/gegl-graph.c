@@ -28,6 +28,7 @@
 #include "gegl-visitable.h"
 #include "gegl-pad.h"
 #include "gegl-visitor.h"
+#include "gegl-connection.h"
 
 enum
 {
@@ -45,7 +46,6 @@ static void get_property          (GObject        *object,
                                    guint           property_id,
                                    GValue         *value,
                                    GParamSpec     *pspec);
-
 
 G_DEFINE_TYPE(GeglGraph, gegl_graph, GEGL_TYPE_NODE)
 
@@ -207,3 +207,36 @@ gegl_graph_create_node (GeglGraph   *self,
   return node;
 }
 
+GeglNode *
+gegl_graph_get_output_nop (GeglGraph    *graph)
+{
+  GeglNode *node = GEGL_NODE (graph);
+  GeglPad  *pad;
+
+  pad = gegl_node_get_pad (node, "output");
+  if (!pad)
+    {
+      GeglNode *nop = g_object_new (GEGL_TYPE_NODE, "class", "nop", NULL);
+      gegl_node_add_pad (GEGL_NODE (graph), gegl_node_get_pad (nop, "output"));
+      g_object_set (nop, "name", "out-foo", NULL);
+      return nop;
+    }
+  return gegl_pad_get_node (pad);
+}
+
+GeglNode *
+gegl_graph_get_input_nop (GeglGraph    *graph)
+{
+  GeglNode *node = GEGL_NODE (graph);
+  GeglPad  *pad;
+
+  pad = gegl_node_get_pad (node, "input");
+  if (!pad)
+    {
+      GeglNode *nop = g_object_new (GEGL_TYPE_NODE, "class", "nop", NULL);
+      gegl_node_add_pad (GEGL_NODE (graph), gegl_node_get_pad (nop, "input"));
+      g_object_set (nop, "name", "in-foo", NULL);
+      return nop;
+    }
+  return gegl_pad_get_node (pad);
+}

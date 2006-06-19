@@ -73,29 +73,21 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   GeglVisitor  *have_visitor;
   GeglVisitor  *need_visitor;
   GeglVisitor  *cr_visitor;
-  GeglVisitor  *debug_rect_visitor;
   GeglVisitor  *eval_visitor;
   GeglPad      *pad;
 
   g_return_if_fail (GEGL_IS_EVAL_MGR (self));
   g_return_if_fail (GEGL_IS_NODE (root));
 
-  g_object_ref (root);
   if (pad_name == NULL)
     pad_name = "output";
-
   pad = gegl_node_get_pad (root, pad_name);
 
-  /* Redirect if the pad doesn't really belong to the root node (this is a hack and should have a better infrastructure) */
+  /* Use the redirect output NOP of a graph instead of a graph if a traversal
+   * is attempted directly on a graph */
   if (pad->node != root)
     root = pad->node;
-
-#if 0
-  /* This part does the evaluation of the ops, depth first. */
-  gegl_log_debug(__FILE__, __LINE__,"eval_mgr_apply",
-                 "begin eval-compute for node: %s %p pad: %s",
-                 G_OBJECT_TYPE_NAME(root), root, pad_name);
-#endif
+  g_object_ref (root);
 
   have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, NULL);
   gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE(root));
@@ -120,15 +112,19 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   cr_visitor = g_object_new (GEGL_TYPE_CR_VISITOR, NULL);
   gegl_visitor_bfs_traverse (cr_visitor, GEGL_VISITABLE(root));
   g_object_unref (cr_visitor);
-  debug_rect_visitor = g_object_new (GEGL_TYPE_DEBUG_RECT_VISITOR, NULL);
 
-  /*
-   */
   root->result_rect = self->roi;
-  
+
+
   if(getenv("GEGL_DEBUG_RECTS")!=NULL)
-    gegl_visitor_dfs_traverse (debug_rect_visitor, GEGL_VISITABLE(root));
-  g_object_unref (debug_rect_visitor);
+    {
+      GeglVisitor  *debug_rect_visitor;
+
+      debug_rect_visitor = g_object_new (GEGL_TYPE_DEBUG_RECT_VISITOR, NULL);
+        gegl_visitor_dfs_traverse (debug_rect_visitor, GEGL_VISITABLE(root));
+      g_object_unref (debug_rect_visitor);
+    }
+
   eval_visitor = g_object_new (GEGL_TYPE_EVAL_VISITOR, NULL);
   gegl_visitor_dfs_traverse (eval_visitor, GEGL_VISITABLE(pad));
   g_object_unref (eval_visitor);

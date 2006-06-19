@@ -74,7 +74,6 @@ static void            gegl_node_set_op_class         (GeglNode      *self,
                                                        const gchar   *op_class);
 static const gchar *   gegl_node_get_op_class         (GeglNode      *self);
 
-
 G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, GEGL_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (GEGL_TYPE_VISITABLE,
                                                 visitable_init))
@@ -568,7 +567,7 @@ gegl_node_apply (GeglNode    *self,
   gegl_eval_mgr_apply (eval_mgr, self, output_prop_name);
   g_object_unref (eval_mgr);
 }
-
+#include "gegl-graph.h"
 GList *
 gegl_node_get_depends_on (GeglNode *self)
 {
@@ -578,7 +577,12 @@ gegl_node_get_depends_on (GeglNode *self)
   while (llink)
     {
       GeglConnection *connection = llink->data;
-      GeglNode * source_node = gegl_connection_get_source_node (connection);
+      GeglNode * source_node;
+
+      /* this indirection is to make sure we follow the connection correctly
+       * if the connected node, is the ghost pad of a graph
+       */
+      source_node = gegl_pad_get_node (gegl_connection_get_source_prop (connection));
 
       /* It may already be on the list, so check first */
       if (! g_list_find (depends_on, source_node))

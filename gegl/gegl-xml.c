@@ -48,7 +48,6 @@ enum {
 struct _ParseData {
   gint        state;
   GeglGraph  *gegl;
-  GeglNode   *root;  /*< the top of this projection */
   GeglNode   *iter;  /*< the iterator we're either connecting to input|aux of
                          depending on context */
   GList      *parent; /*< a stack of parents, as we are recursing into aux
@@ -90,13 +89,24 @@ static void start_element (GMarkupParseContext *context,
 
   if (!strcmp (element_name, "gegl"))
     {
-      g_assert (pd->gegl == NULL);
-      pd->gegl = g_object_new (GEGL_TYPE_GRAPH, NULL);
     }
   else if (!strcmp (element_name, "tree"))
     {
-      g_assert (pd->root == NULL);
+      GeglNode *new = g_object_new (GEGL_TYPE_GRAPH, NULL);
+      if (pd->gegl == NULL)
+        {
+          pd->gegl = GEGL_GRAPH (new);
+        }
+      else
+        {
+        }
       pd->state=STATE_TREE_NORMAL;
+      pd->parent = g_list_prepend (pd->parent, new);
+      gegl_graph_get_output_nop (GEGL_GRAPH (new));
+      if (pd->iter)
+        gegl_node_connect (pd->iter, "input", new, "output");
+      new = gegl_graph_get_output_nop (GEGL_GRAPH (new));
+      pd->iter = new;
     }
   else if (!strcmp (element_name, "node"))
     {
@@ -154,18 +164,14 @@ static void start_element (GMarkupParseContext *context,
         v++;
       }
 
-      if (pd->root == NULL)
-        {
-          pd->root = new;
-          pd->state = STATE_TREE_FIRST_CHILD;
-        }
-      else if (pd->state == STATE_TREE_FIRST_CHILD)
+      if (pd->state == STATE_TREE_FIRST_CHILD)
         {
           gegl_node_connect (pd->iter, "aux", new, "output");
         }
       else
         {
-          gegl_node_connect (pd->iter, "input", new, "output");
+          if (pd->iter)
+            gegl_node_connect (pd->iter, "input", new, "output");
         }
       pd->parent = g_list_prepend (pd->parent, new);
       pd->state = STATE_TREE_FIRST_CHILD;
@@ -173,6 +179,7 @@ static void start_element (GMarkupParseContext *context,
     }
   else if (!strcmp (element_name, "graph"))
     {
+      
       /*NYI*/
     }
 }
@@ -193,6 +200,18 @@ static void end_element (GMarkupParseContext *context,
     }
   else if (!strcmp (element_name, "tree"))
     {
+      if (gegl_node_get_pad (pd->iter, "input"))
+        {
+          gegl_node_connect (pd->iter, "input",
+             gegl_graph_get_input_nop (GEGL_GRAPH (pd->parent->data)), "output");
+          pd->iter   = gegl_graph_get_input_nop (GEGL_GRAPH (pd->parent->data));
+        }
+      else
+        {
+          pd->iter = NULL;
+        }
+      pd->parent = g_list_remove (pd->parent, pd->parent->data);
+      pd->state = STATE_TREE_NORMAL;
     }
   else if (!strcmp (element_name, "node"))
     {
@@ -264,9 +283,6 @@ GeglNode *gegl_xml_parse (const gchar *xmldata)
   g_list_foreach (pd->refs, each_ref, pd);
   
   ret = GEGL_NODE (pd->gegl);
-  /* hacky redirect */
-  gegl_node_add_pad (ret, gegl_node_get_pad (pd->root, "output"));
   g_free (pd);
   return ret;
 }
-
