@@ -231,7 +231,7 @@ gegl_tile_lock (GeglTile *tile)
   /*fprintf (stderr, "global tile locking: %i %i\n", locks, unlocks);*/
 
   gegl_tile_unclone (tile);
-  gegl_buffer_add_dirty (tile->buffer, tile->x, tile->y);
+  /*gegl_buffer_add_dirty (tile->buffer, tile->x, tile->y);*/
 }
 
 void
@@ -245,7 +245,7 @@ gegl_tile_unlock (GeglTile *tile)
     }
   if (tile->lock == 0)
     {
-      gegl_buffer_add_dirty (tile->buffer, tile->x, tile->y);
+      /*gegl_buffer_add_dirty (tile->buffer, tile->x, tile->y);*/
       tile->rev++;
     }
 }
@@ -294,8 +294,8 @@ gegl_tile_swp (GeglTile *a,
   gegl_tile_unclone (a);
   gegl_tile_unclone (b);
 
-  gegl_buffer_add_dirty (a->buffer, a->x, a->y);
-  gegl_buffer_add_dirty (b->buffer, b->x, b->y);
+/*  gegl_buffer_add_dirty (a->buffer, a->x, a->y);
+  gegl_buffer_add_dirty (b->buffer, b->x, b->y);*/
 
   g_assert (a->size == b->size);
 

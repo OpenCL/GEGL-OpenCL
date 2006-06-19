@@ -1,3 +1,8 @@
+2006-06-20  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-tile.c: (gegl_tile_lock), (gegl_tile_unlock):
+	commented out call to dirtying, since it is not in use at the moment.
+
 2006-06-19  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-operation.[ch]: removed dead code.
