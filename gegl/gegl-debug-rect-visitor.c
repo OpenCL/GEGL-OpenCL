@@ -59,8 +59,6 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-  GeglOperation *operation = node->operation;
-
   GEGL_VISITOR_CLASS (gegl_debug_rect_visitor_parent_class)->visit_node (self, node);
 
 #if 0
@@ -87,7 +85,7 @@ visit_node (GeglVisitor *self,
     "\tneed: %ix%i %i,%i\n" 
     "\tresult: %ix%i %i,%i\n" 
     "\tcomp: %ix%i %i,%i",   
-   G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (operation)),
+  gegl_node_get_debug_name (node),
   node->have_rect.w, node->have_rect.h,
   node->have_rect.x, node->have_rect.y,
   node->need_rect.w, node->need_rect.h,
@@ -96,5 +94,4 @@ visit_node (GeglVisitor *self,
   node->result_rect.x, node->result_rect.y,
   node->comp_rect.w, node->comp_rect.h,
   node->comp_rect.x, node->comp_rect.y);
-  
 }
