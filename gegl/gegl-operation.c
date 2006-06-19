@@ -77,9 +77,6 @@ constructor (GType                  type,
                                                                    props);
 
   self = GEGL_OPERATION (object);
-
-  self->constructed = TRUE;
-
   return object;
 }
 

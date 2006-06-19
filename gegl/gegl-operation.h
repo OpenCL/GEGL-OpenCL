@@ -48,32 +48,12 @@ struct _GeglOperation
   /*< private >*/
   GeglNode *node;  /* the node that this operation object is communicated
                       with through */
-  gboolean  constructed;
-
-  gint input_pads;
-  gint output_pads;
-  gint required_input_pads;
-  gint in_pad_fmt[MAX_INPUT_PADS];
-  gint out_pad_fmt[MAX_OUTPUT_PADS];
 };
 
 struct _GeglOperationClass
 {
   GObjectClass  parent_class;
   gchar    *name;
-
-  gint     (*query_in_pad_fmt)  (GeglOperation *self,
-                                 gint pad_no,
-                                 gint fmt);
-  gint     (*query_out_pad_fmt) (GeglOperation *self,
-                                 gint no,
-                                 gint fmt);
-  gint     (*set_in_pad_fmt)    (GeglOperation *self,
-                                 gint no,
-                                 gint fmt);
-  gint     (*set_out_pad_fmt)   (GeglOperation *self,
-                                 gint no,
-                                 gint fmt);
 
   gboolean (*evaluate)          (GeglOperation *self,
                                  const gchar   *output_pad);

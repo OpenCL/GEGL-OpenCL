@@ -1,5 +1,9 @@
 2006-06-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation.[ch]: removed dead code.
+
+2006-06-19  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed dirty flag from pads, it is currently unused.
 
 	* gegl/gegl-pad.[ch]: (gegl_pad_init), (visitable_needs_visiting):
