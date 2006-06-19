@@ -86,7 +86,6 @@ gegl_pad_init (GeglPad *self)
   self->param_spec  = NULL;
   self->node        = NULL;
   self->connections = NULL;
-  self->dirty       = TRUE;
 }
 
 static void
@@ -275,23 +274,6 @@ gegl_pad_set_node (GeglPad  *self,
 }
 
 gboolean
-gegl_pad_is_dirty (GeglPad *self)
-{
-  g_return_val_if_fail (GEGL_IS_PAD (self), TRUE);
-
-  return self->dirty;
-}
-
-void
-gegl_pad_set_dirty (GeglPad  *self,
-                    gboolean  flag)
-{
-  g_return_if_fail (GEGL_IS_PAD (self));
-
-  self->dirty = flag;
-}
-
-gboolean
 gegl_pad_is_output (GeglPad *self)
 {
   return GEGL_PAD_OUTPUT & self->param_spec->flags;
@@ -321,7 +303,5 @@ visitable_depends_on (GeglVisitable *visitable)
 static gboolean
 visitable_needs_visiting (GeglVisitable *visitable)
 {
-  GeglPad *self = GEGL_PAD (visitable);
-
-  return gegl_pad_is_dirty (self);
+  return TRUE;
 }

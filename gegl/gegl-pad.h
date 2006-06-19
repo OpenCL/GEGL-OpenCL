@@ -51,7 +51,6 @@ struct _GeglPad
   GParamSpec    *param_spec;
   GeglNode      *node;
   GList         *connections;
-  gboolean       dirty;
 };
 
 struct _GeglPadClass
@@ -70,9 +69,6 @@ void             gegl_pad_set_node            (GeglPad        *self,
 gboolean         gegl_pad_is_output           (GeglPad        *self);
 gboolean         gegl_pad_is_input            (GeglPad        *self);
 GeglPad        * gegl_pad_get_connected_to    (GeglPad        *self);
-gboolean         gegl_pad_is_dirty            (GeglPad        *self);
-void             gegl_pad_set_dirty           (GeglPad        *self,
-                                               gboolean        flag);
 GeglConnection * gegl_pad_connect             (GeglPad        *sink,
                                                GeglPad        *source);
 void             gegl_pad_disconnect          (GeglPad        *sink,
