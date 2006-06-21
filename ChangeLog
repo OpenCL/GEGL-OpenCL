@@ -1,5 +1,9 @@
 2006-06-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/Makefile.am: remove extranous / in header install path.
+
+2006-06-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* TODO: updated wording of the GEGL buffer todo item.
 
 2006-06-20  Jakub Steiner <jimmac@ximian.com>
