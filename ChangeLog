@@ -1,3 +1,7 @@
+2006-06-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* TODO: updated wording of the GEGL buffer todo item.
+
 2006-06-20  Jakub Steiner <jimmac@ximian.com>
 
 	* /docs/images/gegl-logo.svg: convert text to paths and fix the

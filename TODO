@@ -7,11 +7,9 @@
 GEGL buffers
 -----------------------------------------------------------------------------
 
-Replace/augment the functionality provided by the linear gggl buffers with
-tile based cached GEGL buffers. (done, based on the work from horizon)
-
-Make GeglBuffer be an interface (or a container containing a TiledBackend,
-LinearBackend GimpTileManagerBackend).
+Make GeglBuffer be an interface (or a use composition and allow for 
+TiledBackend, LinearBackend GimpTileManagerBackend). This will make
+integration with legacy GIMP code much easier.
 
 Pixel format negotation
 -----------------------------------------------------------------------------
