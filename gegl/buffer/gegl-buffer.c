@@ -55,27 +55,33 @@ enum {
   PROP_FORMAT     
 };
 
-
-
-static inline gint
-indice (gint i,
-        gint stride)
+/* compute the tile indice of a coordinate
+ * the stride is the width/height of tiles along the axis of coordinate
+ */
+static inline
+tile_indice (gint coordinate,
+             gint stride)
 {
-  if (i>=0)
-    return i/stride;
-  return ((i+1)/stride)-1;
+  if (coordinate>=0)
+    return coordinate/stride;
+  return (((coordinate+1)/stride)-1);
 }
 
-static inline gint toff (gint i,
-                         gint stride)
+/* computes the positive integer remainder (also for negative dividends)
+ */
+#define REMAINDER(dividend, divisor)         \
+   ((((dividend) < 0) ?                      \
+   (divisor) - ((-(dividend)) % (divisor)) : \
+   ((dividend) % (divisor))))
+
+/* compute the offset into the containing tile a coordinate has,
+ * the stride is the width/height of tiles along the axis of coordinate
+ */
+static inline gint
+tile_offset (gint coordinate,
+             gint stride)
 {
-  gint res;
-  if (i>=0)
-    return i%stride;
-  res = stride-(-1*i)%stride;
-  if (res==stride)
-    return 0;
-  return res;
+  return REMAINDER (coordinate,stride);
 }
 
 static inline gint needed_tiles (gint w,
@@ -685,7 +691,7 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
   while (bufy < height)
     {
       gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
-      gint offsety = toff (tiledy, tile_height);
+      gint offsety = tile_offset (tiledy, tile_height);
       gint bufx    = 0;
 
       if (!(buffer->y + bufy + (tile_height) >= buffer->abyss_y &&
@@ -710,7 +716,7 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
       while (bufx < width)
         {
           gint      tiledx  = buffer->x + bufx + buffer->total_shift_x;
-          gint      offsetx = toff (tiledx, tile_width);
+          gint      offsetx = tile_offset (tiledx, tile_width);
           gint      pixels;
           guchar   *bp;
 
@@ -740,7 +746,7 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
             {
               guchar   *tile_base, *tp;
               GeglTile *tile    = gegl_tile_store_get_tile (GEGL_TILE_STORE (buffer), 
-                                      indice(tiledx,tile_width), indice(tiledy,tile_height),
+                                      tile_indice(tiledx,tile_width), tile_indice(tiledy,tile_height),
                                       0);
               if (!tile)
                 {
@@ -846,17 +852,17 @@ gegl_buffer_void (GeglBuffer *buffer)
   while (bufy < height)
     {
       gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
-      gint offsety = toff (tiledy, tile_height);
+      gint offsety = tile_offset (tiledy, tile_height);
       gint bufx    = 0;
 
       while (bufx < width)
         {
           gint      tiledx  = buffer->x + bufx + buffer->total_shift_x;
-          gint      offsetx = toff (tiledx, tile_width);
+          gint      offsetx = tile_offset (tiledx, tile_width);
 
           gegl_tile_store_message (GEGL_TILE_STORE (buffer),
                                    GEGL_TILE_VOID, 
-                                   indice(tiledx,tile_width), indice(tiledy,tile_height),0,
+                                   tile_indice(tiledx,tile_width), tile_indice(tiledy,tile_height),0,
                                    NULL);
           bufx += (tile_width - offsetx);
         }

@@ -1,3 +1,15 @@
+2006-06-22  Øyvind Kolås  <pippin@gimp.org>
+
+	Gave the tile offset and indice computation functions more descriptive
+	names.
+
+	* gegl/buffer/gegl-buffer.c:
+	  (REMAINDER): a macro to work around the lack of well definedness
+	  of % for negative numbers in C.
+	  (tile_indice): new name for indice()
+	  (tile_offset): new name for toff()
+	  (gegl_buffer_iterate_fmt), (gegl_buffer_void): use the new names.
+
 2006-06-21  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/Makefile.am: remove extranous / in header install path.
