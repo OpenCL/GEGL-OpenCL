@@ -18,16 +18,6 @@
  * Copyright 2006 Øyvind Kolås
  */
 
-/* TODO:
- *   - Add a graph element to the XML, it is important that the graph can be
- *     used in place of a node anywhere in a tree (or a graph). Routing nodes
- *     should probably be used for this. The routing nodes would be OpNop
- *     nodes, or subclasses of OpNop (with just a different name).
- *   - Create code to write out an in memory graph to either a graph, or a tree
- *     with embedded graphs for things that cannot be serialized as a tree with
- *     clones.
- */
-
 #include <glib.h>
 #include <glib-object.h>
 #include <stdlib.h>
@@ -284,5 +274,219 @@ GeglNode *gegl_xml_parse (const gchar *xmldata)
   
   ret = GEGL_NODE (pd->gegl);
   g_free (pd);
+  return ret;
+}
+
+/****/
+
+
+#define ind do{gint i;for(i=0;i<indent;i++)g_string_append(ss->buf, " ");}while(0)
+
+typedef struct _SerializeState SerializeState;
+struct _SerializeState
+{
+  GString    *buf;
+  gint        clone_count;
+  GHashTable *clones;
+};
+
+static void tuple (GString     *buf,
+                   const gchar *key,
+                   const gchar *value)
+{
+  g_string_append (buf, " ");
+  g_string_append (buf, key);
+  g_string_append (buf, "=");
+  g_string_append (buf, "'");
+  g_string_append (buf, value);
+  g_string_append (buf, "'");
+}
+
+static void encode_node_attributes (SerializeState *ss,
+                                    GeglNode       *node,
+                                    const           gchar *id)
+{
+  GParamSpec ** properties;
+  guint n_properties;
+  gchar *class;
+  gint i;
+
+  properties = gegl_node_list_properties (node, &n_properties);
+ 
+  gegl_node_get (node, "class", &class, NULL);
+  tuple (ss->buf, "class", class);
+  g_free (class);
+
+  for (i=0; i<n_properties; i++)
+    {
+      if (strcmp (properties[i]->name, "input") &&
+          strcmp (properties[i]->name, "output") &&
+          strcmp (properties[i]->name, "aux"))
+        {
+          if (properties[i]->value_type == G_TYPE_FLOAT)
+            {
+              gfloat value;
+              gchar str[64];
+              gegl_node_get (node, properties[i]->name, &value, NULL);
+              sprintf (str, "%f", value);
+              tuple (ss->buf, properties[i]->name, str);
+            }
+          else if (properties[i]->value_type == G_TYPE_INT)
+            {
+              gint value;
+              gchar str[64];
+              gegl_node_get (node, properties[i]->name, &value, NULL);
+              sprintf (str, "%i", value);
+              tuple (ss->buf, properties[i]->name, str);
+            }
+          else if (properties[i]->value_type == G_TYPE_STRING)
+            {
+              gchar *value;
+              gegl_node_get (node, properties[i]->name, &value, NULL);
+              tuple (ss->buf, properties[i]->name, value);
+              g_free (value);
+            }
+        }
+    } 
+    if (id != NULL)
+      tuple (ss->buf, "id", id);
+
+  g_free (properties);
+}
+
+static void add_stack (SerializeState *ss,
+                       gint            indent,
+                       GeglNode       *head)
+{
+
+  if (GEGL_IS_GRAPH (head))
+    {
+      GeglNode *iter;
+      GeglPad  *input;
+      iter = gegl_graph_get_output_nop (GEGL_GRAPH (head));
+      input = gegl_node_get_pad (iter, "input");
+      input = gegl_pad_get_connected_to (input);
+      iter = gegl_pad_get_node (input);
+
+      ind;g_string_append (ss->buf, "<tree>\n");
+      add_stack (ss, indent + 1, iter);
+      ind;g_string_append (ss->buf, "</tree>\n");
+    }
+  else if (GEGL_IS_NODE (head))
+    {
+      GeglNode *iter = head;
+
+      while (iter)
+        {
+          GeglPad *input, *aux;
+          const gchar *id=NULL; 
+
+          input = gegl_node_get_pad (iter, "input");
+          aux = gegl_node_get_pad (iter, "aux");
+
+          if (gegl_node_get_num_sinks (iter)>1)
+            {
+              const gchar *new_id = g_hash_table_lookup (ss->clones, iter);
+              if (new_id)
+                {
+                  ind; g_string_append (ss->buf, "<node class='clone' ref='");
+                  g_string_append (ss->buf, new_id);
+                  g_string_append (ss->buf, "'/>\n");
+                  return; /* terminate the stack, the cloned part is already
+                             serialized */
+                }
+              else
+                {
+                  gchar temp_id[64];
+                  sprintf (temp_id, "clone%i", ss->clone_count++);
+                  id = g_strdup (temp_id);
+                  g_hash_table_insert (ss->clones, iter, (gchar*)id);
+                  /* the allocation is freed by the hash table */
+                }
+            }
+
+          if (aux &&
+              gegl_pad_get_connected_to (aux))
+            {
+              GeglPad *source_pad;
+              source_pad = gegl_pad_get_connected_to (aux);
+              ind;g_string_append (ss->buf, "<node");
+              encode_node_attributes (ss, iter, id);
+              g_string_append (ss->buf, ">\n");
+              add_stack (ss, indent+1, gegl_pad_get_node (source_pad));
+              ind;g_string_append (ss->buf, "</node>\n");
+            }
+          else
+            {
+              gchar *class;
+              gegl_node_get (iter, "class", &class, NULL);
+
+              if (strcmp (class, "nop") &&
+                  strcmp (class, "clone"))
+                {
+                  ind;g_string_append (ss->buf, "<node");
+                  encode_node_attributes (ss, iter, id);
+                  g_string_append (ss->buf, "/>\n");
+                }
+
+              g_free (class);
+            }
+          id = NULL;
+          if (input)
+            {
+              GeglPad *source_pad;
+              source_pad = gegl_pad_get_connected_to (input);
+              if (source_pad)
+                {
+                  GeglNode *source_node = gegl_pad_get_node (source_pad);
+                    {
+                      iter = source_node;
+                    }
+                }
+              else
+                iter = NULL;
+            }
+          else
+            iter = NULL;
+        }
+    }
+}
+
+static void free_clone_id (gpointer key,
+                           gpointer value,
+                           gpointer user_data)
+{
+  g_free (value);
+}
+
+gchar *
+gegl_to_xml (GeglNode *gegl)
+{
+  gchar *ret;
+  SerializeState *ss = g_malloc0 (sizeof (SerializeState));
+  ss->buf = g_string_new ("");
+  ss->clones = g_hash_table_new (NULL, NULL);
+
+  g_string_append (ss->buf, "<?xml version='1.0' encoding='UTF-8'?>\n");
+  g_string_append (ss->buf, "<gegl>\n");
+
+  if (GEGL_IS_GRAPH (gegl))
+    {
+      add_stack (ss, 1, gegl);
+    }
+  else
+    {
+      g_string_append (ss->buf, " <tree>\n");
+      add_stack (ss, 2, gegl);
+      g_string_append (ss->buf, " </tree>\n");
+    }
+  
+  g_string_append (ss->buf, "</gegl>");
+
+  g_hash_table_foreach (ss->clones, free_clone_id, NULL);
+  g_hash_table_destroy (ss->clones);
+  
+  ret=g_string_free (ss->buf, FALSE);
+  g_free (ss);
   return ret;
 }

@@ -1,5 +1,21 @@
 2006-06-23  Øyvind Kolås  <pippin@gimp.org>
 
+	Added a function to serialize a graph of gegl nodes, either starting
+	with a container graph, or a node to an XML structure.
+
+	The XML structure is the same structure that is supported in the
+	parser, it is a hierarchical representation of the graph which allows
+	clones. This is capable of supporting any graph as long as the node
+	types are limited to sources (1 output), filters (1 input 1 output)
+	and composers (2 inputs 1 output).
+
+	* gegl/gegl-xml.h: (gegl_to_xml).
+	* gegl/gegl-xml.c: (gegl_xml_parse), (tuple),
+	(encode_node_attributes), (add_stack), (free_clone_id),
+	(gegl_to_xml): Added xml serializer.
+
+2006-06-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: Added missing return type. (gint).
 
 2006-06-22  Øyvind Kolås  <pippin@gimp.org>
