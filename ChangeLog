@@ -1,3 +1,7 @@
+2006-06-23  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: Added missing return type. (gint).
+
 2006-06-22  Øyvind Kolås  <pippin@gimp.org>
 
 	Gave the tile offset and indice computation functions more descriptive

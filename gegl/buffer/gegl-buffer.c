@@ -58,7 +58,7 @@ enum {
 /* compute the tile indice of a coordinate
  * the stride is the width/height of tiles along the axis of coordinate
  */
-static inline
+static inline gint
 tile_indice (gint coordinate,
              gint stride)
 {
