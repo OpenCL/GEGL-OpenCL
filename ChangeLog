@@ -1,3 +1,10 @@
+2006-06-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.h, gegl/buffer/gegl-tile-backend.c:
+	  modified to include babl/babl.h instead of just babl.h
+	* gegl/gegl-init.c: (gegl_exit): added BABL_DEBUG_BUFS for enabling
+	tile/buffer refererence leaks.
+
 2006-06-23  Øyvind Kolås  <pippin@gimp.org>
 
 	Added a function to serialize a graph of gegl nodes, either starting

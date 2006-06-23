@@ -19,15 +19,13 @@
  */
 
 #include "config.h"
-#include <babl.h>
+#include <babl/babl.h>
 #include <glib-object.h>
 #include "gegl-types.h"
 #include "gegl-init.h"
 #include "buffer/gegl-buffer-allocator.h"
 
-
 static gboolean gegl_initialized = FALSE;
-
 
 void
 gegl_init (int *argc,
@@ -48,11 +46,13 @@ gegl_exit (void)
 {
   gegl_buffer_allocators_free ();
   babl_destroy ();
+
   /* used when tracking buffer leaks (also tracks tiles, as well
    * as tiles.
    */
-#if 0
-  gegl_buffer_stats ();
-  gegl_tile_mem_stats ();
-#endif
+  if(getenv("GEGL_DEBUG_BUFS")!=NULL)
+    {
+      gegl_buffer_stats ();
+      gegl_tile_mem_stats ();
+    }
 }

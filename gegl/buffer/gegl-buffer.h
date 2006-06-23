@@ -21,7 +21,7 @@
 #include <glib-object.h>
 
 #include "gegl-buffer-types.h"
-#include <babl.h>
+#include <babl/babl.h>
 
 #ifndef _GEGL_BUFFER_H
 #define _GEGL_BUFFER_H
