@@ -23,19 +23,19 @@
 
 #include <glib-object.h>
 
-#include <gegl-types.h>
+#include <gegl/gegl-types.h>
 
-#include <gegl-connection.h>
-#include <gegl-graph.h>
-#include <gegl-init.h>
-#include <gegl-node.h>
-#include <gegl-object.h>
-#include <gegl-operation.h>
-#include <gegl-pad.h>
-#include <gegl-utils.h>
-#include <gegl-visitable.h>
-#include <gegl-visitor.h>
-#include <gegl-buffer.h>
-#include <gegl-xml.h>
+#include <gegl/gegl-connection.h>
+#include <gegl/gegl-graph.h>
+#include <gegl/gegl-init.h>
+#include <gegl/gegl-node.h>
+#include <gegl/gegl-object.h>
+#include <gegl/gegl-operation.h>
+#include <gegl/gegl-pad.h>
+#include <gegl/gegl-utils.h>
+#include <gegl/gegl-visitable.h>
+#include <gegl/gegl-visitor.h>
+#include <gegl/gegl-buffer.h>
+#include <gegl/gegl-xml.h>
 
 #endif  /* __GEGL_H__ */

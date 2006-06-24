@@ -21,7 +21,7 @@
 #ifndef GEGL_XML_H
 #define GEGL_XML_H
 
-#include <gegl-types.h>
+#include "gegl-types.h"
 
 gchar    * gegl_to_xml    (GeglNode *gegl);
 GeglNode * gegl_xml_parse (const gchar *xmldata);

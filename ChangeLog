@@ -1,3 +1,18 @@
+2006-06-25  Øyvind Kolås  <pippin@gimp.org>
+
+	Changed the way the headers are installed to mimick glib.
+	gegl.h is installed in prefix/include/gegl-x.x/gegl.h and
+	the rest in a gegl subdir in that directory.
+
+	If you've got an existing GEGL installation you need to
+	perform a rm -rf on your gegl include dir before doing
+	make install, for the header enviroment to be correct.
+	
+	* gegl.pc.in: Changed specified path.
+	* gegl/Makefile.am: Added a new subdir path to install headers in.
+	* gegl/gegl-xml.h: changed header to handle change.
+	* gegl/gegl.h: include headers with path.
+
 2006-06-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.h, gegl/buffer/gegl-tile-backend.c:

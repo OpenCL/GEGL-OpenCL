@@ -26,7 +26,6 @@ GEGL_sources = \
 	gegl-xml.c
 
 GEGL_public_headers = \
-	gegl.h			\
 	gegl-connection.h	\
 	gegl-graph.h		\
 	gegl-init.h		\
@@ -54,9 +53,11 @@ AM_LDFLAGS =  \
 	@DEP_LIBS@ @BABL_LIBS@
 
 
-libgeglincludedir = $(includedir)/gegl-1.0/gegl
+libgeglincludedir = $(includedir)/gegl-1.0
+libgeglsubincludedir = $(includedir)/gegl-1.0/gegl
 
-libgeglinclude_HEADERS = $(GEGL_public_headers) 
+libgeglinclude_HEADERS = gegl.h
+libgeglsubinclude_HEADERS = $(GEGL_public_headers) 
 
 
 #BUILT_SOURCES = \
