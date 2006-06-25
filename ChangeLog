@@ -1,5 +1,11 @@
 2006-06-25  Øyvind Kolås  <pippin@gimp.org>
 
+	Another installed change of organization of installed headers.
+
+	* gegl/gegl.h: changed path of buffer.
+	* gegl/buffer/Makefile.am: install headers in seperate subdir.
+
+2006-06-25  Øyvind Kolås  <pippin@gimp.org>
 	Changed the way the headers are installed to mimick glib.
 	gegl.h is installed in prefix/include/gegl-x.x/gegl.h and
 	the rest in a gegl subdir in that directory.
