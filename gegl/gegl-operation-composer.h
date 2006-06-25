@@ -44,8 +44,6 @@ struct _GeglOperationComposer
     GeglBuffer *input;
     GeglBuffer *aux;
     GeglBuffer *output;
-
-    gboolean    in_place;
 };
 
 typedef struct _GeglOperationComposerClass GeglOperationComposerClass;

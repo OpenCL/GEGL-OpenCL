@@ -1,4 +1,12 @@
 2006-06-25  Øyvind Kolås  <pippin@gimp.org>
+
+	Removed (defunct) references to in-place processing.
+
+	* gegl/gegl-operation-composer.[ch]:
+	(gegl_operation_composer_class_init),
+	(gegl_operation_composer_init), (get_property), (set_property):
+
+2006-06-25  Øyvind Kolås  <pippin@gimp.org>
 	
 	Added abstract base classes for source, filter and composer
 	operations that use GeglBuffers.

@@ -25,7 +25,6 @@ enum
   PROP_OUTPUT,
   PROP_INPUT,
   PROP_AUX,
-  PROP_IN_PLACE,
   PROP_LAST
 };
 
@@ -95,20 +94,11 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
                                                         G_PARAM_READWRITE |
                                                         GEGL_PAD_INPUT));
 
-  g_object_class_install_property (object_class, PROP_IN_PLACE,
-                                   g_param_spec_boolean ("in-place",
-                                                        "In place",
-                                                        "do processing in-place, modifying the passed in drawable.",
-                                                        FALSE,
-                                                        G_PARAM_CONSTRUCT |
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PAD_INPUT));
 }
 
 static void
 gegl_operation_composer_init (GeglOperationComposer *self)
 {
-  self->in_place = FALSE;
   self->input    = NULL;
   self->aux      = NULL;
   self->output   = NULL;
@@ -169,9 +159,6 @@ get_property (GObject      *object,
     case PROP_AUX:
       g_value_set_object (value, self->aux);
       break;
-    case PROP_IN_PLACE:
-      g_value_set_boolean (value, self->in_place);
-      break;
     default:
       break;
   }
@@ -192,9 +179,6 @@ set_property (GObject      *object,
       break;
     case PROP_AUX:
       self->aux = g_value_get_object(value);
-      break;
-    case PROP_IN_PLACE:
-      self->in_place = g_value_get_boolean (value);
       break;
     default:
       break;
