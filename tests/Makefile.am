@@ -2,6 +2,7 @@
 INCLUDES = \
 	-I$(top_srcdir)/gegl		\
 	-I$(top_srcdir)/tools/testsuite \
+	@BABL_CFLAGS@ \
 	@DEP_CFLAGS@
 
 TESTDEPS = \

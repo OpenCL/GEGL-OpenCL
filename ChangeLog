@@ -1,6 +1,6 @@
 2006-06-25  Øyvind Kolås  <pippin@gimp.org>
 
-	* tests/Makefile.am: Added babl cflags to compilation.
+	* tests/Makefile.am: Added babl cflags to compilation of tests.
 
 2006-06-25  Øyvind Kolås  <pippin@gimp.org>
 
