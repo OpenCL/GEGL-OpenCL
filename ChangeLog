@@ -1,4 +1,14 @@
 2006-06-25  Øyvind Kolås  <pippin@gimp.org>
+	
+	Added abstract base classes for source, filter and composer
+	operations that use GeglBuffers.
+
+	* gegl/Makefile.am: Added new files.
+	* gegl/gegl-operation-composer.[ch],
+	* gegl/gegl-operation-filter.[ch],
+	* gegl/gegl-operation-source.[ch]: Added files.
+
+2006-06-25  Øyvind Kolås  <pippin@gimp.org>
 
 	Another installed change of organization of installed headers.
 

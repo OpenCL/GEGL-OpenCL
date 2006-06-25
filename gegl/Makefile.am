@@ -19,6 +19,9 @@ GEGL_sources = \
 	gegl-node.c			\
 	gegl-object.c			\
 	gegl-operation.c        	\
+	gegl-operation-composer.c     	\
+	gegl-operation-filter.c       	\
+	gegl-operation-source.c       	\
 	gegl-pad.c			\
 	gegl-utils.c			\
 	gegl-visitable.c		\
@@ -26,17 +29,20 @@ GEGL_sources = \
 	gegl-xml.c
 
 GEGL_public_headers = \
-	gegl-connection.h	\
-	gegl-graph.h		\
-	gegl-init.h		\
-	gegl-node.h		\
-	gegl-object.h		\
-	gegl-operation.h        \
-	gegl-pad.h		\
-	gegl-types.h		\
-	gegl-utils.h		\
-	gegl-visitable.h	\
-	gegl-visitor.h		\
+	gegl-connection.h		\
+	gegl-graph.h			\
+	gegl-init.h			\
+	gegl-node.h			\
+	gegl-object.h			\
+	gegl-operation.h        	\
+	gegl-operation-composer.h     	\
+	gegl-operation-filter.h       	\
+	gegl-operation-source.h       	\
+	gegl-pad.h			\
+	gegl-types.h			\
+	gegl-utils.h			\
+	gegl-visitable.h		\
+	gegl-visitor.h			\
 	gegl-xml.h
 
 libgegl_1_0_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
