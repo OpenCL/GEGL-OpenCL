@@ -1,5 +1,9 @@
 2006-06-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* tests/Makefile.am: Added babl cflags to compilation.
+
+2006-06-25  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed (defunct) references to in-place processing.
 
 	* gegl/gegl-operation-composer.[ch]:
