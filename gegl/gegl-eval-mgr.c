@@ -113,9 +113,6 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   gegl_visitor_bfs_traverse (cr_visitor, GEGL_VISITABLE(root));
   g_object_unref (cr_visitor);
 
-  root->result_rect = self->roi;
-
-
   if(getenv("GEGL_DEBUG_RECTS")!=NULL)
     {
       GeglVisitor  *debug_rect_visitor;

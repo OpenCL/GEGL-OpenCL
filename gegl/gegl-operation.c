@@ -27,7 +27,9 @@
 #include "gegl-types.h"
 #include "gegl-operation.h"
 #include "gegl-node.h"
+#include "gegl-connection.h"
 #include "gegl-pad.h"
+#include "gegl-utils.h"
 
 static void      gegl_operation_class_init (GeglOperationClass    *klass);
 static void      gegl_operation_init       (GeglOperation         *self);
@@ -248,16 +250,70 @@ gegl_operation_get_have_rect (GeglOperation *operation,
   return gegl_node_get_have_rect (gegl_pad_get_node (pad));
 }
 
+static GList *
+producer_nodes (GeglPad *input_pad)
+{
+  GList *ret = NULL;
+  GList *connections;
+  g_return_val_if_fail (GEGL_IS_PAD (input_pad), NULL);
+
+  g_assert (gegl_pad_is_input (input_pad));
+
+  connections = gegl_pad_get_connections (input_pad);
+  while (connections)
+    {
+      GeglNode *node = gegl_connection_get_source_node (connections->data);
+
+      if (node)
+        ret = g_list_append (ret, node);
+      connections = g_list_next (connections);
+    }
+  return ret;
+}
+
 void
 gegl_operation_set_need_rect (GeglOperation *operation,
+                              const gchar   *input_pad_name,
                               gint           x,
                               gint           y,
                               gint           width,
                               gint           height)
 {
+  GeglPad *pad;
+  GList   *children;
+  GeglRect need = {x, y, width, height},
+           child_need;
+
   g_assert (operation);
   g_assert (operation->node);
-  gegl_node_set_need_rect (operation->node, x, y, width, height);
+  g_assert (input_pad_name);
+
+  pad = gegl_node_get_pad (operation->node, input_pad_name);
+  g_assert (pad);
+
+  children = producer_nodes (pad);
+
+  while (children)
+    {
+      gegl_rect_bounding_box (&child_need,
+                              gegl_node_get_need_rect (children->data), &need);
+      gegl_node_set_need_rect (children->data,
+                               child_need.x, child_need.y,
+                               child_need.w, child_need.h);
+      children = g_list_remove (children, children->data);
+    }
+}
+
+void
+gegl_operation_set_result_rect (GeglOperation *operation,
+                                gint           x,
+                                gint           y,
+                                gint           width,
+                                gint           height)
+{
+  g_assert (operation);
+  g_assert (operation->node);
+  gegl_node_set_result_rect (operation->node, x, y, width, height);
 }
 
 void
@@ -271,18 +327,6 @@ gegl_operation_set_comp_rect (GeglOperation *operation,
   g_assert (operation->node);
   gegl_node_set_comp_rect (operation->node, x, y, width, height);
 }
-
-gboolean
-gegl_operation_get_requested_rect (GeglOperation *operation,
-                                   const gchar   *output_pad_name,
-                                   GeglRect      *rect)
-{
-  g_assert (operation && 
-            operation->node &&
-            output_pad_name);
-  return gegl_node_get_requested_rect (operation->node, output_pad_name, rect);
-}
-
 
 static gboolean
 calc_have_rect (GeglOperation *self)
@@ -326,6 +370,8 @@ calc_result_rect (GeglOperation *self)
   g_assert (node);
 
   gegl_rect_intersect (&node->result_rect, &node->have_rect, &node->need_rect);
+  return TRUE;
+
   /*g_warning ("Op '%s' has no proper result_rect function",
      G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));*/
   if(0)g_warning ("%i,%i %ix%i  "

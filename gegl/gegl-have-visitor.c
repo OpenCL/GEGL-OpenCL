@@ -61,4 +61,5 @@ visit_node (GeglVisitor *self,
   GEGL_VISITOR_CLASS (gegl_have_visitor_parent_class)->visit_node (self, node);
   /*g_print("Visiting Operation %s\n", G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (operation)));*/
   gegl_operation_calc_have_rect (operation);
+  gegl_node_set_need_rect (node, 0, 0, 0, 0);
 }

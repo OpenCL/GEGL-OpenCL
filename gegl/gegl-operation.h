@@ -102,20 +102,24 @@ GeglRect *gegl_operation_get_have_rect (GeglOperation *operation,
                                         const gchar   *input_pad_name);
 
 void gegl_operation_set_need_rect (GeglOperation *operation,
+                                   const gchar   *input_pad_name,
                                    gint           x,
                                    gint           y,
                                    gint           width,
                                    gint           height);
+
+void gegl_operation_set_result_rect (GeglOperation *operation,
+                                     gint           x,
+                                     gint           y,
+                                     gint           width,
+                                     gint           height);
+
 void
 gegl_operation_set_comp_rect (GeglOperation *operation,
                               gint           x,
                               gint           y,
                               gint           width,
                               gint           height);
-
-gboolean  gegl_operation_get_requested_rect (GeglOperation *operation,
-                                             const gchar *output_pad_name,
-                                             GeglRect    *rect /*written to*/);
 
 GeglRect *gegl_operation_need_rect     (GeglOperation *operation);
 GeglRect *gegl_operation_have_rect     (GeglOperation *operation);

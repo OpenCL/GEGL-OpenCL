@@ -60,6 +60,5 @@ visit_node (GeglVisitor *self,
 
   GEGL_VISITOR_CLASS (gegl_need_visitor_parent_class)->visit_node (self, node);
   /*g_print("Visiting Operation %s\n", G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (operation)));*/
-  if (!node->is_root)
-    gegl_operation_calc_need_rect (operation);
+  gegl_operation_calc_need_rect (operation);
 }

@@ -167,11 +167,5 @@ calc_have_rect (GeglOperation *self)
 static gboolean
 calc_need_rect (GeglOperation *self)
 {
-  GeglRect requested;
-
-  gegl_operation_get_requested_rect (self, "output", &requested);
-  gegl_operation_set_need_rect (self,
-     requested.x, requested.y,
-     requested.w, requested.h);
   return TRUE;
 }

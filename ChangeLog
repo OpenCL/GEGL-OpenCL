@@ -1,3 +1,18 @@
+2006-06-27  Philip Lafleur  <plafleur@cvs.gnome.org>
+
+	* gegl/gegl-eval-mgr.c,
+	* gegl/gegl-have-visitor.c,
+	* gegl/gegl-need-visitor.c,
+	* gegl/gegl-node.[ch],
+	* gegl/gegl-operation-composer.c,
+	* gegl/gegl-operation-filter.c,
+	* gegl/gegl-operation-source.c,
+	* gegl/gegl-operation.[ch]: Changed API for need_rect calculation;
+		A node's need_rect should be what is needed from it by its parents,
+		not what it needs from its children. An operation sets the need_rects
+		of its children using gegl_operation_set_need_rect(self) in its
+		calc_need_rect() function.
+
 2006-06-25  Øyvind Kolås  <pippin@gimp.org>
 
 	* tests/Makefile.am: Added babl cflags to compilation of tests.
