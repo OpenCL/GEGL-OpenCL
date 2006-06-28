@@ -1,3 +1,9 @@
+2006-06-28  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: changed REMAINDER macro to provide
+	  correct results for negative values that are a multiple of the
+	  remainder.
+
 2006-06-27  Philip Lafleur  <plafleur@cvs.gnome.org>
 
 	* gegl/gegl-eval-mgr.c,

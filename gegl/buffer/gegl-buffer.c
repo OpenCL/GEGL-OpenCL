@@ -69,9 +69,9 @@ tile_indice (gint coordinate,
 
 /* computes the positive integer remainder (also for negative dividends)
  */
-#define REMAINDER(dividend, divisor)         \
-   ((((dividend) < 0) ?                      \
-   (divisor) - ((-(dividend)) % (divisor)) : \
+#define REMAINDER(dividend, divisor)                       \
+   ((((dividend) < 0) ?                                    \
+   ((divisor) - ((-(dividend)) % (divisor))) % (divisor) : \
    ((dividend) % (divisor))))
 
 /* compute the offset into the containing tile a coordinate has,
