@@ -1,5 +1,9 @@
 2006-06-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* AUTHORS: added Philip Lafleur
+
+2006-06-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: changed REMAINDER macro to provide
 	  correct results for negative values that are a multiple of the
 	  remainder.
