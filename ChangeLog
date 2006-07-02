@@ -1,3 +1,9 @@
+2006-07-02  Philip Lafleur  <plafleur@cvs.gnome.org>
+
+	* gegl/gegl-eval-mgr.c: Clean root node's pads after evaluating.
+	  This fixes a memory leak when using an operation with output (non-sink)
+	  as the root.
+
 2006-06-28  Øyvind Kolås  <pippin@gimp.org>
 
 	* AUTHORS: added Philip Lafleur
