@@ -59,7 +59,6 @@ visit_node (GeglVisitor *self,
   GeglOperation *operation = node->operation;
 
   GEGL_VISITOR_CLASS (gegl_cr_visitor_parent_class)->visit_node (self, node);
-  /*g_print("Visiting Operation %s\n", G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (operation)));*/
 
   gegl_operation_calc_result_rect (operation);
   gegl_operation_calc_comp_rect (operation);

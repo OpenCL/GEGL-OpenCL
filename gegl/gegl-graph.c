@@ -30,22 +30,9 @@
 #include "gegl-visitor.h"
 #include "gegl-connection.h"
 
-enum
-{
-  PROP_0
-};
-
 static void gegl_graph_class_init (GeglGraphClass *klass);
 static void gegl_graph_init       (GeglGraph      *self);
 static void finalize              (GObject        *object);
-static void set_property          (GObject        *object,
-                                   guint           property_id,
-                                   const GValue   *value,
-                                   GParamSpec     *pspec);
-static void get_property          (GObject        *object,
-                                   guint           property_id,
-                                   GValue         *value,
-                                   GParamSpec     *pspec);
 
 G_DEFINE_TYPE(GeglGraph, gegl_graph, GEGL_TYPE_NODE)
 
@@ -55,9 +42,7 @@ gegl_graph_class_init (GeglGraphClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize     = finalize;
-  object_class->set_property = set_property;
-  object_class->get_property = get_property;
+  object_class->finalize = finalize;
 }
 
 static void
@@ -82,34 +67,6 @@ finalize (GObject *object)
   gegl_graph_remove_children (self);
 
   G_OBJECT_CLASS (gegl_graph_parent_class)->finalize (object);
-}
-
-static void
-set_property (GObject      *object,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
-  switch (property_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-      break;
-    }
-}
-
-static void
-get_property (GObject      *object,
-              guint         property_id,
-              GValue       *value,
-              GParamSpec   *pspec)
-{
-  switch (property_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-      break;
-    }
 }
 
 void
@@ -171,7 +128,7 @@ gegl_graph_get_nth_child (GeglGraph *self,
 }
 
 /*
- * Returns a copy of the graphs internal list of nodes 
+ * Returns a copy of the graphs internal list of nodes
  */
 GList *
 gegl_graph_get_children (GeglGraph *self)
@@ -191,8 +148,8 @@ gegl_graph_create_node (GeglGraph   *self,
 {
   GeglNode    *node;
   va_list      var_args;
-  const gchar *name; 
-  
+  const gchar *name;
+
   g_return_val_if_fail (GEGL_IS_GRAPH (self), NULL);
 
   node = g_object_new (GEGL_TYPE_NODE, NULL);

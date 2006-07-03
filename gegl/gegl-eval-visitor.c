@@ -60,20 +60,9 @@ visit_pad (GeglVisitor *self,
   GeglOperation *operation = node->operation;
 
   GEGL_VISITOR_CLASS (gegl_eval_visitor_parent_class)->visit_pad (self, pad);
-#if 0
-  g_print("Compute Visitor: Visiting pad %s from operation %s\n",
-          gegl_pad_get_name(pad),
-          gegl_object_get_name(GEGL_OBJECT(operation)));
-#endif
 
   if (gegl_pad_is_output (pad))
-    {
-      const gchar *pad_name = gegl_pad_get_name (pad);
-      gboolean     success;
-
-      /* XXX: this is probably correct anyways */
-      success = gegl_operation_evaluate (operation, pad_name);
-    }
+    gegl_operation_evaluate (operation, gegl_pad_get_name (pad));
   else if (gegl_pad_is_input (pad))
     {
       GeglPad *source_pad = gegl_pad_get_connected_to (pad);

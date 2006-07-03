@@ -32,9 +32,6 @@ enum
 
 static void      gegl_object_class_init (GeglObjectClass       *klass);
 static void      gegl_object_init       (GeglObject            *self);
-static GObject * constructor            (GType                  type,
-                                         guint                  n_props,
-                                         GObjectConstructParam *props);
 static void      finalize               (GObject               *gobject);
 static void      set_property           (GObject               *gobject,
                                          guint                  prop_id,
@@ -54,7 +51,6 @@ gegl_object_class_init (GeglObjectClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-  gobject_class->constructor  = constructor;
   gobject_class->finalize     = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
@@ -83,23 +79,6 @@ finalize (GObject *gobject)
     g_free (self->name);
 
   G_OBJECT_CLASS (gegl_object_parent_class)->finalize (gobject);
-}
-
-static GObject*
-constructor (GType                  type,
-             guint                  n_props,
-             GObjectConstructParam *props)
-{
-  GObject    *gobject;
-  GeglObject *self;
-
-  gobject = G_OBJECT_CLASS (gegl_object_parent_class)->constructor (type,
-                                                                   n_props,
-                                                                   props);
-  self = GEGL_OBJECT (gobject);
-  self->constructed = TRUE;
-
-  return gobject;
 }
 
 static void

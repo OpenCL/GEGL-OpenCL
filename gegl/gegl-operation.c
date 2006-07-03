@@ -33,9 +33,6 @@
 
 static void      gegl_operation_class_init (GeglOperationClass    *klass);
 static void      gegl_operation_init       (GeglOperation         *self);
-static GObject * constructor               (GType                  type,
-                                            guint                  n_props,
-                                            GObjectConstructParam *props);
 static void      associate                 (GeglOperation         *self);
 static void      clean_pads                (GeglOperation *self);
 
@@ -49,10 +46,6 @@ G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
 static void
 gegl_operation_class_init (GeglOperationClass * klass)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-
-  gobject_class->constructor  = constructor;
- 
   klass->name = NULL;  /* an operation class with name == NULL is not included
                           when doing operation lookup by name */
   klass->associate = associate;
@@ -66,22 +59,6 @@ gegl_operation_class_init (GeglOperationClass * klass)
 static void
 gegl_operation_init (GeglOperation *self)
 {
-}
-
-static GObject*
-constructor (GType                  type,
-             guint                  n_props,
-             GObjectConstructParam *props)
-{
-  GObject    *object;
-  GeglOperation *self;
-
-  object = G_OBJECT_CLASS (gegl_operation_parent_class)->constructor (type,
-                                                                   n_props,
-                                                                   props);
-
-  self = GEGL_OPERATION (object);
-  return object;
 }
 
 /**
@@ -111,7 +88,7 @@ gegl_operation_create_pad (GeglOperation *self,
   gegl_pad_set_param_spec (pad, param_spec);
   gegl_pad_set_node (pad, self->node);
   gegl_node_add_pad (self->node, pad);
-} 
+}
 
 gboolean
 gegl_operation_evaluate (GeglOperation *self,
@@ -237,7 +214,7 @@ gegl_operation_get_have_rect (GeglOperation *operation,
                               const gchar   *input_pad_name)
 {
   GeglPad *pad;
-  g_assert (operation && 
+  g_assert (operation &&
             operation->node &&
             input_pad_name);
   pad = gegl_node_get_pad (operation->node, input_pad_name);
@@ -246,7 +223,7 @@ gegl_operation_get_have_rect (GeglOperation *operation,
   if (!pad)
     return NULL;
   g_assert (gegl_pad_get_node (pad));
-  
+
   return gegl_node_get_have_rect (gegl_pad_get_node (pad));
 }
 
@@ -356,9 +333,6 @@ calc_comp_rect (GeglOperation *self)
      result->w, result->h);
 
   return TRUE;
-
-  g_warning ("Op '%s' has no proper comp_rect function",
-     G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
 }
 
 #include "gegl/gegl-utils.h"
@@ -371,25 +345,6 @@ calc_result_rect (GeglOperation *self)
 
   gegl_rect_intersect (&node->result_rect, &node->have_rect, &node->need_rect);
   return TRUE;
-
-  /*g_warning ("Op '%s' has no proper result_rect function",
-     G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));*/
-  if(0)g_warning ("%i,%i %ix%i  "
-" %i,%i %ix%i  "
-" %i,%i %ix%i",
-   node->result_rect.x, 
-   node->result_rect.y, 
-   node->result_rect.w, 
-   node->result_rect.h,
-   node->have_rect.x, 
-   node->have_rect.y, 
-   node->have_rect.w, 
-   node->have_rect.h,
-   node->need_rect.x, 
-   node->need_rect.y, 
-   node->need_rect.w, 
-   node->need_rect.h);
-  return FALSE;
 }
 
 GeglRect *

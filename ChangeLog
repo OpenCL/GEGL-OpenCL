@@ -1,3 +1,15 @@
+2006-07-03  Philip Lafleur  <plafleur@cvs.gnome.org>
+
+	* gegl/gegl-cr-visitor.c,
+	* gegl/gegl-debug-rect-visitor.c,
+	* gegl/gegl-eval-visitor.c,
+	* gegl/gegl-graph.c,
+	* gegl/gegl-have-visitor.c,
+	* gegl/gegl-need-visitor.c,
+	* gegl/gegl-object.[ch],
+	* gegl/gegl-operation.c,
+	* gegl/gegl-pad.c: Removed unused/unnecessary code.
+
 2006-07-02  Philip Lafleur  <plafleur@cvs.gnome.org>
 
 	* gegl/gegl-eval-mgr.c: Clean root node's pads after evaluating.

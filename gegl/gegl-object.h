@@ -41,7 +41,6 @@ struct _GeglObject
 
   /*< private >*/
   gchar    *name;
-  gboolean  constructed;
 };
 
 struct _GeglObjectClass

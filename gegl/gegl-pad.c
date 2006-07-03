@@ -32,23 +32,9 @@
 #include "gegl-visitable.h"
 
 
-enum
-{
-  PROP_0,
-  PROP_PARAM_SPEC
-};
-
 static void       gegl_pad_class_init      (GeglPadClass  *klass);
 static void       gegl_pad_init            (GeglPad       *self);
 static void       finalize                 (GObject       *gobject);
-static void       set_property             (GObject       *gobject,
-                                            guint          pad_id,
-                                            const GValue  *value,
-                                            GParamSpec    *pspec);
-static void       get_property             (GObject       *gobject,
-                                            guint          pad_id,
-                                            GValue        *value,
-                                            GParamSpec    *pspec);
 static void       visitable_init           (gpointer       ginterface,
                                             gpointer       interface_data);
 static void       visitable_accept         (GeglVisitable *visitable,
@@ -66,18 +52,7 @@ gegl_pad_class_init (GeglPadClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-  gobject_class->finalize     = finalize;
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-
-  /*
-  g_object_class_install_property (gobject_class, PROP_PARAM_SPEC,
-                   g_param_spec_param ("param_spec",
-                                       "ParamSpec",
-                                       "Param spec for the pad",
-                                       ????,
-                                       G_PARAM_READWRITE));
-                                       */
+  gobject_class->finalize = finalize;
 }
 
 static void
@@ -107,38 +82,6 @@ finalize (GObject *gobject)
   g_assert (self->connections == NULL);
 
   G_OBJECT_CLASS (gegl_pad_parent_class)->finalize (gobject);
-}
-
-static void
-set_property (GObject      *object,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
-  /*GeglPad * pad = GEGL_PAD(gobject);*/
-
-  switch (property_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-      break;
-    }
-}
-
-static void
-get_property (GObject    *object,
-              guint       property_id,
-              GValue     *value,
-              GParamSpec *pspec)
-{
-  /*GeglPad * pad = GEGL_PAD(gobject);*/
-
-  switch (property_id)
-    {
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-      break;
-    }
 }
 
 GParamSpec *
