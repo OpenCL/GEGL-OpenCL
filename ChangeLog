@@ -2,6 +2,14 @@
 
 	* gegl/gegl-cr-visitor.c,
 	* gegl/gegl-debug-rect-visitor.c,
+	* gegl/gegl-node.[ch],
+	* gegl/gegl-operation.[ch]: Removed comp_rect since there are currently
+	  no plans to use it.
+
+2006-07-03  Philip Lafleur  <plafleur@cvs.gnome.org>
+
+	* gegl/gegl-cr-visitor.c,
+	* gegl/gegl-debug-rect-visitor.c,
 	* gegl/gegl-eval-visitor.c,
 	* gegl/gegl-graph.c,
 	* gegl/gegl-have-visitor.c,

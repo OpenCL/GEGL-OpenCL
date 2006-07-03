@@ -38,7 +38,6 @@ static void      clean_pads                (GeglOperation *self);
 
 static gboolean calc_have_rect (GeglOperation *self);
 static gboolean calc_need_rect (GeglOperation *self);
-static gboolean calc_comp_rect (GeglOperation *self);
 static gboolean calc_result_rect (GeglOperation *self);
 
 G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
@@ -52,7 +51,6 @@ gegl_operation_class_init (GeglOperationClass * klass)
   klass->clean_pads = clean_pads;
   klass->calc_have_rect = calc_have_rect;
   klass->calc_need_rect = calc_need_rect;
-  klass->calc_comp_rect = calc_comp_rect;
   klass->calc_result_rect = calc_result_rect;
 }
 
@@ -123,18 +121,6 @@ gegl_operation_calc_need_rect (GeglOperation *self)
 
   if (klass->calc_need_rect)
     return klass->calc_need_rect (self);
-  return FALSE;
-}
-
-gboolean
-gegl_operation_calc_comp_rect (GeglOperation *self)
-{
-  GeglOperationClass *klass;
-
-  klass = GEGL_OPERATION_GET_CLASS (self);
-
-  if (klass->calc_comp_rect)
-    return klass->calc_comp_rect (self);
   return FALSE;
 }
 
@@ -293,18 +279,6 @@ gegl_operation_set_result_rect (GeglOperation *operation,
   gegl_node_set_result_rect (operation->node, x, y, width, height);
 }
 
-void
-gegl_operation_set_comp_rect (GeglOperation *operation,
-                              gint           x,
-                              gint           y,
-                              gint           width,
-                              gint           height)
-{
-  g_assert (operation);
-  g_assert (operation->node);
-  gegl_node_set_comp_rect (operation->node, x, y, width, height);
-}
-
 static gboolean
 calc_have_rect (GeglOperation *self)
 {
@@ -319,20 +293,6 @@ calc_need_rect (GeglOperation *self)
   g_warning ("Op '%s' has no proper need_rect function",
      G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
   return FALSE;
-}
-
-static gboolean
-calc_comp_rect (GeglOperation *self)
-{
-
-  GeglRect *result = gegl_operation_result_rect (self);
-  if (!result)
-    return FALSE;
-  gegl_operation_set_comp_rect (self,
-     result->x, result->y,
-     result->w, result->h);
-
-  return TRUE;
 }
 
 #include "gegl/gegl-utils.h"
@@ -367,13 +327,6 @@ gegl_operation_result_rect   (GeglOperation *operation)
   g_assert (operation);
   g_assert (operation->node);
   return &operation->node->result_rect;
-}
-GeglRect *
-gegl_operation_comp_rect     (GeglOperation *operation)
-{
-  g_assert (operation);
-  g_assert (operation->node);
-  return &operation->node->comp_rect;
 }
 
 void

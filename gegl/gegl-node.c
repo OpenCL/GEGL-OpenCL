@@ -163,10 +163,10 @@ set_property (GObject      *gobject,
     {
     case PROP_OP_CLASS:
       gegl_node_set_op_class (GEGL_NODE (gobject), g_value_get_string (value));
-      break; 
+      break;
     case PROP_OPERATION:
       gegl_node_set_operation_object (GEGL_NODE (gobject), g_value_get_object (value));
-      break; 
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
@@ -344,7 +344,7 @@ gegl_node_connect (GeglNode    *sink,
 {
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
   g_return_val_if_fail (GEGL_IS_NODE (source), FALSE);
-  
+
   if (pads_exist (sink, sink_prop_name, source, source_prop_name))
     {
       GeglPad   *sink_prop   = gegl_node_get_pad (sink,
@@ -700,7 +700,7 @@ gegl_node_set_op_class (GeglNode      *node,
       GeglOperation *operation;
 
       type = g_type_from_op_class (op_class);
-      
+
       if (!type)
         {
           g_warning ("Failed to set operation type %s, using a passthrough op instead", op_class);
@@ -759,7 +759,7 @@ gegl_node_set (GeglNode    *self,
 void
 gegl_node_get (GeglNode    *self,
                const gchar *first_property_name,
-               ...) 
+               ...)
 {
   va_list        var_args;
 
@@ -796,7 +796,7 @@ gegl_node_set_valist (GeglNode     *self,
       if (!strcmp (property_name, "class"))
         {
           const gchar *op_class;
-        
+
           if (first_property_name != property_name)
             {
               g_warning (
@@ -823,7 +823,7 @@ gegl_node_set_valist (GeglNode     *self,
             }
           g_object_set_property (G_OBJECT (self), property_name, &value);
         }
-      else 
+      else
         {
           if (self->operation)
             {
@@ -1050,21 +1050,6 @@ gegl_node_set_result_rect (GeglNode *node,
   node->result_rect.w = width;
   node->result_rect.h = height;
 }
-
-void
-gegl_node_set_comp_rect (GeglNode    *node,
-                         gint         x,
-                         gint         y,
-                         gint         width,
-                         gint         height)
-{
-  g_assert (node);
-  node->comp_rect.x = x;
-  node->comp_rect.y = y;
-  node->comp_rect.w = width;
-  node->comp_rect.h = height;
-}
-
 
 GeglRect *
 gegl_node_get_need_rect (GeglNode    *node)

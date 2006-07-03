@@ -46,10 +46,8 @@ struct _GeglNode
 
   GeglRect       have_rect;
   GeglRect       need_rect;
-  gboolean       is_root;
   GeglRect       result_rect;
-  GeglRect       comp_rect;
-  
+
   GList         *pads;
   GList         *input_pads;
   GList         *output_pads;
@@ -57,6 +55,7 @@ struct _GeglNode
   GList         *sources;
   GList         *sinks;
 
+  gboolean       is_root;
   gint           refs;      /*< set to number of nodes that depends on it before evaluation begins,
                                 each time data is fetched from the op the reference count is dropped,
                                 when it drops to zero, the op is asked to clean it's pads
@@ -136,11 +135,6 @@ void          gegl_node_set_need_rect       (GeglNode     *node,
                                              gint          height);
 GeglRect    * gegl_node_get_result_rect     (GeglNode     *node);
 void          gegl_node_set_result_rect     (GeglNode     *node,
-                                             gint          x,
-                                             gint          y,
-                                             gint          width,
-                                             gint          height);
-void          gegl_node_set_comp_rect       (GeglNode     *node,
                                              gint          x,
                                              gint          y,
                                              gint          width,

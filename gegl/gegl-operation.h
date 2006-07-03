@@ -64,7 +64,6 @@ struct _GeglOperationClass
   gboolean (*calc_have_rect)    (GeglOperation *self);
   gboolean (*calc_need_rect)    (GeglOperation *self);
   gboolean (*calc_result_rect)  (GeglOperation *self);
-  gboolean (*calc_comp_rect)    (GeglOperation *self);
 };
 
 
@@ -87,7 +86,6 @@ void          gegl_operation_clean_pads     (GeglOperation *self);
 gboolean      gegl_operation_calc_have_rect (GeglOperation *self);
 gboolean      gegl_operation_calc_need_rect (GeglOperation *self);
 gboolean      gegl_operation_calc_result_rect (GeglOperation *self);
-gboolean      gegl_operation_calc_comp_rect (GeglOperation *self);
 
 /* this method defined for the Operation, even though it acts on the Node.
  * The rationale for this is that the knowledge for setting the rect
@@ -114,17 +112,9 @@ void gegl_operation_set_result_rect (GeglOperation *operation,
                                      gint           width,
                                      gint           height);
 
-void
-gegl_operation_set_comp_rect (GeglOperation *operation,
-                              gint           x,
-                              gint           y,
-                              gint           width,
-                              gint           height);
-
 GeglRect *gegl_operation_need_rect     (GeglOperation *operation);
 GeglRect *gegl_operation_have_rect     (GeglOperation *operation);
 GeglRect *gegl_operation_result_rect   (GeglOperation *operation);
-GeglRect *gegl_operation_comp_rect     (GeglOperation *operation);
 
 
 G_END_DECLS
