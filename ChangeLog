@@ -1,5 +1,12 @@
 2006-07-03  Philip Lafleur  <plafleur@cvs.gnome.org>
 
+	* gegl/gegl-node.c (gegl_node_set_valist): Pass all properties following
+	  a "class" property as construction properties to the created operation
+	  so that they may be used in initialization. This means that the "name"
+		property should appear before the "class" property if used.
+
+2006-07-03  Philip Lafleur  <plafleur@cvs.gnome.org>
+
 	* gegl/gegl-cr-visitor.c,
 	* gegl/gegl-debug-rect-visitor.c,
 	* gegl/gegl-node.[ch],

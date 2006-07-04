@@ -70,7 +70,9 @@ static gboolean        visitable_needs_visiting       (GeglVisitable *visitable)
 static void            gegl_node_set_operation_object (GeglNode      *self,
                                                        GeglOperation *operation);
 static void            gegl_node_set_op_class         (GeglNode      *self,
-                                                       const gchar   *op_class);
+                                                       const gchar   *op_class,
+                                                       const gchar   *first_property,
+                                                       va_list        var_args);
 static const gchar *   gegl_node_get_op_class         (GeglNode      *self);
 
 G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, GEGL_TYPE_OBJECT,
@@ -162,7 +164,8 @@ set_property (GObject      *gobject,
   switch (property_id)
     {
     case PROP_OP_CLASS:
-      gegl_node_set_op_class (GEGL_NODE (gobject), g_value_get_string (value));
+      gegl_node_set_op_class (GEGL_NODE (gobject), g_value_get_string (value),
+                              NULL, NULL);
       break;
     case PROP_OPERATION:
       gegl_node_set_operation_object (GEGL_NODE (gobject), g_value_get_object (value));
@@ -689,12 +692,14 @@ static GType g_type_from_op_class (const gchar *op_class)
 
 static void
 gegl_node_set_op_class (GeglNode      *node,
-                        const gchar   *op_class)
+                        const gchar   *op_class,
+                        const gchar   *first_property,
+                        va_list        var_args)
 {
   g_return_if_fail (GEGL_IS_NODE (node));
   g_return_if_fail (op_class);
 
-  if (op_class && op_class[0])
+  if (op_class && op_class[0] != '\0')
     {
       GType         type;
       GeglOperation *operation;
@@ -705,11 +710,12 @@ gegl_node_set_op_class (GeglNode      *node,
         {
           g_warning ("Failed to set operation type %s, using a passthrough op instead", op_class);
           if (strcmp (op_class, "nop"))
-            gegl_node_set_op_class (node, "nop");
+            gegl_node_set_op_class (node, "nop", NULL, var_args);
           return;
         }
 
-      operation = g_object_new (type, NULL);
+      operation = GEGL_OPERATION (g_object_new_valist (type, first_property,
+                                                       var_args));
       gegl_node_set_operation_object (node, operation);
       g_object_unref (operation);
     }
@@ -795,17 +801,16 @@ gegl_node_set_valist (GeglNode     *self,
 
       if (!strcmp (property_name, "class"))
         {
-          const gchar *op_class;
+          const gchar *op_class,
+                      *op_first_property;
 
-          if (first_property_name != property_name)
-            {
-              g_warning (
-                "%s: attempt to change opertation type(class), and not first property in list.", G_STRFUNC);
+          op_class          = va_arg (var_args, gchar*);
+          op_first_property = va_arg (var_args, gchar*);
 
-              break;
-            }
-          op_class = va_arg (var_args, gchar*);
-          gegl_node_set_op_class (self, op_class);
+          /* pass the following properties as construction properties
+           * to the operation */
+          gegl_node_set_op_class (self, op_class, op_first_property, var_args);
+          break;
         }
       else if (!strcmp (property_name, "name"))
         {
