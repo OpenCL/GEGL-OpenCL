@@ -82,24 +82,24 @@ gegl_rect_bounding_box (GeglRect *dest,
   gboolean s1_has_area = src1->w && src1->h;
   gboolean s2_has_area = src2->w && src2->h;
 
-  if( !s1_has_area &&  !s2_has_area)
+  if (! s1_has_area && ! s2_has_area)
     gegl_rect_set (dest, 0, 0, 0, 0);
-  else if(!s1_has_area)
+  else if (! s1_has_area)
     gegl_rect_copy (dest, src2);
-  else if(!s2_has_area)
+  else if (! s2_has_area)
     gegl_rect_copy (dest, src1);
+  else
+    {
+      gint x1 = MIN (src1->x, src2->x);
+      gint x2 = MAX (src1->x + src1->w, src2->x + src2->w);
+      gint y1 = MIN (src1->y, src2->y);
+      gint y2 = MAX (src1->y + src1->h, src2->y + src2->h);
 
-  {
-    gint x1 = MIN(src1->x, src2->x);
-    gint x2 = MAX(src1->x + src1->w, src2->x + src2->w);
-    gint y1 = MIN(src1->y, src2->y);
-    gint y2 = MAX(src1->y + src1->h, src2->y + src2->h);
-
-    dest->x = x1;
-    dest->y = y1;
-    dest->w = x2 - x1;
-    dest->h = y2 - y1;
-  }
+      dest->x = x1;
+      dest->y = y1;
+      dest->w = x2 - x1;
+      dest->h = y2 - y1;
+    }
 }
 
 gboolean

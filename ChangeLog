@@ -1,3 +1,8 @@
+2006-07-04  Philip Lafleur  <plafleur@cvs.gnome.org>
+
+	* gegl/gegl-utils.c (gegl_rect_bounding_box): Added a missing 'else' that
+	  was breaking rect calculations.
+
 2006-07-03  Philip Lafleur  <plafleur@cvs.gnome.org>
 
 	* gegl/gegl-node.c (gegl_node_set_valist): Pass all properties following
