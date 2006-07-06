@@ -1,5 +1,9 @@
 2006-07-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* AUTHORS: made vertical spacing more uniform.
+
+2006-07-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-operation.c: (gegl_operation_class_init),
 	(gegl_operation_class_set_description):
 	* gegl/gegl-operation.h: Added a class level description string, that
