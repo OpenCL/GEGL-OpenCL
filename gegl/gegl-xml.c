@@ -21,10 +21,12 @@
 #include <glib.h>
 #include <glib-object.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "gegl-types.h"
 #include "gegl-graph.h"
 #include "gegl-node.h"
+#include "gegl-pad.h"
 
 typedef struct _ParseData ParseData;
 
@@ -98,11 +100,26 @@ static void start_element (GMarkupParseContext *context,
       new = gegl_graph_get_output_nop (GEGL_GRAPH (new));
       pd->iter = new;
     }
-  else if (!strcmp (element_name, "node"))
+  else if (!strcmp (element_name, "graph"))
     {
-      GeglNode *new = gegl_graph_create_node (pd->gegl,
+      /*NYI*/
+    }
+  else
+    {
+      GeglNode *new;
+
+      if (!strcmp (element_name, "node"))
+        {
+          new = gegl_graph_create_node (pd->gegl,
              "class", name2val (a, v, "class"),
              NULL);
+        }
+      else
+        {
+          new = gegl_graph_create_node (pd->gegl,
+             "class", element_name, 
+             NULL);
+        }
       g_assert (new);
 
       while (*a)
@@ -167,11 +184,6 @@ static void start_element (GMarkupParseContext *context,
       pd->state = STATE_TREE_FIRST_CHILD;
       pd->iter = new;
     }
-  else if (!strcmp (element_name, "graph"))
-    {
-      
-      /*NYI*/
-    }
 }
 
 /* Called for close tags </foo> */
@@ -203,15 +215,15 @@ static void end_element (GMarkupParseContext *context,
       pd->parent = g_list_remove (pd->parent, pd->parent->data);
       pd->state = STATE_TREE_NORMAL;
     }
-  else if (!strcmp (element_name, "node"))
+  else if (!strcmp (element_name, "graph"))
+    {
+      /*NYI*/
+    }
+  else if (1 || !strcmp (element_name, "node"))
     {
       pd->iter   = pd->parent->data;
       pd->parent = g_list_remove (pd->parent, pd->parent->data);
       pd->state = STATE_TREE_NORMAL;
-    }
-  else if (!strcmp (element_name, "graph"))
-    {
-      /*NYI*/
     }
 }
 
