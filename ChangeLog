@@ -1,5 +1,24 @@
 2006-07-06  Øyvind Kolås  <pippin@gimp.org>
 
+	Added a framework for dynamically loading GEGL operations based on
+	gmodule. Copied from GIMPs module.
+
+	* configure.in: added gegl/module/Makefile to generated files.
+	* gegl/Makefile.am: added module dir
+	* gegl/gegl-init.c: (gegl_init): load modules upon library
+	initialization.
+
+	* gegl/module/Makefile.am,
+	* gegl/module/gegldatafiles.c,
+	* gegl/module/gegldatafiles.h,
+	* gegl/module/geglmodule.c,
+	* gegl/module/geglmodule.h,
+	* gegl/module/geglmoduledb.c,
+	* gegl/module/geglmoduledb.h,
+	* gegl/module/geglmoduletypes.h: New files.
+
+2006-07-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (gegl_node_get), (gegl_node_get_valist),
 	(gegl_node_get_property), (gegl_node_get_op_type_name):
 	Reroute when as needed when graphs are queried for properties.

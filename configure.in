@@ -211,6 +211,7 @@ gil/gil/Makefile
 gil/tests/Makefile
 gegl/Makefile
 gegl/buffer/Makefile
+gegl/module/Makefile
 tools/Makefile
 tools/testsuite/Makefile
 tests/Makefile

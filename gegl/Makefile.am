@@ -1,8 +1,11 @@
 noinst_PROGRAMS =
 
-SUBDIRS = buffer
+bin_PROGRAMS = gegl
+
+SUBDIRS = buffer module
 
 libbuffer = $(top_builddir)/gegl/buffer/libbuffer.la
+libmodule = $(top_builddir)/gegl/module/libmodule.la
 
 lib_LTLIBRARIES = libgegl-1.0.la
 
@@ -28,6 +31,11 @@ GEGL_sources = \
 	gegl-visitor.c			\
 	gegl-xml.c
 
+gegl_SOURCES = \
+	gegl.c	\
+	gegl-options.c \
+	gegl-options.h 
+
 GEGL_public_headers = \
 	gegl-connection.h		\
 	gegl-graph.h			\
@@ -47,7 +55,7 @@ GEGL_public_headers = \
 
 libgegl_1_0_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 
-libgegl_1_0_la_LIBADD = $(libbuffer)
+libgegl_1_0_la_LIBADD = $(libbuffer) $(libmodule)
 
 INCLUDES = \
 	-I$(top_srcdir)	\
@@ -57,12 +65,14 @@ AM_LDFLAGS =  \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)	\
 	-no-undefined \
 	@DEP_LIBS@ @BABL_LIBS@
+gegl_LDFLAGS = \
+	libgegl-1.0.la
 
 
 libgeglincludedir = $(includedir)/gegl-1.0
 libgeglsubincludedir = $(includedir)/gegl-1.0/gegl
 
-libgeglinclude_HEADERS = gegl.h
+libgeglinclude_HEADERS = gegl.h gegl-module.h
 libgeglsubinclude_HEADERS = $(GEGL_public_headers) 
 
 

@@ -24,6 +24,9 @@
 #include "gegl-types.h"
 #include "gegl-init.h"
 #include "buffer/gegl-buffer-allocator.h"
+#include "module/geglmodule.h"
+#include "module/geglmoduledb.h"
+#include <stdlib.h>
 
 static gboolean gegl_initialized = FALSE;
 
@@ -31,10 +34,34 @@ void
 gegl_init (int *argc,
            char ***argv)
 {
+  static GeglModuleDB *module_db = NULL;
+
   if (gegl_initialized)
     return;
   g_type_init ();
   babl_init ();
+
+  if (!module_db)
+    {
+      gchar *load_inhibit = g_strdup ("");
+      gchar *module_path;
+    
+      if (getenv ("GEGL_PATH"))
+        {
+          module_path = g_strdup (getenv ("GEGL_PATH"));
+        }
+      else
+        module_path  = g_strdup ("/usr/local/lib/gegl-operations/"
+                                      ":/home/pippin/src/gegl-operations-base/");
+      
+      module_db = gegl_module_db_new (FALSE);
+      
+      gegl_module_db_set_load_inhibit (module_db, load_inhibit);
+      gegl_module_db_load (module_db, module_path);
+
+      g_free (module_path);
+      g_free (load_inhibit); 
+    }
   gegl_initialized = TRUE;
 }
 
