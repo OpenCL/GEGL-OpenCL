@@ -770,7 +770,7 @@ gegl_node_get (GeglNode    *self,
   va_list        var_args;
 
   g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail (GEGL_IS_OPERATION (self->operation));
+  g_return_if_fail (GEGL_IS_GRAPH (self) || GEGL_IS_OPERATION (self->operation));
 
   va_start (var_args, first_property_name);
   gegl_node_get_valist (self, first_property_name, var_args);
@@ -896,13 +896,28 @@ gegl_node_get_valist (GeglNode    *self,
         }
       else
         {
-        pspec = g_object_class_find_property (
-           G_OBJECT_GET_CLASS (G_OBJECT (self->operation)), property_name);
+        /* if we're a graph, this is not possible,.
+         * requesting the redirected properties of a node that is graph
+         * should also be done
+         */
+        if (GEGL_IS_GRAPH (self))
+          {
+            /* cheap workaround to make querying the output property of
+             * a graph work
+             */
+            pspec = g_object_class_find_property (
+               G_OBJECT_GET_CLASS (G_OBJECT (gegl_graph_get_output_nop (GEGL_GRAPH(self))->operation)), property_name);
+          }
+        else
+          {
+            pspec = g_object_class_find_property (
+               G_OBJECT_GET_CLASS (G_OBJECT (self->operation)), property_name);
+          }
 
         if (!pspec)
           {
-              g_warning ("%s:%s has no property named: '%s'",
-               G_STRFUNC, gegl_node_get_debug_name (self), property_name);
+            g_warning ("%s:%s has no property named: '%s'",
+              G_STRFUNC, gegl_node_get_debug_name (self), property_name);
             break;
           }
         if (!(pspec->flags & G_PARAM_READABLE))
@@ -966,7 +981,12 @@ gegl_node_get_property (GeglNode    *self,
     }
   else
     {
-      if (self->operation)
+      if (GEGL_IS_GRAPH (self))
+        {
+          g_object_get_property (G_OBJECT (gegl_graph_get_output_nop (GEGL_GRAPH (self))->operation),
+                property_name, value);
+        }
+      else if (self->operation)
         {
           g_object_get_property (G_OBJECT (self->operation),
                 property_name, value);
@@ -1000,7 +1020,7 @@ gegl_node_get_op_type_name    (GeglNode     *node)
       g_warning ("No op associated");
       return "No op associated";
     }
-  return g_type_name_from_instance ((GTypeInstance*)(node->operation));
+  return GEGL_OPERATION_GET_CLASS (node->operation)->name;
 }
 void
 gegl_node_set_have_rect (GeglNode    *node,
