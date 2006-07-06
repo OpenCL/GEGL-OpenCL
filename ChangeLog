@@ -1,3 +1,11 @@
+2006-07-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-eval-mgr.c: Reverted change of 2006-07-02, as changes in
+	uncommited changes built up in a net-less period depends on being able
+	to query the data of a gegl-graph, after evaluation.
+
+	(The cleaning should perhaps be done at dispose time for the graph?)
+
 2006-07-04  Philip Lafleur  <plafleur@cvs.gnome.org>
 
 	* gegl/gegl-utils.c (gegl_rect_bounding_box): Added a missing 'else' that

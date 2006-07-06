@@ -128,6 +128,5 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
 
   root->is_root = FALSE;
 
-  gegl_operation_clean_pads (root->operation);
   g_object_unref (root);
 }
