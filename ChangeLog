@@ -7,7 +7,8 @@
 	* gegl/Makefile.am: added module dir
 	* gegl/gegl-init.c: (gegl_init): load modules upon library
 	initialization.
-
+	
+	* gegl/gegl-module.h
 	* gegl/module/Makefile.am,
 	* gegl/module/gegldatafiles.c,
 	* gegl/module/gegldatafiles.h,
