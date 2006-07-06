@@ -1,5 +1,13 @@
 2006-07-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation.c: (gegl_operation_class_init),
+	(gegl_operation_class_set_description):
+	* gegl/gegl-operation.h: Added a class level description string, that
+	can be used by ui/reports, etc for a longer description than what
+	the name alone provides.
+
+2006-07-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-xml.c: (start_element), (end_element): Due to demand,
 	implemented the ability to name the ops directly with the tags. Not
 	sure if this is a change that should be made permanent.

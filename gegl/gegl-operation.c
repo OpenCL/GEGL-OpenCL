@@ -47,6 +47,8 @@ gegl_operation_class_init (GeglOperationClass * klass)
 {
   klass->name = NULL;  /* an operation class with name == NULL is not included
                           when doing operation lookup by name */
+  klass->description = NULL;
+
   klass->associate = associate;
   klass->clean_pads = clean_pads;
   klass->calc_have_rect = calc_have_rect;
@@ -336,6 +338,15 @@ gegl_operation_class_set_name (GeglOperationClass *klass,
   if (klass->name)
     g_free (klass->name);
   klass->name = g_strdup (new_name);
+}
+
+void
+gegl_operation_class_set_description (GeglOperationClass *klass,
+                               const gchar        *new_description)
+{
+  if (klass->description)
+    g_free (klass->description);
+  klass->description = g_strdup (new_description);
 }
 
 const gchar *

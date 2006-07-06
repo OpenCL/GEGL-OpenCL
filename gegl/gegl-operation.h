@@ -54,6 +54,7 @@ struct _GeglOperationClass
 {
   GObjectClass  parent_class;
   gchar    *name;
+  gchar    *description;
 
   gboolean (*evaluate)          (GeglOperation *self,
                                  const gchar   *output_pad);
@@ -68,10 +69,12 @@ struct _GeglOperationClass
 
 
 
-GType         gegl_operation_get_type       (void) G_GNUC_CONST;
+GType         gegl_operation_get_type           (void) G_GNUC_CONST;
 
 void          gegl_operation_class_set_name (GeglOperationClass *self,
                                              const gchar        *name);
+void          gegl_operation_class_set_description (GeglOperationClass *self,
+                                                 const gchar        *description);
 
 const gchar * gegl_operation_get_name       (GeglOperation *self);
 gboolean      gegl_operation_evaluate       (GeglOperation *self,
@@ -115,7 +118,6 @@ void gegl_operation_set_result_rect (GeglOperation *operation,
 GeglRect *gegl_operation_need_rect     (GeglOperation *operation);
 GeglRect *gegl_operation_have_rect     (GeglOperation *operation);
 GeglRect *gegl_operation_result_rect   (GeglOperation *operation);
-
 
 G_END_DECLS
 
