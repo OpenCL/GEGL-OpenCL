@@ -1,5 +1,17 @@
 2006-07-06  Øyvind Kolås  <pippin@gimp.org>
 
+	Added a gegl tool library, the can view xml graphs and export them
+	to files.
+	
+	* gegl/.cvsignore:
+	* gegl/gegl-options.c: (opts_new), (usage), (print_opts), (fixup),
+	(gegl_options_parse), (parse_args):
+	* gegl/gegl-options.h:
+	* gegl/gegl.c: (main), (main_interactive), (list_properties),
+	(introspect), (gegl_list_ops):
+
+2006-07-06  Øyvind Kolås  <pippin@gimp.org>
+
 	Added a framework for dynamically loading GEGL operations based on
 	gmodule. Copied from GIMPs module.
 
