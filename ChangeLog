@@ -1,6 +1,7 @@
 2006-07-07  Øyvind Kolås  <pippin@gimp.org>
 
-	* gegl/gegl-init.c: (gegl_init):
+	* gegl/gegl-init.c: (gegl_init): use PREFIX/lib/gegl instead of
+	PREFIX/lib/gegl-operations.
 
 2006-07-06  Øyvind Kolås  <pippin@gimp.org>
 

@@ -51,8 +51,7 @@ gegl_init (int *argc,
           module_path = g_strdup (getenv ("GEGL_PATH"));
         }
       else
-        module_path  = g_strdup ("/usr/local/lib/gegl-operations/"
-                                      ":/home/pippin/src/gegl-operations-base/");
+        module_path  = g_strdup ("/usr/local/lib/gegl");
       
       module_db = gegl_module_db_new (FALSE);
       
