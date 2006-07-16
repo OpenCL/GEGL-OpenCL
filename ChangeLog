@@ -5,7 +5,7 @@
 
 2006-07-06  Øyvind Kolås  <pippin@gimp.org>
 
-	Added a gegl tool library, the can view xml graphs and export them
+	Added a gegl tool binary, the can view xml graphs and export them
 	to files.
 	
 	* gegl/.cvsignore:
