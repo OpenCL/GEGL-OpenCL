@@ -1,5 +1,9 @@
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: do not include the unit tests in the build right now.
+
+2006-07-17  Øyvind Kolås  <pippin@gimp.org>
+
 	Added a compiletime xml-includes tool written in bash.
 
 	* tools/Makefile.am:
