@@ -1,5 +1,12 @@
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>
 
+	Added a compiletime xml-includes tool written in bash.
+
+	* tools/Makefile.am:
+	* tools/xml_insert.sh:
+
+2006-07-17  Øyvind Kolås  <pippin@gimp.org>
+
 	Added a core set of operations that are compiled alongside the GEGL
 	library.
 
