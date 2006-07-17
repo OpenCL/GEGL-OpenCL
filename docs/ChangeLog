@@ -1,5 +1,11 @@
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl.css: Added style for the new tabular output for operations.html
+	* index-static.html.in: Added links to categories in operations.html
+	from the menu, and some other reorganization.
+
+2006-07-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* gallery/drop-shadow.xml: Added a test.
 	* gallery/data/gegl.png: gegl logo rendered from svg to png.
 	* gallery/data/vinci-fly3.jpg: a sketch by leonardo davinci.

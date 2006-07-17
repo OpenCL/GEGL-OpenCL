@@ -162,6 +162,24 @@
          top: -8px;
          border: none;
       }
+      td.op_name {
+          padding-top: 1.5em;
+          font-style: italic;
+          font-weight: bold;
+      }
+      td.op_description {
+          padding-bottom: 1em;
+      }
+      td.prop_type {
+          color: gray;
+      }
+      td.prop_name {
+          font-style: italic;
+      }
+      td.prop_blurb {
+          padding-bottom: 0.5em;
+      }
+
       @media screen {
         body {
           background-color: #606060;

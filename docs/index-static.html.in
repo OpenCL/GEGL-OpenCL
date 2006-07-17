@@ -72,9 +72,12 @@
         <li><a href='#Introduction'>Introduction</a></li>
         <li><a href='#Features'>&nbsp;&nbsp;Features</a></li>
         <li><a href='#Operations'>Operations</a></li>
+        <li><a href='operations.html#sources'>&nbsp;&nbsp;Sources</a></li>
+        <li><a href='operations.html#filters'>&nbsp;&nbsp;Filters</a></li>
+        <li><a href='operations.html#composers'>&nbsp;&nbsp;Composers</a></li>
         <li><a href='#XML'>XML data model</a></li>
-        <li><a href='gallery/index.html'>&nbsp;&nbsp;Gallery</a></li>
         <li><a href='#gegl'>&nbsp;&nbsp;gegl</a></li>
+        <li><a href='gallery/index.html'>&nbsp;&nbsp;Gallery</a></li>
         <li><a href='#Building'>Building</a></li>
         <li><a href='#Source'>Source</a></li>
         <li><a href='#Usage'>Usage</a></li>
@@ -176,19 +179,11 @@ webpages were built, you can take a look at <a href='operations.html'>some intro
     name for the node.
     </p>
 </p>
-    <a name='Gallery'></a>
-    <h2>Gallery</h2>
-    <p>During the build of these webpages, all xml files in the gallery
-    subfolder were processed and included in. <a href='gallery/index.html'>The
-        gallery</a> is the best current illustration of the
-    capabilities of GEGLs operations.
-    </p>
 
     <a name='gegl'></a>
     <h2>gegl</h2>
 <p>
-The gallery is created using the <u>gegl</u> binary. It allows scripting
-GEGL in XML in a number of ways from the commandline: XML from file, XML on stding, XML as commandline argument.</p>
+GEGL comes install a binary called <u>gegl</u> binary. This is a commandline tool for using GEGL, it parses XML from file, stdin or the commandline and either displays, or saves the result of evaluating the resulting processing tree.</p>
 
 <p>
 Some examples:
@@ -206,6 +201,13 @@ Some examples:
   &lt;node class='invert'/&gt;
   &lt;node class='scale' x='0.5' y='0.5'/&gt;
   &lt;node class='png-load' path='-'/&gt;&lt;/tree&gt;&lt;/gegl&gt;" &gt; output.png</pre>
+
+    <a name='Gallery'></a>
+    <h2>Gallery</h2>
+    <p>During the build of these webpages, all xml files in the gallery
+    subfolder were processed and included in. <a href='gallery/index.html'>The
+        gallery</a> is the best current illustration of GEGL.
+    </p>
 
         <a name='Building'></a>
         <h2>Building</h2>
