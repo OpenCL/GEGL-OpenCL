@@ -1,5 +1,9 @@
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/module/Makefile.am: renamed meta level variables.
+
+2006-07-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* TODO: updated TODO
 
 2006-07-07  Øyvind Kolås  <pippin@gimp.org>

@@ -1,18 +1,18 @@
 noinst_LTLIBRARIES = libmodule.la
 
-BUFFER_sources = 	\
+MODULE_sources = 	\
     gegldatafiles.c	\
     geglmodule.c	\
     geglmoduledb.c	
 
-BUFFER_headers = 	\
+MODULE_headers = 	\
     gegldatafiles.h	\
     geglmoduledb.h	\
     geglmodule.h	\
     geglmoduletypes.h
 
-libmodule_la_SOURCES = $(BUFFER_sources) $(BUFFER_headers)
-libmoduleinclude_HEADERS = $(BUFFER_headers)
+libmodule_la_SOURCES = $(MODULE_sources) $(MODULE_headers)
+libmoduleinclude_HEADERS = $(MODULE_headers)
 
 libmoduleincludedir = $(includedir)/gegl-1.0/gegl/module
 
