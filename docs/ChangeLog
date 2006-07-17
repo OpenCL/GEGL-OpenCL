@@ -1,5 +1,10 @@
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* gallery/clones.xml:
+	* gallery/data/car-stack.jpg:
+
+2006-07-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* index-static.html.in: added bootstrapping script to build
 	instructions.
 
