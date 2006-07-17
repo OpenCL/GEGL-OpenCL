@@ -14,11 +14,6 @@ integration with legacy GIMP code much easier.
 Pixel format negotation
 -----------------------------------------------------------------------------
 
-Make a pass checking the input and output pixel representation capabilities of
-connected nodes, and insert temporary proxies if they cannot agree on an agreed
-exchange format. This will allow mixing various pixel representations,passing
-rgb data to an operations expecting rgb would do an implicit conversion.
-
 Right now all computation is done in 32bit floating point RGBA,. allowing
 operations to have different pixelformat evalutae handlers,. and capabilities
 that are reference tested against the floating point is important.
