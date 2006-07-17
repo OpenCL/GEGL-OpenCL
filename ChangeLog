@@ -1,3 +1,22 @@
+2006-07-16  Philip Lafleur  <plafleur@cvs.gnome.org>
+
+	* gegl/gegl-chant.h:
+	  - Implemented CHANT_STATIC option for static operations;
+	  - implemented chant_boolean() property;
+	  - implemented CHANT_SUPER_CLASS_AFFINE inheritance;
+	  - implemented CHANT_CONSTRUCT option that defines init(self), called
+	    from the operation's gobject constructor;
+	  - removed the need for defining CHANT_type_name_init and
+	    CHANT_type_name_class_init.
+
+	* operations/core/clone.c: removed definition of CHANT_STATIC.
+
+	* operations/core/clone.c:
+	* operations/core/crop.c:
+	* operations/core/nop.c:
+	* operations/core/shift.c: removed definitions of CHANT_type_name_init
+	  and CHANT_type_name_class_init.
+
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am: do not include the unit tests in the build right now.

@@ -7,11 +7,8 @@ chant_string (ref, "")
 #define CHANT_NAME                 "clone"
 #define CHANT_SELF                 "clone.c"
 #define CHANT_SUPER_CLASS_FILTER
-#define CHANT_STATIC
 #define CHANT_TypeName             OpClone
 #define CHANT_type_name            op_clone
-#define CHANT_type_name_init       op_clone_init
-#define CHANT_type_name_class_init op_clone_class_init
 #include "gegl-chant.h"
 
 

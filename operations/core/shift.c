@@ -11,8 +11,6 @@ chant_float (y,   -121212.0,  1234134.0,  0.0)
 #define CHANT_CLASS_CONSTRUCT
 #define CHANT_TypeName             OpShift
 #define CHANT_type_name            op_shift
-#define CHANT_type_name_init       op_shift_init
-#define CHANT_type_name_class_init op_shift_class_init
 #include "gegl-chant.h"
 
 

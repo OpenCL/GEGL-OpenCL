@@ -8,8 +8,6 @@
 #define CHANT_CLASS_CONSTRUCT
 #define CHANT_TypeName             OpNop
 #define CHANT_type_name            op_nop
-#define CHANT_type_name_init       op_nop_init
-#define CHANT_type_name_class_init op_nop_class_init
 #include "gegl-chant.h"
 
 static gboolean
