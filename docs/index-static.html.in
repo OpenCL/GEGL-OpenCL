@@ -112,7 +112,7 @@ of DAGs, directed acyclic graphs, of image processing operations.
 
         <ul>
             <li>Graph manipulation API.</li>
-            <li>XML data model</li>
+            <li>Process trees (layers, layer groups, effect layers, clones etc.) parsed/serialized to XML.</li>
             <li>Supports rectangular subregion output to linear buffers in all
                 <a href='http://pippin.gimp.org/babl/'>babl</a> based
                 pixel formats.</li>
@@ -167,13 +167,19 @@ webpages were built, you can take a look at <a href='operations.html'>some intro
     <a name='XML'></a>
     <h2>XML</h2>
 
+    <p>A higher level and abstraction than the graph manipulation API which
+    isn't quite stabilized is the XML backed processing tree.</p>
+
+    <p>For documentation on how this XML works, take a look at the sources
+    in the <a href='gallery/index.html'>gallery.</a> And browse the
+    <a href='operations.html'>documentation for operations</a>.</p>
+
+    <p>The tree allows clones, making it possible to express any acyclic graph
+    where the nodes are all of the types: source, filter and composer. </p>
     <p>
     GEGL can write and reads its data model to and from XML. The XML is
     chains of image processing commands, where some chains allow a child chain
     (the 'over' operator to implement layers for instance).
-    </p>
-    <p>The tree representation also allows clones, making it possible to express
-    any acyclic graph where the nodes are all of the types: source, filter and composer.
     </p>
     <p>The type of operation associated with a node can be specified either
     with a <em>class</em> attribute or by using the operation name as the tag
