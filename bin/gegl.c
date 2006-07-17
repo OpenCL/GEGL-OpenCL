@@ -174,9 +174,11 @@ list_properties (GType    type,
             g_print (" ");
           if (html)
             {
-              g_print("&nbsp;&nbsp;&nbsp;%s <em>%s</em> %s<br/>\n",
-                g_param_spec_get_name (self[prop_no]),
+              g_print("<tr><td colspan='2'>&nbsp;&nbsp;</td><td colspan='1' class='prop_type'>%s</td><td class='prop_name'>%s</td></tr>\n",
                 g_type_name (G_OBJECT_TYPE(self[prop_no])),
+                g_param_spec_get_name (self[prop_no]));
+              if (g_param_spec_get_blurb (self[prop_no])[0]!='\0')
+                g_print ("<tr><td colspan='3'>&nbsp;</td><td colspan='2' class='prop_blurb'>%s</td></tr>\n",
                 g_param_spec_get_blurb (self[prop_no]));
             }
           else
@@ -223,16 +225,41 @@ introspect (GType    type,
       if (klass->name != NULL)
         {
           if (html)
-            g_print ("<h4>%s</h4><p>\n", klass->name);
+            g_print ("<tr><td colspan='2'>&nbsp;</td><td class='op_name' colspan='3'><a name='%s'>%s</a></td></tr>\n", klass->name, klass->name);
           else
             g_print ("%s\n", klass->name);
           if (html && klass->description)
-            g_print ("%s</p><p>\n", klass->description);
+            g_print ("<tr><td colspan='2'>&nbsp;</td><td class='op_description' colspan='3'>%s</td></tr>\n", klass->description);
           list_properties (ops[no], indent+2, html);
-          if (html)
-            g_print ("</p>");
         }
       introspect (ops[no], indent+2, html);
+    }
+  g_free (ops);
+}
+
+static void
+index_introspect (GType    type)
+{
+  GType *ops;
+  guint  children;
+  gint   no;
+
+  if (!type)
+    return;
+
+  ops = g_type_children (type, &children);
+
+  if (!ops)
+    return;
+
+  for (no=0; no<children; no++)
+    {
+      GeglOperationClass *klass;
+
+      klass = g_type_class_ref (ops[no]);
+      if (klass->name != NULL)
+        g_print ("<li><a href='#%s'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s</a></li>\n", klass->name, klass->name);
+      index_introspect (ops[no]);
     }
   g_free (ops);
 }
@@ -241,21 +268,40 @@ static void
 gegl_list_ops (gboolean html)
 {
   if (html)
-    g_print ("<html><head><title>GEGL gallery</title><style type='text/css'>@import url(gegl.css);</style></head><body>"
-    "<div class='toc'><ul><li><a href='index.html'>GEGL</a></li><li><a href='#'>Operations</a></li>"
-"<li><a href='#sources'>&nbsp;&nbsp;sources</a></li>"
-"<li><a href='#filters'>&nbsp;&nbsp;filters</a></li>"
-"<li><a href='#composers'>&nbsp;&nbsp;composers</a></li>"
-"</ul></div>"
-"<div class='paper'><div class='content'>");
+    {
+      g_print ("<html><head><title>GEGL operations</title><style type='text/css'>@import url(gegl.css);</style></head><body>\n");
+      g_print ("<div class='toc'><ul><li><a href='index.html'>GEGL</a></li><li><a href='#'>Operations</a></li>\n");
+      g_print ("<li><a href='#sources'>&nbsp;&nbsp;Sources</a></li>\n");
+      index_introspect (GEGL_TYPE_OPERATION_SOURCE);
+      g_print ("<li><a href='#filters'>&nbsp;&nbsp;Filters</a></li>\n");
+      index_introspect (GEGL_TYPE_OPERATION_FILTER);
+      g_print ("<li><a href='#composers'>&nbsp;&nbsp;Composers</a></li>\n");
+      index_introspect (GEGL_TYPE_OPERATION_COMPOSER);
+      g_print ("</ul></div>\n");
+      g_print ("<div class='paper'><div class='content'>\n");
+      g_print ("<h1>Operations</h1>");
+      g_print ("<p>All nodes in the graph are operations, when dividing the operations into categories it is done based on what input and output pads are available for connection to other operations.</p>");
+    }
 
-  g_print ("<a name='sources'></a><h2>Sources</h2>");
+  if(html)
+    g_print ("<table border='0'>");
+
+  if(html)
+    g_print ("<tr><td colspan='5'><a name='sources'></a><h2>Sources</h2>"
+     "<p>Source operations provide an image buffer on an output pad. These are the portion of the graph where the image data to be operated on comes from.</p>"
+     "</td></tr>\n");
   introspect (GEGL_TYPE_OPERATION_SOURCE, 0, html);
-  g_print ("<a name='filters'></a><h2>Filters</h2>");
+  if(html)
+    g_print ("<tr><td colspan='5'><a name='filters'></a><h2>Filters</h2>"
+     "<p>Filter operations modify a provided image in some manner.</p>"
+     "</td></tr>\n");
   introspect (GEGL_TYPE_OPERATION_FILTER, 0, html);
-  g_print ("<a name='composers'></a><h2>Composers</h2>");
+  if(html)
+    g_print ("<tr><td colspan='5'><a name='composers'></a><h2>Composers</h2>"
+     "<p>Composers are like filters, but has an (optional) image buffer controlling what happens to the input buffer as well. Some of the built in ones, use the buffer if it exist and the value of the property named <em>value</em> otherwize.</p>"
+     "</td></tr>\n");
   introspect (GEGL_TYPE_OPERATION_COMPOSER, 0, html);
 
   if (html)
-    g_print ("</div></div></body></html>");
+    g_print ("</table></div></div></body></html>");
 }
