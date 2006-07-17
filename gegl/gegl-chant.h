@@ -65,13 +65,13 @@ typedef struct GeneratedClass   CHANT_GENERATED_CLASS;
 struct Generated
 {
   CHANT_PARENT_TypeName  parent_instance;
-#define chant_int(name, min, max, def)     gint     name;
-#define chant_double(name, min, max, def)  gdouble  name;
-#define chant_float(name, min, max, def)   gfloat   name;
-#define chant_boolean(name, def)           gboolean name;
-#define chant_string(name, def)            gchar   *name;
-#define chant_object(name)                 GObject *name;
-#define chant_pointer(name)                gpointer name;
+#define chant_int(name, min, max, def, blurb)     gint     name;
+#define chant_double(name, min, max, def, blurb)  gdouble  name;
+#define chant_float(name, min, max, def, blurb)   gfloat   name;
+#define chant_boolean(name, def, blurb)           gboolean name;
+#define chant_string(name, def, blurb)            gchar   *name;
+#define chant_object(name, blurb)                 GObject *name;
+#define chant_pointer(name, blurb)                gpointer name;
 
 #include CHANT_SELF
 
@@ -199,13 +199,13 @@ M_DEFINE_TYPE (CHANT_TypeName, CHANT_NAME, CHANT_type_name, CHANT_PARENT_TYPE)
 enum
 {
   PROP_0,
-#define chant_int(name, min, max, def)     PROP_##name,
-#define chant_double(name, min, max, def)  PROP_##name,
-#define chant_float(name, min, max, def)   PROP_##name,
-#define chant_boolean(name, def)           PROP_##name,
-#define chant_string(name, def)            PROP_##name,
-#define chant_object(name)                 PROP_##name,
-#define chant_pointer(name)                PROP_##name,
+#define chant_int(name, min, max, def, blurb)     PROP_##name,
+#define chant_double(name, min, max, def, blurb)  PROP_##name,
+#define chant_float(name, min, max, def, blurb)   PROP_##name,
+#define chant_boolean(name, def, blurb)           PROP_##name,
+#define chant_string(name, def, blurb)            PROP_##name,
+#define chant_object(name, blurb)                 PROP_##name,
+#define chant_pointer(name, blurb)                PROP_##name,
 
 #include CHANT_SELF
 
@@ -228,19 +228,19 @@ static void get_property (GObject      *object,
 
   switch (property_id)
   {
-#define chant_int(name, min, max, def)\
+#define chant_int(name, min, max, def, blurb)\
     case PROP_##name: g_value_set_int (value, self->name);break;
-#define chant_double(name, min, max, def)\
+#define chant_double(name, min, max, def, blurb)\
     case PROP_##name: g_value_set_double (value, self->name);break;
-#define chant_float(name, min, max, def)\
+#define chant_float(name, min, max, def, blurb)\
     case PROP_##name: g_value_set_float (value, self->name);break;
-#define chant_boolean(name, def)\
+#define chant_boolean(name, def, blurb)\
     case PROP_##name: g_value_set_boolean (value, self->name);break;
-#define chant_string(name, def)\
+#define chant_string(name, def, blurb)\
     case PROP_##name: g_value_set_string (value, self->name);break;
-#define chant_object(name)\
+#define chant_object(name, blurb)\
     case PROP_##name: g_value_set_object (value, self->name);break;
-#define chant_pointer(name)\
+#define chant_pointer(name, blurb)\
     case PROP_##name: g_value_set_pointer (value, self->name);break;
 
 #include CHANT_SELF
@@ -268,35 +268,35 @@ static void set_property (GObject      *object,
 
   switch (property_id)
   {
-#define chant_int(name, min, max, def)\
+#define chant_int(name, min, max, def, blurb)\
     case PROP_##name:\
       self->name = g_value_get_int (value);\
       break;
-#define chant_double(name, min, max, def)\
+#define chant_double(name, min, max, def, blurb)\
     case PROP_##name:\
       self->name = g_value_get_double (value);\
       break;
-#define chant_float(name, min, max, def)\
+#define chant_float(name, min, max, def, blurb)\
     case PROP_##name:\
       self->name = g_value_get_float (value);\
       break;
-#define chant_boolean(name, def)\
+#define chant_boolean(name, def, blurb)\
     case PROP_##name:\
       self->name = g_value_get_boolean (value);\
       break;
-#define chant_string(name, def)\
+#define chant_string(name, def, blurb)\
     case PROP_##name:\
       if (self->name)\
         g_free (self->name);\
       self->name = g_strdup (g_value_get_string (value));\
       break;
-#define chant_object(name)\
+#define chant_object(name, blurb)\
     case PROP_##name:\
       if (self->name != NULL) \
          g_object_unref (self->name);\
       self->name = g_value_get_object (value);\
       break;
-#define chant_pointer(name)\
+#define chant_pointer(name, blurb)\
     case PROP_##name:\
       self->name = g_value_get_pointer (value);\
       break;
@@ -399,51 +399,51 @@ chant_class_init (CHANT_GENERATED_CLASS * klass)
   class_init (operation_class);
 #endif
 
-#define chant_int(name, min, max, def)  \
+#define chant_int(name, min, max, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
-                                   g_param_spec_int (#name, #name, #name,\
+                                   g_param_spec_int (#name, #name, blurb,\
                                                      min, max, def,\
                                                      G_PARAM_READWRITE |\
                                                      G_PARAM_CONSTRUCT |\
                                                      GEGL_PAD_INPUT));
-#define chant_double(name, min, max, def)  \
+#define chant_double(name, min, max, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
-                                   g_param_spec_double (#name, #name, #name,\
+                                   g_param_spec_double (#name, #name, blurb,\
                                                         min, max, def,\
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
                                                         GEGL_PAD_INPUT));
-#define chant_float(name, min, max, def)  \
+#define chant_float(name, min, max, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
-                                   g_param_spec_float (#name, #name, #name,\
+                                   g_param_spec_float (#name, #name, blurb,\
                                                         min, max, def,\
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
                                                         GEGL_PAD_INPUT));
-#define chant_boolean(name, def)  \
+#define chant_boolean(name, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
-                                   g_param_spec_boolean (#name, #name, #name,\
+                                   g_param_spec_boolean (#name, #name, blurb,\
                                                          def,\
                                                          G_PARAM_READWRITE |\
                                                          G_PARAM_CONSTRUCT |\
                                                          GEGL_PAD_INPUT));
-#define chant_string(name, def)  \
+#define chant_string(name, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
-                                   g_param_spec_string (#name, #name, #name,\
+                                   g_param_spec_string (#name, #name, blurb,\
                                                         def,\
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
                                                         GEGL_PAD_INPUT));
-#define chant_object(name)  \
+#define chant_object(name, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
-                                   g_param_spec_object (#name, #name, #name,\
+                                   g_param_spec_object (#name, #name, blurb,\
                                                         G_TYPE_OBJECT,\
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
                                                         GEGL_PAD_INPUT));
-#define chant_pointer(name)  \
+#define chant_pointer(name, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
-                                   g_param_spec_pointer (#name, #name, #name,\
+                                   g_param_spec_pointer (#name, #name, blurb,\
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
                                                         GEGL_PAD_INPUT));

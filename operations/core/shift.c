@@ -1,7 +1,7 @@
 #ifdef CHANT_SELF
  
-chant_float (x,   -123434.0,  1234134.0,  0.0)
-chant_float (y,   -121212.0,  1234134.0,  0.0)
+chant_float (x,   -123434.0,  1234134.0,  0.0, "x coordinate of new origin")
+chant_float (y,   -121212.0,  1234134.0,  0.0, "y coordinate of new origin")
 
 #else
 

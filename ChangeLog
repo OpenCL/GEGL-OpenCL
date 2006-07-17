@@ -1,5 +1,21 @@
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-chant.h: Added descriptive blurbs to all property chants.
+	* operations/core/clone.c:
+	* operations/core/crop.c:
+	* operations/core/shift.c:
+
+2006-07-17  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* gegl/gegl-chant.h:
+	* operations/core/clone.c:
+	* operations/core/crop.c:
+	* operations/core/shift.c:
+
+2006-07-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/core/Makefile.am: stop pkg-config pulling in the
 	headers of the (possibly) installed GEGL.
 

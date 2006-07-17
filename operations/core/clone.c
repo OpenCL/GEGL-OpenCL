@@ -1,6 +1,6 @@
 #ifdef CHANT_SELF
 
-chant_string (ref, "")
+chant_string (ref, "", "The reference ID used as input, used internally by the XML data model.")
 
 #else
 
