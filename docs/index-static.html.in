@@ -79,8 +79,9 @@
         <li><a href='#gegl'>&nbsp;&nbsp;gegl</a></li>
         <li><a href='gallery/index.html'>&nbsp;&nbsp;Gallery</a></li>
         <li><a href='#Building'>Building</a></li>
+        <li><a href='#bootstrapping'>&nbsp;&nbsp;Bootstrapping</a></li>
         <li><a href='#Source'>Source</a></li>
-        <li><a href='#Usage'>Usage</a></li>
+        <li><a href='#source_overview'>&nbsp;&nbsp;Overview</a></li>
         <li><a href='#Todo'>Todo</a></li>
         <li><a href='#Mailinglists'>Mailinglists</a></li>
         <li><a href='#Copyright'>Copyright</a></li>
@@ -226,7 +227,67 @@ Some examples:
                  <li>libjpeg</li>
              </ul>
              </li>
-        </ul>
+         </ul>
+
+        <a name='bootstrapping'></a>
+        <h3>Bootstrapping</h3>
+        <p>Save the following bash script to a file and make it executable.
+        Running this probably makes quite a few assumptions, it is currently
+        only known to work out of the box on my (pippin) ubuntu install with
+        quite a few other general build dependencies satisfied. Read and 
+        understand the script before running it.
+        </p>
+        <pre>
+#!/bin/sh
+
+export CVSROOT=':pserver:anonymous@anoncvs.gimp.org:/cvs/gnome'
+
+mkdir gegl-test
+cd gegl-test
+
+echo -n "Enter sudo "
+sudo echo "got root"
+
+echo "Cleaning up any prior /usr/local babl and gegl installs"
+sudo rm -rfv /usr/local/lib/*gegl* /usr/local/include/*gegl*
+sudo rm -rfv /usr/local/lib/*babl* /usr/local/include/*babl*
+
+echo "Getting sources"
+cvs co babl || exit
+cvs co gegl || exit
+wget http://pippin.gimp.org/gegl/gegl-operations.tgz || exit
+tar xvzf gegl-operations.tgz
+
+echo "Building babl"
+
+cd babl
+./autogen.sh || exit
+make || exit
+echo "Installing babl"
+sudo make install || exit
+cd ..
+
+echo "Building GEGL"
+cd gegl
+./autogen.sh || exit
+make || exit
+echo "Installing GEGL"
+sudo make install || exit
+cd ..
+
+echo "Building GEGL operations"
+cd gegl-operations
+make || exit
+sudo make install || exit
+cd ..
+
+echo "Rebuilding GEGL documentation"
+cd gegl/docs
+make clean || exit
+make || exit
+
+echo "Hopefully gegl-test/gegl/docs/gallery/index.html has a generated sample now."</pre>
+
 
         <a name='Source'></a>
         <h2>Source</h2>
@@ -235,7 +296,9 @@ Some examples:
         The latest development version is available in <a href='http://cvs.gnome.org/viewcvs/gegl/'>the <em>gegl</em> module in GNOME CVS</a>.
         </p>
 
-<h3>Directory overview</h3>
+
+<a name='source_overview'></a>
+<h3>Source Overview</h3>
 
 <p>
 If you're reading this, you probably have a GEGL distribution. This file
@@ -287,6 +350,15 @@ about how babl works, since GEGL builds on top of babl.
  `--opgen        seems to be code using an older version of gil
 </pre>
 
+<h4>Directories in the gegl-operations tarball</h4>
+<pre>gegl-operations
+ |
+ |--file_io      Image loading and saving for png, jpg, raw, image magick...
+ |--generated    Operations that have their code generated from (ruby) code
+ |               generators.
+ |--local        Place to add your own ops (currently contains an invert op)
+ `--misc         a collection of ops.
+</pre>
 <h4>Directories a babl checkout</h4>
 <pre>babl-dist-root
  |
@@ -309,13 +381,6 @@ about how babl works, since GEGL builds on top of babl.
         </div>
         -->
 
-        <a name='Usage'></a>
-        <h2>Usage</h2>
-
-<p>
-At the moment the samples in the <a href='gallery/index.html'>gallery</a> is probably the best illustrations
-of how the current capabilities can be used for compositing.
-</p>
 
         <a name='Extending'></a>
         <h2>Extending</h2>
