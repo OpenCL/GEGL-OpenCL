@@ -1,5 +1,9 @@
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* AUTHORS: added myself to Documentation.
+
+2006-07-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.c: (list_properties), (introspect), (index_introspect),
 	(gegl_list_ops): Made the generated webpage a easier to interact with
 	and prettier.
