@@ -1,3 +1,15 @@
+2006-07-17  Øyvind Kolås  <pippin@gimp.org>
+
+	Added a new set of documentation in HTML format/webpages, mostly
+	based on babl's documentation.
+
+	* gallery/Makefile.am: A gallery system that renders all xml files
+	in the gallery directory to png's and creates a html index.
+	* gegl.css: A stylesheet, originating with the babl documentation.
+	* index-static.html.in: a migration of the data from the existing
+	README.
+	* Makefile.am: modified accordingly.
+
 2005-07-29  Sven Neumann  <sven@gimp.org>
 
 	* reference/gegl/Makefile.am
