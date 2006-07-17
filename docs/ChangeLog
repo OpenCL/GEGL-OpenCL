@@ -1,5 +1,11 @@
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* gallery/drop-shadow.xml: Added a test.
+	* gallery/data/gegl.png: gegl logo rendered from svg to png.
+	* gallery/data/vinci-fly3.jpg: a sketch by leonardo davinci.
+
+2006-07-17  Øyvind Kolås  <pippin@gimp.org>
+
 	Added a new set of documentation in HTML format/webpages, mostly
 	based on babl's documentation.
 
