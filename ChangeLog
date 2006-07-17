@@ -1,3 +1,8 @@
+2006-07-17  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/core/Makefile.am: stop pkg-config pulling in the
+	headers of the (possibly) installed GEGL.
+
 2006-07-16  Philip Lafleur  <plafleur@cvs.gnome.org>
 
 	* gegl/gegl-chant.h:

@@ -7,7 +7,7 @@ CFILES  = clone.c crop.c nop.c shift.c
 SOBJS   = $(CFILES:.c=.so)
 all: $(SOBJS)
 
-CFLAGS  += -Wall -I../.. `pkg-config --cflags gegl`
+CFLAGS  += -Wall -I../..
 
 %.so: %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
