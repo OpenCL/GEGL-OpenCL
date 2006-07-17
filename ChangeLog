@@ -1,18 +1,20 @@
+
+2006-07-17  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-chant.h: added CHANT_DESCRIPTION, which ends up as the
+	textual decsription of the operation being defined.
+
+	* operations/core/crop.c,
+	* operations/core/nop.c,
+	* operations/core/shift.c: fixed accordingly.
+
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-chant.h: Added descriptive blurbs to all property chants.
-	* operations/core/clone.c:
-	* operations/core/crop.c:
-	* operations/core/shift.c:
 
-2006-07-17  Øyvind Kolås  <pippin@gimp.org>
-
-	reviewed by: <delete if not using a buddy>
-
-	* gegl/gegl-chant.h:
-	* operations/core/clone.c:
-	* operations/core/crop.c:
-	* operations/core/shift.c:
+	* operations/core/clone.c,
+	* operations/core/crop.c,
+	* operations/core/shift.c: fixed accordingly.
 
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>
 

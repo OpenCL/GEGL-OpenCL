@@ -1,10 +1,12 @@
 #ifdef CHANT_SELF
 
-chant_string (ref, "", "The reference ID used as input, used internally by the XML data model.")
+chant_string (ref, "", "The reference ID used as input.")
 
 #else
 
 #define CHANT_NAME                 "clone"
+#define CHANT_DESCRIPTION          "A routing op used by the XML data model to implement clones."
+
 #define CHANT_SELF                 "clone.c"
 #define CHANT_SUPER_CLASS_FILTER
 #define CHANT_TypeName             OpClone

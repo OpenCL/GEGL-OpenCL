@@ -3,6 +3,7 @@
 #else
 
 #define CHANT_NAME                 "nop"
+#define CHANT_DESCRIPTION          "Passthrough operation"
 #define CHANT_SELF                 "nop.c"
 #define CHANT_SUPER_CLASS_FILTER
 #define CHANT_CLASS_CONSTRUCT

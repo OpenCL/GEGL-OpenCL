@@ -6,6 +6,7 @@ chant_float (y,   -121212.0,  1234134.0,  0.0, "y coordinate of new origin")
 #else
 
 #define CHANT_NAME                 "shift"
+#define CHANT_DESCRIPTION          "Translate the buffer, an integer amount of pixels."
 #define CHANT_SELF                 "shift.c"
 #define CHANT_SUPER_CLASS_FILTER
 #define CHANT_CLASS_CONSTRUCT

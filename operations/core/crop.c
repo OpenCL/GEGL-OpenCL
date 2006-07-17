@@ -9,6 +9,9 @@ chant_float (height, -121212.0,  1234134.0,  10.0, "height in pixels")
 
 #define CHANT_NAME                 "crop"
 #define CHANT_SELF                 "crop.c"
+#define CHANT_DESCRIPTION          "crops the image, can be used to rectangulary" \
+                                   "clip buffers, as well as specifying what " \
+                                   "portion of a composition to render to file"
 #define CHANT_SUPER_CLASS_FILTER
 #define CHANT_CLASS_CONSTRUCT
 #define CHANT_TypeName             OpCrop
@@ -80,8 +83,6 @@ static void class_init (GeglOperationClass *operation_class)
 {
   operation_class->calc_have_rect = calc_have_rect;
   operation_class->calc_need_rect = calc_need_rect;
-  gegl_operation_class_set_description (operation_class,
-    "crops the image, can be used to rectangulary clip buffers, as well as specifying what portion of a composition to render to file");
 }
 
 #endif

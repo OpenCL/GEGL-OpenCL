@@ -449,6 +449,10 @@ chant_class_init (CHANT_GENERATED_CLASS * klass)
                                                         GEGL_PAD_INPUT));
 #include CHANT_SELF
 
+#ifdef CHANT_DESCRIPTION
+  gegl_operation_class_set_description (operation_class, CHANT_DESCRIPTION);
+#endif
+
 #undef chant_int
 #undef chant_double
 #undef chant_float
