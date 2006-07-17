@@ -1,5 +1,25 @@
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>
 
+	Added a core set of operations that are compiled alongside the GEGL
+	library.
+
+	* gegl/gegl-chant.h: A code containing magic encantations used to
+	significantly decrease the needed lines of code to develop operation
+	plug-ins.
+	* gegl/Makefile.am: added gegl-chant.h
+	* operations/Makefile.am: new file, that simply builds in the core
+	subdir as well.
+	* operations/core/Makefile.am: Added a makefile for compiling modules,
+	probably not quite automakified yet.
+	* operations/core/clone.c:
+	* operations/core/crop.c:
+	* operations/core/nop.c:
+	* operations/core/shift.c:
+	* configure.in,
+	  Makefile.am: modified accordingly.
+
+2006-07-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/module/Makefile.am: renamed meta level variables.
 
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>

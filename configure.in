@@ -212,10 +212,14 @@ gil/tests/Makefile
 gegl/Makefile
 gegl/buffer/Makefile
 gegl/module/Makefile
+operations/Makefile
+operations/core/Makefile
 tools/Makefile
 tools/testsuite/Makefile
 tests/Makefile
 docs/Makefile
+docs/index-static.html
+docs/gallery/Makefile
 docs/reference/Makefile
 docs/reference/gegl/Makefile
 docs/reference/gegl/version

@@ -55,7 +55,7 @@ GEGL_public_headers = \
 
 libgegl_1_0_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 
-libgegl_1_0_la_LIBADD = $(libbuffer) $(libmodule)
+libgegl_1_0_la_LIBADD = $(libbuffer) $(libmodule) 
 
 INCLUDES = \
 	-I$(top_srcdir)	\
@@ -72,7 +72,7 @@ gegl_LDFLAGS = \
 libgeglincludedir = $(includedir)/gegl-1.0
 libgeglsubincludedir = $(includedir)/gegl-1.0/gegl
 
-libgeglinclude_HEADERS = gegl.h gegl-module.h
+libgeglinclude_HEADERS = gegl.h gegl-module.h gegl-chant.h
 libgeglsubinclude_HEADERS = $(GEGL_public_headers) 
 
 
