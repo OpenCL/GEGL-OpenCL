@@ -225,9 +225,9 @@
         div.content {
         }
         div.graphic {
-           background: url("images/gegl.png");
+           /*background: url("gallery/data/gegl.png");
            background-repeat: no-repeat;
-           z-index: 1;
+           z-index: 1;*/
         }
         div.print {
           display: none;
