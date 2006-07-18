@@ -7,15 +7,13 @@ chant_float (height, -121212.0,  1234134.0,  10.0, "height in pixels")
 
 #else
 
-#define CHANT_NAME                 "crop"
-#define CHANT_SELF                 "crop.c"
-#define CHANT_DESCRIPTION          "crops the image, can be used to rectangulary" \
-                                   "clip buffers, as well as specifying what " \
-                                   "portion of a composition to render to file"
-#define CHANT_SUPER_CLASS_FILTER
+#define CHANT_FILTER
+#define CHANT_NAME            crop
+#define CHANT_SELF            "crop.c"
+#define CHANT_DESCRIPTION     "crops the image, can be used to rectangulary" \
+                              "clip buffers, as well as specifying what " \
+                              "portion of a composition to render to file"
 #define CHANT_CLASS_CONSTRUCT
-#define CHANT_TypeName             OpCrop
-#define CHANT_type_name            op_crop
 #include "gegl-chant.h"
 
 
@@ -31,7 +29,7 @@ evaluate (GeglOperation *operation,
 {
   GeglOperationFilter    *filter = GEGL_OPERATION_FILTER(operation);
   GeglBuffer  *input  = filter->input;
-  OpCrop *crop = (OpCrop*)filter;
+  ChantInstance *crop = CHANT_INSTANCE (operation);
 
   if(strcmp("output", output_prop))
     return FALSE;
@@ -56,7 +54,7 @@ evaluate (GeglOperation *operation,
 static gboolean
 calc_have_rect (GeglOperation *operation)
 {
-  OpCrop  *op_crop = (OpCrop*)(operation);
+  ChantInstance  *op_crop = (ChantInstance*)(operation);
   GeglRect *in_rect = gegl_operation_get_have_rect (operation, "input");
   if (!in_rect)
     return FALSE;

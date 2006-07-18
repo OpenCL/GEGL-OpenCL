@@ -338,6 +338,15 @@ gegl_operation_class_set_name (GeglOperationClass *klass,
   if (klass->name)
     g_free (klass->name);
   klass->name = g_strdup (new_name);
+  { /* perform a: s/_/-/g */
+    gchar *p=klass->name;
+    while (*p)
+      {
+        if (*p == '_')
+          *p = '-';
+        p++;
+      }
+  }
 }
 
 void

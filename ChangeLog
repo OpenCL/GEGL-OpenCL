@@ -1,3 +1,18 @@
+2006-07-18  Øyvind Kolås  <pippin@gimp.org>
+
+	Reworked the magic chanting. 
+	
+	  - removed need for a camel cased name
+	  - shortened CHANT_SUPER_CLASS_FOO to CHANT_SUPER_CLASS.
+
+	* gegl/gegl-chant.h:
+	* gegl/gegl-operation.c: (gegl_operation_class_set_name): perform a
+	s/_/-/ on the string.
+	* operations/core/clone.c,
+	* operations/core/crop.c,
+	* operations/core/nop.c,
+	* operations/core/shift.c: Changed accordingly.
+
 2006-07-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* AUTHORS: added myself to Documentation.

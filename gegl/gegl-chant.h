@@ -9,49 +9,49 @@
 
 #include <gegl.h>
 
-#ifdef CHANT_SUPER_CLASS_SOURCE
+#ifdef CHANT_SOURCE
   #include <gegl/gegl-operation-source.h>
   #define CHANT_PARENT_TypeName      GeglOperationSource
   #define CHANT_PARENT_TypeNameClass GeglOperationSourceClass
   #define CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_SOURCE
   #define CHANT_PARENT_CLASS         GEGL_OPERATION_SOURCE_CLASS
 #endif
-#ifdef CHANT_SUPER_CLASS_SINK
+#ifdef CHANT_SINK
   #include "op_sink.h"
   #define CHANT_PARENT_TypeName      OpSink
   #define CHANT_PARENT_TypeNameClass OpSinkClass
   #define CHANT_PARENT_TYPE          TYPE_OP_SINK
   #define CHANT_PARENT_CLASS         OP_SINK_CLASS
 #endif
-#ifdef CHANT_SUPER_CLASS_FILTER
+#ifdef CHANT_FILTER
   #include <gegl/gegl-operation-filter.h>
   #define CHANT_PARENT_TypeName      GeglOperationFilter
   #define CHANT_PARENT_TypeNameClass GeglOperationFilterClass
   #define CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_FILTER
   #define CHANT_PARENT_CLASS         GEGL_OPERATION_FILTER_CLASS
 #endif
-#ifdef CHANT_SUPER_CLASS_POINT_FILTER
+#ifdef CHANT_POINT_FILTER
   #include "op_point_filter.h"
   #define CHANT_PARENT_TypeName      OpPointFilter
   #define CHANT_PARENT_TypeNameClass OpPointFilterClass
   #define CHANT_PARENT_TYPE          TYPE_OP_POINT_FILTER
   #define CHANT_PARENT_CLASS         OP_POINT_FILTER_CLASS
 #endif
-#ifdef CHANT_SUPER_CLASS_COMPOSER
+#ifdef CHANT_COMPOSER
   #include <gegl/gegl-operation-composer.h>
   #define CHANT_PARENT_TypeName      GeglOperationComposer
   #define CHANT_PARENT_TypeNameClass GeglOperationComposerClass
   #define CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_COMPOSER
   #define CHANT_PARENT_CLASS         GEGL_OPERATION_COMPOSER_CLASS
 #endif
-#ifdef CHANT_SUPER_CLASS_POINT_COMPOSER
+#ifdef CHANT_POINT_COMPOSER
   #include "op_point_composer.h"
   #define CHANT_PARENT_TypeName      OpPointComposer
   #define CHANT_PARENT_TypeNameClass OpPointComposerClass
   #define CHANT_PARENT_TYPE          TYPE_OP_POINT_COMPOSER
   #define CHANT_PARENT_CLASS         OP_POINT_COMPOSER_CLASS
 #endif
-#ifdef CHANT_SUPER_CLASS_AFFINE
+#ifdef CHANT_AFFINE
   #include "op_affine.h"
   #define CHANT_PARENT_TypeName      OpAffine
   #define CHANT_PARENT_TypeNameClass OpAffineClass
@@ -59,8 +59,8 @@
   #define CHANT_PARENT_CLASS         OP_AFFINE_CLASS
 #endif
 
-typedef struct Generated        CHANT_TypeName;
-typedef struct GeneratedClass   CHANT_GENERATED_CLASS;
+typedef struct Generated        ChantInstance;
+typedef struct GeneratedClass   ChantClass;
 
 struct Generated
 {
@@ -94,18 +94,20 @@ struct GeneratedClass
   CHANT_PARENT_TypeNameClass parent_class;
 };
 
+#define CHANT_INSTANCE(obj) ((ChantInstance*)(obj))
+
 #include <gegl-module.h>
 
 #ifndef CHANT_STATIC
-#  define M_DEFINE_TYPE_EXTENDED(TypeName, MAG_NAME, type_name, TYPE_PARENT, flags, CODE) \
+#  define M_DEFINE_TYPE_EXTENDED(type_name, TYPE_PARENT, flags, CODE) \
   \
-static void     chant_init              (TypeName        *self); \
-static void     chant_class_init        (CHANT_GENERATED_CLASS *klass); \
+static void     chant_init              (ChantInstance *self); \
+static void     chant_class_init        (ChantClass    *klass); \
 static gpointer chant_parent_class = NULL; \
 static void     chant_class_intern_init (gpointer klass) \
   { \
     chant_parent_class = g_type_class_peek_parent (klass); \
-    chant_class_init ((CHANT_GENERATED_CLASS*) klass); \
+    chant_class_init ((ChantClass*) klass); \
   } \
 \
 GType \
@@ -115,20 +117,20 @@ type_name##_get_type (GTypeModule *module) \
     if (G_UNLIKELY (g_define_type_id == 0)) \
       { \
             static const GTypeInfo g_define_type_info = { \
-                      sizeof (CHANT_GENERATED_CLASS), \
+                      sizeof (ChantClass), \
                       (GBaseInitFunc) NULL, \
                       (GBaseFinalizeFunc) NULL, \
                       (GClassInitFunc) chant_class_intern_init, \
                       (GClassFinalizeFunc) NULL, \
                       NULL,   /* class_data */ \
-                      sizeof (TypeName), \
+                      sizeof (ChantInstance), \
                       0,      /* n_preallocs */ \
                       (GInstanceInitFunc) chant_init, \
                       NULL    /* value_table */ \
                     }; \
             g_define_type_id = gegl_module_register_type (module,\
                                                             TYPE_PARENT,\
-                          "GeglOpPlugIn-" MAG_NAME, &g_define_type_info, 0);\
+                          "GeglOpPlugIn-" #type_name, &g_define_type_info, 0);\
           } \
     return g_define_type_id; \
   }\
@@ -136,7 +138,7 @@ type_name##_get_type (GTypeModule *module) \
 static const GeglModuleInfo modinfo =\
 {\
  GEGL_MODULE_ABI_VERSION,\
- MAG_NAME,\
+ #type_name,\
  "v0.0",\
  "(c) 2006, released under the LGPL",\
  "June 2006"\
@@ -156,15 +158,15 @@ gegl_module_register (GTypeModule *module)\
 }
 
 #else
-#  define M_DEFINE_TYPE_EXTENDED(TypeName, MAG_NAME, type_name, TYPE_PARENT, flags, CODE) \
+#  define M_DEFINE_TYPE_EXTENDED(type_name, TYPE_PARENT, flags, CODE) \
   \
-static void     chant_init              (TypeName        *self); \
-static void     chant_class_init        (CHANT_GENERATED_CLASS *klass); \
+static void     chant_init              (ChantInstance   *self); \
+static void     chant_class_init        (ChantClass *klass); \
 static gpointer chant_parent_class = NULL; \
 static void     chant_class_intern_init (gpointer klass) \
   { \
     chant_parent_class = g_type_class_peek_parent (klass); \
-    chant_class_init ((CHANT_GENERATED_CLASS*) klass); \
+    chant_class_init ((ChantClass*) klass); \
   } \
 \
 GType \
@@ -174,27 +176,27 @@ type_name##_get_type (GTypeModule *module) \
     if (G_UNLIKELY (g_define_type_id == 0)) \
       { \
             static const GTypeInfo g_define_type_info = { \
-                      sizeof (CHANT_GENERATED_CLASS), \
+                      sizeof (ChantClass), \
                       (GBaseInitFunc) NULL, \
                       (GBaseFinalizeFunc) NULL, \
                       (GClassInitFunc) chant_class_intern_init, \
                       (GClassFinalizeFunc) NULL, \
                       NULL,   /* class_data */ \
-                      sizeof (TypeName), \
+                      sizeof (ChantInstance), \
                       0,      /* n_preallocs */ \
                       (GInstanceInitFunc) chant_init, \
                       NULL    /* value_table */ \
                     }; \
-            g_define_type_id = g_type_register_static (TYPE_PARENT, #TypeName, &g_define_type_info, (GTypeFlags) flags); \
+            g_define_type_id = g_type_register_static (TYPE_PARENT, "GeglOpPlugIn-" #type_name, &g_define_type_info, (GTypeFlags) flags); \
             { CODE ; } \
           } \
     return g_define_type_id; \
   }
 #endif
 
-#define M_DEFINE_TYPE(TN, Mn, t_n, T_P)   M_DEFINE_TYPE_EXTENDED (TN, Mn, t_n, T_P, 0, )
+#define M_DEFINE_TYPE(t_n, T_P)   M_DEFINE_TYPE_EXTENDED (t_n, T_P, 0, )
 
-M_DEFINE_TYPE (CHANT_TypeName, CHANT_NAME, CHANT_type_name, CHANT_PARENT_TYPE)
+M_DEFINE_TYPE (CHANT_NAME, CHANT_PARENT_TYPE)
 
 enum
 {
@@ -219,12 +221,12 @@ enum
   PROP_LAST
 };
 
-static void get_property (GObject      *object,
+static void get_property (GObject      *gobject,
                           guint         property_id,
                           GValue       *value,
                           GParamSpec   *pspec)
 {
-  CHANT_TypeName *self = (CHANT_TypeName*) object;
+  ChantInstance *self = CHANT_INSTANCE (gobject);
 
   switch (property_id)
   {
@@ -253,18 +255,18 @@ static void get_property (GObject      *object,
 #undef chant_object
 #undef chant_pointer
     default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
   }
   self = NULL; /* silence GCC if no properties were defined */
 }
 
-static void set_property (GObject      *object,
+static void set_property (GObject      *gobject,
                           guint         property_id,
                           const GValue *value,
                           GParamSpec   *pspec)
 {
-  CHANT_TypeName *self = (CHANT_TypeName*) object;
+  ChantInstance *self = CHANT_INSTANCE (gobject);
 
   switch (property_id)
   {
@@ -312,26 +314,26 @@ static void set_property (GObject      *object,
 #undef chant_pointer
 
     default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
   }
   self = NULL; /* silence GCC if no properties were defined */
 }
 
-#ifdef CHANT_SUPER_CLASS_POINT_FILTER
+#ifdef CHANT_POINT_FILTER
 static gboolean evaluate (GeglOperation *operation,
                           guchar        *buf,
                           gint           n_pixels);
 #else
-#ifdef CHANT_SUPER_CLASS_POINT_COMPOSER
+#ifdef CHANT_POINT_COMPOSER
 static gboolean evaluate (GeglOperation *operation,
                           guchar        *src_buf,
                           guchar        *aux_buf,
                           guchar        *out_buf,
                           gint           n_pixels);
 #else
-#ifdef CHANT_SUPER_CLASS_AFFINE
-static void create_matrix (CHANT_TypeName *operation,
+#ifdef CHANT_AFFINE
+static void create_matrix (ChantInstance *operation,
                            Matrix3         matrix);
 #else
 static gboolean evaluate (GeglOperation *operation,
@@ -340,12 +342,12 @@ static gboolean evaluate (GeglOperation *operation,
 #endif
 #endif
 
-static void chant_init (CHANT_TypeName *self)
+static void chant_init (ChantInstance *self)
 {
 }
 
 #ifdef CHANT_CONSTRUCT
-static void init (CHANT_TypeName *self);
+static void init (ChantInstance *self);
 
 static GObject *
 chant_constructor (GType                  type,
@@ -357,7 +359,7 @@ chant_constructor (GType                  type,
   obj = G_OBJECT_CLASS (chant_parent_class)->constructor (
             type, n_construct_properties, construct_properties);
 
-  init ((CHANT_TypeName *) obj);
+  init (CHANT_INSTANCE (obj));
 
   return obj;
 }
@@ -367,12 +369,12 @@ chant_constructor (GType                  type,
 static void class_init (GeglOperationClass *operation_class);
 #endif
 
-#ifdef CHANT_SUPER_CLASS_SOURCE
+#ifdef CHANT_SOURCE
 static gboolean calc_have_rect (GeglOperation *self);
 #endif
 
 static void
-chant_class_init (CHANT_GENERATED_CLASS * klass)
+chant_class_init (ChantClass * klass)
 {
   GObjectClass               *object_class = G_OBJECT_CLASS (klass);
   CHANT_PARENT_TypeNameClass *parent_class = CHANT_PARENT_CLASS (klass);
@@ -385,16 +387,26 @@ chant_class_init (CHANT_GENERATED_CLASS * klass)
 #ifdef CHANT_CONSTRUCT
   object_class->constructor  = chant_constructor;
 #endif
-#ifdef CHANT_SUPER_CLASS_AFFINE
+#ifdef CHANT_AFFINE
   parent_class->create_matrix = (OpAffineCreateMatrixFunc) create_matrix;
 #else
   parent_class->evaluate     = evaluate;
 #endif
 
-#ifdef CHANT_SUPER_CLASS_SOURCE
+#ifdef CHANT_SOURCE
   operation_class->calc_have_rect = calc_have_rect;
 #endif
-  gegl_operation_class_set_name (operation_class, CHANT_NAME);
+#define chant_set_name(name)\
+  gegl_operation_class_set_name (operation_class, ##name);\
+  g_warning ("%s", #name)
+
+/***********/
+#  define M_CHANT_SET_NAME_EXTENDED(name) \
+  gegl_operation_class_set_name (operation_class, #name);\
+
+#define M_CHANT_SET_NAME(name)   M_CHANT_SET_NAME_EXTENDED(name)
+M_CHANT_SET_NAME(CHANT_NAME);
+  
 #ifdef CHANT_CLASS_CONSTRUCT
   class_init (operation_class);
 #endif
@@ -461,5 +473,6 @@ chant_class_init (CHANT_GENERATED_CLASS * klass)
 #undef chant_object
 #undef chant_pointer
 }
+
 
 /****************************************************************************/

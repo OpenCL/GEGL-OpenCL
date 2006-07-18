@@ -2,13 +2,11 @@
 
 #else
 
-#define CHANT_NAME                 "nop"
-#define CHANT_DESCRIPTION          "Passthrough operation"
-#define CHANT_SELF                 "nop.c"
-#define CHANT_SUPER_CLASS_FILTER
+#define CHANT_FILTER
+#define CHANT_NAME            nop
+#define CHANT_DESCRIPTION     "Passthrough operation"
+#define CHANT_SELF            "nop.c"
 #define CHANT_CLASS_CONSTRUCT
-#define CHANT_TypeName             OpNop
-#define CHANT_type_name            op_nop
 #include "gegl-chant.h"
 
 static gboolean

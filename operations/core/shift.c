@@ -5,13 +5,11 @@ chant_float (y,   -121212.0,  1234134.0,  0.0, "y coordinate of new origin")
 
 #else
 
-#define CHANT_NAME                 "shift"
-#define CHANT_DESCRIPTION          "Translate the buffer, an integer amount of pixels."
-#define CHANT_SELF                 "shift.c"
-#define CHANT_SUPER_CLASS_FILTER
+#define CHANT_FILTER
+#define CHANT_NAME            shift
+#define CHANT_DESCRIPTION     "Translate the buffer, an integer amount of pixels."
+#define CHANT_SELF            "shift.c"
 #define CHANT_CLASS_CONSTRUCT
-#define CHANT_TypeName             OpShift
-#define CHANT_type_name            op_shift
 #include "gegl-chant.h"
 
 
@@ -26,8 +24,8 @@ evaluate (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationFilter    *filter = GEGL_OPERATION_FILTER(operation);
-  GeglBuffer  *input  = filter->input;
-  OpShift *translate = (OpShift*)filter;
+  GeglBuffer    *input  = filter->input;
+  ChantInstance *translate = (ChantInstance*)filter;
 
   if(strcmp("output", output_prop))
     return FALSE;
@@ -52,7 +50,7 @@ evaluate (GeglOperation *operation,
 static gboolean
 calc_have_rect (GeglOperation *operation)
 {
-  OpShift  *op_shift = (OpShift*)(operation);
+  ChantInstance  *op_shift = (ChantInstance*)(operation);
   GeglRect *in_rect = gegl_operation_get_have_rect (operation, "input");
   if (!in_rect)
     return FALSE;
@@ -67,7 +65,7 @@ calc_have_rect (GeglOperation *operation)
 static gboolean
 calc_need_rect (GeglOperation *self)
 {
-  OpShift  *op_shift = (OpShift*)(self);
+  ChantInstance  *op_shift = (ChantInstance*)(self);
   GeglRect *requested    = gegl_operation_need_rect (self);
 
   gegl_operation_set_need_rect (self, "input",
