@@ -280,7 +280,7 @@ gegl_list_ops (gboolean html)
       g_print ("</ul></div>\n");
       g_print ("<div class='paper'><div class='content'>\n");
       g_print ("<h1>Operations</h1>");
-      g_print ("<p>All nodes in the graph are operations, when dividing the operations into categories it is done based on what input and output pads are available for connection to other operations.</p>");
+      g_print ("<p>Image processing operations are loaded when GEGL initializes. In this listing generated from the metadata provided by operations themselves, they are divided into main categories, which also corresponds to different base classes.</p>");
     }
 
   if(html)
@@ -288,17 +288,17 @@ gegl_list_ops (gboolean html)
 
   if(html)
     g_print ("<tr><td colspan='5'><a name='sources'></a><h2>Sources</h2>"
-     "<p>Source operations provide an image buffer on an output pad. These are the portion of the graph where the image data to be operated on comes from.</p>"
+     "<p>Source operations have one output pad, but no input pads. Typical sources are file loaders, video loaders (providing a frame property), video sources (v4l, DV25), gradients, noise, text renderer ..</p>"
      "</td></tr>\n");
   introspect (GEGL_TYPE_OPERATION_SOURCE, 0, html);
   if(html)
     g_print ("<tr><td colspan='5'><a name='filters'></a><h2>Filters</h2>"
-     "<p>Filter operations modify a provided image in some manner.</p>"
+     "<p>Filter operations have an input pad and an output pad and change the image in some manner. Samples: blurs, color correction, sharpening, artistic filters ...</p>"
      "</td></tr>\n");
   introspect (GEGL_TYPE_OPERATION_FILTER, 0, html);
   if(html)
     g_print ("<tr><td colspan='5'><a name='composers'></a><h2>Composers</h2>"
-     "<p>Composers are like filters, but has an (optional) image buffer controlling what happens to the input buffer as well. Some of the built in ones, use the buffer if it exist and the value of the property named <em>value</em> otherwize.</p>"
+     "<p>Composer operations are like filters, but also have an additional auxiliary image buffer input pad.</p>"
      "</td></tr>\n");
   introspect (GEGL_TYPE_OPERATION_COMPOSER, 0, html);
 
