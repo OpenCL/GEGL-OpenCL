@@ -335,18 +335,12 @@ void
 gegl_operation_class_set_name (GeglOperationClass *klass,
                                const gchar        *new_name)
 {
-  if (klass->name)
-    g_free (klass->name);
-  klass->name = g_strdup (new_name);
-  { /* perform a: s/_/-/g */
-    gchar *p=klass->name;
-    while (*p)
-      {
-        if (*p == '_')
-          *p = '-';
-        p++;
-      }
-  }
+  gchar *name_copy;
+
+  name_copy = g_strdup (new_name);
+  g_strdelimit (name_copy, "_", '-');
+  klass->name = g_intern_string (name_copy);
+  g_free (name_copy);
 }
 
 void

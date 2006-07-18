@@ -53,8 +53,9 @@ struct _GeglOperation
 struct _GeglOperationClass
 {
   GObjectClass  parent_class;
-  gchar    *name;
-  gchar    *description;
+
+  const gchar *name;
+  gchar       *description;
 
   gboolean (*evaluate)          (GeglOperation *self,
                                  const gchar   *output_pad);

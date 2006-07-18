@@ -1,3 +1,11 @@
+2006-07-18  Philip Lafleur  <plafleur@cvs.gnome.org>
+
+	* gegl/gegl-operation.[ch]: Store class name as an interned string to
+	  speed up name->type lookup.
+
+	* gegl/gegl-node.c (g_type_from_op_class2): Replace _ with - in
+	  operation class names before looking them up.
+
 2006-07-18  Øyvind Kolås  <pippin@gimp.org>
 
 	Reworked the magic chanting. 

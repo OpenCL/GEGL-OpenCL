@@ -650,23 +650,31 @@ gegl_node_evaluate (GeglNode    *self,
   return gegl_operation_evaluate (self->operation, output_pad);
 }
 
-static GType g_type_from_op_class2 (GType parent,
-                                    const gchar *op_class)
+static GType
+g_type_from_op_class2 (GType        parent,
+                       const gchar *op_class)
 {
-  GType ret = 0;
-  GType *types;
-  guint  count;
-  gint   no;
+  GType        ret = 0;
+  GType       *types;
+  guint        count;
+  gint         no;
+  gchar       *op_class_copy;
+  const gchar *op_class_intern;
 
   types = g_type_children (parent, &count);
   if (!types)
     return 0;
+
+  op_class_copy = g_strdup (op_class);
+  g_strdelimit (op_class_copy, "_", '-');
+  op_class_intern = g_intern_string (op_class_copy);
+  g_free (op_class_copy);
+
   for (no=0; no < count; no++)
     {
       GeglOperationClass *klass = g_type_class_ref (types[no]);
 
-      if (klass->name != NULL &&
-          !strcmp (klass->name, op_class))
+      if (klass->name == op_class_intern)
         {
           ret = types[no];
           g_type_class_unref (klass);
@@ -685,7 +693,8 @@ static GType g_type_from_op_class2 (GType parent,
   return ret;
 }
 
-static GType g_type_from_op_class (const gchar *op_class)
+static GType
+g_type_from_op_class (const gchar *op_class)
 {
   return g_type_from_op_class2 (GEGL_TYPE_OPERATION, op_class);
 }
