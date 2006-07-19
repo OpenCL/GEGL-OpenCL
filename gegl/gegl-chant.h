@@ -51,13 +51,6 @@
   #define CHANT_PARENT_TYPE          TYPE_OP_POINT_COMPOSER
   #define CHANT_PARENT_CLASS         OP_POINT_COMPOSER_CLASS
 #endif
-#ifdef CHANT_AFFINE
-  #include "op_affine.h"
-  #define CHANT_PARENT_TypeName      OpAffine
-  #define CHANT_PARENT_TypeNameClass OpAffineClass
-  #define CHANT_PARENT_TYPE          TYPE_OP_AFFINE
-  #define CHANT_PARENT_CLASS         OP_AFFINE_CLASS
-#endif
 
 typedef struct Generated        ChantInstance;
 typedef struct GeneratedClass   ChantClass;
@@ -104,36 +97,39 @@ struct GeneratedClass
 static void     chant_init              (ChantInstance *self); \
 static void     chant_class_init        (ChantClass    *klass); \
 static gpointer chant_parent_class = NULL; \
-static void     chant_class_intern_init (gpointer klass) \
-  { \
-    chant_parent_class = g_type_class_peek_parent (klass); \
-    chant_class_init ((ChantClass*) klass); \
-  } \
+\
+static void \
+chant_class_intern_init (gpointer klass) \
+{ \
+  chant_parent_class = g_type_class_peek_parent (klass); \
+  chant_class_init ((ChantClass*) klass); \
+} \
 \
 GType \
 type_name##_get_type (GTypeModule *module) \
-  { \
-    static GType g_define_type_id = 0; \
-    if (G_UNLIKELY (g_define_type_id == 0)) \
-      { \
-            static const GTypeInfo g_define_type_info = { \
-                      sizeof (ChantClass), \
-                      (GBaseInitFunc) NULL, \
-                      (GBaseFinalizeFunc) NULL, \
-                      (GClassInitFunc) chant_class_intern_init, \
-                      (GClassFinalizeFunc) NULL, \
-                      NULL,   /* class_data */ \
-                      sizeof (ChantInstance), \
-                      0,      /* n_preallocs */ \
-                      (GInstanceInitFunc) chant_init, \
-                      NULL    /* value_table */ \
-                    }; \
-            g_define_type_id = gegl_module_register_type (module,\
-                                                            TYPE_PARENT,\
-                          "GeglOpPlugIn-" #type_name, &g_define_type_info, 0);\
-          } \
-    return g_define_type_id; \
-  }\
+{ \
+  static GType g_define_type_id = 0; \
+  if (G_UNLIKELY (g_define_type_id == 0)) \
+    { \
+      static const GTypeInfo g_define_type_info = \
+        { \
+          sizeof (ChantClass), \
+          (GBaseInitFunc) NULL, \
+          (GBaseFinalizeFunc) NULL, \
+          (GClassInitFunc) chant_class_intern_init, \
+          (GClassFinalizeFunc) NULL, \
+          NULL,   /* class_data */ \
+          sizeof (ChantInstance), \
+          0,      /* n_preallocs */ \
+          (GInstanceInitFunc) chant_init, \
+          NULL    /* value_table */ \
+        }; \
+      g_define_type_id = gegl_module_register_type (module, TYPE_PARENT,\
+                                                    "GeglOpPlugIn-" #type_name,\
+                                                    &g_define_type_info, 0);\
+    } \
+  return g_define_type_id; \
+}\
 \
 static const GeglModuleInfo modinfo =\
 {\
@@ -171,27 +167,30 @@ static void     chant_class_intern_init (gpointer klass) \
 \
 GType \
 type_name##_get_type (GTypeModule *module) \
-  { \
-    static GType g_define_type_id = 0; \
-    if (G_UNLIKELY (g_define_type_id == 0)) \
-      { \
-            static const GTypeInfo g_define_type_info = { \
-                      sizeof (ChantClass), \
-                      (GBaseInitFunc) NULL, \
-                      (GBaseFinalizeFunc) NULL, \
-                      (GClassInitFunc) chant_class_intern_init, \
-                      (GClassFinalizeFunc) NULL, \
-                      NULL,   /* class_data */ \
-                      sizeof (ChantInstance), \
-                      0,      /* n_preallocs */ \
-                      (GInstanceInitFunc) chant_init, \
-                      NULL    /* value_table */ \
-                    }; \
-            g_define_type_id = g_type_register_static (TYPE_PARENT, "GeglOpPlugIn-" #type_name, &g_define_type_info, (GTypeFlags) flags); \
-            { CODE ; } \
-          } \
-    return g_define_type_id; \
-  }
+{ \
+  static GType g_define_type_id = 0; \
+  if (G_UNLIKELY (g_define_type_id == 0)) \
+    { \
+      static const GTypeInfo g_define_type_info = \
+        { \
+          sizeof (ChantClass), \
+          (GBaseInitFunc) NULL, \
+          (GBaseFinalizeFunc) NULL, \
+          (GClassInitFunc) chant_class_intern_init, \
+          (GClassFinalizeFunc) NULL, \
+          NULL,   /* class_data */ \
+          sizeof (ChantInstance), \
+          0,      /* n_preallocs */ \
+          (GInstanceInitFunc) chant_init, \
+          NULL    /* value_table */ \
+        }; \
+      g_define_type_id = \
+        g_type_register_static (TYPE_PARENT, "GeglOpPlugIn-" #type_name,\
+                                &g_define_type_info, (GTypeFlags) flags); \
+      { CODE ; } \
+    } \
+  return g_define_type_id; \
+}
 #endif
 
 #define M_DEFINE_TYPE(t_n, T_P)   M_DEFINE_TYPE_EXTENDED (t_n, T_P, 0, )
@@ -221,10 +220,11 @@ enum
   PROP_LAST
 };
 
-static void get_property (GObject      *gobject,
-                          guint         property_id,
-                          GValue       *value,
-                          GParamSpec   *pspec)
+static void
+get_property (GObject      *gobject,
+              guint         property_id,
+              GValue       *value,
+              GParamSpec   *pspec)
 {
   ChantInstance *self = CHANT_INSTANCE (gobject);
 
@@ -261,10 +261,11 @@ static void get_property (GObject      *gobject,
   self = NULL; /* silence GCC if no properties were defined */
 }
 
-static void set_property (GObject      *gobject,
-                          guint         property_id,
-                          const GValue *value,
-                          GParamSpec   *pspec)
+static void
+set_property (GObject      *gobject,
+              guint         property_id,
+              const GValue *value,
+              GParamSpec   *pspec)
 {
   ChantInstance *self = CHANT_INSTANCE (gobject);
 
@@ -332,17 +333,13 @@ static gboolean evaluate (GeglOperation *operation,
                           guchar        *out_buf,
                           gint           n_pixels);
 #else
-#ifdef CHANT_AFFINE
-static void create_matrix (ChantInstance *operation,
-                           Matrix3         matrix);
-#else
 static gboolean evaluate (GeglOperation *operation,
                           const gchar   *output_prop);
 #endif
 #endif
-#endif
 
-static void chant_init (ChantInstance *self)
+static void
+chant_init (ChantInstance *self)
 {
 }
 
@@ -384,31 +381,27 @@ chant_class_init (ChantClass * klass)
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;
+
+  parent_class->evaluate = evaluate;
+
 #ifdef CHANT_CONSTRUCT
   object_class->constructor  = chant_constructor;
 #endif
-#ifdef CHANT_AFFINE
-  parent_class->create_matrix = (OpAffineCreateMatrixFunc) create_matrix;
-#else
-  parent_class->evaluate     = evaluate;
+#ifdef CHANT_CLASS_CONSTRUCT
+  class_init (operation_class);
 #endif
 
 #ifdef CHANT_SOURCE
   operation_class->calc_have_rect = calc_have_rect;
 #endif
-#define chant_set_name(name)\
-  gegl_operation_class_set_name (operation_class, ##name);\
-  g_warning ("%s", #name)
 
-/***********/
-#  define M_CHANT_SET_NAME_EXTENDED(name) \
-  gegl_operation_class_set_name (operation_class, #name);\
-
+#define M_CHANT_SET_NAME_EXTENDED(name) \
+  gegl_operation_class_set_name (operation_class, #name);
 #define M_CHANT_SET_NAME(name)   M_CHANT_SET_NAME_EXTENDED(name)
-M_CHANT_SET_NAME(CHANT_NAME);
-  
-#ifdef CHANT_CLASS_CONSTRUCT
-  class_init (operation_class);
+  M_CHANT_SET_NAME (CHANT_NAME);
+
+#ifdef CHANT_DESCRIPTION
+  gegl_operation_class_set_description (operation_class, CHANT_DESCRIPTION);
 #endif
 
 #define chant_int(name, min, max, def, blurb)  \
@@ -460,10 +453,6 @@ M_CHANT_SET_NAME(CHANT_NAME);
                                                         G_PARAM_CONSTRUCT |\
                                                         GEGL_PAD_INPUT));
 #include CHANT_SELF
-
-#ifdef CHANT_DESCRIPTION
-  gegl_operation_class_set_description (operation_class, CHANT_DESCRIPTION);
-#endif
 
 #undef chant_int
 #undef chant_double

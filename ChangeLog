@@ -1,3 +1,7 @@
+2006-07-19  Philip Lafleur  <plafleur@cvs.gnome.org>
+
+	* gegl/gegl-chant.h: Removed CHANT_AFFINE code (refactored to operations).
+
 2006-07-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl.c: changed the static html content (this should perhaps
