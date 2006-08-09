@@ -2,16 +2,12 @@
 # file babl_extensions
 
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
-#no_undefined = -no-undefined
-
-CC = gcc
 
 CFILES  = $(wildcard *.c)
-CFLAGS  += -g -O2 -Wall
 SOBJS   = $(CFILES:.c=.so)
 all: $(SOBJS)
 
-CFLAGS  += -Wall -I. `pkg-config --cflags gegl`
+CFLAGS  += -Wall -I../..
 
 %.so: %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
@@ -23,32 +19,19 @@ CFLAGS  += -Wall -I. `pkg-config --cflags gegl`
 
 display.so: display.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `sdl-config --cflags --libs`
+#############################################################################
 LDFLAGS += -shared 
 
-LDADD    = $(win32_libs) $(no-undefined) `pkg-config --libs gegl`
-CFLAGS  += $(win32_libs) $(no-undefined) `pkg-config --cflags gegl`
+LDADD    = @DEP_LIBS@ @BABL_LIBS@	
+CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ -I$(top_srcdir) -I$(top_srcdir)/gegl -I.
 
 clean:
 	rm -f $(SOBJS) *~
-distclean:
-	rm -f $(SOBJS) Makefile
-maintainer-clean: distclean
-mostlyclean:
 
-srcdir       = .
-top_builddir = ..
-INSTALL      = /usr/bin/install -c
-SHELL        = /bin/sh
 ext_dir      = /usr/local/lib/gegl
 
-install: user-install
-
-user-install: all
+install: all
 	$(INSTALL) -d $(ext_dir)
-	$(INSTALL) $(SOBJS)  $(ext_dir)
-distdir:
-	cp $(CFILES) $(Makefile.in) $$distdir
+	$(INSTALL) $(SOBJS) $(ext_dir)
 
-dvi:
-	#playing along with automake
 check: all

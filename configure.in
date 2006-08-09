@@ -213,7 +213,15 @@ gegl/Makefile
 gegl/buffer/Makefile
 gegl/module/Makefile
 operations/Makefile
+operations/blur/Makefile
+operations/color/Makefile
 operations/core/Makefile
+operations/display/Makefile
+operations/file-io/Makefile
+operations/generated/Makefile
+operations/render/Makefile
+operations/transform/Makefile
+operations/transparency/Makefile
 tools/Makefile
 tools/testsuite/Makefile
 tests/Makefile

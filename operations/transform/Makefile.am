@@ -4,13 +4,17 @@
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
 
 CFILES  = $(wildcard *.c)
-SOBJS   = $(CFILES:.c=.so)
+OFILES  = $(CFILES:.c=.o)
+SOBJS   = affine.so
 all: $(SOBJS)
 
 CFLAGS  += -Wall -I../..
 
-%.so: %.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
+affine.so: $(OFILES)
+	$(CC) $(LDFLAGS) $(LDADD) $(OFILES) -o affine.so
+
+%.o: %.c chant.h module.h matrix.h
+	$(CC) $(CFLAGS) -c $< 
 
 LDFLAGS += -shared 
 
@@ -18,7 +22,7 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ -I$(top_srcdir) -I$(top_srcdir)/gegl -I.
 
 clean:
-	rm -f $(SOBJS) *~
+	rm -f affine.so $(OFILES) *~
 
 ext_dir      = /usr/local/lib/gegl
 

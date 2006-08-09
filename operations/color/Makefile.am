@@ -12,6 +12,10 @@ CFLAGS  += -Wall -I../..
 %.so: %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
+# if extension needing external libraries are to be # compiled with this make
+# file, each of them can be added according to the this pattern:
+# extra.so: extra.c
+#	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 LDFLAGS += -shared 
 
 LDADD    = @DEP_LIBS@ @BABL_LIBS@	

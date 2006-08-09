@@ -308,5 +308,8 @@ if test $RC -ne 0; then
   exit $RC
 fi
 
+(cd operations/generated;./porter-duff.rb)
+(cd operations/generated;./math.rb)
+
 echo
 echo "Now type 'make' to compile $PROJECT."

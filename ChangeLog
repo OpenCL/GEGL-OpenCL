@@ -1,5 +1,31 @@
 2006-08-09  Øyvind Kolås  <pippin@gimp.org>
 
+	Made the ops build within the source tree.
+
+	* operations/transparency/Makefile,
+	* operations/blur/Makefile,
+	* operations/color/Makefile,
+	* operations/display/Makefile,
+	* operations/file-io/Makefile,
+	* operations/generated/Makefile,
+	* operations/render/Makefile,
+	* operations/transform/Makefile: Removed Makefiles
+	* operations/Makefile.am,
+	* operations/blur/Makefile.am,
+	* operations/color/Makefile.am,
+	* operations/core/Makefile.am,
+	* operations/display/Makefile.am,
+	* operations/file-io/Makefile.am,
+	* operations/generated/Makefile.am,
+	* operations/render/Makefile.am,
+	* operations/transform/Makefile.am,
+	* operations/transparency/Makefile.am: added makefile.am's that are
+	using wildcards for which ops to compile.
+	* configure.in: added makefiles to be generated.
+	* autogen.sh: trigger generation of ops using ruby.
+
+2006-08-09  Øyvind Kolås  <pippin@gimp.org>
+
 	Incorporated operations into CVS, the build system of GEGL is still
 	too fragile, but at least most of the relevant code is now under
 	version control. Further reorganization and setup is needed.
