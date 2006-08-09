@@ -31,11 +31,11 @@
   #define CHANT_PARENT_CLASS         GEGL_OPERATION_FILTER_CLASS
 #endif
 #ifdef CHANT_POINT_FILTER
-  #include "op_point_filter.h"
-  #define CHANT_PARENT_TypeName      OpPointFilter
-  #define CHANT_PARENT_TypeNameClass OpPointFilterClass
-  #define CHANT_PARENT_TYPE          TYPE_OP_POINT_FILTER
-  #define CHANT_PARENT_CLASS         OP_POINT_FILTER_CLASS
+  #include <gegl/gegl-operation-point-filter.h>
+  #define CHANT_PARENT_TypeName      GeglOperationPointFilter
+  #define CHANT_PARENT_TypeNameClass GeglOperationPointFilterClass
+  #define CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_POINT_FILTER
+  #define CHANT_PARENT_CLASS         GEGL_OPERATION_POINT_FILTER_CLASS
 #endif
 #ifdef CHANT_COMPOSER
   #include <gegl/gegl-operation-composer.h>
@@ -45,11 +45,11 @@
   #define CHANT_PARENT_CLASS         GEGL_OPERATION_COMPOSER_CLASS
 #endif
 #ifdef CHANT_POINT_COMPOSER
-  #include "op_point_composer.h"
-  #define CHANT_PARENT_TypeName      OpPointComposer
-  #define CHANT_PARENT_TypeNameClass OpPointComposerClass
-  #define CHANT_PARENT_TYPE          TYPE_OP_POINT_COMPOSER
-  #define CHANT_PARENT_CLASS         OP_POINT_COMPOSER_CLASS
+  #include <gegl/gegl-operation-point-composer.h>
+  #define CHANT_PARENT_TypeName      GeglOperationPointComposer
+  #define CHANT_PARENT_TypeNameClass GeglOperationPointComposerClass
+  #define CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_POINT_COMPOSER
+  #define CHANT_PARENT_CLASS         GEGL_OPERATION_POINT_COMPOSER_CLASS
 #endif
 
 typedef struct Generated        ChantInstance;
@@ -323,15 +323,16 @@ set_property (GObject      *gobject,
 
 #ifdef CHANT_POINT_FILTER
 static gboolean evaluate (GeglOperation *operation,
-                          guchar        *buf,
-                          gint           n_pixels);
+                          void          *in_buf,
+                          void          *out_buf,
+                          glong          samples);
 #else
 #ifdef CHANT_POINT_COMPOSER
 static gboolean evaluate (GeglOperation *operation,
-                          guchar        *src_buf,
-                          guchar        *aux_buf,
-                          guchar        *out_buf,
-                          gint           n_pixels);
+                          void          *in_buf, 
+                          void          *aux_buf,
+                          void          *out_buf,
+                          glong          samples);
 #else
 static gboolean evaluate (GeglOperation *operation,
                           const gchar   *output_prop);

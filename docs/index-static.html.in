@@ -71,17 +71,18 @@
       <ul>
         <li><a href='#GEGL'>GEGL</a></li>
         <li><a href='#Features'>&nbsp;&nbsp;Features</a></li>
-        <li><a href='#Operations'>Operations</a></li>
+        <li><a href='operations.html'>Operations</a></li>
         <li><a href='operations.html#sources'>&nbsp;&nbsp;Sources</a></li>
         <li><a href='operations.html#filters'>&nbsp;&nbsp;Filters</a></li>
         <li><a href='operations.html#composers'>&nbsp;&nbsp;Composers</a></li>
         <li><a href='#XML'>XML data model</a></li>
         <li><a href='gallery/index.html'>&nbsp;&nbsp;Gallery</a></li>
-        <li><a href='#gegl'>&nbsp;&nbsp;<em>gegl</emhttp://pippin.gimp.org/gegl/gallery/index.html></a></li>
-        <li><a href='#Building'>Building</a></li>
-        <li><a href='#bootstrapping'>&nbsp;&nbsp;Bootstrapping</a></li>
+        <li><a href='#gegl'>&nbsp;&nbsp;<em>gegl</emhttp://pippin.gimp.org/gegl/gallery/index.html></a></em></li>
         <li><a href='#Source'>Source</a></li>
+        <li><a href='#dependencies'>&nbsp;&nbsp;Dependencies</a></li>
         <li><a href='#source_overview'>&nbsp;&nbsp;Overview</a></li>
+        <li><a href='#bootstrapping'>&nbsp;&nbsp;Bootstrapping</a></li>
+        <li><a href='#extending'>&nbsp;&nbsp;Extending</a></li>
         <li><a href='#Todo'>Todo</a></li>
         <li><a href='#Mailinglists'>Mailinglists</a></li>
         <li><a href='#Copyright'>Copyright</a></li>
@@ -344,7 +345,7 @@ about how babl works, since GEGL builds on top of babl.
         -->
 
 
-        <a name='Extending'></a>
+        <a name='extending'></a>
         <h2>Extending</h2>
 
         <p>To create your own operations you should start by looking for one

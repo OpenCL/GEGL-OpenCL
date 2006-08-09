@@ -97,7 +97,7 @@
 
             <add       value  = '0.5'/>
 
-            <box-blur  radius ='15'/>
+            <gaussian-blur  radius ='15'/>
 
             <clone     ref    ='gegl'/>
         </under>
