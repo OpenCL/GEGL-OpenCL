@@ -1,5 +1,54 @@
 2006-08-09  Øyvind Kolås  <pippin@gimp.org>
 
+	Incorporated operations into CVS, the build system of GEGL is still
+	too fragile, but at least most of the relevant code is now under
+	version control. Further reorganization and setup is needed.
+
+	* operations/Makefile.am:
+	* operations/blur/Makefile:
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c:
+	* operations/color/Makefile:
+	* operations/color/brightness-contrast.c:
+	* operations/color/invert.c:
+	* operations/color/stretch-contrast.c:
+	* operations/color/threshold.c:
+	* operations/display/Makefile:
+	* operations/display/display.c:
+	* operations/file-io/Makefile:
+	* operations/file-io/jpg-load.c:
+	* operations/file-io/load.c:
+	* operations/file-io/magick-load.c:
+	* operations/file-io/png-load.c:
+	* operations/file-io/png-save.c:
+	* operations/file-io/raw-load.c:
+	* operations/generated/Makefile:
+	* operations/generated/math.rb:
+	* operations/generated/porter-duff.rb:
+	* operations/render/Makefile:
+	* operations/render/noise.c:
+	* operations/render/text.c:
+	* operations/transform/Makefile:
+	* operations/transform/affine.c:
+	* operations/transform/affine.h:
+	* operations/transform/chant.h:
+	* operations/transform/linear.c:
+	* operations/transform/linear.h:
+	* operations/transform/matrix.c:
+	* operations/transform/matrix.h:
+	* operations/transform/module.c:
+	* operations/transform/module.h:
+	* operations/transform/nearest.c:
+	* operations/transform/nearest.h:
+	* operations/transform/rotate.c:
+	* operations/transform/scale.c:
+	* operations/transform/shear.c:
+	* operations/transform/translate.c:
+	* operations/transparency/Makefile:
+	* operations/transparency/opacity.c:
+
+2006-08-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.c: (index_introspect), (gegl_list_ops): Modified to list
 	operations inline in the body after each category header instead of
 	the right-hand menu.
