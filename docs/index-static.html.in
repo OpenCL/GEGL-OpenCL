@@ -218,8 +218,6 @@ sudo rm -rfv /usr/local/lib/*babl* /usr/local/include/*babl*
 echo "Getting sources"
 cvs co babl || exit
 cvs co gegl || exit
-wget http://pippin.gimp.org/gegl/gegl-operations.tgz || exit
-tar xvzf gegl-operations.tgz
 
 echo "Building babl"
 
@@ -237,17 +235,6 @@ make || exit
 echo "Installing GEGL"
 sudo make install || exit
 cd ..
-
-echo "Building GEGL operations"
-cd gegl-operations
-make || exit
-sudo make install || exit
-cd ..
-
-echo "Rebuilding GEGL documentation"
-cd gegl/docs
-make clean || exit
-make || exit
 
 echo "Hopefully gegl-test/gegl/docs/gallery/index.html has a generated sample now."</pre>
 
