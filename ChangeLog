@@ -1,5 +1,11 @@
 2006-08-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.c: (index_introspect), (gegl_list_ops): Modified to list
+	operations inline in the body after each category header instead of
+	the right-hand menu.
+
+2006-08-09  Øyvind Kolås  <pippin@gimp.org>
+
 	Added superclasses for point filters and point composers, as well as
 	integration with gegl-chant (the boiler plate reducer).
 

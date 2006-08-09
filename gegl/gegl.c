@@ -258,7 +258,7 @@ index_introspect (GType    type)
 
       klass = g_type_class_ref (ops[no]);
       if (klass->name != NULL)
-        g_print ("<li><a href='#%s'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%s</a></li>\n", klass->name, klass->name);
+        g_print ("<li><a href='#%s'>%s</a></li>\n", klass->name, klass->name);
       index_introspect (ops[no]);
     }
   g_free (ops);
@@ -272,11 +272,8 @@ gegl_list_ops (gboolean html)
       g_print ("<html><head><title>GEGL operations</title><style type='text/css'>@import url(gegl.css);</style></head><body>\n");
       g_print ("<div class='toc'><ul><li><a href='index.html'>GEGL</a></li><li><a href='#'>Operations</a></li>\n");
       g_print ("<li><a href='#sources'>&nbsp;&nbsp;Sources</a></li>\n");
-      index_introspect (GEGL_TYPE_OPERATION_SOURCE);
       g_print ("<li><a href='#filters'>&nbsp;&nbsp;Filters</a></li>\n");
-      index_introspect (GEGL_TYPE_OPERATION_FILTER);
       g_print ("<li><a href='#composers'>&nbsp;&nbsp;Composers</a></li>\n");
-      index_introspect (GEGL_TYPE_OPERATION_COMPOSER);
       g_print ("</ul></div>\n");
       g_print ("<div class='paper'><div class='content'>\n");
       g_print ("<h1>Operations</h1>");
@@ -288,18 +285,21 @@ gegl_list_ops (gboolean html)
 
   if(html)
     g_print ("<tr><td colspan='5'><a name='sources'></a><h2>Sources</h2>"
-     "<p>Source operations have one output pad, but no input pads. Typical sources are file loaders, video loaders (providing a frame property), video sources (v4l, DV25), gradients, noise, text renderer ..</p>"
-     "</td></tr>\n");
+     "<p>Source operations have one output pad, but no input pads. Typical sources are file loaders, video loaders (providing a frame property), video sources (v4l, DV25), gradients, noise, text renderer ..</p><ul>");
+      index_introspect (GEGL_TYPE_OPERATION_SOURCE);
+     g_print ("</ul></td></tr>\n");
   introspect (GEGL_TYPE_OPERATION_SOURCE, 0, html);
   if(html)
     g_print ("<tr><td colspan='5'><a name='filters'></a><h2>Filters</h2>"
-     "<p>Filter operations have an input pad and an output pad and change the image in some manner. Samples: blurs, color correction, sharpening, artistic filters ...</p>"
-     "</td></tr>\n");
+     "<p>Filter operations have an input pad and an output pad and change the image in some manner. Samples: blurs, color correction, sharpening, artistic filters ...</p><ul>");
+      index_introspect (GEGL_TYPE_OPERATION_FILTER);
+     g_print ("</ul></td></tr>\n");
   introspect (GEGL_TYPE_OPERATION_FILTER, 0, html);
   if(html)
     g_print ("<tr><td colspan='5'><a name='composers'></a><h2>Composers</h2>"
-     "<p>Composer operations are like filters, but also have an additional auxiliary image buffer input pad.</p>"
-     "</td></tr>\n");
+     "<p>Composer operations are like filters, but also have an additional auxiliary image buffer input pad.</p><ul>");
+      index_introspect (GEGL_TYPE_OPERATION_COMPOSER);
+     g_print ("</ul></td></tr>\n");
   introspect (GEGL_TYPE_OPERATION_COMPOSER, 0, html);
 
   if (html)
