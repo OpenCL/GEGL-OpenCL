@@ -175,6 +175,7 @@ Some examples:
         <a name='Building'></a>
         <h2>Building</h2>
 
+        <a name='dependencies'></a>
         <h3>Dependencies</h3>
         <p>GEGL is currently building on linux, the build enviroment probably
         needs some fixes before all of it builds gracefully on many platforms.
@@ -182,12 +183,12 @@ Some examples:
         <ul>
             <li>glib (including gobject, and gmodule)</li>
             <li>babl for describing pixel formats, and conversions between them</li>
-            <li>optional plug-in dependencies:)
+            <li>dependencies for some of the operations (currently not detected properly).</li>
             <ul>
-                 <li>SDL</li>
-                 <li>libpng</li>
-                 <li>libjpeg</li>
-                 <li>cairo</li>
+                 <li>SDL (display op)</li>
+                 <li>libpng (png loader/export ops)</li>
+                 <li>libjpeg (jpg loader op)</li>
+                 <li>cairo (text source op)</li>
              </ul>
              </li>
          </ul>
@@ -259,7 +260,6 @@ about how babl works, since GEGL builds on top of babl.
 <h4>Directories in the GEGL checkout:</h4>
 <pre>gegl-dist-root
  |
- |--operations   Runtime loaded plug-ins of image processing operations.
  |
  |--gegl         core source of GEGL, graph handling, library init/deinit,
  |   |           evaluation management. Also contains common abstract base
@@ -276,6 +276,8 @@ about how babl works, since GEGL builds on top of babl.
  |   |
  |   `--module   The code to load plug-ins located in a colon seperated list
  |               of paths from the environment variable GEGL_PATH
+ |
+ |--operations   Runtime loaded plug-ins for image processing operations.
  |
  |--docs         A website for GEGL
  |   |
@@ -300,15 +302,6 @@ about how babl works, since GEGL builds on top of babl.
  `--opgen        seems to be code using an older version of gil
 </pre>
 
-<h4>Directories in the gegl-operations tarball</h4>
-<pre>gegl-operations
- |
- |--file_io      Image loading and saving for png, jpg, raw, image magick...
- |--generated    Operations that have their code generated from (ruby) code
- |               generators.
- |--local        Place to add your own ops (currently contains an invert op)
- `--misc         a collection of ops.
-</pre>
 <h4>Directories a babl checkout</h4>
 <pre>babl-dist-root
  |
