@@ -69,44 +69,47 @@ evaluate_inner (GeglOperation *operation,
                            "height", result->h,
                            NULL);
 
-    buf  = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));
-
+    if ( (result->w>0) && (result->h>0) )
       {
-        GeglBuffer *roi = g_object_new (GEGL_TYPE_BUFFER,
-                                        "source", input,
-                                        "x",      result->x,
-                                        "y",      result->y,
-                                        "width",  result->w,
-                                        "height", result->h,
-                                        NULL);
-        gegl_buffer_get_fmt (roi, buf, point_filter->format);
-        g_object_unref (roi);
-      }
-      {
-        GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation)->evaluate (
-           operation,
-           buf,
-           buf,
-           gegl_buffer_pixels (output));
-      }
+        buf  = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));
 
-      {
-        GeglBuffer *roi = g_object_new (GEGL_TYPE_BUFFER,
-                                        "source", output,
-                                        "x",      result->x,
-                                        "y",      result->y,
-                                        "width",  result->w,
-                                        "height", result->h,
-                                        NULL);
-        gegl_buffer_set_fmt (roi, buf, point_filter->format);
-        g_object_unref (roi);
-      }
+          {
+            GeglBuffer *roi = g_object_new (GEGL_TYPE_BUFFER,
+                                            "source", input,
+                                            "x",      result->x,
+                                            "y",      result->y,
+                                            "width",  result->w,
+                                            "height", result->h,
+                                            NULL);
+            gegl_buffer_get_fmt (roi, buf, point_filter->format);
+            g_object_unref (roi);
+          }
+          {
+            GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation)->evaluate (
+               operation,
+               buf,
+               buf,
+               gegl_buffer_pixels (output));
+          }
 
-    g_free (buf);
+          {
+            GeglBuffer *roi = g_object_new (GEGL_TYPE_BUFFER,
+                                            "source", output,
+                                            "x",      result->x,
+                                            "y",      result->y,
+                                            "width",  result->w,
+                                            "height", result->h,
+                                            NULL);
+            gegl_buffer_set_fmt (roi, buf, point_filter->format);
+            g_object_unref (roi);
+          }
+
+        g_free (buf);
+      }
 
     if (filter->output)
       g_object_unref (filter->output);
     filter->output = output;
-    }
+  }
   return  TRUE;
 }

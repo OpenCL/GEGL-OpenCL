@@ -1,5 +1,13 @@
 2006-08-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation-point-composer.c: (evaluate_inner):
+	* gegl/gegl-operation-point-filter.c: (evaluate_inner): handle
+	zero extent buffers better (adaptation of a patch from Richard
+	Kralovic)
+	* AUTHORS: Added Richard Kralovic
+
+2006-08-10  Øyvind Kolås  <pippin@gimp.org>
+
 	Added copyright statements to operations.
 
 	* operations/blur/box-blur.c:
