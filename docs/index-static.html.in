@@ -181,8 +181,8 @@ Some examples:
         needs some fixes before all of it builds gracefully on many platforms.
         </p>
         <ul>
-            <li>glib (including gobject, and gmodule)</li>
-            <li>babl for describing pixel formats, and conversions between them</li>
+            <li>glib (including gobject, and gmodule) 2.10 or newer</li>
+            <li>babl for describing pixel formats, and conversions between them (from CVS)</li>
             <li>dependencies for some of the operations (currently not detected properly).</li>
             <ul>
                  <li>SDL (display op)</li>

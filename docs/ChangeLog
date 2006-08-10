@@ -1,5 +1,10 @@
 2006-08-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.html.in: added 2.10 as minimum glib version (needed for
+	g_intern_string)
+
+2006-08-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* index-static.html.in: added link to dependency, updated source
 	overview.
 
