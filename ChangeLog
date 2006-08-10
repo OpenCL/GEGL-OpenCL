@@ -1,5 +1,30 @@
 2006-08-10  Øyvind Kolås  <pippin@gimp.org>
 
+	Added copyright statements to operations.
+
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c:
+	* operations/color/brightness-contrast.c:
+	* operations/color/invert.c:
+	* operations/color/stretch-contrast.c:
+	* operations/color/threshold.c:
+	* operations/core/clone.c:
+	* operations/core/crop.c:
+	* operations/core/nop.c:
+	* operations/core/shift.c:
+	* operations/display/display.c:
+	* operations/file-io/jpg-load.c:
+	* operations/file-io/load.c:
+	* operations/file-io/magick-load.c:
+	* operations/file-io/png-load.c:
+	* operations/file-io/png-save.c:
+	* operations/file-io/raw-load.c:
+	* operations/render/noise.c:
+	* operations/render/text.c:
+	* operations/transparency/opacity.c:
+
+2006-08-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* AUTHORS: Added Dominik Ernst
 
 2006-08-09  Øyvind Kolås  <pippin@gimp.org>
