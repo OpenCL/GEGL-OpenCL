@@ -1,5 +1,4 @@
 /* This file is an image processing operation for GEGL
- *
  * GEGL is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -16,10 +15,15 @@
  * Boston, MA 02110-1301, USA.
  *
  * Copyright 2006 Dominik Ernst <dernst@gmx.de>
+ * 
+ * Recursive Gauss IIR Filter as described by Young / van Vliet
+ * in "Signal Processing 44 (1995) 139 - 151"
  */
+
 #ifdef CHANT_SELF
  
-chant_double (radius, 0.0, 200.0, 4.0, "radius of square pixel region.")
+chant_double (radius_x, 0.0, 200.0, 4.0, "blur radius in horizontal direction.")
+chant_double (radius_y, 0.0, 200.0, 4.0, "blur radius in vertical direction.")
 
 #else
 
@@ -31,24 +35,25 @@ chant_double (radius, 0.0, 200.0, 4.0, "radius of square pixel region.")
 #include "gegl-chant.h"
 
 #include <math.h>
+#include <stdio.h>
 
 static void
 hor_blur (GeglBuffer *src,
           GeglBuffer *dst,
-          gint        radius,
-          gdouble    *cmatrix,
-          gint        matrix_length);
+          gdouble     B,
+          gdouble    *b);
 
 static void
 ver_blur (GeglBuffer *src,
           GeglBuffer *dst,
-          gint        radius,
-          gdouble    *cmatrix,
-          gint       matrix_length);
+          gdouble     B,
+          gdouble    *b);
 
-static gint
-gen_convolve_matrix (gdouble   radius,
-                     gdouble **cmatrix_p);
+static void
+find_iir_constants (gfloat   radius, 
+                    gdouble *B,
+                    gdouble *b);
+
 
 
 
@@ -74,8 +79,6 @@ evaluate (GeglOperation *operation,
       GeglRect   *result = gegl_operation_result_rect (operation);
       GeglBuffer *temp_in;
       GeglBuffer *temp;
-      gdouble    *cmatrix = NULL;
-      gint        matrix_length;
 
       if (result->w==0 ||
           result->h==0)
@@ -107,16 +110,18 @@ evaluate (GeglOperation *operation,
                                  "height", result->h,
                                  NULL);
 
-          matrix_length = gen_convolve_matrix(self->radius, &cmatrix);
+          {
+            gdouble B, b[4];
 
-          hor_blur (temp_in, temp,  self->radius, cmatrix, matrix_length);
-          ver_blur (temp, output, self->radius, cmatrix, matrix_length);
+            find_iir_constants (self->radius_x, &B, b);
+            hor_blur (temp_in, temp,   B, b);
+            
+            find_iir_constants (self->radius_y, &B, b);
+            ver_blur (temp,    output, B, b);
+          }
           
           g_object_unref (temp);
           g_object_unref (temp_in);
-
-          if (cmatrix)
-            g_free(cmatrix);
         }
 
       if (filter->output)
@@ -126,138 +131,172 @@ evaluate (GeglOperation *operation,
   return  TRUE;
 }
 
-static inline float
-get_mean_component (gfloat  * buf,
-                    gint      buf_width,
-                    gint      buf_height,
-                    gint      x0,
-                    gint      y0,
-                    gint      width,
-                    gint      height,
-                    gint      component,
-                    gdouble * cmatrix)
+static void
+find_iir_constants (gfloat   radius, 
+                    gdouble *B,
+                    gdouble *b)
 {
-  gint    x, y;
-  gdouble acc=0, count=0.0;
-  gint    mcount=0;
+  gdouble sigma0, q;
+  
+  sigma0 = (radius/3.0)+0.5;
 
-  gint offset = (y0 * buf_width + x0) * 4 + component;
+  if(sigma0 >= 2.5)
+    q = 0.98711*sigma0 - 0.96330;
+  else
+    q = 3.97156 - 4.14554*sqrt(1-0.26891*sigma0);
 
-  for (y=y0; y<y0+height; y++)
+  b[0] = 1.57825 + (2.44413*q) + (1.4281*q*q) + (0.422205*q*q*q);
+  b[1] = (2.44413*q) + (2.85619*q*q) + (1.26661*q*q*q);
+  b[2] = -((1.4281*q*q) + (1.26661*q*q*q));
+  b[3] = 0.422205*q*q*q;
+
+  *B = 1 - ( (b[1]+b[2]+b[3])/b[0] );
+}
+
+static inline void
+blur_1D (gfloat  * buf,
+         gint      offset,
+         gint      delta_offset,
+         gdouble   B,
+         gdouble * b,
+         gfloat  * w,
+         gint      w_len)
+{
+  gint wcount, i;
+  gdouble tmp;
+
+  /* forward filter */
+  wcount = 0;
+  
+  while (wcount < w_len)
     {
-    for (x=x0; x<x0+width; x++)
-      {
-        if (x>=0 && x<buf_width &&
-            y>=0 && y<buf_height)
-          {
-            acc += buf [offset] * cmatrix[mcount];
-            count += cmatrix[mcount];
-          }
-        offset+=4;
-        mcount++;
-      }
-      offset+= (buf_width * 4) - 4 * width;
+      tmp = 0;
+
+      for (i=1; i<4; i++)
+        {
+          if (wcount-i >= 0)
+            tmp += b[i]*w[wcount-i];
+        }
+
+      tmp /= b[0];
+      tmp += B*buf[offset];
+      w[wcount] = tmp;
+
+      wcount++;
+      offset += delta_offset;
     }
-   if (count)
-     return acc/count;
-   /* return 0.0; */
-   return buf [offset];
+
+  /* backward filter */
+  wcount = w_len - 1;
+  offset -= delta_offset;
+
+  while (wcount >= 0)
+    {
+      tmp = 0;
+
+      for (i=1; i<4; i++)
+        {
+          if (wcount+i < w_len)
+            tmp += b[i]*buf[offset+delta_offset*i];
+        }
+
+      tmp /= b[0];
+      tmp += B*w[wcount];
+      buf[offset] = tmp;
+
+      offset -= delta_offset;
+      wcount--;
+    }
 }
 
 static void
 hor_blur (GeglBuffer *src,
           GeglBuffer *dst,
-          gint        radius,
-          gdouble    *cmatrix,
-          gint        matrix_length)
+          gdouble     B,
+          gdouble    *b)
 {
-  gint u,v;
-  gint offset;
-  gfloat *src_buf;
-  gfloat *dst_buf;
+  gint v;
+  gint c;
+  gint w_len;
+  gfloat *buf;
+  gfloat *w;
 
-  src_buf = g_malloc0 (src->width * src->height * 4 * 4);
-  dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
+  buf = g_malloc0 (src->width * src->height * 4 * 4);
+  w   = g_malloc0 (src->width * 4);
 
-  gegl_buffer_get_fmt (src, src_buf, babl_format ("RaGaBaA float"));
+  gegl_buffer_get_fmt (src, buf, babl_format ("RaGaBaA float"));
 
-  offset = 0;
-  for (v=0; v<dst->height; v++)
-    for (u=0; u<dst->width; u++)
-      {
-        gint i;
+  w_len = src->width;
+  for (v=0; v<src->height; v++)
+    {
+      for (c = 0; c < 4; c++)
+        { 
+          blur_1D (buf,
+                   v*src->width*4+c,
+                   4,
+                   B,
+                   b,
+                   w,
+                   w_len);
+        }
+    }
 
-        for (i=0; i<4; i++)
-          dst_buf [offset++] = get_mean_component (src_buf,
-                               src->width,
-                               src->height,
-                               u - (matrix_length/2-1),
-                               v,
-                               matrix_length,
-                               1,
-                               i,
-                               cmatrix);
-      }
-
-  gegl_buffer_set_fmt (dst, dst_buf, babl_format ("RaGaBaA float"));
-  g_free (src_buf);
-  g_free (dst_buf);
+  gegl_buffer_set_fmt (dst, buf, babl_format ("RaGaBaA float"));
+  g_free (buf);
+  g_free (w);
 }
-
 
 static void
 ver_blur (GeglBuffer *src,
           GeglBuffer *dst,
-          gint        radius,
-          gdouble    *cmatrix,
-          gint        matrix_length)
+          gdouble     B,
+          gdouble    *b)
 {
-  gint u,v;
-  gint offset;
-  gfloat *src_buf;
-  gfloat *dst_buf;
+  gint v;
+  gint c;
+  gint w_len;
+  gfloat *buf;
+  gfloat *w;
 
-  src_buf = g_malloc0 (src->width * src->height * 4 * 4);
-  dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
+  buf = g_malloc0 (src->width * src->height * 4 * 4);
+  w   = g_malloc0 (src->height * 4);
+
+  gegl_buffer_get_fmt (src, buf, babl_format ("RaGaBaA float"));
+
+  w_len = src->height;
   
-  gegl_buffer_get_fmt (src, src_buf, babl_format ("RaGaBaA float"));
+  for (v=0; v<src->width; v++)
+    {
+      for (c = 0; c < 4; c++)
+        {
+          blur_1D (buf,
+                   v*4 + c,
+                   src->width*4,
+                   B,
+                   b,
+                   w,
+                   w_len);
+        }
+    }
 
-  offset=0;
-  for (v=0; v<dst->height; v++)
-    for (u=0; u<dst->width; u++)
-      {
-        gint c;
-
-        for (c=0; c<4; c++)
-          dst_buf [offset++] =
-           get_mean_component (src_buf,
-                               src->width,
-                               src->height,
-                               u,
-                               v - (matrix_length/2-1),
-                               1,
-                               matrix_length,
-                               c,
-                               cmatrix);
-      }
-
-  gegl_buffer_set_fmt (dst, dst_buf, babl_format ("RaGaBaA float"));
-  g_free (src_buf);
-  g_free (dst_buf);
+  gegl_buffer_set_fmt (dst, buf, babl_format ("RaGaBaA float"));
+  g_free (buf);
+  g_free (w);
 }
 
 static gboolean
 calc_have_rect (GeglOperation *operation)
 {
   GeglRect *in_rect = gegl_operation_get_have_rect (operation, "input");
-  ChantInstance *blur = CHANT_INSTANCE (operation);
-  gint       radius = ceil(blur->radius);
-  if (!in_rect)
+  ChantInstance* self = CHANT_INSTANCE(operation);
+  gint radius_x       = ceil(self->radius_x+0.5);
+  gint radius_y       = ceil(self->radius_y+0.5);
+  if(!in_rect)
     return FALSE;
 
   gegl_operation_set_have_rect (operation, 
-     in_rect->x-radius, in_rect->y-radius,
-     in_rect->w+radius*2, in_rect->h+radius*2);
+     in_rect->x-radius_x,   in_rect->y-radius_y,
+     in_rect->w+radius_x*2, in_rect->h+radius_y*2);
   return TRUE;
 }
 
@@ -265,13 +304,14 @@ calc_have_rect (GeglOperation *operation)
 static gboolean
 calc_need_rect (GeglOperation *self)
 {
-  ChantInstance *blur = CHANT_INSTANCE (self);
   GeglRect  *need   = gegl_operation_need_rect (self);
-  gint       radius = ceil(blur->radius);
+  ChantInstance *blur = CHANT_INSTANCE(self);
+  gint radius_x = ceil(blur->radius_x+0.5);
+  gint radius_y = ceil(blur->radius_y+0.5);
 
   gegl_operation_set_need_rect (self, "input",
-     need->x - radius, need->y - radius,
-     need->w + radius, need->h + radius);
+     need->x-radius_x,   need->y-radius_y,
+     need->w+radius_x*2, need->h+radius_y*2);
   return TRUE;
 }
 
@@ -281,39 +321,5 @@ static void class_init (GeglOperationClass *operation_class)
   operation_class->calc_need_rect = calc_need_rect;
 }
 
-static gint
-gen_convolve_matrix (gdouble   radius,
-                     gdouble **cmatrix_p)
-{
-  gdouble *cmatrix;
-  gdouble  sigma;
-  gint     matrix_length;
-
-  sigma = (abs (radius) / 3.0)+1;
-  matrix_length = 6*sigma + 1;
-
-  cmatrix = g_new (gdouble, matrix_length);
-  if (!cmatrix)
-    return 0;
-
-  {
-    gint i, x;
-    gdouble y;
-
-    for (i=0; i<matrix_length/2+1; i++)
-      {
-        x = i - (matrix_length/2+1);
-        y = (1.0/(sigma*sqrt(2*M_PI))) * exp(-(x*x) / (2*sigma*sigma));
-
-        cmatrix[i] = y;
-      }
-
-    for (i=matrix_length/2 + 1; i<matrix_length; i++)
-      cmatrix[i] = cmatrix[matrix_length-i-1];
-  }
-
-  *cmatrix_p = cmatrix;
-  return matrix_length;
-}
 
 #endif

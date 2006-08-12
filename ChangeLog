@@ -1,3 +1,9 @@
+2006-08-12  Dominik Ernst  <dernst@gmx.de>
+
+	* operations/blur/gaussian-blur.c: improved the efficiency by
+	implementing an IIR algorithm, also blur can be applied in x and y
+	direction independently.
+
 2006-08-12  Øyvind Kolås  <pippin@gimp.org>
 
 	Added cvsignore files to the operations subdir.
