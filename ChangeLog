@@ -1,5 +1,20 @@
 2006-08-12  Øyvind Kolås  <pippin@gimp.org>
 
+	Added cvsignore files to the operations subdir.
+
+	* operations/.cvsignore,
+	* operations/blur/.cvsignore,
+	* operations/color/.cvsignore,
+	* operations/core/.cvsignore,
+	* operations/display/.cvsignore,
+	* operations/file-io/.cvsignore,
+	* operations/generated/.cvsignore,
+	* operations/render/.cvsignore,
+	* operations/transform/.cvsignore,
+	* operations/transparency/.cvsignore: NEW files.
+
+2006-08-12  Øyvind Kolås  <pippin@gimp.org>
+
 	Made properties of operations that used to be passed as gfloats be
 	passed as gdoubles.
 
