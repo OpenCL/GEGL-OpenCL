@@ -18,7 +18,7 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #ifdef CHANT_SELF
-chant_float (value, -100.0, 100.0, 0.5, "global opacity value, used if no aux input is provided")
+chant_double (value, -10.0, 10.0, 0.5, "global opacity value, used if no aux input is provided")
 #else
 
 #define CHANT_POINT_COMPOSER

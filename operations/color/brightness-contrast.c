@@ -19,8 +19,8 @@
  */
 #ifdef CHANT_SELF
  
-chant_float (contrast,   -100.0, 100.0, 1.0, "Range scale factor")
-chant_float (brightness,  -10.0,  10.0, 0.0, "Amount to increase brightness")
+chant_double (contrast,   -100.0, 100.0, 1.0, "Range scale factor")
+chant_double (brightness,  -10.0,  10.0, 0.0, "Amount to increase brightness")
 
 #else
 

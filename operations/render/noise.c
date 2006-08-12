@@ -19,11 +19,11 @@
  */
 #ifdef CHANT_SELF
  
-chant_float (alpha, -100.0, 100.0, 12.3, "")
-chant_float (beta,  -100.0, 100.0, 0.1, "")
-chant_float (zoff, -100.0, 100.0,  -1, "")
-chant_float (seed,  -100.0, 100.0, 20.0, "")
-chant_float (n,     -100.0, 100.0, 6.0, "")
+chant_double (alpha, -G_MAXDOUBLE, G_MAXDOUBLE, 12.3, "")
+chant_double (beta,  -G_MAXDOUBLE, G_MAXDOUBLE, 0.1, "")
+chant_double (zoff,  -G_MAXDOUBLE, G_MAXDOUBLE,  -1, "")
+chant_double (seed,  -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "")
+chant_double (n,     0, 20.0, 6.0, "")
 
 #else
 

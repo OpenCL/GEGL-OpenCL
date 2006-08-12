@@ -1,5 +1,23 @@
 2006-08-12  Øyvind Kolås  <pippin@gimp.org>
 
+	Made properties of operations that used to be passed as gfloats be
+	passed as gdoubles.
+
+	* operations/blur/box-blur.c,
+	* operations/blur/gaussian-blur.c,
+	* operations/color/brightness-contrast.c,
+	* operations/color/threshold.c,
+	* operations/core/crop.c,
+	* operations/core/shift.c,
+	* operations/generated/math.rb,
+	* operations/render/noise.c,
+	* operations/render/text.c,
+	* operations/transparency/opacity.c: replaced chant_float with
+	chant_double, and some adjustments to the min/max ranges of
+	properties.
+
+2006-08-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/file-io/load.c: Added the .nef|.NEF extension to the set
 	of files handled by the raw-loader.
 

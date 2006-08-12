@@ -36,7 +36,7 @@ a.each do
     file.write copyright
     file.write "
 #ifdef CHANT_SELF
-chant_float (value, -10000.0, 10000.0, 0.0, \"global value used if aux doesn't contain data\")
+chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if aux doesn't contain data\")
 #else
 
 #define CHANT_POINT_COMPOSER

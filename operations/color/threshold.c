@@ -19,7 +19,7 @@
  */
 #ifdef CHANT_SELF
 
-chant_float (value, -100.0, 100.0, 0.5, "global threshold level (used when there is no aux input")
+chant_double (value, -100.0, 100.0, 0.5, "global threshold level (used when there is no aux input")
 
 #else
 

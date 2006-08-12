@@ -20,7 +20,7 @@
 #ifdef CHANT_SELF
  
 chant_string (string, "Hello", "utf8 string to display")
-chant_float (size, -100.0, 100.0, 10.0, "approximate height of text in pixels")
+chant_double (size, 1.0, 2048.0, 10.0, "approximate height of text in pixels")
 chant_pointer (cached, "private")
 
 #else

@@ -19,7 +19,7 @@
  */
 #ifdef CHANT_SELF
  
-chant_float (radius, 0.0, 200.0, 4.0, "radius of square pixel region, (width and height will be radius*2+1.")
+chant_double (radius, 0.0, 200.0, 4.0, "radius of square pixel region, (width and height will be radius*2+1.")
 
 #else
 

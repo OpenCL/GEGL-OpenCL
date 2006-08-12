@@ -19,10 +19,10 @@
  */
 #ifdef CHANT_SELF
 
-chant_float (x,      -123434.0,  1234134.0,  0.0, "left most pixel coordinate")
-chant_float (y,      -121212.0,  1234134.0,  0.0, "top pixel coordinate")
-chant_float (width,  -123434.0,  1234134.0,  10.0, "width in pixels")
-chant_float (height, -121212.0,  1234134.0,  10.0, "height in pixels")
+chant_double (x,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "left most pixel coordinate")
+chant_double (y,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "top pixel coordinate")
+chant_double (width,  -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "width in pixels")
+chant_double (height, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "height in pixels")
 
 #else
 
