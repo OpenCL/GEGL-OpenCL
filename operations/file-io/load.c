@@ -50,6 +50,8 @@ static LoaderMapping mappings[]=
   {".raw",  "raw-load"},
   {".RAW",  "raw-load"},
   {".raf",  "raw-load"},
+  {".nef",  "raw-load"},
+  {".NEF",  "raw-load"},
   {NULL,    "magick-load"}
 };
   
