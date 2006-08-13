@@ -1,3 +1,9 @@
+2006-08-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* docs/.cvsignore,
+	* docs/gallery/.cvsignore,
+	* gegl/module/.cvsignore: Added and updated .cvsignore files.
+
 2006-08-12  Dominik Ernst  <dernst@gmx.de>
 
 	* operations/blur/gaussian-blur.c: improved the efficiency by
