@@ -1,3 +1,10 @@
+2006-08-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* tests/bfspadvisitortest.c~,
+	* tests/dfspadvisitortest.c~,
+	* tests/gegl-mock-pad-visitor.c~: removed temp files accidentaly
+	checked into CVS.
+
 2006-08-14  Øyvind Kolås  <pippin@gimp.org>
 
 	Reintroduced check for glib, and made it check for glib >=2.10.0
