@@ -1,3 +1,10 @@
+2006-08-14  Øyvind Kolås  <pippin@gimp.org>
+
+	Reintroduced check for glib, and made it check for glib >=2.10.0
+
+	* autogen.sh: uncommented check for glib and increased version number
+	being checked for.
+
 2006-08-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* docs/.cvsignore,
