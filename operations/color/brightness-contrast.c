@@ -28,6 +28,7 @@ chant_double (brightness,  -10.0,  10.0, 0.0, "Amount to increase brightness")
 #define CHANT_NAME         brightness_contrast
 #define CHANT_DESCRIPTION  "Changes the light level and contrast."
 #define CHANT_SELF         "brightness-contrast.c"
+#define CHANT_CATEGORIES   "color"
 #include "gegl-chant.h"
 
 static gboolean

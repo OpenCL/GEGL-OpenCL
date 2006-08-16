@@ -121,6 +121,7 @@ op_affine_class_init (OpAffineClass *klass)
 
   op_class->calc_have_rect   = calc_have_rect;
   op_class->calc_need_rect   = calc_need_rect;
+  op_class->categories = "geometry";
 
   filter_class->evaluate = evaluate;
 

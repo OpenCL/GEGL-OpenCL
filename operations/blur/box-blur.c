@@ -27,6 +27,7 @@ chant_double (radius, 0.0, 200.0, 4.0, "radius of square pixel region, (width an
 #define CHANT_NAME            box_blur
 #define CHANT_DESCRIPTION     "Performs an averaging of a square box of pixels."
 #define CHANT_SELF            "box-blur.c"
+#define CHANT_CATEGORIES      "blur"
 #define CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 

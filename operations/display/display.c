@@ -33,6 +33,7 @@ chant_int(height, 0, 1000, 0, "private")
 #define CHANT_NAME        display
 #define CHANT_DESCRIPTION "Displays the input buffer in an SDL window (restricted to one display op/process, due to SDL implementation issues, a gtk+ based replacement would be nice."
 #define CHANT_SELF        "display.c"
+#define CHANT_CATEGORIES  "output"
 #include "gegl-chant.h"
 
 #include <SDL.h>

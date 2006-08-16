@@ -27,6 +27,7 @@ chant_double (value, -100.0, 100.0, 0.5, "global threshold level (used when ther
 #define CHANT_NAME            threshold
 #define CHANT_DESCRIPTION     "thresholds the image to white/black based on either the global value set in the value property, or per pixel from the aux input"
 #define CHANT_SELF            "threshold.c"
+#define CHANT_CATEGORIES      "color"
 #define CHANT_CONSTRUCT
 #include "gegl-chant.h"
 

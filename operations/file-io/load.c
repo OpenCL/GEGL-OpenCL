@@ -29,6 +29,7 @@ chant_pointer (cached, "private")
                               "using image magick's convert."
 
 #define CHANT_SELF            "load.c"
+#define CHANT_CATEGORIES      "sources"
 #define CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 #include <stdio.h>

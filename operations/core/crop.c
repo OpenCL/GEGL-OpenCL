@@ -32,6 +32,7 @@ chant_double (height, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "height in pixels")
 #define CHANT_DESCRIPTION     "crops the image, can be used to rectangulary" \
                               "clip buffers, as well as specifying what " \
                               "portion of a composition to render to file"
+#define CHANT_CATEGORIES      "geometry"
 #define CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 

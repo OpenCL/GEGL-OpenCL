@@ -28,6 +28,7 @@ chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "y coordinate of new origin")
 #define CHANT_NAME            shift
 #define CHANT_DESCRIPTION     "Translate the buffer, an integer amount of pixels."
 #define CHANT_SELF            "shift.c"
+#define CHANT_CATEGORIES      "geometry"
 #define CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 

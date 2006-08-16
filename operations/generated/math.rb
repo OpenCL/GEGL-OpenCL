@@ -43,6 +43,7 @@ chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if aux 
 #define CHANT_NAME          #{name}
 #define CHANT_DESCRIPTION   \"Math operation #{name} (#{formula})\"
 #define CHANT_SELF          \"#{filename}\"
+#define CHANT_CATEGORIES    \"compositors:math\"
 #define CHANT_CONSTRUCT
 #include \"gegl-chant.h\"
 

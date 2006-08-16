@@ -31,6 +31,7 @@ chant_double (radius_y, 0.0, 200.0, 4.0, "blur radius in vertical direction.")
 #define CHANT_NAME            gaussian_blur
 #define CHANT_DESCRIPTION     "Performs an averaging of neighbouring pixels with the normal distribution as weighting."
 #define CHANT_SELF            "gaussian-blur.c"
+#define CHANT_CATEGORIES      "blur"
 #define CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 

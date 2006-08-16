@@ -29,6 +29,7 @@ chant_pointer (cached, "private")
 #define CHANT_NAME            text
 #define CHANT_DESCRIPTION     "Display a string of text using cairo"
 #define CHANT_SELF            "text.c"
+#define CHANT_CATEGORIES      "sources:render"
 #define CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 

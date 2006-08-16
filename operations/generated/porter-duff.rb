@@ -47,6 +47,7 @@ a.each do
 #define CHANT_POINT_COMPOSER
 #define CHANT_NAME          #{name}
 #define CHANT_DESCRIPTION   \"Porter Duff operation #{name} (c = #{formula})\"
+#define CHANT_CATEGORIES    \"compositors:porter duff\"
 #define CHANT_SELF          \"#{filename}\"
 #define CHANT_CONSTRUCT
 #include \"gegl-chant.h\"

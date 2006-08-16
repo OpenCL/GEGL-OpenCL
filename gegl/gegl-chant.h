@@ -405,6 +405,12 @@ chant_class_init (ChantClass * klass)
   gegl_operation_class_set_description (operation_class, CHANT_DESCRIPTION);
 #endif
 
+#ifdef CHANT_CATEGORIES
+  operation_class->categories = CHANT_CATEGORIES;
+#else
+  operation_class->categories = "misc";
+#endif
+
 #define chant_int(name, min, max, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_int (#name, #name, blurb,\

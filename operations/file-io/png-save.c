@@ -27,6 +27,7 @@ chant_string(path, "/tmp/fnord.png", "path to new file to save - for stdout")
 #define CHANT_NAME        png_save
 #define CHANT_DESCRIPTION "saves a png image using libpng"
 #define CHANT_SELF        "png-save.c"
+#define CHANT_CATEGORIES      "output"
 #include "gegl-chant.h"
 
 #include <png.h>

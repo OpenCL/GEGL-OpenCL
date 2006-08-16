@@ -29,6 +29,7 @@ chant_pointer (cached, "private")
 #define CHANT_DESCRIPTION     "loads a png file using libpng, currently restricted to 8bpc"
 
 #define CHANT_SELF            "png-load.c"
+#define CHANT_CATEGORIES      "sources"
 #define CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 

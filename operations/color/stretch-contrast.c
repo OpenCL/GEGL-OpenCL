@@ -28,6 +28,7 @@
 #define CHANT_SELF            "stretch-contrast.c"
 #define CHANT_CLASS_CONSTRUCT /*< we need to modify the standard class init
                                   of the super class */
+#define CHANT_CATEGORIES      "color"
 #include "gegl-chant.h"
 
 static gboolean

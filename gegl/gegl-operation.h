@@ -56,6 +56,7 @@ struct _GeglOperationClass
 
   const gchar *name;
   gchar       *description;
+  char        *categories;  /* a colon seperated list of categories */
 
   gboolean (*evaluate)          (GeglOperation *self,
                                  const gchar   *output_pad);

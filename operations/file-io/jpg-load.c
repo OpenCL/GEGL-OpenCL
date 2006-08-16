@@ -28,6 +28,7 @@ chant_pointer (cached, "private")
 #define CHANT_NAME            jpg_load
 #define CHANT_DESCRIPTION     "loads a jpeg file using libjpeg"
 #define CHANT_SELF            "jpg-load.c"
+#define CHANT_CATEGORIES      "sources"
 #define CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 #include <stdio.h>

@@ -28,6 +28,7 @@ chant_string (ref, "", "The reference ID used as input.")
 #define CHANT_DESCRIPTION "A routing op used by the XML data model to implement clones."
 
 #define CHANT_SELF        "clone.c"
+#define CHANT_CATEGORIES  "misc"
 #include "gegl-chant.h"
 
 

@@ -29,6 +29,7 @@ chant_pointer (cached, "private")
 
 #define CHANT_SELF            "magick-load.c"
 #define CHANT_CLASS_CONSTRUCT
+#define CHANT_CATEGORIES      "sources"
 #include "gegl-chant.h"
 #include <stdio.h>
 

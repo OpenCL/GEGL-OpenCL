@@ -1,3 +1,14 @@
+2006-08-16  Øyvind Kolås  <pippin@gimp.org>
+
+	Added a colon seperated list of categories to each operation class
+	structure. This allows generation of easily browsable menus for class
+	selection in user interfaces.
+	
+	* gegl/gegl-operation.h: added categories to class struct.
+	* gegl/gegl-chant.h: use provided CHANT_CATEGORIES if set, or "misc"
+	if not set for klass->categories.
+	* operations/*/*.[c|rb]: gave all operations misc categories.
+
 2006-08-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* tests/bfspadvisitortest.c~,

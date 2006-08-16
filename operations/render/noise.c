@@ -32,6 +32,7 @@ chant_double (n,     0, 20.0, 6.0, "")
 #define CHANT_DESCRIPTION    "Perlin noise generator"
 
 #define CHANT_SELF           "noise.c"
+#define CHANT_CATEGORIES      "sources:render"
 #define CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 #include "perlin/perlin.c"
