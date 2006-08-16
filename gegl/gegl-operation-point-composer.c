@@ -100,7 +100,7 @@ evaluate_inner (GeglOperation *operation,
                                             "width",  result->w,
                                             "height", result->h,
                                             NULL);
-            gegl_buffer_get_fmt (roi, aux_buf, point_composer->format);
+            gegl_buffer_get_fmt (roi, aux_buf, point_composer->aux_format);
             g_object_unref (roi);
           }
           {

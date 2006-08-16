@@ -1,5 +1,13 @@
 2006-08-16  Øyvind Kolås  <pippin@gimp.org>
 
+	Fixed aux format request in point composers.
+
+	* gegl/gegl-operation-point-composer.c: (evaluate_inner): Fetch the
+	aux input with the pixel format specified in
+	GeglOperationPointComposer->aux_format.
+
+2006-08-16  Øyvind Kolås  <pippin@gimp.org>
+
 	Added a colon seperated list of categories to each operation class
 	structure. This allows generation of easily browsable menus for class
 	selection in user interfaces.
