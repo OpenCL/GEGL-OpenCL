@@ -1,5 +1,14 @@
 2006-08-16  Øyvind Kolås  <pippin@gimp.org>
 
+	Added two ops, one that renders a black/white checkerboard with
+	specified horizonal/vertical spacings for the cells, and one that
+	generates a blank image.
+
+	* operations/render/blank.c,
+	* operations/render/checkerboard.c: New files.
+
+2006-08-16  Øyvind Kolås  <pippin@gimp.org>
+
 	Fixed aux format request in point composers.
 
 	* gegl/gegl-operation-point-composer.c: (evaluate_inner): Fetch the
