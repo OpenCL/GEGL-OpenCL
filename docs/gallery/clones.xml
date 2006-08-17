@@ -83,7 +83,7 @@
 
     <over>
         <shift x='90'
-                   y='90'/>
+               y='90'/>
 
         <opacity   value='-0.5'/>
 
@@ -93,11 +93,11 @@
             <opacity   value='0.8'/>
 
             <shift x      = '0'
-                       y      = '0'/>
+                   y      = '0'/>
 
             <add       value  = '0.5'/>
 
-            <gaussian-blur  radius ='15'/>
+            <gaussian-blur  radius-x ='15' radius-y='15'/>
 
             <clone     ref    ='gegl'/>
         </under>
