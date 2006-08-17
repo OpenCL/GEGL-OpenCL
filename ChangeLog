@@ -1,3 +1,17 @@
+2006-08-17  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* blur/Makefile.am
+	* color/Makefile.am
+	* core/Makefile.am
+	* display/Makefile.am
+	* file-io/Makefile.am
+	* generated/Makefile.am
+	* render/Makefile.am
+	* transform/Makefile.am
+	* transparency/Makefile.am: ext_dir now uses the directory specified
+	during ./configure instead of a using hard-coded value. Also added
+	DESTDIR so install will work properly during packaging.
+
 2006-08-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/render/text.c: a modified version of the text op

@@ -33,7 +33,7 @@ CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ -I$(top_srcdir) -I$(top_srcdir)/gegl -I.
 clean:
 	rm -f $(SOBJS) *~
 
-ext_dir      = /usr/local/lib/gegl
+ext_dir = $(DESTDIR)$(prefix)/lib/gegl
 
 install: all
 	$(INSTALL) -d $(ext_dir)
