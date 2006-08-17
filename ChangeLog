@@ -1,5 +1,11 @@
 2006-08-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation-point-composer.h,
+	* gegl/gegl-operation-point-filter.h: Changed to use the proper
+	super class-struct. (they used GeglOperationClass directly).
+
+2006-08-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/gallery/clones.xml: make used of the radius-x and radius-y
 	properties instead of radius of the gaussian blur.
 

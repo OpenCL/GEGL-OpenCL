@@ -53,7 +53,7 @@ struct _GeglOperationPointComposer
 typedef struct _GeglOperationPointComposerClass GeglOperationPointComposerClass;
 struct _GeglOperationPointComposerClass
 {
-   GeglOperationClass operation_class;
+   GeglOperationComposerClass operation_class;
    gboolean (*evaluate) (GeglOperation *self,      /* for parameters      */
                          void          *in,
                          void          *aux,
