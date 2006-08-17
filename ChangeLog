@@ -1,3 +1,7 @@
+2006-08-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* AUTOHORS: added Kevin Cozens to code section.
+
 2006-08-17  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* blur/Makefile.am
