@@ -1,5 +1,10 @@
 2006-08-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-xml.c: (encode_node_attributes): encoded G_TYPE_DOUBLE as
+	well.
+
+2006-08-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* AUTOHORS: added Kevin Cozens to code section.
 
 2006-08-17  Kevin Cozens  <kcozens@cvs.gnome.org>

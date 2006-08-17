@@ -343,6 +343,14 @@ static void encode_node_attributes (SerializeState *ss,
               sprintf (str, "%f", value);
               tuple (ss->buf, properties[i]->name, str);
             }
+          if (properties[i]->value_type == G_TYPE_DOUBLE)
+            {
+              gdouble value;
+              gchar str[64];
+              gegl_node_get (node, properties[i]->name, &value, NULL);
+              sprintf (str, "%f", value);
+              tuple (ss->buf, properties[i]->name, str);
+            }
           else if (properties[i]->value_type == G_TYPE_INT)
             {
               gint value;
