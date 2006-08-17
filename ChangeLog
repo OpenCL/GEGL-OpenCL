@@ -1,5 +1,11 @@
 2006-08-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/render/text.c: a modified version of the text op
+	got commited accidently, here is a version that at least compiles,
+	but the issue of not rerendering correctly is not handled.
+
+2006-08-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/file-io/jpg-load.c: (evaluate), (calc_have_rect):
 	provide a dummy 10x10 buffer when failing to load a jpg.
 

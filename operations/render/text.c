@@ -22,7 +22,7 @@
 chant_string (string, "Hello", "utf8 string to display")
 chant_double (size, 1.0, 2048.0, 10.0, "approximate height of text in pixels")
 chant_pointer (cached, "private")
-chant_string (cached_string, "", "private");
+chant_string (cached_string, "", "private")
 
 #else
 
