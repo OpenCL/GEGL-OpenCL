@@ -20,7 +20,6 @@
 #ifdef CHANT_SELF
  
 chant_string (path, "/tmp/romedalen.png", "path to file to load")
-chant_pointer (cached, "private")
 
 #else
 
@@ -29,8 +28,7 @@ chant_pointer (cached, "private")
 #define CHANT_DESCRIPTION     "loads a png file using libpng, currently restricted to 8bpc"
 
 #define CHANT_SELF            "png-load.c"
-#define CHANT_CATEGORIES      "sources"
-#define CHANT_CLASS_CONSTRUCT
+#define CHANT_CATEGORIES      "hidden"
 #include "gegl-chant.h"
 
 #include <png.h>
@@ -62,7 +60,6 @@ evaluate (GeglOperation *operation,
     g_object_unref (op_source->output);
   op_source->output=NULL;
 
-  if (!self->cached)
     {
     gint width, height;
 
@@ -77,47 +74,29 @@ evaluate (GeglOperation *operation,
           }
       }
 
-    self->cached = g_object_new (GEGL_TYPE_BUFFER,
+    op_source->output = g_object_new (GEGL_TYPE_BUFFER,
                                       "format", babl_format ("R'G'B'A u8"),
                                       "x",      0,
                                       "y",      0,
-                                      "width",  8192,
-                                      "height", 8192,
+                                      "width",  width,
+                                      "height", height,
                                       NULL);
 
-    result = gegl_buffer_import_png (self->cached, self->path, 0, 0,
+    result = gegl_buffer_import_png (op_source->output, self->path, 0, 0,
                                      &width, &height);
 
     if (result)
       {
         g_warning ("%s failed to open file %s for reading.",
           G_OBJECT_TYPE_NAME (operation), self->path);
-        op_source->output = NULL;
-        g_object_unref (self->cached);
-        self->cached = NULL;
+        if (op_source->output)
+          {
+            g_object_unref (op_source->output);
+            op_source->output = NULL;
+          }
         return FALSE;
       }
-    self->cached = g_object_new (GEGL_TYPE_BUFFER,
-                                 "source", self->cached,
-                                 "x", 0,
-                                 "y", 0,
-                                 "width", width,
-                                 "height", height,
-                                 NULL);
-    g_object_unref (GEGL_TILE_TRAIT (self->cached)->source);
     }
-
-  {
-    GeglRect *result = gegl_operation_result_rect (operation);
-
-    op_source->output = g_object_new (GEGL_TYPE_BUFFER,
-                        "source", self->cached,
-                        "x",      result->x,
-                        "y",      result->y,
-                        "width",  result->w,
-                        "height", result->h,
-                        NULL);
-  }
   return  TRUE;
 }
 
@@ -360,22 +339,6 @@ gint query_png (const gchar *path,
   png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
   fclose (infile);
   return 0;
-}
-
-static void dispose (GObject *gobject)
-{
-  ChantInstance *self = CHANT_INSTANCE (gobject);
-  if (self->cached)
-    {
-      g_object_unref (self->cached);
-      self->cached = NULL;
-    }
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (gobject)))->dispose (gobject);
-}
-
-static void class_init (GeglOperationClass *klass)
-{
-  G_OBJECT_CLASS (klass)->dispose = dispose;
 }
 
 #endif

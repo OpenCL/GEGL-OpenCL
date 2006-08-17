@@ -20,7 +20,6 @@
 #ifdef CHANT_SELF
  
 chant_string (path, "/tmp/romedalen.jpg", "Path to jpg file on disk to load")
-chant_pointer (cached, "private")
 
 #else
 
@@ -28,8 +27,7 @@ chant_pointer (cached, "private")
 #define CHANT_NAME            jpg_load
 #define CHANT_DESCRIPTION     "loads a jpeg file using libjpeg"
 #define CHANT_SELF            "jpg-load.c"
-#define CHANT_CATEGORIES      "sources"
-#define CHANT_CLASS_CONSTRUCT
+#define CHANT_CATEGORIES      "hidden"
 #include "gegl-chant.h"
 #include <stdio.h>
 #include <jpeglib.h>
@@ -64,7 +62,6 @@ evaluate (GeglOperation *operation,
       op_source->output=NULL;
     }
 
-  if (!self->cached)
     {
       result = query_jpg (self->path, &width, &height);
       if (result)
@@ -74,7 +71,7 @@ evaluate (GeglOperation *operation,
           return FALSE;
         }
 
-      self->cached = g_object_new (GEGL_TYPE_BUFFER,
+      op_source->output = g_object_new (GEGL_TYPE_BUFFER,
                                         "format", babl_format ("R'G'B' u8"),
                                         "x",      0,
                                         "y",      0,
@@ -82,7 +79,7 @@ evaluate (GeglOperation *operation,
                                         "height", height,
                                         NULL);
 
-      result = gegl_buffer_import_jpg (self->cached, self->path, 0, 0);
+      result = gegl_buffer_import_jpg (op_source->output, self->path, 0, 0);
 
       if (result)
         {
@@ -92,18 +89,6 @@ evaluate (GeglOperation *operation,
           return FALSE;
         }
     }
-
-
-  {
-    GeglRect *result = gegl_operation_result_rect (operation);
-    op_source->output = g_object_new (GEGL_TYPE_BUFFER,
-                        "source", self->cached,
-                        "x",      result->x,
-                        "y",      result->y,
-                        "width",  result->w,
-                        "height", result->h,
-                        NULL);
-  }
   return  TRUE;
 }
 
@@ -166,6 +151,7 @@ query_jpg (const gchar *path,
   fclose (infile);
   return 0;
 }
+
 static gint
 gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
                         const gchar *path,
@@ -227,21 +213,4 @@ gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
   return 0;
 }
 
-
-
-static void dispose (GObject *gobject)
-{
-  ChantInstance *self = CHANT_INSTANCE (gobject);
-  if (self->cached)
-    {
-      g_object_unref (self->cached);
-      self->cached = NULL;
-    }
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (gobject)))->dispose (gobject);
-}
-
-static void class_init (GeglOperationClass *klass)
-{
-  G_OBJECT_CLASS (klass)->dispose = dispose;
-}
 #endif

@@ -29,30 +29,10 @@ chant_pointer (cached, "private")
 
 #define CHANT_SELF            "magick-load.c"
 #define CHANT_CLASS_CONSTRUCT
-#define CHANT_CATEGORIES      "sources"
+#define CHANT_CATEGORIES      "hidden"
 #include "gegl-chant.h"
 #include <stdio.h>
 
-typedef struct LoaderMapping
-{
-  gchar *extension;
-  gchar *loader;
-} LoaderMapping;
-
-static LoaderMapping mappings[]=
-{
-  {".jpg",  "jpg-load"},
-  {".jpeg", "jpg-load"},
-  {".JPG",  "jpg-load"},
-  {".JPEG", "jpg-load"},
-  {".png",  "png-load"},
-  {".PNG",  "png-load"},
-  {".raw",  "raw-load"},
-  {".RAW",  "raw-load"},
-  {".raf",  "raw-load"},
-  {NULL, NULL}
-};
-  
 static void
 load_cache (ChantInstance *op_magick_load)
 {
@@ -60,19 +40,6 @@ load_cache (ChantInstance *op_magick_load)
     {
         GeglNode *temp_gegl;
         gchar xml[1024]="";
-        LoaderMapping *map = &mappings[0];
-
-        while (map->extension)
-          {
-            if (strstr (op_magick_load->path, map->extension))
-              {
-                sprintf (xml, "<gegl><tree><node class='%s' path='%s'></node></tree></gegl>", map->loader, op_magick_load->path);
-                break;
-              }
-            map++;
-          }
-        if (xml[0]=='\0') /* no automatic mapping found,
-                             use imagemagick fallback */
           {
             /* ImageMagick backed fallback FIXME: make this robust.
              * maybe use pipes in a manner similar to the raw loader */
@@ -93,7 +60,6 @@ load_cache (ChantInstance *op_magick_load)
     g_object_unref (temp_gegl);
   }
 }
-
 
 static gboolean
 evaluate (GeglOperation *operation,
@@ -120,6 +86,8 @@ evaluate (GeglOperation *operation,
                         "width",  result->w,
                         "height", result->h,
                         NULL);
+    g_object_unref (self->cached); /* do not keep a cache here, the meta loader has one */
+    self->cached = NULL;
   }
   return  TRUE;
 }

@@ -1,5 +1,15 @@
 2006-08-17  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed internal caching from file loading operations, (the meta
+	loader still has a cache).
+
+	* operations/file-io/jpg-load.c: (evaluate):
+	* operations/file-io/magick-load.c: (load_cache), (evaluate):
+	* operations/file-io/png-load.c: (evaluate), (query_png):
+	* operations/file-io/raw-load.c: (evaluate):
+
+2006-08-17  Øyvind Kolås  <pippin@gimp.org>
+
 	Make the cache of the meta loader be invalidated if the path property
 	changes.
 

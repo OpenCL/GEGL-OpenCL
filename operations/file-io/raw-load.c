@@ -27,7 +27,7 @@ chant_pointer (cached, "private")
 #define CHANT_DESCRIPTION     "Loads a raw file, by communicating with dcraw through pipes."
 
 #define CHANT_SELF            "raw-load.c"
-#define CHANT_CATEGORIES      "sources"
+#define CHANT_CATEGORIES      "hidden"
 #define CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 #include <unistd.h>
@@ -66,6 +66,8 @@ evaluate (GeglOperation *operation,
                         "width",  result->w,
                         "height", result->h,
                         NULL);
+    g_object_unref (self->cached);
+    self->cached = NULL;
   }
   return  TRUE;
 }

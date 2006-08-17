@@ -212,8 +212,8 @@ static void
 refresh_cache (GeglOperationLoad *self)
 {
   if (!self->cached ||
-      (self->cached_path &&
-       self->path &&
+      ((self->cached_path &&
+       self->path) &&
        strcmp (self->path, self->cached_path)))
     {
         GeglNode *temp_gegl;
@@ -223,8 +223,8 @@ refresh_cache (GeglOperationLoad *self)
         if (self->cached)
           {
             g_object_unref (self->cached);
-            g_free (self->cached_path);
             self->cached = NULL;
+            g_free (self->cached_path);
           }
 
         while (map->extension)
@@ -254,6 +254,10 @@ refresh_cache (GeglOperationLoad *self)
     g_object_unref (temp_gegl);
     self->cached_path = g_strdup (self->path);
   }
+  else
+    {
+      g_warning ("%s had a valid cache %s", self->path, self->cached_path);
+    }
 }
 
 static gboolean
