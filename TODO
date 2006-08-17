@@ -42,3 +42,35 @@ Make it possible to have multiple evaluations of the graph happening at the
 same time. (both the way the visitor pattern is implemented, and the reference
 counting for immediate freeing of buffers assumes a single thread of operation
 at the moment.)
+
+
+Operations
+==========
+
+Caching operation
+-----------------
+
+Write an operations that maintains a sparse backing buffer the size of the HAVE
+rect of the operations. Keeps rendered information, and keeps cached computations
+as long as the properties have not changed.
+
+An initial implementation of this should be designed to work directly on top of
+source nodes only. Later a similar approach could be extended to work on subgraphs,
+multiple such caches could be used as well, speeding up reevaluations at the expense
+of extra tiles used for caching intermediate results.
+
+Currently the meta loader contains it's own simplistic caching, per file loader caching
+will be removed, to make the code needed for each importer node as simple as possible.
+Thus the other file loaders should probably be hidden.
+
+text source
+-----------
+
+Use pango for rendering, expose more parameters, perhaps look at integrating
+the pango interface provided by GIMP?
+
+SVG loader
+----------
+
+With basis in the text source (which uses cairo), create an operation that renders
+to a buffer in a similar fashion using librsvg for the SVG parsing.
