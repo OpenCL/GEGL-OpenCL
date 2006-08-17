@@ -1,5 +1,10 @@
 2006-08-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/file-io/jpg-load.c: (evaluate), (calc_have_rect):
+	provide a dummy 10x10 buffer when failing to load a jpg.
+
+2006-08-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* TODO: updated with thoughts about how caching ops could evolve.
 
 2006-08-17  Øyvind Kolås  <pippin@gimp.org>

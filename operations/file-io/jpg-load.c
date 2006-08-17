@@ -68,7 +68,14 @@ evaluate (GeglOperation *operation,
         {
           g_warning ("%s failed to open file %s for reading.",
             G_OBJECT_TYPE_NAME (operation), self->path);
-          return FALSE;
+          op_source->output = g_object_new (GEGL_TYPE_BUFFER,
+                                            "format", babl_format ("R'G'B' u8"),
+                                            "x",      0,
+                                            "y",      0,
+                                            "width",  10,
+                                            "height", 10,
+                                            NULL);
+              return TRUE;
         }
 
       op_source->output = g_object_new (GEGL_TYPE_BUFFER,
@@ -104,7 +111,8 @@ calc_have_rect (GeglOperation *operation)
   if (status)
     {
       g_warning ("calc have rect of %s failed", self->path);
-      return FALSE;
+      gegl_operation_set_have_rect (operation, 0, 0, 10, 10);
+      return TRUE;
     }
 
   gegl_operation_set_have_rect (operation, 0, 0, width, height);
