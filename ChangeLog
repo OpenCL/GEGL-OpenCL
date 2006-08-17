@@ -1,5 +1,13 @@
 2006-08-17  Øyvind Kolås  <pippin@gimp.org>
 
+	Make the cache of the meta loader be invalidated if the path property
+	changes.
+
+	* operations/file-io/load.c: (gegl_operation_load_class_init),
+	(refresh_cache), (calc_have_rect), (dispose):
+
+2006-08-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/file-io/load.c: migrated from chanting to full boiler
 	plate gobject.
 

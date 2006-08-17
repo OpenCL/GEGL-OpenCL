@@ -51,7 +51,6 @@ static LoaderMapping mappings[]=
   {NULL,    "magick-load"} /* fallthrough */
 };
   
-
 typedef struct _GeglOperationLoad      GeglOperationLoad;
 typedef struct _GeglOperationLoadClass GeglOperationLoadClass;
 
@@ -196,7 +195,10 @@ gegl_operation_load_class_init (GeglOperationLoadClass *klass)
   parent_class->evaluate = evaluate;
   operation_class->calc_have_rect = calc_have_rect;
   gegl_operation_class_set_name (operation_class, "load");;
-  gegl_operation_class_set_description (operation_class, "Multipurpose file loader, that uses other " "native handlers, and fallback conversion " "using image magick's convert.");
+  gegl_operation_class_set_description (operation_class,
+           "Multipurpose file loader, that uses other "
+           "native handlers, and fallback conversion "
+           "using image magick's convert.");
   operation_class->categories = "sources";
 
   g_object_class_install_property (object_class, PROP_PATH,
@@ -207,26 +209,39 @@ gegl_operation_load_class_init (GeglOperationLoadClass *klass)
 }
 
 static void
-load_cache (GeglOperationLoad *self)
+refresh_cache (GeglOperationLoad *self)
 {
-  if (!self->cached)
+  if (!self->cached ||
+      (self->cached_path &&
+       self->path &&
+       strcmp (self->path, self->cached_path)))
     {
         GeglNode *temp_gegl;
         gchar xml[1024]="";
         LoaderMapping *map = &mappings[0];
 
+        if (self->cached)
+          {
+            g_object_unref (self->cached);
+            g_free (self->cached_path);
+            self->cached = NULL;
+          }
+
         while (map->extension)
           {
             if (strstr (self->path, map->extension))
               {
-                sprintf (xml, "<gegl><tree><node class='%s' path='%s'></node></tree></gegl>", map->handler, self->path);
+                sprintf (xml,
+                  "<gegl><tree><node class='%s' path='%s'></node></tree></gegl>",
+                  map->handler, self->path);
                 break;
               }
             map++;
           }
         if (map->extension==NULL) /* no extension matched, using fallback */
           {
-            sprintf (xml, "<gegl><tree><node class='%s' path='%s'></node></tree></gegl>", map->handler, self->path);
+            sprintf (xml, "<gegl><tree><node class='%s' path='%s'></node></tree></gegl>",
+                 map->handler, self->path);
           }
 
     temp_gegl = gegl_xml_parse (xml);
@@ -237,6 +252,7 @@ load_cache (GeglOperationLoad *self)
      */
     gegl_node_get (temp_gegl, "output", &(self->cached), NULL);
     g_object_unref (temp_gegl);
+    self->cached_path = g_strdup (self->path);
   }
 }
 
@@ -275,7 +291,7 @@ calc_have_rect (GeglOperation *operation)
   GeglOperationLoad *self = GEGL_OPERATION_LOAD (operation);
   gint width, height;
 
-  load_cache (self);
+  refresh_cache (self);
 
   width  = GEGL_BUFFER (self->cached)->width;
   height = GEGL_BUFFER (self->cached)->height;
@@ -293,6 +309,9 @@ static void dispose (GObject *gobject)
       g_object_unref (self->cached);
       self->cached = NULL;
     }
+  if (self->cached_path)
+    {
+      g_free (self->cached_path);
+    }
   G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (gobject)))->dispose (gobject);
 }
-
