@@ -1,5 +1,12 @@
 2006-08-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/file-io/png-load.c: (evaluate): provide a dummy 10x10
+	buffer if loading of png fails.
+	* operations/file-io/load.c: (refresh_cache): removed debug
+	printlining.
+
+2006-08-17  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed internal caching from file loading operations, (the meta
 	loader still has a cache).
 

@@ -254,10 +254,6 @@ refresh_cache (GeglOperationLoad *self)
     g_object_unref (temp_gegl);
     self->cached_path = g_strdup (self->path);
   }
-  else
-    {
-      g_warning ("%s had a valid cache %s", self->path, self->cached_path);
-    }
 }
 
 static gboolean

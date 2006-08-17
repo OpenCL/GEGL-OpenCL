@@ -70,7 +70,14 @@ evaluate (GeglOperation *operation,
           {
             g_warning ("%s is %s really a PNG file?",
               G_OBJECT_TYPE_NAME (operation), self->path);
-            return FALSE;
+        op_source->output = g_object_new (GEGL_TYPE_BUFFER,
+                                      "format", babl_format ("R'G'B'A u8"),
+                                      "x",      0,
+                                      "y",      0,
+                                      "width",  10,
+                                      "height", 10,
+                                      NULL);
+            return TRUE;
           }
       }
 
@@ -94,7 +101,14 @@ evaluate (GeglOperation *operation,
             g_object_unref (op_source->output);
             op_source->output = NULL;
           }
-        return FALSE;
+        op_source->output = g_object_new (GEGL_TYPE_BUFFER,
+                                      "format", babl_format ("R'G'B'A u8"),
+                                      "x",      0,
+                                      "y",      0,
+                                      "width",  10,
+                                      "height", 10,
+                                      NULL);
+        return TRUE;
       }
     }
   return  TRUE;

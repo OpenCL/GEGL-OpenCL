@@ -22,6 +22,7 @@
 chant_string (string, "Hello", "utf8 string to display")
 chant_double (size, 1.0, 2048.0, 10.0, "approximate height of text in pixels")
 chant_pointer (cached, "private")
+chant_string (cached_string, "", "private");
 
 #else
 
@@ -93,13 +94,6 @@ evaluate (GeglOperation *operation,
 
   if (!self->cached)
     {
-    /*
-     * FIXME: cache full sized buffer (and potentially check disk mtime
-     * to make sure the cache is valid),. This would allow animations based
-     * on cached tiles from e.g. png.
-     */
-
-
     self->cached = g_object_new (GEGL_TYPE_BUFFER,
                                       "format", babl_format ("R'G'B'A u8"),
                                       "x",      0,
