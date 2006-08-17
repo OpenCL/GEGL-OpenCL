@@ -1,5 +1,10 @@
 2006-08-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/file-io/load.c: migrated from chanting to full boiler
+	plate gobject.
+
+2006-08-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-operation-point-composer.h,
 	* gegl/gegl-operation-point-filter.h: Changed to use the proper
 	super class-struct. (they used GeglOperationClass directly).

@@ -17,22 +17,17 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
-chant_string (path, "/tmp/gegl-logo.svg", "Path to image file to load.")
-chant_pointer (cached, "private")
-#else
 
-#define CHANT_SOURCE
-#define CHANT_NAME            load
-#define CHANT_DESCRIPTION     "Multipurpose file loader, that uses other " \
-                              "native handlers, and fallback conversion " \
-                              "using image magick's convert."
-
-#define CHANT_SELF            "load.c"
-#define CHANT_CATEGORIES      "sources"
-#define CHANT_CLASS_CONSTRUCT
-#include "gegl-chant.h"
+#include <gegl.h>
+#include <gegl-module.h>
+#include <gegl/gegl-operation-source.h>
+#include <string.h>
 #include <stdio.h>
+
+#define GEGL_TYPE_OPERATION_LOAD           (gegl_operation_load_get_type ())
+#define GEGL_OPERATION_LOAD(obj)           ((GeglOperationLoad*)(obj))
+#define GEGL_OPERATION_LOAD_CLASS(obj)     (G_TYPE_CHECK_CLASS_CAST ((obj), GEGL_TYPE_OPERATION_LOAD, GeglOperationLoadClass))
+#define GEGL_OPERATION_LOAD_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), GEGL_TYPE_OPERATION_LOAD, GeglOperationLoadClass))
 
 typedef struct LoaderMapping
 {
@@ -53,13 +48,168 @@ static LoaderMapping mappings[]=
   {".raf",  "raw-load"},
   {".nef",  "raw-load"},
   {".NEF",  "raw-load"},
-  {NULL,    "magick-load"}
+  {NULL,    "magick-load"} /* fallthrough */
 };
   
-static void
-load_cache (ChantInstance *op_load)
+
+typedef struct _GeglOperationLoad      GeglOperationLoad;
+typedef struct _GeglOperationLoadClass GeglOperationLoadClass;
+
+struct _GeglOperationLoad
 {
-  if (!op_load->cached)
+  GeglOperationSource  parent_instance;
+  gchar               *path;
+
+  /* private */
+  gchar               *cached_path;
+  GeglBuffer          *cached;
+};
+
+struct _GeglOperationLoadClass
+{
+  GeglOperationSourceClass parent_class;
+};
+
+
+static void gegl_operation_load_class_init (GeglOperationLoadClass *klass);
+static void gegl_operation_load_init       (GeglOperationLoad      *self);
+
+static GType
+gegl_operation_load_get_type (GTypeModule *module)
+{
+    static GType gegl_operation_load_id = 0;
+    if (G_UNLIKELY (gegl_operation_load_id == 0))
+    {
+      static const GTypeInfo select_info =
+      {
+        sizeof (GeglOperationLoadClass),
+	(GBaseInitFunc) NULL,
+	(GBaseFinalizeFunc) NULL,
+	(GClassInitFunc) gegl_operation_load_class_init,
+	NULL,           /* class_finalize */
+	NULL,           /* class_data     */
+	sizeof (GeglOperationLoad),
+	0,              /* n_preallocs    */
+	(GInstanceInitFunc) gegl_operation_load_init,
+      };
+
+      gegl_operation_load_id =
+        gegl_module_register_type (module,
+                                     GEGL_TYPE_OPERATION_SOURCE,
+                                     "GeglOperationLoad",
+                                     &select_info, 0);
+    }
+  return gegl_operation_load_id;
+}
+
+static const GeglModuleInfo modinfo = {
+  GEGL_MODULE_ABI_VERSION,
+  "load",
+  "v0.0",
+  "(c) 2006, released under the LGPL",
+  "June 2006"
+};
+
+const GeglModuleInfo *gegl_module_query (GTypeModule *module)
+{
+  return &modinfo;
+}
+  
+gboolean gegl_module_register (GTypeModule *module)
+{
+  gegl_operation_load_get_type (module);
+  return TRUE;
+}
+
+enum
+{
+  PROP_0,
+  PROP_PATH,
+  PROP_LAST
+};
+
+static void
+get_property (GObject *gobject,
+              guint property_id,
+              GValue *value,
+              GParamSpec *pspec)
+{
+  GeglOperationLoad *self = GEGL_OPERATION_LOAD (gobject);
+
+  switch (property_id)
+  {
+    case PROP_PATH:
+      g_value_set_string (value, self->path);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+      break;
+  }
+}
+
+static void
+set_property (GObject *gobject,
+              guint property_id,
+              const GValue *value,
+              GParamSpec *pspec)
+{
+  GeglOperationLoad *self = GEGL_OPERATION_LOAD (gobject);
+
+  switch (property_id)
+  {
+    case PROP_PATH:
+      if (self->path)
+        g_free (self->path);
+      self->path = g_strdup (g_value_get_string (value));
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+      break;
+  }
+}
+
+static void
+gegl_operation_load_init (GeglOperationLoad *self)
+{
+  self->path = NULL;
+  self->cached_path = NULL;
+  self->cached = NULL;
+}
+
+static void dispose            (GObject       *gobject);
+static gboolean evaluate       (GeglOperation *operation,
+                                const gchar   *output_prop);
+static gboolean calc_have_rect (GeglOperation *self);
+
+static void
+gegl_operation_load_class_init (GeglOperationLoadClass *klass)
+{
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GeglOperationSourceClass *parent_class = GEGL_OPERATION_SOURCE_CLASS (klass);
+  GeglOperationClass *operation_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  object_class->dispose      = dispose;
+  object_class->set_property = set_property;
+  object_class->get_property = get_property;
+
+  parent_class->evaluate = evaluate;
+  operation_class->calc_have_rect = calc_have_rect;
+  gegl_operation_class_set_name (operation_class, "load");;
+  gegl_operation_class_set_description (operation_class, "Multipurpose file loader, that uses other " "native handlers, and fallback conversion " "using image magick's convert.");
+  operation_class->categories = "sources";
+
+  g_object_class_install_property (object_class, PROP_PATH,
+      g_param_spec_string ("path", "path",
+                           "The path to the file to load",
+                           "/tmp/romedalen.png",
+                           G_PARAM_READWRITE | G_PARAM_CONSTRUCT | GEGL_PAD_INPUT));
+}
+
+static void
+load_cache (GeglOperationLoad *self)
+{
+  if (!self->cached)
     {
         GeglNode *temp_gegl;
         gchar xml[1024]="";
@@ -67,16 +217,16 @@ load_cache (ChantInstance *op_load)
 
         while (map->extension)
           {
-            if (strstr (op_load->path, map->extension))
+            if (strstr (self->path, map->extension))
               {
-                sprintf (xml, "<gegl><tree><node class='%s' path='%s'></node></tree></gegl>", map->handler, op_load->path);
+                sprintf (xml, "<gegl><tree><node class='%s' path='%s'></node></tree></gegl>", map->handler, self->path);
                 break;
               }
             map++;
           }
         if (map->extension==NULL) /* no extension matched, using fallback */
           {
-            sprintf (xml, "<gegl><tree><node class='%s' path='%s'></node></tree></gegl>", map->handler, op_load->path);
+            sprintf (xml, "<gegl><tree><node class='%s' path='%s'></node></tree></gegl>", map->handler, self->path);
           }
 
     temp_gegl = gegl_xml_parse (xml);
@@ -85,18 +235,17 @@ load_cache (ChantInstance *op_load)
     /*FIXME: this should be unneccesary, using the graph
      * directly as a node is more elegant.
      */
-    gegl_node_get (temp_gegl, "output", &(op_load->cached), NULL);
+    gegl_node_get (temp_gegl, "output", &(self->cached), NULL);
     g_object_unref (temp_gegl);
   }
 }
-
 
 static gboolean
 evaluate (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  GeglOperationLoad *self = GEGL_OPERATION_LOAD (operation);
 
   if(strcmp("output", output_prop))
     return FALSE;
@@ -123,7 +272,7 @@ evaluate (GeglOperation *operation,
 static gboolean
 calc_have_rect (GeglOperation *operation)
 {
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  GeglOperationLoad *self = GEGL_OPERATION_LOAD (operation);
   gint width, height;
 
   load_cache (self);
@@ -138,7 +287,7 @@ calc_have_rect (GeglOperation *operation)
 
 static void dispose (GObject *gobject)
 {
-  ChantInstance *self = CHANT_INSTANCE (gobject);
+  GeglOperationLoad *self = GEGL_OPERATION_LOAD (gobject);
   if (self->cached)
     {
       g_object_unref (self->cached);
@@ -147,9 +296,3 @@ static void dispose (GObject *gobject)
   G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (gobject)))->dispose (gobject);
 }
 
-static void class_init (GeglOperationClass *klass)
-{
-  G_OBJECT_CLASS (klass)->dispose = dispose;
-}
-
-#endif
