@@ -18,12 +18,12 @@ CFLAGS  += -Wall -I../..
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
 png-load.so: png-load.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config --cflags --libs libpng`
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(PNG_CFLAGS) $(PNG_LIBS)
 png-save.so: png-save.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config --cflags --libs libpng`
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(PNG_CFLAGS) $(PNG_LIBS)
 
 jpg-load.so: jpg-load.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) -ljpeg
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(LIBJPEG)
 #############################################################################
 LDFLAGS += -shared 
 

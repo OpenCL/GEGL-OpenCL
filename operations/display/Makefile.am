@@ -18,7 +18,7 @@ CFLAGS  += -Wall -I../..
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
 display.so: display.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `sdl-config --cflags --libs`
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(SDL_CFLAGS) $(SDL_LIBS)
 #############################################################################
 LDFLAGS += -shared 
 

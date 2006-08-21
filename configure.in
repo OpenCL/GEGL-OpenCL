@@ -4,6 +4,21 @@ AC_PREREQ(2.54)
 
 AC_INIT(gegl/gegl-init.c)
 
+AM_INIT_AUTOMAKE(gegl,$GEGL_VERSION)
+AM_CONFIG_HEADER(config.h)
+
+GEGL_UNSTABLE=yes
+AC_SUBST(GEGL_UNSTABLE)
+
+dnl The symbol GEGL_UNSTABLE is defined above for substitution in
+dnl Makefiles and conditionally defined here as a preprocessor symbol
+dnl and automake conditional.
+if test "x$GEGL_UNSTABLE" = "xyes"; then
+  AC_DEFINE(GEGL_UNSTABLE, 1,
+            [Define to 1 if this is an unstable version of the GIMP])
+fi
+AM_CONDITIONAL(GEGL_UNSTABLE, test "x$GEGL_UNSTABLE" = "xyes")
+
 GLIB_REQUIRED_VERSION=2.6.4
 
 dnl ==========================================================================
@@ -55,17 +70,29 @@ AC_SUBST(LT_CURRENT_MINUS_AGE)
 
 dnl ==========================================================================
 
-AM_INIT_AUTOMAKE(gegl,$GEGL_VERSION)
-AM_CONFIG_HEADER(config.h)
+dnl Initialize libtool
+AC_PROG_CC
+#AM_DISABLE_STATIC
+AC_LIBTOOL_WIN32_DLL
+AM_PROG_LIBTOOL
+
+dnl Initialize maintainer mode
+AM_MAINTAINER_MODE
+
+
+###############
+# Generic stuff
+###############
 
 dnl Checks for programs.
-AC_PROG_CC
-AM_PROG_LIBTOOL
-AC_PROG_YACC
-AM_PROG_LEX
+AC_ISC_POSIX
+#AM_PROG_CC_STDC
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
 
 dnl Large file support.
 AC_SYS_LARGEFILE
+
 
 AC_MSG_CHECKING([whether to turn on debugging])
 AC_ARG_ENABLE(debug,
@@ -95,6 +122,10 @@ else
   AC_MSG_RESULT([no])
 fi
 
+AC_ARG_ENABLE(ansi,
+              [  --enable-ansi           turn on strict ansi (default=no)],,
+              enable_ansi=no)
+
 changequote(,)dnl
 if eval "test x$GCC = xyes"; then
   case " $CFLAGS " in
@@ -123,6 +154,15 @@ AC_CACHE_CHECK([for aclocal flags], ac_cv_gegl_aclocal_flags,[
 ])
 ACLOCAL="$ACLOCAL $ac_cv_gegl_aclocal_flags"
 
+
+dnl Checks for programs.
+AC_PROG_YACC
+AM_PROG_LEX
+
+
+###############################
+# Checks for required libraries
+###############################
 
 GLIB_PACKAGES="gobject-2.0 gmodule-2.0"
 AC_SUBST(GLIB_PACKAGES)
@@ -201,7 +241,71 @@ AC_CHECK_LIB(lcms, cmsCreateProofingTransform, [
 AC_SUBST(LCMS_LIBS)
 AM_CONDITIONAL(HAVE_LCMS, test $have_lcms = yes)
 
+
+###################
+# Check for libjpeg
+###################
+
+AC_ARG_WITH(libjpeg,  [  --without-libjpeg       build without JPEG support])
+  if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
+    AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
+      jpeg_ok=yes,
+      [jpeg_ok="no (JPEG library not found)"])
+    if test "$jpeg_ok" = yes; then
+      AC_MSG_CHECKING([for jpeglib.h])
+      AC_TRY_CPP([
+#include <stdio.h>
+#undef HAVE_STDDEF_H
+#undef HAVE_STDLIB_H
+#undef PACKAGE
+#undef VERSION
+#include <jpeglib.h>],
+        jpeg_ok=yes,
+        jpeg_ok="no (Can't include jpeglib.h)")
+      AC_MSG_RESULT($jpeg_ok)
+      if test "$jpeg_ok" = yes; then
+        AC_CHECK_LIB(jpeg, jpeg_save_markers,
+        LIBJPEG='-ljpeg',
+        jpeg_ok="no (JPEG library is too old)")
+      else
+        jpeg_ok="no (JPEG header file not found)"
+      fi
+    fi
+  fi
+
+  if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
+     AC_MSG_ERROR([*** Checks for JPEG library failed.])
+  fi
+
+AC_SUBST(LIBJPEG)
+
+
+###############
+# Check for SDL
+###############
+
+dnl check for SDL
+AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
+if test "$SDL_CONFIG" = "no"; then
+  AC_MSG_ERROR([*** Check for SDL library failed.])
+else
+  HAS_SDL=yes
+  SDL_LIBS=`$SDL_CONFIG --libs`
+  SDL_CFLAGS=`$SDL_CONFIG --cflags`
+fi
+
+AC_SUBST(HAS_SDL) 
+AC_SUBST(SDL_LIBS)
+AC_SUBST(SDL_CFLAGS)
+
+
+#######################
+# Check for other items
+#######################
+
 PKG_CHECK_MODULES(BABL, babl >= 0.0)
+PKG_CHECK_MODULES(CAIRO, cairo)
+PKG_CHECK_MODULES(PNG, libpng)
 
 
 AC_OUTPUT([

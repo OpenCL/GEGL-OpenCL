@@ -1,3 +1,13 @@
+2006-08-21  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.in: Various bits of auto-configuration magic. Added
+	checks for some programs and libraries. Defined GEGL_UNSTABLE.
+
+	* operations/display/Makefile.am
+	* operations/file-io/Makefile.am
+	* operations/render/Makefile.am: Make use of C and linker flags that
+	were determined during the running of 'configure'.
+
 2006-08-20  Dominik Ernst <dernst@gmx.de>
 
 	* operations/blur/gaussian-blur.c: adjusted the computation of sigma,
@@ -10,7 +20,7 @@
 
 2006-08-18  Øyvind Kolås  <pippin@gimp.org>
 
-	* AUTOHORS: added Kevin Cozens to code section.
+	* AUTHORS: added Kevin Cozens to code section.
 
 2006-08-17  Kevin Cozens  <kcozens@cvs.gnome.org>
 

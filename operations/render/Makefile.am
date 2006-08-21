@@ -18,7 +18,7 @@ CFLAGS  += -Wall -I../..
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
 text.so: text.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config --cflags --libs cairo`
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
 #############################################################################
 LDFLAGS += -shared 
 
