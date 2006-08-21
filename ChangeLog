@@ -1,3 +1,8 @@
+2006-08-20  Dominik Ernst <dernst@gmx.de>
+
+	* operations/blur/gaussian-blur.c: adjusted the computation of sigma,
+	so blurring with radius 0 does not actually blur the image. 
+
 2006-08-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-xml.c: (encode_node_attributes): encoded G_TYPE_DOUBLE as

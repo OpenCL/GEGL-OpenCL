@@ -22,8 +22,8 @@
 
 #ifdef CHANT_SELF
  
-chant_double (radius_x, 0.0, 200.0, 4.0, "blur radius in horizontal direction.")
-chant_double (radius_y, 0.0, 200.0, 4.0, "blur radius in vertical direction.")
+chant_double (radius_x, -0.91675, 500.0, 4.0, "blur radius in horizontal direction.")
+chant_double (radius_y, -0.91675, 500.0, 4.0, "blur radius in vertical direction.")
 
 #else
 
@@ -139,7 +139,7 @@ find_iir_constants (gfloat   radius,
 {
   gdouble sigma0, q;
   
-  sigma0 = (radius/3.0)+0.5;
+  sigma0 = (radius/3.0)+0.305584;
 
   if(sigma0 >= 2.5)
     q = 0.98711*sigma0 - 0.96330;
