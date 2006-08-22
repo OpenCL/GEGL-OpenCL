@@ -80,6 +80,8 @@ struct Generated
 #undef chant_pointer
 
 /****************************************************************************/
+
+  gpointer *priv;  /* free to use be implementer of operation */
 };
 
 struct GeneratedClass

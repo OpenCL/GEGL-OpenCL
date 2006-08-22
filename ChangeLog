@@ -1,5 +1,10 @@
 2006-08-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-chant.h: added a gpointer priv to the ChantInstance for
+	use in the plug-in implementations.
+
+2006-08-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.h: made GeglGraph the superclass.
 	* gegl/gegl-graph.h: made GeglObject the superclass.
 	* gegl/gegl-graph.c: (gegl_graph_get_pad_proxy): refactored a new
