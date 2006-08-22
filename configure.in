@@ -307,6 +307,9 @@ PKG_CHECK_MODULES(BABL, babl >= 0.0)
 PKG_CHECK_MODULES(CAIRO, cairo)
 PKG_CHECK_MODULES(PNG, libpng)
 
+# w3m is used to autogenerate README
+AC_PATH_PROG(W3M, w3m, no)
+AM_CONDITIONAL(HAVE_W3M, test "x$W3M" != "xno")
 
 AC_OUTPUT([
 Makefile

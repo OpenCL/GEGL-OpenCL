@@ -8,3 +8,16 @@ EXTRA_DIST = 			\
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gegl.pc
+
+built_dist_files = README
+if HAVE_W3M
+dist-check-w3m:
+
+README: docs/index.html
+	$(W3M) -cols 72 -dump $< > $@
+else
+dist-check-w3m:
+	@echo "*** w3m must be available in order to make dist"
+	@false
+endif
+

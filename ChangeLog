@@ -1,5 +1,11 @@
 2006-08-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* README: removed
+	* configure.in: added check for w3m
+	* Makefile.am: added dist rule to format index.html into README.
+
+2006-08-22  Øyvind Kolås  <pippin@gimp.org>
+
 	Distribute data by wildcard as well, (add more extensions 
 	to Makefile.am when raw/raf/nef are added)
 
