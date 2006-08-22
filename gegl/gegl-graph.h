@@ -21,7 +21,7 @@
 #ifndef __GEGL_GRAPH_H__
 #define __GEGL_GRAPH_H__
 
-#include "gegl-node.h"
+#include "gegl-object.h"
 
 G_BEGIN_DECLS
 
@@ -38,7 +38,7 @@ typedef struct _GeglGraphClass GeglGraphClass;
 
 struct _GeglGraph
 {
-  GeglNode  parent_instance;
+  GeglObject parent_instance;
 
   /*< private >*/
   GList    *children;
@@ -46,7 +46,7 @@ struct _GeglGraph
 
 struct _GeglGraphClass
 {
-  GeglNodeClass  parent_class;
+  GeglObjectClass  parent_class;
 };
 
 
@@ -64,10 +64,9 @@ gint       gegl_graph_get_num_children (GeglGraph    *self);
 GeglNode * gegl_graph_create_node      (GeglGraph    *self,
                                         const gchar  *first_property_name,
                                         ...);
-
-GeglNode *gegl_graph_get_output_nop (GeglGraph    *graph);
-GeglNode *gegl_graph_get_input_nop  (GeglGraph    *graph);
-
+GeglNode * gegl_graph_get_pad_proxy    (GeglGraph    *graph,
+                                        const gchar  *name,
+                                        gboolean      is_graph_input);
 G_END_DECLS
 
 #endif /* __GEGL_GRAPH_H__ */

@@ -23,8 +23,8 @@
 #include <glib-object.h>
 
 #include "gegl-types.h"
-
 #include "gegl-graph.h"
+#include "gegl-node.h"
 #include "gegl-visitable.h"
 #include "gegl-pad.h"
 #include "gegl-visitor.h"
@@ -33,16 +33,16 @@
 static void gegl_graph_class_init (GeglGraphClass *klass);
 static void gegl_graph_init       (GeglGraph      *self);
 static void finalize              (GObject        *object);
+static void dispose               (GObject        *object);
 
-G_DEFINE_TYPE(GeglGraph, gegl_graph, GEGL_TYPE_NODE)
+G_DEFINE_TYPE(GeglGraph, gegl_graph, GEGL_TYPE_OBJECT)
 
 
 static void
 gegl_graph_class_init (GeglGraphClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
-
-  object_class->finalize = finalize;
+  object_class->dispose = dispose;
 }
 
 static void
@@ -52,8 +52,34 @@ gegl_graph_init (GeglGraph *self)
 }
 
 static void
+dispose (GObject *object)
+{
+  GeglGraph *self = GEGL_GRAPH (object);
+#if 0
+  GeglNode  *node = GEGL_NODE (self);
+
+  /* why should this happen for the graph, and not for the node? */
+  while (node->pads)
+    {
+      GeglPad *pad = g_list_nth_data (node->pads, 0);
+
+      node->pads = g_list_remove (node->pads, pad); /* need to figure
+                                                       out a better way to
+                                                       mark these pads
+                                                    */
+    }
+#endif
+  
+  gegl_graph_remove_children (self);
+
+  G_OBJECT_CLASS (gegl_graph_parent_class)->dispose (object);
+}
+
+
+static void
 finalize (GObject *object)
 {
+#if 0
   GeglGraph *self = GEGL_GRAPH (object);
   GeglNode  *node = GEGL_NODE (self);
 
@@ -65,7 +91,7 @@ finalize (GObject *object)
     }
 
   gegl_graph_remove_children (self);
-
+#endif
   G_OBJECT_CLASS (gegl_graph_parent_class)->finalize (object);
 }
 
@@ -165,35 +191,20 @@ gegl_graph_create_node (GeglGraph   *self,
 }
 
 GeglNode *
-gegl_graph_get_output_nop (GeglGraph    *graph)
+gegl_graph_get_pad_proxy (GeglGraph   *graph,
+                          const gchar *name,
+                          gboolean     is_graph_input)
 {
   GeglNode *node = GEGL_NODE (graph);
   GeglPad  *pad;
 
-  pad = gegl_node_get_pad (node, "output");
+  pad = gegl_node_get_pad (node, name);
   if (!pad)
     {
-      GeglNode *nop = g_object_new (GEGL_TYPE_NODE, "class", "nop", NULL);
-      gegl_node_add_pad (GEGL_NODE (graph), gegl_node_get_pad (nop, "output"));
-      g_object_set (nop, "name", "out-foo", NULL);
-      return nop;
-    }
-  return gegl_pad_get_node (pad);
-}
-
-GeglNode *
-gegl_graph_get_input_nop (GeglGraph    *graph)
-{
-  GeglNode *node = GEGL_NODE (graph);
-  GeglPad  *pad;
-
-  pad = gegl_node_get_pad (node, "input");
-  if (!pad)
-    {
-      GeglNode *nop = g_object_new (GEGL_TYPE_NODE, "class", "nop", NULL);
-      gegl_node_add_pad (GEGL_NODE (graph), gegl_node_get_pad (nop, "input"));
-      g_object_set (nop, "name", "in-foo", NULL);
-      return nop;
+        GeglNode *nop = g_object_new (GEGL_TYPE_NODE, "class", "nop", NULL);
+        gegl_node_add_pad (GEGL_NODE (graph), gegl_node_get_pad (nop, is_graph_input?"input":"output"));
+        gegl_graph_add_child (graph, nop);
+        return nop;
     }
   return gegl_pad_get_node (pad);
 }

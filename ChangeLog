@@ -1,3 +1,15 @@
+2006-08-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-node.h: made GeglGraph the superclass.
+	* gegl/gegl-graph.h: made GeglObject the superclass.
+	* gegl/gegl-graph.c: (gegl_graph_get_pad_proxy): refactored a new
+	method from gegl_graph_get_nop_{in,out}put.
+	* gegl/gegl-node.c: (gegl_node_remove_pad): unref pad.
+	(gegl_node_get_valist),(gegl_node_get_property): adopt to refactoring.
+	* gegl/gegl-xml.c: (start_element), (end_element), (add_stack): adopt
+	to refactoring.
+	* gegl/gegl.c: (main), (main_interactive): adopt to refactoring.
+
 2006-08-21  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.in: Various bits of auto-configuration magic. Added

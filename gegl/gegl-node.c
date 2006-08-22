@@ -75,7 +75,7 @@ static void            gegl_node_set_op_class         (GeglNode      *self,
                                                        va_list        var_args);
 static const gchar *   gegl_node_get_op_class         (GeglNode      *self);
 
-G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, GEGL_TYPE_OBJECT,
+G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, GEGL_TYPE_GRAPH,
                          G_IMPLEMENT_INTERFACE (GEGL_TYPE_VISITABLE,
                                                 visitable_init))
 
@@ -208,6 +208,10 @@ gegl_node_get_pad (GeglNode    *self,
 {
   GList *list;
 
+  g_assert (self);
+  if (!self->pads)
+    return NULL;
+
   for (list = self->pads; list; list = g_list_next (list))
     {
       GeglPad *property = list->data;
@@ -291,6 +295,8 @@ gegl_node_remove_pad (GeglNode *self,
 
   if (gegl_pad_is_input (pad))
     self->input_pads = g_list_remove (self->input_pads, pad);
+
+  g_object_unref (pad);
 }
 
 static gboolean
@@ -914,8 +920,11 @@ gegl_node_get_valist (GeglNode    *self,
             /* cheap workaround to make querying the output property of
              * a graph work
              */
+            GeglGraph *graph = GEGL_GRAPH (self);
             pspec = g_object_class_find_property (
-               G_OBJECT_GET_CLASS (G_OBJECT (gegl_graph_get_output_nop (GEGL_GRAPH(self))->operation)), property_name);
+               G_OBJECT_GET_CLASS (G_OBJECT (
+                   
+                   gegl_graph_get_pad_proxy (graph, "output", FALSE)->operation)), property_name);
           }
         else
           {
@@ -992,8 +1001,11 @@ gegl_node_get_property (GeglNode    *self,
     {
       if (GEGL_IS_GRAPH (self))
         {
-          g_object_get_property (G_OBJECT (gegl_graph_get_output_nop (GEGL_GRAPH (self))->operation),
-                property_name, value);
+          GeglGraph *graph = GEGL_GRAPH (self);
+          g_object_get_property (G_OBJECT
+             (
+             gegl_graph_get_pad_proxy (graph, "output", FALSE)->operation
+             ), property_name, value);
         }
       else if (self->operation)
         {

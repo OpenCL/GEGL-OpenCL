@@ -22,7 +22,7 @@
 #ifndef __GEGL_NODE_H__
 #define __GEGL_NODE_H__
 
-#include "gegl-object.h"
+#include "gegl-graph.h"
 
 G_BEGIN_DECLS
 
@@ -38,7 +38,7 @@ typedef struct _GeglNodeClass GeglNodeClass;
 
 struct _GeglNode
 {
-  GeglObject     parent_instance;
+  GeglGraph      parent_instance;
 
   /*< private >*/
 
@@ -65,7 +65,7 @@ struct _GeglNode
 
 struct _GeglNodeClass
 {
-  GeglObjectClass  parent_class;
+  GeglGraphClass  parent_class;
 };
 
 GType         gegl_node_get_type            (void) G_GNUC_CONST;
