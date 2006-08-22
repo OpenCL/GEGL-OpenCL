@@ -1,5 +1,9 @@
 2006-08-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/Makefile.am: do not include the testsuite subdir.
+
+2006-08-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: added a gpointer priv to the ChantInstance for
 	use in the plug-in implementations.
 
