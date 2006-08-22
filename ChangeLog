@@ -1,5 +1,14 @@
 2006-08-22  Øyvind Kolås  <pippin@gimp.org>
 
+	Distribute data by wildcard as well, (add more extensions 
+	to Makefile.am when raw/raf/nef are added)
+
+	* configure.in:
+	* docs/gallery/Makefile.am:
+	* docs/gallery/data/Makefile.am:
+
+2006-08-22  Øyvind Kolås  <pippin@gimp.org>
+
 	Overhaul of files included/not when rolling tarballs.
 
 	* configure.in: removed dead code from traversal.

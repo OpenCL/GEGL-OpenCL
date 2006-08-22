@@ -327,6 +327,7 @@ tools/Makefile
 docs/Makefile
 docs/index-static.html
 docs/gallery/Makefile
+docs/gallery/data/Makefile
 gegl.pc
 gegl-uninstalled.pc
 ])
