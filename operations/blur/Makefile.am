@@ -2,6 +2,7 @@
 # file babl_extensions
 
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
+EXTRA_DIST=*.c
 
 CFILES  = $(wildcard *.c)
 SOBJS   = $(CFILES:.c=.so)

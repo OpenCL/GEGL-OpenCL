@@ -1,3 +1,4 @@
+EXTRA_DIST=*.xml
 all:
 	echo "<html><head><title>GEGL gallery</title><style type='text/css'>@import url(../gegl.css);</style></head><body><div class='toc'><ul><li><a href='../index.html'>GEGL</a></li><li><a href='#'>Gallery</a></li>" > index.html
 	

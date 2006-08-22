@@ -344,6 +344,7 @@ static gboolean evaluate (GeglOperation *operation,
 static void
 chant_init (ChantInstance *self)
 {
+  self->priv = NULL;
 }
 
 #ifdef CHANT_CONSTRUCT

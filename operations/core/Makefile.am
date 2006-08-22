@@ -3,6 +3,8 @@
 
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
 
+EXTRA_DIST=*.c
+
 CFILES  = $(wildcard *.c)
 SOBJS   = $(CFILES:.c=.so)
 all: $(SOBJS)
@@ -16,6 +18,7 @@ LDFLAGS += -shared
 
 LDADD    = @DEP_LIBS@ @BABL_LIBS@	
 CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ -I$(top_srcdir) -I$(top_srcdir)/gegl -I.
+
 
 clean:
 	rm -f $(SOBJS) *~

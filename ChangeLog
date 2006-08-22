@@ -1,5 +1,23 @@
 2006-08-22  Øyvind Kolås  <pippin@gimp.org>
 
+	Overhaul of files included/not when rolling tarballs.
+
+	* configure.in: removed dead code from traversal.
+	* docs/Makefile.am: do not enter the reference.
+	* operations/blur/Makefile.am,
+	* operations/color/Makefile.am,
+	* operations/core/Makefile.am,
+	* operations/display/Makefile.am,
+	* operations/file-io/Makefile.am,
+	* operations/render/Makefile.am,
+	* operations/transform/Makefile.am,
+	* operations/transparency/Makefile.am: EXTRA_DIST=*.c
+	* operations/generated/Makefile.am: EXTRA_DIST=*.rb *.c
+	* gegl/Makefile.am: added some of the needed headers to EXTRA_DIST.
+	* gegl/gegl-chant.h: initialize priv member to NULL.
+
+2006-08-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/Makefile.am: do not include the testsuite subdir.
 
 2006-08-22  Øyvind Kolås  <pippin@gimp.org>

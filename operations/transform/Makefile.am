@@ -3,6 +3,7 @@
 
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
 
+EXTRA_DIST=*.[ch]
 CFILES  = $(wildcard *.c)
 OFILES  = $(CFILES:.c=.o)
 SOBJS   = affine.so

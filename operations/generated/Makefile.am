@@ -3,6 +3,7 @@
 
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
 
+EXTRA_DIST=*.c *.rb
 CFILES  = $(wildcard *.c)
 SOBJS   = $(CFILES:.c=.so)
 all: $(SOBJS)

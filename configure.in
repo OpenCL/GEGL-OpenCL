@@ -310,9 +310,6 @@ PKG_CHECK_MODULES(PNG, libpng)
 
 AC_OUTPUT([
 Makefile
-gil/Makefile
-gil/gil/Makefile
-gil/tests/Makefile
 gegl/Makefile
 gegl/buffer/Makefile
 gegl/module/Makefile
@@ -327,14 +324,9 @@ operations/render/Makefile
 operations/transform/Makefile
 operations/transparency/Makefile
 tools/Makefile
-tools/testsuite/Makefile
-tests/Makefile
 docs/Makefile
 docs/index-static.html
 docs/gallery/Makefile
-docs/reference/Makefile
-docs/reference/gegl/Makefile
-docs/reference/gegl/version
 gegl.pc
 gegl-uninstalled.pc
 ])

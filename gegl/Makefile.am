@@ -9,6 +9,14 @@ libmodule = $(top_builddir)/gegl/module/libmodule.la
 
 lib_LTLIBRARIES = libgegl-1.0.la
 
+EXTRA_DIST =	\
+	gegl-cr-visitor.h		\
+	gegl-eval-mgr.h			\
+	gegl-eval-visitor.h		\
+	gegl-have-visitor.h		\
+	gegl-need-visitor.h		\
+	gegl-debug-rect-visitor.h	
+
 GEGL_sources = \
 	gegl-connection.c		\
 	gegl-cr-visitor.c		\

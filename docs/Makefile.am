@@ -1,5 +1,5 @@
 .SILENT:
-SUBDIRS= reference gallery
+SUBDIRS= gallery
 #DIST_SUBDIRS= graphics gallery
 
 # The patterns used for html creation in the babl build system
@@ -13,11 +13,9 @@ HTML_FILES = index-static.html 	\
 
 EXTRA_DIST= 			\
 	ChangeLog		\
-	make-todo		\
 	gegl.css  		\
 	index-static.html.in	\
-	index.html		\
-	LGPL
+	index.html
 
 BUILT_EXTRA_DIST = index.html operations.html
 
