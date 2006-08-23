@@ -82,9 +82,8 @@
         <li><a href='#Source'>Source</a></li>
         <li><a href='#dependencies'>&nbsp;&nbsp;Dependencies</a></li>
         <li><a href='#source_overview'>&nbsp;&nbsp;Overview</a></li>
-        <li><a href='#bootstrapping'>&nbsp;&nbsp;Bootstrapping</a></li>
         <li><a href='#extending'>&nbsp;&nbsp;Extending</a></li>
-        <li><a href='#Todo'>Todo</a></li>
+        <li><a href='todo.html'>To do</a></li>
         <li><a href='#Mailinglists'>Mailinglists</a></li>
         <li><a href='#Copyright'>Copyright</a></li>
         <li><a href='#Contributors'>&nbsp;&nbsp;Contributors</a></li>
@@ -133,7 +132,7 @@ rectangular regions to be repainted.
 -->
 
     <a name='XML'></a>
-    <h2>XML</h2>
+    <h2>XML data model</h2>
 
     <p>The tree allows clones, making it possible to express any acyclic graph
     where the nodes are all of the types: source, filter and composer. </p>
@@ -154,7 +153,9 @@ rectangular regions to be repainted.
     <a name='gegl'></a>
     <h2>gegl</h2>
 <p>
-GEGL provides a commandline tool called <em>gegl</em>, which parses XML from file, stdin or the commandline. It can display the result of processing the layer tree or save it to file.</p>
+GEGL provides a commandline tool called <em>gegl</em>, for working with the XML
+data model from file, stdin or the commandline. It can display the result of
+processing the layer tree or save it to file.</p>
 
 <p>
 Some examples:
@@ -173,72 +174,6 @@ Some examples:
   &lt;node class='scale' x='0.5' y='0.5'/&gt;
   &lt;node class='png-load' path='-'/&gt;&lt;/tree&gt;&lt;/gegl&gt;" &gt; output.png</pre>
 
-        <a name='Building'></a>
-        <h2>Building</h2>
-
-        <a name='dependencies'></a>
-        <h3>Dependencies</h3>
-        <p>GEGL is currently building on linux, the build enviroment probably
-        needs some fixes before all of it builds gracefully on many platforms.
-        </p>
-        <ul>
-            <li>glib (including gobject, and gmodule) 2.10 or newer</li>
-            <li>babl for describing pixel formats, and conversions between them (from CVS)</li>
-            <li>dependencies for some of the operations (currently not detected properly).</li>
-            <ul>
-                 <li>SDL (display op)</li>
-                 <li>libpng (png loader/export ops)</li>
-                 <li>libjpeg (jpg loader op)</li>
-                 <li>cairo (text source op)</li>
-             </ul>
-             </li>
-         </ul>
-
-        <a name='bootstrapping'></a>
-        <h3>Bootstrapping</h3>
-        <p>Save the following bash script to a file and make it executable.
-        Running this probably makes quite a few assumptions, it is currently
-        only known to work out of the box on my (pippin) ubuntu install with
-        quite a few other general build dependencies satisfied. Read and 
-        understand the script before running it.
-        </p>
-        <pre>
-#!/bin/sh
-
-export CVSROOT=':pserver:anonymous@anoncvs.gimp.org:/cvs/gnome'
-
-mkdir gegl-test
-cd gegl-test
-
-echo -n "Enter sudo "
-sudo echo "got root"
-
-echo "Cleaning up any prior /usr/local babl and gegl installs"
-sudo rm -rfv /usr/local/lib/*gegl* /usr/local/include/*gegl*
-sudo rm -rfv /usr/local/lib/*babl* /usr/local/include/*babl*
-
-echo "Getting sources"
-cvs co babl || exit
-cvs co gegl || exit
-
-echo "Building babl"
-
-cd babl
-./autogen.sh || exit
-make || exit
-echo "Installing babl"
-sudo make install || exit
-cd ..
-
-echo "Building GEGL"
-cd gegl
-./autogen.sh || exit
-make || exit
-echo "Installing GEGL"
-sudo make install || exit
-cd ..
-
-echo "Hopefully gegl-test/gegl/docs/gallery/index.html has a generated sample now."</pre>
 
         <a name='Environment'></a>
         <h2>Environment</h2>
@@ -265,10 +200,32 @@ echo "Hopefully gegl-test/gegl/docs/gallery/index.html has a generated sample no
         <h2>Source</h2>
 
         <p>
-        The latest development version is available in <a href='http://cvs.gnome.org/viewcvs/gegl/'>the <em>gegl</em> module in GNOME CVS</a>.
+        The latest development version is available in <a
+            href='http://cvs.gnome.org/viewcvs/gegl/'>the <em>gegl</em> module
+            in GNOME CVS</a>. 
+        </p>
+        <p>GEGL uses autotools, from a CVS checkout running <tt>./autogen.sh &amp;&amp; make &amp;&amp; sudo make install</tt> should be sufficient. From a tarball running 
+        <tt>./configure &amp;&amp; make &amp;&amp; sudo make install</tt> should work.
         </p>
 
-
+        <a name='dependencies'></a>
+        <h3>Dependencies</h3>
+        <p>GEGL is currently building on linux, the build enviroment probably
+        needs some fixes before all of it builds gracefully on many platforms.
+        </p>
+        <ul>
+            <li>glib (including gobject, and gmodule) 2.10 or newer</li>
+            <li><a href='http://pippin.gimp.org/babl'>babl</a> for describing pixel formats, and conversions between them (also from GNOME CVS)</li>
+            <li>dependencies for some of the operations.</li>
+            <ul>
+                 <li>SDL (display op)</li>
+                 <li>libpng (png loader/export ops)</li>
+                 <li>libjpeg (jpg loader op)</li>
+                 <li>cairo (text source op)</li>
+             </ul>
+             </li>
+         </ul>
+        
 <a name='source_overview'></a>
 <h3>Source Overview</h3>
 
@@ -359,19 +316,6 @@ about how babl works, since GEGL builds on top of babl.
         tricks turning the boilerplate in a <a
             href='http://cvs.gnome.org/viewcvs/gegl/operations/core/crop.c?view=markup'>short
             chant</a>.
-
-        <a name='Todo'></a>
-        <h2>Todo</h2>
-        <ul>
-            <li>Stabilize, document and freeze APIs</li>
-            <li>Allow graphs to be filters/composers in XML</li>
-            <li>Optimize the used conversion in babl</li>
-            <li>Implement infrastructure to switch in regression tested
-            optimized versions per pixelformat in Operations.</li>
-            <li>Implement more operations.</li>
-            <li>Optimize operations.</li>
-            <li>Resurrect GIL, or even multiple alternate code generators for differnt classes of operations.</li>
-        </ul>
 
         <a name='Mailinglists'></a>
         <h2>Mailinglists</h2>

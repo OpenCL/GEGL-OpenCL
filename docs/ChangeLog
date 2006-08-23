@@ -1,3 +1,10 @@
+2006-08-23  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am: added todo.html to the files being distributed in
+	tarball.
+	* index-static.html.in: reordered reformulated and rewrote portions.
+	* todo.html: migration of content from ../TODO.
+
 2006-08-22  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: Added a section about debug environment

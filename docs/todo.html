@@ -1,0 +1,137 @@
+<html>
+  <head>
+    <title>Thing to do for GEGL</title>
+    <style type='text/css'>@import url(gegl.css);url(gegl.css);</style>
+  </head>
+
+  <body>
+    <div class='toc'>
+      <ul>
+        <li><a href='index.html'>GEGL</a></li>
+        <li><a href='#TODO'>TODO</a></li>
+        <li><a href='#Buffer'>&nbsp;&nbsp;Buffer</a></li>
+        <li><a href='#Evaluation'>&nbsp;&nbsp;Evaluation</a></li>
+        <li><a href='#XML'>&nbsp;&nbsp;XML</a></li>
+        <li><a href='#Operations'>&nbsp;&nbsp;Operations</a></li>
+        <li><a href='#GIL'>&nbsp;&nbsp;&nbsp;&nbsp;GIL</a></li>
+      </ul>
+   </div>
+   <div class='paper'>
+     <div class='content'>
+       <a name='To do'><h2>To do</h2></a>
+       <p>A temporally deficient roadmap for GEGL</p>
+
+<a name='Buffer'><h2>Buffer</h2></a>
+
+<p>
+Make GeglBuffer be an interface (or a use composition and allow for 
+TiledBackend, LinearBackend GimpTileManagerBackend). This will make
+integration with legacy GIMP code much easier.
+<p>
+
+<ul>
+Desired backends:
+<li>further evolution of horizon/gegl tile interface with tiled mipmapping</li>
+<li>linear buffers</li>
+<li>gimp tile manager</li>
+<li>GPU memory (for shader code)</li>
+<li>verse</li>
+<li>krita</li>
+<li>image/graphics-magick?</li>
+</ul>
+
+<a name='Evaluation'><h2>Evaluation</h2></a>
+
+<h3>Optimized evaluation methods</h3>
+
+<p>
+Right now all computation is done in 32bit floating point RGBA. Allowing to
+register optimized versions of different pixel formats (that can be regression
+tested against the float implementation) is and important step. This would also
+allow to plug-in external code, like snippets of cairo code to do evaluation in
+8bit.
+</p>
+
+<h3>Pixel format negotiation</h3>
+
+<p>
+When more pixel-format versions exist of OPs, more works needs to be done
+when iterating the GRAPH, the desired op, and the format with which the
+image data flows in the graph needs to be negotiatied between speed and quality.
+</p>
+
+<h3>Multithreading</h3>
+
+<p>
+Make it possible to have multiple evaluations of the graph happening at the
+same time. (both the way the visitor pattern is implemented, and the reference
+counting for immediate freeing of buffers assumes a single thread of operation
+at the moment.)
+</p>
+
+
+       <a name='XML'><h2>XML</h2></a>
+
+
+<p>
+A file format is gradually evolving, the XML handling might even end up handling
+multiple different file formats, at the moment work being done to improve
+interoperability through efforts to define an Exhange format for structured
+Raster data.</p>
+
+
+<a name='Operations'><h2>Operations</h2></a>
+
+<h3>GIMP plug-in proxy op.</h3>
+
+<p>
+A GEGL operation acting as a proxy to legacy gimp plug-ins will drag a lot
+of the existing GIMP functionality along.
+</p>
+
+<h3>GEGL operation API freeze</h3>
+
+<p>
+At some point the plug-in api for GEGL should be declared stable.
+</p>
+
+<h3>Caching operation</h3>
+
+<p>
+Write an operations that maintains a sparse backing buffer the size of the HAVE
+rect of the operations. Keeps rendered information, and keeps cached computations
+as long as the properties have not changed.</p>
+
+<p>
+An initial implementation of this should be designed to work directly on top of
+source nodes only. Later a similar approach could be extended to work on subgraphs,
+multiple such caches could be used as well, speeding up reevaluations at the expense
+of extra tiles used for caching intermediate results.</p>
+
+<p>
+Currently the meta loader contains it's own simplistic caching, per file loader caching
+will be removed, to make the code needed for each importer node as simple as possible.
+Thus the other file loaders should probably be hidden.</p>
+
+<h3>text source</h3>
+
+<p>
+Use pango for rendering, expose more parameters, perhaps look at integrating
+the pango interface provided by GIMP?
+</p>
+
+<h3>SVG loader</h3>
+
+<p>
+With basis in the text source (which uses cairo), create an operation that renders
+to a buffer in a similar fashion using librsvg for the SVG parsing.</p>
+
+<a name='GIL'><h3>GIL</h3></a>
+
+<p>GIL should probably be resurrected as well, this work would depend on
+pixel format negotiation to be in place first.
+</p>
+
+</div></div>
+</body>
+</html>
