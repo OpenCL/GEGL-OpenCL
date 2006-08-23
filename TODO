@@ -1,7 +1,7 @@
 .---. .--- .---. .
 | __  |__  | __  |
 |   | |    |   | |
-`---| `--- `---| `---                                                 roadmap
+`---| `--- `---| `---                            temporally deficient roadmap
 =============================================================================
 
 GEGL buffers
@@ -11,19 +11,40 @@ Make GeglBuffer be an interface (or a use composition and allow for
 TiledBackend, LinearBackend GimpTileManagerBackend). This will make
 integration with legacy GIMP code much easier.
 
+Desired backends:
+ - further evolution of horizon/gegl tile interface with tiled mipmapping
+ - linear buffers
+ - gimp tile manager
+ - GPU memory (for shader code)
+ - verse
+ - krita
+ - image/graphics-magick?
+
+
+Optimized evaluation methods
+-----------------------------------------------------------------------------
+
+Right now all computation is done in 32bit floating point RGBA. Allowing to
+register optimized versions of different pixel formats (that can be regression
+tested against the float implementation) is and important step. This would also
+allow to plug-in external code, like snippets of cairo code to do evaluation in
+8bit.
+
+
 Pixel format negotation
 -----------------------------------------------------------------------------
 
-Right now all computation is done in 32bit floating point RGBA,. allowing
-operations to have different pixelformat evalutae handlers,. and capabilities
-that are reference tested against the floating point is important.
+When more pixel-format versions exist of OPs, more works needs to be done
+when iterating the GRAPH, the desired op, and the format with which the
+image data flows in the graph needs to be negotiatied between speed and quality.
 
-Optimized paths
+
+Composition File format
 -----------------------------------------------------------------------------
-
-Add the ability to choose different implementations of the ops at runtime,
-for insance using cairo/glitz/generated code. This should is closely related
-to the pixel format negotiation.
+A file format is grafually evolving, the XML handling might even end up handling
+multiple different file formats, at the moment work being done to improve
+interoperability through efforts to define an Exhange format for structured
+Raster data.
 
 GIMP plug-in proxy op.
 -----------------------------------------------------------------------------
