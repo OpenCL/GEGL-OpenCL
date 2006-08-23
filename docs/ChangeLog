@@ -1,5 +1,9 @@
 2006-08-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* todo.html: added links to the GIL/codegen documents.
+
+2006-08-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* TODO.xml,
 	* gegl-color-convert-op.html,
 	* gegl-color-model.html,
