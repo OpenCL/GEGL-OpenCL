@@ -19,20 +19,20 @@ EXTRA_DIST= 			\
 	index-static.html.in	\
 	index.html
 
-BUILT_EXTRA_DIST = index.html operations.html class-hierarchy.html
+BUILT_EXTRA_DIST = index.html class-hierarchy.html operations.html
 
 CLEANFILES = README $(HTML_FILES)
-DISTCLEANFILES = index-static.html class-hierarchy.html
+DISTCLEANFILES = index-static.html class-hierarchy.html operations.html
 MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
 all: $(HTML_FILES)
 
 operations.html: $(top_srcdir)/gegl/gegl
-	export GEGL_PATH=$(top_srcdir)/operations/:/usr/local/lib/gegl;\
+	export GEGL_PATH=$(top_srcdir)/operations:$(prefix)/lib/gegl;\
 	$(top_srcdir)/gegl/gegl --ops-html > $@
 
 class-hierarchy.html: $(top_srcdir)/tools/introspect
-	export GEGL_PATH=$(top_srcdir)/operations/:/usr/local/lib/gegl;\
+	export GEGL_PATH=$(top_srcdir)/operations:$(prefix)/lib/gegl;\
 	$(top_srcdir)/tools/introspect > $@
 
 index.html: index-static.html                    \

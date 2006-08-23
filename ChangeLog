@@ -1,3 +1,15 @@
+2006-08-23  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* .cvsignore: Added 'README'
+	* docs/.cvsignore: Added 'class-hierarchy.html'
+	* docs/gallery/data/.cvsignore: File added
+	* tools/.cvsignore: Added 'introspect'
+
+	* docs/Makefile.am
+	* docs/gallery/Makefile.am
+	* operations/transform/Makefile.am
+	* tools/Makefile.am: Some changes towards fixing 'make distcheck'.
+
 2006-08-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* docs/Makefile.am: created class-hierarchy.html

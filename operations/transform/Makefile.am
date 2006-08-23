@@ -23,7 +23,7 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ -I$(top_srcdir) -I$(top_srcdir)/gegl -I.
 
 clean:
-	rm -f affine.so $(OFILES) *~
+	rm -f $(SOBJS) $(OFILES) *~
 
 ext_dir = $(DESTDIR)$(prefix)/lib/gegl
 
