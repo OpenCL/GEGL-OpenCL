@@ -9,7 +9,8 @@ SUBDIRS= gallery
 #
 HTML_FILES = index-static.html 	\
 	     index.html		\
-	     operations.html
+	     operations.html	\
+	     class-hierarchy.html
 
 EXTRA_DIST= 			\
 	ChangeLog		\
@@ -18,10 +19,10 @@ EXTRA_DIST= 			\
 	index-static.html.in	\
 	index.html
 
-BUILT_EXTRA_DIST = index.html operations.html
+BUILT_EXTRA_DIST = index.html operations.html class-hierarchy.html
 
 CLEANFILES = README $(HTML_FILES)
-DISTCLEANFILES = index-static.html 
+DISTCLEANFILES = index-static.html class-hierarchy.html
 MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
 all: $(HTML_FILES)
@@ -29,6 +30,10 @@ all: $(HTML_FILES)
 operations.html: $(top_srcdir)/gegl/gegl
 	export GEGL_PATH=$(top_srcdir)/operations/:/usr/local/lib/gegl;\
 	$(top_srcdir)/gegl/gegl --ops-html > $@
+
+class-hierarchy.html: $(top_srcdir)/tools/introspect
+	export GEGL_PATH=$(top_srcdir)/operations/:/usr/local/lib/gegl;\
+	$(top_srcdir)/tools/introspect > $@
 
 index.html: index-static.html                    \
 	    $(top_srcdir)/AUTHORS                \

@@ -1,5 +1,13 @@
 2006-08-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/Makefile.am: created class-hierarchy.html
+	* Makefile.am: changed order of tools and docs subdir.
+	* tools/introspect.c: Added a gobject introspection->html tool for
+	documentation.
+	* tools/Makefile.am: 
+
+2006-08-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* TODO: removed, the information lives on in docs/todo.html.
 
 2006-08-23  Øyvind Kolås  <pippin@gimp.org>
