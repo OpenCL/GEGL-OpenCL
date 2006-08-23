@@ -1,2 +1,2 @@
-EXTRA_DIST=*.png *.svg *.jpg
+EXTRA_DIST=*.png *.jpg
 all:

@@ -4,8 +4,7 @@ AC_PREREQ(2.54)
 
 AC_INIT(gegl/gegl-init.c)
 
-AM_INIT_AUTOMAKE(gegl,$GEGL_VERSION)
-AM_CONFIG_HEADER(config.h)
+GLIB_REQUIRED_VERSION=2.6.4
 
 GEGL_UNSTABLE=yes
 AC_SUBST(GEGL_UNSTABLE)
@@ -18,8 +17,6 @@ if test "x$GEGL_UNSTABLE" = "xyes"; then
             [Define to 1 if this is an unstable version of the GIMP])
 fi
 AM_CONDITIONAL(GEGL_UNSTABLE, test "x$GEGL_UNSTABLE" = "xyes")
-
-GLIB_REQUIRED_VERSION=2.6.4
 
 dnl ==========================================================================
 dnl                              Versioning              
@@ -69,6 +66,9 @@ AC_SUBST(LT_VERSION_INFO)
 AC_SUBST(LT_CURRENT_MINUS_AGE)
 
 dnl ==========================================================================
+
+AM_INIT_AUTOMAKE(gegl,$GEGL_VERSION)
+AM_CONFIG_HEADER(config.h)
 
 dnl Initialize libtool
 AC_PROG_CC

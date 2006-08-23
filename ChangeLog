@@ -1,3 +1,11 @@
+2006-08-22  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	Minor changes to fix 'make dist'.
+
+	* configure.in: Fixed versioning of tarball.
+
+	* docs/gallery/data/Makefile.am: Removed *.svg from EXTRA_DIST.
+
 2006-08-22  Øyvind Kolås  <pippin@gimp.org>
 
 	* README: removed
