@@ -1,5 +1,21 @@
 2006-08-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* TODO.xml,
+	* gegl-color-convert-op.html,
+	* gegl-color-model.html,
+	* gegl.jpg,
+	* geglImageAndOp.html,
+	* genericChannelData.html,
+	* gimp16.html,
+	* gimp16_install_notes.html,
+	* gimp_siggraph.html,
+	* make-todo: removed some of the files that are not contemporary with
+	the rest of GEGL. (maybe they should have been moved into a public
+	"attic" instead, removed for now, they were cluttering the top-level
+	docs dir.).
+
+2006-08-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am: added todo.html to the files being distributed in
 	tarball.
 	* index-static.html.in: reordered reformulated and rewrote portions.
