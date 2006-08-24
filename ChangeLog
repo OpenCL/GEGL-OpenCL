@@ -1,5 +1,13 @@
 2006-08-23  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* gegl/Makefile.am
+	* gegl/buffer/Makefile.am
+	* gegl/module/Makefile.am
+	* tools/Makefile.am: Use GEGL_API_VERSION defined in configure.in
+	in name of libgegl file and for gegl include directory.
+
+2006-08-23  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* .cvsignore: Added 'README'
 	* docs/.cvsignore: Added 'class-hierarchy.html'
 	* docs/gallery/data/.cvsignore: File added

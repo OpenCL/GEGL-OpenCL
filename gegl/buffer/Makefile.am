@@ -32,7 +32,7 @@ BUFFER_headers = \
 libbuffer_la_SOURCES = $(BUFFER_sources) $(BUFFER_headers)
 libbufferinclude_HEADERS = $(BUFFER_headers)
 
-libbufferincludedir = $(includedir)/gegl-1.0/gegl/buffer
+libbufferincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/buffer
 
 INCLUDES = \
 	   -I$(top_srcdir)	\

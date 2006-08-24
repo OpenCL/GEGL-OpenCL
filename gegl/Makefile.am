@@ -7,7 +7,7 @@ SUBDIRS = buffer module
 libbuffer = $(top_builddir)/gegl/buffer/libbuffer.la
 libmodule = $(top_builddir)/gegl/module/libmodule.la
 
-lib_LTLIBRARIES = libgegl-1.0.la
+lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
 
 EXTRA_DIST =	\
 	gegl-cr-visitor.h		\
@@ -65,9 +65,9 @@ GEGL_public_headers = \
 	gegl-visitor.h			\
 	gegl-xml.h
 
-libgegl_1_0_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
+libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 
-libgegl_1_0_la_LIBADD = $(libbuffer) $(libmodule) 
+libgegl_@GEGL_API_VERSION@_la_LIBADD = $(libbuffer) $(libmodule) 
 
 INCLUDES = \
 	-I$(top_srcdir)	\
@@ -77,12 +77,13 @@ AM_LDFLAGS =  \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)	\
 	-no-undefined \
 	@DEP_LIBS@ @BABL_LIBS@
+
 gegl_LDFLAGS = \
-	libgegl-1.0.la
+	libgegl-@GEGL_API_VERSION@.la
 
 
-libgeglincludedir = $(includedir)/gegl-1.0
-libgeglsubincludedir = $(includedir)/gegl-1.0/gegl
+libgeglincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)
+libgeglsubincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl
 
 libgeglinclude_HEADERS = gegl.h gegl-module.h gegl-chant.h
 libgeglsubinclude_HEADERS = $(GEGL_public_headers) 
