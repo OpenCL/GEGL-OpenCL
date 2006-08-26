@@ -70,7 +70,7 @@
       </div>
       <ul>
         <li><a href='#GEGL'>GEGL</a></li>
-        <li><a href='#Features'>&nbsp;&nbsp;Features</a></li>
+        <li><a href='#Features'>Features</a></li>
         <li><a href='#glossary'>Glossary</a></li>
         <li><a href='operations.html'>Operations</a></li>
         <li><a href='operations.html#sources'>&nbsp;&nbsp;Sources</a></li>
@@ -101,7 +101,7 @@
         from glib for object orientation.</p>
         
         <a name='Features'></a>
-        <h3>Features</h3>
+        <h2>Features</h2>
         <ul>
             A large number of supported color models and datatypes and new models and types can be added
             easily through plug-ins for <a href='http://pippin.gimp.org/babl/'>babl</a>.</li>
@@ -171,7 +171,7 @@ rectangular regions to be repainted.
               format.
           </dd>-->
           <dt>filter</dt>
-          <dd>A <em>operation</em> that has one <em>output pad</em>.
+          <dd>A <em>operation</em> that has one <em>output pad</em> and one <em>input pad</em>.
           </dd>
           <dt>source</dt>
           <dd>A <em>operation</em> that only has one <em>output pad</em>.

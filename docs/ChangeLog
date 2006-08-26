@@ -1,3 +1,7 @@
+2006-08-26  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.html.in: added Glossary from gggl.
+
 2006-08-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* todo.html: added links to the GIL/codegen documents.
