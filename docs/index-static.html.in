@@ -71,11 +71,11 @@
       <ul>
         <li><a href='#GEGL'>GEGL</a></li>
         <li><a href='#Features'>&nbsp;&nbsp;Features</a></li>
+        <li><a href='#glossary'>Glossary</a></li>
         <li><a href='operations.html'>Operations</a></li>
         <li><a href='operations.html#sources'>&nbsp;&nbsp;Sources</a></li>
         <li><a href='operations.html#filters'>&nbsp;&nbsp;Filters</a></li>
         <li><a href='operations.html#composers'>&nbsp;&nbsp;Composers</a></li>
-        <li><a href='#glossary'>Glossary</a></li>
         <li><a href='#XML'>XML data model</a></li>
         <li><a href='gallery/index.html'>&nbsp;&nbsp;Gallery</a></li>
         <li><a href='#gegl'>&nbsp;&nbsp;<em>gegl</emhttp://pippin.gimp.org/gegl/gallery/index.html></a></em></li>
