@@ -1,30 +1,41 @@
 # General minimalistic compile file for self contained single
 # file babl_extensions
 
+EXTRA_DIST=$(wildcard *.c)
+
+CFILES  = $(wildcard $(srcdir)/*.c)
+SOBJS   = $(subst $(srcdir)/,,$(CFILES:.c=.so))
+
+INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=.so))
+
+all-local: $(SOBJS)
+
+CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ \
+           -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/gegl -I.
+LDFLAGS += -shared 
+
+LDADD    = @DEP_LIBS@ @BABL_LIBS@	
+
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
-
-EXTRA_DIST=*.c
-CFILES  = $(wildcard *.c)
-SOBJS   = $(CFILES:.c=.so)
-all: $(SOBJS)
-
-CFLAGS  += -Wall -I../..
 
 %.so: %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
-LDFLAGS += -shared 
+# If extensions needing external libraries are to be compiled with this make
+# file, each of them can be added according to this pattern:
+# extra.so: extra.c
+#	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
-LDADD    = @DEP_LIBS@ @BABL_LIBS@	
-CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ -I$(top_srcdir) -I$(top_srcdir)/gegl -I.
-
-clean:
+clean-local:
 	rm -f $(SOBJS) *~
 
 ext_dir = $(DESTDIR)$(prefix)/lib/gegl
 
-install: all
+install-exec-local: all-local
 	$(INSTALL) -d $(ext_dir)
 	$(INSTALL) $(SOBJS) $(ext_dir)
 
-check: all
+uninstall-local:
+	rm -f $(INSTALLED_ITEMS)
+
+check-local: all-local

@@ -25,15 +25,15 @@ CLEANFILES = README $(HTML_FILES)
 DISTCLEANFILES = index-static.html class-hierarchy.html operations.html
 MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
-all: $(HTML_FILES)
+all-local: $(HTML_FILES)
 
-operations.html: $(top_srcdir)/gegl/gegl
-	export GEGL_PATH=$(top_srcdir)/operations:$(prefix)/lib/gegl;\
-	$(top_srcdir)/gegl/gegl --ops-html > $@
+operations.html: $(top_builddir)/gegl/gegl
+	export GEGL_PATH=$(top_builddir)/operations:$(prefix)/lib/gegl;\
+	$(top_builddir)/gegl/gegl --ops-html > $@
 
-class-hierarchy.html: $(top_srcdir)/tools/introspect
-	export GEGL_PATH=$(top_srcdir)/operations:$(prefix)/lib/gegl;\
-	$(top_srcdir)/tools/introspect > $@
+class-hierarchy.html: $(top_builddir)/tools/introspect
+	export GEGL_PATH=$(top_builddir)/operations:$(prefix)/lib/gegl;\
+	$(top_builddir)/tools/introspect > $@
 
 index.html: index-static.html                    \
 	    $(top_srcdir)/AUTHORS                \

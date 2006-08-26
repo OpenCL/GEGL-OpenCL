@@ -1,2 +1,4 @@
-EXTRA_DIST=*.png *.jpg
-all:
+EXTRA_DIST=$(wildcard *.png) $(wildcard *.jpg)
+
+distcheck:
+	cp $(srcdir)/* .

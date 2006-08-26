@@ -2,14 +2,19 @@
 
 SUBDIRS = gegl operations tools docs
 
-EXTRA_DIST = 			\
-	gegl-uninstalled.pc.in	\
-	gegl.pc.in
-
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gegl.pc
 
 built_dist_files = README
+
+EXTRA_DIST = 			\
+	$(built_dist_files)     \
+	gegl-uninstalled.pc.in	\
+	gegl.pc.in
+
+DISTCLEANFILES = \
+	$(built_dist_files)
+
 if HAVE_W3M
 dist-check-w3m:
 
@@ -21,3 +26,4 @@ dist-check-w3m:
 	@false
 endif
 
+dist-hook: dist-check-w3m
