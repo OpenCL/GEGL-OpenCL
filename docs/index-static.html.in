@@ -160,7 +160,7 @@ rectangular regions to be repainted.
           number of <em>output pads</em>.
         <dl>
           <dt>composer</dt>
-          <dd>A <em>operation</em> that has more than one
+          <dd>An <em>operation</em> that has more than one
               <em>input pad</em>.
           </dd>
           <!--<dt>decomposer</dt>
@@ -171,10 +171,10 @@ rectangular regions to be repainted.
               format.
           </dd>-->
           <dt>filter</dt>
-          <dd>A <em>operation</em> that has one <em>output pad</em> and one <em>input pad</em>.
+          <dd>An <em>operation</em> that has one <em>output pad</em> and one <em>input pad</em>.
           </dd>
           <dt>source</dt>
-          <dd>A <em>operation</em> that only has one <em>output pad</em>.
+          <dd>An <em>operation</em> that only has one <em>output pad</em>.
           </dd>
         </dl>
       </dd>

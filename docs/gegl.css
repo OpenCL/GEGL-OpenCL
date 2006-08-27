@@ -56,10 +56,10 @@
         border: 1px solid #bbb;
       }
       div.expander_title {
-        border-bottom: 1px solid #aaa;
+        /*border-bottom: 0px solid #aaa;*/
       }
       div.expander_content {
-        margin-left: 3em;
+        margin-left: 2em;
         display: none;
         padding-bottom: 1em;
       }
@@ -67,6 +67,7 @@
         margin: 0;
         padding: 0;
       }
+
 
       table th {
         font-weight: normal;
@@ -297,6 +298,7 @@
           margin-left: -0.75em;
         }
         h2 {
+          padding-top: 4em;
           margin-left: -1em;
         }
         span.component {

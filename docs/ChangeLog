@@ -1,3 +1,9 @@
+2006-08-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.html.in: some wording changes in the glossary.
+	* gegl.css: preparing for more changes to the html introspection
+	of gobjects.
+
 2006-08-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: added Glossary from gggl.
