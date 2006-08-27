@@ -1,5 +1,10 @@
 2006-08-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-eval-visitor.c: (visit_pad): added a warning when passing
+	a NULL between nodes.
+
+2006-08-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-operation.[ch]: (gegl_operation_class_init),
 	(gegl_operation_prepare), (gegl_operation_get_have_rect),
 	(gegl_operation_set_need_rect): added virtual method prepare.

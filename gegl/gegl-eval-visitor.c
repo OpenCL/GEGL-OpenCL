@@ -61,6 +61,7 @@ visit_pad (GeglVisitor *self,
 
   GEGL_VISITOR_CLASS (gegl_eval_visitor_parent_class)->visit_pad (self, pad);
 
+  
   if (gegl_pad_is_output (pad))
     gegl_operation_evaluate (operation, gegl_pad_get_name (pad));
   else if (gegl_pad_is_input (pad))
@@ -71,16 +72,32 @@ visit_pad (GeglVisitor *self,
         {
           GValue      value     = { 0 };
           GParamSpec *prop_spec = gegl_pad_get_param_spec (pad);
-          GeglOperation *source = gegl_pad_get_node (source_pad)->operation;
+          GeglNode *source_node = gegl_pad_get_node (source_pad);
+          GeglOperation *source = source_node->operation;
 
           g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (prop_spec));
 
           g_object_get_property (G_OBJECT(source),
                                  gegl_pad_get_name (source_pad),
                                  &value);
+
+          /* if we're getting it from a graph,. do extra maneuvers trying
+           * to get at the internal nop operation instead
+           */
+          if(0)g_warning ("eval %s->%s",
+            G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (source)),
+            G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (operation)));
+          
+          if (!g_value_get_object (&value))
+             g_warning ("eval-visitor encountered a NULL buffer passed from: %s.%s-[%p]", 
+             gegl_node_get_debug_name (source_node),
+             gegl_pad_get_name (source_pad),
+             g_value_get_object (&value));
+
           g_object_set_property (G_OBJECT (operation),
                                  gegl_pad_get_name (pad),
                                  &value);
+
           if (--gegl_pad_get_node (source_pad)->refs==0)
             {
               gegl_operation_clean_pads (source);
