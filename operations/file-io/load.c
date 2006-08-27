@@ -232,7 +232,7 @@ refresh_cache (GeglOperationLoad *self)
             if (strstr (self->path, map->extension))
               {
                 sprintf (xml,
-                  "<gegl><tree><node class='%s' path='%s'></node></tree></gegl>",
+                  "<gegl ><tree><node class='%s' path='%s'></node></tree></gegl>",
                   map->handler, self->path);
                 break;
               }
@@ -243,6 +243,7 @@ refresh_cache (GeglOperationLoad *self)
             sprintf (xml, "<gegl><tree><node class='%s' path='%s'></node></tree></gegl>",
                  map->handler, self->path);
           }
+        g_warning ("%s", xml);
 
     temp_gegl = gegl_xml_parse (xml);
     gegl_node_apply (temp_gegl, "output");
@@ -252,6 +253,7 @@ refresh_cache (GeglOperationLoad *self)
      */
     gegl_node_get (temp_gegl, "output", &(self->cached), NULL);
     g_object_unref (temp_gegl);
+    g_assert (self->cached);
     self->cached_path = g_strdup (self->path);
   }
 }
@@ -269,6 +271,8 @@ evaluate (GeglOperation *operation,
   if (op_source->output)
     g_object_unref (op_source->output);
   op_source->output=NULL;
+
+  refresh_cache (self);
 
   g_assert (self->cached);
   {
@@ -292,6 +296,7 @@ calc_have_rect (GeglOperation *operation)
   gint width, height;
 
   refresh_cache (self);
+  g_assert (self->cached);
 
   width  = GEGL_BUFFER (self->cached)->width;
   height = GEGL_BUFFER (self->cached)->height;

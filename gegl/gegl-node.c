@@ -356,10 +356,8 @@ gegl_node_connect (GeglNode    *sink,
 
   if (pads_exist (sink, sink_prop_name, source, source_prop_name))
     {
-      GeglPad   *sink_prop   = gegl_node_get_pad (sink,
-                                                            sink_prop_name);
-      GeglPad   *source_prop = gegl_node_get_pad (source,
-                                                            source_prop_name);
+      GeglPad   *sink_prop   = gegl_node_get_pad (sink,   sink_prop_name);
+      GeglPad   *source_prop = gegl_node_get_pad (source, source_prop_name);
       GeglConnection *connection  = gegl_pad_connect (sink_prop,
                                                            source_prop);
 
@@ -576,6 +574,7 @@ gegl_node_apply (GeglNode    *self,
   gegl_eval_mgr_apply (eval_mgr, self, output_prop_name);
   g_object_unref (eval_mgr);
 }
+
 #include "gegl-graph.h"
 GList *
 gegl_node_get_depends_on (GeglNode *self)
@@ -583,23 +582,22 @@ gegl_node_get_depends_on (GeglNode *self)
   GList *depends_on = NULL;
   GList *llink      = self->sources;
 
-  while (llink)
+  for (llink = self->sources; llink; llink = g_list_next (llink))
     {
       GeglConnection *connection = llink->data;
       GeglNode * source_node;
 
       /* this indirection is to make sure we follow the connection correctly
-       * if the connected node, is the ghost pad of a graph
+       * if the connected node, is the ghost pad of a graph.
+       *
+       * Since the node in the graph would be the true recevier of the property.
        */
       source_node = gegl_pad_get_node (gegl_connection_get_source_prop (connection));
 
       /* It may already be on the list, so check first */
       if (! g_list_find (depends_on, source_node))
         depends_on = g_list_append (depends_on, source_node);
-
-      llink = g_list_next (llink);
     }
-
   return depends_on;
 }
 
@@ -631,19 +629,22 @@ visitable_needs_visiting (GeglVisitable *visitable)
  *
  * Create a property.
  **/
-void
+GeglPad *
 gegl_node_create_pad (GeglNode   *self,
                       GParamSpec *param_spec)
 {
   GeglPad *pad;
 
-  g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail (param_spec);
+  if (!GEGL_IS_NODE (self) ||
+      !param_spec)
+    return NULL;
 
   pad = g_object_new (GEGL_TYPE_PAD, NULL);
   gegl_pad_set_param_spec (pad, param_spec);
   gegl_pad_set_node (pad, self);
   gegl_node_add_pad (self, pad);
+
+  return pad;
 }
 
 gboolean
@@ -911,20 +912,12 @@ gegl_node_get_valist (GeglNode    *self,
         }
       else
         {
-        /* if we're a graph, this is not possible,.
-         * requesting the redirected properties of a node that is graph
-         * should also be done
-         */
-        if (GEGL_IS_GRAPH (self))
+        if (!self->operation)  /* if we do not have a operation, we're bound to be a graph */
           {
-            /* cheap workaround to make querying the output property of
-             * a graph work
-             */
             GeglGraph *graph = GEGL_GRAPH (self);
-            pspec = g_object_class_find_property (
-               G_OBJECT_GET_CLASS (G_OBJECT (
-                   
-                   gegl_graph_get_pad_proxy (graph, "output", FALSE)->operation)), property_name);
+                 pspec = g_object_class_find_property (
+                    G_OBJECT_GET_CLASS (G_OBJECT (
+                        gegl_graph_output (graph, "output")->operation)), property_name);
           }
         else
           {
@@ -946,8 +939,8 @@ gegl_node_get_valist (GeglNode    *self,
              G_OBJECT_TYPE_NAME (self->operation));
           }
       }
-      g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
 
+      g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
       gegl_node_get_property (self, property_name, &value);
       G_VALUE_LCOPY (&value, var_args, 0, &error);
       if (error)
@@ -999,17 +992,14 @@ gegl_node_get_property (GeglNode    *self,
     }
   else
     {
-      if (GEGL_IS_GRAPH (self))
-        {
-          GeglGraph *graph = GEGL_GRAPH (self);
-          g_object_get_property (G_OBJECT
-             (
-             gegl_graph_get_pad_proxy (graph, "output", FALSE)->operation
-             ), property_name, value);
-        }
-      else if (self->operation)
+      if (self->operation)
         {
           g_object_get_property (G_OBJECT (self->operation),
+                property_name, value);
+        }
+      else /* we're a graph */
+        {
+          g_object_get_property (G_OBJECT (gegl_graph_output (GEGL_GRAPH (self), "output")->operation),
                 property_name, value);
         }
     }
@@ -1043,6 +1033,7 @@ gegl_node_get_op_type_name    (GeglNode     *node)
     }
   return GEGL_OPERATION_GET_CLASS (node->operation)->name;
 }
+
 void
 gegl_node_set_have_rect (GeglNode    *node,
                          gint         x,

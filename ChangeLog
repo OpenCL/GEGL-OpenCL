@@ -1,5 +1,26 @@
 2006-08-27  Øyvind Kolås  <pippin@gimp.org>
 
+	Rewrote parts of the graph handling, this doesn't seem to work fully
+	yet. But it seems like no old behavior has been lost with this change.
+
+	* gegl/gegl-graph.[ch]: (gegl_graph_get_pad_proxy): made static
+	(gegl_graph_input), (gegl_graph_output): new public methods with
+	better names than get_pad_proxy.
+	* gegl/gegl-node.c: (gegl_node_connect),
+	(gegl_node_get_depends_on), (gegl_node_create_pad),
+	(gegl_node_get_valist), (gegl_node_get_property): handle graphs
+	correctly.
+	* gegl/gegl-xml.c: (start_element), (end_element), (add_stack): adapt
+	to new gegl_graph_output|input methods.
+	* gegl/gegl.c: (main), (main_interactive): adapt to new
+	gegl_graph_output|input methods.
+	* operations/file-io/load.c: (refresh_cache), (evaluate),
+	(calc_have_rect): adapt to new gegl_graph_output|input methods. Should
+	be further adapted to actually have a live graph, instead of using
+	it's seperate evaluation instance to do it's work.
+
+2006-08-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-eval-visitor.c: (visit_pad): added a warning when passing
 	a NULL between nodes.
 

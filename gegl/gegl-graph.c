@@ -29,10 +29,10 @@
 #include "gegl-pad.h"
 #include "gegl-visitor.h"
 #include "gegl-connection.h"
+#include "gegl-node.h"
 
 static void gegl_graph_class_init (GeglGraphClass *klass);
 static void gegl_graph_init       (GeglGraph      *self);
-static void finalize              (GObject        *object);
 static void dispose               (GObject        *object);
 
 G_DEFINE_TYPE(GeglGraph, gegl_graph, GEGL_TYPE_OBJECT)
@@ -73,26 +73,6 @@ dispose (GObject *object)
   gegl_graph_remove_children (self);
 
   G_OBJECT_CLASS (gegl_graph_parent_class)->dispose (object);
-}
-
-
-static void
-finalize (GObject *object)
-{
-#if 0
-  GeglGraph *self = GEGL_GRAPH (object);
-  GeglNode  *node = GEGL_NODE (self);
-
-  while (node->pads)
-    {
-      GeglPad *pad = g_list_nth_data (node->pads, 0);
-
-      node->pads = g_list_remove (node->pads, pad);
-    }
-
-  gegl_graph_remove_children (self);
-#endif
-  G_OBJECT_CLASS (gegl_graph_parent_class)->finalize (object);
 }
 
 void
@@ -190,7 +170,7 @@ gegl_graph_create_node (GeglGraph   *self,
   return node;
 }
 
-GeglNode *
+static GeglNode *
 gegl_graph_get_pad_proxy (GeglGraph   *graph,
                           const gchar *name,
                           gboolean     is_graph_input)
@@ -201,10 +181,33 @@ gegl_graph_get_pad_proxy (GeglGraph   *graph,
   pad = gegl_node_get_pad (node, name);
   if (!pad)
     {
-        GeglNode *nop = g_object_new (GEGL_TYPE_NODE, "class", "nop", NULL);
-        gegl_node_add_pad (GEGL_NODE (graph), gegl_node_get_pad (nop, is_graph_input?"input":"output"));
+        GeglNode *nop = g_object_new (GEGL_TYPE_NODE, "class", "nop", "name", "proxynop", NULL);
+        GeglPad  *nop_pad = gegl_node_get_pad (nop, is_graph_input?"input":"output");
         gegl_graph_add_child (graph, nop);
+        
+        {
+          GeglPad *new_pad = g_object_new (GEGL_TYPE_PAD, NULL);
+          gegl_pad_set_param_spec (new_pad, nop_pad->param_spec);
+          gegl_pad_set_node (new_pad, nop);
+          gegl_node_add_pad (node, new_pad);
+        }
+
+        g_warning ("adding %i", is_graph_input);
         return nop;
     }
   return gegl_pad_get_node (pad);
+}
+
+GeglNode *
+gegl_graph_input (GeglGraph   *graph,
+                  const gchar *name)
+{
+  return gegl_graph_get_pad_proxy (graph, name, TRUE);
+}
+
+GeglNode *
+gegl_graph_output (GeglGraph   *graph,
+                   const gchar *name)
+{
+  return gegl_graph_get_pad_proxy (graph, name, FALSE);
 }

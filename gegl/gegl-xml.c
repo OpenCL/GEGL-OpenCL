@@ -94,11 +94,11 @@ static void start_element (GMarkupParseContext *context,
         }
       pd->state=STATE_TREE_NORMAL;
       pd->parent = g_list_prepend (pd->parent, new);
-      gegl_graph_get_pad_proxy (GEGL_GRAPH (new), "output", FALSE);
+
+      gegl_graph_output (GEGL_GRAPH (new), "output"); /* creates the pad if it doesn't exist */
       if (pd->iter)
         gegl_node_connect (pd->iter, "input", new, "output");
-      new = gegl_graph_get_pad_proxy (GEGL_GRAPH (new), "output", FALSE);
-      pd->iter = new;
+      pd->iter = gegl_graph_output (GEGL_GRAPH (new), "output");
     }
   else if (!strcmp (element_name, "graph"))
     {
@@ -205,8 +205,8 @@ static void end_element (GMarkupParseContext *context,
       if (gegl_node_get_pad (pd->iter, "input"))
         {
           gegl_node_connect (pd->iter, "input",
-             gegl_graph_get_pad_proxy (GEGL_GRAPH (pd->parent->data), "input", TRUE), "output");
-          pd->iter   = gegl_graph_get_pad_proxy (GEGL_GRAPH (pd->parent->data), "input", TRUE);
+             gegl_graph_input (GEGL_GRAPH (pd->parent->data), "input"), "output");
+          pd->iter = gegl_graph_input (GEGL_GRAPH (pd->parent->data), "input");
         }
       else
         {
@@ -383,7 +383,7 @@ static void add_stack (SerializeState *ss,
     {
       GeglNode *iter;
       GeglPad  *input;
-      iter = gegl_graph_get_pad_proxy (GEGL_GRAPH (head), "output", FALSE);
+      iter = gegl_graph_output (GEGL_GRAPH (head), "output");
       input = gegl_node_get_pad (iter, "input");
       input = gegl_pad_get_connected_to (input);
       iter = gegl_pad_get_node (input);

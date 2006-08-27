@@ -101,7 +101,7 @@ main (gint    argc,
                                "class", "png-save",
                                "path", o->output,
                                NULL);
-          gegl_node_connect (output, "input", gegl_graph_get_pad_proxy (GEGL_GRAPH (gegl), "output", FALSE), "output");
+          gegl_node_connect (output, "input", gegl_graph_output (GEGL_GRAPH (gegl), "output"), "output");
 
           gegl_node_apply (output, "output");
         }
@@ -127,7 +127,7 @@ main_interactive (GeglNode *gegl,
                        "class", "display",
                        NULL);
 
-  gegl_node_connect (output, "input", gegl_graph_get_pad_proxy (GEGL_GRAPH (gegl), "output", FALSE), "output");
+  gegl_node_connect (output, "input", gegl_graph_output (GEGL_GRAPH (gegl), "output"), "output");
   gegl_node_apply (output, "output");
   sleep(o->delay);
   return 0;
