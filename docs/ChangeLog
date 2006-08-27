@@ -1,5 +1,15 @@
 2006-08-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.html.in: Refined the features listing.
+
+2006-08-27  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* index-static.html.in:
+
+2006-08-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* index-static.html.in: some wording changes in the glossary.
 	* gegl.css: preparing for more changes to the html introspection
 	of gobjects.

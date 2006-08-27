@@ -103,14 +103,29 @@
         <a name='Features'></a>
         <h2>Features</h2>
         <ul>
-            A large number of supported color models and datatypes and new models and types can be added
-            easily through plug-ins for <a href='http://pippin.gimp.org/babl/'>babl</a>.</li>
-            <li>Core image processing and compositing <a href='operations.html'>operations</a></li>
-            <li>Additional image processing operations loaded from plug-in</li>
-            <li>Construction of chains (DAGs or Directed Acyclic Graphs) of
-            operations</li>
+            <li>32bit floating point processing of data (optimized variants using GPU or generated code for lower/integer bitdepths is somewhere in the roadmap.)</li>
+            <li>Pixel format agnostic API design. Through the use of <a href='http://pippin.gimp.org/babl/'>babl</a> as universal translation engine between pixel formats.
+            <li>Data models
+               <ul>
+                   <li>Graphs of operations (Directed Acyclic Graphs)</li>
+                   <li>Tree of (operations) w/clones (XML format)</li>
+                   <li>Tree of layers (work in progress)</li>
+               </ul>
+            </li>
+
+            </li>
+            <li>Operations
+            <ul>
+               <li>Operations are plug-ins (shared objects) loaded at runtime.</li>
+               <li>Simplified gobject with minimal boilerplate used to write plug-ins.</li>
+               <li><b>File inputs:</b> png, jpg, raw, ImageMagick fallback</li>
+               <li><b>Filters:</b> gaussian blur, brightness/contrast, gamma, math ops, threshold, affine transformations, stretch contrast, adjust opacity.
+               </li>
+               <li><b>Composers (Layer modes):</b> porter-duff (including normal over), math ops (+,-,*,/), opacity (apply mask).
+               </li>
+           </ul>
+            </li>
             <li>Memory efficient computation of rectangular ROI (region of interest).</li>
-            <li>Layer tree XML data model, with layer groups, filters (adjustment layers) and clones.</li>
         </ul>
 
         <!--
@@ -149,9 +164,7 @@ rectangular regions to be repainted.
            graph is a <em>DAG</em>.
       </dd>
       <dt>node</dt>
-      <dd>Synonym for <em>operation</em>, node is a graph oriented
-          glossary, whilst operation speak of an image operation, that does
-          something with image samples.
+      <dd>The nodes are connected in the graph. A node has an associated <em>operation</em> unless the node itself is a <em>graph</em>.
       </dd>
       <dt>operation</dt>
       <dd>The processing primitive of GEGL, is where the actual image
