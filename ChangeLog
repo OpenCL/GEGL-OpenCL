@@ -1,5 +1,10 @@
 2006-08-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-graph.c: (gegl_graph_get_pad_proxy): removed debug
+	printlning.
+
+2006-08-27  Øyvind Kolås  <pippin@gimp.org>
+
 	Rewrote parts of the graph handling, this doesn't seem to work fully
 	yet. But it seems like no old behavior has been lost with this change.
 

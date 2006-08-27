@@ -191,8 +191,6 @@ gegl_graph_get_pad_proxy (GeglGraph   *graph,
           gegl_pad_set_node (new_pad, nop);
           gegl_node_add_pad (node, new_pad);
         }
-
-        g_warning ("adding %i", is_graph_input);
         return nop;
     }
   return gegl_pad_get_node (pad);
