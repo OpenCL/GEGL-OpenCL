@@ -18,8 +18,3 @@ all-local:
 
 clean-local:
 	rm -f index.html
-
-distcheck-hook:
-	ls -alR .
-	mkdir data
-	cp $(srcdir)/data/* data

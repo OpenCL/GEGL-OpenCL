@@ -1,3 +1,9 @@
+2006-08-25  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* docs/gallery/Makefile.am: Removed distcheck target.
+
+	* docs/gallery/data/Makefile.am: Removed distcheck-hook target.
+
 2006-08-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-graph.c: (gegl_graph_get_pad_proxy): removed debug
