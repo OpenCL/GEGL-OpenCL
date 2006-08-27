@@ -50,6 +50,7 @@ gegl_operation_class_init (GeglOperationClass * klass)
   klass->description = NULL;
 
   klass->associate = associate;
+  klass->prepare = NULL;
   klass->clean_pads = clean_pads;
   klass->calc_have_rect = calc_have_rect;
   klass->calc_need_rect = calc_need_rect;
@@ -163,6 +164,20 @@ gegl_operation_associate (GeglOperation *self,
   klass->associate (self);
 }
 
+void
+gegl_operation_prepare (GeglOperation *self)
+{
+  GeglOperationClass *klass;
+
+  g_return_if_fail (GEGL_IS_OPERATION (self));
+
+  klass = GEGL_OPERATION_GET_CLASS (self);
+
+  if (klass->prepare)
+    klass->prepare (self);
+}
+
+
 
 /* this virtual method is here to clean up (unref) output
  * pads when all other nodes that depend on the data on
@@ -206,7 +221,8 @@ gegl_operation_get_have_rect (GeglOperation *operation,
             operation->node &&
             input_pad_name);
   pad = gegl_node_get_pad (operation->node, input_pad_name);
-  g_assert (pad);
+  if (!pad)
+    return NULL;
   pad = gegl_pad_get_connected_to (pad);
   if (!pad)
     return NULL;
@@ -254,7 +270,8 @@ gegl_operation_set_need_rect (GeglOperation *operation,
   g_assert (input_pad_name);
 
   pad = gegl_node_get_pad (operation->node, input_pad_name);
-  g_assert (pad);
+  if (!pad)
+    return;
 
   children = producer_nodes (pad);
 
