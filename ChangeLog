@@ -1,3 +1,10 @@
+2006-08-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* tools/introspect.c: (introspection), (list_properties_simple),
+	(list_properties), (details_for_type), (collapse_all),
+	(expand_all), (introspect), (introspect_overview): added collapsible
+	DHTML tree instead of index.
+
 2006-08-25  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* Makefile.am
