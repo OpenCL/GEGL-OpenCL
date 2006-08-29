@@ -33,6 +33,7 @@
 #include "gegl-eval-visitor.h"
 #include "gegl-node.h"
 #include "gegl-operation.h"
+#include "gegl-prepare-visitor.h"
 #include "gegl-visitable.h"
 #include "gegl-pad.h"
 #include <stdlib.h>
@@ -70,6 +71,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
                      GeglNode    *root,
                      const gchar *pad_name)
 {
+  GeglVisitor  *prepare_visitor;
   GeglVisitor  *have_visitor;
   GeglVisitor  *need_visitor;
   GeglVisitor  *cr_visitor;
@@ -88,6 +90,10 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   if (pad->node != root)
     root = pad->node;
   g_object_ref (root);
+
+  prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, NULL);
+  gegl_visitor_dfs_traverse (prepare_visitor, GEGL_VISITABLE(root));
+  g_object_unref (prepare_visitor);
 
   have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, NULL);
   gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE(root));

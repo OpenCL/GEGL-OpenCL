@@ -115,6 +115,7 @@ gegl_node_init (GeglNode *self)
   self->operation   = NULL;
   self->refs        = 0;
   self->enabled     = TRUE;
+  self->is_graph    = FALSE;
 }
 
 static void
@@ -272,6 +273,11 @@ gegl_node_add_pad (GeglNode *self,
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (GEGL_IS_PAD (pad));
 
+  if (gegl_node_get_pad (self, gegl_pad_get_name (pad)))
+    {
+      g_warning ("EEEEK in %s", gegl_node_get_debug_name (self));
+    }
+  g_assert (!gegl_node_get_pad (self, gegl_pad_get_name (pad)));
   self->pads = g_list_append (self->pads, pad);
 
   if (gegl_pad_is_output (pad))
@@ -575,6 +581,7 @@ gegl_node_apply (GeglNode    *self,
   g_object_unref (eval_mgr);
 }
 
+#include <stdio.h>
 #include "gegl-graph.h"
 GList *
 gegl_node_get_depends_on (GeglNode *self)
@@ -594,10 +601,24 @@ gegl_node_get_depends_on (GeglNode *self)
        */
       source_node = gegl_pad_get_node (gegl_connection_get_source_prop (connection));
 
+
+
       /* It may already be on the list, so check first */
       if (! g_list_find (depends_on, source_node))
-        depends_on = g_list_append (depends_on, source_node);
+        {
+          depends_on = g_list_append (depends_on, source_node);
+        }
     }
+
+  if (!strcmp (gegl_object_get_name (GEGL_OBJECT (self)), "proxynop-input"))
+    {
+      GeglGraph *graph = g_object_get_data (G_OBJECT (self), "graph");
+      if (graph)
+        {
+          depends_on = g_list_concat (depends_on, gegl_node_get_depends_on (GEGL_NODE (graph)));
+        }
+    }
+
   return depends_on;
 }
 
@@ -652,7 +673,11 @@ gegl_node_evaluate (GeglNode    *self,
                     const gchar *output_pad)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), FALSE);
-  g_return_val_if_fail (GEGL_IS_OPERATION (self->operation), FALSE);
+  /*g_return_val_if_fail (GEGL_IS_OPERATION (self->operation), FALSE);*/
+  if (!self->operation)
+    {
+      return FALSE;
+    }
 
   return gegl_operation_evaluate (self->operation, output_pad);
 }
@@ -912,7 +937,7 @@ gegl_node_get_valist (GeglNode    *self,
         }
       else
         {
-        if (!self->operation)  /* if we do not have a operation, we're bound to be a graph */
+        if (self->is_graph)  /* if we do not have a operation, we're bound to be a graph */
           {
             GeglGraph *graph = GEGL_GRAPH (self);
                  pspec = g_object_class_find_property (
@@ -970,10 +995,19 @@ gegl_node_set_property (GeglNode     *self,
     }
   else
     {
-      if (self->operation)
+      if (self->is_graph)
         {
-          g_object_set_property (G_OBJECT (self->operation),
+          g_warning ("set_property for graph,. hmm");
+          g_object_set_property (G_OBJECT (gegl_graph_input (GEGL_GRAPH (self), "input")->operation),
                 property_name, value);
+        }
+      else
+        {
+          if (self->operation)
+            {
+              g_object_set_property (G_OBJECT (self->operation),
+                    property_name, value);
+            }
         }
     }
 }
@@ -992,16 +1026,19 @@ gegl_node_get_property (GeglNode    *self,
     }
   else
     {
-      if (self->operation)
-        {
-          g_object_get_property (G_OBJECT (self->operation),
-                property_name, value);
-        }
-      else /* we're a graph */
-        {
+    if (self->is_graph)
+      {
           g_object_get_property (G_OBJECT (gegl_graph_output (GEGL_GRAPH (self), "output")->operation),
                 property_name, value);
-        }
+      }
+    else
+      {
+        if (self->operation)
+          {
+            g_object_get_property (G_OBJECT (self->operation),
+                  property_name, value);
+          }
+      }
     }
 }
 
@@ -1026,6 +1063,8 @@ gegl_node_get_op_type_name    (GeglNode     *node)
       g_warning ("NULL node passed in");
       return "NULL node passd in";
     }
+  if (node->is_graph)
+    return "GraphNode";
   if (node->operation == NULL)
     {
       g_warning ("No op associated");

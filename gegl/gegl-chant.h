@@ -51,6 +51,13 @@
   #define CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_POINT_COMPOSER
   #define CHANT_PARENT_CLASS         GEGL_OPERATION_POINT_COMPOSER_CLASS
 #endif
+#ifdef CHANT_GRAPH
+  #include <gegl/gegl-operation-source.h>
+  #define CHANT_PARENT_TypeName      GeglOperation
+  #define CHANT_PARENT_TypeNameClass GeglOperationClass
+  #define CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION
+  #define CHANT_PARENT_CLASS         GEGL_OPERATION_CLASS
+#endif
 
 typedef struct Generated        ChantInstance;
 typedef struct GeneratedClass   ChantClass;
@@ -336,8 +343,10 @@ static gboolean evaluate (GeglOperation *operation,
                           void          *out_buf,
                           glong          samples);
 #else
+#ifndef CHANT_GRAPH
 static gboolean evaluate (GeglOperation *operation,
                           const gchar   *output_prop);
+#endif
 #endif
 #endif
 
@@ -378,15 +387,17 @@ static void
 chant_class_init (ChantClass * klass)
 {
   GObjectClass               *object_class = G_OBJECT_CLASS (klass);
-  CHANT_PARENT_TypeNameClass *parent_class = CHANT_PARENT_CLASS (klass);
   GeglOperationClass         *operation_class;
+
+#ifndef CHANT_GRAPH
+  CHANT_PARENT_TypeNameClass *parent_class = CHANT_PARENT_CLASS (klass);
+  parent_class->evaluate = evaluate;
+#endif
 
   operation_class = GEGL_OPERATION_CLASS (klass);
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;
-
-  parent_class->evaluate = evaluate;
 
 #ifdef CHANT_CONSTRUCT
   object_class->constructor  = chant_constructor;

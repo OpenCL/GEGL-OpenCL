@@ -181,7 +181,7 @@ gegl_graph_get_pad_proxy (GeglGraph   *graph,
   pad = gegl_node_get_pad (node, name);
   if (!pad)
     {
-        GeglNode *nop = g_object_new (GEGL_TYPE_NODE, "class", "nop", "name", "proxynop", NULL);
+        GeglNode *nop = g_object_new (GEGL_TYPE_NODE, "class", "nop", "name", is_graph_input?"proxynop-input":"proxynop-output", NULL);
         GeglPad  *nop_pad = gegl_node_get_pad (nop, is_graph_input?"input":"output");
         gegl_graph_add_child (graph, nop);
         
@@ -191,6 +191,8 @@ gegl_graph_get_pad_proxy (GeglGraph   *graph,
           gegl_pad_set_node (new_pad, nop);
           gegl_node_add_pad (node, new_pad);
         }
+        g_object_set_data (G_OBJECT (nop), "graph", graph);
+        node->is_graph = TRUE;
         return nop;
     }
   return gegl_pad_get_node (pad);

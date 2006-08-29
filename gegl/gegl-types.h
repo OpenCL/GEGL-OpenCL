@@ -24,25 +24,24 @@
 
 G_BEGIN_DECLS
 
+typedef struct _GeglConnection       GeglConnection;
+typedef struct _GeglCRVisitor        GeglCRVisitor;
+typedef struct _GeglDebugRectVisitor GeglDebugRectVisitor;
+typedef struct _GeglEvalMgr          GeglEvalMgr;
+typedef struct _GeglEvalVisitor      GeglEvalVisitor;
+typedef struct _GeglGraph            GeglGraph;
+typedef struct _GeglHaveVisitor      GeglHaveVisitor;
+typedef struct _GeglNeedVisitor      GeglNeedVisitor;
+typedef struct _GeglNode             GeglNode;
+typedef struct _GeglOperation        GeglOperation;
+typedef struct _GeglPad              GeglPad;
+typedef struct _GeglPrepareVisitor   GeglPrepareVisitor;
+typedef struct _GeglVisitable        GeglVisitable; /* dummy typedef */
+typedef struct _GeglVisitor          GeglVisitor;
 
-typedef struct _GeglConnection  GeglConnection;
-typedef struct _GeglCRVisitor   GeglCRVisitor;
-typedef struct _GeglDebugRectVisitor   GeglDebugRectVisitor;
-typedef struct _GeglEvalMgr     GeglEvalMgr;
-typedef struct _GeglEvalVisitor GeglEvalVisitor;
-typedef struct _GeglGraph       GeglGraph;
-typedef struct _GeglHaveVisitor GeglHaveVisitor;
-typedef struct _GeglNeedVisitor GeglNeedVisitor;
-typedef struct _GeglNode        GeglNode;
-typedef struct _GeglOperation   GeglOperation;
-typedef struct _GeglPad         GeglPad;
-typedef struct _GeglVisitable   GeglVisitable; /* dummy typedef */
-typedef struct _GeglVisitor     GeglVisitor;
-
-
-typedef struct _GeglRect        GeglRect;
-typedef struct _GeglPoint       GeglPoint;
-typedef struct _GeglDimension   GeglDimension;
+typedef struct _GeglRect             GeglRect;
+typedef struct _GeglPoint            GeglPoint;
+typedef struct _GeglDimension        GeglDimension;
 
 struct _GeglRect
 {

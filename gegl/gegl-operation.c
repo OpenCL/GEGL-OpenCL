@@ -221,11 +221,27 @@ gegl_operation_get_have_rect (GeglOperation *operation,
             operation->node &&
             input_pad_name);
   pad = gegl_node_get_pad (operation->node, input_pad_name);
+
   if (!pad)
     return NULL;
   pad = gegl_pad_get_connected_to (pad);
+
+  if (!pad && !strcmp (gegl_object_get_name (GEGL_OBJECT (operation->node)), "proxynop-input"))
+    {
+      GeglGraph *graph = GEGL_GRAPH (g_object_get_data (G_OBJECT (operation->node), "graph"));
+      if (!graph)
+        {
+          return NULL;
+        }
+
+      pad = gegl_node_get_pad (GEGL_NODE (graph), input_pad_name);
+      if (!pad)
+        return NULL;
+      pad = gegl_pad_get_connected_to (pad);
+    }
   if (!pad)
     return NULL;
+  
   g_assert (gegl_pad_get_node (pad));
 
   return gegl_node_get_have_rect (gegl_pad_get_node (pad));
@@ -243,11 +259,28 @@ producer_nodes (GeglPad *input_pad)
   connections = gegl_pad_get_connections (input_pad);
   while (connections)
     {
-      GeglNode *node = gegl_connection_get_source_node (connections->data);
+      GeglNode *node = gegl_pad_get_node (gegl_connection_get_source_prop (connections->data));
 
       if (node)
         ret = g_list_append (ret, node);
       connections = g_list_next (connections);
+    }
+
+  if (!strcmp (gegl_object_get_name (GEGL_OBJECT (gegl_pad_get_node (input_pad))), "proxynop-input"))
+    {
+      GeglNode *self = gegl_pad_get_node (input_pad);
+      GList *llink;
+
+      self = GEGL_NODE (g_object_get_data (G_OBJECT (self), "graph"));
+
+      for (llink = self->sources; llink; llink = g_list_next (llink))
+        {
+          GeglConnection *connection = llink->data;
+          GeglNode *source_node = gegl_pad_get_node (gegl_connection_get_source_prop (connection));
+
+          if (! g_list_find (ret, source_node))
+            ret = g_list_append (ret, source_node);
+        }
     }
   return ret;
 }
@@ -270,8 +303,18 @@ gegl_operation_set_need_rect (GeglOperation *operation,
   g_assert (input_pad_name);
 
   pad = gegl_node_get_pad (operation->node, input_pad_name);
+
+  if (!pad && !strcmp (gegl_object_get_name (GEGL_OBJECT (operation->node)), "proxynop-input"))
+    {
+      GeglGraph *graph = GEGL_GRAPH (g_object_get_data (G_OBJECT (operation->node), "graph"));
+      g_assert (graph);
+      pad = gegl_node_get_pad (GEGL_NODE (graph), input_pad_name);
+    }
   if (!pad)
-    return;
+    {
+      g_warning ("buuu %s", gegl_node_get_debug_name (operation->node));
+      return;
+    }
 
   children = producer_nodes (pad);
 

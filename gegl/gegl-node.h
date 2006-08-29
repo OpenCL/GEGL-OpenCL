@@ -56,6 +56,7 @@ struct _GeglNode
   GList         *sinks;
 
   gboolean       is_root;
+  gboolean       is_graph;  /*< a node that is a graph, needs a bit special treatment */
   gint           refs;      /*< set to number of nodes that depends on it before evaluation begins,
                                 each time data is fetched from the op the reference count is dropped,
                                 when it drops to zero, the op is asked to clean it's pads

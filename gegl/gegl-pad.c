@@ -19,6 +19,7 @@
  */
 
 #include "config.h"
+#include <string.h>
 
 #include <glib-object.h>
 
@@ -163,18 +164,40 @@ gegl_pad_get_depends_on (GeglPad *self)
 {
   GList *depends_on = NULL;
 
-  if (gegl_pad_is_input (self) &&
-      gegl_pad_get_num_connections (self) == 1)
+  if (gegl_pad_is_input (self))
     {
-      GeglConnection *connection = g_list_nth_data (self->connections, 0);
+      gint i;
+      for (i=0; i<g_list_length (self->connections); i++)
+       {
+          GeglConnection *connection = g_list_nth_data (self->connections, i);
+          if (connection)
+            {
+              depends_on = g_list_append (depends_on,
+                                          gegl_connection_get_source_prop (connection));
+            }
+          else
+            {
+              g_warning ("hmm,. or perhaps just a non connected pad");
+            }
+       }
+      if (!strcmp (gegl_object_get_name (GEGL_OBJECT (self->node)), "proxynop-input"))
+        {
+          GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
+          GList *llink = graph->sources;
 
-      if (connection)
-        depends_on = g_list_append (depends_on,
-                                    gegl_connection_get_source_prop (connection));
+          for (llink = graph->sources; llink; llink = g_list_next (llink))
+            {
+              GeglConnection *connection = llink->data;
+              depends_on = g_list_append (depends_on,
+                                          gegl_connection_get_source_prop (connection));
+            }
+        }
+
     }
   else if (gegl_pad_is_output (self))
     {
       GList *input_pads = gegl_node_get_input_pads (self->node);
+          gint i;
 
       depends_on = g_list_copy (input_pads);
     }
