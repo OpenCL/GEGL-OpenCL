@@ -297,7 +297,7 @@ collapse_all (GType type)
     return;
 
   /* exclude plug-ins */
-  { 
+  if(0){ 
     GTypeClass *class = NULL;
     class = g_type_class_ref (type);
     if (GEGL_IS_OPERATION_CLASS (class) &&
@@ -334,7 +334,7 @@ expand_all (GType type)
     return;
 
   /* exclude plug-ins */
-  { 
+  if(0){ 
     GTypeClass *class = NULL;
     class = g_type_class_ref (type);
     if (GEGL_IS_OPERATION_CLASS (class) &&
@@ -372,7 +372,7 @@ introspect (GType type,
     return;
 
   /* exclude plug-ins */
-  { 
+  if(0){ 
     GTypeClass *class = NULL;
     class = g_type_class_ref (type);
     if (GEGL_IS_OPERATION_CLASS (class) &&
@@ -415,7 +415,7 @@ introspect_overview (GType type,
     return;
 
   /* exclude plug-ins */
-  {
+  if(0){
     GTypeClass *class = NULL;
     class = g_type_class_ref (type);
     if (GEGL_IS_OPERATION_CLASS (class) &&

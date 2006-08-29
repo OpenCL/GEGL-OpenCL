@@ -1,5 +1,10 @@
 2006-08-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/introspect.c: (collapse_all), (expand_all),
+	(introspect_overview): Include plug-ins in introspection.
+
+2006-08-30  Øyvind Kolås  <pippin@gimp.org>
+
 	Halfway done (functional) refactoring to make it possible to define
 	graphs inside nodes from operation plug-ins.
 
