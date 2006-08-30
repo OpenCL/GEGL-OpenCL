@@ -76,7 +76,7 @@ visit_pad (GeglVisitor *self,
         {
           GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (node), "graph"));
           g_assert (graph);
-          source_pad = gegl_node_get_pad (graph, "input");
+          source_pad = gegl_node_get_pad (graph, gegl_pad_get_name (pad));
           g_assert (source_pad);
           source_pad = gegl_pad_get_connected_to (source_pad);
         }

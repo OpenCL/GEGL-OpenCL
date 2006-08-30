@@ -100,6 +100,7 @@ gegl_pad_set_param_spec (GeglPad    *self,
   g_return_if_fail (GEGL_IS_PAD (self));
 
   self->param_spec = param_spec;
+  gegl_object_set_name (GEGL_OBJECT (self), g_param_spec_get_name (param_spec));
 }
 
 GeglConnection *
@@ -209,8 +210,7 @@ const gchar *
 gegl_pad_get_name (GeglPad *self)
 {
   g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
-
-  return g_param_spec_get_name (self->param_spec);
+  return gegl_object_get_name (GEGL_OBJECT (self));
 }
 
 GeglPad *
