@@ -1,5 +1,11 @@
 2006-08-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/introspect.c: Changed the sample to a simple graph that does
+	evaluate successfully, cleaned up the introspection code to not poke
+	through NULL pointers.
+
+2006-08-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/generated/math.rb: do componentwize arithmetic (request
 	RGB to get three components,. using greyscale will then give the same
 	value to all components.)

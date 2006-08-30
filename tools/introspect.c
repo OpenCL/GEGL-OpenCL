@@ -141,9 +141,9 @@ static void
 list_properties_simple (GType type)
 {
   GParamSpec **self;
-  GParamSpec **parent;
+  GParamSpec **parent = NULL;
   guint n_self;
-  guint n_parent;
+  guint n_parent=0;
   gint prop_no;
   gboolean first=TRUE;
 
@@ -153,9 +153,10 @@ list_properties_simple (GType type)
   self = g_object_class_list_properties (
             G_OBJECT_CLASS (g_type_class_ref (type)),
             &n_self);
-  parent = g_object_class_list_properties (
-            G_OBJECT_CLASS (g_type_class_ref (g_type_parent (type))),
-            &n_parent);
+  if (g_type_parent (type))
+    parent = g_object_class_list_properties (
+              G_OBJECT_CLASS (g_type_class_ref (g_type_parent (type))),
+              &n_parent);
 
   
   for (prop_no=0;prop_no<n_self;prop_no++)
@@ -196,9 +197,9 @@ list_properties (GType type,
                  gint  indent)
 {
   GParamSpec **self;
-  GParamSpec **parent;
+  GParamSpec **parent = NULL;
   guint n_self;
-  guint n_parent;
+  guint n_parent = 0;
   gint prop_no;
   gboolean first=TRUE;
 
@@ -208,6 +209,7 @@ list_properties (GType type,
   self = g_object_class_list_properties (
             G_OBJECT_CLASS (g_type_class_ref (type)),
             &n_self);
+  if (g_type_parent (type))
   parent = g_object_class_list_properties (
             G_OBJECT_CLASS (g_type_class_ref (g_type_parent (type))),
             &n_parent);
@@ -464,21 +466,19 @@ stuff (gint    argc,
   
     {
       GeglGraph *gegl = g_object_new (GEGL_TYPE_GRAPH, NULL);
-      GeglNode  *display         = gegl_graph_create_node (gegl,
-                    "class", "png-save",
-                    "path",      "/tmp/ick",
+
+      GeglNode  *display = gegl_graph_create_node (gegl,
+                    "class", "crop",
                     NULL);
-      GeglNode  *png_load      = gegl_graph_create_node (gegl,
-                    "class", "png-load",
-                    "path",      "data/100x100.png",
+      GeglNode  *png_load = gegl_graph_create_node (gegl,
+                    "class", "blank",
                     NULL);
 
       /* connect operations */
       gegl_node_connect   (display,     "input", png_load,   "output");
 
       /* then the whole output region */
-      gegl_node_apply (display, "output");
-
+      gegl_node_apply (GEGL_NODE (display), "output");
       g_object_unref (gegl);
     }
   return 0;
