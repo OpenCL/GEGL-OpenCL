@@ -1,5 +1,19 @@
 2006-08-30  Øyvind Kolås  <pippin@gimp.org>
 
+	Added two example meta operations, that are graph that are plugged
+	into the main GEGL graph as if they were a single node.
+
+	* gegl/gegl-chant.h: added CHANT_GRAPH
+	* operations/Makefile.am: added makefile.
+	* configure.in: added directory for meta operations.
+	* operations/meta/: new dir.
+	* operations/meta/Makefile.am: new file
+	* operations/meta/.cvsignore: new file
+	* operations/meta/dropshadow.c: A dropshadow filter.
+	* operations/meta/unsharp-mask.c: An unsharp mask filter.
+
+2006-08-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/introspect.c: (collapse_all), (expand_all),
 	(introspect_overview): Include plug-ins in introspection.
 

@@ -323,6 +323,7 @@ operations/core/Makefile
 operations/display/Makefile
 operations/file-io/Makefile
 operations/generated/Makefile
+operations/meta/Makefile
 operations/render/Makefile
 operations/transform/Makefile
 operations/transparency/Makefile

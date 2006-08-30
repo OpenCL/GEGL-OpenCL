@@ -243,7 +243,6 @@ refresh_cache (GeglOperationLoad *self)
             sprintf (xml, "<gegl><tree><node class='%s' path='%s'></node></tree></gegl>",
                  map->handler, self->path);
           }
-        g_warning ("%s", xml);
 
     temp_gegl = gegl_xml_parse (xml);
     gegl_node_apply (temp_gegl, "output");
