@@ -21,7 +21,7 @@
 #include "config.h"
 
 #include <glib-object.h>
-
+#include <string.h>
 #include "gegl-types.h"
 #include "gegl-graph.h"
 #include "gegl-node.h"
@@ -191,6 +191,10 @@ gegl_graph_get_pad_proxy (GeglGraph   *graph,
           gegl_pad_set_node (new_pad, nop);
           gegl_object_set_name (GEGL_OBJECT (new_pad), name);
           gegl_node_add_pad (node, new_pad);
+          if (!strcmp (name, "aux"))
+            {
+              g_object_set_data (G_OBJECT (nop), "is-aux", "foo");
+            }
         }
         g_object_set_data (G_OBJECT (nop), "graph", graph);
         node->is_graph = TRUE;
