@@ -1,3 +1,23 @@
+	* gegl/gegl-eval-visitor.c: (visit_pad): do not hardcode the name of
+	the pad to be "input".
+	* gegl/gegl-graph.c: (gegl_graph_get_pad_proxy): set name of padA
+
+
+	* gegl/gegl-pad.c: (gegl_pad_set_param_spec), (gegl_pad_get_name):
+	Use the gegl-name instead of the paramspec name (this might be just
+	a temporary fix though).
+
+	* gegl/gegl-xml.c: (start_element), (end_element): allow image and
+	layers in place of gegl and tree.
+	* gegl/gegl-node.c: (gegl_node_add_pad), (gegl_node_connect),
+	(gegl_node_set_property):
+
+2006-08-30  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-operation-point-composer.c: (evaluate_inner): If no input
+	received on input, and there is something on aux, just pass it
+	through.
+
 2006-08-30  Øyvind Kolås  <pippin@gimp.org>
 
 	* tools/introspect.c: Changed the sample to a simple graph that does

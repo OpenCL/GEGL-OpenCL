@@ -59,6 +59,14 @@ evaluate_inner (GeglOperation *operation,
   if(strcmp("output", output_pad))
     return FALSE;
 
+  if (!input && aux)
+    {
+        if (composer->output)
+          g_object_unref (composer->output);
+        composer->output = g_object_ref (aux);
+        return TRUE;
+    }
+
   {
     gfloat *buf = NULL, *aux_buf = NULL;
 
