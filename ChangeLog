@@ -1,5 +1,13 @@
 2006-08-30  Øyvind Kolås  <pippin@gimp.org>
 
+	Added synonyms to XML parser gegl=image nad tree=layers, this to aid
+	experimentation towards an Structured Open Unstable Raster Compositing
+	Embedding.
+
+	* gegl/gegl-xml.c: (start_element), (end_element):
+
+2006-08-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-eval-visitor.c: (visit_pad): do not hardcode the name of
 	the pad to be "input".
 	* gegl/gegl-graph.c: (gegl_graph_get_pad_proxy): set name of padA

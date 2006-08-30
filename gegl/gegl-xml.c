@@ -79,10 +79,12 @@ static void start_element (GMarkupParseContext *context,
  
   pd = user_data;
 
-  if (!strcmp (element_name, "gegl"))
+  if (!strcmp (element_name, "gegl")||
+      !strcmp (element_name, "image"))
     {
     }
-  else if (!strcmp (element_name, "tree"))
+  else if (!strcmp (element_name, "tree") ||
+           !strcmp (element_name, "layers"))
     {
       GeglNode *new = g_object_new (GEGL_TYPE_NODE, NULL);
       if (pd->gegl == NULL)
@@ -196,11 +198,13 @@ static void end_element (GMarkupParseContext *context,
  
   pd = user_data;
 
-  if (!strcmp (element_name, "gegl"))
+  if (!strcmp (element_name, "gegl")||
+      !strcmp (element_name, "image"))
     {
       /*ignored*/
     }
-  else if (!strcmp (element_name, "tree"))
+  else if (!strcmp (element_name, "tree") ||
+           !strcmp (element_name, "layers"))
     {
       if (gegl_node_get_pad (pd->iter, "input"))
         {
