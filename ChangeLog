@@ -1,5 +1,21 @@
 2006-08-30  Øyvind Kolås  <pippin@gimp.org>
 
+	Made operations rebuild if gegl headers have changed.
+
+	* operations/blur/Makefile.am,
+	* operations/color/Makefile.am,
+	* operations/core/Makefile.am,
+	* operations/display/Makefile.am,
+	* operations/file-io/Makefile.am,
+	* operations/generated/Makefile.am,
+	* operations/meta/Makefile.am,
+	* operations/render/Makefile.am,
+	* operations/transform/Makefile.am,
+	* operations/transparency/Makefile.am: Added dependency on the gegl
+	headers.
+
+2006-08-30  Øyvind Kolås  <pippin@gimp.org>
+
 	Added synonyms to XML parser gegl=image nad tree=layers, this to aid
 	experimentation towards an Structured Open Unstable Raster Compositing
 	Embedding.

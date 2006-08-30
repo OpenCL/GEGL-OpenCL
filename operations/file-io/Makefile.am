@@ -1,12 +1,9 @@
-# General minimalistic compile file for self contained single
-# file babl_extensions
-
-EXTRA_DIST=$(wildcard *.c)
-
-CFILES  = $(wildcard $(srcdir)/*.c)
-SOBJS   = $(subst $(srcdir)/,,$(CFILES:.c=.so))
-
+EXTRA_DIST      = $(wildcard *.c)
+CFILES          = $(wildcard $(srcdir)/*.c)
+SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=.so))
 INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=.so))
+GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
+	          $(wildcard $(top_srcdir)/gegl/buffer/*.h)
 
 all-local: $(SOBJS)
 
@@ -18,20 +15,15 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
 
-%.so: %.c
+%.so: %.c $(GEGLHEADERS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
-# If extensions needing external libraries are to be compiled with this make
-# file, each of them can be added according to this pattern:
-# extra.so: extra.c
-#	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
-
-png-load.so: png-load.c
+png-load.so: png-load.c $(GEGLHEADERS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(PNG_CFLAGS) $(PNG_LIBS)
-png-save.so: png-save.c
+png-save.so: png-save.c $(GEGLHEADERS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(PNG_CFLAGS) $(PNG_LIBS)
 
-jpg-load.so: jpg-load.c
+jpg-load.so: jpg-load.c $(GEGLHEADERS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(LIBJPEG)
 #############################################################################
 
