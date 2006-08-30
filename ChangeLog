@@ -1,3 +1,9 @@
+2006-08-31  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-node.c: (gegl_node_add_pad), (gegl_node_connect),
+	(gegl_node_set_property): disconnect the existing connection
+	when doing a reconnect on a source property.
+
 2006-08-30  Øyvind Kolås  <pippin@gimp.org>
 
 	Made operations rebuild if gegl headers have changed.

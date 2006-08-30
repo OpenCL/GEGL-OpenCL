@@ -275,9 +275,9 @@ gegl_node_add_pad (GeglNode *self,
 
   if (gegl_node_get_pad (self, gegl_pad_get_name (pad)))
     {
-      g_warning ("EEEEK in %s", gegl_node_get_debug_name (self));
+      g_warning ("EEEEK in %s for %s", gegl_node_get_debug_name (self), gegl_pad_get_name (pad));
     }
-  g_assert (!gegl_node_get_pad (self, gegl_pad_get_name (pad)));
+  if(0)g_assert (!gegl_node_get_pad (self, gegl_pad_get_name (pad)));
   self->pads = g_list_append (self->pads, pad);
 
   if (gegl_pad_is_output (pad))
@@ -360,6 +360,21 @@ gegl_node_connect (GeglNode    *sink,
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
   g_return_val_if_fail (GEGL_IS_NODE (source), FALSE);
 
+    {
+      GeglPad *pad;
+      GeglPad *other_pad;
+
+      pad = gegl_node_get_pad (sink, sink_prop_name);
+      if (pad)
+        other_pad = gegl_pad_get_connected_to (pad);
+      else
+        g_warning ("oops %s", sink_prop_name);
+
+    if (other_pad)
+      {
+        gegl_node_disconnect (sink, sink_prop_name, other_pad->node, gegl_pad_get_name (other_pad));
+      }
+    }
   if (pads_exist (sink, sink_prop_name, source, source_prop_name))
     {
       GeglPad   *sink_prop   = gegl_node_get_pad (sink,   sink_prop_name);
@@ -998,6 +1013,7 @@ gegl_node_set_property (GeglNode     *self,
       if (self->is_graph)
         {
           g_warning ("set_property for graph,. hmm");
+          /* FIXME: should this really be "input")? is_graph doesn't seem to be used,.. */
           g_object_set_property (G_OBJECT (gegl_graph_input (GEGL_GRAPH (self), "input")->operation),
                 property_name, value);
         }
