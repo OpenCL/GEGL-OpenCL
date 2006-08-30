@@ -1,5 +1,11 @@
 2006-08-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/generated/math.rb: do componentwize arithmetic (request
+	RGB to get three components,. using greyscale will then give the same
+	value to all components.)
+
+2006-08-30  Øyvind Kolås  <pippin@gimp.org>
+
 	Added two example meta operations, that are graph that are plugged
 	into the main GEGL graph as if they were a single node.
 

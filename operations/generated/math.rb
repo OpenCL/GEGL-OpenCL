@@ -52,7 +52,7 @@ chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if aux 
 static void init (ChantInstance *self)
 {
   GEGL_OPERATION_POINT_COMPOSER (self)->format = babl_format (\"RaGaBaA float\");
-  GEGL_OPERATION_POINT_COMPOSER (self)->aux_format = babl_format (\"Y float\");
+  GEGL_OPERATION_POINT_COMPOSER (self)->aux_format = babl_format (\"RGB float\");
 }
 
 static gboolean
@@ -91,16 +91,17 @@ evaluate (GeglOperation *op,
             {
               int  j;
               gfloat c;
-              gfloat value = *aux;
+              gfloat value;
               for (j=0; j<3; j++)
                   {
                       c=in[j];
+                      value=aux[j];
                       #{formula};
                       out[j]=c;
                   }
               out[3]=in[3];
               in += 4;
-              aux += 1;
+              aux += 3;
               out+= 4;
             }
       }
