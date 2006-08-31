@@ -1,5 +1,11 @@
 2006-08-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: added a dependency on all for README, making it
+	possible to ./autogen.sh && make distcheck # directly from CVS
+	checkout.
+
+2006-08-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* autogen.sh: commented out checks for gtkdocize, since it is not
 	currently used.
 

@@ -1,4 +1,4 @@
-# Process this file with automake to create Makefile.in.
+AUTOMAKE_OPTIONS = dist-bzip2
 
 SUBDIRS = gegl operations tools docs
 
@@ -18,7 +18,7 @@ DISTCLEANFILES = \
 if HAVE_W3M
 dist-check-w3m:
 
-README: docs/index.html
+README: all docs/index.html
 	$(W3M) -cols 72 -dump $< > $@
 else
 dist-check-w3m:
