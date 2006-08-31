@@ -1,4 +1,5 @@
 SUBDIRS=data
+.SILENT:
 
 EXTRA_DIST=$(wildcard *.xml)
 
@@ -10,9 +11,10 @@ all-local:
 	for XML in *.xml;do echo "<div style='margin-bottom:3em;'><a name='$$XML'></a><a href='$$XML'>$$XML</a><br/><img src='"`echo $$XML|sed s/xml/png/`"'></div>">>index.html;done
 	echo "</div></div></div></body></html>" >> index.html
 	export GEGL_PATH=$(top_builddir)/operations:$(top_builddir)/lib/gegl;\
-	for XML in $(srcdir)/*.xml;do echo $$XML;$(top_builddir)/gegl/gegl $$XML -o `echo $$XML|sed s/xml/png/`;done
+	for XML in $(srcdir)/*.xml;do make `echo $$XML|sed s/xml/png/`;done
 
-%.png:%.xml
+%.png:%.xml $(wildcard $(top_builddir)/operations/*/*.so)
+	echo $<
 	export GEGL_PATH=$(top_builddir)/operations:$(top_builddir)/lib/gegl;\
 	$(top_builddir)/gegl/gegl $< -o $@
 

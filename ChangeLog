@@ -1,5 +1,10 @@
 2006-08-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/gallery/Makefile.am: only rebuild changed samples (or if
+	any built plug-ins are newer than the pngs).
+
+2006-08-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (gegl_node_add_pad), (gegl_node_connect),
 	(gegl_node_set_property): disconnect the existing connection
 	when doing a reconnect on a source property.
