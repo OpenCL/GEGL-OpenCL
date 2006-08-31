@@ -1,5 +1,10 @@
 2006-08-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* autogen.sh: commented out checks for gtkdocize, since it is not
+	currently used.
+
+2006-08-31  Øyvind Kolås  <pippin@gimp.org>
+
 	Added a meta operation called layer.
 
 	* operations/meta/layer.c: (prepare), (associate), (class_init):
