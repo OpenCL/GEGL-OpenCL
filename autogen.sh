@@ -310,6 +310,7 @@ fi
 
 (cd operations/generated;./porter-duff.rb)
 (cd operations/generated;./math.rb)
+(cd operations/generated;./svg-blend.rb)
 
 echo
 echo "Now type 'make' to compile $PROJECT."

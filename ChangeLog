@@ -1,3 +1,12 @@
+2006-09-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/generated/svg-blend.rb: SVG blending mode operators.
+
+2006-09-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* autogen.sh: generate SVG blending mode operators.
+	* operations/generated/svg-blend.rb: SVG blending mode operators.
+
 2006-08-31  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-pad.c: (gegl_pad_get_depends_on): do lookups through
