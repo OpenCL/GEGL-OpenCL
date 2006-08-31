@@ -33,7 +33,7 @@ dnl set GEGL_BINARY_AGE _and_ GEGL_INTERFACE_AGE to 0.
 dnl The triplet 
 GEGL_MAJOR_VERSION=0
 GEGL_MINOR_VERSION=0
-GEGL_MICRO_VERSION=2
+GEGL_MICRO_VERSION=3
 GEGL_VERSION=$GEGL_MAJOR_VERSION.$GEGL_MINOR_VERSION.$GEGL_MICRO_VERSION
 
 dnl The X.Y in -lgegl-X.Y line. This is expected to stay 1.0 until Gegl 2.
@@ -303,7 +303,7 @@ AC_SUBST(SDL_CFLAGS)
 # Check for other items
 #######################
 
-PKG_CHECK_MODULES(BABL, babl >= 0.0)
+PKG_CHECK_MODULES(BABL, babl >= 0.0.4)
 PKG_CHECK_MODULES(CAIRO, cairo)
 PKG_CHECK_MODULES(PNG, libpng)
 

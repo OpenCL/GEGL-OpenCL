@@ -299,7 +299,7 @@ Some examples:
         </p>
         <ul>
             <li>glib (including gobject, and gmodule) 2.10 or newer</li>
-            <li><a href='http://pippin.gimp.org/babl'>babl</a> for describing pixel formats, and conversions between them (also from GNOME CVS)</li>
+            <li><a href='http://pippin.gimp.org/babl'>babl</a> 0.0.4 or newer</li>
             <li>dependencies for some of the operations.</li>
             <ul>
                  <li>SDL (display op)</li>

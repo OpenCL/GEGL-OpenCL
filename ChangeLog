@@ -1,5 +1,13 @@
 2006-08-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.in: increased version to 0.0.3 to have an odd number
+	indicating that this is a CVS version. Changed to depend on
+	babl>=0.0.4.
+	* docs/index-static.html.in: Changed dependencies to reflect
+	dependency on babl>=0.0.4.
+
+2006-08-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am: added a dependency on all for README, making it
 	possible to ./autogen.sh && make distcheck # directly from CVS
 	checkout.
