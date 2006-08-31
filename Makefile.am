@@ -19,7 +19,7 @@ if HAVE_W3M
 dist-check-w3m:
 
 README: all docs/index.html
-	$(W3M) -cols 72 -dump $< > $@
+	$(W3M) -cols 72 -dump docs/index.html > $@
 else
 dist-check-w3m:
 	@echo "*** w3m must be available in order to make dist"
