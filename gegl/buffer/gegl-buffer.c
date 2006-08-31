@@ -421,7 +421,7 @@ gegl_buffer_constructor (GType                  type,
   * have a enough tiles to be scanline iteratable.
   */ 
 
-  if (buffer->width < 1<<14)
+  if (0 && buffer->width < 1<<14)
     gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_CACHE,
                                                 "size", 
                                                 needed_tiles (buffer->width, tile_width)+1,

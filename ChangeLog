@@ -1,5 +1,13 @@
 2006-09-01  Øyvind Kolås  <pippin@gimp.org>
 
+	Turning off caching for now, until memory leaks have been debugged,
+	or an enviroment variable or other mechanism is used to toggle it.
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor):
+	* gegl/buffer/gegl-storage.c: (gegl_storage_constructor):
+
+2006-09-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/generated/svg-blend.rb: SVG blending mode operators.
 
 2006-09-01  Øyvind Kolås  <pippin@gimp.org>
