@@ -1,5 +1,11 @@
 2006-08-31  Øyvind Kolås  <pippin@gimp.org>
 
+	Added a meta operation called layer.
+
+	* operations/meta/layer.c: (prepare), (associate), (class_init):
+
+2006-08-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/gallery/Makefile.am: only rebuild changed samples (or if
 	any built plug-ins are newer than the pngs).
 
