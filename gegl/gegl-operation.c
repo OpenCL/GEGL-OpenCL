@@ -226,19 +226,6 @@ gegl_operation_get_have_rect (GeglOperation *operation,
     return NULL;
   pad = gegl_pad_get_connected_to (pad);
 
-  if (!pad && !strcmp (gegl_object_get_name (GEGL_OBJECT (operation->node)), "proxynop-input"))
-    {
-      GeglGraph *graph = GEGL_GRAPH (g_object_get_data (G_OBJECT (operation->node), "graph"));
-      if (!graph)
-        {
-          return NULL;
-        }
-
-      pad = gegl_node_get_pad (GEGL_NODE (graph), input_pad_name);
-      if (!pad)
-        return NULL;
-      pad = gegl_pad_get_connected_to (pad);
-    }
   if (!pad)
     return NULL;
   

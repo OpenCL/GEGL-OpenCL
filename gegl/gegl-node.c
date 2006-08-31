@@ -362,7 +362,7 @@ gegl_node_connect (GeglNode    *sink,
 
     {
       GeglPad *pad;
-      GeglPad *other_pad;
+      GeglPad *other_pad = NULL;
 
       pad = gegl_node_get_pad (sink, sink_prop_name);
       if (pad)

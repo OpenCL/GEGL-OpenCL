@@ -1,5 +1,16 @@
 2006-08-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-pad.c: (gegl_pad_get_depends_on): do lookups through
+	graphs.
+	* gegl/gegl-eval-visitor.c: (visit_pad): removed code made redundant
+	by above change.
+	* gegl/gegl-node.c: (gegl_node_connect): removed code made redundant
+	by above change.
+	* gegl/gegl-operation.c: (gegl_operation_get_have_rect): removed
+	code my redudnat by above change.
+
+2006-08-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.in: increased version to 0.0.3 to have an odd number
 	indicating that this is a CVS version. Changed to depend on
 	babl>=0.0.4.

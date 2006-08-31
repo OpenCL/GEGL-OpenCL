@@ -181,6 +181,7 @@ gegl_pad_get_depends_on (GeglPad *self)
               g_warning ("hmm,. or perhaps just a non connected pad");
             }
        }
+
       if (!strcmp (gegl_object_get_name (GEGL_OBJECT (self->node)), "proxynop-input"))
         {
           GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
@@ -198,7 +199,6 @@ gegl_pad_get_depends_on (GeglPad *self)
   else if (gegl_pad_is_output (self))
     {
       GList *input_pads = gegl_node_get_input_pads (self->node);
-          gint i;
 
       depends_on = g_list_copy (input_pads);
     }
@@ -213,9 +213,10 @@ gegl_pad_get_name (GeglPad *self)
   return gegl_object_get_name (GEGL_OBJECT (self));
 }
 
-GeglPad *
-gegl_pad_get_connected_to (GeglPad *self)
+static GeglPad *
+gegl_pad_get_connected_to2 (GeglPad *self)
 {
+  GeglPad *pad = NULL;
   g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
 
   if (gegl_pad_is_input (self) &&
@@ -223,10 +224,36 @@ gegl_pad_get_connected_to (GeglPad *self)
     {
       GeglConnection *connection = g_list_nth_data (self->connections, 0);
 
-      return gegl_connection_get_source_prop (connection);
+      pad = gegl_connection_get_source_prop (connection);
     }
 
-  return NULL;
+  return pad;
+}
+
+GeglPad *
+gegl_pad_get_connected_to (GeglPad *self)
+{
+  GeglPad *pad = gegl_pad_get_connected_to2 (self);
+  g_assert (GEGL_IS_PAD (self));
+
+  /* redirect for graphs */
+  if (!pad && !strcmp (gegl_object_get_name (GEGL_OBJECT (self->node)), "proxynop-input"))
+    {
+      GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
+      g_assert (graph);
+
+      if (g_object_get_data (G_OBJECT (self->node), "is-aux"))
+        {
+          pad = gegl_node_get_pad (graph, "aux");
+        }
+      else
+        {
+          pad = gegl_node_get_pad (graph, gegl_pad_get_name (self));
+        }
+      if (pad)
+         pad = gegl_pad_get_connected_to2 (pad);
+    }
+  return pad;
 }
 
 void
