@@ -1,8 +1,13 @@
 2006-09-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* AUTHORS: added Victor Bogado.
+	
+2006-09-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/file-io/load.c: (refresh_cache): s/class/operation/
 	* operations/meta/layer.c: (prepare): s/class/operation/
 	* tools/introspect.c: (stuff): s/class/opertation/
+	* docs/gallery/drop-shadow.xml: s/class/operation/
 
 2006-09-01  Øyvind Kolås  <pippin@gimp.org>
 
