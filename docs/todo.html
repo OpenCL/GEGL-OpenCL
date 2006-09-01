@@ -66,18 +66,17 @@ image data flows in the graph needs to be negotiatied between speed and quality.
 Make it possible to have multiple evaluations of the graph happening at the
 same time. (both the way the visitor pattern is implemented, and the reference
 counting for immediate freeing of buffers assumes a single thread of operation
-at the moment.)
+at the moment.) The multithreading would allow splitting the image up into
+rectangular "work sections", that are requested for rendering.
 </p>
 
-
-       <a name='XML'><h2>XML</h2></a>
-
+<a name='XML'><h2>XML</h2></a>
 
 <p>
 A file format is gradually evolving, the XML handling might even end up handling
 multiple different file formats, at the moment work being done to improve
 interoperability through efforts to define an Exhange format for structured
-Raster data.</p>
+Raster data. <a href='http://create.freedesktop.org/wiki/index.php/OpenRaster'>OpenRaster</a>, <a href='http://pippin.gimp.org/OpenRaster/'>xml sketches</a></p>
 
 
 <a name='Operations'><h2>Operations</h2></a>
@@ -86,13 +85,16 @@ Raster data.</p>
 
 <p>
 A GEGL operation acting as a proxy to legacy gimp plug-ins will drag a lot
-of the existing GIMP functionality along.
+of the existing GIMP functionality along. This probably depends on having a
+gimp-tile manager backend for gegl buffers working for as smooth as possible
+implementation.
 </p>
 
 <h3>GEGL operation API freeze</h3>
 
 <p>
-At some point the plug-in api for GEGL should be declared stable.
+At some point the plug-in api for GEGL should be declared stable. It isn't yet
+since it doesn't allow registering optimized versions. And there are some confusing naming of the methods needed when implementing.
 </p>
 
 <h3>Caching operation</h3>
