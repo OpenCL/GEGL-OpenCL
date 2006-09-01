@@ -121,7 +121,8 @@ static void associate (GeglOperation *operation)
   priv->output = gegl_graph_output (graph, "output");
 
   priv->load = gegl_graph_create_node (graph,
-                                       "class", "load",
+                                       "operation", "text",
+                                       "string", "foo",
                                        NULL);
 
   gegl_node_connect (priv->output, "input", priv->load, "output");

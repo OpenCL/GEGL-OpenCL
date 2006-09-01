@@ -1,5 +1,10 @@
 2006-09-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/file-io/load.c: (associate): do not set operation to
+	"load", causing an infinite loop.
+
+2006-09-01  Øyvind Kolås  <pippin@gimp.org>
+
 	Rewrote load operation to be a meta-op (it should probably move to
 	../meta due to this change.). All caching has been removed. Pending
 	a better way to cache buffers when subgraphs haven't changed to
