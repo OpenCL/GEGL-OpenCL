@@ -1,5 +1,9 @@
 2006-09-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* autogen.sh: added check for ruby.
+
+2006-09-01  Øyvind Kolås  <pippin@gimp.org>
+
 	Turning off caching for now, until memory leaks have been debugged,
 	or an enviroment variable or other mechanism is used to toggle it.
 

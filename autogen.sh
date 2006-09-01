@@ -185,6 +185,16 @@ if test x$AUTOMAKE != x; then
     check_version $VER $AUTOMAKE_REQUIRED_VERSION
 fi
 
+echo -n "checking for ruby ... "
+if which ruby > /dev/null; then
+    echo "yes"
+else
+    echo
+    echo "no You need ruby installed to run autogen.sh (only needed when building from CVS)"
+    echo
+    DIE=1
+fi
+
 
 echo -n "checking for glib-gettextize ... "
 if (glib-gettextize --version) < /dev/null > /dev/null 2>&1; then
