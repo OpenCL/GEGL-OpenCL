@@ -83,7 +83,7 @@ main (gint    argc,
     }
   else
     {
-      script = g_strdup ("<gegl><tree><node class='text' size='100' string='GEGL'/></tree></gegl>");
+      script = g_strdup ("<gegl><tree><node operation='text' size='100' string='GEGL'/></tree></gegl>");
     }
   
   gegl = gegl_xml_parse (script);
@@ -98,7 +98,7 @@ main (gint    argc,
       case GEGL_RUN_MODE_PNG:
         {
           GeglNode *output = gegl_graph_create_node (GEGL_GRAPH (gegl),
-                               "class", "png-save",
+                               "operation", "png-save",
                                "path", o->output,
                                NULL);
           gegl_node_connect (output, "input", gegl_graph_output (GEGL_GRAPH (gegl), "output"), "output");
@@ -124,7 +124,7 @@ main_interactive (GeglNode *gegl,
                   GeglOptions *o)
 {
   GeglNode *output = gegl_graph_create_node (GEGL_GRAPH (gegl),
-                       "class", "display",
+                       "operation", "display",
                        NULL);
 
   gegl_node_connect (output, "input", gegl_graph_output (GEGL_GRAPH (gegl), "output"), "output");

@@ -181,7 +181,7 @@ gegl_graph_get_pad_proxy (GeglGraph   *graph,
   pad = gegl_node_get_pad (node, name);
   if (!pad)
     {
-        GeglNode *nop = g_object_new (GEGL_TYPE_NODE, "class", "nop", "name", is_graph_input?"proxynop-input":"proxynop-output", NULL);
+        GeglNode *nop = g_object_new (GEGL_TYPE_NODE, "operation", "nop", "name", is_graph_input?"proxynop-input":"proxynop-output", NULL);
         GeglPad  *nop_pad = gegl_node_get_pad (nop, is_graph_input?"input":"output");
         gegl_graph_add_child (graph, nop);
         

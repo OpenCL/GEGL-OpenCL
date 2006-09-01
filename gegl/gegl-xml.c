@@ -53,8 +53,19 @@ static const gchar *name2val (const gchar **attribute_names,
                               const gchar **attribute_values,
                               const gchar  *name)
 {
+  int dep = !strcmp(name, "operation");
+
   while (*attribute_names)
     {
+      /* FIXME: remove when warning stop occuring */
+      if (dep && !strcmp(*attribute_names, "class"))
+        {
+          g_warning("Found the deprecated attribute \"class\" in the XML, "
+                    "update it to \"operation\"");
+
+          return *attribute_values;
+        }
+
       if (!strcmp (*attribute_names, name))
         {
           return *attribute_values;
@@ -113,13 +124,13 @@ static void start_element (GMarkupParseContext *context,
       if (!strcmp (element_name, "node"))
         {
           new = gegl_graph_create_node (pd->gegl,
-             "class", name2val (a, v, "class"),
+             "operation", name2val (a, v, "operation"),
              NULL);
         }
       else
         {
           new = gegl_graph_create_node (pd->gegl,
-             "class", element_name, 
+             "operation", element_name, 
              NULL);
         }
       g_assert (new);
@@ -139,7 +150,7 @@ static void start_element (GMarkupParseContext *context,
               pd->refs = g_list_append (pd->refs, new);
               goto set_clone_prop_as_well;
             }
-          else if (strcmp (*a, "class"))
+          else if (strcmp (*a, "operation"))
             {
               GeglOperation *operation;
               GParamSpec    *paramspec;
@@ -147,9 +158,10 @@ static void start_element (GMarkupParseContext *context,
 
               operation = new->operation;
               paramspec = g_object_class_find_property (G_OBJECT_GET_CLASS (operation), *a);
+
               if (!paramspec)
                 {
-                  g_warning ("property %s not found for %s", *a, gegl_node_get_debug_name (new));
+                   g_warning ("property %s not found for %s", *a, gegl_node_get_debug_name (new));
                 }
               else if (paramspec->value_type == G_TYPE_INT)
                 {
@@ -329,8 +341,8 @@ static void encode_node_attributes (SerializeState *ss,
 
   properties = gegl_node_list_properties (node, &n_properties);
  
-  gegl_node_get (node, "class", &class, NULL);
-  tuple (ss->buf, "class", class);
+  gegl_node_get (node, "operation", &class, NULL);
+  tuple (ss->buf, "operation", class);
   g_free (class);
 
   for (i=0; i<n_properties; i++)
@@ -443,7 +455,7 @@ static void add_stack (SerializeState *ss,
           else
             {
               gchar *class;
-              gegl_node_get (iter, "class", &class, NULL);
+              gegl_node_get (iter, "operation", &class, NULL);
 
               if (strcmp (class, "nop") &&
                   strcmp (class, "clone"))

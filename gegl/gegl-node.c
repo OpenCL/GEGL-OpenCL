@@ -89,14 +89,14 @@ gegl_node_class_init (GeglNodeClass * klass)
   gobject_class->get_property = get_property;
 
   g_object_class_install_property (gobject_class, PROP_OPERATION,
-                                   g_param_spec_object ("operation",
+                                   g_param_spec_object ("gegl_operation",
                                    "Operation Object",
                                    "The associated GeglOperation instance",
                                    GEGL_TYPE_OPERATION,
                                    G_PARAM_WRITABLE |
                                    G_PARAM_CONSTRUCT));
   g_object_class_install_property (gobject_class, PROP_OP_CLASS,
-                                   g_param_spec_string ("class",
+                                   g_param_spec_string ("operation",
                                    "Operation Type",
                                    "The type of associated GeglOperation",
                                    "",
@@ -855,7 +855,19 @@ gegl_node_set_valist (GeglNode     *self,
       GParamSpec *pspec = NULL;
       gchar      *error = NULL;
 
+      /* this code will make sure that all the code that is runing
+       * does not break FIXME: remove this after a while, when warnings have
+       * died down.
+       */
       if (!strcmp (property_name, "class"))
+        {
+          g_warning ("Setting a deprecated property \"class\" "
+                     "use \"operation\" instead");
+
+          property_name = "operation";
+        }
+
+      if (!strcmp (property_name, "operation"))
         {
           const gchar *op_class,
                       *op_first_property;
@@ -944,7 +956,14 @@ gegl_node_get_valist (GeglNode    *self,
       GParamSpec *pspec;
       gchar      *error;
 
-      if (!strcmp (property_name, "class") ||
+      if (!strcmp (property_name, "class"))
+        {
+          g_warning ("Getting a deprecated property \"class\" "
+                     "use \"operation\" instead");
+          property_name = "operation";
+        }
+
+      if (!strcmp (property_name, "operation") ||
           !strcmp (property_name, "name"))
         {
           pspec = g_object_class_find_property (
@@ -1002,7 +1021,15 @@ gegl_node_set_property (GeglNode     *self,
                         const gchar  *property_name,
                         const GValue *value)
 {
-  if (!strcmp (property_name, "class") ||
+  if (!strcmp (property_name, "operation"))
+    {
+      g_warning("Setting a deprecated property \"class\", "
+                "use \"operation\" instead.");
+      
+      g_object_set_property (G_OBJECT (self), "operation", value);
+    }
+
+  if (!strcmp (property_name, "operation") ||
       !strcmp (property_name, "name"))
     {
       g_object_set_property (G_OBJECT (self),
@@ -1033,7 +1060,7 @@ gegl_node_get_property (GeglNode    *self,
                         const gchar *property_name,
                         GValue      *value)
 {
-  if (!strcmp (property_name, "class") ||
+  if (!strcmp (property_name, "operation") ||
       !strcmp (property_name, "name")
    )
     {
