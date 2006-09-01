@@ -1,5 +1,10 @@
 2006-09-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* gallery/drop-shadow.xml: s/class/introspection/ due to gegl API
+	changes.
+
+2006-09-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* todo.html: updated some of the entires.
 
 2006-08-27  Øyvind Kolås  <pippin@gimp.org>
