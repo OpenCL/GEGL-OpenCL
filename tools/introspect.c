@@ -468,10 +468,10 @@ stuff (gint    argc,
       GeglGraph *gegl = g_object_new (GEGL_TYPE_GRAPH, NULL);
 
       GeglNode  *display = gegl_graph_create_node (gegl,
-                    "class", "crop",
+                    "operation", "crop",
                     NULL);
       GeglNode  *png_load = gegl_graph_create_node (gegl,
-                    "class", "blank",
+                    "operation", "blank",
                     NULL);
 
       /* connect operations */

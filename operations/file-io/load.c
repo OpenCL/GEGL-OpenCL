@@ -232,7 +232,7 @@ refresh_cache (GeglOperationLoad *self)
             if (strstr (self->path, map->extension))
               {
                 sprintf (xml,
-                  "<gegl ><tree><node class='%s' path='%s'></node></tree></gegl>",
+                  "<gegl ><tree><node operation='%s' path='%s'></node></tree></gegl>",
                   map->handler, self->path);
                 break;
               }
@@ -240,7 +240,7 @@ refresh_cache (GeglOperationLoad *self)
           }
         if (map->extension==NULL) /* no extension matched, using fallback */
           {
-            sprintf (xml, "<gegl><tree><node class='%s' path='%s'></node></tree></gegl>",
+            sprintf (xml, "<gegl><tree><node operation='%s' path='%s'></node></tree></gegl>",
                  map->handler, self->path);
           }
 

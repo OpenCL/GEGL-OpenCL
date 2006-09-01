@@ -61,7 +61,7 @@ prepare (GeglOperation *operation)
    *          requests to be made into members of the graph
    */
   gegl_node_set (priv->composite_op,
-                 "class", self->composite_op,
+                 "operation", self->composite_op,
                  NULL);
   if (self->src[0])
     {

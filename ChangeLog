@@ -1,5 +1,11 @@
 2006-09-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/file-io/load.c: (refresh_cache): s/class/operation/
+	* operations/meta/layer.c: (prepare): s/class/operation/
+	* tools/introspect.c: (stuff): s/class/opertation/
+
+2006-09-01  Øyvind Kolås  <pippin@gimp.org>
+
 	Applied patch from Victor Bogado that changes the name of the "class"
 	property of GeglNode to "operation". It also adds workaround code for
 	the deprecated behavior that issues warnings. (FIXME's have been
