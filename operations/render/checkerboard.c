@@ -18,7 +18,7 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #ifdef GEGL_CHANT_PROPERTIES
- 
+
 gegl_chant_int (x,        -G_MAXINT, G_MAXINT, 16, "")
 gegl_chant_int (y,        -G_MAXINT, G_MAXINT, 16, "")
 gegl_chant_int (x_offset, -G_MAXINT, G_MAXINT,  0, "")
@@ -53,10 +53,12 @@ evaluate (GeglOperation *operation,
   {
     GeglRect *result = gegl_operation_result_rect (operation);
     gfloat *buf;
+    gfloat color1[4] = {1., 1., 1., 1.};
+    gfloat color2[4] = {0., 0., 0., 1.};
 
     op_source->output = g_object_new (GEGL_TYPE_BUFFER,
-                        "format", 
-                        babl_format ("Y float"),
+                        "format",
+                        babl_format ("RGBA float"),
                         "x",      result->x,
                         "y",      result->y,
                         "width",  result->w,
@@ -71,37 +73,16 @@ evaluate (GeglOperation *operation,
             gint x;
             for (x=0; x < result->w; x++)
               {
-                gfloat val;
+                gfloat *rgba_color;
                 gint nx,ny;
 
                 nx = (x + result->x + self->x_offset)/self->x;
                 ny = (y + result->y + self->y_offset)/self->y;
 
-                if ( (nx%2) == 0 )
-                  {
-                    if ((ny%2)==0)
-                      {
-                        val = 0.0;
-                      }
-                    else
-                      {
-                        val = 1.0;
-                      }
-                  }
-                else
-                  {
-                    if ((ny%2)==0)
-                      {
-                        val = 1.0;
-                      }
-                    else
-                      {
-                        val = 0.0;
-                      }
-                  }
+                rgba_color = (nx+ny)%2 == 0 ? color1 : color2;
 
-                *dst = val;
-                dst ++;
+                memcpy(dst, rgba_color, 4*sizeof(gfloat));
+                dst += 4;
               }
           }
       }

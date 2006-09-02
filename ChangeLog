@@ -1,5 +1,11 @@
 2006-09-02  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* operations/render/checkerboard.c: Applied slightly modified patch
+	from Martin Nordholts which makes the checkerboard operation use the
+	'RGBA float' pixel format. Also removes lots of if cases.
+
+2006-09-02  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* gegl/buffer/.cvsignore
 	* gegl/module/.cvsignore
 	* tools/.cvsignore: Added .deps
