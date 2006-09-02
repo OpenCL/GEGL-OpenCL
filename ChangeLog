@@ -1,5 +1,9 @@
 2006-09-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-extension-handler.h: do not include config.h
+
+2006-09-02  Øyvind Kolås  <pippin@gimp.org>
+
 	Added the ability to register operations for extensions, thus making
 	it possible for the load operation to handle new file input
 	operations.

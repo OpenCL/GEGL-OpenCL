@@ -20,7 +20,6 @@
 #ifndef GEGL_EXTENSION_HANDLER_H
 #define GEGL_EXTENSION_HANDLER_H
 
-#include "config.h"
 #include <glib.h>
 
 void          gegl_extension_handler_register (const gchar *extension,
