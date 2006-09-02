@@ -17,18 +17,18 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
  
-chant_string (path, "/tmp/romedalen.jpg", "Path to jpg file on disk to load")
+gegl_chant_string (path, "/tmp/romedalen.jpg", "Path to jpg file on disk to load")
 
 #else
 
-#define CHANT_SOURCE
-#define CHANT_NAME            jpg_load
-#define CHANT_DESCRIPTION     "loads a jpeg file using libjpeg"
-#define CHANT_SELF            "jpg-load.c"
-#define CHANT_CATEGORIES      "hidden"
-#define CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_SOURCE
+#define GEGL_CHANT_NAME            jpg_load
+#define GEGL_CHANT_DESCRIPTION     "loads a jpeg file using libjpeg"
+#define GEGL_CHANT_SELF            "jpg-load.c"
+#define GEGL_CHANT_CATEGORIES      "hidden"
+#define GEGL_CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 #include <stdio.h>
 #include <jpeglib.h>
@@ -49,7 +49,7 @@ evaluate (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE (operation);
-  ChantInstance       *self      = CHANT_INSTANCE (operation);
+  ChantInstance       *self      = GEGL_CHANT_INSTANCE (operation);
   gint           width;
   gint           height;
   gint           result;
@@ -104,7 +104,7 @@ evaluate (GeglOperation *operation,
 static gboolean
 calc_have_rect (GeglOperation *operation)
 {
-  ChantInstance       *self      = CHANT_INSTANCE (operation);
+  ChantInstance       *self      = GEGL_CHANT_INSTANCE (operation);
   gint width, height;
   gint status;
   status = query_jpg (self->path, &width, &height);

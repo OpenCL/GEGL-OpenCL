@@ -17,18 +17,18 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 
-chant_double(radius, 0.0, 30.0, 1.4, "Radius")
-chant_double(scale,  0.0, 100.0, 10.0, "Scale")
+gegl_chant_double(radius, 0.0, 30.0, 1.4, "Radius")
+gegl_chant_double(scale,  0.0, 100.0, 10.0, "Scale")
 
 #else
 
-#define CHANT_GRAPH
-#define CHANT_NAME            unsharp_mask
-#define CHANT_DESCRIPTION     "Performs an unsharp mask"
-#define CHANT_SELF            "unsharp-mask.c"
-#define CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_GRAPH
+#define GEGL_CHANT_NAME            unsharp_mask
+#define GEGL_CHANT_DESCRIPTION     "Performs an unsharp mask"
+#define GEGL_CHANT_SELF            "unsharp-mask.c"
+#define GEGL_CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 
 typedef struct _Priv Priv;
@@ -51,7 +51,7 @@ static void associate (GeglOperation *operation)
   Priv          *priv;
   GeglGraph     *graph;
 
-  self       = CHANT_INSTANCE (operation);
+  self       = GEGL_CHANT_INSTANCE (operation);
   priv       = g_malloc0 (sizeof (Priv));
   self->priv = (void*) priv;
 
@@ -95,7 +95,7 @@ static void associate (GeglOperation *operation)
 
 static void prepare (GeglOperation *operation)
 {
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   Priv          *priv = (Priv*)self->priv;
 
   gegl_node_set (priv->multiply, "value",    self->scale,

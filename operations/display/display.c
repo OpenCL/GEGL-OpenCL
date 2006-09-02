@@ -17,23 +17,23 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 
-chant_string(window_title, "window_title", "Title to be given output window")
-chant_string(icon_title, "icon_title", "Icon to be used for output window")
-chant_pointer(screen, "private")
-chant_int(w, 0, 1000, 0, "private")
-chant_int(h, 0, 1000, 0, "private")
-chant_int(width, 0, 1000, 0, "private")
-chant_int(height, 0, 1000, 0, "private")
+gegl_chant_string(window_title, "window_title", "Title to be given output window")
+gegl_chant_string(icon_title, "icon_title", "Icon to be used for output window")
+gegl_chant_pointer(screen, "private")
+gegl_chant_int(w, 0, 1000, 0, "private")
+gegl_chant_int(h, 0, 1000, 0, "private")
+gegl_chant_int(width, 0, 1000, 0, "private")
+gegl_chant_int(height, 0, 1000, 0, "private")
 
 #else
 
-#define CHANT_FILTER
-#define CHANT_NAME        display
-#define CHANT_DESCRIPTION "Displays the input buffer in an SDL window (restricted to one display op/process, due to SDL implementation issues, a gtk+ based replacement would be nice."
-#define CHANT_SELF        "display.c"
-#define CHANT_CATEGORIES  "output"
+#define GEGL_CHANT_FILTER
+#define GEGL_CHANT_NAME        display
+#define GEGL_CHANT_DESCRIPTION "Displays the input buffer in an SDL window (restricted to one display op/process, due to SDL implementation issues, a gtk+ based replacement would be nice."
+#define GEGL_CHANT_SELF        "display.c"
+#define GEGL_CHANT_CATEGORIES  "output"
 #include "gegl-chant.h"
 
 #include <SDL.h>
@@ -82,7 +82,7 @@ evaluate (GeglOperation *operation,
           const gchar *output_prop)
 {
   GeglOperationFilter *op_filter = GEGL_OPERATION_FILTER (operation);
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   GeglBuffer   *source;
   GeglRect     *need    = gegl_operation_need_rect (operation);
   SDL_Surface **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");

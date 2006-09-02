@@ -17,22 +17,22 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 
-chant_string(composite_op, "over", "Composite operation to use")
-chant_double(opacity, 0.0, 1.0, 1.0, "Opacity")
-chant_double(x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, "horizontal position")
-chant_double(y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, "vertical position")
-chant_string(src, "", "source datafile (png, jpg, raw, svg, bmp, tif, ..)")
-chant_pointer(private, "private stuff do not touch")
+gegl_chant_string(composite_op, "over", "Composite operation to use")
+gegl_chant_double(opacity, 0.0, 1.0, 1.0, "Opacity")
+gegl_chant_double(x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, "horizontal position")
+gegl_chant_double(y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, "vertical position")
+gegl_chant_string(src, "", "source datafile (png, jpg, raw, svg, bmp, tif, ..)")
+gegl_chant_pointer(private, "private stuff do not touch")
 
 #else
 
-#define CHANT_GRAPH
-#define CHANT_NAME            layer
-#define CHANT_DESCRIPTION     "A layer in the traditional sense"
-#define CHANT_SELF            "layer.c"
-#define CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_GRAPH
+#define GEGL_CHANT_NAME            layer
+#define GEGL_CHANT_DESCRIPTION     "A layer in the traditional sense"
+#define GEGL_CHANT_SELF            "layer.c"
+#define GEGL_CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 
 typedef struct _Priv Priv;
@@ -52,7 +52,7 @@ struct _Priv
 static void
 prepare (GeglOperation *operation)
 {
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   Priv *priv;
   priv = (Priv*)self->priv;
 
@@ -85,7 +85,7 @@ prepare (GeglOperation *operation)
 
 static void associate (GeglOperation *operation)
 {
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   Priv *priv = (Priv*)self->priv;
   GeglGraph *graph;
   g_assert (priv == NULL);

@@ -17,18 +17,18 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 
-chant_double (value, -100.0, 100.0, 0.5, "global threshold level (used when there is no aux input")
+gegl_chant_double (value, -100.0, 100.0, 0.5, "global threshold level (used when there is no aux input")
 
 #else
 
-#define CHANT_POINT_COMPOSER
-#define CHANT_NAME            threshold
-#define CHANT_DESCRIPTION     "thresholds the image to white/black based on either the global value set in the value property, or per pixel from the aux input"
-#define CHANT_SELF            "threshold.c"
-#define CHANT_CATEGORIES      "color"
-#define CHANT_CONSTRUCT
+#define GEGL_CHANT_POINT_COMPOSER
+#define GEGL_CHANT_NAME            threshold
+#define GEGL_CHANT_DESCRIPTION     "thresholds the image to white/black based on either the global value set in the value property, or per pixel from the aux input"
+#define GEGL_CHANT_SELF            "threshold.c"
+#define GEGL_CHANT_CATEGORIES      "color"
+#define GEGL_CHANT_CONSTRUCT
 #include "gegl-chant.h"
 
 static void init (ChantInstance *self)
@@ -52,7 +52,7 @@ evaluate (GeglOperation *op,
 
   if (aux == NULL)
     {
-      gfloat value = CHANT_INSTANCE (op)->value;
+      gfloat value = GEGL_CHANT_INSTANCE (op)->value;
       for (i=0; i<n_pixels; i++)
         {
           out[0] = in[0]>=value?1.0:0.0;

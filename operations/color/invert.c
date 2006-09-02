@@ -17,16 +17,16 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
    /* no properties */
 #else
 
-#define CHANT_POINT_FILTER
-#define CHANT_NAME          invert
-#define CHANT_DESCRIPTION   "inverts the components (except alpha, one by one)"
-#define CHANT_SELF          "invert.c"
-#define CHANT_CATEGORIES    "color"
-#define CHANT_CONSTRUCT
+#define GEGL_CHANT_POINT_FILTER
+#define GEGL_CHANT_NAME          invert
+#define GEGL_CHANT_DESCRIPTION   "inverts the components (except alpha, one by one)"
+#define GEGL_CHANT_SELF          "invert.c"
+#define GEGL_CHANT_CATEGORIES    "color"
+#define GEGL_CHANT_CONSTRUCT
 #include "gegl-chant.h"
 
 static void init (ChantInstance *self)

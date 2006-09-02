@@ -17,21 +17,21 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
  
-chant_int (x,        -G_MAXINT, G_MAXINT, 16, "")
-chant_int (y,        -G_MAXINT, G_MAXINT, 16, "")
-chant_int (x_offset, -G_MAXINT, G_MAXINT,  0, "")
-chant_int (y_offset, -G_MAXINT, G_MAXINT,  0, "")
+gegl_chant_int (x,        -G_MAXINT, G_MAXINT, 16, "")
+gegl_chant_int (y,        -G_MAXINT, G_MAXINT, 16, "")
+gegl_chant_int (x_offset, -G_MAXINT, G_MAXINT,  0, "")
+gegl_chant_int (y_offset, -G_MAXINT, G_MAXINT,  0, "")
 
 #else
 
-#define CHANT_SOURCE
-#define CHANT_NAME           checkerboard
-#define CHANT_DESCRIPTION    "Black and white checkerboard renderer."
+#define GEGL_CHANT_SOURCE
+#define GEGL_CHANT_NAME           checkerboard
+#define GEGL_CHANT_DESCRIPTION    "Black and white checkerboard renderer."
 
-#define CHANT_SELF           "checkerboard.c"
-#define CHANT_CATEGORIES      "sources:render"
+#define GEGL_CHANT_SELF           "checkerboard.c"
+#define GEGL_CHANT_CATEGORIES      "sources:render"
 #include "gegl-chant.h"
 
 static gboolean
@@ -40,7 +40,7 @@ evaluate (GeglOperation *operation,
 {
   GeglRect  *need;
   GeglOperationSource  *op_source = GEGL_OPERATION_SOURCE(operation);
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
 
   if(strcmp("output", output_prop))
     return FALSE;

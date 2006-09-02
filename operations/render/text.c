@@ -17,21 +17,21 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
  
-chant_string (string, "Hello", "utf8 string to display")
-chant_double (size, 1.0, 2048.0, 10.0, "approximate height of text in pixels")
-chant_pointer (cached, "private")
-chant_string (cached_string, "", "private")
+gegl_chant_string (string, "Hello", "utf8 string to display")
+gegl_chant_double (size, 1.0, 2048.0, 10.0, "approximate height of text in pixels")
+gegl_chant_pointer (cached, "private")
+gegl_chant_string (cached_string, "", "private")
 
 #else
 
-#define CHANT_SOURCE
-#define CHANT_NAME            text
-#define CHANT_DESCRIPTION     "Display a string of text using cairo"
-#define CHANT_SELF            "text.c"
-#define CHANT_CATEGORIES      "sources:render"
-#define CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_SOURCE
+#define GEGL_CHANT_NAME            text
+#define GEGL_CHANT_DESCRIPTION     "Display a string of text using cairo"
+#define GEGL_CHANT_SELF            "text.c"
+#define GEGL_CHANT_CATEGORIES      "sources:render"
+#define GEGL_CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 
 #include <cairo.h>
@@ -76,7 +76,7 @@ evaluate (GeglOperation *operation,
 {
   GeglRect  *have;
   GeglOperationSource     *op_source = GEGL_OPERATION_SOURCE(operation);
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   gint       width;
   gint       height;
 
@@ -147,7 +147,7 @@ evaluate (GeglOperation *operation,
 static gboolean
 calc_have_rect (GeglOperation *operation)
 {
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   gdouble width, height;
   gint status = FALSE;
 
@@ -177,7 +177,7 @@ calc_have_rect (GeglOperation *operation)
 
 static void dispose (GObject *gobject)
 {
-  ChantInstance *self = CHANT_INSTANCE (gobject);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (gobject);
   if (self->cached)
     {
       g_object_unref (self->cached);

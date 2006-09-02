@@ -17,16 +17,16 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 
 #else
 
-#define CHANT_SOURCE
-#define CHANT_NAME           blank
-#define CHANT_DESCRIPTION    "Blank Source"
+#define GEGL_CHANT_SOURCE
+#define GEGL_CHANT_NAME           blank
+#define GEGL_CHANT_DESCRIPTION    "Blank Source"
 
-#define CHANT_SELF           "blank.c"
-#define CHANT_CATEGORIES      "sources"
+#define GEGL_CHANT_SELF           "blank.c"
+#define GEGL_CHANT_CATEGORIES      "sources"
 #include "gegl-chant.h"
 
 static gboolean

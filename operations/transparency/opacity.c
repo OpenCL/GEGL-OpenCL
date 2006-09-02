@@ -17,16 +17,16 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
-chant_double (value, -10.0, 10.0, 0.5, "global opacity value, used if no aux input is provided")
+#ifdef GEGL_CHANT_SELF
+gegl_chant_double (value, -10.0, 10.0, 0.5, "global opacity value, used if no aux input is provided")
 #else
 
-#define CHANT_POINT_COMPOSER
-#define CHANT_NAME            opacity
-#define CHANT_DESCRIPTION     "weights the opacity of the input with either the value of the aux input or the global value property"
-#define CHANT_SELF            "opacity.c"
-#define CHANT_CATEGORIES      "transparency"
-#define CHANT_CONSTRUCT
+#define GEGL_CHANT_POINT_COMPOSER
+#define GEGL_CHANT_NAME            opacity
+#define GEGL_CHANT_DESCRIPTION     "weights the opacity of the input with either the value of the aux input or the global value property"
+#define GEGL_CHANT_SELF            "opacity.c"
+#define GEGL_CHANT_CATEGORIES      "transparency"
+#define GEGL_CHANT_CONSTRUCT
 #include "gegl-chant.h"
 
 static void init (ChantInstance *self)
@@ -50,7 +50,7 @@ evaluate (GeglOperation *op,
 
   if (aux == NULL)
     {
-      gfloat value = CHANT_INSTANCE (op)->value;
+      gfloat value = GEGL_CHANT_INSTANCE (op)->value;
       for (i=0; i<n_pixels; i++)
         {
           gint j;

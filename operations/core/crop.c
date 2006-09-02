@@ -17,29 +17,29 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 
-chant_double (x,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "left most pixel coordinate")
-chant_double (y,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "top pixel coordinate")
-chant_double (width,  -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "width in pixels")
-chant_double (height, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "height in pixels")
+gegl_chant_double (x,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "left most pixel coordinate")
+gegl_chant_double (y,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "top pixel coordinate")
+gegl_chant_double (width,  -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "width in pixels")
+gegl_chant_double (height, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "height in pixels")
 
 #else
 
-#define CHANT_FILTER
-#define CHANT_NAME            crop
-#define CHANT_SELF            "crop.c"
-#define CHANT_DESCRIPTION     "crops the image, can be used to rectangulary" \
+#define GEGL_CHANT_FILTER
+#define GEGL_CHANT_NAME            crop
+#define GEGL_CHANT_SELF            "crop.c"
+#define GEGL_CHANT_DESCRIPTION     "crops the image, can be used to rectangulary" \
                               "clip buffers, as well as specifying what " \
                               "portion of a composition to render to file"
-#define CHANT_CATEGORIES      "geometry"
-#define CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CATEGORIES      "geometry"
+#define GEGL_CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 
 
 #include <stdio.h>
 
-int chant_foo = 0;
+int gegl_chant_foo = 0;
 
 /* Actual image processing code
  ************************************************************************/
@@ -49,7 +49,7 @@ evaluate (GeglOperation *operation,
 {
   GeglOperationFilter    *filter = GEGL_OPERATION_FILTER(operation);
   GeglBuffer  *input  = filter->input;
-  ChantInstance *crop = CHANT_INSTANCE (operation);
+  ChantInstance *crop = GEGL_CHANT_INSTANCE (operation);
 
   if(strcmp("output", output_prop))
     return FALSE;

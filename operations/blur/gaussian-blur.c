@@ -20,19 +20,19 @@
  * in "Signal Processing 44 (1995) 139 - 151"
  */
 
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
  
-chant_double (radius_x, -0.91675, 500.0, 4.0, "blur radius in horizontal direction.")
-chant_double (radius_y, -0.91675, 500.0, 4.0, "blur radius in vertical direction.")
+gegl_chant_double (radius_x, -0.91675, 500.0, 4.0, "blur radius in horizontal direction.")
+gegl_chant_double (radius_y, -0.91675, 500.0, 4.0, "blur radius in vertical direction.")
 
 #else
 
-#define CHANT_FILTER
-#define CHANT_NAME            gaussian_blur
-#define CHANT_DESCRIPTION     "Performs an averaging of neighbouring pixels with the normal distribution as weighting."
-#define CHANT_SELF            "gaussian-blur.c"
-#define CHANT_CATEGORIES      "blur"
-#define CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_FILTER
+#define GEGL_CHANT_NAME            gaussian_blur
+#define GEGL_CHANT_DESCRIPTION     "Performs an averaging of neighbouring pixels with the normal distribution as weighting."
+#define GEGL_CHANT_SELF            "gaussian-blur.c"
+#define GEGL_CHANT_CATEGORIES      "blur"
+#define GEGL_CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 
 #include <math.h>
@@ -68,7 +68,7 @@ evaluate (GeglOperation *operation,
   ChantInstance *self;
 
   filter = GEGL_OPERATION_FILTER (operation);
-  self   = CHANT_INSTANCE (operation);
+  self   = GEGL_CHANT_INSTANCE (operation);
 
   GeglBuffer *input  = filter->input;
   GeglBuffer *output;
@@ -289,7 +289,7 @@ static gboolean
 calc_have_rect (GeglOperation *operation)
 {
   GeglRect *in_rect = gegl_operation_get_have_rect (operation, "input");
-  ChantInstance* self = CHANT_INSTANCE(operation);
+  ChantInstance* self = GEGL_CHANT_INSTANCE(operation);
   gint radius_x       = ceil(self->radius_x+0.5);
   gint radius_y       = ceil(self->radius_y+0.5);
   if(!in_rect)
@@ -306,7 +306,7 @@ static gboolean
 calc_need_rect (GeglOperation *self)
 {
   GeglRect  *need   = gegl_operation_need_rect (self);
-  ChantInstance *blur = CHANT_INSTANCE(self);
+  ChantInstance *blur = GEGL_CHANT_INSTANCE(self);
   gint radius_x = ceil(blur->radius_x+0.5);
   gint radius_y = ceil(blur->radius_y+0.5);
 

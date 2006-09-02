@@ -17,18 +17,18 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
  
-chant_double (radius, 0.0, 200.0, 4.0, "radius of square pixel region, (width and height will be radius*2+1.")
+gegl_chant_double (radius, 0.0, 200.0, 4.0, "radius of square pixel region, (width and height will be radius*2+1.")
 
 #else
 
-#define CHANT_FILTER
-#define CHANT_NAME            box_blur
-#define CHANT_DESCRIPTION     "Performs an averaging of a square box of pixels."
-#define CHANT_SELF            "box-blur.c"
-#define CHANT_CATEGORIES      "blur"
-#define CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_FILTER
+#define GEGL_CHANT_NAME            box_blur
+#define GEGL_CHANT_DESCRIPTION     "Performs an averaging of a square box of pixels."
+#define GEGL_CHANT_SELF            "box-blur.c"
+#define GEGL_CHANT_CATEGORIES      "blur"
+#define GEGL_CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 
 static void
@@ -53,7 +53,7 @@ evaluate (GeglOperation *operation,
   ChantInstance *self;
 
   filter = GEGL_OPERATION_FILTER (operation);
-  self   = CHANT_INSTANCE (operation);
+  self   = GEGL_CHANT_INSTANCE (operation);
 
   GeglBuffer *input  = filter->input;
   GeglBuffer *output;
@@ -225,7 +225,7 @@ static gboolean
 calc_have_rect (GeglOperation *operation)
 {
   GeglRect *in_rect = gegl_operation_get_have_rect (operation, "input");
-  ChantInstance *blur = CHANT_INSTANCE (operation);
+  ChantInstance *blur = GEGL_CHANT_INSTANCE (operation);
   gint       radius = ceil(blur->radius);
   if (!in_rect)
     return FALSE;
@@ -240,7 +240,7 @@ calc_have_rect (GeglOperation *operation)
 static gboolean
 calc_need_rect (GeglOperation *self)
 {
-  ChantInstance *blur = CHANT_INSTANCE (self);
+  ChantInstance *blur = GEGL_CHANT_INSTANCE (self);
   GeglRect  *need   = gegl_operation_need_rect (self);
   gint       radius = ceil(blur->radius);
 

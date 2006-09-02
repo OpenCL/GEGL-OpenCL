@@ -17,18 +17,18 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
  
-chant_double (contrast,   -100.0, 100.0, 1.0, "Range scale factor")
-chant_double (brightness,  -10.0,  10.0, 0.0, "Amount to increase brightness")
+gegl_chant_double (contrast,   -100.0, 100.0, 1.0, "Range scale factor")
+gegl_chant_double (brightness,  -10.0,  10.0, 0.0, "Amount to increase brightness")
 
 #else
 
-#define CHANT_POINT_FILTER
-#define CHANT_NAME         brightness_contrast
-#define CHANT_DESCRIPTION  "Changes the light level and contrast."
-#define CHANT_SELF         "brightness-contrast.c"
-#define CHANT_CATEGORIES   "color"
+#define GEGL_CHANT_POINT_FILTER
+#define GEGL_CHANT_NAME         brightness_contrast
+#define GEGL_CHANT_DESCRIPTION  "Changes the light level and contrast."
+#define GEGL_CHANT_SELF         "brightness-contrast.c"
+#define GEGL_CHANT_CATEGORIES   "color"
 #include "gegl-chant.h"
 
 static gboolean
@@ -37,7 +37,7 @@ evaluate (GeglOperation *op,
           void          *out_buf,
           glong          n_pixels)
 {
-  ChantInstance *self = CHANT_INSTANCE (op);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (op);
   gint o;
   gfloat *p = in_buf;  /* it is inplace anyways, and out_but==in_buf) */
 

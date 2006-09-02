@@ -17,18 +17,18 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 
-chant_string (ref, "", "The reference ID used as input.")
+gegl_chant_string (ref, "", "The reference ID used as input.")
 
 #else
 
-#define CHANT_FILTER
-#define CHANT_NAME        clone
-#define CHANT_DESCRIPTION "A routing op used by the XML data model to implement clones."
+#define GEGL_CHANT_FILTER
+#define GEGL_CHANT_NAME        clone
+#define GEGL_CHANT_DESCRIPTION "A routing op used by the XML data model to implement clones."
 
-#define CHANT_SELF        "clone.c"
-#define CHANT_CATEGORIES  "misc"
+#define GEGL_CHANT_SELF        "clone.c"
+#define GEGL_CHANT_CATEGORIES  "misc"
 #include "gegl-chant.h"
 
 

@@ -17,25 +17,25 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
  
-chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "x coordinate of new origin")
-chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "y coordinate of new origin")
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "x coordinate of new origin")
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "y coordinate of new origin")
 
 #else
 
-#define CHANT_FILTER
-#define CHANT_NAME            shift
-#define CHANT_DESCRIPTION     "Translate the buffer, an integer amount of pixels."
-#define CHANT_SELF            "shift.c"
-#define CHANT_CATEGORIES      "geometry"
-#define CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_FILTER
+#define GEGL_CHANT_NAME            shift
+#define GEGL_CHANT_DESCRIPTION     "Translate the buffer, an integer amount of pixels."
+#define GEGL_CHANT_SELF            "shift.c"
+#define GEGL_CHANT_CATEGORIES      "geometry"
+#define GEGL_CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 
 
 #include <stdio.h>
 
-int chant_foo = 0;
+int gegl_chant_foo = 0;
   
 /* Actual image processing code
  ************************************************************************/

@@ -33,16 +33,16 @@ a.each do
 
     file.write copyright
     file.write "
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 /* no properties */
 #else
 
-#define CHANT_POINT_COMPOSER
-#define CHANT_NAME          #{name}
-#define CHANT_DESCRIPTION   \"SVG blend operation #{name} (c = #{formula})\"
-#define CHANT_CATEGORIES    \"compositors:svgfilter\"
-#define CHANT_SELF          \"#{filename}\"
-#define CHANT_CONSTRUCT
+#define GEGL_CHANT_POINT_COMPOSER
+#define GEGL_CHANT_NAME          #{name}
+#define GEGL_CHANT_DESCRIPTION   \"SVG blend operation #{name} (c = #{formula})\"
+#define GEGL_CHANT_CATEGORIES    \"compositors:svgfilter\"
+#define GEGL_CHANT_SELF          \"#{filename}\"
+#define GEGL_CHANT_CONSTRUCT
 #include \"gegl-chant.h\"
 
 static void init (ChantInstance *self)

@@ -18,14 +18,14 @@
  * Copyright 2006 Philip Lafleur
  */
 
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 
-chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0., "")
+gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0., "")
 
 #else
 
-#define CHANT_NAME rotate
-#define CHANT_SELF "rotate.c"
+#define GEGL_CHANT_NAME rotate
+#define GEGL_CHANT_SELF "rotate.c"
 #include "chant.h"
 
 #include <math.h>

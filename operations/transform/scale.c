@@ -18,15 +18,15 @@
  * Copyright 2006 Philip Lafleur
  */
 
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 
-chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "")
-chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "")
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "")
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "")
 
 #else
 
-#define CHANT_NAME scale
-#define CHANT_SELF "scale.c"
+#define GEGL_CHANT_NAME scale
+#define GEGL_CHANT_SELF "scale.c"
 #include "chant.h"
 
 #include <math.h>

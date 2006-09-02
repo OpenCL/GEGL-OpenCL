@@ -17,19 +17,19 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
-chant_string (path, "/tmp/gegl-logo.svg", "path to file to load")
-chant_pointer (cached, "private")
+#ifdef GEGL_CHANT_SELF
+gegl_chant_string (path, "/tmp/gegl-logo.svg", "path to file to load")
+gegl_chant_pointer (cached, "private")
 #else
 
-#define CHANT_SOURCE
-#define CHANT_NAME            magick_load
-#define CHANT_DESCRIPTION     "Image Magick wrapper, that converts to" \
+#define GEGL_CHANT_SOURCE
+#define GEGL_CHANT_NAME            magick_load
+#define GEGL_CHANT_DESCRIPTION     "Image Magick wrapper, that converts to" \
                               "PNG before loading."
 
-#define CHANT_SELF            "magick-load.c"
-#define CHANT_CLASS_CONSTRUCT
-#define CHANT_CATEGORIES      "hidden"
+#define GEGL_CHANT_SELF            "magick-load.c"
+#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CATEGORIES      "hidden"
 #include "gegl-chant.h"
 #include <stdio.h>
 
@@ -66,7 +66,7 @@ evaluate (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
-  ChantInstance       *self = CHANT_INSTANCE (operation);
+  ChantInstance       *self = GEGL_CHANT_INSTANCE (operation);
 
   if(strcmp("output", output_prop))
     return FALSE;
@@ -96,7 +96,7 @@ evaluate (GeglOperation *operation,
 static gboolean
 calc_have_rect (GeglOperation *operation)
 {
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   gint width, height;
 
   load_cache (self);
@@ -111,7 +111,7 @@ calc_have_rect (GeglOperation *operation)
 
 static void dispose (GObject *gobject)
 {
-  ChantInstance *self = CHANT_INSTANCE (gobject);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (gobject);
   if (self->cached)
     {
       g_object_unref (self->cached);

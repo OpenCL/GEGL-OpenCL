@@ -35,16 +35,16 @@ a.each do
 
     file.write copyright
     file.write "
-#ifdef CHANT_SELF
-chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if aux doesn't contain data\")
+#ifdef GEGL_CHANT_SELF
+gegl_chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if aux doesn't contain data\")
 #else
 
-#define CHANT_POINT_COMPOSER
-#define CHANT_NAME          #{name}
-#define CHANT_DESCRIPTION   \"Math operation #{name} (#{formula})\"
-#define CHANT_SELF          \"#{filename}\"
-#define CHANT_CATEGORIES    \"compositors:math\"
-#define CHANT_CONSTRUCT
+#define GEGL_CHANT_POINT_COMPOSER
+#define GEGL_CHANT_NAME          #{name}
+#define GEGL_CHANT_DESCRIPTION   \"Math operation #{name} (#{formula})\"
+#define GEGL_CHANT_SELF          \"#{filename}\"
+#define GEGL_CHANT_CATEGORIES    \"compositors:math\"
+#define GEGL_CHANT_CONSTRUCT
 #include \"gegl-chant.h\"
 
 #include <math.h>
@@ -69,7 +69,7 @@ evaluate (GeglOperation *op,
 
   if (aux == NULL)
       {
-          gfloat value = CHANT_INSTANCE (op)->value;
+          gfloat value = GEGL_CHANT_INSTANCE (op)->value;
           for (i=0; i<n_pixels; i++)
             {
               int  j;

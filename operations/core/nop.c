@@ -17,15 +17,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 
 #else
 
-#define CHANT_FILTER
-#define CHANT_NAME            nop
-#define CHANT_DESCRIPTION     "Passthrough operation"
-#define CHANT_SELF            "nop.c"
-#define CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_FILTER
+#define GEGL_CHANT_NAME            nop
+#define GEGL_CHANT_DESCRIPTION     "Passthrough operation"
+#define GEGL_CHANT_SELF            "nop.c"
+#define GEGL_CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 
 static gboolean

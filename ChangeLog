@@ -1,4 +1,49 @@
 2006-09-02  Øyvind Kolås  <pippin@gimp.org>
+	
+	Namespaced the chanting by performing a recursive
+	%s/CHANT_/GEGL_CHANT_/g %s/chant_/gegl_chant_/g
+
+	* gegl/gegl-chant.h:
+	* operations/blur/box-blur.c: (evaluate), (calc_have_rect),
+	(calc_need_rect):
+	* operations/blur/gaussian-blur.c: (evaluate), (calc_have_rect),
+	(calc_need_rect):
+	* operations/color/brightness-contrast.c: (evaluate):
+	* operations/color/invert.c:
+	* operations/color/stretch-contrast.c:
+	* operations/color/threshold.c: (evaluate):
+	* operations/core/clone.c:
+	* operations/core/crop.c: (evaluate):
+	* operations/core/nop.c:
+	* operations/core/shift.c:
+	* operations/display/display.c: (evaluate):
+	* operations/file-io/jpg-load.c: (evaluate), (calc_have_rect):
+	* operations/file-io/load.c: (prepare), (associate):
+	* operations/file-io/magick-load.c: (evaluate), (calc_have_rect),
+	(dispose):
+	* operations/file-io/png-load.c: (evaluate), (calc_have_rect):
+	* operations/file-io/png-save.c: (evaluate):
+	* operations/file-io/raw-load.c: (evaluate), (calc_have_rect),
+	(dispose):
+	* operations/generated/math.rb:
+	* operations/generated/porter-duff.rb:
+	* operations/generated/svg-blend.rb:
+	* operations/meta/dropshadow.c: (prepare), (associate):
+	* operations/meta/layer.c: (prepare), (associate):
+	* operations/meta/unsharp-mask.c: (associate), (prepare):
+	* operations/render/blank.c:
+	* operations/render/checkerboard.c: (evaluate):
+	* operations/render/noise.c: (evaluate):
+	* operations/render/text.c: (evaluate), (calc_have_rect),
+	(dispose):
+	* operations/transform/chant.h:
+	* operations/transform/rotate.c:
+	* operations/transform/scale.c:
+	* operations/transform/shear.c:
+	* operations/transform/translate.c:
+	* operations/transparency/opacity.c: (evaluate):
+
+2006-09-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-extension-handler.c: (gegl_extension_handler_register):
 	removed unused variable old.

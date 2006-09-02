@@ -17,18 +17,18 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
  
 #else
 
-#define CHANT_FILTER
-#define CHANT_NAME            stretch_contrast
-#define CHANT_DESCRIPTION     "Scales the components of the buffer to be in the 0.0-1.0 range"
+#define GEGL_CHANT_FILTER
+#define GEGL_CHANT_NAME            stretch_contrast
+#define GEGL_CHANT_DESCRIPTION     "Scales the components of the buffer to be in the 0.0-1.0 range"
 
-#define CHANT_SELF            "stretch-contrast.c"
-#define CHANT_CLASS_CONSTRUCT /*< we need to modify the standard class init
+#define GEGL_CHANT_SELF            "stretch-contrast.c"
+#define GEGL_CHANT_CLASS_CONSTRUCT /*< we need to modify the standard class init
                                   of the super class */
-#define CHANT_CATEGORIES      "color"
+#define GEGL_CHANT_CATEGORIES      "color"
 #include "gegl-chant.h"
 
 static gboolean
@@ -170,7 +170,7 @@ calc_need_rect (GeglOperation *self)
 }
 
 /* This is called at the end of the gobject class_init function, the
- * CHANT_CLASS_CONSTRUCT was needed to make this happen
+ * GEGL_CHANT_CLASS_CONSTRUCT was needed to make this happen
  *
  * Here we override the standard passthrough options for the rect
  * computations.

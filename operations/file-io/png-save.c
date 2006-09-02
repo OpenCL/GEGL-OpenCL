@@ -17,17 +17,17 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
  
-chant_string(path, "/tmp/fnord.png", "path to new file to save - for stdout")
+gegl_chant_string(path, "/tmp/fnord.png", "path to new file to save - for stdout")
 
 #else
 
-#define CHANT_FILTER
-#define CHANT_NAME        png_save
-#define CHANT_DESCRIPTION "saves a png image using libpng"
-#define CHANT_SELF        "png-save.c"
-#define CHANT_CATEGORIES      "output"
+#define GEGL_CHANT_FILTER
+#define GEGL_CHANT_NAME        png_save
+#define GEGL_CHANT_DESCRIPTION "saves a png image using libpng"
+#define GEGL_CHANT_SELF        "png-save.c"
+#define GEGL_CHANT_CATEGORIES      "output"
 #include "gegl-chant.h"
 
 #include <png.h>
@@ -44,7 +44,7 @@ static gboolean
 evaluate (GeglOperation *operation,
           const gchar *output_prop)
 {
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   GeglOperationFilter *op_filter = GEGL_OPERATION_FILTER (operation);
   GeglBuffer          *input   = op_filter->input;
   GeglRect            *result  = gegl_operation_result_rect (operation);

@@ -17,17 +17,17 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 
-chant_string(path, "/tmp/lena.png", "Path of file to load.")
+gegl_chant_string(path, "/tmp/lena.png", "Path of file to load.")
 
 #else
 
-#define CHANT_GRAPH
-#define CHANT_NAME            load
-#define CHANT_DESCRIPTION     "Multipurpose file loader, that uses other native handlers, and fallback conversion using image magick's convert."
-#define CHANT_SELF            "load.c"
-#define CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_GRAPH
+#define GEGL_CHANT_NAME            load
+#define GEGL_CHANT_DESCRIPTION     "Multipurpose file loader, that uses other native handlers, and fallback conversion using image magick's convert."
+#define GEGL_CHANT_SELF            "load.c"
+#define GEGL_CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 #include "gegl/gegl-extension-handler.h"
 
@@ -43,7 +43,7 @@ struct _Priv
 static void
 prepare (GeglOperation *operation)
 {
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   Priv *priv;
   priv = (Priv*)self->priv;
 
@@ -77,7 +77,7 @@ prepare (GeglOperation *operation)
 
 static void associate (GeglOperation *operation)
 {
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   Priv *priv = (Priv*)self->priv;
   GeglGraph *graph;
   g_assert (priv == NULL);

@@ -17,23 +17,23 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
  
-chant_double (alpha, -G_MAXDOUBLE, G_MAXDOUBLE, 12.3, "")
-chant_double (beta,  -G_MAXDOUBLE, G_MAXDOUBLE, 0.1, "")
-chant_double (zoff,  -G_MAXDOUBLE, G_MAXDOUBLE,  -1, "")
-chant_double (seed,  -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "")
-chant_double (n,     0, 20.0, 6.0, "")
+gegl_chant_double (alpha, -G_MAXDOUBLE, G_MAXDOUBLE, 12.3, "")
+gegl_chant_double (beta,  -G_MAXDOUBLE, G_MAXDOUBLE, 0.1, "")
+gegl_chant_double (zoff,  -G_MAXDOUBLE, G_MAXDOUBLE,  -1, "")
+gegl_chant_double (seed,  -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "")
+gegl_chant_double (n,     0, 20.0, 6.0, "")
 
 #else
 
-#define CHANT_SOURCE
-#define CHANT_NAME           perlin_noise
-#define CHANT_DESCRIPTION    "Perlin noise generator"
+#define GEGL_CHANT_SOURCE
+#define GEGL_CHANT_NAME           perlin_noise
+#define GEGL_CHANT_DESCRIPTION    "Perlin noise generator"
 
-#define CHANT_SELF           "noise.c"
-#define CHANT_CATEGORIES      "sources:render"
-#define CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_SELF           "noise.c"
+#define GEGL_CHANT_CATEGORIES      "sources:render"
+#define GEGL_CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 #include "perlin/perlin.c"
 #include "perlin/perlin.h"
@@ -44,7 +44,7 @@ evaluate (GeglOperation *operation,
 {
   GeglRect  *need;
   GeglOperationSource     *op_source = GEGL_OPERATION_SOURCE(operation);
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
 
   if(strcmp("output", output_prop))
     return FALSE;

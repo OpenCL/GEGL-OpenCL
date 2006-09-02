@@ -17,20 +17,20 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 
-chant_double(opacity, 0.0, 1.0, 0.5, "Opacity")
-chant_double(x, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "horizontal position")
-chant_double(y, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "vertical position")
-chant_double(radius, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "blur radius")
+gegl_chant_double(opacity, 0.0, 1.0, 0.5, "Opacity")
+gegl_chant_double(x, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "horizontal position")
+gegl_chant_double(y, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "vertical position")
+gegl_chant_double(radius, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "blur radius")
 
 #else
 
-#define CHANT_GRAPH
-#define CHANT_NAME            dropshadow
-#define CHANT_DESCRIPTION     "Creates a dropshadow"
-#define CHANT_SELF            "dropshadow.c"
-#define CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_GRAPH
+#define GEGL_CHANT_NAME            dropshadow
+#define GEGL_CHANT_DESCRIPTION     "Creates a dropshadow"
+#define GEGL_CHANT_SELF            "dropshadow.c"
+#define GEGL_CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 
 typedef struct _Priv Priv;
@@ -50,7 +50,7 @@ struct _Priv
 static void
 prepare (GeglOperation *operation)
 {
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   Priv *priv;
   priv = (Priv*)self->priv;
 
@@ -68,7 +68,7 @@ prepare (GeglOperation *operation)
 
 static void associate (GeglOperation *operation)
 {
-  ChantInstance *self = CHANT_INSTANCE (operation);
+  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   Priv *priv = (Priv*)self->priv;
   GeglGraph *graph;
   g_assert (priv == NULL);

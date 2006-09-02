@@ -18,15 +18,15 @@
  * Copyright 2006 Philip Lafleur
  */
 
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
 
-chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "")
-chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "")
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "")
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "")
 
 #else
 
-#define CHANT_NAME shear
-#define CHANT_SELF "shear.c"
+#define GEGL_CHANT_NAME shear
+#define GEGL_CHANT_SELF "shear.c"
 #include "chant.h"
 
 #include <math.h>

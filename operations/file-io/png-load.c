@@ -17,18 +17,18 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef CHANT_SELF
+#ifdef GEGL_CHANT_SELF
  
-chant_string (path, "/tmp/romedalen.png", "path to file to load")
+gegl_chant_string (path, "/tmp/romedalen.png", "path to file to load")
 
 #else
 
-#define CHANT_SOURCE
-#define CHANT_NAME            png_load
-#define CHANT_DESCRIPTION     "loads a png file using libpng, currently restricted to 8bpc"
-#define CHANT_SELF            "png-load.c"
-#define CHANT_CATEGORIES      "hidden"
-#define CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_SOURCE
+#define GEGL_CHANT_NAME            png_load
+#define GEGL_CHANT_DESCRIPTION     "loads a png file using libpng, currently restricted to 8bpc"
+#define GEGL_CHANT_SELF            "png-load.c"
+#define GEGL_CHANT_CATEGORIES      "hidden"
+#define GEGL_CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 
 #include <png.h>
@@ -49,7 +49,7 @@ static gboolean
 evaluate (GeglOperation *operation,
           const gchar   *output_prop)
 {
-  ChantInstance       *self = CHANT_INSTANCE (operation);
+  ChantInstance       *self = GEGL_CHANT_INSTANCE (operation);
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   gint          result;
 
@@ -118,7 +118,7 @@ evaluate (GeglOperation *operation,
 static gboolean
 calc_have_rect (GeglOperation *operation)
 {
-  ChantInstance       *self = CHANT_INSTANCE (operation);
+  ChantInstance       *self = GEGL_CHANT_INSTANCE (operation);
   GeglOperationSource *source = GEGL_OPERATION_SOURCE (operation);
   gint width, height;
   gint status;
