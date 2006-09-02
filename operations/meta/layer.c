@@ -101,14 +101,14 @@ static void associate (GeglOperation *operation)
   priv->output = gegl_graph_output (graph, "output");
 
   priv->composite_op = gegl_graph_create_node (graph,
-                                         "class", self->composite_op,
+                                         "operation", self->composite_op,
                                          NULL);
 
-  priv->shift = gegl_graph_create_node (graph, "class", "shift", NULL);
-  priv->opacity = gegl_graph_create_node (graph, "class", "opacity", NULL);
+  priv->shift = gegl_graph_create_node (graph, "operation", "shift", NULL);
+  priv->opacity = gegl_graph_create_node (graph, "operation", "opacity", NULL);
   
   priv->load = gegl_graph_create_node (graph,
-                                       "class", "load",
+                                       "operation", "load",
                                        NULL);
 
   gegl_node_connect (priv->opacity, "input", priv->load, "output");

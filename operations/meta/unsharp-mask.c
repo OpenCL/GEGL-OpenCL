@@ -64,19 +64,19 @@ static void associate (GeglOperation *operation)
   if (!priv->add)
     {
       priv->add      = gegl_graph_create_node (graph,
-                                               "class", "add",
+                                               "operation", "add",
                                                NULL);
 
       priv->multiply = gegl_graph_create_node (graph,
-                                               "class", "multiply",
+                                               "operation", "multiply",
                                                NULL);
 
       priv->subtract = gegl_graph_create_node (graph,
-                                               "class", "subtract",
+                                               "operation", "subtract",
                                                NULL);
 
       priv->blur     = gegl_graph_create_node (graph,
-                                               "class", "gaussian-blur",
+                                               "operation", "gaussian-blur",
                                                NULL);
 
       gegl_node_connect (priv->subtract, "input", priv->input,    "output");

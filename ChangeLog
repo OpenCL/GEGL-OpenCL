@@ -1,3 +1,12 @@
+2006-09-02  Øyvind Kolås  <pippin@gimp.org>
+
+	Fixes for the s/class/operation/ change.
+
+	* operations/file-io/magick-load.c:
+	* operations/meta/dropshadow.c: (associate):
+	* operations/meta/layer.c: (associate):
+	* operations/meta/unsharp-mask.c: (associate):
+
 2006-09-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/file-io/load.c: (associate): do not set operation to
@@ -20,7 +29,7 @@
 
 	* operations/file-io/load.c: (refresh_cache): s/class/operation/
 	* operations/meta/layer.c: (prepare): s/class/operation/
-	* tools/introspect.c: (stuff): s/class/opertation/
+	* tools/introspect.c: (stuff): s/class/operation/
 	* docs/gallery/drop-shadow.xml: s/class/operation/
 
 2006-09-01  Øyvind Kolås  <pippin@gimp.org>
