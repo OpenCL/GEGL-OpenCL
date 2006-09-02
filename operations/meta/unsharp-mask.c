@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_SELF
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double(radius, 0.0, 30.0, 1.4, "Radius")
 gegl_chant_double(scale,  0.0, 100.0, 10.0, "Scale")

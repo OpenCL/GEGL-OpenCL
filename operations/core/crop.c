@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_SELF
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (x,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "left most pixel coordinate")
 gegl_chant_double (y,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "top pixel coordinate")

@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_SELF
+#ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double(opacity, 0.0, 1.0, 0.5, "Opacity")
 gegl_chant_double(x, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "horizontal position")

@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_SELF
+#ifdef GEGL_CHANT_PROPERTIES
    /* no properties */
 #else
 

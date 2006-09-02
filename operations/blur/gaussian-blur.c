@@ -20,7 +20,7 @@
  * in "Signal Processing 44 (1995) 139 - 151"
  */
 
-#ifdef GEGL_CHANT_SELF
+#ifdef GEGL_CHANT_PROPERTIES
  
 gegl_chant_double (radius_x, -0.91675, 500.0, 4.0, "blur radius in horizontal direction.")
 gegl_chant_double (radius_y, -0.91675, 500.0, 4.0, "blur radius in vertical direction.")

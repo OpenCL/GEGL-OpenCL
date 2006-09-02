@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_SELF
+#ifdef GEGL_CHANT_PROPERTIES
  
 gegl_chant_double (radius, 0.0, 200.0, 4.0, "radius of square pixel region, (width and height will be radius*2+1.")
 

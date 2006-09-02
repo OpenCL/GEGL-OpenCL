@@ -2,6 +2,8 @@
 #error "GEGL_CHANT_SELF not defined"
 #endif
 
+#define GEGL_CHANT_PROPERTIES 1
+
 /****************************************************************************/
 
 #include <string.h>

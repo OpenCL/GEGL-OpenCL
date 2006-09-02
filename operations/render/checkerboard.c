@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_SELF
+#ifdef GEGL_CHANT_PROPERTIES
  
 gegl_chant_int (x,        -G_MAXINT, G_MAXINT, 16, "")
 gegl_chant_int (y,        -G_MAXINT, G_MAXINT, 16, "")

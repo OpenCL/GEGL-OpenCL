@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_SELF
+#ifdef GEGL_CHANT_PROPERTIES
  
 gegl_chant_string (string, "Hello", "utf8 string to display")
 gegl_chant_double (size, 1.0, 2048.0, 10.0, "approximate height of text in pixels")

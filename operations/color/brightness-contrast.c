@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_SELF
+#ifdef GEGL_CHANT_PROPERTIES
  
 gegl_chant_double (contrast,   -100.0, 100.0, 1.0, "Range scale factor")
 gegl_chant_double (brightness,  -10.0,  10.0, 0.0, "Amount to increase brightness")

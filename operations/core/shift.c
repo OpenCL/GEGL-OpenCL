@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_SELF
+#ifdef GEGL_CHANT_PROPERTIES
  
 gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "x coordinate of new origin")
 gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "y coordinate of new origin")
