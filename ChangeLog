@@ -1,5 +1,12 @@
 2006-09-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-extension-handler.c: (gegl_extension_handler_register):
+	removed unused variable old.
+	* gegl/gegl-prepare-visitor.c: (visit_node): added a const to a
+	gchar* declaration.
+
+2006-09-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-extension-handler.h: do not include config.h
 
 2006-09-02  Øyvind Kolås  <pippin@gimp.org>
