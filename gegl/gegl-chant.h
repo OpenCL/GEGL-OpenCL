@@ -11,6 +11,7 @@
 
 #ifdef CHANT_SOURCE
   #include <gegl/gegl-operation-source.h>
+  #include <gegl/gegl-extension-handler.h>
   #define CHANT_PARENT_TypeName      GeglOperationSource
   #define CHANT_PARENT_TypeNameClass GeglOperationSourceClass
   #define CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_SOURCE
@@ -402,6 +403,7 @@ chant_class_init (ChantClass * klass)
 #ifdef CHANT_CONSTRUCT
   object_class->constructor  = chant_constructor;
 #endif
+
 #ifdef CHANT_CLASS_CONSTRUCT
   class_init (operation_class);
 #endif

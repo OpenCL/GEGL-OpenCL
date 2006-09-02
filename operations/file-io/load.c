@@ -29,28 +29,7 @@ chant_string(path, "/tmp/lena.png", "Path of file to load.")
 #define CHANT_SELF            "load.c"
 #define CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
-
-typedef struct LoaderMapping
-{
-  gchar *extension;
-  gchar *handler;
-} LoaderMapping;
-
-static LoaderMapping mappings[]=
-{
-  {".jpg",  "jpg-load"},
-  {".jpeg", "jpg-load"},
-  {".JPG",  "jpg-load"},
-  {".JPEG", "jpg-load"},
-  {".png",  "png-load"},
-  {".PNG",  "png-load"},
-  {".raw",  "raw-load"},
-  {".RAW",  "raw-load"},
-  {".raf",  "raw-load"},
-  {".nef",  "raw-load"},
-  {".NEF",  "raw-load"},
-  {NULL,    "magick-load"} /* fallthrough */
-};
+#include "gegl/gegl-extension-handler.h"
 
 typedef struct _Priv Priv;
 struct _Priv
@@ -65,7 +44,6 @@ static void
 prepare (GeglOperation *operation)
 {
   ChantInstance *self = CHANT_INSTANCE (operation);
-  LoaderMapping *map;
   Priv *priv;
   priv = (Priv*)self->priv;
 
@@ -76,24 +54,16 @@ prepare (GeglOperation *operation)
 
   if (self->path[0])
     {
-      for (map = &mappings[0]; map->extension; map++)
-        {
-          if (strstr (self->path, map->extension))
-            {
-              gegl_node_set (priv->load, 
-                             "operation", map->handler,
-                             "path",  self->path,
-                             NULL);
-              break;
-            }
-        }
-      if (map->extension == NULL)
-        { /* no extension matched, using fallback */
-          gegl_node_set (priv->load,
-                         "operation", map->handler,
-                         "path", self->path,
-                         NULL);
-        }
+      const gchar *extension = strrchr (self->path, '.');
+      const gchar *handler = NULL;
+     
+      if (extension)
+        handler = gegl_extension_handler_get (extension);
+
+      gegl_node_set (priv->load, 
+                     "operation", handler,
+                     "path",  self->path,
+                     NULL);
     }
   else
     {

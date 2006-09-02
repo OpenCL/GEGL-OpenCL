@@ -1,5 +1,19 @@
 2006-09-02  Øyvind Kolås  <pippin@gimp.org>
 
+	Added the ability to register operations for extensions, thus making
+	it possible for the load operation to handle new file input
+	operations.
+
+	* gegl/gegl-extension-handler.[ch]: new files.
+	* gegl/Makefile.am: compile the new files.
+	* gegl/gegl-chant.h: include gegl-extension-handler.h for sources.
+	* operations/file-io/jpg-load.c,
+	* operations/file-io/load.c:,
+	* operations/file-io/png-load.c, 
+	* operations/file-io/raw-load.c: register.
+
+2006-09-02  Øyvind Kolås  <pippin@gimp.org>
+
 	Fixes for the s/class/operation/ change.
 
 	* operations/file-io/magick-load.c:

@@ -26,9 +26,9 @@ chant_string (path, "/tmp/romedalen.png", "path to file to load")
 #define CHANT_SOURCE
 #define CHANT_NAME            png_load
 #define CHANT_DESCRIPTION     "loads a png file using libpng, currently restricted to 8bpc"
-
 #define CHANT_SELF            "png-load.c"
 #define CHANT_CATEGORIES      "hidden"
+#define CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 
 #include <png.h>
@@ -353,6 +353,16 @@ gint query_png (const gchar *path,
   png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
   fclose (infile);
   return 0;
+}
+
+static void class_init (GeglOperationClass *operation_class)
+{
+  static gboolean done=FALSE;
+  if (done)
+    return;
+  gegl_extension_handler_register (".png", "png-load");
+  gegl_extension_handler_register (".PNG", "png-load");
+  done = TRUE;
 }
 
 #endif

@@ -28,6 +28,7 @@ chant_string (path, "/tmp/romedalen.jpg", "Path to jpg file on disk to load")
 #define CHANT_DESCRIPTION     "loads a jpeg file using libjpeg"
 #define CHANT_SELF            "jpg-load.c"
 #define CHANT_CATEGORIES      "hidden"
+#define CHANT_CLASS_CONSTRUCT
 #include "gegl-chant.h"
 #include <stdio.h>
 #include <jpeglib.h>
@@ -219,6 +220,18 @@ gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
   jpeg_destroy_decompress (&cinfo);
   fclose (infile);
   return 0;
+}
+
+static void class_init (GeglOperationClass *operation_class)
+{
+  static gboolean done=FALSE;
+  if (done)
+    return;
+  gegl_extension_handler_register (".jpg", "jpg-load");
+  gegl_extension_handler_register (".JPG", "jpg-load");
+  gegl_extension_handler_register (".jpeg", "jpg-load");
+  gegl_extension_handler_register (".JPEG", "jpg-load");
+  done = TRUE;
 }
 
 #endif

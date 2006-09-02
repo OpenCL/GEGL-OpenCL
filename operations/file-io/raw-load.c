@@ -102,7 +102,18 @@ static void dispose (GObject *gobject)
 
 static void class_init (GeglOperationClass *klass)
 {
+  static gboolean done=FALSE;
   G_OBJECT_CLASS (klass)->dispose = dispose;
+
+  if (done)
+    return;
+  gegl_extension_handler_register (".raw", "raw-load");
+  gegl_extension_handler_register (".RAW", "raw-load");
+  gegl_extension_handler_register (".raf", "raw-load");
+  gegl_extension_handler_register (".RAF", "raw-load");
+  gegl_extension_handler_register (".nef", "raw-load");
+  gegl_extension_handler_register (".NEF", "raw-load");
+  done = TRUE;
 }
 
 static void

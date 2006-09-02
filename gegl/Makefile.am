@@ -24,6 +24,7 @@ GEGL_sources = \
 	gegl-debug-rect-visitor.c	\
 	gegl-eval-mgr.c			\
 	gegl-eval-visitor.c		\
+	gegl-extension-handler.c	\
 	gegl-graph.c			\
 	gegl-have-visitor.c		\
 	gegl-init.c			\
@@ -50,6 +51,7 @@ gegl_SOURCES = \
 
 GEGL_public_headers = \
 	gegl-connection.h		\
+	gegl-extension-handler.h	\
 	gegl-graph.h			\
 	gegl-init.h			\
 	gegl-node.h			\
