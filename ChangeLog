@@ -1,3 +1,9 @@
+2006-09-02  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/buffer/.cvsignore
+	* gegl/module/.cvsignore
+	* tools/.cvsignore: Added .deps
+
 2006-09-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-chant.h,
