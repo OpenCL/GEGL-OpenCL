@@ -26,7 +26,7 @@ gegl_chant_double (value, -10.0, 10.0, 0.5, "global opacity value, used if no au
 #define GEGL_CHANT_DESCRIPTION     "weights the opacity of the input with either the value of the aux input or the global value property"
 #define GEGL_CHANT_SELF            "opacity.c"
 #define GEGL_CHANT_CATEGORIES      "transparency"
-#define GEGL_CHANT_CONSTRUCT
+#define GEGL_CHANT_INIT
 #include "gegl-chant.h"
 
 static void init (ChantInstance *self)

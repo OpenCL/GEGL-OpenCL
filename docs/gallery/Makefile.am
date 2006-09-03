@@ -19,4 +19,4 @@ all-local:
 	$(top_builddir)/gegl/gegl $< -o $@
 
 clean-local:
-	rm -f index.html
+	rm -f index.html *.png

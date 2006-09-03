@@ -28,7 +28,7 @@ gegl_chant_double(scale,  0.0, 100.0, 10.0, "Scale")
 #define GEGL_CHANT_NAME            unsharp_mask
 #define GEGL_CHANT_DESCRIPTION     "Performs an unsharp mask"
 #define GEGL_CHANT_SELF            "unsharp-mask.c"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 typedef struct _Priv Priv;

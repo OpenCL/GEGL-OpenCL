@@ -230,7 +230,7 @@ static void gegl_chant_init (ChantInstance *self)
 {
 }
 
-#ifdef GEGL_CHANT_CONSTRUCT
+#ifdef GEGL_CHANT_INIT
 static void init (ChantInstance *self);
 
 static GObject *
@@ -249,7 +249,7 @@ gegl_chant_constructor (GType                  type,
 }
 #endif
 
-#ifdef GEGL_CHANT_CLASS_CONSTRUCT
+#ifdef GEGL_CHANT_CLASS_INIT
 static void class_init (GeglOperationClass *operation_class);
 #endif
 
@@ -270,10 +270,10 @@ gegl_chant_class_init (ChantClass * klass)
 
   parent_class->create_matrix = (OpAffineCreateMatrixFunc) create_matrix;
 
-#ifdef GEGL_CHANT_CONSTRUCT
+#ifdef GEGL_CHANT_INIT
   object_class->constructor  = gegl_chant_constructor;
 #endif
-#ifdef GEGL_CHANT_CLASS_CONSTRUCT
+#ifdef GEGL_CHANT_CLASS_INIT
   class_init (operation_class);
 #endif
 

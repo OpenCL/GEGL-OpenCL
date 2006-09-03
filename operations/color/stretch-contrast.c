@@ -26,7 +26,7 @@
 #define GEGL_CHANT_DESCRIPTION     "Scales the components of the buffer to be in the 0.0-1.0 range"
 
 #define GEGL_CHANT_SELF            "stretch-contrast.c"
-#define GEGL_CHANT_CLASS_CONSTRUCT /*< we need to modify the standard class init
+#define GEGL_CHANT_CLASS_INIT /*< we need to modify the standard class init
                                   of the super class */
 #define GEGL_CHANT_CATEGORIES      "color"
 #include "gegl-chant.h"
@@ -164,7 +164,7 @@ calc_source_regions (GeglOperation *self)
 }
 
 /* This is called at the end of the gobject class_init function, the
- * GEGL_CHANT_CLASS_CONSTRUCT was needed to make this happen
+ * GEGL_CHANT_CLASS_INIT was needed to make this happen
  *
  * Here we override the standard passthrough options for the rect
  * computations.

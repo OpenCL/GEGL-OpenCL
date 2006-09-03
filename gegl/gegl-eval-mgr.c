@@ -93,7 +93,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
 
   {
     gint i;
-    for (i=0;i<2;i++)
+    for (i=0;i<4;i++)
       {
         prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, NULL);
         gegl_visitor_dfs_traverse (prepare_visitor, GEGL_VISITABLE(root));

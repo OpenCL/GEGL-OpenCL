@@ -25,7 +25,7 @@
 #define GEGL_CHANT_NAME            nop
 #define GEGL_CHANT_DESCRIPTION     "Passthrough operation"
 #define GEGL_CHANT_SELF            "nop.c"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 static gboolean

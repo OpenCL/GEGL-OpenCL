@@ -33,7 +33,7 @@ gegl_chant_double (n,     0, 20.0, 6.0, "")
 
 #define GEGL_CHANT_SELF           "noise.c"
 #define GEGL_CHANT_CATEGORIES      "sources:render"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 #include "perlin/perlin.c"
 #include "perlin/perlin.h"

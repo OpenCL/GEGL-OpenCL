@@ -26,7 +26,7 @@
 #define GEGL_CHANT_DESCRIPTION   "inverts the components (except alpha, one by one)"
 #define GEGL_CHANT_SELF          "invert.c"
 #define GEGL_CHANT_CATEGORIES    "color"
-#define GEGL_CHANT_CONSTRUCT
+#define GEGL_CHANT_INIT
 #include "gegl-chant.h"
 
 static void init (ChantInstance *self)

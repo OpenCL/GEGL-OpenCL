@@ -32,7 +32,7 @@ gegl_chant_double (radius_y, -0.91675, 500.0, 4.0, "blur radius in vertical dire
 #define GEGL_CHANT_DESCRIPTION     "Performs an averaging of neighbouring pixels with the normal distribution as weighting."
 #define GEGL_CHANT_SELF            "gaussian-blur.c"
 #define GEGL_CHANT_CATEGORIES      "blur"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 #include <math.h>

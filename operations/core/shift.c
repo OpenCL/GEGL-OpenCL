@@ -29,7 +29,7 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "y coordinate of new orig
 #define GEGL_CHANT_DESCRIPTION     "Translate the buffer, an integer amount of pixels."
 #define GEGL_CHANT_SELF            "shift.c"
 #define GEGL_CHANT_CATEGORIES      "geometry"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 

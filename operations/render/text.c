@@ -33,7 +33,7 @@ gegl_chant_int    (height, 0, 1000000, 0, "private")
 #define GEGL_CHANT_DESCRIPTION     "Display a string of text using cairo"
 #define GEGL_CHANT_SELF            "text.c"
 #define GEGL_CHANT_CATEGORIES      "sources:render"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 #include <cairo.h>

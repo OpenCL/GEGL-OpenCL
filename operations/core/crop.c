@@ -33,7 +33,7 @@ gegl_chant_double (height, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "height in pixels")
                               "clip buffers, as well as specifying what " \
                               "portion of a composition to render to file"
 #define GEGL_CHANT_CATEGORIES      "geometry"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 

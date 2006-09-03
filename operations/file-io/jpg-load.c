@@ -28,7 +28,7 @@ gegl_chant_string (path, "/tmp/romedalen.jpg", "Path to jpg file on disk to load
 #define GEGL_CHANT_DESCRIPTION     "loads a jpeg file using libjpeg"
 #define GEGL_CHANT_SELF            "jpg-load.c"
 #define GEGL_CHANT_CATEGORIES      "hidden"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 #include <stdio.h>
 #include <jpeglib.h>

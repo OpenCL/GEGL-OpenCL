@@ -28,7 +28,7 @@ gegl_chant_string (path, "/tmp/romedalen.png", "path to file to load")
 #define GEGL_CHANT_DESCRIPTION     "loads a png file using libpng, currently restricted to 8bpc"
 #define GEGL_CHANT_SELF            "png-load.c"
 #define GEGL_CHANT_CATEGORIES      "hidden"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 #include <png.h>

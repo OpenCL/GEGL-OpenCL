@@ -44,7 +44,7 @@ gegl_chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if
 #define GEGL_CHANT_DESCRIPTION   \"Math operation #{name} (#{formula})\"
 #define GEGL_CHANT_SELF          \"#{filename}\"
 #define GEGL_CHANT_CATEGORIES    \"compositors:math\"
-#define GEGL_CHANT_CONSTRUCT
+#define GEGL_CHANT_INIT
 #include \"gegl-chant.h\"
 
 #include <math.h>

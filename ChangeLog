@@ -1,5 +1,37 @@
 2006-09-04  Øyvind Kolås  <pippin@gimp.org>
 
+	s/GEGL_CHANT_CONSTRUCT/GEGL_CHANT_INIT/
+	s/GEGL_CHANT_CLASS_CONSTRUCT/GEGL_CHANT_CLASS_INIT/
+
+	* docs/gallery/Makefile.am:
+	* gegl/gegl-chant.h:
+	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c:
+	* operations/color/invert.c:
+	* operations/color/stretch-contrast.c:
+	* operations/color/threshold.c:
+	* operations/core/crop.c:
+	* operations/core/nop.c:
+	* operations/core/shift.c:
+	* operations/file-io/jpg-load.c:
+	* operations/file-io/load.c:
+	* operations/file-io/magick-load.c:
+	* operations/file-io/png-load.c:
+	* operations/file-io/raw-load.c:
+	* operations/generated/math.rb:
+	* operations/generated/porter-duff.rb:
+	* operations/generated/svg-blend.rb:
+	* operations/meta/dropshadow.c:
+	* operations/meta/layer.c:
+	* operations/meta/unsharp-mask.c:
+	* operations/render/noise.c:
+	* operations/render/text.c:
+	* operations/transform/chant.h:
+	* operations/transparency/opacity.c:
+
+2006-09-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (gegl_node_add_pad): removed debug EEK, just
 	return silently when a second attempt is made to add a pad to a node.
 

@@ -30,7 +30,7 @@ gegl_chant_double(radius, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "blur radius")
 #define GEGL_CHANT_NAME            dropshadow
 #define GEGL_CHANT_DESCRIPTION     "Creates a dropshadow"
 #define GEGL_CHANT_SELF            "dropshadow.c"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 typedef struct _Priv Priv;

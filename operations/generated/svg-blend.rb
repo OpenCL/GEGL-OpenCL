@@ -42,7 +42,7 @@ a.each do
 #define GEGL_CHANT_DESCRIPTION   \"SVG blend operation #{name} (c = #{formula})\"
 #define GEGL_CHANT_CATEGORIES    \"compositors:svgfilter\"
 #define GEGL_CHANT_SELF          \"#{filename}\"
-#define GEGL_CHANT_CONSTRUCT
+#define GEGL_CHANT_INIT
 #include \"gegl-chant.h\"
 
 static void init (ChantInstance *self)

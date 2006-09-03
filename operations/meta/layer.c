@@ -32,7 +32,7 @@ gegl_chant_pointer(private, "private stuff do not touch")
 #define GEGL_CHANT_NAME            layer
 #define GEGL_CHANT_DESCRIPTION     "A layer in the traditional sense"
 #define GEGL_CHANT_SELF            "layer.c"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 typedef struct _Priv Priv;

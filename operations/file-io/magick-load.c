@@ -28,7 +28,7 @@ gegl_chant_pointer (cached, "private")
                               "PNG before loading."
 
 #define GEGL_CHANT_SELF            "magick-load.c"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #define GEGL_CHANT_CATEGORIES      "hidden"
 #include "gegl-chant.h"
 #include <stdio.h>

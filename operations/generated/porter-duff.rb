@@ -49,7 +49,7 @@ a.each do
 #define GEGL_CHANT_DESCRIPTION   \"Porter Duff operation #{name} (c = #{formula})\"
 #define GEGL_CHANT_CATEGORIES    \"compositors:porter duff\"
 #define GEGL_CHANT_SELF          \"#{filename}\"
-#define GEGL_CHANT_CONSTRUCT
+#define GEGL_CHANT_INIT
 #include \"gegl-chant.h\"
 
 static void init (ChantInstance *self)

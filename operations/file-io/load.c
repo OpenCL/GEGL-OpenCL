@@ -27,7 +27,7 @@ gegl_chant_string(path, "/tmp/lena.png", "Path of file to load.")
 #define GEGL_CHANT_NAME            load
 #define GEGL_CHANT_DESCRIPTION     "Multipurpose file loader, that uses other native handlers, and fallback conversion using image magick's convert."
 #define GEGL_CHANT_SELF            "load.c"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 #include "gegl/gegl-extension-handler.h"
 

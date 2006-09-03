@@ -28,7 +28,7 @@ gegl_chant_pointer (cached, "private")
 
 #define GEGL_CHANT_SELF            "raw-load.c"
 #define GEGL_CHANT_CATEGORIES      "hidden"
-#define GEGL_CHANT_CLASS_CONSTRUCT
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 #include <unistd.h>
 #include <string.h>
