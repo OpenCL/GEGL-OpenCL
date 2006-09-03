@@ -29,6 +29,7 @@
 #include "gegl-node.h"
 #include "gegl-pad.h"
 #include "gegl-visitable.h"
+#include "gegl-utils.h"
 
 
 static void gegl_cr_visitor_class_init (GeglCRVisitorClass *klass);
@@ -56,10 +57,9 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-  GeglOperation *operation = node->operation;
-
   GEGL_VISITOR_CLASS (gegl_cr_visitor_parent_class)->visit_node (self, node);
 
-  gegl_operation_calc_result_rect (operation);
+  gegl_rect_intersect (&node->result_rect, &node->have_rect, &node->need_rect);
+
   node->refs = gegl_node_get_num_sinks (node);
 }

@@ -1,7 +1,18 @@
 2006-09-03  Øyvind Kolås  <pippin@gimp.org>
 
+	Cleaned up the base class for operations even more, added comments in
+	the header describing the functions that are important to operation
+	writers.
+
+	* gegl/gegl-operation.[ch]: removed dead code.
+	* gegl/gegl-cr-visitor.c: (visit_node): moved som code here from
+	gegl-operation.c.
+
+2006-09-03  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed (mostly unusued) gegl_operation_set_have_rect and
-	gegl_operation_have_rect.
+	gegl_operation_have_rect, gegl_operation_result_region,
+	gegl_operation_get_name.
 
 	* gegl/gegl-operation.[ch]: removed unneeded code.
 	* gegl/gegl-operation.h:

@@ -38,7 +38,6 @@ static void      clean_pads                (GeglOperation *self);
 
 static GeglRect get_defined_region (GeglOperation *self);
 static gboolean calc_source_regions (GeglOperation *self);
-static gboolean calc_result_rect (GeglOperation *self);
 
 G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
 
@@ -54,7 +53,6 @@ gegl_operation_class_init (GeglOperationClass * klass)
   klass->clean_pads = clean_pads;
   klass->get_defined_region = get_defined_region;
   klass->calc_source_regions = calc_source_regions;
-  klass->calc_result_rect = calc_result_rect;
 }
 
 static void
@@ -128,24 +126,10 @@ gegl_operation_calc_source_regions (GeglOperation *self)
   return FALSE;
 }
 
-gboolean
-gegl_operation_calc_result_rect (GeglOperation *self)
-{
-  GeglOperationClass *klass;
-
-  klass = GEGL_OPERATION_GET_CLASS (self);
-
-  if (klass->calc_result_rect)
-    return klass->calc_result_rect (self);
-  return FALSE;
-}
-
-#include <stdio.h>
-
 static void
 associate (GeglOperation *self)
 {
-  fprintf (stderr, "kilroy was at What The Hack (%p)\n", (void*)self);
+  g_warning ("kilroy was at What The Hack (%p)\n", (void*)self);
   return;
 }
 
@@ -330,18 +314,6 @@ calc_source_regions (GeglOperation *self)
   return FALSE;
 }
 
-#include "gegl/gegl-utils.h"
-
-static gboolean
-calc_result_rect (GeglOperation *self)
-{
-  GeglNode *node = self->node;
-  g_assert (node);
-
-  gegl_rect_intersect (&node->result_rect, &node->have_rect, &node->need_rect);
-  return TRUE;
-}
-
 GeglRect *
 gegl_operation_get_requested_region     (GeglOperation *operation)
 {
@@ -377,10 +349,4 @@ gegl_operation_class_set_description (GeglOperationClass *klass,
   if (klass->description)
     g_free (klass->description);
   klass->description = g_strdup (new_description);
-}
-
-const gchar *
-gegl_operation_get_name (GeglOperation *operation)
-{
-  return GEGL_OPERATION_GET_CLASS (operation)->name;
 }
