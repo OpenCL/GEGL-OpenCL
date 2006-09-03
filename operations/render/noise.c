@@ -95,7 +95,7 @@ evaluate (GeglOperation *operation,
 
 
 static GeglRect 
-defined_region (GeglOperation *operation)
+get_defined_region (GeglOperation *operation)
 {
   GeglRect result = {-10000000, -10000000, 20000000, 20000000};
   return result;

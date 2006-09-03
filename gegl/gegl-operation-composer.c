@@ -47,7 +47,7 @@ static gboolean evaluate     (GeglOperation   *operation,
 static void     associate    (GeglOperation *operation);
 static void     clean_pads   (GeglOperation *operation);
 
-static GeglRect defined_region       (GeglOperation *self);
+static GeglRect get_defined_region       (GeglOperation *self);
 static gboolean calc_source_regions       (GeglOperation *self);
 
 
@@ -67,7 +67,7 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
   operation_class->evaluate = evaluate;
   operation_class->associate = associate;
   operation_class->clean_pads = clean_pads;
-  operation_class->defined_region = defined_region;
+  operation_class->get_defined_region = get_defined_region;
   operation_class->calc_source_regions = calc_source_regions;
 
   g_object_class_install_property (object_class, PROP_OUTPUT,
@@ -220,7 +220,7 @@ evaluate (GeglOperation *operation,
 }
 
 static GeglRect
-defined_region (GeglOperation *self)
+get_defined_region (GeglOperation *self)
 {
   GeglRect result = {0,0,0,0};
   GeglRect *in_rect  = gegl_operation_get_have_rect (self, "input");

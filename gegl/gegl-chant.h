@@ -383,7 +383,7 @@ static void class_init (GeglOperationClass *operation_class);
 #endif
 
 #ifdef GEGL_CHANT_SOURCE
-static GeglRect defined_region (GeglOperation *self);
+static GeglRect get_defined_region (GeglOperation *self);
 #endif
 
 static void
@@ -411,7 +411,7 @@ gegl_chant_class_init (ChantClass * klass)
 #endif
 
 #ifdef GEGL_CHANT_SOURCE
-  operation_class->defined_region = defined_region;
+  operation_class->get_defined_region = get_defined_region;
 #endif
 
 #define M_GEGL_CHANT_SET_NAME_EXTENDED(name) \

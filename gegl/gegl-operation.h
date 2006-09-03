@@ -58,17 +58,18 @@ struct _GeglOperationClass
   gchar       *description;
   char        *categories;  /* a colon seperated list of categories */
 
-  gboolean (*evaluate)          (GeglOperation *self,
-                                 const gchar   *output_pad);
+  gboolean (*evaluate)            (GeglOperation *self,
+                                   const gchar   *output_pad);
 
-  void     (*associate)         (GeglOperation *self);
-  void     (*prepare)           (GeglOperation *self);
-  void     (*clean_pads)        (GeglOperation *self);
+  void     (*associate)           (GeglOperation *self);
+  void     (*prepare)             (GeglOperation *self);
+  void     (*clean_pads)          (GeglOperation *self);
 
-  GeglRect (*defined_region)    (GeglOperation *self);
+  GeglRect (*get_defined_region)  (GeglOperation *self);
 
-  gboolean (*calc_source_regions)    (GeglOperation *self);
-  gboolean (*calc_result_rect)  (GeglOperation *self);
+  gboolean (*calc_source_regions) (GeglOperation *self);
+
+  gboolean (*calc_result_rect)    (GeglOperation *self);
 };
 
 
@@ -91,7 +92,7 @@ void          gegl_operation_create_pad     (GeglOperation *self,
 gboolean      gegl_operation_register       (GeglOperation *self,
                                              GeglNode      *node);
 void          gegl_operation_clean_pads     (GeglOperation *self);
-GeglRect      gegl_operation_defined_region (GeglOperation *self);
+GeglRect      gegl_operation_get_defined_region (GeglOperation *self);
 gboolean      gegl_operation_calc_source_regions (GeglOperation *self);
 gboolean      gegl_operation_calc_result_rect (GeglOperation *self);
 

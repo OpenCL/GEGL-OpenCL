@@ -1,5 +1,36 @@
 2006-09-03  Øyvind Kolås  <pippin@gimp.org>
 
+	s/defined_region/get_defined_region/
+
+	* gegl/gegl-chant.h:
+	* gegl/gegl-have-visitor.c: (visit_node):
+	* gegl/gegl-operation-composer.c:
+	(gegl_operation_composer_class_init), (get_defined_region):
+	* gegl/gegl-operation-filter.c: (gegl_operation_filter_class_init),
+	(get_defined_region):
+	* gegl/gegl-operation-source.c: (gegl_operation_source_class_init),
+	(get_defined_region):
+	* gegl/gegl-operation.c: (gegl_operation_class_init),
+	(gegl_operation_get_defined_region), (get_defined_region):
+	* gegl/gegl-operation.h:
+	* operations/blur/box-blur.c: (get_defined_region), (class_init):
+	* operations/blur/gaussian-blur.c: (get_defined_region),
+	(class_init):
+	* operations/core/crop.c: (get_defined_region), (class_init):
+	* operations/core/shift.c: (get_defined_region), (class_init):
+	* operations/file-io/jpg-load.c: (get_defined_region):
+	* operations/file-io/magick-load.c: (get_defined_region):
+	* operations/file-io/png-load.c: (get_defined_region):
+	* operations/file-io/raw-load.c: (get_defined_region):
+	* operations/render/blank.c: (get_defined_region):
+	* operations/render/checkerboard.c: (get_defined_region):
+	* operations/render/noise.c: (get_defined_region):
+	* operations/render/text.c: (get_defined_region):
+	* operations/transform/affine.c: (op_affine_class_init),
+	(get_defined_region):
+
+2006-09-03  Øyvind Kolås  <pippin@gimp.org>
+
 	s/calc_need_rect/calc_source_regions/
 
 	* gegl/gegl-need-visitor.c: (visit_node):

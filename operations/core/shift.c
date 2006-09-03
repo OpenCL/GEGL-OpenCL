@@ -68,7 +68,7 @@ evaluate (GeglOperation *operation,
 }
 
 static GeglRect
-defined_region (GeglOperation *operation)
+get_defined_region (GeglOperation *operation)
 {
   GeglRect result = {0,0,0,0};
   ChantInstance  *op_shift = (ChantInstance*)(operation);
@@ -98,7 +98,7 @@ calc_source_regions (GeglOperation *self)
 
 static void class_init (GeglOperationClass *operation_class)
 {
-  operation_class->defined_region = defined_region;
+  operation_class->get_defined_region = get_defined_region;
   operation_class->calc_source_regions = calc_source_regions;
 }
 

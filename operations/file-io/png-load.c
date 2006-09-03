@@ -116,7 +116,7 @@ evaluate (GeglOperation *operation,
 
 
 static GeglRect 
-defined_region (GeglOperation *operation)
+get_defined_region (GeglOperation *operation)
 {
   GeglRect result = {0,0,0,0};
   ChantInstance       *self = GEGL_CHANT_INSTANCE (operation);

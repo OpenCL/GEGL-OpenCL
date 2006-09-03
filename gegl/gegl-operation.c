@@ -36,7 +36,7 @@ static void      gegl_operation_init       (GeglOperation         *self);
 static void      associate                 (GeglOperation         *self);
 static void      clean_pads                (GeglOperation *self);
 
-static GeglRect defined_region (GeglOperation *self);
+static GeglRect get_defined_region (GeglOperation *self);
 static gboolean calc_source_regions (GeglOperation *self);
 static gboolean calc_result_rect (GeglOperation *self);
 
@@ -52,7 +52,7 @@ gegl_operation_class_init (GeglOperationClass * klass)
   klass->associate = associate;
   klass->prepare = NULL;
   klass->clean_pads = clean_pads;
-  klass->defined_region = defined_region;
+  klass->get_defined_region = get_defined_region;
   klass->calc_source_regions = calc_source_regions;
   klass->calc_result_rect = calc_result_rect;
 }
@@ -105,16 +105,16 @@ gegl_operation_evaluate (GeglOperation *self,
 }
 
 GeglRect
-gegl_operation_defined_region (GeglOperation *self)
+gegl_operation_get_defined_region (GeglOperation *self)
 {
   GeglRect rect = {0,0,0,0};
   GeglOperationClass *klass;
 
   klass = GEGL_OPERATION_GET_CLASS (self);
-  g_warning ("'%s'.defined_region",
+  g_warning ("'%s'.get_defined_region",
      G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
-  if (klass->defined_region)
-    return klass->defined_region (self);
+  if (klass->get_defined_region)
+    return klass->get_defined_region (self);
   return rect;
 }
 
@@ -332,7 +332,7 @@ gegl_operation_set_result_rect (GeglOperation *operation,
 }
 
 static GeglRect
-defined_region (GeglOperation *self)
+get_defined_region (GeglOperation *self)
 {
   GeglRect rect = {0,0,0,0};
   g_warning ("Op '%s' has no proper have_rect function",
