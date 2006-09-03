@@ -74,7 +74,7 @@ process (GeglOperation *operation,
 static GeglRect
 get_defined_region (GeglOperation *operation)
 {
-  GeglRect result;
+  GeglRect  result = {0,0,0,0};
   ChantInstance  *op_crop = (ChantInstance*)(operation);
   GeglRect *in_rect = gegl_operation_source_get_defined_region (operation, "input");
   if (!in_rect)

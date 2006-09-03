@@ -289,7 +289,7 @@ ver_blur (GeglBuffer *src,
 static GeglRect 
 get_defined_region (GeglOperation *operation)
 {
-  GeglRect  result;
+  GeglRect  result = {0,0,0,0};
   GeglRect *in_rect = gegl_operation_source_get_defined_region (operation,
                                                                 "input");
   ChantInstance *blur = GEGL_CHANT_INSTANCE (operation);

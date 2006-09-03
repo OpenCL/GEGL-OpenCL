@@ -1,3 +1,10 @@
+2006-09-04  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/blur/box-blur.c: (get_defined_region),
+	* operations/blur/gaussian-blur.c: (get_defined_region),
+	* operations/core/crop.c: (get_defined_region): initialize GeglRects
+	to {0,0,0,0}
+
 2006-09-03  Øyvind Kolås  <pippin@gimp.org>
 
 	Cleaned up the base class for operations even more, added comments in
