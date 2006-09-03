@@ -275,7 +275,7 @@ gegl_node_add_pad (GeglNode *self,
 
   if (gegl_node_get_pad (self, gegl_pad_get_name (pad)))
     {
-      g_warning ("EEEEK in %s for %s", gegl_node_get_debug_name (self), gegl_pad_get_name (pad));
+      return;
     }
   if(0)g_assert (!gegl_node_get_pad (self, gegl_pad_get_name (pad)));
   self->pads = g_list_append (self->pads, pad);

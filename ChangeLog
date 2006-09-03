@@ -1,5 +1,10 @@
 2006-09-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.c: (gegl_node_add_pad): removed debug EEK, just
+	return silently when a second attempt is made to add a pad to a node.
+
+2006-09-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/Makefile.am: do not include system-wide plug-ins when invoking
 	gegl.
 
