@@ -32,7 +32,7 @@ gegl_chant_double (brightness,  -10.0,  10.0, 0.0, "Amount to increase brightnes
 #include "gegl-chant.h"
 
 static gboolean
-evaluate (GeglOperation *op,
+process (GeglOperation *op,
           void          *in_buf,
           void          *out_buf,
           glong          n_pixels)

@@ -92,8 +92,8 @@ gegl_operation_create_pad (GeglOperation *self,
 }
 
 gboolean
-gegl_operation_evaluate (GeglOperation *self,
-                         const gchar   *output_pad)
+gegl_operation_process (GeglOperation *self,
+                        const gchar   *output_pad)
 {
   GeglOperationClass *klass;
 
@@ -101,7 +101,7 @@ gegl_operation_evaluate (GeglOperation *self,
 
   klass = GEGL_OPERATION_GET_CLASS (self);
 
-  return klass->evaluate (self, output_pad);
+  return klass->process (self, output_pad);
 }
 
 GeglRect

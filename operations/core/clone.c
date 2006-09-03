@@ -35,7 +35,7 @@ gegl_chant_string (ref, "", "The reference ID used as input.")
 /* Actual image processing code
  ************************************************************************/
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationFilter   *filter = GEGL_OPERATION_FILTER(operation);

@@ -29,7 +29,7 @@ static void     set_property (GObject      *gobject,
                               guint         prop_id,
                               const GValue *value,
                               GParamSpec   *pspec);
-static gboolean evaluate     (GeglOperation   *operation,
+static gboolean process     (GeglOperation   *operation,
                               const gchar  *output_prop);
 static void     associate    (GeglOperation *operation);
 
@@ -48,7 +48,7 @@ gegl_mock_image_operation_class_init (GeglMockImageOperationClass * klass)
   object_class->get_property = get_property;
   object_class->finalize     = finalize;
 
-  operation_class->evaluate = evaluate;
+  operation_class->process = process;
   operation_class->associate = associate;
 
   g_object_class_install_property (object_class, PROP_OUTPUT,
@@ -161,7 +161,7 @@ set_property (GObject      *object,
 }
 
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar *output_prop)
 {
   GeglMockImageOperation *self = GEGL_MOCK_IMAGE_OPERATION(operation);

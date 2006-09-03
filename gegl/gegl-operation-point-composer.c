@@ -20,7 +20,7 @@
 #include "gegl-operation-point-composer.h"
 #include <string.h>
 
-static gboolean evaluate_inner       (GeglOperation *operation,
+static gboolean process_inner       (GeglOperation *operation,
                                       const gchar   *output_pad);
 
 G_DEFINE_TYPE (GeglOperationPointComposer, gegl_operation_point_composer, GEGL_TYPE_OPERATION_COMPOSER)
@@ -32,7 +32,7 @@ gegl_operation_point_composer_class_init (GeglOperationPointComposerClass * klas
   /*GObjectClass       *object_class    = G_OBJECT_CLASS (klass);*/
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  operation_class->evaluate = evaluate_inner;
+  operation_class->process = process_inner;
 }
 
 static void
@@ -45,8 +45,8 @@ gegl_operation_point_composer_init (GeglOperationPointComposer *self)
 }
 
 static gboolean
-evaluate_inner (GeglOperation *operation,
-                const gchar   *output_pad)
+process_inner (GeglOperation *operation,
+               const gchar   *output_pad)
 {
   GeglOperationComposer *composer = GEGL_OPERATION_COMPOSER (operation);
   GeglOperationPointComposer *point_composer = GEGL_OPERATION_POINT_COMPOSER (operation);
@@ -112,7 +112,7 @@ evaluate_inner (GeglOperation *operation,
             g_object_unref (roi);
           }
           {
-            GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->evaluate (
+            GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
                operation,
                buf,
                aux_buf,

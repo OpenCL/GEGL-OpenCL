@@ -35,8 +35,8 @@ static void     set_property (GObject      *gobject,
                               guint         prop_id,
                               const GValue *value,
                               GParamSpec   *pspec);
-static gboolean evaluate     (GeglOperation   *operation,
-                              const gchar  *output_prop);
+static gboolean process      (GeglOperation *operation,
+                              const gchar   *output_prop);
 static void     associate    (GeglOperation *operation);
 static void     clean_pads   (GeglOperation *operation);
 
@@ -57,7 +57,7 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
   gobject_class->get_property = get_property;
   gobject_class->finalize     = finalize;
 
-  operation_class->evaluate = evaluate;
+  operation_class->process = process;
   operation_class->associate = associate;
   operation_class->clean_pads = clean_pads;
 
@@ -145,13 +145,13 @@ set_property (GObject      *object,
 }
 
 static gboolean
-evaluate (GeglOperation *operation,
-          const gchar   *output_prop)
+process (GeglOperation *operation,
+         const gchar   *output_prop)
 {
   GeglOperationSourceClass *klass = GEGL_OPERATION_SOURCE_GET_CLASS (operation);
   gboolean success;
 
-  success = klass->evaluate (operation, output_prop);
+  success = klass->process (operation, output_prop);
 
   return success;
 }

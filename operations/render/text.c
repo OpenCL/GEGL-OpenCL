@@ -71,7 +71,7 @@ static void text_layout_text (cairo_t     *cr,
 }
 
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglRect  *have;

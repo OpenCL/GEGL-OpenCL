@@ -48,8 +48,8 @@ typedef struct _GeglOperationSourceClass GeglOperationSourceClass;
 struct _GeglOperationSourceClass
 {
    GeglOperationClass operation_class;
-   gboolean (*evaluate) (GeglOperation *self,
-                         const gchar   *output_pad);
+   gboolean (*process) (GeglOperation *self,
+                        const gchar   *output_pad);
 };
 
 GType             gegl_operation_source_get_type                  (void) G_GNUC_CONST;

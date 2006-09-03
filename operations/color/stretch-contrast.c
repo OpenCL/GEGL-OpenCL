@@ -32,7 +32,7 @@
 #include "gegl-chant.h"
 
 static gboolean
-inner_evaluate (gdouble        min,
+inner_process (gdouble        min,
                 gdouble        max,
                 guchar        *buf,
                 gint           n_pixels)
@@ -81,7 +81,7 @@ buffer_get_min_max (GeglBuffer *buffer,
 }
 
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationFilter *filter = GEGL_OPERATION_FILTER (operation);
@@ -136,7 +136,7 @@ evaluate (GeglOperation *operation,
                          "height", chunk,
                          NULL);
         gegl_buffer_get_fmt (in_line, buf, babl_format ("RGBA float"));
-        inner_evaluate (min, max, buf, result->w * chunk);
+        inner_process (min, max, buf, result->w * chunk);
         gegl_buffer_set_fmt (out_line, buf, babl_format ("RGBA float"));
         g_object_unref (in_line);
         g_object_unref (out_line);

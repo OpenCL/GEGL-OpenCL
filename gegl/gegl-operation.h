@@ -58,7 +58,7 @@ struct _GeglOperationClass
   gchar       *description;
   char        *categories;  /* a colon seperated list of categories */
 
-  gboolean (*evaluate)            (GeglOperation *self,
+  gboolean (*process)             (GeglOperation *self,
                                    const gchar   *output_pad);
 
   void     (*associate)           (GeglOperation *self);
@@ -85,7 +85,7 @@ const gchar * gegl_operation_get_name       (GeglOperation *self);
 void          gegl_operation_associate      (GeglOperation *self,
                                              GeglNode      *node);
 void          gegl_operation_prepare        (GeglOperation *self);
-gboolean      gegl_operation_evaluate       (GeglOperation *self,
+gboolean      gegl_operation_process        (GeglOperation *self,
                                              const gchar   *output_pad);
 void          gegl_operation_create_pad     (GeglOperation *self,
                                              GParamSpec    *param_spec);

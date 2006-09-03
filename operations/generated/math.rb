@@ -56,7 +56,7 @@ static void init (ChantInstance *self)
 }
 
 static gboolean
-evaluate (GeglOperation *op,
+process (GeglOperation *op,
           void          *in_buf,
           void          *aux_buf,
           void          *out_buf,

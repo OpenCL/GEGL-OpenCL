@@ -45,7 +45,7 @@ query_jpg (const gchar *path,
            gint        *height);
 
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE (operation);

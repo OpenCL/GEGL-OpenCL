@@ -50,10 +50,10 @@ typedef struct _GeglOperationPointFilterClass GeglOperationPointFilterClass;
 struct _GeglOperationPointFilterClass
 {
    GeglOperationFilterClass operation_class;
-   gboolean (*evaluate) (GeglOperation *self,      /* for parameters      */
-                         void          *in_buf,    /* input buffer */
-                         void          *out_buf,   /* output buffer */
-                         glong          samples);  /* number of samples   */
+   gboolean (*process) (GeglOperation *self,      /* for parameters      */
+                        void          *in_buf,    /* input buffer */
+                        void          *out_buf,   /* output buffer */
+                        glong          samples);  /* number of samples   */
 
 };
 

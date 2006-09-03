@@ -39,7 +39,7 @@ gegl_chant_double (n,     0, 20.0, 6.0, "")
 #include "perlin/perlin.h"
 
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglRect  *need;

@@ -78,7 +78,7 @@ init_sdl (void)
 
 
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar *output_prop)
 {
   GeglOperationFilter *op_filter = GEGL_OPERATION_FILTER (operation);

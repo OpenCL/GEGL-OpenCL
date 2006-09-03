@@ -29,7 +29,7 @@
 #include "gegl-chant.h"
 
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   /* not used */
@@ -37,7 +37,7 @@ evaluate (GeglOperation *operation,
 }
 
 static gboolean
-op_evaluate (GeglOperation *operation,
+op_process (GeglOperation *operation,
              const gchar   *output_prop)
 {
   GeglOperationFilter      *op_filter = GEGL_OPERATION_FILTER (operation);
@@ -60,7 +60,7 @@ op_evaluate (GeglOperation *operation,
 }
 static void class_init (GeglOperationClass *klass)
 {
-  klass->evaluate = op_evaluate;
+  klass->process = op_process;
 }
 
 

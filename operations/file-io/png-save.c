@@ -41,7 +41,7 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
                         gint         height);
 
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar *output_prop)
 {
   ChantInstance *self = GEGL_CHANT_INSTANCE (operation);

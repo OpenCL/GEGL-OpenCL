@@ -30,7 +30,7 @@
 #include "gegl-chant.h"
 
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglRect  *need;

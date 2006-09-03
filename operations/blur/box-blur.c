@@ -46,7 +46,7 @@ ver_blur (GeglBuffer *src,
 /* Actual image processing code
  ************************************************************************/
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationFilter *filter;

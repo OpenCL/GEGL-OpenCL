@@ -62,7 +62,7 @@ static void       get_source_matrix       (OpAffine *affine,
                                            Matrix3   output);
 static GeglRect   get_defined_region          (GeglOperation *op);
 static gboolean   calc_source_regions          (GeglOperation *op);
-static gboolean   evaluate                (GeglOperation *op,
+static gboolean   process                (GeglOperation *op,
                                            const gchar   *output_prop);
 
 /* ************************* */
@@ -123,7 +123,7 @@ op_affine_class_init (OpAffineClass *klass)
   op_class->calc_source_regions   = calc_source_regions;
   op_class->categories = "geometry";
 
-  filter_class->evaluate = evaluate;
+  filter_class->process = process;
 
   klass->create_matrix = NULL;
 
@@ -443,7 +443,7 @@ calc_source_regions (GeglOperation *op)
 }
 
 static gboolean
-evaluate (GeglOperation *op,
+process (GeglOperation *op,
           const gchar   *output_pad)
 {
   GeglOperationFilter *filter = GEGL_OPERATION_FILTER (op);

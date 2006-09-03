@@ -20,8 +20,8 @@
 #include "gegl-operation-point-filter.h"
 #include <string.h>
 
-static gboolean evaluate_inner       (GeglOperation *operation,
-                                      const gchar   *output_pad);
+static gboolean process_inner       (GeglOperation *operation,
+                                     const gchar   *output_pad);
 
 G_DEFINE_TYPE (GeglOperationPointFilter, gegl_operation_point_filter, GEGL_TYPE_OPERATION_FILTER)
 
@@ -32,7 +32,7 @@ gegl_operation_point_filter_class_init (GeglOperationPointFilterClass * klass)
   /*GObjectClass       *object_class    = G_OBJECT_CLASS (klass);*/
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  operation_class->evaluate = evaluate_inner;
+  operation_class->process = process_inner;
 }
 
 static void
@@ -43,8 +43,8 @@ gegl_operation_point_filter_init (GeglOperationPointFilter *self)
 }
 
 static gboolean
-evaluate_inner (GeglOperation *operation,
-                const gchar   *output_pad)
+process_inner (GeglOperation *operation,
+               const gchar   *output_pad)
 {
   GeglOperationFilter *filter = GEGL_OPERATION_FILTER (operation);
   GeglOperationPointFilter *point_filter = GEGL_OPERATION_POINT_FILTER (operation);
@@ -85,7 +85,7 @@ evaluate_inner (GeglOperation *operation,
             g_object_unref (roi);
           }
           {
-            GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation)->evaluate (
+            GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation)->process (
                operation,
                buf,
                buf,

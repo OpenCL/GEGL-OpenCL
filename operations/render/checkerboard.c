@@ -35,7 +35,7 @@ gegl_chant_int (y_offset, -G_MAXINT, G_MAXINT,  0, "")
 #include "gegl-chant.h"
 
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglRect  *need;

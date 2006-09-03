@@ -683,20 +683,6 @@ gegl_node_create_pad (GeglNode   *self,
   return pad;
 }
 
-gboolean
-gegl_node_evaluate (GeglNode    *self,
-                    const gchar *output_pad)
-{
-  g_return_val_if_fail (GEGL_IS_NODE (self), FALSE);
-  /*g_return_val_if_fail (GEGL_IS_OPERATION (self->operation), FALSE);*/
-  if (!self->operation)
-    {
-      return FALSE;
-    }
-
-  return gegl_operation_evaluate (self->operation, output_pad);
-}
-
 static GType
 g_type_from_op_class2 (GType        parent,
                        const gchar *op_class)

@@ -42,7 +42,7 @@ static void     set_property (GObject      *gobject,
                               guint         prop_id,
                               const GValue *value,
                               GParamSpec   *pspec);
-static gboolean evaluate     (GeglOperation   *operation,
+static gboolean process      (GeglOperation   *operation,
                               const gchar  *output_prop);
 static void     associate    (GeglOperation *operation);
 static void     clean_pads   (GeglOperation *operation);
@@ -64,7 +64,7 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
   object_class->get_property = get_property;
   object_class->finalize     = finalize;
 
-  operation_class->evaluate = evaluate;
+  operation_class->process = process;
   operation_class->associate = associate;
   operation_class->clean_pads = clean_pads;
   operation_class->get_defined_region = get_defined_region;
@@ -188,8 +188,8 @@ set_property (GObject      *object,
 }
 
 static gboolean
-evaluate (GeglOperation *operation,
-          const gchar   *output_prop)
+process (GeglOperation *operation,
+         const gchar   *output_prop)
 {
   GeglOperationComposer      *gegl_operation_composer = GEGL_OPERATION_COMPOSER (operation);
   GeglOperationComposerClass *klass       = GEGL_OPERATION_COMPOSER_GET_CLASS (operation);
@@ -200,7 +200,7 @@ evaluate (GeglOperation *operation,
    */
   if (gegl_operation_composer->input != NULL)
     {
-      success = klass->evaluate (operation, output_prop);
+      success = klass->process (operation, output_prop);
     }
   else
     {

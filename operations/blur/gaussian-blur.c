@@ -61,7 +61,7 @@ find_iir_constants (gfloat   radius,
 /* Actual image processing code
  ************************************************************************/
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationFilter *filter;

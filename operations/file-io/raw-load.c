@@ -42,7 +42,7 @@ gegl_chant_pointer (cached, "private")
 static void load_cache (ChantInstance *op_raw_load);
 
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);

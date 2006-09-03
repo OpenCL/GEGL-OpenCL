@@ -44,7 +44,7 @@ int gegl_chant_foo = 0;
 /* Actual image processing code
  ************************************************************************/
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationFilter    *filter = GEGL_OPERATION_FILTER(operation);

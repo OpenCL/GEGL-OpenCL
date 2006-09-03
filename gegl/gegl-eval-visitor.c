@@ -66,7 +66,7 @@ visit_pad (GeglVisitor *self,
   
   if (gegl_pad_is_output (pad))
     {
-      gegl_operation_evaluate (operation, gegl_pad_get_name (pad));
+      gegl_operation_process (operation, gegl_pad_get_name (pad));
     }
   else if (gegl_pad_is_input (pad))
     {

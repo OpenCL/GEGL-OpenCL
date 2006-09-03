@@ -334,21 +334,21 @@ set_property (GObject      *gobject,
 }
 
 #ifdef GEGL_CHANT_POINT_FILTER
-static gboolean evaluate (GeglOperation *operation,
-                          void          *in_buf,
-                          void          *out_buf,
-                          glong          samples);
+static gboolean process (GeglOperation *operation,
+                         void          *in_buf,
+                         void          *out_buf,
+                         glong          samples);
 #else
 #ifdef GEGL_CHANT_POINT_COMPOSER
-static gboolean evaluate (GeglOperation *operation,
-                          void          *in_buf, 
-                          void          *aux_buf,
-                          void          *out_buf,
-                          glong          samples);
+static gboolean process (GeglOperation *operation,
+                         void          *in_buf, 
+                         void          *aux_buf,
+                         void          *out_buf,
+                         glong          samples);
 #else
 #ifndef GEGL_CHANT_GRAPH
-static gboolean evaluate (GeglOperation *operation,
-                          const gchar   *output_prop);
+static gboolean process (GeglOperation *operation,
+                         const gchar   *output_prop);
 #endif
 #endif
 #endif
@@ -394,7 +394,7 @@ gegl_chant_class_init (ChantClass * klass)
 
 #ifndef GEGL_CHANT_GRAPH
   GEGL_CHANT_PARENT_TypeNameClass *parent_class = GEGL_CHANT_PARENT_CLASS (klass);
-  parent_class->evaluate = evaluate;
+  parent_class->process = process;
 #endif
 
   operation_class = GEGL_OPERATION_CLASS (klass);

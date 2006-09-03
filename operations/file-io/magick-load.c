@@ -62,7 +62,7 @@ load_cache (ChantInstance *op_magick_load)
 }
 
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);

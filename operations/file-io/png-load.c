@@ -46,7 +46,7 @@ gint query_png (const gchar *path,
                 gint        *height);
 
 static gboolean
-evaluate (GeglOperation *operation,
+process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   ChantInstance       *self = GEGL_CHANT_INSTANCE (operation);
@@ -126,7 +126,7 @@ get_defined_region (GeglOperation *operation)
 
   if (!strcmp (self->path, "-"))
     {
-      evaluate (operation, "output");
+      process (operation, "output");
       width = source->output->width;
       height = source->output->height;
     }
