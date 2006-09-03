@@ -60,7 +60,7 @@ static gboolean   is_intermediate_node    (OpAffine *affine);
 static gboolean   is_composite_node       (OpAffine *affine);
 static void       get_source_matrix       (OpAffine *affine,
                                            Matrix3   output);
-static gboolean   calc_have_rect          (GeglOperation *op);
+static GeglRect   defined_region          (GeglOperation *op);
 static gboolean   calc_need_rect          (GeglOperation *op);
 static gboolean   evaluate                (GeglOperation *op,
                                            const gchar   *output_prop);
@@ -119,7 +119,7 @@ op_affine_class_init (OpAffineClass *klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  op_class->calc_have_rect   = calc_have_rect;
+  op_class->defined_region   = defined_region;
   op_class->calc_need_rect   = calc_need_rect;
   op_class->categories = "geometry";
 
@@ -311,8 +311,8 @@ get_source_matrix (OpAffine *affine,
   matrix3_copy (output, OP_AFFINE (source)->matrix);
 }
 
-static gboolean
-calc_have_rect (GeglOperation *op)
+static GeglRect
+defined_region (GeglOperation *op)
 {
   OpAffine      *affine  = (OpAffine *) op;
   OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);
@@ -339,10 +339,7 @@ calc_have_rect (GeglOperation *op)
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (affine->matrix))
     {
-      gegl_operation_set_have_rect (op,
-                                    in_rect.x, in_rect.y,
-                                    in_rect.w, in_rect.h);
-      return TRUE;
+      return in_rect;
     }
 
   if (! strcasecmp (affine->filter, "linear"))
@@ -379,10 +376,7 @@ calc_have_rect (GeglOperation *op)
 
   bounding_box (have_points, 4, &have_rect);
 
-  gegl_operation_set_have_rect (op,
-                                have_rect.x, have_rect.y,
-                                have_rect.w, have_rect.h);
-  return TRUE;
+  return have_rect;
 }
 
 static gboolean

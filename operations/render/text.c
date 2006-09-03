@@ -144,21 +144,24 @@ evaluate (GeglOperation *operation,
 }
 
 
-static gboolean
-calc_have_rect (GeglOperation *operation)
+static GeglRect
+defined_region (GeglOperation *operation)
 {
+  GeglRect result = {0,0,0,0};
   ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
-  gdouble width, height;
   gint status = FALSE;
 
   { /* get extents */
     cairo_t *cr;
+    gdouble width, height;
 
     cairo_surface_t *surface  = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
         1, 1); 
     cr = cairo_create (surface);
     cairo_set_font_size (cr, self->size);
     text_layout_text (cr, self->string, 0, &width, &height);
+    result.w = width;
+    result.h = height;
 
     cairo_destroy (cr);
     cairo_surface_destroy (surface);
@@ -167,12 +170,12 @@ calc_have_rect (GeglOperation *operation)
   if (status)
     {
       g_warning ("calc have rect of text '%s' failed", self->string);
-      return FALSE;
+    }
+  else
+    {
     }
 
-  gegl_operation_set_have_rect (operation, 0, 0, width, height);
-
-  return TRUE;
+  return result;
 }
 
 static void dispose (GObject *gobject)

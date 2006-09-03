@@ -67,19 +67,20 @@ evaluate (GeglOperation *operation,
   return  TRUE;
 }
 
-static gboolean
-calc_have_rect (GeglOperation *operation)
+static GeglRect
+defined_region (GeglOperation *operation)
 {
+  GeglRect result = {0,0,0,0};
   ChantInstance  *op_shift = (ChantInstance*)(operation);
   GeglRect *in_rect = gegl_operation_get_have_rect (operation, "input");
   if (!in_rect)
-    return FALSE;
+    return result;
 
-  gegl_operation_set_have_rect (operation, 
-     in_rect->x + op_shift->x,
-     in_rect->y + op_shift->y,
-     in_rect->w, in_rect->h);
-  return TRUE;
+  result = *in_rect;
+  result.x += op_shift->x;
+  result.y += op_shift->y;
+ 
+  return result;
 }
 
 static gboolean
@@ -97,7 +98,7 @@ calc_need_rect (GeglOperation *self)
 
 static void class_init (GeglOperationClass *operation_class)
 {
-  operation_class->calc_have_rect = calc_have_rect;
+  operation_class->defined_region = defined_region;
   operation_class->calc_need_rect = calc_need_rect;
 }
 

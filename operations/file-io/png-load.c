@@ -115,9 +115,10 @@ evaluate (GeglOperation *operation,
 }
 
 
-static gboolean
-calc_have_rect (GeglOperation *operation)
+static GeglRect 
+defined_region (GeglOperation *operation)
 {
+  GeglRect result = {0,0,0,0};
   ChantInstance       *self = GEGL_CHANT_INSTANCE (operation);
   GeglOperationSource *source = GEGL_OPERATION_SOURCE (operation);
   gint width, height;
@@ -136,13 +137,11 @@ calc_have_rect (GeglOperation *operation)
       if (status)
         {
           g_warning ("calc have rect of %s failed", self->path);
-          return FALSE;
         }
     }
-
-  gegl_operation_set_have_rect (operation, 0, 0, width, height);
-
-  return TRUE;
+  result.w = width;
+  result.h = height;
+  return result;
 }
 
 static gint

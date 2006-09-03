@@ -59,9 +59,11 @@ prepare (GeglOperation *operation)
      
       if (extension)
         handler = gegl_extension_handler_get (extension);
-
+      g_warning ("%s %s", handler, self->path);
       gegl_node_set (priv->load, 
                      "operation", handler,
+                     NULL);
+      gegl_node_set (priv->load, 
                      "path",  self->path,
                      NULL);
     }

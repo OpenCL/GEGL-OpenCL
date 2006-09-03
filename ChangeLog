@@ -1,3 +1,37 @@
+2006-09-03  Øyvind Kolås  <pippin@gimp.org>
+
+	s/calc_have_rect/defined_region/, this new virtual method for
+	operations returns (over the stack) a GeglRect. The graph evaluation
+	manager is responsible for updating the operation (and node)'s state.
+
+	* gegl/gegl-chant.h:
+	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
+	* gegl/gegl-have-visitor.c: (visit_node):
+	* gegl/gegl-operation-composer.c:
+	(gegl_operation_composer_class_init), (defined_region):
+	* gegl/gegl-operation-filter.c: (gegl_operation_filter_class_init),
+	(defined_region):
+	* gegl/gegl-operation-source.c: (gegl_operation_source_class_init),
+	(defined_region):
+	* gegl/gegl-operation.c: (gegl_operation_class_init),
+	(gegl_operation_defined_region), (defined_region):
+	* gegl/gegl-operation.h:
+	* operations/blur/box-blur.c: (defined_region), (class_init):
+	* operations/blur/gaussian-blur.c: (defined_region), (class_init):
+	* operations/core/crop.c: (defined_region), (class_init):
+	* operations/core/shift.c: (defined_region), (class_init):
+	* operations/file-io/jpg-load.c: (defined_region):
+	* operations/file-io/load.c: (prepare):
+	* operations/file-io/magick-load.c: (defined_region):
+	* operations/file-io/png-load.c: (defined_region):
+	* operations/file-io/raw-load.c: (defined_region):
+	* operations/render/blank.c: (defined_region):
+	* operations/render/checkerboard.c: (defined_region):
+	* operations/render/noise.c: (defined_region):
+	* operations/render/text.c: (defined_region):
+	* operations/transform/affine.c: (op_affine_class_init),
+	(defined_region):
+
 2006-09-02  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/render/checkerboard.c: Applied slightly modified patch

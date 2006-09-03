@@ -44,7 +44,7 @@ static void     clean_pads   (GeglOperation *operation);
 
 G_DEFINE_TYPE (GeglOperationSource, gegl_operation_source, GEGL_TYPE_OPERATION)
 
-static gboolean calc_have_rect (GeglOperation *self);
+static GeglRect defined_region (GeglOperation *self);
 static gboolean calc_need_rect (GeglOperation *self);
 
 static void
@@ -61,7 +61,7 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
   operation_class->associate = associate;
   operation_class->clean_pads = clean_pads;
 
-  operation_class->calc_have_rect = calc_have_rect;
+  operation_class->defined_region = defined_region;
   operation_class->calc_need_rect = calc_need_rect;
 
   g_object_class_install_property (gobject_class, PROP_OUTPUT,
@@ -156,12 +156,13 @@ evaluate (GeglOperation *operation,
   return success;
 }
 
-static gboolean
-calc_have_rect (GeglOperation *self)
+static GeglRect
+defined_region (GeglOperation *self)
 {
+  GeglRect result = {0,0,0,0};
   g_warning ("Gegl Source '%s' has no proper have_rect function",
      G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
-  return FALSE;
+  return result;
 }
 
 static gboolean

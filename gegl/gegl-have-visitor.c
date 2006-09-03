@@ -56,9 +56,11 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
+  GeglRect rect;
   GeglOperation *operation = node->operation;
 
   GEGL_VISITOR_CLASS (gegl_have_visitor_parent_class)->visit_node (self, node);
 
-  gegl_operation_calc_have_rect (operation);
+  rect = gegl_operation_defined_region (operation);
+  gegl_operation_set_have_rect (operation, rect.x, rect.y, rect.w, rect.h);
 }

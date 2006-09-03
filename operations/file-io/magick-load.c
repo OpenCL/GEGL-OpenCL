@@ -93,9 +93,10 @@ evaluate (GeglOperation *operation,
 }
 
 
-static gboolean
-calc_have_rect (GeglOperation *operation)
+static GeglRect
+defined_region (GeglOperation *operation)
 {
+  GeglRect result = {0,0,0,0};
   ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   gint width, height;
 
@@ -104,9 +105,10 @@ calc_have_rect (GeglOperation *operation)
   width  = GEGL_BUFFER (self->cached)->width;
   height = GEGL_BUFFER (self->cached)->height;
 
-  gegl_operation_set_have_rect (operation, 0, 0, width, height);
+  result.w = width;
+  result.h = height;
 
-  return TRUE;
+  return result;
 }
 
 static void dispose (GObject *gobject)

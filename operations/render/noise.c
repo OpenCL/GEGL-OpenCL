@@ -94,14 +94,11 @@ evaluate (GeglOperation *operation,
 }
 
 
-static gboolean
-calc_have_rect (GeglOperation *operation)
+static GeglRect 
+defined_region (GeglOperation *operation)
 {
-  /*OpNoise    *self      = (OpNoise*)(operation);*/
-
-  gegl_operation_set_have_rect (operation, -1000000, -1000000, 2000000, 2000000);
-
-  return TRUE;
+  GeglRect result = {-10000000, -10000000, 20000000, 20000000};
+  return result;
 }
 
 static void dispose (GObject *gobject)

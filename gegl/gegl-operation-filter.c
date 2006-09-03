@@ -44,7 +44,7 @@ static gboolean evaluate             (GeglOperation *operation,
 
 static void     associate            (GeglOperation *operation);
 
-static gboolean calc_have_rect       (GeglOperation *self);
+static GeglRect defined_region       (GeglOperation *self);
 static gboolean calc_need_rect       (GeglOperation *self);
 static void     clean_pads           (GeglOperation *operation);
 
@@ -64,7 +64,7 @@ gegl_operation_filter_class_init (GeglOperationFilterClass * klass)
   operation_class->evaluate = evaluate;
   operation_class->associate = associate;
   operation_class->clean_pads = clean_pads;
-  operation_class->calc_have_rect = calc_have_rect;
+  operation_class->defined_region = defined_region;
   operation_class->calc_need_rect = calc_need_rect;
 
   g_object_class_install_property (object_class, PROP_OUTPUT,
@@ -192,20 +192,19 @@ evaluate (GeglOperation *operation,
   return success;
 }
 
-static gboolean
-calc_have_rect (GeglOperation *self)
+static GeglRect
+defined_region (GeglOperation *self)
 {
+  GeglRect result = {0,0,0,0};
   GeglRect *in_rect;
 
   in_rect = gegl_operation_get_have_rect (self, "input");
-  if (!in_rect)
-    return FALSE;
+  if (in_rect)
+    {
+      result = *in_rect;
+    }
 
-  gegl_operation_set_have_rect (self,
-     in_rect->x, in_rect->y,
-     in_rect->w, in_rect->h);
-
-  return TRUE;
+  return result;
 }
 
 static gboolean

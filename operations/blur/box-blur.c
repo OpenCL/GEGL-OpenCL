@@ -221,21 +221,24 @@ ver_blur (GeglBuffer *src,
 }
 
 #include <math.h>
-static gboolean
-calc_have_rect (GeglOperation *operation)
+static GeglRect 
+defined_region (GeglOperation *operation)
 {
+  GeglRect  result;
   GeglRect *in_rect = gegl_operation_get_have_rect (operation, "input");
   ChantInstance *blur = GEGL_CHANT_INSTANCE (operation);
   gint       radius = ceil(blur->radius);
   if (!in_rect)
-    return FALSE;
+    return result;
 
-  gegl_operation_set_have_rect (operation, 
-     in_rect->x-radius, in_rect->y-radius,
-     in_rect->w+radius*2, in_rect->h+radius*2);
-  return TRUE;
+  result = *in_rect;
+  result.x-=radius;
+  result.y-=radius;
+  result.w+=radius*2;
+  result.h+=radius*2;
+  
+  return result;
 }
-
 
 static gboolean
 calc_need_rect (GeglOperation *self)
@@ -252,7 +255,7 @@ calc_need_rect (GeglOperation *self)
 
 static void class_init (GeglOperationClass *operation_class)
 {
-  operation_class->calc_have_rect = calc_have_rect;
+  operation_class->defined_region = defined_region;
   operation_class->calc_need_rect = calc_need_rect;
 }
 

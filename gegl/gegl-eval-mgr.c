@@ -91,9 +91,15 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
     root = pad->node;
   g_object_ref (root);
 
-  prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, NULL);
-  gegl_visitor_dfs_traverse (prepare_visitor, GEGL_VISITABLE(root));
-  g_object_unref (prepare_visitor);
+  {
+    gint i;
+    for (i=0;i<2;i++)
+      {
+        prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, NULL);
+        gegl_visitor_dfs_traverse (prepare_visitor, GEGL_VISITABLE(root));
+        g_object_unref (prepare_visitor);
+      }
+  }
 
   have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, NULL);
   gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE(root));

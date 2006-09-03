@@ -285,22 +285,26 @@ ver_blur (GeglBuffer *src,
   g_free (w);
 }
 
-static gboolean
-calc_have_rect (GeglOperation *operation)
+#include <math.h>
+static GeglRect 
+defined_region (GeglOperation *operation)
 {
+  GeglRect  result;
   GeglRect *in_rect = gegl_operation_get_have_rect (operation, "input");
-  ChantInstance* self = GEGL_CHANT_INSTANCE(operation);
-  gint radius_x       = ceil(self->radius_x+0.5);
-  gint radius_y       = ceil(self->radius_y+0.5);
-  if(!in_rect)
-    return FALSE;
+  ChantInstance *blur = GEGL_CHANT_INSTANCE (operation);
+  gint radius_x       = ceil(blur->radius_x+0.5);
+  gint radius_y       = ceil(blur->radius_y+0.5);
+  if (!in_rect)
+    return result;
 
-  gegl_operation_set_have_rect (operation, 
-     in_rect->x-radius_x,   in_rect->y-radius_y,
-     in_rect->w+radius_x*2, in_rect->h+radius_y*2);
-  return TRUE;
+  result = *in_rect;
+  result.x-=radius_x;
+  result.y-=radius_y;
+  result.w+=radius_x*2;
+  result.h+=radius_y*2;
+  
+  return result;
 }
-
 
 static gboolean
 calc_need_rect (GeglOperation *self)
@@ -318,9 +322,8 @@ calc_need_rect (GeglOperation *self)
 
 static void class_init (GeglOperationClass *operation_class)
 {
-  operation_class->calc_have_rect = calc_have_rect;
+  operation_class->defined_region = defined_region;
   operation_class->calc_need_rect = calc_need_rect;
 }
-
 
 #endif
