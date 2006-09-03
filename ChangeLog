@@ -1,5 +1,25 @@
 2006-09-03  Øyvind Kolås  <pippin@gimp.org>
 
+	s/gegl_operation_set_need_rect/gegl_operation_set_source_region/
+
+	made the region function take a GeglRect instead of seperate x,y,w,h.
+
+	* gegl/gegl-have-visitor.c: (visit_node):
+	* gegl/gegl-operation-composer.c: (calc_source_regions):
+	* gegl/gegl-operation-filter.c: (calc_source_regions):
+	* gegl/gegl-operation.c: (gegl_operation_set_have_rect),
+	(gegl_operation_set_source_region):
+	* gegl/gegl-operation.h:
+	* operations/blur/box-blur.c: (calc_source_regions):
+	* operations/blur/gaussian-blur.c: (calc_source_regions):
+	* operations/color/stretch-contrast.c: (calc_source_regions):
+	* operations/core/crop.c: (get_defined_region),
+	(calc_source_regions):
+	* operations/core/shift.c: (calc_source_regions):
+	* operations/transform/affine.c: (calc_source_regions):
+
+2006-09-03  Øyvind Kolås  <pippin@gimp.org>
+
 	s/evaluate/process/
 
 	* gegl/gegl-eval-visitor.c: (visit_pad):

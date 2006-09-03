@@ -244,12 +244,15 @@ static gboolean
 calc_source_regions (GeglOperation *self)
 {
   ChantInstance *blur = GEGL_CHANT_INSTANCE (self);
-  GeglRect  *need   = gegl_operation_need_rect (self);
+  GeglRect   need   = *gegl_operation_need_rect (self);
   gint       radius = ceil(blur->radius);
 
-  gegl_operation_set_need_rect (self, "input",
-     need->x - radius, need->y - radius,
-     need->w + radius, need->h + radius);
+  need.x-=radius;
+  need.y-=radius;
+  need.w+=radius*2;
+  need.h+=radius*2;
+
+  gegl_operation_set_source_region (self, "input", &need);
   return TRUE;
 }
 

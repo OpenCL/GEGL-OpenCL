@@ -66,9 +66,7 @@ struct _GeglOperationClass
   void     (*clean_pads)          (GeglOperation *self);
 
   GeglRect (*get_defined_region)  (GeglOperation *self);
-
   gboolean (*calc_source_regions) (GeglOperation *self);
-
   gboolean (*calc_result_rect)    (GeglOperation *self);
 };
 
@@ -96,34 +94,22 @@ GeglRect      gegl_operation_get_defined_region (GeglOperation *self);
 gboolean      gegl_operation_calc_source_regions (GeglOperation *self);
 gboolean      gegl_operation_calc_result_rect (GeglOperation *self);
 
-/* this method defined for the Operation, even though it acts on the Node.
- * The rationale for this is that the knowledge for setting the rect
- * belongs on the Op side of the Node/Op pair
- */
-void gegl_operation_set_have_rect (GeglOperation *operation,
-                                   gint           x,
-                                   gint           y,
-                                   gint           width,
-                                   gint           height);
-GeglRect *gegl_operation_get_have_rect (GeglOperation *operation,
-                                        const gchar   *input_pad_name);
+void gegl_operation_set_have_rect           (GeglOperation *operation,
+                                             GeglRect      *region);
 
-void gegl_operation_set_need_rect (GeglOperation *operation,
-                                   const gchar   *input_pad_name,
-                                   gint           x,
-                                   gint           y,
-                                   gint           width,
-                                   gint           height);
+GeglRect *gegl_operation_get_have_rect      (GeglOperation *operation,
+                                             const gchar   *input_pad_name);
 
-void gegl_operation_set_result_rect (GeglOperation *operation,
-                                     gint           x,
-                                     gint           y,
-                                     gint           width,
-                                     gint           height);
+void gegl_operation_set_source_region       (GeglOperation *operation,
+                                             const gchar   *input_pad_name,
+                                             GeglRect      *region);
 
-GeglRect *gegl_operation_need_rect     (GeglOperation *operation);
-GeglRect *gegl_operation_have_rect     (GeglOperation *operation);
-GeglRect *gegl_operation_result_rect   (GeglOperation *operation);
+void gegl_operation_set_result_region       (GeglOperation *operation,
+                                             GeglRect      *region);
+
+GeglRect *gegl_operation_need_rect          (GeglOperation *operation);
+GeglRect *gegl_operation_have_rect          (GeglOperation *operation);
+GeglRect *gegl_operation_result_rect        (GeglOperation *operation);
 
 G_END_DECLS
 

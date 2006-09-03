@@ -243,12 +243,8 @@ calc_source_regions (GeglOperation *self)
 {
   GeglRect *need_rect = gegl_operation_need_rect (self);
 
-  gegl_operation_set_need_rect (self, "input",
-                                need_rect->x, need_rect->y,
-                                need_rect->w, need_rect->h);
-  gegl_operation_set_need_rect (self, "aux",
-                                need_rect->x, need_rect->y,
-                                need_rect->w, need_rect->h);
+  gegl_operation_set_source_region (self, "input", need_rect);
+  gegl_operation_set_source_region (self, "aux", need_rect);
   return TRUE;
 }
 

@@ -80,25 +80,20 @@ get_defined_region (GeglOperation *operation)
   if (!in_rect)
     return result;
 
-  gegl_operation_set_have_rect (operation,
-     op_crop->x, op_crop->y,
-     op_crop->width, op_crop->height);
   result.x=op_crop->x;
   result.y=op_crop->y;
   result.w=op_crop->width;
   result.h=op_crop->height;
+
+  gegl_operation_set_have_rect (operation, &result);
   return result;
 }
 
 static gboolean
 calc_source_regions (GeglOperation *self)
 {
-  GeglRect *requested    = gegl_operation_need_rect (self);
-
-  gegl_operation_set_need_rect (self, "input",
-     requested->x,
-     requested->y,
-     requested->w, requested->h);
+  gegl_operation_set_source_region (self, "input",
+                                    gegl_operation_need_rect (self));
   return TRUE;
 }
 

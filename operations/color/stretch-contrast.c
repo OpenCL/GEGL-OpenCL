@@ -158,14 +158,8 @@ process (GeglOperation *operation,
 static gboolean
 calc_source_regions (GeglOperation *self)
 {
-  GeglRect *requested;
-  requested = gegl_operation_need_rect (self);
-
-  gegl_operation_set_need_rect (self, "input",
-      gegl_operation_have_rect (self)->x,
-      gegl_operation_have_rect (self)->y,
-      gegl_operation_have_rect (self)->w,
-      gegl_operation_have_rect (self)->h);
+  gegl_operation_set_source_region (self, "input",
+                                    gegl_operation_need_rect (self));
   return TRUE;
 }
 

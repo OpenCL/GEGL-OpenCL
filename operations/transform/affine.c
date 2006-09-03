@@ -394,9 +394,7 @@ calc_source_regions (GeglOperation *op)
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (inverse))
     {
-      gegl_operation_set_need_rect (op, "input",
-                                    requested_rect.x, requested_rect.y,
-                                    requested_rect.w, requested_rect.h);
+      gegl_operation_set_source_region (op, "input", &requested_rect);
       return TRUE;
     }
 
@@ -436,9 +434,7 @@ calc_source_regions (GeglOperation *op)
         }
     }
 
-  gegl_operation_set_need_rect (op, "input",
-                                need_rect.x, need_rect.y,
-                                need_rect.w, need_rect.h);
+  gegl_operation_set_source_region (op, "input", &need_rect);
   return TRUE;
 }
 

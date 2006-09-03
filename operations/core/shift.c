@@ -87,12 +87,12 @@ static gboolean
 calc_source_regions (GeglOperation *self)
 {
   ChantInstance  *op_shift = (ChantInstance*)(self);
-  GeglRect *requested    = gegl_operation_need_rect (self);
+  GeglRect rect = *gegl_operation_need_rect (self);
 
-  gegl_operation_set_need_rect (self, "input",
-     requested->x - op_shift->x,
-     requested->y - op_shift->y,
-     requested->w, requested->h);
+  rect.x -= op_shift->x;
+  rect.y -= op_shift->y;
+
+  gegl_operation_set_source_region (self, "input", &rect);
   return TRUE;
 }
 

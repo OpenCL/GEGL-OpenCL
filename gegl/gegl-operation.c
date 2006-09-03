@@ -205,14 +205,11 @@ gegl_operation_clean_pads (GeglOperation *self)
 
 void
 gegl_operation_set_have_rect (GeglOperation *operation,
-                              gint           x,
-                              gint           y,
-                              gint           width,
-                              gint           height)
+                              GeglRect      *rect)
 {
   g_assert (operation);
   g_assert (operation->node);
-  gegl_node_set_have_rect (operation->node, x, y, width, height);
+  gegl_node_set_have_rect (operation->node, rect->x, rect->y, rect->w, rect->h);
 }
 
 GeglRect *
@@ -276,17 +273,13 @@ producer_nodes (GeglPad *input_pad)
 }
 
 void
-gegl_operation_set_need_rect (GeglOperation *operation,
-                              const gchar   *input_pad_name,
-                              gint           x,
-                              gint           y,
-                              gint           width,
-                              gint           height)
+gegl_operation_set_source_region (GeglOperation *operation,
+                                  const gchar   *input_pad_name,
+                                  GeglRect      *region)
 {
   GeglPad *pad;
   GList   *children;
-  GeglRect need = {x, y, width, height},
-           child_need;
+  GeglRect child_need;
 
   g_assert (operation);
   g_assert (operation->node);
@@ -311,7 +304,7 @@ gegl_operation_set_need_rect (GeglOperation *operation,
   while (children)
     {
       gegl_rect_bounding_box (&child_need,
-                              gegl_node_get_need_rect (children->data), &need);
+                              gegl_node_get_need_rect (children->data), region);
       gegl_node_set_need_rect (children->data,
                                child_need.x, child_need.y,
                                child_need.w, child_need.h);
