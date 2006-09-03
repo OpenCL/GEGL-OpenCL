@@ -156,7 +156,7 @@ evaluate (GeglOperation *operation,
  * compute the scale op.
  */
 static gboolean
-calc_need_rect (GeglOperation *self)
+calc_source_regions (GeglOperation *self)
 {
   GeglRect *requested;
   requested = gegl_operation_need_rect (self);
@@ -177,7 +177,7 @@ calc_need_rect (GeglOperation *self)
  */
 static void class_init (GeglOperationClass *operation_class)
 {
-  operation_class->calc_need_rect = calc_need_rect;
+  operation_class->calc_source_regions = calc_source_regions;
 }
 
 #endif

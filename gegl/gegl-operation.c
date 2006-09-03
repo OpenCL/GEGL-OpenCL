@@ -37,7 +37,7 @@ static void      associate                 (GeglOperation         *self);
 static void      clean_pads                (GeglOperation *self);
 
 static GeglRect defined_region (GeglOperation *self);
-static gboolean calc_need_rect (GeglOperation *self);
+static gboolean calc_source_regions (GeglOperation *self);
 static gboolean calc_result_rect (GeglOperation *self);
 
 G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
@@ -53,7 +53,7 @@ gegl_operation_class_init (GeglOperationClass * klass)
   klass->prepare = NULL;
   klass->clean_pads = clean_pads;
   klass->defined_region = defined_region;
-  klass->calc_need_rect = calc_need_rect;
+  klass->calc_source_regions = calc_source_regions;
   klass->calc_result_rect = calc_result_rect;
 }
 
@@ -119,14 +119,14 @@ gegl_operation_defined_region (GeglOperation *self)
 }
 
 gboolean
-gegl_operation_calc_need_rect (GeglOperation *self)
+gegl_operation_calc_source_regions (GeglOperation *self)
 {
   GeglOperationClass *klass;
 
   klass = GEGL_OPERATION_GET_CLASS (self);
 
-  if (klass->calc_need_rect)
-    return klass->calc_need_rect (self);
+  if (klass->calc_source_regions)
+    return klass->calc_source_regions (self);
   return FALSE;
 }
 
@@ -341,7 +341,7 @@ defined_region (GeglOperation *self)
 }
 
 static gboolean
-calc_need_rect (GeglOperation *self)
+calc_source_regions (GeglOperation *self)
 {
   g_warning ("Op '%s' has no proper need_rect function",
      G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));

@@ -84,7 +84,7 @@ defined_region (GeglOperation *operation)
 }
 
 static gboolean
-calc_need_rect (GeglOperation *self)
+calc_source_regions (GeglOperation *self)
 {
   ChantInstance  *op_shift = (ChantInstance*)(self);
   GeglRect *requested    = gegl_operation_need_rect (self);
@@ -99,7 +99,7 @@ calc_need_rect (GeglOperation *self)
 static void class_init (GeglOperationClass *operation_class)
 {
   operation_class->defined_region = defined_region;
-  operation_class->calc_need_rect = calc_need_rect;
+  operation_class->calc_source_regions = calc_source_regions;
 }
 
 #endif

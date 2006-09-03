@@ -67,7 +67,7 @@ struct _GeglOperationClass
 
   GeglRect (*defined_region)    (GeglOperation *self);
 
-  gboolean (*calc_need_rect)    (GeglOperation *self);
+  gboolean (*calc_source_regions)    (GeglOperation *self);
   gboolean (*calc_result_rect)  (GeglOperation *self);
 };
 
@@ -92,7 +92,7 @@ gboolean      gegl_operation_register       (GeglOperation *self,
                                              GeglNode      *node);
 void          gegl_operation_clean_pads     (GeglOperation *self);
 GeglRect      gegl_operation_defined_region (GeglOperation *self);
-gboolean      gegl_operation_calc_need_rect (GeglOperation *self);
+gboolean      gegl_operation_calc_source_regions (GeglOperation *self);
 gboolean      gegl_operation_calc_result_rect (GeglOperation *self);
 
 /* this method defined for the Operation, even though it acts on the Node.

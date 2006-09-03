@@ -48,7 +48,7 @@ static void     associate    (GeglOperation *operation);
 static void     clean_pads   (GeglOperation *operation);
 
 static GeglRect defined_region       (GeglOperation *self);
-static gboolean calc_need_rect       (GeglOperation *self);
+static gboolean calc_source_regions       (GeglOperation *self);
 
 
 G_DEFINE_TYPE (GeglOperationComposer, gegl_operation_composer, GEGL_TYPE_OPERATION)
@@ -68,7 +68,7 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
   operation_class->associate = associate;
   operation_class->clean_pads = clean_pads;
   operation_class->defined_region = defined_region;
-  operation_class->calc_need_rect = calc_need_rect;
+  operation_class->calc_source_regions = calc_source_regions;
 
   g_object_class_install_property (object_class, PROP_OUTPUT,
                                    g_param_spec_object ("output",
@@ -239,7 +239,7 @@ defined_region (GeglOperation *self)
 }
 
 static gboolean
-calc_need_rect (GeglOperation *self)
+calc_source_regions (GeglOperation *self)
 {
   GeglRect *need_rect = gegl_operation_need_rect (self);
 

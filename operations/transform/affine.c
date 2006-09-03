@@ -61,7 +61,7 @@ static gboolean   is_composite_node       (OpAffine *affine);
 static void       get_source_matrix       (OpAffine *affine,
                                            Matrix3   output);
 static GeglRect   defined_region          (GeglOperation *op);
-static gboolean   calc_need_rect          (GeglOperation *op);
+static gboolean   calc_source_regions          (GeglOperation *op);
 static gboolean   evaluate                (GeglOperation *op,
                                            const gchar   *output_prop);
 
@@ -120,7 +120,7 @@ op_affine_class_init (OpAffineClass *klass)
   gobject_class->get_property = get_property;
 
   op_class->defined_region   = defined_region;
-  op_class->calc_need_rect   = calc_need_rect;
+  op_class->calc_source_regions   = calc_source_regions;
   op_class->categories = "geometry";
 
   filter_class->evaluate = evaluate;
@@ -380,7 +380,7 @@ defined_region (GeglOperation *op)
 }
 
 static gboolean
-calc_need_rect (GeglOperation *op)
+calc_source_regions (GeglOperation *op)
 {
   OpAffine *affine = (OpAffine *) op;
   Matrix3   inverse;

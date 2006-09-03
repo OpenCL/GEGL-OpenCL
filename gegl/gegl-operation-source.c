@@ -45,7 +45,7 @@ static void     clean_pads   (GeglOperation *operation);
 G_DEFINE_TYPE (GeglOperationSource, gegl_operation_source, GEGL_TYPE_OPERATION)
 
 static GeglRect defined_region (GeglOperation *self);
-static gboolean calc_need_rect (GeglOperation *self);
+static gboolean calc_source_regions (GeglOperation *self);
 
 static void
 gegl_operation_source_class_init (GeglOperationSourceClass * klass)
@@ -62,7 +62,7 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
   operation_class->clean_pads = clean_pads;
 
   operation_class->defined_region = defined_region;
-  operation_class->calc_need_rect = calc_need_rect;
+  operation_class->calc_source_regions = calc_source_regions;
 
   g_object_class_install_property (gobject_class, PROP_OUTPUT,
     g_param_spec_object ("output",
@@ -166,7 +166,7 @@ defined_region (GeglOperation *self)
 }
 
 static gboolean
-calc_need_rect (GeglOperation *self)
+calc_source_regions (GeglOperation *self)
 {
   return TRUE;
 }

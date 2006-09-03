@@ -1,5 +1,29 @@
 2006-09-03  Øyvind Kolås  <pippin@gimp.org>
 
+	s/calc_need_rect/calc_source_regions/
+
+	* gegl/gegl-need-visitor.c: (visit_node):
+	* gegl/gegl-operation-composer.c:
+	(gegl_operation_composer_class_init), (calc_source_regions):
+	* gegl/gegl-operation-filter.c: (gegl_operation_filter_class_init),
+	(calc_source_regions):
+	* gegl/gegl-operation-source.c: (gegl_operation_source_class_init),
+	(calc_source_regions):
+	* gegl/gegl-operation.c: (gegl_operation_class_init),
+	(gegl_operation_calc_source_regions), (calc_source_regions):
+	* gegl/gegl-operation.h:
+	* operations/blur/box-blur.c: (calc_source_regions), (class_init):
+	* operations/blur/gaussian-blur.c: (calc_source_regions),
+	(class_init):
+	* operations/color/stretch-contrast.c: (calc_source_regions),
+	(class_init):
+	* operations/core/crop.c: (calc_source_regions), (class_init):
+	* operations/core/shift.c: (calc_source_regions), (class_init):
+	* operations/transform/affine.c: (op_affine_class_init),
+	(calc_source_regions):
+
+2006-09-03  Øyvind Kolås  <pippin@gimp.org>
+
 	Fix mistake in "class"->"operation" renaming patch, from Victor
 	Bogado.
 
@@ -99,9 +123,9 @@
 
 	* gegl/gegl-chant.h:
 	* operations/blur/box-blur.c: (evaluate), (calc_have_rect),
-	(calc_need_rect):
+	(calc_source_regions):
 	* operations/blur/gaussian-blur.c: (evaluate), (calc_have_rect),
-	(calc_need_rect):
+	(calc_source_regions):
 	* operations/color/brightness-contrast.c: (evaluate):
 	* operations/color/invert.c:
 	* operations/color/stretch-contrast.c:
@@ -1110,7 +1134,7 @@
 	  A node's need_rect should be what is needed from it by its parents,
 	  not what it needs from its children. An operation sets the need_rects
 	  of its children using gegl_operation_set_need_rect(self) in its
-	  calc_need_rect() function.
+	  calc_source_regions() function.
 
 2006-06-25  Øyvind Kolås  <pippin@gimp.org>
 
@@ -1680,12 +1704,12 @@
 	(gegl_node_get_need_rect), (gegl_node_get_debug_name):
 	* gegl/gegl-node.h:
 	* gegl/gegl-operation.c: (gegl_operation_class_init),
-	(gegl_operation_calc_have_rect), (gegl_operation_calc_need_rect),
+	(gegl_operation_calc_have_rect), (gegl_operation_calc_source_regions),
 	(gegl_operation_calc_comp_rect), (gegl_operation_calc_result_rect),
 	(associate), (gegl_operation_set_have_rect),
 	(gegl_operation_get_have_rect), (gegl_operation_set_need_rect),
 	(gegl_operation_set_comp_rect), (gegl_pad_get_connected_to2),
-	(gegl_operation_get_need_rect), (calc_have_rect), (calc_need_rect),
+	(gegl_operation_get_need_rect), (calc_have_rect), (calc_source_regions),
 	(calc_comp_rect), (calc_result_rect), (gegl_operation_need_rect),
 	(gegl_operation_have_rect), (gegl_operation_result_rect),
 	(gegl_operation_comp_rect):
