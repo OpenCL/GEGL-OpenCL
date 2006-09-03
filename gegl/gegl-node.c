@@ -1021,7 +1021,7 @@ gegl_node_set_property (GeglNode     *self,
                         const gchar  *property_name,
                         const GValue *value)
 {
-  if (!strcmp (property_name, "operation"))
+  if (!strcmp (property_name, "class"))
     {
       g_warning("Setting a deprecated property \"class\", "
                 "use \"operation\" instead.");
