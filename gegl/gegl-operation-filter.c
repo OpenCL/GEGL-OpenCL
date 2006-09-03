@@ -210,7 +210,7 @@ get_defined_region (GeglOperation *self)
 static gboolean
 calc_source_regions (GeglOperation *self)
 {
-  GeglRect *need_rect = gegl_operation_need_rect (self);
+  GeglRect *need_rect = gegl_operation_get_requested_region (self);
 
   gegl_operation_set_source_region (self, "input", need_rect);
   return TRUE;

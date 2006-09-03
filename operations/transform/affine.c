@@ -389,7 +389,7 @@ calc_source_regions (GeglOperation *op)
   gdouble   need_points [8];
   gint      i;
 
-  requested_rect = *(gegl_operation_need_rect (op));
+  requested_rect = *(gegl_operation_get_requested_region (op));
 
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (inverse))

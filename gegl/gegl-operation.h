@@ -107,9 +107,10 @@ void gegl_operation_set_source_region       (GeglOperation *operation,
 void gegl_operation_set_result_region       (GeglOperation *operation,
                                              GeglRect      *region);
 
-GeglRect *gegl_operation_need_rect          (GeglOperation *operation);
-GeglRect *gegl_operation_have_rect          (GeglOperation *operation);
-GeglRect *gegl_operation_result_rect        (GeglOperation *operation);
+GeglRect *gegl_operation_get_requested_region (GeglOperation *operation);
+
+GeglRect *gegl_operation_have_rect            (GeglOperation *operation);
+GeglRect *gegl_operation_result_rect          (GeglOperation *operation);
 
 G_END_DECLS
 

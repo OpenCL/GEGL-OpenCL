@@ -111,8 +111,6 @@ gegl_operation_get_defined_region (GeglOperation *self)
   GeglOperationClass *klass;
 
   klass = GEGL_OPERATION_GET_CLASS (self);
-  g_warning ("'%s'.get_defined_region",
-     G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
   if (klass->get_defined_region)
     return klass->get_defined_region (self);
   return rect;
@@ -354,7 +352,7 @@ calc_result_rect (GeglOperation *self)
 }
 
 GeglRect *
-gegl_operation_need_rect     (GeglOperation *operation)
+gegl_operation_get_requested_region     (GeglOperation *operation)
 {
   g_assert (operation);
   g_assert (operation->node);

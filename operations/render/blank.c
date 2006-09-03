@@ -43,7 +43,7 @@ process (GeglOperation *operation,
     g_object_unref (op_source->output);
   op_source->output=NULL;
 
-  need = gegl_operation_need_rect (operation);
+  need = gegl_operation_get_requested_region (operation);
 
   {
     GeglRect *result = gegl_operation_result_rect (operation);

@@ -84,7 +84,7 @@ process (GeglOperation *operation,
   GeglOperationFilter *op_filter = GEGL_OPERATION_FILTER (operation);
   ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   GeglBuffer   *source;
-  GeglRect     *need    = gegl_operation_need_rect (operation);
+  GeglRect     *need    = gegl_operation_get_requested_region (operation);
   SDL_Surface **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
 
   if(strcmp("output", output_prop))

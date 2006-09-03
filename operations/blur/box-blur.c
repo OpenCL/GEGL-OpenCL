@@ -244,7 +244,7 @@ static gboolean
 calc_source_regions (GeglOperation *self)
 {
   ChantInstance *blur = GEGL_CHANT_INSTANCE (self);
-  GeglRect   need   = *gegl_operation_need_rect (self);
+  GeglRect   need   = *gegl_operation_get_requested_region (self);
   gint       radius = ceil(blur->radius);
 
   need.x-=radius;

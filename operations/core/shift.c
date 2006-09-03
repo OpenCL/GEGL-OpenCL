@@ -87,7 +87,7 @@ static gboolean
 calc_source_regions (GeglOperation *self)
 {
   ChantInstance  *op_shift = (ChantInstance*)(self);
-  GeglRect rect = *gegl_operation_need_rect (self);
+  GeglRect rect = *gegl_operation_get_requested_region (self);
 
   rect.x -= op_shift->x;
   rect.y -= op_shift->y;

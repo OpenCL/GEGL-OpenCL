@@ -91,7 +91,7 @@ process (GeglOperation *operation,
   gdouble              min, max;
 
   input = filter->input;
-  result = gegl_operation_need_rect (operation);
+  result = gegl_operation_get_requested_region (operation);
 
   if (result->w==0 ||
       result->h==0)
@@ -159,7 +159,7 @@ static gboolean
 calc_source_regions (GeglOperation *self)
 {
   gegl_operation_set_source_region (self, "input",
-                                    gegl_operation_need_rect (self));
+                                    gegl_operation_get_requested_region (self));
   return TRUE;
 }
 

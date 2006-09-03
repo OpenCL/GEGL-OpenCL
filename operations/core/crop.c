@@ -93,7 +93,7 @@ static gboolean
 calc_source_regions (GeglOperation *self)
 {
   gegl_operation_set_source_region (self, "input",
-                                    gegl_operation_need_rect (self));
+                                    gegl_operation_get_requested_region (self));
   return TRUE;
 }
 
