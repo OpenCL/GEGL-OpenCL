@@ -1,5 +1,10 @@
 2006-09-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/Makefile.am: do not include system-wide plug-ins when invoking
+	gegl.
+
+2006-09-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/blur/box-blur.c: (get_defined_region),
 	* operations/blur/gaussian-blur.c: (get_defined_region),
 	* operations/core/crop.c: (get_defined_region): initialize GeglRects
