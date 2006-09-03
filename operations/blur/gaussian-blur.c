@@ -65,10 +65,10 @@ process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationFilter *filter;
-  ChantInstance *self;
+  GeglChantOperation *self;
 
   filter = GEGL_OPERATION_FILTER (operation);
-  self   = GEGL_CHANT_INSTANCE (operation);
+  self   = GEGL_CHANT_OPERATION (operation);
 
   GeglBuffer *input  = filter->input;
   GeglBuffer *output;
@@ -292,7 +292,7 @@ get_defined_region (GeglOperation *operation)
   GeglRect  result = {0,0,0,0};
   GeglRect *in_rect = gegl_operation_source_get_defined_region (operation,
                                                                 "input");
-  ChantInstance *blur = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation *blur = GEGL_CHANT_OPERATION (operation);
   gint radius_x       = ceil(blur->radius_x+0.5);
   gint radius_y       = ceil(blur->radius_y+0.5);
   if (!in_rect)
@@ -311,7 +311,7 @@ static gboolean
 calc_source_regions (GeglOperation *self)
 {
   GeglRect       need     = *gegl_operation_get_requested_region (self);
-  ChantInstance *blur     = GEGL_CHANT_INSTANCE(self);
+  GeglChantOperation *blur     = GEGL_CHANT_OPERATION(self);
   gint           radius_x = ceil(blur->radius_x+0.5);
   gint           radius_y = ceil(blur->radius_y+0.5);
 

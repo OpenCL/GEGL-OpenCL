@@ -49,7 +49,7 @@ process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE (operation);
-  ChantInstance       *self      = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
   gint           width;
   gint           height;
   gint           result;
@@ -105,7 +105,7 @@ static GeglRect
 get_defined_region (GeglOperation *operation)
 {
   GeglRect result = {0,0,0,0};
-  ChantInstance       *self      = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
   gint width, height;
   gint status;
   status = query_jpg (self->path, &width, &height);

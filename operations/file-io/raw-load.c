@@ -39,14 +39,14 @@ gegl_chant_pointer (cached, "private")
 #define MAX_SAMPLE 65535
 #define ERROR -1
 
-static void load_cache (ChantInstance *op_raw_load);
+static void load_cache (GeglChantOperation *op_raw_load);
 
 static gboolean
 process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
-  ChantInstance       *self      = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
 
   if(strcmp("output", output_prop))
     return FALSE;
@@ -77,7 +77,7 @@ static GeglRect
 get_defined_region (GeglOperation *operation)
 {
   GeglRect result = {0,0,0,0};
-  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
   load_cache (self);
 
@@ -88,7 +88,7 @@ get_defined_region (GeglOperation *operation)
 
 static void dispose (GObject *gobject)
 {
-  ChantInstance *self = GEGL_CHANT_INSTANCE (gobject);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (gobject);
   if (self->cached)
     {
       g_object_unref (self->cached);
@@ -114,7 +114,7 @@ static void class_init (GeglOperationClass *klass)
 }
 
 static void
-load_cache (ChantInstance *op_raw_load)
+load_cache (GeglChantOperation *op_raw_load)
 {
   if (!op_raw_load->cached)
     {

@@ -45,7 +45,7 @@ process (GeglOperation *operation,
 {
   GeglOperationFilter    *filter = GEGL_OPERATION_FILTER(operation);
   GeglBuffer    *input  = filter->input;
-  ChantInstance *translate = (ChantInstance*)filter;
+  GeglChantOperation *translate = (GeglChantOperation*)filter;
 
   if(strcmp("output", output_prop))
     return FALSE;
@@ -71,7 +71,7 @@ static GeglRect
 get_defined_region (GeglOperation *operation)
 {
   GeglRect result = {0,0,0,0};
-  ChantInstance  *op_shift = (ChantInstance*)(operation);
+  GeglChantOperation  *op_shift = (GeglChantOperation*)(operation);
   GeglRect *in_rect = gegl_operation_source_get_defined_region (operation, "input");
   if (!in_rect)
     return result;
@@ -86,7 +86,7 @@ get_defined_region (GeglOperation *operation)
 static gboolean
 calc_source_regions (GeglOperation *self)
 {
-  ChantInstance  *op_shift = (ChantInstance*)(self);
+  GeglChantOperation  *op_shift = (GeglChantOperation*)(self);
   GeglRect rect = *gegl_operation_get_requested_region (self);
 
   rect.x -= op_shift->x;

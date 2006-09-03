@@ -29,7 +29,7 @@
 #define GEGL_CHANT_INIT
 #include "gegl-chant.h"
 
-static void init (ChantInstance *self)
+static void init (GeglChantOperation *self)
 {
   /* set the babl format this operation prefers to work on */
   GEGL_OPERATION_POINT_FILTER (self)->format = babl_format ("RGBA float");

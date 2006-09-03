@@ -45,7 +45,7 @@ a.each do
 #define GEGL_CHANT_INIT
 #include \"gegl-chant.h\"
 
-static void init (ChantInstance *self)
+static void init (GeglChantOperation *self)
 {
   GEGL_OPERATION_POINT_COMPOSER (self)->format = babl_format (\"RaGaBaA float\");
   GEGL_OPERATION_POINT_COMPOSER (self)->aux_format = babl_format (\"RaGaBaA float\");

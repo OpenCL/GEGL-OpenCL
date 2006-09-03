@@ -37,7 +37,7 @@ process (GeglOperation *op,
           void          *out_buf,
           glong          n_pixels)
 {
-  ChantInstance *self = GEGL_CHANT_INSTANCE (op);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (op);
   gint o;
   gfloat *p = in_buf;  /* it is inplace anyways, and out_but==in_buf) */
 

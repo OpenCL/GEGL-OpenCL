@@ -49,7 +49,7 @@ static gboolean
 process (GeglOperation *operation,
           const gchar   *output_prop)
 {
-  ChantInstance       *self = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   gint          result;
 
@@ -119,7 +119,7 @@ static GeglRect
 get_defined_region (GeglOperation *operation)
 {
   GeglRect result = {0,0,0,0};
-  ChantInstance       *self = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
   GeglOperationSource *source = GEGL_OPERATION_SOURCE (operation);
   gint width, height;
   gint status;

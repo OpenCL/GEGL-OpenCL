@@ -47,11 +47,11 @@ struct _Priv
 static void prepare (GeglOperation *operation);
 static void associate (GeglOperation *operation)
 {
-  ChantInstance *self;
+  GeglChantOperation *self;
   Priv          *priv;
   GeglGraph     *graph;
 
-  self       = GEGL_CHANT_INSTANCE (operation);
+  self       = GEGL_CHANT_OPERATION (operation);
   priv       = g_malloc0 (sizeof (Priv));
   self->priv = (void*) priv;
 
@@ -95,7 +95,7 @@ static void associate (GeglOperation *operation)
 
 static void prepare (GeglOperation *operation)
 {
-  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv          *priv = (Priv*)self->priv;
 
   gegl_node_set (priv->multiply, "value",    self->scale,

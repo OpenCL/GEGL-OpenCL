@@ -44,7 +44,7 @@ static gboolean
 process (GeglOperation *operation,
           const gchar *output_prop)
 {
-  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   GeglOperationFilter *op_filter = GEGL_OPERATION_FILTER (operation);
   GeglBuffer          *input   = op_filter->input;
   GeglRect            *result  = gegl_operation_result_rect (operation);

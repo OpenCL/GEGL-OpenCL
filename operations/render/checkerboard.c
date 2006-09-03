@@ -40,7 +40,7 @@ process (GeglOperation *operation,
 {
   GeglRect  *need;
   GeglOperationSource  *op_source = GEGL_OPERATION_SOURCE(operation);
-  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
   if(strcmp("output", output_prop))
     return FALSE;

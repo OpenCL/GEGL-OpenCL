@@ -34,7 +34,7 @@ gegl_chant_pointer (cached, "private")
 #include <stdio.h>
 
 static void
-load_cache (ChantInstance *op_magick_load)
+load_cache (GeglChantOperation *op_magick_load)
 {
   if (!op_magick_load->cached)
     {
@@ -66,7 +66,7 @@ process (GeglOperation *operation,
           const gchar   *output_prop)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
-  ChantInstance       *self = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
 
   if(strcmp("output", output_prop))
     return FALSE;
@@ -97,7 +97,7 @@ static GeglRect
 get_defined_region (GeglOperation *operation)
 {
   GeglRect result = {0,0,0,0};
-  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   gint width, height;
 
   load_cache (self);
@@ -113,7 +113,7 @@ get_defined_region (GeglOperation *operation)
 
 static void dispose (GObject *gobject)
 {
-  ChantInstance *self = GEGL_CHANT_INSTANCE (gobject);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (gobject);
   if (self->cached)
     {
       g_object_unref (self->cached);

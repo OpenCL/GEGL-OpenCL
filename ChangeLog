@@ -1,5 +1,47 @@
 2006-09-04  Øyvind Kolås  <pippin@gimp.org>
 
+	s/ChantInstance/GeglChantOperation/
+	s/CHANT_OPERATION/GEGL_CHANT_INSTANCE/
+
+	* gegl/gegl-chant.h:
+	* operations/blur/box-blur.c: (process), (get_defined_region),
+	(calc_source_regions):
+	* operations/blur/gaussian-blur.c: (process), (get_defined_region),
+	(calc_source_regions):
+	* operations/color/brightness-contrast.c: (process):
+	* operations/color/invert.c: (init):
+	* operations/color/threshold.c: (init), (process):
+	* operations/core/crop.c: (process), (get_defined_region):
+	* operations/core/shift.c: (process), (get_defined_region),
+	(calc_source_regions):
+	* operations/display/display.c: (process):
+	* operations/file-io/jpg-load.c: (process), (get_defined_region):
+	* operations/file-io/load.c: (prepare), (associate):
+	* operations/file-io/magick-load.c: (load_cache), (process),
+	(get_defined_region), (dispose):
+	* operations/file-io/png-load.c: (process), (get_defined_region):
+	* operations/file-io/png-save.c: (process):
+	* operations/file-io/raw-load.c: (process), (get_defined_region),
+	(dispose), (load_cache):
+	* operations/generated/math.rb:
+	* operations/generated/porter-duff.rb:
+	* operations/generated/svg-blend.rb:
+	* operations/meta/dropshadow.c: (prepare), (associate):
+	* operations/meta/layer.c: (prepare), (associate):
+	* operations/meta/unsharp-mask.c: (associate), (prepare):
+	* operations/render/checkerboard.c: (process):
+	* operations/render/noise.c: (process):
+	* operations/render/text.c: (process), (get_defined_region),
+	(dispose):
+	* operations/transform/chant.h:
+	* operations/transform/rotate.c: (create_matrix):
+	* operations/transform/scale.c: (create_matrix):
+	* operations/transform/shear.c: (create_matrix):
+	* operations/transform/translate.c: (create_matrix):
+	* operations/transparency/opacity.c: (init), (process):
+
+2006-09-04  Øyvind Kolås  <pippin@gimp.org>
+
 	s/GEGL_CHANT_CONSTRUCT/GEGL_CHANT_INIT/
 	s/GEGL_CHANT_CLASS_CONSTRUCT/GEGL_CHANT_CLASS_INIT/
 

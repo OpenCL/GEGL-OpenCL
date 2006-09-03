@@ -31,7 +31,7 @@ gegl_chant_double (value, -100.0, 100.0, 0.5, "global threshold level (used when
 #define GEGL_CHANT_INIT
 #include "gegl-chant.h"
 
-static void init (ChantInstance *self)
+static void init (GeglChantOperation *self)
 {
   GEGL_OPERATION_POINT_COMPOSER (self)->format = babl_format ("YA float");
   GEGL_OPERATION_POINT_COMPOSER (self)->aux_format = babl_format ("Y float");
@@ -52,7 +52,7 @@ process (GeglOperation *op,
 
   if (aux == NULL)
     {
-      gfloat value = GEGL_CHANT_INSTANCE (op)->value;
+      gfloat value = GEGL_CHANT_OPERATION (op)->value;
       for (i=0; i<n_pixels; i++)
         {
           out[0] = in[0]>=value?1.0:0.0;

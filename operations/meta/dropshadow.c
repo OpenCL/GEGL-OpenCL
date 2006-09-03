@@ -50,7 +50,7 @@ struct _Priv
 static void
 prepare (GeglOperation *operation)
 {
-  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *priv;
   priv = (Priv*)self->priv;
 
@@ -68,7 +68,7 @@ prepare (GeglOperation *operation)
 
 static void associate (GeglOperation *operation)
 {
-  ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *priv = (Priv*)self->priv;
   GeglGraph *graph;
   g_assert (priv == NULL);

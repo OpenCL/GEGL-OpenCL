@@ -49,7 +49,7 @@ process (GeglOperation *operation,
 {
   GeglOperationFilter    *filter = GEGL_OPERATION_FILTER(operation);
   GeglBuffer  *input  = filter->input;
-  ChantInstance *crop = GEGL_CHANT_INSTANCE (operation);
+  GeglChantOperation *crop = GEGL_CHANT_OPERATION (operation);
 
   if(strcmp("output", output_prop))
     return FALSE;
@@ -75,7 +75,7 @@ static GeglRect
 get_defined_region (GeglOperation *operation)
 {
   GeglRect  result = {0,0,0,0};
-  ChantInstance  *op_crop = (ChantInstance*)(operation);
+  GeglChantOperation  *op_crop = (GeglChantOperation*)(operation);
   GeglRect *in_rect = gegl_operation_source_get_defined_region (operation, "input");
   if (!in_rect)
     return result;

@@ -62,7 +62,7 @@
   #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_CLASS
 #endif
 
-typedef struct Generated        ChantInstance;
+typedef struct Generated        GeglChantOperation;
 typedef struct GeneratedClass   ChantClass;
 
 struct Generated
@@ -99,14 +99,14 @@ struct GeneratedClass
   GEGL_CHANT_PARENT_TypeNameClass parent_class;
 };
 
-#define GEGL_CHANT_INSTANCE(obj) ((ChantInstance*)(obj))
+#define GEGL_CHANT_OPERATION(obj) ((GeglChantOperation*)(obj))
 
 #include <gegl-module.h>
 
 #ifndef GEGL_CHANT_STATIC
 #  define M_DEFINE_TYPE_EXTENDED(type_name, TYPE_PARENT, flags, CODE) \
   \
-static void     gegl_chant_init              (ChantInstance *self); \
+static void     gegl_chant_init              (GeglChantOperation *self); \
 static void     gegl_chant_class_init        (ChantClass    *klass); \
 static gpointer gegl_chant_parent_class = NULL; \
 \
@@ -131,7 +131,7 @@ type_name##_get_type (GTypeModule *module) \
           (GClassInitFunc) gegl_chant_class_intern_init, \
           (GClassFinalizeFunc) NULL, \
           NULL,   /* class_data */ \
-          sizeof (ChantInstance), \
+          sizeof (GeglChantOperation), \
           0,      /* n_preallocs */ \
           (GInstanceInitFunc) gegl_chant_init, \
           NULL    /* value_table */ \
@@ -168,7 +168,7 @@ gegl_module_register (GTypeModule *module)\
 #else
 #  define M_DEFINE_TYPE_EXTENDED(type_name, TYPE_PARENT, flags, CODE) \
   \
-static void     gegl_chant_init              (ChantInstance   *self); \
+static void     gegl_chant_init              (GeglChantOperation   *self); \
 static void     gegl_chant_class_init        (ChantClass *klass); \
 static gpointer gegl_chant_parent_class = NULL; \
 static void     gegl_chant_class_intern_init (gpointer klass) \
@@ -191,7 +191,7 @@ type_name##_get_type (GTypeModule *module) \
           (GClassInitFunc) gegl_chant_class_intern_init, \
           (GClassFinalizeFunc) NULL, \
           NULL,   /* class_data */ \
-          sizeof (ChantInstance), \
+          sizeof (GeglChantOperation), \
           0,      /* n_preallocs */ \
           (GInstanceInitFunc) gegl_chant_init, \
           NULL    /* value_table */ \
@@ -238,7 +238,7 @@ get_property (GObject      *gobject,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  ChantInstance *self = GEGL_CHANT_INSTANCE (gobject);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (gobject);
 
   switch (property_id)
   {
@@ -279,7 +279,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  ChantInstance *self = GEGL_CHANT_INSTANCE (gobject);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (gobject);
 
   switch (property_id)
   {
@@ -354,13 +354,13 @@ static gboolean process (GeglOperation *operation,
 #endif
 
 static void
-gegl_chant_init (ChantInstance *self)
+gegl_chant_init (GeglChantOperation *self)
 {
   self->priv = NULL;
 }
 
 #ifdef GEGL_CHANT_INIT
-static void init (ChantInstance *self);
+static void init (GeglChantOperation *self);
 
 static GObject *
 gegl_chant_constructor (GType                  type,
@@ -372,7 +372,7 @@ gegl_chant_constructor (GType                  type,
   obj = G_OBJECT_CLASS (gegl_chant_parent_class)->constructor (
             type, n_construct_properties, construct_properties);
 
-  init (GEGL_CHANT_INSTANCE (obj));
+  init (GEGL_CHANT_OPERATION (obj));
 
   return obj;
 }
