@@ -72,7 +72,7 @@ get_defined_region (GeglOperation *operation)
 {
   GeglRect result = {0,0,0,0};
   ChantInstance  *op_shift = (ChantInstance*)(operation);
-  GeglRect *in_rect = gegl_operation_get_have_rect (operation, "input");
+  GeglRect *in_rect = gegl_operation_source_get_defined_region (operation, "input");
   if (!in_rect)
     return result;
 

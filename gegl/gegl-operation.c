@@ -211,7 +211,7 @@ gegl_operation_set_have_rect (GeglOperation *operation,
 }
 
 GeglRect *
-gegl_operation_get_have_rect (GeglOperation *operation,
+gegl_operation_source_get_defined_region (GeglOperation *operation,
                               const gchar   *input_pad_name)
 {
   GeglPad *pad;

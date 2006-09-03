@@ -1,5 +1,20 @@
 2006-09-03  Øyvind Kolås  <pippin@gimp.org>
 
+	s/gegl_operation_get_have_rect/gegl_operation_source_get_defined_region/
+
+	* gegl/gegl-operation-composer.c: (get_defined_region):
+	* gegl/gegl-operation-filter.c: (get_defined_region):
+	* gegl/gegl-operation.c:
+	(gegl_operation_source_get_defined_region):
+	* gegl/gegl-operation.h:
+	* operations/blur/box-blur.c: (get_defined_region):
+	* operations/blur/gaussian-blur.c: (get_defined_region):
+	* operations/core/crop.c: (get_defined_region):
+	* operations/core/shift.c: (get_defined_region):
+	* operations/transform/affine.c: (get_defined_region):
+
+2006-09-03  Øyvind Kolås  <pippin@gimp.org>
+
 	s/gegl_operation_need_rect/gegl_operation_get_requested_region/
 
 	* gegl/gegl-operation-composer.c: (calc_source_regions):

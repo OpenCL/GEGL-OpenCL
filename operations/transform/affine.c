@@ -316,7 +316,7 @@ get_defined_region (GeglOperation *op)
 {
   OpAffine      *affine  = (OpAffine *) op;
   OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);
-  GeglRect       in_rect = * gegl_operation_get_have_rect (op, "input"),
+  GeglRect       in_rect = * gegl_operation_source_get_defined_region (op, "input"),
                  have_rect;
   gdouble        have_points [8];
   gint           i;

@@ -198,7 +198,7 @@ get_defined_region (GeglOperation *self)
   GeglRect result = {0,0,0,0};
   GeglRect *in_rect;
 
-  in_rect = gegl_operation_get_have_rect (self, "input");
+  in_rect = gegl_operation_source_get_defined_region (self, "input");
   if (in_rect)
     {
       result = *in_rect;

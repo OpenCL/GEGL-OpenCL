@@ -223,8 +223,8 @@ static GeglRect
 get_defined_region (GeglOperation *self)
 {
   GeglRect result = {0,0,0,0};
-  GeglRect *in_rect  = gegl_operation_get_have_rect (self, "input");
-  GeglRect *aux_rect = gegl_operation_get_have_rect (self, "aux");
+  GeglRect *in_rect  = gegl_operation_source_get_defined_region (self, "input");
+  GeglRect *aux_rect = gegl_operation_source_get_defined_region (self, "aux");
   if (!in_rect)
     return result;
   if (aux_rect)

@@ -97,8 +97,8 @@ gboolean      gegl_operation_calc_result_rect (GeglOperation *self);
 void gegl_operation_set_have_rect           (GeglOperation *operation,
                                              GeglRect      *region);
 
-GeglRect *gegl_operation_get_have_rect      (GeglOperation *operation,
-                                             const gchar   *input_pad_name);
+GeglRect *gegl_operation_source_get_defined_region (GeglOperation *operation,
+                                                    const gchar   *source_name);
 
 void gegl_operation_set_source_region       (GeglOperation *operation,
                                              const gchar   *input_pad_name,

@@ -225,7 +225,7 @@ static GeglRect
 get_defined_region (GeglOperation *operation)
 {
   GeglRect  result;
-  GeglRect *in_rect = gegl_operation_get_have_rect (operation, "input");
+  GeglRect *in_rect = gegl_operation_source_get_defined_region (operation, "input");
   ChantInstance *blur = GEGL_CHANT_INSTANCE (operation);
   gint       radius = ceil(blur->radius);
   if (!in_rect)
