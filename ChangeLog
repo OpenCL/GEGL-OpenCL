@@ -1,5 +1,17 @@
 2006-09-03  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed (mostly unusued) gegl_operation_set_have_rect and
+	gegl_operation_have_rect.
+
+	* gegl/gegl-operation.[ch]: removed unneeded code.
+	* gegl/gegl-operation.h:
+	* gegl/gegl-have-visitor.c: (visit_node):
+	* operations/blur/gaussian-blur.c: (get_defined_region):
+	* operations/core/crop.c: (get_defined_region):
+	* operations/render/text.c: (process), (get_defined_region):
+
+2006-09-03  Øyvind Kolås  <pippin@gimp.org>
+
 	s/gegl_operation_get_have_rect/gegl_operation_source_get_defined_region/
 
 	* gegl/gegl-operation-composer.c: (get_defined_region):

@@ -85,7 +85,6 @@ get_defined_region (GeglOperation *operation)
   result.w=op_crop->width;
   result.h=op_crop->height;
 
-  gegl_operation_set_have_rect (operation, &result);
   return result;
 }
 

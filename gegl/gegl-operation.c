@@ -201,15 +201,6 @@ gegl_operation_clean_pads (GeglOperation *self)
   klass->clean_pads (self);
 }
 
-void
-gegl_operation_set_have_rect (GeglOperation *operation,
-                              GeglRect      *rect)
-{
-  g_assert (operation);
-  g_assert (operation->node);
-  gegl_node_set_have_rect (operation->node, rect->x, rect->y, rect->w, rect->h);
-}
-
 GeglRect *
 gegl_operation_source_get_defined_region (GeglOperation *operation,
                               const gchar   *input_pad_name)
@@ -358,13 +349,7 @@ gegl_operation_get_requested_region     (GeglOperation *operation)
   g_assert (operation->node);
   return &operation->node->need_rect;
 }
-GeglRect *
-gegl_operation_have_rect     (GeglOperation *operation)
-{
-  g_assert (operation);
-  g_assert (operation->node);
-  return &operation->node->have_rect;
-}
+
 GeglRect *
 gegl_operation_result_rect   (GeglOperation *operation)
 {

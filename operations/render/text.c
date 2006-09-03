@@ -23,6 +23,8 @@ gegl_chant_string (string, "Hello", "utf8 string to display")
 gegl_chant_double (size, 1.0, 2048.0, 10.0, "approximate height of text in pixels")
 gegl_chant_pointer (cached, "private")
 gegl_chant_string (cached_string, "", "private")
+gegl_chant_int    (width, 0, 1000000, 0, "private")
+gegl_chant_int    (height, 0, 1000000, 0, "private")
 
 #else
 
@@ -74,7 +76,6 @@ static gboolean
 process (GeglOperation *operation,
           const gchar   *output_prop)
 {
-  GeglRect  *have;
   GeglOperationSource     *op_source = GEGL_OPERATION_SOURCE(operation);
   ChantInstance *self = GEGL_CHANT_INSTANCE (operation);
   gint       width;
@@ -88,9 +89,8 @@ process (GeglOperation *operation,
   op_source->output=NULL;
 
 
-  have = gegl_operation_have_rect (operation);
-  width = have->w;
-  height = have->h;
+  width = self->width;
+  height = self->height;
 
   if (!self->cached)
     {
@@ -162,6 +162,9 @@ get_defined_region (GeglOperation *operation)
     text_layout_text (cr, self->string, 0, &width, &height);
     result.w = width;
     result.h = height;
+
+    self->width = width;
+    self->height = height;
 
     cairo_destroy (cr);
     cairo_surface_destroy (surface);
