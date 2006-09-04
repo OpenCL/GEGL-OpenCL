@@ -1,3 +1,8 @@
+2006-09-04  Øyvind Kolås  <pippin@gimp.org>
+
+	* todo.html: added GeglColor item. also added more info to the cache
+	operation.
+
 2006-09-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* gallery/drop-shadow.xml: s/class/introspection/ due to gegl API

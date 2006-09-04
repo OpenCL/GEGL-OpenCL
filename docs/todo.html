@@ -70,6 +70,28 @@ at the moment.) The multithreading would allow splitting the image up into
 rectangular "work sections", that are requested for rendering.
 </p>
 
+<h3>GeglColor</h3>
+
+<p>A data type, that is also chantable for the operations With convenience
+methods to get a single chunky pixel in any given babl format, as well as being
+settable as such. </p>
+<p>More convencience methods for set/get rgba lab luminance or similar things
+can be added on top of this</p>
+<p>Internally it should probably just store a RGBA32 float for now</p>
+<p>It should also be capable of generating/parsing strings of the forms:
+</p>
+<pre
+>#fff
+#ffffff
+white
+rgb(1.0, 1.0, 1.0)
+rgba(1.0, 1.0, 1.0, 1.0)
+#ffff
+#ffffffff
+</pre>
+<p>All interpreted as fully opaque white.
+</p>
+
 <a name='XML'><h2>XML</h2></a>
 
 <p>
@@ -110,10 +132,11 @@ source nodes only. Later a similar approach could be extended to work on subgrap
 multiple such caches could be used as well, speeding up reevaluations at the expense
 of extra tiles used for caching intermediate results.</p>
 
-<p>
-Currently the meta loader contains it's own simplistic caching, per file loader caching
-will be removed, to make the code needed for each importer node as simple as possible.
-Thus the other file loaders should probably be hidden.</p>
+<p>It could be possible to measure the efficiency of a cache in a particular location,
+and decide to retire it,. or move it down in the graph. Based on profiling data of
+property changes over time,. it should be possible to discover optimal cache points
+in the graph.
+</p>
 
 <h3>text source</h3>
 
