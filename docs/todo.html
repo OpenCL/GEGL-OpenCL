@@ -9,11 +9,13 @@
       <ul>
         <li><a href='index.html'>GEGL</a></li>
         <li><a href='#TODO'>TODO</a></li>
+        <li><a href='#GeglColor'>&nbsp;&nbsp;GeglColor</a></li>
         <li><a href='#Buffer'>&nbsp;&nbsp;Buffer</a></li>
         <li><a href='#Evaluation'>&nbsp;&nbsp;Evaluation</a></li>
         <li><a href='#XML'>&nbsp;&nbsp;XML</a></li>
         <li><a href='#Operations'>&nbsp;&nbsp;Operations</a></li>
         <li><a href='#GIL'>&nbsp;&nbsp;&nbsp;&nbsp;GIL</a></li>
+        <li><a href='#GIMPPlugIn'>&nbsp;&nbsp;GIMP plug-in</a></li>
       </ul>
    </div>
    <div class='paper'>
@@ -21,6 +23,28 @@
        <a name='To do'><h2>To do</h2></a>
        <p>A temporally deficient roadmap for GEGL</p>
 
+<a name='GeglColor'><h2>GeglColor</h2></a>
+
+<p>A data type, that is also chantable for the operations With convenience
+methods to get a single chunky pixel in any given babl format, as well as being
+settable as such. </p>
+<p>More convencience methods for set/get rgba lab luminance or similar things
+can be added on top of this</p>
+<p>Internally it should probably just store a RGBA32 float for now</p>
+<p>It should also be capable of generating/parsing strings of the forms:
+</p>
+<pre
+>#fff
+#ffffff
+white
+rgb(1.0, 1.0, 1.0)
+rgba(1.0, 1.0, 1.0, 1.0)
+#ffff
+#ffffffff
+</pre>
+<p>All interpreted as fully opaque white.
+</p>
+     
 <a name='Buffer'><h2>Buffer</h2></a>
 
 <p>
@@ -70,27 +94,6 @@ at the moment.) The multithreading would allow splitting the image up into
 rectangular "work sections", that are requested for rendering.
 </p>
 
-<h3>GeglColor</h3>
-
-<p>A data type, that is also chantable for the operations With convenience
-methods to get a single chunky pixel in any given babl format, as well as being
-settable as such. </p>
-<p>More convencience methods for set/get rgba lab luminance or similar things
-can be added on top of this</p>
-<p>Internally it should probably just store a RGBA32 float for now</p>
-<p>It should also be capable of generating/parsing strings of the forms:
-</p>
-<pre
->#fff
-#ffffff
-white
-rgb(1.0, 1.0, 1.0)
-rgba(1.0, 1.0, 1.0, 1.0)
-#ffff
-#ffffffff
-</pre>
-<p>All interpreted as fully opaque white.
-</p>
 
 <a name='XML'><h2>XML</h2></a>
 
@@ -155,6 +158,14 @@ to a buffer in a similar fashion using librsvg for the SVG parsing.</p>
 
 <p><a href='genericImageLanguage.html'>GIL</a> and <a href='codegen.html'>codegen</a> should probably be resurrected as well, this work would depend on
 pixel format negotiation to be in place first.
+</p>
+
+<a name='GIMPPlugIn'><h2>GIMP plug-in</h2></a>
+
+<p>A core function, or plug-in, that takes an XML document as parameter. This
+document is parsed to a GEGL graph that is then evaluated. The evaluation will
+be done on a tile by tile basis and the result will be requested as the BablFormat
+<tt>R'G'B'A u8</tt>.
 </p>
 
 </div></div>
