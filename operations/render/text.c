@@ -21,8 +21,6 @@
  
 gegl_chant_string (string, "Hello", "utf8 string to display")
 gegl_chant_double (size, 1.0, 2048.0, 10.0, "approximate height of text in pixels")
-gegl_chant_pointer (cached, "private")
-gegl_chant_string (cached_string, "", "private")
 gegl_chant_int    (width, 0, 1000000, 0, "private")
 gegl_chant_int    (height, 0, 1000000, 0, "private")
 
@@ -33,7 +31,6 @@ gegl_chant_int    (height, 0, 1000000, 0, "private")
 #define GEGL_CHANT_DESCRIPTION     "Display a string of text using cairo"
 #define GEGL_CHANT_SELF            "text.c"
 #define GEGL_CHANT_CATEGORIES      "sources:render"
-#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 #include <cairo.h>
@@ -74,7 +71,7 @@ static void text_layout_text (cairo_t     *cr,
 
 static gboolean
 process (GeglOperation *operation,
-          const gchar   *output_prop)
+         const gchar   *output_prop)
 {
   GeglOperationSource     *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
@@ -88,13 +85,10 @@ process (GeglOperation *operation,
     g_object_unref (op_source->output);
   op_source->output=NULL;
 
-
   width = self->width;
   height = self->height;
 
-  if (!self->cached)
-    {
-    self->cached = g_object_new (GEGL_TYPE_BUFFER,
+    op_source->output = g_object_new (GEGL_TYPE_BUFFER,
                                       "format", babl_format ("R'G'B'A u8"),
                                       "x",      0,
                                       "y",      0,
@@ -114,7 +108,7 @@ process (GeglOperation *operation,
     cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
     text_layout_text (cr, self->string, 0, NULL, NULL);
 
-    gegl_buffer_set_fmt (self->cached, data,
+    gegl_buffer_set_fmt (op_source->output, data,
         babl_format_new (babl_model ("R'G'B'A"),
                          babl_type ("u8"),
                          babl_component ("B'"),
@@ -126,19 +120,6 @@ process (GeglOperation *operation,
     cairo_destroy (cr);
     cairo_surface_destroy (surface);
     g_free (data);
-  }
-    }
-
-  {
-    GeglRect *result = gegl_operation_result_rect (operation);
-
-    op_source->output = g_object_new (GEGL_TYPE_BUFFER,
-                        "source", self->cached,
-                        "x",      result->x,
-                        "y",      result->y,
-                        "width",  result->w,
-                        "height", result->h,
-                        NULL);
   }
   return  TRUE;
 }
@@ -163,6 +144,7 @@ get_defined_region (GeglOperation *operation)
     result.w = width;
     result.h = height;
 
+    /* store the measured size for later use */
     self->width = width;
     self->height = height;
 
@@ -179,22 +161,6 @@ get_defined_region (GeglOperation *operation)
     }
 
   return result;
-}
-
-static void dispose (GObject *gobject)
-{
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (gobject);
-  if (self->cached)
-    {
-      g_object_unref (self->cached);
-      self->cached = NULL;
-    }
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (gobject)))->dispose (gobject);
-}
-
-static void class_init (GeglOperationClass *klass)
-{
-  G_OBJECT_CLASS (klass)->dispose = dispose;
 }
 
 #endif

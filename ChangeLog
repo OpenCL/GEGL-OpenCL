@@ -1,5 +1,19 @@
 2006-09-04  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed broken cache.
+
+	* operations/render/text.c: (process), (get_defined_region):
+
+2006-09-04  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
+	* operations/color/brightness-contrast.c:
+	* operations/meta/layer.c: (prepare):
+
+2006-09-04  Øyvind Kolås  <pippin@gimp.org>
+
 	s/ChantInstance/GeglChantOperation/
 	s/CHANT_OPERATION/GEGL_CHANT_INSTANCE/
 
