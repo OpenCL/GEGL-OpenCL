@@ -1,5 +1,12 @@
 2006-09-04  Øyvind Kolås  <pippin@gimp.org>
 
+	Added gegl_node_blit_buf method, which is the new primary method
+	to aquire data from GEGL.
+
+	* gegl/gegl-node.[ch]: (gegl_node_get_sources), (gegl_node_blit_buf):
+
+2006-09-04  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed caches.
 
 	* operations/file-io/magick-load.c: (load_cache), (process),

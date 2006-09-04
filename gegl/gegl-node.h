@@ -23,6 +23,7 @@
 #define __GEGL_NODE_H__
 
 #include "gegl-graph.h"
+#include <gegl/buffer/gegl-buffer.h>
 
 G_BEGIN_DECLS
 
@@ -69,14 +70,38 @@ struct _GeglNodeClass
   GeglGraphClass  parent_class;
 };
 
-GType         gegl_node_get_type            (void) G_GNUC_CONST;
+/* renders the desired region of interest to a buffer of the specified
+ * bablformat */
+void          gegl_node_blit_buf            (GeglNode     *self,
+                                             GeglRect     *roi,
+                                             void         *format,
+                                             gint          rowstride,
+                                             gpointer     *destination_buf);
 
+gboolean      gegl_node_connect             (GeglNode     *self,
+                                             const gchar  *input_pad_name,
+                                             GeglNode     *source,
+                                             const gchar  *output_pad_name);
+
+gboolean      gegl_node_disconnect          (GeglNode     *self,
+                                             const gchar  *input_pad_name,
+                                             GeglNode     *source,
+                                             const gchar  *output_pad_name);
+
+void          gegl_node_set                 (GeglNode     *self,
+                                             const gchar  *first_property_name,
+                                             ...);
+void          gegl_node_get                 (GeglNode     *self,
+                                             const gchar  *first_property_name,
+                                             ...);
+
+/* functions below are internal to gegl */
+
+GType         gegl_node_get_type            (void) G_GNUC_CONST;
 void          gegl_node_add_pad             (GeglNode     *self,
                                              GeglPad      *pad);
-GeglPad *
-gegl_node_create_pad (GeglNode   *self,
-                      GParamSpec *param_spec);
-
+GeglPad     * gegl_node_create_pad          (GeglNode     *self,
+                                             GParamSpec   *param_spec);
 void          gegl_node_remove_pad          (GeglNode     *self,
                                              GeglPad      *pad);
 GeglPad     * gegl_node_get_pad             (GeglNode     *self,
@@ -90,14 +115,6 @@ GList       * gegl_node_get_sinks           (GeglNode     *self);
 GList       * gegl_node_get_sources         (GeglNode     *self);
 gint          gegl_node_get_num_sources     (GeglNode     *self);
 gint          gegl_node_get_num_sinks       (GeglNode     *self);
-gboolean      gegl_node_connect             (GeglNode     *sink,
-                                             const gchar  *sink_pad_name,
-                                             GeglNode     *source,
-                                             const gchar  *source_pad_name);
-gboolean      gegl_node_disconnect          (GeglNode     *sink,
-                                             const gchar  *sink_pad_name,
-                                             GeglNode     *source,
-                                             const gchar  *source_pad_name);
 void          gegl_node_disconnect_sinks    (GeglNode     *self);
 void          gegl_node_disconnect_sources  (GeglNode     *self);
 GList       * gegl_node_get_depends_on      (GeglNode     *self);
@@ -106,12 +123,6 @@ void          gegl_node_apply               (GeglNode     *self,
 void          gegl_node_apply_roi           (GeglNode     *self,
                                              const gchar  *output_pad_name,
                                              GeglRect     *roi);
-void          gegl_node_set                 (GeglNode     *self,
-                                             const gchar  *first_property_name,
-                                             ...);
-void          gegl_node_get                 (GeglNode     *self,
-                                             const gchar  *first_property_name,
-                                             ...);
 void          gegl_node_set_valist          (GeglNode     *object,
                                              const gchar  *first_property_name,
                                              va_list       var_args);

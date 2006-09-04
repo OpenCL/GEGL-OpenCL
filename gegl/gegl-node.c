@@ -35,6 +35,7 @@
 #include "gegl-pad.h"
 #include "gegl-connection.h"
 #include "gegl-eval-mgr.h"
+#include "buffer/gegl-buffer.h"
 
 
 enum
@@ -567,6 +568,40 @@ GList *
 gegl_node_get_sources (GeglNode *self)
 {
   return self->sources;
+}
+
+void
+gegl_node_blit_buf (GeglNode    *self,
+                    GeglRect    *roi,
+                    void        *format,
+                    gint         rowstride,
+                    gpointer    *destination_buf)
+{
+  GeglBuffer  *buffer;
+  GeglEvalMgr *eval_mgr;
+
+  g_return_if_fail (GEGL_IS_NODE (self));
+
+  g_assert (rowstride == 0);
+  eval_mgr = g_object_new (GEGL_TYPE_EVAL_MGR, NULL);
+  eval_mgr->roi = *roi;
+  gegl_eval_mgr_apply (eval_mgr, self, "output");
+  g_object_unref (eval_mgr);
+  gegl_node_get (self, "output", &(buffer), NULL);
+
+
+  {
+    GeglBuffer *roi_buf = g_object_new (GEGL_TYPE_BUFFER,
+                                        "source", buffer,
+                                        "x",      roi->x,
+                                        "y",      roi->y,
+                                        "width",  roi->w,
+                                        "height", roi->h,
+                                        NULL);
+    gegl_buffer_get_fmt (roi_buf, destination_buf, format);
+    g_object_unref (roi_buf);
+  }
+  g_object_unref (buffer);
 }
 
 void
