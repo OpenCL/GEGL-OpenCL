@@ -19,7 +19,6 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 gegl_chant_string (path, "/tmp/test.raw", "path to file to load")
-gegl_chant_pointer (cached, "private")
 #else
 
 #define GEGL_CHANT_SOURCE
@@ -39,7 +38,7 @@ gegl_chant_pointer (cached, "private")
 #define MAX_SAMPLE 65535
 #define ERROR -1
 
-static void load_cache (GeglChantOperation *op_raw_load);
+static void load_buffer (GeglChantOperation *op_raw_load);
 
 static gboolean
 process (GeglOperation *operation,
@@ -55,21 +54,10 @@ process (GeglOperation *operation,
     g_object_unref (op_source->output);
   op_source->output=NULL;
 
-  g_assert (self->cached);
-  {
-    GeglRect *result = gegl_operation_result_rect (operation);
-
-    op_source->output = g_object_new (GEGL_TYPE_BUFFER,
-                        "source", self->cached,
-                        "x",      result->x,
-                        "y",      result->y,
-                        "width",  result->w,
-                        "height", result->h,
-                        NULL);
-    g_object_unref (self->cached);
-    self->cached = NULL;
-  }
-  return  TRUE;
+  g_assert (self->priv);
+  op_source->output = GEGL_BUFFER (self->priv);
+  self->priv = NULL;
+  return TRUE;
 }
 
 
@@ -79,44 +67,27 @@ get_defined_region (GeglOperation *operation)
   GeglRect result = {0,0,0,0};
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
-  load_cache (self);
+  load_buffer (self);
 
-  result.w = GEGL_BUFFER (self->cached)->width;
-  result.h = GEGL_BUFFER (self->cached)->height;
+  result.w = GEGL_BUFFER (self->priv)->width;
+  result.h = GEGL_BUFFER (self->priv)->height;
   return result;
-}
-
-static void dispose (GObject *gobject)
-{
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (gobject);
-  if (self->cached)
-    {
-      g_object_unref (self->cached);
-      self->cached = NULL;
-    }
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (gobject)))->dispose (gobject);
 }
 
 static void class_init (GeglOperationClass *klass)
 {
-  static gboolean done=FALSE;
-  G_OBJECT_CLASS (klass)->dispose = dispose;
-
-  if (done)
-    return;
   gegl_extension_handler_register (".raw", "raw-load");
   gegl_extension_handler_register (".RAW", "raw-load");
   gegl_extension_handler_register (".raf", "raw-load");
   gegl_extension_handler_register (".RAF", "raw-load");
   gegl_extension_handler_register (".nef", "raw-load");
   gegl_extension_handler_register (".NEF", "raw-load");
-  done = TRUE;
 }
 
 static void
-load_cache (GeglChantOperation *op_raw_load)
+load_buffer (GeglChantOperation *op_raw_load)
 {
-  if (!op_raw_load->cached)
+  if (!op_raw_load->priv)
     {
       FILE *pfp;
       gchar *command;
@@ -139,7 +110,7 @@ load_cache (GeglChantOperation *op_raw_load)
           return;
         }
 
-       op_raw_load->cached = g_object_new (GEGL_TYPE_BUFFER,
+       op_raw_load->priv = g_object_new (GEGL_TYPE_BUFFER,
                                       "format", babl_format_new (
                                         babl_model ("RGB"),
                                         babl_type ("u16"),
@@ -156,7 +127,7 @@ load_cache (GeglChantOperation *op_raw_load)
            
            guchar *buf=g_malloc (width * height * 3 * 2);
            fread (buf, 1, width * height * 3 * 2, pfp);
-           gegl_buffer_set (op_raw_load->cached, buf);
+           gegl_buffer_set (GEGL_BUFFER (op_raw_load->priv), buf);
            g_free (buf);
          }
        fclose (pfp);

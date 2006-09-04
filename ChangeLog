@@ -1,5 +1,14 @@
 2006-09-04  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed caches.
+
+	* operations/file-io/magick-load.c: (load_cache), (process),
+	(get_defined_region):
+	* operations/file-io/raw-load.c: (process), (get_defined_region),
+	(class_init), (load_buffer):
+
+2006-09-04  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed broken cache.
 
 	* operations/render/text.c: (process), (get_defined_region):

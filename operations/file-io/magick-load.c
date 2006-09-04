@@ -19,7 +19,6 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 gegl_chant_string (path, "/tmp/gegl-logo.svg", "path to file to load")
-gegl_chant_pointer (cached, "private")
 #else
 
 #define GEGL_CHANT_SOURCE
@@ -28,7 +27,6 @@ gegl_chant_pointer (cached, "private")
                               "PNG before loading."
 
 #define GEGL_CHANT_SELF            "magick-load.c"
-#define GEGL_CHANT_CLASS_INIT
 #define GEGL_CHANT_CATEGORIES      "hidden"
 #include "gegl-chant.h"
 #include <stdio.h>
@@ -36,7 +34,7 @@ gegl_chant_pointer (cached, "private")
 static void
 load_cache (GeglChantOperation *op_magick_load)
 {
-  if (!op_magick_load->cached)
+  if (!op_magick_load->priv)
     {
         GeglNode *temp_gegl;
         gchar xml[1024]="";
@@ -56,7 +54,7 @@ load_cache (GeglChantOperation *op_magick_load)
     /*FIXME: this should be unneccesary, using the graph
      * directly as a node is more elegant.
      */
-    gegl_node_get (temp_gegl, "output", &(op_magick_load->cached), NULL);
+    gegl_node_get (temp_gegl, "output", &(op_magick_load->priv), NULL);
     g_object_unref (temp_gegl);
   }
 }
@@ -73,22 +71,13 @@ process (GeglOperation *operation,
 
   if (op_source->output)
     g_object_unref (op_source->output);
-  op_source->output=NULL;
+  op_source->output = NULL;
 
-  g_assert (self->cached);
-  {
-    GeglRect *result = gegl_operation_result_rect (operation);
+  if (!self->priv)
+    return FALSE;
+  op_source->output= GEGL_BUFFER (self->priv);
+  self->priv = NULL;
 
-    op_source->output = g_object_new (GEGL_TYPE_BUFFER,
-                        "source", self->cached,
-                        "x",      result->x,
-                        "y",      result->y,
-                        "width",  result->w,
-                        "height", result->h,
-                        NULL);
-    g_object_unref (self->cached); /* do not keep a cache here, the meta loader has one */
-    self->cached = NULL;
-  }
   return  TRUE;
 }
 
@@ -102,29 +91,13 @@ get_defined_region (GeglOperation *operation)
 
   load_cache (self);
 
-  width  = GEGL_BUFFER (self->cached)->width;
-  height = GEGL_BUFFER (self->cached)->height;
+  width  = GEGL_BUFFER (self->priv)->width;
+  height = GEGL_BUFFER (self->priv)->height;
 
   result.w = width;
   result.h = height;
 
   return result;
-}
-
-static void dispose (GObject *gobject)
-{
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (gobject);
-  if (self->cached)
-    {
-      g_object_unref (self->cached);
-      self->cached = NULL;
-    }
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (gobject)))->dispose (gobject);
-}
-
-static void class_init (GeglOperationClass *klass)
-{
-  G_OBJECT_CLASS (klass)->dispose = dispose;
 }
 
 #endif
