@@ -1,3 +1,19 @@
+2006-09-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-node.c: (gegl_node_connect): s/oops/to a sane warning
+	message about failing to find input pad.
+	* operations/file-io/load.c: (prepare): remove debug message.
+
+2006-09-05  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
+	* gegl/gegl-node.c: (gegl_node_connect):
+	* operations/color/brightness-contrast.c:
+	* operations/file-io/load.c: (prepare):
+	* operations/meta/layer.c: (prepare), (associate):
+
 2006-09-05  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* gegl/gegl-options.c: Minor fixes to usage information. Display

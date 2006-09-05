@@ -369,7 +369,9 @@ gegl_node_connect (GeglNode    *sink,
       if (pad)
         other_pad = gegl_pad_get_connected_to (pad);
       else
-        g_warning ("oops %s", sink_prop_name);
+        {
+          g_warning ("Didn't find pad '%s' of '%s'", sink_prop_name, gegl_node_get_debug_name (sink));
+        }
 
     if (other_pad)
       {
