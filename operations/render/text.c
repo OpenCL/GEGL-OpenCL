@@ -18,7 +18,7 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #ifdef GEGL_CHANT_PROPERTIES
- 
+
 gegl_chant_string (string, "Hello", "utf8 string to display")
 gegl_chant_double (size, 1.0, 2048.0, 10.0, "approximate height of text in pixels")
 gegl_chant_int    (width, 0, 1000000, 0, "private")
@@ -35,36 +35,24 @@ gegl_chant_int    (height, 0, 1000000, 0, "private")
 
 #include <cairo.h>
 
-static void measure_word (cairo_t     *cr,
-                          const gchar *word,
-                          gdouble     *width,
-                          gdouble     *height)
-{
-    cairo_text_extents_t extent;
-    cairo_text_extents (cr, word, &extent);
-    if (width)
-      *width = extent.width;
-    if (height)
-      *height = extent.height;
-}
-
 static void text_layout_text (cairo_t     *cr,
                               const gchar *utf8,
                               gdouble      rowstride,
                               gdouble     *width,
                               gdouble     *height)
 {
-  gdouble x, y;
- 
-  x = 0;
-  y = 0;
+  cairo_text_extents_t extent;
+
+  cairo_text_extents (cr, utf8, &extent);
 
   if (width && height)
     {
-      measure_word (cr, utf8, width, height);
+      *width = extent.width+extent.x_bearing;
+      *height = extent.height;
     }
   else
     {
+      cairo_move_to (cr, 0, 0-extent.y_bearing);
       cairo_show_text (cr, utf8);
     }
 }
@@ -100,7 +88,7 @@ process (GeglOperation *operation,
     guchar *data = g_malloc0 (width * height * 4);
     cairo_t *cr;
 
-    cairo_surface_t *surface  = cairo_image_surface_create_for_data (data, CAIRO_FORMAT_ARGB32, width, height, width * 4);
+    cairo_surface_t *surface = cairo_image_surface_create_for_data (data, CAIRO_FORMAT_ARGB32, width, height, width * 4);
     cr = cairo_create (surface);
     cairo_set_font_size (cr, self->size);
     cairo_move_to (cr, 0, height);
@@ -116,7 +104,7 @@ process (GeglOperation *operation,
                          babl_component ("R'"),
                          babl_component ("A"),
                          NULL));
-                         
+
     cairo_destroy (cr);
     cairo_surface_destroy (surface);
     g_free (data);
@@ -137,7 +125,7 @@ get_defined_region (GeglOperation *operation)
     gdouble width, height;
 
     cairo_surface_t *surface  = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
-        1, 1); 
+        1, 1);
     cr = cairo_create (surface);
     cairo_set_font_size (cr, self->size);
     text_layout_text (cr, self->string, 0, &width, &height);
@@ -151,7 +139,7 @@ get_defined_region (GeglOperation *operation)
     cairo_destroy (cr);
     cairo_surface_destroy (surface);
   }
-    
+
   if (status)
     {
       g_warning ("calc have rect of text '%s' failed", self->string);

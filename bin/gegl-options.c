@@ -9,7 +9,7 @@
 static GeglOptions *opts_new (void)
 {
   GeglOptions *o = g_malloc0 (sizeof (GeglOptions));
-   
+
   o->mode     = GEGL_RUN_MODE_HELP;
   o->xml      = NULL;
   o->output   = NULL;
@@ -36,8 +36,8 @@ usage (char *application_name)
 "     -ui\n"
 "\n"
 "All parameters following -- are considered ops to be chained together\n"
-"into a small compoistion instead of using an xml file, this allows for\n"
-"easy testing of filters, be aware that the default value will be used\n"
+"into a small composition instead of using an xml file, this allows for\n"
+"easy testing of filters. Be aware that the default value will be used\n"
 "for all properties.\n"
 , application_name);
     exit (-1);
@@ -141,6 +141,7 @@ parse_args (int    argc,
         if (match ("-h")    ||
             match ("--help")) {
             o->mode = GEGL_RUN_MODE_HELP;
+            usage (argv[0]);
         }
 
         else if (match ("--delay") ||
@@ -152,7 +153,7 @@ parse_args (int    argc,
                  match ("-v")) {
             o->verbose=1;
         }
-        
+
         else if (match ("--file") ||
                  match ("-i")) {
             get_string (o->file);

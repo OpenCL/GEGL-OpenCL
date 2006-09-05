@@ -1,3 +1,12 @@
+2006-09-05  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/gegl-options.c: Minor fixes to usage information. Display
+	usage information when -h/--help specified on command line.
+
+	* operations/render/text.c: Fixed problems in positioning of text.
+
+	* docs/gallery/clones.xml: Moved 'warming up' text down 5 pixels.
+
 2006-09-04  Øyvind Kolås  <pippin@gimp.org>
 
 	Added gegl_node_blit_buf method, which is the new primary method
