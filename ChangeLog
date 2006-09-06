@@ -1,5 +1,19 @@
 2006-09-06  Øyvind Kolås  <pippin@gimp.org>
 
+	Readded caching to the "load" meta op in a saner fashion than before.
+	If the boolean cache property (not available from XML yet) is set to
+	TRUE (the default), the load op will invoke itself upon the first
+	"prepare" call, load the whole image into a buffer, keep that buffer
+	around and use the new "buffer" op to pass it on to the rest of 
+	the pipeline.
+
+	* operations/core/buffer.c: NEW operation that takes a GeglBuffer
+	as parameter (for internal use).
+	* operations/file-io/load.c: (prepare), (class_init),
+	(refresh_cache): added cache using "buffer" op.
+
+2006-09-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/file-io/load.c: (prepare): generate a text string
 	when the file specified does not exist. This makes gegl pass
 	dist-check again even though the data files for the gallery are

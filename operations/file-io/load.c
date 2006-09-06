@@ -20,6 +20,7 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_string(path, "/tmp/lena.png", "Path of file to load.")
+gegl_chant_boolean(cache, TRUE, "Whether to cache the entire buffer loaded from the file.")
 
 #else
 
@@ -35,60 +36,75 @@ gegl_chant_string(path, "/tmp/lena.png", "Path of file to load.")
 typedef struct _Priv Priv;
 struct _Priv
 {
-  GeglNode *self;
-  GeglNode *output;
+  GeglNode   *self;
+  GeglNode   *output;
 
-  GeglNode *load;
+  GeglNode   *load;
+
+  gchar      *cached_path;
+  GeglBuffer *cached_buffer;
 };
+
+static void refresh_cache (GeglChantOperation *self);
 
 static void
 prepare (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  Priv *priv;
-  priv = (Priv*)self->priv;
+  Priv *priv = (Priv*)self->priv;
 
   /* warning: this might trigger regeneration of the graph,
    *          for now this is evaded by just ignoring additional
    *          requests to be made into members of the graph
    */
 
-  if (self->path[0])
+  if (self->cache)
     {
-      const gchar *extension = strrchr (self->path, '.');
-      const gchar *handler = NULL;
-
-      if (!g_file_test (self->path, G_FILE_TEST_EXISTS))
-        {
-          gchar *tmp = g_malloc(strlen (self->path) + 100);
-          sprintf (tmp, "File '%s' does not exist", self->path);
-          g_warning ("load: %s", tmp);
-          gegl_node_set (priv->load,
-                         "operation", "text",
-                         "size", 12.0,
-                         "string", tmp,
-                         NULL);
-          g_free (tmp);
-        }
-      else
-        {
-          if (extension)
-            handler = gegl_extension_handler_get (extension);
-          gegl_node_set (priv->load, 
-                         "operation", handler,
-                         NULL);
-          gegl_node_set (priv->load, 
-                         "path",  self->path,
-                         NULL);
-        }
+      refresh_cache (self);
+      gegl_node_set (priv->load,
+                     "operation", "buffer",
+                     "buffer", priv->cached_buffer,
+                     NULL);
     }
   else
     {
-      gegl_node_set (priv->load,
-                     "operation", "text",
-                     "size", 20.0,
-                     "string", "Eeeeek!",
-                     NULL);
+      if (self->path[0])
+        {
+          const gchar *extension = strrchr (self->path, '.');
+          const gchar *handler = NULL;
+
+          if (!g_file_test (self->path, G_FILE_TEST_EXISTS))
+            {
+              gchar *tmp = g_malloc(strlen (self->path) + 100);
+              sprintf (tmp, "File '%s' does not exist", self->path);
+              g_warning ("load: %s", tmp);
+              gegl_node_set (priv->load,
+                             "operation", "text",
+                             "size", 12.0,
+                             "string", tmp,
+                             NULL);
+              g_free (tmp);
+            }
+          else
+            {
+              if (extension)
+                handler = gegl_extension_handler_get (extension);
+              gegl_node_set (priv->load, 
+                             "operation", handler,
+                             NULL);
+              gegl_node_set (priv->load, 
+                             "path",  self->path,
+                             NULL);
+            }
+        }
+      else
+        {
+          gegl_node_set (priv->load,
+                         "operation", "text",
+                         "size", 20.0,
+                         "string", "Eeeeek!",
+                         NULL);
+        }
     }
 }
 
@@ -119,6 +135,38 @@ static void class_init (GeglOperationClass *klass)
 {
   klass->prepare = prepare;
   klass->associate = associate;
+}
+
+
+static void
+refresh_cache (GeglChantOperation *self)
+{
+  Priv *priv = (Priv*)self->priv;
+
+  if (!priv->cached_buffer ||
+      ((priv->cached_path && self->path) &&
+        strcmp (self->path, priv->cached_path)))
+    {
+        GeglGraph *gegl;
+        GeglNode  *load;
+
+        if (priv->cached_buffer)
+          {
+            g_object_unref (priv->cached_buffer);
+            priv->cached_buffer = NULL;
+            g_free (priv->cached_path);
+          }
+
+        gegl = g_object_new (GEGL_TYPE_GRAPH, NULL);
+        load = gegl_graph_create_node (gegl, "operation", "load",
+                                             "cache", FALSE,
+                                             "path", self->path,
+                                             NULL);
+        gegl_node_apply (load, "output");
+        gegl_node_get (load, "output", &(priv->cached_buffer), NULL);
+        g_object_unref (gegl);
+        priv->cached_path = g_strdup (self->path);
+  }
 }
 
 #endif
