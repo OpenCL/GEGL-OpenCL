@@ -24,7 +24,7 @@ png-save.so: png-save.c $(GEGLHEADERS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(PNG_CFLAGS) $(PNG_LIBS)
 
 jpg-load.so: jpg-load.c $(GEGLHEADERS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(LIBJPEG)
+	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(LIBJPEG)
 #############################################################################
 
 clean-local:
@@ -34,7 +34,7 @@ ext_dir = $(DESTDIR)$(prefix)/lib/gegl
 
 install-exec-local: all-local
 	$(INSTALL) -d $(ext_dir)
-	$(INSTALL) $(SOBJS) $(ext_dir)
+	-$(INSTALL) $(SOBJS) $(ext_dir)
 
 uninstall-local:
 	rm -f $(INSTALLED_ITEMS)

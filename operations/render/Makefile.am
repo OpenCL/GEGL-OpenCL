@@ -19,7 +19,7 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 text.so: text.c $(GEGLHEADERS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
+	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
 
 clean-local:
 	rm -f $(SOBJS) *~
@@ -28,7 +28,7 @@ ext_dir = $(DESTDIR)$(prefix)/lib/gegl
 
 install-exec-local: all-local
 	$(INSTALL) -d $(ext_dir)
-	$(INSTALL) $(SOBJS) $(ext_dir)
+	-$(INSTALL) $(SOBJS) $(ext_dir)
 
 uninstall-local:
 	rm -f $(INSTALLED_ITEMS)

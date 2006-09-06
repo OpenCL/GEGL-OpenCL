@@ -1,5 +1,14 @@
 2006-09-06  Øyvind Kolås  <pippin@gimp.org>
 
+
+	* configure.in: Made the checks for libjpeg and sdl be non-fatal
+	failures, also commented out check for lcms as it is not in use.
+	* operations/display/Makefile.am:
+	* operations/file-io/Makefile.am:
+	* operations/render/Makefile.am:
+
+2006-09-06  Øyvind Kolås  <pippin@gimp.org>
+
 	Readded caching to the "load" meta op in a saner fashion than before.
 	If the boolean cache property (not available from XML yet) is set to
 	TRUE (the default), the load op will invoke itself upon the first
