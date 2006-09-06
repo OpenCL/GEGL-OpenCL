@@ -397,7 +397,6 @@ static void encode_node_attributes (SerializeState *ss,
           else if (properties[i]->value_type == G_TYPE_BOOLEAN)
             {
               gboolean value;
-              gchar str[64];
               gegl_node_get (node, properties[i]->name, &value, NULL);
               if (value)
                 {
