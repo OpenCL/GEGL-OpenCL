@@ -1,3 +1,18 @@
+2006-09-07  Øyvind Kolås  <pippin@gimp.org>
+
+	Simplificaiton of buffer reference counting code, not plugging
+	any leaks yet though.
+
+	* gegl/gegl-cr-visitor.c: (visit_node): include graphs references
+	in refernce tracking for outputs.
+	* gegl/gegl-eval-visitor.c: (visit_pad): do not issue clean_pads,
+	but clean the already passed buffer.
+
+	* gegl/gegl-operation.[ch]: removed virtual method clean_pads.
+	* gegl/gegl-operation-composer.c,
+	* gegl/gegl-operation-filter.c,
+	* gegl/gegl-operation-source.c: removed clean pads and finalize.
+
 2006-09-06  Øyvind Kolås  <pippin@gimp.org>
 
 	Added capability to serialize/parse boolean properties.

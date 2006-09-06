@@ -26,7 +26,6 @@ enum
   PROP_LAST
 };
 
-static void     finalize     (GObject      *gobject);
 static void     get_property (GObject      *gobject,
                               guint         prop_id,
                               GValue       *value,
@@ -38,7 +37,6 @@ static void     set_property (GObject      *gobject,
 static gboolean process      (GeglOperation *operation,
                               const gchar   *output_prop);
 static void     associate    (GeglOperation *operation);
-static void     clean_pads   (GeglOperation *operation);
 
 
 
@@ -55,11 +53,9 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-  gobject_class->finalize     = finalize;
 
   operation_class->process = process;
   operation_class->associate = associate;
-  operation_class->clean_pads = clean_pads;
 
   operation_class->get_defined_region = get_defined_region;
   operation_class->calc_source_regions = calc_source_regions;
@@ -89,25 +85,6 @@ associate (GeglOperation *self)
   gegl_operation_create_pad (operation,
                              g_object_class_find_property (object_class,
                                                            "output"));
-}
-
-static void
-clean_pads (GeglOperation *operation)
-{
-  GeglOperationSource *source = GEGL_OPERATION_SOURCE (operation);
-  if (source->output)
-    {
-      g_object_unref (source->output);
-      source->output = NULL;
-    }
-}
-
-static void
-finalize (GObject *object)
-{
-  clean_pads (GEGL_OPERATION (object));
-
-  G_OBJECT_CLASS (gegl_operation_source_parent_class)->finalize (object);
 }
 
 static void
@@ -151,6 +128,7 @@ process (GeglOperation *operation,
   GeglOperationSourceClass *klass = GEGL_OPERATION_SOURCE_GET_CLASS (operation);
   gboolean success;
 
+  GEGL_OPERATION_SOURCE (operation)->output = NULL;
   success = klass->process (operation, output_prop);
 
   return success;

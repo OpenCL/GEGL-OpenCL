@@ -84,10 +84,6 @@ struct _GeglOperationClass
   /* do the actual processing needed to put GeglBuffers on the output pad */
   gboolean   (*process)             (GeglOperation *self,
                                      const gchar   *output_pad);
-
-  /* remove data left on pad */
-  void       (*clean_pads)          (GeglOperation *self);
-
 };
 
 /* returns the ROI passed to _this_ operation */
@@ -115,7 +111,6 @@ void       gegl_operation_prepare                   (GeglOperation *self);
 
 gboolean   gegl_operation_process                   (GeglOperation *self,
                                                      const gchar   *output_pad);
-void       gegl_operation_clean_pads                (GeglOperation *self);
 
 GType      gegl_operation_get_type                  (void) G_GNUC_CONST;
 void       gegl_operation_class_set_name            (GeglOperationClass *self,

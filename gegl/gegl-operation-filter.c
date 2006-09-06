@@ -27,8 +27,6 @@ enum
   PROP_LAST
 };
 
-static void     finalize             (GObject       *gobject);
-
 static void     get_property         (GObject       *gobject,
                                       guint          prop_id,
                                       GValue        *value,
@@ -46,7 +44,6 @@ static void     associate            (GeglOperation *operation);
 
 static GeglRect get_defined_region       (GeglOperation *self);
 static gboolean calc_source_regions       (GeglOperation *self);
-static void     clean_pads           (GeglOperation *operation);
 
 G_DEFINE_TYPE (GeglOperationFilter, gegl_operation_filter, GEGL_TYPE_OPERATION)
 
@@ -59,11 +56,9 @@ gegl_operation_filter_class_init (GeglOperationFilterClass * klass)
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;
-  object_class->finalize     = finalize;
 
   operation_class->process = process;
   operation_class->associate = associate;
-  operation_class->clean_pads = clean_pads;
   operation_class->get_defined_region = get_defined_region;
   operation_class->calc_source_regions = calc_source_regions;
 
@@ -104,25 +99,6 @@ associate (GeglOperation *self)
   gegl_operation_create_pad (operation,
                                g_object_class_find_property (object_class,
                                                              "input"));
-}
-
-static void
-clean_pads (GeglOperation *operation)
-{
-  GeglOperationFilter *filter = GEGL_OPERATION_FILTER (operation);
-  if (filter->output)
-    {
-      g_object_unref (filter->output);
-      filter->output = NULL;
-    }
-}
-
-static void
-finalize (GObject *object)
-{
-  clean_pads (GEGL_OPERATION (object));
-
-  G_OBJECT_CLASS (gegl_operation_filter_parent_class)->finalize (object);
 }
 
 static void
@@ -180,6 +156,7 @@ process (GeglOperation *operation,
 
   if (gegl_operation_filter->input != NULL)
     {
+      gegl_operation_filter->output = NULL;
       success = klass->process (operation, output_prop);
       g_object_unref (gegl_operation_filter->input);
       gegl_operation_filter->input=NULL;

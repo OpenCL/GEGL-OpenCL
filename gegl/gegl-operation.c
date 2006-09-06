@@ -34,7 +34,6 @@
 static void      gegl_operation_class_init (GeglOperationClass    *klass);
 static void      gegl_operation_init       (GeglOperation         *self);
 static void      associate                 (GeglOperation         *self);
-static void      clean_pads                (GeglOperation *self);
 
 static GeglRect get_defined_region (GeglOperation *self);
 static gboolean calc_source_regions (GeglOperation *self);
@@ -50,7 +49,6 @@ gegl_operation_class_init (GeglOperationClass * klass)
 
   klass->associate = associate;
   klass->prepare = NULL;
-  klass->clean_pads = clean_pads;
   klass->get_defined_region = get_defined_region;
   klass->calc_source_regions = calc_source_regions;
 }
@@ -160,29 +158,6 @@ gegl_operation_prepare (GeglOperation *self)
 
   if (klass->prepare)
     klass->prepare (self);
-}
-
-
-
-/* this virtual method is here to clean up (unref) output
- * pads when all other nodes that depend on the data on
- * an output pad have used the data
- */
-static void
-clean_pads (GeglOperation *self)
-{
-  g_warning ("Don't know how to clean pads of %s", gegl_node_get_debug_name (self->node));
-  return;
-}
-
-void
-gegl_operation_clean_pads (GeglOperation *self)
-{
-  GeglOperationClass *klass;
-  g_return_if_fail (GEGL_IS_OPERATION (self));
-  klass = GEGL_OPERATION_GET_CLASS (self);
-  g_assert (klass->clean_pads);
-  klass->clean_pads (self);
 }
 
 GeglRect *

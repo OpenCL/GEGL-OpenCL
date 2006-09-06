@@ -33,7 +33,6 @@ enum
 static void  gegl_operation_composer_class_init (GeglOperationComposerClass *klass);
 static void  gegl_operation_composer_init       (GeglOperationComposer      *self);
 
-static void     finalize     (GObject      *gobject);
 static void     get_property (GObject      *gobject,
                               guint         prop_id,
                               GValue       *value,
@@ -45,7 +44,6 @@ static void     set_property (GObject      *gobject,
 static gboolean process      (GeglOperation   *operation,
                               const gchar  *output_prop);
 static void     associate    (GeglOperation *operation);
-static void     clean_pads   (GeglOperation *operation);
 
 static GeglRect get_defined_region       (GeglOperation *self);
 static gboolean calc_source_regions       (GeglOperation *self);
@@ -62,11 +60,9 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;
-  object_class->finalize     = finalize;
 
   operation_class->process = process;
   operation_class->associate = associate;
-  operation_class->clean_pads = clean_pads;
   operation_class->get_defined_region = get_defined_region;
   operation_class->calc_source_regions = calc_source_regions;
 
@@ -121,25 +117,6 @@ associate (GeglOperation *self)
   gegl_operation_create_pad (operation,
                              g_object_class_find_property (object_class,
                                                            "aux"));
-}
-
-static void
-clean_pads (GeglOperation *operation)
-{
-  GeglOperationComposer *composer = GEGL_OPERATION_COMPOSER (operation);
-  if (composer->output)
-    {
-      g_object_unref (composer->output);
-      composer->output = NULL;
-    }
-}
-
-static void
-finalize (GObject *object)
-{
-  clean_pads (GEGL_OPERATION (object));
-
-  G_OBJECT_CLASS (gegl_operation_composer_parent_class)->finalize (object);
 }
 
 static void
@@ -200,6 +177,7 @@ process (GeglOperation *operation,
    */
   if (gegl_operation_composer->input != NULL)
     {
+      gegl_operation_composer->output = NULL;
       success = klass->process (operation, output_prop);
     }
   else

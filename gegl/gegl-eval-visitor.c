@@ -63,7 +63,6 @@ visit_pad (GeglVisitor *self,
 
   GEGL_VISITOR_CLASS (gegl_eval_visitor_parent_class)->visit_pad (self, pad);
 
-  
   if (gegl_pad_is_output (pad))
     {
       gegl_operation_process (operation, gegl_pad_get_name (pad));
@@ -98,7 +97,11 @@ visit_pad (GeglVisitor *self,
           /* reference counting for this source dropped to zero, freeing up */
           if (--gegl_pad_get_node (source_pad)->refs==0)
             {
-              gegl_operation_clean_pads (source);
+              GeglBuffer *buffer = g_value_get_object (&value);
+              if (buffer)
+                {
+                  g_object_unref (buffer);
+                }
             }
         }
     }
