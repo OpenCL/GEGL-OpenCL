@@ -30,6 +30,7 @@ gegl_chant_string(path, "/tmp/lena.png", "Path of file to load.")
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 #include "gegl/gegl-extension-handler.h"
+#include <stdio.h>
 
 typedef struct _Priv Priv;
 struct _Priv
@@ -56,15 +57,30 @@ prepare (GeglOperation *operation)
     {
       const gchar *extension = strrchr (self->path, '.');
       const gchar *handler = NULL;
-     
-      if (extension)
-        handler = gegl_extension_handler_get (extension);
-      gegl_node_set (priv->load, 
-                     "operation", handler,
-                     NULL);
-      gegl_node_set (priv->load, 
-                     "path",  self->path,
-                     NULL);
+
+      if (!g_file_test (self->path, G_FILE_TEST_EXISTS))
+        {
+          gchar *tmp = g_malloc(strlen (self->path) + 100);
+          sprintf (tmp, "File '%s' does not exist", self->path);
+          g_warning ("load: %s", tmp);
+          gegl_node_set (priv->load,
+                         "operation", "text",
+                         "size", 12.0,
+                         "string", tmp,
+                         NULL);
+          g_free (tmp);
+        }
+      else
+        {
+          if (extension)
+            handler = gegl_extension_handler_get (extension);
+          gegl_node_set (priv->load, 
+                         "operation", handler,
+                         NULL);
+          gegl_node_set (priv->load, 
+                         "path",  self->path,
+                         NULL);
+        }
     }
   else
     {

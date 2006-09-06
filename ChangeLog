@@ -1,3 +1,10 @@
+2006-09-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/file-io/load.c: (prepare): generate a text string
+	when the file specified does not exist. This makes gegl pass
+	dist-check again even though the data files for the gallery are
+	not properly copied for the distcheck.
+
 2006-09-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-node.c: (gegl_node_connect): s/oops/to a sane warning
