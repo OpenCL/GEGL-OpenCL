@@ -176,6 +176,25 @@ static void start_element (GMarkupParseContext *context,
                 {
                   gegl_node_set (new, *a, *v, NULL);
                 }
+              else if (paramspec->value_type == G_TYPE_BOOLEAN)
+                {
+                  if (!strcmp (*v, "true") ||
+                      !strcmp (*v, "TRUE") ||
+                      !strcmp (*v, "YES") ||
+                      !strcmp (*v, "yes") ||
+                      !strcmp (*v, "y") ||
+                      !strcmp (*v, "Y") ||
+                      !strcmp (*v, "1") ||
+                      !strcmp (*v, "on") 
+                      )
+                    {
+                      gegl_node_set (new, *a, TRUE, NULL);
+                    }
+                  else
+                    {
+                      gegl_node_set (new, *a, FALSE, NULL);
+                    }
+                }
               else
                 {
                   g_warning ("operation desired unknown parapspec type for %s", *a);
@@ -374,6 +393,20 @@ static void encode_node_attributes (SerializeState *ss,
               gegl_node_get (node, properties[i]->name, &value, NULL);
               sprintf (str, "%i", value);
               tuple (ss->buf, properties[i]->name, str);
+            }
+          else if (properties[i]->value_type == G_TYPE_BOOLEAN)
+            {
+              gboolean value;
+              gchar str[64];
+              gegl_node_get (node, properties[i]->name, &value, NULL);
+              if (value)
+                {
+                  tuple (ss->buf, properties[i]->name, "true");
+                }
+              else
+                {
+                  tuple (ss->buf, properties[i]->name, "false");
+                }
             }
           else if (properties[i]->value_type == G_TYPE_STRING)
             {

@@ -1,11 +1,19 @@
 2006-09-06  Øyvind Kolås  <pippin@gimp.org>
 
+	Added capability to serialize/parse boolean properties.
 
+	* gegl/gegl-xml.c: (start_element), (encode_node_attributes):
+
+2006-09-06  Øyvind Kolås  <pippin@gimp.org>
+
+	Made sdl, cairo and libjpeg optional dependencies.
+	
 	* configure.in: Made the checks for libjpeg and sdl be non-fatal
 	failures, also commented out check for lcms as it is not in use.
 	* operations/display/Makefile.am:
 	* operations/file-io/Makefile.am:
-	* operations/render/Makefile.am:
+	* operations/render/Makefile.am: Made failure to compile .so's
+	of operations with dependencies non-fatal.
 
 2006-09-06  Øyvind Kolås  <pippin@gimp.org>
 
