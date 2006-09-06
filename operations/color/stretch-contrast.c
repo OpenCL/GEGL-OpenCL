@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
  
 #else
 
@@ -38,7 +38,7 @@ inner_process (gdouble        min,
                 gint           n_pixels)
 {
   gint o;
-  float *p = (float*) (buf);
+  gfloat *p = (gfloat*) (buf);
 
   for (o=0; o<n_pixels; o++)
     {
@@ -55,18 +55,19 @@ buffer_get_min_max (GeglBuffer *buffer,
                     gdouble    *min,
                     gdouble    *max)
 {
-  gdouble tmin = 9000000.0;
-  gdouble tmax =-9000000.0;
+  gfloat tmin = 9000000.0;
+  gfloat tmax =-9000000.0;
 
   gfloat *buf = g_malloc0 (sizeof (gfloat) * 4 * buffer->width * buffer->height);
   gint i;
   gegl_buffer_get_fmt (buffer, buf, babl_format ("RGBA float"));
   for (i=0;i<gegl_buffer_pixels (buffer);i++)
     {
-      gint c;
-      for (c=0;c<3;c++)
+      gint component;
+      for (component=0; component<3; component++)
         {
-          gdouble val = buf[i*4+c];
+          gfloat val = buf[i*4+component];
+
           if (val<tmin)
             tmin=val;
           if (val>tmax)
@@ -82,7 +83,7 @@ buffer_get_min_max (GeglBuffer *buffer,
 
 static gboolean
 process (GeglOperation *operation,
-          const gchar   *output_prop)
+         const gchar   *output_prop)
 {
   GeglOperationFilter *filter = GEGL_OPERATION_FILTER (operation);
   GeglRect            *result;
@@ -93,6 +94,7 @@ process (GeglOperation *operation,
   input = filter->input;
   result = gegl_operation_get_requested_region (operation);
 
+  
   if (result->w==0 ||
       result->h==0)
     {
@@ -145,8 +147,6 @@ process (GeglOperation *operation,
     g_free (buf);
   }
 
-  if (filter->output)
-    g_object_unref (filter->output);
   filter->output = output;
 
   return TRUE;

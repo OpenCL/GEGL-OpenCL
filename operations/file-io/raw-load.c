@@ -17,13 +17,13 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 gegl_chant_string (path, "/tmp/test.raw", "path to file to load")
 #else
 
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME            raw_load
-#define GEGL_CHANT_DESCRIPTION     "Loads a raw file, by communicating with dcraw through pipes."
+#define GEGL_CHANT_DESCRIPTION     "Raw image loader, wrapping dcraw with pipes"
 
 #define GEGL_CHANT_SELF            "raw-load.c"
 #define GEGL_CHANT_CATEGORIES      "hidden"
@@ -47,12 +47,10 @@ process (GeglOperation *operation,
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
 
+  
   if(strcmp("output", output_prop))
     return FALSE;
 
-  if (op_source->output)
-    g_object_unref (op_source->output);
-  op_source->output=NULL;
 
   g_assert (self->priv);
   op_source->output = GEGL_BUFFER (self->priv);

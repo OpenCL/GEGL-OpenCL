@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 
 gegl_chant_string(window_title, "window_title", "Title to be given output window")
 gegl_chant_string(icon_title, "icon_title", "Icon to be used for output window")
@@ -79,7 +79,7 @@ init_sdl (void)
 
 static gboolean
 process (GeglOperation *operation,
-          const gchar *output_prop)
+         const gchar   *output_prop)
 {
   GeglOperationFilter *op_filter = GEGL_OPERATION_FILTER (operation);
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
@@ -165,7 +165,7 @@ process (GeglOperation *operation,
   self->width = need->w;
   self->height = need->h;
 
-  op_filter->output = NULL;
+  
   return  TRUE;
 }
 

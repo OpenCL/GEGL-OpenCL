@@ -18,7 +18,7 @@
  * Copyright 2006 Philip Lafleur
  */
 
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "")
 gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "")

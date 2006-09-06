@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (value, -100.0, 100.0, 0.5, "global threshold level (used when there is no aux input")
 
@@ -39,10 +39,10 @@ static void init (GeglChantOperation *self)
 
 static gboolean
 process (GeglOperation *op,
-          void          *in_buf,
-          void          *aux_buf,
-          void          *out_buf,
-          glong          n_pixels)
+         void          *in_buf,
+         void          *aux_buf,
+         void          *out_buf,
+         glong          n_pixels)
 {
   gint i;
 
@@ -55,7 +55,12 @@ process (GeglOperation *op,
       gfloat value = GEGL_CHANT_OPERATION (op)->value;
       for (i=0; i<n_pixels; i++)
         {
-          out[0] = in[0]>=value?1.0:0.0;
+          gfloat c;
+
+          c = in[0];
+          c = c>=value?1.0:0.0;
+          out[0] = c;
+
           out[1] = in[1];
           in  += 2;
           out += 2;
@@ -65,7 +70,13 @@ process (GeglOperation *op,
     {
       for (i=0; i<n_pixels; i++)
         {
-          out[0] = in[0]>=(*aux)?1.0:0.0;
+          gfloat value = *aux;
+          gfloat c;
+
+          c = in[0];
+          c = c>=value?1.0:0.0;
+          out[0] = c;
+
           out[1] = in[1];
           in  += 2;
           out += 2;

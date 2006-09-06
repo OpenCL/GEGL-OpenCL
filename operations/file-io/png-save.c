@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
  
 gegl_chant_string(path, "/tmp/fnord.png", "path to new file to save - for stdout")
 
@@ -25,7 +25,7 @@ gegl_chant_string(path, "/tmp/fnord.png", "path to new file to save - for stdout
 
 #define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME        png_save
-#define GEGL_CHANT_DESCRIPTION "saves a png image using libpng"
+#define GEGL_CHANT_DESCRIPTION "saves a png image using libpng (as a side effect)"
 #define GEGL_CHANT_SELF        "png-save.c"
 #define GEGL_CHANT_CATEGORIES      "output"
 #include "gegl-chant.h"
@@ -60,7 +60,6 @@ process (GeglOperation *operation,
                           result->x, result->y,
                           result->w, result->h);
 
-  op_filter->output = NULL;
   return  TRUE;
 }
 

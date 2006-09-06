@@ -33,7 +33,7 @@ a.each do
 
     file.write copyright
     file.write "
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 /* no properties */
 #else
 

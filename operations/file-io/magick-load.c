@@ -17,14 +17,13 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 gegl_chant_string (path, "/tmp/gegl-logo.svg", "path to file to load")
 #else
 
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME            magick_load
-#define GEGL_CHANT_DESCRIPTION     "Image Magick wrapper, that converts to" \
-                              "PNG before loading."
+#define GEGL_CHANT_DESCRIPTION     "Image Magick wrapper using the png op"
 
 #define GEGL_CHANT_SELF            "magick-load.c"
 #define GEGL_CHANT_CATEGORIES      "hidden"
@@ -66,12 +65,10 @@ process (GeglOperation *operation,
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
 
+  
   if(strcmp("output", output_prop))
     return FALSE;
 
-  if (op_source->output)
-    g_object_unref (op_source->output);
-  op_source->output = NULL;
 
   if (!self->priv)
     return FALSE;

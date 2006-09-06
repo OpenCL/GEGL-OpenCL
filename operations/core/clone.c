@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 
 gegl_chant_string (ref, "", "The reference ID used as input.")
 
@@ -36,15 +36,12 @@ gegl_chant_string (ref, "", "The reference ID used as input.")
  ************************************************************************/
 static gboolean
 process (GeglOperation *operation,
-          const gchar   *output_prop)
+         const gchar   *output_prop)
 {
   GeglOperationFilter   *filter = GEGL_OPERATION_FILTER(operation);
-  GeglBuffer *input  = filter->input;
-
-  if (filter->output)
-    g_object_unref (filter->output);
-
-  filter->output = g_object_ref (input);
+  
+  if (filter->input)
+    filter->output = g_object_ref (filter->input);
   return  TRUE;
 }
 

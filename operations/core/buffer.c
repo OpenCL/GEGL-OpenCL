@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 gegl_chant_object(buffer, "GeglBuffer to use")
 #else
 
@@ -31,17 +31,14 @@ gegl_chant_object(buffer, "GeglBuffer to use")
 
 static gboolean
 process (GeglOperation *operation,
-          const gchar   *output_prop)
+         const gchar   *output_prop)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
 
+  
   if(strcmp("output", output_prop))
     return FALSE;
-
-  if (op_source->output)
-    g_object_unref (op_source->output);
-  op_source->output=NULL;
 
   if (self->buffer)
     op_source->output = GEGL_BUFFER (g_object_ref (self->buffer));

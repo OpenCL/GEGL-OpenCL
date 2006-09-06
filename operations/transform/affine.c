@@ -447,6 +447,7 @@ process (GeglOperation *op,
   GeglBuffer          *output;
   GeglRect            *result = gegl_operation_result_rect (op);
 
+  
   if (strcmp (output_pad, "output"))
     return FALSE;
 

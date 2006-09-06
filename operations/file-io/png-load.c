@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
  
 gegl_chant_string (path, "/tmp/romedalen.png", "path to file to load")
 
@@ -25,7 +25,7 @@ gegl_chant_string (path, "/tmp/romedalen.png", "path to file to load")
 
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME            png_load
-#define GEGL_CHANT_DESCRIPTION     "loads a png file using libpng, currently restricted to 8bpc"
+#define GEGL_CHANT_DESCRIPTION     "PNG image loader"
 #define GEGL_CHANT_SELF            "png-load.c"
 #define GEGL_CHANT_CATEGORIES      "hidden"
 #define GEGL_CHANT_CLASS_INIT
@@ -53,12 +53,10 @@ process (GeglOperation *operation,
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   gint          result;
 
+  
   if(strcmp("output", output_prop))
     return FALSE;
 
-  if (op_source->output)
-    g_object_unref (op_source->output);
-  op_source->output=NULL;
 
     {
     gint width, height;
@@ -99,7 +97,7 @@ process (GeglOperation *operation,
         if (op_source->output)
           {
             g_object_unref (op_source->output);
-            op_source->output = NULL;
+            
           }
         op_source->output = g_object_new (GEGL_TYPE_BUFFER,
                                       "format", babl_format ("R'G'B'A u8"),

@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
  
 gegl_chant_double (alpha, -G_MAXDOUBLE, G_MAXDOUBLE, 12.3, "")
 gegl_chant_double (beta,  -G_MAXDOUBLE, G_MAXDOUBLE, 0.1, "")
@@ -33,7 +33,6 @@ gegl_chant_double (n,     0, 20.0, 6.0, "")
 
 #define GEGL_CHANT_SELF           "noise.c"
 #define GEGL_CHANT_CATEGORIES      "sources:render"
-#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 #include "perlin/perlin.c"
 #include "perlin/perlin.h"
@@ -42,16 +41,13 @@ static gboolean
 process (GeglOperation *operation,
           const gchar   *output_prop)
 {
-  GeglRect  *need;
-  GeglOperationSource     *op_source = GEGL_OPERATION_SOURCE(operation);
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  GeglRect             *need;
+  GeglOperationSource  *op_source = GEGL_OPERATION_SOURCE(operation);
+  GeglChantOperation   *self      = GEGL_CHANT_OPERATION (operation);
 
+  
   if(strcmp("output", output_prop))
     return FALSE;
-
-  if (op_source->output)
-    g_object_unref (op_source->output);
-  op_source->output=NULL;
 
   need = gegl_operation_get_requested_region (operation);
 
@@ -99,17 +95,6 @@ get_defined_region (GeglOperation *operation)
 {
   GeglRect result = {-10000000, -10000000, 20000000, 20000000};
   return result;
-}
-
-static void dispose (GObject *gobject)
-{
-  /*OpNoise *self = (OpNoise*)(gobject);*/
-  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (gobject)))->dispose (gobject);
-}
-
-static void class_init (GeglOperationClass *klass)
-{
-  G_OBJECT_CLASS (klass)->dispose = dispose;
 }
 
 #endif

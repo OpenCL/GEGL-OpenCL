@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 
 gegl_chant_string(composite_op, "over", "Composite operation to use")
 gegl_chant_double(opacity, 0.0, 1.0, 1.0, "Opacity")
@@ -68,9 +68,12 @@ prepare (GeglOperation *operation)
       gegl_node_set (priv->load, 
                      "path",  self->src,
                      NULL);
+      gegl_operation_prepare (priv->load->operation);
+      g_warning ("(src should be used)");
     }
   else
     {
+      g_warning ("(aux should be used)");
       gegl_node_connect (priv->opacity, "input", priv->aux, "output");
     }
 
@@ -110,6 +113,7 @@ static void associate (GeglOperation *operation)
   priv->load = gegl_graph_create_node (graph,
                                        "operation", "load",
                                        NULL);
+  gegl_operation_prepare (priv->load->operation);
 
   gegl_node_connect (priv->opacity, "input", priv->load, "output");
   gegl_node_connect (priv->shift, "input", priv->opacity, "output");

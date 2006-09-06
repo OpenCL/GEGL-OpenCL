@@ -35,7 +35,7 @@ a.each do
 
     file.write copyright
     file.write "
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 gegl_chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if aux doesn't contain data\")
 #else
 

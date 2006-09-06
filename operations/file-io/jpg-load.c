@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
  
 gegl_chant_string (path, "/tmp/romedalen.jpg", "Path to jpg file on disk to load")
 
@@ -25,7 +25,7 @@ gegl_chant_string (path, "/tmp/romedalen.jpg", "Path to jpg file on disk to load
 
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME            jpg_load
-#define GEGL_CHANT_DESCRIPTION     "loads a jpeg file using libjpeg"
+#define GEGL_CHANT_DESCRIPTION     "JPG image loader"
 #define GEGL_CHANT_SELF            "jpg-load.c"
 #define GEGL_CHANT_CATEGORIES      "hidden"
 #define GEGL_CHANT_CLASS_INIT
@@ -46,7 +46,7 @@ query_jpg (const gchar *path,
 
 static gboolean
 process (GeglOperation *operation,
-          const gchar   *output_prop)
+         const gchar   *output_prop)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE (operation);
   GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
@@ -54,14 +54,9 @@ process (GeglOperation *operation,
   gint           height;
   gint           result;
 
+  
   if(strcmp("output", output_prop))
     return FALSE;
-
-  if (op_source->output!=NULL)
-    {
-      g_object_unref (op_source->output);
-      op_source->output=NULL;
-    }
 
     {
       result = query_jpg (self->path, &width, &height);
@@ -93,7 +88,7 @@ process (GeglOperation *operation,
         {
           g_warning ("%s failed to open file %s for reading.",
             G_OBJECT_TYPE_NAME (operation), self->path);
-          op_source->output = NULL;
+          
           return FALSE;
         }
     }

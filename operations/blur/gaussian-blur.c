@@ -20,7 +20,7 @@
  * in "Signal Processing 44 (1995) 139 - 151"
  */
 
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
  
 gegl_chant_double (radius_x, -0.91675, 500.0, 4.0, "blur radius in horizontal direction.")
 gegl_chant_double (radius_y, -0.91675, 500.0, 4.0, "blur radius in vertical direction.")
@@ -55,11 +55,6 @@ find_iir_constants (gfloat   radius,
                     gdouble *B,
                     gdouble *b);
 
-
-
-
-/* Actual image processing code
- ************************************************************************/
 static gboolean
 process (GeglOperation *operation,
           const gchar   *output_prop)
@@ -73,6 +68,7 @@ process (GeglOperation *operation,
   GeglBuffer *input  = filter->input;
   GeglBuffer *output;
 
+  
   if(strcmp("output", output_prop))
     return FALSE;
 
@@ -125,8 +121,6 @@ process (GeglOperation *operation,
           g_object_unref (temp_in);
         }
 
-      if (filter->output)
-        g_object_unref (filter->output);
       filter->output = output;
     }
   return  TRUE;

@@ -17,12 +17,12 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(opacity, 0.0, 1.0, 0.5, "Opacity")
-gegl_chant_double(x, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "horizontal position")
-gegl_chant_double(y, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "vertical position")
-gegl_chant_double(radius, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "blur radius")
+gegl_chant_double (opacity, 0.0, 1.0, 0.5, "Opacity")
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "horizontal position")
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "vertical position")
+gegl_chant_double (radius, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "blur radius")
 
 #else
 
@@ -47,6 +47,8 @@ struct _Priv
   GeglNode *darken;
 };
 
+
+/* prepare for an evaluation */
 static void
 prepare (GeglOperation *operation)
 {
@@ -55,7 +57,6 @@ prepare (GeglOperation *operation)
   priv = (Priv*)self->priv;
 
   /* parameters might have changed, so set the properties again */
-
   gegl_node_set (priv->translate, "x", self->x,
                                   "y", self->y,
                                   NULL);
@@ -66,6 +67,7 @@ prepare (GeglOperation *operation)
                                   NULL);
 }
 
+/* in associate we hook into graph adding the needed nodes */
 static void associate (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);

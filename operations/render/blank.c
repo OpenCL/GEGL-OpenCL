@@ -17,13 +17,13 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 
 #else
 
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME           blank
-#define GEGL_CHANT_DESCRIPTION    "Blank Source"
+#define GEGL_CHANT_DESCRIPTION    "Generates an infinite black plane"
 
 #define GEGL_CHANT_SELF           "blank.c"
 #define GEGL_CHANT_CATEGORIES      "sources"
@@ -33,22 +33,18 @@ static gboolean
 process (GeglOperation *operation,
           const gchar   *output_prop)
 {
-  GeglRect  *need;
-  GeglOperationSource     *op_source = GEGL_OPERATION_SOURCE(operation);
+  GeglRect             *need;
+  GeglOperationSource  *op_source = GEGL_OPERATION_SOURCE(operation);
 
+  
   if(strcmp("output", output_prop))
     return FALSE;
 
-  if (op_source->output)
-    g_object_unref (op_source->output);
-  op_source->output=NULL;
 
   need = gegl_operation_get_requested_region (operation);
 
   {
     GeglRect *result = gegl_operation_result_rect (operation);
-    gfloat *buf;
-
     op_source->output = g_object_new (GEGL_TYPE_BUFFER,
                         "format", 
                         babl_format ("YA float"),
@@ -57,9 +53,6 @@ process (GeglOperation *operation,
                         "width",  result->w,
                         "height", result->h,
                         NULL);
-    buf = g_malloc0 (gegl_buffer_pixels (op_source->output) * gegl_buffer_px_size (op_source->output));
-    gegl_buffer_set (op_source->output, buf);
-    g_free (buf);
   }
   return  TRUE;
 }

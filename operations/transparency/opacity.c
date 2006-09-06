@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 gegl_chant_double (value, -10.0, 10.0, 0.5, "global opacity value, used if no aux input is provided")
 #else
 
@@ -42,7 +42,6 @@ process (GeglOperation *op,
           void          *out_buf,
           glong          n_pixels)
 {
-  gint i;
 
   gfloat *in = in_buf;
   gfloat *out = out_buf;
@@ -50,6 +49,7 @@ process (GeglOperation *op,
 
   if (aux == NULL)
     {
+      gint i;
       gfloat value = GEGL_CHANT_OPERATION (op)->value;
       for (i=0; i<n_pixels; i++)
         {
@@ -62,6 +62,7 @@ process (GeglOperation *op,
     }
   else
     {
+      gint i;
       for (i=0; i<n_pixels; i++)
         {
           gint j;

@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (x,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "left most pixel coordinate")
 gegl_chant_double (y,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "top pixel coordinate")
@@ -30,8 +30,8 @@ gegl_chant_double (height, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "height in pixels")
 #define GEGL_CHANT_NAME            crop
 #define GEGL_CHANT_SELF            "crop.c"
 #define GEGL_CHANT_DESCRIPTION     "crops the image, can be used to rectangulary" \
-                              "clip buffers, as well as specifying what " \
-                              "portion of a composition to render to file"
+                                   "clip buffers, as well as specifying what " \
+                                   "portion of a composition to render to file"
 #define GEGL_CHANT_CATEGORIES      "geometry"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
@@ -45,45 +45,50 @@ int gegl_chant_foo = 0;
  ************************************************************************/
 static gboolean
 process (GeglOperation *operation,
-          const gchar   *output_prop)
+         const gchar   *output_prop)
 {
-  GeglOperationFilter    *filter = GEGL_OPERATION_FILTER(operation);
-  GeglBuffer  *input  = filter->input;
-  GeglChantOperation *crop = GEGL_CHANT_OPERATION (operation);
+  GeglOperationFilter *filter;
+  GeglBuffer          *input;
+  GeglChantOperation  *crop;
+  
+  crop   = GEGL_CHANT_OPERATION (operation);
+  filter = GEGL_OPERATION_FILTER(operation);
+  input  = filter->input;
 
   if(strcmp("output", output_prop))
     return FALSE;
-
-  if (filter->output)
-    g_object_unref (filter->output);
 
   g_assert (input);
   g_assert (gegl_buffer_get_format (input));
 
   filter->output = g_object_new (GEGL_TYPE_BUFFER,
                                  "source",       input,
-                                 "x",     (int)crop->x,
-                                 "y",     (int)crop->y,
+                                 "x",      (int)crop->x,
+                                 "y",      (int)crop->y,
                                  "width",  (int)crop->width,
                                  "height", (int)crop->height,
                                  NULL);
-  crop = NULL;
   return  TRUE;
 }
 
 static GeglRect
 get_defined_region (GeglOperation *operation)
 {
-  GeglRect  result = {0,0,0,0};
-  GeglChantOperation  *op_crop = (GeglChantOperation*)(operation);
-  GeglRect *in_rect = gegl_operation_source_get_defined_region (operation, "input");
+  GeglRect result = {0,0,0,0};
+  GeglChantOperation  *op_crop;
+  GeglRect            *in_rect;
+ 
+  op_crop = (GeglChantOperation*)(operation);
+  in_rect = gegl_operation_source_get_defined_region (operation, "input");
+
   if (!in_rect)
     return result;
 
-  result.x=op_crop->x;
-  result.y=op_crop->y;
-  result.w=op_crop->width;
-  result.h=op_crop->height;
+  result.x = op_crop->x;
+  result.y = op_crop->y;
+  result.w = op_crop->width;
+  result.h = op_crop->height;
+
 
   return result;
 }

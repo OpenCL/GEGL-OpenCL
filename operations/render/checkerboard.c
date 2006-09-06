@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (x,        -G_MAXINT, G_MAXINT, 16, "")
 gegl_chant_int (y,        -G_MAXINT, G_MAXINT, 16, "")
@@ -34,6 +34,11 @@ gegl_chant_int (y_offset, -G_MAXINT, G_MAXINT,  0, "")
 #define GEGL_CHANT_CATEGORIES      "sources:render"
 #include "gegl-chant.h"
 
+#define REMAINDER(dividend, divisor)                     \
+    ((dividend) < 0 ?                                    \
+       (divisor) - 1 - ((-(dividend) - 1) % (divisor)) : \
+       (dividend) % (divisor))
+
 static gboolean
 process (GeglOperation *operation,
           const gchar   *output_prop)
@@ -42,12 +47,10 @@ process (GeglOperation *operation,
   GeglOperationSource  *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
+  
   if(strcmp("output", output_prop))
     return FALSE;
 
-  if (op_source->output)
-    g_object_unref (op_source->output);
-  op_source->output=NULL;
 
   need = gegl_operation_get_requested_region (operation);
   {
@@ -76,10 +79,10 @@ process (GeglOperation *operation,
                 gfloat *rgba_color;
                 gint nx,ny;
 
-                nx = (x + result->x + self->x_offset)/self->x;
-                ny = (y + result->y + self->y_offset)/self->y;
+                nx = ((x + result->x + self->x_offset + 100000 * self->x)/self->x) ;
+                ny = ((y + result->y + self->y_offset + 100000 * self->y)/self->y) ;
 
-                rgba_color = (nx+ny)%2 == 0 ? color1 : color2;
+                rgba_color = (nx+ny) % 2 == 0 ? color1 : color2;
 
                 memcpy(dst, rgba_color, 4*sizeof(gfloat));
                 dst += 4;

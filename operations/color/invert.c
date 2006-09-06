@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
    /* no properties */
 #else
 
@@ -37,9 +37,9 @@ static void init (GeglChantOperation *self)
 
 static gboolean
 process (GeglOperation *op,
-          void          *in_buf,
-          void          *out_buf,
-          glong          samples) 
+         void          *in_buf,
+         void          *out_buf,
+         glong          samples) 
 {
   gint i;
   gfloat *in  = in_buf;
@@ -50,7 +50,10 @@ process (GeglOperation *op,
       int  j;
       for (j=0; j<3; j++)
         {
-          out[j] = 1.0 - in[j];
+          gfloat c;
+          c = in[j];
+          c = 1.0 - c;
+          out[j] = c;
         }
       out[3]=in[3];
       in += 4;

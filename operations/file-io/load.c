@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 
 gegl_chant_string(path, "/tmp/lena.png", "Path of file to load.")
 gegl_chant_boolean(cache, TRUE, "Whether to cache the entire buffer loaded from the file.")
@@ -26,7 +26,9 @@ gegl_chant_boolean(cache, TRUE, "Whether to cache the entire buffer loaded from 
 
 #define GEGL_CHANT_GRAPH
 #define GEGL_CHANT_NAME            load
-#define GEGL_CHANT_DESCRIPTION     "Multipurpose file loader, that uses other native handlers, and fallback conversion using image magick's convert."
+#define GEGL_CHANT_DESCRIPTION     "Multipurpose file loader, that uses other "\
+                                   "native handlers, and fallback conversion using "\
+                                   "image magick's convert."
 #define GEGL_CHANT_SELF            "load.c"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
@@ -46,6 +48,37 @@ struct _Priv
 };
 
 static void refresh_cache (GeglChantOperation *self);
+
+static void
+dispose (GObject *object)
+{
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
+  Priv *priv = (Priv*)self->priv;
+
+  if (priv->cached_buffer)
+    {
+      g_object_unref (priv->cached_buffer);
+      priv->cached_buffer = NULL;
+    }
+  if (priv->cached_path)
+    {
+      g_free (priv->cached_path);
+      priv->cached_path = NULL;
+    }
+
+  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
+}
+
+static void
+finalize (GObject *object)
+{
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
+
+  if (self->priv)
+    g_free (self->priv);
+
+  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
+}
 
 static void
 prepare (GeglOperation *operation)
@@ -135,6 +168,9 @@ static void class_init (GeglOperationClass *klass)
 {
   klass->prepare = prepare;
   klass->associate = associate;
+  
+  G_OBJECT_CLASS (klass)->dispose = dispose;
+  G_OBJECT_CLASS (klass)->finalize = finalize;
 }
 
 

@@ -17,7 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#ifdef GEGL_CHANT_PROPERTIES
+#if GEGL_CHANT_PROPERTIES
 
 #else
 
@@ -43,25 +43,16 @@ op_process (GeglOperation *operation,
   GeglOperationFilter      *op_filter = GEGL_OPERATION_FILTER (operation);
   gboolean success = FALSE;
 
-  if (op_filter->output != NULL)
-    {
-      g_object_unref (op_filter->output);
-      op_filter->output = NULL;
-    }
-
-  if (op_filter->input != NULL)
+  if (op_filter->input)
     {
       op_filter->output=g_object_ref (op_filter->input);
-      g_object_unref (op_filter->input);
-      op_filter->input=NULL;
+      return TRUE;
     }
-  /* the NOP op does not complain about NULL inputs */
   return success;
 }
 static void class_init (GeglOperationClass *klass)
 {
   klass->process = op_process;
 }
-
 
 #endif
