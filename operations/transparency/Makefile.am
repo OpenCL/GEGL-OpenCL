@@ -12,7 +12,7 @@ CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ \
            -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/gegl -I.
 LDFLAGS += -shared 
 
-LDADD    = @DEP_LIBS@ @BABL_LIBS@	
+LDADD    = @DEP_LIBS@ @BABL_LIBS@ -fPIC
 
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
 
