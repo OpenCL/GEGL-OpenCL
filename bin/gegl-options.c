@@ -16,6 +16,7 @@ static GeglOptions *opts_new (void)
   o->file     = NULL;
   o->delay    = 0.0;
   o->rest     = NULL;
+  o->stats    = FALSE;
   return o;
 }
 
@@ -152,6 +153,11 @@ parse_args (int    argc,
         else if (match ("--verbose") ||
                  match ("-v")) {
             o->verbose=1;
+        }
+
+        else if (match ("--stats") ||
+                 match ("-s")) {
+            o->stats=1;
         }
 
         else if (match ("--file") ||

@@ -1,3 +1,60 @@
+2006-09-08  Øyvind Kolås  <pippin@gimp.org>
+	
+	Changed the output of the gallery generation to include timing in
+	msecs as well as number of leaked buffers. (a regression in some
+	respects since it will always rebuild all the PNGs in the gallery
+	dir when make is issued in the dir now.)
+
+	* gegl/buffer/gegl-buffer.[ch]: (gegl_buffer_leaks): added a method
+	returning the buffer balance (positive number==leaks).
+	* gegl/gegl-options.[ch]: (opts_new), (parse_args): added a new
+	-s option.
+	* gegl/gegl.c: (main): generate a line of information when -s is
+	passed as an option.
+	* docs/gallery/Makefile.am: use the -s option when building, and
+	do not use recursive make.
+
+2006-09-07  Øyvind Kolås  <pippin@gimp.org>
+
+	Harmonization, reindentation, simplification and tiny bits more.
+
+	* operations/blur/box-blur.c: (process):
+	* operations/blur/gaussian-blur.c: (process):
+	* operations/color/brightness-contrast.c: (init), (process):
+	* operations/color/invert.c: (process):
+	* operations/color/stretch-contrast.c: (inner_process),
+	(buffer_get_min_max), (process):
+	* operations/color/threshold.c: (process):
+	* operations/core/buffer.c: (process):
+	* operations/core/clone.c: (process):
+	* operations/core/crop.c: (process), (get_defined_region):
+	* operations/core/nop.c: (op_process), (class_init):
+	* operations/core/shift.c: (process):
+	* operations/display/display.c: (process):
+	* operations/file-io/jpg-load.c: (process):
+	* operations/file-io/load.c: (dispose), (finalize), (class_init):
+	* operations/file-io/magick-load.c: (process):
+	* operations/file-io/png-load.c: (process):
+	* operations/file-io/png-save.c: (process):
+	* operations/file-io/raw-load.c: (process):
+	* operations/generated/math.rb:
+	* operations/generated/porter-duff.rb:
+	* operations/generated/svg-blend.rb:
+	* operations/meta/dropshadow.c: (prepare):
+	* operations/meta/layer.c: (prepare), (associate):
+	* operations/meta/unsharp-mask.c:
+	* operations/render/blank.c: (process):
+	* operations/render/checkerboard.c: (process): moved the problematic
+	origin far into negativ land.
+	* operations/render/noise.c: (process), (get_defined_region):
+	* operations/render/text.c: (process):
+	* operations/transform/affine.c: (process):
+	* operations/transform/rotate.c:
+	* operations/transform/scale.c:
+	* operations/transform/shear.c:
+	* operations/transform/translate.c:
+	* operations/transparency/opacity.c: (process):
+
 2006-09-07  Øyvind Kolås  <pippin@gimp.org>
 
 	Simplificaiton of buffer reference counting code, not plugging

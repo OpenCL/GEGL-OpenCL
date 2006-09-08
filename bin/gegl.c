@@ -18,6 +18,8 @@ static void gegl_list_ops    (gboolean html);
 static gint main_interactive (GeglNode    *gegl,
                               GeglOptions *o);
 
+unsigned int babl_ticks (void);
+
 gint
 main (gint    argc,
       gchar **argv)
@@ -91,19 +93,28 @@ main (gint    argc,
   switch (o->mode)
     {
       case GEGL_RUN_MODE_INTERACTIVE:
-        {
           main_interactive (gegl, o);
-        }
+          g_object_unref (gegl);
         break;
       case GEGL_RUN_MODE_PNG:
         {
+          guint ticks;
+        
+          ticks = babl_ticks ();
           GeglNode *output = gegl_graph_create_node (GEGL_GRAPH (gegl),
                                "operation", "png-save",
                                "path", o->output,
                                NULL);
+          if (o->stats)
+            g_print ("%s  ", o->file);
           gegl_node_connect (output, "input", gegl_graph_output (GEGL_GRAPH (gegl), "output"), "output");
 
           gegl_node_apply (output, "output");
+          if (o->stats)
+            g_print ("msecs: %i", babl_ticks()-ticks);
+          if (gegl_buffer_leaks())
+            g_print ("  buffer-leaks: %i", gegl_buffer_leaks ());
+          g_print ("\n");
         }
         break;
       case GEGL_RUN_MODE_HELP:
@@ -113,7 +124,6 @@ main (gint    argc,
     }
 
   g_object_unref (gegl);
-
   g_free (o);
   gegl_exit ();
   return 0;

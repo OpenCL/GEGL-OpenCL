@@ -10,13 +10,14 @@ all-local:
 	echo "</ul></div><div class='paper'><div class='content'>" >> index.html
 	for XML in *.xml;do echo "<div style='margin-bottom:3em;'><a name='$$XML'></a><a href='$$XML'>$$XML</a><br/><img src='"`echo $$XML|sed s/xml/png/`"'></div>">>index.html;done
 	echo "</div></div></div></body></html>" >> index.html
+	echo "--[Rendering sample compositions]--"
 	export GEGL_PATH=$(top_builddir)/operations:$(top_builddir)/lib/gegl;\
-	for XML in $(srcdir)/*.xml;do make `echo $$XML|sed s/xml/png/`;done
+	for XML in $(srcdir)/*.xml;do $(top_builddir)/gegl/gegl $$XML -s -o `echo $$XML|sed s/xml/png/`;done
+	echo "--"
 
 %.png:%.xml $(wildcard $(top_builddir)/operations/*/*.so)
-	echo $<
 	export GEGL_PATH=$(top_builddir)/operations:$(top_builddir)/lib/gegl;\
-	$(top_builddir)/gegl/gegl $< -o $@
+	$(top_builddir)/gegl/gegl $< -s -o $@
 
 clean-local:
 	rm -f index.html *.png

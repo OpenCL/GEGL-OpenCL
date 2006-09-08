@@ -197,6 +197,11 @@ void gegl_buffer_stats (void)
             allocated_buffers, de_allocated_buffers, allocated_buffers-de_allocated_buffers);
 }
 
+gint gegl_buffer_leaks (void)
+{
+  return allocated_buffers-de_allocated_buffers;
+}
+
 #include "gegl-buffer-allocator.h"
 
 #include <string.h>

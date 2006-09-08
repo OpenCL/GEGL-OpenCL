@@ -23,6 +23,7 @@ typedef struct GeglOptions
   gchar      **rest;
 
   gboolean     verbose;
+  gboolean     stats;
 
   gfloat       delay;
 } GeglOptions;
