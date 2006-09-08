@@ -107,8 +107,6 @@ process_inner (GeglOperation *operation,
         g_free (buf);
       }
 
-    if (filter->output)
-      g_object_unref (filter->output);
     filter->output = output;
   }
   return  TRUE;

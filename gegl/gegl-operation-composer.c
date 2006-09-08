@@ -154,10 +154,10 @@ set_property (GObject      *object,
   switch (prop_id)
   {
     case PROP_INPUT:
-      self->input = G_OBJECT (g_value_dup_object(value));
+      self->input = GEGL_BUFFER (g_value_dup_object(value));
       break;
     case PROP_AUX:
-      self->aux = G_OBJECT (g_value_dup_object(value));
+      self->aux = GEGL_BUFFER (g_value_dup_object(value));
       break;
     default:
       break;

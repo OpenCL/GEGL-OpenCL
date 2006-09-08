@@ -61,8 +61,6 @@ process_inner (GeglOperation *operation,
 
   if (!input && aux)
     {
-        if (composer->output)
-          g_object_unref (composer->output);
         composer->output = g_object_ref (aux);
         return TRUE;
     }
@@ -136,8 +134,6 @@ process_inner (GeglOperation *operation,
           g_free (aux_buf);
 
         }
-        if (composer->output)
-          g_object_unref (composer->output);
         composer->output = output;
       }
   return  TRUE;

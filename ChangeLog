@@ -1,3 +1,15 @@
+2006-09-09  Øyvind Kolås  <pippin@gimp.org>
+
+	Some ref-counting fixups.
+
+	* gegl/gegl-operation-composer.c: (set_property),
+	* gegl/gegl-operation-filter.c: (set_property): add a reference when
+	the input buffers are set.
+
+	* gegl/gegl-operation-point-filter.c: (process_inner),
+	* gegl/gegl-operation-point-composer.c: (process_inner): removed
+	unneeded unrefs of output.
+
 2006-09-08  Øyvind Kolås  <pippin@gimp.org>
 
 	Moved previously added -fPIC to CFLAGS.
