@@ -95,6 +95,9 @@ main (gint    argc,
       case GEGL_RUN_MODE_INTERACTIVE:
           main_interactive (gegl, o);
           g_object_unref (gegl);
+          g_free (o);
+          gegl_exit ();
+          return 0;
         break;
       case GEGL_RUN_MODE_PNG:
         {
@@ -112,6 +115,11 @@ main (gint    argc,
           gegl_node_apply (output, "output");
           if (o->stats)
             g_print ("msecs: %i", babl_ticks()-ticks);
+
+          g_object_unref (gegl);
+          g_free (o);
+          gegl_exit ();
+
           if (gegl_buffer_leaks())
             g_print ("  buffer-leaks: %i", gegl_buffer_leaks ());
           g_print ("\n");
@@ -123,9 +131,6 @@ main (gint    argc,
         break;
     }
 
-  g_object_unref (gegl);
-  g_free (o);
-  gegl_exit ();
   return 0;
 }
 

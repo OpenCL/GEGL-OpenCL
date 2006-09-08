@@ -1,5 +1,12 @@
 2006-09-08  Øyvind Kolås  <pippin@gimp.org>
 
+	Invoke gegl_exit earlier, to make the buffer ref-counting output
+	more accurate during bug hunt season.
+
+	* gegl/gegl.c: (main): invoke gegl_exit earlier.
+
+2006-09-08  Øyvind Kolås  <pippin@gimp.org>
+
 	Some ref-counting fixups.
 
 	* gegl/gegl-operation-composer.c: (set_property): add our own ref
