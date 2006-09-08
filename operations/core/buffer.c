@@ -27,7 +27,22 @@ gegl_chant_object(buffer, "GeglBuffer to use")
 
 #define GEGL_CHANT_SELF            "buffer.c"
 #define GEGL_CHANT_CATEGORIES      "hidden"
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
+
+static void
+dispose (GObject *object)
+{
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
+
+  if (self->buffer)
+    {
+      g_object_unref (self->buffer);
+      self->buffer = NULL;
+    }
+
+  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
+}
 
 static gboolean
 process (GeglOperation *operation,
@@ -60,6 +75,11 @@ get_defined_region (GeglOperation *operation)
   result.w = GEGL_BUFFER (self->buffer)->width;
   result.h = GEGL_BUFFER (self->buffer)->height;
   return result;
+}
+
+static void class_init (GeglOperationClass *klass)
+{
+  G_OBJECT_CLASS (klass)->dispose = dispose;
 }
 
 #endif

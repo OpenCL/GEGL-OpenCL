@@ -309,7 +309,7 @@ set_property (GObject      *gobject,
     case PROP_##name:\
       if (self->name != NULL) \
          g_object_unref (self->name);\
-      self->name = g_value_get_object (value);\
+      self->name = g_value_dup_object (value);\
       break;
 #define gegl_chant_pointer(name, blurb)\
     case PROP_##name:\

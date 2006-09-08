@@ -1,5 +1,13 @@
 2006-09-08  Øyvind Kolås  <pippin@gimp.org>
 
+	Some ref-counting fixups.
+
+	* gegl/gegl-chant.h: ref gobject when set.
+	* operations/core/buffer.c: (dispose), (get_defined_region),
+	(class_init):
+
+2006-09-08  Øyvind Kolås  <pippin@gimp.org>
+
 	Invoke gegl_exit earlier, to make the buffer ref-counting output
 	more accurate during bug hunt season.
 
