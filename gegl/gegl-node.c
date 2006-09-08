@@ -603,6 +603,9 @@ gegl_node_blit_buf (GeglNode    *self,
     gegl_buffer_get_fmt (roi_buf, destination_buf, format);
     g_object_unref (roi_buf);
   }
+  /* unref'ing because we used gegl_node_get */
+  g_object_unref (buffer);
+  /* and unrefing to ultimatly clean it off from the graph */
   g_object_unref (buffer);
 }
 

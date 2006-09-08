@@ -84,6 +84,7 @@ visit_pad (GeglVisitor *self,
                                  gegl_pad_get_name (source_pad),
                                  &value);
 
+          
           if (!g_value_get_object (&value))
              g_warning ("eval-visitor encountered a NULL buffer passed from: %s.%s-[%p]", 
              gegl_node_get_debug_name (source_node),
@@ -95,14 +96,13 @@ visit_pad (GeglVisitor *self,
                                  &value);
 
           /* reference counting for this source dropped to zero, freeing up */
-          if (--gegl_pad_get_node (source_pad)->refs==0)
+          if (--gegl_pad_get_node (source_pad)->refs==0 &&
+              g_value_get_object (&value))
             {
-              GeglBuffer *buffer = g_value_get_object (&value);
-              if (buffer)
-                {
-                  g_object_unref (buffer);
-                }
+              g_object_unref (g_value_get_object (&value));
             }
+
+          g_value_unset (&value);
         }
     }
 }

@@ -1,4 +1,17 @@
 2006-09-08  Øyvind Kolås  <pippin@gimp.org>
+
+	Some ref-counting fixups.
+
+	* gegl/gegl-operation-composer.c: (set_property): add our own ref
+	* gegl/gegl-operation-filter.c: (set_property):
+	* gegl/gegl-eval-visitor.c: (visit_pad): unref the value when done
+	with it.
+	* operations/file-io/load.c: (refresh_cache): perform an extra unref
+	on the retrieved buffer.
+	* gegl/gegl-node.c: (gegl_node_blit_buf): unref the gegl-buffer we
+	blit from.
+
+2006-09-08  Øyvind Kolås  <pippin@gimp.org>
 	
 	Changed the output of the gallery generation to include timing in
 	msecs as well as number of leaked buffers. (a regression in some
