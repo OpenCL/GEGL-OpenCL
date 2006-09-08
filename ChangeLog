@@ -1,5 +1,20 @@
 2006-09-08  Øyvind Kolås  <pippin@gimp.org>
 
+	Moved previously added -fPIC to CFLAGS.
+
+	* operations/blur/Makefile.am:
+	* operations/color/Makefile.am:
+	* operations/core/Makefile.am:
+	* operations/display/Makefile.am:
+	* operations/file-io/Makefile.am:
+	* operations/generated/Makefile.am:
+	* operations/meta/Makefile.am:
+	* operations/render/Makefile.am:
+	* operations/transform/Makefile.am:
+	* operations/transparency/Makefile.am:
+
+2006-09-08  Øyvind Kolås  <pippin@gimp.org>
+
 	Added -fPIC to LDADD to make the plug-ins compile for 64bit archs.
 
 	* operations/blur/Makefile.am:

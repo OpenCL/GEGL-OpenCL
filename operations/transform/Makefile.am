@@ -6,10 +6,10 @@ SOBJS           = affine.so
 all-local: $(SOBJS)
 
 CFLAGS  += @DEP_CFLAGS@ @BABL_CFLAGS@ \
-           -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/gegl -I.
+           -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/gegl -I. -fPIC
 LDFLAGS += -shared 
 
-LDADD    = @DEP_LIBS@ @BABL_LIBS@ -fPIC
+LDADD    = @DEP_LIBS@ @BABL_LIBS@
 
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
 
