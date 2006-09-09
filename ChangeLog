@@ -1,3 +1,15 @@
+2006-09-08  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.in: Simplified and reordered library checks. Library
+	checks are not fatal if the library doesn't exist. Added checks for
+	Pango libraries. Display results of which libraries were found.
+
+	* operations/render/Makefile.am: Added extra Pango CFLAGS and LIBS
+	needed to build the text.so operation file.
+
+	* operations/render/text.c: Use Pango for text layout. Added 'font'
+	option to set font face, weight, and style.
+
 2006-09-09  Øyvind Kolås  <pippin@gimp.org>
 
 	Some ref-counting fixups.

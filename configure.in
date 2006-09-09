@@ -217,9 +217,120 @@ GTK_DOC_CHECK([1.0])
 
 dnl NOTE: We need to use a separate automake conditional for this
 dnl   	  to make this work with the tarballs.
-AM_CONDITIONAL(ENABLE_GTK_DOC, test x$enable_gtk_doc = xyes)
+AM_CONDITIONAL(ENABLE_GTK_DOC, test "x$enable_gtk_doc" = "xyes")
 
 AC_CHECK_PROGS(PERL, perl5 perl)
+
+
+#################
+# Check for Cairo
+#################
+
+PKG_CHECK_MODULES(CAIRO, cairo,
+  have_cairo="yes",
+  have_cairo="no (Cairo not found)")
+AM_CONDITIONAL(HAS_CAIRO, test "x$have_cairo" = "xyes")
+
+AC_SUBST(HAS_CAIRO) 
+AC_SUBST(CAIRO_CFLAGS) 
+AC_SUBST(CAIRO_LIBS) 
+
+
+########################
+# Checks for Pango stuff
+########################
+
+PKG_CHECK_MODULES(PANGO, pango,
+  have_pango="yes",
+  have_pango="no (Pango not found)")
+AM_CONDITIONAL(HAS_PANGO, test "x$have_pango" = "xyes")
+
+PKG_CHECK_MODULES(PANGOCAIRO, pangocairo,
+  have_pangocairo="yes",
+  have_pangocairo="no (pangocairo not found)")
+AM_CONDITIONAL(HAS_PANGOCAIRO, test "x$have_pangocairo" = "xyes")
+
+AC_SUBST(HAS_PANGO) 
+AC_SUBST(HAS_PANGOCAIRO) 
+AC_SUBST(PANGO_CFLAGS) 
+AC_SUBST(PANGO_LIBS) 
+AC_SUBST(PANGOCAIRO_CFLAGS) 
+AC_SUBST(PANGOCAIRO_LIBS) 
+
+
+###################
+# Check for libjpeg
+###################
+
+AC_ARG_WITH(libjpeg, [  --without-libjpeg       build without JPEG support])
+  if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
+    AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
+      jpeg_ok=yes,
+      [jpeg_ok="no (JPEG library not found)"])
+    if test "$jpeg_ok" = yes; then
+      AC_MSG_CHECKING([for jpeglib.h])
+      AC_TRY_CPP([
+#include <stdio.h>
+#undef HAVE_STDDEF_H
+#undef HAVE_STDLIB_H
+#undef PACKAGE
+#undef VERSION
+#include <jpeglib.h>],
+        jpeg_ok="yes",
+        jpeg_ok="no (Can't include jpeglib.h)")
+      AC_MSG_RESULT($jpeg_ok)
+      if test "$jpeg_ok" = yes; then
+        AC_CHECK_LIB(jpeg, jpeg_save_markers,
+        LIBJPEG='-ljpeg',
+        jpeg_ok="no (JPEG library is too old)")
+      else
+        jpeg_ok="no (JPEG header file not found)"
+      fi
+    fi
+  fi
+
+  if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
+     AC_MSG_RESULT([*** Checks for JPEG library failed.])
+  fi
+AM_CONDITIONAL(HAS_JPEG, test "x$jpeg_ok" = "xyes")
+
+AC_SUBST(HAS_JPEG)
+AC_SUBST(LIBJPEG)
+
+
+##################
+# Check for libpng
+##################
+
+PKG_CHECK_MODULES(PNG, libpng,
+  have_libpng="yes",
+  have_libpng="no (libpng not found)")
+AM_CONDITIONAL(HAS_PNG, test "x$have_libpng" = "xyes")
+
+AC_SUBST(HAS_PNG) 
+AC_SUBST(PNG_CFLAGS) 
+AC_SUBST(PNG_LIBS) 
+
+
+###############
+# Check for SDL
+###############
+
+dnl check for SDL
+AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
+if test "$SDL_CONFIG" = "no"; then
+  have_sdl=no
+  AC_MSG_RESULT([*** Check for SDL library failed.])
+else
+  have_sdl=yes
+  SDL_CFLAGS=`$SDL_CONFIG --cflags`
+  SDL_LIBS=`$SDL_CONFIG --libs`
+fi
+AM_CONDITIONAL(HAS_SDL, test "x$SDL_CONFIG" != "xno")
+
+AC_SUBST(HAS_SDL) 
+AC_SUBST(SDL_CFLAGS)
+AC_SUBST(SDL_LIBS)
 
 
 ################
@@ -238,65 +349,8 @@ AC_CHECK_PROGS(PERL, perl5 perl)
 #      LCMS_LIBS="-llcms")])
 #])
 # 
+#AM_CONDITIONAL(HAVE_LCMS, test "x$have_lcms" = "xyes")
 #AC_SUBST(LCMS_LIBS)
-#AM_CONDITIONAL(HAVE_LCMS, test $have_lcms = yes)
-
-
-###################
-# Check for libjpeg
-###################
-
-AC_ARG_WITH(libjpeg,  [  --without-libjpeg       build without JPEG support])
-  if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
-    AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
-      jpeg_ok=yes,
-      [jpeg_ok="no (JPEG library not found)"])
-    if test "$jpeg_ok" = yes; then
-      AC_MSG_CHECKING([for jpeglib.h])
-      AC_TRY_CPP([
-#include <stdio.h>
-#undef HAVE_STDDEF_H
-#undef HAVE_STDLIB_H
-#undef PACKAGE
-#undef VERSION
-#include <jpeglib.h>],
-        jpeg_ok=yes,
-        jpeg_ok="no (Can't include jpeglib.h)")
-      AC_MSG_RESULT($jpeg_ok)
-      if test "$jpeg_ok" = yes; then
-        AC_CHECK_LIB(jpeg, jpeg_save_markers,
-        LIBJPEG='-ljpeg',
-        jpeg_ok="no (JPEG library is too old)")
-      else
-        jpeg_ok="no (JPEG header file not found)"
-      fi
-    fi
-  fi
-
-  if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
-     AC_MSG_RESULT([*** Checks for JPEG library failed.])
-  fi
-
-AC_SUBST(LIBJPEG)
-
-
-###############
-# Check for SDL
-###############
-
-dnl check for SDL
-AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
-if test "$SDL_CONFIG" = "no"; then
-  AC_MSG_RESULT([*** Check for SDL library failed.])
-else
-  HAS_SDL=yes
-  SDL_LIBS=`$SDL_CONFIG --libs`
-  SDL_CFLAGS=`$SDL_CONFIG --cflags`
-fi
-
-AC_SUBST(HAS_SDL) 
-AC_SUBST(SDL_LIBS)
-AC_SUBST(SDL_CFLAGS)
 
 
 #######################
@@ -304,12 +358,11 @@ AC_SUBST(SDL_CFLAGS)
 #######################
 
 PKG_CHECK_MODULES(BABL, babl >= 0.0.4)
-PKG_CHECK_MODULES(CAIRO, cairo)
-PKG_CHECK_MODULES(PNG, libpng)
 
 # w3m is used to autogenerate README
 AC_PATH_PROG(W3M, w3m, no)
 AM_CONDITIONAL(HAVE_W3M, test "x$W3M" != "xno")
+
 
 AC_OUTPUT([
 Makefile
@@ -335,3 +388,17 @@ docs/gallery/data/Makefile
 gegl.pc
 gegl-uninstalled.pc
 ])
+
+dnl Print a summary of features enabled/disabled:
+AC_MSG_RESULT([
+Building GEGL with prefix=$prefix
+
+External Libraries:
+  Cairo:          $have_cairo
+  Pango:          $have_pango
+  pangocairo:     $have_pangocairo
+  JPEG:           $jpeg_ok
+  PNG:            $have_libpng
+  rsvg:           $have_librsvg
+  SDL:            $have_sdl
+]);

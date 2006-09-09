@@ -20,6 +20,7 @@
 #if GEGL_CHANT_PROPERTIES
 
 gegl_chant_string (string, "Hello", "utf8 string to display")
+gegl_chant_string (font, "Sans", "utf8 font family")
 gegl_chant_double (size, 1.0, 2048.0, 10.0, "approximate height of text in pixels")
 gegl_chant_int    (width, 0, 1000000, 0, "private")
 gegl_chant_int    (height, 0, 1000000, 0, "private")
@@ -34,27 +35,45 @@ gegl_chant_int    (height, 0, 1000000, 0, "private")
 #include "gegl-chant.h"
 
 #include <cairo.h>
+#include <pango/pangocairo.h>
 
-static void text_layout_text (cairo_t     *cr,
-                              const gchar *utf8,
-                              gdouble      rowstride,
-                              gdouble     *width,
-                              gdouble     *height)
+static void text_layout_text (GeglChantOperation *self,
+                              cairo_t       *cr,
+                              gdouble        rowstride,
+                              gdouble       *width,
+                              gdouble       *height)
 {
-  cairo_text_extents_t extent;
+  PangoLayout *layout;
+  PangoFontDescription *desc;
 
-  cairo_text_extents (cr, utf8, &extent);
+  /* Create a PangoLayout, set the font and text */
+  layout = pango_cairo_create_layout (cr);
+
+  pango_layout_set_text (layout, self->string, -1);
+  desc = pango_font_description_from_string (self->font);
+  pango_font_description_set_absolute_size (desc, self->size * PANGO_SCALE);
+  pango_layout_set_font_description (layout, desc);
+  pango_font_description_free (desc);
+
+  /* Inform Pango to re-layout the text with the new transformation */
+  pango_cairo_update_layout (cr, layout);
 
   if (width && height)
     {
-      *width = extent.width+extent.x_bearing;
-      *height = extent.height;
+      int w, h;
+
+      pango_layout_get_pixel_size (layout, &w, &h);
+      *width = (gdouble)w;
+      *height = (gdouble)h;
     }
   else
     {
-      cairo_move_to (cr, 0, 0-extent.y_bearing);
-      cairo_show_text (cr, utf8);
+      cairo_move_to (cr, 0, 0);
+      pango_cairo_show_layout (cr, layout);
     }
+
+  /* free the layout object */
+  g_object_unref (layout);
 }
 
 static gboolean
@@ -62,7 +81,7 @@ process (GeglOperation *operation,
          const gchar   *output_prop)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
-  GeglChantOperation  *self      = GEGL_CHANT_OPERATION (operation);
+  GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
   gint       width;
   gint       height;
 
@@ -72,13 +91,13 @@ process (GeglOperation *operation,
   width = self->width;
   height = self->height;
 
-    op_source->output = g_object_new (GEGL_TYPE_BUFFER,
-                                      "format", babl_format ("R'G'B'A u8"),
-                                      "x",      0,
-                                      "y",      0,
-                                      "width",  width,
-                                      "height", height,
-                                      NULL);
+  op_source->output = g_object_new (GEGL_TYPE_BUFFER,
+                                    "format", babl_format ("R'G'B'A u8"),
+                                    "x",      0,
+                                    "y",      0,
+                                    "width",  width,
+                                    "height", height,
+                                    NULL);
 
   {
     guchar *data = g_malloc0 (width * height * 4);
@@ -86,11 +105,8 @@ process (GeglOperation *operation,
 
     cairo_surface_t *surface = cairo_image_surface_create_for_data (data, CAIRO_FORMAT_ARGB32, width, height, width * 4);
     cr = cairo_create (surface);
-    cairo_set_font_size (cr, self->size);
-    cairo_move_to (cr, 0, height);
-
     cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
-    text_layout_text (cr, self->string, 0, NULL, NULL);
+    text_layout_text (self, cr, 0, NULL, NULL);
 
     gegl_buffer_set_fmt (op_source->output, data,
         babl_format_new (babl_model ("R'G'B'A"),
@@ -122,8 +138,7 @@ get_defined_region (GeglOperation *operation)
     cairo_surface_t *surface  = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
         1, 1);
     cr = cairo_create (surface);
-    cairo_set_font_size (cr, self->size);
-    text_layout_text (cr, self->string, 0, &width, &height);
+    text_layout_text (self, cr, 0, &width, &height);
     result.w = width;
     result.h = height;
 
@@ -137,10 +152,7 @@ get_defined_region (GeglOperation *operation)
 
   if (status)
     {
-      g_warning ("calc have rect of text '%s' failed", self->string);
-    }
-  else
-    {
+      g_warning ("get defined region for text '%s' failed", self->string);
     }
 
   return result;

@@ -19,7 +19,10 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 text.so: text.c $(GEGLHEADERS)
-	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
+              $(CAIRO_CFLAGS) $(CAIRO_LIBS) \
+              $(PANGO_CFLAGS) $(PANGO_LIBS) \
+              $(PANGOCAIRO_CFLAGS) $(PANGOCAIRO_LIBS)
 
 clean-local:
 	rm -f $(SOBJS) *~
