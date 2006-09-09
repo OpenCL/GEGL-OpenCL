@@ -1,5 +1,10 @@
 2006-09-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor): removed debug
+	message about creation of empty buffer.
+
+2006-09-09  Øyvind Kolås  <pippin@gimp.org>
+
 	Allow 0x0 buffers.
 
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor): made -1x-1

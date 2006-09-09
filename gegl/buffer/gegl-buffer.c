@@ -350,11 +350,6 @@ gegl_buffer_constructor (GType                  type,
       buffer->abyss_y = buffer->y;
       buffer->abyss_width = buffer->width;
       buffer->abyss_height = buffer->height;
-
-      if (buffer->height == 0)
-        {
-          g_warning ("making empty buf");
-        }
     }
   else if (buffer->abyss_width == 0 &&
            buffer->abyss_height == 0)
