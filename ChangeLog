@@ -1,3 +1,14 @@
+2006-09-09  Øyvind Kolås  <pippin@gimp.org>
+
+	Use the virtual process method of GeglOperationFilter and
+	GeglOperationComposer,. instead of bypassing it and using
+	GeglOperation's. (ref counting fixes).
+
+	* gegl/gegl-operation-point-composer.c:
+	(gegl_operation_point_composer_class_init):
+	* gegl/gegl-operation-point-filter.c:
+	(gegl_operation_point_filter_class_init):
+
 2006-09-08  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.in: Simplified and reordered library checks. Library

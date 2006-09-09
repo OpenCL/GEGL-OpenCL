@@ -29,10 +29,8 @@ G_DEFINE_TYPE (GeglOperationPointFilter, gegl_operation_point_filter, GEGL_TYPE_
 static void
 gegl_operation_point_filter_class_init (GeglOperationPointFilterClass * klass)
 {
-  /*GObjectClass       *object_class    = G_OBJECT_CLASS (klass);*/
-  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
-
-  operation_class->process = process_inner;
+  GeglOperationFilterClass *filter_class = GEGL_OPERATION_FILTER_CLASS (klass);
+  filter_class->process = process_inner;
 }
 
 static void

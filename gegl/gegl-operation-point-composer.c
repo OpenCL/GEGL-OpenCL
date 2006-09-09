@@ -30,9 +30,9 @@ static void
 gegl_operation_point_composer_class_init (GeglOperationPointComposerClass * klass)
 {
   /*GObjectClass       *object_class    = G_OBJECT_CLASS (klass);*/
-  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
+  GeglOperationComposerClass *composer_class = GEGL_OPERATION_COMPOSER_CLASS (klass);
 
-  operation_class->process = process_inner;
+  composer_class->process = process_inner;
 }
 
 static void
