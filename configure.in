@@ -399,6 +399,5 @@ External Libraries:
   pangocairo:     $have_pangocairo
   JPEG:           $jpeg_ok
   PNG:            $have_libpng
-  rsvg:           $have_librsvg
   SDL:            $have_sdl
 ]);

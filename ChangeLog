@@ -1,3 +1,7 @@
+2006-09-09  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.in: Don't report on librsvg since checks aren't there yet.
+
 2006-09-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor): removed debug
