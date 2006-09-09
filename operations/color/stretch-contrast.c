@@ -82,8 +82,7 @@ buffer_get_min_max (GeglBuffer *buffer,
 }
 
 static gboolean
-process (GeglOperation *operation,
-         const gchar   *output_prop)
+process (GeglOperation *operation)
 {
   GeglOperationFilter *filter = GEGL_OPERATION_FILTER (operation);
   GeglRect            *result;
@@ -93,7 +92,6 @@ process (GeglOperation *operation,
 
   input = filter->input;
   result = gegl_operation_get_requested_region (operation);
-
   
   if (result->w==0 ||
       result->h==0)

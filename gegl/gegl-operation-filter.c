@@ -18,6 +18,7 @@
  * Copyright 2006 Øyvind Kolås
  */
 #include "gegl-operation-filter.h"
+#include <string.h>
 
 enum
 {
@@ -154,10 +155,16 @@ process (GeglOperation *operation,
 
   g_assert (klass->process);
 
+  if (strcmp (output_prop, "output"))
+    {
+      g_warning ("requested processing of %s pad on a filter", output_prop);
+      return FALSE;
+    }
+
   if (gegl_operation_filter->input != NULL)
     {
       gegl_operation_filter->output = NULL;
-      success = klass->process (operation, output_prop);
+      success = klass->process (operation);
       g_object_unref (gegl_operation_filter->input);
       gegl_operation_filter->input=NULL;
     }

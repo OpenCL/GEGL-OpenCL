@@ -25,20 +25,10 @@
 #define GEGL_CHANT_NAME            nop
 #define GEGL_CHANT_DESCRIPTION     "Passthrough operation"
 #define GEGL_CHANT_SELF            "nop.c"
-#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 static gboolean
-process (GeglOperation *operation,
-          const gchar   *output_prop)
-{
-  /* not used */
-  return  TRUE;
-}
-
-static gboolean
-op_process (GeglOperation *operation,
-             const gchar   *output_prop)
+process (GeglOperation *operation)
 {
   GeglOperationFilter      *op_filter = GEGL_OPERATION_FILTER (operation);
   gboolean success = FALSE;
@@ -49,10 +39,6 @@ op_process (GeglOperation *operation,
       return TRUE;
     }
   return success;
-}
-static void class_init (GeglOperationClass *klass)
-{
-  klass->process = op_process;
 }
 
 #endif

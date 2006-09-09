@@ -49,8 +49,7 @@ typedef struct _GeglOperationFilterClass GeglOperationFilterClass;
 struct _GeglOperationFilterClass
 {
    GeglOperationClass operation_class;
-   gboolean (*process) (GeglOperation *self,
-                        const gchar   *output_pad);
+   gboolean (*process) (GeglOperation *self);
 
 };
 

@@ -41,16 +41,10 @@ gegl_chant_string (path, "/tmp/test.raw", "path to file to load")
 static void load_buffer (GeglChantOperation *op_raw_load);
 
 static gboolean
-process (GeglOperation *operation,
-          const gchar   *output_prop)
+process (GeglOperation *operation)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
-
-  
-  if(strcmp("output", output_prop))
-    return FALSE;
-
 
   g_assert (self->priv);
   op_source->output = GEGL_BUFFER (self->priv);

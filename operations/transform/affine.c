@@ -62,8 +62,7 @@ static void       get_source_matrix       (OpAffine *affine,
                                            Matrix3   output);
 static GeglRect   get_defined_region          (GeglOperation *op);
 static gboolean   calc_source_regions          (GeglOperation *op);
-static gboolean   process                (GeglOperation *op,
-                                           const gchar   *output_prop);
+static gboolean   process                (GeglOperation *op);
 
 /* ************************* */
 
@@ -439,17 +438,12 @@ calc_source_regions (GeglOperation *op)
 }
 
 static gboolean
-process (GeglOperation *op,
-          const gchar   *output_pad)
+process (GeglOperation *op)
 {
   GeglOperationFilter *filter = GEGL_OPERATION_FILTER (op);
   OpAffine            *affine = (OpAffine *) op;
   GeglBuffer          *output;
   GeglRect            *result = gegl_operation_result_rect (op);
-
-  
-  if (strcmp (output_pad, "output"))
-    return FALSE;
 
   /* TODO: remove this check when 0-size buffers are supported */
   if (result->w == 0 || result->h == 0)

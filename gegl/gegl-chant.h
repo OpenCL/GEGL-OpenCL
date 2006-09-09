@@ -347,8 +347,7 @@ static gboolean process (GeglOperation *operation,
                          glong          samples);
 #else
 #ifndef GEGL_CHANT_GRAPH
-static gboolean process (GeglOperation *operation,
-                         const gchar   *output_prop);
+static gboolean process (GeglOperation *operation);
 #endif
 #endif
 #endif

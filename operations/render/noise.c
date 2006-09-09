@@ -38,16 +38,11 @@ gegl_chant_double (n,     0, 20.0, 6.0, "")
 #include "perlin/perlin.h"
 
 static gboolean
-process (GeglOperation *operation,
-          const gchar   *output_prop)
+process (GeglOperation *operation)
 {
   GeglRect             *need;
   GeglOperationSource  *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation   *self      = GEGL_CHANT_OPERATION (operation);
-
-  
-  if(strcmp("output", output_prop))
-    return FALSE;
 
   need = gegl_operation_get_requested_region (operation);
 

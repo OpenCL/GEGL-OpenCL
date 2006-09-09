@@ -77,16 +77,12 @@ static void text_layout_text (GeglChantOperation *self,
 }
 
 static gboolean
-process (GeglOperation *operation,
-         const gchar   *output_prop)
+process (GeglOperation *operation)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
   gint       width;
   gint       height;
-
-  if(strcmp("output", output_prop))
-    return FALSE;
 
   width = self->width;
   height = self->height;

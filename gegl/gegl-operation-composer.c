@@ -20,6 +20,7 @@
 
 #include "gegl-operation-composer.h"
 #include "gegl-utils.h"
+#include <string.h>
 
 enum
 {
@@ -172,13 +173,19 @@ process (GeglOperation *operation,
   GeglOperationComposerClass *klass       = GEGL_OPERATION_COMPOSER_GET_CLASS (operation);
   gboolean success = FALSE;
 
+  if (strcmp (output_prop, "output"))
+    {
+      g_warning ("requested processing of %s pad on a composer", output_prop);
+      return FALSE;
+    }
+  
   /* A composer with a NULL aux, can still be valid, the
    * subclass has to handle it.
    */
   if (gegl_operation_composer->input != NULL)
     {
       gegl_operation_composer->output = NULL;
-      success = klass->process (operation, output_prop);
+      success = klass->process (operation);
     }
   else
     {

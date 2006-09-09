@@ -18,6 +18,7 @@
  * Copyright 2006 Øyvind Kolås
  */
 #include "gegl-operation-source.h"
+#include <string.h>
 
 enum
 {
@@ -128,8 +129,17 @@ process (GeglOperation *operation,
   GeglOperationSourceClass *klass = GEGL_OPERATION_SOURCE_GET_CLASS (operation);
   gboolean success;
 
+  if (strcmp (output_prop, "output"))
+    {
+      g_warning ("requested processing of %s pad on a source operation", output_prop);
+    return FALSE;
+
+
+    }
+  
   GEGL_OPERATION_SOURCE (operation)->output = NULL;
-  success = klass->process (operation, output_prop);
+  g_assert (klass->process);
+  success = klass->process (operation);
 
   return success;
 }

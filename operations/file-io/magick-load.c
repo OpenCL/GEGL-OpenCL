@@ -59,16 +59,10 @@ load_cache (GeglChantOperation *op_magick_load)
 }
 
 static gboolean
-process (GeglOperation *operation,
-          const gchar   *output_prop)
+process (GeglOperation *operation)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
-
-  
-  if(strcmp("output", output_prop))
-    return FALSE;
-
 
   if (!self->priv)
     return FALSE;

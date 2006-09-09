@@ -45,18 +45,13 @@ query_jpg (const gchar *path,
            gint        *height);
 
 static gboolean
-process (GeglOperation *operation,
-         const gchar   *output_prop)
+process (GeglOperation *operation)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE (operation);
   GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
   gint           width;
   gint           height;
   gint           result;
-
-  
-  if(strcmp("output", output_prop))
-    return FALSE;
 
     {
       result = query_jpg (self->path, &width, &height);

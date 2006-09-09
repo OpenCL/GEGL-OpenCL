@@ -56,8 +56,7 @@ find_iir_constants (gfloat   radius,
                     gdouble *b);
 
 static gboolean
-process (GeglOperation *operation,
-          const gchar   *output_prop)
+process (GeglOperation *operation)
 {
   GeglOperationFilter *filter;
   GeglChantOperation *self;
@@ -67,10 +66,6 @@ process (GeglOperation *operation,
 
   GeglBuffer *input  = filter->input;
   GeglBuffer *output;
-
-  
-  if(strcmp("output", output_prop))
-    return FALSE;
 
     {
       GeglRect   *result = gegl_operation_result_rect (operation);

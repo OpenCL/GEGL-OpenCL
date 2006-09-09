@@ -20,8 +20,7 @@
 #include "gegl-operation-point-filter.h"
 #include <string.h>
 
-static gboolean process_inner       (GeglOperation *operation,
-                                     const gchar   *output_pad);
+static gboolean process_inner (GeglOperation *operation);
 
 G_DEFINE_TYPE (GeglOperationPointFilter, gegl_operation_point_filter, GEGL_TYPE_OPERATION_FILTER)
 
@@ -41,8 +40,7 @@ gegl_operation_point_filter_init (GeglOperationPointFilter *self)
 }
 
 static gboolean
-process_inner (GeglOperation *operation,
-               const gchar   *output_pad)
+process_inner (GeglOperation *operation)
 {
   GeglOperationFilter *filter = GEGL_OPERATION_FILTER (operation);
   GeglOperationPointFilter *point_filter = GEGL_OPERATION_POINT_FILTER (operation);
@@ -50,9 +48,6 @@ process_inner (GeglOperation *operation,
   GeglBuffer *input  = filter->input;
   GeglRect   *result = gegl_operation_result_rect (operation);
   GeglBuffer *output;
-
-  if(strcmp("output", output_pad))
-    return FALSE;
 
   {
     gfloat *buf;

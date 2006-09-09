@@ -50,8 +50,7 @@ typedef struct _GeglOperationComposerClass GeglOperationComposerClass;
 struct _GeglOperationComposerClass
 {
    GeglOperationClass operation_class;
-   gboolean (*process) (GeglOperation *self,
-                        const gchar   *output_pad);
+   gboolean (*process) (GeglOperation *self);
 };
 
 GType gegl_operation_composer_get_type (void) G_GNUC_CONST;

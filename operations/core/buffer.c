@@ -45,15 +45,10 @@ dispose (GObject *object)
 }
 
 static gboolean
-process (GeglOperation *operation,
-         const gchar   *output_prop)
+process (GeglOperation *operation)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
-
-  
-  if(strcmp("output", output_prop))
-    return FALSE;
 
   if (self->buffer)
     op_source->output = GEGL_BUFFER (g_object_ref (self->buffer));

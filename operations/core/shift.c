@@ -40,16 +40,11 @@ int gegl_chant_foo = 0;
 /* Actual image processing code
  ************************************************************************/
 static gboolean
-process (GeglOperation *operation,
-          const gchar   *output_prop)
+process (GeglOperation *operation)
 {
   GeglOperationFilter    *filter = GEGL_OPERATION_FILTER(operation);
   GeglBuffer    *input  = filter->input;
   GeglChantOperation *translate = (GeglChantOperation*)filter;
-
-  
-  if(strcmp("output", output_prop))
-    return FALSE;
 
   g_assert (input);
   g_assert (gegl_buffer_get_format (input));

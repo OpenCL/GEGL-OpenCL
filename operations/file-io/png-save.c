@@ -41,18 +41,12 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
                         gint         height);
 
 static gboolean
-process (GeglOperation *operation,
-          const gchar *output_prop)
+process (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   GeglOperationFilter *op_filter = GEGL_OPERATION_FILTER (operation);
   GeglBuffer          *input   = op_filter->input;
   GeglRect            *result  = gegl_operation_result_rect (operation);
-
-  if(strcmp("output", output_prop))
-    return FALSE;
-
-  /*g_warning ("%s", ((Babl*)(input->format))->instance.name);*/
 
   g_assert (input);
 

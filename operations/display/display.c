@@ -78,19 +78,13 @@ init_sdl (void)
 
 
 static gboolean
-process (GeglOperation *operation,
-         const gchar   *output_prop)
+process (GeglOperation *operation)
 {
   GeglOperationFilter *op_filter = GEGL_OPERATION_FILTER (operation);
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer   *source;
   GeglRect     *need    = gegl_operation_get_requested_region (operation);
   SDL_Surface **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
-
-  if(strcmp("output", output_prop))
-    return FALSE;
-
-  /*g_warning ("%s", ((Babl*)(input->format))->instance.name);*/
 
   g_assert (op_filter->input);
 
