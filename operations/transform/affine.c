@@ -445,10 +445,6 @@ process (GeglOperation *op)
   GeglBuffer          *output;
   GeglRect            *result = gegl_operation_result_rect (op);
 
-  /* TODO: remove this check when 0-size buffers are supported */
-  if (result->w == 0 || result->h == 0)
-    return FALSE;
-
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (affine->matrix))
     output = g_object_new (GEGL_TYPE_BUFFER,

@@ -325,8 +325,8 @@ gegl_buffer_constructor (GType                  type,
   tile_width = backend->tile_width;
   tile_height = backend->tile_height;
   
-  if (buffer->width == 0 &&
-      buffer->height == 0) /* no specified extents, inheriting from source */
+  if (buffer->width == -1 &&
+      buffer->height == -1) /* no specified extents, inheriting from source */
     {
       if (GEGL_IS_BUFFER (source))
         {
@@ -498,12 +498,12 @@ gegl_buffer_class_init (GeglBufferClass *class)
 
   g_object_class_install_property (gobject_class, PROP_WIDTH,
                                    g_param_spec_int ("width", "width", "pixel width of buffer",
-                                                     0, G_MAXINT, 0,
+                                                     -1, G_MAXINT, -1,
                                                      G_PARAM_READWRITE|
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_HEIGHT,
                                    g_param_spec_int ("height", "height", "pixel height of buffer",
-                                                     0, G_MAXINT, 0,
+                                                     -1, G_MAXINT, -1,
                                                      G_PARAM_READWRITE|
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_X,

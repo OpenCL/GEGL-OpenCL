@@ -1,5 +1,17 @@
 2006-09-09  Øyvind Kolås  <pippin@gimp.org>
 
+	Allow 0x0 buffers.
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor): made -1x-1
+	be interpreted as inherit source dimensions instead.
+	(gegl_buffer_class_init): set default dimensions to -1,-1.
+	* operations/transform/affine.c: (process): do not bail out on 0x0
+	buffers.
+	* operations/transform/linear.c: (affine_linear), (scale_linear): bail
+	out if no pixels.
+
+2006-09-09  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed property_name / pad_name parameter from the process method of
 	source, filter and composer. Simplified other bits of the code as
 	needed.

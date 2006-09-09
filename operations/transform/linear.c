@@ -45,6 +45,9 @@ affine_linear (GeglBuffer *dest,
   gdouble  u_start,
            v_start;
 
+  if (gegl_buffer_pixels (src) == 0 ||
+      gegl_buffer_pixels (dest) == 0)
+    return;
   src_buf  = g_malloc (gegl_buffer_pixels (src) << 2);
   dest_buf = g_malloc (gegl_buffer_pixels (dest) << 2);
   g_assert (src_buf && dest_buf);
@@ -215,6 +218,9 @@ scale_linear (GeglBuffer *dest,
            u_float,
            v_float;
 
+  if (gegl_buffer_pixels (src) == 0 ||
+      gegl_buffer_pixels (dest) == 0)
+    return;
   src_buf  = g_malloc (gegl_buffer_pixels (src) << 2);
   dest_buf = g_malloc (gegl_buffer_pixels (dest) << 2);
   g_assert (src_buf && dest_buf);
