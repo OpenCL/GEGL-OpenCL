@@ -803,11 +803,18 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
                         }
 
                       if (!write)
-                        {
-                          if ((buffer->x + bufx)-(buffer->abyss_x)<0)
+                        {  
+                        /* FIXME: this 0-padding was actually intentional, but it seems to write outside
+                         * the allowed region, thus crashing things. This function needs a cleanup anyways,
+                         * and alternate paths will exist that do not have this issue
+                         */
+#if 0
+                          if ((buffer->x + bufx)-(buffer->abyss_x)<0)  /* valgrind eeks on this one */
                             {
-                              memset (bp, 0x00, bpx_size * ((buffer->x + bufx)-(buffer->abyss_x))*-1);
+                              memset (bp, 0x00, bpx_size * 
+                               ((buffer->x + bufx) - (buffer->abyss_x))*-1);
                             }
+#endif
                           if ((buffer->abyss_x+buffer->abyss_width)-
                               (buffer->x + bufx + pixels)<0)
                             {

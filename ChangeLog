@@ -1,3 +1,10 @@
+2006-09-09  Øyvind Kolås  <pippin@gimp.org>
+
+	Disabled some of the 0 padding code of gegl_buffer_get_fmt since it
+	wrote outside the passed buffer. Proper fix is needed later.
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_iterate_fmt)
+
 2006-09-09  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.in: Don't report on librsvg since checks aren't there yet.
