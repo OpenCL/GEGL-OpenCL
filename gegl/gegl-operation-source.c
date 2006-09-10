@@ -62,12 +62,12 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
   operation_class->calc_source_regions = calc_source_regions;
 
   g_object_class_install_property (gobject_class, PROP_OUTPUT,
-    g_param_spec_object ("output",
-                         "Output",
-                         "An output property",
-                         GEGL_TYPE_BUFFER,
-                         G_PARAM_READABLE |
-                         GEGL_PAD_OUTPUT));
+                                   g_param_spec_object ("output",
+                                                        "Output",
+                                                        "Ouput pad for generated image buffer.",
+                                                        GEGL_TYPE_BUFFER,
+                                                        G_PARAM_READABLE |
+                                                        GEGL_PAD_OUTPUT));
 
 }
 

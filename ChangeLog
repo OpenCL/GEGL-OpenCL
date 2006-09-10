@@ -1,5 +1,14 @@
 2006-09-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation-source.c,
+	* gegl/gegl-operation-filter.c,
+	* gegl/gegl-operation-composer.c: improved the documentation of the
+	input/aux/output properties/pads.
+	* operations/color/stretch-contrast.c: added to "enhance" category.
+	* tools/operation_reference.c: reworded introductory paragraph.
+
+2006-09-10  Øyvind Kolås  <pippin@gimp.org>
+
 	Refactored the operation reference generator to use categories/tags of
 	the operations instead of peeking into the superclasses. At the moment
 	it doesn't list the categories in alphabetical order, this should be

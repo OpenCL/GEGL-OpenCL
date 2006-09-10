@@ -28,7 +28,7 @@
 #define GEGL_CHANT_SELF            "stretch-contrast.c"
 #define GEGL_CHANT_CLASS_INIT /*< we need to modify the standard class init
                                   of the super class */
-#define GEGL_CHANT_CATEGORIES      "color"
+#define GEGL_CHANT_CATEGORIES      "color:enhance"
 #include "gegl-chant.h"
 
 static gboolean

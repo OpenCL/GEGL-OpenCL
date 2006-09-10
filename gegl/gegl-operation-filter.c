@@ -66,7 +66,7 @@ gegl_operation_filter_class_init (GeglOperationFilterClass * klass)
   g_object_class_install_property (object_class, PROP_OUTPUT,
                                    g_param_spec_object ("output",
                                                         "Output",
-                                                        "An output property",
+                                                        "Ouput pad for generated image buffer.",
                                                         GEGL_TYPE_BUFFER,
                                                         G_PARAM_READABLE |
                                                         GEGL_PAD_OUTPUT));
@@ -74,11 +74,13 @@ gegl_operation_filter_class_init (GeglOperationFilterClass * klass)
   g_object_class_install_property (object_class, PROP_INPUT,
                                    g_param_spec_object ("input",
                                                         "Input",
-                                                        "An input property",
+                                                        "Input pad, for image buffer input.",
                                                         GEGL_TYPE_BUFFER,
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE |
                                                         GEGL_PAD_INPUT));
+
+
 }
 
 static void
