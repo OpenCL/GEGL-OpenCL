@@ -1,8 +1,19 @@
-2006-09-10  Øyvind Kolås  <pippin@gimp.org>
+2006-09-10  Martin Nordholts  <enselic@hotmail.com>
 
-	Integrated contribution from Martin Nordholts that provides a
-	property type of type color. That accepts a superset of CSS
-	color strings.
+	Renamed GeglParamSpecColor to GeglParamColor and related function
+	names accordingly.
+
+	* gegl/gegl-color.c: (gegl_param_color_init), (finalize),
+	(value_set_default), (gegl_param_color_get_type),
+	(gegl_param_spec_color):
+	* gegl/gegl-color.h:
+
+2006-09-10  Martin Nordholts  <enselic@hotmail.com>
+
+	Added support for color representations with GeglColor, as well
+	as integration of GeglColor:s in chanted operations. GeglColor
+	properties of chanted operations uses a superset of CSS
+	color strings for color specification.
 
 	* gegl/gegl-color.[ch]: NEW files.
 	* gegl/gegl-chant.h: added the ability to chant color properties.

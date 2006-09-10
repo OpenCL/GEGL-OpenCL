@@ -57,14 +57,14 @@ void         gegl_color_set_rgba             (GeglColor    *self,
                                               gfloat       a);
 void         gegl_color_set_from_string      (GeglColor    *self,
                                               const gchar  *color_string);
-GType        gegl_color_get_type            (void) G_GNUC_CONST;
+GType        gegl_color_get_type             (void) G_GNUC_CONST;
 
-GType        gegl_param_spec_color_get_type  (void) G_GNUC_CONST;
-GParamSpec  *gegl_param_spec_color           (const        gchar *name,
-                                              const        gchar *nick,
-                                              const        gchar *blurb,
-                                              const        gchar *default_color_string,
-                                              GParamFlags  flags);
+GParamSpec  *gegl_param_spec_color           (const gchar  *name,
+                                              const gchar  *nick,
+                                              const gchar  *blurb,
+                                              const gchar  *default_color_string,
+                                              GParamFlags   flags);
+GType        gegl_param_color_get_type       (void) G_GNUC_CONST;
 
 G_END_DECLS
 
