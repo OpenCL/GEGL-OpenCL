@@ -164,18 +164,20 @@
          border: none;
       }
       td.op_name {
-          padding-top: 1.5em;
-          font-style: italic;
+          padding-top: 2.5em;
+          padding-bottom: 1.0em;
           font-weight: bold;
+          font-size: 120%;
       }
       td.op_description {
           padding-bottom: 1em;
       }
       td.prop_type {
           color: gray;
+          font-style: italic;
       }
       td.prop_name {
-          font-style: italic;
+          font-weight: bold;
       }
       td.prop_blurb {
           padding-bottom: 0.5em;

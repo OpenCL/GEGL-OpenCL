@@ -1,5 +1,17 @@
 2006-09-10  Øyvind Kolås  <pippin@gimp.org>
 
+	Refactored the operation reference generator to use categories/tags of
+	the operations instead of peeking into the superclasses. At the moment
+	it doesn't list the categories in alphabetical order, this should be
+	fixed.
+
+	* tools/operation_reference.c: (gegl_operations_build),
+	(compare_operation_names), (gegl_operations), (list_properties),
+	(category_menu_item), (category_index), (main), (index_introspect):
+	* docs/gegl.css: changed the layout of operation properties slightly.
+
+2006-09-10  Øyvind Kolås  <pippin@gimp.org>
+
 	Added categories to meta ops.
 
 	* operations/file-io/load.c:
