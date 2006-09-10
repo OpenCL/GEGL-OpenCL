@@ -32,6 +32,7 @@ gegl_chant_pointer(private, "private stuff do not touch")
 #define GEGL_CHANT_NAME            layer
 #define GEGL_CHANT_DESCRIPTION     "A layer in the traditional sense"
 #define GEGL_CHANT_SELF            "layer.c"
+#define GEGL_CHANT_CATEGORIES      "meta"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
@@ -68,7 +69,6 @@ prepare (GeglOperation *operation)
       gegl_node_set (priv->load, 
                      "path",  self->src,
                      NULL);
-      gegl_operation_prepare (priv->load->operation);
       g_warning ("(src should be used)");
     }
   else
@@ -113,13 +113,13 @@ static void associate (GeglOperation *operation)
   priv->load = gegl_graph_create_node (graph,
                                        "operation", "load",
                                        NULL);
-  gegl_operation_prepare (priv->load->operation);
 
   gegl_node_connect (priv->opacity, "input", priv->load, "output");
   gegl_node_connect (priv->shift, "input", priv->opacity, "output");
   gegl_node_connect (priv->composite_op, "aux", priv->shift, "output");
   gegl_node_connect (priv->composite_op, "input", priv->input, "output");
   gegl_node_connect (priv->output, "input", priv->composite_op, "output");
+
 }
 
 static void class_init (GeglOperationClass *klass)

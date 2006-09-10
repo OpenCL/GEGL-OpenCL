@@ -1,5 +1,14 @@
 2006-09-10  Øyvind Kolås  <pippin@gimp.org>
 
+	Added categories to meta ops.
+
+	* operations/file-io/load.c:
+	* operations/meta/dropshadow.c:
+	* operations/meta/layer.c: (prepare), (associate):
+	* operations/meta/unsharp-mask.c:
+
+2006-09-10  Øyvind Kolås  <pippin@gimp.org>
+
 	Moved the operation reference generator out of the gegl binary.
 
 	* gegl/gegl.c: (main), (main_interactive): moved the operation

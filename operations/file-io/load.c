@@ -30,6 +30,7 @@ gegl_chant_boolean(cache, TRUE, "Whether to cache the entire buffer loaded from 
                                    "native handlers, and fallback conversion using "\
                                    "image magick's convert."
 #define GEGL_CHANT_SELF            "load.c"
+#define GEGL_CHANT_CATEGORIES      "sources:meta"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 #include "gegl/gegl-extension-handler.h"
