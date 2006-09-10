@@ -181,15 +181,6 @@ parse_args (int    argc,
             o->mode = GEGL_RUN_MODE_INTERACTIVE;
         }
 
-        else if (match ("--ops") ||
-                 match ("-ops")) {
-            o->mode = GEGL_RUN_MODE_OP_LISTING;
-        }
-        else if (match ("--ops-html"))
-          {
-            o->mode = GEGL_RUN_MODE_OP_LISTING_HTML;
-        }
-
         else if (match ("--")) {
             o->rest = curr+1;
             break;

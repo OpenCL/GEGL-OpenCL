@@ -1,3 +1,17 @@
+2006-09-10  Øyvind Kolås  <pippin@gimp.org>
+
+	Moved the operation reference generator out of the gegl binary.
+
+	* gegl/gegl.c: (main), (main_interactive): moved the operation
+	reference generator to ../tools/operation_reference.
+	* gegl/gegl-options.[ch]: (parse_args): removed references to
+	operation reference generator.
+	* tools/operation_reference.c: (main), (list_properties),
+	(introspect), (index_introspect), (gegl_list_ops):
+	* tools/Makefile.am: added operation_reference.c
+	* docs/Makefile.am: use the new operation reference tool instead of
+	special run mode of the gegl binary.
+
 2006-09-10  Martin Nordholts  <enselic@hotmail.com>
 
 	Renamed GeglParamSpecColor to GeglParamColor and related function

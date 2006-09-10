@@ -27,9 +27,9 @@ MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
 all-local: $(HTML_FILES)
 
-operations.html: $(top_builddir)/gegl/gegl
+operations.html: $(top_builddir)/tools/operation_reference
 	export GEGL_PATH=$(top_builddir)/operations;\
-	$(top_builddir)/gegl/gegl --ops-html > $@
+	$(top_builddir)/tools/operation_reference --ops-html > $@
 
 class-hierarchy.html: $(top_builddir)/tools/introspect
 	export GEGL_PATH=$(top_builddir)/operations;\
