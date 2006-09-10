@@ -1,0 +1,467 @@
+/* This file is part of GEGL
+ *
+ * GEGL is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * GEGL is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with GEGL; if not, write to the
+ * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ * Copyright 2006 Martin Nordholts <enselic@hotmail.com>
+ */
+
+#include <glib.h>
+#include <glib/gprintf.h>
+#include <glib-object.h>
+#include <string.h>
+
+#include "gegl-color.h"
+
+typedef struct _GeglColorPrivate  GeglColorPrivate;
+typedef struct _ColorNameEntity   ColorNameEntity;
+
+struct _GeglColorPrivate {
+  gfloat rgba_color[4];
+};
+
+struct _ColorNameEntity {
+  const gchar *color_name;
+  const gfloat rgba_color[4];
+};
+
+static void      gegl_color_to_string       (const GValue    *src_value,
+                                             GValue          *dest_value);
+static void      string_to_gegl_color       (const GValue    *src_value,
+                                             GValue          *dest_value);
+static gboolean  parse_float_argument_list  (GeglColor       *color,
+                                             GScanner        *scanner,
+                                             gint             num_arguments);
+static gboolean  parse_color_name           (GeglColor       *color,
+                                             const gchar     *color_string);
+static gboolean  parse_hex                  (GeglColor       *color,
+                                             const gchar     *color_string);
+
+/* These color names are based on those defined in the HTML 4.01 standard. See
+ * http://www.w3.org/TR/html4/types.html#h-6.5
+ */
+static const ColorNameEntity color_names[] = {
+  { "black",    { 0.f,       0.f,       0.f,       1.f } },
+  { "silver",   { 0.75294f,  0.75294f,  0.75294f,  1.f } },
+  { "gray",     { 0.50196f,  0.50196f,  0.50196f,  1.f } },
+  { "white",    { 1.f,       1.f,       1.f,       1.f } },
+  { "maroon",   { 0.50196f,  0.f,       0.f,       1.f } },
+  { "red",      { 1.f,       0.f,       0.f,       1.f } },
+  { "purple",   { 0.50196f,  0.f,       0.50196f,  1.f } },
+  { "fuchsia",  { 1.f,       0.f,       1.f,       1.f } },
+  { "green",    { 0.f,       0.50196f,  0.f,       1.f } },
+  { "lime",     { 0.f,       1.f,       0.f,       1.f } },
+  { "olive",    { 0.50196f,  0.50196f,  0.f,       1.f } },
+  { "yellow",   { 1.f,       1.f,       01.f,      1.f } },
+  { "navy",     { 0.f,       0.f,       0.50196f,  1.f } },
+  { "blue",     { 0.f,       0.f,       1.f,       1.f } },
+  { "teal",     { 0.f,       0.50196f,  0.50196f,  1.f } },
+  { "aqua",     { 0.f,       1.f,       1.f,       1.f } }
+};
+
+/* Copied into GeglColor:s instances when parsing a color from a string fails. */
+static const gfloat parsing_error_color[4] = { 0.f, 1.f, 1.f, 0.67f };
+
+/* Copied into all GeglColor:s at their instantiation. */
+static const gfloat init_color[4]          = { 1.f, 1.f, 1.f, 1.f   };
+
+G_DEFINE_TYPE_WITH_CODE (GeglColor, gegl_color, G_TYPE_OBJECT,
+                         g_value_register_transform_func (g_define_type_id,        \
+                                                          G_TYPE_STRING,           \
+                                                          gegl_color_to_string);   \
+                         g_value_register_transform_func (G_TYPE_STRING,           \
+                                                          g_define_type_id,        \
+                                                          string_to_gegl_color);)
+
+#define GEGL_COLOR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GEGL_TYPE_COLOR, GeglColorPrivate))
+
+static void
+gegl_color_init (GeglColor *self)
+{
+  GeglColorPrivate *priv = GEGL_COLOR_GET_PRIVATE (self);
+
+  memcpy (priv->rgba_color, init_color, sizeof (init_color));
+}
+
+static void
+gegl_color_class_init (GeglColorClass *klass)
+{
+  g_type_class_add_private (klass, sizeof (GeglColorPrivate));
+}
+
+static void
+string_to_gegl_color (const GValue *src_value,
+                      GValue       *dest_value)
+{
+  const gchar *color_string;
+  GeglColor   *color;
+
+  color_string  = g_value_get_string (src_value);
+
+  color = g_object_new (GEGL_TYPE_COLOR, NULL);
+  gegl_color_set_from_string (color, color_string);
+  g_value_take_object (dest_value, color);
+}
+
+static void
+gegl_color_to_string (const GValue  *src_value,
+                      GValue        *dest_value)
+{
+  GeglColor        *color;
+  GeglColorPrivate *priv;
+  gchar             buffer[512];
+
+  color = GEGL_COLOR (g_value_get_object (src_value));
+  priv  = GEGL_COLOR_GET_PRIVATE (color);
+
+  g_sprintf (buffer, "rgba(%f, %f, %f, %f)",
+             priv->rgba_color[0],
+             priv->rgba_color[1],
+             priv->rgba_color[2],
+             priv->rgba_color[3]);
+
+  g_value_set_string (dest_value, buffer);
+}
+
+static gboolean
+parse_float_argument_list (GeglColor  *color,
+                           GScanner   *scanner,
+                           gint        num_arguments)
+{
+  GTokenType  token_type;
+  GTokenValue token_value;
+  GeglColorPrivate  *priv;
+
+  priv = GEGL_COLOR_GET_PRIVATE (color);
+
+  /* Make sure there is a leading '(' */
+  if (g_scanner_get_next_token (scanner) != G_TOKEN_LEFT_PAREN)
+    {
+      return FALSE;
+    }
+
+  /* Iterate through the arguments and copy each value
+   * to the rgba_color array of GeglColor.
+   */
+  gint i;
+  for (i = 0; i < num_arguments; ++i)
+    {
+      if (g_scanner_get_next_token (scanner) != G_TOKEN_FLOAT)
+        {
+          return FALSE;
+        }
+
+      token_value = g_scanner_cur_value (scanner);
+      priv->rgba_color[i] = token_value.v_float;
+
+      /* Verify that there is a ',' after each float, except the last one */
+      if (i < (num_arguments - 1))
+        {
+          token_type = g_scanner_get_next_token (scanner);
+          if (token_type != G_TOKEN_COMMA)
+            {
+              return FALSE;
+            }
+        }
+    }
+
+  /* Make sure there is a traling ')' and that that is the last token. */
+  if (g_scanner_get_next_token (scanner) == G_TOKEN_RIGHT_PAREN &&
+      g_scanner_get_next_token (scanner) == G_TOKEN_EOF)
+    {
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+static gboolean
+parse_color_name (GeglColor   *color,
+                  const gchar *color_string)
+{
+  GeglColorPrivate  *priv = GEGL_COLOR_GET_PRIVATE (color);
+
+  gint num_color_names = sizeof (color_names) / sizeof (color_names[0]);
+  gint i;
+  for (i = 0; i < num_color_names; ++i)
+    {
+      if (g_ascii_strcasecmp (color_names[i].color_name, color_string) == 0)
+        {
+          memcpy (priv->rgba_color, color_names[i].rgba_color, sizeof(color_names[i].rgba_color));
+          return TRUE;
+        }
+    }
+
+  return FALSE;
+}
+
+static gboolean
+parse_hex (GeglColor    *color,
+           const gchar  *color_string)
+{
+  gint               i;
+  gsize              string_length = strlen (color_string);
+  GeglColorPrivate  *priv = GEGL_COLOR_GET_PRIVATE (color);
+
+  if (string_length == 7 ||  /* #rrggbb   */
+      string_length == 9)    /* #rrggbbaa */
+    {
+      gint num_iterations = (string_length-1) / 2;
+      for (i = 0; i < num_iterations; ++i)
+        {
+          if (g_ascii_isxdigit (color_string[2*i + 1]) &&
+              g_ascii_isxdigit (color_string[2*i + 2]))
+            {
+              priv->rgba_color[i] = (g_ascii_xdigit_value (color_string[2*i + 1]) << 4 |
+                                     g_ascii_xdigit_value (color_string[2*i + 2])) / 255.f;
+            }
+          else
+            {
+              return FALSE;
+            }
+        }
+
+      /* Successful #rrggbb(aa) parsing! */
+      return TRUE;
+    }
+  else if (string_length == 4 ||  /* #rgb  */
+           string_length == 5)    /* #rgba */
+    {
+      gint num_iterations = string_length - 1;
+      for (i = 0; i < num_iterations; ++i)
+        {
+          if (g_ascii_isxdigit (color_string[i + 1]))
+            {
+              priv->rgba_color[i] = (g_ascii_xdigit_value (color_string[i + 1]) << 4 |
+                                     g_ascii_xdigit_value (color_string[i + 1])) / 255.f;
+            }
+          else
+            {
+              return FALSE;
+            }
+        }
+
+      /* Successful #rgb(a) parsing! */
+      return TRUE;
+    }
+
+  /* String was of unsupported length. */
+  return FALSE;
+}
+
+void
+gegl_color_get_rgba (GeglColor  *self,
+                     gfloat     *r,
+                     gfloat     *g,
+                     gfloat     *b,
+                     gfloat     *a)
+{
+  GeglColorPrivate *priv = GEGL_COLOR_GET_PRIVATE (self);
+
+  *r = priv->rgba_color[0];
+  *g = priv->rgba_color[1];
+  *b = priv->rgba_color[2];
+  *a = priv->rgba_color[3];
+}
+
+void
+gegl_color_set_rgba (GeglColor  *self,
+                     gfloat      r,
+                     gfloat      g,
+                     gfloat      b,
+                     gfloat      a)
+{
+  GeglColorPrivate *priv = GEGL_COLOR_GET_PRIVATE (self);
+
+  priv->rgba_color[0] = r;
+  priv->rgba_color[1] = g;
+  priv->rgba_color[2] = b;
+  priv->rgba_color[3] = a;
+}
+
+void
+gegl_color_set_from_string (GeglColor    *self,
+                            const gchar  *color_string)
+{
+  GScanner          *scanner;
+  GTokenType         token_type;
+  GTokenValue        token_value;
+  gboolean           color_parsing_successfull;
+  GeglColorPrivate  *priv;
+
+  scanner = g_scanner_new (NULL);
+  scanner->config->cpair_comment_single = "";
+  g_scanner_input_text (scanner, color_string, strlen (color_string));
+
+  priv = GEGL_COLOR_GET_PRIVATE (self);
+
+  token_type  = g_scanner_get_next_token (scanner);
+  token_value = g_scanner_cur_value (scanner);
+
+  if (token_type == G_TOKEN_IDENTIFIER &&
+      g_ascii_strcasecmp (token_value.v_identifier, "rgb") == 0)
+    {
+      color_parsing_successfull = parse_float_argument_list (self, scanner, 3);
+      priv->rgba_color[3] = 1.f;
+    }
+  else if (token_type == G_TOKEN_IDENTIFIER &&
+           g_ascii_strcasecmp (token_value.v_identifier, "rgba") == 0)
+    {
+      color_parsing_successfull = parse_float_argument_list (self, scanner, 4);
+    }
+  else if (token_type == '#') /* FIXME: Verify that this is a safe way to check for '#' */
+    {
+      color_parsing_successfull = parse_hex (self, color_string);
+    }
+  else if (token_type == G_TOKEN_IDENTIFIER)
+    {
+      color_parsing_successfull = parse_color_name (self, color_string);
+    }
+  else
+    {
+      color_parsing_successfull = FALSE;
+    }
+
+  if (!color_parsing_successfull)
+    {
+      memcpy (priv->rgba_color,
+              parsing_error_color,
+              sizeof(parsing_error_color));
+      g_warning ("Parsing of color string \"%s\" into GeglColor failed! "
+                 "Using transparent cyan instead",
+                 color_string);
+    }
+
+  g_scanner_destroy (scanner);
+}
+
+/* --------------------------------------------------------------------------
+ * A GParamSpec class to describe behavior of GeglColor as an object property
+ * follows.
+ * --------------------------------------------------------------------------
+ */
+
+#define GEGL_TYPE_PARAM_SPEC_COLOR             (gegl_param_spec_color_get_type ())
+#define GEGL_PARAM_SPEC_COLOR(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PARAM_SPEC_COLOR, GeglParamSpecColor))
+#define GEGL_IS_PARAM_SPEC_COLOR(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PARAM_SPEC_COLOR))
+#define GEGL_IS_PARAM_SPEC_COLOR_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_PARAM_SPEC_COLOR))
+
+typedef struct _GeglParamSpecColor  GeglParamSpecColor;
+
+struct _GeglParamSpecColor
+{
+  GParamSpec parent_instance;
+
+  const gchar *default_color_string;
+};
+
+static void
+gegl_param_spec_color_init (GParamSpec *self)
+{
+  GEGL_PARAM_SPEC_COLOR (self)->default_color_string = NULL;
+}
+
+static void
+finalize (GParamSpec *self)
+{
+  GeglParamSpecColor *param_spec_color = GEGL_PARAM_SPEC_COLOR (self);
+  GParamSpecClass    *parent_class     = g_type_class_peek (g_type_parent (GEGL_TYPE_PARAM_SPEC_COLOR));
+
+  if (param_spec_color->default_color_string)
+    {
+      g_free ((gpointer) param_spec_color->default_color_string);
+      param_spec_color->default_color_string = NULL;
+    }
+
+  parent_class->finalize (self);
+}
+
+static void
+value_set_default (GParamSpec *param_spec,
+                   GValue     *value)
+{
+  GValue             color_string = {0, };
+
+  g_value_init (&color_string, G_TYPE_STRING);
+  g_value_set_string (&color_string, GEGL_PARAM_SPEC_COLOR (param_spec)->default_color_string);
+
+  g_value_transform (&color_string, value);
+}
+
+GType
+gegl_param_spec_color_get_type (void)
+{
+  static GType param_spec_color_type = 0;
+
+  if (G_UNLIKELY (param_spec_color_type == 0))
+    {
+      static GParamSpecTypeInfo param_spec_color_type_info = {
+        sizeof (GeglParamSpecColor),
+        0,
+        gegl_param_spec_color_init,
+        0,
+        finalize,
+        value_set_default,
+        NULL,
+        NULL
+      };
+      param_spec_color_type_info.value_type = GEGL_TYPE_COLOR;
+
+      param_spec_color_type = g_param_type_register_static ("GeglParamSpecColor",
+                                                            &param_spec_color_type_info);
+
+    }
+
+  return param_spec_color_type; 
+}
+
+GParamSpec *
+gegl_param_spec_color (const gchar *name,
+                       const gchar *nick,
+                       const gchar *blurb,
+                       const gchar *default_color_string,
+                       GParamFlags  flags)
+{
+  GeglParamSpecColor *param_spec_color;
+
+  param_spec_color = g_param_spec_internal (GEGL_TYPE_PARAM_SPEC_COLOR,
+                                            name, nick, blurb, flags);
+
+  param_spec_color->default_color_string = g_strdup (default_color_string);
+
+  return G_PARAM_SPEC (param_spec_color);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,3 +1,18 @@
+2006-09-10  Øyvind Kolås  <pippin@gimp.org>
+
+	Integrated contribution from Martin Nordholts that provides a
+	property type of type color. That accepts a superset of CSS
+	color strings.
+
+	* gegl/gegl-color.[ch]: NEW files.
+	* gegl/gegl-chant.h: added the ability to chant color properties.
+	* gegl/Makefile.am: 
+	* gegl/gegl-xml.c: (start_element): handle colors in XML parsing.
+	* gegl/gegl.h: include GeglColor.
+	* operations/render/checkerboard.c: (process): make use of GeglColor.
+	* docs/todo.html: removed GeglColor item.
+	* AUTHORS: Added Martin Nordholts.
+
 2006-09-09  Øyvind Kolås  <pippin@gimp.org>
 
 	Disabled some of the 0 padding code of gegl_buffer_get_fmt since it

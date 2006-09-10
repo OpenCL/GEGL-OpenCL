@@ -27,6 +27,7 @@
 #include "gegl-graph.h"
 #include "gegl-node.h"
 #include "gegl-pad.h"
+#include "gegl-color.h"
 
 typedef struct _ParseData ParseData;
 
@@ -194,6 +195,15 @@ static void start_element (GMarkupParseContext *context,
                     {
                       gegl_node_set (new, *a, FALSE, NULL);
                     }
+                }
+              else if (paramspec->value_type == GEGL_TYPE_COLOR)
+                {
+                  GeglColor *color = g_object_new (GEGL_TYPE_COLOR, NULL);
+                  gegl_color_set_from_string (color, *v);
+
+                  gegl_node_set (new, *a, color, NULL);
+
+                  g_object_unref (color);
                 }
               else
                 {

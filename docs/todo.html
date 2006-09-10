@@ -22,28 +22,6 @@
      <div class='content'>
        <a name='To do'><h2>To do</h2></a>
        <p>A temporally deficient roadmap for GEGL</p>
-
-<a name='GeglColor'><h2>GeglColor</h2></a>
-
-<p>A data type, that is also chantable for the operations With convenience
-methods to get a single chunky pixel in any given babl format, as well as being
-settable as such. </p>
-<p>More convencience methods for set/get rgba lab luminance or similar things
-can be added on top of this</p>
-<p>Internally it should probably just store a RGBA32 float for now</p>
-<p>It should also be capable of generating/parsing strings of the forms:
-</p>
-<pre
->#fff
-#ffffff
-white
-rgb(1.0, 1.0, 1.0)
-rgba(1.0, 1.0, 1.0, 1.0)
-#ffff
-#ffffffff
-</pre>
-<p>All interpreted as fully opaque white.
-</p>
      
 <a name='Buffer'><h2>Buffer</h2></a>
 

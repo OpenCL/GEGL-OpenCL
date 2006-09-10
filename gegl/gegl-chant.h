@@ -68,13 +68,14 @@ typedef struct GeneratedClass   ChantClass;
 struct Generated
 {
   GEGL_CHANT_PARENT_TypeName  parent_instance;
-#define gegl_chant_int(name, min, max, def, blurb)     gint     name;
-#define gegl_chant_double(name, min, max, def, blurb)  gdouble  name;
-#define gegl_chant_float(name, min, max, def, blurb)   gfloat   name;
-#define gegl_chant_boolean(name, def, blurb)           gboolean name;
-#define gegl_chant_string(name, def, blurb)            gchar   *name;
-#define gegl_chant_object(name, blurb)                 GObject *name;
-#define gegl_chant_pointer(name, blurb)                gpointer name;
+#define gegl_chant_int(name, min, max, def, blurb)     gint       name;
+#define gegl_chant_double(name, min, max, def, blurb)  gdouble    name;
+#define gegl_chant_float(name, min, max, def, blurb)   gfloat     name;
+#define gegl_chant_boolean(name, def, blurb)           gboolean   name;
+#define gegl_chant_string(name, def, blurb)            gchar     *name;
+#define gegl_chant_object(name, blurb)                 GObject   *name;
+#define gegl_chant_pointer(name, blurb)                gpointer   name;
+#define gegl_chant_color(name, def, blurb)             GeglColor *name;
 
 #include GEGL_CHANT_SELF
 
@@ -88,6 +89,7 @@ struct Generated
 #undef gegl_chant_string
 #undef gegl_chant_object
 #undef gegl_chant_pointer
+#undef gegl_chant_color
 
 /****************************************************************************/
 
@@ -219,6 +221,7 @@ enum
 #define gegl_chant_string(name, def, blurb)            PROP_##name,
 #define gegl_chant_object(name, blurb)                 PROP_##name,
 #define gegl_chant_pointer(name, blurb)                PROP_##name,
+#define gegl_chant_color(name, def, blurb)             PROP_##name,
 
 #include GEGL_CHANT_SELF
 
@@ -229,6 +232,7 @@ enum
 #undef gegl_chant_string
 #undef gegl_chant_object
 #undef gegl_chant_pointer
+#undef gegl_chant_color
   PROP_LAST
 };
 
@@ -256,6 +260,8 @@ get_property (GObject      *gobject,
     case PROP_##name: g_value_set_object (value, self->name);break;
 #define gegl_chant_pointer(name, blurb)\
     case PROP_##name: g_value_set_pointer (value, self->name);break;
+#define gegl_chant_color(name, def, blurb)\
+    case PROP_##name: g_value_set_object (value, self->name);break;
 
 #include GEGL_CHANT_SELF
 
@@ -266,6 +272,7 @@ get_property (GObject      *gobject,
 #undef gegl_chant_string
 #undef gegl_chant_object
 #undef gegl_chant_pointer
+#undef gegl_chant_color
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
@@ -315,6 +322,12 @@ set_property (GObject      *gobject,
     case PROP_##name:\
       self->name = g_value_get_pointer (value);\
       break;
+#define gegl_chant_color(name, def, blurb)\
+    case PROP_##name:\
+      if (self->name != NULL && G_IS_OBJECT (self->name))\
+         g_object_unref (self->name);\
+      self->name = g_value_get_object (value);\
+      break;
 
 #include GEGL_CHANT_SELF
 
@@ -325,6 +338,7 @@ set_property (GObject      *gobject,
 #undef gegl_chant_string
 #undef gegl_chant_object
 #undef gegl_chant_pointer
+#undef gegl_chant_color
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -476,6 +490,13 @@ gegl_chant_class_init (ChantClass * klass)
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
                                                         GEGL_PAD_INPUT));
+#define gegl_chant_color(name, def, blurb)  \
+  g_object_class_install_property (object_class, PROP_##name,\
+                                   gegl_param_spec_color (#name, #name, blurb,\
+                                                          def,\
+                                                          G_PARAM_READWRITE |\
+                                                          G_PARAM_CONSTRUCT |\
+                                                          GEGL_PAD_INPUT));
 #include GEGL_CHANT_SELF
 
 #undef gegl_chant_int
@@ -485,6 +506,7 @@ gegl_chant_class_init (ChantClass * klass)
 #undef gegl_chant_string
 #undef gegl_chant_object
 #undef gegl_chant_pointer
+#undef gegl_chant_color
 }
 
 

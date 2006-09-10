@@ -19,6 +19,7 @@ EXTRA_DIST =	\
 	gegl-prepare-visitor.h
 
 GEGL_sources = \
+	gegl-color.c			\
 	gegl-connection.c		\
 	gegl-cr-visitor.c		\
 	gegl-debug-rect-visitor.c	\
@@ -50,6 +51,7 @@ gegl_SOURCES = \
 	gegl-options.h 
 
 GEGL_public_headers = \
+	gegl-color.h			\
 	gegl-connection.h		\
 	gegl-extension-handler.h	\
 	gegl-graph.h			\

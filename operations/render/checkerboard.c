@@ -19,19 +19,21 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (x,        -G_MAXINT, G_MAXINT, 16, "")
-gegl_chant_int (y,        -G_MAXINT, G_MAXINT, 16, "")
-gegl_chant_int (x_offset, -G_MAXINT, G_MAXINT,  0, "")
-gegl_chant_int (y_offset, -G_MAXINT, G_MAXINT,  0, "")
+gegl_chant_int   (x,        -G_MAXINT, G_MAXINT, 16, "")
+gegl_chant_int   (y,        -G_MAXINT, G_MAXINT, 16, "")
+gegl_chant_int   (x_offset, -G_MAXINT, G_MAXINT,  0, "")
+gegl_chant_int   (y_offset, -G_MAXINT, G_MAXINT,  0, "")
+gegl_chant_color (color1,    "black",                "")
+gegl_chant_color (color2,    "white",                "")
 
 #else
 
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME           checkerboard
-#define GEGL_CHANT_DESCRIPTION    "Black and white checkerboard renderer."
+#define GEGL_CHANT_DESCRIPTION    "Checkerboard renderer. Colors defaults to black and white. "
 
 #define GEGL_CHANT_SELF           "checkerboard.c"
-#define GEGL_CHANT_CATEGORIES      "sources:render"
+#define GEGL_CHANT_CATEGORIES     "sources:render"
 #include "gegl-chant.h"
 
 #define REMAINDER(dividend, divisor)                     \
@@ -50,8 +52,20 @@ process (GeglOperation *operation)
   {
     GeglRect *result = gegl_operation_result_rect (operation);
     gfloat *buf;
-    gfloat color1[4] = {1., 1., 1., 1.};
-    gfloat color2[4] = {0., 0., 0., 1.};
+    gfloat color1[4];
+    gfloat color2[4];
+
+    gegl_color_get_rgba (self->color1,
+                         &color1[0],
+                         &color1[1],
+                         &color1[2],
+                         &color1[3]);
+
+    gegl_color_get_rgba (self->color2,
+                         &color2[0],
+                         &color2[1],
+                         &color2[2],
+                         &color2[3]);
 
     op_source->output = g_object_new (GEGL_TYPE_BUFFER,
                         "format",
