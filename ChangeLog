@@ -1,3 +1,7 @@
+2006-09-11  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/gegl.c: Tick values are longs not ints.
+
 2006-09-10  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-operation-source.c,

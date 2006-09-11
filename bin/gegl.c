@@ -69,7 +69,7 @@ main (gint    argc,
     {
       script = g_strdup ("<gegl><tree><node operation='text' size='100' string='GEGL'/></tree></gegl>");
     }
-  
+
   gegl = gegl_xml_parse (script);
 
   switch (o->mode)
@@ -83,8 +83,8 @@ main (gint    argc,
         break;
       case GEGL_RUN_MODE_PNG:
         {
-          guint ticks;
-        
+          glong ticks;
+
           ticks = babl_ticks ();
           GeglNode *output = gegl_graph_create_node (GEGL_GRAPH (gegl),
                                "operation", "png-save",
@@ -96,7 +96,7 @@ main (gint    argc,
 
           gegl_node_apply (output, "output");
           if (o->stats)
-            g_print ("msecs: %i", babl_ticks()-ticks);
+            g_print ("usecs: %li", babl_ticks()-ticks);
 
           g_object_unref (gegl);
           g_free (o);
@@ -116,7 +116,7 @@ main (gint    argc,
   return 0;
 }
 
-static gint 
+static gint
 main_interactive (GeglNode *gegl,
                   GeglOptions *o)
 {
