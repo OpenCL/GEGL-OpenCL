@@ -28,31 +28,34 @@
 typedef struct _GeglColorPrivate  GeglColorPrivate;
 typedef struct _ColorNameEntity   ColorNameEntity;
 
-struct _GeglColorPrivate {
+struct _GeglColorPrivate
+{
   gfloat rgba_color[4];
 };
 
-struct _ColorNameEntity {
+struct _ColorNameEntity
+{
   const gchar *color_name;
   const gfloat rgba_color[4];
 };
 
-static void      gegl_color_to_string       (const GValue    *src_value,
-                                             GValue          *dest_value);
-static void      string_to_gegl_color       (const GValue    *src_value,
-                                             GValue          *dest_value);
-static gboolean  parse_float_argument_list  (GeglColor       *color,
-                                             GScanner        *scanner,
-                                             gint             num_arguments);
-static gboolean  parse_color_name           (GeglColor       *color,
-                                             const gchar     *color_string);
-static gboolean  parse_hex                  (GeglColor       *color,
-                                             const gchar     *color_string);
+static void      gegl_color_to_string       (const GValue *src_value,
+                                             GValue       *dest_value);
+static void      string_to_gegl_color       (const GValue *src_value,
+                                             GValue       *dest_value);
+static gboolean  parse_float_argument_list  (GeglColor    *color,
+                                             GScanner     *scanner,
+                                             gint          num_arguments);
+static gboolean  parse_color_name           (GeglColor    *color,
+                                             const gchar  *color_string);
+static gboolean  parse_hex                  (GeglColor    *color,
+                                             const gchar  *color_string);
 
 /* These color names are based on those defined in the HTML 4.01 standard. See
  * http://www.w3.org/TR/html4/types.html#h-6.5
  */
-static const ColorNameEntity color_names[] = {
+static const ColorNameEntity color_names[] =
+{
   { "black",    { 0.f,       0.f,       0.f,       1.f } },
   { "silver",   { 0.75294f,  0.75294f,  0.75294f,  1.f } },
   { "gray",     { 0.50196f,  0.50196f,  0.50196f,  1.f } },
@@ -136,9 +139,9 @@ gegl_color_to_string (const GValue  *src_value,
 }
 
 static gboolean
-parse_float_argument_list (GeglColor  *color,
-                           GScanner   *scanner,
-                           gint        num_arguments)
+parse_float_argument_list (GeglColor *color,
+                           GScanner  *scanner,
+                           gint       num_arguments)
 {
   GTokenType  token_type;
   GTokenValue token_value;
@@ -208,8 +211,8 @@ parse_color_name (GeglColor   *color,
 }
 
 static gboolean
-parse_hex (GeglColor    *color,
-           const gchar  *color_string)
+parse_hex (GeglColor   *color,
+           const gchar *color_string)
 {
   gint               i;
   gsize              string_length = strlen (color_string);
@@ -262,11 +265,11 @@ parse_hex (GeglColor    *color,
 }
 
 void
-gegl_color_get_rgba (GeglColor  *self,
-                     gfloat     *r,
-                     gfloat     *g,
-                     gfloat     *b,
-                     gfloat     *a)
+gegl_color_get_rgba (GeglColor *self,
+                     gfloat    *r,
+                     gfloat    *g,
+                     gfloat    *b,
+                     gfloat    *a)
 {
   GeglColorPrivate *priv = GEGL_COLOR_GET_PRIVATE (self);
 
@@ -277,11 +280,11 @@ gegl_color_get_rgba (GeglColor  *self,
 }
 
 void
-gegl_color_set_rgba (GeglColor  *self,
-                     gfloat      r,
-                     gfloat      g,
-                     gfloat      b,
-                     gfloat      a)
+gegl_color_set_rgba (GeglColor *self,
+                     gfloat     r,
+                     gfloat     g,
+                     gfloat     b,
+                     gfloat     a)
 {
   GeglColorPrivate *priv = GEGL_COLOR_GET_PRIVATE (self);
 
@@ -292,8 +295,8 @@ gegl_color_set_rgba (GeglColor  *self,
 }
 
 void
-gegl_color_set_from_string (GeglColor    *self,
-                            const gchar  *color_string)
+gegl_color_set_from_string (GeglColor   *self,
+                            const gchar *color_string)
 {
   GScanner          *scanner;
   GTokenType         token_type;
@@ -428,11 +431,11 @@ gegl_param_color_get_type (void)
 }
 
 GParamSpec *
-gegl_param_spec_color (const gchar  *name,
-                       const gchar  *nick,
-                       const gchar  *blurb,
-                       const gchar  *default_color_string,
-                       GParamFlags   flags)
+gegl_param_spec_color (const gchar *name,
+                       const gchar *nick,
+                       const gchar *blurb,
+                       const gchar *default_color_string,
+                       GParamFlags  flags)
 {
   GeglParamColor *param_color;
 

@@ -1,3 +1,7 @@
+2006-09-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-color.[ch]: removed CR/LF line endings.
+
 2006-09-11  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* gegl/gegl.c: Tick values are longs not ints.
