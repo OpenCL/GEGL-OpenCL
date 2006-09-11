@@ -492,7 +492,7 @@ gegl_chant_class_init (ChantClass * klass)
                                                         GEGL_PAD_INPUT));
 #define gegl_chant_color(name, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
-                                   gegl_param_spec_color (#name, #name, blurb,\
+                                   gegl_param_spec_color_from_string (#name, #name, blurb,\
                                                           def,\
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\

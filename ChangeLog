@@ -1,5 +1,14 @@
 2006-09-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-color.h: moved GeglColor type def from here ..
+	* gegl/gegl-types.h: .. to here
+	* gegl/gegl-color.[ch]: added gegl_param_spec_color_from_string,
+	removed conversions between string GValues and GeglColor.
+	* gegl/gegl-chant.h: use gegl_param_spec_color_from_string when
+	chanting a GeglColor.
+
+2006-09-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-color.[ch]: removed CR/LF line endings.
 
 2006-09-11  Kevin Cozens  <kcozens@cvs.gnome.org>

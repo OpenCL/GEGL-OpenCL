@@ -21,6 +21,7 @@
 #ifndef __GEGL_COLOR_H__
 #define __GEGL_COLOR_H__
 
+#include <gegl-types.h>
 #include <glib-object.h>
 
 G_BEGIN_DECLS
@@ -32,7 +33,6 @@ G_BEGIN_DECLS
 #define GEGL_IS_COLOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_COLOR))
 #define GEGL_COLOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_COLOR, GeglColorClass))
 
-typedef struct _GeglColor       GeglColor;
 typedef struct _GeglColorClass  GeglColorClass;
 
 struct _GeglColor
@@ -45,26 +45,36 @@ struct _GeglColorClass
   GObjectClass parent;
 };
 
-void         gegl_color_get_rgba             (GeglColor    *self,
-                                              gfloat       *r,
-                                              gfloat       *g,
-                                              gfloat       *b,
-                                              gfloat       *a);
-void         gegl_color_set_rgba             (GeglColor    *self,
-                                              gfloat       r,
-                                              gfloat       g,
-                                              gfloat       b,
-                                              gfloat       a);
-void         gegl_color_set_from_string      (GeglColor    *self,
-                                              const gchar  *color_string);
-GType        gegl_color_get_type             (void) G_GNUC_CONST;
+void         gegl_color_get_rgba               (GeglColor    *self,
+                                                gfloat       *r,
+                                                gfloat       *g,
+                                                gfloat       *b,
+                                                gfloat       *a);
 
-GParamSpec  *gegl_param_spec_color           (const gchar  *name,
-                                              const gchar  *nick,
-                                              const gchar  *blurb,
-                                              const gchar  *default_color_string,
-                                              GParamFlags   flags);
-GType        gegl_param_color_get_type       (void) G_GNUC_CONST;
+void         gegl_color_set_rgba               (GeglColor    *self,
+                                                gfloat       r,
+                                                gfloat       g,
+                                                gfloat       b,
+                                                gfloat       a);
+
+void         gegl_color_set_from_string        (GeglColor    *self,
+                                                const gchar  *color_string);
+
+GType        gegl_color_get_type               (void) G_GNUC_CONST;
+
+GParamSpec * gegl_param_spec_color             (const gchar *name,
+                                                const gchar *nick,
+                                                const gchar *blurb,
+                                                GeglColor   *default_color,
+                                                GParamFlags  flags);
+
+GParamSpec * gegl_param_spec_color_from_string (const gchar *name,
+                                                const gchar *nick,
+                                                const gchar *blurb,
+                                                const gchar *default_color_string,
+                                                GParamFlags  flags);
+
+GType        gegl_param_color_get_type         (void) G_GNUC_CONST;
 
 G_END_DECLS
 

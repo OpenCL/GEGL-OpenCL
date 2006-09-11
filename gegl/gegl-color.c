@@ -39,10 +39,6 @@ struct _ColorNameEntity
   const gfloat rgba_color[4];
 };
 
-static void      gegl_color_to_string       (const GValue *src_value,
-                                             GValue       *dest_value);
-static void      string_to_gegl_color       (const GValue *src_value,
-                                             GValue       *dest_value);
 static gboolean  parse_float_argument_list  (GeglColor    *color,
                                              GScanner     *scanner,
                                              gint          num_arguments);
@@ -80,13 +76,7 @@ static const gfloat parsing_error_color[4] = { 0.f, 1.f, 1.f, 0.67f };
 /* Copied into all GeglColor:s at their instantiation. */
 static const gfloat init_color[4]          = { 1.f, 1.f, 1.f, 1.f   };
 
-G_DEFINE_TYPE_WITH_CODE (GeglColor, gegl_color, G_TYPE_OBJECT,
-                         g_value_register_transform_func (g_define_type_id,        \
-                                                          G_TYPE_STRING,           \
-                                                          gegl_color_to_string);   \
-                         g_value_register_transform_func (G_TYPE_STRING,           \
-                                                          g_define_type_id,        \
-                                                          string_to_gegl_color);)
+G_DEFINE_TYPE (GeglColor, gegl_color, G_TYPE_OBJECT);
 
 #define GEGL_COLOR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GEGL_TYPE_COLOR, GeglColorPrivate))
 
@@ -102,40 +92,6 @@ static void
 gegl_color_class_init (GeglColorClass *klass)
 {
   g_type_class_add_private (klass, sizeof (GeglColorPrivate));
-}
-
-static void
-string_to_gegl_color (const GValue *src_value,
-                      GValue       *dest_value)
-{
-  const gchar *color_string;
-  GeglColor   *color;
-
-  color_string  = g_value_get_string (src_value);
-
-  color = g_object_new (GEGL_TYPE_COLOR, NULL);
-  gegl_color_set_from_string (color, color_string);
-  g_value_take_object (dest_value, color);
-}
-
-static void
-gegl_color_to_string (const GValue  *src_value,
-                      GValue        *dest_value)
-{
-  GeglColor        *color;
-  GeglColorPrivate *priv;
-  gchar             buffer[512];
-
-  color = GEGL_COLOR (g_value_get_object (src_value));
-  priv  = GEGL_COLOR_GET_PRIVATE (color);
-
-  g_sprintf (buffer, "rgba(%f, %f, %f, %f)",
-             priv->rgba_color[0],
-             priv->rgba_color[1],
-             priv->rgba_color[2],
-             priv->rgba_color[3]);
-
-  g_value_set_string (dest_value, buffer);
 }
 
 static gboolean
@@ -271,7 +227,10 @@ gegl_color_get_rgba (GeglColor *self,
                      gfloat    *b,
                      gfloat    *a)
 {
-  GeglColorPrivate *priv = GEGL_COLOR_GET_PRIVATE (self);
+  GeglColorPrivate *priv;
+
+  g_assert (self);
+  priv = GEGL_COLOR_GET_PRIVATE (self);
 
   *r = priv->rgba_color[0];
   *g = priv->rgba_color[1];
@@ -286,7 +245,10 @@ gegl_color_set_rgba (GeglColor *self,
                      gfloat     b,
                      gfloat     a)
 {
-  GeglColorPrivate *priv = GEGL_COLOR_GET_PRIVATE (self);
+  GeglColorPrivate *priv;
+
+  g_assert (self);
+  priv = GEGL_COLOR_GET_PRIVATE (self);
 
   priv->rgba_color[0] = r;
   priv->rgba_color[1] = g;
@@ -367,25 +329,25 @@ struct _GeglParamColor
 {
   GParamSpec parent_instance;
 
-  const gchar *default_color_string;
+  GeglColor  *default_color;
 };
 
 static void
 gegl_param_color_init (GParamSpec *self)
 {
-  GEGL_PARAM_COLOR (self)->default_color_string = NULL;
+  GEGL_PARAM_COLOR (self)->default_color = NULL;
 }
 
 static void
-finalize (GParamSpec *self)
+gegl_param_color_finalize (GParamSpec *self)
 {
   GeglParamColor  *param_color  = GEGL_PARAM_COLOR (self);
   GParamSpecClass *parent_class = g_type_class_peek (g_type_parent (GEGL_TYPE_PARAM_COLOR));
 
-  if (param_color->default_color_string)
+  if (param_color->default_color)
     {
-      g_free ((gpointer) param_color->default_color_string);
-      param_color->default_color_string = NULL;
+      g_object_unref (param_color->default_color);
+      param_color->default_color = NULL;
     }
 
   parent_class->finalize (self);
@@ -395,12 +357,9 @@ static void
 value_set_default (GParamSpec *param_spec,
                    GValue     *value)
 {
-  GValue             color_string = {0, };
+  GeglParamColor *gegl_color = GEGL_PARAM_COLOR (param_spec);
 
-  g_value_init (&color_string, G_TYPE_STRING);
-  g_value_set_string (&color_string, GEGL_PARAM_COLOR (param_spec)->default_color_string);
-
-  g_value_transform (&color_string, value);
+  g_value_set_object (value, gegl_color->default_color);
 }
 
 GType
@@ -415,7 +374,7 @@ gegl_param_color_get_type (void)
         0,
         gegl_param_color_init,
         0,
-        finalize,
+        gegl_param_color_finalize,
         value_set_default,
         NULL,
         NULL
@@ -434,7 +393,7 @@ GParamSpec *
 gegl_param_spec_color (const gchar *name,
                        const gchar *nick,
                        const gchar *blurb,
-                       const gchar *default_color_string,
+                       GeglColor   *default_color,
                        GParamFlags  flags)
 {
   GeglParamColor *param_color;
@@ -442,29 +401,25 @@ gegl_param_spec_color (const gchar *name,
   param_color = g_param_spec_internal (GEGL_TYPE_PARAM_COLOR,
                                        name, nick, blurb, flags);
 
-  param_color->default_color_string = g_strdup (default_color_string);
+  param_color->default_color = default_color;
 
   return G_PARAM_SPEC (param_color);
 }
 
+GParamSpec *
+gegl_param_spec_color_from_string (const gchar *name,
+                                   const gchar *nick,
+                                   const gchar *blurb,
+                                   const gchar *default_color_string,
+                                   GParamFlags  flags)
+{
+  GeglParamColor *param_color;
 
+  param_color = g_param_spec_internal (GEGL_TYPE_PARAM_COLOR,
+                                       name, nick, blurb, flags);
 
+  param_color->default_color = g_object_new (GEGL_TYPE_COLOR, NULL);
+  gegl_color_set_from_string (param_color->default_color, default_color_string);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  return G_PARAM_SPEC (param_color);
+}
