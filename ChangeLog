@@ -1,5 +1,16 @@
 2006-09-11  Øyvind Kolås  <pippin@gimp.org>
 
+	Made gegl_color_set_from_string and gegl_color_get_string private, and
+	merged their functionality into a GObject property "string" instead,
+	other getters could probably be added to get HEX strings or other
+	variants of formatted strings of the color.
+
+	* gegl/gegl-color.[ch]: (gegl_color_class_init), (set_property),
+	(get_property), (gegl_param_spec_color_from_string):
+	* gegl/gegl-xml.c: (start_element):
+
+2006-09-11  Øyvind Kolås  <pippin@gimp.org>
+
 	Added gegl_color_get_string method.
 
 	* gegl/gegl-color.[ch]: (gegl_color_get_string):

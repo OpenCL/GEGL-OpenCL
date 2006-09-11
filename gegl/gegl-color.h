@@ -56,11 +56,6 @@ void         gegl_color_set_rgba               (GeglColor    *self,
                                                 gfloat       b,
                                                 gfloat       a);
 
-void         gegl_color_set_from_string        (GeglColor    *self,
-                                                const gchar  *color_string);
-
-gchar *      gegl_color_get_string             (GeglColor *color);
-
 GType        gegl_color_get_type               (void) G_GNUC_CONST;
 
 GParamSpec * gegl_param_spec_color             (const gchar *name,

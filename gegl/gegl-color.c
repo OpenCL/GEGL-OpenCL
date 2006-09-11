@@ -27,6 +27,12 @@
 
 #include "gegl-color.h"
 
+enum
+{
+  PROP_0,
+  PROP_STRING
+};
+
 typedef struct _GeglColorPrivate  GeglColorPrivate;
 typedef struct _ColorNameEntity   ColorNameEntity;
 
@@ -48,6 +54,14 @@ static gboolean  parse_color_name           (GeglColor    *color,
                                              const gchar  *color_string);
 static gboolean  parse_hex                  (GeglColor    *color,
                                              const gchar  *color_string);
+static void      set_property               (GObject      *gobject,
+                                             guint         prop_id,
+                                             const GValue *value,
+                                             GParamSpec   *pspec);
+static void      get_property               (GObject      *gobject,
+                                             guint         prop_id,
+                                             GValue       *value,
+                                             GParamSpec   *pspec);
 
 /* These color names are based on those defined in the HTML 4.01 standard. See
  * http://www.w3.org/TR/html4/types.html#h-6.5
@@ -93,6 +107,18 @@ gegl_color_init (GeglColor *self)
 static void
 gegl_color_class_init (GeglColorClass *klass)
 {
+  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+
+  gobject_class->set_property = set_property;
+  gobject_class->get_property = get_property;
+
+  g_object_class_install_property (gobject_class, PROP_STRING,
+                                   g_param_spec_string ("string",
+                                                        "String",
+                                                        "A String representation of the GeglColor",
+                                                        "",
+                                                        G_PARAM_READWRITE));
+
   g_type_class_add_private (klass, sizeof (GeglColorPrivate));
 }
 
@@ -258,7 +284,7 @@ gegl_color_set_rgba (GeglColor *self,
   priv->rgba_color[3] = a;
 }
 
-void
+static void
 gegl_color_set_from_string (GeglColor   *self,
                             const gchar *color_string)
 {
@@ -314,7 +340,7 @@ gegl_color_set_from_string (GeglColor   *self,
   g_scanner_destroy (scanner);
 }
 
-gchar *
+static gchar *
 gegl_color_get_string (GeglColor *color)
 {
   GeglColorPrivate *priv;
@@ -338,6 +364,50 @@ gegl_color_get_string (GeglColor *color)
     }
   return g_strdup (buffer);
 }
+
+
+static void
+set_property (GObject      *gobject,
+              guint         property_id,
+              const GValue *value,
+              GParamSpec   *pspec)
+{
+  GeglColor *color = GEGL_COLOR (gobject);
+
+  switch (property_id)
+    {
+    case PROP_STRING:
+      gegl_color_set_from_string (color, g_value_get_string (value));
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+      break;
+    }
+}
+
+static void
+get_property (GObject      *gobject,
+              guint         property_id,
+              GValue       *value,
+              GParamSpec   *pspec)
+{
+  GeglColor *color = GEGL_COLOR (gobject);
+
+  switch (property_id)
+    {
+    case PROP_STRING:
+      {
+        gchar *string = gegl_color_get_string (color);
+        g_value_set_string (value, string);
+        g_free (string);
+      }
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+      break;
+    }
+}
+
 
 /* --------------------------------------------------------------------------
  * A GParamSpec class to describe behavior of GeglColor as an object property
@@ -445,8 +515,9 @@ gegl_param_spec_color_from_string (const gchar *name,
   param_color = g_param_spec_internal (GEGL_TYPE_PARAM_COLOR,
                                        name, nick, blurb, flags);
 
-  param_color->default_color = g_object_new (GEGL_TYPE_COLOR, NULL);
-  gegl_color_set_from_string (param_color->default_color, default_color_string);
+  param_color->default_color = g_object_new (GEGL_TYPE_COLOR,
+                                             "string", default_color_string,
+                                             NULL);
 
   return G_PARAM_SPEC (param_color);
 }

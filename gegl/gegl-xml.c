@@ -198,8 +198,7 @@ static void start_element (GMarkupParseContext *context,
                 }
               else if (paramspec->value_type == GEGL_TYPE_COLOR)
                 {
-                  GeglColor *color = g_object_new (GEGL_TYPE_COLOR, NULL);
-                  gegl_color_set_from_string (color, *v);
+                  GeglColor *color = g_object_new (GEGL_TYPE_COLOR, "string", *v, NULL);
 
                   gegl_node_set (new, *a, color, NULL);
 
