@@ -23,7 +23,7 @@
 
 #define GEGL_CHANT_POINT_FILTER
 #define GEGL_CHANT_NAME          invert
-#define GEGL_CHANT_DESCRIPTION   "inverts the components (except alpha, one by one)"
+#define GEGL_CHANT_DESCRIPTION   "Inverts the components (except alpha), the result is the corresponding \"negative\" image."
 #define GEGL_CHANT_SELF          "invert.c"
 #define GEGL_CHANT_CATEGORIES    "color"
 #define GEGL_CHANT_INIT

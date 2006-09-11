@@ -18,12 +18,13 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #if GEGL_CHANT_PROPERTIES
-gegl_chant_string (path, "/tmp/gegl-logo.svg", "path to file to load")
+gegl_chant_string (path, "/tmp/gegl-logo.svg",
+                   "Path of file to load.")
 #else
 
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME            magick_load
-#define GEGL_CHANT_DESCRIPTION     "Image Magick wrapper using the png op"
+#define GEGL_CHANT_DESCRIPTION     "Image Magick wrapper using the png op."
 
 #define GEGL_CHANT_SELF            "magick-load.c"
 #define GEGL_CHANT_CATEGORIES      "hidden"

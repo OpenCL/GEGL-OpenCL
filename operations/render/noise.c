@@ -29,7 +29,7 @@ gegl_chant_double (n,     0, 20.0, 6.0, "")
 
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME           perlin_noise
-#define GEGL_CHANT_DESCRIPTION    "Perlin noise generator"
+#define GEGL_CHANT_DESCRIPTION    "Perlin noise generator."
 
 #define GEGL_CHANT_SELF           "noise.c"
 #define GEGL_CHANT_CATEGORIES      "sources:render"

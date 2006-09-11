@@ -20,11 +20,12 @@
 
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0., "")
+gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0., "Angle to rotate (clockwize)")
 
 #else
 
 #define GEGL_CHANT_NAME rotate
+#define GEGL_CHANT_DESCRIPTION  "Rotate the buffer around the specfied origin."
 #define GEGL_CHANT_SELF "rotate.c"
 #include "chant.h"
 

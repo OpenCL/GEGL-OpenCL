@@ -19,7 +19,8 @@
  */
 #if GEGL_CHANT_PROPERTIES
  
-gegl_chant_string (path, "/tmp/romedalen.jpg", "Path to jpg file on disk to load")
+gegl_chant_string (path, "/tmp/romedalen.jpg",
+                   "Path of file to load.")
 
 #else
 

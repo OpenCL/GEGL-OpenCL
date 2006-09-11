@@ -19,17 +19,22 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (string, "Hello", "utf8 string to display")
-gegl_chant_string (font, "Sans", "utf8 font family")
-gegl_chant_double (size, 1.0, 2048.0, 10.0, "approximate height of text in pixels")
-gegl_chant_int    (width, 0, 1000000, 0, "private")
-gegl_chant_int    (height, 0, 1000000, 0, "private")
+gegl_chant_string (string, "Hello",
+                   "String to display. (utf8)")
+gegl_chant_string (font, "Sans",
+                   "Font family. (utf8)")
+gegl_chant_double (size, 1.0, 2048.0, 10.0,
+                   "Approximate height of text in pixels.")
+gegl_chant_int    (width, 0, 1000000, 0,
+                   "Rendered width in pixels. (read only)")
+gegl_chant_int    (height, 0, 1000000, 0,
+                   "Rendered height in pixels. (read only)")
 
 #else
 
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME            text
-#define GEGL_CHANT_DESCRIPTION     "Display a string of text using cairo"
+#define GEGL_CHANT_DESCRIPTION     "Display a string of text using pango and cairo."
 #define GEGL_CHANT_SELF            "text.c"
 #define GEGL_CHANT_CATEGORIES      "sources:render"
 #include "gegl-chant.h"

@@ -20,15 +20,18 @@
 #if GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (opacity, 0.0, 1.0, 0.5, "Opacity")
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "horizontal position")
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "vertical position")
-gegl_chant_double (radius, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "blur radius")
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
+                   "Horizontal shadow offset.")
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
+                   "Vertical shadow offset.")
+gegl_chant_double (radius, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0,
+                   "Blur radius.")
 
 #else
 
 #define GEGL_CHANT_GRAPH
 #define GEGL_CHANT_NAME            dropshadow
-#define GEGL_CHANT_DESCRIPTION     "Creates a dropshadow"
+#define GEGL_CHANT_DESCRIPTION     "Creates a dropshadow effect on the input buffer."
 #define GEGL_CHANT_SELF            "dropshadow.c"
 #define GEGL_CHANT_CATEGORIES      "meta:effects"
 #define GEGL_CHANT_CLASS_INIT

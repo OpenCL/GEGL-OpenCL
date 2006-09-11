@@ -19,19 +19,21 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "left most pixel coordinate")
-gegl_chant_double (y,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "top pixel coordinate")
-gegl_chant_double (width,  -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "width in pixels")
-gegl_chant_double (height, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0, "height in pixels")
+gegl_chant_double (x,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0,
+                   "Left-most pixel coordinate.")
+gegl_chant_double (y,      -G_MAXDOUBLE, G_MAXDOUBLE,  0.0,
+                   "Top-most pixel coordinate.")
+gegl_chant_double (width,  -G_MAXDOUBLE, G_MAXDOUBLE, 10.0,
+                   "Width in pixels.")
+gegl_chant_double (height, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0,
+                   "Height in pixels.")
 
 #else
 
 #define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME            crop
 #define GEGL_CHANT_SELF            "crop.c"
-#define GEGL_CHANT_DESCRIPTION     "crops the image, can be used to rectangulary" \
-                                   "clip buffers, as well as specifying what " \
-                                   "portion of a composition to render to file"
+#define GEGL_CHANT_DESCRIPTION     "Crops the resulting image buffer computed by the sources of the crop operation, can be used to mask out unwanted data, the cropped out regions are interpreted as transparent black by nodes using regions outside the crop-area for compositing."
 #define GEGL_CHANT_CATEGORIES      "geometry"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"

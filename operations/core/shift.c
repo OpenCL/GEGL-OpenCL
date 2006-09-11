@@ -19,14 +19,16 @@
  */
 #if GEGL_CHANT_PROPERTIES
  
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "x coordinate of new origin")
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0, "y coordinate of new origin")
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0,
+                   "X coordinate of new origin.")
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0,
+                   "Y coordinate of new origin.")
 
 #else
 
 #define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME            shift
-#define GEGL_CHANT_DESCRIPTION     "Translate the buffer, an integer amount of pixels."
+#define GEGL_CHANT_DESCRIPTION     "Translate the buffer, an integer amount of pixels. (This is a lower level operation than the affine 'translate' operation.)"
 #define GEGL_CHANT_SELF            "shift.c"
 #define GEGL_CHANT_CATEGORIES      "geometry"
 #define GEGL_CHANT_CLASS_INIT

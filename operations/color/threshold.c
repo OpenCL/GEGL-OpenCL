@@ -19,13 +19,14 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (value, -100.0, 100.0, 0.5, "global threshold level (used when there is no aux input")
+gegl_chant_double (value, -100.0, 100.0, 0.5,
+   "Global threshold level (used when there is no auxiliary input buffer).")
 
 #else
 
 #define GEGL_CHANT_POINT_COMPOSER
 #define GEGL_CHANT_NAME            threshold
-#define GEGL_CHANT_DESCRIPTION     "thresholds the image to white/black based on either the global value set in the value property, or per pixel from the aux input"
+#define GEGL_CHANT_DESCRIPTION     "Thresholds the image to white/black based on either the global value set in the value property, or per pixel from the aux input."
 #define GEGL_CHANT_SELF            "threshold.c"
 #define GEGL_CHANT_CATEGORIES      "color"
 #define GEGL_CHANT_INIT

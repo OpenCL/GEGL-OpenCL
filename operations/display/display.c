@@ -19,9 +19,11 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_string(window_title, "window_title", "Title to be given output window")
-gegl_chant_string(icon_title, "icon_title", "Icon to be used for output window")
-gegl_chant_pointer(screen, "private")
+gegl_chant_string  (window_title, "window_title",
+                    "Title to be given output window")
+gegl_chant_string  (icon_title, "icon_title",
+                    "Icon to be used for output window")
+gegl_chant_pointer (screen, "private")
 gegl_chant_int(w, 0, 1000, 0, "private")
 gegl_chant_int(h, 0, 1000, 0, "private")
 gegl_chant_int(width, 0, 1000, 0, "private")
@@ -158,8 +160,8 @@ process (GeglOperation *operation)
 
   self->width = need->w;
   self->height = need->h;
+  /*self->output = g_object_ref (self->input);*/
 
-  
   return  TRUE;
 }
 

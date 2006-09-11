@@ -19,13 +19,14 @@
  */
 #if GEGL_CHANT_PROPERTIES
  
-gegl_chant_string(path, "/tmp/fnord.png", "path to new file to save - for stdout")
+gegl_chant_string (path, "/tmp/fnord.png",
+                   "Target path and filename, use '-' for stdout.")
 
 #else
 
 #define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME        png_save
-#define GEGL_CHANT_DESCRIPTION "saves a png image using libpng (as a side effect)"
+#define GEGL_CHANT_DESCRIPTION "PNG image saver (passes the buffer through, saves as a side-effect.)"
 #define GEGL_CHANT_SELF        "png-save.c"
 #define GEGL_CHANT_CATEGORIES      "output"
 #include "gegl-chant.h"
@@ -53,6 +54,8 @@ process (GeglOperation *operation)
   gegl_buffer_export_png (input, self->path,
                           result->x, result->y,
                           result->w, result->h);
+
+  /*op_filter->output = g_object_ref (input);*/
 
   return  TRUE;
 }

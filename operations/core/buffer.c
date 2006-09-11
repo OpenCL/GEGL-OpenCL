@@ -18,7 +18,7 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #if GEGL_CHANT_PROPERTIES
-gegl_chant_object(buffer, "GeglBuffer to use")
+gegl_chant_object (buffer, "GeglBuffer to use")
 #else
 
 #define GEGL_CHANT_SOURCE

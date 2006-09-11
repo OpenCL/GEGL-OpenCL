@@ -20,12 +20,15 @@
 
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "")
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1., "")
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
+                   "Horizontal translation.")
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.,
+                   "Vertical translation.")
 
 #else
 
 #define GEGL_CHANT_NAME translate
+#define GEGL_CHANT_DESCRIPTION "Repositions the buffer (with subpixel precision)."
 #define GEGL_CHANT_SELF "translate.c"
 #include "chant.h"
 

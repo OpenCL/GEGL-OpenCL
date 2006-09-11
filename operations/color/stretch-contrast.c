@@ -23,7 +23,7 @@
 
 #define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME            stretch_contrast
-#define GEGL_CHANT_DESCRIPTION     "Scales the components of the buffer to be in the 0.0-1.0 range"
+#define GEGL_CHANT_DESCRIPTION     "Scales the components of the buffer to be in the 0.0-1.0 range. This improves images that makes poor use of the available contrast (little contrast, very dark, or very bright images)."
 
 #define GEGL_CHANT_SELF            "stretch-contrast.c"
 #define GEGL_CHANT_CLASS_INIT /*< we need to modify the standard class init

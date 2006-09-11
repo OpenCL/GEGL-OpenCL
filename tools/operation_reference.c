@@ -119,6 +119,8 @@ void category_menu_item (gpointer key,
                          gpointer user_data)
 {
   gchar    *category = key;
+  if (!strcmp (category, "hidden"))
+    return;
   g_print ("<li><a href='#cat_%s'>&nbsp;&nbsp;%s</a></li>\n", category, category);
 }
 
@@ -131,12 +133,16 @@ void category_index (gpointer key,
   GList    *iter;
   gboolean  comma;
 
+  if (!strcmp (category, "hidden"))
+    return;
   g_print ("<a name='cat_%s'><h3>%s</h3></a>\n", category, category);
   g_print ("<p>\n");
 
   for (iter=operations, comma=FALSE;iter;iter = g_list_next (iter))
     {
       GeglOperationClass *klass = iter->data;
+      if (strstr (klass->categories, "hidden"))
+        continue;
       g_print ("%s<a href='#op_%s'>%s</a>", comma?", ":"", klass->name, klass->name);
       comma = TRUE;
     }
@@ -204,6 +210,8 @@ main (gint    argc,
   for (iter=operations;iter;iter = g_list_next (iter))
     {
       GeglOperationClass *klass = iter->data;
+      if (strstr (klass->categories, "hidden"))
+        continue;
 
       g_print ("<tr><td colspan='1'>&nbsp;</td><td class='op_name' colspan='4'><a name='op_%s'>%s</a></td></tr>\n", klass->name, klass->name);
       if (klass->description)

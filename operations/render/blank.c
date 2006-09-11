@@ -23,10 +23,10 @@
 
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME           blank
-#define GEGL_CHANT_DESCRIPTION    "Generates an infinite black plane"
+#define GEGL_CHANT_DESCRIPTION    "Generates an infinite transparent plane"
 
 #define GEGL_CHANT_SELF           "blank.c"
-#define GEGL_CHANT_CATEGORIES      "sources"
+#define GEGL_CHANT_CATEGORIES     "sources"
 #include "gegl-chant.h"
 
 static gboolean

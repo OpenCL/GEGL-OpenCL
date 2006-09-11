@@ -23,7 +23,7 @@
 
 #define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME            nop
-#define GEGL_CHANT_DESCRIPTION     "Passthrough operation"
+#define GEGL_CHANT_DESCRIPTION     "Passthrough operation. Used mostly for routing/place holder purposes internally in GEGL."
 #define GEGL_CHANT_SELF            "nop.c"
 #include "gegl-chant.h"
 

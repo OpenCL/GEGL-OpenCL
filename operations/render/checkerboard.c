@@ -19,27 +19,22 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_int   (x,        -G_MAXINT, G_MAXINT, 16, "")
-gegl_chant_int   (y,        -G_MAXINT, G_MAXINT, 16, "")
-gegl_chant_int   (x_offset, -G_MAXINT, G_MAXINT,  0, "")
-gegl_chant_int   (y_offset, -G_MAXINT, G_MAXINT,  0, "")
-gegl_chant_color (color1,    "black",                "")
-gegl_chant_color (color2,    "white",                "")
+gegl_chant_int   (x,        -G_MAXINT, G_MAXINT, 16, "Horizontal width of cells pixels.")
+gegl_chant_int   (y,        -G_MAXINT, G_MAXINT, 16, "Vertical width of cells in pixels.")
+gegl_chant_int   (x_offset, -G_MAXINT, G_MAXINT,  0, "Horizontal offset (from origin) for start of grid.")
+gegl_chant_int   (y_offset, -G_MAXINT, G_MAXINT,  0, "Vertical offset (from origin) for start of grid.")
+gegl_chant_color (color1,    "black",                "One of the cell colors (defaults to 'black')")
+gegl_chant_color (color2,    "white",                "The other cell color (defaults to 'white')")
 
 #else
 
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME           checkerboard
-#define GEGL_CHANT_DESCRIPTION    "Checkerboard renderer. Colors defaults to black and white. "
+#define GEGL_CHANT_DESCRIPTION    "Checkerboard renderer."
 
 #define GEGL_CHANT_SELF           "checkerboard.c"
 #define GEGL_CHANT_CATEGORIES     "sources:render"
 #include "gegl-chant.h"
-
-#define REMAINDER(dividend, divisor)                     \
-    ((dividend) < 0 ?                                    \
-       (divisor) - 1 - ((-(dividend) - 1) % (divisor)) : \
-       (dividend) % (divisor))
 
 static gboolean
 process (GeglOperation *operation)

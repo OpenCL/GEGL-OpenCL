@@ -22,8 +22,10 @@
 
 #if GEGL_CHANT_PROPERTIES
  
-gegl_chant_double (radius_x, -0.91675, 500.0, 4.0, "blur radius in horizontal direction.")
-gegl_chant_double (radius_y, -0.91675, 500.0, 4.0, "blur radius in vertical direction.")
+gegl_chant_double (radius_x, -0.91675, 500.0, 4.0,
+   "Standard deviation for the horizontal axis.")
+gegl_chant_double (radius_y, -0.91675, 500.0, 4.0,
+   "Standard deviation for the vertical axis.")
 
 #else
 

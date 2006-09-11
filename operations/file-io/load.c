@@ -19,8 +19,10 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_string(path, "/tmp/lena.png", "Path of file to load.")
-gegl_chant_boolean(cache, TRUE, "Whether to cache the entire buffer loaded from the file.")
+gegl_chant_string  (path, "/tmp/lena.png",
+                    "Path of file to load.")
+gegl_chant_boolean (cache, TRUE,
+                    "Whether to cache the entire buffer loaded from the file.")
 
 #else
 

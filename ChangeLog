@@ -1,3 +1,39 @@
+2006-09-12  Øyvind Kolås  <pippin@gimp.org>
+	
+	Improved documentation strings for most operations.
+
+	* tools/operation_reference.c: (category_menu_item),
+	(category_index), (main): hide the "hidden" category from being
+	output.
+
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c:
+	* operations/color/brightness-contrast.c:
+	* operations/color/invert.c:
+	* operations/color/stretch-contrast.c:
+	* operations/color/threshold.c:
+	* operations/core/buffer.c:
+	* operations/core/crop.c:
+	* operations/core/nop.c:
+	* operations/core/shift.c:
+	* operations/display/display.c:
+	* operations/file-io/jpg-load.c:
+	* operations/file-io/magick-load.c:
+	* operations/file-io/png-load.c:
+	* operations/file-io/png-save.c:
+	* operations/file-io/raw-load.c:
+	* operations/meta/dropshadow.c:
+	* operations/meta/unsharp-mask.c:
+	* operations/render/blank.c:
+	* operations/render/checkerboard.c:
+	* operations/render/noise.c:
+	* operations/render/text.c:
+	* operations/transform/rotate.c:
+	* operations/transform/scale.c:
+	* operations/transform/shear.c:
+	* operations/transform/translate.c:
+	* operations/transparency/opacity.c:
+
 2006-09-11  Øyvind Kolås  <pippin@gimp.org>
 
 	Made gegl_color_set_from_string and gegl_color_get_string private, and

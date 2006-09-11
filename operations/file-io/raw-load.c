@@ -18,12 +18,13 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #if GEGL_CHANT_PROPERTIES
-gegl_chant_string (path, "/tmp/test.raw", "path to file to load")
+gegl_chant_string (path, "/tmp/test.raw",
+                   "Path of file to load.")
 #else
 
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME            raw_load
-#define GEGL_CHANT_DESCRIPTION     "Raw image loader, wrapping dcraw with pipes"
+#define GEGL_CHANT_DESCRIPTION     "Raw image loader, wrapping dcraw with pipes."
 
 #define GEGL_CHANT_SELF            "raw-load.c"
 #define GEGL_CHANT_CATEGORIES      "hidden"

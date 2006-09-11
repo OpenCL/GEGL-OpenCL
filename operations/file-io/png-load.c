@@ -19,13 +19,14 @@
  */
 #if GEGL_CHANT_PROPERTIES
  
-gegl_chant_string (path, "/tmp/romedalen.png", "path to file to load")
+gegl_chant_string (path, "/tmp/romedalen.png",
+                   "Path of file to load.")
 
 #else
 
 #define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME            png_load
-#define GEGL_CHANT_DESCRIPTION     "PNG image loader"
+#define GEGL_CHANT_DESCRIPTION     "PNG image loader."
 #define GEGL_CHANT_SELF            "png-load.c"
 #define GEGL_CHANT_CATEGORIES      "hidden"
 #define GEGL_CHANT_CLASS_INIT

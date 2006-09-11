@@ -18,12 +18,12 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #if GEGL_CHANT_PROPERTIES
-gegl_chant_double (value, -10.0, 10.0, 0.5, "global opacity value, used if no aux input is provided")
+gegl_chant_double (value, -10.0, 10.0, 0.5, "Global opacity value, used if no auxiliary input buffer is provided.")
 #else
 
 #define GEGL_CHANT_POINT_COMPOSER
 #define GEGL_CHANT_NAME            opacity
-#define GEGL_CHANT_DESCRIPTION     "weights the opacity of the input with either the value of the aux input or the global value property"
+#define GEGL_CHANT_DESCRIPTION     "Weights the opacity of the input with either the value of the aux input or the global value property."
 #define GEGL_CHANT_SELF            "opacity.c"
 #define GEGL_CHANT_CATEGORIES      "transparency"
 #define GEGL_CHANT_INIT
