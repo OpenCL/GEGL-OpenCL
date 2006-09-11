@@ -23,6 +23,8 @@
 #include <glib-object.h>
 #include <string.h>
 
+#include "gegl-types.h"
+
 #include "gegl-color.h"
 
 typedef struct _GeglColorPrivate  GeglColorPrivate;
@@ -310,6 +312,31 @@ gegl_color_set_from_string (GeglColor   *self,
     }
 
   g_scanner_destroy (scanner);
+}
+
+gchar *
+gegl_color_get_string (GeglColor *color)
+{
+  GeglColorPrivate *priv;
+  gchar             buffer[512];
+
+  priv = GEGL_COLOR_GET_PRIVATE (color);
+  if (priv->rgba_color[3]==1.0)
+    {
+      g_sprintf (buffer, "rgb(%1.4f, %1.4f, %1.4f)",
+                 priv->rgba_color[0],
+                 priv->rgba_color[1],
+                 priv->rgba_color[2]);
+    }
+  else
+    {
+      g_sprintf (buffer, "rgba(%1.4f, %1.4f, %1.4f, %1.4f)",
+                 priv->rgba_color[0],
+                 priv->rgba_color[1],
+                 priv->rgba_color[2],
+                 priv->rgba_color[3]);
+    }
+  return g_strdup (buffer);
 }
 
 /* --------------------------------------------------------------------------

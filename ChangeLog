@@ -1,5 +1,11 @@
 2006-09-11  Øyvind Kolås  <pippin@gimp.org>
 
+	Added gegl_color_get_string method.
+
+	* gegl/gegl-color.[ch]: (gegl_color_get_string):
+
+2006-09-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-color.h: moved GeglColor type def from here ..
 	* gegl/gegl-types.h: .. to here
 	* gegl/gegl-color.[ch]: added gegl_param_spec_color_from_string,

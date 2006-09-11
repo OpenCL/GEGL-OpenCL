@@ -21,7 +21,6 @@
 #ifndef __GEGL_COLOR_H__
 #define __GEGL_COLOR_H__
 
-#include <gegl-types.h>
 #include <glib-object.h>
 
 G_BEGIN_DECLS
@@ -59,6 +58,8 @@ void         gegl_color_set_rgba               (GeglColor    *self,
 
 void         gegl_color_set_from_string        (GeglColor    *self,
                                                 const gchar  *color_string);
+
+gchar *      gegl_color_get_string             (GeglColor *color);
 
 GType        gegl_color_get_type               (void) G_GNUC_CONST;
 
