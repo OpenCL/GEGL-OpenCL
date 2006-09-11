@@ -1,3 +1,9 @@
+2006-09-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* todo.html: removed item about adding pango to the text rendering
+	op since it is done now, further layout related still needs to be
+	added though.
+
 2006-09-04  Øyvind Kolås  <pippin@gimp.org>
 
 	* todo.html: added bit about gimp plug-in.
