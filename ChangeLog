@@ -1,5 +1,10 @@
 2006-09-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/meta/layer.c: changed to incorporate it's own caching
+	multifile loader.
+
+2006-09-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply): only "prepare" the
 	nodes in the graph once.
 	* gegl/gegl-operation-composer.c: (process): made the error message
