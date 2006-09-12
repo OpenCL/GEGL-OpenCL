@@ -1,5 +1,10 @@
 2006-09-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation-composer.c: (process): allow composer ops with
+	only the aux pad set to work.
+
+2006-09-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: properly handle unreferencing and freeing of
 	chanted properties.
 

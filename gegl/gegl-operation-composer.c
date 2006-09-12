@@ -182,7 +182,8 @@ process (GeglOperation *operation,
   /* A composer with a NULL aux, can still be valid, the
    * subclass has to handle it.
    */
-  if (gegl_operation_composer->input != NULL)
+  if (gegl_operation_composer->input != NULL ||
+      gegl_operation_composer->aux   != NULL)
     {
       gegl_operation_composer->output = NULL;
       success = klass->process (operation);
@@ -192,8 +193,8 @@ process (GeglOperation *operation,
       g_warning ("%s received NULL %s%s%s",
           gegl_node_get_debug_name (operation->node),
           gegl_operation_composer->input == NULL ? "input" : "",
-          gegl_operation_composer->input == NULL && gegl_operation_composer->aux ? " and " : "",
-          gegl_operation_composer->aux ? "aux" : "");
+          gegl_operation_composer->input == NULL && gegl_operation_composer->aux==NULL ? " and " : "",
+          gegl_operation_composer->aux==NULL ? "aux" : "");
     }
   
   if (gegl_operation_composer->input)
