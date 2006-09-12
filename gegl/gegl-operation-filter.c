@@ -172,8 +172,12 @@ process (GeglOperation *operation,
     }
   else
     {
-      g_warning ("%s received NULL input",
-		 gegl_node_get_debug_name (operation->node));
+      /* if we have the data "graph" associated" we're a proxy-nop, and thus
+       * we might legitimatly get NULL (at least layers might)
+       */
+      if (!g_object_get_data (operation->node, "graph"))
+        g_warning ("%s received NULL input",
+                   gegl_node_get_debug_name (operation->node));
     }
   return success;
 }

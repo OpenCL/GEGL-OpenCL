@@ -1,5 +1,13 @@
 2006-09-12  Øyvind Kolås  <pippin@gimp.org>
 
+	Silence warnings when nops (probably proxy-nops) are passing NULL
+	buffers (which layers do).
+
+	* gegl/gegl-eval-visitor.c: (visit_pad):
+	* gegl/gegl-operation-filter.c: (process):
+
+2006-09-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/meta/layer.c: changed to incorporate it's own caching
 	multifile loader.
 
