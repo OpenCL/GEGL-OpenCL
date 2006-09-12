@@ -1,5 +1,12 @@
 2006-09-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply): only "prepare" the
+	nodes in the graph once.
+	* gegl/gegl-operation-composer.c: (process): made the error message
+	explicit, and not depend on conditionals that were already checked.
+
+2006-09-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-operation-composer.c: (process): allow composer ops with
 	only the aux pad set to work.
 

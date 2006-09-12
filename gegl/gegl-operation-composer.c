@@ -190,11 +190,8 @@ process (GeglOperation *operation,
     }
   else
     {
-      g_warning ("%s received NULL %s%s%s",
-          gegl_node_get_debug_name (operation->node),
-          gegl_operation_composer->input == NULL ? "input" : "",
-          gegl_operation_composer->input == NULL && gegl_operation_composer->aux==NULL ? " and " : "",
-          gegl_operation_composer->aux==NULL ? "aux" : "");
+      g_warning ("%s received NULL input and output",
+          gegl_node_get_debug_name (operation->node));
     }
   
   if (gegl_operation_composer->input)
