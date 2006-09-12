@@ -1,4 +1,9 @@
 2006-09-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-chant.h: properly handle unreferencing and freeing of
+	chanted properties.
+
+2006-09-12  Øyvind Kolås  <pippin@gimp.org>
 	
 	Improved documentation strings for most operations.
 

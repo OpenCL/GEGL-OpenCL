@@ -374,22 +374,67 @@ gegl_chant_init (GeglChantOperation *self)
 
 #ifdef GEGL_CHANT_INIT
 static void init (GeglChantOperation *self);
+#endif
+
+static void gegl_chant_destroy_notify (gpointer data)
+{
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (data);
+
+#define gegl_chant_int(name, min, max, def, blurb)
+#define gegl_chant_double(name, min, max, def, blurb)
+#define gegl_chant_float(name, min, max, def, blurb)
+#define gegl_chant_boolean(name, def, blurb)
+#define gegl_chant_string(name, def, blurb)\
+  if (self->name)\
+    {\
+      g_free (self->name);\
+      self->name = NULL;\
+    }
+#define gegl_chant_object(name, blurb)\
+  if (self->name)\
+    {\
+      g_object_unref (self->name);\
+      self->name = NULL;\
+    }
+#define gegl_chant_pointer(name, blurb)
+#define gegl_chant_color(name, def, blurb)\
+  if (self->name)\
+    {\
+      g_object_unref (self->name);\
+      self->name = NULL;\
+    }
+
+#include GEGL_CHANT_SELF
+
+#undef gegl_chant_int
+#undef gegl_chant_double
+#undef gegl_chant_float
+#undef gegl_chant_boolean
+#undef gegl_chant_string
+#undef gegl_chant_object
+#undef gegl_chant_pointer
+#undef gegl_chant_color
+  self = NULL; /* shut up gcc warnings if there were no properties to clean up*/
+}
 
 static GObject *
 gegl_chant_constructor (GType                  type,
-                   guint                  n_construct_properties,
-                   GObjectConstructParam *construct_properties)
+                        guint                  n_construct_properties,
+                        GObjectConstructParam *construct_properties)
 {
   GObject *obj;
 
   obj = G_OBJECT_CLASS (gegl_chant_parent_class)->constructor (
             type, n_construct_properties, construct_properties);
 
+#ifdef GEGL_CHANT_INIT
   init (GEGL_CHANT_OPERATION (obj));
+#endif
+
+  g_object_set_data_full (obj, "chant-data", obj, gegl_chant_destroy_notify);
 
   return obj;
 }
-#endif
 
 #ifdef GEGL_CHANT_CLASS_INIT
 static void class_init (GeglOperationClass *operation_class);
@@ -415,9 +460,7 @@ gegl_chant_class_init (ChantClass * klass)
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-#ifdef GEGL_CHANT_INIT
   object_class->constructor  = gegl_chant_constructor;
-#endif
 
 #ifdef GEGL_CHANT_CLASS_INIT
   class_init (operation_class);
