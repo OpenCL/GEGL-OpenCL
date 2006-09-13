@@ -340,6 +340,7 @@ struct _SerializeState
   GString    *buf;
   gint        clone_count;
   GHashTable *clones;
+  gboolean    terse;
 };
 
 static void tuple (GString     *buf,
@@ -365,9 +366,12 @@ static void encode_node_attributes (SerializeState *ss,
 
   properties = gegl_node_list_properties (node, &n_properties);
  
-  gegl_node_get (node, "operation", &class, NULL);
-  tuple (ss->buf, "operation", class);
-  g_free (class);
+  if (!ss->terse)
+    {
+      gegl_node_get (node, "operation", &class, NULL);
+      tuple (ss->buf, "operation", class);
+      g_free (class);
+    }
 
   for (i=0; i<n_properties; i++)
     {
@@ -462,7 +466,10 @@ static void add_stack (SerializeState *ss,
               const gchar *new_id = g_hash_table_lookup (ss->clones, iter);
               if (new_id)
                 {
-                  ind; g_string_append (ss->buf, "<node class='clone' ref='");
+                  ind; if (ss->terse)
+                          g_string_append (ss->buf, "<clone ref='");
+                       else
+                          g_string_append (ss->buf, "<node class='clone' ref='");
                   g_string_append (ss->buf, new_id);
                   g_string_append (ss->buf, "'/>\n");
                   return; /* terminate the stack, the cloned part is already
@@ -490,11 +497,29 @@ static void add_stack (SerializeState *ss,
                 if (graph)
                   source_node = graph;
               }
-              ind;g_string_append (ss->buf, "<node");
+              ind;if (ss->terse)
+                {
+                  g_string_append (ss->buf, "<");
+                  g_string_append (ss->buf, gegl_node_get_op_type_name (iter));
+                }
+              else
+                {
+                  g_string_append (ss->buf, "<node");
+                }
               encode_node_attributes (ss, iter, id);
               g_string_append (ss->buf, ">\n");
-              add_stack (ss, indent+1, source_node);
-              ind;g_string_append (ss->buf, "</node>\n");
+              add_stack (ss, indent+4, source_node);
+
+              ind;if (ss->terse)
+                {
+                  g_string_append (ss->buf, "</");
+                  g_string_append (ss->buf, gegl_node_get_op_type_name (iter));
+                  g_string_append (ss->buf, ">\n");
+                }
+              else
+                {
+                  g_string_append (ss->buf, "</node\n>");
+                }
             }
           else
             {
@@ -506,7 +531,16 @@ static void add_stack (SerializeState *ss,
                   if (strcmp (class, "nop") &&
                       strcmp (class, "clone"))
                     {
-                      ind;g_string_append (ss->buf, "<node");
+                      ind;if (ss->terse)
+                        {
+                          g_string_append (ss->buf, "<");
+                          g_string_append (ss->buf, class);
+                        }
+                      else
+                        {
+                          g_string_append (ss->buf, "<node");
+                      }
+
                       encode_node_attributes (ss, iter, id);
                       g_string_append (ss->buf, "/>\n");
                     }
@@ -549,6 +583,7 @@ gegl_to_xml (GeglNode *gegl)
   SerializeState *ss = g_malloc0 (sizeof (SerializeState));
   ss->buf = g_string_new ("");
   ss->clones = g_hash_table_new (NULL, NULL);
+  ss->terse = TRUE;
 
   gegl = gegl_graph_output (GEGL_GRAPH (gegl), "output");
 
