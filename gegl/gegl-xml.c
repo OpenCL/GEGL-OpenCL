@@ -94,10 +94,6 @@ static void start_element (GMarkupParseContext *context,
   if (!strcmp (element_name, "gegl")||
       !strcmp (element_name, "image"))
     {
-    }
-  else if (!strcmp (element_name, "tree") ||
-           !strcmp (element_name, "layers"))
-    {
       GeglNode *new = g_object_new (GEGL_TYPE_NODE, NULL);
       if (pd->gegl == NULL)
         {
@@ -436,7 +432,7 @@ static void add_stack (SerializeState *ss,
                        GeglNode       *head)
 {
 
-  if (GEGL_IS_GRAPH (head))
+  /*if (GEGL_IS_GRAPH (head))
     {
       GeglNode *iter;
       GeglPad  *input;
@@ -449,7 +445,7 @@ static void add_stack (SerializeState *ss,
       add_stack (ss, indent + 1, iter);
       ind;g_string_append (ss->buf, "</tree>\n");
     }
-  else if (GEGL_IS_NODE (head))
+  else*/if (GEGL_IS_NODE (head))
     {
       GeglNode *iter = head;
 
@@ -483,14 +479,21 @@ static void add_stack (SerializeState *ss,
             }
 
           if (aux &&
-              gegl_pad_get_connected_to (aux))
+              gegl_pad_get_connected_to2 (aux))
             {
               GeglPad *source_pad;
-              source_pad = gegl_pad_get_connected_to (aux);
+              GeglNode *source_node;
+              source_pad = gegl_pad_get_connected_to2 (aux);
+              source_node = gegl_pad_get_node (source_pad);
+              {
+                GeglNode *graph = g_object_get_data (G_OBJECT (source_node), "graph");
+                if (graph)
+                  source_node = graph;
+              }
               ind;g_string_append (ss->buf, "<node");
               encode_node_attributes (ss, iter, id);
               g_string_append (ss->buf, ">\n");
-              add_stack (ss, indent+1, gegl_pad_get_node (source_pad));
+              add_stack (ss, indent+1, source_node);
               ind;g_string_append (ss->buf, "</node>\n");
             }
           else
@@ -498,27 +501,30 @@ static void add_stack (SerializeState *ss,
               gchar *class;
               gegl_node_get (iter, "operation", &class, NULL);
 
-              if (strcmp (class, "nop") &&
-                  strcmp (class, "clone"))
+              if (class)
                 {
-                  ind;g_string_append (ss->buf, "<node");
-                  encode_node_attributes (ss, iter, id);
-                  g_string_append (ss->buf, "/>\n");
+                  if (strcmp (class, "nop") &&
+                      strcmp (class, "clone"))
+                    {
+                      ind;g_string_append (ss->buf, "<node");
+                      encode_node_attributes (ss, iter, id);
+                      g_string_append (ss->buf, "/>\n");
+                    }
+                  g_free (class);
                 }
-
-              g_free (class);
             }
           id = NULL;
           if (input)
             {
               GeglPad *source_pad;
-              source_pad = gegl_pad_get_connected_to (input);
+              source_pad = gegl_pad_get_connected_to2 (input);
               if (source_pad)
                 {
                   GeglNode *source_node = gegl_pad_get_node (source_pad);
-                    {
-                      iter = source_node;
-                    }
+                  GeglNode *graph = g_object_get_data (G_OBJECT (source_node), "graph");
+                  if (graph)
+                    source_node = graph;
+                  iter = source_node;
                 }
               else
                 iter = NULL;
@@ -544,21 +550,14 @@ gegl_to_xml (GeglNode *gegl)
   ss->buf = g_string_new ("");
   ss->clones = g_hash_table_new (NULL, NULL);
 
+  gegl = gegl_graph_output (GEGL_GRAPH (gegl), "output");
+
   g_string_append (ss->buf, "<?xml version='1.0' encoding='UTF-8'?>\n");
   g_string_append (ss->buf, "<gegl>\n");
 
-  if (GEGL_IS_GRAPH (gegl))
-    {
-      add_stack (ss, 1, gegl);
-    }
-  else
-    {
-      g_string_append (ss->buf, " <tree>\n");
-      add_stack (ss, 2, gegl);
-      g_string_append (ss->buf, " </tree>\n");
-    }
+  add_stack (ss, 2, gegl);
   
-  g_string_append (ss->buf, "</gegl>");
+  g_string_append (ss->buf, "</gegl>\n");
 
   g_hash_table_foreach (ss->clones, free_clone_id, NULL);
   g_hash_table_destroy (ss->clones);

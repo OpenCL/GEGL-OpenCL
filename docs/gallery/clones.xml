@@ -1,6 +1,4 @@
 <gegl>
-  <tree>
-
     <over>
         <shift x = '10'
                    y = '280'/>
@@ -108,5 +106,5 @@
 
     <load path = 'data/car-stack.jpg'
           id   = 'bg'/>
-  </tree>
+  
 </gegl>

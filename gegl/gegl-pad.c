@@ -213,7 +213,7 @@ gegl_pad_get_name (GeglPad *self)
   return gegl_object_get_name (GEGL_OBJECT (self));
 }
 
-static GeglPad *
+GeglPad *
 gegl_pad_get_connected_to2 (GeglPad *self)
 {
   GeglPad *pad = NULL;
@@ -226,7 +226,6 @@ gegl_pad_get_connected_to2 (GeglPad *self)
 
       pad = gegl_connection_get_source_prop (connection);
     }
-
   return pad;
 }
 

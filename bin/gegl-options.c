@@ -176,6 +176,10 @@ parse_args (int    argc,
             o->mode = GEGL_RUN_MODE_PNG;
         }
 
+        else if (match ("-X")) {
+            o->mode = GEGL_RUN_MODE_XML;
+        }
+
         else if (match ("--ui") ||
                  match ("-ui")) {
             o->mode = GEGL_RUN_MODE_INTERACTIVE;

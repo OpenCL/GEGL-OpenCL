@@ -81,6 +81,11 @@ main (gint    argc,
           gegl_exit ();
           return 0;
         break;
+      case GEGL_RUN_MODE_XML:
+          g_print (gegl_to_xml (gegl));
+          gegl_exit ();
+          return 0;
+        break;
       case GEGL_RUN_MODE_PNG:
         {
           glong ticks;

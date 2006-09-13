@@ -1,5 +1,5 @@
 <gegl>
-  <tree>
+  
     
     <!-- add the edge mask on top of the original image -->
     <add>
@@ -19,5 +19,5 @@
     </add>
 
     <load path='data/car-stack.jpg' id='original'/>
-  </tree>
+  
 </gegl>

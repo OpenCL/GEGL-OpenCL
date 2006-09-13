@@ -7,7 +7,8 @@ typedef enum
 {
   GEGL_RUN_MODE_HELP,
   GEGL_RUN_MODE_INTERACTIVE,
-  GEGL_RUN_MODE_PNG
+  GEGL_RUN_MODE_PNG,
+  GEGL_RUN_MODE_XML
 } GeglRunMode;
 
 typedef struct GeglOptions

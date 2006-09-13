@@ -1,5 +1,26 @@
 2006-09-13  Øyvind Kolås  <pippin@gimp.org>
 
+	Reworked the XML export to work properly with meta nodes, also
+	removed the <tree> element from the sample XML documents.
+
+	* gegl/gegl-xml.c: (start_element), (add_stack), (gegl_to_xml):
+	reworked the xml serializer.
+	* gegl/gegl-node.c: (gegl_node_get_valist),
+	(gegl_node_get_property): Changed to make reading of meta-node
+	properties work correctly.
+	* gegl/gegl-pad.[ch]: (gegl_pad_get_connected_to2): made the old
+	gegl_pad_get_connected_to public again, this function and code
+	that uses it still needs refactoring.
+	* gegl/gegl-options.[ch]: (parse_args): added -X option,.
+	* gegl/gegl.c: (main): .. that reserializes the graph to an XML
+	document.
+	* docs/gallery/clones.xml,
+	* docs/gallery/drop-shadow.xml,
+	* docs/gallery/unsharp-mask.xml: removed <tree> element from
+	documents.
+
+2006-09-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/meta/layer.c: Removed unused chanted "private" pointer.
 
 2006-09-12  Øyvind Kolås  <pippin@gimp.org>

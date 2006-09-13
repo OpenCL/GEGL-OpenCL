@@ -997,12 +997,17 @@ gegl_node_get_valist (GeglNode    *self,
         }
       else
         {
-        if (self->is_graph)  /* if we do not have a operation, we're bound to be a graph */
+        if (self->is_graph)
           {
             GeglGraph *graph = GEGL_GRAPH (self);
                  pspec = g_object_class_find_property (
                     G_OBJECT_GET_CLASS (G_OBJECT (
                         gegl_graph_output (graph, "output")->operation)), property_name);
+            if (!pspec)
+              {
+                pspec = g_object_class_find_property (
+                   G_OBJECT_GET_CLASS (G_OBJECT (self->operation)), property_name);
+              }
           }
         else
           {
@@ -1095,7 +1100,8 @@ gegl_node_get_property (GeglNode    *self,
     }
   else
     {
-    if (self->is_graph)
+    if (self->is_graph &&
+        !strcmp (property_name, "output"))
       {
           g_object_get_property (G_OBJECT (gegl_graph_output (GEGL_GRAPH (self), "output")->operation),
                 property_name, value);
