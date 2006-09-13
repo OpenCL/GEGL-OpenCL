@@ -86,7 +86,7 @@ visit_pad (GeglVisitor *self,
 
           
           if (!g_value_get_object (&value) &&
-              !g_object_get_data (source_node, "graph"))
+              !g_object_get_data (G_OBJECT (source_node), "graph"))
              g_warning ("eval-visitor encountered a NULL buffer passed from: %s.%s-[%p]", 
              gegl_node_get_debug_name (source_node),
              gegl_pad_get_name (source_pad),

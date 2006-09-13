@@ -1,5 +1,12 @@
 2006-09-13  Øyvind Kolås  <pippin@gimp.org>
 
+	Added casts to GObject for g_object_get_data calls.
+
+	* gegl/gegl-eval-visitor.c: (visit_pad):
+	* gegl/gegl-operation-filter.c: (process):
+
+2006-09-13  Øyvind Kolås  <pippin@gimp.org>
+
 	Reworked the XML export to work properly with meta nodes, also
 	removed the <tree> element from the sample XML documents.
 
