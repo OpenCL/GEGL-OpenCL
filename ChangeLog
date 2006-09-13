@@ -1,3 +1,11 @@
+2006-09-11  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.in: Added tests for librsvg
+
+	* operations/file-io/Makefile.am
+	* operations/file-io/svg-load.c: First version of a file
+	loader for SVG files.
+
 2006-09-13  Øyvind Kolås  <pippin@gimp.org>
 
 	Added casts to GObject for g_object_get_data calls.

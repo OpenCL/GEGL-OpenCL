@@ -312,6 +312,20 @@ AC_SUBST(PNG_CFLAGS)
 AC_SUBST(PNG_LIBS) 
 
 
+###################
+# Check for librsvg
+###################
+
+PKG_CHECK_MODULES(RSVG, librsvg-2.0,
+  have_librsvg="yes",
+  have_librsvg="no (librsvg not found)")
+AM_CONDITIONAL(HAS_RSVG, test "x$have_librsvg" = "xyes")
+
+AC_SUBST(HAS_RSVG) 
+AC_SUBST(RSVG_CFLAGS) 
+AC_SUBST(RSVG_LIBS) 
+
+
 ###############
 # Check for SDL
 ###############
@@ -399,5 +413,6 @@ External Libraries:
   pangocairo:     $have_pangocairo
   JPEG:           $jpeg_ok
   PNG:            $have_libpng
+  rsvg:           $have_librsvg
   SDL:            $have_sdl
 ]);
