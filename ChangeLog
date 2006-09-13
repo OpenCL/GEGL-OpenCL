@@ -1,3 +1,7 @@
+2006-09-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/meta/layer.c: Removed unused chanted "private" pointer.
+
 2006-09-12  Øyvind Kolås  <pippin@gimp.org>
 
 	Silence warnings when nops (probably proxy-nops) are passing NULL
