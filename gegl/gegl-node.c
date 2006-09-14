@@ -118,6 +118,7 @@ gegl_node_init (GeglNode *self)
   self->enabled     = TRUE;
   self->is_graph    = FALSE;
   self->usecs       = 0;
+  self->babl_usecs  = 0;
 }
 
 static void

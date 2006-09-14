@@ -1,5 +1,12 @@
 2006-09-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.[ch]: (gegl_node_init): added field to store the
+	amount of time spent in babl when processing.
+	* gegl/gegl-eval-visitor.c: (visit_pad): store the time spent in babl
+	during processing seperatly.
+
+2006-09-14  Øyvind Kolås  <pippin@gimp.org>
+
 	Added code to measue amount of time spent doing processing for an
 	individual node. Should probably extend babl to be able to query
 	the total amount of usecs spent doing actual babl conversions as

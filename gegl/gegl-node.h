@@ -65,6 +65,7 @@ struct _GeglNode
   gboolean       enabled;
 
   glong          usecs;
+  glong          babl_usecs;
 };
 
 struct _GeglNodeClass
