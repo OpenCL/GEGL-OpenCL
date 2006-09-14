@@ -25,8 +25,12 @@ gegl_chant_string (font, "Sans",
                    "Font family. (utf8)")
 gegl_chant_double (size, 1.0, 2048.0, 10.0,
                    "Approximate height of text in pixels.")
+gegl_chant_int    (wrap, -1, 1000000, -1,
+                   "Sets the width in pixels at which long lines will wrap. Use -1 for no wrapping.")
+gegl_chant_int    (alignment, 0, 2, 0,
+                   "Alignment for multi-line text (0=Left, 1=Center, 2=Right)")
 gegl_chant_int    (width, 0, 1000000, 0,
-                   "Rendered width in pixels. (read only)")
+                   "Sets the width of the lines in pixels. (read only)")
 gegl_chant_int    (height, 0, 1000000, 0,
                    "Rendered height in pixels. (read only)")
 
@@ -48,16 +52,22 @@ static void text_layout_text (GeglChantOperation *self,
                               gdouble       *width,
                               gdouble       *height)
 {
+  gchar       *string;
   PangoLayout *layout;
   PangoFontDescription *desc;
 
   /* Create a PangoLayout, set the font and text */
   layout = pango_cairo_create_layout (cr);
 
-  pango_layout_set_text (layout, self->string, -1);
+  string = g_strcompress (self->string);
+  pango_layout_set_text (layout, string, -1);
+  g_free (string);
+
   desc = pango_font_description_from_string (self->font);
   pango_font_description_set_absolute_size (desc, self->size * PANGO_SCALE);
   pango_layout_set_font_description (layout, desc);
+  pango_layout_set_alignment (layout, self->alignment);
+  pango_layout_set_width (layout, self->wrap * PANGO_SCALE);
   pango_font_description_free (desc);
 
   /* Inform Pango to re-layout the text with the new transformation */

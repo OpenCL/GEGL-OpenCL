@@ -1,5 +1,10 @@
 2006-09-13  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* operations/render/text.c: Update to handle escaped characters
+	to allow use of multi-line text). Added wrap and alignment options.
+
+2006-09-13  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* tools/.cvsignore: Added operation_reference.
 
 2006-09-13  Øyvind Kolås  <pippin@gimp.org>
