@@ -1,3 +1,9 @@
+2006-09-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-color.c: (value_set_default): Add an extra reference
+	when setting the default from the paramspec (not sure why this is
+	needed, but references are leaked if it is not done.)
+
 2006-09-13  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/render/text.c: Update to handle escaped characters
