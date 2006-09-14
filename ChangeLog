@@ -1,5 +1,16 @@
 2006-09-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/render/text.c: (process): use a premultiplied pixel
+	format when setting the buffer from cairo.
+
+2006-09-14  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* operations/render/text.c: (process):
+
+2006-09-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-color.c: (value_set_default): Add an extra reference
 	when setting the default from the paramspec (not sure why this is
 	needed, but references are leaked if it is not done.)
