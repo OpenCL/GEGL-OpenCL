@@ -53,6 +53,7 @@ gegl_eval_visitor_init (GeglEvalVisitor *self)
 {
 }
 
+long babl_ticks (void);
 
 static void
 visit_pad (GeglVisitor *self,
@@ -65,7 +66,9 @@ visit_pad (GeglVisitor *self,
 
   if (gegl_pad_is_output (pad))
     {
+      glong start_time = babl_ticks ();
       gegl_operation_process (operation, gegl_pad_get_name (pad));
+      node->usecs += babl_ticks () - start_time;
     }
   else if (gegl_pad_is_input (pad))
     {

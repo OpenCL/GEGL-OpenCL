@@ -1,5 +1,17 @@
 2006-09-14  Øyvind Kolås  <pippin@gimp.org>
 
+	Added code to measue amount of time spent doing processing for an
+	individual node. Should probably extend babl to be able to query
+	the total amount of usecs spent doing actual babl conversions as
+	well to be able to seperate it out from the rest of the processing
+	happening in a node.
+
+	* gegl/gegl-node.[ch]: added usecs field to node.
+	* gegl/gegl-eval-visitor.c: increment the usecs of the node with
+	the amount of time spent doing processing for this node.
+
+2006-09-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/render/text.c: (process): use a premultiplied pixel
 	format when setting the buffer from cairo.
 
