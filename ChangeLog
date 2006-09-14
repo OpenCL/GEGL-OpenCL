@@ -1,3 +1,7 @@
+2006-09-13  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* tools/.cvsignore: Added operation_reference.
+
 2006-09-13  Øyvind Kolås  <pippin@gimp.org>
 
 	Made the XML output terse by default (<png-load path='foo.png'/>
@@ -7,7 +11,7 @@
 	* gegl/gegl-xml.c: (encode_node_attributes), (add_stack),
 	(gegl_to_xml):
 
-2006-09-11  Kevin Cozens  <kcozens@cvs.gnome.org>
+2006-09-13  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.in: Added tests for librsvg
 
