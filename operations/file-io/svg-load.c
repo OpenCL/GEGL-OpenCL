@@ -178,31 +178,21 @@ instead.
                                             &pError);
     if (pixbuf)
     {
-      guchar *pixeldata;
-      gint    rowstride;
-      int     row = 0;
-      guchar *buffer;
+      guchar     *pixeldata;
+      GeglBuffer *rect;
 
       pixeldata = gdk_pixbuf_get_pixels (pixbuf);
-      rowstride = gdk_pixbuf_get_rowstride (pixbuf);
-      if (rowstride % 2)
-          ++rowstride;
 
-      /* allocated with the jpeg library, and freed with the decompress context */
-      while (row < height)
-        {
-          GeglBuffer *rect = g_object_new (GEGL_TYPE_BUFFER,
-                                           "source", gegl_buffer,
-                                           "x",      dest_x,
-                                           "y",      dest_y + row,
-                                           "width",  width,
-                                           "height", 1,
-                                           NULL);
+      rect = g_object_new (GEGL_TYPE_BUFFER,
+                           "source", gegl_buffer,
+                           "x",      dest_x,
+                           "y",      dest_y,
+                           "width",  width,
+                           "height", height,
+                           NULL);
 
-          buffer = pixeldata + row++ * rowstride;
-          gegl_buffer_set_fmt (rect, buffer, babl_format ("R'G'B'A u8"));
-          g_object_unref (rect);
-        }
+      gegl_buffer_set_fmt (rect, pixeldata, babl_format ("R'G'B'A u8"));
+      g_object_unref (rect);
     }
 
     rsvg_term();
