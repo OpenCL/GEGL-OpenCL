@@ -35,6 +35,9 @@ svg-load.so: svg-load.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
                                      $(CAIRO_CFLAGS) $(CAIRO_LIBS) \
                                      $(RSVG_CFLAGS) $(RSVG_LIBS)
+pixbuf.so: pixbuf.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
+                                     $(RSVG_CFLAGS) $(RSVG_LIBS)
 #############################################################################
 
 clean-local:
