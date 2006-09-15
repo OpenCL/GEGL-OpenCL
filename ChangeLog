@@ -1,5 +1,12 @@
 2006-09-15  Øyvind Kolås  <pippin@gimp.org>
 
+	Added operation color, that renders a infinite buffer with the
+	specified color (pixel value).
+
+	* operations/render/color.c: (process), (get_defined_region):
+
+2006-09-15  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed category "sources", moved with no category into render.
 	
 	* operations/file-io/load.c:
