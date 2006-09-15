@@ -1,3 +1,9 @@
+2006-09-15  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/gegl-eval-mgr.c: Temporarily #if'ed out one #include and one
+	if statement. The #if'ed out sections need two files that are not
+	currently in CVS. Fixes building from CVS.
+
 2006-09-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/render/blank.c: removed, it is now deprecated by the
