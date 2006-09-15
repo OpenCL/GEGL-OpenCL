@@ -1,5 +1,10 @@
 2006-09-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/Makefile.am: made the operations.html and class-hierachy.html
+	depend on the state of operations / library.
+
+2006-09-15  Øyvind Kolås  <pippin@gimp.org>
+
 	Added operation color, that renders a infinite buffer with the
 	specified color (pixel value).
 
