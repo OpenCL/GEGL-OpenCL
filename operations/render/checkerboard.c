@@ -33,7 +33,7 @@ gegl_chant_color (color2,    "white",                "The other cell color (defa
 #define GEGL_CHANT_DESCRIPTION    "Checkerboard renderer."
 
 #define GEGL_CHANT_SELF           "checkerboard.c"
-#define GEGL_CHANT_CATEGORIES     "sources:render"
+#define GEGL_CHANT_CATEGORIES     "render"
 #include "gegl-chant.h"
 
 static gboolean

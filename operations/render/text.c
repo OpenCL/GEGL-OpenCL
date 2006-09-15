@@ -40,7 +40,7 @@ gegl_chant_int    (height, 0, 1000000, 0,
 #define GEGL_CHANT_NAME            text
 #define GEGL_CHANT_DESCRIPTION     "Display a string of text using pango and cairo."
 #define GEGL_CHANT_SELF            "text.c"
-#define GEGL_CHANT_CATEGORIES      "sources:render"
+#define GEGL_CHANT_CATEGORIES      "render"
 #include "gegl-chant.h"
 
 #include <cairo.h>

@@ -26,7 +26,7 @@
 #define GEGL_CHANT_DESCRIPTION    "Generates an infinite transparent plane"
 
 #define GEGL_CHANT_SELF           "blank.c"
-#define GEGL_CHANT_CATEGORIES     "sources"
+#define GEGL_CHANT_CATEGORIES     "render"
 #include "gegl-chant.h"
 
 static gboolean

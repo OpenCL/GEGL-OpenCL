@@ -1,5 +1,15 @@
 2006-09-15  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed category "sources", moved with no category into render.
+	
+	* operations/file-io/load.c:
+	* operations/render/blank.c:
+	* operations/render/checkerboard.c:
+	* operations/render/noise.c:
+	* operations/render/text.c:
+
+2006-09-15  Øyvind Kolås  <pippin@gimp.org>
+
 	Changed operation categories.
 
 	* operations/core/buffer.c: io, programming
