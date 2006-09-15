@@ -30,6 +30,7 @@
 #include "gegl-need-visitor.h"
 #include "gegl-cr-visitor.h"
 #include "gegl-debug-rect-visitor.h"
+#include "gegl-debug-time-visitor.h"
 #include "gegl-eval-visitor.h"
 #include "gegl-node.h"
 #include "gegl-operation.h"
@@ -131,6 +132,24 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   eval_visitor = g_object_new (GEGL_TYPE_EVAL_VISITOR, NULL);
   gegl_visitor_dfs_traverse (eval_visitor, GEGL_VISITABLE(pad));
   g_object_unref (eval_visitor);
+
+  if(getenv("GEGL_DEBUG_RECTS")!=NULL)
+    {
+      GeglVisitor  *debug_rect_visitor;
+
+      debug_rect_visitor = g_object_new (GEGL_TYPE_DEBUG_RECT_VISITOR, NULL);
+        gegl_visitor_dfs_traverse (debug_rect_visitor, GEGL_VISITABLE(root));
+      g_object_unref (debug_rect_visitor);
+    }
+
+  if(getenv("GEGL_DEBUG_TIME")!=NULL)
+    {
+      GeglVisitor  *debug_time_visitor;
+
+      debug_time_visitor = g_object_new (GEGL_TYPE_DEBUG_TIME_VISITOR, NULL);
+        gegl_visitor_dfs_traverse (debug_time_visitor, GEGL_VISITABLE(root));
+      g_object_unref (debug_time_visitor);
+    }
 
   root->is_root = FALSE;
 

@@ -1,5 +1,10 @@
 2006-09-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/render/blank.c: removed, it is now deprecated by the
+	"color" operation.
+
+2006-09-15  Øyvind Kolås  <pippin@gimp.org>
+
 	Renamed "io" category to "input".
 
 	* operations/core/buffer.c:
