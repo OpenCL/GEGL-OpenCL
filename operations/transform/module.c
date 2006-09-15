@@ -50,6 +50,7 @@ GType rotate_get_type    (void);
 GType scale_get_type     (void);
 GType shear_get_type     (void);
 GType translate_get_type (void);
+GType reflect_get_type      (void);
 
 gboolean
 gegl_module_register (GTypeModule *module)
@@ -61,6 +62,7 @@ gegl_module_register (GTypeModule *module)
   scale_get_type ();
   shear_get_type ();
   translate_get_type ();
+  reflect_get_type ();
 
   return TRUE;
 }

@@ -1,5 +1,17 @@
 2006-09-15  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	Applied patches from Dominik Ernst.
+
+	* operations/blur/gaussian-blur.c: improved accuracy for small radius
+	values and now uses the radius paramater literally as standard
+	deviation.
+
+	* operations/transform/module.c
+	* operations/transform/reflect.c: added an affine op to reflect an
+	image about a line.
+
+2006-09-15  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* gegl/gegl-eval-mgr.c: Temporarily #if'ed out one #include and one
 	if statement. The #if'ed out sections need two files that are not
 	currently in CVS. Fixes building from CVS.
