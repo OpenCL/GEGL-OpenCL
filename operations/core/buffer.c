@@ -26,7 +26,7 @@ gegl_chant_object (buffer, "GeglBuffer to use")
 #define GEGL_CHANT_DESCRIPTION     "A source that uses an in-memory GeglBuffer, for use internally by GEGL."
 
 #define GEGL_CHANT_SELF            "buffer.c"
-#define GEGL_CHANT_CATEGORIES      "hidden"
+#define GEGL_CHANT_CATEGORIES      "programming:io"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 

@@ -1,13 +1,19 @@
 2006-09-15  Øyvind Kolås  <pippin@gimp.org>
 
+	Changed operation categories.
+
+	* operations/core/buffer.c: io, programming
+	* operations/file-io/load.c: io
+	* operations/file-io/svg-load.c: io (since it has additional
+	properties compared to load).
+
+2006-09-15  Øyvind Kolås  <pippin@gimp.org>
+
 	Added pixbuf operation in category programming.
 
 	* operations/file-io/pixbuf.c: NEW operation that uses a GdkPixbuf
 	from a pointer, in category programming.
 	* operations/file-io/Makefile.am: added new file.
-
-2006-09-15  Øyvind Kolås  <pippin@gimp.org>
-
 
 2006-09-14  Kevin Cozens  <kcozens@cvs.gnome.org>
 
