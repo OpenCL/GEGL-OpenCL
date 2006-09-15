@@ -1,5 +1,14 @@
 2006-09-15  Øyvind Kolås  <pippin@gimp.org>
 
+	Renamed "io" category to "input".
+
+	* operations/core/buffer.c:
+	* operations/file-io/load.c:
+	* operations/file-io/pixbuf.c:
+	* operations/file-io/svg-load.c:
+
+2006-09-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/Makefile.am: made the operations.html and class-hierachy.html
 	depend on the state of operations / library.
 

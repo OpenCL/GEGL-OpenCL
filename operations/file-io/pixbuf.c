@@ -26,7 +26,7 @@ gegl_chant_pointer (pixbuf, "GdkPixbuf to use")
 #define GEGL_CHANT_DESCRIPTION     "Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>."
 
 #define GEGL_CHANT_SELF            "pixbuf.c"
-#define GEGL_CHANT_CATEGORIES      "programming"
+#define GEGL_CHANT_CATEGORIES      "programming:input"
 #include "gegl-chant.h"
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
