@@ -1,5 +1,10 @@
 2006-09-15  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* gegl/Makefile.am: References to gegl-debug-time-visitor.[ch]
+	have been removed. Should have been part of earlier commit.
+
+2006-09-15  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	Applied patches from Dominik Ernst.
 
 	* operations/blur/gaussian-blur.c: improved accuracy for small radius
