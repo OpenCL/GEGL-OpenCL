@@ -21,6 +21,7 @@
 #include "config.h"
 #include <babl/babl.h>
 #include <glib-object.h>
+#include "gegl-instrument.h"
 #include "gegl-types.h"
 #include "gegl-init.h"
 #include "buffer/gegl-buffer-allocator.h"
@@ -30,6 +31,8 @@
 
 static gboolean gegl_initialized = FALSE;
 
+static glong global_time = 0;
+
 void
 gegl_init (int *argc,
            char ***argv)
@@ -38,6 +41,8 @@ gegl_init (int *argc,
 
   if (gegl_initialized)
     return;
+  g_assert (global_time == 0);
+  global_time = gegl_ticks ();
   g_type_init ();
   babl_init ();
 
@@ -61,17 +66,23 @@ gegl_init (int *argc,
       g_free (module_path);
       g_free (load_inhibit); 
     }
+  gegl_instrument ("gegl", "gegl_init", gegl_ticks () - global_time);
   gegl_initialized = TRUE;
 }
 
 void gegl_buffer_stats (void);
 void gegl_tile_mem_stats (void);
 
+#include <stdio.h>
+
 void
 gegl_exit (void)
 {
+  long   timing = gegl_ticks ();
   gegl_buffer_allocators_free ();
   babl_destroy ();
+  timing = gegl_ticks () - timing;
+  gegl_instrument ("gegl", "gegl_exit", timing);
 
   /* used when tracking buffer leaks (also tracks tiles, as well
    * as tiles.
@@ -80,5 +91,12 @@ gegl_exit (void)
     {
       gegl_buffer_stats ();
       gegl_tile_mem_stats ();
+    }
+  global_time = gegl_ticks () - global_time;
+  gegl_instrument ("gegl", "gegl", global_time);
+
+  if(getenv("GEGL_DEBUG_TIME")!=NULL)
+    {
+      printf ("\n%s", gegl_instrument_xhtml ());
     }
 }

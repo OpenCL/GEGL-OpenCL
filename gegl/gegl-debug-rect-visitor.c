@@ -66,8 +66,7 @@ visit_node (GeglVisitor *self,
     "\thave: %ix%i %i,%i\n"
     "\tneed: %ix%i %i,%i\n"
     "\tresult: %ix%i %i,%i\n"
-    "\trefs: %i\n"
-    "\tusecs: %ld",
+    "\trefs: %i",
   gegl_node_get_debug_name (node),
   node->have_rect.w, node->have_rect.h,
   node->have_rect.x, node->have_rect.y,
@@ -75,6 +74,5 @@ visit_node (GeglVisitor *self,
   node->need_rect.x, node->need_rect.y,
   node->result_rect.w, node->result_rect.h,
   node->result_rect.x, node->result_rect.y,
-  node->refs,
-  node->usecs);
+  node->refs);
 }

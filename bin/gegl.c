@@ -3,6 +3,7 @@
                               through gegl.h in other places */
 #include <stdio.h>
 #include <string.h>
+#include "gegl-instrument.h"
 #include <unistd.h>
 #include "gegl-options.h"
 
@@ -13,8 +14,6 @@ static gchar *usage = "Usage: %s <xmlfile>\n"
 
 static gint main_interactive (GeglNode    *gegl,
                               GeglOptions *o);
-
-unsigned int babl_ticks (void);
 
 gint
 main (gint    argc,
@@ -88,9 +87,9 @@ main (gint    argc,
         break;
       case GEGL_RUN_MODE_PNG:
         {
-          glong ticks;
+          glong timing;
 
-          ticks = babl_ticks ();
+          timing = gegl_ticks ();
           GeglNode *output = gegl_graph_create_node (GEGL_GRAPH (gegl),
                                "operation", "png-save",
                                "path", o->output,
@@ -100,8 +99,10 @@ main (gint    argc,
           gegl_node_connect (output, "input", gegl_graph_output (GEGL_GRAPH (gegl), "output"), "output");
 
           gegl_node_apply (output, "output");
+          timing = gegl_ticks()-timing;
           if (o->stats)
-            g_print ("usecs: %li", babl_ticks()-ticks);
+            g_print ("usecs: %li", timing);
+
 
           g_object_unref (gegl);
           g_free (o);

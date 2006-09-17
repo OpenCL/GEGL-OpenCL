@@ -29,7 +29,7 @@
 #include "gegl-node.h"
 #include "gegl-pad.h"
 #include "gegl-visitable.h"
-
+#include "gegl-instrument.h"
 
 static void gegl_have_visitor_class_init (GeglHaveVisitorClass *klass);
 static void visit_node                   (GeglVisitor          *self,
@@ -58,9 +58,14 @@ visit_node (GeglVisitor *self,
 {
   GeglRect rect;
   GeglOperation *operation = node->operation;
+  glong    time = gegl_ticks ();
 
   GEGL_VISITOR_CLASS (gegl_have_visitor_parent_class)->visit_node (self, node);
 
   rect = gegl_operation_get_defined_region (operation);
   gegl_node_set_have_rect (operation->node, rect.x, rect.y, rect.w, rect.h);
+
+  time = gegl_ticks () - time;
+  gegl_instrument ("process", gegl_node_get_op_type_name (node), time);
+  gegl_instrument (gegl_node_get_op_type_name (node), "defined-region", time);
 }

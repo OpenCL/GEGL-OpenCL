@@ -14,6 +14,7 @@ EXTRA_DIST =	\
 	gegl-eval-mgr.h			\
 	gegl-eval-visitor.h		\
 	gegl-have-visitor.h		\
+	gegl-instrument.h		\
 	gegl-need-visitor.h		\
 	gegl-debug-rect-visitor.h	\
 	gegl-prepare-visitor.h
@@ -29,6 +30,7 @@ GEGL_sources = \
 	gegl-graph.c			\
 	gegl-have-visitor.c		\
 	gegl-init.c			\
+	gegl-instrument.c		\
 	gegl-need-visitor.c		\
 	gegl-node.c			\
 	gegl-object.c			\

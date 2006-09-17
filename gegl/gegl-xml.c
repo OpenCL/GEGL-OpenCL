@@ -28,6 +28,7 @@
 #include "gegl-node.h"
 #include "gegl-pad.h"
 #include "gegl-color.h"
+#include "gegl-instrument.h"
 
 typedef struct _ParseData ParseData;
 
@@ -307,6 +308,7 @@ void each_ref (gpointer value,
 
 GeglNode *gegl_xml_parse (const gchar *xmldata)
 {
+  glong     time = gegl_ticks ();
   GeglNode *ret;
   ParseData           *pd;
   GMarkupParseContext *context;
@@ -326,6 +328,9 @@ GeglNode *gegl_xml_parse (const gchar *xmldata)
   
   ret = GEGL_NODE (pd->gegl);
   g_free (pd);
+
+  time = gegl_ticks () - time;
+  gegl_instrument ("gegl", "gegl_xml_parse", time);
   return ret;
 }
 

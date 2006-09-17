@@ -28,6 +28,7 @@
 #include "gegl-node.h"
 #include "gegl-pad.h"
 #include "gegl-visitable.h"
+#include "gegl-instrument.h"
 
 
 static void gegl_prepare_visitor_class_init (GeglPrepareVisitorClass *klass);
@@ -58,6 +59,7 @@ visit_node (GeglVisitor *self,
   GeglOperation *operation = node->operation;
 
   GEGL_VISITOR_CLASS (gegl_prepare_visitor_parent_class)->visit_node (self, node);
+  glong time = gegl_ticks ();
 
   /* prepare the operation for the coming evaluation (all properties
    * should be set now).
@@ -80,4 +82,7 @@ visit_node (GeglVisitor *self,
 
   gegl_operation_prepare (operation);
   gegl_node_set_need_rect (node, 0, 0, 0, 0);
+  time = gegl_ticks () - time;
+  gegl_instrument ("process", gegl_node_get_op_type_name (node), time);
+  gegl_instrument (gegl_node_get_op_type_name (node), "prepare", time);
 }

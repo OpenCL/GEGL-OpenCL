@@ -30,6 +30,7 @@
 #include "gegl-need-visitor.h"
 #include "gegl-cr-visitor.h"
 #include "gegl-debug-rect-visitor.h"
+#include "gegl-instrument.h"
 #if 0
 #include "gegl-debug-time-visitor.h"
 #endif
@@ -80,9 +81,12 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   GeglVisitor  *cr_visitor;
   GeglVisitor  *eval_visitor;
   GeglPad      *pad;
+  glong         time = gegl_ticks ();
 
   g_return_if_fail (GEGL_IS_EVAL_MGR (self));
   g_return_if_fail (GEGL_IS_NODE (root));
+
+  gegl_instrument ("gegl", "process", 0);
 
   if (pad_name == NULL)
     pad_name = "output";
@@ -158,4 +162,6 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   root->is_root = FALSE;
 
   g_object_unref (root);
+  time = gegl_ticks () - time;
+  gegl_instrument ("gegl", "process", time);
 }

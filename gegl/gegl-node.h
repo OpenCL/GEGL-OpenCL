@@ -63,9 +63,6 @@ struct _GeglNode
                                 when it drops to zero, the op is asked to clean it's pads
                              */
   gboolean       enabled;
-
-  glong          usecs;
-  glong          babl_usecs;
 };
 
 struct _GeglNodeClass

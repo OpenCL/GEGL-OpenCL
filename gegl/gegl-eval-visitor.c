@@ -30,6 +30,7 @@
 #include "gegl-node.h"
 #include "gegl-pad.h"
 #include "gegl-visitable.h"
+#include "gegl-instrument.h"
 
 
 static void gegl_eval_visitor_class_init (GeglEvalVisitorClass *klass);
@@ -53,7 +54,6 @@ gegl_eval_visitor_init (GeglEvalVisitor *self)
 {
 }
 
-long babl_ticks (void);
 extern long babl_total_usecs;
 
 static void
@@ -67,12 +67,14 @@ visit_pad (GeglVisitor *self,
 
   if (gegl_pad_is_output (pad))
     {
-      glong start_time = babl_ticks ();
-      glong babl_timer = babl_total_usecs;
+      glong time = gegl_ticks ();
+      glong babl_time = babl_total_usecs;
       gegl_operation_process (operation, gegl_pad_get_name (pad));
-      babl_timer = babl_total_usecs - babl_timer;
-      node->usecs += (babl_ticks () - start_time) - babl_timer;
-      node->babl_usecs += babl_timer;
+      babl_time = babl_total_usecs - babl_time;
+      time = gegl_ticks ()-time;
+
+      gegl_instrument ("process", gegl_node_get_op_type_name (node), time);
+      gegl_instrument (gegl_node_get_op_type_name (node), "babl", babl_time);
     }
   else if (gegl_pad_is_input (pad))
     {

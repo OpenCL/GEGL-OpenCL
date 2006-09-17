@@ -1,3 +1,24 @@
+2006-09-17  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-instrument.[ch]: NEW files providing an instrumentation
+	framework for GEGL.
+	* gegl/Makefile.am: added gegl-instrument.[ch]
+	* gegl/gegl-node.[ch]: removed per node instrumentation fields from
+	structure.
+	* gegl/gegl-debug-rect-visitor.c: (visit_node): no longer print
+	instrumentation in debug rects.
+
+	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply): instrument
+	* gegl/gegl-eval-visitor.c: (visit_pad): instrument
+	* gegl/gegl-have-visitor.c: (visit_node):instrument
+	* gegl/gegl-prepare-visitor.c: (visit_node): instrument
+	* gegl/gegl-xml.c: (gegl_xml_parse): instrument
+	* gegl/gegl.c: (main): instrument
+	* gegl/gegl-init.c: (gegl_init): instrument,
+	                    (gegl_exit): instrument and conditionally print
+			    instrumentation stats if GEGL_DEBUG_TIME is
+			    set.
+
 2006-09-15  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* gegl/Makefile.am: References to gegl-debug-time-visitor.[ch]
