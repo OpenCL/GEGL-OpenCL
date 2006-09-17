@@ -168,7 +168,7 @@ tab_to (GString *string, gint position)
   if (!p)
     {
       p=string->str;
-      position-=1;
+      curcount++;
     }
   while (p && *p!='\0')
     {
@@ -176,9 +176,9 @@ tab_to (GString *string, gint position)
       p++;
     }
 
-  if (curcount > position)
+  if (curcount > position && position!=0)
     {
-      g_warning ("tab overflow");
+      g_warning ("tab overflow %i>%i", curcount, position);
     }
   else
     {
@@ -203,6 +203,8 @@ bar (GString *string, gint width, gfloat value)
 {
   gboolean utf8 = TRUE;
   gint i;
+  if (value<0)
+    return string;
   if (utf8)
     {
       gint blocks = width * 8 * value;
@@ -224,6 +226,11 @@ bar (GString *string, gint width, gfloat value)
   return string;
 }
 
+#define INDENT_SPACES 2
+#define SECONDS_COL   25
+#define BAR_COL       36
+#define BAR_WIDTH     (78-BAR_COL)
+
 gchar *
 gegl_instrument_xhtml (void)
 {
@@ -235,28 +242,28 @@ gegl_instrument_xhtml (void)
     {
       gchar *buf;
 
-      s = tab_to (s, timing_depth (iter) * 2);
+      s = tab_to (s, timing_depth (iter) * INDENT_SPACES);
 
       s = g_string_append (s, iter->name);
 
-      s = tab_to (s, 23);
+      s = tab_to (s, SECONDS_COL);
       buf = g_strdup_printf ("%f", seconds (iter->usecs));
       s = g_string_append (s, buf);
       g_free (buf);
-      s = tab_to (s, 34);
-      s = bar (s, 46, normalized (iter->usecs));
+      s = tab_to (s, BAR_COL);
+      s = bar (s, BAR_WIDTH, normalized (iter->usecs));
       s = g_string_append (s, "\n");
 
       if (timing_depth(iter_next (iter)) < timing_depth (iter))
         {
-          s = tab_to (s, timing_depth (iter) * 2);
+          s = tab_to (s, timing_depth (iter) * INDENT_SPACES);
           s = g_string_append (s, "other");
-          s = tab_to (s, 23);
+          s = tab_to (s, SECONDS_COL);
           buf = g_strdup_printf ("%f", seconds (timing_other (iter->parent)));
           s = g_string_append (s, buf);
           g_free (buf);
-          s = tab_to (s, 34);
-          s = bar (s, 46, normalized (timing_other (iter->parent)));
+          s = tab_to (s, BAR_COL);
+          s = bar (s, BAR_WIDTH, normalized (timing_other (iter->parent)));
           s = g_string_append (s, "\n");
         }
 
