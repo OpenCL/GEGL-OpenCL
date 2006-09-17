@@ -1,3 +1,8 @@
+2006-09-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* gallery/Makefile.am: Added time instrumentation log per rendered
+	image.
+
 2006-09-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* todo.html: removed item about adding pango to the text rendering
