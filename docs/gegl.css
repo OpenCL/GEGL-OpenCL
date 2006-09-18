@@ -7,7 +7,7 @@
         background-color: #fff;
         margin: 1em;
         margin-right: 3em;
-        margin-left: 280px;
+        margin-left: 12em;
       }
       iframe {
         background-color: #aaa;
@@ -197,7 +197,7 @@
         div.toc {
           position: absolute;
           position: fixed;
-          width: 250px;
+          width: 12em;
           top: 0;
           left: 0;
           padding-top: 2em;

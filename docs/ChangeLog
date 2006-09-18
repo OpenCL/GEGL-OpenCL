@@ -1,5 +1,13 @@
 2006-09-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl.css: Changed width of menu margin.
+	* gallery/Makefile.am: add extra space at top of menu.
+	* index-static.html.in: reworked menu and reordered paragraphs. And
+	added links to crucible, gmane and the ChangeLog.
+	* todo.html: added extra space at top of menu.
+
+2006-09-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* gallery/Makefile.am: Added time instrumentation log per rendered
 	image.
 
