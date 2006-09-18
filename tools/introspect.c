@@ -471,7 +471,7 @@ stuff (gint    argc,
                     "operation", "crop",
                     NULL);
       GeglNode  *png_load = gegl_graph_create_node (gegl,
-                    "operation", "blank",
+                    "operation", "checkerboard",
                     NULL);
 
       /* connect operations */
