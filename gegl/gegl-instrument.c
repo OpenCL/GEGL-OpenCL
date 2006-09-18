@@ -109,7 +109,10 @@ gegl_instrument (const gchar *parent_name,
     }
   parent = timing_find (root, parent_name);
   if (!parent)
-    g_warning ("%s", parent_name);
+    {
+      gegl_instrument (root->name, parent_name, 0);
+      parent = timing_find (root, parent_name);
+    }
   g_assert (parent);
   iter = timing_find (parent, name);
   if (!iter)
