@@ -97,6 +97,6 @@ gegl_exit (void)
 
   if(getenv("GEGL_DEBUG_TIME")!=NULL)
     {
-      printf ("\n%s", gegl_instrument_xhtml ());
+      printf ("\n%s", gegl_instrument_utf8 ());
     }
 }

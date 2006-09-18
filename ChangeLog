@@ -1,5 +1,14 @@
 2006-09-18  Øyvind Kolås  <pippin@gimp.org>
 
+	Renamed gegl_instrument_xhtml to gegl_instrument_utf8 which is
+	more correct.
+
+	* gegl/gegl-instrument.c: (gegl_instrument_utf8):
+	* gegl/gegl-instrument.h:
+	* gegl/gegl-init.c
+
+2006-09-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/introspect.c: (stuff): do not use deprecated "blank"
 	operation, but "checkerboard" instead.
 

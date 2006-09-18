@@ -280,7 +280,7 @@ sort_children (Timing *parent)
 }
 
 gchar *
-gegl_instrument_xhtml (void)
+gegl_instrument_utf8 (void)
 {
   GString *s = g_string_new ("");
   gchar  *ret;

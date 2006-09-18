@@ -20,14 +20,19 @@
 #ifndef GEGL_INSTRUMENT_H
 #define GEGL_INSTRUMENT_H
 
-long gegl_ticks (void);
+/* return number of usecs since gegl was initialized */
+long gegl_ticks               (void);
 
-void
-gegl_instrument (const gchar *parent,
-                 const gchar *scale,
-                 long         usecs);
 
-gchar *
-gegl_instrument_xhtml (void);
+/* store a timing instrumentation (parent is expected to exist,
+ * and to keep it's own record of the time-slice reported) */
+void gegl_instrument          (const gchar *parent,
+                               const gchar *scale,
+                               long         usecs);
+
+/* create a utf8 string with bar charts for where time disappears
+ * during a gegl-run
+ */
+gchar * gegl_instrument_utf8 (void);
 
 #endif
