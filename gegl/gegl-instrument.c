@@ -157,7 +157,7 @@ static float normalized(glong usecs)
 
 #include <string.h>
 
-GString *
+static GString *
 tab_to (GString *string, gint position)
 {
   gchar *p;
@@ -196,9 +196,10 @@ static gchar *eight[]={
 "▋",
 "▊",
 "▉",
-"█"};
+"█"
+};
 
-GString *
+static GString *
 bar (GString *string, gint width, gfloat value)
 {
   gboolean utf8 = TRUE;
@@ -231,12 +232,61 @@ bar (GString *string, gint width, gfloat value)
 #define BAR_COL       36
 #define BAR_WIDTH     (78-BAR_COL)
 
+static void
+sort_children (Timing *parent)
+{
+  Timing *iter;
+  Timing *prev;
+  gboolean changed = FALSE;
+
+  do
+    {
+      iter = parent->children;
+      changed = FALSE;
+      prev = NULL;
+      while (iter && iter->next)
+        {
+          Timing *next = iter->next;
+
+          if (next->usecs > iter->usecs)
+            {
+              changed = TRUE;
+              if (prev)
+                {
+                  prev->next = next;
+                  iter->next = next->next;
+                  next->next = iter;
+                }
+              else
+                {
+                  iter->next = next->next;
+                  next->next = iter;
+                  parent->children = next;
+                }
+            }
+          prev = iter;
+          iter = iter->next;
+        }
+    }
+  while (changed);
+
+
+  iter = parent->children;
+  while (iter && iter->next)
+    {
+      sort_children (iter);
+      iter = iter->next;
+    }
+}
+
 gchar *
 gegl_instrument_xhtml (void)
 {
   GString *s = g_string_new ("");
   gchar  *ret;
   Timing *iter = root;
+
+  sort_children (root);
 
   while (iter)
     {
@@ -266,7 +316,6 @@ gegl_instrument_xhtml (void)
           s = bar (s, BAR_WIDTH, normalized (timing_other (iter->parent)));
           s = g_string_append (s, "\n");
         }
-
       iter = iter_next (iter);
     }
   

@@ -1,5 +1,11 @@
 2006-09-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-instrument.c: (sort_children), (gegl_instrument_xhtml):
+	Sort the consumption of chilren in decreasing order. To better
+	visualize where time disappears.
+
+2006-09-18  Øyvind Kolås  <pippin@gimp.org>
+
 	Changed indentation of time instrumentation.
 
 	* gegl/gegl-instrument.c: (tab_to), (bar), (gegl_instrument_xhtml):
