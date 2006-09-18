@@ -1,5 +1,11 @@
 2006-09-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.html.in: moved gallery to top section of menu, added
+	blur about gallery at bottom of features. Merged documentation into
+	a seperate section. Added BABL_DEBUG_TIME to enviroment section.
+
+2006-09-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl.css: Changed width of menu margin.
 	* gallery/Makefile.am: add extra space at top of menu.
 	* index-static.html.in: reworked menu and reordered paragraphs. And

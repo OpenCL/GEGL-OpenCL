@@ -72,6 +72,7 @@
         <li><a href='#GEGL'>GEGL</a></li>
         <li>&nbsp;</li>
         <li><a href='#Features'>Features</a></li>
+        <li><a href='gallery/index.html'>Gallery</a></li>
         <li><a href='#dependencies'>Dependencies</a></li>
         <li><a href='#Download'>Download</a></li>
         <li><a href='#Mailinglists'>Mailinglists</a></li>
@@ -79,14 +80,13 @@
         <li>&nbsp;</li>
         <li><a href='#glossary'>Glossary</a></li>
         <li><a href='operations.html'>Operations</a></li>
-        <li><a href='gallery/index.html'>Gallery</a></li>
-        <li>&nbsp;</li>
-        <li><a href='#gegl'>gegl</li>
-        <li><a href='#Environment'>Environment</a></li>
         <li><a href='#XML'>XML data model</a></li>
+        <li><a href='#Environment'>Environment</a></li>
+        <li><a href='#gegl'>gegl</li>
         <li>&nbsp;</li>
         <li><a href='#Source'>Source</a></li>
         <li><a href='todo.html'>To do</a></li>
+        <li>&nbsp;</li>
         <li>&nbsp;</li>
         <li><a href='http://cvs.gnome.org/viewcvs/gegl/ChangeLog?view=markup'>ChangeLog</a></li>
         <li><a href='http://crucible.osdl.org/runs/gegl_report.html'>crucible</a></li>
@@ -106,30 +106,18 @@
         <a name='Features'></a>
         <h2>Features</h2>
         <ul>
-            <li>32bit floating point processing of data (optimized variants using GPU or generated code for lower/integer bitdepths is somewhere in the roadmap.)</li>
-            <li>Pixel format agnostic API design. Through the use of <a href='http://pippin.gimp.org/babl/'>babl</a> as universal translation engine between pixel formats.
-            <li>Data models
-               <ul>
-                   <li>Graphs of operations (Directed Acyclic Graphs)</li>
-                   <li>Tree of (operations) w/clones (XML format)</li>
-                   <li>Tree of layers (work in progress)</li>
-               </ul>
-            </li>
-
-            </li>
-            <li>Operations
-            <ul>
-               <li>Operations are plug-ins (shared objects) loaded at runtime.</li>
-               <li>Simplified gobject with minimal boilerplate used to write plug-ins.</li>
-               <li><b>File inputs:</b> png, jpg, raw, ImageMagick fallback</li>
-               <li><b>Filters:</b> gaussian blur, brightness/contrast, gamma, math ops, threshold, affine transformations, stretch contrast, adjust opacity.
-               </li>
-               <li><b>Composers (Layer modes):</b> porter-duff (including normal over), math ops (+,-,*,/), opacity (apply mask).
-               </li>
-           </ul>
-            </li>
-            <li>Memory efficient computation of rectangular ROI (region of interest).</li>
+            <li>8bit, 16bit integer and 32bit floating point buffer.</li>
+            <li>RGB, YCbCr and CIE Lab color models</li>
+            <li>High Dynamic Range capable</li>
+            <li>Rich core set of processing <a href='operations.html'>operations</a></li>
+            <li>PNG, JPEG, RAW, SVG and more format loaders</li>
+            <li>Easily extendable through plug-ins.</li>
+            <li>Memory efficient evaluation of Regions of Interest</li>
+            <li>XML, C and Python interfaces.</li>
         </ul>
+        <p>For examples of what GEGL is currently capable of doing, take a
+        look at <a href='gallery/index.html'>the gallery</a>.
+        </p>
 
         <!--
 <p>
@@ -158,7 +146,7 @@ rectangular regions to be repainted.
             <li>Core</li>
                 <ul>
             <li>glib (including gobject, and gmodule) 2.10 or newer</li>
-            <li><a href='http://pippin.gimp.org/babl'>babl</a> 0.0.4 or newer</li>
+            <li><a href='http://pippin.gimp.org/babl/'>babl</a> 0.0.5 or newer (for pixel-format agnostisism).</li>
             <li>libpng (png load/export ops, and image magick fallback import)</li>
             </ul>
             <li>Optional dependencies for operations.</li>
@@ -278,6 +266,50 @@ rectangular regions to be repainted.
     </dl>
 
 
+
+
+    <a name='XML'></a>
+    <h3>XML data model</h3>
+
+    <p>The tree allows clones, making it possible to express any acyclic graph
+    where the nodes are all of the types: source, filter and composer. </p>
+    <p>
+    GEGL can write and reads its data model to and from XML. The XML is
+    chains of image processing commands, where some chains allow a child chain
+    (the 'over' operator to implement layers for instance).
+    </p>
+    <p>The type of operation associated with a node can be specified either
+    with a <em>class</em> attribute or by using the operation name as the tag
+    name for the node.
+    </p>
+    <p>For documentation on how this XML works, take a look at the sources
+    in the <a href='gallery/index.html'>gallery.</a> And browse the
+    <a href='operations.html'>documentation for operations</a>.</p>
+</p>
+
+        <a name='Environment'></a>
+        <h3>Environment</h3>
+        <p>Some environment variables can be set to alter how GEGL runs, this
+        list might not be exhaustive but it should list the most useful ones.
+        </p>
+        <dl>
+            <dt>BABL_STATS</dt><dd>
+            When set babl will write a html file (/tmp/babl-stats.html)
+            containing a matrix of used conversions, as well as all
+            existing conversions and which optimized paths are followed.</dd>
+
+            <dt>BABL_ERROR</dt>
+            <dd>The amount of error that babl tolerates, set it to for instance 0.1 to use some conversions that trade some quality for speed.</dd>
+            <dt>GEGL_DEBUG_BUFS</dt>
+            <dd>Display tile/buffer leakage statistics.
+            </dd>
+            <dt>GEGL_DEBUG_RECTS</dt>
+            <dd>Show the results of have/need rect negotiations.
+            </dd>
+            <dt>GEGL_DEBUG_TIME</dt>
+            <dd>Print a performance instrumentation breakdown of GEGL and it's operations.
+            </dd>
+        </dl>
     <a name='gegl'></a>
     <h2>gegl</h2>
 <p>
@@ -301,48 +333,6 @@ Some examples:
   &lt;node class='invert'/&gt;
   &lt;node class='scale' x='0.5' y='0.5'/&gt;
   &lt;node class='png-load' path='-'/&gt;&lt;/tree&gt;&lt;/gegl&gt;" &gt; output.png</pre>
-
-
-        <a name='Environment'></a>
-        <h3>Environment</h3>
-        <p>Some environment variables can be set to alter how GEGL runs, this
-        list might not be exhaustive but it should list the most useful ones.
-        </p>
-        <dl>
-            <dt>BABL_STATS</dt><dd>
-            When set babl will write a html file (/tmp/babl-stats.html)
-            containing a matrix of used conversions, as well as all
-            existing conversions and which optimized paths are followed.</dd>
-
-            <dt>BABL_ERROR</dt>
-            <dd>The amount of error that babl tolerates, set it to for instance 0.1 to use some conversions that trade some quality for speed.</dd>
-            <dt>GEGL_DEBUG_BUFS</dt>
-            <dd>Display tile/buffer leakage statistics.
-            </dd>
-            <dt>GEGL_DEBUG_RECTS</dt>
-            <dd>Show the results of have/need rect negotiations.
-            </dd>
-        </dl>
-
-
-    <a name='XML'></a>
-    <h3>XML data model</h3>
-
-    <p>The tree allows clones, making it possible to express any acyclic graph
-    where the nodes are all of the types: source, filter and composer. </p>
-    <p>
-    GEGL can write and reads its data model to and from XML. The XML is
-    chains of image processing commands, where some chains allow a child chain
-    (the 'over' operator to implement layers for instance).
-    </p>
-    <p>The type of operation associated with a node can be specified either
-    with a <em>class</em> attribute or by using the operation name as the tag
-    name for the node.
-    </p>
-    <p>For documentation on how this XML works, take a look at the sources
-    in the <a href='gallery/index.html'>gallery.</a> And browse the
-    <a href='operations.html'>documentation for operations</a>.</p>
-</p>
 
         <a name='Source'></a>
         <h2>Source</h2>
