@@ -238,11 +238,11 @@ void
 gegl_tile_unlock (GeglTile *tile)
 {
   total_unlocks++;
-  tile->lock--;
-  if (tile->lock < 0)
+  if (tile->lock == 0)
     {
-      g_warning ("unlocked a tile with lock count < 0");
+      g_warning ("unlocked a tile with lock count == 0");
     }
+  tile->lock--;
   if (tile->lock == 0)
     {
       /*gegl_buffer_add_dirty (tile->buffer, tile->x, tile->y);*/

@@ -1,5 +1,15 @@
 2006-09-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile.c: (gegl_tile_unlock): do not check for <0 on
+	unsigned value.
+
+2006-09-19  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/Makefile.am: to not use -version-info when compiling gegl,
+	only when compiling GEGL.
+
+2006-09-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/blur/gaussian-blur.c: (process): set temp=NULL to
 	shut up gcc.
 
