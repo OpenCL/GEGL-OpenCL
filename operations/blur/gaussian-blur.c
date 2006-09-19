@@ -95,7 +95,7 @@ process (GeglOperation *operation)
     {
       GeglRect   *result = gegl_operation_result_rect (operation);
       GeglBuffer *temp_in;
-      GeglBuffer *temp;
+      GeglBuffer *temp = NULL;
 
       if (result->w==0 || result->h==0 || (!self->radius_x && !self->radius_y))
         {

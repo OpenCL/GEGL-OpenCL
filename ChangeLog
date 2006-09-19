@@ -1,3 +1,8 @@
+2006-09-19  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/blur/gaussian-blur.c: (process): set temp=NULL to
+	shut up gcc.
+
 2006-09-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-instrument.c: (gegl_instrument): Handle implicit
