@@ -295,19 +295,18 @@ gegl_instrument_utf8 (void)
     {
       gchar *buf;
 
-      s = tab_to (s, timing_depth (iter) * INDENT_SPACES);
+      if (!strcmp (iter->name, root->name))
+        {
+          buf = g_strdup_printf ("Total time: %.8fs\n", seconds (iter->usecs));
+          s = g_string_append (s, buf);
+          g_free (buf);
+        }
 
+      s = tab_to (s, timing_depth (iter) * INDENT_SPACES);
       s = g_string_append (s, iter->name);
 
       s = tab_to (s, SECONDS_COL);
-      if (!strcmp (iter->name, root->name))
-        {
-          buf = g_strdup_printf ("%5.1fs", seconds (iter->usecs));
-        }
-      else
-        {
-          buf = g_strdup_printf ("%5.1f%%", 100.0 * iter->usecs / (iter->parent?iter->parent->usecs:10000.0));
-        }
+      buf = g_strdup_printf ("%5.1f%%", iter->parent?100.0 * iter->usecs / iter->parent->usecs:100.0);
       s = g_string_append (s, buf);
       g_free (buf);
       s = tab_to (s, BAR_COL);
@@ -328,7 +327,9 @@ gegl_instrument_utf8 (void)
               s = bar (s, BAR_WIDTH, normalized (timing_other (iter->parent)));
               s = g_string_append (s, "\n");
             }
+          s = g_string_append (s, "\n");
         }
+
       iter = iter_next (iter);
     }
   

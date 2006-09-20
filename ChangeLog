@@ -1,8 +1,13 @@
 2006-09-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-instrument.c: (gegl_instrument_utf8): added grouping to
+	make the diagram easier to read.
+
+2006-09-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-instrument.c: (gegl_instrument_utf8): output percentage of
-				  parent task instead of usecs spent. (more
-				   human readable, less machine readable).
+	parent task instead of usecs spent. (more human readable, less machine
+	readable).
 
 2006-09-19  Øyvind Kolås  <pippin@gimp.org>
 
