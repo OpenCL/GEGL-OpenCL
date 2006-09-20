@@ -1,3 +1,9 @@
+2006-09-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-instrument.c: (gegl_instrument_utf8): output percentage of
+				  parent task instead of usecs spent. (more
+				   human readable, less machine readable).
+
 2006-09-19  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-tile.c: (gegl_tile_unlock): do not check for <0 on

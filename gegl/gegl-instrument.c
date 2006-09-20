@@ -232,7 +232,7 @@ bar (GString *string, gint width, gfloat value)
 
 #define INDENT_SPACES 2
 #define SECONDS_COL   25
-#define BAR_COL       36
+#define BAR_COL       33
 #define BAR_WIDTH     (78-BAR_COL)
 
 static void
@@ -300,7 +300,14 @@ gegl_instrument_utf8 (void)
       s = g_string_append (s, iter->name);
 
       s = tab_to (s, SECONDS_COL);
-      buf = g_strdup_printf ("%f", seconds (iter->usecs));
+      if (!strcmp (iter->name, root->name))
+        {
+          buf = g_strdup_printf ("%5.1fs", seconds (iter->usecs));
+        }
+      else
+        {
+          buf = g_strdup_printf ("%5.1f%%", 100.0 * iter->usecs / (iter->parent?iter->parent->usecs:10000.0));
+        }
       s = g_string_append (s, buf);
       g_free (buf);
       s = tab_to (s, BAR_COL);
@@ -309,15 +316,18 @@ gegl_instrument_utf8 (void)
 
       if (timing_depth(iter_next (iter)) < timing_depth (iter))
         {
-          s = tab_to (s, timing_depth (iter) * INDENT_SPACES);
-          s = g_string_append (s, "other");
-          s = tab_to (s, SECONDS_COL);
-          buf = g_strdup_printf ("%f", seconds (timing_other (iter->parent)));
-          s = g_string_append (s, buf);
-          g_free (buf);
-          s = tab_to (s, BAR_COL);
-          s = bar (s, BAR_WIDTH, normalized (timing_other (iter->parent)));
-          s = g_string_append (s, "\n");
+          if (timing_other (iter->parent) > 0)
+            {
+              s = tab_to (s, timing_depth (iter) * INDENT_SPACES);
+              s = g_string_append (s, "other");
+              s = tab_to (s, SECONDS_COL);
+              buf = g_strdup_printf ("%5.1f%%", 100 * normalized (timing_other (iter->parent)));
+              s = g_string_append (s, buf);
+              g_free (buf);
+              s = tab_to (s, BAR_COL);
+              s = bar (s, BAR_WIDTH, normalized (timing_other (iter->parent)));
+              s = g_string_append (s, "\n");
+            }
         }
       iter = iter_next (iter);
     }
