@@ -70,22 +70,25 @@
       </div>
       <ul>
         <li><a href='#GEGL'>GEGL</a></li>
+        <li><a href='#Features'>&nbsp;&nbsp;Features</a></li>
+        <li><a href='gallery/index.html'>&nbsp;&nbsp;Gallery</a></li>
+        <li><a href='#Dependencies'>&nbsp;&nbsp;Dependencies</a></li>
+        <li><a href='#Download'>&nbsp;&nbsp;Download</a></li>
+        <li><a href='#Bugzilla'>&nbsp;&nbsp;Bugzilla</a></li>
+        <li><a href='#Mailinglist'>&nbsp;&nbsp;Mailinglist</a></li>
+        <li><a href='#Copyright'>&nbsp;&nbsp;Copyright</a></li>
         <li>&nbsp;</li>
-        <li><a href='#Features'>Features</a></li>
-        <li><a href='gallery/index.html'>Gallery</a></li>
-        <li><a href='#dependencies'>Dependencies</a></li>
-        <li><a href='#Download'>Download</a></li>
-        <li><a href='#Mailinglists'>Mailinglists</a></li>
-        <li><a href='#Copyright'>Copyright</a></li>
+        <li><a href='#Documentation'>Documentation</a></li>
+        <li><a href='operations.html'>&nbsp;&nbsp;Operations</a></li>
+        <li><a href='#Glossary'>&nbsp;&nbsp;Glossary</a></li>
+        <li><a href='#XML'>&nbsp;&nbsp;XML data model</a></li>
+        <li><a href='#Environment'>&nbsp;&nbsp;Environment</a></li>
+        <li><a href='#gegl'>&nbsp;&nbsp;gegl</li>
         <li>&nbsp;</li>
-        <li><a href='#glossary'>Glossary</a></li>
-        <li><a href='operations.html'>Operations</a></li>
-        <li><a href='#XML'>XML data model</a></li>
-        <li><a href='#Environment'>Environment</a></li>
-        <li><a href='#gegl'>gegl</li>
-        <li>&nbsp;</li>
-        <li><a href='#Source'>Source</a></li>
-        <li><a href='todo.html'>To do</a></li>
+        <li><a href='#Development'>Development</a></li>
+        <li><a href='#Bootstrap'>&nbsp;&nbsp;Bootstrap</a></li>
+        <li><a href='todo.html'>&nbsp;&nbsp;To do</a></li>
+        <li><a href='#CodeOverview'>&nbsp;&nbsp;Code Overview</a></li>
         <li>&nbsp;</li>
         <li>&nbsp;</li>
         <li><a href='http://cvs.gnome.org/viewcvs/gegl/ChangeLog?view=markup'>ChangeLog</a></li>
@@ -100,11 +103,17 @@
 
         <a name='GEGL'></a>
         <h1>GEGL</h1>
-        <p>GEGL (Generic Graphics Library) is an image processing library written in C using gobject
-        from glib for object orientation.</p>
+        <p>GEGL (Generic Graphics Library) is a graph based image processing
+        library written in C using gobject from glib for object
+        orientation.</p>
+
+        <p>GEGL original design was made to scratch <a href='http://www.gimp.org/'>GIMP</a>s itches
+        for a new compositing and processing core. This core is being designed
+        to have minimal <a href='#Dependencies'>dependencies.</a> and a simple well defined API. It
+        is still a work in progress, but it already provides for a capable system.
         
         <a name='Features'></a>
-        <h2>Features</h2>
+        <h3>Features</h3>
         <ul>
             <li>8bit, 16bit integer and 32bit floating point buffer.</li>
             <li>RGB, YCbCr and CIE Lab color models</li>
@@ -137,8 +146,8 @@ recomputed. This fits well with being able to back an api that requests
 rectangular regions to be repainted.
 </p>
 -->
-        <a name='dependencies'></a>
-        <h2>Dependencies</h2>
+        <a name='Dependencies'></a>
+        <h3>Dependencies</h3>
         <p>GEGL is currently building on linux, the build enviroment probably
         needs some fixes before all of it builds gracefully on many platforms.
         </p>
@@ -168,23 +177,36 @@ rectangular regions to be repainted.
             in GNOME CVS</a>. <a href='http://pippin.gimp.org/cvs-snapshots/gegl-current.tar.bz2'>Nightly tarballs</a> are also available.
         </p>
 
-        <p>GEGL uses autotools, from a CVS checkout running <tt>./autogen.sh &amp;&amp; make &amp;&amp; sudo make install</tt> should be sufficient. From a tarball running 
-        <tt>./configure &amp;&amp; make &amp;&amp; sudo make install</tt> should be sufficient if the core dependencies are satisfied.</p>
+        <a name='Bugzilla'></a>
+        <h3>Bugzilla</h3>
 
-        <a name='Mailinglists'></a>
-        <h2>Mailinglists</h2>
+        <p>The GEGL project uses <a href='http://bugzilla.gnome.org'>GNOME
+            Bugzilla</a>, a bug-tracking system that allows us to coordinate
+        bug reports. Bugzilla is also used for enhancement requests and the
+        preferred way to submit patches for GEGL is to open a bug report and
+        attach the patch to it.</p>
+
+        <p>
+        Below is a list of links to get you started with Bugzilla:
+        </p>
+        <ul>
+            <li><a href='http://bugzilla.gnome.org/reports/weekly-bug-summary.html'>Bugzilla Weekly Summary</a></li>
+            <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED'>List of Open Bugs</a></li>
+            <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&bug_severity=normal&bug_severity=minor&bug_severity=trivial'>List of Open Bugs (excluding enhancement requests)</a></li>
+            <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO&bug_severity=enhancement'>List of Enhancement Proposals</a></li>
+        </ul>
+
+        <a name='Mailinglist'></a>
+        <h3>Mailinglist</h3>
+
         <p>You can subscribe to gegl-developer and view the archives
         <a href='https://lists.XCF.Berkeley.EDU/mailman/listinfo/gegl-developer'>here</a>.
         The GEGL developer list is the appopriate place to ask development questions,
         and get more information about GEGL development in general. You can email this
         list at <a href='mailto:gegldev at gegl.org'>gegldev at gegl.org</a>.</p>
-        <p>If you want to submit a bugfix or enhancement, feel free to attach
-        a patch generated by the <em>diff</em> utility,
-        using the <em>u</em> option to make the patch more readable. Including
-        an appropriate ChangeLog entry makes incorporating the patch easier.
-        </p>
+
         <a name='Copyright'></a>
-        <h2>Copyright</h2>
+        <h3>Copyright</h3>
 
         <p> GEGL is free software; you can redistribute it and/or modify it
         under the terms of the <a href='LGPL'>GNU Lesser General Public
@@ -197,8 +219,36 @@ rectangular regions to be repainted.
 <!--AUTHORS-->          
 </pre>
 
-    <a name='glossary'></a>
-    <h2>Glossary</h2>
+    <a name='Documentation'></a>
+    <h2>Documentation</h2>
+    
+    <p>
+    GEGLs programmer/user interface is a <a href='#Glossary-DAG'>Directed
+        Acyclic Graph</a> of <a href='#Glossary-node'>nodes</a>. The DAG
+    expresses a processing chain of <a
+        href='#Glossary-operation'>operations</a>. A DAG, or any node in it,
+    expresses a composited and processed image. It is possible to request
+    rectangular regions in a wide range of pixel formats from any node. See the
+    <a href='#Glossary'>Glossary</a> to decode this paragraph.
+    </p>
+    
+    <p>The DAG is modifiable through the C API as well as a <a
+        href='http://ervilha.org/pygegl/'>Python Binding</a>. The <a
+        href='#XML'>XML Data model</a> provides a tree based interface that
+    maps to Directed Acyclic graphs (DAGs).
+    
+    <a href='#Environment'>Environment Variables</a> can be set to tune and
+    instrument the behavior of GEGL. <a href='#gegl'>gegl</a> is small commandline
+    tool acting as a wrapper around the XML capabilities that provides output
+    to PNG. </p>
+
+    <p>The main source of documentation as GEGL grows is the <a
+        href='operations.html'>Operations</a> reference. Plug-ins themselves
+    register information about the categories they belong to, what they do, and
+    documentation of the available parameters. </p>
+
+    <a name='Glossary'></a>
+    <h3>Glossary</h3>
     <dl>
       <dt>connection</dt>
       <dd>A link/pipe routing image flow between operations within
@@ -207,40 +257,20 @@ rectangular regions to be repainted.
                 <em>input pad</em>, in graph glossary
                 this might also be reffered to as an edge.
       </dd>
-      <dt>DAG</dt>
+      <dt><a name='Glossary-DAG'>DAG</a></dt>
       <dd>Directed Acyclic Graph, see <em>graph</em>.</dd>
       <dt>graph</dt>
       <dd>A composition of <em>nodes</em>, the
            graph is a <em>DAG</em>.
       </dd>
-      <dt>node</dt>
-      <dd>The nodes are connected in the graph. A node has an associated <em>operation</em> unless the node itself is a <em>graph</em>.
+      <dt><a name='Glossary-node'>node</a></dt>
+      <dd>The nodes are connected in the graph. A node has an associated
+      <em>operation</em> or can be constructed <em>graph</em>.
       </dd>
-      <dt>operation</dt>
+      <dt><a name='Glossary-operation'>operation</a></dt>
       <dd>The processing primitive of GEGL, is where the actual image
-      processing takes place. Various categories of operations exist, these
-      categories depends on their
-          number of <em>output pads</em>.
-        <dl>
-          <dt>composer</dt>
-          <dd>An <em>operation</em> that has more than one
-              <em>input pad</em>.
-          </dd>
-          <!--<dt>decomposer</dt>
-          <dd>A <em>operation</em> that has more than one
-              <em>output pad</em>. decomposer
-              nodes are not expressable in a treeview and are 
-              restricted to the graph portion of the oxide file 
-              format.
-          </dd>-->
-          <dt>filter</dt>
-          <dd>An <em>operation</em> that has one <em>output pad</em> and one <em>input pad</em>.
-          </dd>
-          <dt>source</dt>
-          <dd>An <em>operation</em> that only has one <em>output pad</em>.
-          </dd>
-        </dl>
-      </dd>
+      processing takes place. Operations are plug-ins and provide the
+      actual functionality of GEGL
       <dt>pad</dt>
       <dd>The part of a node that exchanges image content. The place
           where image &quot;pipes&quot; are used to connect the various
@@ -257,16 +287,10 @@ rectangular regions to be repainted.
           </dl>
       </dd>
       <dt>property</dt>
-      <dd>Properties are what control the behavior of operations,
-          properties are named, have defined types and ranges, and probably
-          provide hints about their usage. e.g. a string can be (amongst other
-          things) a file parameter or font defintion, both should be handled
-          differenlty in an autogenerated UI.).
+      <dd>Properties are what control the behavior of operations, through the
+      use of GParamSpecs properties are self documenting through introspection.
       </dd>
     </dl>
-
-
-
 
     <a name='XML'></a>
     <h3>XML data model</h3>
@@ -311,7 +335,7 @@ rectangular regions to be repainted.
             </dd>
         </dl>
     <a name='gegl'></a>
-    <h2>gegl</h2>
+    <h3>gegl</h3>
 <p>
 GEGL provides a commandline tool called <em>gegl</em>, for working with the XML
 data model from file, stdin or the commandline. It can display the result of
@@ -334,27 +358,59 @@ Some examples:
   &lt;node class='scale' x='0.5' y='0.5'/&gt;
   &lt;node class='png-load' path='-'/&gt;&lt;/tree&gt;&lt;/gegl&gt;" &gt; output.png</pre>
 
-        <a name='Source'></a>
-        <h2>Source</h2>
-
-        <p>
         The latest development version is available in <a
             href='http://cvs.gnome.org/viewcvs/gegl/'>the <em>gegl</em> module
             in GNOME CVS</a>. 
-        </p>
-        <p>GEGL uses autotools, from a CVS checkout running <tt>./autogen.sh &amp;&amp; make &amp;&amp; sudo make install</tt> should be sufficient. From a tarball running 
-        <tt>./configure &amp;&amp; make &amp;&amp; sudo make install</tt> should work.
-        </p>
 
         
-<a name='source_overview'></a>
-<h3>Source Overview</h3>
+        <a name='Development'></a>
 
-<p>
-If you're reading this, you probably have a GEGL distribution. This file
-contains information about how GEGL works. It also contains information
-about how babl works, since GEGL builds on top of babl.
-</p>
+    <h2>Development</h2>
+
+        
+
+    <p>There is no real roadmap for GEGL, what is done next depends on what is
+    currently working, and the possibilities of interesting development work
+    enabled by current functionality. A list of various possible features is
+    available in the <a href='todo.html'>To Do</a> document. A description of
+    what the various directories in the GEGL checkout is in the <a
+        href='#CodeOverview'>Code Overview</a>. Most coders working with gegl
+    would probably be <a href='#extending'>extending</a> it through operations.
+    </p>
+
+        <a name ='Bootstrap'></a>
+        <h3>Bootstrapping Development Environment</h3>
+        <p>GEGL uses autotools, from a CVS checkout running <tt>./autogen.sh &amp;&amp; make &amp;&amp; sudo make install</tt> should be sufficient. From a tarball running 
+        <tt>./configure &amp;&amp; make &amp;&amp; sudo make install</tt> should be sufficient if the core dependencies are satisfied.</p>
+
+        <p>The following commands are what is needed for me to bootstrap a GEGL build environment
+        that builds from anonymous CVS (should be possible to select, and paste into a terminal).
+        Look at <a href='http://cvs.gnome.org/'>cvs.gnome.org</a> for more information.
+        </p>
+
+        <pre>
+wget http://pippin.gimp.org/cvs-snapshots/babl-current.tar.bz2 &amp;&amp;
+wget http://pippin.gimp.org/cvs-snapshots/gegl-current.tar.bz2 &amp;&amp;
+tar xjf babl-current.tar.bz2 &amp;&amp;
+cd babl-2* &amp;&amp;
+./autogen.sh &amp;&amp;
+make &amp;&amp;
+sudo make install &amp;&amp;
+cd .. &amp;&amp;
+tar xjf gegl-current.tar.bz2 &amp;&amp;
+cd gegl-2* &amp;&amp;
+./autogen.sh &amp;&amp;
+make &amp;&amp;
+sudo make install</pre>
+
+        <p>To sync up your checkout later, issue the following command when
+        in the toplevel GEGL directory.
+        </p>
+
+        <p>cvs update -Pd</p>
+
+<a name='CodeOverview'></a>
+<h3>Code Overview</h3>
 
 <h4>Directories in the GEGL checkout:</h4>
 <pre>gegl-dist-root
@@ -401,7 +457,7 @@ about how babl works, since GEGL builds on top of babl.
  `--opgen        seems to be code using an older version of gil
 </pre>
 
-<h4>Directories a babl checkout</h4>
+<h4>Directories of babl</h4>
 <pre>babl-dist-root
  |
  |--babl       the babl core
@@ -422,7 +478,6 @@ about how babl works, since GEGL builds on top of babl.
           the version this website was built. </p>
         </div>
         -->
-
 
         <a name='extending'></a>
         <h3>Extending</h3>

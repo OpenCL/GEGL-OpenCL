@@ -1,3 +1,9 @@
+2006-09-20  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.html.in: restructured, and stitched together with
+	some introductions to main section to make it flow better as a
+	continous text. Also added links to bugzilla from the old webpages.
+
 2006-09-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: moved gallery to top section of menu, added

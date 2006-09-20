@@ -221,6 +221,10 @@
           color: #fff;
           background-color: #506080;
         }
+        div.toc li a:active {
+          color: #000;
+          background-color: #506080;
+        }
         div.paper {
           max-width: 45em;
           -moz-border-radius: 1em;
