@@ -51,7 +51,7 @@ gegl_init (int *argc,
       gchar *load_inhibit = g_strdup ("");
       gchar *module_path;
 
-      setenv ("BABL_ERROR", "0.01", 0);
+      setenv ("BABL_ERROR", "0.007", 0);
     
       if (getenv ("GEGL_PATH"))
         {
