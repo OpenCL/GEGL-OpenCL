@@ -1,4 +1,3 @@
-.SILENT:
 SUBDIRS= gallery
 #DIST_SUBDIRS= graphics gallery
 
@@ -35,13 +34,21 @@ class-hierarchy.html: $(top_builddir)/tools/introspect $(top_srcdir)/operations/
 	export GEGL_PATH=$(top_builddir)/operations;\
 	$(top_builddir)/tools/introspect > $@
 
+runinfo: Makefile.am
+	if [ "x"$$plan != "x" ]; then\
+	  echo "<h2><a href='http://crucible.osdl.org/runs/gegl_report.html'>Crucible</a></h2><p>These pages document a GEGL build at a <a href='http://crucible.osdl.org/'>crucible</a> test machine.</p><p>run: <a href='http://crucible.osdl.org/runs/$$id/'>$$id</a><br/>pkg-file: $$pkg_file<br/>host: `hostname`</p>\
+	  <pre>`cat /proc/cpuinfo`</pre>" > runinfo;\
+	fi
+
 index.html: index-static.html                    \
 	    $(top_srcdir)/AUTHORS                \
 	    $(top_srcdir)/NEWS                   \
-	    Makefile.am	
+	    Makefile.am				 \
+	    runinfo
 	echo -n "HTML: $@"
 	cp $< $@ 
 	$(top_srcdir)/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
+	[ -f runinfo ] && $(top_srcdir)/tools/xml_insert.sh $@ RUNINFO runinfo || true
 	echo " [OK]"
 
 distclean-local:
@@ -67,3 +74,12 @@ web: all
 	   (\
 	   echo "FAIL   $(WEBSITE_HOST) not reachable."\
 	   )
+
+WEBSITE_FILES=*.html *.css */*.html gallery/*.txt images/gegl.ico gallery/*.png
+
+website: all
+	if [ "x"$$WEBSITE_DESTINATION == "x" ];then echo "WEBSITE_DESTINATION not set";exit -1;fi
+	mkdir $$WEBSITE_DESTINATION
+	echo "foo"
+	cp --parents -rv  $(WEBSITE_FILES) $$WEBSITE_DESTINATION
+

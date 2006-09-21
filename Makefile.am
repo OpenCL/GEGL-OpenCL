@@ -27,3 +27,6 @@ dist-check-w3m:
 endif
 
 dist-hook: dist-check-w3m
+
+website: all
+	make -C docs website

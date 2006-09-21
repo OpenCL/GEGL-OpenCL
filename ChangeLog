@@ -1,5 +1,10 @@
 2006-09-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: added target website, depending on all, running
+	recursive make on docs subdir.
+
+2006-09-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-init.c: (gegl_init): tuned default value to 0.007 as that
 	seems to be a good compromise between speed/acceptable conversions at
 	the moment.

@@ -1,5 +1,4 @@
 SUBDIRS=data
-.SILENT:
 
 EXTRA_DIST=$(wildcard *.xml)
 

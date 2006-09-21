@@ -99,9 +99,10 @@
       </ul>
     </div>
 
-    <a name='GEGL'></a>
     <div class='paper'>
       <div class='content'>
+
+        <!--RUNINFO-->          
 
         <a name='GEGL'></a>
         <h1>GEGL</h1>

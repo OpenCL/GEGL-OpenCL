@@ -1,5 +1,12 @@
 2006-09-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: added target website, added runinfo embedding, and
+	some content to be used when building under crucible. removed silence.
+	* gallery/Makefile.am: removed silence.
+	* index-static.html.in: add room for RUNINFO include.
+
+2006-09-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl.css: display: none for graphic when printing to fix issues with
 	printing from firefox.
 
