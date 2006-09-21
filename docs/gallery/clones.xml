@@ -1,110 +1,85 @@
 <gegl>
-    <over>
-        <shift x = '10'
-                   y = '280'/>
+  <scale x = '0.4'
+         y = '0.4'/>
+  <over>
+    <shift x = '10'
+           y = '280'/>
+    <scale x = '0.20'
+           y = '0.20'/>
+    <box-blur radius = '5'/>
+    <clone ref = 'bg'/>
+  </over>
 
-        <scale x = '0.20'
-               y = '0.20'/>
-        
-        <box-blur radius = '5'/>
+  <over>
+    <shift x = '10'
+           y = '190'/>
+    <gamma value  = '2.5'/>
+    <scale x = '0.20'
+           y = '0.20'/>
 
-        <clone ref = 'bg'/>
-    </over>
+    <clone ref = 'bg'/>
+  </over>
 
-    <over>
-        <shift x = '10'
-                   y = '190'/>
-        
-        <gamma value  = '2.5'/>
+  <over>
+      <shift x = '10'
+             y = '100'/>
+      <invert/>
+      <scale x = '0.20'
+             y = '0.20'/>
+      <clone ref = 'bg'/>
+  </over>
+  <over>
+      <shift x = '10'
+             y = '10'/>
+      <threshold value  = '0.5'/>
+      <scale x = '0.20'
+             y = '0.20'/>
+      <clone ref    = 'bg'/>
+  </over>
 
-        <scale x = '0.20'
-               y = '0.20'/>
-
-        <clone ref = 'bg'/>
-    </over>
-
-    <over>
-        <shift x = '10'
-                   y = '100'/>
-
-        <invert/>
-
-        <scale x = '0.20'
-               y = '0.20'/>
-
-        <clone ref = 'bg'/>
-    </over>
-    <over>
-        <shift x = '10'
-                   y = '10'/>
-
-        <threshold value  = '0.5'/>
-
-        <scale x = '0.20'
-               y = '0.20'/>
-
-        <clone ref    = 'bg'/>
-    </over>
-
-    <over>
-        <shift x = '335'
-                   y = '210'/>
-
-        <over>
-            <shift x = '-10'
-                       y = '120'/>
-
-            <opacity value = '0.6'/>
-
-            <under id = 'gegl-shadowed'>
-                <opacity   value      = '2.0'/>
-
-                <shift x          = '0'
-                           y          = '0'/>
-                <box-blur  radius     = '4'/>
-
-                <brightness-contrast brightness = '-1.0'/>
-
-                <clone     ref        = 'text'/>
-            </under>
-
-            <text      size   = '30'
-                       string = 'warming up'
-                       id     = 'text'/>
-        </over>
-
-        <scale x   = '0.5'
-               y   = '0.5'/>
-
-        <clone ref ='gegl-shadowed'/>
-    </over>
-
-    <over>
-        <shift x='90'
-               y='90'/>
-
-        <opacity   value='-0.5'/>
-
-        <box-blur  radius='15'/>
-
-        <under     id='gegl-shadowed'>
-            <opacity   value='0.8'/>
-
-            <shift x      = '0'
-                   y      = '0'/>
-
-            <add       value  = '0.5'/>
-
-            <gaussian-blur  radius-x ='15' radius-y='15'/>
-
-            <clone     ref    ='gegl'/>
+  <over>
+      <shift x = '335'
+             y = '210'/>
+      <over>
+        <shift x = '-10'
+               y = '120'/>
+        <opacity value = '0.6'/>
+        <under id = 'gegl-shadowed'>
+          <opacity   value      = '2.0'/>
+          <shift x          = '0'
+                 y          = '0'/>
+          <box-blur  radius     = '4'/>
+          <brightness-contrast brightness = '-1.0'/>
+          <clone     ref        = 'text'/>
         </under>
+        <text size   = '30'
+              string = 'warming up'
+              id     = 'text'/>
+      </over>
+      <scale x = '0.5'
+             y = '0.5'/>
+      <clone ref ='gegl-shadowed'/>
+  </over>
 
-        <load path = 'data/gegl.png'
-              id   = 'gegl'/>
-    </over>
+  <over>
+    <shift x='90'
+           y='90'/>
+    <opacity  value = '-0.5'/>
+    <box-blur radius = '15'/>
+    <under id = 'gegl-shadowed'>
+      <opacity   value='0.8'/>
+      <shift x = '0'
+             y = '0'/>
+      <add value  = '0.5'/>
+      <gaussian-blur radius-x ='15'
+                     radius-y='15'/>
+      <clone ref ='gegl'/>
+    </under>
+    <load path = 'data/gegl.png'
+          id   = 'gegl'/>
+  </over>
 
-    <load path = 'data/car-stack.jpg'
-          id   = 'bg'/>
-  
+  <load path = 'data/car-stack.jpg'
+        id   = 'bg'/>
+
 </gegl>

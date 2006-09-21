@@ -1,5 +1,15 @@
 2006-09-21  Øyvind Kolås  <pippin@gimp.org>
 
+	Improved layout of gallery, reindented samples, and
+	scaled down the sizes of the images.
+
+	* gallery/Makefile.am:
+	* gallery/clones.xml:
+	* gallery/drop-shadow.xml:
+	* gallery/unsharp-mask.xml:
+
+2006-09-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am: added target website, added runinfo embedding, and
 	some content to be used when building under crucible. removed silence.
 	* gallery/Makefile.am: removed silence.

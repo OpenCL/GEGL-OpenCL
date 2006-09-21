@@ -1,23 +1,30 @@
 <gegl>
-  
-    
-    <!-- add the edge mask on top of the original image -->
-    <add>
-      <!-- crop the sharpening mask to the middle of the image,
-           to show off the difference
+  <scale x = '0.4'
+         y = '0.4'/>
+  <!-- add the edge mask on top of the
+  original image -->
+  <add>
+    <!-- crop the sharpening mask to
+    the middle of the image, to show
+    off the difference
       -->
-      <crop x='128' y='0' width='256' height='384'/>
+    <crop x     ='128'
+          y     ='0'
+          width ='256'
+          height='384'/>
 
-      <!-- create a high frequency difference image, by substracting
-           a blurred version from the original
-        --> 
-      <subtract>
-        <gaussian-blur radius-x='1.2' radius-y='1.2'/>     
-        <clone ref='original'/>
-      </subtract>
+    <!-- create a high frequency
+    difference image, by
+    substracting a blurred version
+    from the original --> 
+    <subtract>
+      <gaussian-blur radius-x='1.2'
+                     radius-y='1.2'/>
       <clone ref='original'/>
-    </add>
+    </subtract>
+    <clone ref='original'/>
+  </add>
 
-    <load path='data/car-stack.jpg' id='original'/>
-  
+  <load path='data/car-stack.jpg'
+        id  ='original'/>
 </gegl>

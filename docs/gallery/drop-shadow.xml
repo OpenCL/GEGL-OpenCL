@@ -1,17 +1,24 @@
 <gegl>
-    
-  <node operation='crop' x='80' y='60' width='360' height='320'/>
-  <node operation='over'>
-    <node operation='shift' x='100.0' y='100.0'/>
-    <node operation='under'>
-      <node operation='opacity' value='0.5'/>
-      <node operation='box-blur' radius='16.0'/>
-      <node operation='brightness-contrast' brightness='-1.0' name='fooo'/>
-      <node operation='shift' x='16.0' y='16.0'/>
-      <node operation='clone' ref='gegl'/>
-    </node>
-    <node operation='load' path='data/gegl.png' id='gegl'/>
-  </node>
-  <node operation='load' path='data/vinci-fly3.jpg'/>
- 
+  <scale x='0.5'
+         y='0.5'/>
+  <crop x     ='80'
+        y     ='60'
+        width ='360'
+        height='320'/>
+ <over>
+    <shift x='100.0'
+           y='100.0'/>
+    <under>
+      <opacity value='0.5'/>
+      <box-blur radius='16.0'/>
+      <brightness-contrast brightness='-1.0'
+                           name      ='fooo'/>
+      <shift x='16.0'
+             y='16.0'/>
+      <clone ref='gegl'/>
+    </under>
+    <load path='data/gegl.png'
+          id  ='gegl'/>
+  </over>
+  <load path='data/vinci-fly3.jpg'/>
 </gegl>
