@@ -136,15 +136,6 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   gegl_visitor_dfs_traverse (eval_visitor, GEGL_VISITABLE(pad));
   g_object_unref (eval_visitor);
 
-  if(getenv("GEGL_DEBUG_RECTS")!=NULL)
-    {
-      GeglVisitor  *debug_rect_visitor;
-
-      debug_rect_visitor = g_object_new (GEGL_TYPE_DEBUG_RECT_VISITOR, NULL);
-        gegl_visitor_dfs_traverse (debug_rect_visitor, GEGL_VISITABLE(root));
-      g_object_unref (debug_rect_visitor);
-    }
-
   root->is_root = FALSE;
 
   g_object_unref (root);
