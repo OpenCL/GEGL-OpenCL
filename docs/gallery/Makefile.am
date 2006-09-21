@@ -4,7 +4,7 @@ SUBDIRS=data
 EXTRA_DIST=$(wildcard *.xml)
 
 all-local: 
-	echo "<html><head><title>GEGL gallery</title><style type='text/css'>@import url(../gegl.css);</style></head><body><div class='toc'><ul><li><a href='../index.html'>GEGL</a></li><li>&nbsp;</li><li><a href='#'>Gallery</a></li>" > index.html
+	echo "<html><head><title>GEGL gallery</title><style type='text/css'>@import url(../gegl.css);</style><link rel='shortcut icon' href='../images/gegl.ico'/></head><body><div class='toc'><ul><li><a href='../index.html'>GEGL</a></li><li>&nbsp;</li><li><a href='#'>Gallery</a></li>" > index.html
 	
 	for XML in *.xml;do echo "<li><a href='#$$XML'>&nbsp;&nbsp;"`echo $$XML|sed -e 's/.xml//' -e 's/-/ /g'`"</a></li>">>index.html;done
 	echo "</ul></div><div class='paper'><div class='content'>" >> index.html

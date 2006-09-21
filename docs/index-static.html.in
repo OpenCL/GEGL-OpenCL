@@ -10,7 +10,8 @@
 -->
 <html>
   <head>
-    <title>GEGL-@GEGL_VERSION@</title>
+      <title>GEGL-@GEGL_VERSION@</title>
+      <link rel="shortcut icon" href="images/gegl.ico" />
     
     <style type='text/css'>
        @import url(gegl.css);

@@ -1,5 +1,12 @@
 2006-09-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* images/gegl.ico: added a favicon for use in the gegl documentation.
+	* gallery/Makefile.am,
+	* index-static.html.in,
+	* todo.html: Make use of the new favicon.
+
+2006-09-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* index-static.html.in: fixed link to weekly bug summary in bugzilla,
 	changed terms of external links in menu.
 
