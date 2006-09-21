@@ -1,0 +1,9 @@
+<image>
+  <layer src='data/OpenRaster.png'
+         x='10'
+         y='40'/>
+  <layer src='data/OpenRaster.png'
+         x='72'
+         y='8'/>
+  <layer src='data/romedalen.jpg'/>
+</image>

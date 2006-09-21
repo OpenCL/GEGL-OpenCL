@@ -1,5 +1,17 @@
 2006-09-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* gallery/OpenRaster-00.xml:
+	* gallery/OpenRaster-01.xml:
+	* gallery/OpenRaster-02.xml:
+	* gallery/OpenRaster-03.xml:
+	* gallery/OpenRaster-04.xml:
+	* gallery/OpenRaster-05.xml:
+	* gallery/data/romedalen.jpg:
+	* gallery/data/OpenRaster.svg:
+	* gallery/data/OpenRaster.png: New files.
+
+2006-09-21  Øyvind Kolås  <pippin@gimp.org>
+
 	Improved layout of gallery, reindented samples, and
 	scaled down the sizes of the images.
 

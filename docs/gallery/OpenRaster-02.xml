@@ -1,0 +1,7 @@
+<image>
+  <layer src    ='data/OpenRaster.png'
+         x      ='72'
+         y      ='8'
+         opacity='0.7'/>
+  <layer src='data/romedalen.jpg'/>
+</image>
