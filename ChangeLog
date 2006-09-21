@@ -1,5 +1,11 @@
 2006-09-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-init.c: (gegl_init): set BABL_ERROR to 0.01 in the
+	environment if it is not set, this allows using some more of the
+	optimized conversion function, with a slight accuracy penalty.
+
+2006-09-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-instrument.c: (gegl_instrument_utf8): added grouping to
 	make the diagram easier to read.
 
