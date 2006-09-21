@@ -328,6 +328,7 @@
           padding-top: 4em;
         }
         div.graphic {
+          display: none;
           background-color: #bbf;
           height: 100%;
         }

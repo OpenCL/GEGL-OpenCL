@@ -1,5 +1,10 @@
 2006-09-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl.css: display: none for graphic when printing to fix issues with
+	printing from firefox.
+
+2006-09-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* gallery/Makefile.am: embed the XML in a textarea on the page.
 
 2006-09-21  Øyvind Kolås  <pippin@gimp.org>
