@@ -1,5 +1,10 @@
 2006-09-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/introspect.c: (introspection): added link to short cut icon.
+	* tools/operation_reference.c: (main): added link to short cut icon.
+
+2006-09-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-init.c: (gegl_init): set BABL_ERROR to 0.01 in the
 	environment if it is not set, this allows using some more of the
 	optimized conversion function, with a slight accuracy penalty.

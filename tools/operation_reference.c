@@ -110,7 +110,7 @@ list_properties (GType    type,
 }
 
 
-static gchar *html_top = "<html><head><title>GEGL operations</title><style type='text/css'>@import url(gegl.css);</style></head><body><div class='paper'><div class='content'>\n";
+static gchar *html_top = "<html><head><title>GEGL operations</title><link rel='shortcut icon' href='images/gegl.ico'/><style type='text/css'>@import url(gegl.css);</style></head><body><div class='paper'><div class='content'>\n";
 static gchar *html_bottom = "</div></div></body></html>";
 
 
@@ -189,7 +189,7 @@ main (gint    argc,
   g_print (html_top);
 
   g_print ("<div class='toc'><ul>\n");
-  g_print ("<li><a href='index.html'>GEGL</a></li>\n");
+  g_print ("<li><a href='index.html'>GEGL</a></li><li>&nbsp;</li>\n");
   g_print ("<li><a href='operations.html#'>Operations</a></li>\n");
   category_menu_item ("All", NULL, NULL);
   g_hash_table_foreach (categories, category_menu_item, NULL);

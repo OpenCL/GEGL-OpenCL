@@ -54,8 +54,8 @@ gint  stuff      (gint    argc, gchar **argv);
 void introspection (void)
 {
   file = stdout;
-  fprintf (file, "<html><head><title>GObject class introspection</title><style type='text/css'>@import url(gegl.css);</style>%s</head><body>\n", collapsibles_html);
-  fprintf (file, "<div class='toc'><ul><li><a href='index.html'>GEGL</a></li><li><a href='#top'>Class hierarchy</a></li>\n");
+  fprintf (file, "<html><head><title>GObject class introspection</title><link rel='shortcut icon' href='images/gegl.ico'/><style type='text/css'>@import url(gegl.css);</style>%s</head><body>\n", collapsibles_html);
+  fprintf (file, "<div class='toc'><ul><li><a href='index.html'>GEGL</a></li><li>&nbsp;</li><li><a href='#top'>Class hierarchy</a></li>\n");
   fprintf (file, "</ul></div>\n");
   fprintf (file, "<div class='paper'><div class='content'>\n");
 
