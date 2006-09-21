@@ -91,9 +91,10 @@
         <li><a href='#CodeOverview'>&nbsp;&nbsp;Code Overview</a></li>
         <li>&nbsp;</li>
         <li>&nbsp;</li>
-        <li><a href='http://cvs.gnome.org/viewcvs/gegl/ChangeLog?view=markup'>ChangeLog</a></li>
-        <li><a href='http://crucible.osdl.org/runs/gegl_report.html'>crucible</a></li>
-        <li><a href='http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes'>gmane</a></li>
+        <li><a href='http://cvs.gnome.org/viewcvs/gegl/ChangeLog?view=markup'>changes</a></li>
+        <li><a href='http://crucible.osdl.org/runs/gegl_report.html'>tests</a></li>
+        <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED'>issues</a></li>
+        <li><a href='http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes'>mailarchive</a></li>
       </ul>
     </div>
 
@@ -190,10 +191,10 @@ rectangular regions to be repainted.
         Below is a list of links to get you started with Bugzilla:
         </p>
         <ul>
-            <li><a href='http://bugzilla.gnome.org/reports/weekly-bug-summary.html'>Bugzilla Weekly Summary</a></li>
             <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED'>List of Open Bugs</a></li>
             <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&bug_severity=normal&bug_severity=minor&bug_severity=trivial'>List of Open Bugs (excluding enhancement requests)</a></li>
             <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO&bug_severity=enhancement'>List of Enhancement Proposals</a></li>
+            <li><a href='http://bugzilla.gnome.org/reports/weekly-bug-summary.cgi'>Bugzilla Weekly Summary</a></li>
         </ul>
 
         <a name='Mailinglist'></a>

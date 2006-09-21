@@ -1,3 +1,8 @@
+2006-09-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.html.in: fixed link to weekly bug summary in bugzilla,
+	changed terms of external links in menu.
+
 2006-09-20  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: restructured, and stitched together with
