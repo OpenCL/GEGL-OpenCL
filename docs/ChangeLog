@@ -1,5 +1,9 @@
 2006-09-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* gallery/Makefile.am: embed the XML in a textarea on the page.
+
+2006-09-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* images/gegl.ico: added a favicon for use in the gegl documentation.
 	* gallery/Makefile.am,
 	* index-static.html.in,
