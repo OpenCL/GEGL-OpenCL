@@ -1,5 +1,14 @@
 2006-09-21  Øyvind Kolås  <pippin@gimp.org>
 
+	Added relative links to other archs when building on crucible.
+
+	* Makefile.am:
+	* gallery/Makefile.am:
+	* gegl.css:
+	* index-static.html.in:
+
+2006-09-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* gallery/OpenRaster-00.xml:
 	* gallery/OpenRaster-01.xml:
 	* gallery/OpenRaster-02.xml:

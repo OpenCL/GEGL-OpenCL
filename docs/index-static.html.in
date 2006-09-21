@@ -14,7 +14,9 @@
       <link rel="shortcut icon" href="images/gegl.ico" />
     
     <style type='text/css'>
-       @import url(gegl.css);
+        @import url(gegl.css);
+    </style>
+
     </style>
 
     <script type='text/javascript'>

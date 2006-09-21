@@ -239,6 +239,8 @@
         div.print {
           display: none;
         }
+        ul.crucible {margin:0; padding:0}
+        ul.crucible li{display: inline;}
       }
 
       @media print {
