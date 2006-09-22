@@ -1,5 +1,11 @@
 2006-09-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/module/geglmodule.c: (gegl_module_register_type): put some code
+	dead to allow re-registration with the same name to fail safely later
+	with a warning.
+
+2006-09-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply): do not print the debug
 	rects twice.
 

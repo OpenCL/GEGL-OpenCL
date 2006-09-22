@@ -534,12 +534,14 @@ gegl_module_register_type (GTypeModule     *module,
                            GTypeFlags       flags)
 {
   GType type = g_type_from_name (type_name);
-  if (type)
+  if (0 && type)
     {
       GTypePlugin *old_plugin = g_type_get_plugin (type);
 
       if (old_plugin != G_TYPE_PLUGIN (module))
         {
+          g_warning ("EeeK");
+          return -1;
           /* ignoring loading of plug-in from second source */
           return type;
         }
