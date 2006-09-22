@@ -26,13 +26,13 @@ index.html: Makefile.am
 	echo "</div></div></div></body></html>" >> index.html
 all-local:  index.html
 	echo "--[Rendering sample compositions]--"
-	export GEGL_PATH=$(top_builddir)/operations:$(top_builddir)/lib/gegl;\
+	export GEGL_PATH=$(top_builddir)/operations;\
 	export GEGL_DEBUG_TIME=yes;\
 	for XML in $(srcdir)/*.xml;do $(top_builddir)/gegl/gegl $$XML -s -o `echo $$XML|sed s/xml/png/` > `echo $$XML|sed s/xml/txt/`;done
 	echo "--"
 
 %.png:%.xml $(wildcard $(top_builddir)/operations/*/*.so)
-	export GEGL_PATH=$(top_builddir)/operations:$(top_builddir)/lib/gegl;\
+	export GEGL_PATH=$(top_builddir)/operations;\
 	$(top_builddir)/gegl/gegl $< -s -o $@
 
 clean-local:
