@@ -394,6 +394,8 @@ operations/meta/Makefile
 operations/render/Makefile
 operations/transform/Makefile
 operations/transparency/Makefile
+operations/workshop/Makefile
+operations/workshop/generated/Makefile
 tools/Makefile
 docs/Makefile
 docs/index-static.html

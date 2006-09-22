@@ -1,5 +1,21 @@
 2006-09-22  Øyvind Kolås  <pippin@gimp.org>
 
+	Added a workshop directory in operations, that contains operations
+	that are not compiled by default. To compile them, enter the workshop
+	dir,. type make, and make install, if you rebuild the docs directory
+	after having built the workshop operations, then they will be
+	documented in the Operations Reference as well.
+
+	* configure.in: generate the makefiles for the workshop.
+	* operations/workshop/Makefile.am:
+	* operations/workshop/generated/Makefile.am:
+
+	* operations/workshop/mandelbrot.c: mandelbrot renderer.
+	* operations/workshop/generated/blend.rb: a heap of blending modes.
+	* autogen.sh: generate the .c files for blend.rb.
+
+2006-09-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/module/geglmodule.c: (gegl_module_register_type): put some code
 	dead to allow re-registration with the same name to fail safely later
 	with a warning.
