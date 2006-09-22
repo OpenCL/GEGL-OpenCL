@@ -1,3 +1,7 @@
+2006-09-22  Dominik Ernst <dernst@gmx.de>
+	* operations/file-io/png-load.c: Added support for interlaced, gray-scale
+	and paletted PNG images.
+
 2006-09-22  Øyvind Kolås  <pippin@gimp.org>
 
 	Added a workshop directory in operations, that contains operations

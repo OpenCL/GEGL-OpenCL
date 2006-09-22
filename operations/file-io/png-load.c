@@ -16,6 +16,7 @@
  * Boston, MA 02110-1301, USA.
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ *           2006 Dominik Ernst <dernst@gmx.de>
  */
 #if GEGL_CHANT_PROPERTIES
  
@@ -40,11 +41,13 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
                         gint         dest_x,
                         gint         dest_y,
                         gint        *ret_width,
-                        gint        *ret_height);
+                        gint        *ret_height,
+                        gpointer     format);
 
 gint query_png (const gchar *path,
                 gint        *width,
-                gint        *height);
+                gint        *height,
+                gpointer    *format);
 
 static gboolean
 process (GeglOperation *operation)
@@ -52,13 +55,14 @@ process (GeglOperation *operation)
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   gint          result;
+  gpointer      format;
 
     {
     gint width, height;
 
     if (strcmp(self->path, "-"))
       {
-        result = query_png (self->path, &width, &height);
+        result = query_png (self->path, &width, &height, &format);
         if (result)
           {
             g_warning ("%s is %s really a PNG file?",
@@ -75,7 +79,7 @@ process (GeglOperation *operation)
       }
 
     op_source->output = g_object_new (GEGL_TYPE_BUFFER,
-                                      "format", babl_format ("R'G'B'A u8"),
+                                      "format", format,
                                       "x",      0,
                                       "y",      0,
                                       "width",  width,
@@ -83,7 +87,7 @@ process (GeglOperation *operation)
                                       NULL);
 
     result = gegl_buffer_import_png (op_source->output, self->path, 0, 0,
-                                     &width, &height);
+                                     &width, &height, format);
 
     if (result)
       {
@@ -116,6 +120,7 @@ get_defined_region (GeglOperation *operation)
   GeglOperationSource *source = GEGL_OPERATION_SOURCE (operation);
   gint width, height;
   gint status;
+  gpointer format;
 
   if (!strcmp (self->path, "-"))
     {
@@ -125,7 +130,7 @@ get_defined_region (GeglOperation *operation)
     }
   else
     {
-      status = query_png (self->path, &width, &height);
+      status = query_png (self->path, &width, &height, &format);
 
       if (status)
         {
@@ -143,11 +148,14 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
                         gint         dest_x,
                         gint         dest_y,
                         gint        *ret_width,
-                        gint        *ret_height)
+                        gint        *ret_height,
+                        gpointer     format)
 {
   gint           width;
   gint           height;
-  gint           row_stride;
+  gint           bit_depth;
+  gint           bpp;
+  gint           number_of_passes=1;
   png_uint_32    w;
   png_uint_32    h;
   FILE          *infile;
@@ -155,6 +163,8 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
   png_infop      load_info_ptr;
   unsigned char  header[8];
   guchar        *pixels;
+  png_bytep     *rows;
+
 
   unsigned   int i;
   png_bytep  *row_p = NULL;
@@ -209,59 +219,107 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
   png_set_sig_bytes (load_png_ptr, 8);
   png_read_info (load_png_ptr, load_info_ptr);
   {
-    int bit_depth;
     int color_type;
+    int interlace_type;
 
-    png_get_IHDR (load_png_ptr, load_info_ptr, &w, &h, &bit_depth, &color_type, NULL, NULL, NULL);
+    png_get_IHDR (load_png_ptr, 
+                  load_info_ptr,
+                  &w, &h, 
+                  &bit_depth, 
+                  &color_type, 
+                  &interlace_type, 
+                  NULL, NULL);
     width = w;
     height = h;
     if (ret_width)
       *ret_width = w;
     if (ret_height)
       *ret_height = h;
-    png_set_strip_16 (load_png_ptr);
-    if ((color_type == PNG_COLOR_TYPE_RGB))
+     
+    if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
       {
-	png_set_add_alpha (load_png_ptr, 0xffffffff, 1);
-      }
-    else if (!(color_type == PNG_COLOR_TYPE_RGBA))
-      {
-        g_warning ("bpp or type mismatch");
-        png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
-        fclose (infile);
-        return -1;
+        png_set_expand (load_png_ptr);
+        bit_depth = 8;
       }
 
-    if (png_get_interlace_type (load_png_ptr, load_info_ptr) == PNG_INTERLACE_ADAM7)
+    if (png_get_valid (load_png_ptr, load_info_ptr, PNG_INFO_tRNS))
       {
-        g_warning ("not supporting interlaced pngs");
-        png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
-        fclose (infile);
-        return -1;
+        png_set_tRNS_to_alpha (load_png_ptr);
+        color_type |= PNG_COLOR_MASK_ALPHA;
       }
+
+    switch (color_type)
+      {
+        case PNG_COLOR_TYPE_GRAY:
+          bpp = 1;
+          break;
+        case PNG_COLOR_TYPE_GRAY_ALPHA:
+          bpp = 2;
+          break;
+        case PNG_COLOR_TYPE_RGB:
+          bpp = 3;
+          break;
+        case PNG_COLOR_TYPE_RGB_ALPHA:
+          bpp = 4;
+          break;
+        case (PNG_COLOR_TYPE_PALETTE | PNG_COLOR_MASK_ALPHA):
+          bpp = 4;
+          break;
+        case PNG_COLOR_TYPE_PALETTE:
+          bpp = 3;
+          break;
+        default:
+          g_warning ("color type mismatch");
+          png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
+          fclose (infile);
+          return -1;
+      }
+
+    if (color_type == PNG_COLOR_TYPE_PALETTE)
+      png_set_palette_to_rgb (load_png_ptr);
+
+    if (bit_depth == 16)
+      bpp = bpp << 1;
+
+#if BYTE_ORDER == LITTLE_ENDIAN
+    if (bit_depth == 16)
+      png_set_swap (load_png_ptr);
+#endif
+
+    if (interlace_type == PNG_INTERLACE_ADAM7)
+      number_of_passes = png_set_interlace_handling (load_png_ptr);
+
+    if (load_info_ptr->valid & PNG_INFO_gAMA)
+      {
+        gdouble gamma;
+        png_get_gAMA (load_png_ptr, load_info_ptr, &gamma);
+        png_set_gamma (load_png_ptr, 2.2, gamma);
+      }
+    else
+      {
+        png_set_gamma (load_png_ptr, 2.2, 0.45455);
+      }
+
+    png_read_update_info (load_png_ptr, load_info_ptr);
   }
+ 
+  pixels = g_malloc0 (width*height*bpp);
+  rows = g_malloc0 (height*sizeof(png_bytep*));
 
-  row_stride = w * 4;
-  pixels = g_malloc0 (row_stride);
+  for (i=0; i<h; i++) 
+    rows[i] = pixels+i*width*bpp;
 
-  for (i=0; i< h; i++)
-    {
-      GeglBuffer *rect = g_object_new (GEGL_TYPE_BUFFER,
-                    "source", gegl_buffer,
-                    "x",      dest_x,
-                    "y",      dest_y + i,
-                    "width",  width,
-                    "height", 1,
-                    NULL);
-      png_read_rows (load_png_ptr, &pixels, NULL, 1);
-      gegl_buffer_set_fmt (rect, pixels, babl_format ("R'G'B'A u8"));
-      g_object_unref (rect);
-    }
+  for (i=0; i<number_of_passes; i++)
+    png_read_rows (load_png_ptr, rows, NULL, height);
+  
+  gegl_buffer_set (gegl_buffer, pixels);
 
   png_read_end (load_png_ptr, NULL);
   png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
 
   g_free (pixels);
+  g_free (rows);
+
   if (infile!=stdin)
     fclose (infile);
 
@@ -270,7 +328,8 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
 
 gint query_png (const gchar *path,
                 gint        *width,
-                gint        *height)
+                gint        *height,
+                gpointer    *format)
 {
   png_uint_32   w;
   png_uint_32   h;
@@ -325,22 +384,66 @@ gint query_png (const gchar *path,
   {
     int bit_depth;
     int color_type;
+    gchar format_string[32];
 
-    png_get_IHDR (load_png_ptr, load_info_ptr, &w, &h, &bit_depth, &color_type, NULL, NULL, NULL);
+    png_get_IHDR (load_png_ptr, 
+                  load_info_ptr,
+                  &w, &h, 
+                  &bit_depth,
+                  &color_type,
+                  NULL, NULL, NULL);
     *width = w;
     *height = h;
-    png_set_strip_16 (load_png_ptr);
-    if ((color_type == PNG_COLOR_TYPE_RGB))
+
+    if (load_info_ptr->valid & PNG_INFO_tRNS)
+      color_type |= PNG_COLOR_MASK_ALPHA;
+
+    if (color_type & PNG_COLOR_TYPE_RGB)
       {
-	png_set_add_alpha (load_png_ptr, 0xffffffff, 1);
+        if (color_type & PNG_COLOR_MASK_ALPHA)
+          strcpy (format_string, "R'G'B'A ");
+        else
+          strcpy (format_string, "R'G'B' ");
       }
-    else if (!(color_type == PNG_COLOR_TYPE_RGBA))
+    else if ((color_type & PNG_COLOR_TYPE_GRAY) == PNG_COLOR_TYPE_GRAY)
+      {
+        if (color_type & PNG_COLOR_MASK_ALPHA)
+          strcpy (format_string, "Y'A ");
+        else
+          strcpy (format_string, "Y' ");
+      }
+    else if (color_type & PNG_COLOR_TYPE_PALETTE)
+      {
+        if (color_type & PNG_COLOR_MASK_ALPHA)
+          strcpy (format_string, "R'G'B'A ");
+        else
+          strcpy (format_string, "R'G'B' ");
+      }
+    else
       {
         g_warning ("color type mismatch");
         png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
         fclose (infile);
         return -1;
       }
+
+    if (bit_depth <= 8)
+      {
+        strcat (format_string, "u8");
+      }
+    else if(bit_depth == 16)
+      {
+        strcat (format_string, "u16");
+      }
+    else
+      {
+        g_warning ("bit depth mismatch");
+        png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
+        fclose (infile);
+        return -1;
+      }
+
+    *format = babl_format (format_string);
   }
   png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
   fclose (infile);
