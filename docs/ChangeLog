@@ -1,5 +1,9 @@
 2006-09-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.html.in: updated Code Overview.
+
+2006-09-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/gallery/Makefile.am: removed unneeded elements from GEGL_PATH
 
 2006-09-21  Øyvind Kolås  <pippin@gimp.org>

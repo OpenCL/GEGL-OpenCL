@@ -419,62 +419,81 @@ sudo make install</pre>
 
 <h4>Directories in the GEGL checkout:</h4>
 <pre>gegl-dist-root
- |
- |
- |--gegl         core source of GEGL, graph handling, library init/deinit,
- |   |           evaluation management. Also contains common abstract base
- |   |           classes for plug-in operations.
- |   | 
- |   |--buffer   contains the implementation of Bab
- |   |            - sparse (tiled)
- |   |            - recursivly subbuffer extendable
- |   |            - clipping rectangle (defaults to bounds when making
- |   |              subbuffers)
- |   |            - storage in any babl supported pixel format
- |   |            - read/write rectangular region as linear buffer for
- |   |              any babl supported pixel format.
- |   |
- |   `--module   The code to load plug-ins located in a colon seperated list
- |               of paths from the environment variable GEGL_PATH
- |
- |--operations   Runtime loaded plug-ins for image processing operations.
- |
- |--docs         A website for GEGL
- |   |
- |   |--gallery  A gallery of sample GEGL compositions.
- |   |   |
- |   |   `--data Image data used by the sample compositions.
- |   |
- |   `--graphics Misc graphics. (including SVG GEGL logo).
- |
- |--tools        some small utilities to help the build.
- |
- |
- |--tests        Unit tests, that are currently not working, since the tests
- |               now depend on deprecated behavior.
- |
- | GIL           has documentation, and seems to be in a working state, that
- |               working state is not in sync with GEGL, and it is thus dead
- |               code at the moment.
- |
- |--gil          
- |--codegen      part of gil
- `--opgen        seems to be code using an older version of gil
+ │
+ │
+ ├──gegl             core source of GEGL, graph handling, library init/deinit,
+ │   │               evaluation management. Also contains common abstract base
+ │   │               classes for plug-in operations.
+ │   │ 
+ │   ├──buffer       contains the implementation of Bab
+ │   │                - sparse (tiled)
+ │   │                - recursivly subbuffer extendable
+ │   │                - clipping rectangle (defaults to bounds when making
+ │   │                  subbuffers)
+ │   │                - storage in any babl supported pixel format
+ │   │                - read/write rectangular region as linear buffer for
+ │   │                  any babl supported pixel format.
+ │   │
+ │   └──module        The code to load plug-ins located in a colon seperated
+ │                    list of paths from the environment variable GEGL_PATH
+ │
+ ├──operations        Runtime loaded plug-ins for image processing operations.
+ │   │
+ │   ├──core          Basic operations tightly coupled with GEGL.
+ │   │
+ │   ├──blur          Blurring operations.
+ │   ├──color         Color adjustments.
+ │   ├──display       Operations that show image data as a side effect.
+ │   ├──meta          Operations that are made by gegl graphs.
+ │   ├──file-io       File loaders.
+ │   ├──render        Operations providing patters, graidents, fills, ...
+ │   ├──transform     transforming/resampling operations
+ │   ├──transparency  opacity/mask control
+ │   │
+ │   ├──generated     Operations generated from scripts (currently
+ │   │                ruby scripts.) (arithmetic, compositing, ...)
+ │   │
+ │   └──workshop      Works in progress, (not compiled by default)
+ │       └──generated
+ │                    
+ │
+ ├──docs              A website for GEGL
+ │   │
+ │   ├──gallery       A gallery of sample GEGL compositions.
+ │   │   │
+ │   │   └──data      Image data used by the sample compositions.
+ │   │
+ │   └──images        Misc graphics. (including SVG GEGL logo).
+ │
+ ├──tools             s┄ome small utilities to help the build.
+ │
+ │   ┄┄┄┄┄┄┄directories below this line are not included in dist┄┄┄┄┄┄┄┄
+ │
+ ├──tests             Unit tests, that are currently not working, since the
+ │                    tests now depend on deprecated behavior.
+ │
+ │ GIL                has documentation, and seems to be in a working state,
+ │                    that working state is not in sync with GEGL, and it is
+ │                    this code at the moment.
+ │
+ ├──gil          
+ ├──codegen           part of gil
+ └──opgen             seems to be code using an older version of gil
 </pre>
 
 <h4>Directories of babl</h4>
 <pre>babl-dist-root
- |
- |--babl       the babl core
- |   `--base   reference implementations for RGB and Grayscale Color Models,
- |             8bit 16bit, and 32bit and 64bit floating point.
- |--extensions CIE-Lab color model as well as a naive-CMYK color model.
- |             also contains a random cribbage of old conversion optimized
- |             code from gggl. Finding more exsisting conversions in third
- |             part libraries (hermes, lcms?, liboil?) would improve the
- |             speed of babl considerably.
- |--tests      tests used to keep babl sane during development.
- `--docs       Documentation/webpage for babl.
+ │
+ ├──babl       the babl core
+ │   └──base   reference implementations for RGB and Grayscale Color Models,
+ │             8bit 16bit, and 32bit and 64bit floating point.
+ ├──extensions CIE-Lab color model as well as a naive-CMYK color model.
+ │             also contains a random cribbage of old conversion optimized
+ │             code from gggl. Finding more exsisting conversions in third
+ │             part libraries (hermes, lcms?, liboil?) would improve the
+ │             speed of babl considerably.
+ ├──tests      tests used to keep babl sane during development.
+ └──docs       Documentation/webpage for babl.
 </pre>
 
         <!--
@@ -496,8 +515,6 @@ sudo make install</pre>
         <p>Most of the operations do not use the verbose gobject syntax, but preprocessor
         tricks turning the boilerplate in a <a
             href='http://cvs.gnome.org/viewcvs/gegl/operations/color/brightness-contrast.c?view=markup'>short chant</a>.
-
-
       </div>
     </div>
     <div class='graphic'>
