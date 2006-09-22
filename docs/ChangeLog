@@ -1,5 +1,11 @@
 2006-09-22  Øyvind Kolås  <pippin@gimp.org>
 
+	reviewed by: <delete if not using a buddy>
+
+	* Makefile.am:
+
+2006-09-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* index-static.html.in: updated Code Overview.
 
 2006-09-22  Øyvind Kolås  <pippin@gimp.org>
