@@ -46,35 +46,6 @@ Desired backends:
 
 <a name='Evaluation'><h2>Evaluation</h2></a>
 
-<h3>Optimized evaluation methods</h3>
-
-<p>
-Right now all computation is done in 32bit floating point RGBA. Allowing to
-register optimized versions of different pixel formats (that can be regression
-tested against the float implementation) is and important step. This would also
-allow to plug-in external code, like snippets of cairo code to do evaluation in
-8bit.
-</p>
-
-<h3>Pixel format negotiation</h3>
-
-<p>
-When more pixel-format versions exist of OPs, more works needs to be done
-when iterating the GRAPH, the desired op, and the format with which the
-image data flows in the graph needs to be negotiatied between speed and quality.
-</p>
-
-<h3>Multithreading</h3>
-
-<p>
-Make it possible to have multiple evaluations of the graph happening at the
-same time. (both the way the visitor pattern is implemented, and the reference
-counting for immediate freeing of buffers assumes a single thread of operation
-at the moment.) The multithreading would allow splitting the image up into
-rectangular "work sections", that are requested for rendering.
-</p>
-
-
 <a name='XML'><h2>XML</h2></a>
 
 <p>
@@ -120,12 +91,6 @@ and decide to retire it,. or move it down in the graph. Based on profiling data 
 property changes over time,. it should be possible to discover optimal cache points
 in the graph.
 </p>
-
-<h3>SVG loader</h3>
-
-<p>
-With basis in the text source (which uses cairo), create an operation that renders
-to a buffer in a similar fashion using librsvg for the SVG parsing.</p>
 
 <a name='GIL'><h3>GIL</h3></a>
 
