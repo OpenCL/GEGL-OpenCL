@@ -78,6 +78,13 @@ void          gegl_node_blit_buf            (GeglNode     *self,
                                              gint          rowstride,
                                              gpointer     *destination_buf);
 
+void           egl_node_link                (GeglNode     *source,
+                                             GeglNode     *sink);
+
+void          gegl_node_link_many           (GeglNode     *source,
+                                             GeglNode     *dest,
+                                             ...);
+
 gboolean      gegl_node_connect             (GeglNode     *self,
                                              const gchar  *input_pad_name,
                                              GeglNode     *source,

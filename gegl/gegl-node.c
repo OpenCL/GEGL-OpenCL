@@ -572,6 +572,32 @@ gegl_node_get_sources (GeglNode *self)
   return self->sources;
 }
 
+void          gegl_node_link                (GeglNode     *source,
+                                             GeglNode     *sink)
+{
+  gegl_node_connect (sink, "input", source, "output");
+}
+
+void          gegl_node_link_many           (GeglNode     *source,
+                                             GeglNode     *dest,
+                                             ...)
+{
+  va_list        var_args;
+  g_assert (GEGL_IS_NODE (source));
+  g_assert (GEGL_IS_NODE (dest));
+
+  va_start (var_args, dest);
+  while (dest)
+    {
+      gegl_node_link (source, dest);
+      source = dest;
+      dest = va_arg (var_args, GeglNode*);
+    }
+  va_end (var_args);
+
+}
+
+
 void
 gegl_node_blit_buf (GeglNode    *self,
                     GeglRect    *roi,

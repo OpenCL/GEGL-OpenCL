@@ -1,3 +1,9 @@
+2006-09-23  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-node.[ch]: (gegl_node_link), (gegl_node_link_many), added
+	new convenience function to be able to more elegantly link up a graph.
+	(concept taken from gstreamers API).
+
 2006-09-22  Dominik Ernst <dernst@gmx.de>
 	* operations/file-io/png-load.c: Added support for interlaced, gray-scale
 	and paletted PNG images.
