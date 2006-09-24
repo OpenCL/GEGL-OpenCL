@@ -14,9 +14,9 @@ copyright = '
 
 a = [
       ['average',       '(cA + aB)/2'],
-      ['screen',        '1.0 - ((1.0-cA) * (1.0-cB))'],
-      ['darken',        'cA < cB ? cA : cB'],
-      ['lighten',       'cA > cB ? cA : cB'],
+      #['screen',        '1.0 - ((1.0-cA) * (1.0-cB))'],
+      #['darken',        'cA < cB ? cA : cB'],
+      #['lighten',       'cA > cB ? cA : cB'],
       ['difference',    'fabs(cA-cB)'],
       ['negation',      '1.0 - fabs(1.0-cA-cB)'],
       ['exclusion',     'cA + cB - 2*cA*cB'],

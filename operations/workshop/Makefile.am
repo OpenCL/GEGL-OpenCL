@@ -20,6 +20,9 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 %.so: %.c $(GEGLHEADERS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
+gst.so: gst.c $(GEGLHEADERS)
+	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config gstreamer-0.10 --libs --cflags`
+
 clean-local:
 	rm -f $(SOBJS) *~
 

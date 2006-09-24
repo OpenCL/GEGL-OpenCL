@@ -1,3 +1,12 @@
+2006-09-24  Øyvind Kolås  <pippin@gimp.org>
+
+	Commented out duplicate operations in blend.rb, added cvs ignore files.
+
+	* operations/workshop/.cvsignore:
+	* operations/workshop/Makefile.am:
+	* operations/workshop/generated/.cvsignore:
+	* operations/workshop/generated/blend.rb:
+
 2006-09-23  Øyvind Kolås  <pippin@gimp.org>
 	
 	* configure.in: depend on babl 0.5 or newer.
