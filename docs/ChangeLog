@@ -1,3 +1,14 @@
+2006-09-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.html.in: added Hello World example.
+
+2006-09-23  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* index-static.html.in:
+	* todo.html:
+
 2006-09-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* todo.html: trimmed dwon todo list a bit, things done or moved to
