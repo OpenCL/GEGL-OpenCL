@@ -159,7 +159,7 @@ static void associate (GeglOperation *operation)
 
   priv->output = gegl_graph_output (graph, "output");
 
-  priv->load = gegl_graph_create_node (graph,
+  priv->load = gegl_graph_new_node (graph,
                                        "operation", "text",
                                        "string", "foo",
                                        NULL);
@@ -197,7 +197,7 @@ refresh_cache (GeglChantOperation *self)
           }
 
         gegl = g_object_new (GEGL_TYPE_GRAPH, NULL);
-        load = gegl_graph_create_node (gegl, "operation", "load",
+        load = gegl_graph_new_node (gegl, "operation", "load",
                                              "cache", FALSE,
                                              "path", self->path,
                                              NULL);

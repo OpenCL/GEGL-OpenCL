@@ -63,7 +63,7 @@ test_mock_image_operation_g_object_properties(Test *test)
                           "length", 3,
                           "default-pixel", 1,
                           NULL);
-    a = gegl_graph_create_node (gegl,
+    a = gegl_graph_new_node (gegl,
                                 "operation", "GeglMockImageOperation",
                                 "input1", 2, 
                                 "input0", image,
@@ -121,12 +121,12 @@ test_mock_image_operation_chain(Test *test)
                            "default-pixel", 1,
                            NULL);
 
-    A = gegl_graph_create_node (gegl,
+    A = gegl_graph_new_node (gegl,
                                 "operation", "GeglMockImageOperation", 
                                 "input0",    image,
                                 "input1",    2,
                                 NULL);
-    B = gegl_graph_create_node (gegl,
+    B = gegl_graph_new_node (gegl,
                                 "operation", "GeglMockImageOperation",
                                 "input1",    3,
                                 NULL);

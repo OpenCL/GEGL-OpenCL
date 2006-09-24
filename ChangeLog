@@ -1,5 +1,22 @@
 2006-09-24  Øyvind Kolås  <pippin@gimp.org>
 
+	s/gegl_graph_create_node/gegl_graph_new_node/ in public API.
+
+	* gegl/gegl-graph.c: (gegl_graph_new_node):
+	* gegl/gegl-graph.h:
+	* gegl/gegl-xml.c: (start_element):
+	* gegl/gegl.c: (main), (main_interactive):
+	* operations/file-io/load.c: (associate), (refresh_cache):
+	* operations/meta/dropshadow.c: (associate):
+	* operations/meta/layer.c: (associate), (refresh_cache):
+	* operations/meta/unsharp-mask.c: (associate):
+	* tests/mockimageoperationtest.c:
+	(test_mock_image_operation_g_object_properties),
+	(test_mock_image_operation_chain):
+	* tools/introspect.c: (stuff):
+
+2006-09-24  Øyvind Kolås  <pippin@gimp.org>
+
 	Commented out duplicate operations in blend.rb, added cvs ignore files.
 
 	* operations/workshop/.cvsignore:

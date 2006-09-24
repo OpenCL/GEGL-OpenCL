@@ -107,14 +107,14 @@ static void associate (GeglOperation *operation)
   priv->aux = gegl_graph_input (graph, "aux");
   priv->output = gegl_graph_output (graph, "output");
 
-  priv->composite_op = gegl_graph_create_node (graph,
+  priv->composite_op = gegl_graph_new_node (graph,
                                          "operation", self->composite_op,
                                          NULL);
 
-  priv->shift = gegl_graph_create_node (graph, "operation", "shift", NULL);
-  priv->opacity = gegl_graph_create_node (graph, "operation", "opacity", NULL);
+  priv->shift = gegl_graph_new_node (graph, "operation", "shift", NULL);
+  priv->opacity = gegl_graph_new_node (graph, "operation", "opacity", NULL);
   
-  priv->load = gegl_graph_create_node (graph,
+  priv->load = gegl_graph_new_node (graph,
                                        "operation", "buffer",
                                        NULL);
 
@@ -186,7 +186,7 @@ refresh_cache (GeglChantOperation *self)
           }
 
         gegl = g_object_new (GEGL_TYPE_GRAPH, NULL);
-        load = gegl_graph_create_node (gegl, "operation", "load",
+        load = gegl_graph_new_node (gegl, "operation", "load",
                                              "cache", FALSE,
                                              "path", self->src,
                                              NULL);

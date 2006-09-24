@@ -90,7 +90,7 @@ main (gint    argc,
           glong timing;
 
           timing = gegl_ticks ();
-          GeglNode *output = gegl_graph_create_node (GEGL_GRAPH (gegl),
+          GeglNode *output = gegl_graph_new_node (GEGL_GRAPH (gegl),
                                "operation", "png-save",
                                "path", o->output,
                                NULL);
@@ -126,7 +126,7 @@ static gint
 main_interactive (GeglNode *gegl,
                   GeglOptions *o)
 {
-  GeglNode *output = gegl_graph_create_node (GEGL_GRAPH (gegl),
+  GeglNode *output = gegl_graph_new_node (GEGL_GRAPH (gegl),
                        "operation", "display",
                        NULL);
 

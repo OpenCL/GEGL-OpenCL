@@ -90,11 +90,11 @@ static void associate (GeglOperation *operation)
   if (!priv->over)
     {
       GeglGraph *graph = GEGL_GRAPH (priv->self);
-      priv->over = gegl_graph_create_node (graph, "operation", "over", NULL);
-      priv->translate = gegl_graph_create_node (graph, "operation", "translate", NULL);
-      priv->opacity = gegl_graph_create_node (graph, "operation", "opacity", NULL);
-      priv->blur = gegl_graph_create_node (graph, "operation", "gaussian-blur", NULL);
-      priv->darken = gegl_graph_create_node (graph, "operation", "brightness-contrast", "brightness", -0.9, NULL);
+      priv->over = gegl_graph_new_node (graph, "operation", "over", NULL);
+      priv->translate = gegl_graph_new_node (graph, "operation", "translate", NULL);
+      priv->opacity = gegl_graph_new_node (graph, "operation", "opacity", NULL);
+      priv->blur = gegl_graph_new_node (graph, "operation", "gaussian-blur", NULL);
+      priv->darken = gegl_graph_new_node (graph, "operation", "brightness-contrast", "brightness", -0.9, NULL);
 
       gegl_node_connect (priv->darken, "input", priv->input, "output");
       gegl_node_connect (priv->blur,   "input", priv->darken, "output");

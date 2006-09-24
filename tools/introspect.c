@@ -467,10 +467,10 @@ stuff (gint    argc,
     {
       GeglGraph *gegl = g_object_new (GEGL_TYPE_GRAPH, NULL);
 
-      GeglNode  *display = gegl_graph_create_node (gegl,
+      GeglNode  *display = gegl_graph_new_node (gegl,
                     "operation", "crop",
                     NULL);
-      GeglNode  *png_load = gegl_graph_create_node (gegl,
+      GeglNode  *png_load = gegl_graph_new_node (gegl,
                     "operation", "checkerboard",
                     NULL);
 
