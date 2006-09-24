@@ -371,7 +371,7 @@ AC_SUBST(SDL_LIBS)
 # Check for other items
 #######################
 
-PKG_CHECK_MODULES(BABL, babl >= 0.0.4)
+PKG_CHECK_MODULES(BABL, babl >= 0.0.5)
 
 # w3m is used to autogenerate README
 AC_PATH_PROG(W3M, w3m, no)
