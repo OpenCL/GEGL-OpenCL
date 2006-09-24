@@ -1,3 +1,9 @@
+2006-09-24  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/buffer/gegl-buffer.c (gegl_buffer_iterate_fmt): Moved some
+	offset calculations out of the inner loops as suggested by the
+	TODO comment.
+
 2006-09-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-graph.[ch]: (gegl_graph_create_node): new simple function
