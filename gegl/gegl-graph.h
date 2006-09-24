@@ -64,6 +64,8 @@ gint       gegl_graph_get_num_children (GeglGraph    *self);
 GeglNode * gegl_graph_new_node         (GeglGraph    *self,
                                         const gchar  *first_property_name,
                                         ...);
+GeglNode * gegl_graph_create_node      (GeglGraph    *self,
+                                        const gchar  *operation);
 GeglNode * gegl_graph_input            (GeglGraph    *graph,
                                         const gchar  *name);
 GeglNode * gegl_graph_output           (GeglGraph    *graph,

@@ -1,5 +1,10 @@
 2006-09-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-graph.[ch]: (gegl_graph_create_node): new simple function
+	to create a node without setting parameters (syntactic sugar).
+
+2006-09-24  Øyvind Kolås  <pippin@gimp.org>
+
 	s/gegl_graph_create_node/gegl_graph_new_node/ in public API.
 
 	* gegl/gegl-graph.c: (gegl_graph_new_node):

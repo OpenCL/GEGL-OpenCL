@@ -170,6 +170,12 @@ gegl_graph_new_node (GeglGraph   *self,
   return node;
 }
 
+GeglNode * gegl_graph_create_node      (GeglGraph    *self,
+                                        const gchar  *operation)
+{
+  return gegl_graph_new_node (self, "operation", operation, NULL);
+}
+
 static GeglNode *
 gegl_graph_get_pad_proxy (GeglGraph   *graph,
                           const gchar *name,
