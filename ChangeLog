@@ -1,3 +1,26 @@
+2006-09-25  Øyvind Kolås  <pippin@gimp.org>
+
+	Refactoring of how meta-nodes are connected in the graph (hopefully
+	more similar to normal nodes.)
+
+	* gegl/gegl-eval-visitor.c: (visit_pad): use
+	gegl_pad_get_real_connected_to instead of gegl_pad_get_connected_to.
+	* gegl/gegl-have-visitor.c: (visit_node): some sanity checking.
+	* gegl/gegl-node.c: (gegl_node_get_depends_on): add the needed code
+	to do traversals properly.
+	(gegl_node_get_op_type_name): provide better debug string for
+	meta-nodes.
+	* gegl/gegl-operation.c: removed function produce_nodes (use
+	gegl_node_depends_on instead.
+	(gegl_operation_source_get_defined_region),
+	(gegl_operation_set_source_region), (get_defined_region),
+	(calc_source_regions): deal with changes in connections between
+	nodes.
+	* gegl/gegl-pad.[ch]: (gegl_pad_get_connected_to),
+	(gegl_pad_get_real_connected_to): resurrected the redirecting
+	gegl_pad_get_connected_to function.
+	* gegl/gegl-xml.c: (add_stack): use gegl_connected_to.
+
 2006-09-24  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* gegl/buffer/gegl-buffer.c (gegl_buffer_iterate_fmt): Moved some

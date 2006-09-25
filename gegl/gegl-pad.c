@@ -214,7 +214,7 @@ gegl_pad_get_name (GeglPad *self)
 }
 
 GeglPad *
-gegl_pad_get_connected_to2 (GeglPad *self)
+gegl_pad_get_connected_to (GeglPad *self)
 {
   GeglPad *pad = NULL;
   g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
@@ -230,12 +230,11 @@ gegl_pad_get_connected_to2 (GeglPad *self)
 }
 
 GeglPad *
-gegl_pad_get_connected_to (GeglPad *self)
+gegl_pad_get_real_connected_to (GeglPad *self)
 {
-  GeglPad *pad = gegl_pad_get_connected_to2 (self);
+  GeglPad *pad = gegl_pad_get_connected_to (self);
   g_assert (GEGL_IS_PAD (self));
 
-  /* redirect for graphs */
   if (!pad && !strcmp (gegl_object_get_name (GEGL_OBJECT (self->node)), "proxynop-input"))
     {
       GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
@@ -250,7 +249,7 @@ gegl_pad_get_connected_to (GeglPad *self)
           pad = gegl_node_get_pad (graph, gegl_pad_get_name (self));
         }
       if (pad)
-         pad = gegl_pad_get_connected_to2 (pad);
+         pad = gegl_pad_get_connected_to (pad);
     }
   return pad;
 }

@@ -491,11 +491,11 @@ static void add_stack (SerializeState *ss,
             }
 
           if (aux &&
-              gegl_pad_get_connected_to2 (aux))
+              gegl_pad_get_connected_to (aux))
             {
               GeglPad *source_pad;
               GeglNode *source_node;
-              source_pad = gegl_pad_get_connected_to2 (aux);
+              source_pad = gegl_pad_get_connected_to (aux);
               source_node = gegl_pad_get_node (source_pad);
               {
                 GeglNode *graph = g_object_get_data (G_OBJECT (source_node), "graph");
@@ -556,7 +556,7 @@ static void add_stack (SerializeState *ss,
           if (input)
             {
               GeglPad *source_pad;
-              source_pad = gegl_pad_get_connected_to2 (input);
+              source_pad = gegl_pad_get_connected_to (input);
               if (source_pad)
                 {
                   GeglNode *source_node = gegl_pad_get_node (source_pad);

@@ -675,22 +675,21 @@ gegl_node_get_depends_on (GeglNode *self)
       GeglConnection *connection = llink->data;
       GeglNode * source_node;
 
-      /* this indirection is to make sure we follow the connection correctly
-       * if the connected node, is the ghost pad of a graph.
-       *
-       * Since the node in the graph would be the true recevier of the property.
-       */
-      source_node = gegl_pad_get_node (gegl_connection_get_source_prop (connection));
+      source_node = gegl_connection_get_source_node (connection);
 
+      if (source_node->is_graph)
+        {
+          GeglNode *proxy = gegl_graph_output (GEGL_GRAPH (source_node), "output");
 
-
-      /* It may already be on the list, so check first */
-      if (! g_list_find (depends_on, source_node))
+          if (! g_list_find (depends_on, proxy))
+             depends_on = g_list_append (depends_on, proxy);
+        }
+      else if (!g_list_find (depends_on, source_node))
         {
           depends_on = g_list_append (depends_on, source_node);
         }
     }
-
+#if 1
   if (!strcmp (gegl_object_get_name (GEGL_OBJECT (self)), "proxynop-input"))
     {
       GeglGraph *graph = g_object_get_data (G_OBJECT (self), "graph");
@@ -699,6 +698,25 @@ gegl_node_get_depends_on (GeglNode *self)
           depends_on = g_list_concat (depends_on, gegl_node_get_depends_on (GEGL_NODE (graph)));
         }
     }
+#endif
+#if 0
+  if (!strcmp (gegl_object_get_name (GEGL_OBJECT (self)), "proxynop-input"))
+    {
+      GList *llink;
+      GeglNode *graph;
+
+      graph = GEGL_NODE (g_object_get_data (G_OBJECT (self), "graph"));
+
+      for (llink = graph->sources; llink; llink = g_list_next (llink))
+        {
+          GeglConnection *connection = llink->data;
+          GeglNode *source_node = gegl_connection_get_source_node (connection);
+
+          if (! g_list_find (depends_on, source_node))
+            depends_on = g_list_append (depends_on, source_node);
+        }
+    }
+#endif
 
   return depends_on;
 }
@@ -1164,7 +1182,7 @@ gegl_node_get_op_type_name    (GeglNode     *node)
       g_warning ("NULL node passed in");
       return "NULL node passd in";
     }
-  if (node->is_graph)
+  if (node->is_graph && node->operation == NULL)
     return "GraphNode";
   if (node->operation == NULL)
     {

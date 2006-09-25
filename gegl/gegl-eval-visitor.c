@@ -78,7 +78,7 @@ visit_pad (GeglVisitor *self,
     }
   else if (gegl_pad_is_input (pad))
     {
-      GeglPad *source_pad = gegl_pad_get_connected_to (pad);
+      GeglPad *source_pad = gegl_pad_get_real_connected_to (pad);
 
       if (source_pad)
         {
@@ -93,7 +93,6 @@ visit_pad (GeglVisitor *self,
                                  gegl_pad_get_name (source_pad),
                                  &value);
 
-          
           if (!g_value_get_object (&value) &&
               !g_object_get_data (G_OBJECT (source_node), "graph"))
              g_warning ("eval-visitor encountered a NULL buffer passed from: %s.%s-[%p]", 

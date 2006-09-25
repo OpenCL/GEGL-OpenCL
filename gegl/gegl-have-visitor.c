@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include <glib-object.h>
+#include <string.h>
 
 #include "gegl-types.h"
 
@@ -57,11 +58,15 @@ visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
   GeglRect rect;
-  GeglOperation *operation = node->operation;
+  GeglOperation *operation;
   glong    time = gegl_ticks ();
 
   GEGL_VISITOR_CLASS (gegl_have_visitor_parent_class)->visit_node (self, node);
-
+  if (!node)
+    return;
+  operation = node->operation;
+  if (!operation)
+    return;
   rect = gegl_operation_get_defined_region (operation);
   gegl_node_set_have_rect (operation->node, rect.x, rect.y, rect.w, rect.h);
 

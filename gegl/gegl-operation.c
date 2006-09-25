@@ -162,7 +162,7 @@ gegl_operation_prepare (GeglOperation *self)
 
 GeglRect *
 gegl_operation_source_get_defined_region (GeglOperation *operation,
-                              const gchar   *input_pad_name)
+                                          const gchar   *input_pad_name)
 {
   GeglPad *pad;
   g_assert (operation &&
@@ -172,7 +172,7 @@ gegl_operation_source_get_defined_region (GeglOperation *operation,
 
   if (!pad)
     return NULL;
-  pad = gegl_pad_get_connected_to (pad);
+  pad = gegl_pad_get_real_connected_to (pad);
 
   if (!pad)
     return NULL;
@@ -182,6 +182,7 @@ gegl_operation_source_get_defined_region (GeglOperation *operation,
   return gegl_node_get_have_rect (gegl_pad_get_node (pad));
 }
 
+#if 0
 static GList *
 producer_nodes (GeglPad *input_pad)
 {
@@ -219,6 +220,7 @@ producer_nodes (GeglPad *input_pad)
     }
   return ret;
 }
+#endif
 
 void
 gegl_operation_set_source_region (GeglOperation *operation,
@@ -247,7 +249,7 @@ gegl_operation_set_source_region (GeglOperation *operation,
       return;
     }
 
-  children = producer_nodes (pad);
+  children = gegl_node_get_depends_on (operation->node);
 
   while (children)
     {
@@ -276,6 +278,10 @@ static GeglRect
 get_defined_region (GeglOperation *self)
 {
   GeglRect rect = {0,0,0,0};
+  if (self->node->is_graph)
+    {
+      return gegl_operation_get_defined_region (gegl_graph_output (GEGL_GRAPH (self->node), "output")->operation);
+    }
   g_warning ("Op '%s' has no proper have_rect function",
      G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
   return rect;
@@ -284,6 +290,10 @@ get_defined_region (GeglOperation *self)
 static gboolean
 calc_source_regions (GeglOperation *self)
 {
+  if (self->node->is_graph)
+    {
+      return gegl_operation_calc_source_regions (gegl_graph_output (GEGL_GRAPH (self->node), "output")->operation);
+    }
   g_warning ("Op '%s' has no proper need_rect function",
      G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
   return FALSE;
