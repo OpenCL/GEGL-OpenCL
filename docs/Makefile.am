@@ -82,7 +82,7 @@ web: all
 WEBSITE_FILES=*.html *.css */*.html gallery/*.txt images/gegl.ico gallery/*.png
 
 website: all
-	if [ "x"$$WEBSITE_DESTINATION == "x" ];then echo "WARNING: WEBSITE_DESTINATION not set";\
+	if [ "x"$$WEBSITE_DESTINATION == "x" ];then echo "WAR""NING: WEBSITE_DESTINATION not set";\
 	else \
 	    (mkdir $$WEBSITE_DESTINATION;echo "foo";\
 	     cp --parents -rv  $(WEBSITE_FILES) $$WEBSITE_DESTINATION;);\

@@ -1,3 +1,7 @@
+2006-09-25  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am: mask WARNING in echo from crucible:
+
 2006-09-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: added Hello World example.
