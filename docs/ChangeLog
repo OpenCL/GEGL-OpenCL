@@ -1,5 +1,10 @@
 2006-09-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am,
+	* gallery/Makefile.am: fixed relative links on crucible.
+
+2006-09-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am: mask WARNING in echo from crucible:
 
 2006-09-24  Øyvind Kolås  <pippin@gimp.org>

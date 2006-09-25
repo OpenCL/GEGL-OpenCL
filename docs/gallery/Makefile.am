@@ -9,7 +9,7 @@ index.html: Makefile.am
 	echo "</ul></div><div class='paper'><div class='content'>" >> index.html
 	if [ "x"$$CRUCIBLE_ID != "x" ]; then\
 	  echo "<ul class='crucible'>" >> index.html;\
-	  for host in amd01 ita01 nfs02 nfs11 nfs12 ppc01;do echo "<li><a href='../../$$host/docs/gallery/index.html'>$$host</a></li>" >> index.html; done;\
+	  for host in amd01 ita01 nfs02 nfs11 nfs12 ppc01;do echo "<li><a href='../../$$host/gallery/index.html'>$$host</a></li>" >> index.html; done;\
 	  echo "</ul>" >> index.html;\
 	  echo "<p>These pages document a GEGL build at a <a href='http://crucible.osdl.org/'>crucible</a> test machine.</p><p><a href='http://crucible.osdl.org/runs/$$CRUCIBLE_ID/'>$$CRUCIBLE_ID</a> @ `hostname`  `date`</p>" >> index.html;\
 	fi;\
