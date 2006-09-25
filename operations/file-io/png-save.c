@@ -16,6 +16,7 @@
  * Boston, MA 02110-1301, USA.
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ *           2006 Dominik Ernst <dernst@gmx.de>
  */
 #if GEGL_CHANT_PROPERTIES
  
@@ -77,6 +78,8 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
   png_info      *info;
   guchar        *pixels;
   png_color_16   white;
+  gchar          format_string[16];
+  gint           bit_depth = 8;
 
   if (!strcmp (path, "-"))
     {
@@ -90,7 +93,28 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
     {
       return -1;
     }
-  
+
+  strcpy (format_string, "R'G'B'A ");
+
+  {
+    BablFormat  *format = gegl_buffer->format;
+    BablType   **type   = format->type;
+
+    for (i=0; i<format->components; i++)
+      if ((*type)->bits > 8)
+        bit_depth = 16;
+  }
+
+  if (bit_depth == 16)
+    {
+      strcat (format_string, "u16");
+      row_stride *= 2;
+    }
+  else
+    {
+      strcat (format_string, "u8");
+    }
+
   png = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if (png == NULL)
     return -1;
@@ -103,7 +127,7 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
   png_init_io (png, fp);
 
   png_set_IHDR (png, info,
-     width, height, 8, PNG_COLOR_TYPE_RGB_ALPHA,
+     width, height, bit_depth, PNG_COLOR_TYPE_RGB_ALPHA,
      PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_DEFAULT);
 
   white.red = 0xff;
@@ -112,6 +136,10 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
   png_set_bKGD (png, info, &white);
 
   png_write_info (png, info);
+
+  if (bit_depth > 8)
+    png_set_swap (png);
+
   pixels = g_malloc0 (row_stride);
 
   for (i=0; i< height; i++)
@@ -123,9 +151,11 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
                                        "width", width,
                                        "height", 1,
                                        NULL);
-      gegl_buffer_get_fmt (rect, pixels, babl_format ("R'G'B'A u8"));
+      gegl_buffer_get_fmt (rect, pixels, babl_format (format_string));
+
       png_write_rows (png, &pixels, 1);
       g_object_unref (rect);
+
     }
 
   png_write_end (png, info);
