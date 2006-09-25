@@ -9,7 +9,7 @@ index.html: Makefile.am
 	echo "</ul></div><div class='paper'><div class='content'>" >> index.html
 	if [ "x"$$CRUCIBLE_ID != "x" ]; then\
 	  echo "<ul class='crucible'>" >> index.html;\
-	  for host in amd01 ita01 nfs02 nfs11 nfs12 ppc01;do echo "<li><a href='../../../$$host/docs/gallery/index.html'>$$host</a></li>" >> index.html; done;\
+	  for host in amd01 ita01 nfs02 nfs11 nfs12 ppc01;do echo "<li><a href='../../$$host/docs/gallery/index.html'>$$host</a></li>" >> index.html; done;\
 	  echo "</ul>" >> index.html;\
 	  echo "<p>These pages document a GEGL build at a <a href='http://crucible.osdl.org/'>crucible</a> test machine.</p><p><a href='http://crucible.osdl.org/runs/$$CRUCIBLE_ID/'>$$CRUCIBLE_ID</a> @ `hostname`  `date`</p>" >> index.html;\
 	fi;\
@@ -28,7 +28,7 @@ all-local:  index.html
 	echo "--[Rendering sample compositions]--"
 	export GEGL_PATH=$(top_builddir)/operations;\
 	export GEGL_DEBUG_TIME=yes;\
-	for XML in $(srcdir)/*.xml;do $(top_builddir)/gegl/gegl $$XML -s -o `echo $$XML|sed s/xml/png/` > `echo $$XML|sed s/xml/txt/`;done
+	for XML in $(srcdir)/*.xml;do make $(top_builddir)/gegl/gegl $$XML -s -o `echo $$XML|sed s/xml/png/` > `echo $$XML|sed s/xml/txt/`;done
 	echo "--"
 
 %.png:%.xml $(wildcard $(top_builddir)/operations/*/*.so)
