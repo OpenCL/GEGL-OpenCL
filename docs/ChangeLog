@@ -1,5 +1,11 @@
 2006-09-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* gallery/Makefile.am: build by using recursive make, added
+	object files in gegl dir and gegl binary itself as dependencies
+	for the images.
+
+2006-09-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am: mkdir -p.
 
 2006-09-25  Øyvind Kolås  <pippin@gimp.org>
