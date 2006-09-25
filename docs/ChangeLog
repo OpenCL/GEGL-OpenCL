@@ -1,7 +1,6 @@
 2006-09-25  Øyvind Kolås  <pippin@gimp.org>
 
-	* Makefile.am,
-	* gallery/Makefile.am: fixed relative links on crucible.
+	* Makefile.am: mkdir -p.
 
 2006-09-25  Øyvind Kolås  <pippin@gimp.org>
 

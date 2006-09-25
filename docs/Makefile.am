@@ -81,9 +81,9 @@ web: all
 
 WEBSITE_FILES=*.html *.css */*.html gallery/*.txt images/gegl.ico gallery/*.png
 
-website: all
+website:
 	if [ "x"$$WEBSITE_DESTINATION == "x" ];then echo "WAR""NING: WEBSITE_DESTINATION not set";\
 	else \
-	    (mkdir $$WEBSITE_DESTINATION;echo "foo";\
+	    (mkdir -p $$WEBSITE_DESTINATION;\
 	     cp --parents -rv  $(WEBSITE_FILES) $$WEBSITE_DESTINATION;);\
 	fi
