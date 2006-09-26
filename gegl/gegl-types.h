@@ -37,6 +37,7 @@ typedef struct _GeglNode             GeglNode;
 typedef struct _GeglOperation        GeglOperation;
 typedef struct _GeglPad              GeglPad;
 typedef struct _GeglPrepareVisitor   GeglPrepareVisitor;
+typedef struct _GeglRefVisitor       GeglRefVisitor;
 typedef struct _GeglVisitable        GeglVisitable; /* dummy typedef */
 typedef struct _GeglVisitor          GeglVisitor;
 

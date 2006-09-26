@@ -140,7 +140,8 @@ type_name##_get_type (GTypeModule *module) \
         }; \
       g_define_type_id = gegl_module_register_type (module, TYPE_PARENT,\
                                                     "GeglOpPlugIn-" #type_name,\
-                                                    &g_define_type_info, 0);\
+                                                    &g_define_type_info, \
+                                                    (GTypeFlags) 0);\
     } \
   return g_define_type_id; \
 }\
@@ -489,57 +490,65 @@ gegl_chant_class_init (ChantClass * klass)
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_int (#name, #name, blurb,\
                                                      min, max, def,\
+                                                     (GParamFlags) (\
                                                      G_PARAM_READWRITE |\
                                                      G_PARAM_CONSTRUCT |\
-                                                     GEGL_PAD_INPUT));
+                                                     GEGL_PAD_INPUT)));
 #define gegl_chant_double(name, min, max, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_double (#name, #name, blurb,\
                                                         min, max, def,\
+                                                        (GParamFlags) (\
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
-                                                        GEGL_PAD_INPUT));
+                                                        GEGL_PAD_INPUT)));
 #define gegl_chant_float(name, min, max, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_float (#name, #name, blurb,\
                                                         min, max, def,\
+                                                        (GParamFlags) (\
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
-                                                        GEGL_PAD_INPUT));
+                                                        GEGL_PAD_INPUT)));
 #define gegl_chant_boolean(name, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_boolean (#name, #name, blurb,\
                                                          def,\
+                                                         (GParamFlags) (\
                                                          G_PARAM_READWRITE |\
                                                          G_PARAM_CONSTRUCT |\
-                                                         GEGL_PAD_INPUT));
+                                                         GEGL_PAD_INPUT)));
 #define gegl_chant_string(name, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_string (#name, #name, blurb,\
                                                         def,\
+                                                        (GParamFlags) ( \
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
-                                                        GEGL_PAD_INPUT));
+                                                        GEGL_PAD_INPUT)));
 #define gegl_chant_object(name, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_object (#name, #name, blurb,\
                                                         G_TYPE_OBJECT,\
+                                                        (GParamFlags) (\
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
-                                                        GEGL_PAD_INPUT));
+                                                        GEGL_PAD_INPUT)));
 #define gegl_chant_pointer(name, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_pointer (#name, #name, blurb,\
+                                                        (GParamFlags) (\
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
-                                                        GEGL_PAD_INPUT));
+                                                        GEGL_PAD_INPUT)));
 #define gegl_chant_color(name, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    gegl_param_spec_color_from_string (#name, #name, blurb,\
                                                           def,\
+                                                          (GParamFlags) (\
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
-                                                          GEGL_PAD_INPUT));
+                                                          GEGL_PAD_INPUT)));
 #include GEGL_CHANT_SELF
 
 #undef gegl_chant_int

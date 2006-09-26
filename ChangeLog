@@ -1,3 +1,7 @@
+2006-09-26  Dominik Ernst  <dernst@gmx.de>
+
+	* gegl/gegl-chant.h: fixed an issue with g++.
+
 2006-09-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-cr-visitor.c: (visit_node): improved calculation of needed

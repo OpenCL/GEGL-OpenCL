@@ -26,17 +26,18 @@
 #include "gegl-types.h"
 
 #include "gegl-eval-mgr.h"
+#include "gegl-eval-visitor.h"
+#include "gegl-debug-rect-visitor.h"
+#include "gegl-cr-visitor.h"
 #include "gegl-have-visitor.h"
 #include "gegl-need-visitor.h"
-#include "gegl-cr-visitor.h"
-#include "gegl-debug-rect-visitor.h"
 #include "gegl-instrument.h"
-#include "gegl-eval-visitor.h"
 #include "gegl-node.h"
 #include "gegl-operation.h"
 #include "gegl-prepare-visitor.h"
-#include "gegl-visitable.h"
 #include "gegl-pad.h"
+#include "gegl-ref-visitor.h"
+#include "gegl-visitable.h"
 #include <stdlib.h>
 
 
@@ -76,6 +77,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   GeglVisitor  *have_visitor;
   GeglVisitor  *need_visitor;
   GeglVisitor  *cr_visitor;
+  GeglVisitor  *ref_visitor;
   GeglVisitor  *eval_visitor;
   GeglPad      *pad;
   glong         time = gegl_ticks ();
@@ -123,6 +125,10 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   gegl_visitor_bfs_traverse (cr_visitor, GEGL_VISITABLE(root));
   g_object_unref (cr_visitor);
 
+  ref_visitor = g_object_new (GEGL_TYPE_REF_VISITOR, NULL);
+  gegl_visitor_dfs_traverse (ref_visitor, GEGL_VISITABLE(pad));
+  g_object_unref (ref_visitor);
+
   if(getenv("GEGL_DEBUG_RECTS")!=NULL)
     {
       GeglVisitor  *debug_rect_visitor;
@@ -137,6 +143,16 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   g_object_unref (eval_visitor);
 
   root->is_root = FALSE;
+  if(getenv("GEGL_DEBUG_RECTS")!=NULL)
+    {
+      GeglVisitor  *debug_rect_visitor;
+
+      g_warning ("---------------------");
+
+      debug_rect_visitor = g_object_new (GEGL_TYPE_DEBUG_RECT_VISITOR, NULL);
+        gegl_visitor_dfs_traverse (debug_rect_visitor, GEGL_VISITABLE(root));
+      g_object_unref (debug_rect_visitor);
+    }
 
   g_object_unref (root);
   time = gegl_ticks () - time;

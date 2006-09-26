@@ -13,24 +13,31 @@ index.html: Makefile.am
 	  echo "</ul>" >> index.html;\
 	  echo "<p>These pages document a GEGL build at a <a href='http://crucible.osdl.org/'>crucible</a> test machine.</p><p><a href='http://crucible.osdl.org/runs/$$CRUCIBLE_ID/'>$$CRUCIBLE_ID</a> @ `hostname`  `date`</p>" >> index.html;\
 	fi;\
-	for XML in *.xml;\
-	   do echo "<div style='margin-bottom:3em;'><a name='$$XML'></a><h3>" >> index.html;\
-	      echo `echo $$XML | sed s/\.xml//`"</h3>" >> index.html; \
-	      echo "<img src='"`echo $$XML|sed s/xml/png/`"' style='float:right; padding-left:1em;padding-bottom: 1em;'>" >> index.html;\
-	      echo "<form><textarea rows='14' cols='30'>" >> index.html;\
-	      cat $$XML | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/' >> index.html;\
-	      echo "</textarea></form>" >> index.html;\
-	      echo "<br/><a href='$$XML'>xml</a>, <a href='"`echo $$XML|sed s/xml/txt/`"'>execution breakdown</a><br/>" >> index.html; \
-	      echo "</div>">>index.html;\
-	   done
+	for XML in *.xml; do\
+	    export BASE=`echo $$XML | sed s/\.xml//`;\
+	    TXT=$$BASE".txt";\
+	    PNG=$$BASE".png";\
+		echo $${XML};\
+	    echo "<div style='margin-bottom:3em;'><a name='$$XML'></a>" >> index.html;\
+	    echo "<h3>$$BASE</h3>" >> index.html; \
+	    echo "<img src='$$PNG' style='float:right; padding-left:1em;padding-bottom: 1em;'>" >> index.html;\
+	    echo "<form><textarea rows='14' cols='30'>" >> index.html;\
+	    cat $$XML | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/' >> index.html;\
+	    echo "</textarea></form>" >> index.html;\
+	    echo "<br/><a href='$$XML'>xml</a>, <a href='$$TXT'>execution breakdown</a><br/>" >> index.html; \
+	    echo "<span style='color:red'>"`cat $$TXT |grep buffer-leaks`"</span><br/>" >> index.html;\
+	    echo "</div>">>index.html;\
+	   done;\
 	echo "</div></div></div></body></html>" >> index.html
 
-all-local:  index.html
+pngs:
 	echo "--[Rendering sample compositions]--"
 	export GEGL_PATH=$(top_builddir)/operations;\
 	export GEGL_DEBUG_TIME=yes;\
-	for XML in $(srcdir)/*.xml;do make `echo $$XML|sed s/xml/png/` > `echo $$XML|sed s/xml/txt/`;done
+	for XML in $(srcdir)/*.xml;do make `echo $$XML|sed s/xml/png/`;done
 	echo "--"
+
+all-local: pngs index.html
 
 %.png:%.xml $(wildcard $(top_builddir)/operations/*/*.so)\
 	    $(wildcard $(top_builddir)/*.o)\
@@ -40,4 +47,4 @@ all-local:  index.html
 	$(top_builddir)/gegl/gegl $< -s -o $@ > `echo $@|sed -e s/png/txt/`
 
 clean-local:
-	rm -f index.html *.png
+	rm -f index.html *.png *.txt
