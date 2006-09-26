@@ -1,6 +1,11 @@
+2006-09-26  Øyvind Kolås  <pippin@gimp.org>
+
+	* gallery/Makefile.am: Reenabled statistics generation.
+	* index-static.html.in: Added pango to features.
+
 2006-09-25  Øyvind Kolås  <pippin@gimp.org>
 	
-	* index-static.html.in: reworked Feautures.
+	* index-static.html.in: reworked Features.
 
 2006-09-25  Øyvind Kolås  <pippin@gimp.org>
 	

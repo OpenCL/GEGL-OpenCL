@@ -36,7 +36,7 @@ all-local:  index.html
 	    $(wildcard $(top_builddir)/*.o)\
 	    $(wildcard $(top_builddir)/*/*.o)\
 	    $(top_builddir)/gegl
-	export GEGL_PATH=$(top_builddir)/operations;\
+	export GEGL_DEBUG_TIME=yes;export GEGL_PATH=$(top_builddir)/operations;\
 	$(top_builddir)/gegl/gegl $< -s -o $@ > `echo $@|sed -e s/png/txt/`
 
 clean-local:
