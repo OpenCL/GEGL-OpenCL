@@ -21,6 +21,7 @@
 #include "config.h"
 
 #include <glib-object.h>
+#include <string.h>
 
 #include "gegl-types.h"
 
@@ -61,13 +62,12 @@ visit_node (GeglVisitor *self,
 
   gegl_rect_intersect (&node->result_rect, &node->have_rect, &node->need_rect);
 
-  node->refs = 0;
-  /*gegl_node_get_num_sinks (node);
+  node->refs = gegl_node_get_num_sinks (node);
 
   if (!strcmp (gegl_object_get_name (GEGL_OBJECT (node)), "proxynop-output"))
   {
     GeglNode *graph = g_object_get_data (G_OBJECT (node), "graph");
     if (graph)
       node->refs += gegl_node_get_num_sinks (graph);
-  }*/
+  }
 }

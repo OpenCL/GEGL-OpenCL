@@ -77,7 +77,6 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   GeglVisitor  *have_visitor;
   GeglVisitor  *need_visitor;
   GeglVisitor  *cr_visitor;
-  GeglVisitor  *ref_visitor;
   GeglVisitor  *eval_visitor;
   GeglPad      *pad;
   glong         time = gegl_ticks ();
@@ -124,10 +123,6 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   cr_visitor = g_object_new (GEGL_TYPE_CR_VISITOR, NULL);
   gegl_visitor_bfs_traverse (cr_visitor, GEGL_VISITABLE(root));
   g_object_unref (cr_visitor);
-
-  ref_visitor = g_object_new (GEGL_TYPE_REF_VISITOR, NULL);
-  gegl_visitor_dfs_traverse (ref_visitor, GEGL_VISITABLE(pad));
-  g_object_unref (ref_visitor);
 
   if(getenv("GEGL_DEBUG_RECTS")!=NULL)
     {

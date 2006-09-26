@@ -1,3 +1,13 @@
+2006-09-26  Øyvind Kolås  <pippin@gimp.org>
+
+	Accidentaly commited changes to the following files when commiting
+	the previous patch. Reverting to prior state.
+
+	* gegl/Makefile.am:
+	* gegl/gegl-cr-visitor.c: (visit_node):
+	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
+	* gegl/gegl-types.h:
+
 2006-09-26  Dominik Ernst  <dernst@gmx.de>
 
 	* gegl/gegl-chant.h: fixed an issue with g++.
