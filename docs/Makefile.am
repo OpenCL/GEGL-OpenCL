@@ -35,12 +35,12 @@ class-hierarchy.html: $(top_builddir)/tools/introspect $(top_srcdir)/operations/
 	$(top_builddir)/tools/introspect > $@
 
 runinfo: Makefile.am
-	if [ "x"$$CRUCIBLE_ID != "x" ]; then\
-	  echo "<h2><a href='http://crucible.osdl.org/runs/gegl_report.html'>Crucible</a></h2>" > runinfo;\
+	if [ ! -z "{CRUCIBLE_ID}" ]; then\
+	  echo "<h2>Crucible</h2>" > runinfo;\
 	  echo "<ul class='crucible'>" >> runinfo;\
-	  for host in amd01 ita01 nfs02 nfs11 nfs12 ppc01;do echo "<li><a href='../$$host/index.html'>$$host</a></li>" >> runinfo; done;\
+	  for host in amd01 ita01 nfs02 nfs11 nfs12 ppc01;do echo "<li><a href='../$${host}/index.html'>$${host}</a></li>" >> runinfo; done;\
 	  echo "</ul>" >> runinfo ;\
-	  echo "<p>These pages document a GEGL build at a <a href='http://crucible.osdl.org/'>crucible</a> test machine.</p><p><a href='http://crucible.osdl.org/runs/$$CRUCIBLE_ID/'>$$CRUCIBLE_ID</a> @ `hostname`  `date`</p>\
+	  echo "<p>These pages document a GEGL build at a <a href='http://crucible.osdl.org/'>crucible</a> test machine.</p><p><a href='http://crucible.osdl.org/runs/$${CRUCIBLE_ID}/'>$${CRUCIBLE_ID}</a> @ $${CRUCIBLE_SUT} `date`</p>\
 	  <pre>`cat /proc/cpuinfo`</pre>" >> runinfo;\
 	fi
 

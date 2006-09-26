@@ -1,5 +1,13 @@
 2006-09-26  Øyvind Kolås  <pippin@gimp.org>
 
+	Added timing information to webpage, made the leaks visible when
+	building under crucible.
+
+	* Makefile.am:
+	* gallery/Makefile.am:
+
+2006-09-26  Øyvind Kolås  <pippin@gimp.org>
+
 	* gallery/Makefile.am: Reenabled statistics generation.
 	* index-static.html.in: Added pango to features.
 
