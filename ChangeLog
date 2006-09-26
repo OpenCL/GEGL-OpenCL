@@ -1,7 +1,13 @@
+2006-09-26  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-cr-visitor.c: (visit_node): improved calculation of needed
+	unrefs for buffers. Reduces buffer leakage for meta nodes
+	significantly.
+
 2006-09-26  Dominik Ernst <dernst@gmx.de>
 
 	* operations/file-io/png-save.c: (gegl_buffer_export_png): Fixed
-	endian usse for 16-bit rgba images.
+	endian issue for 16-bit rgba images.
 
 2006-09-25  Dominik Ernst <dernst@gmx.de>
 
