@@ -120,14 +120,23 @@
         <a name='Features'></a>
         <h3>Features</h3>
         <ul>
-            <li>8bit, 16bit integer and 32bit floating point buffer.</li>
-            <li>RGB, YCbCr and CIE Lab color models</li>
-            <li>High Dynamic Range capable</li>
-            <li>Rich core set of processing <a href='operations.html'>operations</a></li>
-            <li>PNG, JPEG, RAW, SVG and more format loaders</li>
+            <li>8bit, 16bit integer and 32bit floating point, RGB, CIE Lab,
+            YCbCr and naive CMYK output.</li>
             <li>Easily extendable through plug-ins.</li>
-            <li>Memory efficient evaluation of Regions of Interest</li>
             <li>XML, C and Python interfaces.</li>
+            <li>Memory efficient evaluation of subregions.</li>
+            <li>Rich core set of processing <a
+                href='operations.html'>operations</a>
+            <ul>
+              <li>PNG, JPEG, RAW, SVG and more format loaders</li>
+              <li>Arithmetic operations, porter duff compositing operations,
+              SVG blend modes, other blend modes, apply mask.</li>
+              <li>Gaussian blur.</li>
+              <li>Basic color correction tools.</li>.
+              <li>Most processing done with High Dynamic Range routines.</li>
+              <li>Text layouting using <a href='http://pango.org/'>pango</a></li>
+            </ul>
+            </li>
         </ul>
         <p>For examples of what GEGL is currently capable of doing, take a
         look at <a href='gallery/index.html'>the gallery</a>.
