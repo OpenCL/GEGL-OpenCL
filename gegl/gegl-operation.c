@@ -280,7 +280,7 @@ get_defined_region (GeglOperation *self)
   GeglRect rect = {0,0,0,0};
   if (self->node->is_graph)
     {
-      return gegl_operation_get_defined_region (gegl_graph_output (GEGL_GRAPH (self->node), "output")->operation);
+      return gegl_operation_get_defined_region (gegl_graph_output (self->node, "output")->operation);
     }
   g_warning ("Op '%s' has no proper have_rect function",
      G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
@@ -292,7 +292,7 @@ calc_source_regions (GeglOperation *self)
 {
   if (self->node->is_graph)
     {
-      return gegl_operation_calc_source_regions (gegl_graph_output (GEGL_GRAPH (self->node), "output")->operation);
+      return gegl_operation_calc_source_regions (gegl_graph_output (self->node, "output")->operation);
     }
   g_warning ("Op '%s' has no proper need_rect function",
      G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));

@@ -1,4 +1,4 @@
-#include <gegl.h>
+#include <gegl-plugin.h>  /* needed to do full introspection */
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>

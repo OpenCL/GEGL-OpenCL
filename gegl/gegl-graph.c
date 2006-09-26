@@ -134,11 +134,11 @@ gegl_graph_get_children (GeglGraph *self)
  *  returns a freshly created node, owned by the graph, and thus freed with it
  */
 GeglNode *
-gegl_graph_new_node (GeglGraph   *self,
+gegl_graph_new_node (GeglNode    *node,
                      const gchar *first_property_name,
                      ...)
 {
-  GeglNode    *node;
+  GeglGraph   *self = GEGL_GRAPH (node);
   va_list      var_args;
   const gchar *name;
 
@@ -156,7 +156,7 @@ gegl_graph_new_node (GeglGraph   *self,
   return node;
 }
 
-GeglNode * gegl_graph_create_node      (GeglGraph    *self,
+GeglNode * gegl_graph_create_node      (GeglNode     *self,
                                         const gchar  *operation)
 {
   return gegl_graph_new_node (self, "operation", operation, NULL);
@@ -196,15 +196,15 @@ gegl_graph_get_pad_proxy (GeglGraph   *graph,
 }
 
 GeglNode *
-gegl_graph_input (GeglGraph   *graph,
+gegl_graph_input (GeglNode    *node,
                   const gchar *name)
 {
-  return gegl_graph_get_pad_proxy (graph, name, TRUE);
+  return gegl_graph_get_pad_proxy (GEGL_GRAPH (node), name, TRUE);
 }
 
 GeglNode *
-gegl_graph_output (GeglGraph   *graph,
-                   const gchar *name)
+gegl_graph_output (GeglNode    *node,
+                  const gchar *name)
 {
-  return gegl_graph_get_pad_proxy (graph, name, FALSE);
+  return gegl_graph_get_pad_proxy (GEGL_GRAPH (node), name, FALSE);
 }

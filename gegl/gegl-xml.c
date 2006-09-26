@@ -41,7 +41,7 @@ enum {
 
 struct _ParseData {
   gint        state;
-  GeglGraph  *gegl;
+  GeglNode   *gegl;
   GeglNode   *iter;  /*< the iterator we're either connecting to input|aux of
                          depending on context */
   GList      *parent; /*< a stack of parents, as we are recursing into aux
@@ -98,7 +98,7 @@ static void start_element (GMarkupParseContext *context,
       GeglNode *new = g_object_new (GEGL_TYPE_NODE, NULL);
       if (pd->gegl == NULL)
         {
-          pd->gegl = GEGL_GRAPH (new);
+          pd->gegl = new;
         }
       else
         {
@@ -106,10 +106,10 @@ static void start_element (GMarkupParseContext *context,
       pd->state=STATE_TREE_NORMAL;
       pd->parent = g_list_prepend (pd->parent, new);
 
-      gegl_graph_output (GEGL_GRAPH (new), "output"); /* creates the pad if it doesn't exist */
+      gegl_graph_output (new, "output"); /* creates the pad if it doesn't exist */
       if (pd->iter)
         gegl_node_connect (pd->iter, "input", new, "output");
-      pd->iter = gegl_graph_output (GEGL_GRAPH (new), "output");
+      pd->iter = gegl_graph_output (new, "output");
     }
   else if (!strcmp (element_name, "graph"))
     {
@@ -246,8 +246,8 @@ static void end_element (GMarkupParseContext *context,
       if (gegl_node_get_pad (pd->iter, "input"))
         {
           gegl_node_connect (pd->iter, "input",
-             gegl_graph_input (GEGL_GRAPH (pd->parent->data), "input"), "output");
-          pd->iter = gegl_graph_input (GEGL_GRAPH (pd->parent->data), "input");
+             gegl_graph_input (GEGL_NODE (pd->parent->data), "input"), "output");
+          pd->iter = gegl_graph_input (GEGL_NODE (pd->parent->data), "input");
         }
       else
         {
@@ -590,7 +590,7 @@ gegl_to_xml (GeglNode *gegl)
   ss->clones = g_hash_table_new (NULL, NULL);
   ss->terse = TRUE;
 
-  gegl = gegl_graph_output (GEGL_GRAPH (gegl), "output");
+  gegl = gegl_graph_output (gegl, "output");
 
   g_string_append (ss->buf, "<?xml version='1.0' encoding='UTF-8'?>\n");
   g_string_append (ss->buf, "<gegl>\n");

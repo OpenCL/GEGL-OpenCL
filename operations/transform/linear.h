@@ -1,7 +1,7 @@
 #ifndef __AFFINE_LINEAR_H__
 #define __AFFINE_LINEAR_H__
 
-#include <gegl.h>
+#include <gegl-plugin.h>
 #include "matrix.h"
 
 void       affine_linear           (GeglBuffer *input,

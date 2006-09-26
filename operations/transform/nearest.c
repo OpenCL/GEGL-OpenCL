@@ -18,7 +18,7 @@
  * Copyright 2006 Philip Lafleur
  */
 
-#include <gegl.h>
+#include <gegl-plugin.h>
 #include <string.h>
 
 #include "matrix.h"

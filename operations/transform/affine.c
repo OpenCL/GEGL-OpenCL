@@ -25,7 +25,7 @@
 
 #include <string.h>
 #include <math.h>
-#include <gegl.h>
+#include <gegl-plugin.h>
 #include <gegl-module.h>
 
 #include "affine.h"

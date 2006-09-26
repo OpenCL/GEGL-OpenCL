@@ -20,7 +20,7 @@
 
 #include <string.h>
 #include <math.h>
-#include <gegl.h>
+#include <gegl-plugin.h>
 
 #include "matrix.h"
 

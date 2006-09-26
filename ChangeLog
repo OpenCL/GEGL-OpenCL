@@ -1,5 +1,40 @@
 2006-09-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: Rewrote to only contain the public API of GEGL.
+	* gegl/gegl-plugin.h: new file for inclusion when a tight coupling
+	with GEGL is needed (plug-ins use a lot more API than host apps
+	embedding GEGL).
+	* gegl/Makefile.am: added gegl-plugin.h
+
+	Other files modified due to these changes.
+
+	* gegl/gegl-chant.h:
+	* gegl/gegl-graph.c: (gegl_graph_new_node),
+	(gegl_graph_create_node), (gegl_graph_input), (gegl_graph_output):
+	* gegl/gegl-graph.h:
+	* gegl/gegl-init.c: (gegl_exit):
+	* gegl/gegl-node.c: (gegl_node_get_depends_on),
+	(gegl_node_get_valist), (gegl_node_set_property),
+	(gegl_node_get_property):
+	* gegl/gegl-operation.c: (get_defined_region),
+	(calc_source_regions):
+	* gegl/gegl-xml.c: (start_element), (end_element), (gegl_to_xml):
+	* gegl/gegl.c: (main), (main_interactive):
+	* operations/file-io/load.c: (associate), (refresh_cache):
+	* operations/meta/dropshadow.c: (associate):
+	* operations/meta/layer.c: (associate), (refresh_cache):
+	* operations/meta/unsharp-mask.c: (associate):
+	* operations/transform/affine.c:
+	* operations/transform/chant.h:
+	* operations/transform/linear.c:
+	* operations/transform/linear.h:
+	* operations/transform/nearest.c:
+	* operations/transform/nearest.h:
+	* tools/introspect.c: (stuff):
+	* tools/operation_reference.c:
+
+2006-09-26  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-graph.c: (dispose): removed dead code.
 	* gegl/gegl-node.c: (gegl_node_get_depends_on): removed dead code.
 

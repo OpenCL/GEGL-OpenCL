@@ -94,29 +94,29 @@ static void associate (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *priv = (Priv*)self->priv;
-  GeglGraph *graph;
+  GeglNode *gegl;
   g_assert (priv == NULL);
 
   priv = g_malloc0 (sizeof (Priv));
   self->priv = (void*) priv;
 
   priv->self = GEGL_OPERATION (self)->node;
-  graph = GEGL_GRAPH (priv->self);
+  gegl = priv->self;
 
-  priv->input = gegl_graph_input (graph, "input");
-  priv->aux = gegl_graph_input (graph, "aux");
-  priv->output = gegl_graph_output (graph, "output");
+  priv->input = gegl_graph_input (gegl, "input");
+  priv->aux = gegl_graph_input (gegl, "aux");
+  priv->output = gegl_graph_output (gegl, "output");
 
-  priv->composite_op = gegl_graph_new_node (graph,
+  priv->composite_op = gegl_graph_new_node (gegl,
                                          "operation", self->composite_op,
                                          NULL);
 
-  priv->shift = gegl_graph_new_node (graph, "operation", "shift", NULL);
-  priv->opacity = gegl_graph_new_node (graph, "operation", "opacity", NULL);
+  priv->shift = gegl_graph_new_node (gegl, "operation", "shift", NULL);
+  priv->opacity = gegl_graph_new_node (gegl, "operation", "opacity", NULL);
   
-  priv->load = gegl_graph_new_node (graph,
-                                       "operation", "buffer",
-                                       NULL);
+  priv->load = gegl_graph_new_node (gegl,
+                                    "operation", "buffer",
+                                    NULL);
 
   gegl_node_connect (priv->opacity, "input", priv->load, "output");
   gegl_node_connect (priv->shift, "input", priv->opacity, "output");
@@ -175,8 +175,8 @@ refresh_cache (GeglChantOperation *self)
       ((priv->cached_path && self->src) &&
         strcmp (self->src, priv->cached_path)))
     {
-        GeglGraph *gegl;
-        GeglNode  *load;
+        GeglNode *gegl;
+        GeglNode *load;
 
         if (priv->cached_buffer)
           {
@@ -185,7 +185,7 @@ refresh_cache (GeglChantOperation *self)
             g_free (priv->cached_path);
           }
 
-        gegl = g_object_new (GEGL_TYPE_GRAPH, NULL);
+        gegl = g_object_new (GEGL_TYPE_NODE, NULL);
         load = gegl_graph_new_node (gegl, "operation", "load",
                                              "cache", FALSE,
                                              "path", self->src,

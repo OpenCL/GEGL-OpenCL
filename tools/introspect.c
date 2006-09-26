@@ -1,4 +1,5 @@
-#include <gegl.h>
+#include <gegl-plugin.h> /* needed instead of gegl.h to be able to do full
+                            introspection*/
 #include <stdio.h>
 
 FILE *file = NULL;
@@ -465,7 +466,7 @@ stuff (gint    argc,
   gegl_init (&argc, &argv);
   
     {
-      GeglGraph *gegl = g_object_new (GEGL_TYPE_GRAPH, NULL);
+      GeglNode  *gegl = g_object_new (GEGL_TYPE_NODE, NULL);
 
       GeglNode  *display = gegl_graph_new_node (gegl,
                     "operation", "crop",

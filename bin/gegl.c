@@ -1,9 +1,8 @@
+#include <glib.h>
 #include <gegl.h>
-#include <gegl/gegl-xml.h> /* needed to build in source dir, but exposed
-                              through gegl.h in other places */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include "gegl-instrument.h"
 #include <unistd.h>
 #include "gegl-options.h"
 
@@ -87,30 +86,17 @@ main (gint    argc,
         break;
       case GEGL_RUN_MODE_PNG:
         {
-          glong timing;
-
-          timing = gegl_ticks ();
-          GeglNode *output = gegl_graph_new_node (GEGL_GRAPH (gegl),
+          GeglNode *output = gegl_graph_new_node (gegl,
                                "operation", "png-save",
                                "path", o->output,
                                NULL);
-          if (o->stats)
-            g_print ("%s  ", o->file);
-          gegl_node_connect (output, "input", gegl_graph_output (GEGL_GRAPH (gegl), "output"), "output");
-
+          gegl_node_connect (output, "input", gegl_graph_output (gegl, "output"), "output");
           gegl_node_apply (output, "output");
-          timing = gegl_ticks()-timing;
-          if (o->stats)
-            g_print ("usecs: %li", timing);
-
 
           g_object_unref (gegl);
           g_free (o);
           gegl_exit ();
 
-          if (gegl_buffer_leaks())
-            g_print ("  buffer-leaks: %i", gegl_buffer_leaks ());
-          g_print ("\n");
         }
         break;
       case GEGL_RUN_MODE_HELP:
@@ -118,7 +104,6 @@ main (gint    argc,
       default:
         break;
     }
-
   return 0;
 }
 
@@ -126,11 +111,11 @@ static gint
 main_interactive (GeglNode *gegl,
                   GeglOptions *o)
 {
-  GeglNode *output = gegl_graph_new_node (GEGL_GRAPH (gegl),
+  GeglNode *output = gegl_graph_new_node (gegl,
                        "operation", "display",
                        NULL);
 
-  gegl_node_connect (output, "input", gegl_graph_output (GEGL_GRAPH (gegl), "output"), "output");
+  gegl_node_connect (output, "input", gegl_graph_output (gegl, "output"), "output");
   gegl_node_apply (output, "output");
   sleep(o->delay);
   return 0;

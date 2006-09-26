@@ -101,4 +101,8 @@ gegl_exit (void)
     {
       printf ("\n%s", gegl_instrument_utf8 ());
     }
+
+  if (gegl_buffer_leaks())
+    g_print ("  buffer-leaks: %i", gegl_buffer_leaks ());
+  g_print ("\n");
 }

@@ -76,25 +76,24 @@ static void associate (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *priv = (Priv*)self->priv;
-  GeglGraph *graph;
+  GeglNode *gegl;
   g_assert (priv == NULL);
 
   priv = g_malloc0 (sizeof (Priv));
   self->priv = (void*) priv;
 
   priv->self = GEGL_OPERATION (self)->node;
-  graph = GEGL_GRAPH (priv->self);
-  priv->input = gegl_graph_input (graph, "input");
-  priv->output = gegl_graph_output (graph, "output");
+  gegl = priv->self;
+  priv->input = gegl_graph_input (gegl, "input");
+  priv->output = gegl_graph_output (gegl, "output");
 
   if (!priv->over)
     {
-      GeglGraph *graph = GEGL_GRAPH (priv->self);
-      priv->over = gegl_graph_new_node (graph, "operation", "over", NULL);
-      priv->translate = gegl_graph_new_node (graph, "operation", "translate", NULL);
-      priv->opacity = gegl_graph_new_node (graph, "operation", "opacity", NULL);
-      priv->blur = gegl_graph_new_node (graph, "operation", "gaussian-blur", NULL);
-      priv->darken = gegl_graph_new_node (graph, "operation", "brightness-contrast", "brightness", -0.9, NULL);
+      priv->over = gegl_graph_new_node (gegl, "operation", "over", NULL);
+      priv->translate = gegl_graph_new_node (gegl, "operation", "translate", NULL);
+      priv->opacity = gegl_graph_new_node (gegl, "operation", "opacity", NULL);
+      priv->blur = gegl_graph_new_node (gegl, "operation", "gaussian-blur", NULL);
+      priv->darken = gegl_graph_new_node (gegl, "operation", "brightness-contrast", "brightness", -0.9, NULL);
 
       gegl_node_connect (priv->darken, "input", priv->input, "output");
       gegl_node_connect (priv->blur,   "input", priv->darken, "output");

@@ -95,7 +95,7 @@ gegl_LDFLAGS = \
 libgeglincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)
 libgeglsubincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl
 
-libgeglinclude_HEADERS = gegl.h gegl-module.h gegl-chant.h
+libgeglinclude_HEADERS = gegl.h gegl-module.h gegl-chant.h gegl-plugin.h
 libgeglsubinclude_HEADERS = $(GEGL_public_headers) 
 
 

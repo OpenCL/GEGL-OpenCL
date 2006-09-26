@@ -50,35 +50,35 @@ static void associate (GeglOperation *operation)
 {
   GeglChantOperation *self;
   Priv          *priv;
-  GeglGraph     *graph;
+  GeglNode      *gegl;
 
   self       = GEGL_CHANT_OPERATION (operation);
   priv       = g_malloc0 (sizeof (Priv));
   self->priv = (void*) priv;
 
-  graph = GEGL_GRAPH (operation->node);
+  gegl = operation->node;
 
   /* aquire interior nodes representing the graphs pads */
-  priv->input  = gegl_graph_input (graph, "input");
-  priv->output = gegl_graph_output (graph, "output");
+  priv->input  = gegl_graph_input (gegl, "input");
+  priv->output = gegl_graph_output (gegl, "output");
 
   if (!priv->add)
     {
-      priv->add      = gegl_graph_new_node (graph,
-                                               "operation", "add",
-                                               NULL);
+      priv->add      = gegl_graph_new_node (gegl,
+                                            "operation", "add",
+                                            NULL);
 
-      priv->multiply = gegl_graph_new_node (graph,
-                                               "operation", "multiply",
-                                               NULL);
+      priv->multiply = gegl_graph_new_node (gegl,
+                                            "operation", "multiply",
+                                            NULL);
 
-      priv->subtract = gegl_graph_new_node (graph,
-                                               "operation", "subtract",
-                                               NULL);
+      priv->subtract = gegl_graph_new_node (gegl,
+                                            "operation", "subtract",
+                                            NULL);
 
-      priv->blur     = gegl_graph_new_node (graph,
-                                               "operation", "gaussian-blur",
-                                               NULL);
+      priv->blur     = gegl_graph_new_node (gegl,
+                                            "operation", "gaussian-blur",
+                                            NULL);
 
       gegl_node_connect (priv->subtract, "input", priv->input,    "output");
       gegl_node_connect (priv->blur,     "input", priv->input,    "output");

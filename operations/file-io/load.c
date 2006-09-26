@@ -148,18 +148,16 @@ static void associate (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *priv = (Priv*)self->priv;
-  GeglGraph *graph;
   g_assert (priv == NULL);
 
   priv = g_malloc0 (sizeof (Priv));
   self->priv = (void*) priv;
 
   priv->self = GEGL_OPERATION (self)->node;
-  graph = GEGL_GRAPH (priv->self);
 
-  priv->output = gegl_graph_output (graph, "output");
+  priv->output = gegl_graph_output (priv->self, "output");
 
-  priv->load = gegl_graph_new_node (graph,
+  priv->load = gegl_graph_new_node (priv->self,
                                        "operation", "text",
                                        "string", "foo",
                                        NULL);
@@ -186,7 +184,7 @@ refresh_cache (GeglChantOperation *self)
       ((priv->cached_path && self->path) &&
         strcmp (self->path, priv->cached_path)))
     {
-        GeglGraph *gegl;
+        GeglNode  *gegl;
         GeglNode  *load;
 
         if (priv->cached_buffer)
@@ -196,7 +194,7 @@ refresh_cache (GeglChantOperation *self)
             g_free (priv->cached_path);
           }
 
-        gegl = g_object_new (GEGL_TYPE_GRAPH, NULL);
+        gegl = g_object_new (GEGL_TYPE_NODE, NULL);
         load = gegl_graph_new_node (gegl, "operation", "load",
                                              "cache", FALSE,
                                              "path", self->path,

@@ -9,7 +9,7 @@
 #include <string.h>
 #include <glib-object.h>
 
-#include <gegl.h>
+#include <gegl-plugin.h>
 
 #ifdef GEGL_CHANT_SOURCE
   #include <gegl/gegl-operation-source.h>
