@@ -1,3 +1,8 @@
+2006-09-26  Dominik Ernst <dernst@gmx.de>
+
+	* operations/file-io/png-save.c: (gegl_buffer_export_png): Fixed
+	endian usse for 16-bit rgba images.
+
 2006-09-25  Dominik Ernst <dernst@gmx.de>
 
 	* operations/file-io/png-save.c: added write support for 16-bit rgba

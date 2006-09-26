@@ -137,8 +137,10 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
 
   png_write_info (png, info);
 
+#if BYTE_ORDER == LITTLE_ENDIAN
   if (bit_depth > 8)
     png_set_swap (png);
+#endif
 
   pixels = g_malloc0 (row_stride);
 
