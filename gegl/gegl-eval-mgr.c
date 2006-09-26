@@ -36,7 +36,6 @@
 #include "gegl-operation.h"
 #include "gegl-prepare-visitor.h"
 #include "gegl-pad.h"
-#include "gegl-ref-visitor.h"
 #include "gegl-visitable.h"
 #include <stdlib.h>
 

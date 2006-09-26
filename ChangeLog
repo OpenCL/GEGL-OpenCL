@@ -1,5 +1,9 @@
 2006-09-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-eval-mgr.c: removed cruft amongst headers.
+
+2006-09-26  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.h: Rewrote to only contain the public API of GEGL.
 	* gegl/gegl-plugin.h: new file for inclusion when a tight coupling
 	with GEGL is needed (plug-ins use a lot more API than host apps
