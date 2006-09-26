@@ -1,4 +1,5 @@
 Makefile
 Makefile.in
 *.png
+*.txt
 index.html

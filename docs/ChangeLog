@@ -1,5 +1,9 @@
 2006-09-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* gallery/.cvsignore: added *.txt
+
+2006-09-26  Øyvind Kolås  <pippin@gimp.org>
+
 	Added timing information to webpage, made the leaks visible when
 	building under crucible.
 
