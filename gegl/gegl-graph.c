@@ -55,20 +55,6 @@ static void
 dispose (GObject *object)
 {
   GeglGraph *self = GEGL_GRAPH (object);
-#if 0
-  GeglNode  *node = GEGL_NODE (self);
-
-  /* why should this happen for the graph, and not for the node? */
-  while (node->pads)
-    {
-      GeglPad *pad = g_list_nth_data (node->pads, 0);
-
-      node->pads = g_list_remove (node->pads, pad); /* need to figure
-                                                       out a better way to
-                                                       mark these pads
-                                                    */
-    }
-#endif
   
   gegl_graph_remove_children (self);
 

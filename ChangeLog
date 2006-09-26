@@ -1,5 +1,10 @@
 2006-09-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-graph.c: (dispose): removed dead code.
+	* gegl/gegl-node.c: (gegl_node_get_depends_on): removed dead code.
+
+2006-09-26  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.h: added missing g to egl_node_link.
 
 2006-09-26  Øyvind Kolås  <pippin@gimp.org>

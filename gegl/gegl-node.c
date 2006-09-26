@@ -689,7 +689,7 @@ gegl_node_get_depends_on (GeglNode *self)
           depends_on = g_list_append (depends_on, source_node);
         }
     }
-#if 1
+
   if (!strcmp (gegl_object_get_name (GEGL_OBJECT (self)), "proxynop-input"))
     {
       GeglGraph *graph = g_object_get_data (G_OBJECT (self), "graph");
@@ -698,25 +698,6 @@ gegl_node_get_depends_on (GeglNode *self)
           depends_on = g_list_concat (depends_on, gegl_node_get_depends_on (GEGL_NODE (graph)));
         }
     }
-#endif
-#if 0
-  if (!strcmp (gegl_object_get_name (GEGL_OBJECT (self)), "proxynop-input"))
-    {
-      GList *llink;
-      GeglNode *graph;
-
-      graph = GEGL_NODE (g_object_get_data (G_OBJECT (self), "graph"));
-
-      for (llink = graph->sources; llink; llink = g_list_next (llink))
-        {
-          GeglConnection *connection = llink->data;
-          GeglNode *source_node = gegl_connection_get_source_node (connection);
-
-          if (! g_list_find (depends_on, source_node))
-            depends_on = g_list_append (depends_on, source_node);
-        }
-    }
-#endif
 
   return depends_on;
 }
