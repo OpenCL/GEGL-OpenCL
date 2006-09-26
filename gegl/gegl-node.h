@@ -78,7 +78,7 @@ void          gegl_node_blit_buf            (GeglNode     *self,
                                              gint          rowstride,
                                              gpointer     *destination_buf);
 
-void           egl_node_link                (GeglNode     *source,
+void          gegl_node_link                (GeglNode     *source,
                                              GeglNode     *sink);
 
 void          gegl_node_link_many           (GeglNode     *source,

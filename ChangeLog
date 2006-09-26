@@ -1,5 +1,9 @@
 2006-09-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.h: added missing g to egl_node_link.
+
+2006-09-26  Øyvind Kolås  <pippin@gimp.org>
+
 	Accidentaly commited changes to the following files when commiting
 	the previous patch. Reverting to prior state.
 
