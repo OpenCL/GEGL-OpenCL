@@ -1,3 +1,9 @@
+2006-09-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-node.[ch]: (gegl_node_get_connected_to):
+	added a convenience method more suited for high level interaction with
+	the graph.
+
 2006-09-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-eval-mgr.c: removed cruft amongst headers.

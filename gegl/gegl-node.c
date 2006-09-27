@@ -1244,3 +1244,21 @@ gegl_node_get_debug_name (GeglNode     *node)
     sprintf (ret_buf, "%s", gegl_node_get_op_type_name (node));
   return ret_buf;
 }
+
+
+GeglNode *
+gegl_node_get_connected_to (GeglNode *node,
+                            gchar    *pad_name)
+{
+  GeglPad *pad = gegl_node_get_pad (node, pad_name);
+
+  if (pad &&
+      gegl_pad_is_input (pad) &&
+      gegl_pad_get_num_connections (pad) == 1)
+    {
+      GeglConnection *connection = g_list_nth_data (pad->connections, 0);
+
+      return gegl_connection_get_source_node (connection);
+    }
+  return NULL;
+}
