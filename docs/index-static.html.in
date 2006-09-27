@@ -450,9 +450,15 @@ Some examples:
         The latest development version is available in <a
             href='http://cvs.gnome.org/viewcvs/gegl/'>the <em>gegl</em> module
             in GNOME CVS</a>. 
+    <h4>gegl usage</h4>
+    The following is the usage information of the gegl binary, this
+    documentation might not be complete.
 
+    <pre>
+    <!--GEGL_USAGE-->
+    </pre>
         
-        <a name='Development'></a>
+    <a name='Development'></a>
 
     <h2>Development</h2>
 

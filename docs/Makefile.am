@@ -47,12 +47,16 @@ runinfo: Makefile.am
 index.html: index-static.html                    \
 	    $(top_srcdir)/AUTHORS                \
 	    $(top_srcdir)/NEWS                   \
+	    $(top_builddir)/gegl/gegl		 \
 	    Makefile.am				 \
 	    runinfo
 	echo -n "HTML: $@"
 	cp $< $@ 
 	$(top_srcdir)/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
 	[ -f runinfo ] && $(top_srcdir)/tools/xml_insert.sh $@ RUNINFO runinfo || true
+	$(top_builddir)/gegl/gegl -h > gegl-usage.txt 2>&1
+	$(top_srcdir)/tools/xml_insert.sh $@ GEGL_USAGE gegl-usage.txt
+	rm gegl-usage.txt
 	echo " [OK]"
 
 distclean-local:
