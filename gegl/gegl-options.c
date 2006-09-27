@@ -16,7 +16,6 @@ static GeglOptions *opts_new (void)
   o->file     = NULL;
   o->delay    = 0.0;
   o->rest     = NULL;
-  o->stats    = FALSE;
   return o;
 }
 
@@ -27,14 +26,28 @@ usage (char *application_name)
 "usage: %s [options] <file | -- [op [op] ..]>\n"
 "\n"
 "  Options:\n"
-"     --help                this help\n"
+"     --help                this help information\n"
 "     -h\n"
+"\n"
+"     --file                read xml from named file\n"
+"     -i\n"
+"\n"
+"     --xml                 use xml provided in next argument\n"
+"     -x\n"
+"\n"
+"     --output              output generated image to named file\n"
+"     -o                    (file is saved in PNG format)\n"
+"\n"
+"     -X                    output the XML that was read in\n"
 "\n"
 "     --verbose             print diagnostics while running\n"
 "      -v\n"
 "\n"
 "     --ui                  use gtk+ ui (act like a viewer/editor)"
-"     -ui\n"
+"     -u\n"
+"\n"
+"     --delay               wait for specified number of seconds before exit\n"
+"     -d                    (only valid when --ui or -u option is also used)\n"
 "\n"
 "All parameters following -- are considered ops to be chained together\n"
 "into a small composition instead of using an xml file, this allows for\n"
@@ -155,11 +168,6 @@ parse_args (int    argc,
             o->verbose=1;
         }
 
-        else if (match ("--stats") ||
-                 match ("-s")) {
-            o->stats=1;
-        }
-
         else if (match ("--file") ||
                  match ("-i")) {
             get_string (o->file);
@@ -181,7 +189,7 @@ parse_args (int    argc,
         }
 
         else if (match ("--ui") ||
-                 match ("-ui")) {
+                 match ("-u")) {
             o->mode = GEGL_RUN_MODE_INTERACTIVE;
         }
 

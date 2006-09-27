@@ -44,7 +44,7 @@ all-local: pngs index.html
 	    $(wildcard $(top_builddir)/*/*.o)\
 	    $(top_builddir)/gegl
 	@export GEGL_DEBUG_TIME=yes;export GEGL_PATH=$(top_builddir)/operations;\
-	$(top_builddir)/gegl/gegl $< -s -o $@ > `echo $@|sed -e s/png/txt/`
+	$(top_builddir)/gegl/gegl $< -o $@ > `echo $@|sed -e s/png/txt/`
 
 clean-local:
 	rm -f index.html *.png *.txt

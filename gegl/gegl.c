@@ -6,11 +6,6 @@
 #include <unistd.h>
 #include "gegl-options.h"
 
-static gchar *usage = "Usage: %s <xmlfile>\n"
-"\n"
-"Evaluates the supplied XML encoded GEGL processing graph.\n"
-"If xmlfile is - the xml is read from standard input\n";
-
 static gint main_interactive (GeglNode    *gegl,
                               GeglOptions *o);
 
@@ -20,17 +15,8 @@ main (gint    argc,
 {
   GeglOptions *o        = NULL;
   GeglNode    *gegl     = NULL;
-  const gchar *filename = NULL;
   gchar       *script   = NULL;
   GError      *err      = NULL;
-
-  if (argc <= 1)
-    {
-      fprintf (stderr, usage, argv[0]);
-      exit (-1);
-    }
-
-  filename = argv[1];
 
   gegl_init (&argc, &argv);
 

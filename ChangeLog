@@ -1,3 +1,14 @@
+2006-09-27  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/gegl.c: Display usage information in gegl-options.c and not here.
+
+	* gegl/gegl-options.c: Removed support and usage information for
+	obsolete --stats/-s option. Added missing usage information.
+
+	* gegl/gegl-options.h: Removed stats member from GeglOptions structure.
+
+	* docs/gallery/Makefile.am: Removed -s option from invocation of gegl.
+
 2006-09-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-node.[ch]: (gegl_node_get_connected_to):

@@ -3,7 +3,7 @@
 
 #include <glib.h>
 
-typedef enum 
+typedef enum
 {
   GEGL_RUN_MODE_HELP,
   GEGL_RUN_MODE_INTERACTIVE,
@@ -22,7 +22,6 @@ typedef struct GeglOptions
   gchar      **rest;
 
   gboolean     verbose;
-  gboolean     stats;
 
   gfloat       delay;
 } GeglOptions;
