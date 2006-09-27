@@ -54,7 +54,7 @@ usage (char *application_name)
 "easy testing of filters. Be aware that the default value will be used\n"
 "for all properties.\n"
 , application_name);
-    exit (-1);
+    exit (0);
 }
 
 #define match(string) (!strcmp (*curr, (string)))
