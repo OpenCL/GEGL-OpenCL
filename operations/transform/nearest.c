@@ -32,20 +32,21 @@ affine_nearest (GeglBuffer *dest,
            u, v,
            src_w  = src->width,
            src_h  = src->height;
-  guint32 *src_buf,
+  gfloat  *src_buf,
+          *src_ptr,
           *dest_buf,
           *dest_ptr,
-           abyss = 0;
+           abyss = 0.;
   Matrix3  inverse;
   gdouble  u_start,
            v_start,
            u_float,
            v_float;
 
-  src_buf  = g_malloc (gegl_buffer_pixels (src) << 2);
-  dest_buf = g_malloc (gegl_buffer_pixels (dest) << 2);
+  src_buf  = g_new (gfloat, gegl_buffer_pixels (src) * 4);
+  dest_buf = g_new (gfloat, gegl_buffer_pixels (dest) * 4);
   g_assert (src_buf && dest_buf);
-  gegl_buffer_get_fmt (src, src_buf, babl_format ("RGBA u8"));
+  gegl_buffer_get_fmt (src, src_buf, babl_format ("RGBA float"));
 
   matrix3_copy (inverse, matrix);
   matrix3_invert (inverse);
@@ -66,7 +67,7 @@ affine_nearest (GeglBuffer *dest,
       u_float = u_start;
       v_float = v_start;
 
-      for (x = dest->width; x--; dest_ptr++)
+      for (x = dest->width; x--;)
         {
           u = u_float;
           v = v_float;
@@ -75,9 +76,21 @@ affine_nearest (GeglBuffer *dest,
                         v >= 0 &&
                         u < src_w &&
                         v < src_h))
-            *dest_ptr = src_buf [v * src_w + u];
+            {
+              src_ptr = src_buf + (v * src_w + u) * 4;
+
+              *dest_ptr++ = *src_ptr++;
+              *dest_ptr++ = *src_ptr++;
+              *dest_ptr++ = *src_ptr++;
+              *dest_ptr++ = *src_ptr++;
+            }
           else
-            *dest_ptr = abyss;
+            {
+              *dest_ptr++ = abyss;
+              *dest_ptr++ = abyss;
+              *dest_ptr++ = abyss;
+              *dest_ptr++ = abyss;
+            }
 
           u_float += inverse [0][0];
           v_float += inverse [1][0];
@@ -87,7 +100,7 @@ affine_nearest (GeglBuffer *dest,
       v_start += inverse [1][1];
     }
 
-  gegl_buffer_set_fmt (dest, dest_buf, babl_format ("RGBA u8"));
+  gegl_buffer_set_fmt (dest, dest_buf, babl_format ("RGBA float"));
 
   g_free (src_buf);
   g_free (dest_buf);
@@ -98,16 +111,17 @@ scale_nearest (GeglBuffer *dest,
                GeglBuffer *src,
                Matrix3     matrix)
 {
-  gint     x, y,
+  gint     x, y, u,
            src_w  = src->width,
            src_h  = src->height,
            dest_w = dest->width,
            dest_h = dest->height,
-           dest_rowstride = dest->width << 2,
+           src_rowstride = src_w * 4,
+           dest_rowstride = dest_w * 4,
            skip_end   = 0,
            skip_left  = 0,
            skip_right = 0;
-  guint32 *src_buf,
+  gfloat  *src_buf,
           *dest_buf,
           *src_ptr,
           *dest_ptr;
@@ -117,10 +131,10 @@ scale_nearest (GeglBuffer *dest,
            u_float,
            v_float;
 
-  src_buf  = g_malloc (gegl_buffer_pixels (src) << 2);
-  dest_buf = g_malloc (gegl_buffer_pixels (dest) << 2);
+  src_buf  = g_new (gfloat, gegl_buffer_pixels (src) * 4);
+  dest_buf = g_new (gfloat, gegl_buffer_pixels (dest) * 4);
   g_assert (src_buf && dest_buf);
-  gegl_buffer_get_fmt (src, src_buf, babl_format ("RGBA u8"));
+  gegl_buffer_get_fmt (src, src_buf, babl_format ("RGBA float"));
 
   matrix3_copy (inverse, matrix);
   matrix3_invert (inverse);
@@ -139,8 +153,8 @@ scale_nearest (GeglBuffer *dest,
   dest_ptr = dest_buf;
   for (; ((gint) v_start < 0 || (gint) v_start >= src_h) && dest_h; dest_h--)
     {
-      memset (dest_ptr, 0, dest_rowstride);
-      dest_ptr += dest->width;
+      memset (dest_ptr, 0, dest_rowstride * sizeof (gfloat));
+      dest_ptr += dest_rowstride;
       v_start += inverse [1][1];
     }
 
@@ -164,28 +178,37 @@ scale_nearest (GeglBuffer *dest,
       u_float -= inverse [0][0];
     }
 
+  skip_left *= 4;
+  skip_right *= 4;
   for (y = dest_h; y--; v_start += inverse [1][1])
     {
-      for (x = skip_left; x--;)
-        *dest_ptr++ = 0;
+      memset (dest_ptr, 0, skip_left * sizeof (gfloat));
+      dest_ptr += skip_left;
 
       u_float = u_start;
-      src_ptr = src_buf + ((gint) v_start) * src_w;
+      src_ptr = src_buf + ((gint) v_start) * src_rowstride;
 
       for (x = dest_w; x--; u_float += inverse [0][0])
-        *dest_ptr++ = src_ptr [(gint) u_float];
+        {
+          u = (gint) u_float * 4;
 
-      for (x = skip_right; x--;)
-        *dest_ptr++ = 0;
+          *dest_ptr++ = src_ptr [u];
+          *dest_ptr++ = src_ptr [u + 1];
+          *dest_ptr++ = src_ptr [u + 2];
+          *dest_ptr++ = src_ptr [u + 3];
+        }
+
+      memset (dest_ptr, 0, skip_right * sizeof (gfloat));
+      dest_ptr += skip_right;
     }
 
   while (skip_end--)
     {
-      memset (dest_ptr, 0, dest_rowstride);
-      dest_ptr += dest->width;
+      memset (dest_ptr, 0, dest_rowstride * sizeof (gfloat));
+      dest_ptr += dest_rowstride;
     }
 
-  gegl_buffer_set_fmt (dest, dest_buf, babl_format ("RGBA u8"));
+  gegl_buffer_set_fmt (dest, dest_buf, babl_format ("RGBA float"));
 
   g_free (src_buf);
   g_free (dest_buf);

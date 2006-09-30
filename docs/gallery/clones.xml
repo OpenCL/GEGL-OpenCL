@@ -71,8 +71,8 @@
       <shift x = '0'
              y = '0'/>
       <add value  = '0.5'/>
-      <gaussian-blur radius-x ='15'
-                     radius-y='15'/>
+      <gaussian-blur radius-x ='5'
+                     radius-y='5'/>
       <clone ref ='gegl'/>
     </under>
     <load path = 'data/gegl.png'

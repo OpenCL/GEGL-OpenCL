@@ -24,6 +24,7 @@
 
 #include "matrix.h"
 
+
 void
 affine_linear (GeglBuffer *dest,
                GeglBuffer *src,
@@ -35,12 +36,12 @@ affine_linear (GeglBuffer *dest,
            src_w_m1 = src_w - 1,
            src_h    = src->height,
            src_h_m1 = src_h - 1,
-           src_rowstride = src_w << 2;
-  guint8  *src_buf,
+           src_rowstride = src_w * 4;
+  gfloat  *src_buf,
           *dest_buf,
           *src_ptr,
-          *dest_ptr;
-  guint32  abyss = 0;
+          *dest_ptr,
+           abyss = 0.;
   Matrix3  inverse;
   gdouble  u_start,
            v_start;
@@ -48,52 +49,62 @@ affine_linear (GeglBuffer *dest,
   if (gegl_buffer_pixels (src) == 0 ||
       gegl_buffer_pixels (dest) == 0)
     return;
-  src_buf  = g_malloc (gegl_buffer_pixels (src) << 2);
-  dest_buf = g_malloc (gegl_buffer_pixels (dest) << 2);
+  src_buf  = g_new (gfloat, gegl_buffer_pixels (src) * 4);
+  dest_buf = g_new (gfloat, gegl_buffer_pixels (dest) * 4);
   g_assert (src_buf && dest_buf);
-  gegl_buffer_get_fmt (src, src_buf, babl_format ("RGBA u8"));
+  gegl_buffer_get_fmt (src, src_buf, babl_format ("RGBA float"));
 
   /* expand borders */
   /* bottom row */
   memcpy (src_buf + src_h_m1 * src_rowstride,
-          src_buf + (src_h - 2) * src_rowstride,
-          src_rowstride);
+          src_buf + (src_h_m1 - 1) * src_rowstride,
+          src_rowstride * sizeof (gfloat));
 
   /* right column */
-  src_ptr = src_buf + (src_w_m1 << 2);
+  src_ptr = src_buf + src_w_m1 * 4;
   for (y = src_h; y--; src_ptr += src_rowstride)
-    *((guint32 *) src_ptr) = *((guint32 *) (src_ptr - 4));
+  {
+    src_ptr[0] = *((gfloat *) (src_ptr - 4));
+    src_ptr[1] = *((gfloat *) (src_ptr - 3));
+    src_ptr[2] = *((gfloat *) (src_ptr - 2));
+    src_ptr[3] = *((gfloat *) (src_ptr - 1));
+  }
 
   if (! hard_edges)
     {
       /* top row */
-      memcpy (src_buf, src_buf + src_rowstride, src_rowstride);
+      memcpy (src_buf, src_buf + src_rowstride, src_rowstride * sizeof (gfloat));
 
       /* left column */
       src_ptr = src_buf;
       for (y = src_h; y--; src_ptr += src_rowstride)
-        *((guint32 *) src_ptr) = *((guint32 *) (src_ptr + 4));
+      {
+        src_ptr[0] = *((gfloat *) (src_ptr + 4));
+        src_ptr[1] = *((gfloat *) (src_ptr + 5));
+        src_ptr[2] = *((gfloat *) (src_ptr + 6));
+        src_ptr[3] = *((gfloat *) (src_ptr + 7));
+      }
 
       /* make expanded borders transparent */
       /* left column */
       src_ptr = src_buf + 3;
       for (y = src_h; y--; src_ptr += src_rowstride)
-        *src_ptr = 0;
+        *src_ptr = 0.;
 
       /* right column */
-      src_ptr = src_buf + (src_w_m1 << 2) + 3;
+      src_ptr = src_buf + src_w_m1 * 4 + 3;
       for (y = src_h; y--; src_ptr += src_rowstride)
-        *src_ptr = 0;
+        *src_ptr = 0.;
 
       /* top row */
       src_ptr = src_buf + 3;
       for (x = src_w; x--; src_ptr += 4)
-        *src_ptr = 0;
+        *src_ptr = 0.;
 
       /* bottom row */
-      src_ptr = src_buf + ((src_h_m1 * src_w) << 2) + 3;
+      src_ptr = src_buf + src_h_m1 * src_rowstride + 3;
       for (x = src_w; x--; src_ptr += 4)
-        *src_ptr = 0;
+        *src_ptr = 0.;
     }
 
   matrix3_copy (inverse, matrix);
@@ -140,7 +151,7 @@ affine_linear (GeglBuffer *dest,
               factor2 = fv * fu_inv;
               factor3 = fv * fu;
 
-              src_ptr = src_buf + ((v * src_w + u) << 2);
+              src_ptr = src_buf + (v * src_w + u) * 4;
               r = src_ptr [0] * factor0;
               g = src_ptr [1] * factor0;
               b = src_ptr [2] * factor0;
@@ -169,8 +180,10 @@ affine_linear (GeglBuffer *dest,
             }
           else
             {
-              *((guint32 *) dest_ptr) = abyss;
-              dest_ptr += 4;
+              *dest_ptr++ = abyss;
+              *dest_ptr++ = abyss;
+              *dest_ptr++ = abyss;
+              *dest_ptr++ = abyss;
             }
 
           u_float += inverse [0][0];
@@ -181,7 +194,7 @@ affine_linear (GeglBuffer *dest,
       v_start += inverse [1][1];
     }
 
-  gegl_buffer_set_fmt (dest, dest_buf, babl_format ("RGBA u8"));
+  gegl_buffer_set_fmt (dest, dest_buf, babl_format ("RGBA float"));
 
   g_free (src_buf);
   g_free (dest_buf);
@@ -200,13 +213,13 @@ scale_linear (GeglBuffer *dest,
            src_h_m1       = src_h - 1,
            dest_w         = dest->width,
            dest_h         = dest->height,
-           src_rowstride  = src_w << 2,
-           dest_rowstride = dest_w << 2,
+           src_rowstride  = src_w * 4,
+           dest_rowstride = dest_w * 4,
            skip_start     = 0,
            skip_left      = 0,
            skip_right     = 0,
            skip_end       = 0;
-  guint8  *src_buf,
+  gfloat  *src_buf,
           *dest_buf,
           *src_start,
           *dest_start,
@@ -221,52 +234,62 @@ scale_linear (GeglBuffer *dest,
   if (gegl_buffer_pixels (src) == 0 ||
       gegl_buffer_pixels (dest) == 0)
     return;
-  src_buf  = g_malloc (gegl_buffer_pixels (src) << 2);
-  dest_buf = g_malloc (gegl_buffer_pixels (dest) << 2);
+  src_buf  = g_new (gfloat, gegl_buffer_pixels (src) * 4);
+  dest_buf = g_new (gfloat, gegl_buffer_pixels (dest) * 4);
   g_assert (src_buf && dest_buf);
-  gegl_buffer_get_fmt (src, src_buf, babl_format ("RGBA u8"));
+  gegl_buffer_get_fmt (src, src_buf, babl_format ("RGBA float"));
 
   /* expand borders */
   /* bottom row */
   memcpy (src_buf + src_h_m1 * src_rowstride,
-          src_buf + (src_h - 2) * src_rowstride,
-          src_rowstride);
+          src_buf + (src_h_m1 - 1) * src_rowstride,
+          src_rowstride * sizeof (gfloat));
 
   /* right column */
-  src_ptr = src_buf + (src_w_m1 << 2);
+  src_ptr = src_buf + src_w_m1 * 4;
   for (y = src_h; y--; src_ptr += src_rowstride)
-    *((guint32 *) src_ptr) = *((guint32 *) (src_ptr - 4));
+  {
+    src_ptr[0] = *((gfloat *) (src_ptr - 4));
+    src_ptr[1] = *((gfloat *) (src_ptr - 3));
+    src_ptr[2] = *((gfloat *) (src_ptr - 2));
+    src_ptr[3] = *((gfloat *) (src_ptr - 1));
+  }
 
   if (! hard_edges)
     {
       /* top row */
-      memcpy (src_buf, src_buf + src_rowstride, src_rowstride);
+      memcpy (src_buf, src_buf + src_rowstride, src_rowstride*sizeof (gfloat));
 
       /* left column */
       src_ptr = src_buf;
       for (y = src_h; y--; src_ptr += src_rowstride)
-        *((guint32 *) src_ptr) = *((guint32 *) (src_ptr + 4));
+      {
+        src_ptr[0] = *((gfloat *) (src_ptr + 4));
+        src_ptr[1] = *((gfloat *) (src_ptr + 5));
+        src_ptr[2] = *((gfloat *) (src_ptr + 6));
+        src_ptr[3] = *((gfloat *) (src_ptr + 7));
+      }
 
       /* make expanded borders transparent */
       /* left column */
       src_ptr = src_buf + 3;
       for (y = src_h; y--; src_ptr += src_rowstride)
-        *src_ptr = 0;
+        *src_ptr = 0.;
 
       /* right column */
-      src_ptr = src_buf + (src_w_m1 << 2) + 3;
+      src_ptr = src_buf + src_w_m1 * 4 + 3;
       for (y = src_h; y--; src_ptr += src_rowstride)
-        *src_ptr = 0;
+        *src_ptr = 0.;
 
       /* top row */
       src_ptr = src_buf + 3;
       for (x = src_w; x--; src_ptr += 4)
-        *src_ptr = 0;
+        *src_ptr = 0.;
 
       /* bottom row */
-      src_ptr = src_buf + ((src_h_m1 * src_w) << 2) + 3;
+      src_ptr = src_buf + (src_h_m1 * src_rowstride) + 3;
       for (x = src_w; x--; src_ptr += 4)
-        *src_ptr = 0;
+        *src_ptr = 0.;
     }
 
   matrix3_copy (inverse, matrix);
@@ -283,7 +306,7 @@ scale_linear (GeglBuffer *dest,
   v_float = v_start + (dest_h - 1) * inverse [1][1];
   for (; ((gint) v_float < 0 || (gint) v_float >= src_h_m1) && dest_h; dest_h--)
     {
-      memset (dest_ptr, 0, dest_rowstride);
+      memset (dest_ptr, 0, dest_rowstride * sizeof (gfloat));
       dest_ptr -= dest_rowstride;
 
       skip_end += dest_rowstride;
@@ -293,7 +316,7 @@ scale_linear (GeglBuffer *dest,
   dest_ptr = dest_buf;
   for (; ((gint) v_start < 0 || (gint) v_start >= src_h_m1) && dest_h; dest_h--)
     {
-      memset (dest_ptr, 0, dest_rowstride);
+      memset (dest_ptr, 0, dest_rowstride * sizeof (gfloat));
       dest_ptr += dest_rowstride;
 
       skip_start += dest_rowstride;
@@ -303,21 +326,23 @@ scale_linear (GeglBuffer *dest,
   u_float = u_start + (dest_w - 1) * inverse [0][0];
   for (; ((gint) u_float < 0 || (gint) u_float >= src_w_m1) && dest_w; dest_w--)
     {
-      skip_right += 4;
+      skip_right++;
       u_float -= inverse [0][0];
     }
+  skip_right *= 4;
   dest_ptr += dest_rowstride - skip_right;
   for (y = dest_h; y--; dest_ptr += dest_rowstride)
-    memset (dest_ptr, 0, skip_right);
+    memset (dest_ptr, 0, skip_right * sizeof (gfloat));
 
   for (; ((gint) u_start < 0 || (gint) u_start >= src_w_m1) && dest_w; dest_w--)
     {
-      skip_left += 4;
+      skip_left++;
       u_start += inverse [0][0];
     }
+  skip_left *= 4;
   dest_ptr = dest_buf + skip_start;
   for (y = dest_h; y--; dest_ptr += dest_rowstride)
-    memset (dest_ptr, 0, skip_left);
+    memset (dest_ptr, 0, skip_left * sizeof (gfloat));
 
   dest_ptr = dest_start = dest_buf + skip_start + skip_left;
 
@@ -326,6 +351,7 @@ scale_linear (GeglBuffer *dest,
    * depending on which scale factor is greater) */
   if (fabs (matrix [0][0]) > .5 &&
       fabs (matrix [0][0]) >= fabs (matrix [1][1]))
+{
     for (y = dest_h; y--; v_start += inverse [1][1])
       {
         /*  a  b
@@ -363,9 +389,9 @@ scale_linear (GeglBuffer *dest,
             u = u_float;
             if (u != u_a)
               {
-                guint8 *src_ptr2;
+                gfloat *src_ptr2;
 
-                src_ptr  = src_start + (u << 2);
+                src_ptr  = src_start + u * 4;
                 src_ptr2 = src_ptr + src_rowstride;
 
                 if (u == u_b)
@@ -402,7 +428,9 @@ scale_linear (GeglBuffer *dest,
           }
         dest_ptr += skip_left + skip_right;
       }
+}
   else if (fabs (matrix [1][1]) > .5)
+{
     for (x = dest_w; x--; u_start += inverse [0][0])
       {
         /* a [0][1]  <- source pixels
@@ -430,7 +458,7 @@ scale_linear (GeglBuffer *dest,
         v_float   = v_start;
         v_a = v_b = (gint) v_float - 1;
 
-        src_start = src_buf + (u << 2);
+        src_start = src_buf + u * 4;
         for (y = dest_h; y--; v_float += inverse [1][1])
           {
             gint    v;
@@ -477,7 +505,9 @@ scale_linear (GeglBuffer *dest,
           }
         dest_ptr = dest_start += 4;
       }
+}
   else
+{
     for (y = dest_h; y--; v_start += inverse [1][1])
       {
         gint    v = v_start;
@@ -511,7 +541,7 @@ scale_linear (GeglBuffer *dest,
             factor2 = fv * fu_inv;
             factor3 = fv * fu;
 
-            src_ptr = src_start + (u << 2);
+            src_ptr = src_start + u * 4;
             r = src_ptr [0] * factor0;
             g = src_ptr [1] * factor0;
             b = src_ptr [2] * factor0;
@@ -540,8 +570,9 @@ scale_linear (GeglBuffer *dest,
           }
         dest_ptr += skip_left + skip_right;
       }
+}
 
-  gegl_buffer_set_fmt (dest, dest_buf, babl_format ("RGBA u8"));
+  gegl_buffer_set_fmt (dest, dest_buf, babl_format ("RGBA float"));
 
   g_free (src_buf);
   g_free (dest_buf);
