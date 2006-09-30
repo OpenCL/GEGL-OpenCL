@@ -1,3 +1,11 @@
+2006-09-30  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.[ch]: (gegl_buffer_set_rect_fmt),
+	(gegl_buffer_get_rect_fmt), (gegl_buffer_set_rect),
+	(gegl_buffer_get_rect): Added convenience functions to only
+	render/retrieve portions of a buffer in a given pixel format
+	specified with a GeglRect.
+
 2006-09-30  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/transform/linear.c

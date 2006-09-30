@@ -21,6 +21,7 @@
 #include <glib-object.h>
 
 #include "gegl-buffer-types.h"
+#include "../gegl-types.h"
 #include <babl/babl.h>
 
 #ifndef _GEGL_BUFFER_H
@@ -79,6 +80,24 @@ void          gegl_buffer_set_fmt (GeglBuffer  *buffer,
                                                 void       *format);
 
 void          gegl_buffer_get_fmt             (GeglBuffer *buffer,
+                                               void       *dst,
+                                               void       *format);
+
+void          gegl_buffer_set_rect            (GeglBuffer *buffer,
+                                               GeglRect   *rect,
+                                               void       *src);
+
+void          gegl_buffer_get_rect            (GeglBuffer *buffer,
+                                               GeglRect   *rect,
+                                               void       *dst);
+
+void          gegl_buffer_set_rect_fmt        (GeglBuffer *buffer,
+                                               GeglRect   *rect,
+                                               void       *src,
+                                               void       *format);
+
+void          gegl_buffer_get_rect_fmt        (GeglBuffer *buffer,
+                                               GeglRect   *rect,
                                                void       *dst,
                                                void       *format);
 

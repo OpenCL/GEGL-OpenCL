@@ -905,3 +905,49 @@ gegl_buffer_get_fmt (GeglBuffer *buffer,
   gegl_buffer_iterate_fmt (buffer, dst, write = FALSE, format);
 }
 
+
+void          gegl_buffer_set_rect_fmt        (GeglBuffer *buffer,
+                                               GeglRect   *rect,
+                                               void       *src,
+                                               void       *format)
+{
+  GeglBuffer *sub_buf = g_object_new (GEGL_TYPE_BUFFER,
+                                      "source", buffer,
+                                      "x", rect->x,
+                                      "y", rect->y,
+                                      "width", rect->w,
+                                      "height", rect->h,
+                                      NULL);
+  gegl_buffer_set_fmt (sub_buf, src, format);
+  g_object_unref (sub_buf);
+}
+
+void          gegl_buffer_get_rect_fmt        (GeglBuffer *buffer,
+                                               GeglRect   *rect,
+                                               void       *dst,
+                                               void       *format)
+{
+  GeglBuffer *sub_buf = g_object_new (GEGL_TYPE_BUFFER,
+                                      "source", buffer,
+                                      "x", rect->x,
+                                      "y", rect->y,
+                                      "width", rect->w,
+                                      "height", rect->h,
+                                      NULL);
+  gegl_buffer_get_fmt (sub_buf, dst, format);
+  g_object_unref (sub_buf);
+}
+
+void          gegl_buffer_set_rect            (GeglBuffer *buffer,
+                                               GeglRect   *rect,
+                                               void       *src)
+{
+  gegl_buffer_set_rect_fmt (buffer, rect, src, buffer->format);
+}
+
+void          gegl_buffer_get_rect            (GeglBuffer *buffer,
+                                               GeglRect   *rect,
+                                               void       *dst)
+{
+  gegl_buffer_get_rect_fmt (buffer, rect, dst, buffer->format);
+}
