@@ -33,6 +33,8 @@
 #include "matrix.h"
 #include "nearest.h"
 #include "linear.h"
+#include "interpolate-lanczos.h"
+#include "interpolate-cubic.h"
 
 enum
 {
@@ -40,6 +42,7 @@ enum
   PROP_ORIGIN_Y,
   PROP_FILTER,
   PROP_HARD_EDGES,
+  PROP_LANCZOS_WIDTH
 };
 
 /* *** static prototypes *** */
@@ -146,7 +149,7 @@ op_affine_class_init (OpAffineClass *klass)
                                    g_param_spec_string (
                                      "filter",
                                      "Filter",
-                                     "Filter type (nearest, linear)",
+                                     "Filter type (nearest, linear, lanczos)",
                                      "linear",
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_HARD_EDGES,
@@ -155,6 +158,13 @@ op_affine_class_init (OpAffineClass *klass)
                                      "Hard-edges",
                                      "Hard edges",
                                      FALSE,
+                                     G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class, PROP_LANCZOS_WIDTH,
+                                   g_param_spec_int (
+                                     "lanczos-width",
+                                     "Lanczos-width",
+                                     "Lanczos-width width of lanczos function",
+                                     3, 6, 3,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 }
 
@@ -182,6 +192,8 @@ get_property (GObject    *object,
       g_value_set_string (value, self->filter); break;
     case PROP_HARD_EDGES:
       g_value_set_boolean (value, self->hard_edges); break;
+    case PROP_LANCZOS_WIDTH:
+      g_value_set_int (value, self->lanczos_width); break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec); break;
     }
@@ -206,6 +218,8 @@ set_property (GObject      *object,
       self->filter = g_strdup (g_value_get_string (value)); break;
     case PROP_HARD_EDGES:
       self->hard_edges = g_value_get_boolean (value); break;
+    case PROP_LANCZOS_WIDTH:
+      self->lanczos_width = g_value_get_int (value); break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec); break;
     }
@@ -506,13 +520,21 @@ process (GeglOperation *op)
 
           g_object_unref (input);
         }
+      else if (!strcasecmp (affine->filter, "lanczos"))
+        if (matrix3_is_scale (affine->matrix))
+          scale_lanczos (output, filter->input, affine->matrix, affine->lanczos_width);
+        else
+          affine_lanczos (output, filter->input, affine->matrix, affine->lanczos_width);
+      else if (!strcasecmp (affine->filter, "cubic"))
+        if (matrix3_is_scale (affine->matrix))
+          scale_cubic (output, filter->input, affine->matrix);
+        else
+          affine_cubic (output, filter->input, affine->matrix);
       else
-        {
           if (matrix3_is_scale (affine->matrix))
             scale_nearest (output, filter->input, affine->matrix);
           else
             affine_nearest (output, filter->input, affine->matrix);
-        }
     }
   filter->output = output;
   return TRUE;

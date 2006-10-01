@@ -351,7 +351,6 @@ scale_linear (GeglBuffer *dest,
    * depending on which scale factor is greater) */
   if (fabs (matrix [0][0]) > .5 &&
       fabs (matrix [0][0]) >= fabs (matrix [1][1]))
-{
     for (y = dest_h; y--; v_start += inverse [1][1])
       {
         /*  a  b
@@ -428,9 +427,7 @@ scale_linear (GeglBuffer *dest,
           }
         dest_ptr += skip_left + skip_right;
       }
-}
   else if (fabs (matrix [1][1]) > .5)
-{
     for (x = dest_w; x--; u_start += inverse [0][0])
       {
         /* a [0][1]  <- source pixels
@@ -505,9 +502,7 @@ scale_linear (GeglBuffer *dest,
           }
         dest_ptr = dest_start += 4;
       }
-}
   else
-{
     for (y = dest_h; y--; v_start += inverse [1][1])
       {
         gint    v = v_start;
@@ -570,7 +565,6 @@ scale_linear (GeglBuffer *dest,
           }
         dest_ptr += skip_left + skip_right;
       }
-}
 
   gegl_buffer_set_fmt (dest, dest_buf, babl_format ("RGBA float"));
 

@@ -26,6 +26,7 @@ struct _OpAffine
             origin_y;
   gchar    *filter;
   gboolean  hard_edges;
+  gint      lanczos_width;
 };
 
 typedef struct _OpAffineClass OpAffineClass;

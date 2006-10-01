@@ -1,3 +1,20 @@
+2006-10-01  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	Added slightly modified versions of the lanczos and cubic interpolate 
+	affine transformations written by Geert Jordaens.
+
+	* operations/transform/affine.c: Added hooks for interpolate ops.
+
+	* operations/transform/affine.h: Added lanczos_width to _OpAffine.
+
+	* operations/transform/interpolate-cubic.c
+	* operations/transform/interpolate-cubic.h
+	* operations/transform/interpolate-lanczos.c
+	* operations/transform/interpolate-lanczos.h: Added
+
+	* operations/transform/linear.c: Removed braces left in by mistake
+	after removal of debug code.
+
 2006-09-30  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.[ch]: (gegl_buffer_set_rect_fmt),
