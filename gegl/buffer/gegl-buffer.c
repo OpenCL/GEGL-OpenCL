@@ -742,7 +742,7 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
 
           pixels = (width + offsetx - bufx) - offsetx;
 
-          if (pixels > tile_width)
+          if (pixels >= tile_width)
             pixels = tile_width - offsetx;
 
           if (!(buffer->x + bufx + tile_width >= buffer->abyss_x &&
