@@ -720,8 +720,8 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
                    row < tile_height && y < height;
                    row++, y++)
                 {
-                  memset (bp, 0x00, buffer->width * bpx_size);
-                  bp += buffer->width * bpx_size;
+                  memset (bp, 0x00, buf_stride);
+                  bp += buf_stride;
                 }
             }
           else
@@ -740,9 +740,9 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
 
           bp = buf + (bufy * width + bufx) * bpx_size;
 
-          pixels = (width + offsetx - bufx) - offsetx;
-
-          if (pixels >= tile_width)
+          if (width + offsetx - bufx < tile_width)
+            pixels = (width + offsetx - bufx) - offsetx;
+          else
             pixels = tile_width - offsetx;
 
           if (!(buffer->x + bufx + tile_width >= buffer->abyss_x &&
