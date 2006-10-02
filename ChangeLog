@@ -1,3 +1,8 @@
+2006-10-02  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_iterate_fmt): moved some
+	conditionals out of loops.
+
 2006-10-01  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	Added slightly modified versions of the lanczos and cubic interpolate 
