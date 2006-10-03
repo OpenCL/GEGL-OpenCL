@@ -1,3 +1,10 @@
+2006-10-03  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/blur/box-blur.c: (process), (hor_blur), (ver_blur),
+	(get_source_rect), (calc_source_regions): modified to use correctly
+	sized temp buffers, and set the format of the temp buffers to
+	"RaGaBaA float"
+
 2006-10-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_iterate_fmt): fixed error
