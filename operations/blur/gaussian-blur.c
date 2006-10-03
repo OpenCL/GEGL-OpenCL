@@ -115,7 +115,7 @@ process (GeglOperation *operation)
                                  NULL);
 
           output = g_object_new (GEGL_TYPE_BUFFER,
-                                 "format", gegl_buffer_get_format (input),
+                                 "format", babl_format ("RaGaBaA float"),
                                  "x",      need.x,
                                  "y",      need.y,
                                  "width",  need.w,
