@@ -78,18 +78,18 @@ process (GeglOperation *operation)
                                  NULL);
           temp   = g_object_new (GEGL_TYPE_BUFFER,
                                  "format", babl_format ("RaGaBaA float"),
-                                 "x",      result->x,
+                                 "x",      need.x,
                                  "y",      need.y,
-                                 "width",  result->w,
+                                 "width",  need.w,
                                  "height", need.h,
                                  NULL);
 
           output = g_object_new (GEGL_TYPE_BUFFER,
                                  "format", babl_format ("RaGaBaA float"),
-                                 "x",      result->x,
-                                 "y",      result->y,
-                                 "width",  result->w,
-                                 "height", result->h,
+                                 "x",      need.x,
+                                 "y",      need.y,
+                                 "width",  need.w,
+                                 "height", need.h,
                                  NULL);
 
           hor_blur (temp_in, temp,  self->radius);
@@ -98,7 +98,17 @@ process (GeglOperation *operation)
           g_object_unref (temp_in);
         }
 
-      filter->output = output;
+      {
+        GeglBuffer *cropped = g_object_new (GEGL_TYPE_BUFFER,
+                                              "source", output,
+                                              "x",      result->x,
+                                              "y",      result->y,
+                                              "width",  result->w,
+                                              "height", result->h,
+                                              NULL);
+        filter->output = cropped;
+        g_object_unref (output);
+      }
     }
   return  TRUE;
 }
@@ -163,7 +173,7 @@ hor_blur (GeglBuffer *src,
           dst_buf [offset++] = get_mean_component (src_buf,
                                src->width,
                                src->height,
-                               u,
+                               u - radius,
                                v,
                                1 + radius*2,
                                1,
@@ -203,9 +213,9 @@ ver_blur (GeglBuffer *src,
                                src->width,
                                src->height,
                                u,
-                               v,
+                               v - radius,
                                1,
-                               1+radius*2,
+                               1 + radius * 2,
                                c);
       }
 
@@ -219,9 +229,12 @@ static GeglRect
 get_defined_region (GeglOperation *operation)
 {
   GeglRect  result = {0,0,0,0};
-  GeglRect *in_rect = gegl_operation_source_get_defined_region (operation, "input");
+  GeglRect *in_rect = gegl_operation_source_get_defined_region (operation,
+                                                                "input");
+
   GeglChantOperation *blur = GEGL_CHANT_OPERATION (operation);
   gint       radius = ceil(blur->radius);
+
   if (!in_rect)
     return result;
 
@@ -237,13 +250,16 @@ get_defined_region (GeglOperation *operation)
 static GeglRect get_source_rect (GeglOperation *self)
 {
   GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
-  GeglRect            rect   = *gegl_operation_get_requested_region (self);
-  gint                radius = ceil(blur->radius);
+  GeglRect            rect;
+  gint                radius;
+ 
+  radius = ceil(blur->radius);
 
-  rect.x-=radius;
-  rect.y-=radius;
-  rect.w+=radius*2;
-  rect.h+=radius*2;
+  rect  = *gegl_operation_get_requested_region (self);
+  rect.x -= radius;
+  rect.y -= radius;
+  rect.w += radius*2;
+  rect.h += radius*2;
 
   return rect;
 }
@@ -252,7 +268,9 @@ static gboolean
 calc_source_regions (GeglOperation *self)
 {
   GeglRect need = get_source_rect (self);
+
   gegl_operation_set_source_region (self, "input", &need);
+
   return TRUE;
 }
 

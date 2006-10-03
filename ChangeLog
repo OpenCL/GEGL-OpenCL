@@ -1,3 +1,9 @@
+2006-10-03  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/blur/box-blur.c: (process), (hor_blur), (ver_blur),
+	(get_defined_region), (get_source_rect), (calc_source_regions):
+	Copied changes from gaussian blur to make the box-blur behave when translated.
+
 2006-10-03  Dominik Ernst  <dernst@gmx.de>
 
 	* operations/blur/gaussian-blur.c: (process), (hor_blur), (ver_blur),
