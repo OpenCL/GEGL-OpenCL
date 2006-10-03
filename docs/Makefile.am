@@ -35,7 +35,7 @@ class-hierarchy.html: $(top_builddir)/tools/introspect $(top_srcdir)/operations/
 	$(top_builddir)/tools/introspect > $@
 
 runinfo: Makefile.am
-	if [ ! -z "{CRUCIBLE_ID}" ]; then\
+	if [ ! -z "$${CRUCIBLE_ID}" ]; then\
 	  echo "<h2>Crucible</h2>" > runinfo;\
 	  echo "<ul class='crucible'>" >> runinfo;\
 	  for host in amd01 ita01 nfs02 nfs11 nfs12 ppc01;do echo "<li><a href='../$${host}/index.html'>$${host}</a></li>" >> runinfo; done;\
