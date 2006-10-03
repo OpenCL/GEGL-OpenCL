@@ -32,15 +32,15 @@ gegl_chant_double (radius, 0.0, 200.0, 4.0,
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
-static void
-hor_blur (GeglBuffer *src,
-          GeglBuffer *dst,
-          gint        radius);
+static void hor_blur (GeglBuffer *src,
+                      GeglBuffer *dst,
+                      gint        radius);
 
-static void
-ver_blur (GeglBuffer *src,
-          GeglBuffer *dst,
-          gint        radius);
+static void ver_blur (GeglBuffer *src,
+                      GeglBuffer *dst,
+                      gint        radius);
+
+static GeglRect get_source_rect (GeglOperation *self);
 
 #include <stdio.h>
 
@@ -58,6 +58,7 @@ process (GeglOperation *operation)
 
     {
       GeglRect   *result = gegl_operation_result_rect (operation);
+      GeglRect    need   = get_source_rect (operation);
       GeglBuffer *temp_in;
       GeglBuffer *temp;
 
@@ -70,21 +71,21 @@ process (GeglOperation *operation)
         {
           temp_in = g_object_new (GEGL_TYPE_BUFFER,
                                  "source", input,
-                                 "x",      result->x,
-                                 "y",      result->y,
-                                 "width",  result->w,
-                                 "height", result->h,
+                                 "x",      need.x,
+                                 "y",      need.y,
+                                 "width",  need.w,
+                                 "height", need.h,
                                  NULL);
           temp   = g_object_new (GEGL_TYPE_BUFFER,
-                                 "format", gegl_buffer_get_format (input),
+                                 "format", babl_format ("RaGaBaA float"),
                                  "x",      result->x,
-                                 "y",      result->y,
+                                 "y",      need.y,
                                  "width",  result->w,
-                                 "height", result->h,
+                                 "height", need.h,
                                  NULL);
 
           output = g_object_new (GEGL_TYPE_BUFFER,
-                                 "format", gegl_buffer_get_format (input),
+                                 "format", babl_format ("RaGaBaA float"),
                                  "x",      result->x,
                                  "y",      result->y,
                                  "width",  result->w,
@@ -162,7 +163,7 @@ hor_blur (GeglBuffer *src,
           dst_buf [offset++] = get_mean_component (src_buf,
                                src->width,
                                src->height,
-                               u - radius,
+                               u,
                                v,
                                1 + radius*2,
                                1,
@@ -202,7 +203,7 @@ ver_blur (GeglBuffer *src,
                                src->width,
                                src->height,
                                u,
-                               v - radius,
+                               v,
                                1,
                                1+radius*2,
                                c);
@@ -233,18 +234,24 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
+static GeglRect get_source_rect (GeglOperation *self)
+{
+  GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
+  GeglRect            rect   = *gegl_operation_get_requested_region (self);
+  gint                radius = ceil(blur->radius);
+
+  rect.x-=radius;
+  rect.y-=radius;
+  rect.w+=radius*2;
+  rect.h+=radius*2;
+
+  return rect;
+}
+
 static gboolean
 calc_source_regions (GeglOperation *self)
 {
-  GeglChantOperation *blur = GEGL_CHANT_OPERATION (self);
-  GeglRect   need   = *gegl_operation_get_requested_region (self);
-  gint       radius = ceil(blur->radius);
-
-  need.x-=radius;
-  need.y-=radius;
-  need.w+=radius*2;
-  need.h+=radius*2;
-
+  GeglRect need = get_source_rect (self);
   gegl_operation_set_source_region (self, "input", &need);
   return TRUE;
 }

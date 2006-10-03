@@ -79,6 +79,7 @@ fir_ver_blur (GeglBuffer *src,
               gdouble    *cmatrix,
               gint        matrix_length);
 
+static GeglRect get_source_rect (GeglOperation *operation);
 
 static gboolean
 process (GeglOperation *operation)
@@ -93,9 +94,11 @@ process (GeglOperation *operation)
   GeglBuffer *output;
 
     {
-      GeglRect   *result = gegl_operation_result_rect (operation);
+      GeglRect   *result     = gegl_operation_result_rect (operation);
       GeglBuffer *temp_in;
       GeglBuffer *temp = NULL;
+      GeglRect    need = get_source_rect (operation);
+
 
       if (result->w==0 || result->h==0 || (!self->radius_x && !self->radius_y))
         {
@@ -105,27 +108,27 @@ process (GeglOperation *operation)
         {
           temp_in = g_object_new (GEGL_TYPE_BUFFER,
                                  "source", input,
-                                 "x",      result->x,
-                                 "y",      result->y,
-                                 "width",  result->w,
-                                 "height", result->h,
+                                 "x",      need.x,
+                                 "y",      need.y,
+                                 "width",  need.w,
+                                 "height", need.h,
                                  NULL);
 
           output = g_object_new (GEGL_TYPE_BUFFER,
                                  "format", gegl_buffer_get_format (input),
-                                 "x",      result->x,
-                                 "y",      result->y,
-                                 "width",  result->w,
-                                 "height", result->h,
+                                 "x",      need.x,
+                                 "y",      need.y,
+                                 "width",  need.w,
+                                 "height", need.h,
                                  NULL);
 
           if (self->radius_x && self->radius_y)
             temp   = g_object_new (GEGL_TYPE_BUFFER,
-                                   "format", gegl_buffer_get_format (input),
-                                   "x",      result->x,
-                                   "y",      result->y,
-                                   "width",  result->w,
-                                   "height", result->h,
+                                   "format", babl_format ("RaGaBaA float"),
+                                   "x",      need.x,
+                                   "y",      need.y,
+                                   "width",  need.w,
+                                   "height", need.h,
                                    NULL);
           else if (!self->radius_x)
             temp = temp_in;
@@ -180,7 +183,17 @@ process (GeglOperation *operation)
           g_object_unref (temp_in);
         }
 
-      filter->output = output;
+      { 
+        GeglBuffer *cropped = g_object_new (GEGL_TYPE_BUFFER,
+                                            "source", output,
+                                            "x",      result->x,
+                                            "y",      result->y,
+                                            "width",  result->w,
+                                            "height", result->h,
+                                            NULL);
+        g_object_unref (output);
+        filter->output = cropped;
+      }
     }
 
   return  TRUE;
@@ -506,33 +519,44 @@ get_defined_region (GeglOperation *operation)
   GeglRect *in_rect = gegl_operation_source_get_defined_region (operation,
                                                                 "input");
   GeglChantOperation *blur = GEGL_CHANT_OPERATION (operation);
-  gint radius_x       = ceil(blur->radius_x+0.5);
-  gint radius_y       = ceil(blur->radius_y+0.5);
+  gint radius_x       = ceil(blur->radius_x);
+  gint radius_y       = ceil(blur->radius_y);
   if (!in_rect)
     return result;
 
   result = *in_rect;
-  result.x-=radius_x;
-  result.y-=radius_y;
-  result.w+=radius_x*2;
-  result.h+=radius_y*2;
+  result.x-=radius_x*3;
+  result.y-=radius_y*3;
+  result.w+=radius_x*6;
+  result.h+=radius_y*6;
 
   return result;
 }
 
+static GeglRect get_source_rect (GeglOperation *operation)
+{
+  GeglChantOperation *self = GEGL_CHANT_OPERATION(operation);
+  GeglRect rect;
+  gint radius_x, radius_y;
+
+  radius_x = ceil(self->radius_x);
+  radius_y = ceil(self->radius_y);
+
+  rect = *gegl_operation_get_requested_region (operation);
+  rect.x -= radius_x*3;
+  rect.y -= radius_y*3;
+  rect.w += radius_x*6;
+  rect.h += radius_y*6;
+
+  return rect;
+}
+
+
 static gboolean
 calc_source_regions (GeglOperation *self)
 {
-  GeglRect       need     = *gegl_operation_get_requested_region (self);
-  GeglChantOperation *blur     = GEGL_CHANT_OPERATION(self);
-  gint           radius_x = ceil(blur->radius_x+0.5);
-  gint           radius_y = ceil(blur->radius_y+0.5);
-
-  need.x-=radius_x;
-  need.y-=radius_y;
-  need.w+=radius_x*2;
-  need.h+=radius_y*2;
-
+  GeglRect       need = get_source_rect (self);
+  
   gegl_operation_set_source_region (self, "input", &need);
 
   return TRUE;
