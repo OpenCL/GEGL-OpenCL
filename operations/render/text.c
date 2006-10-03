@@ -30,7 +30,7 @@ gegl_chant_int    (wrap, -1, 1000000, -1,
 gegl_chant_int    (alignment, 0, 2, 0,
                    "Alignment for multi-line text (0=Left, 1=Center, 2=Right)")
 gegl_chant_int    (width, 0, 1000000, 0,
-                   "Sets the width of the lines in pixels. (read only)")
+                   "Rendered width in pixels. (read only)")
 gegl_chant_int    (height, 0, 1000000, 0,
                    "Rendered height in pixels. (read only)")
 
@@ -83,7 +83,16 @@ static void text_layout_text (GeglChantOperation *self,
     }
   else
     {
-      cairo_move_to (cr, 0, 0);
+      /* FIXME: This feels like a hack but it stops the rendered text  */
+      /* from shifting position depending on the value of 'alignment'. */
+      if (self->alignment == 1)
+         cairo_move_to (cr, self->width / 2, 0);
+      else
+        {
+          if (self->alignment == 2)
+             cairo_move_to (cr, self->width, 0);
+        }
+
       pango_cairo_show_layout (cr, layout);
     }
 
@@ -120,11 +129,11 @@ process (GeglOperation *operation)
     text_layout_text (self, cr, 0, NULL, NULL);
 
     gegl_buffer_set_fmt (op_source->output, data,
-        babl_format_new (babl_model ("R'aG'aB'aA"),
+        babl_format_new (babl_model ("R'G'B'A"),
                          babl_type ("u8"),
-                         babl_component ("B'a"),
-                         babl_component ("G'a"),
-                         babl_component ("R'a"),
+                         babl_component ("B'"),
+                         babl_component ("G'"),
+                         babl_component ("R'"),
                          babl_component ("A"),
                          NULL));
 
@@ -132,6 +141,7 @@ process (GeglOperation *operation)
     cairo_surface_destroy (surface);
     g_free (data);
   }
+
   return  TRUE;
 }
 

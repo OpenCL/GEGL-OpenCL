@@ -1,3 +1,9 @@
+2006-10-03  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/render/text.c: Added what seems like a bit of a hack to
+	stop the position of the rendered text from shifting position based
+	on the type of alignment being requested.
+
 2006-10-03  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/blur/gaussian-blur.c: (process): make the end result be
@@ -36,7 +42,7 @@
 2006-10-01  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	Added slightly modified versions of the lanczos and cubic interpolate 
-	affine transformations written by Geert Jordaens.
+	affine transformations written by Geert Jordaens. (Bug #357331)
 
 	* operations/transform/affine.c: Added hooks for interpolate ops.
 
