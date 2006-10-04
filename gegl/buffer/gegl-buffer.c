@@ -631,6 +631,39 @@ gint gegl_buffer_px_size (GeglBuffer *buffer)
   return gegl_buffer_storage (buffer)->px_size;
 }
 
+
+static void
+gegl_buffer_void (GeglBuffer *buffer)
+{
+  gint width       = buffer->width;
+  gint height      = buffer->height;
+  gint tile_width  = gegl_buffer_storage (buffer)->tile_width;
+  gint tile_height = gegl_buffer_storage (buffer)->tile_height;
+  gint bufy        = 0;
+
+
+  while (bufy < height)
+    {
+      gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
+      gint offsety = tile_offset (tiledy, tile_height);
+      gint bufx    = 0;
+
+      while (bufx < width)
+        {
+          gint      tiledx  = buffer->x + bufx + buffer->total_shift_x;
+          gint      offsetx = tile_offset (tiledx, tile_width);
+
+          gegl_tile_store_message (GEGL_TILE_STORE (buffer),
+                                   GEGL_TILE_VOID,
+                                   tile_indice(tiledx,tile_width), tile_indice(tiledy,tile_height),0,
+                                   NULL);
+          bufx += (tile_width - offsetx);
+        }
+      bufy += (tile_height - offsety);
+    }
+}
+
+
 /*
  * babl conversion should probably be done on a tile by tile, or even scanline by
  * scanline basis instead of allocating large temporary buffers. (using babl for "memcpy")
@@ -848,52 +881,6 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
     }
 }
 
-void
-gegl_buffer_set (GeglBuffer *buffer,
-                 void       *src)
-{
-  gegl_buffer_set_fmt (buffer, src, buffer->format);
-}
-
-static void
-gegl_buffer_void (GeglBuffer *buffer)
-{
-  gint width       = buffer->width;
-  gint height      = buffer->height;
-  gint tile_width  = gegl_buffer_storage (buffer)->tile_width;
-  gint tile_height = gegl_buffer_storage (buffer)->tile_height;
-  gint bufy        = 0;
-
-
-  while (bufy < height)
-    {
-      gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
-      gint offsety = tile_offset (tiledy, tile_height);
-      gint bufx    = 0;
-
-      while (bufx < width)
-        {
-          gint      tiledx  = buffer->x + bufx + buffer->total_shift_x;
-          gint      offsetx = tile_offset (tiledx, tile_width);
-
-          gegl_tile_store_message (GEGL_TILE_STORE (buffer),
-                                   GEGL_TILE_VOID,
-                                   tile_indice(tiledx,tile_width), tile_indice(tiledy,tile_height),0,
-                                   NULL);
-          bufx += (tile_width - offsetx);
-        }
-      bufy += (tile_height - offsety);
-    }
-}
-
-void
-gegl_buffer_get (GeglBuffer *buffer,
-                 void       *dst)
-{
-  gboolean write;
-  gegl_buffer_get_fmt (buffer, dst, buffer->format);
-}
-
 
 void
 gegl_buffer_set_fmt (GeglBuffer *buffer,
@@ -913,6 +900,20 @@ gegl_buffer_get_fmt (GeglBuffer *buffer,
   gegl_buffer_iterate_fmt (buffer, dst, write = FALSE, format);
 }
 
+void
+gegl_buffer_set (GeglBuffer *buffer,
+                 void       *src)
+{
+  gegl_buffer_set_fmt (buffer, src, buffer->format);
+}
+
+void
+gegl_buffer_get (GeglBuffer *buffer,
+                 void       *dst)
+{
+  gboolean write;
+  gegl_buffer_get_fmt (buffer, dst, buffer->format);
+}
 
 void          gegl_buffer_set_rect_fmt        (GeglBuffer *buffer,
                                                GeglRect   *rect,
