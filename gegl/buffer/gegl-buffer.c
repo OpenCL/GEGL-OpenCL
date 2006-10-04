@@ -649,13 +649,6 @@ gint gegl_buffer_px_size (GeglBuffer *buffer)
 #endif
 #define FMTPXS(fmt) (BABL(fmt)->format.bytes_per_pixel)
 
-/* the setter and getter were merged into a single buf iterator,
- * this iterator should be refactored to provide a linear buffer object
- * that is iterating. Making it easier to reuse for other optimized traversals.
- *
- * babl conversion should probably be done on a tile by tile, or even scanline by
- * scanline basis instead of allocating large temporary buffers. (using babl for "memcpy")
- */
 static void inline
 gegl_buffer_iterate_fmt (GeglBuffer *buffer,
                          guchar     *buf,
@@ -691,52 +684,36 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
         }
     }
 
-  /* before move:  36.850s 36.579
-   * one move out: 36.481s 36.338s 36.205
-   *
-   * saving for moving the
-   */
-
-  /*g_warning ("%i %i", buffer->abyss_y, buffer->abyss_height);*/
-
   while (bufy < height)
     {
       gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
       gint offsety = tile_offset (tiledy, tile_height);
       gint bufx    = 0;
 
-      /* we're either in the abyss above, or in the abyss below */
-
-      if (!(buffer->y + bufy + (tile_height) >= buffer->abyss_y &&
+      if (!write &&
+          !(buffer->y + bufy + (tile_height) >= buffer->abyss_y &&
             buffer->y + bufy                  < abyss_y_total))
-        {
-          if (!write)
-            {
-              gint row;
-              gint y = bufy;
-              guchar *bp = buf + ((bufy) * width) * bpx_size;
+        { /* entire row of tiles is in abyss */
+          gint row;
+          gint y = bufy;
+          guchar *bp = buf + ((bufy) * width) * bpx_size;
 
-              for (row = offsety;
-                   row < tile_height && y < height;
-                   row++, y++)
-                {
-                  memset (bp, 0x00, buf_stride);
-                  bp += buf_stride;
-                }
-            }
-          else
+          for (row = offsety;
+               row < tile_height && y < height;
+               row++, y++)
             {
-              /* when writing, we simply ignore the abyss */
+              memset (bp, 0x00, buf_stride);
+              bp += buf_stride;
             }
         }
       else
 
       while (bufx < width)
         {
-          gint      tiledx  = buffer->x + bufx + buffer->total_shift_x;
-          gint      offsetx = tile_offset (tiledx, tile_width);
-          gint      pixels;
-          guchar   *bp;
+          gint    tiledx  = buffer->x + bufx + buffer->total_shift_x;
+          gint    offsetx = tile_offset (tiledx, tile_width);
+          gint    pixels;
+          guchar *bp;
 
           bp = buf + (bufy * width + bufx) * bpx_size;
 
@@ -745,20 +722,19 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
           else
             pixels = tile_width - offsetx;
 
-          if (!(buffer->x + bufx + tile_width >= buffer->abyss_x &&
-                buffer->x + bufx < buffer->abyss_x + buffer->abyss_width))
-            {
+          if (!write &&
+              !(buffer->x + bufx + tile_width >= buffer->abyss_x &&
+                buffer->x + bufx              < abyss_x_total))
+            { /* entire tile is in abyss */
               gint row;
               gint y = bufy;
-              if (!write)
+
+              for (row = offsety;
+                   row < tile_height && y < height;
+                   row++, y++)
                 {
-                  for (row = offsety;
-                       row < tile_height && y < height;
-                       row++, y++)
-                    {
-                      memset (bp, 0x00, pixels * bpx_size);
-                      bp += buf_stride;
-                    }
+                  memset (bp, 0x00, pixels * bpx_size);
+                  bp += buf_stride;
                 }
             }
           else
@@ -788,7 +764,11 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
                   if (fish)
                     {
                       for (row = offsety;
-                           row < tile_height && y < height;
+                           row < tile_height &&
+                           y < height &&
+                           buffer->y + y < abyss_y_total
+                           
+                           ;
                            row++, y++)
                         {
                           if (buffer->y + y >= buffer->abyss_y &&
@@ -835,25 +815,26 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
                         }
                       else 
                         {
+                          /* entire row in abyss */
                           memset (bp, 0x00, pixels * bpx_size);
                         }
 
-                      /* FIXME: this 0-padding was actually intentional, but it seems to write outside
-                       * the allowed region, thus crashing things. This function needs a cleanup anyways,
-                       * and alternate paths will exist that do not have this issue
-                       */
-#if 0
-                        if ((buffer->x + bufx)-(buffer->abyss_x)<0)  /* valgrind eeks on this one */
-                          {
-                            memset (bp, 0x00, bpx_size *
-                             ((buffer->x + bufx) - (buffer->abyss_x))*-1);
-                          }
-#endif
-                        if (abyss_x_total - (buffer->x + bufx + pixels)<0)
-                          {
-                            gint diff = (abyss_x_total-(buffer->x + bufx + pixels))*-1;
-                            memset (bp + (pixels-diff)*bpx_size, 0x00, bpx_size * diff);
-                          }
+                        {
+                          gint zeros = (buffer->abyss_x) - (buffer->x + bufx);
+
+                          /* left hand zeroing of abyss in tile */
+                          if (zeros > 0 && zeros < pixels)
+                            {
+                              memset (bp, 0x00, bpx_size * zeros);
+                            }
+
+                          /* right side zeroing of abyss in tile */
+                          zeros = (buffer->x + bufx + pixels) - abyss_x_total;
+                          if (zeros > 0 && zeros < pixels)
+                            {
+                              memset (bp + (pixels-zeros)*bpx_size, 0x00, bpx_size * zeros);
+                            }
+                        }
 
                       tp += tile_stride;
                       bp += buf_stride;
@@ -861,7 +842,6 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
                 }
               g_object_unref (G_OBJECT (tile));
             }
-
           bufx += (tile_width - offsetx);
         }
       bufy += (tile_height - offsety);
@@ -872,8 +852,7 @@ void
 gegl_buffer_set (GeglBuffer *buffer,
                  void       *src)
 {
-  gboolean write;
-  gegl_buffer_iterate_fmt (buffer, src, write = TRUE, buffer->format);
+  gegl_buffer_set_fmt (buffer, src, buffer->format);
 }
 
 static void
@@ -912,7 +891,7 @@ gegl_buffer_get (GeglBuffer *buffer,
                  void       *dst)
 {
   gboolean write;
-  gegl_buffer_iterate_fmt (buffer, dst, write = FALSE, buffer->format);
+  gegl_buffer_get_fmt (buffer, dst, buffer->format);
 }
 
 
