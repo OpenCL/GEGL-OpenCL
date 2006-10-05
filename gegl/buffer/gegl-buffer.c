@@ -723,20 +723,22 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
       gint offsety = tile_offset (tiledy, tile_height);
       gint bufx    = 0;
 
-      if (!write &&
-          !(buffer->y + bufy + (tile_height) >= buffer->abyss_y &&
+      if (!(buffer->y + bufy + (tile_height) >= buffer->abyss_y &&
             buffer->y + bufy                  < abyss_y_total))
         { /* entire row of tiles is in abyss */
-          gint row;
-          gint y = bufy;
-          guchar *bp = buf + ((bufy) * width) * bpx_size;
-
-          for (row = offsety;
-               row < tile_height && y < height;
-               row++, y++)
+          if (!write)
             {
-              memset (bp, 0x00, buf_stride);
-              bp += buf_stride;
+              gint row;
+              gint y = bufy;
+              guchar *bp = buf + ((bufy) * width) * bpx_size;
+
+              for (row = offsety;
+                   row < tile_height && y < height;
+                   row++, y++)
+                {
+                  memset (bp, 0x00, buf_stride);
+                  bp += buf_stride;
+                }
             }
         }
       else
@@ -755,19 +757,21 @@ gegl_buffer_iterate_fmt (GeglBuffer *buffer,
           else
             pixels = tile_width - offsetx;
 
-          if (!write &&
-              !(buffer->x + bufx + tile_width >= buffer->abyss_x &&
-                buffer->x + bufx              < abyss_x_total))
+          if (!(buffer->x + bufx + tile_width >= buffer->abyss_x &&
+                buffer->x + bufx              <  abyss_x_total))
             { /* entire tile is in abyss */
-              gint row;
-              gint y = bufy;
-
-              for (row = offsety;
-                   row < tile_height && y < height;
-                   row++, y++)
+              if (!write)
                 {
-                  memset (bp, 0x00, pixels * bpx_size);
-                  bp += buf_stride;
+                  gint row;
+                  gint y = bufy;
+
+                  for (row = offsety;
+                       row < tile_height && y < height;
+                       row++, y++)
+                    {
+                      memset (bp, 0x00, pixels * bpx_size);
+                      bp += buf_stride;
+                    }
                 }
             }
           else
