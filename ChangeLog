@@ -1,5 +1,17 @@
 2006-10-05  Øyvind Kolås  <pippin@gimp.org>
 
+	Generate RaGaBaA float instead of whatever the input format was in the
+	transform operations.
+
+	* operations/transform/affine.c: (process):
+	* operations/transform/interpolate-cubic.c: (affine_cubic):
+	* operations/transform/interpolate-lanczos.c: (affine_lanczos):
+	* operations/transform/linear.c: (affine_linear), (scale_linear):
+	* operations/transform/nearest.c: (affine_nearest),
+	(scale_nearest):
+
+2006-10-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-allocator.c: add more compensation
 	for erronious interaction between adjecant buffers.
 

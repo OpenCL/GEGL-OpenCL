@@ -485,7 +485,7 @@ process (GeglOperation *op)
   else
     {
       output = g_object_new (GEGL_TYPE_BUFFER,
-          "format", gegl_buffer_get_format (filter->input),
+          "format", babl_format ("RaGaBaA float"),
           "x",      result->x,
           "y",      result->y,
           "width",  result->w,

@@ -114,7 +114,7 @@ affine_lanczos (GeglBuffer *dest,
   src_buf  = g_new (gfloat, gegl_buffer_pixels (src) << 2);
   dest_buf = g_new (gfloat, gegl_buffer_pixels (dest) << 2);
   g_assert (src_buf && dest_buf);
-  gegl_buffer_get_fmt (src, src_buf, babl_format ("RGBA float"));
+  gegl_buffer_get_fmt (src, src_buf, babl_format ("RaGaBaA float"));
 
   matrix3_copy (inverse, matrix);
   matrix3_invert (inverse);
@@ -206,7 +206,7 @@ affine_lanczos (GeglBuffer *dest,
       fu = du;
       fv = dv;
     }
-  gegl_buffer_set_fmt (dest, dest_buf, babl_format ("RGBA float"));
+  gegl_buffer_set_fmt (dest, dest_buf, babl_format ("RaGaBaA float"));
 
   g_free (lanczos);
   g_free (src_buf);
