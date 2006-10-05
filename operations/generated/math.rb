@@ -51,7 +51,7 @@ gegl_chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if
 
 static void init (GeglChantOperation *self)
 {
-  GEGL_OPERATION_POINT_COMPOSER (self)->format = babl_format (\"RaGaBaA float\");
+  GEGL_OPERATION_POINT_COMPOSER (self)->format = babl_format (\"RGBA float\");
   GEGL_OPERATION_POINT_COMPOSER (self)->aux_format = babl_format (\"RGB float\");
 }
 

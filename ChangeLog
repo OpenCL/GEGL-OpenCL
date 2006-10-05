@@ -1,5 +1,10 @@
 2006-10-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/generated/math.rb: request non premultiplied data on
+	input pad.
+
+2006-10-05  Øyvind Kolås  <pippin@gimp.org>
+
 	Generate RaGaBaA float instead of whatever the input format was in the
 	transform operations.
 
