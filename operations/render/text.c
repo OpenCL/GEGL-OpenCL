@@ -112,7 +112,7 @@ process (GeglOperation *operation)
   height = self->height;
 
   op_source->output = g_object_new (GEGL_TYPE_BUFFER,
-                                    "format", babl_format ("R'G'B'A u8"),
+                                    "format", babl_format ("R'aG'aB'aA u8"),
                                     "x",      0,
                                     "y",      0,
                                     "width",  width,
@@ -129,11 +129,11 @@ process (GeglOperation *operation)
     text_layout_text (self, cr, 0, NULL, NULL);
 
     gegl_buffer_set_fmt (op_source->output, data,
-        babl_format_new (babl_model ("R'G'B'A"),
+        babl_format_new (babl_model ("R'aG'aB'aA"),
                          babl_type ("u8"),
-                         babl_component ("B'"),
-                         babl_component ("G'"),
-                         babl_component ("R'"),
+                         babl_component ("B'a"),
+                         babl_component ("G'a"),
+                         babl_component ("R'a"),
                          babl_component ("A"),
                          NULL));
 

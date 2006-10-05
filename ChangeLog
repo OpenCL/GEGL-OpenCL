@@ -1,5 +1,10 @@
 2006-10-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/render/text.c: (process): cairo provides us with
+	premultiplied sRGB gamma 8bit data, correct the code to reflect this.
+
+2006-10-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/generated/math.rb: request non premultiplied data on
 	input pad.
 
