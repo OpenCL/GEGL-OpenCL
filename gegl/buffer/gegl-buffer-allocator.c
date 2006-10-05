@@ -62,8 +62,8 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
    * needed to compensate for erronious interaction between adjecant
    * buffers.
    */
-  gint needed_width = ((width-1)/tile_width+5)*tile_width;
-  gint needed_height = ((height-1)/tile_height+5)*tile_height;
+  gint needed_width = ((width-1)/tile_width+10)*tile_width;
+  gint needed_height = ((height-1)/tile_height+10)*tile_height;
 
   gint shift_x;
   gint shift_y;
