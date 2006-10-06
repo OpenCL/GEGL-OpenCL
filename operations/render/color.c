@@ -19,7 +19,7 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_color (color, "black", "One of the cell colors (defaults to 'black')")
+gegl_chant_color (value, "black", "One of the cell colors (defaults to 'black')")
 #else
 
 #define GEGL_CHANT_SOURCE
@@ -43,7 +43,7 @@ process (GeglOperation *operation)
     gfloat *buf;
     gfloat color[4];
 
-    gegl_color_get_rgba (self->color,
+    gegl_color_get_rgba (self->value,
                          &color[0],
                          &color[1],
                          &color[2],

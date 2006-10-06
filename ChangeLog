@@ -1,5 +1,10 @@
 2006-10-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/render/color.c: (process): renamed parameter from "color"
+	to "value".
+
+2006-10-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/meta/dropshadow.c: (associate): make the darkening of the
 	layer work by using porter-duff operator "in", instead of abusing
 	brightness/contrast.
