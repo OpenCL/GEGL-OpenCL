@@ -43,8 +43,8 @@ static gboolean process              (GeglOperation *operation,
 
 static void     associate            (GeglOperation *operation);
 
-static GeglRect get_defined_region       (GeglOperation *self);
-static gboolean calc_source_regions       (GeglOperation *self);
+static GeglRect get_defined_region   (GeglOperation *self);
+static gboolean calc_source_regions  (GeglOperation *self);
 
 G_DEFINE_TYPE (GeglOperationFilter, gegl_operation_filter, GEGL_TYPE_OPERATION)
 

@@ -441,20 +441,7 @@ static void add_stack (SerializeState *ss,
                        GeglNode       *head)
 {
 
-  /*if (GEGL_IS_GRAPH (head))
-    {
-      GeglNode *iter;
-      GeglPad  *input;
-      iter = gegl_graph_output (GEGL_GRAPH (head), "output");
-      input = gegl_node_get_pad (iter, "input");
-      input = gegl_pad_get_connected_to (input);
-      iter = gegl_pad_get_node (input);
-
-      ind;g_string_append (ss->buf, "<tree>\n");
-      add_stack (ss, indent + 1, iter);
-      ind;g_string_append (ss->buf, "</tree>\n");
-    }
-  else*/if (GEGL_IS_NODE (head))
+  if (GEGL_IS_NODE (head))
     {
       GeglNode *iter = head;
 

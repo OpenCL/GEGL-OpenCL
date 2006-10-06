@@ -18,8 +18,6 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
-/* abyss should be represented in the same way as shifting */
-
 #include <glib.h>
 #include <glib/gstdio.h>
 

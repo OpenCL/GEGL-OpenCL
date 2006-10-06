@@ -86,9 +86,7 @@ gegl_exit (void)
   timing = gegl_ticks () - timing;
   gegl_instrument ("gegl", "gegl_exit", timing);
 
-  /* used when tracking buffer leaks (also tracks tiles, as well
-   * as tiles.
-   */
+  /* used when tracking buffer and tile leaks */
   if(getenv("GEGL_DEBUG_BUFS")!=NULL)
     {
       gegl_buffer_stats ();

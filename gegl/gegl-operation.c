@@ -76,8 +76,9 @@ gegl_operation_create_pad (GeglOperation *self,
 
   if (!self->node)
     {
-      g_warning ("gegl_operation_create_pad aborting, no associated node, this"
-                 " should be called after the operation is associated with a specific node.");
+      g_warning ("gegl_operation_create_pad aborting, no associated node. "
+                 "This method should only be called after the operation is "
+                 "associated with a node.");
       return;
     }
 
@@ -127,7 +128,8 @@ gegl_operation_calc_source_regions (GeglOperation *self)
 static void
 associate (GeglOperation *self)
 {
-  g_warning ("kilroy was at What The Hack (%p)\n", (void*)self);
+  g_warning ("kilroy was at What The Hack (%p, %s)\n", (void*)self,
+                         G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
   return;
 }
 
@@ -182,52 +184,11 @@ gegl_operation_source_get_defined_region (GeglOperation *operation,
   return gegl_node_get_have_rect (gegl_pad_get_node (pad));
 }
 
-#if 0
-static GList *
-producer_nodes (GeglPad *input_pad)
-{
-  GList *ret = NULL;
-  GList *connections;
-  g_return_val_if_fail (GEGL_IS_PAD (input_pad), NULL);
-
-  g_assert (gegl_pad_is_input (input_pad));
-
-  connections = gegl_pad_get_connections (input_pad);
-  while (connections)
-    {
-      GeglNode *node = gegl_pad_get_node (gegl_connection_get_source_prop (connections->data));
-
-      if (node)
-        ret = g_list_append (ret, node);
-      connections = g_list_next (connections);
-    }
-
-  if (!strcmp (gegl_object_get_name (GEGL_OBJECT (gegl_pad_get_node (input_pad))), "proxynop-input"))
-    {
-      GeglNode *self = gegl_pad_get_node (input_pad);
-      GList *llink;
-
-      self = GEGL_NODE (g_object_get_data (G_OBJECT (self), "graph"));
-
-      for (llink = self->sources; llink; llink = g_list_next (llink))
-        {
-          GeglConnection *connection = llink->data;
-          GeglNode *source_node = gegl_pad_get_node (gegl_connection_get_source_prop (connection));
-
-          if (! g_list_find (ret, source_node))
-            ret = g_list_append (ret, source_node);
-        }
-    }
-  return ret;
-}
-#endif
-
 void
 gegl_operation_set_source_region (GeglOperation *operation,
                                   const gchar   *input_pad_name,
                                   GeglRect      *region)
 {
-  GeglPad *pad;
   GList   *children;
   GeglRect child_need;
 
@@ -235,19 +196,10 @@ gegl_operation_set_source_region (GeglOperation *operation,
   g_assert (operation->node);
   g_assert (input_pad_name);
 
-  pad = gegl_node_get_pad (operation->node, input_pad_name);
-
-  if (!pad && !strcmp (gegl_object_get_name (GEGL_OBJECT (operation->node)), "proxynop-input"))
-    {
-      GeglGraph *graph = GEGL_GRAPH (g_object_get_data (G_OBJECT (operation->node), "graph"));
-      g_assert (graph);
-      pad = gegl_node_get_pad (GEGL_NODE (graph), input_pad_name);
-    }
-  if (!pad)
-    {
-      g_warning ("buuu %s", gegl_node_get_debug_name (operation->node));
-      return;
-    }
+  /* FIXME: do not iterate all children like it is currently done, but
+   * set the source region on the actual needed node instead, this
+   * seems to work for all current ops though.
+   */
 
   children = gegl_node_get_depends_on (operation->node);
 
@@ -255,6 +207,9 @@ gegl_operation_set_source_region (GeglOperation *operation,
     {
       gegl_rect_bounding_box (&child_need,
                               gegl_node_get_need_rect (children->data), region);
+      /* expand the need rect of the node, to include what the calling
+       * operation needs as well
+       */
       gegl_node_set_need_rect (children->data,
                                child_need.x, child_need.y,
                                child_need.w, child_need.h);
@@ -280,9 +235,10 @@ get_defined_region (GeglOperation *self)
   GeglRect rect = {0,0,0,0};
   if (self->node->is_graph)
     {
-      return gegl_operation_get_defined_region (gegl_graph_output (self->node, "output")->operation);
+      return gegl_operation_get_defined_region (
+                   gegl_graph_output (self->node, "output")->operation);
     }
-  g_warning ("Op '%s' has no proper have_rect function",
+  g_warning ("Op '%s' has no defined_region method",
      G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
   return rect;
 }
@@ -292,10 +248,12 @@ calc_source_regions (GeglOperation *self)
 {
   if (self->node->is_graph)
     {
-      return gegl_operation_calc_source_regions (gegl_graph_output (self->node, "output")->operation);
+      return gegl_operation_calc_source_regions (
+                         gegl_graph_output (self->node, "output")->operation);
     }
-  g_warning ("Op '%s' has no proper need_rect function",
-     G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
+
+  g_warning ("Op '%s' has no calc_source_regions method",
+                         G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
   return FALSE;
 }
 
