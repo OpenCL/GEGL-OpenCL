@@ -1,5 +1,10 @@
 2006-10-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/render/text.c: (process): force an initial conversion to
+	R'G'B'A u8 to work around a bug in babl.
+
+2006-10-06  Øyvind Kolås  <pippin@gimp.org>
+
 	Make use of gegl_node_link and gegl_node_link_many in meta operations.
 
 	* operations/meta/dropshadow.c: (associate):
