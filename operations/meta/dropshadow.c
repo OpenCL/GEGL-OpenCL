@@ -95,14 +95,8 @@ static void associate (GeglOperation *operation)
       priv->blur = gegl_graph_new_node (gegl, "operation", "gaussian-blur", NULL);
       priv->darken = gegl_graph_new_node (gegl, "operation", "brightness-contrast", "brightness", -0.9, NULL);
 
-      gegl_node_connect (priv->darken, "input", priv->input, "output");
-      gegl_node_connect (priv->blur,   "input", priv->darken, "output");
-      gegl_node_connect (priv->opacity, "input", priv->blur, "output");
-      gegl_node_connect (priv->translate, "input", priv->opacity, "output");
-
-      gegl_node_connect (priv->over, "input", priv->translate, "output");
+      gegl_node_link_many (priv->input, priv->darken, priv->blur, priv->opacity, priv->translate, priv->over, priv->output, NULL);
       gegl_node_connect (priv->over, "aux", priv->input, "output");
-      gegl_node_connect (priv->output, "input", priv->over, "output");
     }
 }
 

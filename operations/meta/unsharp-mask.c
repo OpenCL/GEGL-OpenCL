@@ -80,17 +80,14 @@ static void associate (GeglOperation *operation)
                                             "operation", "gaussian-blur",
                                             NULL);
 
-      gegl_node_connect (priv->subtract, "input", priv->input,    "output");
-      gegl_node_connect (priv->blur,     "input", priv->input,    "output");
+      gegl_node_link_many (priv->input, priv->subtract, priv->multiply, NULL);
+      gegl_node_link (priv->input, priv->blur);
+      gegl_node_link_many (priv->input, priv->add, priv->output, NULL);
+
 
       gegl_node_connect (priv->subtract, "aux",   priv->blur,     "output");
-
-      gegl_node_connect (priv->multiply, "input", priv->subtract, "output");
-
-      gegl_node_connect (priv->add,      "input", priv->input,    "output");
       gegl_node_connect (priv->add,      "aux",   priv->multiply, "output");
 
-      gegl_node_connect (priv->output,   "input", priv->add,      "output");
     }
 }
 

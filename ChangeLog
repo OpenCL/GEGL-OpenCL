@@ -1,5 +1,14 @@
 2006-10-06  Øyvind Kolås  <pippin@gimp.org>
 
+	Make use of gegl_node_link and gegl_node_link_many in meta operations.
+
+	* operations/meta/dropshadow.c: (associate):
+	* operations/meta/layer.c: (associate):
+	* operations/meta/unsharp-mask.c: (associate):
+	* operations/render/text.c: (process):
+
+2006-10-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_get): removed unused
 	variable write.
 

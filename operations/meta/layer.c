@@ -118,11 +118,9 @@ static void associate (GeglOperation *operation)
                                     "operation", "buffer",
                                     NULL);
 
-  gegl_node_connect (priv->opacity, "input", priv->load, "output");
-  gegl_node_connect (priv->shift, "input", priv->opacity, "output");
+  gegl_node_link_many (priv->load, priv->opacity, priv->shift, NULL);
+  gegl_node_link_many (priv->input, priv->composite_op, priv->output, NULL);
   gegl_node_connect (priv->composite_op, "aux", priv->shift, "output");
-  gegl_node_connect (priv->composite_op, "input", priv->input, "output");
-  gegl_node_connect (priv->output, "input", priv->composite_op, "output");
 }
 
 static void
