@@ -913,7 +913,6 @@ void
 gegl_buffer_get (GeglBuffer *buffer,
                  void       *dst)
 {
-  gboolean write;
   gegl_buffer_get_fmt (buffer, dst, buffer->format);
 }
 

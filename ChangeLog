@@ -1,5 +1,10 @@
 2006-10-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_get): removed unused
+	variable write.
+
+2006-10-06  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed sections of dead code, and cleaned up some comments/debug
 	messages.
 
