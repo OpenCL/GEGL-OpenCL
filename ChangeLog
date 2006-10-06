@@ -1,5 +1,10 @@
 2006-10-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/render/text.c: (process): create a linear buffer of the
+	minimum needed size.
+
+2006-10-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-color.[ch]: (gegl_color_from_string): added new
 	convenience function.
 	* operations/meta/dropshadow.c: (associate): specify the color of the

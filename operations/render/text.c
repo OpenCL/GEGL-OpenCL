@@ -105,29 +105,29 @@ process (GeglOperation *operation)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
-  gint       width;
-  gint       height;
+  GeglRect                 *need;
 
-  width = self->width;
-  height = self->height;
+  need = gegl_operation_get_requested_region (operation);
 
   op_source->output = g_object_new (GEGL_TYPE_BUFFER,
                                     "format", babl_format ("R'G'B'A u8"), /* FIXME: babl
                                                          performs a wrong conversion if the
                                                          correct format is specified here. */
-                                    "x",      0,
-                                    "y",      0,
-                                    "width",  width,
-                                    "height", height,
+                                    "x",      need->x,
+                                    "y",      need->y,
+                                    "width",  need->w,
+                                    "height", need->h,
                                     NULL);
 
   {
-    guchar *data = g_malloc0 (width * height * 4);
+    guchar *data = g_malloc0 (need->w * need->h * 4);
     cairo_t *cr;
 
-    cairo_surface_t *surface = cairo_image_surface_create_for_data (data, CAIRO_FORMAT_ARGB32, width, height, width * 4);
+    cairo_surface_t *surface = cairo_image_surface_create_for_data (data, CAIRO_FORMAT_ARGB32,
+      need->w, need->h, need->w* 4);
     cr = cairo_create (surface);
     cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
+    cairo_translate (cr, -need->x, -need->y);
     text_layout_text (self, cr, 0, NULL, NULL);
 
     gegl_buffer_set_fmt (op_source->output, data,
