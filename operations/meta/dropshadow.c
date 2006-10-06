@@ -95,8 +95,9 @@ static void associate (GeglOperation *operation)
       priv->opacity = gegl_graph_new_node (gegl, "operation", "opacity", NULL);
       priv->blur = gegl_graph_new_node (gegl, "operation", "gaussian-blur", NULL);
       priv->darken = gegl_graph_new_node (gegl, "operation", "in", NULL);
-      priv->black = gegl_graph_new_node (gegl, "operation", "color", NULL); /* FIXME: specify
-           black, and not rely on it being default when the GeglColor param works properly */
+      priv->black = gegl_graph_new_node (gegl, "operation", "color",
+                                         "value", gegl_color_from_string ("rgb(0.0,0.0,0.0)"),
+                                         NULL);
 
       gegl_node_link_many (priv->input, priv->darken, priv->blur, priv->opacity, priv->translate, priv->over, priv->output, NULL);
       gegl_node_connect (priv->over, "aux", priv->input, "output");

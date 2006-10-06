@@ -408,6 +408,11 @@ get_property (GObject      *gobject,
     }
 }
 
+GeglColor *
+gegl_color_from_string (const gchar *string)
+{
+  return g_object_new (GEGL_TYPE_COLOR, "string", string, NULL);
+}
 
 /* --------------------------------------------------------------------------
  * A GParamSpec class to describe behavior of GeglColor as an object property

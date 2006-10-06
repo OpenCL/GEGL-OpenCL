@@ -1,5 +1,12 @@
 2006-10-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-color.[ch]: (gegl_color_from_string): added new
+	convenience function.
+	* operations/meta/dropshadow.c: (associate): specify the color of the
+	shadow (black) explicitly in the code.
+
+2006-10-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/render/color.c: (process): renamed parameter from "color"
 	to "value".
 
