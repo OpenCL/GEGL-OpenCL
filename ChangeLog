@@ -1,5 +1,12 @@
 2006-10-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/generated/porter-duff.rb: the defined region for "in" is
+	not the union of the inputs but only the defined region of "input".
+	Special case the "in" operation (this probably applies to other
+	compositing ops as well).
+
+2006-10-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/render/text.c: (process): force an initial conversion to
 	R'G'B'A u8 to work around a bug in babl.
 
