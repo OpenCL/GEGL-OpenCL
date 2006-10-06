@@ -1,5 +1,11 @@
 2006-10-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/meta/dropshadow.c: (associate): make the darkening of the
+	layer work by using porter-duff operator "in", instead of abusing
+	brightness/contrast.
+
+2006-10-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/generated/porter-duff.rb: the defined region for "in" is
 	not the union of the inputs but only the defined region of "input".
 	Special case the "in" operation (this probably applies to other

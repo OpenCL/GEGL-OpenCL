@@ -19,7 +19,7 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (opacity, 0.0, 1.0, 0.5, "Opacity")
+gegl_chant_double (opacity, 0.0, 100.0, 0.5, "Opacity")
 gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
                    "Horizontal shadow offset.")
 gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
@@ -49,6 +49,7 @@ struct _Priv
   GeglNode *opacity;
   GeglNode *blur;
   GeglNode *darken;
+  GeglNode *black;
 };
 
 
@@ -93,10 +94,13 @@ static void associate (GeglOperation *operation)
       priv->translate = gegl_graph_new_node (gegl, "operation", "translate", NULL);
       priv->opacity = gegl_graph_new_node (gegl, "operation", "opacity", NULL);
       priv->blur = gegl_graph_new_node (gegl, "operation", "gaussian-blur", NULL);
-      priv->darken = gegl_graph_new_node (gegl, "operation", "brightness-contrast", "brightness", -0.9, NULL);
+      priv->darken = gegl_graph_new_node (gegl, "operation", "in", NULL);
+      priv->black = gegl_graph_new_node (gegl, "operation", "color", NULL); /* FIXME: specify
+           black, and not rely on it being default when the GeglColor param works properly */
 
       gegl_node_link_many (priv->input, priv->darken, priv->blur, priv->opacity, priv->translate, priv->over, priv->output, NULL);
       gegl_node_connect (priv->over, "aux", priv->input, "output");
+      gegl_node_connect (priv->darken, "aux", priv->black, "output");
     }
 }
 
