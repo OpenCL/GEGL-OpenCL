@@ -76,7 +76,15 @@ struct _GeglOperationClass
    */
   GeglRect   (*get_defined_region)  (GeglOperation *self);
 
-  /* Compute the region of interests on out own sources (and use
+  /* Computes the region in output (same effected rect assumed for all outputs)
+   * when a given region has changed on an input. Used to aggregate dirt in
+   * the graph.
+   */
+  GeglRect   (*get_effected_region)  (GeglOperation *self,
+                                      const gchar   *input_pad,
+                                      GeglRect       region);
+
+  /* Compute the region of interests on our own sources (and use
    * gegl_operation_set_source_region() on each of them).
    */
   gboolean   (*calc_source_regions) (GeglOperation *self);
@@ -103,6 +111,9 @@ GeglRect * gegl_operation_result_rect               (GeglOperation *operation);
 
 
 /* virtual method invokers */
+GeglRect   gegl_operation_get_effected_region       (GeglOperation *self,
+                                                     const gchar   *input_pad,
+                                                     GeglRect       region);
 GeglRect   gegl_operation_get_defined_region        (GeglOperation *self);
 gboolean   gegl_operation_calc_source_regions       (GeglOperation *self);
 void       gegl_operation_associate                 (GeglOperation *self,

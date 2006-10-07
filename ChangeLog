@@ -1,9 +1,10 @@
 2006-10-07  Øyvind Kolås  <pippin@gimp.org>
 
-	* gegl/gegl-operation.c: (gegl_operation_class_init),
+	Added gegl_operation.get_effected_region virtual method.
+
+	* gegl/gegl-operation.[ch]: (gegl_operation_class_init),
 	(gegl_operation_get_effected_region), (get_defined_region),
-	(get_effected_region):
-	* gegl/gegl-operation.h:
+	(get_effected_region): added virtual method.
 
 2006-10-07  Øyvind Kolås  <pippin@gimp.org>
 

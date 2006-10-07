@@ -36,6 +36,9 @@ static void      gegl_operation_init       (GeglOperation         *self);
 static void      associate                 (GeglOperation         *self);
 
 static GeglRect get_defined_region (GeglOperation *self);
+static GeglRect get_effected_region (GeglOperation *self,
+                                     const gchar   *input_pad,
+                                     GeglRect       region);
 static gboolean calc_source_regions (GeglOperation *self);
 
 G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
@@ -50,6 +53,7 @@ gegl_operation_class_init (GeglOperationClass * klass)
   klass->associate = associate;
   klass->prepare = NULL;
   klass->get_defined_region = get_defined_region;
+  klass->get_effected_region = get_effected_region;
   klass->calc_source_regions = calc_source_regions;
 }
 
@@ -112,6 +116,19 @@ gegl_operation_get_defined_region (GeglOperation *self)
     return klass->get_defined_region (self);
   return rect;
 }
+
+GeglRect   gegl_operation_get_effected_region       (GeglOperation *self,
+                                                     const gchar   *input_pad,
+                                                     GeglRect       region)
+{
+  GeglOperationClass *klass;
+
+  klass = GEGL_OPERATION_GET_CLASS (self);
+  if (klass->get_effected_region)
+    return klass->get_effected_region (self, input_pad, region);
+  return region;
+}
+
 
 gboolean
 gegl_operation_calc_source_regions (GeglOperation *self)
@@ -243,6 +260,26 @@ get_defined_region (GeglOperation *self)
   g_warning ("Op '%s' has no defined_region method",
      G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
   return rect;
+}
+
+static GeglRect
+get_effected_region (GeglOperation *self,
+                     const gchar   *input_pad,
+                     GeglRect       region)
+{
+  /* This should not be needed, but followed the copypaste from get_defined_region.
+   * 
+  if (self->node->is_graph)
+    {
+      return gegl_operation_get_effected_region (
+                   gegl_graph_output (self->node, "output")->operation,
+                   input_pad,
+                   region);
+    }
+  */
+  return region;
+  g_warning ("Op '%s' has no defined_region method",
+     G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
 }
 
 static gboolean
