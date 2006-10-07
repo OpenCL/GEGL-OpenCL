@@ -1,3 +1,17 @@
+2006-10-07  Øyvind Kolås  <pippin@gimp.org>
+
+	Added four more SVG-filters from Geert Jordaens
+	<geert.jordaens@telenet.be>
+
+	* configure.in:
+	* operations/Makefile.am:
+	* operations/svg/.cvsignore:
+	* operations/svg/Makefile.am:
+	* operations/svg/svg_huerotate.c: (init), (process):
+	* operations/svg/svg_luminancetoalpha.c: (init), (process):
+	* operations/svg/svg_matrix.c: (init), (process):
+	* operations/svg/svg_saturate.c: (init), (process):
+
 2006-10-06  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/render/text.c: (process): create a linear buffer of the

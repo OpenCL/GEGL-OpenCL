@@ -7,5 +7,6 @@ SUBDIRS = \
 	generated	\
 	meta		\
 	render		\
+	svg		\
 	transform	\
 	transparency

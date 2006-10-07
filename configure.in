@@ -392,6 +392,7 @@ operations/file-io/Makefile
 operations/generated/Makefile
 operations/meta/Makefile
 operations/render/Makefile
+operations/svg/Makefile
 operations/transform/Makefile
 operations/transparency/Makefile
 operations/workshop/Makefile
