@@ -1,5 +1,17 @@
 2006-10-07  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation.c: (gegl_operation_class_init),
+	(gegl_operation_get_effected_region), (get_defined_region),
+	(get_effected_region):
+	* gegl/gegl-operation.h:
+
+2006-10-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-node.c: (gegl_node_set_operation_object): Added cast to
+	shut up warning.
+
+2006-10-07  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-operation.c: (gegl_operation_set_source_region): only set
 	rect on the one that is specified.
 

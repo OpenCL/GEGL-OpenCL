@@ -870,7 +870,7 @@ gegl_node_set_operation_object (GeglNode      *self,
   gegl_operation_associate (operation, self);
 
   g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (property_changed), self);
-  property_changed (operation, NULL, self);
+  property_changed (G_OBJECT (operation), NULL, self);
 }
 
 static const gchar *
