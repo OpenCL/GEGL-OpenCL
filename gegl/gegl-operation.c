@@ -189,32 +189,34 @@ gegl_operation_set_source_region (GeglOperation *operation,
                                   const gchar   *input_pad_name,
                                   GeglRect      *region)
 {
-  GList   *children;
+  GeglNode *child;
   GeglRect child_need;
 
   g_assert (operation);
   g_assert (operation->node);
   g_assert (input_pad_name);
 
-  /* FIXME: do not iterate all children like it is currently done, but
-   * set the source region on the actual needed node instead, this
-   * seems to work for all current ops though.
+  {
+    GeglPad *pad = gegl_node_get_pad (operation->node, input_pad_name);
+    if (!pad)
+      return;
+    pad = gegl_pad_get_real_connected_to (pad);
+    if (!pad)
+      return;
+    child = gegl_pad_get_node (pad);
+    if (!child)
+      return;
+  }
+
+  gegl_rect_bounding_box (&child_need,
+                          gegl_node_get_need_rect (child), region);
+
+  /* expand the need rect of the node, to include what the calling
+   * operation needs as well
    */
-
-  children = gegl_node_get_depends_on (operation->node);
-
-  while (children)
-    {
-      gegl_rect_bounding_box (&child_need,
-                              gegl_node_get_need_rect (children->data), region);
-      /* expand the need rect of the node, to include what the calling
-       * operation needs as well
-       */
-      gegl_node_set_need_rect (children->data,
-                               child_need.x, child_need.y,
-                               child_need.w, child_need.h);
-      children = g_list_remove (children, children->data);
-    }
+  gegl_node_set_need_rect (child,
+                           child_need.x, child_need.y,
+                           child_need.w, child_need.h);
 }
 
 void

@@ -1,5 +1,10 @@
 2006-10-07  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation.c: (gegl_operation_set_source_region): only set
+	rect on the one that is specified.
+
+2006-10-07  Øyvind Kolås  <pippin@gimp.org>
+
 	Modified meta nodes to incurr fewer repeated changes on the graph.
 
 	* operations/meta/dropshadow.c: (prepare):
