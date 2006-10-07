@@ -50,7 +50,7 @@ struct _Priv
   GeglBuffer *cached_buffer;
 };
 
-static void refresh_cache (GeglChantOperation *self);
+static gboolean refresh_cache (GeglChantOperation *self);
 
 static void
 dispose (GObject *object)
@@ -96,11 +96,11 @@ prepare (GeglOperation *operation)
 
   if (self->cache)
     {
-      refresh_cache (self);
-      gegl_node_set (priv->load,
-                     "operation", "buffer",
-                     "buffer", priv->cached_buffer,
-                     NULL);
+      if (refresh_cache (self))
+        gegl_node_set (priv->load,
+                       "operation", "buffer",
+                       "buffer", priv->cached_buffer,
+                       NULL);
     }
   else
     {
@@ -175,7 +175,7 @@ static void class_init (GeglOperationClass *klass)
 }
 
 
-static void
+static gboolean
 refresh_cache (GeglChantOperation *self)
 {
   Priv *priv = (Priv*)self->priv;
@@ -210,7 +210,9 @@ refresh_cache (GeglChantOperation *self)
 
         g_object_unref (gegl);
         priv->cached_path = g_strdup (self->path);
+        return TRUE;
   }
+  return FALSE;
 }
 
 #endif

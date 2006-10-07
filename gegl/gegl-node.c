@@ -116,6 +116,7 @@ gegl_node_init (GeglNode *self)
   self->operation   = NULL;
   self->refs        = 0;
   self->enabled     = TRUE;
+  self->dirty       = FALSE;
   self->is_graph    = FALSE;
 }
 
@@ -820,11 +821,33 @@ gegl_node_set_op_class (GeglNode      *node,
             gegl_node_set_op_class (node, "nop", NULL, var_args);
           return;
         }
-
+      
+       if (node->operation &&
+           type == G_OBJECT_TYPE (node->operation))
+         {
+           gegl_node_set_valist (node, first_property, var_args);
+           return;
+         }
+      
       operation = GEGL_OPERATION (g_object_new_valist (type, first_property,
                                                        var_args));
       gegl_node_set_operation_object (node, operation);
       g_object_unref (operation);
+    }
+}
+
+static void property_changed (GObject    *gobject,
+                              GParamSpec *arg1,
+                              gpointer    user_data)
+{
+  GeglNode *self = GEGL_NODE (user_data);
+
+  if (!arg1 ||
+      arg1->value_type != GEGL_TYPE_BUFFER)
+    {
+     /* g_warning ("%s: %s", gegl_node_get_debug_name (self),
+        arg1?arg1->name:"operation changed");*/
+      self->dirty = TRUE;
     }
 }
 
@@ -845,6 +868,9 @@ gegl_node_set_operation_object (GeglNode      *self,
   g_object_ref (operation);
   self->operation = operation;
   gegl_operation_associate (operation, self);
+
+  g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (property_changed), self);
+  property_changed (operation, NULL, self);
 }
 
 static const gchar *

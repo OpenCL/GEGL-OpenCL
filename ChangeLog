@@ -1,5 +1,26 @@
 2006-10-07  Øyvind Kolås  <pippin@gimp.org>
 
+
+	* gegl/gegl-node.h: added dirty variable to GeglNode struct.
+	* gegl/gegl-node.c: (gegl_node_set_op_class), (property_changed),
+	(gegl_node_set_operation_object): set GeglNode->dirty when properties
+	change (on notification of change actually, might not _really_ have
+	changed.).
+	* operations/file-io/load.c: (prepare), (refresh_cache): reduce number
+	of changed emitted.
+
+2006-10-07  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* docs/gallery/Makefile.am:
+	* gegl/gegl-node.c: (property_changed),
+	(gegl_node_set_operation_object):
+	* gegl/gegl-node.h:
+	* tools/Makefile.am:
+
+2006-10-07  Øyvind Kolås  <pippin@gimp.org>
+
 	Added four more SVG-filters from Geert Jordaens
 	<geert.jordaens@telenet.be>
 
