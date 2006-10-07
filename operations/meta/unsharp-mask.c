@@ -43,6 +43,9 @@ struct _Priv
   GeglNode *multiply;
   GeglNode *subtract;
   GeglNode *blur;
+
+  double p_radius;
+  double p_scale;
 };
 
 static void prepare (GeglOperation *operation);
@@ -96,12 +99,20 @@ static void prepare (GeglOperation *operation)
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv          *priv = (Priv*)self->priv;
 
-  gegl_node_set (priv->multiply, "value",    self->scale,
-                                  NULL);
+  if (self->scale != priv->p_scale)
+    {
+      gegl_node_set (priv->multiply, "value",    self->scale,
+                                      NULL);
+      priv->p_scale = self->scale;
+    }
 
-  gegl_node_set (priv->blur,     "radius-x", self->radius,
-                                 "radius-y", self->radius,
-                                 NULL);
+  if (self->radius != priv->p_radius)
+    {
+      gegl_node_set (priv->blur,     "radius-x", self->radius,
+                                     "radius-y", self->radius,
+                                     NULL);
+      priv->p_radius = self->radius;
+    }
 }
 
 static void class_init (GeglOperationClass *klass)

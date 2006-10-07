@@ -50,6 +50,11 @@ struct _Priv
   GeglNode *blur;
   GeglNode *darken;
   GeglNode *black;
+
+  double p_opacity;
+  double p_x;
+  double p_y;
+  double p_radius;
 };
 
 
@@ -61,15 +66,30 @@ prepare (GeglOperation *operation)
   Priv *priv;
   priv = (Priv*)self->priv;
 
-  /* parameters might have changed, so set the properties again */
-  gegl_node_set (priv->translate, "x", self->x,
-                                  "y", self->y,
-                                  NULL);
-  gegl_node_set (priv->opacity,   "value", self->opacity,
-                                  NULL);
-  gegl_node_set (priv->blur,     "radius-x", self->radius,
-                                  "radius-y", self->radius,
-                                  NULL);
+  if (self->x != priv->p_x ||
+      self->y != priv->p_y)
+    {
+      gegl_node_set (priv->translate, "x", self->x,
+                                      "y", self->y,
+                                      NULL);
+      priv->p_x = self->x;
+      priv->p_y = self->y;
+    }
+
+  if (self->opacity != priv->p_opacity)
+    {
+      gegl_node_set (priv->opacity,   "value", self->opacity,
+                                      NULL);
+      priv->p_opacity = self->opacity;
+    }
+ 
+  if (self->radius != priv->p_radius)
+    {
+      gegl_node_set (priv->blur,     "radius-x", self->radius,
+                                      "radius-y", self->radius,
+                                      NULL);
+      priv->p_radius = self->radius;
+    } 
 }
 
 /* in associate we hook into graph adding the needed nodes */

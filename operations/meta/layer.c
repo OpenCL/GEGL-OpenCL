@@ -50,9 +50,14 @@ struct _Priv
 
     gchar *cached_path;
     GeglBuffer *cached_buffer;
+
+  gdouble p_opacity;
+  gdouble p_x;
+  gdouble p_y;
+  gchar *p_composite_op;
 };
 
-static void refresh_cache (GeglChantOperation *self);
+static gboolean refresh_cache (GeglChantOperation *self);
 
 static void
 prepare (GeglOperation *operation)
@@ -66,28 +71,48 @@ prepare (GeglOperation *operation)
    *          for now this is evaded by just ignoring additional
    *          requests to be made into members of the graph
    */
-  gegl_node_set (priv->composite_op,
-                 "operation", self->composite_op,
-                 NULL);
+
+  if (!priv->p_composite_op || strcmp (priv->p_composite_op, self->composite_op))
+    {
+      gegl_node_set (priv->composite_op,
+                     "operation", self->composite_op,
+                     NULL);
+      if (priv->p_composite_op)
+        g_free (priv->p_composite_op);
+      priv->p_composite_op = g_strdup (self->composite_op);
+    }
   if (self->src[0])
     {
-      refresh_cache (self);
-      gegl_node_set (priv->load, 
-                     "buffer", priv->cached_buffer,
-                     NULL);
+      if (refresh_cache (self))
+        {
+          gegl_node_set (priv->load, 
+                         "buffer", priv->cached_buffer,
+                         NULL);
+        }
     }
   else
     {
       gegl_node_connect (priv->opacity, "input", priv->aux, "output");
     }
 
-  gegl_node_set (priv->opacity, 
-                 "value",  self->opacity,
-                 NULL);
-  gegl_node_set (priv->shift, 
-                 "x",  self->x,
-                 "y",  self->y,
-                 NULL);
+  if (self->opacity != priv->p_opacity)
+    {
+      gegl_node_set (priv->opacity, 
+                     "value",  self->opacity,
+                     NULL);
+      priv->p_opacity = self->opacity;
+    }
+
+  if (self->x != priv->p_x ||
+      self->y != priv->p_y)
+    {
+      gegl_node_set (priv->shift, 
+                     "x",  self->x,
+                     "y",  self->y,
+                     NULL);
+      priv->p_x = self->x;
+      priv->p_y = self->y;
+    }
 }
 
 static void associate (GeglOperation *operation)
@@ -134,11 +159,6 @@ dispose (GObject *object)
       g_object_unref (priv->cached_buffer);
       priv->cached_buffer = NULL;
     }
-  if (priv->cached_path)
-    {
-      g_free (priv->cached_path);
-      priv->cached_path = NULL;
-    }
 
   G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->dispose (object);
 }
@@ -148,7 +168,12 @@ static void
 finalize (GObject *object)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
+  Priv *priv = (Priv*)self->priv;
 
+  if (priv->cached_path)
+      g_free (priv->cached_path);
+  if (priv->p_composite_op)
+      g_free (priv->p_composite_op);
   if (self->priv)
     g_free (self->priv);
 
@@ -164,7 +189,7 @@ static void class_init (GeglOperationClass *klass)
   G_OBJECT_CLASS (klass)->finalize = finalize;
 }
 
-static void
+static gboolean
 refresh_cache (GeglChantOperation *self)
 {
   Priv *priv = (Priv*)self->priv;
@@ -173,33 +198,35 @@ refresh_cache (GeglChantOperation *self)
       ((priv->cached_path && self->src) &&
         strcmp (self->src, priv->cached_path)))
     {
-        GeglNode *gegl;
-        GeglNode *load;
+      GeglNode *gegl;
+      GeglNode *load;
 
-        if (priv->cached_buffer)
-          {
-            g_object_unref (priv->cached_buffer);
-            priv->cached_buffer = NULL;
-            g_free (priv->cached_path);
-          }
+      if (priv->cached_buffer)
+        {
+          g_object_unref (priv->cached_buffer);
+          priv->cached_buffer = NULL;
+          g_free (priv->cached_path);
+        }
 
-        gegl = g_object_new (GEGL_TYPE_NODE, NULL);
-        load = gegl_graph_new_node (gegl, "operation", "load",
-                                             "cache", FALSE,
-                                             "path", self->src,
-                                             NULL);
-        gegl_node_apply (load, "output");
-        gegl_node_get (load, "output", &(priv->cached_buffer), NULL);
+      gegl = g_object_new (GEGL_TYPE_NODE, NULL);
+      load = gegl_graph_new_node (gegl, "operation", "load",
+                                           "cache", FALSE,
+                                           "path", self->src,
+                                           NULL);
+      gegl_node_apply (load, "output");
+      gegl_node_get (load, "output", &(priv->cached_buffer), NULL);
 
-        /* we unref the buffer since we effectifly need to steal the
-         * contents XXX, only once here,. twice in node_blit.. since
-         * we do not have any more use for it there.
-         */
-        g_object_unref (priv->cached_buffer);
+      /* we unref the buffer since we effectifly need to steal the
+       * contents XXX, only once here,. twice in node_blit.. since
+       * we do not have any more use for it there.
+       */
+      g_object_unref (priv->cached_buffer);
 
-        g_object_unref (gegl);
-        priv->cached_path = g_strdup (self->src);
-  }
+      g_object_unref (gegl);
+      priv->cached_path = g_strdup (self->src);
+      return TRUE;
+    }
+  return FALSE;
 }
 
 

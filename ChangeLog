@@ -1,5 +1,14 @@
 2006-10-07  Øyvind Kolås  <pippin@gimp.org>
 
+	Modified meta nodes to incurr fewer repeated changes on the graph.
+
+	* operations/meta/dropshadow.c: (prepare):
+	* operations/meta/layer.c: (prepare), (dispose), (finalize),
+	(refresh_cache):
+	* operations/meta/unsharp-mask.c: (prepare):
+	* tools/Makefile.am:
+
+2006-10-07  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-node.h: added dirty variable to GeglNode struct.
 	* gegl/gegl-node.c: (gegl_node_set_op_class), (property_changed),
@@ -8,16 +17,6 @@
 	changed.).
 	* operations/file-io/load.c: (prepare), (refresh_cache): reduce number
 	of changed emitted.
-
-2006-10-07  Øyvind Kolås  <pippin@gimp.org>
-
-	reviewed by: <delete if not using a buddy>
-
-	* docs/gallery/Makefile.am:
-	* gegl/gegl-node.c: (property_changed),
-	(gegl_node_set_operation_object):
-	* gegl/gegl-node.h:
-	* tools/Makefile.am:
 
 2006-10-07  Øyvind Kolås  <pippin@gimp.org>
 
