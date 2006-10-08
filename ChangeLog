@@ -1,5 +1,15 @@
 2006-10-08  Øyvind Kolås  <pippin@gimp.org>
 
+	Added build infrastructure for bin dir.
+
+	* Makefile.am: added bin subdir.
+	* configure.in: added creation of bin/Makefile
+	* gegl/Makefile.am: remove remnants of the gegl bin.
+	* bin/.cvsignore: new file
+	* bin/Makefile.am: new file.
+
+2006-10-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.c,
 	* gegl/gegl-options.[ch]: moved these files ...
 

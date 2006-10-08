@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = dist-bzip2
 
-SUBDIRS = gegl operations tools docs
+SUBDIRS = gegl operations bin tools docs
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gegl.pc

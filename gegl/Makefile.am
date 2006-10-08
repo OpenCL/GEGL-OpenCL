@@ -1,7 +1,5 @@
 noinst_PROGRAMS =
 
-bin_PROGRAMS = gegl
-
 SUBDIRS = buffer module
 
 libbuffer = $(top_builddir)/gegl/buffer/libbuffer.la
@@ -47,11 +45,6 @@ GEGL_sources = \
 	gegl-visitor.c			\
 	gegl-xml.c
 
-gegl_SOURCES = \
-	gegl.c	\
-	gegl-options.c \
-	gegl-options.h 
-
 GEGL_public_headers = \
 	gegl-color.h			\
 	gegl-connection.h		\
@@ -87,10 +80,6 @@ INCLUDES = \
 AM_LDFLAGS =  \
 	-no-undefined \
 	@DEP_LIBS@ @BABL_LIBS@
-
-gegl_LDFLAGS = \
-	libgegl-@GEGL_API_VERSION@.la
-
 
 libgeglincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)
 libgeglsubincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl
