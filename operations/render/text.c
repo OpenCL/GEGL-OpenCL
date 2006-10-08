@@ -25,6 +25,7 @@ gegl_chant_string (font, "Sans",
                    "Font family. (utf8)")
 gegl_chant_double (size, 1.0, 2048.0, 10.0,
                    "Approximate height of text in pixels.")
+gegl_chant_color  (color, "white", "Color for the text (defaults to 'white')")
 gegl_chant_int    (wrap, -1, 1000000, -1,
                    "Sets the width in pixels at which long lines will wrap. Use -1 for no wrapping.")
 gegl_chant_int    (alignment, 0, 2, 0,
@@ -44,6 +45,7 @@ gegl_chant_int    (height, 0, 1000000, 0,
 #include "gegl-chant.h"
 
 #include <cairo.h>
+#include <pango/pango-attributes.h>
 #include <pango/pangocairo.h>
 
 static void text_layout_text (GeglChantOperation *self,
@@ -52,9 +54,13 @@ static void text_layout_text (GeglChantOperation *self,
                               gdouble       *width,
                               gdouble       *height)
 {
-  gchar       *string;
-  PangoLayout *layout;
   PangoFontDescription *desc;
+  PangoLayout    *layout;
+  PangoAttrList  *attrs;
+  PangoAttribute *attr  = NULL;
+  gchar          *string;
+  gfloat          color[4];
+  gint            alignment = 0;
 
   /* Create a PangoLayout, set the font and text */
   layout = pango_cairo_create_layout (cr);
@@ -66,9 +72,38 @@ static void text_layout_text (GeglChantOperation *self,
   desc = pango_font_description_from_string (self->font);
   pango_font_description_set_absolute_size (desc, self->size * PANGO_SCALE);
   pango_layout_set_font_description (layout, desc);
-  pango_layout_set_alignment (layout, self->alignment);
+
+  switch (self->alignment)
+  {
+  case 0:
+    alignment = PANGO_ALIGN_LEFT;
+    break;
+  case 1:
+    alignment = PANGO_ALIGN_CENTER;
+    break;
+  case 2:
+    alignment = PANGO_ALIGN_RIGHT;
+    break;
+  }
+  pango_layout_set_alignment (layout, alignment);
   pango_layout_set_width (layout, self->wrap * PANGO_SCALE);
-  pango_font_description_free (desc);
+
+  attrs = pango_attr_list_new ();
+  if (attrs)
+  {
+    gegl_color_get_rgba (self->color,
+                         &color[0], &color[1], &color[2], &color[3]);
+    attr = pango_attr_foreground_new ((guint16) (color[0] * 65535),
+                                      (guint16) (color[1] * 65535),
+                                      (guint16) (color[2] * 65535));
+    if (attr)
+    {
+      attr->start_index = 0;
+      attr->end_index   = -1;
+      pango_attr_list_insert (attrs, attr);
+      pango_layout_set_attributes (layout, attrs);
+    }
+  }
 
   /* Inform Pango to re-layout the text with the new transformation */
   pango_cairo_update_layout (cr, layout);
@@ -96,7 +131,8 @@ static void text_layout_text (GeglChantOperation *self,
       pango_cairo_show_layout (cr, layout);
     }
 
-  /* free the layout object */
+  pango_font_description_free (desc);
+  pango_attr_list_unref (attrs);
   g_object_unref (layout);
 }
 
@@ -133,8 +169,8 @@ process (GeglOperation *operation)
     gegl_buffer_set_fmt (op_source->output, data,
         babl_format_new (babl_model ("R'aG'aB'aA"),
                          babl_type ("u8"),
-                         babl_component ("G'a"),
                          babl_component ("B'a"),
+                         babl_component ("G'a"),
                          babl_component ("R'a"),
                          babl_component ("A"),
                          NULL));

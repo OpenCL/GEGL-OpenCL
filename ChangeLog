@@ -1,3 +1,10 @@
+2006-10-08  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/gegl-operation.[ch]: Changed 'effected' to 'affected'.
+
+	* operations/render/text.c: Added 'color' parameter. Use proper
+	Pango values when setting alignment.
+
 2006-10-07  Øyvind Kolås  <pippin@gimp.org>
 
 	Added gegl_operation.get_effected_region virtual method.

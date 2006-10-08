@@ -36,7 +36,7 @@ static void      gegl_operation_init       (GeglOperation         *self);
 static void      associate                 (GeglOperation         *self);
 
 static GeglRect get_defined_region (GeglOperation *self);
-static GeglRect get_effected_region (GeglOperation *self,
+static GeglRect get_affected_region (GeglOperation *self,
                                      const gchar   *input_pad,
                                      GeglRect       region);
 static gboolean calc_source_regions (GeglOperation *self);
@@ -53,7 +53,7 @@ gegl_operation_class_init (GeglOperationClass * klass)
   klass->associate = associate;
   klass->prepare = NULL;
   klass->get_defined_region = get_defined_region;
-  klass->get_effected_region = get_effected_region;
+  klass->get_affected_region = get_affected_region;
   klass->calc_source_regions = calc_source_regions;
 }
 
@@ -117,15 +117,15 @@ gegl_operation_get_defined_region (GeglOperation *self)
   return rect;
 }
 
-GeglRect   gegl_operation_get_effected_region       (GeglOperation *self,
+GeglRect   gegl_operation_get_affected_region       (GeglOperation *self,
                                                      const gchar   *input_pad,
                                                      GeglRect       region)
 {
   GeglOperationClass *klass;
 
   klass = GEGL_OPERATION_GET_CLASS (self);
-  if (klass->get_effected_region)
-    return klass->get_effected_region (self, input_pad, region);
+  if (klass->get_affected_region)
+    return klass->get_affected_region (self, input_pad, region);
   return region;
 }
 
@@ -195,7 +195,7 @@ gegl_operation_source_get_defined_region (GeglOperation *operation,
 
   if (!pad)
     return NULL;
-  
+
   g_assert (gegl_pad_get_node (pad));
 
   return gegl_node_get_have_rect (gegl_pad_get_node (pad));
@@ -263,15 +263,15 @@ get_defined_region (GeglOperation *self)
 }
 
 static GeglRect
-get_effected_region (GeglOperation *self,
+get_affected_region (GeglOperation *self,
                      const gchar   *input_pad,
                      GeglRect       region)
 {
   /* This should not be needed, but followed the copypaste from get_defined_region.
-   * 
+   *
   if (self->node->is_graph)
     {
-      return gegl_operation_get_effected_region (
+      return gegl_operation_get_affected_region (
                    gegl_graph_output (self->node, "output")->operation,
                    input_pad,
                    region);

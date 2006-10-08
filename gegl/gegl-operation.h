@@ -76,11 +76,11 @@ struct _GeglOperationClass
    */
   GeglRect   (*get_defined_region)  (GeglOperation *self);
 
-  /* Computes the region in output (same effected rect assumed for all outputs)
+  /* Computes the region in output (same affected rect assumed for all outputs)
    * when a given region has changed on an input. Used to aggregate dirt in
    * the graph.
    */
-  GeglRect   (*get_effected_region)  (GeglOperation *self,
+  GeglRect   (*get_affected_region)  (GeglOperation *self,
                                       const gchar   *input_pad,
                                       GeglRect       region);
 
@@ -111,7 +111,7 @@ GeglRect * gegl_operation_result_rect               (GeglOperation *operation);
 
 
 /* virtual method invokers */
-GeglRect   gegl_operation_get_effected_region       (GeglOperation *self,
+GeglRect   gegl_operation_get_affected_region       (GeglOperation *self,
                                                      const gchar   *input_pad,
                                                      GeglRect       region);
 GeglRect   gegl_operation_get_defined_region        (GeglOperation *self);
