@@ -1,3 +1,29 @@
+2006-10-09  Øyvind Kolås  <pippin@gimp.org>
+
+	Relicensed the GEGL binary under GPL instead of LGPL, incorporated
+	changes to better cooperate with an upcoming editing component that
+	uses GTK+.
+
+	* bin/gegl-options.[ch]: (parse_args): relicensed.
+	* bin/gegl.c: (file_is_gegl_xml), (main): added simple handling of
+	operations specified on commandline, as already documented in usage.
+
+2006-10-08  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* bin/gegl-options.c: (parse_args):
+	* bin/gegl.c: (main):
+	* tools/Makefile.am:
+
+2006-10-08  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* bin/gegl-options.c: (parse_args):
+	* bin/gegl.c: (main):
+	* tools/Makefile.am:
+
 2006-10-08  Øyvind Kolås  <pippin@gimp.org>
 
 	Added build infrastructure for bin dir.

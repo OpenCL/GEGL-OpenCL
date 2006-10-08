@@ -1,3 +1,22 @@
+/* This file is part of GEGL editor -- a gtk frontend for GEGL
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
+ */
+
 #include <glib.h>
 #include <gegl.h>
 #include <stdio.h>
@@ -6,8 +25,39 @@
 #include <unistd.h>
 #include "gegl-options.h"
 
-static gint main_interactive (GeglNode    *gegl,
-                              GeglOptions *o);
+#ifdef HAVE_GTK
+#include <gtk/gtk.h>
+gint editor_main (GeglNode    *gegl,
+                  const gchar *path);
+#endif
+
+
+/*FIXME: this should be in gegl.h*/
+
+GeglNode * gegl_graph_output          (GeglNode     *graph,
+                                       const gchar  *name);
+
+
+GeglNode * gegl_node_get_connected_to (GeglNode     *self,
+                                       gchar        *pad_name);
+
+/******************/
+
+static gboolean file_is_gegl_xml (const gchar *path)
+{
+  gchar *extension;
+
+  extension = strrchr (path, '.');
+  if (!extension)
+    return FALSE;
+  extension++;
+  if (extension[0]=='\0')
+    return FALSE;
+  if (!strcmp (extension, "xml")||
+      !strcmp (extension, "XML"))
+    return TRUE;
+  return FALSE;
+}
 
 gint
 main (gint    argc,
@@ -28,7 +78,7 @@ main (gint    argc,
     }
   else if (o->file)
     {
-      if (!strcmp (o->file, "-"))
+      if (!strcmp (o->file, "-"))  /* read XML from stdin */
         {
           gint  buf_size = 128;
           gchar buf[buf_size];
@@ -40,7 +90,7 @@ main (gint    argc,
             }
           script = g_string_free (acc, FALSE);
         }
-      else
+      else if (file_is_gegl_xml (o->file))
         {
           g_file_get_contents (o->file, &script, NULL, &err);
           if (err != NULL)
@@ -48,18 +98,55 @@ main (gint    argc,
               g_warning ("Unable to read file: %s", err->message);
             }
         }
+      else
+        {
+          gchar *leaked_string = g_malloc (strlen (o->file + 4));
+          GString *acc = g_string_new (""); 
+
+          g_string_append (acc, "<gegl><load path='");
+          g_string_append (acc, o->file);
+          g_string_append (acc, "'/></gegl>");
+          
+          script = g_string_free (acc, FALSE);
+
+          leaked_string[0]='\0';
+          strcat (leaked_string, o->file);
+          strcat (leaked_string, ".xml");
+          o->file = leaked_string;
+        }
     }
   else
     {
-      script = g_strdup ("<gegl><tree><node operation='text' size='100' string='GEGL'/></tree></gegl>");
+      script = g_strdup ("<gegl><text size='100' string='GEGL'/></gegl>");
     }
 
   gegl = gegl_xml_parse (script);
 
+  if (o->rest)
+    {
+      GeglNode *proxy;
+      GeglNode *iter;
+     
+      gchar **operation = o->rest;
+      proxy = gegl_graph_output (gegl, "output");
+      iter = gegl_node_get_connected_to (proxy, "input");
+
+      while (*operation)
+        {
+          GeglNode *new = gegl_graph_new_node (gegl, "operation", *operation, NULL);
+          gegl_node_link_many (iter, new, proxy);
+          iter = new;
+          operation++;
+        }
+    }
+
   switch (o->mode)
     {
       case GEGL_RUN_MODE_INTERACTIVE:
-          main_interactive (gegl, o);
+#ifdef HAVE_GTK
+          gtk_init (&argc, &argv);
+          editor_main (gegl, o->file);
+#endif
           g_object_unref (gegl);
           g_free (o);
           gegl_exit ();
@@ -90,19 +177,5 @@ main (gint    argc,
       default:
         break;
     }
-  return 0;
-}
-
-static gint
-main_interactive (GeglNode *gegl,
-                  GeglOptions *o)
-{
-  GeglNode *output = gegl_graph_new_node (gegl,
-                       "operation", "display",
-                       NULL);
-
-  gegl_node_connect (output, "input", gegl_graph_output (gegl, "output"), "output");
-  gegl_node_apply (output, "output");
-  sleep(o->delay);
   return 0;
 }
