@@ -1,3 +1,7 @@
+2006-10-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/: new directory, for end-user binaries exercising GEGL.
+
 2006-10-08  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* gegl/gegl-operation.[ch]: Changed 'effected' to 'affected'.
