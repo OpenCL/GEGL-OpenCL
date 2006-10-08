@@ -543,6 +543,7 @@ sudo make install</pre>
  │   └──workshop      Works in progress, (not compiled by default)
  │       └──generated
  │                    
+ ├──bin               gegl binary, for processing XML compositions to png files.
  │
  ├──docs              A website for GEGL
  │   │

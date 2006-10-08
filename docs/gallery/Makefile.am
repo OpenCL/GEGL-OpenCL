@@ -40,11 +40,10 @@ pngs:
 all-local: pngs index.html
 
 %.png:%.xml $(wildcard $(top_builddir)/operations/*/*.so)\
-	    $(wildcard $(top_builddir)/*.o)\
-	    $(wildcard $(top_builddir)/*/*.o)\
-	    $(top_builddir)/gegl
+	    $(top_builddir)/gegl/libgegl-@GEGL_API_VERSION@.la\
+	    $(top_builddir)/bin/gegl
 	@export GEGL_DEBUG_TIME=yes;export GEGL_PATH=$(top_builddir)/operations;\
-	$(top_builddir)/gegl/gegl $< -o $@ > `echo $@|sed -e s/png/txt/`
+	$(top_builddir)/bin/gegl $< -o $@ > `echo $@|sed -e s/png/txt/`
 
 clean-local:
 	rm -f index.html *.png *.txt
