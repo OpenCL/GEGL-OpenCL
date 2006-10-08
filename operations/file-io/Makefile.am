@@ -16,7 +16,7 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
 
 %.so: %.c $(GEGLHEADERS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
+	@echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 # If extensions needing external libraries are to be compiled with this make
 # file, each of them can be added according to this pattern:
@@ -24,20 +24,27 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
 jpg-load.so: jpg-load.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(LIBJPEG)
+	@[ ! -z "$(LIBJPEG)" ] &&\
+	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(LIBJPEG))\
+	|| true
 
 png-load.so: png-load.c $(GEGLHEADERS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(PNG_CFLAGS) $(PNG_LIBS)
+	@echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(PNG_CFLAGS) $(PNG_LIBS)
 png-save.so: png-save.c $(GEGLHEADERS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(PNG_CFLAGS) $(PNG_LIBS)
+	@echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(PNG_CFLAGS) $(PNG_LIBS)
 
 svg-load.so: svg-load.c
+	@if [ ! -z "$(RSVG_LIBS)" ]; then \
+	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
                                      $(CAIRO_CFLAGS) $(CAIRO_LIBS) \
-                                     $(RSVG_CFLAGS) $(RSVG_LIBS)
+                                     $(RSVG_CFLAGS) $(RSVG_LIBS);\
+	fi
 pixbuf.so: pixbuf.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
-                                     $(RSVG_CFLAGS) $(RSVG_LIBS)
+	@if [ ! -z "$(RSVG_LIBS)" ]; then \
+	echo $@;\
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(RSVG_CFLAGS) $(RSVG_LIBS);\
+	fi
 #############################################################################
 
 clean-local:

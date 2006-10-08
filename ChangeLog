@@ -1,5 +1,26 @@
 2006-10-09  Øyvind Kolås  <pippin@gimp.org>
 
+	Make greater efforts not to compile items when dependencies are not
+	satisfied (LIBS not being set when expected to be). Also made the
+	compile a lot less verbose, by only outputing the name of the object
+	being compiled.
+
+	* operations/blur/Makefile.am:
+	* operations/color/Makefile.am:
+	* operations/core/Makefile.am:
+	* operations/display/Makefile.am:
+	* operations/file-io/Makefile.am:
+	* operations/generated/Makefile.am:
+	* operations/meta/Makefile.am:
+	* operations/render/Makefile.am:
+	* operations/svg/Makefile.am:
+	* operations/transform/Makefile.am:
+	* operations/transparency/Makefile.am:
+	* operations/workshop/Makefile.am:
+	* operations/workshop/generated/Makefile.am:
+
+2006-10-09  Øyvind Kolås  <pippin@gimp.org>
+
 	Relicensed the GEGL binary under GPL instead of LGPL, incorporated
 	changes to better cooperate with an upcoming editing component that
 	uses GTK+.

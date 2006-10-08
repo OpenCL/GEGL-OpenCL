@@ -18,7 +18,7 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
 
 %.so: %.c $(GEGLHEADERS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
+	@echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 gst.so: gst.c $(GEGLHEADERS)
 	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config gstreamer-0.10 --libs --cflags`

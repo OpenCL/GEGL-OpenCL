@@ -14,10 +14,10 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
 
 %.o: %.c chant.h module.h matrix.h $(GEGLHEADERS)
-	$(CC) $(CFLAGS) -c $< 
+	@echo $@;$(CC) $(CFLAGS) -c $< 
 
 affine.so: $(OFILES)
-	$(CC) $(LDFLAGS) $(LDADD) $(OFILES) -o affine.so
+	@echo $@;$(CC) $(LDFLAGS) $(LDADD) $(OFILES) -o affine.so
 
 clean-local:
 	rm -f $(SOBJS) *.o *~

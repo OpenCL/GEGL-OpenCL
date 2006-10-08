@@ -16,7 +16,7 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 #win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
 
 %.so: %.c $(GEGLHEADERS) $(GEGLHEADERS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
+	@echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 display.so: display.c $(GEGLHEADERS)
 	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(SDL_CFLAGS) $(SDL_LIBS)
