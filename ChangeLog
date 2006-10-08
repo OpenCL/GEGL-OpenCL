@@ -1,4 +1,12 @@
-2006-10-07  Øyvind Kolås  <pippin@gimp.org>
+2006-10-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.c,
+	* gegl/gegl-options.[ch]: moved these files ...
+
+	* bin/gegl.c,
+	* bin/gegl-options.[ch]: ... here.
+
+2006-10-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/: new directory, for end-user binaries exercising GEGL.
 
