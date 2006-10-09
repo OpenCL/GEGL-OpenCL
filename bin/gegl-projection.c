@@ -70,7 +70,7 @@ gegl_projection_constructor (GType                  type,
   GeglProjection *self = GEGL_PROJECTION (object);
 
   self->valid_region = gdk_region_new ();
-  self->format = babl_format ("R'G'B' u8");
+  self->format = babl_format ("R'G'B'A u8");
   self->buffer = g_object_new (GEGL_TYPE_BUFFER,
                                "format", self->format,
                                "x", -65536,

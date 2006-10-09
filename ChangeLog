@@ -1,5 +1,12 @@
 2006-10-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-projection.c: (gegl_projection_constructor): use
+	"R'G'B'A u8" instead of "R'G'B' u8" for storage, since the first
+	is what is actually queried by gegl-view, as well as what is rendered
+	in the rendering task.
+
+2006-10-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/gtk-display.c: an op that acts a passthrough
 	op, and as a side effects shows the buffer passed through in
 	a GtkWindow, depends on the gtk+ library already being initialized
