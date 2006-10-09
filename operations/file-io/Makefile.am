@@ -1,10 +1,10 @@
-EXTRA_DIST      = $(wildcard *.c)
+EXTRA_DIST      = $(wildcard *.c) $(wildcard *.cpp)
 CFILES          = $(wildcard $(srcdir)/*.c)
 CXXFILES        = $(wildcard $(srcdir)/*.cpp)
 SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=.so)) \
                   $(subst $(srcdir)/,,$(CXXFILES:.cpp=.so))
 INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=.so)) \
-                  $(subst $(srcdir),$(ext_dir),$(CFILES:.cpp=.so))
+                  $(subst $(srcdir),$(ext_dir),$(CXXFILES:.cpp=.so))
 GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
 	          $(wildcard $(top_srcdir)/gegl/buffer/*.h)
 

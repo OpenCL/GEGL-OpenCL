@@ -1,5 +1,9 @@
 2006-10-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/file-io/Makefile.am: fix inclusion of .cc files in dist.
+
+2006-10-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* autogen.sh: autogenerate before running configure (to allow the user
 	to see the results of the dependency checks at the end.)
 
