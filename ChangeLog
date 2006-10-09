@@ -1,5 +1,10 @@
 2006-10-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-view.c: (gegl_view_constructor): removed double buffering.
+	Since we do our own.
+
+2006-10-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl.c: (main): fixed out of bounds error checks and wrongful
 	pointer manipulations.
 

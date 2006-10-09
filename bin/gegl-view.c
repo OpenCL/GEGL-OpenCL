@@ -204,6 +204,7 @@ gegl_view_constructor (GType                  type,
                       G_CALLBACK (expose_event), NULL);
   g_signal_connect (G_OBJECT (widget), "motion_notify_event",
 		    G_CALLBACK (motion_notify_event), NULL);
+  gtk_widget_set_double_buffered (widget, FALSE);
 
   return object;
 }
