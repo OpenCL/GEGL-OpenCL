@@ -197,6 +197,7 @@ have_gtk=no
 AC_ARG_WITH(gtk,  [  --without-gtk           build without GTK+])
 if test x$with_gtk != xno; then
   have_gtk=yes
+  AC_DEFINE(HAVE_GTK, 1, [Define to 1 to compile with gtk support.])
   PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED_VERSION,
     GTK_CFLAGS="$GTK_CFLAGS"
     GTK_LIBS="$GTK_LIBS",
