@@ -101,7 +101,7 @@ main (gint    argc,
         }
       else
         {
-          gchar *leaked_string = g_malloc (strlen (o->file + 4));
+          gchar *leaked_string = g_malloc (strlen (o->file) + 5);
           GString *acc = g_string_new ("");
 
           g_string_append (acc, "<gegl><load path='");

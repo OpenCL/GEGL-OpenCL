@@ -1,5 +1,10 @@
 2006-10-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl.c: (main): fixed out of bounds error checks and wrongful
+	pointer manipulations.
+
+2006-10-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.in: made HAVE_GTK show up as a define that can be checked
 	for.
 
