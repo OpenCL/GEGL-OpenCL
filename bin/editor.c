@@ -66,6 +66,7 @@ create_tree_window (Editor *editor)
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (property_scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   vpaned = gtk_vpaned_new ();
 
+
   menubar = create_menubar (editor); /*< depends on other widgets existing */
 
   /* packing */

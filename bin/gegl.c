@@ -118,7 +118,14 @@ main (gint    argc,
     }
   else
     {
-      script = g_strdup ("<gegl></gegl>");
+      if (o->rest)
+        {
+          script = g_strdup ("<gegl></gegl>");
+        }
+      else
+        {
+          script = g_strdup ("<gegl><color value='rgb(0.8,0.8,0.8)'/></gegl>");
+        }
     }
 
   gegl = gegl_xml_parse (script);
@@ -150,7 +157,7 @@ main (gint    argc,
 
   switch (o->mode)
     {
-      case GEGL_RUN_MODE_INTERACTIVE:
+      case GEGL_RUN_MODE_EDITOR:
 #if HAVE_GTK
           gtk_init (&argc, &argv);
           editor_main (gegl, o->file);
