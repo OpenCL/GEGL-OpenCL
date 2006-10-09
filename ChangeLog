@@ -1,5 +1,24 @@
 2006-10-09  Øyvind Kolås  <pippin@gimp.org>
 
+	Imported a GTK+ based editing component for the gegl binary, the build
+	environment for building this has not been fully adapted yet.
+
+	* bin/editor-optype.c:
+	* bin/editor.c:
+	* bin/editor.h:
+	* bin/gegl-projection.c:
+	* bin/gegl-projection.h:
+	* bin/gegl-store.c:
+	* bin/gegl-store.h:
+	* bin/gegl-tree-editor-action.c:
+	* bin/gegl-tree-editor-action.h:
+	* bin/gegl-tree-editor.c:
+	* bin/gegl-tree-editor.h:
+	* bin/gegl-view.c:
+	* bin/gegl-view.h:
+
+2006-10-09  Øyvind Kolås  <pippin@gimp.org>
+
 	Make greater efforts not to compile items when dependencies are not
 	satisfied (LIBS not being set when expected to be). Also made the
 	compile a lot less verbose, by only outputing the name of the object
