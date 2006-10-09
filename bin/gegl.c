@@ -25,11 +25,9 @@
 #include <unistd.h>
 #include "gegl-options.h"
 
-#ifdef HAVE_GTK
 #include <gtk/gtk.h>
 gint editor_main (GeglNode    *gegl,
                   const gchar *path);
-#endif
 
 
 /*FIXME: this should be in gegl.h*/
@@ -117,7 +115,7 @@ main (gint    argc,
     }
   else
     {
-      script = g_strdup ("<gegl><text size='100' string='GEGL'/></gegl>");
+      script = g_strdup ("<gegl></gegl>");
     }
 
   gegl = gegl_xml_parse (script);
@@ -134,7 +132,14 @@ main (gint    argc,
       while (*operation)
         {
           GeglNode *new = gegl_graph_new_node (gegl, "operation", *operation, NULL);
-          gegl_node_link_many (iter, new, proxy);
+          if (iter)
+            {
+              gegl_node_link_many (iter, new, proxy, NULL);
+            }
+          else
+            {
+              gegl_node_link_many (new, proxy, NULL);
+            }
           iter = new;
           operation++;
         }
@@ -143,10 +148,8 @@ main (gint    argc,
   switch (o->mode)
     {
       case GEGL_RUN_MODE_INTERACTIVE:
-#ifdef HAVE_GTK
           gtk_init (&argc, &argv);
           editor_main (gegl, o->file);
-#endif
           g_object_unref (gegl);
           g_free (o);
           gegl_exit ();

@@ -1,5 +1,14 @@
 2006-10-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-options.c: (gegl_options_parse), (parse_args): made the
+	handling of various commandline combinations saner.
+	* bin/gegl.c: (main): made the default script fully empty. (to allow
+	building a document entirely from things after --)
+	* gegl/gegl-pad.c: (gegl_pad_disconnect): remove assertion, that no
+	longer holds with ghost pads.
+
+2006-10-09  Øyvind Kolås  <pippin@gimp.org>
+
 	Imported a GTK+ based editing component for the gegl binary, the build
 	environment for building this has not been fully adapted yet.
 

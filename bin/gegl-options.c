@@ -129,16 +129,6 @@ print_opts (GeglOptions *o)
 );
 }
 
-static void
-fixup (GeglOptions *o)
-{
-    if (o->file && o->rest) {
-        fprintf (stderr, "ERROR: both chain and file specified\n");
-        exit (-1);
-    }
- /*   fprintf (stderr, "op fixup not written yet\n");*/
-}
-
 GeglOptions *
 gegl_options_parse (gint    argc,
                     gchar **argv)
@@ -146,7 +136,6 @@ gegl_options_parse (gint    argc,
     GeglOptions *o;
 
     o = parse_args (argc, argv);
-    fixup (o);
     if (o->verbose)
         print_opts (o);
     return o;
@@ -225,7 +214,8 @@ parse_args (int    argc,
           }
         curr++;
     }
-    if (o->file && o->mode == GEGL_RUN_MODE_HELP)
+    if ((o->file || o->xml || o->rest) &&
+        o->mode == GEGL_RUN_MODE_HELP)
       o->mode = GEGL_RUN_MODE_INTERACTIVE;
 
     return o;
