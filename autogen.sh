@@ -240,6 +240,10 @@ test $TEST_TYPE $FILE || {
     exit 1
 }
 
+(cd operations/generated;./porter-duff.rb)
+(cd operations/generated;./math.rb)
+(cd operations/generated;./svg-blend.rb)
+(cd operations/workshop/generated;./blend.rb)
 
 echo
 echo "I am going to run ./configure with the following arguments:"
@@ -318,10 +322,6 @@ if test $RC -ne 0; then
   exit $RC
 fi
 
-(cd operations/generated;./porter-duff.rb)
-(cd operations/generated;./math.rb)
-(cd operations/generated;./svg-blend.rb)
-(cd operations/workshop/generated;./blend.rb)
 
 echo
 echo "Now type 'make' to compile $PROJECT."
