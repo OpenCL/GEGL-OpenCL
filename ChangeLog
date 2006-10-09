@@ -1,3 +1,7 @@
+2006-10-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/gegl.c: #include "config.h"
+
 2006-10-09  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.in

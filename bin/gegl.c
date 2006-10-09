@@ -17,6 +17,8 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
+#include "config.h"
+
 #include <glib.h>
 #include <gegl.h>
 #include <stdio.h>
