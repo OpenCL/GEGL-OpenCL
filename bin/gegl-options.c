@@ -59,12 +59,11 @@ usage (char *application_name)
 "     --verbose             print diagnostics while running\n"
 "      -v\n"
 "\n"
-"     --ui                  use gtk+ ui (act like a viewer/editor)"
-"     -u\n"
-"\n"
+#if 0
 "     --delay               wait for specified number of seconds before exit\n"
-"     -d                    (only valid when --ui or -u option is also used)\n"
+"     -d\n"
 "\n"
+#endif
 "All parameters following -- are considered ops to be chained together\n"
 "into a small composition instead of using an xml file, this allows for\n"
 "easy testing of filters. Be aware that the default value will be used\n"
@@ -191,11 +190,6 @@ parse_args (int    argc,
 
         else if (match ("-X")) {
             o->mode = GEGL_RUN_MODE_XML;
-        }
-
-        else if (match ("--ui") ||
-                 match ("-u")) {
-            o->mode = GEGL_RUN_MODE_INTERACTIVE;
         }
 
         else if (match ("--")) {

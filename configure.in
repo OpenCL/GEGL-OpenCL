@@ -5,6 +5,7 @@ AC_PREREQ(2.54)
 AC_INIT(gegl/gegl-init.c)
 
 GLIB_REQUIRED_VERSION=2.6.4
+GTK_REQUIRED_VERSION=2.8.17
 
 GEGL_UNSTABLE=yes
 AC_SUBST(GEGL_UNSTABLE)
@@ -64,6 +65,11 @@ AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 AC_SUBST(LT_VERSION_INFO)
 AC_SUBST(LT_CURRENT_MINUS_AGE)
+
+gegltargetlib=libgegl-$GEGL_API_VERSION.la
+
+AC_SUBST(gegltargetlib)
+
 
 dnl ==========================================================================
 
@@ -187,6 +193,25 @@ PKG_CHECK_MODULES(DEP,
 DEP_CFLAGS=`$PKG_CONFIG --cflags $GLIB_PACKAGES gthread-2.0`
 
 
+have_gtk=no
+AC_ARG_WITH(gtk,  [  --without-gtk           build without GTK+])
+if test x$with_gtk != xno; then
+  have_gtk=yes
+  PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED_VERSION,
+    GTK_CFLAGS="$GTK_CFLAGS"
+    GTK_LIBS="$GTK_LIBS",
+    [have_gtk="no (gtk+ not found)"
+     AC_MSG_ERROR([
+*** Checks for GTK+ library failed. You can build without it by passing
+*** --without-gtk to configure but you won't be able to use the GEGL GUI.])])
+fi
+AM_CONDITIONAL(HAVE_GTK, test "x$have_gtk" = "xyes")
+
+AC_SUBST(HAVE_GTK)
+AC_SUBST(GTK_CFLAGS)
+AC_SUBST(GTK_LIBS)
+
+
 #########################
 # Disable deprecated APIs
 #########################
@@ -202,11 +227,6 @@ AC_MSG_RESULT($have_glib_2_11)
 if test "x$have_glib_2_11" != "xyes"; then
   CPPFLAGS="${CPPFLAGS} -DG_DISABLE_DEPRECATED"
 fi
-
-
-gegltargetlib=libgegl-$GEGL_API_VERSION.la
-
-AC_SUBST(gegltargetlib)
 
 
 ######################################
@@ -229,9 +249,9 @@ AC_CHECK_PROGS(PERL, perl5 perl)
 PKG_CHECK_MODULES(CAIRO, cairo,
   have_cairo="yes",
   have_cairo="no (Cairo not found)")
-AM_CONDITIONAL(HAS_CAIRO, test "x$have_cairo" = "xyes")
+AM_CONDITIONAL(HAVE_CAIRO, test "x$have_cairo" = "xyes")
 
-AC_SUBST(HAS_CAIRO) 
+AC_SUBST(HAVE_CAIRO) 
 AC_SUBST(CAIRO_CFLAGS) 
 AC_SUBST(CAIRO_LIBS) 
 
@@ -243,15 +263,15 @@ AC_SUBST(CAIRO_LIBS)
 PKG_CHECK_MODULES(PANGO, pango,
   have_pango="yes",
   have_pango="no (Pango not found)")
-AM_CONDITIONAL(HAS_PANGO, test "x$have_pango" = "xyes")
+AM_CONDITIONAL(HAVE_PANGO, test "x$have_pango" = "xyes")
 
 PKG_CHECK_MODULES(PANGOCAIRO, pangocairo,
   have_pangocairo="yes",
   have_pangocairo="no (pangocairo not found)")
-AM_CONDITIONAL(HAS_PANGOCAIRO, test "x$have_pangocairo" = "xyes")
+AM_CONDITIONAL(HAVE_PANGOCAIRO, test "x$have_pangocairo" = "xyes")
 
-AC_SUBST(HAS_PANGO) 
-AC_SUBST(HAS_PANGOCAIRO) 
+AC_SUBST(HAVE_PANGO) 
+AC_SUBST(HAVE_PANGOCAIRO) 
 AC_SUBST(PANGO_CFLAGS) 
 AC_SUBST(PANGO_LIBS) 
 AC_SUBST(PANGOCAIRO_CFLAGS) 
@@ -292,9 +312,9 @@ AC_ARG_WITH(libjpeg, [  --without-libjpeg       build without JPEG support])
   if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
      AC_MSG_RESULT([*** Checks for JPEG library failed.])
   fi
-AM_CONDITIONAL(HAS_JPEG, test "x$jpeg_ok" = "xyes")
+AM_CONDITIONAL(HAVE_JPEG, test "x$jpeg_ok" = "xyes")
 
-AC_SUBST(HAS_JPEG)
+AC_SUBST(HAVE_JPEG)
 AC_SUBST(LIBJPEG)
 
 
@@ -305,9 +325,9 @@ AC_SUBST(LIBJPEG)
 PKG_CHECK_MODULES(PNG, libpng,
   have_libpng="yes",
   have_libpng="no (libpng not found)")
-AM_CONDITIONAL(HAS_PNG, test "x$have_libpng" = "xyes")
+AM_CONDITIONAL(HAVE_PNG, test "x$have_libpng" = "xyes")
 
-AC_SUBST(HAS_PNG) 
+AC_SUBST(HAVE_PNG) 
 AC_SUBST(PNG_CFLAGS) 
 AC_SUBST(PNG_LIBS) 
 
@@ -319,9 +339,9 @@ AC_SUBST(PNG_LIBS)
 PKG_CHECK_MODULES(RSVG, librsvg-2.0,
   have_librsvg="yes",
   have_librsvg="no (librsvg not found)")
-AM_CONDITIONAL(HAS_RSVG, test "x$have_librsvg" = "xyes")
+AM_CONDITIONAL(HAVE_RSVG, test "x$have_librsvg" = "xyes")
 
-AC_SUBST(HAS_RSVG) 
+AC_SUBST(HAVE_RSVG) 
 AC_SUBST(RSVG_CFLAGS) 
 AC_SUBST(RSVG_LIBS) 
 
@@ -340,9 +360,9 @@ else
   SDL_CFLAGS=`$SDL_CONFIG --cflags`
   SDL_LIBS=`$SDL_CONFIG --libs`
 fi
-AM_CONDITIONAL(HAS_SDL, test "x$SDL_CONFIG" != "xno")
+AM_CONDITIONAL(HAVE_SDL, test "x$SDL_CONFIG" != "xno")
 
-AC_SUBST(HAS_SDL) 
+AC_SUBST(HAVE_SDL) 
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 
@@ -412,6 +432,7 @@ AC_MSG_RESULT([
 Building GEGL with prefix=$prefix
 
 External Libraries:
+  GTK+:           $have_gtk
   Cairo:          $have_cairo
   Pango:          $have_pango
   pangocairo:     $have_pangocairo

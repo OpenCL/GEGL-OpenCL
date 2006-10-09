@@ -24,11 +24,12 @@
 #include <string.h>
 #include <unistd.h>
 #include "gegl-options.h"
-
+#if HAVE_GTK
 #include <gtk/gtk.h>
+
 gint editor_main (GeglNode    *gegl,
                   const gchar *path);
-
+#endif
 
 /*FIXME: this should be in gegl.h*/
 
@@ -99,12 +100,12 @@ main (gint    argc,
       else
         {
           gchar *leaked_string = g_malloc (strlen (o->file + 4));
-          GString *acc = g_string_new (""); 
+          GString *acc = g_string_new ("");
 
           g_string_append (acc, "<gegl><load path='");
           g_string_append (acc, o->file);
           g_string_append (acc, "'/></gegl>");
-          
+
           script = g_string_free (acc, FALSE);
 
           leaked_string[0]='\0';
@@ -124,7 +125,7 @@ main (gint    argc,
     {
       GeglNode *proxy;
       GeglNode *iter;
-     
+
       gchar **operation = o->rest;
       proxy = gegl_graph_output (gegl, "output");
       iter = gegl_node_get_connected_to (proxy, "input");
@@ -148,8 +149,10 @@ main (gint    argc,
   switch (o->mode)
     {
       case GEGL_RUN_MODE_INTERACTIVE:
+#if HAVE_GTK
           gtk_init (&argc, &argv);
           editor_main (gegl, o->file);
+#endif
           g_object_unref (gegl);
           g_free (o);
           gegl_exit ();

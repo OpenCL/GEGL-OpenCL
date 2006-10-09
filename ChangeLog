@@ -1,3 +1,14 @@
+2006-10-09  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.in
+	* bin/Makefile.am: Use HAVE_* instead of HAS_* in variables set by
+	tests for libraries. Added optional test for GTK+.
+
+	* bin/gegl.c: Added #if HAVE_GTK to fix build when not using GTK+.
+
+	* bin/gegl-options.c: Removed usage information for options that are
+	no longer used.
+
 2006-10-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-options.c: (gegl_options_parse), (parse_args): made the
