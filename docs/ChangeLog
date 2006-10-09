@@ -1,5 +1,9 @@
 2006-10-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: removed reference to todo.html
+
+2006-10-08  Øyvind Kolås  <pippin@gimp.org>
+
 	Updated to reflect the migration of the gegl binary from gegl/gegl to
 	bin/gegl
 
