@@ -1,3 +1,11 @@
+2006-10-09  Dominik Ernst  <dernst@gmx.de>
+
+	Added support for loading OpenEXR images and checks for OpenEXR.
+
+	* configure.in
+	* operations/file-io/Makefile.am
+	* operations/file-io/exr-load.cpp
+
 2006-10-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-view.c: (gegl_view_constructor): removed double buffering.

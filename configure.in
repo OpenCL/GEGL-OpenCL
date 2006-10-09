@@ -346,6 +346,19 @@ AC_SUBST(HAVE_RSVG)
 AC_SUBST(RSVG_CFLAGS) 
 AC_SUBST(RSVG_LIBS) 
 
+###################
+# Check for OpenEXR
+###################
+
+PKG_CHECK_MODULES(OPENEXR, OpenEXR,
+  have_openexr="yes",
+  have_openexr="no (OpenEXR not found)")
+AM_CONDITIONAL(HAVE_OPENEXR, test "x$have_openexr" = "xyes")
+
+AC_SUBST(HAVE_OPENEXR) 
+AC_SUBST(OPENEXR_CFLAGS) 
+AC_SUBST(OPENEXR_LIBS) 
+
 
 ###############
 # Check for SDL
@@ -439,6 +452,7 @@ External Libraries:
   pangocairo:     $have_pangocairo
   JPEG:           $jpeg_ok
   PNG:            $have_libpng
+  OpenEXR:        $have_openexr
   rsvg:           $have_librsvg
   SDL:            $have_sdl
 ]);

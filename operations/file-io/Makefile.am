@@ -1,7 +1,10 @@
 EXTRA_DIST      = $(wildcard *.c)
 CFILES          = $(wildcard $(srcdir)/*.c)
-SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=.so))
-INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=.so))
+CXXFILES        = $(wildcard $(srcdir)/*.cpp)
+SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=.so)) \
+                  $(subst $(srcdir)/,,$(CXXFILES:.cpp=.so))
+INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=.so)) \
+                  $(subst $(srcdir),$(ext_dir),$(CFILES:.cpp=.so))
 GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
 	          $(wildcard $(top_srcdir)/gegl/buffer/*.h)
 
@@ -45,7 +48,17 @@ pixbuf.so: pixbuf.c
 	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(RSVG_CFLAGS) $(RSVG_LIBS);\
 	fi
+
+exr-load.so: exr-load.cpp
+	@if [ ! -z "$(OPENEXR_LIBS)" ]; then \
+	echo $@;\
+	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(OPENEXR_CFLAGS) $(OPENEXR_LIBS);\
+	fi
+	
+
 #############################################################################
+
+
 
 clean-local:
 	rm -f $(SOBJS) *~
