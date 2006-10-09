@@ -1,3 +1,11 @@
+2006-10-10  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/gtk-display.c: an op that acts a passthrough
+	op, and as a side effects shows the buffer passed through in
+	a GtkWindow, depends on the gtk+ library already being initialized
+	and a mainloop to be running.
+	* operations/workshop/Makefile.am: added GTK+ deps for gtk-display op.
+
 2006-10-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* AUTHORS: Added Geert Jordaens.
