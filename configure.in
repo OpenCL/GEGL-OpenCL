@@ -192,20 +192,12 @@ PKG_CHECK_MODULES(DEP,
 # Rerun PKG_CONFIG to add gthread-2.0 cflags, but not libs
 DEP_CFLAGS=`$PKG_CONFIG --cflags $GLIB_PACKAGES gthread-2.0`
 
-
-have_gtk=no
-AC_ARG_WITH(gtk,  [  --without-gtk           build without GTK+])
-if test x$with_gtk != xno; then
-  have_gtk=yes
+PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED_VERSION,
+  have_gtk="yes"
   AC_DEFINE(HAVE_GTK, 1, [Define to 1 to compile with gtk support.])
-  PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED_VERSION,
-    GTK_CFLAGS="$GTK_CFLAGS"
-    GTK_LIBS="$GTK_LIBS",
-    [have_gtk="no (gtk+ not found)"
-     AC_MSG_ERROR([
-*** Checks for GTK+ library failed. You can build without it by passing
-*** --without-gtk to configure but you won't be able to use the GEGL GUI.])])
-fi
+  GTK_CFLAGS="$GTK_CFLAGS"
+  GTK_LIBS="$GTK_LIBS",
+  have_gtk="no  (gtk+ not found)")
 AM_CONDITIONAL(HAVE_GTK, test "x$have_gtk" = "xyes")
 
 AC_SUBST(HAVE_GTK)
@@ -249,7 +241,7 @@ AC_CHECK_PROGS(PERL, perl5 perl)
 
 PKG_CHECK_MODULES(CAIRO, cairo,
   have_cairo="yes",
-  have_cairo="no (Cairo not found)")
+  have_cairo="no  (Cairo not found)")
 AM_CONDITIONAL(HAVE_CAIRO, test "x$have_cairo" = "xyes")
 
 AC_SUBST(HAVE_CAIRO) 
@@ -263,12 +255,12 @@ AC_SUBST(CAIRO_LIBS)
 
 PKG_CHECK_MODULES(PANGO, pango,
   have_pango="yes",
-  have_pango="no (Pango not found)")
+  have_pango="no  (Pango not found)")
 AM_CONDITIONAL(HAVE_PANGO, test "x$have_pango" = "xyes")
 
 PKG_CHECK_MODULES(PANGOCAIRO, pangocairo,
   have_pangocairo="yes",
-  have_pangocairo="no (pangocairo not found)")
+  have_pangocairo="no  (pangocairo not found)")
 AM_CONDITIONAL(HAVE_PANGOCAIRO, test "x$have_pangocairo" = "xyes")
 
 AC_SUBST(HAVE_PANGO) 
@@ -287,7 +279,7 @@ AC_ARG_WITH(libjpeg, [  --without-libjpeg       build without JPEG support])
   if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
     AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
       jpeg_ok=yes,
-      [jpeg_ok="no (JPEG library not found)"])
+      [jpeg_ok="no  (JPEG library not found)"])
     if test "$jpeg_ok" = yes; then
       AC_MSG_CHECKING([for jpeglib.h])
       AC_TRY_CPP([
@@ -298,14 +290,14 @@ AC_ARG_WITH(libjpeg, [  --without-libjpeg       build without JPEG support])
 #undef VERSION
 #include <jpeglib.h>],
         jpeg_ok="yes",
-        jpeg_ok="no (Can't include jpeglib.h)")
+        jpeg_ok="no  (Can't include jpeglib.h)")
       AC_MSG_RESULT($jpeg_ok)
       if test "$jpeg_ok" = yes; then
         AC_CHECK_LIB(jpeg, jpeg_save_markers,
         LIBJPEG='-ljpeg',
-        jpeg_ok="no (JPEG library is too old)")
+        jpeg_ok="no  (JPEG library is too old)")
       else
-        jpeg_ok="no (JPEG header file not found)"
+        jpeg_ok="no  (JPEG header file not found)"
       fi
     fi
   fi
@@ -325,7 +317,7 @@ AC_SUBST(LIBJPEG)
 
 PKG_CHECK_MODULES(PNG, libpng,
   have_libpng="yes",
-  have_libpng="no (libpng not found)")
+  have_libpng="no  (libpng not found)")
 AM_CONDITIONAL(HAVE_PNG, test "x$have_libpng" = "xyes")
 
 AC_SUBST(HAVE_PNG) 
@@ -339,7 +331,7 @@ AC_SUBST(PNG_LIBS)
 
 PKG_CHECK_MODULES(RSVG, librsvg-2.0,
   have_librsvg="yes",
-  have_librsvg="no (librsvg not found)")
+  have_librsvg="no  (librsvg not found)")
 AM_CONDITIONAL(HAVE_RSVG, test "x$have_librsvg" = "xyes")
 
 AC_SUBST(HAVE_RSVG) 
@@ -352,7 +344,7 @@ AC_SUBST(RSVG_LIBS)
 
 PKG_CHECK_MODULES(OPENEXR, OpenEXR,
   have_openexr="yes",
-  have_openexr="no (OpenEXR not found)")
+  have_openexr="no  (OpenEXR not found)")
 AM_CONDITIONAL(HAVE_OPENEXR, test "x$have_openexr" = "xyes")
 
 AC_SUBST(HAVE_OPENEXR) 

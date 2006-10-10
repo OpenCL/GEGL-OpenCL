@@ -1,3 +1,7 @@
+2006-10-10  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.in: Relaxed the checks for the GTK+ library.
+
 2006-10-10  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-projection.c: (gegl_projection_constructor): use
