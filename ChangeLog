@@ -1,5 +1,10 @@
 2006-10-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation-composer.c: (process): changed warning message
+	to reflect reality.
+
+2006-10-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/meta/unsharp-mask.c: changed default values to radius=1.0
 	and scale=1.0.
 

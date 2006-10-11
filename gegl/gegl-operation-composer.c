@@ -190,7 +190,7 @@ process (GeglOperation *operation,
     }
   else
     {
-      g_warning ("%s received NULL input and output",
+      g_warning ("%s received NULL input and aux",
           gegl_node_get_debug_name (operation->node));
     }
   
