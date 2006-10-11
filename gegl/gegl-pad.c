@@ -128,12 +128,12 @@ gegl_pad_disconnect (GeglPad        *sink,
   g_return_if_fail (GEGL_IS_PAD (sink));
   g_return_if_fail (GEGL_IS_PAD (source));
 
-  g_assert (sink == gegl_connection_get_sink_prop (connection));
+  g_assert (sink == gegl_connection_get_sink_pad (connection));
   /*
    *  this happends with ghostpads sometimes,. maybe check for that being
    *  the case, and then do the assert, or bake it into the assert?
    * 
-  g_assert (source == gegl_connection_get_source_prop (connection));
+  g_assert (source == gegl_connection_get_source_pad (connection));
   */
 
   sink->connections   = g_list_remove (sink->connections, connection);
@@ -179,7 +179,7 @@ gegl_pad_get_depends_on (GeglPad *self)
           if (connection)
             {
               depends_on = g_list_append (depends_on,
-                                          gegl_connection_get_source_prop (connection));
+                                          gegl_connection_get_source_pad (connection));
             }
           else
             {
@@ -196,7 +196,7 @@ gegl_pad_get_depends_on (GeglPad *self)
             {
               GeglConnection *connection = llink->data;
               depends_on = g_list_append (depends_on,
-                                          gegl_connection_get_source_prop (connection));
+                                          gegl_connection_get_source_pad (connection));
             }
         }
 
@@ -229,7 +229,7 @@ gegl_pad_get_connected_to (GeglPad *self)
     {
       GeglConnection *connection = g_list_nth_data (self->connections, 0);
 
-      pad = gegl_connection_get_source_prop (connection);
+      pad = gegl_connection_get_source_pad (connection);
     }
   return pad;
 }

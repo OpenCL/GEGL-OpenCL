@@ -29,9 +29,9 @@ gegl-connection
 </para>
 
 @sink: 
-@sink_prop: 
+@sink_pad: 
 @source: 
-@source_prop: 
+@source_pad: 
 @Returns: 
 
 
@@ -53,7 +53,7 @@ gegl-connection
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_connection_get_source_prop ##### -->
+<!-- ##### FUNCTION gegl_connection_get_source_pad ##### -->
 <para>
 
 </para>
@@ -62,7 +62,7 @@ gegl-connection
 @Returns: 
 
 
-<!-- ##### FUNCTION gegl_connection_get_sink_prop ##### -->
+<!-- ##### FUNCTION gegl_connection_get_sink_pad ##### -->
 <para>
 
 </para>
@@ -80,13 +80,13 @@ gegl-connection
 @sink: 
 
 
-<!-- ##### FUNCTION gegl_connection_set_sink_prop ##### -->
+<!-- ##### FUNCTION gegl_connection_set_sink_pad ##### -->
 <para>
 
 </para>
 
 @connection: 
-@sink_prop: 
+@sink_pad: 
 
 
 <!-- ##### FUNCTION gegl_connection_set_source_node ##### -->
@@ -98,12 +98,12 @@ gegl-connection
 @source: 
 
 
-<!-- ##### FUNCTION gegl_connection_set_source_prop ##### -->
+<!-- ##### FUNCTION gegl_connection_set_source_pad ##### -->
 <para>
 
 </para>
 
 @connection: 
-@source_prop: 
+@source_pad: 
 
 

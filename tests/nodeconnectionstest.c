@@ -44,12 +44,12 @@ test_node_connections(Test *test)
     sinks = gegl_node_get_sinks(A);
     connection = g_list_nth_data(sinks, 0);
     ct_test(test, A == gegl_connection_get_source_node(connection));
-    ct_test(test, output0 == gegl_connection_get_source_prop(connection));
+    ct_test(test, output0 == gegl_connection_get_source_pad(connection));
 
     sources = gegl_node_get_sources(B);
     connection = g_list_nth_data(sources, 0);
     ct_test(test, B == gegl_connection_get_sink_node(connection));
-    ct_test(test, input0 == gegl_connection_get_sink_prop(connection));
+    ct_test(test, input0 == gegl_connection_get_sink_pad(connection));
 
     gegl_node_disconnect(B, "input0", A, "output0");
 
@@ -234,14 +234,14 @@ test_node_connections(Test *test)
     connection = g_list_nth_data(sources, 0);
     ct_test(test, C == gegl_connection_get_sink_node(connection));
     ct_test(test, A == gegl_connection_get_source_node(connection));
-    ct_test(test, Aoutput0 == gegl_connection_get_source_prop(connection));
-    ct_test(test, input0 == gegl_connection_get_sink_prop(connection));
+    ct_test(test, Aoutput0 == gegl_connection_get_source_pad(connection));
+    ct_test(test, input0 == gegl_connection_get_sink_pad(connection));
 
     connection = g_list_nth_data(sources, 1);
     ct_test(test, C == gegl_connection_get_sink_node(connection));
     ct_test(test, B == gegl_connection_get_source_node(connection));
-    ct_test(test, Boutput0 == gegl_connection_get_source_prop(connection));
-    ct_test(test, input1 == gegl_connection_get_sink_prop(connection));
+    ct_test(test, Boutput0 == gegl_connection_get_source_pad(connection));
+    ct_test(test, input1 == gegl_connection_get_sink_pad(connection));
 
     gegl_node_disconnect_sources(C);
 

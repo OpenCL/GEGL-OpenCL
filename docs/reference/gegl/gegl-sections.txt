@@ -460,12 +460,12 @@ GeglConnection
 gegl_connection_new
 gegl_connection_get_source_node
 gegl_connection_get_sink_node
-gegl_connection_get_source_prop
-gegl_connection_get_sink_prop
+gegl_connection_get_source_pad
+gegl_connection_get_sink_pad
 gegl_connection_set_sink_node
-gegl_connection_set_sink_prop
+gegl_connection_set_sink_pad
 gegl_connection_set_source_node
-gegl_connection_set_source_prop
+gegl_connection_set_source_pad
 </SECTION>
 
 <SECTION>

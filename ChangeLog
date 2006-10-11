@@ -1,5 +1,24 @@
 2006-10-11  Øyvind Kolås  <pippin@gimp.org>
 
+	s/_prop\ /_pad\ /g
+
+	* bin/gegl-store.c: (gegl_previous_sibling), (gegl_parent):
+	* docs/reference/gegl/gegl-sections.txt:
+	* docs/reference/gegl/tmpl/gegl-connection.sgml:
+	* gegl/gegl-connection.c: (gegl_connection_new),
+	(gegl_connection_get_sink_pad), (gegl_connection_set_sink_pad),
+	(gegl_connection_get_source_pad), (gegl_connection_set_source_pad):
+	* gegl/gegl-connection.h:
+	* gegl/gegl-node.c: (pads_exist), (find_connection),
+	(gegl_node_connect), (gegl_node_disconnect),
+	(gegl_node_disconnect_sources), (gegl_node_disconnect_sinks),
+	(gegl_node_set_operation_object):
+	* gegl/gegl-pad.c: (gegl_pad_disconnect),
+	(gegl_pad_get_depends_on), (gegl_pad_get_connected_to):
+	* tests/nodeconnectionstest.c: (test_node_connections):
+
+2006-10-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (gegl_node_set_operation_object): start at attemts
 	of disconnecting from graph, tearing down node resources, and then
 	reconnecting the node to sources sinks after association of new

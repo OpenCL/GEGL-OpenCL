@@ -27,26 +27,26 @@
 struct _GeglConnection
 {
   GeglNode *sink;
-  GeglPad  *sink_prop;
+  GeglPad  *sink_pad;
 
   GeglNode *source;
-  GeglPad  *source_prop;
+  GeglPad  *source_pad;
 
   /*XXX: here is a nice place to store the negotiated Pixel Format representation */
 };
 
 GeglConnection *
 gegl_connection_new (GeglNode *sink,
-                     GeglPad  *sink_prop,
+                     GeglPad  *sink_pad,
                      GeglNode *source,
-                     GeglPad  *source_prop)
+                     GeglPad  *source_pad)
 {
   GeglConnection *self = g_new0 (GeglConnection, 1);
 
-  self->sink        = sink;
-  self->sink_prop   = sink_prop;
-  self->source      = source;
-  self->source_prop = source_prop;
+  self->sink       = sink;
+  self->sink_pad   = sink_pad;
+  self->source     = source;
+  self->source_pad = source_pad;
 
   return self;
 }
@@ -78,27 +78,27 @@ gegl_connection_set_sink_node (GeglConnection *self,
 }
 
 GeglPad *
-gegl_connection_get_sink_prop (GeglConnection *self)
+gegl_connection_get_sink_pad (GeglConnection *self)
 {
-  return self->sink_prop;
+  return self->sink_pad;
 }
 
 void
-gegl_connection_set_sink_prop (GeglConnection *self,
-                               GeglPad        *sink_prop)
+gegl_connection_set_sink_pad (GeglConnection *self,
+                               GeglPad        *sink_pad)
 {
-  self->sink_prop = sink_prop;
+  self->sink_pad = sink_pad;
 }
 
 GeglPad *
-gegl_connection_get_source_prop (GeglConnection *self)
+gegl_connection_get_source_pad (GeglConnection *self)
 {
-  return self->source_prop;
+  return self->source_pad;
 }
 
 void
-gegl_connection_set_source_prop (GeglConnection *self,
-                                 GeglPad        *source_prop)
+gegl_connection_set_source_pad (GeglConnection *self,
+                                 GeglPad        *source_pad)
 {
-  self->source_prop = source_prop;
+  self->source_pad = source_pad;
 }

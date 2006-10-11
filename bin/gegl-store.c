@@ -47,7 +47,7 @@ GeglNode *gegl_previous_sibling (GeglNode *item)
       if (pads)
         {
           GeglConnection *connection = pads->data;
-          GeglPad *pad = gegl_connection_get_sink_prop (connection);
+          GeglPad *pad = gegl_connection_get_sink_pad (connection);
           if (!strcmp (gegl_pad_get_name (pad), "input"))
             return gegl_connection_get_sink_node (connection);
         }
@@ -75,7 +75,7 @@ GeglNode *gegl_parent (GeglNode *item)
       if (pads)
         {
           GeglConnection *connection = pads->data;
-          GeglPad *pad = gegl_connection_get_sink_prop (connection);
+          GeglPad *pad = gegl_connection_get_sink_pad (connection);
           if (!strcmp (gegl_pad_get_name (pad), "aux"))
             iter = gegl_connection_get_sink_node (connection);
         }
