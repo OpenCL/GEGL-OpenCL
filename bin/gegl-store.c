@@ -64,11 +64,6 @@ GeglNode *gegl_parent (GeglNode *item)
     return NULL;
   while (gegl_previous_sibling (iter))
     iter = gegl_previous_sibling (iter);
-  if(0){
-    GeglNode *graph = g_object_get_data (G_OBJECT (iter), "graph");
-    if (graph)
-      iter = graph;
-  }
 
   pad = gegl_node_get_pad (iter, "output");
   
@@ -85,11 +80,6 @@ GeglNode *gegl_parent (GeglNode *item)
             iter = gegl_connection_get_sink_node (connection);
         }
     }
-  if(0){
-    GeglNode *graph = g_object_get_data (G_OBJECT (iter), "graph");
-    if (graph)
-      iter = graph;
-  }
   return iter;
 }
 

@@ -1,3 +1,7 @@
+2006-10-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/gegl-store.c: (gegl_parent): removed dead code.
+
 2006-10-10  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.in: Relaxed the checks for the GTK+ library.
