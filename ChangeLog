@@ -1,5 +1,12 @@
 2006-10-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.c: (gegl_node_set_operation_object): start at attemts
+	of disconnecting from graph, tearing down node resources, and then
+	reconnecting the node to sources sinks after association of new
+	operation.
+
+2006-10-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-store.c: (gegl_parent): removed dead code.
 
 2006-10-10  Kevin Cozens  <kcozens@cvs.gnome.org>

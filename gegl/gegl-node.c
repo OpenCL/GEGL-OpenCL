@@ -862,12 +862,57 @@ gegl_node_set_operation_object (GeglNode      *self,
 
   g_return_if_fail (GEGL_IS_OPERATION (operation));
 
+  {
+    GList    *output_c = NULL;
+    GeglNode *output = NULL;
+    GeglNode *input = NULL;
+    GeglNode *aux = NULL;
+
   if (self->operation)
     g_object_unref (self->operation);
 
   g_object_ref (operation);
   self->operation = operation;
-  gegl_operation_associate (operation, self);
+
+  /* FIXME: handle multiple outputs */
+
+    if (gegl_node_get_pad (self, "output"))
+    output_c = gegl_pad_get_connections (gegl_node_get_pad (self, "output"));
+    if (output_c && output_c->data)
+      {
+        GeglConnection *connection = output_c->data;
+        GeglNode       *node;
+        GeglPad        *pad;
+
+        output = gegl_connection_get_sink_node (connection);
+        pad  = gegl_connection_get_sink_prop (connection);
+      }
+    input = gegl_node_get_connected_to (self, "input");
+    aux   = gegl_node_get_connected_to (self, "aux");
+
+    gegl_node_disconnect_sources (self);
+    gegl_node_disconnect_sinks (self);
+
+    /* FIXME: handle this in a more generic way, but it is needed to allow
+     * the associate to work properly.
+     */
+    if (gegl_node_get_pad (self, "output"))
+      gegl_node_remove_pad (self, gegl_node_get_pad (self, "output"));
+    if (gegl_node_get_pad (self, "input"))
+      gegl_node_remove_pad (self, gegl_node_get_pad (self, "input"));
+    if (gegl_node_get_pad (self, "aux"))
+      gegl_node_remove_pad (self, gegl_node_get_pad (self, "aux"));
+    
+    gegl_operation_associate (operation, self);
+
+    if (input)
+      gegl_node_connect (self, "input", input, "output");
+    if (aux)
+      gegl_node_connect (self, "input", aux, "output");
+    if (output)
+      gegl_node_connect (output, "input", self, "output");
+
+  }
 
   g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (property_changed), self);
   property_changed (G_OBJECT (operation), NULL, self);
