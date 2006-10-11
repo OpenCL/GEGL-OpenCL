@@ -1,5 +1,10 @@
 2006-10-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/meta/unsharp-mask.c: changed default values to radius=1.0
+	and scale=1.0.
+
+2006-10-11  Øyvind Kolås  <pippin@gimp.org>
+
 	s/_prop\ /_pad\ /g
 
 	* bin/gegl-store.c: (gegl_previous_sibling), (gegl_parent):
