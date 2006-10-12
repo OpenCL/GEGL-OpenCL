@@ -4,8 +4,8 @@ gint
 main (gint    argc,
       gchar **argv)
 {
-  GeglNode *gegl;
-  GeglNode *load,
+  GeglNode *gegl;      /*< Main GEGL graph */
+  GeglNode *load,      /*< The image processing nodes */
            *scale,
            *bcontrast,
            *layer,
@@ -19,22 +19,29 @@ main (gint    argc,
      return -1;
    }
 
-  gegl_init (&argc, &argv);
+  gegl_init (&argc, &argv);  /* initialize the GEGL library */
 
-  gegl = gegl_graph_new ();
+  gegl = gegl_graph_new ();  /* instantiate a graph */
 
+  /* create nodes for the graph, with specified operations */
   load       = gegl_graph_create_node (gegl, "load");
   layer      = gegl_graph_create_node (gegl, "layer");
   scale      = gegl_graph_create_node (gegl, "scale");
   bcontrast  = gegl_graph_create_node (gegl, "brightness-contrast");
   text       = gegl_graph_create_node (gegl, "text");
   dropshadow = gegl_graph_create_node (gegl, "dropshadow");
-  save       = gegl_graph_create_node (gegl, "png-save");
+  save       = gegl_graph_create_node (gegl, "png-save"); /* note: the
+                                          png-save operation will probably
+                                          be removed from future versions
+                                          of GEGL, but it is useful for
+                                          debugging. */                
 
+  /* link the nodes together */
   gegl_node_link_many (load, scale, bcontrast, layer, save, NULL);
   gegl_node_link (text, dropshadow);
   gegl_node_connect (layer, "aux", dropshadow, "output");
 
+  /* set properties for the nodes */
   gegl_node_set (load, "path",  argv[1], NULL);
   gegl_node_set (scale,
                  "x",  0.5,
@@ -52,11 +59,15 @@ main (gint    argc,
   gegl_node_set (save,
                  "path", argv[2]?argv[2]:"output.png",
                  NULL);
-  
+ 
+  /* request evaluation of the "output" pad of the png-save op */ 
   gegl_node_apply (save, "output");
 
+  /* free resources used by the graph and the nodes it owns */
   g_object_unref (gegl);
 
+  /* free resources globally used by GEGL */
   gegl_exit ();
+
   return 0;
 }
