@@ -1,5 +1,9 @@
 2006-12-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.html.in: added link to hello-world.c
+
+2006-12-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* index-static.html.in: added EXR to list of supported formats.
 	* hello-world.c: moved hello world out of the html file.
 	* Makefile.am: include hello-world.c into html with encoding.

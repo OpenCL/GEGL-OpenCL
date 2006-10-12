@@ -323,8 +323,8 @@ rectangular regions to be repainted.
 
   <h4>Compiling</h4>
   <p>GEGL uses pkg-config for passing the needed compile time options,
-  saving the above to test.c and typing what follows in a terminal should
-  produce a working binary.
+  download <a href='hello-world.c'>hello-world.c</a> and typing what follows in
+  a terminal after succesfully installing GEGL should produce a working binary.
   </p>
   <pre>gcc hello-world.c `pkg-config --libs --cflags gegl` -o hello-world</pre>
 
