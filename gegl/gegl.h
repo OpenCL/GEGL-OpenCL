@@ -26,8 +26,9 @@
 
 #ifndef GEGL_INTERNAL
 
-typedef struct _GeglNode             GeglNode;
-typedef struct _GeglRect             GeglRect;
+typedef struct _GeglNode   GeglNode;
+typedef struct _GeglRect   GeglRect;
+typedef struct _GeglColor  GeglColor;
 
 struct _GeglRect
 {
@@ -44,6 +45,9 @@ void       gegl_init              (gint    *argc,
                                    gchar ***argv);
 /* Clean up the gegl library after use (global caches etc.) */
 void       gegl_exit              (void);
+
+/* Create a new gegl graph */
+GeglNode * gegl_graph_new         (void);
 
 /* create a new node belonging to a graph */
 GeglNode * gegl_graph_create_node (GeglNode     *graph,
@@ -117,5 +121,7 @@ GeglNode * gegl_xml_parse         (const gchar *xmldata);
 /* Serialize a GEGL graph to XML, the resulting data must
  * be freed. */
 gchar    * gegl_to_xml            (GeglNode *gegl);
+
+GeglColor *  gegl_color_from_string            (const gchar *string);
 
 #endif  /* __GEGL_H__ */

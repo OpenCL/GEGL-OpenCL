@@ -881,7 +881,6 @@ gegl_node_set_operation_object (GeglNode      *self,
     if (output_c && output_c->data)
       {
         GeglConnection *connection = output_c->data;
-        GeglNode       *node;
         GeglPad        *pad;
 
         output = gegl_connection_get_sink_node (connection);

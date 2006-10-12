@@ -1,3 +1,10 @@
+2006-10-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.h: add gegl_graph_new (), gegl_color_new_from_string and
+	the GeglColor type.
+	* gegl/gegl-graph.[ch]: added gegl_graph_new ()
+	* gegl/gegl-node.c: removed unused variable.
+
 2006-10-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-operation-composer.c: (process): changed warning message

@@ -61,6 +61,9 @@ GeglNode * gegl_graph_get_nth_child    (GeglGraph    *self,
 GList    * gegl_graph_get_children     (GeglGraph    *self);
 void       gegl_graph_remove_children  (GeglGraph    *self);
 gint       gegl_graph_get_num_children (GeglGraph    *self);
+
+GeglNode * gegl_graph_new              (void);
+
 GeglNode * gegl_graph_new_node         (GeglNode     *self,
                                         const gchar  *first_property_name,
                                         ...);

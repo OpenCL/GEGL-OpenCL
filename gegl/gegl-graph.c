@@ -208,3 +208,9 @@ gegl_graph_output (GeglNode    *node,
 {
   return gegl_graph_get_pad_proxy (GEGL_GRAPH (node), name, FALSE);
 }
+
+GeglNode *
+gegl_graph_new (void)
+{
+  return g_object_new (GEGL_TYPE_GRAPH, NULL);
+}
