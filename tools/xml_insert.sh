@@ -7,6 +7,8 @@
 #
 # xml_insert.sh bar.xml foo foo.inc
 #
+# adding yet another argument will encode <,> and & as html entites.
+#
 # 2005 © Øyvind Kolås
 #
 # FIXME: add argument checking / error handling
@@ -17,7 +19,11 @@ cp $1 $TMP_FILE
 
 SPLIT=`grep -n "<\!--$2-->" $TMP_FILE|head -n 1|sed -e "s/:.*//"`;
 head -n $SPLIT $TMP_FILE > $1
-cat $3 >> $1
+if [ -z "$4" ]; then
+  cat $3 >> $1
+else
+  cat $3 | sed -e "s/\&/\&amp;/g" -e "s/</\&lt;/g" -e "s/>/\&gt;/g" >> $1
+fi
 tail -n $((`wc -l $TMP_FILE | sed -e "s/ .*//"` - $SPLIT )) $TMP_FILE >> $1
 
 rm $TMP_FILE

@@ -1,5 +1,10 @@
 2006-10-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/xml_insert.sh: if an additional argument is given encode
+	the input to html entities.
+
+2006-10-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.h: add gegl_graph_new (), gegl_color_new_from_string and
 	the GeglColor type.
 	* gegl/gegl-graph.[ch]: added gegl_graph_new ()
