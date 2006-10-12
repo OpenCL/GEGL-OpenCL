@@ -48,6 +48,7 @@ index.html: index-static.html                    \
 	    $(top_srcdir)/NEWS                   \
 	    $(top_builddir)/bin/gegl		 \
 	    Makefile.am				 \
+	    hello-world.c			 \
 	    runinfo
 	echo -n "HTML: $@"
 	cp $< $@ 
