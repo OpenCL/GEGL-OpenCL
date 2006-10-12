@@ -55,6 +55,7 @@ index.html: index-static.html                    \
 	[ -f runinfo ] && $(top_srcdir)/tools/xml_insert.sh $@ RUNINFO runinfo || true
 	$(top_builddir)/bin/gegl -h > gegl-usage.txt 2>&1
 	$(top_srcdir)/tools/xml_insert.sh $@ GEGL_USAGE gegl-usage.txt
+	$(top_srcdir)/tools/xml_insert.sh $@ HELLO-WORLD hello-world.c encode
 	rm gegl-usage.txt
 	echo " [OK]"
 

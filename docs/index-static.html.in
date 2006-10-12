@@ -129,7 +129,7 @@
             <li>Rich core set of processing <a
                 href='operations.html'>operations</a>
             <ul>
-              <li>PNG, JPEG, RAW, SVG and more format loaders</li>
+              <li>PNG, JPEG, SVG, EXR, RAW and other image sources.</li>
               <li>Arithmetic operations, porter duff compositing operations,
               SVG blend modes, other blend modes, apply mask.</li>
               <li>Gaussian blur.</li>
@@ -318,68 +318,15 @@ rectangular regions to be repainted.
   testing yet.</p>
 
 <pre>
-#include &lt;gegl.h&gt;
-
-gint
-main (gint    argc,
-      gchar **argv)
-{
-  GeglGraph *gegl;
-  GeglNode  *load, *scale, *bcontrast, *layer, *text, *dropshadow, *save;
-
-
-  if (argc &lt; 2)
-   { 
-     g_print ("Usage: %s &lt;input&gt; [output.png]\n\n", argv[0]);
-     return -1;
-   }
-
-  gegl_init (&amp;argc, &amp;argv);
-
-  gegl = g_object_new (GEGL_TYPE_GRAPH, NULL);
-
-  load       = gegl_graph_create_node (gegl, "load");
-  layer      = gegl_graph_create_node (gegl, "layer");
-  scale      = gegl_graph_create_node (gegl, "scale");
-  bcontrast  = gegl_graph_create_node (gegl, "brightness-contrast");
-  text       = gegl_graph_create_node (gegl, "text");
-  dropshadow = gegl_graph_create_node (gegl, "dropshadow");
-  save       = gegl_graph_create_node (gegl, "png-save");
-
-  gegl_node_link_many (load, scale, bcontrast, layer, save, NULL);
-  gegl_node_link (text, dropshadow);
-  gegl_node_connect (layer, "aux", dropshadow, "output");
-
-  gegl_node_set (load, "path",  argv[1], NULL);
-  gegl_node_set (scale,
-                 "x",  0.20,
-                 "y",  0.20, NULL);
-  gegl_node_set (bcontrast,
-                 "contrast", 3.0, NULL);
-  gegl_node_set (layer,
-                 "x", 10.0,
-                 "y", 10.0, NULL);
-  gegl_node_set (text,
-                 "string", "Hello World",
-                 NULL);
-  gegl_node_set (save,
-                 "path", argv[2]?argv[2]:"output.png",
-                 NULL);
-  
-  gegl_node_apply (save, "output");
-
-  g_object_unref (gegl);
-
-  gegl_exit ();
-  return 0;
-}
+<!--HELLO-WORLD-->
 </pre>
+
   <h4>Compiling</h4>
   <p>GEGL uses pkg-config for passing the needed compile time options,
   saving the above to test.c and typing what follows in a terminal should
   produce a working binary.
   </p>
-  <pre>gcc test.c `pkg-config --libs --cflags gegl` -o test</pre>
+  <pre>gcc hello-world.c `pkg-config --libs --cflags gegl` -o hello-world</pre>
 
     <a name='XML'></a>
     <h3>XML data model</h3>
