@@ -865,6 +865,7 @@ gegl_node_set_operation_object (GeglNode      *self,
   {
     GList    *output_c = NULL;
     GeglNode *output = NULL;
+    gchar    *output_dest_pad = NULL;
     GeglNode *input = NULL;
     GeglNode *aux = NULL;
 
@@ -885,6 +886,7 @@ gegl_node_set_operation_object (GeglNode      *self,
 
         output = gegl_connection_get_sink_node (connection);
         pad  = gegl_connection_get_sink_pad (connection);
+        output_dest_pad = g_strdup (pad->param_spec->name);
       }
     input = gegl_node_get_connected_to (self, "input");
     aux   = gegl_node_get_connected_to (self, "aux");
@@ -895,6 +897,7 @@ gegl_node_set_operation_object (GeglNode      *self,
     /* FIXME: handle this in a more generic way, but it is needed to allow
      * the associate to work properly.
      */
+    
     if (gegl_node_get_pad (self, "output"))
       gegl_node_remove_pad (self, gegl_node_get_pad (self, "output"));
     if (gegl_node_get_pad (self, "input"))
@@ -909,8 +912,10 @@ gegl_node_set_operation_object (GeglNode      *self,
     if (aux)
       gegl_node_connect (self, "aux", aux, "output");
     if (output)
-      gegl_node_connect (output, "input", self, "output");
+      gegl_node_connect (output, output_dest_pad, self, "output");
 
+    if (output_dest_pad)
+      g_free (output_dest_pad);
   }
 
   g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (property_changed), self);

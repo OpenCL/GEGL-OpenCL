@@ -1,5 +1,10 @@
 2006-10-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.c: (gegl_node_set_operation_object): connect to the
+	proper pad of the node that our output is.
+
+2006-10-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (gegl_node_set_operation_object): reconnect aux
 	to aux and not input.
 
