@@ -907,7 +907,7 @@ gegl_node_set_operation_object (GeglNode      *self,
     if (input)
       gegl_node_connect (self, "input", input, "output");
     if (aux)
-      gegl_node_connect (self, "input", aux, "output");
+      gegl_node_connect (self, "aux", aux, "output");
     if (output)
       gegl_node_connect (output, "input", self, "output");
 
