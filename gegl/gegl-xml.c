@@ -428,6 +428,18 @@ static void encode_node_attributes (SerializeState *ss,
               tuple (ss->buf, properties[i]->name, value);
               g_free (value);
             }
+          else if (properties[i]->value_type == G_TYPE_STRING)
+            {
+              gchar *value;
+              gegl_node_get (node, properties[i]->name, &value, NULL);
+              tuple (ss->buf, properties[i]->name, value);
+              g_free (value);
+            }
+          else
+            {
+              g_warning ("%s: serialization of %s proeprties not implemented",
+                properties[i]->name, g_type_name (properties[i]->value_type));
+            }
         }
     } 
     if (id != NULL)
