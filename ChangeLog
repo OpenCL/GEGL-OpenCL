@@ -1,5 +1,10 @@
 2006-10-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-xml.c: (encode_node_attributes): serialize colors when
+	saving XML as well.
+
+2006-10-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-xml.c: (encode_node_attributes): output a warning if
 	a property fails to be encoded due to unimplemented property type.
 
