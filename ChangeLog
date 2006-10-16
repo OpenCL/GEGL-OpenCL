@@ -1,5 +1,9 @@
 2006-10-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.in: depend on babl>=0.0.6 (and not on a CVS version).
+
+2006-10-17  Øyvind Kolås  <pippin@gimp.org>
+
 	Use G_GNUC_NULL_TERMINATED for varargs lists that should be NULL
 	terminated.
 
