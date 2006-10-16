@@ -57,7 +57,7 @@ GeglNode * gegl_graph_create_node (GeglNode     *graph,
  * terminated by NULL (remember to set "operation") */
 GeglNode * gegl_graph_new_node    (GeglNode     *graph,
                                    const gchar  *first_property_name,
-                                   ...);
+                                   ...) G_GNUC_NULL_TERMINATED;
 /* connect the output pad of a different node to this nodes input pad,
  * pads specified by names ("input","aux" and "output" are the names
  * currently in use
@@ -74,20 +74,20 @@ void       gegl_node_link         (GeglNode     *source,
 /* syntetic sugar for linking multiple nodes, end with NULL*/
 void       gegl_node_link_many    (GeglNode     *source,
                                    GeglNode     *dest,
-                                   ...);
+                                   ...) G_GNUC_NULL_TERMINATED;
 
 /* set properties on the node, a NULL terminated key/value list, similar
  * to gobject
  */
 void       gegl_node_set          (GeglNode     *self,
                                    const gchar  *first_property_name,
-                                   ...);
+                                   ...) G_GNUC_NULL_TERMINATED;
 /* Get properties from a node, a NULL terminated key/value list, similar
  * to gobject.
  */
 void       gegl_node_get          (GeglNode     *self,
                                    const gchar  *first_property_name,
-                                   ...);
+                                   ...) G_GNUC_NULL_TERMINATED;
 
 /* Render the "output" buffer resulting from a node to an external buffer.
  * rowstride of 0 indicates default rowstride. You have to make sure the

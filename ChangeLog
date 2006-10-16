@@ -1,3 +1,12 @@
+2006-10-17  Øyvind Kolås  <pippin@gimp.org>
+
+	Use G_GNUC_NULL_TERMINATED for varargs lists that should be NULL
+	terminated.
+
+	* gegl/gegl-graph.h:
+	* gegl/gegl-node.h:
+	* gegl/gegl.h:
+
 2006-10-16  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-xml.c: (encode_node_attributes): serialize colors when

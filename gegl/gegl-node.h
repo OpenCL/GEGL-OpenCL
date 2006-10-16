@@ -85,7 +85,7 @@ void          gegl_node_link                (GeglNode     *source,
 
 void          gegl_node_link_many           (GeglNode     *source,
                                              GeglNode     *dest,
-                                             ...);
+                                             ...) G_GNUC_NULL_TERMINATED;
 
 gboolean      gegl_node_connect             (GeglNode     *self,
                                              const gchar  *input_pad_name,
@@ -99,10 +99,10 @@ gboolean      gegl_node_disconnect          (GeglNode     *self,
 
 void          gegl_node_set                 (GeglNode     *self,
                                              const gchar  *first_property_name,
-                                             ...);
+                                             ...) G_GNUC_NULL_TERMINATED;
 void          gegl_node_get                 (GeglNode     *self,
                                              const gchar  *first_property_name,
-                                             ...);
+                                             ...) G_GNUC_NULL_TERMINATED;
 
 /* functions below are internal to gegl */
 

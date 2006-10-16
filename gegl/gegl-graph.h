@@ -66,7 +66,7 @@ GeglNode * gegl_graph_new              (void);
 
 GeglNode * gegl_graph_new_node         (GeglNode     *self,
                                         const gchar  *first_property_name,
-                                        ...);
+                                        ...) G_GNUC_NULL_TERMINATED;
 GeglNode * gegl_graph_create_node      (GeglNode     *self,
                                         const gchar  *operation);
 GeglNode * gegl_graph_input            (GeglNode     *graph,
