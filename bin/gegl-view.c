@@ -287,6 +287,6 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
 
 void gegl_view_repaint (GeglView *view)
 {
-  gegl_projection_invalidate (view->projection);
+  /*gegl_projection_invalidate (view->projection);*/
   gtk_widget_queue_draw (GTK_WIDGET (view));
 }

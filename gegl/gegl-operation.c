@@ -267,8 +267,6 @@ get_affected_region (GeglOperation *self,
                      const gchar   *input_pad,
                      GeglRect       region)
 {
-  /* This should not be needed, but followed the copypaste from get_defined_region.
-   *
   if (self->node->is_graph)
     {
       return gegl_operation_get_affected_region (
@@ -276,10 +274,7 @@ get_affected_region (GeglOperation *self,
                    input_pad,
                    region);
     }
-  */
   return region;
-  g_warning ("Op '%s' has no defined_region method",
-     G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
 }
 
 static gboolean

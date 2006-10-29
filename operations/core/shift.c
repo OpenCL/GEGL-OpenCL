@@ -78,6 +78,18 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
+static GeglRect
+get_affected_region (GeglOperation *operation,
+                     const gchar   *input_pad,
+                     GeglRect       region)
+{
+  GeglChantOperation  *op_shift = (GeglChantOperation*)(operation);
+ 
+  region.x += op_shift->x;
+  region.y += op_shift->y;
+  return region;
+}
+
 static gboolean
 calc_source_regions (GeglOperation *self)
 {
@@ -93,6 +105,7 @@ calc_source_regions (GeglOperation *self)
 
 static void class_init (GeglOperationClass *operation_class)
 {
+  operation_class->get_affected_region = get_affected_region;
   operation_class->get_defined_region = get_defined_region;
   operation_class->calc_source_regions = calc_source_regions;
 }

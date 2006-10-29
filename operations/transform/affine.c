@@ -47,25 +47,27 @@ enum
 
 /* *** static prototypes *** */
 
-static void       get_property            (GObject    *object,
-                                           guint       prop_id,
-                                           GValue     *value,
-                                           GParamSpec *pspec);
-static void       set_property            (GObject      *object,
-                                           guint         prop_id,
-                                           const GValue *value,
-                                           GParamSpec   *pspec);
-
-static void       bounding_box            (gdouble  *points,
-                                           gint      num_points,
-                                           GeglRect *output);
-static gboolean   is_intermediate_node    (OpAffine *affine);
-static gboolean   is_composite_node       (OpAffine *affine);
-static void       get_source_matrix       (OpAffine *affine,
-                                           Matrix3   output);
-static GeglRect   get_defined_region          (GeglOperation *op);
-static gboolean   calc_source_regions          (GeglOperation *op);
-static gboolean   process                (GeglOperation *op);
+static void       get_property         (GObject       *object,
+                                        guint          prop_id,
+                                        GValue        *value,
+                                        GParamSpec    *pspec);
+static void       set_property         (GObject       *object,
+                                        guint          prop_id,
+                                        const GValue  *value,
+                                        GParamSpec    *pspec);
+static void       bounding_box         (gdouble       *points,
+                                        gint           num_points,
+                                        GeglRect      *output);
+static gboolean   is_intermediate_node (OpAffine      *affine);
+static gboolean   is_composite_node    (OpAffine      *affine);
+static void       get_source_matrix    (OpAffine      *affine,
+                                        Matrix3        output);
+static GeglRect   get_defined_region   (GeglOperation *op);
+static gboolean   calc_source_regions  (GeglOperation *op);
+static GeglRect   get_affected_region  (GeglOperation *operation,
+                                        const gchar   *input_pad,
+                                        GeglRect       region);
+static gboolean   process              (GeglOperation *op);
 
 /* ************************* */
 
@@ -121,8 +123,9 @@ op_affine_class_init (OpAffineClass *klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  op_class->get_defined_region   = get_defined_region;
-  op_class->calc_source_regions   = calc_source_regions;
+  op_class->get_affected_region = get_affected_region;
+  op_class->get_defined_region  = get_defined_region;
+  op_class->calc_source_regions = calc_source_regions;
   op_class->categories = "geometry";
 
   filter_class->process = process;
@@ -329,10 +332,13 @@ get_defined_region (GeglOperation *op)
 {
   OpAffine      *affine  = (OpAffine *) op;
   OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);
-  GeglRect       in_rect = * gegl_operation_source_get_defined_region (op, "input"),
+  GeglRect       in_rect = {0,0,0,0},
                  have_rect;
   gdouble        have_points [8];
   gint           i;
+
+  if (gegl_operation_source_get_defined_region (op, "input"))
+  in_rect = *gegl_operation_source_get_defined_region (op, "input");
 
   /* invoke child's matrix creation function */
   g_assert (klass->create_matrix);
@@ -450,6 +456,77 @@ calc_source_regions (GeglOperation *op)
   gegl_operation_set_source_region (op, "input", &need_rect);
   return TRUE;
 }
+
+static GeglRect
+get_affected_region (GeglOperation *op,
+                     const gchar   *input_pad,
+                     GeglRect       region)
+{
+  OpAffine      *affine  = (OpAffine *) op;
+  OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);
+  GeglRect       affected_rect;
+  gdouble        affected_points [8];
+  gint           i;
+
+  /* invoke child's matrix creation function */
+  g_assert (klass->create_matrix);
+  matrix3_identity (affine->matrix);
+  klass->create_matrix (op, affine->matrix);
+
+  if (affine->origin_x || affine->origin_y)
+    matrix3_originate (affine->matrix, affine->origin_x, affine->origin_y);
+
+  if (is_composite_node (affine))
+    {
+      Matrix3 source;
+
+      get_source_matrix (affine, source);
+      matrix3_multiply (source, affine->matrix, affine->matrix);
+    }
+  if (is_intermediate_node (affine) ||
+      matrix3_is_identity (affine->matrix))
+    {
+      return region;
+    }
+
+  if (! strcasecmp (affine->filter, "linear"))
+    {
+      if (affine->hard_edges)
+        {
+          region.w++;
+          region.h++;
+        }
+      else
+        {
+          region.x--;
+          region.y--;
+          region.w += 2;
+          region.h += 2;
+        }
+    }
+
+  affected_points [0] = region.x;
+  affected_points [1] = region.y;
+
+  affected_points [2] = region.x + region.w;
+  affected_points [3] = region.y;
+
+  affected_points [4] = region.x + region.w;
+  affected_points [5] = region.y + region.h;
+
+  affected_points [6] = region.x;
+  affected_points [7] = region.y + region.h;
+
+  for (i = 0; i < 8; i += 2)
+    matrix3_transform_point (affine->matrix,
+                             affected_points + i, affected_points + i + 1);
+
+  bounding_box (affected_points, 4, &affected_rect);
+
+  return affected_rect;
+
+}
+
 
 static gboolean
 process (GeglOperation *op)

@@ -188,9 +188,21 @@ get_defined_region (GeglOperation *self)
   return *in_rect;
 }
 
+static GeglRect
+get_affected_region (GeglOperation *self,
+                     const gchar   *pad_name,
+                     GeglRect       region)
+{
+  GeglRect empty = {0,0,0,0};
+  if (!strcmp (pad_name, \"input\"))
+    return region;
+  return empty;
+}
+
 static void class_init (GeglOperationClass *operation_class)
 {
   operation_class->get_defined_region = get_defined_region;
+  operation_class->get_affected_region = get_affected_region;
 }
 
 #endif

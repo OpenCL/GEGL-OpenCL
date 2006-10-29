@@ -36,6 +36,9 @@
 #include "gegl-connection.h"
 #include "gegl-eval-mgr.h"
 #include "buffer/gegl-buffer.h"
+#include "gegl-have-visitor.h"
+#include "gegl-dirt-visitor.h"
+#include "gegl-utils.h"
 
 
 enum
@@ -116,7 +119,7 @@ gegl_node_init (GeglNode *self)
   self->operation   = NULL;
   self->refs        = 0;
   self->enabled     = TRUE;
-  self->dirty       = FALSE;
+  memset (&self->dirt_rect, 0, sizeof (self->dirt_rect));
   self->is_graph    = FALSE;
 }
 
@@ -842,12 +845,75 @@ static void property_changed (GObject    *gobject,
 {
   GeglNode *self = GEGL_NODE (user_data);
 
-  if (!arg1 ||
-      arg1->value_type != GEGL_TYPE_BUFFER)
+  if ((arg1 &&
+      arg1->value_type != GEGL_TYPE_BUFFER) ||
+     (self->operation && !arg1))
     {
-     /* g_warning ("%s: %s", gegl_node_get_debug_name (self),
-        arg1?arg1->name:"operation changed");*/
-      self->dirty = TRUE;
+     /* FIXME: optimize by using GdkRegions (an undesired dependency here, thus
+      * the code might have to move to the projection.
+      */
+
+      if (self->operation && !arg1)
+        {/*
+          g_warning ("%s: operation changed %i,%i %ix%i += %i,%i %ix%i",
+                     gegl_node_get_debug_name (self),
+                       self->dirt_rect.x,
+                       self->dirt_rect.y,
+                       self->dirt_rect.w,
+                       self->dirt_rect.h,
+                       self->have_rect.x,
+                       self->have_rect.y,
+                       self->have_rect.w,
+                       self->have_rect.h
+                     );*/
+
+          gegl_rect_bounding_box (&self->dirt_rect,
+                                  &self->dirt_rect,
+                                  &self->have_rect);
+        }
+      else
+        {
+          GeglVisitor *have_visitor;
+/*
+          g_warning ("%s: %s, %i,%i %ix%i += %i,%i %ix%i",
+                     gegl_node_get_debug_name (self),
+                       arg1->name,
+                       self->dirt_rect.x,
+                       self->dirt_rect.y,
+                       self->dirt_rect.w,
+                       self->dirt_rect.h,
+                       self->have_rect.x,
+                       self->have_rect.y,
+                       self->have_rect.w,
+                       self->have_rect.h
+                     );
+*/
+          gegl_rect_bounding_box (&self->dirt_rect,
+                                  &self->dirt_rect,
+                                  &self->have_rect);
+
+          have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, NULL);
+          gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE(self));
+          g_object_unref (have_visitor);
+    /*
+          g_warning ("%s: %s, %i,%i %ix%i += %i,%i %ix%i",
+                     gegl_node_get_debug_name (self),
+                     arg1?arg1->name:"operation changed",
+                       self->dirt_rect.x,
+                       self->dirt_rect.y,
+                       self->dirt_rect.w,
+                       self->dirt_rect.h,
+                       self->have_rect.x,
+                       self->have_rect.y,
+                       self->have_rect.w,
+                       self->have_rect.h
+                     );
+    */
+          gegl_rect_bounding_box (&self->dirt_rect,
+                                  &self->dirt_rect,
+                                  &self->have_rect);
+            }
+
     }
 }
 
@@ -1336,4 +1402,68 @@ gegl_node_get_connected_to (GeglNode *node,
       return gegl_connection_get_source_node (connection);
     }
   return NULL;
+}
+
+
+/* should perhaps be moved into a seperate class, and have a specialized
+ * graph evaluation manager for dirt context, or share one with the blitter
+ * in question?
+ */
+GeglRect
+gegl_node_get_dirty_rect (GeglNode     *root)
+{
+  GeglVisitor *have_visitor;
+  GeglVisitor *dirt_visitor;
+
+  GeglPad     *pad;
+ 
+  pad = gegl_node_get_pad (root, "output");
+  if (pad->node != root)
+    root = pad->node;
+  g_object_ref (root);
+
+  have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, NULL);
+  gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE(root));
+  g_object_unref (have_visitor);
+
+  dirt_visitor = g_object_new (GEGL_TYPE_DIRT_VISITOR, NULL);
+  gegl_visitor_dfs_traverse (dirt_visitor, GEGL_VISITABLE(root));
+  g_object_unref (dirt_visitor);
+
+/*
+  dirt_visitor = g_object_new (GEGL_TYPE_DIRT_VISITOR, NULL);
+  gegl_visitor_dfs_traverse (dirt_visitor, GEGL_VISITABLE(root));
+  g_object_unref (dirt_visitor);
+  if (root->dirt_rect.w)
+  g_warning ("get_dirty_rect(%s) => %i %i %i %i",
+         gegl_node_get_debug_name (root),
+         root->dirt_rect.w, 
+         root->dirt_rect.h, 
+         root->dirt_rect.x, 
+         root->dirt_rect.y);
+*/
+
+  g_object_unref (root);
+  
+  return root->dirt_rect; 
+}
+
+#include "gegl-clean-visitor.h"
+
+void
+gegl_node_clear_dirt (GeglNode *node)
+{
+  GeglVisitor *clean_visitor;
+
+  GeglPad     *pad;
+ 
+  pad = gegl_node_get_pad (node, "output");
+  if (pad->node != node)
+    node = pad->node;
+
+  g_object_ref (node);
+  clean_visitor = g_object_new (GEGL_TYPE_CLEAN_VISITOR, NULL);
+  gegl_visitor_dfs_traverse (clean_visitor, GEGL_VISITABLE(node));
+  g_object_unref (clean_visitor);
+  g_object_unref (node);
 }

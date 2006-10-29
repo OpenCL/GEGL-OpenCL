@@ -45,9 +45,14 @@ struct _GeglNode
 
   GeglOperation *operation;
 
-  GeglRect       have_rect;
+  /* FIXME: move these to a hash associated with the evaluation manager
+   * context
+   */
   GeglRect       need_rect;
   GeglRect       result_rect;
+
+  GeglRect       have_rect;
+  GeglRect       dirt_rect;
 
   GList         *pads;
   GList         *input_pads;
@@ -64,7 +69,6 @@ struct _GeglNode
                              */
   gboolean       enabled;
 
-  gboolean       dirty;
 };
 
 struct _GeglNodeClass
@@ -79,6 +83,12 @@ void          gegl_node_blit_buf            (GeglNode     *self,
                                              void         *format,
                                              gint          rowstride,
                                              gpointer     *destination_buf);
+
+/* returns the rectangle that has become dirtied as a result of changes to
+ * properties since time rendering was issued.
+ */
+GeglRect      gegl_node_get_dirty_rect      (GeglNode     *root);
+void          gegl_node_clear_dirt          (GeglNode     *node);
 
 void          gegl_node_link                (GeglNode     *source,
                                              GeglNode     *sink);

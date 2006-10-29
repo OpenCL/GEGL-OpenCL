@@ -124,7 +124,8 @@ main (gint    argc,
         }
       else
         {
-          script = g_strdup ("<gegl><color value='rgb(0.8,0.8,0.8)'/></gegl>");
+          script = g_strdup ("<?xml version='1.0' encoding='UTF-8'?> <gegl> <over> <shift x='20.000000' y='120.000000'/> <text string='This user interface of this application is a work in progress, and it might be the case that quie a few of the buttons and options should have do not push me signs, or WARNINGS about proper use, this is not the case, so expect loss of experimental data.' font='Sans' size='10.000000' color='rgb(1.0000, 1.0000, 1.0000)' wrap='220' alignment='0' width='216' height='78'/> </over> <over> <gaussian-blur radius-x='1.200000' radius-y='1.200000' filter=''/> <shift x='35.000000' y='30.000000'/> <text string='GEGL' font='Sans' size='60.000000' color='rgb(0.5666, 0.0000, 0.0000)' wrap='-1' alignment='0' width='165' height='71'/> </over> <perlin-noise alpha='12.300000' beta='0.100000' zoff='-1.000000' seed='20.000000' n='6.000000'/> </gegl>");
+
         }
     }
 

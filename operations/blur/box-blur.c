@@ -274,9 +274,27 @@ calc_source_regions (GeglOperation *self)
   return TRUE;
 }
 
+static GeglRect
+get_affected_region (GeglOperation *self,
+                     const gchar   *input_pad,
+                     GeglRect       region)
+{
+  GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
+  gint                radius;
+ 
+  radius = ceil(blur->radius);
+
+  region.x -= radius;
+  region.y -= radius;
+  region.w += radius*2;
+  region.h += radius*2;
+  return region;
+}
+
 static void class_init (GeglOperationClass *operation_class)
 {
-  operation_class->get_defined_region = get_defined_region;
+  operation_class->get_defined_region  = get_defined_region;
+  operation_class->get_affected_region = get_affected_region;
   operation_class->calc_source_regions = calc_source_regions;
 }
 

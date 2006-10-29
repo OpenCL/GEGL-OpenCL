@@ -53,7 +53,8 @@ static void            get_property                   (GObject       *gobject,
                                                        guint          prop_id,
                                                        GValue        *value,
                                                        GParamSpec    *pspec);
-static gboolean        task_render                   (gpointer *foo);
+static gboolean        task_render                    (gpointer      *foo);
+static gboolean        task_monitor                   (gpointer      *foo);
 
 G_DEFINE_TYPE (GeglProjection, gegl_projection, G_TYPE_OBJECT);
 
@@ -78,6 +79,9 @@ gegl_projection_constructor (GType                  type,
                                "width", 65536*2,
                                "height", 65536*2,
                                NULL);
+
+  g_idle_add_full (G_PRIORITY_LOW, (GSourceFunc) task_monitor, self, NULL);
+
   return object;
 }
 
@@ -151,6 +155,7 @@ set_property (GObject      *gobject,
         if (self->node)
           g_object_unref (self->node);
         self->node = GEGL_NODE (g_value_dup_object (value));
+        
         break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -280,13 +285,12 @@ static gboolean task_render (gpointer *foo)
 
       /*g_warning ("computing %i,%i %ix%i", dr->x, dr->y, dr->w, dr->h);*/
       
-      buf = g_malloc ((dr->w+1) * (dr->h+1) * 4); /* FIXME: this padding should not be needed, but it avoids some segfaults */
+      buf = g_malloc ((dr->w) * (dr->h) * 4);
       g_assert (buf);
 
       gegl_node_blit_buf (projection->node, dr, babl_format ("R'G'B'A u8"), 0, (gpointer*) buf);
       gegl_buffer_set_rect_fmt (projection->buffer, dr, buf, babl_format ("R'G'B'A u8"));
       gdk_region_union_with_rect (projection->valid_region, (GdkRectangle*)dr);
-      /* FIXME: trigger a reblit */
       g_signal_emit (projection, projection_signals[COMPUTED], 0, dr, NULL, NULL);
 
       g_free (buf);
@@ -294,6 +298,82 @@ static gboolean task_render (gpointer *foo)
     }
   return (projection->dirty_rects!=NULL);
 }
+
+static gboolean task_monitor (gpointer *foo)
+{
+  GeglProjection  *projection = GEGL_PROJECTION (foo);
+  GeglRect dirty_rect = gegl_node_get_dirty_rect (projection->node);
+  if (dirty_rect.w != 0 &&
+      dirty_rect.h != 0)
+    {
+      GdkRectangle   rectangle;
+      GdkRegion     *region;
+      GdkRectangle  *rectangles;
+      gint           n_rectangles;
+      gint           i;
+
+      rectangle.width = dirty_rect.w;
+      rectangle.height = dirty_rect.h;
+      rectangle.x = dirty_rect.x;
+      rectangle.y = dirty_rect.y;
+
+      region = gdk_region_rectangle (&rectangle);
+
+      gdk_region_intersect (region, projection->valid_region);
+
+      gdk_region_get_rectangles (region, &rectangles, &n_rectangles);
+      for (i=0; i<n_rectangles; i++)
+        {
+        /*
+          g_warning ("adding dirt %i,%i %ix%i", rectangles[i].x,
+                                                rectangles[i].y,
+                                                rectangles[i].width,
+                                                rectangles[i].height);
+         */
+          /* FIXME: this enqueing should be dependent on what is visible in
+           * the views
+           */
+          enqueue_dirty (projection, *((GeglRect*)&rectangles[i]));
+        }
+      g_free (rectangles);
+      gdk_region_destroy (region);
+    }
+  gegl_node_clear_dirt (projection->node);
+  return TRUE;
+}
+
+#if 0
+void
+gegl_projection_request (GeglProjection *projection,
+                         GdkRectangle    rectangle)
+{
+  GdkRegion     *region;
+  GdkRectangle  *rectangles;
+  gint           n_rectangles;
+  gint           i;
+
+  region = gdk_region_rectangle (&rectangle);
+
+  gdk_region_intersect (region, projection->valid_region);
+
+  gdk_region_get_rectangles (region, &rectangles, &n_rectangles);
+  for (i=0; i<n_rectangles; i++)
+    {
+    /*
+      g_warning ("adding dirt %i,%i %ix%i", rectangles[i].x,
+                                            rectangles[i].y,
+                                            rectangles[i].width,
+                                            rectangles[i].height);
+     */
+      /* FIXME: this enqueing should be dependent on what is visible in
+       * the views
+       */
+      enqueue_dirty (projection, *((GeglRect*)&rectangles[i]));
+    }
+  g_free (rectangles);
+  gdk_region_destroy (region);
+}
+#endif
 
 void
 gegl_projection_invalidate (GeglProjection *projection)

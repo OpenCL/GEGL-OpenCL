@@ -28,6 +28,8 @@ typedef struct _GeglConnection       GeglConnection;
 typedef struct _GeglColor            GeglColor;
 typedef struct _GeglCRVisitor        GeglCRVisitor;
 typedef struct _GeglDebugRectVisitor GeglDebugRectVisitor;
+typedef struct _GeglCleanVisitor     GeglCleanVisitor;
+typedef struct _GeglDirtVisitor      GeglDirtVisitor;
 typedef struct _GeglEvalMgr          GeglEvalMgr;
 typedef struct _GeglEvalVisitor      GeglEvalVisitor;
 typedef struct _GeglGraph            GeglGraph;

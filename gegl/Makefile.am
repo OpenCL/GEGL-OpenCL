@@ -10,6 +10,8 @@ lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
 EXTRA_DIST =	\
 	gegl-cr-visitor.h		\
 	gegl-debug-rect-visitor.h	\
+	gegl-clean-visitor.h		\
+	gegl-dirt-visitor.h		\
 	gegl-eval-mgr.h			\
 	gegl-eval-visitor.h		\
 	gegl-have-visitor.h		\
@@ -22,6 +24,8 @@ GEGL_sources = \
 	gegl-connection.c		\
 	gegl-cr-visitor.c		\
 	gegl-debug-rect-visitor.c	\
+	gegl-clean-visitor.c		\
+	gegl-dirt-visitor.c		\
 	gegl-eval-mgr.c			\
 	gegl-eval-visitor.c		\
 	gegl-extension-handler.c	\

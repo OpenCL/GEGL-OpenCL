@@ -1,3 +1,39 @@
+2006-10-29  Øyvind Kolås  <pippin@gimp.org>
+
+	Minimized unneeded recomputation in the GUI test app with a new
+	dirt propagation infrastructure. The dirt accumulation is happening
+	as the graph is manipulated, properties are changed etc automatically.
+	The code probably needs more changes as well, but the basics seems
+	to work correctly.
+
+	* bin/gegl-projection.c: (gegl_projection_constructor),
+	(set_property), (task_render), (task_monitor): Handle dirt
+	tracking/cleaning for updates.
+	* bin/gegl-view.c: (set_property), (gegl_view_repaint):
+	* bin/gegl.c: (main): changed the default project.
+
+	* gegl/Makefile.am: added gegl-{clean,dirt}-visitor.[ch]
+	* gegl/gegl-types.h: added dirt and clean visitors.
+	* gegl/gegl-dirt-visitor.[ch] NEW:, visitor for propagating dirtied
+	regions in the graph.
+	* gegl/gegl-clean-visitor.[ch] NEW:, visitor that cleans up dirt
+	rectangles.
+
+	* gegl/gegl-node.[ch]: added gegl_node_get_dirty_rect,
+	gegl_node_clear_dirt and dirt_rect instance member.
+	* gegl/gegl-operation.c: (get_affected_region):
+
+	Added get_affected_region to operations that needed to override
+	default behavior.
+	
+	* operations/blur/box-blur.c: (get_affected_region), (class_init):
+	* operations/blur/gaussian-blur.c: (get_affected_region),
+	(class_init):
+	* operations/core/shift.c: (get_affected_region), (class_init):
+	* operations/transform/affine.c: (op_affine_class_init),
+	(get_defined_region), (get_affected_region):
+	* operations/generated/porter-duff.rb: (op_affine_class_init).
+
 2006-10-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.in: depend on babl>=0.0.6 (and not on a CVS version).
