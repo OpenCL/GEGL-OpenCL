@@ -38,6 +38,7 @@ enum
 
 enum
 {
+  INVALIDATED,
   COMPUTED,
   LAST_SIGNAL
 };
@@ -117,6 +118,17 @@ gegl_projection_class_init (GeglProjectionClass * klass)
       G_TYPE_NONE /* return type */,
       1 /* n_params */,
       G_TYPE_POINTER /* param_types */);
+
+  projection_signals[INVALIDATED] =
+      g_signal_new ("invalidated", G_TYPE_FROM_CLASS (klass),
+      G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+      0    /* class offset*/,
+      NULL /* accumulator */,
+      NULL /* accu_data */,
+      g_cclosure_marshal_VOID__POINTER,
+      G_TYPE_NONE /* return type */,
+      1 /* n_params */,
+      G_TYPE_POINTER /* param_types */);
   
 }
 
@@ -188,6 +200,11 @@ static void enqueue_dirty (GeglProjection *projection,
   *dr = roi;
   
   projection->dirty_rects = g_list_append (projection->dirty_rects, dr);
+
+  /*
+   * Do merge rectangles, a rectangle merging process?
+   */
+  
   g_idle_add_full (G_PRIORITY_LOW, (GSourceFunc) task_render, projection, NULL);
 }
  
@@ -332,9 +349,14 @@ static gboolean task_monitor (gpointer *foo)
          */
           /* FIXME: this enqueing should be dependent on what is visible in
            * the views
-           */
           enqueue_dirty (projection, *((GeglRect*)&rectangles[i]));
+           */
+          GdkRegion *temp_region = gdk_region_rectangle (&rectangles[i]);
+          gdk_region_subtract (projection->valid_region, temp_region);
+          gdk_region_destroy (temp_region);
         }
+      if (n_rectangles)
+        g_signal_emit (projection, projection_signals[INVALIDATED], 0, NULL, NULL, NULL);
       g_free (rectangles);
       gdk_region_destroy (region);
     }

@@ -120,9 +120,22 @@ static void computed_event (GeglProjection *self,
   GeglView *view = GEGL_VIEW (user_data);
   GtkWidget *widget = GTK_WIDGET (user_data);
 
+  /* FIXME: check that the are is relevant for us */
+
   gtk_widget_queue_draw_area (widget, rect->x - view->x,
                                       rect->y - view->y,
                                       rect->w, rect->h);
+}
+
+
+static void invalidated_event (GeglProjection *self,
+                               void           *foo,
+                               void           *user_data)
+{
+  GeglView *view = GEGL_VIEW (user_data);
+  GtkWidget *widget = GTK_WIDGET (user_data);
+  GeglRect roi={view->x, view->y, widget->allocation.width, widget->allocation.height};
+  gegl_projection_update_rect (view->projection, roi);
 }
 
 static void
@@ -146,6 +159,9 @@ set_property (GObject      *gobject,
                                        NULL);
       g_signal_connect (G_OBJECT (self->projection), "computed",
                         (GCallback)computed_event,
+                        self);
+      g_signal_connect (G_OBJECT (self->projection), "invalidated",
+                        (GCallback)invalidated_event,
                         self);
       gegl_view_repaint (self);
       break;
@@ -263,8 +279,6 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
       roi.w=rectangles[i].width;
       roi.h=rectangles[i].height;
 
-      gegl_projection_update_rect (view->projection, roi);
-      
       buf = g_malloc ((roi.w+1) * (roi.h+1) * 4); /* FIXME: this padding should not be needed, but it avoids some segfaults */
       gegl_buffer_get_rect_fmt (view->projection->buffer,
                                 &roi, buf, babl_format ("R'G'B'A u8"));
@@ -280,6 +294,7 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
                              buf, roi.w * 4);
       g_free (buf);
     }
+  gegl_view_repaint (view);
   g_free (rectangles);
 
   return TRUE;
@@ -287,6 +302,7 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
 
 void gegl_view_repaint (GeglView *view)
 {
-  /*gegl_projection_invalidate (view->projection);*/
-  gtk_widget_queue_draw (GTK_WIDGET (view));
+  GtkWidget *widget = GTK_WIDGET (view);
+  GeglRect roi={view->x, view->y, widget->allocation.width, widget->allocation.height};
+  gegl_projection_update_rect (view->projection, roi);
 }

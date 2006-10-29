@@ -1,5 +1,16 @@
 2006-10-29  Øyvind Kolås  <pippin@gimp.org>
 
+	Made som changes to how renderings are handled in background/enqueued
+	for rendering. This code still needs quite a bit of
+	cleanup/refactoring before it works in a satisfactory manner.
+
+	* bin/gegl-projection.c: (gegl_projection_class_init),
+	(enqueue_dirty), (task_monitor):
+	* bin/gegl-view.c: (computed_event), (invalidated_event),
+	(set_property), (expose_event), (gegl_view_repaint):
+
+2006-10-29  Øyvind Kolås  <pippin@gimp.org>
+
 	Minimized unneeded recomputation in the GUI test app with a new
 	dirt propagation infrastructure. The dirt accumulation is happening
 	as the graph is manipulated, properties are changed etc automatically.
