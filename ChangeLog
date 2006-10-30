@@ -1,5 +1,13 @@
 2006-10-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-projection.h: added GeglProjection->queued_region.
+	* bin/gegl-projection.c: (gegl_projection_constructor),
+	(gegl_projection_init), (finalize), (enqueue_dirty),
+	(gegl_projection_update_rect), (task_render), (task_monitor): improved
+	mechanisms for keeping projection up to date.
+
+2006-10-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-operation.c: (gegl_operation_get_affected_region): Sanity
 	check, making no change no affecting.
 	* operations/blur/box-blur.c,

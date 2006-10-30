@@ -44,10 +44,13 @@ struct _GeglProjection
   GeglBuffer   *buffer;
 
   GdkRegion    *valid_region;
+  GdkRegion    *queued_region;
   
   /*< private >*/
   GList        *dirty_rects;
-  guint         updater;
+
+  guint         render_id;
+  guint         monitor_id;
 };
 
 struct _GeglProjectionClass

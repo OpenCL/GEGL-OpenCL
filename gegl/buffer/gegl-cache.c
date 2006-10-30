@@ -72,6 +72,7 @@ gegl_projection_constructor (GType                  type,
   GeglProjection *self = GEGL_PROJECTION (object);
 
   self->valid_region = gdk_region_new ();
+  self->queued_region = gdk_region_new ();
   self->format = babl_format ("R'G'B'A u8");
   self->buffer = g_object_new (GEGL_TYPE_BUFFER,
                                "format", self->format,
@@ -137,7 +138,8 @@ gegl_projection_init (GeglProjection *self)
 {
   self->buffer = NULL;
   self->node = NULL;
-  self->updater = 0;
+  self->render_id = 0;
+  self->monitor_id = 0;
 }
 
 static void
@@ -151,6 +153,8 @@ finalize (GObject *gobject)
     g_object_unref (self->node);
   if (self->valid_region)
     gdk_region_destroy (self->valid_region);
+  if (self->queued_region)
+    gdk_region_destroy (self->queued_region);
   G_OBJECT_CLASS (gegl_projection_parent_class)->finalize (gobject);
 }
 
@@ -204,7 +208,13 @@ static void enqueue_dirty (GeglProjection *projection,
   /*
    * Do merge rectangles, a rectangle merging process?
    */
-  
+
+        {
+          GdkRegion *tr = gdk_region_rectangle ((GdkRectangle*)dr);
+          gdk_region_subtract (projection->queued_region, tr);
+          gdk_region_destroy (tr);
+        }
+ 
   g_idle_add_full (G_PRIORITY_LOW, (GSourceFunc) task_render, projection, NULL);
 }
  
@@ -212,22 +222,23 @@ static void enqueue_dirty (GeglProjection *projection,
 void          gegl_projection_update_rect (GeglProjection *self,
                                            GeglRect        roi)
 {
-  GeglRect     temp_rect;
+ /* GeglRect     temp_rect;*/
   GdkRectangle gdk_rect;
   GdkRegion *temp_region;
-
+/*
   gint          i;
   gint          n_rectangles;
   GdkRectangle *rectangles;
-
+*/
   g_assert (sizeof (GeglRect) == sizeof (GdkRectangle));
   memcpy (&gdk_rect, &roi, sizeof (GdkRectangle));
   temp_region = gdk_region_rectangle (&gdk_rect);
 
-  gdk_region_subtract (temp_region, self->valid_region);
+  gdk_region_union (self->queued_region, temp_region);
+  gdk_region_subtract (self->queued_region, self->valid_region);
 
+  /*
   gdk_region_get_rectangles (temp_region, &rectangles, &n_rectangles);
-
   for (i=0;i<n_rectangles;i++)
     {
       temp_rect.x = rectangles[i].x;
@@ -238,7 +249,7 @@ void          gegl_projection_update_rect (GeglProjection *self,
     }
 
   g_free (rectangles);
-
+*/
   gdk_region_destroy (temp_region);
 }
 
@@ -307,13 +318,29 @@ static gboolean task_render (gpointer *foo)
 
       gegl_node_blit_buf (projection->node, dr, babl_format ("R'G'B'A u8"), 0, (gpointer*) buf);
       gegl_buffer_set_rect_fmt (projection->buffer, dr, buf, babl_format ("R'G'B'A u8"));
+      
       gdk_region_union_with_rect (projection->valid_region, (GdkRectangle*)dr);
+        /*{
+          GdkRegion *tr = gdk_region_rectangle ((GdkRectangle*)dr);
+          gdk_region_subtract (projection->queued_region, tr);
+          gdk_region_destroy (tr);
+        }*/
+
       g_signal_emit (projection, projection_signals[COMPUTED], 0, dr, NULL, NULL);
 
       g_free (buf);
       g_free (dr);
     }
-  return (projection->dirty_rects!=NULL);
+  
+  if (projection->dirty_rects)
+    {
+      return TRUE;
+    }
+  else
+    {
+      projection->render_id = 0;
+      return FALSE;
+    }
 }
 
 static gboolean task_monitor (gpointer *foo)
@@ -325,42 +352,72 @@ static gboolean task_monitor (gpointer *foo)
     {
       GdkRectangle   rectangle;
       GdkRegion     *region;
+      /*
       GdkRectangle  *rectangles;
       gint           n_rectangles;
-      gint           i;
+      gint           i;*/
 
       rectangle.width = dirty_rect.w;
       rectangle.height = dirty_rect.h;
       rectangle.x = dirty_rect.x;
       rectangle.y = dirty_rect.y;
 
+      g_warning ("monitor found: %i,%i %ix%i",
+        rectangle.x,
+        rectangle.y,
+        rectangle.width,
+        rectangle.height);
+
       region = gdk_region_rectangle (&rectangle);
 
-      gdk_region_intersect (region, projection->valid_region);
+      gdk_region_subtract (projection->valid_region, region);
 
-      gdk_region_get_rectangles (region, &rectangles, &n_rectangles);
-      for (i=0; i<n_rectangles; i++)
+      if (!gdk_region_empty (region))
         {
-        /*
-          g_warning ("adding dirt %i,%i %ix%i", rectangles[i].x,
-                                                rectangles[i].y,
-                                                rectangles[i].width,
-                                                rectangles[i].height);
-         */
-          /* FIXME: this enqueing should be dependent on what is visible in
-           * the views
-          enqueue_dirty (projection, *((GeglRect*)&rectangles[i]));
-           */
-          GdkRegion *temp_region = gdk_region_rectangle (&rectangles[i]);
-          gdk_region_subtract (projection->valid_region, temp_region);
-          gdk_region_destroy (temp_region);
+          GdkRectangle  *rectangles;
+          gint           n_rectangles;
+          gint           i;
+          g_signal_emit (projection, projection_signals[INVALIDATED], 0, NULL, NULL, NULL);
+          /*gdk_region_subtract (projection->queued_region, projection->valid_region);
+          
+          gdk_region_get_rectangles (projection->queued_region, &rectangles, &n_rectangles);
+          for (i=0; i<n_rectangles; i++)
+            {
+              enqueue_dirty (projection, *((GeglRect*)&rectangles[i]));
+            }
+          g_free (rectangles);
+          */
         }
-      if (n_rectangles)
-        g_signal_emit (projection, projection_signals[INVALIDATED], 0, NULL, NULL, NULL);
-      g_free (rectangles);
       gdk_region_destroy (region);
     }
+
   gegl_node_clear_dirt (projection->node);
+
+  {
+  }
+  
+  gdk_region_subtract (projection->queued_region, projection->valid_region);
+
+  if (!gdk_region_empty (projection->queued_region) &&
+      !projection->dirty_rects)
+    {
+      GdkRectangle  *rectangles;
+      gint           n_rectangles;
+      gint           i;
+
+      gdk_region_get_rectangles (projection->queued_region, &rectangles, &n_rectangles);
+
+      for (i=0; i<n_rectangles && i<1; i++)
+        {
+          g_warning ("queuing %i,%i %ix%i, %i " , rectangles[i].x, rectangles[i].y,
+                                                  rectangles[i].width, rectangles[i].height,
+                                                  n_rectangles);
+          enqueue_dirty (projection, *((GeglRect*)&rectangles[i]));
+        }
+      g_free (rectangles);
+    }
+  else if (!projection->dirty_rects)
+    usleep (250);
   return TRUE;
 }
 
