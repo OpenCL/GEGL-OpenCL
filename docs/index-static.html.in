@@ -435,12 +435,14 @@ cd babl-2* &amp;&amp;
 ./autogen.sh &amp;&amp;
 make &amp;&amp;
 sudo make install &amp;&amp;
+sudo ldconfig &amp;&amp;
 cd .. &amp;&amp;
 tar xjf gegl-current.tar.bz2 &amp;&amp;
 cd gegl-2* &amp;&amp;
 ./autogen.sh &amp;&amp;
 make &amp;&amp;
-sudo make install</pre>
+sudo make install &amp;&amp;
+sudo ldconfig</pre>
 
         <p>To sync up your checkout later, issue the following command when
         in the toplevel GEGL directory.
