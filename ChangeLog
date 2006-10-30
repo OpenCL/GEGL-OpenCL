@@ -1,5 +1,10 @@
 2006-10-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-clean-visitor.c: (visit_node): Also clean graph when
+	traversing ghost pad|node.
+
+2006-10-30  Øyvind Kolås  <pippin@gimp.org>
+
 	Cleaned up the projection/view, removed dead code and other cruft.
 
 	* bin/gegl-projection.c: (gegl_projection_constructor),

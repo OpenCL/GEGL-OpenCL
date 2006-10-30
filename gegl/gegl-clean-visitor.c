@@ -66,4 +66,12 @@ visit_node (GeglVisitor *self,
     return;
 
   node->dirt_rect = rect;
+
+  {
+    GeglNode *graph = g_object_get_data (G_OBJECT (node), "graph");
+    
+    /* Also clean the graph this ghost pad|node belongs to */
+    if (graph)
+      graph->dirt_rect = rect;
+  }
 }
