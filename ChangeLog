@@ -1,5 +1,15 @@
 2006-10-30  Øyvind Kolås  <pippin@gimp.org>
 
+	Cleaned up the projection/view, removed dead code and other cruft.
+
+	* bin/gegl-projection.c: (gegl_projection_constructor),
+	(gegl_projection_update_rect), (task_render), (task_monitor):
+	* bin/gegl-projection.h:
+	* bin/gegl-view.c: (gegl_view_init), (computed_event),
+	(invalidated_event), (expose_event):
+
+2006-10-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-projection.h: added GeglProjection->queued_region.
 	* bin/gegl-projection.c: (gegl_projection_constructor),
 	(gegl_projection_init), (finalize), (enqueue_dirty),

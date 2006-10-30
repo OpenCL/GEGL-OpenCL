@@ -91,7 +91,8 @@ gegl_view_class_init (GeglViewClass * klass)
 static void
 gegl_view_init (GeglView *self)
 {
-  self->node        = NULL;
+  self->node 
+       = NULL;
   self->x           = 0;
   self->y           = 0;
   self->prev_x      = -1;
@@ -120,7 +121,7 @@ static void computed_event (GeglProjection *self,
   GeglView *view = GEGL_VIEW (user_data);
   GtkWidget *widget = GTK_WIDGET (user_data);
 
-  /* FIXME: check that the are is relevant for us */
+  /* FIXME: check that the area is relevant for us */
 
   gtk_widget_queue_draw_area (widget, rect->x - view->x,
                                       rect->y - view->y,
@@ -132,10 +133,7 @@ static void invalidated_event (GeglProjection *self,
                                void           *foo,
                                void           *user_data)
 {
-  GeglView *view = GEGL_VIEW (user_data);
-  GtkWidget *widget = GTK_WIDGET (user_data);
-  GeglRect roi={view->x, view->y, widget->allocation.width, widget->allocation.height};
-  gegl_projection_update_rect (view->projection, roi);
+  gegl_view_repaint (GEGL_VIEW (user_data));
 }
 
 static void
@@ -279,7 +277,8 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
       roi.w=rectangles[i].width;
       roi.h=rectangles[i].height;
 
-      buf = g_malloc ((roi.w+1) * (roi.h+1) * 4); /* FIXME: this padding should not be needed, but it avoids some segfaults */
+      buf = g_malloc ((roi.w+1) * (roi.h+1) * 4);
+      /* FIXME: this padding should not be needed, but it avoids some segfaults */
       gegl_buffer_get_rect_fmt (view->projection->buffer,
                                 &roi, buf, babl_format ("R'G'B'A u8"));
 

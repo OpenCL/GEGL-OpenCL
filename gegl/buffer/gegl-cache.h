@@ -58,11 +58,10 @@ struct _GeglProjectionClass
   GObjectClass parent_class;
 };
 
+GType  gegl_projection_get_type    (void) G_GNUC_CONST;
+
 void   gegl_projection_update_rect (GeglProjection *self,
                                     GeglRect        roi);
-
-void   gegl_projection_invalidate (GeglProjection *projection);
-GType  gegl_projection_get_type            (void) G_GNUC_CONST;
 
 G_END_DECLS
 
