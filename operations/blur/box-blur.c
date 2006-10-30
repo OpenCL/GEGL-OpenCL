@@ -239,10 +239,14 @@ get_defined_region (GeglOperation *operation)
     return result;
 
   result = *in_rect;
-  result.x-=radius;
-  result.y-=radius;
-  result.w+=radius*2;
-  result.h+=radius*2;
+  if (result.w != 0 &&
+      result.h != 0)
+    {
+      result.x-=radius;
+      result.y-=radius;
+      result.w+=radius*2;
+      result.h+=radius*2;
+    }
   
   return result;
 }
@@ -256,10 +260,14 @@ static GeglRect get_source_rect (GeglOperation *self)
   radius = ceil(blur->radius);
 
   rect  = *gegl_operation_get_requested_region (self);
-  rect.x -= radius;
-  rect.y -= radius;
-  rect.w += radius*2;
-  rect.h += radius*2;
+  if (rect.w != 0 &&
+      rect.h != 0)
+    {
+      rect.x -= radius;
+      rect.y -= radius;
+      rect.w += radius*2;
+      rect.h += radius*2;
+    }
 
   return rect;
 }

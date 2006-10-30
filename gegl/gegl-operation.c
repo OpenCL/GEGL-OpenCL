@@ -124,6 +124,9 @@ GeglRect   gegl_operation_get_affected_region       (GeglOperation *self,
   GeglOperationClass *klass;
 
   klass = GEGL_OPERATION_GET_CLASS (self);
+  if (region.w == 0 ||
+      region.h == 0)
+    return region;
   if (klass->get_affected_region)
     return klass->get_affected_region (self, input_pad, region);
   return region;

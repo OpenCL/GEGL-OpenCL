@@ -1,5 +1,14 @@
 2006-10-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation.c: (gegl_operation_get_affected_region): Sanity
+	check, making no change no affecting.
+	* operations/blur/box-blur.c,
+	* operations/blur/gaussian-blur.c: (get_defined_region),
+	(get_source_rect): Sanity improvements for extent changing of empty
+	rectangles.
+
+2006-10-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.in: depend on librsvg >= 2.14.0, improved messages in
 	dependency summary.
 
