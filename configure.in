@@ -170,6 +170,8 @@ AM_PROG_LEX
 # Checks for required libraries
 ###############################
 
+PKG_CHECK_MODULES(BABL, babl >= 0.0.6)
+
 GLIB_PACKAGES="gobject-2.0 gmodule-2.0"
 AC_SUBST(GLIB_PACKAGES)
 
@@ -241,7 +243,7 @@ AC_CHECK_PROGS(PERL, perl5 perl)
 
 PKG_CHECK_MODULES(CAIRO, cairo,
   have_cairo="yes",
-  have_cairo="no  (Cairo not found)")
+  have_cairo="no  (usable cairo not found)")
 AM_CONDITIONAL(HAVE_CAIRO, test "x$have_cairo" = "xyes")
 
 AC_SUBST(HAVE_CAIRO) 
@@ -255,12 +257,12 @@ AC_SUBST(CAIRO_LIBS)
 
 PKG_CHECK_MODULES(PANGO, pango,
   have_pango="yes",
-  have_pango="no  (Pango not found)")
+  have_pango="no  (usable pango not found)")
 AM_CONDITIONAL(HAVE_PANGO, test "x$have_pango" = "xyes")
 
 PKG_CHECK_MODULES(PANGOCAIRO, pangocairo,
   have_pangocairo="yes",
-  have_pangocairo="no  (pangocairo not found)")
+  have_pangocairo="no  (usable pangocairo not found)")
 AM_CONDITIONAL(HAVE_PANGOCAIRO, test "x$have_pangocairo" = "xyes")
 
 AC_SUBST(HAVE_PANGO) 
@@ -279,7 +281,7 @@ AC_ARG_WITH(libjpeg, [  --without-libjpeg       build without JPEG support])
   if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
     AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
       jpeg_ok=yes,
-      [jpeg_ok="no  (JPEG library not found)"])
+      [jpeg_ok="no  (usable JPEG library not found)"])
     if test "$jpeg_ok" = yes; then
       AC_MSG_CHECKING([for jpeglib.h])
       AC_TRY_CPP([
@@ -317,7 +319,7 @@ AC_SUBST(LIBJPEG)
 
 PKG_CHECK_MODULES(PNG, libpng,
   have_libpng="yes",
-  have_libpng="no  (libpng not found)")
+  have_libpng="no  (usable libpng not found)")
 AM_CONDITIONAL(HAVE_PNG, test "x$have_libpng" = "xyes")
 
 AC_SUBST(HAVE_PNG) 
@@ -329,9 +331,9 @@ AC_SUBST(PNG_LIBS)
 # Check for librsvg
 ###################
 
-PKG_CHECK_MODULES(RSVG, librsvg-2.0,
+PKG_CHECK_MODULES(RSVG, librsvg-2.0 >= 2.14.0,
   have_librsvg="yes",
-  have_librsvg="no  (librsvg not found)")
+  have_librsvg="no  (usable librsvg not found)")
 AM_CONDITIONAL(HAVE_RSVG, test "x$have_librsvg" = "xyes")
 
 AC_SUBST(HAVE_RSVG) 
@@ -344,7 +346,7 @@ AC_SUBST(RSVG_LIBS)
 
 PKG_CHECK_MODULES(OPENEXR, OpenEXR,
   have_openexr="yes",
-  have_openexr="no  (OpenEXR not found)")
+  have_openexr="no  (usable OpenEXR not found)")
 AM_CONDITIONAL(HAVE_OPENEXR, test "x$have_openexr" = "xyes")
 
 AC_SUBST(HAVE_OPENEXR) 
@@ -359,14 +361,14 @@ AC_SUBST(OPENEXR_LIBS)
 dnl check for SDL
 AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
 if test "$SDL_CONFIG" = "no"; then
-  have_sdl=no
+  have_sdl="no  (usable libsdl not found)"
   AC_MSG_RESULT([*** Check for SDL library failed.])
 else
-  have_sdl=yes
+  have_sdl="yes"
   SDL_CFLAGS=`$SDL_CONFIG --cflags`
   SDL_LIBS=`$SDL_CONFIG --libs`
 fi
-AM_CONDITIONAL(HAVE_SDL, test "x$SDL_CONFIG" != "xno")
+AM_CONDITIONAL(HAVE_SDL, test "x$SDL_CONFIG" = "xyes")
 
 AC_SUBST(HAVE_SDL) 
 AC_SUBST(SDL_CFLAGS)
@@ -397,7 +399,6 @@ AC_SUBST(SDL_LIBS)
 # Check for other items
 #######################
 
-PKG_CHECK_MODULES(BABL, babl >= 0.0.6)
 
 # w3m is used to autogenerate README
 AC_PATH_PROG(W3M, w3m, no)
@@ -437,7 +438,7 @@ dnl Print a summary of features enabled/disabled:
 AC_MSG_RESULT([
 Building GEGL with prefix=$prefix
 
-External Libraries:
+Optional dependencies:
   GTK+:           $have_gtk
   Cairo:          $have_cairo
   Pango:          $have_pango
