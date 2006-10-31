@@ -27,7 +27,7 @@ gegl_chant_string(src, "", "source datafile (png, jpg, raw, svg, bmp, tif, ..)")
 
 #else
 
-#define GEGL_CHANT_GRAPH
+#define GEGL_CHANT_META
 #define GEGL_CHANT_NAME            layer
 #define GEGL_CHANT_DESCRIPTION     "A layer in the traditional sense"
 #define GEGL_CHANT_SELF            "layer.c"

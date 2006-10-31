@@ -1,3 +1,16 @@
+2006-10-31  Øyvind Kolås  <pippin@gimp.org>
+
+	Added a meta super class for meta operations.
+
+	* gegl/Makefile.am: added gegl-operation-meta.[ch]
+	* gegl/gegl-chant.h:
+	* gegl/gegl-operation-meta.[ch] NEW: a superclass for meta
+	operations.
+	* operations/file-io/load.c:
+	* operations/meta/dropshadow.c:
+	* operations/meta/layer.c:
+	* operations/meta/unsharp-mask.c:
+
 2006-10-30  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-clean-visitor.c: (visit_node): Also clean graph when

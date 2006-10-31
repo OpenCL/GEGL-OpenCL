@@ -24,7 +24,7 @@ gegl_chant_double(scale,  0.0, 100.0, 1.0, "Scale")
 
 #else
 
-#define GEGL_CHANT_GRAPH
+#define GEGL_CHANT_META
 #define GEGL_CHANT_NAME            unsharp_mask
 #define GEGL_CHANT_DESCRIPTION     "Performs an unsharp mask on the input buffer (sharpens an image by adding false mach-bands around edges)."
 #define GEGL_CHANT_SELF            "unsharp-mask.c"

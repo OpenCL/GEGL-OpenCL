@@ -26,7 +26,7 @@ gegl_chant_boolean (cache, TRUE,
 
 #else
 
-#define GEGL_CHANT_GRAPH
+#define GEGL_CHANT_META
 #define GEGL_CHANT_NAME            load
 #define GEGL_CHANT_DESCRIPTION     "Multipurpose file loader, that uses other "\
                                    "native handlers, and fallback conversion using "\

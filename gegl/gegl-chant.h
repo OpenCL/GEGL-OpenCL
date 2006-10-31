@@ -54,12 +54,12 @@
   #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_POINT_COMPOSER
   #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_POINT_COMPOSER_CLASS
 #endif
-#ifdef GEGL_CHANT_GRAPH
-  #include <gegl/gegl-operation-source.h>
-  #define GEGL_CHANT_PARENT_TypeName      GeglOperation
-  #define GEGL_CHANT_PARENT_TypeNameClass GeglOperationClass
-  #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION
-  #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_CLASS
+#ifdef GEGL_CHANT_META
+  #include <gegl/gegl-operation-meta.h>
+  #define GEGL_CHANT_PARENT_TypeName      GeglOperationMeta
+  #define GEGL_CHANT_PARENT_TypeNameClass GeglOperationMetaClass
+  #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_META
+  #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_META_CLASS
 #endif
 
 typedef struct Generated        GeglChantOperation;
@@ -361,7 +361,7 @@ static gboolean process (GeglOperation *operation,
                          void          *out_buf,
                          glong          samples);
 #else
-#ifndef GEGL_CHANT_GRAPH
+#ifndef GEGL_CHANT_META
 static gboolean process (GeglOperation *operation);
 #endif
 #endif
@@ -451,7 +451,7 @@ gegl_chant_class_init (ChantClass * klass)
   GObjectClass               *object_class = G_OBJECT_CLASS (klass);
   GeglOperationClass         *operation_class;
 
-#ifndef GEGL_CHANT_GRAPH
+#ifndef GEGL_CHANT_META
   GEGL_CHANT_PARENT_TypeNameClass *parent_class = GEGL_CHANT_PARENT_CLASS (klass);
   parent_class->process = process;
 #endif
