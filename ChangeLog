@@ -1,5 +1,11 @@
 2006-10-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-dirt-visitor.c: (visit_node): handle meta nodes.
+	* gegl/gegl-node.c: (property_changed): trigger meta nodes to rerender
+	by propagating properties immediatly.
+
+2006-10-31  Øyvind Kolås  <pippin@gimp.org>
+
 	Added a meta super class for meta operations.
 
 	* gegl/Makefile.am: added gegl-operation-meta.[ch]

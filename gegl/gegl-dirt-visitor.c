@@ -59,7 +59,7 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-  GeglRect rect = {0,0,0,0};
+  GeglRect sum_rect = {0,0,0,0};
   GeglOperation *operation;
   glong    time = gegl_ticks ();
 
@@ -73,30 +73,55 @@ visit_node (GeglVisitor *self,
   /* should collect dirt from it's sources and unify that dirt with
    * current own dirt
    */
-  rect = node->dirt_rect;
+  sum_rect = node->dirt_rect;
 
+
+  
   {
     GList *llink;
     for (llink = node->sources; llink; llink = g_list_next (llink))
       {
         GeglRect        dirt_rect;
         GeglConnection *connection = llink->data;
-        GeglNode       *source_node = gegl_connection_get_source_node (connection);
+          GeglNode    *source_node;
+        GeglPad        *source_pad = gegl_connection_get_source_pad (connection);
         GeglPad        *dest_pad    = gegl_connection_get_sink_pad (connection);
-        
+
+        source_node = gegl_pad_get_node (source_pad);
         dirt_rect = source_node->dirt_rect;
         dirt_rect = gegl_operation_get_affected_region (operation, gegl_pad_get_name (dest_pad), dirt_rect);
-        gegl_rect_bounding_box (&rect, &rect, &dirt_rect);
+        gegl_rect_bounding_box (&sum_rect, &sum_rect, &dirt_rect);
       }
   }
 
-  node->dirt_rect = rect;
-/*
+  if (!strcmp (gegl_object_get_name (GEGL_OBJECT (node)), "proxynop-input"))
+    {
+      GeglNode *graph = g_object_get_data (G_OBJECT (node), "graph");
+      GList *llink;
+      for (llink = graph->sources; llink; llink = g_list_next (llink))
+        {
+          GeglRect        dirt_rect;
+          GeglConnection *connection = llink->data;
+          GeglNode    *source_node;
+        GeglPad        *source_pad = gegl_connection_get_source_pad (connection);
+          GeglPad        *dest_pad    = gegl_connection_get_sink_pad (connection);
+
+        source_node = gegl_pad_get_node (source_pad);
+          dirt_rect = source_node->dirt_rect;
+          dirt_rect = gegl_operation_get_affected_region (operation, gegl_pad_get_name (dest_pad), dirt_rect);
+          gegl_rect_bounding_box (&sum_rect, &sum_rect, &dirt_rect);
+        }
+    }
+
+
+  node->dirt_rect = sum_rect;
+
+  /*
   if (rect.w != 0 && rect.h != 0)
     g_warning ("visit dirt: %s %i,%i %ix%i",
        gegl_node_get_debug_name (node),
-       rect.x, rect.y, rect.w, rect.h);
-  */
+       sum_rect.x, sum_rect.y, sum_rect.w, sum_rect.h);*/
+
   time = gegl_ticks () - time;
   gegl_instrument ("process", gegl_node_get_op_type_name (node), time);
   gegl_instrument (gegl_node_get_op_type_name (node), "dirt-compute", time);

@@ -839,11 +839,19 @@ gegl_node_set_op_class (GeglNode      *node,
     }
 }
 
+#include "gegl-operation-meta.h"
+
 static void property_changed (GObject    *gobject,
                               GParamSpec *arg1,
                               gpointer    user_data)
 {
   GeglNode *self = GEGL_NODE (user_data);
+
+  if (self->operation &&
+      g_type_is_a (G_OBJECT_TYPE(self->operation), GEGL_TYPE_OPERATION_META))
+    {
+      gegl_operation_prepare (self->operation);
+    }
 
   if ((arg1 &&
       arg1->value_type != GEGL_TYPE_BUFFER) ||
@@ -867,6 +875,9 @@ static void property_changed (GObject    *gobject,
                        self->have_rect.h
                      );*/
 
+          /* if operation has changed, declare previously defined region to
+           * be invalid
+           */
           gegl_rect_bounding_box (&self->dirt_rect,
                                   &self->dirt_rect,
                                   &self->have_rect);
@@ -895,7 +906,7 @@ static void property_changed (GObject    *gobject,
           have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, NULL);
           gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE(self));
           g_object_unref (have_visitor);
-    /*
+   /* 
           g_warning ("%s: %s, %i,%i %ix%i += %i,%i %ix%i",
                      gegl_node_get_debug_name (self),
                      arg1?arg1->name:"operation changed",
@@ -913,7 +924,6 @@ static void property_changed (GObject    *gobject,
                                   &self->dirt_rect,
                                   &self->have_rect);
             }
-
     }
 }
 
@@ -1386,7 +1396,6 @@ gegl_node_get_debug_name (GeglNode     *node)
   return ret_buf;
 }
 
-
 GeglNode *
 gegl_node_get_connected_to (GeglNode *node,
                             gchar    *pad_name)
@@ -1405,10 +1414,6 @@ gegl_node_get_connected_to (GeglNode *node,
 }
 
 
-/* should perhaps be moved into a seperate class, and have a specialized
- * graph evaluation manager for dirt context, or share one with the blitter
- * in question?
- */
 GeglRect
 gegl_node_get_dirty_rect (GeglNode     *root)
 {
@@ -1429,19 +1434,6 @@ gegl_node_get_dirty_rect (GeglNode     *root)
   dirt_visitor = g_object_new (GEGL_TYPE_DIRT_VISITOR, NULL);
   gegl_visitor_dfs_traverse (dirt_visitor, GEGL_VISITABLE(root));
   g_object_unref (dirt_visitor);
-
-/*
-  dirt_visitor = g_object_new (GEGL_TYPE_DIRT_VISITOR, NULL);
-  gegl_visitor_dfs_traverse (dirt_visitor, GEGL_VISITABLE(root));
-  g_object_unref (dirt_visitor);
-  if (root->dirt_rect.w)
-  g_warning ("get_dirty_rect(%s) => %i %i %i %i",
-         gegl_node_get_debug_name (root),
-         root->dirt_rect.w, 
-         root->dirt_rect.h, 
-         root->dirt_rect.x, 
-         root->dirt_rect.y);
-*/
 
   g_object_unref (root);
   
