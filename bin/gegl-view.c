@@ -147,6 +147,7 @@ set_property (GObject      *gobject,
   switch (property_id)
     {
     case PROP_NODE:
+      /* FIXME: a view should probably be made from a projection */
       if (self->node)
         g_object_unref (self->node);
       self->node = GEGL_NODE (g_value_dup_object (value));
@@ -303,5 +304,9 @@ void gegl_view_repaint (GeglView *view)
 {
   GtkWidget *widget = GTK_WIDGET (view);
   GeglRect roi={view->x, view->y, widget->allocation.width, widget->allocation.height};
+
+  /* first forget all */
+  gegl_projection_forget      (view->projection, NULL);
+  /* then enqueue our selves */
   gegl_projection_update_rect (view->projection, roi);
 }

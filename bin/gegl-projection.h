@@ -63,6 +63,9 @@ GType  gegl_projection_get_type    (void) G_GNUC_CONST;
 void   gegl_projection_update_rect (GeglProjection *self,
                                     GeglRect        roi);
 
+void   gegl_projection_forget      (GeglProjection *self,
+                                    GeglRect       *roi);
+
 G_END_DECLS
 
 #endif /* __GEGL_PROJECTION_H__ */

@@ -1,5 +1,14 @@
 2006-10-31  Øyvind Kolås  <pippin@gimp.org>
 
+	Remove all other queued requests from the projection to speed up
+	interaction.
+
+	* bin/gegl-projection.c: (gegl_projection_forget):
+	* bin/gegl-projection.h:
+	* bin/gegl-view.c: (set_property), (gegl_view_repaint):
+
+2006-10-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-dirt-visitor.c: (visit_node): handle meta nodes.
 	* gegl/gegl-node.c: (property_changed): trigger meta nodes to rerender
 	by propagating properties immediatly.

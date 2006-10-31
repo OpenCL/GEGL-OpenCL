@@ -199,6 +199,30 @@ get_property (GObject    *gobject,
     }
 }
 
+void gegl_projection_forget (GeglProjection *self,
+                             GeglRect       *roi)
+{
+
+  if (roi)
+    {
+      GdkRectangle gdk_rect;
+      GdkRegion *temp_region;
+      memcpy (&gdk_rect, roi, sizeof (GdkRectangle));
+      temp_region = gdk_region_rectangle (&gdk_rect);
+      gdk_region_subtract (self->queued_region, temp_region);
+    }
+  else
+    {
+      if (self->queued_region)
+        gdk_region_destroy (self->queued_region);
+      self->queued_region = gdk_region_new ();
+
+      while (self->dirty_rects)
+         self->dirty_rects = g_list_remove (self->dirty_rects,
+            self->dirty_rects->data);
+    }
+}
+
 void gegl_projection_update_rect (GeglProjection *self,
                                   GeglRect        roi)
 {
