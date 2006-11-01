@@ -1459,3 +1459,24 @@ gegl_node_clear_dirt (GeglNode *node)
   g_object_unref (clean_visitor);
   g_object_unref (node);
 }
+
+GeglRect
+gegl_node_get_defined_rect (GeglNode     *root)
+{
+  GeglVisitor *have_visitor;
+
+  GeglPad     *pad;
+ 
+  pad = gegl_node_get_pad (root, "output");
+  if (pad->node != root)
+    root = pad->node;
+  g_object_ref (root);
+
+  have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, NULL);
+  gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE(root));
+  g_object_unref (have_visitor);
+
+  g_object_unref (root);
+  
+  return root->have_rect; 
+}

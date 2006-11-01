@@ -1,5 +1,20 @@
 2006-11-01  Øyvind Kolås  <pippin@gimp.org>
 
+	Added method to get the bounding box of the defined data in the
+	projection.
+
+	* gegl/gegl-node.[ch]: (gegl_node_get_defined_rect):
+
+2006-11-01  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* docs/gallery/clones.xml:
+	* gegl/gegl-operation-meta.c: (gegl_operation_meta_redirect):
+	* operations/meta/dropshadow.c: (associate):
+
+2006-11-01  Øyvind Kolås  <pippin@gimp.org>
+
 	Made the GUI start without the buggy structure editing tools visible,
 	they can be turned on by switch a toggle in the menu. Also made 
 	short cuts work.

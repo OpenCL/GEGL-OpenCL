@@ -88,6 +88,7 @@ void          gegl_node_blit_buf            (GeglNode     *self,
  * properties since time rendering was issued.
  */
 GeglRect      gegl_node_get_dirty_rect      (GeglNode     *root);
+GeglRect      gegl_node_get_defined_rect    (GeglNode     *root);
 void          gegl_node_clear_dirt          (GeglNode     *node);
 
 void          gegl_node_link                (GeglNode     *source,
