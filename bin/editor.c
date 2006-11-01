@@ -42,7 +42,7 @@ static void reset_gegl (GeglNode    *gegl,
                         const gchar *path);
 static GtkWidget *create_menubar (Editor *editor);
 static GtkWidget *
-create_tree_window (Editor *editor)
+create_window (Editor *editor)
 {
   GtkWidget *self;
   GtkWidget *vbox;
@@ -54,7 +54,7 @@ create_tree_window (Editor *editor)
   GtkWidget *property_scroll;
 
   /* creation of ui components */
-  self = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  editor->window = self = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   vbox = gtk_vbox_new (FALSE, 1);
   hpaned_top = gtk_vpaned_new ();
   hpaned_top_level = gtk_hpaned_new ();
@@ -65,7 +65,6 @@ create_tree_window (Editor *editor)
   gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (property_scroll), editor->property_editor);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (property_scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   vpaned = gtk_vpaned_new ();
-
 
   menubar = create_menubar (editor); /*< depends on other widgets existing */
 
@@ -96,6 +95,9 @@ create_tree_window (Editor *editor)
   gtk_widget_show_all (vbox);
 
   editor->drawing_area = drawing_area;
+  editor->structure = hpaned_top;
+  editor->property_pane = property_scroll;
+  gtk_widget_hide (editor->structure);
   return self;
 }
 
@@ -111,10 +113,10 @@ editor_main (GeglNode    *gegl,
   editor.property_editor = gtk_vbox_new (FALSE, 0);
   editor.tree_editor = tree_editor_new (editor.property_editor);
   editor.graph_editor = NULL;/*gtk_label_new ("graph");*/
-  editor.tree_window = create_tree_window (&editor);
+  editor.window = create_window (&editor);
   treeview = tree_editor_get_treeview (editor.tree_editor);
   gtk_container_add (GTK_CONTAINER (editor.property_editor), gtk_label_new (editor.composition_path));
-  gtk_widget_show_all (editor.tree_window);
+  gtk_widget_show (editor.window);
 
   reset_gegl (gegl, path);
 
@@ -172,32 +174,60 @@ static const gchar *ui_info =
   "      <menuitem action='Quit'/>"
   "      <separator/>"
   "    </menu>"
+  "    <menu action='ViewMenu'>"
+  "      <menuitem action='Tree'/>"
+  "      <menuitem action='Properties'/>"
+  "    </menu>"
   "    <menu action='HelpMenu'>"
   "      <menuitem action='About'/>"
   "    </menu>"
   "  </menubar>"
   "</ui>";
 
+static void cb_tree_visible (GtkAction *action, gpointer userdata);
+static void cb_properties_visible (GtkAction *action, gpointer userdata);
+  
+static GtkToggleActionEntry toggle_entries[]={
+    {"Tree", NULL,
+     "TreeView", "F5",
+     "Toggle visibility of tree structure of composition",
+     G_CALLBACK (cb_tree_visible),
+     FALSE},
+    {"Properties", NULL,
+     "PropertiesView", NULL,
+     "Toggle visibility of property editor",
+     G_CALLBACK (cb_properties_visible),
+     TRUE}
+};
+
+static guint n_toggle_entries = G_N_ELEMENTS (toggle_entries);
+
+static GtkActionGroup *get_actions(void)
+{
+  static GtkActionGroup *actions = NULL;
+  if (!actions)
+    {
+      actions = gtk_action_group_new ("Actions");
+      gtk_action_group_add_actions (actions, action_entries, n_action_entries,
+                                    NULL);
+      gtk_action_group_add_toggle_actions (actions, toggle_entries, n_toggle_entries,
+                                           (void*)0x6367); /* <- probably userdata */
+    }
+  return actions;
+}
+
 static GtkWidget *
 create_menubar (Editor *editor)
 {
-  GtkActionGroup *actions;
   GtkUIManager *ui;
   GError   *error = NULL;
 
-
   ui = gtk_ui_manager_new ();
-  actions = gtk_action_group_new ("Actions");
-  gtk_action_group_add_actions (actions, action_entries, n_action_entries,
-                                NULL);
-
   gtk_ui_manager_set_add_tearoffs (ui, TRUE);
-  gtk_ui_manager_insert_action_group (ui, actions, 0);
+  gtk_ui_manager_insert_action_group (ui, get_actions (), 0);
 
-#if 0
-  gtk_window_add_accel_group (GTK_WINDOW (editor->tree_window),
+  gtk_window_add_accel_group (GTK_WINDOW (editor->window),
                               gtk_ui_manager_get_accel_group (ui));
-#endif
 
   if (!gtk_ui_manager_add_ui_from_string (ui, ui_info, -1, &error))
     {
@@ -218,7 +248,7 @@ cb_composition_new (GtkAction *action)
   gint      result;
 
   dialog = gtk_dialog_new_with_buttons ("GEGL - new composition",
-                                        GTK_WINDOW (editor.tree_window),
+                                        GTK_WINDOW (editor.window),
                                         GTK_DIALOG_MODAL,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
                                         GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
@@ -226,7 +256,7 @@ cb_composition_new (GtkAction *action)
 
   alert =
     StockIcon (GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG,
-               editor.tree_window);
+               editor.window);
 
   label =
     gtk_label_new
@@ -271,7 +301,7 @@ cb_composition_load (GtkAction *action)
   GtkFileFilter *filter;
 
   dialog = gtk_file_chooser_dialog_new ("Load GEGL composition",
-                                        GTK_WINDOW (editor.tree_window),
+                                        GTK_WINDOW (editor.window),
                                         GTK_FILE_CHOOSER_ACTION_OPEN,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                         GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
@@ -306,7 +336,7 @@ cb_composition_save (GtkAction *action)
   GtkFileFilter *filter;
 
   dialog = gtk_file_chooser_dialog_new ("Save GEGL composition",
-                                        GTK_WINDOW (editor.tree_window),
+                                        GTK_WINDOW (editor.window),
                                         GTK_FILE_CHOOSER_ACTION_SAVE,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                         GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
@@ -376,7 +406,7 @@ cb_quit_dialog (GtkAction *action)
   gint      result;
 
   dialog = gtk_dialog_new_with_buttons ("GEGL - quit confirmation",
-                                        GTK_WINDOW (editor.tree_window),
+                                        GTK_WINDOW (editor.window),
                                         GTK_DIALOG_MODAL,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
                                         GTK_STOCK_SAVE, 4,
@@ -386,7 +416,7 @@ cb_quit_dialog (GtkAction *action)
 
   alert =
     StockIcon (GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG,
-               editor.tree_window);
+               editor.window);
 
   label = gtk_label_new ("Really quit?\nAll unsaved data will be lost.");
   gtk_misc_set_padding (GTK_MISC (label), 10, 10);
@@ -435,6 +465,31 @@ cb_about (GtkAction *action)
   g_signal_connect (G_OBJECT (window), "delete-event",
                     G_CALLBACK (gtk_widget_destroy), window);
   gtk_widget_show_all (window);
+}
+
+static void cb_tree_visible (GtkAction *action, gpointer userdata)
+{
+  GtkWidget *widget = editor.structure;
+  if (GTK_WIDGET_VISIBLE (widget))
+    {
+      gtk_widget_hide (widget);
+    }
+  else
+    {
+      gtk_widget_show (widget);
+    }
+}
+static void cb_properties_visible (GtkAction *action, gpointer userdata)
+{
+  GtkWidget *widget = editor.property_pane;
+  if (GTK_WIDGET_VISIBLE (widget))
+    {
+      gtk_widget_hide (widget);
+    }
+  else
+    {
+      gtk_widget_show (widget);
+    }
 }
 
 GtkWidget *

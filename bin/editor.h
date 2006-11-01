@@ -24,9 +24,13 @@
 
 typedef struct Editor 
 {
+  GtkWidget *window;
   GtkWidget *property_editor;
-  GtkWidget *tree_window;
   GtkWidget *tree_editor;
+
+  GtkWidget *structure;
+  GtkWidget *property_pane;
+  
   GtkWidget *graph_editor;
   GtkWidget *drawing_area;
   gchar     *composition_path;

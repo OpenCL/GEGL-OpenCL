@@ -1,3 +1,16 @@
+2006-11-01  Øyvind Kolås  <pippin@gimp.org>
+
+	Made the GUI start without the buggy structure editing tools visible,
+	they can be turned on by switch a toggle in the menu. Also made 
+	short cuts work.
+
+	* bin/editor.c: (create_window), (editor_main), (get_actions),
+	(create_menubar), (cb_composition_new), (cb_composition_load),
+	(cb_composition_save), (cb_quit_dialog), (cb_about),
+	(cb_tree_visible), (cb_properties_visible):
+	* bin/editor.h:
+	* bin/gegl.c: (main):
+
 2006-10-31  Øyvind Kolås  <pippin@gimp.org>
 
 	Remove all other queued requests from the projection to speed up
