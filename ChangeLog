@@ -1,5 +1,10 @@
 2006-11-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl.c: Made resizes follow the shrink wrap, made the default
+	project a little bit more interesting.
+
+2006-11-02  Øyvind Kolås  <pippin@gimp.org>
+
 	Fixed bug #367869, create a GHashMap cache of string->op_id,
 	lookups.
 
