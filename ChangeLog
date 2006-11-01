@@ -1,3 +1,10 @@
+2006-11-02  Øyvind Kolås  <pippin@gimp.org>
+
+	Fixed bug #367869, create a GHashMap cache of string->op_id,
+	lookups.
+
+	* gegl/gegl-node.c: (add_operations), (g_type_from_op_class):
+
 2006-11-01  Øyvind Kolås  <pippin@gimp.org>
 
 	Added shrink wrap at startup, as well as a shrink-wrap shortcut

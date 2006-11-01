@@ -752,53 +752,39 @@ gegl_node_create_pad (GeglNode   *self,
   return pad;
 }
 
-static GType
-g_type_from_op_class2 (GType        parent,
-                       const gchar *op_class)
+static void
+add_operations (GHashTable *hash,
+                GType       parent)
 {
-  GType        ret = 0;
   GType       *types;
   guint        count;
   gint         no;
-  gchar       *op_class_copy;
-  const gchar *op_class_intern;
 
   types = g_type_children (parent, &count);
   if (!types)
-    return 0;
-
-  op_class_copy = g_strdup (op_class);
-  g_strdelimit (op_class_copy, "_", '-');
-  op_class_intern = g_intern_string (op_class_copy);
-  g_free (op_class_copy);
+    return;
 
   for (no=0; no < count; no++)
     {
-      GeglOperationClass *klass = g_type_class_ref (types[no]);
-
-      if (klass->name == op_class_intern)
-        {
-          ret = types[no];
-          g_type_class_unref (klass);
-          g_free (types);
-          return ret;
-        }
-      else
-        {
-          ret = g_type_from_op_class2 (types[no], op_class);
-        }
-      g_type_class_unref (klass);
-      if (ret!=0)
-        break;
+      GeglOperationClass *operation_class = g_type_class_ref (types[no]);
+      if (operation_class->name)
+        g_hash_table_insert (hash, g_strdup (operation_class->name), (gpointer)types[no]);
+      add_operations (hash, types[no]);
     }
   g_free (types);
-  return ret;
 }
 
 static GType
 g_type_from_op_class (const gchar *op_class)
 {
-  return g_type_from_op_class2 (GEGL_TYPE_OPERATION, op_class);
+  static GHashTable *hash = NULL;
+  if (!hash)
+    {
+      hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+
+      add_operations (hash, GEGL_TYPE_OPERATION);
+    }
+  return (GType)g_hash_table_lookup (hash, op_class);
 }
 
 static void
