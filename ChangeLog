@@ -1,5 +1,12 @@
 2006-11-01  Øyvind Kolås  <pippin@gimp.org>
 
+	Added shrink wrap at startup, as well as a shrink-wrap shortcut
+	(Ctrl+E, same as in GIMP).
+
+	* bin/editor.c: (create_window), (editor_main), (cb_shrinkwrap):
+
+2006-11-01  Øyvind Kolås  <pippin@gimp.org>
+
 	Added method to get the bounding box of the defined data in the
 	projection.
 

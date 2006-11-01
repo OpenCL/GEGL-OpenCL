@@ -83,15 +83,13 @@ create_window (Editor *editor)
   /* setting properties for ui components */
   gtk_window_set_gravity (GTK_WINDOW (self), GDK_GRAVITY_STATIC);
   gtk_window_set_title (GTK_WINDOW (self), "GEGL - tree ui");
-  gtk_widget_set_size_request (editor->tree_editor, -1, 200);
-  gtk_widget_set_size_request (property_scroll, -1, 200);
-  gtk_widget_set_size_request (drawing_area, 256, 256);
+  gtk_widget_set_size_request (editor->tree_editor, -1, 100);
+  gtk_widget_set_size_request (property_scroll, -1, 100);
+  gtk_widget_set_size_request (drawing_area, 89, 55);
 
   g_signal_connect (G_OBJECT (self), "delete-event",
                     G_CALLBACK (cb_window_delete_event), NULL);
 
-  gtk_window_set_geometry_hints (GTK_WINDOW (self), NULL, NULL,
-                                 GDK_HINT_USER_POS);
   gtk_widget_show_all (vbox);
 
   editor->drawing_area = drawing_area;
@@ -103,6 +101,8 @@ create_window (Editor *editor)
 
 
 GeglNode *editor_output = NULL;
+
+static void cb_shrinkwrap (GtkAction *action);
 
 gint
 editor_main (GeglNode    *gegl,
@@ -120,6 +120,7 @@ editor_main (GeglNode    *gegl,
 
   reset_gegl (gegl, path);
 
+  cb_shrinkwrap (NULL);
   gtk_main ();
   return 0;
 }
@@ -159,6 +160,11 @@ static GtkActionEntry action_entries[] = {
    "_About", "<control>A",
    "About",
    G_CALLBACK (cb_about)},
+
+  {"ShrinkWrap", NULL,
+   "_Shrink wrap", "<control>E",
+   "Size the window to the image, if feasible",
+   G_CALLBACK (cb_shrinkwrap)},
 };
 static guint n_action_entries = G_N_ELEMENTS (action_entries);
 
@@ -175,6 +181,8 @@ static const gchar *ui_info =
   "      <separator/>"
   "    </menu>"
   "    <menu action='ViewMenu'>"
+  "      <menuitem action='ShrinkWrap'/>"
+  "      <separator/>"
   "      <menuitem action='Tree'/>"
   "      <menuitem action='Properties'/>"
   "    </menu>"
@@ -479,6 +487,7 @@ static void cb_tree_visible (GtkAction *action, gpointer userdata)
       gtk_widget_show (widget);
     }
 }
+
 static void cb_properties_visible (GtkAction *action, gpointer userdata)
 {
   GtkWidget *widget = editor.property_pane;
@@ -491,6 +500,41 @@ static void cb_properties_visible (GtkAction *action, gpointer userdata)
       gtk_widget_show (widget);
     }
 }
+
+static void cb_shrinkwrap (GtkAction *action)
+{
+  GeglRect defined = gegl_node_get_defined_rect (editor.gegl);
+  g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.w, defined.h);
+
+  g_object_set (editor.drawing_area, "x", defined.x, "y", defined.y, NULL);
+  gtk_widget_queue_draw (editor.drawing_area);
+  {
+    GdkScreen *screen= gtk_window_get_screen (GTK_WINDOW (editor.window));
+
+    gint screen_width, screen_height;    
+    gint width, height;
+
+    screen_width = gdk_screen_get_width (screen);
+    screen_height = gdk_screen_get_height (screen);
+    
+    gtk_window_get_size (GTK_WINDOW (editor.window), &width, &height);
+    width -= editor.drawing_area->allocation.width;
+    height -= editor.drawing_area->allocation.height;
+
+    width += defined.w;
+    height += defined.h;
+
+    if (width > screen_width)
+      width = screen_width;
+    if (height > screen_height)
+      height = screen_height;
+
+    gtk_window_resize (GTK_WINDOW (editor.window), width,
+                                                   height);
+  }
+
+}
+
 
 GtkWidget *
 StockIcon (const gchar *id, GtkIconSize size, GtkWidget *widget)
