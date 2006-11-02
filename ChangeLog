@@ -1,5 +1,9 @@
 2006-11-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl.c: remove old splash projects.
+
+2006-11-02  Øyvind Kolås  <pippin@gimp.org>
+
 	Added some experimental code to play with bayer demosaicing from raw
 	files, one loader that only grabs the raw CCD/CMOS data for raw files
 	with extension either .rawbayer or .rawbayerS (the S version needed
