@@ -1,5 +1,19 @@
 2006-11-02  Øyvind Kolås  <pippin@gimp.org>
 
+	Added some experimental code to play with bayer demosaicing from raw
+	files, one loader that only grabs the raw CCD/CMOS data for raw files
+	with extension either .rawbayer or .rawbayerS (the S version needed
+	for some endianness/pnm reader offset issues).
+
+	demosaic-simple does a nearest correctly colored neighbour
+	demosaicing. The exact bayer pattern can be specified with integers
+	ranged 0..3.
+
+	* operations/workshop/demosaic-simple.c: NEW file
+	* operations/workshop/rawbayer-load.c: NEW file
+
+2006-11-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl.c: Made resizes follow the shrink wrap, made the default
 	project a little bit more interesting.
 
