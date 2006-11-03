@@ -68,3 +68,20 @@ set_property (GObject      *object,
               GParamSpec   *pspec)
 {
 }
+
+typedef struct Redirect {
+  gchar    *name;
+  void     *data;
+  GeglNode *internal;
+  gchar    *internal_name;
+} Redirect;
+
+void
+gegl_operation_meta_redirect (GeglOperation *operation,
+                              const gchar   *name,
+                              void          *data,
+                              GeglNode      *internal,
+                              const gchar   *internal_name)
+{
+  g_warning ("redirect request for %s->%s", name, internal_name);
+}

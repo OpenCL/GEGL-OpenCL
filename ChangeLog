@@ -1,5 +1,13 @@
 2006-11-03  Øyvind Kolås  <pippin@gimp.org>
 
+	Some prototype code towards making it possible to write meta ops as
+	XML instead of C.
+
+	* gegl/gegl-operation-meta.c: (gegl_operation_meta_redirect):
+	* operations/meta/dropshadow.c: (associate):
+
+2006-11-03  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (gegl_node_connect), (gegl_node_link_many):
 	Made insertion of nodes provide dirt to the structure.
 
@@ -3695,7 +3703,7 @@
 	* gegl/gegl-pad.[ch]
 	* gegl/gegl-visitor.[ch]: Make consistent use of using self as the
 	object instance.
-	* gegl/gegl-node.[c]: added gegl_node_list_properties ()
+	* gegl/gegl-node.[c]: added gegl_node_get_properties ()
 	* gegl/gegl-operation.[ch]: Made descendant class of GObject instead
 
 2005-07-30  Øyvind Kolås  <pipipn@gimp.org>

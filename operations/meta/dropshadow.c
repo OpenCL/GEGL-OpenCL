@@ -122,6 +122,11 @@ static void associate (GeglOperation *operation)
       gegl_node_link_many (priv->input, priv->darken, priv->blur, priv->opacity, priv->translate, priv->over, priv->output, NULL);
       gegl_node_connect (priv->over, "aux", priv->input, "output");
       gegl_node_connect (priv->darken, "aux", priv->black, "output");
+
+      gegl_operation_meta_redirect (self, "radius", &self->radius, priv->blur, "radius-x");
+      gegl_operation_meta_redirect (self, "radius", &self->radius, priv->blur, "radius-y");
+      gegl_operation_meta_redirect (self, "x", &self->x, priv->translate, "x");
+      gegl_operation_meta_redirect (self, "y", &self->y, priv->translate, "y");
     }
 }
 
