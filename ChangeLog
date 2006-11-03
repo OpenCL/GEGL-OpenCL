@@ -1,5 +1,9 @@
 2006-11-03  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/meta/dropshadow.c: (associate): use new API instead.
+
+2006-11-03  Øyvind Kolås  <pippin@gimp.org>
+
 	Improved the gegl binary and moved larger portions to use
 	pure public api from gegl.h.
 
