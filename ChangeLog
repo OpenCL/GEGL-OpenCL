@@ -1,6 +1,28 @@
 2006-11-03  Øyvind Kolås  <pippin@gimp.org>
 
-	Reindented and improved the the public API (gegl.h)
+	Improved the gegl binary and moved larger portions to use
+	pure public api from gegl.h.
+
+	* bin/Makefile.am:
+	* bin/editor-optype.c: (popup_properties), (chain_in_operation),
+	(menu_item_activate), (typeeditor_optype), (entry_activate):
+	* bin/editor.c: (cb_window_keybinding), (create_window),
+	(editor_main), (cb_about), (cb_structure_visible),
+	(cb_properties_visible), (cb_tree_visible), (cb_shrinkwrap),
+	(cb_recompute), (editor_refresh_structure), (reset_gegl):
+	* bin/editor.h:
+	* bin/gegl-projection.c:
+	* bin/gegl-projection.h:
+	* bin/gegl-store.c:
+	* bin/gegl-tree-editor-action.c:
+	* bin/gegl-tree-editor.c: (type_editor_generic),
+	(property_editor_general):
+	* bin/gegl-view.c:
+	* bin/gegl-view.h:
+
+2006-11-03  Øyvind Kolås  <pippin@gimp.org>
+
+	Improved and reindented the the public API (gegl.h)
 
 	* gegl/gegl.h:
 	* gegl/buffer/gegl-buffer-allocator.c:

@@ -21,7 +21,7 @@
 #define __GEGL_VIEW_H__
 
 #include <gtk/gtk.h>
-#include <gegl-plugin.h>
+#include "gegl.h"
 #include "gegl-projection.h"
 
 G_BEGIN_DECLS

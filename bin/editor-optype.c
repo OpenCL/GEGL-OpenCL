@@ -18,7 +18,7 @@
  */
 
 #include <gtk/gtk.h>
-#include <gegl-plugin.h>
+#include "gegl-plugin.h"  /* FIXME: should just be gegl.h */
 #include <string.h>
 #include <stdlib.h>
 #include "editor.h"
@@ -32,6 +32,53 @@ static gboolean
 completion_match_selected (GtkEntryCompletion * completion,
                            GtkTreeModel *model,
                            GtkTreeIter *iter, gpointer user_data);
+void editor_refresh_structure ();
+
+void popup_properties (GeglNode *node)
+{
+  GtkWidget *dialog;
+  GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
+
+  dialog = gtk_dialog_new_with_buttons ("Massage",
+                                        GTK_WINDOW (editor.window),
+                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_STOCK_OK,
+                                        GTK_RESPONSE_NONE,
+                                        NULL);
+  property_editor_rebuild (vbox, node);
+  gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox), vbox);
+
+  g_signal_connect_swapped (dialog,
+                            "response", 
+                            G_CALLBACK (gtk_widget_destroy),
+                            dialog);
+  
+  gtk_widget_show_all (dialog);
+}
+
+static void
+chain_in_operation (const gchar *op_type)
+{
+  g_warning ("request to chain in %s", op_type);
+  GeglNode *proxy;
+  GeglNode *iter;
+  GeglNode *new;
+
+  proxy = gegl_graph_output (editor.gegl, "output");
+  iter = gegl_node_get_connected_to (proxy, "input");
+  new = gegl_graph_new_node (editor.gegl, "operation", op_type, NULL);
+  if (iter)
+    {
+      gegl_node_link_many (iter, new, proxy, NULL);
+    }
+  else
+    {
+      gegl_node_link_many (new, proxy, NULL);
+    }
+  editor_refresh_structure();
+  popup_properties (new);
+}
+
 static void
 menu_item_activate (GtkWidget *widget, gpointer user_data)
 {
@@ -42,9 +89,16 @@ menu_item_activate (GtkWidget *widget, gpointer user_data)
   const char *new_type;
 
   item = user_data;
+
   menu_item = widget;
   label = gtk_bin_get_child (GTK_BIN (menu_item));
   new_type = gtk_label_get_text (GTK_LABEL (label));
+
+  if (!item)
+    {
+      chain_in_operation (new_type);
+      return;
+    }
 
   gegl_node_set (item, "operation", new_type, NULL);
   property_editor_rebuild (editor.property_editor, item);
@@ -111,7 +165,7 @@ operation_class_iterate_for_completion (GType type,
   g_free (ops);
 }
 
-GtkTreeModel *
+static GtkTreeModel *
 create_completion_model (GeglNode *item)
 {
   GtkListStore *store;
@@ -321,8 +375,6 @@ gtk_option_menu_position (GtkMenu  *menu,
     *y = popup_y;
 }
 
-
-
 static void
 button_clicked (GtkButton * button, gpointer item)
 {
@@ -332,15 +384,13 @@ button_clicked (GtkButton * button, gpointer item)
   gtk_menu_popup (menu, NULL, NULL, gtk_option_menu_position, button, 0, 0);
 }
 
-
-
 GtkWidget *
 typeeditor_optype (GtkSizeGroup *col1,
                    GtkSizeGroup *col2,
                    GeglNode *item)
 {
   GtkWidget *hbox;
-  GtkWidget *label;
+  GtkWidget *label = NULL;
   GtkWidget *hbox2;
   GtkWidget *entry;
   GtkEntryCompletion *completion;
@@ -350,7 +400,7 @@ typeeditor_optype (GtkSizeGroup *col1,
   char     *current_type;
 
   hbox = gtk_hbox_new (FALSE, 5);
-  label = gtk_label_new ("operation");
+  if (col1) label = gtk_label_new ("operation");
   hbox2 = gtk_hbox_new (FALSE, 0);
   entry = gtk_entry_new ();
   gtk_entry_set_width_chars (GTK_ENTRY (entry), 6);
@@ -360,16 +410,23 @@ typeeditor_optype (GtkSizeGroup *col1,
   button = gtk_button_new ();
   button_arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
 
+  if (item)
+    {
   current_type = g_strdup (gegl_node_get_op_type_name (item));
+    }
+  else
+    {
+      current_type = g_strdup ("Enter action here");
+    }
 
-  gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, FALSE, 0);
+  if (label) gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (hbox), hbox2, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (hbox2), entry, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
   gtk_container_add (GTK_CONTAINER (button), button_arrow);
-  gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
-  gtk_size_group_add_widget (col1, label);
-  gtk_size_group_add_widget (col2, hbox2);
+  if (label) gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
+  if (label) gtk_size_group_add_widget (col1, label);
+  if (col2)gtk_size_group_add_widget (col2, hbox2);
 
   if (current_type)
     {
@@ -401,6 +458,11 @@ entry_activate (GtkEntry * entry, gpointer user_data)
   GeglNode   *item = user_data;
   const char *new_type = gtk_entry_get_text (entry);
 
+  if (!item)
+    {
+      chain_in_operation (new_type);
+      return;
+    }
   gegl_node_set (item, "operation", new_type, NULL);
   property_editor_rebuild (editor.property_editor, item);
 

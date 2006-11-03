@@ -19,7 +19,7 @@
 
 #include <gtk/gtk.h>
 #include <stdio.h>
-#include <gegl-plugin.h>
+#include "gegl.h"
 #include "gegl-tree-editor.h"
 #include "editor.h"
 #include <string.h>
@@ -150,7 +150,7 @@ type_editor_generic (GtkSizeGroup *col1,
   gtk_size_group_add_widget (col1, label);
   gtk_size_group_add_widget (col2, entry);
 
-  gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
 
   g_object_set_data (G_OBJECT (entry), "node", node);
@@ -235,7 +235,7 @@ property_editor_general (GtkSizeGroup *col1,
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 10);
   
-  properties = gegl_node_list_properties (node, &n_properties);
+  properties = gegl_node_get_properties (node, &n_properties);
 
   gtk_box_pack_start (GTK_BOX (vbox), typeeditor_optype (col1, col2, node), FALSE, FALSE, 0);
   /*gtk_box_pack_start (GTK_BOX (vbox), prop_editor, FALSE, FALSE, 0);*/

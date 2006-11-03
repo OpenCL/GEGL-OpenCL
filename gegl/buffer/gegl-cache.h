@@ -20,8 +20,9 @@
 #ifndef __GEGL_PROJECTION_H__
 #define __GEGL_PROJECTION_H__
 
-#include <gegl-plugin.h>
 #include <gdk/gdk.h>
+#include "gegl.h"
+#include "gegl-buffer.h"
 
 G_BEGIN_DECLS
 

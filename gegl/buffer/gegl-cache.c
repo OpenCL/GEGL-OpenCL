@@ -23,7 +23,8 @@
 #include <glib-object.h>
 #include <gobject/gvaluecollector.h>
 
-#include <gegl-plugin.h>
+#include "gegl.h"
+#include <babl/babl.h>
 #include "gegl-projection.h"
 
 #include <gdk/gdk.h>

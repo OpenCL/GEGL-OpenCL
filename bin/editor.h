@@ -28,8 +28,9 @@ typedef struct Editor
   GtkWidget *property_editor;
   GtkWidget *tree_editor;
 
-  GtkWidget *structure;
   GtkWidget *property_pane;
+  GtkWidget *tree_pane;
+  GtkWidget *structure;
   
   GtkWidget *graph_editor;
   GtkWidget *drawing_area;

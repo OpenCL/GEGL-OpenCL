@@ -19,7 +19,7 @@
 
 #include <gtk/gtk.h>
 #include <string.h>
-#include <gegl-plugin.h>
+#include "gegl.h"
 #include "gegl-view.h"
 #include "editor.h"
 #include "gegl-tree-editor.h"

@@ -27,7 +27,7 @@ gegl_SOURCES = \
         $(gui_sources)
 
 INCLUDES = \
-	-I$(top_srcdir)	-I$(top_srcdir)/gegl \
+	-I$(top_srcdir)	-I$(top_srcdir)/gegl -I$(top_srcdir)/gegl/buffer \
 	@DEP_CFLAGS@ @GTK_CFLAGS@ @BABL_CFLAGS@
 
 AM_LDFLAGS =  \

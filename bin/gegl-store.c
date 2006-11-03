@@ -16,7 +16,26 @@
  *
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
-#include "gegl-plugin.h"
+
+
+#if 1
+#include "gegl-plugin.h"  /* is this neccesary? FIXME: should just be gegl.h
+                           
+                           gegl_node_get_connected_to
+                           gegl_node_get_op_type_name
+                           GeglPad
+                           gegl_node_get_pad
+                           gegl_pad_get_connections
+                           GeglConnection
+                           gegl_connection_get_sink_pad
+                           gegl_pad_get_name
+                           gegl_connection_get_sink_node
+                           */
+#endif
+#if 0
+#include "gegl.h"
+#endif
+
 #include "gegl-store.h"
 #include <string.h>
 

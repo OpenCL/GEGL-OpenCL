@@ -17,16 +17,17 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
-#include <gegl-plugin.h>
 #include <gtk/gtk.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <libgen.h>
+#include "gegl.h"
 #include "gegl-store.h"
 #include "gegl-tree-editor.h"
 #include "editor.h"
 #include "gegl-view.h"
+#include <gdk/gdkkeysyms.h>
 
 static gchar *blank_composition =
     "<gegl>"
@@ -35,6 +36,26 @@ static gchar *blank_composition =
 
 static gboolean
 cb_window_delete_event (GtkWidget *widget, GdkEvent *event, gpointer data);
+static gboolean
+cb_window_keybinding (GtkWidget *widget, GdkEventKey *event, gpointer data)
+{ 
+  if (event->keyval == GDK_space &&
+      ! (event->state & (~GDK_SHIFT_MASK & gtk_accelerator_get_default_mod_mask())))
+    {
+      g_warning ("slash");
+      return TRUE;
+    }
+  else
+    {
+      g_warning ("something else");
+    }
+  return FALSE;
+}
+
+GtkWidget *
+typeeditor_optype (GtkSizeGroup *col1,
+                   GtkSizeGroup *col2,
+                   GeglNode *item);
 
 Editor editor;
 
@@ -46,16 +67,22 @@ create_window (Editor *editor)
 {
   GtkWidget *self;
   GtkWidget *vbox;
+  GtkWidget *hbox;
+  GtkWidget *vbox2;
   GtkWidget *menubar;
   GtkWidget *hpaned_top_level;
   GtkWidget *hpaned_top;
   GtkWidget *vpaned;
   GtkWidget *drawing_area;
   GtkWidget *property_scroll;
+  GtkWidget *add_box;
+  GtkWidget *add_entry;
 
   /* creation of ui components */
   editor->window = self = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   vbox = gtk_vbox_new (FALSE, 1);
+  hbox = gtk_hbox_new (FALSE, 1);
+  vbox2 = gtk_vbox_new (FALSE, 1);
   hpaned_top = gtk_vpaned_new ();
   hpaned_top_level = gtk_hpaned_new ();
   drawing_area = g_object_new (GEGL_TYPE_VIEW,
@@ -68,21 +95,33 @@ create_window (Editor *editor)
 
   menubar = create_menubar (editor); /*< depends on other widgets existing */
 
+  add_box = gtk_hbox_new (FALSE, 1);
+  add_entry = gtk_entry_new ();
+
   /* packing */
 
   gtk_container_add (GTK_CONTAINER (self), vbox);
-  gtk_box_pack_start (GTK_BOX (vbox), menubar, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), menubar, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), hpaned_top_level, TRUE, TRUE, 0);
   gtk_paned_pack1 (GTK_PANED (hpaned_top_level), hpaned_top, FALSE, TRUE);
-  gtk_paned_pack2 (GTK_PANED (hpaned_top_level), drawing_area, TRUE, TRUE);
+  gtk_box_pack_start (GTK_BOX (hbox), gtk_label_new ("     "), FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), add_box, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox2), drawing_area, TRUE, TRUE, 0);
+  gtk_paned_pack2 (GTK_PANED (hpaned_top_level), vbox2, TRUE, TRUE);
 
   gtk_paned_pack1 (GTK_PANED (hpaned_top), property_scroll, FALSE,
                    TRUE);
   gtk_paned_pack2 (GTK_PANED (hpaned_top), editor->tree_editor, FALSE, TRUE);
 
+    {
+      GtkWidget *foo = typeeditor_optype (NULL, NULL, NULL);
+      gtk_box_pack_start (GTK_BOX (add_box), foo, TRUE, TRUE, 0);
+    }
+
   /* setting properties for ui components */
   gtk_window_set_gravity (GTK_WINDOW (self), GDK_GRAVITY_STATIC);
-  gtk_window_set_title (GTK_WINDOW (self), "GEGL - tree ui");
+  gtk_window_set_title (GTK_WINDOW (self), "GEGL");
   gtk_widget_set_size_request (editor->tree_editor, -1, 100);
   gtk_widget_set_size_request (property_scroll, -1, 100);
   gtk_widget_set_size_request (drawing_area, 89, 55);
@@ -90,11 +129,15 @@ create_window (Editor *editor)
   g_signal_connect (G_OBJECT (self), "delete-event",
                     G_CALLBACK (cb_window_delete_event), NULL);
 
+  g_signal_connect (G_OBJECT (self), "key-press-event",
+                    G_CALLBACK (cb_window_keybinding), NULL);
+
   gtk_widget_show_all (vbox);
 
   editor->drawing_area = drawing_area;
   editor->structure = hpaned_top;
   editor->property_pane = property_scroll;
+  editor->tree_pane = editor->tree_editor;
   gtk_widget_hide (editor->structure);
   return self;
 }
@@ -103,6 +146,7 @@ create_window (Editor *editor)
 GeglNode *editor_output = NULL;
 
 static void cb_shrinkwrap (GtkAction *action);
+static void cb_recompute (GtkAction *action);
 
 gint
 editor_main (GeglNode    *gegl,
@@ -117,6 +161,7 @@ editor_main (GeglNode    *gegl,
   treeview = tree_editor_get_treeview (editor.tree_editor);
   gtk_container_add (GTK_CONTAINER (editor.property_editor), gtk_label_new (editor.composition_path));
   gtk_widget_show (editor.window);
+  gtk_container_set_border_width (GTK_CONTAINER (editor.property_editor), 4);
 
   reset_gegl (gegl, path);
 
@@ -165,6 +210,11 @@ static GtkActionEntry action_entries[] = {
    "_Shrink wrap", "<control>E",
    "Size the window to the image, if feasible",
    G_CALLBACK (cb_shrinkwrap)},
+
+  {"Recompute", NULL,
+   "_Recompute view", "<control>R",
+   "Recalculate all image data (for working around bugs)",
+   G_CALLBACK (cb_recompute)},
 };
 static guint n_action_entries = G_N_ELEMENTS (action_entries);
 
@@ -182,7 +232,10 @@ static const gchar *ui_info =
   "    </menu>"
   "    <menu action='ViewMenu'>"
   "      <menuitem action='ShrinkWrap'/>"
+  "      <menuitem action='Recompute'/>"
   "      <separator/>"
+  "      <separator/>"
+  "      <menuitem action='Structure'/>"
   "      <menuitem action='Tree'/>"
   "      <menuitem action='Properties'/>"
   "    </menu>"
@@ -194,18 +247,24 @@ static const gchar *ui_info =
 
 static void cb_tree_visible (GtkAction *action, gpointer userdata);
 static void cb_properties_visible (GtkAction *action, gpointer userdata);
+static void cb_structure_visible (GtkAction *action, gpointer userdata);
   
 static GtkToggleActionEntry toggle_entries[]={
     {"Tree", NULL,
-     "TreeView", "F5",
+     "TreeView", NULL,
      "Toggle visibility of tree structure of composition",
      G_CALLBACK (cb_tree_visible),
-     FALSE},
+     TRUE},
     {"Properties", NULL,
      "PropertiesView", NULL,
      "Toggle visibility of property editor",
      G_CALLBACK (cb_properties_visible),
-     TRUE}
+     TRUE},
+    {"Structure", NULL,
+     "StructureView", "F5",
+     "Toggle visibility of sidebar",
+     G_CALLBACK (cb_structure_visible),
+     FALSE},
 };
 
 static guint n_toggle_entries = G_N_ELEMENTS (toggle_entries);
@@ -462,7 +521,7 @@ cb_about (GtkAction *action)
    );
    
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window), "About gugl");
+  gtk_window_set_title (GTK_WINDOW (window), "About GEGL");
   about = g_object_new (GEGL_TYPE_VIEW,
                         "node", gegl,
                         NULL);
@@ -475,16 +534,41 @@ cb_about (GtkAction *action)
   gtk_widget_show_all (window);
 }
 
-static void cb_tree_visible (GtkAction *action, gpointer userdata)
+static void cb_structure_visible (GtkAction *action, gpointer userdata)
 {
   GtkWidget *widget = editor.structure;
-  if (GTK_WIDGET_VISIBLE (widget))
+
+  GeglRect defined = gegl_node_get_defined_rect (editor.gegl);
+
+      if (GTK_WIDGET_VISIBLE (widget))
+        {
+          gtk_widget_hide (widget);
+        }
+      else
+        {
+          gtk_widget_show (widget);
+        }
+
+  if (defined.w == editor.drawing_area->allocation.width &&
+      defined.h == editor.drawing_area->allocation.height)
     {
-      gtk_widget_hide (widget);
-    }
-  else
-    {
-      gtk_widget_show (widget);
+      int i;
+      /* hacky way, trying to get the resize done with */
+      for (i=0;i<23;i++)
+        gtk_main_iteration ();
+
+      {
+        gint x,y;
+        g_object_get (editor.drawing_area,
+                      "x", &x,
+                      "y", &y,
+                      NULL);
+        cb_shrinkwrap (NULL);
+        g_object_set (editor.drawing_area,
+                      "x", x,
+                      "y", y,
+                      NULL);
+      }
     }
 }
 
@@ -501,13 +585,26 @@ static void cb_properties_visible (GtkAction *action, gpointer userdata)
     }
 }
 
+static void cb_tree_visible (GtkAction *action, gpointer userdata)
+{
+  GtkWidget *widget = editor.tree_pane;
+  if (GTK_WIDGET_VISIBLE (widget))
+    {
+      gtk_widget_hide (widget);
+    }
+  else
+    {
+      gtk_widget_show (widget);
+    }
+}
+
+
 static void cb_shrinkwrap (GtkAction *action)
 {
   GeglRect defined = gegl_node_get_defined_rect (editor.gegl);
-  g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.w, defined.h);
+  /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.w, defined.h);*/
 
   g_object_set (editor.drawing_area, "x", defined.x, "y", defined.y, NULL);
-  gtk_widget_queue_draw (editor.drawing_area);
   {
     GdkScreen *screen= gtk_window_get_screen (GTK_WINDOW (editor.window));
 
@@ -532,7 +629,12 @@ static void cb_shrinkwrap (GtkAction *action)
     gtk_window_resize (GTK_WINDOW (editor.window), width,
                                                    height);
   }
+  gtk_widget_queue_draw (editor.drawing_area);
+}
 
+static void cb_recompute (GtkAction *action)
+{
+  gegl_view_repaint ((GeglView*)editor.drawing_area);
 }
 
 
@@ -549,28 +651,31 @@ StockIcon (const gchar *id, GtkIconSize size, GtkWidget *widget)
   return image;
 }
 
-
-
-static void reset_gegl (GeglNode    *gegl,
-                        const gchar *path)
+void editor_refresh_structure ()
 {
   GeglStore *store = gegl_store_new ();
   GtkWidget *treeview;
 
-  if (editor.composition_path)
-    g_free (editor.composition_path);
-  editor.composition_path = g_strdup (path);
-
-
-  if (editor.gegl)
-    g_object_unref (editor.gegl);
-  editor.gegl = gegl;
-
-  g_object_set (editor.drawing_area, "node", editor.gegl, NULL);
   gegl_store_set_root (store, gegl_graph_output (editor.gegl, "output"));
   gegl_store_set_gegl (store, editor.gegl);
   treeview = tree_editor_get_treeview (editor.tree_editor);
   gtk_tree_view_set_model (GTK_TREE_VIEW (treeview), NULL);
   gtk_tree_view_set_model (GTK_TREE_VIEW (treeview),
                                GTK_TREE_MODEL (store));
+}
+
+static void reset_gegl (GeglNode    *gegl,
+                        const gchar *path)
+{
+
+  if (editor.composition_path)
+    g_free (editor.composition_path);
+  editor.composition_path = g_strdup (path);
+
+  if (editor.gegl)
+    g_object_unref (editor.gegl);
+  editor.gegl = gegl;
+
+  g_object_set (editor.drawing_area, "node", editor.gegl, NULL);
+  editor_refresh_structure ();
 }
