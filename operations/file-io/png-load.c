@@ -19,7 +19,7 @@
  *           2006 Dominik Ernst <dernst@gmx.de>
  */
 #if GEGL_CHANT_PROPERTIES
- 
+
 gegl_chant_string (path, "/tmp/romedalen.png",
                    "Path of file to load.")
 
@@ -67,7 +67,7 @@ process (GeglOperation *operation)
           {
             g_warning ("%s is %s really a PNG file?",
               G_OBJECT_TYPE_NAME (operation), self->path);
-        op_source->output = g_object_new (GEGL_TYPE_BUFFER,
+            op_source->output = g_object_new (GEGL_TYPE_BUFFER,
                                       "format", babl_format ("R'G'B'A u8"),
                                       "x",      0,
                                       "y",      0,
@@ -96,10 +96,10 @@ process (GeglOperation *operation)
         if (op_source->output)
           {
             g_object_unref (op_source->output);
-            
+
           }
         op_source->output = g_object_new (GEGL_TYPE_BUFFER,
-                                      "format", babl_format ("R'G'B'A u8"),
+                                      "format", format,
                                       "x",      0,
                                       "y",      0,
                                       "width",  10,
@@ -112,7 +112,7 @@ process (GeglOperation *operation)
 }
 
 
-static GeglRect 
+static GeglRect
 get_defined_region (GeglOperation *operation)
 {
   GeglRect result = {0,0,0,0};
@@ -222,12 +222,12 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
     int color_type;
     int interlace_type;
 
-    png_get_IHDR (load_png_ptr, 
+    png_get_IHDR (load_png_ptr,
                   load_info_ptr,
-                  &w, &h, 
-                  &bit_depth, 
-                  &color_type, 
-                  &interlace_type, 
+                  &w, &h,
+                  &bit_depth,
+                  &color_type,
+                  &interlace_type,
                   NULL, NULL);
     width = w;
     height = h;
@@ -235,7 +235,7 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
       *ret_width = w;
     if (ret_height)
       *ret_height = h;
-     
+
     if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
       {
         png_set_expand (load_png_ptr);
@@ -302,16 +302,16 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
 
     png_read_update_info (load_png_ptr, load_info_ptr);
   }
- 
+
   pixels = g_malloc0 (width*height*bpp);
   rows = g_malloc0 (height*sizeof(png_bytep*));
 
-  for (i=0; i<h; i++) 
+  for (i=0; i<h; i++)
     rows[i] = pixels+i*width*bpp;
 
   for (i=0; i<number_of_passes; i++)
     png_read_rows (load_png_ptr, rows, NULL, height);
-  
+
   gegl_buffer_set (gegl_buffer, pixels);
 
   png_read_end (load_png_ptr, NULL);
@@ -386,9 +386,9 @@ gint query_png (const gchar *path,
     int color_type;
     gchar format_string[32];
 
-    png_get_IHDR (load_png_ptr, 
+    png_get_IHDR (load_png_ptr,
                   load_info_ptr,
-                  &w, &h, 
+                  &w, &h,
                   &bit_depth,
                   &color_type,
                   NULL, NULL, NULL);

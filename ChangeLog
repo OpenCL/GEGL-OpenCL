@@ -1,3 +1,8 @@
+2006-11-03  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/file-io/png-load.c: Create output buffer based on
+	format determined from the call to query_png().
+
 2006-11-03  Øyvind Kolås  <pippin@gimp.org>
 
 	Changes to not quite functional code.
