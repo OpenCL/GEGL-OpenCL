@@ -1,5 +1,12 @@
 2006-11-03  Øyvind Kolås  <pippin@gimp.org>
 
+	Changes to not quite functional code.
+
+	* gegl/gegl-operation-meta.h:
+	* operations/meta/dropshadow.c: (associate):
+
+2006-11-03  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/meta/dropshadow.c: (associate): use new API instead.
 
 2006-11-03  Øyvind Kolås  <pippin@gimp.org>
