@@ -17,6 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  *           2006 Dominik Ernst <dernst@gmx.de>
+ *           2006 Kevin Cozens <kcozens@cvs.gnome.org>
  */
 #if GEGL_CHANT_PROPERTIES
 
