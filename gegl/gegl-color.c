@@ -409,9 +409,11 @@ get_property (GObject      *gobject,
 }
 
 GeglColor *
-gegl_color_from_string (const gchar *string)
+gegl_color_new (const gchar *string)
 {
-  return g_object_new (GEGL_TYPE_COLOR, "string", string, NULL);
+  if (string)
+    return g_object_new (GEGL_TYPE_COLOR, "string", string, NULL);
+  return g_object_new (GEGL_TYPE_COLOR, NULL);
 }
 
 /* --------------------------------------------------------------------------

@@ -369,7 +369,7 @@ static void encode_node_attributes (SerializeState *ss,
   gchar *class;
   gint i;
 
-  properties = gegl_node_list_properties (node, &n_properties);
+  properties = gegl_node_get_properties (node, &n_properties);
  
   if (!ss->terse)
     {

@@ -1,5 +1,36 @@
 2006-11-03  Øyvind Kolås  <pippin@gimp.org>
 
+	Reindented and improved the the public API (gegl.h)
+
+	* gegl/gegl.h:
+	* gegl/buffer/gegl-buffer-allocator.c:
+	* gegl/buffer/gegl-buffer.c:
+	* gegl/buffer/gegl-buffer.h:
+	* gegl/buffer/gegl-tile-cache.c:
+	* gegl/buffer/gegl-tile.c:
+	* gegl/gegl-color.c: (gegl_color_new): make this be the public
+	constructor.
+	* gegl/gegl-color.h:
+	* gegl/gegl-node.c: (gegl_node_get_properties): renamed from
+	gegl_node_list_properties.
+	* gegl/gegl-node.h:
+	* gegl/gegl-xml.c:
+	* operations/blur/Makefile.am:
+	* operations/color/Makefile.am:
+	* operations/core/Makefile.am:
+	* operations/display/Makefile.am:
+	* operations/file-io/Makefile.am:
+	* operations/generated/Makefile.am:
+	* operations/meta/Makefile.am:
+	* operations/render/Makefile.am:
+	* operations/svg/Makefile.am:
+	* operations/transform/Makefile.am:
+	* operations/transparency/Makefile.am:
+	* operations/workshop/Makefile.am:
+	* operations/workshop/generated/Makefile.am:
+
+2006-11-03  Øyvind Kolås  <pippin@gimp.org>
+
 	Some prototype code towards making it possible to write meta ops as
 	XML instead of C.
 

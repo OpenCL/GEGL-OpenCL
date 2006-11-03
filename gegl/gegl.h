@@ -30,6 +30,14 @@ typedef struct _GeglNode   GeglNode;
 typedef struct _GeglRect   GeglRect;
 typedef struct _GeglColor  GeglColor;
 
+GType         gegl_node_get_type         (void) G_GNUC_CONST;
+#define GEGL_TYPE_NODE (gegl_node_get_type())
+#define GEGL_NODE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
+
+GType         gegl_color_get_type        (void) G_GNUC_CONST;
+#define GEGL_TYPE_COLOR (gegl_color_get_type())
+
+/* NB: a GeglRect has the same internal structure as a GdkRectangle.*/
 struct _GeglRect
 {
   gint x;
@@ -41,87 +49,121 @@ struct _GeglRect
 #endif
 
 /* Initialize the GEGL library, options are passed on to glib */
-void       gegl_init              (gint    *argc,
-                                   gchar ***argv);
+void          gegl_init                  (gint    *argc,
+                                          gchar ***argv);
 /* Clean up the gegl library after use (global caches etc.) */
-void       gegl_exit              (void);
+void          gegl_exit                  (void);
 
 /* Create a new gegl graph */
-GeglNode * gegl_graph_new         (void);
+GeglNode    * gegl_graph_new             (void);
 
 /* create a new node belonging to a graph */
-GeglNode * gegl_graph_create_node (GeglNode     *graph,
-                                   const gchar  *operation);
+GeglNode    * gegl_graph_create_node     (GeglNode     *graph,
+                                          const gchar  *operation);
 
 /* create a new node belonging to a graph, with key/value pairs for properties,
  * terminated by NULL (remember to set "operation") */
-GeglNode * gegl_graph_new_node    (GeglNode     *graph,
-                                   const gchar  *first_property_name,
-                                   ...) G_GNUC_NULL_TERMINATED;
+GeglNode    * gegl_graph_new_node        (GeglNode     *graph,
+                                          const gchar  *first_property_name,
+                                          ...) G_GNUC_NULL_TERMINATED;
 /* connect the output pad of a different node to this nodes input pad,
  * pads specified by names ("input","aux" and "output" are the names
  * currently in use
  */
-gboolean   gegl_node_connect      (GeglNode     *self,
-                                   const gchar  *input_pad_name,
-                                   GeglNode     *source,
-                                   const gchar  *output_pad_name);
+gboolean      gegl_node_connect          (GeglNode     *sink,
+                                          const gchar  *input_pad_name,
+                                          GeglNode     *source,
+                                          const gchar  *output_pad_name);
+
+/* Break a connection.
+ */
+gboolean      gegl_node_disconnect       (GeglNode     *self,
+                                          const gchar  *input_pad_name,
+                                          GeglNode     *source,
+                                          const gchar  *output_pad_name);
 
 /* syntetic sugar for linking two nodes "output"->"input" */
-void       gegl_node_link         (GeglNode     *source,
-                                   GeglNode     *sink);
+void          gegl_node_link             (GeglNode     *source,
+                                          GeglNode     *sink);
 
 /* syntetic sugar for linking multiple nodes, end with NULL*/
-void       gegl_node_link_many    (GeglNode     *source,
-                                   GeglNode     *dest,
-                                   ...) G_GNUC_NULL_TERMINATED;
+void          gegl_node_link_many        (GeglNode     *source,
+                                          GeglNode     *dest,
+                                          ...) G_GNUC_NULL_TERMINATED;
 
 /* set properties on the node, a NULL terminated key/value list, similar
  * to gobject
  */
-void       gegl_node_set          (GeglNode     *self,
-                                   const gchar  *first_property_name,
-                                   ...) G_GNUC_NULL_TERMINATED;
+void          gegl_node_set              (GeglNode     *node,
+                                          const gchar  *first_property_name,
+                                          ...) G_GNUC_NULL_TERMINATED;
 /* Get properties from a node, a NULL terminated key/value list, similar
  * to gobject.
  */
-void       gegl_node_get          (GeglNode     *self,
-                                   const gchar  *first_property_name,
-                                   ...) G_GNUC_NULL_TERMINATED;
+void          gegl_node_get              (GeglNode     *node,
+                                          const gchar  *first_property_name,
+                                          ...) G_GNUC_NULL_TERMINATED;
 
 /* Render the "output" buffer resulting from a node to an external buffer.
  * rowstride of 0 indicates default rowstride. You have to make sure the
  * buffer is large enough yourself.
  */
-void       gegl_node_blit_buf     (GeglNode     *self,
-                                   GeglRect     *roi,
-                                   void         *format,
-                                   gint          rowstride,
-                                   gpointer     *destination_buf);
+void          gegl_node_blit_buf         (GeglNode     *node,
+                                          GeglRect     *roi,
+                                          void         *format,
+                                          gint          rowstride,
+                                          gpointer     *destination_buf);
 
+/* Retrieve the bounding box of the rectangle that has been dirtied since
+ * the last cleaning.
+ */
+GeglRect      gegl_node_get_dirty_rect   (GeglNode   *node);
 
+/* Clean all record of which region is dirty.
+ */
+void          gegl_node_clear_dirt       (GeglNode   *node);
+
+/* Returns the bounding box of the defined data in a projection of node.
+ */
+GeglRect      gegl_node_get_defined_rect (GeglNode *node);
 /*
  * Causes a evaluation to happen (this function will be deprecated)
  */
-void       gegl_node_apply        (GeglNode     *self,
-                                   const gchar  *output_pad_name);
+void          gegl_node_apply            (GeglNode     *node,
+                                          const gchar  *output_pad_name);
 
 /* aquire the attached ghost output pad of a Graph node,
  * create it if it does not exist */
-GeglNode * gegl_graph_output      (GeglNode     *graph,
-                                   const gchar  *name);
+GeglNode    * gegl_graph_output          (GeglNode     *graph,
+                                          const gchar  *name);
 /* aquire the attached ghost input pad of a Graph node,
  * create it if it does not exist */
-GeglNode * gegl_graph_input       (GeglNode     *graph,
-                                   const gchar  *name);
+GeglNode    * gegl_graph_input           (GeglNode     *graph,
+                                          const gchar  *name);
 
 /* create a geglgraph from parsed XML data */
-GeglNode * gegl_xml_parse         (const gchar *xmldata);
+GeglNode    * gegl_xml_parse             (const gchar *xmldata);
+
+GParamSpec ** gegl_node_get_properties   (GeglNode *self,
+                                          guint    *n_properties);
 
 /* Serialize a GEGL graph to XML, the resulting data must
  * be freed. */
-gchar    * gegl_to_xml            (GeglNode *gegl);
+gchar       * gegl_to_xml                (GeglNode *gegl);
 
-GeglColor *  gegl_color_from_string            (const gchar *string);
+GeglColor   * gegl_color_new             (const gchar *string);
+
+void          gegl_color_get_rgba        (GeglColor    *self,
+                                          gfloat       *r,
+                                          gfloat       *g,
+                                          gfloat       *b,
+                                          gfloat       *a);
+
+void         gegl_color_set_rgba         (GeglColor    *self,
+                                          gfloat       r,
+                                          gfloat       g,
+                                          gfloat       b,
+                                          gfloat       a);
+
 
 #endif  /* __GEGL_H__ */

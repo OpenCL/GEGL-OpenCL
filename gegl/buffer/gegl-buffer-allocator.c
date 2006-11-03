@@ -21,6 +21,7 @@
 #include <glib/gprintf.h>
 #include <glib/gstdio.h>
 
+#include "../gegl-types.h"
 #include "gegl-buffer-types.h"
 #include "gegl-storage.h"
 #include "gegl-buffer-allocator.h"

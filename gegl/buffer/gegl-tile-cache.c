@@ -17,9 +17,14 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#include "gegl-tile.h"
 #include <stdio.h>
+
+#include <glib.h>
+#include <glib/gstdio.h>
+
+#include "../gegl-types.h"
 #include "gegl-buffer.h"
+#include "gegl-tile.h"
 #include "gegl-tile-cache.h"
 
 GeglTileCache * gegl_tile_cache_new                 (void);

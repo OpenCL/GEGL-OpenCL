@@ -21,8 +21,9 @@
 #include <glib/gprintf.h>
 #include <unistd.h>
 #include "string.h" /* memcpy */
-#include "gegl-tile.h"
+#include "../gegl-types.h"
 #include "gegl-buffer.h"
+#include "gegl-tile.h"
 
 G_DEFINE_TYPE(GeglTile, gegl_tile, G_TYPE_OBJECT)
 enum {
