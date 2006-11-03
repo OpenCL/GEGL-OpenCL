@@ -78,6 +78,9 @@ static void            gegl_node_set_op_class         (GeglNode      *self,
                                                        const gchar   *first_property,
                                                        va_list        var_args);
 static const gchar *   gegl_node_get_op_class         (GeglNode      *self);
+static void property_changed (GObject    *gobject,
+                              GParamSpec *arg1,
+                              gpointer    user_data);
 
 G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, GEGL_TYPE_GRAPH,
                          G_IMPLEMENT_INTERFACE (GEGL_TYPE_VISITABLE,
@@ -395,6 +398,10 @@ gegl_node_connect (GeglNode    *sink,
       sink->sources = g_list_append (sink->sources, connection);
       source->sinks = g_list_append (source->sinks, connection);
 
+      /* whatever what comes after us has computed, has become dirty now */
+      property_changed (G_OBJECT (sink->operation), NULL, sink);
+      property_changed (G_OBJECT (source->operation), NULL, source);
+
       return TRUE;
     }
 
@@ -598,7 +605,6 @@ void          gegl_node_link_many           (GeglNode     *source,
       dest = va_arg (var_args, GeglNode*);
     }
   va_end (var_args);
-
 }
 
 

@@ -1,3 +1,8 @@
+2006-11-03  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-node.c: (gegl_node_connect), (gegl_node_link_many):
+	Made insertion of nodes provide dirt to the structure.
+
 2006-11-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl.c: remove old splash projects.
