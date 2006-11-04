@@ -54,7 +54,6 @@ GType gegl_operation_meta_get_type   (void) G_GNUC_CONST;
 
 void  gegl_operation_meta_redirect   (GeglOperation *operation,
                                       const gchar   *name,
-                                      void          *data,
                                       GeglNode      *internal,
                                       const gchar   *internal_name);
 

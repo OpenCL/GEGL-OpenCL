@@ -43,30 +43,25 @@ struct _Priv
   GeglNode *multiply;
   GeglNode *subtract;
   GeglNode *blur;
-
-  double p_radius;
-  double p_scale;
 };
 
-static void prepare (GeglOperation *operation);
 static void associate (GeglOperation *operation)
 {
   GeglChantOperation *self;
   Priv          *priv;
-  GeglNode      *gegl;
 
   self       = GEGL_CHANT_OPERATION (operation);
   priv       = g_malloc0 (sizeof (Priv));
   self->priv = (void*) priv;
 
-  gegl = operation->node;
-
-  /* aquire interior nodes representing the graphs pads */
-  priv->input  = gegl_graph_input (gegl, "input");
-  priv->output = gegl_graph_output (gegl, "output");
 
   if (!priv->add)
     {
+      GeglNode      *gegl;
+      gegl = operation->node;
+
+      priv->input    = gegl_graph_input (gegl, "input");
+      priv->output   = gegl_graph_output (gegl, "output");
       priv->add      = gegl_graph_new_node (gegl,
                                             "operation", "add",
                                             NULL);
@@ -91,33 +86,14 @@ static void associate (GeglOperation *operation)
       gegl_node_connect (priv->subtract, "aux",   priv->blur,     "output");
       gegl_node_connect (priv->add,      "aux",   priv->multiply, "output");
 
-    }
-}
-
-static void prepare (GeglOperation *operation)
-{
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  Priv          *priv = (Priv*)self->priv;
-
-  if (self->scale != priv->p_scale)
-    {
-      gegl_node_set (priv->multiply, "value",    self->scale,
-                                      NULL);
-      priv->p_scale = self->scale;
-    }
-
-  if (self->radius != priv->p_radius)
-    {
-      gegl_node_set (priv->blur,     "radius-x", self->radius,
-                                     "radius-y", self->radius,
-                                     NULL);
-      priv->p_radius = self->radius;
+      gegl_operation_meta_redirect (operation, "scale", priv->multiply, "value");
+      gegl_operation_meta_redirect (operation, "radius", priv->blur, "radius-x");
+      gegl_operation_meta_redirect (operation, "radius", priv->blur, "radius-y");
     }
 }
 
 static void class_init (GeglOperationClass *klass)
 {
-  klass->prepare = prepare;
   klass->associate = associate;
 }
 

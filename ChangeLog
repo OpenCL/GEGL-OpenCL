@@ -1,5 +1,15 @@
 2006-11-04  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed unneeded "data" pointer from interface of property redirect
+	code.
+
+	* gegl/gegl-operation-meta.[ch]: (redirect_new),
+	(gegl_operation_meta_redirect):
+	* operations/meta/dropshadow.c: (associate):
+	* operations/meta/unsharp-mask.c: (associate), (class_init):
+
+2006-11-04  Øyvind Kolås  <pippin@gimp.org>
+
 	Added new infrsatructure to do redirects of properties between meta
 	operations and their inner nodes.
 

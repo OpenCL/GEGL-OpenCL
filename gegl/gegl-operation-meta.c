@@ -75,19 +75,16 @@ set_property (GObject      *object,
 
 typedef struct Redirect {
   gchar    *name;
-  void     *data;
   GeglNode *internal;
   gchar    *internal_name;
 } Redirect;
 
 static Redirect *redirect_new (const gchar *name,
-                               void        *data,
                                GeglNode    *internal,
                                const gchar *internal_name)
 {
   Redirect *self = g_malloc0 (sizeof (Redirect));
   self->name = g_strdup (name);
-  self->data = data;
   self->internal = internal;
   self->internal_name = g_strdup (internal_name);
   return self;
@@ -126,12 +123,11 @@ gegl_node_copy_property_property (GObject     *source,
 void
 gegl_operation_meta_redirect (GeglOperation *operation,
                               const gchar   *name,
-                              void          *data,
                               GeglNode      *internal,
                               const gchar   *internal_name)
 {
   GeglOperationMeta *self = GEGL_OPERATION_META (operation);
-  Redirect *redirect = redirect_new (name, data, internal, internal_name);
+  Redirect *redirect = redirect_new (name, internal, internal_name);
 
   self->redirects = g_slist_prepend (self->redirects, redirect);
 
