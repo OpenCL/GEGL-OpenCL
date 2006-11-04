@@ -75,6 +75,14 @@ gboolean      gegl_node_connect          (GeglNode     *sink,
                                           GeglNode     *source,
                                           const gchar  *output_pad_name);
 
+/* included mainly for language bindings */
+void          gegl_node_set_property        (GeglNode     *object,
+                                             const gchar  *property_name,
+                                             const GValue *value);
+/* included mainly for language bindings */
+void          gegl_node_get_property        (GeglNode     *object,
+                                             const gchar  *property_name,
+                                             GValue       *value);
 /* Break a connection.
  */
 gboolean      gegl_node_disconnect       (GeglNode     *self,
