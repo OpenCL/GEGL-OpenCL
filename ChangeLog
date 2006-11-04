@@ -1,3 +1,22 @@
+2006-11-04  Øyvind Kolås  <pippin@gimp.org>
+
+	Added new infrsatructure to do redirects of properties between meta
+	operations and their inner nodes.
+
+	* docs/index-static.html.in:
+	* gegl/gegl-node.c: (property_changed):
+	* gegl/gegl-operation-meta.c: (gegl_operation_meta_init),
+	(redirect_new), (redirect_free),
+	(gegl_node_copy_property_property), (gegl_operation_meta_redirect),
+	(gegl_operation_meta_property_changed):
+	* gegl/gegl-operation-meta.h:
+	* operations/meta/dropshadow.c: (associate), (class_init): Use the new
+	meta op infrastructure.
+
+2006-11-04  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.h: added gegl_node_set/gegl_node_get property.
+
 2006-11-03  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/file-io/png-load.c: added Kevin Cozens to copyright

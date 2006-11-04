@@ -50,72 +50,31 @@ struct _Priv
   GeglNode *blur;
   GeglNode *darken;
   GeglNode *black;
-
-  double p_opacity;
-  double p_x;
-  double p_y;
-  double p_radius;
 };
-
-
-/* prepare for an evaluation */
-static void
-prepare (GeglOperation *operation)
-{
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  Priv *priv;
-  priv = (Priv*)self->priv;
-
-  if (self->x != priv->p_x ||
-      self->y != priv->p_y)
-    {
-      gegl_node_set (priv->translate, "x", self->x,
-                                      "y", self->y,
-                                      NULL);
-      priv->p_x = self->x;
-      priv->p_y = self->y;
-    }
-
-  if (self->opacity != priv->p_opacity)
-    {
-      gegl_node_set (priv->opacity,   "value", self->opacity,
-                                      NULL);
-      priv->p_opacity = self->opacity;
-    }
- 
-  if (self->radius != priv->p_radius)
-    {
-      gegl_node_set (priv->blur,     "radius-x", self->radius,
-                                      "radius-y", self->radius,
-                                      NULL);
-      priv->p_radius = self->radius;
-    } 
-}
 
 /* in associate we hook into graph adding the needed nodes */
 static void associate (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *priv = (Priv*)self->priv;
-  GeglNode *gegl;
   g_assert (priv == NULL);
 
   priv = g_malloc0 (sizeof (Priv));
   self->priv = (void*) priv;
 
   priv->self = GEGL_OPERATION (self)->node;
-  gegl = priv->self;
-  priv->input = gegl_graph_input (gegl, "input");
-  priv->output = gegl_graph_output (gegl, "output");
 
   if (!priv->over)
     {
-      priv->over = gegl_graph_new_node (gegl, "operation", "over", NULL);
+      GeglNode *gegl  = priv->self;
+      priv->input     = gegl_graph_input (gegl, "input");
+      priv->output    = gegl_graph_output (gegl, "output");
+      priv->over      = gegl_graph_new_node (gegl, "operation", "over", NULL);
       priv->translate = gegl_graph_new_node (gegl, "operation", "translate", NULL);
-      priv->opacity = gegl_graph_new_node (gegl, "operation", "opacity", NULL);
-      priv->blur = gegl_graph_new_node (gegl, "operation", "gaussian-blur", NULL);
-      priv->darken = gegl_graph_new_node (gegl, "operation", "in", NULL);
-      priv->black = gegl_graph_new_node (gegl, "operation", "color",
+      priv->opacity   = gegl_graph_new_node (gegl, "operation", "opacity", NULL);
+      priv->blur      = gegl_graph_new_node (gegl, "operation", "gaussian-blur", NULL);
+      priv->darken    = gegl_graph_new_node (gegl, "operation", "in", NULL);
+      priv->black     = gegl_graph_new_node (gegl, "operation", "color",
                                          "value", gegl_color_new ("rgb(0.0,0.0,0.0)"),
                                          NULL);
 
@@ -123,6 +82,7 @@ static void associate (GeglOperation *operation)
       gegl_node_connect (priv->over, "aux", priv->input, "output");
       gegl_node_connect (priv->darken, "aux", priv->black, "output");
 
+      gegl_operation_meta_redirect (operation, "opacity", &self->radius, priv->opacity, "value");
       gegl_operation_meta_redirect (operation, "radius", &self->radius, priv->blur, "radius-x");
       gegl_operation_meta_redirect (operation, "radius", &self->radius, priv->blur, "radius-y");
       gegl_operation_meta_redirect (operation, "x", &self->x, priv->translate, "x");
@@ -132,7 +92,6 @@ static void associate (GeglOperation *operation)
 
 static void class_init (GeglOperationClass *klass)
 {
-  klass->prepare = prepare;
   klass->associate = associate;
 }
 

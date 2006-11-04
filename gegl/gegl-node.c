@@ -842,7 +842,8 @@ static void property_changed (GObject    *gobject,
   if (self->operation &&
       g_type_is_a (G_OBJECT_TYPE(self->operation), GEGL_TYPE_OPERATION_META))
     {
-      gegl_operation_prepare (self->operation);
+      gegl_operation_meta_property_changed (
+              GEGL_OPERATION_META (self->operation), arg1, user_data);
     }
 
   if ((arg1 &&

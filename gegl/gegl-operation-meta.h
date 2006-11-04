@@ -39,23 +39,28 @@ extern "C" {
 typedef struct _GeglOperationMeta  GeglOperationMeta;
 struct _GeglOperationMeta
 {
-    GeglOperation operation;
+  GeglOperation operation;
+  GSList       *redirects;
 };
 
 typedef struct _GeglOperationMetaClass GeglOperationMetaClass;
 struct _GeglOperationMetaClass
 {
-   GeglOperationClass operation_class;
+  GeglOperationClass operation_class;
 };
 
 
-GType gegl_operation_meta_get_type (void) G_GNUC_CONST;
+GType gegl_operation_meta_get_type   (void) G_GNUC_CONST;
 
-void  gegl_operation_meta_redirect (GeglOperation *operation,
-                                    const gchar   *name,
-                                    void          *data,
-                                    GeglNode      *internal,
-                                    const gchar   *internal_name);
+void  gegl_operation_meta_redirect   (GeglOperation *operation,
+                                      const gchar   *name,
+                                      void          *data,
+                                      GeglNode      *internal,
+                                      const gchar   *internal_name);
+
+void gegl_operation_meta_property_changed (GeglOperationMeta *self,
+                                           GParamSpec        *arg1,
+                                           gpointer           user_data);
 
 #ifdef __cplusplus
 }

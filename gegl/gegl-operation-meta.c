@@ -35,6 +35,8 @@ static void     set_property         (GObject       *gobject,
                                       guint          prop_id,
                                       const GValue  *value,
                                       GParamSpec    *pspec);
+static void     finalize             (GObject       *self_object);
+
 
 G_DEFINE_TYPE (GeglOperationMeta, gegl_operation_meta, GEGL_TYPE_OPERATION)
 
@@ -45,11 +47,13 @@ gegl_operation_meta_class_init (GeglOperationMetaClass * klass)
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;
+  object_class->finalize = finalize;
 }
 
 static void
 gegl_operation_meta_init (GeglOperationMeta *self)
 {
+  self->redirects = NULL;
 }
 
 
@@ -76,6 +80,49 @@ typedef struct Redirect {
   gchar    *internal_name;
 } Redirect;
 
+static Redirect *redirect_new (const gchar *name,
+                               void        *data,
+                               GeglNode    *internal,
+                               const gchar *internal_name)
+{
+  Redirect *self = g_malloc0 (sizeof (Redirect));
+  self->name = g_strdup (name);
+  self->data = data;
+  self->internal = internal;
+  self->internal_name = g_strdup (internal_name);
+  return self;
+}
+
+static void redirect_destroy (Redirect *self)
+{
+  if (!self)
+    return;
+  if (self->name)
+    g_free (self->name);
+  if (self->internal_name)
+    g_free (self->internal_name);
+  g_free (self);
+}
+
+/* FIXME: take GeglNode's as parameters, since we need
+ * extra behavior provided by GeglNode on top of GObject.
+ */
+static void
+gegl_node_copy_property_property (GObject     *source,
+                                  const gchar *source_property,
+                                  GObject     *destination,
+                                  const gchar *destination_property)
+{
+  GValue value = {0};
+  GParamSpec *spec = g_object_class_find_property (
+       G_OBJECT_GET_CLASS (source), source_property);
+  g_assert (spec);
+  g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (spec));
+  gegl_node_get_property (GEGL_OPERATION(source)->node, source_property, &value);
+  gegl_node_set_property (GEGL_OPERATION(destination)->node, destination_property, &value);
+  g_value_unset (&value);
+}
+
 void
 gegl_operation_meta_redirect (GeglOperation *operation,
                               const gchar   *name,
@@ -83,5 +130,50 @@ gegl_operation_meta_redirect (GeglOperation *operation,
                               GeglNode      *internal,
                               const gchar   *internal_name)
 {
-  g_warning ("redirect request for %s->%s", name, internal_name);
+  GeglOperationMeta *self = GEGL_OPERATION_META (operation);
+  Redirect *redirect = redirect_new (name, data, internal, internal_name);
+
+  self->redirects = g_slist_prepend (self->redirects, redirect);
+
+  /* set default value */
+  gegl_node_copy_property_property (G_OBJECT (operation), name, G_OBJECT (internal->operation), internal_name);
 }
+
+void gegl_operation_meta_property_changed (GeglOperationMeta *self,
+                                           GParamSpec        *arg1,
+                                           gpointer           user_data)
+{
+  g_assert (GEGL_IS_OPERATION_META (self));
+  if (arg1)
+    {
+      GSList *iter = self->redirects;
+      while (iter)
+        {
+          Redirect *redirect = iter->data;
+          if (!strcmp (redirect->name, arg1->name))
+            {
+              gegl_node_copy_property_property (G_OBJECT (self), arg1->name,
+                                                G_OBJECT (redirect->internal->operation),
+                                                redirect->internal_name);
+            }
+          iter=iter->next;
+        }
+    }
+}
+
+static void
+finalize (GObject *gobject)
+{
+  GeglOperationMeta *self = GEGL_OPERATION_META (gobject);
+  GSList *iter = self->redirects;
+
+  while (iter)
+    {
+      Redirect *redirect = iter->data;
+      iter = g_slist_remove (iter, redirect);
+      redirect_destroy (redirect);
+    }
+
+  G_OBJECT_CLASS (gegl_operation_meta_parent_class)->finalize (gobject);
+}
+

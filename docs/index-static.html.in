@@ -122,10 +122,11 @@
         <ul>
             <li>8bit, 16bit integer and 32bit floating point, RGB, CIE Lab,
             YCbCr and naive CMYK output.</li>
-            <li>Easily extendable through plug-ins.</li>
+            <li>Extendable through plug-ins.</li>
             <li>XML, C and Python interfaces.</li>
             <li>Memory efficient evaluation of subregions.</li>
             <li>Tiled sparse data storage</li>
+
             <li>Rich core set of processing <a
                 href='operations.html'>operations</a>
             <ul>
