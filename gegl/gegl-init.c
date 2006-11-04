@@ -38,14 +38,20 @@ gegl_init (int *argc,
            char ***argv)
 {
   static GeglModuleDB *module_db = NULL;
+  glong time;
 
   if (gegl_initialized)
     return;
   g_assert (global_time == 0);
   global_time = gegl_ticks ();
   g_type_init ();
-  babl_init ();
+  gegl_instrument ("gegl", "gegl_init", 0);
 
+  time = gegl_ticks ();
+  babl_init ();
+  gegl_instrument ("gegl_init", "babl_init", gegl_ticks () - time);
+
+  time = gegl_ticks ();
   if (!module_db)
     {
       gchar *load_inhibit = g_strdup ("");
@@ -67,7 +73,9 @@ gegl_init (int *argc,
 
       g_free (module_path);
       g_free (load_inhibit); 
+      gegl_instrument ("gegl_init", "load modules", gegl_ticks () - time);
     }
+
   gegl_instrument ("gegl", "gegl_init", gegl_ticks () - global_time);
   gegl_initialized = TRUE;
 }
