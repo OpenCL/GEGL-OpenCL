@@ -1,5 +1,10 @@
 2006-11-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/file-io/load.c: made the default path be the empty
+	string, to silence the cries for lena.png in the debugging output.
+
+2006-11-04  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed unneeded "data" pointer from interface of property redirect
 	code.
 
