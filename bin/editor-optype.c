@@ -403,6 +403,8 @@ typeeditor_optype (GtkSizeGroup *col1,
   if (col1) label = gtk_label_new ("operation");
   hbox2 = gtk_hbox_new (FALSE, 0);
   entry = gtk_entry_new ();
+  if (!col1)
+    editor.search_entry = entry;
   gtk_entry_set_width_chars (GTK_ENTRY (entry), 6);
   completion = gtk_entry_completion_new ();
   completion_model = create_completion_model (item);

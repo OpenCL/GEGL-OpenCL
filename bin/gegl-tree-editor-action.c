@@ -378,7 +378,6 @@ add_sibling_op (GtkAction *action, gpointer userdata)
 
       if (previous)  /* we're just chaining in */
         {
-          g_warning ("chaining in");
           gegl_node_disconnect (previous, "input", item, "output");
           gegl_node_connect (previous, "input", new_item, "output");
           gegl_node_connect (new_item, "input", item, "output");
@@ -386,7 +385,6 @@ add_sibling_op (GtkAction *action, gpointer userdata)
       else /* we're chaining in as the new aux of the parent level */
         {
           GeglNode *parent = gegl_parent (item);
-          g_warning ("we're new aux of parent");
           gegl_node_disconnect (parent, "aux", item, "output");
           gegl_node_connect (parent, "aux", new_item, "output");
           gegl_node_connect (new_item, "input", item, "output");

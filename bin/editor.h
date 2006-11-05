@@ -31,6 +31,7 @@ typedef struct Editor
   GtkWidget *property_pane;
   GtkWidget *tree_pane;
   GtkWidget *structure;
+  GtkWidget *search_entry;
   
   GtkWidget *graph_editor;
   GtkWidget *drawing_area;

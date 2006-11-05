@@ -1,5 +1,15 @@
 2006-11-05  Øyvind Kolås  <pippin@gimp.org>
 
+	Make Ctrl+L jump to the quick add op entry along the top.
+
+	* bin/editor-optype.c: (typeeditor_optype):
+	* bin/editor.c: (cb_window_keybinding):
+	* bin/editor.h:
+	* bin/gegl.c:
+	* bin/gegl-tree-editor-action.c: (add_sibling_op): removed debug spew.
+
+2006-11-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/render/noise.c: (process): Changed default parameters to
 	be in a better range.
 

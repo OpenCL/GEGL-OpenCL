@@ -39,15 +39,15 @@ cb_window_delete_event (GtkWidget *widget, GdkEvent *event, gpointer data);
 static gboolean
 cb_window_keybinding (GtkWidget *widget, GdkEventKey *event, gpointer data)
 { 
-  if (event->keyval == GDK_space &&
-      ! (event->state & (~GDK_SHIFT_MASK & gtk_accelerator_get_default_mod_mask())))
+  if (event->keyval == GDK_l &&
+      (event->state & (GDK_CONTROL_MASK & gtk_accelerator_get_default_mod_mask())))
     {
-      g_warning ("slash");
+      if (editor.search_entry)
+        gtk_widget_grab_focus (editor.search_entry);
       return TRUE;
     }
   else
     {
-      g_warning ("something else");
     }
   return FALSE;
 }
@@ -517,7 +517,7 @@ cb_about (GtkAction *action)
   GeglNode  *gegl;
 
   gegl = gegl_xml_parse (
-   "<gegl> <over> <invert/> <shift x='20.0' y='140.0'/> <text string=\"GEGL is a image processing and compositing framework.\n\nGUI editor Copyright © 2006 Øyvind Kolås\nGEGL and it's editor comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. The processing and compositing library GEGL is licensed under LGPLv2 and the editor itself is licensed as GPLv2.\" font='Sans' size='10.0' wrap='300' alignment='0' width='224' height='52'/> </over> <over> <shift x='20.0' y='10.0'/> <dropshadow opacity='1.0' x='10.0' y='10.0' radius='5.0'/> <text string='GEGL' font='Sans' size='100.0' wrap='-1' alignment='0'/> </over> <perlin-noise alpha='12.30' beta='0.10' zoff='-1.0' seed='20.0' n='6.0'/> </gegl>"
+   "<gegl> <over> <invert/> <shift x='20.0' y='140.0'/> <text string=\"GEGL is a image processing and compositing framework.\n\nGUI editor Copyright © 2006 Øyvind Kolås\nGEGL and it's editor comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. The processing and compositing library GEGL is licensed under LGPLv2 and the editor itself is licensed as GPLv2.\" font='Sans' size='10.0' wrap='300' alignment='0' width='224' height='52'/> </over> <over> <shift x='20.0' y='10.0'/> <dropshadow opacity='1.0' x='10.0' y='10.0' radius='5.0'/> <text string='GEGL' font='Sans' size='100.0' wrap='-1' alignment='0'/> </over> <perlin-noise alpha='12.30' scale='0.10' zoff='-1.0' seed='20.0' n='6.0'/> </gegl>"
    );
    
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
