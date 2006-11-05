@@ -19,11 +19,11 @@
  */
 #if GEGL_CHANT_PROPERTIES
  
-gegl_chant_double (alpha, -G_MAXDOUBLE, G_MAXDOUBLE, 12.3, "")
-gegl_chant_double (beta,  -G_MAXDOUBLE, G_MAXDOUBLE, 0.1, "")
+gegl_chant_double (alpha, -G_MAXDOUBLE, G_MAXDOUBLE, 1.2, "")
+gegl_chant_double (scale, -G_MAXDOUBLE, G_MAXDOUBLE, 1.8, "")
 gegl_chant_double (zoff,  -G_MAXDOUBLE, G_MAXDOUBLE,  -1, "")
-gegl_chant_double (seed,  -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, "")
-gegl_chant_double (n,     0, 20.0, 6.0, "")
+gegl_chant_double (seed,  -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, "")
+gegl_chant_double (n,     0, 20.0, 3.0, "")
 
 #else
 
@@ -71,7 +71,7 @@ process (GeglOperation *operation)
 
                 val = PerlinNoise3D ((double) (x + result->x)/50.0,
                                      (double) (y + result->y)/50.0,
-                                     (double) self->zoff, self->alpha, self->beta,
+                                     (double) self->zoff, self->alpha, self->scale,
                                      self->n);
                 *dst = val * 0.5 + 0.5;
                 dst ++;
