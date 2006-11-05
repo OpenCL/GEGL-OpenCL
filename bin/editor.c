@@ -171,6 +171,7 @@ editor_main (GeglNode    *gegl,
 }
 
 static void cb_about (GtkAction *action);
+static void cb_export (GtkAction *action);
 static void cb_quit_dialog (GtkAction *action);
 static void cb_composition_new (GtkAction *action);
 static void cb_composition_load (GtkAction *action);
@@ -206,6 +207,11 @@ static GtkActionEntry action_entries[] = {
    "About",
    G_CALLBACK (cb_about)},
 
+  {"Export", GTK_STOCK_SAVE,
+   "_Export", "<control><shift>E",
+   "Export to PNG",
+   G_CALLBACK (cb_export)},
+
   {"ShrinkWrap", NULL,
    "_Shrink wrap", "<control>E",
    "Size the window to the image, if feasible",
@@ -226,6 +232,8 @@ static const gchar *ui_info =
   "      <menuitem action='New'/>"
   "      <menuitem action='Open'/>"
   "      <menuitem action='Save'/>"
+  "      <separator/>"
+  "      <menuitem action='Export'/>"
   "      <separator/>"
   "      <menuitem action='Quit'/>"
   "      <separator/>"
@@ -637,6 +645,12 @@ static void cb_recompute (GtkAction *action)
   gegl_view_repaint ((GeglView*)editor.drawing_area);
 }
 
+#include "export.h"
+
+static void cb_export (GtkAction *action)
+{
+  export_window ();
+}
 
 GtkWidget *
 StockIcon (const gchar *id, GtkIconSize size, GtkWidget *widget)

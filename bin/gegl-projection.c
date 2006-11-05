@@ -55,8 +55,8 @@ static void            get_property                   (GObject       *gobject,
                                                        guint          prop_id,
                                                        GValue        *value,
                                                        GParamSpec    *pspec);
-static gboolean        task_render                    (gpointer      *foo);
-static gboolean        task_monitor                   (gpointer      *foo);
+static gboolean        task_render                    (gpointer       foo);
+static gboolean        task_monitor                   (gpointer       foo);
 
 G_DEFINE_TYPE (GeglProjection, gegl_projection, G_TYPE_OBJECT);
 
@@ -246,7 +246,7 @@ void gegl_projection_update_rect (GeglProjection *self,
 }
 
 /* renders a rectangle, in chunks as an idle function */
-static gboolean task_render (gpointer *foo)
+static gboolean task_render (gpointer foo)
 {
   GeglProjection  *projection = GEGL_PROJECTION (foo);
   gint max_area = MAX_PIXELS;
@@ -329,7 +329,7 @@ static gboolean task_render (gpointer *foo)
     }
 }
 
-static gboolean task_monitor (gpointer *foo)
+static gboolean task_monitor (gpointer foo)
 {
   GeglProjection  *projection = GEGL_PROJECTION (foo);
   GeglRect dirty_rect = gegl_node_get_dirty_rect (projection->node);
@@ -395,4 +395,20 @@ static gboolean task_monitor (gpointer *foo)
     {
       return TRUE;
     }
+}
+
+gboolean gegl_projection_render (GeglProjection *self)
+{
+     while (self->dirty_rects)
+      {
+        task_render (self);
+      }
+     if (!gdk_region_empty (self->queued_region))
+       task_monitor (self);
+  return (self->dirty_rects != NULL);
+}
+
+GeglBuffer *gegl_projection_get_buffer (GeglProjection *self)
+{
+  return self->buffer;
 }

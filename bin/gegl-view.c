@@ -310,3 +310,8 @@ void gegl_view_repaint (GeglView *view)
   /* then enqueue our selves */
   gegl_projection_update_rect (view->projection, roi);
 }
+
+GeglProjection *gegl_view_get_projection (GeglView *view)
+{
+  return view->projection;
+}

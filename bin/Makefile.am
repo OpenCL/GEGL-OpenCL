@@ -8,6 +8,8 @@ gui_sources = \
 	editor.c \
 	editor.h \
 	editor-optype.c   \
+	export.c	  \
+	export.h	  \
 	gegl-projection.c \
 	gegl-projection.h \
 	gegl-store.c      \
@@ -28,11 +30,11 @@ gegl_SOURCES = \
 
 INCLUDES = \
 	-I$(top_srcdir)	-I$(top_srcdir)/gegl -I$(top_srcdir)/gegl/buffer \
-	@DEP_CFLAGS@ @GTK_CFLAGS@ @BABL_CFLAGS@
+	@DEP_CFLAGS@ @GTK_CFLAGS@ @BABL_CFLAGS@ @PNG_CFLAGS@
 
 AM_LDFLAGS =  \
 	-no-undefined \
-	@DEP_LIBS@ @GTK_LIBS@ @BABL_LIBS@
+	@DEP_LIBS@ @GTK_LIBS@ @BABL_LIBS@ @PNG_LIBS@
 
 gegl_LDFLAGS = \
 	../gegl/libgegl-@GEGL_API_VERSION@.la

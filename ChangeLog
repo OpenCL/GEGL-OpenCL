@@ -1,5 +1,20 @@
 2006-11-05  Øyvind Kolås  <pippin@gimp.org>
 
+	Added ability to export a part of the composition (from the projection
+	actually) to a png file.
+
+	* bin/Makefile.am: added export.[ch], link with libpng.
+	* bin/export.[ch] NEW: a dialog to handle exporting parts/all fo the
+	defined region.
+	* bin/editor.c: (cb_export): added export menu entry/shortcut.
+	* bin/editor.h:
+	* bin/gegl-projection.[ch]: (task_render), (task_monitor),
+	(gegl_projection_render), (gegl_projection_get_buffer):
+	* bin/gegl-view.c: (gegl_view_get_projection):
+	* bin/gegl-view.h:
+
+2006-11-05  Øyvind Kolås  <pippin@gimp.org>
+
 	Make Ctrl+L jump to the quick add op entry along the top.
 
 	* bin/editor-optype.c: (typeeditor_optype):
