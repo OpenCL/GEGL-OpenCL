@@ -200,14 +200,6 @@
 
 2006-11-01  Øyvind Kolås  <pippin@gimp.org>
 
-	reviewed by: <delete if not using a buddy>
-
-	* docs/gallery/clones.xml:
-	* gegl/gegl-operation-meta.c: (gegl_operation_meta_redirect):
-	* operations/meta/dropshadow.c: (associate):
-
-2006-11-01  Øyvind Kolås  <pippin@gimp.org>
-
 	Made the GUI start without the buggy structure editing tools visible,
 	they can be turned on by switch a toggle in the menu. Also made 
 	short cuts work.
