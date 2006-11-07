@@ -1,3 +1,7 @@
+2006-11-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/color/levels.c: added a linear level remapping op.
+
 2006-11-05  Øyvind Kolås  <pippin@gimp.org>
 
 	Added ability to export a part of the composition (from the projection
