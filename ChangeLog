@@ -1,3 +1,15 @@
+2006-11-08  Øyvind Kolås  <pippin@gimp.org>
+
+	Moved the node editor code out into a single file.
+
+	* bin/Makefile.am:
+	* bin/gegl-node-editor.c: (type_editor_generic_changed),
+	(type_editor_color_changed), (type_editor_color),
+	(type_editor_generic), (property_editor_general),
+	(gegl_node_editor_new):
+	* bin/gegl-node-editor.h:
+	* bin/gegl-tree-editor.c: (property_editor_rebuild):
+
 2006-11-08  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* bin/editor-optype.c

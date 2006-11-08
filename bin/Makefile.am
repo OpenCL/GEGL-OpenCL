@@ -5,27 +5,29 @@ libmodule = $(top_builddir)/gegl/module/libmodule.la
 
 if HAVE_GTK
 gui_sources = \
-	editor.c \
-	editor.h \
-	editor-optype.c   \
-	export.c	  \
-	export.h	  \
-	gegl-projection.c \
-	gegl-projection.h \
-	gegl-store.c      \
-	gegl-store.h      \
+	editor.c		\
+	editor.h		\
+	editor-optype.c		\
+	export.c		\
+	export.h		\
+	gegl-node-editor.c	\
+	gegl-node-editor.h	\
+	gegl-projection.c	\
+	gegl-projection.h	\
+	gegl-store.c		\
+	gegl-store.h		\
 	gegl-tree-editor-action.c \
 	gegl-tree-editor-action.h \
-	gegl-tree-editor.c        \
-	gegl-tree-editor.h        \
-	gegl-view.c \
+	gegl-tree-editor.c	\
+	gegl-tree-editor.h	\
+	gegl-view.c		\
 	gegl-view.h
 endif
 
-gegl_SOURCES = \
-	gegl.c	\
-	gegl-options.c \
-	gegl-options.h \
+gegl_SOURCES =			\
+	gegl.c			\
+	gegl-options.c		\
+	gegl-options.h		\
         $(gui_sources)
 
 INCLUDES = \
