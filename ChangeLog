@@ -1,3 +1,8 @@
+2006-11-08  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* bin/editor-optype.c
+	* bin/gegl-tree-editor.c: Vertically center widget labels.
+
 2006-11-07  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/color/levels.c: added a linear level remapping op.

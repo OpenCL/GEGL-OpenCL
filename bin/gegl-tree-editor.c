@@ -105,7 +105,7 @@ type_editor_color (GtkSizeGroup *col1,
   GtkWidget *label = gtk_label_new (param_spec->name);
   GtkWidget *button = g_object_new (GTK_TYPE_COLOR_BUTTON, "use-alpha", TRUE, NULL);
 
-  gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
   gtk_size_group_add_widget (col1, label);
   gtk_size_group_add_widget (col2, button);
 
@@ -146,7 +146,7 @@ type_editor_generic (GtkSizeGroup *col1,
   GtkWidget *entry = gtk_entry_new ();
 
   gtk_entry_set_width_chars (GTK_ENTRY (entry), 6);
-  gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
+  gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
   gtk_size_group_add_widget (col1, label);
   gtk_size_group_add_widget (col2, entry);
 

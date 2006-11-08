@@ -426,9 +426,12 @@ typeeditor_optype (GtkSizeGroup *col1,
   gtk_box_pack_start (GTK_BOX (hbox2), entry, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (hbox2), button, FALSE, FALSE, 0);
   gtk_container_add (GTK_CONTAINER (button), button_arrow);
-  if (label) gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
-  if (label) gtk_size_group_add_widget (col1, label);
-  if (col2)gtk_size_group_add_widget (col2, hbox2);
+  if (label)
+    {
+      gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+      gtk_size_group_add_widget (col1, label);
+    }
+  if (col2) gtk_size_group_add_widget (col2, hbox2);
 
   if (current_type)
     {
