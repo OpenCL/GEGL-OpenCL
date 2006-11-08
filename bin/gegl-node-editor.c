@@ -25,6 +25,102 @@
 #include "gegl-view.h"
 #include "editor.h"
 
+enum
+{
+  PROP_0,
+  PROP_NODE,
+  PROP_LAST
+};
+
+static void gegl_node_editor_class_init (GeglNodeEditorClass   *klass);
+static void gegl_node_editor_init       (GeglNodeEditor        *self);
+static void set_property                (GObject               *gobject,
+                                         guint                  prop_id,
+                                         const GValue          *value,
+                                         GParamSpec            *pspec);
+
+static GObject *constructor             (GType                  type,
+                                         guint                  n_params,
+                                         GObjectConstructParam *params);
+
+G_DEFINE_TYPE (GeglNodeEditor, gegl_node_editor, GTK_TYPE_VBOX)
+
+static GObjectClass *parent_class = NULL;
+
+static void
+gegl_node_editor_class_init (GeglNodeEditorClass *klass)
+{
+  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+
+  parent_class = g_type_class_peek_parent (klass);
+
+  gobject_class->set_property = set_property;
+  gobject_class->constructor = constructor;
+
+  g_object_class_install_property (gobject_class, PROP_NODE,
+                                   g_param_spec_object ("node",
+                                                        "Node",
+                                                        "The node to render",
+                                                        G_TYPE_OBJECT,
+                                                        G_PARAM_CONSTRUCT |
+                                                        G_PARAM_READWRITE));
+}
+
+static void
+gegl_node_editor_init (GeglNodeEditor *self)
+{
+  self->node = NULL;
+}
+
+static void
+set_property (GObject      *gobject,
+              guint         property_id,
+              const GValue *value,
+              GParamSpec   *pspec)
+{
+  GeglView *self = GEGL_VIEW (gobject);
+
+  switch (property_id)
+    {
+    case PROP_NODE:
+      /* FIXME: reference counting? */
+      self->node = GEGL_NODE (g_value_get_object (value));
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+      break;
+    }
+}
+
+static GtkWidget *
+property_editor_general (GeglNode *node);
+
+static GObject *
+constructor (GType                  type,
+             guint                  n_params,
+             GObjectConstructParam *params)
+{
+  GObject         *object;
+  GeglNodeEditor  *self;
+  object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
+  self = GEGL_NODE_EDITOR (object);
+
+  gtk_box_set_homogeneous (GTK_BOX (object), FALSE);
+  gtk_box_set_spacing (GTK_BOX (object), 0);
+
+  gtk_container_add (GTK_CONTAINER (object), property_editor_general (self->node));
+
+  return object;
+}
+
+
+GtkWidget *
+gegl_node_editor_new (GeglNode *node)
+{
+  return g_object_new (GEGL_TYPE_NODE_EDITOR, "node", node, NULL);
+}
+
+
 GtkWidget *typeeditor_double (GtkSizeGroup *col1,
                               GtkSizeGroup *col2,
                               GeglNode     *node);
@@ -261,16 +357,5 @@ property_editor_general (GeglNode *node)
 
   g_object_unref (G_OBJECT (col1));
   g_object_unref (G_OBJECT (col2));
-  return vbox;
-}
-
-GtkWidget *
-gegl_node_editor_new (GeglNode *node)
-{
-  GtkWidget *vbox;
-
-  vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (vbox), property_editor_general (node));
-  
   return vbox;
 }
