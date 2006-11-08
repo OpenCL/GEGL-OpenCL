@@ -1,5 +1,14 @@
 2006-11-08  Øyvind Kolås  <pippin@gimp.org>
 
+	Made GeglNodeEditor be a class derived from GtkVBox.
+
+	* bin/gegl-node-editor.c: (gegl_node_editor_class_init),
+	(gegl_node_editor_init), (set_property), (constructor),
+	(gegl_node_editor_new), (property_editor_general):
+	* bin/gegl-node-editor.h:
+
+2006-11-08  Øyvind Kolås  <pippin@gimp.org>
+
 	Moved the node editor code out into a single file.
 
 	* bin/Makefile.am:

@@ -21,8 +21,36 @@
 #define GEGL_NODE_EDITOR_H
 
 #include <gtk/gtk.h>
+#include <gtk/gtkvbox.h>
 #include <gegl.h>
 
-GtkWidget * gegl_node_editor_new     (GeglNode *node);
+#define GEGL_TYPE_NODE_EDITOR            (gegl_node_editor_get_type ())
+#define GEGL_NODE_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE_EDITOR, GeglNodeEditor))
+#define GEGL_NODE_EDITOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_NODE_EDITOR, GeglNodeEditorClass))
+#define GEGL_IS_NODE_EDITOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_NODE_EDITOR))
+#define GEGL_IS_NODE_EDITOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_NODE_EDITOR))
+#define GEGL_NODE_EDITOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_NODE_EDITOR, GeglNodeEditorClass))
+
+typedef struct _GeglNodeEditor      GeglNodeEditor;
+typedef struct _GeglNodeEditorClass GeglNodeEditorClass;
+
+struct _GeglNodeEditor
+{
+  GtkVBox  parent_instance;
+
+  GeglNode *node;
+};
+
+struct _GeglNodeEditorClass
+{
+  GtkVBoxClass parent_class;
+};
+
+GType       gegl_node_editor_get_type (void) G_GNUC_CONST;
+
+GtkWidget * gegl_node_editor_new      (GeglNode *node);
+
+G_END_DECLS
+
 
 #endif /* NODE_EDITOR_H */

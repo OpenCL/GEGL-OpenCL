@@ -63,7 +63,7 @@ gegl_node_editor_class_init (GeglNodeEditorClass *klass)
                                                         "The node to render",
                                                         G_TYPE_OBJECT,
                                                         G_PARAM_CONSTRUCT |
-                                                        G_PARAM_READWRITE));
+                                                        G_PARAM_WRITABLE));
 }
 
 static void
@@ -78,7 +78,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglView *self = GEGL_VIEW (gobject);
+  GeglNodeEditor *self = GEGL_NODE_EDITOR (gobject);
 
   switch (property_id)
     {
