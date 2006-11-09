@@ -1,3 +1,7 @@
+2006-11-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/color/whitebalance.c: added whitebalance operation.
+
 2006-11-08  Øyvind Kolås  <pippin@gimp.org>
 
 	Made GeglNodeEditor be a class derived from GtkVBox.
