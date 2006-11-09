@@ -1,5 +1,5 @@
-#include <gegl-plugin.h> /* needed instead of gegl.h to be able to do full
-                            introspection*/
+#include <gegl.h> /* needed instead of gegl.h to be able to do full
+                     introspection*/
 #include <stdio.h>
 
 FILE *file = NULL;
@@ -299,19 +299,6 @@ collapse_all (GType type)
   if (!type)
     return;
 
-  /* exclude plug-ins */
-  if(0){ 
-    GTypeClass *class = NULL;
-    class = g_type_class_ref (type);
-    if (GEGL_IS_OPERATION_CLASS (class) &&
-        GEGL_OPERATION_CLASS(class)->name!=NULL)
-      {
-        g_type_class_unref (class);
-        return;
-      }
-    g_type_class_unref (class);
-  }
-
   fprintf (file, "hide(\"x_%s\");", g_type_name(type));
 
   children=g_type_children (type, &count);
@@ -335,19 +322,6 @@ expand_all (GType type)
 
   if (!type)
     return;
-
-  /* exclude plug-ins */
-  if(0){ 
-    GTypeClass *class = NULL;
-    class = g_type_class_ref (type);
-    if (GEGL_IS_OPERATION_CLASS (class) &&
-        GEGL_OPERATION_CLASS(class)->name!=NULL)
-      {
-        g_type_class_unref (class);
-        return;
-      }
-    g_type_class_unref (class);
-  }
 
   fprintf (file, "show(\"x_%s\");", g_type_name(type));
 
@@ -373,19 +347,6 @@ introspect (GType type,
 
   if (!type)
     return;
-
-  /* exclude plug-ins */
-  if(0){ 
-    GTypeClass *class = NULL;
-    class = g_type_class_ref (type);
-    if (GEGL_IS_OPERATION_CLASS (class) &&
-        GEGL_OPERATION_CLASS(class)->name!=NULL)
-      {
-        g_type_class_unref (class);
-        return;
-      }
-    g_type_class_unref (class);
-  }
 
   fprintf (file, "<hr/>\n");
   fprintf (file, "<a name='%s'><h3>%s</h3></a>\n", g_type_name (type),
@@ -416,23 +377,6 @@ introspect_overview (GType type,
 
   if (!type)
     return;
-
-  /* exclude plug-ins */
-  if(0){
-    GTypeClass *class = NULL;
-    class = g_type_class_ref (type);
-    if (GEGL_IS_OPERATION_CLASS (class) &&
-        GEGL_OPERATION_CLASS(class)->name!=NULL)
-      {
-        g_type_class_unref (class);
-        return;
-      }
-    g_type_class_unref (class);
-  }
-
-  /*fprintf (file, "<div>");
-  for (i=0; i<indent; i++)
-    fprintf (file, "&nbsp;&nbsp;&nbsp;");*/
 
   fprintf (file, "<div class='expander'>\n"
                    "<div class='expander_title'><a href='javascript:toggle_visible(\"x_%s\");'>%s</a></div>\n"

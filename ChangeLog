@@ -1,5 +1,11 @@
 2006-11-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/introspect.c: (collapse_all), (expand_all), (introspect),
+	(introspect_overview): removed dependency on anything but the public
+	gegl.h header.
+
+2006-11-09  Øyvind Kolås  <pippin@gimp.org>
+
 	Moved the static caches for gtype lookups from names and a list
 	of available operation types' names to GeglOperation.
 
