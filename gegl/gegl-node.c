@@ -645,6 +645,7 @@ gegl_node_blit_buf (GeglNode    *self,
   g_object_unref (buffer);
 }
 
+
 void
 gegl_node_apply_roi (GeglNode    *self,
                      const gchar *output_pad_name,
@@ -759,41 +760,6 @@ gegl_node_create_pad (GeglNode   *self,
 }
 
 static void
-add_operations (GHashTable *hash,
-                GType       parent)
-{
-  GType       *types;
-  guint        count;
-  gint         no;
-
-  types = g_type_children (parent, &count);
-  if (!types)
-    return;
-
-  for (no=0; no < count; no++)
-    {
-      GeglOperationClass *operation_class = g_type_class_ref (types[no]);
-      if (operation_class->name)
-        g_hash_table_insert (hash, g_strdup (operation_class->name), (gpointer)types[no]);
-      add_operations (hash, types[no]);
-    }
-  g_free (types);
-}
-
-static GType
-g_type_from_op_class (const gchar *op_class)
-{
-  static GHashTable *hash = NULL;
-  if (!hash)
-    {
-      hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-
-      add_operations (hash, GEGL_TYPE_OPERATION);
-    }
-  return (GType)g_hash_table_lookup (hash, op_class);
-}
-
-static void
 gegl_node_set_op_class (GeglNode      *node,
                         const gchar   *op_class,
                         const gchar   *first_property,
@@ -807,7 +773,7 @@ gegl_node_set_op_class (GeglNode      *node,
       GType         type;
       GeglOperation *operation;
 
-      type = g_type_from_op_class (op_class);
+      type = gegl_operation_gtype_from_name (op_class);
 
       if (!type)
         {

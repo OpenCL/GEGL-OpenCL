@@ -1,5 +1,18 @@
 2006-11-09  Øyvind Kolås  <pippin@gimp.org>
 
+	Moved the static caches for gtype lookups from names and a list
+	of available operation types' names to GeglOperation.
+
+	* gegl/gegl-operation.[ch]:
+	  (gegl_operation_gtype_from_name),
+	  (gegl_operation_list_operations): moved here from node, and renamed
+	  with better names.
+	* gegl/gegl-node.c: (gegl_node_set_op_class): use the new
+	gegl_operation_gtype_from_name.
+	* gegl/gegl.h: added gegl_operation_list_operations
+
+2006-11-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/color/whitebalance.c: added whitebalance operation.
 
 2006-11-08  Øyvind Kolås  <pippin@gimp.org>

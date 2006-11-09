@@ -130,6 +130,8 @@ void       gegl_operation_class_set_description     (GeglOperationClass *self,
                                                      const gchar        *description);
 void       gegl_operation_create_pad                (GeglOperation *self,
                                                      GParamSpec    *param_spec);
+GType      gegl_operation_gtype_from_name           (const gchar *name);
+GSList   * gegl_operation_list_operations           (void);
 
 G_END_DECLS
 

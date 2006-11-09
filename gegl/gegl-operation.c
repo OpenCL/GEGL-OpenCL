@@ -330,3 +330,57 @@ gegl_operation_class_set_description (GeglOperationClass *klass,
     g_free (klass->description);
   klass->description = g_strdup (new_description);
 }
+
+static void
+add_operations (GHashTable *hash,
+                GType       parent)
+{
+  GType       *types;
+  guint        count;
+  gint         no;
+
+  types = g_type_children (parent, &count);
+  if (!types)
+    return;
+
+  for (no=0; no < count; no++)
+    {
+      GeglOperationClass *operation_class = g_type_class_ref (types[no]);
+      if (operation_class->name)
+        g_hash_table_insert (hash, g_strdup (operation_class->name), (gpointer)types[no]);
+      add_operations (hash, types[no]);
+    }
+  g_free (types);
+}
+
+static GHashTable *gtype_hash = NULL;
+GType
+gegl_operation_gtype_from_name (const gchar *name)
+{
+  if (!gtype_hash)
+    {
+      gtype_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+
+      add_operations (gtype_hash, GEGL_TYPE_OPERATION);
+    }
+  return (GType)g_hash_table_lookup (gtype_hash, name);
+}
+
+static GSList *operations_list = NULL;
+static void addop(gpointer key,
+                  gpointer value,
+                  gpointer user_data)
+{
+  operations_list = g_slist_prepend (operations_list, key);
+}
+
+GSList *gegl_operation_list_operations (void)
+{
+  if (!operations_list)
+    {
+      gegl_operation_gtype_from_name ("");
+      g_hash_table_foreach (gtype_hash, addop, NULL);
+      operations_list = g_slist_sort (operations_list, (GCompareFunc) strcmp);
+    }
+  return operations_list;
+}

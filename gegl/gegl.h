@@ -155,6 +155,9 @@ GeglNode    * gegl_xml_parse             (const gchar *xmldata);
 GParamSpec ** gegl_node_get_properties   (GeglNode *self,
                                           guint    *n_properties);
 
+/* return a list of available operation names */
+GSList      * gegl_operation_list_operations (void);
+
 /* Serialize a GEGL graph to XML, the resulting data must
  * be freed. */
 gchar       * gegl_to_xml                (GeglNode *gegl);
