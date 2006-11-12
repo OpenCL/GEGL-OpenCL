@@ -181,7 +181,7 @@ void          gegl_node_set_result_rect     (GeglNode     *node,
                                              gint          width,
                                              gint          height);
 
-const gchar * gegl_node_get_op_type_name    (GeglNode     *node);
+const gchar * gegl_node_get_operation       (GeglNode     *node);
 
 const gchar * gegl_node_get_debug_name      (GeglNode     *node);
 G_END_DECLS

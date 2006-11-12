@@ -123,6 +123,6 @@ visit_node (GeglVisitor *self,
        sum_rect.x, sum_rect.y, sum_rect.w, sum_rect.h);*/
 
   time = gegl_ticks () - time;
-  gegl_instrument ("process", gegl_node_get_op_type_name (node), time);
-  gegl_instrument (gegl_node_get_op_type_name (node), "dirt-compute", time);
+  gegl_instrument ("process", gegl_node_get_operation (node), time);
+  gegl_instrument (gegl_node_get_operation (node), "dirt-compute", time);
 }

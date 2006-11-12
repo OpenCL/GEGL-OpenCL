@@ -1265,7 +1265,7 @@ gegl_node_get_properties (GeglNode *self,
 }
 
 const gchar *
-gegl_node_get_op_type_name    (GeglNode     *node)
+gegl_node_get_operation (GeglNode     *node)
 {
   if (node == NULL)
     {
@@ -1348,10 +1348,10 @@ gegl_node_get_debug_name (GeglNode     *node)
   static gchar ret_buf[512];
   if (gegl_object_get_name (GEGL_OBJECT (node))!=NULL &&
       gegl_object_get_name (GEGL_OBJECT (node))[0] != '\0')
-    sprintf (ret_buf, "%s named %s", gegl_node_get_op_type_name (node),
+    sprintf (ret_buf, "%s named %s", gegl_node_get_operation (node),
                                      gegl_object_get_name (GEGL_OBJECT (node)));
   else
-    sprintf (ret_buf, "%s", gegl_node_get_op_type_name (node));
+    sprintf (ret_buf, "%s", gegl_node_get_operation (node));
   return ret_buf;
 }
 

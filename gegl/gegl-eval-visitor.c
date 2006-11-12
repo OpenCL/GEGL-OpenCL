@@ -73,8 +73,8 @@ visit_pad (GeglVisitor *self,
       babl_time = babl_total_usecs - babl_time;
       time = gegl_ticks ()-time;
 
-      gegl_instrument ("process", gegl_node_get_op_type_name (node), time);
-      gegl_instrument (gegl_node_get_op_type_name (node), "babl", babl_time);
+      gegl_instrument ("process", gegl_node_get_operation (node), time);
+      gegl_instrument (gegl_node_get_operation (node), "babl", babl_time);
     }
   else if (gegl_pad_is_input (pad))
     {

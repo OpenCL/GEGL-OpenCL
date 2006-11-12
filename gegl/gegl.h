@@ -140,6 +140,10 @@ GeglRect      gegl_node_get_defined_rect (GeglNode *node);
 void          gegl_node_apply            (GeglNode     *node,
                                           const gchar  *output_pad_name);
 
+/* Returns the name of the operation (also available as a property)
+ */
+const gchar * gegl_node_get_operation    (GeglNode     *node);
+
 /* aquire the attached ghost output pad of a Graph node,
  * create it if it does not exist */
 GeglNode    * gegl_graph_output          (GeglNode     *graph,

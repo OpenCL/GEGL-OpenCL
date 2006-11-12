@@ -514,7 +514,7 @@ static void add_stack (SerializeState *ss,
               ind;if (ss->terse)
                 {
                   g_string_append (ss->buf, "<");
-                  g_string_append (ss->buf, gegl_node_get_op_type_name (iter));
+                  g_string_append (ss->buf, gegl_node_get_operation (iter));
                 }
               else
                 {
@@ -527,7 +527,7 @@ static void add_stack (SerializeState *ss,
               ind;if (ss->terse)
                 {
                   g_string_append (ss->buf, "</");
-                  g_string_append (ss->buf, gegl_node_get_op_type_name (iter));
+                  g_string_append (ss->buf, gegl_node_get_operation (iter));
                   g_string_append (ss->buf, ">\n");
                 }
               else

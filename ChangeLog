@@ -1,3 +1,17 @@
+2006-11-12  Øyvind Kolås  <pippin@gimp.org>
+
+	s/gegl_node_get_op_type_name/gegl_node_get_operation/
+
+	* gegl/gegl-dirt-visitor.c: (visit_node):
+	* gegl/gegl-eval-visitor.c: (visit_pad):
+	* gegl/gegl-have-visitor.c: (visit_node):
+	* gegl/gegl-node.c: (gegl_node_get_operation),
+	(gegl_node_get_debug_name):
+	* gegl/gegl-node.h:
+	* gegl/gegl-prepare-visitor.c: (visit_node):
+	* gegl/gegl-xml.c: (add_stack):
+	* gegl/gegl.h: made gegl_node_get_operation public.
+
 2006-11-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* tools/introspect.c: (collapse_all), (expand_all), (introspect),

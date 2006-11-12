@@ -83,6 +83,6 @@ visit_node (GeglVisitor *self,
   gegl_operation_prepare (operation);
   gegl_node_set_need_rect (node, 0, 0, 0, 0);
   time = gegl_ticks () - time;
-  gegl_instrument ("process", gegl_node_get_op_type_name (node), time);
-  gegl_instrument (gegl_node_get_op_type_name (node), "prepare", time);
+  gegl_instrument ("process", gegl_node_get_operation (node), time);
+  gegl_instrument (gegl_node_get_operation (node), "prepare", time);
 }

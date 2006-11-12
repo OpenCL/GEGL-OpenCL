@@ -71,6 +71,6 @@ visit_node (GeglVisitor *self,
   gegl_node_set_have_rect (operation->node, rect.x, rect.y, rect.w, rect.h);
 
   time = gegl_ticks () - time;
-  gegl_instrument ("process", gegl_node_get_op_type_name (node), time);
-  gegl_instrument (gegl_node_get_op_type_name (node), "defined-region", time);
+  gegl_instrument ("process", gegl_node_get_operation (node), time);
+  gegl_instrument (gegl_node_get_operation (node), "defined-region", time);
 }
