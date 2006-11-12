@@ -161,6 +161,7 @@ operation_class_iterate_for_completion (GType type,
           gtk_list_store_set (store, &iter, 0, klass->name, -1);
         }
       operation_class_iterate_for_completion (ops[no], store);
+      g_type_class_unref (klass);
     }
   g_free (ops);
 }
@@ -414,7 +415,7 @@ typeeditor_optype (GtkSizeGroup *col1,
 
   if (item)
     {
-  current_type = g_strdup (gegl_node_get_op_type_name (item));
+  current_type = g_strdup (gegl_node_get_operation (item));
     }
   else
     {
