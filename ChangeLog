@@ -1,3 +1,27 @@
+2006-11-13  Øyvind Kolås  <pippin@gimp.org>
+
+	Started adding infrastructure for custom GUIs for editing properties
+	of nodes.
+
+	* bin/Makefile.am:
+	* bin/editor-optype.c: (popup_properties), (menu_item_activate),
+	(typeeditor_optype), (entry_activate):
+	* bin/editor.c: (create_window), (cb_recompute), (reset_gegl),
+	(gegl_gui_flush):
+	* bin/editor.h:
+	* bin/gegl-node-editor.c: (gegl_node_editor_class_init),
+	(gegl_node_editor_init), (set_property), (construct),
+	(gegl_node_editor_construct), (constructor),
+	(type_editor_generic_changed), (type_editor_color_changed),
+	(type_editor_generic), (property_editor_general),
+	(gegl_widget_get_cr), (gegl_node_editor_new):
+	* bin/gegl-node-editor.h:
+	* bin/gegl-node-editor-level.c: added a subclass for threshold and
+	opacity.
+	* bin/gegl-tree-editor-action.c: (remove_itm), (move_up),
+	(move_down):
+	* bin/gegl-tree-editor.c: (property_editor_rebuild):
+
 2006-11-12  Øyvind Kolås  <pippin@gimp.org>
 
 	s/gegl_node_get_op_type_name/gegl_node_get_operation/

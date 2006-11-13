@@ -30,19 +30,11 @@ void property_editor_rebuild (GtkWidget *container,
 {
   GtkWidget *editor;
 
-  /* traversing down to real child within scrolled window */
-  /*container = gtk_bin_get_child (GTK_BIN (container));
-  container = gtk_bin_get_child (GTK_BIN (container));*/
-  
-  /*g_warning ("%p %s", container, gegl_node_get_op_type_name (node));*/
-  /* emptying container */
-
-  /* empty the container first */
   gtk_container_foreach (GTK_CONTAINER (container),
                          (GtkCallback) gtk_widget_destroy, NULL);
 
   /*editor = property_editor_general (col1, col2, node);*/
-  editor = gegl_node_editor_new (node);
+  editor = gegl_node_editor_new (node, TRUE);
   if (editor)
     gtk_box_pack_start (GTK_BOX (container), editor, TRUE, TRUE, 0);
   gtk_widget_show_all (container);

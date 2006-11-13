@@ -25,10 +25,15 @@
 #include "gegl-view.h"
 #include "editor.h"
 
+GtkWidget *
+typeeditor_optype (GtkSizeGroup *col1,
+                   GtkSizeGroup *col2,
+                   GeglNodeEditor *node_editor);
 enum
 {
   PROP_0,
   PROP_NODE,
+  PROP_OPERATION_SWITCHER,
   PROP_LAST
 };
 
@@ -38,6 +43,7 @@ static void set_property                (GObject               *gobject,
                                          guint                  prop_id,
                                          const GValue          *value,
                                          GParamSpec            *pspec);
+static void construct                   (GeglNodeEditor        *editor);
 
 static GObject *constructor             (GType                  type,
                                          guint                  n_params,
@@ -50,12 +56,14 @@ static GObjectClass *parent_class = NULL;
 static void
 gegl_node_editor_class_init (GeglNodeEditorClass *klass)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GObjectClass        *gobject_class = G_OBJECT_CLASS (klass);
+  GeglNodeEditorClass *node_editor_class = GEGL_NODE_EDITOR_CLASS (klass);
 
   parent_class = g_type_class_peek_parent (klass);
 
   gobject_class->set_property = set_property;
   gobject_class->constructor = constructor;
+  node_editor_class->construct = construct;
 
   g_object_class_install_property (gobject_class, PROP_NODE,
                                    g_param_spec_object ("node",
@@ -64,12 +72,21 @@ gegl_node_editor_class_init (GeglNodeEditorClass *klass)
                                                         G_TYPE_OBJECT,
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_WRITABLE));
+
+  g_object_class_install_property (gobject_class, PROP_OPERATION_SWITCHER,
+                                   g_param_spec_boolean ("operation-switcher",
+                                                        "operation-switcher",
+                                                        "Show an operation changer widget in the node-editor",
+                                                        TRUE,
+                                                        G_PARAM_CONSTRUCT |
+                                                        G_PARAM_WRITABLE));
 }
 
 static void
 gegl_node_editor_init (GeglNodeEditor *self)
 {
   self->node = NULL;
+  self->operation_switcher = TRUE;
 }
 
 static void
@@ -86,6 +103,10 @@ set_property (GObject      *gobject,
       /* FIXME: reference counting? */
       self->node = GEGL_NODE (g_value_get_object (value));
       break;
+    case PROP_OPERATION_SWITCHER:
+      /* FIXME: reference counting? */
+      self->operation_switcher = g_value_get_boolean (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
@@ -93,7 +114,30 @@ set_property (GObject      *gobject,
 }
 
 static GtkWidget *
-property_editor_general (GeglNode *node);
+property_editor_general (GeglNodeEditor *node_editor,
+                         GeglNode *node);
+
+static void
+construct (GeglNodeEditor *self)
+{
+  gtk_box_set_homogeneous (GTK_BOX (self), FALSE);
+  gtk_box_set_spacing (GTK_BOX (self), 0);
+
+  gtk_container_add (GTK_CONTAINER (self), property_editor_general (self, self->node));
+}
+
+static void
+gegl_node_editor_construct (GeglNodeEditor *self)
+{
+  GeglNodeEditorClass *klass;
+
+  g_return_if_fail (GEGL_IS_NODE_EDITOR (self));
+  
+  klass = GEGL_NODE_EDITOR_GET_CLASS (self);
+  g_assert (klass->construct);
+  klass->construct(self);
+}
+
 
 static GObject *
 constructor (GType                  type,
@@ -105,21 +149,17 @@ constructor (GType                  type,
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
   self = GEGL_NODE_EDITOR (object);
 
-  gtk_box_set_homogeneous (GTK_BOX (object), FALSE);
-  gtk_box_set_spacing (GTK_BOX (object), 0);
+  self->col1 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+  self->col2 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
-  gtk_container_add (GTK_CONTAINER (object), property_editor_general (self->node));
+  if (self->operation_switcher)
+    gtk_box_pack_start (GTK_BOX (object), typeeditor_optype (self->col1, self->col2, self), FALSE, FALSE, 0);
+  gegl_node_editor_construct (GEGL_NODE_EDITOR (object));
 
+  g_object_unref (self->col1);
+  g_object_unref (self->col2);
   return object;
 }
-
-
-GtkWidget *
-gegl_node_editor_new (GeglNode *node)
-{
-  return g_object_new (GEGL_TYPE_NODE_EDITOR, "node", node, NULL);
-}
-
 
 GtkWidget *typeeditor_double (GtkSizeGroup *col1,
                               GtkSizeGroup *col2,
@@ -159,7 +199,7 @@ type_editor_generic_changed (GtkWidget *entry,
       gegl_node_set (node, prop_name, color, NULL);
       g_object_unref (color);
     }
-  gegl_view_repaint (GEGL_VIEW (editor.drawing_area));
+  gegl_gui_flush ();
 }
 
 
@@ -187,7 +227,7 @@ type_editor_color_changed (GtkColorButton *button,
       gegl_node_set (node, prop_name, color, NULL);
       g_object_unref (color);
     }
-  gegl_view_repaint (GEGL_VIEW (editor.drawing_area));
+  gegl_gui_flush ();
 }
 
 static GtkWidget *
@@ -250,9 +290,9 @@ type_editor_generic (GtkSizeGroup *col1,
 
   g_object_set_data (G_OBJECT (entry), "node", node);
 
-  /*gulong handler = */g_signal_connect (G_OBJECT (entry), "activate",
-                                     G_CALLBACK (type_editor_generic_changed),
-                                     (gpointer) param_spec);
+  g_signal_connect (G_OBJECT (entry), "activate",
+                    G_CALLBACK (type_editor_generic_changed),
+                    (gpointer) param_spec);
 
   if (param_spec->value_type == G_TYPE_BOOLEAN)
     {
@@ -311,14 +351,11 @@ type_editor_generic (GtkSizeGroup *col1,
   return hbox;
 }
 
-GtkWidget *
-typeeditor_optype (GtkSizeGroup *col1,
-                   GtkSizeGroup *col2,
-                   GeglNode     *item);
 
 
 static GtkWidget *
-property_editor_general (GeglNode *node)
+property_editor_general (GeglNodeEditor *node_editor,
+                         GeglNode *node)
 {
   GtkSizeGroup *col1, *col2;
   GtkWidget   *vbox;
@@ -326,14 +363,13 @@ property_editor_general (GeglNode *node)
   guint        n_properties;
   gint         i;
 
-  col1 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-  col2 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 10);
   
   properties = gegl_node_get_properties (node, &n_properties);
+  col1 = node_editor->col1;
+  col2 = node_editor->col2;
 
-  gtk_box_pack_start (GTK_BOX (vbox), typeeditor_optype (col1, col2, node), FALSE, FALSE, 0);
   /*gtk_box_pack_start (GTK_BOX (vbox), prop_editor, FALSE, FALSE, 0);*/
   for (i=0; i<n_properties; i++)
     {
@@ -355,7 +391,52 @@ property_editor_general (GeglNode *node)
         }
     }
 
-  g_object_unref (G_OBJECT (col1));
-  g_object_unref (G_OBJECT (col2));
   return vbox;
+}
+
+/* utility method */
+cairo_t *
+gegl_widget_get_cr (GtkWidget *widget)
+{
+  gdouble    width  = widget->allocation.width;
+  gdouble    height = widget->allocation.height;
+  cairo_t   *cr = gdk_cairo_create (widget->window);
+  gdouble    margin = 0.04;
+
+  if (height > width)
+    height = width;
+  else
+    width = height;
+
+  cairo_select_font_face (cr, "Sans",
+                          CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+  cairo_set_font_size (cr, 0.08);
+  cairo_translate (cr, width * margin, height * margin);
+  cairo_scale (cr, width * (1.0-margin*2), height * (1.0-margin*2));
+  cairo_set_line_width (cr, 0.01);
+
+  return cr;
+}
+
+
+/*FIXME: the following should be dealt with using plug-ins, and automatic coupling of operation/gui **/
+
+GType       gegl_node_editor_level_get_type (void) G_GNUC_CONST;
+
+GtkWidget *
+gegl_node_editor_new (GeglNode *node,
+                      gboolean  operation_switcher)
+{
+  GType editor_type = GEGL_TYPE_NODE_EDITOR;
+  const gchar *operation;
+
+  operation = gegl_node_get_operation (node);
+  if (!strcmp (operation, "threshold"))
+    editor_type = gegl_node_editor_level_get_type ();
+  if (!strcmp (operation, "opacity"))
+    editor_type = gegl_node_editor_level_get_type ();
+  
+  return g_object_new (editor_type, "node", node,
+                                    "operation-switcher", operation_switcher,
+                                    NULL);
 }

@@ -97,7 +97,7 @@ remove_itm (GtkAction *action, gpointer userdata)
       gtk_tree_selection_select_path (tree_selection, path);
       gtk_tree_path_free (path);
     }
-  gegl_view_repaint (GEGL_VIEW (editor.drawing_area));
+  gegl_gui_flush ();
 }
 
 static void
@@ -238,7 +238,7 @@ move_up (GtkAction *action, gpointer userdata)
   iter.user_data = item;
 
   gtk_tree_selection_select_iter (tree_selection, &iter);
-  gegl_view_repaint (GEGL_VIEW (editor.drawing_area));
+  gegl_gui_flush ();
 }
 
 static void
@@ -348,7 +348,7 @@ move_down (GtkAction *action, gpointer userdata)
        }
     }
   gtk_tree_path_free (parent_path);
-  gegl_view_repaint (GEGL_VIEW (editor.drawing_area));
+  gegl_gui_flush ();
 }
 
 static void

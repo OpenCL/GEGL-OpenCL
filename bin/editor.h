@@ -46,4 +46,5 @@ typedef struct Editor
 extern Editor editor;
 GtkWidget * StockIcon (const gchar *id, GtkIconSize size, GtkWidget *widget);
 
+void gegl_gui_flush (void);
 #endif

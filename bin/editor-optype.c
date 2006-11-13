@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include "editor.h"
 #include "gegl-tree-editor.h"
+#include "gegl-node-editor.h"
 
 extern GeglNode *editor_output;
 
@@ -39,13 +40,13 @@ void popup_properties (GeglNode *node)
   GtkWidget *dialog;
   GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
 
-  dialog = gtk_dialog_new_with_buttons ("Massage",
+  dialog = gtk_dialog_new_with_buttons (gegl_node_get_operation (node),
                                         GTK_WINDOW (editor.window),
                                         GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_STOCK_OK,
                                         GTK_RESPONSE_NONE,
                                         NULL);
-  property_editor_rebuild (vbox, node);
+  gtk_container_add (GTK_CONTAINER (vbox), gegl_node_editor_new (node, FALSE));
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox), vbox);
 
   g_signal_connect_swapped (dialog,
@@ -112,7 +113,7 @@ menu_item_activate (GtkWidget *widget, gpointer user_data)
         {
           gtk_tree_model_row_changed (model, gtk_tree_model_get_path (model, &iter), &iter);
         }
-      gegl_view_repaint (GEGL_VIEW (editor.drawing_area));
+      gegl_gui_flush ();
     }
 #if 0
 
@@ -388,7 +389,7 @@ button_clicked (GtkButton * button, gpointer item)
 GtkWidget *
 typeeditor_optype (GtkSizeGroup *col1,
                    GtkSizeGroup *col2,
-                   GeglNode *item)
+                   GeglNodeEditor *node_editor)
 {
   GtkWidget *hbox;
   GtkWidget *label = NULL;
@@ -399,6 +400,10 @@ typeeditor_optype (GtkSizeGroup *col1,
   GtkWidget *button;
   GtkWidget *button_arrow;
   char     *current_type;
+  GeglNode  *item = NULL;
+  
+  if (node_editor)
+    item =node_editor->node;
 
   hbox = gtk_hbox_new (FALSE, 5);
   if (col1) label = gtk_label_new ("operation");
@@ -481,7 +486,7 @@ entry_activate (GtkEntry * entry, gpointer user_data)
       if (gtk_tree_selection_get_selected (tree_selection, &model, &iter))
         {
           gtk_tree_model_row_changed (model, gtk_tree_model_get_path (model, &iter), &iter);
-          gegl_view_repaint (GEGL_VIEW (editor.drawing_area));
+          gegl_gui_flush ();
         }
     }
 }

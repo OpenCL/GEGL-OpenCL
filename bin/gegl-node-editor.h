@@ -36,19 +36,26 @@ typedef struct _GeglNodeEditorClass GeglNodeEditorClass;
 
 struct _GeglNodeEditor
 {
-  GtkVBox  parent_instance;
-
-  GeglNode *node;
+  GtkVBox       parent_instance;
+  gboolean      operation_switcher;
+  GtkSizeGroup *col1;
+  GtkSizeGroup *col2;
+  GeglNode     *node;
 };
 
 struct _GeglNodeEditorClass
 {
   GtkVBoxClass parent_class;
+
+  void (*construct) (GeglNodeEditor *self);
 };
 
 GType       gegl_node_editor_get_type (void) G_GNUC_CONST;
 
-GtkWidget * gegl_node_editor_new      (GeglNode *node);
+GtkWidget * gegl_node_editor_new      (GeglNode *node,
+                                       gboolean  operation_switcher);
+/* utility method */
+cairo_t *                              gegl_widget_get_cr (GtkWidget *widget);
 
 G_END_DECLS
 

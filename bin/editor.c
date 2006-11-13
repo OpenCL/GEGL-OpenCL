@@ -25,6 +25,7 @@
 #include "gegl.h"
 #include "gegl-store.h"
 #include "gegl-tree-editor.h"
+#include "gegl-node-editor.h"
 #include "editor.h"
 #include "gegl-view.h"
 #include <gdk/gdkkeysyms.h>
@@ -53,9 +54,9 @@ cb_window_keybinding (GtkWidget *widget, GdkEventKey *event, gpointer data)
 }
 
 GtkWidget *
-typeeditor_optype (GtkSizeGroup *col1,
-                   GtkSizeGroup *col2,
-                   GeglNode *item);
+typeeditor_optype (GtkSizeGroup   *col1,
+                   GtkSizeGroup   *col2,
+                   GeglNodeEditor *node_editor);
 
 Editor editor;
 
@@ -104,11 +105,11 @@ create_window (Editor *editor)
   gtk_box_pack_start (GTK_BOX (hbox), menubar, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), hpaned_top_level, TRUE, TRUE, 0);
-  gtk_paned_pack1 (GTK_PANED (hpaned_top_level), hpaned_top, FALSE, TRUE);
+  gtk_paned_pack2 (GTK_PANED (hpaned_top_level), hpaned_top, FALSE, TRUE);
   gtk_box_pack_start (GTK_BOX (hbox), gtk_label_new ("     "), FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (hbox), add_box, TRUE, TRUE, 0);
   gtk_box_pack_start (GTK_BOX (vbox2), drawing_area, TRUE, TRUE, 0);
-  gtk_paned_pack2 (GTK_PANED (hpaned_top_level), vbox2, TRUE, TRUE);
+  gtk_paned_pack1 (GTK_PANED (hpaned_top_level), vbox2, TRUE, TRUE);
 
   gtk_paned_pack1 (GTK_PANED (hpaned_top), property_scroll, FALSE,
                    TRUE);
@@ -642,7 +643,8 @@ static void cb_shrinkwrap (GtkAction *action)
 
 static void cb_recompute (GtkAction *action)
 {
-  gegl_view_repaint ((GeglView*)editor.drawing_area);
+  gegl_projection_forget (GEGL_VIEW(editor.drawing_area)->projection, NULL);
+  gegl_gui_flush ();
 }
 
 #include "export.h"
@@ -692,4 +694,10 @@ static void reset_gegl (GeglNode    *gegl,
 
   g_object_set (editor.drawing_area, "node", editor.gegl, NULL);
   editor_refresh_structure ();
+}
+
+void
+gegl_gui_flush (void)
+{
+  gegl_view_repaint (GEGL_VIEW (editor.drawing_area));
 }
