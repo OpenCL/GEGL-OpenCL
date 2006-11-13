@@ -1,5 +1,18 @@
 2006-11-13  Øyvind Kolås  <pippin@gimp.org>
 
+	Added a cairo based customization of brightness-contrast. (This needs
+	to be made a lot easier, perhaps through plug-ins.)
+
+	* bin/Makefile.am:
+	* bin/gegl-node-editor-brightness-contrast.c:
+	(gegl_node_editor_brightness_contrast_class_init),
+	(gegl_node_editor_brightness_contrast_init), (expose),
+	(event_press), (event_motion), (construct):
+	* bin/gegl-node-editor-level.c: (drag_n_motion):
+	* bin/gegl-node-editor.c: (gegl_node_editor_new):
+
+2006-11-13  Øyvind Kolås  <pippin@gimp.org>
+
 	Started adding infrastructure for custom GUIs for editing properties
 	of nodes.
 

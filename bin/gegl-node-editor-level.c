@@ -19,7 +19,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-
 #include "gegl.h"
 #include "gegl-node-editor.h"
 #include "editor.h"
@@ -125,7 +124,6 @@ drag_n_motion (GtkWidget *widget, GdkEventMotion *mev, gpointer user_data)
   gegl_gui_flush ();
   return TRUE;
 }
-
 
 static void
 construct (GeglNodeEditor *self)

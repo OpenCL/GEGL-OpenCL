@@ -5,23 +5,24 @@ libmodule = $(top_builddir)/gegl/module/libmodule.la
 
 if HAVE_GTK
 gui_sources = \
-	editor.c			\
-	editor.h			\
-	editor-optype.c			\
-	export.c			\
-	export.h			\
-	gegl-node-editor.c		\
-	gegl-node-editor-level.c	\
-	gegl-node-editor.h		\
-	gegl-projection.c		\
-	gegl-projection.h		\
-	gegl-store.c			\
-	gegl-store.h			\
-	gegl-tree-editor-action.c	\
-	gegl-tree-editor-action.h	\
-	gegl-tree-editor.c		\
-	gegl-tree-editor.h		\
-	gegl-view.c			\
+	editor.c				\
+	editor.h				\
+	editor-optype.c				\
+	export.c				\
+	export.h				\
+	gegl-node-editor.c			\
+	gegl-node-editor-brightness-contrast.c	\
+	gegl-node-editor-level.c		\
+	gegl-node-editor.h			\
+	gegl-projection.c			\
+	gegl-projection.h			\
+	gegl-store.c				\
+	gegl-store.h				\
+	gegl-tree-editor-action.c		\
+	gegl-tree-editor-action.h		\
+	gegl-tree-editor.c			\
+	gegl-tree-editor.h			\
+	gegl-view.c				\
 	gegl-view.h
 endif
 

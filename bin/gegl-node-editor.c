@@ -418,10 +418,10 @@ gegl_widget_get_cr (GtkWidget *widget)
   return cr;
 }
 
-
 /*FIXME: the following should be dealt with using plug-ins, and automatic coupling of operation/gui **/
 
-GType       gegl_node_editor_level_get_type (void) G_GNUC_CONST;
+GType gegl_node_editor_level_get_type (void) G_GNUC_CONST;
+GType gegl_node_editor_brightness_contrast_get_type (void) G_GNUC_CONST;
 
 GtkWidget *
 gegl_node_editor_new (GeglNode *node,
@@ -435,6 +435,8 @@ gegl_node_editor_new (GeglNode *node,
     editor_type = gegl_node_editor_level_get_type ();
   if (!strcmp (operation, "opacity"))
     editor_type = gegl_node_editor_level_get_type ();
+  if (!strcmp (operation, "brightness-contrast"))
+    editor_type = gegl_node_editor_brightness_contrast_get_type ();
   
   return g_object_new (editor_type, "node", node,
                                     "operation-switcher", operation_switcher,
