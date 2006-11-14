@@ -1,3 +1,7 @@
+2006-11-14  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/render/FractalExplorer.c: Added.
+
 2006-11-13  Øyvind Kolås  <pippin@gimp.org>
 
 	Added a cairo based customization of brightness-contrast. (This needs
