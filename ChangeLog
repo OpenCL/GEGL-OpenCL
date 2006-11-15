@@ -1,3 +1,7 @@
+2006-11-15  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.in: commented out checks for yacc and lex.
+
 2006-11-14  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/render/FractalExplorer.c: Added.

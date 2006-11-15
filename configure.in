@@ -162,8 +162,8 @@ ACLOCAL="$ACLOCAL $ac_cv_gegl_aclocal_flags"
 
 
 dnl Checks for programs.
-AC_PROG_YACC
-AM_PROG_LEX
+#AC_PROG_YACC
+#AM_PROG_LEX
 
 
 ###############################
