@@ -1,3 +1,11 @@
+2006-11-15  Øyvind Kolås  <pippin@gimp.org>
+
+	Made the default value of GEGL_PATH depend on the PREFIX used
+	when configuring GEGL.
+
+	* gegl/Makefile.am:
+	* gegl/gegl-init.c: (gegl_init):
+
 2006-11-15  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.in: commented out checks for yacc and lex.

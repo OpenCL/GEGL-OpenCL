@@ -87,6 +87,8 @@ AM_LDFLAGS =  \
 	-no-undefined \
 	@DEP_LIBS@ @BABL_LIBS@
 
+AM_CPPFLAGS = -DPREFIX=\""$(prefix)"\"
+
 libgeglincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)
 libgeglsubincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl
 

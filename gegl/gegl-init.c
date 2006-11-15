@@ -64,8 +64,8 @@ gegl_init (int *argc,
           module_path = g_strdup (getenv ("GEGL_PATH"));
         }
       else
-        module_path  = g_strdup ("/usr/local/lib/gegl");
-      
+        module_path  = g_strdup (PREFIX "/lib/gegl");
+
       module_db = gegl_module_db_new (FALSE);
       
       gegl_module_db_set_load_inhibit (module_db, load_inhibit);
