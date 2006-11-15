@@ -1,12 +1,18 @@
 2006-11-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c: (cb_structure_visible): removed attempt at keeping
+	  the size of the viewport if it was shrink wrapped.
+	* bin/gegl-tree-editor.c: (view_onButtonPressed): removed dead code.
+
+2006-11-15  Øyvind Kolås  <pippin@gimp.org>
+
 	Made the default value of GEGL_PATH depend on the PREFIX used
 	when configuring GEGL.
 
 	* gegl/Makefile.am:
 	* gegl/gegl-init.c: (gegl_init):
 
-2006-11-15  Kevin Cozens  <kcozens@cvs.gnome.org>
+2006-11-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.in: commented out checks for yacc and lex.
 

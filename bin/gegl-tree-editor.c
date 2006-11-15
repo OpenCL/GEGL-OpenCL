@@ -394,26 +394,3 @@ view_onButtonPressed (GtkWidget *treeview, GdkEventButton *event,
 
   return FALSE;                 /* we did not handle this */
 }
-
-
-gboolean
-view_onPopupMenu (GtkWidget *treeview, gpointer userdata)
-{
-  view_popup_menu (treeview, NULL, userdata);
-
-  return TRUE;                  /* we handled this */
-}
-
-
-void
-create_view (void)
-{
-  GtkWidget *view;
-
-  view = gtk_tree_view_new ();
-
-  g_signal_connect (view, "button-press-event",
-                    (GCallback) view_onButtonPressed, NULL);
-  g_signal_connect (view, "popup-menu", (GCallback) view_onPopupMenu, NULL);
-
-}

@@ -558,6 +558,8 @@ static void cb_structure_visible (GtkAction *action, gpointer userdata)
           gtk_widget_show (widget);
         }
 
+#if 0
+      nasty hack that didn't really work
   if (defined.w == editor.drawing_area->allocation.width &&
       defined.h == editor.drawing_area->allocation.height)
     {
@@ -579,6 +581,7 @@ static void cb_structure_visible (GtkAction *action, gpointer userdata)
                       NULL);
       }
     }
+#endif
 }
 
 static void cb_properties_visible (GtkAction *action, gpointer userdata)
