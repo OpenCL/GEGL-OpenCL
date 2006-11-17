@@ -1,3 +1,13 @@
+2006-11-17  Øyvind Kolås  <pippin@gimp.org>
+
+	Made the logic to force a rerender of the view work correctly (needed
+	to manually compensate for bugs).
+
+	* bin/gegl-projection.c: (gegl_projection_forget_queue),
+	(gegl_projection_forget):
+	* bin/gegl-projection.h:
+	* bin/gegl-view.c: (gegl_view_repaint):
+
 2006-11-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/editor.c: (cb_structure_visible): removed attempt at keeping

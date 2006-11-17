@@ -66,6 +66,9 @@ void   gegl_projection_update_rect     (GeglProjection *self,
 void   gegl_projection_forget          (GeglProjection *self,
                                         GeglRect       *roi);
 
+void   gegl_projection_forget_queue    (GeglProjection *self,
+                                        GeglRect       *roi);
+
 GeglBuffer *gegl_projection_get_buffer (GeglProjection *self);
 gboolean gegl_projection_render        (GeglProjection *self);
 

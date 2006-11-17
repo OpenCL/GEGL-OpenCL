@@ -200,7 +200,8 @@ get_property (GObject    *gobject,
     }
 }
 
-void gegl_projection_forget (GeglProjection *self,
+
+void gegl_projection_forget_queue (GeglProjection *self,
                              GeglRect       *roi)
 {
 
@@ -221,6 +222,28 @@ void gegl_projection_forget (GeglProjection *self,
       while (self->dirty_rects)
          self->dirty_rects = g_list_remove (self->dirty_rects,
             self->dirty_rects->data);
+    }
+}
+
+
+void gegl_projection_forget (GeglProjection *self,
+                             GeglRect       *roi)
+{
+  gegl_projection_forget_queue (self, roi);
+
+  if (roi)
+    {
+      GdkRectangle gdk_rect;
+      GdkRegion *temp_region;
+      memcpy (&gdk_rect, roi, sizeof (GdkRectangle));
+      temp_region = gdk_region_rectangle (&gdk_rect);
+      gdk_region_subtract (self->valid_region, temp_region);
+    }
+  else
+    {
+      if (self->valid_region)
+        gdk_region_destroy (self->valid_region);
+      self->valid_region = gdk_region_new ();
     }
 }
 

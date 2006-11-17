@@ -305,8 +305,8 @@ void gegl_view_repaint (GeglView *view)
   GtkWidget *widget = GTK_WIDGET (view);
   GeglRect roi={view->x, view->y, widget->allocation.width, widget->allocation.height};
 
-  /* first forget all */
-  gegl_projection_forget      (view->projection, NULL);
+  /* forget all already queued repaints */
+  gegl_projection_forget_queue (view->projection, NULL);
   /* then enqueue our selves */
   gegl_projection_update_rect (view->projection, roi);
 }
