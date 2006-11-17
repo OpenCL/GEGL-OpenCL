@@ -1,5 +1,14 @@
 2006-11-17  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed gegl_store_set_root call, it is now being called by
+	the gegl_store_set_gegl call.
+
+	* bin/editor.c: (editor_refresh_structure):
+	* bin/gegl-store.c: (gegl_store_set_gegl):
+	* bin/gegl-store.h:
+
+2006-11-17  Øyvind Kolås  <pippin@gimp.org>
+
 	Made the fast adding of ops, add a sibling to the currently selected
 	op in the treeview, if any.
 

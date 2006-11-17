@@ -69,8 +69,6 @@ GType       gegl_store_get_type (void);
 GeglStore * gegl_store_new      (void);
 void        gegl_store_set_gegl (GeglStore  *gegl_store,
                                  GeglNode   *gegl);
-void        gegl_store_set_root (GeglStore  *gegl_store,
-                                 GeglNode   *root);
 void        gegl_store_freeze   (GeglStore  *gegl_store);
 void        gegl_store_thaw     (GeglStore  *gegl_store);
 void        gegl_store_process  (GeglStore  *gegl_store);

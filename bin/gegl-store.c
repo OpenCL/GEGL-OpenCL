@@ -856,17 +856,10 @@ gegl_store_new (void)
 }
 
 void
-gegl_store_set_root (GeglStore *gegl_store,
-                     GeglNode  *root)
-{
-  g_return_if_fail (IS_GEGL_STORE (gegl_store));
-  gegl_store->root = root;
-}
-
-void
 gegl_store_set_gegl (GeglStore *gegl_store,
                      GeglNode  *gegl)
 {
   g_return_if_fail (IS_GEGL_STORE (gegl_store));
   gegl_store->gegl = gegl;
+  gegl_store->root = gegl_graph_output (gegl, "output");
 }

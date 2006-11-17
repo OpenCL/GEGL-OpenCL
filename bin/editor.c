@@ -675,7 +675,7 @@ void editor_refresh_structure ()
   GeglStore *store = gegl_store_new ();
   GtkWidget *treeview;
 
-  gegl_store_set_root (store, gegl_graph_output (editor.gegl, "output"));
+  /*gegl_store_set_root (store, gegl_graph_output (editor.gegl, "output"));*/
   gegl_store_set_gegl (store, editor.gegl);
   treeview = tree_editor_get_treeview (editor.tree_editor);
   gtk_tree_view_set_model (GTK_TREE_VIEW (treeview), NULL);
