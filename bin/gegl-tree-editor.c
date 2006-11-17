@@ -138,7 +138,10 @@ tree_editor_get_active (GtkWidget *tree_editor)
   tree_selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
 
   if (!gtk_tree_selection_get_selected (tree_selection, &model, &iter))
-    return NULL;
+    {
+      GeglNode *proxy = gegl_graph_output (editor.gegl, "output");
+      return gegl_node_get_connected_to (proxy, "input"); 
+    }
 
   item = iter.user_data;
   return item;
@@ -169,7 +172,6 @@ tree_editor_set_active (GtkWidget *tree_editor, GeglNode *item)
   gtk_tree_view_expand_to_path (treeview, path);
   gtk_tree_selection_select_iter (tree_selection, &iter);
   gtk_tree_view_scroll_to_cell (treeview, path, NULL, TRUE, 0, 0);
-
 
   gtk_tree_path_free (path);
 }

@@ -1,5 +1,15 @@
 2006-11-17  Øyvind Kolås  <pippin@gimp.org>
 
+	Made the fast adding of ops, add a sibling to the currently selected
+	op in the treeview, if any.
+
+	* bin/editor-optype.c: (chain_in_operation):
+	* bin/gegl-tree-editor-action.c: (gegl_add_sibling):
+	* bin/gegl-tree-editor.c: (tree_editor_get_active),
+	(tree_editor_set_active):
+
+2006-11-17  Øyvind Kolås  <pippin@gimp.org>
+
 	Made the logic to force a rerender of the view work correctly (needed
 	to manually compensate for bugs).
 

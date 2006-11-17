@@ -60,6 +60,7 @@ void popup_properties (GeglNode *node)
 static void
 chain_in_operation (const gchar *op_type)
 {
+#if 0
   g_warning ("request to chain in %s", op_type);
   GeglNode *proxy;
   GeglNode *iter;
@@ -78,7 +79,12 @@ chain_in_operation (const gchar *op_type)
     }
   editor_refresh_structure();
   popup_properties (new);
+#endif
+  GeglNode *new = gegl_add_sibling (op_type);
+  /*editor_refresh_structure();*/
+  popup_properties (new);
 }
+
 
 static void
 menu_item_activate (GtkWidget *widget, gpointer user_data)

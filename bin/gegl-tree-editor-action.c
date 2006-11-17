@@ -396,6 +396,21 @@ add_sibling_op (GtkAction *action, gpointer userdata)
   gtk_tree_selection_select_iter (tree_selection, &iter);
 }
 
+GeglNode *gegl_add_sibling (const gchar *type)
+{
+  GeglNode *node;
+
+  /* hack hack */ 
+  tree_editor_set_active (editor.tree_editor, 
+    tree_editor_get_active (editor.tree_editor));
+  add_sibling_op (NULL, tree_editor_get_treeview (editor.tree_editor));
+  node = tree_editor_get_active (editor.tree_editor);
+  gegl_node_set (node, "operation", type, NULL);
+  tree_editor_set_active (editor.tree_editor, node);
+  property_editor_rebuild (editor.property_editor, node);
+  return node;
+}
+
 static void
 add_child_op (GtkAction *action, gpointer userdata)
 {
