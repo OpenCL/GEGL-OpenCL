@@ -130,6 +130,7 @@ parse_float_argument_list (GeglColor *color,
   GTokenType  token_type;
   GTokenValue token_value;
   GeglColorPrivate  *priv;
+  gint i;
 
   priv = GEGL_COLOR_GET_PRIVATE (color);
 
@@ -142,7 +143,6 @@ parse_float_argument_list (GeglColor *color,
   /* Iterate through the arguments and copy each value
    * to the rgba_color array of GeglColor.
    */
-  gint i;
   for (i = 0; i < num_arguments; ++i)
     {
       if (g_scanner_get_next_token (scanner) != G_TOKEN_FLOAT)

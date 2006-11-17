@@ -565,6 +565,7 @@ gegl_buffer_init (GeglBuffer *buffer)
   allocated_buffers++;
 }
 
+#if 0
 gboolean
 gegl_buffer_void_tile (GeglBuffer *buffer,
                        gint        x,
@@ -582,6 +583,7 @@ gegl_buffer_idle (GeglBuffer *buffer)
   return gegl_tile_store_message (GEGL_TILE_STORE (buffer),
                                   GEGL_TILE_IDLE, 0, 0, 0, NULL);
 }
+#endif
 
 /***************************************************************************/
 
@@ -593,6 +595,7 @@ void *gegl_buffer_get_format      (GeglBuffer *buffer)
   return gegl_buffer_backend (buffer)->format;
 }
 
+#if 0
 void
 gegl_buffer_add_dirty (GeglBuffer *buffer,
                        gint        x,
@@ -619,6 +622,7 @@ gegl_buffer_is_dirty (GeglBuffer *buffer,
   return gegl_tile_store_message (GEGL_TILE_STORE (buffer),
                                   GEGL_TILE_IS_DIRTY, x, y, z, NULL);
 }
+#endif
 
 gint gegl_buffer_pixels (GeglBuffer *buffer)
 {

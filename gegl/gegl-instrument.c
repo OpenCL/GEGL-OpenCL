@@ -77,8 +77,8 @@ static gint timing_depth (Timing *timing)
   return ret;
 }
 
-Timing *timing_find (Timing      *root,
-                     const gchar *name)
+static Timing *timing_find (Timing      *root,
+                            const gchar *name)
 {
   Timing *iter = root;
   if (!iter)

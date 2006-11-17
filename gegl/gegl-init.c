@@ -80,9 +80,7 @@ gegl_init (int *argc,
   gegl_initialized = TRUE;
 }
 
-void gegl_buffer_stats (void);
 void gegl_tile_mem_stats (void);
-
 #include <stdio.h>
 
 void

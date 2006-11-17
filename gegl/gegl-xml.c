@@ -29,6 +29,7 @@
 #include "gegl-pad.h"
 #include "gegl-color.h"
 #include "gegl-instrument.h"
+#include "gegl-xml.h"
 
 typedef struct _ParseData ParseData;
 
@@ -276,10 +277,10 @@ static void error (GMarkupParseContext *context,
                    gpointer             user_data)
 {
   ParseData *pd;
- 
+  gint       line_number;
+  gint       char_number;
+
   pd = user_data;
-  gint line_number;
-  gint char_number;
   g_markup_parse_context_get_position (context, &line_number, &char_number);
   g_warning ("XML Parse error %i:%i: %s", line_number, char_number, error->message);
 }
@@ -292,8 +293,8 @@ static GMarkupParser parser={
   error
 };
 
-void each_ref (gpointer value,
-               gpointer user_data)
+static void each_ref (gpointer value,
+                      gpointer user_data)
 {
   ParseData *pd=user_data;
   GeglNode  *dest_node = value;

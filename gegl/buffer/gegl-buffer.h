@@ -100,9 +100,13 @@ void          gegl_buffer_get_rect_fmt        (GeglBuffer *buffer,
                                                void       *dst,
                                                void       *format);
 
-GeglStorage * gegl_buffer_storage            (GeglBuffer *buffer);
+GeglStorage * gegl_buffer_storage             (GeglBuffer *buffer);
 
-gint          gegl_buffer_leaks              (void);
+gint          gegl_buffer_leaks               (void);
+
+void          gegl_buffer_stats               (void);
+
+
 /* the following are remnants of how horizon used the precursor of the
  * tile manager for it's purposes. For now it is not used
 

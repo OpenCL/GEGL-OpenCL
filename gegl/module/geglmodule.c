@@ -383,25 +383,6 @@ gegl_module_state_name (GeglModuleState state)
   return gettext (statenames[state]);
 }
 
-/**
- * gegl_module_register_enum:
- * @module:
- * @name:
- * @const_static_values:
- *
- * This function is deprecated! Use g_type_module_register_enum() instead.
- *
- * Return value: a new enum #GType
- **/
-GType
-gegl_module_register_enum (GTypeModule      *module,
-                           const gchar      *name,
-                           const GEnumValue *const_static_values)
-{
-  return g_type_module_register_enum (module, name, const_static_values);
-}
-
-
 /*  private functions  */
 
 static gboolean

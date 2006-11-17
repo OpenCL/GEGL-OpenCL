@@ -142,7 +142,7 @@ gegl_path_parse (const gchar  *path,
  * This function frees the memory allocated for the list and the strings
  * it contains.
  **/
-void
+static void
 gegl_path_free (GList *path)
 {
   g_list_foreach (path, (GFunc) g_free, NULL);

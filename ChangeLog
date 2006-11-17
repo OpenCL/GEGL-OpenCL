@@ -1,3 +1,19 @@
+2006-11-18  Øyvind Kolås  <pippin@gimp.org>
+
+	Silencing of stricter warnings.
+
+	* gegl/buffer/gegl-buffer.c:
+	* gegl/buffer/gegl-buffer.h:
+	* gegl/buffer/gegl-tile-mem.h:
+	* gegl/gegl-color.c: (parse_float_argument_list): do not mix code and
+	declarations.
+	* gegl/gegl-init.c: moved gegl_buffer_stats prototype to gegl-buffer.h
+	* gegl/gegl-instrument.c: (timing_find): made static
+	* gegl/gegl-xml.c: (error), (each_ref): made functions static include .h
+	* gegl/module/gegldatafiles.c: made functions static, removed dead
+	code.
+	* gegl/module/geglmodule.c: made functions static.
+
 2006-11-17  Øyvind Kolås  <pippin@gimp.org>
 
 	Silencing of strict warnings.
