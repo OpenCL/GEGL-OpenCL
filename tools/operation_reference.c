@@ -32,8 +32,8 @@ gegl_operations_build (GList *list, GType type)
   return list;
 }
 
-gint compare_operation_names (gconstpointer a,
-                              gconstpointer b)
+static gint compare_operation_names (gconstpointer a,
+                                     gconstpointer b)
 {
   const GeglOperationClass *klassA, *klassB;
 
@@ -43,7 +43,7 @@ gint compare_operation_names (gconstpointer a,
   return strcmp (klassA->name, klassB->name);
 }
 
-GList *gegl_operations (void)
+static GList *gegl_operations (void)
 {
   static GList *operations = NULL;
   if (!operations)
@@ -114,9 +114,9 @@ static gchar *html_top = "<html><head><title>GEGL operations</title><link rel='s
 static gchar *html_bottom = "</div></div></body></html>";
 
 
-void category_menu_item (gpointer key,
-                         gpointer value,
-                         gpointer user_data)
+static void category_menu_item (gpointer key,
+                                gpointer value,
+                                gpointer user_data)
 {
   gchar    *category = key;
   if (!strcmp (category, "hidden"))
@@ -124,9 +124,9 @@ void category_menu_item (gpointer key,
   g_print ("<li><a href='#cat_%s'>&nbsp;&nbsp;%s</a></li>\n", category, category);
 }
 
-void category_index (gpointer key,
-                     gpointer value,
-                     gpointer user_data)
+static void category_index (gpointer key,
+                            gpointer value,
+                            gpointer user_data)
 {
   gchar    *category = key;
   GList    *operations = value;

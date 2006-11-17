@@ -52,7 +52,7 @@ void  introspect_overview (GType type, gint  indent);
 void  introspect (GType type, gint  indent);
 gint  stuff      (gint    argc, gchar **argv);
 
-void introspection (void)
+static void introspection (void)
 {
   file = stdout;
   fprintf (file, "<html><head><title>GObject class introspection</title><link rel='shortcut icon' href='images/gegl.ico'/><style type='text/css'>@import url(gegl.css);</style>%s</head><body>\n", collapsibles_html);

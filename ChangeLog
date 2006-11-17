@@ -1,5 +1,13 @@
 2006-11-18  Øyvind Kolås  <pippin@gimp.org>
 
+	Made internal methods for the binaries static.
+
+	* tools/introspect.c: (introspection):
+	* tools/operation_reference.c: (compare_operation_names),
+	(gegl_operations), (category_menu_item), (category_index):
+
+2006-11-18  Øyvind Kolås  <pippin@gimp.org>
+
 	Silencing to be able to cope with stricter settings of warnings during
 	compile.
 
