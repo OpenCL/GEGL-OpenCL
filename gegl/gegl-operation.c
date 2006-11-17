@@ -318,8 +318,7 @@ gegl_operation_class_set_name (GeglOperationClass *klass,
 
   name_copy = g_strdup (new_name);
   g_strdelimit (name_copy, "_", '-');
-  klass->name = g_intern_string (name_copy);
-  g_free (name_copy);
+  klass->name = name_copy;
 }
 
 void

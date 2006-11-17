@@ -1,5 +1,11 @@
 2006-11-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.in: lower required GTK+ version to 2.8.9
+	* gegl/gegl-operation.c: (gegl_operation_class_set_name): do not use
+	g_intern_string since that would demand a rather recent glib.
+
+2006-11-17  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed gegl_store_set_root call, it is now being called by
 	the gegl_store_set_gegl call.
 
