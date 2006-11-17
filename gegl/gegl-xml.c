@@ -36,7 +36,7 @@ typedef struct _ParseData ParseData;
 enum {
   STATE_NONE=0,
   STATE_TREE_NORMAL,
-  STATE_TREE_FIRST_CHILD,
+  STATE_TREE_FIRST_CHILD
 };
 
 

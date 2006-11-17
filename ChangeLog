@@ -1,5 +1,9 @@
 2006-11-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-xml.c: removed comma at end of enumerator.
+
+2006-11-18  Øyvind Kolås  <pippin@gimp.org>
+
 	Made internal methods for the binaries static.
 
 	* tools/introspect.c: (introspection):
