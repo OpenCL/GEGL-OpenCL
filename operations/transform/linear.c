@@ -21,7 +21,7 @@
 #include <string.h>
 #include <math.h>
 #include <gegl-plugin.h>
-
+#include "linear.h"
 #include "matrix.h"
 
 

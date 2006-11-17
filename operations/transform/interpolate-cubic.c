@@ -21,6 +21,7 @@
 #include <string.h>
 #include <math.h>
 #include <gegl-plugin.h>
+#include "interpolate-cubic.h"
 
 #include "matrix.h"
 

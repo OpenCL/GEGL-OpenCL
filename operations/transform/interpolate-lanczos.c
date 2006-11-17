@@ -21,6 +21,7 @@
 #include <string.h>
 #include <math.h>
 #include <gegl-plugin.h>
+#include "interpolate-lanczos.h"
 
 #include "matrix.h"
 
@@ -70,21 +71,13 @@ affine_lanczos (GeglBuffer *dest,
   gdouble  x_sum, y_sum;       /* sum of Lanczos weights */
   gint     lanczos_width2;
   gint     lanczos_spp;
-  /*
-   * parameter corretions
-   * 1.   lanczos_width we do not settlme for less than lanczos(3)
-   * 2.   Window width is 2 times lanczos_width + 1
-   * 3.   The minimum number of recalculate samples lanczos_spp is
-   *      lanczos_width2.
-   */
-  lanczos_width  = (lanczos_width < 3) ? 3 : lanczos_width;
-  lanczos_width2 = lanczos_width * 2 + 1;
-  lanczos_spp    = lanczos_width2 * 10000;
 
   gdouble x_kernel[lanczos_width*2+1],/* 1-D kernels of Lanczos window coeffs */
           y_kernel[lanczos_width*2+1];
-
   gdouble scale, arecip;
+
+
+
 
   gint    x, y,
           i, j,
@@ -107,6 +100,17 @@ affine_lanczos (GeglBuffer *dest,
   gdouble newval[4];
   gdouble du, dv, fu, fv;
   Matrix3 inverse;
+
+  /*
+   * parameter corretions
+   * 1.   lanczos_width we do not settle for less than lanczos(3)
+   * 2.   Window width is 2 times lanczos_width + 1
+   * 3.   The minimum number of recalculate samples lanczos_spp is
+   *      lanczos_width2.
+   */
+  lanczos_width  = (lanczos_width < 3) ? 3 : lanczos_width;
+  lanczos_width2 = lanczos_width * 2 + 1;
+  lanczos_spp    = lanczos_width2 * 10000;
 
   if (gegl_buffer_pixels (src) == 0 ||
       gegl_buffer_pixels (dest) == 0)

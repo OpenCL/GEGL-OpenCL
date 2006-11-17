@@ -69,6 +69,7 @@ gegl_chant_class_intern_init (gpointer klass) \
   gegl_chant_parent_class = g_type_class_peek_parent (klass); \
   gegl_chant_class_init ((ChantClass*) klass); \
 } \
+GType  type_name##_get_type (void); \
 \
 GType \
 type_name##_get_type (void) \

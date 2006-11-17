@@ -35,7 +35,7 @@ static const GeglModuleInfo  modinfo =
 };
 
 GTypeModule *
-affine_module_get_module ()
+affine_module_get_module (void)
 {
   return affine_module;
 }

@@ -20,7 +20,7 @@
 
 #include <gegl-plugin.h>
 #include <string.h>
-
+#include "nearest.h"
 #include "matrix.h"
 
 void

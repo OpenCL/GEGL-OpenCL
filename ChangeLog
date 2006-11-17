@@ -1,5 +1,18 @@
 2006-11-18  Øyvind Kolås  <pippin@gimp.org>
 
+	Silencing to be able to cope with stricter settings of warnings during
+	compile.
+
+	* operations/transform/chant.h:
+	* operations/transform/interpolate-cubic.c:
+	* operations/transform/interpolate-lanczos.c: (affine_lanczos):
+	* operations/transform/linear.c:
+	* operations/transform/module.c: (affine_module_get_module):
+	* operations/transform/module.h:
+	* operations/transform/nearest.c:
+
+2006-11-18  Øyvind Kolås  <pippin@gimp.org>
+
 	Silencing of stricter warnings.
 
 	* gegl/buffer/gegl-buffer.c:
