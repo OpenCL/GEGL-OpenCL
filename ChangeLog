@@ -1,5 +1,10 @@
 2006-11-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/file-io/load.c: (prepare): added extra braces in body of
+	if.
+
+2006-11-17  Øyvind Kolås  <pippin@gimp.org>
+
 	Made code more C standard conformant.
 
 	* gegl/gegl-chant.h: declare functions before defining then.

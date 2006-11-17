@@ -97,10 +97,12 @@ prepare (GeglOperation *operation)
   if (self->cache)
     {
       if (refresh_cache (self))
-        gegl_node_set (priv->load,
-                       "operation", "buffer",
-                       "buffer", priv->cached_buffer,
-                       NULL);
+        {
+          gegl_node_set (priv->load,
+                         "operation", "buffer",
+                         "buffer", priv->cached_buffer,
+                         NULL);
+        }
     }
   else
     {
