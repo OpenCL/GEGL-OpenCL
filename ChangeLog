@@ -1,5 +1,17 @@
 2006-11-17  Øyvind Kolås  <pippin@gimp.org>
 
+	Made code more C standard conformant.
+
+	* gegl/gegl-chant.h: declare functions before defining then.
+	* gegl/gegl-extension-handler.c: include header for function
+	prototypes.
+	* gegl/gegl-operation.c: removed unused
+	gegl_operation_set_result_rect.
+	* gegl/gegl-prepare-visitor.c: (visit_node): do not mix code and
+	declarations.
+
+2006-11-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.in: lower required GTK+ version to 2.8.9
 	* gegl/gegl-operation.c: (gegl_operation_class_set_name): do not use
 	g_intern_string since that would demand a rather recent glib.

@@ -239,18 +239,6 @@ gegl_operation_set_source_region (GeglOperation *operation,
                            child_need.w, child_need.h);
 }
 
-void
-gegl_operation_set_result_rect (GeglOperation *operation,
-                                gint           x,
-                                gint           y,
-                                gint           width,
-                                gint           height)
-{
-  g_assert (operation);
-  g_assert (operation->node);
-  gegl_node_set_result_rect (operation->node, x, y, width, height);
-}
-
 static GeglRect
 get_defined_region (GeglOperation *self)
 {

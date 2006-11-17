@@ -20,6 +20,7 @@
 
 #include "config.h"
 #include <glib.h>
+#include "gegl-extension-handler.h"
 
 static GHashTable *handlers = NULL;
 

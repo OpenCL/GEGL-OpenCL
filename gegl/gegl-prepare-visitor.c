@@ -58,8 +58,8 @@ visit_node (GeglVisitor *self,
 {
   GeglOperation *operation = node->operation;
 
-  GEGL_VISITOR_CLASS (gegl_prepare_visitor_parent_class)->visit_node (self, node);
   glong time = gegl_ticks ();
+  GEGL_VISITOR_CLASS (gegl_prepare_visitor_parent_class)->visit_node (self, node);
 
   /* prepare the operation for the coming evaluation (all properties
    * should be set now).
