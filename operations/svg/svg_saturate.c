@@ -40,12 +40,14 @@ process (GeglOperation *op,
                     0.0, 0.0, 1.0, 0.0, 0.0,
                     0.0, 0.0, 0.0, 1.0, 0.0,
                     0.0, 0.0, 0.0, 0.0, 1.0};
+  char         *endptr;
+  gfloat        value;
+  const gchar   delimiter=',';
+  const gchar  *delimiters=" ";
+  gchar       **values;
+  gint          i;
+
   m = ma;
-  char        *endptr;
-  gfloat       value;
-  const gchar  delimiter=',';
-  const gchar *delimiters=" ";
-  gchar**      values;
 
   if ( GEGL_CHANT_OPERATION (op)->values != NULL ) 
     {
@@ -71,7 +73,6 @@ process (GeglOperation *op,
         }
       g_strfreev(values);
     }
-  gint i;
   for (i=0; i<n_pixels; i++)
     {
       out[0] =  m[0]  * in[0] +  m[1]  * in[1] + m[2]  * in[2] + m[3]  * in[3] + m[4];

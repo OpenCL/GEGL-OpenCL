@@ -299,7 +299,7 @@ explorer_render_row (GeglChantOperation *self,
     }
 }
 
-void
+static void
 make_color_map (GeglChantOperation *self, clrmap colormap)
 {
   gint     i;

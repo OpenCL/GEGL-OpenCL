@@ -48,13 +48,14 @@ static gboolean
 process (GeglOperation *operation)
 {
   GeglOperationFilter *filter;
-  GeglChantOperation *self;
+  GeglChantOperation  *self;
+  GeglBuffer          *input;
+  GeglBuffer          *output;
 
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-  GeglBuffer *input  = filter->input;
-  GeglBuffer *output;
+  input   = filter->input;
 
     {
       GeglRect   *result = gegl_operation_result_rect (operation);

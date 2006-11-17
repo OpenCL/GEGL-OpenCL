@@ -1,5 +1,19 @@
 2006-11-17  Øyvind Kolås  <pippin@gimp.org>
 
+	Silencing of strict warnings.
+
+	* operations/render/FractalExplorer.c: made make_color_map() static.
+	* operations/blur/box-blur.c: (process),
+	* operations/blur/gaussian-blur.c: (process),
+	* operations/svg/svg_huerotate.c: (process),
+	* operations/svg/svg_luminancetoalpha.c: (process),
+	* operations/svg/svg_matrix.c: (process),
+	* operations/svg/svg_saturate.c: (process):
+	* operations/workshop/demosaic-simple.c: (process): avoid mixing
+	declarations and code.
+
+2006-11-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/file-io/load.c: (prepare): added extra braces in body of
 	if.
 
