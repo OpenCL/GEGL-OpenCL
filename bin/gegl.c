@@ -29,9 +29,8 @@
 
 #if HAVE_GTK
 #include <gtk/gtk.h>
+#include "editor.h"
 
-gint editor_main (GeglNode    *gegl,
-                  const gchar *path);
 #endif
 
 

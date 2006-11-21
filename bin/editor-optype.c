@@ -24,6 +24,7 @@
 #include "editor.h"
 #include "gegl-tree-editor.h"
 #include "gegl-node-editor.h"
+#include "gegl-tree-editor-action.h"
 
 extern GeglNode *editor_output;
 
@@ -33,9 +34,8 @@ static gboolean
 completion_match_selected (GtkEntryCompletion * completion,
                            GtkTreeModel *model,
                            GtkTreeIter *iter, gpointer user_data);
-void editor_refresh_structure ();
 
-void popup_properties (GeglNode *node)
+static void popup_properties (GeglNode *node)
 {
   GtkWidget *dialog;
   GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
@@ -392,6 +392,13 @@ button_clicked (GtkButton * button, gpointer item)
   gtk_menu_popup (menu, NULL, NULL, gtk_option_menu_position, button, 0, 0);
 }
 
+/* FIXME: this should be in a header, here to silence gcc in extreme
+ * strictness of error reporting mode
+ */
+GtkWidget *
+typeeditor_optype (GtkSizeGroup *col1,
+                   GtkSizeGroup *col2,
+                   GeglNodeEditor *node_editor);
 GtkWidget *
 typeeditor_optype (GtkSizeGroup *col1,
                    GtkSizeGroup *col2,

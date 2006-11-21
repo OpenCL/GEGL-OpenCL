@@ -23,5 +23,6 @@
 #include <gtk/gtk.h>
 
 GtkActionGroup *tree_editor_action_group (GtkWidget *tree_editor);
+GeglNode *gegl_add_sibling (const gchar *type);
 
 #endif

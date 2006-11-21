@@ -1,5 +1,6 @@
 #include "gegl-plugin.h"
 #include "editor.h"
+#include "export.h"
 #include <png.h>
 
 static gint

@@ -1,5 +1,16 @@
 2006-11-21  Øyvind Kolås  <pippin@gimp.org>
 
+	Quiet compiler warnings. (and perhaps a minor bug mutation|fix).
+
+	* bin/editor-optype.c: (popup_properties):
+	* bin/editor.c: (cb_structure_visible), (editor_refresh_structure):
+	* bin/editor.h:
+	* bin/export.c:
+	* bin/gegl-tree-editor-action.h:
+	* bin/gegl.c:
+
+2006-11-21  Øyvind Kolås  <pippin@gimp.org>
+
 	Fixed some motion-hint related bug in zoom interaction.
 	
 	* bin/gegl-view.c: (motion_notify_event), (expose_event):

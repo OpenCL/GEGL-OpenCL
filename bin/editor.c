@@ -547,41 +547,14 @@ static void cb_structure_visible (GtkAction *action, gpointer userdata)
 {
   GtkWidget *widget = editor.structure;
 
-  GeglRect defined = gegl_node_get_defined_rect (editor.gegl);
-
-      if (GTK_WIDGET_VISIBLE (widget))
-        {
-          gtk_widget_hide (widget);
-        }
-      else
-        {
-          gtk_widget_show (widget);
-        }
-
-#if 0
-      nasty hack that didn't really work
-  if (defined.w == editor.drawing_area->allocation.width &&
-      defined.h == editor.drawing_area->allocation.height)
+  if (GTK_WIDGET_VISIBLE (widget))
     {
-      int i;
-      /* hacky way, trying to get the resize done with */
-      for (i=0;i<23;i++)
-        gtk_main_iteration ();
-
-      {
-        gint x,y;
-        g_object_get (editor.drawing_area,
-                      "x", &x,
-                      "y", &y,
-                      NULL);
-        cb_shrinkwrap (NULL);
-        g_object_set (editor.drawing_area,
-                      "x", x,
-                      "y", y,
-                      NULL);
-      }
+      gtk_widget_hide (widget);
     }
-#endif
+  else
+    {
+      gtk_widget_show (widget);
+    }
 }
 
 static void cb_properties_visible (GtkAction *action, gpointer userdata)
@@ -670,17 +643,16 @@ StockIcon (const gchar *id, GtkIconSize size, GtkWidget *widget)
   return image;
 }
 
-void editor_refresh_structure ()
+void editor_refresh_structure (void)
 {
   GeglStore *store = gegl_store_new ();
   GtkWidget *treeview;
 
-  /*gegl_store_set_root (store, gegl_graph_output (editor.gegl, "output"));*/
   gegl_store_set_gegl (store, editor.gegl);
   treeview = tree_editor_get_treeview (editor.tree_editor);
   gtk_tree_view_set_model (GTK_TREE_VIEW (treeview), NULL);
   gtk_tree_view_set_model (GTK_TREE_VIEW (treeview),
-                               GTK_TREE_MODEL (store));
+                           GTK_TREE_MODEL (store));
 }
 
 static void reset_gegl (GeglNode    *gegl,
