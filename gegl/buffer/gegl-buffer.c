@@ -966,3 +966,72 @@ void          gegl_buffer_get_rect            (GeglBuffer *buffer,
 {
   gegl_buffer_get_rect_fmt (buffer, rect, dst, buffer->format);
 }
+
+void          gegl_buffer_get_rect_fmt_scale  (GeglBuffer *buffer,
+                                               GeglRect   *rect,
+                                               void       *dest,
+                                               void       *format,
+                                               gdouble     scale)
+{
+  if (rect->w == 0 ||
+      rect->h == 0)
+    return;
+  if (scale == 1.0)
+    {
+      gegl_buffer_get_rect_fmt (buffer,
+                                rect,
+                                dest,
+                                format);
+      return;
+    }
+  else
+    {
+      /* FIXME: this is a slow and inaccurate implementation, and needs
+       *        a lot more further work within the buffer implementation.
+       */
+    
+      gint bpp = BABL(format)->format.bytes_per_pixel;
+      GeglRect sample_rect = {rect->x,
+                              rect->y,
+                              rect->w / scale,
+                              rect->h / scale};
+      void *sample_buf;
+
+      /* ensure we always have some data to sample from */
+      sample_rect.w += 1;
+      sample_rect.h += 1;
+
+      sample_buf = g_malloc (sample_rect.w * sample_rect.h * bpp);
+
+      gegl_buffer_get_rect_fmt (buffer,
+                                &sample_rect,
+                                sample_buf,
+                                format);
+      {
+        gint x,y;
+        for (y=0;y<rect->h;y++)
+          {
+            gint sy;
+            char *dst;
+            char *src_base;
+
+            sy = y / scale;
+
+            dst = ((gchar*)dest) + y * rect->w * bpp;
+            src_base = ((gchar*)sample_buf) + sy * sample_rect.w * bpp;
+
+            for (x=0;x<rect->w;x++)
+              {
+                gint sx;
+                char *src;
+                sx = x/scale;
+                src = src_base + sx * bpp;
+
+                memcpy (dst, src, bpp);
+                dst += bpp;
+              }
+          }
+      }
+      g_free (sample_buf);
+    }
+}

@@ -107,6 +107,12 @@ gint          gegl_buffer_leaks               (void);
 void          gegl_buffer_stats               (void);
 
 
+void          gegl_buffer_get_rect_fmt_scale  (GeglBuffer *buffer,
+                                               GeglRect   *rect,
+                                               void       *dest,
+                                               void       *format,
+                                               gdouble     scale);
+
 /* the following are remnants of how horizon used the precursor of the
  * tile manager for it's purposes. For now it is not used
 

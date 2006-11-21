@@ -1,5 +1,20 @@
 2006-11-18  Øyvind Kolås  <pippin@gimp.org>
 
+	Added multi resolution retrival interface to GeglBuffer, maybe it
+	should use a fraction instead of a floating point number. Apart from
+	that the function seems to do it's job, and is a good API for something
+	that will improve both in quality and speed as GeglBuffers get the
+	ability to cache mipmap resamplings.
+
+	* gegl/buffer/gegl-buffer.[ch]: added
+          void gegl_buffer_get_rect_fmt_scale  (GeglBuffer *buffer,
+                                                GeglRect   *rect,
+                                                void       *dest,
+                                                void       *format,
+                                                gdouble     scale);
+
+2006-11-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-xml.c: removed comma at end of enumerator.
 
 2006-11-18  Øyvind Kolås  <pippin@gimp.org>
