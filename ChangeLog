@@ -1,5 +1,11 @@
 2006-11-21  Øyvind Kolås  <pippin@gimp.org>
 
+	Fixed some motion-hint related bug in zoom interaction.
+	
+	* bin/gegl-view.c: (motion_notify_event), (expose_event):
+
+2006-11-21  Øyvind Kolås  <pippin@gimp.org>
+
 	Added primitive and buggy zoom capability to the editor.
 
 	* bin/gegl-view.h: added scale property and instance variable.

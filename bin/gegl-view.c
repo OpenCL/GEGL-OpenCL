@@ -273,7 +273,7 @@ static gboolean motion_notify_event (GtkWidget      *widget,
       view->x+= (x) / view->scale;
       view->y+= (y) / view->scale;
 
-      view->scale *= (1.0 + (view->prev_y-y) * 0.01);
+      view->scale *= (1.0 + (view->prev_y-y) * 0.001);
 
       view->x-= (x) / view->scale;
       view->y-= (y) / view->scale;
@@ -328,6 +328,7 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
     }
   gegl_view_repaint (view);
   g_free (rectangles);
+  gdk_window_get_pointer (event->window, NULL, NULL, NULL);
 
   return TRUE;
 }
