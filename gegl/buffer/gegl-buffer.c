@@ -1017,6 +1017,9 @@ void          gegl_buffer_get_rect_fmt_scale  (GeglBuffer *buffer,
 
             sy = y / scale;
 
+            if (sy>sample_rect.h)
+              sy=sample_rect.h-1;
+
             dst = ((gchar*)dest) + y * rect->w * bpp;
             src_base = ((gchar*)sample_buf) + sy * sample_rect.w * bpp;
 
@@ -1025,6 +1028,9 @@ void          gegl_buffer_get_rect_fmt_scale  (GeglBuffer *buffer,
                 gint sx;
                 char *src;
                 sx = x/scale;
+
+                if (sx>sample_rect.w)
+                  sx=sample_rect.w-1;
                 src = src_base + sx * bpp;
 
                 memcpy (dst, src, bpp);

@@ -1,5 +1,11 @@
 2006-11-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.[ch]: Restrict sampling to ensure using
+	rendered data. Might introduce unwanted decimation, but that shouldn't
+	matter much with nearest neighbour interpolation.
+
+2006-11-21  Øyvind Kolås  <pippin@gimp.org>
+
 	Quiet compiler warnings. (and perhaps a minor bug mutation|fix).
 
 	* bin/editor-optype.c: (popup_properties):
