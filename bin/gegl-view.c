@@ -26,7 +26,8 @@ enum
   PROP_0,
   PROP_NODE,
   PROP_X,
-  PROP_Y
+  PROP_Y,
+  PROP_SCALE
 };
 
 static void      gegl_view_class_init (GeglViewClass  *klass);
@@ -79,6 +80,13 @@ gegl_view_class_init (GeglViewClass * klass)
                                                      G_MININT, G_MAXINT, 0,
                                                      G_PARAM_CONSTRUCT |
                                                      G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class, PROP_SCALE,
+                                   g_param_spec_double ("scale",
+                                                        "Scale",
+                                                        "Zoom factor",
+                                                        0.0, 100.0, 1.00,
+                                                        G_PARAM_CONSTRUCT |
+                                                        G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_NODE,
                                    g_param_spec_object ("node",
                                                         "Node",
@@ -98,6 +106,7 @@ gegl_view_init (GeglView *self)
   self->prev_x      = -1;
   self->prev_y      = -1;
   self->dirty_rects = NULL;
+  self->scale       = 1.0;
 }
 
 static void
@@ -117,15 +126,21 @@ static void computed_event (GeglProjection *self,
                             void           *foo,
                             void           *user_data)
 {
-  GeglRect *rect = foo;
+  GeglRect  rect = *(GeglRect*)foo;
   GeglView *view = GEGL_VIEW (user_data);
   GtkWidget *widget = GTK_WIDGET (user_data);
 
   /* FIXME: check that the area is relevant for us */
 
-  gtk_widget_queue_draw_area (widget, rect->x - view->x,
-                                      rect->y - view->y,
-                                      rect->w, rect->h);
+  rect.x -= view->x;
+  rect.y -= view->y;
+  rect.x *= view->scale;
+  rect.y *= view->scale;
+  rect.w *= view->scale;
+  rect.h *= view->scale;
+
+  gtk_widget_queue_draw_area (widget, rect.x, rect.y,
+                                      rect.w, rect.h);
 }
 
 
@@ -170,6 +185,9 @@ set_property (GObject      *gobject,
     case PROP_Y:
       self->y = g_value_get_int (value);
       break;
+    case PROP_SCALE:
+      self->scale = g_value_get_double (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
@@ -194,6 +212,9 @@ get_property (GObject      *gobject,
       break;
     case PROP_Y:
       g_value_set_int (value, self->y);
+      break;
+    case PROP_SCALE:
+      g_value_set_double (value, self->scale);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -242,9 +263,23 @@ static gboolean motion_notify_event (GtkWidget      *widget,
     
   if (state & GDK_BUTTON1_MASK)
     {
-      view->x += (view->prev_x-x);
-      view->y += (view->prev_y-y);
-      gdk_window_scroll (widget->window, -(view->prev_x-x), -(view->prev_y-y));
+      view->x += (view->prev_x-x) / view->scale;
+      view->y += (view->prev_y-y) / view->scale;
+      gdk_window_scroll (widget->window, -(view->prev_x-x)    ,
+                                         -(view->prev_y-y)   );
+    }
+  else if (state & GDK_BUTTON3_MASK)
+    {
+      view->x+= (x) / view->scale;
+      view->y+= (y) / view->scale;
+
+      view->scale *= (1.0 + (view->prev_y-y) * 0.01);
+
+      view->x-= (x) / view->scale;
+      view->y-= (y) / view->scale;
+      /*gegl_view_repaint (self);*/
+      gtk_widget_queue_draw (GTK_WIDGET (view));
+      g_warning ("new zoom: %f", view->scale);
     }
   view->prev_x = x;
   view->prev_y = y;
@@ -273,23 +308,20 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
   for (i=0;i<count;i++)
     {
       guchar *buf;
-      roi.x=rectangles[i].x + view->x;
-      roi.y=rectangles[i].y + view->y;
+      roi.x=view->x + rectangles[i].x / view->scale;
+      roi.y=view->y + rectangles[i].y / view->scale;
       roi.w=rectangles[i].width;
       roi.h=rectangles[i].height;
 
       buf = g_malloc ((roi.w+1) * (roi.h+1) * 4);
       /* FIXME: this padding should not be needed, but it avoids some segfaults */
-      gegl_buffer_get_rect_fmt (view->projection->buffer,
-                                &roi, buf, babl_format ("R'G'B'A u8"));
-
-      roi.x-=view->x;
-      roi.y-=view->y;
+      gegl_buffer_get_rect_fmt_scale (view->projection->buffer,
+                                      &roi, buf, babl_format ("R'G'B'A u8"), view->scale);
 
       gdk_draw_rgb_32_image (widget->window,
                              widget->style->black_gc,
-                             roi.x, roi.y,
-                             roi.w, roi.h,
+                             rectangles[i].x, rectangles[i].y,
+                             rectangles[i].width, rectangles[i].height,
                              GDK_RGB_DITHER_NONE,
                              buf, roi.w * 4);
       g_free (buf);
@@ -303,7 +335,9 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
 void gegl_view_repaint (GeglView *view)
 {
   GtkWidget *widget = GTK_WIDGET (view);
-  GeglRect roi={view->x, view->y, widget->allocation.width, widget->allocation.height};
+  GeglRect roi={view->x, view->y,
+                widget->allocation.width / view->scale,
+                widget->allocation.height / view->scale};
 
   /* forget all already queued repaints */
   gegl_projection_forget_queue (view->projection, NULL);

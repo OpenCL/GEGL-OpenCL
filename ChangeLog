@@ -1,3 +1,12 @@
+2006-11-21  Øyvind Kolås  <pippin@gimp.org>
+
+	Added primitive and buggy zoom capability to the editor.
+
+	* bin/gegl-view.h: added scale property and instance variable.
+	* bin/gegl-view.c: (gegl_view_class_init), (gegl_view_init),
+	(computed_event), (set_property), (get_property),
+	(motion_notify_event), (expose_event), (gegl_view_repaint):
+
 2006-11-18  Øyvind Kolås  <pippin@gimp.org>
 
 	Added multi resolution retrival interface to GeglBuffer, maybe it

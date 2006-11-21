@@ -46,8 +46,10 @@ struct _GeglView
   GeglNode       *node;
   gint            x;
   gint            y;
+  gdouble         scale;
   gint            prev_x;
   gint            prev_y;
+  gdouble         prev_scale;
   GList          *dirty_rects;
 };
 
