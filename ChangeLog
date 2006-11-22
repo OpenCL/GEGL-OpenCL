@@ -1,5 +1,12 @@
 2006-11-23  Øyvind Kolås  <pippin@gimp.org>
 
+	Adding zooming actions
+
+	* bin/editor.c: (cb_zoom_100), (cb_zoom_200), (cb_zoom_50),
+	(cb_zoom_in), (cb_zoom_out):
+
+2006-11-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-view.c: (motion_notify_event): fixed issue with math.
 	(zoom center still moves as you drag though)
 
