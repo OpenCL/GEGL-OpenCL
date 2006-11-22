@@ -178,6 +178,12 @@ static void cb_composition_new (GtkAction *action);
 static void cb_composition_load (GtkAction *action);
 static void cb_composition_save (GtkAction *action);
 
+static void cb_zoom_in (GtkAction *action);
+static void cb_zoom_out (GtkAction *action);
+static void cb_zoom_50 (GtkAction *action);
+static void cb_zoom_100 (GtkAction *action);
+static void cb_zoom_200 (GtkAction *action);
+
 static GtkActionEntry action_entries[] = {
   {"CompositionMenu", NULL, "_Composition", NULL, NULL, NULL},
   {"ViewMenu", NULL, "_View", NULL, NULL, NULL},
@@ -218,6 +224,31 @@ static GtkActionEntry action_entries[] = {
    "Size the window to the image, if feasible",
    G_CALLBACK (cb_shrinkwrap)},
 
+  {"ZoomIn", NULL,
+   "Zoom in", "plus",
+   "",
+   G_CALLBACK (cb_zoom_in)},
+
+  {"ZoomOut", NULL,
+   "Zoom out", "minus",
+   "",
+   G_CALLBACK (cb_zoom_out)},
+
+  {"Zoom50", NULL,
+   "50%", "2",
+   "",
+   G_CALLBACK (cb_zoom_50)},
+
+  {"Zoom100", NULL,
+   "100%", "1",
+   "",
+   G_CALLBACK (cb_zoom_100)},
+
+  {"Zoom200", NULL,
+   "200%", "",
+   "",
+   G_CALLBACK (cb_zoom_200)},
+
   {"Recompute", NULL,
    "_Recompute view", "<control>R",
    "Recalculate all image data (for working around bugs)",
@@ -243,6 +274,11 @@ static const gchar *ui_info =
   "      <menuitem action='ShrinkWrap'/>"
   "      <menuitem action='Recompute'/>"
   "      <separator/>"
+  "      <menuitem action='ZoomIn'/>"
+  "      <menuitem action='ZoomOut'/>"
+  "      <menuitem action='Zoom50'/>"
+  "      <menuitem action='Zoom100'/>"
+  "      <menuitem action='Zoom200'/>"
   "      <separator/>"
   "      <menuitem action='Structure'/>"
   "      <menuitem action='Tree'/>"
@@ -622,6 +658,164 @@ static void cb_recompute (GtkAction *action)
   gegl_projection_forget (GEGL_VIEW(editor.drawing_area)->projection, NULL);
   gegl_gui_flush ();
 }
+
+static void cb_zoom_100 (GtkAction *action)
+{ 
+  gint width, height;
+  gint x,y;
+  gdouble scale;
+
+  width = editor.drawing_area->allocation.width;
+  height = editor.drawing_area->allocation.height;
+
+  g_object_get (editor.drawing_area,
+                "x", &x,
+                "y", &y,
+                "scale", &scale,
+                NULL);
+
+  x += (width/2) / scale;
+  y += (height/2) / scale;
+
+  scale = 1.0;
+
+  x -= (width/2) / scale;
+  y -= (height/2) / scale;
+
+  g_object_set (editor.drawing_area,
+                "x", x,
+                "y", y,
+                "scale", scale,
+                NULL);
+  gtk_widget_queue_draw (editor.drawing_area);
+}
+
+static void cb_zoom_200 (GtkAction *action)
+{ 
+  gint width, height;
+  gint x,y;
+  gdouble scale;
+
+  width = editor.drawing_area->allocation.width;
+  height = editor.drawing_area->allocation.height;
+
+  g_object_get (editor.drawing_area,
+                "x", &x,
+                "y", &y,
+                "scale", &scale,
+                NULL);
+
+  x += (width/2) / scale;
+  y += (height/2) / scale;
+
+  scale = 2.0;
+
+  x -= (width/2) / scale;
+  y -= (height/2) / scale;
+
+  g_object_set (editor.drawing_area,
+                "x", x,
+                "y", y,
+                "scale", scale,
+                NULL);
+  gtk_widget_queue_draw (editor.drawing_area);
+}
+
+static void cb_zoom_50 (GtkAction *action)
+{ 
+  gint width, height;
+  gint x,y;
+  gdouble scale;
+
+  width = editor.drawing_area->allocation.width;
+  height = editor.drawing_area->allocation.height;
+
+  g_object_get (editor.drawing_area,
+                "x", &x,
+                "y", &y,
+                "scale", &scale,
+                NULL);
+
+  x += (width/2) / scale;
+  y += (height/2) / scale;
+
+  scale = 0.5;
+
+  x -= (width/2) / scale;
+  y -= (height/2) / scale;
+
+  g_object_set (editor.drawing_area,
+                "x", x,
+                "y", y,
+                "scale", scale,
+                NULL);
+  gtk_widget_queue_draw (editor.drawing_area);
+}
+
+
+static void cb_zoom_in (GtkAction *action)
+{
+  gint width, height;
+  gint x,y;
+  gdouble scale;
+
+  width = editor.drawing_area->allocation.width;
+  height = editor.drawing_area->allocation.height;
+
+  g_object_get (editor.drawing_area,
+                "x", &x,
+                "y", &y,
+                "scale", &scale,
+                NULL);
+
+  x += (width/2) / scale;
+  y += (height/2) / scale;
+
+  scale *= 2.0;
+
+  x -= (width/2) / scale;
+  y -= (height/2) / scale;
+
+  g_object_set (editor.drawing_area,
+                "x", x,
+                "y", y,
+                "scale", scale,
+                NULL);
+  gtk_widget_queue_draw (editor.drawing_area);
+}
+
+static void cb_zoom_out (GtkAction *action)
+{
+  gint width, height;
+  gint x,y;
+  gdouble scale;
+
+  width = editor.drawing_area->allocation.width;
+  height = editor.drawing_area->allocation.height;
+
+  g_object_get (editor.drawing_area,
+                "x", &x,
+                "y", &y,
+                "scale", &scale,
+                NULL);
+
+  x += (width/2) / scale;
+  y += (height/2) / scale;
+
+  scale /= 2.0;
+
+  x -= (width/2) / scale;
+  y -= (height/2) / scale;
+
+  g_object_set (editor.drawing_area,
+                "x", x,
+                "y", y,
+                "scale", scale,
+                NULL);
+  gegl_gui_flush ();
+  gtk_widget_queue_draw (editor.drawing_area);
+}
+
 
 #include "export.h"
 

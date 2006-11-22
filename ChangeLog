@@ -1,5 +1,10 @@
 2006-11-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* autogen.sh: lower required GTK+ version.
+	* configure.in: lower required GTK+ version.
+
+2006-11-23  Øyvind Kolås  <pippin@gimp.org>
+
 	Adding zooming actions
 
 	* bin/editor.c: (cb_zoom_100), (cb_zoom_200), (cb_zoom_50),
