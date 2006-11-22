@@ -270,10 +270,19 @@ static gboolean motion_notify_event (GtkWidget      *widget,
     }
   else if (state & GDK_BUTTON3_MASK)
     {
+      gdouble diff;
       view->x+= (x) / view->scale;
       view->y+= (y) / view->scale;
 
-      view->scale *= (1.0 + (view->prev_y-y) * 0.001);
+      diff = (view->prev_y-y) / 300.0;
+      if (diff<0.0)
+        {
+          view->scale *= 1.0 + diff;
+        }
+      else
+        {
+          view->scale /= 1.0 - diff;
+        }
 
       view->x-= (x) / view->scale;
       view->y-= (y) / view->scale;
