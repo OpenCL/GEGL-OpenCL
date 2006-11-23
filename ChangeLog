@@ -1,5 +1,10 @@
 2006-11-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-tree-editor.c: Quiet compiler warning by including
+	gegl-plugin.h instead of gegl.h.
+
+2006-11-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile.h: improved wording of a comment.
 
 2006-11-23  Øyvind Kolås  <pippin@gimp.org>

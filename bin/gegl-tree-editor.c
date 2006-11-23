@@ -18,7 +18,7 @@
  */
 
 #include <gtk/gtk.h>
-#include "gegl.h"
+#include "gegl-plugin.h"
 #include "gegl-tree-editor.h"
 #include "gegl-node-editor.h"
 #include "editor.h"
