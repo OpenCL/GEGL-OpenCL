@@ -1,5 +1,9 @@
 2006-11-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile.h: improved wording of a comment.
+
+2006-11-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* autogen.sh: lower required GTK+ version.
 	* configure.in: lower required GTK+ version.
 

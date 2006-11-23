@@ -46,7 +46,7 @@ struct _GeglTile
 
   GeglStorage   *storage;     /* the buffer from which this tile was retrieved
                                * needed for the tile to be able to store itself
-                               * back when it is destructed.
+                               * back when it is unreffed for the last time
                                */
   gint           storage_x, storage_y, storage_z;
 
