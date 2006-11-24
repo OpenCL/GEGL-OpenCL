@@ -1,3 +1,14 @@
+2006-11-24  Øyvind Kolås  <pippin@gimp.org>
+
+	Added (at the moment unused) code for handling an image pyramid for
+	zooming out.
+
+	* gegl/buffer/Makefile.am: added gegl-tile-zoom.[ch]
+	* gegl/buffer/gegl-tile-zoom.[ch]: class to handle requests and
+	caching of downsampled levels of an image pyramid per buffer.
+	* gegl/buffer/gegl-storage.c: (gegl_storage_constructor): insert the
+	a zoom handler in the tile request chain.
+
 2006-11-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-tree-editor.c: Quiet compiler warning by including

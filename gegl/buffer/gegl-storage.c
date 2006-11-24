@@ -27,6 +27,7 @@
 #include "gegl-tile-disk.h"
 #endif
 #include "gegl-tile-empty.h"
+#include "gegl-tile-zoom.h"
 #include "gegl-tile-mem.h"
 #include "gegl-tile-cache.h"
 #include "gegl-tile-log.h"
@@ -193,15 +194,25 @@ gegl_storage_constructor (GType                  type,
                   NULL);
  }
 
+  if(1)gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_CACHE,
+                                              "size", 256,
+                                              NULL));
 
   if(0)gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_LOG,
                                                 NULL));
+
+  if(1)gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_ZOOM,
+                                              "backend", trait->source,
+                                              "storage", storage,
+                                              NULL));
+
   /* moved here to allow sharing between buffers (speeds up, but only
    * allows nulled (transparent) blank tiles,..
    */
   if(1)gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_EMPTY,
                                               "backend", trait->source,
                                               NULL));
+
   if(0)gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_CACHE,
                                               "size", 128,
                                               NULL));

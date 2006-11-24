@@ -12,7 +12,8 @@ BUFFER_sources = \
     gegl-tile-mem.c		\
     gegl-tile-store.c		\
     gegl-tile-trait.c		\
-    gegl-tile-traits.c
+    gegl-tile-traits.c		\
+    gegl-tile-zoom.c
 
 BUFFER_headers = \
     gegl-buffer-allocator.h	\
@@ -27,7 +28,8 @@ BUFFER_headers = \
     gegl-tile-mem.h		\
     gegl-tile-store.h		\
     gegl-tile-trait.h		\
-    gegl-tile-traits.h
+    gegl-tile-traits.h		\
+    gegl-tile-zoom.h
 
 libbuffer_la_SOURCES = $(BUFFER_sources) $(BUFFER_headers)
 libbufferinclude_HEADERS = $(BUFFER_headers)
