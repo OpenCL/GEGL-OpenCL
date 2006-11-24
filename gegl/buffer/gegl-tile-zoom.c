@@ -212,11 +212,15 @@ get_tile (GeglTileStore *gegl_tile_store,
       guchar   *data;
       data = gegl_tile_get_data (tile);
 
+      g_warning ("%i", z);
+
       for (i=0;i<2;i++)
         for (j=0;j<2;j++)
           {
             GeglTile *source_tile;
-            source_tile = gegl_tile_store_get_tile (source, x*2+i, y*2+j, z-1);
+            /* we get the tile from ourselves, to make successive rescales work
+             * correctly */
+            source_tile = gegl_tile_store_get_tile (zoom, x*2+i, y*2+j, z-1);
 
             if (source_tile)
               {
