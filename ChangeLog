@@ -1,5 +1,10 @@
 2006-11-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-zoom.c: (downscale_u8): divide by 4, the
+	number of samples, not the number of components.
+
+2006-11-24  Øyvind Kolås  <pippin@gimp.org>
+
 	Added (at the moment unused) code for handling an image pyramid for
 	zooming out.
 

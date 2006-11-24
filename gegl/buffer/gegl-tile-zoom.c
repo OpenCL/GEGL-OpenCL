@@ -117,8 +117,11 @@ downscale_u8 (gint    components,
          {
             int i;
             for (i=0; i<components; i++)
-              dst[i] = (src[i] + src[i+components] + src[i + src_rowstride] + src[i + src_rowstride + components]) /
-components;
+              dst[i] = (src[i] +
+                        src[i+components] +
+                        src[i + src_rowstride] +
+                        src[i + src_rowstride + components]) /
+                       4;
 
             dst+=components;
             src+=components*2;
