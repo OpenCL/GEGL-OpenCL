@@ -253,6 +253,10 @@ gegl_view_constructor (GType                  type,
   return object;
 }
 
+/* hack, this should not be in the view, since the view should not be coupled
+ * to the app be be a generic widget */
+void gegl_editor_update_title (void);
+
 static gboolean motion_notify_event (GtkWidget      *widget,
                                      GdkEventMotion *event)
 {
@@ -296,7 +300,7 @@ static gboolean motion_notify_event (GtkWidget      *widget,
       view->y-= (y) / view->scale;
       /*gegl_view_repaint (self);*/
       gtk_widget_queue_draw (GTK_WIDGET (view));
-      g_warning ("new zoom: %f", view->scale);
+      gegl_editor_update_title ();
     }
   view->prev_x = x;
   view->prev_y = y;

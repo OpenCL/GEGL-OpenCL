@@ -167,6 +167,7 @@ editor_main (GeglNode    *gegl,
   reset_gegl (gegl, path);
 
   cb_shrinkwrap (NULL);
+  gegl_editor_update_title ();
   gtk_main ();
   return 0;
 }
@@ -662,6 +663,16 @@ static void cb_recompute (GtkAction *action)
   gegl_gui_flush ();
 }
 
+void gegl_editor_update_title (void)
+{
+  gdouble zoom;
+  gchar buf[512];
+  g_object_get (editor.drawing_area, "scale", &zoom, NULL);
+  sprintf (buf, "GEGL %2.0f%%", zoom * 100);
+
+  gtk_window_set_title (GTK_WINDOW (editor.window), buf);
+}
+
 static void cb_zoom_100 (GtkAction *action)
 { 
   gint width, height;
@@ -691,6 +702,7 @@ static void cb_zoom_100 (GtkAction *action)
                 "scale", scale,
                 NULL);
   gtk_widget_queue_draw (editor.drawing_area);
+  gegl_editor_update_title ();
 }
 
 static void cb_zoom_200 (GtkAction *action)
@@ -722,6 +734,7 @@ static void cb_zoom_200 (GtkAction *action)
                 "scale", scale,
                 NULL);
   gtk_widget_queue_draw (editor.drawing_area);
+  gegl_editor_update_title ();
 }
 
 static void cb_zoom_50 (GtkAction *action)
@@ -753,6 +766,7 @@ static void cb_zoom_50 (GtkAction *action)
                 "scale", scale,
                 NULL);
   gtk_widget_queue_draw (editor.drawing_area);
+  gegl_editor_update_title ();
 }
 
 
@@ -785,6 +799,7 @@ static void cb_zoom_in (GtkAction *action)
                 "scale", scale,
                 NULL);
   gtk_widget_queue_draw (editor.drawing_area);
+  gegl_editor_update_title ();
 }
 
 static void cb_zoom_out (GtkAction *action)
@@ -817,6 +832,7 @@ static void cb_zoom_out (GtkAction *action)
                 NULL);
   gegl_gui_flush ();
   gtk_widget_queue_draw (editor.drawing_area);
+  gegl_editor_update_title ();
 }
 
 

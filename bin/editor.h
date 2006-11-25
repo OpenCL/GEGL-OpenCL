@@ -51,4 +51,6 @@ void gegl_gui_flush (void);
 gint editor_main (GeglNode    *gegl,
                   const gchar *path);
 void editor_refresh_structure (void);
+void gegl_editor_update_title ();
+
 #endif
