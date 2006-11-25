@@ -196,9 +196,11 @@ get_tile (GeglTileStore *gegl_tile_store,
       return tile;
     }
 
-  if (z==0 &&
-      tile == NULL)
-    return NULL;
+  if (z==0) /* at base level with no tile found->send null, and shared empty
+               tile will be used instead */
+    {
+      return NULL;
+    }
 
   g_assert (zoom->backend);
   g_object_get (zoom->backend, "tile-width",  &tile_width,
@@ -206,26 +208,38 @@ get_tile (GeglTileStore *gegl_tile_store,
                                "tile-size",   &tile_size,
                                NULL);
 
-  tile = gegl_tile_new (tile_size);
     {
       gint i,j;
       guchar   *data;
-      data = gegl_tile_get_data (tile);
-
-      g_warning ("%i", z);
+      GeglTile *source_tile[2][2];
 
       for (i=0;i<2;i++)
         for (j=0;j<2;j++)
           {
-            GeglTile *source_tile;
             /* we get the tile from ourselves, to make successive rescales work
              * correctly */
-            source_tile = gegl_tile_store_get_tile (zoom, x*2+i, y*2+j, z-1);
+            source_tile[i][j] = gegl_tile_store_get_tile (gegl_tile_store,
+                                                          x*2+i, y*2+j, z-1);
+          }
 
-            if (source_tile)
+      if (source_tile[0][0]==NULL &&
+          source_tile[0][1]==NULL &&
+          source_tile[1][0]==NULL &&
+          source_tile[1][1]==NULL)
+        {
+          return NULL; /* no data from level below, return NULL and let GeglTileEmpty
+                          fill in the shared empty tile */
+        }
+
+      tile = gegl_tile_new (tile_size);
+      data = gegl_tile_get_data (tile);
+      for (i=0;i<2;i++)
+        for (j=0;j<2;j++)
+          {
+            if (source_tile[i][j])
               {
-                set_half (tile, source_tile, tile_width, tile_height, format, i, j);
-                g_object_unref (source_tile);
+                set_half (tile, source_tile[i][j], tile_width, tile_height, format, i, j);
+                g_object_unref (source_tile[i][j]);
               }
             else
               {

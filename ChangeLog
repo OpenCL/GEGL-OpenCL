@@ -1,5 +1,10 @@
 2006-11-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-zoom.c: (get_tile): Do not generated decimated
+	tile if none of 4 needed decimated/actual tiles exist on lower level.
+
+2006-11-25  Øyvind Kolås  <pippin@gimp.org>
+
 	Show zoom level in title bar.
 
 	* bin/editor.[ch]: (editor_main), (gegl_editor_update_title),
@@ -9,18 +14,6 @@
 	with right mouse button (this coupling is too tight, but it works for
 	now).
 
-2006-11-25  Øyvind Kolås  <pippin@gimp.org>
-
-	* gegl/buffer/gegl-buffer.c: (gegl_buffer_iterate_fmt),
-	(gegl_buffer_iterate_fmt2), (gegl_buffer_set_fmt),
-	(gegl_buffer_get_fmt2), (gegl_buffer_get_fmt),
-	(gegl_buffer_get_rect_fmt2), (gegl_buffer_get_rect_fmt),
-	(gegl_buffer_get_rect_fmt_scale):
-	* gegl/buffer/gegl-storage.c: (gegl_storage_constructor):
-	* gegl/buffer/gegl-tile-store.h:
-	* gegl/buffer/gegl-tile.c: (gegl_tile_void_pyramid),
-	(gegl_tile_unlock):
-	* operations/render/FractalExplorer.c:
 
 2006-11-25  Øyvind Kolås  <pippin@gimp.org>
 
