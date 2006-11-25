@@ -139,6 +139,14 @@ static void computed_event (GeglProjection *self,
   rect.w *= view->scale;
   rect.h *= view->scale;
 
+  if (view->scale != 1.0 &&
+      view->scale != 0.5)
+    {
+      /* Hack to avoid issues with rounding issues in redraws */
+      rect.w+=4;
+      rect.h+=4;
+    }
+
   gtk_widget_queue_draw_area (widget, rect.x, rect.y,
                                       rect.w, rect.h);
 }

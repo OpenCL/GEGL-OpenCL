@@ -1,5 +1,10 @@
 2006-11-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-view.c: (computed_event): Increase size of exposed
+	region to circumwent gaps due to scaling related rounding errors.
+
+2006-11-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: (cb_shrinkwrap): Made shrinkwrap take zoom into
 	account.
 
