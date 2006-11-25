@@ -629,18 +629,21 @@ static void cb_shrinkwrap (GtkAction *action)
   {
     GdkScreen *screen= gtk_window_get_screen (GTK_WINDOW (editor.window));
 
-    gint screen_width, screen_height;    
-    gint width, height;
+    gint    screen_width, screen_height;    
+    gint    width, height;
+    gdouble scale;
+    g_object_get (editor.drawing_area, "scale", &scale, NULL);
 
+    /* compute a base width/height for the other contents of the window */
     screen_width = gdk_screen_get_width (screen);
     screen_height = gdk_screen_get_height (screen);
-    
     gtk_window_get_size (GTK_WINDOW (editor.window), &width, &height);
     width -= editor.drawing_area->allocation.width;
     height -= editor.drawing_area->allocation.height;
 
-    width += defined.w;
-    height += defined.h;
+    /* add the area consumed by the canvas content */
+    width += defined.w * scale;
+    height += defined.h * scale;
 
     if (width > screen_width)
       width = screen_width;

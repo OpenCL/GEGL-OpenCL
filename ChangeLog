@@ -1,3 +1,8 @@
+2006-11-25  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/editor.c: (cb_shrinkwrap): Made shrinkwrap take zoom into
+	account.
+
 2006-11-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-tile-zoom.c: (get_tile): request source tiles for
