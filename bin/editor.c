@@ -147,6 +147,7 @@ create_window (Editor *editor)
 GeglNode *editor_output = NULL;
 
 static void cb_shrinkwrap (GtkAction *action);
+static void cb_fit (GtkAction *action);
 static void cb_recompute (GtkAction *action);
 
 gint
@@ -167,6 +168,7 @@ editor_main (GeglNode    *gegl,
   reset_gegl (gegl, path);
 
   cb_shrinkwrap (NULL);
+  /*cb_fit (NULL);*/
   gegl_editor_update_title ();
   gtk_main ();
   return 0;
@@ -225,6 +227,11 @@ static GtkActionEntry action_entries[] = {
    "Size the window to the image, if feasible",
    G_CALLBACK (cb_shrinkwrap)},
 
+  {"Fit", NULL,
+   "_Fit", "<control>F",
+   "Fit the image in window",
+   G_CALLBACK (cb_fit)},
+
   {"ZoomIn", NULL,
    "Zoom in", "plus",
    "",
@@ -272,6 +279,7 @@ static const gchar *ui_info =
   "      <separator/>"
   "    </menu>"
   "    <menu action='ViewMenu'>"
+  "      <menuitem action='Fit'/>"
   "      <menuitem action='ShrinkWrap'/>"
   "      <menuitem action='Recompute'/>"
   "      <separator/>"
@@ -620,6 +628,46 @@ static void cb_tree_visible (GtkAction *action, gpointer userdata)
     }
 }
 
+static void cb_fit (GtkAction *action)
+{
+  GeglRect defined = gegl_node_get_defined_rect (editor.gegl);
+  gint     width;
+  gint     height;
+  gint     x,y;
+  gdouble  hscale;
+  gdouble  vscale;
+
+  gtk_window_get_size (GTK_WINDOW (editor.window), &width, &height);
+  width -= editor.drawing_area->allocation.width;
+  height -= editor.drawing_area->allocation.height;
+
+  hscale = (gdouble) editor.drawing_area->allocation.width / defined.w;
+  vscale = (gdouble) editor.drawing_area->allocation.height / defined.h;
+
+  if (hscale > vscale)
+    {
+      hscale = vscale;
+      y=0;
+      x= (editor.drawing_area->allocation.width - defined.w * hscale) / 2 / hscale;
+    }
+  else
+    {
+      vscale = hscale;
+      x=0;
+      y= (editor.drawing_area->allocation.height - defined.h * vscale) / 2 / vscale;
+    }
+
+  g_object_set (editor.drawing_area,
+                "x",     defined.x - x,
+                "y",     defined.y - y,
+                "scale", hscale,
+                NULL);
+
+    width += defined.w * hscale;
+    height += defined.h * vscale;
+
+  gtk_widget_queue_draw (editor.drawing_area);
+}
 
 static void cb_shrinkwrap (GtkAction *action)
 {
