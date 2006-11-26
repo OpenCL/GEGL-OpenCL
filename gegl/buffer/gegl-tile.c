@@ -235,6 +235,31 @@ gegl_tile_lock (GeglTile *tile)
   /*gegl_buffer_add_dirty (tile->buffer, tile->x, tile->y);*/
 }
 
+static void
+gegl_tile_void_pyramid (GeglTile *tile)
+{
+  /* should, to tile->storage, request it's toplevel tile, and mark
+   * it as dirty, to force a recomputation of it's toplevel at the
+   * next subdivision request. NB: a full voiding might not be neccesary,
+   * forcing a rerender of just the dirtied part might be better, more
+   * similar to how it was done in horizon, this will only work with 4->1 px
+   * averageing.
+   */
+  gint x,y,z;
+  x = tile->storage_x;
+  y = tile->storage_y;
+  z = 0;/*tile->storage_z;*/
+
+  for (z=1; z<5;z++)
+    {
+      x/=2;
+      y/=2;
+      gegl_tile_store_message (GEGL_TILE_STORE (tile->storage),
+                               GEGL_TILE_VOID,
+                               x, y, z, NULL);
+    }
+}
+
 void
 gegl_tile_unlock (GeglTile *tile)
 {
@@ -244,9 +269,10 @@ gegl_tile_unlock (GeglTile *tile)
       g_warning ("unlocked a tile with lock count == 0");
     }
   tile->lock--;
-  if (tile->lock == 0)
+  if (tile->lock == 0 &&
+      tile->z == 0)
     {
-      /*gegl_buffer_add_dirty (tile->buffer, tile->x, tile->y);*/
+      gegl_tile_void_pyramid (tile);
       tile->rev++;
     }
 }

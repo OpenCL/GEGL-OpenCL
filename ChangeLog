@@ -1,3 +1,12 @@
+2006-11-26  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: Add a scaling implementation that uses
+	nearest neighbour "interpolation" on the next bigger available scale
+	of a pyramid.
+	* gegl/buffer/gegl-tile.c: (gegl_tile_void_pyramid),
+	(gegl_tile_unlock): Void pyramid levels above when a tile on the
+	base level changes.
+
 2006-11-25  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-tile-zoom.c: (get_tile): Do not generated decimated
