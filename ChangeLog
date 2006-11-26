@@ -1,5 +1,11 @@
 2006-11-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_get_rect_fmt_scale):
+	Increase size of sampled buffer in such a manner that no garbage
+	data gets included.
+
+2006-11-26  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: Add a scaling implementation that uses
 	nearest neighbour "interpolation" on the next bigger available scale
 	of a pyramid.

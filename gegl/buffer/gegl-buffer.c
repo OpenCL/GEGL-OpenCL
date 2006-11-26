@@ -1273,17 +1273,10 @@ void          gegl_buffer_get_rect_fmt_scale  (GeglBuffer *buffer,
       buf_height/=factor;
 
       /* ensure we always have some data to sample from */
-
-      if (buf_width == 0)
-        {
-          buf_width = 1;
-          sample_rect.w = factor;
-        }
-      if (buf_height == 0)
-        {
-          buf_height = 1;
-          sample_rect.h = factor;
-        }
+      sample_rect.w += factor;
+      sample_rect.h += factor;
+      buf_width++;
+      buf_height++;
 
       sample_buf = g_malloc (buf_width * buf_height * bpp);
 
