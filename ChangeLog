@@ -1,5 +1,9 @@
 2006-11-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/editor.c (cb_fit): update window title after zooming to fit.
+
+2006-11-26  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c (cb_fit): Added a zoom to fit window action (ctrl+F)
 
 2006-11-26  Øyvind Kolås  <pippin@gimp.org>

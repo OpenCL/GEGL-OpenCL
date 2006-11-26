@@ -667,6 +667,7 @@ static void cb_fit (GtkAction *action)
     height += defined.h * vscale;
 
   gtk_widget_queue_draw (editor.drawing_area);
+  gegl_editor_update_title ();
 }
 
 static void cb_shrinkwrap (GtkAction *action)
