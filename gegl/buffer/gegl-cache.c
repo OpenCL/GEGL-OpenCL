@@ -378,11 +378,11 @@ static gboolean task_render (gpointer foo)
       if (!dr->w || !dr->h)
         return TRUE;
       
-      buf = g_malloc ((dr->w) * (dr->h) * 4);
+      buf = g_malloc (dr->w * dr->h * gegl_buffer_px_size (GEGL_BUFFER (projection)));
       g_assert (buf);
 
-      gegl_node_blit_buf (projection->node, dr, babl_format ("R'G'B'A u8"), 0, (gpointer*) buf);
-      gegl_buffer_set_rect_fmt (projection->buffer, dr, buf, babl_format ("R'G'B'A u8"));
+      gegl_node_blit_buf (projection->node, dr, projection->format, 0, (gpointer*) buf);
+      gegl_buffer_set_rect_fmt (projection->buffer, dr, buf, projection->format);
       
       gdk_region_union_with_rect (projection->valid_region, (GdkRectangle*)dr);
 

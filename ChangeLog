@@ -1,5 +1,17 @@
 2006-11-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-projection.c (task_render): Handle different specified
+	formats correctly. (8bit RGBA was assumed).
+
+2006-11-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/gegl-projection.c (task_render):
+	* bin/gegl-view.c:
+	* gegl/buffer/gegl-storage.c (gegl_storage_constructor):
+	* operations/render/FractalExplorer.c:
+
+2006-11-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-projection.c: (gegl_projection_constructor),
 	(set_property), (get_property): override default values of properties
 	properly.
