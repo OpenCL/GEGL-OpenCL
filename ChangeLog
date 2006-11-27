@@ -1,5 +1,12 @@
 2006-11-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-projection.[ch] (override_default_param_values),
+	(gegl_projection_constructor), (finalize): made GeglProjection be
+	a subclass of GeglBuffer. override_default_params changes the
+	passed properties passed in the construction
+
+2006-11-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: changed zoom in/out shortcuts to <control>plus
 	and <control>minus.
 

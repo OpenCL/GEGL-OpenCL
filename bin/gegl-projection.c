@@ -44,8 +44,8 @@ enum
   LAST_SIGNAL
 };
 
-static void            gegl_projection_class_init           (GeglProjectionClass *klass);
-static void            gegl_projection_init                 (GeglProjection      *self);
+static void            gegl_projection_class_init     (GeglProjectionClass *klass);
+static void            gegl_projection_init           (GeglProjection      *self);
 static void            finalize                       (GObject       *self_object);
 static void            set_property                   (GObject       *gobject,
                                                        guint          prop_id,
@@ -58,10 +58,85 @@ static void            get_property                   (GObject       *gobject,
 static gboolean        task_render                    (gpointer       foo);
 static gboolean        task_monitor                   (gpointer       foo);
 
-G_DEFINE_TYPE (GeglProjection, gegl_projection, G_TYPE_OBJECT);
+G_DEFINE_TYPE (GeglProjection, gegl_projection, GEGL_TYPE_BUFFER);
 
 static GObjectClass *parent_class = NULL;
 static guint         projection_signals[LAST_SIGNAL] = {0};
+
+
+/* This is a hack, to provide a different set of default values for projection
+ * than GeglBuffer
+ */
+static void override_default_param_values (guint                  n_params,
+                                           GObjectConstructParam *params)
+{
+  gint      i;
+  gpointer *format = NULL;
+  gint      width = -1,
+            height = -1,
+            x = 0, y = 0;
+  for (i=0; i<n_params;i ++)
+    {
+      if (!strcmp (params[i].pspec->name, "format"))
+        {
+          format = g_value_get_pointer (params[i].value);
+        }
+      else if (!strcmp (params[i].pspec->name, "width"))
+        {
+          width = g_value_get_int (params[i].value);
+        }
+      else if (!strcmp (params[i].pspec->name, "height"))
+        {
+          height = g_value_get_int (params[i].value);
+        }
+      else if (!strcmp (params[i].pspec->name, "x"))
+        {
+          x = g_value_get_int (params[i].value);
+        }
+      else if (!strcmp (params[i].pspec->name, "y"))
+        {
+          y = g_value_get_int (params[i].value);
+        }
+    }
+
+    if (format == NULL)
+      {
+        format = (gpointer)babl_format ("R'G'B'A u8");
+      }
+
+    if (x==0 && y==0 && width == -1 && height == -1)
+      {
+        x = -65536;
+        y = -65536;
+        width = 65536*2;
+        height = 65536*2;
+      }
+
+  for (i=0; i<n_params;i ++)
+    {
+      if (!strcmp (params[i].pspec->name, "format"))
+        {
+          g_value_set_pointer (params[i].value, format);
+        }
+      else if (!strcmp (params[i].pspec->name, "width"))
+        {
+          g_value_set_int (params[i].value, width);
+        }
+      else if (!strcmp (params[i].pspec->name, "height"))
+        {
+          g_value_set_int (params[i].value, height);
+        }
+      else if (!strcmp (params[i].pspec->name, "x"))
+        {
+          g_value_set_int (params[i].value, x);
+        }
+      else if (!strcmp (params[i].pspec->name, "y"))
+        {
+          g_value_set_int (params[i].value, y);
+        }
+    }
+}
+
 
 static GObject *
 gegl_projection_constructor (GType                  type,
@@ -69,19 +144,17 @@ gegl_projection_constructor (GType                  type,
                              GObjectConstructParam *params)
 {
   GObject         *object;
+  GeglProjection *self;
+
+  override_default_param_values (n_params, params);
+
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  GeglProjection *self = GEGL_PROJECTION (object);
+  self = GEGL_PROJECTION (object);
 
   self->valid_region = gdk_region_new ();
   self->queued_region = gdk_region_new ();
-  self->format = babl_format ("R'G'B'A u8");
-  self->buffer = g_object_new (GEGL_TYPE_BUFFER,
-                               "format", self->format,
-                               "x", -65536,
-                               "y", -65536,
-                               "width", 65536*2,
-                               "height", 65536*2,
-                               NULL);
+  self->buffer = GEGL_BUFFER (self);
+  self->format = self->buffer->format;
  
   if (self->monitor_id == 0) 
     self->monitor_id = g_idle_add_full (
@@ -150,8 +223,6 @@ finalize (GObject *gobject)
 {
   GeglProjection *self = GEGL_PROJECTION (gobject);
   while (g_idle_remove_by_data (gobject));
-  if (self->buffer)
-    g_object_unref (self->buffer);
   if (self->node)
     g_object_unref (self->node);
   if (self->valid_region)

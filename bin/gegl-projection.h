@@ -38,8 +38,8 @@ typedef struct _GeglProjectionClass GeglProjectionClass;
 
 struct _GeglProjection
 {
-  GObject       parent_instance;
-  GeglBuffer   *buffer;  /* FIXME: projection should be a subclass of buffer */
+  GeglBuffer    parent;
+  GeglBuffer   *buffer;
   GeglNode     *node;
   void         *format;
 
@@ -55,7 +55,7 @@ struct _GeglProjection
 
 struct _GeglProjectionClass
 {
-  GObjectClass parent_class;
+  GeglBufferClass buffer_class;
 };
 
 GType  gegl_projection_get_type    (void) G_GNUC_CONST;
