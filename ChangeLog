@@ -1,5 +1,10 @@
 2006-11-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-view.c (set_property), (expose_event): make the projection
+	be 24bit instead of including an unused alpha byte.
+
+2006-11-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-projection.c (task_render): Handle different specified
 	formats correctly. (8bit RGBA was assumed).
 

@@ -178,6 +178,7 @@ set_property (GObject      *gobject,
         g_object_unref (self->projection);
       self->projection = g_object_new (GEGL_TYPE_PROJECTION,
                                        "node", self->node,
+                                       "format", babl_format ("R'G'B' u8"),
                                        NULL);
       g_signal_connect (G_OBJECT (self->projection), "computed",
                         (GCallback)computed_event,
@@ -334,17 +335,16 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
       roi.w=rectangles[i].width;
       roi.h=rectangles[i].height;
 
-      buf = g_malloc ((roi.w+1) * (roi.h+1) * 4);
+      buf = g_malloc ((roi.w+1) * (roi.h+1) * 3);
       /* FIXME: this padding should not be needed, but it avoids some segfaults */
       gegl_buffer_get_rect_fmt_scale (view->projection->buffer,
-                                      &roi, buf, babl_format ("R'G'B'A u8"), view->scale);
-
-      gdk_draw_rgb_32_image (widget->window,
-                             widget->style->black_gc,
-                             rectangles[i].x, rectangles[i].y,
-                             rectangles[i].width, rectangles[i].height,
-                             GDK_RGB_DITHER_NONE,
-                             buf, roi.w * 4);
+                                      &roi, buf, babl_format ("R'G'B' u8"), view->scale);
+      gdk_draw_rgb_image (widget->window,
+                          widget->style->black_gc,
+                          rectangles[i].x, rectangles[i].y,
+                          rectangles[i].width, rectangles[i].height,
+                          GDK_RGB_DITHER_NONE,
+                          buf, roi.w * 3);
       g_free (buf);
     }
   gegl_view_repaint (view);
