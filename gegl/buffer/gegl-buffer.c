@@ -179,7 +179,12 @@ set_property (GObject      *gobject,
         buffer->abyss_height = g_value_get_int (value);
         break;
       case PROP_FORMAT:
-        buffer->format = g_value_get_pointer (value);
+        /* Do not set to NULL even if asked to do so by a non-overriden
+         * value, this is needed since a default value can not be specified
+         * for a gpointer paramspec
+         */
+        if (g_value_get_pointer (value))
+          buffer->format = g_value_get_pointer (value);
         break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);

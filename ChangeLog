@@ -1,5 +1,14 @@
 2006-11-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-projection.c: (gegl_projection_constructor),
+	(set_property), (get_property): override default values of properties
+	properly.
+	* gegl/buffer/gegl-buffer.c: (set_property): Do not set buffer if NULL
+	is passed in, this is needed to avoid changing it in construct when
+	no format is being passed (thus being set to NULL).
+
+2006-11-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-projection.[ch] (override_default_param_values),
 	(gegl_projection_constructor), (finalize): made GeglProjection be
 	a subclass of GeglBuffer. override_default_params changes the

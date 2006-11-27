@@ -34,6 +34,10 @@
 enum
 {
   PROP_0,
+  PROP_X,
+  PROP_Y,
+  PROP_WIDTH,
+  PROP_HEIGHT,
   PROP_NODE
 };
 
@@ -63,81 +67,6 @@ G_DEFINE_TYPE (GeglProjection, gegl_projection, GEGL_TYPE_BUFFER);
 static GObjectClass *parent_class = NULL;
 static guint         projection_signals[LAST_SIGNAL] = {0};
 
-
-/* This is a hack, to provide a different set of default values for projection
- * than GeglBuffer
- */
-static void override_default_param_values (guint                  n_params,
-                                           GObjectConstructParam *params)
-{
-  gint      i;
-  gpointer *format = NULL;
-  gint      width = -1,
-            height = -1,
-            x = 0, y = 0;
-  for (i=0; i<n_params;i ++)
-    {
-      if (!strcmp (params[i].pspec->name, "format"))
-        {
-          format = g_value_get_pointer (params[i].value);
-        }
-      else if (!strcmp (params[i].pspec->name, "width"))
-        {
-          width = g_value_get_int (params[i].value);
-        }
-      else if (!strcmp (params[i].pspec->name, "height"))
-        {
-          height = g_value_get_int (params[i].value);
-        }
-      else if (!strcmp (params[i].pspec->name, "x"))
-        {
-          x = g_value_get_int (params[i].value);
-        }
-      else if (!strcmp (params[i].pspec->name, "y"))
-        {
-          y = g_value_get_int (params[i].value);
-        }
-    }
-
-    if (format == NULL)
-      {
-        format = (gpointer)babl_format ("R'G'B'A u8");
-      }
-
-    if (x==0 && y==0 && width == -1 && height == -1)
-      {
-        x = -65536;
-        y = -65536;
-        width = 65536*2;
-        height = 65536*2;
-      }
-
-  for (i=0; i<n_params;i ++)
-    {
-      if (!strcmp (params[i].pspec->name, "format"))
-        {
-          g_value_set_pointer (params[i].value, format);
-        }
-      else if (!strcmp (params[i].pspec->name, "width"))
-        {
-          g_value_set_int (params[i].value, width);
-        }
-      else if (!strcmp (params[i].pspec->name, "height"))
-        {
-          g_value_set_int (params[i].value, height);
-        }
-      else if (!strcmp (params[i].pspec->name, "x"))
-        {
-          g_value_set_int (params[i].value, x);
-        }
-      else if (!strcmp (params[i].pspec->name, "y"))
-        {
-          g_value_set_int (params[i].value, y);
-        }
-    }
-}
-
-
 static GObject *
 gegl_projection_constructor (GType                  type,
                              guint                  n_params,
@@ -145,8 +74,6 @@ gegl_projection_constructor (GType                  type,
 {
   GObject         *object;
   GeglProjection *self;
-
-  override_default_param_values (n_params, params);
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
   self = GEGL_PROJECTION (object);
@@ -185,6 +112,29 @@ gegl_projection_class_init (GeglProjectionClass * klass)
                                    G_PARAM_WRITABLE |
                                    G_PARAM_CONSTRUCT));
 
+  /* overriding pspecs for properties in parent class */
+  g_object_class_install_property (gobject_class, PROP_X,
+                                   g_param_spec_int ("x", "x", "local origin's offset relative to source origin",
+                                                     G_MININT, G_MAXINT, -65536,
+                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_CONSTRUCT_ONLY));
+ g_object_class_install_property (gobject_class, PROP_Y,
+                                   g_param_spec_int ("y", "y", "local origin's offset relative to source origin",
+                                                     G_MININT, G_MAXINT, -65536,
+                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_CONSTRUCT_ONLY));
+  g_object_class_install_property (gobject_class, PROP_WIDTH,
+                                   g_param_spec_int ("width", "width", "pixel width of buffer",
+                                                     -1, G_MAXINT, 65536*2,
+                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_CONSTRUCT_ONLY));
+  g_object_class_install_property (gobject_class, PROP_HEIGHT,
+                                   g_param_spec_int ("height", "height", "pixel height of buffer",
+                                                     -1, G_MAXINT, 65536*2,
+                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_CONSTRUCT_ONLY));
+
+
   projection_signals[COMPUTED] =
       g_signal_new ("computed", G_TYPE_FROM_CLASS (klass),
       G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
@@ -216,6 +166,10 @@ gegl_projection_init (GeglProjection *self)
   self->node = NULL;
   self->render_id = 0;
   self->monitor_id = 0;
+
+  /* thus providing a default value for GeglProjection, that overrides the NULL
+   * from GeglBuffer */
+  GEGL_BUFFER (self)->format = (gpointer)babl_format ("R'G'B'A u8");
 }
 
 static void
@@ -245,7 +199,20 @@ set_property (GObject      *gobject,
         if (self->node)
           g_object_unref (self->node);
         self->node = GEGL_NODE (g_value_dup_object (value));
-        
+        break;
+
+      /* For the rest, upchaining to the property implementation in GeglBuffer */
+      case PROP_X:
+        g_object_set_property (gobject, "GeglBuffer::x", value);
+        break;
+      case PROP_Y:
+        g_object_set_property (gobject, "GeglBuffer::y", value);
+        break;
+      case PROP_WIDTH:
+        g_object_set_property (gobject, "GeglBuffer::width", value);
+        break;
+      case PROP_HEIGHT:
+        g_object_set_property (gobject, "GeglBuffer::height", value);
         break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -264,6 +231,20 @@ get_property (GObject    *gobject,
     {
       case PROP_NODE:
         g_value_set_object (value, self->node);
+        break;
+
+      /* For the rest, upchaining to the property implementation in GeglBuffer */
+      case PROP_X:
+        g_object_get_property (gobject, "GeglBuffer::x", value);
+        break;
+      case PROP_Y:
+        g_object_get_property (gobject, "GeglBuffer::y", value);
+        break;
+      case PROP_WIDTH:
+        g_object_get_property (gobject, "GeglBuffer::width", value);
+        break;
+      case PROP_HEIGHT:
+        g_object_get_property (gobject, "GeglBuffer::height", value);
         break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -295,7 +276,6 @@ void gegl_projection_forget_queue (GeglProjection *self,
             self->dirty_rects->data);
     }
 }
-
 
 void gegl_projection_forget (GeglProjection *self,
                              GeglRect       *roi)
