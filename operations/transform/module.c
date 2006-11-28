@@ -55,14 +55,15 @@ GType reflect_get_type      (void);
 gboolean
 gegl_module_register (GTypeModule *module)
 {
+  GType sink;
   affine_module = module;
 
-  op_affine_get_type ();
-  rotate_get_type ();
-  scale_get_type ();
-  shear_get_type ();
-  translate_get_type ();
-  reflect_get_type ();
+  sink = op_affine_get_type ();
+  sink = rotate_get_type ();
+  sink = scale_get_type ();
+  sink = shear_get_type ();
+  sink = translate_get_type ();
+  sink = reflect_get_type ();
 
   return TRUE;
 }

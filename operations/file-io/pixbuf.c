@@ -46,8 +46,8 @@ process (GeglOperation *operation)
                                       "width", gdk_pixbuf_get_width (self->pixbuf),
                                       "height", gdk_pixbuf_get_height (self->pixbuf),
                                       NULL);
-  gegl_buffer_set_fmt (op_source->output, gdk_pixbuf_get_pixels (self->pixbuf), 
-                       babl_format(gdk_pixbuf_get_has_alpha(self->pixbuf)?"R'G'B'A u8":"R'G'B' u8"));
+  gegl_buffer_set (op_source->output, NULL, gdk_pixbuf_get_pixels (self->pixbuf), 
+                   babl_format(gdk_pixbuf_get_has_alpha(self->pixbuf)?"R'G'B'A u8":"R'G'B' u8"));
   return TRUE;
 }
 

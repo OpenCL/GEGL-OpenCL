@@ -46,7 +46,7 @@ affine_nearest (GeglBuffer *dest,
   src_buf  = g_new (gfloat, gegl_buffer_pixels (src) * 4);
   dest_buf = g_new (gfloat, gegl_buffer_pixels (dest) * 4);
   g_assert (src_buf && dest_buf);
-  gegl_buffer_get_fmt (src, src_buf, babl_format ("RaGaBaA float"));
+  gegl_buffer_get (src, NULL, src_buf, babl_format ("RaGaBaA float"), 1.0);
 
   matrix3_copy (inverse, matrix);
   matrix3_invert (inverse);
@@ -100,7 +100,7 @@ affine_nearest (GeglBuffer *dest,
       v_start += inverse [1][1];
     }
 
-  gegl_buffer_set_fmt (dest, dest_buf, babl_format ("RaGaBaA float"));
+  gegl_buffer_set (dest, NULL, dest_buf, babl_format ("RaGaBaA float"));
 
   g_free (src_buf);
   g_free (dest_buf);
@@ -134,7 +134,7 @@ scale_nearest (GeglBuffer *dest,
   src_buf  = g_new (gfloat, gegl_buffer_pixels (src) * 4);
   dest_buf = g_new (gfloat, gegl_buffer_pixels (dest) * 4);
   g_assert (src_buf && dest_buf);
-  gegl_buffer_get_fmt (src, src_buf, babl_format ("RaGaBaA float"));
+  gegl_buffer_get (src, NULL, src_buf, babl_format ("RaGaBaA float"), 1.0);
 
   matrix3_copy (inverse, matrix);
   matrix3_invert (inverse);
@@ -208,7 +208,7 @@ scale_nearest (GeglBuffer *dest,
       dest_ptr += dest_rowstride;
     }
 
-  gegl_buffer_set_fmt (dest, dest_buf, babl_format ("RaGaBaA float"));
+  gegl_buffer_set (dest, NULL, dest_buf, babl_format ("RaGaBaA float"));
 
   g_free (src_buf);
   g_free (dest_buf);

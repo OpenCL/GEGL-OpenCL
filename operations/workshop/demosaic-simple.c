@@ -113,7 +113,7 @@ demosaic (GeglChantOperation *op,
   src_buf = g_malloc0 (src->width * src->height * 4);
   dst_buf = g_malloc0 (dst->width * dst->height * 4 * 3);
   
-  gegl_buffer_get_fmt (src, src_buf, babl_format ("Y float"));
+  gegl_buffer_get (src, NULL, src_buf, babl_format ("Y float"), 1.0);
 
   offset=0;
   for (y=src->y; y<dst->height + src->y; y++)
@@ -165,7 +165,7 @@ demosaic (GeglChantOperation *op,
         offset++;
       }
 
-  gegl_buffer_set_fmt (dst, dst_buf, babl_format ("RGB float"));
+  gegl_buffer_set (dst, NULL, dst_buf, babl_format ("RGB float"));
   g_free (src_buf);
   g_free (dst_buf);
 }

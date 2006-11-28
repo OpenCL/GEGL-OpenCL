@@ -422,7 +422,7 @@ process (GeglOperation *operation)
           }
       }
 
-    gegl_buffer_set (op_source->output, buf);
+    gegl_buffer_set (op_source->output, NULL, buf, babl_format ("R'G'B' u8"));
     g_free (buf);
   }
   return TRUE;

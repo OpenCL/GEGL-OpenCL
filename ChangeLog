@@ -1,5 +1,39 @@
 2006-11-28  Øyvind Kolås  <pippin@gimp.org>
 
+	Adapt to changes in previous commit.
+
+	* operations/blur/box-blur.c: (hor_blur), (ver_blur):
+	* operations/blur/gaussian-blur.c: (iir_young_hor_blur),
+	(iir_young_ver_blur), (fir_hor_blur), (fir_ver_blur):
+	* operations/color/stretch-contrast.c: (buffer_get_min_max),
+	(process):
+	* operations/display/display.c: (process):
+	* operations/file-io/jpg-load.c: (gegl_buffer_import_jpg):
+	* operations/file-io/pixbuf.c: (process):
+	* operations/file-io/png-load.c: (gegl_buffer_import_png):
+	* operations/file-io/png-save.c: (gegl_buffer_export_png):
+	* operations/file-io/raw-load.c: (load_buffer):
+	* operations/file-io/svg-load.c: (gegl_buffer_import_svg):
+	* operations/render/FractalExplorer.c: (process):
+	* operations/render/checkerboard.c: (process):
+	* operations/render/color.c: (process):
+	* operations/render/noise.c: (process):
+	* operations/render/text.c: (process):
+	* operations/transform/interpolate-cubic.c: (affine_cubic):
+	* operations/transform/interpolate-lanczos.c: (affine_lanczos):
+	* operations/transform/linear.c: (affine_linear), (scale_linear):
+	* operations/transform/module.c: (gegl_module_register):
+	* operations/transform/nearest.c: (affine_nearest), (scale_nearest):
+	* operations/workshop/demosaic-simple.c: (demosaic):
+	* operations/workshop/gtk-display.c: (process):
+	* operations/workshop/mandelbrot.c: (process):
+	* operations/workshop/rawbayer-load.c: (load_buffer):
+	* bin/export.c: (gegl_buffer_export_png):
+	* bin/gegl-projection.c: (task_render):
+	* bin/gegl-view.c: (expose_event):
+
+2006-11-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.[ch]: (gegl_buffer_set), (gegl_buffer_get):
 	Made these two the only public setters/getters of linear pixel data to
 	simplify the public API, if the rect is NULL, the entire extent of the

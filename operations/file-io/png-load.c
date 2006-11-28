@@ -313,7 +313,7 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
   for (i=0; i<number_of_passes; i++)
     png_read_rows (load_png_ptr, rows, NULL, height);
 
-  gegl_buffer_set (gegl_buffer, pixels);
+  gegl_buffer_set (gegl_buffer, NULL, pixels, format);
 
   png_read_end (load_png_ptr, NULL);
   png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);

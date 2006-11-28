@@ -209,7 +209,7 @@ gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
                                        NULL);
 
       jpeg_read_scanlines (&cinfo, buffer, 1);
-      gegl_buffer_set_fmt (rect, buffer[0], babl_format ("R'G'B' u8"));
+      gegl_buffer_set (rect, NULL, buffer[0], babl_format ("R'G'B' u8"));
       g_object_unref (rect);
     }
   jpeg_destroy_decompress (&cinfo);

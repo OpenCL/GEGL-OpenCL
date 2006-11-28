@@ -166,7 +166,7 @@ process (GeglOperation *operation)
     cairo_translate (cr, -need->x, -need->y);
     text_layout_text (self, cr, 0, NULL, NULL);
 
-    gegl_buffer_set_fmt (op_source->output, data,
+    gegl_buffer_set (op_source->output, NULL, data,
         babl_format_new (babl_model ("R'aG'aB'aA"),
                          babl_type ("u8"),
                          babl_component ("B'a"),

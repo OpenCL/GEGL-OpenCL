@@ -337,7 +337,7 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
                                        "width", width,
                                        "height", 1,
                                        NULL);
-      gegl_buffer_get_fmt (rect, pixels, babl_format (format_string));
+      gegl_buffer_get (rect, NULL, pixels, babl_format (format_string), 1.0);
 
       png_write_rows (png, &pixels, 1);
       g_object_unref (rect);

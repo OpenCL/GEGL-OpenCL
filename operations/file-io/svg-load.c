@@ -191,7 +191,7 @@ instead.
                            "height", height,
                            NULL);
 
-      gegl_buffer_set_fmt (rect, pixeldata, babl_format ("R'G'B'A u8"));
+      gegl_buffer_set (rect, NULL, pixeldata, babl_format ("R'G'B'A u8"));
       g_object_unref (rect);
     }
 

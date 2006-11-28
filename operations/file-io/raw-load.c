@@ -120,7 +120,16 @@ load_buffer (GeglChantOperation *op_raw_load)
            
            guchar *buf=g_malloc (width * height * 3 * 2);
            fread (buf, 1, width * height * 3 * 2, pfp);
-           gegl_buffer_set (GEGL_BUFFER (op_raw_load->priv), buf);
+           gegl_buffer_set (GEGL_BUFFER (op_raw_load->priv),
+                            NULL, buf,
+                            babl_format_new (
+                                        babl_model ("RGB"),
+                                        babl_type ("u16"),
+                                        babl_component ("G"),
+                                        babl_component ("B"),
+                                        babl_component ("R"),
+                                        NULL)
+                           );
            g_free (buf);
          }
        fclose (pfp);

@@ -92,7 +92,7 @@ process (GeglOperation *operation)
               }
           }
       }
-    gegl_buffer_set (op_source->output, buf);
+    gegl_buffer_set (op_source->output, NULL, buf, babl_format ("RGBA float"));
     g_free (buf);
   }
   return  TRUE;
