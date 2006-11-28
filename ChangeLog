@@ -1,5 +1,13 @@
 2006-11-28  Øyvind Kolås  <pippin@gimp.org>
 
+	Simplified buffer handling, by using rect parameter made available
+	in buffer_set/get methods.
+
+	* gegl/gegl-operation-point-composer.c: (process_inner):
+	* gegl/gegl-operation-point-filter.c: (process_inner):
+
+2006-11-28  Øyvind Kolås  <pippin@gimp.org>
+
 	Adapt to changes in previous commit.
 
 	* operations/blur/box-blur.c: (hor_blur), (ver_blur):

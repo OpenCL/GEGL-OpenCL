@@ -80,29 +80,11 @@ process_inner (GeglOperation *operation)
         if (aux)
           aux_buf = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));
 
-          {
-            GeglBuffer *roi = g_object_new (GEGL_TYPE_BUFFER,
-                                            "source", input,
-                                            "x",      result->x,
-                                            "y",      result->y,
-                                            "width",  result->w,
-                                            "height", result->h,
-                                            NULL);
-            gegl_buffer_get (roi, NULL, buf, point_composer->format, 1.0);
-            g_object_unref (roi);
-          }
+        gegl_buffer_get (input, result, buf, point_composer->format, 1.0);
           
         if (aux)
           {
-            GeglBuffer *roi = g_object_new (GEGL_TYPE_BUFFER,
-                                            "source", aux,
-                                            "x",      result->x,
-                                            "y",      result->y,
-                                            "width",  result->w,
-                                            "height", result->h,
-                                            NULL);
-            gegl_buffer_get (roi, NULL, aux_buf, point_composer->aux_format, 1.0);
-            g_object_unref (roi);
+            gegl_buffer_get (aux, result, aux_buf, point_composer->aux_format, 1.0);
           }
           {
             GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
@@ -112,17 +94,8 @@ process_inner (GeglOperation *operation)
                buf,
                gegl_buffer_pixels (output));
           }
-          {
-            GeglBuffer *roi = g_object_new (GEGL_TYPE_BUFFER,
-                                            "source", output,
-                                            "x",      result->x,
-                                            "y",      result->y,
-                                            "width",  result->w,
-                                            "height", result->h,
-                                            NULL);
-            gegl_buffer_set (roi, NULL, buf, point_composer->format);
-            g_object_unref (roi);
-          }
+
+        gegl_buffer_set (output, result, buf, point_composer->format);
 
         g_free (buf);
         if (aux)

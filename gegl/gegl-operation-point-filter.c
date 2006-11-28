@@ -66,37 +66,15 @@ process_inner (GeglOperation *operation)
       {
         buf  = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));
 
-          {
-            GeglBuffer *roi = g_object_new (GEGL_TYPE_BUFFER,
-                                            "source", input,
-                                            "x",      result->x,
-                                            "y",      result->y,
-                                            "width",  result->w,
-                                            "height", result->h,
-                                            NULL);
-            gegl_buffer_get (roi, NULL, buf, point_filter->format, 1.0);
-            g_object_unref (roi);
-          }
-          {
-            GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation)->process (
-               operation,
-               buf,
-               buf,
-               gegl_buffer_pixels (output));
-          }
+        gegl_buffer_get (input, result, buf, point_filter->format, 1.0);
 
-          {
-            GeglBuffer *roi = g_object_new (GEGL_TYPE_BUFFER,
-                                            "source", output,
-                                            "x",      result->x,
-                                            "y",      result->y,
-                                            "width",  result->w,
-                                            "height", result->h,
-                                            NULL);
-            gegl_buffer_set (roi, NULL, buf, point_filter->format);
-            g_object_unref (roi);
-          }
+        GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation)->process (
+           operation,
+           buf,
+           buf,
+           gegl_buffer_pixels (output));
 
+        gegl_buffer_set (output, result, buf, point_filter->format);
         g_free (buf);
       }
 
