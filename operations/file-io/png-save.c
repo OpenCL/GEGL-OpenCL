@@ -146,18 +146,10 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
 
   for (i=0; i< height; i++)
     {
-      GeglBuffer *rect = g_object_new (GEGL_TYPE_BUFFER,
-                                       "source", gegl_buffer,
-                                       "x", src_x,
-                                       "y", src_y + i,
-                                       "width", width,
-                                       "height", 1,
-                                       NULL);
-      gegl_buffer_get (rect, NULL, pixels, babl_format (format_string), 1.0);
+      GeglRect rect = {src_x, src_y+i, width, 1};
+      gegl_buffer_get (gegl_buffer, &rect, pixels, babl_format (format_string), 1.0);
 
       png_write_rows (png, &pixels, 1);
-      g_object_unref (rect);
-
     }
 
   png_write_end (png, info);

@@ -1,6 +1,21 @@
 2006-11-28  Øyvind Kolås  <pippin@gimp.org>
 
 	Simplified buffer handling, by using rect parameter made available
+	in recent changes to buffer_set/get methods.
+
+	* operations/color/stretch-contrast.c: (process):
+	* operations/file-io/jpg-load.c: (gegl_buffer_import_jpg):
+	* operations/file-io/pixbuf.c: (process):
+	* operations/file-io/png-save.c: (gegl_buffer_export_png):
+	* operations/file-io/svg-load.c: (gegl_buffer_import_svg):
+	* operations/render/checkerboard.c: (process):
+	* operations/render/color.c: (process):
+	* operations/render/text.c: (process):
+	* operations/workshop/mandelbrot.c: (process):
+
+2006-11-28  Øyvind Kolås  <pippin@gimp.org>
+
+	Simplified buffer handling, by using rect parameter made available
 	in buffer_set/get methods.
 
 	* gegl/gegl-operation-point-composer.c: (process_inner):

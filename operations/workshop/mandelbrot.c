@@ -108,7 +108,7 @@ process (GeglOperation *operation)
               }
           }
       }
-    gegl_buffer_set (op_source->output, NULL, buf, babl_format ("Y float"));
+    gegl_buffer_set (op_source->output, NULL, buf, NULL);
     g_free (buf);
   }
   return  TRUE;

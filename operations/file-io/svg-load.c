@@ -178,21 +178,11 @@ instead.
                                             &pError);
     if (pixbuf)
     {
-      guchar     *pixeldata;
-      GeglBuffer *rect;
+      guchar   *pixeldata;
+      GeglRect  rect = {dest_x, dest_y, width, height};
 
       pixeldata = gdk_pixbuf_get_pixels (pixbuf);
-
-      rect = g_object_new (GEGL_TYPE_BUFFER,
-                           "source", gegl_buffer,
-                           "x",      dest_x,
-                           "y",      dest_y,
-                           "width",  width,
-                           "height", height,
-                           NULL);
-
-      gegl_buffer_set (rect, NULL, pixeldata, babl_format ("R'G'B'A u8"));
-      g_object_unref (rect);
+      gegl_buffer_set (gegl_buffer, &rect, pixeldata, babl_format ("R'G'B'A u8"));
     }
 
     rsvg_term();

@@ -121,25 +121,14 @@ process (GeglOperation *operation)
     for (row=0;row<result->h;row=consumed)
       {
         gint chunk = consumed+chunk_size<result->h?chunk_size:result->h-consumed;
-        GeglBuffer *in_line = g_object_new (GEGL_TYPE_BUFFER,
-                                            "source", input,
-                                            "x",      result->x,
-                                            "y",      result->y+row,
-                                            "width",  result->w,
-                                            "height", chunk,
-                                            NULL);
-        GeglBuffer *out_line = g_object_new (GEGL_TYPE_BUFFER,
-                         "source", output,
-                         "x",      result->x,
-                         "y",      result->y+row,
-                         "width",  result->w,
-                         "height", chunk,
-                         NULL);
-        gegl_buffer_get (in_line, NULL, buf, babl_format ("RGBA float"), 1.0);
+        GeglRect line = {result->x,
+                         result->y+row,
+                         result->w,
+                         chunk};
+
+        gegl_buffer_get (input, &line, buf, babl_format ("RGBA float"), 1.0);
         inner_process (min, max, buf, result->w * chunk);
-        gegl_buffer_set (out_line, NULL, buf, babl_format ("RGBA float"));
-        g_object_unref (in_line);
-        g_object_unref (out_line);
+        gegl_buffer_set (output, &line, buf, babl_format ("RGBA float"));
         consumed+=chunk;
       }
     g_free (buf);

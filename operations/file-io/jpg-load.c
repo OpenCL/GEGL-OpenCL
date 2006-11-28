@@ -200,17 +200,10 @@ gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
 
   while (cinfo.output_scanline < cinfo.output_height)
     {
-      GeglBuffer *rect = g_object_new (GEGL_TYPE_BUFFER,
-                                       "source", gegl_buffer,
-                                       "x", dest_x,
-                                       "y", dest_y + row++,
-                                       "width", cinfo.output_width,
-                                       "height", 1,
-                                       NULL);
+      GeglRect rect = {dest_x, dest_y + row++, cinfo.output_width, 1};
 
       jpeg_read_scanlines (&cinfo, buffer, 1);
-      gegl_buffer_set (rect, NULL, buffer[0], babl_format ("R'G'B' u8"));
-      g_object_unref (rect);
+      gegl_buffer_set (gegl_buffer, &rect, buffer[0], babl_format ("R'G'B' u8"));
     }
   jpeg_destroy_decompress (&cinfo);
   fclose (infile);
