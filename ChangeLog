@@ -1,3 +1,12 @@
+2006-11-28  Øyvind Kolås  <pippin@gimp.org>
+
+	Improve startup time a lot by not creating a projection that is
+	destroyed (destroying a projection (a huge bounded buffer), is
+	taking a lot of time.
+
+	* bin/editor.c (create_window): do not pass an initial node to view.
+	* bin/gegl-view.c (set_property): handle setting of NULL node better.
+
 2006-11-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-view.c (set_property), (expose_event): make the projection

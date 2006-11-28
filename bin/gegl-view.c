@@ -173,20 +173,28 @@ set_property (GObject      *gobject,
       /* FIXME: a view should probably be made from a projection */
       if (self->node)
         g_object_unref (self->node);
-      self->node = GEGL_NODE (g_value_dup_object (value));
       if (self->projection)
         g_object_unref (self->projection);
-      self->projection = g_object_new (GEGL_TYPE_PROJECTION,
-                                       "node", self->node,
-                                       "format", babl_format ("R'G'B' u8"),
-                                       NULL);
-      g_signal_connect (G_OBJECT (self->projection), "computed",
-                        (GCallback)computed_event,
-                        self);
-      g_signal_connect (G_OBJECT (self->projection), "invalidated",
-                        (GCallback)invalidated_event,
-                        self);
-      gegl_view_repaint (self);
+      if (g_value_get_object (value))
+        {
+          self->node = GEGL_NODE (g_value_dup_object (value));
+          self->projection = g_object_new (GEGL_TYPE_PROJECTION,
+                                           "node", self->node,
+                                           "format", babl_format ("R'G'B' u8"),
+                                           NULL);
+          g_signal_connect (G_OBJECT (self->projection), "computed",
+                            (GCallback)computed_event,
+                            self);
+          g_signal_connect (G_OBJECT (self->projection), "invalidated",
+                            (GCallback)invalidated_event,
+                            self);
+          gegl_view_repaint (self);
+        }
+      else
+        {
+          self->node = NULL;
+          self->projection = NULL;
+        }
       break;
     case PROP_X:
       self->x = g_value_get_int (value);

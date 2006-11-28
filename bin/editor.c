@@ -87,7 +87,6 @@ create_window (Editor *editor)
   hpaned_top = gtk_vpaned_new ();
   hpaned_top_level = gtk_hpaned_new ();
   drawing_area = g_object_new (GEGL_TYPE_VIEW,
-                               "node", editor->gegl,
                                NULL);
   property_scroll = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (property_scroll), editor->property_editor);
