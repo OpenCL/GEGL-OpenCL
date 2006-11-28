@@ -636,7 +636,7 @@ gegl_node_blit_buf (GeglNode    *self,
                                         "width",  roi->w,
                                         "height", roi->h,
                                         NULL);
-    gegl_buffer_get_fmt (roi_buf, destination_buf, format);
+    gegl_buffer_get (roi_buf, NULL, destination_buf, format, 1.0);
     g_object_unref (roi_buf);
   }
   /* unref'ing because we used gegl_node_get */

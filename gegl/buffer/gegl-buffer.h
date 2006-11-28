@@ -39,8 +39,8 @@ struct _GeglBuffer
 {
   GeglTileTraits parent_object;
   gpointer       format;
-  gint           x;         /* the relative position in relation to parent buffer */
-  gint           y;         /* the relative position in relation to parent buffer */
+  gint           x;   /* the relative position in relation to parent buffer */
+  gint           y;   /* the relative position in relation to parent buffer */
   gint           width;
   gint           height;
 
@@ -60,74 +60,45 @@ struct _GeglBufferClass
   GeglTileTraitsClass parent_class;
 };
 
-GType         gegl_buffer_get_type           (void) G_GNUC_CONST;
+GType         gegl_buffer_get_type   (void) G_GNUC_CONST;
 
 
+void        * gegl_buffer_get_format (GeglBuffer *buffer);
+gint          gegl_buffer_pixels     (GeglBuffer *buffer);
+gint          gegl_buffer_px_size    (GeglBuffer *buffer);
 
-void        * gegl_buffer_get_format         (GeglBuffer *buffer);
-gint          gegl_buffer_pixels             (GeglBuffer *buffer);
-gint          gegl_buffer_px_size            (GeglBuffer *buffer);
+void          gegl_buffer_get        (GeglBuffer *buffer,
+                                      GeglRect   *rect,
+                                      void       *dest,
+                                      void       *format,
+                                      gdouble     scale);
 
-void          gegl_buffer_set                  (GeglBuffer *buffer,
-                                                void       *src);
+void          gegl_buffer_set        (GeglBuffer *buffer,
+                                      GeglRect   *rect,
+                                      void       *src,
+                                      void       *format);
 
-void          gegl_buffer_get                  (GeglBuffer *buffer,
-                                                void       *dst);
+GeglStorage * gegl_buffer_storage    (GeglBuffer *buffer);
 
-void          gegl_buffer_set_fmt (GeglBuffer  *buffer,
-                                                void       *src,
-                                                void       *format);
+gint          gegl_buffer_leaks      (void);
 
-void          gegl_buffer_get_fmt             (GeglBuffer *buffer,
-                                               void       *dst,
-                                               void       *format);
-
-void          gegl_buffer_set_rect            (GeglBuffer *buffer,
-                                               GeglRect   *rect,
-                                               void       *src);
-
-void          gegl_buffer_get_rect            (GeglBuffer *buffer,
-                                               GeglRect   *rect,
-                                               void       *dst);
-
-void          gegl_buffer_set_rect_fmt        (GeglBuffer *buffer,
-                                               GeglRect   *rect,
-                                               void       *src,
-                                               void       *format);
-
-void          gegl_buffer_get_rect_fmt        (GeglBuffer *buffer,
-                                               GeglRect   *rect,
-                                               void       *dst,
-                                               void       *format);
-
-GeglStorage * gegl_buffer_storage             (GeglBuffer *buffer);
-
-gint          gegl_buffer_leaks               (void);
-
-void          gegl_buffer_stats               (void);
-
-
-void          gegl_buffer_get_rect_fmt_scale  (GeglBuffer *buffer,
-                                               GeglRect   *rect,
-                                               void       *dest,
-                                               void       *format,
-                                               gdouble     scale);
+void          gegl_buffer_stats      (void);
 
 /* the following are remnants of how horizon used the precursor of the
  * tile manager for it's purposes. For now it is not used
 
-gboolean      gegl_buffer_idle               (GeglBuffer *gegl_buffer);
+gboolean      gegl_buffer_idle       (GeglBuffer *gegl_buffer);
 
 
-void          gegl_buffer_add_dirty          (GeglBuffer *gegl_buffer,
-                                              gint        x,
-                                              gint        y);
+void          gegl_buffer_add_dirty  (GeglBuffer *gegl_buffer,
+                                      gint        x,
+                                      gint        y);
 
-void          gegl_buffer_flush_dirty        (GeglBuffer *buffer);
+void          gegl_buffer_flush_dirty(GeglBuffer *buffer);
 
-gboolean      gegl_buffer_is_dirty           (GeglBuffer *buffer,
-                                              gint        x,
-                                              gint        y);
+gboolean      gegl_buffer_is_dirty   (GeglBuffer *buffer,
+                                      gint        x,
+                                      gint        y);
 */
 
 #endif

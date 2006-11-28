@@ -1,5 +1,19 @@
 2006-11-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.[ch]: (gegl_buffer_set), (gegl_buffer_get):
+	Made these two the only public setters/getters of linear pixel data to
+	simplify the public API, if the rect is NULL, the entire extent of the
+	buffer will be used. If the format passed in is NULL, the format of
+	the buffer will be used.
+
+	* gegl/gegl-node.c: (gegl_node_blit_buf),
+	* gegl/gegl-operation-point-composer.c: (process_inner),
+	* gegl/gegl-operation-point-filter.c: (process_inner): adapt to
+	changes.
+
+
+2006-11-28  Øyvind Kolås  <pippin@gimp.org>
+
 	Improve startup time a lot by not creating a projection that is
 	destroyed (destroying a projection (a huge bounded buffer), is
 	taking a lot of time.

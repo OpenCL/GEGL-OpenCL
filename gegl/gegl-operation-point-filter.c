@@ -74,7 +74,7 @@ process_inner (GeglOperation *operation)
                                             "width",  result->w,
                                             "height", result->h,
                                             NULL);
-            gegl_buffer_get_fmt (roi, buf, point_filter->format);
+            gegl_buffer_get (roi, NULL, buf, point_filter->format, 1.0);
             g_object_unref (roi);
           }
           {
@@ -93,7 +93,7 @@ process_inner (GeglOperation *operation)
                                             "width",  result->w,
                                             "height", result->h,
                                             NULL);
-            gegl_buffer_set_fmt (roi, buf, point_filter->format);
+            gegl_buffer_set (roi, NULL, buf, point_filter->format);
             g_object_unref (roi);
           }
 
