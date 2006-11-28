@@ -1,3 +1,8 @@
+2006-11-28  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.html.in: changed feature describing tiles, to be the
+	term tiled pyramidial buffers.
+
 2006-10-30  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: added sudo ldconfig after install of each lib.

@@ -125,7 +125,7 @@
             <li>Extendable through plug-ins.</li>
             <li>XML, C and Python interfaces.</li>
             <li>Memory efficient evaluation of subregions.</li>
-            <li>Tiled sparse data storage</li>
+            <li>Tiled sparse pyramidial buffers</li>
 
             <li>Rich core set of processing <a
                 href='operations.html'>operations</a>
