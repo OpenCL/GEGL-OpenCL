@@ -1010,6 +1010,111 @@ static void resample_nearest (void *dest_buf,
     }
 }
 
+#include <math.h>
+
+#if 0
+static inline guchar
+bilinear_8 (gdouble x,
+            gdouble y,
+            guchar *values)
+{
+  gdouble m0, m1;
+
+  g_return_val_if_fail (values != NULL, 0);
+
+  x = fmod (x, 1.0);
+  y = fmod (y, 1.0);
+
+  if (x < 0.0)
+    x += 1.0;
+  if (y < 0.0)
+    y += 1.0;
+
+  m0 = (1.0 - x) * values[0] + x * values[1];
+  m1 = (1.0 - x) * values[2] + x * values[3];
+
+  return (guchar) ((1.0 - y) * m0 + y * m1);
+}
+#endif
+
+static inline void
+bilinear_8 (gdouble x,
+            gdouble y,
+            guchar *src0,
+            guchar *src1,
+            guchar *src2,
+            guchar *src3,
+            guchar *dst,
+            gint    components)
+{
+  gint i;
+  gint dx,dy;
+
+  x = fmod (x, 1.0);
+  y = fmod (y, 1.0);
+
+  if (x < 0.0)
+    x += 1.0;
+  if (y < 0.0)
+    y += 1.0;
+  dx = x * 255;
+  dy = y * 255;
+
+  for (i=0;i<components;i++)
+    {
+      gint m0, m1;
+      m0 = ((255 - dx) * src0[i] + dx * src1[i])>>8;
+      m1 = ((255 - dx) * src2[i] + dx * src3[i])>>8;
+      dst[i] = (((255 - dy) * m0 + dy * m1))>>8;
+    }
+}
+
+static void resample_bilinear_u8 (void *dest_buf,
+                                  void *source_buf,
+                                  gint  dest_w,
+                                  gint  dest_h,
+                                  gint  source_w,
+                                  gint  source_h,
+                                  gdouble scale,
+                                  gint  components)
+{
+  gint x,y;
+  for (y=0;y<dest_h;y++)
+    {
+      gdouble sy;
+      guchar *dst;
+      guchar *src_base;
+
+      sy = y / scale;
+
+      if (sy>source_h-1)
+        sy=source_h-2;
+
+      dst = ((guchar*)dest_buf) + y * dest_w * components;
+      src_base = ((guchar*)source_buf) + ((gint)sy) * source_w * components;
+
+      for (x=0;x<dest_w;x++)
+        {
+          gdouble sx;
+          guchar *src0;
+          guchar *src1;
+          guchar *src2;
+          guchar *src3;
+          sx = x / scale;
+
+          if (sx>source_w-1)
+            sx=source_w-2;
+          src0 = src_base + ((gint)sx) * components;
+          src1 = src0 + components;
+          src2 = src0 + source_w * components;
+          src3 = src1 + source_w * components;
+
+          bilinear_8 (sx, sy, src0, src1, src2, src3, dst, components);
+          dst += components;
+        }
+    }
+}
+
 void gegl_buffer_get (GeglBuffer *buffer,
                       GeglRect   *rect,
                       void       *dest_buf,
@@ -1033,10 +1138,6 @@ void gegl_buffer_get (GeglBuffer *buffer,
     }
   else
     {
-      /* FIXME: this is a slow and inaccurate implementation, and needs
-       *        a lot more further work within the buffer implementation.
-       */
-    
       gint level=0;
       gint buf_width = rect->w/scale;
       gint buf_height = rect->h/scale;
@@ -1048,7 +1149,7 @@ void gegl_buffer_get (GeglBuffer *buffer,
       void *sample_buf;
       gint factor=1;
 
-      while(scale<0.5)
+      while(scale<=0.5)
         {
           scale*=2;
           factor*=2;
@@ -1059,23 +1160,60 @@ void gegl_buffer_get (GeglBuffer *buffer,
       buf_height/=factor;
 
       /* ensure we always have some data to sample from */
-      sample_rect.w += factor;
-      sample_rect.h += factor;
-      buf_width++;
-      buf_height++;
+      sample_rect.w += factor * 2;
+      sample_rect.h += factor * 2;
+      buf_width+=2;
+      buf_height+=2;
 
       sample_buf = g_malloc (buf_width * buf_height * bpp);
       gegl_buffer_get_scaled (buffer, &sample_rect, sample_buf, format, level);
 
+      if (scale > 1.0 - 0.001 &&
+          scale < 1.0 + 0.001)
+        { /* avoid resampling if the pyramidial level we've got is close */
+          gint y;
+          for (y=0;y<rect->h;y++)
+            {
+              gint sy;
+              guchar *dst;
+              guchar *src_base;
 
-      resample_nearest (dest_buf,
-                        sample_buf,
-                        rect->w,
-                        rect->h,
-                        buf_width,
-                        buf_height,
-                        scale,
-                        bpp);
+              sy = y / scale;
+
+              if (sy>buf_height)
+                sy=buf_height-1;
+
+              dst = ((guchar*)dest_buf) + y * rect->w * bpp;
+              src_base = ((guchar*)sample_buf) + sy * buf_width * bpp;
+
+              memcpy (dst, src_base, bpp * rect->w);
+            }
+        }
+      else if (BABL(format)->format.type[0] == (BablType*)babl_type ("u8") &&
+               /*!(level == 0 && scale > 1.0)  uncomment this to do nearest neighbour for scales > 1.0
+                */
+               )
+        { /* do bilinear resampling if we're 8bit (which projections are) */
+          resample_bilinear_u8 (dest_buf,
+                                sample_buf,
+                                rect->w,
+                                rect->h,
+                                buf_width,
+                                buf_height,
+                                scale,
+                                bpp);
+        }
+      else
+        {
+          resample_nearest (dest_buf,
+                            sample_buf,
+                            rect->w,
+                            rect->h,
+                            buf_width,
+                            buf_height,
+                            scale,
+                            bpp);
+        }
 
       g_free (sample_buf);
     }

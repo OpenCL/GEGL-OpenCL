@@ -1,5 +1,12 @@
 2006-11-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c (bilinear_8), (resample_bilinear_u8),
+	(gegl_buffer_get): Add bilinear resampling to gegl_buffer_get
+	fixes bug #378115, the only outstanding issue from that bug is
+	to expand the code to do trilinear resampling.
+
+2006-11-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c (resample_nearest), (gegl_buffer_get):
 	Split the resampling from the pyramid level out in a utility function.
 
