@@ -461,7 +461,7 @@ import_exr (GeglBuffer  *gegl_buffer,
           pixels = fs;
         }
 
-      gegl_buffer_set (gegl_buffer, pixels);
+      gegl_buffer_set (gegl_buffer, NULL, pixels, NULL);
       g_free (pixels);
     }
   catch (...)

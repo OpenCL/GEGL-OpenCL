@@ -1,3 +1,8 @@
+2006-11-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/file-io/exr-load.cpp: added extra params needed for
+	gegl_buffer_set().
+
 2006-11-28  Øyvind Kolås  <pippin@gimp.org>
 
 	Simplified buffer handling, by using rect parameter made available
