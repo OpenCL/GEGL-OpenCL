@@ -1,5 +1,10 @@
 2006-11-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/render/text.c (process): Swap Red and Blue components
+	to get correct colors.
+
+2006-11-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: made zoom to 100% and 200% be <control>1|2, to allow
 	1 and 2 to be used on it's own in text entries.
 
