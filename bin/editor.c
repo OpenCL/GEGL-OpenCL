@@ -242,12 +242,12 @@ static GtkActionEntry action_entries[] = {
    G_CALLBACK (cb_zoom_out)},
 
   {"Zoom50", NULL,
-   "50%", "2",
+   "50%", "<control>2",
    "",
    G_CALLBACK (cb_zoom_50)},
 
   {"Zoom100", NULL,
-   "100%", "1",
+   "100%", "<control>1",
    "",
    G_CALLBACK (cb_zoom_100)},
 
