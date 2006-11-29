@@ -1,5 +1,10 @@
 2006-11-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c (resample_nearest), (gegl_buffer_get):
+	Split the resampling from the pyramid level out in a utility function.
+
+2006-11-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/render/text.c (process): Swap Red and Blue components
 	to get correct colors.
 

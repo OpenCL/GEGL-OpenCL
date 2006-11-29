@@ -969,9 +969,50 @@ static void gegl_buffer_get_scaled (GeglBuffer *buffer,
   g_object_unref (sub_buf);
 }
 
+
+static void resample_nearest (void *dest_buf,
+                              void *source_buf,
+                              gint  dest_w,
+                              gint  dest_h,
+                              gint  source_w,
+                              gint  source_h,
+                              gdouble scale,
+                              gint  bpp)
+{
+  gint x,y;
+  for (y=0;y<dest_h;y++)
+    {
+      gint sy;
+      guchar *dst;
+      guchar *src_base;
+
+      sy = y / scale;
+
+      if (sy>source_h)
+        sy=source_h-1;
+
+      dst = ((guchar*)dest_buf) + y * dest_w * bpp;
+      src_base = ((guchar*)source_buf) + sy * source_w * bpp;
+
+      for (x=0;x<dest_w;x++)
+        {
+          gint sx;
+          guchar *src;
+          sx = x / scale;
+
+          if (sx>source_w)
+            sx=source_w-1;
+          src = src_base + sx * bpp;
+
+          memcpy (dst, src, bpp);
+          dst += bpp;
+        }
+    }
+}
+
 void gegl_buffer_get (GeglBuffer *buffer,
                       GeglRect   *rect,
-                      void       *dest,
+                      void       *dest_buf,
                       void       *format,
                       gdouble     scale)
 {
@@ -979,7 +1020,7 @@ void gegl_buffer_get (GeglBuffer *buffer,
     format = buffer->format;
   if (!rect && scale == 1.0)
     {
-      gegl_buffer_iterate (buffer, dest, FALSE, format, 0);
+      gegl_buffer_iterate (buffer, dest_buf, FALSE, format, 0);
       return;
     }
   if (rect->w == 0 ||
@@ -987,7 +1028,7 @@ void gegl_buffer_get (GeglBuffer *buffer,
     return;
   if (scale == 1.0)
     {
-      gegl_buffer_get_scaled (buffer, rect, dest, format, 0);
+      gegl_buffer_get_scaled (buffer, rect, dest_buf, format, 0);
       return;
     }
   else
@@ -1024,39 +1065,18 @@ void gegl_buffer_get (GeglBuffer *buffer,
       buf_height++;
 
       sample_buf = g_malloc (buf_width * buf_height * bpp);
-
       gegl_buffer_get_scaled (buffer, &sample_rect, sample_buf, format, level);
-      {
-        gint x,y;
-        for (y=0;y<rect->h;y++)
-          {
-            gint sy;
-            char *dst;
-            char *src_base;
 
-            sy = y / scale;
 
-            if (sy>buf_height)
-              sy=buf_height-1;
+      resample_nearest (dest_buf,
+                        sample_buf,
+                        rect->w,
+                        rect->h,
+                        buf_width,
+                        buf_height,
+                        scale,
+                        bpp);
 
-            dst = ((gchar*)dest) + y * rect->w * bpp;
-            src_base = ((gchar*)sample_buf) + sy * buf_width * bpp;
-
-            for (x=0;x<rect->w;x++)
-              {
-                gint sx;
-                gchar *src;
-                sx = x / scale;
-
-                if (sx>buf_width)
-                  sx=buf_width-1;
-                src = src_base + sx * bpp;
-
-                memcpy (dst, src, bpp);
-                dst += bpp;
-              }
-          }
-      }
       g_free (sample_buf);
     }
 }
