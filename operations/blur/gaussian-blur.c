@@ -538,17 +538,21 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
-static GeglRect get_source_rect (GeglOperation *operation)
+static GeglRect get_source_rect (GeglOperation *self)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION(operation);
-  GeglRect rect;
-  gint radius_x, radius_y;
+  GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
+  GeglRect            rect;
+  GeglRect            defined;
+  gint                radius_x;
+  gint                radius_y;
+ 
+  radius_x = ceil(blur->radius_x);
+  radius_y = ceil(blur->radius_y);
 
-  radius_x = ceil(self->radius_x);
-  radius_y = ceil(self->radius_y);
-
-  rect = *gegl_operation_get_requested_region (operation);
-  if (rect.w != 0 && 
+  rect  = *gegl_operation_get_requested_region (self);
+  defined = get_defined_region (self);
+  gegl_rect_intersect (&rect, &rect, &defined);
+  if (rect.w != 0 &&
       rect.h != 0)
     {
       rect.x -= radius_x*3;

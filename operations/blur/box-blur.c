@@ -256,11 +256,14 @@ static GeglRect get_source_rect (GeglOperation *self)
 {
   GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
   GeglRect            rect;
+  GeglRect            defined;
   gint                radius;
  
   radius = ceil(blur->radius);
 
   rect  = *gegl_operation_get_requested_region (self);
+  defined = get_defined_region (self);
+  gegl_rect_intersect (&rect, &rect, &defined);
   if (rect.w != 0 &&
       rect.h != 0)
     {

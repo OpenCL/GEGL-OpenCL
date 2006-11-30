@@ -1,5 +1,13 @@
 2006-11-30  Øyvind Kolås  <pippin@gimp.org>
 
+	Intersect requested regions with defined regions before computing
+	needed regions from sources for blur ops.
+
+	* operations/blur/box-blur.c (get_source_rect):
+	* operations/blur/gaussian-blur.c (get_source_rect):
+
+2006-11-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/export.c: (gegl_buffer_export_png): use a GeglRect as the
 	geometry parameter.
 
