@@ -1189,8 +1189,8 @@ void gegl_buffer_get (GeglBuffer *buffer,
               memcpy (dst, src_base, bpp * rect->w);
             }
         }
-      else if (BABL(format)->format.type[0] == (BablType*)babl_type ("u8") &&
-               /*!(level == 0 && scale > 1.0)  uncomment this to do nearest neighbour for scales > 1.0
+      else if (BABL(format)->format.type[0] == (BablType*)babl_type ("u8") /*&&
+               !(level == 0 && scale > 1.0)  uncomment this to do nearest neighbour for scales > 1.0
                 */
                )
         { /* do bilinear resampling if we're 8bit (which projections are) */

@@ -1,3 +1,8 @@
+2006-11-30  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_get): moved comment
+	to include all of the code that needed commenting out.
+
 2006-11-29  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.c (bilinear_8), (resample_bilinear_u8),
