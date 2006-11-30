@@ -5,11 +5,8 @@
 
 static gint
 gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
-                        const gchar *path,
-                        gint         src_x,
-                        gint         src_y,
-                        gint         width,
-                        gint         height);
+                        GeglRect    *rect,
+                        const gchar *path);
 
 #include <stdio.h>
 
@@ -126,7 +123,7 @@ static void button_render_clicked (GtkButton *button,
   while (gegl_projection_render (projection));
 
   gegl_buffer_export_png (gegl_projection_get_buffer (projection),
-                          path,rect.x,rect.y,rect.w,rect.h);
+                          &rect, path);
 }
 
 void export_window (void)
@@ -246,16 +243,12 @@ void export_window (void)
   editor.export_window = window;
 }
 
-
 static gint
-gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
-                        const gchar     *path,
-                        gint             src_x,
-                        gint             src_y,
-                        gint             width,
-                        gint             height)
+gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
+                        GeglRect    *rect,
+                        const gchar *path)
 {
-  gint           row_stride = width * 4;
+  gint           row_stride = rect->w * 4;
   FILE          *fp;
   gint           i;
   png_struct    *png;
@@ -311,7 +304,7 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
   png_init_io (png, fp);
 
   png_set_IHDR (png, info,
-     width, height, bit_depth, PNG_COLOR_TYPE_RGB_ALPHA,
+     rect->w, rect->h, bit_depth, PNG_COLOR_TYPE_RGB_ALPHA,
      PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_DEFAULT);
 
   white.red = 0xff;
@@ -328,22 +321,12 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
 
   pixels = g_malloc0 (row_stride);
 
-  for (i=0; i< height; i++)
+  for (i=0; i< rect->h; i++)
     {
-      GeglBuffer *rect = g_object_new (GEGL_TYPE_BUFFER,
-                                       "source", gegl_buffer,
-                                       "x", src_x,
-                                       "y", src_y + i,
-                                       "width", width,
-                                       "height", 1,
-                                       NULL);
-      gegl_buffer_get (rect, NULL, pixels, babl_format (format_string), 1.0);
-
+      GeglRect    line = {rect->x, rect->y + i, rect->w, 1};
+      gegl_buffer_get (gegl_buffer, &line, pixels, babl_format (format_string), 1.0);
       png_write_rows (png, &pixels, 1);
-      g_object_unref (rect);
-
     }
-
   png_write_end (png, info);
 
   png_destroy_write_struct (&png, &info);
