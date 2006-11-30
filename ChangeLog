@@ -1,5 +1,10 @@
 2006-11-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/transform/module.c: (gegl_module_register): use better
+	name for dummy variable and a small indentation fix.
+
+2006-11-30  Øyvind Kolås  <pippin@gimp.org>
+
 	Intersect requested regions with defined regions before computing
 	needed regions from sources for blur ops.
 

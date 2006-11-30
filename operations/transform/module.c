@@ -50,20 +50,20 @@ GType rotate_get_type    (void);
 GType scale_get_type     (void);
 GType shear_get_type     (void);
 GType translate_get_type (void);
-GType reflect_get_type      (void);
+GType reflect_get_type   (void);
 
 gboolean
 gegl_module_register (GTypeModule *module)
 {
-  GType sink;
+  GType dummy;
   affine_module = module;
 
-  sink = op_affine_get_type ();
-  sink = rotate_get_type ();
-  sink = scale_get_type ();
-  sink = shear_get_type ();
-  sink = translate_get_type ();
-  sink = reflect_get_type ();
+  dummy = op_affine_get_type ();
+  dummy = rotate_get_type ();
+  dummy = scale_get_type ();
+  dummy = shear_get_type ();
+  dummy = translate_get_type ();
+  dummy = reflect_get_type ();
 
   return TRUE;
 }
