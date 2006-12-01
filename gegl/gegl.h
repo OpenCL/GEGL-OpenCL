@@ -134,11 +134,11 @@ void          gegl_node_clear_dirt       (GeglNode   *node);
 /* Returns the bounding box of the defined data in a projection of node.
  */
 GeglRect      gegl_node_get_defined_rect (GeglNode *node);
+
 /*
- * Causes a evaluation to happen (this function will be deprecated)
+ * Causes a evaluation to happen
  */
-void          gegl_node_apply            (GeglNode     *node,
-                                          const gchar  *output_pad_name);
+void          gegl_node_process          (GeglNode     *sink_node);
 
 /* Returns the name of the operation (also available as a property)
  */

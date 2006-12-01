@@ -25,7 +25,7 @@ gegl_chant_string (path, "/tmp/fnord.png",
 
 #else
 
-#define GEGL_CHANT_FILTER
+#define GEGL_CHANT_SINK
 #define GEGL_CHANT_NAME        png_save
 #define GEGL_CHANT_DESCRIPTION "PNG image saver (passes the buffer through, saves as a side-effect.)"
 #define GEGL_CHANT_SELF        "png-save.c"
@@ -45,10 +45,10 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
 static gboolean
 process (GeglOperation *operation)
 {
-  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglOperationFilter *op_filter = GEGL_OPERATION_FILTER (operation);
-  GeglBuffer          *input   = op_filter->input;
-  GeglRect            *result  = gegl_operation_result_rect (operation);
+  GeglChantOperation *self    = GEGL_CHANT_OPERATION (operation);
+  GeglOperationSink  *op_sink = GEGL_OPERATION_SINK (operation);
+  GeglBuffer         *input   = op_sink->input;
+  GeglRect           *result  = gegl_operation_result_rect (operation);
 
   g_assert (input);
 

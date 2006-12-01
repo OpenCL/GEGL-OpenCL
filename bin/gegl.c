@@ -183,7 +183,7 @@ main (gint    argc,
                                "path", o->output,
                                NULL);
           gegl_node_connect (output, "input", gegl_graph_output (gegl, "output"), "output");
-          gegl_node_apply (output, "output");
+          gegl_node_process (output);
 
           g_object_unref (gegl);
           g_free (o);

@@ -412,18 +412,19 @@ stuff (gint    argc,
     {
       GeglNode  *gegl = g_object_new (GEGL_TYPE_NODE, NULL);
 
-      GeglNode  *display = gegl_graph_new_node (gegl,
-                    "operation", "crop",
+      GeglNode  *save = gegl_graph_new_node (gegl,
+                    "operation", "png-save",
+                    "path", "/dev/null",
                     NULL);
       GeglNode  *png_load = gegl_graph_new_node (gegl,
                     "operation", "checkerboard",
                     NULL);
 
       /* connect operations */
-      gegl_node_connect   (display,     "input", png_load,   "output");
+      gegl_node_connect   (save,     "input", png_load,   "output");
 
       /* then the whole output region */
-      gegl_node_apply (GEGL_NODE (display), "output");
+      gegl_node_process (save);
       g_object_unref (gegl);
     }
   return 0;

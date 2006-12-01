@@ -1425,7 +1425,6 @@ gegl_node_get_defined_rect (GeglNode     *root)
   GeglVisitor *have_visitor;
 
   GeglPad     *pad;
- 
   pad = gegl_node_get_pad (root, "output");
   if (pad->node != root)
     root = pad->node;
@@ -1438,4 +1437,28 @@ gegl_node_get_defined_rect (GeglNode     *root)
   g_object_unref (root);
   
   return root->have_rect; 
+}
+
+#include "gegl-operation-sink.h"
+
+void
+gegl_node_process (GeglNode *self)
+{
+  GeglNode    *input;
+  GeglBuffer  *buffer;
+  GeglRect     defined;
+
+  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (g_type_is_a (G_OBJECT_TYPE(self->operation),
+                    GEGL_TYPE_OPERATION_SINK));
+
+  input = gegl_node_get_connected_to (self, "input");
+  gegl_node_apply (input, "output");
+
+  defined = gegl_node_get_defined_rect (input);
+  gegl_node_get (input, "output", &buffer, NULL);
+  gegl_node_set (self, "input", buffer, NULL);
+  gegl_node_set_result_rect (self, defined.x, defined.y, defined.w, defined.h);
+  gegl_operation_process (self->operation, "foo");
+  g_object_unref (buffer);
 }

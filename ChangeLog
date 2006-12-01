@@ -1,3 +1,21 @@
+2006-12-01  Øyvind Kolås  <pippin@gimp.org>
+
+	Changed API to allow sink ops, further work needs to be done
+	internally in GEGL to efficiently manage divide and conquer
+	before handing off saving to the sink node as a final step.
+	The current API is blocking, some form of non blocking iterative
+	version would be nice to have as well.
+
+	* bin/gegl.c: (main): use gegl_node_process ().
+	* gegl/Makefile.am: added sink base class.
+	* gegl/gegl-chant.h: added sink base class.
+	* gegl/gegl-node.[ch]: (gegl_node_get_defined_rect),
+	(gegl_node_process): added gegl_node_process ().
+	* gegl/gegl-operation-sink.[ch]: added new base class for sink ops.
+	* gegl/gegl.h: made gegl_node_process () a public function.
+	* operations/file-io/png-save.c: (process):
+	* tools/introspect.c: (stuff): write a png to /dev/null
+
 2006-11-30  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/transform/module.c: (gegl_module_register): use better

@@ -20,11 +20,11 @@
   #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_SOURCE_CLASS
 #endif
 #ifdef GEGL_CHANT_SINK
-  #include "op_sink.h"
-  #define GEGL_CHANT_PARENT_TypeName      OpSink
-  #define GEGL_CHANT_PARENT_TypeNameClass OpSinkClass
-  #define GEGL_CHANT_PARENT_TYPE          TYPE_OP_SINK
-  #define GEGL_CHANT_PARENT_CLASS         OP_SINK_CLASS
+  #include <gegl/gegl-operation-sink.h>
+  #define GEGL_CHANT_PARENT_TypeName      GeglOperationSink
+  #define GEGL_CHANT_PARENT_TypeNameClass GeglOperationSinkClass
+  #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_SINK
+  #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_SINK_CLASS
 #endif
 #ifdef GEGL_CHANT_FILTER
   #include <gegl/gegl-operation-filter.h>

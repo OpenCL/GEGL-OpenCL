@@ -148,6 +148,7 @@ void          gegl_node_apply               (GeglNode     *self,
 void          gegl_node_apply_roi           (GeglNode     *self,
                                              const gchar  *output_pad_name,
                                              GeglRect     *roi);
+void          gegl_node_process             (GeglNode     *self);
 void          gegl_node_set_valist          (GeglNode     *object,
                                              const gchar  *first_property_name,
                                              va_list       var_args);

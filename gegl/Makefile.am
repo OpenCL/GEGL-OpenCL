@@ -42,6 +42,7 @@ GEGL_sources = \
 	gegl-operation-meta.c       	\
 	gegl-operation-point-composer.c \
 	gegl-operation-point-filter.c   \
+	gegl-operation-sink.c       	\
 	gegl-operation-source.c       	\
 	gegl-pad.c			\
 	gegl-prepare-visitor.c		\
@@ -64,6 +65,7 @@ GEGL_public_headers = \
 	gegl-operation-meta.h       	\
 	gegl-operation-point-composer.h \
 	gegl-operation-point-filter.h   \
+	gegl-operation-sink.h       	\
 	gegl-operation-source.h       	\
 	gegl-pad.h			\
 	gegl-types.h			\
