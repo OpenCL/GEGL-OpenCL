@@ -1,5 +1,10 @@
 2006-12-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/introspect.c (stuff): do not create a surface hogging all
+	memory when testing.
+
+2006-12-01  Øyvind Kolås  <pippin@gimp.org>
+
 	Changed API to allow sink ops, further work needs to be done
 	internally in GEGL to efficiently manage divide and conquer
 	before handing off saving to the sink node as a final step.

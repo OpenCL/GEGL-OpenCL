@@ -416,12 +416,19 @@ stuff (gint    argc,
                     "operation", "png-save",
                     "path", "/dev/null",
                     NULL);
+      GeglNode *crop = gegl_graph_new_node (gegl,
+       "operation", "crop",
+       "x", 0,
+       "y", 0,
+       "width", 50,
+       "height", 50,
+       NULL);
       GeglNode  *png_load = gegl_graph_new_node (gegl,
                     "operation", "checkerboard",
                     NULL);
 
       /* connect operations */
-      gegl_node_connect   (save,     "input", png_load,   "output");
+      gegl_node_link_many (png_load, crop, save, NULL);
 
       /* then the whole output region */
       gegl_node_process (save);
