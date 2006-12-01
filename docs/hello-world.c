@@ -60,8 +60,10 @@ main (gint    argc,
                  "path", argv[2]?argv[2]:"output.png",
                  NULL);
  
-  /* request evaluation of the "output" pad of the png-save op */ 
-  gegl_node_apply (save, "output");
+  /* request that the save node is processed, all dependencies will
+   * be processed as well
+   */
+  gegl_node_process (save);
 
   /* free resources used by the graph and the nodes it owns */
   g_object_unref (gegl);
