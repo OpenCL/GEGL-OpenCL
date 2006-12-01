@@ -14,6 +14,7 @@ HTML_FILES = index-static.html 	\
 EXTRA_DIST= 			\
 	ChangeLog		\
 	gegl.css  		\
+	hello-world.c		\
 	index-static.html.in	\
 	index.html
 

@@ -1,5 +1,9 @@
 2006-12-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: add hallo-world.c to EXTRA_DIST
+
+2006-12-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* hello-world.c: (main): use gegl_node_process in example.
 
 2006-11-28  Øyvind Kolås  <pippin@gimp.org>
