@@ -1,5 +1,9 @@
 2006-12-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/Makefile.am: add workshop to EXTRA_DIST.
+
+2006-12-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/introspect.c (stuff): do not create a surface hogging all
 	memory when testing.
 

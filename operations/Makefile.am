@@ -10,3 +10,6 @@ SUBDIRS = \
 	svg		\
 	transform	\
 	transparency
+
+EXTRA_DIST=workshop
+
