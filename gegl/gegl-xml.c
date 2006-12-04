@@ -109,7 +109,7 @@ static void start_element (GMarkupParseContext *context,
 
       gegl_graph_output (new, "output"); /* creates the pad if it doesn't exist */
       if (pd->iter)
-        gegl_node_connect (pd->iter, "input", new, "output");
+        gegl_node_connect_from (pd->iter, "input", new, "output");
       pd->iter = gegl_graph_output (new, "output");
     }
   else if (!strcmp (element_name, "graph"))
@@ -213,12 +213,12 @@ static void start_element (GMarkupParseContext *context,
 
       if (pd->state == STATE_TREE_FIRST_CHILD)
         {
-          gegl_node_connect (pd->iter, "aux", new, "output");
+          gegl_node_connect_from (pd->iter, "aux", new, "output");
         }
       else
         {
           if (pd->iter)
-            gegl_node_connect (pd->iter, "input", new, "output");
+            gegl_node_connect_from (pd->iter, "input", new, "output");
         }
       pd->parent = g_list_prepend (pd->parent, new);
       pd->state = STATE_TREE_FIRST_CHILD;
@@ -246,7 +246,7 @@ static void end_element (GMarkupParseContext *context,
     {
       if (gegl_node_get_pad (pd->iter, "input"))
         {
-          gegl_node_connect (pd->iter, "input",
+          gegl_node_connect_from (pd->iter, "input",
              gegl_graph_input (GEGL_NODE (pd->parent->data), "input"), "output");
           pd->iter = gegl_graph_input (GEGL_NODE (pd->parent->data), "input");
         }
@@ -304,7 +304,7 @@ static void each_ref (gpointer value,
   gegl_node_get (dest_node, "ref", &ref, NULL);
   source_node = g_hash_table_lookup (pd->ids, ref);
 
-  gegl_node_connect (dest_node, "input", source_node, "output");
+  gegl_node_connect_from (dest_node, "input", source_node, "output");
 }
 
 GeglNode *gegl_xml_parse (const gchar *xmldata)

@@ -63,8 +63,8 @@ test_dfs_node_visitor(Test *test)
     GeglNode *B = g_object_new (GEGL_TYPE_NODE, "name", "B", "operation", "GeglMockOperation01", NULL);
     GeglNode *C = g_object_new (GEGL_TYPE_NODE, "name", "C", "operation", "GeglMockOperation21", NULL);
 
-    gegl_node_connect(C, "input0", A, "output0");
-    gegl_node_connect(C, "input1", B, "output0");
+    gegl_node_connect_from(C, "input0", A, "output0");
+    gegl_node_connect_from(C, "input1", B, "output0");
 
     ct_test(test, do_visitor_and_check_visit_order(visit_order, 3, C));
 
@@ -94,8 +94,8 @@ test_dfs_node_visitor(Test *test)
     GeglNode *B = g_object_new (GEGL_TYPE_NODE, "name", "B", "operation", "GeglMockOperation11", NULL);
     GeglNode *C = g_object_new (GEGL_TYPE_NODE, "name", "C", "operation", "GeglMockOperation11", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(C, "input0", B, "output0");
+    gegl_node_connect_from(B, "input0", A, "output0");
+    gegl_node_connect_from(C, "input0", B, "output0");
 
     ct_test(test, do_visitor_and_check_visit_order(visit_order, 3, C));
 
@@ -120,8 +120,8 @@ test_dfs_node_visitor(Test *test)
     GeglNode *A = g_object_new (GEGL_TYPE_NODE, "name", "A", "operation", "GeglMockOperation01", NULL);
     GeglNode *B = g_object_new (GEGL_TYPE_NODE, "name", "B", "operation", "GeglMockOperation21", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(B, "input1", A, "output0");
+    gegl_node_connect_from(B, "input0", A, "output0");
+    gegl_node_connect_from(B, "input1", A, "output0");
 
     ct_test(test, do_visitor_and_check_visit_order(visit_order, 2, B));
 
@@ -152,8 +152,8 @@ test_dfs_node_visitor(Test *test)
     GeglNode *B = g_object_new (GEGL_TYPE_NODE, "name", "B", "operation", "GeglMockOperation21", NULL);
     GeglNode *C = g_object_new (GEGL_TYPE_NODE, "name", "C", "operation", "GeglMockOperation21", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(C, "input1", B, "output0");
+    gegl_node_connect_from(B, "input0", A, "output0");
+    gegl_node_connect_from(C, "input1", B, "output0");
 
     ct_test(test, do_visitor_and_check_visit_order(visit_order, 3, C));
 
@@ -185,10 +185,10 @@ test_dfs_node_visitor(Test *test)
     GeglNode *B = g_object_new (GEGL_TYPE_NODE, "name", "B", "operation", "GeglMockOperation22", NULL);
     GeglNode *C = g_object_new (GEGL_TYPE_NODE, "name", "C", "operation", "GeglMockOperation21", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(B, "input1", A, "output0");
-    gegl_node_connect(C, "input0", B, "output0");
-    gegl_node_connect(C, "input1", B, "output1");
+    gegl_node_connect_from(B, "input0", A, "output0");
+    gegl_node_connect_from(B, "input1", A, "output0");
+    gegl_node_connect_from(C, "input0", B, "output0");
+    gegl_node_connect_from(C, "input1", B, "output1");
 
     ct_test(test, do_visitor_and_check_visit_order(visit_order, 3, C));
 
@@ -215,8 +215,8 @@ test_dfs_node_visitor(Test *test)
     GeglNode *A = g_object_new (GEGL_TYPE_NODE, "name", "A", "operation", "GeglMockOperation12", NULL);
     GeglNode *B = g_object_new (GEGL_TYPE_NODE, "name", "B", "operation", "GeglMockOperation21", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(B, "input1", A, "output1");
+    gegl_node_connect_from(B, "input0", A, "output0");
+    gegl_node_connect_from(B, "input1", A, "output1");
 
     ct_test(test, do_visitor_and_check_visit_order(visit_order, 2, B));
 
@@ -246,9 +246,9 @@ test_dfs_node_visitor(Test *test)
     GeglNode *B = g_object_new (GEGL_TYPE_NODE, "name", "B", "operation", "GeglMockOperation11", NULL);
     GeglNode *C = g_object_new (GEGL_TYPE_NODE, "name", "C", "operation", "GeglMockOperation21", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(C, "input1", B, "output0");
-    gegl_node_connect(C, "input0", A, "output0");
+    gegl_node_connect_from(B, "input0", A, "output0");
+    gegl_node_connect_from(C, "input1", B, "output0");
+    gegl_node_connect_from(C, "input0", A, "output0");
 
     ct_test(test, do_visitor_and_check_visit_order(visit_order, 3, C));
 
@@ -287,10 +287,10 @@ test_dfs_node_visitor(Test *test)
     GeglNode *C = g_object_new (GEGL_TYPE_NODE, "name", "C", "operation", "GeglMockOperation11", NULL);
     GeglNode *D = g_object_new (GEGL_TYPE_NODE, "name", "D", "operation", "GeglMockOperation21", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(C, "input0", B, "output0");
-    gegl_node_connect(D, "input0", B, "output0");
-    gegl_node_connect(D, "input1", C, "output0");
+    gegl_node_connect_from(B, "input0", A, "output0");
+    gegl_node_connect_from(C, "input0", B, "output0");
+    gegl_node_connect_from(D, "input0", B, "output0");
+    gegl_node_connect_from(D, "input1", C, "output0");
 
     ct_test(test, do_visitor_and_check_visit_order(visit_order, 4, D));
 
@@ -328,10 +328,10 @@ test_dfs_node_visitor(Test *test)
     GeglNode *C = g_object_new (GEGL_TYPE_NODE, "name", "C", "operation", "GeglMockOperation11", NULL);
     GeglNode *D = g_object_new (GEGL_TYPE_NODE, "name", "D", "operation", "GeglMockOperation21", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(C, "input0", B, "output0");
-    gegl_node_connect(D, "input1", C, "output0");
-    gegl_node_connect(D, "input0", A, "output0");
+    gegl_node_connect_from(B, "input0", A, "output0");
+    gegl_node_connect_from(C, "input0", B, "output0");
+    gegl_node_connect_from(D, "input1", C, "output0");
+    gegl_node_connect_from(D, "input0", A, "output0");
 
     ct_test(test, do_visitor_and_check_visit_order(visit_order, 4, D));
 
@@ -369,13 +369,13 @@ test_dfs_node_visitor(Test *test)
     GeglNode *F = g_object_new (GEGL_TYPE_NODE, "name", "F", "operation", "GeglMockOperation11", NULL);
     GeglNode *G = g_object_new (GEGL_TYPE_NODE, "name", "G", "operation", "GeglMockOperation01", NULL);
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(D, "input0", B, "output0");
-    gegl_node_connect(C, "input0", A, "output0");
-    gegl_node_connect(D, "input1", C, "output0");
-    gegl_node_connect(F, "input0", G, "output0");
-    gegl_node_connect(E, "input0", D, "output0");
-    gegl_node_connect(E, "input1", F, "output0");
+    gegl_node_connect_from(B, "input0", A, "output0");
+    gegl_node_connect_from(D, "input0", B, "output0");
+    gegl_node_connect_from(C, "input0", A, "output0");
+    gegl_node_connect_from(D, "input1", C, "output0");
+    gegl_node_connect_from(F, "input0", G, "output0");
+    gegl_node_connect_from(E, "input0", D, "output0");
+    gegl_node_connect_from(E, "input1", F, "output0");
 
     ct_test(test, do_visitor_and_check_visit_order(visit_order, 7, E));
 

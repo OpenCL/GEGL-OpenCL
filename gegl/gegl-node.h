@@ -98,7 +98,7 @@ void          gegl_node_link_many           (GeglNode     *source,
                                              GeglNode     *dest,
                                              ...) G_GNUC_NULL_TERMINATED;
 
-gboolean      gegl_node_connect             (GeglNode     *self,
+gboolean      gegl_node_connect_from        (GeglNode     *self,
                                              const gchar  *input_pad_name,
                                              GeglNode     *source,
                                              const gchar  *output_pad_name);

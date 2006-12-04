@@ -164,7 +164,7 @@ static void associate (GeglOperation *operation)
                                        "string", "foo",
                                        NULL);
 
-  gegl_node_connect (priv->output, "input", priv->load, "output");
+  gegl_node_connect_from (priv->output, "input", priv->load, "output");
 }
 
 static void class_init (GeglOperationClass *klass)

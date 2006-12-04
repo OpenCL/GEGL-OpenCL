@@ -39,7 +39,7 @@ main (gint    argc,
   /* link the nodes together */
   gegl_node_link_many (load, scale, bcontrast, layer, save, NULL);
   gegl_node_link (text, dropshadow);
-  gegl_node_connect (layer, "aux", dropshadow, "output");
+  gegl_node_connect_from (layer, "aux", dropshadow, "output");
 
   /* set properties for the nodes */
   gegl_node_set (load, "path",  argv[1], NULL);

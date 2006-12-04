@@ -182,7 +182,7 @@ main (gint    argc,
                                "operation", "png-save",
                                "path", o->output,
                                NULL);
-          gegl_node_connect (output, "input", gegl_graph_output (gegl, "output"), "output");
+          gegl_node_connect_from (output, "input", gegl_graph_output (gegl, "output"), "output");
           gegl_node_process (output);
 
           g_object_unref (gegl);

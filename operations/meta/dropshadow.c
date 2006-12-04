@@ -79,8 +79,8 @@ static void associate (GeglOperation *operation)
                                          NULL);
 
       gegl_node_link_many (priv->input, priv->darken, priv->blur, priv->opacity, priv->translate, priv->over, priv->output, NULL);
-      gegl_node_connect (priv->over, "aux", priv->input, "output");
-      gegl_node_connect (priv->darken, "aux", priv->black, "output");
+      gegl_node_connect_from (priv->over, "aux", priv->input, "output");
+      gegl_node_connect_from (priv->darken, "aux", priv->black, "output");
 
       gegl_operation_meta_redirect (operation, "opacity", priv->opacity, "value");
       gegl_operation_meta_redirect (operation, "radius", priv->blur, "radius-x");

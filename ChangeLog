@@ -1,5 +1,34 @@
 2006-12-04  Øyvind Kolås  <pippin@gimp.org>
 
+	%s/gegl_node_connect/gegl_node_connect_from/
+
+	* bin/gegl-tree-editor-action.c: (remove_itm), (move_up),
+	(move_down), (add_sibling_op), (add_child_op):
+	* bin/gegl.c: (main):
+	* docs/hello-world.c: (main):
+	* gegl/gegl-node.c: (gegl_node_connect_from), (gegl_node_link),
+	(gegl_node_set_operation_object), (gegl_node_get_bounding_box),
+	(gegl_node_process):
+	* gegl/gegl-node.h:
+	* gegl/gegl-xml.c: (start_element), (end_element), (each_ref):
+	* gegl/gegl.h:
+	* operations/file-io/load.c: (associate):
+	* operations/meta/dropshadow.c: (associate):
+	* operations/meta/layer.c: (prepare), (associate):
+	* operations/meta/unsharp-mask.c: (associate):
+	* tests/bfspadvisitortest.c: (test_bfs_pad_visitor):
+	* tests/dfsnodevisitortest.c: (test_dfs_node_visitor):
+	* tests/dfspadvisitortest.c: (test_dfs_pad_visitor):
+	* tests/graphtest.c: (test_graph_properties),
+	(test_graph_property_visitors):
+	* tests/mockimageoperationtest.c:
+	(test_mock_image_operation_chain),
+	(test_mock_image_operation_chain2):
+	* tests/nodeconnectionstest.c: (test_node_connections):
+	* tests/updatepadtest.c: (test_update_pad):
+
+2006-12-04  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/gegl_node_get_defined_rect/gegl_node_get_bounding_box/
 
 	* gegl/gegl-node.c (gegl_node_get_bounding_box),

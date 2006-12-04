@@ -92,7 +92,7 @@ prepare (GeglOperation *operation)
     }
   else
     {
-      gegl_node_connect (priv->opacity, "input", priv->aux, "output");
+      gegl_node_connect_from (priv->opacity, "input", priv->aux, "output");
     }
 
   if (self->opacity != priv->p_opacity)
@@ -145,7 +145,7 @@ static void associate (GeglOperation *operation)
 
   gegl_node_link_many (priv->load, priv->opacity, priv->shift, NULL);
   gegl_node_link_many (priv->input, priv->composite_op, priv->output, NULL);
-  gegl_node_connect (priv->composite_op, "aux", priv->shift, "output");
+  gegl_node_connect_from (priv->composite_op, "aux", priv->shift, "output");
 }
 
 static void

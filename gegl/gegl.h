@@ -70,7 +70,7 @@ GeglNode    * gegl_graph_new_node        (GeglNode     *graph,
  * pads specified by names ("input","aux" and "output" are the names
  * currently in use
  */
-gboolean      gegl_node_connect          (GeglNode     *sink,
+gboolean      gegl_node_connect_from     (GeglNode     *sink,
                                           const gchar  *input_pad_name,
                                           GeglNode     *source,
                                           const gchar  *output_pad_name);

@@ -31,7 +31,7 @@ test_node_connections(Test *test)
     GeglPad *output0 = gegl_node_get_pad(A, "output0");
     GeglPad *input0 = gegl_node_get_pad(B, "input0");
 
-    gegl_node_connect(B, "input0", A, "output0");
+    gegl_node_connect_from(B, "input0", A, "output0");
 
     ct_test(test, 1 == gegl_node_get_num_sinks(A));
     ct_test(test, 0 == gegl_node_get_num_sources(A));
@@ -81,7 +81,7 @@ test_node_connections(Test *test)
     GeglPad *input0 = gegl_node_get_pad(C, "input0");
     GeglPad *input1 = gegl_node_get_pad(C, "input1");
 
-    gegl_node_connect(C, "input0", A, "output0");
+    gegl_node_connect_from(C, "input0", A, "output0");
 
     ct_test(test, 1 == gegl_node_get_num_sinks(A));
     ct_test(test, 0 == gegl_node_get_num_sources(A));
@@ -123,7 +123,7 @@ test_node_connections(Test *test)
     GeglPad *input0 = gegl_node_get_pad(C, "input0");
     GeglPad *input1 = gegl_node_get_pad(C, "input1");
 
-    gegl_node_connect(C, "input1", A, "output0");
+    gegl_node_connect_from(C, "input1", A, "output0");
 
     ct_test(test, 1 == gegl_node_get_num_sinks(A));
     ct_test(test, 0 == gegl_node_get_num_sources(A));
@@ -165,8 +165,8 @@ test_node_connections(Test *test)
     GeglPad *input0 = gegl_node_get_pad(C, "input0");
     GeglPad *input1 = gegl_node_get_pad(C, "input1");
 
-    gegl_node_connect(C, "input1", A, "output0");
-    gegl_node_connect(C, "input0", A, "output0");
+    gegl_node_connect_from(C, "input1", A, "output0");
+    gegl_node_connect_from(C, "input0", A, "output0");
 
     ct_test(test, 2 == gegl_node_get_num_sinks(A));
     ct_test(test, 0 == gegl_node_get_num_sources(A));
@@ -215,8 +215,8 @@ test_node_connections(Test *test)
     GeglPad *input0 = gegl_node_get_pad(C, "input0");
     GeglPad *input1 = gegl_node_get_pad(C, "input1");
 
-    gegl_node_connect(C, "input0", A, "output0");
-    gegl_node_connect(C, "input1", B, "output0");
+    gegl_node_connect_from(C, "input0", A, "output0");
+    gegl_node_connect_from(C, "input1", B, "output0");
 
     ct_test(test, 1 == gegl_node_get_num_sinks(A));
     ct_test(test, 1 == gegl_node_get_num_sinks(B));
@@ -277,8 +277,8 @@ test_node_connections(Test *test)
     GeglPad *Binput0 = gegl_node_get_pad(B, "input0");
     GeglPad *Cinput0 = gegl_node_get_pad(C, "input0");
 
-    gegl_node_connect(B, "input0", A, "output0");
-    gegl_node_connect(C, "input0", A, "output0");
+    gegl_node_connect_from(B, "input0", A, "output0");
+    gegl_node_connect_from(C, "input0", A, "output0");
 
     ct_test(test, 2 == gegl_node_get_num_sinks(A));
     ct_test(test, 1 == gegl_node_get_num_sources(B));

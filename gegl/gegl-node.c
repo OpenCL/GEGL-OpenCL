@@ -360,7 +360,7 @@ find_connection (GeglNode     *sink,
 #include <stdio.h>
 
 gboolean
-gegl_node_connect (GeglNode    *sink,
+gegl_node_connect_from (GeglNode    *sink,
                    const gchar *sink_pad_name,
                    GeglNode    *source,
                    const gchar *source_pad_name)
@@ -586,7 +586,7 @@ gegl_node_get_sources (GeglNode *self)
 void          gegl_node_link                (GeglNode     *source,
                                              GeglNode     *sink)
 {
-  gegl_node_connect (sink, "input", source, "output");
+  gegl_node_connect_from (sink, "input", source, "output");
 }
 
 void          gegl_node_link_many           (GeglNode     *source,
@@ -943,11 +943,11 @@ gegl_node_set_operation_object (GeglNode      *self,
     gegl_operation_associate (operation, self);
 
     if (input)
-      gegl_node_connect (self, "input", input, "output");
+      gegl_node_connect_from (self, "input", input, "output");
     if (aux)
-      gegl_node_connect (self, "aux", aux, "output");
+      gegl_node_connect_from (self, "aux", aux, "output");
     if (output)
-      gegl_node_connect (output, output_dest_pad, self, "output");
+      gegl_node_connect_from (output, output_dest_pad, self, "output");
 
     if (output_dest_pad)
       g_free (output_dest_pad);
@@ -1420,7 +1420,7 @@ gegl_node_clear_dirt (GeglNode *node)
 }
 
 GeglRect
-gegl_node_get_defined_rect (GeglNode     *root)
+gegl_node_get_bounding_box (GeglNode     *root)
 {
   GeglVisitor *have_visitor;
 
@@ -1455,7 +1455,7 @@ gegl_node_process (GeglNode *self)
   input = gegl_node_get_connected_to (self, "input");
   gegl_node_apply (input, "output");
 
-  defined = gegl_node_get_defined_rect (input);
+  defined = gegl_node_get_bounding_box (input);
   gegl_node_get (input, "output", &buffer, NULL);
   gegl_node_set (self, "input", buffer, NULL);
   gegl_node_set_result_rect (self, defined.x, defined.y, defined.w, defined.h);

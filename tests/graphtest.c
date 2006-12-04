@@ -72,7 +72,7 @@ test_graph_properties(Test *test)
     ct_test(test, 1 == gegl_node_get_num_output_pads(GEGL_NODE(graph)));
     ct_test(test, 1 == gegl_node_get_num_input_pads(GEGL_NODE(graph)));
 
-    gegl_node_connect(B, "input0", GEGL_NODE(graph), "output0");
+    gegl_node_connect_from(B, "input0", GEGL_NODE(graph), "output0");
 
     ct_test(test, 0 == gegl_node_get_num_sinks(A));
     ct_test(test, 1 == gegl_node_get_num_sinks(GEGL_NODE(graph)));
@@ -126,8 +126,8 @@ test_graph_properties(Test *test)
     ct_test(test, 1 == gegl_node_get_num_output_pads(D));
     ct_test(test, 1 == gegl_node_get_num_input_pads(D));
 
-    gegl_node_connect(B, "input0", D, "output0");
-    gegl_node_connect(D, "input0", C, "output0");
+    gegl_node_connect_from(B, "input0", D, "output0");
+    gegl_node_connect_from(D, "input0", C, "output0");
 
     ct_test(test, 0 == gegl_node_get_num_sinks(A));
     ct_test(test, 0 == gegl_node_get_num_sources(A));
@@ -199,8 +199,8 @@ test_graph_property_visitors(Test *test)
     ct_test(test, 1 == gegl_node_get_num_output_pads(D));
     ct_test(test, 1 == gegl_node_get_num_input_pads(D));
 
-    gegl_node_connect(B, "input0", D, "output0");
-    gegl_node_connect(D, "input0", C, "output0");
+    gegl_node_connect_from(B, "input0", D, "output0");
+    gegl_node_connect_from(D, "input0", C, "output0");
 
     gegl_node_disconnect(B, "input0", D, "output0");
     gegl_node_disconnect(D, "input0", C, "output0");

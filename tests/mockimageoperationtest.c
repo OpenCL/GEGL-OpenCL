@@ -130,7 +130,7 @@ test_mock_image_operation_chain(Test *test)
                                 "operation", "GeglMockImageOperation",
                                 "input1",    3,
                                 NULL);
-    gegl_node_connect (B, "input0", A, "output");
+    gegl_node_connect_from (B, "input0", A, "output");
 
 
     gegl_node_apply   (B, "output");
@@ -189,8 +189,8 @@ test_mock_image_operation_chain2(Test *test)
     C = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation11", NULL);
     gegl_node_set (C, "input0", 3, NULL);
 
-    gegl_node_connect (B, "input0", A, "output");
-    gegl_node_connect (B, "input1", C, "output0");
+    gegl_node_connect_from (B, "input0", A, "output");
+    gegl_node_connect_from (B, "input1", C, "output0");
 
     gegl_node_apply (B, "output");
 
