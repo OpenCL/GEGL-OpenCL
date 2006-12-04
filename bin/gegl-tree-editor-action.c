@@ -66,10 +66,10 @@ remove_itm (GtkAction *action, gpointer userdata)
 
       if (previous)
         {
-          gegl_node_disconnect (previous, "input", item, "output");
+          gegl_node_disconnect (previous, "input");
           if (next)
             {
-              gegl_node_disconnect (item, "input", next, "output");
+              gegl_node_disconnect (item, "input");
               gegl_node_connect_from (previous, "input", next, "output");
             }
           g_object_unref (G_OBJECT (item));
@@ -78,11 +78,11 @@ remove_itm (GtkAction *action, gpointer userdata)
         { /* we're unchaining from parent */
           GeglNode *parent = gegl_parent (item);
           g_assert (parent);
-          gegl_node_disconnect (previous, "input", item, "output");
-          gegl_node_disconnect (parent, "aux", item, "output");
+          gegl_node_disconnect (previous, "input");
+          gegl_node_disconnect (parent, "aux");
           if (next)
             {
-              gegl_node_disconnect (item, "input", next, "output");
+              gegl_node_disconnect (item, "input");
               gegl_node_connect_from (parent, "aux", next, "output");
             }
           g_object_unref (G_OBJECT (item));
@@ -180,12 +180,12 @@ move_up (GtkAction *action, gpointer userdata)
          g_free (new_order);
        }
 
-       gegl_node_disconnect (prev, "input", item, "output");
-       gegl_node_disconnect (item, "input", next, "output");
+       gegl_node_disconnect (prev, "input");
+       gegl_node_disconnect (item, "input");
        gegl_node_connect_from (prev, "input", next, "output");
        /* now it is kind of removed */
 
-       gegl_node_disconnect (next, "input", next2, "output");
+       gegl_node_disconnect (next, "input");
        gegl_node_connect_from    (next, "input", item, "output");
        gegl_node_connect_from    (item, "input", next2, "output");
        /* and hooked back in */
@@ -223,12 +223,12 @@ move_up (GtkAction *action, gpointer userdata)
            }
          g_free (new_order);
        }
-       gegl_node_disconnect (parent, "aux", item, "output");
-       gegl_node_disconnect (item, "input", next, "output");
+       gegl_node_disconnect (parent, "aux");
+       gegl_node_disconnect (item, "input");
        gegl_node_connect_from (parent, "aux", next, "output");
        /* now it is kind of removed */
 
-       gegl_node_disconnect (next, "input", next2, "output");
+       gegl_node_disconnect (next, "input");
        gegl_node_connect_from    (next, "input", item, "output");
        gegl_node_connect_from    (item, "input", next2, "output");
        /* and hooked back in */
@@ -289,11 +289,11 @@ move_down (GtkAction *action, gpointer userdata)
 
   if (prev)
     {
-       gegl_node_disconnect (prev, "input", item, "output");
-       gegl_node_disconnect (item, "input", next, "output");
+       gegl_node_disconnect (prev, "input");
+       gegl_node_disconnect (item, "input");
        gegl_node_connect_from    (prev, "input", next, "output");
 
-       gegl_node_disconnect (next, "input", next2, "output");
+       gegl_node_disconnect (next, "input");
        gegl_node_connect_from    (next, "input", item,  "output");
        gegl_node_connect_from    (item, "input", next2, "output");
 
@@ -320,11 +320,11 @@ move_down (GtkAction *action, gpointer userdata)
   else /* need to rehook parent instead */
     {
 
-       gegl_node_disconnect (parent, "aux", item, "output");
-       gegl_node_disconnect (item, "input", next, "output");
+       gegl_node_disconnect (parent, "aux");
+       gegl_node_disconnect (item, "input");
        gegl_node_connect_from (parent, "aux", next, "output");
 
-       gegl_node_disconnect (next, "input", next2, "output");
+       gegl_node_disconnect (next, "input");
        gegl_node_connect_from (next, "input", item, "output");
        gegl_node_connect_from (item, "input", next2, "output");
 
@@ -378,14 +378,14 @@ add_sibling_op (GtkAction *action, gpointer userdata)
 
       if (previous)  /* we're just chaining in */
         {
-          gegl_node_disconnect (previous, "input", item, "output");
+          gegl_node_disconnect (previous, "input");
           gegl_node_connect_from (previous, "input", new_item, "output");
           gegl_node_connect_from (new_item, "input", item, "output");
         }
       else /* we're chaining in as the new aux of the parent level */
         {
           GeglNode *parent = gegl_parent (item);
-          gegl_node_disconnect (parent, "aux", item, "output");
+          gegl_node_disconnect (parent, "aux");
           gegl_node_connect_from (parent, "aux", new_item, "output");
           gegl_node_connect_from (new_item, "input", item, "output");
         }

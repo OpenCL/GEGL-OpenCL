@@ -1,5 +1,18 @@
 2006-12-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.c: 
+	(gegl_node_disconnect): refactored to only focus on the sink side of
+	the connection in its params.
+	(gegl_node_connect_from),
+	(gegl_node_disconnect_sources),
+	(gegl_node_disconnect_sinks): adapted to above change.
+	* gegl/gegl-node.h,
+	* gegl/gegl.h: Changed prototype.
+	* bin/gegl-tree-editor-action.c: (remove_itm), (move_up),
+	(move_down), (add_sibling_op): adapt to change.
+
+2006-12-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (pads_exist): allow passing NULL for sink or
 	source to do more limited pad existance testing.
 	(gegl_node_disconnect): recoded to ignore values of last two

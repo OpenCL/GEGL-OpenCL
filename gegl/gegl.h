@@ -93,9 +93,7 @@ void          gegl_node_get_property        (GeglNode     *object,
 /* Break a connection.
  */
 gboolean      gegl_node_disconnect       (GeglNode     *self,
-                                          const gchar  *input_pad_name,
-                                          GeglNode     *source,
-                                          const gchar  *output_pad_name);
+                                          const gchar  *input_pad_name);
 
 /* syntetic sugar for linking two nodes "output"->"input" */
 void          gegl_node_link             (GeglNode     *source,
