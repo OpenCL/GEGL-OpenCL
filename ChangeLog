@@ -1,5 +1,16 @@
 2006-12-04  Øyvind Kolås  <pippin@gimp.org>
 
+	Added a gegl_node_connect_to function as syntachtic sugar for
+	gegl_node_connect_from. Since gegl_node_connect_to might lead
+	to clearer code in some cases.
+
+	* gegl/gegl-node.c: (gegl_node_connect_to),
+	(gegl_node_connect_from):
+	* gegl/gegl-node.h:
+	* gegl/gegl.h:
+
+2006-12-04  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/gegl_node_connect/gegl_node_connect_from/
 
 	* bin/gegl-tree-editor-action.c: (remove_itm), (move_up),

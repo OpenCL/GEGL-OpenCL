@@ -75,6 +75,13 @@ gboolean      gegl_node_connect_from     (GeglNode     *sink,
                                           GeglNode     *source,
                                           const gchar  *output_pad_name);
 
+/* Connect the data coming from one of our output pads to an input pad
+ * on an other node */
+gboolean      gegl_node_connect_to          (GeglNode    *self,
+                                             const gchar *output_pad_name,
+                                             GeglNode    *sink,
+                                             const gchar *input_pad_name);
+
 /* included mainly for language bindings */
 void          gegl_node_set_property        (GeglNode     *object,
                                              const gchar  *property_name,

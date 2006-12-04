@@ -103,6 +103,11 @@ gboolean      gegl_node_connect_from        (GeglNode     *self,
                                              GeglNode     *source,
                                              const gchar  *output_pad_name);
 
+gboolean      gegl_node_connect_to          (GeglNode    *self,
+                                             const gchar *output_pad_name,
+                                             GeglNode    *sink,
+                                             const gchar *input_pad_name);
+
 gboolean      gegl_node_disconnect          (GeglNode     *self,
                                              const gchar  *input_pad_name,
                                              GeglNode     *source,

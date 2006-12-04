@@ -360,10 +360,19 @@ find_connection (GeglNode     *sink,
 #include <stdio.h>
 
 gboolean
+gegl_node_connect_to (GeglNode    *source,
+                      const gchar *source_pad_name,
+                      GeglNode    *sink,
+                      const gchar *sink_pad_name)
+{
+  return gegl_node_connect_from (sink, sink_pad_name, source, source_pad_name);
+}
+
+gboolean
 gegl_node_connect_from (GeglNode    *sink,
-                   const gchar *sink_pad_name,
-                   GeglNode    *source,
-                   const gchar *source_pad_name)
+                        const gchar *sink_pad_name,
+                        GeglNode    *source,
+                        const gchar *source_pad_name)
 {
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
   g_return_val_if_fail (GEGL_IS_NODE (source), FALSE);
@@ -586,7 +595,10 @@ gegl_node_get_sources (GeglNode *self)
 void          gegl_node_link                (GeglNode     *source,
                                              GeglNode     *sink)
 {
-  gegl_node_connect_from (sink, "input", source, "output");
+  /* using connect_to is more natural here, but leads to an extra
+   * function call, perhaps connect_to and connect_from should be swapped?
+   */
+  gegl_node_connect_to (source, "output", sink, "input");
 }
 
 void          gegl_node_link_many           (GeglNode     *source,
@@ -947,7 +959,7 @@ gegl_node_set_operation_object (GeglNode      *self,
     if (aux)
       gegl_node_connect_from (self, "aux", aux, "output");
     if (output)
-      gegl_node_connect_from (output, output_dest_pad, self, "output");
+      gegl_node_connect_to (self, "output", output, output_dest_pad);
 
     if (output_dest_pad)
       g_free (output_dest_pad);
