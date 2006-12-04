@@ -20,7 +20,7 @@ static void set_to_defined (GtkWidget *export)
   GtkEntry *height = g_object_get_data (G_OBJECT (export), "height");
   gchar buf[128];
 
-  rect = gegl_node_get_defined_rect (editor.gegl);
+  rect = gegl_node_get_bounding_box (editor.gegl);
 
   sprintf (buf, "%i", rect.x);
   gtk_entry_set_text (x0, buf);
@@ -41,7 +41,7 @@ static void button_defined_clicked (GtkButton *button,
 static GeglRect get_input_rect (void)
 {
   GeglNode *iter = gegl_graph_output (editor.gegl, "output");
-  gegl_node_get_defined_rect (editor.gegl);  /* to trigger defined setting for all */
+  gegl_node_get_bounding_box (editor.gegl);  /* to trigger defined setting for all */
   while (iter &&
          gegl_node_get_connected_to (iter, "input")){
     iter = gegl_node_get_connected_to (iter, "input");

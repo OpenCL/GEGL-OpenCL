@@ -133,7 +133,7 @@ void          gegl_node_clear_dirt       (GeglNode   *node);
 
 /* Returns the bounding box of the defined data in a projection of node.
  */
-GeglRect      gegl_node_get_defined_rect (GeglNode *node);
+GeglRect      gegl_node_get_bounding_box (GeglNode *node);
 
 /*
  * Causes a evaluation to happen

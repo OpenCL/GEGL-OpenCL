@@ -629,7 +629,7 @@ static void cb_tree_visible (GtkAction *action, gpointer userdata)
 
 static void cb_fit (GtkAction *action)
 {
-  GeglRect defined = gegl_node_get_defined_rect (editor.gegl);
+  GeglRect defined = gegl_node_get_bounding_box (editor.gegl);
   gint     width;
   gint     height;
   gint     x,y;
@@ -671,7 +671,7 @@ static void cb_fit (GtkAction *action)
 
 static void cb_shrinkwrap (GtkAction *action)
 {
-  GeglRect defined = gegl_node_get_defined_rect (editor.gegl);
+  GeglRect defined = gegl_node_get_bounding_box (editor.gegl);
   /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.w, defined.h);*/
 
   g_object_set (editor.drawing_area, "x", defined.x, "y", defined.y, NULL);
