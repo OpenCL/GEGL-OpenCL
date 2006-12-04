@@ -319,20 +319,32 @@ pads_exist (GeglNode    *sink,
             GeglNode    *source,
             const gchar *source_pad_name)
 {
-  GeglPad *sink_pad   = gegl_node_get_pad (sink, sink_pad_name);
-  GeglPad *source_pad = gegl_node_get_pad (source, source_pad_name);
+  GeglPad *sink_pad;
 
-  if (!sink_pad || !gegl_pad_is_input (sink_pad))
+  GeglPad *source_pad;
+
+  if (sink)
     {
-      g_warning ("Can't find sink property %s of %s", sink_pad_name,
-                  gegl_node_get_debug_name (sink));
-      return FALSE;
+      g_assert (sink_pad_name);
+      sink_pad  = gegl_node_get_pad (sink, sink_pad_name);
+      if (!sink_pad || !gegl_pad_is_input (sink_pad))
+        {
+          g_warning ("Can't find sink property %s of %s", sink_pad_name,
+                      gegl_node_get_debug_name (sink));
+          return FALSE;
+        }
     }
-  else if (!source_pad || !gegl_pad_is_output (source_pad))
+
+  if (source)
     {
-      g_warning ("Can't find source property %s of %s", source_pad_name,
-                  gegl_node_get_debug_name (source));
-      return FALSE;
+      g_assert (source_pad_name);
+      source_pad = gegl_node_get_pad (source, source_pad_name);
+      if (!source_pad || !gegl_pad_is_output (source_pad))
+        {
+          g_warning ("Can't find source property %s of %s", source_pad_name,
+                      gegl_node_get_debug_name (source));
+          return FALSE;
+        }
     }
 
   return TRUE;
@@ -426,16 +438,17 @@ gegl_node_disconnect (GeglNode    *sink,
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
   g_return_val_if_fail (GEGL_IS_NODE (source), FALSE);
 
-  if (pads_exist (sink, sink_pad_name, source, source_pad_name))
-    {
-      GeglPad   *sink_pad   = gegl_node_get_pad (sink,
-                                                            sink_pad_name);
-      GeglPad   *source_pad = gegl_node_get_pad (source,
-                                                            source_pad_name);
+  if (pads_exist (sink, sink_pad_name, NULL, NULL))
+    { GeglPad   *sink_pad   = gegl_node_get_pad (sink, sink_pad_name);
       GeglConnection *connection  = find_connection (sink, sink_pad);
+      GeglPad   *source_pad;
 
       if (! connection)
         return FALSE;
+
+      source_pad = gegl_connection_get_source_pad (connection);
+      source = gegl_connection_get_source_node (connection);
+
 
       gegl_pad_disconnect (sink_pad, source_pad, connection);
 

@@ -1,5 +1,12 @@
 2006-12-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.c: (pads_exist): allow passing NULL for sink or
+	source to do more limited pad existance testing.
+	(gegl_node_disconnect): recoded to ignore values of last two
+	parameters.
+
+2006-12-04  Øyvind Kolås  <pippin@gimp.org>
+
 	Added a gegl_node_connect_to function as syntachtic sugar for
 	gegl_node_connect_from. Since gegl_node_connect_to might lead
 	to clearer code in some cases.
