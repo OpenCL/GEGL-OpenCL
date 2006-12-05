@@ -20,7 +20,6 @@
 #ifndef __GEGL_PROJECTION_H__
 #define __GEGL_PROJECTION_H__
 
-#include <gdk/gdk.h>
 #include "gegl.h"
 #include "gegl-buffer.h"
 
@@ -43,8 +42,8 @@ struct _GeglProjection
   GeglNode     *node;
   void         *format;
 
-  GdkRegion    *valid_region;
-  GdkRegion    *queued_region;
+  GeglRegion   *valid_region;
+  GeglRegion   *queued_region;
   
   /*< private >*/
   GList        *dirty_rects;

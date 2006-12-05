@@ -43,5 +43,6 @@ typedef struct _GeglBufferClass          GeglBufferClass;
 
 typedef struct _GeglBufferAllocator      GeglBufferAllocator;
 typedef struct _GeglBufferAllocatorClass GeglBufferAllocatorClass;
+typedef struct _GeglRegion               GeglRegion;
 
 #endif

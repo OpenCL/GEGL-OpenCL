@@ -1,5 +1,17 @@
 2006-12-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-region-generic.[ch]:
+	* gegl/buffer/gegl-region.h:
+	* gegl/buffer/Makefile.am:
+	* gegl/buffer/gegl-buffer-types.h: Internalized GdkRegion as
+	GeglRegion to have the functionality without depending on gtk+ for non
+	GUI purposes.
+
+	* bin/gegl-projection.[ch]: removed Gdk dependency used internalized
+	GeglRegion instead.
+
+2006-12-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c (gegl_node_get_bounding_box): prepare graph for
 	evalulation first.
 	(gegl_node_process): a little bit closer to how it should be.

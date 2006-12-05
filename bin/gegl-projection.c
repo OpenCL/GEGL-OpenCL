@@ -23,11 +23,12 @@
 #include <glib-object.h>
 #include <gobject/gvaluecollector.h>
 
-#include "gegl.h"
+#include "gegl-plugin.h"
+#include "gegl-types.h"
 #include <babl/babl.h>
 #include "gegl-projection.h"
+#include "gegl-region.h"
 
-#include <gdk/gdk.h>
 
 #define MAX_PIXELS (128*128)   /* maximum size of area computed in one idle cycle */
 
@@ -78,8 +79,8 @@ gegl_projection_constructor (GType                  type,
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
   self = GEGL_PROJECTION (object);
 
-  self->valid_region = gdk_region_new ();
-  self->queued_region = gdk_region_new ();
+  self->valid_region = gegl_region_new ();
+  self->queued_region = gegl_region_new ();
   self->buffer = GEGL_BUFFER (self);
   self->format = self->buffer->format;
  
@@ -180,9 +181,9 @@ finalize (GObject *gobject)
   if (self->node)
     g_object_unref (self->node);
   if (self->valid_region)
-    gdk_region_destroy (self->valid_region);
+    gegl_region_destroy (self->valid_region);
   if (self->queued_region)
-    gdk_region_destroy (self->queued_region);
+    gegl_region_destroy (self->queued_region);
   G_OBJECT_CLASS (gegl_projection_parent_class)->finalize (gobject);
 }
 
@@ -254,22 +255,21 @@ get_property (GObject    *gobject,
 
 
 void gegl_projection_forget_queue (GeglProjection *self,
-                             GeglRect       *roi)
+                                   GeglRect       *roi)
 {
 
   if (roi)
     {
-      GdkRectangle gdk_rect;
-      GdkRegion *temp_region;
-      memcpy (&gdk_rect, roi, sizeof (GdkRectangle));
-      temp_region = gdk_region_rectangle (&gdk_rect);
-      gdk_region_subtract (self->queued_region, temp_region);
+      GeglRegion *temp_region;
+      temp_region = gegl_region_rectangle (roi);
+      gegl_region_subtract (self->queued_region, temp_region);
+      gegl_region_destroy (temp_region);
     }
   else
     {
       if (self->queued_region)
-        gdk_region_destroy (self->queued_region);
-      self->queued_region = gdk_region_new ();
+        gegl_region_destroy (self->queued_region);
+      self->queued_region = gegl_region_new ();
 
       while (self->dirty_rects)
          self->dirty_rects = g_list_remove (self->dirty_rects,
@@ -284,34 +284,30 @@ void gegl_projection_forget (GeglProjection *self,
 
   if (roi)
     {
-      GdkRectangle gdk_rect;
-      GdkRegion *temp_region;
-      memcpy (&gdk_rect, roi, sizeof (GdkRectangle));
-      temp_region = gdk_region_rectangle (&gdk_rect);
-      gdk_region_subtract (self->valid_region, temp_region);
+      GeglRegion *temp_region;
+      temp_region = gegl_region_rectangle (roi);
+      gegl_region_subtract (self->valid_region, temp_region);
+      gegl_region_destroy (temp_region);
     }
   else
     {
       if (self->valid_region)
-        gdk_region_destroy (self->valid_region);
-      self->valid_region = gdk_region_new ();
+        gegl_region_destroy (self->valid_region);
+      self->valid_region = gegl_region_new ();
     }
 }
 
 void gegl_projection_update_rect (GeglProjection *self,
                                   GeglRect        roi)
 {
-  GdkRectangle gdk_rect;
-  GdkRegion *temp_region;
+  GeglRegion *temp_region;
 
-  g_assert (sizeof (GeglRect) == sizeof (GdkRectangle));
-  memcpy (&gdk_rect, &roi, sizeof (GdkRectangle));
-  temp_region = gdk_region_rectangle (&gdk_rect);
+  temp_region = gegl_region_rectangle (&roi);
 
-  gdk_region_union (self->queued_region, temp_region);
-  gdk_region_subtract (self->queued_region, self->valid_region);
+  gegl_region_union (self->queued_region, temp_region);
+  gegl_region_subtract (self->queued_region, self->valid_region);
 
-  gdk_region_destroy (temp_region);
+  gegl_region_destroy (temp_region);
 
   /* start a monitor if the monitor of the projection is dormant */
   if (self->monitor_id == 0) 
@@ -384,7 +380,7 @@ static gboolean task_render (gpointer foo)
       gegl_node_blit (projection->node, dr, projection->format, 0, (gpointer*) buf);
       gegl_buffer_set (projection->buffer, dr, buf, projection->format);
       
-      gdk_region_union_with_rect (projection->valid_region, (GdkRectangle*)dr);
+      gegl_region_union_with_rect (projection->valid_region, (GeglRect*)dr);
 
       g_signal_emit (projection, projection_signals[COMPUTED], 0, dr, NULL, NULL);
 
@@ -410,45 +406,39 @@ static gboolean task_monitor (gpointer foo)
   if (dirty_rect.w != 0 &&
       dirty_rect.h != 0)
     {
-      GdkRectangle   rectangle;
-      GdkRegion     *region;
+      GeglRegion     *region;
 
-      rectangle.width = dirty_rect.w;
-      rectangle.height = dirty_rect.h;
-      rectangle.x = dirty_rect.x;
-      rectangle.y = dirty_rect.y;
+      region = gegl_region_rectangle (&dirty_rect);
+      gegl_region_subtract (projection->valid_region, region);
 
-      region = gdk_region_rectangle (&rectangle);
-      gdk_region_subtract (projection->valid_region, region);
-
-      if (!gdk_region_empty (region))
+      if (!gegl_region_empty (region))
         {
           g_signal_emit (projection, projection_signals[INVALIDATED], 0, NULL, NULL, NULL);
         }
-      gdk_region_destroy (region);
+      gegl_region_destroy (region);
     }
 
   gegl_node_clear_dirt (projection->node);
 
-  gdk_region_subtract (projection->queued_region, projection->valid_region);
+  gegl_region_subtract (projection->queued_region, projection->valid_region);
 
-  if (!gdk_region_empty (projection->queued_region) &&
+  if (!gegl_region_empty (projection->queued_region) &&
       !projection->dirty_rects &&
       projection->render_id == 0) 
     {
-      GdkRectangle  *rectangles;
+      GeglRect  *rectangles;
       gint           n_rectangles;
       gint           i;
 
-      gdk_region_get_rectangles (projection->queued_region, &rectangles, &n_rectangles);
+      gegl_region_get_rectangles (projection->queued_region, &rectangles, &n_rectangles);
 
       for (i=0; i<n_rectangles && i<1; i++)
         {
           GeglRect roi = *((GeglRect*)&rectangles[i]);
           GeglRect *dr;
-          GdkRegion *tr = gdk_region_rectangle ((void*)&roi);
-          gdk_region_subtract (projection->queued_region, tr);
-          gdk_region_destroy (tr);
+          GeglRegion *tr = gegl_region_rectangle ((void*)&roi);
+          gegl_region_subtract (projection->queued_region, tr);
+          gegl_region_destroy (tr);
          
           dr = g_malloc(sizeof (GeglRect));
           *dr = roi;
@@ -460,7 +450,7 @@ static gboolean task_monitor (gpointer foo)
         }
       g_free (rectangles);
     }
-  if (gdk_region_empty (projection->queued_region))
+  if (gegl_region_empty (projection->queued_region))
     { /* job done */
       projection->monitor_id = 0;
       return FALSE;
@@ -477,7 +467,7 @@ gboolean gegl_projection_render (GeglProjection *self)
       {
         task_render (self);
       }
-     if (!gdk_region_empty (self->queued_region))
+     if (!gegl_region_empty (self->queued_region))
        task_monitor (self);
   return (self->dirty_rects != NULL);
 }

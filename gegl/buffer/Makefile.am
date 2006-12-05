@@ -3,6 +3,7 @@ noinst_LTLIBRARIES = libbuffer.la
 BUFFER_sources = \
     gegl-buffer-allocator.c	\
     gegl-buffer.c		\
+    gegl-region-generic.c	\
     gegl-storage.c		\
     gegl-tile-backend.c		\
     gegl-tile.c			\
@@ -19,6 +20,8 @@ BUFFER_headers = \
     gegl-buffer-allocator.h	\
     gegl-buffer.h		\
     gegl-buffer-types.h		\
+    gegl-region.h		\
+    gegl-region-generic.h	\
     gegl-storage.h		\
     gegl-tile-backend.h		\
     gegl-tile-cache.h		\
