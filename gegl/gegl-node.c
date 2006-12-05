@@ -38,6 +38,8 @@
 #include "buffer/gegl-buffer.h"
 #include "gegl-have-visitor.h"
 #include "gegl-dirt-visitor.h"
+#include "gegl-clean-visitor.h"
+#include "gegl-prepare-visitor.h"
 #include "gegl-utils.h"
 
 
@@ -1417,7 +1419,6 @@ gegl_node_get_dirty_rect (GeglNode     *root)
   return root->dirt_rect; 
 }
 
-#include "gegl-clean-visitor.h"
 
 void
 gegl_node_clear_dirt (GeglNode *node)
@@ -1440,6 +1441,7 @@ gegl_node_clear_dirt (GeglNode *node)
 GeglRect
 gegl_node_get_bounding_box (GeglNode     *root)
 {
+  GeglVisitor *prepare_visitor;
   GeglVisitor *have_visitor;
 
   GeglPad     *pad;
@@ -1447,6 +1449,11 @@ gegl_node_get_bounding_box (GeglNode     *root)
   if (pad->node != root)
     root = pad->node;
   g_object_ref (root);
+
+
+  prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, NULL);
+  gegl_visitor_dfs_traverse (prepare_visitor, GEGL_VISITABLE(root));
+  g_object_unref (prepare_visitor);
 
   have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, NULL);
   gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE(root));
@@ -1471,9 +1478,9 @@ gegl_node_process (GeglNode *self)
                     GEGL_TYPE_OPERATION_SINK));
 
   input = gegl_node_get_connected_to (self, "input");
-  gegl_node_apply (input, "output");
-
   defined = gegl_node_get_bounding_box (input);
+  gegl_node_apply_roi (input, "output", &defined);
+
   gegl_node_get (input, "output", &buffer, NULL);
   gegl_node_set (self, "input", buffer, NULL);
   gegl_node_set_result_rect (self, defined.x, defined.y, defined.w, defined.h);

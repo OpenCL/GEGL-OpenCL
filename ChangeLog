@@ -1,4 +1,10 @@
 2006-12-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-node.c (gegl_node_get_bounding_box): prepare graph for
+	evalulation first.
+	(gegl_node_process): a little bit closer to how it should be.
+
+2006-12-05  Øyvind Kolås  <pippin@gimp.org>
 	
 	%s/gegl_node_blit_buf/gegl_node_blit/
 
