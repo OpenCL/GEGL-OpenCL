@@ -78,7 +78,7 @@ struct _GeglNodeClass
 
 /* renders the desired region of interest to a buffer of the specified
  * bablformat */
-void          gegl_node_blit_buf            (GeglNode     *self,
+void          gegl_node_blit                (GeglNode     *self,
                                              GeglRect     *roi,
                                              void         *format,
                                              gint          rowstride,
@@ -109,9 +109,7 @@ gboolean      gegl_node_connect_to          (GeglNode    *self,
                                              const gchar *input_pad_name);
 
 gboolean      gegl_node_disconnect          (GeglNode     *self,
-                                             const gchar  *input_pad_name,
-                                             GeglNode     *source,
-                                             const gchar  *output_pad_name);
+                                             const gchar  *input_pad_name);
 
 void          gegl_node_set                 (GeglNode     *self,
                                              const gchar  *first_property_name,

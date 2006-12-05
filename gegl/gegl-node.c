@@ -627,11 +627,11 @@ void          gegl_node_link_many           (GeglNode     *source,
 
 
 void
-gegl_node_blit_buf (GeglNode    *self,
-                    GeglRect    *roi,
-                    void        *format,
-                    gint         rowstride,
-                    gpointer    *destination_buf)
+gegl_node_blit (GeglNode *self,
+                GeglRect *roi,
+                void     *format,
+                gint      rowstride,
+                gpointer *destination_buf)
 {
   GeglBuffer  *buffer;
   GeglEvalMgr *eval_mgr;

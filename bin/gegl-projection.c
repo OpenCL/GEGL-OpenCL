@@ -381,7 +381,7 @@ static gboolean task_render (gpointer foo)
       buf = g_malloc (dr->w * dr->h * gegl_buffer_px_size (GEGL_BUFFER (projection)));
       g_assert (buf);
 
-      gegl_node_blit_buf (projection->node, dr, projection->format, 0, (gpointer*) buf);
+      gegl_node_blit (projection->node, dr, projection->format, 0, (gpointer*) buf);
       gegl_buffer_set (projection->buffer, dr, buf, projection->format);
       
       gdk_region_union_with_rect (projection->valid_region, (GdkRectangle*)dr);

@@ -121,7 +121,7 @@ void          gegl_node_get              (GeglNode     *node,
  * rowstride of 0 indicates default rowstride. You have to make sure the
  * buffer is large enough yourself.
  */
-void          gegl_node_blit_buf         (GeglNode     *node,
+void          gegl_node_blit             (GeglNode     *node,
                                           GeglRect     *roi,
                                           void         *format,
                                           gint          rowstride,
