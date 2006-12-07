@@ -31,7 +31,7 @@ gegl_chant_int(height, 0, 1000, 0, "private")
 
 #else
 
-#define GEGL_CHANT_FILTER
+#define GEGL_CHANT_SINK
 #define GEGL_CHANT_NAME        display
 #define GEGL_CHANT_DESCRIPTION "Displays the input buffer in an SDL window (restricted to one display op/process, due to SDL implementation issues, a gtk+ based replacement would be nice."
 #define GEGL_CHANT_SELF        "display.c"
@@ -82,19 +82,19 @@ init_sdl (void)
 static gboolean
 process (GeglOperation *operation)
 {
-  GeglOperationFilter *op_filter = GEGL_OPERATION_FILTER (operation);
+  GeglOperationSink *op_sink = GEGL_OPERATION_SINK (operation);
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer   *source;
-  GeglRect     *need    = gegl_operation_get_requested_region (operation);
+  GeglRect     *result  = gegl_operation_result_rect (operation);
   SDL_Surface **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
 
-  g_assert (op_filter->input);
+  g_assert (op_sink->input);
 
   init_sdl ();
 
   if (!self->screen ||
-       self->w != need->w||
-       self->h != need->h)
+       self->w != result->w||
+       self->h != result->h)
     {
       if (sdl_outwin)
         {
@@ -105,7 +105,7 @@ process (GeglOperation *operation)
             }
 
           self->screen = SDL_CreateRGBSurface (SDL_SWSURFACE,
-                                            need->w, need->h, 32, 0xff0000,
+                                            result->w, result->h, 32, 0xff0000,
                                             0x00ff00, 0x0000ff, 0x000000);
 
           *sdl_outwin = self->screen;
@@ -118,7 +118,7 @@ process (GeglOperation *operation)
         }
       else
         {
-          self->screen = SDL_SetVideoMode (need->w, need->h, 32, SDL_SWSURFACE);
+          self->screen = SDL_SetVideoMode (result->w, result->h, 32, SDL_SWSURFACE);
           if (!self->screen)
             {
               fprintf (stderr, "Unable to set SDL mode: %s\n",
@@ -126,8 +126,8 @@ process (GeglOperation *operation)
               return -1;
             }
         }
-      self->w = need->w;
-      self->h = need->h;
+      self->w = result->w;
+      self->h = result->h;
     }
 
   /*
@@ -136,11 +136,11 @@ process (GeglOperation *operation)
    *
    */
   source = g_object_new (GEGL_TYPE_BUFFER,
-                         "source", op_filter->input,
-                         "x",      need->x,
-                         "y",      need->y,
-                         "width",  need->w,
-                         "height", need->h,
+                         "source", op_sink->input,
+                         "x",      result->x,
+                         "y",      result->y,
+                         "width",  result->w,
+                         "height", result->h,
                          NULL);
   gegl_buffer_get (source, NULL, ((SDL_Surface*)self->screen)->pixels,
        babl_format_new (babl_model ("R'G'B'A"),
@@ -159,9 +159,8 @@ process (GeglOperation *operation)
       SDL_WM_SetCaption (self->window_title, self->icon_title);
     }
 
-  self->width = need->w;
-  self->height = need->h;
-  /*self->output = g_object_ref (self->input);*/
+  self->width = result->w;
+  self->height = result->h;
 
   return  TRUE;
 }
