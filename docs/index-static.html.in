@@ -310,13 +310,8 @@ rectangular regions to be repainted.
 
   <a name='HelloWorld'></a>
   <h3>Hello world</h3>
-  <p>This is a small test application that takes one or two parameters, the
-  first indicating an image file to load and optionally the name of a png
-  file to save the output to.
-  </p>
-
-  <p>This is a minimal test application and doesn't do sufficient error
-  testing yet.</p>
+  <p>This is a small sample GEGL application that animates a zoom on a mandelbrot
+  fractal</p>
 
 <pre>
 <!--HELLO-WORLD-->

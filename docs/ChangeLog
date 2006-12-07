@@ -1,3 +1,9 @@
+2006-12-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* hello-world.c: updated sample to use API consistently, swapped old
+	example with a mandelbrot zoomer.
+	* index-static.html.in: updated text around sample.
+
 2006-12-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am: add hallo-world.c to EXTRA_DIST

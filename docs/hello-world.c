@@ -4,14 +4,6 @@ gint
 main (gint    argc,
       gchar **argv)
 {
-  GeglNode *gegl;      /*< Main GEGL graph */
-  GeglNode *load,      /*< The image processing nodes */
-           *scale,
-           *bcontrast,
-           *layer,
-           *text,
-           *dropshadow,
-           *save;
 
   if (argc < 2)
    { 
@@ -21,52 +13,99 @@ main (gint    argc,
 
   gegl_init (&argc, &argv);  /* initialize the GEGL library */
 
-  gegl = gegl_graph_new ();  /* instantiate a graph */
+  {
+    /* instantiate a graph */
+    GeglNode *gegl = gegl_graph_new ();
 
-  /* create nodes for the graph, with specified operations */
-  load       = gegl_graph_create_node (gegl, "load");
-  layer      = gegl_graph_create_node (gegl, "layer");
-  scale      = gegl_graph_create_node (gegl, "scale");
-  bcontrast  = gegl_graph_create_node (gegl, "brightness-contrast");
-  text       = gegl_graph_create_node (gegl, "text");
-  dropshadow = gegl_graph_create_node (gegl, "dropshadow");
-  save       = gegl_graph_create_node (gegl, "png-save"); /* note: the
-                                          png-save operation will probably
-                                          be removed from future versions
-                                          of GEGL, but it is useful for
-                                          debugging. */                
-
-  /* link the nodes together */
-  gegl_node_link_many (load, scale, bcontrast, layer, save, NULL);
-  gegl_node_link (text, dropshadow);
-  gegl_node_connect_from (layer, "aux", dropshadow, "output");
-
-  /* set properties for the nodes */
-  gegl_node_set (load, "path",  argv[1], NULL);
-  gegl_node_set (scale,
-                 "x",  0.5,
-                 "y",  0.5, NULL);
-  gegl_node_set (bcontrast,
-                 "contrast", 3.0, NULL);
-  gegl_node_set (layer,
-                 "x", 10.0,
-                 "y", 10.0, NULL);
-  gegl_node_set (text,
-                 "string", "Hello World",
-                 "size", 20.0,
-                 "color", gegl_color_from_string ("rgb(0.1,0.5,0.9)"),
-                 NULL);
-  gegl_node_set (save,
-                 "path", argv[2]?argv[2]:"output.png",
-                 NULL);
+/*
+This is the graph we're going to construct:
  
-  /* request that the save node is processed, all dependencies will
-   * be processed as well
-   */
-  gegl_node_process (save);
+.-----------.
+| display   |
+`-----------'
+   |
+.-------.
+| layer |
+`-------'
+   |   \
+   |    \
+   |     \
+   |      |
+   |   .------.
+   |   | text |
+   |   `------'
+.-----------.
+| bcontrast |
+`-----------'
+   |
+.-----------------.
+| FractalExplorer |
+`-----------------'
 
-  /* free resources used by the graph and the nodes it owns */
-  g_object_unref (gegl);
+*/
+
+    /*< The image nodes representing operations we want to perform */
+    GeglNode *display    = gegl_graph_create_node (gegl, "display");
+    GeglNode *layer      = gegl_graph_new_node (gegl,
+                                 "operation", "layer",
+                                 "x", 2.0,
+                                 "y", 4.0,
+                                 NULL);
+    GeglNode *text       = gegl_graph_new_node (gegl,
+                                 "operation", "text",
+                                 "size", 10.0,
+                                 "color", gegl_color_new ("rgb(1.0,1.0,1.0)"),
+                                 NULL);
+    GeglNode *mandelbrot = gegl_graph_new_node (gegl,
+                                "operation", "FractalExplorer",
+                                "width", 256,
+                                "height", 256,
+                                NULL);
+
+    gegl_node_link_many (mandelbrot, layer, display, NULL);
+    gegl_node_connect_to (text, "output",  layer, "aux");
+   
+    /* request that the save node is processed, all dependencies will
+     * be processed as well
+     */
+    {
+      gint frame;
+      gint frames = 30;
+
+      for (frame=0; frame<frames; frame++)
+        {
+          gchar string[512];
+          gdouble t = frame * 1.0/frames;
+          gdouble cx = -1.76;
+          gdouble cy = 0.0;
+
+#define INTERPOLATE(min,max) ((max)*(t)+(min)*(1.0-t))
+
+          gdouble xmin = INTERPOLATE(  cx-0.02, cx-2.5);
+          gdouble ymin = INTERPOLATE(  cy-0.02, cy-2.5);
+          gdouble xmax = INTERPOLATE(  cx+0.02, cx+2.5);
+          gdouble ymax = INTERPOLATE(  cy+0.02, cy+2.5);
+
+          if (xmin<-3.0)
+            xmin=-3.0;
+          if (ymin<-3.0)
+            ymin=-3.0;
+
+          gegl_node_set (mandelbrot, "xmin", xmin,
+                                     "ymin", ymin,
+                                     "xmax", xmax,
+                                     "ymax", ymax,
+                                     NULL);
+          g_sprintf (string, "%1.3f,%1.3f %1.3f×%1.3f",
+            xmin, ymin, xmax-xmin, ymax-ymin);
+          gegl_node_set (text, "string", string, NULL);
+          gegl_node_process (display);
+        }
+    }
+
+    /* free resources used by the graph and the nodes it owns */
+    g_object_unref (gegl);
+  }
 
   /* free resources globally used by GEGL */
   gegl_exit ();
