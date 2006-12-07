@@ -4,13 +4,6 @@ gint
 main (gint    argc,
       gchar **argv)
 {
-
-  if (argc < 2)
-   { 
-     g_print ("Usage: %s <input> [output.png]\n\n", argv[0]);
-     return -1;
-   }
-
   gegl_init (&argc, &argv);  /* initialize the GEGL library */
 
   {
