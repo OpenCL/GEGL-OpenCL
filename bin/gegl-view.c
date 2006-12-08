@@ -20,6 +20,7 @@
 #include <glib-object.h>
 #include "gegl.h"
 #include "gegl-view.h"
+#include <math.h>
 
 enum
 {
