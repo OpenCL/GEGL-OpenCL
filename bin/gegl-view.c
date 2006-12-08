@@ -254,8 +254,7 @@ gegl_view_constructor (GType                  type,
 
   gtk_widget_set_events (widget, GDK_EXPOSURE_MASK
                                 |GDK_BUTTON_PRESS_MASK
-                                |GDK_POINTER_MOTION_MASK
-                                |GDK_POINTER_MOTION_HINT_MASK);
+                                |GDK_POINTER_MOTION_MASK);
   gtk_signal_connect (GTK_OBJECT (widget), "expose_event",
                       G_CALLBACK (expose_event), NULL);
   g_signal_connect (G_OBJECT (widget), "motion_notify_event",
@@ -302,9 +301,6 @@ static gboolean motion_notify_event (GtkWidget      *widget,
   gint x, y;
   GdkModifierType state;
 
-  if (event->is_hint)
-    gdk_window_get_pointer (event->window, &x, &y, &state);
-  else
     {
       x = event->x;
       y = event->y;
@@ -390,7 +386,6 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
     }
   gegl_view_repaint (view);
   g_free (rectangles);
-  gdk_window_get_pointer (event->window, NULL, NULL, NULL);
 
   return TRUE;
 }

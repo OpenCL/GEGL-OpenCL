@@ -1,5 +1,11 @@
 2006-12-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-view.c: (gegl_view_constructor), (motion_notify_event),
+	(expose_event): removed use of motion hints since things seems slighly
+	less buggy then.
+
+2006-12-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: (cb_fit), (cb_recompute), (cb_redraw): added a redraw
 	action with shortcut ctrl+r and made recompute be shift+ctrl+r.
 
