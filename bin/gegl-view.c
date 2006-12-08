@@ -292,7 +292,6 @@ static gboolean  button_press_event   (GtkWidget      *widget,
   view->prev_x = x;
   view->prev_y = y;
 
-  g_warning ("hei");
   return TRUE;
 }
 

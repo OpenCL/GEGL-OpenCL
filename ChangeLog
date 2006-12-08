@@ -1,6 +1,6 @@
 2006-12-08  Øyvind Kolås  <pippin@gimp.org>
 
-	* bin/gegl-view.c (gegl_view_constructor), (button_press_event),
+	* bin/gegl-view.c: (gegl_view_constructor), (button_press_event),
 	(motion_notify_event):
 	* bin/gegl-view.h: Mostly fix bug #378114
 
