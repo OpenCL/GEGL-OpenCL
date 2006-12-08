@@ -149,6 +149,7 @@ static void cb_shrinkwrap (GtkAction *action);
 static void cb_fit (GtkAction *action);
 static void cb_fit_on_screen (GtkAction *action);
 static void cb_recompute (GtkAction *action);
+static void cb_redraw (GtkAction *action);
 
 gint
 editor_main (GeglNode    *gegl,
@@ -263,9 +264,14 @@ static GtkActionEntry action_entries[] = {
    G_CALLBACK (cb_zoom_200)},
 
   {"Recompute", NULL,
-   "_Recompute view", "<control>R",
-   "Recalculate all image data (for working around bugs)",
+   "_Recompute view", "<shift><control>R",
+   "Recalculate all image data (for working around dirt bugs)",
    G_CALLBACK (cb_recompute)},
+
+  {"Redraw", NULL,
+   "_Redraw view", "<control>R",
+   "Repaints all image data (works around display glitches)",
+   G_CALLBACK (cb_redraw)},
 };
 static guint n_action_entries = G_N_ELEMENTS (action_entries);
 
@@ -287,13 +293,15 @@ static const gchar *ui_info =
   "      <menuitem action='FitOnScreen'/>"
   "      <menuitem action='Fit'/>"
   "      <menuitem action='ShrinkWrap'/>"
-  "      <menuitem action='Recompute'/>"
   "      <separator/>"
   "      <menuitem action='ZoomIn'/>"
   "      <menuitem action='ZoomOut'/>"
   "      <menuitem action='Zoom50'/>"
   "      <menuitem action='Zoom100'/>"
   "      <menuitem action='Zoom200'/>"
+  "      <separator/>"
+  "      <menuitem action='Redraw'/>"
+  "      <menuitem action='Recompute'/>"
   "      <separator/>"
   "      <menuitem action='Structure'/>"
   "      <menuitem action='Tree'/>"
@@ -644,6 +652,7 @@ static void cb_fit (GtkAction *action)
   gdouble  hscale;
   gdouble  vscale;
 
+
   gtk_window_get_size (GTK_WINDOW (editor.window), &width, &height);
   width -= editor.drawing_area->allocation.width;
   height -= editor.drawing_area->allocation.height;
@@ -750,6 +759,11 @@ static void cb_recompute (GtkAction *action)
 {
   gegl_projection_forget (GEGL_VIEW(editor.drawing_area)->projection, NULL);
   gegl_gui_flush ();
+}
+
+static void cb_redraw (GtkAction *action)
+{
+  gtk_widget_queue_draw (editor.drawing_area);
 }
 
 void gegl_editor_update_title (void)
