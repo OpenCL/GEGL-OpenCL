@@ -51,7 +51,8 @@ gint query_png (const gchar *path,
                 gpointer    *format);
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
@@ -118,18 +119,18 @@ get_defined_region (GeglOperation *operation)
 {
   GeglRect result = {0,0,0,0};
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
-  GeglOperationSource *source = GEGL_OPERATION_SOURCE (operation);
+  /*GeglOperationSource *source = GEGL_OPERATION_SOURCE (operation);*/
   gint width, height;
   gint status;
   gpointer format;
 
-  if (!strcmp (self->path, "-"))
+  /*if (!strcmp (self->path, "-"))
     {
-      process (operation);
+      process (operation, dynamic_id);
       width = source->output->width;
       height = source->output->height;
     }
-  else
+  else*/
     {
       status = query_png (self->path, &width, &height, &format);
 

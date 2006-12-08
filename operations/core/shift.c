@@ -42,7 +42,8 @@ int gegl_chant_foo = 0;
 /* Actual image processing code
  ************************************************************************/
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationFilter    *filter = GEGL_OPERATION_FILTER(operation);
   GeglBuffer    *input  = filter->input;
@@ -91,15 +92,16 @@ get_affected_region (GeglOperation *operation,
 }
 
 static gboolean
-calc_source_regions (GeglOperation *self)
+calc_source_regions (GeglOperation *self,
+                     gpointer       dynamic_id)
 {
   GeglChantOperation  *op_shift = (GeglChantOperation*)(self);
-  GeglRect rect = *gegl_operation_get_requested_region (self);
+  GeglRect rect = *gegl_operation_get_requested_region (self, dynamic_id);
 
   rect.x -= op_shift->x;
   rect.y -= op_shift->y;
 
-  gegl_operation_set_source_region (self, "input", &rect);
+  gegl_operation_set_source_region (self, dynamic_id, "input", &rect);
   return TRUE;
 }
 

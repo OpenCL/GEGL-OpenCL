@@ -97,12 +97,13 @@ static Priv *init_priv (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationFilter *op_filter = GEGL_OPERATION_FILTER (operation);
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer   *source;
-  GeglRect     *requested  = gegl_operation_get_requested_region (operation);
+  GeglRect     *requested  = gegl_operation_get_requested_region (operation, dynamic_id);
   Priv *priv = init_priv (operation);
 
   g_assert (op_filter->input);

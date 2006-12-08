@@ -80,12 +80,13 @@ init_sdl (void)
 
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationSink *op_sink = GEGL_OPERATION_SINK (operation);
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer   *source;
-  GeglRect     *result  = gegl_operation_result_rect (operation);
+  GeglRect     *result  = gegl_operation_result_rect (operation, dynamic_id);
   SDL_Surface **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
 
   g_assert (op_sink->input);

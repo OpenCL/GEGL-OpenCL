@@ -60,7 +60,8 @@ struct _Priv
 static gboolean refresh_cache (GeglChantOperation *self);
 
 static void
-prepare (GeglOperation *operation)
+prepare (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *priv;

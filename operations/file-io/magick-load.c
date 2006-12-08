@@ -60,7 +60,8 @@ load_cache (GeglChantOperation *op_magick_load)
 }
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);

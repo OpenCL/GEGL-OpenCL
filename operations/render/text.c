@@ -137,13 +137,14 @@ static void text_layout_text (GeglChantOperation *self,
 }
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
   GeglRect                 *need;
 
-  need = gegl_operation_get_requested_region (operation);
+  need = gegl_operation_get_requested_region (operation, dynamic_id);
 
   op_source->output = g_object_new (GEGL_TYPE_BUFFER,
                                     "format", babl_format ("R'G'B'A u8"), /* FIXME: babl

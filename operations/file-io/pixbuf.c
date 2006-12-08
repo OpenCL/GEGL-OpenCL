@@ -33,7 +33,8 @@ gegl_chant_pointer (pixbuf, "GdkPixbuf to use")
 #include <gdk-pixbuf/gdk-pixdata.h>
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation  *self      = GEGL_CHANT_OPERATION (operation);

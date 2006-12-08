@@ -42,7 +42,8 @@ gegl_chant_string (path, "/tmp/test.raw",
 static void load_buffer (GeglChantOperation *op_raw_load);
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);

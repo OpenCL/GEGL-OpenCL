@@ -35,7 +35,8 @@ gegl_chant_string (ref, "", "The reference ID used as input.")
 /* Actual image processing code
  ************************************************************************/
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationFilter   *filter = GEGL_OPERATION_FILTER(operation);
   

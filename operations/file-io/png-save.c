@@ -43,12 +43,13 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
                         gint         height);
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglChantOperation *self    = GEGL_CHANT_OPERATION (operation);
   GeglOperationSink  *op_sink = GEGL_OPERATION_SINK (operation);
   GeglBuffer         *input   = op_sink->input;
-  GeglRect           *result  = gegl_operation_result_rect (operation);
+  GeglRect           *result  = gegl_operation_result_rect (operation, dynamic_id);
 
   g_assert (input);
 

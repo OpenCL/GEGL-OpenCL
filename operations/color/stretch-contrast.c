@@ -82,7 +82,8 @@ buffer_get_min_max (GeglBuffer *buffer,
 }
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationFilter *filter = GEGL_OPERATION_FILTER (operation);
   GeglRect            *result;
@@ -91,7 +92,7 @@ process (GeglOperation *operation)
   gdouble              min, max;
 
   input = filter->input;
-  result = gegl_operation_get_requested_region (operation);
+  result = gegl_operation_get_requested_region (operation, dynamic_id);
   
   if (result->w==0 ||
       result->h==0)
@@ -143,10 +144,11 @@ process (GeglOperation *operation)
  * compute the scale op.
  */
 static gboolean
-calc_source_regions (GeglOperation *self)
+calc_source_regions (GeglOperation *self,
+                     gpointer       dynamic_id)
 {
-  gegl_operation_set_source_region (self, "input",
-                                    gegl_operation_get_requested_region (self));
+  gegl_operation_set_source_region (self, dynamic_id, "input",
+                                    gegl_operation_get_requested_region (self, dynamic_id));
   return TRUE;
 }
 

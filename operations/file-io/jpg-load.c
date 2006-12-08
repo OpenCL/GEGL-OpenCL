@@ -46,7 +46,8 @@ query_jpg (const gchar *path,
            gint        *height);
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE (operation);
   GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);

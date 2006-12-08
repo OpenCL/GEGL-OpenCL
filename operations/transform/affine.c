@@ -63,11 +63,13 @@ static gboolean   is_composite_node    (OpAffine      *affine);
 static void       get_source_matrix    (OpAffine      *affine,
                                         Matrix3        output);
 static GeglRect   get_defined_region   (GeglOperation *op);
-static gboolean   calc_source_regions  (GeglOperation *op);
+static gboolean   calc_source_regions  (GeglOperation *op,
+                                        gpointer       dynamic_id);
 static GeglRect   get_affected_region  (GeglOperation *operation,
                                         const gchar   *input_pad,
                                         GeglRect       region);
-static gboolean   process              (GeglOperation *op);
+static gboolean   process              (GeglOperation *op,
+                                        gpointer       dynamic_id);
 
 /* ************************* */
 
@@ -399,7 +401,8 @@ get_defined_region (GeglOperation *op)
 }
 
 static gboolean
-calc_source_regions (GeglOperation *op)
+calc_source_regions (GeglOperation *op,
+                     gpointer       dynamic_id)
 {
   OpAffine *affine = (OpAffine *) op;
   Matrix3   inverse;
@@ -408,12 +411,12 @@ calc_source_regions (GeglOperation *op)
   gdouble   need_points [8];
   gint      i;
 
-  requested_rect = *(gegl_operation_get_requested_region (op));
+  requested_rect = *(gegl_operation_get_requested_region (op, dynamic_id));
 
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (inverse))
     {
-      gegl_operation_set_source_region (op, "input", &requested_rect);
+      gegl_operation_set_source_region (op, dynamic_id, "input", &requested_rect);
       return TRUE;
     }
 
@@ -453,7 +456,7 @@ calc_source_regions (GeglOperation *op)
         }
     }
 
-  gegl_operation_set_source_region (op, "input", &need_rect);
+  gegl_operation_set_source_region (op, dynamic_id, "input", &need_rect);
   return TRUE;
 }
 
@@ -529,12 +532,13 @@ get_affected_region (GeglOperation *op,
 
 
 static gboolean
-process (GeglOperation *op)
+process (GeglOperation *op,
+         gpointer       dynamic_id)
 {
   GeglOperationFilter *filter = GEGL_OPERATION_FILTER (op);
   OpAffine            *affine = (OpAffine *) op;
   GeglBuffer          *output;
-  GeglRect            *result = gegl_operation_result_rect (op);
+  GeglRect            *result = gegl_operation_result_rect (op, dynamic_id);
 
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (affine->matrix))

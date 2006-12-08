@@ -31,7 +31,8 @@ gegl_chant_int (pattern, 0, 3, 0, "Bayer pattern used, 0 seems to work for some 
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
-static GeglRect get_source_rect (GeglOperation *self);
+static GeglRect get_source_rect (GeglOperation *self,
+                                 gpointer       dynamic_id);
 
 #include <stdio.h>
 static void
@@ -40,7 +41,8 @@ demosaic (GeglChantOperation *op,
           GeglBuffer *dst);
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationFilter *filter;
   GeglChantOperation  *self;
@@ -54,8 +56,8 @@ process (GeglOperation *operation)
   input  = filter->input;
 
     {
-      GeglRect   *result = gegl_operation_result_rect (operation);
-      GeglRect    need   = get_source_rect (operation);
+      GeglRect   *result = gegl_operation_result_rect (operation, dynamic_id);
+      GeglRect    need   = get_source_rect (operation, dynamic_id);
       GeglBuffer *temp_in;
 
       if (result->w==0 ||
@@ -191,11 +193,12 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
-static GeglRect get_source_rect (GeglOperation *self)
+static GeglRect get_source_rect (GeglOperation *self,
+                                 gpointer       dynamic_id)
 {
   GeglRect            rect;
 
-  rect  = *gegl_operation_get_requested_region (self);
+  rect  = *gegl_operation_get_requested_region (self, dynamic_id);
   if (rect.w != 0 &&
       rect.h != 0)
     {
@@ -207,11 +210,12 @@ static GeglRect get_source_rect (GeglOperation *self)
 }
 
 static gboolean
-calc_source_regions (GeglOperation *self)
+calc_source_regions (GeglOperation *self,
+                     gpointer       dynamic_id)
 {
-  GeglRect need = get_source_rect (self);
+  GeglRect need = get_source_rect (self, dynamic_id);
 
-  gegl_operation_set_source_region (self, "input", &need);
+  gegl_operation_set_source_region (self, dynamic_id, "input", &need);
 
   return TRUE;
 }

@@ -46,7 +46,8 @@ int gegl_chant_foo = 0;
 /* Actual image processing code
  ************************************************************************/
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationFilter *filter;
   GeglBuffer          *input;
@@ -92,10 +93,11 @@ get_defined_region (GeglOperation *operation)
 }
 
 static gboolean
-calc_source_regions (GeglOperation *self)
+calc_source_regions (GeglOperation *self,
+                     gpointer       dynamic_id)
 {
-  gegl_operation_set_source_region (self, "input",
-                                    gegl_operation_get_requested_region (self));
+  gegl_operation_set_source_region (self, dynamic_id, "input",
+                                    gegl_operation_get_requested_region (self, dynamic_id));
   return TRUE;
 }
 

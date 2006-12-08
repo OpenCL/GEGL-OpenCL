@@ -28,7 +28,8 @@
 #include "gegl-chant.h"
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationFilter      *op_filter = GEGL_OPERATION_FILTER (operation);
   gboolean success = FALSE;

@@ -31,15 +31,16 @@ gegl_chant_color (value, "black", "One of the cell colors (defaults to 'black')"
 #include "gegl-chant.h"
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglRect  *need;
   GeglOperationSource  *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
-  need = gegl_operation_get_requested_region (operation);
+  need = gegl_operation_get_requested_region (operation, dynamic_id);
   {
-    GeglRect *result = gegl_operation_result_rect (operation);
+    GeglRect *result = gegl_operation_result_rect (operation, dynamic_id);
     gfloat *buf;
     gfloat color[4];
 
