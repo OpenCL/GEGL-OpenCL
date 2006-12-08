@@ -43,6 +43,8 @@ static void      get_property         (GObject        *gobject,
                                        GParamSpec     *pspec);
 static gboolean  motion_notify_event  (GtkWidget      *widget,
                                        GdkEventMotion *event);
+static gboolean  button_press_event   (GtkWidget      *widget,
+                                       GdkEventButton *event);
 static GObject *
 gegl_view_constructor (GType                  type,
                        guint                  n_params,
@@ -257,6 +259,8 @@ gegl_view_constructor (GType                  type,
                       G_CALLBACK (expose_event), NULL);
   g_signal_connect (G_OBJECT (widget), "motion_notify_event",
 		    G_CALLBACK (motion_notify_event), NULL);
+  g_signal_connect (G_OBJECT (widget), "button_press_event",
+		    G_CALLBACK (button_press_event), NULL);
   gtk_widget_set_double_buffered (widget, FALSE);
 
   return object;
@@ -265,6 +269,31 @@ gegl_view_constructor (GType                  type,
 /* hack, this should not be in the view, since the view should not be coupled
  * to the app be be a generic widget */
 void gegl_editor_update_title (void);
+
+
+static gboolean  button_press_event   (GtkWidget      *widget,
+                                       GdkEventButton *event)
+{
+  GeglView *view = GEGL_VIEW (widget);
+  gint x, y;
+  GdkModifierType state;
+
+  x = event->x;
+  y = event->y;
+  state = event->state;
+
+  view->screen_x = x;
+  view->screen_y = y;
+
+  view->orig_x = view->x;
+  view->orig_y = view->y;
+    
+  view->prev_x = x;
+  view->prev_y = y;
+
+  g_warning ("hei");
+  return TRUE;
+}
 
 static gboolean motion_notify_event (GtkWidget      *widget,
                                      GdkEventMotion *event)
@@ -284,16 +313,20 @@ static gboolean motion_notify_event (GtkWidget      *widget,
     
   if (state & GDK_BUTTON1_MASK)
     {
-      view->x += (view->prev_x-x) / view->scale;
-      view->y += (view->prev_y-y) / view->scale;
-      gdk_window_scroll (widget->window, -(view->prev_x-x)    ,
-                                         -(view->prev_y-y)   );
+      gint pre_x = floor (view->x * view->scale);
+      gint pre_y = floor (view->y * view->scale);
+
+      view->x = view->orig_x + (view->screen_x-x) / view->scale;
+      view->y = view->orig_y + (view->screen_y-y) / view->scale;
+
+      gdk_window_scroll (widget->window, pre_x - floor (view->x * view->scale),
+                                         pre_y - floor (view->y * view->scale));
     }
   else if (state & GDK_BUTTON3_MASK)
     {
       gdouble diff;
-      view->x+= (x) / view->scale;
-      view->y+= (y) / view->scale;
+      view->x += (view->screen_x) / view->scale;
+      view->y += (view->screen_y) / view->scale;
 
       diff = (view->prev_y-y) / 300.0;
       if (diff<0.0)
@@ -305,8 +338,8 @@ static gboolean motion_notify_event (GtkWidget      *widget,
           view->scale /= 1.0 - diff;
         }
 
-      view->x-= (x) / view->scale;
-      view->y-= (y) / view->scale;
+      view->x-= (view->screen_x) / view->scale;
+      view->y-= (view->screen_y) / view->scale;
       /*gegl_view_repaint (self);*/
       gtk_widget_queue_draw (GTK_WIDGET (view));
       gegl_editor_update_title ();
