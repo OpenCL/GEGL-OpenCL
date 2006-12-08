@@ -147,6 +147,7 @@ GeglNode *editor_output = NULL;
 
 static void cb_shrinkwrap (GtkAction *action);
 static void cb_fit (GtkAction *action);
+static void cb_fit_on_screen (GtkAction *action);
 static void cb_recompute (GtkAction *action);
 
 gint
@@ -166,8 +167,8 @@ editor_main (GeglNode    *gegl,
 
   reset_gegl (gegl, path);
 
-  cb_shrinkwrap (NULL);
-  /*cb_fit (NULL);*/
+  /*cb_shrinkwrap (NULL);*/
+  cb_fit_on_screen (NULL);
   gegl_editor_update_title ();
   gtk_main ();
   return 0;
@@ -231,6 +232,11 @@ static GtkActionEntry action_entries[] = {
    "Fit the image in window",
    G_CALLBACK (cb_fit)},
 
+  {"FitOnScreen", NULL,
+   "_Fit on screen", "",
+   "Fit the image on screen",
+   G_CALLBACK (cb_fit_on_screen)},
+
   {"ZoomIn", NULL,
    "Zoom in", "<control>plus",
    "",
@@ -278,6 +284,7 @@ static const gchar *ui_info =
   "      <separator/>"
   "    </menu>"
   "    <menu action='ViewMenu'>"
+  "      <menuitem action='FitOnScreen'/>"
   "      <menuitem action='Fit'/>"
   "      <menuitem action='ShrinkWrap'/>"
   "      <menuitem action='Recompute'/>"
@@ -633,8 +640,11 @@ static void cb_fit (GtkAction *action)
   gint     width;
   gint     height;
   gint     x,y;
+  gint     i;
   gdouble  hscale;
   gdouble  vscale;
+
+  g_warning ("%i,%i %i×%i", defined.x, defined.y, defined.w, defined.h);
 
   gtk_window_get_size (GTK_WINDOW (editor.window), &width, &height);
   width -= editor.drawing_area->allocation.width;
@@ -667,12 +677,42 @@ static void cb_fit (GtkAction *action)
 
   gtk_widget_queue_draw (editor.drawing_area);
   gegl_editor_update_title ();
+  for (i=0;i<40;i++){
+    gtk_main_iteration ();
+  }
+}
+
+
+static void cb_fit_on_screen (GtkAction *action)
+{
+  GeglRect defined = gegl_node_get_bounding_box (editor.gegl);
+  /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.w, defined.h);*/
+
+  g_object_set (editor.drawing_area, "x", defined.x, "y", defined.y, NULL);
+  {
+    GdkScreen *screen= gtk_window_get_screen (GTK_WINDOW (editor.window));
+
+    gint    screen_width, screen_height;    
+    gint i;
+
+    screen_width = gdk_screen_get_width (screen);
+    screen_height = gdk_screen_get_height (screen);
+
+    gtk_window_resize (GTK_WINDOW (editor.window), screen_width * 0.75,
+                                                   screen_height * 0.75);
+      for (i=0;i<40;i++){
+        gtk_main_iteration ();
+      }
+  }
+  cb_fit (action);
+  cb_shrinkwrap (action);
 }
 
 static void cb_shrinkwrap (GtkAction *action)
 {
   GeglRect defined = gegl_node_get_bounding_box (editor.gegl);
   /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.w, defined.h);*/
+  gint i;
 
   g_object_set (editor.drawing_area, "x", defined.x, "y", defined.y, NULL);
   {
@@ -703,6 +743,9 @@ static void cb_shrinkwrap (GtkAction *action)
                                                    height);
   }
   gtk_widget_queue_draw (editor.drawing_area);
+  for (i=0;i<40;i++){
+    gtk_main_iteration ();
+  }
 }
 
 static void cb_recompute (GtkAction *action)
