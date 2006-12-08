@@ -1,5 +1,9 @@
 2006-12-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/file-io/exr-load.cpp: padd dynamic_id to process.
+
+2006-12-08  Øyvind Kolås  <pippin@gimp.org>
+
 	Added GeglNodeDynamic, a data structure to store evaluation
 	thread/context specifc data attached to nodes, at the moment it
 	contains some of the rects travesals and internal refcount for buffer

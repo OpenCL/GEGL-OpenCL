@@ -348,7 +348,6 @@ convert_yca_to_rgba (char   *pixels,
     }
 }
 
-
 static void
 insert_channels (FrameBuffer  &fb,
                  const Header &header,
@@ -558,7 +557,8 @@ query_exr (const gchar *path,
 }
 
 static gboolean
-process (GeglOperation *operation)
+process (GeglOperation *operation,
+         gpointer       dynamic_id)
 {
   GeglOperationSource *op_source = GEGL_OPERATION_SOURCE (operation);
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
