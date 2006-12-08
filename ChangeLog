@@ -1,5 +1,10 @@
 2006-12-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-view.c: (computed_event): changed the rect resize hack to
+	reblit a larger region.
+
+2006-12-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-view.c: (gegl_view_constructor), (motion_notify_event),
 	(expose_event): removed use of motion hints since things seems slighly
 	less buggy then.
