@@ -45,7 +45,7 @@ load_cache (GeglChantOperation *op_magick_load)
             sprintf (cmd_buf, "convert \"%s\" /tmp/gegl-magick.png", op_magick_load->path);
             system (cmd_buf);
 
-            sprintf (xml, "<gegl><tree><node operation='png-load' path='/tmp/gegl-magick.png'></node></tree></gegl>");
+            sprintf (xml, "<gegl><node operation='png-load' path='/tmp/gegl-magick.png'></node></gegl>");
           }
 
     temp_gegl = gegl_xml_parse (xml);

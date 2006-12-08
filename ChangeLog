@@ -1,5 +1,10 @@
 2006-12-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/file-io/magick-load.c: (load_cache): removed deprecated
+	<tree> tag from XML.
+
+2006-12-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-view.c: (computed_event): changed the rect resize hack to
 	reblit a larger region.
 
