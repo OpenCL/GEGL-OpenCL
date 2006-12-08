@@ -68,7 +68,8 @@ struct _GeglOperationClass
    * override this if you are creating a meta operation (using the node
    * as a GeglGraph).
    */
-  void       (*prepare)             (GeglOperation *self);
+  void       (*prepare)             (GeglOperation *self,
+                                     gpointer       dynamic_id);
 
   /* Returns a bounding rectangle for the data that is defined by
    * this op. (is already implemented for GeglOperationPointFilter and
@@ -87,15 +88,18 @@ struct _GeglOperationClass
   /* Compute the region of interests on our own sources (and use
    * gegl_operation_set_source_region() on each of them).
    */
-  gboolean   (*calc_source_regions) (GeglOperation *self);
+  gboolean   (*calc_source_regions) (GeglOperation *self,
+                                     gpointer       dynamic_id);
 
   /* do the actual processing needed to put GeglBuffers on the output pad */
   gboolean   (*process)             (GeglOperation *self,
+                                     gpointer       dynamic_id,
                                      const gchar   *output_pad);
 };
 
 /* returns the ROI passed to _this_ operation */
-GeglRect * gegl_operation_get_requested_region      (GeglOperation *operation);
+GeglRect * gegl_operation_get_requested_region      (GeglOperation *operation,
+                                                     gpointer       dynamic_id);
 
 /* retrieves the bounding box of a connected input */
 GeglRect * gegl_operation_source_get_defined_region (GeglOperation *operation,
@@ -103,11 +107,13 @@ GeglRect * gegl_operation_source_get_defined_region (GeglOperation *operation,
 
 /* sets the ROI needed to be computed on one of the sources */
 void       gegl_operation_set_source_region         (GeglOperation *operation,
+                                                     gpointer       dynamic_id,
                                                      const gchar   *pad_name,
                                                      GeglRect      *region);
 
 /* returns the bounding box of the buffer that needs to be computed */
-GeglRect * gegl_operation_result_rect               (GeglOperation *operation);
+GeglRect * gegl_operation_result_rect               (GeglOperation *operation,
+                                                     gpointer       dynamic_id);
 
 
 /* virtual method invokers */
@@ -115,12 +121,15 @@ GeglRect   gegl_operation_get_affected_region       (GeglOperation *self,
                                                      const gchar   *input_pad,
                                                      GeglRect       region);
 GeglRect   gegl_operation_get_defined_region        (GeglOperation *self);
-gboolean   gegl_operation_calc_source_regions       (GeglOperation *self);
+gboolean   gegl_operation_calc_source_regions       (GeglOperation *self,
+                                                     gpointer       dynamic_id);
 void       gegl_operation_associate                 (GeglOperation *self,
                                                      GeglNode      *node);
-void       gegl_operation_prepare                   (GeglOperation *self);
+void       gegl_operation_prepare                   (GeglOperation *self,
+                                                     gpointer       dynamic_id);
 
 gboolean   gegl_operation_process                   (GeglOperation *self,
+                                                     gpointer       dynamic_id,
                                                      const gchar   *output_pad);
 
 GType      gegl_operation_get_type                  (void) G_GNUC_CONST;

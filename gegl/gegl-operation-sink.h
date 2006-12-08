@@ -48,7 +48,8 @@ typedef struct _GeglOperationSinkClass GeglOperationSinkClass;
 struct _GeglOperationSinkClass
 {
    GeglOperationClass operation_class;
-   gboolean (*process) (GeglOperation *self);
+   gboolean (*process) (GeglOperation *self,
+                        gpointer       dynamic_id);
 };
 
 GType gegl_operation_sink_get_type (void) G_GNUC_CONST;

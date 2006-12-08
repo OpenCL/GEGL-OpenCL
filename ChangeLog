@@ -1,3 +1,87 @@
+2006-12-08  Øyvind Kolås  <pippin@gimp.org>
+
+	Added GeglNodeDynamic, a data structure to store evaluation
+	thread/context specifc data attached to nodes, at the moment it
+	contains some of the rects travesals and internal refcount for buffer
+	bookkeeping. Buffers (and potentially other pad data), should be moved
+	here as well.
+
+	* gegl/Makefile.am:
+	* gegl/gegl-chant.h:
+	* gegl/gegl-cr-visitor.c: (visit_node):
+	* gegl/gegl-debug-rect-visitor.c: (visit_node):
+	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
+	* gegl/gegl-eval-visitor.c: (visit_pad):
+	* gegl/gegl-finish-visitor.c: (gegl_finish_visitor_class_init),
+	(gegl_finish_visitor_init), (visit_node):
+	* gegl/gegl-finish-visitor.h:
+	* gegl/gegl-need-visitor.c: (visit_node):
+	* gegl/gegl-node-dynamic.c: (gegl_node_dynamic_class_init),
+	(gegl_node_dynamic_init), (gegl_node_dynamic_set_need_rect),
+	(gegl_node_dynamic_get_result_rect),
+	(gegl_node_dynamic_set_result_rect),
+	(gegl_node_dynamic_get_need_rect):
+	* gegl/gegl-node-dynamic.h:
+	* gegl/gegl-node.c: (gegl_node_init), (gegl_node_set_need_rect),
+	(gegl_node_get_result_rect), (gegl_node_set_result_rect),
+	(gegl_node_get_need_rect), (gegl_node_get_bounding_box),
+	(gegl_node_process), (lookup_dynamic), (gegl_node_get_dynamic),
+	(gegl_node_remove_dynamic), (gegl_node_add_dynamic):
+	* gegl/gegl-node.h:
+	* gegl/gegl-operation-composer.c: (process), (calc_source_regions):
+	* gegl/gegl-operation-composer.h:
+	* gegl/gegl-operation-filter.c: (process), (calc_source_regions):
+	* gegl/gegl-operation-filter.h:
+	* gegl/gegl-operation-point-composer.c: (process_inner):
+	* gegl/gegl-operation-point-filter.c: (process_inner):
+	* gegl/gegl-operation-sink.c: (process), (calc_source_regions):
+	* gegl/gegl-operation-sink.h:
+	* gegl/gegl-operation-source.c: (process), (calc_source_regions):
+	* gegl/gegl-operation-source.h:
+	* gegl/gegl-operation.c: (gegl_operation_process),
+	(gegl_operation_calc_source_regions), (gegl_operation_prepare),
+	(gegl_operation_set_source_region), (calc_source_regions),
+	(gegl_operation_get_requested_region),
+	(gegl_operation_result_rect):
+	* gegl/gegl-operation.h:
+	* gegl/gegl-prepare-visitor.c: (visit_node):
+	* gegl/gegl-types.h:
+	* gegl/gegl-visitor.c: (gegl_visitor_class_init), (set_property),
+	(get_property):
+	* gegl/gegl-visitor.h:
+	* operations/blur/box-blur.c: (process), (get_source_rect),
+	(calc_source_regions):
+	* operations/blur/gaussian-blur.c: (process), (get_source_rect),
+	(calc_source_regions):
+	* operations/color/stretch-contrast.c: (process),
+	(calc_source_regions):
+	* operations/core/buffer.c: (process):
+	* operations/core/clone.c: (process):
+	* operations/core/crop.c: (process), (calc_source_regions):
+	* operations/core/nop.c: (process):
+	* operations/core/shift.c: (process), (calc_source_regions):
+	* operations/display/display.c: (process):
+	* operations/file-io/jpg-load.c: (process):
+	* operations/file-io/load.c: (prepare):
+	* operations/file-io/magick-load.c: (process):
+	* operations/file-io/pixbuf.c: (process):
+	* operations/file-io/png-load.c: (process), (get_defined_region):
+	* operations/file-io/png-save.c: (process):
+	* operations/file-io/raw-load.c: (process):
+	* operations/file-io/svg-load.c: (process), (get_defined_region):
+	* operations/meta/layer.c: (prepare):
+	* operations/render/FractalExplorer.c: (process):
+	* operations/render/checkerboard.c: (process):
+	* operations/render/color.c: (process):
+	* operations/render/noise.c: (process):
+	* operations/render/text.c: (process):
+	* operations/transform/affine.c: (calc_source_regions), (process):
+	* operations/workshop/demosaic-simple.c: (process),
+	(get_source_rect), (calc_source_regions):
+	* operations/workshop/gtk-display.c: (process):
+	* operations/workshop/mandelbrot.c: (process):
+	* operations/workshop/rawbayer-load.c: (process):
+
 2006-12-07  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/display/display.c: (process): updated to use sink as

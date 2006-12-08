@@ -36,6 +36,7 @@ static void     set_property (GObject      *gobject,
                               const GValue *value,
                               GParamSpec   *pspec);
 static gboolean process      (GeglOperation *operation,
+                              gpointer       dynamic_id,
                               const gchar   *output_prop);
 static void     associate    (GeglOperation *operation);
 
@@ -44,7 +45,8 @@ static void     associate    (GeglOperation *operation);
 G_DEFINE_TYPE (GeglOperationSource, gegl_operation_source, GEGL_TYPE_OPERATION)
 
 static GeglRect get_defined_region (GeglOperation *self);
-static gboolean calc_source_regions (GeglOperation *self);
+static gboolean calc_source_regions (GeglOperation *self,
+                                     gpointer       dynamic_id);
 
 static void
 gegl_operation_source_class_init (GeglOperationSourceClass * klass)
@@ -124,6 +126,7 @@ set_property (GObject      *object,
 
 static gboolean
 process (GeglOperation *operation,
+         gpointer       dynamic_id,
          const gchar   *output_prop)
 {
   GeglOperationSourceClass *klass = GEGL_OPERATION_SOURCE_GET_CLASS (operation);
@@ -139,7 +142,7 @@ process (GeglOperation *operation,
   
   GEGL_OPERATION_SOURCE (operation)->output = NULL;
   g_assert (klass->process);
-  success = klass->process (operation);
+  success = klass->process (operation, dynamic_id);
 
   return success;
 }
@@ -154,7 +157,8 @@ get_defined_region (GeglOperation *self)
 }
 
 static gboolean
-calc_source_regions (GeglOperation *self)
+calc_source_regions (GeglOperation *self,
+                     gpointer       dynamic_id)
 {
   return TRUE;
 }

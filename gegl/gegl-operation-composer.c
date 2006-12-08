@@ -42,12 +42,14 @@ static void     set_property (GObject      *gobject,
                               guint         prop_id,
                               const GValue *value,
                               GParamSpec   *pspec);
-static gboolean process      (GeglOperation   *operation,
+static gboolean process      (GeglOperation *operation,
+                              gpointer       dynamic_id,
                               const gchar  *output_prop);
 static void     associate    (GeglOperation *operation);
 
-static GeglRect get_defined_region       (GeglOperation *self);
-static gboolean calc_source_regions       (GeglOperation *self);
+static GeglRect get_defined_region  (GeglOperation *self);
+static gboolean calc_source_regions (GeglOperation *self,
+                                     gpointer       dynamic_id);
 
 
 G_DEFINE_TYPE (GeglOperationComposer, gegl_operation_composer, GEGL_TYPE_OPERATION)
@@ -167,6 +169,7 @@ set_property (GObject      *object,
 
 static gboolean
 process (GeglOperation *operation,
+         gpointer       dynamic_id,
          const gchar   *output_prop)
 {
   GeglOperationComposer      *gegl_operation_composer = GEGL_OPERATION_COMPOSER (operation);
@@ -186,7 +189,7 @@ process (GeglOperation *operation,
       gegl_operation_composer->aux   != NULL)
     {
       gegl_operation_composer->output = NULL;
-      success = klass->process (operation);
+      success = klass->process (operation, dynamic_id);
     }
   else
     {
@@ -222,12 +225,13 @@ get_defined_region (GeglOperation *self)
 }
 
 static gboolean
-calc_source_regions (GeglOperation *self)
+calc_source_regions (GeglOperation *self,
+                     gpointer       dynamic_id)
 {
-  GeglRect *need_rect = gegl_operation_get_requested_region (self);
+  GeglRect *need_rect = gegl_operation_get_requested_region (self, dynamic_id);
 
-  gegl_operation_set_source_region (self, "input", need_rect);
-  gegl_operation_set_source_region (self, "aux", need_rect);
+  gegl_operation_set_source_region (self, dynamic_id, "input", need_rect);
+  gegl_operation_set_source_region (self, dynamic_id, "aux", need_rect);
   return TRUE;
 }
 

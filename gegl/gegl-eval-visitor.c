@@ -28,6 +28,7 @@
 #include "gegl-eval-visitor.h"
 #include "gegl-operation.h"
 #include "gegl-node.h"
+#include "gegl-node-dynamic.h"
 #include "gegl-pad.h"
 #include "gegl-visitable.h"
 #include "gegl-instrument.h"
@@ -62,6 +63,7 @@ visit_pad (GeglVisitor *self,
 {
   GeglNode      *node      = gegl_pad_get_node (pad);
   GeglOperation *operation = node->operation;
+  gpointer       dynamic_id = self->dynamic_id;
 
   GEGL_VISITOR_CLASS (gegl_eval_visitor_parent_class)->visit_pad (self, pad);
 
@@ -69,7 +71,7 @@ visit_pad (GeglVisitor *self,
     {
       glong time = gegl_ticks ();
       glong babl_time = babl_total_usecs;
-      gegl_operation_process (operation, gegl_pad_get_name (pad));
+      gegl_operation_process (operation, dynamic_id, gegl_pad_get_name (pad));
       babl_time = babl_total_usecs - babl_time;
       time = gegl_ticks ()-time;
 
@@ -105,7 +107,7 @@ visit_pad (GeglVisitor *self,
                                  &value);
 
           /* reference counting for this source dropped to zero, freeing up */
-          if (--gegl_pad_get_node (source_pad)->refs==0 &&
+          if (--gegl_node_get_dynamic(gegl_pad_get_node (source_pad), dynamic_id)->refs==0 &&
               g_value_get_object (&value))
             {
               g_object_unref (g_value_get_object (&value));

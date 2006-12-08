@@ -57,7 +57,8 @@ visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
   GeglOperation *operation = node->operation;
+  gpointer       dynamic_id = self->dynamic_id;
 
   GEGL_VISITOR_CLASS (gegl_need_visitor_parent_class)->visit_node (self, node);
-  gegl_operation_calc_source_regions (operation);
+  gegl_operation_calc_source_regions (operation, dynamic_id);
 }

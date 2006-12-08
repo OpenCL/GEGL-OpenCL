@@ -29,6 +29,7 @@
 #include "gegl-types.h"
 
 #include "gegl-node.h"
+#include "gegl-node-dynamic.h"
 #include "gegl-operation.h"
 #include "gegl-visitor.h"
 #include "gegl-visitable.h"
@@ -40,6 +41,8 @@
 #include "gegl-dirt-visitor.h"
 #include "gegl-clean-visitor.h"
 #include "gegl-prepare-visitor.h"
+#include "gegl-finish-visitor.h"
+#include "gegl-node-dynamic.h"
 #include "gegl-utils.h"
 
 
@@ -122,7 +125,6 @@ gegl_node_init (GeglNode *self)
   self->sinks       = NULL;
   self->sources     = NULL;
   self->operation   = NULL;
-  self->refs        = 0;
   self->enabled     = TRUE;
   memset (&self->dirt_rect, 0, sizeof (self->dirt_rect));
   self->is_graph    = FALSE;
@@ -1324,42 +1326,51 @@ gegl_node_get_have_rect (GeglNode    *node)
 
 void
 gegl_node_set_need_rect (GeglNode    *node,
+                         gpointer     dynamic_id,
                          gint         x,
                          gint         y,
                          gint         width,
                          gint         height)
 {
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, dynamic_id);
   g_assert (node);
-  node->need_rect.x = x;
-  node->need_rect.y = y;
-  node->need_rect.w = width;
-  node->need_rect.h = height;
+  dynamic->need_rect.x = x;
+  dynamic->need_rect.y = y;
+  dynamic->need_rect.w = width;
+  dynamic->need_rect.h = height;
 }
 
 GeglRect *
-gegl_node_get_result_rect (GeglNode *node)
+gegl_node_get_result_rect (GeglNode *node,
+                           gpointer  dynamic_id)
 {
-  return &node->result_rect;
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, dynamic_id);
+  return &dynamic->result_rect;
 }
 
 void
 gegl_node_set_result_rect (GeglNode *node,
+                           gpointer  dynamic_id,
                            gint      x,
                            gint      y,
                            gint      width,
                            gint      height)
 {
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, dynamic_id);
   g_assert (node);
-  node->result_rect.x = x;
-  node->result_rect.y = y;
-  node->result_rect.w = width;
-  node->result_rect.h = height;
+  g_assert (dynamic);
+  dynamic->result_rect.x = x;
+  dynamic->result_rect.y = y;
+  dynamic->result_rect.w = width;
+  dynamic->result_rect.h = height;
 }
 
 GeglRect *
-gegl_node_get_need_rect (GeglNode    *node)
+gegl_node_get_need_rect (GeglNode    *node,
+                         gpointer     dynamic_id)
 {
-  return &node->need_rect;
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, dynamic_id);
+  return &dynamic->need_rect;
 }
 
 const gchar *
@@ -1443,6 +1454,9 @@ gegl_node_get_bounding_box (GeglNode     *root)
 {
   GeglVisitor *prepare_visitor;
   GeglVisitor *have_visitor;
+  GeglVisitor *finish_visitor;
+  guchar *id = g_malloc(1);
+  gint         i;
 
   GeglPad     *pad;
   pad = gegl_node_get_pad (root, "output");
@@ -1450,16 +1464,23 @@ gegl_node_get_bounding_box (GeglNode     *root)
     root = pad->node;
   g_object_ref (root);
 
+  for (i=0;i<2;i++)
+    {
+      prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, "id", id, NULL);
+      gegl_visitor_dfs_traverse (prepare_visitor, GEGL_VISITABLE(root));
+      g_object_unref (prepare_visitor);
+    }
 
-  prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, NULL);
-  gegl_visitor_dfs_traverse (prepare_visitor, GEGL_VISITABLE(root));
-  g_object_unref (prepare_visitor);
-
-  have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, NULL);
+  have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, "id", id, NULL);
   gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE(root));
   g_object_unref (have_visitor);
 
+  finish_visitor = g_object_new (GEGL_TYPE_FINISH_VISITOR, "id", id, NULL);
+  gegl_visitor_dfs_traverse (finish_visitor, GEGL_VISITABLE(root));
+  g_object_unref (finish_visitor);
+
   g_object_unref (root);
+  g_free(id);
   
   return root->have_rect; 
 }
@@ -1470,6 +1491,7 @@ void
 gegl_node_process (GeglNode *self)
 {
   GeglNode    *input;
+  GeglNodeDynamic *dynamic;
   GeglBuffer  *buffer;
   GeglRect     defined;
 
@@ -1483,7 +1505,76 @@ gegl_node_process (GeglNode *self)
 
   gegl_node_get (input, "output", &buffer, NULL);
   gegl_node_set (self, "input", buffer, NULL);
-  gegl_node_set_result_rect (self, defined.x, defined.y, defined.w, defined.h);
-  gegl_operation_process (self->operation, "foo");
+
+  dynamic = gegl_node_add_dynamic (self, &defined);
+  gegl_node_dynamic_set_result_rect (dynamic, defined.x, defined.y, defined.w, defined.h);
+  gegl_operation_process (self->operation, &defined, "foo");
+  gegl_node_remove_dynamic (self, &defined);
   g_object_unref (buffer);
+}
+
+static gint
+lookup_dynamic (gconstpointer a,
+                gconstpointer dynamic_id)
+{
+  GeglNodeDynamic *dynamic = (void*)a;
+  if (dynamic->dynamic_id == dynamic_id)
+    return 0;
+  return -1;
+}
+void babl_backtrack(void);
+GeglNodeDynamic *
+gegl_node_get_dynamic (GeglNode *self,
+                       gpointer  dynamic_id)
+{
+  GSList *found;
+  GeglNodeDynamic *dynamic = NULL;
+ 
+  found = g_slist_find_custom (self->dynamic, dynamic_id, lookup_dynamic);
+  if (found)
+    dynamic = found->data;
+  else
+    {
+      g_warning ("didn't find %p", dynamic_id);
+      babl_backtrack();
+    }
+  return dynamic;
+}
+
+void
+gegl_node_remove_dynamic (GeglNode *self,
+                          gpointer  dynamic_id)
+{
+  GeglNodeDynamic *dynamic;
+  dynamic = gegl_node_get_dynamic (self, dynamic_id);
+  if (!dynamic)
+    {
+      g_warning ("didn't find dynamic %p for %s", dynamic_id, gegl_node_get_debug_name (self));
+      return;
+    }
+  self->dynamic = g_slist_remove (self->dynamic, dynamic);
+  g_object_unref (dynamic);
+}
+
+GeglNodeDynamic *
+gegl_node_add_dynamic (GeglNode *self,
+                       gpointer  dynamic_id)
+{
+  GeglNodeDynamic *dynamic = NULL;
+  GSList *found = g_slist_find_custom (self->dynamic, dynamic_id, lookup_dynamic);
+  if (found)
+    dynamic = found->data;
+
+  if (dynamic)
+    {
+      /* silently ignore, since multiple traversals of prepare are done
+       * to saturate the graph */
+      return dynamic;
+    }
+
+  dynamic = g_object_new (GEGL_TYPE_NODE_DYNAMIC, NULL);
+  dynamic->node = self;
+  dynamic->dynamic_id = dynamic_id;
+  self->dynamic = g_slist_append (self->dynamic, dynamic);
+  return dynamic;
 }

@@ -35,6 +35,7 @@
 #include "gegl-node.h"
 #include "gegl-operation.h"
 #include "gegl-prepare-visitor.h"
+#include "gegl-finish-visitor.h"
 #include "gegl-pad.h"
 #include "gegl-visitable.h"
 #include <stdlib.h>
@@ -77,8 +78,11 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   GeglVisitor  *need_visitor;
   GeglVisitor  *cr_visitor;
   GeglVisitor  *eval_visitor;
+  GeglVisitor  *finish_visitor;
   GeglPad      *pad;
+  gint          i;
   glong         time = gegl_ticks ();
+  gpointer      dynamic_id = self;
 
   g_return_if_fail (GEGL_IS_EVAL_MGR (self));
   g_return_if_fail (GEGL_IS_NODE (root));
@@ -95,11 +99,14 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
     root = pad->node;
   g_object_ref (root);
 
-  prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, NULL);
-  gegl_visitor_dfs_traverse (prepare_visitor, GEGL_VISITABLE(root));
-  g_object_unref (prepare_visitor);
+  for (i=0;i<2;i++)
+    {
+      prepare_visitor = g_object_new (GEGL_TYPE_PREPARE_VISITOR, "id", dynamic_id, NULL);
+      gegl_visitor_dfs_traverse (prepare_visitor, GEGL_VISITABLE(root));
+      g_object_unref (prepare_visitor);
+    }
 
-  have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, NULL);
+  have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, "id", dynamic_id, NULL);
   gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE(root));
   g_object_unref (have_visitor);
 
@@ -111,15 +118,15 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
       self->roi = *root_have_rect;
     }
 
-  gegl_node_set_need_rect (root, self->roi.x, self->roi.y,
-                                 self->roi.w, self->roi.h);
+  gegl_node_set_need_rect (root, dynamic_id, self->roi.x, self->roi.y,
+                                             self->roi.w, self->roi.h);
   root->is_root = TRUE;
 
-  need_visitor = g_object_new (GEGL_TYPE_NEED_VISITOR, NULL);
+  need_visitor = g_object_new (GEGL_TYPE_NEED_VISITOR, "id", dynamic_id, NULL);
   gegl_visitor_bfs_traverse (need_visitor, GEGL_VISITABLE(root));
   g_object_unref (need_visitor);
 
-  cr_visitor = g_object_new (GEGL_TYPE_CR_VISITOR, NULL);
+  cr_visitor = g_object_new (GEGL_TYPE_CR_VISITOR, "id", dynamic_id, NULL);
   gegl_visitor_bfs_traverse (cr_visitor, GEGL_VISITABLE(root));
   g_object_unref (cr_visitor);
 
@@ -127,12 +134,12 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
     {
       GeglVisitor  *debug_rect_visitor;
 
-      debug_rect_visitor = g_object_new (GEGL_TYPE_DEBUG_RECT_VISITOR, NULL);
+      debug_rect_visitor = g_object_new (GEGL_TYPE_DEBUG_RECT_VISITOR, "id", dynamic_id, NULL);
         gegl_visitor_dfs_traverse (debug_rect_visitor, GEGL_VISITABLE(root));
       g_object_unref (debug_rect_visitor);
     }
 
-  eval_visitor = g_object_new (GEGL_TYPE_EVAL_VISITOR, NULL);
+  eval_visitor = g_object_new (GEGL_TYPE_EVAL_VISITOR, "id", dynamic_id, NULL);
   gegl_visitor_dfs_traverse (eval_visitor, GEGL_VISITABLE(pad));
   g_object_unref (eval_visitor);
 
@@ -143,10 +150,15 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
 
       g_warning ("---------------------");
 
-      debug_rect_visitor = g_object_new (GEGL_TYPE_DEBUG_RECT_VISITOR, NULL);
+      debug_rect_visitor = g_object_new (GEGL_TYPE_DEBUG_RECT_VISITOR, "id", dynamic_id, NULL);
         gegl_visitor_dfs_traverse (debug_rect_visitor, GEGL_VISITABLE(root));
       g_object_unref (debug_rect_visitor);
     }
+
+  finish_visitor = g_object_new (GEGL_TYPE_FINISH_VISITOR, "id", dynamic_id, NULL);
+  gegl_visitor_dfs_traverse (finish_visitor, GEGL_VISITABLE(root));
+  g_object_unref (finish_visitor);
+
 
   g_object_unref (root);
   time = gegl_ticks () - time;

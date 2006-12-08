@@ -365,7 +365,8 @@ static gboolean process (GeglOperation *operation,
                          glong          samples);
 #else
 #ifndef GEGL_CHANT_META
-static gboolean process (GeglOperation *operation);
+static gboolean process (GeglOperation *operation,
+                         gpointer       dynamic_id);
 #endif
 #endif
 #endif

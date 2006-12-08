@@ -30,6 +30,7 @@
 #include "gegl-debug-rect-visitor.h"
 #include "gegl-operation.h"
 #include "gegl-node.h"
+#include "gegl-node-dynamic.h"
 #include "gegl-pad.h"
 #include "gegl-visitable.h"
 
@@ -59,6 +60,7 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, self->dynamic_id);
   GEGL_VISITOR_CLASS (gegl_debug_rect_visitor_parent_class)->visit_node (self, node);
 
   g_warning (
@@ -70,9 +72,9 @@ visit_node (GeglVisitor *self,
   gegl_node_get_debug_name (node),
   node->have_rect.w, node->have_rect.h,
   node->have_rect.x, node->have_rect.y,
-  node->need_rect.w, node->need_rect.h,
-  node->need_rect.x, node->need_rect.y,
-  node->result_rect.w, node->result_rect.h,
-  node->result_rect.x, node->result_rect.y,
-  node->refs);
+  dynamic->need_rect.w, dynamic->need_rect.h,
+  dynamic->need_rect.x, dynamic->need_rect.y,
+  dynamic->result_rect.w, dynamic->result_rect.h,
+  dynamic->result_rect.x, dynamic->result_rect.y,
+  dynamic->refs);
 }

@@ -10,7 +10,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should prepare received a copy of the GNU Lesser General Public
+ * You should finish received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, write to the
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
@@ -23,7 +23,7 @@
 #include <glib-object.h>
 
 #include "gegl-types.h"
-#include "gegl-prepare-visitor.h"
+#include "gegl-finish-visitor.h"
 #include "gegl-operation.h"
 #include "gegl-node.h"
 #include "gegl-pad.h"
@@ -31,16 +31,16 @@
 #include "gegl-instrument.h"
 
 
-static void gegl_prepare_visitor_class_init (GeglPrepareVisitorClass *klass);
+static void gegl_finish_visitor_class_init (GeglFinishVisitorClass *klass);
 static void visit_node                      (GeglVisitor             *self,
                                              GeglNode                *node);
 
 
-G_DEFINE_TYPE(GeglPrepareVisitor, gegl_prepare_visitor, GEGL_TYPE_VISITOR)
+G_DEFINE_TYPE(GeglFinishVisitor, gegl_finish_visitor, GEGL_TYPE_VISITOR)
 
 
 static void
-gegl_prepare_visitor_class_init (GeglPrepareVisitorClass *klass)
+gegl_finish_visitor_class_init (GeglFinishVisitorClass *klass)
 {
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
 
@@ -48,7 +48,7 @@ gegl_prepare_visitor_class_init (GeglPrepareVisitorClass *klass)
 }
 
 static void
-gegl_prepare_visitor_init (GeglPrepareVisitor *self)
+gegl_finish_visitor_init (GeglFinishVisitor *self)
 {
 }
 
@@ -56,18 +56,8 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-  GeglOperation *operation = node->operation;
+  GEGL_VISITOR_CLASS (gegl_finish_visitor_parent_class)->visit_node (self, node);
 
-  glong time = gegl_ticks ();
-  GEGL_VISITOR_CLASS (gegl_prepare_visitor_parent_class)->visit_node (self, node);
-
-  if (self->dynamic_id == NULL)
-    g_warning ("hmm");
-  gegl_node_add_dynamic (node, self->dynamic_id);
-
-  /* prepare the operation for the coming evaluation (all properties
-   * should be set now).
-   */
   {
     const gchar *name = gegl_object_get_name (GEGL_OBJECT (node));
     if (name && !strcmp (name, "proxynop-output"))
@@ -76,17 +66,15 @@ visit_node (GeglVisitor *self,
         g_assert (graph);
         if (GEGL_NODE (graph)->operation)
           {
-            /* issuing a prepare on the graph, FIXME: we might need to do
-             * a cycle of prepares as deep as the nesting of graphs,.
+            /* issuing a finish on the graph, FIXME: we might need to do
+             * a cycle of finishs as deep as the nesting of graphs,.
              * (or find a better way to do this) */
-            gegl_operation_prepare (GEGL_NODE (graph)->operation, self->dynamic_id);
+
+            /* we probably do not need to recurse, prepare should have done that
+             * for us..*/
           }
       }
   }
 
-  gegl_operation_prepare (operation, self->dynamic_id);
-  gegl_node_set_need_rect (node, self->dynamic_id, 0, 0, 0, 0);
-  time = gegl_ticks () - time;
-  gegl_instrument ("process", gegl_node_get_operation (node), time);
-  gegl_instrument (gegl_node_get_operation (node), "prepare", time);
+  gegl_node_remove_dynamic (node, self->dynamic_id);
 }

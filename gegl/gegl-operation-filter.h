@@ -49,8 +49,8 @@ typedef struct _GeglOperationFilterClass GeglOperationFilterClass;
 struct _GeglOperationFilterClass
 {
    GeglOperationClass operation_class;
-   gboolean (*process) (GeglOperation *self);
-
+   gboolean (*process) (GeglOperation *self,
+                        gpointer       dynamic_id);
 };
 
 GType gegl_operation_filter_get_type (void) G_GNUC_CONST;

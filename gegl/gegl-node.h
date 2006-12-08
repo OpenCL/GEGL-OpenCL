@@ -23,6 +23,7 @@
 #define __GEGL_NODE_H__
 
 #include "gegl-graph.h"
+#include "gegl-node-dynamic.h"
 #include <gegl/buffer/gegl-buffer.h>
 
 G_BEGIN_DECLS
@@ -45,30 +46,21 @@ struct _GeglNode
 
   GeglOperation *operation;
 
-  /* FIXME: move these to a hash associated with the evaluation manager
-   * context
-   */
-  GeglRect       need_rect;
-  GeglRect       result_rect;
+  GeglRect   have_rect;
+  GeglRect   dirt_rect;
 
-  GeglRect       have_rect;
-  GeglRect       dirt_rect;
+  GList     *pads;
+  GList     *input_pads;
+  GList     *output_pads;
 
-  GList         *pads;
-  GList         *input_pads;
-  GList         *output_pads;
+  GList     *sources;
+  GList     *sinks;
 
-  GList         *sources;
-  GList         *sinks;
+  gboolean   is_root;
+  gboolean   is_graph;  /*< a node that is a graph, needs a bit special treatment */
+  gboolean   enabled;
 
-  gboolean       is_root;
-  gboolean       is_graph;  /*< a node that is a graph, needs a bit special treatment */
-  gint           refs;      /*< set to number of nodes that depends on it before evaluation begins,
-                                each time data is fetched from the op the reference count is dropped,
-                                when it drops to zero, the op is asked to clean it's pads
-                             */
-  gboolean       enabled;
-
+  GSList    *dynamic;   /*< list of GeglNodeDynamic's corresponding to evaluation contexts */
 };
 
 struct _GeglNodeClass
@@ -121,6 +113,14 @@ void          gegl_node_get                 (GeglNode     *self,
 /* functions below are internal to gegl */
 
 GType         gegl_node_get_type            (void) G_GNUC_CONST;
+
+GeglNodeDynamic *gegl_node_get_dynamic      (GeglNode     *self,
+                                             gpointer      dynamic_id);
+void             gegl_node_remove_dynamic   (GeglNode     *self,
+                                             gpointer      dynamic_id);
+GeglNodeDynamic *gegl_node_add_dynamic      (GeglNode     *self,
+                                             gpointer      dynamic_id);
+
 void          gegl_node_add_pad             (GeglNode     *self,
                                              GeglPad      *pad);
 GeglPad     * gegl_node_create_pad          (GeglNode     *self,
@@ -166,20 +166,25 @@ void          gegl_node_get_property        (GeglNode     *object,
                                              GValue       *value);
 GParamSpec ** gegl_node_get_properties      (GeglNode     *self,
                                              guint        *n_properties);
+GParamSpec *  gegl_node_find_property       (GeglNode     *self,
+                                             const gchar  *property_name);
 GeglRect    * gegl_node_get_have_rect       (GeglNode     *node);
 void          gegl_node_set_have_rect       (GeglNode     *node,
                                              gint          x,
                                              gint          y,
                                              gint          width,
                                              gint          height);
-GeglRect    * gegl_node_get_need_rect       (GeglNode     *node);
+GeglRect    * gegl_node_get_need_rect       (GeglNode     *node,
+                                             gpointer      dynamic_id);
 void          gegl_node_set_need_rect       (GeglNode     *node,
+                                             gpointer      dynamic_id,
                                              gint          x,
                                              gint          y,
                                              gint          width,
                                              gint          height);
-GeglRect    * gegl_node_get_result_rect     (GeglNode     *node);
+
 void          gegl_node_set_result_rect     (GeglNode     *node,
+                                             gpointer      dynamic_id,
                                              gint          x,
                                              gint          y,
                                              gint          width,

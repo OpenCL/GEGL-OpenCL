@@ -14,6 +14,7 @@ EXTRA_DIST =	\
 	gegl-dirt-visitor.h		\
 	gegl-eval-mgr.h			\
 	gegl-eval-visitor.h		\
+	gegl-finish-visitor.h		\
 	gegl-have-visitor.h		\
 	gegl-instrument.h		\
 	gegl-need-visitor.h		\
@@ -29,12 +30,14 @@ GEGL_sources = \
 	gegl-eval-mgr.c			\
 	gegl-eval-visitor.c		\
 	gegl-extension-handler.c	\
+	gegl-finish-visitor.c		\
 	gegl-graph.c			\
 	gegl-have-visitor.c		\
 	gegl-init.c			\
 	gegl-instrument.c		\
 	gegl-need-visitor.c		\
 	gegl-node.c			\
+	gegl-node-dynamic.c		\
 	gegl-object.c			\
 	gegl-operation.c        	\
 	gegl-operation-composer.c     	\
@@ -58,6 +61,7 @@ GEGL_public_headers = \
 	gegl-graph.h			\
 	gegl-init.h			\
 	gegl-node.h			\
+	gegl-node-dynamic.h		\
 	gegl-object.h			\
 	gegl-operation.h        	\
 	gegl-operation-composer.h     	\

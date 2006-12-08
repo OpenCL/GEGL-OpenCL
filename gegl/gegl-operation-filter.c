@@ -39,12 +39,14 @@ static void     set_property         (GObject       *gobject,
                                       GParamSpec    *pspec);
 
 static gboolean process              (GeglOperation *operation,
+                                      gpointer       dynamic_id,
                                       const gchar   *output_prop);
 
 static void     associate            (GeglOperation *operation);
 
 static GeglRect get_defined_region   (GeglOperation *self);
-static gboolean calc_source_regions  (GeglOperation *self);
+static gboolean calc_source_regions  (GeglOperation *self,
+                                      gpointer       dynamic_id);
 
 G_DEFINE_TYPE (GeglOperationFilter, gegl_operation_filter, GEGL_TYPE_OPERATION)
 
@@ -146,6 +148,7 @@ set_property (GObject      *object,
 
 static gboolean
 process (GeglOperation *operation,
+         gpointer       dynamic_id,
          const gchar   *output_prop)
 {
   GeglOperationFilter      *gegl_operation_filter;
@@ -166,7 +169,7 @@ process (GeglOperation *operation,
   if (gegl_operation_filter->input != NULL)
     {
       gegl_operation_filter->output = NULL;
-      success = klass->process (operation);
+      success = klass->process (operation, dynamic_id);
       g_object_unref (gegl_operation_filter->input);
       gegl_operation_filter->input=NULL;
     }
@@ -198,10 +201,11 @@ get_defined_region (GeglOperation *self)
 }
 
 static gboolean
-calc_source_regions (GeglOperation *self)
+calc_source_regions (GeglOperation *self,
+                     gpointer       dynamic_id)
 {
-  GeglRect *need_rect = gegl_operation_get_requested_region (self);
+  GeglRect *need_rect = gegl_operation_get_requested_region (self, dynamic_id);
 
-  gegl_operation_set_source_region (self, "input", need_rect);
+  gegl_operation_set_source_region (self, dynamic_id, "input", need_rect);
   return TRUE;
 }

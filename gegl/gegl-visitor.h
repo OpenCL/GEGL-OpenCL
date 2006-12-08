@@ -39,6 +39,7 @@ typedef struct _GeglVisitorClass GeglVisitorClass;
 struct _GeglVisitor
 {
   GeglObject  parent_instance;
+  gpointer    dynamic_id;
 
   GList      *visits_list;
   GHashTable *hash;
