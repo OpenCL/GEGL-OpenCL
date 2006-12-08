@@ -27,10 +27,6 @@ This is the graph we're going to construct:
    |   .------.
    |   | text |
    |   `------'
-.-----------.
-| bcontrast |
-`-----------'
-   |
 .-----------------.
 | FractalExplorer |
 `-----------------'
