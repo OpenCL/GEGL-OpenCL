@@ -644,8 +644,6 @@ static void cb_fit (GtkAction *action)
   gdouble  hscale;
   gdouble  vscale;
 
-  g_warning ("%i,%i %i×%i", defined.x, defined.y, defined.w, defined.h);
-
   gtk_window_get_size (GTK_WINDOW (editor.window), &width, &height);
   width -= editor.drawing_area->allocation.width;
   height -= editor.drawing_area->allocation.height;
