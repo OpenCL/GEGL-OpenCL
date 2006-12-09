@@ -1,5 +1,14 @@
 2006-12-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-storage.c: Increased default tile size to 128x128
+	to speed up freeing of the projection buffers.
+
+2006-12-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/editor.c: changed the stock icons used for previous/next.
+
+2006-12-09  Øyvind Kolås  <pippin@gimp.org>
+
 	Added capability to load a set of files on the command line and 
 	next/previous actions to the GUI.
 

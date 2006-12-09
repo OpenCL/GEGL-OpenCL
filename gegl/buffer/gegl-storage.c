@@ -33,7 +33,7 @@
 #include "gegl-tile-log.h"
 
 G_DEFINE_TYPE(GeglStorage, gegl_storage, GEGL_TYPE_TILE_TRAITS)
-#define TILE_SIZE 64
+#define TILE_SIZE 128
 
 static GObjectClass *parent_class = NULL;
 
