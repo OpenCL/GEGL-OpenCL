@@ -1,3 +1,24 @@
+2006-12-09  Øyvind Kolås  <pippin@gimp.org>
+
+	Added capability to load a set of files on the command line and 
+	next/previous actions to the GUI.
+
+	* bin/editor.c: (editor_main), (cb_composition_new),
+	(cb_composition_load), (cb_composition_save), (file_is_gegl_xml),
+	(do_load), (cb_next_file), (cb_previous_file), (reset_gegl): Added
+	next/previous image actions to the GUI.
+	* bin/editor.h:
+	* bin/gegl-options.[ch]: (opts_new), (print_opts),
+	(gegl_options_next_file), (gegl_options_previous_file),
+	(parse_args): Added the capability to load a list of files from the
+	command line, as well as methods to iterate back and forth in this
+	list.
+	* bin/gegl-projection.c: (gegl_projection_class_init): Changed the
+	default maximum size allocated for the projection to make project
+	switching work faster (this is a temporary measure, a proper speedup
+	fix needs to be added to the storage/buffer code).
+	* bin/gegl.c: (main):
+
 2006-12-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/file-io/magick-load.c: (load_cache): removed deprecated

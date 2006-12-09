@@ -20,27 +20,29 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#include "gegl-options.h"
 #include "gegl-view.h"
 
 typedef struct Editor 
 {
-  GtkWidget *window;
-  GtkWidget *property_editor;
-  GtkWidget *tree_editor;
+  GeglNode    *gegl;
+  GeglOptions *options;
+  gint         x;
+  gint         y;
 
-  GtkWidget *export_window;
+  GtkWidget   *window;
+  GtkWidget   *property_editor;
+  GtkWidget   *tree_editor;
 
-  GtkWidget *property_pane;
-  GtkWidget *tree_pane;
-  GtkWidget *structure;
-  GtkWidget *search_entry;
+  GtkWidget   *export_window;
+
+  GtkWidget   *property_pane;
+  GtkWidget   *tree_pane;
+  GtkWidget   *structure;
+  GtkWidget   *search_entry;
   
-  GtkWidget *graph_editor;
-  GtkWidget *drawing_area;
-  gchar     *composition_path;
-  GeglNode  *gegl;
-  gint       x;
-  gint       y;
+  GtkWidget   *graph_editor;
+  GtkWidget   *drawing_area;
 } Editor;
 
 extern Editor editor;
@@ -49,7 +51,7 @@ GtkWidget * StockIcon (const gchar *id, GtkIconSize size, GtkWidget *widget);
 void gegl_gui_flush (void);
 
 gint editor_main (GeglNode    *gegl,
-                  const gchar *path);
+                  GeglOptions *options);
 void editor_refresh_structure (void);
 void gegl_editor_update_title ();
 

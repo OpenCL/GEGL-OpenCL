@@ -30,9 +30,7 @@
 #if HAVE_GTK
 #include <gtk/gtk.h>
 #include "editor.h"
-
 #endif
-
 
 #define DEFAULT_COMPOSITION "<?xml version='1.0' encoding='UTF-8'?> <gegl> <crop x='0.000000' y='-70.000000' width='232.000000' height='377.000000'/> <over> <shift x='24.000000' y='145.000000'/> <dropshadow opacity='2.400000' x='2.000000' y='2.000000' radius='6.000000'/> <text string='This user interface of this application is a work in progress, and it might be the case that quie a few of the buttons and options should have do not push me signs, or WARNINGS about proper use, this is not the case, so expect loss of experimental data.' font='Sans' size='10.000000' color='rgb(1.0000, 1.0000, 1.0000)' wrap='190' alignment='0' width='190' height='91'/> </over> <over> <gaussian-blur radius-x='1.200000' radius-y='1.200000' filter=''/> <shift x='20.000000' y='60.000000'/> <text string='GEGL' font='Sans' size='50.000000' color='rgb(0.7857, 0.0451, 0.0000)' wrap='-1' alignment='0' width='138' height='59'/> </over> <gaussian-blur radius-x='10.0' radius-y='0.0' filter=''/> <perlin-noise/> </gegl>"
 
@@ -117,7 +115,7 @@ main (gint    argc,
           leaked_string[0]='\0';
           strcat (leaked_string, o->file);
           strcat (leaked_string, ".xml");
-          o->file = leaked_string;
+          /*o->file = leaked_string;*/
         }
     }
   else
@@ -164,7 +162,7 @@ main (gint    argc,
       case GEGL_RUN_MODE_EDITOR:
 #if HAVE_GTK
           gtk_init (&argc, &argv);
-          editor_main (gegl, o->file);
+          editor_main (gegl, o);
 #endif
           g_object_unref (gegl);
           g_free (o);

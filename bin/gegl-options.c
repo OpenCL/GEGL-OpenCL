@@ -35,6 +35,7 @@ static GeglOptions *opts_new (void)
 #endif
   o->xml      = NULL;
   o->output   = NULL;
+  o->files    = NULL;
   o->file     = NULL;
   o->delay    = 0.0;
   o->rest     = NULL;
@@ -132,6 +133,14 @@ print_opts (GeglOptions *o)
     o->rest==NULL?"":"yes",
     o->delay
 );
+    {
+      GList *files = o->files;
+      while (files)
+        {
+          fprintf (stderr, "\t%s\n", (gchar*)files->data);
+          files = g_list_next (files);
+        }
+    }
 }
 
 GeglOptions *
@@ -144,6 +153,34 @@ gegl_options_parse (gint    argc,
     if (o->verbose)
         print_opts (o);
     return o;
+}
+
+gboolean
+gegl_options_next_file (GeglOptions *o)
+{
+  GList *current = g_list_find (o->files, o->file);
+  current = g_list_next (current);
+  if (current)
+    {
+      g_warning ("%s", o->file);
+      o->file = current->data;
+      g_warning ("%s", o->file);
+      return TRUE;
+    }
+  return FALSE;
+}
+
+gboolean
+gegl_options_previous_file (GeglOptions *o)
+{
+  GList *current = g_list_find (o->files, o->file);
+  current = g_list_previous (current);
+  if (current)
+    {
+      o->file = current->data;
+      return TRUE;
+    }
+  return FALSE;
 }
 
 
@@ -182,7 +219,7 @@ parse_args (int    argc,
 
         else if (match ("--file") ||
                  match ("-i")) {
-            get_string (o->file);
+            o->files = g_list_append (o->files, g_strdup (*curr));
         }
 
         else if (match ("--xml") ||
@@ -212,11 +249,13 @@ parse_args (int    argc,
 
         else
           {
-            o->file = *curr;
+            o->files = g_list_append (o->files, g_strdup (*curr));
           }
         curr++;
     }
 
+    if (o->files)
+      o->file = o->files->data;
     return o;
 }
 #undef match

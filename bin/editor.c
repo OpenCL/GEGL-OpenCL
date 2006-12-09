@@ -60,8 +60,7 @@ typeeditor_optype (GtkSizeGroup   *col1,
 
 Editor editor;
 
-static void reset_gegl (GeglNode    *gegl,
-                        const gchar *path);
+static void reset_gegl (GeglNode    *gegl);
 static GtkWidget *create_menubar (Editor *editor);
 static GtkWidget *
 create_window (Editor *editor)
@@ -153,20 +152,21 @@ static void cb_redraw (GtkAction *action);
 
 gint
 editor_main (GeglNode    *gegl,
-             const gchar *path)
+             GeglOptions *options)
 {
   GtkWidget *treeview;
 
+  editor.options = options;
   editor.property_editor = gtk_vbox_new (FALSE, 0);
   editor.tree_editor = tree_editor_new (editor.property_editor);
   editor.graph_editor = NULL;/*gtk_label_new ("graph");*/
   editor.window = create_window (&editor);
   treeview = tree_editor_get_treeview (editor.tree_editor);
-  gtk_container_add (GTK_CONTAINER (editor.property_editor), gtk_label_new (editor.composition_path));
+  gtk_container_add (GTK_CONTAINER (editor.property_editor), gtk_label_new (editor.options->file));
   gtk_widget_show (editor.window);
   gtk_container_set_border_width (GTK_CONTAINER (editor.property_editor), 4);
 
-  reset_gegl (gegl, path);
+  reset_gegl (gegl);
 
   /*cb_shrinkwrap (NULL);*/
   cb_fit_on_screen (NULL);
@@ -188,6 +188,9 @@ static void cb_zoom_50 (GtkAction *action);
 static void cb_zoom_100 (GtkAction *action);
 static void cb_zoom_200 (GtkAction *action);
 
+static void cb_next_file (GtkAction *action);
+static void cb_previous_file (GtkAction *action);
+
 static GtkActionEntry action_entries[] = {
   {"CompositionMenu", NULL, "_Composition", NULL, NULL, NULL},
   {"ViewMenu", NULL, "_View", NULL, NULL, NULL},
@@ -197,6 +200,16 @@ static GtkActionEntry action_entries[] = {
    "_New", "<control>N",
    "Create a new composition",
    G_CALLBACK (cb_composition_new)},
+
+  {"Next", GTK_STOCK_NEW,
+   "_Next", "<control>a",
+   "Go to next file in list",
+   G_CALLBACK (cb_next_file)},
+
+  {"Previous", GTK_STOCK_NEW,
+   "_Previous", "<control>z",
+   "Go to previous file in list",
+   G_CALLBACK (cb_previous_file)},
 
   {"Open", GTK_STOCK_OPEN,
    "_Open", "<control>O",
@@ -214,7 +227,7 @@ static GtkActionEntry action_entries[] = {
    G_CALLBACK (cb_quit_dialog)},
 
   {"About", NULL,
-   "_About", "<control>A",
+   "_About", "",
    "About",
    G_CALLBACK (cb_about)},
 
@@ -283,6 +296,9 @@ static const gchar *ui_info =
   "      <menuitem action='New'/>"
   "      <menuitem action='Open'/>"
   "      <menuitem action='Save'/>"
+  "      <separator/>"
+  "      <menuitem action='Next'/>"
+  "      <menuitem action='Previous'/>"
   "      <separator/>"
   "      <menuitem action='Export'/>"
   "      <separator/>"
@@ -412,7 +428,10 @@ cb_composition_new (GtkAction *action)
     {
     case GTK_RESPONSE_ACCEPT:
       {
+      /* FIXME: should append to list of files, and set as current
         reset_gegl (gegl_xml_parse (blank_composition), "untitled.xml");
+        */
+        reset_gegl (gegl_xml_parse (blank_composition));
 
       }
       break;
@@ -457,7 +476,8 @@ cb_composition_load (GtkAction *action)
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 
       g_file_get_contents (filename, &xml, NULL, NULL);
-      reset_gegl (gegl_xml_parse (xml), filename);
+      /* FIXME: append name to list of files in options */
+      reset_gegl (gegl_xml_parse (xml));
       g_free (xml);
     }
   gtk_widget_destroy (dialog);
@@ -487,7 +507,7 @@ cb_composition_save (GtkAction *action)
 
   {
     gchar absolute_path[PATH_MAX];
-    realpath (editor.composition_path, absolute_path);
+    realpath (editor.options->file, absolute_path);
     gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), absolute_path);
   }
 
@@ -514,9 +534,12 @@ cb_composition_save (GtkAction *action)
               strcpy (full_filename, filename);
               full_filename = strcat (full_filename, ".xml");
             }
-          if (editor.composition_path)
-            g_free (editor.composition_path);
-          editor.composition_path = g_strdup (full_filename);
+          /*
+           * FIXME: append new path to end of list or something and set as current,..
+          if (editor.options->file)
+            g_free (editor.options->file);
+          editor.options->file = g_strdup (full_filename);
+          */
 
           realpath (full_filename, abs_filepath);
           abs_path = dirname (abs_filepath);
@@ -576,6 +599,67 @@ cb_quit_dialog (GtkAction *action)
     }
   gtk_widget_destroy (dialog);
 }
+
+static gboolean file_is_gegl_xml (const gchar *path)
+{
+  gchar *extension;
+
+  extension = strrchr (path, '.');
+  if (!extension)
+    return FALSE;
+  extension++;
+  if (extension[0]=='\0')
+    return FALSE;
+  if (!strcmp (extension, "xml")||
+      !strcmp (extension, "XML"))
+    return TRUE;
+  return FALSE;
+}
+
+static void do_load (void)
+{
+  GeglOptions *o = editor.options;
+  gchar *xml = NULL;
+
+  if (file_is_gegl_xml (o->file))
+    {
+      GError      *err      = NULL;
+      g_file_get_contents (o->file, &xml, NULL, &err);
+      if (err != NULL)
+        {
+          g_warning ("Unable to read file: %s", err->message);
+        }
+    }
+  else
+    {
+      GString *acc = g_string_new ("");
+
+      g_string_append (acc, "<gegl><load path='");
+      g_string_append (acc, o->file);
+      g_string_append (acc, "'/></gegl>");
+
+      xml = g_string_free (acc, FALSE);
+    }
+
+  reset_gegl (gegl_xml_parse (xml));
+  g_free (xml);
+}
+
+static void cb_next_file (GtkAction *action)
+{
+  gegl_options_next_file (editor.options);
+  do_load ();
+  cb_fit (NULL);
+}
+
+
+static void cb_previous_file (GtkAction *action)
+{
+  gegl_options_previous_file (editor.options);
+  do_load ();
+  cb_fit (NULL);
+}
+
 
 static void
 cb_about (GtkAction *action)
@@ -971,13 +1055,12 @@ void editor_refresh_structure (void)
                            GTK_TREE_MODEL (store));
 }
 
-static void reset_gegl (GeglNode    *gegl,
-                        const gchar *path)
+static void reset_gegl (GeglNode    *gegl)
 {
-
-  if (editor.composition_path)
-    g_free (editor.composition_path);
-  editor.composition_path = g_strdup (path);
+/*
+  if (editor.options->file)
+    g_free (editor.options->file);
+  editor.options->file = g_strdup (path);*/
 
   if (editor.gegl)
     g_object_unref (editor.gegl);

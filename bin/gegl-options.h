@@ -38,6 +38,8 @@ typedef struct GeglOptions
   const gchar *xml;
   const gchar *output;
 
+  GList       *files;
+
   gchar      **rest;
 
   gboolean     verbose;
@@ -45,8 +47,11 @@ typedef struct GeglOptions
   gfloat       delay;
 } GeglOptions;
 
-GeglOptions *
-gegl_options_parse (gint    argc,
-                    gchar **argv);
+GeglOptions *gegl_options_parse (gint    argc,
+                                 gchar **argv);
+
+/* used to let the file member traverse the files list back and forth */
+gboolean gegl_options_next_file (GeglOptions *o);
+gboolean gegl_options_previous_file (GeglOptions *o);
 
 #endif
