@@ -60,7 +60,7 @@ typeeditor_optype (GtkSizeGroup   *col1,
 
 Editor editor;
 
-static void reset_gegl (GeglNode    *gegl);
+static void editor_set_gegl (GeglNode    *gegl);
 static GtkWidget *create_menubar (Editor *editor);
 static GtkWidget *
 create_window (Editor *editor)
@@ -149,6 +149,14 @@ static void cb_fit (GtkAction *action);
 static void cb_fit_on_screen (GtkAction *action);
 static void cb_recompute (GtkAction *action);
 static void cb_redraw (GtkAction *action);
+static void cb_next_file (GtkAction *action);
+static void cb_previous_file (GtkAction *action);
+
+static gboolean advance_slide (gpointer data)
+{
+  cb_next_file (NULL);
+  return TRUE;
+}
 
 gint
 editor_main (GeglNode    *gegl,
@@ -166,11 +174,18 @@ editor_main (GeglNode    *gegl,
   gtk_widget_show (editor.window);
   gtk_container_set_border_width (GTK_CONTAINER (editor.property_editor), 4);
 
-  reset_gegl (gegl);
+  editor_set_gegl (gegl);
 
   /*cb_shrinkwrap (NULL);*/
   cb_fit_on_screen (NULL);
   gegl_editor_update_title ();
+
+  if (options->delay != 0.0)
+    {
+      g_timeout_add (1000 * options->delay, advance_slide, NULL);
+    }
+
+  /*gtk_window_fullscreen (GTK_WINDOW (editor.window));*/
   gtk_main ();
   return 0;
 }
@@ -188,8 +203,6 @@ static void cb_zoom_50 (GtkAction *action);
 static void cb_zoom_100 (GtkAction *action);
 static void cb_zoom_200 (GtkAction *action);
 
-static void cb_next_file (GtkAction *action);
-static void cb_previous_file (GtkAction *action);
 
 static GtkActionEntry action_entries[] = {
   {"CompositionMenu", NULL, "_Composition", NULL, NULL, NULL},
@@ -201,12 +214,12 @@ static GtkActionEntry action_entries[] = {
    "Create a new composition",
    G_CALLBACK (cb_composition_new)},
 
-  {"Next", GTK_STOCK_NEW,
+  {"Next", GTK_STOCK_GO_FORWARD,
    "_Next", "<control>a",
    "Go to next file in list",
    G_CALLBACK (cb_next_file)},
 
-  {"Previous", GTK_STOCK_NEW,
+  {"Previous", GTK_STOCK_GO_BACK,
    "_Previous", "<control>z",
    "Go to previous file in list",
    G_CALLBACK (cb_previous_file)},
@@ -429,9 +442,9 @@ cb_composition_new (GtkAction *action)
     case GTK_RESPONSE_ACCEPT:
       {
       /* FIXME: should append to list of files, and set as current
-        reset_gegl (gegl_xml_parse (blank_composition), "untitled.xml");
+        editor_set_gegl (gegl_xml_parse (blank_composition), "untitled.xml");
         */
-        reset_gegl (gegl_xml_parse (blank_composition));
+        editor_set_gegl (gegl_xml_parse (blank_composition));
 
       }
       break;
@@ -477,7 +490,7 @@ cb_composition_load (GtkAction *action)
 
       g_file_get_contents (filename, &xml, NULL, NULL);
       /* FIXME: append name to list of files in options */
-      reset_gegl (gegl_xml_parse (xml));
+      editor_set_gegl (gegl_xml_parse (xml));
       g_free (xml);
     }
   gtk_widget_destroy (dialog);
@@ -641,7 +654,7 @@ static void do_load (void)
       xml = g_string_free (acc, FALSE);
     }
 
-  reset_gegl (gegl_xml_parse (xml));
+  editor_set_gegl (gegl_xml_parse (xml));
   g_free (xml);
 }
 
@@ -1055,7 +1068,7 @@ void editor_refresh_structure (void)
                            GTK_TREE_MODEL (store));
 }
 
-static void reset_gegl (GeglNode    *gegl)
+static void editor_set_gegl (GeglNode    *gegl)
 {
 /*
   if (editor.options->file)

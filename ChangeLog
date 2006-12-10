@@ -1,3 +1,10 @@
+2006-12-10  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/editor.c: (advance_slide), (editor_main),
+	(cb_composition_new), (cb_composition_load), (do_load),
+	(editor_set_gegl): Added automatic slideshow mode activated from the
+	commandline by passing seconds of delay to the -d commandline option.
+
 2006-12-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-storage.c: Increased default tile size to 128x128
