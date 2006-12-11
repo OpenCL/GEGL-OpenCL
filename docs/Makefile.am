@@ -88,8 +88,8 @@ web: all
 WEBSITE_FILES=*.html *.css */*.html gallery/*.txt images/gegl.ico gallery/*.png
 
 website:
-	#if [ "x"$$WEBSITE_DESTINATION == "x" ];then echo "WAR""NING: WEBSITE_DESTINATION not set";\
-	#else \
-	#    (mkdir -p $$WEBSITE_DESTINATION;\
-	#     cp --parents -rv  $(WEBSITE_FILES) $$WEBSITE_DESTINATION;);\
-	#fi
+	if [ "x"$$WEBSITE_DESTINATION == "x" ];then echo "WA""NING: WEBSITE_DESTINATION not set (and it is crucibles fault)";\
+	else \
+	    (mkdir -p $$WEBSITE_DESTINATION;\
+	     cp --parents -rv  $(WEBSITE_FILES) $$WEBSITE_DESTINATION;);\
+	fi
