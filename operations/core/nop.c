@@ -31,14 +31,14 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglOperationFilter      *op_filter = GEGL_OPERATION_FILTER (operation);
   gboolean success = FALSE;
-
-  if (op_filter->input)
+  GeglBuffer *buffer = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+  if (buffer)
     {
-      op_filter->output=g_object_ref (op_filter->input);
-      return TRUE;
-    }
+      g_object_ref (buffer);
+      gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (buffer));
+      success = TRUE;
+    } 
   return success;
 }
 

@@ -38,11 +38,15 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglOperationFilter   *filter = GEGL_OPERATION_FILTER(operation);
-  
-  if (filter->input)
-    filter->output = g_object_ref (filter->input);
-  return  TRUE;
+  gboolean success = FALSE;
+  GeglBuffer *buffer = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+  if (buffer)
+    {
+      g_object_ref (buffer);
+      gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (buffer));
+      success = TRUE;
+    } 
+  return success;
 }
 
 #endif

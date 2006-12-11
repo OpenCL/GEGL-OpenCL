@@ -86,14 +86,12 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglOperationFilter *filter;
   GeglChantOperation  *self;
   GeglBuffer          *input;
   GeglBuffer          *output;
 
-  filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
-  input  = filter->input;
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
 
     {
       GeglRect   *result     = gegl_operation_result_rect (operation, dynamic_id);
@@ -193,8 +191,8 @@ process (GeglOperation *operation,
                                             "width",  result->w,
                                             "height", result->h,
                                             NULL);
+        gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (cropped));
         g_object_unref (output);
-        filter->output = cropped;
       }
     }
 

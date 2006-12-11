@@ -202,13 +202,13 @@ refresh_cache (GeglChantOperation *self)
                                              "cache", FALSE,
                                              "path", self->path,
                                              NULL);
-        gegl_node_apply (load, "output");
-        gegl_node_get (load, "output", &(priv->cached_buffer), NULL);
+        priv->cached_buffer = gegl_node_apply (load, "output");
+        /*gegl_node_get (load, "output", &(priv->cached_buffer), NULL);*/
 
         /* we unref the buffer since we effectifly need to steal the
          * contents XXX, only once here,. twice in node_blit..
          */
-        g_object_unref (priv->cached_buffer);
+        /*g_object_unref (priv->cached_buffer);*/
 
 
         g_object_unref (gegl);

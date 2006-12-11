@@ -389,7 +389,7 @@ process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
   GeglRect  *need;
-  GeglOperationSource  *op_source = GEGL_OPERATION_SOURCE(operation);
+  GeglBuffer *output = NULL;
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
   need = gegl_operation_get_requested_region (operation, dynamic_id);
@@ -400,15 +400,15 @@ process (GeglOperation *operation,
 
     make_color_map (self, colormap);
 
-    op_source->output = g_object_new (GEGL_TYPE_BUFFER,
-                        "format", babl_format ("R'G'B' u8"),
-                        "x",      result->x,
-                        "y",      result->y,
-                        "width",  result->w,
-                        "height", result->h,
-                        NULL);
+    output = g_object_new (GEGL_TYPE_BUFFER,
+                           "format", babl_format ("R'G'B' u8"),
+                           "x",      result->x,
+                           "y",      result->y,
+                           "width",  result->w,
+                           "height", result->h,
+                           NULL);
 
-    buf  = g_new (guchar, gegl_buffer_pixels (op_source->output) * 3);
+    buf  = g_new (guchar, gegl_buffer_pixels (output) * 3);
       {
         guchar *dst=buf;
         gint y;
@@ -423,9 +423,10 @@ process (GeglOperation *operation,
           }
       }
 
-    gegl_buffer_set (op_source->output, NULL, buf, babl_format ("R'G'B' u8"));
+    gegl_buffer_set (output, NULL, buf, babl_format ("R'G'B' u8"));
     g_free (buf);
   }
+  gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
   return TRUE;
 }
 

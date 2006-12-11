@@ -49,11 +49,12 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglOperationSource *op_source = GEGL_OPERATION_SOURCE (operation);
-  GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
+  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  GeglBuffer          *output;
   gint           width;
   gint           height;
   gint           result;
+
 
     {
       result = query_jpg (self->path, &width, &height);
@@ -61,17 +62,18 @@ process (GeglOperation *operation,
         {
           g_warning ("%s failed to open file %s for reading.",
             G_OBJECT_TYPE_NAME (operation), self->path);
-          op_source->output = g_object_new (GEGL_TYPE_BUFFER,
+          output = g_object_new (GEGL_TYPE_BUFFER,
                                             "format", babl_format ("R'G'B' u8"),
                                             "x",      0,
                                             "y",      0,
                                             "width",  10,
                                             "height", 10,
                                             NULL);
-              return TRUE;
+          gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
+          return TRUE;
         }
 
-      op_source->output = g_object_new (GEGL_TYPE_BUFFER,
+      output = g_object_new (GEGL_TYPE_BUFFER,
                                         "format", babl_format ("R'G'B' u8"),
                                         "x",      0,
                                         "y",      0,
@@ -79,7 +81,8 @@ process (GeglOperation *operation,
                                         "height", height,
                                         NULL);
 
-      result = gegl_buffer_import_jpg (op_source->output, self->path, 0, 0);
+      gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
+      result = gegl_buffer_import_jpg (output, self->path, 0, 0);
 
       if (result)
         {

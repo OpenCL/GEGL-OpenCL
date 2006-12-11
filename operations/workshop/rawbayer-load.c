@@ -45,11 +45,11 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
-  GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
   g_assert (self->priv);
-  op_source->output = GEGL_BUFFER (self->priv);
+  gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (self->priv));
+
   self->priv = NULL;
   return TRUE;
 }

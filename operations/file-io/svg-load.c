@@ -68,8 +68,8 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
-  GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
+  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  GeglBuffer          *output = NULL;
   gint                 result;
 
   {
@@ -82,7 +82,7 @@ process (GeglOperation *operation,
         {
           g_warning ("%s failed to open file %s for reading.",
             G_OBJECT_TYPE_NAME (operation), self->path);
-          op_source->output = g_object_new (GEGL_TYPE_BUFFER,
+          output = g_object_new (GEGL_TYPE_BUFFER,
                                             "format", babl_format ("R'G'B'A u8"),
                                             "x",      0,
                                             "y",      0,
@@ -92,7 +92,7 @@ process (GeglOperation *operation,
               return TRUE;
         }
 
-      op_source->output = g_object_new (GEGL_TYPE_BUFFER,
+      output = g_object_new (GEGL_TYPE_BUFFER,
                                         "format", babl_format ("R'G'B'A u8"),
                                         "x",      0,
                                         "y",      0,
@@ -100,15 +100,16 @@ process (GeglOperation *operation,
                                         "height", height,
                                         NULL);
 
-    result = gegl_buffer_import_svg (op_source->output, self->path,
+    result = gegl_buffer_import_svg (output, self->path,
                                      width, height, 0, 0, &width, &height);
     if (result)
       {
         g_warning ("%s failed to open file %s for reading.",
           G_OBJECT_TYPE_NAME (operation), self->path);
-        op_source->output = NULL;
         return  FALSE;
       }
+    gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
+
   }
 
   return  TRUE;

@@ -100,13 +100,15 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglOperationFilter *op_filter = GEGL_OPERATION_FILTER (operation);
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer   *source;
-  GeglRect     *requested  = gegl_operation_get_requested_region (operation, dynamic_id);
+  GeglBuffer *source;
+  GeglBuffer *input;
+  GeglRect   *requested  = gegl_operation_get_requested_region (operation, dynamic_id);
   Priv *priv = init_priv (operation);
 
-  g_assert (op_filter->input);
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+
+  g_assert (input);
 
   if (priv->width != requested->w ||
       priv->height != requested->h)
@@ -121,7 +123,7 @@ process (GeglOperation *operation,
     }
 
   source = g_object_new (GEGL_TYPE_BUFFER,
-                         "source", op_filter->input,
+                         "source", input,
                          "x",      requested->x,
                          "y",      requested->y,
                          "width",  requested->w,
@@ -151,7 +153,6 @@ process (GeglOperation *operation,
         }
     }
   g_object_unref (source);
-  op_filter->output=g_object_ref (op_filter->input);
 
   return  TRUE;
 }

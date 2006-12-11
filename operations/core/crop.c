@@ -49,24 +49,25 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglOperationFilter *filter;
   GeglBuffer          *input;
+  GeglBuffer          *output;
   GeglChantOperation  *crop;
   
   crop   = GEGL_CHANT_OPERATION (operation);
-  filter = GEGL_OPERATION_FILTER(operation);
-  input  = filter->input;
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+
 
   g_assert (input);
   g_assert (gegl_buffer_get_format (input));
 
-  filter->output = g_object_new (GEGL_TYPE_BUFFER,
-                                 "source",       input,
-                                 "x",      (int)crop->x,
-                                 "y",      (int)crop->y,
-                                 "width",  (int)crop->width,
-                                 "height", (int)crop->height,
-                                 NULL);
+  output = g_object_new (GEGL_TYPE_BUFFER,
+                         "source",       input,
+                         "x",      (int)crop->x,
+                         "y",      (int)crop->y,
+                         "width",  (int)crop->width,
+                         "height", (int)crop->height,
+                         NULL);
+  gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
   return  TRUE;
 }
 

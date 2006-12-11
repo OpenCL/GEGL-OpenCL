@@ -45,21 +45,23 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglOperationFilter    *filter = GEGL_OPERATION_FILTER(operation);
-  GeglBuffer    *input  = filter->input;
-  GeglChantOperation *translate = (GeglChantOperation*)filter;
+  GeglBuffer    *input;
+  GeglBuffer    *output;
+  GeglChantOperation *translate = GEGL_CHANT_OPERATION (operation);
+
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
 
   g_assert (input);
   g_assert (gegl_buffer_get_format (input));
 
-  filter->output = g_object_new (GEGL_TYPE_BUFFER,
-                                 "source",       input,
-                                 "shift-x",     (int)-translate->x,
-                                 "shift-y",     (int)-translate->y,
-                                 "abyss-width", -1,  /* turn of abyss (relying
-                                                        on abyss of source) */
-                                 NULL);
-  translate = NULL;
+  output = g_object_new (GEGL_TYPE_BUFFER,
+                         "source",       input,
+                         "shift-x",     (int)-translate->x,
+                         "shift-y",     (int)-translate->y,
+                         "abyss-width", -1,  /* turn of abyss (relying
+                         on abyss of source) */
+                         NULL);
+  gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
   return  TRUE;
 }
 

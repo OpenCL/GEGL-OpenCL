@@ -83,13 +83,15 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglOperationSink *op_sink = GEGL_OPERATION_SINK (operation);
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  GeglBuffer   *input;
   GeglBuffer   *source;
   GeglRect     *result  = gegl_operation_result_rect (operation, dynamic_id);
   SDL_Surface **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
 
-  g_assert (op_sink->input);
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+
+  g_assert (input);
 
   init_sdl ();
 
@@ -137,7 +139,7 @@ process (GeglOperation *operation,
    *
    */
   source = g_object_new (GEGL_TYPE_BUFFER,
-                         "source", op_sink->input,
+                         "source", input,
                          "x",      result->x,
                          "y",      result->y,
                          "width",  result->w,

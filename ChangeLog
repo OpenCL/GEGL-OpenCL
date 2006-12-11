@@ -1,5 +1,40 @@
 2006-12-11  Øyvind Kolås  <pippin@gimp.org>
 
+	Adapted most operations to new reentrant API for passing buffers
+	around in the graph. (EXR load is amongst the ones that were not
+	cheched this time around.)
+
+	* operations/blur/box-blur.c: (process):
+	* operations/blur/gaussian-blur.c: (process):
+	* operations/color/stretch-contrast.c: (process):
+	* operations/core/buffer.c: (process):
+	* operations/core/clone.c: (process):
+	* operations/core/crop.c: (process):
+	* operations/core/nop.c: (process):
+	* operations/core/shift.c: (process):
+	* operations/display/display.c: (process):
+	* operations/file-io/jpg-load.c: (process):
+	* operations/file-io/load.c: (refresh_cache):
+	* operations/file-io/magick-load.c: (process):
+	* operations/file-io/pixbuf.c: (process):
+	* operations/file-io/png-load.c: (process):
+	* operations/file-io/png-save.c: (process):
+	* operations/file-io/raw-load.c: (process):
+	* operations/file-io/svg-load.c: (process):
+	* operations/meta/layer.c: (refresh_cache):
+	* operations/render/FractalExplorer.c: (process):
+	* operations/render/checkerboard.c: (process):
+	* operations/render/color.c: (process):
+	* operations/render/noise.c: (process):
+	* operations/render/text.c: (process):
+	* operations/transform/affine.c: (process):
+	* operations/workshop/demosaic-simple.c: (process):
+	* operations/workshop/gtk-display.c: (process):
+	* operations/workshop/mandelbrot.c: (process):
+	* operations/workshop/rawbayer-load.c: (process):
+
+2006-12-11  Øyvind Kolås  <pippin@gimp.org>
+
 	Made graph evaluation reentrant.
 
 	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply):

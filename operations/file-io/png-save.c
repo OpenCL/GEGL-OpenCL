@@ -47,18 +47,15 @@ process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
   GeglChantOperation *self    = GEGL_CHANT_OPERATION (operation);
-  GeglOperationSink  *op_sink = GEGL_OPERATION_SINK (operation);
-  GeglBuffer         *input   = op_sink->input;
+  GeglBuffer         *input;
   GeglRect           *result  = gegl_operation_result_rect (operation, dynamic_id);
 
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
   g_assert (input);
 
   gegl_buffer_export_png (input, self->path,
                           result->x, result->y,
                           result->w, result->h);
-
-  /*op_filter->output = g_object_ref (input);*/
-
   return  TRUE;
 }
 

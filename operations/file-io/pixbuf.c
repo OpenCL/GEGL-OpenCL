@@ -36,18 +36,20 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation  *self      = GEGL_CHANT_OPERATION (operation);
 
   if (self->pixbuf)
-    op_source->output = g_object_new (GEGL_TYPE_BUFFER,
-                                      "format", babl_format(gdk_pixbuf_get_has_alpha(self->pixbuf)?"R'G'B'A u8":"R'G'B' u8"),
-                                      "x", 0,
-                                      "y", 0,
-                                      "width", gdk_pixbuf_get_width (self->pixbuf),
-                                      "height", gdk_pixbuf_get_height (self->pixbuf),
-                                      NULL);
-  gegl_buffer_set (op_source->output, NULL, gdk_pixbuf_get_pixels (self->pixbuf), NULL);
+    {
+      GeglBuffer *output = g_object_new (GEGL_TYPE_BUFFER,
+                                        "format", babl_format(gdk_pixbuf_get_has_alpha(self->pixbuf)?"R'G'B'A u8":"R'G'B' u8"),
+                                        "x", 0,
+                                        "y", 0,
+                                        "width", gdk_pixbuf_get_width (self->pixbuf),
+                                        "height", gdk_pixbuf_get_height (self->pixbuf),
+                                        NULL);
+      gegl_buffer_set (output, NULL, gdk_pixbuf_get_pixels (self->pixbuf), NULL);
+      gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
+    }
   return TRUE;
 }
 

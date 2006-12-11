@@ -67,15 +67,15 @@ process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
   GeglRect  *need;
-  GeglOperationSource  *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  GeglBuffer *output;
 
   need = gegl_operation_get_requested_region (operation, dynamic_id);
   {
     GeglRect *result = gegl_operation_result_rect (operation, dynamic_id);
     gfloat *buf;
 
-    op_source->output = g_object_new (GEGL_TYPE_BUFFER,
+    output = g_object_new (GEGL_TYPE_BUFFER,
                         "format",
                         babl_format ("Y float"),
                         "x",      result->x,
@@ -84,7 +84,7 @@ process (GeglOperation *operation,
                         "height", result->h,
                         NULL);
 
-    buf = g_malloc (gegl_buffer_pixels (op_source->output) * gegl_buffer_px_size (op_source->output));
+    buf = g_malloc (gegl_buffer_pixels (output) * gegl_buffer_px_size (output));
       {
         gfloat *dst=buf;
         gint y;
@@ -109,9 +109,10 @@ process (GeglOperation *operation,
               }
           }
       }
-    gegl_buffer_set (op_source->output, NULL, buf, NULL);
+    gegl_buffer_set (output, NULL, buf, NULL);
     g_free (buf);
   }
+  gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
   return  TRUE;
 }
 

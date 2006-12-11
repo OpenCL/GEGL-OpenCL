@@ -140,21 +140,21 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
-  GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
-  GeglRect                 *need;
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  GeglBuffer         *output = NULL;
+  GeglRect           *need;
 
   need = gegl_operation_get_requested_region (operation, dynamic_id);
 
-  op_source->output = g_object_new (GEGL_TYPE_BUFFER,
-                                    "format", babl_format ("R'G'B'A u8"), /* FIXME: babl
+  output = g_object_new (GEGL_TYPE_BUFFER,
+                         "format", babl_format ("R'G'B'A u8"), /* FIXME: babl
                                                          performs a wrong conversion if the
                                                          correct format is specified here. */
-                                    "x",      need->x,
-                                    "y",      need->y,
-                                    "width",  need->w,
-                                    "height", need->h,
-                                    NULL);
+                         "x",      need->x,
+                         "y",      need->y,
+                         "width",  need->w,
+                         "height", need->h,
+                         NULL);
 
   {
     guchar *data = g_malloc0 (need->w * need->h * 4);
@@ -167,7 +167,7 @@ process (GeglOperation *operation,
     cairo_translate (cr, -need->x, -need->y);
     text_layout_text (self, cr, 0, NULL, NULL);
 
-    gegl_buffer_set (op_source->output, NULL, data, babl_format_new (babl_model ("R'aG'aB'aA"),
+    gegl_buffer_set (output, NULL, data, babl_format_new (babl_model ("R'aG'aB'aA"),
                                                                      babl_type ("u8"),
                                                                      babl_component ("B'a"),
                                                                      babl_component ("G'a"),
@@ -179,6 +179,7 @@ process (GeglOperation *operation,
     cairo_surface_destroy (surface);
     g_free (data);
   }
+  gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
 
   return  TRUE;
 }

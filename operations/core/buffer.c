@@ -48,11 +48,14 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglOperationSource *op_source = GEGL_OPERATION_SOURCE(operation);
   GeglChantOperation       *self = GEGL_CHANT_OPERATION (operation);
-
   if (self->buffer)
-    op_source->output = GEGL_BUFFER (g_object_ref (self->buffer));
+    {
+      g_object_ref (self->buffer); /* Add an extra reference, since gegl_operation_set_data
+                                      is stealing one.
+                                    */
+      gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (self->buffer));
+    }
   return TRUE;
 }
 

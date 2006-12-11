@@ -535,15 +535,17 @@ static gboolean
 process (GeglOperation *op,
          gpointer       dynamic_id)
 {
-  GeglOperationFilter *filter = GEGL_OPERATION_FILTER (op);
-  OpAffine            *affine = (OpAffine *) op;
-  GeglBuffer          *output;
-  GeglRect            *result = gegl_operation_result_rect (op, dynamic_id);
+  OpAffine   *affine = (OpAffine *) op;
+  GeglBuffer *filter_input;
+  GeglBuffer *output;
+  GeglRect   *result = gegl_operation_result_rect (op, dynamic_id);
+
+  filter_input = GEGL_BUFFER (gegl_operation_get_data (op, dynamic_id, "input"));
 
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (affine->matrix))
     output = g_object_new (GEGL_TYPE_BUFFER,
-        "source", filter->input,
+        "source", filter_input,
         "x",      result->x,
         "y",      result->y,
         "width",  result->w,
@@ -554,7 +556,7 @@ process (GeglOperation *op,
             (affine->matrix [0][2] == (gint) affine->matrix [0][2] &&
              affine->matrix [1][2] == (gint) affine->matrix [1][2])))
     output = g_object_new (GEGL_TYPE_BUFFER,
-                           "source",      filter->input,
+                           "source",      filter_input,
                            "x",           result->x,
                            "y",           result->y,
                            "width",       result->w,
@@ -579,19 +581,19 @@ process (GeglOperation *op,
 
           if (affine->hard_edges)
             input = g_object_new (GEGL_TYPE_BUFFER,
-              "source", filter->input,
-              "x",      filter->input->x,
-              "y",      filter->input->y,
-              "width",  filter->input->width + 1,
-              "height", filter->input->height + 1,
+              "source", filter_input,
+              "x",      filter_input->x,
+              "y",      filter_input->y,
+              "width",  filter_input->width + 1,
+              "height", filter_input->height + 1,
               NULL);
           else
             input = g_object_new (GEGL_TYPE_BUFFER,
-                "source", filter->input,
-                "x",      filter->input->x - 1,
-                "y",      filter->input->y - 1,
-                "width",  filter->input->width + 2,
-                "height", filter->input->height + 2,
+                "source", filter_input,
+                "x",      filter_input->x - 1,
+                "y",      filter_input->y - 1,
+                "width",  filter_input->width + 2,
+                "height", filter_input->height + 2,
                 NULL);
 
           if (matrix3_is_scale (affine->matrix))
@@ -603,20 +605,20 @@ process (GeglOperation *op,
         }
       else if (!strcasecmp (affine->filter, "lanczos"))
         if (matrix3_is_scale (affine->matrix))
-          scale_lanczos (output, filter->input, affine->matrix, affine->lanczos_width);
+          scale_lanczos (output, filter_input, affine->matrix, affine->lanczos_width);
         else
-          affine_lanczos (output, filter->input, affine->matrix, affine->lanczos_width);
+          affine_lanczos (output, filter_input, affine->matrix, affine->lanczos_width);
       else if (!strcasecmp (affine->filter, "cubic"))
         if (matrix3_is_scale (affine->matrix))
-          scale_cubic (output, filter->input, affine->matrix);
+          scale_cubic (output, filter_input, affine->matrix);
         else
-          affine_cubic (output, filter->input, affine->matrix);
+          affine_cubic (output, filter_input, affine->matrix);
       else
           if (matrix3_is_scale (affine->matrix))
-            scale_nearest (output, filter->input, affine->matrix);
+            scale_nearest (output, filter_input, affine->matrix);
           else
-            affine_nearest (output, filter->input, affine->matrix);
+            affine_nearest (output, filter_input, affine->matrix);
     }
-  filter->output = output;
+  gegl_operation_set_data (op, dynamic_id, "output", G_OBJECT (output));
   return TRUE;
 }

@@ -85,13 +85,13 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglOperationFilter *filter = GEGL_OPERATION_FILTER (operation);
   GeglRect            *result;
   GeglBuffer          *input,
                       *output;
   gdouble              min, max;
 
-  input = filter->input;
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+
   result = gegl_operation_get_requested_region (operation, dynamic_id);
   
   if (result->w==0 ||
@@ -135,7 +135,7 @@ process (GeglOperation *operation,
     g_free (buf);
   }
 
-  filter->output = output;
+  gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
 
   return TRUE;
 }
