@@ -48,17 +48,18 @@ static gboolean
 process_inner (GeglOperation *operation,
                gpointer       dynamic_id)
 {
-  GeglOperationComposer *composer = GEGL_OPERATION_COMPOSER (operation);
   GeglOperationPointComposer *point_composer = GEGL_OPERATION_POINT_COMPOSER (operation);
 
-  GeglBuffer *input  = composer->input;
-  GeglBuffer *aux    = composer->aux;
+  GeglBuffer * input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+  GeglBuffer * aux = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "aux"));
+
   GeglRect   *result = gegl_operation_result_rect (operation, dynamic_id);
   GeglBuffer *output;
 
   if (!input && aux)
     {
-        composer->output = g_object_ref (aux);
+        g_object_ref (aux);
+        gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (aux));
         return TRUE;
     }
 
@@ -104,7 +105,7 @@ process_inner (GeglOperation *operation,
           g_free (aux_buf);
 
         }
-        composer->output = output;
+        gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
       }
   return  TRUE;
 }

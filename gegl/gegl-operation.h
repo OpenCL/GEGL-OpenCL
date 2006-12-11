@@ -142,6 +142,14 @@ void       gegl_operation_create_pad                (GeglOperation *self,
 GType      gegl_operation_gtype_from_name           (const gchar *name);
 GSList   * gegl_operation_list_operations           (void);
 
+GObject  * gegl_operation_get_data                  (GeglOperation *operation,
+                                                     gpointer       dynamic_id,
+                                                     const gchar   *property_name);
+void       gegl_operation_set_data                  (GeglOperation *operation,
+                                                     gpointer       dynamic_id,
+                                                     const gchar   *property_name,
+                                                     GObject       *data);
+
 G_END_DECLS
 
 #endif /* __GEGL_OPERATION_H__ */

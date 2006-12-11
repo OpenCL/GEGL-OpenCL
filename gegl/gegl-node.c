@@ -629,6 +629,21 @@ void          gegl_node_link_many           (GeglNode     *source,
   va_end (var_args);
 }
 
+static GeglBuffer *
+gegl_node_apply_roi (GeglNode    *self,
+                     const gchar *output_pad_name,
+                     GeglRect    *roi)
+{
+  GeglEvalMgr *eval_mgr;
+  GeglBuffer  *buffer;
+
+  g_assert (GEGL_IS_NODE (self));
+  eval_mgr = g_object_new (GEGL_TYPE_EVAL_MGR, NULL);
+  eval_mgr->roi = *roi;
+  buffer = gegl_eval_mgr_apply (eval_mgr, self, output_pad_name);
+  g_object_unref (eval_mgr);
+  return buffer;
+}
 
 void
 gegl_node_blit (GeglNode *self,
@@ -638,18 +653,8 @@ gegl_node_blit (GeglNode *self,
                 gpointer *destination_buf)
 {
   GeglBuffer  *buffer;
-  GeglEvalMgr *eval_mgr;
 
-  g_return_if_fail (GEGL_IS_NODE (self));
-
-  g_assert (rowstride == 0);
-  eval_mgr = g_object_new (GEGL_TYPE_EVAL_MGR, NULL);
-  eval_mgr->roi = *roi;
-  gegl_eval_mgr_apply (eval_mgr, self, "output");
-  g_object_unref (eval_mgr);
-  gegl_node_get (self, "output", &(buffer), NULL);
-
-
+  buffer = gegl_node_apply_roi (self, "output", roi);
   {
     GeglBuffer *roi_buf = g_object_new (GEGL_TYPE_BUFFER,
                                         "source", buffer,
@@ -661,38 +666,18 @@ gegl_node_blit (GeglNode *self,
     gegl_buffer_get (roi_buf, NULL, destination_buf, format, 1.0);
     g_object_unref (roi_buf);
   }
-  /* unref'ing because we used gegl_node_get */
-  g_object_unref (buffer);
   /* and unrefing to ultimatly clean it off from the graph */
   g_object_unref (buffer);
 }
 
-
-void
-gegl_node_apply_roi (GeglNode    *self,
-                     const gchar *output_pad_name,
-                     GeglRect    *roi)
-{
-  GeglEvalMgr *eval_mgr;
-
-  g_return_if_fail (GEGL_IS_NODE (self));
-  eval_mgr = g_object_new (GEGL_TYPE_EVAL_MGR, NULL);
-  eval_mgr->roi = *roi;
-  gegl_eval_mgr_apply (eval_mgr, self, output_pad_name);
-  g_object_unref (eval_mgr);
-}
-
-void
+GeglBuffer *
 gegl_node_apply (GeglNode    *self,
                  const gchar *output_prop_name)
 {
-  GeglEvalMgr *eval_mgr;
-
-  g_return_if_fail (GEGL_IS_NODE (self));
-
-  eval_mgr = g_object_new (GEGL_TYPE_EVAL_MGR, NULL);
-  gegl_eval_mgr_apply (eval_mgr, self, output_prop_name);
-  g_object_unref (eval_mgr);
+  GeglRect     defined;
+  g_assert (GEGL_IS_NODE (self));
+  defined = gegl_node_get_bounding_box (self);
+  return gegl_node_apply_roi (self, "output", &defined);
 }
 
 #include <stdio.h>
@@ -1259,6 +1244,7 @@ gegl_node_get_property (GeglNode    *self,
     if (self->is_graph &&
         !strcmp (property_name, "output"))
       {
+          g_warning ("Eeek");
           g_object_get_property (G_OBJECT (gegl_graph_output (self, "output")->operation),
                 property_name, value);
       }
@@ -1284,6 +1270,21 @@ gegl_node_get_properties (GeglNode *self,
   pspecs = g_object_class_list_properties (G_OBJECT_GET_CLASS (self->operation), n_properties_p);
 
   return pspecs;
+}
+
+GParamSpec *
+gegl_node_find_property (GeglNode    *self,
+                         const gchar *property_name)
+{
+  GParamSpec *pspec = NULL;
+
+  if (self->operation)
+    pspec = g_object_class_find_property (
+     G_OBJECT_GET_CLASS (G_OBJECT (self->operation)), property_name);
+  if (!pspec)
+    pspec = g_object_class_find_property (
+     G_OBJECT_GET_CLASS (G_OBJECT (self)), property_name);
+  return pspec;
 }
 
 const gchar *
@@ -1501,12 +1502,22 @@ gegl_node_process (GeglNode *self)
 
   input = gegl_node_get_connected_to (self, "input");
   defined = gegl_node_get_bounding_box (input);
-  gegl_node_apply_roi (input, "output", &defined);
+  buffer = gegl_node_apply_roi (input, "output", &defined);
 
-  gegl_node_get (input, "output", &buffer, NULL);
-  gegl_node_set (self, "input", buffer, NULL);
+  /*gegl_node_get (input, "output", &buffer, NULL);
+  gegl_node_set (self, "input", buffer, NULL);*/
 
+  g_assert (GEGL_IS_BUFFER (buffer));
   dynamic = gegl_node_add_dynamic (self, &defined);
+
+    {
+      GValue value = {0,};
+      g_value_init (&value, GEGL_TYPE_BUFFER);
+      g_value_set_object (&value, buffer);
+      gegl_node_dynamic_set_property (dynamic, "input", &value);
+      g_value_unset (&value);
+    }
+
   gegl_node_dynamic_set_result_rect (dynamic, defined.x, defined.y, defined.w, defined.h);
   gegl_operation_process (self->operation, &defined, "foo");
   gegl_node_remove_dynamic (self, &defined);

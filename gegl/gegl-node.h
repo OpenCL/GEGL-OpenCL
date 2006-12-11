@@ -146,11 +146,8 @@ GeglNode    * gegl_node_get_connected_to    (GeglNode     *self,
                                              gchar        *pad_name);
 
 GList       * gegl_node_get_depends_on      (GeglNode     *self);
-void          gegl_node_apply               (GeglNode     *self,
+GeglBuffer  * gegl_node_apply               (GeglNode     *self,
                                              const gchar  *output_pad_name);
-void          gegl_node_apply_roi           (GeglNode     *self,
-                                             const gchar  *output_pad_name,
-                                             GeglRect     *roi);
 void          gegl_node_process             (GeglNode     *self);
 void          gegl_node_set_valist          (GeglNode     *object,
                                              const gchar  *first_property_name,

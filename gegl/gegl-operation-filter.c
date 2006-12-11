@@ -78,7 +78,6 @@ gegl_operation_filter_class_init (GeglOperationFilterClass * klass)
                                                         "Input",
                                                         "Input pad, for image buffer input.",
                                                         GEGL_TYPE_BUFFER,
-                                                        G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE |
                                                         GEGL_PAD_INPUT));
 
@@ -88,8 +87,6 @@ gegl_operation_filter_class_init (GeglOperationFilterClass * klass)
 static void
 gegl_operation_filter_init (GeglOperationFilter *self)
 {
-  self->input  = NULL;
-  self->output = NULL;
 }
 
 static void
@@ -106,21 +103,23 @@ associate (GeglOperation *self)
                                                              "input"));
 }
 
+void babl_backtrack (void);
+
 static void
 get_property (GObject      *object,
               guint         prop_id,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglOperationFilter *self = GEGL_OPERATION_FILTER (object);
-
   switch (prop_id)
   {
     case PROP_OUTPUT:
-      g_value_set_object (value, self->output);
+      g_warning ("shouldn't happen");
+      babl_backtrack ();
       break;
     case PROP_INPUT:
-      g_value_set_object (value, self->input);
+      g_warning ("shouldn't happen");
+      babl_backtrack ();
       break;
     default:
       break;
@@ -133,12 +132,11 @@ set_property (GObject      *object,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglOperationFilter *self = GEGL_OPERATION_FILTER (object);
-
   switch (prop_id)
   {
     case PROP_INPUT:
-      self->input = GEGL_BUFFER (g_value_dup_object (value));
+      g_warning ("shouldn't happen");
+      babl_backtrack ();
       break;
     default:
       break;
@@ -153,6 +151,7 @@ process (GeglOperation *operation,
 {
   GeglOperationFilter      *gegl_operation_filter;
   GeglOperationFilterClass *klass;
+  GeglBuffer               *input;
   gboolean success = FALSE;
 
   gegl_operation_filter = GEGL_OPERATION_FILTER (operation);
@@ -166,12 +165,10 @@ process (GeglOperation *operation,
       return FALSE;
     }
 
-  if (gegl_operation_filter->input != NULL)
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+  if (input != NULL)
     {
-      gegl_operation_filter->output = NULL;
       success = klass->process (operation, dynamic_id);
-      g_object_unref (gegl_operation_filter->input);
-      gegl_operation_filter->input=NULL;
     }
   else
     {

@@ -382,3 +382,49 @@ GSList *gegl_operation_list_operations (void)
     }
   return operations_list;
 }
+
+GObject *
+gegl_operation_get_data (GeglOperation *operation,
+                         gpointer       dynamic_id,
+                         const gchar   *property_name)
+{
+  GObject    *ret;
+  GeglNode   *node = operation->node;
+  GParamSpec *pspec;
+  GValue      value = {0,};
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, dynamic_id);
+
+  pspec = gegl_node_find_property (node, property_name);
+  g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+  gegl_node_dynamic_get_property (dynamic, property_name, &value);
+  /* FIXME: handle other things than gobjects as well? */
+  ret = g_value_get_object (&value);
+
+  if (!ret)
+    {/*
+      g_warning ("some important data was not found on %s.%s",
+        gegl_node_get_debug_name (node), property_name);
+      */
+    }
+  g_value_unset (&value);
+  return ret;
+}
+
+void
+gegl_operation_set_data (GeglOperation *operation,
+                         gpointer       dynamic_id,
+                         const gchar   *property_name,
+                         GObject       *data)
+{
+  GeglNode   *node = operation->node;
+  GParamSpec *pspec;
+  GValue      value = {0,};
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, dynamic_id);
+
+  pspec = gegl_node_find_property (node, property_name);
+  g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+  g_value_set_object (&value, data);
+  gegl_node_dynamic_set_property (dynamic, property_name, &value);
+  g_value_unset (&value);
+  g_object_unref (data);  /* stealing the initial reference? */
+}

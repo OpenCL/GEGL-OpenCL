@@ -39,9 +39,6 @@ typedef struct _GeglOperationSource  GeglOperationSource;
 struct _GeglOperationSource
 {
     GeglOperation  operation;
-
-    /*< private >*/
-    GeglBuffer    *output;
 };
 
 typedef struct _GeglOperationSourceClass GeglOperationSourceClass;

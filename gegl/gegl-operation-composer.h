@@ -39,11 +39,6 @@ typedef struct _GeglOperationComposer  GeglOperationComposer;
 struct _GeglOperationComposer
 {
     GeglOperation       operation;
-
-    /*< private >*/
-    GeglBuffer *input;
-    GeglBuffer *aux;
-    GeglBuffer *output;
 };
 
 typedef struct _GeglOperationComposerClass GeglOperationComposerClass;

@@ -39,9 +39,6 @@ typedef struct _GeglOperationSink  GeglOperationSink;
 struct _GeglOperationSink
 {
     GeglOperation operation;
-
-    /*< private >*/
-    GeglBuffer *input;
 };
 
 typedef struct _GeglOperationSinkClass GeglOperationSinkClass;

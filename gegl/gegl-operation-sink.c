@@ -69,7 +69,6 @@ gegl_operation_sink_class_init (GeglOperationSinkClass * klass)
                                                         "Input",
                                                         "Input pad, for image buffer input.",
                                                         GEGL_TYPE_BUFFER,
-                                                        G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE |
                                                         GEGL_PAD_INPUT));
 
@@ -79,7 +78,6 @@ gegl_operation_sink_class_init (GeglOperationSinkClass * klass)
 static void
 gegl_operation_sink_init (GeglOperationSink *self)
 {
-  self->input  = NULL;
 }
 
 static void
@@ -99,16 +97,6 @@ get_property (GObject      *object,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglOperationSink *self = GEGL_OPERATION_SINK (object);
-
-  switch (prop_id)
-  {
-    case PROP_INPUT:
-      g_value_set_object (value, self->input);
-      break;
-    default:
-      break;
-  }
 }
 
 static void
@@ -117,16 +105,6 @@ set_property (GObject      *object,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglOperationSink *self = GEGL_OPERATION_SINK (object);
-
-  switch (prop_id)
-  {
-    case PROP_INPUT:
-      self->input = GEGL_BUFFER (g_value_dup_object (value));
-      break;
-    default:
-      break;
-  }
 }
 
 static gboolean
@@ -136,6 +114,7 @@ process (GeglOperation *operation,
 {
   GeglOperationSink      *gegl_operation_sink;
   GeglOperationSinkClass *klass;
+  GeglBuffer             *input;
   gboolean success = FALSE;
 
   gegl_operation_sink = GEGL_OPERATION_SINK (operation);
@@ -143,11 +122,10 @@ process (GeglOperation *operation,
 
   g_assert (klass->process);
 
-  if (gegl_operation_sink->input != NULL)
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+  if (input);
     {
       success = klass->process (operation, dynamic_id);
-      g_object_unref (gegl_operation_sink->input);
-      gegl_operation_sink->input=NULL;
     }
   return success;
 }

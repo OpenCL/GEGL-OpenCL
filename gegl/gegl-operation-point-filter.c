@@ -44,12 +44,12 @@ static gboolean
 process_inner (GeglOperation *operation,
                gpointer       dynamic_id)
 {
-  GeglOperationFilter *filter = GEGL_OPERATION_FILTER (operation);
   GeglOperationPointFilter *point_filter = GEGL_OPERATION_POINT_FILTER (operation);
 
-  GeglBuffer *input  = filter->input;
+  GeglBuffer *input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
   GeglRect   *result = gegl_operation_result_rect (operation, dynamic_id);
   GeglBuffer *output;
+
 
   {
     gfloat *buf;
@@ -80,7 +80,7 @@ process_inner (GeglOperation *operation,
         g_free (buf);
       }
 
-    filter->output = output;
+    gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
   }
   return  TRUE;
 }

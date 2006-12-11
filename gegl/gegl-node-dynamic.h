@@ -49,12 +49,15 @@ struct _GeglNodeDynamic
                       each time data is fetched from the op the reference count is dropped,
                       when it drops to zero, the op is asked to clean it's pads
                    */
+  GSList  *property; /* used for the dynamic storage of pad data, being
+                        exchanged */
 };
 
 struct _GeglNodeDynamicClass
 {
   GObjectClass    parent_class;
 };
+
 
 GType      gegl_node_dynamic_get_type         (void) G_GNUC_CONST;
 GeglRect * gegl_node_dynamic_get_need_rect    (GeglNodeDynamic *node);
@@ -69,6 +72,14 @@ void       gegl_node_dynamic_set_result_rect  (GeglNodeDynamic *node,
                                                gint             y,
                                                gint             width,
                                                gint             height);
+void       gegl_node_dynamic_set_property     (GeglNodeDynamic *node,
+                                               const gchar     *name,
+                                               const GValue    *value);
+void       gegl_node_dynamic_get_property     (GeglNodeDynamic *node,
+                                               const gchar     *name,
+                                               GValue          *value);
+void       gegl_node_dynamic_remove_property  (GeglNodeDynamic *self,
+                                               const gchar     *name);
 
 G_END_DECLS
 

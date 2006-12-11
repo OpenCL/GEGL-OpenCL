@@ -82,7 +82,6 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
                                                         "Input",
                                                         "Input pad, for image buffer input.",
                                                         GEGL_TYPE_BUFFER,
-                                                        G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE |
                                                         GEGL_PAD_INPUT));
 
@@ -91,7 +90,6 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
                                                         "Input",
                                                         "Auxiliary image buffer input pad.",
                                                         GEGL_TYPE_BUFFER,
-                                                        G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE |
                                                         GEGL_PAD_INPUT));
 
@@ -100,9 +98,6 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
 static void
 gegl_operation_composer_init (GeglOperationComposer *self)
 {
-  self->input    = NULL;
-  self->aux      = NULL;
-  self->output   = NULL;
 }
 
 static void
@@ -128,22 +123,6 @@ get_property (GObject      *object,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglOperationComposer *self = GEGL_OPERATION_COMPOSER (object);
-
-  switch (prop_id)
-  {
-    case PROP_OUTPUT:
-      g_value_set_object (value, self->output);
-      break;
-    case PROP_INPUT:
-      g_value_set_object (value, self->input);
-      break;
-    case PROP_AUX:
-      g_value_set_object (value, self->aux);
-      break;
-    default:
-      break;
-  }
 }
 
 static void
@@ -152,19 +131,6 @@ set_property (GObject      *object,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglOperationComposer *self = GEGL_OPERATION_COMPOSER (object);
-
-  switch (prop_id)
-  {
-    case PROP_INPUT:
-      self->input = GEGL_BUFFER (g_value_dup_object(value));
-      break;
-    case PROP_AUX:
-      self->aux = GEGL_BUFFER (g_value_dup_object(value));
-      break;
-    default:
-      break;
-  }
 }
 
 static gboolean
@@ -172,7 +138,9 @@ process (GeglOperation *operation,
          gpointer       dynamic_id,
          const gchar   *output_prop)
 {
-  GeglOperationComposer      *gegl_operation_composer = GEGL_OPERATION_COMPOSER (operation);
+  GeglBuffer *input;
+  GeglBuffer *aux;
+
   GeglOperationComposerClass *klass       = GEGL_OPERATION_COMPOSER_GET_CLASS (operation);
   gboolean success = FALSE;
 
@@ -181,14 +149,16 @@ process (GeglOperation *operation,
       g_warning ("requested processing of %s pad on a composer", output_prop);
       return FALSE;
     }
-  
+
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+  aux = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "aux"));
+
   /* A composer with a NULL aux, can still be valid, the
    * subclass has to handle it.
    */
-  if (gegl_operation_composer->input != NULL ||
-      gegl_operation_composer->aux   != NULL)
+  if (input != NULL ||
+      aux   != NULL)
     {
-      gegl_operation_composer->output = NULL;
       success = klass->process (operation, dynamic_id);
     }
   else
@@ -196,11 +166,6 @@ process (GeglOperation *operation,
       g_warning ("%s received NULL input and aux",
           gegl_node_get_debug_name (operation->node));
     }
-  
-  if (gegl_operation_composer->input)
-    g_object_unref (gegl_operation_composer->input);
-  if (gegl_operation_composer->aux)
-    g_object_unref (gegl_operation_composer->aux);
 
   return success;
 }

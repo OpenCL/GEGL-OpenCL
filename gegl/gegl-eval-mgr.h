@@ -22,6 +22,8 @@
 #define __GEGL_EVAL_MGR_H__
 
 #include "gegl-object.h"
+#include "gegl-types.h"
+#include "buffer/gegl-buffer-types.h"
 
 G_BEGIN_DECLS
 
@@ -50,9 +52,9 @@ struct _GeglEvalMgrClass
 
 GType   gegl_eval_mgr_get_type (void) G_GNUC_CONST;
 
-void    gegl_eval_mgr_apply    (GeglEvalMgr *self,
-                                GeglNode    *root,
-                                const gchar *property_name);
+GeglBuffer *gegl_eval_mgr_apply (GeglEvalMgr *self,
+                                 GeglNode    *root,
+                                 const gchar *property_name);
 
 
 G_END_DECLS

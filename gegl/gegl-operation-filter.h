@@ -39,10 +39,6 @@ typedef struct _GeglOperationFilter  GeglOperationFilter;
 struct _GeglOperationFilter
 {
     GeglOperation operation;
-
-    /*< private >*/
-    GeglBuffer *input;
-    GeglBuffer *output;
 };
 
 typedef struct _GeglOperationFilterClass GeglOperationFilterClass;

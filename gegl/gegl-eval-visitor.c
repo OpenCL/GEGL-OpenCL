@@ -61,9 +61,10 @@ static void
 visit_pad (GeglVisitor *self,
            GeglPad     *pad)
 {
-  GeglNode      *node      = gegl_pad_get_node (pad);
-  GeglOperation *operation = node->operation;
-  gpointer       dynamic_id = self->dynamic_id;
+  GeglNode        *node      = gegl_pad_get_node (pad);
+  gpointer         dynamic_id = self->dynamic_id;
+  GeglNodeDynamic *dynamic   = gegl_node_get_dynamic (node, dynamic_id);
+  GeglOperation   *operation = node->operation;
 
   GEGL_VISITOR_CLASS (gegl_eval_visitor_parent_class)->visit_pad (self, pad);
 
@@ -82,35 +83,36 @@ visit_pad (GeglVisitor *self,
     {
       GeglPad *source_pad = gegl_pad_get_real_connected_to (pad);
 
+#define USE_DYNAMIC
+
       if (source_pad)
         {
           GValue      value     = { 0 };
           GParamSpec *prop_spec = gegl_pad_get_param_spec (pad);
           GeglNode *source_node = gegl_pad_get_node (source_pad);
-          GeglOperation *source = source_node->operation;
+          GeglNodeDynamic *source_dynamic = gegl_node_get_dynamic (source_node, dynamic_id);
 
           g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (prop_spec));
 
-          g_object_get_property (G_OBJECT(source),
-                                 gegl_pad_get_name (source_pad),
-                                 &value);
+          gegl_node_dynamic_get_property (source_dynamic,
+                                          gegl_pad_get_name (source_pad),
+                                          &value);
 
           if (!g_value_get_object (&value) &&
               !g_object_get_data (G_OBJECT (source_node), "graph"))
              g_warning ("eval-visitor encountered a NULL buffer passed from: %s.%s-[%p]", 
-             gegl_node_get_debug_name (source_node),
-             gegl_pad_get_name (source_pad),
-             g_value_get_object (&value));
+               gegl_node_get_debug_name (source_node),
+               gegl_pad_get_name (source_pad),
+               g_value_get_object (&value));
 
-          g_object_set_property (G_OBJECT (operation),
-                                 gegl_pad_get_name (pad),
-                                 &value);
-
+          gegl_node_dynamic_set_property (dynamic,
+                                          gegl_pad_get_name (pad),
+                                          &value);
           /* reference counting for this source dropped to zero, freeing up */
           if (--gegl_node_get_dynamic(gegl_pad_get_node (source_pad), dynamic_id)->refs==0 &&
               g_value_get_object (&value))
             {
-              g_object_unref (g_value_get_object (&value));
+              gegl_node_dynamic_remove_property (gegl_node_get_dynamic (gegl_pad_get_node (source_pad), dynamic_id), gegl_pad_get_name (source_pad));
             }
 
           g_value_unset (&value);

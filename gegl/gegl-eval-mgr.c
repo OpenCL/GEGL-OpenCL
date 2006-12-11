@@ -68,11 +68,12 @@ gegl_eval_mgr_init (GeglEvalMgr *self)
  *
  * Update this property.
  **/
-void
+GeglBuffer *
 gegl_eval_mgr_apply (GeglEvalMgr *self,
                      GeglNode    *root,
                      const gchar *pad_name)
 {
+  GeglBuffer   *buffer;
   GeglVisitor  *prepare_visitor;
   GeglVisitor  *have_visitor;
   GeglVisitor  *need_visitor;
@@ -84,8 +85,8 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   glong         time = gegl_ticks ();
   gpointer      dynamic_id = self;
 
-  g_return_if_fail (GEGL_IS_EVAL_MGR (self));
-  g_return_if_fail (GEGL_IS_NODE (root));
+  g_assert (GEGL_IS_EVAL_MGR (self));
+  g_assert (GEGL_IS_NODE (root));
 
   gegl_instrument ("gegl", "process", 0);
 
@@ -155,6 +156,17 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
       g_object_unref (debug_rect_visitor);
     }
 
+ {
+   /* extract return buffer before running finish visitor */
+   GValue value={0,};
+   g_value_init (&value, G_TYPE_OBJECT);
+   gegl_node_dynamic_get_property (gegl_node_get_dynamic (root, dynamic_id),
+      "output", &value);
+   buffer = g_value_get_object (&value);
+   g_object_ref (buffer); /* salvage buffer from finalization */
+   g_value_unset (&value);
+ }
+
   finish_visitor = g_object_new (GEGL_TYPE_FINISH_VISITOR, "id", dynamic_id, NULL);
   gegl_visitor_dfs_traverse (finish_visitor, GEGL_VISITABLE(root));
   g_object_unref (finish_visitor);
@@ -163,4 +175,8 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   g_object_unref (root);
   time = gegl_ticks () - time;
   gegl_instrument ("gegl", "process", time);
+
+  if (!G_IS_OBJECT (buffer))
+    g_warning ("foo %p %i", buffer, ((GObject*)buffer)->ref_count);
+  return buffer;
 }

@@ -76,7 +76,6 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
 static void
 gegl_operation_source_init (GeglOperationSource *self)
 {
-  self->output = NULL;
 }
 
 static void
@@ -96,16 +95,6 @@ get_property (GObject      *object,
               GValue       *value,
               GParamSpec   *pspec)
 {
-  GeglOperationSource *self = GEGL_OPERATION_SOURCE (object);
-
-  switch (prop_id)
-  {
-    case PROP_OUTPUT:
-      g_value_set_object(value, self->output);
-      break;
-    default:
-      break;
-  }
 }
 
 static void
@@ -114,14 +103,6 @@ set_property (GObject      *object,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglOperationSource *self = GEGL_OPERATION_SOURCE (object);
-  self = NULL;
-
-  switch (prop_id)
-  {
-    default:
-      break;
-  }
 }
 
 static gboolean
@@ -136,11 +117,8 @@ process (GeglOperation *operation,
     {
       g_warning ("requested processing of %s pad on a source operation", output_prop);
     return FALSE;
-
-
     }
   
-  GEGL_OPERATION_SOURCE (operation)->output = NULL;
   g_assert (klass->process);
   success = klass->process (operation, dynamic_id);
 
