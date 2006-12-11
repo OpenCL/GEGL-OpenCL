@@ -19,7 +19,9 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 	@echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 display.so: display.c $(GEGLHEADERS)
-	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(SDL_CFLAGS) $(SDL_LIBS)
+	@[ ! -z "$(SDL_LIBS)" ] &&\
+	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(SDL_CFLAGS) $(SDL_LIBS)) \
+	|| true
 
 clean-local:
 	rm -f $(SOBJS) *~
