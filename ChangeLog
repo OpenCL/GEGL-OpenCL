@@ -1,3 +1,8 @@
+2006-12-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* docs/Makefile.am: commented out website target commands, to make
+	crucible output more legible.
+
 2006-12-10  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/editor.c: (advance_slide), (editor_main),
