@@ -294,3 +294,27 @@ gegl_direct_logv (GLogLevelFlags  level,
         g_free(tabbed);
       }
 }
+
+
+static GeglRect *
+gegl_rect_dup (const GeglRect *rectangle)
+{
+  GeglRect *result = g_new (GeglRect, 1);
+  *result = *rectangle;
+
+  return result;
+}
+
+GType
+gegl_rect_get_type (void)
+{
+  static GType our_type = 0;
+  
+  if (our_type == 0)
+    our_type = g_boxed_type_register_static (g_intern_static_string ("GeglRect"),
+					     (GBoxedCopyFunc)gegl_rect_dup,
+					     (GBoxedFreeFunc)g_free);
+  return our_type;
+}
+
+

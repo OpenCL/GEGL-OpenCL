@@ -1,3 +1,8 @@
+2006-12-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-utils.[ch]: made it possible to box GeglRect, and use
+	GEGL_TYPE_RECT.
+
 2006-12-12  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.in: Changes to make it easier to specify version numbers

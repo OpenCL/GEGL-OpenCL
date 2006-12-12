@@ -65,10 +65,10 @@ void        gegl_log_message          (gchar    *file,
 void        gegl_log_direct           (gchar    *format,
                                        ...);
 
-
-#define GEGL_FLOAT_EPSILON                       (1e-5)
-#define GEGL_FLOAT_IS_ZERO(value) (_gegl_float_epsilon_zero ((value)))
-#define GEGL_FLOAT_EQUAL(v1, v2) (_gegl_float_epsilon_equal ((v1), (v2)))
+#define GEGL_TYPE_RECTANGLE           (gegl_rect_get_type ())
+#define GEGL_FLOAT_EPSILON            (1e-5)
+#define GEGL_FLOAT_IS_ZERO(value)     (_gegl_float_epsilon_zero ((value)))
+#define GEGL_FLOAT_EQUAL(v1, v2)      (_gegl_float_epsilon_equal ((v1), (v2)))
 
 #define INT_MULT(a,b,t)  ((t) = (a) * (b) + 0x80, ((((t) >> 8) + (t)) >> 8))
 
