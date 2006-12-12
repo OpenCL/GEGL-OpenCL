@@ -64,8 +64,9 @@ void        gegl_log_message          (gchar    *file,
                                        ...);
 void        gegl_log_direct           (gchar    *format,
                                        ...);
+GType       gegl_rect_get_type        (void) G_GNUC_CONST;
+#define     GEGL_TYPE_RECT            (gegl_rect_get_type ())
 
-#define GEGL_TYPE_RECTANGLE           (gegl_rect_get_type ())
 #define GEGL_FLOAT_EPSILON            (1e-5)
 #define GEGL_FLOAT_IS_ZERO(value)     (_gegl_float_epsilon_zero ((value)))
 #define GEGL_FLOAT_EQUAL(v1, v2)      (_gegl_float_epsilon_equal ((v1), (v2)))
