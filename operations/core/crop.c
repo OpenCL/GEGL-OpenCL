@@ -102,8 +102,23 @@ calc_source_regions (GeglOperation *self,
   return TRUE;
 }
 
+static GeglRect
+get_affected_region (GeglOperation *operation,
+                     const gchar   *input_pad,
+                     GeglRect       region)
+{
+  GeglChantOperation  *op_crop = (GeglChantOperation*)(operation);
+  GeglRect crop_rect;
+
+  gegl_rect_set (&crop_rect, op_crop->x, op_crop->y, op_crop->width, op_crop->height);
+  gegl_rect_intersect (&crop_rect, &crop_rect, &region);
+ 
+  return crop_rect;
+}
+
 static void class_init (GeglOperationClass *operation_class)
 {
+  operation_class->get_affected_region = get_affected_region;
   operation_class->get_defined_region = get_defined_region;
   operation_class->calc_source_regions = calc_source_regions;
 }

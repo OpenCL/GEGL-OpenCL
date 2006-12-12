@@ -1,5 +1,10 @@
 2006-12-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/core/crop.c: (get_affected_region), (class_init): added
+	affected_region computation to crop.
+
+2006-12-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-utils.h: made GEGL_TYPE_RECT possible to use.
 
 2006-12-12  Øyvind Kolås  <pippin@gimp.org>
