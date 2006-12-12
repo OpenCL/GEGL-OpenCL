@@ -27,9 +27,10 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
 jpg-load.so: jpg-load.c
-	@if [ ! -z "$(LIBJPEG)" ] &&\
-	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(LIBJPEG))\
-	|| true
+	@if [ ! -z "$(LIBJPEG)" ]; then \
+	echo $@;\
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(LIBJPEG);\
+	fi
 
 png-load.so: png-load.c $(GEGLHEADERS)
 	@echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(PNG_CFLAGS) $(PNG_LIBS)
