@@ -27,7 +27,7 @@ LDADD    = @DEP_LIBS@ @BABL_LIBS@
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
 jpg-load.so: jpg-load.c
-	@[ ! -z "$(LIBJPEG)" ] &&\
+	@if [ ! -z "$(LIBJPEG)" ] &&\
 	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(LIBJPEG))\
 	|| true
 

@@ -83,7 +83,7 @@ libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 libgegl_@GEGL_API_VERSION@_la_LIBADD = $(libbuffer) $(libmodule)
 
 libgegl_@GEGL_API_VERSION@_la_LDFLAGS = \
-	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+	-version-info $(LT_VERSION_INFO)
 
 INCLUDES = \
 	-I$(top_srcdir)	\
