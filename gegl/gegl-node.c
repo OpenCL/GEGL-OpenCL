@@ -38,8 +38,6 @@
 #include "gegl-eval-mgr.h"
 #include "buffer/gegl-buffer.h"
 #include "gegl-have-visitor.h"
-#include "gegl-dirt-visitor.h"
-#include "gegl-clean-visitor.h"
 #include "gegl-prepare-visitor.h"
 #include "gegl-finish-visitor.h"
 #include "gegl-node-dynamic.h"
@@ -52,6 +50,8 @@ enum
   PROP_OP_CLASS,
   PROP_OPERATION
 };
+
+guint gegl_node_signals[GEGL_NODE_LAST_SIGNAL] = {0};
 
 static void            gegl_node_class_init           (GeglNodeClass *klass);
 static void            gegl_node_init                 (GeglNode      *self);
@@ -91,6 +91,7 @@ G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, GEGL_TYPE_GRAPH,
                          G_IMPLEMENT_INTERFACE (GEGL_TYPE_VISITABLE,
                                                 visitable_init))
 
+
 static void
 gegl_node_class_init (GeglNodeClass * klass)
 {
@@ -114,6 +115,17 @@ gegl_node_class_init (GeglNodeClass * klass)
                                    "",
                                    G_PARAM_CONSTRUCT |
                                    G_PARAM_READWRITE));
+
+  gegl_node_signals[GEGL_NODE_INVALIDATED] =
+      g_signal_new ("invalidated", G_TYPE_FROM_CLASS (klass),
+      G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+      0    /* class offset*/,
+      NULL /* accumulator */,
+      NULL /* accu_data */,
+      g_cclosure_marshal_VOID__BOXED,
+      G_TYPE_NONE /* return type */,
+      1 /* n_params */,
+      GEGL_TYPE_RECT /* param_types */);
 }
 
 static void
@@ -126,7 +138,6 @@ gegl_node_init (GeglNode *self)
   self->sources     = NULL;
   self->operation   = NULL;
   self->enabled     = TRUE;
-  memset (&self->dirt_rect, 0, sizeof (self->dirt_rect));
   self->is_graph    = FALSE;
 }
 
@@ -384,6 +395,44 @@ gegl_node_connect_to (GeglNode    *source,
   return gegl_node_connect_from (sink, sink_pad_name, source, source_pad_name);
 }
 
+static void
+source_invalidated (GeglNode *source,
+                    GeglRect *rect,
+                    gpointer  data)
+{
+  GeglRect dirty_rect;
+  GeglPad  *destination_pad = GEGL_PAD (data);
+  GeglNode *destination = GEGL_NODE (gegl_pad_get_node (destination_pad));
+  gchar *source_name;
+  gchar *destination_name;
+
+  destination_name = g_strdup (gegl_node_get_debug_name (destination));
+  source_name = g_strdup (gegl_node_get_debug_name (source));
+
+  if(0)g_warning ("%s.%s is dirtied from %s (%i,%i %ix%i)",
+     destination_name,
+     gegl_pad_get_name (destination_pad),
+     source_name,
+     rect->x, rect->y,
+     rect->w, rect->h);
+
+  if (destination->operation)
+    {
+      dirty_rect = gegl_operation_get_affected_region (destination->operation,
+                                 gegl_pad_get_name (destination_pad), *rect);
+    }
+  else
+    {
+      dirty_rect = *rect;
+    }
+
+  g_signal_emit (destination, gegl_node_signals[GEGL_NODE_INVALIDATED],
+                 0, &dirty_rect, NULL);
+
+  g_free (source_name);
+  g_free (destination_name);
+}
+
 gboolean
 gegl_node_connect_from (GeglNode    *sink,
                         const gchar *sink_pad_name,
@@ -423,8 +472,8 @@ gegl_node_connect_from (GeglNode    *sink,
       sink->sources = g_list_append (sink->sources, connection);
       source->sinks = g_list_append (source->sinks, connection);
 
-      /* whatever what comes after us has computed, has become dirty now */
-      property_changed (G_OBJECT (sink->operation), NULL, sink);
+      g_signal_connect (G_OBJECT (source), "invalidated", G_CALLBACK (source_invalidated), sink_pad);
+
       property_changed (G_OBJECT (source->operation), NULL, source);
 
       return TRUE;
@@ -451,6 +500,19 @@ gegl_node_disconnect (GeglNode    *sink,
 
       source_pad = gegl_connection_get_source_pad (connection);
       source = gegl_connection_get_source_node (connection);
+
+      {
+        /* disconnecting dirt propagation */
+        gulong handler;
+
+        handler = g_signal_handler_find (source, G_SIGNAL_MATCH_DATA,
+                                         gegl_node_signals[GEGL_NODE_INVALIDATED],
+           0, NULL, NULL, sink_pad);
+        if (handler)
+          {
+            g_signal_handler_disconnect (source, handler);
+          }
+      }
 
       gegl_pad_disconnect (sink_pad, source_pad, connection);
 
@@ -828,68 +890,33 @@ static void property_changed (GObject    *gobject,
       */
 
       if (self->operation && !arg1)
-        {/*
-          g_warning ("%s: operation changed %i,%i %ix%i += %i,%i %ix%i",
-                     gegl_node_get_debug_name (self),
-                       self->dirt_rect.x,
-                       self->dirt_rect.y,
-                       self->dirt_rect.w,
-                       self->dirt_rect.h,
-                       self->have_rect.x,
-                       self->have_rect.y,
-                       self->have_rect.w,
-                       self->have_rect.h
-                     );*/
-
-          /* if operation has changed, declare previously defined region to
-           * be invalid
+        { /* these means we were called due to a operation change
+           
+             FIXME: The logic of this if is not quite intuitive,
+             perhaps the thing being checked should be slightly different,
+             or perhaps a bug lurks here?
            */
-          gegl_rect_bounding_box (&self->dirt_rect,
-                                  &self->dirt_rect,
-                                  &self->have_rect);
+          GeglRect dirty_rect;
+
+          dirty_rect = self->have_rect;
+
+          g_signal_emit (self, gegl_node_signals[GEGL_NODE_INVALIDATED], 0, &dirty_rect, NULL);
         }
       else
         {
-          GeglVisitor *have_visitor;
-/*
-          g_warning ("%s: %s, %i,%i %ix%i += %i,%i %ix%i",
-                     gegl_node_get_debug_name (self),
-                       arg1->name,
-                       self->dirt_rect.x,
-                       self->dirt_rect.y,
-                       self->dirt_rect.w,
-                       self->dirt_rect.h,
-                       self->have_rect.x,
-                       self->have_rect.y,
-                       self->have_rect.w,
-                       self->have_rect.h
-                     );
-*/
-          gegl_rect_bounding_box (&self->dirt_rect,
-                                  &self->dirt_rect,
-                                  &self->have_rect);
+          /* we were called due to a property change */
+          GeglRect dirty_rect;
+          GeglRect new_have_rect;
 
-          have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, NULL);
-          gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE(self));
-          g_object_unref (have_visitor);
-   /* 
-          g_warning ("%s: %s, %i,%i %ix%i += %i,%i %ix%i",
-                     gegl_node_get_debug_name (self),
-                     arg1?arg1->name:"operation changed",
-                       self->dirt_rect.x,
-                       self->dirt_rect.y,
-                       self->dirt_rect.w,
-                       self->dirt_rect.h,
-                       self->have_rect.x,
-                       self->have_rect.y,
-                       self->have_rect.w,
-                       self->have_rect.h
-                     );
-    */
-          gegl_rect_bounding_box (&self->dirt_rect,
-                                  &self->dirt_rect,
-                                  &self->have_rect);
-            }
+          dirty_rect = self->have_rect;
+          new_have_rect = gegl_node_get_bounding_box (self);
+
+          gegl_rect_bounding_box (&dirty_rect,
+                                  &dirty_rect,
+                                  &new_have_rect);
+
+          g_signal_emit (self, gegl_node_signals[GEGL_NODE_INVALIDATED], 0, &dirty_rect, NULL);
+        }
     }
 }
 
@@ -1402,52 +1429,6 @@ gegl_node_get_connected_to (GeglNode *node,
       return gegl_connection_get_source_node (connection);
     }
   return NULL;
-}
-
-
-GeglRect
-gegl_node_get_dirty_rect (GeglNode     *root)
-{
-  GeglVisitor *have_visitor;
-  GeglVisitor *dirt_visitor;
-
-  GeglPad     *pad;
- 
-  pad = gegl_node_get_pad (root, "output");
-  if (pad->node != root)
-    root = pad->node;
-  g_object_ref (root);
-
-  have_visitor = g_object_new (GEGL_TYPE_HAVE_VISITOR, NULL);
-  gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE(root));
-  g_object_unref (have_visitor);
-
-  dirt_visitor = g_object_new (GEGL_TYPE_DIRT_VISITOR, NULL);
-  gegl_visitor_dfs_traverse (dirt_visitor, GEGL_VISITABLE(root));
-  g_object_unref (dirt_visitor);
-
-  g_object_unref (root);
-  
-  return root->dirt_rect; 
-}
-
-
-void
-gegl_node_clear_dirt (GeglNode *node)
-{
-  GeglVisitor *clean_visitor;
-
-  GeglPad     *pad;
- 
-  pad = gegl_node_get_pad (node, "output");
-  if (pad->node != node)
-    node = pad->node;
-
-  g_object_ref (node);
-  clean_visitor = g_object_new (GEGL_TYPE_CLEAN_VISITOR, NULL);
-  gegl_visitor_dfs_traverse (clean_visitor, GEGL_VISITABLE(node));
-  g_object_unref (clean_visitor);
-  g_object_unref (node);
 }
 
 GeglRect

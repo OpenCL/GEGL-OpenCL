@@ -29,7 +29,6 @@
 #include "gegl-projection.h"
 #include "gegl-region.h"
 
-
 #define MAX_PIXELS (128*128)   /* maximum size of area computed in one idle cycle */
 
 enum
@@ -63,6 +62,7 @@ static void            get_property                   (GObject       *gobject,
 static gboolean        task_render                    (gpointer       foo);
 static gboolean        task_monitor                   (gpointer       foo);
 
+
 G_DEFINE_TYPE (GeglProjection, gegl_projection, GEGL_TYPE_BUFFER);
 
 static GObjectClass *parent_class = NULL;
@@ -83,10 +83,6 @@ gegl_projection_constructor (GType                  type,
   self->queued_region = gegl_region_new ();
   self->buffer = GEGL_BUFFER (self);
   self->format = self->buffer->format;
- 
-  if (self->monitor_id == 0) 
-    self->monitor_id = g_idle_add_full (
-           G_PRIORITY_LOW, (GSourceFunc) task_monitor, self, NULL);
 
   return object;
 }
@@ -142,10 +138,10 @@ gegl_projection_class_init (GeglProjectionClass * klass)
       0    /* class offset*/,
       NULL /* accumulator */,
       NULL /* accu_data */,
-      g_cclosure_marshal_VOID__POINTER,
+      g_cclosure_marshal_VOID__BOXED,
       G_TYPE_NONE /* return type */,
       1 /* n_params */,
-      G_TYPE_POINTER /* param_types */);
+      GEGL_TYPE_RECT /* param_types */);
 
   projection_signals[INVALIDATED] =
       g_signal_new ("invalidated", G_TYPE_FROM_CLASS (klass),
@@ -153,10 +149,10 @@ gegl_projection_class_init (GeglProjectionClass * klass)
       0    /* class offset*/,
       NULL /* accumulator */,
       NULL /* accu_data */,
-      g_cclosure_marshal_VOID__POINTER,
+      g_cclosure_marshal_VOID__BOXED,
       G_TYPE_NONE /* return type */,
       1 /* n_params */,
-      G_TYPE_POINTER /* param_types */);
+      GEGL_TYPE_RECT /* param_types */);
   
 }
 
@@ -166,7 +162,6 @@ gegl_projection_init (GeglProjection *self)
   self->buffer = NULL;
   self->node = NULL;
   self->render_id = 0;
-  self->monitor_id = 0;
 
   /* thus providing a default value for GeglProjection, that overrides the NULL
    * from GeglBuffer */
@@ -187,6 +182,68 @@ finalize (GObject *gobject)
   G_OBJECT_CLASS (gegl_projection_parent_class)->finalize (gobject);
 }
 
+static gboolean task_monitor (gpointer foo)
+{
+  GeglProjection  *projection = GEGL_PROJECTION (foo);
+
+  if (!gegl_region_empty (projection->queued_region) &&
+      !projection->dirty_rects &&
+      projection->render_id == 0) 
+    {
+      GeglRect  *rectangles;
+      gint           n_rectangles;
+      gint           i;
+
+      gegl_region_get_rectangles (projection->queued_region, &rectangles, &n_rectangles);
+
+      for (i=0; i<n_rectangles && i<1; i++)
+        {
+          GeglRect roi = *((GeglRect*)&rectangles[i]);
+          GeglRect *dr;
+          GeglRegion *tr = gegl_region_rectangle ((void*)&roi);
+          gegl_region_subtract (projection->queued_region, tr);
+          gegl_region_destroy (tr);
+         
+          dr = g_malloc(sizeof (GeglRect));
+          *dr = roi;
+          projection->dirty_rects = g_list_append (projection->dirty_rects, dr);
+
+          /* start a renderer if it isn't already running */
+          if (projection->render_id == 0)
+            projection->render_id = g_idle_add_full (G_PRIORITY_LOW, (GSourceFunc) task_render, projection, NULL);
+        }
+      g_free (rectangles);
+    }
+  if (gegl_region_empty (projection->queued_region))
+    { /* job done */
+      projection->monitor_id = 0;
+      return FALSE;
+    }
+  else
+    {
+      return TRUE;
+    }
+}
+
+static void
+node_invalidated (GeglNode *source,
+                  GeglRect *rect,
+                  gpointer  data)
+{
+  GeglProjection *projection = GEGL_PROJECTION (data);
+
+  {
+      GeglRegion     *region;
+      region = gegl_region_rectangle (rect);
+      gegl_region_subtract (projection->valid_region, region);
+      gegl_region_destroy (region);
+  }
+
+  g_signal_emit (projection, projection_signals[INVALIDATED], 0, rect, NULL);
+  gegl_region_subtract (projection->queued_region, projection->valid_region);
+  task_monitor (projection);
+}
+
 static void
 set_property (GObject      *gobject,
               guint         property_id,
@@ -198,8 +255,21 @@ set_property (GObject      *gobject,
     {
       case PROP_NODE:
         if (self->node)
-          g_object_unref (self->node);
+          {
+            /* disconnecting dirt propagation */
+            gulong handler;
+            handler = g_signal_handler_find (self->node, G_SIGNAL_MATCH_DATA,
+                                             gegl_node_signals[GEGL_NODE_INVALIDATED],
+                                             0, NULL, NULL, self);
+            if (handler)
+              {
+                g_signal_handler_disconnect (self->node, handler);
+              }
+            g_object_unref (self->node);
+          }
         self->node = GEGL_NODE (g_value_dup_object (value));
+        g_signal_connect (G_OBJECT (self->node), "invalidated",
+                          G_CALLBACK (node_invalidated), self);
         break;
 
       /* For the rest, upchaining to the property implementation in GeglBuffer */
@@ -309,7 +379,7 @@ void gegl_projection_update_rect (GeglProjection *self,
 
   gegl_region_destroy (temp_region);
 
-  /* start a monitor if the monitor of the projection is dormant */
+   /* start a monitor if the monitor of the projection is dormant */
   if (self->monitor_id == 0) 
     self->monitor_id = g_idle_add_full (
            G_PRIORITY_LOW, (GSourceFunc) task_monitor, self, NULL);
@@ -387,7 +457,7 @@ static gboolean task_render (gpointer foo)
       g_free (buf);
       g_free (dr);
     }
-  
+
   if (!projection->dirty_rects)
     { /* job done */
       projection->render_id = 0;
@@ -399,76 +469,15 @@ static gboolean task_render (gpointer foo)
     }
 }
 
-static gboolean task_monitor (gpointer foo)
-{
-  GeglProjection  *projection = GEGL_PROJECTION (foo);
-  GeglRect dirty_rect = gegl_node_get_dirty_rect (projection->node);
-  if (dirty_rect.w != 0 &&
-      dirty_rect.h != 0)
-    {
-      GeglRegion     *region;
-
-      region = gegl_region_rectangle (&dirty_rect);
-      gegl_region_subtract (projection->valid_region, region);
-
-      if (!gegl_region_empty (region))
-        {
-          g_signal_emit (projection, projection_signals[INVALIDATED], 0, NULL, NULL, NULL);
-        }
-      gegl_region_destroy (region);
-    }
-
-  gegl_node_clear_dirt (projection->node);
-
-  gegl_region_subtract (projection->queued_region, projection->valid_region);
-
-  if (!gegl_region_empty (projection->queued_region) &&
-      !projection->dirty_rects &&
-      projection->render_id == 0) 
-    {
-      GeglRect  *rectangles;
-      gint           n_rectangles;
-      gint           i;
-
-      gegl_region_get_rectangles (projection->queued_region, &rectangles, &n_rectangles);
-
-      for (i=0; i<n_rectangles && i<1; i++)
-        {
-          GeglRect roi = *((GeglRect*)&rectangles[i]);
-          GeglRect *dr;
-          GeglRegion *tr = gegl_region_rectangle ((void*)&roi);
-          gegl_region_subtract (projection->queued_region, tr);
-          gegl_region_destroy (tr);
-         
-          dr = g_malloc(sizeof (GeglRect));
-          *dr = roi;
-          projection->dirty_rects = g_list_append (projection->dirty_rects, dr);
-
-          /* start a renderer if it isn't already running */
-          if (projection->render_id == 0)
-            projection->render_id = g_idle_add_full (G_PRIORITY_LOW, (GSourceFunc) task_render, projection, NULL);
-        }
-      g_free (rectangles);
-    }
-  if (gegl_region_empty (projection->queued_region))
-    { /* job done */
-      projection->monitor_id = 0;
-      return FALSE;
-    }
-  else
-    {
-      return TRUE;
-    }
-}
-
 gboolean gegl_projection_render (GeglProjection *self)
 {
-     while (self->dirty_rects)
-      {
-        task_render (self);
-      }
-     if (!gegl_region_empty (self->queued_region))
-       task_monitor (self);
+  while (self->dirty_rects)
+    {
+      task_render (self);
+    }
+  if (!gegl_region_empty (self->queued_region))
+    task_monitor (self);
+
   return (self->dirty_rects != NULL);
 }
 

@@ -162,6 +162,34 @@ GeglNode * gegl_graph_create_node      (GeglNode     *self,
   return gegl_graph_new_node (self, "operation", operation, NULL);
 }
 
+static void
+source_invalidated (GeglNode *source,
+                    GeglRect *rect,
+                    gpointer  data)
+{
+  GeglRect dirty_rect;
+  GeglNode *destination = GEGL_NODE (data);
+  gchar *source_name;
+  gchar *destination_name;
+
+  destination_name = g_strdup (gegl_node_get_debug_name (destination));
+  source_name = g_strdup (gegl_node_get_debug_name (source));
+
+  if(0)g_warning ("graph:%s is dirtied from %s (%i,%i %ix%i)",
+     destination_name,
+     source_name,
+     rect->x, rect->y,
+     rect->w, rect->h);
+
+  dirty_rect = *rect;
+
+  g_signal_emit (destination, gegl_node_signals[GEGL_NODE_INVALIDATED], 0, &dirty_rect, NULL);
+
+  g_free (source_name);
+  g_free (destination_name);
+}
+
+
 static GeglNode *
 gegl_graph_get_pad_proxy (GeglGraph   *graph,
                           const gchar *name,
@@ -188,8 +216,15 @@ gegl_graph_get_pad_proxy (GeglGraph   *graph,
               g_object_set_data (G_OBJECT (nop), "is-aux", "foo");
             }
         }
+
         g_object_set_data (G_OBJECT (nop), "graph", graph);
         node->is_graph = TRUE;
+
+        if (!is_graph_input)
+          {
+            g_signal_connect (G_OBJECT (nop), "invalidated",
+                G_CALLBACK (source_invalidated), graph);
+          }
         return nop;
     }
   return gegl_pad_get_node (pad);

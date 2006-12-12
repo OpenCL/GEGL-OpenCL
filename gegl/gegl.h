@@ -127,15 +127,6 @@ void          gegl_node_blit             (GeglNode     *node,
                                           gint          rowstride,
                                           gpointer     *destination_buf);
 
-/* Retrieve the bounding box of the rectangle that has been dirtied since
- * the last cleaning.
- */
-GeglRect      gegl_node_get_dirty_rect   (GeglNode   *node);
-
-/* Clean all record of which region is dirty.
- */
-void          gegl_node_clear_dirt       (GeglNode   *node);
-
 /* Returns the bounding box of the defined data in a projection of node.
  */
 GeglRect      gegl_node_get_bounding_box (GeglNode *node);

@@ -1,5 +1,33 @@
 2006-12-12  Øyvind Kolås  <pippin@gimp.org>
 
+	Reimplemented the dirt handling with signals, making GEGL push dirt
+	instead of poll for it.
+
+	* gegl/gegl.h: removed cleaning/dirt collection functions from public
+	API.
+
+	* gegl/gegl-clean-visitor.[ch]: REMOVED
+	* gegl/gegl-dirt-visitor.[ch]: REMOVED
+	* gegl/gegl-types.h: removed clean/dirt visitors.
+	* gegl/Makefile.am: updated to reflect above change.
+
+	* gegl/gegl-node.[ch]: (gegl_node_class_init), (gegl_node_init),
+	(source_invalidated), (gegl_node_connect_from),
+	(gegl_node_disconnect), (property_changed),
+	(gegl_node_get_connected_to): Replaced dirt member with singal
+	propagation for changed rects in the graph.
+	* gegl/gegl-graph.c: (source_invalidated),
+	(gegl_graph_get_pad_proxy): forward changes through ghost pads.
+
+	* bin/gegl-projection.c: (gegl_projection_constructor),
+	(gegl_projection_class_init), (gegl_projection_init),
+	(task_monitor), (node_invalidated), (set_property),
+	(gegl_projection_update_rect), (task_render),
+	(gegl_projection_render): made projection work with new signal based
+	dirt API.
+
+2006-12-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/core/crop.c: (get_affected_region), (class_init): added
 	affected_region computation to crop.
 

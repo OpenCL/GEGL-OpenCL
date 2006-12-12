@@ -47,7 +47,6 @@ struct _GeglNode
   GeglOperation *operation;
 
   GeglRect   have_rect;
-  GeglRect   dirt_rect;
 
   GList     *pads;
   GList     *input_pads;
@@ -76,12 +75,7 @@ void          gegl_node_blit                (GeglNode     *self,
                                              gint          rowstride,
                                              gpointer     *destination_buf);
 
-/* returns the rectangle that has become dirtied as a result of changes to
- * properties since time rendering was issued.
- */
-GeglRect      gegl_node_get_dirty_rect      (GeglNode     *root);
 GeglRect      gegl_node_get_bounding_box    (GeglNode     *root);
-void          gegl_node_clear_dirt          (GeglNode     *node);
 
 void          gegl_node_link                (GeglNode     *source,
                                              GeglNode     *sink);
@@ -190,6 +184,16 @@ void          gegl_node_set_result_rect     (GeglNode     *node,
 const gchar * gegl_node_get_operation       (GeglNode     *node);
 
 const gchar * gegl_node_get_debug_name      (GeglNode     *node);
+
+
+enum
+{
+  GEGL_NODE_INVALIDATED,
+  GEGL_NODE_LAST_SIGNAL
+};
+
+extern guint gegl_node_signals[];
+
 G_END_DECLS
 
 #endif /* __GEGL_NODE_H__ */
