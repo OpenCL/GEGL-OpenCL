@@ -322,8 +322,9 @@ get_property (GObject    *gobject,
 }
 
 
-void gegl_projection_forget_queue (GeglProjection *self,
-                                   GeglRectangle  *roi)
+void
+gegl_projection_dequeue (GeglProjection *self,
+                         GeglRectangle  *roi)
 {
 
   if (roi)
@@ -345,10 +346,11 @@ void gegl_projection_forget_queue (GeglProjection *self,
     }
 }
 
-void gegl_projection_forget (GeglProjection *self,
-                             GeglRectangle  *roi)
+void
+gegl_projection_invalidate (GeglProjection *self,
+                            GeglRectangle  *roi)
 {
-  gegl_projection_forget_queue (self, roi);
+  gegl_projection_dequeue (self, roi);
 
   if (roi)
     {
@@ -356,17 +358,21 @@ void gegl_projection_forget (GeglProjection *self,
       temp_region = gegl_region_rectangle (roi);
       gegl_region_subtract (self->valid_region, temp_region);
       gegl_region_destroy (temp_region);
+      g_signal_emit (self, projection_signals[INVALIDATED], 0, roi, NULL);
     }
   else
     {
+      GeglRectangle rect = {0,0,0,0}; /* should probably be the extent of the projection */
       if (self->valid_region)
         gegl_region_destroy (self->valid_region);
       self->valid_region = gegl_region_new ();
+      g_signal_emit (self, projection_signals[INVALIDATED], 0, &rect, NULL);
     }
 }
 
-void gegl_projection_update_rect (GeglProjection *self,
-                                  GeglRectangle   roi)
+void
+gegl_projection_enqueue (GeglProjection *self,
+                         GeglRectangle   roi)
 {
   GeglRegion *temp_region;
 

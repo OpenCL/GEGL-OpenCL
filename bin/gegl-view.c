@@ -400,9 +400,9 @@ void gegl_view_repaint (GeglView *view)
                  widget->allocation.height / view->scale};
 
   /* forget all already queued repaints */
-  gegl_projection_forget_queue (view->projection, NULL);
+  gegl_projection_dequeue (view->projection, NULL);
   /* then enqueue our selves */
-  gegl_projection_update_rect (view->projection, roi);
+  gegl_projection_enqueue (view->projection, roi);
 }
 
 GeglProjection *gegl_view_get_projection (GeglView *view)

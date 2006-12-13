@@ -118,7 +118,7 @@ static void button_render_clicked (GtkButton *button,
   
   projection = gegl_view_get_projection (GEGL_VIEW (editor.drawing_area));
 
-  gegl_projection_update_rect (projection, rect);
+  gegl_projection_enqueue (projection, rect);
 
   while (gegl_projection_render (projection));
 

@@ -56,18 +56,19 @@ struct _GeglProjectionClass
   GeglBufferClass buffer_class;
 };
 
-GType  gegl_projection_get_type    (void) G_GNUC_CONST;
+GType    gegl_projection_get_type   (void) G_GNUC_CONST;
 
-void   gegl_projection_update_rect     (GeglProjection *self,
-                                        GeglRectangle  roi);
+void     gegl_projection_enqueue    (GeglProjection *self,
+                                     GeglRectangle  roi);
 
-void   gegl_projection_forget          (GeglProjection *self,
-                                        GeglRectangle  *roi);
 
-void   gegl_projection_forget_queue    (GeglProjection *self,
-                                        GeglRectangle  *roi);
+void     gegl_projection_dequeue    (GeglProjection *self,
+                                     GeglRectangle  *roi);
 
-gboolean gegl_projection_render        (GeglProjection *self);
+void     gegl_projection_invalidate (GeglProjection *self,
+                                     GeglRectangle  *roi);
+
+gboolean gegl_projection_render     (GeglProjection *self);
 
 G_END_DECLS
 
