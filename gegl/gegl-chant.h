@@ -70,7 +70,6 @@ struct Generated
   GEGL_CHANT_PARENT_TypeName  parent_instance;
 #define gegl_chant_int(name, min, max, def, blurb)     gint       name;
 #define gegl_chant_double(name, min, max, def, blurb)  gdouble    name;
-#define gegl_chant_float(name, min, max, def, blurb)   gfloat     name;
 #define gegl_chant_boolean(name, def, blurb)           gboolean   name;
 #define gegl_chant_string(name, def, blurb)            gchar     *name;
 #define gegl_chant_object(name, blurb)                 GObject   *name;
@@ -84,7 +83,6 @@ struct Generated
 /* undefining the chant macros before all subsequent inclusions */
 #undef gegl_chant_int
 #undef gegl_chant_double
-#undef gegl_chant_float
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_object
@@ -220,7 +218,6 @@ enum
   PROP_0,
 #define gegl_chant_int(name, min, max, def, blurb)     PROP_##name,
 #define gegl_chant_double(name, min, max, def, blurb)  PROP_##name,
-#define gegl_chant_float(name, min, max, def, blurb)   PROP_##name,
 #define gegl_chant_boolean(name, def, blurb)           PROP_##name,
 #define gegl_chant_string(name, def, blurb)            PROP_##name,
 #define gegl_chant_object(name, blurb)                 PROP_##name,
@@ -231,7 +228,6 @@ enum
 
 #undef gegl_chant_int
 #undef gegl_chant_double
-#undef gegl_chant_float
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_object
@@ -254,8 +250,6 @@ get_property (GObject      *gobject,
     case PROP_##name: g_value_set_int (value, self->name);break;
 #define gegl_chant_double(name, min, max, def, blurb)\
     case PROP_##name: g_value_set_double (value, self->name);break;
-#define gegl_chant_float(name, min, max, def, blurb)\
-    case PROP_##name: g_value_set_float (value, self->name);break;
 #define gegl_chant_boolean(name, def, blurb)\
     case PROP_##name: g_value_set_boolean (value, self->name);break;
 #define gegl_chant_string(name, def, blurb)\
@@ -271,7 +265,6 @@ get_property (GObject      *gobject,
 
 #undef gegl_chant_int
 #undef gegl_chant_double
-#undef gegl_chant_float
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_object
@@ -301,10 +294,6 @@ set_property (GObject      *gobject,
 #define gegl_chant_double(name, min, max, def, blurb)\
     case PROP_##name:\
       self->name = g_value_get_double (value);\
-      break;
-#define gegl_chant_float(name, min, max, def, blurb)\
-    case PROP_##name:\
-      self->name = g_value_get_float (value);\
       break;
 #define gegl_chant_boolean(name, def, blurb)\
     case PROP_##name:\
@@ -337,7 +326,6 @@ set_property (GObject      *gobject,
 
 #undef gegl_chant_int
 #undef gegl_chant_double
-#undef gegl_chant_float
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_object
@@ -387,7 +375,6 @@ static void gegl_chant_destroy_notify (gpointer data)
 
 #define gegl_chant_int(name, min, max, def, blurb)
 #define gegl_chant_double(name, min, max, def, blurb)
-#define gegl_chant_float(name, min, max, def, blurb)
 #define gegl_chant_boolean(name, def, blurb)
 #define gegl_chant_string(name, def, blurb)\
   if (self->name)\
@@ -413,7 +400,6 @@ static void gegl_chant_destroy_notify (gpointer data)
 
 #undef gegl_chant_int
 #undef gegl_chant_double
-#undef gegl_chant_float
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_object
@@ -506,14 +492,6 @@ gegl_chant_class_init (ChantClass * klass)
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
                                                         GEGL_PAD_INPUT)));
-#define gegl_chant_float(name, min, max, def, blurb)  \
-  g_object_class_install_property (object_class, PROP_##name,\
-                                   g_param_spec_float (#name, #name, blurb,\
-                                                        min, max, def,\
-                                                        (GParamFlags) (\
-                                                        G_PARAM_READWRITE |\
-                                                        G_PARAM_CONSTRUCT |\
-                                                        GEGL_PAD_INPUT)));
 #define gegl_chant_boolean(name, def, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_boolean (#name, #name, blurb,\
@@ -557,7 +535,6 @@ gegl_chant_class_init (ChantClass * klass)
 
 #undef gegl_chant_int
 #undef gegl_chant_double
-#undef gegl_chant_float
 #undef gegl_chant_boolean
 #undef gegl_chant_string
 #undef gegl_chant_object
