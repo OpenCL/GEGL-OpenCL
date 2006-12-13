@@ -79,7 +79,7 @@ fir_ver_blur (GeglBuffer *src,
               gdouble    *cmatrix,
               gint        matrix_length);
 
-static GeglRect get_source_rect (GeglOperation *operation,
+static GeglRectangle get_source_rect (GeglOperation *operation,
                                  gpointer       dynamic_id);
 
 static gboolean
@@ -94,10 +94,10 @@ process (GeglOperation *operation,
   input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
 
     {
-      GeglRect   *result     = gegl_operation_result_rect (operation, dynamic_id);
-      GeglBuffer *temp_in;
-      GeglBuffer *temp = NULL;
-      GeglRect    need = get_source_rect (operation, dynamic_id);
+      GeglRectangle *result     = gegl_operation_result_rect (operation, dynamic_id);
+      GeglBuffer    *temp_in;
+      GeglBuffer    *temp = NULL;
+      GeglRectangle  need = get_source_rect (operation, dynamic_id);
 
 
       if (result->w==0 || result->h==0 || (!self->radius_x && !self->radius_y))
@@ -512,11 +512,11 @@ fir_ver_blur (GeglBuffer *src,
 
 
 #include <math.h>
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
-  GeglRect  result = {0,0,0,0};
-  GeglRect *in_rect = gegl_operation_source_get_defined_region (operation,
+  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation,
                                                                 "input");
   GeglChantOperation *blur = GEGL_CHANT_OPERATION (operation);
   gint radius_x       = ceil(blur->radius_x);
@@ -538,12 +538,12 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
-static GeglRect get_source_rect (GeglOperation *self,
+static GeglRectangle get_source_rect (GeglOperation *self,
                                  gpointer       dynamic_id)
 {
   GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
-  GeglRect            rect;
-  GeglRect            defined;
+  GeglRectangle       rect;
+  GeglRectangle       defined;
   gint                radius_x;
   gint                radius_y;
  
@@ -565,10 +565,10 @@ static GeglRect get_source_rect (GeglOperation *self,
   return rect;
 }
 
-static GeglRect
+static GeglRectangle
 get_affected_region (GeglOperation *self,
                      const gchar   *input_pad,
-                     GeglRect       region)
+                     GeglRectangle  region)
 {
   GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
   gint                radius_x;
@@ -588,7 +588,7 @@ static gboolean
 calc_source_regions (GeglOperation *self,
                      gpointer       dynamic_id)
 {
-  GeglRect need = get_source_rect (self, dynamic_id);
+  GeglRectangle need = get_source_rect (self, dynamic_id);
   
   gegl_operation_set_source_region (self, dynamic_id, "input", &need);
 

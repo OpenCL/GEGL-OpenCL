@@ -85,10 +85,10 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglRect            *result;
-  GeglBuffer          *input,
-                      *output;
-  gdouble              min, max;
+  GeglRectangle *result;
+  GeglBuffer    *input,
+                *output;
+  gdouble        min, max;
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
 
@@ -122,7 +122,7 @@ process (GeglOperation *operation,
     for (row=0;row<result->h;row=consumed)
       {
         gint chunk = consumed+chunk_size<result->h?chunk_size:result->h-consumed;
-        GeglRect line = {result->x,
+        GeglRectangle line = {result->x,
                          result->y+row,
                          result->w,
                          chunk};

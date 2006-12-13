@@ -84,14 +84,14 @@ GeglRegion *gegl_region_polygon   (GeglPoint     *points,
 				 gint          npoints,
 				 GeglFillRule   fill_rule);
 GeglRegion *gegl_region_copy      (GeglRegion    *region);
-GeglRegion *gegl_region_rectangle (GeglRect *rectangle);
+GeglRegion *gegl_region_rectangle (GeglRectangle *rectangle);
 void       gegl_region_destroy   (GeglRegion    *region);
 
 void	       gegl_region_get_clipbox    (GeglRegion     *region,
-                                          GeglRect  *rectangle);
+                                           GeglRectangle  *rectangle);
 void           gegl_region_get_rectangles (GeglRegion     *region,
-                                          GeglRect **rectangles,
-                                          gint          *n_rectangles);
+                                           GeglRectangle **rectangles,
+                                           gint          *n_rectangles);
 
 gboolean       gegl_region_empty    (GeglRegion    *region);
 gboolean       gegl_region_equal    (GeglRegion    *region1,
@@ -100,7 +100,7 @@ gboolean       gegl_region_point_in (GeglRegion    *region,
 				    int           x,
 				    int           y);
 GeglOverlapType gegl_region_rect_in  (GeglRegion    *region,
-				    GeglRect *rectangle);
+				      GeglRectangle *rectangle);
 
 void gegl_region_offset          (GeglRegion    *region,
 				 gint          dx,
@@ -109,7 +109,7 @@ void gegl_region_shrink          (GeglRegion    *region,
 				 gint          dx,
 				 gint          dy);
 void gegl_region_union_with_rect (GeglRegion    *region,
-				 GeglRect *rect);
+				  GeglRectangle *rect);
 void gegl_region_intersect       (GeglRegion    *source1,
 				 GeglRegion    *source2);
 void gegl_region_union           (GeglRegion    *source1,

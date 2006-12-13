@@ -42,11 +42,11 @@ typedef struct _GeglPrepareVisitor   GeglPrepareVisitor;
 typedef struct _GeglVisitable        GeglVisitable; /* dummy typedef */
 typedef struct _GeglVisitor          GeglVisitor;
 
-typedef struct _GeglRect             GeglRect;
+typedef struct _GeglRectangle        GeglRectangle;
 typedef struct _GeglPoint            GeglPoint;
 typedef struct _GeglDimension        GeglDimension;
 
-struct _GeglRect
+struct _GeglRectangle
 {
   gint x;
   gint y;

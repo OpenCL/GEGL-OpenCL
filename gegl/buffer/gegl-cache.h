@@ -60,13 +60,13 @@ struct _GeglProjectionClass
 GType  gegl_projection_get_type    (void) G_GNUC_CONST;
 
 void   gegl_projection_update_rect     (GeglProjection *self,
-                                        GeglRect        roi);
+                                        GeglRectangle  roi);
 
 void   gegl_projection_forget          (GeglProjection *self,
-                                        GeglRect       *roi);
+                                        GeglRectangle  *roi);
 
 void   gegl_projection_forget_queue    (GeglProjection *self,
-                                        GeglRect       *roi);
+                                        GeglRectangle  *roi);
 
 GeglBuffer *gegl_projection_get_buffer (GeglProjection *self);
 gboolean gegl_projection_render        (GeglProjection *self);

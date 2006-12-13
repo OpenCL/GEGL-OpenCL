@@ -129,9 +129,9 @@ static void computed_event (GeglProjection *self,
                             void           *foo,
                             void           *user_data)
 {
-  GeglRect  rect = *(GeglRect*)foo;
-  GeglView *view = GEGL_VIEW (user_data);
-  GtkWidget *widget = GTK_WIDGET (user_data);
+  GeglRectangle  rect   = *(GeglRectangle*)foo;
+  GeglView      *view   = GEGL_VIEW (user_data);
+  GtkWidget     *widget = GTK_WIDGET (user_data);
 
   /* FIXME: check that the area is relevant for us */
 
@@ -352,7 +352,7 @@ static gboolean
 expose_event (GtkWidget *widget, GdkEventExpose * event)
 {
   GeglView      *view;
-  GeglRect roi = {0,0,0,0};
+  GeglRectangle  roi = {0,0,0,0};
   GdkRectangle  *rectangles;
   gint           count;
   gint           i;
@@ -394,10 +394,10 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
 
 void gegl_view_repaint (GeglView *view)
 {
-  GtkWidget *widget = GTK_WIDGET (view);
-  GeglRect roi={view->x, view->y,
-                widget->allocation.width / view->scale,
-                widget->allocation.height / view->scale};
+  GtkWidget     *widget = GTK_WIDGET (view);
+  GeglRectangle  roi={view->x, view->y,
+                 widget->allocation.width / view->scale,
+                 widget->allocation.height / view->scale};
 
   /* forget all already queued repaints */
   gegl_projection_forget_queue (view->projection, NULL);

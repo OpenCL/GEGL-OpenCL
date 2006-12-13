@@ -446,7 +446,7 @@ static void class_init (GeglOperationClass *operation_class);
 #endif
 
 #ifdef GEGL_CHANT_SOURCE
-static GeglRect get_defined_region (GeglOperation *self);
+static GeglRectangle get_defined_region (GeglOperation *self);
 #endif
 
 static void

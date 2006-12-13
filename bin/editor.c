@@ -741,13 +741,13 @@ static void cb_tree_visible (GtkAction *action, gpointer userdata)
 
 static void cb_fit (GtkAction *action)
 {
-  GeglRect defined = gegl_node_get_bounding_box (editor.gegl);
-  gint     width;
-  gint     height;
-  gint     x,y;
-  gint     i;
-  gdouble  hscale;
-  gdouble  vscale;
+  GeglRectangle defined = gegl_node_get_bounding_box (editor.gegl);
+  gint          width;
+  gint          height;
+  gint          x, y;
+  gint          i;
+  gdouble       hscale;
+  gdouble       vscale;
 
 
   gtk_window_get_size (GTK_WINDOW (editor.window), &width, &height);
@@ -789,7 +789,7 @@ static void cb_fit (GtkAction *action)
 
 static void cb_fit_on_screen (GtkAction *action)
 {
-  GeglRect defined = gegl_node_get_bounding_box (editor.gegl);
+  GeglRectangle defined = gegl_node_get_bounding_box (editor.gegl);
   /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.w, defined.h);*/
 
   g_object_set (editor.drawing_area, "x", defined.x, "y", defined.y, NULL);
@@ -814,7 +814,7 @@ static void cb_fit_on_screen (GtkAction *action)
 
 static void cb_shrinkwrap (GtkAction *action)
 {
-  GeglRect defined = gegl_node_get_bounding_box (editor.gegl);
+  GeglRectangle defined = gegl_node_get_bounding_box (editor.gegl);
   /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.w, defined.h);*/
   gint i;
 

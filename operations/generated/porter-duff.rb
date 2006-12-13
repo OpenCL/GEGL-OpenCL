@@ -178,22 +178,22 @@ process (GeglOperation *op,
   return TRUE;
 }
 
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *self)
 {
-  GeglRect result = {0,0,0,0};
-  GeglRect *in_rect  = gegl_operation_source_get_defined_region (self, \"input\");
+  GeglRectangle result = {0,0,0,0};
+  GeglRectangle *in_rect  = gegl_operation_source_get_defined_region (self, \"input\");
   if (!in_rect)
     return result;
   return *in_rect;
 }
 
-static GeglRect
+static GeglRectangle
 get_affected_region (GeglOperation *self,
                      const gchar   *pad_name,
-                     GeglRect       region)
+                     GeglRectangle       region)
 {
-  GeglRect empty = {0,0,0,0};
+  GeglRectangle empty = {0,0,0,0};
   if (!strcmp (pad_name, \"input\"))
     return region;
   return empty;

@@ -388,15 +388,15 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglRect  *need;
-  GeglBuffer *output = NULL;
+  GeglRectangle *need;
+  GeglBuffer    *output = NULL;
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
   need = gegl_operation_get_requested_region (operation, dynamic_id);
   {
-    GeglRect *result = gegl_operation_result_rect (operation, dynamic_id);
-    clrmap    colormap;
-    guchar   *buf;
+    GeglRectangle *result = gegl_operation_result_rect (operation, dynamic_id);
+    clrmap         colormap;
+    guchar        *buf;
 
     make_color_map (self, colormap);
 
@@ -430,11 +430,11 @@ process (GeglOperation *operation,
   return TRUE;
 }
 
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglRect            result = {0,0,0,0};
+  GeglRectangle       result = {0,0,0,0};
 
   result.w = self->width;
   result.h = self->height;

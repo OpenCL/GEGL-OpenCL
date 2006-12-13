@@ -475,7 +475,7 @@ gegl_init
 
 <SECTION>
 <FILE>gegl-types</FILE>
-GeglRect
+GeglRectangle
 GeglPoint
 GeglDimension
 </SECTION>

@@ -125,7 +125,7 @@ gegl_node_class_init (GeglNodeClass * klass)
       g_cclosure_marshal_VOID__BOXED,
       G_TYPE_NONE /* return type */,
       1 /* n_params */,
-      GEGL_TYPE_RECT /* param_types */);
+      GEGL_TYPE_RECTANGLE /* param_types */);
 }
 
 static void
@@ -396,11 +396,11 @@ gegl_node_connect_to (GeglNode    *source,
 }
 
 static void
-source_invalidated (GeglNode *source,
-                    GeglRect *rect,
-                    gpointer  data)
+source_invalidated (GeglNode      *source,
+                    GeglRectangle *rect,
+                    gpointer       data)
 {
-  GeglRect dirty_rect;
+  GeglRectangle dirty_rect;
   GeglPad  *destination_pad = GEGL_PAD (data);
   GeglNode *destination = GEGL_NODE (gegl_pad_get_node (destination_pad));
   gchar *source_name;
@@ -692,9 +692,9 @@ void          gegl_node_link_many           (GeglNode     *source,
 }
 
 static GeglBuffer *
-gegl_node_apply_roi (GeglNode    *self,
-                     const gchar *output_pad_name,
-                     GeglRect    *roi)
+gegl_node_apply_roi (GeglNode      *self,
+                     const gchar   *output_pad_name,
+                     GeglRectangle *roi)
 {
   GeglEvalMgr *eval_mgr;
   GeglBuffer  *buffer;
@@ -708,11 +708,11 @@ gegl_node_apply_roi (GeglNode    *self,
 }
 
 void
-gegl_node_blit (GeglNode *self,
-                GeglRect *roi,
-                void     *format,
-                gint      rowstride,
-                gpointer *destination_buf)
+gegl_node_blit (GeglNode      *self,
+                GeglRectangle *roi,
+                void          *format,
+                gint           rowstride,
+                gpointer      *destination_buf)
 {
   GeglBuffer  *buffer;
 
@@ -736,7 +736,7 @@ GeglBuffer *
 gegl_node_apply (GeglNode    *self,
                  const gchar *output_prop_name)
 {
-  GeglRect     defined;
+  GeglRectangle defined;
   g_assert (GEGL_IS_NODE (self));
   defined = gegl_node_get_bounding_box (self);
   return gegl_node_apply_roi (self, "output", &defined);
@@ -896,7 +896,7 @@ static void property_changed (GObject    *gobject,
              perhaps the thing being checked should be slightly different,
              or perhaps a bug lurks here?
            */
-          GeglRect dirty_rect;
+          GeglRectangle dirty_rect;
 
           dirty_rect = self->have_rect;
 
@@ -905,8 +905,8 @@ static void property_changed (GObject    *gobject,
       else
         {
           /* we were called due to a property change */
-          GeglRect dirty_rect;
-          GeglRect new_have_rect;
+          GeglRectangle dirty_rect;
+          GeglRectangle new_have_rect;
 
           dirty_rect = self->have_rect;
           new_have_rect = gegl_node_get_bounding_box (self);
@@ -1346,7 +1346,7 @@ gegl_node_set_have_rect (GeglNode    *node,
   node->have_rect.h = height;
 }
 
-GeglRect *
+GeglRectangle *
 gegl_node_get_have_rect (GeglNode    *node)
 {
   return &node->have_rect;
@@ -1368,7 +1368,7 @@ gegl_node_set_need_rect (GeglNode    *node,
   dynamic->need_rect.h = height;
 }
 
-GeglRect *
+GeglRectangle *
 gegl_node_get_result_rect (GeglNode *node,
                            gpointer  dynamic_id)
 {
@@ -1393,7 +1393,7 @@ gegl_node_set_result_rect (GeglNode *node,
   dynamic->result_rect.h = height;
 }
 
-GeglRect *
+GeglRectangle *
 gegl_node_get_need_rect (GeglNode    *node,
                          gpointer     dynamic_id)
 {
@@ -1431,7 +1431,7 @@ gegl_node_get_connected_to (GeglNode *node,
   return NULL;
 }
 
-GeglRect
+GeglRectangle
 gegl_node_get_bounding_box (GeglNode     *root)
 {
   GeglVisitor *prepare_visitor;
@@ -1475,7 +1475,7 @@ gegl_node_process (GeglNode *self)
   GeglNode    *input;
   GeglNodeDynamic *dynamic;
   GeglBuffer  *buffer;
-  GeglRect     defined;
+  GeglRectangle     defined;
 
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (g_type_is_a (G_OBJECT_TYPE(self->operation),

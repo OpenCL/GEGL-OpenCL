@@ -48,7 +48,7 @@ process (GeglOperation *operation,
 {
   GeglChantOperation *self    = GEGL_CHANT_OPERATION (operation);
   GeglBuffer         *input;
-  GeglRect           *result  = gegl_operation_result_rect (operation, dynamic_id);
+  GeglRectangle      *result  = gegl_operation_result_rect (operation, dynamic_id);
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
   g_assert (input);
@@ -144,7 +144,7 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
 
   for (i=0; i< height; i++)
     {
-      GeglRect rect = {src_x, src_y+i, width, 1};
+      GeglRectangle rect = {src_x, src_y+i, width, 1};
       gegl_buffer_get (gegl_buffer, &rect, pixels, babl_format (format_string), 1.0);
 
       png_write_rows (png, &pixels, 1);

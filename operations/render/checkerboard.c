@@ -40,16 +40,16 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
-  GeglRect  *need;
+  GeglRectangle      *need;
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer *output = NULL;
+  GeglBuffer         *output = NULL;
 
   need = gegl_operation_get_requested_region (operation, dynamic_id);
   {
-    GeglRect *result = gegl_operation_result_rect (operation, dynamic_id);
-    gfloat *buf;
-    gfloat color1[4];
-    gfloat color2[4];
+    GeglRectangle *result = gegl_operation_result_rect (operation, dynamic_id);
+    gfloat        *buf;
+    gfloat         color1[4];
+    gfloat         color2[4];
 
     gegl_color_get_rgba (self->color1,
                          &color1[0],
@@ -100,10 +100,10 @@ process (GeglOperation *operation,
   return  TRUE;
 }
 
-static GeglRect 
+static GeglRectangle 
 get_defined_region (GeglOperation *operation)
 {
-  GeglRect result = {-10000000,-10000000, 20000000, 20000000};
+  GeglRectangle result = {-10000000,-10000000, 20000000, 20000000};
   return result;
 }
 

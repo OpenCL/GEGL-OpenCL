@@ -22,8 +22,8 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
   GeglPremultOp *
   new (GeglImageBuffer *dest,
        GeglImageBuffer *src,
-       GeglRect *dest_rect,
-       GeglRect *src_rect)
+       GeglRectangle *dest_rect,
+       GeglRectangle *src_rect)
   {
     GeglPremultOp * self = GEGL_PREMULT_OP(GET_NEW);
 
@@ -42,8 +42,8 @@ class Gegl:Premult:Op from Gegl:Single:Src:Op {
   constructor(self, 
               GeglImageBuffer *dest,
               GeglImageBuffer *src,
-              GeglRect *dest_rect,
-              GeglRect *src_rect) 
+              GeglRectangle *dest_rect,
+              GeglRectangle *src_rect) 
   {
     if(GEGL_OBJECT(self)->constructed) 
       return FALSE;

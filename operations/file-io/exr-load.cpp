@@ -596,11 +596,11 @@ process (GeglOperation *operation,
   return TRUE;
 }
 
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglRect result = {0, 0, 10, 10};
+  GeglRectangle result = {0, 0, 10, 10};
   gint w,h,ff;
   gpointer format;
 

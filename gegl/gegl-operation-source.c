@@ -44,7 +44,7 @@ static void     associate    (GeglOperation *operation);
 
 G_DEFINE_TYPE (GeglOperationSource, gegl_operation_source, GEGL_TYPE_OPERATION)
 
-static GeglRect get_defined_region (GeglOperation *self);
+static GeglRectangle get_defined_region (GeglOperation *self);
 static gboolean calc_source_regions (GeglOperation *self,
                                      gpointer       dynamic_id);
 
@@ -125,10 +125,10 @@ process (GeglOperation *operation,
   return success;
 }
 
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *self)
 {
-  GeglRect result = {0,0,0,0};
+  GeglRectangle result = {0,0,0,0};
   g_warning ("Gegl Source '%s' has no proper have_rect function",
      G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
   return result;

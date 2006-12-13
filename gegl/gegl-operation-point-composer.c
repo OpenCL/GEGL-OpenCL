@@ -53,7 +53,7 @@ process_inner (GeglOperation *operation,
   GeglBuffer * input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
   GeglBuffer * aux = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "aux"));
 
-  GeglRect   *result = gegl_operation_result_rect (operation, dynamic_id);
+  GeglRectangle *result = gegl_operation_result_rect (operation, dynamic_id);
   GeglBuffer *output;
 
   if (!input && aux)

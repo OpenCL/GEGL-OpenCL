@@ -1,6 +1,4 @@
 <gegl>
-  <scale x = '0.4'
-         y = '0.4'/>
   <over>
     <shift x = '10'
            y = '280'/>

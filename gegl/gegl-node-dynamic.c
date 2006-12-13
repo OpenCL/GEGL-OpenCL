@@ -67,7 +67,7 @@ gegl_node_dynamic_set_need_rect (GeglNodeDynamic    *node,
   node->need_rect.h = height;
 }
 
-GeglRect *
+GeglRectangle *
 gegl_node_dynamic_get_result_rect (GeglNodeDynamic *node)
 {
   return &node->result_rect;
@@ -87,7 +87,7 @@ gegl_node_dynamic_set_result_rect (GeglNodeDynamic *node,
   node->result_rect.h = height;
 }
 
-GeglRect *
+GeglRectangle *
 gegl_node_dynamic_get_need_rect (GeglNodeDynamic    *node)
 {
   return &node->need_rect;

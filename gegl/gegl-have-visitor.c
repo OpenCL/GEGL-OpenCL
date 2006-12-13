@@ -57,7 +57,7 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-  GeglRect rect;
+  GeglRectangle rect;
   GeglOperation *operation;
   glong    time = gegl_ticks ();
 

@@ -116,10 +116,10 @@ process (GeglOperation *operation,
 }
 
 
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
-  GeglRect result = {0,0,0,0};
+  GeglRectangle result = {0,0,0,0};
   GeglChantOperation    *self = GEGL_CHANT_OPERATION (operation);
   /*GeglOperationSource *source = GEGL_OPERATION_SOURCE(operation);*/
   gint width, height;
@@ -180,8 +180,8 @@ instead.
                                             &pError);
     if (pixbuf)
     {
-      guchar   *pixeldata;
-      GeglRect  rect = {dest_x, dest_y, width, height};
+      guchar        *pixeldata;
+      GeglRectangle  rect = {dest_x, dest_y, width, height};
 
       pixeldata = gdk_pixbuf_get_pixels (pixbuf);
       gegl_buffer_set (gegl_buffer, &rect, pixeldata, babl_format ("R'G'B'A u8"));

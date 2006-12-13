@@ -31,16 +31,16 @@
 #include "gegl-pad.h"
 #include "gegl-utils.h"
 
-static void      gegl_operation_class_init (GeglOperationClass    *klass);
-static void      gegl_operation_init       (GeglOperation         *self);
-static void      associate                 (GeglOperation         *self);
+static void          gegl_operation_class_init (GeglOperationClass    *klass);
+static void          gegl_operation_init       (GeglOperation         *self);
+static void          associate                 (GeglOperation         *self);
 
-static GeglRect get_defined_region (GeglOperation *self);
-static GeglRect get_affected_region (GeglOperation *self,
-                                     const gchar   *input_pad,
-                                     GeglRect       region);
-static gboolean calc_source_regions (GeglOperation *self,
-                                     gpointer       dynamic_id);
+static GeglRectangle get_defined_region        (GeglOperation *self);
+static GeglRectangle get_affected_region       (GeglOperation *self,
+                                                const gchar   *input_pad,
+                                                GeglRectangle  region);
+static gboolean calc_source_regions            (GeglOperation *self,
+                                                gpointer       dynamic_id);
 
 G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
 
@@ -107,10 +107,10 @@ gegl_operation_process (GeglOperation *self,
   return klass->process (self, dynamic_id, output_pad);
 }
 
-GeglRect
+GeglRectangle
 gegl_operation_get_defined_region (GeglOperation *self)
 {
-  GeglRect rect = {0,0,0,0};
+  GeglRectangle rect = {0,0,0,0};
   GeglOperationClass *klass;
 
   klass = GEGL_OPERATION_GET_CLASS (self);
@@ -119,9 +119,10 @@ gegl_operation_get_defined_region (GeglOperation *self)
   return rect;
 }
 
-GeglRect   gegl_operation_get_affected_region       (GeglOperation *self,
-                                                     const gchar   *input_pad,
-                                                     GeglRect       region)
+GeglRectangle
+gegl_operation_get_affected_region (GeglOperation *self,
+                                    const gchar   *input_pad,
+                                    GeglRectangle  region)
 {
   GeglOperationClass *klass;
 
@@ -186,7 +187,7 @@ gegl_operation_prepare (GeglOperation *self,
     klass->prepare (self, dynamic_id);
 }
 
-GeglRect *
+GeglRectangle *
 gegl_operation_source_get_defined_region (GeglOperation *operation,
                                           const gchar   *input_pad_name)
 {
@@ -212,10 +213,10 @@ void
 gegl_operation_set_source_region (GeglOperation *operation,
                                   gpointer       dynamic_id,
                                   const gchar   *input_pad_name,
-                                  GeglRect      *region)
+                                  GeglRectangle *region)
 {
-  GeglNode *child;
-  GeglRect child_need;
+  GeglNode      *child;
+  GeglRectangle  child_need;
 
   g_assert (operation);
   g_assert (operation->node);
@@ -244,10 +245,10 @@ gegl_operation_set_source_region (GeglOperation *operation,
                            child_need.w, child_need.h);
 }
 
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *self)
 {
-  GeglRect rect = {0,0,0,0};
+  GeglRectangle rect = {0,0,0,0};
   if (self->node->is_graph)
     {
       return gegl_operation_get_defined_region (
@@ -258,10 +259,10 @@ get_defined_region (GeglOperation *self)
   return rect;
 }
 
-static GeglRect
+static GeglRectangle
 get_affected_region (GeglOperation *self,
                      const gchar   *input_pad,
-                     GeglRect       region)
+                     GeglRectangle  region)
 {
   if (self->node->is_graph)
     {
@@ -289,7 +290,7 @@ calc_source_regions (GeglOperation *self,
   return FALSE;
 }
 
-GeglRect *
+GeglRectangle *
 gegl_operation_get_requested_region     (GeglOperation *operation,
                                          gpointer       dynamic_id)
 {
@@ -299,7 +300,7 @@ gegl_operation_get_requested_region     (GeglOperation *operation,
   return &dynamic->need_rect;
 }
 
-GeglRect *
+GeglRectangle *
 gegl_operation_result_rect (GeglOperation *operation,
                             gpointer       dynamic_id)
 {

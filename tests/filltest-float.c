@@ -75,7 +75,7 @@ static void
 test_fill_apply_roi(Test *test)
 {
   {
-    GeglRect roi = {1,1,IMAGE_OP_WIDTH/2,IMAGE_OP_HEIGHT/2};
+    GeglRectangle roi = {1,1,IMAGE_OP_WIDTH/2,IMAGE_OP_HEIGHT/2};
     GeglColor *color = g_object_new(GEGL_TYPE_COLOR,
                                     "rgb-float", .1, .2, .3,
                                     NULL);

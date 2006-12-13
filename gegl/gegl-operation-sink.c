@@ -43,7 +43,7 @@ static gboolean process              (GeglOperation *operation,
 
 static void     associate            (GeglOperation *operation);
 
-static GeglRect get_defined_region   (GeglOperation *self);
+static GeglRectangle get_defined_region   (GeglOperation *self);
 static gboolean calc_source_regions  (GeglOperation *self,
                                       gpointer       dynamic_id);
 
@@ -130,11 +130,11 @@ process (GeglOperation *operation,
   return success;
 }
 
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *self)
 {
-  GeglRect result = {0,0,0,0};
-  GeglRect *in_rect;
+  GeglRectangle result = {0,0,0,0};
+  GeglRectangle *in_rect;
 
   in_rect = gegl_operation_source_get_defined_region (self, "input");
   if (in_rect)
@@ -149,7 +149,7 @@ static gboolean
 calc_source_regions (GeglOperation *self,
                      gpointer       dynamic_id)
 {
-  GeglRect *need_rect = gegl_operation_get_requested_region (self, dynamic_id);
+  GeglRectangle *need_rect = gegl_operation_get_requested_region (self, dynamic_id);
 
   gegl_operation_set_source_region (self, dynamic_id, "input", need_rect);
   return TRUE;

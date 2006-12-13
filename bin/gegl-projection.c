@@ -141,7 +141,7 @@ gegl_projection_class_init (GeglProjectionClass * klass)
       g_cclosure_marshal_VOID__BOXED,
       G_TYPE_NONE /* return type */,
       1 /* n_params */,
-      GEGL_TYPE_RECT /* param_types */);
+      GEGL_TYPE_RECTANGLE /* param_types */);
 
   projection_signals[INVALIDATED] =
       g_signal_new ("invalidated", G_TYPE_FROM_CLASS (klass),
@@ -152,7 +152,7 @@ gegl_projection_class_init (GeglProjectionClass * klass)
       g_cclosure_marshal_VOID__BOXED,
       G_TYPE_NONE /* return type */,
       1 /* n_params */,
-      GEGL_TYPE_RECT /* param_types */);
+      GEGL_TYPE_RECTANGLE /* param_types */);
   
 }
 
@@ -190,7 +190,7 @@ static gboolean task_monitor (gpointer foo)
       !projection->dirty_rects &&
       projection->render_id == 0) 
     {
-      GeglRect  *rectangles;
+      GeglRectangle *rectangles;
       gint           n_rectangles;
       gint           i;
 
@@ -198,13 +198,13 @@ static gboolean task_monitor (gpointer foo)
 
       for (i=0; i<n_rectangles && i<1; i++)
         {
-          GeglRect roi = *((GeglRect*)&rectangles[i]);
-          GeglRect *dr;
+          GeglRectangle roi = *((GeglRectangle*)&rectangles[i]);
+          GeglRectangle *dr;
           GeglRegion *tr = gegl_region_rectangle ((void*)&roi);
           gegl_region_subtract (projection->queued_region, tr);
           gegl_region_destroy (tr);
          
-          dr = g_malloc(sizeof (GeglRect));
+          dr = g_malloc(sizeof (GeglRectangle));
           *dr = roi;
           projection->dirty_rects = g_list_append (projection->dirty_rects, dr);
 
@@ -226,9 +226,9 @@ static gboolean task_monitor (gpointer foo)
 }
 
 static void
-node_invalidated (GeglNode *source,
-                  GeglRect *rect,
-                  gpointer  data)
+node_invalidated (GeglNode      *source,
+                  GeglRectangle *rect,
+                  gpointer       data)
 {
   GeglProjection *projection = GEGL_PROJECTION (data);
 
@@ -325,7 +325,7 @@ get_property (GObject    *gobject,
 
 
 void gegl_projection_forget_queue (GeglProjection *self,
-                                   GeglRect       *roi)
+                                   GeglRectangle  *roi)
 {
 
   if (roi)
@@ -348,7 +348,7 @@ void gegl_projection_forget_queue (GeglProjection *self,
 }
 
 void gegl_projection_forget (GeglProjection *self,
-                             GeglRect       *roi)
+                             GeglRectangle  *roi)
 {
   gegl_projection_forget_queue (self, roi);
 
@@ -368,7 +368,7 @@ void gegl_projection_forget (GeglProjection *self,
 }
 
 void gegl_projection_update_rect (GeglProjection *self,
-                                  GeglRect        roi)
+                                  GeglRectangle   roi)
 {
   GeglRegion *temp_region;
 
@@ -391,7 +391,7 @@ static gboolean task_render (gpointer foo)
   GeglProjection  *projection = GEGL_PROJECTION (foo);
   gint max_area = MAX_PIXELS;
 
-  GeglRect *dr;
+  GeglRectangle *dr;
 
   if (projection->dirty_rects)
     {
@@ -410,7 +410,7 @@ static gboolean task_render (gpointer foo)
               if (band_size<1)
                 band_size=1;
 
-              GeglRect *fragment = g_malloc (sizeof (GeglRect));
+              GeglRectangle *fragment = g_malloc (sizeof (GeglRectangle));
               *fragment = *dr;
 
               fragment->h = band_size;
@@ -427,7 +427,7 @@ static gboolean task_render (gpointer foo)
               if (band_size<1)
                 band_size=1;
 
-              GeglRect *fragment = g_malloc (sizeof (GeglRect));
+              GeglRectangle *fragment = g_malloc (sizeof (GeglRectangle));
               *fragment = *dr;
 
               fragment->w = band_size;
@@ -450,7 +450,7 @@ static gboolean task_render (gpointer foo)
       gegl_node_blit (projection->node, dr, projection->format, 0, (gpointer*) buf);
       gegl_buffer_set (projection->buffer, dr, buf, projection->format);
       
-      gegl_region_union_with_rect (projection->valid_region, (GeglRect*)dr);
+      gegl_region_union_with_rect (projection->valid_region, (GeglRectangle*)dr);
 
       g_signal_emit (projection, projection_signals[COMPUTED], 0, dr, NULL, NULL);
 

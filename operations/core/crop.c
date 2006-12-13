@@ -71,12 +71,12 @@ process (GeglOperation *operation,
   return  TRUE;
 }
 
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
-  GeglRect result = {0,0,0,0};
-  GeglChantOperation  *op_crop;
-  GeglRect            *in_rect;
+  GeglRectangle result = {0,0,0,0};
+  GeglChantOperation *op_crop;
+  GeglRectangle      *in_rect;
  
   op_crop = (GeglChantOperation*)(operation);
   in_rect = gegl_operation_source_get_defined_region (operation, "input");
@@ -102,13 +102,13 @@ calc_source_regions (GeglOperation *self,
   return TRUE;
 }
 
-static GeglRect
+static GeglRectangle
 get_affected_region (GeglOperation *operation,
                      const gchar   *input_pad,
-                     GeglRect       region)
+                     GeglRectangle  region)
 {
   GeglChantOperation  *op_crop = (GeglChantOperation*)(operation);
-  GeglRect crop_rect;
+  GeglRectangle        crop_rect;
 
   gegl_rect_set (&crop_rect, op_crop->x, op_crop->y, op_crop->width, op_crop->height);
   gegl_rect_intersect (&crop_rect, &crop_rect, &region);

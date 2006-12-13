@@ -40,8 +40,8 @@ typedef struct _GeglEvalMgrClass GeglEvalMgrClass;
 
 struct _GeglEvalMgr
 {
-  GeglObject  parent_instance;
-  GeglRect    roi;
+  GeglObject    parent_instance;
+  GeglRectangle roi;
 };
 
 struct _GeglEvalMgrClass

@@ -62,11 +62,11 @@ _gegl_float_epsilon_equal (float v1, float v2)
 }
 
 void
-gegl_rect_set (GeglRect *r,
-               gint x,
-               gint y,
-               guint w,
-               guint h)
+gegl_rect_set (GeglRectangle *r,
+               gint           x,
+               gint           y,
+               guint          w,
+               guint          h)
 {
   r->x = x;
   r->y = y;
@@ -75,9 +75,9 @@ gegl_rect_set (GeglRect *r,
 }
 
 void
-gegl_rect_bounding_box (GeglRect *dest,
-                        GeglRect *src1,
-                        GeglRect *src2)
+gegl_rect_bounding_box (GeglRectangle *dest,
+                        GeglRectangle *src1,
+                        GeglRectangle *src2)
 {
   gboolean s1_has_area = src1->w && src1->h;
   gboolean s2_has_area = src2->w && src2->h;
@@ -103,9 +103,9 @@ gegl_rect_bounding_box (GeglRect *dest,
 }
 
 gboolean
-gegl_rect_intersect (GeglRect *dest,
-                     GeglRect *src1,
-                     GeglRect *src2)
+gegl_rect_intersect (GeglRectangle *dest,
+                     GeglRectangle *src1,
+                     GeglRectangle *src2)
 {
   gint x1, x2, y1, y2;
 
@@ -135,8 +135,8 @@ gegl_rect_intersect (GeglRect *dest,
 }
 
 void
-gegl_rect_copy (GeglRect *to,
-                GeglRect *from)
+gegl_rect_copy (GeglRectangle *to,
+                GeglRectangle *from)
 {
   to->x = from->x;
   to->y = from->y;
@@ -145,8 +145,8 @@ gegl_rect_copy (GeglRect *to,
 }
 
 gboolean
-gegl_rect_contains (GeglRect *r,
-                    GeglRect *s)
+gegl_rect_contains (GeglRectangle *r,
+                    GeglRectangle *s)
 {
   if (s->x >= r->x &&
       s->y >= r->y &&
@@ -158,8 +158,8 @@ gegl_rect_contains (GeglRect *r,
 }
 
 gboolean
-gegl_rect_equal (GeglRect *r,
-                 GeglRect *s)
+gegl_rect_equal (GeglRectangle *r,
+                 GeglRectangle *s)
 {
   if (r->x == s->x &&
       r->y == s->y &&
@@ -171,11 +171,11 @@ gegl_rect_equal (GeglRect *r,
 }
 
 gboolean
-gegl_rect_equal_coords (GeglRect *r,
-                        gint      x,
-                        gint      y,
-                        gint      w,
-                        gint      h)
+gegl_rect_equal_coords (GeglRectangle *r,
+                        gint           x,
+                        gint           y,
+                        gint           w,
+                        gint           h)
 {
   if (r->x == x &&
       r->y == y &&
@@ -296,10 +296,10 @@ gegl_direct_logv (GLogLevelFlags  level,
 }
 
 
-static GeglRect *
-gegl_rect_dup (const GeglRect *rectangle)
+static GeglRectangle *
+gegl_rect_dup (const GeglRectangle *rectangle)
 {
-  GeglRect *result = g_new (GeglRect, 1);
+  GeglRectangle *result = g_new (GeglRectangle, 1);
   *result = *rectangle;
 
   return result;
@@ -311,7 +311,7 @@ gegl_rect_get_type (void)
   static GType our_type = 0;
   
   if (our_type == 0)
-    our_type = g_boxed_type_register_static (g_intern_static_string ("GeglRect"),
+    our_type = g_boxed_type_register_static (g_intern_static_string ("GeglRectangle"),
 					     (GBoxedCopyFunc)gegl_rect_dup,
 					     (GBoxedFreeFunc)g_free);
   return our_type;

@@ -47,7 +47,7 @@ process_inner (GeglOperation *operation,
   GeglOperationPointFilter *point_filter = GEGL_OPERATION_POINT_FILTER (operation);
 
   GeglBuffer *input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
-  GeglRect   *result = gegl_operation_result_rect (operation, dynamic_id);
+  GeglRectangle *result = gegl_operation_result_rect (operation, dynamic_id);
   GeglBuffer *output;
 
 

@@ -38,12 +38,12 @@ typedef struct _GeglNodeDynamicClass GeglNodeDynamicClass;
 
 struct _GeglNodeDynamic
 {
-  GObject   parent_instance;
-  GeglNode *node;
-  gpointer  dynamic_id;
+  GObject        parent_instance;
+  GeglNode      *node;
+  gpointer       dynamic_id;
 
-  GeglRect  need_rect;
-  GeglRect  result_rect;
+  GeglRectangle  need_rect;
+  GeglRectangle  result_rect;
 
   gint      refs; /*< set to number of nodes that depends on it before evaluation begins,
                       each time data is fetched from the op the reference count is dropped,
@@ -59,27 +59,27 @@ struct _GeglNodeDynamicClass
 };
 
 
-GType      gegl_node_dynamic_get_type         (void) G_GNUC_CONST;
-GeglRect * gegl_node_dynamic_get_need_rect    (GeglNodeDynamic *node);
-void       gegl_node_dynamic_set_need_rect    (GeglNodeDynamic *node,
-                                               gint             x,
-                                               gint             y,
-                                               gint             width,
-                                               gint             height);
-GeglRect * gegl_node_dynamic_get_result_rect  (GeglNodeDynamic *node);
-void       gegl_node_dynamic_set_result_rect  (GeglNodeDynamic *node,
-                                               gint             x,
-                                               gint             y,
-                                               gint             width,
-                                               gint             height);
-void       gegl_node_dynamic_set_property     (GeglNodeDynamic *node,
-                                               const gchar     *name,
-                                               const GValue    *value);
-void       gegl_node_dynamic_get_property     (GeglNodeDynamic *node,
-                                               const gchar     *name,
-                                               GValue          *value);
-void       gegl_node_dynamic_remove_property  (GeglNodeDynamic *self,
-                                               const gchar     *name);
+GType           gegl_node_dynamic_get_type         (void) G_GNUC_CONST;
+GeglRectangle * gegl_node_dynamic_get_need_rect    (GeglNodeDynamic *node);
+void            gegl_node_dynamic_set_need_rect    (GeglNodeDynamic *node,
+                                                    gint             x,
+                                                    gint             y,
+                                                    gint             width,
+                                                    gint             height);
+GeglRectangle * gegl_node_dynamic_get_result_rect  (GeglNodeDynamic *node);
+void            gegl_node_dynamic_set_result_rect  (GeglNodeDynamic *node,
+                                                    gint             x,
+                                                    gint             y,
+                                                    gint             width,
+                                                    gint             height);
+void            gegl_node_dynamic_set_property     (GeglNodeDynamic *node,
+                                                    const gchar     *name,
+                                                    const GValue    *value);
+void            gegl_node_dynamic_get_property     (GeglNodeDynamic *node,
+                                                    const gchar     *name,
+                                                    GValue          *value);
+void            gegl_node_dynamic_remove_property  (GeglNodeDynamic *self,
+                                                    const gchar     *name);
 
 G_END_DECLS
 

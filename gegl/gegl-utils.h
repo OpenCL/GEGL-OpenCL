@@ -24,28 +24,28 @@
 G_BEGIN_DECLS
 
 
-void        gegl_rect_set             (GeglRect *r,
-                                       gint      x,
-                                       gint      y,
-                                       guint     w,
-                                       guint     h);
-gboolean    gegl_rect_equal           (GeglRect *r,
-                                       GeglRect *s);
-gboolean    gegl_rect_equal_coords    (GeglRect *r,
-                                       gint      x,
-                                       gint      y,
-                                       gint      w,
-                                       gint      h);
-void        gegl_rect_copy            (GeglRect *to,
-                                       GeglRect *from);
-void        gegl_rect_bounding_box    (GeglRect *dest,
-                                       GeglRect *src1,
-                                       GeglRect *src2);
-gboolean    gegl_rect_intersect       (GeglRect *dest,
-                                       GeglRect *src1,
-                                       GeglRect *src2);
-gboolean    gegl_rect_contains        (GeglRect *r,
-                                       GeglRect *s);
+void        gegl_rect_set             (GeglRectangle *r,
+                                       gint           x,
+                                       gint           y,
+                                       guint          w,
+                                       guint          h);
+gboolean    gegl_rect_equal           (GeglRectangle *r,
+                                       GeglRectangle *s);
+gboolean    gegl_rect_equal_coords    (GeglRectangle *r,
+                                       gint           x,
+                                       gint           y,
+                                       gint           w,
+                                       gint           h);
+void        gegl_rect_copy            (GeglRectangle *to,
+                                       GeglRectangle *from);
+void        gegl_rect_bounding_box    (GeglRectangle *dest,
+                                       GeglRectangle *src1,
+                                       GeglRectangle *src2);
+gboolean    gegl_rect_intersect       (GeglRectangle *dest,
+                                       GeglRectangle *src1,
+                                       GeglRectangle *src2);
+gboolean    gegl_rect_contains        (GeglRectangle *r,
+                                       GeglRectangle *s);
 
 void        gegl_log_debug            (gchar    *file,
                                        gint      line,
@@ -65,7 +65,7 @@ void        gegl_log_message          (gchar    *file,
 void        gegl_log_direct           (gchar    *format,
                                        ...);
 GType       gegl_rect_get_type        (void) G_GNUC_CONST;
-#define     GEGL_TYPE_RECT            (gegl_rect_get_type ())
+#define     GEGL_TYPE_RECTANGLE            (gegl_rect_get_type ())
 
 #define GEGL_FLOAT_EPSILON            (1e-5)
 #define GEGL_FLOAT_IS_ZERO(value)     (_gegl_float_epsilon_zero ((value)))

@@ -23,9 +23,9 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
   new (GeglImageBuffer *dest, 
        GeglImageBuffer *src1,
        GeglImageBuffer *src2,       
-       GeglRect *dest_rect,
-       GeglRect *src1_rect,
-       GeglRect *src2_rect,
+       GeglRectangle *dest_rect,
+       GeglRectangle *src1_rect,
+       GeglRectangle *src2_rect,
        GeglCompositeMode mode)
   {
     GeglCompositeOp * self = GEGL_COMPOSITE_OP(GET_NEW);
@@ -47,9 +47,9 @@ class Gegl:Composite:Op from Gegl:Dual:Src:Op {
               GeglImageBuffer *dest, 
               GeglImageBuffer *src1,
               GeglImageBuffer *src2,       
-              GeglRect *dest_rect,
-              GeglRect *src1_rect,
-              GeglRect *src2_rect,
+              GeglRectangle *dest_rect,
+              GeglRectangle *src1_rect,
+              GeglRectangle *src2_rect,
               GeglCompositeMode mode)
   {
     if(GEGL_OBJECT(self)->constructed) 

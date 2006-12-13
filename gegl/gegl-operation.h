@@ -75,15 +75,15 @@ struct _GeglOperationClass
    * this op. (is already implemented for GeglOperationPointFilter and
    * GeglOperationPointComposer.
    */
-  GeglRect   (*get_defined_region)  (GeglOperation *self);
+  GeglRectangle   (*get_defined_region)  (GeglOperation *self);
 
   /* Computes the region in output (same affected rect assumed for all outputs)
    * when a given region has changed on an input. Used to aggregate dirt in
    * the graph.
    */
-  GeglRect   (*get_affected_region)  (GeglOperation *self,
-                                      const gchar   *input_pad,
-                                      GeglRect       region);
+  GeglRectangle   (*get_affected_region)  (GeglOperation *self,
+                                           const gchar   *input_pad,
+                                           GeglRectangle region);
 
   /* Compute the region of interests on our own sources (and use
    * gegl_operation_set_source_region() on each of them).
@@ -98,29 +98,29 @@ struct _GeglOperationClass
 };
 
 /* returns the ROI passed to _this_ operation */
-GeglRect * gegl_operation_get_requested_region      (GeglOperation *operation,
+GeglRectangle * gegl_operation_get_requested_region (GeglOperation *operation,
                                                      gpointer       dynamic_id);
 
 /* retrieves the bounding box of a connected input */
-GeglRect * gegl_operation_source_get_defined_region (GeglOperation *operation,
+GeglRectangle * gegl_operation_source_get_defined_region (GeglOperation *operation,
                                                      const gchar   *pad_name);
 
 /* sets the ROI needed to be computed on one of the sources */
 void       gegl_operation_set_source_region         (GeglOperation *operation,
                                                      gpointer       dynamic_id,
                                                      const gchar   *pad_name,
-                                                     GeglRect      *region);
+                                                     GeglRectangle *region);
 
 /* returns the bounding box of the buffer that needs to be computed */
-GeglRect * gegl_operation_result_rect               (GeglOperation *operation,
+GeglRectangle * gegl_operation_result_rect               (GeglOperation *operation,
                                                      gpointer       dynamic_id);
 
 
 /* virtual method invokers */
-GeglRect   gegl_operation_get_affected_region       (GeglOperation *self,
+GeglRectangle   gegl_operation_get_affected_region       (GeglOperation *self,
                                                      const gchar   *input_pad,
-                                                     GeglRect       region);
-GeglRect   gegl_operation_get_defined_region        (GeglOperation *self);
+                                                     GeglRectangle  region);
+GeglRectangle   gegl_operation_get_defined_region        (GeglOperation *self);
 gboolean   gegl_operation_calc_source_regions       (GeglOperation *self,
                                                      gpointer       dynamic_id);
 void       gegl_operation_associate                 (GeglOperation *self,

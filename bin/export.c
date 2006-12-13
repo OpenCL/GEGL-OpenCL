@@ -4,16 +4,16 @@
 #include <png.h>
 
 static gint
-gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
-                        GeglRect    *rect,
-                        const gchar *path);
+gegl_buffer_export_png (GeglBuffer    *gegl_buffer,
+                        GeglRectangle *rect,
+                        const gchar   *path);
 
 #include <stdio.h>
 
 
 static void set_to_defined (GtkWidget *export)
 {
-  GeglRect rect;
+  GeglRectangle rect;
   GtkEntry *x0 = g_object_get_data (G_OBJECT (export), "x0");
   GtkEntry *y0 = g_object_get_data (G_OBJECT (export), "y0");
   GtkEntry *width = g_object_get_data (G_OBJECT (export), "width");
@@ -38,7 +38,7 @@ static void button_defined_clicked (GtkButton *button,
   set_to_defined (GTK_WIDGET (user_data));
 }
 
-static GeglRect get_input_rect (void)
+static GeglRectangle get_input_rect (void)
 {
   GeglNode *iter = gegl_graph_output (editor.gegl, "output");
   gegl_node_get_bounding_box (editor.gegl);  /* to trigger defined setting for all */
@@ -53,7 +53,7 @@ static void button_input_clicked (GtkButton *button,
                                   gpointer   user_data)
 {
   GtkWidget *export = GTK_WIDGET (user_data);
-  GeglRect rect={42,42,42,42};
+  GeglRectangle rect={42,42,42,42};
   GtkEntry *x0 = g_object_get_data (G_OBJECT (export), "x0");
   GtkEntry *y0 = g_object_get_data (G_OBJECT (export), "y0");
   GtkEntry *width = g_object_get_data (G_OBJECT (export), "width");
@@ -74,12 +74,12 @@ static void button_input_clicked (GtkButton *button,
 static void button_view_clicked (GtkButton *button,
                                  gpointer   user_data)
 {
-  GtkWidget *export = GTK_WIDGET (user_data);
-  GeglRect rect={23,23,42,42};
-  GtkEntry *x0 = g_object_get_data (G_OBJECT (export), "x0");
-  GtkEntry *y0 = g_object_get_data (G_OBJECT (export), "y0");
-  GtkEntry *width = g_object_get_data (G_OBJECT (export), "width");
-  GtkEntry *height = g_object_get_data (G_OBJECT (export), "height");
+  GtkWidget     *export = GTK_WIDGET (user_data);
+  GeglRectangle  rect   = {23,23,42,42};
+  GtkEntry      *x0     = g_object_get_data (G_OBJECT (export), "x0");
+  GtkEntry      *y0     = g_object_get_data (G_OBJECT (export), "y0");
+  GtkEntry      *width  = g_object_get_data (G_OBJECT (export), "width");
+  GtkEntry      *height = g_object_get_data (G_OBJECT (export), "height");
   gchar buf[128];
 
   g_object_get (G_OBJECT (editor.drawing_area), "x", &rect.x, "y" ,&rect.y, NULL);
@@ -100,7 +100,7 @@ static void button_render_clicked (GtkButton *button,
                                    gpointer   user_data)
 {
   GeglProjection *projection;
-  GeglRect   rect;
+  GeglRectangle   rect;
   GtkWidget *export = GTK_WIDGET (user_data);
   GtkEntry *x0 = g_object_get_data (G_OBJECT (export), "x0");
   GtkEntry *y0 = g_object_get_data (G_OBJECT (export), "y0");
@@ -244,9 +244,9 @@ void export_window (void)
 }
 
 static gint
-gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
-                        GeglRect    *rect,
-                        const gchar *path)
+gegl_buffer_export_png (GeglBuffer    *gegl_buffer,
+                        GeglRectangle *rect,
+                        const gchar   *path)
 {
   gint           row_stride = rect->w * 4;
   FILE          *fp;
@@ -323,7 +323,7 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
 
   for (i=0; i< rect->h; i++)
     {
-      GeglRect    line = {rect->x, rect->y + i, rect->w, 1};
+      GeglRectangle    line = {rect->x, rect->y + i, rect->w, 1};
       gegl_buffer_get (gegl_buffer, &line, pixels, babl_format (format_string), 1.0);
       png_write_rows (png, &pixels, 1);
     }

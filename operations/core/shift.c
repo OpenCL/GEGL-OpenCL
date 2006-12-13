@@ -65,12 +65,12 @@ process (GeglOperation *operation,
   return  TRUE;
 }
 
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
-  GeglRect result = {0,0,0,0};
-  GeglChantOperation  *op_shift = (GeglChantOperation*)(operation);
-  GeglRect *in_rect = gegl_operation_source_get_defined_region (operation, "input");
+  GeglRectangle       result = {0,0,0,0};
+  GeglChantOperation *op_shift = (GeglChantOperation*)(operation);
+  GeglRectangle      *in_rect = gegl_operation_source_get_defined_region (operation, "input");
   if (!in_rect)
     return result;
 
@@ -81,10 +81,10 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
-static GeglRect
+static GeglRectangle
 get_affected_region (GeglOperation *operation,
                      const gchar   *input_pad,
-                     GeglRect       region)
+                     GeglRectangle  region)
 {
   GeglChantOperation  *op_shift = (GeglChantOperation*)(operation);
  
@@ -97,8 +97,8 @@ static gboolean
 calc_source_regions (GeglOperation *self,
                      gpointer       dynamic_id)
 {
-  GeglChantOperation  *op_shift = (GeglChantOperation*)(self);
-  GeglRect rect = *gegl_operation_get_requested_region (self, dynamic_id);
+  GeglChantOperation *op_shift = (GeglChantOperation*)(self);
+  GeglRectangle       rect = *gegl_operation_get_requested_region (self, dynamic_id);
 
   rect.x -= op_shift->x;
   rect.y -= op_shift->y;

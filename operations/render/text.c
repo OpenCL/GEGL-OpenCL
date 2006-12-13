@@ -142,7 +142,7 @@ process (GeglOperation *operation,
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer         *output = NULL;
-  GeglRect           *need;
+  GeglRectangle      *need;
 
   need = gegl_operation_get_requested_region (operation, dynamic_id);
 
@@ -184,10 +184,10 @@ process (GeglOperation *operation,
   return  TRUE;
 }
 
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
-  GeglRect result = {0,0,0,0};
+  GeglRectangle result = {0,0,0,0};
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   gint status = FALSE;
 

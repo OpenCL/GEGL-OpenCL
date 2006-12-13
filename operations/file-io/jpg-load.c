@@ -96,10 +96,10 @@ process (GeglOperation *operation,
 }
 
 
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
-  GeglRect result = {0,0,0,0};
+  GeglRectangle result = {0,0,0,0};
   GeglChantOperation       *self      = GEGL_CHANT_OPERATION (operation);
   gint width, height;
   gint status;
@@ -204,7 +204,7 @@ gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
 
   while (cinfo.output_scanline < cinfo.output_height)
     {
-      GeglRect rect = {dest_x, dest_y + row++, cinfo.output_width, 1};
+      GeglRectangle rect = {dest_x, dest_y + row++, cinfo.output_width, 1};
 
       jpeg_read_scanlines (&cinfo, buffer, 1);
       gegl_buffer_set (gegl_buffer, &rect, buffer[0], babl_format ("R'G'B' u8"));

@@ -377,18 +377,18 @@ gegl_buffer_constructor (GType                  type,
     */
    if (GEGL_IS_BUFFER (source))
      {
-       GeglRect parent = {
+       GeglRectangle parent = {
          GEGL_BUFFER (source)->abyss_x - buffer->shift_x,
          GEGL_BUFFER (source)->abyss_y - buffer->shift_y,
          GEGL_BUFFER (source)->abyss_width,
          GEGL_BUFFER (source)->abyss_height};
-       GeglRect request = {
+       GeglRectangle request = {
          buffer->abyss_x,
          buffer->abyss_y,
          buffer->abyss_width,
          buffer->abyss_height
        };
-       GeglRect self;
+       GeglRectangle self;
        gegl_rect_intersect (&self, &parent, &request);
 
        buffer->abyss_x = self.x;
@@ -920,10 +920,11 @@ gegl_buffer_iterate (GeglBuffer *buffer,
     }
 }
 
-void          gegl_buffer_set                 (GeglBuffer *buffer,
-                                               GeglRect   *rect,
-                                               void       *src,
-                                               void       *format)
+void
+gegl_buffer_set (GeglBuffer    *buffer,
+                 GeglRectangle *rect,
+                 void          *src,
+                 void          *format)
 {
   GeglBuffer *sub_buf;
   if (format == NULL)
@@ -952,11 +953,11 @@ void          gegl_buffer_set                 (GeglBuffer *buffer,
  * level:  halving levels 0 = 1:1 1=1:2 2=1:4 3=1:8 ..
  *
  */
-static void gegl_buffer_get_scaled (GeglBuffer *buffer,
-                                    GeglRect   *rect,
-                                    void       *dst,
-                                    void       *format,
-                                    gint        level)
+static void gegl_buffer_get_scaled (GeglBuffer    *buffer,
+                                    GeglRectangle *rect,
+                                    void          *dst,
+                                    void          *format,
+                                    gint           level)
 {
   GeglBuffer *sub_buf = g_object_new (GEGL_TYPE_BUFFER,
                                       "source", buffer,
@@ -1115,11 +1116,11 @@ static void resample_bilinear_u8 (void *dest_buf,
     }
 }
 
-void gegl_buffer_get (GeglBuffer *buffer,
-                      GeglRect   *rect,
-                      void       *dest_buf,
-                      void       *format,
-                      gdouble     scale)
+void gegl_buffer_get (GeglBuffer    *buffer,
+                      GeglRectangle *rect,
+                      void          *dest_buf,
+                      void          *format,
+                      gdouble        scale)
 {
   if (format == NULL)
     format = buffer->format;
@@ -1142,7 +1143,7 @@ void gegl_buffer_get (GeglBuffer *buffer,
       gint buf_width = rect->w/scale;
       gint buf_height = rect->h/scale;
       gint bpp = BABL(format)->format.bytes_per_pixel;
-      GeglRect sample_rect = {rect->x,
+      GeglRectangle sample_rect = {rect->x,
                               rect->y,
                               buf_width,
                               buf_height};

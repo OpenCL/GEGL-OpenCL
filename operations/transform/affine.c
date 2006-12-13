@@ -57,17 +57,17 @@ static void       set_property         (GObject       *object,
                                         GParamSpec    *pspec);
 static void       bounding_box         (gdouble       *points,
                                         gint           num_points,
-                                        GeglRect      *output);
+                                        GeglRectangle *output);
 static gboolean   is_intermediate_node (OpAffine      *affine);
 static gboolean   is_composite_node    (OpAffine      *affine);
 static void       get_source_matrix    (OpAffine      *affine,
                                         Matrix3        output);
-static GeglRect   get_defined_region   (GeglOperation *op);
+static GeglRectangle   get_defined_region   (GeglOperation *op);
 static gboolean   calc_source_regions  (GeglOperation *op,
                                         gpointer       dynamic_id);
-static GeglRect   get_affected_region  (GeglOperation *operation,
+static GeglRectangle   get_affected_region (GeglOperation *operation,
                                         const gchar   *input_pad,
-                                        GeglRect       region);
+                                        GeglRectangle  region);
 static gboolean   process              (GeglOperation *op,
                                         gpointer       dynamic_id);
 
@@ -231,9 +231,9 @@ set_property (GObject      *object,
 }
 
 static void
-bounding_box (gdouble  *points,
-              gint      num_points,
-              GeglRect *output)
+bounding_box (gdouble       *points,
+              gint           num_points,
+              GeglRectangle *output)
 {
   gint    i;
   gdouble min_x,
@@ -329,12 +329,12 @@ get_source_matrix (OpAffine *affine,
   matrix3_copy (output, OP_AFFINE (source)->matrix);
 }
 
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *op)
 {
   OpAffine      *affine  = (OpAffine *) op;
   OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);
-  GeglRect       in_rect = {0,0,0,0},
+  GeglRectangle  in_rect = {0,0,0,0},
                  have_rect;
   gdouble        have_points [8];
   gint           i;
@@ -404,12 +404,12 @@ static gboolean
 calc_source_regions (GeglOperation *op,
                      gpointer       dynamic_id)
 {
-  OpAffine *affine = (OpAffine *) op;
-  Matrix3   inverse;
-  GeglRect  requested_rect,
-            need_rect;
-  gdouble   need_points [8];
-  gint      i;
+  OpAffine      *affine = (OpAffine *) op;
+  Matrix3        inverse;
+  GeglRectangle  requested_rect,
+                 need_rect;
+  gdouble        need_points [8];
+  gint           i;
 
   requested_rect = *(gegl_operation_get_requested_region (op, dynamic_id));
 
@@ -460,14 +460,14 @@ calc_source_regions (GeglOperation *op,
   return TRUE;
 }
 
-static GeglRect
+static GeglRectangle
 get_affected_region (GeglOperation *op,
                      const gchar   *input_pad,
-                     GeglRect       region)
+                     GeglRectangle  region)
 {
   OpAffine      *affine  = (OpAffine *) op;
   OpAffineClass *klass   = OP_AFFINE_GET_CLASS (affine);
-  GeglRect       affected_rect;
+  GeglRectangle  affected_rect;
   gdouble        affected_points [8];
   gint           i;
 
@@ -535,10 +535,10 @@ static gboolean
 process (GeglOperation *op,
          gpointer       dynamic_id)
 {
-  OpAffine   *affine = (OpAffine *) op;
-  GeglBuffer *filter_input;
-  GeglBuffer *output;
-  GeglRect   *result = gegl_operation_result_rect (op, dynamic_id);
+  OpAffine      *affine = (OpAffine *) op;
+  GeglBuffer    *filter_input;
+  GeglBuffer    *output;
+  GeglRectangle *result = gegl_operation_result_rect (op, dynamic_id);
 
   filter_input = GEGL_BUFFER (gegl_operation_get_data (op, dynamic_id, "input"));
 

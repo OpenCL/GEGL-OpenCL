@@ -84,10 +84,10 @@ process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer   *input;
-  GeglBuffer   *source;
-  GeglRect     *result  = gegl_operation_result_rect (operation, dynamic_id);
-  SDL_Surface **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
+  GeglBuffer         *input;
+  GeglBuffer         *source;
+  GeglRectangle      *result  = gegl_operation_result_rect (operation, dynamic_id);
+  SDL_Surface       **sdl_outwin = NULL;      //op_sym (op, "sdl_outwin");
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
 

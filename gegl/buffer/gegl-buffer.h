@@ -63,22 +63,22 @@ struct _GeglBufferClass
 GType         gegl_buffer_get_type   (void) G_GNUC_CONST;
 
 
-void        * gegl_buffer_get_format (GeglBuffer *buffer);
-gint          gegl_buffer_pixels     (GeglBuffer *buffer);
-gint          gegl_buffer_px_size    (GeglBuffer *buffer);
+void        * gegl_buffer_get_format (GeglBuffer    *buffer);
+gint          gegl_buffer_pixels     (GeglBuffer    *buffer);
+gint          gegl_buffer_px_size    (GeglBuffer    *buffer);
 
-void          gegl_buffer_get        (GeglBuffer *buffer,
-                                      GeglRect   *rect,
-                                      void       *dest,
-                                      void       *format,
-                                      gdouble     scale);
+void          gegl_buffer_get        (GeglBuffer    *buffer,
+                                      GeglRectangle *rect,
+                                      void          *dest,
+                                      void          *format,
+                                      gdouble        scale);
 
-void          gegl_buffer_set        (GeglBuffer *buffer,
-                                      GeglRect   *rect,
-                                      void       *src,
-                                      void       *format);
+void          gegl_buffer_set        (GeglBuffer    *buffer,
+                                      GeglRectangle *rect,
+                                      void          *src,
+                                      void          *format);
 
-GeglStorage * gegl_buffer_storage    (GeglBuffer *buffer);
+GeglStorage * gegl_buffer_storage    (GeglBuffer    *buffer);
 
 gint          gegl_buffer_leaks      (void);
 

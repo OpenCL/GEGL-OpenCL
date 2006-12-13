@@ -53,10 +53,10 @@ process (GeglOperation *operation,
   return TRUE;
 }
 
-static GeglRect
+static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
-  GeglRect result = {0,0,0,0};
+  GeglRectangle result = {0,0,0,0};
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
   if (!self->pixbuf)

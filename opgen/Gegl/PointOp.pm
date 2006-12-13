@@ -128,7 +128,7 @@ sub print_prepare
   void
   prepare(GeglOp *self_op,
           GeglImage *dest,
-	  GeglRect *dest_rect)
+	  GeglRectangle *dest_rect)
   {
     $op->{prepare}
 

@@ -31,8 +31,8 @@ gegl_chant_int (pattern, 0, 3, 0, "Bayer pattern used, 0 seems to work for some 
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
-static GeglRect get_source_rect (GeglOperation *self,
-                                 gpointer       dynamic_id);
+static GeglRectangle get_source_rect (GeglOperation *self,
+                                      gpointer       dynamic_id);
 
 #include <stdio.h>
 static void
@@ -55,9 +55,9 @@ process (GeglOperation *operation,
   input  = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
 
     {
-      GeglRect   *result = gegl_operation_result_rect (operation, dynamic_id);
-      GeglRect    need   = get_source_rect (operation, dynamic_id);
-      GeglBuffer *temp_in;
+      GeglRectangle *result = gegl_operation_result_rect (operation, dynamic_id);
+      GeglRectangle  need   = get_source_rect (operation, dynamic_id);
+      GeglBuffer    *temp_in;
 
       if (result->w==0 ||
           result->h==0)
@@ -174,11 +174,11 @@ demosaic (GeglChantOperation *op,
 }
 
 #include <math.h>
-static GeglRect 
+static GeglRectangle 
 get_defined_region (GeglOperation *operation)
 {
-  GeglRect  result = {0,0,0,0};
-  GeglRect *in_rect = gegl_operation_source_get_defined_region (operation,
+  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation,
                                                                 "input");
   if (!in_rect)
     return result;
@@ -194,10 +194,10 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
-static GeglRect get_source_rect (GeglOperation *self,
-                                 gpointer       dynamic_id)
+static GeglRectangle get_source_rect (GeglOperation *self,
+                                      gpointer       dynamic_id)
 {
-  GeglRect            rect;
+  GeglRectangle            rect;
 
   rect  = *gegl_operation_get_requested_region (self, dynamic_id);
   if (rect.w != 0 &&
@@ -214,17 +214,17 @@ static gboolean
 calc_source_regions (GeglOperation *self,
                      gpointer       dynamic_id)
 {
-  GeglRect need = get_source_rect (self, dynamic_id);
+  GeglRectangle need = get_source_rect (self, dynamic_id);
 
   gegl_operation_set_source_region (self, dynamic_id, "input", &need);
 
   return TRUE;
 }
 
-static GeglRect
+static GeglRectangle
 get_affected_region (GeglOperation *self,
                      const gchar   *input_pad,
-                     GeglRect       region)
+                     GeglRectangle  region)
 {
   gint                radius;
  

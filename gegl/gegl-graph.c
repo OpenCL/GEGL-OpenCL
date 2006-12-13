@@ -163,11 +163,11 @@ GeglNode * gegl_graph_create_node      (GeglNode     *self,
 }
 
 static void
-source_invalidated (GeglNode *source,
-                    GeglRect *rect,
-                    gpointer  data)
+source_invalidated (GeglNode      *source,
+                    GeglRectangle *rect,
+                    gpointer       data)
 {
-  GeglRect dirty_rect;
+  GeglRectangle dirty_rect;
   GeglNode *destination = GEGL_NODE (data);
   gchar *source_name;
   gchar *destination_name;

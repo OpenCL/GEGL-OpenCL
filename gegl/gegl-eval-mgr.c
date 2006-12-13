@@ -56,7 +56,7 @@ gegl_eval_mgr_class_init (GeglEvalMgrClass * klass)
 static void
 gegl_eval_mgr_init (GeglEvalMgr *self)
 {
-  GeglRect roi={0,0,-1,-1};
+  GeglRectangle roi={0,0,-1,-1};
   self->roi = roi;
 }
 
@@ -114,7 +114,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   if (self->roi.w==-1 &&
       self->roi.h==-1)
     {
-      GeglRect *root_have_rect = gegl_node_get_have_rect (root);
+      GeglRectangle *root_have_rect = gegl_node_get_have_rect (root);
       g_assert (root_have_rect);
       self->roi = *root_have_rect;
     }

@@ -24,7 +24,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   public 
   GeglFillOp *
   new (GeglImageBuffer *dest, 
-       GeglRect *dest_rect,
+       GeglRectangle *dest_rect,
        GeglColor *fill_color)
   {
     GeglFillOp * self = GEGL_FILL_OP(GET_NEW);
@@ -43,7 +43,7 @@ class Gegl:Fill:Op from Gegl:Point:Op {
   gboolean 
   constructor(self, 
               GeglImageBuffer *dest, 
-              GeglRect *dest_rect,
+              GeglRectangle *dest_rect,
               GeglColor *color)
   {
 

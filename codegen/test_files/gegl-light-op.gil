@@ -24,9 +24,9 @@ class Gegl:Light:Op from Gegl:Dual:Src:Op {
   new (GeglImageBuffer *dest, 
        GeglImageBuffer *src1,
        GeglImageBuffer *src2,       
-       GeglRect *dest_rect,
-       GeglRect *src1_rect,
-       GeglRect *src2_rect)
+       GeglRectangle *dest_rect,
+       GeglRectangle *src1_rect,
+       GeglRectangle *src2_rect)
   {
     GeglLightOp * self = GEGL_LIGHT_OP(GET_NEW);
 
@@ -47,9 +47,9 @@ class Gegl:Light:Op from Gegl:Dual:Src:Op {
               GeglImageBuffer *dest,
               GeglImageBuffer *src1,
               GeglImageBuffer *src2,
-              GeglRect *dest_rect,
-              GeglRect *src1_rect,
-              GeglRect *src2_rect)        
+              GeglRectangle *dest_rect,
+              GeglRectangle *src1_rect,
+              GeglRectangle *src2_rect)        
   {
     GeglPointOp *point_op = GEGL_POINT_OP (self);
     GeglPointOpClass *point_op_class = 

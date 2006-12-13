@@ -125,14 +125,14 @@ gegl_region_new (void)
 
 /**
  * gegl_region_rectangle:
- * @rectangle: a #GeglRect
+ * @rectangle: a #GeglRectangle
  * 
  * Creates a new region containing the area @rectangle.
  * 
  * Return value: a new region
  **/
 GeglRegion *
-gegl_region_rectangle (GeglRect *rectangle)
+gegl_region_rectangle (GeglRectangle *rectangle)
 {
   GeglRegion *temp;
 
@@ -186,7 +186,7 @@ gegl_region_copy (GeglRegion *region)
  */
 void
 gegl_region_get_clipbox (GeglRegion    *region, 
-			GeglRect *rectangle)
+			 GeglRectangle *rectangle)
 {
   g_return_if_fail (region != NULL);
   g_return_if_fail (rectangle != NULL);
@@ -209,8 +209,8 @@ gegl_region_get_clipbox (GeglRegion    *region,
  **/
 void
 gegl_region_get_rectangles (GeglRegion     *region,
-                           GeglRect **rectangles,
-                           gint          *n_rectangles)
+                            GeglRectangle **rectangles,
+                            gint           *n_rectangles)
 {
   gint i;
   
@@ -219,7 +219,7 @@ gegl_region_get_rectangles (GeglRegion     *region,
   g_return_if_fail (n_rectangles != NULL);
   
   *n_rectangles = region->numRects;
-  *rectangles = g_new (GeglRect, region->numRects);
+  *rectangles = g_new (GeglRectangle, region->numRects);
 
   for (i = 0; i < region->numRects; i++)
     {
@@ -235,7 +235,7 @@ gegl_region_get_rectangles (GeglRegion     *region,
 /**
  * gegl_region_union_with_rect:
  * @region: a #GeglRegion.
- * @rect: a #GeglRect.
+ * @rect: a #GeglRectangle.
  * 
  * Sets the area of @region to the union of the areas of @region and
  * @rect. The resulting area is the set of pixels contained in
@@ -243,7 +243,7 @@ gegl_region_get_rectangles (GeglRegion     *region,
  **/
 void
 gegl_region_union_with_rect (GeglRegion    *region,
-			    GeglRect *rect)
+			     GeglRectangle *rect)
 {
   GeglRegion tmp_region;
 
@@ -1590,7 +1590,7 @@ gegl_region_point_in (GeglRegion *region,
 /**
  * gegl_region_rect_in: 
  * @region: a #GeglRegion.
- * @rectangle: a #GeglRect.
+ * @rectangle: a #GeglRectangle.
  *
  * Tests whether a rectangle is within a region.
  *
@@ -1600,7 +1600,7 @@ gegl_region_point_in (GeglRegion *region,
  */
 GeglOverlapType
 gegl_region_rect_in (GeglRegion    *region,
-		    GeglRect *rectangle)
+		     GeglRectangle *rectangle)
 {
   GeglRegionBox *pbox;
   GeglRegionBox *pboxEnd;
