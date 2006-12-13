@@ -14,8 +14,6 @@ gui_sources = \
 	gegl-node-editor-brightness-contrast.c	\
 	gegl-node-editor-level.c		\
 	gegl-node-editor.h			\
-	gegl-projection.c			\
-	gegl-projection.h			\
 	gegl-store.c				\
 	gegl-store.h				\
 	gegl-tree-editor-action.c		\

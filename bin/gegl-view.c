@@ -117,15 +117,15 @@ finalize (GObject *gobject)
 {
   GeglView * self = GEGL_VIEW (gobject);
 
-  if (self->projection)
-    g_object_unref (self->projection);
+  if (self->cache)
+    g_object_unref (self->cache);
   if (self->node)
     g_object_unref (self->node);
 
   G_OBJECT_CLASS (gegl_view_parent_class)->finalize (gobject);
 }
 
-static void computed_event (GeglProjection *self,
+static void computed_event (GeglCache *self,
                             void           *foo,
                             void           *user_data)
 {
@@ -157,7 +157,7 @@ static void computed_event (GeglProjection *self,
 }
 
 
-static void invalidated_event (GeglProjection *self,
+static void invalidated_event (GeglCache *self,
                                void           *foo,
                                void           *user_data)
 {
@@ -175,22 +175,22 @@ set_property (GObject      *gobject,
   switch (property_id)
     {
     case PROP_NODE:
-      /* FIXME: a view should probably be made from a projection */
+      /* FIXME: a view should probably be made from a cache */
       if (self->node)
         g_object_unref (self->node);
-      if (self->projection)
-        g_object_unref (self->projection);
+      if (self->cache)
+        g_object_unref (self->cache);
       if (g_value_get_object (value))
         {
           self->node = GEGL_NODE (g_value_dup_object (value));
-          self->projection = g_object_new (GEGL_TYPE_PROJECTION,
-                                           "node", self->node,
-                                           "format", babl_format ("R'G'B' u8"),
-                                           NULL);
-          g_signal_connect (G_OBJECT (self->projection), "computed",
+          self->cache = g_object_new (GEGL_TYPE_CACHE,
+                                      "node",   self->node,
+                                      "format", babl_format ("R'G'B' u8"),
+                                      NULL);
+          g_signal_connect (G_OBJECT (self->cache), "computed",
                             (GCallback)computed_event,
                             self);
-          g_signal_connect (G_OBJECT (self->projection), "invalidated",
+          g_signal_connect (G_OBJECT (self->cache), "invalidated",
                             (GCallback)invalidated_event,
                             self);
           gegl_view_repaint (self);
@@ -198,7 +198,7 @@ set_property (GObject      *gobject,
       else
         {
           self->node = NULL;
-          self->projection = NULL;
+          self->cache = NULL;
         }
       break;
     case PROP_X:
@@ -361,7 +361,7 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
 
   if (!view->node)
     return FALSE;
-  if (!view->projection)
+  if (!view->cache)
     return FALSE;
   
   gdk_region_get_rectangles (event->region, &rectangles, &count);
@@ -376,7 +376,7 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
 
       buf = g_malloc ((roi.w+1) * (roi.h+1) * 3);
       /* FIXME: this padding should not be needed, but it avoids some segfaults */
-      gegl_buffer_get (GEGL_BUFFER (view->projection),
+      gegl_buffer_get (GEGL_BUFFER (view->cache),
                        &roi, buf, babl_format ("R'G'B' u8"), view->scale);
       gdk_draw_rgb_image (widget->window,
                           widget->style->black_gc,
@@ -400,12 +400,12 @@ void gegl_view_repaint (GeglView *view)
                  widget->allocation.height / view->scale};
 
   /* forget all already queued repaints */
-  gegl_projection_dequeue (view->projection, NULL);
+  gegl_cache_dequeue (view->cache, NULL);
   /* then enqueue our selves */
-  gegl_projection_enqueue (view->projection, roi);
+  gegl_cache_enqueue (view->cache, roi);
 }
 
-GeglProjection *gegl_view_get_projection (GeglView *view)
+GeglCache *gegl_view_get_cache (GeglView *view)
 {
-  return view->projection;
+  return view->cache;
 }

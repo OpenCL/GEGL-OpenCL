@@ -1,5 +1,23 @@
 2006-12-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-projection.[ch]: moved and renamed this class ...
+	* gegl/buffer/gegl-cache.[ch]: ... and resurrected it here.
+	* gegl/buffer/Makefile.am: added new files.
+	* gegl/buffer/gegl-buffer-types.h: added new typedefs.
+
+	And modified the sample app and it's GeglView widget according to
+	the changes.
+
+	* bin/Makefile.am:
+	* bin/editor.c: (cb_recompute):
+	* bin/export.c: (button_render_clicked):
+	* bin/gegl-view.c: (finalize), (computed_event),
+	(invalidated_event), (set_property), (expose_event),
+	(gegl_view_repaint), (gegl_view_get_cache):
+	* bin/gegl-view.h:
+
+2006-12-13  Øyvind Kolås  <pippin@gimp.org>
+
 	Gave new names to functions of the projection, not sure if these names
 	will be the final ones, but at least they are better than the old
 	ones:
@@ -7,7 +25,7 @@
 	enqueue (add a rectangle to the region that is desired to be computed)
 	dequeue (remove a prior request for rendering)
 	invalidate (mark a region of the projection as invalid (usually
-                    happens automatically).
+	happens automatically).
 
 	* bin/editor.c: (cb_recompute):
 	* bin/export.c: (button_render_clicked):

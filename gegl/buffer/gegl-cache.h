@@ -17,25 +17,22 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
-#ifndef __GEGL_PROJECTION_H__
-#define __GEGL_PROJECTION_H__
+#ifndef __GEGL_CACHE_H__
+#define __GEGL_CACHE_H__
 
 #include "gegl.h"
 #include "gegl-buffer.h"
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_PROJECTION            (gegl_projection_get_type ())
-#define GEGL_PROJECTION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROJECTION, GeglProjection))
-#define GEGL_PROJECTION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_PROJECTION, GeglProjectionClass))
-#define GEGL_IS_PROJECTION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PROJECTION))
-#define GEGL_IS_PROJECTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_PROJECTION))
-#define GEGL_PROJECTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_PROJECTION, GeglProjectionClass))
+#define GEGL_TYPE_CACHE            (gegl_cache_get_type ())
+#define GEGL_CACHE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CACHE, GeglCache))
+#define GEGL_CACHE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CACHE, GeglCacheClass))
+#define GEGL_IS_CACHE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CACHE))
+#define GEGL_IS_CACHE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CACHE))
+#define GEGL_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CACHE, GeglCacheClass))
 
-typedef struct _GeglProjection       GeglProjection;
-typedef struct _GeglProjectionClass GeglProjectionClass;
-
-struct _GeglProjection
+struct _GeglCache
 {
   GeglBuffer    parent;
   GeglNode     *node;
@@ -51,25 +48,25 @@ struct _GeglProjection
   guint         monitor_id;
 };
 
-struct _GeglProjectionClass
+struct _GeglCacheClass
 {
   GeglBufferClass buffer_class;
 };
 
-GType    gegl_projection_get_type   (void) G_GNUC_CONST;
+GType    gegl_cache_get_type   (void) G_GNUC_CONST;
 
-void     gegl_projection_enqueue    (GeglProjection *self,
-                                     GeglRectangle  roi);
+void     gegl_cache_enqueue    (GeglCache     *self,
+                                GeglRectangle  roi);
 
 
-void     gegl_projection_dequeue    (GeglProjection *self,
-                                     GeglRectangle  *roi);
+void     gegl_cache_dequeue    (GeglCache     *self,
+                                GeglRectangle *roi);
 
-void     gegl_projection_invalidate (GeglProjection *self,
-                                     GeglRectangle  *roi);
+void     gegl_cache_invalidate (GeglCache     *self,
+                                GeglRectangle *roi);
 
-gboolean gegl_projection_render     (GeglProjection *self);
+gboolean gegl_cache_render     (GeglCache     *self);
 
 G_END_DECLS
 
-#endif /* __GEGL_PROJECTION_H__ */
+#endif /* __GEGL_CACHE_H__ */

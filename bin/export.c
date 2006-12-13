@@ -99,7 +99,7 @@ static void button_view_clicked (GtkButton *button,
 static void button_render_clicked (GtkButton *button,
                                    gpointer   user_data)
 {
-  GeglProjection *projection;
+  GeglCache *cache;
   GeglRectangle   rect;
   GtkWidget *export = GTK_WIDGET (user_data);
   GtkEntry *x0 = g_object_get_data (G_OBJECT (export), "x0");
@@ -116,13 +116,13 @@ static void button_render_clicked (GtkButton *button,
 
   path = gtk_entry_get_text (pathe);
   
-  projection = gegl_view_get_projection (GEGL_VIEW (editor.drawing_area));
+  cache = gegl_view_get_cache (GEGL_VIEW (editor.drawing_area));
 
-  gegl_projection_enqueue (projection, rect);
+  gegl_cache_enqueue (cache, rect);
 
-  while (gegl_projection_render (projection));
+  while (gegl_cache_render (cache));
 
-  gegl_buffer_export_png (GEGL_BUFFER (projection),
+  gegl_buffer_export_png (GEGL_BUFFER (cache),
                           &rect, path);
 }
 

@@ -26,7 +26,7 @@
 #include "gegl-plugin.h"
 #include "gegl-types.h"
 #include <babl/babl.h>
-#include "gegl-projection.h"
+#include "gegl-cache.h"
 #include "gegl-region.h"
 
 #define MAX_PIXELS (128*128)   /* maximum size of area computed in one idle cycle */
@@ -48,36 +48,36 @@ enum
   LAST_SIGNAL
 };
 
-static void            gegl_projection_class_init     (GeglProjectionClass *klass);
-static void            gegl_projection_init           (GeglProjection      *self);
-static void            finalize                       (GObject       *self_object);
-static void            set_property                   (GObject       *gobject,
-                                                       guint          prop_id,
-                                                       const GValue  *value,
-                                                       GParamSpec    *pspec);
-static void            get_property                   (GObject       *gobject,
-                                                       guint          prop_id,
-                                                       GValue        *value,
-                                                       GParamSpec    *pspec);
-static gboolean        task_render                    (gpointer       foo);
-static gboolean        task_monitor                   (gpointer       foo);
+static void            gegl_cache_class_init     (GeglCacheClass *klass);
+static void            gegl_cache_init           (GeglCache      *self);
+static void            finalize                  (GObject       *self_object);
+static void            set_property              (GObject       *gobject,
+                                                  guint          prop_id,
+                                                  const GValue  *value,
+                                                  GParamSpec    *pspec);
+static void            get_property              (GObject       *gobject,
+                                                  guint          prop_id,
+                                                  GValue        *value,
+                                                  GParamSpec    *pspec);
+static gboolean        task_render               (gpointer       foo);
+static gboolean        task_monitor              (gpointer       foo);
 
 
-G_DEFINE_TYPE (GeglProjection, gegl_projection, GEGL_TYPE_BUFFER);
+G_DEFINE_TYPE (GeglCache, gegl_cache, GEGL_TYPE_BUFFER);
 
 static GObjectClass *parent_class = NULL;
-static guint         projection_signals[LAST_SIGNAL] = {0};
+static guint         cache_signals[LAST_SIGNAL] = {0};
 
 static GObject *
-gegl_projection_constructor (GType                  type,
-                             guint                  n_params,
-                             GObjectConstructParam *params)
+gegl_cache_constructor (GType                  type,
+                        guint                  n_params,
+                        GObjectConstructParam *params)
 {
   GObject         *object;
-  GeglProjection *self;
+  GeglCache *self;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  self = GEGL_PROJECTION (object);
+  self = GEGL_CACHE (object);
 
   self->valid_region = gegl_region_new ();
   self->queued_region = gegl_region_new ();
@@ -88,7 +88,7 @@ gegl_projection_constructor (GType                  type,
 
 
 static void
-gegl_projection_class_init (GeglProjectionClass * klass)
+gegl_cache_class_init (GeglCacheClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
@@ -98,7 +98,7 @@ gegl_projection_class_init (GeglProjectionClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  gobject_class->constructor = gegl_projection_constructor;
+  gobject_class->constructor = gegl_cache_constructor;
 
   g_object_class_install_property (gobject_class, PROP_NODE,
                                    g_param_spec_object ("node",
@@ -131,7 +131,7 @@ gegl_projection_class_init (GeglProjectionClass * klass)
                                                      G_PARAM_CONSTRUCT_ONLY));
 
 
-  projection_signals[COMPUTED] =
+  cache_signals[COMPUTED] =
       g_signal_new ("computed", G_TYPE_FROM_CLASS (klass),
       G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
       0    /* class offset*/,
@@ -142,7 +142,7 @@ gegl_projection_class_init (GeglProjectionClass * klass)
       1 /* n_params */,
       GEGL_TYPE_RECTANGLE /* param_types */);
 
-  projection_signals[INVALIDATED] =
+  cache_signals[INVALIDATED] =
       g_signal_new ("invalidated", G_TYPE_FROM_CLASS (klass),
       G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
       0    /* class offset*/,
@@ -156,12 +156,12 @@ gegl_projection_class_init (GeglProjectionClass * klass)
 }
 
 static void
-gegl_projection_init (GeglProjection *self)
+gegl_cache_init (GeglCache *self)
 {
   self->node = NULL;
   self->render_id = 0;
 
-  /* thus providing a default value for GeglProjection, that overrides the NULL
+  /* thus providing a default value for GeglCache, that overrides the NULL
    * from GeglBuffer */
   GEGL_BUFFER (self)->format = (gpointer)babl_format ("R'G'B'A u8");
 }
@@ -169,7 +169,7 @@ gegl_projection_init (GeglProjection *self)
 static void
 finalize (GObject *gobject)
 {
-  GeglProjection *self = GEGL_PROJECTION (gobject);
+  GeglCache *self = GEGL_CACHE (gobject);
   while (g_idle_remove_by_data (gobject));
   if (self->node)
     g_object_unref (self->node);
@@ -177,44 +177,44 @@ finalize (GObject *gobject)
     gegl_region_destroy (self->valid_region);
   if (self->queued_region)
     gegl_region_destroy (self->queued_region);
-  G_OBJECT_CLASS (gegl_projection_parent_class)->finalize (gobject);
+  G_OBJECT_CLASS (gegl_cache_parent_class)->finalize (gobject);
 }
 
 static gboolean task_monitor (gpointer foo)
 {
-  GeglProjection  *projection = GEGL_PROJECTION (foo);
+  GeglCache  *cache = GEGL_CACHE (foo);
 
-  if (!gegl_region_empty (projection->queued_region) &&
-      !projection->dirty_rects &&
-      projection->render_id == 0) 
+  if (!gegl_region_empty (cache->queued_region) &&
+      !cache->dirty_rects &&
+      cache->render_id == 0) 
     {
       GeglRectangle *rectangles;
       gint           n_rectangles;
       gint           i;
 
-      gegl_region_get_rectangles (projection->queued_region, &rectangles, &n_rectangles);
+      gegl_region_get_rectangles (cache->queued_region, &rectangles, &n_rectangles);
 
       for (i=0; i<n_rectangles && i<1; i++)
         {
           GeglRectangle roi = *((GeglRectangle*)&rectangles[i]);
           GeglRectangle *dr;
           GeglRegion *tr = gegl_region_rectangle ((void*)&roi);
-          gegl_region_subtract (projection->queued_region, tr);
+          gegl_region_subtract (cache->queued_region, tr);
           gegl_region_destroy (tr);
          
           dr = g_malloc(sizeof (GeglRectangle));
           *dr = roi;
-          projection->dirty_rects = g_list_append (projection->dirty_rects, dr);
+          cache->dirty_rects = g_list_append (cache->dirty_rects, dr);
 
           /* start a renderer if it isn't already running */
-          if (projection->render_id == 0)
-            projection->render_id = g_idle_add_full (G_PRIORITY_LOW, (GSourceFunc) task_render, projection, NULL);
+          if (cache->render_id == 0)
+            cache->render_id = g_idle_add_full (G_PRIORITY_LOW, (GSourceFunc) task_render, cache, NULL);
         }
       g_free (rectangles);
     }
-  if (gegl_region_empty (projection->queued_region))
+  if (gegl_region_empty (cache->queued_region))
     { /* job done */
-      projection->monitor_id = 0;
+      cache->monitor_id = 0;
       return FALSE;
     }
   else
@@ -228,18 +228,18 @@ node_invalidated (GeglNode      *source,
                   GeglRectangle *rect,
                   gpointer       data)
 {
-  GeglProjection *projection = GEGL_PROJECTION (data);
+  GeglCache *cache = GEGL_CACHE (data);
 
   {
       GeglRegion     *region;
       region = gegl_region_rectangle (rect);
-      gegl_region_subtract (projection->valid_region, region);
+      gegl_region_subtract (cache->valid_region, region);
       gegl_region_destroy (region);
   }
 
-  g_signal_emit (projection, projection_signals[INVALIDATED], 0, rect, NULL);
-  gegl_region_subtract (projection->queued_region, projection->valid_region);
-  task_monitor (projection);
+  g_signal_emit (cache, cache_signals[INVALIDATED], 0, rect, NULL);
+  gegl_region_subtract (cache->queued_region, cache->valid_region);
+  task_monitor (cache);
 }
 
 static void
@@ -248,7 +248,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglProjection *self = GEGL_PROJECTION (gobject);
+  GeglCache *self = GEGL_CACHE (gobject);
   switch (property_id)
     {
       case PROP_NODE:
@@ -295,7 +295,7 @@ get_property (GObject    *gobject,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglProjection *self = GEGL_PROJECTION (gobject);
+  GeglCache *self = GEGL_CACHE (gobject);
   switch (property_id)
     {
       case PROP_NODE:
@@ -323,8 +323,8 @@ get_property (GObject    *gobject,
 
 
 void
-gegl_projection_dequeue (GeglProjection *self,
-                         GeglRectangle  *roi)
+gegl_cache_dequeue (GeglCache     *self,
+                    GeglRectangle *roi)
 {
 
   if (roi)
@@ -347,10 +347,10 @@ gegl_projection_dequeue (GeglProjection *self,
 }
 
 void
-gegl_projection_invalidate (GeglProjection *self,
-                            GeglRectangle  *roi)
+gegl_cache_invalidate (GeglCache     *self,
+                       GeglRectangle *roi)
 {
-  gegl_projection_dequeue (self, roi);
+  gegl_cache_dequeue (self, roi);
 
   if (roi)
     {
@@ -358,21 +358,21 @@ gegl_projection_invalidate (GeglProjection *self,
       temp_region = gegl_region_rectangle (roi);
       gegl_region_subtract (self->valid_region, temp_region);
       gegl_region_destroy (temp_region);
-      g_signal_emit (self, projection_signals[INVALIDATED], 0, roi, NULL);
+      g_signal_emit (self, cache_signals[INVALIDATED], 0, roi, NULL);
     }
   else
     {
-      GeglRectangle rect = {0,0,0,0}; /* should probably be the extent of the projection */
+      GeglRectangle rect = {0,0,0,0}; /* should probably be the extent of the cache */
       if (self->valid_region)
         gegl_region_destroy (self->valid_region);
       self->valid_region = gegl_region_new ();
-      g_signal_emit (self, projection_signals[INVALIDATED], 0, &rect, NULL);
+      g_signal_emit (self, cache_signals[INVALIDATED], 0, &rect, NULL);
     }
 }
 
 void
-gegl_projection_enqueue (GeglProjection *self,
-                         GeglRectangle   roi)
+gegl_cache_enqueue (GeglCache     *self,
+                    GeglRectangle  roi)
 {
   GeglRegion *temp_region;
 
@@ -383,7 +383,7 @@ gegl_projection_enqueue (GeglProjection *self,
 
   gegl_region_destroy (temp_region);
 
-   /* start a monitor if the monitor of the projection is dormant */
+   /* start a monitor if the monitor of the cache is dormant */
   if (self->monitor_id == 0) 
     self->monitor_id = g_idle_add_full (
            G_PRIORITY_LOW, (GSourceFunc) task_monitor, self, NULL);
@@ -392,16 +392,16 @@ gegl_projection_enqueue (GeglProjection *self,
 /* renders a rectangle, in chunks as an idle function */
 static gboolean task_render (gpointer foo)
 {
-  GeglProjection  *projection = GEGL_PROJECTION (foo);
+  GeglCache  *cache = GEGL_CACHE (foo);
   gint max_area = MAX_PIXELS;
 
   GeglRectangle *dr;
 
-  if (projection->dirty_rects)
+  if (cache->dirty_rects)
     {
       guchar *buf;
 
-      dr = projection->dirty_rects->data;
+      dr = cache->dirty_rects->data;
 
       if (dr->h * dr->w > max_area && 1)
         {
@@ -421,7 +421,7 @@ static gboolean task_render (gpointer foo)
               dr->h-=band_size;
               dr->y+=band_size;
 
-              projection->dirty_rects = g_list_prepend (projection->dirty_rects, fragment);
+              cache->dirty_rects = g_list_prepend (cache->dirty_rects, fragment);
               return TRUE;
             }
           else 
@@ -438,33 +438,33 @@ static gboolean task_render (gpointer foo)
               dr->w-=band_size;
               dr->x+=band_size;
 
-              projection->dirty_rects = g_list_prepend (projection->dirty_rects, fragment);
+              cache->dirty_rects = g_list_prepend (cache->dirty_rects, fragment);
               return TRUE;
             }
         }
       
-      projection->dirty_rects = g_list_remove (projection->dirty_rects, dr);
+      cache->dirty_rects = g_list_remove (cache->dirty_rects, dr);
 
       if (!dr->w || !dr->h)
         return TRUE;
       
-      buf = g_malloc (dr->w * dr->h * gegl_buffer_px_size (GEGL_BUFFER (projection)));
+      buf = g_malloc (dr->w * dr->h * gegl_buffer_px_size (GEGL_BUFFER (cache)));
       g_assert (buf);
 
-      gegl_node_blit (projection->node, dr, projection->format, 0, (gpointer*) buf);
-      gegl_buffer_set (GEGL_BUFFER (projection), dr, buf, projection->format);
+      gegl_node_blit (cache->node, dr, cache->format, 0, (gpointer*) buf);
+      gegl_buffer_set (GEGL_BUFFER (cache), dr, buf, cache->format);
       
-      gegl_region_union_with_rect (projection->valid_region, (GeglRectangle*)dr);
+      gegl_region_union_with_rect (cache->valid_region, (GeglRectangle*)dr);
 
-      g_signal_emit (projection, projection_signals[COMPUTED], 0, dr, NULL, NULL);
+      g_signal_emit (cache, cache_signals[COMPUTED], 0, dr, NULL, NULL);
 
       g_free (buf);
       g_free (dr);
     }
 
-  if (!projection->dirty_rects)
+  if (!cache->dirty_rects)
     { /* job done */
-      projection->render_id = 0;
+      cache->render_id = 0;
       return FALSE;
     }
   else
@@ -473,7 +473,7 @@ static gboolean task_render (gpointer foo)
     }
 }
 
-gboolean gegl_projection_render (GeglProjection *self)
+gboolean gegl_cache_render (GeglCache *self)
 {
   while (self->dirty_rects)
     {
