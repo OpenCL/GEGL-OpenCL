@@ -32,7 +32,10 @@
 #include "editor.h"
 #endif
 
-#define DEFAULT_COMPOSITION "<?xml version='1.0' encoding='UTF-8'?> <gegl> <crop x='0.000000' y='-70.000000' width='232.000000' height='377.000000'/> <over> <shift x='24.000000' y='145.000000'/> <dropshadow opacity='2.400000' x='2.000000' y='2.000000' radius='6.000000'/> <text string='This user interface of this application is a work in progress, and it might be the case that quie a few of the buttons and options should have do not push me signs, or WARNINGS about proper use, this is not the case, so expect loss of experimental data.' font='Sans' size='10.000000' color='rgb(1.0000, 1.0000, 1.0000)' wrap='190' alignment='0' width='190' height='91'/> </over> <over> <gaussian-blur radius-x='1.200000' radius-y='1.200000' filter=''/> <shift x='20.000000' y='60.000000'/> <text string='GEGL' font='Sans' size='50.000000' color='rgb(0.7857, 0.0451, 0.0000)' wrap='-1' alignment='0' width='138' height='59'/> </over> <gaussian-blur radius-x='10.0' radius-y='0.0' filter=''/> <perlin-noise/> </gegl>"
+#define DEFAULT_COMPOSITION  \
+"<?xml version='1.0' encoding='UTF-8'?> <gegl> <over> <shift x='24.000000' y='155.000000'/> <dropshadow opacity='5.000000' x='2.000000' y='2.000000' radius='3.000000'/> <text string='This is an experimental testing ground for GEGL technologies. Things are expected to change and break without prior notice. It is not recommendable for any use where loss of data is an issue.' font='Sans' size='10.000000' color='rgb(1.0000, 1.0000, 1.0000)' wrap='160' alignment='0' width='160' height='91'/> </over> <over> <gaussian-blur radius-x='1.500000' radius-y='1.500000' filter=''/> <shift x='20.000000' y='35.000000'/> <text string='Fragile' font='Sans' size='80.000000' color='rgb(0.7857, 0.0451, 0.0000)' wrap='-1' alignment='0' width='266' height='94'/> </over> <FractalExplorer width='300' height='400' fractaltype='0' xmin='0.100000' xmax='0.500000' ymin='0.000000' ymax='0.500000' iter='50' cx='-0.750000' cy='0.200000' redstretch='1.000000' greenstretch='1.000000' bluestretch='1.000000' redmode='1' greenmode='1' bluemode='0' redinvert='false' greeninvert='false' blueinvert='false' ncolors='256' useloglog='false'/> </gegl>"
+
+
 
 
 /*FIXME: this should be in gegl.h*/

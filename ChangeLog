@@ -1,5 +1,9 @@
 2006-12-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl.c: changed the default composition.
+
+2006-12-13  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/GeglRect/GeglRectangle/g
 	%s/gegl_rect_/gegl_rectangle_/g
 
