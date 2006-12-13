@@ -1,5 +1,9 @@
 2006-12-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: added gegl_node_find_property to public API.
+
+2006-12-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl.c: changed the default composition.
 
 2006-12-13  Øyvind Kolås  <pippin@gimp.org>

@@ -90,6 +90,13 @@ void          gegl_node_set_property        (GeglNode     *object,
 void          gegl_node_get_property        (GeglNode     *object,
                                              const gchar  *property_name,
                                              GValue       *value);
+
+/* Lookup the GParamSpec of an operations property, returns NULL
+ * if the property was not found.
+ */
+GParamSpec *  gegl_node_find_property       (GeglNode     *self,
+                                             const gchar  *property_name);
+
 /* Break a connection.
  */
 gboolean      gegl_node_disconnect       (GeglNode        *self,
