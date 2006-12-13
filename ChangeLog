@@ -1,5 +1,15 @@
 2006-12-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-projection.[ch]: removed buffer member from struct, and
+	removed method gegl_projection_get_buffer, since the projection is
+	now it's own buffer.
+	* bin/export.c: (button_render_clicked): fixed according to above
+	changes.
+	(gegl_projection_init), (task_render), (gegl_projection_render):
+	* bin/gegl-view.c: (expose_event): fixed according to above changes.
+
+2006-12-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: removed gegl_chant_float from the API.
 
 2006-12-13  Øyvind Kolås  <pippin@gimp.org>

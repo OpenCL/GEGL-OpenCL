@@ -376,7 +376,7 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
 
       buf = g_malloc ((roi.w+1) * (roi.h+1) * 3);
       /* FIXME: this padding should not be needed, but it avoids some segfaults */
-      gegl_buffer_get (view->projection->buffer,
+      gegl_buffer_get (GEGL_BUFFER (view->projection),
                        &roi, buf, babl_format ("R'G'B' u8"), view->scale);
       gdk_draw_rgb_image (widget->window,
                           widget->style->black_gc,

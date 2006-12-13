@@ -122,7 +122,7 @@ static void button_render_clicked (GtkButton *button,
 
   while (gegl_projection_render (projection));
 
-  gegl_buffer_export_png (gegl_projection_get_buffer (projection),
+  gegl_buffer_export_png (GEGL_BUFFER (projection),
                           &rect, path);
 }
 

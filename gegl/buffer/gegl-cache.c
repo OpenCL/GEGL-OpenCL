@@ -81,8 +81,7 @@ gegl_projection_constructor (GType                  type,
 
   self->valid_region = gegl_region_new ();
   self->queued_region = gegl_region_new ();
-  self->buffer = GEGL_BUFFER (self);
-  self->format = self->buffer->format;
+  self->format = GEGL_BUFFER (self)->format;
 
   return object;
 }
@@ -159,7 +158,6 @@ gegl_projection_class_init (GeglProjectionClass * klass)
 static void
 gegl_projection_init (GeglProjection *self)
 {
-  self->buffer = NULL;
   self->node = NULL;
   self->render_id = 0;
 
@@ -448,7 +446,7 @@ static gboolean task_render (gpointer foo)
       g_assert (buf);
 
       gegl_node_blit (projection->node, dr, projection->format, 0, (gpointer*) buf);
-      gegl_buffer_set (projection->buffer, dr, buf, projection->format);
+      gegl_buffer_set (GEGL_BUFFER (projection), dr, buf, projection->format);
       
       gegl_region_union_with_rect (projection->valid_region, (GeglRectangle*)dr);
 
@@ -479,9 +477,4 @@ gboolean gegl_projection_render (GeglProjection *self)
     task_monitor (self);
 
   return (self->dirty_rects != NULL);
-}
-
-GeglBuffer *gegl_projection_get_buffer (GeglProjection *self)
-{
-  return self->buffer;
 }
