@@ -1,5 +1,13 @@
 2006-12-14  Øyvind Kolås  <pippin@gimp.org>
 
+	Added simple custom GUI node editors for gaussian blur and
+	whitebalance.
+
+	* bin/node-editors/gaussian-blur.c:
+	* bin/node-editors/whitebalance.c:
+
+2006-12-14  Øyvind Kolås  <pippin@gimp.org>
+
 	Enabled the infrastructure for writing GUI-plugins that register as
 	GUI for a pattern of operations. This should makes the custom GUIs
 	less coupled to the build framework.
