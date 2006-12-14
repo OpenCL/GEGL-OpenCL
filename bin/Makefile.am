@@ -1,3 +1,5 @@
+SUBDIRS = node-editors
+
 bin_PROGRAMS = gegl
 
 libbuffer = $(top_builddir)/gegl/buffer/libbuffer.la
@@ -11,13 +13,12 @@ gui_sources = \
 	export.c				\
 	export.h				\
 	gegl-node-editor.c			\
-	gegl-node-editor-brightness-contrast.c	\
-	gegl-node-editor-level.c		\
 	gegl-node-editor.h			\
 	gegl-store.c				\
 	gegl-store.h				\
 	gegl-tree-editor-action.c		\
 	gegl-tree-editor-action.h		\
+	gegl-node-editor-plugin.h		\
 	gegl-tree-editor.c			\
 	gegl-tree-editor.h			\
 	gegl-view.c				\

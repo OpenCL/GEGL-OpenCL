@@ -439,6 +439,7 @@ AM_CONDITIONAL(HAVE_W3M, test "x$W3M" != "xno")
 AC_OUTPUT([
 Makefile
 bin/Makefile
+bin/node-editors/Makefile
 gegl/Makefile
 gegl/buffer/Makefile
 gegl/module/Makefile

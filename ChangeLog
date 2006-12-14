@@ -1,5 +1,25 @@
 2006-12-14  Øyvind Kolås  <pippin@gimp.org>
 
+	Enabled the infrastructure for writing GUI-plugins that register as
+	GUI for a pattern of operations. This should makes the custom GUIs
+	less coupled to the build framework.
+
+	* bin/Makefile.am: added node-editors subdir.
+	* bin/gegl-node-editor.c: rewritten to handle dynamically loaded node
+	property editors.
+	* bin/gegl-node-editor-brightness-contrast.c: REMOVED.
+	* bin/gegl-node-editor-level.c: REMOVED.
+	* bin/gegl-node-editor-plugin.h: added header for writing GUI
+	plug-ins.
+	* bin/node-editors/Makefile.am: added.
+	* bin/node-editors/brightness-contrast.c: moved here from parent dir,
+	rewritten as a module.
+	* bin/node-editors/level.c: moved here from parent dir,
+	rewritten as a module.
+	* configure.in: added bin/node-editors/Makefile
+
+2006-12-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: made the get_type function static within the
 	shared object.
 

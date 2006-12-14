@@ -419,7 +419,8 @@ void
 gegl_node_editor_class_set_pattern (GeglNodeEditorClass *klass,
                                     const gchar         *pattern)
 {
-  klass->pattern = (gchar*)pattern;/*g_strdup (pattern);*/
+  /* FIXME: here we're most probably leaking a string */
+  klass->pattern = g_strdup(pattern);/*g_strdup (pattern);*/
 }
 
 gboolean
@@ -469,22 +470,18 @@ static GType *gegl_type_heirs (GType  supertype,
       return NULL;
     }
   *count = g_slist_length (subtypes);
-  heirs = g_malloc (sizeof (GType) * *count);
+  heirs = g_malloc (sizeof (GType) * (*count));
    
   for (iter = subtypes, i=0; iter; iter = g_slist_next (iter), i++) 
     {
       GType type = GPOINTER_TO_UINT (iter->data);
       heirs[i]=type;
     }
+  g_assert (i==*count);
 
   g_slist_free (subtypes);
   return heirs;
 }
-
-/*FIXME: the following should be dealt with using plug-ins, and automatic coupling of operation/gui **/
-
-GType gegl_node_editor_level_get_type (void) G_GNUC_CONST;
-GType gegl_node_editor_brightness_contrast_get_type (void) G_GNUC_CONST;
 
 GtkWidget *
 gegl_node_editor_new (GeglNode *node,
@@ -492,8 +489,6 @@ gegl_node_editor_new (GeglNode *node,
 {
   GType editor_type;
   const gchar *operation;
-
-  g_warning ("%i %i", gegl_node_editor_level_get_type (), gegl_node_editor_brightness_contrast_get_type ());
 
   editor_type = GEGL_TYPE_NODE_EDITOR;
 

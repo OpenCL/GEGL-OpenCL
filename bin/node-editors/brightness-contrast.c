@@ -17,41 +17,41 @@
  * Copyright (C) 2003, 2004, 2006 Øyvind Kolås
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include "gegl.h"
-#include "gegl-node-editor.h"
-#include "editor.h"
+#include "gegl-node-editor-plugin.h"
 
-typedef struct _GeglNodeEditorLevel      GeglNodeEditorLevel;
-typedef struct _GeglNodeEditorLevelClass GeglNodeEditorLevelClass;
+typedef struct _BrightnessContrast      BrightnessContrast;
+typedef struct _BrightnessContrastClass BrightnessContrastClass;
 
-struct _GeglNodeEditorLevel
+struct _BrightnessContrast
 {
   GeglNodeEditor  parent_instance;
+  gdouble         brightness;
+  gdouble         contrast;
+  gdouble         x;
+  gdouble         y;
+  gdouble         v0;
+  gdouble         v1;
 };
 
-struct _GeglNodeEditorLevelClass
+struct _BrightnessContrastClass
 {
   GeglNodeEditorClass parent_class;
 };
 
-static void gegl_node_editor_level_class_init (GeglNodeEditorLevelClass   *klass);
-static void gegl_node_editor_level_init       (GeglNodeEditorLevel        *self);
 static void construct                         (GeglNodeEditor             *editor);
 
-G_DEFINE_TYPE (GeglNodeEditorLevel, gegl_node_editor_level, GEGL_TYPE_NODE_EDITOR)
+EDITOR_DEFINE_TYPE (BrightnessContrast, brightness_contrast, GEGL_TYPE_NODE_EDITOR)
 
 static void
-gegl_node_editor_level_class_init (GeglNodeEditorLevelClass *klass)
+brightness_contrast_class_init (BrightnessContrastClass *klass)
 {
   GeglNodeEditorClass *node_editor_class = GEGL_NODE_EDITOR_CLASS (klass);
-  gegl_node_editor_class_set_pattern (node_editor_class, "threshold:opacity");
+  gegl_node_editor_class_set_pattern (node_editor_class, "brightness-contrast");
   node_editor_class->construct = construct;
 }
 
 static void
-gegl_node_editor_level_init (GeglNodeEditorLevel *self)
+brightness_contrast_init (BrightnessContrast *self)
 {
 }
 
@@ -63,12 +63,27 @@ static void expose (GtkWidget      *widget,
   GeglNodeEditor *node_editor = user_data;
   GeglNode       *node        = node_editor->node;
 
+  gint       i;
   gdouble    handle_radius;
-  gdouble    level;
+  gdouble    brightness;
+  gdouble    contrast;
+
+  gdouble x[3];
+  gdouble y[3];
 
   handle_radius = (1.0 / 3) * 0.4;
 
-  gegl_node_get (node, "value", &level, NULL);
+  gegl_node_get (node, "brightness", &brightness,
+                       "contrast", &contrast,
+                       NULL);
+
+  for (i = 0; i < 3; i++)
+  {
+    x[i] = (1.0 / (3 - 1)) * i;
+    y[i] = contrast * (x[i] - 0.5) + 0.5 + brightness;
+    y[i] = 1.0 - y[i];
+  }
+
 
   {
     cairo_pattern_t *pat;
@@ -83,40 +98,93 @@ static void expose (GtkWidget      *widget,
   }
 
   cairo_set_line_width (cr, 0.01);
-  cairo_set_source_rgb (cr, 0,0,0);
-  cairo_rectangle (cr, 0.0, 0.5, level, 0.5);
-  cairo_fill (cr);
-  cairo_set_source_rgb (cr, 1,1,1);
-  cairo_rectangle (cr, level, 0.5, 1 - level, 0.5);
-  cairo_fill (cr);
+  cairo_set_source_rgb (cr, 0.0,0.5,1.0);
 
-  {
-    char      buf[100];
-    sprintf (buf, "%2.2f", level);
+  cairo_move_to (cr, x[0], y[0]);
+  for (i = 1; i < 3; i++)
+    {
+      cairo_line_to (cr, x[i], y[i]);
+    }
+  cairo_stroke (cr);
 
-    cairo_set_source_rgb (cr, 0, 0.5, 1);
-    cairo_move_to (cr, 0.0, 1.0);
-    cairo_show_text (cr, buf);
-  }
+  for (i = 0; i < 3; i++)
+    {
+      cairo_arc (cr, x[i], y[i], handle_radius, 0, 2 * 3.1415);
+      cairo_save (cr);
+      cairo_set_source_rgb (cr, 1.0-y[i], 1.0-y[i], 1.0-y[i]);
+      cairo_fill (cr);
+      cairo_restore (cr);
+      cairo_stroke (cr);
+    }
 
   cairo_destroy (cr);
 }
 
 static gboolean
-drag_n_motion (GtkWidget *widget, GdkEventMotion *mev, gpointer user_data)
+event_press (GtkWidget *widget, GdkEventButton *bev, gpointer user_data)
 {
-  gdouble         x, y;
+  gdouble    x, y;
   GeglNodeEditor *node_editor = user_data;
   GeglNode       *node        = node_editor->node;
   cairo_t        *cr          = gegl_widget_get_cr (widget);
+  BrightnessContrast *self = user_data;
 
+  x = bev->x;
+  y = bev->y;
+
+  cairo_device_to_user (cr, &x, &y);
+
+  self->x = x;
+  self->y = y;
+  gegl_node_get (node, "brightness", &self->brightness,
+                       "contrast", &self->contrast,
+                       NULL);
+  self->v0 = self->contrast * (0.0 - 0.5) + 0.5 + self->brightness;
+  self->v1 = self->contrast * (1.0 - 0.5) + 0.5 + self->brightness;
+
+  cairo_destroy (cr);
+
+  return TRUE;
+}
+
+static gboolean
+event_motion (GtkWidget *widget, GdkEventMotion *mev, gpointer user_data)
+{
+  gdouble    x, y;
+  GeglNodeEditor *node_editor = user_data;
+  GeglNode       *node        = node_editor->node;
+  cairo_t        *cr          = gegl_widget_get_cr (widget);
+  BrightnessContrast *self = user_data;
+
+
+  gdouble    brightness;
+  gdouble    contrast;
+
+  gegl_node_get (node, "brightness", &brightness,
+                       "contrast", &contrast,
+                       NULL);
   x = mev->x;
   y = mev->y;
 
   cairo_device_to_user (cr, &x, &y);
-  cairo_destroy (cr);
 
-  gegl_node_set (node, "value", x, NULL);
+  if (self->x < 0.33)
+    {
+      y = (self->v0) - (y - self->y) - 0.5;
+      contrast = (brightness - y) / 0.5;
+      gegl_node_set (node, "contrast", contrast, NULL);
+    }
+  else if (self->x < 0.66)
+    {
+      brightness = self->brightness + (self->y - y);
+      gegl_node_set (node, "brightness", brightness, NULL);
+    }
+  else
+    {
+      y = (self->v1) - (y - self->y) - 0.5;
+      contrast = (y - brightness) / 0.5;
+      gegl_node_set (node, "contrast", contrast, NULL);
+    }
 
   gtk_widget_queue_draw (widget);
   gdk_window_get_pointer (widget->window, NULL, NULL, NULL);
@@ -145,9 +213,9 @@ construct (GeglNodeEditor *self)
   g_signal_connect (G_OBJECT (drawing_area), "expose-event",
                     G_CALLBACK (expose), self);
   g_signal_connect (G_OBJECT (drawing_area), "motion_notify_event",
-                    G_CALLBACK (drag_n_motion), self);
+                    G_CALLBACK (event_motion), self);
   g_signal_connect (G_OBJECT (drawing_area), "button_press_event",
-                    G_CALLBACK (drag_n_motion), self);
+                    G_CALLBACK (event_press), self);
 
   gtk_container_add (GTK_CONTAINER (self), drawing_area);
 }
