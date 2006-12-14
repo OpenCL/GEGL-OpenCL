@@ -46,7 +46,7 @@ static void
 gegl_node_editor_level_class_init (GeglNodeEditorLevelClass *klass)
 {
   GeglNodeEditorClass *node_editor_class = GEGL_NODE_EDITOR_CLASS (klass);
-
+  gegl_node_editor_class_set_pattern (node_editor_class, "threshold:opacity");
   node_editor_class->construct = construct;
 }
 

@@ -54,6 +54,7 @@ gegl_node_editor_brightness_contrast_class_init (GeglNodeEditorBrightnessContras
   GeglNodeEditorClass *node_editor_class = GEGL_NODE_EDITOR_CLASS (klass);
 
   node_editor_class->construct = construct;
+  gegl_node_editor_class_set_pattern (node_editor_class, "brightness-contrast");
 }
 
 static void

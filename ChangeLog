@@ -1,3 +1,14 @@
+2006-12-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/gegl-node-editor.[ch]: (gegl_node_editor_class_init),
+	(property_editor_general), (gegl_node_editor_class_set_pattern),
+	(gegl_node_editor_class_matches), (gegl_type_subtypes),
+	(gegl_type_heirs), (gegl_node_editor_new): Added some more logic
+	towards easier extensibility of custom property editors.
+
+	* bin/gegl-node-editor-brightness-contrast.c: specify op.
+	* bin/gegl-node-editor-level.c: specify pattern "opacity:threshold".
+
 2006-12-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-projection.[ch]: moved and renamed this class ...

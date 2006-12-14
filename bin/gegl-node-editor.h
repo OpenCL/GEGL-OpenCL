@@ -46,8 +46,9 @@ struct _GeglNodeEditor
 struct _GeglNodeEditorClass
 {
   GtkVBoxClass parent_class;
+  gchar        *pattern;
 
-  void (*construct) (GeglNodeEditor *self);
+  void (*construct) (GeglNodeEditor *self);  /* virtual method used to add to the container */
 };
 
 GType       gegl_node_editor_get_type (void) G_GNUC_CONST;
@@ -56,6 +57,14 @@ GtkWidget * gegl_node_editor_new      (GeglNode *node,
                                        gboolean  operation_switcher);
 /* utility method */
 cairo_t *                              gegl_widget_get_cr (GtkWidget *widget);
+
+/* class functions */
+
+/* set the pattern that this matches on */
+void     gegl_node_editor_class_set_pattern (GeglNodeEditorClass *klass,
+                                             const gchar         *pattern);
+gboolean gegl_node_editor_class_matches     (GeglNodeEditorClass *klass,
+                                             const gchar         *operation_name);
 
 G_END_DECLS
 

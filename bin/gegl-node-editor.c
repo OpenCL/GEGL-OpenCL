@@ -68,7 +68,7 @@ gegl_node_editor_class_init (GeglNodeEditorClass *klass)
   g_object_class_install_property (gobject_class, PROP_NODE,
                                    g_param_spec_object ("node",
                                                         "Node",
-                                                        "The node to render",
+                                                        "The node we're showing properties for",
                                                         G_TYPE_OBJECT,
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_WRITABLE));
@@ -76,7 +76,7 @@ gegl_node_editor_class_init (GeglNodeEditorClass *klass)
   g_object_class_install_property (gobject_class, PROP_OPERATION_SWITCHER,
                                    g_param_spec_boolean ("operation-switcher",
                                                         "operation-switcher",
-                                                        "Show an operation changer widget in the node-editor",
+                                                        "Show an operation changer widget within (at the top of) this node property editor",
                                                         TRUE,
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_WRITABLE));
@@ -137,7 +137,6 @@ gegl_node_editor_construct (GeglNodeEditor *self)
   g_assert (klass->construct);
   klass->construct(self);
 }
-
 
 static GObject *
 constructor (GType                  type,
@@ -351,11 +350,9 @@ type_editor_generic (GtkSizeGroup *col1,
   return hbox;
 }
 
-
-
 static GtkWidget *
 property_editor_general (GeglNodeEditor *node_editor,
-                         GeglNode *node)
+                         GeglNode       *node)
 {
   GtkSizeGroup *col1, *col2;
   GtkWidget   *vbox;
@@ -418,6 +415,72 @@ gegl_widget_get_cr (GtkWidget *widget)
   return cr;
 }
 
+void
+gegl_node_editor_class_set_pattern (GeglNodeEditorClass *klass,
+                                    const gchar         *pattern)
+{
+  klass->pattern = (gchar*)pattern;/*g_strdup (pattern);*/
+}
+
+gboolean
+gegl_node_editor_class_matches (GeglNodeEditorClass *klass,
+                                const gchar         *operation_name)
+{
+  /* without a pattern it matches always */
+  if (!klass->pattern)
+    return TRUE;
+
+  if (strstr (klass->pattern, operation_name))
+    return TRUE;
+  return FALSE;
+}
+
+static GSList *gegl_type_subtypes (GType   supertype,
+                                   GSList *list)
+{
+  GType *types;
+  guint  count;
+  gint   no;
+
+  types = g_type_children (supertype, &count);
+  if (!types)
+    return list;
+
+  for (no=0; no < count; no++)
+    {
+      list = g_slist_prepend (list, GUINT_TO_POINTER (types[no]));
+      list = gegl_type_subtypes (types[no], list);
+    }
+  g_free (types);
+  return list;
+}
+
+static GType *gegl_type_heirs (GType  supertype,
+                               guint *count)
+{
+  GSList *subtypes= gegl_type_subtypes (supertype, NULL);
+  GSList *iter;
+  GType  *heirs;
+  gint    i;
+
+  if (!subtypes)
+    {
+      *count = 0;
+      return NULL;
+    }
+  *count = g_slist_length (subtypes);
+  heirs = g_malloc (sizeof (GType) * *count);
+   
+  for (iter = subtypes, i=0; iter; iter = g_slist_next (iter), i++) 
+    {
+      GType type = GPOINTER_TO_UINT (iter->data);
+      heirs[i]=type;
+    }
+
+  g_slist_free (subtypes);
+  return heirs;
+}
+
 /*FIXME: the following should be dealt with using plug-ins, and automatic coupling of operation/gui **/
 
 GType gegl_node_editor_level_get_type (void) G_GNUC_CONST;
@@ -427,17 +490,37 @@ GtkWidget *
 gegl_node_editor_new (GeglNode *node,
                       gboolean  operation_switcher)
 {
-  GType editor_type = GEGL_TYPE_NODE_EDITOR;
+  GType editor_type;
   const gchar *operation;
 
+  g_warning ("%i %i", gegl_node_editor_level_get_type (), gegl_node_editor_brightness_contrast_get_type ());
+
+  editor_type = GEGL_TYPE_NODE_EDITOR;
+
   operation = gegl_node_get_operation (node);
-  if (!strcmp (operation, "threshold"))
-    editor_type = gegl_node_editor_level_get_type ();
-  if (!strcmp (operation, "opacity"))
-    editor_type = gegl_node_editor_level_get_type ();
-  if (!strcmp (operation, "brightness-contrast"))
-    editor_type = gegl_node_editor_brightness_contrast_get_type ();
-  
+
+  /* iterate through all GeglNodeEditor subclasses, and check if it matches */
+
+  {
+    guint   count;
+    GType  *heirs = gegl_type_heirs (GEGL_TYPE_NODE_EDITOR, &count);
+    gint    i;
+
+    for (i=0; i<count; i++)
+      {
+        GType type = heirs[i];
+        GeglNodeEditorClass *klass = g_type_class_ref (type);
+        if (gegl_node_editor_class_matches (klass, operation))
+          {
+            editor_type = type;
+            g_type_class_unref (klass);
+            break;
+          }
+        g_type_class_unref (klass);
+      }
+    g_free (heirs);
+  }
+
   return g_object_new (editor_type, "node", node,
                                     "operation-switcher", operation_switcher,
                                     NULL);
