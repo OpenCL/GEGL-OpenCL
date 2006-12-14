@@ -181,7 +181,7 @@ static void     gegl_chant_class_intern_init (gpointer klass) \
     gegl_chant_class_init ((ChantClass*) klass); \
   } \
 \
-GType \
+static GType \
 type_name##_get_type (GTypeModule *module) \
 { \
   static GType g_define_type_id = 0; \
