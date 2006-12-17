@@ -169,7 +169,7 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
   png_infop      load_info_ptr;
   unsigned char  header[8];
   guchar        *pixels;
-  png_bytep     *rows;
+  //png_bytep     *rows;
 
 
   unsigned   int i;
@@ -309,22 +309,43 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
     png_read_update_info (load_png_ptr, load_info_ptr);
   }
 
-  pixels = g_malloc0 (width*height*bpp);
-  rows = g_malloc0 (height*sizeof(png_bytep*));
+  pixels = g_malloc0 (width*bpp);
 
-  for (i=0; i<h; i++)
-    rows[i] = pixels+i*width*bpp;
+  {
+    gint           pass;
+    GeglBuffer    *tmp_buf;
+    GeglRectangle  rect;
 
-  for (i=0; i<number_of_passes; i++)
-    png_read_rows (load_png_ptr, rows, NULL, height);
+    tmp_buf = g_object_new( GEGL_TYPE_BUFFER,
+                            "source", gegl_buffer,
+                            "x",      dest_x,
+                            "y",      dest_y,
+                            "width",  width,
+                            "height", height,
+                            NULL);
 
-  gegl_buffer_set (gegl_buffer, NULL, pixels, format);
+    for (pass=0; pass<number_of_passes; pass++)
+      {
+        for(i=0; i<h; i++)
+          {
+            gegl_rect_set (&rect, 0, i, width, 1);
+
+            if (pass != 0)
+              gegl_buffer_get (tmp_buf, &rect, pixels, format, 1.0);
+
+            png_read_rows (load_png_ptr, &pixels, NULL, 1);
+            gegl_buffer_set (tmp_buf, &rect, pixels, format);
+          }
+      }
+
+      g_object_unref (tmp_buf);
+  }
+
 
   png_read_end (load_png_ptr, NULL);
   png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
 
   g_free (pixels);
-  g_free (rows);
 
   if (infile!=stdin)
     fclose (infile);
