@@ -6,9 +6,10 @@ BUFFER_sources = \
     gegl-cache.c		\
     gegl-region-generic.c	\
     gegl-storage.c		\
-    gegl-tile-backend.c		\
     gegl-tile.c			\
+    gegl-tile-backend.c		\
     gegl-tile-cache.c		\
+    gegl-tile-disk.c		\
     gegl-tile-empty.c		\
     gegl-tile-log.c		\
     gegl-tile-mem.c		\
@@ -25,10 +26,11 @@ BUFFER_headers = \
     gegl-region.h		\
     gegl-region-generic.h	\
     gegl-storage.h		\
+    gegl-tile.h			\
     gegl-tile-backend.h		\
     gegl-tile-cache.h		\
+    gegl-tile-disk.h		\
     gegl-tile-empty.h		\
-    gegl-tile.h			\
     gegl-tile-log.h		\
     gegl-tile-mem.h		\
     gegl-tile-store.h		\

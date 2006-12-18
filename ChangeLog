@@ -1,3 +1,15 @@
+2006-12-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/Makefile.am: added gegl-tile-disk.[ch]
+	* gegl/buffer/gegl-buffer-allocator.c:
+	(gegl_buffer_new_from_format): compute swapfile names for new
+	allocators.
+	* gegl/buffer/gegl-storage.c: (gegl_storage_constructor): check for
+	GEGL_SWAP environment variable before backing the storage with disk
+	swap.
+	* gegl/buffer/gegl-tile-disk.[ch]: Added a simple swap to disk
+	implementation.
+
 2006-12-17  Dominik Ernst  <dernst@gmx.de>
 
 	* operations/file-io/png-load.c: made png-load load images chunk-wise

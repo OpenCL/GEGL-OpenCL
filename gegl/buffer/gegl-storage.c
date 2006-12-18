@@ -17,15 +17,15 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
+#include <stdlib.h>
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <glib/gstdio.h>
 
 #include "gegl-storage.h"
 #include "gegl-tile.h"
-#if 0
 #include "gegl-tile-disk.h"
-#endif
 #include "gegl-tile-empty.h"
 #include "gegl-tile-zoom.h"
 #include "gegl-tile-mem.h"
@@ -157,9 +157,9 @@ gegl_storage_constructor (GType                  type,
   traits = GEGL_TILE_TRAITS (storage);
   trait = GEGL_TILE_TRAIT (storage);
 
-  if(storage->path != NULL && 0)
+  if(storage->path != NULL &&
+     getenv ("GEGL_SWAP"))
     {
-#if 0
       g_object_set (storage,
                 "source", g_object_new (GEGL_TYPE_TILE_DISK_STORE,
                                         "tile-width",  storage->tile_width,
@@ -168,7 +168,6 @@ gegl_storage_constructor (GType                  type,
                                         "path", storage->path,
                                         NULL),
                 NULL);
-#endif
     }
   else
     {
@@ -195,7 +194,7 @@ gegl_storage_constructor (GType                  type,
  }
 
   if(1)gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_CACHE,
-                                              "size", 256,
+                                              "size", 128,
                                               NULL));
 
   if(0)gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_LOG,
