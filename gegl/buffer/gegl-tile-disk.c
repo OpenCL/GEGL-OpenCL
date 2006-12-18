@@ -47,9 +47,10 @@ struct _DiskEntry {
   gint offset;
 };
 
-static void inline disk_entry_read (GeglTileDisk *disk,
-                                    DiskEntry    *entry,
-                                    guchar       *dest)
+static void inline
+disk_entry_read (GeglTileDisk *disk,
+                 DiskEntry    *entry,
+                 guchar       *dest)
 {
   gint   nleft;
   off_t  offset;
@@ -86,9 +87,10 @@ static void inline disk_entry_read (GeglTileDisk *disk,
     }
 }
 
-static void inline disk_entry_write (GeglTileDisk *disk,
-                                     DiskEntry    *entry,
-                                     guchar       *source)
+static void inline
+disk_entry_write (GeglTileDisk *disk,
+                  DiskEntry    *entry,
+                  guchar       *source)
 {
   gint   nleft;
   off_t  offset;
@@ -119,13 +121,14 @@ static void inline disk_entry_write (GeglTileDisk *disk,
     }
 }
 
-static DiskEntry *disk_entry_new (GeglTileDisk *disk)
+static inline DiskEntry *
+disk_entry_new (GeglTileDisk *disk)
 {
   DiskEntry *self = g_malloc (sizeof (DiskEntry));
 
   if (disk->free_list)
     {
-      self->offset = GPOINTER_TO_UINT (disk->free_list->data);
+      self->offset    = GPOINTER_TO_UINT (disk->free_list->data);
       disk->free_list = g_slist_remove (disk->free_list, disk->free_list->data);
     }
   else
@@ -143,10 +146,13 @@ static DiskEntry *disk_entry_new (GeglTileDisk *disk)
   return self;
 }
 
-static void disk_entry_destroy (DiskEntry    *entry,
-                                GeglTileDisk *disk)
+static inline void
+disk_entry_destroy (DiskEntry    *entry,
+                    GeglTileDisk *disk)
 {
   disk->free_list = g_slist_prepend (disk->free_list, GUINT_TO_POINTER (entry->offset));
+  disk->entries   = g_slist_remove  (disk->entries, entry);
+
   dbg_dealloc (GEGL_TILE_BACKEND (disk)->tile_size);
   g_free (entry);
 }
@@ -167,7 +173,7 @@ void gegl_tile_disk_stats (void)
      allocs, disk_size/1024/1024.0, peak_allocs, peak_disk_size, peak_disk_size/1024/1024.0);
 }
 
-static void dbg_alloc(int size)
+static void dbg_alloc (gint size)
 {
   allocs++;
   disk_size+=size;
@@ -176,16 +182,18 @@ static void dbg_alloc(int size)
   if (disk_size>peak_disk_size)
     peak_disk_size=disk_size;
 }
-static void dbg_dealloc(int size)
+
+static void dbg_dealloc(gint size)
 {
   allocs--;
   disk_size-=size;
 }
 
-DiskEntry *lookup_entry (GeglTileDisk *self,
-                         gint          x,
-                         gint          y,
-                         gint          z)
+static inline DiskEntry *
+lookup_entry (GeglTileDisk *self,
+              gint          x,
+              gint          y,
+              gint          z)
 {
   GSList  *entries = self->entries;
 
@@ -212,9 +220,9 @@ get_tile (GeglTileStore *tile_store,
           gint           y,
           gint           z)
 {
-  GeglTileDisk *tile_disk = GEGL_TILE_DISK (tile_store);
-  GeglTileBackend *backend = GEGL_TILE_BACKEND (tile_store);
-  GeglTile *tile = NULL;
+  GeglTileDisk    *tile_disk = GEGL_TILE_DISK (tile_store);
+  GeglTileBackend *backend   = GEGL_TILE_BACKEND (tile_store);
+  GeglTile        *tile      = NULL;
   
   {
     DiskEntry *entry = lookup_entry (tile_disk, x, y, z);
@@ -238,8 +246,8 @@ gboolean set_tile (GeglTileStore *store,
                    gint           y,
                    gint           z)
 {
-  GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
-  GeglTileDisk     *tile_disk = GEGL_TILE_DISK (backend);
+  GeglTileBackend *backend   = GEGL_TILE_BACKEND (store);
+  GeglTileDisk    *tile_disk = GEGL_TILE_DISK (backend);
 
   DiskEntry *entry = lookup_entry (tile_disk, x, y, z);
 
@@ -250,7 +258,6 @@ gboolean set_tile (GeglTileStore *store,
       entry->y=y;
       entry->z=z;
       tile_disk->entries = g_slist_prepend (tile_disk->entries, entry);
-      
     }
 
   disk_entry_write (tile_disk, entry, tile->data);
@@ -270,7 +277,6 @@ gboolean void_tile (GeglTileStore *store,
   
   if (entry!=NULL)
     {
-      tile_disk->entries = g_slist_remove (tile_disk->entries, entry);
       disk_entry_destroy (entry, tile_disk);
     }
 
@@ -314,6 +320,7 @@ static void set_property (GObject      *object,
                           GParamSpec   *pspec)
 {
   GeglTileDisk *self = GEGL_TILE_DISK (object);
+
   switch (property_id)
   {
     case PROP_PATH:
@@ -333,6 +340,7 @@ static void get_property (GObject      *object,
                           GParamSpec   *pspec)
 {
   GeglTileDisk *self = GEGL_TILE_DISK (object);
+
   switch (property_id)
   {
     case PROP_PATH:
@@ -350,8 +358,8 @@ finalize (GObject *object)
 {
   GeglTileDisk *self = (GeglTileDisk *) object;
 
-  if (self->entries)
-    g_slist_foreach (self->entries, (GFunc)disk_entry_destroy, self);
+  while (self->entries)
+    self->entries = g_slist_remove (self->entries, self->entries->data);
 
   close (self->fd);
   g_unlink (self->path);
@@ -383,14 +391,15 @@ gegl_tile_disk_constructor (GType                  type,
 static void
 gegl_tile_disk_class_init (GeglTileDiskClass * klass)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GObjectClass       *gobject_class         = G_OBJECT_CLASS (klass);
   GeglTileStoreClass *gegl_tile_store_class = GEGL_TILE_STORE_CLASS (klass);
+
   parent_class = g_type_class_peek_parent (klass);
 
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
-  gobject_class->constructor = gegl_tile_disk_constructor;
-  gobject_class->finalize = finalize;
+  gobject_class->constructor  = gegl_tile_disk_constructor;
+  gobject_class->finalize     = finalize;
   
   gegl_tile_store_class->get_tile = get_tile;
   gegl_tile_store_class->message  = message;
@@ -415,4 +424,3 @@ gegl_tile_disk_init (GeglTileDisk *self)
   self->next_unused = 0;
   self->total = 0;
 }
-

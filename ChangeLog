@@ -1,5 +1,9 @@
 2006-12-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-disk.c: reindented.
+
+2006-12-18  Øyvind Kolås  <pippin@gimp.org>
+
 	Added a swap implementation, enable it by setting the environment
 	variable GEGL_SWAP non NULL.
 	WARNING: GEGL currently does not clean up it's swap files.
