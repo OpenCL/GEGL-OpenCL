@@ -40,8 +40,7 @@ typedef struct _GeglTileMemClass GeglTileMemClass;
 struct _GeglTileMem
 {
   GeglTileBackend  parent_instance;
-
-  gpointer        *priv;
+  GHashTable *entries;
 };
 
 struct _GeglTileMemClass

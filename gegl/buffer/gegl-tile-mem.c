@@ -17,6 +17,9 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
 #include <glib.h>
 #include <glib-object.h>
 #include <glib/gprintf.h>
@@ -26,218 +29,104 @@
 #include <string.h>
 #include <stdio.h>
 
+static void dbg_alloc   (int size);
+static void dbg_dealloc (int size);
+
+/* These entries are kept in RAM for now, they should be written as an index to the
+ * swap file, at a position specified by a header block, making the header grow up
+ * to a multiple of the size used in this swap file is probably a good idea
+ *
+ * Serializing the bablformat is probably also a good idea.
+ */
+typedef struct _MemEntry MemEntry;
+
+struct _MemEntry {
+  gint    x;
+  gint    y;
+  gint    z;
+  guchar *offset;
+};
+
+static void inline
+mem_entry_read (GeglTileMem *mem,
+                MemEntry    *entry,
+                guchar      *dest)
+{
+  gint   tile_size = GEGL_TILE_BACKEND (mem)->tile_size;
+  memcpy (dest, entry->offset, tile_size);
+}
+
+static void inline
+mem_entry_write (GeglTileMem *mem,
+                 MemEntry    *entry,
+                 guchar      *source)
+{
+  gint   tile_size = GEGL_TILE_BACKEND (mem)->tile_size;
+  memcpy (entry->offset, source, tile_size);
+}
+
+static inline MemEntry *
+mem_entry_new (GeglTileMem *mem)
+{
+  MemEntry *self = g_malloc (sizeof (MemEntry));
+  self->offset = g_malloc (GEGL_TILE_BACKEND (mem)->tile_size);
+  dbg_alloc (GEGL_TILE_BACKEND (mem)->tile_size);
+  return self;
+}
+
+static inline void
+mem_entry_destroy (MemEntry    *entry,
+                    GeglTileMem *mem)
+{
+  g_free (entry->offset);
+  g_hash_table_remove (mem->entries, entry);
+
+  dbg_dealloc (GEGL_TILE_BACKEND (mem)->tile_size);
+  g_free (entry);
+}
+
+
 G_DEFINE_TYPE(GeglTileMem, gegl_tile_mem, GEGL_TYPE_TILE_BACKEND)
 static GObjectClass *parent_class = NULL;
 
 
 static gint allocs=0;
 static gint mem_size=0;
-static gint max_allocs=0;
-static gint max_mem_size=0;
+static gint peak_allocs=0;
+static gint peak_mem_size=0;
 
 void gegl_tile_mem_stats (void)
 {
   g_warning ("leaked: %i chunks (%f mb)  peak: %i (%i bytes %fmb))",
-     allocs, mem_size/1024/1024.0, max_allocs, max_mem_size, max_mem_size/1024/1024.0);
+     allocs, mem_size/1024/1024.0, peak_allocs, peak_mem_size, peak_mem_size/1024/1024.0);
 }
 
-static void dbg_alloc(int size)
+static void dbg_alloc (gint size)
 {
   allocs++;
   mem_size+=size;
-  if (allocs>max_allocs)
-    max_allocs=allocs;
-  if (mem_size>max_mem_size)
-    max_mem_size=mem_size;
+  if (allocs>peak_allocs)
+    peak_allocs=allocs;
+  if (mem_size>peak_mem_size)
+    peak_mem_size=mem_size;
 }
-static void dbg_dealloc(int size)
+
+static void dbg_dealloc(gint size)
 {
   allocs--;
   mem_size-=size;
 }
 
-
-
-typedef struct _MemEntry MemEntry;
-typedef struct _MemBank MemBank;
-typedef struct _MemPriv MemPriv;
-
-struct _MemEntry {
-  gint    x;
-  gint    y;
-  gint    z;
-  gint    size;
-  guchar *offset; 
-};
-
-static MemEntry *mem_entry_new (void)
+static inline MemEntry *
+lookup_entry (GeglTileMem *self,
+              gint          x,
+              gint          y,
+              gint          z)
 {
-  MemEntry *self = g_malloc (sizeof (MemEntry));
-  self->offset = NULL;
-  return self;
+  MemEntry key = {x,y,z,0};
+  return g_hash_table_lookup (self->entries, &key);
 }
 
-static void mem_entry_destroy (gpointer self, gpointer foo)
-{
-  MemEntry *entry = (MemEntry*)self;
-  if (entry->offset!= NULL)
-    g_free (entry->offset);
-  dbg_dealloc (entry->size);
-  g_free (self);
-}
-
-struct _MemBank {
-  guchar  *base;
-  GSList  *entries;
-};
-
-static MemBank *mem_bank_new (void)
-{
-  MemBank *self = g_malloc (sizeof (MemBank));
-  self->base = 0;
-  self->entries = NULL;
-  return self;
-}
-
-static void mem_bank_destroy (gpointer self, gpointer foo)
-{
-  MemBank *bank = (MemBank*)self;
-  g_slist_foreach (bank->entries, mem_entry_destroy, NULL);
-  if (bank->base)
-    g_free (bank->base);
-  g_free (self);
-}
-
-struct _MemPriv {
-  GSList *banks;
-};
-
-static MemPriv *mem_priv_new (void)
-{
-  MemPriv *self = g_malloc (sizeof (MemPriv));
-  self->banks = g_slist_append (NULL, mem_bank_new ());
-  return self;
-}
-
-static void mem_priv_destroy (MemPriv *self)
-{
-  g_slist_foreach (self->banks, mem_bank_destroy, NULL);
-  g_free (self);
-}
-
-static guchar * mem_priv_get_tile (MemPriv *priv,
-                                   gint     x,
-                                   gint     y,
-                                   gint     z)
-{
-  GSList *banks = priv->banks;
-  while (banks)
-    {
-      MemBank *bank    = banks->data;
-      GSList  *entries = bank->entries;
-
-      while (entries)
-        {
-          MemEntry *entry = entries->data;
-          if (entry->x == x &&
-              entry->y == y &&
-              entry->z == z)
-            return entry->offset;
-
-          entries = entries->next;
-        }
-      banks=banks->next;
-    }
-  return NULL;
-}
-
-static gboolean mem_priv_set_tile (MemPriv *priv,
-                                   gint     x,
-                                   gint     y,
-                                   gint     z,
-                                   guchar  *data,
-                                   gint     size)
-{
-  MemEntry *entry = NULL;
-  GSList *banks = priv->banks;
-  MemBank *bank = banks->data;
-
-  while (banks)
-    {
-      MemBank *bank    = banks->data;
-      GSList  *entries = bank->entries;
-
-      while (entries)
-        {
-          entry = entries->data;
-          if (entry->x == x &&
-              entry->y == y &&
-              entry->z == z)
-            {
-              goto search_done;
-            }
-
-          entries = entries->next;
-        }
-      banks=banks->next;
-      entry = NULL;       /* goto jumps across this */
-    }
-  search_done:
-  
-  if (entry==NULL)
-    {
-      entry = mem_entry_new ();
-      entry->x=x;
-      entry->y=y;
-      entry->z=z;
-      entry->offset = g_malloc (size);
-      entry->size = size;
-      bank->entries = g_slist_prepend (bank->entries, entry);
-      dbg_alloc (size);
-    }
-  memcpy (entry->offset, data, size);
-  return TRUE;
-}
-  
-static gboolean mem_priv_void_tile (MemPriv *priv,
-                                    gint     x,
-                                    gint     y,
-                                    gint     z)
-{
-  MemEntry *entry = NULL;
-  GSList *banks = priv->banks;
-  MemBank *bank = banks->data;
-
-  while (banks)
-    {
-      MemBank *bank    = banks->data;
-      GSList  *entries = bank->entries;
-
-      while (entries)
-        {
-          entry = entries->data;
-          if (entry->x == x &&
-              entry->y == y &&
-              entry->z == z)
-            {
-              goto search_done;
-            }
-
-          entries = entries->next;
-        }
-      banks=banks->next;
-      entry = NULL;       /* goto jumps across this */
-    }
-  search_done:
-  
-  if (entry!=NULL)
-    {
-      bank->entries = g_slist_remove (bank->entries, entry);
-      mem_entry_destroy (entry, NULL);
-    }
-  return TRUE;
-}
-  
 /* this is the only place that actually should
  * instantiate tiles, when the cache is large enough
  * that should make sure we don't hit this function
@@ -245,24 +134,26 @@ static gboolean mem_priv_void_tile (MemPriv *priv,
  */
 static GeglTile *
 get_tile (GeglTileStore *tile_store,
-          gint          x,
-          gint          y,
-          gint          z)
+          gint           x,
+          gint           y,
+          gint           z)
 {
-  GeglTileMem *tile_mem = GEGL_TILE_MEM (tile_store);
-  GeglTileBackend *backend = GEGL_TILE_BACKEND (tile_store);
-  GeglTile *tile = NULL;
+  GeglTileMem    *tile_mem = GEGL_TILE_MEM (tile_store);
+  GeglTileBackend *backend   = GEGL_TILE_BACKEND (tile_store);
+  GeglTile        *tile      = NULL;
   
-    {
-      guchar *data = mem_priv_get_tile ((MemPriv*)tile_mem->priv, x, y, z);
-      if (!data)
-        return NULL;
+  {
+    MemEntry *entry = lookup_entry (tile_mem, x, y, z);
 
-      tile = gegl_tile_new (backend->tile_size);
-      tile->stored_rev = 1;
-      tile->rev = 1;
-      memcpy (tile->data, data, backend->tile_size);
-    }
+    if (!entry)
+      return NULL;
+
+    tile = gegl_tile_new (backend->tile_size);
+    tile->stored_rev = 1;
+    tile->rev = 1;
+
+    mem_entry_read (tile_mem, entry, tile->data);
+  }
   return tile;
 }
 
@@ -273,11 +164,21 @@ gboolean set_tile (GeglTileStore *store,
                    gint           y,
                    gint           z)
 {
-  GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
-  GeglTileMem     *tile_mem = GEGL_TILE_MEM (backend);
+  GeglTileBackend *backend   = GEGL_TILE_BACKEND (store);
+  GeglTileMem    *tile_mem = GEGL_TILE_MEM (backend);
 
-  mem_priv_set_tile ((MemPriv*)tile_mem->priv, x, y, z,
-                     tile->data, backend->tile_size);
+  MemEntry *entry = lookup_entry (tile_mem, x, y, z);
+
+  if (entry==NULL)
+    {
+      entry = mem_entry_new (tile_mem);
+      entry->x=x;
+      entry->y=y;
+      entry->z=z;
+      g_hash_table_insert (tile_mem->entries, entry, entry);
+    }
+
+  mem_entry_write (tile_mem, entry, tile->data);
   return TRUE;
 }
 
@@ -289,15 +190,19 @@ gboolean void_tile (GeglTileStore *store,
                    gint           z)
 {
   GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
-  GeglTileMem     *tile_mem = GEGL_TILE_MEM (backend);
+  GeglTileMem    *tile_mem = GEGL_TILE_MEM (backend);
+  MemEntry *entry = lookup_entry (tile_mem, x, y, z);
+  
+  if (entry!=NULL)
+    {
+      mem_entry_destroy (entry, tile_mem);
+    }
 
-  mem_priv_void_tile ((MemPriv*)tile_mem->priv, x, y, z);
   return TRUE;
 }
 
 enum {
   PROP_0,
-  PROP_PATH
 };
 
 static gboolean
@@ -355,26 +260,62 @@ static void get_property (GObject      *object,
 static void
 finalize (GObject *object)
 {
-  GeglTileMem *tile_mem = (GeglTileMem *) object;
-  if (tile_mem->priv)
-    {
-      mem_priv_destroy ((MemPriv*)tile_mem->priv);
-      tile_mem->priv = NULL;
-    }
+  GeglTileMem *self = (GeglTileMem *) object;
+
+  g_hash_table_unref (self->entries);
+
   (* G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
 
+static guint hashfunc (gconstpointer key)
+{
+  const MemEntry *e = key;
+  guint hash;
+  hash = e->x * 7 + e->y + e->z * 11;
+  return hash;
+}
+
+static gboolean equalfunc (gconstpointer a,
+                           gconstpointer b)
+{
+  const MemEntry *ea = a;
+  const MemEntry *eb = b;
+
+  if (ea->x == eb->x &&
+      ea->y == eb->y &&
+      ea->z == eb->z)
+    return TRUE;
+  return FALSE;
+}
+
+static GObject *
+gegl_tile_mem_constructor (GType                  type,
+                            guint                  n_params,
+                            GObjectConstructParam *params)
+{
+  GObject      *object;
+  GeglTileMem *mem;
+
+  object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
+  mem = GEGL_TILE_MEM (object);
+
+  mem->entries = g_hash_table_new (hashfunc, equalfunc);
+
+  return object;
+}
 
 static void
 gegl_tile_mem_class_init (GeglTileMemClass * klass)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GObjectClass       *gobject_class         = G_OBJECT_CLASS (klass);
   GeglTileStoreClass *gegl_tile_store_class = GEGL_TILE_STORE_CLASS (klass);
+
   parent_class = g_type_class_peek_parent (klass);
 
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
-  gobject_class->finalize = finalize;
+  gobject_class->constructor  = gegl_tile_mem_constructor;
+  gobject_class->finalize     = finalize;
   
   gegl_tile_store_class->get_tile = get_tile;
   gegl_tile_store_class->message  = message;
@@ -383,5 +324,5 @@ gegl_tile_mem_class_init (GeglTileMemClass * klass)
 static void
 gegl_tile_mem_init (GeglTileMem *self)
 {
-  self->priv = (void*)mem_priv_new ();
+  self->entries = NULL;
 }

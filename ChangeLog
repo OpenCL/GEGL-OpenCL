@@ -1,5 +1,10 @@
 2006-12-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-mem.[ch]: incorporated Changes from
+	GeglTileDisk (HashTable and general code structure).
+
+2006-12-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-disk.[ch]: modified to use a HashTable instead
 	of a GSList for the in-memory index.
 
