@@ -41,12 +41,12 @@ struct _GeglTileDisk
 {
   GeglTileBackend  parent_instance;
 
-  gchar   *path;
-  gint     fd;
-  GSList  *entries;
-  GSList  *free_list;
-  guint    next_unused;
-  guint    total;
+  gchar      *path;
+  gint        fd;
+  GHashTable *entries;
+  GSList     *free_list;
+  guint       next_unused;
+  guint       total;
 };
 
 struct _GeglTileDiskClass

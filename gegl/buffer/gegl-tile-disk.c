@@ -82,7 +82,6 @@ disk_entry_read (GeglTileDisk *disk,
                      g_strerror (errno), err, nleft);
           return;
         }
-
       nleft -= err;
     }
 }
@@ -151,7 +150,7 @@ disk_entry_destroy (DiskEntry    *entry,
                     GeglTileDisk *disk)
 {
   disk->free_list = g_slist_prepend (disk->free_list, GUINT_TO_POINTER (entry->offset));
-  disk->entries   = g_slist_remove  (disk->entries, entry);
+  g_hash_table_remove (disk->entries, entry);
 
   dbg_dealloc (GEGL_TILE_BACKEND (disk)->tile_size);
   g_free (entry);
@@ -195,18 +194,8 @@ lookup_entry (GeglTileDisk *self,
               gint          y,
               gint          z)
 {
-  GSList  *entries = self->entries;
-
-  while (entries)
-    {
-      DiskEntry *entry = entries->data;
-      if (entry->x == x &&
-          entry->y == y &&
-          entry->z == z)
-        return entry;
-      entries = entries->next;
-    }
-  return NULL;
+  DiskEntry key = {x,y,z,0};
+  return g_hash_table_lookup (self->entries, &key);
 }
 
 /* this is the only place that actually should
@@ -257,7 +246,7 @@ gboolean set_tile (GeglTileStore *store,
       entry->x=x;
       entry->y=y;
       entry->z=z;
-      tile_disk->entries = g_slist_prepend (tile_disk->entries, entry);
+      g_hash_table_insert (tile_disk->entries, entry, entry);
     }
 
   disk_entry_write (tile_disk, entry, tile->data);
@@ -358,8 +347,7 @@ finalize (GObject *object)
 {
   GeglTileDisk *self = (GeglTileDisk *) object;
 
-  while (self->entries)
-    self->entries = g_slist_remove (self->entries, self->entries->data);
+  g_hash_table_unref (self->entries);
 
   close (self->fd);
   g_unlink (self->path);
@@ -367,6 +355,26 @@ finalize (GObject *object)
   (* G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
 
+static guint hashfunc (gconstpointer key)
+{
+  const DiskEntry *e = key;
+  guint hash;
+  hash = e->x * 7 + e->y + e->z * 11;
+  return hash;
+}
+
+static gboolean equalfunc (gconstpointer a,
+                           gconstpointer b)
+{
+  const DiskEntry *ea = a;
+  const DiskEntry *eb = b;
+
+  if (ea->x == eb->x &&
+      ea->y == eb->y &&
+      ea->z == eb->z)
+    return TRUE;
+  return FALSE;
+}
 
 static GObject *
 gegl_tile_disk_constructor (GType                  type,
@@ -384,6 +392,8 @@ gegl_tile_disk_constructor (GType                  type,
     {
       g_message ("Unable to open swap file '%s' GEGL unable to initialize virtual memory", disk->path);
     }
+
+  disk->entries = g_hash_table_new (hashfunc, equalfunc);
 
   return object;
 }
