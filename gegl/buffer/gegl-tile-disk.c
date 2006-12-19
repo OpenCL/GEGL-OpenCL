@@ -17,8 +17,10 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+#include "config.h"
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/types.h>
 #include <errno.h>
 #include <glib.h>
 #include <glib-object.h>
@@ -56,7 +58,7 @@ disk_entry_read (GeglTileDisk *disk,
   off_t  offset;
   gint   tile_size = GEGL_TILE_BACKEND (disk)->tile_size;
 
-  offset = lseek (disk->fd, entry->offset * tile_size, SEEK_SET);
+  offset = lseek (disk->fd, (off_t) entry->offset * tile_size, SEEK_SET);
   if (offset == -1)
     {
       g_warning ("unable to seek to tile in swap: %s",
@@ -95,7 +97,7 @@ disk_entry_write (GeglTileDisk *disk,
   off_t  offset;
   gint   tile_size = GEGL_TILE_BACKEND (disk)->tile_size;
 
-  offset = lseek (disk->fd, entry->offset * tile_size, SEEK_SET);
+  offset = lseek (disk->fd, (off_t) entry->offset * tile_size, SEEK_SET);
   if (offset == -1)
     {
       g_warning ("unable to seek to tile in swap: %s",
@@ -137,7 +139,7 @@ disk_entry_new (GeglTileDisk *disk)
       if (self->offset >= disk->total)
         {
           gint grow = 32; /* grow 32 tiles of swap space at a time */
-          g_assert (0 == ftruncate (disk->fd, (disk->total + grow) * GEGL_TILE_BACKEND (disk)->tile_size));
+          g_assert (0 == ftruncate (disk->fd, (off_t)(disk->total + grow) * (off_t) GEGL_TILE_BACKEND (disk)->tile_size));
           disk->total = self->offset;
         }
     }

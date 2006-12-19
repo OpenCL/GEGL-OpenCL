@@ -1,5 +1,11 @@
 2006-12-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-disk.c: (disk_entry_read),
+	(disk_entry_write), (disk_entry_new): Made it work with >2GB swap
+	files.
+
+2006-12-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-mem.[ch]: incorporated Changes from
 	GeglTileDisk (HashTable and general code structure).
 
