@@ -454,9 +454,6 @@ get_tile (GeglTileStore *tile_store,
 
   if (tile)
     {
-      tile->x = x;
-      tile->y = y;
-      tile->z = z;
       tile->buffer  = GEGL_BUFFER (tile_store);
 
       /* storing information in tile, to enable the dispose
@@ -468,9 +465,9 @@ get_tile (GeglTileStore *tile_store,
        */
       {
         tile->storage = gegl_buffer_storage (GEGL_BUFFER (tile_store));
-        tile->storage_x = x;
-        tile->storage_y = y;
-        tile->storage_z = z;
+        tile->x = x;
+        tile->y = y;
+        tile->z = z;
       }
     }
 

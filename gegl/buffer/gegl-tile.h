@@ -41,14 +41,12 @@ struct _GeglTile
 
 
   GeglBuffer    *buffer;
-  gint           x, y, z;      /* the coordinates of this tile within the storage
-                                 (not neccesarily the coordinates in a buffer) */
 
   GeglStorage   *storage;     /* the buffer from which this tile was retrieved
                                * needed for the tile to be able to store itself
                                * back when it is unreffed for the last time
                                */
-  gint           storage_x, storage_y, storage_z;
+  gint           x, y, z;
 
 
   guint          rev;         /* this tile revision */
