@@ -1,5 +1,12 @@
 2006-12-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-cache.c: (gegl_cache_class_init): increased default
+	dimensions.
+	* gegl/buffer/gegl-storage.c: (gegl_storage_constructor): set default
+	storage cache size to 256 tiles.
+
+2006-12-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-disk.c: (disk_entry_read),
 	(disk_entry_write), (disk_entry_new): Made it work with >2GB swap
 	files.

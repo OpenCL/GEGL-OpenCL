@@ -111,22 +111,22 @@ gegl_cache_class_init (GeglCacheClass * klass)
   /* overriding pspecs for properties in parent class */
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x", "x", "local origin's offset relative to source origin",
-                                                     G_MININT, G_MAXINT, -10240,
+                                                     G_MININT, G_MAXINT, -4096,
                                                      G_PARAM_READWRITE|
                                                      G_PARAM_CONSTRUCT_ONLY));
- g_object_class_install_property (gobject_class, PROP_Y,
+  g_object_class_install_property (gobject_class, PROP_Y,
                                    g_param_spec_int ("y", "y", "local origin's offset relative to source origin",
-                                                     G_MININT, G_MAXINT, -10240,
+                                                     G_MININT, G_MAXINT, -4096,
                                                      G_PARAM_READWRITE|
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_WIDTH,
                                    g_param_spec_int ("width", "width", "pixel width of buffer",
-                                                     -1, G_MAXINT, 10240*2,
+                                                     -1, G_MAXINT, 10240*8,
                                                      G_PARAM_READWRITE|
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_HEIGHT,
                                    g_param_spec_int ("height", "height", "pixel height of buffer",
-                                                     -1, G_MAXINT, 10240*2,
+                                                     -1, G_MAXINT, 10240*7,
                                                      G_PARAM_READWRITE|
                                                      G_PARAM_CONSTRUCT_ONLY));
 

@@ -194,7 +194,7 @@ gegl_storage_constructor (GType                  type,
  }
 
   if(1)gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_CACHE,
-                                              "size", 128,
+                                              "size", 256,
                                               NULL));
 
   if(0)gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_LOG,
