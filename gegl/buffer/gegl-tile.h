@@ -46,6 +46,7 @@ struct _GeglTile
                                * needed for the tile to be able to store itself
                                * back when it is unreffed for the last time
                                */
+  gint           storage_x, storage_y, storage_z;
   gint           x, y, z;
 
 

@@ -1,5 +1,12 @@
 2006-12-19  Øyvind Kolås  <pippin@gimp.org>
 
+	Reverted previous change, as it somehow adversly affected zoom.
+
+	* gegl/buffer/gegl-buffer.c:
+	* gegl/buffer/gegl-tile.h:
+
+2006-12-19  Øyvind Kolås  <pippin@gimp.org>
+
 	Some cleanup (at least code simplification, without regression).
 
 	* gegl/buffer/gegl-tile.h: removed ->storage_[xyz] instance variables.
