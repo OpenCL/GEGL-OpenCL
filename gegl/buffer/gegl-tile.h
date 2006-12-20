@@ -54,6 +54,8 @@ struct _GeglTile
   guint          stored_rev;  /* what revision was we when we from storage?
                                  (currently set to 1 when loaded from disk */
 
+  guint          flags;       /* used to store zoom dirt info */
+
   gchar          lock;        /* number of times the tile is write locked
                                * should in theory just have the values 0/1
                                */
@@ -61,6 +63,13 @@ struct _GeglTile
   /* the shared list is a doubly linked circular list */
   GeglTile      *next_shared;
   GeglTile      *prev_shared;
+};
+
+enum {
+  GEGL_TILE_DIRT_TL = 1<<0,
+  GEGL_TILE_DIRT_TR = 1<<1,
+  GEGL_TILE_DIRT_BL = 1<<2,
+  GEGL_TILE_DIRT_BR = 1<<3
 };
 
 struct _GeglTileClass

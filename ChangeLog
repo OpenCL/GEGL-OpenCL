@@ -1,5 +1,19 @@
 2006-12-20  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-store.h: added new messages for the tilebus to
+	void regions of a tile for zoom purposes.
+	* gegl/buffer/gegl-tile-zoom.c: (get_tile), (message),
+	(gegl_tile_zoom_class_init): only recompute dirtied quadrants.
+	* gegl/buffer/gegl-tile.c: (gegl_tile_init),
+	(gegl_tile_void_pyramid): made pyramid_dirtying dirty quadrants
+	instead of void tiles.
+	* gegl/buffer/gegl-tile.h: added flags, and enum for quadrant dirt.
+	* gegl/buffer/gegl-tile-disk.c: (set_tile): added assertion for
+	tile->flags==0
+	* gegl/buffer/gegl-tile-mem.c: (set_tile): added assertion for tile->flags==0
+
+2006-12-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_void): void smaller pyramid
 	levels as well.
 

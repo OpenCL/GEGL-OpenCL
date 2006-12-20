@@ -251,6 +251,9 @@ gboolean set_tile (GeglTileStore *store,
       g_hash_table_insert (tile_disk->entries, entry, entry);
     }
 
+  g_assert (tile->flags == 0); /* when this one is triggered, dirty pyramid data
+                                  has been tried written to persistent storage.
+                                */
   disk_entry_write (tile_disk, entry, tile->data);
   return TRUE;
 }

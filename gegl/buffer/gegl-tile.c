@@ -151,6 +151,7 @@ gegl_tile_init (GeglTile* tile)
   tile->rev = 0;
   tile->lock = 0;
   tile->data = NULL;
+  tile->flags = 0;
 
   tile->next_shared = tile;
   tile->prev_shared = tile;
@@ -250,13 +251,43 @@ gegl_tile_void_pyramid (GeglTile *tile)
   y = tile->storage_y;
   z = 0;/*tile->storage_z;*/
 
-  for (z=1; z<5;z++)
+  for (z=1; z<10;z++)
     {
+      gint ver = (y%2);
+      gint hor = (x%2);
       x/=2;
       y/=2;
-      gegl_tile_store_message (GEGL_TILE_STORE (tile->storage),
-                               GEGL_TILE_VOID,
-                               x, y, z, NULL);
+
+      if (!ver)
+        {
+          if (!hor)
+            {
+              gegl_tile_store_message (GEGL_TILE_STORE (tile->storage),
+                                       GEGL_TILE_VOID_TL,
+                                       x, y, z, NULL);
+            }
+          else
+            {
+              gegl_tile_store_message (GEGL_TILE_STORE (tile->storage),
+                                       GEGL_TILE_VOID_TR,
+                                       x, y, z, NULL);
+            }
+        }
+      else
+        {
+          if (!hor)
+            {
+              gegl_tile_store_message (GEGL_TILE_STORE (tile->storage),
+                                       GEGL_TILE_VOID_BL,
+                                       x, y, z, NULL);
+            }
+          else
+            {
+              gegl_tile_store_message (GEGL_TILE_STORE (tile->storage),
+                                       GEGL_TILE_VOID_BR,
+                                       x, y, z, NULL);
+            }
+        }
     }
 }
 

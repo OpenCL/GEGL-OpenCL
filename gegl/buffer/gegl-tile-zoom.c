@@ -193,7 +193,12 @@ get_tile (GeglTileStore *gegl_tile_store,
 
   if (tile != NULL)
     {
-      return tile;
+      /* Check that the tile is fully valid */
+      if (! (tile->flags & (GEGL_TILE_DIRT_TL |
+                            GEGL_TILE_DIRT_TR |
+                            GEGL_TILE_DIRT_BL |
+                            GEGL_TILE_DIRT_BR)))
+        return tile;
     }
 
   if (z==0) /* at base level with no tile found->send null, and shared empty
@@ -211,15 +216,39 @@ get_tile (GeglTileStore *gegl_tile_store,
     {
       gint i,j;
       guchar   *data;
-      GeglTile *source_tile[2][2];
+      GeglTile *source_tile[2][2]={{NULL,NULL}, {NULL, NULL}};
+      gboolean  fetch[2][2]={{FALSE,FALSE},
+                             {FALSE,FALSE}};
+
+      if (tile)
+        {
+          if (tile->flags & GEGL_TILE_DIRT_TL)
+             fetch[0][0]=TRUE;
+          if (tile->flags & GEGL_TILE_DIRT_TR)
+             fetch[1][0]=TRUE;
+          if (tile->flags & GEGL_TILE_DIRT_BL)
+             fetch[0][1]=TRUE;
+          if (tile->flags & GEGL_TILE_DIRT_BR)
+             fetch[1][1]=TRUE;
+
+          tile->flags = 0;
+        }
+      else
+        {
+          fetch[0][0]=TRUE;
+          fetch[1][0]=TRUE;
+          fetch[0][1]=TRUE;
+          fetch[1][1]=TRUE;
+        }
 
       for (i=0;i<2;i++)
         for (j=0;j<2;j++)
           {
             /* we get the tile from ourselves, to make successive rescales work
              * correctly */
-            source_tile[i][j] = gegl_tile_store_get_tile (gegl_tile_store,
-                                                          x*2+i, y*2+j, z-1);
+            if (fetch[i][j])
+              source_tile[i][j] = gegl_tile_store_get_tile (gegl_tile_store,
+                                                            x*2+i, y*2+j, z-1);
           }
 
       if (source_tile[0][0]==NULL &&
@@ -227,11 +256,16 @@ get_tile (GeglTileStore *gegl_tile_store,
           source_tile[1][0]==NULL &&
           source_tile[1][1]==NULL)
         {
+          if (tile)
+            {
+              g_object_unref (tile);
+            }
           return NULL; /* no data from level below, return NULL and let GeglTileEmpty
                           fill in the shared empty tile */
         }
 
-      tile = gegl_tile_new (tile_size);
+      if (!tile)
+        tile = gegl_tile_new (tile_size);
       data = gegl_tile_get_data (tile);
       for (i=0;i<2;i++)
         for (j=0;j<2;j++)
@@ -241,13 +275,63 @@ get_tile (GeglTileStore *gegl_tile_store,
                 set_half (tile, source_tile[i][j], tile_width, tile_height, format, i, j);
                 g_object_unref (source_tile[i][j]);
               }
-            else
+            else if (fetch[i][j])
               {
                 set_blank (tile, tile_width, tile_height, format, i, j);
+              }
+            else
+              {
+                /* keep old data around */
               }
           }
     }
   return tile;
+}
+
+static gboolean
+message (GeglTileStore   *tile_store,
+         GeglTileMessage  message,
+         gint             x,
+         gint             y,
+         gint             z,
+         gpointer         data)
+{
+  GeglTileTrait *trait = GEGL_TILE_TRAIT (tile_store);
+  GeglTileStore *source = trait->source;
+
+  if (message == GEGL_TILE_VOID_TL ||
+      message == GEGL_TILE_VOID_TR ||
+      message == GEGL_TILE_VOID_BL ||
+      message == GEGL_TILE_VOID_BR)
+    {
+      GeglTile *tile = gegl_tile_store_get_tile (source, x, y, z);
+
+      if (!tile)
+        return FALSE;
+      switch (message)
+        {
+          case GEGL_TILE_VOID_TL:
+            tile->flags |= GEGL_TILE_DIRT_TL;
+            break;
+          case GEGL_TILE_VOID_TR:
+            tile->flags |= GEGL_TILE_DIRT_TR;
+            break;
+          case GEGL_TILE_VOID_BL:
+            tile->flags |= GEGL_TILE_DIRT_BL;
+            break;
+          case GEGL_TILE_VOID_BR:
+            tile->flags |= GEGL_TILE_DIRT_BR;
+            break;
+          default:
+            break;
+        }
+      g_object_unref (tile);
+      return FALSE;
+    }
+  /* pass the message on */
+  if (trait->source)
+    return gegl_tile_store_message (trait->source, message, x, y, z, data);
+  return FALSE; /* pass it on */
 }
 
 
@@ -315,6 +399,7 @@ gegl_tile_zoom_class_init (GeglTileZoomClass * klass)
   GeglTileStoreClass *gegl_tile_store_class = GEGL_TILE_STORE_CLASS (klass);
 
   gegl_tile_store_class->get_tile = get_tile;
+  gegl_tile_store_class->message = message;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
   gobject_class->constructor  = constructor;
