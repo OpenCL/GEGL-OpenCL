@@ -255,6 +255,7 @@ gboolean set_tile (GeglTileStore *store,
                                   has been tried written to persistent storage.
                                 */
   disk_entry_write (tile_disk, entry, tile->data);
+  tile->stored_rev = tile->rev;
   return TRUE;
 }
 
