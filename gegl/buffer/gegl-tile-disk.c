@@ -296,8 +296,6 @@ message (GeglTileStore   *tile_store,
         return set_tile (tile_store, data, x, y, z);
       case GEGL_TILE_IDLE:
         return FALSE;
-      case GEGL_TILE_IS_DIRTY:
-        return FALSE;
       case GEGL_TILE_VOID:
         return void_tile (tile_store, data, x, y, z);
         break;

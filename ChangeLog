@@ -1,5 +1,16 @@
 2006-12-20  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-store.h: removed unused fields/defines.
+	* gegl/buffer/gegl-tile.h: removed unused fields/defines.
+
+	For the rest, cleaned away remnants of ancient code.
+
+	* gegl/buffer/gegl-buffer.c: (get_tile), (gegl_buffer_get_format):
+	* gegl/buffer/gegl-tile-disk.c: (message):
+	* gegl/buffer/gegl-tile-mem.c: (message):
+
+2006-12-20  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-zoom.c: (get_tile): add sufficient meta data to
 	generated tile enabling us to swap it out.
 

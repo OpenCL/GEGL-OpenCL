@@ -457,7 +457,6 @@ get_tile (GeglTileStore *tile_store,
       tile->x = x;
       tile->y = y;
       tile->z = z;
-      tile->buffer  = GEGL_BUFFER (tile_store);
 
       /* storing information in tile, to enable the dispose
        * function of the tile instance to "hook" back to the storage with correct coordinates.
@@ -598,35 +597,6 @@ void *gegl_buffer_get_format      (GeglBuffer *buffer)
     return buffer->format;
   return gegl_buffer_backend (buffer)->format;
 }
-
-#if 0
-void
-gegl_buffer_add_dirty (GeglBuffer *buffer,
-                       gint        x,
-                       gint        y)
-{
-  gint z=0;
-  gegl_tile_store_message (GEGL_TILE_STORE (buffer),
-                           GEGL_TILE_DIRTY, x, y, z, NULL);
-}
-
-void
-gegl_buffer_flush_dirty (GeglBuffer *buffer)
-{
-  gegl_tile_store_message (GEGL_TILE_STORE (buffer),
-                           GEGL_TILE_FLUSH_DIRTY, 0, 0, 0, NULL);
-}
-
-gboolean
-gegl_buffer_is_dirty (GeglBuffer *buffer,
-                      gint        x,
-                      gint        y)
-{
-  gint z=0;
-  return gegl_tile_store_message (GEGL_TILE_STORE (buffer),
-                                  GEGL_TILE_IS_DIRTY, x, y, z, NULL);
-}
-#endif
 
 gint gegl_buffer_pixels (GeglBuffer *buffer)
 {

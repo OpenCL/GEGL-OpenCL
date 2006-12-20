@@ -39,9 +39,6 @@ struct _GeglTile
   guchar        *data;        /* A small linear buffer for pixel data */
   gint           size;        /* The size of the data element in bytes */
 
-
-  GeglBuffer    *buffer;
-
   GeglStorage   *storage;     /* the buffer from which this tile was retrieved
                                * needed for the tile to be able to store itself
                                * back when it is unreffed for the last time
