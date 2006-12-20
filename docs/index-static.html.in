@@ -170,14 +170,19 @@ rectangular regions to be repainted.
         <ul>
             <li>Core</li>
                 <ul>
-            <li>glib (including gobject, and gmodule) 2.10 or newer</li>
-            <li><a href='http://pippin.gimp.org/babl/'>babl</a> 0.0.5 or newer (for pixel-format agnostisism).</li>
-            <li>libpng (png load/export ops, and image magick fallback import)</li>
+                  <li>glib (including gobject, and gmodule) 2.10 or newer</li>
+                  <li><a href='http://pippin.gimp.org/babl/'>babl</a> 0.0.5 or newer (for pixel-format agnostisism).</li>
+                  <li>libpng (png load/export ops, and image magick fallback import)</li>
             </ul>
+            <li>GUI (sandbox for testing ops and the API)</li>
+               <ul>
+                 <li>GTK+</li>
+               </ul>
             <li>Optional dependencies for operations.</li>
             <ul>
                  <li>SDL (display op)</li>
                  <li>libjpeg (jpg loader op)</li>
+                 <li>libopenexr (exr loader op)</li>
                  <li>cairo, pango (text source op)</li>
                  <li>librsvg</li>
              </ul>
