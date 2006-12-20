@@ -142,6 +142,24 @@ gegl_storage_dispose (GObject *object)
   (* G_OBJECT_CLASS (parent_class)->dispose) (object);
 }
 
+static gboolean
+storage_idle (gpointer data)
+{
+  GeglStorage *storage = GEGL_STORAGE (data);
+
+  if (0 /* nothing to do*/)
+    {
+      storage->idle_swapper = 0;
+      return FALSE;
+    }
+
+  gegl_tile_store_message (GEGL_TILE_STORE (storage),
+                           GEGL_TILE_IDLE, 0, 0, 0, NULL);
+  
+  return TRUE;
+}
+
+
 static GObject *
 gegl_storage_constructor (GType                  type,
                          guint                  n_params,
@@ -216,6 +234,11 @@ gegl_storage_constructor (GType                  type,
                                               "size", 128,
                                               NULL));
 
+  storage->idle_swapper = g_timeout_add_full (G_PRIORITY_LOW,
+                                              250,
+                                              storage_idle,
+                                              storage,
+                                              NULL);
 
   return object;
 }

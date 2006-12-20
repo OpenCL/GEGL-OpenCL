@@ -45,6 +45,8 @@ struct _GeglStorage
   gint           width;
   gint           height;
   gchar         *path;
+
+  guint          idle_swapper;
 };
 
 struct _GeglStorageClass
