@@ -216,11 +216,12 @@ get_tile (GeglTileStore *gegl_tile_store,
     {
       gint i,j;
       guchar   *data;
+      gboolean had_tile = tile!=NULL;
       GeglTile *source_tile[2][2]={{NULL,NULL}, {NULL, NULL}};
       gboolean  fetch[2][2]={{FALSE,FALSE},
                              {FALSE,FALSE}};
 
-      if (tile)
+      if (had_tile)
         {
           if (tile->flags & GEGL_TILE_DIRT_TL)
              fetch[0][0]=TRUE;
@@ -256,7 +257,7 @@ get_tile (GeglTileStore *gegl_tile_store,
           source_tile[1][0]==NULL &&
           source_tile[1][1]==NULL)
         {
-          if (tile)
+          if (had_tile)
             {
               g_object_unref (tile);
             }
@@ -264,9 +265,26 @@ get_tile (GeglTileStore *gegl_tile_store,
                           fill in the shared empty tile */
         }
 
-      if (!tile)
-        tile = gegl_tile_new (tile_size);
+      if (!had_tile)
+        {
+          tile = gegl_tile_new (tile_size); 
+
+          /* it is a bit hacky, but adding enough information (probably too much)
+           * enabling the storage system to attempt swapping out of zoom tiles
+           */
+          tile->storage_x = x;
+          tile->storage_y = y;
+          tile->storage_z = z;
+          tile->x= x;
+          tile->y= y;
+          tile->z= z;
+          tile->storage = zoom->storage;
+          tile->rev = 0;
+          tile->stored_rev = 0;
+        }
+      gegl_tile_lock (tile);
       data = gegl_tile_get_data (tile);
+
       for (i=0;i<2;i++)
         for (j=0;j<2;j++)
           {
@@ -284,6 +302,7 @@ get_tile (GeglTileStore *gegl_tile_store,
                 /* keep old data around */
               }
           }
+      gegl_tile_unlock (tile);
     }
   return tile;
 }
