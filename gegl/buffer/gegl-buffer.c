@@ -659,10 +659,12 @@ gegl_buffer_void (GeglBuffer *buffer)
         {
           gint      tiledx  = buffer->x + bufx + buffer->total_shift_x;
           gint      offsetx = tile_offset (tiledx, tile_width);
+          gint      z;
 
+          for (z=0;z<10;z++)
           gegl_tile_store_message (GEGL_TILE_STORE (buffer),
                                    GEGL_TILE_VOID,
-                                   tile_indice(tiledx,tile_width), tile_indice(tiledy,tile_height),0,
+                                   tile_indice(tiledx,tile_width), tile_indice(tiledy,tile_height), z,
                                    NULL);
           bufx += (tile_width - offsetx);
         }
