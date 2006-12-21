@@ -1,3 +1,8 @@
+2006-12-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/dog.c: added a difference of gaussians edge
+	detection op.
+
 2006-12-20  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-storage.[ch]:  added an idle handler cleaning the
