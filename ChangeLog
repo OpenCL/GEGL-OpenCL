@@ -1,3 +1,11 @@
+2006-12-25  Øyvind Kolås  <pippin@gimp.org>
+
+	Added operations that pick the minimum/maximum values in a square
+	neighbourhood to the workshop dir.
+
+	* operations/workshop/box-max.c: 
+	* operations/workshop/box-min.c: 
+
 2006-12-21  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/dog.c: added a difference of gaussians edge
