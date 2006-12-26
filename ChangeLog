@@ -1,5 +1,12 @@
 2006-12-26  Øyvind Kolås  <pippin@gimp.org>
 
+	Modified to request only needed data.
+
+	* operations/workshop/box-max.c: (process):
+	* operations/workshop/box-min.c: (process):
+
+2006-12-26  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-chant.h: make the type registration function static.
 
 2006-12-25  Øyvind Kolås  <pippin@gimp.org>

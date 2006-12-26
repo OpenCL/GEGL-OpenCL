@@ -61,9 +61,14 @@ process (GeglOperation *operation,
   input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
     {
       GeglRectangle   *result = gegl_operation_result_rect (operation, dynamic_id);
-      GeglRectangle    need   = get_source_rect (operation, dynamic_id);
+      GeglRectangle    need   = *result;
       GeglBuffer      *temp_in;
       GeglBuffer *temp;
+
+      need.x-=self->radius;
+      need.y-=self->radius;
+      need.w+=self->radius*2;
+      need.h+=self->radius*2;
 
       if (result->w==0 ||
           result->h==0)
