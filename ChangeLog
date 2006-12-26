@@ -1,5 +1,11 @@
 2006-12-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/tonemap.c: added a meta operation that does
+	local contrast enhancement. Based on gaussian blurred maximum/minimum
+	stretch values in a square neighbourhood.
+
+2006-12-26  Øyvind Kolås  <pippin@gimp.org>
+
 	Modified to request only needed data.
 
 	* operations/workshop/box-max.c: (process):
