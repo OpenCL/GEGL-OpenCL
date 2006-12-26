@@ -108,7 +108,7 @@ struct GeneratedClass
   \
 static void     gegl_chant_init              (GeglChantOperation *self); \
 static void     gegl_chant_class_init        (ChantClass    *klass); \
-GType           type_name##_get_type         (GTypeModule *module); \
+static GType    type_name##_get_type         (GTypeModule *module); \
 const GeglModuleInfo * gegl_module_query     (GTypeModule *module);\
 gboolean        gegl_module_register         (GTypeModule *module);\
 static gpointer gegl_chant_parent_class = NULL; \
@@ -120,7 +120,7 @@ gegl_chant_class_intern_init (gpointer klass) \
   gegl_chant_class_init ((ChantClass*) klass); \
 } \
 \
-GType \
+static GType \
 type_name##_get_type (GTypeModule *module) \
 { \
   static GType g_define_type_id = 0; \
