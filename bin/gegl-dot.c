@@ -18,13 +18,14 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include "gegl-plugin.h"
 
 gchar *
 gegl_to_dot (GeglNode *node)
 {
   GeglGraph *graph  = GEGL_GRAPH (node);
-  GString   *string = g_string_new ("digraph gegl { graph [ rankdir = \"LR\"];\n");
+  GString   *string = g_string_new ("digraph gegl { graph [ rankdir = \"BT\"];\n");
 
     {
       GList *nodes = gegl_graph_get_children (graph);
@@ -33,39 +34,97 @@ gegl_to_dot (GeglNode *node)
       while (entry)
         {
           GeglNode *node = entry->data;
-          gchar buf[512];
-          sprintf (buf, "op_%p [label=\"%s\\n", node, gegl_node_get_debug_name (node));
-          g_string_append (string, buf);
+
+          g_string_append_printf (string, "op_%p [label=\"", node);
 
 
-	  if(0){
-	    guint n_properties;
-	    GParamSpec **properties = gegl_node_get_properties (node, &n_properties);
-	    gint i;
-	    for (i=0;i<n_properties;i++)
-	      {
-		sprintf (buf, "%s=%s\\n", properties[i]->name, "foo");
-		g_string_append (string, buf);
-	      }
-	    g_free (properties);
-	  }
-          g_string_append (string, "\\n");
+          g_string_append_printf (string, "{{");
+
+	  
+	    {
+	      GList *pads = gegl_node_get_pads (node);
+	      GList *entry = pads;
+              gboolean got_output = FALSE;
+	      while (entry)
+		{
+		  GeglPad *pad = entry->data;
+                  if (gegl_pad_is_output (pad))
+                    {
+                      if (got_output)
+                        {
+                          g_string_append (string, "|");
+                        }
+                      got_output = TRUE;
+                      g_string_append_printf (string, "<%s>%s",
+                                              gegl_pad_get_name (pad),
+                                              gegl_pad_get_name (pad));
+                    }
+		  entry = g_list_next (entry);
+		}
+	    }
+          g_string_append_printf (string, "}|{%s|{", gegl_node_get_debug_name (node));
+
+	  if(1)
+            {
+              guint n_properties;
+              GParamSpec **properties = gegl_node_get_properties (node, &n_properties);
+              gint i;
+              for (i=0;i<n_properties;i++)
+                {
+                  const gchar *name = properties[i]->name;
+                  GValue tvalue={0,};
+                  GValue svalue={0,};
+
+                  if (properties[i]->value_type == GEGL_TYPE_BUFFER)
+                    continue;
+
+                  g_value_init (&svalue, G_TYPE_STRING);
+                  g_value_init (&tvalue, properties[i]->value_type);
+
+                  gegl_node_get_property (node, name, &tvalue);
+
+                  if (g_value_transform (&tvalue, &svalue))
+                    { 
+                      gchar *sval = g_value_dup_string (&svalue);
+                      if (strlen (sval) > 20)
+                        sval[20]='\0';
+                      g_string_append_printf (string, "%s=%s\\n", name, sval);
+                      g_free (sval);
+                      g_value_unset (&svalue);
+                    }
+                  g_value_unset (&tvalue);
+
+                }
+              g_free (properties);
+            }
+
+           
+          g_string_append_printf (string, "}}|{");
+
 
 	    {
 	      GList *pads = gegl_node_get_pads (node);
 	      GList *entry = pads;
+              gboolean got_input = FALSE;
 	      while (entry)
 		{
 		  GeglPad *pad = entry->data;
-		  sprintf (buf, "|<%s>%s", gegl_pad_get_name (pad),
-		                          gegl_pad_get_name (pad));
-		  g_string_append (string, buf);
+                  if (gegl_pad_is_input (pad))
+                    {
+                      if (got_input)
+                        {
+                          g_string_append (string, "|");
+                        }
+                      got_input = TRUE;
+                      g_string_append_printf (string, "<%s>%s",
+                                              gegl_pad_get_name (pad),
+                                              gegl_pad_get_name (pad));
+                    }
 		  entry = g_list_next (entry);
 		}
 	    }
-	  
-	  sprintf (buf, "\"\n shape=\"record\"];\n");
-          g_string_append (string, buf);
+
+          g_string_append_printf (string, "}}\"\n shape=\"record\"];\n");
 
 
           entry = g_list_next (entry);

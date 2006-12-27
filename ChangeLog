@@ -1,5 +1,10 @@
 2006-12-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-dot.c: (gegl_to_dot): output the values of properties
+	in the generated graph.
+
+2006-12-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-dot.c: (gegl_to_dot): show input/output pads involved in
 	connections.
 
