@@ -1,8 +1,13 @@
 2006-12-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-dot.c: (gegl_add_graph), (gegl_to_dot): visualize
+	subgraphs.
+
+2006-12-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/gallery/Makefile.am: added links to graphviz visualization
 	graphs to the gallery.
-	* docs/gallery/drop-shadow.xml: removed scale.
+	* docs/gallery/drop-shadow.xml: removed final downscaling.
 
 2006-12-27  Øyvind Kolås  <pippin@gimp.org>
 

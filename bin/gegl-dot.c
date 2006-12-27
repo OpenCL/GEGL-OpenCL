@@ -40,7 +40,17 @@ gegl_add_graph (GString     *string,
 
           if (node->is_graph)
             {
-              gegl_add_graph (string, node, g_strdup (gegl_node_get_debug_name (node)));
+              gchar *name = g_strdup (gegl_node_get_debug_name (node));
+              gchar *p = name;
+              while (*p)
+                {
+                  if (*p == ' ' ||
+                      *p == '-')
+                    *p='_';
+                  p++;
+                }
+              gegl_add_graph (string, node, name);
+              g_free (name);
             }
 
           g_string_append_printf (string, "op_%p [label=\"", node);
