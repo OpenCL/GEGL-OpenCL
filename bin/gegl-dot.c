@@ -24,7 +24,7 @@ gchar *
 gegl_to_dot (GeglNode *node)
 {
   GeglGraph *graph  = GEGL_GRAPH (node);
-  GString   *string = g_string_new ("digraph gegl {\n");
+  GString   *string = g_string_new ("digraph gegl { graph [ rankdir = \"LR\"];\n");
 
     {
       GList *nodes = gegl_graph_get_children (graph);
@@ -34,8 +34,40 @@ gegl_to_dot (GeglNode *node)
         {
           GeglNode *node = entry->data;
           gchar buf[512];
-          sprintf (buf, "op_%p [label=\"%s\"];\n", node, gegl_node_get_debug_name (node));
+          sprintf (buf, "op_%p [label=\"%s\\n", node, gegl_node_get_debug_name (node));
           g_string_append (string, buf);
+
+
+	  if(0){
+	    guint n_properties;
+	    GParamSpec **properties = gegl_node_get_properties (node, &n_properties);
+	    gint i;
+	    for (i=0;i<n_properties;i++)
+	      {
+		sprintf (buf, "%s=%s\\n", properties[i]->name, "foo");
+		g_string_append (string, buf);
+	      }
+	    g_free (properties);
+	  }
+          g_string_append (string, "\\n");
+
+	    {
+	      GList *pads = gegl_node_get_pads (node);
+	      GList *entry = pads;
+	      while (entry)
+		{
+		  GeglPad *pad = entry->data;
+		  sprintf (buf, "|<%s>%s", gegl_pad_get_name (pad),
+		                          gegl_pad_get_name (pad));
+		  g_string_append (string, buf);
+		  entry = g_list_next (entry);
+		}
+	    }
+	  
+	  sprintf (buf, "\"\n shape=\"record\"];\n");
+          g_string_append (string, buf);
+
+
           entry = g_list_next (entry);
         }
 
@@ -60,11 +92,17 @@ gegl_to_dot (GeglNode *node)
                 gchar buf[512];
                 GeglNode *source;
                 GeglNode *sink;
+		GeglPad  *source_pad;
+		GeglPad  *sink_pad;
 
                 source = gegl_connection_get_source_node (connection);
                 sink = gegl_connection_get_sink_node (connection);
+                source_pad = gegl_connection_get_source_pad (connection);
+                sink_pad = gegl_connection_get_sink_pad (connection);
 
-                sprintf (buf, "op_%p -> op_%p;\n", source, sink);
+                sprintf (buf, "op_%p:%s -> op_%p:%s;\n", source,
+		   gegl_pad_get_name (source_pad), sink,
+		   gegl_pad_get_name (sink_pad));
                 g_string_append (string, buf);
                 entry = g_list_next (entry);
                }
@@ -82,3 +120,4 @@ gegl_to_dot (GeglNode *node)
   g_string_append (string, "}");
   return g_string_free (string, FALSE);
 }
+

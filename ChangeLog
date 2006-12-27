@@ -1,9 +1,14 @@
 2006-12-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-dot.c: (gegl_to_dot): show input/output pads involved in
+	connections.
+
+2006-12-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-dot.[ch]: NEW files with a function to create a graphviz
 	compatible description of a given graph.
 	* bin/Makefile.am: added gegl-dot.[ch]
-	* bin/gegl-options.[c]: added --dot commandline option.
+	* bin/gegl-options.[ch]: added --dot commandline option.
 	* bin/gegl.c: (main): handle --dot.
 
 2006-12-26  Øyvind Kolås  <pippin@gimp.org>
