@@ -26,6 +26,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "gegl-options.h"
+#include "gegl-dot.h"
 
 #if HAVE_GTK
 #include <gtk/gtk.h>
@@ -174,6 +175,11 @@ main (gint    argc,
         break;
       case GEGL_RUN_MODE_XML:
           g_print (gegl_to_xml (gegl));
+          gegl_exit ();
+          return 0;
+        break;
+      case GEGL_RUN_MODE_DOT:
+          g_print (gegl_to_dot (gegl));
           gegl_exit ();
           return 0;
         break;

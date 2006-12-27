@@ -58,6 +58,8 @@ usage (char *application_name)
 "     --xml       use xml provided in next argument\n"
 "     -x\n"
 "\n"
+"     --dot       output a graphviz graph description\n"
+""
 "     --output    output generated image to named file\n"
 "     -o          (file is saved in PNG format)\n"
 "\n"
@@ -236,6 +238,10 @@ parse_args (int    argc,
 
         else if (match ("-X")) {
             o->mode = GEGL_RUN_MODE_XML;
+        }
+
+        else if (match ("--dot")) {
+            o->mode = GEGL_RUN_MODE_DOT;
         }
 
         else if (match ("--")) {
