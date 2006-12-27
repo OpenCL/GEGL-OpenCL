@@ -86,10 +86,17 @@ gegl_to_dot (GeglNode *node)
                   if (g_value_transform (&tvalue, &svalue))
                     { 
                       gchar *sval = g_value_dup_string (&svalue);
-                      if (strlen (sval) > 20)
-                        sval[20]='\0';
-                      g_string_append_printf (string, "%s=%s\\n", name, sval);
-                      g_free (sval);
+                      if (sval && strlen (sval) > 30)
+                        {
+                          sval[28]='.';
+                          sval[29]='.';
+                          sval[30]='\0';
+                        }
+                      if (sval)
+                        {
+                          g_string_append_printf (string, "%s=%s\\n", name, sval);
+                          g_free (sval);
+                        }
                       g_value_unset (&svalue);
                     }
                   g_value_unset (&tvalue);
@@ -100,7 +107,6 @@ gegl_to_dot (GeglNode *node)
 
            
           g_string_append_printf (string, "}}|{");
-
 
 	    {
 	      GList *pads = gegl_node_get_pads (node);
