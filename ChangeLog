@@ -1,5 +1,20 @@
 2006-12-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-dot.c: (gegl_to_dot): decreased font size nodesep and
+	ranksep to make rendered output more compact.
+
+2006-12-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/gegl-dot.c: (gegl_to_dot):
+	* bin/gegl-view.c: (button_press_event):
+	* docs/gallery/Makefile.am:
+	* gegl/gegl-node.c: (gegl_node_detect):
+	* gegl/gegl-node.h:
+	* gegl/gegl.h:
+	* operations/render/FractalExplorer.c:
+
+2006-12-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-dot.c: (gegl_to_dot): handle NULL strings as results of
 	value transforms.
 

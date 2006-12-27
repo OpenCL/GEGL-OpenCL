@@ -25,7 +25,7 @@ gchar *
 gegl_to_dot (GeglNode *node)
 {
   GeglGraph *graph  = GEGL_GRAPH (node);
-  GString   *string = g_string_new ("digraph gegl { graph [ rankdir = \"BT\"];\n");
+  GString   *string = g_string_new ("digraph gegl { graph [ fontsize=\"10\" ranksep=\"0.3\" nodesep=\"0.3\" rankdir = \"BT\"]; node [ fontsize=\"10\" ];\n");
 
     {
       GList *nodes = gegl_graph_get_children (graph);
