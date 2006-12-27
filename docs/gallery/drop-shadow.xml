@@ -1,6 +1,9 @@
+<!-- Dropshadow implemented without using the meta-op
+     using a <dropshadow> node directly would be quite
+     a bit more efficient.
+  -->
+
 <gegl>
-  <scale x='0.5'
-         y='0.5'/>
   <crop x     ='80'
         y     ='60'
         width ='360'
@@ -9,12 +12,13 @@
     <shift x='100.0'
            y='100.0'/>
     <under>
-      <opacity value='0.5'/>
+      <opacity value='1.0'/>
       <box-blur radius='16.0'/>
-      <brightness-contrast brightness='-1.0'
-                           name      ='fooo'/>
       <shift x='16.0'
              y='16.0'/>
+      <in>
+         <color value='rgb(0.0,0.0,0.0)'/>
+      </in>
       <clone ref='gegl'/>
     </under>
     <load path='data/gegl.png'
