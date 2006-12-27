@@ -21,11 +21,14 @@
 #include <string.h>
 #include "gegl-plugin.h"
 
-gchar *
-gegl_to_dot (GeglNode *node)
+void
+gegl_add_graph (GString     *string,
+                GeglNode    *node,
+                const gchar *label)
 {
   GeglGraph *graph  = GEGL_GRAPH (node);
-  GString   *string = g_string_new ("digraph gegl { graph [ fontsize=\"10\" ranksep=\"0.3\" nodesep=\"0.3\" rankdir = \"BT\"]; node [ fontsize=\"10\" ];\n");
+
+  g_string_append_printf (string, "subgraph cluster_%s%p { graph [ label=\"%s %p\" fontsize=\"10\" ranksep=\"0.3\" nodesep=\"0.3\"]; node [ fontsize=\"10\" ];\n", label, node, label, node);
 
     {
       GList *nodes = gegl_graph_get_children (graph);
@@ -34,6 +37,11 @@ gegl_to_dot (GeglNode *node)
       while (entry)
         {
           GeglNode *node = entry->data;
+
+          if (node->is_graph)
+            {
+              gegl_add_graph (string, node, g_strdup (gegl_node_get_debug_name (node)));
+            }
 
           g_string_append_printf (string, "op_%p [label=\"", node);
 
@@ -105,7 +113,6 @@ gegl_to_dot (GeglNode *node)
               g_free (properties);
             }
 
-           
           g_string_append_printf (string, "}}|{");
 
 	    {
@@ -178,11 +185,17 @@ gegl_to_dot (GeglNode *node)
           }
           entry = g_list_next (entry);
         }
-
       g_list_free (nodes);
     }
+  g_string_append_printf (string, "}\n");
+}
 
+gchar *
+gegl_to_dot (GeglNode *node)
+{
+  GString   *string = g_string_new ("digraph gegl { graph [ rankdir = \"BT\"];\n");
+
+  gegl_add_graph (string, node, "GEGL");
   g_string_append (string, "}");
   return g_string_free (string, FALSE);
 }
-
