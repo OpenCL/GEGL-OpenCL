@@ -1,5 +1,9 @@
 2006-12-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-node-editor.c: #include <unistd.h> for getcwd
+
+2006-12-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/Makefile.am: added gegl-dot.h to list of sources.
 
 2006-12-28  Øyvind Kolås  <pippin@gimp.org>
