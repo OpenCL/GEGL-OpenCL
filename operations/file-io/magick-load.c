@@ -18,8 +18,7 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 #if GEGL_CHANT_PROPERTIES
-gegl_chant_string (path, "/tmp/gegl-logo.svg",
-                   "Path of file to load.")
+gegl_chant_path (path, "/tmp/gegl-logo.svg", "Path of file to load.")
 #else
 
 #define GEGL_CHANT_SOURCE

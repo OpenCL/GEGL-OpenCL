@@ -19,8 +19,7 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_string  (path, "",
-                    "Path of file to load.")
+gegl_chant_path (path, "", "Path of file to load.")
 gegl_chant_boolean (cache, TRUE,
                     "Whether to cache the entire buffer loaded from the file.")
 

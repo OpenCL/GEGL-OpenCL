@@ -20,8 +20,7 @@
  */
 #if GEGL_CHANT_PROPERTIES
  
-gegl_chant_string (path, "/tmp/fnord.png",
-                   "Target path and filename, use '-' for stdout.")
+gegl_chant_path (path, "/tmp/fnord.png", "Target path and filename, use '-' for stdout.")
 
 #else
 

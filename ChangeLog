@@ -1,5 +1,29 @@
 2006-12-28  Øyvind Kolås  <pippin@gimp.org>
 
+	Added a PATH paramspec (chantable from operations).
+
+	* gegl/gegl-paramspecs.[ch]: NEW files (copied from GIMP, shortened
+	and appeneded).
+
+	* gegl/Makefile.am:
+	* gegl/gegl-chant.h:
+	* gegl/gegl-plugin.h:
+	* gegl/gegl-types.h:
+	* gegl/gegl.h:
+
+	use gegl_chant_path instead of gegl_chant_string for the properties
+	which are filenames.
+
+	* operations/file-io/jpg-load.c:
+	* operations/file-io/load.c:
+	* operations/file-io/magick-load.c:
+	* operations/file-io/png-load.c:
+	* operations/file-io/png-save.c:
+	* operations/file-io/raw-load.c:
+	* operations/file-io/svg-load.c:
+
+2006-12-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-node-editor.c: use fewer digits after floating point.
 
 2006-12-28  Øyvind Kolås  <pippin@gimp.org>

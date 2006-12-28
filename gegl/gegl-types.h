@@ -66,7 +66,6 @@ struct _GeglDimension
   gint height;
 };
 
-
 G_END_DECLS
 
 #endif /* __GEGL_TYPES_H__ */

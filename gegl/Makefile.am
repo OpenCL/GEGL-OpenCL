@@ -44,6 +44,7 @@ GEGL_sources = \
 	gegl-operation-sink.c       	\
 	gegl-operation-source.c       	\
 	gegl-pad.c			\
+	gegl-paramspecs.c		\
 	gegl-prepare-visitor.c		\
 	gegl-utils.c			\
 	gegl-visitable.c		\
@@ -68,6 +69,7 @@ GEGL_public_headers = \
 	gegl-operation-sink.h       	\
 	gegl-operation-source.h       	\
 	gegl-pad.h			\
+	gegl-paramspecs.h		\
 	gegl-types.h			\
 	gegl-utils.h			\
 	gegl-visitable.h		\

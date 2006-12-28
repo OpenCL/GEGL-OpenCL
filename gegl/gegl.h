@@ -187,5 +187,6 @@ GeglNode     *gegl_node_detect           (GeglNode        *root,
                                           gint             x,
                                           gint             y);
 
+#include "gegl-paramspecs.h"
 
 #endif  /* __GEGL_H__ */

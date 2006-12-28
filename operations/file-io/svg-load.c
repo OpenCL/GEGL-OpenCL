@@ -19,7 +19,7 @@
  */
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (path, "/tmp/test.svg", "Path to SVG file to load")
+gegl_chant_path (path, "/tmp/test.svg", "Path to SVG file to load")
 gegl_chant_int (width,  0, G_MAXINT, 100, "Width for rendered image")
 gegl_chant_int (height, 0, G_MAXINT, 100, "Height for rendered image")
 

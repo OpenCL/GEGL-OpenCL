@@ -72,6 +72,7 @@ struct Generated
 #define gegl_chant_double(name, min, max, def, blurb)  gdouble    name;
 #define gegl_chant_boolean(name, def, blurb)           gboolean   name;
 #define gegl_chant_string(name, def, blurb)            gchar     *name;
+#define gegl_chant_path(name, def, blurb)              gchar     *name;
 #define gegl_chant_object(name, blurb)                 GObject   *name;
 #define gegl_chant_pointer(name, blurb)                gpointer   name;
 #define gegl_chant_color(name, def, blurb)             GeglColor *name;
@@ -85,6 +86,7 @@ struct Generated
 #undef gegl_chant_double
 #undef gegl_chant_boolean
 #undef gegl_chant_string
+#undef gegl_chant_path
 #undef gegl_chant_object
 #undef gegl_chant_pointer
 #undef gegl_chant_color
@@ -220,6 +222,7 @@ enum
 #define gegl_chant_double(name, min, max, def, blurb)  PROP_##name,
 #define gegl_chant_boolean(name, def, blurb)           PROP_##name,
 #define gegl_chant_string(name, def, blurb)            PROP_##name,
+#define gegl_chant_path(name, def, blurb)              PROP_##name,
 #define gegl_chant_object(name, blurb)                 PROP_##name,
 #define gegl_chant_pointer(name, blurb)                PROP_##name,
 #define gegl_chant_color(name, def, blurb)             PROP_##name,
@@ -230,6 +233,7 @@ enum
 #undef gegl_chant_double
 #undef gegl_chant_boolean
 #undef gegl_chant_string
+#undef gegl_chant_path
 #undef gegl_chant_object
 #undef gegl_chant_pointer
 #undef gegl_chant_color
@@ -254,6 +258,8 @@ get_property (GObject      *gobject,
     case PROP_##name: g_value_set_boolean (value, self->name);break;
 #define gegl_chant_string(name, def, blurb)\
     case PROP_##name: g_value_set_string (value, self->name);break;
+#define gegl_chant_path(name, def, blurb)\
+    case PROP_##name: g_value_set_string (value, self->name);break;
 #define gegl_chant_object(name, blurb)\
     case PROP_##name: g_value_set_object (value, self->name);break;
 #define gegl_chant_pointer(name, blurb)\
@@ -267,6 +273,7 @@ get_property (GObject      *gobject,
 #undef gegl_chant_double
 #undef gegl_chant_boolean
 #undef gegl_chant_string
+#undef gegl_chant_path
 #undef gegl_chant_object
 #undef gegl_chant_pointer
 #undef gegl_chant_color
@@ -305,6 +312,12 @@ set_property (GObject      *gobject,
         g_free (self->name);\
       self->name = g_strdup (g_value_get_string (value));\
       break;
+#define gegl_chant_path(name, def, blurb)\
+    case PROP_##name:\
+      if (self->name)\
+        g_free (self->name);\
+      self->name = g_strdup (g_value_get_string (value));\
+      break;
 #define gegl_chant_object(name, blurb)\
     case PROP_##name:\
       if (self->name != NULL) \
@@ -328,6 +341,7 @@ set_property (GObject      *gobject,
 #undef gegl_chant_double
 #undef gegl_chant_boolean
 #undef gegl_chant_string
+#undef gegl_chant_path
 #undef gegl_chant_object
 #undef gegl_chant_pointer
 #undef gegl_chant_color
@@ -382,6 +396,12 @@ static void gegl_chant_destroy_notify (gpointer data)
       g_free (self->name);\
       self->name = NULL;\
     }
+#define gegl_chant_path(name, def, blurb)\
+  if (self->name)\
+    {\
+      g_free (self->name);\
+      self->name = NULL;\
+    }
 #define gegl_chant_object(name, blurb)\
   if (self->name)\
     {\
@@ -402,6 +422,7 @@ static void gegl_chant_destroy_notify (gpointer data)
 #undef gegl_chant_double
 #undef gegl_chant_boolean
 #undef gegl_chant_string
+#undef gegl_chant_path
 #undef gegl_chant_object
 #undef gegl_chant_pointer
 #undef gegl_chant_color
@@ -508,6 +529,15 @@ gegl_chant_class_init (ChantClass * klass)
                                                         G_PARAM_READWRITE |\
                                                         G_PARAM_CONSTRUCT |\
                                                         GEGL_PAD_INPUT)));
+#define gegl_chant_path(name, def, blurb)  \
+  g_object_class_install_property (object_class, PROP_##name,\
+                                   gegl_param_spec_path (#name, #name, blurb,\
+                                                         FALSE, FALSE,\
+                                                         def,\
+                                                         (GParamFlags) ( \
+                                                         G_PARAM_READWRITE |\
+                                                         G_PARAM_CONSTRUCT |\
+                                                         GEGL_PAD_INPUT)));
 #define gegl_chant_object(name, blurb)  \
   g_object_class_install_property (object_class, PROP_##name,\
                                    g_param_spec_object (#name, #name, blurb,\
@@ -537,6 +567,7 @@ gegl_chant_class_init (ChantClass * klass)
 #undef gegl_chant_double
 #undef gegl_chant_boolean
 #undef gegl_chant_string
+#undef gegl_chant_path
 #undef gegl_chant_object
 #undef gegl_chant_pointer
 #undef gegl_chant_color

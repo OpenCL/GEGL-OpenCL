@@ -42,4 +42,5 @@
                          to get warnings about conflicts in the prototypes
                          of functions. */
 #include <gegl.h>
+#include <gegl-paramspecs.h>
 #endif  /* __GEGL_H__ */
