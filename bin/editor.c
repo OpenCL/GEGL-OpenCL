@@ -191,6 +191,7 @@ editor_main (GeglNode    *gegl,
 }
 
 static void cb_about (GtkAction *action);
+static void cb_introspect (GtkAction *action);
 static void cb_export (GtkAction *action);
 static void cb_quit_dialog (GtkAction *action);
 static void cb_composition_new (GtkAction *action);
@@ -243,6 +244,11 @@ static GtkActionEntry action_entries[] = {
    "_About", "",
    "About",
    G_CALLBACK (cb_about)},
+
+  {"Introspect", NULL,
+   "_Introspect", "<control>I",
+   "Introspect",
+   G_CALLBACK (cb_introspect)},
 
   {"Export", GTK_STOCK_SAVE,
    "_Export", "<control><shift>E",
@@ -335,6 +341,7 @@ static const gchar *ui_info =
   "      <menuitem action='Structure'/>"
   "      <menuitem action='Tree'/>"
   "      <menuitem action='Properties'/>"
+  "      <menuitem action='Introspect'/>"
   "    </menu>"
   "    <menu action='HelpMenu'>"
   "      <menuitem action='About'/>"
@@ -697,6 +704,34 @@ cb_about (GtkAction *action)
   g_signal_connect (G_OBJECT (window), "delete-event",
                     G_CALLBACK (gtk_widget_destroy), window);
   gtk_widget_show_all (window);
+}
+
+static void
+cb_introspect (GtkAction *action)
+{
+  GtkWidget *window;
+  GtkWidget *introspect;
+  GeglNode  *gegl;
+  GeglNode  *dot;
+
+  gegl = gegl_graph_new ();
+  dot = gegl_graph_new_node (gegl,
+                             "operation", "introspect",
+                             "node", editor.gegl,
+                             NULL);
+  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_title (GTK_WINDOW (window), "About GEGL");
+  introspect = g_object_new (GEGL_TYPE_VIEW,
+                             "node", dot,
+                             NULL);
+  g_object_unref (gegl);
+  gtk_container_add (GTK_CONTAINER (window), introspect);
+  gtk_widget_set_size_request (introspect, 320, 260);
+
+  g_signal_connect (G_OBJECT (window), "delete-event",
+                    G_CALLBACK (gtk_widget_destroy), window);
+  gtk_widget_show_all (window);
+
 }
 
 static void cb_structure_visible (GtkAction *action, gpointer userdata)
