@@ -61,11 +61,12 @@ process (GeglOperation *operation,
       input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
       g_assert (input);
 
-      gegl_rect_set (&rect, 0, 0, input->width, input->height);
+      gegl_rect_set (&rect, input->x, input->y, input->width, input->height);
 
       temp = g_malloc (gegl_buffer_pixels (input) * gegl_buffer_px_size (input));
       format = input->format;
-      gegl_buffer_get (input, NULL, temp, format, 1.0);
+      gegl_buffer_get (input, &rect, temp, format, 1.0);
+
       gegl_buffer_set (GEGL_BUFFER (self->buffer), &rect, temp, format);
       g_free (temp);
     }

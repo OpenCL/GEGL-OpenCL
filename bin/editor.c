@@ -713,6 +713,7 @@ cb_introspect (GtkAction *action)
   GtkWidget *introspect;
   GeglNode  *gegl;
   GeglNode  *dot;
+  GeglRectangle bounding_box;
 
   gegl = gegl_graph_new ();
   dot = gegl_graph_new_node (gegl,
@@ -720,13 +721,18 @@ cb_introspect (GtkAction *action)
                              "node", editor.gegl,
                              NULL);
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window), "About GEGL");
+  gtk_window_set_title (GTK_WINDOW (window), "GEGL Introspection");
   introspect = g_object_new (GEGL_TYPE_VIEW,
                              "node", dot,
                              NULL);
+  bounding_box = gegl_node_get_bounding_box (dot);
+  bounding_box = gegl_node_get_bounding_box (dot);
   g_object_unref (gegl);
+
   gtk_container_add (GTK_CONTAINER (window), introspect);
-  gtk_widget_set_size_request (introspect, 320, 260);
+
+  gtk_widget_set_size_request (introspect, bounding_box.w * 0.70, bounding_box.h * 0.70);
+  g_object_set (introspect, "scale", 0.70, NULL);
 
   g_signal_connect (G_OBJECT (window), "delete-event",
                     G_CALLBACK (gtk_widget_destroy), window);

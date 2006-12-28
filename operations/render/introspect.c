@@ -44,14 +44,16 @@ process (GeglOperation *operation,
          gpointer       dynamic_id)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
-  GeglBuffer *output;
 
   {
     if (self->buf)
       {
-        g_object_ref(self->buf); /* add an extra reference, since gegl_operation_set_data
-                                    is stealing one */
-        gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (self->buf));
+        if (dynamic_id)
+          {
+            g_object_ref(self->buf); /* add an extra reference, since gegl_operation_set_data
+                                        is stealing one */
+            gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (self->buf));
+          }
         return TRUE;
       }
   }
@@ -70,28 +72,30 @@ process (GeglOperation *operation,
     {
       GeglNode *gegl = gegl_graph_new ();
       GeglNode *png_load = gegl_graph_new_node (gegl, "operation", "load", "path", "/tmp/gegl-temp.png", NULL);
-      GeglNode *buffer_save = gegl_graph_new_node (gegl, "operation", "save-buffer", NULL);
-      gegl_node_link_many (png_load, buffer_save, NULL);
+      GeglNode *buffer_save;
       GeglRectangle defined;
 
       defined = gegl_node_get_bounding_box (png_load);
-
-      self->buf = output = g_object_new (GEGL_TYPE_BUFFER,
+      self->buf = g_object_new (GEGL_TYPE_BUFFER,
                           "format", babl_format ("R'G'B' u8"),
                           "x",      defined.x,
                           "y",      defined.y,
                           "width",  defined.w,
                           "height", defined.h,
                           NULL);
-      g_object_ref (self->buf);
-      gegl_node_set (buffer_save, "buffer", self->buf, NULL);
+      buffer_save = gegl_graph_new_node (gegl, "operation", "save-buffer", "buffer", self->buf, NULL);
+      gegl_node_link_many (png_load, buffer_save, NULL);
 
       gegl_node_process (buffer_save);
       g_object_unref (gegl);
       system ("rm /tmp/gegl-temp.*");
     }
 
-  gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
+  if (dynamic_id)
+    {
+      g_object_ref (self->buf);
+      gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (self->buf));
+    }
   }
   return  TRUE;
 }
@@ -99,7 +103,16 @@ process (GeglOperation *operation,
 static GeglRectangle 
 get_defined_region (GeglOperation *operation)
 {
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+ 
   GeglRectangle result = {0,0, 4096, 4096};
+  process (operation, NULL);
+  if (self->buf)
+    {
+      GeglBuffer *buffer = GEGL_BUFFER (self->buf);
+      gegl_rect_set (&result, buffer->x, buffer->y,
+                              buffer->width, buffer->height);
+    }
   return result;
 }
 
