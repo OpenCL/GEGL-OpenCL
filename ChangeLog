@@ -1,5 +1,10 @@
 2006-12-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/core/save-buffer.c: added an operation to save results to
+	GeglBuffers.
+
+2006-12-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-dot.c: (gegl_add_graph), (gegl_to_dot): visualize
 	subgraphs.
 

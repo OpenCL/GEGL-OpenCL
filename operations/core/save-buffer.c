@@ -52,6 +52,9 @@ process (GeglOperation *operation,
 
   if (self->buffer)
     {
+      /*FIXME: iterate the buffer in chunks/tiles/spans instead of making a large
+       * temporary linear buffer the size of the incoming buffe
+       */
       gpointer       format;
       guchar        *temp;
       GeglRectangle  rect;
