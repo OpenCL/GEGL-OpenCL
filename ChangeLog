@@ -1,5 +1,14 @@
 2006-12-28  Øyvind Kolås  <pippin@gimp.org>
 
+	Made the local contrast enhancement code work properly.
+
+	* operations/workshop/remap.c: moved,.
+	* operations/color/remap.c: .. here.
+	* operations/workshop/tonemap.c: moved,..
+	* operations/meta/tonemap.c:  .. here.
+
+2006-12-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/remap.c: (gegl_operation_remap_class_init):
 	Changed the category remap registers for.
 
