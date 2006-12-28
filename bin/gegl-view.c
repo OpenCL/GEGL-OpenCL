@@ -293,6 +293,11 @@ static gboolean  button_press_event   (GtkWidget      *widget,
   view->prev_x = x;
   view->prev_y = y;
 
+  x= x/view->scale + view->x;
+  y= y/view->scale + view->y;
+
+  gegl_node_detect (view->node, x, y);
+
   return TRUE;
 }
 

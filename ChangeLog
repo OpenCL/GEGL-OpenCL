@@ -1,3 +1,11 @@
+2006-12-28  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/gegl-view.c: (button_press_event): trigger the hit detection
+	code.
+	* gegl/gegl-node.[ch]: (gegl_node_detect): added detect function, not yet
+	functional.
+	* gegl/gegl.h: added gegl_node_detect()
+
 2006-12-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/core/save-buffer.c: added an operation to save results to

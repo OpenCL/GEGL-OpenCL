@@ -1570,3 +1570,25 @@ gegl_node_add_dynamic (GeglNode *self,
   self->dynamic = g_slist_append (self->dynamic, dynamic);
   return dynamic;
 }
+
+GeglNode *
+gegl_node_detect (GeglNode *root,
+                  gint      x,
+                  gint      y)
+{
+  /*
+   *     nop
+   *      |
+   *     over
+   *     / \
+   *    in aux
+   *
+   *//*
+  g_warning ("gegl_node_detect: %i, %i", x, y);*/
+
+  /* make sure the have rects are computed */
+  gegl_node_get_bounding_box (root); 
+
+  
+  return NULL;
+}

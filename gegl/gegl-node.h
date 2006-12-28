@@ -187,6 +187,9 @@ const gchar * gegl_node_get_operation         (GeglNode     *node);
 
 const gchar * gegl_node_get_debug_name        (GeglNode     *node);
 
+GeglNode    * gegl_node_detect                (GeglNode     *root,
+                                               gint          x,
+                                               gint          y);
 
 enum
 {

@@ -183,5 +183,9 @@ void          gegl_color_set_rgba        (GeglColor       *self,
                                           gfloat           b,
                                           gfloat           a);
 
+GeglNode     *gegl_node_detect           (GeglNode        *root,
+                                          gint             x,
+                                          gint             y);
+
 
 #endif  /* __GEGL_H__ */
