@@ -315,7 +315,7 @@ type_editor_generic (GtkSizeGroup *col1,
       gdouble value;
       gchar str[64];
       gegl_node_get (node, param_spec->name, &value, NULL);
-      sprintf (str, "%f", value);
+      sprintf (str, "%3.3f", value);
       gtk_entry_set_text (GTK_ENTRY (entry), str);
     }
   else if (param_spec->value_type == G_TYPE_INT)
