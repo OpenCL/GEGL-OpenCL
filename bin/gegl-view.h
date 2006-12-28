@@ -53,6 +53,9 @@ struct _GeglView
   gint       orig_x;    /* coordinates of drag start */
   gint       orig_y;
 
+  gint       start_buf_x;    /* coordinates of drag start */
+  gint       start_buf_y;
+
   gint       prev_x;
   gint       prev_y;
   gdouble    prev_scale;

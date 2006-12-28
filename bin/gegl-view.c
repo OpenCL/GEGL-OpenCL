@@ -289,6 +289,9 @@ static gboolean  button_press_event   (GtkWidget      *widget,
 
   view->orig_x = view->x;
   view->orig_y = view->y;
+
+  view->start_buf_x = view->x + x/view->scale;
+  view->start_buf_y = view->y + y/view->scale;
     
   view->prev_x = x;
   view->prev_y = y;
@@ -327,22 +330,29 @@ static gboolean motion_notify_event (GtkWidget      *widget,
     }
   else if (state & GDK_BUTTON3_MASK)
     {
-      gdouble diff;
-      view->x += (view->screen_x) / view->scale;
-      view->y += (view->screen_y) / view->scale;
+      gint diff;
 
-      diff = (view->prev_y-y) / 300.0;
-      if (diff<0.0)
+      gint i;
+      diff = (view->prev_y-y);
+
+      if (diff<0)
         {
-          view->scale *= 1.0 + diff;
+          for (i=0;i>diff;i--)
+            {
+              view->scale /= 1.006;
+            }
         }
       else
         {
-          view->scale /= 1.0 - diff;
+          for (i=0;i<diff;i++)
+            {
+              view->scale *= 1.006;
+            }
         }
 
-      view->x-= (view->screen_x) / view->scale;
-      view->y-= (view->screen_y) / view->scale;
+      view->x = view->start_buf_x - (view->screen_x) / view->scale;
+      view->y = view->start_buf_y - (view->screen_y) / view->scale;
+
       /*gegl_view_repaint (self);*/
       gtk_widget_queue_draw (GTK_WIDGET (view));
       gegl_editor_update_title ();
