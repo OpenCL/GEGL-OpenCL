@@ -269,6 +269,186 @@ type_editor_color (GtkSizeGroup *col1,
   return hbox;
 }
 
+static GQuark param_spec_quark = 0;
+
+static void
+set_param_spec (GObject     *object,
+                GtkWidget   *widget,
+                GParamSpec  *param_spec)
+{
+  if (object)
+    {
+      if (! param_spec_quark)
+        param_spec_quark = g_quark_from_static_string ("gimp-config-param-spec");
+
+      g_object_set_qdata (object, param_spec_quark, param_spec);
+    }
+
+  if (widget)
+    {
+#if 0
+      const gchar *blurb = g_param_spec_get_blurb (param_spec);
+
+      if (blurb)
+        {
+          const gchar *domain;
+
+          domain = gimp_type_get_translation_domain (param_spec->owner_type);
+          gimp_help_set_help_data (widget, dgettext (domain, blurb), NULL);
+        }
+#endif
+    }
+}
+
+static GParamSpec *
+get_param_spec (GObject *object)
+{
+  if (! param_spec_quark)
+    param_spec_quark = g_quark_from_static_string ("gimp-config-param-spec");
+
+  return g_object_get_qdata (object, param_spec_quark);
+}
+
+
+static void
+connect_notify (GObject     *config,
+                const gchar *property_name,
+                GCallback    callback,
+                gpointer     callback_data)
+{
+  gchar *notify_name;
+
+  notify_name = g_strconcat ("notify::", property_name, NULL);
+
+  g_signal_connect_object (config, notify_name, callback, callback_data, 0);
+
+  g_free (notify_name);
+}
+
+
+static void
+gegl_path_chooser_button_notify (GObject        *config,
+                                 GParamSpec     *param_spec,
+                                 GtkFileChooser *button);
+
+static void
+gegl_path_chooser_button_callback (GtkFileChooser *button,
+                                   GObject        *config)
+{
+  GParamSpec *param_spec;
+  gchar      *value;
+  gchar      *utf8;
+
+  param_spec = get_param_spec (G_OBJECT (button));
+  if (! param_spec)
+    return;
+
+  value = gtk_file_chooser_get_filename (button);
+  utf8 = value ? g_filename_to_utf8 (value, -1, NULL, NULL, NULL) : NULL;
+  g_free (value);
+
+
+  gegl_node_get (GEGL_NODE (config),
+                 param_spec->name, &value,
+                NULL);
+
+  if (! (value && utf8 && strcmp (value, utf8) == 0))
+    {
+      g_signal_handlers_block_by_func (config,
+                                       gegl_path_chooser_button_notify,
+                                       button);
+      if (utf8)
+      gegl_node_set (GEGL_NODE (config),
+                    param_spec->name, utf8,
+                    NULL);
+
+      g_signal_handlers_unblock_by_func (config,
+                                         gegl_path_chooser_button_notify,
+                                         button);
+    }
+
+  g_free (value);
+  g_free (utf8);
+}
+
+static void
+gegl_path_chooser_button_notify (GObject        *config,
+                                 GParamSpec     *param_spec,
+                                 GtkFileChooser *button)
+{
+  gchar *filename;
+
+  gegl_node_get (GEGL_NODE (config),
+                 param_spec->name, &filename,
+                 NULL);
+
+  g_signal_handlers_block_by_func (button,
+                                   gegl_path_chooser_button_callback,
+                                   config);
+
+  if (filename)
+    gtk_file_chooser_set_filename (button, filename);
+  else
+    gtk_file_chooser_unselect_all (button);
+
+  g_signal_handlers_unblock_by_func (button,
+                                     gegl_path_chooser_button_callback,
+                                     config);
+
+  g_free (filename);
+}
+
+
+static GtkWidget *
+type_editor_path (GtkSizeGroup *col1,
+                  GtkSizeGroup *col2,
+                  GeglNode     *node,
+                  GParamSpec   *param_spec)
+{
+  GObject   *config = G_OBJECT (node);
+  GtkWidget *hbox = gtk_hbox_new (FALSE, 5);
+  GtkWidget *label = gtk_label_new (param_spec->name);
+  gchar     *filename;
+
+  GtkWidget *button = gtk_file_chooser_button_new ("title", GTK_FILE_CHOOSER_ACTION_OPEN);
+
+  gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+  gtk_size_group_add_widget (col1, label);
+  gtk_size_group_add_widget (col2, button);
+
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
+
+  g_object_set_data (G_OBJECT (button), "node", node);
+
+  gegl_node_get (node, param_spec->name, &filename, NULL);
+
+  set_param_spec (G_OBJECT (button), button, param_spec);
+
+  if (filename)
+    {
+      gchar *p = filename;
+      if (!g_path_is_absolute (p))
+        {
+          gchar *cwd = getcwd (NULL, 0); /*XXX: linux specific */
+          filename = g_build_filename (cwd, p, NULL);
+          g_free (p);
+          g_free (cwd);
+        }
+      gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (button), filename);
+      g_free (filename);
+    }
+  g_signal_connect (G_OBJECT (button), "selection-changed",
+                                     G_CALLBACK (gegl_path_chooser_button_callback),
+                                     (gpointer) node);
+
+  connect_notify (config, param_spec->name,
+                  G_CALLBACK (gegl_path_chooser_button_notify),
+                  button);
+  gtk_widget_show_all (hbox);
+  return hbox;
+}
+
 static GtkWidget *
 type_editor_generic (GtkSizeGroup *col1,
                      GtkSizeGroup *col2,
@@ -376,7 +556,11 @@ property_editor_general (GeglNodeEditor *node_editor,
         {
           GtkWidget *prop_editor;
        
-          if (properties[i]->value_type == GEGL_TYPE_COLOR)
+          if (g_type_is_a (G_PARAM_SPEC_TYPE (properties[i]), GEGL_TYPE_PARAM_PATH))
+            {
+              prop_editor = type_editor_path (col1, col2, node, properties[i]);
+            }
+          else if (properties[i]->value_type == GEGL_TYPE_COLOR)
             {
               prop_editor = type_editor_color (col1, col2, node, properties[i]);
             }

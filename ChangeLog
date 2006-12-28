@@ -1,5 +1,11 @@
 2006-12-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-node-editor.c: add a special handler for path properties.
+	* operations/file-io/png-save.c: the GtkFileChooserButton doesn't
+	support the SAVE action.
+
+2006-12-28  Øyvind Kolås  <pippin@gimp.org>
+
 	Added a PATH paramspec (chantable from operations).
 
 	* gegl/gegl-paramspecs.[ch]: NEW files (copied from GIMP, shortened
