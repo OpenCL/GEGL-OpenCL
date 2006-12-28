@@ -1442,8 +1442,10 @@ gegl_node_get_bounding_box (GeglNode     *root)
 
   GeglPad     *pad;
   pad = gegl_node_get_pad (root, "output");
-  if (pad->node != root)
-    root = pad->node;
+  if (pad && pad->node != root)
+    {
+      root = pad->node;
+    }
   g_object_ref (root);
 
   for (i=0;i<2;i++)

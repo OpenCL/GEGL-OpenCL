@@ -1,5 +1,10 @@
 2006-12-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.c: (gegl_node_get_bounding_box): do not try to do
+	graph based proxy redirect, if we do not have an output pad.
+
+2006-12-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-view.[ch]: (button_press_event), (motion_notify_event):
 	made right click drag to zoom work correctly.
 
