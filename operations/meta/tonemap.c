@@ -21,6 +21,7 @@
 
 gegl_chant_double(radius, 0.0, 100.0, 20.0, "radius")
 gegl_chant_double(blur, 0.0, 100.0,   15.0,   "blur")
+gegl_chant_double(amount, -10.0, 20.0, 0.5,   "amount")
 
 #else
 
@@ -39,6 +40,8 @@ struct _Priv
   GeglNode *input;
   GeglNode *output;
 
+  GeglNode *over;
+  GeglNode *opacity;
   GeglNode *min;
   GeglNode *blur_min;
   GeglNode *max;
@@ -84,6 +87,14 @@ static void associate (GeglOperation *operation)
                                          "operation", "remap",
                                          NULL);
 
+      priv->over = gegl_graph_new_node (gegl,
+                                         "operation", "over",
+                                         NULL);
+
+      priv->opacity = gegl_graph_new_node (gegl,
+                                         "operation", "opacity",
+                                         NULL);
+
       gegl_node_link_many (priv->input, priv->min, priv->blur_min, NULL);
       gegl_node_link_many (priv->input, priv->max, priv->blur_max, NULL);
 
@@ -91,7 +102,13 @@ static void associate (GeglOperation *operation)
       gegl_node_connect_to (priv->blur_min, "output", priv->remap, "low");
       gegl_node_connect_to (priv->blur_max, "output", priv->remap, "high");
 
-      gegl_node_connect_to (priv->remap, "output", priv->output, "input");
+      gegl_node_connect_to (priv->input, "output", priv->over, "input");
+      gegl_node_connect_to (priv->remap, "output", priv->opacity, "input");
+      gegl_node_connect_to (priv->opacity, "output", priv->over, "aux");
+      gegl_node_connect_to (priv->over, "output", priv->output, "input");
+
+
+
 
       gegl_operation_meta_redirect (operation, "blur", priv->blur_max, "radius-x");
       gegl_operation_meta_redirect (operation, "blur", priv->blur_max, "radius-y");
@@ -101,6 +118,7 @@ static void associate (GeglOperation *operation)
       gegl_operation_meta_redirect (operation, "blur", priv->blur_min, "radius-x");
       gegl_operation_meta_redirect (operation, "blur", priv->blur_min, "radius-y");
       gegl_operation_meta_redirect (operation, "radius", priv->min, "radius");
+      gegl_operation_meta_redirect (operation, "amount", priv->opacity, "value");
     }
 }
 
