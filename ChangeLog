@@ -1,3 +1,7 @@
+2006-12-28  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.in: Added check for graphviz (by looking for 'dot').
+
 2006-12-28  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/meta/tonemap.c: added an amount parameter, defaulting

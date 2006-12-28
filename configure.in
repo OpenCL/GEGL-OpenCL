@@ -42,6 +42,7 @@ m4_define([png_required_version], [0.0.0])
 m4_define([librsvg_required_version], [2.14.0])
 m4_define([openexr_required_version], [0.0.0])
 m4_define([sdl_required_version], [0.0.0])
+m4_define([graphviz_required_version], [0.0.0])
 
 AC_INIT(gegl/gegl-init.c)
 
@@ -406,6 +407,22 @@ AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 
 
+####################
+# Check for graphviz
+####################
+ 
+AC_PATH_PROG(HAVE_GRAPHVIZ, dot, no)
+if test "$HAVE_GRAPHVIZ" = "no"; then
+  have_graphviz="no  (usable graphviz not found)"
+  AC_MSG_RESULT([*** Check for dot command from graphviz failed.])
+else
+  have_graphviz="yes"
+fi
+AM_CONDITIONAL(HAVE_GRAPHVIZ, test "x$have_graphviz" = "xyes")
+
+AC_SUBST(HAVE_GRAPHVIZ)
+
+
 ################
 # Check for lcms
 ################
@@ -480,4 +497,5 @@ Optional dependencies:
   OpenEXR:        $have_openexr
   rsvg:           $have_librsvg
   SDL:            $have_sdl
+  graphviz:       $have_graphviz
 ]);
