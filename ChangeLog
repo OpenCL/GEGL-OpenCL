@@ -1,5 +1,10 @@
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/meta/tonemap.c: (attach): use boxblur instead of gauss
+	blur. (mostly for speed, doesn't make arifcats much worse).
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/dynamic_id/context_id/g which is hopefully a rename in a sane
 	direction, probably not a final choice though.
 

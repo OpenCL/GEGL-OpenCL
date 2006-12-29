@@ -72,7 +72,7 @@ static void attach (GeglOperation *operation)
                                        NULL);
 
       priv->blur_min = gegl_graph_new_node (gegl,
-                                            "operation", "gaussian-blur",
+                                            "operation", "box-blur",
                                             NULL);
 
       priv->max = gegl_graph_new_node (gegl,
@@ -80,7 +80,7 @@ static void attach (GeglOperation *operation)
                                        NULL);
 
       priv->blur_max = gegl_graph_new_node (gegl,
-                                            "operation", "gaussian-blur",
+                                            "operation", "box-blur",
                                             NULL);
 
       priv->remap = gegl_graph_new_node (gegl,
@@ -110,13 +110,11 @@ static void attach (GeglOperation *operation)
 
 
 
-      gegl_operation_meta_redirect (operation, "blur", priv->blur_max, "radius-x");
-      gegl_operation_meta_redirect (operation, "blur", priv->blur_max, "radius-y");
+      gegl_operation_meta_redirect (operation, "blur", priv->blur_max, "radius");
       gegl_operation_meta_redirect (operation, "radius", priv->max, "radius");
 
 
-      gegl_operation_meta_redirect (operation, "blur", priv->blur_min, "radius-x");
-      gegl_operation_meta_redirect (operation, "blur", priv->blur_min, "radius-y");
+      gegl_operation_meta_redirect (operation, "blur", priv->blur_min, "radius");
       gegl_operation_meta_redirect (operation, "radius", priv->min, "radius");
       gegl_operation_meta_redirect (operation, "amount", priv->opacity, "value");
     }
