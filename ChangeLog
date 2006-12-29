@@ -1,5 +1,10 @@
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl.c: improved splash, (tweaked it to not extend the bounding
+	box of the background fractal.)
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	s/associate/attach/ in the API, perhaps this should even be passed the
 	node it is being attached to as a parameter.
 
