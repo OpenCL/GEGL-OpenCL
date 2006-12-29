@@ -1,5 +1,9 @@
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-node-editor.c: (type_editor_scalar): set a minimum size.
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/color/levels.c: changed ranges to -5..5
 
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>

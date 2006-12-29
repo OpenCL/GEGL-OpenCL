@@ -660,7 +660,7 @@ type_editor_scalar (GtkSizeGroup *col1,
   GtkWidget *drawing_area = gtk_drawing_area_new ();
   GtkWidget *label = gtk_label_new (param_spec->name);
 
-  /*gtk_widget_set_size_request (drawing_area, 128, 32);*/
+  gtk_widget_set_size_request (drawing_area, 128, 32);
 
   gtk_widget_set_events (drawing_area,
                          GDK_EXPOSURE_MASK |
