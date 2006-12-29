@@ -34,6 +34,9 @@ class-hierarchy.html: $(top_builddir)/tools/introspect $(top_srcdir)/operations/
 	export GEGL_PATH=$(top_builddir)/operations;\
 	$(top_builddir)/tools/introspect > $@
 
+gegl.h.html: ../gegl/gegl.h
+	enscript -E --color -whtml -p$@ $<
+
 runinfo: Makefile.am
 	if [ ! -z "$${CRUCIBLE_ID}" ]; then\
 	  echo "<h2>Crucible</h2>" > runinfo;\
@@ -85,7 +88,7 @@ web: all
 	   echo "FAIL   $(WEBSITE_HOST) not reachable."\
 	   )
 
-WEBSITE_FILES=*.html *.css */*.html gallery/*.txt images/gegl.ico gallery/*.png
+WEBSITE_FILES=*.html *.css */*.html gallery/*.txt images/gegl.ico gallery/*.png gegl.h.html
 
 website:
 	if [ "x"$$WEBSITE_DESTINATION == "x" ];then echo "WA""NING: WEBSITE_DESTINATION not set (and it is crucibles fault)";\

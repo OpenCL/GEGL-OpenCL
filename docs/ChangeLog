@@ -1,5 +1,10 @@
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: added enscriptification of gegl.h
+	* index-static.html.in: added link to html version of gegl.h
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* gallery/Makefile.am: only generate graphs if graphviz is installed.
 
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>

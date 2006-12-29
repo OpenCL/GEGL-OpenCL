@@ -252,7 +252,8 @@ rectangular regions to be repainted.
     <a href='#Glossary'>Glossary</a> to decode this paragraph.
     </p>
     
-    <p>The DAG is modifiable through the C API as well as a <a
+    <p>The DAG is modifiable through the <a href='gegl.h.html'>C API</a> as
+    well as a <a
         href='http://ervilha.org/pygegl/'>Python Binding</a>. The <a
         href='#XML'>XML Data model</a> provides a tree based interface that
     maps to Directed Acyclic graphs (DAGs).
