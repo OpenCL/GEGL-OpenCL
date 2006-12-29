@@ -33,6 +33,7 @@ GEGL_sources = \
 	gegl-instrument.c		\
 	gegl-need-visitor.c		\
 	gegl-node.c			\
+	gegl-dot.c			\
 	gegl-node-dynamic.c		\
 	gegl-object.c			\
 	gegl-operation.c        	\
@@ -74,6 +75,7 @@ GEGL_public_headers = \
 	gegl-utils.h			\
 	gegl-visitable.h		\
 	gegl-visitor.h			\
+	gegl-dot.h			\
 	gegl-xml.h
 
 libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)

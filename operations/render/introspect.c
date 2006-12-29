@@ -36,7 +36,7 @@ gegl_chant_pointer(buf, "Buffer")
 #include <stdio.h>
 #include <string.h>
 #include "gegl-plugin.h"
-#include "../../bin/gegl-dot.h"
+#include "gegl-dot.h"
 
 
 static gboolean
