@@ -1,5 +1,9 @@
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-dot.c: (gegl_add_graph): removed deprecated FIXME.
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (property_changed), (gegl_node_set_valist):
 	removed deprecation warning.
 	* gegl/gegl-xml.c: (name2val), (add_stack): removed deperaction

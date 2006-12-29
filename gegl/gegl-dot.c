@@ -188,10 +188,6 @@ gegl_add_graph (GString     *string,
                 g_string_append (string, buf);
                 entry = g_list_next (entry);
                }
-
-             /* FIXME: should have needed a free, but we're working directly on
-              * the list,..
-              */
           }
           entry = g_list_next (entry);
         }
