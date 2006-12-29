@@ -95,8 +95,7 @@
         <li>&nbsp;</li>
         <li>&nbsp;</li>
         <li><a href='http://cvs.gnome.org/viewcvs/gegl/ChangeLog?view=markup'>changes</a></li>
-        <li><a href='http://crucible.osdl.org/runs/gegl_report.html'>tests</a></li>
-        <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED'>issues</a></li>
+        <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED'>bugzilla</a></li>
         <li><a href='http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes'>mailarchive</a></li>
       </ul>
     </div>
