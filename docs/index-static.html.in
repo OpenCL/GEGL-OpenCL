@@ -90,11 +90,11 @@
         <li><a href='#gegl'>&nbsp;&nbsp;gegl</li>
         <li>&nbsp;</li>
         <li><a href='#Development'>Development</a></li>
-        <li><a href='#Bootstrap'>&nbsp;&nbsp;Bootstrap</a></li>
+        <!--<li><a href='#Bootstrap'>&nbsp;&nbsp;Bootstrap</a></li>-->
         <li><a href='#CodeOverview'>&nbsp;&nbsp;Code Overview</a></li>
         <li>&nbsp;</li>
         <li>&nbsp;</li>
-        <li><a href='http://cvs.gnome.org/viewcvs/gegl/ChangeLog?view=markup'>changes</a></li>
+        <li><a href='http://svn.gnome.org/viewcvs/gegl/trunk/ChangeLog?view=markup'>changes</a></li>
         <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED'>bugzilla</a></li>
         <li><a href='http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes'>mailarchive</a></li>
       </ul>
@@ -170,7 +170,7 @@ rectangular regions to be repainted.
             <li>Core</li>
                 <ul>
                   <li>glib (including gobject, and gmodule) 2.10 or newer</li>
-                  <li><a href='http://pippin.gimp.org/babl/'>babl</a> 0.0.5 or newer (for pixel-format agnostisism).</li>
+                  <li><a href='ftp://gimp.org/pub/babl/0.0/'>babl</a> 0.0.8 or newer (for pixel-format agnostisism).</li>
                   <li>libpng (png load/export ops, and image magick fallback import)</li>
             </ul>
             <li>GUI (sandbox for testing ops and the API)</li>
@@ -192,15 +192,14 @@ rectangular regions to be repainted.
     <h2>Download</h2>
 
     <p>
-        The latest development version is available in <a
-            href='http://cvs.gnome.org/viewcvs/gegl/'>the <em>gegl</em> module
-            in GNOME CVS</a>. <a href='http://pippin.gimp.org/cvs-snapshots/gegl-current.tar.bz2'>Nightly tarballs</a> are also available.
-        </p>
+    The latest development snapshot, and eventually stable versions of GEGL are
+    available at <a href='ftp://ftp.gimp.org/pub/gegl/'>ftp://ftp.gimp.org/pub/gegl/</a>.
+    </p>
 
         <a name='Bugzilla'></a>
         <h3>Bugzilla</h3>
 
-        <p>The GEGL project uses <a href='http://bugzilla.gnome.org'>GNOME
+        <p>The GEGL project uses <a href='http://bugzilla.gnome.org/'>GNOME
             Bugzilla</a>, a bug-tracking system that allows us to coordinate
         bug reports. Bugzilla is also used for enhancement requests and the
         preferred way to submit patches for GEGL is to open a bug report and
@@ -401,8 +400,8 @@ Some examples:
   &lt;node class='png-load' path='-'/&gt;&lt;/tree&gt;&lt;/gegl&gt;" &gt; output.png</pre>
 
         The latest development version is available in <a
-            href='http://cvs.gnome.org/viewcvs/gegl/'>the <em>gegl</em> module
-            in GNOME CVS</a>. 
+            href='http://svn.gnome.org/viewcvs/gegl/trunk/'>the <em>gegl</em> module
+            in GNOME Subversion</a>. 
     <h4>gegl usage</h4>
     The following is the usage information of the gegl binary, this
     documentation might not be complete.
@@ -422,39 +421,6 @@ Some examples:
     gegl would probably be <a href='#extending'>extending</a> it through
     operations.
     </p>
-
-        <a name ='Bootstrap'></a>
-        <h3>Bootstrapping Development Environment</h3>
-        <p>GEGL uses autotools, from a CVS checkout running <tt>./autogen.sh &amp;&amp; make &amp;&amp; sudo make install</tt> should be sufficient. From a tarball running 
-        <tt>./configure &amp;&amp; make &amp;&amp; sudo make install</tt> should be sufficient if the core dependencies are satisfied.</p>
-
-        <p>The following commands are what is needed for me to bootstrap a GEGL build environment
-        that builds from anonymous CVS (should be possible to select, and paste into a terminal).
-        Look at <a href='http://cvs.gnome.org/'>cvs.gnome.org</a> for more information.
-        </p>
-
-        <pre>
-wget http://pippin.gimp.org/cvs-snapshots/babl-current.tar.bz2 &amp;&amp;
-wget http://pippin.gimp.org/cvs-snapshots/gegl-current.tar.bz2 &amp;&amp;
-tar xjf babl-current.tar.bz2 &amp;&amp;
-cd babl-2* &amp;&amp;
-./autogen.sh &amp;&amp;
-make &amp;&amp;
-sudo make install &amp;&amp;
-sudo ldconfig &amp;&amp;
-cd .. &amp;&amp;
-tar xjf gegl-current.tar.bz2 &amp;&amp;
-cd gegl-2* &amp;&amp;
-./autogen.sh &amp;&amp;
-make &amp;&amp;
-sudo make install &amp;&amp;
-sudo ldconfig</pre>
-
-        <p>To sync up your checkout later, issue the following command when
-        in the toplevel GEGL directory.
-        </p>
-
-        <p>cvs update -Pd</p>
 
 <a name='CodeOverview'></a>
 <h3>Code Overview</h3>
@@ -523,13 +489,6 @@ sudo ldconfig</pre>
  └──docs       Documentation/webpage for babl.
 </pre>
 
-        <!--
-        <div class='screen'>
-          <p>You can also <a href='source-local.html'>browse the source</a> for
-          the version this website was built. </p>
-        </div>
-        -->
-
         <a name='extending'></a>
         <h3>Extending</h3>
 
@@ -541,7 +500,7 @@ sudo ldconfig</pre>
 
         <p>Most of the operations do not use the verbose gobject syntax, but preprocessor
         tricks turning the boilerplate in a <a
-            href='http://cvs.gnome.org/viewcvs/gegl/operations/color/brightness-contrast.c?view=markup'>short chant</a>.
+            href='http://svn.gnome.org/viewcvs/gegl/trunk/operations/color/brightness-contrast.c?view=markup'>short chant</a>.
       </div>
     </div>
     <div class='graphic'>
