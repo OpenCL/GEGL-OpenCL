@@ -297,7 +297,7 @@ gegl_instrument_utf8 (void)
 
       if (!strcmp (iter->name, root->name))
         {
-          buf = g_strdup_printf ("Total time: %.8fs\n", seconds (iter->usecs));
+          buf = g_strdup_printf ("Total time: %.3fs\n", seconds (iter->usecs));
           s = g_string_append (s, buf);
           g_free (buf);
         }

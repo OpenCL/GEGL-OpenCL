@@ -1,5 +1,14 @@
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-instrument.c: (gegl_instrument_utf8): only print three
+	decimal digits in total.
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.in:
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/Makefile.am: removed gegl-dot.[ch]
 	* gegl/Makefile.am: added gegl-dot.[ch]
 	* operations/render/introspect.c: include gegl-dot.h correctly.
