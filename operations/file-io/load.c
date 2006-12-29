@@ -84,7 +84,7 @@ finalize (GObject *object)
 
 static void
 prepare (GeglOperation *operation,
-         gpointer       dynamic_id)
+         gpointer       context_id)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *priv = (Priv*)self->priv;

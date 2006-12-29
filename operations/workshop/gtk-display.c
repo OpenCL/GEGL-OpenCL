@@ -98,15 +98,15 @@ static Priv *init_priv (GeglOperation *operation)
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       dynamic_id)
+         gpointer       context_id)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer         *source;
   GeglBuffer         *input;
-  GeglRectangle      *requested  = gegl_operation_get_requested_region (operation, dynamic_id);
+  GeglRectangle      *requested  = gegl_operation_get_requested_region (operation, context_id);
   Priv               *priv = init_priv (operation);
 
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
   g_assert (input);
 

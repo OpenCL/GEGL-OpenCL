@@ -34,7 +34,7 @@ gegl_chant_pointer (pixbuf, "GdkPixbuf to use")
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       dynamic_id)
+         gpointer       context_id)
 {
   GeglChantOperation  *self      = GEGL_CHANT_OPERATION (operation);
 
@@ -48,7 +48,7 @@ process (GeglOperation *operation,
                                         "height", gdk_pixbuf_get_height (self->pixbuf),
                                         NULL);
       gegl_buffer_set (output, NULL, gdk_pixbuf_get_pixels (self->pixbuf), NULL);
-      gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
+      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
     }
   return TRUE;
 }

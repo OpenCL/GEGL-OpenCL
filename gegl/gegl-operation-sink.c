@@ -38,14 +38,14 @@ static void     set_property         (GObject       *gobject,
                                       GParamSpec    *pspec);
 
 static gboolean process              (GeglOperation *operation,
-                                      gpointer       dynamic_id,
+                                      gpointer       context_id,
                                       const gchar   *output_prop);
 
 static void     attach               (GeglOperation *operation);
 
 static GeglRectangle get_defined_region   (GeglOperation *self);
 static gboolean calc_source_regions  (GeglOperation *self,
-                                      gpointer       dynamic_id);
+                                      gpointer       context_id);
 
 G_DEFINE_TYPE (GeglOperationSink, gegl_operation_sink, GEGL_TYPE_OPERATION)
 
@@ -109,7 +109,7 @@ set_property (GObject      *object,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       dynamic_id,
+         gpointer       context_id,
          const gchar   *output_prop)
 {
   GeglOperationSink      *gegl_operation_sink;
@@ -122,10 +122,10 @@ process (GeglOperation *operation,
 
   g_assert (klass->process);
 
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   if (input);
     {
-      success = klass->process (operation, dynamic_id);
+      success = klass->process (operation, context_id);
     }
   return success;
 }
@@ -147,10 +147,10 @@ get_defined_region (GeglOperation *self)
 
 static gboolean
 calc_source_regions (GeglOperation *self,
-                     gpointer       dynamic_id)
+                     gpointer       context_id)
 {
-  GeglRectangle *need_rect = gegl_operation_get_requested_region (self, dynamic_id);
+  GeglRectangle *need_rect = gegl_operation_get_requested_region (self, context_id);
 
-  gegl_operation_set_source_region (self, dynamic_id, "input", need_rect);
+  gegl_operation_set_source_region (self, context_id, "input", need_rect);
   return TRUE;
 }

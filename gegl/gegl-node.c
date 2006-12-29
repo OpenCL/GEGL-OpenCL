@@ -1338,13 +1338,13 @@ gegl_node_get_have_rect (GeglNode    *node)
 
 void
 gegl_node_set_need_rect (GeglNode    *node,
-                         gpointer     dynamic_id,
+                         gpointer     context_id,
                          gint         x,
                          gint         y,
                          gint         width,
                          gint         height)
 {
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, dynamic_id);
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, context_id);
   g_assert (node);
   dynamic->need_rect.x = x;
   dynamic->need_rect.y = y;
@@ -1354,21 +1354,21 @@ gegl_node_set_need_rect (GeglNode    *node,
 
 GeglRectangle *
 gegl_node_get_result_rect (GeglNode *node,
-                           gpointer  dynamic_id)
+                           gpointer  context_id)
 {
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, dynamic_id);
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, context_id);
   return &dynamic->result_rect;
 }
 
 void
 gegl_node_set_result_rect (GeglNode *node,
-                           gpointer  dynamic_id,
+                           gpointer  context_id,
                            gint      x,
                            gint      y,
                            gint      width,
                            gint      height)
 {
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, dynamic_id);
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, context_id);
   g_assert (node);
   g_assert (dynamic);
   dynamic->result_rect.x = x;
@@ -1379,9 +1379,9 @@ gegl_node_set_result_rect (GeglNode *node,
 
 GeglRectangle *
 gegl_node_get_need_rect (GeglNode    *node,
-                         gpointer     dynamic_id)
+                         gpointer     context_id)
 {
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, dynamic_id);
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, context_id);
   return &dynamic->need_rect;
 }
 
@@ -1493,27 +1493,27 @@ gegl_node_process (GeglNode *self)
 
 static gint
 lookup_dynamic (gconstpointer a,
-                gconstpointer dynamic_id)
+                gconstpointer context_id)
 {
   GeglNodeDynamic *dynamic = (void*)a;
-  if (dynamic->dynamic_id == dynamic_id)
+  if (dynamic->context_id == context_id)
     return 0;
   return -1;
 }
 void babl_backtrack(void);
 GeglNodeDynamic *
 gegl_node_get_dynamic (GeglNode *self,
-                       gpointer  dynamic_id)
+                       gpointer  context_id)
 {
   GSList *found;
   GeglNodeDynamic *dynamic = NULL;
  
-  found = g_slist_find_custom (self->dynamic, dynamic_id, lookup_dynamic);
+  found = g_slist_find_custom (self->dynamic, context_id, lookup_dynamic);
   if (found)
     dynamic = found->data;
   else
     {
-      g_warning ("didn't find %p", dynamic_id);
+      g_warning ("didn't find %p", context_id);
       babl_backtrack();
     }
   return dynamic;
@@ -1521,13 +1521,13 @@ gegl_node_get_dynamic (GeglNode *self,
 
 void
 gegl_node_remove_dynamic (GeglNode *self,
-                          gpointer  dynamic_id)
+                          gpointer  context_id)
 {
   GeglNodeDynamic *dynamic;
-  dynamic = gegl_node_get_dynamic (self, dynamic_id);
+  dynamic = gegl_node_get_dynamic (self, context_id);
   if (!dynamic)
     {
-      g_warning ("didn't find dynamic %p for %s", dynamic_id, gegl_node_get_debug_name (self));
+      g_warning ("didn't find dynamic %p for %s", context_id, gegl_node_get_debug_name (self));
       return;
     }
   self->dynamic = g_slist_remove (self->dynamic, dynamic);
@@ -1536,10 +1536,10 @@ gegl_node_remove_dynamic (GeglNode *self,
 
 GeglNodeDynamic *
 gegl_node_add_dynamic (GeglNode *self,
-                       gpointer  dynamic_id)
+                       gpointer  context_id)
 {
   GeglNodeDynamic *dynamic = NULL;
-  GSList *found = g_slist_find_custom (self->dynamic, dynamic_id, lookup_dynamic);
+  GSList *found = g_slist_find_custom (self->dynamic, context_id, lookup_dynamic);
   if (found)
     dynamic = found->data;
 
@@ -1552,7 +1552,7 @@ gegl_node_add_dynamic (GeglNode *self,
 
   dynamic = g_object_new (GEGL_TYPE_NODE_DYNAMIC, NULL);
   dynamic->node = self;
-  dynamic->dynamic_id = dynamic_id;
+  dynamic->context_id = context_id;
   self->dynamic = g_slist_append (self->dynamic, dynamic);
   return dynamic;
 }

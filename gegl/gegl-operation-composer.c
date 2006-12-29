@@ -43,13 +43,13 @@ static void     set_property (GObject      *gobject,
                               const GValue *value,
                               GParamSpec   *pspec);
 static gboolean process      (GeglOperation *operation,
-                              gpointer       dynamic_id,
+                              gpointer       context_id,
                               const gchar  *output_prop);
 static void     attach       (GeglOperation *operation);
 
 static GeglRectangle get_defined_region  (GeglOperation *self);
 static gboolean calc_source_regions (GeglOperation *self,
-                                     gpointer       dynamic_id);
+                                     gpointer       context_id);
 
 
 G_DEFINE_TYPE (GeglOperationComposer, gegl_operation_composer, GEGL_TYPE_OPERATION)
@@ -135,7 +135,7 @@ set_property (GObject      *object,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       dynamic_id,
+         gpointer       context_id,
          const gchar   *output_prop)
 {
   GeglBuffer *input;
@@ -150,8 +150,8 @@ process (GeglOperation *operation,
       return FALSE;
     }
 
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
-  aux = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "aux"));
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+  aux = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
 
   /* A composer with a NULL aux, can still be valid, the
    * subclass has to handle it.
@@ -159,7 +159,7 @@ process (GeglOperation *operation,
   if (input != NULL ||
       aux   != NULL)
     {
-      success = klass->process (operation, dynamic_id);
+      success = klass->process (operation, context_id);
     }
   else
     {
@@ -191,12 +191,12 @@ get_defined_region (GeglOperation *self)
 
 static gboolean
 calc_source_regions (GeglOperation *self,
-                     gpointer       dynamic_id)
+                     gpointer       context_id)
 {
-  GeglRectangle *need_rect = gegl_operation_get_requested_region (self, dynamic_id);
+  GeglRectangle *need_rect = gegl_operation_get_requested_region (self, context_id);
 
-  gegl_operation_set_source_region (self, dynamic_id, "input", need_rect);
-  gegl_operation_set_source_region (self, dynamic_id, "aux", need_rect);
+  gegl_operation_set_source_region (self, context_id, "input", need_rect);
+  gegl_operation_set_source_region (self, context_id, "aux", need_rect);
   return TRUE;
 }
 

@@ -21,7 +21,7 @@
 #include <string.h>
 
 static gboolean process_inner (GeglOperation *operation,
-                               gpointer       dynamic_id);
+                               gpointer       context_id);
 
 G_DEFINE_TYPE (GeglOperationPointComposer, gegl_operation_point_composer, GEGL_TYPE_OPERATION_COMPOSER)
 
@@ -46,20 +46,20 @@ gegl_operation_point_composer_init (GeglOperationPointComposer *self)
 
 static gboolean
 process_inner (GeglOperation *operation,
-               gpointer       dynamic_id)
+               gpointer       context_id)
 {
   GeglOperationPointComposer *point_composer = GEGL_OPERATION_POINT_COMPOSER (operation);
 
-  GeglBuffer * input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
-  GeglBuffer * aux = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "aux"));
+  GeglBuffer * input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+  GeglBuffer * aux = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
 
-  GeglRectangle *result = gegl_operation_result_rect (operation, dynamic_id);
+  GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
   GeglBuffer *output;
 
   if (!input && aux)
     {
         g_object_ref (aux);
-        gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (aux));
+        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (aux));
         return TRUE;
     }
 
@@ -105,7 +105,7 @@ process_inner (GeglOperation *operation,
           g_free (aux_buf);
 
         }
-        gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
+        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
       }
   return  TRUE;
 }

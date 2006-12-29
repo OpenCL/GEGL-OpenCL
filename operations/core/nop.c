@@ -29,14 +29,14 @@
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       dynamic_id)
+         gpointer       context_id)
 {
   gboolean success = FALSE;
-  GeglBuffer *buffer = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+  GeglBuffer *buffer = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   if (buffer)
     {
       g_object_ref (buffer);
-      gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (buffer));
+      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (buffer));
       success = TRUE;
     } 
   return success;

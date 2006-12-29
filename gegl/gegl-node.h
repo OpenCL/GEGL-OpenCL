@@ -111,11 +111,11 @@ void          gegl_node_get                   (GeglNode     *self,
 GType         gegl_node_get_type              (void) G_GNUC_CONST;
 
 GeglNodeDynamic *gegl_node_get_dynamic        (GeglNode     *self,
-                                               gpointer      dynamic_id);
+                                               gpointer      context_id);
 void             gegl_node_remove_dynamic     (GeglNode     *self,
-                                               gpointer      dynamic_id);
+                                               gpointer      context_id);
 GeglNodeDynamic *gegl_node_add_dynamic        (GeglNode     *self,
-                                               gpointer      dynamic_id);
+                                               gpointer      context_id);
 
 void          gegl_node_add_pad               (GeglNode     *self,
                                                GeglPad      *pad);
@@ -168,16 +168,16 @@ void          gegl_node_set_have_rect         (GeglNode     *node,
                                                gint          width,
                                                gint          height);
 GeglRectangle    * gegl_node_get_need_rect    (GeglNode     *node,
-                                               gpointer      dynamic_id);
+                                               gpointer      context_id);
 void          gegl_node_set_need_rect         (GeglNode     *node,
-                                               gpointer      dynamic_id,
+                                               gpointer      context_id,
                                                gint          x,
                                                gint          y,
                                                gint          width,
                                                gint          height);
  
 void          gegl_node_set_result_rect       (GeglNode     *node,
-                                               gpointer      dynamic_id,
+                                               gpointer      context_id,
                                                gint          x,
                                                gint          y,
                                                gint          width,

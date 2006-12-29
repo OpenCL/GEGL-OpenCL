@@ -60,7 +60,7 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, self->dynamic_id);
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, self->context_id);
   GEGL_VISITOR_CLASS (gegl_debug_rect_visitor_parent_class)->visit_node (self, node);
 
   g_warning (

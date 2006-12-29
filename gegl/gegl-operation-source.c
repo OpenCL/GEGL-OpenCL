@@ -36,7 +36,7 @@ static void     set_property (GObject      *gobject,
                               const GValue *value,
                               GParamSpec   *pspec);
 static gboolean process      (GeglOperation *operation,
-                              gpointer       dynamic_id,
+                              gpointer       context_id,
                               const gchar   *output_prop);
 static void     attach       (GeglOperation *operation);
 
@@ -46,7 +46,7 @@ G_DEFINE_TYPE (GeglOperationSource, gegl_operation_source, GEGL_TYPE_OPERATION)
 
 static GeglRectangle get_defined_region (GeglOperation *self);
 static gboolean calc_source_regions (GeglOperation *self,
-                                     gpointer       dynamic_id);
+                                     gpointer       context_id);
 
 static void
 gegl_operation_source_class_init (GeglOperationSourceClass * klass)
@@ -107,7 +107,7 @@ set_property (GObject      *object,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       dynamic_id,
+         gpointer       context_id,
          const gchar   *output_prop)
 {
   GeglOperationSourceClass *klass = GEGL_OPERATION_SOURCE_GET_CLASS (operation);
@@ -120,7 +120,7 @@ process (GeglOperation *operation,
     }
   
   g_assert (klass->process);
-  success = klass->process (operation, dynamic_id);
+  success = klass->process (operation, context_id);
 
   return success;
 }
@@ -136,7 +136,7 @@ get_defined_region (GeglOperation *self)
 
 static gboolean
 calc_source_regions (GeglOperation *self,
-                     gpointer       dynamic_id)
+                     gpointer       context_id)
 {
   return TRUE;
 }

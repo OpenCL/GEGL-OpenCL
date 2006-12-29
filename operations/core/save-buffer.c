@@ -45,7 +45,7 @@ dispose (GObject *object)
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       dynamic_id)
+         gpointer       context_id)
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer          *input;
@@ -58,7 +58,7 @@ process (GeglOperation *operation,
       gpointer       format;
       guchar        *temp;
       GeglRectangle  rect;
-      input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+      input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
       g_assert (input);
 
       gegl_rect_set (&rect, input->x, input->y, input->width, input->height);

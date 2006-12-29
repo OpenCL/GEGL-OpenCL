@@ -61,9 +61,9 @@ visit_node (GeglVisitor *self,
   glong time = gegl_ticks ();
   GEGL_VISITOR_CLASS (gegl_prepare_visitor_parent_class)->visit_node (self, node);
 
-  if (self->dynamic_id == NULL)
+  if (self->context_id == NULL)
     g_warning ("hmm");
-  gegl_node_add_dynamic (node, self->dynamic_id);
+  gegl_node_add_dynamic (node, self->context_id);
 
   /* prepare the operation for the coming evaluation (all properties
    * should be set now).
@@ -79,13 +79,13 @@ visit_node (GeglVisitor *self,
             /* issuing a prepare on the graph, FIXME: we might need to do
              * a cycle of prepares as deep as the nesting of graphs,.
              * (or find a better way to do this) */
-            gegl_operation_prepare (GEGL_NODE (graph)->operation, self->dynamic_id);
+            gegl_operation_prepare (GEGL_NODE (graph)->operation, self->context_id);
           }
       }
   }
 
-  gegl_operation_prepare (operation, self->dynamic_id);
-  gegl_node_set_need_rect (node, self->dynamic_id, 0, 0, 0, 0);
+  gegl_operation_prepare (operation, self->context_id);
+  gegl_node_set_need_rect (node, self->context_id, 0, 0, 0, 0);
   time = gegl_ticks () - time;
   gegl_instrument ("process", gegl_node_get_operation (node), time);
   gegl_instrument (gegl_node_get_operation (node), "prepare", time);

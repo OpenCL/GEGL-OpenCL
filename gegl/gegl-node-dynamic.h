@@ -40,7 +40,7 @@ struct _GeglNodeDynamic
 {
   GObject        parent_instance;
   GeglNode      *node;
-  gpointer       dynamic_id;
+  gpointer       context_id;
 
   GeglRectangle  need_rect;
   GeglRectangle  result_rect;

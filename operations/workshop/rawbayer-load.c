@@ -43,12 +43,12 @@ static void load_buffer (GeglChantOperation *op_raw_load);
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       dynamic_id)
+         gpointer       context_id)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
   g_assert (self->priv);
-  gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (self->priv));
+  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (self->priv));
 
   self->priv = NULL;
   return TRUE;

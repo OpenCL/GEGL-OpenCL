@@ -61,7 +61,7 @@ static gboolean refresh_cache (GeglChantOperation *self);
 
 static void
 prepare (GeglOperation *operation,
-         gpointer       dynamic_id)
+         gpointer       context_id)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *priv;

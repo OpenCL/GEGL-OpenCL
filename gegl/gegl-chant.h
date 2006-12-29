@@ -384,7 +384,7 @@ static gboolean process (GeglOperation *operation,
 #else
 #ifndef GEGL_CHANT_META
 static gboolean process (GeglOperation *operation,
-                         gpointer       dynamic_id);
+                         gpointer       context_id);
 #endif
 #endif
 #endif

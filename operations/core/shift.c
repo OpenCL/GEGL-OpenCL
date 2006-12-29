@@ -43,13 +43,13 @@ int gegl_chant_foo = 0;
  ************************************************************************/
 static gboolean
 process (GeglOperation *operation,
-         gpointer       dynamic_id)
+         gpointer       context_id)
 {
   GeglBuffer    *input;
   GeglBuffer    *output;
   GeglChantOperation *translate = GEGL_CHANT_OPERATION (operation);
 
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
   g_assert (input);
   g_assert (gegl_buffer_get_format (input));
@@ -61,7 +61,7 @@ process (GeglOperation *operation,
                          "abyss-width", -1,  /* turn of abyss (relying
                          on abyss of source) */
                          NULL);
-  gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
+  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
   return  TRUE;
 }
 
@@ -95,15 +95,15 @@ get_affected_region (GeglOperation *operation,
 
 static gboolean
 calc_source_regions (GeglOperation *self,
-                     gpointer       dynamic_id)
+                     gpointer       context_id)
 {
   GeglChantOperation *op_shift = (GeglChantOperation*)(self);
-  GeglRectangle       rect = *gegl_operation_get_requested_region (self, dynamic_id);
+  GeglRectangle       rect = *gegl_operation_get_requested_region (self, context_id);
 
   rect.x -= op_shift->x;
   rect.y -= op_shift->y;
 
-  gegl_operation_set_source_region (self, dynamic_id, "input", &rect);
+  gegl_operation_set_source_region (self, context_id, "input", &rect);
   return TRUE;
 }
 

@@ -32,15 +32,15 @@ gegl_chant_color (value, "black", "One of the cell colors (defaults to 'black')"
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       dynamic_id)
+         gpointer       context_id)
 {
   GeglRectangle      *need;
   GeglBuffer         *output = NULL;
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
-  need = gegl_operation_get_requested_region (operation, dynamic_id);
+  need = gegl_operation_get_requested_region (operation, context_id);
   {
-    GeglRectangle *result = gegl_operation_result_rect (operation, dynamic_id);
+    GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
     gfloat *buf;
     gfloat color[4];
 
@@ -71,7 +71,7 @@ process (GeglOperation *operation,
     gegl_buffer_set (output, NULL, buf, NULL);
     g_free (buf);
   }
-  gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (output));
+  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
   return  TRUE;
 }
 

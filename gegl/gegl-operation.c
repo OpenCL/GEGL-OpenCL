@@ -40,7 +40,7 @@ static GeglRectangle get_affected_region       (GeglOperation *self,
                                                 const gchar   *input_pad,
                                                 GeglRectangle  region);
 static gboolean calc_source_regions            (GeglOperation *self,
-                                                gpointer       dynamic_id);
+                                                gpointer       context_id);
 
 G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
 
@@ -95,7 +95,7 @@ gegl_operation_create_pad (GeglOperation *self,
 
 gboolean
 gegl_operation_process (GeglOperation *self,
-                        gpointer       dynamic_id,
+                        gpointer       context_id,
                         const gchar   *output_pad)
 {
   GeglOperationClass *klass;
@@ -104,7 +104,7 @@ gegl_operation_process (GeglOperation *self,
 
   klass = GEGL_OPERATION_GET_CLASS (self);
 
-  return klass->process (self, dynamic_id, output_pad);
+  return klass->process (self, context_id, output_pad);
 }
 
 GeglRectangle
@@ -138,14 +138,14 @@ gegl_operation_get_affected_region (GeglOperation *self,
 
 gboolean
 gegl_operation_calc_source_regions (GeglOperation *self,
-                                    gpointer       dynamic_id)
+                                    gpointer       context_id)
 {
   GeglOperationClass *klass;
 
   klass = GEGL_OPERATION_GET_CLASS (self);
 
   if (klass->calc_source_regions)
-    return klass->calc_source_regions (self, dynamic_id);
+    return klass->calc_source_regions (self, context_id);
   return FALSE;
 }
 
@@ -175,7 +175,7 @@ gegl_operation_attach (GeglOperation *self,
 
 void
 gegl_operation_prepare (GeglOperation *self,
-                        gpointer       dynamic_id)
+                        gpointer       context_id)
 {
   GeglOperationClass *klass;
 
@@ -184,7 +184,7 @@ gegl_operation_prepare (GeglOperation *self,
   klass = GEGL_OPERATION_GET_CLASS (self);
 
   if (klass->prepare)
-    klass->prepare (self, dynamic_id);
+    klass->prepare (self, context_id);
 }
 
 GeglRectangle *
@@ -211,7 +211,7 @@ gegl_operation_source_get_defined_region (GeglOperation *operation,
 
 void
 gegl_operation_set_source_region (GeglOperation *operation,
-                                  gpointer       dynamic_id,
+                                  gpointer       context_id,
                                   const gchar   *input_pad_name,
                                   GeglRectangle *region)
 {
@@ -235,12 +235,12 @@ gegl_operation_set_source_region (GeglOperation *operation,
   }
 
   gegl_rect_bounding_box (&child_need,
-                          gegl_node_get_need_rect (child, dynamic_id), region);
+                          gegl_node_get_need_rect (child, context_id), region);
 
   /* expand the need rect of the node, to include what the calling
    * operation needs as well
    */
-  gegl_node_set_need_rect (child, dynamic_id,
+  gegl_node_set_need_rect (child, context_id,
                            child_need.x, child_need.y,
                            child_need.w, child_need.h);
 }
@@ -276,13 +276,13 @@ get_affected_region (GeglOperation *self,
 
 static gboolean
 calc_source_regions (GeglOperation *self,
-                     gpointer       dynamic_id)
+                     gpointer       context_id)
 {
   if (self->node->is_graph)
     {
       return gegl_operation_calc_source_regions (
                          gegl_graph_output (self->node, "output")->operation,
-                         dynamic_id);
+                         context_id);
     }
 
   g_warning ("Op '%s' has no calc_source_regions method",
@@ -292,9 +292,9 @@ calc_source_regions (GeglOperation *self,
 
 GeglRectangle *
 gegl_operation_get_requested_region     (GeglOperation *operation,
-                                         gpointer       dynamic_id)
+                                         gpointer       context_id)
 {
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (operation->node, dynamic_id);
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (operation->node, context_id);
   g_assert (operation);
   g_assert (operation->node);
   return &dynamic->need_rect;
@@ -302,9 +302,9 @@ gegl_operation_get_requested_region     (GeglOperation *operation,
 
 GeglRectangle *
 gegl_operation_result_rect (GeglOperation *operation,
-                            gpointer       dynamic_id)
+                            gpointer       context_id)
 {
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (operation->node, dynamic_id);
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (operation->node, context_id);
   g_assert (operation);
   g_assert (operation->node);
   return &dynamic->result_rect;
@@ -386,14 +386,14 @@ GSList *gegl_operation_list_operations (void)
 
 GObject *
 gegl_operation_get_data (GeglOperation *operation,
-                         gpointer       dynamic_id,
+                         gpointer       context_id,
                          const gchar   *property_name)
 {
   GObject    *ret;
   GeglNode   *node = operation->node;
   GParamSpec *pspec;
   GValue      value = {0,};
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, dynamic_id);
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, context_id);
 
   pspec = gegl_node_find_property (node, property_name);
   g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
@@ -413,14 +413,14 @@ gegl_operation_get_data (GeglOperation *operation,
 
 void
 gegl_operation_set_data (GeglOperation *operation,
-                         gpointer       dynamic_id,
+                         gpointer       context_id,
                          const gchar   *property_name,
                          GObject       *data)
 {
   GeglNode   *node = operation->node;
   GParamSpec *pspec;
   GValue      value = {0,};
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, dynamic_id);
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, context_id);
 
   pspec = gegl_node_find_property (node, property_name);
   g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));

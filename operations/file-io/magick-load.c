@@ -60,14 +60,14 @@ load_cache (GeglChantOperation *op_magick_load)
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       dynamic_id)
+         gpointer       context_id)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
 
   if (!self->priv)
     return FALSE;
 
-  gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (self->priv));
+  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (self->priv));
   self->priv = NULL;
 
   return  TRUE;

@@ -69,7 +69,7 @@ struct _GeglOperationClass
    * as a GeglGraph).
    */
   void       (*prepare)             (GeglOperation *self,
-                                     gpointer       dynamic_id);
+                                     gpointer       context_id);
 
   /* Returns a bounding rectangle for the data that is defined by
    * this op. (is already implemented for GeglOperationPointFilter and
@@ -89,17 +89,17 @@ struct _GeglOperationClass
    * gegl_operation_set_source_region() on each of them).
    */
   gboolean   (*calc_source_regions) (GeglOperation *self,
-                                     gpointer       dynamic_id);
+                                     gpointer       context_id);
 
   /* do the actual processing needed to put GeglBuffers on the output pad */
   gboolean   (*process)             (GeglOperation *self,
-                                     gpointer       dynamic_id,
+                                     gpointer       context_id,
                                      const gchar   *output_pad);
 };
 
 /* returns the ROI passed to _this_ operation */
 GeglRectangle * gegl_operation_get_requested_region (GeglOperation *operation,
-                                                     gpointer       dynamic_id);
+                                                     gpointer       context_id);
 
 /* retrieves the bounding box of a connected input */
 GeglRectangle * gegl_operation_source_get_defined_region (GeglOperation *operation,
@@ -107,13 +107,13 @@ GeglRectangle * gegl_operation_source_get_defined_region (GeglOperation *operati
 
 /* sets the ROI needed to be computed on one of the sources */
 void       gegl_operation_set_source_region         (GeglOperation *operation,
-                                                     gpointer       dynamic_id,
+                                                     gpointer       context_id,
                                                      const gchar   *pad_name,
                                                      GeglRectangle *region);
 
 /* returns the bounding box of the buffer that needs to be computed */
 GeglRectangle * gegl_operation_result_rect               (GeglOperation *operation,
-                                                     gpointer       dynamic_id);
+                                                     gpointer       context_id);
 
 
 /* virtual method invokers */
@@ -122,14 +122,14 @@ GeglRectangle   gegl_operation_get_affected_region       (GeglOperation *self,
                                                      GeglRectangle  region);
 GeglRectangle   gegl_operation_get_defined_region        (GeglOperation *self);
 gboolean   gegl_operation_calc_source_regions       (GeglOperation *self,
-                                                     gpointer       dynamic_id);
+                                                     gpointer       context_id);
 void       gegl_operation_attach                    (GeglOperation *self,
                                                      GeglNode      *node);
 void       gegl_operation_prepare                   (GeglOperation *self,
-                                                     gpointer       dynamic_id);
+                                                     gpointer       context_id);
 
 gboolean   gegl_operation_process                   (GeglOperation *self,
-                                                     gpointer       dynamic_id,
+                                                     gpointer       context_id,
                                                      const gchar   *output_pad);
 
 GType      gegl_operation_get_type                  (void) G_GNUC_CONST;
@@ -143,10 +143,10 @@ GType      gegl_operation_gtype_from_name           (const gchar *name);
 GSList   * gegl_operation_list_operations           (void);
 
 GObject  * gegl_operation_get_data                  (GeglOperation *operation,
-                                                     gpointer       dynamic_id,
+                                                     gpointer       context_id,
                                                      const gchar   *property_name);
 void       gegl_operation_set_data                  (GeglOperation *operation,
-                                                     gpointer       dynamic_id,
+                                                     gpointer       context_id,
                                                      const gchar   *property_name,
                                                      GObject       *data);
 

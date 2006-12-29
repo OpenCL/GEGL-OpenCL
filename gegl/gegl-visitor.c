@@ -125,7 +125,7 @@ set_property (GObject      *gobject,
   switch (property_id)
     {
     case PROP_ID:
-      self->dynamic_id = g_value_get_pointer (value);
+      self->context_id = g_value_get_pointer (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -144,7 +144,7 @@ get_property (GObject      *gobject,
   switch (property_id)
     {
     case PROP_ID:
-      g_value_set_pointer (value, self->dynamic_id);
+      g_value_set_pointer (value, self->context_id);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);

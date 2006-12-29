@@ -80,24 +80,24 @@ fir_ver_blur (GeglBuffer *src,
               gint        matrix_length);
 
 static GeglRectangle get_source_rect (GeglOperation *operation,
-                                 gpointer       dynamic_id);
+                                 gpointer       context_id);
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       dynamic_id)
+         gpointer       context_id)
 {
   GeglChantOperation  *self;
   GeglBuffer          *input;
   GeglBuffer          *output;
 
   self   = GEGL_CHANT_OPERATION (operation);
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
     {
-      GeglRectangle *result     = gegl_operation_result_rect (operation, dynamic_id);
+      GeglRectangle *result     = gegl_operation_result_rect (operation, context_id);
       GeglBuffer    *temp_in;
       GeglBuffer    *temp = NULL;
-      GeglRectangle  need = get_source_rect (operation, dynamic_id);
+      GeglRectangle  need = get_source_rect (operation, context_id);
 
 
       if (result->w==0 || result->h==0 || (!self->radius_x && !self->radius_y))
@@ -191,7 +191,7 @@ process (GeglOperation *operation,
                                             "width",  result->w,
                                             "height", result->h,
                                             NULL);
-        gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (cropped));
+        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (cropped));
         g_object_unref (output);
       }
     }
@@ -539,7 +539,7 @@ get_defined_region (GeglOperation *operation)
 }
 
 static GeglRectangle get_source_rect (GeglOperation *self,
-                                 gpointer       dynamic_id)
+                                 gpointer       context_id)
 {
   GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
   GeglRectangle       rect;
@@ -550,7 +550,7 @@ static GeglRectangle get_source_rect (GeglOperation *self,
   radius_x = ceil(blur->radius_x);
   radius_y = ceil(blur->radius_y);
 
-  rect  = *gegl_operation_get_requested_region (self, dynamic_id);
+  rect  = *gegl_operation_get_requested_region (self, context_id);
   defined = get_defined_region (self);
   gegl_rect_intersect (&rect, &rect, &defined);
   if (rect.w != 0 &&
@@ -586,11 +586,11 @@ get_affected_region (GeglOperation *self,
 
 static gboolean
 calc_source_regions (GeglOperation *self,
-                     gpointer       dynamic_id)
+                     gpointer       context_id)
 {
-  GeglRectangle need = get_source_rect (self, dynamic_id);
+  GeglRectangle need = get_source_rect (self, context_id);
   
-  gegl_operation_set_source_region (self, dynamic_id, "input", &need);
+  gegl_operation_set_source_region (self, context_id, "input", &need);
 
   return TRUE;
 }

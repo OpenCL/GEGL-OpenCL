@@ -32,7 +32,7 @@ gegl_chant_int (pattern, 0, 3, 0, "Bayer pattern used, 0 seems to work for some 
 #include "gegl-chant.h"
 
 static GeglRectangle get_source_rect (GeglOperation *self,
-                                      gpointer       dynamic_id);
+                                      gpointer       context_id);
 
 #include <stdio.h>
 static void
@@ -42,7 +42,7 @@ demosaic (GeglChantOperation *op,
 
 static gboolean
 process (GeglOperation *operation,
-         gpointer       dynamic_id)
+         gpointer       context_id)
 {
   GeglOperationFilter *filter;
   GeglChantOperation  *self;
@@ -52,11 +52,11 @@ process (GeglOperation *operation,
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-  input  = GEGL_BUFFER (gegl_operation_get_data (operation, dynamic_id, "input"));
+  input  = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
     {
-      GeglRectangle *result = gegl_operation_result_rect (operation, dynamic_id);
-      GeglRectangle  need   = get_source_rect (operation, dynamic_id);
+      GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+      GeglRectangle  need   = get_source_rect (operation, context_id);
       GeglBuffer    *temp_in;
 
       if (result->w==0 ||
@@ -94,7 +94,7 @@ process (GeglOperation *operation,
                                               "width",  result->w,
                                               "height", result->h,
                                               NULL);
-        gegl_operation_set_data (operation, dynamic_id, "output", G_OBJECT (cropped));
+        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (cropped));
         g_object_unref (output);
       }
     }
@@ -195,11 +195,11 @@ get_defined_region (GeglOperation *operation)
 }
 
 static GeglRectangle get_source_rect (GeglOperation *self,
-                                      gpointer       dynamic_id)
+                                      gpointer       context_id)
 {
   GeglRectangle            rect;
 
-  rect  = *gegl_operation_get_requested_region (self, dynamic_id);
+  rect  = *gegl_operation_get_requested_region (self, context_id);
   if (rect.w != 0 &&
       rect.h != 0)
     {
@@ -212,11 +212,11 @@ static GeglRectangle get_source_rect (GeglOperation *self,
 
 static gboolean
 calc_source_regions (GeglOperation *self,
-                     gpointer       dynamic_id)
+                     gpointer       context_id)
 {
-  GeglRectangle need = get_source_rect (self, dynamic_id);
+  GeglRectangle need = get_source_rect (self, context_id);
 
-  gegl_operation_set_source_region (self, dynamic_id, "input", &need);
+  gegl_operation_set_source_region (self, context_id, "input", &need);
 
   return TRUE;
 }
