@@ -1,3 +1,7 @@
+<!-- This composition is a graph
+using only simple operations to
+achieve layers and clones -->
+
 <gegl>
   <over>
     <shift x = '10'
