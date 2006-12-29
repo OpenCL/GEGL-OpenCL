@@ -7,6 +7,7 @@ index.html: Makefile.am $(wildcard *.txt)
 	
 	@for XML in *.xml;do echo "<li><a href='#$$XML'>&nbsp;&nbsp;"`echo $$XML|sed -e 's/.xml//' -e 's/-/ /g'`"</a></li>">>index.html;done;
 	echo "</ul></div><div class='paper'><div class='content'>" >> index.html
+	echo "<p>This gallery shows samples of GEGL output it is used to both document current capabilities, and help spot regressions.</p>" >> index.html
 	@if [ ! -z "$${CRUCIBLE_ID}" ]; then\
 	  echo "<ul class='crucible'>" >> index.html;\
 	  for host in amd01 ita01 nfs08 nfs11 nfs12 ppc01;do echo "<li><a href='../../$${host}/gallery/index.html'>$${host}</a></li>" >> index.html; done;\
@@ -24,7 +25,7 @@ index.html: Makefile.am $(wildcard *.txt)
 	    echo `cat $$TXT |grep "Total time:"|sed -e "s/Total time:/: /"`"&nbsp;&nbsp;" >> index.html;\
 	    echo "<span style='color:red'>"`cat $$TXT |grep buffer-leaks`"</span>" >> index.html;\
 	    echo "</p>" >> index.html;\
-	    echo "<img src='$$PNG' style='float:right; max-width: 22em;padding-left:1em;padding-bottom: 1em;'>" >> index.html;\
+	    echo "<a href='$$PNG'><img src='$$PNG' style='border:0;float:right; max-width: 22em;padding-left:1em;padding-bottom: 1em;'></a>" >> index.html;\
 	    echo "<form><textarea rows='14' cols='30'>" >> index.html;\
 	    cat $$XML | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/' >> index.html;\
 	    echo "</textarea></form>" >> index.html;\
