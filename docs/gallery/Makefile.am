@@ -18,15 +18,16 @@ index.html: Makefile.am $(wildcard *.txt)
 	    TXT=$$BASE".txt";\
 	    PNG=$$BASE".png";\
 	    GRAPH=$$BASE"-graph.png";\
-	    echo "<div style='margin-bottom:3em;'><a name='$$XML'></a>" >> index.html;\
+	    echo "<div style='margin-bottom:3em;clear:both;'><a name='$$XML'></a>" >> index.html;\
 	    echo "<h3>$$BASE</h3>" >> index.html; \
-	    echo "<img src='$$PNG' style='float:right; padding-left:1em;padding-bottom: 1em;'>" >> index.html;\
+	    echo "<p><a href='$$XML'>xml</a> | <a href='$$GRAPH'>graph</a> | <a href='$$TXT'>time usage</a>" >> index.html; \
+	    echo `cat $$TXT |grep "Total time:"|sed -e "s/Total time:/: /"`"&nbsp;&nbsp;" >> index.html;\
+	    echo "<span style='color:red'>"`cat $$TXT |grep buffer-leaks`"</span>" >> index.html;\
+	    echo "</p>" >> index.html;\
+	    echo "<img src='$$PNG' style='float:right; max-width: 22em;padding-left:1em;padding-bottom: 1em;'>" >> index.html;\
 	    echo "<form><textarea rows='14' cols='30'>" >> index.html;\
 	    cat $$XML | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/' >> index.html;\
 	    echo "</textarea></form>" >> index.html;\
-	    echo "<br/><a href='$$XML'>xml</a>, <a href='$$TXT'>execution breakdown</a>, <a href='$$GRAPH'>graph</a><br/>" >> index.html; \
-	    echo `cat $$TXT |grep "Total time:"|sed -e "s/Total time://"`"&nbsp;&nbsp;" >> index.html;\
-	    if [ ! -z "$${CRUCIBLE_ID}" ];then echo "<span style='color:red'>"`cat $$TXT |grep buffer-leaks`"</span>" >> index.html;fi;\
 	    echo "</div>">>index.html;\
 	   done;\
 	echo "</div></div></div></body></html>" >> index.html
