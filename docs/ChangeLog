@@ -1,5 +1,10 @@
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gallery/Makefile.am: cleaned up build code a bit.
+	* gallery/OpenRaster-04.xml: added comment.
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* index-static.html.in: removed reference to crucible, since it
 	doesn't seem to update properly anymore.
 

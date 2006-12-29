@@ -6,8 +6,8 @@ index.html: Makefile.am $(wildcard *.txt)
 	@echo "<html><head><title>GEGL gallery</title><style type='text/css'>@import url(../gegl.css);</style><link rel='shortcut icon' href='../images/gegl.ico'/></head><body><div class='toc'><ul><li><a href='../index.html'>GEGL</a></li><li>&nbsp;</li><li><a href='#'>Gallery</a></li>" > index.html
 	
 	@for XML in *.xml;do echo "<li><a href='#$$XML'>&nbsp;&nbsp;"`echo $$XML|sed -e 's/.xml//' -e 's/-/ /g'`"</a></li>">>index.html;done;
-	echo "</ul></div><div class='paper'><div class='content'>" >> index.html
-	echo "<p>This gallery shows samples of GEGL output it is used to both document current capabilities, and help spot regressions.</p>" >> index.html
+	@echo "</ul></div><div class='paper'><div class='content'>" >> index.html
+	@echo "<p>This gallery shows samples of GEGL output it is used to both document current capabilities, and help spot regressions.</p>" >> index.html
 	@if [ ! -z "$${CRUCIBLE_ID}" ]; then\
 	  echo "<ul class='crucible'>" >> index.html;\
 	  for host in amd01 ita01 nfs08 nfs11 nfs12 ppc01;do echo "<li><a href='../../$${host}/gallery/index.html'>$${host}</a></li>" >> index.html; done;\
@@ -34,22 +34,23 @@ index.html: Makefile.am $(wildcard *.txt)
 	echo "</div></div></div></body></html>" >> index.html
 
 pngs:
-	@echo "--[Updating sample compositions]--"
-	@export GEGL_PATH=$(top_builddir)/operations;\
-	export GEGL_DEBUG_TIME=yes;\
-	for XML in $(srcdir)/*.xml;do echo $${XML};make `echo $${XML}|sed s/xml/png/`>/dev/null;done
-	@echo "--[Rendering Graphviz graphs]--"
-	-@export GEGL_PATH=$(top_builddir)/operations;\
-	for XML in $(srcdir)/*.xml;do echo $${XML};$(top_builddir)/bin/gegl --dot $${XML} | dot -Tpng -o`echo $${XML}|sed s/.xml/-graph.png/`>/dev/null;done
-	echo "--"
+	@echo "--[Updating sample compositions]--";\
+	for XML in $(srcdir)/*.xml;do\
+	   echo $${XML};\
+	   make `echo $${XML}|sed s/xml/png/`>/dev/null;\
+	done
 
 all-local: pngs index.html
 
 %.png:%.xml $(wildcard $(top_builddir)/operations/*/*.so)\
 	    $(top_builddir)/gegl/libgegl-@GEGL_API_VERSION@.la\
 	    $(top_builddir)/bin/gegl
-	@export GEGL_DEBUG_TIME=yes;export GEGL_PATH=$(top_builddir)/operations;\
-	$(top_builddir)/bin/gegl $< -o $@ > `echo $@|sed -e s/png/txt/`
+	
+	@export GEGL_DEBUG_TIME=yes;GEGL_PATH=$(top_builddir)/operations;\
+	$(top_builddir)/bin/gegl $< -o $@ > `echo $@|sed -e s/png/txt/`;
+	
+	@export GEGL_PATH=$(top_builddir)/operations;\
+	$(top_builddir)/bin/gegl --dot $< | dot -Tpng -o`echo $@|sed s/.png/-graph.png/`>/dev/null
 
 clean-local:
 	rm -f index.html *.png *.txt

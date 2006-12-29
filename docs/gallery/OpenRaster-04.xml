@@ -1,3 +1,7 @@
+<!-- OpenRaster showing non destructive
+editing, the way properties of the filters
+are expressed will change.-->
+
 <image>
   <brightness-contrast contrast='1.4'/>
   <unsharp-mask radius='0.8'/>
