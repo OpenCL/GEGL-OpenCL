@@ -1,5 +1,9 @@
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: improved look of scraped usage information.
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed a bit of redundancy from samples in the gallery.
 
 	* gallery/OpenRaster-00.xml:
