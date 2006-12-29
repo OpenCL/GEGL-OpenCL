@@ -1,5 +1,10 @@
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-node-editor.c: (scalar_expose): removed some visual noise
+	from the custom slider.
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-dot.c: (gegl_add_graph): removed deprecated FIXME.
 
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>

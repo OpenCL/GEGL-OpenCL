@@ -555,7 +555,7 @@ static void scalar_expose (GtkWidget      *widget,
   if (max>100000.0)
     max = 10.0;
 
-  cairo_set_font_size (cr, 10.0);
+  cairo_set_font_size (cr, 12.0);
   gegl_node_get (node, param_spec->name, &value, NULL);
   
   /*cairo_scale (cr, width, height);*/
@@ -575,7 +575,7 @@ static void scalar_expose (GtkWidget      *widget,
   cairo_rectangle (cr, (def - min)/(max-min) * width, 0.0, 2, 1.0 * height);
   cairo_fill (cr);
   cairo_set_source_rgb (cr, 0,0,0);
-    {
+    if(0){
       gchar buf[100];
       sprintf (buf, "%2.2f (default)", def);
       cairo_move_to (cr, (def-min)/(max-min) * width, 0.8 * height);
@@ -583,11 +583,11 @@ static void scalar_expose (GtkWidget      *widget,
     }
 
 
-  cairo_set_source_rgb (cr, 1.0, 0.0, 0.0);
+  cairo_set_source_rgb (cr, 0.4, 1.0, 0.4);
   cairo_rectangle (cr, (value - min)/(max-min) * width, 0.0, 2, 1.0 * height);
   cairo_fill (cr);
   cairo_set_source_rgb (cr, 1.0, 0.6, 0.5);
-    {
+    if(1){
       gchar buf[100];
       sprintf (buf, "%2.2f", value);
       cairo_move_to (cr, (value-min)/(max-min) * width, 0.8 * height);
@@ -599,7 +599,7 @@ static void scalar_expose (GtkWidget      *widget,
   cairo_rectangle (cr, (value - min)/(max-min) * width, 0.0, 2, 1.0 * height);
   cairo_fill (cr);
   cairo_set_source_rgb (cr, 1.0, 0.6, 0.5);
-    {
+    if(0){
       gchar buf[100];
       sprintf (buf, "%2.2f (min)", value);
       cairo_move_to (cr, (value-min)/(max-min) * width, 0.8 * height);
@@ -612,7 +612,7 @@ static void scalar_expose (GtkWidget      *widget,
   cairo_rectangle (cr, (value - min)/(max-min) * width, 0.0, 2, 1.0 * height);
   cairo_fill (cr);
   cairo_set_source_rgb (cr, 1.0, 0.6, 0.5);
-    {
+    if(0){
       gchar buf[100];
       sprintf (buf, "%2.2f (max)", value);
       cairo_move_to (cr, (value-min)/(max-min) * width - 20, 0.8 * height);
