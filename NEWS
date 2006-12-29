@@ -1,0 +1,25 @@
+                 ------------------------------------
+                 GEGL - an image processing framework
+                 ------------------------------------
+
+GEGL only has released development snapshots thus far. Odd micro versions are
+from CVS whilst even micro numbers indicate released snapshots. 
+
+Changes in GEGL 0.0.4
+=====================
+This is the first public release of GEGL.
+
+- 8bit, 16bit integer and 32bit floating point, RGB, CIE Lab, YCbCr and naive
+  CMYK output.
+- Extendable through plug-ins.
+- XML, C and Python interfaces.
+- Memory efficient evaluation of subregions.
+- Tiled, sparse, pyramidial and larger than RAM buffers.
+- Rich core set of processing operations
+  - PNG, JPEG, SVG, EXR, RAW and other image sources.
+  - Arithmetic operations, porter duff compositing operations, SVG blend modes,
+    other blend modes, apply mask.
+     - Gaussian blur.
+     - Basic color correction tools.
+     - Most processing done with High Dynamic Range routines.
+     - Text layouting using pango

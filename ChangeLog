@@ -1,5 +1,9 @@
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* NEWS: added generic feature blurb as first news item in NEWS file.
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/Makefile.am: removed libtool barf in scrabed usage information.
 
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
