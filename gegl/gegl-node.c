@@ -885,10 +885,6 @@ static void property_changed (GObject    *gobject,
       arg1->value_type != GEGL_TYPE_BUFFER) ||
      (self->operation && !arg1))
     {
-     /* FIXME: optimize by using GdkRegions (an undesired dependency here, thus
-      * the code might have to move to the projection.
-      */
-
       if (self->operation && !arg1)
         { /* these means we were called due to a operation change
            
@@ -1049,18 +1045,6 @@ gegl_node_set_valist (GeglNode     *self,
       GValue      value = {0, };
       GParamSpec *pspec = NULL;
       gchar      *error = NULL;
-
-      /* this code will make sure that all the code that is runing
-       * does not break FIXME: remove this after a while, when warnings have
-       * died down.
-       */
-      if (!strcmp (property_name, "class"))
-        {
-          g_warning ("Setting a deprecated property \"class\" "
-                     "use \"operation\" instead");
-
-          property_name = "operation";
-        }
 
       if (!strcmp (property_name, "operation"))
         {

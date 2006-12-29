@@ -56,19 +56,8 @@ static const gchar *name2val (const gchar **attribute_names,
                               const gchar **attribute_values,
                               const gchar  *name)
 {
-  int dep = !strcmp(name, "operation");
-
   while (*attribute_names)
     {
-      /* FIXME: remove when warning stop occuring */
-      if (dep && !strcmp(*attribute_names, "class"))
-        {
-          g_warning("Found the deprecated attribute \"class\" in the XML, "
-                    "update it to \"operation\"");
-
-          return *attribute_values;
-        }
-
       if (!strcmp (*attribute_names, name))
         {
           return *attribute_values;
@@ -481,10 +470,7 @@ static void add_stack (SerializeState *ss,
               const gchar *new_id = g_hash_table_lookup (ss->clones, iter);
               if (new_id)
                 {
-                  ind; if (ss->terse)
-                          g_string_append (ss->buf, "<clone ref='");
-                       else
-                          g_string_append (ss->buf, "<node class='clone' ref='");
+                  ind; g_string_append (ss->buf, "<clone ref='");
                   g_string_append (ss->buf, new_id);
                   g_string_append (ss->buf, "'/>\n");
                   return; /* terminate the stack, the cloned part is already
