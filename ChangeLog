@@ -1,5 +1,12 @@
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-node-editor.c: (scalar_expose), (scalar_drag_n_motion):
+	changed clipping rules for out of range values.
+	* operations/workshop/dog.c: changed range, to make ui a bit more
+	usable.
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/color/levels.c: changed ranges to -5..5
 
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>

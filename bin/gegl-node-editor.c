@@ -550,10 +550,10 @@ static void scalar_expose (GtkWidget      *widget,
   max = G_PARAM_SPEC_DOUBLE (param_spec)->maximum;
   def = G_PARAM_SPEC_DOUBLE (param_spec)->default_value;
 
-  if (min<-100.0)
-    min = -100.0;
-  if (max>100.0)
-    max = 100.0;
+  if (min<-100000.0)
+    min = -10.0;
+  if (max>100000.0)
+    max = 10.0;
 
   cairo_set_font_size (cr, 10.0);
   gegl_node_get (node, param_spec->name, &value, NULL);
@@ -635,10 +635,10 @@ scalar_drag_n_motion (GtkWidget *widget, GdkEventMotion *mev, gpointer user_data
   min = G_PARAM_SPEC_DOUBLE (param_spec)->minimum;
   max = G_PARAM_SPEC_DOUBLE (param_spec)->maximum;
 
-  if (min<-100.0)
-    min = -100.0;
-  if (max>100.0)
-    max = 100.0;
+  if (min<-100000.0)
+    min = -10.0;
+  if (max>100000.0)
+    max = 10.0;
 
   value = mev->x/width * (max-min) + min;
 

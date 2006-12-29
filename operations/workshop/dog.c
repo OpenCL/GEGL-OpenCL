@@ -19,8 +19,8 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(radius1, 0.0, 100.0, 1.0, "Radius")
-gegl_chant_double(radius2, 0.0, 100.0, 2.0, "Radius")
+gegl_chant_double(radius1, 0.0, 20.0, 1.0, "Radius")
+gegl_chant_double(radius2, 0.0, 20.0, 2.0, "Radius")
 
 #else
 
