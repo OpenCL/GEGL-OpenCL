@@ -48,9 +48,10 @@ all-local: pngs index.html
 	
 	@export GEGL_DEBUG_TIME=yes;GEGL_PATH=$(top_builddir)/operations;\
 	$(top_builddir)/bin/gegl $< -o $@ > `echo $@|sed -e s/png/txt/`;
-	
+if HAVE_GRAPHVIZ
 	@export GEGL_PATH=$(top_builddir)/operations;\
 	$(top_builddir)/bin/gegl --dot $< | dot -Tpng -o`echo $@|sed s/.png/-graph.png/`>/dev/null
+endif
 
 clean-local:
 	rm -f index.html *.png *.txt
