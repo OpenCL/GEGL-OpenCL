@@ -121,12 +121,12 @@ gegl_cache_class_init (GeglCacheClass * klass)
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_WIDTH,
                                    g_param_spec_int ("width", "width", "pixel width of buffer",
-                                                     -1, G_MAXINT, 10240*8,
+                                                     -1, G_MAXINT, 10240*4,
                                                      G_PARAM_READWRITE|
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_HEIGHT,
                                    g_param_spec_int ("height", "height", "pixel height of buffer",
-                                                     -1, G_MAXINT, 10240*7,
+                                                     -1, G_MAXINT, 10240*4,
                                                      G_PARAM_READWRITE|
                                                      G_PARAM_CONSTRUCT_ONLY));
 

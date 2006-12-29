@@ -200,6 +200,35 @@ GParamSpec * gegl_param_spec_path (const gchar *name,
                                    const gchar *default_value,
                                    GParamFlags  flags);
 
+
+/*
+ * GEGL_TYPE_PARAM_MULTILINE
+ */
+
+#define GEGL_TYPE_PARAM_MULTILINE           (gegl_param_multiline_get_type ())
+#define GEGL_PARAM_SPEC_MULTILINE(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_MULTILINE, GeglParamSpecMultiline))
+#define GEGL_IS_PARAM_SPEC_MULTILINE(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_MULTILINE))
+
+typedef struct _GeglParamSpecMultiline GeglParamSpecMultiline;
+
+struct _GeglParamSpecMultiline
+{
+  GParamSpecString parent_instance;
+
+  guint            no_validate : 1;
+  guint            null_ok     : 1;
+};
+
+GType        gegl_param_multiline_get_type (void) G_GNUC_CONST;
+
+GParamSpec * gegl_param_spec_multiline (const gchar *name,
+                                   const gchar *nick,
+                                   const gchar *blurb,
+                                   const gchar *default_value,
+                                   GParamFlags  flags);
+
+
+
 /*
  * GEGL_TYPE_PARAM_ENUM
  */

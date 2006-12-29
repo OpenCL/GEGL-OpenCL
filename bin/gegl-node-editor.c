@@ -450,6 +450,245 @@ type_editor_path (GtkSizeGroup *col1,
   return hbox;
 }
 
+
+
+static gboolean
+multiline_changed (GtkTextBuffer *buffer, gpointer user_data)
+{
+  GeglNode   *node = g_object_get_data (G_OBJECT (buffer), "node");
+  GParamSpec *param_spec = user_data;
+  gchar      *contents;
+  GtkTextIter start;
+  GtkTextIter end;
+
+  gtk_text_buffer_get_bounds (buffer, &start, &end);
+  contents = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
+
+  gegl_node_set (node, param_spec->name, contents, NULL);
+
+  gegl_gui_flush ();
+  g_free (contents);
+  return TRUE;
+}
+
+
+static GtkWidget *
+type_editor_multiline (GtkSizeGroup *col1,
+                       GtkSizeGroup *col2,
+                       GeglNode     *node,
+                       GParamSpec   *param_spec)
+{
+  GObject   *config = G_OBJECT (node);
+  GtkWidget *vbox = gtk_vbox_new (FALSE, 5);
+  GtkWidget *hbox = gtk_hbox_new (FALSE, 5);
+  GtkWidget *label = gtk_label_new (param_spec->name);
+  GtkWidget *scroll = gtk_scrolled_window_new (NULL, NULL);
+  GtkWidget *view = gtk_text_view_new ();
+  GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+  GtkWidget *pad = gtk_label_new ("");
+  gchar     *contents;
+
+  GtkWidget *button = gtk_file_chooser_button_new ("title", GTK_FILE_CHOOSER_ACTION_OPEN);
+
+
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(scroll),
+                                  GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+  gtk_container_add (GTK_CONTAINER (scroll), view);
+  gtk_widget_set_size_request (scroll, -1, 100);
+  gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view), GTK_WRAP_CHAR);
+
+  g_object_set_data (G_OBJECT (buffer), "node", node);
+
+  gegl_node_get (node, param_spec->name, &contents, NULL);
+
+  set_param_spec (G_OBJECT (button), button, param_spec);
+
+  if (contents)
+    {
+      gtk_text_buffer_set_text (buffer, contents, -1);
+      g_free (contents);
+    }
+
+  gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+  gtk_size_group_add_widget (col1, label);
+  gtk_size_group_add_widget (col2, pad);
+
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), pad, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), scroll, TRUE, TRUE, 0);
+
+
+  g_signal_connect (G_OBJECT (buffer), "changed",
+                                     G_CALLBACK (multiline_changed),
+                                     (gpointer) param_spec);
+
+  connect_notify (config, param_spec->name,
+                  G_CALLBACK (gegl_path_chooser_button_notify),
+                  button);
+  gtk_widget_show_all (vbox);
+  return vbox;
+}
+
+
+
+static void scalar_expose (GtkWidget      *widget,
+                           GdkEventExpose *eev,
+                           gpointer        user_data)
+{
+  gdouble    width  = widget->allocation.width;
+  gdouble    height = widget->allocation.height;
+  gdouble    min, max;
+  gdouble    def;
+  cairo_t *cr = gdk_cairo_create (widget->window);
+  GeglNode   *node = g_object_get_data (G_OBJECT (widget), "node");
+  GParamSpec *param_spec = user_data;
+  gdouble     value;
+
+
+  min = G_PARAM_SPEC_DOUBLE (param_spec)->minimum;
+  max = G_PARAM_SPEC_DOUBLE (param_spec)->maximum;
+  def = G_PARAM_SPEC_DOUBLE (param_spec)->default_value;
+
+  if (min<-100.0)
+    min = -100.0;
+  if (max>100.0)
+    max = 100.0;
+
+  cairo_set_font_size (cr, 10.0);
+  gegl_node_get (node, param_spec->name, &value, NULL);
+  
+  /*cairo_scale (cr, width, height);*/
+  cairo_set_line_width (cr, 0.01);
+  {
+    cairo_pattern_t *pat;
+    pat = cairo_pattern_create_linear (0, 0, width, 0);
+    cairo_pattern_add_color_stop_rgba (pat, 0, 0, 0, 0, 1);
+    cairo_pattern_add_color_stop_rgba (pat, 1, 1, 1, 1, 1);
+    cairo_set_source (cr, pat);
+    cairo_rectangle (cr, 0.0, 0.1 * height, 1.0 * width , 0.8 * height);
+    cairo_fill (cr);
+    cairo_pattern_destroy (pat);
+  }
+
+  cairo_set_source_rgb (cr, 0.3, 0.3, 0.7);
+  cairo_rectangle (cr, (def - min)/(max-min) * width, 0.0, 2, 1.0 * height);
+  cairo_fill (cr);
+  cairo_set_source_rgb (cr, 0,0,0);
+    {
+      gchar buf[100];
+      sprintf (buf, "%2.2f (default)", def);
+      cairo_move_to (cr, (def-min)/(max-min) * width, 0.8 * height);
+      cairo_show_text (cr, buf);
+    }
+
+
+  cairo_set_source_rgb (cr, 1.0, 0.0, 0.0);
+  cairo_rectangle (cr, (value - min)/(max-min) * width, 0.0, 2, 1.0 * height);
+  cairo_fill (cr);
+  cairo_set_source_rgb (cr, 1.0, 0.6, 0.5);
+    {
+      gchar buf[100];
+      sprintf (buf, "%2.2f", value);
+      cairo_move_to (cr, (value-min)/(max-min) * width, 0.8 * height);
+      cairo_show_text (cr, buf);
+    }
+
+  value=min;
+  cairo_set_source_rgb (cr, 1.0, 0.0, 0.0);
+  cairo_rectangle (cr, (value - min)/(max-min) * width, 0.0, 2, 1.0 * height);
+  cairo_fill (cr);
+  cairo_set_source_rgb (cr, 1.0, 0.6, 0.5);
+    {
+      gchar buf[100];
+      sprintf (buf, "%2.2f (min)", value);
+      cairo_move_to (cr, (value-min)/(max-min) * width, 0.8 * height);
+      cairo_show_text (cr, buf);
+    }
+
+
+  value=max;
+  cairo_set_source_rgb (cr, 1.0, 0.0, 0.0);
+  cairo_rectangle (cr, (value - min)/(max-min) * width, 0.0, 2, 1.0 * height);
+  cairo_fill (cr);
+  cairo_set_source_rgb (cr, 1.0, 0.6, 0.5);
+    {
+      gchar buf[100];
+      sprintf (buf, "%2.2f (max)", value);
+      cairo_move_to (cr, (value-min)/(max-min) * width - 20, 0.8 * height);
+      cairo_show_text (cr, buf);
+    }
+
+  cairo_destroy (cr);
+}
+
+
+static gboolean
+scalar_drag_n_motion (GtkWidget *widget, GdkEventMotion *mev, gpointer user_data)
+{
+  GeglNode   *node = g_object_get_data (G_OBJECT (widget), "node");
+  gdouble    width  = widget->allocation.width;
+  gdouble    min, max;
+  GParamSpec *param_spec = user_data;
+  gdouble     value;
+
+  min = G_PARAM_SPEC_DOUBLE (param_spec)->minimum;
+  max = G_PARAM_SPEC_DOUBLE (param_spec)->maximum;
+
+  if (min<-100.0)
+    min = -100.0;
+  if (max>100.0)
+    max = 100.0;
+
+  value = mev->x/width * (max-min) + min;
+
+  gegl_node_set (node, param_spec->name, value, NULL);
+
+  gtk_widget_queue_draw (widget);
+  gdk_window_get_pointer (widget->window, NULL, NULL, NULL);
+  gegl_gui_flush ();
+  return TRUE;
+}
+
+static GtkWidget *
+type_editor_scalar (GtkSizeGroup *col1,
+                    GtkSizeGroup *col2,
+                    GeglNode     *node,
+                    GParamSpec   *param_spec)
+{
+  GtkWidget *hbox = gtk_hbox_new (FALSE, 5);
+  GtkWidget *drawing_area = gtk_drawing_area_new ();
+  GtkWidget *label = gtk_label_new (param_spec->name);
+
+  /*gtk_widget_set_size_request (drawing_area, 128, 32);*/
+
+  gtk_widget_set_events (drawing_area,
+                         GDK_EXPOSURE_MASK |
+                         GDK_POINTER_MOTION_HINT_MASK |
+                         GDK_BUTTON1_MOTION_MASK |
+                         GDK_BUTTON_PRESS_MASK |
+                         GDK_BUTTON_RELEASE_MASK);
+
+  g_object_set_data (G_OBJECT (drawing_area), "node", node);
+
+  g_signal_connect (G_OBJECT (drawing_area), "expose-event",
+                    G_CALLBACK (scalar_expose), param_spec);
+  g_signal_connect (G_OBJECT (drawing_area), "motion_notify_event",
+                    G_CALLBACK (scalar_drag_n_motion), param_spec);
+  g_signal_connect (G_OBJECT (drawing_area), "button_press_event",
+                    G_CALLBACK (scalar_drag_n_motion), param_spec);
+
+
+  gtk_misc_set_alignment (GTK_MISC (label), 0, 0.5);
+  gtk_size_group_add_widget (col1, label);
+  gtk_size_group_add_widget (col2, drawing_area);
+
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), drawing_area, TRUE, TRUE, 0);
+
+  return hbox;
+}
+
 static GtkWidget *
 type_editor_generic (GtkSizeGroup *col1,
                      GtkSizeGroup *col2,
@@ -561,9 +800,17 @@ property_editor_general (GeglNodeEditor *node_editor,
             {
               prop_editor = type_editor_path (col1, col2, node, properties[i]);
             }
+          else if (g_type_is_a (G_PARAM_SPEC_TYPE (properties[i]), GEGL_TYPE_PARAM_MULTILINE))
+            {
+              prop_editor = type_editor_multiline (col1, col2, node, properties[i]);
+            }
           else if (properties[i]->value_type == GEGL_TYPE_COLOR)
             {
               prop_editor = type_editor_color (col1, col2, node, properties[i]);
+            }
+          else if (properties[i]->value_type == G_TYPE_DOUBLE)
+            {
+              prop_editor = type_editor_scalar (col1, col2, node, properties[i]);
             }
           else
             { 

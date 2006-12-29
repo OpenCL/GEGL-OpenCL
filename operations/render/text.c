@@ -19,8 +19,8 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (string, "Hello",
-                   "String to display. (utf8)")
+gegl_chant_multiline (string, "Hello",
+                      "String to display. (utf8)")
 gegl_chant_string (font, "Sans",
                    "Font family. (utf8)")
 gegl_chant_double (size, 1.0, 2048.0, 10.0,
