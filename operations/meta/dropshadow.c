@@ -19,7 +19,7 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (opacity, 0.0, 100.0, 0.5, "Opacity")
+gegl_chant_double (opacity, -10.0, 10.0, 0.5, "Opacity")
 gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
                    "Horizontal shadow offset.")
 gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
