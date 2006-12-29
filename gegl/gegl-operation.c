@@ -33,7 +33,7 @@
 
 static void          gegl_operation_class_init (GeglOperationClass    *klass);
 static void          gegl_operation_init       (GeglOperation         *self);
-static void          associate                 (GeglOperation         *self);
+static void          attach                    (GeglOperation         *self);
 
 static GeglRectangle get_defined_region        (GeglOperation *self);
 static GeglRectangle get_affected_region       (GeglOperation *self,
@@ -51,7 +51,7 @@ gegl_operation_class_init (GeglOperationClass * klass)
                           when doing operation lookup by name */
   klass->description = NULL;
 
-  klass->associate = associate;
+  klass->attach = attach;
   klass->prepare = NULL;
   klass->get_defined_region = get_defined_region;
   klass->get_affected_region = get_affected_region;
@@ -150,7 +150,7 @@ gegl_operation_calc_source_regions (GeglOperation *self,
 }
 
 static void
-associate (GeglOperation *self)
+attach (GeglOperation *self)
 {
   g_warning ("kilroy was at What The Hack (%p, %s)\n", (void*)self,
                          G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
@@ -158,8 +158,8 @@ associate (GeglOperation *self)
 }
 
 void
-gegl_operation_associate (GeglOperation *self,
-                          GeglNode      *node)
+gegl_operation_attach (GeglOperation *self,
+                       GeglNode      *node)
 {
   GeglOperationClass *klass;
 
@@ -168,9 +168,9 @@ gegl_operation_associate (GeglOperation *self,
 
   klass = GEGL_OPERATION_GET_CLASS (self);
 
-  g_assert (klass->associate);
+  g_assert (klass->attach);
   self->node = node;
-  klass->associate (self);
+  klass->attach (self);
 }
 
 void

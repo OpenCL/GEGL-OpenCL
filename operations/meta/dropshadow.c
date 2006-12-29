@@ -52,8 +52,8 @@ struct _Priv
   GeglNode *black;
 };
 
-/* in associate we hook into graph adding the needed nodes */
-static void associate (GeglOperation *operation)
+/* in attach we hook into graph adding the needed nodes */
+static void attach (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *priv = (Priv*)self->priv;
@@ -92,7 +92,7 @@ static void associate (GeglOperation *operation)
 
 static void class_init (GeglOperationClass *klass)
 {
-  klass->associate = associate;
+  klass->attach = attach;
 }
 
 #endif

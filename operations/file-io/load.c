@@ -146,7 +146,7 @@ prepare (GeglOperation *operation,
     }
 }
 
-static void associate (GeglOperation *operation)
+static void attach (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   Priv *priv = (Priv*)self->priv;
@@ -170,7 +170,7 @@ static void associate (GeglOperation *operation)
 static void class_init (GeglOperationClass *klass)
 {
   klass->prepare = prepare;
-  klass->associate = associate;
+  klass->attach = attach;
   
   G_OBJECT_CLASS (klass)->dispose = dispose;
   G_OBJECT_CLASS (klass)->finalize = finalize;

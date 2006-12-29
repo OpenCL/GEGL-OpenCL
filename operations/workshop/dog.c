@@ -45,7 +45,7 @@ struct _Priv
   GeglNode *blur2;
 };
 
-static void associate (GeglOperation *operation)
+static void attach (GeglOperation *operation)
 {
   GeglChantOperation *self;
   Priv          *priv;
@@ -89,7 +89,7 @@ static void associate (GeglOperation *operation)
 
 static void class_init (GeglOperationClass *klass)
 {
-  klass->associate = associate;
+  klass->attach = attach;
 }
 
 #endif

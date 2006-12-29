@@ -59,10 +59,10 @@ struct _GeglOperationClass
   gchar       *description; /* textual description of the operation */
   char        *categories;  /* a colon seperated list of categories */
 
-  /* associate this operation with a GeglNode, override this if you are
+  /* attach this operation with a GeglNode, override this if you are
    * creating a GeglGraph, it is already defined for Filters/Sources/Composers.
    */
-  void       (*associate)           (GeglOperation *self);
+  void       (*attach)              (GeglOperation *self);
 
   /* prepare the node for processing (all properties will be set)
    * override this if you are creating a meta operation (using the node
@@ -123,7 +123,7 @@ GeglRectangle   gegl_operation_get_affected_region       (GeglOperation *self,
 GeglRectangle   gegl_operation_get_defined_region        (GeglOperation *self);
 gboolean   gegl_operation_calc_source_regions       (GeglOperation *self,
                                                      gpointer       dynamic_id);
-void       gegl_operation_associate                 (GeglOperation *self,
+void       gegl_operation_attach                    (GeglOperation *self,
                                                      GeglNode      *node);
 void       gegl_operation_prepare                   (GeglOperation *self,
                                                      gpointer       dynamic_id);

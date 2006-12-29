@@ -964,7 +964,7 @@ gegl_node_set_operation_object (GeglNode      *self,
     gegl_node_disconnect_sinks (self);
 
     /* FIXME: handle this in a more generic way, but it is needed to allow
-     * the associate to work properly.
+     * the attach to work properly.
      */
     
     if (gegl_node_get_pad (self, "output"))
@@ -974,7 +974,7 @@ gegl_node_set_operation_object (GeglNode      *self,
     if (gegl_node_get_pad (self, "aux"))
       gegl_node_remove_pad (self, gegl_node_get_pad (self, "aux"));
     
-    gegl_operation_associate (operation, self);
+    gegl_operation_attach (operation, self);
 
     if (input)
       gegl_node_connect_from (self, "input", input, "output");

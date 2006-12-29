@@ -1,10 +1,32 @@
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
-	* NEWS: added generic feature blurb as first news item in NEWS file.
+	s/associate/attach/ in the API, perhaps this should even be passed the
+	node it is being attached to as a parameter.
+
+	* gegl/gegl-node.c: (gegl_node_set_operation_object):
+	* gegl/gegl-operation-composer.c:
+	(gegl_operation_composer_class_init), (attach):
+	* gegl/gegl-operation-filter.c: (gegl_operation_filter_class_init),
+	(attach):
+	* gegl/gegl-operation-sink.c: (gegl_operation_sink_class_init),
+	(attach):
+	* gegl/gegl-operation-source.c: (gegl_operation_source_class_init),
+	(attach):
+	* gegl/gegl-operation.c: (gegl_operation_class_init), (attach),
+	(gegl_operation_attach):
+	* gegl/gegl-operation.h:
+	* operations/color/remap.c: (attach),
+	(gegl_operation_remap_class_init):
+	* operations/file-io/load.c: (attach), (class_init):
+	* operations/meta/dropshadow.c: (attach), (class_init):
+	* operations/meta/layer.c: (attach), (class_init):
+	* operations/meta/tonemap.c: (attach), (class_init):
+	* operations/meta/unsharp-mask.c: (attach), (class_init):
+	* operations/workshop/dog.c: (attach), (class_init):
 
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
-	* docs/Makefile.am: removed libtool barf in scrabed usage information.
+	* NEWS: added generic feature blurb as first news item in NEWS file.
 
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 

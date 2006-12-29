@@ -264,7 +264,7 @@ get_affected_region (GeglOperation *self,
 
 
 static void
-associate (GeglOperation *self)
+attach (GeglOperation *self)
 {
   GeglOperation  *operation    = GEGL_OPERATION (self);
   GObjectClass   *object_class = G_OBJECT_GET_CLASS (self);
@@ -306,7 +306,7 @@ gegl_operation_remap_class_init (GeglOperationRemapClass * klass)
   operation_class->get_defined_region = get_defined_region;
   operation_class->get_affected_region = get_affected_region;
   operation_class->calc_source_regions = calc_source_regions;
-  operation_class->associate = associate;
+  operation_class->attach = attach;
 
   gegl_operation_class_set_name (operation_class, "remap");;
 

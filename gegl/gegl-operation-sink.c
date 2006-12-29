@@ -41,7 +41,7 @@ static gboolean process              (GeglOperation *operation,
                                       gpointer       dynamic_id,
                                       const gchar   *output_prop);
 
-static void     associate            (GeglOperation *operation);
+static void     attach               (GeglOperation *operation);
 
 static GeglRectangle get_defined_region   (GeglOperation *self);
 static gboolean calc_source_regions  (GeglOperation *self,
@@ -60,7 +60,7 @@ gegl_operation_sink_class_init (GeglOperationSinkClass * klass)
   object_class->get_property = get_property;
 
   operation_class->process = process;
-  operation_class->associate = associate;
+  operation_class->attach = attach;
   operation_class->get_defined_region = get_defined_region;
   operation_class->calc_source_regions = calc_source_regions;
 
@@ -81,7 +81,7 @@ gegl_operation_sink_init (GeglOperationSink *self)
 }
 
 static void
-associate (GeglOperation *self)
+attach (GeglOperation *self)
 {
   GeglOperation  *operation    = GEGL_OPERATION (self);
   GObjectClass   *object_class = G_OBJECT_GET_CLASS (self);
