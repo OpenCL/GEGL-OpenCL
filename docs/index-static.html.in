@@ -486,10 +486,8 @@ sudo ldconfig</pre>
  │   ├──render        Operations providing patters, graidents, fills, ...
  │   ├──transform     transforming/resampling operations
  │   ├──transparency  opacity/mask control
- │   │
  │   ├──generated     Operations generated from scripts (currently
  │   │                ruby scripts.) (arithmetic, compositing, ...)
- │   │
  │   └──workshop      Works in progress, (not compiled by default)
  │       └──generated
  │                    
@@ -497,26 +495,12 @@ sudo ldconfig</pre>
  │
  ├──docs              A website for GEGL
  │   │
- │   ├──gallery       A gallery of sample GEGL compositions.
- │   │   │
- │   │   └──data      Image data used by the sample compositions.
- │   │
- │   └──images        Misc graphics. (including SVG GEGL logo).
+ │   └──gallery       A gallery of sample GEGL compositions.
+ │       │
+ │       └──data      Image data used by the sample compositions.
+ │    
  │
- ├──tools             s┄ome small utilities to help the build.
- │
- │   ┄┄┄┄┄┄┄directories below this line are not included in dist┄┄┄┄┄┄┄┄
- │
- ├──tests             Unit tests, that are currently not working, since the
- │                    tests now depend on deprecated behavior.
- │
- │ GIL                has documentation, and seems to be in a working state,
- │                    that working state is not in sync with GEGL, and it is
- │                    this code at the moment.
- │
- ├──gil          
- ├──codegen           part of gil
- └──opgen             seems to be code using an older version of gil
+ └──tools             some small utilities to help the build.
 </pre>
 
 <h4>Directories of babl</h4>
