@@ -1,5 +1,17 @@
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-dot.[ch]: moved ...
+	* gegl/gegl-dot.[ch]: .. here.
+	* operations/workshop/introspect.c: moved ...
+	* operations/render/introspect.c: ... here
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/gegl-dot.c: (gegl_add_graph):
+	* operations/render/FractalExplorer.c:
+
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/meta/dropshadow.c: modified opacity to be within legal
 	values (allow negative dropshadow for highlights).
 
