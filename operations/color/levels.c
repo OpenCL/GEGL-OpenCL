@@ -19,11 +19,11 @@
  */
 
 #if GEGL_CHANT_PROPERTIES
-  gegl_chant_double (in_low, -5.0, 5.0, 0.0,
+  gegl_chant_double (in_low, -1.0, 4.0, 0.0,
       "Input luminance level to become lowest output")
-  gegl_chant_double (in_high, -5.0, 5.0, 1.0, "Input luminance level to become white.")
-  gegl_chant_double (out_low, -5.0, 5.0, 0.0, "Lowest luminance level in output")
-  gegl_chant_double (out_high, -5.0, 5.0, 1.0, "Highest luminance level in output")
+  gegl_chant_double (in_high, -1.0, 4.0, 1.0, "Input luminance level to become white.")
+  gegl_chant_double (out_low, -1.0, 4.0, 0.0, "Lowest luminance level in output")
+  gegl_chant_double (out_high, -1.0, 4.0, 1.0, "Highest luminance level in output")
 
 #else
 
