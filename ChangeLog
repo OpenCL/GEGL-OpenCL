@@ -1,3 +1,8 @@
+2007-01-01  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* gegl/gegl/gegl-tile-disk.c: g_open takes three parameters. Only
+	broke on Microsoft Windows, apparently.
+
 2006-12-31  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* gegl/buffer/gegl-buffer.c: include <limits.h> and not <values.h>.
