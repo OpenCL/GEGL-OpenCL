@@ -1,3 +1,8 @@
+2007-01-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.in: bumped version to 0.0.5 (odd micro==checkout from
+	cvs).
+
 2007-01-01  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* gegl/gegl/gegl-tile-disk.c: g_open takes three parameters. Only
