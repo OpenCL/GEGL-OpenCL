@@ -476,7 +476,7 @@ get_tile (GeglTileStore *tile_store,
   return tile;
 }
 
-#include "values.h"
+#include "limits.h"
 
 static void
 gegl_buffer_class_init (GeglBufferClass *class)
@@ -695,13 +695,13 @@ gegl_buffer_iterate (GeglBuffer *buffer,
       factor*=2;
     }
 
-  buffer_abyss_x /=factor; 
-  buffer_abyss_y /=factor; 
-  abyss_x_total /=factor; 
+  buffer_abyss_x /=factor;
+  buffer_abyss_y /=factor;
+  abyss_x_total /=factor;
   abyss_y_total /=factor;
-  buffer_total_shift_x /=factor; 
-  buffer_total_shift_y /=factor; 
-  buffer_x /=factor; 
+  buffer_total_shift_x /=factor;
+  buffer_total_shift_y /=factor;
+  buffer_x /=factor;
   buffer_y /=factor;
   width/=factor;
   height/=factor;
@@ -811,7 +811,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                            row < tile_height &&
                            y < height &&
                            buffer_y + y < abyss_y_total
-                           
+
                            ;
                            row++, y++)
                         {
@@ -857,7 +857,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                           else
                             memcpy (bp, tp, pixels * px_size);
                         }
-                      else 
+                      else
                         {
                           /* entire row in abyss */
                           memset (bp, 0x00, pixels * bpx_size);
@@ -917,7 +917,7 @@ gegl_buffer_set (GeglBuffer    *buffer,
   g_object_unref (sub_buf);
 }
 
-/* 
+/*
  * buffer: the buffer to get data from
  * rect:   the (full size rectangle to sample)
  * dst:    the destination buffer to write to
