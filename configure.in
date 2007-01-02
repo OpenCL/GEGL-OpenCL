@@ -193,6 +193,38 @@ AC_CACHE_CHECK([for aclocal flags], ac_cv_gegl_aclocal_flags,[
 ACLOCAL="$ACLOCAL $ac_cv_gegl_aclocal_flags"
 
 
+###########################
+# Check target architecture
+###########################
+
+AC_MSG_CHECKING([for target architecture])
+case x"$target" in
+  xNONE | x)
+    target_or_host="$host" ;;
+  *)
+    target_or_host="$target" ;;
+esac
+AC_MSG_RESULT([$target_or_host])
+
+#################
+# Check for Win32
+#################
+
+MATH_LIB=-lm
+AC_MSG_CHECKING([for native Win32])
+case "$target_or_host" in
+  *-*-mingw*)
+    os_win32=yes
+    MATH_LIB=
+    ;;
+  *)
+    os_win32=no
+    ;;
+esac
+AC_MSG_RESULT([$os_win32])
+AC_SUBST(MATH_LIB)
+
+
 dnl Checks for programs.
 #AC_PROG_YACC
 #AM_PROG_LEX

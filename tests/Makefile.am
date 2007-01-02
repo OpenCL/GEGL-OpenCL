@@ -61,7 +61,7 @@ testgegl_SOURCES = \
 
 testgegl_LDFLAGS = -g
 testgegl_DEPENDENCIES = $(GEGLDEPS)
-testgegl_LDADD = $(GEGLLDADDS) -lm
+testgegl_LDADD = $(GEGLLDADDS) $(MATH_LIB)
 
 TESTS = testgegl$(EXEEXT)
 

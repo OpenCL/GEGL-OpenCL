@@ -33,7 +33,7 @@ testgil_SOURCES = \
 
 testgil_LDFLAGS = -g @DEP_LIBS@
 testgil_DEPENDENCIES = $(DEPS)
-testgil_LDADD = $(LDADDS) -lm
+testgil_LDADD = $(LDADDS) $(MATH_LIB)
 
 tests: dummy testgil
 

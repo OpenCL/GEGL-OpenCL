@@ -7,7 +7,7 @@ codegen_SOURCES = \
 	lexer.l		\
 	parser.y
 
-codegen_LDADD = -lm -lfl
+codegen_LDADD = $(MATH_LIB) -lfl
 
 YFLAGS = -d -t
 

@@ -18,7 +18,7 @@ libgil_a_SOURCES = \
 	gil-visitor.c
 
 LDADD = \
-	-lm \
+	@MATH_LIB@ \
 	@DEP_LIBS@
 
 #noinst_PROGRAMS = gil
@@ -28,7 +28,7 @@ LDADD = \
 #	parse.y
 
 #gil_LDADD = \
-#	-lm \
+#	@MATH_LIB@ \
 #    libgil.la \
 #	@GEGL_LIBS@ \
 #	@LEXLIB@

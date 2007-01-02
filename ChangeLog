@@ -1,3 +1,21 @@
+2007-01-01  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	Some changes to fix build problems in FreeBSD and Windows.
+
+	* configure.in: Added tests to check for libm and set MATH_LIB.
+
+	* Makefile.am: Use '$(MAKE)' instead of 'make'.
+
+	* docs/gallery/Makefile.am: Use '$(MAKE)' instead of 'make'. Added
+	missing 'export' for GEGL_PATH.
+
+	* codegen/Makefile.am:
+	* gil/gil/Makefile.am:
+	* gil/tests/Makefile.am:
+	* tests/Makefile.am:
+	* tools/testsuite/Makefile.am: Use $(MATH_LIB) instead of a
+	hard-coded '-lm'.
+
 2007-01-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl.h: include gegl-paramspecs.h in gegl/ prefix.

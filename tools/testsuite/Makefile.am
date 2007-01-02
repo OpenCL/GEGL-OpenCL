@@ -13,6 +13,6 @@ TESTS = testcomplex
 testcomplex_SOURCES = testcomplex.c
 testcomplex_LDFLAGS = -g
 testcomplex_DEPENDENCIES = libtestsuite.la
-testcomplex_LDADD = libtestsuite.la -lm
+testcomplex_LDADD = libtestsuite.la $(MATH_LIB)
 
 EXTRA_PROGRAMS = testcomplex

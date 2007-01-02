@@ -37,7 +37,7 @@ pngs:
 	@echo "--[Updating sample compositions]--";\
 	for XML in $(srcdir)/*.xml;do\
 	   echo $${XML};\
-	   make `echo $${XML}|sed s/xml/png/`>/dev/null;\
+	   $(MAKE) `echo $${XML}|sed s/xml/png/`>/dev/null;\
 	done
 
 all-local: pngs index.html
@@ -45,8 +45,7 @@ all-local: pngs index.html
 %.png:%.xml $(wildcard $(top_builddir)/operations/*/*.so)\
 	    $(top_builddir)/gegl/libgegl-@GEGL_API_VERSION@.la\
 	    $(top_builddir)/bin/gegl
-	
-	@export GEGL_DEBUG_TIME=yes;GEGL_PATH=$(top_builddir)/operations;\
+	@export GEGL_DEBUG_TIME=yes;export GEGL_PATH=$(top_builddir)/operations;\
 	$(top_builddir)/bin/gegl $< -o $@ > `echo $@|sed -e s/png/txt/`;
 if HAVE_GRAPHVIZ
 	@export GEGL_PATH=$(top_builddir)/operations;\
