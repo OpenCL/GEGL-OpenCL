@@ -1,5 +1,9 @@
 2007-01-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: include gegl-paramspecs.h in gegl/ prefix.
+
+2007-01-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.in: bumped version to 0.0.5 (odd micro==checkout from
 	cvs).
 
