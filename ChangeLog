@@ -1,5 +1,9 @@
 2007-01-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: indentation fixes.
+
+2007-01-04  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/gegl_node_new_node/gegl_node_new_child/
 	%s/gegl_node_create_child/gegl_node_create_child/
 
