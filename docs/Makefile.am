@@ -6,10 +6,11 @@ SUBDIRS= gallery
 #	
 #
 #
-HTML_FILES = index-static.html 	\
-	     index.html		\
-	     operations.html	\
-	     class-hierarchy.html
+HTML_FILES = index-static.html 		\
+	     index.html			\
+	     operations.html		\
+	     class-hierarchy.html	\
+	     gegl.h.html
 
 EXTRA_DIST= 			\
 	ChangeLog		\
@@ -88,7 +89,7 @@ web: all
 	   echo "FAIL   $(WEBSITE_HOST) not reachable."\
 	   )
 
-WEBSITE_FILES=*.html *.css */*.html gallery/*.txt images/gegl.ico gallery/*.png gegl.h.html
+WEBSITE_FILES=*.html *.css */*.html gallery/*.txt images/gegl.ico gallery/*.png
 
 website:
 	if [ "x"$$WEBSITE_DESTINATION == "x" ];then echo "WA""NING: WEBSITE_DESTINATION not set (and it is crucibles fault)";\
