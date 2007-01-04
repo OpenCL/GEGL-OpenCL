@@ -1,5 +1,31 @@
 2007-01-04  Øyvind Kolås  <pippin@gimp.org>
 
+	%s/gegl_node_new_node/gegl_node_new_child/
+	%s/gegl_node_create_node/gegl_node_create_child/
+
+	* bin/editor-optype.c: (chain_in_operation):
+	* bin/editor.c: (cb_introspect):
+	* bin/gegl-tree-editor-action.c: (add_sibling_op), (add_child_op):
+	* bin/gegl.c: (main):
+	* gegl/gegl-graph.c: (gegl_node_new_child),
+	(gegl_node_create_child):
+	* gegl/gegl-graph.h:
+	* gegl/gegl-xml.c: (start_element):
+	* gegl/gegl.h:
+	* operations/file-io/load.c: (attach), (refresh_cache):
+	* operations/meta/dropshadow.c: (attach):
+	* operations/meta/layer.c: (attach), (refresh_cache):
+	* operations/meta/tonemap.c: (attach):
+	* operations/meta/unsharp-mask.c: (attach):
+	* operations/render/introspect.c: (process):
+	* operations/workshop/dog.c: (attach):
+	* tests/mockimageoperationtest.c:
+	(test_mock_image_operation_g_object_properties),
+	(test_mock_image_operation_chain):
+	* tools/introspect.c: (stuff):
+
+2007-01-04  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/gegl_node_output/gegl_node_get_output_proxy/
 	%s/gegl_node_input/gegl_node_get_input_proxy/
 

@@ -63,15 +63,15 @@ static void attach (GeglOperation *operation)
       priv->input    = gegl_node_get_input_proxy (gegl, "input");
       priv->output   = gegl_node_get_output_proxy (gegl, "output");
 
-      priv->subtract = gegl_node_new_node (gegl,
+      priv->subtract = gegl_node_new_child (gegl,
                                             "operation", "subtract",
                                             NULL);
 
-      priv->blur1    = gegl_node_new_node (gegl,
+      priv->blur1    = gegl_node_new_child (gegl,
                                             "operation", "gaussian-blur",
                                             NULL);
 
-      priv->blur2    = gegl_node_new_node (gegl,
+      priv->blur2    = gegl_node_new_child (gegl,
                                             "operation", "gaussian-blur",
                                             NULL);
 

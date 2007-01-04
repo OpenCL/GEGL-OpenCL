@@ -71,7 +71,7 @@ process (GeglOperation *operation,
 
     {
       GeglNode *gegl = gegl_node_new ();
-      GeglNode *png_load = gegl_node_new_node (gegl, "operation", "load", "path", "/tmp/gegl-temp.png", NULL);
+      GeglNode *png_load = gegl_node_new_child (gegl, "operation", "load", "path", "/tmp/gegl-temp.png", NULL);
       GeglNode *buffer_save;
       GeglRectangle defined;
 
@@ -83,7 +83,7 @@ process (GeglOperation *operation,
                           "width",  defined.w,
                           "height", defined.h,
                           NULL);
-      buffer_save = gegl_node_new_node (gegl, "operation", "save-buffer", "buffer", self->buf, NULL);
+      buffer_save = gegl_node_new_child (gegl, "operation", "save-buffer", "buffer", self->buf, NULL);
       gegl_node_link_many (png_load, buffer_save, NULL);
 
       gegl_node_process (buffer_save);

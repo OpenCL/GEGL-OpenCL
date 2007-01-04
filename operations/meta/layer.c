@@ -133,14 +133,14 @@ static void attach (GeglOperation *operation)
   priv->aux = gegl_node_get_input_proxy (gegl, "aux");
   priv->output = gegl_node_get_output_proxy (gegl, "output");
 
-  priv->composite_op = gegl_node_new_node (gegl,
+  priv->composite_op = gegl_node_new_child (gegl,
                                          "operation", self->composite_op,
                                          NULL);
 
-  priv->shift = gegl_node_new_node (gegl, "operation", "shift", NULL);
-  priv->opacity = gegl_node_new_node (gegl, "operation", "opacity", NULL);
+  priv->shift = gegl_node_new_child (gegl, "operation", "shift", NULL);
+  priv->opacity = gegl_node_new_child (gegl, "operation", "opacity", NULL);
   
-  priv->load = gegl_node_new_node (gegl,
+  priv->load = gegl_node_new_child (gegl,
                                     "operation", "buffer",
                                     NULL);
 
@@ -210,7 +210,7 @@ refresh_cache (GeglChantOperation *self)
         }
 
       gegl = g_object_new (GEGL_TYPE_NODE, NULL);
-      load = gegl_node_new_node (gegl, "operation", "load",
+      load = gegl_node_new_child (gegl, "operation", "load",
                                            "cache", FALSE,
                                            "path", self->src,
                                            NULL);

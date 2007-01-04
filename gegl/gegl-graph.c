@@ -106,7 +106,7 @@ gegl_node_get_children (GeglNode *self)
  *  returns a freshly created node, owned by the graph, and thus freed with it
  */
 GeglNode *
-gegl_node_new_node (GeglNode    *node,
+gegl_node_new_child (GeglNode    *node,
                      const gchar *first_property_name,
                      ...)
 {
@@ -128,10 +128,10 @@ gegl_node_new_node (GeglNode    *node,
   return node;
 }
 
-GeglNode * gegl_node_create_node      (GeglNode     *self,
+GeglNode * gegl_node_create_child      (GeglNode     *self,
                                         const gchar  *operation)
 {
-  return gegl_node_new_node (self, "operation", operation, NULL);
+  return gegl_node_new_child (self, "operation", operation, NULL);
 }
 
 static void

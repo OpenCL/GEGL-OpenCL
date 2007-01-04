@@ -111,13 +111,13 @@ static void start_element (GMarkupParseContext *context,
 
       if (!strcmp (element_name, "node"))
         {
-          new = gegl_node_new_node (pd->gegl,
+          new = gegl_node_new_child (pd->gegl,
              "operation", name2val (a, v, "operation"),
              NULL);
         }
       else
         {
-          new = gegl_node_new_node (pd->gegl,
+          new = gegl_node_new_child (pd->gegl,
              "operation", element_name, 
              NULL);
         }

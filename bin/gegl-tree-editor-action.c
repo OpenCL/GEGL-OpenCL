@@ -372,7 +372,7 @@ add_sibling_op (GtkAction *action, gpointer userdata)
     {
       GeglNode *previous = gegl_previous_sibling (item);
 
-      new_item = gegl_node_new_node (GEGL_STORE (model)->gegl,
+      new_item = gegl_node_new_child (GEGL_STORE (model)->gegl,
                                          "operation", "nop",
                                          NULL);
 
@@ -435,7 +435,7 @@ add_child_op (GtkAction *action, gpointer userdata)
         }
       else
         {
-          new_item = gegl_node_new_node (GEGL_STORE (model)->gegl,
+          new_item = gegl_node_new_child (GEGL_STORE (model)->gegl,
                                              "operation", "blank",
                                              NULL);
           gegl_node_connect_from (item, "aux", new_item, "output");

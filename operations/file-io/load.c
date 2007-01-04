@@ -159,7 +159,7 @@ static void attach (GeglOperation *operation)
 
   priv->output = gegl_node_get_output_proxy (priv->self, "output");
 
-  priv->load = gegl_node_new_node (priv->self,
+  priv->load = gegl_node_new_child (priv->self,
                                        "operation", "text",
                                        "string", "foo",
                                        NULL);
@@ -197,7 +197,7 @@ refresh_cache (GeglChantOperation *self)
           }
 
         gegl = g_object_new (GEGL_TYPE_NODE, NULL);
-        load = gegl_node_new_node (gegl, "operation", "load",
+        load = gegl_node_new_child (gegl, "operation", "load",
                                              "cache", FALSE,
                                              "path", self->path,
                                              NULL);

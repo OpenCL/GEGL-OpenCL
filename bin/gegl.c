@@ -147,7 +147,7 @@ main (gint    argc,
 
       while (*operation)
         {
-          GeglNode *new = gegl_node_new_node (gegl, "operation", *operation, NULL);
+          GeglNode *new = gegl_node_new_child (gegl, "operation", *operation, NULL);
           if (iter)
             {
               gegl_node_link_many (iter, new, proxy, NULL);
@@ -185,7 +185,7 @@ main (gint    argc,
         break;
       case GEGL_RUN_MODE_PNG:
         {
-          GeglNode *output = gegl_node_new_node (gegl,
+          GeglNode *output = gegl_node_new_child (gegl,
                                "operation", "png-save",
                                "path", o->output,
                                NULL);

@@ -67,31 +67,31 @@ static void attach (GeglOperation *operation)
       priv->input    = gegl_node_get_input_proxy (gegl, "input");
       priv->output   = gegl_node_get_output_proxy (gegl, "output");
 
-      priv->min = gegl_node_new_node (gegl,
+      priv->min = gegl_node_new_child (gegl,
                                        "operation", "box-min",
                                        NULL);
 
-      priv->blur_min = gegl_node_new_node (gegl,
+      priv->blur_min = gegl_node_new_child (gegl,
                                             "operation", "box-blur",
                                             NULL);
 
-      priv->max = gegl_node_new_node (gegl,
+      priv->max = gegl_node_new_child (gegl,
                                        "operation", "box-max",
                                        NULL);
 
-      priv->blur_max = gegl_node_new_node (gegl,
+      priv->blur_max = gegl_node_new_child (gegl,
                                             "operation", "box-blur",
                                             NULL);
 
-      priv->remap = gegl_node_new_node (gegl,
+      priv->remap = gegl_node_new_child (gegl,
                                          "operation", "remap",
                                          NULL);
 
-      priv->over = gegl_node_new_node (gegl,
+      priv->over = gegl_node_new_child (gegl,
                                          "operation", "over",
                                          NULL);
 
-      priv->opacity = gegl_node_new_node (gegl,
+      priv->opacity = gegl_node_new_child (gegl,
                                          "operation", "opacity",
                                          NULL);
 
