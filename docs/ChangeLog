@@ -1,3 +1,7 @@
+2007-01-04  Øyvind Kolås  <pippin@gimp.org>
+
+	* hello-world.c: (main): updated to reflect API changes.
+
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: updated documentation.

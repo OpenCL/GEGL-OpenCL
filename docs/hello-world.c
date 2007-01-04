@@ -8,7 +8,7 @@ main (gint    argc,
 
   {
     /* instantiate a graph */
-    GeglNode *gegl = gegl_graph_new ();
+    GeglNode *gegl = gegl_node_new ();
 
 /*
 This is the graph we're going to construct:
@@ -34,18 +34,18 @@ This is the graph we're going to construct:
 */
 
     /*< The image nodes representing operations we want to perform */
-    GeglNode *display    = gegl_graph_create_node (gegl, "display");
-    GeglNode *layer      = gegl_graph_new_node (gegl,
+    GeglNode *display    = gegl_node_create_child (gegl, "display");
+    GeglNode *layer      = gegl_node_new_child (gegl,
                                  "operation", "layer",
                                  "x", 2.0,
                                  "y", 4.0,
                                  NULL);
-    GeglNode *text       = gegl_graph_new_node (gegl,
+    GeglNode *text       = gegl_node_new_child (gegl,
                                  "operation", "text",
                                  "size", 10.0,
                                  "color", gegl_color_new ("rgb(1.0,1.0,1.0)"),
                                  NULL);
-    GeglNode *mandelbrot = gegl_graph_new_node (gegl,
+    GeglNode *mandelbrot = gegl_node_new_child (gegl,
                                 "operation", "FractalExplorer",
                                 "width", 256,
                                 "height", 256,
