@@ -39,14 +39,14 @@ gint       gegl_node_get_num_children (GeglNode    *self);
 
 GeglNode * gegl_node_new              (void);
 
-GeglNode * gegl_node_new_child         (GeglNode     *self,
+GeglNode * gegl_node_new_child        (GeglNode    *self,
                                        const gchar  *first_property_name,
                                        ...) G_GNUC_NULL_TERMINATED;
-GeglNode * gegl_node_create_child      (GeglNode     *self,
+GeglNode * gegl_node_create_child     (GeglNode    *self,
                                        const gchar  *operation);
-GeglNode * gegl_node_get_input_proxy           (GeglNode     *graph,
+GeglNode * gegl_node_get_input_proxy  (GeglNode     *graph,
                                        const gchar  *name);
-GeglNode * gegl_node_get_output_proxy          (GeglNode     *graph,
+GeglNode * gegl_node_get_output_proxy (GeglNode     *graph,
                                        const gchar  *name);
 G_END_DECLS
 

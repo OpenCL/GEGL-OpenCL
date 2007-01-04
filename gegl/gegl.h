@@ -58,12 +58,12 @@ void          gegl_exit                  (void);
 GeglNode    * gegl_node_new              (void);
 
 /* create a new node belonging to a graph */
-GeglNode    * gegl_node_create_child      (GeglNode     *graph,
+GeglNode    * gegl_node_create_child     (GeglNode     *graph,
                                           const gchar  *operation);
 
 /* create a new node belonging to a graph, with key/value pairs for properties,
  * terminated by NULL (remember to set "operation") */
-GeglNode    * gegl_node_new_child         (GeglNode     *graph,
+GeglNode    * gegl_node_new_child        (GeglNode     *graph,
                                           const gchar  *first_property_name,
                                           ...) G_GNUC_NULL_TERMINATED;
 /* connect the output pad of a different node to this nodes input pad,
@@ -77,25 +77,25 @@ gboolean      gegl_node_connect_from     (GeglNode     *sink,
 
 /* Connect the data coming from one of our output pads to an input pad
  * on an other node */
-gboolean      gegl_node_connect_to          (GeglNode    *self,
-                                             const gchar *output_pad_name,
-                                             GeglNode    *sink,
-                                             const gchar *input_pad_name);
+gboolean      gegl_node_connect_to       (GeglNode    *self,
+                                          const gchar *output_pad_name,
+                                          GeglNode    *sink,
+                                          const gchar *input_pad_name);
 
 /* included mainly for language bindings */
-void          gegl_node_set_property        (GeglNode     *object,
-                                             const gchar  *property_name,
-                                             const GValue *value);
+void          gegl_node_set_property     (GeglNode     *object,
+                                          const gchar  *property_name,
+                                          const GValue *value);
 /* included mainly for language bindings */
-void          gegl_node_get_property        (GeglNode     *object,
-                                             const gchar  *property_name,
-                                             GValue       *value);
+void          gegl_node_get_property     (GeglNode     *object,
+                                          const gchar  *property_name,
+                                          GValue       *value);
 
 /* Lookup the GParamSpec of an operations property, returns NULL
  * if the property was not found.
  */
-GParamSpec *  gegl_node_find_property       (GeglNode     *self,
-                                             const gchar  *property_name);
+GParamSpec *  gegl_node_find_property    (GeglNode     *self,
+                                          const gchar  *property_name);
 
 /* Break a connection.
  */

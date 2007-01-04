@@ -1,7 +1,7 @@
 2007-01-04  Øyvind Kolås  <pippin@gimp.org>
 
 	%s/gegl_node_new_node/gegl_node_new_child/
-	%s/gegl_node_create_node/gegl_node_create_child/
+	%s/gegl_node_create_child/gegl_node_create_child/
 
 	* bin/editor-optype.c: (chain_in_operation):
 	* bin/editor.c: (cb_introspect):
@@ -68,7 +68,7 @@
 	(gegl_node_add_child), (gegl_node_remove_child),
 	(gegl_node_get_num_children), (gegl_node_get_nth_child),
 	(gegl_node_get_children), (gegl_node_new_node),
-	(gegl_node_create_node), (gegl_node_get_pad_proxy),
+	(gegl_node_create_child), (gegl_node_get_pad_proxy),
 	(gegl_node_input), (gegl_node_output), (gegl_node_new):
 	* gegl/gegl-graph.h:
 	* gegl/gegl-node-dynamic.h:
