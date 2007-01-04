@@ -411,7 +411,7 @@ test_update_pad (Test *test)
     GeglPad *output0 = gegl_node_get_pad(A, "output0");
     GeglPad *input0 = gegl_node_get_pad(A, "input0");
 
-    gegl_graph_add_child(GEGL_GRAPH(D), A);
+    gegl_node_add_child(GEGL_GRAPH(D), A);
     gegl_node_add_pad(D, output0);
     gegl_node_add_pad(D, input0);
 

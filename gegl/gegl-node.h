@@ -40,33 +40,29 @@ typedef struct _GeglNodeClass GeglNodeClass;
 
 struct _GeglNode
 {
-  GeglGraph       parent_instance;
-
-  /*< private >*/
-
+  GeglObject      parent_instance;
   GeglOperation  *operation;
-
   GeglRectangle   have_rect;
-
   GList          *pads;
   GList          *input_pads;
   GList          *output_pads;
-
   GList          *sources;
   GList          *sinks;
 
   gboolean        is_root;
-  gboolean        is_graph;  /*< a node that is a graph,
-                                 needs a bit special treatment */
   gboolean        enabled;
 
   GSList         *dynamic;   /*< list of GeglNodeDynamic's corresponding to
                                  evaluation contexts */
+
+  gboolean        is_graph;
+  /*< private >*/
+  GList          *children;  /*  used for children */
 };
 
 struct _GeglNodeClass
 {
-  GeglGraphClass  parent_class;
+  GeglObjectClass  parent_class;
 };
 
 /* renders the desired region of interest to a buffer of the specified

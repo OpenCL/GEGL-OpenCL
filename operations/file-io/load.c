@@ -157,9 +157,9 @@ static void attach (GeglOperation *operation)
 
   priv->self = GEGL_OPERATION (self)->node;
 
-  priv->output = gegl_graph_output (priv->self, "output");
+  priv->output = gegl_node_output (priv->self, "output");
 
-  priv->load = gegl_graph_new_node (priv->self,
+  priv->load = gegl_node_new_node (priv->self,
                                        "operation", "text",
                                        "string", "foo",
                                        NULL);
@@ -197,7 +197,7 @@ refresh_cache (GeglChantOperation *self)
           }
 
         gegl = g_object_new (GEGL_TYPE_NODE, NULL);
-        load = gegl_graph_new_node (gegl, "operation", "load",
+        load = gegl_node_new_node (gegl, "operation", "load",
                                              "cache", FALSE,
                                              "path", self->path,
                                              NULL);

@@ -129,18 +129,18 @@ static void attach (GeglOperation *operation)
   priv->self = GEGL_OPERATION (self)->node;
   gegl = priv->self;
 
-  priv->input = gegl_graph_input (gegl, "input");
-  priv->aux = gegl_graph_input (gegl, "aux");
-  priv->output = gegl_graph_output (gegl, "output");
+  priv->input = gegl_node_input (gegl, "input");
+  priv->aux = gegl_node_input (gegl, "aux");
+  priv->output = gegl_node_output (gegl, "output");
 
-  priv->composite_op = gegl_graph_new_node (gegl,
+  priv->composite_op = gegl_node_new_node (gegl,
                                          "operation", self->composite_op,
                                          NULL);
 
-  priv->shift = gegl_graph_new_node (gegl, "operation", "shift", NULL);
-  priv->opacity = gegl_graph_new_node (gegl, "operation", "opacity", NULL);
+  priv->shift = gegl_node_new_node (gegl, "operation", "shift", NULL);
+  priv->opacity = gegl_node_new_node (gegl, "operation", "opacity", NULL);
   
-  priv->load = gegl_graph_new_node (gegl,
+  priv->load = gegl_node_new_node (gegl,
                                     "operation", "buffer",
                                     NULL);
 
@@ -210,7 +210,7 @@ refresh_cache (GeglChantOperation *self)
         }
 
       gegl = g_object_new (GEGL_TYPE_NODE, NULL);
-      load = gegl_graph_new_node (gegl, "operation", "load",
+      load = gegl_node_new_node (gegl, "operation", "load",
                                            "cache", FALSE,
                                            "path", self->src,
                                            NULL);

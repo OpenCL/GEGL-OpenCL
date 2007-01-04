@@ -1,3 +1,49 @@
+2007-01-04  Øyvind Kolås  <pippin@gimp.org>
+
+	Merged GeglGraph class into GeglNode class. (more API cleanup to
+	follow).
+
+	* bin/editor-optype.c: (chain_in_operation):
+	* bin/editor.c: (cb_introspect):
+	* bin/export.c: (get_input_rect):
+	* bin/gegl-store.c: (gegl_store_set_gegl):
+	* bin/gegl-tree-editor-action.c: (add_sibling_op), (add_child_op):
+	* bin/gegl-tree-editor.c: (tree_editor_get_active):
+	* bin/gegl.c: (main):
+	* gegl/gegl-dot.c: (gegl_add_graph):
+	* gegl/gegl-graph.c: (gegl_node_remove_children),
+	(gegl_node_add_child), (gegl_node_remove_child),
+	(gegl_node_get_num_children), (gegl_node_get_nth_child),
+	(gegl_node_get_children), (gegl_node_new_node),
+	(gegl_node_create_node), (gegl_node_get_pad_proxy),
+	(gegl_node_input), (gegl_node_output), (gegl_node_new):
+	* gegl/gegl-graph.h:
+	* gegl/gegl-node-dynamic.h:
+	* gegl/gegl-node.c: (gegl_node_class_init), (gegl_node_init),
+	(dispose), (gegl_node_get_depends_on), (gegl_node_get),
+	(gegl_node_get_valist), (gegl_node_set_property),
+	(gegl_node_get_property):
+	* gegl/gegl-node.h:
+	* gegl/gegl-operation.c: (get_defined_region),
+	(get_affected_region), (calc_source_regions):
+	* gegl/gegl-xml.c: (start_element), (end_element), (gegl_to_xml):
+	* gegl/gegl.h:
+	* operations/file-io/load.c: (attach), (refresh_cache):
+	* operations/meta/dropshadow.c: (attach):
+	* operations/meta/layer.c: (attach), (refresh_cache):
+	* operations/meta/tonemap.c: (attach):
+	* operations/meta/unsharp-mask.c: (attach):
+	* operations/render/introspect.c: (process):
+	* operations/workshop/dog.c: (attach):
+	* tests/dfspadvisitortest.c: (test_dfs_pad_visitor):
+	* tests/graphtest.c: (test_graph), (test_graph_properties),
+	(test_graph_property_visitors):
+	* tests/mockimageoperationtest.c:
+	(test_mock_image_operation_g_object_properties),
+	(test_mock_image_operation_chain):
+	* tests/updatepadtest.c: (test_update_pad):
+	* tools/introspect.c: (stuff):
+
 2007-01-01  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	Some changes to fix build problems in FreeBSD and Windows.

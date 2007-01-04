@@ -55,15 +55,15 @@ void          gegl_init                  (gint    *argc,
 void          gegl_exit                  (void);
 
 /* Create a new gegl graph */
-GeglNode    * gegl_graph_new             (void);
+GeglNode    * gegl_node_new              (void);
 
 /* create a new node belonging to a graph */
-GeglNode    * gegl_graph_create_node     (GeglNode     *graph,
+GeglNode    * gegl_node_create_node      (GeglNode     *graph,
                                           const gchar  *operation);
 
 /* create a new node belonging to a graph, with key/value pairs for properties,
  * terminated by NULL (remember to set "operation") */
-GeglNode    * gegl_graph_new_node        (GeglNode     *graph,
+GeglNode    * gegl_node_new_node         (GeglNode     *graph,
                                           const gchar  *first_property_name,
                                           ...) G_GNUC_NULL_TERMINATED;
 /* connect the output pad of a different node to this nodes input pad,
@@ -149,11 +149,11 @@ const gchar * gegl_node_get_operation    (GeglNode        *node);
 
 /* aquire the attached ghost output pad of a Graph node,
  * create it if it does not exist */
-GeglNode    * gegl_graph_output          (GeglNode        *graph,
+GeglNode    * gegl_node_output (GeglNode        *graph,
                                           const gchar     *name);
 /* aquire the attached ghost input pad of a Graph node,
  * create it if it does not exist */
-GeglNode    * gegl_graph_input           (GeglNode        *graph,
+GeglNode    * gegl_node_input  (GeglNode        *graph,
                                           const gchar     *name);
 
 /* create a geglgraph from parsed XML data */

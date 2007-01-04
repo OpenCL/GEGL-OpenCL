@@ -60,21 +60,21 @@ static void attach (GeglOperation *operation)
       GeglNode      *gegl;
       gegl = operation->node;
 
-      priv->input    = gegl_graph_input (gegl, "input");
-      priv->output   = gegl_graph_output (gegl, "output");
-      priv->add      = gegl_graph_new_node (gegl,
+      priv->input    = gegl_node_input (gegl, "input");
+      priv->output   = gegl_node_output (gegl, "output");
+      priv->add      = gegl_node_new_node (gegl,
                                             "operation", "add",
                                             NULL);
 
-      priv->multiply = gegl_graph_new_node (gegl,
+      priv->multiply = gegl_node_new_node (gegl,
                                             "operation", "multiply",
                                             NULL);
 
-      priv->subtract = gegl_graph_new_node (gegl,
+      priv->subtract = gegl_node_new_node (gegl,
                                             "operation", "subtract",
                                             NULL);
 
-      priv->blur     = gegl_graph_new_node (gegl,
+      priv->blur     = gegl_node_new_node (gegl,
                                             "operation", "gaussian-blur",
                                             NULL);
 

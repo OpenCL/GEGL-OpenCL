@@ -67,14 +67,14 @@ static void attach (GeglOperation *operation)
   if (!priv->over)
     {
       GeglNode *gegl  = priv->self;
-      priv->input     = gegl_graph_input (gegl, "input");
-      priv->output    = gegl_graph_output (gegl, "output");
-      priv->over      = gegl_graph_new_node (gegl, "operation", "over", NULL);
-      priv->translate = gegl_graph_new_node (gegl, "operation", "translate", NULL);
-      priv->opacity   = gegl_graph_new_node (gegl, "operation", "opacity", NULL);
-      priv->blur      = gegl_graph_new_node (gegl, "operation", "gaussian-blur", NULL);
-      priv->darken    = gegl_graph_new_node (gegl, "operation", "in", NULL);
-      priv->black     = gegl_graph_new_node (gegl, "operation", "color",
+      priv->input     = gegl_node_input (gegl, "input");
+      priv->output    = gegl_node_output (gegl, "output");
+      priv->over      = gegl_node_new_node (gegl, "operation", "over", NULL);
+      priv->translate = gegl_node_new_node (gegl, "operation", "translate", NULL);
+      priv->opacity   = gegl_node_new_node (gegl, "operation", "opacity", NULL);
+      priv->blur      = gegl_node_new_node (gegl, "operation", "gaussian-blur", NULL);
+      priv->darken    = gegl_node_new_node (gegl, "operation", "in", NULL);
+      priv->black     = gegl_node_new_node (gegl, "operation", "color",
                                          "value", gegl_color_new ("rgb(0.0,0.0,0.0)"),
                                          NULL);
 

@@ -64,34 +64,34 @@ static void attach (GeglOperation *operation)
       GeglNode      *gegl;
       gegl = operation->node;
 
-      priv->input    = gegl_graph_input (gegl, "input");
-      priv->output   = gegl_graph_output (gegl, "output");
+      priv->input    = gegl_node_input (gegl, "input");
+      priv->output   = gegl_node_output (gegl, "output");
 
-      priv->min = gegl_graph_new_node (gegl,
+      priv->min = gegl_node_new_node (gegl,
                                        "operation", "box-min",
                                        NULL);
 
-      priv->blur_min = gegl_graph_new_node (gegl,
+      priv->blur_min = gegl_node_new_node (gegl,
                                             "operation", "box-blur",
                                             NULL);
 
-      priv->max = gegl_graph_new_node (gegl,
+      priv->max = gegl_node_new_node (gegl,
                                        "operation", "box-max",
                                        NULL);
 
-      priv->blur_max = gegl_graph_new_node (gegl,
+      priv->blur_max = gegl_node_new_node (gegl,
                                             "operation", "box-blur",
                                             NULL);
 
-      priv->remap = gegl_graph_new_node (gegl,
+      priv->remap = gegl_node_new_node (gegl,
                                          "operation", "remap",
                                          NULL);
 
-      priv->over = gegl_graph_new_node (gegl,
+      priv->over = gegl_node_new_node (gegl,
                                          "operation", "over",
                                          NULL);
 
-      priv->opacity = gegl_graph_new_node (gegl,
+      priv->opacity = gegl_node_new_node (gegl,
                                          "operation", "opacity",
                                          NULL);
 

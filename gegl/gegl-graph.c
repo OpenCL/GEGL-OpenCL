@@ -23,7 +23,6 @@
 #include <glib-object.h>
 #include <string.h>
 #include "gegl-types.h"
-#include "gegl-graph.h"
 #include "gegl-node.h"
 #include "gegl-visitable.h"
 #include "gegl-pad.h"
@@ -31,90 +30,63 @@
 #include "gegl-connection.h"
 #include "gegl-node.h"
 
-static void gegl_graph_class_init (GeglGraphClass *klass);
-static void gegl_graph_init       (GeglGraph      *self);
-static void dispose               (GObject        *object);
-
-G_DEFINE_TYPE(GeglGraph, gegl_graph, GEGL_TYPE_OBJECT)
-
-
-static void
-gegl_graph_class_init (GeglGraphClass *klass)
-{
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
-  object_class->dispose = dispose;
-}
-
-static void
-gegl_graph_init (GeglGraph *self)
-{
-  self->children = NULL;
-}
-
-static void
-dispose (GObject *object)
-{
-  GeglGraph *self = GEGL_GRAPH (object);
-  
-  gegl_graph_remove_children (self);
-
-  G_OBJECT_CLASS (gegl_graph_parent_class)->dispose (object);
-}
-
 void
-gegl_graph_remove_children (GeglGraph *self)
+gegl_node_remove_children (GeglNode *self)
 {
-  g_return_if_fail (GEGL_IS_GRAPH (self));
+  g_return_if_fail (GEGL_IS_NODE (self));
 
   while (TRUE)
     {
-      GeglNode *child = gegl_graph_get_nth_child (self, 0);
+      GeglNode *child = gegl_node_get_nth_child (self, 0);
 
       if (child)
-        gegl_graph_remove_child (self, child);
+        gegl_node_remove_child (self, child);
       else
         break;
     }
 }
 
 GeglNode *
-gegl_graph_add_child (GeglGraph *self,
+gegl_node_add_child (GeglNode *self,
                       GeglNode  *child)
 {
-  g_return_val_if_fail (GEGL_IS_GRAPH (self), NULL);
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
   self->children = g_list_append (self->children, g_object_ref (child));
+  self->is_graph = TRUE;
 
   return child;
 }
 
 GeglNode *
-gegl_graph_remove_child (GeglGraph *self,
+gegl_node_remove_child (GeglNode *self,
                          GeglNode  *child)
 {
-  g_return_val_if_fail (GEGL_IS_GRAPH (self), NULL);
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
   self->children = g_list_remove (self->children, child);
   g_object_unref (child);
+  if (self->children == NULL)
+    self->is_graph = FALSE;
 
   return child;
 }
 
 gint
-gegl_graph_get_num_children (GeglGraph *self)
+gegl_node_get_num_children (GeglNode *self)
 {
-  g_return_val_if_fail (GEGL_IS_GRAPH (self), -1);
+  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
   return g_list_length (self->children);
 }
 
 GeglNode *
-gegl_graph_get_nth_child (GeglGraph *self,
+gegl_node_get_nth_child (GeglNode *self,
                           gint       n)
 {
-  g_return_val_if_fail (GEGL_IS_GRAPH (self), NULL);
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
   return g_list_nth_data (self->children, n);
 }
@@ -123,9 +95,9 @@ gegl_graph_get_nth_child (GeglGraph *self,
  * Returns a copy of the graphs internal list of nodes
  */
 GList *
-gegl_graph_get_children (GeglGraph *self)
+gegl_node_get_children (GeglNode *self)
 {
-  g_return_val_if_fail (GEGL_IS_GRAPH (self), NULL);
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
   return g_list_copy (self->children);
 }
@@ -134,18 +106,18 @@ gegl_graph_get_children (GeglGraph *self)
  *  returns a freshly created node, owned by the graph, and thus freed with it
  */
 GeglNode *
-gegl_graph_new_node (GeglNode    *node,
+gegl_node_new_node (GeglNode    *node,
                      const gchar *first_property_name,
                      ...)
 {
-  GeglGraph   *self = GEGL_GRAPH (node);
+  GeglNode   *self = node;
   va_list      var_args;
   const gchar *name;
 
-  g_return_val_if_fail (GEGL_IS_GRAPH (self), NULL);
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
   node = g_object_new (GEGL_TYPE_NODE, NULL);
-  gegl_graph_add_child (self, node);
+  gegl_node_add_child (self, node);
 
   name = first_property_name;
   va_start (var_args, first_property_name);
@@ -156,10 +128,10 @@ gegl_graph_new_node (GeglNode    *node,
   return node;
 }
 
-GeglNode * gegl_graph_create_node      (GeglNode     *self,
+GeglNode * gegl_node_create_node      (GeglNode     *self,
                                         const gchar  *operation)
 {
-  return gegl_graph_new_node (self, "operation", operation, NULL);
+  return gegl_node_new_node (self, "operation", operation, NULL);
 }
 
 static void
@@ -191,11 +163,11 @@ source_invalidated (GeglNode      *source,
 
 
 static GeglNode *
-gegl_graph_get_pad_proxy (GeglGraph   *graph,
+gegl_node_get_pad_proxy (GeglNode   *graph,
                           const gchar *name,
                           gboolean     is_graph_input)
 {
-  GeglNode *node = GEGL_NODE (graph);
+  GeglNode *node = graph;
   GeglPad  *pad;
 
   pad = gegl_node_get_pad (node, name);
@@ -203,7 +175,7 @@ gegl_graph_get_pad_proxy (GeglGraph   *graph,
     {
         GeglNode *nop = g_object_new (GEGL_TYPE_NODE, "operation", "nop", "name", is_graph_input?"proxynop-input":"proxynop-output", NULL);
         GeglPad  *nop_pad = gegl_node_get_pad (nop, is_graph_input?"input":"output");
-        gegl_graph_add_child (graph, nop);
+        gegl_node_add_child (graph, nop);
         
         {
           GeglPad *new_pad = g_object_new (GEGL_TYPE_PAD, NULL);
@@ -218,7 +190,6 @@ gegl_graph_get_pad_proxy (GeglGraph   *graph,
         }
 
         g_object_set_data (G_OBJECT (nop), "graph", graph);
-        node->is_graph = TRUE;
 
         if (!is_graph_input)
           {
@@ -231,21 +202,21 @@ gegl_graph_get_pad_proxy (GeglGraph   *graph,
 }
 
 GeglNode *
-gegl_graph_input (GeglNode    *node,
+gegl_node_input (GeglNode    *node,
                   const gchar *name)
 {
-  return gegl_graph_get_pad_proxy (GEGL_GRAPH (node), name, TRUE);
+  return gegl_node_get_pad_proxy (node, name, TRUE);
 }
 
 GeglNode *
-gegl_graph_output (GeglNode    *node,
+gegl_node_output (GeglNode    *node,
                   const gchar *name)
 {
-  return gegl_graph_get_pad_proxy (GEGL_GRAPH (node), name, FALSE);
+  return gegl_node_get_pad_proxy (node, name, FALSE);
 }
 
 GeglNode *
-gegl_graph_new (void)
+gegl_node_new (void)
 {
-  return g_object_new (GEGL_TYPE_GRAPH, NULL);
+  return g_object_new (GEGL_TYPE_NODE, NULL);
 }

@@ -41,7 +41,7 @@
 
 /*FIXME: this should be in gegl.h*/
 
-GeglNode * gegl_graph_output          (GeglNode     *graph,
+GeglNode * gegl_node_output         (GeglNode     *graph,
                                        const gchar  *name);
 
 
@@ -142,12 +142,12 @@ main (gint    argc,
       GeglNode *iter;
 
       gchar **operation = o->rest;
-      proxy = gegl_graph_output (gegl, "output");
+      proxy = gegl_node_output (gegl, "output");
       iter = gegl_node_get_connected_to (proxy, "input");
 
       while (*operation)
         {
-          GeglNode *new = gegl_graph_new_node (gegl, "operation", *operation, NULL);
+          GeglNode *new = gegl_node_new_node (gegl, "operation", *operation, NULL);
           if (iter)
             {
               gegl_node_link_many (iter, new, proxy, NULL);
@@ -185,11 +185,11 @@ main (gint    argc,
         break;
       case GEGL_RUN_MODE_PNG:
         {
-          GeglNode *output = gegl_graph_new_node (gegl,
+          GeglNode *output = gegl_node_new_node (gegl,
                                "operation", "png-save",
                                "path", o->output,
                                NULL);
-          gegl_node_connect_from (output, "input", gegl_graph_output (gegl, "output"), "output");
+          gegl_node_connect_from (output, "input", gegl_node_output (gegl, "output"), "output");
           gegl_node_process (output);
 
           g_object_unref (gegl);

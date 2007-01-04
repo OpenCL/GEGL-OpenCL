@@ -23,56 +23,31 @@
 
 #include "gegl-object.h"
 
+/* graph related methods of gegl_node class */
+
 G_BEGIN_DECLS
 
+GeglNode * gegl_node_add_child        (GeglNode    *self,
+                                       GeglNode    *child);
+GeglNode * gegl_node_remove_child     (GeglNode    *self,
+                                       GeglNode     *child);
+GeglNode * gegl_node_get_nth_child    (GeglNode    *self,
+                                       gint          n);
+GList    * gegl_node_get_children     (GeglNode    *self);
+void       gegl_node_remove_children  (GeglNode    *self);
+gint       gegl_node_get_num_children (GeglNode    *self);
 
-#define GEGL_TYPE_GRAPH            (gegl_graph_get_type ())
-#define GEGL_GRAPH(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_GRAPH, GeglGraph))
-#define GEGL_GRAPH_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_GRAPH, GeglGraphClass))
-#define GEGL_IS_GRAPH(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_GRAPH))
-#define GEGL_IS_GRAPH_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_GRAPH))
-#define GEGL_GRAPH_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_GRAPH, GeglGraphClass))
+GeglNode * gegl_node_new              (void);
 
-
-typedef struct _GeglGraphClass GeglGraphClass;
-
-struct _GeglGraph
-{
-  GeglObject parent_instance;
-
-  /*< private >*/
-  GList    *children;
-};
-
-struct _GeglGraphClass
-{
-  GeglObjectClass  parent_class;
-};
-
-
-GType      gegl_graph_get_type         (void) G_GNUC_CONST;
-
-GeglNode * gegl_graph_add_child        (GeglGraph    *self,
-                                        GeglNode     *child);
-GeglNode * gegl_graph_remove_child     (GeglGraph    *self,
-                                        GeglNode     *child);
-GeglNode * gegl_graph_get_nth_child    (GeglGraph    *self,
-                                        gint          n);
-GList    * gegl_graph_get_children     (GeglGraph    *self);
-void       gegl_graph_remove_children  (GeglGraph    *self);
-gint       gegl_graph_get_num_children (GeglGraph    *self);
-
-GeglNode * gegl_graph_new              (void);
-
-GeglNode * gegl_graph_new_node         (GeglNode     *self,
-                                        const gchar  *first_property_name,
-                                        ...) G_GNUC_NULL_TERMINATED;
-GeglNode * gegl_graph_create_node      (GeglNode     *self,
-                                        const gchar  *operation);
-GeglNode * gegl_graph_input            (GeglNode     *graph,
-                                        const gchar  *name);
-GeglNode * gegl_graph_output           (GeglNode     *graph,
-                                        const gchar  *name);
+GeglNode * gegl_node_new_node         (GeglNode     *self,
+                                       const gchar  *first_property_name,
+                                       ...) G_GNUC_NULL_TERMINATED;
+GeglNode * gegl_node_create_node      (GeglNode     *self,
+                                       const gchar  *operation);
+GeglNode * gegl_node_input           (GeglNode     *graph,
+                                       const gchar  *name);
+GeglNode * gegl_node_output          (GeglNode     *graph,
+                                       const gchar  *name);
 G_END_DECLS
 
 #endif /* __GEGL_GRAPH_H__ */

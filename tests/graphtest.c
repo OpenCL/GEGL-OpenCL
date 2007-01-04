@@ -29,11 +29,11 @@ test_graph(Test *test)
     GeglNode *A = g_object_new (GEGL_TYPE_NODE, "operation", "GeglMockOperation11", NULL);
     GeglGraph *graph = g_object_new (GEGL_TYPE_GRAPH, NULL);
 
-    gegl_graph_add_child (graph, A);
-    ct_test(test, 1 == gegl_graph_get_num_children(graph));
+    gegl_node_add_child (graph, A);
+    ct_test(test, 1 == gegl_node_get_num_children(graph));
 
-    gegl_graph_remove_child (graph, A);
-    ct_test(test, 0 == gegl_graph_get_num_children(graph));
+    gegl_node_remove_child (graph, A);
+    ct_test(test, 0 == gegl_node_get_num_children(graph));
 
     g_object_unref(A);
     g_object_unref(graph);
@@ -65,7 +65,7 @@ test_graph_properties(Test *test)
     GeglPad *output0 = gegl_node_get_pad(A, "output0");
     GeglPad *input0 = gegl_node_get_pad(A, "input0");
 
-    gegl_graph_add_child(graph, A);
+    gegl_node_add_child(graph, A);
     gegl_node_add_pad(GEGL_NODE(graph), output0);
     gegl_node_add_pad(GEGL_NODE(graph), input0);
 
@@ -119,7 +119,7 @@ test_graph_properties(Test *test)
     GeglPad *output0 = gegl_node_get_pad(A, "output0");
     GeglPad *input0 = gegl_node_get_pad(A, "input0");
 
-    gegl_graph_add_child(GEGL_GRAPH(D), A);
+    gegl_node_add_child(GEGL_GRAPH(D), A);
     gegl_node_add_pad(D, output0);
     gegl_node_add_pad(D, input0);
 
@@ -192,7 +192,7 @@ test_graph_property_visitors(Test *test)
     GeglPad *output0 = gegl_node_get_pad(A, "output0");
     GeglPad *input0 = gegl_node_get_pad(A, "input0");
 
-    gegl_graph_add_child(GEGL_GRAPH(D), A);
+    gegl_node_add_child(GEGL_GRAPH(D), A);
     gegl_node_add_pad(D, output0);
     gegl_node_add_pad(D, input0);
 

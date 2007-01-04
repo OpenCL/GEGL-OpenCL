@@ -96,10 +96,10 @@ static void start_element (GMarkupParseContext *context,
       pd->state=STATE_TREE_NORMAL;
       pd->parent = g_list_prepend (pd->parent, new);
 
-      gegl_graph_output (new, "output"); /* creates the pad if it doesn't exist */
+      gegl_node_output (new, "output"); /* creates the pad if it doesn't exist */
       if (pd->iter)
         gegl_node_connect_from (pd->iter, "input", new, "output");
-      pd->iter = gegl_graph_output (new, "output");
+      pd->iter = gegl_node_output (new, "output");
     }
   else if (!strcmp (element_name, "graph"))
     {
@@ -111,13 +111,13 @@ static void start_element (GMarkupParseContext *context,
 
       if (!strcmp (element_name, "node"))
         {
-          new = gegl_graph_new_node (pd->gegl,
+          new = gegl_node_new_node (pd->gegl,
              "operation", name2val (a, v, "operation"),
              NULL);
         }
       else
         {
-          new = gegl_graph_new_node (pd->gegl,
+          new = gegl_node_new_node (pd->gegl,
              "operation", element_name, 
              NULL);
         }
@@ -236,8 +236,8 @@ static void end_element (GMarkupParseContext *context,
       if (gegl_node_get_pad (pd->iter, "input"))
         {
           gegl_node_connect_from (pd->iter, "input",
-             gegl_graph_input (GEGL_NODE (pd->parent->data), "input"), "output");
-          pd->iter = gegl_graph_input (GEGL_NODE (pd->parent->data), "input");
+             gegl_node_input (GEGL_NODE (pd->parent->data), "input"), "output");
+          pd->iter = gegl_node_input (GEGL_NODE (pd->parent->data), "input");
         }
       else
         {
@@ -586,7 +586,7 @@ gegl_to_xml (GeglNode *gegl)
   ss->clones = g_hash_table_new (NULL, NULL);
   ss->terse = TRUE;
 
-  gegl = gegl_graph_output (gegl, "output");
+  gegl = gegl_node_output (gegl, "output");
 
   g_string_append (ss->buf, "<?xml version='1.0' encoding='UTF-8'?>\n");
   g_string_append (ss->buf, "<gegl>\n");

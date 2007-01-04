@@ -715,8 +715,8 @@ cb_introspect (GtkAction *action)
   GeglNode  *dot;
   GeglRectangle bounding_box;
 
-  gegl = gegl_graph_new ();
-  dot = gegl_graph_new_node (gegl,
+  gegl = gegl_node_new ();
+  dot = gegl_node_new_node (gegl,
                              "operation", "introspect",
                              "node", editor.gegl,
                              NULL);

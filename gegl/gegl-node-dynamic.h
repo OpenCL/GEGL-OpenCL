@@ -22,7 +22,6 @@
 #ifndef __GEGL_NODE_DYNAMIC_H__
 #define __GEGL_NODE_DYNAMIC_H__
 
-#include "gegl-graph.h"
 #include <gegl/buffer/gegl-buffer.h>
 
 G_BEGIN_DECLS
