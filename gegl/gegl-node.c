@@ -772,7 +772,7 @@ gegl_node_get_depends_on (GeglNode *self)
 
       if (source_node->is_graph)
         {
-          GeglNode *proxy = gegl_node_output (source_node, "output");
+          GeglNode *proxy = gegl_node_get_output_proxy (source_node, "output");
 
           if (! g_list_find (depends_on, proxy))
              depends_on = g_list_append (depends_on, proxy);
@@ -1167,7 +1167,7 @@ gegl_node_get_valist (GeglNode    *self,
           {
             pspec = g_object_class_find_property (
                G_OBJECT_GET_CLASS (G_OBJECT (
-                   gegl_node_output (self, "output")->operation)), property_name);
+                   gegl_node_get_output_proxy (self, "output")->operation)), property_name);
             if (!pspec)
               {
                 pspec = g_object_class_find_property (
@@ -1237,7 +1237,7 @@ gegl_node_set_property (GeglNode     *self,
         {
           g_warning ("set_property for graph,. hmm");
           /* FIXME: should this really be "input")? is_graph doesn't seem to be used,.. */
-          g_object_set_property (G_OBJECT (gegl_node_input (self, "input")->operation),
+          g_object_set_property (G_OBJECT (gegl_node_get_input_proxy (self, "input")->operation),
                 property_name, value);
         }
       else
@@ -1269,7 +1269,7 @@ gegl_node_get_property (GeglNode    *self,
         !strcmp (property_name, "output"))
       {
           g_warning ("Eeek");
-          g_object_get_property (G_OBJECT (gegl_node_output (self, "output")->operation),
+          g_object_get_property (G_OBJECT (gegl_node_get_output_proxy (self, "output")->operation),
                 property_name, value);
       }
     else

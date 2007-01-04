@@ -861,5 +861,5 @@ gegl_store_set_gegl (GeglStore *gegl_store,
 {
   g_return_if_fail (IS_GEGL_STORE (gegl_store));
   gegl_store->gegl = gegl;
-  gegl_store->root = gegl_node_output (gegl, "output");
+  gegl_store->root = gegl_node_get_output_proxy (gegl, "output");
 }

@@ -157,7 +157,7 @@ static void attach (GeglOperation *operation)
 
   priv->self = GEGL_OPERATION (self)->node;
 
-  priv->output = gegl_node_output (priv->self, "output");
+  priv->output = gegl_node_get_output_proxy (priv->self, "output");
 
   priv->load = gegl_node_new_node (priv->self,
                                        "operation", "text",

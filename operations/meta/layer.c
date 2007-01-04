@@ -129,9 +129,9 @@ static void attach (GeglOperation *operation)
   priv->self = GEGL_OPERATION (self)->node;
   gegl = priv->self;
 
-  priv->input = gegl_node_input (gegl, "input");
-  priv->aux = gegl_node_input (gegl, "aux");
-  priv->output = gegl_node_output (gegl, "output");
+  priv->input = gegl_node_get_input_proxy (gegl, "input");
+  priv->aux = gegl_node_get_input_proxy (gegl, "aux");
+  priv->output = gegl_node_get_output_proxy (gegl, "output");
 
   priv->composite_op = gegl_node_new_node (gegl,
                                          "operation", self->composite_op,

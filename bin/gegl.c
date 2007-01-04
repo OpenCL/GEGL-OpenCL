@@ -41,7 +41,7 @@
 
 /*FIXME: this should be in gegl.h*/
 
-GeglNode * gegl_node_output         (GeglNode     *graph,
+GeglNode * gegl_node_get_output_proxy         (GeglNode     *graph,
                                        const gchar  *name);
 
 
@@ -142,7 +142,7 @@ main (gint    argc,
       GeglNode *iter;
 
       gchar **operation = o->rest;
-      proxy = gegl_node_output (gegl, "output");
+      proxy = gegl_node_get_output_proxy (gegl, "output");
       iter = gegl_node_get_connected_to (proxy, "input");
 
       while (*operation)
@@ -189,7 +189,7 @@ main (gint    argc,
                                "operation", "png-save",
                                "path", o->output,
                                NULL);
-          gegl_node_connect_from (output, "input", gegl_node_output (gegl, "output"), "output");
+          gegl_node_connect_from (output, "input", gegl_node_get_output_proxy (gegl, "output"), "output");
           gegl_node_process (output);
 
           g_object_unref (gegl);

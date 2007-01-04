@@ -60,8 +60,8 @@ static void attach (GeglOperation *operation)
       GeglNode      *gegl;
       gegl = operation->node;
 
-      priv->input    = gegl_node_input (gegl, "input");
-      priv->output   = gegl_node_output (gegl, "output");
+      priv->input    = gegl_node_get_input_proxy (gegl, "input");
+      priv->output   = gegl_node_get_output_proxy (gegl, "output");
       priv->add      = gegl_node_new_node (gegl,
                                             "operation", "add",
                                             NULL);

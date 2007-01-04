@@ -149,11 +149,11 @@ const gchar * gegl_node_get_operation    (GeglNode        *node);
 
 /* aquire the attached ghost output pad of a Graph node,
  * create it if it does not exist */
-GeglNode    * gegl_node_output (GeglNode        *graph,
+GeglNode    * gegl_node_get_output_proxy (GeglNode        *graph,
                                           const gchar     *name);
 /* aquire the attached ghost input pad of a Graph node,
  * create it if it does not exist */
-GeglNode    * gegl_node_input  (GeglNode        *graph,
+GeglNode    * gegl_node_get_input_proxy  (GeglNode        *graph,
                                           const gchar     *name);
 
 /* create a geglgraph from parsed XML data */

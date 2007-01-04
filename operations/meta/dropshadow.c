@@ -67,8 +67,8 @@ static void attach (GeglOperation *operation)
   if (!priv->over)
     {
       GeglNode *gegl  = priv->self;
-      priv->input     = gegl_node_input (gegl, "input");
-      priv->output    = gegl_node_output (gegl, "output");
+      priv->input     = gegl_node_get_input_proxy (gegl, "input");
+      priv->output    = gegl_node_get_output_proxy (gegl, "output");
       priv->over      = gegl_node_new_node (gegl, "operation", "over", NULL);
       priv->translate = gegl_node_new_node (gegl, "operation", "translate", NULL);
       priv->opacity   = gegl_node_new_node (gegl, "operation", "opacity", NULL);

@@ -1,5 +1,32 @@
 2007-01-04  Øyvind Kolås  <pippin@gimp.org>
 
+	%s/gegl_node_output/gegl_node_get_output_proxy/
+	%s/gegl_node_input/gegl_node_get_input_proxy/
+
+	* bin/editor-optype.c: (chain_in_operation):
+	* bin/export.c: (get_input_rect):
+	* bin/gegl-store.c: (gegl_store_set_gegl):
+	* bin/gegl-tree-editor.c: (tree_editor_get_active):
+	* bin/gegl.c: (main):
+	* gegl/gegl-graph.c: (gegl_node_get_input_proxy),
+	(gegl_node_get_output_proxy):
+	* gegl/gegl-graph.h:
+	* gegl/gegl-node.c: (gegl_node_get_depends_on),
+	(gegl_node_get_valist), (gegl_node_set_property),
+	(gegl_node_get_property):
+	* gegl/gegl-operation.c: (get_defined_region),
+	(get_affected_region), (calc_source_regions):
+	* gegl/gegl-xml.c: (start_element), (end_element), (gegl_to_xml):
+	* gegl/gegl.h:
+	* operations/file-io/load.c: (attach):
+	* operations/meta/dropshadow.c: (attach):
+	* operations/meta/layer.c: (attach):
+	* operations/meta/tonemap.c: (attach):
+	* operations/meta/unsharp-mask.c: (attach):
+	* operations/workshop/dog.c: (attach):
+
+2007-01-04  Øyvind Kolås  <pippin@gimp.org>
+
 	Merged GeglGraph class into GeglNode class. (more API cleanup to
 	follow).
 

@@ -44,9 +44,9 @@ GeglNode * gegl_node_new_node         (GeglNode     *self,
                                        ...) G_GNUC_NULL_TERMINATED;
 GeglNode * gegl_node_create_node      (GeglNode     *self,
                                        const gchar  *operation);
-GeglNode * gegl_node_input           (GeglNode     *graph,
+GeglNode * gegl_node_get_input_proxy           (GeglNode     *graph,
                                        const gchar  *name);
-GeglNode * gegl_node_output          (GeglNode     *graph,
+GeglNode * gegl_node_get_output_proxy          (GeglNode     *graph,
                                        const gchar  *name);
 G_END_DECLS
 

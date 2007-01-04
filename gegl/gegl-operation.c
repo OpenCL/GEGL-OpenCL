@@ -253,7 +253,7 @@ get_defined_region (GeglOperation *self)
   if (self->node->is_graph)
     {
       return gegl_operation_get_defined_region (
-                   gegl_node_output (self->node, "output")->operation);
+                   gegl_node_get_output_proxy (self->node, "output")->operation);
     }
   g_warning ("Op '%s' has no defined_region method",
      G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
@@ -268,7 +268,7 @@ get_affected_region (GeglOperation *self,
   if (self->node->is_graph)
     {
       return gegl_operation_get_affected_region (
-                   gegl_node_output (self->node, "output")->operation,
+                   gegl_node_get_output_proxy (self->node, "output")->operation,
                    input_pad,
                    region);
     }
@@ -282,7 +282,7 @@ calc_source_regions (GeglOperation *self,
   if (self->node->is_graph)
     {
       return gegl_operation_calc_source_regions (
-                         gegl_node_output (self->node, "output")->operation,
+                         gegl_node_get_output_proxy (self->node, "output")->operation,
                          context_id);
     }
 

@@ -202,14 +202,14 @@ gegl_node_get_pad_proxy (GeglNode   *graph,
 }
 
 GeglNode *
-gegl_node_input (GeglNode    *node,
+gegl_node_get_input_proxy (GeglNode    *node,
                   const gchar *name)
 {
   return gegl_node_get_pad_proxy (node, name, TRUE);
 }
 
 GeglNode *
-gegl_node_output (GeglNode    *node,
+gegl_node_get_output_proxy (GeglNode    *node,
                   const gchar *name)
 {
   return gegl_node_get_pad_proxy (node, name, FALSE);

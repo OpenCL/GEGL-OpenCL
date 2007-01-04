@@ -66,7 +66,7 @@ chain_in_operation (const gchar *op_type)
   GeglNode *iter;
   GeglNode *new;
 
-  proxy = gegl_node_output (editor.gegl, "output");
+  proxy = gegl_node_get_output_proxy (editor.gegl, "output");
   iter = gegl_node_get_connected_to (proxy, "input");
   new = gegl_node_new_node (editor.gegl, "operation", op_type, NULL);
   if (iter)
