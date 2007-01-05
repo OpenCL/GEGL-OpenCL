@@ -1,3 +1,8 @@
+2007-01-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-color.h: protect GEGL_TYPE_COLOR from being defined
+	multiple times.
+
 2007-01-04  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* docs/Makefile.am: Use --language=html instead of -whtml. Version

@@ -25,7 +25,9 @@
 
 G_BEGIN_DECLS
 
+#ifndef GEGL_TYPE_COLOR
 #define GEGL_TYPE_COLOR            (gegl_color_get_type ())
+#endif
 #define GEGL_COLOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR, GeglColor))
 #define GEGL_COLOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_COLOR, GeglColorClass))
 #define GEGL_IS_COLOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_COLOR))
