@@ -1,3 +1,8 @@
+2007-01-04  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* docs/Makefile.am: Use --language=html instead of -whtml. Version
+	1.6.4-4 of Enscript in Fedora Core 6 doesn't like the -w option.
+
 2007-01-04  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl.h: indentation fixes.

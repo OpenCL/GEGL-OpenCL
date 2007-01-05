@@ -36,7 +36,7 @@ class-hierarchy.html: $(top_builddir)/tools/introspect $(top_srcdir)/operations/
 	$(top_builddir)/tools/introspect > $@
 
 gegl.h.html: ../gegl/gegl.h
-	enscript -E --color -whtml -p$@ $<
+	enscript -E --color --language=html -p$@ $<
 
 runinfo: Makefile.am
 	if [ ! -z "$${CRUCIBLE_ID}" ]; then\
