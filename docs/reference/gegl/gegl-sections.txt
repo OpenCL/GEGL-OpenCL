@@ -3,17 +3,17 @@
 GeglGraph
 GeglGraphClass
 <TITLE>GeglGraph</TITLE>
-gegl_graph_add_child
-gegl_graph_remove_child
-gegl_graph_get_nth_child
-gegl_graph_get_children
-gegl_graph_remove_children
-gegl_graph_get_num_children
+gegl_node_add_child
+gegl_node_remove_child
+gegl_node_get_nth_child
+gegl_node_get_children
+gegl_node_remove_children
+gegl_node_get_num_children
 <SUBSECTION Standard>
 GEGL_GRAPH
 GEGL_IS_GRAPH
 GEGL_TYPE_GRAPH
-gegl_graph_get_type
+gegl_node_get_type
 GEGL_GRAPH_CLASS
 GEGL_IS_GRAPH_CLASS
 GEGL_GRAPH_GET_CLASS

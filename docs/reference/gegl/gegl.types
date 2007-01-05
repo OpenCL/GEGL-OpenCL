@@ -7,7 +7,7 @@ gegl_cache_entry_get_type
 gegl_cache_get_type
 gegl_cache_store_get_type
 gegl_component_sample_model_get_type
-gegl_graph_get_type
+gegl_node_get_type
 gegl_heap_cache_get_type
 gegl_heap_cache_store_get_type
 gegl_node_get_type

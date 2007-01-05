@@ -1,3 +1,12 @@
+2007-01-05  Øyvind Kolås  <pippin@gimp.org>
+
+	Results of global renames, commiting in case the reference is still
+	salvageable.
+
+	* gegl/gegl-sections.txt:
+	* gegl/gegl.types:
+	* gegl/tmpl/gegl-graph.sgml:
+
 Tue Oct 15 21:06:05 EDT 2002 calvinw@mindspring.com	
 
 	*docs/reference/gegl/tmpl/gegl-color-space-gray.sgml
