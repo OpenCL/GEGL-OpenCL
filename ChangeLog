@@ -5,7 +5,7 @@
 2007-01-04  Øyvind Kolås  <pippin@gimp.org>
 
 	%s/gegl_node_new_node/gegl_node_new_child/
-	%s/gegl_node_create_child/gegl_node_create_child/
+	%s/gegl_node_create_node/gegl_node_create_child/
 
 	* bin/editor-optype.c: (chain_in_operation):
 	* bin/editor.c: (cb_introspect):
