@@ -1,3 +1,7 @@
+2007-01-06  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* gegl/gegl-init.c: Use g_setenv and g_getenv.
+
 2007-01-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-color.h: protect GEGL_TYPE_COLOR from being defined

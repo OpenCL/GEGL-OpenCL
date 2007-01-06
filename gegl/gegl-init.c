@@ -57,11 +57,11 @@ gegl_init (int *argc,
       gchar *load_inhibit = g_strdup ("");
       gchar *module_path;
 
-      setenv ("BABL_ERROR", "0.007", 0);
+      g_setenv ("BABL_ERROR", "0.007", 0);
     
-      if (getenv ("GEGL_PATH"))
+      if (g_getenv ("GEGL_PATH"))
         {
-          module_path = g_strdup (getenv ("GEGL_PATH"));
+          module_path = g_strdup (g_getenv ("GEGL_PATH"));
         }
       else
         module_path  = g_strdup (PREFIX "/lib/gegl");
@@ -93,7 +93,7 @@ gegl_exit (void)
   gegl_instrument ("gegl", "gegl_exit", timing);
 
   /* used when tracking buffer and tile leaks */
-  if(getenv("GEGL_DEBUG_BUFS")!=NULL)
+  if(g_getenv("GEGL_DEBUG_BUFS")!=NULL)
     {
       gegl_buffer_stats ();
       gegl_tile_mem_stats ();
@@ -101,7 +101,7 @@ gegl_exit (void)
   global_time = gegl_ticks () - global_time;
   gegl_instrument ("gegl", "gegl", global_time);
 
-  if(getenv("GEGL_DEBUG_TIME")!=NULL)
+  if(g_getenv("GEGL_DEBUG_TIME")!=NULL)
     {
       printf ("\n%s", gegl_instrument_utf8 ());
     }
