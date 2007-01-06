@@ -1,3 +1,8 @@
+2007-01-06  Dominik Ernst  <dernst@gmx.de>
+
+	* operations/file-io/png-load.c: removed a redundant GeglBuffer
+	* operations/file-io/exr-load.cpp: made exr-load load images chunk-wise
+
 2007-01-06  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-view.c: (gegl_view_constructor): do not disable double

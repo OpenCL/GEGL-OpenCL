@@ -312,16 +312,7 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
 
   {
     gint           pass;
-    GeglBuffer    *tmp_buf;
     GeglRectangle  rect;
-
-    tmp_buf = g_object_new( GEGL_TYPE_BUFFER,
-                            "source", gegl_buffer,
-                            "x",      dest_x,
-                            "y",      dest_y,
-                            "width",  width,
-                            "height", height,
-                            NULL);
 
     for (pass=0; pass<number_of_passes; pass++)
       {
@@ -330,14 +321,12 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
             gegl_rect_set (&rect, 0, i, width, 1);
 
             if (pass != 0)
-              gegl_buffer_get (tmp_buf, &rect, pixels, format, 1.0);
+              gegl_buffer_get (gegl_buffer, &rect, pixels, format, 1.0);
 
             png_read_rows (load_png_ptr, &pixels, NULL, 1);
-            gegl_buffer_set (tmp_buf, &rect, pixels, format);
+            gegl_buffer_set (gegl_buffer, &rect, pixels, format);
           }
       }
-
-      g_object_unref (tmp_buf);
   }
 
 

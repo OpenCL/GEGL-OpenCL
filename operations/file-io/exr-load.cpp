@@ -72,53 +72,63 @@ static gfloat chroma_sampling[] =
 
 
 static gboolean
-query_exr (const gchar *path,
-           gint        *width,
-           gint        *height,
-           gint        *ff_ptr,
-           gpointer    *format);
+query_exr              (const gchar *path,
+                        gint        *width,
+                        gint        *height,
+                        gint        *ff_ptr,
+                        gpointer    *format);
 
 static gboolean
-import_exr (GeglBuffer  *gegl_buffer,
-            const gchar *path,
-            gint         format_flags);
+import_exr             (GeglBuffer  *gegl_buffer,
+                        const gchar *path,
+                        gint         format_flags);
 
 static void
-convert_yca_to_rgba (char      *pixels,
-                     gint       num_pixels,
-                     gint       has_alpha,
-                     const V3f &yw);
+convert_yca_to_rgba    (GeglBuffer *buf,
+                        gint        has_alpha,
+                        const V3f  &yw);
 
+static void
+reconstruct_chroma_row (gfloat *pixels,
+                        gint    num,
+                        gint    has_alpha,
+                        gfloat *tmp);
+
+static void
+reconstruct_chroma     (GeglBuffer *buf,
+                        gint        has_alpha);
+
+static void
+fix_saturation_row     (gfloat           *row_top,
+                        gfloat           *row_middle,
+                        gfloat           *row_bottom,
+                        const Imath::V3f &yw,
+                        gint              width,
+                        gint              nc);
+
+static void
+fix_saturation         (GeglBuffer       *buf,
+                        const Imath::V3f &yw,
+                        gint              has_alpha);
 
 static float
-saturation (const gfloat *in);
+saturation             (const gfloat *in);
 
 static void
-desaturate (const gfloat *in, 
-            gfloat        f, 
-            const V3f    &yw, 
-            gfloat       *out,
-            int           has_alpha);
-
-static void 
-fix_saturation (const Imath::V3f &yw,
-                gint              width,
-                gint              height,
-                const gfloat     *rgba_in,
-                gfloat           *rgba_out,
-                gint              has_alpha );
+desaturate             (const gfloat *in, 
+                        gfloat        f, 
+                        const V3f    &yw, 
+                        gfloat       *out,
+                        int           has_alpha);
 
 static void
-reconstruct_chroma_horiz (char *pixels,
-                          gint  width,
-                          gint  height,
-                          gint  has_alpha);
+insert_channels        (FrameBuffer  &fb,
+                        const Header &header,
+                        char         *base,
+                        gint          width,
+                        gint          format_flags,
+                        gint          bpp);
 
-static void
-reconstruct_chroma_horiz (char *pixels,
-                          gint  width,
-                          gint  height,
-                          gint  has_alpha);
 
 
 /* The following functions saturation, desaturate, fix_saturation, 
@@ -138,6 +148,7 @@ saturation (const gfloat *in)
   else
     return 0;
 }
+
 
 static void
 desaturate (const gfloat *in, 
@@ -165,188 +176,222 @@ desaturate (const gfloat *in,
     }
 }
 
-static void 
-fix_saturation (const Imath::V3f &yw,
-                gint              width,
-                gint              height,
-                const gfloat     *rgba_in,
-                gfloat           *rgba_out,
-                gint              has_alpha )
+
+static void
+fix_saturation_row (gfloat           *row_top,
+                    gfloat           *row_middle,
+                    gfloat           *row_bottom,
+                    const Imath::V3f &yw,
+                    gint              width,
+                    gint              nc)
 {
-  gint x,y;
-  gint nc = has_alpha ? 4 : 3;
-  gint rowstride = width*nc;
+  static gint y=-1;
+  gint x;
   const gfloat *neighbor1, *neighbor2, *neighbor3, *neighbor4;
+  gfloat sMean, sMax, s;
 
-  for (y=0; y<height; y++)
-    {
-      for (x=0; x<width; x++)
-        {
-          if (y-1 >= 0)
-            neighbor1 = rgba_in - rowstride;
-          else
-            neighbor1 = rgba_in;
-
-          if (y+1 < height)
-            neighbor2 = rgba_in + rowstride;
-          else
-            neighbor2 = rgba_in;
-
-          if (x-1 >= 0)
-            neighbor3 = rgba_in - nc;
-          else
-            neighbor3 = rgba_in;
-
-          if (x+1 < width)
-            neighbor4 = rgba_in + nc;
-          else
-            neighbor4 = rgba_in;
-
-          float sMean = MIN (1.0f, 0.25f * (saturation (neighbor1) +
-                                            saturation (neighbor2) +
-                                            saturation (neighbor3) +
-                                            saturation (neighbor4)));
-
-          float s = saturation (rgba_in);
-          float sMax = MIN (1.0f, 1 - (1 - sMean) * 0.25f);
-
-          if (s > sMean && s > sMax)
-            desaturate (rgba_in, sMax / s, yw, rgba_out, has_alpha);
-          else
-            memcpy (rgba_out, rgba_in, sizeof(gfloat)*nc);
-
-          rgba_out += nc;
-          rgba_in  += nc;
-        }
-    }
-}
-
-static void
-reconstruct_chroma_horiz (char *pixels,
-                          gint  width,
-                          gint  height,
-                          gint  has_alpha)
-{
-  gint x,x2,y, i;
-  gfloat r,b;
-  gint nc = has_alpha ? 4 : 3;
-  gfloat *pxl = (gfloat*)pixels;
-  gfloat *tmp = (gfloat*) g_malloc0 (sizeof(gfloat)*width*2);
-
-  for (y=0; y<height/2; y++)
-    {
-      for (x=x2=0; x<width; x++)
-        {
-          if (x&1)
-            {
-              r = b = 0.0;
-              for (i=-6; i<=6; i++)
-                {
-                  if (x2+i >= 0 && x2+i < width)
-                    {
-                      r += *(pxl+i*nc+1) * chroma_sampling[i+6];
-                      b += *(pxl+i*nc+2) * chroma_sampling[i+6];
-                    }
-                }
-              x2++;
-            }
-          else
-            {
-              r = pxl[1];
-              b = pxl[2];
-              pxl += nc;
-            }
-
-          tmp[x*2]   = r;
-          tmp[x*2+1] = b;
-        }
-
-      pxl = ((gfloat*)pixels)+width*nc*y;
-      for (i=0; i<width; i++)
-        memcpy (&pxl[i*nc+1], &tmp[i*2], sizeof(gfloat)*2);
-      pxl += nc*width;
-    }
-
-  g_free (tmp);
-}
-
-static void
-reconstruct_chroma_vert (gchar *pixels,
-                         gint   width,
-                         gint   height,
-                         gint   has_alpha)
-{
-  gint x,y,y2, i;
-  gint nc = has_alpha ? 4 : 3;
-  gint rowstride = width*nc;
-  gfloat r,b;
-  gfloat *tmp = (gfloat*) g_malloc0 (sizeof(gfloat)*height*2);
-  gfloat *pxl;
+  y++;
 
   for (x=0; x<width; x++)
     {
-      pxl = ((gfloat*)pixels)+x*nc;
+      neighbor1 = &row_top[x];
+      neighbor2 = &row_bottom[x];
 
-      for (y=y2=0; y<height; y++)
-        {
-          if (y&1)
-            {
-              r = b = 0.0;
-              for (i=-6; i<=6; i++)
-                {
-                  if (y2+i >= 0 && y2+i < height)
-                    {
-                      r += *(pxl+i*rowstride+1) * chroma_sampling[i+6];
-                      b += *(pxl+i*rowstride+2) * chroma_sampling[i+6];
-                    }
-                }
-              y2++;
-            }
-          else
-            {
-              r = pxl[1];
-              b = pxl[2];
-              pxl += rowstride;
-            }
+      if (x>0)
+        neighbor3 = &row_middle[x-1];
+      else
+        neighbor3 = &row_middle[x];
 
-          tmp[y*2]   = r;
-          tmp[y*2+1] = b;
-        }
+      if (x < width-1)
+        neighbor4 = &row_middle[x+1];
+      else
+        neighbor4 = &row_middle[x];
 
-        pxl = ((gfloat*)pixels)+x*nc;
-        for (i = 0; i<height; i++)
-            memcpy (&pxl[i*rowstride+1], &tmp[i*2], sizeof(gfloat)*2);
-            
+      sMean = MIN (1.0f, 0.25f * (saturation (neighbor1) +
+                                  saturation (neighbor2) +
+                                  saturation (neighbor3) +
+                                  saturation (neighbor4) ));
+
+      s = saturation (&row_middle[x]);
+      sMax = MIN (1.0f, 1 - (1-sMean) * 0.25f);
+
+      if (s > sMean && s > sMax)
+        desaturate (&row_middle[x], sMax / s, yw, &row_middle[x], nc == 4);
     }
 }
+
 
 static void
-convert_yca_to_rgba (char   *pixels,
-                     gint    num_pixels,
-                     gint    has_alpha,
-                     const V3f &yw)
+fix_saturation (GeglBuffer       *buf,
+                const Imath::V3f &yw,
+                gint              has_alpha)
 {
-  gfloat r,g,b, y,ry,by;
-  gfloat *pxl = (gfloat*)pixels;
-  gint i, dx = has_alpha ? 4 : 3;
+  gint y;
+  const gint nc = has_alpha ? 4 : 3;
+  gfloat *row[3], *tmp;
+  GeglRectangle rect;
 
-  for (i=0; i<num_pixels; i++)
+  for (y=0; y<3; y++)
+    row[y] = (gfloat*) g_malloc0 (gegl_buffer_px_size(buf) * buf->width);
+
+  for (y=0; y<2; y++)
     {
-      y  = pxl[0];
-      ry = pxl[1];
-      by = pxl[2];
-
-      r = y*(ry+1.0);
-      b = y*(by+1.0);
-      g = (y - r*yw.x - b*yw.z) / yw.y;
-
-      pxl[0] = r;
-      pxl[1] = g;
-      pxl[2] = b;
-
-      pxl += dx;
+      gegl_rect_set (&rect, 0,y, buf->width, 1);
+      gegl_buffer_get (buf, &rect, row[y+1], buf->format, 1.0);
     }
+
+  fix_saturation_row (row[1], row[1], row[2], yw, buf->width, nc);
+  
+  for (y=1; y<buf->height-1; y++)
+    {
+      if (y>1)
+        {
+          gegl_rect_set (&rect, 0, y-2, buf->width, 1);
+          gegl_buffer_set (buf, &rect, row[0], buf->format);
+        }
+      
+      gegl_rect_set (&rect, 0,y+1, buf->width, 1);
+      gegl_buffer_get (buf, &rect, row[0], buf->format, 1.0);
+
+      tmp = row[0];
+      row[0] = row[1];
+      row[1] = row[2];
+      row[2] = tmp;
+
+      fix_saturation_row (row[0], row[1], row[2], yw, buf->width, nc);
+    }
+
+  fix_saturation_row (row[1], row[2], row[2], yw, buf->width, nc);
+
+  for (y=buf->height-2; y<buf->height; y++)
+    {
+      gegl_rect_set (&rect, 0, y, buf->width, 1);
+      gegl_buffer_set (buf, &rect, row[y-buf->height+2], buf->format);
+    }
+
+  for (y=0; y<3; y++)
+    g_free (row[y]);
 }
+
+
+static void
+reconstruct_chroma_row (gfloat *pixels,
+                        gint    num,
+                        gint    has_alpha,
+                        gfloat *tmp)
+{
+  gint x,i;
+  gint nc = has_alpha ? 4 : 3;
+  gfloat r,b;
+  gfloat *pxl = pixels;
+
+  for (x=0; x<num; x++)
+    {
+      if (x&1)
+        {
+          r = b = 0.0;
+          for (i=-6; i<=6; i++)
+            {
+              if (x+(2*i-1) >= 0 && x+(2*i-1) < num)
+                {
+                  r += *(pxl+(2*i-1)*nc+1) * chroma_sampling[i+6];
+                  b += *(pxl+(2*i-1)*nc+2) * chroma_sampling[i+6];
+                }
+            }
+        }
+      else
+        {
+          r = pxl[1];
+          b = pxl[2];
+        }
+
+      pxl += nc;
+      tmp[x*2]   = r;
+      tmp[x*2+1] = b;
+    }
+
+  pxl = pixels;
+  for (i=0; i<num; i++)
+    memcpy (&pxl[i*nc+1], &tmp[i*2], sizeof(gfloat)*2);
+}
+
+
+static void
+reconstruct_chroma (GeglBuffer *buf,
+                    gint        has_alpha)
+{
+  gfloat *tmp, *pixels;
+  gint i;
+  GeglRectangle rect;
+
+  pixels = (gfloat*) g_malloc0 (MAX(buf->width, buf->height)*
+                               gegl_buffer_px_size(buf) );
+  tmp = (gfloat*) g_malloc0 (MAX(buf->width, buf->height)*2*sizeof(gfloat));
+
+  for (i=0; i<buf->height; i+=2)
+    {
+      gegl_rect_set (&rect, 0, i,  buf->width, 1);
+      gegl_buffer_get (buf, &rect, pixels, buf->format, 1.0);
+
+      reconstruct_chroma_row (pixels, buf->width, has_alpha, tmp);
+      gegl_buffer_set (buf, &rect, pixels, buf->format);
+    }
+
+  for (i=0; i<buf->width; i++)
+    {
+      gegl_rect_set (&rect, i, 0, 1, buf->height);
+      gegl_buffer_get (buf, &rect, pixels, buf->format, 1.0);
+
+      reconstruct_chroma_row (pixels, buf->height, has_alpha, tmp);
+      gegl_buffer_set (buf, &rect, pixels, buf->format);
+    }
+
+  g_free (tmp);
+  g_free (pixels);
+}
+
+
+static void
+convert_yca_to_rgba (GeglBuffer *buf,
+                     gint        has_alpha,
+                     const V3f  &yw)
+{
+  gchar *pixels;
+  gfloat r,g,b, y, ry, by, *pxl;
+  gint row, i, dx = has_alpha ? 4 : 3;
+  GeglRectangle rect;
+
+  pixels = (gchar*) g_malloc0 (buf->width * gegl_buffer_px_size(buf));
+
+  for (row=0; row<buf->height; row++)
+    {
+      gegl_rect_set (&rect, 0, row, buf->width, 1);
+      gegl_buffer_get (buf, &rect, pixels, buf->format, 1.0);
+      pxl = (gfloat*) pixels;
+
+      for (i=0; i<buf->width; i++)
+        {
+          y  = pxl[0];
+          ry = pxl[1];
+          by = pxl[2];
+
+          r = y*(ry+1.0);
+          b = y*(by+1.0);
+          g = (y - r*yw.x - b*yw.z) / yw.y;
+
+          pxl[0] = r;
+          pxl[1] = g;
+          pxl[2] = b;
+
+          pxl += dx;
+        }
+
+      gegl_buffer_set (buf, &rect, pixels, buf->format);
+    }
+
+  g_free (pixels);
+}
+
 
 static void
 insert_channels (FrameBuffer  &fb,
@@ -366,24 +411,24 @@ insert_channels (FrameBuffer  &fb,
 
   if (format_flags & COLOR_RGB)
     {
-      fb.insert ("R", Slice (tp, base,    bpp, bpp*width, 1,1, 0.0));
-      fb.insert ("G", Slice (tp, base+4,  bpp, bpp*width, 1,1, 0.0));
-      fb.insert ("B", Slice (tp, base+8,  bpp, bpp*width, 1,1, 0.0));
+      fb.insert ("R", Slice (tp, base,    bpp, 0, 1,1, 0.0));
+      fb.insert ("G", Slice (tp, base+4,  bpp, 0, 1,1, 0.0));
+      fb.insert ("B", Slice (tp, base+8,  bpp, 0, 1,1, 0.0));
     }
   else if (format_flags & COLOR_C)
     {
-      fb.insert ("Y",  Slice (tp, base,   bpp, bpp*width, 1,1, 0.5));
-      fb.insert ("RY", Slice (tp, base+4, bpp, bpp*width, 2,2, 0.0));
-      fb.insert ("BY", Slice (tp, base+8, bpp, bpp*width, 2,2, 0.0));
+      fb.insert ("Y",  Slice (tp, base,   bpp,   0, 1,1, 0.5));
+      fb.insert ("RY", Slice (tp, base+4, bpp*2, 0, 2,2, 0.0));
+      fb.insert ("BY", Slice (tp, base+8, bpp*2, 0, 2,2, 0.0));
     }
   else if (format_flags & COLOR_Y)
     {
-      fb.insert ("Y",  Slice (tp, base, bpp, bpp*width, 1,1, 0.5));
+      fb.insert ("Y",  Slice (tp, base, bpp, 0, 1,1, 0.5));
       alpha_offset = 4;
     }
 
   if (format_flags & COLOR_ALPHA)
-    fb.insert ("A", Slice (tp, base+alpha_offset, bpp, bpp*width, 1,1, 1.0));
+    fb.insert ("A", Slice (tp, base+alpha_offset, bpp, 0, 1,1, 1.0));
 }
 
 
@@ -398,8 +443,9 @@ import_exr (GeglBuffer  *gegl_buffer,
       FrameBuffer frameBuffer;
       Box2i dw = file.header().dataWindow();
 
-      char *pixels = (char*) g_malloc0 (gegl_buffer_pixels (gegl_buffer) * 
+      char *pixels = (char*) g_malloc0 (gegl_buffer->width *
                                         gegl_buffer_px_size (gegl_buffer));
+
       char *base = pixels;
 
       /*
@@ -411,7 +457,6 @@ import_exr (GeglBuffer  *gegl_buffer,
        * position in our buffer.
        */
       base -= gegl_buffer_px_size (gegl_buffer)*dw.min.x;
-      base -= gegl_buffer_px_size (gegl_buffer)*gegl_buffer->width*dw.min.y;
 
       insert_channels (frameBuffer, 
                        file.header(), 
@@ -421,7 +466,18 @@ import_exr (GeglBuffer  *gegl_buffer,
                        gegl_buffer_px_size (gegl_buffer));
 
       file.setFrameBuffer (frameBuffer);
-      file.readPixels (dw.min.y, dw.max.y);
+
+      {
+        gint i;
+        GeglRectangle rect;
+        
+        for (i=dw.min.y; i<=dw.max.y; i++)
+          {
+            gegl_rect_set (&rect, 0, i-dw.min.y,gegl_buffer->width, 1);
+            file.readPixels (i);
+            gegl_buffer_set (gegl_buffer, &rect, pixels, gegl_buffer->format);
+          }
+      }
 
       if (format_flags & COLOR_C)
         {
@@ -433,34 +489,14 @@ import_exr (GeglBuffer  *gegl_buffer,
 
           yw = computeYw (cr);
 
-          reconstruct_chroma_horiz (pixels, 
-                                    gegl_buffer->width,
-                                    gegl_buffer->height,
-                                    format_flags & COLOR_ALPHA);
-          reconstruct_chroma_vert (pixels,
-                                   gegl_buffer->width,
-                                   gegl_buffer->height,
-                                   format_flags & COLOR_ALPHA);
-
-          convert_yca_to_rgba (pixels, 
-                               gegl_buffer_pixels(gegl_buffer),
+          reconstruct_chroma (gegl_buffer, format_flags & COLOR_ALPHA);
+          convert_yca_to_rgba (gegl_buffer, 
                                format_flags & COLOR_ALPHA,
                                yw);
 
-          gchar *fs = (gchar*) g_malloc0 (gegl_buffer_pixels (gegl_buffer) *
-                                            gegl_buffer_px_size (gegl_buffer));
-          fix_saturation (yw, 
-                          gegl_buffer->width, 
-                          gegl_buffer->height, 
-                          (const gfloat*) pixels, 
-                          (gfloat*) fs, 
-                          format_flags & COLOR_ALPHA);
-
-          g_free (pixels);
-          pixels = fs;
+          fix_saturation (gegl_buffer, yw, format_flags & COLOR_ALPHA);
         }
 
-      gegl_buffer_set (gegl_buffer, NULL, pixels, NULL);
       g_free (pixels);
     }
   catch (...)
@@ -620,6 +656,7 @@ static void class_init (GeglOperationClass *operation_class)
     return;
   gegl_extension_handler_register (".exr", "exr-load");
   gegl_extension_handler_register (".EXR", "exr-load");
+
   done = TRUE;
 }
 
