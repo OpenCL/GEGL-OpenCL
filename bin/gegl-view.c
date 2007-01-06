@@ -263,7 +263,6 @@ gegl_view_constructor (GType                  type,
 		    G_CALLBACK (motion_notify_event), NULL);
   g_signal_connect (G_OBJECT (widget), "button_press_event",
 		    G_CALLBACK (button_press_event), NULL);
-  gtk_widget_set_double_buffered (widget, FALSE);
 
   return object;
 }
@@ -404,7 +403,7 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
   gegl_view_repaint (view);
   g_free (rectangles);
 
-  return TRUE;
+  return FALSE;
 }
 
 void gegl_view_repaint (GeglView *view)
