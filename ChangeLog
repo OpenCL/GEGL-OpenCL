@@ -1,5 +1,12 @@
 2007-01-07  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-view.c: (button_press_event): ask the treeview to activate
+	the pressed node.
+	* operations/core/clone.c: (detect), (class_init): stop hit detection
+	when encountering a clone.
+
+2007-01-07  Øyvind Kolås  <pippin@gimp.org>
+
 	Added initial hit-detection system.
 	
 	* gegl/gegl-node.c: gegl_node_detect tied in with operations.
@@ -38,14 +45,6 @@
 	* operations/file-io/load.c: (refresh_cache):
 	* operations/file-io/magick-load.c: (load_cache):
 	* operations/meta/layer.c:
-
-2007-01-07  Øyvind Kolås  <pippin@gimp.org>
-
-	reviewed by: <delete if not using a buddy>
-
-	* NEWS:
-	* gegl/gegl.h:
-	* operations/file-io/load.c: (refresh_cache):
 
 2007-01-06  Dominik Ernst  <dernst@gmx.de>
 

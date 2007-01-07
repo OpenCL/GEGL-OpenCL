@@ -29,6 +29,7 @@ gegl_chant_string (ref, "", "The reference ID used as input.")
 
 #define GEGL_CHANT_SELF        "clone.c"
 #define GEGL_CHANT_CATEGORIES  "misc"
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 
@@ -47,6 +48,28 @@ process (GeglOperation *operation,
       success = TRUE;
     } 
   return success;
+}
+
+static GeglNode *
+detect (GeglOperation *operation,
+        gint           x,
+        gint           y)
+{
+  GeglNode *node = operation->node;
+
+  if (x>=node->have_rect.x &&
+      y>=node->have_rect.y &&
+      x<node->have_rect.w &&
+      y<node->have_rect.h)
+    {
+      return node;
+    }
+  return NULL;
+}
+
+static void class_init (GeglOperationClass *operation_class)
+{
+  operation_class->detect = detect;
 }
 
 #endif

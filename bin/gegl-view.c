@@ -20,6 +20,8 @@
 #include <glib-object.h>
 #include "gegl.h"
 #include "gegl-view.h"
+#include "gegl-tree-editor.h"
+#include "editor.h"
 #include <math.h>
 
 enum
@@ -302,8 +304,9 @@ static gboolean  button_press_event   (GtkWidget      *widget,
     GeglNode *detected = gegl_node_detect (view->node,
                                            view->x + event->x/view->scale,
                                            view->y + event->y/view->scale);
-    if (0 && detected)
+    if (detected)
       {
+      /*
         gchar *name;
         gchar *operation;
         gegl_node_get (detected, "name", &name, "operation", &operation, NULL);
@@ -311,7 +314,8 @@ static gboolean  button_press_event   (GtkWidget      *widget,
         if (name)
           g_free (name);
         if (operation)
-          g_free (operation);
+          g_free (operation);*/
+        tree_editor_set_active (editor.tree_editor, detected);
       }
   }
 
