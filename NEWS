@@ -5,6 +5,20 @@
 GEGL only has released development snapshots thus far. Odd micro versions are
 from CVS whilst even micro numbers indicate released snapshots. 
 
+Changes in GEGL 0.0.6
+=====================
+
+- hit detection code
+- handling of relative/absolute path names for XML.
+- merged GeglNode and GeglGraph classes.
+- build fixes for Win32 and FreeBSD
+- temporary disabled custom cairo in test application.
+- png and EXR improvements.
+
+Contributions from:
+
+Dominik Ernst, Kevin Cozens, Micael Schumacher and Øyvind Kolås.
+
 Changes in GEGL 0.0.4
 =====================
 This is the first public release of GEGL.

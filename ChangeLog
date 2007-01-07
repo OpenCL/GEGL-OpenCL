@@ -1,3 +1,9 @@
+2007-01-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* NEWS: Added news for the 0.0.6 release.
+	* configure.in: increased version to 0.0.6
+	* Makefile.am: added autogen.sh.
+
 2007-01-07  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-view.c: (button_press_event): ask the treeview to activate

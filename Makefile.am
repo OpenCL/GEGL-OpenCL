@@ -9,6 +9,7 @@ built_dist_files = README
 
 EXTRA_DIST = 			\
 	$(built_dist_files)     \
+	autogen.sh		\
 	gegl-uninstalled.pc.in	\
 	gegl.pc.in
 
