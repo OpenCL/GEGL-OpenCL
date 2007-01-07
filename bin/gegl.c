@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <libgen.h>
 #include "gegl-options.h"
 #include "gegl-dot.h"
 
@@ -74,6 +75,7 @@ main (gint    argc,
   GeglNode    *gegl     = NULL;
   gchar       *script   = NULL;
   GError      *err      = NULL;
+  gchar       *path_root = NULL;
 
   gegl_init (&argc, &argv);
 
@@ -134,7 +136,16 @@ main (gint    argc,
         }
     }
 
-  gegl = gegl_xml_parse (script);
+
+  if (o->file)
+    {
+      gchar *temp = g_strdup (o->file);
+      path_root = g_strdup (dirname (temp));
+      g_free (temp);
+      path_root = realpath (path_root, NULL);
+    }
+
+  gegl = gegl_xml_parse (script, path_root);
 
   if (o->rest)
     {
@@ -174,7 +185,7 @@ main (gint    argc,
           return 0;
         break;
       case GEGL_RUN_MODE_XML:
-          g_print (gegl_to_xml (gegl));
+          g_print (gegl_to_xml (gegl, path_root));
           gegl_exit ();
           return 0;
         break;

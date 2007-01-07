@@ -23,7 +23,7 @@ gegl_chant_string(composite_op, "over", "Composite operation to use")
 gegl_chant_double(opacity, 0.0, 1.0, 1.0, "Opacity")
 gegl_chant_double(x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, "horizontal position")
 gegl_chant_double(y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, "vertical position")
-gegl_chant_string(src, "", "source datafile (png, jpg, raw, svg, bmp, tif, ..)")
+gegl_chant_path(src, "", "source datafile (png, jpg, raw, svg, bmp, tif, ..)")
 
 #else
 

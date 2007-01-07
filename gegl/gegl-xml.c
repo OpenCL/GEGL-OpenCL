@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 #include "gegl-types.h"
 #include "gegl-graph.h"
 #include "gegl-node.h"
@@ -30,6 +31,7 @@
 #include "gegl-color.h"
 #include "gegl-instrument.h"
 #include "gegl-xml.h"
+#include "gegl-paramspecs.h"
 
 typedef struct _ParseData ParseData;
 
@@ -39,9 +41,9 @@ enum {
   STATE_TREE_FIRST_CHILD
 };
 
-
 struct _ParseData {
   gint        state;
+  const gchar      *path_root;
   GeglNode   *gegl;
   GeglNode   *iter;  /*< the iterator we're either connecting to input|aux of
                          depending on context */
@@ -150,6 +152,25 @@ static void start_element (GMarkupParseContext *context,
               if (!paramspec)
                 {
                    g_warning ("property %s not found for %s", *a, gegl_node_get_debug_name (new));
+                }
+              else if (g_type_is_a (G_PARAM_SPEC_TYPE (paramspec), GEGL_TYPE_PARAM_PATH))
+                {
+                  gchar buf[PATH_MAX];
+                 
+                  if (pd->path_root)
+                    {
+                      gchar absolute_path[PATH_MAX];
+                      sprintf (buf, "%s/%s", pd->path_root, *v);
+                      realpath (buf, absolute_path);
+                      gegl_node_set (new, *a, absolute_path, NULL);
+                    }
+                  else
+                    {
+                      gchar absolute_path[PATH_MAX];
+                      sprintf (buf, "./%s", *v);
+                      realpath (buf, absolute_path);
+                      gegl_node_set (new, *a, absolute_path, NULL);
+                    }
                 }
               else if (paramspec->value_type == G_TYPE_INT)
                 {
@@ -296,7 +317,8 @@ static void each_ref (gpointer value,
   gegl_node_connect_from (dest_node, "input", source_node, "output");
 }
 
-GeglNode *gegl_xml_parse (const gchar *xmldata)
+GeglNode *gegl_xml_parse (const gchar *xmldata,
+                          const gchar *path_root)
 {
   glong     time = gegl_ticks ();
   GeglNode *ret;
@@ -309,6 +331,7 @@ GeglNode *gegl_xml_parse (const gchar *xmldata)
                                    g_free,
                                    NULL);
   pd->refs = NULL;
+  pd->path_root = path_root;
 
   context = g_markup_parse_context_new (&parser, 0, pd, NULL);
   g_markup_parse_context_parse (context, xmldata, strlen (xmldata), NULL);
@@ -332,16 +355,20 @@ GeglNode *gegl_xml_parse (const gchar *xmldata)
 typedef struct _SerializeState SerializeState;
 struct _SerializeState
 {
-  GString    *buf;
-  gint        clone_count;
-  GHashTable *clones;
-  gboolean    terse;
+  GString     *buf;
+  const gchar *path_root;
+  gint         clone_count;
+  GHashTable  *clones;
+  gboolean     terse;
 };
 
 static void tuple (GString     *buf,
                    const gchar *key,
                    const gchar *value)
 {
+  g_assert (key);
+  if (!value)
+    return;
   g_string_append (buf, " ");
   g_string_append (buf, key);
   g_string_append (buf, "=");
@@ -374,7 +401,31 @@ static void encode_node_attributes (SerializeState *ss,
           strcmp (properties[i]->name, "output") &&
           strcmp (properties[i]->name, "aux"))
         {
-          if (properties[i]->value_type == G_TYPE_FLOAT)
+
+          if (g_type_is_a (G_PARAM_SPEC_TYPE (properties[i]),
+                           GEGL_TYPE_PARAM_PATH))
+            {
+              gchar *value;
+              gegl_node_get (node, properties[i]->name, &value, NULL);
+
+              if (value) 
+                {
+                  g_warning ("%s|%s|", ss->path_root, value);
+                  if (ss->path_root &&
+                   !strncmp (ss->path_root, value, strlen (ss->path_root)))
+                    {
+                      g_warning ("foo");
+                      tuple (ss->buf, properties[i]->name, &value[strlen(ss->path_root)+1]);
+                    }
+                  else
+                    {
+                      tuple (ss->buf, properties[i]->name, value);
+                    }
+                }
+              
+              g_free (value);
+            }
+          else if (properties[i]->value_type == G_TYPE_FLOAT)
             {
               gfloat value;
               gchar str[64];
@@ -382,7 +433,7 @@ static void encode_node_attributes (SerializeState *ss,
               sprintf (str, "%f", value);
               tuple (ss->buf, properties[i]->name, str);
             }
-          if (properties[i]->value_type == G_TYPE_DOUBLE)
+          else if (properties[i]->value_type == G_TYPE_DOUBLE)
             {
               gdouble value;
               gchar str[64];
@@ -578,13 +629,15 @@ static void free_clone_id (gpointer key,
 }
 
 gchar *
-gegl_to_xml (GeglNode *gegl)
+gegl_to_xml (GeglNode    *gegl,
+             const gchar *path_root)
 {
   gchar *ret;
   SerializeState *ss = g_malloc0 (sizeof (SerializeState));
   ss->buf = g_string_new ("");
   ss->clones = g_hash_table_new (NULL, NULL);
   ss->terse = TRUE;
+  ss->path_root = path_root;
 
   gegl = gegl_node_get_output_proxy (gegl, "output");
 

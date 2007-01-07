@@ -23,7 +23,9 @@
 
 #include "gegl-types.h"
 
-gchar    * gegl_to_xml    (GeglNode *gegl);
-GeglNode * gegl_xml_parse (const gchar *xmldata);
+gchar    * gegl_to_xml    (GeglNode    *gegl,
+                           const gchar *path_root);
+GeglNode * gegl_xml_parse (const gchar *xmldata,
+                           const gchar *path_root);
 
 #endif

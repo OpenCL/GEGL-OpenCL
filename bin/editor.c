@@ -451,8 +451,7 @@ cb_composition_new (GtkAction *action)
       /* FIXME: should append to list of files, and set as current
         editor_set_gegl (gegl_xml_parse (blank_composition), "untitled.xml");
         */
-        editor_set_gegl (gegl_xml_parse (blank_composition));
-
+        editor_set_gegl (gegl_xml_parse (blank_composition, "/"));
       }
       break;
     default:
@@ -497,7 +496,14 @@ cb_composition_load (GtkAction *action)
 
       g_file_get_contents (filename, &xml, NULL, NULL);
       /* FIXME: append name to list of files in options */
-      editor_set_gegl (gegl_xml_parse (xml));
+      /* FIXME: handle non XML files */
+        {
+          gchar *temp = g_strdup (filename);
+          gchar *path = g_strdup (dirname (temp));
+          editor_set_gegl (gegl_xml_parse (xml, path));
+          g_free (temp);
+          g_free (path);
+        }
       g_free (xml);
     }
   gtk_widget_destroy (dialog);
@@ -539,10 +545,10 @@ cb_composition_save (GtkAction *action)
         gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
       if (filename)
         {
-          gchar     *full_filename;
-          gchar      abs_filepath[PATH_MAX];
-          const gchar *abs_path;
-          gchar     *xml;
+          gchar *full_filename;
+          gchar  abs_filepath[PATH_MAX];
+          gchar *abs_path;
+          gchar *xml;
 
           if (strstr (filename, "xml"))
             {
@@ -562,11 +568,12 @@ cb_composition_save (GtkAction *action)
           */
 
           realpath (full_filename, abs_filepath);
-          abs_path = dirname (abs_filepath);
-          xml = gegl_to_xml (editor.gegl); /*oxide_xml (editor->oxide, abs_path);*/
+          abs_path = g_strdup (dirname (abs_filepath));
+          xml = gegl_to_xml (editor.gegl, abs_path); /*oxide_xml (editor->oxide, abs_path);*/
 
           g_file_set_contents (full_filename, xml, -1, NULL);
 
+          g_free (abs_path);
           g_free (xml);
           g_free (full_filename);
         }
@@ -661,7 +668,7 @@ static void do_load (void)
       xml = g_string_free (acc, FALSE);
     }
 
-  editor_set_gegl (gegl_xml_parse (xml));
+  editor_set_gegl (gegl_xml_parse (xml, "/"));
   g_free (xml);
 }
 
@@ -690,7 +697,7 @@ cb_about (GtkAction *action)
 
   gegl = gegl_xml_parse (
    "<gegl> <over> <invert/> <shift x='20.0' y='140.0'/> <text string=\"GEGL is a image processing and compositing framework.\n\nGUI editor Copyright © 2006 Øyvind Kolås\nGEGL and it's editor comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. The processing and compositing library GEGL is licensed under LGPLv2 and the editor itself is licensed as GPLv2.\" font='Sans' size='10.0' wrap='300' alignment='0' width='224' height='52'/> </over> <over> <shift x='20.0' y='10.0'/> <dropshadow opacity='1.0' x='10.0' y='10.0' radius='5.0'/> <text string='GEGL' font='Sans' size='100.0' wrap='-1' alignment='0'/> </over> <perlin-noise alpha='12.30' scale='0.10' zoff='-1.0' seed='20.0' n='6.0'/> </gegl>"
-   );
+  ,NULL);
    
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (window), "About GEGL");

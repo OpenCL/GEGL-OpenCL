@@ -66,6 +66,13 @@ GeglNode    * gegl_node_create_child     (GeglNode      *graph,
 GeglNode    * gegl_node_new_child        (GeglNode      *graph,
                                           const gchar   *first_property_name,
                                           ...) G_GNUC_NULL_TERMINATED;
+
+/*
+ * return a list of children for this graph node. The list should _not_ be
+ * freed (XXX:maybe this should change?)
+ */
+GList       * gegl_node_get_children     (GeglNode    *graph);
+
 /* connect the output pad of a different node to this nodes input pad,
  * pads specified by names ("input","aux" and "output" are the names
  * currently in use
@@ -157,7 +164,8 @@ GeglNode    * gegl_node_get_input_proxy  (GeglNode        *graph,
                                           const gchar     *name);
 
 /* create a geglgraph from parsed XML data */
-GeglNode    * gegl_xml_parse             (const gchar     *xmldata);
+GeglNode    * gegl_xml_parse             (const gchar     *xmldata,
+                                          const gchar     *path_root);
 
 /* Get a list of all properties existing on a node (includes the ones
  * of the current operation) */
@@ -169,7 +177,8 @@ GSList      * gegl_operation_list_operations (void);
 
 /* Serialize a GEGL graph to XML, the resulting data must
  * be freed. */
-gchar       * gegl_to_xml                (GeglNode        *gegl);
+gchar       * gegl_to_xml                (GeglNode        *gegl,
+                                          const gchar     *path_root);
 
 /* Create a new color based on a CSS style string.
  */
