@@ -1,5 +1,9 @@
 2007-01-07  Øyvind Kolås  <pippin@gimp.org>
-	
+
+	* bin/Makefile.am: disable gui plug-ins for now.
+
+2007-01-07  Øyvind Kolås  <pippin@gimp.org>
+
 	Added path_root argument to gegl_xml_parse and gegl_to_xml, this
 	fixes bug. The mangling of paths being passed in/out is done on
 	all properties of type gegl_chant_path in the operations.
