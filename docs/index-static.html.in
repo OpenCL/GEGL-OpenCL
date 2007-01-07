@@ -125,7 +125,7 @@
             <li>XML, C and Python interfaces.</li>
             <li>Memory efficient evaluation of subregions.</li>
             <li>Tiled, sparse, pyramidial and larger than RAM buffers.</li>
-
+            <li>Hit detection.</li>
             <li>Rich core set of processing <a
                 href='operations.html'>operations</a>
             <ul>
@@ -134,7 +134,7 @@
               SVG blend modes, other blend modes, apply mask.</li>
               <li>Gaussian blur.</li>
               <li>Basic color correction tools.</li>
-              <li>Most processing done with High Dynamic Range routines.</li>
+              <li>32bit floating point for intermediate values.</li>
               <li>Text layouting using <a href='http://pango.org/'>pango</a></li>
             </ul>
             </li>
@@ -195,6 +195,11 @@ rectangular regions to be repainted.
     The latest development snapshot, and eventually stable versions of GEGL are
     available at <a href='ftp://ftp.gimp.org/pub/gegl/'>ftp://ftp.gimp.org/pub/gegl/</a>.
     </p>
+
+    <p>The current code under development can be <a
+href='http://svn.gnome.org/viewscvs/gegl/trunk/'>browsed online</a> and checked
+out from GNOME Subversion using: </p> <pre>svn co
+http://svn.gnome.org/svn/gegl/trunk/gegl/trunk gegl</pre>
 
         <a name='Bugzilla'></a>
         <h3>Bugzilla</h3>
