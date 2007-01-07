@@ -1,5 +1,24 @@
 2007-01-07  Øyvind Kolås  <pippin@gimp.org>
 
+	Added initial hit-detection system.
+	
+	* gegl/gegl-node.c: gegl_node_detect tied in with operations.
+	* gegl/gegl-operation.[ch]: Added new virtual method called detect
+	default implementation is to say it is us, if we've got defined data
+	at the position.
+
+	Changes in operation classes:
+	* gegl/gegl-operation-filter.c: just call our source op asking it.
+	* gegl/gegl-operation-composer.c: use aux if pixeldata is define there
+	(should be overriden in some subclass(es?))
+	* operations/core/shift.c: modify coordinates.
+	* operations/transform/affine.c: modify coordinates.
+
+	* bin/gegl-view.c: added (disabled by default) code to print which
+	node is detected upon mouse press in the view.
+
+2007-01-07  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/Makefile.am: disable gui plug-ins for now.
 
 2007-01-07  Øyvind Kolås  <pippin@gimp.org>

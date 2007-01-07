@@ -47,29 +47,32 @@ enum
 
 /* *** static prototypes *** */
 
-static void       get_property         (GObject       *object,
-                                        guint          prop_id,
-                                        GValue        *value,
-                                        GParamSpec    *pspec);
-static void       set_property         (GObject       *object,
-                                        guint          prop_id,
-                                        const GValue  *value,
-                                        GParamSpec    *pspec);
-static void       bounding_box         (gdouble       *points,
-                                        gint           num_points,
-                                        GeglRectangle *output);
-static gboolean   is_intermediate_node (OpAffine      *affine);
-static gboolean   is_composite_node    (OpAffine      *affine);
-static void       get_source_matrix    (OpAffine      *affine,
-                                        Matrix3        output);
-static GeglRectangle   get_defined_region   (GeglOperation *op);
-static gboolean   calc_source_regions  (GeglOperation *op,
-                                        gpointer       context_id);
-static GeglRectangle   get_affected_region (GeglOperation *operation,
-                                        const gchar   *input_pad,
-                                        GeglRectangle  region);
-static gboolean   process              (GeglOperation *op,
-                                        gpointer       context_id);
+static void          get_property         (GObject       *object,
+                                           guint          prop_id,
+                                           GValue        *value,
+                                           GParamSpec    *pspec);
+static void          set_property         (GObject       *object,
+                                           guint          prop_id,
+                                           const GValue  *value,
+                                           GParamSpec    *pspec);
+static void          bounding_box         (gdouble       *points,
+                                           gint           num_points,
+                                           GeglRectangle *output);
+static gboolean      is_intermediate_node (OpAffine      *affine);
+static gboolean      is_composite_node    (OpAffine      *affine);
+static void          get_source_matrix    (OpAffine      *affine,
+                                           Matrix3        output);
+static GeglRectangle get_defined_region   (GeglOperation *op);
+static gboolean      calc_source_regions  (GeglOperation *op,
+                                           gpointer       context_id);
+static GeglRectangle get_affected_region  (GeglOperation *operation,
+                                           const gchar   *input_pad,
+                                           GeglRectangle  region);
+static gboolean      process              (GeglOperation *op,
+                                           gpointer       context_id);
+static GeglNode    * detect               (GeglOperation *operation,
+                                           gint           x,
+                                           gint           y);
 
 /* ************************* */
 
@@ -128,6 +131,7 @@ op_affine_class_init (OpAffineClass *klass)
   op_class->get_affected_region = get_affected_region;
   op_class->get_defined_region  = get_defined_region;
   op_class->calc_source_regions = calc_source_regions;
+  op_class->detect = detect;
   op_class->categories = "geometry";
 
   filter_class->process = process;
@@ -398,6 +402,37 @@ get_defined_region (GeglOperation *op)
   bounding_box (have_points, 4, &have_rect);
 
   return have_rect;
+}
+
+static GeglNode *
+detect (GeglOperation *operation,
+        gint           x,
+        gint           y)
+{
+  GeglNode *source_node = gegl_operation_get_source_node (operation, "input");
+
+  OpAffine      *affine = (OpAffine *) operation;
+  Matrix3        inverse;
+  gdouble        need_points [2];
+  gint           i;
+
+  if (is_intermediate_node (affine) ||
+      matrix3_is_identity (inverse))
+    {
+      return gegl_operation_detect (source_node->operation, x, y);
+    }
+
+  need_points [0] = x;
+  need_points [1] = y;
+
+  matrix3_copy (inverse, affine->matrix);
+  matrix3_invert (inverse);
+
+  for (i = 0; i < 2; i += 2)
+    matrix3_transform_point (inverse,
+                             need_points + i, need_points + i + 1);
+
+  return gegl_operation_detect (source_node->operation, need_points[0], need_points[1]);
 }
 
 static gboolean

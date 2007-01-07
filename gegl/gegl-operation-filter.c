@@ -43,6 +43,9 @@ static gboolean process                 (GeglOperation *operation,
                                          const gchar   *output_prop);
 
 static void     attach                  (GeglOperation *operation);
+static GeglNode *detect                 (GeglOperation *operation,
+                                         gint           x,
+                                         gint           y);
 
 static GeglRectangle get_defined_region (GeglOperation *self);
 static gboolean calc_source_regions     (GeglOperation *self,
@@ -62,6 +65,7 @@ gegl_operation_filter_class_init (GeglOperationFilterClass * klass)
 
   operation_class->process = process;
   operation_class->attach = attach;
+  operation_class->detect = detect;
   operation_class->get_defined_region = get_defined_region;
   operation_class->calc_source_regions = calc_source_regions;
 
@@ -102,6 +106,17 @@ attach (GeglOperation *self)
                                g_object_class_find_property (object_class,
                                                              "input"));
 }
+
+
+static GeglNode *
+detect (GeglOperation *operation,
+        gint           x,
+        gint           y)
+{
+  GeglNode *input_node = gegl_operation_get_source_node (operation, "input");
+  return gegl_operation_detect (input_node->operation, x, y);
+}
+
 
 void babl_backtrack (void);
 

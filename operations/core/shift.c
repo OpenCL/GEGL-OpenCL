@@ -107,11 +107,24 @@ calc_source_regions (GeglOperation *self,
   return TRUE;
 }
 
+static GeglNode *
+detect (GeglOperation *operation,
+        gint           x,
+        gint           y)
+{
+  GeglChantOperation *shift = (GeglChantOperation*)(operation);
+  GeglNode *input_node = gegl_operation_get_source_node (operation, "input");
+  return gegl_operation_detect (input_node->operation, x-shift->x, y-shift->y);
+  /*return gegl_operation_detect (input_node->operation, x+shift->x, y+shift->y);*/
+}
+
+
 static void class_init (GeglOperationClass *operation_class)
 {
   operation_class->get_affected_region = get_affected_region;
   operation_class->get_defined_region = get_defined_region;
   operation_class->calc_source_regions = calc_source_regions;
+  operation_class->detect = detect;
 }
 
 #endif

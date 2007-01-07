@@ -1586,8 +1586,23 @@ gegl_node_detect (GeglNode *root,
   g_warning ("gegl_node_detect: %i, %i", x, y);*/
 
   /* make sure the have rects are computed */
-  gegl_node_get_bounding_box (root); 
 
-  
-  return NULL;
+  /* FIXME: do not call this all the time! */
+  if (root)
+    {
+      gegl_node_get_bounding_box (root); 
+
+      if (root->operation)
+        return gegl_operation_detect (root->operation, x, y);
+      else
+        {
+          if (root->is_graph)
+            {
+              GeglNode *foo = gegl_node_get_output_proxy (root, "output");
+              if (foo && foo != root)
+                return gegl_node_detect (foo, x, y);
+            }
+        }
+    }
+  return root;
 }

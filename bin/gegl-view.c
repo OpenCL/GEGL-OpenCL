@@ -298,7 +298,22 @@ static gboolean  button_press_event   (GtkWidget      *widget,
   x= x/view->scale + view->x;
   y= y/view->scale + view->y;
 
-  gegl_node_detect (view->node, x, y);
+  {
+    GeglNode *detected = gegl_node_detect (view->node,
+                                           view->x + event->x/view->scale,
+                                           view->y + event->y/view->scale);
+    if (0 && detected)
+      {
+        gchar *name;
+        gchar *operation;
+        gegl_node_get (detected, "name", &name, "operation", &operation, NULL);
+        g_warning ("%s:%s(%p)", operation, name, detected);
+        if (name)
+          g_free (name);
+        if (operation)
+          g_free (operation);
+      }
+  }
 
   return TRUE;
 }

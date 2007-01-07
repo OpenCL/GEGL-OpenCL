@@ -188,9 +188,8 @@ gegl_operation_prepare (GeglOperation *self,
     klass->prepare (self, context_id);
 }
 
-GeglRectangle *
-gegl_operation_source_get_defined_region (GeglOperation *operation,
-                                          const gchar   *input_pad_name)
+GeglNode * gegl_operation_get_source_node (GeglOperation *operation,
+                                           const gchar   *input_pad_name)
 {
   GeglPad *pad;
   g_assert (operation &&
@@ -206,8 +205,17 @@ gegl_operation_source_get_defined_region (GeglOperation *operation,
     return NULL;
 
   g_assert (gegl_pad_get_node (pad));
+  return gegl_pad_get_node (pad);
+}
 
-  return gegl_node_get_have_rect (gegl_pad_get_node (pad));
+GeglRectangle *
+gegl_operation_source_get_defined_region (GeglOperation *operation,
+                                          const gchar   *input_pad_name)
+{
+  GeglNode *node = gegl_operation_get_source_node (operation, input_pad_name);
+  if (node)
+    return gegl_node_get_have_rect (node);
+  return NULL;
 }
 
 void
@@ -410,6 +418,35 @@ gegl_operation_get_data (GeglOperation *operation,
     }
   g_value_unset (&value);
   return ret;
+}
+
+GeglNode *
+gegl_operation_detect (GeglOperation *operation,
+                       gint           x,
+                       gint           y)
+{
+  GeglNode *node;
+  GeglOperationClass *klass;
+
+  if (!operation)
+    return NULL;
+
+  g_return_val_if_fail (GEGL_IS_OPERATION (operation), NULL);
+  node = operation->node;
+
+  klass = GEGL_OPERATION_GET_CLASS (operation);
+
+  if (klass->detect)
+    return klass->detect (operation, x, y);
+
+  if (x>=node->have_rect.x &&
+      x<node->have_rect.x+node->have_rect.w &&
+      y>=node->have_rect.y &&
+      y<node->have_rect.y+node->have_rect.h)
+    {
+      return node;
+    }
+  return NULL;
 }
 
 void
