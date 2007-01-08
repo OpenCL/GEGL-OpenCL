@@ -1233,20 +1233,10 @@ gegl_node_set_property (GeglNode     *self,
     }
   else
     {
-      if (self->is_graph)
+      if (self->operation)
         {
-          g_warning ("set_property for graph,. hmm");
-          /* FIXME: should this really be "input")? is_graph doesn't seem to be used,.. */
-          g_object_set_property (G_OBJECT (gegl_node_get_input_proxy (self, "input")->operation),
+          g_object_set_property (G_OBJECT (self->operation),
                 property_name, value);
-        }
-      else
-        {
-          if (self->operation)
-            {
-              g_object_set_property (G_OBJECT (self->operation),
-                    property_name, value);
-            }
         }
     }
 }

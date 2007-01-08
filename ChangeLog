@@ -1,3 +1,9 @@
+2007-01-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-node.c: (gegl_node_set_property): remove code meant
+	to eek the first time a graph property was set directly.
+	* gegl/gegl.h: make gegl_node_get_connected_to public.
+
 2007-01-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/render/color.c: (detect), (class_init): Made color class
