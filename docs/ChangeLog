@@ -1,14 +1,7 @@
 2007-01-08  Øyvind Kolås  <pippin@gimp.org>
 
-	reviewed by: <delete if not using a buddy>
-
-	* index-static.html.in:
-
-2007-01-08  Øyvind Kolås  <pippin@gimp.org>
-
-	reviewed by: <delete if not using a buddy>
-
-	* index-static.html.in:
+	* Makefile.am: do not build gegl.h.html if HAVE_ENSCRIPT is not
+	defined.
 
 2007-01-04  Øyvind Kolås  <pippin@gimp.org>
 
