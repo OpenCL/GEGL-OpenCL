@@ -1,5 +1,9 @@
 2007-01-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.in: added test for enscript.
+
+2007-01-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.in: increased version to 0.0.7
 
 2007-01-08  Øyvind Kolås  <pippin@gimp.org>

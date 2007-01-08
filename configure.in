@@ -445,7 +445,7 @@ AC_SUBST(SDL_LIBS)
  
 AC_PATH_PROG(HAVE_GRAPHVIZ, dot, no)
 if test "$HAVE_GRAPHVIZ" = "no"; then
-  have_graphviz="no  (usable graphviz not found)"
+  have_graphviz="no  (graphviz not found)"
   AC_MSG_RESULT([*** Check for dot command from graphviz failed.])
 else
   have_graphviz="yes"
@@ -453,6 +453,22 @@ fi
 AM_CONDITIONAL(HAVE_GRAPHVIZ, test "x$have_graphviz" = "xyes")
 
 AC_SUBST(HAVE_GRAPHVIZ)
+
+
+####################
+# Check for enscript
+####################
+ 
+AC_PATH_PROG(HAVE_ENSCRIPT, enscript, no)
+if test "$HAVE_ENSCRIPT" = "no"; then
+  have_enscript="no  (enscript not found)"
+  AC_MSG_RESULT([*** Check for enscript command failed.])
+else
+  have_enscript="yes"
+fi
+AM_CONDITIONAL(HAVE_ENSCRIPT, test "x$have_enscript" = "xyes")
+
+AC_SUBST(HAVE_ENSCRIPT)
 
 
 ################
