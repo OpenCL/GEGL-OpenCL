@@ -28,6 +28,7 @@ gegl_chant_color (value, "black", "One of the cell colors (defaults to 'black')"
 
 #define GEGL_CHANT_SELF           "color.c"
 #define GEGL_CHANT_CATEGORIES     "render"
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 static gboolean
@@ -81,6 +82,19 @@ get_defined_region (GeglOperation *operation)
 {
   GeglRectangle result = {-10000000,-10000000,20000000,20000000};
   return result;
+}
+
+static GeglNode *
+detect (GeglOperation *operation,
+        gint           x,
+        gint           y)
+{
+  return NULL;
+}
+
+static void class_init (GeglOperationClass *klass)
+{
+  klass->detect = detect;
 }
 
 #endif

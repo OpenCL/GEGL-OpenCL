@@ -1,5 +1,15 @@
 2007-01-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/render/color.c: (detect), (class_init): Made color class
+	refuse hits (this makes the hit detection work through the drop-shadow
+	op).
+
+2007-01-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/render/color.c: (detect), (class_init):
+
+2007-01-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.in: added test for enscript.
 
 2007-01-08  Øyvind Kolås  <pippin@gimp.org>
