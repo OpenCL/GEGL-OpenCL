@@ -181,14 +181,18 @@ get_defined_region (GeglOperation *self)
   GeglRectangle *in_rect  = gegl_operation_source_get_defined_region (self, "input");
   GeglRectangle *aux_rect = gegl_operation_source_get_defined_region (self, "aux");
   if (!in_rect)
-    return result;
+    {
+      if (aux_rect)
+        return *aux_rect;
+      return result;
+    }
   if (aux_rect)
     {
       gegl_rect_bounding_box (&result, in_rect, aux_rect);
     }
   else
     {
-      result = *in_rect;
+      return *in_rect;
     }
   return result;
 }

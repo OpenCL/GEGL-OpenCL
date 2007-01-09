@@ -1596,3 +1596,22 @@ gegl_node_detect (GeglNode *root,
     }
   return root;
 }
+
+/* this is a bit hacky, but allows us to insert a node into the graph,
+ * and avoid the full defined region of the entire graph to change
+ */
+void
+gegl_node_insert_before (GeglNode *self,
+                         GeglNode *to_be_inserted)
+{
+  GeglNode *other = gegl_node_get_connected_to (self, "input");
+  GeglRectangle rectangle = gegl_node_get_bounding_box (to_be_inserted);
+
+  g_signal_handlers_block_matched (other, G_SIGNAL_MATCH_FUNC, 0, 0, 0, source_invalidated, NULL);
+  /* the blocked handler disappears during the relinking */
+  gegl_node_link_many (other, to_be_inserted, self, NULL);
+
+  /* emit the change ourselves */
+  g_signal_emit (self, gegl_node_signals[GEGL_NODE_INVALIDATED],
+                 0, &rectangle, NULL);
+}

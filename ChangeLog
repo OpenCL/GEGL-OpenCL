@@ -1,5 +1,17 @@
 2007-01-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.[ch]: (gegl_node_insert_before): added convenience
+	function to insert an over op at end of chain without having to
+	recompute entire composition. (kept from public API for now)
+	* gegl/gegl-operation-composer.c: (get_defined_region): return defined
+	region for aux buf, if input buf is not defined.
+
+2007-01-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/file-io/load.c: (detect), (class_init):
+
+2007-01-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (gegl_node_set_property): remove code meant
 	to eek the first time a graph property was set directly.
 	* gegl/gegl.h: make gegl_node_get_connected_to public.
