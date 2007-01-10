@@ -137,12 +137,17 @@ main (gint    argc,
     }
 
 
-  if (o->file)
+  if (o->file &&
+      file_is_gegl_xml (o->file))
     {
       gchar *temp = g_strdup (o->file);
       path_root = g_strdup (dirname (temp));
       g_free (temp);
       path_root = realpath (path_root, NULL);
+    }
+  else
+    {
+      path_root = "";
     }
 
   gegl = gegl_xml_parse (script, path_root);

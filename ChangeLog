@@ -1,5 +1,10 @@
 2007-01-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl.c: (main): Fix path handling when loading non XML files
+	from the commandline.
+
+2007-01-11  Øyvind Kolås  <pippin@gimp.org>
+
 	s/gegl_pad_get_real_connected_to/gegl_pad_get_internal_connected_to/
 
 	This is a function that returns what pad is the source
