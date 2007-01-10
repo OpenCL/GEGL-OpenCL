@@ -1,3 +1,18 @@
+2007-01-11  Øyvind Kolås  <pippin@gimp.org>
+
+	s/gegl_pad_get_real_connected_to/gegl_pad_get_internal_connected_to/
+
+	This is a function that returns what pad is the source
+	of data. Rerouted out of a graph and into a pad at that
+	level if neccesary.
+
+	* gegl/gegl-eval-visitor.c: (visit_pad):
+	* gegl/gegl-operation.c: (gegl_operation_get_source_node),
+	(gegl_operation_set_source_region):
+	* gegl/gegl-pad.c: (gegl_pad_get_depends_on),
+	(gegl_pad_get_internal_connected_to):
+	* gegl/gegl-pad.h:
+
 2007-01-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-node.[ch]: (gegl_node_insert_before): added convenience

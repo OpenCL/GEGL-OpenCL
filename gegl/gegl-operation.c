@@ -199,7 +199,7 @@ GeglNode * gegl_operation_get_source_node (GeglOperation *operation,
 
   if (!pad)
     return NULL;
-  pad = gegl_pad_get_real_connected_to (pad);
+  pad = gegl_pad_get_internal_connected_to (pad);
 
   if (!pad)
     return NULL;
@@ -235,7 +235,7 @@ gegl_operation_set_source_region (GeglOperation *operation,
     GeglPad *pad = gegl_node_get_pad (operation->node, input_pad_name);
     if (!pad)
       return;
-    pad = gegl_pad_get_real_connected_to (pad);
+    pad = gegl_pad_get_internal_connected_to (pad);
     if (!pad)
       return;
     child = gegl_pad_get_node (pad);

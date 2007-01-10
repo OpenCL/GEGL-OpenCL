@@ -81,7 +81,7 @@ visit_pad (GeglVisitor *self,
     }
   else if (gegl_pad_is_input (pad))
     {
-      GeglPad *source_pad = gegl_pad_get_real_connected_to (pad);
+      GeglPad *source_pad = gegl_pad_get_internal_connected_to (pad);
 
 #define USE_DYNAMIC
 

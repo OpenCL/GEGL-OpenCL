@@ -187,6 +187,9 @@ gegl_pad_get_depends_on (GeglPad *self)
             }
        }
 
+      /* FIXME: this add depends for all inputs of the graph, this is probably
+       * too much in some cases
+       */
       if (!strcmp (gegl_object_get_name (GEGL_OBJECT (self->node)), "proxynop-input"))
         {
           GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
@@ -235,7 +238,7 @@ gegl_pad_get_connected_to (GeglPad *self)
 }
 
 GeglPad *
-gegl_pad_get_real_connected_to (GeglPad *self)
+gegl_pad_get_internal_connected_to (GeglPad *self)
 {
   GeglPad *pad = gegl_pad_get_connected_to (self);
   g_assert (GEGL_IS_PAD (self));
@@ -245,6 +248,9 @@ gegl_pad_get_real_connected_to (GeglPad *self)
       GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
       g_assert (graph);
 
+      /* FIXME: is this check still needed when gegl_pad_get_name is used in the else
+       * clause?
+       */
       if (g_object_get_data (G_OBJECT (self->node), "is-aux"))
         {
           pad = gegl_node_get_pad (graph, "aux");
