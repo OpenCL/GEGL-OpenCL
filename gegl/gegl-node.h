@@ -189,6 +189,8 @@ GeglNode    * gegl_node_detect                (GeglNode     *root,
 void          gegl_node_insert_before         (GeglNode     *self,
                                                GeglNode     *to_be_inserted);
 
+GeglNode    * gegl_node_get_consumer_node     (GeglNode *node);
+
 enum
 {
   GEGL_NODE_INVALIDATED,

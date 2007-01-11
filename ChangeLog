@@ -1,5 +1,13 @@
 2007-01-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-store.c: (gegl_previous_sibling): moved functionality to
+	gegl_node_consumer_node.
+	* gegl/gegl-node.[ch]: (gegl_node_get_consumer_node): new hacky
+	convenience function, needs a broader, better API before it can be
+	made public.
+
+2007-01-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl.c: (main): Fix path handling when loading non XML files
 	from the commandline.
 

@@ -1615,3 +1615,29 @@ gegl_node_insert_before (GeglNode *self,
   g_signal_emit (self, gegl_node_signals[GEGL_NODE_INVALIDATED],
                  0, &rectangle, NULL);
 }
+
+/* this needs to be exposed better, and more generically (Allowing to specify/return
+ * pad name as well, as well as a list of nodes
+ */
+GeglNode *gegl_node_get_consumer_node (GeglNode *node)
+{
+  GeglPad *pad;
+  if (!node)
+    return NULL;
+  
+  pad = gegl_node_get_pad (node, "output");
+  if (!pad)
+    return NULL;
+    {
+      GList *pads = gegl_pad_get_connections (pad);
+      if (pads)
+        {
+          GeglConnection *connection = pads->data;
+          GeglPad *pad = gegl_connection_get_sink_pad (connection);
+          if (!strcmp (gegl_pad_get_name (pad), "input"))
+            return gegl_connection_get_sink_node (connection);
+        }
+    }
+  return NULL;
+}
+

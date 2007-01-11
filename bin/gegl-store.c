@@ -53,25 +53,7 @@ GeglNode *gegl_next_sibling (GeglNode *item)
 
 GeglNode *gegl_previous_sibling (GeglNode *item)
 {
-  GeglPad *pad;
-  if (!item)
-    return NULL;
-
-  
-  pad = gegl_node_get_pad (item, "output");
-  if (!pad)
-    return NULL;
-    {
-      GList *pads = gegl_pad_get_connections (pad);
-      if (pads)
-        {
-          GeglConnection *connection = pads->data;
-          GeglPad *pad = gegl_connection_get_sink_pad (connection);
-          if (!strcmp (gegl_pad_get_name (pad), "input"))
-            return gegl_connection_get_sink_node (connection);
-        }
-    }
-  return NULL;
+  return gegl_node_get_consumer_node (item);
 }
 
 GeglNode *gegl_parent (GeglNode *item)
