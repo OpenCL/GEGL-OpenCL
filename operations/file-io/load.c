@@ -173,7 +173,6 @@ detect (GeglOperation *operation,
         gint           y)
 {
   GeglNode *node = operation->node;
-  g_warning ("in load op");
   return node;
 }
 

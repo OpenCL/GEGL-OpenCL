@@ -1,5 +1,10 @@
 2007-01-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/file-io/load.c: (detect), (class_init): removed debug
+	message.
+
+2007-01-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/core/nop.c: (detect), (class_init): reroute to include
 	meta ops in detection.
 	* gegl/gegl-operation-composer.c: (detect):
