@@ -1,5 +1,14 @@
 2007-01-12  Øyvind Kolås  <pippin@gimp.org>
 
+	Added edge preserving blur/min/max filters based on kuwahara.
+
+	* operations/workshop/kuwahara.c:
+	* operations/workshop/kuwahara-max.c:
+	* operations/workshop/kuwahara-min.c:
+	* operations/workshop/kuwahara-switch.c:
+
+2007-01-12  Øyvind Kolås  <pippin@gimp.org>
+
 	Modified to work in non-pre-multiplied RGB.
 
 	* operations/workshop/box-max.c: (hor_max), (ver_max):
