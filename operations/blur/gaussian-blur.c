@@ -529,10 +529,10 @@ get_defined_region (GeglOperation *operation)
   if (result.w &&
       result.h)
     {
-      result.x-=radius_x*3;
-      result.y-=radius_y*3;
-      result.w+=radius_x*6;
-      result.h+=radius_y*6;
+      result.x-=radius_x*4;
+      result.y-=radius_y*4;
+      result.w+=radius_x*8;
+      result.h+=radius_y*8;
     }
 
   return result;
@@ -556,10 +556,10 @@ static GeglRectangle get_source_rect (GeglOperation *self,
   if (rect.w != 0 &&
       rect.h != 0)
     {
-      rect.x -= radius_x*3;
-      rect.y -= radius_y*3;
-      rect.w += radius_x*6;
-      rect.h += radius_y*6;
+      rect.x -= radius_x*4;
+      rect.y -= radius_y*4;
+      rect.w += radius_x*8;
+      rect.h += radius_y*8;
     }
 
   return rect;
@@ -577,10 +577,10 @@ get_affected_region (GeglOperation *self,
   radius_x = ceil(blur->radius_x);
   radius_y = ceil(blur->radius_y);
 
-  region.x -= radius_x*3;
-  region.y -= radius_y*3;
-  region.w += radius_x*6;
-  region.h += radius_y*6;
+  region.x -= radius_x*4;
+  region.y -= radius_y*4;
+  region.w += radius_x*8;
+  region.h += radius_y*8;
   return region;
 }
 

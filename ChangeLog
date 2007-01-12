@@ -1,3 +1,9 @@
+2007-01-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/blur/gaussian-blur.c: (get_defined_region),
+	(get_source_rect), (get_affected_region): Increase the size of the
+	sampling buffer.
+
 2007-01-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-store.c: (gegl_previous_sibling): moved functionality to
