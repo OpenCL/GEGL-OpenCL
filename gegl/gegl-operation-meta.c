@@ -26,16 +26,18 @@ enum
   PROP_LAST
 };
 
-static void     get_property         (GObject       *gobject,
-                                      guint          prop_id,
-                                      GValue        *value,
-                                      GParamSpec    *pspec);
-
-static void     set_property         (GObject       *gobject,
-                                      guint          prop_id,
-                                      const GValue  *value,
-                                      GParamSpec    *pspec);
-static void     finalize             (GObject       *self_object);
+static void       get_property (GObject       *gobject,
+                                guint          prop_id,
+                                GValue        *value,
+                                GParamSpec    *pspec);
+static void       set_property (GObject       *gobject,
+                                guint          prop_id,
+                                const GValue  *value,
+                                GParamSpec    *pspec);
+static void       finalize     (GObject       *self_object);
+static GeglNode * detect       (GeglOperation *operation,
+                                gint           x,
+                                gint           y);
 
 
 G_DEFINE_TYPE (GeglOperationMeta, gegl_operation_meta, GEGL_TYPE_OPERATION)
@@ -48,6 +50,7 @@ gegl_operation_meta_class_init (GeglOperationMetaClass * klass)
   object_class->set_property = set_property;
   object_class->get_property = get_property;
   object_class->finalize = finalize;
+  GEGL_OPERATION_CLASS (klass)->detect = detect;
 }
 
 static void
@@ -71,6 +74,14 @@ set_property (GObject      *object,
               const GValue *value,
               GParamSpec   *pspec)
 {
+}
+
+static GeglNode *
+detect (GeglOperation *operation,
+        gint           x,
+        gint           y)
+{
+  return NULL; /* hands it over request to the internal nodes */
 }
 
 typedef struct Redirect {

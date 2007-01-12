@@ -167,10 +167,21 @@ static void attach (GeglOperation *operation)
   gegl_node_connect_from (priv->output, "input", priv->load, "output");
 }
 
+static GeglNode *
+detect (GeglOperation *operation,
+        gint           x,
+        gint           y)
+{
+  GeglNode *node = operation->node;
+  g_warning ("in load op");
+  return node;
+}
+
 static void class_init (GeglOperationClass *klass)
 {
   klass->prepare = prepare;
   klass->attach = attach;
+  klass->detect = detect;
   
   G_OBJECT_CLASS (klass)->dispose = dispose;
   G_OBJECT_CLASS (klass)->finalize = finalize;
@@ -208,5 +219,6 @@ refresh_cache (GeglChantOperation *self)
   }
   return FALSE;
 }
+
 
 #endif

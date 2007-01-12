@@ -1,3 +1,14 @@
+2007-01-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/core/nop.c: (detect), (class_init): reroute to include
+	meta ops in detection.
+	* gegl/gegl-operation-composer.c: (detect):
+	* gegl/gegl-operation-filter.c: (detect):
+	* gegl/gegl-operation-meta.c: (gegl_operation_meta_class_init),
+	(detect):
+	* gegl/gegl-operation.c: (gegl_operation_get_source_node):
+	* operations/file-io/load.c: (detect), (class_init):
+
 2007-01-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/meta/tonemap.c: changed range of amount property.

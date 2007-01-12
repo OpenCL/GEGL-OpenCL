@@ -25,6 +25,7 @@
 #define GEGL_CHANT_NAME            nop
 #define GEGL_CHANT_DESCRIPTION     "Passthrough operation. Used mostly for routing/place holder purposes internally in GEGL."
 #define GEGL_CHANT_SELF            "nop.c"
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 static gboolean
@@ -41,5 +42,37 @@ process (GeglOperation *operation,
     } 
   return success;
 }
+
+static GeglNode *
+detect (GeglOperation *operation,
+        gint           x,
+        gint           y)
+{
+  GeglNode *input_node;
+
+  const gchar *name = gegl_object_get_name (GEGL_OBJECT (operation->node));
+  if (name && !strcmp (name, "proxynop-output"))
+    {
+      GeglNode *graph;
+      graph = g_object_get_data (G_OBJECT (operation->node), "graph");
+      input_node = gegl_operation_detect (graph->operation, x, y);
+      if (input_node)
+        return input_node;
+    }
+ 
+  input_node = gegl_operation_get_source_node (operation, "input");
+
+  if (input_node)
+    return gegl_operation_detect (input_node->operation, x, y);
+  return operation->node;
+}
+
+static void class_init (GeglOperationClass *operation_class)
+{
+  operation_class->detect = detect;
+}
+
+
+
 
 #endif

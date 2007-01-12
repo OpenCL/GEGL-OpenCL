@@ -216,10 +216,14 @@ detect (GeglOperation *operation,
   GeglNode *input_node = gegl_operation_get_source_node (operation, "input");
   GeglNode *aux_node = gegl_operation_get_source_node (operation, "aux");
 
-  input_node = gegl_node_detect (input_node, x, y);
-  aux_node = gegl_node_detect (aux_node, x, y);
+  if (input_node)
+    input_node = gegl_node_detect (input_node, x, y);
+  if (aux_node)
+    aux_node = gegl_node_detect (aux_node, x, y);
 
   if (aux_node)
     return aux_node;
-  return input_node;
+  if (input_node)
+    return input_node;
+  return operation->node;
 }

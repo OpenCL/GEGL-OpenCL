@@ -113,8 +113,13 @@ detect (GeglOperation *operation,
         gint           x,
         gint           y)
 {
-  GeglNode *input_node = gegl_operation_get_source_node (operation, "input");
-  return gegl_operation_detect (input_node->operation, x, y);
+  GeglNode *input_node;
+ 
+  input_node = gegl_operation_get_source_node (operation, "input");
+
+  if (input_node)
+    return gegl_operation_detect (input_node->operation, x, y);
+  return operation->node;
 }
 
 
