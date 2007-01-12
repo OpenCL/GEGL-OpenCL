@@ -1575,11 +1575,11 @@ gegl_node_detect (GeglNode *root,
    *//*
   g_warning ("gegl_node_detect: %i, %i", x, y);*/
 
-  /* make sure the have rects are computed */
 
-  /* FIXME: do not call this all the time! */
   if (root)
     {
+      /* make sure the have rects are computed */
+      /* FIXME: do not call this all the time! */
       gegl_node_get_bounding_box (root); 
 
       if (root->operation)

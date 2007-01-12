@@ -173,7 +173,15 @@ detect (GeglOperation *operation,
         gint           y)
 {
   GeglNode *node = operation->node;
-  return node;
+  Priv *priv = (Priv*)GEGL_CHANT_OPERATION (operation)->priv;
+  GeglNode *output = priv->output;
+
+  if (x >= output->have_rect.x &&
+      y >= output->have_rect.y &&
+      x  < output->have_rect.x + output->have_rect.w &&
+      y  < output->have_rect.y + output->have_rect.h)
+    return node;
+  return NULL;
 }
 
 static void class_init (GeglOperationClass *klass)

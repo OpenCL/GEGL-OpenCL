@@ -426,7 +426,7 @@ gegl_operation_detect (GeglOperation *operation,
                        gint           x,
                        gint           y)
 {
-  GeglNode *node;
+  GeglNode *node = NULL;
   GeglOperationClass *klass;
 
   if (!operation)
@@ -438,7 +438,9 @@ gegl_operation_detect (GeglOperation *operation,
   klass = GEGL_OPERATION_GET_CLASS (operation);
 
   if (klass->detect)
-    return klass->detect (operation, x, y);
+    {
+      return klass->detect (operation, x, y);
+    }
 
   if (x>=node->have_rect.x &&
       x<node->have_rect.x+node->have_rect.w &&

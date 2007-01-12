@@ -1,5 +1,12 @@
 2007-01-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.c: (gegl_node_detect): moved comment.
+	* gegl/gegl-operation.c: (gegl_operation_detect): added some sanity.
+	* operations/file-io/load.c: (detect): check the bounds of the
+	proxy output to really see if we hit.
+
+2007-01-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/file-io/load.c: (detect), (class_init): removed debug
 	message.
 
