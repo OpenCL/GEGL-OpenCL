@@ -1,5 +1,12 @@
 2007-01-12  Øyvind Kolås  <pippin@gimp.org>
 
+	Modified to work in non-pre-multiplied RGB.
+
+	* operations/workshop/box-max.c: (hor_max), (ver_max):
+	* operations/workshop/box-min.c: (hor_min), (ver_min):
+
+2007-01-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/color/stretch-contrast.c: (calc_source_regions): request
 	entire image.
 
