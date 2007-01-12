@@ -1,5 +1,9 @@
 2007-01-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/grey.c: (init), (process): added a grey op.
+
+2007-01-12  Øyvind Kolås  <pippin@gimp.org>
+
 	Added edge preserving blur/min/max filters based on kuwahara.
 
 	* operations/workshop/kuwahara.c:
