@@ -1,5 +1,10 @@
 2007-01-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/color/remap.c: (process): made the remapper for use in
+	local contrast stretching ops operate per component.
+
+2007-01-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/grey.c: (init), (process): added a grey op.
 
 2007-01-12  Øyvind Kolås  <pippin@gimp.org>
