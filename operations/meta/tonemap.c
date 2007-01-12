@@ -21,7 +21,7 @@
 
 gegl_chant_double(radius, 0.0, 100.0, 20.0, "radius")
 gegl_chant_double(blur, 0.0, 100.0,   15.0,   "blur")
-gegl_chant_double(amount, -10.0, 20.0, 0.5,   "amount")
+gegl_chant_double(amount, -1.0, 2.0, 0.5, "amount")
 
 #else
 

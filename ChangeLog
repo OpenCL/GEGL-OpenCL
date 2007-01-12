@@ -1,5 +1,9 @@
 2007-01-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/meta/tonemap.c: changed range of amount property.
+
+2007-01-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/color/remap.c: (process): made the remapper for use in
 	local contrast stretching ops operate per component.
 
