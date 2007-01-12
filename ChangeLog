@@ -1,5 +1,10 @@
 2007-01-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/color/stretch-contrast.c: (calc_source_regions): request
+	entire image.
+
+2007-01-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/blur/gaussian-blur.c: (get_defined_region),
 	(get_source_rect), (get_affected_region): Increase the size of the
 	sampling buffer.

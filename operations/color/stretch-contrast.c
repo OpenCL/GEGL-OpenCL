@@ -140,15 +140,14 @@ process (GeglOperation *operation,
   return TRUE;
 }
 
-/* computes the bounding rectangle of the raster data needed to
- * compute the scale op.
- */
 static gboolean
 calc_source_regions (GeglOperation *self,
                      gpointer       context_id)
 {
+  /*gegl_operation_set_source_region (self, context_id, "input",
+                                    gegl_operation_get_requested_region (self, context_id));*/
   gegl_operation_set_source_region (self, context_id, "input",
-                                    gegl_operation_get_requested_region (self, context_id));
+                                    gegl_operation_source_get_defined_region (self, "input"));
   return TRUE;
 }
 
