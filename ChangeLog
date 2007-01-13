@@ -1,5 +1,12 @@
 2007-01-13  Øyvind Kolås  <pippin@gimp.org>
 
+	Fixed handling of relative paths when loading XML compositions/images.
+
+	* bin/editor.c: (do_load):
+	* bin/gegl.c: (main):
+
+2007-01-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (gegl_node_detect): moved comment.
 	* gegl/gegl-operation.c: (gegl_operation_detect): added some sanity.
 	* operations/file-io/load.c: (detect): check the bounds of the

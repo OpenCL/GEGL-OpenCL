@@ -648,6 +648,14 @@ static void do_load (void)
   GeglOptions *o = editor.options;
   gchar *xml = NULL;
 
+  gchar *temp1 = g_strdup (o->file);
+  gchar *temp2;
+  gchar *path_root;
+  temp2 = g_strdup (dirname (temp1));
+  path_root = g_strdup (realpath (temp2, NULL));
+  g_free (temp1);
+  g_free (temp2);
+
   if (file_is_gegl_xml (o->file))
     {
       GError      *err      = NULL;
@@ -661,14 +669,23 @@ static void do_load (void)
     {
       GString *acc = g_string_new ("");
 
-      g_string_append (acc, "<gegl><load path='");
-      g_string_append (acc, o->file);
-      g_string_append (acc, "'/></gegl>");
+            {gchar *file_basename;
+             gchar *tmp;
+             tmp=g_strdup (o->file);
+             file_basename = basename (tmp);
+
+             g_string_append (acc, "<gegl><load path='");
+             g_string_append (acc, file_basename);
+             g_string_append (acc, "'/></gegl>");
+             
+             g_free (tmp);
+            }
 
       xml = g_string_free (acc, FALSE);
     }
 
-  editor_set_gegl (gegl_xml_parse (xml, "/"));
+  editor_set_gegl (gegl_xml_parse (xml, path_root));
+  g_free (path_root);
   g_free (xml);
 }
 

@@ -81,12 +81,41 @@ main (gint    argc,
 
   o = gegl_options_parse (argc, argv);
 
+
   if (o->xml)
     {
+      gchar *tmp = g_malloc(PATH_MAX);
+      tmp = getcwd (tmp, PATH_MAX);
+      path_root = tmp;
+    }
+  else if (o->file)
+    {
+
+      if (!strcmp (o->file, "-"))  /* read XML from stdin */
+        {
+          gchar *tmp = g_malloc(PATH_MAX);
+          tmp = getcwd (tmp, PATH_MAX);
+          path_root = tmp;
+        }
+      else
+        {
+          gchar *temp1 = g_strdup (o->file);
+          gchar *temp2;
+          temp2 = g_strdup (dirname (temp1));
+          path_root = g_strdup (realpath (temp2, NULL));
+          g_free (temp1);
+          g_free (temp2);
+        }
+    }
+
+  if (o->xml)
+    {
+
       script = g_strdup (o->xml);
     }
   else if (o->file)
     {
+
       if (!strcmp (o->file, "-"))  /* read XML from stdin */
         {
           gint  buf_size = 128;
@@ -112,9 +141,17 @@ main (gint    argc,
           gchar *leaked_string = g_malloc (strlen (o->file) + 5);
           GString *acc = g_string_new ("");
 
-          g_string_append (acc, "<gegl><load path='");
-          g_string_append (acc, o->file);
-          g_string_append (acc, "'/></gegl>");
+            {gchar *file_basename;
+             gchar *tmp;
+             tmp=g_strdup (o->file);
+             file_basename = basename (tmp);
+
+             g_string_append (acc, "<gegl><load path='");
+             g_string_append (acc, file_basename);
+             g_string_append (acc, "'/></gegl>");
+             
+             g_free (tmp);
+            }
 
           script = g_string_free (acc, FALSE);
 
@@ -134,20 +171,6 @@ main (gint    argc,
         {
           script = g_strdup (DEFAULT_COMPOSITION);
         }
-    }
-
-
-  if (o->file &&
-      file_is_gegl_xml (o->file))
-    {
-      gchar *temp = g_strdup (o->file);
-      path_root = g_strdup (dirname (temp));
-      g_free (temp);
-      path_root = realpath (path_root, NULL);
-    }
-  else
-    {
-      path_root = "";
     }
 
   gegl = gegl_xml_parse (script, path_root);
