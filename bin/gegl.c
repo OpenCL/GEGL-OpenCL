@@ -242,5 +242,6 @@ main (gint    argc,
       default:
         break;
     }
+  g_free (path_root);
   return 0;
 }
