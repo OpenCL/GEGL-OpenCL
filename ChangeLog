@@ -1,3 +1,8 @@
+2007-01-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-xml.c: (start_element): do not modify a path that
+	is already absolute.
+
 2007-01-13  Øyvind Kolås  <pippin@gimp.org>
 
 	Fixed handling of relative paths when loading XML compositions/images.

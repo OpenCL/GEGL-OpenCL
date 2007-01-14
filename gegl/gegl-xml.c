@@ -156,8 +156,12 @@ static void start_element (GMarkupParseContext *context,
               else if (g_type_is_a (G_PARAM_SPEC_TYPE (paramspec), GEGL_TYPE_PARAM_PATH))
                 {
                   gchar buf[PATH_MAX];
-                 
-                  if (pd->path_root)
+                
+                  if (g_path_is_absolute (*v))
+                    {
+                      gegl_node_set (new, *a, *v, NULL);
+                    } 
+                  else if (pd->path_root)
                     {
                       gchar absolute_path[PATH_MAX];
                       sprintf (buf, "%s/%s", pd->path_root, *v);
