@@ -1,5 +1,12 @@
 2007-01-15  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed floating point code from innerlooops, manually unrolled
+	the scenarios for different number of components.
+
+	* gegl/buffer/gegl-buffer.c: (bilinear_8), (resample_bilinear_u8):
+
+2007-01-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-operation-composer.c: (detect): do not capture event
 	ourselves if neither input nor aux wanted it.
 

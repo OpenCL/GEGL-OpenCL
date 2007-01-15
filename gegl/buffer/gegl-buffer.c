@@ -1010,6 +1010,8 @@ bilinear_8 (gdouble x,
 }
 #endif
 
+#if 0
+
 static inline void
 bilinear_8 (gdouble x,
             gdouble y,
@@ -1083,6 +1085,100 @@ static void resample_bilinear_u8 (void *dest_buf,
           src3 = src1 + source_w * components;
 
           bilinear_8 (sx, sy, src0, src1, src2, src3, dst, components);
+          dst += components;
+        }
+    }
+}
+
+#endif
+
+static inline void
+bilinear_8 (gint    dx,
+            gint    dy,
+            guchar *src0,
+            guchar *src1,
+            guchar *src2,
+            guchar *src3,
+            guchar *dst,
+            gint    components)
+{
+#define DO_ITER(iter) \
+    {\
+      gint m0, m1;\
+      m0 = ((255 - dx) * src0[iter] + dx * src1[iter])>>8;\
+      m1 = ((255 - dx) * src2[iter] + dx * src3[iter])>>8;\
+      dst[iter] = (((255 - dy) * m0 + dy * m1))>>8;\
+    }
+ 
+  switch (components)
+    {
+      case 1:
+        DO_ITER(0);
+        break;
+      case 2:
+        DO_ITER(0);
+        DO_ITER(1);
+        break;
+      case 3:
+        DO_ITER(0);
+        DO_ITER(1);
+        DO_ITER(2);
+        break;
+      case 4:
+        DO_ITER(0);
+        DO_ITER(1);
+        DO_ITER(2);
+        DO_ITER(3);
+        break;
+    } 
+#undef DO_ITER
+}
+
+static void resample_bilinear_u8 (void *dest_buf,
+                                  void *source_buf,
+                                  gint  dest_w,
+                                  gint  dest_h,
+                                  gint  source_w,
+                                  gint  source_h,
+                                  gdouble scale,
+                                  gint  components)
+{
+  gint x,y;
+  gint iscale = scale * 256;
+  
+  for (y=0;y<dest_h;y++)
+    {
+      gint    sy;
+      guchar *dst;
+      guchar *src_base;
+
+      sy = (y << 16) / iscale;
+
+      if (sy>(source_h-1) << 8)
+        sy=(source_h-2) << 8;
+
+      dst = ((guchar*)dest_buf) + y * dest_w * components;
+      src_base = ((guchar*)source_buf) + (sy >> 8) * source_w * components;
+
+      for (x=0;x<dest_w;x++)
+        {
+          gint    sx;
+          guchar *src0;
+          guchar *src1;
+          guchar *src2;
+          guchar *src3;
+
+          sx = (x << 16) / iscale;
+
+          if (sx>(source_w-1) << 8)
+            sx=(source_w-2) << 8;
+
+          src0 = src_base + (sx>>8) * components;
+          src1 = src0 + components;
+          src2 = src0 + source_w * components;
+          src3 = src1 + source_w * components;
+
+          bilinear_8 (sx & 255, sy & 255, src0, src1, src2, src3, dst, components);
           dst += components;
         }
     }
