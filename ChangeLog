@@ -1,3 +1,9 @@
+2007-01-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/gegl-view.c: (computed_event): remove hack which overlaps
+	exposed regions due to invalidation with code that rounds uo
+	up to the closest integer pixel using ceil.
+
 2007-01-15  Sven Neumann  <sven@gimp.org>
 
 	* gegl/gegl-xml.c (tuple): escape text when writing as XML.

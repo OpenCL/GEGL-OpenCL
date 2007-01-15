@@ -135,24 +135,14 @@ static void computed_event (GeglCache *self,
   GeglView      *view   = GEGL_VIEW (user_data);
   GtkWidget     *widget = GTK_WIDGET (user_data);
 
-  /* FIXME: check that the area is relevant for us */
+  /* FIXME: check that the area is within this view */
 
   rect.x -= view->x;
   rect.y -= view->y;
   rect.x *= view->scale;
   rect.y *= view->scale;
-  rect.w *= view->scale;
-  rect.h *= view->scale;
-
-  if (view->scale != 1.0 &&
-      view->scale != 0.5)
-    {
-      /* Hack to avoid issues with rounding issues in redraws */
-      rect.x-=3;
-      rect.y-=3;
-      rect.w+=6;
-      rect.h+=6;
-    }
+  rect.w = ceil(view->scale * rect.w);
+  rect.h = ceil(view->scale * rect.h);
 
   gtk_widget_queue_draw_area (widget, rect.x, rect.y,
                                       rect.w, rect.h);
