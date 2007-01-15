@@ -1,3 +1,13 @@
+2007-01-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-operation-composer.c: (detect): do not capture event
+	ourselves if neither input nor aux wanted it.
+
+2007-01-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_get):
+	* gegl/gegl-operation-composer.c: (detect):
+
 2007-01-14  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-xml.c: (start_element): do not modify a path that

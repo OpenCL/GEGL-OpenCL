@@ -225,5 +225,5 @@ detect (GeglOperation *operation,
     return aux_node;
   if (input_node)
     return input_node;
-  return operation->node;
+  return NULL;
 }
