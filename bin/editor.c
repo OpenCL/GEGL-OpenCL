@@ -39,7 +39,7 @@ static gboolean
 cb_window_delete_event (GtkWidget *widget, GdkEvent *event, gpointer data);
 static gboolean
 cb_window_keybinding (GtkWidget *widget, GdkEventKey *event, gpointer data)
-{ 
+{
   if (event->keyval == GDK_l &&
       (event->state & (GDK_CONTROL_MASK & gtk_accelerator_get_default_mod_mask())))
     {
@@ -240,7 +240,7 @@ static GtkActionEntry action_entries[] = {
    "Quit",
    G_CALLBACK (cb_quit_dialog)},
 
-  {"About", NULL,
+  {"About", GTK_STOCK_ABOUT,
    "_About", "",
    "About",
    G_CALLBACK (cb_about)},
@@ -256,27 +256,27 @@ static GtkActionEntry action_entries[] = {
    G_CALLBACK (cb_export)},
 
   {"ShrinkWrap", NULL,
-   "_Shrink wrap", "<control>E",
+   "_Shrink Wrap", "<control>E",
    "Size the window to the image, if feasible",
    G_CALLBACK (cb_shrinkwrap)},
 
-  {"Fit", NULL,
+  {"Fit", GTK_STOCK_ZOOM_FIT,
    "_Fit", "<control>F",
    "Fit the image in window",
    G_CALLBACK (cb_fit)},
 
   {"FitOnScreen", NULL,
-   "_Fit on screen", "",
+   "_Fit On Screen", "",
    "Fit the image on screen",
    G_CALLBACK (cb_fit_on_screen)},
 
-  {"ZoomIn", NULL,
-   "Zoom in", "<control>plus",
+  {"ZoomIn", GTK_STOCK_ZOOM_IN,
+   "Zoom In", "<control>plus",
    "",
    G_CALLBACK (cb_zoom_in)},
 
-  {"ZoomOut", NULL,
-   "Zoom out", "<control>minus",
+  {"ZoomOut", GTK_STOCK_ZOOM_OUT,
+   "Zoom Out", "<control>minus",
    "",
    G_CALLBACK (cb_zoom_out)},
 
@@ -285,7 +285,7 @@ static GtkActionEntry action_entries[] = {
    "",
    G_CALLBACK (cb_zoom_50)},
 
-  {"Zoom100", NULL,
+  {"Zoom100", GTK_STOCK_ZOOM_100,
    "100%", "<control>1",
    "",
    G_CALLBACK (cb_zoom_100)},
@@ -296,12 +296,12 @@ static GtkActionEntry action_entries[] = {
    G_CALLBACK (cb_zoom_200)},
 
   {"Recompute", NULL,
-   "_Recompute view", "<shift><control>R",
+   "_Recompute View", "<shift><control>R",
    "Recalculate all image data (for working around dirt bugs)",
    G_CALLBACK (cb_recompute)},
 
   {"Redraw", NULL,
-   "_Redraw view", "<control>R",
+   "_Redraw View", "<control>R",
    "Repaints all image data (works around display glitches)",
    G_CALLBACK (cb_redraw)},
 };
@@ -352,7 +352,7 @@ static const gchar *ui_info =
 static void cb_tree_visible (GtkAction *action, gpointer userdata);
 static void cb_properties_visible (GtkAction *action, gpointer userdata);
 static void cb_structure_visible (GtkAction *action, gpointer userdata);
-  
+
 static GtkToggleActionEntry toggle_entries[]={
     {"Tree", NULL,
      "TreeView", NULL,
@@ -418,7 +418,7 @@ cb_composition_new (GtkAction *action)
   GtkWidget *label;
   gint      result;
 
-  dialog = gtk_dialog_new_with_buttons ("GEGL - new composition",
+  dialog = gtk_dialog_new_with_buttons ("GEGL - New Composition",
                                         GTK_WINDOW (editor.window),
                                         GTK_DIALOG_MODAL,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
@@ -473,7 +473,7 @@ cb_composition_load (GtkAction *action)
   GtkWidget *dialog;
   GtkFileFilter *filter;
 
-  dialog = gtk_file_chooser_dialog_new ("Load GEGL composition",
+  dialog = gtk_file_chooser_dialog_new ("Load GEGL Composition",
                                         GTK_WINDOW (editor.window),
                                         GTK_FILE_CHOOSER_ACTION_OPEN,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -516,7 +516,7 @@ cb_composition_save (GtkAction *action)
   GtkWidget *dialog;
   GtkFileFilter *filter;
 
-  dialog = gtk_file_chooser_dialog_new ("Save GEGL composition",
+  dialog = gtk_file_chooser_dialog_new ("Save GEGL Composition",
                                         GTK_WINDOW (editor.window),
                                         GTK_FILE_CHOOSER_ACTION_SAVE,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -590,7 +590,7 @@ cb_quit_dialog (GtkAction *action)
   GtkWidget *alert;
   gint      result;
 
-  dialog = gtk_dialog_new_with_buttons ("GEGL - quit confirmation",
+  dialog = gtk_dialog_new_with_buttons ("GEGL - Confirm Quit",
                                         GTK_WINDOW (editor.window),
                                         GTK_DIALOG_MODAL,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
@@ -677,7 +677,7 @@ static void do_load (void)
              g_string_append (acc, "<gegl><load path='");
              g_string_append (acc, file_basename);
              g_string_append (acc, "'/></gegl>");
-             
+
              g_free (tmp);
             }
 
@@ -713,9 +713,9 @@ cb_about (GtkAction *action)
   GeglNode  *gegl;
 
   gegl = gegl_xml_parse (
-   "<gegl> <over> <invert/> <shift x='20.0' y='140.0'/> <text string=\"GEGL is a image processing and compositing framework.\n\nGUI editor Copyright © 2006 Øyvind Kolås\nGEGL and it's editor comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. The processing and compositing library GEGL is licensed under LGPLv2 and the editor itself is licensed as GPLv2.\" font='Sans' size='10.0' wrap='300' alignment='0' width='224' height='52'/> </over> <over> <shift x='20.0' y='10.0'/> <dropshadow opacity='1.0' x='10.0' y='10.0' radius='5.0'/> <text string='GEGL' font='Sans' size='100.0' wrap='-1' alignment='0'/> </over> <perlin-noise alpha='12.30' scale='0.10' zoff='-1.0' seed='20.0' n='6.0'/> </gegl>"
+   "<gegl> <over> <invert/> <shift x='20.0' y='140.0'/> <text string=\"GEGL is a image processing and compositing framework.\n\nGUI editor Copyright © 2006, 2007 Øyvind Kolås\nGEGL and its editor come with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. The processing and compositing library GEGL is licensed under LGPLv2 and the editor itself is licensed as GPLv2.\" font='Sans' size='10.0' wrap='300' alignment='0' width='224' height='52'/> </over> <over> <shift x='20.0' y='10.0'/> <dropshadow opacity='1.0' x='10.0' y='10.0' radius='5.0'/> <text string='GEGL' font='Sans' size='100.0' wrap='-1' alignment='0'/> </over> <perlin-noise alpha='12.30' scale='0.10' zoff='-1.0' seed='20.0' n='6.0'/> </gegl>"
   ,NULL);
-   
+
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title (GTK_WINDOW (window), "About GEGL");
   about = g_object_new (GEGL_TYPE_VIEW,
@@ -861,7 +861,7 @@ static void cb_fit_on_screen (GtkAction *action)
   {
     GdkScreen *screen= gtk_window_get_screen (GTK_WINDOW (editor.window));
 
-    gint    screen_width, screen_height;    
+    gint    screen_width, screen_height;
     gint i;
 
     screen_width = gdk_screen_get_width (screen);
@@ -887,7 +887,7 @@ static void cb_shrinkwrap (GtkAction *action)
   {
     GdkScreen *screen= gtk_window_get_screen (GTK_WINDOW (editor.window));
 
-    gint    screen_width, screen_height;    
+    gint    screen_width, screen_height;
     gint    width, height;
     gdouble scale;
     g_object_get (editor.drawing_area, "scale", &scale, NULL);
@@ -939,7 +939,7 @@ void gegl_editor_update_title (void)
 }
 
 static void cb_zoom_100 (GtkAction *action)
-{ 
+{
   gint width, height;
   gint x,y;
   gdouble scale;
@@ -971,7 +971,7 @@ static void cb_zoom_100 (GtkAction *action)
 }
 
 static void cb_zoom_200 (GtkAction *action)
-{ 
+{
   gint width, height;
   gint x,y;
   gdouble scale;
@@ -1003,7 +1003,7 @@ static void cb_zoom_200 (GtkAction *action)
 }
 
 static void cb_zoom_50 (GtkAction *action)
-{ 
+{
   gint width, height;
   gint x,y;
   gdouble scale;

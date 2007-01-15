@@ -1,5 +1,13 @@
 2007-01-15  Sven Neumann  <sven@gimp.org>
 
+	* bin/editor.c (cb_about)
+	* bin/gegl.c (DEFAULT_COMPOSITION): updated year in copyright.
+
+	* bin/editor.c: use more stock icons, capitalisation and grammar
+	fixes.
+
+2007-01-15  Sven Neumann  <sven@gimp.org>
+
 	* gegl/gegl-init.[ch]
 	* gegl/gegl.h: added external API to use GEGL with the GOption
 	command-line parser. Will become useful if command-line options
