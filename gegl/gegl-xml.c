@@ -81,7 +81,7 @@ static void start_element (GMarkupParseContext *context,
   const gchar **a=attribute_names;
   const gchar **v=attribute_values;
   ParseData *pd;
- 
+
   pd = user_data;
 
   if (!strcmp (element_name, "gegl")||
@@ -114,14 +114,14 @@ static void start_element (GMarkupParseContext *context,
       if (!strcmp (element_name, "node"))
         {
           new = gegl_node_new_child (pd->gegl,
-             "operation", name2val (a, v, "operation"),
-             NULL);
+                                     "operation", name2val (a, v, "operation"),
+                                     NULL);
         }
       else
         {
           new = gegl_node_new_child (pd->gegl,
-             "operation", element_name, 
-             NULL);
+                                     "operation", element_name,
+                                     NULL);
         }
       g_assert (new);
 
@@ -151,16 +151,18 @@ static void start_element (GMarkupParseContext *context,
 
               if (!paramspec)
                 {
-                   g_warning ("property %s not found for %s", *a, gegl_node_get_debug_name (new));
+                   g_warning ("property %s not found for %s",
+                              *a, gegl_node_get_debug_name (new));
                 }
-              else if (g_type_is_a (G_PARAM_SPEC_TYPE (paramspec), GEGL_TYPE_PARAM_PATH))
+              else if (g_type_is_a (G_PARAM_SPEC_TYPE (paramspec),
+                                    GEGL_TYPE_PARAM_PATH))
                 {
                   gchar buf[PATH_MAX];
-                
+
                   if (g_path_is_absolute (*v))
                     {
                       gegl_node_set (new, *a, *v, NULL);
-                    } 
+                    }
                   else if (pd->path_root)
                     {
                       gchar absolute_path[PATH_MAX];
@@ -198,7 +200,7 @@ static void start_element (GMarkupParseContext *context,
                       !strcmp (*v, "y") ||
                       !strcmp (*v, "Y") ||
                       !strcmp (*v, "1") ||
-                      !strcmp (*v, "on") 
+                      !strcmp (*v, "on")
                       )
                     {
                       gegl_node_set (new, *a, TRUE, NULL);
@@ -210,7 +212,9 @@ static void start_element (GMarkupParseContext *context,
                 }
               else if (paramspec->value_type == GEGL_TYPE_COLOR)
                 {
-                  GeglColor *color = g_object_new (GEGL_TYPE_COLOR, "string", *v, NULL);
+                  GeglColor *color = g_object_new (GEGL_TYPE_COLOR,
+                                                   "string", *v,
+                                                   NULL);
 
                   gegl_node_set (new, *a, color, NULL);
 
@@ -218,7 +222,8 @@ static void start_element (GMarkupParseContext *context,
                 }
               else
                 {
-                  g_warning ("operation desired unknown parapspec type for %s", *a);
+                  g_warning ("operation desired unknown parapspec type for %s",
+                             *a);
                 }
             }
         a++;
@@ -247,7 +252,7 @@ static void end_element (GMarkupParseContext *context,
                          GError             **error)
 {
   ParseData *pd;
- 
+
   pd = user_data;
 
   if (!strcmp (element_name, "gegl")||
@@ -261,8 +266,10 @@ static void end_element (GMarkupParseContext *context,
       if (gegl_node_get_pad (pd->iter, "input"))
         {
           gegl_node_connect_from (pd->iter, "input",
-             gegl_node_get_input_proxy (GEGL_NODE (pd->parent->data), "input"), "output");
-          pd->iter = gegl_node_get_input_proxy (GEGL_NODE (pd->parent->data), "input");
+                                  gegl_node_get_input_proxy (GEGL_NODE (pd->parent->data), "input"),
+                                  "output");
+          pd->iter = gegl_node_get_input_proxy (GEGL_NODE (pd->parent->data),
+                                                "input");
         }
       else
         {
@@ -296,7 +303,8 @@ static void error (GMarkupParseContext *context,
 
   pd = user_data;
   g_markup_parse_context_get_position (context, &line_number, &char_number);
-  g_warning ("XML Parse error %i:%i: %s", line_number, char_number, error->message);
+  g_warning ("XML Parse error %i:%i: %s",
+             line_number, char_number, error->message);
 }
 
 static GMarkupParser parser={
@@ -328,7 +336,7 @@ GeglNode *gegl_xml_parse (const gchar *xmldata,
   GeglNode *ret;
   ParseData           *pd;
   GMarkupParseContext *context;
-  pd = g_malloc0 (sizeof (ParseData));
+  pd = g_new0 (ParseData, 1);
 
   pd->ids = g_hash_table_new_full (g_str_hash,
                                    g_str_equal,
@@ -342,7 +350,7 @@ GeglNode *gegl_xml_parse (const gchar *xmldata,
 
   /* connect clones */
   g_list_foreach (pd->refs, each_ref, pd);
-  
+
   ret = GEGL_NODE (pd->gegl);
   g_free (pd);
 
@@ -371,14 +379,20 @@ static void tuple (GString     *buf,
                    const gchar *value)
 {
   g_assert (key);
-  if (!value)
-    return;
-  g_string_append (buf, " ");
-  g_string_append (buf, key);
-  g_string_append (buf, "=");
-  g_string_append (buf, "'");
-  g_string_append (buf, value);
-  g_string_append (buf, "'");
+
+  if (value)
+    {
+      gchar *text = g_markup_escape_text (value, -1);
+
+      g_string_append_c (buf, ' ');
+      g_string_append (buf, key);
+      g_string_append_c (buf, '=');
+      g_string_append_c (buf, '\'');
+      g_string_append (buf, text);
+      g_string_append_c (buf, '\'');
+
+      g_free (text);
+    }
 }
 
 static void encode_node_attributes (SerializeState *ss,
@@ -391,7 +405,7 @@ static void encode_node_attributes (SerializeState *ss,
   gint i;
 
   properties = gegl_node_get_properties (node, &n_properties);
- 
+
   if (!ss->terse)
     {
       gegl_node_get (node, "operation", &class, NULL);
@@ -412,7 +426,7 @@ static void encode_node_attributes (SerializeState *ss,
               gchar *value;
               gegl_node_get (node, properties[i]->name, &value, NULL);
 
-              if (value) 
+              if (value)
                 {
                   g_warning ("%s|%s|", ss->path_root, value);
                   if (ss->path_root &&
@@ -426,7 +440,7 @@ static void encode_node_attributes (SerializeState *ss,
                       tuple (ss->buf, properties[i]->name, value);
                     }
                 }
-              
+
               g_free (value);
             }
           else if (properties[i]->value_type == G_TYPE_FLOAT)
@@ -496,7 +510,7 @@ static void encode_node_attributes (SerializeState *ss,
                 properties[i]->name, g_type_name (properties[i]->value_type));
             }
         }
-    } 
+    }
     if (id != NULL)
       tuple (ss->buf, "id", id);
 
@@ -515,7 +529,7 @@ static void add_stack (SerializeState *ss,
       while (iter)
         {
           GeglPad *input, *aux;
-          const gchar *id=NULL; 
+          const gchar *id=NULL;
 
           input = gegl_node_get_pad (iter, "input");
           aux = gegl_node_get_pad (iter, "aux");
@@ -549,7 +563,8 @@ static void add_stack (SerializeState *ss,
               source_pad = gegl_pad_get_connected_to (aux);
               source_node = gegl_pad_get_node (source_pad);
               {
-                GeglNode *graph = g_object_get_data (G_OBJECT (source_node), "graph");
+                GeglNode *graph = g_object_get_data (G_OBJECT (source_node),
+                                                     "graph");
                 if (graph)
                   source_node = graph;
               }
@@ -611,7 +626,8 @@ static void add_stack (SerializeState *ss,
               if (source_pad)
                 {
                   GeglNode *source_node = gegl_pad_get_node (source_pad);
-                  GeglNode *graph = g_object_get_data (G_OBJECT (source_node), "graph");
+                  GeglNode *graph = g_object_get_data (G_OBJECT (source_node),
+                                                       "graph");
                   if (graph)
                     source_node = graph;
                   iter = source_node;
@@ -637,7 +653,7 @@ gegl_to_xml (GeglNode    *gegl,
              const gchar *path_root)
 {
   gchar *ret;
-  SerializeState *ss = g_malloc0 (sizeof (SerializeState));
+  SerializeState *ss = g_new0 (SerializeState, 1);
   ss->buf = g_string_new ("");
   ss->clones = g_hash_table_new (NULL, NULL);
   ss->terse = TRUE;
@@ -649,12 +665,12 @@ gegl_to_xml (GeglNode    *gegl,
   g_string_append (ss->buf, "<gegl>\n");
 
   add_stack (ss, 2, gegl);
-  
+
   g_string_append (ss->buf, "</gegl>\n");
 
   g_hash_table_foreach (ss->clones, free_clone_id, NULL);
   g_hash_table_destroy (ss->clones);
-  
+
   ret=g_string_free (ss->buf, FALSE);
   g_free (ss);
   return ret;

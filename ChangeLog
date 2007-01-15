@@ -1,5 +1,9 @@
 2007-01-15  Sven Neumann  <sven@gimp.org>
 
+	* gegl/gegl-xml.c (tuple): escape text when writing as XML.
+
+2007-01-15  Sven Neumann  <sven@gimp.org>
+
 	* bin/editor.c (cb_about)
 	* bin/gegl.c (DEFAULT_COMPOSITION): updated year in copyright.
 
