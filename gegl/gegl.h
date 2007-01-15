@@ -49,17 +49,21 @@ struct _GeglRectangle
 #endif
 
 /* Initialize the GEGL library, options are passed on to glib */
-void          gegl_init                  (gint          *argc,
-                                          gchar       ***argv);
+void           gegl_init                  (gint          *argc,
+                                           gchar       ***argv);
+
+/* Get a GOptionGroup for the commandline arguments recognized by GEGL */
+GOptionGroup * gegl_get_option_group      (void);
+
 /* Clean up the gegl library after use (global caches etc.) */
-void          gegl_exit                  (void);
+void           gegl_exit                  (void);
 
 /* Create a new gegl graph */
-GeglNode    * gegl_node_new              (void);
+GeglNode     * gegl_node_new              (void);
 
 /* create a new node belonging to a graph */
-GeglNode    * gegl_node_create_child     (GeglNode      *graph,
-                                          const gchar   *operation);
+GeglNode     * gegl_node_create_child     (GeglNode      *graph,
+                                           const gchar   *operation);
 
 /* create a new node belonging to a graph, with key/value pairs for properties,
  * terminated by NULL (remember to set "operation") */

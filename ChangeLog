@@ -1,3 +1,10 @@
+2007-01-15  Sven Neumann  <sven@gimp.org>
+
+	* gegl/gegl-init.[ch]
+	* gegl/gegl.h: added external API to use GEGL with the GOption
+	command-line parser. Will become useful if command-line options
+	are ever added.
+
 2007-01-15  Øyvind Kolås  <pippin@gimp.org>
 
 	Removed floating point code from innerlooops, manually unrolled

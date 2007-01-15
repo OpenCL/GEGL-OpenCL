@@ -24,9 +24,10 @@
 G_BEGIN_DECLS
 
 
-void   gegl_init (gint    *argc,
-                  gchar ***argv);
-void   gegl_exit (void);
+void           gegl_init             (gint    *argc,
+                                      gchar ***argv);
+GOptionGroup * gegl_get_option_group (void);
+void           gegl_exit             (void);
 
 
 G_END_DECLS
