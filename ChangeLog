@@ -1,3 +1,11 @@
+2007-01-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c:
+	  (gegl_buffer_iterate): fixed bug with black abyss to the left of
+	  non some buffers.
+ 	  (resample_bilinear_u8): moved 8bit 3 component into a special
+	  case to allow the compiler to more agressivly optimize it.
+
 2007-01-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-view.c: (computed_event): remove hack which overlaps

@@ -764,8 +764,8 @@ gegl_buffer_iterate (GeglBuffer *buffer,
           else
             pixels = tile_width - offsetx;
 
-          if (!(buffer_x + bufx + tile_width >= buffer_abyss_x &&
-                buffer_x + bufx              <  abyss_x_total))
+          if (!(buffer_x + bufx + tile_width >=  buffer_abyss_x &&
+                buffer_x + bufx              <   abyss_x_total))
             { /* entire tile is in abyss */
               if (!write)
                 {
@@ -865,10 +865,13 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 
                         {
                           gint zeros = (buffer_abyss_x) - (buffer_x + bufx);
-
                           /* left hand zeroing of abyss in tile */
-                          if (zeros > 0 && zeros < pixels)
+                          if (zeros > 0)
                             {
+                              if (zeros > pixels)
+                                zeros = pixels;
+                              if (zeros > tile_width)
+                                zeros = tile_width;
                               memset (bp, 0x00, bpx_size * zeros);
                             }
 
@@ -1102,7 +1105,7 @@ bilinear_8 (gint    dx,
             guchar *dst,
             gint    components)
 {
-#define DO_ITER(iter) \
+#define DO_COMPONENT(iter) \
     {\
       gint m0, m1;\
       m0 = ((255 - dx) * src0[iter] + dx * src1[iter])>>8;\
@@ -1113,25 +1116,24 @@ bilinear_8 (gint    dx,
   switch (components)
     {
       case 1:
-        DO_ITER(0);
+        DO_COMPONENT(0);
         break;
       case 2:
-        DO_ITER(0);
-        DO_ITER(1);
+        DO_COMPONENT(0);
+        DO_COMPONENT(1);
         break;
       case 3:
-        DO_ITER(0);
-        DO_ITER(1);
-        DO_ITER(2);
+        DO_COMPONENT(0);
+        DO_COMPONENT(1);
+        DO_COMPONENT(2);
         break;
       case 4:
-        DO_ITER(0);
-        DO_ITER(1);
-        DO_ITER(2);
-        DO_ITER(3);
+        DO_COMPONENT(0);
+        DO_COMPONENT(1);
+        DO_COMPONENT(2);
+        DO_COMPONENT(3);
         break;
     } 
-#undef DO_ITER
 }
 
 static void resample_bilinear_u8 (void *dest_buf,
@@ -1145,50 +1147,107 @@ static void resample_bilinear_u8 (void *dest_buf,
 {
   gint x,y;
   gint iscale = scale * 256;
-  
-  for (y=0;y<dest_h;y++)
+  gint s_rowstride = source_w * components;
+  gint d_rowstride = dest_w * components;
+
+  if (components == 3)  /* optimize specially for the 3 component case since that is
+                           the normal projection and needs to be FAST
+                         */
     {
-      gint    sy;
-      guchar *dst;
-      guchar *src_base;
-
-      sy = (y << 16) / iscale;
-
-      if (sy>(source_h-1) << 8)
-        sy=(source_h-2) << 8;
-
-      dst = ((guchar*)dest_buf) + y * dest_w * components;
-      src_base = ((guchar*)source_buf) + (sy >> 8) * source_w * components;
-
-      for (x=0;x<dest_w;x++)
+      for (y=0; y < dest_h; y++)
         {
-          gint    sx;
-          guchar *src0;
-          guchar *src1;
-          guchar *src2;
-          guchar *src3;
+          gint    sy;
+          gint    dy;
+          guchar *dst;
+          guchar *src_base;
 
-          sx = (x << 16) / iscale;
+          sy = (y << 16) / iscale;
 
-          if (sx>(source_w-1) << 8)
-            sx=(source_w-2) << 8;
+          if (sy>(source_h-1) << 8)
+            sy=(source_h-2) << 8;    /* is this the right thing to do? */
 
-          src0 = src_base + (sx>>8) * components;
-          src1 = src0 + components;
-          src2 = src0 + source_w * components;
-          src3 = src1 + source_w * components;
+          dy = sy & 255;
 
-          bilinear_8 (sx & 255, sy & 255, src0, src1, src2, src3, dst, components);
-          dst += components;
+          dst      = ((guchar*) dest_buf) + y * d_rowstride;
+          src_base = ((guchar*) source_buf) + (sy >> 8) * s_rowstride;
+
+          for (x=0; x < dest_w; x++)
+            {
+              gint    sx;
+              gint    dx;
+              guchar *src0;
+              guchar *src1;
+              guchar *src2;
+              guchar *src3;
+
+              sx = (x << 16) / iscale;
+
+              if (sx>(source_w-1) << 8)  /* this check to see if we're within bounds is expensive */
+                sx=(source_w-2) << 8;    /* and the action taken might not be quite right either */
+
+              dx = sx & 255;
+
+              src0 = src_base + (sx>>8) * 3;
+              src2 = src0 + s_rowstride;
+              src1 = src0 + 3;
+              src3 = src2 + 3;
+
+              DO_COMPONENT(0)
+              DO_COMPONENT(1)
+              DO_COMPONENT(2)
+              dst += 3;
+            }
+        }
+    }
+  else
+    {
+      for (y=0; y < dest_h; y++)
+        {
+          gint    sy;
+          gint    dy;
+          guchar *dst;
+          guchar *src_base;
+
+          sy = (y << 16) / iscale;
+
+          if (sy>(source_h-1) << 8)
+            sy=(source_h-2) << 8;    /* is this the right thing to do? */
+
+          dy = sy & 255;
+
+          dst      = ((guchar*) dest_buf) + y * d_rowstride;
+          src_base = ((guchar*) source_buf) + (sy >> 8) * s_rowstride;
+
+          for (x=0; x < dest_w; x++)
+            {
+              gint    sx;
+              gint    dx;
+              guchar *src0;
+              guchar *src1;
+              guchar *src2;
+              guchar *src3;
+
+              sx = (x << 16) / iscale;
+
+              if (sx>(source_w-1) << 8)  /* this check to see if we're within bounds is expensive */
+                sx=(source_w-2) << 8;    /* and the action taken might not be quite right either */
+
+              dx = sx & 255;
+
+              src0 = src_base + (sx>>8) * components;
+              src2 = src0 + s_rowstride;
+              src1 = src0 + components;
+              src3 = src2 + components;
+
+              bilinear_8 (dx, dy, src0, src1, src2, src3, dst, components);
+              dst += components;
+            }
         }
     }
 }
+#undef DO_COMPONENT
 
-void gegl_buffer_get (GeglBuffer    *buffer,
-                      GeglRectangle *rect,
-                      void          *dest_buf,
-                      void          *format,
-                      gdouble        scale)
+void gegl_buffer_get (GeglBuffer *buffer, GeglRectangle *rect, void *dest_buf, void *format, gdouble scale)
 {
   if (format == NULL)
     format = buffer->format;
