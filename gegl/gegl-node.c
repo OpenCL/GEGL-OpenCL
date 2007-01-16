@@ -1619,24 +1619,34 @@ gegl_node_insert_before (GeglNode *self,
 /* this needs to be exposed better, and more generically (Allowing to specify/return
  * pad name as well, as well as a list of nodes
  */
-GeglNode *gegl_node_get_consumer_node (GeglNode *node)
+GeglNode *
+gegl_node_get_consumer (GeglNode  *node,
+                        gchar    **input_pad_name)
 {
+  /*FIXME: support returning multiple connections */
+
+  GList   *connections;
   GeglPad *pad;
+
   if (!node)
     return NULL;
   
   pad = gegl_node_get_pad (node, "output");
   if (!pad)
     return NULL;
+
+  connections = gegl_pad_get_connections (pad);
+  if (connections)
     {
-      GList *pads = gegl_pad_get_connections (pad);
-      if (pads)
-        {
-          GeglConnection *connection = pads->data;
-          GeglPad *pad = gegl_connection_get_sink_pad (connection);
-          if (!strcmp (gegl_pad_get_name (pad), "input"))
-            return gegl_connection_get_sink_node (connection);
-        }
+       GeglConnection *connection = connections->data;
+       GeglPad *pad = gegl_connection_get_sink_pad (connection);
+       if (input_pad_name)
+         {
+           *input_pad_name = g_strdup (gegl_pad_get_name (pad));
+         }
+
+       /*if (!strcmp (gegl_pad_get_name (pad), "input"))*/
+       return gegl_connection_get_sink_node (connection);
     }
   return NULL;
 }

@@ -53,7 +53,19 @@ GeglNode *gegl_next_sibling (GeglNode *item)
 
 GeglNode *gegl_previous_sibling (GeglNode *item)
 {
-  return gegl_node_get_consumer_node (item);
+  GeglNode *node;
+  gchar    *pad;
+  
+  node = gegl_node_get_consumer (item, &pad);
+  if (node)
+    {
+      if (strcmp (pad, "input"))
+        {
+          /* any other node but input we're not interested in */
+          node = NULL;
+        }
+    }
+  return node;
 }
 
 GeglNode *gegl_parent (GeglNode *item)

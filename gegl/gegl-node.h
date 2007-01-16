@@ -189,7 +189,8 @@ GeglNode    * gegl_node_detect                (GeglNode     *root,
 void          gegl_node_insert_before         (GeglNode     *self,
                                                GeglNode     *to_be_inserted);
 
-GeglNode    * gegl_node_get_consumer_node     (GeglNode *node);
+GeglNode    * gegl_node_get_consumer          (GeglNode     *node,
+                                               gchar       **input_pad_name);
 
 enum
 {

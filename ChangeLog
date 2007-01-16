@@ -1,5 +1,19 @@
 2007-01-16  Øyvind Kolås  <pippin@gimp.org>
 
+	Improved work on the introspection capabilities in the yet not
+	public API to do that. It still only supports a single output
+	correctly but it now also reports the name of the pad the node
+	is providing data for.
+
+	* gegl/gegl-node.c: (gegl_node_get_consumer):
+	* gegl/gegl-node.h:
+
+	Modified the binary accordingly.
+
+	* bin/gegl-store.c: (gegl_previous_sibling):
+
+2007-01-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c:
 	  (gegl_buffer_iterate): fixed bug with black abyss to the left of
 	  non some buffers.
