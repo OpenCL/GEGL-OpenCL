@@ -170,9 +170,10 @@ editor_main (GeglNode    *gegl,
   editor.graph_editor = NULL;/*gtk_label_new ("graph");*/
   editor.window = create_window (&editor);
   treeview = tree_editor_get_treeview (editor.tree_editor);
-  gtk_container_add (GTK_CONTAINER (editor.property_editor), gtk_label_new (editor.options->file));
+  gtk_container_add (GTK_CONTAINER (editor.property_editor),
+                     gtk_label_new (editor.options->file));
   gtk_widget_show (editor.window);
-  gtk_container_set_border_width (GTK_CONTAINER (editor.property_editor), 4);
+  gtk_container_set_border_width (GTK_CONTAINER (editor.property_editor), 6);
 
   editor_set_gegl (gegl);
 
@@ -424,22 +425,19 @@ cb_composition_new (GtkAction *action)
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
                                         GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
                                         NULL);
+  gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
 
-  alert =
-    StockIcon (GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG,
-               editor.window);
-
-  label =
-    gtk_label_new
-    ("Discard current composition?\nAll unsaved data will be lost.");
-
-  gtk_misc_set_padding (GTK_MISC (label), 10, 10);
-
-  hbox = gtk_hbox_new (FALSE, 5);
-  gtk_container_add (GTK_CONTAINER (hbox), alert);
-  gtk_container_add (GTK_CONTAINER (hbox), label);
-
+  hbox = gtk_hbox_new (FALSE, 12);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox), 12);
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG (dialog)->vbox), hbox);
+
+  alert = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING,
+                                    GTK_ICON_SIZE_DIALOG);
+  gtk_container_add (GTK_CONTAINER (hbox), alert);
+
+  label = gtk_label_new ("Discard current composition?\n"
+                         "All unsaved data will be lost.");
+  gtk_container_add (GTK_CONTAINER (hbox), label);
 
   gtk_widget_show_all (dialog);
   result = gtk_dialog_run (GTK_DIALOG (dialog));
@@ -479,6 +477,7 @@ cb_composition_load (GtkAction *action)
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                         GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                                         NULL);
+
   filter = gtk_file_filter_new ();
   gtk_file_filter_add_mime_type (filter, "text/xml");
   gtk_file_filter_set_name (filter, "GEGL composition");
@@ -597,21 +596,20 @@ cb_quit_dialog (GtkAction *action)
                                         GTK_STOCK_SAVE, 4,
                                         GTK_STOCK_QUIT, GTK_RESPONSE_ACCEPT,
                                         NULL);
+  gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
 
+  hbox = gtk_hbox_new (FALSE, 12);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox), 12);
+  gtk_container_add (GTK_CONTAINER (GTK_DIALOG (dialog)->vbox), hbox);
 
-  alert =
-    StockIcon (GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG,
-               editor.window);
+  alert = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING,
+                                    GTK_ICON_SIZE_DIALOG);
+  gtk_container_add (GTK_CONTAINER (hbox), alert);
 
   label = gtk_label_new ("Really quit?\nAll unsaved data will be lost.");
-  gtk_misc_set_padding (GTK_MISC (label), 10, 10);
-
-  hbox = gtk_hbox_new (FALSE, 5);
-  gtk_container_add (GTK_CONTAINER (hbox), alert);
   gtk_container_add (GTK_CONTAINER (hbox), label);
 
   gtk_widget_show_all (hbox);
-  gtk_container_add (GTK_CONTAINER (GTK_DIALOG (dialog)->vbox), hbox);
 
   result = gtk_dialog_run (GTK_DIALOG (dialog));
   switch (result)
@@ -1106,19 +1104,6 @@ static void cb_zoom_out (GtkAction *action)
 static void cb_export (GtkAction *action)
 {
   export_window ();
-}
-
-GtkWidget *
-StockIcon (const gchar *id, GtkIconSize size, GtkWidget *widget)
-{
-  GdkPixbuf *icon;
-  GtkWidget *image;
-
-  icon = gtk_widget_render_icon (widget, id, size, "");
-  image = gtk_image_new_from_pixbuf (icon);
-
-  g_object_unref (icon);
-  return image;
 }
 
 void editor_refresh_structure (void)
