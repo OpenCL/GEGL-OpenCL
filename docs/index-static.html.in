@@ -122,7 +122,8 @@
             <li>8bit, 16bit integer and 32bit floating point, RGB, CIE Lab,
             YCbCr and naive CMYK output.</li>
             <li>Extendable through plug-ins.</li>
-            <li>XML, C and Python interfaces.</li>
+            <li>C, Ruby and Python interfaces.</li>
+            <li>XML model</li>
             <li>Memory efficient evaluation of subregions.</li>
             <li>Tiled, sparse, pyramidial and larger than RAM buffers.</li>
             <li>Hit detection.</li>

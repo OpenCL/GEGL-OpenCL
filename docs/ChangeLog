@@ -1,5 +1,9 @@
 2007-01-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.html.in: added mention of ruby binding in feature list.
+
+2007-01-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* index-static.html.in: fixed URL for anonymous svn access.
 
 2007-01-08  Øyvind Kolås  <pippin@gimp.org>
