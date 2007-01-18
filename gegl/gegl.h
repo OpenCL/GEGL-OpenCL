@@ -49,21 +49,21 @@ struct _GeglRectangle
 #endif
 
 /* Initialize the GEGL library, options are passed on to glib */
-void           gegl_init                  (gint          *argc,
-                                           gchar       ***argv);
+void           gegl_init                 (gint          *argc,
+                                          gchar       ***argv);
 
 /* Get a GOptionGroup for the commandline arguments recognized by GEGL */
-GOptionGroup * gegl_get_option_group      (void);
+GOptionGroup * gegl_get_option_group     (void);
 
 /* Clean up the gegl library after use (global caches etc.) */
-void           gegl_exit                  (void);
+void           gegl_exit                 (void);
 
 /* Create a new gegl graph */
-GeglNode     * gegl_node_new              (void);
+GeglNode     * gegl_node_new             (void);
 
 /* create a new node belonging to a graph */
-GeglNode     * gegl_node_create_child     (GeglNode      *graph,
-                                           const gchar   *operation);
+GeglNode     * gegl_node_create_child    (GeglNode      *graph,
+                                          const gchar   *operation);
 
 /* create a new node belonging to a graph, with key/value pairs for properties,
  * terminated by NULL (remember to set "operation") */
@@ -75,7 +75,7 @@ GeglNode    * gegl_node_new_child        (GeglNode      *graph,
  * return a list of children for this graph node. The list should _not_ be
  * freed (XXX:maybe this should change?)
  */
-GList       * gegl_node_get_children     (GeglNode    *graph);
+GList       * gegl_node_get_children     (GeglNode      *graph);
 
 /* connect the output pad of a different node to this nodes input pad,
  * pads specified by names ("input","aux" and "output" are the names
@@ -88,8 +88,8 @@ gboolean      gegl_node_connect_from     (GeglNode      *sink,
 
 /* Returns the node connected to the specified input, or NULL if none.
  */
-GeglNode    * gegl_node_get_connected_to (GeglNode        *self,
-                                          gchar           *input_pad_name);
+GeglNode    * gegl_node_get_connected_to (GeglNode      *self,
+                                          gchar         *input_pad_name);
 
 /* Connect the data coming from one of our output pads to an input pad
  * on an other node */
