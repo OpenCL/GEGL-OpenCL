@@ -199,7 +199,7 @@ rectangular regions to be repainted.
     <p>The current code under development can be <a
 href='http://svn.gnome.org/viewscvs/gegl/trunk/'>browsed online</a> and checked
 out from GNOME Subversion using: </p> <pre>svn co
-http://svn.gnome.org/svn/gegl/trunk/gegl/trunk gegl</pre>
+http://svn.gnome.org/svn/gegl/trunk/ gegl</pre>
 
         <a name='Bugzilla'></a>
         <h3>Bugzilla</h3>
