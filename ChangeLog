@@ -1,5 +1,9 @@
 2007-01-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.h: reindented.
+
+2007-01-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.h: getting nit-picky with indentation just because this
 	is the public API and thus the best excuse for documentation right
 	now.

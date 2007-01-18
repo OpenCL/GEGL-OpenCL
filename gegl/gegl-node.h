@@ -67,130 +67,130 @@ struct _GeglNodeClass
 
 /* renders the desired region of interest to a buffer of the specified
  * bablformat */
-void          gegl_node_blit                 (GeglNode      *self,
-                                              GeglRectangle *roi,
-                                              void          *format,
-                                              gint           rowstride,
-                                              gpointer      *destination_buf);
+void          gegl_node_blit                (GeglNode      *self,
+                                             GeglRectangle *roi,
+                                             void          *format,
+                                             gint           rowstride,
+                                             gpointer      *destination_buf);
 
-GeglRectangle      gegl_node_get_bounding_box (GeglNode     *root);
+GeglRectangle gegl_node_get_bounding_box    (GeglNode      *root);
 
-void          gegl_node_link                  (GeglNode     *source,
-                                               GeglNode     *sink);
+void          gegl_node_link                (GeglNode      *source,
+                                             GeglNode      *sink);
 
-void          gegl_node_link_many             (GeglNode     *source,
-                                               GeglNode     *dest,
-                                               ...) G_GNUC_NULL_TERMINATED;
+void          gegl_node_link_many           (GeglNode      *source,
+                                             GeglNode      *dest,
+                                             ...) G_GNUC_NULL_TERMINATED;
 
-gboolean      gegl_node_connect_from          (GeglNode     *self,
-                                               const gchar  *input_pad_name,
-                                               GeglNode     *source,
-                                               const gchar  *output_pad_name);
+gboolean      gegl_node_connect_from        (GeglNode      *self,
+                                             const gchar   *input_pad_name,
+                                             GeglNode      *source,
+                                             const gchar   *output_pad_name);
 
-gboolean      gegl_node_connect_to            (GeglNode    *self,
-                                               const gchar *output_pad_name,
-                                               GeglNode    *sink,
-                                               const gchar *input_pad_name);
+gboolean      gegl_node_connect_to          (GeglNode      *self,
+                                             const gchar   *output_pad_name,
+                                             GeglNode      *sink,
+                                             const gchar   *input_pad_name);
 
-gboolean      gegl_node_disconnect            (GeglNode     *self,
-                                               const gchar  *input_pad_name);
+gboolean      gegl_node_disconnect          (GeglNode      *self,
+                                             const gchar   *input_pad_name);
 
-void          gegl_node_set                   (GeglNode     *self,
-                                               const gchar  *first_property_name,
-                                               ...) G_GNUC_NULL_TERMINATED;
-void          gegl_node_get                   (GeglNode     *self,
-                                               const gchar  *first_property_name,
-                                               ...) G_GNUC_NULL_TERMINATED;
+void          gegl_node_set                 (GeglNode      *self,
+                                             const gchar   *first_property_name,
+                                             ...) G_GNUC_NULL_TERMINATED;
+void          gegl_node_get                 (GeglNode      *self,
+                                             const gchar   *first_property_name,
+                                             ...) G_GNUC_NULL_TERMINATED;
 
 /* functions below are internal to gegl */
 
-GType         gegl_node_get_type              (void) G_GNUC_CONST;
+GType         gegl_node_get_type            (void) G_GNUC_CONST;
 
-GeglNodeDynamic *gegl_node_get_dynamic        (GeglNode     *self,
-                                               gpointer      context_id);
-void             gegl_node_remove_dynamic     (GeglNode     *self,
-                                               gpointer      context_id);
-GeglNodeDynamic *gegl_node_add_dynamic        (GeglNode     *self,
-                                               gpointer      context_id);
+GeglNodeDynamic *gegl_node_get_dynamic      (GeglNode      *self,
+                                             gpointer       context_id);
+void             gegl_node_remove_dynamic   (GeglNode      *self,
+                                             gpointer       context_id);
+GeglNodeDynamic *gegl_node_add_dynamic      (GeglNode      *self,
+                                             gpointer       context_id);
 
-void          gegl_node_add_pad               (GeglNode     *self,
-                                               GeglPad      *pad);
-GeglPad     * gegl_node_create_pad            (GeglNode     *self,
-                                               GParamSpec   *param_spec);
-void          gegl_node_remove_pad            (GeglNode     *self,
-                                               GeglPad      *pad);
-GeglPad     * gegl_node_get_pad               (GeglNode     *self,
-                                               const gchar  *name);
-GList       * gegl_node_get_pads              (GeglNode     *self);
-GList       * gegl_node_get_input_pads        (GeglNode     *self);
-GList       * gegl_node_get_output_pads       (GeglNode     *self);
-gint          gegl_node_get_num_input_pads    (GeglNode     *self);
-gint          gegl_node_get_num_output_pads   (GeglNode     *self);
-GList       * gegl_node_get_sinks             (GeglNode     *self);
-GList       * gegl_node_get_sources           (GeglNode     *self);
-gint          gegl_node_get_num_sources       (GeglNode     *self);
-gint          gegl_node_get_num_sinks         (GeglNode     *self);
-void          gegl_node_disconnect_sinks      (GeglNode     *self);
-void          gegl_node_disconnect_sources    (GeglNode     *self);
+void          gegl_node_add_pad             (GeglNode      *self,
+                                             GeglPad       *pad);
+GeglPad     * gegl_node_create_pad          (GeglNode      *self,
+                                             GParamSpec    *param_spec);
+void          gegl_node_remove_pad          (GeglNode      *self,
+                                             GeglPad       *pad);
+GeglPad     * gegl_node_get_pad             (GeglNode      *self,
+                                             const gchar   *name);
+GList       * gegl_node_get_pads            (GeglNode      *self);
+GList       * gegl_node_get_input_pads      (GeglNode      *self);
+GList       * gegl_node_get_output_pads     (GeglNode      *self);
+gint          gegl_node_get_num_input_pads  (GeglNode      *self);
+gint          gegl_node_get_num_output_pads (GeglNode      *self);
+GList       * gegl_node_get_sinks           (GeglNode      *self);
+GList       * gegl_node_get_sources         (GeglNode      *self);
+gint          gegl_node_get_num_sources     (GeglNode      *self);
+gint          gegl_node_get_num_sinks       (GeglNode      *self);
+void          gegl_node_disconnect_sinks    (GeglNode      *self);
+void          gegl_node_disconnect_sources  (GeglNode      *self);
 
 
-GeglNode    * gegl_node_get_connected_to      (GeglNode     *self,
-                                               gchar        *pad_name);
+GeglNode    * gegl_node_get_connected_to    (GeglNode      *self,
+                                             gchar         *pad_name);
 
-GList       * gegl_node_get_depends_on        (GeglNode     *self);
-GeglBuffer  * gegl_node_apply                 (GeglNode     *self,
-                                               const gchar  *output_pad_name);
-void          gegl_node_process               (GeglNode     *self);
-void          gegl_node_set_valist            (GeglNode     *object,
-                                               const gchar  *first_property_name,
-                                               va_list       var_args);
-void          gegl_node_get_valist            (GeglNode     *object,
-                                               const gchar  *first_property_name,
-                                               va_list       var_args);
-void          gegl_node_set_property          (GeglNode     *object,
-                                               const gchar  *property_name,
-                                               const GValue *value);
-void          gegl_node_get_property          (GeglNode     *object,
-                                               const gchar  *property_name,
-                                               GValue       *value);
-GParamSpec ** gegl_node_get_properties        (GeglNode     *self,
-                                               guint        *n_properties);
-GParamSpec *  gegl_node_find_property         (GeglNode     *self,
-                                               const gchar  *property_name);
-GeglRectangle    * gegl_node_get_have_rect    (GeglNode     *node);
-void          gegl_node_set_have_rect         (GeglNode     *node,
-                                               gint          x,
-                                               gint          y,
-                                               gint          width,
-                                               gint          height);
-GeglRectangle    * gegl_node_get_need_rect    (GeglNode     *node,
-                                               gpointer      context_id);
-void          gegl_node_set_need_rect         (GeglNode     *node,
-                                               gpointer      context_id,
-                                               gint          x,
-                                               gint          y,
-                                               gint          width,
-                                               gint          height);
+GList       * gegl_node_get_depends_on      (GeglNode      *self);
+GeglBuffer  * gegl_node_apply               (GeglNode      *self,
+                                             const gchar   *output_pad_name);
+void          gegl_node_process             (GeglNode      *self);
+void          gegl_node_set_valist          (GeglNode      *object,
+                                             const gchar   *first_property_name,
+                                             va_list        var_args);
+void          gegl_node_get_valist          (GeglNode      *object,
+                                             const gchar   *first_property_name,
+                                             va_list        var_args);
+void          gegl_node_set_property        (GeglNode      *object,
+                                             const gchar   *property_name,
+                                             const GValue  *value);
+void          gegl_node_get_property        (GeglNode      *object,
+                                             const gchar   *property_name,
+                                             GValue        *value);
+GParamSpec ** gegl_node_get_properties      (GeglNode      *self,
+                                             guint         *n_properties);
+GParamSpec *  gegl_node_find_property       (GeglNode      *self,
+                                             const gchar   *property_name);
+GeglRectangle    * gegl_node_get_have_rect  (GeglNode      *node);
+void          gegl_node_set_have_rect       (GeglNode      *node,
+                                             gint           x,
+                                             gint           y,
+                                             gint           width,
+                                             gint           height);
+GeglRectangle    * gegl_node_get_need_rect  (GeglNode      *node,
+                                             gpointer       context_id);
+void          gegl_node_set_need_rect       (GeglNode      *node,
+                                             gpointer       context_id,
+                                             gint           x,
+                                             gint           y,
+                                             gint           width,
+                                             gint           height);
  
-void          gegl_node_set_result_rect       (GeglNode     *node,
-                                               gpointer      context_id,
-                                               gint          x,
-                                               gint          y,
-                                               gint          width,
-                                               gint          height);
+void          gegl_node_set_result_rect     (GeglNode      *node,
+                                             gpointer       context_id,
+                                             gint           x,
+                                             gint           y,
+                                             gint           width,
+                                             gint           height);
 
-const gchar * gegl_node_get_operation         (GeglNode     *node);
+const gchar * gegl_node_get_operation       (GeglNode      *node);
 
-const gchar * gegl_node_get_debug_name        (GeglNode     *node);
+const gchar * gegl_node_get_debug_name      (GeglNode      *node);
 
-GeglNode    * gegl_node_detect                (GeglNode     *root,
-                                               gint          x,
-                                               gint          y);
-void          gegl_node_insert_before         (GeglNode     *self,
-                                               GeglNode     *to_be_inserted);
+GeglNode    * gegl_node_detect              (GeglNode      *root,
+                                             gint           x,
+                                             gint           y);
+void          gegl_node_insert_before       (GeglNode      *self,
+                                             GeglNode      *to_be_inserted);
 
-GeglNode    * gegl_node_get_consumer          (GeglNode     *node,
-                                               gchar       **input_pad_name);
+GeglNode    * gegl_node_get_consumer        (GeglNode      *node,
+                                             gchar        **input_pad_name);
 
 enum
 {
