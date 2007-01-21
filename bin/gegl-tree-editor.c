@@ -171,7 +171,7 @@ tree_editor_set_active (GtkWidget *tree_editor, GeglNode *item)
   // gtk_tree_view_collapse_all (treeview);
   gtk_tree_view_expand_to_path (treeview, path);
   gtk_tree_selection_select_iter (tree_selection, &iter);
-  gtk_tree_view_scroll_to_cell (treeview, path, NULL, TRUE, 0, 0);
+  gtk_tree_view_scroll_to_cell (treeview, path, NULL, TRUE, 0.5, 0);
 
   gtk_tree_path_free (path);
 }

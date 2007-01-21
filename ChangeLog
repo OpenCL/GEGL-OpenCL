@@ -1,5 +1,10 @@
 2007-01-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-tree-editor.c: (tree_editor_set_active): make the selected
+	element in the treeview end up in the middle instead of at the top.
+
+2007-01-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-utils.c: (gegl_rect_intersect): allow passing a NULL
 	destination, if we're only interested in the boolean return value.
 
