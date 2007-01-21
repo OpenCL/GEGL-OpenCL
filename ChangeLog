@@ -1,3 +1,10 @@
+2007-01-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/core/shift.c: (process), (get_defined_region),
+	(get_affected_region), (calc_source_regions), (detect): floor the
+	parameters to avoid issues with different rounding in rect
+	computations and processing.
+
 2007-01-21  Øyvind Kolås  <pippin@gimp.org>
 
 	* bin/gegl-tree-editor.c: (tree_editor_set_active): make the selected

@@ -17,6 +17,7 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
+
 #if GEGL_CHANT_PROPERTIES
  
 gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0,
@@ -34,13 +35,13 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0,
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
-
+#include <math.h>
 #include <stdio.h>
 
 int gegl_chant_foo = 0;
-  
-/* Actual image processing code
- ************************************************************************/
+
+/*FIXME: check that all rounding done here makes sense */
+
 static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
@@ -50,6 +51,9 @@ process (GeglOperation *operation,
   GeglChantOperation *translate = GEGL_CHANT_OPERATION (operation);
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+
+  translate->x = floor (translate->x);
+  translate->y = floor (translate->y);
 
   g_assert (input);
   g_assert (gegl_buffer_get_format (input));
@@ -75,8 +79,8 @@ get_defined_region (GeglOperation *operation)
     return result;
 
   result = *in_rect;
-  result.x += op_shift->x;
-  result.y += op_shift->y;
+  result.x += floor(op_shift->x);
+  result.y += floor(op_shift->y);
  
   return result;
 }
@@ -88,8 +92,8 @@ get_affected_region (GeglOperation *operation,
 {
   GeglChantOperation  *op_shift = (GeglChantOperation*)(operation);
  
-  region.x += op_shift->x;
-  region.y += op_shift->y;
+  region.x += floor(op_shift->x);
+  region.y += floor(op_shift->y);
   return region;
 }
 
@@ -100,8 +104,8 @@ calc_source_regions (GeglOperation *self,
   GeglChantOperation *op_shift = (GeglChantOperation*)(self);
   GeglRectangle       rect = *gegl_operation_get_requested_region (self, context_id);
 
-  rect.x -= op_shift->x;
-  rect.y -= op_shift->y;
+  rect.x -= floor(op_shift->x);
+  rect.y -= floor(op_shift->y);
 
   gegl_operation_set_source_region (self, context_id, "input", &rect);
   return TRUE;
@@ -114,7 +118,7 @@ detect (GeglOperation *operation,
 {
   GeglChantOperation *shift = (GeglChantOperation*)(operation);
   GeglNode *input_node = gegl_operation_get_source_node (operation, "input");
-  return gegl_operation_detect (input_node->operation, x-shift->x, y-shift->y);
+  return gegl_operation_detect (input_node->operation, x-floor(shift->x), y-floor(shift->y));
   /*return gegl_operation_detect (input_node->operation, x+shift->x, y+shift->y);*/
 }
 
