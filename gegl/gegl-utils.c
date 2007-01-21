@@ -114,7 +114,8 @@ gegl_rect_intersect (GeglRectangle *dest,
 
   if (x2 <= x1)
     {
-      gegl_rect_set (dest,0,0,0,0);
+      if (dest)
+        gegl_rect_set (dest,0,0,0,0);
       return FALSE;
     }
 
@@ -123,14 +124,13 @@ gegl_rect_intersect (GeglRectangle *dest,
 
   if (y2 <= y1)
     {
-      gegl_rect_set (dest,0,0,0,0);
+      if (dest)
+        gegl_rect_set (dest,0,0,0,0);
       return FALSE;
     }
 
-  dest->x = x1;
-  dest->y = y1;
-  dest->w = x2 - x1;
-  dest->h = y2 - y1;
+  if (dest)
+    gegl_rect_set (dest, x1, y1, x2 - x1, y2 - y1);
   return TRUE;
 }
 

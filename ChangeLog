@@ -1,5 +1,10 @@
 2007-01-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-utils.c: (gegl_rect_intersect): allow passing a NULL
+	destination, if we're only interested in the boolean return value.
+
+2007-01-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/gtk-display.c: (process): added NULL pointer
 	for new argument of gegl_node_get_connected_to.
 
