@@ -42,12 +42,9 @@
 
 /*FIXME: this should be in gegl.h*/
 
-GeglNode * gegl_node_get_output_proxy         (GeglNode     *graph,
-                                       const gchar  *name);
+GeglNode * gegl_node_get_output_proxy  (GeglNode     *graph,
+                                        const gchar  *name);
 
-
-GeglNode * gegl_node_get_connected_to (GeglNode     *self,
-                                       gchar        *pad_name);
 
 /******************/
 
@@ -182,7 +179,7 @@ main (gint    argc,
 
       gchar **operation = o->rest;
       proxy = gegl_node_get_output_proxy (gegl, "output");
-      iter = gegl_node_get_connected_to (proxy, "input");
+      iter = gegl_node_get_connected_to (proxy, "input", NULL);
 
       while (*operation)
         {

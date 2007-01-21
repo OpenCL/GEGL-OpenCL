@@ -43,8 +43,8 @@ static GeglRectangle get_input_rect (void)
   GeglNode *iter = gegl_node_get_output_proxy (editor.gegl, "output");
   gegl_node_get_bounding_box (editor.gegl);  /* to trigger defined setting for all */
   while (iter &&
-         gegl_node_get_connected_to (iter, "input")){
-    iter = gegl_node_get_connected_to (iter, "input");
+         gegl_node_get_connected_to (iter, "input", NULL)){
+    iter = gegl_node_get_connected_to (iter, "input", NULL);
   }
   return iter->have_rect;
 }

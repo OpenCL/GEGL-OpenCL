@@ -89,7 +89,8 @@ gboolean      gegl_node_connect_from     (GeglNode      *sink,
 /* Returns the node connected to the specified input, or NULL if none.
  */
 GeglNode    * gegl_node_get_connected_to (GeglNode      *self,
-                                          gchar         *input_pad_name);
+                                          gchar         *input_pad_name,
+                                          gchar        **output_pad_name);
 
 /* Connect the data coming from one of our output pads to an input pad
  * on an other node */

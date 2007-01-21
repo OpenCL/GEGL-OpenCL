@@ -41,14 +41,14 @@
 
 GeglNode *gegl_children (GeglNode *item)
 {
-  return gegl_node_get_connected_to (item, "aux");
+  return gegl_node_get_connected_to (item, "aux", NULL);
 }
 
 GeglNode *gegl_next_sibling (GeglNode *item)
 {
   if (!strcmp (gegl_node_get_operation (item), "clone"))
     return NULL;
-  return gegl_node_get_connected_to (item, "input");
+  return gegl_node_get_connected_to (item, "input", NULL); /* FIXME: handle padname */
 }
 
 GeglNode *gegl_previous_sibling (GeglNode *item)
@@ -56,7 +56,7 @@ GeglNode *gegl_previous_sibling (GeglNode *item)
   GeglNode *node;
   gchar    *pad;
   
-  node = gegl_node_get_consumer (item, &pad);
+  node = gegl_node_get_consumer (item, "output", &pad);
   if (node)
     {
       if (strcmp (pad, "input"))
@@ -64,6 +64,7 @@ GeglNode *gegl_previous_sibling (GeglNode *item)
           /* any other node but input we're not interested in */
           node = NULL;
         }
+      g_free (pad);
     }
   return node;
 }

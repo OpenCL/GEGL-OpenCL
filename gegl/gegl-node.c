@@ -966,8 +966,8 @@ gegl_node_set_operation_object (GeglNode      *self,
         pad  = gegl_connection_get_sink_pad (connection);
         output_dest_pad = g_strdup (pad->param_spec->name);
       }
-    input = gegl_node_get_connected_to (self, "input");
-    aux   = gegl_node_get_connected_to (self, "aux");
+    input = gegl_node_get_connected_to (self, "input", NULL);
+    aux   = gegl_node_get_connected_to (self, "aux", NULL);
 
     gegl_node_disconnect_sources (self);
     gegl_node_disconnect_sinks (self);
@@ -1403,7 +1403,8 @@ gegl_node_get_debug_name (GeglNode     *node)
 
 GeglNode *
 gegl_node_get_connected_to (GeglNode *node,
-                            gchar    *pad_name)
+                            gchar    *pad_name,
+                            gchar   **output_pad_name)
 {
   GeglPad *pad = gegl_node_get_pad (node, pad_name);
 
@@ -1413,6 +1414,11 @@ gegl_node_get_connected_to (GeglNode *node,
     {
       GeglConnection *connection = g_list_nth_data (pad->connections, 0);
 
+      if (output_pad_name)
+        {
+          GeglPad *pad= gegl_connection_get_source_pad (connection);
+          *output_pad_name = g_strdup (gegl_pad_get_name (pad));
+        }
       return gegl_connection_get_source_node (connection);
     }
   return NULL;
@@ -1470,7 +1476,7 @@ gegl_node_process (GeglNode *self)
   g_return_if_fail (g_type_is_a (G_OBJECT_TYPE(self->operation),
                     GEGL_TYPE_OPERATION_SINK));
 
-  input = gegl_node_get_connected_to (self, "input");
+  input = gegl_node_get_connected_to (self, "input", NULL);
   defined = gegl_node_get_bounding_box (input);
   buffer = gegl_node_apply_roi (input, "output", &defined);
 
@@ -1604,7 +1610,7 @@ void
 gegl_node_insert_before (GeglNode *self,
                          GeglNode *to_be_inserted)
 {
-  GeglNode *other = gegl_node_get_connected_to (self, "input");
+  GeglNode *other = gegl_node_get_connected_to (self, "input", NULL); /*XXX: handle pad name */
   GeglRectangle rectangle = gegl_node_get_bounding_box (to_be_inserted);
 
   g_signal_handlers_block_matched (other, G_SIGNAL_MATCH_FUNC, 0, 0, 0, source_invalidated, NULL);
@@ -1616,38 +1622,110 @@ gegl_node_insert_before (GeglNode *self,
                  0, &rectangle, NULL);
 }
 
+gint
+gegl_node_get_consumers (GeglNode    *node,
+                         const gchar *output_pad,
+                         GeglNode  ***nodes,
+                         gchar     ***pads)
+{
+  GList   *connections;
+  gint     n_connections;
+  GeglPad *pad;
+  gchar  **pasp=NULL;
+
+  if (!node)
+    {
+      g_warning ("%s node==NULL", __FUNCTION__);
+      return 0;
+    }
+  
+  pad = gegl_node_get_pad (node, output_pad);
+
+  if (!pad)
+    {
+      g_warning ("%s: no such pad %s for %s", __FUNCTION__, output_pad, gegl_node_get_debug_name (node));
+      return 0;
+    }
+
+  connections = gegl_pad_get_connections (pad);
+  {
+    GList *iter;
+    gint pasp_size=0;
+    gint i;
+    gint pasp_pos=0;
+
+    n_connections = g_list_length (connections);
+    pasp_size+= (n_connections+1) * sizeof (gchar*);
+
+    for (iter=connections;iter;iter=g_list_next(iter))
+      {
+        GeglConnection *connection = iter->data;
+        GeglPad *pad = gegl_connection_get_sink_pad (connection);
+        pasp_size+=strlen (gegl_pad_get_name (pad)) + 1;
+      }
+    if (nodes)
+      *nodes = g_malloc ((n_connections + 1) * sizeof (void*));
+    if (pads)
+      {
+        pasp = g_malloc (pasp_size);
+        *pads = pasp;
+      }
+    i=0;
+    pasp_pos=(n_connections + 1) * sizeof(void*);
+    for (iter=connections;iter;iter=g_list_next(iter))
+      {
+        GeglConnection *connection = iter->data;
+        GeglPad  *pad = gegl_connection_get_sink_pad (connection);
+        GeglNode *node = gegl_connection_get_sink_node (connection);
+        const gchar *pad_name = gegl_pad_get_name (pad);
+
+        if (nodes)
+          (*nodes)[i]=node;
+        if (pasp)
+          {
+            pasp[i] = ((gchar*)pasp) + pasp_pos;
+            strcpy (pasp[i], pad_name);
+          }
+        pasp_pos += strlen (pad_name)+1;
+        i++;
+      }
+    if (nodes)
+      (*nodes)[i]=NULL;
+    if (pads)
+      pasp[i]=NULL;
+  }
+  return n_connections;
+}
+
+
 /* this needs to be exposed better, and more generically (Allowing to specify/return
  * pad name as well, as well as a list of nodes
  */
 GeglNode *
-gegl_node_get_consumer (GeglNode  *node,
-                        gchar    **input_pad_name)
+gegl_node_get_consumer (GeglNode     *node,
+                        const gchar  *output_pad,
+                        gchar       **input_pad_name)
 {
-  /*FIXME: support returning multiple connections */
-
-  GList   *connections;
-  GeglPad *pad;
+  GeglNode **nodes = NULL;
+  GeglNode  *ret=NULL;
+  gchar    **pads;
+  gint       count = 0;
 
   if (!node)
-    return NULL;
-  
-  pad = gegl_node_get_pad (node, "output");
-  if (!pad)
-    return NULL;
+    return ret;
+  count = gegl_node_get_consumers (node, output_pad, &nodes, &pads);
+  if (!count)
+    return ret;
+  g_assert (nodes);
+  g_assert (pads);
 
-  connections = gegl_pad_get_connections (pad);
-  if (connections)
+  if (input_pad_name)
     {
-       GeglConnection *connection = connections->data;
-       GeglPad *pad = gegl_connection_get_sink_pad (connection);
-       if (input_pad_name)
-         {
-           *input_pad_name = g_strdup (gegl_pad_get_name (pad));
-         }
-
-       /*if (!strcmp (gegl_pad_get_name (pad), "input"))*/
-       return gegl_connection_get_sink_node (connection);
+      *input_pad_name = g_strdup (pads[0]);
     }
-  return NULL;
+  ret = nodes[0];
+  g_free (nodes);
+  g_free (pads);
+  return ret;
 }
 

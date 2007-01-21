@@ -132,11 +132,9 @@ gint          gegl_node_get_num_sources     (GeglNode      *self);
 gint          gegl_node_get_num_sinks       (GeglNode      *self);
 void          gegl_node_disconnect_sinks    (GeglNode      *self);
 void          gegl_node_disconnect_sources  (GeglNode      *self);
-
-
 GeglNode    * gegl_node_get_connected_to    (GeglNode      *self,
-                                             gchar         *pad_name);
-
+                                             gchar         *pad_name,
+                                             gchar        **output_pad);
 GList       * gegl_node_get_depends_on      (GeglNode      *self);
 GeglBuffer  * gegl_node_apply               (GeglNode      *self,
                                              const gchar   *output_pad_name);
@@ -188,8 +186,12 @@ GeglNode    * gegl_node_detect              (GeglNode      *root,
                                              gint           y);
 void          gegl_node_insert_before       (GeglNode      *self,
                                              GeglNode      *to_be_inserted);
-
+gint          gegl_node_get_consumers       (GeglNode      *node,
+                                             const gchar   *output_pad,
+                                             GeglNode    ***nodes,
+                                             gchar       ***pads);
 GeglNode    * gegl_node_get_consumer        (GeglNode      *node,
+                                             const gchar   *output_pad,
                                              gchar        **input_pad_name);
 
 enum
