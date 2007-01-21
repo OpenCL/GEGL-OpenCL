@@ -1,5 +1,22 @@
 2007-01-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.[ch]: (gegl_buffer_get_abyss): added
+	getter for the abyss/clip rectangle.
+	* gegl/gegl-operation-point-composer.c: (process_inner): add
+	special speedup treatment for over op when in or aux is outside
+	the roi.
+
+2007-01-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_get_abyss):
+	* gegl/buffer/gegl-buffer.h:
+	* gegl/gegl-operation-point-composer.c: (process_inner):
+	* gegl/gegl-utils.c: (gegl_rect_intersect), (gegl_rect_overlaps),
+	(gegl_rect_contains_point):
+	* gegl/gegl-utils.h:
+
+2007-01-21  Øyvind Kolås  <pippin@gimp.org>
+
 	Refined the API to query connections between nodes.
 	gegl_node_get_consumer(s) is still not public API, but might
 	be promoted to gegl.h soon.

@@ -1346,3 +1346,12 @@ void gegl_buffer_get (GeglBuffer *buffer, GeglRectangle *rect, void *dest_buf, v
       g_free (sample_buf);
     }
 }
+
+GeglRectangle
+gegl_buffer_get_abyss (GeglBuffer *buffer)
+{
+  GeglRectangle ret={0,0,0,0};
+  gegl_rect_set (&ret, buffer->abyss_x, buffer->abyss_y,
+                       buffer->abyss_width, buffer->abyss_height);
+  return ret;
+}

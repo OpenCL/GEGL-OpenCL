@@ -18,6 +18,7 @@
  * Copyright 2006 Øyvind Kolås
  */
 #include "gegl-operation-point-composer.h"
+#include "gegl-utils.h"
 #include <string.h>
 
 static gboolean process_inner (GeglOperation *operation,
@@ -78,6 +79,46 @@ process_inner (GeglOperation *operation,
 
     if ( (result->w>0) && (result->h>0))
       {
+
+	const gchar *op = gegl_node_get_operation (operation->node);
+	if (!strcmp (op, "over"))
+{
+#define SKIP_EMPTY_IN
+#define SKIP_EMPTY_AUX
+#ifdef SKIP_EMPTY_IN
+       {
+	GeglRectangle in_abyss;
+
+	in_abyss = gegl_buffer_get_abyss (input);
+
+	if ((!input ||
+            !gegl_rect_intersect (NULL, &in_abyss, result)) &&
+            aux)
+          {
+            g_object_ref (aux);
+            gegl_operation_set_data (operation, context_id, "output", G_OBJECT (aux));
+            return TRUE;
+          }
+        }
+#endif
+
+#ifdef SKIP_EMPTY_AUX
+       {
+	GeglRectangle aux_abyss;
+
+	if (aux)
+	  aux_abyss = gegl_buffer_get_abyss (aux);
+
+	if (!aux ||
+            !gegl_rect_intersect (NULL, &aux_abyss, result))
+          {
+            g_object_ref (input);
+            gegl_operation_set_data (operation, context_id, "output", G_OBJECT (input));
+            return TRUE;
+          }
+        }
+#endif
+}
         buf = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));
 
         if (aux)

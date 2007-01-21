@@ -62,7 +62,6 @@ struct _GeglBufferClass
 
 GType         gegl_buffer_get_type   (void) G_GNUC_CONST;
 
-
 void        * gegl_buffer_get_format (GeglBuffer    *buffer);
 gint          gegl_buffer_pixels     (GeglBuffer    *buffer);
 gint          gegl_buffer_px_size    (GeglBuffer    *buffer);
@@ -78,11 +77,13 @@ void          gegl_buffer_set        (GeglBuffer    *buffer,
                                       void          *src,
                                       void          *format);
 
-GeglStorage * gegl_buffer_storage    (GeglBuffer    *buffer);
+GeglStorage * gegl_buffer_storage     (GeglBuffer    *buffer);
+GeglRectangle gegl_buffer_get_abyss   (GeglBuffer *buffer);
 
-gint          gegl_buffer_leaks      (void);
+gint          gegl_buffer_leaks       (void);
 
-void          gegl_buffer_stats      (void);
+void          gegl_buffer_stats       (void);
+
 
 /* the following are remnants of how horizon used the precursor of the
  * tile manager for it's purposes. For now it is not used
