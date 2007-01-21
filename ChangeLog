@@ -1,5 +1,10 @@
 2007-01-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/gtk-display.c: (process): added NULL pointer
+	for new argument of gegl_node_get_connected_to.
+
+2007-01-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.[ch]: (gegl_buffer_get_abyss): added
 	getter for the abyss/clip rectangle.
 	* gegl/gegl-operation-point-composer.c: (process_inner): add
