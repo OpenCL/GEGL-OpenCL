@@ -29,8 +29,6 @@
 #include "gegl-cache.h"
 #include "gegl-region.h"
 
-#define MAX_PIXELS (128*128)   /* maximum size of area computed in one idle cycle */
-
 enum
 {
   PROP_0,
@@ -38,7 +36,8 @@ enum
   PROP_Y,
   PROP_WIDTH,
   PROP_HEIGHT,
-  PROP_NODE
+  PROP_NODE,
+  PROP_CHUNK_SIZE
 };
 
 enum
@@ -105,6 +104,11 @@ gegl_cache_class_init (GeglCacheClass * klass)
                                    G_PARAM_WRITABLE |
                                    G_PARAM_CONSTRUCT));
 
+  g_object_class_install_property (gobject_class, PROP_CHUNK_SIZE,
+                                   g_param_spec_int ("chunk-size", "chunk-size", "Size of chunks being rendered (larger chunks need more memory to do the processing).",
+                                                     8*8, 2048*2048, 128*128,
+                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_CONSTRUCT_ONLY));
   /* overriding pspecs for properties in parent class */
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x", "x", "local origin's offset relative to source origin",
@@ -156,6 +160,7 @@ static void
 gegl_cache_init (GeglCache *self)
 {
   self->node = NULL;
+  self->chunk_size = 128*128;
 
   /* thus providing a default value for GeglCache, that overrides the NULL
    * from GeglBuffer */
@@ -232,6 +237,9 @@ set_property (GObject      *gobject,
         break;
 
       /* For the rest, upchaining to the property implementation in GeglBuffer */
+      case PROP_CHUNK_SIZE:
+        self->chunk_size = g_value_get_int (value);
+        break;
       case PROP_X:
         g_object_set_property (gobject, "GeglBuffer::x", value);
         break;
@@ -266,6 +274,9 @@ get_property (GObject    *gobject,
       /* For the rest, upchaining to the property implementation in GeglBuffer */
       case PROP_X:
         g_object_get_property (gobject, "GeglBuffer::x", value);
+        break;
+      case PROP_CHUNK_SIZE:
+        g_value_set_int (value, self->chunk_size);
         break;
       case PROP_Y:
         g_object_get_property (gobject, "GeglBuffer::y", value);
@@ -348,7 +359,7 @@ gegl_cache_enqueue (GeglCache     *self,
 /* renders a single queued rectangle */
 static gboolean render_rectangle (GeglCache *cache)
 {
-  gint max_area = MAX_PIXELS;
+  gint max_area = cache->chunk_size;
 
   GeglRectangle *dr;
 

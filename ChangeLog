@@ -1,5 +1,17 @@
 2007-01-23  Øyvind Kolås  <pippin@gimp.org>
 
+	Added property chunk-size, which allows to specify the rectangular
+	size used for computations when iterativly rendering a cache.
+	Defaulting to 128*128, for overall speed bigger seems to be better
+	as the processing done fits within RAM.
+
+	* gegl/buffer/gegl-cache.c: (gegl_cache_class_init),
+	(gegl_cache_init), (set_property), (get_property),
+	(render_rectangle):
+	* gegl/buffer/gegl-cache.h:
+
+2007-01-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: (resample_bilinear_u8): clamp coordinate
 	further in, to avoid reading outside the buffer.
 

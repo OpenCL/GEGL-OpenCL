@@ -42,6 +42,7 @@ struct _GeglCache
   GeglRegion   *valid_region;
   GeglRegion   *queued_region;
   GList        *dirty_rectangles;
+  gint          chunk_size;
 };
 
 struct _GeglCacheClass
