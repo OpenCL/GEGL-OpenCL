@@ -1,4 +1,5 @@
 #SUBDIRS = node-editors
+EXTRA_DIST=node-editors
 
 bin_PROGRAMS = gegl
 

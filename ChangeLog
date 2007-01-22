@@ -1,5 +1,11 @@
 2007-01-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/Makefile.am: added the GUI plug-ins to EXTRA_DIST. They are not
+	compiled at the moment, but the makefile is created, and
+	compiling/installing them works.
+
+2007-01-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.[ch]: (gegl_node_get_consumers): declare the Pointer
 	Array String Pool return location as const ***gchar.
 
