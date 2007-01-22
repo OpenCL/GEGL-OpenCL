@@ -1623,10 +1623,10 @@ gegl_node_insert_before (GeglNode *self,
 }
 
 gint
-gegl_node_get_consumers (GeglNode    *node,
-                         const gchar *output_pad,
-                         GeglNode  ***nodes,
-                         gchar     ***pads)
+gegl_node_get_consumers (GeglNode      *node,
+                         const gchar   *output_pad,
+                         GeglNode    ***nodes,
+                         const gchar ***pads)
 {
   GList   *connections;
   gint     n_connections;

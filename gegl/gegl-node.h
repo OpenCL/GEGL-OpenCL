@@ -189,7 +189,7 @@ void          gegl_node_insert_before       (GeglNode      *self,
 gint          gegl_node_get_consumers       (GeglNode      *node,
                                              const gchar   *output_pad,
                                              GeglNode    ***nodes,
-                                             gchar       ***pads);
+                                             const gchar ***pads);
 GeglNode    * gegl_node_get_consumer        (GeglNode      *node,
                                              const gchar   *output_pad,
                                              gchar        **input_pad_name);
