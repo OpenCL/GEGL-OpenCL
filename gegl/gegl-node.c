@@ -1465,7 +1465,6 @@ gegl_node_get_bounding_box (GeglNode     *root)
 
 #include "gegl-operation-sink.h"
 
-#if 0
 /* this is a version of process that doesn't do all the initial
  * processing on a huge rect, it's inclusion is pending on some
  * GeglCache refactoring.
@@ -1491,10 +1490,7 @@ gegl_node_process (GeglNode *self)
 
   gegl_cache_enqueue (cache, defined);
 
-  while (gegl_cache_render (cache))
-    {
-      g_warning ("iteration");
-    }
+  while (gegl_cache_render (cache));
 
   dynamic = gegl_node_add_dynamic (self, cache);
     {
@@ -1510,8 +1506,11 @@ gegl_node_process (GeglNode *self)
   gegl_node_remove_dynamic (self, cache);
   g_object_unref (cache);
 }
-#endif
 
+#if 0
+/* old version of GeglProcess that processes all data in one
+ * single large chunk
+ */
 void
 gegl_node_process (GeglNode *self)
 {
@@ -1544,6 +1543,7 @@ gegl_node_process (GeglNode *self)
   gegl_node_remove_dynamic (self, &defined);
   g_object_unref (buffer);
 }
+#endif
 
 static gint
 lookup_dynamic (gconstpointer a,

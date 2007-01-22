@@ -1,5 +1,11 @@
 2007-01-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.c: (gegl_node_process): process the graph up until
+	the final sink node in chunks into a buffer, and then pass the buffer
+	to the sink node.
+
+2007-01-22  Øyvind Kolås  <pippin@gimp.org>
+
 	Made iterative rendering work for GeglCache.
 
 	* gegl/buffer/gegl-cache.h: added gegl_cache_is_rendered.
