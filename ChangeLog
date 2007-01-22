@@ -1,5 +1,13 @@
 2007-01-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.c: (gegl_node_process): added (ifdef'ed out)
+	iterative version of gegl_node_process. Enabling it causes more
+	buffer leaks, and due to design issues with GeglCache it is
+	not possible to iterate through the processing, this code will
+	be revisited after some slight GeglCache refactoring.
+
+2007-01-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-cache.h: amended includes to seperate
 	external/internal use.
 

@@ -42,6 +42,7 @@
 #include "gegl-finish-visitor.h"
 #include "gegl-node-dynamic.h"
 #include "gegl-utils.h"
+#include "buffer/gegl-cache.h"
 
 
 enum
@@ -1464,13 +1465,18 @@ gegl_node_get_bounding_box (GeglNode     *root)
 
 #include "gegl-operation-sink.h"
 
+#if 0
+/* this is a version of process that doesn't do all the initial
+ * processing on a huge rect, it's inclusion is pending on some
+ * GeglCache refactoring.
+ */
 void
 gegl_node_process (GeglNode *self)
 {
-  GeglNode    *input;
+  GeglNode        *input;
   GeglNodeDynamic *dynamic;
-  GeglBuffer  *buffer;
-  GeglRectangle     defined;
+  GeglCache       *cache;
+  GeglRectangle    defined;
 
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (g_type_is_a (G_OBJECT_TYPE(self->operation),
@@ -1478,21 +1484,60 @@ gegl_node_process (GeglNode *self)
 
   input = gegl_node_get_provider (self, "input", NULL);
   defined = gegl_node_get_bounding_box (input);
-  buffer = gegl_node_apply_roi (input, "output", &defined);
+  cache = g_object_new (GEGL_TYPE_CACHE,
+                        "node", input,
+                        "format", babl_format ("RGBA float"),
+                        NULL);
 
-  /*gegl_node_get (input, "output", &buffer, NULL);
-  gegl_node_set (self, "input", buffer, NULL);*/
+  gegl_cache_enqueue (cache, defined);
+
+  while (gegl_cache_render (cache))
+    {
+      g_warning ("iteration");
+    }
+
+  dynamic = gegl_node_add_dynamic (self, cache);
+    {
+      GValue value = {0,};
+      g_value_init (&value, GEGL_TYPE_BUFFER);
+      g_value_set_object (&value, cache);
+      gegl_node_dynamic_set_property (dynamic, "input", &value);
+      g_value_unset (&value);
+    }
+
+  gegl_node_dynamic_set_result_rect (dynamic, defined.x, defined.y, defined.w, defined.h);
+  gegl_operation_process (self->operation, cache, "foo");
+  gegl_node_remove_dynamic (self, cache);
+  g_object_unref (cache);
+}
+#endif
+
+void
+gegl_node_process (GeglNode *self)
+{
+  GeglNode        *input;
+  GeglNodeDynamic *dynamic;
+  GeglBuffer      *buffer;
+  GeglRectangle    defined;
+
+  g_return_if_fail (GEGL_IS_NODE (self));
+  g_return_if_fail (g_type_is_a (G_OBJECT_TYPE(self->operation),
+                    GEGL_TYPE_OPERATION_SINK));
+
+  input   = gegl_node_get_provider (self, "input", NULL);
+  defined = gegl_node_get_bounding_box (input);
+  buffer  = gegl_node_apply_roi (input, "output", &defined);
 
   g_assert (GEGL_IS_BUFFER (buffer));
   dynamic = gegl_node_add_dynamic (self, &defined);
 
-    {
-      GValue value = {0,};
-      g_value_init (&value, GEGL_TYPE_BUFFER);
-      g_value_set_object (&value, buffer);
-      gegl_node_dynamic_set_property (dynamic, "input", &value);
-      g_value_unset (&value);
-    }
+  {
+    GValue value = {0,};
+    g_value_init (&value, GEGL_TYPE_BUFFER);
+    g_value_set_object (&value, buffer);
+    gegl_node_dynamic_set_property (dynamic, "input", &value);
+    g_value_unset (&value);
+  }
 
   gegl_node_dynamic_set_result_rect (dynamic, defined.x, defined.y, defined.w, defined.h);
   gegl_operation_process (self->operation, &defined, "foo");
@@ -1571,17 +1616,6 @@ gegl_node_detect (GeglNode *root,
                   gint      x,
                   gint      y)
 {
-  /*
-   *     nop
-   *      |
-   *     over
-   *     / \
-   *    in aux
-   *
-   *//*
-  g_warning ("gegl_node_detect: %i, %i", x, y);*/
-
-
   if (root)
     {
       /* make sure the have rects are computed */
