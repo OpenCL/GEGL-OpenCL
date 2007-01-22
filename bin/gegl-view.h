@@ -59,6 +59,8 @@ struct _GeglView
   gint       prev_x;
   gint       prev_y;
   gdouble    prev_scale;
+
+  guint      monitor_id;
   GList     *dirty_rects;
 };
 

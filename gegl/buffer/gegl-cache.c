@@ -59,9 +59,6 @@ static void            get_property              (GObject       *gobject,
                                                   guint          prop_id,
                                                   GValue        *value,
                                                   GParamSpec    *pspec);
-static gboolean        task_render               (gpointer       foo);
-static gboolean        task_monitor              (gpointer       foo);
-
 
 G_DEFINE_TYPE (GeglCache, gegl_cache, GEGL_TYPE_BUFFER);
 
@@ -159,7 +156,6 @@ static void
 gegl_cache_init (GeglCache *self)
 {
   self->node = NULL;
-  self->render_id = 0;
 
   /* thus providing a default value for GeglCache, that overrides the NULL
    * from GeglBuffer */
@@ -180,47 +176,13 @@ finalize (GObject *gobject)
   G_OBJECT_CLASS (gegl_cache_parent_class)->finalize (gobject);
 }
 
-static gboolean task_monitor (gpointer foo)
+gboolean
+gegl_cache_is_rendered (GeglCache *cache)
 {
-  GeglCache  *cache = GEGL_CACHE (foo);
-
-  if (!gegl_region_empty (cache->queued_region) &&
-      !cache->dirty_rects &&
-      cache->render_id == 0) 
-    {
-      GeglRectangle *rectangles;
-      gint           n_rectangles;
-      gint           i;
-
-      gegl_region_get_rectangles (cache->queued_region, &rectangles, &n_rectangles);
-
-      for (i=0; i<n_rectangles && i<1; i++)
-        {
-          GeglRectangle roi = *((GeglRectangle*)&rectangles[i]);
-          GeglRectangle *dr;
-          GeglRegion *tr = gegl_region_rectangle ((void*)&roi);
-          gegl_region_subtract (cache->queued_region, tr);
-          gegl_region_destroy (tr);
-         
-          dr = g_malloc(sizeof (GeglRectangle));
-          *dr = roi;
-          cache->dirty_rects = g_list_append (cache->dirty_rects, dr);
-
-          /* start a renderer if it isn't already running */
-          if (cache->render_id == 0)
-            cache->render_id = g_idle_add_full (G_PRIORITY_LOW, (GSourceFunc) task_render, cache, NULL);
-        }
-      g_free (rectangles);
-    }
-  if (gegl_region_empty (cache->queued_region))
-    { /* job done */
-      cache->monitor_id = 0;
-      return FALSE;
-    }
-  else
-    {
-      return TRUE;
-    }
+  if (gegl_region_empty (cache->queued_region) &&
+      cache->dirty_rectangles == NULL)
+    return TRUE;
+  return FALSE;
 }
 
 static void
@@ -239,7 +201,6 @@ node_invalidated (GeglNode      *source,
 
   g_signal_emit (cache, cache_signals[INVALIDATED], 0, rect, NULL);
   gegl_region_subtract (cache->queued_region, cache->valid_region);
-  task_monitor (cache);
 }
 
 static void
@@ -340,9 +301,9 @@ gegl_cache_dequeue (GeglCache     *self,
         gegl_region_destroy (self->queued_region);
       self->queued_region = gegl_region_new ();
 
-      while (self->dirty_rects)
-         self->dirty_rects = g_list_remove (self->dirty_rects,
-            self->dirty_rects->data);
+      while (self->dirty_rectangles)
+         self->dirty_rectangles = g_list_remove (self->dirty_rectangles,
+            self->dirty_rectangles->data);
     }
 }
 
@@ -382,26 +343,20 @@ gegl_cache_enqueue (GeglCache     *self,
   gegl_region_subtract (self->queued_region, self->valid_region);
 
   gegl_region_destroy (temp_region);
-
-   /* start a monitor if the monitor of the cache is dormant */
-  if (self->monitor_id == 0) 
-    self->monitor_id = g_idle_add_full (
-           G_PRIORITY_LOW, (GSourceFunc) task_monitor, self, NULL);
 }
 
-/* renders a rectangle, in chunks as an idle function */
-static gboolean task_render (gpointer foo)
+/* renders a single queued rectangle */
+static gboolean render_rectangle (GeglCache *cache)
 {
-  GeglCache  *cache = GEGL_CACHE (foo);
   gint max_area = MAX_PIXELS;
 
   GeglRectangle *dr;
 
-  if (cache->dirty_rects)
+  if (cache->dirty_rectangles)
     {
       guchar *buf;
 
-      dr = cache->dirty_rects->data;
+      dr = cache->dirty_rectangles->data;
 
       if (dr->h * dr->w > max_area && 1)
         {
@@ -421,7 +376,7 @@ static gboolean task_render (gpointer foo)
               dr->h-=band_size;
               dr->y+=band_size;
 
-              cache->dirty_rects = g_list_prepend (cache->dirty_rects, fragment);
+              cache->dirty_rectangles = g_list_prepend (cache->dirty_rectangles, fragment);
               return TRUE;
             }
           else 
@@ -438,12 +393,12 @@ static gboolean task_render (gpointer foo)
               dr->w-=band_size;
               dr->x+=band_size;
 
-              cache->dirty_rects = g_list_prepend (cache->dirty_rects, fragment);
+              cache->dirty_rectangles = g_list_prepend (cache->dirty_rectangles, fragment);
               return TRUE;
             }
         }
       
-      cache->dirty_rects = g_list_remove (cache->dirty_rects, dr);
+      cache->dirty_rectangles = g_list_remove (cache->dirty_rectangles, dr);
 
       if (!dr->w || !dr->h)
         return TRUE;
@@ -461,26 +416,43 @@ static gboolean task_render (gpointer foo)
       g_free (buf);
       g_free (dr);
     }
-
-  if (!cache->dirty_rects)
-    { /* job done */
-      cache->render_id = 0;
-      return FALSE;
-    }
-  else
-    {
-      return TRUE;
-    }
+  return cache->dirty_rectangles != NULL;
 }
 
-gboolean gegl_cache_render (GeglCache *self)
+gboolean
+gegl_cache_render (GeglCache *cache)
 {
-  while (self->dirty_rects)
-    {
-      task_render (self);
-    }
-  if (!gegl_region_empty (self->queued_region))
-    task_monitor (self);
+  g_assert (GEGL_IS_CACHE (cache));
 
-  return (self->dirty_rects != NULL);
+  {
+    gboolean more_work = render_rectangle (cache);
+    if (more_work == TRUE)
+      return more_work;
+  }
+
+  if (!gegl_region_empty (cache->queued_region) &&
+      !cache->dirty_rectangles)
+    {
+      GeglRectangle *rectangles;
+      gint           n_rectangles;
+      gint           i;
+
+      gegl_region_get_rectangles (cache->queued_region, &rectangles, &n_rectangles);
+
+      for (i=0; i<n_rectangles && i<1; i++)
+        {
+          GeglRectangle roi = *((GeglRectangle*)&rectangles[i]);
+          GeglRectangle *dr;
+          GeglRegion *tr = gegl_region_rectangle ((void*)&roi);
+          gegl_region_subtract (cache->queued_region, tr);
+          gegl_region_destroy (tr);
+         
+          dr = g_malloc(sizeof (GeglRectangle));
+          *dr = roi;
+          cache->dirty_rectangles = g_list_append (cache->dirty_rectangles, dr);
+        }
+      g_free (rectangles);
+    }
+
+  return !gegl_cache_is_rendered (cache);
 }

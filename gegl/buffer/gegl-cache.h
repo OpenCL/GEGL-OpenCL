@@ -39,15 +39,9 @@ struct _GeglCache
   GeglBuffer    parent;
   GeglNode     *node;
   void         *format;
-
   GeglRegion   *valid_region;
   GeglRegion   *queued_region;
-  
-  /*< private >*/
-  GList        *dirty_rects;
-
-  guint         render_id;
-  guint         monitor_id;
+  GList        *dirty_rectangles;
 };
 
 struct _GeglCacheClass
@@ -55,19 +49,15 @@ struct _GeglCacheClass
   GeglBufferClass buffer_class;
 };
 
-GType    gegl_cache_get_type   (void) G_GNUC_CONST;
-
-void     gegl_cache_enqueue    (GeglCache     *self,
-                                GeglRectangle  roi);
-
-
-void     gegl_cache_dequeue    (GeglCache     *self,
-                                GeglRectangle *roi);
-
-void     gegl_cache_invalidate (GeglCache     *self,
-                                GeglRectangle *roi);
-
-gboolean gegl_cache_render     (GeglCache     *self);
+GType    gegl_cache_get_type    (void) G_GNUC_CONST;
+void     gegl_cache_enqueue     (GeglCache     *self,
+                                 GeglRectangle  roi);
+void     gegl_cache_dequeue     (GeglCache     *self,
+                                 GeglRectangle *roi);
+void     gegl_cache_invalidate  (GeglCache     *self,
+                                 GeglRectangle *roi);
+gboolean gegl_cache_render      (GeglCache     *self);
+gboolean gegl_cache_is_rendered (GeglCache     *cache);
 
 G_END_DECLS
 

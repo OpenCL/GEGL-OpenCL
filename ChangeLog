@@ -1,5 +1,19 @@
 2007-01-22  Øyvind Kolås  <pippin@gimp.org>
 
+	Made iterative rendering work for GeglCache.
+
+	* gegl/buffer/gegl-cache.h: added gegl_cache_is_rendered.
+	* gegl/buffer/gegl-cache.c: (gegl_cache_init),
+	(gegl_cache_is_rendered), (node_invalidated), (gegl_cache_dequeue),
+	(gegl_cache_enqueue), (render_rectangle), (gegl_cache_render): fixed
+	gegl_cache_render to work iterativly (use it in a while loop to render
+	the entire cache).
+	* bin/gegl-view.[ch]: (gegl_view_init), (set_property),
+	(task_monitor), (gegl_view_repaint): changes due to changes in
+	GeglCache.
+
+2007-01-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (gegl_node_process): added (ifdef'ed out)
 	iterative version of gegl_node_process. Enabling it causes more
 	buffer leaks, and due to design issues with GeglCache it is

@@ -112,6 +112,7 @@ gegl_view_init (GeglView *self)
   self->prev_y      = -1;
   self->dirty_rects = NULL;
   self->scale       = 1.0;
+  self->monitor_id  = 0;
 }
 
 static void
@@ -150,8 +151,8 @@ static void computed_event (GeglCache *self,
 
 
 static void invalidated_event (GeglCache *self,
-                               void           *foo,
-                               void           *user_data)
+                               void      *foo,
+                               void      *user_data)
 {
   gegl_view_repaint (GEGL_VIEW (user_data));
 }
@@ -203,6 +204,7 @@ set_property (GObject      *gobject,
       self->scale = g_value_get_double (value);
       break;
     default:
+
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
       break;
     }
@@ -415,6 +417,21 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
   return FALSE;
 }
 
+static gboolean task_monitor (gpointer foo)
+{
+  GeglView  *view = GEGL_VIEW (foo);
+  GeglCache *cache = view->cache;
+  gboolean   ret = FALSE;
+
+  ret = gegl_cache_render (cache);
+
+  if (ret==FALSE)
+    {
+      view->monitor_id = 0;
+    }
+  return ret;
+}
+
 void gegl_view_repaint (GeglView *view)
 {
   GtkWidget     *widget = GTK_WIDGET (view);
@@ -426,6 +443,12 @@ void gegl_view_repaint (GeglView *view)
   gegl_cache_dequeue (view->cache, NULL);
   /* then enqueue our selves */
   gegl_cache_enqueue (view->cache, roi);
+
+  if (view->monitor_id == 0)
+    {
+      view->monitor_id = g_idle_add_full (
+         G_PRIORITY_LOW, (GSourceFunc) task_monitor, view, NULL);
+    }
 }
 
 GeglCache *gegl_view_get_cache (GeglView *view)
