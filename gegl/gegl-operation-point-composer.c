@@ -11,6 +11,9 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
+      case PROP_CHUNK_SIZE:
+        self->chunk_size = g_value_get_int (value);
+        break;
  * License along with GEGL; if not, write to the
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
@@ -55,7 +58,6 @@ process_inner (GeglOperation *operation,
   GeglBuffer * aux = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
 
   GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
-  GeglBuffer *output;
 
   if (!input && aux)
     {
@@ -69,16 +71,10 @@ process_inner (GeglOperation *operation,
 
     g_assert (gegl_buffer_get_format (input));
 
-    output = g_object_new (GEGL_TYPE_BUFFER,
-                           "format", point_composer->format,
-                           "x",      result->x,
-                           "y",      result->y,
-                           "width",  result->w,
-                           "height", result->h,
-                           NULL);
 
     if ( (result->w>0) && (result->h>0))
       {
+        GeglBuffer *output;
 
 	const gchar *op = gegl_node_get_operation (operation->node);
 	if (!strcmp (op, "over"))
@@ -95,6 +91,21 @@ process_inner (GeglOperation *operation,
             !gegl_rect_intersect (NULL, &in_abyss, result)) &&
             aux)
           {
+	    GeglRectangle aux_abyss;
+	    aux_abyss = gegl_buffer_get_abyss (aux);
+
+            if(!gegl_rect_intersect (NULL, &aux_abyss, result))
+              {
+                GeglBuffer *output = g_object_new (GEGL_TYPE_BUFFER,
+                                     "format", point_composer->format,
+                                     "x",      0,
+                                     "y",      0,
+                                     "width",  0,
+                                     "height", 0,
+                                     NULL);
+                gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+                return TRUE;
+              }
             g_object_ref (aux);
             gegl_operation_set_data (operation, context_id, "output", G_OBJECT (aux));
             return TRUE;
@@ -119,6 +130,14 @@ process_inner (GeglOperation *operation,
         }
 #endif
 }
+        output = g_object_new (GEGL_TYPE_BUFFER,
+                               "format", point_composer->format,
+                               "x",      result->x,
+                               "y",      result->y,
+                               "width",  result->w,
+                               "height", result->h,
+                               NULL);
+
         buf = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));
 
         if (aux)
@@ -145,8 +164,19 @@ process_inner (GeglOperation *operation,
         if (aux)
           g_free (aux_buf);
 
+          gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
         }
-        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+      else
+        {
+          GeglBuffer *output = g_object_new (GEGL_TYPE_BUFFER,
+                               "format", point_composer->format,
+                               "x",      0,
+                               "y",      0,
+                               "width",  0,
+                               "height", 0,
+                               NULL);
+          gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+        }
       }
   return  TRUE;
 }
