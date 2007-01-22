@@ -1163,7 +1163,7 @@ static void resample_bilinear_u8 (void *dest_buf,
 
           sy = (y << 16) / iscale;
 
-          if (sy>(source_h-1) << 8)
+          if (sy>=(source_h-1) << 8)
             sy=(source_h-2) << 8;    /* is this the right thing to do? */
 
           dy = sy & 255;
@@ -1182,7 +1182,7 @@ static void resample_bilinear_u8 (void *dest_buf,
 
               sx = (x << 16) / iscale;
 
-              if (sx>(source_w-1) << 8)  /* this check to see if we're within bounds is expensive */
+              if (sx>=(source_w-1) << 8)  /* this check to see if we're within bounds is expensive */
                 sx=(source_w-2) << 8;    /* and the action taken might not be quite right either */
 
               dx = sx & 255;
