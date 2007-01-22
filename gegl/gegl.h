@@ -86,18 +86,28 @@ gboolean      gegl_node_connect_from     (GeglNode      *sink,
                                           GeglNode      *source,
                                           const gchar   *output_pad_name);
 
-/* Returns the node connected to the specified input, or NULL if none.
- */
-GeglNode    * gegl_node_get_provider     (GeglNode      *self,
-                                          gchar         *input_pad_name,
-                                          gchar        **output_pad_name);
-
 /* Connect the data coming from one of our output pads to an input pad
  * on an other node */
 gboolean      gegl_node_connect_to       (GeglNode      *self,
                                           const gchar   *output_pad_name,
                                           GeglNode      *sink,
                                           const gchar   *input_pad_name);
+
+/* Returns the node connected to the specified input, or NULL if none.
+ */
+GeglNode    * gegl_node_get_provider     (GeglNode      *self,
+                                          gchar         *input_pad_name,
+                                          gchar        **output_pad_name);
+
+/* Retrieve which pads on which nodes are connected to a named output_pad,
+ * returns the number of connections. Both the location for the generated
+ * nodes arrays and pads arrays can be left as NULL, if they are non NULL
+ * both should be freed with g_free, the arrays are NULL terminated.
+ */
+gint          gegl_node_get_consumers    (GeglNode      *node,
+                                          const gchar   *output_pad,
+                                          GeglNode    ***nodes,
+                                          const gchar ***pads);
 
 /* included mainly for language bindings */
 void          gegl_node_set_property     (GeglNode      *object,

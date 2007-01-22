@@ -1,5 +1,9 @@
 2007-01-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: promote gegl_node_get_consumers to be public API.
+
+2007-01-22  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/gegl_node_get_connected_to/gegl_node_get_provider/
 
 	* gegl/gegl.h:
