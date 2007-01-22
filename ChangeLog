@@ -1,5 +1,10 @@
 2007-01-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* NEWS: updated, to gauge whether it is time for a new release soon or
+	not.
+
+2007-01-22  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed gegl_node_get_consumer, reimplemented it where it was used in
 	the test binary on top of gegl_node_get_consumers.
 

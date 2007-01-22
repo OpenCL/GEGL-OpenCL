@@ -5,6 +5,17 @@
 GEGL only has released development snapshots thus far. Odd micro versions are
 from CVS whilst even micro numbers indicate released snapshots. 
 
+Changes in GEGL 0.0.7 (up to date as per 2007-01-22) gegl_node_get_consumer commit.
+=====================
+
+- improved hit detection
+- fixed path handling in test app
+- improved tonemapping meta op
+- speed ups to scaled retrieval from pyramidial buffers
+- Misc GUI and operation improvements
+- avoid doing unneeded computations when compositing with over operator
+- added public API for querying connections between nodes.
+
 Changes in GEGL 0.0.6
 =====================
 
