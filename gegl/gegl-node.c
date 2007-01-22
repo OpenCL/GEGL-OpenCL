@@ -1696,36 +1696,3 @@ gegl_node_get_consumers (GeglNode      *node,
   }
   return n_connections;
 }
-
-
-/* this needs to be exposed better, and more generically (Allowing to specify/return
- * pad name as well, as well as a list of nodes
- */
-GeglNode *
-gegl_node_get_consumer (GeglNode     *node,
-                        const gchar  *output_pad,
-                        gchar       **input_pad_name)
-{
-  GeglNode    **nodes = NULL;
-  GeglNode     *ret=NULL;
-  const gchar **pads;
-  gint          count = 0;
-
-  if (!node)
-    return ret;
-  count = gegl_node_get_consumers (node, output_pad, &nodes, &pads);
-  if (!count)
-    return ret;
-  g_assert (nodes);
-  g_assert (pads);
-
-  if (input_pad_name)
-    {
-      *input_pad_name = g_strdup (pads[0]);
-    }
-  ret = nodes[0];
-  g_free (nodes);
-  g_free (pads);
-  return ret;
-}
-

@@ -21,7 +21,6 @@
 #if 1
 #include "gegl-plugin.h"  /* is this neccesary? FIXME: should just be gegl.h
                            
-                           gegl_node_get_provider
                            gegl_node_get_operation
                            GeglPad
                            gegl_node_get_pad
@@ -51,12 +50,41 @@ GeglNode *gegl_next_sibling (GeglNode *item)
   return gegl_node_get_provider (item, "input", NULL); /* FIXME: handle padname */
 }
 
+static GeglNode *
+node_get_consumer (GeglNode     *node,
+                   const gchar  *output_pad,
+                   gchar       **input_pad_name)
+{
+  GeglNode   **nodes = NULL;
+  GeglNode    *ret=NULL;
+  const gchar **pads;
+  gint       count = 0;
+
+  if (!node)
+    return ret;
+  count = gegl_node_get_consumers (node, output_pad, &nodes, &pads);
+  if (!count)
+    return ret;
+  g_assert (nodes);
+  g_assert (pads);
+
+  if (input_pad_name)
+    {
+      *input_pad_name = g_strdup (pads[0]);
+    }
+  ret = nodes[0];
+  g_free (nodes);
+  g_free (pads);
+  return ret;
+}
+
+
 GeglNode *gegl_previous_sibling (GeglNode *item)
 {
   GeglNode *node;
   gchar    *pad;
   
-  node = gegl_node_get_consumer (item, "output", &pad);
+  node = node_get_consumer (item, "output", &pad);
   if (node)
     {
       if (strcmp (pad, "input"))

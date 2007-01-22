@@ -1,5 +1,13 @@
 2007-01-22  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed gegl_node_get_consumer, reimplemented it where it was used in
+	the test binary on top of gegl_node_get_consumers.
+
+	* bin/gegl-store.c: (node_get_consumer), (gegl_previous_sibling):
+	* gegl/gegl-node.[ch]: removed gegl_node_get_consumer.
+
+2007-01-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.h: promote gegl_node_get_consumers to be public API.
 
 2007-01-22  Øyvind Kolås  <pippin@gimp.org>
