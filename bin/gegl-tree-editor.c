@@ -140,7 +140,7 @@ tree_editor_get_active (GtkWidget *tree_editor)
   if (!gtk_tree_selection_get_selected (tree_selection, &model, &iter))
     {
       GeglNode *proxy = gegl_node_get_output_proxy (editor.gegl, "output");
-      return gegl_node_get_connected_to (proxy, "input", NULL); 
+      return gegl_node_get_provider (proxy, "input", NULL); 
     }
 
   item = iter.user_data;

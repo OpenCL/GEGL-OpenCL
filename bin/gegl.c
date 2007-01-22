@@ -179,7 +179,7 @@ main (gint    argc,
 
       gchar **operation = o->rest;
       proxy = gegl_node_get_output_proxy (gegl, "output");
-      iter = gegl_node_get_connected_to (proxy, "input", NULL);
+      iter = gegl_node_get_provider (proxy, "input", NULL);
 
       while (*operation)
         {

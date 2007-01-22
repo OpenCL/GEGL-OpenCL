@@ -21,7 +21,7 @@
 #if 1
 #include "gegl-plugin.h"  /* is this neccesary? FIXME: should just be gegl.h
                            
-                           gegl_node_get_connected_to
+                           gegl_node_get_provider
                            gegl_node_get_operation
                            GeglPad
                            gegl_node_get_pad
@@ -41,14 +41,14 @@
 
 GeglNode *gegl_children (GeglNode *item)
 {
-  return gegl_node_get_connected_to (item, "aux", NULL);
+  return gegl_node_get_provider (item, "aux", NULL);
 }
 
 GeglNode *gegl_next_sibling (GeglNode *item)
 {
   if (!strcmp (gegl_node_get_operation (item), "clone"))
     return NULL;
-  return gegl_node_get_connected_to (item, "input", NULL); /* FIXME: handle padname */
+  return gegl_node_get_provider (item, "input", NULL); /* FIXME: handle padname */
 }
 
 GeglNode *gegl_previous_sibling (GeglNode *item)

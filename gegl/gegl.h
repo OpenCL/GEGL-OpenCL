@@ -88,7 +88,7 @@ gboolean      gegl_node_connect_from     (GeglNode      *sink,
 
 /* Returns the node connected to the specified input, or NULL if none.
  */
-GeglNode    * gegl_node_get_connected_to (GeglNode      *self,
+GeglNode    * gegl_node_get_provider     (GeglNode      *self,
                                           gchar         *input_pad_name,
                                           gchar        **output_pad_name);
 

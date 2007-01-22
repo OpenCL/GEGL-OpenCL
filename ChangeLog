@@ -1,5 +1,21 @@
 2007-01-22  Øyvind Kolås  <pippin@gimp.org>
 
+	%s/gegl_node_get_connected_to/gegl_node_get_provider/
+
+	* gegl/gegl.h:
+	* gegl/gegl-node.[ch]: (gegl_node_set_operation_object),
+	(gegl_node_get_provider), (gegl_node_process),
+	(gegl_node_insert_before), (gegl_node_get_consumers),
+	(gegl_node_get_consumer):
+	* operations/workshop/gtk-display.c: (process):
+	* bin/editor-optype.c: (chain_in_operation):
+	* bin/export.c: (get_input_rect):
+	* bin/gegl-store.c: (gegl_children), (gegl_next_sibling):
+	* bin/gegl-tree-editor.c: (tree_editor_get_active):
+	* bin/gegl.c: (main):
+
+2007-01-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/Makefile.am: added the GUI plug-ins to EXTRA_DIST. They are not
 	compiled at the moment, but the makefile is created, and
 	compiling/installing them works.

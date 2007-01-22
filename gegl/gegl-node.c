@@ -966,8 +966,8 @@ gegl_node_set_operation_object (GeglNode      *self,
         pad  = gegl_connection_get_sink_pad (connection);
         output_dest_pad = g_strdup (pad->param_spec->name);
       }
-    input = gegl_node_get_connected_to (self, "input", NULL);
-    aux   = gegl_node_get_connected_to (self, "aux", NULL);
+    input = gegl_node_get_provider (self, "input", NULL);
+    aux   = gegl_node_get_provider (self, "aux", NULL);
 
     gegl_node_disconnect_sources (self);
     gegl_node_disconnect_sinks (self);
@@ -1402,9 +1402,9 @@ gegl_node_get_debug_name (GeglNode     *node)
 }
 
 GeglNode *
-gegl_node_get_connected_to (GeglNode *node,
-                            gchar    *pad_name,
-                            gchar   **output_pad_name)
+gegl_node_get_provider (GeglNode *node,
+                        gchar    *pad_name,
+                        gchar   **output_pad_name)
 {
   GeglPad *pad = gegl_node_get_pad (node, pad_name);
 
@@ -1476,7 +1476,7 @@ gegl_node_process (GeglNode *self)
   g_return_if_fail (g_type_is_a (G_OBJECT_TYPE(self->operation),
                     GEGL_TYPE_OPERATION_SINK));
 
-  input = gegl_node_get_connected_to (self, "input", NULL);
+  input = gegl_node_get_provider (self, "input", NULL);
   defined = gegl_node_get_bounding_box (input);
   buffer = gegl_node_apply_roi (input, "output", &defined);
 
@@ -1610,7 +1610,7 @@ void
 gegl_node_insert_before (GeglNode *self,
                          GeglNode *to_be_inserted)
 {
-  GeglNode *other = gegl_node_get_connected_to (self, "input", NULL); /*XXX: handle pad name */
+  GeglNode *other = gegl_node_get_provider (self, "input", NULL); /*XXX: handle pad name */
   GeglRectangle rectangle = gegl_node_get_bounding_box (to_be_inserted);
 
   g_signal_handlers_block_matched (other, G_SIGNAL_MATCH_FUNC, 0, 0, 0, source_invalidated, NULL);
@@ -1668,7 +1668,7 @@ gegl_node_get_consumers (GeglNode      *node,
     if (pads)
       {
         pasp = g_malloc (pasp_size);
-        *pads = pasp;
+        *pads = (void*)pasp;
       }
     i=0;
     pasp_pos=(n_connections + 1) * sizeof(void*);
@@ -1706,10 +1706,10 @@ gegl_node_get_consumer (GeglNode     *node,
                         const gchar  *output_pad,
                         gchar       **input_pad_name)
 {
-  GeglNode **nodes = NULL;
-  GeglNode  *ret=NULL;
-  gchar    **pads;
-  gint       count = 0;
+  GeglNode    **nodes = NULL;
+  GeglNode     *ret=NULL;
+  const gchar **pads;
+  gint          count = 0;
 
   if (!node)
     return ret;
