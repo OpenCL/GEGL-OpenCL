@@ -20,7 +20,9 @@
 #ifndef __GEGL_CACHE_H__
 #define __GEGL_CACHE_H__
 
-#include "gegl.h"
+#ifndef __GEGL_H__
+#include "gegl-types.h"
+#endif
 #include "gegl-buffer.h"
 
 G_BEGIN_DECLS

@@ -1,5 +1,10 @@
 2007-01-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-cache.h: amended includes to seperate
+	external/internal use.
+
+2007-01-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* NEWS: updated, to gauge whether it is time for a new release soon or
 	not.
 
