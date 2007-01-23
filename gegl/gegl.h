@@ -397,7 +397,8 @@ GeglNode    * gegl_node_get_input_proxy  (GeglNode      *graph,
 GeglNode    * gegl_parse_xml             (const gchar   *xmldata,
                                           const gchar   *path_root);
 
-/* gegl_node_get_properties:
+/**
+ * gegl_node_get_properties:
  * @node: a #GeglNode
  * @n_properties: return location for number of properties.
  *
@@ -450,7 +451,7 @@ void          gegl_color_get_rgba        (GeglColor     *color,
                                           gfloat        *a);
 
 /**
- * gegl_color_get_rgba:
+ * gegl_color_set_rgba:
  * @color: a #GeglColor
  * @r: new value for red component
  * @g: new value for green component

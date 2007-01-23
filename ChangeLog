@@ -1,5 +1,9 @@
 2007-01-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: fixed minor mistakes.
+
+2007-01-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.h: made the style of documentation consistent.
 
 2007-01-23  Øyvind Kolås  <pippin@gimp.org>
