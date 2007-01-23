@@ -1,5 +1,10 @@
 2007-01-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: reordered, added initial documentation for all public
+	API.
+
+2007-01-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-operation-point-composer.c: (process_inner): further
 	speedups to over op avoiding unneeded computations earlier.
 
