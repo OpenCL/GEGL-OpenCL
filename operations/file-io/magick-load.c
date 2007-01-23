@@ -47,7 +47,7 @@ load_cache (GeglChantOperation *op_magick_load)
             sprintf (xml, "<gegl><node operation='png-load' path='/tmp/gegl-magick.png'></node></gegl>");
           }
 
-    temp_gegl = gegl_xml_parse (xml, "/");
+    temp_gegl = gegl_parse_xml (xml, "/");
     gegl_node_apply (temp_gegl, "output");
 
     /*FIXME: this should be unneccesary, using the graph

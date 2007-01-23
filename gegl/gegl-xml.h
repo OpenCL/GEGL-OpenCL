@@ -25,7 +25,7 @@
 
 gchar    * gegl_to_xml    (GeglNode    *gegl,
                            const gchar *path_root);
-GeglNode * gegl_xml_parse (const gchar *xmldata,
+GeglNode * gegl_parse_xml (const gchar *xmldata,
                            const gchar *path_root);
 
 #endif

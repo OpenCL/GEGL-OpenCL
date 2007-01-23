@@ -447,9 +447,9 @@ cb_composition_new (GtkAction *action)
     case GTK_RESPONSE_ACCEPT:
       {
       /* FIXME: should append to list of files, and set as current
-        editor_set_gegl (gegl_xml_parse (blank_composition), "untitled.xml");
+        editor_set_gegl (gegl_parse_xml (blank_composition), "untitled.xml");
         */
-        editor_set_gegl (gegl_xml_parse (blank_composition, "/"));
+        editor_set_gegl (gegl_parse_xml (blank_composition, "/"));
       }
       break;
     default:
@@ -499,7 +499,7 @@ cb_composition_load (GtkAction *action)
         {
           gchar *temp = g_strdup (filename);
           gchar *path = g_strdup (dirname (temp));
-          editor_set_gegl (gegl_xml_parse (xml, path));
+          editor_set_gegl (gegl_parse_xml (xml, path));
           g_free (temp);
           g_free (path);
         }
@@ -682,7 +682,7 @@ static void do_load (void)
       xml = g_string_free (acc, FALSE);
     }
 
-  editor_set_gegl (gegl_xml_parse (xml, path_root));
+  editor_set_gegl (gegl_parse_xml (xml, path_root));
   g_free (path_root);
   g_free (xml);
 }
@@ -710,7 +710,7 @@ cb_about (GtkAction *action)
   GtkWidget *about;
   GeglNode  *gegl;
 
-  gegl = gegl_xml_parse (
+  gegl = gegl_parse_xml (
    "<gegl> <over> <invert/> <shift x='20.0' y='140.0'/> <text string=\"GEGL is a image processing and compositing framework.\n\nGUI editor Copyright © 2006, 2007 Øyvind Kolås\nGEGL and its editor come with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. The processing and compositing library GEGL is licensed under LGPLv2 and the editor itself is licensed as GPLv2.\" font='Sans' size='10.0' wrap='300' alignment='0' width='224' height='52'/> </over> <over> <shift x='20.0' y='10.0'/> <dropshadow opacity='1.0' x='10.0' y='10.0' radius='5.0'/> <text string='GEGL' font='Sans' size='100.0' wrap='-1' alignment='0'/> </over> <perlin-noise alpha='12.30' scale='0.10' zoff='-1.0' seed='20.0' n='6.0'/> </gegl>"
   ,NULL);
 

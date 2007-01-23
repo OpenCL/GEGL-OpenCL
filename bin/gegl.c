@@ -170,7 +170,7 @@ main (gint    argc,
         }
     }
 
-  gegl = gegl_xml_parse (script, path_root);
+  gegl = gegl_parse_xml (script, path_root);
 
   if (o->rest)
     {

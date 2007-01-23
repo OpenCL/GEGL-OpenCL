@@ -329,7 +329,7 @@ static void each_ref (gpointer value,
   gegl_node_connect_from (dest_node, "input", source_node, "output");
 }
 
-GeglNode *gegl_xml_parse (const gchar *xmldata,
+GeglNode *gegl_parse_xml (const gchar *xmldata,
                           const gchar *path_root)
 {
   glong     time = gegl_ticks ();
@@ -355,7 +355,7 @@ GeglNode *gegl_xml_parse (const gchar *xmldata,
   g_free (pd);
 
   time = gegl_ticks () - time;
-  gegl_instrument ("gegl", "gegl_xml_parse", time);
+  gegl_instrument ("gegl", "gegl_parse_xml", time);
   return ret;
 }
 

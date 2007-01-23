@@ -387,14 +387,14 @@ GeglNode    * gegl_node_get_input_proxy  (GeglNode      *graph,
                                           const gchar   *name);
 
 /**
- * gegl_xml_parse:
+ * gegl_parse_xml:
  * @xmldata: a \0 terminated string containing XML data to be parsed.
  * @path_root: a file system path that relative paths in the XML will be
  * resolved in relation to.
  *
  * Returns: a GeglNode containing the parsed XML as a subgraph.
  */
-GeglNode    * gegl_xml_parse             (const gchar   *xmldata,
+GeglNode    * gegl_parse_xml             (const gchar   *xmldata,
                                           const gchar   *path_root);
 
 /* Get a list of all properties existing on a node (includes the ones
@@ -453,10 +453,10 @@ void          gegl_color_get_rgba        (GeglColor     *color,
 /**
  * gegl_color_get_rgba:
  * @color: a #GeglColor
- * @r: return location for red component.
- * @g: return location for green component.
- * @b: return location for blue component.
- * @a: return location for alpha component.
+ * @r: new value for red component
+ * @g: new value for green component
+ * @b: new value for blue component
+ * @a: new value for alpha component
  *
  * Retrieve RGB component values from a GeglColor.
  */

@@ -1,5 +1,20 @@
 2007-01-23  Øyvind Kolås  <pippin@gimp.org>
 
+	%s/gegl_xml_parse/gegl_parse_xml/g not prefixed by xml anymore, but
+	neither is gegl_to_xml, besides this reads a lot better.
+
+	* gegl/gegl-xml.[ch]: (gegl_parse_xml):
+	* gegl/gegl.h:
+
+	Fixed uses of it:
+	
+	* bin/editor.c: (cb_composition_new), (cb_composition_load),
+	(do_load), (cb_about):
+	* bin/gegl.c: (main):
+	* operations/file-io/magick-load.c: (load_cache):
+
+2007-01-23  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/provider/producer/
 
 	* bin/editor-optype.c: (chain_in_operation):
