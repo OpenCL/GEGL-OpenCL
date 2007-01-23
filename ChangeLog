@@ -1,5 +1,9 @@
 2007-01-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: made the style of documentation consistent.
+
+2007-01-23  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/gegl_xml_parse/gegl_parse_xml/g not prefixed by xml anymore, but
 	neither is gegl_to_xml, besides this reads a lot better.
 

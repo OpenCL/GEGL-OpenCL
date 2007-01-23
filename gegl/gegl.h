@@ -397,8 +397,6 @@ GeglNode    * gegl_node_get_input_proxy  (GeglNode      *graph,
 GeglNode    * gegl_parse_xml             (const gchar   *xmldata,
                                           const gchar   *path_root);
 
-/* Get a list of all properties existing on a node (includes the ones
- * of the current operation) */
 /* gegl_node_get_properties:
  * @node: a #GeglNode
  * @n_properties: return location for number of properties.
@@ -427,7 +425,8 @@ GSList      * gegl_operation_list_operations (void);
 gchar       * gegl_to_xml                (GeglNode      *gegl,
                                           const gchar   *path_root);
 
-/* gegl_color_new:
+/**
+ * gegl_color_new:
  * @string: an CSS style color string.
  *
  * Returns a GeglColor object suitable for use in gegl_node_set.
