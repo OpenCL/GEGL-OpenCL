@@ -362,7 +362,7 @@ const gchar * gegl_node_get_operation    (GeglNode      *node);
  * Returns a output proxy for the named pad. If no output proxy exists with
  * this name a new one will be created.
  */
-GeglNode    * gegl_node_get_output_proxy (GeglNode      *graph,
+GeglNode    * gegl_node_get_output_proxy (GeglNode      *node,
                                           const gchar   *pad_name);
 
 /**
@@ -376,7 +376,7 @@ GeglNode    * gegl_node_get_output_proxy (GeglNode      *graph,
  * Returns an input proxy for the named pad. If no input proxy exists with
  * this name a new one will be created.
  */
-GeglNode    * gegl_node_get_input_proxy  (GeglNode      *graph,
+GeglNode    * gegl_node_get_input_proxy  (GeglNode      *node,
                                           const gchar   *name);
 
 /**
@@ -416,7 +416,7 @@ GSList      * gegl_operation_list_operations (void);
  * Returns a freshly allocated \0 terminated string containing a XML
  * serialization of a nodes children.
  */
-gchar       * gegl_to_xml                (GeglNode      *gegl,
+gchar       * gegl_to_xml                (GeglNode      *node,
                                           const gchar   *path_root);
 
 /**

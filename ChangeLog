@@ -1,3 +1,8 @@
+2007-01-23  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.h: fixed mismatches between documented names, and actually
+	declared names.
+
 2007-01-23  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* gegl/gegl.h: fixed minor (mostly grammatical) errors in the
