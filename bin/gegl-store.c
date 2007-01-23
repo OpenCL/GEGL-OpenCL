@@ -40,14 +40,14 @@
 
 GeglNode *gegl_children (GeglNode *item)
 {
-  return gegl_node_get_provider (item, "aux", NULL);
+  return gegl_node_get_producer (item, "aux", NULL);
 }
 
 GeglNode *gegl_next_sibling (GeglNode *item)
 {
   if (!strcmp (gegl_node_get_operation (item), "clone"))
     return NULL;
-  return gegl_node_get_provider (item, "input", NULL); /* FIXME: handle padname */
+  return gegl_node_get_producer (item, "input", NULL); /* FIXME: handle padname */
 }
 
 static GeglNode *

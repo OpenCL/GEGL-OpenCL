@@ -132,7 +132,7 @@ gint          gegl_node_get_num_sources     (GeglNode      *self);
 gint          gegl_node_get_num_sinks       (GeglNode      *self);
 void          gegl_node_disconnect_sinks    (GeglNode      *self);
 void          gegl_node_disconnect_sources  (GeglNode      *self);
-GeglNode    * gegl_node_get_provider        (GeglNode      *self,
+GeglNode    * gegl_node_get_producer        (GeglNode      *self,
                                              gchar         *pad_name,
                                              gchar        **output_pad);
 GList       * gegl_node_get_depends_on      (GeglNode      *self);

@@ -296,16 +296,16 @@ void          gegl_node_get_property     (GeglNode      *node,
 
 
 /**
- * gegl_node_get_provider:
+ * gegl_node_get_producer:
  * @node: the node we are querying
- * @input_pad_name: the input pad we want to get the provider for
+ * @input_pad_name: the input pad we want to get the producer for
  * @output_pad_name: optional pointer to a location where we can store a
  *                   freshly allocated string with the name of the output pad.
  *
  * Returns the node providing data or NULL if no node is connected to the
  * input_pad.
  */
-GeglNode    * gegl_node_get_provider     (GeglNode      *node,
+GeglNode    * gegl_node_get_producer     (GeglNode      *node,
                                           gchar         *input_pad_name,
                                           gchar        **output_pad_name);
 

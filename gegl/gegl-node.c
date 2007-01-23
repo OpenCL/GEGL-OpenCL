@@ -967,8 +967,8 @@ gegl_node_set_operation_object (GeglNode      *self,
         pad  = gegl_connection_get_sink_pad (connection);
         output_dest_pad = g_strdup (pad->param_spec->name);
       }
-    input = gegl_node_get_provider (self, "input", NULL);
-    aux   = gegl_node_get_provider (self, "aux", NULL);
+    input = gegl_node_get_producer (self, "input", NULL);
+    aux   = gegl_node_get_producer (self, "aux", NULL);
 
     gegl_node_disconnect_sources (self);
     gegl_node_disconnect_sinks (self);
@@ -1403,7 +1403,7 @@ gegl_node_get_debug_name (GeglNode     *node)
 }
 
 GeglNode *
-gegl_node_get_provider (GeglNode *node,
+gegl_node_get_producer (GeglNode *node,
                         gchar    *pad_name,
                         gchar   **output_pad_name)
 {
@@ -1481,7 +1481,7 @@ gegl_node_process (GeglNode *self)
   g_return_if_fail (g_type_is_a (G_OBJECT_TYPE(self->operation),
                     GEGL_TYPE_OPERATION_SINK));
 
-  input = gegl_node_get_provider (self, "input", NULL);
+  input = gegl_node_get_producer (self, "input", NULL);
   defined = gegl_node_get_bounding_box (input);
   cache = g_object_new (GEGL_TYPE_CACHE,
                         "node", input,
@@ -1523,7 +1523,7 @@ gegl_node_process (GeglNode *self)
   g_return_if_fail (g_type_is_a (G_OBJECT_TYPE(self->operation),
                     GEGL_TYPE_OPERATION_SINK));
 
-  input   = gegl_node_get_provider (self, "input", NULL);
+  input   = gegl_node_get_producer (self, "input", NULL);
   defined = gegl_node_get_bounding_box (input);
   buffer  = gegl_node_apply_roi (input, "output", &defined);
 
@@ -1644,7 +1644,7 @@ void
 gegl_node_insert_before (GeglNode *self,
                          GeglNode *to_be_inserted)
 {
-  GeglNode *other = gegl_node_get_provider (self, "input", NULL); /*XXX: handle pad name */
+  GeglNode *other = gegl_node_get_producer (self, "input", NULL); /*XXX: handle pad name */
   GeglRectangle rectangle = gegl_node_get_bounding_box (to_be_inserted);
 
   g_signal_handlers_block_matched (other, G_SIGNAL_MATCH_FUNC, 0, 0, 0, source_invalidated, NULL);

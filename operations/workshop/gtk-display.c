@@ -143,7 +143,7 @@ process (GeglOperation *operation,
       else
         {
           gtk_window_set_title (GTK_WINDOW (priv->window), 
-           gegl_node_get_debug_name (gegl_node_get_provider(operation->node, "input", NULL))
+           gegl_node_get_debug_name (gegl_node_get_producer(operation->node, "input", NULL))
            );
         }
 
