@@ -1,4 +1,9 @@
-2007-01-23  Øyvind Kolås  <pippin@gimp.org>
+2007-01-23  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/gegl.h: fixed minor (mostly grammatical) errors in the
+	comment blocks.
+
+200r-01-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl.h: fixed minor mistakes.
 

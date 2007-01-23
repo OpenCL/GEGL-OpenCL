@@ -56,7 +56,7 @@ struct _GeglRectangle
  * accordingly so your own code will never see those standard
  * arguments.
  *
- * Note that there is an alternative ways to initialize GEGL: if you
+ * Note that there is an alternative way to initialize GEGL: if you
  * are calling g_option_context_parse() with the option group returned
  * by gegl_get_option_group(), you don't have to call gegl_init().
  **/
@@ -67,7 +67,7 @@ void           gegl_init                 (gint          *argc,
  *
  * Returns a #GOptionGroup for the commandline arguments recognized
  * by GEGL. You should add this group to your #GOptionContext
- * with g_option_context_add_group(), if you are using
+ * with g_option_context_add_group() if you are using
  * g_option_context_parse() to parse your commandline arguments.
  */
 GOptionGroup * gegl_get_option_group     (void);
@@ -75,7 +75,7 @@ GOptionGroup * gegl_get_option_group     (void);
 /**
  * gegl_exit:
  *
- * Call this function when you're done using GEGL, it will clean up
+ * Call this function when you're done using GEGL. It will clean up
  * caches and write/dump debug information if the correct debug flags
  * are set.
  */
@@ -95,23 +95,19 @@ GeglNode     * gegl_node_new             (void);
  * @parent: a #GeglNode
  * @operation: the type of node to create.
  *
- * Creates a new processing node the performs the specified operation.
+ * Creates a new processing node that performs the specified operation.
  *
  * Returns a newly created node.
  */
 GeglNode     * gegl_node_create_child    (GeglNode      *parent,
                                           const gchar   *operation);
 
-/* create a new node belonging to a graph, with key/value pairs for properties,
- * terminated by NULL (remember to set "operation") */
-
-
 /**
  * gegl_node_new_child:
  * @parent: a #GeglNode
  * @first_property_name: the first property name, should usually be "operation"
  *
- * Creates a new processing node the performs the specified operation with
+ * Creates a new processing node that performs the specified operation with
  * a NULL terminated list of key/value pairs for initial parameter values
  * configuring the operation.
  *
@@ -160,7 +156,7 @@ gboolean      gegl_node_connect_to       (GeglNode      *source,
  * @property_name: the name of the property to set
  * @value: a GValue containing the value to be set in the property.
  *
- * This is mainly included for language bindings use gegl_node_set instead
+ * This is mainly included for language bindings. Use gegl_node_set instead.
  */
 void          gegl_node_set_property     (GeglNode      *node,
                                           const gchar   *property_name,
@@ -237,8 +233,8 @@ void          gegl_node_blit             (GeglNode      *node,
  * gegl_node_process:
  * @sink_node: a #GeglNode without outputs.
  *
- * Render a composition, XXX: this will be replaced with an API that allows
- * to iterate thorugh the processing in chunks.
+ * Render a composition. XXX: this will be replaced with an API that allows
+ * the processing to occur in smaller chunks.
  */
 void          gegl_node_process          (GeglNode      *sink_node);
 
@@ -257,8 +253,8 @@ GeglRectangle gegl_node_get_bounding_box (GeglNode      *node);
  * @x: x coordinate
  * @y: y coordinate
  *
- * Performs hit detection returning the node providing data at a given
- * coordinate pair, currently operates only on bounding boxes and not
+ * Performs hit detection by returning the node providing data at a given
+ * coordinate pair. Currently operates only on bounding boxes and not
  * pixel data.
  *
  * Returns the GeglNode providing the data ending up at x,y for this
@@ -288,12 +284,11 @@ void          gegl_node_get              (GeglNode      *node,
  * @property_name: the name of the property to get
  * @value: pointer to a GValue where the value of the property should be stored
  *
- * This is mainly included for language bindings use gegl_node_set instead
+ * This is mainly included for language bindings. Use gegl_node_set instead.
  */
 void          gegl_node_get_property     (GeglNode      *node,
                                           const gchar   *property_name,
                                           GValue        *value);
-
 
 /**
  * gegl_node_get_producer:
@@ -317,9 +312,9 @@ GeglNode    * gegl_node_get_producer     (GeglNode      *node,
  * @pads: optional return location for array of pad names.
  *
  * Retrieve which pads on which nodes are connected to a named output_pad,
- * returns the number of connections. Both the location for the generated
- * nodes arrays and pads arrays can be left as NULL, if they are non NULL
- * both should be freed with g_free, the arrays are NULL terminated.
+ * and the number of connections. Both the location for the generated
+ * nodes array and pads array can be left as NULL. If they are non NULL
+ * both should be freed with g_free. The arrays are NULL terminated.
  *
  * Returns the number of consumers connected to this output_pad.
  */
@@ -332,8 +327,8 @@ gint          gegl_node_get_consumers    (GeglNode      *node,
  * gegl_node_get_children:
  * @node: the node to retrieve the children of.
  *
- * Returns a list of a nodes children/internal nodes, the list must be freed
- * by the caller:
+ * Returns a list of nodes with children/internal nodes. The list must be
+ * freed by the caller.
  */
 GList       * gegl_node_get_children     (GeglNode      *node);
 
@@ -343,7 +338,7 @@ GList       * gegl_node_get_children     (GeglNode      *node);
  * @node: the node to lookup a paramspec on
  * @property_name: the name of the property to get a paramspec for.
  *
- * Returns the GParamSpec of property or NULL if no such proeprty exists.
+ * Returns the GParamSpec of property or NULL if no such property exists.
  */
 GParamSpec  * gegl_node_find_property    (GeglNode      *node,
                                           const gchar   *property_name);
@@ -356,9 +351,6 @@ GParamSpec  * gegl_node_find_property    (GeglNode      *node,
  */
 const gchar * gegl_node_get_operation    (GeglNode      *node);
 
-/* aquire the attached ghost output pad of a Graph node,
- * create it if it does not exist */
-
 /**
  * gegl_node_get_output_proxy:
  * @node: a #GeglNode
@@ -367,11 +359,12 @@ const gchar * gegl_node_get_operation    (GeglNode      *node);
  * Proxies are used to route between nodes of a subgraph contained within
  * a node.
  *
- * Returns a output proxy for the named pad, if no output proxy exists with
+ * Returns a output proxy for the named pad. If no output proxy exists with
  * this name a new one will be created.
  */
 GeglNode    * gegl_node_get_output_proxy (GeglNode      *graph,
                                           const gchar   *pad_name);
+
 /**
  * gegl_node_get_input_proxy:
  * @node: a #GeglNode
@@ -380,8 +373,8 @@ GeglNode    * gegl_node_get_output_proxy (GeglNode      *graph,
  * Proxies are used to route between nodes of a subgraph contained within
  * a node.
  *
- * Returns a input proxy for the named pad, if no input proxy exists with this
- * name a new one will be created.
+ * Returns an input proxy for the named pad. If no input proxy exists with
+ * this name a new one will be created.
  */
 GeglNode    * gegl_node_get_input_proxy  (GeglNode      *graph,
                                           const gchar   *name);
@@ -392,7 +385,7 @@ GeglNode    * gegl_node_get_input_proxy  (GeglNode      *graph,
  * @path_root: a file system path that relative paths in the XML will be
  * resolved in relation to.
  *
- * Returns: a GeglNode containing the parsed XML as a subgraph.
+ * Returns a GeglNode containing the parsed XML as a subgraph.
  */
 GeglNode    * gegl_parse_xml             (const gchar   *xmldata,
                                           const gchar   *path_root);
@@ -411,7 +404,7 @@ GParamSpec ** gegl_node_get_properties   (GeglNode      *node,
 /**
  * gegl_operation_list_operations:
  *
- * Returns a list of all operations names, the list should not be freed.
+ * Returns a list of all operations names. The list should not be freed.
  */
 GSList      * gegl_operation_list_operations (void);
 
@@ -465,7 +458,6 @@ void          gegl_color_set_rgba        (GeglColor     *color,
                                           gfloat         g,
                                           gfloat         b,
                                           gfloat         a);
-
 
 
 #include "gegl/gegl-paramspecs.h"
