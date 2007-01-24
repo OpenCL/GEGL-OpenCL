@@ -26,7 +26,7 @@
 #ifndef GEGL_INTERNAL /* These declarations duplicate internal ones in GEGL */
 
 /***
- * GEGL:
+ * Introduction:
  *
  * GEGL is a graph based image processing (and compositing API), this document
  * describes the C programming interface to use GEGL in other software. It is
@@ -339,6 +339,7 @@ void          gegl_node_link             (GeglNode      *source,
  * gegl_node_link_many:
  * @source: the producer of data.
  * @first_sink: the first consumer of data.
+ * @...: NULL, or optionally more consumers followed by NULL.
  *
  * Synthetic sugar for linking a chain of nodes with "input"->"output", the
  * list is NULL terminated.
@@ -361,6 +362,8 @@ GeglNode     * gegl_node_new             (void);
  * gegl_node_new_child:
  * @parent: a #GeglNode
  * @first_property_name: the first property name, should usually be "operation"
+ * @...: first property value, optionally followed by more key/value pairs, ended
+ * terminated with NULL.
  *
  * Creates a new processing node that performs the specified operation with
  * a NULL terminated list of key/value pairs for initial parameter values
@@ -506,6 +509,50 @@ void          gegl_color_set_rgba        (GeglColor     *color,
                                           gfloat         a);
 
 
+
+/***
+ * glib:
+ *
+ * The following data types are from glib, look in the glib documentation
+ * for further information.
+ */
+
+/***
+ * GList:
+ * glib's doubly linked list structure.
+ *
+ */
+
+
+/***
+ * GList:
+ * glib's singly linked list structure.
+ *
+ */
+
+/***
+ * GParamSpec:
+ *
+ * A specification of a parameter, includes name, default values, limits (maximum/minimum) as
+ * well as other information.
+ *
+ */
+
+/***
+ * GOptionGroup:
+ *
+ * A datastructure used when decoding commandline options.
+ *
+ */
+
+/***
+ * GValue:
+ *
+ * glib's structure to store arbitary typed values, used by GEGL
+ * in conjunction with #GParamSpec to handle the properties for
+ * node operations.
+ *
+ */
 
 /*** this is just here to trick the parser.
  */

@@ -244,6 +244,7 @@ test $TEST_TYPE $FILE || {
 (cd operations/generated;./math.rb)
 (cd operations/generated;./svg-blend.rb)
 (cd operations/workshop/generated;./blend.rb)
+(cd docs/;../tools/create-reference.rb ../gegl/gegl.h api.html)
 
 echo
 echo "I am going to run ./configure with the following arguments:"
