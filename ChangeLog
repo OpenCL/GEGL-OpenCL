@@ -1,5 +1,9 @@
 2007-01-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: moved #ifndef marker to correct location.
+
+2007-01-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-cache.c: (finalize): disconnect signal handler
 	for invalidation of the connected node.
 

@@ -23,7 +23,6 @@
 
 #include <glib-object.h>
 
-#ifndef GEGL_INTERNAL /* These declarations duplicate internal ones in GEGL */
 
 /***
  * API Reference:
@@ -88,12 +87,12 @@ void           gegl_exit                 (void);
  * created (that also might have their own children) using #gegl_node_new_child
  * and #gegl_node_create_child.
  */
+#ifndef GEGL_INTERNAL /* These declarations duplicate internal ones in GEGL */
 typedef struct _GeglNode      GeglNode;
 GType gegl_node_get_type  (void) G_GNUC_CONST;
 #define GEGL_TYPE_NODE  (gegl_node_get_type())
 #define GEGL_NODE(obj)  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
 typedef struct _GeglRectangle GeglRectangle;
-
 #endif
 
 /**
@@ -260,11 +259,18 @@ void          gegl_node_set_property     (GeglNode      *node,
 
 
 /***
- * Introspection:
+ * Queries:
  *
  * This section lists functions that retrieve information, mostly needed
  * for interacting with a graph in a GUI, not creating one from scratch.
  */
+
+/**
+ * gegl_list_operations:
+ *
+ * Returns a list of available operations names. The list should not be freed.
+ */
+GSList      * gegl_list_operations (void);
 
 /**
  * gegl_node_detect:
@@ -294,12 +300,6 @@ GeglNode    * gegl_node_detect           (GeglNode      *node,
 GParamSpec  * gegl_node_find_property    (GeglNode      *node,
                                           const gchar   *property_name);
 
-/**
- * gegl_list_operations:
- *
- * Returns a list of available operations names. The list should not be freed.
- */
-GSList      * gegl_list_operations (void);
 
 /**
  * gegl_node_get:
