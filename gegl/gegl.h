@@ -70,6 +70,12 @@ GOptionGroup * gegl_get_option_group     (void);
  */
 void           gegl_exit                 (void);
 
+/**
+ * gegl_list_operations:
+ *
+ * Returns a list of available operations names. The list should not be freed.
+ */
+GSList      * gegl_list_operations (void);
 
 /***
  * GeglNode:
@@ -396,12 +402,6 @@ GeglNode    * gegl_node_get_input_proxy  (GeglNode      *node,
 GParamSpec ** gegl_node_get_properties   (GeglNode      *node,
                                           guint         *n_properties);
 
-/**
- * gegl_operation_list_operations:
- *
- * Returns a list of all operations names. The list should not be freed.
- */
-GSList      * gegl_operation_list_operations (void);
 
 /***
  * XML:

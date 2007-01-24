@@ -1,5 +1,12 @@
 2007-01-24  Øyvind Kolås  <pippin@gimp.org>
 
+	%s/gegl_operation_list_operations/gegl_list_operations/g
+
+	* gegl/gegl-operation.[ch]: (gegl_list_operations):
+	* gegl/gegl.h:
+
+2007-01-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.h: first step in reordering the order functions are
 	presented in the public API.
 

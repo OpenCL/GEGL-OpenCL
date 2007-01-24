@@ -383,7 +383,7 @@ static void addop(gpointer key,
   operations_list = g_slist_prepend (operations_list, key);
 }
 
-GSList *gegl_operation_list_operations (void)
+GSList *gegl_list_operations (void)
 {
   if (!operations_list)
     {

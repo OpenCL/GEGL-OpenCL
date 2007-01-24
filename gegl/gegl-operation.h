@@ -121,15 +121,15 @@ void       gegl_operation_set_source_region         (GeglOperation *operation,
                                                      GeglRectangle *region);
 
 /* returns the bounding box of the buffer that needs to be computed */
-GeglRectangle * gegl_operation_result_rect               (GeglOperation *operation,
+GeglRectangle * gegl_operation_result_rect          (GeglOperation *operation,
                                                      gpointer       context_id);
 
 
 /* virtual method invokers */
-GeglRectangle   gegl_operation_get_affected_region       (GeglOperation *self,
+GeglRectangle   gegl_operation_get_affected_region  (GeglOperation *self,
                                                      const gchar   *input_pad,
                                                      GeglRectangle  region);
-GeglRectangle   gegl_operation_get_defined_region        (GeglOperation *self);
+GeglRectangle   gegl_operation_get_defined_region   (GeglOperation *self);
 gboolean   gegl_operation_calc_source_regions       (GeglOperation *self,
                                                      gpointer       context_id);
 void       gegl_operation_attach                    (GeglOperation *self,
@@ -151,7 +151,7 @@ void       gegl_operation_class_set_description     (GeglOperationClass *self,
 void       gegl_operation_create_pad                (GeglOperation *self,
                                                      GParamSpec    *param_spec);
 GType      gegl_operation_gtype_from_name           (const gchar *name);
-GSList   * gegl_operation_list_operations           (void);
+GSList   * gegl_list_operations                     (void);
 
 GObject  * gegl_operation_get_data                  (GeglOperation *operation,
                                                      gpointer       context_id,
