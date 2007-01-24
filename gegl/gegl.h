@@ -1,4 +1,4 @@
-/* This file is part of GEGL
+/* This file is the public GEGL API
  *
  * GEGL is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,9 +15,7 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * Contributors:
- *   Calvin Williamson
- *           2006 Øyvind Kolås
+ * 2000-2007 © Calvin Williamson, Øyvind Kolås.
  */
 
 #ifndef __GEGL_H__
@@ -26,24 +24,15 @@
 #include <glib-object.h>
 
 #ifndef GEGL_INTERNAL /* These declarations duplicate internal ones in GEGL */
-typedef struct _GeglNode      GeglNode;
-GType gegl_node_get_type  (void) G_GNUC_CONST;
-#define GEGL_TYPE_NODE  (gegl_node_get_type())
-#define GEGL_NODE(obj)  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
 
-typedef struct _GeglColor     GeglColor;
-GType gegl_color_get_type (void) G_GNUC_CONST;
-#define GEGL_TYPE_COLOR (gegl_color_get_type())
-
-typedef struct _GeglRectangle GeglRectangle;
-struct _GeglRectangle
-{
-  gint x;
-  gint y;
-  gint w;
-  gint h;
-};
-#endif
+/***
+ * GEGL:
+ *
+ * GEGL is a graph based image processing (and compositing API), this document
+ * describes the C programming interface to use GEGL in other software. It is
+ * also possible to use GEGL from ruby and eventually other languages through
+ * bindings built on top of this C interface.
+ */
 
 /**
  * gegl_init:
@@ -81,12 +70,29 @@ GOptionGroup * gegl_get_option_group     (void);
  */
 void           gegl_exit                 (void);
 
+
+/***
+ * GeglNode:
+ *
+ * The Node is the most primitive building block in GEGL it is used to
+ * for foo.
+ */
+typedef struct _GeglNode      GeglNode;
+GType gegl_node_get_type  (void) G_GNUC_CONST;
+#define GEGL_TYPE_NODE  (gegl_node_get_type())
+#define GEGL_NODE(obj)  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
+typedef struct _GeglRectangle GeglRectangle;
+
+#endif
+
+
 /**
  * gegl_node_new:
  *
  * Create a new graph that can contain further processing nodes.
  *
- * Returns a new top level GeglNode (which can be used as a graph).
+ * Returns a new top level GeglNode (which can be used as a graph). When you
+ * are done using this graph instance it should be unreferenced with g_object_unref.
  */
 GeglNode     * gegl_node_new             (void);
 
@@ -164,7 +170,6 @@ void          gegl_node_set_property     (GeglNode      *node,
 
 /**
  * gegl_node_disconnect:
- * @node: the node to remove a connection from
  * @node: a #GeglNode
  * @input_pad_name: the input pad to disconnect.
  *
@@ -377,18 +382,8 @@ GeglNode    * gegl_node_get_output_proxy (GeglNode      *node,
  * this name a new one will be created.
  */
 GeglNode    * gegl_node_get_input_proxy  (GeglNode      *node,
-                                          const gchar   *name);
+                                          const gchar   *pad_name);
 
-/**
- * gegl_parse_xml:
- * @xmldata: a \0 terminated string containing XML data to be parsed.
- * @path_root: a file system path that relative paths in the XML will be
- * resolved in relation to.
- *
- * Returns a GeglNode containing the parsed XML as a subgraph.
- */
-GeglNode    * gegl_parse_xml             (const gchar   *xmldata,
-                                          const gchar   *path_root);
 
 /**
  * gegl_node_get_properties:
@@ -408,6 +403,24 @@ GParamSpec ** gegl_node_get_properties   (GeglNode      *node,
  */
 GSList      * gegl_operation_list_operations (void);
 
+/***
+ * XML:
+ * The XML format used by GEGL is not stable and should not be relied on
+ * for anything but testing purposes yet.
+ */
+
+
+/**
+ * gegl_parse_xml:
+ * @xmldata: a \0 terminated string containing XML data to be parsed.
+ * @path_root: a file system path that relative paths in the XML will be
+ * resolved in relation to.
+ *
+ * Returns a GeglNode containing the parsed XML as a subgraph.
+ */
+GeglNode    * gegl_parse_xml             (const gchar   *xmldata,
+                                          const gchar   *path_root);
+
 /**
  * gegl_to_xml:
  * @node: a #GeglNode
@@ -418,6 +431,37 @@ GSList      * gegl_operation_list_operations (void);
  */
 gchar       * gegl_to_xml                (GeglNode      *node,
                                           const gchar   *path_root);
+
+#ifndef GEGL_INTERNAL
+
+/***
+ * GeglRectangle:
+ * @x: x position
+ * @y: y position
+ * @w: width
+ * @h: height
+ *
+ * GeglRectangles are used for instance in gegl_node_get_bounding_box
+ */
+struct _GeglRectangle
+{
+  gint x;
+  gint y;
+  gint w;
+  gint h;
+};
+
+/***
+ * GeglColor:
+ *
+ * GeglColor is used for properties that use a gegl color, use gegl_color_new
+ * with a NULL string to create a new blank one, gegl_colors are destroyed
+ * with g_object_unref when they no longer are needed.
+ */
+typedef struct _GeglColor     GeglColor;
+GType gegl_color_get_type (void) G_GNUC_CONST;
+#define GEGL_TYPE_COLOR (gegl_color_get_type())
+#endif
 
 /**
  * gegl_color_new:

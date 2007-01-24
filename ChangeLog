@@ -1,3 +1,8 @@
+2007-01-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.h: first step in reordering the order functions are
+	presented in the public API.
+
 2007-01-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl.h: fixed mismatches between documented names, and actually
