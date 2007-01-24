@@ -1,5 +1,9 @@
 2007-01-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: sorted gegl_node_foo functions alphabetically.
+
+2007-01-24  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/gegl_operation_list_operations/gegl_list_operations/g
 
 	* gegl/gegl-operation.[ch]: (gegl_list_operations):
