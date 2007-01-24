@@ -12,8 +12,10 @@ class Argument
         @name=""
     end
     def data_type
-        type = @data_type.gsub(/\**/,"").gsub(/\s*/, "")
+        type = @data_type.gsub("const", "").gsub(/\**/,"").gsub(/\s*/, "")
         ret = @data_type.sub(/\s+/, "&nbsp;")
+        url = ""
+        
         case type
         when "void"
         when "gint"
@@ -23,10 +25,24 @@ class Argument
         when "gfloat"
         when "gboolean"
         when "gpointer"
+        when "GList"
+          url="http://developer.gnome.org/doc/API/2.0/glib/glib-Doubly-Linked-Lists.html#GList"
+        when "GSList"
+          url="http://developer.gnome.org/doc/API/2.0/glib/glib-Singly-Linked-Lists.html#GSList"
+        when "GParamSpec"
+          url="http://developer.gnome.org/doc/API/2.0/gobject/gobject-GParamSpec.html#GParamSpec"
+        when "GOptionGroup"
+          url="http://developer.gnome.org/doc/API/2.2/glib/glib-Commandline-option-parser.html#GOptionGroup"
+        when "GValue"
+          url="http://developer.gnome.org/doc/API/2.0/gobject/gobject-Generic-values.html#GValue"
         else
-          ret = ret.sub(type, "<a href='##{type}'>#{type}</a>")
+          url="##{type}"
         end
-        ret
+        if url!=""
+          ret.sub(type, "<a href='#{url}'>#{type}</a>")
+        else
+          ret
+        end
     end
 end
 
@@ -87,25 +103,43 @@ class Function
     end
 
     def return_type
-        type = @return_type.gsub(/\**/,"").gsub(/\s*/, "")
+        type = @return_type.gsub("const", "").gsub(/\**/,"").gsub(/\s*/, "")
         ret = @return_type.sub(/\s+/, "&nbsp;")
+        url = ""
+        
         case type
         when "void"
         when "gint"
         when "guint"
         when "gchar"
         when "gdouble"
-        when "gboolean"
         when "gfloat"
+        when "gboolean"
         when "gpointer"
+        when "GList"
+          url="http://developer.gnome.org/doc/API/2.0/glib/glib-Doubly-Linked-Lists.html#GList"
+        when "GSList"
+          url="http://developer.gnome.org/doc/API/2.0/glib/glib-Singly-Linked-Lists.html#GSList"
+        when "GParamSpec"
+          url="http://developer.gnome.org/doc/API/2.0/gobject/gobject-GParamSpec.html#GParamSpec"
+        when "GOptionGroup"
+          url="http://developer.gnome.org/doc/API/2.2/glib/glib-Commandline-option-parser.html#GOptionGroup"
+        when "GValue"
+          url="http://developer.gnome.org/doc/API/2.0/gobject/gobject-Generic-values.html#GValue"
         else
-          ret = ret.sub(type, "<a href='##{type}'>#{type}</a>")
+          url="##{type}"
         end
-        ret
+        if url!=""
+          ret.sub(type, "<a href='#{url}'>#{type}</a>")
+        else
+          ret
+        end
     end
+
+
     def to_html
         ret = "<div class='function'>
-                 <h3>#{@name}</h3>
+                 <!--<h3>#{@name}</h3>-->
                  <div class='function_signature'>
                    <div class='function_header'>
                    <div class='return_type'>#{self.return_type.sub(/const/,"<span class='const'>const</span>").gsub("*","<span class='pointer'>*</span>")}</div>
@@ -114,12 +148,37 @@ class Function
 
         ret += "<div class='function_args'>"
 
+        first=true
+        i=0
+        if @arguments.length==0
+            ret += "<div class='argument'><div class='arg_type'><span class='const'>(void)</span></div></div>\n"
+        end
         @arguments.each {|arg|
+            i=i+1
+            if(first and i==@arguments.length)
+            ret += "<div class='argument'>
+                      <div class='arg_type'><span class='const'>(</span>#{arg.data_type.sub(/const/,"<span class='const'>const</span>").gsub("*","<span class='pointer'>*</span>")}</div>
+                      <div class='arg_name'>#{arg.name.sub("...","<span class='varargs'>..., NULL</span>")}<span class='const'>)</span></div>
+                    </div>\n"
+            elsif(first)
+                first=false
+            ret += "<div class='argument'>
+                      <div class='arg_type'><span class='const'>(</span>#{arg.data_type.sub(/const/,"<span class='const'>const</span>").gsub("*","<span class='pointer'>*</span>")}</div>
+                      <div class='arg_name'>#{arg.name.sub("...","<span class='varargs'>..., NULL</span>")}<span class='const'>,</span></div>
+                    </div>\n"
+            elsif(i==@arguments.length)
             ret += "<div class='argument'>
                       <div class='arg_type'>#{arg.data_type.sub(/const/,"<span class='const'>const</span>").gsub("*","<span class='pointer'>*</span>")}</div>
-                      <div class='arg_name'>#{arg.name.sub("...","<span class='varargs'>..., NULL</span>")}</div>
+                      <div class='arg_name'>#{arg.name.sub("...","<span class='varargs'>..., NULL</span>")}<span class='const'>)</span></div>
                     </div>\n"
+            else
+            ret += "<div class='argument'>
+                      <div class='arg_type'>#{arg.data_type.sub(/const/,"<span class='const'>const</span>").gsub("*","<span class='pointer'>*</span>")}</div>
+                      <div class='arg_name'>#{arg.name.sub("...","<span class='varargs'>..., NULL</span>")}<span class='const'>,</span></div>
+                    </div>\n"
+            end
         }
+
         ret += "</div>"
         ret += "<div class='float_breaker'></div>"
         ret += "</div>"
@@ -380,6 +439,20 @@ file.puts "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
        @import url(\"gegl.css\");
        div.toc ul {
           font-size: 70%;
+       }
+       h3 {
+         margin-top: 2em;
+         margin-bottom: 0;
+         padding-bottom: 0;
+         padding-top: 0.2em;
+         border-top: 1px solid grey;
+       }
+       h4 {
+         margin-top: 1.5em;
+         margin-bottom: 0;
+         padding-bottom: 0.5em;
+         padding-top: 0.2em;
+         border-top: 1px solid grey;
        }
        #{CSS}
     </style>

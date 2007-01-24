@@ -26,12 +26,20 @@
 #ifndef GEGL_INTERNAL /* These declarations duplicate internal ones in GEGL */
 
 /***
- * Introduction:
+ * API Reference:
+ * This is the GEGL API reference, it is generated from the declarations and
+ * comments in <a href='gegl.h.html'>gegl.h</a> the headerfile that forms the
+ * public API of GEGL. This file contains both the functions that are to be used
+ * when using gegl from C, as well as the functions that are intended for use
+ * by language bindings for languages like ruby and python.
+ */
+
+/***
+ * Initialization:
  *
- * GEGL is a graph based image processing (and compositing API), this document
- * describes the C programming interface to use GEGL in other software. It is
- * also possible to use GEGL from ruby and eventually other languages through
- * bindings built on top of this C interface.
+ * Before GEGL can be used the engine should be initialized by either calling
+ * #gegl_init or through the use of #gegl_get_option_group. To shut down the
+ * GEGL engine call #gegl_exit.
  */
 
 /**
@@ -70,12 +78,6 @@ GOptionGroup * gegl_get_option_group     (void);
  */
 void           gegl_exit                 (void);
 
-/**
- * gegl_list_operations:
- *
- * Returns a list of available operations names. The list should not be freed.
- */
-GSList      * gegl_list_operations (void);
 
 /***
  * GeglNode:
@@ -85,9 +87,6 @@ GSList      * gegl_list_operations (void);
  * created with #gegl_node_new, from such a graph node, further children can be
  * created (that also might have their own children) using #gegl_node_new_child
  * and #gegl_node_create_child.
- *
- * Available property names are queried with #gegl_node_get_properties, set
- * with #gegl_node_set and retrieved with #gegl_node_get.
  */
 typedef struct _GeglNode      GeglNode;
 GType gegl_node_get_type  (void) G_GNUC_CONST;
@@ -98,20 +97,52 @@ typedef struct _GeglRectangle GeglRectangle;
 #endif
 
 /**
- * gegl_node_blit:
- * @node: a #GeglNode
- * @roi: the rectangle to render
- * @format: the #BablFormat desired.
- * @rowstride: rowstride in bytes (currently ignored)
- * @destination_buf: a memory buffer large enough to contain the data.
+ * gegl_node_new:
  *
- * Render a rectangular region from a node.
+ * Create a new graph that can contain further processing nodes.
+ *
+ * Returns a new top level #GeglNode (which can be used as a graph). When you
+ * are done using this graph instance it should be unreferenced with g_object_unref.
  */
-void          gegl_node_blit             (GeglNode      *node,
-                                          GeglRectangle *roi,
-                                          void          *format,
-                                          gint           rowstride,
-                                          gpointer      *destination_buf);
+GeglNode     * gegl_node_new             (void);
+
+/**
+ * gegl_node_create_child:
+ * @parent: a #GeglNode
+ * @operation: the type of node to create.
+ *
+ * Creates a new processing node that performs the specified operation.
+ *
+ * Returns a newly created node.
+ */
+
+GeglNode     * gegl_node_create_child    (GeglNode      *parent,
+                                          const gchar   *operation);
+
+/**
+ * gegl_node_new_child:
+ * @parent: a #GeglNode
+ * @first_property_name: the first property name, should usually be "operation"
+ * @...: first property value, optionally followed by more key/value pairs, ended
+ * terminated with NULL.
+ *
+ * Creates a new processing node that performs the specified operation with
+ * a NULL terminated list of key/value pairs for initial parameter values
+ * configuring the operation.
+ *
+ * Returns a newly created node.
+ */
+GeglNode    * gegl_node_new_child        (GeglNode      *parent,
+                                          const gchar   *first_property_name,
+                                          ...) G_GNUC_NULL_TERMINATED;
+
+/***
+ * Making connections:
+ *
+ * To do anything useful #GeglNode s needs to be connected together in
+ * a graph, this can be done through multiple functions, all of which
+ * are variations of #gegl_node_connect_from internally.
+ */
 
 /**
  * gegl_node_connect_from:
@@ -147,17 +178,93 @@ gboolean      gegl_node_connect_to       (GeglNode      *source,
                                           const gchar   *input_pad_name);
 
 /**
- * gegl_node_create_child:
- * @parent: a #GeglNode
- * @operation: the type of node to create.
+ * gegl_node_disconnect:
+ * @node: a #GeglNode
+ * @input_pad_name: the input pad to disconnect.
  *
- * Creates a new processing node that performs the specified operation.
+ * Disconnects a data source from a node. (Should this be deprecated and
+ * connecting a NULL node be used instead?)
  *
- * Returns a newly created node.
+ * Returns TRUE if a connection was broken.
+ */
+gboolean      gegl_node_disconnect       (GeglNode      *node,
+                                          const gchar   *input_pad_name);
+
+/**
+ * gegl_node_link:
+ * @source: the producer of data.
+ * @sink: the consumer of data.
+ *
+ * Synthetic sugar for linking the "output" pad of @source to the "input"
+ * pad of @sink.
+ */
+void          gegl_node_link             (GeglNode      *source,
+                                          GeglNode      *sink);
+
+/**
+ * gegl_node_link_many:
+ * @source: the producer of data.
+ * @first_sink: the first consumer of data.
+ * @...: NULL, or optionally more consumers followed by NULL.
+ *
+ * Synthetic sugar for linking a chain of nodes with "input"->"output", the
+ * list is NULL terminated. Making it possible to do things like:
+ * <pre>gegl_node_link_many (png_load, blur, scale, crop, png_save, NULL);</pre>
+ */
+void          gegl_node_link_many        (GeglNode      *source,
+                                          GeglNode      *first_sink,
+                                          ...) G_GNUC_NULL_TERMINATED;
+
+/***
+ * Setting properties:
+ *
+ * Properties can be set either when creating the node with
+ * #gegl_node_new_child or multiple properties can be set with #gegl_node_set.
+ * #gegl_node_set_property is provided to make it possible to implement
+ * language bindings without using variable arguments.
+ *
+ * To see what operations are available for a given operation look in the <a
+ * href='operations.html'>Operations reference</a> or use
+ * #gegl_node_get_properties.
  */
 
-GeglNode     * gegl_node_create_child    (GeglNode      *parent,
-                                          const gchar   *operation);
+/**
+ * gegl_node_set:
+ * @node: a #GeglNode
+ * @first_property_name: name of the first property to set
+ * @...: value for the first property, followed optionally by more name/value
+ * pairs, followed by NULL.
+ *
+ * Set properties on a node, possible properties to be set are the properties
+ * of the currently set operations as well as <em>"name"</em> and
+ * <em>"operation"</em>. <em>"operation"</em> changes the current operations
+ * set for the node, <em>"name"</em> doesn't have any role internally in
+ * GEGL.
+ */
+void          gegl_node_set              (GeglNode      *node,
+                                          const gchar   *first_property_name,
+                                          ...) G_GNUC_NULL_TERMINATED;
+/**
+ * gegl_node_set_property:
+ * @node: a #GeglNode
+ * @property_name: the name of the property to set
+ * @value: a GValue containing the value to be set in the property.
+ *
+ * This is mainly included for language bindings. Using #gegl_node_set is
+ * more convenient when programming in C.
+ */
+void          gegl_node_set_property     (GeglNode      *node,
+                                          const gchar   *property_name,
+                                          const GValue  *value);
+
+
+
+/***
+ * Introspection:
+ *
+ * This section lists functions that retrieve information, mostly needed
+ * for interacting with a graph in a GUI, not creating one from scratch.
+ */
 
 /**
  * gegl_node_detect:
@@ -176,18 +283,6 @@ GeglNode    * gegl_node_detect           (GeglNode      *node,
                                           gint           x,
                                           gint           y);
 
-/**
- * gegl_node_disconnect:
- * @node: a #GeglNode
- * @input_pad_name: the input pad to disconnect.
- *
- * Disconnects a data source from a node. (Should this be deprecated and
- * connecting a NULL node be used instead?)
- *
- * Returns TRUE if a connection was broken.
- */
-gboolean      gegl_node_disconnect       (GeglNode      *node,
-                                          const gchar   *input_pad_name);
 
 /**
  * gegl_node_find_property:
@@ -198,6 +293,13 @@ gboolean      gegl_node_disconnect       (GeglNode      *node,
  */
 GParamSpec  * gegl_node_find_property    (GeglNode      *node,
                                           const gchar   *property_name);
+
+/**
+ * gegl_list_operations:
+ *
+ * Returns a list of available operations names. The list should not be freed.
+ */
+GSList      * gegl_list_operations (void);
 
 /**
  * gegl_node_get:
@@ -304,8 +406,8 @@ GeglNode    * gegl_node_get_producer     (GeglNode      *node,
  * @node: a #GeglNode
  * @n_properties: return location for number of properties.
  *
- * Returns an allocated array of all paramspecs for a nodes operation
- * properties.
+ * Returns an allocated array of #GParamSpecs describing the properties
+ * of the operation currently set for a node.
  */
 GParamSpec ** gegl_node_get_properties   (GeglNode      *node,
                                           guint         *n_properties);
@@ -324,57 +426,32 @@ void          gegl_node_get_property     (GeglNode      *node,
                                           const gchar   *property_name,
                                           GValue        *value);
 
-/**
- * gegl_node_link:
- * @source: the producer of data.
- * @sink: the consumer of data.
+
+
+/***
+ * Processing:
  *
- * Synthetic sugar for linking the "output" pad of @source to the "input"
- * pad of @sink.
+ * There are two different ways to do processing with GEGL, either you
+ * query any node providing output for a rectangular region to be rendered
+ * using #gegl_node_blit, or you use #gegl_node_process on a sink node (A
+ * display node, an image file writer or similar).
  */
-void          gegl_node_link             (GeglNode      *source,
-                                          GeglNode      *sink);
 
 /**
- * gegl_node_link_many:
- * @source: the producer of data.
- * @first_sink: the first consumer of data.
- * @...: NULL, or optionally more consumers followed by NULL.
+ * gegl_node_blit:
+ * @node: a #GeglNode
+ * @roi: the rectangle to render
+ * @format: the #BablFormat desired.
+ * @rowstride: rowstride in bytes (currently ignored)
+ * @destination_buf: a memory buffer large enough to contain the data.
  *
- * Synthetic sugar for linking a chain of nodes with "input"->"output", the
- * list is NULL terminated.
+ * Render a rectangular region from a node.
  */
-void          gegl_node_link_many        (GeglNode      *source,
-                                          GeglNode      *first_sink,
-                                          ...) G_GNUC_NULL_TERMINATED;
-
-/**
- * gegl_node_new:
- *
- * Create a new graph that can contain further processing nodes.
- *
- * Returns a new top level #GeglNode (which can be used as a graph). When you
- * are done using this graph instance it should be unreferenced with g_object_unref.
- */
-GeglNode     * gegl_node_new             (void);
-
-/**
- * gegl_node_new_child:
- * @parent: a #GeglNode
- * @first_property_name: the first property name, should usually be "operation"
- * @...: first property value, optionally followed by more key/value pairs, ended
- * terminated with NULL.
- *
- * Creates a new processing node that performs the specified operation with
- * a NULL terminated list of key/value pairs for initial parameter values
- * configuring the operation.
- *
- * Returns a newly created node.
- */
-GeglNode    * gegl_node_new_child        (GeglNode      *parent,
-                                          const gchar   *first_property_name,
-                                          ...) G_GNUC_NULL_TERMINATED;
-
+void          gegl_node_blit             (GeglNode      *node,
+                                          GeglRectangle *roi,
+                                          void          *format,
+                                          gint           rowstride,
+                                          gpointer      *destination_buf);
 /**
  * gegl_node_process:
  * @sink_node: a #GeglNode without outputs.
@@ -384,30 +461,7 @@ GeglNode    * gegl_node_new_child        (GeglNode      *parent,
  */
 void          gegl_node_process          (GeglNode      *sink_node);
 
-/**
- * gegl_node_set:
- * @node: a #GeglNode
- * @first_property_name: name of the first property to set
- * @...: value for the first property, followed optionally by more name/value
- * pairs, followed by NULL.
- *
- * Set properties on a node.
- */
-void          gegl_node_set              (GeglNode      *node,
-                                          const gchar   *first_property_name,
-                                          ...) G_GNUC_NULL_TERMINATED;
-/**
- * gegl_node_set_property:
- * @node: a #GeglNode
- * @property_name: the name of the property to set
- * @value: a GValue containing the value to be set in the property.
- *
- * This is mainly included for language bindings. Using #gegl_node_set is
- * more convenient when programming in C.
- */
-void          gegl_node_set_property     (GeglNode      *node,
-                                          const gchar   *property_name,
-                                          const GValue  *value);
+
 
 /***
  * XML:
@@ -441,12 +495,18 @@ gchar       * gegl_to_xml                (GeglNode      *node,
 
 /***
  * GeglRectangle:
- * @x: x position
- * @y: y position
- * @w: width
- * @h: height
  *
- * GeglRectangles are used for instance in gegl_node_get_bounding_box
+ * GeglRectangles are used in #gegl_node_get_bounding_box and #gegl_node_blit
+ * for specifying rectangles.
+ *
+ * <pre>struct GeglRectangle
+ * {
+ *   gint x;
+ *   gint y;
+ *   gint w;
+ *   gint h;
+ * };</pre>
+ *
  */
 struct _GeglRectangle
 {
@@ -462,6 +522,10 @@ struct _GeglRectangle
  * GeglColor is used for properties that use a gegl color, use #gegl_color_new
  * with a NULL string to create a new blank one, gegl_colors are destroyed
  * with g_object_unref when they no longer are needed.
+ *
+ * The colors used by gegls are described in a format similar to CSS, the
+ * textstring "rgb(1.0,1.0,1.0)" signifies opaque white and
+ * "rgba(1.0,0.0,0.0,0.75)" is a 75% opaque red. 
  */
 typedef struct _GeglColor     GeglColor;
 GType gegl_color_get_type (void) G_GNUC_CONST;
@@ -507,52 +571,6 @@ void          gegl_color_set_rgba        (GeglColor     *color,
                                           gfloat         g,
                                           gfloat         b,
                                           gfloat         a);
-
-
-
-/***
- * glib:
- *
- * The following data types are from glib, look in the glib documentation
- * for further information.
- */
-
-/***
- * GList:
- * glib's doubly linked list structure.
- *
- */
-
-
-/***
- * GList:
- * glib's singly linked list structure.
- *
- */
-
-/***
- * GParamSpec:
- *
- * A specification of a parameter, includes name, default values, limits (maximum/minimum) as
- * well as other information.
- *
- */
-
-/***
- * GOptionGroup:
- *
- * A datastructure used when decoding commandline options.
- *
- */
-
-/***
- * GValue:
- *
- * glib's structure to store arbitary typed values, used by GEGL
- * in conjunction with #GParamSpec to handle the properties for
- * node operations.
- *
- */
 
 /*** this is just here to trick the parser.
  */
