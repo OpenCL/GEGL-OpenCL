@@ -47,15 +47,15 @@
  *
  * Note that there is an alternative way to initialize GEGL: if you
  * are calling g_option_context_parse() with the option group returned
- * by gegl_get_option_group(), you don't have to call gegl_init().
+ * by #gegl_get_option_group(), you don't have to call #gegl_init().
  **/
 void           gegl_init                 (gint          *argc,
                                           gchar       ***argv);
 /**
  * gegl_get_option_group:
  *
- * Returns a #GOptionGroup for the commandline arguments recognized
- * by GEGL. You should add this group to your #GOptionContext
+ * Returns a GOptionGroup for the commandline arguments recognized
+ * by GEGL. You should add this group to your GOptionContext
  * with g_option_context_add_group() if you are using
  * g_option_context_parse() to parse your commandline arguments.
  */
@@ -80,8 +80,14 @@ GSList      * gegl_list_operations (void);
 /***
  * GeglNode:
  *
- * The Node is the most primitive building block in GEGL it is used to
- * for foo.
+ * The Node is the image processing primitive connected to create compositions
+ * in GEGL. The toplevel #GeglNode which contains a graph of #GeglNodes can be
+ * created with #gegl_node_new, from such a graph node, further children can be
+ * created (that also might have their own children) using #gegl_node_new_child
+ * and #gegl_node_create_child.
+ *
+ * Available property names are queried with #gegl_node_get_properties, set
+ * with #gegl_node_set and retrieved with #gegl_node_get.
  */
 typedef struct _GeglNode      GeglNode;
 GType gegl_node_get_type  (void) G_GNUC_CONST;
@@ -163,8 +169,8 @@ GeglNode     * gegl_node_create_child    (GeglNode      *parent,
  * coordinate pair. Currently operates only on bounding boxes and not
  * pixel data.
  *
- * Returns the GeglNode providing the data ending up at x,y for this
- * nodes output.
+ * Returns the GeglNode providing the data ending up at @x,@y in the output
+ * of @node.
  */
 GeglNode    * gegl_node_detect           (GeglNode      *node,
                                           gint           x,
@@ -310,7 +316,9 @@ GParamSpec ** gegl_node_get_properties   (GeglNode      *node,
  * @property_name: the name of the property to get
  * @value: pointer to a GValue where the value of the property should be stored
  *
- * This is mainly included for language bindings. Use gegl_node_set instead.
+ * This is mainly included for language bindings. Using #gegl_node_get is
+ * more convenient when programming in C.
+ *
  */
 void          gegl_node_get_property     (GeglNode      *node,
                                           const gchar   *property_name,
@@ -321,8 +329,8 @@ void          gegl_node_get_property     (GeglNode      *node,
  * @source: the producer of data.
  * @sink: the consumer of data.
  *
- * Synthetic sugar for linking the "output" pad of #source to the "input"
- * pad of #sink.
+ * Synthetic sugar for linking the "output" pad of @source to the "input"
+ * pad of @sink.
  */
 void          gegl_node_link             (GeglNode      *source,
                                           GeglNode      *sink);
@@ -330,13 +338,13 @@ void          gegl_node_link             (GeglNode      *source,
 /**
  * gegl_node_link_many:
  * @source: the producer of data.
- * @sink1: the first consumer of data.
+ * @first_sink: the first consumer of data.
  *
  * Synthetic sugar for linking a chain of nodes with "input"->"output", the
  * list is NULL terminated.
  */
 void          gegl_node_link_many        (GeglNode      *source,
-                                          GeglNode      *sink1,
+                                          GeglNode      *first_sink,
                                           ...) G_GNUC_NULL_TERMINATED;
 
 /**
@@ -344,7 +352,7 @@ void          gegl_node_link_many        (GeglNode      *source,
  *
  * Create a new graph that can contain further processing nodes.
  *
- * Returns a new top level GeglNode (which can be used as a graph). When you
+ * Returns a new top level #GeglNode (which can be used as a graph). When you
  * are done using this graph instance it should be unreferenced with g_object_unref.
  */
 GeglNode     * gegl_node_new             (void);
@@ -391,7 +399,8 @@ void          gegl_node_set              (GeglNode      *node,
  * @property_name: the name of the property to set
  * @value: a GValue containing the value to be set in the property.
  *
- * This is mainly included for language bindings. Use gegl_node_set instead.
+ * This is mainly included for language bindings. Using #gegl_node_set is
+ * more convenient when programming in C.
  */
 void          gegl_node_set_property     (GeglNode      *node,
                                           const gchar   *property_name,
@@ -447,7 +456,7 @@ struct _GeglRectangle
 /***
  * GeglColor:
  *
- * GeglColor is used for properties that use a gegl color, use gegl_color_new
+ * GeglColor is used for properties that use a gegl color, use #gegl_color_new
  * with a NULL string to create a new blank one, gegl_colors are destroyed
  * with g_object_unref when they no longer are needed.
  */
@@ -460,7 +469,7 @@ GType gegl_color_get_type (void) G_GNUC_CONST;
  * gegl_color_new:
  * @string: an CSS style color string.
  *
- * Returns a GeglColor object suitable for use in gegl_node_set.
+ * Returns a #GeglColor object suitable for use with #gegl_node_set.
  */
 GeglColor   * gegl_color_new             (const gchar   *string);
 
@@ -472,7 +481,7 @@ GeglColor   * gegl_color_new             (const gchar   *string);
  * @b: return location for blue component.
  * @a: return location for alpha component.
  *
- * Retrieve RGB component values from a GeglColor.
+ * Retrieve RGB component values from a #GeglColor.
  */
 void          gegl_color_get_rgba        (GeglColor     *color,
                                           gfloat        *r,
@@ -497,6 +506,9 @@ void          gegl_color_set_rgba        (GeglColor     *color,
                                           gfloat         a);
 
 
+
+/*** this is just here to trick the parser.
+ */
 #include "gegl/gegl-paramspecs.h"
 
 #endif  /* __GEGL_H__ */
