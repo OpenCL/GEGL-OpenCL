@@ -171,9 +171,22 @@ static void
 finalize (GObject *gobject)
 {
   GeglCache *self = GEGL_CACHE (gobject);
+
+
   while (g_idle_remove_by_data (gobject));
+
+
   if (self->node)
-    g_object_unref (self->node);
+    {
+      gint handler = g_signal_handler_find (self->node, G_SIGNAL_MATCH_DATA,
+                                                 gegl_node_signals[GEGL_NODE_INVALIDATED],
+                                                 0, NULL, NULL, self);
+      if (handler)
+        {
+          g_signal_handler_disconnect (self->node, handler);
+        }
+      g_object_unref (self->node);
+    }
   if (self->valid_region)
     gegl_region_destroy (self->valid_region);
   if (self->queued_region)

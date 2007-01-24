@@ -1,3 +1,8 @@
+2007-01-25  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-cache.c: (finalize): disconnect signal handler
+	for invalidation of the connected node.
+
 2007-01-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl.h: Ordered into sections, removed dummy comments for
