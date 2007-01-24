@@ -17,6 +17,7 @@ EXTRA_DIST= 			\
 	gegl.css  		\
 	hello-world.c		\
 	index-static.html.in	\
+	api.html		\
 	index.html
 
 BUILT_EXTRA_DIST = index.html class-hierarchy.html operations.html
@@ -39,6 +40,9 @@ gegl.h.html: ../gegl/gegl.h
 if HAVE_ENSCRIPT
 	enscript -E --color --language=html -p$@ $<
 endif
+
+api.html: ../gegl/gegl.h ../tools/create-reference.rb
+	../tools/create-reference.rb ../gegl/gegl.h api.html
 
 runinfo: Makefile.am
 	if [ ! -z "$${CRUCIBLE_ID}" ]; then\

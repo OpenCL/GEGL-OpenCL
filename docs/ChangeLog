@@ -1,3 +1,9 @@
+2007-01-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am: added rule to build api.html
+	* gegl.css: add scrollbar if toc grows too large.
+	* index-static.html.in: add api.html to tarball
+
 2007-01-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: added mention of ruby binding in feature list.

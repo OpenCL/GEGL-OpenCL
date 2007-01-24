@@ -82,8 +82,9 @@
         <li><a href='#Copyright'>&nbsp;&nbsp;Copyright</a></li>
         <li>&nbsp;</li>
         <li><a href='#Documentation'>Documentation</a></li>
-        <li><a href='operations.html'>&nbsp;&nbsp;Operations</a></li>
         <li><a href='#Glossary'>&nbsp;&nbsp;Glossary</a></li>
+        <li><a href='operations.html'>&nbsp;&nbsp;Operations</a></li>
+        <li><a href='api.html'>&nbsp;&nbsp;API reference</a></li>
         <li><a href='#HelloWorld'>&nbsp;&nbsp;Hello World</a></li>
         <li><a href='#XML'>&nbsp;&nbsp;XML data model</a></li>
         <li><a href='#Environment'>&nbsp;&nbsp;Environment</a></li>
@@ -140,6 +141,11 @@
             </ul>
             </li>
         </ul>
+
+
+        <a name='Gallery'></a>
+        <h3>Gallery</h3>
+
         <p>For examples of what GEGL is currently capable of doing, take a
         look at <a href='gallery/index.html'>the gallery</a>.
         </p>
@@ -257,21 +263,18 @@ http://svn.gnome.org/svn/gegl/trunk/ gegl</pre>
     <a href='#Glossary'>Glossary</a> to decode this paragraph.
     </p>
     
-    <p>The DAG is modifiable through the <a href='gegl.h.html'>C API</a> as
-    well as a <a
-        href='http://ervilha.org/pygegl/'>Python Binding</a>. The <a
+    <p>The <a href='api.html'>GEGL API</a> is available from both C as
+    well as <a href='http://pippin.gimp.org/rgegl/'>ruby</a> and <a
+        href='http://ervilha.org/pygegl/'>python</a>. The <a
         href='#XML'>XML Data model</a> provides a tree based interface that
-    maps to Directed Acyclic graphs (DAGs).
+    maps to the internal DAG (Directed Acyclic Graph).
+
     
     <a href='#Environment'>Environment Variables</a> can be set to tune and
     instrument the behavior of GEGL. <a href='#gegl'>gegl</a> is small commandline
     tool acting as a wrapper around the XML capabilities that provides output
     to PNG. </p>
 
-    <p>The main source of documentation as GEGL grows is the <a
-        href='operations.html'>Operations</a> reference. Plug-ins themselves
-    register information about the categories they belong to, what they do, and
-    documentation of the available parameters. </p>
 
     <a name='Glossary'></a>
     <h3>Glossary</h3>
@@ -317,6 +320,13 @@ http://svn.gnome.org/svn/gegl/trunk/ gegl</pre>
       use of GParamSpecs properties are self documenting through introspection.
       </dd>
   </dl>
+
+    <a name='Operations'></a>
+    <h3>Operations</h3>
+    <p>The main source of documentation as GEGL grows is the <a
+        href='operations.html'>Operations</a> reference. Plug-ins themselves
+    register information about the categories they belong to, what they do, and
+    documentation of the available parameters. </p>
 
   <a name='HelloWorld'></a>
   <h3>Hello world</h3>
