@@ -1,5 +1,10 @@
 2007-01-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/blur/gaussian-blur.c: making the maximum blur radius be
+	100.0 until a nonlinear mapping for the gui is added to paramspec.
+
+2007-01-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/operation_reference.c: (category_index), (main): improved
 	layout of categories.
 

@@ -25,9 +25,9 @@
 
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (radius_x, 0.0, 500.0, 4.0,
+gegl_chant_double (radius_x, 0.0, 100.0, 4.0,
    "Standard deviation for the horizontal axis.")
-gegl_chant_double (radius_y, 0.0, 500.0, 4.0,
+gegl_chant_double (radius_y, 0.0, 100.0, 4.0,
    "Standard deviation for the vertical axis.")
 gegl_chant_string (filter, NULL,
    "Optional parameter to override the automatic selection of blur filter.")
