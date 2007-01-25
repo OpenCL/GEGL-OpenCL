@@ -257,9 +257,42 @@ void          gegl_node_set_property     (GeglNode      *node,
                                           const GValue  *value);
 
 
+/***
+ * Processing:
+ *
+ * There are two different ways to do processing with GEGL, either you
+ * query any node providing output for a rectangular region to be rendered
+ * using #gegl_node_blit, or you use #gegl_node_process on a sink node (A
+ * display node, an image file writer or similar).
+ */
+
+/**
+ * gegl_node_blit:
+ * @node: a #GeglNode
+ * @roi: the rectangle to render
+ * @format: the #BablFormat desired.
+ * @rowstride: rowstride in bytes (currently ignored)
+ * @destination_buf: a memory buffer large enough to contain the data.
+ *
+ * Render a rectangular region from a node.
+ */
+void          gegl_node_blit             (GeglNode      *node,
+                                          GeglRectangle *roi,
+                                          void          *format,
+                                          gint           rowstride,
+                                          gpointer      *destination_buf);
+/**
+ * gegl_node_process:
+ * @sink_node: a #GeglNode without outputs.
+ *
+ * Render a composition. XXX: this will be replaced with an API that allows
+ * the processing to occur in smaller chunks.
+ */
+void          gegl_node_process          (GeglNode      *sink_node);
+
 
 /***
- * Queries:
+ * State queries:
  *
  * This section lists functions that retrieve information, mostly needed
  * for interacting with a graph in a GUI, not creating one from scratch.
@@ -427,39 +460,6 @@ void          gegl_node_get_property     (GeglNode      *node,
                                           GValue        *value);
 
 
-
-/***
- * Processing:
- *
- * There are two different ways to do processing with GEGL, either you
- * query any node providing output for a rectangular region to be rendered
- * using #gegl_node_blit, or you use #gegl_node_process on a sink node (A
- * display node, an image file writer or similar).
- */
-
-/**
- * gegl_node_blit:
- * @node: a #GeglNode
- * @roi: the rectangle to render
- * @format: the #BablFormat desired.
- * @rowstride: rowstride in bytes (currently ignored)
- * @destination_buf: a memory buffer large enough to contain the data.
- *
- * Render a rectangular region from a node.
- */
-void          gegl_node_blit             (GeglNode      *node,
-                                          GeglRectangle *roi,
-                                          void          *format,
-                                          gint           rowstride,
-                                          gpointer      *destination_buf);
-/**
- * gegl_node_process:
- * @sink_node: a #GeglNode without outputs.
- *
- * Render a composition. XXX: this will be replaced with an API that allows
- * the processing to occur in smaller chunks.
- */
-void          gegl_node_process          (GeglNode      *sink_node);
 
 
 
