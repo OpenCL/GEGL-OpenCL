@@ -1,5 +1,10 @@
 2007-01-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/operation_reference.c: (category_menu_index), (main): made
+	the menu just contain an alphabetical list of all operations.
+
+2007-01-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.h: moved #ifndef marker to correct location.
 
 2007-01-25  Øyvind Kolås  <pippin@gimp.org>

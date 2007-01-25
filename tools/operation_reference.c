@@ -110,7 +110,7 @@ list_properties (GType    type,
 }
 
 
-static gchar *html_top = "<html><head><title>GEGL operations</title><link rel='shortcut icon' href='images/gegl.ico'/><style type='text/css'>@import url(gegl.css);</style></head><body><div class='paper'><div class='content'>\n";
+static gchar *html_top = "<html><head><title>GEGL operations</title><link rel='shortcut icon' href='images/gegl.ico'/><style type='text/css'>@import url(gegl.css);div.toc ul{font-size:70%;}</style></head><body><div class='paper'><div class='content'>\n";
 static gchar *html_bottom = "</div></div></body></html>";
 
 
@@ -147,6 +147,27 @@ static void category_index (gpointer key,
       comma = TRUE;
     }
   g_print ("</p>\n");
+}
+
+static void category_menu_index (gpointer key,
+                                 gpointer value,
+                                 gpointer user_data)
+{
+  gchar    *category = key;
+  GList    *operations = value;
+  GList    *iter;
+  gboolean  comma;
+
+  if (!strcmp (category, "hidden"))
+    return;
+  for (iter=operations, comma=FALSE;iter;iter = g_list_next (iter))
+    {
+      GeglOperationClass *klass = iter->data;
+      if (strstr (klass->categories, "hidden"))
+        continue;
+      g_print ("<li><a href='#op_%s'>&nbsp;&nbsp;%s</a></li>", klass->name, klass->name);
+      comma = TRUE;
+    }
 }
 
 gint
@@ -191,8 +212,11 @@ main (gint    argc,
   g_print ("<div class='toc'><ul>\n");
   g_print ("<li><a href='index.html'>GEGL</a></li><li>&nbsp;</li>\n");
   g_print ("<li><a href='operations.html#'>Operations</a></li>\n");
-  category_menu_item ("All", NULL, NULL);
-  g_hash_table_foreach (categories, category_menu_item, NULL);
+  /*category_menu_item ("All", NULL, NULL);
+  g_hash_table_foreach (categories, category_menu_item, NULL);*/
+
+  category_menu_index("All", operations, NULL);
+
   g_print ("</ul></div>\n");
 
     g_print ("<h1>Operations</h1>");
