@@ -110,10 +110,13 @@ list_properties (GType    type,
 }
 
 
-static gchar *html_top = "<html><head><title>GEGL operations</title><link rel='shortcut icon' href='images/gegl.ico'/><style type='text/css'>@import url(gegl.css);div.toc ul{font-size:70%;}</style></head><body><div class='paper'><div class='content'>\n";
+static gchar *html_top = "<html><head><title>GEGL operations</title><link rel='shortcut icon' href='images/gegl.ico'/><style type='text/css'>@import url(gegl.css);div.toc ul{font-size:70%;}"
+".category { margin-bottom: 2em; }"
+".category a { display: block; width: 10em; height: 1.2em; float: left; text-align: left; font-size: 90%;}"
+"</style></head><body><div class='paper'><div class='content'>\n";
 static gchar *html_bottom = "</div></div></body></html>";
 
-
+#if 0
 static void category_menu_item (gpointer key,
                                 gpointer value,
                                 gpointer user_data)
@@ -123,6 +126,7 @@ static void category_menu_item (gpointer key,
     return;
   g_print ("<li><a href='#cat_%s'>&nbsp;&nbsp;%s</a></li>\n", category, category);
 }
+#endif
 
 static void category_index (gpointer key,
                             gpointer value,
@@ -135,18 +139,18 @@ static void category_index (gpointer key,
 
   if (!strcmp (category, "hidden"))
     return;
-  g_print ("<a name='cat_%s'><h3>%s</h3></a>\n", category, category);
-  g_print ("<p>\n");
+  g_print ("<a name='cat_%s'></a><h3>%s</h3>\n", category, category);
+  g_print ("<div class='category'>\n");
 
   for (iter=operations, comma=FALSE;iter;iter = g_list_next (iter))
     {
       GeglOperationClass *klass = iter->data;
       if (strstr (klass->categories, "hidden"))
         continue;
-      g_print ("%s<a href='#op_%s'>%s</a>", comma?", ":"", klass->name, klass->name);
+      g_print ("%s<a href='#op_%s'>%s</a>", comma?"":"", klass->name, klass->name);
       comma = TRUE;
     }
-  g_print ("</p>\n");
+  g_print ("<div style='clear:both;'></div></div>\n");
 }
 
 static void category_menu_index (gpointer key,
@@ -216,19 +220,24 @@ main (gint    argc,
   g_print ("<li><a href='operations.html#'>&nbsp;&nbsp;Operations</a></li>\n");
   g_print ("<li><a href='api.html'>&nbsp;&nbsp;API reference</a></li>\n");
   g_print ("<li><a href=''>&nbsp;</a></li>\n");
+  g_print ("<li><a href='#Categories'>Categories</a></li>\n");
+  g_print ("<li><a href=''>&nbsp;</a></li>\n");
   /*category_menu_item ("All", NULL, NULL);
   g_hash_table_foreach (categories, category_menu_item, NULL);*/
 
+	  /*border: 0.1em dashed rgb(210,210,210);
+	   */
   category_menu_index("All", operations, NULL);
 
   g_print ("</ul></div>\n");
 
-    g_print ("<h1>Operations</h1>");
+    g_print ("<h1>GEGL operation reference</h1>");
     g_print ("<p>Image processing operations are shared objects (plug-ins) loaded when GEGL initializes. "
-             "This page is generated from information registered by the plug-ins themselves. A plug-in can "
-             "belong in multiple categories.</p>");
+             "This page is generated from information registered by the plug-ins themselves.</p>"
+              "<a name='Categories'><h2>Categories</h2></a><p>A plug-in can "
+             "belong in multiple categories. Below is indexes broken down into the various available categories.</p>");
 
-  category_index ("All", operations, NULL);
+  /*category_index ("All", operations, NULL);*/
   /* create menus for each of the categories */
 
   g_hash_table_foreach (categories, category_index, NULL);
