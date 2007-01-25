@@ -165,7 +165,7 @@ static void category_menu_index (gpointer key,
       GeglOperationClass *klass = iter->data;
       if (strstr (klass->categories, "hidden"))
         continue;
-      g_print ("<li><a href='#op_%s'>&nbsp;&nbsp;%s</a></li>", klass->name, klass->name);
+      g_print ("<li><a href='#op_%s'>%s</a></li>", klass->name, klass->name);
       comma = TRUE;
     }
 }
@@ -211,7 +211,11 @@ main (gint    argc,
 
   g_print ("<div class='toc'><ul>\n");
   g_print ("<li><a href='index.html'>GEGL</a></li><li>&nbsp;</li>\n");
-  g_print ("<li><a href='operations.html#'>Operations</a></li>\n");
+  g_print ("<li><a href='index.html#Documentation'>Documentation</a></li>\n");
+  g_print ("<li><a href='index.html#Glossary'>&nbsp;&nbsp;Glossary</a></li>\n");
+  g_print ("<li><a href='operations.html#'>&nbsp;&nbsp;Operations</a></li>\n");
+  g_print ("<li><a href='api.html'>&nbsp;&nbsp;API reference</a></li>\n");
+  g_print ("<li><a href=''>&nbsp;</a></li>\n");
   /*category_menu_item ("All", NULL, NULL);
   g_hash_table_foreach (categories, category_menu_item, NULL);*/
 
