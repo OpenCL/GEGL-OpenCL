@@ -264,8 +264,8 @@ http://svn.gnome.org/svn/gegl/trunk/ gegl</pre>
     </p>
     
     <p>The <a href='api.html'>GEGL API</a> is available from both C as
-    well as <a href='http://pippin.gimp.org/rgegl/'>ruby</a> and <a
-        href='http://ervilha.org/pygegl/'>python</a>. The <a
+    well as <a href='http://pippin.gimp.org/rgegl/'>Ruby</a> and <a
+        href='http://ervilha.org/pygegl/'>Python</a>. The <a
         href='#XML'>XML Data model</a> provides a tree based interface that
     maps to the internal DAG (Directed Acyclic Graph).
 
