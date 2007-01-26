@@ -741,29 +741,46 @@ gegl_node_apply_roi (GeglNode      *self,
   return buffer;
 }
 
-void
-gegl_node_blit (GeglNode      *self,
-                GeglRectangle *roi,
-                void          *format,
-                gint           rowstride,
-                gpointer      *destination_buf)
+void          gegl_node_blit                (GeglNode      *node,
+                                             GeglRectangle *roi,
+                                             gdouble        scale,
+                                             void          *format,
+                                             gint           rowstride,
+                                             gpointer      *destination_buf,
+                                             GeglBlitFlags  flags)
 {
-  GeglBuffer  *buffer;
-
-  buffer = gegl_node_apply_roi (self, "output", roi);
-  {
-    GeglBuffer *roi_buf = g_object_new (GEGL_TYPE_BUFFER,
-                                        "source", buffer,
-                                        "x",      roi->x,
-                                        "y",      roi->y,
-                                        "width",  roi->w,
-                                        "height", roi->h,
-                                        NULL);
-    gegl_buffer_get (roi_buf, NULL, destination_buf, format, 1.0);
-    g_object_unref (roi_buf);
-  }
-  /* and unrefing to ultimatly clean it off from the graph */
-  g_object_unref (buffer);
+  if (flags == GEGL_BLIT_DEFAULT)
+    {
+      GeglBuffer  *buffer;
+      buffer = gegl_node_apply_roi (node, "output", roi);
+      {
+        GeglBuffer *roi_buf = g_object_new (GEGL_TYPE_BUFFER,
+                                            "source", buffer,
+                                            "x",      roi->x,
+                                            "y",      roi->y,
+                                            "width",  roi->w,
+                                            "height", roi->h,
+                                            NULL);
+        gegl_buffer_get (roi_buf, NULL, 1.0, format, destination_buf);
+        g_object_unref (roi_buf);
+        if (scale!=1.0)
+          {
+            g_warning ("Scale %f!=1.0 in blit without cache", scale);
+          }
+      }
+      /* and unrefing to ultimatly clean it off from the graph */
+      g_object_unref (buffer);
+    }
+  else if (flags & GEGL_BLIT_CACHE)
+    {
+      GeglCache *cache = gegl_node_get_cache (node);
+      if (!flags & GEGL_BLIT_DIRTY)
+        { /* if we're not blitting dirtily, we need to make sure
+             that the data is available */
+          while (gegl_cache_render (cache, roi));
+        }
+      gegl_buffer_get (GEGL_BUFFER (cache), roi, scale, format, destination_buf);
+    }
 }
 
 GeglBuffer *
@@ -1503,14 +1520,9 @@ gegl_node_process (GeglNode *self)
 
   input = gegl_node_get_producer (self, "input", NULL);
   defined = gegl_node_get_bounding_box (input);
-  cache = g_object_new (GEGL_TYPE_CACHE,
-                        "node", input,
-                        "format", babl_format ("RGBA float"),
-                        NULL);
+  cache = gegl_node_get_cache (input);
 
-  gegl_cache_enqueue (cache, defined);
-
-  while (gegl_cache_render (cache));
+  while (gegl_cache_render (cache, &defined));
 
   dynamic = gegl_node_add_dynamic (self, cache);
     {
@@ -1524,7 +1536,9 @@ gegl_node_process (GeglNode *self)
   gegl_node_dynamic_set_result_rect (dynamic, defined.x, defined.y, defined.w, defined.h);
   gegl_operation_process (self->operation, cache, "foo");
   gegl_node_remove_dynamic (self, cache);
-  g_object_unref (cache);
+  gegl_node_disable_cache (input); /* we do not strictly need to kill
+                                      the cache here, and it is a
+                                      bit rude if there is more users */
 }
 
 #if 0

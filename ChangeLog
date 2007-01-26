@@ -1,4 +1,16 @@
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+	
+	Changed public API for gegl_node_blit, it new order of arguments,
+	as well as new flags for indicating use of cache (projection for
+	this node), as well as whether dirty cache data is accepted in
+	the blit.
+
+	* gegl/gegl.h:
+	* gegl/gegl-node.[ch]: (gegl_node_blit), (gegl_node_process):
+	* gegl/buffer/gegl-cache.[ch]: (render_rectangle),
+	(gegl_cache_render):
+
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
 	Internal API change, the order of arguments for buffer set/get
 	has changed to:

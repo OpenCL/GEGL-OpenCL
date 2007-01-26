@@ -275,21 +275,41 @@ void          gegl_node_set_property     (GeglNode      *node,
  * display node, an image file writer or similar).
  */
 
+#ifndef GEGL_INTERNAL
+typedef enum
+{
+  GEGL_BLIT_DEFAULT  = 0,
+  GEGL_BLIT_CACHE    = 1 << 0,
+  GEGL_BLIT_DIRTY    = 1 << 1,
+} GeglBlitFlags;
+#endif
+
 /**
  * gegl_node_blit:
  * @node: a #GeglNode
- * @roi: the rectangle to render
+ * @roi: the upper left coordinates to render, and the width/height of the
+ * destination buffer.
+ * @scale: the scale to render at 1.0 is default, other values changes the
+ * width/height of the sampled region.
  * @format: the #BablFormat desired.
  * @rowstride: rowstride in bytes (currently ignored)
  * @destination_buf: a memory buffer large enough to contain the data.
+ * @flags: an or'ed combination of GEGL_BLIT_DEFAULT, GEGL_BLIT_CACHE and
+ * GEGL_BLIT_DIRTY. if cache is enabled, a cache will be set up for subsequent
+ * requests of image data from this node. By passing in GEGL_BLIT_DIRTY the
+ * function will return with the latest rendered results in the cache without
+ * regard to wheter the regions has been rendered or not.
  *
  * Render a rectangular region from a node.
  */
 void          gegl_node_blit             (GeglNode      *node,
                                           GeglRectangle *roi,
+                                          gdouble        scale,
                                           void          *format,
                                           gint           rowstride,
-                                          gpointer      *destination_buf);
+                                          gpointer      *destination_buf,
+                                          GeglBlitFlags  flags);
+
 /**
  * gegl_node_process:
  * @sink_node: a #GeglNode without outputs.

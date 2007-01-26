@@ -63,6 +63,20 @@ struct _GeglNode
   GeglCache      *cache;
 };
 
+typedef enum
+{
+  GEGL_BLIT_DEFAULT  = 0,
+  GEGL_BLIT_CACHE    = 1 << 0,
+  GEGL_BLIT_DIRTY    = 1 << 1,
+} GeglBlitFlags;
+
+enum
+{
+  GEGL_NODE_INVALIDATED,
+  GEGL_NODE_COMPUTED,
+  GEGL_NODE_LAST_SIGNAL
+};
+
 struct _GeglNodeClass
 {
   GeglObjectClass  parent_class;
@@ -70,11 +84,13 @@ struct _GeglNodeClass
 
 /* renders the desired region of interest to a buffer of the specified
  * bablformat */
-void          gegl_node_blit                (GeglNode      *self,
+void          gegl_node_blit                (GeglNode      *node,
                                              GeglRectangle *roi,
+                                             gdouble        scale,
                                              void          *format,
                                              gint           rowstride,
-                                             gpointer      *destination_buf);
+                                             gpointer      *destination_buf,
+                                             GeglBlitFlags  flags);
 
 GeglRectangle gegl_node_get_bounding_box    (GeglNode      *root);
 
@@ -197,12 +213,6 @@ gint          gegl_node_get_consumers       (GeglNode      *node,
 GeglCache    *gegl_node_get_cache           (GeglNode      *node);
 void          gegl_node_disable_cache       (GeglNode      *node);
 
-enum
-{
-  GEGL_NODE_INVALIDATED,
-  GEGL_NODE_COMPUTED,
-  GEGL_NODE_LAST_SIGNAL
-};
 
 extern guint gegl_node_signals[];
 

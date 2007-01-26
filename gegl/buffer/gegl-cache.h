@@ -57,7 +57,8 @@ void     gegl_cache_dequeue     (GeglCache     *self,
                                  GeglRectangle *roi);
 void     gegl_cache_invalidate  (GeglCache     *self,
                                  GeglRectangle *roi);
-gboolean gegl_cache_render      (GeglCache     *self);
+gboolean gegl_cache_render      (GeglCache     *cache,
+                                 GeglRectangle *rectangle);
 gboolean gegl_cache_is_rendered (GeglCache     *cache);
 
 G_END_DECLS

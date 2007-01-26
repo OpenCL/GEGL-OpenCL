@@ -26,6 +26,7 @@
 #include "gegl-plugin.h"
 #include "gegl-types.h"
 #include <babl/babl.h>
+#include "gegl-node.h"
 #include "gegl-cache.h"
 #include "gegl-region.h"
 
@@ -430,8 +431,8 @@ static gboolean render_rectangle (GeglCache *cache)
       buf = g_malloc (dr->w * dr->h * gegl_buffer_px_size (GEGL_BUFFER (cache)));
       g_assert (buf);
 
-      gegl_node_blit (cache->node, dr, cache->format, 0, (gpointer*) buf);
-      gegl_buffer_set (GEGL_BUFFER (cache), dr, buf, cache->format);
+      gegl_node_blit (cache->node, dr, 1.0, cache->format, 0, (gpointer*) buf, GEGL_BLIT_DEFAULT);
+      gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf);
       
       gegl_region_union_with_rect (cache->valid_region, (GeglRectangle*)dr);
 
@@ -444,7 +445,8 @@ static gboolean render_rectangle (GeglCache *cache)
 }
 
 gboolean
-gegl_cache_render (GeglCache *cache)
+gegl_cache_render (GeglCache     *cache,
+                   GeglRectangle *rectangle)
 {
   g_assert (GEGL_IS_CACHE (cache));
 
@@ -454,8 +456,36 @@ gegl_cache_render (GeglCache *cache)
       return more_work;
   }
 
-  if (!gegl_region_empty (cache->queued_region) &&
-      !cache->dirty_rectangles)
+  if (rectangle)
+    { /* we're asked to work on a specific rectangle thus we only focus
+         on it */
+      GeglRegion *region = gegl_region_rectangle (rectangle);
+      gegl_region_subtract (region, cache->valid_region);
+      GeglRectangle *rectangles;
+      gint           n_rectangles;
+      gint           i;
+      
+      gegl_region_get_rectangles (region, &rectangles, &n_rectangles);
+
+      for (i=0; i<n_rectangles && i<1; i++)
+        {
+          GeglRectangle roi = *((GeglRectangle*)&rectangles[i]);
+          GeglRectangle *dr;
+          GeglRegion *tr = gegl_region_rectangle ((void*)&roi);
+          gegl_region_subtract (cache->queued_region, tr);
+          gegl_region_destroy (tr);
+         
+          dr = g_malloc(sizeof (GeglRectangle));
+          *dr = roi;
+          cache->dirty_rectangles = g_list_append (cache->dirty_rectangles, dr);
+        }
+      g_free (rectangles);
+      if (n_rectangles!=0)
+        return TRUE;
+      return FALSE;
+    }
+  else if (!gegl_region_empty (cache->queued_region) &&
+           !cache->dirty_rectangles)
     {
       GeglRectangle *rectangles;
       gint           n_rectangles;
