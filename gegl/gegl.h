@@ -102,6 +102,7 @@ typedef struct _GeglRectangle GeglRectangle;
  *
  * Returns a new top level #GeglNode (which can be used as a graph). When you
  * are done using this graph instance it should be unreferenced with g_object_unref.
+ * This will also free any sub nodes created from this node.
  */
 GeglNode     * gegl_node_new             (void);
 
@@ -112,7 +113,11 @@ GeglNode     * gegl_node_new             (void);
  *
  * Creates a new processing node that performs the specified operation.
  *
- * Returns a newly created node.
+ * Returns a newly created node, the node will be destroyed by the parent.
+ * Calling g_object_unref on a node will cause the node to be dropped by the
+ * parent. (You may also add additional references using
+ * g_object_ref/g_objecr_unref, but in general relying on the parents reference
+ * counting is easiest.)
  */
 
 GeglNode     * gegl_node_create_child    (GeglNode      *parent,
@@ -129,7 +134,11 @@ GeglNode     * gegl_node_create_child    (GeglNode      *parent,
  * a NULL terminated list of key/value pairs for initial parameter values
  * configuring the operation.
  *
- * Returns a newly created node.
+ * Returns a newly created node, the node will be destroyed by the parent.
+ * Calling g_object_unref on a node will cause the node to be dropped by the
+ * parent. (You may also add additional references using
+ * g_object_ref/g_objecr_unref, but in general relying on the parents reference
+ * counting is easiest.)
  */
 GeglNode    * gegl_node_new_child        (GeglNode      *parent,
                                           const gchar   *first_property_name,

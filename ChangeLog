@@ -1,5 +1,11 @@
 2007-01-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: documented reference counting behavior of nodes,
+	should probably be moved to an introduction about nodes, kept
+	in the creation functions for now.
+
+2007-01-26  Øyvind Kolås  <pippin@gimp.org>
+
 	Fixed the memory management semantics of GeglNode's, they are
 	reference counted. If they are created by a parent the parent
 	holds the initial reference, and doing a manual un_ref on the
