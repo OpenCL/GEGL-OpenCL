@@ -25,6 +25,7 @@
 #include "gegl-graph.h"
 #include "gegl-node-dynamic.h"
 #include <gegl/buffer/gegl-buffer.h>
+#include <gegl/buffer/gegl-cache.h>
 
 G_BEGIN_DECLS
 
@@ -59,6 +60,7 @@ struct _GeglNode
   /*< private >*/
   GList          *children;  /*  used for children */
   GeglNode       *parent;
+  GeglCache      *cache;
 };
 
 struct _GeglNodeClass
@@ -192,9 +194,13 @@ gint          gegl_node_get_consumers       (GeglNode      *node,
                                              GeglNode    ***nodes,
                                              const gchar ***pads);
 
+GeglCache    *gegl_node_get_cache           (GeglNode      *node);
+void          gegl_node_disable_cache       (GeglNode      *node);
+
 enum
 {
   GEGL_NODE_INVALIDATED,
+  GEGL_NODE_COMPUTED,
   GEGL_NODE_LAST_SIGNAL
 };
 

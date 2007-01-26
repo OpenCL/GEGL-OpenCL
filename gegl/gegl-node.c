@@ -129,6 +129,17 @@ gegl_node_class_init (GeglNodeClass * klass)
       G_TYPE_NONE /* return type */,
       1 /* n_params */,
       GEGL_TYPE_RECTANGLE /* param_types */);
+
+  gegl_node_signals[GEGL_NODE_COMPUTED] =
+      g_signal_new ("computed", G_TYPE_FROM_CLASS (klass),
+      G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+      0    /* class offset*/,
+      NULL /* accumulator */,
+      NULL /* accu_data */,
+      g_cclosure_marshal_VOID__BOXED,
+      G_TYPE_NONE /* return type */,
+      1 /* n_params */,
+      GEGL_TYPE_RECTANGLE /* param_types */);
 }
 
 static void
@@ -143,6 +154,7 @@ gegl_node_init (GeglNode *self)
   self->enabled     = TRUE;
   self->is_graph    = FALSE;
   self->children    = NULL;
+  self->cache       = NULL;
 }
 
 static void
@@ -169,6 +181,7 @@ dispose (GObject *gobject)
     }
 
   gegl_node_remove_children (self);
+  gegl_node_disable_cache (self);
 
   G_OBJECT_CLASS (gegl_node_parent_class)->dispose (gobject);
 }
@@ -1736,4 +1749,38 @@ gegl_node_get_consumers (GeglNode      *node,
       pasp[i]=NULL;
   }
   return n_connections;
+}
+
+static void computed_event (GeglCache *self,
+                            void           *foo,
+                            void           *user_data)
+{
+  GeglNode      *node   = GEGL_NODE (user_data);
+  g_signal_emit (node, gegl_node_signals[GEGL_NODE_COMPUTED], 0, foo, NULL, NULL);
+}
+
+GeglCache *
+gegl_node_get_cache (GeglNode *node)
+{
+  if (!node->cache)
+    {
+      node->cache = g_object_new (GEGL_TYPE_CACHE,
+                                  "node", node,
+                                  "format", babl_format ("RGBA float"),
+                                  NULL);
+      g_signal_connect (G_OBJECT (node->cache), "computed",
+                        (GCallback)computed_event,
+                        node);
+    }
+  return node->cache;
+}
+
+void
+gegl_node_disable_cache (GeglNode *node)
+{
+  if (node->cache)
+    {
+      g_object_unref (node->cache);
+      node->cache = NULL;
+    }
 }

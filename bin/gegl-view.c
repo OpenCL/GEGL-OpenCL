@@ -120,17 +120,15 @@ finalize (GObject *gobject)
 {
   GeglView * self = GEGL_VIEW (gobject);
 
-  if (self->cache)
-    g_object_unref (self->cache);
   if (self->node)
     g_object_unref (self->node);
 
   G_OBJECT_CLASS (gegl_view_parent_class)->finalize (gobject);
 }
 
-static void computed_event (GeglCache *self,
-                            void           *foo,
-                            void           *user_data)
+static void computed_event (GeglNode *self,
+                            void     *foo,
+                            void     *user_data)
 {
   GeglRectangle  rect   = *(GeglRectangle*)foo;
   GeglView      *view   = GEGL_VIEW (user_data);
@@ -150,9 +148,9 @@ static void computed_event (GeglCache *self,
 }
 
 
-static void invalidated_event (GeglCache *self,
-                               void      *foo,
-                               void      *user_data)
+static void invalidated_event (GeglNode *self,
+                               void     *foo,
+                               void     *user_data)
 {
   gegl_view_repaint (GEGL_VIEW (user_data));
 }
@@ -168,22 +166,18 @@ set_property (GObject      *gobject,
   switch (property_id)
     {
     case PROP_NODE:
-      /* FIXME: a view should probably be made from a cache */
       if (self->node)
-        g_object_unref (self->node);
-      if (self->cache)
-        g_object_unref (self->cache);
+        {
+          gegl_node_disable_cache (self->node); /* should we really? */
+          g_object_unref (self->node);
+        }
       if (g_value_get_object (value))
         {
           self->node = GEGL_NODE (g_value_dup_object (value));
-          self->cache = g_object_new (GEGL_TYPE_CACHE,
-                                      "node",   self->node,
-                                      "format", babl_format ("R'G'B' u8"),
-                                      NULL);
-          g_signal_connect (G_OBJECT (self->cache), "computed",
+          g_signal_connect (G_OBJECT (self->node), "computed",
                             (GCallback)computed_event,
                             self);
-          g_signal_connect (G_OBJECT (self->cache), "invalidated",
+          g_signal_connect (G_OBJECT (self->node), "invalidated",
                             (GCallback)invalidated_event,
                             self);
           gegl_view_repaint (self);
@@ -191,7 +185,6 @@ set_property (GObject      *gobject,
       else
         {
           self->node = NULL;
-          self->cache = NULL;
         }
       break;
     case PROP_X:
@@ -386,8 +379,6 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
 
   if (!view->node)
     return FALSE;
-  if (!view->cache)
-    return FALSE;
   
   gdk_region_get_rectangles (event->region, &rectangles, &count);
   
@@ -401,7 +392,7 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
 
       buf = g_malloc ((roi.w+1) * (roi.h+1) * 3);
       /* FIXME: this padding should not be needed, but it avoids some segfaults */
-      gegl_buffer_get (GEGL_BUFFER (view->cache),
+      gegl_buffer_get (GEGL_BUFFER (gegl_node_get_cache (view->node)),
                        &roi, buf, babl_format ("R'G'B' u8"), view->scale);
       gdk_draw_rgb_image (widget->window,
                           widget->style->black_gc,
@@ -420,7 +411,7 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
 static gboolean task_monitor (gpointer foo)
 {
   GeglView  *view = GEGL_VIEW (foo);
-  GeglCache *cache = view->cache;
+  GeglCache *cache = gegl_node_get_cache (view->node);
   gboolean   ret = FALSE;
 
   ret = gegl_cache_render (cache);
@@ -440,18 +431,13 @@ void gegl_view_repaint (GeglView *view)
                  widget->allocation.height / view->scale};
 
   /* forget all already queued repaints */
-  gegl_cache_dequeue (view->cache, NULL);
+  gegl_cache_dequeue (gegl_node_get_cache (view->node), NULL);
   /* then enqueue our selves */
-  gegl_cache_enqueue (view->cache, roi);
+  gegl_cache_enqueue (gegl_node_get_cache (view->node), roi);
 
   if (view->monitor_id == 0)
     {
       view->monitor_id = g_idle_add_full (
          G_PRIORITY_LOW, (GSourceFunc) task_monitor, view, NULL);
     }
-}
-
-GeglCache *gegl_view_get_cache (GeglView *view)
-{
-  return view->cache;
 }

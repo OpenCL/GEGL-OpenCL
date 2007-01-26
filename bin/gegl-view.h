@@ -23,6 +23,8 @@
 #include <gtk/gtk.h>
 #include "gegl.h"
 #include "gegl-cache.h"
+GeglCache    *gegl_node_get_cache           (GeglNode      *node);
+void          gegl_node_disable_cache       (GeglNode      *node);
 
 G_BEGIN_DECLS
 
@@ -41,7 +43,6 @@ struct _GeglView
 {
   GtkDrawingArea parent_instance;
 
-  GeglCache *cache;
   /*< private >*/
   GeglNode  *node;
   gint       x;
@@ -71,7 +72,6 @@ struct _GeglViewClass
 
 GType      gegl_view_get_type  (void) G_GNUC_CONST;
 void       gegl_view_repaint   (GeglView *view);
-GeglCache *gegl_view_get_cache (GeglView *view); 
 
 G_END_DECLS
 

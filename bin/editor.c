@@ -917,7 +917,7 @@ static void cb_shrinkwrap (GtkAction *action)
 
 static void cb_recompute (GtkAction *action)
 {
-  gegl_cache_invalidate (GEGL_VIEW(editor.drawing_area)->cache, NULL);
+  gegl_cache_invalidate (gegl_node_get_cache (GEGL_VIEW(editor.drawing_area)->node), NULL);
   gegl_gui_flush ();
 }
 

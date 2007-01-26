@@ -116,7 +116,7 @@ static void button_render_clicked (GtkButton *button,
 
   path = gtk_entry_get_text (pathe);
   
-  cache = gegl_view_get_cache (GEGL_VIEW (editor.drawing_area));
+  cache = gegl_node_get_cache (GEGL_VIEW (editor.drawing_area)->node);
 
   gegl_cache_enqueue (cache, rect);
 

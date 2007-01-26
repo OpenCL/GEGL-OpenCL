@@ -1,5 +1,21 @@
 2007-01-26  Øyvind Kolås  <pippin@gimp.org>
 
+	Made the cache used for the projection internal to a node. This
+	makes the projection 32bit float. The display is still interpolated
+	since babl does the conversion to 8bit prior to rescaling is
+	attempted.
+
+	* gegl/gegl-node.[ch]: (gegl_node_class_init), (gegl_node_init),
+	(dispose), (computed_event), (gegl_node_get_cache),
+	(gegl_node_disable_cache): added gegl_node_get_cache.
+	* bin/gegl-view.[ch]: (finalize), (computed_event),
+	(invalidated_event), (set_property), (expose_event),
+	(task_monitor), (gegl_view_repaint): use ask node for cache
+	* bin/editor.c: (cb_recompute): fetch cache from node.
+	* bin/export.c: (button_render_clicked): fetch cache from node.
+
+2007-01-26  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/color/remap.c: (process): fixed formula to correctly
 	remap.
 
