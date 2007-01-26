@@ -199,7 +199,7 @@ process (GeglOperation *operation,
                   gfloat delta = max[i*3+c]-min[i*3+c];
                   if (delta > 0.0001 || delta < -0.0001)
                     {
-                      buf[i*4+c] = (buf[i*4+c]-min[i*3+c]) / delta + min[i*3+c];
+                      buf[i*4+c] = (buf[i*4+c]-min[i*3+c]) / delta;
                     }
                   /*else
                     buf[i*4+c] = buf[i*4+c];*/

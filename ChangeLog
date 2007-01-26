@@ -1,5 +1,10 @@
 2007-01-26  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/color/remap.c: (process): fixed formula to correctly
+	remap.
+
+2007-01-26  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.h: documented reference counting behavior of nodes,
 	should probably be moved to an introduction about nodes, kept
 	in the creation functions for now.
