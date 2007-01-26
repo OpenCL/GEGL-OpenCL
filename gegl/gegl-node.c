@@ -161,6 +161,13 @@ dispose (GObject *gobject)
 {
   GeglNode *self = GEGL_NODE (gobject);
 
+  if (self->parent!=NULL)
+    {
+      GeglNode *parent=self->parent;
+      self->parent=NULL;
+      gegl_node_remove_child (parent, self);
+    }
+
   gegl_node_remove_children (self);
 
   G_OBJECT_CLASS (gegl_node_parent_class)->dispose (gobject);

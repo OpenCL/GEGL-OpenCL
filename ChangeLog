@@ -1,3 +1,16 @@
+2007-01-26  Øyvind Kolås  <pippin@gimp.org>
+
+	Fixed the memory management semantics of GeglNode's, they are
+	reference counted. If they are created by a parent the parent
+	holds the initial reference, and doing a manual un_ref on the
+	node will break it free from the parent, if this is not done
+	the node will be destroyed when the parent itself is unreferenced
+	the last time.
+
+	* gegl/gegl-graph.c: (gegl_node_add_child),
+	(gegl_node_remove_child):
+	* gegl/gegl-node.[ch]: (dispose):
+
 2007-01-25  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/blur/gaussian-blur.c: making the maximum blur radius be

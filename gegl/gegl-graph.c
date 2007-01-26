@@ -48,26 +48,36 @@ gegl_node_remove_children (GeglNode *self)
 
 GeglNode *
 gegl_node_add_child (GeglNode *self,
-                      GeglNode  *child)
+                     GeglNode  *child)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
   self->children = g_list_append (self->children, g_object_ref (child));
   self->is_graph = TRUE;
+  child->parent = self;
 
   return child;
 }
 
 GeglNode *
 gegl_node_remove_child (GeglNode *self,
-                         GeglNode  *child)
+                        GeglNode  *child)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
   self->children = g_list_remove (self->children, child);
-  g_object_unref (child);
+  
+  if (child->parent!=NULL)
+    {
+      /* if parent isn't set then the node is already in dispose
+       */
+      child->parent = NULL;
+      g_object_unref (child);
+    }
+
+  
   if (self->children == NULL)
     self->is_graph = FALSE;
 

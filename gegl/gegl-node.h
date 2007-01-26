@@ -58,6 +58,7 @@ struct _GeglNode
   gboolean        is_graph;
   /*< private >*/
   GList          *children;  /*  used for children */
+  GeglNode       *parent;
 };
 
 struct _GeglNodeClass
