@@ -47,7 +47,7 @@ process (GeglOperation *operation,
                                         "width", gdk_pixbuf_get_width (self->pixbuf),
                                         "height", gdk_pixbuf_get_height (self->pixbuf),
                                         NULL);
-      gegl_buffer_set (output, NULL, gdk_pixbuf_get_pixels (self->pixbuf), NULL);
+      gegl_buffer_set (output, NULL, NULL, gdk_pixbuf_get_pixels (self->pixbuf));
       gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
     }
   return TRUE;

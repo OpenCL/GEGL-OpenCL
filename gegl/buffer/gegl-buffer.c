@@ -898,8 +898,8 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 void
 gegl_buffer_set (GeglBuffer    *buffer,
                  GeglRectangle *rect,
-                 void          *src,
-                 void          *format)
+                 void          *format,
+                 void          *src)
 {
   GeglBuffer *sub_buf;
   if (format == NULL)
@@ -1247,7 +1247,12 @@ static void resample_bilinear_u8 (void *dest_buf,
 }
 #undef DO_COMPONENT
 
-void gegl_buffer_get (GeglBuffer *buffer, GeglRectangle *rect, void *dest_buf, void *format, gdouble scale)
+void
+gegl_buffer_get (GeglBuffer *buffer,
+                 GeglRectangle *rect,
+                 gdouble scale,
+                 void *format,
+                 void *dest_buf)
 {
   if (format == NULL)
     format = buffer->format;

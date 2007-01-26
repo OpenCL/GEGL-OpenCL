@@ -130,7 +130,7 @@ process (GeglOperation *operation,
                          "height", requested->h,
                          NULL);
 
-  gegl_buffer_get (source, NULL, priv->buf, babl_format ("R'G'B'A u8"), 1.0);
+  gegl_buffer_get (source, NULL, 1.0, babl_format ("R'G'B'A u8"), priv->buf);
   gtk_widget_queue_draw (priv->drawing_area);
 
   if (priv->window)

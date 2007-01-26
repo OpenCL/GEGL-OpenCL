@@ -118,9 +118,7 @@ static void button_render_clicked (GtkButton *button,
   
   cache = gegl_node_get_cache (GEGL_VIEW (editor.drawing_area)->node);
 
-  gegl_cache_enqueue (cache, rect);
-
-  while (gegl_cache_render (cache));
+  while (gegl_cache_render (cache, &rect));
 
   gegl_buffer_export_png (GEGL_BUFFER (cache),
                           &rect, path);
@@ -324,7 +322,7 @@ gegl_buffer_export_png (GeglBuffer    *gegl_buffer,
   for (i=0; i< rect->h; i++)
     {
       GeglRectangle    line = {rect->x, rect->y + i, rect->w, 1};
-      gegl_buffer_get (gegl_buffer, &line, pixels, babl_format (format_string), 1.0);
+      gegl_buffer_get (gegl_buffer, &line, 1.0, babl_format (format_string), pixels);
       png_write_rows (png, &pixels, 1);
     }
   png_write_end (png, info);

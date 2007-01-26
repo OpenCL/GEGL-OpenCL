@@ -89,7 +89,7 @@ affine_cubic (GeglBuffer *dest,
   src_buf  = g_new (gfloat, gegl_buffer_pixels (src) << 2);
   dest_buf = g_new (gfloat, gegl_buffer_pixels (dest) << 2);
   g_assert (src_buf && dest_buf);
-  gegl_buffer_get (src, NULL, src_buf, babl_format ("RaGaBaA float"), 1.0);
+  gegl_buffer_get (src, NULL, 1.0, babl_format ("RaGaBaA float"), src_buf);
 
   matrix3_copy (inverse, matrix);
   matrix3_invert (inverse);
@@ -168,7 +168,7 @@ affine_cubic (GeglBuffer *dest,
       fu = du;
       fv = dv;
     }
-  gegl_buffer_set (dest, NULL, dest_buf, babl_format ("RaGaBaA float"));
+  gegl_buffer_set (dest, NULL, babl_format ("RaGaBaA float"), dest_buf);
 
   g_free (src_buf);
   g_free (dest_buf);

@@ -423,7 +423,7 @@ process (GeglOperation *operation,
           }
       }
 
-    gegl_buffer_set (output, NULL, buf, babl_format ("R'G'B' u8"));
+    gegl_buffer_set (output, NULL, babl_format ("R'G'B' u8"), buf);
     g_free (buf);
   }
   gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));

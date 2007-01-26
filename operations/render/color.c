@@ -69,7 +69,7 @@ process (GeglOperation *operation,
             dst += 4;
           }
       }
-    gegl_buffer_set (output, NULL, buf, NULL);
+    gegl_buffer_set (output, NULL, NULL, buf);
     g_free (buf);
   }
   gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));

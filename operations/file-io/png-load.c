@@ -321,10 +321,10 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
             gegl_rect_set (&rect, 0, i, width, 1);
 
             if (pass != 0)
-              gegl_buffer_get (gegl_buffer, &rect, pixels, format, 1.0);
+              gegl_buffer_get (gegl_buffer, &rect, 1.0, format, pixels);
 
             png_read_rows (load_png_ptr, &pixels, NULL, 1);
-            gegl_buffer_set (gegl_buffer, &rect, pixels, format);
+            gegl_buffer_set (gegl_buffer, &rect, format, pixels);
           }
       }
   }

@@ -145,7 +145,9 @@ process (GeglOperation *operation,
                          "width",  result->w,
                          "height", result->h,
                          NULL);
-  gegl_buffer_get (source, NULL, ((SDL_Surface*)self->screen)->pixels,
+  gegl_buffer_get (source,
+       NULL,
+       1.0,
        babl_format_new (babl_model ("R'G'B'A"),
                         babl_type ("u8"),
                         babl_component ("B'"),
@@ -153,7 +155,7 @@ process (GeglOperation *operation,
                         babl_component ("R'"),
                         babl_component ("A"),
                         NULL),
-       1.0);
+       ((SDL_Surface*)self->screen)->pixels);
   g_object_unref (source);
 
   if (!sdl_outwin)

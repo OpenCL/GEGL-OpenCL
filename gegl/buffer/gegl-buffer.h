@@ -68,14 +68,14 @@ gint          gegl_buffer_px_size    (GeglBuffer    *buffer);
 
 void          gegl_buffer_get        (GeglBuffer    *buffer,
                                       GeglRectangle *rect,
-                                      void          *dest,
+                                      gdouble        scale,
                                       void          *format,
-                                      gdouble        scale);
+                                      void          *dest);
 
 void          gegl_buffer_set        (GeglBuffer    *buffer,
                                       GeglRectangle *rect,
-                                      void          *src,
-                                      void          *format);
+                                      void          *format,
+                                      void          *src);
 
 GeglStorage * gegl_buffer_storage     (GeglBuffer    *buffer);
 GeglRectangle gegl_buffer_get_abyss   (GeglBuffer *buffer);

@@ -65,9 +65,9 @@ process (GeglOperation *operation,
 
       temp = g_malloc (gegl_buffer_pixels (input) * gegl_buffer_px_size (input));
       format = input->format;
-      gegl_buffer_get (input, &rect, temp, format, 1.0);
+      gegl_buffer_get (input, &rect, 1.0, format, temp);
 
-      gegl_buffer_set (GEGL_BUFFER (self->buffer), &rect, temp, format);
+      gegl_buffer_set (GEGL_BUFFER (self->buffer), &rect, format, temp);
       g_free (temp);
     }
   return TRUE;

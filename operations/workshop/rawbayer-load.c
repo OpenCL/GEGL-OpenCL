@@ -119,14 +119,16 @@ load_buffer (GeglChantOperation *op_raw_load)
                 buf[i*2+1] = tmp;
                }
            }
-           gegl_buffer_set (GEGL_BUFFER (op_raw_load->priv), NULL, buf,
-                                        babl_format_new (
-                                          babl_model ("RGB"),
-                                          babl_type ("u16"),
-                                          babl_component ("R"),
-                                          babl_component ("G"),
-                                          babl_component ("B"),
-                                          NULL));
+           gegl_buffer_set (GEGL_BUFFER (op_raw_load->priv),
+                            NULL,
+                            babl_format_new (
+                                 babl_model ("RGB"),
+                                 babl_type ("u16"),
+                                 babl_component ("R"),
+                                 babl_component ("G"),
+                                 babl_component ("B"),
+                                 NULL),
+                            buf);
            g_free (buf);
          }
        fclose (pfp);

@@ -79,7 +79,7 @@ process (GeglOperation *operation,
               }
           }
       }
-    gegl_buffer_set (output, NULL, buf, babl_format ("Y float"));
+    gegl_buffer_set (output, NULL, babl_format ("Y float"), buf);
     g_free (buf);
   }
   gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));

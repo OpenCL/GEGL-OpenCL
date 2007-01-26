@@ -68,7 +68,7 @@ process_inner (GeglOperation *operation,
       {
         buf  = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));
 
-        gegl_buffer_get (input, result, buf, point_filter->format, 1.0);
+        gegl_buffer_get (input, result, 1.0, point_filter->format, buf);
 
         GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation)->process (
            operation,
@@ -76,7 +76,7 @@ process_inner (GeglOperation *operation,
            buf,
            gegl_buffer_pixels (output));
 
-        gegl_buffer_set (output, result, buf, point_filter->format);
+        gegl_buffer_set (output, result, point_filter->format, buf);
         g_free (buf);
       }
 

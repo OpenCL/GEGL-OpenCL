@@ -60,7 +60,7 @@ buffer_get_min_max (GeglBuffer *buffer,
 
   gfloat *buf = g_malloc0 (sizeof (gfloat) * 4 * buffer->width * buffer->height);
   gint i;
-  gegl_buffer_get (buffer, NULL, buf, babl_format ("RGBA float"), 1.0);
+  gegl_buffer_get (buffer, NULL, 1.0, babl_format ("RGBA float"), buf);
   for (i=0;i<gegl_buffer_pixels (buffer);i++)
     {
       gint component;
@@ -127,9 +127,9 @@ process (GeglOperation *operation,
                          result->w,
                          chunk};
 
-        gegl_buffer_get (input, &line, buf, babl_format ("RGBA float"), 1.0);
+        gegl_buffer_get (input, &line, 1.0, babl_format ("RGBA float"), buf);
         inner_process (min, max, buf, result->w * chunk);
-        gegl_buffer_set (output, &line, buf, babl_format ("RGBA float"));
+        gegl_buffer_set (output, &line, babl_format ("RGBA float"), buf);
         consumed+=chunk;
       }
     g_free (buf);

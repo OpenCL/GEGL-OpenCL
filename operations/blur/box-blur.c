@@ -210,7 +210,7 @@ hor_blur (GeglBuffer *src,
   src_buf = g_malloc0 (src->width * src->height * 4 * 4);
   dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
 
-  gegl_buffer_get (src, NULL, src_buf, babl_format ("RaGaBaA float"), 1.0);
+  gegl_buffer_get (src, NULL, 1.0, babl_format ("RaGaBaA float"), src_buf);
 
   offset = 0;
   for (v=0; v<dst->height; v++)
@@ -232,7 +232,7 @@ hor_blur (GeglBuffer *src,
           dst_buf [offset++] = components[i];
       }
 
-  gegl_buffer_set (dst, NULL, dst_buf, babl_format ("RaGaBaA float"));
+  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"), dst_buf);
   g_free (src_buf);
   g_free (dst_buf);
 }
@@ -251,7 +251,7 @@ ver_blur (GeglBuffer *src,
   src_buf = g_malloc0 (src->width * src->height * 4 * 4);
   dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
   
-  gegl_buffer_get (src, NULL, src_buf, babl_format ("RaGaBaA float"), 1.0);
+  gegl_buffer_get (src, NULL, 1.0, babl_format ("RaGaBaA float"), src_buf);
 
   offset=0;
   for (v=0; v<dst->height; v++)
@@ -273,7 +273,7 @@ ver_blur (GeglBuffer *src,
           dst_buf [offset++] = components[c];
       }
 
-  gegl_buffer_set (dst, NULL, dst_buf, babl_format ("RaGaBaA float"));
+  gegl_buffer_set (dst, NULL, babl_format ("RaGaBaA float"), dst_buf);
   g_free (src_buf);
   g_free (dst_buf);
 }

@@ -143,11 +143,11 @@ process_inner (GeglOperation *operation,
         if (aux)
           aux_buf = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));
 
-        gegl_buffer_get (input, result, buf, point_composer->format, 1.0);
+        gegl_buffer_get (input, result, 1.0, point_composer->format, buf);
           
         if (aux)
           {
-            gegl_buffer_get (aux, result, aux_buf, point_composer->aux_format, 1.0);
+            gegl_buffer_get (aux, result, 1.0, point_composer->aux_format, aux_buf);
           }
           {
             GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
@@ -158,7 +158,7 @@ process_inner (GeglOperation *operation,
                gegl_buffer_pixels (output));
           }
 
-        gegl_buffer_set (output, result, buf, point_composer->format);
+        gegl_buffer_set (output, result, point_composer->format, buf);
 
         g_free (buf);
         if (aux)

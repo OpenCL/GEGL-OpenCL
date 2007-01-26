@@ -1,3 +1,60 @@
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
+	Internal API change, the order of arguments for buffer set/get
+	has changed to:
+
+	void gegl_buffer_get (GeglBuffer    *buffer,
+                              GeglRectangle *rect,
+                              gdouble        scale,
+                              void          *format,
+                              void          *dest);
+
+	void gegl_buffer_set (GeglBuffer    *buffer,
+                              GeglRectangle *rect,
+                              void          *format,
+                              void          *src);
+
+	* bin/gegl-view.c: (expose_event), (task_monitor):
+	* bin/export.c: (button_render_clicked), (gegl_buffer_export_png):
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_set), (gegl_buffer_get):
+	* gegl/buffer/gegl-buffer.h:
+	* gegl/gegl-operation-point-composer.c: (process_inner):
+	* gegl/gegl-operation-point-filter.c: (process_inner):
+	* operations/blur/box-blur.c: (hor_blur), (ver_blur):
+	* operations/blur/gaussian-blur.c: (iir_young_hor_blur),
+	(iir_young_ver_blur), (fir_hor_blur), (fir_ver_blur):
+	* operations/color/remap.c: (process):
+	* operations/color/stretch-contrast.c: (buffer_get_min_max),
+	(process):
+	* operations/core/save-buffer.c: (process):
+	* operations/display/display.c: (process):
+	* operations/file-io/jpg-load.c: (gegl_buffer_import_jpg):
+	* operations/file-io/pixbuf.c: (process):
+	* operations/file-io/png-load.c: (gegl_buffer_import_png):
+	* operations/file-io/png-save.c: (gegl_buffer_export_png):
+	* operations/file-io/raw-load.c: (load_buffer):
+	* operations/file-io/svg-load.c: (gegl_buffer_import_svg):
+	* operations/render/FractalExplorer.c: (process):
+	* operations/render/checkerboard.c: (process):
+	* operations/render/color.c: (process):
+	* operations/render/noise.c: (process):
+	* operations/render/text.c: (process):
+	* operations/transform/interpolate-cubic.c: (affine_cubic):
+	* operations/transform/interpolate-lanczos.c: (affine_lanczos):
+	* operations/transform/linear.c: (affine_linear), (scale_linear):
+	* operations/transform/nearest.c: (affine_nearest),
+	(scale_nearest):
+	* operations/workshop/box-max.c: (hor_max), (ver_max):
+	* operations/workshop/box-min.c: (hor_min), (ver_min):
+	* operations/workshop/demosaic-simple.c: (demosaic):
+	* operations/workshop/gtk-display.c: (process):
+	* operations/workshop/kuwahara-max.c: (kuwahara):
+	* operations/workshop/kuwahara-min.c: (kuwahara):
+	* operations/workshop/kuwahara-switch.c: (kuwahara_switch):
+	* operations/workshop/kuwahara.c: (kuwahara):
+	* operations/workshop/mandelbrot.c: (process):
+	* operations/workshop/rawbayer-load.c: (load_buffer):
+
 2007-01-26  Øyvind Kolås  <pippin@gimp.org>
 
 	Made the cache used for the projection internal to a node. This
