@@ -1,5 +1,10 @@
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: moved entry points that are mostly language binding
+	conveniences to own section.
+
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-cache.c: removed unused static function.
 
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>

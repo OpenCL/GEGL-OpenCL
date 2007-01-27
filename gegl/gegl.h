@@ -107,23 +107,6 @@ typedef struct _GeglRectangle GeglRectangle;
 GeglNode     * gegl_node_new             (void);
 
 /**
- * gegl_node_create_child:
- * @parent: a #GeglNode
- * @operation: the type of node to create.
- *
- * Creates a new processing node that performs the specified operation.
- *
- * Returns a newly created node, the node will be destroyed by the parent.
- * Calling g_object_unref on a node will cause the node to be dropped by the
- * parent. (You may also add additional references using
- * g_object_ref/g_objecr_unref, but in general relying on the parents reference
- * counting is easiest.)
- */
-
-GeglNode     * gegl_node_create_child    (GeglNode      *parent,
-                                          const gchar   *operation);
-
-/**
  * gegl_node_new_child:
  * @parent: a #GeglNode
  * @first_property_name: the first property name, should usually be "operation"
@@ -252,18 +235,6 @@ void          gegl_node_link_many        (GeglNode      *source,
 void          gegl_node_set              (GeglNode      *node,
                                           const gchar   *first_property_name,
                                           ...) G_GNUC_NULL_TERMINATED;
-/**
- * gegl_node_set_property:
- * @node: a #GeglNode
- * @property_name: the name of the property to set
- * @value: a GValue containing the value to be set in the property.
- *
- * This is mainly included for language bindings. Using #gegl_node_set is
- * more convenient when programming in C.
- */
-void          gegl_node_set_property     (GeglNode      *node,
-                                          const gchar   *property_name,
-                                          const GValue  *value);
 
 
 /***
@@ -474,20 +445,6 @@ GeglNode    * gegl_node_get_producer     (GeglNode      *node,
 GParamSpec ** gegl_node_get_properties   (GeglNode      *node,
                                           guint         *n_properties);
 
-/**
- * gegl_node_get_property:
- * @node: the node to get a property from
- * @property_name: the name of the property to get
- * @value: pointer to a GValue where the value of the property should be stored
- *
- * This is mainly included for language bindings. Using #gegl_node_get is
- * more convenient when programming in C.
- *
- */
-void          gegl_node_get_property     (GeglNode      *node,
-                                          const gchar   *property_name,
-                                          GValue        *value);
-
 
 
 
@@ -600,6 +557,59 @@ void          gegl_color_set_rgba        (GeglColor     *color,
                                           gfloat         g,
                                           gfloat         b,
                                           gfloat         a);
+
+/***
+ * Bindings conveniences:
+ *
+ * The following functions are mostly included to make it easier
+ * to create language bindings. The varargs versions most often
+ * lead to more readable C code.
+ */
+
+/**
+ * gegl_node_create_child:
+ * @parent: a #GeglNode
+ * @operation: the type of node to create.
+ *
+ * Creates a new processing node that performs the specified operation.
+ *
+ * Returns a newly created node, the node will be destroyed by the parent.
+ * Calling g_object_unref on a node will cause the node to be dropped by the
+ * parent. (You may also add additional references using
+ * g_object_ref/g_objecr_unref, but in general relying on the parents reference
+ * counting is easiest.)
+ */
+
+GeglNode     * gegl_node_create_child    (GeglNode      *parent,
+                                          const gchar   *operation);
+
+
+/**
+ * gegl_node_get_property:
+ * @node: the node to get a property from
+ * @property_name: the name of the property to get
+ * @value: pointer to a GValue where the value of the property should be stored
+ *
+ * This is mainly included for language bindings. Using #gegl_node_get is
+ * more convenient when programming in C.
+ *
+ */
+void          gegl_node_get_property     (GeglNode      *node,
+                                          const gchar   *property_name,
+                                          GValue        *value);
+
+/**
+ * gegl_node_set_property:
+ * @node: a #GeglNode
+ * @property_name: the name of the property to set
+ * @value: a GValue containing the value to be set in the property.
+ *
+ * This is mainly included for language bindings. Using #gegl_node_set is
+ * more convenient when programming in C.
+ */
+void          gegl_node_set_property     (GeglNode      *node,
+                                          const gchar   *property_name,
+                                          const GValue  *value);
 
 /*** this is just here to trick the parser.
  */
