@@ -1,3 +1,7 @@
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl.css: added absolute to toc position.
+
 2007-01-25  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: capitalized Ruby and Python.

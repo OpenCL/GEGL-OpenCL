@@ -195,6 +195,7 @@
           overflow: auto;
         }
         div.toc {
+          position: absolute;
           position: fixed;
           width: 12em;
           top: 0;
