@@ -19,6 +19,7 @@
 
 #include <glib-object.h>
 #include "gegl.h"
+#include <babl/babl.h>
 #include "gegl-view.h"
 #include "gegl-tree-editor.h"
 #include "editor.h"
@@ -110,9 +111,9 @@ gegl_view_init (GeglView *self)
   self->y           = 0;
   self->prev_x      = -1;
   self->prev_y      = -1;
-  self->dirty_rects = NULL;
   self->scale       = 1.0;
   self->monitor_id  = 0;
+  self->processor   = NULL;
 }
 
 static void
@@ -168,7 +169,9 @@ set_property (GObject      *gobject,
     case PROP_NODE:
       if (self->node)
         {
-          gegl_node_disable_cache (self->node); /* should we really? */
+#if 0
+          gegl_node_disable_cache (self->node); /* FIXME: should we really? */
+#endif
           g_object_unref (self->node);
         }
       if (g_value_get_object (value))
@@ -418,10 +421,9 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
 static gboolean task_monitor (gpointer foo)
 {
   GeglView  *view = GEGL_VIEW (foo);
-  GeglCache *cache = gegl_node_get_cache (view->node);
   gboolean   ret = FALSE;
 
-  ret = gegl_cache_render (cache, NULL, NULL);
+  ret = gegl_processor_work (view->processor, NULL);
 
   if (ret==FALSE)
     {
@@ -437,14 +439,23 @@ void gegl_view_repaint (GeglView *view)
                  widget->allocation.width / view->scale,
                  widget->allocation.height / view->scale};
 
+#if 0
   /* forget all already queued repaints */
   gegl_cache_dequeue (gegl_node_get_cache (view->node), NULL);
   /* then enqueue our selves */
   gegl_cache_enqueue (gegl_node_get_cache (view->node), roi);
+#endif
 
   if (view->monitor_id == 0)
     {
       view->monitor_id = g_idle_add_full (
          G_PRIORITY_LOW, (GSourceFunc) task_monitor, view, NULL);
+      if (view->processor == NULL)
+        {
+          if (view->node)
+            view->processor = gegl_node_new_processor (view->node, &roi);
+        }
     }
+  if (view->processor)
+    gegl_processor_set_rectangle (view->processor, &roi);
 }

@@ -291,6 +291,63 @@ void          gegl_node_blit             (GeglNode      *node,
 void          gegl_node_process          (GeglNode      *sink_node);
 
 
+/**
+ * GeglProcessor:
+ *
+ * A #GeglProcessor, is a worker that can be used for background rendering
+ * of regions in a node's cache. Or for processing a sink node. For most
+ * non GUI tasks using #gegl_node_blit and #gegl_node_process directly
+ * should be sufficient.
+ */
+#ifndef GEGL_INTERNAL
+typedef struct _GeglProcessor        GeglProcessor;
+#endif
+
+/**
+ * gegl_node_new_processor:
+ * @node: a #GeglNode
+ * @rectangle: the #GeglRectangle to work on or NULL to work on all available
+ * data.
+ *
+ * Returns a new #GeglProcessor.
+ */
+GeglProcessor *gegl_node_new_processor      (GeglNode      *node,
+                                             GeglRectangle *rectangle);
+
+/**
+ * gegl_processor_set_rectangle:
+ * @processor: a #GeglProcessor
+ * @rectangle: the new #GeglRectangle the processor shold work on or NULL
+ * to make it work on all data in the buffer.
+ *
+ * Change the rectangle a #GeglProcessor is working on.
+ */
+void           gegl_processor_set_rectangle (GeglProcessor *processor,
+                                             GeglRectangle *rectangle);
+
+
+/**
+ * gegl_processor_work:
+ * @processor: a #GeglProcessor
+ * @progress: a location to store the (estimated) percentage complete.
+ *
+ * Do an iteration of work for the processor.
+ *
+ * Returns TRUE if there is more work to be done.
+ */
+gboolean       gegl_processor_work          (GeglProcessor *processor,
+                                             gdouble       *progress);
+
+
+/**
+ * gegl_processor_destroy:
+ * @processor: a #GeglProcessor
+ *
+ * Frees up resources used by a processing handle.
+ */
+void           gegl_processor_destroy       (GeglProcessor *processor);
+
+
 /***
  * State queries:
  *

@@ -22,9 +22,6 @@
 
 #include <gtk/gtk.h>
 #include "gegl.h"
-#include "gegl-cache.h"
-GeglCache    *gegl_node_get_cache           (GeglNode      *node);
-void          gegl_node_disable_cache       (GeglNode      *node);
 
 G_BEGIN_DECLS
 
@@ -44,25 +41,25 @@ struct _GeglView
   GtkDrawingArea parent_instance;
 
   /*< private >*/
-  GeglNode  *node;
-  gint       x;
-  gint       y;
-  gdouble    scale;
-  gint       screen_x;  /* coordinates of drag start */
-  gint       screen_y;
+  GeglNode      *node;
+  gint           x;
+  gint           y;
+  gdouble        scale;
+  gint           screen_x;  /* coordinates of drag start */
+  gint           screen_y;
 
-  gint       orig_x;    /* coordinates of drag start */
-  gint       orig_y;
+  gint           orig_x;    /* coordinates of drag start */
+  gint           orig_y;
 
-  gint       start_buf_x;    /* coordinates of drag start */
-  gint       start_buf_y;
+  gint           start_buf_x;    /* coordinates of drag start */
+  gint           start_buf_y;
 
-  gint       prev_x;
-  gint       prev_y;
-  gdouble    prev_scale;
+  gint           prev_x;
+  gint           prev_y;
+  gdouble        prev_scale;
 
-  guint      monitor_id;
-  GList     *dirty_rects;
+  guint          monitor_id;
+  GeglProcessor *processor;
 };
 
 struct _GeglViewClass

@@ -1529,9 +1529,9 @@ gegl_node_new_processor (GeglNode      *node,
 
   processor->node = node;
 
-
-  if(g_type_is_a(G_OBJECT_TYPE(node->operation),
-                    GEGL_TYPE_OPERATION_SINK))
+  if(node->operation &&
+     g_type_is_a(G_OBJECT_TYPE(node->operation),
+                 GEGL_TYPE_OPERATION_SINK))
     {
       processor->input = gegl_node_get_producer (node, "input", NULL);
     }
@@ -1549,8 +1549,9 @@ gegl_node_new_processor (GeglNode      *node,
     }
 
   cache = gegl_node_get_cache (processor->input);
-  if(g_type_is_a(G_OBJECT_TYPE(node->operation),
-                    GEGL_TYPE_OPERATION_SINK))
+  if(node->operation &&
+     g_type_is_a(G_OBJECT_TYPE(node->operation),
+                 GEGL_TYPE_OPERATION_SINK))
     {
       processor->dynamic = gegl_node_add_dynamic (node, cache);
         {
@@ -1605,7 +1606,7 @@ gegl_processor_work (GeglProcessor *processor,
 void
 gegl_processor_destroy (GeglProcessor *processor)
 {
-  gegl_node_disable_cache (processor->input);
+  gegl_node_disable_cache (processor->input); /* FIXME: it's a bit rude to kill of the cache */
   g_free (processor);
 }
 
@@ -1614,6 +1615,7 @@ gegl_node_process (GeglNode *self)
 {
   GeglProcessor *processor;
 
+  g_assert (GEGL_IS_NODE (self));
   processor = gegl_node_new_processor (self, NULL);
 
   while (gegl_processor_work (processor, NULL));
