@@ -20,7 +20,7 @@ EXTRA_DIST= 			\
 	api.html		\
 	index.html
 
-BUILT_EXTRA_DIST = index.html api.html class-hierarchy.html operations.html
+BUILT_EXTRA_DIST = index.html class-hierarchy.html operations.html
 
 CLEANFILES = README $(HTML_FILES)
 DISTCLEANFILES = index-static.html class-hierarchy.html operations.html

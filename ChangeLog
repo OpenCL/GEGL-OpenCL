@@ -1,3 +1,17 @@
+2007-01-27  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* docs/Makefile.am: Forgot to remove api.html from BUILT_EXTRA_DIST.
+
+2007-01-27  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* autogen.sh: Change CVS to SVN.
+
+	* configure.in: Added check for Ruby and set HAVE_RUBY if
+	available.
+
+	* docs/Makefile.am: Automatically update api.html file if
+	needed but only when Ruby is available.
+
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* NEWS: updated since last sync with changelog.
