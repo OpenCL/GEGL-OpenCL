@@ -213,16 +213,6 @@ gint          gegl_node_get_consumers       (GeglNode      *node,
 GeglCache    *gegl_node_get_cache           (GeglNode      *node);
 void          gegl_node_disable_cache       (GeglNode      *node);
 
-
-GeglProcessor *gegl_node_new_processor      (GeglNode      *node,
-                                             GeglRectangle *rectangle);
-void           gegl_processor_set_rectangle (GeglProcessor *processor,
-                                             GeglRectangle *rectangle);
-gboolean       gegl_processor_work          (GeglProcessor *processor,
-                                             gdouble       *progress);
-void           gegl_processor_destroy       (GeglProcessor *processor);
-
-
 extern guint gegl_node_signals[];
 
 G_END_DECLS

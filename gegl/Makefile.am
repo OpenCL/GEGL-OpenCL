@@ -16,7 +16,8 @@ EXTRA_DIST =	\
 	gegl-have-visitor.h		\
 	gegl-instrument.h		\
 	gegl-need-visitor.h		\
-	gegl-prepare-visitor.h
+	gegl-prepare-visitor.h		\
+	gegl-processor.h
 
 GEGL_sources = \
 	gegl-color.c			\
@@ -47,6 +48,7 @@ GEGL_sources = \
 	gegl-pad.c			\
 	gegl-paramspecs.c		\
 	gegl-prepare-visitor.c		\
+	gegl-processor.c		\
 	gegl-utils.c			\
 	gegl-visitable.c		\
 	gegl-visitor.c			\

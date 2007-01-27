@@ -1,5 +1,17 @@
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
+	Split GeglProcessor out of gegl-node.c into it's own file.
+
+	* gegl/Makefile.am:
+	* gegl/gegl-node.c:
+	* gegl/gegl-node.h:
+	* gegl/gegl-processor.c: (gegl_processor_set_rectangle),
+	(gegl_node_new_processor), (gegl_processor_work),
+	(gegl_processor_destroy):
+	* gegl/gegl-processor.h:
+
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.h: markup fix.
 
 2007-01-27  Kevin Cozens  <kcozens@cvs.gnome.org>
