@@ -54,6 +54,7 @@ static void inline set_blank(GeglTile *dst_tile,
                   (y + j * (height/2)) * width
                ) + i * (width/2)
            )*bpp;
+      /*FIXME: replace loop with a single memset */
       for (x=0;x<width/2;x++)
         {
           memset (dst, 0x0, bpp);
@@ -96,6 +97,42 @@ static void inline set_half_nearest (GeglTile *dst_tile,
 }
 
 static inline void
+downscale_float (gint    components,
+                 guchar *src_data,
+                 gint    src_width,
+                 gint    src_height,
+                 gint    src_rowstride,
+                 guchar *dst_data,
+                 gint    dst_rowstride)
+{
+  gint y;
+  if (!src_data || !dst_data)
+    return;
+  for (y=0; y<src_height/2; y++)
+    {
+       gint x;
+       gfloat *dst = (gfloat*)(dst_data + y*dst_rowstride);
+       gfloat *src = (gfloat*)(src_data + y*2*src_rowstride);
+
+       for (x=0; x<src_width/2; x++)
+         {
+            int i;
+            for (i=0; i<components; i++)
+              dst[i] = (src[i] +
+                        src[i+components] +
+                        src[i + (src_width*components)] +
+                        src[i + (src_width+1)*components]) /
+                       4.0;
+
+            dst += components;
+            src += components*2;
+         }
+    }
+}
+
+
+
+static inline void
 downscale_u8 (gint    components,
               guchar *src_data,
               gint    src_width,
@@ -129,6 +166,27 @@ downscale_u8 (gint    components,
     }
 }
 
+
+static void inline set_half_float (GeglTile *dst_tile,
+                                   GeglTile *src_tile,
+                                   gint      width,
+                                   gint      height,
+                                   Babl     *format,
+                                   gint      i,
+                                   gint      j)
+{
+  guchar *dst_data = gegl_tile_get_data (dst_tile);
+  guchar *src_data = gegl_tile_get_data (src_tile);
+  gint  components = format->format.components;
+  gint  bpp        = format->format.bytes_per_pixel;
+
+  if (i)dst_data+= bpp*width/2;
+  if (j)dst_data+= bpp*width*height/2;
+
+  downscale_float (components, src_data, width, height, width*bpp,
+                               dst_data, width*bpp);
+}
+
 static void inline set_half_u8 (GeglTile *dst_tile,
                                 GeglTile *src_tile,
                                 gint      width,
@@ -157,7 +215,11 @@ static void inline set_half (GeglTile *dst_tile,
                              gint      i,
                              gint      j)
 {
-  if (format->format.type[0] == (BablType*)babl_type ("u8"))
+  if (format->format.type[0] == (BablType*)babl_type ("float"))
+    {
+      set_half_float (dst_tile, src_tile, width, height, format, i, j);
+    }
+  else if (format->format.type[0] == (BablType*)babl_type ("u8"))
     {
       set_half_u8 (dst_tile, src_tile, width, height, format, i, j);
     }
@@ -166,11 +228,6 @@ static void inline set_half (GeglTile *dst_tile,
       set_half_nearest (dst_tile, src_tile, width, height, format, i, j);
     }
 }
-
-
-/* FIXME: I do not think z!=0 tiles are currently freed|voided from
- * storage
- */
 
 static GeglTile *
 get_tile (GeglTileStore *gegl_tile_store,

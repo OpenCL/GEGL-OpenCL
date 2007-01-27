@@ -1,5 +1,11 @@
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-zoom.c: (set_blank), (downscale_float),
+	(set_half_float), (set_half): added mipmap pyramid decimator
+	for 32bit floating point data typed buffers.
+
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
 	Added an API to do iterative processing, at the moment
 	gegl_node_process is ported to use it, but the new code itself
 	isn't exposed yet.
