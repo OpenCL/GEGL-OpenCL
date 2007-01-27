@@ -285,8 +285,9 @@ void          gegl_node_blit             (GeglNode      *node,
  * gegl_node_process:
  * @sink_node: a #GeglNode without outputs.
  *
- * Render a composition. XXX: this will be replaced with an API that allows
- * the processing to occur in smaller chunks.
+ * Render a composition. This can be used for instance on a node with a "png-save"
+ * operation to render all neccesary data, and make it be written to file, the
+ * function is blocking for a non blocking way of doing the same see #GeglProcessor.
  */
 void          gegl_node_process          (GeglNode      *sink_node);
 

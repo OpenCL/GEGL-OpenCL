@@ -1,5 +1,9 @@
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: updated documentation of gegl_process
+
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.h: made GeglProcessor public.
 	* gegl/gegl-node.c: (gegl_node_new_processor),
 	(gegl_processor_destroy), (gegl_node_process):
