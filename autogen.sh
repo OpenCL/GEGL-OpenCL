@@ -190,7 +190,7 @@ if which ruby > /dev/null; then
     echo "yes"
 else
     echo
-    echo "no You need ruby installed to run autogen.sh (only needed when building from CVS)"
+    echo "no You need ruby installed to run autogen.sh (only needed when building from SVN)"
     echo
     DIE=1
 fi

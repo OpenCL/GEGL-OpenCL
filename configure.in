@@ -301,6 +301,27 @@ AM_CONDITIONAL(ENABLE_GTK_DOC, test "x$enable_gtk_doc" = "xyes")
 AC_CHECK_PROGS(PERL, perl5 perl)
 
 
+#######################################
+# Checks for Ruby used to make API docs
+#######################################
+
+AC_CHECK_PROG(RUBY, ruby, yes, no)
+if test "$RUBY" = "no"; then
+  AC_MSG_WARN([
+*** Could not find Ruby interpreter. The HTML API reference
+will not be updated.
+])
+  have_ruby=no
+else
+  RUBY_BIN="$RUBY"
+  have_ruby=yes
+fi
+AM_CONDITIONAL(HAVE_RUBY, test "x$have_ruby" = "xyes")
+
+AC_SUBST(HAVE_RUBY)
+AC_SUBST(RUBY_BIN)
+
+
 #################
 # Check for Cairo
 #################
@@ -536,6 +557,7 @@ AC_MSG_RESULT([
 Building GEGL with prefix=$prefix
 
 Optional dependencies:
+  Ruby:           $have_ruby
   GTK+:           $have_gtk
   Cairo:          $have_cairo
   Pango:          $have_pango

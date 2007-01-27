@@ -20,13 +20,13 @@ EXTRA_DIST= 			\
 	api.html		\
 	index.html
 
-BUILT_EXTRA_DIST = index.html class-hierarchy.html operations.html
+BUILT_EXTRA_DIST = index.html api.html class-hierarchy.html operations.html
 
 CLEANFILES = README $(HTML_FILES)
 DISTCLEANFILES = index-static.html class-hierarchy.html operations.html
 MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
-all-local: $(HTML_FILES)
+all-local: $(HTML_FILES) api.html
 
 operations.html: $(top_builddir)/tools/operation_reference $(top_srcdir)/operations/*/*.c
 	export GEGL_PATH=$(top_builddir)/operations;\
@@ -42,7 +42,9 @@ if HAVE_ENSCRIPT
 endif
 
 api.html: ../gegl/gegl.h ../tools/create-reference.rb
+if HAVE_RUBY
 	../tools/create-reference.rb ../gegl/gegl.h api.html
+endif
 
 runinfo: Makefile.am
 	if [ ! -z "$${CRUCIBLE_ID}" ]; then\
@@ -61,7 +63,7 @@ index.html: index-static.html                    \
 	    Makefile.am				 \
 	    hello-world.c			 \
 	    runinfo
-	echo -n "HTML: $@"
+	@echo "HTML: $@"
 	cp $< $@ 
 	$(top_srcdir)/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
 	[ -f runinfo ] && $(top_srcdir)/tools/xml_insert.sh $@ RUNINFO runinfo || true
@@ -69,7 +71,7 @@ index.html: index-static.html                    \
 	$(top_srcdir)/tools/xml_insert.sh $@ GEGL_USAGE gegl-usage.txt
 	$(top_srcdir)/tools/xml_insert.sh $@ HELLO-WORLD hello-world.c encode
 	rm gegl-usage.txt
-	echo " [OK]"
+	@echo " [OK]"
 
 distclean-local:
 	if test $(srcdir) = .; then :; else 	\
