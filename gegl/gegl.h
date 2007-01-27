@@ -250,7 +250,7 @@ gboolean      gegl_node_disconnect       (GeglNode      *node,
  * To see what operations are available for a given operation look in the <a
  * href='operations.html'>Operations reference</a> or use
  * #gegl_node_get_properties.
- * --
+ * ---
  * gegl_node_set (node, "brightness", -0.2,
  *                      "contrast",   2.0,
  *                      NULL);
