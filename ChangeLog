@@ -1,5 +1,9 @@
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* NEWS: updated since last sync with changelog.
+
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.h: updated documentation of gegl_process
 
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
