@@ -448,6 +448,9 @@ calc_source_regions (GeglOperation *op,
 
   requested_rect = *(gegl_operation_get_requested_region (op, context_id));
 
+  matrix3_copy (inverse, affine->matrix);
+  matrix3_invert (inverse);
+
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (inverse))
     {

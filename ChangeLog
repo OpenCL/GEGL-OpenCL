@@ -1,5 +1,10 @@
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/transform/affine.c: (calc_source_regions): initialize the
+	inverse matrix before using it.
+
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
 	Turned GeglProcessor into a proper GObject.
 
 	* gegl/gegl-processor.[ch]: (gegl_processor_class_init),
