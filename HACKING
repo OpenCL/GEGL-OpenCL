@@ -21,6 +21,9 @@ gegl> automake
 gegl> autoconf 
 gegl> configure
 
+The autogen in GEGL also uses ruby to generate some of the plug-ins, and
+the API reference.
+
 Before running autogen.sh, make sure you have libtool in your path.  
 
 Note that autogen.sh runs configure for you. If you wish to pass options 

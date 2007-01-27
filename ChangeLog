@@ -1,4 +1,9 @@
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* HACKING: added note that GEGL's autogen.sh also needs ruby to be
+	installed.
+
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 	
 	Changed public API for gegl_node_blit, it new order of arguments,
 	as well as new flags for indicating use of cache (projection for
