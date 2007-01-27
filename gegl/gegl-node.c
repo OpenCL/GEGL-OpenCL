@@ -1509,6 +1509,13 @@ struct _GeglProcessor {
   GeglNodeDynamic *dynamic;
 };
 
+void
+gegl_processor_set_rectangle (GeglProcessor *processor,
+                              GeglRectangle *rectangle)
+{
+  processor->rectangle = *rectangle;
+}
+
 GeglProcessor *
 gegl_node_new_processor (GeglNode      *node,
                          GeglRectangle *rectangle)
@@ -1534,9 +1541,12 @@ gegl_node_new_processor (GeglNode      *node,
     }
 
   if (rectangle)
-    processor->rectangle = *rectangle; 
+    gegl_processor_set_rectangle (processor, rectangle);
   else
-    processor->rectangle = gegl_node_get_bounding_box (processor->input);
+    {
+      GeglRectangle tmp = gegl_node_get_bounding_box (processor->input);
+      gegl_processor_set_rectangle (processor, &tmp);
+    }
 
   cache = gegl_node_get_cache (processor->input);
   if(g_type_is_a(G_OBJECT_TYPE(node->operation),

@@ -1,5 +1,12 @@
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.[ch]: (gegl_processor_set_rectangle),
+	(gegl_node_new_processor): added set_rectangle to processor,
+	this should allow reusing a processor for updating the view
+	in an application.
+
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-zoom.c: (set_blank), (downscale_float),
 	(downscale_u8), (set_half): optimized set_blank to use a single
 	memset per scanline, simplified code a bit, and left a FIXME for
