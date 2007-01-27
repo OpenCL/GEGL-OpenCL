@@ -1,5 +1,13 @@
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
+	Turned GeglProcessor into a proper GObject.
+
+	* gegl/gegl-processor.[ch]: (gegl_processor_class_init),
+	(gegl_processor_init), (finalize), (gegl_node_new_processor),
+	(gegl_processor_destroy):
+
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
 	Split GeglProcessor out of gegl-node.c into it's own file.
 
 	* gegl/Makefile.am:

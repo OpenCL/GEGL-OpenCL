@@ -25,12 +25,41 @@
 #include "gegl-processor.h"
 #include "gegl-operation-sink.h"
 
+static void gegl_processor_class_init (GeglProcessorClass *klass);
+static void gegl_processor_init       (GeglProcessor      *self);
+static void finalize                  (GObject            *self_object);
+
 struct _GeglProcessor {
+  GeglObject       parent;
   GeglNode        *node;
   GeglRectangle    rectangle;
   GeglNode        *input;
   GeglNodeDynamic *dynamic;
 };
+
+G_DEFINE_TYPE (GeglProcessor, gegl_processor, GEGL_TYPE_OBJECT);
+
+static void gegl_processor_class_init (GeglProcessorClass *klass)
+{
+  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = finalize;
+}
+static void gegl_processor_init (GeglProcessor *processor)
+{
+  processor->node=NULL;
+  processor->input=NULL;
+  processor->dynamic=NULL;
+
+}
+static void finalize (GObject *self_object)
+{
+#if 0
+  GeglProcessor *processor = GEGL_PROCESSOR (self_object);
+  gegl_node_disable_cache (processor->input); /* FIXME: it's a bit rude to kill of the cache */
+#endif
+  
+  G_OBJECT_CLASS (gegl_processor_parent_class)->finalize (self_object);
+}
 
 void
 gegl_processor_set_rectangle (GeglProcessor *processor,
@@ -48,7 +77,7 @@ gegl_node_new_processor (GeglNode      *node,
 
   g_assert (GEGL_IS_NODE (node));
 
-  processor = g_malloc0 (sizeof (GeglProcessor));
+  processor = g_object_new (GEGL_TYPE_PROCESSOR, NULL);
 
   processor->node = node;
 
@@ -129,6 +158,5 @@ gegl_processor_work (GeglProcessor *processor,
 void
 gegl_processor_destroy (GeglProcessor *processor)
 {
-  gegl_node_disable_cache (processor->input); /* FIXME: it's a bit rude to kill of the cache */
-  g_free (processor);
+  g_object_unref (processor);
 }
