@@ -1,5 +1,21 @@
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
+	Added an API to do iterative processing, at the moment
+	gegl_node_process is ported to use it, but the new code itself
+	isn't exposed yet.
+
+	* gegl/gegl-types.h: add GeglProcessor.
+	* bin/export.c: (button_render_clicked):
+	* bin/gegl-view.c: (task_monitor):
+	* gegl/buffer/gegl-cache.c: (rect_area), (region_area),
+	(area_left), (area_left2), (gegl_cache_render):
+	* gegl/buffer/gegl-cache.h:
+	* gegl/gegl-node.[ch]: (gegl_node_blit), (gegl_node_new_processor),
+	(gegl_processor_work), (gegl_processor_destroy),
+	(gegl_node_process):
+
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* HACKING: added note that GEGL's autogen.sh also needs ruby to be
 	installed.
 

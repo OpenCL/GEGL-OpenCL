@@ -777,7 +777,7 @@ void          gegl_node_blit                (GeglNode      *node,
       if (!flags & GEGL_BLIT_DIRTY)
         { /* if we're not blitting dirtily, we need to make sure
              that the data is available */
-          while (gegl_cache_render (cache, roi));
+          while (gegl_cache_render (cache, roi, NULL));
         }
       gegl_buffer_get (GEGL_BUFFER (cache), roi, scale, format, destination_buf);
     }
@@ -1502,47 +1502,117 @@ gegl_node_get_bounding_box (GeglNode     *root)
 
 #include "gegl-operation-sink.h"
 
-/* this is a version of process that doesn't do all the initial
- * processing on a huge rect, it's inclusion is pending on some
- * GeglCache refactoring.
- */
+struct _GeglProcessor {
+  GeglNode        *node;
+  GeglRectangle    rectangle;
+  GeglNode        *input;
+  GeglNodeDynamic *dynamic;
+};
+
+GeglProcessor *
+gegl_node_new_processor (GeglNode      *node,
+                         GeglRectangle *rectangle)
+{
+  GeglProcessor *processor;
+  GeglCache     *cache;
+
+  g_assert (GEGL_IS_NODE (node));
+
+  processor = g_malloc0 (sizeof (GeglProcessor));
+
+  processor->node = node;
+
+
+  if(g_type_is_a(G_OBJECT_TYPE(node->operation),
+                    GEGL_TYPE_OPERATION_SINK))
+    {
+      processor->input = gegl_node_get_producer (node, "input", NULL);
+    }
+  else
+    {
+      processor->input = node;
+    }
+
+  if (rectangle)
+    processor->rectangle = *rectangle; 
+  else
+    processor->rectangle = gegl_node_get_bounding_box (processor->input);
+
+  cache = gegl_node_get_cache (processor->input);
+  if(g_type_is_a(G_OBJECT_TYPE(node->operation),
+                    GEGL_TYPE_OPERATION_SINK))
+    {
+      processor->dynamic = gegl_node_add_dynamic (node, cache);
+        {
+          GValue value = {0,};
+          g_value_init (&value, GEGL_TYPE_BUFFER);
+          g_value_set_object (&value, cache);
+          gegl_node_dynamic_set_property (processor->dynamic, "input", &value);
+          g_value_unset (&value);
+        }
+
+      gegl_node_dynamic_set_result_rect (processor->dynamic,
+                   processor->rectangle.x, processor->rectangle.y,
+                   processor->rectangle.w, processor->rectangle.h);
+    }
+  else
+    {
+      processor->dynamic = NULL;
+    }
+
+  return processor;
+}
+
+gboolean
+gegl_processor_work (GeglProcessor *processor,
+                     gdouble       *progress)
+{
+  gboolean more_work=FALSE;
+  GeglCache *cache = gegl_node_get_cache (processor->input);
+
+  more_work = gegl_cache_render (cache, &processor->rectangle, progress);
+  if (more_work)
+    {
+      return TRUE;
+    }
+
+  if (processor->dynamic)
+    {
+      gegl_operation_process (processor->node->operation, cache, "foo");
+      gegl_node_remove_dynamic (processor->node, cache);
+      processor->dynamic=NULL;
+      if (progress)
+        *progress=1.0;
+      return TRUE;
+    }
+
+  if (progress)
+    *progress= 1.0;
+
+  return FALSE;
+}
+
+void
+gegl_processor_destroy (GeglProcessor *processor)
+{
+  gegl_node_disable_cache (processor->input);
+  g_free (processor);
+}
+
 void
 gegl_node_process (GeglNode *self)
 {
-  GeglNode        *input;
-  GeglNodeDynamic *dynamic;
-  GeglCache       *cache;
-  GeglRectangle    defined;
+  GeglProcessor *processor;
 
-  g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail (g_type_is_a (G_OBJECT_TYPE(self->operation),
-                    GEGL_TYPE_OPERATION_SINK));
+  processor = gegl_node_new_processor (self, NULL);
 
-  input = gegl_node_get_producer (self, "input", NULL);
-  defined = gegl_node_get_bounding_box (input);
-  cache = gegl_node_get_cache (input);
-
-  while (gegl_cache_render (cache, &defined));
-
-  dynamic = gegl_node_add_dynamic (self, cache);
-    {
-      GValue value = {0,};
-      g_value_init (&value, GEGL_TYPE_BUFFER);
-      g_value_set_object (&value, cache);
-      gegl_node_dynamic_set_property (dynamic, "input", &value);
-      g_value_unset (&value);
-    }
-
-  gegl_node_dynamic_set_result_rect (dynamic, defined.x, defined.y, defined.w, defined.h);
-  gegl_operation_process (self->operation, cache, "foo");
-  gegl_node_remove_dynamic (self, cache);
-  gegl_node_disable_cache (input); /* we do not strictly need to kill
-                                      the cache here, and it is a
-                                      bit rude if there is more users */
+  while (gegl_processor_work (processor, NULL));
+  gegl_processor_destroy (processor);
 }
 
 #if 0
-/* old version of GeglProcess that processes all data in one
+/* simplest form of GeglProcess that processes all data in one
+ *
  * single large chunk
  */
 void

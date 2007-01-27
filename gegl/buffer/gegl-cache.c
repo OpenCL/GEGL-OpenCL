@@ -444,16 +444,88 @@ static gboolean render_rectangle (GeglCache *cache)
   return cache->dirty_rectangles != NULL;
 }
 
+static gint rect_area (GeglRectangle *rectangle)
+{
+  return rectangle->w*rectangle->h;
+}
+
+static gint region_area (GeglRegion    *region)
+{
+  GeglRectangle *rectangles;
+  gint           n_rectangles;
+  gint           i;
+  gint           sum=0;
+  gegl_region_get_rectangles (region, &rectangles, &n_rectangles);
+
+  for (i=0; i<n_rectangles; i++)
+    {
+      sum+=rect_area(&rectangles[i]);
+    }
+  g_free (rectangles);
+  return sum;
+}
+
+static gint area_left (GeglCache     *cache,
+                       GeglRectangle *rectangle)
+{
+  GeglRegion    *region;
+  gint           sum=0;
+
+  region = gegl_region_rectangle (rectangle);
+  gegl_region_subtract (region, cache->valid_region);
+  sum += region_area (region);
+  gegl_region_destroy (region);
+  return sum;
+}
+
+static gint area_left2 (GeglCache     *cache,
+                        GeglRegion    *region_i)
+{
+  gint           sum=0;
+  GeglRegion    *region = gegl_region_copy (region_i);
+  gegl_region_subtract (region, cache->valid_region);
+  sum += region_area (region);
+  gegl_region_destroy (region);
+  return sum;
+}
+
+
 gboolean
 gegl_cache_render (GeglCache     *cache,
-                   GeglRectangle *rectangle)
+                   GeglRectangle *rectangle,
+                   gdouble       *progress)
 {
   g_assert (GEGL_IS_CACHE (cache));
-
   {
     gboolean more_work = render_rectangle (cache);
     if (more_work == TRUE)
-      return more_work;
+      {
+        if (progress)
+          {
+            gint valid;
+            gint wanted;
+            if (rectangle)
+              {
+                wanted = rect_area (rectangle);   
+                valid  = wanted - area_left (cache, rectangle);
+              }
+            else
+              {
+                valid = region_area(cache->valid_region);
+                wanted = region_area(cache->queued_region);
+              }
+            if (wanted == 0)
+              {
+                *progress = 1.0;
+              }
+            else
+              {
+                *progress = (double)valid/wanted;
+              }
+              wanted = 1;
+          }
+        return more_work;
+      }
   }
 
   if (rectangle)
@@ -481,7 +553,11 @@ gegl_cache_render (GeglCache     *cache,
         }
       g_free (rectangles);
       if (n_rectangles!=0)
-        return TRUE;
+        {
+          if (progress)
+            *progress = 1.0-((double)area_left (cache, rectangle)/rect_area(rectangle));
+          return TRUE;
+        }
       return FALSE;
     }
   else if (!gegl_region_empty (cache->queued_region) &&
@@ -507,6 +583,8 @@ gegl_cache_render (GeglCache     *cache,
         }
       g_free (rectangles);
     }
+ if (progress)
+   *progress = 0.69;
 
   return !gegl_cache_is_rendered (cache);
 }

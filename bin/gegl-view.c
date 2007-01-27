@@ -421,7 +421,7 @@ static gboolean task_monitor (gpointer foo)
   GeglCache *cache = gegl_node_get_cache (view->node);
   gboolean   ret = FALSE;
 
-  ret = gegl_cache_render (cache, NULL);
+  ret = gegl_cache_render (cache, NULL, NULL);
 
   if (ret==FALSE)
     {

@@ -118,7 +118,11 @@ static void button_render_clicked (GtkButton *button,
   
   cache = gegl_node_get_cache (GEGL_VIEW (editor.drawing_area)->node);
 
-  while (gegl_cache_render (cache, &rect));
+    {
+      gdouble progress;
+      while (gegl_cache_render (cache, &rect, &progress))
+         g_warning ("%f", progress);
+    }
 
   gegl_buffer_export_png (GEGL_BUFFER (cache),
                           &rect, path);
