@@ -25,12 +25,11 @@
 
 
 /***
- * API Reference:
- * This is the GEGL API reference, it is generated from the declarations and
- * comments in <a href='gegl.h.html'>gegl.h</a> the headerfile that forms the
- * public API of GEGL. This file contains both the functions that are to be used
- * when using gegl from C, as well as the functions that are intended for use
- * by language bindings for languages like ruby and python.
+ * The GEGL API:
+ *
+ * This document is both a tutorial and the reference for the C API of GEGL.
+ * The concepts covered in the tutotrial should be applicable using other
+ * languages as well.
  */
 
 /***
@@ -39,6 +38,16 @@
  * Before GEGL can be used the engine should be initialized by either calling
  * #gegl_init or through the use of #gegl_get_option_group. To shut down the
  * GEGL engine call #gegl_exit.
+ *
+ * ---Code sample:
+ * #include <gegl.h>
+ *
+ * int main(int argc, char **argv)
+ * {
+ *   gegl_init (&argc, &argv);
+ *       # other GEGL code
+ *   gegl_exit ();
+ * }
  */
 
 /**
@@ -82,16 +91,37 @@ void           gegl_exit                 (void);
  * GeglNode:
  *
  * The Node is the image processing primitive connected to create compositions
- * in GEGL. The toplevel #GeglNode which contains a graph of #GeglNodes can be
- * created with #gegl_node_new, from such a graph node, further children can be
- * created (that also might have their own children) using #gegl_node_new_child
- * and #gegl_node_create_child.
+ * in GEGL. The toplevel #GeglNode which contains a graph of #GeglNodes is
+ * created with #gegl_node_new. Using this toplevel node we can create children
+ * of this node which are individual processing elements using #gegl_node_new_child
+ *
+ * A node either has an associated operation or is a parent for other nodes,
+ * that are connected to their parent through proxies created with
+ * #gegl_node_get_input_proxy and #gegl_node_get_output_proxy.
+ *
+ * The properties available on a node depends on which <a
+ * href='operations.html'>operation</a> is specified.
+ *
+ * ---
+ * GeglNode *gegl, *load, *bcontrast;
+ *
+ * gegl = gegl_node_new ();
+ * load = gegl_node_new_child (gegl,
+ *                             "operation", "load",
+ *                             "path",      "input.png",
+ *                             NULL);
+ * save = gegl_node_new_child (gegl,
+ *                             "operation", "brightness-contrast",
+ *                             "brightness", 0.2,
+ *                             "contrast",   1.5,
+ *                             NULL);
  */
 #ifndef GEGL_INTERNAL /* These declarations duplicate internal ones in GEGL */
 typedef struct _GeglNode      GeglNode;
 GType gegl_node_get_type  (void) G_GNUC_CONST;
 #define GEGL_TYPE_NODE  (gegl_node_get_type())
 #define GEGL_NODE(obj)  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
+
 typedef struct _GeglRectangle GeglRectangle;
 #endif
 
@@ -130,9 +160,13 @@ GeglNode    * gegl_node_new_child        (GeglNode      *parent,
 /***
  * Making connections:
  *
- * To do anything useful #GeglNode s needs to be connected together in
- * a graph, this can be done through multiple functions, all of which
- * are variations of #gegl_node_connect_from internally.
+ * Nodes in GEGL are connected to each other, the resulting graph of nodes
+ * represents the image processing pipeline to be processed.
+ *
+ * ---
+ * gegl_node_link_many (background, over, png_save, NULL);
+ * gegl_node_connect_to (translate, "output", over, "aux");
+ * gegl_node_link_many (text, blur, translate);
  */
 
 /**
@@ -168,18 +202,6 @@ gboolean      gegl_node_connect_to       (GeglNode      *source,
                                           GeglNode      *sink,
                                           const gchar   *input_pad_name);
 
-/**
- * gegl_node_disconnect:
- * @node: a #GeglNode
- * @input_pad_name: the input pad to disconnect.
- *
- * Disconnects a data source from a node. (Should this be deprecated and
- * connecting a NULL node be used instead?)
- *
- * Returns TRUE if a connection was broken.
- */
-gboolean      gegl_node_disconnect       (GeglNode      *node,
-                                          const gchar   *input_pad_name);
 
 /**
  * gegl_node_link:
@@ -206,17 +228,32 @@ void          gegl_node_link_many        (GeglNode      *source,
                                           GeglNode      *first_sink,
                                           ...) G_GNUC_NULL_TERMINATED;
 
+/**
+ * gegl_node_disconnect:
+ * @node: a #GeglNode
+ * @input_pad: the input pad to disconnect.
+ *
+ * Disconnects node connected to @input_pad of @node (if any).
+ *
+ * Returns TRUE if a connection was broken.
+ */
+gboolean      gegl_node_disconnect       (GeglNode      *node,
+                                          const gchar   *input_pad);
+
 /***
  * Setting properties:
  *
  * Properties can be set either when creating the node with
- * #gegl_node_new_child or multiple properties can be set with #gegl_node_set.
- * #gegl_node_set_property is provided to make it possible to implement
- * language bindings without using variable arguments.
+ * #gegl_node_new_child as well as later when changing the initial
+ * value with #gegl_node_set.
  *
  * To see what operations are available for a given operation look in the <a
  * href='operations.html'>Operations reference</a> or use
  * #gegl_node_get_properties.
+ * --
+ * gegl_node_set (node, "brightness", -0.2,
+ *                      "contrast",   2.0,
+ *                      NULL);
  */
 
 /**
@@ -244,6 +281,40 @@ void          gegl_node_set              (GeglNode      *node,
  * query any node providing output for a rectangular region to be rendered
  * using #gegl_node_blit, or you use #gegl_node_process on a sink node (A
  * display node, an image file writer or similar).
+ *
+ * ---
+ * GeglNode      *gegl;
+ * GeglRectangle  roi;
+ * GeglNode      *png_save;
+ * unsigned char *buffer;
+ *
+ * gegl = gegl_parse_xml (xml_data);
+ * roi      = gegl_node_get_bounding_box (gegl);
+ * png_save = gegl_node_new_child (gegl,
+ *                                 "operation", "png-save",
+ *                                 "path",      "output.png",
+ *                                 NULL);
+ *
+ * gegl_node_link (gegl, png_save);
+ * gegl_node_process (png_save);
+ *
+ * buffer = malloc (roi.w*roi.h*4);
+ * gegl_node_blit (gegl,
+ *                 &roi,
+ *                 1.0,
+ *                 babl_format("R'G'B'A u8",
+ *                 roi.w*4,
+ *                 buffer,
+ *                 GEGL_BLIT_DEFAULT);
+ *
+ * # iterative processing:
+ *
+ * GeglProcessor *processor = gegl_node_new_processor (node, &roi);
+ * double         progress;
+ *
+ * while (gegl_processor_work (processor, &progress))
+ *   g_warning ("%f%% complete", progress);
+ * gegl_processor_destroy (processor);
  */
 
 #ifndef GEGL_INTERNAL
@@ -299,6 +370,7 @@ void          gegl_node_process          (GeglNode      *sink_node);
  * of regions in a node's cache. Or for processing a sink node. For most
  * non GUI tasks using #gegl_node_blit and #gegl_node_process directly
  * should be sufficient.
+ *
  */
 #ifndef GEGL_INTERNAL
 typedef struct _GeglProcessor        GeglProcessor;
@@ -354,6 +426,16 @@ void           gegl_processor_destroy       (GeglProcessor *processor);
  *
  * This section lists functions that retrieve information, mostly needed
  * for interacting with a graph in a GUI, not creating one from scratch.
+ *
+ * You can figure out what the bounding box of a node is with #gegl_node_get_bounding_box,
+ * retrieve the values of named properties using #gegl_node_get.
+ *
+ * ---
+ * double level;
+ * char  *path;
+ *
+ * gegl_node_get (png_save, "path", &path, NULL);
+ * gegl_node_get (threshold, "level", &level, NULL);
  */
 
 /**
@@ -519,6 +601,10 @@ GParamSpec ** gegl_node_get_properties   (GeglNode      *node,
  * @path_root: a file system path that relative paths in the XML will be
  * resolved in relation to.
  *
+ * The #GeglNode returned contains the graph described by the tree of stacks
+ * in the XML document, the tree is connected to the "output" pad of the
+ * returned node and thus can be used directly for processing.
+ *
  * Returns a GeglNode containing the parsed XML as a subgraph.
  */
 GeglNode    * gegl_parse_xml             (const gchar   *xmldata,
@@ -569,7 +655,8 @@ struct _GeglRectangle
  *
  * The colors used by gegls are described in a format similar to CSS, the
  * textstring "rgb(1.0,1.0,1.0)" signifies opaque white and
- * "rgba(1.0,0.0,0.0,0.75)" is a 75% opaque red. 
+ * "rgba(1.0,0.0,0.0,0.75)" is a 75% opaque red. Hexadecimal forms like #RRGGBB
+ * and #RRGGBBAA are also supported.
  */
 typedef struct _GeglColor     GeglColor;
 GType gegl_color_get_type (void) G_GNUC_CONST;
@@ -672,5 +759,6 @@ void          gegl_node_set_property     (GeglNode      *node,
 /*** this is just here to trick the parser.
  */
 #include "gegl/gegl-paramspecs.h"
+#include <babl/babl.h>
 
 #endif  /* __GEGL_H__ */

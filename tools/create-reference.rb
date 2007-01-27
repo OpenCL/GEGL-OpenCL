@@ -53,9 +53,10 @@ class String
 end
 
 class Section
-    attr_accessor :name, :doc
+    attr_accessor :name, :doc, :sample
     def initialize
         @doc=""
+        @sample=""
         @name=""
     end
     def menu_entry
@@ -63,6 +64,9 @@ class Section
     end
     def to_s
         ret = "#{@name}\n"
+    end
+    def sample_html
+        @sample.gsub(/(.)(#.*)$/, "\\1<span style='color:gray;text-style:italic'>\\2</span>") 
     end
     def to_html
         ret = "<div class='sect'>
@@ -72,6 +76,7 @@ class Section
             ret += "<p>"
             ret += @doc.htmlify
             ret += "</p>"
+            ret += "<pre>#{sample_html}</pre>"
             ret += "</div>"
         ret += "</div>"
     end
@@ -333,11 +338,20 @@ IO.foreach(ARGV[0]) {
         end
 
     when :section_doc
-        if line =~ /\*\//
+        if line =~ /^ \* ---/
+            state=:section_sample
+        elsif line =~ /\*\//
             state=:none
         else
             line =~ /.*\*(.*)/
             function.doc = function.doc + $1.to_s + "\n"
+        end
+    when :section_sample
+        if line =~ /\*\//
+            state=:none
+        else
+            line =~ /.*\* (.*)/
+            function.sample = function.sample + $1.to_s + "\n"
         end
     when :more
         if line =~ /.*(Returns.*)/

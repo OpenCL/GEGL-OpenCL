@@ -1,3 +1,10 @@
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.h: include babl.h, added some more documentation.
+	* tools/create-reference.rb: parse a code sample section at
+	the end of a section (will probably add support for such a
+	code sample per funciton as well.)
+
 2007-01-27  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* docs/Makefile.am: Forgot to remove api.html from BUILT_EXTRA_DIST.
