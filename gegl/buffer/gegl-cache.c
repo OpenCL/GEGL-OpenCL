@@ -478,18 +478,6 @@ static gint area_left (GeglCache     *cache,
   return sum;
 }
 
-static gint area_left2 (GeglCache     *cache,
-                        GeglRegion    *region_i)
-{
-  gint           sum=0;
-  GeglRegion    *region = gegl_region_copy (region_i);
-  gegl_region_subtract (region, cache->valid_region);
-  sum += region_area (region);
-  gegl_region_destroy (region);
-  return sum;
-}
-
-
 gboolean
 gegl_cache_render (GeglCache     *cache,
                    GeglRectangle *rectangle,

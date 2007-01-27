@@ -1,5 +1,9 @@
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-cache.c: removed unused static function.
+
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.[ch]: (gegl_processor_set_rectangle),
 	(gegl_node_new_processor): added set_rectangle to processor,
 	this should allow reusing a processor for updating the view
