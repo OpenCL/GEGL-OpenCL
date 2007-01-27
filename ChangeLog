@@ -1,6 +1,13 @@
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-tile-zoom.c: (set_blank), (downscale_float),
+	(downscale_u8), (set_half): optimized set_blank to use a single
+	memset per scanline, simplified code a bit, and left a FIXME for
+	making the code even more concise.
+
+2007-01-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-tile-zoom.c: (set_blank), (downscale_float),
 	(set_half_float), (set_half): added mipmap pyramid decimator
 	for 32bit floating point data typed buffers.
 
