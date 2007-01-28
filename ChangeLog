@@ -1,5 +1,10 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl-store.c: (gegl_parent): Made GeglStore only depend on
+	public API.
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	%s/gegl_rect_/gegl_rectangle_/g
 
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor),

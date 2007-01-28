@@ -18,23 +18,7 @@
  */
 
 
-#if 1
-#include "gegl-plugin.h"  /* is this neccesary? FIXME: should just be gegl.h
-                           
-                           gegl_node_get_operation
-                           GeglPad
-                           gegl_node_get_pad
-                           gegl_pad_get_connections
-                           GeglConnection
-                           gegl_connection_get_sink_pad
-                           gegl_pad_get_name
-                           gegl_connection_get_sink_node
-                           */
-#endif
-#if 0
-#include "gegl.h"
-#endif
-
+#include <gegl.h>
 #include "gegl-store.h"
 #include <string.h>
 
@@ -99,30 +83,31 @@ GeglNode *gegl_previous_sibling (GeglNode *item)
 
 GeglNode *gegl_parent (GeglNode *item)
 {
-  GeglPad *pad;
   GeglNode *iter = item;
 
   if (!item)
     return NULL;
   while (gegl_previous_sibling (iter))
     iter = gegl_previous_sibling (iter);
-
-  pad = gegl_node_get_pad (iter, "output");
-  
-  if (!pad)
+  if (!iter)
     return NULL;
-  iter = NULL;
-    {
-      GList *pads = gegl_pad_get_connections (pad);
-      if (pads)
-        {
-          GeglConnection *connection = pads->data;
-          GeglPad *pad = gegl_connection_get_sink_pad (connection);
-          if (!strcmp (gegl_pad_get_name (pad), "aux"))
-            iter = gegl_connection_get_sink_node (connection);
-        }
-    }
-  return iter;
+
+  {
+    gint n_consumers;
+    GeglNode    **nodes;
+    const gchar **pads;
+
+    n_consumers = gegl_node_get_consumers (iter, "output", &nodes, &pads);
+    if (n_consumers >0 &&
+        !strcmp (pads[0], "aux"))
+      {
+        GeglNode *ret=nodes[0];
+        g_free (nodes);
+        g_free (pads);
+        return ret;
+      }
+  }
+  return NULL;
 }
 
 /****/
