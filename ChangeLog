@@ -1,5 +1,19 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	Adjusted which groups operations belong in as well as ranges for
+	properties.
+
+	* operations/color/brightness-contrast.c:
+	* operations/color/threshold.c:
+	* operations/color/whitebalance.c:
+	* operations/core/crop.c:
+	* operations/core/shift.c:
+	* operations/transform/affine.c: (op_affine_class_init):
+	* operations/workshop/difference-of-gaussians.c:
+	* operations/workshop/dog.c:
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-store.c: (gegl_parent): Made GeglStore only depend on
 	public API.
 

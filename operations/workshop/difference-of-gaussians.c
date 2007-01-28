@@ -19,16 +19,16 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(radius1, 0.0, 20.0, 1.0, "Radius")
-gegl_chant_double(radius2, 0.0, 20.0, 2.0, "Radius")
+gegl_chant_double(radius1, 0.0, 10.0, 1.0, "Radius")
+gegl_chant_double(radius2, 0.0, 10.0, 2.0, "Radius")
 
 #else
 
 #define GEGL_CHANT_META
-#define GEGL_CHANT_NAME            dog
-#define GEGL_CHANT_DESCRIPTION     "does a difference of gaussians edge detection"
-#define GEGL_CHANT_SELF            "dog.c"
-#define GEGL_CHANT_CATEGORIES      "meta:enhance"
+#define GEGL_CHANT_NAME            difference_of_gaussians
+#define GEGL_CHANT_DESCRIPTION     "does an edge detection based on the differnece of two gaussian blurs."
+#define GEGL_CHANT_SELF            "difference-of-gaussians.c"
+#define GEGL_CHANT_CATEGORIES      "meta:edge"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 

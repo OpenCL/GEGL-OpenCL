@@ -34,7 +34,7 @@ gegl_chant_double (height, -G_MAXDOUBLE, G_MAXDOUBLE, 10.0,
 #define GEGL_CHANT_NAME            crop
 #define GEGL_CHANT_SELF            "crop.c"
 #define GEGL_CHANT_DESCRIPTION     "Crops the resulting image buffer computed by the sources of the crop operation, can be used to mask out unwanted data, the cropped out regions are interpreted as transparent black by nodes using regions outside the crop-area for compositing."
-#define GEGL_CHANT_CATEGORIES      "geometry"
+#define GEGL_CHANT_CATEGORIES      "misc"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 

@@ -29,9 +29,9 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE,  0.0,
 
 #define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME            shift
-#define GEGL_CHANT_DESCRIPTION     "Translate the buffer, an integer amount of pixels. (This is a lower level operation than the affine 'translate' operation.)"
+#define GEGL_CHANT_DESCRIPTION     "Translate the buffer, an integer amount of pixels. (more efficient than the affine op translate which resamples the image.)"
 #define GEGL_CHANT_SELF            "shift.c"
-#define GEGL_CHANT_CATEGORIES      "geometry"
+#define GEGL_CHANT_CATEGORIES      "transform"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 

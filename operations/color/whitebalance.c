@@ -19,11 +19,11 @@
  */
 
 #if GEGL_CHANT_PROPERTIES
-  gegl_chant_double (high_a_delta, -100.0, 100.0, 0.0, "")
-  gegl_chant_double (high_b_delta, -100.0, 100.0, 0.0, "")
-  gegl_chant_double (low_a_delta,  -100.0, 100.0, 0.0, "")
-  gegl_chant_double (low_b_delta,  -100.0, 100.0, 0.0, "")
-  gegl_chant_double (saturation,   0.0, 100.0, 1.0, "")
+  gegl_chant_double (high_a_delta, -2.0, 2.0, 0.0, "")
+  gegl_chant_double (high_b_delta, -2.0, 2.0, 0.0, "")
+  gegl_chant_double (low_a_delta,  -2.0, 2.0, 0.0, "")
+  gegl_chant_double (low_b_delta,  -2.0, 2.0, 0.0, "")
+  gegl_chant_double (saturation,   -3.0, 3.0, 1.0, "")
 
 #else
 

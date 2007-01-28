@@ -19,7 +19,7 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (value, -100.0, 100.0, 0.5,
+gegl_chant_double (value, 0.0, 4.0, 0.5,
    "Global threshold level (used when there is no auxiliary input buffer).")
 
 #else

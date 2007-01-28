@@ -132,7 +132,7 @@ op_affine_class_init (OpAffineClass *klass)
   op_class->get_defined_region  = get_defined_region;
   op_class->calc_source_regions = calc_source_regions;
   op_class->detect = detect;
-  op_class->categories = "geometry";
+  op_class->categories = "transform";
 
   filter_class->process = process;
 
