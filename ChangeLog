@@ -1,3 +1,7 @@
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.h: expose GType for GeglProcess.
+
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/transform/affine.c: (calc_source_regions): initialize the

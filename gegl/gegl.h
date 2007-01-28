@@ -373,7 +373,10 @@ void          gegl_node_process          (GeglNode      *sink_node);
  *
  */
 #ifndef GEGL_INTERNAL
-typedef struct _GeglProcessor        GeglProcessor;
+typedef struct _GeglProcessor      GeglProcessor;
+GType gegl_processor_get_type  (void) G_GNUC_CONST;
+#define GEGL_TYPE_PROCESSOR  (gegl_processor_get_type())
+#define GEGL_PROCESSOR(obj)  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROCESSOR, GeglProcessor))
 #endif
 
 /**
