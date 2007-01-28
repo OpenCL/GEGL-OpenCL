@@ -1,5 +1,9 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* AUTHORS: added Kevin Cozens to documentation section.
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	s/radius/standard deviation/ for gaussian blur and it's derivatives.
 
 	* bin/node-editors/gaussian-blur.c: (expose), (drag_n_motion):
