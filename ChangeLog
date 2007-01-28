@@ -1,6 +1,11 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
-	* gegl/gegl.h: expose GType for GeglProcess.
+	* operations/file-io/exr-load.cpp: reordered arguments for
+	gegl_buffer_set and gegl_buffer_get.
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.h: expose GType for GeglProcessor.
 
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 

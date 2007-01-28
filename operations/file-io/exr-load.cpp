@@ -237,7 +237,7 @@ fix_saturation (GeglBuffer       *buf,
   for (y=0; y<2; y++)
     {
       gegl_rect_set (&rect, 0,y, buf->width, 1);
-      gegl_buffer_get (buf, &rect, row[y+1], buf->format, 1.0);
+      gegl_buffer_get (buf, &rect, 1.0, buf->format, row[y+1]);
     }
 
   fix_saturation_row (row[1], row[1], row[2], yw, buf->width, nc);
@@ -247,11 +247,11 @@ fix_saturation (GeglBuffer       *buf,
       if (y>1)
         {
           gegl_rect_set (&rect, 0, y-2, buf->width, 1);
-          gegl_buffer_set (buf, &rect, row[0], buf->format);
+          gegl_buffer_set (buf, &rect, buf->format, row[0]);
         }
       
       gegl_rect_set (&rect, 0,y+1, buf->width, 1);
-      gegl_buffer_get (buf, &rect, row[0], buf->format, 1.0);
+      gegl_buffer_get (buf, &rect, 1.0, buf->format, row[0]);
 
       tmp = row[0];
       row[0] = row[1];
@@ -266,7 +266,7 @@ fix_saturation (GeglBuffer       *buf,
   for (y=buf->height-2; y<buf->height; y++)
     {
       gegl_rect_set (&rect, 0, y, buf->width, 1);
-      gegl_buffer_set (buf, &rect, row[y-buf->height+2], buf->format);
+      gegl_buffer_set (buf, &rect, buf->format, row[y-buf->height+2]);
     }
 
   for (y=0; y<3; y++)
@@ -331,19 +331,19 @@ reconstruct_chroma (GeglBuffer *buf,
   for (i=0; i<buf->height; i+=2)
     {
       gegl_rect_set (&rect, 0, i,  buf->width, 1);
-      gegl_buffer_get (buf, &rect, pixels, buf->format, 1.0);
+      gegl_buffer_get (buf, &rect, 1.0, buf->format, pixels);
 
       reconstruct_chroma_row (pixels, buf->width, has_alpha, tmp);
-      gegl_buffer_set (buf, &rect, pixels, buf->format);
+      gegl_buffer_set (buf, &rect, buf->format, pixels);
     }
 
   for (i=0; i<buf->width; i++)
     {
       gegl_rect_set (&rect, i, 0, 1, buf->height);
-      gegl_buffer_get (buf, &rect, pixels, buf->format, 1.0);
+      gegl_buffer_get (buf, &rect, 1.0, buf->format, pixels);
 
       reconstruct_chroma_row (pixels, buf->height, has_alpha, tmp);
-      gegl_buffer_set (buf, &rect, pixels, buf->format);
+      gegl_buffer_set (buf, &rect, buf->format, pixels);
     }
 
   g_free (tmp);
@@ -366,7 +366,7 @@ convert_yca_to_rgba (GeglBuffer *buf,
   for (row=0; row<buf->height; row++)
     {
       gegl_rect_set (&rect, 0, row, buf->width, 1);
-      gegl_buffer_get (buf, &rect, pixels, buf->format, 1.0);
+      gegl_buffer_get (buf, &rect, 1.0, buf->format, pixels);
       pxl = (gfloat*) pixels;
 
       for (i=0; i<buf->width; i++)
@@ -386,7 +386,7 @@ convert_yca_to_rgba (GeglBuffer *buf,
           pxl += dx;
         }
 
-      gegl_buffer_set (buf, &rect, pixels, buf->format);
+      gegl_buffer_set (buf, &rect, buf->format, pixels);
     }
 
   g_free (pixels);
@@ -475,7 +475,7 @@ import_exr (GeglBuffer  *gegl_buffer,
           {
             gegl_rect_set (&rect, 0, i-dw.min.y,gegl_buffer->width, 1);
             file.readPixels (i);
-            gegl_buffer_set (gegl_buffer, &rect, pixels, gegl_buffer->format);
+            gegl_buffer_set (gegl_buffer, &rect, gegl_buffer->format, pixels);
           }
       }
 
