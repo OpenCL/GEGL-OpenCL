@@ -946,14 +946,14 @@ static void property_changed (GObject    *gobject,
              or perhaps a bug lurks here?
            */
           GeglRectangle dirty_rect;
-          GeglRectangle new_have_rect;
+/*          GeglRectangle new_have_rect;*/
 
           dirty_rect = self->have_rect;
-          new_have_rect = gegl_node_get_bounding_box (self);
+          /*new_have_rect = gegl_node_get_bounding_box (self);
 
           gegl_rectangle_bounding_box (&dirty_rect,
                                        &dirty_rect,
-                                       &new_have_rect);
+                                       &new_have_rect);*/
 
           g_signal_emit (self, gegl_node_signals[GEGL_NODE_INVALIDATED], 0, &dirty_rect, NULL);
         }
