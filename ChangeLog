@@ -1,5 +1,11 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.in: increased required version of babl from 0.0.8 to
+	0.0.12, this requirement isn't entirely true, but 0.0.8 is much
+	slower than 0.0.12.
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	Do not install internal headers, moved GEGL_TYPE_RECTANGLE into gegl.h
 
 	* gegl/Makefile.am:
