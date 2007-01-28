@@ -1,5 +1,10 @@
 2007-01-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.in: released 0.0.8
+	* NEWS: updated to reflect release.
+
+2007-01-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (property_changed),
 	(gegl_node_set_operation_object): Hack to trigger invalidates properly
 	when operation object changes on node.
