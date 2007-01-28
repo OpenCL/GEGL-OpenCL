@@ -1,5 +1,10 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: encode usage
+	* index-static.html.in: patched up to be valid XHTML 1.0.
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl.css: added float:left to div.toc.
 
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>

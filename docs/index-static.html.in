@@ -16,48 +16,6 @@
     <style type='text/css'>
         @import url(gegl.css);
     </style>
-
-    </style>
-
-    <script type='text/javascript'>
-    function hide(id)
-    {
-      (document.getElementById(id)).style.display = "none";
-    }
-    function show(id)
-    {
-      (document.getElementById(id)).style.display = "block";
-    }
-    function get_visible (id)
-    {
-      var element = document.getElementById(id);
-
-      if (element &&
-          element.style.display &&
-          element.style.display != "none")
-         return true;
-      return false;
-    }
-    function set_visible (id, visible)
-    {
-      var element = document.getElementById(id);
-
-      if (element)
-        {
-          if (visible)
-              element.style.display = "block";
-          else
-              element.style.display = "none";
-        }
-    }
-    function toggle_visible (id)
-    {
-      if (get_visible(id))
-        set_visible(id, false);
-      else
-        set_visible(id,true);
-    }
-    </script>
   </head>
   <body>
 
@@ -88,7 +46,7 @@
         <li><a href='#HelloWorld'>&nbsp;&nbsp;Hello World</a></li>
         <li><a href='#XML'>&nbsp;&nbsp;XML data model</a></li>
         <li><a href='#Environment'>&nbsp;&nbsp;Environment</a></li>
-        <li><a href='#gegl'>&nbsp;&nbsp;gegl</li>
+        <li><a href='#gegl'>&nbsp;&nbsp;gegl</a></li>
         <li>&nbsp;</li>
         <li><a href='#Development'>Development</a></li>
         <!--<li><a href='#Bootstrap'>&nbsp;&nbsp;Bootstrap</a></li>-->
@@ -96,7 +54,7 @@
         <li>&nbsp;</li>
         <li>&nbsp;</li>
         <li><a href='http://svn.gnome.org/viewcvs/gegl/trunk/ChangeLog?view=markup'>changes</a></li>
-        <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED'>bugzilla</a></li>
+        <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED'>bugzilla</a></li>
         <li><a href='http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes'>mailarchive</a></li>
       </ul>
     </div>
@@ -116,6 +74,7 @@
         for a new compositing and processing core. This core is being designed
         to have minimal <a href='#Dependencies'>dependencies.</a> and a simple well defined API. It
         is still a work in progress, but it already provides for a capable system.
+        </p>
         
         <a name='Features'></a>
         <h3>Features</h3>
@@ -174,17 +133,19 @@ rectangular regions to be repainted.
         needs some fixes before all of it builds gracefully on many platforms.
         </p>
         <ul>
-            <li>Core</li>
+            <li>Core
                 <ul>
                   <li>glib (including gobject, and gmodule) 2.10 or newer</li>
                   <li><a href='ftp://gimp.org/pub/babl/0.0/'>babl</a> 0.0.8 or newer (for pixel-format agnostisism).</li>
                   <li>libpng (png load/export ops, and image magick fallback import)</li>
-            </ul>
-            <li>GUI (sandbox for testing ops and the API)</li>
+              </ul>
+              </li>
+            <li>GUI (sandbox for testing ops and the API)
                <ul>
                  <li>GTK+</li>
-               </ul>
-            <li>Optional dependencies for operations.</li>
+             </ul>
+             </li>
+            <li>Optional dependencies for operations.
             <ul>
                  <li>SDL (display op)</li>
                  <li>libjpeg (jpg loader op)</li>
@@ -221,9 +182,9 @@ http://svn.gnome.org/svn/gegl/trunk/ gegl</pre>
         Below is a list of links to get you started with Bugzilla:
         </p>
         <ul>
-            <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED'>List of Open Bugs</a></li>
-            <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&bug_severity=normal&bug_severity=minor&bug_severity=trivial'>List of Open Bugs (excluding enhancement requests)</a></li>
-            <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO&bug_severity=enhancement'>List of Enhancement Proposals</a></li>
+            <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED'>List of Open Bugs</a></li>
+            <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;bug_severity=blocker&amp;bug_severity=critical&amp;bug_severity=major&amp;bug_severity=normal&amp;bug_severity=minor&amp;bug_severity=trivial'>List of Open Bugs (excluding enhancement requests)</a></li>
+            <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;bug_status=UNCONFIRMED&amp;bug_status=NEEDINFO&amp;bug_severity=enhancement'>List of Enhancement Proposals</a></li>
             <li><a href='http://bugzilla.gnome.org/reports/weekly-bug-summary.cgi'>Bugzilla Weekly Summary</a></li>
         </ul>
 
@@ -299,7 +260,7 @@ http://svn.gnome.org/svn/gegl/trunk/ gegl</pre>
       <dt><a name='Glossary-operation'>operation</a></dt>
       <dd>The processing primitive of GEGL, is where the actual image
       processing takes place. Operations are plug-ins and provide the
-      actual functionality of GEGL
+      actual functionality of GEGL</dd>
       <dt>pad</dt>
       <dd>The part of a node that exchanges image content. The place
           where image &quot;pipes&quot; are used to connect the various
@@ -361,7 +322,6 @@ http://svn.gnome.org/svn/gegl/trunk/ gegl</pre>
     <p>For documentation on how this XML works, take a look at the sources
     in the <a href='gallery/index.html'>gallery.</a> And browse the
     <a href='operations.html'>documentation for operations</a>.</p>
-</p>
 
         <a name='Environment'></a>
         <h3>Environment</h3>
@@ -430,6 +390,7 @@ Some examples:
 
     <h2>Development</h2>
 
+    <p>
     GEGL uses <a href='#Bugzilla'>bugzilla</a> to track feature requests and
     contributions.
     A description of what the various directories in the GEGL checkout is in
@@ -516,7 +477,7 @@ Some examples:
 
         <p>Most of the operations do not use the verbose gobject syntax, but preprocessor
         tricks turning the boilerplate in a <a
-            href='http://svn.gnome.org/viewcvs/gegl/trunk/operations/color/brightness-contrast.c?view=markup'>short chant</a>.
+            href='http://svn.gnome.org/viewcvs/gegl/trunk/operations/color/brightness-contrast.c?view=markup'>short chant</a>.</p>
       </div>
     </div>
     <div class='graphic'>

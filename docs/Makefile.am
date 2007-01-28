@@ -68,7 +68,7 @@ index.html: index-static.html                    \
 	$(top_srcdir)/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
 	[ -f runinfo ] && $(top_srcdir)/tools/xml_insert.sh $@ RUNINFO runinfo || true
 	$(top_builddir)/bin/gegl -h 2>&1 | sed -e "s_/.*gegl_gegl_" > gegl-usage.txt
-	$(top_srcdir)/tools/xml_insert.sh $@ GEGL_USAGE gegl-usage.txt
+	$(top_srcdir)/tools/xml_insert.sh $@ GEGL_USAGE gegl-usage.txt encode
 	$(top_srcdir)/tools/xml_insert.sh $@ HELLO-WORLD hello-world.c encode
 	rm gegl-usage.txt
 	@echo " [OK]"
