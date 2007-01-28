@@ -203,6 +203,7 @@
           z-index: 2;
           height: 100%;
           overflow: auto;
+          float: left;
         }
         div.toc ul {
           padding-top: 2em;

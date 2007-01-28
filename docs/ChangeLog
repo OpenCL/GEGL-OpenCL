@@ -1,3 +1,7 @@
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl.css: added float:left to div.toc.
+
 2007-01-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl.css: added absolute to toc position.
