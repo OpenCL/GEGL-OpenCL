@@ -1,5 +1,17 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	s/radius/standard deviation/ for gaussian blur and it's derivatives.
+
+	* bin/node-editors/gaussian-blur.c: (expose), (drag_n_motion):
+	* bin/node-editors/unsharp-mask.c: (expose), (drag_n_motion):
+	* operations/blur/gaussian-blur.c: (process), (get_defined_region),
+	(get_source_rect), (get_affected_region):
+	* operations/meta/dropshadow.c: (attach):
+	* operations/meta/unsharp-mask.c: (attach):
+	* operations/workshop/dog.c: (attach):
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.in: increased required version of babl from 0.0.8 to
 	0.0.12, this requirement isn't entirely true, but 0.0.8 is much
 	slower than 0.0.12.

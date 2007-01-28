@@ -59,7 +59,7 @@ static void expose (GtkWidget      *widget,
 
   gdouble    radius;
 
-  gegl_node_get (node, "radius-x", &radius, NULL);
+  gegl_node_get (node, "std-dev-x", &radius, NULL);
 
   cairo_set_line_width (cr, 0.01);
   cairo_set_source_rgb (cr, 0,0,0);
@@ -104,8 +104,8 @@ drag_n_motion (GtkWidget *widget, GdkEventMotion *mev, gpointer user_data)
 
   radius = sqrt( (x-0.5)*(x-0.5) + (y-0.5) * (y-0.5)) * SCALE;
 
-  gegl_node_set (node, "radius-x", radius, NULL);
-  gegl_node_set (node, "radius-y", radius, NULL);
+  gegl_node_set (node, "std-dev-x", radius, NULL);
+  gegl_node_set (node, "std-dev-y", radius, NULL);
 
   gtk_widget_queue_draw (widget);
   gdk_window_get_pointer (widget->window, NULL, NULL, NULL);

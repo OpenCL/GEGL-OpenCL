@@ -83,8 +83,8 @@ static void attach (GeglOperation *operation)
       gegl_node_connect_from (priv->darken, "aux", priv->black, "output");
 
       gegl_operation_meta_redirect (operation, "opacity", priv->opacity, "value");
-      gegl_operation_meta_redirect (operation, "radius", priv->blur, "radius-x");
-      gegl_operation_meta_redirect (operation, "radius", priv->blur, "radius-y");
+      gegl_operation_meta_redirect (operation, "radius", priv->blur, "std-dev-x");
+      gegl_operation_meta_redirect (operation, "radius", priv->blur, "std-dev-y");
       gegl_operation_meta_redirect (operation, "x", priv->translate, "x");
       gegl_operation_meta_redirect (operation, "y", priv->translate, "y");
     }

@@ -25,10 +25,10 @@
 
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (radius_x, 0.0, 100.0, 4.0,
-   "Standard deviation for the horizontal axis.")
-gegl_chant_double (radius_y, 0.0, 100.0, 4.0,
-   "Standard deviation for the vertical axis.")
+gegl_chant_double (std_dev_x, 0.0, 100.0, 4.0,
+   "Standard deviation for the horizontal axis. (multiply by ~2 to get radius)")
+gegl_chant_double (std_dev_y, 0.0, 100.0, 4.0,
+   "Standard deviation for the vertical axis. (multiply by ~2 to get radius.)")
 gegl_chant_string (filter, NULL,
    "Optional parameter to override the automatic selection of blur filter.")
 
@@ -100,7 +100,7 @@ process (GeglOperation *operation,
       GeglRectangle  need = get_source_rect (operation, context_id);
 
 
-      if (result->w==0 || result->h==0 || (!self->radius_x && !self->radius_y))
+      if (result->w==0 || result->h==0 || (!self->std_dev_x && !self->std_dev_y))
         {
           output = g_object_ref (input);
         }
@@ -122,7 +122,7 @@ process (GeglOperation *operation,
                                  "height", need.h,
                                  NULL);
 
-          if (self->radius_x && self->radius_y)
+          if (self->std_dev_x && self->std_dev_y)
             temp   = g_object_new (GEGL_TYPE_BUFFER,
                                    "format", babl_format ("RaGaBaA float"),
                                    "x",      need.x,
@@ -130,10 +130,10 @@ process (GeglOperation *operation,
                                    "width",  need.w,
                                    "height", need.h,
                                    NULL);
-          else if (!self->radius_x)
+          else if (!self->std_dev_x)
             temp = temp_in;
 
-          else if (!self->radius_y)
+          else if (!self->std_dev_y)
             temp = output;
 
 
@@ -145,33 +145,33 @@ process (GeglOperation *operation,
             gboolean force_iir = filter && !strcmp (filter, "iir");
             gboolean force_fir = filter && !strcmp (filter, "fir");
 
-            if (self->radius_x)
+            if (self->std_dev_x)
               {
-                if ((force_iir || self->radius_x > 1.0) && !force_fir)
+                if ((force_iir || self->std_dev_x > 1.0) && !force_fir)
                   {
-                    iir_young_find_constants (self->radius_x, &B, b);
+                    iir_young_find_constants (self->std_dev_x, &B, b);
                     iir_young_hor_blur (temp_in, temp,   B, b);
                   }
                 else
                   {
                     cmatrix_len =
-                        fir_gen_convolve_matrix (self->radius_x, &cmatrix);
+                        fir_gen_convolve_matrix (self->std_dev_x, &cmatrix);
                     fir_hor_blur (temp_in, temp, cmatrix, cmatrix_len);
                     g_free (cmatrix);
                   }
               }
 
-            if (self->radius_y)
+            if (self->std_dev_y)
               {
-                if ((force_iir || self->radius_y > 1.0) && !force_fir)
+                if ((force_iir || self->std_dev_y > 1.0) && !force_fir)
                   {
-                    iir_young_find_constants (self->radius_y, &B, b);
+                    iir_young_find_constants (self->std_dev_y, &B, b);
                     iir_young_ver_blur (temp, output, B, b);
                   }
                 else
                   {
                     cmatrix_len =
-                        fir_gen_convolve_matrix (self->radius_y, &cmatrix);
+                        fir_gen_convolve_matrix (self->std_dev_y, &cmatrix);
                     fir_ver_blur (temp, output, cmatrix, cmatrix_len);
                     g_free (cmatrix);
                   }
@@ -519,8 +519,8 @@ get_defined_region (GeglOperation *operation)
   GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation,
                                                                 "input");
   GeglChantOperation *blur = GEGL_CHANT_OPERATION (operation);
-  gint radius_x       = ceil(blur->radius_x);
-  gint radius_y       = ceil(blur->radius_y);
+  gint std_dev_x       = ceil(blur->std_dev_x);
+  gint std_dev_y       = ceil(blur->std_dev_y);
   if (!in_rect)
     return result;
 
@@ -529,10 +529,10 @@ get_defined_region (GeglOperation *operation)
   if (result.w &&
       result.h)
     {
-      result.x-=radius_x*4;
-      result.y-=radius_y*4;
-      result.w+=radius_x*8;
-      result.h+=radius_y*8;
+      result.x-=std_dev_x*4;
+      result.y-=std_dev_y*4;
+      result.w+=std_dev_x*8;
+      result.h+=std_dev_y*8;
     }
 
   return result;
@@ -544,11 +544,11 @@ static GeglRectangle get_source_rect (GeglOperation *self,
   GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
   GeglRectangle       rect;
   GeglRectangle       defined;
-  gint                radius_x;
-  gint                radius_y;
+  gint                std_dev_x;
+  gint                std_dev_y;
  
-  radius_x = ceil(blur->radius_x);
-  radius_y = ceil(blur->radius_y);
+  std_dev_x = ceil(blur->std_dev_x);
+  std_dev_y = ceil(blur->std_dev_y);
 
   rect  = *gegl_operation_get_requested_region (self, context_id);
   defined = get_defined_region (self);
@@ -556,10 +556,10 @@ static GeglRectangle get_source_rect (GeglOperation *self,
   if (rect.w != 0 &&
       rect.h != 0)
     {
-      rect.x -= radius_x*4;
-      rect.y -= radius_y*4;
-      rect.w += radius_x*8;
-      rect.h += radius_y*8;
+      rect.x -= std_dev_x*4;
+      rect.y -= std_dev_y*4;
+      rect.w += std_dev_x*8;
+      rect.h += std_dev_y*8;
     }
 
   return rect;
@@ -571,16 +571,16 @@ get_affected_region (GeglOperation *self,
                      GeglRectangle  region)
 {
   GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
-  gint                radius_x;
-  gint                radius_y;
+  gint                std_dev_x;
+  gint                std_dev_y;
  
-  radius_x = ceil(blur->radius_x);
-  radius_y = ceil(blur->radius_y);
+  std_dev_x = ceil(blur->std_dev_x);
+  std_dev_y = ceil(blur->std_dev_y);
 
-  region.x -= radius_x*4;
-  region.y -= radius_y*4;
-  region.w += radius_x*8;
-  region.h += radius_y*8;
+  region.x -= std_dev_x*4;
+  region.y -= std_dev_y*4;
+  region.w += std_dev_x*8;
+  region.h += std_dev_y*8;
   return region;
 }
 

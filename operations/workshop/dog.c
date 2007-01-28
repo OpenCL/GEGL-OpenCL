@@ -80,10 +80,10 @@ static void attach (GeglOperation *operation)
 
       gegl_node_connect_from (priv->subtract, "aux",   priv->blur2,     "output");
 
-      gegl_operation_meta_redirect (operation, "radius1", priv->blur1, "radius-x");
-      gegl_operation_meta_redirect (operation, "radius1", priv->blur1, "radius-y");
-      gegl_operation_meta_redirect (operation, "radius2", priv->blur2, "radius-x");
-      gegl_operation_meta_redirect (operation, "radius2", priv->blur2, "radius-y");
+      gegl_operation_meta_redirect (operation, "radius1", priv->blur1, "std-dev-x");
+      gegl_operation_meta_redirect (operation, "radius1", priv->blur1, "std-dev-y");
+      gegl_operation_meta_redirect (operation, "radius2", priv->blur2, "std-dev-x");
+      gegl_operation_meta_redirect (operation, "radius2", priv->blur2, "std-dev-y");
     }
 }
 

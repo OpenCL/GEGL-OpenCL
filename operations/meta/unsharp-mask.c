@@ -19,8 +19,8 @@
  */
 #if GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(radius, 0.0, 100.0, 1.0, "Radius")
-gegl_chant_double(scale,  0.0, 100.0, 1.0, "Scale")
+gegl_chant_double(std_dev, 0.0, 100.0, 1.0, "Standard deviation (spatial scale factor)")
+gegl_chant_double(scale,  0.0, 100.0, 1.0, "Scale, strength of effect.")
 
 #else
 
@@ -87,8 +87,8 @@ static void attach (GeglOperation *operation)
       gegl_node_connect_from (priv->add,      "aux",   priv->multiply, "output");
 
       gegl_operation_meta_redirect (operation, "scale", priv->multiply, "value");
-      gegl_operation_meta_redirect (operation, "radius", priv->blur, "radius-x");
-      gegl_operation_meta_redirect (operation, "radius", priv->blur, "radius-y");
+      gegl_operation_meta_redirect (operation, "std-dev", priv->blur, "std-dev-x");
+      gegl_operation_meta_redirect (operation, "std-dev", priv->blur, "std-dev-y");
     }
 }
 

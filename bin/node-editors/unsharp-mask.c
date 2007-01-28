@@ -57,9 +57,9 @@ static void expose (GtkWidget      *widget,
   GeglNodeEditor *node_editor = user_data;
   GeglNode       *node        = node_editor->node;
 
-  gdouble radius, scale;
+  gdouble std_dev, scale;
 
-  gegl_node_get (node, "radius", &radius,
+  gegl_node_get (node, "std-dev", &std_dev,
                        "scale", &scale,
                        NULL);
 
@@ -69,7 +69,7 @@ static void expose (GtkWidget      *widget,
   cairo_fill (cr);
 
     {
-      cairo_arc (cr, 0.5, 0.5, radius/SCALE, 0, 2 * 3.1415);
+      cairo_arc (cr, 0.5, 0.5, std_dev/SCALE, 0, 2 * 3.1415);
       cairo_save (cr);
       cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
       cairo_fill (cr);
@@ -108,8 +108,8 @@ drag_n_motion (GtkWidget *widget, GdkEventMotion *mev, gpointer user_data)
     }
   else
     {
-      double radius = sqrt( (x-0.5)*(x-0.5) + (y-0.5) * (y-0.5)) * SCALE;
-      gegl_node_set (node, "radius", radius, NULL);
+      double std_dev = sqrt( (x-0.5)*(x-0.5) + (y-0.5) * (y-0.5)) * SCALE;
+      gegl_node_set (node, "std-dev", std_dev, NULL);
     }
 
   gtk_widget_queue_draw (widget);
