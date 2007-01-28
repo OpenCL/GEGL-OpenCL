@@ -928,15 +928,17 @@ static void property_changed (GObject    *gobject,
   GeglNode *self = GEGL_NODE (user_data);
 
   if (self->operation &&
+      arg1!= user_data &&
       g_type_is_a (G_OBJECT_TYPE(self->operation), GEGL_TYPE_OPERATION_META))
     {
       gegl_operation_meta_property_changed (
               GEGL_OPERATION_META (self->operation), arg1, user_data);
     }
 
-  if ((arg1 &&
+  if (arg1!=user_data &&
+      ((arg1 &&
       arg1->value_type != GEGL_TYPE_BUFFER) ||
-     (self->operation && !arg1))
+     (self->operation && !arg1)))
     {
       if (self->operation && !arg1)
         { /* these means we were called due to a operation change
@@ -1043,7 +1045,7 @@ gegl_node_set_operation_object (GeglNode      *self,
   }
 
   g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (property_changed), self);
-  property_changed (G_OBJECT (operation), NULL, self);
+  property_changed (G_OBJECT (operation), (GParamSpec*)self, self);
 }
 
 static const gchar *
