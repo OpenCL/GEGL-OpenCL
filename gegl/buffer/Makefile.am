@@ -39,7 +39,7 @@ BUFFER_headers = \
     gegl-tile-zoom.h
 
 libbuffer_la_SOURCES = $(BUFFER_sources) $(BUFFER_headers)
-libbufferinclude_HEADERS = $(BUFFER_headers)
+libbufferinclude_HEADERS = #$(BUFFER_headers)
 
 libbufferincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/buffer
 

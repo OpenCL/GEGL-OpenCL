@@ -1,15 +1,16 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
-	* tools/create-reference.rb: generate valid XHTML 1.0
+	Do not install internal headers, moved GEGL_TYPE_RECTANGLE into gegl.h
 
-2007-01-28  Øyvind Kolås  <pippin@gimp.org>
-
-	* AUTHORS:
 	* gegl/Makefile.am:
 	* gegl/buffer/Makefile.am:
 	* gegl/gegl-utils.h:
 	* gegl/gegl.h:
 	* gegl/module/Makefile.am:
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
+	* tools/create-reference.rb: generate valid XHTML 1.0
 
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 

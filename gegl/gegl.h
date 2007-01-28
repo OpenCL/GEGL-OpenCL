@@ -123,6 +123,8 @@ GType gegl_node_get_type  (void) G_GNUC_CONST;
 #define GEGL_NODE(obj)  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_NODE, GeglNode))
 
 typedef struct _GeglRectangle GeglRectangle;
+GType gegl_rectangle_get_type  (void) G_GNUC_CONST;
+#define GEGL_TYPE_RECTANGLE  (gegl_rectangle_get_type())
 #endif
 
 /**
@@ -221,8 +223,7 @@ void          gegl_node_link             (GeglNode      *source,
  * @...: NULL, or optionally more consumers followed by NULL.
  *
  * Synthetic sugar for linking a chain of nodes with "input"->"output", the
- * list is NULL terminated. Making it possible to do things like:
- * <pre>gegl_node_link_many (png_load, blur, scale, crop, png_save, NULL);</pre>
+ * list is NULL terminated.
  */
 void          gegl_node_link_many        (GeglNode      *source,
                                           GeglNode      *first_sink,
@@ -373,8 +374,8 @@ void          gegl_node_process          (GeglNode      *sink_node);
  *
  */
 #ifndef GEGL_INTERNAL
-typedef struct _GeglProcessor      GeglProcessor;
 GType gegl_processor_get_type  (void) G_GNUC_CONST;
+typedef struct _GeglProcessor      GeglProcessor;
 #define GEGL_TYPE_PROCESSOR  (gegl_processor_get_type())
 #define GEGL_PROCESSOR(obj)  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROCESSOR, GeglProcessor))
 #endif
@@ -632,13 +633,13 @@ gchar       * gegl_to_xml                (GeglNode      *node,
  * GeglRectangles are used in #gegl_node_get_bounding_box and #gegl_node_blit
  * for specifying rectangles.
  *
- * <pre>struct GeglRectangle
+ * </p><pre>struct GeglRectangle
  * {
  *   gint x;
  *   gint y;
  *   gint w;
  *   gint h;
- * };</pre>
+ * };</pre><p>
  *
  */
 struct _GeglRectangle

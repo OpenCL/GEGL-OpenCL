@@ -16,8 +16,7 @@ EXTRA_DIST =	\
 	gegl-have-visitor.h		\
 	gegl-instrument.h		\
 	gegl-need-visitor.h		\
-	gegl-prepare-visitor.h		\
-	gegl-processor.h
+	gegl-prepare-visitor.h
 
 GEGL_sources = \
 	gegl-color.c			\
@@ -52,9 +51,8 @@ GEGL_sources = \
 	gegl-utils.c			\
 	gegl-visitable.c		\
 	gegl-visitor.c			\
-	gegl-xml.c
-
-GEGL_public_headers = \
+	gegl-xml.c			\
+	\
 	gegl-color.h			\
 	gegl-connection.h		\
 	gegl-extension-handler.h	\
@@ -72,13 +70,18 @@ GEGL_public_headers = \
 	gegl-operation-sink.h       	\
 	gegl-operation-source.h       	\
 	gegl-pad.h			\
-	gegl-paramspecs.h		\
+	gegl-processor.h		\
 	gegl-types.h			\
-	gegl-utils.h			\
 	gegl-visitable.h		\
 	gegl-visitor.h			\
 	gegl-dot.h			\
-	gegl-xml.h
+	gegl-xml.h			\
+	gegl-plugin.h			\
+	gegl-chant.h			\
+	gegl-module.h
+
+GEGL_public_headers = gegl-paramspecs.h	\
+	gegl-utils.h			
 
 libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 
@@ -100,7 +103,7 @@ AM_CPPFLAGS = -DPREFIX=\""$(prefix)"\"
 libgeglincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)
 libgeglsubincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl
 
-libgeglinclude_HEADERS = gegl.h gegl-module.h gegl-chant.h gegl-plugin.h
+libgeglinclude_HEADERS = gegl.h
 libgeglsubinclude_HEADERS = $(GEGL_public_headers) 
 
 
