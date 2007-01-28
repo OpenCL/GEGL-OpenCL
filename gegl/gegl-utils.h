@@ -23,51 +23,50 @@
 
 G_BEGIN_DECLS
 
+void        gegl_rectangle_set          (GeglRectangle *r,
+                                         gint           x,
+                                         gint           y,
+                                         guint          w,
+                                         guint          h);
+gboolean    gegl_rectangle_equal        (GeglRectangle *r,
+                                         GeglRectangle *s);
+gboolean    gegl_rectangle_equal_coords (GeglRectangle *r,
+                                         gint           x,
+                                         gint           y,
+                                         gint           w,
+                                         gint           h);
+void        gegl_rectangle_copy         (GeglRectangle *to,
+                                         GeglRectangle *from);
+void        gegl_rectangle_bounding_box (GeglRectangle *dest,
+                                         GeglRectangle *src1,
+                                         GeglRectangle *src2);
+gboolean    gegl_rectangle_intersect    (GeglRectangle *dest,
+                                         GeglRectangle *src1,
+                                         GeglRectangle *src2);
+gboolean    gegl_rectangle_contains     (GeglRectangle *r,
+                                         GeglRectangle *s);
 
-void        gegl_rect_set             (GeglRectangle *r,
-                                       gint           x,
-                                       gint           y,
-                                       guint          w,
-                                       guint          h);
-gboolean    gegl_rect_equal           (GeglRectangle *r,
-                                       GeglRectangle *s);
-gboolean    gegl_rect_equal_coords    (GeglRectangle *r,
-                                       gint           x,
-                                       gint           y,
-                                       gint           w,
-                                       gint           h);
-void        gegl_rect_copy            (GeglRectangle *to,
-                                       GeglRectangle *from);
-void        gegl_rect_bounding_box    (GeglRectangle *dest,
-                                       GeglRectangle *src1,
-                                       GeglRectangle *src2);
-gboolean    gegl_rect_intersect       (GeglRectangle *dest,
-                                       GeglRectangle *src1,
-                                       GeglRectangle *src2);
-gboolean    gegl_rect_contains        (GeglRectangle *r,
-                                       GeglRectangle *s);
-
-void        gegl_log_debug            (gchar    *file,
-                                       gint      line,
-                                       gchar    *function,
-                                       gchar    *format,
-                                       ...);
-void        gegl_log_info             (gchar    *file,
-                                       gint      line,
-                                       gchar    *function,
-                                       gchar    *format,
-                                       ...);
-void        gegl_log_message          (gchar    *file,
-                                       gint      line,
-                                       gchar    *function,
-                                       gchar    *format,
-                                       ...);
-void        gegl_log_direct           (gchar    *format,
-                                       ...);
-GType       gegl_rect_get_type        (void) G_GNUC_CONST;
+void        gegl_log_debug              (gchar    *file,
+                                         gint      line,
+                                         gchar    *function,
+                                         gchar    *format,
+                                         ...);
+void        gegl_log_info               (gchar    *file,
+                                         gint      line,
+                                         gchar    *function,
+                                         gchar    *format,
+                                         ...);
+void        gegl_log_message            (gchar    *file,
+                                         gint      line,
+                                         gchar    *function,
+                                         gchar    *format,
+                                         ...);
+void        gegl_log_direct             (gchar    *format,
+                                         ...);
+GType       gegl_rectangle_get_type     (void) G_GNUC_CONST;
 
 #ifndef __GEGL_H__
-#define     GEGL_TYPE_RECTANGLE            (gegl_rect_get_type ())
+#define     GEGL_TYPE_RECTANGLE            (gegl_rectangle_get_type ())
 #endif
 
 #define GEGL_FLOAT_EPSILON            (1e-5)

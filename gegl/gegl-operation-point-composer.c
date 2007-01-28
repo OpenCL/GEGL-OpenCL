@@ -88,13 +88,13 @@ process_inner (GeglOperation *operation,
 	in_abyss = gegl_buffer_get_abyss (input);
 
 	if ((!input ||
-            !gegl_rect_intersect (NULL, &in_abyss, result)) &&
+            !gegl_rectangle_intersect (NULL, &in_abyss, result)) &&
             aux)
           {
 	    GeglRectangle aux_abyss;
 	    aux_abyss = gegl_buffer_get_abyss (aux);
 
-            if(!gegl_rect_intersect (NULL, &aux_abyss, result))
+            if(!gegl_rectangle_intersect (NULL, &aux_abyss, result))
               {
                 GeglBuffer *output = g_object_new (GEGL_TYPE_BUFFER,
                                      "format", point_composer->format,
@@ -121,7 +121,7 @@ process_inner (GeglOperation *operation,
 	  aux_abyss = gegl_buffer_get_abyss (aux);
 
 	if (!aux ||
-            !gegl_rect_intersect (NULL, &aux_abyss, result))
+            !gegl_rectangle_intersect (NULL, &aux_abyss, result))
           {
             g_object_ref (input);
             gegl_operation_set_data (operation, context_id, "output", G_OBJECT (input));

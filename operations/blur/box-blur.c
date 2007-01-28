@@ -317,7 +317,7 @@ static GeglRectangle get_source_rect (GeglOperation *self,
 
   rect  = *gegl_operation_get_requested_region (self, context_id);
   defined = get_defined_region (self);
-  gegl_rect_intersect (&rect, &rect, &defined);
+  gegl_rectangle_intersect (&rect, &rect, &defined);
   if (rect.w != 0 &&
       rect.h != 0)
     {

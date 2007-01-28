@@ -188,7 +188,7 @@ get_defined_region (GeglOperation *self)
     }
   if (aux_rect)
     {
-      gegl_rect_bounding_box (&result, in_rect, aux_rect);
+      gegl_rectangle_bounding_box (&result, in_rect, aux_rect);
     }
   else
     {

@@ -959,7 +959,7 @@ static void property_changed (GObject    *gobject,
           dirty_rect = self->have_rect;
           new_have_rect = gegl_node_get_bounding_box (self);
 
-          gegl_rect_bounding_box (&dirty_rect,
+          gegl_rectangle_bounding_box (&dirty_rect,
                                   &dirty_rect,
                                   &new_have_rect);
 

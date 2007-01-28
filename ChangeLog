@@ -1,5 +1,30 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	%s/gegl_rect_/gegl_rectangle_/g
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor),
+	(gegl_buffer_get_abyss):
+	* gegl/gegl-cr-visitor.c: (visit_node):
+	* gegl/gegl-node.c: (property_changed):
+	* gegl/gegl-operation-composer.c: (get_defined_region):
+	* gegl/gegl-operation-point-composer.c: (process_inner):
+	* gegl/gegl-operation.c: (gegl_operation_set_source_region):
+	* gegl/gegl-utils.c: (gegl_rectangle_set),
+	(gegl_rectangle_bounding_box), (gegl_rectangle_intersect),
+	(gegl_rectangle_copy), (gegl_rectangle_contains),
+	(gegl_rectangle_equal), (gegl_rectangle_equal_coords),
+	(gegl_rectangle_dup), (gegl_rectangle_get_type):
+	* gegl/gegl-utils.h:
+	* operations/blur/box-blur.c: (get_source_rect):
+	* operations/blur/gaussian-blur.c: (get_source_rect):
+	* operations/core/crop.c: (get_affected_region):
+	* operations/core/save-buffer.c: (process):
+	* operations/file-io/exr-load.cpp:
+	* operations/file-io/png-load.c: (gegl_buffer_import_png):
+	* operations/render/introspect.c: (get_defined_region):
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* AUTHORS: added Kevin Cozens to documentation section.
 
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>

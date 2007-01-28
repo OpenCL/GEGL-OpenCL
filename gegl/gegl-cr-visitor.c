@@ -62,7 +62,7 @@ visit_node (GeglVisitor *self,
   GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, self->context_id);
   GEGL_VISITOR_CLASS (gegl_cr_visitor_parent_class)->visit_node (self, node);
 
-  gegl_rect_intersect (&dynamic->result_rect, &node->have_rect, &dynamic->need_rect);
+  gegl_rectangle_intersect (&dynamic->result_rect, &node->have_rect, &dynamic->need_rect);
 
   dynamic->refs = gegl_node_get_num_sinks (node);
 

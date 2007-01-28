@@ -110,8 +110,8 @@ get_affected_region (GeglOperation *operation,
   GeglChantOperation  *op_crop = (GeglChantOperation*)(operation);
   GeglRectangle        crop_rect;
 
-  gegl_rect_set (&crop_rect, op_crop->x, op_crop->y, op_crop->width, op_crop->height);
-  gegl_rect_intersect (&crop_rect, &crop_rect, &region);
+  gegl_rectangle_set (&crop_rect, op_crop->x, op_crop->y, op_crop->width, op_crop->height);
+  gegl_rectangle_intersect (&crop_rect, &crop_rect, &region);
  
   return crop_rect;
 }

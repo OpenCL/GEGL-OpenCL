@@ -389,7 +389,7 @@ gegl_buffer_constructor (GType                  type,
          buffer->abyss_height
        };
        GeglRectangle self;
-       gegl_rect_intersect (&self, &parent, &request);
+       gegl_rectangle_intersect (&self, &parent, &request);
 
        buffer->abyss_x = self.x;
        buffer->abyss_y = self.y;
@@ -1356,7 +1356,7 @@ GeglRectangle
 gegl_buffer_get_abyss (GeglBuffer *buffer)
 {
   GeglRectangle ret={0,0,0,0};
-  gegl_rect_set (&ret, buffer->abyss_x, buffer->abyss_y,
+  gegl_rectangle_set (&ret, buffer->abyss_x, buffer->abyss_y,
                        buffer->abyss_width, buffer->abyss_height);
   return ret;
 }

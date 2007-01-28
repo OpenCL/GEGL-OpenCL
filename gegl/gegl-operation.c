@@ -244,7 +244,7 @@ gegl_operation_set_source_region (GeglOperation *operation,
       return;
   }
 
-  gegl_rect_bounding_box (&child_need,
+  gegl_rectangle_bounding_box (&child_need,
                           gegl_node_get_need_rect (child, context_id), region);
 
   /* expand the need rect of the node, to include what the calling

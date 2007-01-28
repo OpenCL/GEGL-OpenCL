@@ -318,7 +318,7 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
       {
         for(i=0; i<h; i++)
           {
-            gegl_rect_set (&rect, 0, i, width, 1);
+            gegl_rectangle_set (&rect, 0, i, width, 1);
 
             if (pass != 0)
               gegl_buffer_get (gegl_buffer, &rect, 1.0, format, pixels);
