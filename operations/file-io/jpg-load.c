@@ -106,7 +106,7 @@ get_defined_region (GeglOperation *operation)
 
   if (status)
     {
-      g_warning ("calc have rect of %s failed", self->path);
+      /*g_warning ("calc have rect of %s failed", self->path);*/
       result.w = 10;
       result.h = 10;
     }
@@ -130,7 +130,7 @@ query_jpg (const gchar *path,
 
   if ((infile = fopen (path, "r")) == NULL)
     {
-      g_warning ("unable to open %s for jpeg import", path);
+      /*g_warning ("unable to open %s for jpeg import", path);*/
       return -1;
     }
 

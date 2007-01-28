@@ -243,7 +243,7 @@ gegl_pad_get_internal_connected_to (GeglPad *self)
   GeglPad *pad = gegl_pad_get_connected_to (self);
   g_assert (GEGL_IS_PAD (self));
 
-  if (!pad && !strcmp (gegl_object_get_name (GEGL_OBJECT (self->node)), "proxynop-input"))
+  if (!pad && gegl_object_get_name (GEGL_OBJECT (self->node)) && !strcmp (gegl_object_get_name (GEGL_OBJECT (self->node)), "proxynop-input"))
     {
       GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
       g_assert (graph);

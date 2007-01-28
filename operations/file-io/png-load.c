@@ -139,7 +139,9 @@ get_defined_region (GeglOperation *operation)
 
       if (status)
         {
-          g_warning ("calc have rect of %s failed", self->path);
+          /* g_warning ("calc have rect of %s failed", self->path); */
+          width=10;
+          height=10;
         }
     }
   result.w = width;

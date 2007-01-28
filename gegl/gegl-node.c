@@ -822,7 +822,8 @@ gegl_node_get_depends_on (GeglNode *self)
         }
     }
 
-  if (!strcmp (gegl_object_get_name (GEGL_OBJECT (self)), "proxynop-input"))
+  if (gegl_object_get_name (GEGL_OBJECT (self)) &&
+      !strcmp (gegl_object_get_name (GEGL_OBJECT (self)), "proxynop-input"))
     {
       GeglGraph *graph = g_object_get_data (G_OBJECT (self), "graph");
       if (graph)
@@ -945,8 +946,14 @@ static void property_changed (GObject    *gobject,
              or perhaps a bug lurks here?
            */
           GeglRectangle dirty_rect;
+          GeglRectangle new_have_rect;
 
           dirty_rect = self->have_rect;
+          new_have_rect = gegl_node_get_bounding_box (self);
+
+          gegl_rectangle_bounding_box (&dirty_rect,
+                                       &dirty_rect,
+                                       &new_have_rect);
 
           g_signal_emit (self, gegl_node_signals[GEGL_NODE_INVALIDATED], 0, &dirty_rect, NULL);
         }
@@ -1466,6 +1473,7 @@ gegl_node_get_producer (GeglNode *node,
 GeglRectangle
 gegl_node_get_bounding_box (GeglNode     *root)
 {
+  GeglRectangle dummy={0,0,0,0};
   GeglVisitor *prepare_visitor;
   GeglVisitor *have_visitor;
   GeglVisitor *finish_visitor;
@@ -1473,11 +1481,15 @@ gegl_node_get_bounding_box (GeglNode     *root)
   gint         i;
 
   GeglPad     *pad;
+  if (!root)
+    return dummy;
   pad = gegl_node_get_pad (root, "output");
   if (pad && pad->node != root)
     {
       root = pad->node;
     }
+  if (!pad || !root)
+    return dummy;
   g_object_ref (root);
 
   for (i=0;i<2;i++)

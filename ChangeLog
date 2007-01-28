@@ -1,5 +1,15 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	Fixed updates when the operation object on a node changes.
+
+	* gegl/gegl-node.c: (gegl_node_get_depends_on), (property_changed),
+	(gegl_node_get_bounding_box):
+	* gegl/gegl-pad.c: (gegl_pad_get_internal_connected_to):
+	* operations/file-io/jpg-load.c: (get_defined_region), (query_jpg):
+	* operations/file-io/png-load.c: (get_defined_region):
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	Adjusted which groups operations belong in as well as ranges for
 	properties.
 
