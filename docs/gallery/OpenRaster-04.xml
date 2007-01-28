@@ -4,6 +4,6 @@ are expressed will change.-->
 
 <image>
   <brightness-contrast contrast='1.4'/>
-  <unsharp-mask radius='0.8'/>
+  <unsharp-mask std-dev='0.8'/>
   <layer src='data/romedalen.jpg'/>
 </image>

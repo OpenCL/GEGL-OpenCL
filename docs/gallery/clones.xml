@@ -73,8 +73,8 @@ achieve layers and clones -->
       <shift x = '0'
              y = '0'/>
       <add value  = '0.5'/>
-      <gaussian-blur radius-x ='5'
-                     radius-y='5'/>
+      <gaussian-blur std-dev-x ='5'
+                     std-dev-y='5'/>
       <clone ref ='gegl'/>
     </under>
     <load path = 'data/gegl.png'
