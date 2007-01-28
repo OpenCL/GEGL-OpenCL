@@ -1,5 +1,10 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.html.in: updated feature list, added some more links to
+	other sections of the documentation.
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* gallery/OpenRaster-04.xml: updated to use std-dev instead of radius.
 	* gallery/clones.xml: updated to use std-dev instead of radius.
 

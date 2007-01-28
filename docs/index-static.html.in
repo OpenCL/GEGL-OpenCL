@@ -67,45 +67,49 @@
         <a name='GEGL'></a>
         <h1>GEGL</h1>
         <p>GEGL (Generic Graphics Library) is a graph based image processing
-        library written in C using gobject from glib for object
-        orientation.</p>
+        framework.</p>
 
-        <p>GEGL original design was made to scratch <a href='http://www.gimp.org/'>GIMP</a>s itches
-        for a new compositing and processing core. This core is being designed
-        to have minimal <a href='#Dependencies'>dependencies.</a> and a simple well defined API. It
-        is still a work in progress, but it already provides for a capable system.
+        <p>GEGLs original design was made to scratch <a
+            href='http://www.gimp.org/'>GIMP</a>s itches for a new compositing
+        and processing core. This core is being designed to have minimal <a
+            href='#Dependencies'>dependencies.</a> and a simple well defined
+        <a href='api.html'>API</a>.
         </p>
         
         <a name='Features'></a>
         <h3>Features</h3>
         <ul>
             <li>8bit, 16bit integer and 32bit floating point, RGB, CIE Lab,
-            YCbCr and naive CMYK output.</li>
-            <li>Extendable through plug-ins.</li>
+            and Y'CbCr output.</li>
+            <li>Non destructive editing</li>
             <li>C, Ruby and Python interfaces.</li>
+            <li>Extendable through plug-ins.</li>
             <li>XML model</li>
-            <li>Memory efficient evaluation of subregions.</li>
-            <li>Tiled, sparse, pyramidial and larger than RAM buffers.</li>
-            <li>Hit detection.</li>
+            <li>Iterative processing.</li>
+            <li>Efficient subregion evaluation.</li>
+            <li>Supports processing and display of images larger than RAM</li>
+            <li>Bounding box based hit detection.</li>
             <li>Rich core set of processing <a
-                href='operations.html'>operations</a>
+                href='operations.html'>operations</a> that internally computes
+            with HDR capable 32bit floating point.
             <ul>
               <li>PNG, JPEG, SVG, EXR, RAW and other image sources.</li>
-              <li>Arithmetic operations, porter duff compositing operations,
-              SVG blend modes, other blend modes, apply mask.</li>
+              <li><a href='operations.html#cat_render'>Pattern renderers</a></li>
+              <li><a href='operations.html#math'>Arithmetic operations</a></li>
+              <li><a href='operations.html#porter_duff'>porter duff</a> compositing</li>
+              <li><a href='operations.html#svgfilter'>SVG filter modes</a></li>
               <li>Gaussian blur.</li>
-              <li>Basic color correction tools.</li>
-              <li>32bit floating point for intermediate values.</li>
-              <li>Text layouting using <a href='http://pango.org/'>pango</a></li>
+              <li>Unsharp mask.</li>
+              <li><a href='operations.html#cat_color'>Color correction</a>.</li>
+              <li>Text layout using <a href='http://pango.org/'>pango</a></li>
             </ul>
             </li>
         </ul>
 
-
         <a name='Gallery'></a>
         <h3>Gallery</h3>
 
-        <p>For examples of what GEGL is currently capable of doing, take a
+        <p>For examples of what GEGLs rendering engine currently can do
         look at <a href='gallery/index.html'>the gallery</a>.
         </p>
 
