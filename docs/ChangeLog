@@ -1,5 +1,9 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* index-static.html.in: updated babl dependency to 0.0.12
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* index-static.html.in: remove <?xml declaration as Internet Explorer
 	fails to process the file correctly when it is present.
 

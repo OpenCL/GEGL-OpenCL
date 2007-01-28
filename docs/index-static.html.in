@@ -139,7 +139,7 @@ rectangular regions to be repainted.
             <li>Core
                 <ul>
                   <li>glib (including gobject, and gmodule) 2.10 or newer</li>
-                  <li><a href='ftp://gimp.org/pub/babl/0.0/'>babl</a> 0.0.8 or newer (for pixel-format agnostisism).</li>
+                  <li><a href='ftp://gimp.org/pub/babl/0.0/'>babl</a> 0.0.12 or newer (for pixel-format agnostisism).</li>
                   <li>libpng (png load/export ops, and image magick fallback import)</li>
               </ul>
               </li>
