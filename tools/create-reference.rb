@@ -66,7 +66,7 @@ class Section
         ret = "#{@name}\n"
     end
     def sample_html
-        @sample.gsub(/(.)(#.*)$/, "\\1<span style='color:gray;text-style:italic'>\\2</span>") 
+        @sample.gsub('<','&lt;').gsub('>','&gt;').gsub('&','&amp;').gsub(/(.)(#.*)$/, "\\1<span style='color:gray;text-style:italic'>\\2</span>") 
     end
     def to_html
         ret = "<div class='sect'>
@@ -440,13 +440,10 @@ File.open(ARGV[1], "w") {|file|
 
 File.open(ARGV[1], "w") {|file|
 
-file.puts "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" 
-  \"http://www.w3.org/tr/xhtml1/DTD/xhtml1-transitional.dtd\">
+file.puts "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/tr/xhtml1/DTD/xhtml1-transitional.dtd\">
 <html>          
   <head>
-    <title>
-      GEGL API
-    </title>
+    <title>GEGL API</title>
     <meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\" />
 
     <style type='text/css'>
@@ -470,6 +467,7 @@ file.puts "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
        }
        #{CSS}
     </style>
+    </head>
     <body>"
 
 file.puts "<div class='toc'>
@@ -477,21 +475,21 @@ file.puts "<div class='toc'>
          <h3>Contents</h3>
       </div>
       <ul>
-        <li><a href='index.html'>GEGL</li>
+        <li><a href='index.html'>GEGL</a></li>
         <li>&nbsp;</li>
-        <li><a href='index.html#Documentation'>Documentation</li>
-        <li><a href='index.html#Glossary'>&nbsp;&nbsp;Glossary</li>
-        <li><a href='operations.html'>&nbsp;&nbsp;Operations</li>
+        <li><a href='index.html#Documentation'>Documentation</a></li>
+        <li><a href='index.html#Glossary'>&nbsp;&nbsp;Glossary</a></li>
+        <li><a href='operations.html'>&nbsp;&nbsp;Operations</a></li>
         <li>&nbsp;</li>
 
 "
     elements.each { |element|
-      file.puts "<li><a href='\##{element.name}'>#{element.menu_entry}</a></li>"
+      file.puts "<li><a href='\##{element.name.gsub(' ','_')}'>#{element.menu_entry}</a></li>"
     }
     file.puts "</ul></div>\n"
    
     file.puts "<div class='paper'><div class='content'>" 
-    elements.each {|element| file.puts "<div class='section' id='section_#{element.name}'><a name='#{element.name}'></a>#{element.to_html}</div>"
+    elements.each {|element| file.puts "<div class='section' id='section_#{element.name.gsub(' ','_')}'><a name='#{element.name.gsub(' ','_')}'></a>#{element.to_html}</div>"
     }
     file.puts "</div></div>
   </body>

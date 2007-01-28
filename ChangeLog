@@ -1,5 +1,18 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/create-reference.rb: generate valid XHTML 1.0
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
+	* AUTHORS:
+	* gegl/Makefile.am:
+	* gegl/buffer/Makefile.am:
+	* gegl/gegl-utils.h:
+	* gegl/gegl.h:
+	* gegl/module/Makefile.am:
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/file-io/exr-load.cpp: reordered arguments for
 	gegl_buffer_set and gegl_buffer_get.
 
