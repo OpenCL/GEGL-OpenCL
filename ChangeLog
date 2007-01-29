@@ -1,5 +1,9 @@
 2007-01-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.in: updated to 0.0.11 post release.
+
+2007-01-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* NEWS: changed 0.0.8 to 0.0.10
 	* configure.in: updated version to 0.0.10
 
