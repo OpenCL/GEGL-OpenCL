@@ -99,8 +99,9 @@ static void button_view_clicked (GtkButton *button,
 static void button_render_clicked (GtkButton *button,
                                    gpointer   user_data)
 {
-  GeglCache *cache;
+  GeglProcessor  *processor;
   GeglRectangle   rect;
+  GeglNode       *node;
   GtkWidget *export = GTK_WIDGET (user_data);
   GtkEntry *x0 = g_object_get_data (G_OBJECT (export), "x0");
   GtkEntry *y0 = g_object_get_data (G_OBJECT (export), "y0");
@@ -115,17 +116,18 @@ static void button_render_clicked (GtkButton *button,
   rect.h = atoi (gtk_entry_get_text (height));
 
   path = gtk_entry_get_text (pathe);
+  node = GEGL_VIEW (editor.drawing_area)->node;
+ 
+  processor = gegl_node_new_processor (node, &rect);
   
-  cache = gegl_node_get_cache (GEGL_VIEW (editor.drawing_area)->node);
-
     {
       gdouble progress;
-      while (gegl_cache_render (cache, &rect, &progress))
+      while (gegl_processor_work (processor, &progress))
          g_warning ("%f", progress);
     }
-
-  gegl_buffer_export_png (GEGL_BUFFER (cache),
+  gegl_buffer_export_png (GEGL_BUFFER (gegl_node_get_cache (node)),
                           &rect, path);
+  gegl_processor_destroy (processor);
 }
 
 void export_window (void)

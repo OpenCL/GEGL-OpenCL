@@ -1,5 +1,29 @@
 2007-01-29  Øyvind Kolås  <pippin@gimp.org>
 
+	Migrated queued region handling logic from GeglCache to GeglProcessor,
+	thus allowing multiple GeglProcessors to have their own queues of data
+	that they want to be rendered in a GeglCache.
+
+	This also fixes the recent regression where queued rectangles still
+	were being computed outside the viewport after zooming in in current
+	GUI tests.
+
+	* bin/export.c: (button_render_clicked): use a GeglProcessor instead
+	of abusing a cache directly.
+	* gegl/buffer/gegl-cache.[ch]: (gegl_cache_constructor),
+	(gegl_cache_class_init), (gegl_cache_init), (finalize),
+	(node_invalidated), (set_property), (get_property),
+	(gegl_cache_invalidate): removed quite a bit of logic.
+	* gegl/gegl-processor.c: (gegl_processor_class_init),
+	(gegl_processor_init), (constructor), (finalize), (set_property),
+	(get_property), (sync_queue), (enqueue),
+	(gegl_processor_set_rectangle), (gegl_node_new_processor),
+	(render_rectangle), (rect_area), (region_area), (area_left),
+	(gegl_processor_is_rendered), (gegl_processor_render),
+	(gegl_processor_work): added region and rectangle queues.
+
+2007-01-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.in: updated to 0.0.11 post release.
 
 2007-01-29  Øyvind Kolås  <pippin@gimp.org>

@@ -38,15 +38,8 @@ enum
   PROP_WIDTH,
   PROP_HEIGHT,
   PROP_NODE,
-  PROP_CHUNK_SIZE
 };
 
-enum
-{
-  INVALIDATED,
-  COMPUTED,
-  LAST_SIGNAL
-};
 
 static void            gegl_cache_class_init     (GeglCacheClass *klass);
 static void            gegl_cache_init           (GeglCache      *self);
@@ -59,11 +52,11 @@ static void            get_property              (GObject       *gobject,
                                                   guint          prop_id,
                                                   GValue        *value,
                                                   GParamSpec    *pspec);
+guint         gegl_cache_signals[GEGL_CACHE_LAST_SIGNAL] = {0};
 
 G_DEFINE_TYPE (GeglCache, gegl_cache, GEGL_TYPE_BUFFER);
 
 static GObjectClass *parent_class = NULL;
-static guint         cache_signals[LAST_SIGNAL] = {0};
 
 static GObject *
 gegl_cache_constructor (GType                  type,
@@ -77,7 +70,6 @@ gegl_cache_constructor (GType                  type,
   self = GEGL_CACHE (object);
 
   self->valid_region = gegl_region_new ();
-  self->queued_region = gegl_region_new ();
   self->format = GEGL_BUFFER (self)->format;
 
   return object;
@@ -100,16 +92,11 @@ gegl_cache_class_init (GeglCacheClass * klass)
   g_object_class_install_property (gobject_class, PROP_NODE,
                                    g_param_spec_object ("node",
                                    "GeglNode",
-                                   "The GeglNode to render results from",
+                                   "The GeglNode to cache results for",
                                    GEGL_TYPE_NODE,
                                    G_PARAM_WRITABLE |
                                    G_PARAM_CONSTRUCT));
 
-  g_object_class_install_property (gobject_class, PROP_CHUNK_SIZE,
-                                   g_param_spec_int ("chunk-size", "chunk-size", "Size of chunks being rendered (larger chunks need more memory to do the processing).",
-                                                     8*8, 2048*2048, 128*128,
-                                                     G_PARAM_READWRITE|
-                                                     G_PARAM_CONSTRUCT_ONLY));
   /* overriding pspecs for properties in parent class */
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x", "x", "local origin's offset relative to source origin",
@@ -133,7 +120,7 @@ gegl_cache_class_init (GeglCacheClass * klass)
                                                      G_PARAM_CONSTRUCT_ONLY));
 
 
-  cache_signals[COMPUTED] =
+  gegl_cache_signals[GEGL_CACHE_COMPUTED] =
       g_signal_new ("computed", G_TYPE_FROM_CLASS (klass),
       G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
       0    /* class offset*/,
@@ -144,7 +131,7 @@ gegl_cache_class_init (GeglCacheClass * klass)
       1 /* n_params */,
       GEGL_TYPE_RECTANGLE /* param_types */);
 
-  cache_signals[INVALIDATED] =
+  gegl_cache_signals[GEGL_CACHE_INVALIDATED] =
       g_signal_new ("invalidated", G_TYPE_FROM_CLASS (klass),
       G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
       0    /* class offset*/,
@@ -161,7 +148,6 @@ static void
 gegl_cache_init (GeglCache *self)
 {
   self->node = NULL;
-  self->chunk_size = 128*128;
 
   /* thus providing a default value for GeglCache, that overrides the NULL
    * from GeglBuffer */
@@ -190,18 +176,7 @@ finalize (GObject *gobject)
     }
   if (self->valid_region)
     gegl_region_destroy (self->valid_region);
-  if (self->queued_region)
-    gegl_region_destroy (self->queued_region);
   G_OBJECT_CLASS (gegl_cache_parent_class)->finalize (gobject);
-}
-
-gboolean
-gegl_cache_is_rendered (GeglCache *cache)
-{
-  if (gegl_region_empty (cache->queued_region) &&
-      cache->dirty_rectangles == NULL)
-    return TRUE;
-  return FALSE;
 }
 
 static void
@@ -218,8 +193,7 @@ node_invalidated (GeglNode      *source,
       gegl_region_destroy (region);
   }
 
-  g_signal_emit (cache, cache_signals[INVALIDATED], 0, rect, NULL);
-  gegl_region_subtract (cache->queued_region, cache->valid_region);
+  g_signal_emit (cache, gegl_cache_signals[GEGL_CACHE_INVALIDATED], 0, rect, NULL);
 }
 
 static void
@@ -250,10 +224,6 @@ set_property (GObject      *gobject,
                           G_CALLBACK (node_invalidated), self);
         break;
 
-      /* For the rest, upchaining to the property implementation in GeglBuffer */
-      case PROP_CHUNK_SIZE:
-        self->chunk_size = g_value_get_int (value);
-        break;
       case PROP_X:
         g_object_set_property (gobject, "GeglBuffer::x", value);
         break;
@@ -289,9 +259,6 @@ get_property (GObject    *gobject,
       case PROP_X:
         g_object_get_property (gobject, "GeglBuffer::x", value);
         break;
-      case PROP_CHUNK_SIZE:
-        g_value_set_int (value, self->chunk_size);
-        break;
       case PROP_Y:
         g_object_get_property (gobject, "GeglBuffer::y", value);
         break;
@@ -307,44 +274,17 @@ get_property (GObject    *gobject,
     }
 }
 
-
-void
-gegl_cache_dequeue (GeglCache     *self,
-                    GeglRectangle *roi)
-{
-
-  if (roi)
-    {
-      GeglRegion *temp_region;
-      temp_region = gegl_region_rectangle (roi);
-      gegl_region_subtract (self->queued_region, temp_region);
-      gegl_region_destroy (temp_region);
-    }
-  else
-    {
-      if (self->queued_region)
-        gegl_region_destroy (self->queued_region);
-      self->queued_region = gegl_region_new ();
-
-      while (self->dirty_rectangles)
-         self->dirty_rectangles = g_list_remove (self->dirty_rectangles,
-            self->dirty_rectangles->data);
-    }
-}
-
 void
 gegl_cache_invalidate (GeglCache     *self,
                        GeglRectangle *roi)
 {
-  gegl_cache_dequeue (self, roi);
-
   if (roi)
     {
       GeglRegion *temp_region;
       temp_region = gegl_region_rectangle (roi);
       gegl_region_subtract (self->valid_region, temp_region);
       gegl_region_destroy (temp_region);
-      g_signal_emit (self, cache_signals[INVALIDATED], 0, roi, NULL);
+      g_signal_emit (self, gegl_cache_signals[GEGL_CACHE_INVALIDATED], 0, roi, NULL);
     }
   else
     {
@@ -352,227 +292,6 @@ gegl_cache_invalidate (GeglCache     *self,
       if (self->valid_region)
         gegl_region_destroy (self->valid_region);
       self->valid_region = gegl_region_new ();
-      g_signal_emit (self, cache_signals[INVALIDATED], 0, &rect, NULL);
+      g_signal_emit (self, gegl_cache_signals[GEGL_CACHE_INVALIDATED], 0, &rect, NULL);
     }
-}
-
-void
-gegl_cache_enqueue (GeglCache     *self,
-                    GeglRectangle  roi)
-{
-  GeglRegion *temp_region;
-
-  temp_region = gegl_region_rectangle (&roi);
-
-  gegl_region_union (self->queued_region, temp_region);
-  gegl_region_subtract (self->queued_region, self->valid_region);
-
-  gegl_region_destroy (temp_region);
-}
-
-/* renders a single queued rectangle */
-static gboolean render_rectangle (GeglCache *cache)
-{
-  gint max_area = cache->chunk_size;
-
-  GeglRectangle *dr;
-
-  if (cache->dirty_rectangles)
-    {
-      guchar *buf;
-
-      dr = cache->dirty_rectangles->data;
-
-      if (dr->h * dr->w > max_area && 1)
-        {
-          gint band_size;
-         
-          if (dr->h > dr->w)
-            {
-              band_size = dr->h / 2;
-
-              if (band_size<1)
-                band_size=1;
-
-              GeglRectangle *fragment = g_malloc (sizeof (GeglRectangle));
-              *fragment = *dr;
-
-              fragment->h = band_size;
-              dr->h-=band_size;
-              dr->y+=band_size;
-
-              cache->dirty_rectangles = g_list_prepend (cache->dirty_rectangles, fragment);
-              return TRUE;
-            }
-          else 
-            {
-              band_size = dr->w / 2;
-
-              if (band_size<1)
-                band_size=1;
-
-              GeglRectangle *fragment = g_malloc (sizeof (GeglRectangle));
-              *fragment = *dr;
-
-              fragment->w = band_size;
-              dr->w-=band_size;
-              dr->x+=band_size;
-
-              cache->dirty_rectangles = g_list_prepend (cache->dirty_rectangles, fragment);
-              return TRUE;
-            }
-        }
-      
-      cache->dirty_rectangles = g_list_remove (cache->dirty_rectangles, dr);
-
-      if (!dr->w || !dr->h)
-        return TRUE;
-      
-      buf = g_malloc (dr->w * dr->h * gegl_buffer_px_size (GEGL_BUFFER (cache)));
-      g_assert (buf);
-
-      gegl_node_blit (cache->node, dr, 1.0, cache->format, 0, (gpointer*) buf, GEGL_BLIT_DEFAULT);
-      gegl_buffer_set (GEGL_BUFFER (cache), dr, cache->format, buf);
-      
-      gegl_region_union_with_rect (cache->valid_region, (GeglRectangle*)dr);
-
-      g_signal_emit (cache, cache_signals[COMPUTED], 0, dr, NULL, NULL);
-
-      g_free (buf);
-      g_free (dr);
-    }
-  return cache->dirty_rectangles != NULL;
-}
-
-static gint rect_area (GeglRectangle *rectangle)
-{
-  return rectangle->w*rectangle->h;
-}
-
-static gint region_area (GeglRegion    *region)
-{
-  GeglRectangle *rectangles;
-  gint           n_rectangles;
-  gint           i;
-  gint           sum=0;
-  gegl_region_get_rectangles (region, &rectangles, &n_rectangles);
-
-  for (i=0; i<n_rectangles; i++)
-    {
-      sum+=rect_area(&rectangles[i]);
-    }
-  g_free (rectangles);
-  return sum;
-}
-
-static gint area_left (GeglCache     *cache,
-                       GeglRectangle *rectangle)
-{
-  GeglRegion    *region;
-  gint           sum=0;
-
-  region = gegl_region_rectangle (rectangle);
-  gegl_region_subtract (region, cache->valid_region);
-  sum += region_area (region);
-  gegl_region_destroy (region);
-  return sum;
-}
-
-gboolean
-gegl_cache_render (GeglCache     *cache,
-                   GeglRectangle *rectangle,
-                   gdouble       *progress)
-{
-  g_assert (GEGL_IS_CACHE (cache));
-  {
-    gboolean more_work = render_rectangle (cache);
-    if (more_work == TRUE)
-      {
-        if (progress)
-          {
-            gint valid;
-            gint wanted;
-            if (rectangle)
-              {
-                wanted = rect_area (rectangle);   
-                valid  = wanted - area_left (cache, rectangle);
-              }
-            else
-              {
-                valid = region_area(cache->valid_region);
-                wanted = region_area(cache->queued_region);
-              }
-            if (wanted == 0)
-              {
-                *progress = 1.0;
-              }
-            else
-              {
-                *progress = (double)valid/wanted;
-              }
-              wanted = 1;
-          }
-        return more_work;
-      }
-  }
-
-  if (rectangle)
-    { /* we're asked to work on a specific rectangle thus we only focus
-         on it */
-      GeglRegion *region = gegl_region_rectangle (rectangle);
-      gegl_region_subtract (region, cache->valid_region);
-      GeglRectangle *rectangles;
-      gint           n_rectangles;
-      gint           i;
-      
-      gegl_region_get_rectangles (region, &rectangles, &n_rectangles);
-
-      for (i=0; i<n_rectangles && i<1; i++)
-        {
-          GeglRectangle roi = *((GeglRectangle*)&rectangles[i]);
-          GeglRectangle *dr;
-          GeglRegion *tr = gegl_region_rectangle ((void*)&roi);
-          gegl_region_subtract (cache->queued_region, tr);
-          gegl_region_destroy (tr);
-         
-          dr = g_malloc(sizeof (GeglRectangle));
-          *dr = roi;
-          cache->dirty_rectangles = g_list_append (cache->dirty_rectangles, dr);
-        }
-      g_free (rectangles);
-      if (n_rectangles!=0)
-        {
-          if (progress)
-            *progress = 1.0-((double)area_left (cache, rectangle)/rect_area(rectangle));
-          return TRUE;
-        }
-      return FALSE;
-    }
-  else if (!gegl_region_empty (cache->queued_region) &&
-           !cache->dirty_rectangles)
-    {
-      GeglRectangle *rectangles;
-      gint           n_rectangles;
-      gint           i;
-
-      gegl_region_get_rectangles (cache->queued_region, &rectangles, &n_rectangles);
-
-      for (i=0; i<n_rectangles && i<1; i++)
-        {
-          GeglRectangle roi = *((GeglRectangle*)&rectangles[i]);
-          GeglRectangle *dr;
-          GeglRegion *tr = gegl_region_rectangle ((void*)&roi);
-          gegl_region_subtract (cache->queued_region, tr);
-          gegl_region_destroy (tr);
-         
-          dr = g_malloc(sizeof (GeglRectangle));
-          *dr = roi;
-          cache->dirty_rectangles = g_list_append (cache->dirty_rectangles, dr);
-        }
-      g_free (rectangles);
-    }
- if (progress)
-   *progress = 0.69;
-
-  return !gegl_cache_is_rendered (cache);
 }

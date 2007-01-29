@@ -40,9 +40,6 @@ struct _GeglCache
   GeglNode     *node;
   void         *format;
   GeglRegion   *valid_region;
-  GeglRegion   *queued_region;
-  GList        *dirty_rectangles;
-  gint          chunk_size;
 };
 
 struct _GeglCacheClass
@@ -50,17 +47,20 @@ struct _GeglCacheClass
   GeglBufferClass buffer_class;
 };
 
+enum
+{
+  GEGL_CACHE_INVALIDATED,
+  GEGL_CACHE_COMPUTED,
+  GEGL_CACHE_LAST_SIGNAL
+};
+extern guint         gegl_cache_signals[GEGL_CACHE_LAST_SIGNAL];
+
 GType    gegl_cache_get_type    (void) G_GNUC_CONST;
-void     gegl_cache_enqueue     (GeglCache     *self,
-                                 GeglRectangle  roi);
-void     gegl_cache_dequeue     (GeglCache     *self,
-                                 GeglRectangle *roi);
 void     gegl_cache_invalidate  (GeglCache     *self,
                                  GeglRectangle *roi);
 gboolean gegl_cache_render      (GeglCache     *cache,
                                  GeglRectangle *rectangle,
                                  gdouble       *progress);
-gboolean gegl_cache_is_rendered (GeglCache     *cache);
 
 G_END_DECLS
 
