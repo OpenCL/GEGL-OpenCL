@@ -128,9 +128,6 @@ static GObject * constructor (GType                  type,
 static void finalize (GObject *self_object)
 {
   GeglProcessor *processor = GEGL_PROCESSOR (self_object);
-#if 0
-  gegl_node_disable_cache (processor->input); /* FIXME: it's a bit rude to kill of the cache */
-#endif
   if (processor->node)
     g_object_unref (processor->node);
   if (processor->input)
@@ -185,37 +182,6 @@ get_property (GObject    *gobject,
         break;
     }
 }
-
-static void
-sync_queue (GeglProcessor *processor)
-{
-  GeglRegion *valid_region;
-  GeglRegion *queued_region;
-
-  valid_region = gegl_node_get_cache (processor->input)->valid_region;
-  queued_region = processor->queued_region;
-
-  gegl_region_subtract (queued_region, valid_region);
-}
-
-#if 0
-static void
-enqueue (GeglProcessor *processor,
-         GeglRectangle *roi)
-{
-  GeglRegion *temp_region;
-  GeglRegion *valid_region;
-  GeglRegion *queued_region;
-
-  valid_region = gegl_node_get_cache (processor->input)->valid_region;
-  queued_region = processor->queued_region;
-
-  temp_region = gegl_region_rectangle (roi);
-  gegl_region_union (queued_region, temp_region);
-  sync_queue (processor);
-  gegl_region_destroy (temp_region);
-}
-#endif
 
 void
 gegl_processor_set_rectangle (GeglProcessor *processor,
@@ -467,10 +433,12 @@ gegl_processor_render (GeglProcessor *processor,
           return TRUE;
         }
       return FALSE;
-    }
+    } 
   else if (!gegl_region_empty (processor->queued_region) &&
            !processor->dirty_rectangles)
-    {
+    { /* XXX: this branch of the else can probably be removed if gegl-processors
+         should only work with rectangular queued regions
+         */
       GeglRectangle *rectangles;
       gint           n_rectangles;
       gint           i;
@@ -504,13 +472,6 @@ gegl_processor_work (GeglProcessor *processor,
 {
   gboolean more_work=FALSE;
   GeglCache *cache = gegl_node_get_cache (processor->input);
-
-  if(0)g_warning ("%i,%i %ix%i %p",
-     processor->rectangle.x,
-     processor->rectangle.y,
-     processor->rectangle.w,
-     processor->rectangle.h,
-     processor->dirty_rectangles);
 
   more_work = gegl_processor_render (processor, &processor->rectangle, progress);
   if (more_work)

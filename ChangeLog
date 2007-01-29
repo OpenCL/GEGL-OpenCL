@@ -1,3 +1,8 @@
+2007-01-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-processor.c: (finalize), (gegl_processor_render),
+	(gegl_processor_work): removed dead code.
+
 2007-01-29  Sven Neumann  <sven@gimp.org>
 
 	* bin/gegl-view.c: minor code cleanup. Use class closures instead
