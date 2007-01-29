@@ -1,6 +1,6 @@
 #SUBDIRS = testsuite
 
-EXTRA_DIST = xml_insert.sh
+EXTRA_DIST = xml_insert.sh create-reference.rb
 
 noinst_PROGRAMS = introspect operation_reference
 

@@ -1,5 +1,10 @@
 2007-01-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/Makefile.am: added create-reference.rb, this should have gone
+	in before the release was made.
+
+2007-01-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.in: updated to 0.0.9 post release.
 
 2007-01-29  Øyvind Kolås  <pippin@gimp.org>
