@@ -34,6 +34,7 @@ enum
   PROP_SCALE
 };
 
+
 static void      gegl_view_class_init (GeglViewClass  *klass);
 static void      gegl_view_init       (GeglView       *self);
 static void      finalize             (GObject        *gobject);
@@ -49,28 +50,26 @@ static gboolean  motion_notify_event  (GtkWidget      *widget,
                                        GdkEventMotion *event);
 static gboolean  button_press_event   (GtkWidget      *widget,
                                        GdkEventButton *event);
-static GObject *
-gegl_view_constructor (GType                  type,
-                       guint                  n_params,
-                       GObjectConstructParam *params);
-static gboolean
-expose_event (GtkWidget *widget, GdkEventExpose * event);
+static gboolean  expose_event         (GtkWidget      *widget,
+                                       GdkEventExpose *event);
+
 
 G_DEFINE_TYPE (GeglView, gegl_view, GTK_TYPE_DRAWING_AREA)
 
-static GObjectClass *parent_class = NULL;
 
 static void
 gegl_view_class_init (GeglViewClass * klass)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+  GObjectClass   *gobject_class = G_OBJECT_CLASS (klass);
+  GtkWidgetClass *widget_class  = GTK_WIDGET_CLASS (klass);
 
-  parent_class = g_type_class_peek_parent (klass);
-  
   gobject_class->finalize     = finalize;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-  gobject_class->constructor = gegl_view_constructor;
+
+  widget_class->motion_notify_event = motion_notify_event;
+  widget_class->button_press_event  = button_press_event;
+  widget_class->expose_event        = expose_event;
 
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x",
@@ -105,8 +104,7 @@ gegl_view_class_init (GeglViewClass * klass)
 static void
 gegl_view_init (GeglView *self)
 {
-  self->node 
-       = NULL;
+  self->node        = NULL;
   self->x           = 0;
   self->y           = 0;
   self->prev_x      = -1;
@@ -114,6 +112,10 @@ gegl_view_init (GeglView *self)
   self->scale       = 1.0;
   self->monitor_id  = 0;
   self->processor   = NULL;
+
+  gtk_widget_add_events (GTK_WIDGET (self), (GDK_EXPOSURE_MASK     |
+                                             GDK_BUTTON_PRESS_MASK |
+                                             GDK_POINTER_MOTION_MASK));
 }
 
 static void
@@ -174,15 +176,16 @@ set_property (GObject      *gobject,
 #endif
           g_object_unref (self->node);
         }
+
       if (g_value_get_object (value))
         {
           self->node = GEGL_NODE (g_value_dup_object (value));
-          g_signal_connect (G_OBJECT (self->node), "computed",
-                            (GCallback)computed_event,
-                            self);
-          g_signal_connect (G_OBJECT (self->node), "invalidated",
-                            (GCallback)invalidated_event,
-                            self);
+          g_signal_connect_object (self->node, "computed",
+                                   G_CALLBACK (computed_event),
+                                   self, 0);
+          g_signal_connect_object (self->node, "invalidated",
+                                   G_CALLBACK (invalidated_event),
+                                   self, 0);
           gegl_view_repaint (self);
         }
       else
@@ -234,36 +237,14 @@ get_property (GObject      *gobject,
     }
 }
 
-static GObject *
-gegl_view_constructor (GType                  type,
-                       guint                  n_params,
-                       GObjectConstructParam *params)
-{
-  GObject         *object;
-  GtkWidget       *widget;
-  object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  widget = GTK_WIDGET (object);
-
-  gtk_widget_set_events (widget, GDK_EXPOSURE_MASK
-                                |GDK_BUTTON_PRESS_MASK
-                                |GDK_POINTER_MOTION_MASK);
-  gtk_signal_connect (GTK_OBJECT (widget), "expose_event",
-                      G_CALLBACK (expose_event), NULL);
-  g_signal_connect (G_OBJECT (widget), "motion_notify_event",
-		    G_CALLBACK (motion_notify_event), NULL);
-  g_signal_connect (G_OBJECT (widget), "button_press_event",
-		    G_CALLBACK (button_press_event), NULL);
-
-  return object;
-}
-
 /* hack, this should not be in the view, since the view should not be coupled
  * to the app be be a generic widget */
 void gegl_editor_update_title (void);
 
 
-static gboolean  button_press_event   (GtkWidget      *widget,
-                                       GdkEventButton *event)
+static gboolean
+button_press_event (GtkWidget      *widget,
+                    GdkEventButton *event)
 {
   GeglView *view = GEGL_VIEW (widget);
   gint x, y;
@@ -281,7 +262,7 @@ static gboolean  button_press_event   (GtkWidget      *widget,
 
   view->start_buf_x = view->x + x/view->scale;
   view->start_buf_y = view->y + y/view->scale;
-    
+
   view->prev_x = x;
   view->prev_y = y;
 
@@ -310,8 +291,9 @@ static gboolean  button_press_event   (GtkWidget      *widget,
   return TRUE;
 }
 
-static gboolean motion_notify_event (GtkWidget      *widget,
-                                     GdkEventMotion *event)
+static gboolean
+motion_notify_event (GtkWidget      *widget,
+                     GdkEventMotion *event)
 {
   GeglView *view = GEGL_VIEW (widget);
   gint x, y;
@@ -322,7 +304,7 @@ static gboolean motion_notify_event (GtkWidget      *widget,
       y = event->y;
       state = event->state;
     }
-    
+
   if (state & GDK_BUTTON1_MASK)
     {
       gint pre_x = floor (view->x * view->scale);
@@ -365,12 +347,13 @@ static gboolean motion_notify_event (GtkWidget      *widget,
     }
   view->prev_x = x;
   view->prev_y = y;
-  
+
   return TRUE;
 }
 
 static gboolean
-expose_event (GtkWidget *widget, GdkEventExpose * event)
+expose_event (GtkWidget      *widget,
+              GdkEventExpose *event)
 {
   GeglView      *view;
   GeglRectangle  roi = {0,0,0,0};
@@ -382,16 +365,17 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
 
   if (!view->node)
     return FALSE;
-  
+
   gdk_region_get_rectangles (event->region, &rectangles, &count);
-  
-  for (i=0;i<count;i++)
+
+  for (i=0; i<count; i++)
     {
       guchar *buf;
-      roi.x=view->x + rectangles[i].x / view->scale;
-      roi.y=view->y + rectangles[i].y / view->scale;
-      roi.w=rectangles[i].width;
-      roi.h=rectangles[i].height;
+
+      roi.x = view->x + rectangles[i].x / view->scale;
+      roi.y = view->y + rectangles[i].y / view->scale;
+      roi.w = rectangles[i].width;
+      roi.h = rectangles[i].height;
 
       buf = g_malloc ((roi.w+1) * (roi.h+1) * 3);
       /* FIXME: this padding should not be needed, but it avoids some segfaults */
@@ -418,7 +402,8 @@ expose_event (GtkWidget *widget, GdkEventExpose * event)
   return FALSE;
 }
 
-static gboolean task_monitor (gpointer foo)
+static gboolean
+task_monitor (gpointer foo)
 {
   GeglView  *view = GEGL_VIEW (foo);
   gboolean   ret = FALSE;
@@ -432,12 +417,13 @@ static gboolean task_monitor (gpointer foo)
   return ret;
 }
 
-void gegl_view_repaint (GeglView *view)
+void
+gegl_view_repaint (GeglView *view)
 {
   GtkWidget     *widget = GTK_WIDGET (view);
-  GeglRectangle  roi={view->x, view->y,
-                 widget->allocation.width / view->scale,
-                 widget->allocation.height / view->scale};
+  GeglRectangle  roi    = { view->x, view->y,
+                            widget->allocation.width / view->scale,
+                            widget->allocation.height / view->scale };
 
 #if 0
   /* forget all already queued repaints */
