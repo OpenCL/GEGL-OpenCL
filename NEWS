@@ -5,8 +5,8 @@
 GEGL only has released development snapshots thus far. Odd micro versions are
 from CVS whilst even micro numbers indicate released snapshots. 
 
-Changes in GEGL 0.0.8
-=====================
+Changes in GEGL 0.0.10
+======================
 
 - HTML documentation for public API
 - Improvements to operation reference.
