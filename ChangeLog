@@ -1,3 +1,15 @@
+2007-01-30  Sven Neumann  <sven@gimp.org>
+
+	* bin/gegl-view.c: more cleanups. Queue redraws when the offset or
+	scale properties are being changed. Emit notifications when
+	properties are being changed.
+
+	* bin/editor.[ch]: renamed member drawing_area to view.
+	* bin/export.c: changed accordingly.
+
+	* bin/editor.c: connect to the "scale" property of the view and
+	update the window title. Don't needlessly queue view updates.
+
 2007-01-29  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-processor.c: (finalize), (gegl_processor_render),

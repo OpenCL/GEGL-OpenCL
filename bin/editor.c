@@ -35,6 +35,7 @@ static gchar *blank_composition =
         "<color value='white'/>"
     "</gegl>";
 
+static void gegl_editor_update_title (void);
 static gboolean
 cb_window_delete_event (GtkWidget *widget, GdkEvent *event, gpointer data);
 static gboolean
@@ -73,7 +74,7 @@ create_window (Editor *editor)
   GtkWidget *hpaned_top_level;
   GtkWidget *hpaned_top;
   GtkWidget *vpaned;
-  GtkWidget *drawing_area;
+  GtkWidget *view;
   GtkWidget *property_scroll;
   GtkWidget *add_box;
   GtkWidget *add_entry;
@@ -85,8 +86,7 @@ create_window (Editor *editor)
   vbox2 = gtk_vbox_new (FALSE, 1);
   hpaned_top = gtk_vpaned_new ();
   hpaned_top_level = gtk_hpaned_new ();
-  drawing_area = g_object_new (GEGL_TYPE_VIEW,
-                               NULL);
+  view = g_object_new (GEGL_TYPE_VIEW, NULL);
   property_scroll = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (property_scroll), editor->property_editor);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (property_scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -106,7 +106,7 @@ create_window (Editor *editor)
   gtk_paned_pack2 (GTK_PANED (hpaned_top_level), hpaned_top, FALSE, TRUE);
   gtk_box_pack_start (GTK_BOX (hbox), gtk_label_new ("     "), FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (hbox), add_box, TRUE, TRUE, 0);
-  gtk_box_pack_start (GTK_BOX (vbox2), drawing_area, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox2), view, TRUE, TRUE, 0);
   gtk_paned_pack1 (GTK_PANED (hpaned_top_level), vbox2, TRUE, TRUE);
 
   gtk_paned_pack1 (GTK_PANED (hpaned_top), property_scroll, FALSE,
@@ -123,17 +123,21 @@ create_window (Editor *editor)
   gtk_window_set_title (GTK_WINDOW (self), "GEGL");
   gtk_widget_set_size_request (editor->tree_editor, -1, 100);
   gtk_widget_set_size_request (property_scroll, -1, 100);
-  gtk_widget_set_size_request (drawing_area, 89, 55);
+  gtk_widget_set_size_request (view, 89, 55);
 
-  g_signal_connect (G_OBJECT (self), "delete-event",
+  g_signal_connect (self, "delete-event",
                     G_CALLBACK (cb_window_delete_event), NULL);
 
-  g_signal_connect (G_OBJECT (self), "key-press-event",
+  g_signal_connect (self, "key-press-event",
                     G_CALLBACK (cb_window_keybinding), NULL);
 
   gtk_widget_show_all (vbox);
 
-  editor->drawing_area = drawing_area;
+  g_signal_connect_swapped (view, "notify::scale",
+                            G_CALLBACK (gegl_editor_update_title),
+                            editor);
+
+  editor->view = view;
   editor->structure = hpaned_top;
   editor->property_pane = property_scroll;
   editor->tree_pane = editor->tree_editor;
@@ -814,36 +818,34 @@ static void cb_fit (GtkAction *action)
 
 
   gtk_window_get_size (GTK_WINDOW (editor.window), &width, &height);
-  width -= editor.drawing_area->allocation.width;
-  height -= editor.drawing_area->allocation.height;
+  width -= editor.view->allocation.width;
+  height -= editor.view->allocation.height;
 
-  hscale = (gdouble) editor.drawing_area->allocation.width / defined.w;
-  vscale = (gdouble) editor.drawing_area->allocation.height / defined.h;
+  hscale = (gdouble) editor.view->allocation.width / defined.w;
+  vscale = (gdouble) editor.view->allocation.height / defined.h;
 
   if (hscale > vscale)
     {
       hscale = vscale;
       y=0;
-      x= (editor.drawing_area->allocation.width - defined.w * hscale) / 2 / hscale;
+      x= (editor.view->allocation.width - defined.w * hscale) / 2 / hscale;
     }
   else
     {
       vscale = hscale;
       x=0;
-      y= (editor.drawing_area->allocation.height - defined.h * vscale) / 2 / vscale;
+      y= (editor.view->allocation.height - defined.h * vscale) / 2 / vscale;
     }
 
-  g_object_set (editor.drawing_area,
+  g_object_set (editor.view,
                 "x",     defined.x - x,
                 "y",     defined.y - y,
                 "scale", hscale,
                 NULL);
 
-    width += defined.w * hscale;
-    height += defined.h * vscale;
+  width += defined.w * hscale;
+  height += defined.h * vscale;
 
-  gtk_widget_queue_draw (editor.drawing_area);
-  gegl_editor_update_title ();
   for (i=0;i<40;i++){
     gtk_main_iteration ();
   }
@@ -855,7 +857,7 @@ static void cb_fit_on_screen (GtkAction *action)
   GeglRectangle defined = gegl_node_get_bounding_box (editor.gegl);
   /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.w, defined.h);*/
 
-  g_object_set (editor.drawing_area, "x", defined.x, "y", defined.y, NULL);
+  g_object_set (editor.view, "x", defined.x, "y", defined.y, NULL);
   {
     GdkScreen *screen= gtk_window_get_screen (GTK_WINDOW (editor.window));
 
@@ -881,21 +883,21 @@ static void cb_shrinkwrap (GtkAction *action)
   /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.w, defined.h);*/
   gint i;
 
-  g_object_set (editor.drawing_area, "x", defined.x, "y", defined.y, NULL);
+  g_object_set (editor.view, "x", defined.x, "y", defined.y, NULL);
   {
     GdkScreen *screen= gtk_window_get_screen (GTK_WINDOW (editor.window));
 
     gint    screen_width, screen_height;
     gint    width, height;
     gdouble scale;
-    g_object_get (editor.drawing_area, "scale", &scale, NULL);
+    g_object_get (editor.view, "scale", &scale, NULL);
 
     /* compute a base width/height for the other contents of the window */
     screen_width = gdk_screen_get_width (screen);
     screen_height = gdk_screen_get_height (screen);
     gtk_window_get_size (GTK_WINDOW (editor.window), &width, &height);
-    width -= editor.drawing_area->allocation.width;
-    height -= editor.drawing_area->allocation.height;
+    width -= editor.view->allocation.width;
+    height -= editor.view->allocation.height;
 
     /* add the area consumed by the canvas content */
     width += defined.w * scale;
@@ -906,10 +908,9 @@ static void cb_shrinkwrap (GtkAction *action)
     if (height > screen_height)
       height = screen_height;
 
-    gtk_window_resize (GTK_WINDOW (editor.window), width,
-                                                   height);
+    gtk_window_resize (GTK_WINDOW (editor.window), width, height);
   }
-  gtk_widget_queue_draw (editor.drawing_area);
+
   for (i=0;i<40;i++){
     gtk_main_iteration ();
   }
@@ -919,20 +920,20 @@ void          gegl_node_disable_cache       (GeglNode      *node);
 
 static void cb_recompute (GtkAction *action)
 {
-  gegl_node_disable_cache (GEGL_VIEW(editor.drawing_area)->node);
+  gegl_node_disable_cache (GEGL_VIEW(editor.view)->node);
   gegl_gui_flush ();
 }
 
 static void cb_redraw (GtkAction *action)
 {
-  gtk_widget_queue_draw (editor.drawing_area);
+  gtk_widget_queue_draw (editor.view);
 }
 
-void gegl_editor_update_title (void)
+static void gegl_editor_update_title (void)
 {
   gdouble zoom;
   gchar buf[512];
-  g_object_get (editor.drawing_area, "scale", &zoom, NULL);
+  g_object_get (editor.view, "scale", &zoom, NULL);
   sprintf (buf, "GEGL %2.0f%%", zoom * 100);
 
   gtk_window_set_title (GTK_WINDOW (editor.window), buf);
@@ -944,10 +945,10 @@ static void cb_zoom_100 (GtkAction *action)
   gint x,y;
   gdouble scale;
 
-  width = editor.drawing_area->allocation.width;
-  height = editor.drawing_area->allocation.height;
+  width = editor.view->allocation.width;
+  height = editor.view->allocation.height;
 
-  g_object_get (editor.drawing_area,
+  g_object_get (editor.view,
                 "x", &x,
                 "y", &y,
                 "scale", &scale,
@@ -961,13 +962,11 @@ static void cb_zoom_100 (GtkAction *action)
   x -= (width/2) / scale;
   y -= (height/2) / scale;
 
-  g_object_set (editor.drawing_area,
+  g_object_set (editor.view,
                 "x", x,
                 "y", y,
                 "scale", scale,
                 NULL);
-  gtk_widget_queue_draw (editor.drawing_area);
-  gegl_editor_update_title ();
 }
 
 static void cb_zoom_200 (GtkAction *action)
@@ -976,10 +975,10 @@ static void cb_zoom_200 (GtkAction *action)
   gint x,y;
   gdouble scale;
 
-  width = editor.drawing_area->allocation.width;
-  height = editor.drawing_area->allocation.height;
+  width = editor.view->allocation.width;
+  height = editor.view->allocation.height;
 
-  g_object_get (editor.drawing_area,
+  g_object_get (editor.view,
                 "x", &x,
                 "y", &y,
                 "scale", &scale,
@@ -993,13 +992,11 @@ static void cb_zoom_200 (GtkAction *action)
   x -= (width/2) / scale;
   y -= (height/2) / scale;
 
-  g_object_set (editor.drawing_area,
+  g_object_set (editor.view,
                 "x", x,
                 "y", y,
                 "scale", scale,
                 NULL);
-  gtk_widget_queue_draw (editor.drawing_area);
-  gegl_editor_update_title ();
 }
 
 static void cb_zoom_50 (GtkAction *action)
@@ -1008,10 +1005,10 @@ static void cb_zoom_50 (GtkAction *action)
   gint x,y;
   gdouble scale;
 
-  width = editor.drawing_area->allocation.width;
-  height = editor.drawing_area->allocation.height;
+  width = editor.view->allocation.width;
+  height = editor.view->allocation.height;
 
-  g_object_get (editor.drawing_area,
+  g_object_get (editor.view,
                 "x", &x,
                 "y", &y,
                 "scale", &scale,
@@ -1025,13 +1022,11 @@ static void cb_zoom_50 (GtkAction *action)
   x -= (width/2) / scale;
   y -= (height/2) / scale;
 
-  g_object_set (editor.drawing_area,
+  g_object_set (editor.view,
                 "x", x,
                 "y", y,
                 "scale", scale,
                 NULL);
-  gtk_widget_queue_draw (editor.drawing_area);
-  gegl_editor_update_title ();
 }
 
 
@@ -1041,10 +1036,10 @@ static void cb_zoom_in (GtkAction *action)
   gint x,y;
   gdouble scale;
 
-  width = editor.drawing_area->allocation.width;
-  height = editor.drawing_area->allocation.height;
+  width = editor.view->allocation.width;
+  height = editor.view->allocation.height;
 
-  g_object_get (editor.drawing_area,
+  g_object_get (editor.view,
                 "x", &x,
                 "y", &y,
                 "scale", &scale,
@@ -1058,13 +1053,11 @@ static void cb_zoom_in (GtkAction *action)
   x -= (width/2) / scale;
   y -= (height/2) / scale;
 
-  g_object_set (editor.drawing_area,
+  g_object_set (editor.view,
                 "x", x,
                 "y", y,
                 "scale", scale,
                 NULL);
-  gtk_widget_queue_draw (editor.drawing_area);
-  gegl_editor_update_title ();
 }
 
 static void cb_zoom_out (GtkAction *action)
@@ -1073,10 +1066,10 @@ static void cb_zoom_out (GtkAction *action)
   gint x,y;
   gdouble scale;
 
-  width = editor.drawing_area->allocation.width;
-  height = editor.drawing_area->allocation.height;
+  width = editor.view->allocation.width;
+  height = editor.view->allocation.height;
 
-  g_object_get (editor.drawing_area,
+  g_object_get (editor.view,
                 "x", &x,
                 "y", &y,
                 "scale", &scale,
@@ -1090,14 +1083,13 @@ static void cb_zoom_out (GtkAction *action)
   x -= (width/2) / scale;
   y -= (height/2) / scale;
 
-  g_object_set (editor.drawing_area,
+  g_object_set (editor.view,
                 "x", x,
                 "y", y,
                 "scale", scale,
                 NULL);
+
   gegl_gui_flush ();
-  gtk_widget_queue_draw (editor.drawing_area);
-  gegl_editor_update_title ();
 }
 
 
@@ -1131,12 +1123,12 @@ static void editor_set_gegl (GeglNode    *gegl)
     g_object_unref (editor.gegl);
   editor.gegl = gegl;
 
-  g_object_set (editor.drawing_area, "node", editor.gegl, NULL);
+  g_object_set (editor.view, "node", editor.gegl, NULL);
   editor_refresh_structure ();
 }
 
 void
 gegl_gui_flush (void)
 {
-  gegl_view_repaint (GEGL_VIEW (editor.drawing_area));
+  gegl_view_repaint (GEGL_VIEW (editor.view));
 }

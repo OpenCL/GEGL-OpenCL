@@ -82,9 +82,9 @@ static void button_view_clicked (GtkButton *button,
   GtkEntry      *height = g_object_get_data (G_OBJECT (export), "height");
   gchar buf[128];
 
-  g_object_get (G_OBJECT (editor.drawing_area), "x", &rect.x, "y" ,&rect.y, NULL);
-  rect.w= GTK_WIDGET(editor.drawing_area)->allocation.width;
-  rect.h= GTK_WIDGET(editor.drawing_area)->allocation.height;
+  g_object_get (G_OBJECT (editor.view), "x", &rect.x, "y" ,&rect.y, NULL);
+  rect.w= GTK_WIDGET(editor.view)->allocation.width;
+  rect.h= GTK_WIDGET(editor.view)->allocation.height;
 
   sprintf (buf, "%i", rect.x);
   gtk_entry_set_text (x0, buf);
@@ -116,7 +116,7 @@ static void button_render_clicked (GtkButton *button,
   rect.h = atoi (gtk_entry_get_text (height));
 
   path = gtk_entry_get_text (pathe);
-  node = GEGL_VIEW (editor.drawing_area)->node;
+  node = GEGL_VIEW (editor.view)->node;
  
   processor = gegl_node_new_processor (node, &rect);
   

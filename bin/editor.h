@@ -40,9 +40,9 @@ typedef struct Editor
   GtkWidget   *tree_pane;
   GtkWidget   *structure;
   GtkWidget   *search_entry;
-  
+
   GtkWidget   *graph_editor;
-  GtkWidget   *drawing_area;
+  GtkWidget   *view;
 } Editor;
 
 extern Editor editor;
@@ -53,6 +53,5 @@ void gegl_gui_flush (void);
 gint editor_main (GeglNode    *gegl,
                   GeglOptions *options);
 void editor_refresh_structure (void);
-void gegl_editor_update_title ();
 
 #endif
