@@ -75,11 +75,11 @@ gegl_visitable_accept (GeglVisitable *interface,
   g_object_unref (interface);
 }
 
-GList *
+GSList *
 gegl_visitable_depends_on (GeglVisitable *interface)
 {
   GeglVisitableClass *interface_class;
-  GList              *depends_on = NULL;
+  GSList             *depends_on = NULL;
 
   g_return_val_if_fail (GEGL_IS_VISITABLE (interface), NULL);
 

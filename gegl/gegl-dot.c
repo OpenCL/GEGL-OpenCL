@@ -60,8 +60,8 @@ gegl_add_graph (GString     *string,
 
 	  
 	    {
-	      GList *pads = gegl_node_get_pads (node);
-	      GList *entry = pads;
+	      GSList *pads = gegl_node_get_pads (node);
+	      GSList *entry = pads;
               gboolean got_output = FALSE;
 	      while (entry)
 		{
@@ -77,7 +77,7 @@ gegl_add_graph (GString     *string,
                                               gegl_pad_get_name (pad),
                                               gegl_pad_get_name (pad));
                     }
-		  entry = g_list_next (entry);
+		  entry = g_slist_next (entry);
 		}
 	    }
           g_string_append_printf (string, "}|{%s|{", gegl_node_get_debug_name (node));
@@ -126,8 +126,8 @@ gegl_add_graph (GString     *string,
           g_string_append_printf (string, "}}|{");
 
 	    {
-	      GList *pads = gegl_node_get_pads (node);
-	      GList *entry = pads;
+	      GSList *pads = gegl_node_get_pads (node);
+	      GSList *entry = pads;
               gboolean got_input = FALSE;
 	      while (entry)
 		{
@@ -143,7 +143,7 @@ gegl_add_graph (GString     *string,
                                               gegl_pad_get_name (pad),
                                               gegl_pad_get_name (pad));
                     }
-		  entry = g_list_next (entry);
+		  entry = g_slist_next (entry);
 		}
 	    }
 
@@ -164,8 +164,8 @@ gegl_add_graph (GString     *string,
         {
           GeglNode *node = entry->data;
           {
-             GList *connections = gegl_node_get_sinks (node);
-             GList *entry;
+             GSList *connections = gegl_node_get_sinks (node);
+             GSList *entry;
              entry = connections;
 
              while (entry)
@@ -186,7 +186,7 @@ gegl_add_graph (GString     *string,
 		   gegl_pad_get_name (source_pad), sink,
 		   gegl_pad_get_name (sink_pad));
                 g_string_append (string, buf);
-                entry = g_list_next (entry);
+                entry = g_slist_next (entry);
                }
           }
           entry = g_slist_next (entry);

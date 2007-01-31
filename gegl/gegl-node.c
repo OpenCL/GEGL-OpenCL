@@ -77,7 +77,7 @@ static void            visitable_init                 (gpointer       ginterface
                                                        gpointer       interface_data);
 static void            visitable_accept               (GeglVisitable *visitable,
                                                        GeglVisitor   *visitor);
-static GList*          visitable_depends_on           (GeglVisitable *visitable);
+static GSList*         visitable_depends_on           (GeglVisitable *visitable);
 static gboolean        visitable_needs_visiting       (GeglVisitable *visitable);
 static void            gegl_node_set_operation_object (GeglNode      *self,
                                                        GeglOperation *operation);
@@ -196,13 +196,13 @@ finalize (GObject *gobject)
 
   if (self->pads)
     {
-      g_list_foreach (self->pads, (GFunc) g_object_unref, NULL);
-      g_list_free (self->pads);
+      g_slist_foreach (self->pads, (GFunc) g_object_unref, NULL);
+      g_slist_free (self->pads);
       self->pads = NULL;
     }
 
-  g_list_free (self->input_pads);
-  g_list_free (self->output_pads);
+  g_slist_free (self->input_pads);
+  g_slist_free (self->output_pads);
 
   if (self->operation)
     {
@@ -266,13 +266,13 @@ GeglPad *
 gegl_node_get_pad (GeglNode    *self,
                    const gchar *name)
 {
-  GList *list;
+  GSList *list;
 
   g_assert (self);
   if (!self->pads)
     return NULL;
 
-  for (list = self->pads; list; list = g_list_next (list))
+  for (list = self->pads; list; list = g_slist_next (list))
     {
       GeglPad *property = list->data;
 
@@ -289,7 +289,7 @@ gegl_node_get_pad (GeglNode    *self,
  *
  * Returns: A list of #GeglPad.
  **/
-GList *
+GSList *
 gegl_node_get_pads (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
@@ -303,7 +303,7 @@ gegl_node_get_pads (GeglNode *self)
  *
  * Returns: A list of #GeglPad.
  **/
-GList *
+GSList *
 gegl_node_get_input_pads (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
@@ -317,7 +317,7 @@ gegl_node_get_input_pads (GeglNode *self)
  *
  * Returns: A list of #GeglPad.
  **/
-GList *
+GSList *
 gegl_node_get_output_pads (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
@@ -337,13 +337,13 @@ gegl_node_add_pad (GeglNode *self,
       return;
     }
   if(0)g_assert (!gegl_node_get_pad (self, gegl_pad_get_name (pad)));
-  self->pads = g_list_append (self->pads, pad);
+  self->pads = g_slist_append (self->pads, pad);
 
   if (gegl_pad_is_output (pad))
-    self->output_pads = g_list_append (self->output_pads, pad);
+    self->output_pads = g_slist_append (self->output_pads, pad);
 
   if (gegl_pad_is_input (pad))
-    self->input_pads = g_list_append (self->input_pads, pad);
+    self->input_pads = g_slist_append (self->input_pads, pad);
 }
 
 void
@@ -353,13 +353,13 @@ gegl_node_remove_pad (GeglNode *self,
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (GEGL_IS_PAD (pad));
 
-  self->pads = g_list_remove (self->pads, pad);
+  self->pads = g_slist_remove (self->pads, pad);
 
   if (gegl_pad_is_output (pad))
-    self->output_pads = g_list_remove (self->output_pads, pad);
+    self->output_pads = g_slist_remove (self->output_pads, pad);
 
   if (gegl_pad_is_input (pad))
-    self->input_pads = g_list_remove (self->input_pads, pad);
+    self->input_pads = g_slist_remove (self->input_pads, pad);
 
   g_object_unref (pad);
 }
@@ -405,11 +405,11 @@ static GeglConnection *
 find_connection (GeglNode     *sink,
                  GeglPad      *sink_pad)
 {
-  GList *list;
+  GSList *list;
 
   g_return_val_if_fail (GEGL_IS_NODE (sink), NULL);
 
-  for (list = sink->sources; list; list = g_list_next (list))
+  for (list = sink->sources; list; list = g_slist_next (list))
     {
       GeglConnection *connection = list->data;
 
@@ -505,8 +505,8 @@ gegl_node_connect_from (GeglNode    *sink,
       gegl_connection_set_sink_node (connection, sink);
       gegl_connection_set_source_node (connection, source);
 
-      sink->sources = g_list_append (sink->sources, connection);
-      source->sinks = g_list_append (source->sinks, connection);
+      sink->sources = g_slist_append (sink->sources, connection);
+      source->sinks = g_slist_append (source->sinks, connection);
 
       g_signal_connect (G_OBJECT (source), "invalidated", G_CALLBACK (source_invalidated), sink_pad);
 
@@ -552,8 +552,8 @@ gegl_node_disconnect (GeglNode    *sink,
 
       gegl_pad_disconnect (sink_pad, source_pad, connection);
 
-      sink->sources = g_list_remove (sink->sources, connection);
-      source->sinks = g_list_remove (source->sinks, connection);
+      sink->sources = g_slist_remove (sink->sources, connection);
+      source->sinks = g_slist_remove (source->sinks, connection);
 
       g_free (connection);
 
@@ -568,7 +568,7 @@ gegl_node_disconnect_sources (GeglNode *self)
 {
   while (TRUE)
     {
-      GeglConnection *connection = g_list_nth_data (self->sources, 0);
+      GeglConnection *connection = g_slist_nth_data (self->sources, 0);
 
       if (connection)
         {
@@ -590,7 +590,7 @@ gegl_node_disconnect_sinks (GeglNode *self)
 {
   while (TRUE)
     {
-      GeglConnection *connection = g_list_nth_data (self->sinks, 0);
+      GeglConnection *connection = g_slist_nth_data (self->sinks, 0);
 
       if (connection)
         {
@@ -621,7 +621,7 @@ gegl_node_get_num_sinks (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
-  return g_list_length (self->sinks);
+  return g_slist_length (self->sinks);
 }
 
 /**
@@ -637,7 +637,7 @@ gegl_node_get_num_sources (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
-  return g_list_length (self->sources);
+  return g_slist_length (self->sources);
 }
 
 /**
@@ -653,7 +653,7 @@ gegl_node_get_num_input_pads (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
-  return g_list_length (self->input_pads);
+  return g_slist_length (self->input_pads);
 }
 
 /**
@@ -669,7 +669,7 @@ gegl_node_get_num_output_pads (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
-  return g_list_length (self->output_pads);
+  return g_slist_length (self->output_pads);
 }
 
 /**
@@ -680,7 +680,7 @@ gegl_node_get_num_output_pads (GeglNode *self)
  *
  * Returns: list of sink connections.
  **/
-GList *
+GSList *
 gegl_node_get_sinks (GeglNode *self)
 {
   return self->sinks;
@@ -694,7 +694,7 @@ gegl_node_get_sinks (GeglNode *self)
  *
  * Returns: list of source connections.
  **/
-GList *
+GSList *
 gegl_node_get_sources (GeglNode *self)
 {
   return self->sources;
@@ -797,13 +797,13 @@ gegl_node_apply (GeglNode    *self,
 
 #include <stdio.h>
 #include "gegl-graph.h"
-GList *
+GSList *
 gegl_node_get_depends_on (GeglNode *self)
 {
-  GList *depends_on = NULL;
-  GList *llink      = self->sources;
+  GSList *depends_on = NULL;
+  GSList *llink      = self->sources;
 
-  for (llink = self->sources; llink; llink = g_list_next (llink))
+  for (llink = self->sources; llink; llink = g_slist_next (llink))
     {
       GeglConnection *connection = llink->data;
       GeglNode * source_node;
@@ -814,12 +814,12 @@ gegl_node_get_depends_on (GeglNode *self)
         {
           GeglNode *proxy = gegl_node_get_output_proxy (source_node, "output");
 
-          if (! g_list_find (depends_on, proxy))
-             depends_on = g_list_append (depends_on, proxy);
+          if (! g_slist_find (depends_on, proxy))
+             depends_on = g_slist_append (depends_on, proxy);
         }
-      else if (!g_list_find (depends_on, source_node))
+      else if (!g_slist_find (depends_on, source_node))
         {
-          depends_on = g_list_append (depends_on, source_node);
+          depends_on = g_slist_append (depends_on, source_node);
         }
     }
 
@@ -829,7 +829,7 @@ gegl_node_get_depends_on (GeglNode *self)
       GeglGraph *graph = g_object_get_data (G_OBJECT (self), "graph");
       if (graph)
         {
-          depends_on = g_list_concat (depends_on, gegl_node_get_depends_on (GEGL_NODE (graph)));
+          depends_on = g_slist_concat (depends_on, gegl_node_get_depends_on (GEGL_NODE (graph)));
         }
     }
 
@@ -843,7 +843,7 @@ visitable_accept (GeglVisitable *visitable,
   gegl_visitor_visit_node (visitor, GEGL_NODE (visitable));
 }
 
-GList *
+GSList *
 visitable_depends_on (GeglVisitable *visitable)
 {
   GeglNode *self = GEGL_NODE (visitable);
@@ -990,7 +990,7 @@ gegl_node_set_operation_object (GeglNode      *self,
   g_return_if_fail (GEGL_IS_OPERATION (operation));
 
   {
-    GList    *output_c = NULL;
+    GSList   *output_c = NULL;
     GeglNode *output = NULL;
     gchar    *output_dest_pad = NULL;
     GeglNode *input = NULL;
@@ -1452,7 +1452,7 @@ gegl_node_get_producer (GeglNode *node,
       gegl_pad_is_input (pad) &&
       gegl_pad_get_num_connections (pad) == 1)
     {
-      GeglConnection *connection = g_list_nth_data (pad->connections, 0);
+      GeglConnection *connection = g_slist_nth_data (pad->connections, 0);
 
       if (output_pad_name)
         {
@@ -1675,7 +1675,7 @@ gegl_node_get_consumers (GeglNode      *node,
                          GeglNode    ***nodes,
                          const gchar ***pads)
 {
-  GList   *connections;
+  GSList  *connections;
   gint     n_connections;
   GeglPad *pad;
   gchar  **pasp=NULL;
@@ -1696,15 +1696,15 @@ gegl_node_get_consumers (GeglNode      *node,
 
   connections = gegl_pad_get_connections (pad);
   {
-    GList *iter;
+    GSList *iter;
     gint pasp_size=0;
     gint i;
     gint pasp_pos=0;
 
-    n_connections = g_list_length (connections);
+    n_connections = g_slist_length (connections);
     pasp_size+= (n_connections+1) * sizeof (gchar*);
 
-    for (iter=connections;iter;iter=g_list_next(iter))
+    for (iter=connections;iter;iter=g_slist_next(iter))
       {
         GeglConnection *connection = iter->data;
         GeglPad *pad = gegl_connection_get_sink_pad (connection);
@@ -1719,7 +1719,7 @@ gegl_node_get_consumers (GeglNode      *node,
       }
     i=0;
     pasp_pos=(n_connections + 1) * sizeof(void*);
-    for (iter=connections;iter;iter=g_list_next(iter))
+    for (iter=connections;iter;iter=g_slist_next(iter))
       {
         GeglConnection *connection = iter->data;
         GeglPad  *pad = gegl_connection_get_sink_pad (connection);

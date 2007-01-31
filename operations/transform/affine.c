@@ -276,7 +276,7 @@ bounding_box (gdouble       *points,
 static gboolean
 is_intermediate_node (OpAffine *affine)
 {
-  GList         *connections;
+  GSList        *connections;
   GeglOperation *op = GEGL_OPERATION (affine),
                 *sink;
 
@@ -292,7 +292,7 @@ is_intermediate_node (OpAffine *affine)
           strcasecmp (affine->filter, OP_AFFINE (sink)->filter))
         return FALSE;
     }
-  while ((connections = g_list_next (connections)));
+  while ((connections = g_slist_next (connections)));
 
   return TRUE;
 }
@@ -300,7 +300,7 @@ is_intermediate_node (OpAffine *affine)
 static gboolean
 is_composite_node (OpAffine *affine)
 {
-  GList         *connections;
+  GSList        *connections;
   GeglOperation *op = GEGL_OPERATION (affine),
                 *source;
 
@@ -319,7 +319,7 @@ static void
 get_source_matrix (OpAffine *affine,
                    Matrix3   output)
 {
-  GList         *connections;
+  GSList        *connections;
   GeglOperation *op = GEGL_OPERATION (affine),
                 *source;
 

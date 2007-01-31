@@ -50,7 +50,7 @@ struct _GeglPad
   /*< private >*/
   GParamSpec    *param_spec;
   GeglNode      *node;
-  GList         *connections;
+  GSList        *connections;
 };
 
 struct _GeglPadClass
@@ -62,7 +62,7 @@ struct _GeglPadClass
 GType            gegl_pad_get_type                  (void) G_GNUC_CONST;
  
 const gchar    * gegl_pad_get_name                  (GeglPad        *self);
-GList          * gegl_pad_get_depends_on            (GeglPad        *self);
+GSList         * gegl_pad_get_depends_on            (GeglPad        *self);
 GeglNode       * gegl_pad_get_node                  (GeglPad        *self);
 void             gegl_pad_set_node                  (GeglPad        *self,
                                                      GeglNode       *node);
@@ -75,7 +75,7 @@ GeglConnection * gegl_pad_connect                   (GeglPad        *sink,
 void             gegl_pad_disconnect                (GeglPad        *sink,
                                                      GeglPad        *source,
                                                      GeglConnection *connection);
-GList          * gegl_pad_get_connections           (GeglPad        *self);
+GSList         * gegl_pad_get_connections           (GeglPad        *self);
 gint             gegl_pad_get_num_connections       (GeglPad        *self);
 GParamSpec     * gegl_pad_get_param_spec            (GeglPad        *self);
 void             gegl_pad_set_param_spec            (GeglPad        *self,

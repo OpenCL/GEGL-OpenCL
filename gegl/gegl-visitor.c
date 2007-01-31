@@ -168,7 +168,7 @@ finalize (GObject *gobject)
 {
   GeglVisitor *self = GEGL_VISITOR (gobject);
 
-  g_list_free (self->visits_list);
+  g_slist_free (self->visits_list);
   g_hash_table_destroy (self->hash);
 
   G_OBJECT_CLASS (gegl_visitor_parent_class)->finalize (gobject);
@@ -280,7 +280,7 @@ set_shared_count (GeglVisitor   *self,
  *
  * Returns: A list of the visitables visited by this visitor.
  **/
-GList *
+GSList *
 gegl_visitor_get_visits_list (GeglVisitor *self)
 {
   g_return_val_if_fail (GEGL_IS_VISITOR (self), NULL);
@@ -321,8 +321,8 @@ static void
 init_dfs_traversal (GeglVisitor   *self,
                     GeglVisitable *visitable)
 {
-  GList *depends_on_list;
-  GList *llink;
+  GSList *depends_on_list;
+  GSList *llink;
 
   insert (self, visitable);
   depends_on_list = gegl_visitable_depends_on (visitable);
@@ -340,18 +340,18 @@ init_dfs_traversal (GeglVisitor   *self,
             init_dfs_traversal (self, visitable);
         }
 
-      llink = g_list_next(llink);
+      llink = g_slist_next(llink);
     }
 
-  g_list_free (depends_on_list);
+  g_slist_free (depends_on_list);
 }
 
 static void
 dfs_traverse (GeglVisitor   *self,
               GeglVisitable *visitable)
 {
-  GList *depends_on_list;
-  GList *llink;
+  GSList *depends_on_list;
+  GSList *llink;
 
   depends_on_list = gegl_visitable_depends_on (visitable);
   llink = depends_on_list;
@@ -366,10 +366,10 @@ dfs_traverse (GeglVisitor   *self,
             dfs_traverse (self, visitable);
         }
 
-      llink = g_list_next(llink);
+      llink = g_slist_next(llink);
     }
 
-  g_list_free (depends_on_list);
+  g_slist_free (depends_on_list);
 
   gegl_visitable_accept (visitable, self);
   set_visited (self, visitable, TRUE);
@@ -379,8 +379,8 @@ static void
 init_bfs_traversal (GeglVisitor   *self,
                     GeglVisitable *visitable)
 {
-  GList *depends_on_list;
-  GList *llink;
+  GSList *depends_on_list;
+  GSList *llink;
 
   g_return_if_fail (GEGL_IS_VISITOR (self));
 
@@ -401,10 +401,10 @@ init_bfs_traversal (GeglVisitor   *self,
       shared_count = get_shared_count (self, depends_on_visitable);
       shared_count++;
       set_shared_count (self, depends_on_visitable, shared_count);
-      llink = g_list_next(llink);
+      llink = g_slist_next(llink);
     }
 
-  g_list_free (depends_on_list);
+  g_slist_free (depends_on_list);
 }
 
 /**
@@ -453,8 +453,8 @@ gegl_visitor_bfs_traverse (GeglVisitor   *self,
 
       /* Loop through visitable's sources and examine them */
       {
-        GList *llink;
-        GList *depends_on_list = gegl_visitable_depends_on (visitable);
+        GSList *llink;
+        GSList *depends_on_list = gegl_visitable_depends_on (visitable);
         llink = depends_on_list;
 
         while (llink)
@@ -473,10 +473,10 @@ gegl_visitor_bfs_traverse (GeglVisitor   *self,
                 set_discovered (self, depends_on_visitable, TRUE);
               }
 
-            llink = g_list_next (llink);
+            llink = g_slist_next (llink);
           }
 
-        g_list_free (depends_on_list);
+        g_slist_free (depends_on_list);
       }
 
       /* Visit the visitable */
@@ -504,7 +504,7 @@ static void
 visit_pad (GeglVisitor *self,
            GeglPad     *pad)
 {
-  self->visits_list = g_list_append (self->visits_list, pad);
+  self->visits_list = g_slist_append (self->visits_list, pad);
 }
 
 void
@@ -526,5 +526,5 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-  self->visits_list = g_list_append (self->visits_list, node);
+  self->visits_list = g_slist_append (self->visits_list, node);
 }

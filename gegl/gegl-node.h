@@ -44,11 +44,11 @@ struct _GeglNode
   GeglObject      parent_instance;
   GeglOperation  *operation;
   GeglRectangle   have_rect;
-  GList          *pads;
-  GList          *input_pads;
-  GList          *output_pads;
-  GList          *sources;
-  GList          *sinks;
+  GSList         *pads;
+  GSList         *input_pads;
+  GSList         *output_pads;
+  GSList         *sources;
+  GSList         *sinks;
 
   gboolean        is_root;
   gboolean        enabled;
@@ -140,13 +140,13 @@ void          gegl_node_remove_pad          (GeglNode      *self,
                                              GeglPad       *pad);
 GeglPad     * gegl_node_get_pad             (GeglNode      *self,
                                              const gchar   *name);
-GList       * gegl_node_get_pads            (GeglNode      *self);
-GList       * gegl_node_get_input_pads      (GeglNode      *self);
-GList       * gegl_node_get_output_pads     (GeglNode      *self);
+GSList      * gegl_node_get_pads            (GeglNode      *self);
+GSList      * gegl_node_get_input_pads      (GeglNode      *self);
+GSList      * gegl_node_get_output_pads     (GeglNode      *self);
 gint          gegl_node_get_num_input_pads  (GeglNode      *self);
 gint          gegl_node_get_num_output_pads (GeglNode      *self);
-GList       * gegl_node_get_sinks           (GeglNode      *self);
-GList       * gegl_node_get_sources         (GeglNode      *self);
+GSList      * gegl_node_get_sinks           (GeglNode      *self);
+GSList      * gegl_node_get_sources         (GeglNode      *self);
 gint          gegl_node_get_num_sources     (GeglNode      *self);
 gint          gegl_node_get_num_sinks       (GeglNode      *self);
 void          gegl_node_disconnect_sinks    (GeglNode      *self);
@@ -154,7 +154,7 @@ void          gegl_node_disconnect_sources  (GeglNode      *self);
 GeglNode    * gegl_node_get_producer        (GeglNode      *self,
                                              gchar         *pad_name,
                                              gchar        **output_pad);
-GList       * gegl_node_get_depends_on      (GeglNode      *self);
+GSList      * gegl_node_get_depends_on      (GeglNode      *self);
 GeglBuffer  * gegl_node_apply               (GeglNode      *self,
                                              const gchar   *output_pad_name);
 void          gegl_node_process             (GeglNode      *self);

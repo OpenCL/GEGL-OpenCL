@@ -357,8 +357,8 @@ expose_event (GtkWidget      *widget,
       GeglRectangle  roi;
       guchar        *buf;
 
-      roi.x = view->x + rectangles[i].x / view->scale;
-      roi.y = view->y + rectangles[i].y / view->scale;
+      roi.x = view->x + (rectangles[i].x / view->scale);
+      roi.y = view->y + (rectangles[i].y / view->scale);
       roi.w = rectangles[i].width;
       roi.h = rectangles[i].height;
 

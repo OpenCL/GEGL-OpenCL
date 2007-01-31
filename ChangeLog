@@ -1,5 +1,36 @@
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
+	Replaced (most) GLists with GSLists.
+
+	* bin/gegl-view.c: (expose_event):
+	* gegl/buffer/gegl-tile-disk.c: (gegl_tile_disk_constructor):
+	* gegl/gegl-dot.c: (gegl_add_graph):
+	* gegl/gegl-node.c: (finalize), (gegl_node_get_pad),
+	(gegl_node_add_pad), (gegl_node_remove_pad), (find_connection),
+	(gegl_node_connect_from), (gegl_node_disconnect),
+	(gegl_node_disconnect_sources), (gegl_node_disconnect_sinks),
+	(gegl_node_get_num_sinks), (gegl_node_get_num_sources),
+	(gegl_node_get_num_input_pads), (gegl_node_get_num_output_pads),
+	(gegl_node_get_depends_on), (gegl_node_set_operation_object),
+	(gegl_node_get_producer), (gegl_node_get_consumers):
+	* gegl/gegl-node.h:
+	* gegl/gegl-pad.c: (gegl_pad_connect), (gegl_pad_disconnect),
+	(gegl_pad_get_num_connections), (gegl_pad_get_depends_on),
+	(gegl_pad_get_connected_to):
+	* gegl/gegl-pad.h:
+	* gegl/gegl-processor.c: (gegl_processor_set_rectangle),
+	(render_rectangle), (gegl_processor_render):
+	* gegl/gegl-visitable.c: (gegl_visitable_depends_on):
+	* gegl/gegl-visitable.h:
+	* gegl/gegl-visitor.c: (finalize), (init_dfs_traversal),
+	(dfs_traverse), (init_bfs_traversal), (gegl_visitor_bfs_traverse),
+	(visit_pad), (visit_node):
+	* gegl/gegl-visitor.h:
+	* operations/transform/affine.c: (is_intermediate_node),
+	(is_composite_node), (get_source_matrix):
+
+2007-01-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-graph.c: (gegl_node_get_pad_proxy): removed deprecated
 	"user-data tag", identifying a pad as non-input pad.
 
