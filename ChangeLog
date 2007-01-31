@@ -1,5 +1,17 @@
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
+	Made a bunch of g_slist_appends become g_slist_prepend instead.
+
+	* gegl/gegl-graph.c: (gegl_node_add_child):
+	* gegl/gegl-node-dynamic.c: (gegl_node_dynamic_add_value):
+	* gegl/gegl-node.c: (gegl_node_add_pad), (gegl_node_connect_from),
+	(gegl_node_get_depends_on), (gegl_node_add_dynamic):
+	* gegl/gegl-pad.c: (gegl_pad_connect), (gegl_pad_get_depends_on):
+	* gegl/gegl-processor.c: (gegl_processor_render):
+	* gegl/gegl-visitor.c: (visit_pad), (visit_node):
+
+2007-01-31  Øyvind Kolås  <pippin@gimp.org>
+
 	Replaced (most) GLists with GSLists.
 
 	* bin/gegl-view.c: (expose_event):

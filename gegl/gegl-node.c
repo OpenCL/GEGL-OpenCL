@@ -337,13 +337,13 @@ gegl_node_add_pad (GeglNode *self,
       return;
     }
   if(0)g_assert (!gegl_node_get_pad (self, gegl_pad_get_name (pad)));
-  self->pads = g_slist_append (self->pads, pad);
+  self->pads = g_slist_prepend (self->pads, pad);
 
   if (gegl_pad_is_output (pad))
-    self->output_pads = g_slist_append (self->output_pads, pad);
+    self->output_pads = g_slist_prepend (self->output_pads, pad);
 
   if (gegl_pad_is_input (pad))
-    self->input_pads = g_slist_append (self->input_pads, pad);
+    self->input_pads = g_slist_prepend (self->input_pads, pad);
 }
 
 void
@@ -505,8 +505,8 @@ gegl_node_connect_from (GeglNode    *sink,
       gegl_connection_set_sink_node (connection, sink);
       gegl_connection_set_source_node (connection, source);
 
-      sink->sources = g_slist_append (sink->sources, connection);
-      source->sinks = g_slist_append (source->sinks, connection);
+      sink->sources = g_slist_prepend (sink->sources, connection);
+      source->sinks = g_slist_prepend (source->sinks, connection);
 
       g_signal_connect (G_OBJECT (source), "invalidated", G_CALLBACK (source_invalidated), sink_pad);
 
@@ -815,11 +815,11 @@ gegl_node_get_depends_on (GeglNode *self)
           GeglNode *proxy = gegl_node_get_output_proxy (source_node, "output");
 
           if (! g_slist_find (depends_on, proxy))
-             depends_on = g_slist_append (depends_on, proxy);
+             depends_on = g_slist_prepend (depends_on, proxy);
         }
       else if (!g_slist_find (depends_on, source_node))
         {
-          depends_on = g_slist_append (depends_on, source_node);
+          depends_on = g_slist_prepend (depends_on, source_node);
         }
     }
 
@@ -1620,7 +1620,7 @@ gegl_node_add_dynamic (GeglNode *self,
   dynamic = g_object_new (GEGL_TYPE_NODE_DYNAMIC, NULL);
   dynamic->node = self;
   dynamic->context_id = context_id;
-  self->dynamic = g_slist_append (self->dynamic, dynamic);
+  self->dynamic = g_slist_prepend (self->dynamic, dynamic);
   return dynamic;
 }
 

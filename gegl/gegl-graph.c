@@ -53,7 +53,7 @@ gegl_node_add_child (GeglNode *self,
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
-  self->children = g_slist_append (self->children, g_object_ref (child));
+  self->children = g_slist_prepend (self->children, g_object_ref (child));
   self->is_graph = TRUE;
   child->parent = self;
 

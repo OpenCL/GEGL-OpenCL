@@ -504,7 +504,7 @@ static void
 visit_pad (GeglVisitor *self,
            GeglPad     *pad)
 {
-  self->visits_list = g_slist_append (self->visits_list, pad);
+  self->visits_list = g_slist_prepend (self->visits_list, pad);
 }
 
 void
@@ -526,5 +526,5 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-  self->visits_list = g_slist_append (self->visits_list, node);
+  self->visits_list = g_slist_prepend (self->visits_list, node);
 }

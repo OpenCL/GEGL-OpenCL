@@ -423,7 +423,7 @@ gegl_processor_render (GeglProcessor *processor,
          
           dr = g_malloc(sizeof (GeglRectangle));
           *dr = roi;
-          processor->dirty_rectangles = g_slist_append (processor->dirty_rectangles, dr);
+          processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, dr);
         }
       g_free (rectangles);
       if (n_rectangles!=0)
@@ -455,7 +455,7 @@ gegl_processor_render (GeglProcessor *processor,
          
           dr = g_malloc(sizeof (GeglRectangle));
           *dr = roi;
-          processor->dirty_rectangles = g_slist_append (processor->dirty_rectangles, dr);
+          processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, dr);
         }
       g_free (rectangles);
     }

@@ -226,7 +226,7 @@ gegl_node_dynamic_add_value    (GeglNodeDynamic *self,
 
   property = property_new (self->node, property_name);
 
-  self->property = g_slist_append (self->property, property);
+  self->property = g_slist_prepend (self->property, property);
 
   return &property->value;
 }

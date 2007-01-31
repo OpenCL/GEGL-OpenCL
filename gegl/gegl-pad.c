@@ -114,8 +114,8 @@ gegl_pad_connect (GeglPad *sink,
 
   connection = gegl_connection_new (NULL, sink, NULL, source);
 
-  sink->connections   = g_slist_append (sink->connections, connection);
-  source->connections = g_slist_append (source->connections, connection);
+  sink->connections   = g_slist_prepend (sink->connections, connection);
+  source->connections = g_slist_prepend (source->connections, connection);
 
   return connection;
 }
@@ -178,8 +178,8 @@ gegl_pad_get_depends_on (GeglPad *self)
           GeglConnection *connection = g_slist_nth_data (self->connections, i);
           if (connection)
             {
-              depends_on = g_slist_append (depends_on,
-                                          gegl_connection_get_source_pad (connection));
+              depends_on = g_slist_prepend (depends_on,
+                                            gegl_connection_get_source_pad (connection));
             }
           else
             {
@@ -198,8 +198,8 @@ gegl_pad_get_depends_on (GeglPad *self)
           for (llink = graph->sources; llink; llink = g_slist_next (llink))
             {
               GeglConnection *connection = llink->data;
-              depends_on = g_slist_append (depends_on,
-                                          gegl_connection_get_source_pad (connection));
+              depends_on = g_slist_prepend (depends_on,
+                                            gegl_connection_get_source_pad (connection));
             }
         }
 
