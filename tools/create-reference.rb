@@ -66,7 +66,7 @@ class Section
         ret = "#{@name}\n"
     end
     def sample_html
-        @sample.gsub('<','&lt;').gsub('>','&gt;').gsub('&','&amp;').gsub(/(.)(#.*)$/, "\\1<span style='color:gray;text-style:italic'>\\2</span>") 
+        @sample.gsub('&','&amp;').gsub('<','&lt;').gsub('>','&gt;').gsub(/(.)(#.*)$/, "\\1<span style='color:gray;text-style:italic'>\\2</span>") 
     end
     def to_html
         ret = "<div class='sect'>

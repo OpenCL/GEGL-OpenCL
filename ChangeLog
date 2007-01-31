@@ -1,5 +1,10 @@
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/create-reference.rb: escape & before < and > for text that
+	needs escaping.
+
+2007-01-31  Øyvind Kolås  <pippin@gimp.org>
+
 	Made gegl_node_get_children return (thus be) a GSList to make the
 	types of lists returned by GEGL consistent.
 
