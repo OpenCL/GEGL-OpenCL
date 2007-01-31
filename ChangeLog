@@ -1,11 +1,13 @@
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
-	* operations/transform/Makefile.am: added a dependency on the GEGL
-	headers for the affine operations.
+	* gegl/gegl.h: improved documentation for gegl_node_to_xml.
+	* tools/create-reference.rb: added support for a code sample per
+	method, vertical alignment of argument names at top of cell.
 
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
-	* tools/create-reference.rb: fixed link to viewcvs on svn.gnome.org.
+	* operations/transform/Makefile.am: added a dependency on the GEGL
+	headers for the affine operations.
 
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 

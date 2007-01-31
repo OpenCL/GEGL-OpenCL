@@ -251,10 +251,6 @@ gboolean      gegl_node_disconnect       (GeglNode      *node,
  * To see what operations are available for a given operation look in the <a
  * href='operations.html'>Operations reference</a> or use
  * #gegl_node_get_properties.
- * ---
- * gegl_node_set (node, "brightness", -0.2,
- *                      "contrast",   2.0,
- *                      NULL);
  */
 
 /**
@@ -269,6 +265,10 @@ gboolean      gegl_node_disconnect       (GeglNode      *node,
  * <em>"operation"</em>. <em>"operation"</em> changes the current operations
  * set for the node, <em>"name"</em> doesn't have any role internally in
  * GEGL.
+ * ---
+ * gegl_node_set (node, "brightness", -0.2,
+ *                      "contrast",   2.0,
+ *                      NULL);
  */
 void          gegl_node_set              (GeglNode      *node,
                                           const gchar   *first_property_name,
@@ -281,41 +281,8 @@ void          gegl_node_set              (GeglNode      *node,
  * There are two different ways to do processing with GEGL, either you
  * query any node providing output for a rectangular region to be rendered
  * using #gegl_node_blit, or you use #gegl_node_process on a sink node (A
- * display node, an image file writer or similar).
- *
- * ---
- * GeglNode      *gegl;
- * GeglRectangle  roi;
- * GeglNode      *png_save;
- * unsigned char *buffer;
- *
- * gegl = gegl_parse_xml (xml_data);
- * roi      = gegl_node_get_bounding_box (gegl);
- * png_save = gegl_node_new_child (gegl,
- *                                 "operation", "png-save",
- *                                 "path",      "output.png",
- *                                 NULL);
- *
- * gegl_node_link (gegl, png_save);
- * gegl_node_process (png_save);
- *
- * buffer = malloc (roi.w*roi.h*4);
- * gegl_node_blit (gegl,
- *                 &roi,
- *                 1.0,
- *                 babl_format("R'G'B'A u8",
- *                 roi.w*4,
- *                 buffer,
- *                 GEGL_BLIT_DEFAULT);
- *
- * # iterative processing:
- *
- * GeglProcessor *processor = gegl_node_new_processor (node, &roi);
- * double         progress;
- *
- * while (gegl_processor_work (processor, &progress))
- *   g_warning ("%f%% complete", progress);
- * gegl_processor_destroy (processor);
+ * display node, an image file writer or similar). To do iterative processing
+ * you need to use a #GeglProcessor see #gegl_processor_work for a code sample.
  */
 
 #ifndef GEGL_INTERNAL
@@ -360,6 +327,30 @@ void          gegl_node_blit             (GeglNode      *node,
  * Render a composition. This can be used for instance on a node with a "png-save"
  * operation to render all neccesary data, and make it be written to file, the
  * function is blocking for a non blocking way of doing the same see #GeglProcessor.
+ * ---
+ * GeglNode      *gegl;
+ * GeglRectangle  roi;
+ * GeglNode      *png_save;
+ * unsigned char *buffer;
+ *
+ * gegl = gegl_parse_xml (xml_data);
+ * roi      = gegl_node_get_bounding_box (gegl);
+ * png_save = gegl_node_new_child (gegl,
+ *                                 "operation", "png-save",
+ *                                 "path",      "output.png",
+ *                                 NULL);
+ *
+ * gegl_node_link (gegl, png_save);
+ * gegl_node_process (png_save);
+ *
+ * buffer = malloc (roi.w*roi.h*4);
+ * gegl_node_blit (gegl,
+ *                 &roi,
+ *                 1.0,
+ *                 babl_format("R'G'B'A u8",
+ *                 roi.w*4,
+ *                 buffer,
+ *                 GEGL_BLIT_DEFAULT);
  */
 void          gegl_node_process          (GeglNode      *sink_node);
 
@@ -370,7 +361,7 @@ void          gegl_node_process          (GeglNode      *sink_node);
  * A #GeglProcessor, is a worker that can be used for background rendering
  * of regions in a node's cache. Or for processing a sink node. For most
  * non GUI tasks using #gegl_node_blit and #gegl_node_process directly
- * should be sufficient.
+ * should be sufficient. See #gegl_processor_work for a code sample.
  *
  */
 #ifndef GEGL_INTERNAL
@@ -411,6 +402,14 @@ void           gegl_processor_set_rectangle (GeglProcessor *processor,
  * Do an iteration of work for the processor.
  *
  * Returns TRUE if there is more work to be done.
+ *
+ * ---
+ * GeglProcessor *processor = gegl_node_new_processor (node, &roi);
+ * double         progress;
+ *
+ * while (gegl_processor_work (processor, &progress))
+ *   g_warning ("%f%% complete", progress);
+ * gegl_processor_destroy (processor);
  */
 gboolean       gegl_processor_work          (GeglProcessor *processor,
                                              gdouble       *progress);
@@ -433,13 +432,6 @@ void           gegl_processor_destroy       (GeglProcessor *processor);
  *
  * You can figure out what the bounding box of a node is with #gegl_node_get_bounding_box,
  * retrieve the values of named properties using #gegl_node_get.
- *
- * ---
- * double level;
- * char  *path;
- *
- * gegl_node_get (png_save, "path", &path, NULL);
- * gegl_node_get (threshold, "level", &level, NULL);
  */
 
 /**
@@ -486,6 +478,12 @@ GParamSpec  * gegl_node_find_property    (GeglNode      *node,
  * name/value pairs, followed by NULL.
  *
  * Gets properties of a #GeglNode.
+ * ---
+ * double level;
+ * char  *path;
+ *
+ * gegl_node_get (png_save, "path", &path, NULL);
+ * gegl_node_get (threshold, "level", &level, NULL);
  */
 void          gegl_node_get              (GeglNode      *node,
                                           const gchar   *first_property_name,
@@ -622,7 +620,10 @@ GeglNode    * gegl_parse_xml             (const gchar   *xmldata,
  * @path_root: filesystem path to construct relative paths from.
  *
  * Returns a freshly allocated \0 terminated string containing a XML
- * serialization of a nodes children.
+ * serialization of the composition produced by a node (and thus also
+ * the nodes contributing data to the specified node). To export a
+ * gegl graph, connect the internal output node to an output proxy(see
+ * #gegl_node_get_output_proxy.
  */
 gchar       * gegl_to_xml                (GeglNode      *node,
                                           const gchar   *path_root);

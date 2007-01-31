@@ -76,7 +76,7 @@ class Section
             ret += "<p>"
             ret += @doc.htmlify
             ret += "</p>"
-            ret += "<pre>#{sample_html}</pre>"
+            ret += "<pre class='sample_code'>#{sample_html}</pre>"
             ret += "</div>"
         ret += "</div>"
     end
@@ -90,7 +90,7 @@ class Function
         @return_type=""
         @return_doc=""
         @name=""
-        @sample
+        @sample=""
     end
     def menu_entry
         "&nbsp;&nbsp;#{@name}"
@@ -201,7 +201,7 @@ class Function
             ret += "<p><b>Arguments:</b></p>"
             ret += "<table>\n"
             @arguments.each { |arg|
-                ret += "<tr><td style='padding-right:1em;'><span class='arg_name'>#{arg.name}</span></td>"
+                ret += "<tr><td style='padding-right:1em;vertical-align:top'><span class='arg_name'>#{arg.name}</span></td>"
                 ret += "<td>#{arg.doc.htmlify}</td></tr>"
             }
             ret += "</table>\n"
@@ -209,8 +209,7 @@ class Function
 
         ret += "</div>"
         ret += "<div class='return_doc'>#{@return_doc.htmlify.sub("Returns", "<b>Returns</b>")}</div>"
-        ret += "<pre>#{sample_html}</pre>"
-        ret += "</div>"
+        ret += "<pre class='sample_code'>#{sample_html}</pre>"
         ret += "</div>"
     end
 end
@@ -369,7 +368,7 @@ IO.foreach(ARGV[0]) {
         end
     when :more
         if line =~ /^ \* ---/
-            state=:fun_sample
+            state=:function_sample
         elsif line =~ /.*(Returns.*)/
             function.return_doc = $1 + "\n"
             state=:more_return
@@ -383,7 +382,7 @@ IO.foreach(ARGV[0]) {
 
     when :more_return
         if line =~ /^ \* ---/
-            state=:fun_sample
+            state=:function_sample
         elsif line =~ /\*\//
             state=:fun
             arg_no=0
