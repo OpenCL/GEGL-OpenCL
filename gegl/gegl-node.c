@@ -1354,14 +1354,14 @@ gegl_node_get_operation (GeglNode     *node)
 {
   if (node == NULL)
     {
-      return NULL;
+      return "";
     }
   if (node->is_graph &&
       node->operation == NULL)
     return "GraphNode";
   if (node->operation == NULL)
     {
-      return NULL;
+      return "";
     }
   return GEGL_OPERATION_GET_CLASS (node->operation)->name;
 }

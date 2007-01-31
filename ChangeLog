@@ -1,5 +1,12 @@
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.c: (gegl_node_get_operation): changed logic to
+	return an empty string instead of NULL when there is no associated
+	operation.
+	* gegl/gegl.h: updated documentation.
+
+2007-01-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.h: improved documentation for gegl_node_to_xml.
 	* tools/create-reference.rb: added support for a code sample per
 	method, vertical alignment of argument names at top of cell.
