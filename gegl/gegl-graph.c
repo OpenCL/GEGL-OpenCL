@@ -53,7 +53,7 @@ gegl_node_add_child (GeglNode *self,
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
-  self->children = g_list_append (self->children, g_object_ref (child));
+  self->children = g_slist_append (self->children, g_object_ref (child));
   self->is_graph = TRUE;
   child->parent = self;
 
@@ -67,7 +67,7 @@ gegl_node_remove_child (GeglNode *self,
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
-  self->children = g_list_remove (self->children, child);
+  self->children = g_slist_remove (self->children, child);
   
   if (child->parent!=NULL)
     {
@@ -89,7 +89,7 @@ gegl_node_get_num_children (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), -1);
 
-  return g_list_length (self->children);
+  return g_slist_length (self->children);
 }
 
 GeglNode *
@@ -98,18 +98,18 @@ gegl_node_get_nth_child (GeglNode *self,
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
-  return g_list_nth_data (self->children, n);
+  return g_slist_nth_data (self->children, n);
 }
 
 /*
  * Returns a copy of the graphs internal list of nodes
  */
-GList *
+GSList *
 gegl_node_get_children (GeglNode *self)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
-  return g_list_copy (self->children);
+  return g_slist_copy (self->children);
 }
 
 /*

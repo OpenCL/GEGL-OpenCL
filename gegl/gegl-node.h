@@ -58,7 +58,7 @@ struct _GeglNode
 
   gboolean        is_graph;
   /*< private >*/
-  GList          *children;  /*  used for children */
+  GSList         *children;  /*  used for children */
   GeglNode       *parent;
   GeglCache      *cache;
 };

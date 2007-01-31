@@ -31,8 +31,8 @@ gegl_add_graph (GString     *string,
   g_string_append_printf (string, "subgraph cluster_%s%p { graph [ label=\"%s %p\" fontsize=\"10\" ranksep=\"0.3\" nodesep=\"0.3\"]; node [ fontsize=\"10\" ];\n", label, node, label, node);
 
     {
-      GList *nodes = gegl_node_get_children (graph);
-      GList *entry = nodes;
+      GSList *nodes = gegl_node_get_children (graph);
+      GSList *entry = nodes;
 
       while (entry)
         {
@@ -150,15 +150,15 @@ gegl_add_graph (GString     *string,
           g_string_append_printf (string, "}}\"\n shape=\"record\"];\n");
 
 
-          entry = g_list_next (entry);
+          entry = g_slist_next (entry);
         }
 
-      g_list_free (nodes);
+      g_slist_free (nodes);
     }
 
     {
-      GList *nodes = gegl_node_get_children (graph);
-      GList *entry = nodes;
+      GSList *nodes = gegl_node_get_children (graph);
+      GSList *entry = nodes;
 
       while (entry)
         {
@@ -189,9 +189,9 @@ gegl_add_graph (GString     *string,
                 entry = g_list_next (entry);
                }
           }
-          entry = g_list_next (entry);
+          entry = g_slist_next (entry);
         }
-      g_list_free (nodes);
+      g_slist_free (nodes);
     }
   g_string_append_printf (string, "}\n");
 }

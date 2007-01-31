@@ -1,5 +1,18 @@
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
+	Made gegl_node_get_children return (thus be) a GSList to make the
+	types of lists returned by GEGL consistent.
+
+	* gegl/gegl-dot.c: (gegl_add_graph):
+	* gegl/gegl-graph.c: (gegl_node_add_child),
+	(gegl_node_remove_child), (gegl_node_get_num_children),
+	(gegl_node_get_nth_child), (gegl_node_get_children):
+	* gegl/gegl-graph.h:
+	* gegl/gegl-node.h:
+	* gegl/gegl.h:
+
+2007-01-31  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed .cvsignore files.
 
 2007-01-30  Sven Neumann  <sven@gimp.org>

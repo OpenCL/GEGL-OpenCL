@@ -33,7 +33,7 @@ GeglNode * gegl_node_remove_child     (GeglNode    *self,
                                        GeglNode     *child);
 GeglNode * gegl_node_get_nth_child    (GeglNode    *self,
                                        gint          n);
-GList    * gegl_node_get_children     (GeglNode    *self);
+GSList   * gegl_node_get_children     (GeglNode    *self);
 void       gegl_node_remove_children  (GeglNode    *self);
 gint       gegl_node_get_num_children (GeglNode    *self);
 

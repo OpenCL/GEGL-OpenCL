@@ -507,7 +507,7 @@ GeglRectangle gegl_node_get_bounding_box (GeglNode      *node);
  * Returns a list of nodes with children/internal nodes. The list must be
  * freed by the caller.
  */
-GList       * gegl_node_get_children     (GeglNode      *node);
+GSList      * gegl_node_get_children     (GeglNode      *node);
 
 /**
  * gegl_node_get_consumers:
