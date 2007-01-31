@@ -1,6 +1,9 @@
 EXTRA_DIST      = $(wildcard *.[ch])
 CFILES          = $(wildcard $(srcdir)/*.c)
 OFILES          = $(subst $(srcdir)/,,$(CFILES:.c=.o))
+GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
+                  $(wildcard $(top_srcdir)/gegl/buffer/*.h)
+
 SOBJS           = affine.so
 
 all-local: $(SOBJS)

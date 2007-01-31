@@ -1,5 +1,10 @@
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/transform/Makefile.am: added a dependency on the GEGL
+	headers for the affine operations.
+
+2007-01-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/create-reference.rb: fixed link to viewcvs on svn.gnome.org.
 
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
