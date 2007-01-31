@@ -1354,15 +1354,14 @@ gegl_node_get_operation (GeglNode     *node)
 {
   if (node == NULL)
     {
-      g_warning ("NULL node passed in");
-      return "NULL node passd in";
+      return NULL;
     }
-  if (node->is_graph && node->operation == NULL)
+  if (node->is_graph &&
+      node->operation == NULL)
     return "GraphNode";
   if (node->operation == NULL)
     {
-      g_warning ("No op associated");
-      return "No op associated";
+      return NULL;
     }
   return GEGL_OPERATION_GET_CLASS (node->operation)->name;
 }

@@ -546,7 +546,9 @@ GeglNode    * gegl_node_get_input_proxy  (GeglNode      *node,
  * gegl_node_get_operation:
  * @node: a #GeglNode
  *
- * Returns the type of processing operation associated with this node.
+ * Returns the type of processing operation associated with this node, or
+ * NULL if there is no op associated. The special name "GraphNode" might
+ * be returned if the node is the container of a subgraph.
  */
 const gchar * gegl_node_get_operation    (GeglNode      *node);
 

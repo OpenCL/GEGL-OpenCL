@@ -1,5 +1,16 @@
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
+	Changed the meaning of the return value from gegl_node_get_operation
+	in corner cases, it now returns the type of processing operation
+	associated with this node, or NULL if there is no op associated. The
+	special name "GraphNode" might be returned if the node is the
+	container of a subgraph.
+
+	* gegl/gegl-node.c: (gegl_node_get_operation): updated code.
+	* gegl/gegl.h: updated documentation.
+
+2007-01-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/create-reference.rb: escape & before < and > for text that
 	needs escaping.
 
