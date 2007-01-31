@@ -1,5 +1,11 @@
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
+	Removed codegen, gil and opgen directories from GEGL. (they are
+	currently unused, and can perhaps be revived at a later stage if
+	code from them are to be reused.)
+
+2007-01-31  Øyvind Kolås  <pippin@gimp.org>
+
 	Changed the meaning of the return value from gegl_node_get_operation
 	in corner cases, it now returns the type of processing operation
 	associated with this node, or NULL if there is no op associated. The
