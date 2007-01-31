@@ -85,7 +85,6 @@ static void            gegl_node_set_op_class         (GeglNode      *self,
                                                        const gchar   *op_class,
                                                        const gchar   *first_property,
                                                        va_list        var_args);
-static const gchar *   gegl_node_get_op_class         (GeglNode      *self);
 static void property_changed (GObject    *gobject,
                               GParamSpec *arg1,
                               gpointer    user_data);
@@ -241,14 +240,16 @@ get_property (GObject    *gobject,
               GValue     *value,
               GParamSpec *pspec)
 {
+  GeglNode *node = GEGL_NODE (gobject);
   switch (property_id)
     {
-    case PROP_OP_CLASS:
-      g_value_set_string (value, gegl_node_get_op_class (GEGL_NODE (gobject)));
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
-      break;
+      case PROP_OP_CLASS:
+        if (node->operation)
+          g_value_set_string (value, GEGL_OPERATION_GET_CLASS (node->operation)->name);
+        break;
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+        break;
     }
 }
 
@@ -1046,14 +1047,6 @@ gegl_node_set_operation_object (GeglNode      *self,
 
   g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (property_changed), self);
   property_changed (G_OBJECT (operation), (GParamSpec*)self, self);
-}
-
-static const gchar *
-gegl_node_get_op_class (GeglNode      *self)
-{
-  if (!self->operation)
-    return NULL;
-  return GEGL_OPERATION_GET_CLASS (self->operation)->name;
 }
 
 void

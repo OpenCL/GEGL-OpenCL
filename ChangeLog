@@ -1,5 +1,10 @@
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.c: (get_property): removed unneeded static helper
+	gegl_node_op_class and integrated it with get_property function.
+
+2007-01-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (gegl_node_get_operation): changed logic to
 	return an empty string instead of NULL when there is no associated
 	operation.
