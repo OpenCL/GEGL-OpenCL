@@ -1,3 +1,8 @@
+2007-01-31  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.html.in: Added "sparse pyramidial render cache", to
+	list of features modified link to viewcvs of svn.
+
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: updated babl dependency to 0.0.12

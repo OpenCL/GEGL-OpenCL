@@ -87,6 +87,7 @@
             <li>Iterative processing.</li>
             <li>Efficient subregion evaluation.</li>
             <li>Supports processing and display of images larger than RAM</li>
+            <li>Internal sparse pyramidial render cache.</li>
             <li>Bounding box based hit detection.</li>
             <li>Rich core set of processing <a
                 href='operations.html'>operations</a> that internally computes
@@ -168,7 +169,7 @@ rectangular regions to be repainted.
     </p>
 
     <p>The current code under development can be <a
-href='http://svn.gnome.org/viewscvs/gegl/trunk/'>browsed online</a> and checked
+href='http://svn.gnome.org/viewcvs/gegl/trunk/'>browsed online</a> and checked
 out from GNOME Subversion using: </p> <pre>svn co
 http://svn.gnome.org/svn/gegl/trunk/ gegl</pre>
 
