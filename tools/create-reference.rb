@@ -83,16 +83,20 @@ class Section
 end
 
 class Function
-    attr_accessor :name, :return_type, :return_doc, :doc, :arguments
+    attr_accessor :name, :return_type, :return_doc, :doc, :arguments, :sample
     def initialize
         @arguments = Array.new
         @doc=""
         @return_type=""
         @return_doc=""
         @name=""
+        @sample
     end
     def menu_entry
         "&nbsp;&nbsp;#{@name}"
+    end
+    def sample_html
+        @sample.gsub('&','&amp;').gsub('<','&lt;').gsub('>','&gt;').gsub(/(.)(#.*)$/, "\\1<span style='color:gray;text-style:italic'>\\2</span>") 
     end
     def add_arg arg
         @arguments << arg
@@ -205,6 +209,8 @@ class Function
 
         ret += "</div>"
         ret += "<div class='return_doc'>#{@return_doc.htmlify.sub("Returns", "<b>Returns</b>")}</div>"
+        ret += "<pre>#{sample_html}</pre>"
+        ret += "</div>"
         ret += "</div>"
     end
 end
@@ -353,8 +359,18 @@ IO.foreach(ARGV[0]) {
             line =~ /.*\* (.*)/
             function.sample = function.sample + $1.to_s + "\n"
         end
+    when :function_sample
+        if line =~ /\*\//
+            state=:fun
+            arg_no=0
+        else
+            line =~ /.*\* (.*)/
+            function.sample = function.sample + $1.to_s + "\n"
+        end
     when :more
-        if line =~ /.*(Returns.*)/
+        if line =~ /^ \* ---/
+            state=:fun_sample
+        elsif line =~ /.*(Returns.*)/
             function.return_doc = $1 + "\n"
             state=:more_return
         elsif line =~ /\*\//
@@ -366,7 +382,9 @@ IO.foreach(ARGV[0]) {
         end
 
     when :more_return
-        if line =~ /\*\//
+        if line =~ /^ \* ---/
+            state=:fun_sample
+        elsif line =~ /\*\//
             state=:fun
             arg_no=0
         else
