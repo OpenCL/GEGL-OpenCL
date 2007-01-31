@@ -248,17 +248,7 @@ gegl_pad_get_internal_connected_to (GeglPad *self)
       GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
       g_assert (graph);
 
-      /* FIXME: is this check still needed when gegl_pad_get_name is used in the else
-       * clause?
-       */
-      if (g_object_get_data (G_OBJECT (self->node), "is-aux"))
-        {
-          pad = gegl_node_get_pad (graph, "aux");
-        }
-      else
-        {
-          pad = gegl_node_get_pad (graph, gegl_pad_get_name (self));
-        }
+      pad = gegl_node_get_pad (graph, gegl_pad_get_name (self));
       if (pad)
          pad = gegl_pad_get_connected_to (pad);
     }

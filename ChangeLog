@@ -1,5 +1,10 @@
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-pad.c: (gegl_pad_get_internal_connected_to): removed
+	obsoleted if/else.
+
+2007-01-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (get_property): removed unneeded static helper
 	gegl_node_op_class and integrated it with get_property function.
 
