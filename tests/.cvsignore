@@ -1,5 +1,0 @@
-Makefile
-Makefile.in
-testgegl
-testimage
-gegl-tests-init-types.c
