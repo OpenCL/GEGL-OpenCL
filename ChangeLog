@@ -1,5 +1,10 @@
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-graph.c: (gegl_node_get_pad_proxy): removed deprecated
+	"user-data tag", identifying a pad as non-input pad.
+
+2007-01-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-pad.c: (gegl_pad_get_internal_connected_to): removed
 	obsoleted if/else.
 
