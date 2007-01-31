@@ -1,6 +1,0 @@
-See the unit tests in the gil/test directory for illustration of how libgil is
-to be used. Currently there are just some parse trees that get built by hand.
-Once those are little farther, I will hook this back up to yacc/lex for parsing
-simple gil expressions.
-
-The ast graph building code uses GObjects. 
