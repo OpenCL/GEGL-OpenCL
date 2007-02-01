@@ -350,9 +350,10 @@ http://svn.gnome.org/svn/gegl/trunk/ gegl</pre>
             <dd>Print a performance instrumentation breakdown of GEGL and it's operations.
             </dd>
             <dt>GEGL_SWAP</dt>
-            <dd>Swap to disk instead of storing all pixel data in RAM, allows processing
-            images larger than physical RAM. Check temp folder for left over files after
-            processing is done.
+            <dd>The directory where temporary swap files are written, if not
+            specified GEGL will not swap to disk. Be aware that swapping to
+            disk is still experimental and GEGL is currently not removing
+            the per process swap files.
             </dd>
         </dl>
     <a name='gegl'></a>
