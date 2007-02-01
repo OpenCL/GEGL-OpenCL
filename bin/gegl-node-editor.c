@@ -783,7 +783,7 @@ property_editor_general (GeglNodeEditor *node_editor,
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 10);
   
-  properties = gegl_node_get_properties (node, &n_properties);
+  properties = gegl_list_properties (gegl_node_get_operation (node), &n_properties);
   col1 = node_editor->col1;
   col2 = node_editor->col2;
 

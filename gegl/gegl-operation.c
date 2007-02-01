@@ -394,6 +394,29 @@ GSList *gegl_list_operations (void)
   return operations_list;
 }
 
+/* returns a freshly allocated list of the properties of the object, does not list
+ * the regular gobject properties of GeglNode ('name' and 'operation') */
+GParamSpec**
+gegl_list_properties (const gchar *operation_type,
+                      guint       *n_properties_p)
+{
+  GParamSpec  **pspecs;
+  GType         type; 
+  GObjectClass *klass;
+
+  type = gegl_operation_gtype_from_name (operation_type);
+  if (!type)
+    {
+      if (n_properties_p)
+        *n_properties_p=0;
+      return NULL;
+    }
+  klass = g_type_class_ref (type);
+  pspecs = g_object_class_list_properties (klass, n_properties_p);
+  g_type_class_unref (klass);
+  return pspecs;
+}
+
 GObject *
 gegl_operation_get_data (GeglOperation *operation,
                          gpointer       context_id,

@@ -1,5 +1,14 @@
 2007-02-01  Øyvind Kolås  <pippin@gimp.org>
 
+	Replaced gegl_node_get_properties with gegl_list_properties.
+
+	* bin/gegl-node-editor.c: (property_editor_general):
+	* gegl/gegl-node.c:
+	* gegl/gegl-operation.c: (gegl_list_properties):
+	* gegl/gegl.h:
+
+2007-02-01  Øyvind Kolås  <pippin@gimp.org>
+
 	Made GEGL_SWAP specify the location of swap files.
 
 	* gegl/buffer/gegl-buffer-allocator.c:

@@ -441,6 +441,19 @@ void           gegl_processor_destroy       (GeglProcessor *processor);
  */
 GSList      * gegl_list_operations (void);
 
+
+/**
+ * gegl_list_properties:
+ * @operation_type: the name of the operation type we want to query to properties of.
+ * @n_properties: return location for number of properties.
+ *
+ * Returns an allocated array of #GParamSpecs describing the properties
+ * of the operation currently set for a node.
+ */
+GParamSpec** gegl_list_properties        (const gchar   *operation_type,
+                                          guint         *n_properties_p);
+
+
 /**
  * gegl_node_detect:
  * @node: a #GeglNode
@@ -577,20 +590,6 @@ GeglNode    * gegl_node_get_output_proxy (GeglNode      *node,
 GeglNode    * gegl_node_get_producer     (GeglNode      *node,
                                           gchar         *input_pad_name,
                                           gchar        **output_pad_name);
-
-/**
- * gegl_node_get_properties:
- * @node: a #GeglNode
- * @n_properties: return location for number of properties.
- *
- * Returns an allocated array of #GParamSpecs describing the properties
- * of the operation currently set for a node.
- */
-GParamSpec ** gegl_node_get_properties   (GeglNode      *node,
-                                          guint         *n_properties);
-
-
-
 
 
 /***

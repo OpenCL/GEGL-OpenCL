@@ -1314,19 +1314,6 @@ gegl_node_get_property (GeglNode    *self,
     }
 }
 
-/* returns a freshly allocated list of the properties of the object, does not list
- * the regular gobject properties of GeglNode ('name' and 'operation') */
-GParamSpec**
-gegl_node_get_properties (GeglNode *self,
-                           guint    *n_properties_p)
-{
-  GParamSpec **pspecs;
-
-  pspecs = g_object_class_list_properties (G_OBJECT_GET_CLASS (self->operation), n_properties_p);
-
-  return pspecs;
-}
-
 GParamSpec *
 gegl_node_find_property (GeglNode    *self,
                          const gchar *property_name)
