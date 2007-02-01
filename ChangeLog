@@ -1,3 +1,7 @@
+2007-02-02  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.h: added GEGL_COLOR()
+
 2007-02-01  Øyvind Kolås  <pippin@gimp.org>
 
 	Finished s/gegl_node_get_properties/gegl_list_properties/ change.

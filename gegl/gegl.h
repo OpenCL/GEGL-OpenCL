@@ -667,6 +667,7 @@ struct _GeglRectangle
 typedef struct _GeglColor     GeglColor;
 GType gegl_color_get_type (void) G_GNUC_CONST;
 #define GEGL_TYPE_COLOR (gegl_color_get_type())
+#define GEGL_COLOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR, GeglColor))
 #endif
 
 /**
