@@ -142,19 +142,33 @@ gegl_buffer_new_from_format (void *babl_format,
       /* if no match, create new */
       if (allocator == NULL)
         {
-          gchar *path;
-          path = g_strdup_printf ("%s/GEGL-%i-%s.swap", g_get_tmp_dir (),
-           getpid (), babl_name (babl_format));
-          GeglStorage *storage = g_object_new (GEGL_TYPE_STORAGE,
-                                               "format", babl_format,
-                                               "path", path,
-                                               NULL);
-          allocator = g_object_new (GEGL_TYPE_BUFFER_ALLOCATOR,
-                                  "source", storage,
-                                  NULL);
-          g_object_unref (storage);
-          g_hash_table_insert (allocators, babl_format, allocator);
-          g_free (path);
+          if (getenv ("GEGL_SWAP")!= NULL)
+            {
+              gchar *path;
+              path = g_strdup_printf ("%s/GEGL-%i-%s.swap", getenv ("GEGL_SWAP"),
+               getpid (), babl_name (babl_format));
+              GeglStorage *storage = g_object_new (GEGL_TYPE_STORAGE,
+                                                   "format", babl_format,
+                                                   "path", path,
+                                                   NULL);
+              allocator = g_object_new (GEGL_TYPE_BUFFER_ALLOCATOR,
+                                      "source", storage,
+                                      NULL);
+              g_object_unref (storage);
+              g_hash_table_insert (allocators, babl_format, allocator);
+              g_free (path);
+            }
+          else
+            {
+              GeglStorage *storage = g_object_new (GEGL_TYPE_STORAGE,
+                                                   "format", babl_format,
+                                                   NULL);
+              allocator = g_object_new (GEGL_TYPE_BUFFER_ALLOCATOR,
+                                      "source", storage,
+                                      NULL);
+              g_object_unref (storage);
+              g_hash_table_insert (allocators, babl_format, allocator);
+            }
         }
   /* check if we already have a GeglBufferAllocator for the needed tile slice */
   return gegl_buffer_alloc (allocator, x, y, width, height);

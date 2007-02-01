@@ -175,8 +175,7 @@ gegl_storage_constructor (GType                  type,
   traits = GEGL_TILE_TRAITS (storage);
   trait = GEGL_TILE_TRAIT (storage);
 
-  if(storage->path != NULL &&
-     getenv ("GEGL_SWAP"))
+  if(storage->path != NULL)
     {
       g_object_set (storage,
                 "source", g_object_new (GEGL_TYPE_TILE_DISK_STORE,

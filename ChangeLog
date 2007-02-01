@@ -1,3 +1,11 @@
+2007-02-01  Øyvind Kolås  <pippin@gimp.org>
+
+	Made GEGL_SWAP specify the location of swap files.
+
+	* gegl/buffer/gegl-buffer-allocator.c:
+	(gegl_buffer_new_from_format):
+	* gegl/buffer/gegl-storage.c: (gegl_storage_constructor):
+
 2007-01-31  Øyvind Kolås  <pippin@gimp.org>
 
 	Made a bunch of g_slist_appends become g_slist_prepend instead.
