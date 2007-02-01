@@ -170,8 +170,6 @@ void          gegl_node_set_property        (GeglNode      *object,
 void          gegl_node_get_property        (GeglNode      *object,
                                              const gchar   *property_name,
                                              GValue        *value);
-GParamSpec ** gegl_node_get_properties      (GeglNode      *self,
-                                             guint         *n_properties);
 GParamSpec *  gegl_node_find_property       (GeglNode      *self,
                                              const gchar   *property_name);
 GeglRectangle    * gegl_node_get_have_rect  (GeglNode      *node);

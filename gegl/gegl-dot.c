@@ -85,7 +85,7 @@ gegl_add_graph (GString     *string,
 	  if(1)
             {
               guint n_properties;
-              GParamSpec **properties = gegl_node_get_properties (node, &n_properties);
+              GParamSpec **properties = gegl_list_properties (gegl_node_get_operation (node), &n_properties);
               gint i;
               for (i=0;i<n_properties;i++)
                 {

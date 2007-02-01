@@ -153,6 +153,9 @@ void       gegl_operation_create_pad                (GeglOperation *self,
 GType      gegl_operation_gtype_from_name           (const gchar *name);
 GSList   * gegl_list_operations                     (void);
 
+GParamSpec** gegl_list_properties                   (const gchar *operation_type,
+                                                     guint       *n_properties_p);
+
 GObject  * gegl_operation_get_data                  (GeglOperation *operation,
                                                      gpointer       context_id,
                                                      const gchar   *property_name);

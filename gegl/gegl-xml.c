@@ -27,6 +27,7 @@
 #include "gegl-types.h"
 #include "gegl-graph.h"
 #include "gegl-node.h"
+#include "gegl-operation.h"
 #include "gegl-pad.h"
 #include "gegl-color.h"
 #include "gegl-instrument.h"
@@ -404,7 +405,7 @@ static void encode_node_attributes (SerializeState *ss,
   gchar *class;
   gint i;
 
-  properties = gegl_node_get_properties (node, &n_properties);
+  properties = gegl_list_properties (gegl_node_get_operation (node), &n_properties);
 
   if (!ss->terse)
     {
