@@ -1,5 +1,17 @@
 2007-02-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/render/text.c: (process): only process for the result
+	rect not the requested rect. (massive speedup in some circumstances).
+	Getting babl to use the optimized conversion for cairo originated data
+	is the next obvious optimization.
+
+2007-02-02  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl.h: added a missing dash to get the code sampled parsed
+	correctly.
+
+2007-02-02  Øyvind Kolås  <pippin@gimp.org>
+
 	Made gegl_list_operations return an array instead of a GSList.
 
 	* gegl/gegl-operation.c: (add_operations), (gegl_list_operations):
