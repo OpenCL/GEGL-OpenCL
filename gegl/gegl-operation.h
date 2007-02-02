@@ -151,7 +151,7 @@ void       gegl_operation_class_set_description     (GeglOperationClass *self,
 void       gegl_operation_create_pad                (GeglOperation *self,
                                                      GParamSpec    *param_spec);
 GType      gegl_operation_gtype_from_name           (const gchar *name);
-GSList   * gegl_list_operations                     (void);
+gchar    **gegl_list_operations                     (guint *n_operations_p);
 
 GParamSpec** gegl_list_properties                   (const gchar *operation_type,
                                                      guint       *n_properties_p);

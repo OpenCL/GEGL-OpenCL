@@ -356,7 +356,9 @@ add_operations (GHashTable *hash,
     {
       GeglOperationClass *operation_class = g_type_class_ref (types[no]);
       if (operation_class->name)
-        g_hash_table_insert (hash, g_strdup (operation_class->name), (gpointer)types[no]);
+        {
+          g_hash_table_insert (hash, g_strdup (operation_class->name), (gpointer)types[no]);
+        }
       add_operations (hash, types[no]);
     }
   g_free (types);
@@ -383,15 +385,42 @@ static void addop(gpointer key,
   operations_list = g_slist_prepend (operations_list, key);
 }
 
-GSList *gegl_list_operations (void)
+gchar **gegl_list_operations (guint *n_operations_p)
 {
+  gchar **pasp = NULL;
+  gint    n_operations;
+  gint    i;
+  GSList *iter;
+  gint    pasp_size=0;
+  gint    pasp_pos;
+
   if (!operations_list)
     {
       gegl_operation_gtype_from_name ("");
       g_hash_table_foreach (gtype_hash, addop, NULL);
       operations_list = g_slist_sort (operations_list, (GCompareFunc) strcmp);
     }
-  return operations_list;
+
+  n_operations = g_slist_length (operations_list);
+  pasp_size += (n_operations+1) * sizeof (gchar*);
+  for (iter = operations_list; iter!=NULL; iter= g_slist_next (iter))
+    {
+      const gchar *name = iter->data;
+      pasp_size += strlen (name) + 1;
+    }
+  pasp = g_malloc (pasp_size);
+  pasp_pos = (n_operations+1) * sizeof (gchar*);
+  for (iter = operations_list, i=0; iter!=NULL; iter= g_slist_next (iter), i++)
+    {
+      const gchar *name = iter->data;
+      pasp[i] = ((gchar*)pasp) + pasp_pos;
+      strcpy (pasp[i], name);
+      pasp_pos += strlen (name) + 1;
+    }
+  pasp[i] = NULL;
+  if (n_operations_p)
+    *n_operations_p = n_operations;
+  return pasp;
 }
 
 /* returns a freshly allocated list of the properties of the object, does not list

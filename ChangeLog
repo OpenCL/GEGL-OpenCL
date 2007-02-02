@@ -1,5 +1,13 @@
 2007-02-02  Øyvind Kolås  <pippin@gimp.org>
 
+	Made gegl_list_operations return an array instead of a GSList.
+
+	* gegl/gegl-operation.c: (add_operations), (gegl_list_operations):
+	* gegl/gegl-operation.h:
+	* gegl/gegl.h: changed prototype, added documentation and sample code.
+
+2007-02-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl.h: added GEGL_COLOR()
 
 2007-02-01  Øyvind Kolås  <pippin@gimp.org>

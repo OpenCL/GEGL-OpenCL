@@ -436,22 +436,37 @@ void           gegl_processor_destroy       (GeglProcessor *processor);
 
 /**
  * gegl_list_operations:
+ * @n_operations_p: return location for number of operations.
  *
- * Returns a list of available operations names. The list should not be freed.
+ * Returns an alphabetically sorted array of available operation names. The
+ * list should be freed with g_free after use.
+ * --
+ * gchar **operations;
+ * guint   n_operations;
+ * gint i;
+ *
+ * operations = gegl_list_operations (&n_operations);
+ * g_print ("Available operations:\n");
+ * for (i=0; i < n_operations; i++)
+ *   {
+ *     g_print ("\t%s\n", operations[i]);
+ *   }
+ * g_free (operations);
  */
-GSList      * gegl_list_operations (void);
+gchar        **gegl_list_operations         (guint *n_operations_p);
 
 
 /**
  * gegl_list_properties:
  * @operation_type: the name of the operation type we want to query to properties of.
- * @n_properties: return location for number of properties.
+ * @n_properties_p: return location for number of properties.
  *
  * Returns an allocated array of #GParamSpecs describing the properties
- * of the operation currently set for a node.
+ * of the operation currently set for a node. The returned array should
+ * be freed with g_free.
  */
-GParamSpec** gegl_list_properties        (const gchar   *operation_type,
-                                          guint         *n_properties_p);
+GParamSpec** gegl_list_properties           (const gchar   *operation_type,
+                                             guint         *n_properties_p);
 
 
 /**
