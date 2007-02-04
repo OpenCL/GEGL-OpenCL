@@ -429,11 +429,9 @@ static void encode_node_attributes (SerializeState *ss,
 
               if (value)
                 {
-                  g_warning ("%s|%s|", ss->path_root, value);
                   if (ss->path_root &&
                    !strncmp (ss->path_root, value, strlen (ss->path_root)))
                     {
-                      g_warning ("foo");
                       tuple (ss->buf, properties[i]->name, &value[strlen(ss->path_root)+1]);
                     }
                   else
