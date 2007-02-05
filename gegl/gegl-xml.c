@@ -384,12 +384,20 @@ static void tuple (GString     *buf,
   if (value)
     {
       gchar *text = g_markup_escape_text (value, -1);
+      gchar *p;
 
       g_string_append_c (buf, ' ');
       g_string_append (buf, key);
       g_string_append_c (buf, '=');
       g_string_append_c (buf, '\'');
-      g_string_append (buf, text);
+      for (p=text;*p;p++)
+        {
+          if (*p=='\n')
+            g_string_append (buf, "&#10;");
+          else
+            g_string_append_c (buf, *p);
+
+        }
       g_string_append_c (buf, '\'');
 
       g_free (text);
@@ -478,13 +486,6 @@ static void encode_node_attributes (SerializeState *ss,
                 {
                   tuple (ss->buf, properties[i]->name, "false");
                 }
-            }
-          else if (properties[i]->value_type == G_TYPE_STRING)
-            {
-              gchar *value;
-              gegl_node_get (node, properties[i]->name, &value, NULL);
-              tuple (ss->buf, properties[i]->name, value);
-              g_free (value);
             }
           else if (properties[i]->value_type == G_TYPE_STRING)
             {

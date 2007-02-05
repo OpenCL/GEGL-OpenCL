@@ -1,5 +1,10 @@
 2007-02-05  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-xml.c: (tuple), (encode_node_attributes): escape newlines
+	in attribute value.
+
+2007-02-05  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-xml.c: (encode_node_attributes): silence debug output when
 	serializing to XML.
 
