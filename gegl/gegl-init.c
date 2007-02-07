@@ -28,6 +28,7 @@
 #include "module/geglmodule.h"
 #include "module/geglmoduledb.h"
 #include <stdlib.h>
+#include <unistd.h>
 
 static gboolean  gegl_post_parse_hook (GOptionContext *context,
                                        GOptionGroup   *group,
@@ -137,6 +138,16 @@ gegl_exit (void)
 
   if (gegl_buffer_leaks())
     g_print ("  buffer-leaks: %i", gegl_buffer_leaks ());
+
+  if (g_getenv ("GEGL_SWAP"))
+    {
+      const gchar *swapdir = g_getenv ("GEGL_SWAP");
+      guint pid = getpid ();
+      gchar buf[4096];
+      g_snprintf (buf, 4096, "rm %s/GEGL-%i-*.swap", swapdir, pid);
+      g_warning ("%s", buf);
+      system (buf);
+    }
 
   g_print ("\n");
 }

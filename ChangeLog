@@ -1,3 +1,7 @@
+2007-02-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-init.c: (gegl_exit): clean out swap files at exit.
+
 2007-02-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-xml.c: (tuple), (encode_node_attributes): escape newlines
