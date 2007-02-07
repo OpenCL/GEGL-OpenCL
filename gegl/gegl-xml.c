@@ -108,6 +108,13 @@ static void start_element (GMarkupParseContext *context,
     {
       /*NYI*/
     }
+  else if (!strcmp (element_name, "link")||
+           !strcmp (element_name, "links")||
+           !strcmp (element_name, "source")||
+           !strcmp (element_name, "destination"))
+    {
+      /* itnore */
+    }
   else
     {
       GeglNode *new;
@@ -282,6 +289,13 @@ static void end_element (GMarkupParseContext *context,
   else if (!strcmp (element_name, "graph"))
     {
       /*NYI*/
+    }
+  else if (!strcmp (element_name, "link")||
+           !strcmp (element_name, "links")||
+           !strcmp (element_name, "source")||
+           !strcmp (element_name, "destination"))
+    {
+      /* itnore */
     }
   else if (1 || !strcmp (element_name, "node"))
     {
