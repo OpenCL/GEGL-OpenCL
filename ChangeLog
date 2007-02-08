@@ -1,5 +1,13 @@
 2007-02-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/render/text.c: (process): make the buffer be of the same
+	pixeltype as the cairo rendered data and name this format directly.
+	This makes babl use an optimized conversion instead of falling back
+	on reference version (babl should probably do a closer comparison of
+	formats, but that would make it a bit slower in some circumstances.)
+
+2007-02-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-tile-zoom.c: (get_tile): When creating a scaled
 	down tile, set the initial rev!=stored_rev, to allow it being swapped
 	out of the caches (and not just destroyed).

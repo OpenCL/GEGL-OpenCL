@@ -147,9 +147,17 @@ process (GeglOperation *operation,
   result = gegl_operation_result_rect (operation, context_id);
 
   output = g_object_new (GEGL_TYPE_BUFFER,
-                         "format", babl_format ("R'G'B'A u8"), /* FIXME: babl
-                                                         performs a wrong conversion if the
-                                                         correct format is specified here. */
+                         "format", /* FIXME: when babl requirements is
+                                      bumped to 0.0.14 the name should
+                                      be enough */
+                         babl_format_new ("name", "B'aG'aR'aA u8",
+                                          babl_model ("R'aG'aB'aA"),
+                                          babl_type ("u8"),
+                                          babl_component ("B'a"),
+                                          babl_component ("G'a"),
+                                          babl_component ("R'a"),
+                                          babl_component ("A"),
+                                          NULL),
                          "x",      result->x,
                          "y",      result->y,
                          "width",  result->w,
@@ -169,7 +177,8 @@ process (GeglOperation *operation,
 
     gegl_buffer_set (output,
                      NULL,
-                     babl_format_new (babl_model ("R'aG'aB'aA"),
+                     babl_format_new ("name", "B'aG'aR'aA u8",
+                                      babl_model ("R'aG'aB'aA"),
                                       babl_type ("u8"),
                                       babl_component ("B'a"),
                                       babl_component ("G'a"),
