@@ -373,7 +373,31 @@ static guint hashfunc (gconstpointer key)
 {
   const DiskEntry *e = key;
   guint hash;
-  hash = e->x * 7 + e->y + e->z * 11;
+  gint  i;
+  gint  srcA=e->x;
+  gint  srcB=e->y;
+  gint  srcC=e->z;
+
+  /* interleave the 10 least significant bits of all coordinates,
+   * this gives us Z-order / morton order of the space and should
+   * work well as a hash
+  */
+  hash = 0;
+  for (i=0;i<10;i++)
+    {
+      if (srcA & (1<<10))
+        hash=1;
+      hash <<=1;
+      if (srcB & (1<<10))
+        hash=1;
+      hash <<=1;
+      if (srcC & (1<<10))
+        hash=1;
+      hash <<= 1;
+      srcA<<=1;
+      srcB<<=1;
+      srcC<<=1;
+    }
   return hash;
 }
 

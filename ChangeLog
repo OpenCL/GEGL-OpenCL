@@ -1,3 +1,12 @@
+2007-02-08  Øyvind Kolås  <pippin@gimp.org>
+
+	Replaced naive hash functions with positions on a 3d Z-order space
+	filling curve (Morton ordering) using the 10 least significant bits of
+	X, Y and Z indices of the tile, interleaved.
+
+	* gegl/buffer/gegl-tile-disk.c: (hashfunc):
+	* gegl/buffer/gegl-tile-mem.c: (hashfunc):
+
 2007-02-07  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-xml.c: ignore links,link,source and destination tags.
