@@ -144,6 +144,14 @@ message (GeglTileStore   *tile_store,
     {
       return gegl_tile_cache_has_tile (cache, x, y, z);
     }
+  if (message == GEGL_TILE_EXIST)
+    {
+      gboolean is_cached = gegl_tile_cache_has_tile (cache, x, y, z);
+      if (is_cached)
+        return TRUE;
+      /* otherwise pass on the request */
+    }
+
   if (message == GEGL_TILE_IDLE)
     {
       gboolean action = gegl_tile_cache_wash (cache);

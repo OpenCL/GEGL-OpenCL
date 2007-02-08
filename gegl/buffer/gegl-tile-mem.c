@@ -204,6 +204,21 @@ gboolean void_tile (GeglTileStore *store,
   return TRUE;
 }
 
+static
+gboolean exist_tile (GeglTileStore *store,
+                     GeglTile      *tile,
+                     gint           x,
+                     gint           y,
+                     gint           z)
+{
+  GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
+  GeglTileMem    *tile_mem = GEGL_TILE_MEM (backend);
+  MemEntry *entry = lookup_entry (tile_mem, x, y, z);
+ 
+  return entry!=NULL; 
+}
+
+
 enum {
   PROP_0,
 };
@@ -224,7 +239,8 @@ message (GeglTileStore   *tile_store,
         return FALSE;
       case GEGL_TILE_VOID:
         return void_tile (tile_store, data, x, y, z);
-        break;
+      case GEGL_TILE_EXIST:
+        return exist_tile (tile_store, data, x, y, z);
       default:
         g_assert (message <  GEGL_TILE_LAST_MESSAGE &&
                   message >= 0);

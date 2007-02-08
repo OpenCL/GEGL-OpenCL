@@ -45,7 +45,6 @@ message (GeglTileStore   *gegl_tile_store,
   return FALSE;
 }
 
-
 static void
 gegl_tile_store_class_init (GeglTileStoreClass * klass)
 {
