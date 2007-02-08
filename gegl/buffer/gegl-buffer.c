@@ -590,29 +590,37 @@ gegl_buffer_void (GeglBuffer *buffer)
   gint tile_height = gegl_buffer_storage (buffer)->tile_height;
   gint bufy        = 0;
 
+  {
+    gint z;
+    gint factor=1;
+    for (z=0;z<10;z++)
+      {
+        bufy=buffer->y;
+        while (bufy < height)
+          {
+            gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
+            gint offsety = gegl_tile_offset (tiledy, tile_height);
+            gint bufx = buffer->x;
 
-  while (bufy < height)
-    {
-      gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
-      gint offsety = gegl_tile_offset (tiledy, tile_height);
-      gint bufx    = 0;
+            while (bufx < width)
+              {
+                gint tiledx = buffer->x + bufx + buffer->total_shift_x;
+                gint offsetx = gegl_tile_offset (tiledx, tile_width);
 
-      while (bufx < width)
-        {
-          gint      tiledx  = buffer->x + bufx + buffer->total_shift_x;
-          gint      offsetx = gegl_tile_offset (tiledx, tile_width);
-          gint      z;
+                gint tx=gegl_tile_indice(tiledx/factor,tile_width);
+                gint ty=gegl_tile_indice(tiledy/factor,tile_height);
 
-          for (z=0;z<10;z++)
-          gegl_tile_store_message (GEGL_TILE_STORE (buffer),
-                                   GEGL_TILE_VOID,
-                                   gegl_tile_indice(tiledx,tile_width),
-                                   gegl_tile_indice(tiledy,tile_height), z,
-                                   NULL);
-          bufx += (tile_width - offsetx);
-        }
-      bufy += (tile_height - offsety);
-    }
+                gegl_tile_store_message (GEGL_TILE_STORE (buffer),
+                    GEGL_TILE_VOID, tx, ty, z, NULL);
+
+                bufx += (tile_width - offsetx)*factor;
+              }
+            bufy += (tile_height - offsety)*factor;
+          }
+        factor*=2;
+      }
+  }
+
 }
 
 
