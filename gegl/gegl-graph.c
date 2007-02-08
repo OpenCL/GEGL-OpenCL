@@ -161,7 +161,7 @@ source_invalidated (GeglNode      *source,
      destination_name,
      source_name,
      rect->x, rect->y,
-     rect->w, rect->h);
+     rect->width  , rect->height);
 
   dirty_rect = *rect;
 

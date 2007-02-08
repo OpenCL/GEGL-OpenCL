@@ -450,7 +450,7 @@ source_invalidated (GeglNode      *source,
      gegl_pad_get_name (destination_pad),
      source_name,
      rect->x, rect->y,
-     rect->w, rect->h);
+     rect->width  , rect->height);
 
   if (destination->operation)
     {
@@ -760,8 +760,8 @@ void          gegl_node_blit                (GeglNode      *node,
                                             "source", buffer,
                                             "x",      roi->x,
                                             "y",      roi->y,
-                                            "width",  roi->w,
-                                            "height", roi->h,
+                                            "width",  roi->width  ,
+                                            "height", roi->height,
                                             NULL);
         gegl_buffer_get (roi_buf, NULL, 1.0, format, destination_buf);
         g_object_unref (roi_buf);
@@ -1356,8 +1356,8 @@ gegl_node_set_have_rect (GeglNode    *node,
   g_assert (node);
   node->have_rect.x = x;
   node->have_rect.y = y;
-  node->have_rect.w = width;
-  node->have_rect.h = height;
+  node->have_rect.width  = width;
+  node->have_rect.height = height;
 }
 
 GeglRectangle *
@@ -1378,8 +1378,8 @@ gegl_node_set_need_rect (GeglNode    *node,
   g_assert (node);
   dynamic->need_rect.x = x;
   dynamic->need_rect.y = y;
-  dynamic->need_rect.w = width;
-  dynamic->need_rect.h = height;
+  dynamic->need_rect.width  = width;
+  dynamic->need_rect.height = height;
 }
 
 GeglRectangle *
@@ -1403,8 +1403,8 @@ gegl_node_set_result_rect (GeglNode *node,
   g_assert (dynamic);
   dynamic->result_rect.x = x;
   dynamic->result_rect.y = y;
-  dynamic->result_rect.w = width;
-  dynamic->result_rect.h = height;
+  dynamic->result_rect.width  = width;
+  dynamic->result_rect.height = height;
 }
 
 GeglRectangle *
@@ -1538,7 +1538,7 @@ gegl_node_process (GeglNode *self)
     g_value_unset (&value);
   }
 
-  gegl_node_dynamic_set_result_rect (dynamic, defined.x, defined.y, defined.w, defined.h);
+  gegl_node_dynamic_set_result_rect (dynamic, defined.x, defined.y, defined.width  , defined.h);
   gegl_operation_process (self->operation, &defined, "foo");
   gegl_node_remove_dynamic (self, &defined);
   g_object_unref (buffer);

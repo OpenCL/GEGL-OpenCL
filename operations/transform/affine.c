@@ -269,8 +269,8 @@ bounding_box (gdouble       *points,
 
   output->x = floor (min_x);
   output->y = floor (min_y);
-  output->w = (gint) ceil (max_x) - output->x;
-  output->h = (gint) ceil (max_y) - output->y;
+  output->width  = (gint) ceil (max_x) - output->x;
+  output->height = (gint) ceil (max_y) - output->y;
 }
 
 static gboolean
@@ -371,29 +371,29 @@ get_defined_region (GeglOperation *op)
     {
       if (affine->hard_edges)
         {
-          in_rect.w++;
-          in_rect.h++;
+          in_rect.width ++;
+          in_rect.height ++;
         }
       else
         {
           in_rect.x--;
           in_rect.y--;
-          in_rect.w += 2;
-          in_rect.h += 2;
+          in_rect.width  += 2;
+          in_rect.height  += 2;
         }
     }
 
   have_points [0] = in_rect.x;
   have_points [1] = in_rect.y;
 
-  have_points [2] = in_rect.x + in_rect.w;
+  have_points [2] = in_rect.x + in_rect.width ;
   have_points [3] = in_rect.y;
 
-  have_points [4] = in_rect.x + in_rect.w;
-  have_points [5] = in_rect.y + in_rect.h;
+  have_points [4] = in_rect.x + in_rect.width ;
+  have_points [5] = in_rect.y + in_rect.height ;
 
   have_points [6] = in_rect.x;
-  have_points [7] = in_rect.y + in_rect.h;
+  have_points [7] = in_rect.y + in_rect.height ;
 
   for (i = 0; i < 8; i += 2)
     matrix3_transform_point (affine->matrix,
@@ -461,14 +461,14 @@ calc_source_regions (GeglOperation *op,
   need_points [0] = requested_rect.x;
   need_points [1] = requested_rect.y;
 
-  need_points [2] = requested_rect.x + requested_rect.w;
+  need_points [2] = requested_rect.x + requested_rect.width ;
   need_points [3] = requested_rect.y;
 
-  need_points [4] = requested_rect.x + requested_rect.w;
-  need_points [5] = requested_rect.y + requested_rect.h;
+  need_points [4] = requested_rect.x + requested_rect.width ;
+  need_points [5] = requested_rect.y + requested_rect.height ;
 
   need_points [6] = requested_rect.x;
-  need_points [7] = requested_rect.y + requested_rect.h;
+  need_points [7] = requested_rect.y + requested_rect.height ;
 
   matrix3_copy (inverse, affine->matrix);
   matrix3_invert (inverse);
@@ -482,15 +482,15 @@ calc_source_regions (GeglOperation *op,
     {
       if (affine->hard_edges)
         {
-          need_rect.w++;
-          need_rect.h++;
+          need_rect.width ++;
+          need_rect.height ++;
         }
       else
         {
           need_rect.x--;
           need_rect.y--;
-          need_rect.w += 2;
-          need_rect.h += 2;
+          need_rect.width  += 2;
+          need_rect.height  += 2;
         }
     }
 
@@ -534,29 +534,29 @@ get_affected_region (GeglOperation *op,
     {
       if (affine->hard_edges)
         {
-          region.w++;
-          region.h++;
+          region.width ++;
+          region.height ++;
         }
       else
         {
           region.x--;
           region.y--;
-          region.w += 2;
-          region.h += 2;
+          region.width  += 2;
+          region.height  += 2;
         }
     }
 
   affected_points [0] = region.x;
   affected_points [1] = region.y;
 
-  affected_points [2] = region.x + region.w;
+  affected_points [2] = region.x + region.width ;
   affected_points [3] = region.y;
 
-  affected_points [4] = region.x + region.w;
-  affected_points [5] = region.y + region.h;
+  affected_points [4] = region.x + region.width ;
+  affected_points [5] = region.y + region.height ;
 
   affected_points [6] = region.x;
-  affected_points [7] = region.y + region.h;
+  affected_points [7] = region.y + region.height ;
 
   for (i = 0; i < 8; i += 2)
     matrix3_transform_point (affine->matrix,
@@ -586,8 +586,8 @@ process (GeglOperation *op,
         "source", filter_input,
         "x",      result->x,
         "y",      result->y,
-        "width",  result->w,
-        "height", result->h,
+        "width",  result->width ,
+        "height", result->height,
         NULL);
   else if (matrix3_is_translate (affine->matrix) &&
            (! strcasecmp (affine->filter, "nearest") ||
@@ -597,8 +597,8 @@ process (GeglOperation *op,
                            "source",      filter_input,
                            "x",           result->x,
                            "y",           result->y,
-                           "width",       result->w,
-                           "height",      result->h,
+                           "width",       result->width ,
+                           "height",      result->height,
                            "shift-x",     (gint) - affine->matrix [0][2],
                            "shift-y",     (gint) - affine->matrix [1][2],
                            "abyss-width", -1, /* use source's abyss */
@@ -609,8 +609,8 @@ process (GeglOperation *op,
           "format", babl_format ("RaGaBaA float"),
           "x",      result->x,
           "y",      result->y,
-          "width",  result->w,
-          "height", result->h,
+          "width",  result->width ,
+          "height", result->height,
           NULL);
 
       if (! strcasecmp (affine->filter, "linear"))

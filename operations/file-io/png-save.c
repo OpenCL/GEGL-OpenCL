@@ -54,7 +54,7 @@ process (GeglOperation *operation,
 
   gegl_buffer_export_png (input, self->path,
                           result->x, result->y,
-                          result->w, result->h);
+                          result->width, result->height);
   return  TRUE;
 }
 

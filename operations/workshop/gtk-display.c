@@ -110,11 +110,11 @@ process (GeglOperation *operation,
 
   g_assert (input);
 
-  if (priv->width != requested->w ||
-      priv->height != requested->h)
+  if (priv->width != requested->width  ||
+      priv->height != requested->height)
     {
-      priv->width = requested->w;
-      priv->height = requested->h;
+      priv->width = requested->width ;
+      priv->height = requested->height;
       gtk_widget_set_size_request (priv->drawing_area, priv->width, priv->height);
 
       if (priv->buf)
@@ -126,8 +126,8 @@ process (GeglOperation *operation,
                          "source", input,
                          "x",      requested->x,
                          "y",      requested->y,
-                         "width",  requested->w,
-                         "height", requested->h,
+                         "width",  requested->width ,
+                         "height", requested->height,
                          NULL);
 
   gegl_buffer_get (source, NULL, 1.0, babl_format ("R'G'B'A u8"), priv->buf);

@@ -404,19 +404,19 @@ process (GeglOperation *operation,
                            "format", babl_format ("R'G'B' u8"),
                            "x",      result->x,
                            "y",      result->y,
-                           "width",  result->w,
-                           "height", result->h,
+                           "width",  result->width ,
+                           "height", result->height,
                            NULL);
 
     buf  = g_new (guchar, gegl_buffer_pixels (output) * 3);
       {
         guchar *dst=buf;
         gint y;
-        for (y=0; y < result->h; y++)
+        for (y=0; y < result->height; y++)
           {
             explorer_render_row (self,
                                  result->x,
-                                 result->x + result->w,
+                                 result->x + result->width ,
                                  result->y + y,
                                  colormap,
                                  &dst);
@@ -436,8 +436,8 @@ get_defined_region (GeglOperation *operation)
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   GeglRectangle       result = {0,0,0,0};
 
-  result.w = self->width;
-  result.h = self->height;
+  result.width  = self->width;
+  result.height  = self->height;
 
   return result;
 }

@@ -1,5 +1,92 @@
 2007-02-09  Øyvind Kolås  <pippin@gimp.org>
 
+	%s/->w/->width/ , %s/\.w/.width/ for GeglRectangles.
+
+	* bin/editor.c: (cb_introspect), (cb_fit), (cb_fit_on_screen),
+	(cb_shrinkwrap):
+	* bin/export.c: (set_to_defined), (button_input_clicked),
+	(button_view_clicked), (button_render_clicked),
+	(gegl_buffer_export_png):
+	* bin/gegl-view.c: (computed_event), (expose_event):
+	* bin/gegl.c:
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_constructor),
+	(gegl_buffer_void), (gegl_buffer_set), (gegl_buffer_get_scaled),
+	(gegl_buffer_get):
+	* gegl/buffer/gegl-buffer.h:
+	* gegl/buffer/gegl-region-generic.c: (gegl_region_rectangle),
+	(gegl_region_get_clipbox), (gegl_region_get_rectangles),
+	(gegl_region_union_with_rect), (gegl_region_rect_in):
+	* gegl/gegl-debug-rect-visitor.c: (visit_node):
+	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
+	* gegl/gegl-graph.c: (source_invalidated):
+	* gegl/gegl-have-visitor.c: (visit_node):
+	* gegl/gegl-node-dynamic.c: (gegl_node_dynamic_set_need_rect),
+	(gegl_node_dynamic_set_result_rect):
+	* gegl/gegl-node.c: (source_invalidated), (gegl_node_blit),
+	(gegl_node_set_have_rect), (gegl_node_set_need_rect),
+	(gegl_node_set_result_rect), (gegl_node_process):
+	* gegl/gegl-operation-point-composer.c: (process_inner):
+	* gegl/gegl-operation-point-filter.c: (process_inner):
+	* gegl/gegl-operation.c: (gegl_operation_get_affected_region),
+	(gegl_operation_set_source_region), (gegl_operation_detect):
+	* gegl/gegl-processor.c: (gegl_node_new_processor),
+	(render_rectangle), (rect_area):
+	* gegl/gegl-types.h:
+	* gegl/gegl-utils.c: (gegl_rectangle_set),
+	(gegl_rectangle_bounding_box), (gegl_rectangle_intersect),
+	(gegl_rectangle_copy), (gegl_rectangle_contains),
+	(gegl_rectangle_equal), (gegl_rectangle_equal_coords):
+	* gegl/gegl-utils.h:
+	* gegl/gegl.h:
+	* operations/blur/box-blur.c: (process), (get_defined_region),
+	(get_source_rect), (get_affected_region):
+	* operations/blur/gaussian-blur.c: (process), (get_defined_region),
+	(get_source_rect), (get_affected_region):
+	* operations/color/brightness-contrast.c:
+	* operations/color/remap.c: (process):
+	* operations/color/stretch-contrast.c: (process):
+	* operations/core/buffer.c: (get_defined_region):
+	* operations/core/clone.c: (detect):
+	* operations/core/crop.c: (get_defined_region):
+	* operations/display/display.c: (process):
+	* operations/file-io/jpg-load.c: (get_defined_region):
+	* operations/file-io/load.c: (detect):
+	* operations/file-io/magick-load.c: (get_defined_region):
+	* operations/file-io/pixbuf.c: (get_defined_region):
+	* operations/file-io/png-load.c: (get_defined_region):
+	* operations/file-io/png-save.c: (process):
+	* operations/file-io/raw-load.c: (get_defined_region):
+	* operations/file-io/svg-load.c: (get_defined_region):
+	* operations/render/FractalExplorer.c: (process),
+	(get_defined_region):
+	* operations/render/checkerboard.c: (process):
+	* operations/render/color.c: (process):
+	* operations/render/introspect.c: (process):
+	* operations/render/noise.c: (process):
+	* operations/render/text.c: (process), (get_defined_region):
+	* operations/transform/affine.c: (bounding_box),
+	(get_defined_region), (calc_source_regions), (get_affected_region),
+	(process):
+	* operations/workshop/box-max.c: (process), (get_defined_region),
+	(get_source_rect), (get_affected_region):
+	* operations/workshop/box-min.c: (process), (get_defined_region),
+	(get_source_rect), (get_affected_region):
+	* operations/workshop/demosaic-simple.c: (process),
+	(get_defined_region), (get_source_rect), (get_affected_region):
+	* operations/workshop/gtk-display.c: (process):
+	* operations/workshop/kuwahara-max.c: (process),
+	(get_defined_region), (get_source_rect), (get_affected_region):
+	* operations/workshop/kuwahara-min.c: (process),
+	(get_defined_region), (get_source_rect), (get_affected_region):
+	* operations/workshop/kuwahara-switch.c: (process),
+	(get_defined_region), (get_source_rect), (get_affected_region):
+	* operations/workshop/kuwahara.c: (process), (get_defined_region),
+	(get_source_rect), (get_affected_region):
+	* operations/workshop/mandelbrot.c: (process):
+	* operations/workshop/rawbayer-load.c: (get_defined_region):
+
+2007-02-09  Øyvind Kolås  <pippin@gimp.org>
+
 	Added GEGL_TILE_EXIST message to tile protocol, used to query
 	if the tile is available, but does not do any unneccesary loading
 	of it.

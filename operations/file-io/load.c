@@ -178,8 +178,8 @@ detect (GeglOperation *operation,
 
   if (x >= output->have_rect.x &&
       y >= output->have_rect.y &&
-      x  < output->have_rect.x + output->have_rect.w &&
-      y  < output->have_rect.y + output->have_rect.h)
+      x  < output->have_rect.x + output->have_rect.width  &&
+      y  < output->have_rect.y + output->have_rect.height )
     return node;
   return NULL;
 }

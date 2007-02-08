@@ -86,8 +86,8 @@ get_defined_region (GeglOperation *operation)
 
   result.x = op_crop->x;
   result.y = op_crop->y;
-  result.w = op_crop->width;
-  result.h = op_crop->height;
+  result.width  = op_crop->width;
+  result.height  = op_crop->height;
 
 
   return result;

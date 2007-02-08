@@ -63,11 +63,11 @@ process (GeglOperation *operation,
 
       work.x-=self->radius;
       work.y-=self->radius;
-      work.w+=self->radius*2;
-      work.h+=self->radius*2;
+      work.width +=self->radius*2;
+      work.height +=self->radius*2;
 
-      if (result->w==0 ||
-          result->h==0)
+      if (result->width ==0 ||
+          result->height==0)
         {
           output = g_object_ref (input);
         }
@@ -77,16 +77,16 @@ process (GeglOperation *operation,
                                  "source", input,
                                  "x",      work.x,
                                  "y",      work.y,
-                                 "width",  work.w,
-                                 "height", work.h,
+                                 "width",  work.width ,
+                                 "height", work.height ,
                                  NULL);
 
           output = g_object_new (GEGL_TYPE_BUFFER,
                                  "format", babl_format ("RGBA float"),
                                  "x",      work.x,
                                  "y",      work.y,
-                                 "width",  work.w,
-                                 "height", work.h,
+                                 "width",  work.width ,
+                                 "height", work.height ,
                                  NULL);
 
           kuwahara (temp_in, output, self->radius);
@@ -98,8 +98,8 @@ process (GeglOperation *operation,
                                               "source", output,
                                               "x",      result->x,
                                               "y",      result->y,
-                                              "width",  result->w,
-                                              "height", result->h,
+                                              "width",  result->width ,
+                                              "height", result->height,
                                               NULL);
         gegl_operation_set_data (operation, context_id, "output", G_OBJECT (cropped));
         g_object_unref (output);
@@ -285,13 +285,13 @@ get_defined_region (GeglOperation *operation)
     return result;
 
   result = *in_rect;
-  if (result.w != 0 &&
-      result.h != 0)
+  if (result.width  != 0 &&
+      result.height  != 0)
     {
       result.x-=radius;
       result.y-=radius;
-      result.w+=radius*2;
-      result.h+=radius*2;
+      result.width +=radius*2;
+      result.height +=radius*2;
     }
   
   return result;
@@ -307,13 +307,13 @@ static GeglRectangle get_source_rect (GeglOperation *self,
   radius = ceil(blur->radius);
 
   rect  = *gegl_operation_get_requested_region (self, context_id);
-  if (rect.w != 0 &&
-      rect.h != 0)
+  if (rect.width  != 0 &&
+      rect.height  != 0)
     {
       rect.x -= radius;
       rect.y -= radius;
-      rect.w += radius*2;
-      rect.h += radius*2;
+      rect.width  += radius*2;
+      rect.height  += radius*2;
     }
 
   return rect;
@@ -342,8 +342,8 @@ get_affected_region (GeglOperation *self,
 
   region.x -= radius;
   region.y -= radius;
-  region.w += radius*2;
-  region.h += radius*2;
+  region.width  += radius*2;
+  region.height  += radius*2;
   return region;
 }
 

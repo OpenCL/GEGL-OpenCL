@@ -30,6 +30,9 @@
  * This document is both a tutorial and the reference for the C API of GEGL.
  * The concepts covered in the tutotrial should be applicable using other
  * languages as well.
+ *
+ * The core API of GEGL isn't frozen yet and feedback regarding it's use as
+ * well as the clarity of this documentation is most welcome.
  */
 
 /***
@@ -110,11 +113,11 @@ void           gegl_exit                 (void);
  *                             "operation", "load",
  *                             "path",      "input.png",
  *                             NULL);
- * save = gegl_node_new_child (gegl,
- *                             "operation", "brightness-contrast",
- *                             "brightness", 0.2,
- *                             "contrast",   1.5,
- *                             NULL);
+ * bcontrast = gegl_node_new_child (gegl,
+ *                                  "operation", "brightness-contrast",
+ *                                  "brightness", 0.2,
+ *                                  "contrast",   1.5,
+ *                                  NULL);
  */
 #ifndef GEGL_INTERNAL /* These declarations duplicate internal ones in GEGL */
 typedef struct _GeglNode      GeglNode;
@@ -141,13 +144,17 @@ GeglNode     * gegl_node_new             (void);
 /**
  * gegl_node_new_child:
  * @parent: a #GeglNode
- * @first_property_name: the first property name, should usually be "operation"
+ * @first_property_name: the first property name
  * @...: first property value, optionally followed by more key/value pairs, ended
  * terminated with NULL.
  *
  * Creates a new processing node that performs the specified operation with
  * a NULL terminated list of key/value pairs for initial parameter values
- * configuring the operation.
+ * configuring the operation. Usually the first pair should be "operation"
+ * and the type of operation to be associated. If no operation is provided
+ * the node doesn't have an initial operation and can be used to construct
+ * a subgraph with special middle-man routing nodes created with
+ * #gegl_node_get_output_proxy and #gegl_node_get_input_proxy.
  *
  * Returns a newly created node, the node will be destroyed by the parent.
  * Calling g_object_unref on a node will cause the node to be dropped by the
@@ -335,6 +342,8 @@ void          gegl_node_blit             (GeglNode      *node,
  *
  * gegl = gegl_parse_xml (xml_data);
  * roi      = gegl_node_get_bounding_box (gegl);
+ * # create png_save from the graph, the parent/child relationship
+ * # only mean anything when it comes to memory management.
  * png_save = gegl_node_new_child (gegl,
  *                                 "operation", "png-save",
  *                                 "path",      "output.png",
@@ -654,8 +663,8 @@ gchar       * gegl_to_xml                (GeglNode      *node,
  * {
  *   gint x;
  *   gint y;
- *   gint w;
- *   gint h;
+ *   gint width;
+ *   gint height;
  * };</pre><p>
  *
  */
@@ -663,8 +672,8 @@ struct _GeglRectangle
 {
   gint x;
   gint y;
-  gint w;
-  gint h;
+  gint width;
+  gint height;
 };
 
 /***

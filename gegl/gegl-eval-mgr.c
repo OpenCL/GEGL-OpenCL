@@ -111,8 +111,8 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
   gegl_visitor_dfs_traverse (have_visitor, GEGL_VISITABLE(root));
   g_object_unref (have_visitor);
 
-  if (self->roi.w==-1 &&
-      self->roi.h==-1)
+  if (self->roi.width  ==-1 &&
+      self->roi.height ==-1)
     {
       GeglRectangle *root_have_rect = gegl_node_get_have_rect (root);
       g_assert (root_have_rect);
@@ -120,7 +120,7 @@ gegl_eval_mgr_apply (GeglEvalMgr *self,
     }
 
   gegl_node_set_need_rect (root, context_id, self->roi.x, self->roi.y,
-                                             self->roi.w, self->roi.h);
+                                             self->roi.width  , self->roi.height);
   root->is_root = TRUE;
 
   need_visitor = g_object_new (GEGL_TYPE_NEED_VISITOR, "id", context_id, NULL);

@@ -138,7 +138,7 @@ gegl_region_rectangle (GeglRectangle *rectangle)
 
   g_return_val_if_fail (rectangle != NULL, NULL);
 
-  if (rectangle->w <= 0 || rectangle->h <= 0)
+  if (rectangle->width  <= 0 || rectangle->height <= 0)
     return gegl_region_new();
 
   temp = g_slice_new (GeglRegion);
@@ -147,8 +147,8 @@ gegl_region_rectangle (GeglRectangle *rectangle)
   temp->rects = &temp->extents;
   temp->extents.x1 = rectangle->x;
   temp->extents.y1 = rectangle->y;
-  temp->extents.x2 = rectangle->x + rectangle->w;
-  temp->extents.y2 = rectangle->y + rectangle->h;
+  temp->extents.x2 = rectangle->x + rectangle->width ;
+  temp->extents.y2 = rectangle->y + rectangle->height;
   temp->size = 1;
   
   return temp;
@@ -193,8 +193,8 @@ gegl_region_get_clipbox (GeglRegion    *region,
   
   rectangle->x = region->extents.x1;
   rectangle->y = region->extents.y1;
-  rectangle->w = region->extents.x2 - region->extents.x1;
-  rectangle->h = region->extents.y2 - region->extents.y1;
+  rectangle->width  = region->extents.x2 - region->extents.x1;
+  rectangle->height = region->extents.y2 - region->extents.y1;
 }
 
 
@@ -227,8 +227,8 @@ gegl_region_get_rectangles (GeglRegion     *region,
       rect = region->rects[i];
       (*rectangles)[i].x = rect.x1;
       (*rectangles)[i].y = rect.y1;
-      (*rectangles)[i].w= rect.x2 - rect.x1;
-      (*rectangles)[i].h= rect.y2 - rect.y1;
+      (*rectangles)[i].width = rect.x2 - rect.x1;
+      (*rectangles)[i].height = rect.y2 - rect.y1;
     }
 }
 
@@ -250,15 +250,15 @@ gegl_region_union_with_rect (GeglRegion    *region,
   g_return_if_fail (region != NULL);
   g_return_if_fail (rect != NULL);
 
-  if (rect->w <= 0 || rect->h <= 0)
+  if (rect->width  <= 0 || rect->height <= 0)
     return;
     
   tmp_region.rects = &tmp_region.extents;
   tmp_region.numRects = 1;
   tmp_region.extents.x1 = rect->x;
   tmp_region.extents.y1 = rect->y;
-  tmp_region.extents.x2 = rect->x + rect->w;
-  tmp_region.extents.y2 = rect->y + rect->h;
+  tmp_region.extents.x2 = rect->x + rect->width ;
+  tmp_region.extents.y2 = rect->y + rect->height;
   tmp_region.size = 1;
 
   gegl_region_union (region, &tmp_region);
@@ -1617,8 +1617,8 @@ gegl_region_rect_in (GeglRegion    *region,
   
   prect->x1 = rx;
   prect->y1 = ry;
-  prect->x2 = rx + rectangle->w;
-  prect->y2 = ry + rectangle->h;
+  prect->x2 = rx + rectangle->width ;
+  prect->y2 = ry + rectangle->height;
     
     /* this is (just) a useful optimization */
   if ((region->numRects == 0) || !EXTENTCHECK (&region->extents, prect))

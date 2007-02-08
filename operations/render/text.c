@@ -160,16 +160,16 @@ process (GeglOperation *operation,
                                           NULL),
                          "x",      result->x,
                          "y",      result->y,
-                         "width",  result->w,
-                         "height", result->h,
+                         "width",  result->width ,
+                         "height", result->height,
                          NULL);
 
   {
-    guchar *data = g_malloc0 (result->w * result->h * 4);
+    guchar *data = g_malloc0 (result->width * result->height * 4);
     cairo_t *cr;
 
     cairo_surface_t *surface = cairo_image_surface_create_for_data (data, CAIRO_FORMAT_ARGB32,
-      result->w, result->h, result->w* 4);
+      result->width, result->height, result->width * 4);
     cr = cairo_create (surface);
     cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
     cairo_translate (cr, -result->x, -result->y);
@@ -211,8 +211,8 @@ get_defined_region (GeglOperation *operation)
         1, 1);
     cr = cairo_create (surface);
     text_layout_text (self, cr, 0, &width, &height);
-    result.w = width;
-    result.h = height;
+    result.width  = width;
+    result.height  = height;
 
     /* store the measured size for later use */
     self->width = width;

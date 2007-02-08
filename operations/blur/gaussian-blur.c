@@ -100,7 +100,7 @@ process (GeglOperation *operation,
       GeglRectangle  need = get_source_rect (operation, context_id);
 
 
-      if (result->w==0 || result->h==0 || (!self->std_dev_x && !self->std_dev_y))
+      if (result->width ==0 || result->height ==0 || (!self->std_dev_x && !self->std_dev_y))
         {
           output = g_object_ref (input);
         }
@@ -110,16 +110,16 @@ process (GeglOperation *operation,
                                  "source", input,
                                  "x",      need.x,
                                  "y",      need.y,
-                                 "width",  need.w,
-                                 "height", need.h,
+                                 "width",  need.width ,
+                                 "height", need.height ,
                                  NULL);
 
           output = g_object_new (GEGL_TYPE_BUFFER,
                                  "format", babl_format ("RaGaBaA float"),
                                  "x",      need.x,
                                  "y",      need.y,
-                                 "width",  need.w,
-                                 "height", need.h,
+                                 "width",  need.width ,
+                                 "height", need.height ,
                                  NULL);
 
           if (self->std_dev_x && self->std_dev_y)
@@ -127,8 +127,8 @@ process (GeglOperation *operation,
                                    "format", babl_format ("RaGaBaA float"),
                                    "x",      need.x,
                                    "y",      need.y,
-                                   "width",  need.w,
-                                   "height", need.h,
+                                   "width",  need.width ,
+                                   "height", need.height ,
                                    NULL);
           else if (!self->std_dev_x)
             temp = temp_in;
@@ -188,8 +188,8 @@ process (GeglOperation *operation,
                                             "source", output,
                                             "x",      result->x,
                                             "y",      result->y,
-                                            "width",  result->w,
-                                            "height", result->h,
+                                            "width",  result->width ,
+                                            "height", result->height,
                                             NULL);
         gegl_operation_set_data (operation, context_id, "output", G_OBJECT (cropped));
         g_object_unref (output);
@@ -526,13 +526,13 @@ get_defined_region (GeglOperation *operation)
 
   result = *in_rect;
 
-  if (result.w &&
-      result.h)
+  if (result.width  &&
+      result.height )
     {
       result.x-=std_dev_x*4;
       result.y-=std_dev_y*4;
-      result.w+=std_dev_x*8;
-      result.h+=std_dev_y*8;
+      result.width +=std_dev_x*8;
+      result.height +=std_dev_y*8;
     }
 
   return result;
@@ -553,13 +553,13 @@ static GeglRectangle get_source_rect (GeglOperation *self,
   rect  = *gegl_operation_get_requested_region (self, context_id);
   defined = get_defined_region (self);
   gegl_rectangle_intersect (&rect, &rect, &defined);
-  if (rect.w != 0 &&
-      rect.h != 0)
+  if (rect.width  != 0 &&
+      rect.height  != 0)
     {
       rect.x -= std_dev_x*4;
       rect.y -= std_dev_y*4;
-      rect.w += std_dev_x*8;
-      rect.h += std_dev_y*8;
+      rect.width  += std_dev_x*8;
+      rect.height  += std_dev_y*8;
     }
 
   return rect;
@@ -579,8 +579,8 @@ get_affected_region (GeglOperation *self,
 
   region.x -= std_dev_x*4;
   region.y -= std_dev_y*4;
-  region.w += std_dev_x*8;
-  region.h += std_dev_y*8;
+  region.width  += std_dev_x*8;
+  region.height  += std_dev_y*8;
   return region;
 }
 

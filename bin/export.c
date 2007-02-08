@@ -26,9 +26,9 @@ static void set_to_defined (GtkWidget *export)
   gtk_entry_set_text (x0, buf);
   sprintf (buf, "%i", rect.y);
   gtk_entry_set_text (y0, buf);
-  sprintf (buf, "%i", rect.w);
+  sprintf (buf, "%i", rect.width );
   gtk_entry_set_text (width, buf);
-  sprintf (buf, "%i", rect.h);
+  sprintf (buf, "%i", rect.height );
   gtk_entry_set_text (height, buf);
 }
 
@@ -65,9 +65,9 @@ static void button_input_clicked (GtkButton *button,
   gtk_entry_set_text (x0, buf);
   sprintf (buf, "%i", rect.y);
   gtk_entry_set_text (y0, buf);
-  sprintf (buf, "%i", rect.w);
+  sprintf (buf, "%i", rect.width );
   gtk_entry_set_text (width, buf);
-  sprintf (buf, "%i", rect.h);
+  sprintf (buf, "%i", rect.height );
   gtk_entry_set_text (height, buf);
 }
 
@@ -83,16 +83,16 @@ static void button_view_clicked (GtkButton *button,
   gchar buf[128];
 
   g_object_get (G_OBJECT (editor.view), "x", &rect.x, "y" ,&rect.y, NULL);
-  rect.w= GTK_WIDGET(editor.view)->allocation.width;
-  rect.h= GTK_WIDGET(editor.view)->allocation.height;
+  rect.width = GTK_WIDGET(editor.view)->allocation.width;
+  rect.height = GTK_WIDGET(editor.view)->allocation.height;
 
   sprintf (buf, "%i", rect.x);
   gtk_entry_set_text (x0, buf);
   sprintf (buf, "%i", rect.y);
   gtk_entry_set_text (y0, buf);
-  sprintf (buf, "%i", rect.w);
+  sprintf (buf, "%i", rect.width );
   gtk_entry_set_text (width, buf);
-  sprintf (buf, "%i", rect.h);
+  sprintf (buf, "%i", rect.height );
   gtk_entry_set_text (height, buf);
 }
 
@@ -112,8 +112,8 @@ static void button_render_clicked (GtkButton *button,
 
   rect.x = atoi (gtk_entry_get_text (x0));
   rect.y = atoi (gtk_entry_get_text (y0));
-  rect.w = atoi (gtk_entry_get_text (width));
-  rect.h = atoi (gtk_entry_get_text (height));
+  rect.width  = atoi (gtk_entry_get_text (width));
+  rect.height  = atoi (gtk_entry_get_text (height));
 
   path = gtk_entry_get_text (pathe);
   node = GEGL_VIEW (editor.view)->node;
@@ -252,7 +252,7 @@ gegl_buffer_export_png (GeglBuffer    *gegl_buffer,
                         GeglRectangle *rect,
                         const gchar   *path)
 {
-  gint           row_stride = rect->w * 4;
+  gint           row_stride = rect->width  * 4;
   FILE          *fp;
   gint           i;
   png_struct    *png;
@@ -308,7 +308,7 @@ gegl_buffer_export_png (GeglBuffer    *gegl_buffer,
   png_init_io (png, fp);
 
   png_set_IHDR (png, info,
-     rect->w, rect->h, bit_depth, PNG_COLOR_TYPE_RGB_ALPHA,
+     rect->width, rect->height, bit_depth, PNG_COLOR_TYPE_RGB_ALPHA,
      PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_DEFAULT);
 
   white.red = 0xff;
@@ -325,9 +325,9 @@ gegl_buffer_export_png (GeglBuffer    *gegl_buffer,
 
   pixels = g_malloc0 (row_stride);
 
-  for (i=0; i< rect->h; i++)
+  for (i=0; i< rect->height; i++)
     {
-      GeglRectangle    line = {rect->x, rect->y + i, rect->w, 1};
+      GeglRectangle    line = {rect->x, rect->y + i, rect->width , 1};
       gegl_buffer_get (gegl_buffer, &line, 1.0, babl_format (format_string), pixels);
       png_write_rows (png, &pixels, 1);
     }

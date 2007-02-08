@@ -757,7 +757,7 @@ cb_introspect (GtkAction *action)
 
   gtk_container_add (GTK_CONTAINER (window), introspect);
 
-  gtk_widget_set_size_request (introspect, bounding_box.w * 0.70, bounding_box.h * 0.70);
+  gtk_widget_set_size_request (introspect, bounding_box.width  * 0.70, bounding_box.height * 0.70);
   g_object_set (introspect, "scale", 0.70, NULL);
 
   g_signal_connect (G_OBJECT (window), "delete-event",
@@ -821,20 +821,20 @@ static void cb_fit (GtkAction *action)
   width -= editor.view->allocation.width;
   height -= editor.view->allocation.height;
 
-  hscale = (gdouble) editor.view->allocation.width / defined.w;
-  vscale = (gdouble) editor.view->allocation.height / defined.h;
+  hscale = (gdouble) editor.view->allocation.width / defined.width ;
+  vscale = (gdouble) editor.view->allocation.height / defined.height ;
 
   if (hscale > vscale)
     {
       hscale = vscale;
       y=0;
-      x= (editor.view->allocation.width - defined.w * hscale) / 2 / hscale;
+      x= (editor.view->allocation.width - defined.width  * hscale) / 2 / hscale;
     }
   else
     {
       vscale = hscale;
       x=0;
-      y= (editor.view->allocation.height - defined.h * vscale) / 2 / vscale;
+      y= (editor.view->allocation.height - defined.height  * vscale) / 2 / vscale;
     }
 
   g_object_set (editor.view,
@@ -843,8 +843,8 @@ static void cb_fit (GtkAction *action)
                 "scale", hscale,
                 NULL);
 
-  width += defined.w * hscale;
-  height += defined.h * vscale;
+  width += defined.width  * hscale;
+  height += defined.height  * vscale;
 
   for (i=0;i<40;i++){
     gtk_main_iteration ();
@@ -855,7 +855,7 @@ static void cb_fit (GtkAction *action)
 static void cb_fit_on_screen (GtkAction *action)
 {
   GeglRectangle defined = gegl_node_get_bounding_box (editor.gegl);
-  /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.w, defined.h);*/
+  /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.width , defined.h);*/
 
   g_object_set (editor.view, "x", defined.x, "y", defined.y, NULL);
   {
@@ -880,7 +880,7 @@ static void cb_fit_on_screen (GtkAction *action)
 static void cb_shrinkwrap (GtkAction *action)
 {
   GeglRectangle defined = gegl_node_get_bounding_box (editor.gegl);
-  /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.w, defined.h);*/
+  /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.width , defined.h);*/
   gint i;
 
   g_object_set (editor.view, "x", defined.x, "y", defined.y, NULL);
@@ -900,8 +900,8 @@ static void cb_shrinkwrap (GtkAction *action)
     height -= editor.view->allocation.height;
 
     /* add the area consumed by the canvas content */
-    width += defined.w * scale;
-    height += defined.h * scale;
+    width += defined.width  * scale;
+    height += defined.height  * scale;
 
     if (width > screen_width)
       width = screen_width;

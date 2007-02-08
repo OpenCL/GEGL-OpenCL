@@ -26,15 +26,15 @@ G_BEGIN_DECLS
 void        gegl_rectangle_set          (GeglRectangle *r,
                                          gint           x,
                                          gint           y,
-                                         guint          w,
-                                         guint          h);
+                                         guint          width,
+                                         guint          height);
 gboolean    gegl_rectangle_equal        (GeglRectangle *r,
                                          GeglRectangle *s);
 gboolean    gegl_rectangle_equal_coords (GeglRectangle *r,
                                          gint           x,
                                          gint           y,
-                                         gint           w,
-                                         gint           h);
+                                         gint           width,
+                                         gint           height);
 void        gegl_rectangle_copy         (GeglRectangle *to,
                                          GeglRectangle *from);
 void        gegl_rectangle_bounding_box (GeglRectangle *dest,

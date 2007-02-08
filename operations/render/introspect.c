@@ -80,8 +80,8 @@ process (GeglOperation *operation,
                           "format", babl_format ("R'G'B' u8"),
                           "x",      defined.x,
                           "y",      defined.y,
-                          "width",  defined.w,
-                          "height", defined.h,
+                          "width",  defined.width ,
+                          "height", defined.height ,
                           NULL);
       buffer_save = gegl_node_new_child (gegl, "operation", "save-buffer", "buffer", self->buf, NULL);
       gegl_node_link_many (png_load, buffer_save, NULL);

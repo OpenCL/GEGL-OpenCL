@@ -144,8 +144,8 @@ get_defined_region (GeglOperation *operation)
           height=10;
         }
     }
-  result.w = width;
-  result.h = height;
+  result.width  = width;
+  result.height  = height;
   return result;
 }
 

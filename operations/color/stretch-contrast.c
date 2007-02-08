@@ -94,8 +94,8 @@ process (GeglOperation *operation,
 
   result = gegl_operation_get_requested_region (operation, context_id);
   
-  if (result->w==0 ||
-      result->h==0)
+  if (result->width ==0 ||
+      result->height==0)
     {
       output = g_object_ref (input);
       return TRUE;
@@ -107,8 +107,8 @@ process (GeglOperation *operation,
                          "format", babl_format ("RGBA float"),
                          "x",      result->x,
                          "y",      result->y,
-                         "width",  result->w,
-                         "height", result->h,
+                         "width",  result->width ,
+                         "height", result->height,
                          NULL);
 
   {
@@ -117,18 +117,18 @@ process (GeglOperation *operation,
     gint chunk_size=128;
     gint consumed=0;
 
-    buf = g_malloc0 (sizeof (gfloat) * 4 * result->w * chunk_size);
+    buf = g_malloc0 (sizeof (gfloat) * 4 * result->width  * chunk_size);
 
-    for (row=0;row<result->h;row=consumed)
+    for (row=0;row<result->height;row=consumed)
       {
-        gint chunk = consumed+chunk_size<result->h?chunk_size:result->h-consumed;
+        gint chunk = consumed+chunk_size<result->height?chunk_size:result->height-consumed;
         GeglRectangle line = {result->x,
                          result->y+row,
-                         result->w,
+                         result->width ,
                          chunk};
 
         gegl_buffer_get (input, &line, 1.0, babl_format ("RGBA float"), buf);
-        inner_process (min, max, buf, result->w * chunk);
+        inner_process (min, max, buf, result->width  * chunk);
         gegl_buffer_set (output, &line, babl_format ("RGBA float"), buf);
         consumed+=chunk;
       }

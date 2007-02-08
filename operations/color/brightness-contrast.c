@@ -41,7 +41,7 @@ gegl_chant_double (brightness,    -3.0,  3.0, 0.0,
 /* The name of the operation (with lower case here, _ and - are interchangeable
  * when used by GEGL. */
 #define GEGL_CHANT_SELF         "brightness-contrast.c"
-/* we need to specify the name of the source file for gegl-chant.h to
+/* we need to specify the name of the source file for gegl-chant.height  to
  * do it's magic.
  */
 

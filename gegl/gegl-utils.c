@@ -70,8 +70,8 @@ gegl_rectangle_set (GeglRectangle *r,
 {
   r->x = x;
   r->y = y;
-  r->w = w;
-  r->h = h;
+  r->width   = w;
+  r->height = h;
 }
 
 void
@@ -79,8 +79,8 @@ gegl_rectangle_bounding_box (GeglRectangle *dest,
                              GeglRectangle *src1,
                              GeglRectangle *src2)
 {
-  gboolean s1_has_area = src1->w && src1->h;
-  gboolean s2_has_area = src2->w && src2->h;
+  gboolean s1_has_area = src1->width   && src1->height;
+  gboolean s2_has_area = src2->width   && src2->height;
 
   if (! s1_has_area && ! s2_has_area)
     gegl_rectangle_set (dest, 0, 0, 0, 0);
@@ -91,14 +91,14 @@ gegl_rectangle_bounding_box (GeglRectangle *dest,
   else
     {
       gint x1 = MIN (src1->x, src2->x);
-      gint x2 = MAX (src1->x + src1->w, src2->x + src2->w);
+      gint x2 = MAX (src1->x + src1->width  , src2->x + src2->width  );
       gint y1 = MIN (src1->y, src2->y);
-      gint y2 = MAX (src1->y + src1->h, src2->y + src2->h);
+      gint y2 = MAX (src1->y + src1->height, src2->y + src2->height);
 
       dest->x = x1;
       dest->y = y1;
-      dest->w = x2 - x1;
-      dest->h = y2 - y1;
+      dest->width   = x2 - x1;
+      dest->height = y2 - y1;
     }
 }
 
@@ -110,7 +110,7 @@ gegl_rectangle_intersect (GeglRectangle *dest,
   gint x1, x2, y1, y2;
 
   x1 = MAX(src1->x, src2->x);
-  x2 = MIN(src1->x + src1->w, src2->x + src2->w);
+  x2 = MIN(src1->x + src1->width  , src2->x + src2->width  );
 
   if (x2 <= x1)
     {
@@ -120,7 +120,7 @@ gegl_rectangle_intersect (GeglRectangle *dest,
     }
 
   y1 = MAX(src1->y, src2->y);
-  y2 = MIN(src1->y + src1->h, src2->y + src2->h);
+  y2 = MIN(src1->y + src1->height, src2->y + src2->height);
 
   if (y2 <= y1)
     {
@@ -140,8 +140,8 @@ gegl_rectangle_copy (GeglRectangle *to,
 {
   to->x = from->x;
   to->y = from->y;
-  to->w = from->w;
-  to->h = from->h;
+  to->width   = from->width  ;
+  to->height = from->height;
 }
 
 gboolean
@@ -150,8 +150,8 @@ gegl_rectangle_contains (GeglRectangle *r,
 {
   if (s->x >= r->x &&
       s->y >= r->y &&
-      (s->x + s->w) <= (r->x + r->w) &&
-      (s->y + s->h) <= (r->y + r->h) )
+      (s->x + s->width  ) <= (r->x + r->width  ) &&
+      (s->y + s->height) <= (r->y + r->height) )
     return TRUE;
   else
     return FALSE;
@@ -163,8 +163,8 @@ gegl_rectangle_equal (GeglRectangle *r,
 {
   if (r->x == s->x &&
       r->y == s->y &&
-      r->w == s->w &&
-      r->h == s->h)
+      r->width   == s->width   &&
+      r->height == s->height)
     return TRUE;
   else
     return FALSE;
@@ -179,8 +179,8 @@ gegl_rectangle_equal_coords (GeglRectangle *r,
 {
   if (r->x == x &&
       r->y == y &&
-      r->w == w &&
-      r->h == h)
+      r->width   == w &&
+      r->height == h)
     return TRUE;
   else
     return FALSE;

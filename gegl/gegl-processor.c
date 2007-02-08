@@ -234,8 +234,8 @@ gegl_node_new_processor (GeglNode      *node,
       gegl_node_dynamic_set_result_rect (processor->dynamic,
                                          processor->rectangle.x,
                                          processor->rectangle.y,
-                                         processor->rectangle.w,
-                                         processor->rectangle.h);
+                                         processor->rectangle.width  ,
+                                         processor->rectangle.height);
     }
   else
     {
@@ -259,13 +259,13 @@ static gboolean render_rectangle (GeglProcessor *processor)
 
       dr = processor->dirty_rectangles->data;
 
-      if (dr->h * dr->w > max_area && 1)
+      if (dr->height * dr->width   > max_area && 1)
         {
           gint band_size;
          
-          if (dr->h > dr->w)
+          if (dr->height > dr->width  )
             {
-              band_size = dr->h / 2;
+              band_size = dr->height / 2;
 
               if (band_size<1)
                 band_size=1;
@@ -273,8 +273,8 @@ static gboolean render_rectangle (GeglProcessor *processor)
               GeglRectangle *fragment = g_malloc (sizeof (GeglRectangle));
               *fragment = *dr;
 
-              fragment->h = band_size;
-              dr->h-=band_size;
+              fragment->height = band_size;
+              dr->height-=band_size;
               dr->y+=band_size;
 
               processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
@@ -282,7 +282,7 @@ static gboolean render_rectangle (GeglProcessor *processor)
             }
           else 
             {
-              band_size = dr->w / 2;
+              band_size = dr->width   / 2;
 
               if (band_size<1)
                 band_size=1;
@@ -290,8 +290,8 @@ static gboolean render_rectangle (GeglProcessor *processor)
               GeglRectangle *fragment = g_malloc (sizeof (GeglRectangle));
               *fragment = *dr;
 
-              fragment->w = band_size;
-              dr->w-=band_size;
+              fragment->width   = band_size;
+              dr->width  -=band_size;
               dr->x+=band_size;
 
               processor->dirty_rectangles = g_slist_prepend (processor->dirty_rectangles, fragment);
@@ -301,10 +301,10 @@ static gboolean render_rectangle (GeglProcessor *processor)
       
       processor->dirty_rectangles = g_slist_remove (processor->dirty_rectangles, dr);
 
-      if (!dr->w || !dr->h)
+      if (!dr->width   || !dr->height)
         return TRUE;
       
-      buf = g_malloc (dr->w * dr->h * gegl_buffer_px_size (GEGL_BUFFER (cache)));
+      buf = g_malloc (dr->width   * dr->height * gegl_buffer_px_size (GEGL_BUFFER (cache)));
       g_assert (buf);
 
       gegl_node_blit (cache->node, dr, 1.0, cache->format, 0, (gpointer*) buf, GEGL_BLIT_DEFAULT);
@@ -322,7 +322,7 @@ static gboolean render_rectangle (GeglProcessor *processor)
 
 static gint rect_area (GeglRectangle *rectangle)
 {
-  return rectangle->w*rectangle->h;
+  return rectangle->width  *rectangle->height;
 }
 
 static gint region_area (GeglRegion    *region)

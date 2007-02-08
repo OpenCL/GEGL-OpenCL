@@ -162,8 +162,8 @@ process (GeglOperation *operation,
     {
       GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
 
-      if (result->w==0 ||
-          result->h==0)
+      if (result->width ==0 ||
+          result->height==0)
         {
           output = g_object_ref (input);
         }
@@ -172,7 +172,7 @@ process (GeglOperation *operation,
           gfloat *buf;
           gfloat *min;
           gfloat *max;
-          gint pixels = result->w * result->h;
+          gint pixels = result->width  * result->height;
           gint i;
 
           buf = g_malloc (pixels * sizeof (gfloat) * 4);
@@ -187,8 +187,8 @@ process (GeglOperation *operation,
                                  "format", babl_format ("RGBA float"),
                                  "x", result->x,
                                  "y", result->y,
-                                 "width", result->w,
-                                 "height", result->h,
+                                 "width", result->width ,
+                                 "height", result->height,
                                  NULL);
 
           for (i=0;i<pixels;i++)

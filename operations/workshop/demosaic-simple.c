@@ -59,8 +59,8 @@ process (GeglOperation *operation,
       GeglRectangle  need   = get_source_rect (operation, context_id);
       GeglBuffer    *temp_in;
 
-      if (result->w==0 ||
-          result->h==0)
+      if (result->width ==0 ||
+          result->height==0)
         {
           output = g_object_ref (input);
         }
@@ -70,16 +70,16 @@ process (GeglOperation *operation,
                                  "source", input,
                                  "x",      need.x,
                                  "y",      need.y,
-                                 "width",  need.w,
-                                 "height", need.h,
+                                 "width",  need.width ,
+                                 "height", need.height ,
                                  NULL);
 
           output = g_object_new (GEGL_TYPE_BUFFER,
                                  "format", babl_format ("RGB float"),
                                  "x",      need.x,
                                  "y",      need.y,
-                                 "width",  need.w,
-                                 "height", need.h,
+                                 "width",  need.width ,
+                                 "height", need.height ,
                                  NULL);
 
           demosaic (self, temp_in, output);
@@ -91,8 +91,8 @@ process (GeglOperation *operation,
                                               "source", output,
                                               "x",      result->x,
                                               "y",      result->y,
-                                              "width",  result->w,
-                                              "height", result->h,
+                                              "width",  result->width ,
+                                              "height", result->height,
                                               NULL);
         gegl_operation_set_data (operation, context_id, "output", G_OBJECT (cropped));
         g_object_unref (output);
@@ -184,11 +184,11 @@ get_defined_region (GeglOperation *operation)
     return result;
 
   result = *in_rect;
-  if (result.w != 0 &&
-      result.h != 0)
+  if (result.width  != 0 &&
+      result.height  != 0)
     {
-      result.w+=1;
-      result.h+=1;
+      result.width +=1;
+      result.height +=1;
     }
   
   return result;
@@ -200,11 +200,11 @@ static GeglRectangle get_source_rect (GeglOperation *self,
   GeglRectangle            rect;
 
   rect  = *gegl_operation_get_requested_region (self, context_id);
-  if (rect.w != 0 &&
-      rect.h != 0)
+  if (rect.width  != 0 &&
+      rect.height  != 0)
     {
-      rect.w += 1;
-      rect.h += 1;
+      rect.width  += 1;
+      rect.height  += 1;
     }
 
   return rect;
@@ -230,8 +230,8 @@ get_affected_region (GeglOperation *self,
  
   radius = ceil(1);
 
-  region.w += 1;
-  region.h += 1;
+  region.width  += 1;
+  region.height  += 1;
   return region;
 }
 

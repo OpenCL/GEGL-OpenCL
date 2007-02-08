@@ -63,8 +63,8 @@ gegl_node_dynamic_set_need_rect (GeglNodeDynamic    *node,
   g_assert (node);
   node->need_rect.x = x;
   node->need_rect.y = y;
-  node->need_rect.w = width;
-  node->need_rect.h = height;
+  node->need_rect.width  = width;
+  node->need_rect.height = height;
 }
 
 GeglRectangle *
@@ -83,8 +83,8 @@ gegl_node_dynamic_set_result_rect (GeglNodeDynamic *node,
   g_assert (node);
   node->result_rect.x = x;
   node->result_rect.y = y;
-  node->result_rect.w = width;
-  node->result_rect.h = height;
+  node->result_rect.width  = width;
+  node->result_rect.height = height;
 }
 
 GeglRectangle *

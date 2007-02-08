@@ -128,8 +128,8 @@ gegl_operation_get_affected_region (GeglOperation *self,
   GeglOperationClass *klass;
 
   klass = GEGL_OPERATION_GET_CLASS (self);
-  if (region.w == 0 ||
-      region.h == 0)
+  if (region.width   == 0 ||
+      region.height  == 0)
     return region;
   if (klass->get_affected_region)
     return klass->get_affected_region (self, input_pad, region);
@@ -252,7 +252,7 @@ gegl_operation_set_source_region (GeglOperation *operation,
    */
   gegl_node_set_need_rect (child, context_id,
                            child_need.x, child_need.y,
-                           child_need.w, child_need.h);
+                           child_need.width, child_need.height);
 }
 
 static GeglRectangle
@@ -495,9 +495,9 @@ gegl_operation_detect (GeglOperation *operation,
     }
 
   if (x>=node->have_rect.x &&
-      x<node->have_rect.x+node->have_rect.w &&
+      x<node->have_rect.x+node->have_rect.width   &&
       y>=node->have_rect.y &&
-      y<node->have_rect.y+node->have_rect.h)
+      y<node->have_rect.y+node->have_rect.height)
     {
       return node;
     }

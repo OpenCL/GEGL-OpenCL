@@ -365,8 +365,8 @@ gegl_buffer_constructor (GType                  type,
 
        buffer->abyss_x = self.x;
        buffer->abyss_y = self.y;
-       buffer->abyss_width = self.w;
-       buffer->abyss_height = self.h;
+       buffer->abyss_width = self.width ;
+       buffer->abyss_height = self.height;
      }
 
   /* compute our own total shift */
@@ -620,7 +620,6 @@ gegl_buffer_void (GeglBuffer *buffer)
         factor*=2;
       }
   }
-
 }
 
 
@@ -895,8 +894,8 @@ gegl_buffer_set (GeglBuffer    *buffer,
                           "source", buffer,
                           "x", rect->x,
                           "y", rect->y,
-                          "width", rect->w,
-                          "height", rect->h,
+                          "width", rect->width ,
+                          "height", rect->height,
                           NULL);
   gegl_buffer_iterate (sub_buf, src, TRUE, format, 0);
   g_object_unref (sub_buf);
@@ -920,8 +919,8 @@ static void gegl_buffer_get_scaled (GeglBuffer    *buffer,
                                       "source", buffer,
                                       "x", rect->x,
                                       "y", rect->y,
-                                      "width", rect->w,
-                                      "height", rect->h,
+                                      "width", rect->width ,
+                                      "height", rect->height,
                                       NULL);
   gegl_buffer_iterate (sub_buf, dst, FALSE, format, level);
   g_object_unref (sub_buf);
@@ -1243,8 +1242,8 @@ gegl_buffer_get (GeglBuffer *buffer,
       gegl_buffer_iterate (buffer, dest_buf, FALSE, format, 0);
       return;
     }
-  if (rect->w == 0 ||
-      rect->h == 0)
+  if (rect->width  == 0 ||
+      rect->height == 0)
     return;
   if (scale == 1.0)
     {
@@ -1254,8 +1253,8 @@ gegl_buffer_get (GeglBuffer *buffer,
   else
     {
       gint level=0;
-      gint buf_width = rect->w/scale;
-      gint buf_height = rect->h/scale;
+      gint buf_width = rect->width /scale;
+      gint buf_height = rect->height/scale;
       gint bpp = BABL(format)->format.bytes_per_pixel;
       GeglRectangle sample_rect = {rect->x,
                               rect->y,
@@ -1275,8 +1274,8 @@ gegl_buffer_get (GeglBuffer *buffer,
       buf_height/=factor;
 
       /* ensure we always have some data to sample from */
-      sample_rect.w += factor * 2;
-      sample_rect.h += factor * 2;
+      sample_rect.width  += factor * 2;
+      sample_rect.height += factor * 2;
       buf_width+=2;
       buf_height+=2;
 
@@ -1287,7 +1286,7 @@ gegl_buffer_get (GeglBuffer *buffer,
           scale < 1.0 + 0.001)
         { /* avoid resampling if the pyramidial level we've got is close */
           gint y;
-          for (y=0;y<rect->h;y++)
+          for (y=0;y<rect->height;y++)
             {
               gint sy;
               guchar *dst;
@@ -1298,10 +1297,10 @@ gegl_buffer_get (GeglBuffer *buffer,
               if (sy>buf_height)
                 sy=buf_height-1;
 
-              dst = ((guchar*)dest_buf) + y * rect->w * bpp;
+              dst = ((guchar*)dest_buf) + y * rect->width  * bpp;
               src_base = ((guchar*)sample_buf) + sy * buf_width * bpp;
 
-              memcpy (dst, src_base, bpp * rect->w);
+              memcpy (dst, src_base, bpp * rect->width );
             }
         }
       else if (BABL(format)->format.type[0] == (BablType*)babl_type ("u8") /*&&
@@ -1311,8 +1310,8 @@ gegl_buffer_get (GeglBuffer *buffer,
         { /* do bilinear resampling if we're 8bit (which projections are) */
           resample_bilinear_u8 (dest_buf,
                                 sample_buf,
-                                rect->w,
-                                rect->h,
+                                rect->width ,
+                                rect->height,
                                 buf_width,
                                 buf_height,
                                 scale,
@@ -1322,8 +1321,8 @@ gegl_buffer_get (GeglBuffer *buffer,
         {
           resample_nearest (dest_buf,
                             sample_buf,
-                            rect->w,
-                            rect->h,
+                            rect->width ,
+                            rect->height,
                             buf_width,
                             buf_height,
                             scale,

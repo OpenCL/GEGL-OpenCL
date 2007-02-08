@@ -72,7 +72,7 @@ process_inner (GeglOperation *operation,
     g_assert (gegl_buffer_get_format (input));
 
 
-    if ( (result->w>0) && (result->h>0))
+    if ( (result->width  >0) && (result->height>0))
       {
         GeglBuffer *output;
 
@@ -134,8 +134,8 @@ process_inner (GeglOperation *operation,
                                "format", point_composer->format,
                                "x",      result->x,
                                "y",      result->y,
-                               "width",  result->w,
-                               "height", result->h,
+                               "width",  result->width  ,
+                               "height", result->height,
                                NULL);
 
         buf = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));

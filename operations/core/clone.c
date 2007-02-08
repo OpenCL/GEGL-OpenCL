@@ -59,8 +59,8 @@ detect (GeglOperation *operation,
 
   if (x>=node->have_rect.x &&
       y>=node->have_rect.y &&
-      x<node->have_rect.w &&
-      y<node->have_rect.h)
+      x<node->have_rect.width  &&
+      y<node->have_rect.height )
     {
       return node;
     }

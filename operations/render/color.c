@@ -56,14 +56,14 @@ process (GeglOperation *operation,
                            babl_format ("RGBA float"),
                            "x",      result->x,
                            "y",      result->y,
-                           "width",  result->w,
-                           "height", result->h,
+                           "width",  result->width ,
+                           "height", result->height,
                            NULL);
     buf = g_malloc (gegl_buffer_pixels (output) * gegl_buffer_px_size (output));
       {
         gfloat *dst=buf;
         gint i;
-        for (i=0; i < result->h*result->w; i++)
+        for (i=0; i < result->height *result->width ; i++)
           {
             memcpy(dst, color, 4*sizeof(gfloat));
             dst += 4;

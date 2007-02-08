@@ -70,11 +70,11 @@ visit_node (GeglVisitor *self,
     "\tresult: %ix%i %i,%i\n"
     "\trefs: %i",
   gegl_node_get_debug_name (node),
-  node->have_rect.w, node->have_rect.h,
+  node->have_rect.width  , node->have_rect.height,
   node->have_rect.x, node->have_rect.y,
-  dynamic->need_rect.w, dynamic->need_rect.h,
+  dynamic->need_rect.width  , dynamic->need_rect.height,
   dynamic->need_rect.x, dynamic->need_rect.y,
-  dynamic->result_rect.w, dynamic->result_rect.h,
+  dynamic->result_rect.width  , dynamic->result_rect.height,
   dynamic->result_rect.x, dynamic->result_rect.y,
   dynamic->refs);
 }

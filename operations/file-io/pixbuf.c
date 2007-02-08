@@ -66,8 +66,8 @@ get_defined_region (GeglOperation *operation)
     
   result.x = 0;
   result.y = 0;
-  result.w = gdk_pixbuf_get_width (self->pixbuf);
-  result.h = gdk_pixbuf_get_height (self->pixbuf);
+  result.width  = gdk_pixbuf_get_width (self->pixbuf);
+  result.height  = gdk_pixbuf_get_height (self->pixbuf);
   return result;
 }
 

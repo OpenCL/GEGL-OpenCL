@@ -71,8 +71,8 @@ get_defined_region (GeglOperation *operation)
     }
   result.x = GEGL_BUFFER (self->buffer)->x;
   result.y = GEGL_BUFFER (self->buffer)->y;
-  result.w = GEGL_BUFFER (self->buffer)->width;
-  result.h = GEGL_BUFFER (self->buffer)->height;
+  result.width  = GEGL_BUFFER (self->buffer)->width;
+  result.height  = GEGL_BUFFER (self->buffer)->height;
   return result;
 }
 

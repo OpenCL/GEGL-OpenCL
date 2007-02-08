@@ -96,8 +96,8 @@ process (GeglOperation *operation,
   init_sdl ();
 
   if (!self->screen ||
-       self->w != result->w||
-       self->h != result->h)
+       self->width  != result->width ||
+       self->height != result->height)
     {
       if (sdl_outwin)
         {
@@ -108,7 +108,7 @@ process (GeglOperation *operation,
             }
 
           self->screen = SDL_CreateRGBSurface (SDL_SWSURFACE,
-                                            result->w, result->h, 32, 0xff0000,
+                                            result->width, result->height, 32, 0xff0000,
                                             0x00ff00, 0x0000ff, 0x000000);
 
           *sdl_outwin = self->screen;
@@ -121,7 +121,7 @@ process (GeglOperation *operation,
         }
       else
         {
-          self->screen = SDL_SetVideoMode (result->w, result->h, 32, SDL_SWSURFACE);
+          self->screen = SDL_SetVideoMode (result->width, result->height, 32, SDL_SWSURFACE);
           if (!self->screen)
             {
               fprintf (stderr, "Unable to set SDL mode: %s\n",
@@ -129,8 +129,8 @@ process (GeglOperation *operation,
               return -1;
             }
         }
-      self->w = result->w;
-      self->h = result->h;
+      self->width  = result->width ;
+      self->height = result->height;
     }
 
   /*
@@ -142,8 +142,8 @@ process (GeglOperation *operation,
                          "source", input,
                          "x",      result->x,
                          "y",      result->y,
-                         "width",  result->w,
-                         "height", result->h,
+                         "width",  result->width ,
+                         "height", result->height,
                          NULL);
   gegl_buffer_get (source,
        NULL,
@@ -164,8 +164,8 @@ process (GeglOperation *operation,
       SDL_WM_SetCaption (self->window_title, self->icon_title);
     }
 
-  self->width = result->w;
-  self->height = result->h;
+  self->width = result->width ;
+  self->height = result->height;
 
   return  TRUE;
 }

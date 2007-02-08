@@ -51,8 +51,8 @@ struct _GeglRectangle
 {
   gint x;
   gint y;
-  gint w;
-  gint h;
+  gint width;
+  gint height;
 };
 
 struct _GeglPoint

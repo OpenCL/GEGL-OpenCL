@@ -136,8 +136,8 @@ computed_event (GeglNode      *self,
 {
   gint x = view->scale * (rect->x - view->x);
   gint y = view->scale * (rect->y - view->y);
-  gint w = ceil (view->scale * rect->w);
-  gint h = ceil (view->scale * rect->h);
+  gint w = ceil (view->scale * rect->width );
+  gint h = ceil (view->scale * rect->height);
 
   gtk_widget_queue_draw_area (GTK_WIDGET (view), x, y, w, h);
 }
@@ -359,10 +359,10 @@ expose_event (GtkWidget      *widget,
 
       roi.x = view->x + (rectangles[i].x / view->scale);
       roi.y = view->y + (rectangles[i].y / view->scale);
-      roi.w = rectangles[i].width;
-      roi.h = rectangles[i].height;
+      roi.width  = rectangles[i].width;
+      roi.height  = rectangles[i].height;
 
-      buf = g_malloc ((roi.w+1) * (roi.h+1) * 3);
+      buf = g_malloc ((roi.width +1) * (roi.height+1) * 3);
       /* FIXME: this padding should not be needed, but it avoids some segfaults */
 
       gegl_node_blit (view->node,
@@ -378,7 +378,7 @@ expose_event (GtkWidget      *widget,
                           rectangles[i].x, rectangles[i].y,
                           rectangles[i].width, rectangles[i].height,
                           GDK_RGB_DITHER_NONE,
-                          buf, roi.w * 3);
+                          buf, roi.width  * 3);
       g_free (buf);
     }
 

@@ -40,7 +40,7 @@
 
 
 
-/*FIXME: this should be in gegl.h*/
+/*FIXME: this should be in gegl.height */
 
 GeglNode * gegl_node_get_output_proxy  (GeglNode     *graph,
                                         const gchar  *name);
