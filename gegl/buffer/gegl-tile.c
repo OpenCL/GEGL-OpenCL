@@ -385,3 +385,33 @@ gboolean gegl_tile_store (GeglTile   *tile)
                                                  tile->storage_y,
                                                  tile->storage_z, tile);
 }
+
+
+/* compute the tile indice of a coordinate
+ * the stride is the width/height of tiles along the axis of coordinate
+ */
+gint
+gegl_tile_indice (gint coordinate,
+                  gint stride)
+{
+  if (coordinate>=0)
+    return coordinate/stride;
+  return (((coordinate+1)/stride)-1);
+}
+
+/* computes the positive integer remainder (also for negative dividends)
+ */
+#define REMAINDER(dividend, divisor)                       \
+   ((((dividend) < 0) ?                                    \
+   ((divisor) - ((-(dividend)) % (divisor))) % (divisor) : \
+   ((dividend) % (divisor))))
+
+/* compute the offset into the containing tile a coordinate has,
+ * the stride is the width/height of tiles along the axis of coordinate
+ */
+gint
+gegl_tile_offset (gint coordinate,
+                  gint stride)
+{
+  return REMAINDER (coordinate,stride);
+}

@@ -1,5 +1,15 @@
 2007-02-08  Øyvind Kolås  <pippin@gimp.org>
 
+	Moved gegl_tile_indice and gegl_tile_offset out of gegl-buffer.c
+	and prepared them for use as utility functions in other code.
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_void),
+	(gegl_buffer_iterate):
+	* gegl/buffer/gegl-tile.c: (gegl_tile_indice), (gegl_tile_offset):
+	* gegl/buffer/gegl-tile.h:
+
+2007-02-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/render/text.c: (process): make the buffer be of the same
 	pixeltype as the cairo rendered data and name this format directly.
 	This makes babl use an optimized conversion instead of falling back

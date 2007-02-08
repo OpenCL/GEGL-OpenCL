@@ -92,5 +92,9 @@ void         gegl_tile_swp             (GeglTile    *a,
                                         GeglTile    *b);
 void         gegl_tile_cpy             (GeglTile    *src,
                                         GeglTile    *dst);
+gint         gegl_tile_indice          (gint coordinate,
+                                        gint stride);
+gint         gegl_tile_offset          (gint coordinate,
+                                        gint stride);
 
 #endif
