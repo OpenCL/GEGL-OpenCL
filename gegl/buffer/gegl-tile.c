@@ -253,11 +253,18 @@ gegl_tile_void_pyramid (GeglTile *tile)
 
   for (z=1; z<10;z++)
     {
+#if 0
       gint ver = (y%2);
       gint hor = (x%2);
+#endif
       x/=2;
       y/=2;
 
+      gegl_tile_store_message (GEGL_TILE_STORE (tile->storage),
+                               GEGL_TILE_VOID,
+                               x,y,z,NULL);
+#if 0
+  /* FIXME: reenable this code */
       if (!ver)
         {
           if (!hor)
@@ -288,6 +295,7 @@ gegl_tile_void_pyramid (GeglTile *tile)
                                        x, y, z, NULL);
             }
         }
+#endif
     }
 }
 

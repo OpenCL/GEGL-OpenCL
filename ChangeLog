@@ -1,5 +1,14 @@
 2007-02-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile-zoom.c: (get_tile): When creating a scaled
+	down tile, set the initial rev!=stored_rev, to allow it being swapped
+	out of the caches (and not just destroyed).
+	* gegl/buffer/gegl-tile.c: (gegl_tile_void_pyramid): Reverted to
+	simpler dirt propagation between pyramids, due to regression triggered
+	by above change.
+
+2007-02-08  Øyvind Kolås  <pippin@gimp.org>
+
 	Replaced naive hash functions with positions on a 3d Z-order space
 	filling curve (Morton ordering) using the 10 least significant bits of
 	X, Y and Z indices of the tile, interleaved.

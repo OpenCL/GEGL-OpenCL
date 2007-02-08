@@ -294,8 +294,8 @@ get_tile (GeglTileStore *gegl_tile_store,
           tile->y= y;
           tile->z= z;
           tile->storage = zoom->storage;
-          tile->rev = 0;
           tile->stored_rev = 0;
+          tile->rev = 1;
         }
       gegl_tile_lock (tile);
       data = gegl_tile_get_data (tile);
@@ -319,6 +319,9 @@ get_tile (GeglTileStore *gegl_tile_store,
           }
       gegl_tile_unlock (tile);
     }
+
+  tile->flags=0;
+
   return tile;
 }
 
