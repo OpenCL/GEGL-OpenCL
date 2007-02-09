@@ -595,16 +595,16 @@ gegl_buffer_void (GeglBuffer *buffer)
     gint factor=1;
     for (z=0;z<10;z++)
       {
-        bufy=buffer->y;
+        bufy=0;
         while (bufy < height)
           {
             gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
             gint offsety = gegl_tile_offset (tiledy, tile_height);
-            gint bufx = buffer->x;
+            gint bufx = 0;
 
             while (bufx < width)
               {
-                gint tiledx = buffer->x + bufx + buffer->total_shift_x;
+                gint tiledx = buffer->x + buffer->total_shift_x + bufx;
                 gint offsetx = gegl_tile_offset (tiledx, tile_width);
 
                 gint tx=gegl_tile_indice(tiledx/factor,tile_width);
