@@ -187,7 +187,7 @@ gegl_post_parse_hook (GOptionContext *context,
         }
       else
         {
-          module_path  = g_strdup (PREFIX "/lib/gegl");
+          module_path  = g_strdup (PREFIX "/lib/gegl-1.0");
         }
 
       module_db = gegl_module_db_new (FALSE);
