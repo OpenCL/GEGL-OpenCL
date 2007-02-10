@@ -11,5 +11,6 @@ SUBDIRS = \
 	transform	\
 	transparency
 
-EXTRA_DIST=workshop
+EXTRA_DIST=workshop	\
+	Makefile-operations.am
 

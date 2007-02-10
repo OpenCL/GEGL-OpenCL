@@ -1,7 +1,29 @@
 2007-02-10  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* operations/Makefile-operations.am: Added.
+
+	* operations/render/Makefile.am
+	* operations/svg/Makefile.am
+	* operations/blur/Makefile.am
+	* operations/file-io/Makefile.am
+	* operations/display/Makefile.am
+	* operations/meta/Makefile.am
+	* operations/core/Makefile.am
+	* operations/transparency/Makefile.am
+	* operations/Makefile.am
+	* operations/transform/Makefile.am
+	* operations/workshop/Makefile.am
+	* operations/workshop/generated/Makefile.am
+	* operations/color/Makefile.am
+	* operations/generated/Makefile.am: Simplified all operation
+	Makefile.am files by removing all of the common stuff. The
+	file operations/Makefile-operations.am contains the common
+	parts and is included from the other Makefile.am files.
+
+2007-02-10  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* gegl/gegl-init.c (gegl_post_parse_hook): Updated default
-	path to gegl libraries to include version number.
+	path to gegl plug-ins to include version number.
 
 2007-02-10  Øyvind Kolås  <pippin@gimp.org>
 
