@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.54)
 
-dnl Making releases:
+dnl Making releases on the stable branch:
 dnl   GEGL_MICRO_VERSION += 1;
 dnl   GEGL_INTERFACE_AGE += 1;
 dnl   GEGL_BINARY_AGE += 1;
@@ -11,12 +11,15 @@ dnl    set GEGL_INTERFACE_AGE to 0.
 dnl if backwards compatibility has been broken,
 dnl    set GEGL_BINARY_AGE _and_ GEGL_INTERFACE_AGE to 0.
 
+
 m4_define([gegl_major_version], [0])
 m4_define([gegl_minor_version], [0])
 m4_define([gegl_micro_version], [11])
 m4_define([gegl_real_version],
           [gegl_major_version.gegl_minor_version.gegl_micro_version])
 m4_define([gegl_version], [gegl_real_version])
+
+dnl Number of releases since we've added interfaces
 m4_define([gegl_interface_age], [0])
 m4_define([gegl_binary_age],
           [m4_eval(100 * gegl_minor_version + gegl_micro_version)])
@@ -24,10 +27,13 @@ m4_define([gegl_binary_age],
 dnl The X.Y in -lgegl-X.Y line. This is expected to stay 1.0 until Gegl 2.
 m4_define([gegl_api_version], [1.0])
 
+m4_define([stability_version_number],
+          m4_if(m4_eval(gegl_major_version || gegl_minor_version), [0], 
+                        [gegl_micro_version], [gegl_minor_version]))
 m4_define([gegl_unstable],
-          m4_if(m4_eval(gegl_minor_version % 2), [1], [yes], [no]))
+          m4_if(m4_eval(stability_version_number % 2), [1], [yes], [no]))
 m4_define([gegl_stable],
-          m4_if(m4_eval(gegl_minor_version % 2), [0], [yes], [no]))
+          m4_if(m4_eval(stability_version_number % 2), [0], [yes], [no]))
 
 m4_define([gimp_full_name], [Generic Graphical Library])
 
@@ -44,7 +50,8 @@ m4_define([openexr_required_version], [0.0.0])
 m4_define([sdl_required_version], [0.0.0])
 m4_define([graphviz_required_version], [0.0.0])
 
-AC_INIT(gegl/gegl-init.c)
+AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
+AC_CONFIG_SRCDIR([gegl/gegl.h])
 
 dnl ==========================================================================
 dnl                              Versioning              
@@ -54,45 +61,45 @@ dnl The triplet
 GEGL_MAJOR_VERSION=gegl_major_version
 GEGL_MINOR_VERSION=gegl_minor_version
 GEGL_MICRO_VERSION=gegl_micro_version
-GEGL_API_VERSION=gegl_api_version
+GEGL_INTERFACE_AGE=gegl_interface_age
+GEGL_BINARY_AGE=gegl_binary_age
+GEGL_VERSION=gegl_version
 GEGL_REAL_VERSION=gegl_real_version
 GEGL_VERSION=gegl_version
-GEGL_UNSTABLE=gegl_unstable
-GEGL_FULL_NAME="gegl_full_name"
+GEGL_API_VERSION=gegl_api_version
 AC_SUBST(GEGL_MAJOR_VERSION)
 AC_SUBST(GEGL_MINOR_VERSION)
 AC_SUBST(GEGL_MICRO_VERSION)
-AC_SUBST(GEGL_API_VERSION)
-AC_SUBST(GEGL_REAL_VERSION)
-AC_SUBST(GEGL_VERSION)
-AC_SUBST(GEGL_UNSTABLE)
-AC_SUBST(GEGL_FULL_NAME)
-
-dnl Number of releases since we've added interfaces
-GEGL_INTERFACE_AGE=gegl_interface_age
-GEGL_BINARY_AGE=gegl_binary_age
 AC_SUBST(GEGL_INTERFACE_AGE)
 AC_SUBST(GEGL_BINARY_AGE)
+AC_SUBST(GEGL_VERSION)
+AC_SUBST(GEGL_REAL_VERSION)
+AC_SUBST(GEGL_API_VERSION)
+
+GEGL_RELEASE=gegl_api_version
+AC_SUBST(GEGL_RELEASE)
 
 
 dnl The symbol GEGL_UNSTABLE is defined above for substitution in
 dnl Makefiles and conditionally defined here as a preprocessor symbol
 dnl and automake conditional.
+GEGL_UNSTABLE=gegl_unstable
 if test "x$GEGL_UNSTABLE" = "xyes"; then
   AC_DEFINE(GEGL_UNSTABLE, 1,
-            [Define to 1 if this is an unstable version of the GIMP])
+            [Define to 1 if this is an unstable version of GEGL])
 fi
 AM_CONDITIONAL(GEGL_UNSTABLE, test "x$GEGL_UNSTABLE" = "xyes")
+AC_SUBST(GEGL_UNSTABLE)
 
 
 dnl libtool versioning
 m4_define([lt_current], [m4_eval(100 * gegl_minor_version + gegl_micro_version - gegl_interface_age)])
 m4_define([lt_revision], [gegl_interface_age])
 m4_define([lt_age], [m4_eval(gegl_binary_age - gegl_interface_age)])
-LT_VERSION_INFO="lt_current:lt_revision:lt_age"
-LT_CURRENT_MINUS_AGE=m4_eval(lt_current - lt_age)
-AC_SUBST(LT_VERSION_INFO)
-AC_SUBST(LT_CURRENT_MINUS_AGE)
+GEGL_LIBRARY_VERSION="lt_current:lt_revision:lt_age"
+GEGL_CURRENT_MINUS_AGE=m4_eval(lt_current - lt_age)
+AC_SUBST(GEGL_LIBRARY_VERSION)
+AC_SUBST(GEGL_CURRENT_MINUS_AGE)
 
 gegltargetlib=libgegl-$GEGL_API_VERSION.la
 AC_SUBST(gegltargetlib)
@@ -102,10 +109,13 @@ GTK_REQUIRED_VERSION=gtk_required_version
 AC_SUBST(GLIB_REQUIRED_VERSION)
 AC_SUBST(GTK_REQUIRED_VERSION)
 
+PACKAGE_NAME=gegl
+AC_SUBST(PACKAGE_NAME)
+
 
 dnl ==========================================================================
 
-AM_INIT_AUTOMAKE(gegl,$GEGL_VERSION)
+AM_INIT_AUTOMAKE(no-define)
 AM_CONFIG_HEADER(config.h)
 
 dnl Initialize libtool
@@ -210,19 +220,37 @@ AC_MSG_RESULT([$target_or_host])
 # Check for Win32
 #################
 
+AC_MSG_CHECKING([for some Win32 platform])
+case "$target_or_host" in 
+  *-*-mingw* | *-*-cygwin*)
+    platform_win32=yes
+    ;;
+  *)
+    platform_win32=no
+    ;;
+esac
+AC_MSG_RESULT([$platform_win32])
+AM_CONDITIONAL(PLATFORM_WIN32, test "$platform_win32" = "yes")
+
 MATH_LIB=-lm
 AC_MSG_CHECKING([for native Win32])
 case "$target_or_host" in
   *-*-mingw*)
     os_win32=yes
+    PATHSEP=';'
     MATH_LIB=
     ;;
   *)
     os_win32=no
+    PATHSEP=':'
     ;;
 esac
 AC_MSG_RESULT([$os_win32])
+AC_SUBST(PATH_SEP)
 AC_SUBST(MATH_LIB)
+
+AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
+AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
 
 
 dnl Checks for programs.

@@ -156,7 +156,7 @@ GeglNode     * gegl_node_new             (void);
  * a subgraph with special middle-man routing nodes created with
  * #gegl_node_get_output_proxy and #gegl_node_get_input_proxy.
  *
- * Returns a newly created node, the node will be destroyed by the parent.
+ * Returns a newly created node. The node will be destroyed by the parent.
  * Calling g_object_unref on a node will cause the node to be dropped by the
  * parent. (You may also add additional references using
  * g_object_ref/g_objecr_unref, but in general relying on the parents reference
@@ -169,7 +169,7 @@ GeglNode    * gegl_node_new_child        (GeglNode      *parent,
 /***
  * Making connections:
  *
- * Nodes in GEGL are connected to each other, the resulting graph of nodes
+ * Nodes in GEGL are connected to each other. The resulting graph of nodes
  * represents the image processing pipeline to be processed.
  *
  * ---
@@ -229,7 +229,7 @@ void          gegl_node_link             (GeglNode      *source,
  * @first_sink: the first consumer of data.
  * @...: NULL, or optionally more consumers followed by NULL.
  *
- * Synthetic sugar for linking a chain of nodes with "input"->"output", the
+ * Synthetic sugar for linking a chain of nodes with "input"->"output". The
  * list is NULL terminated.
  */
 void          gegl_node_link_many        (GeglNode      *source,
@@ -332,7 +332,7 @@ void          gegl_node_blit             (GeglNode      *node,
  * @sink_node: a #GeglNode without outputs.
  *
  * Render a composition. This can be used for instance on a node with a "png-save"
- * operation to render all neccesary data, and make it be written to file, the
+ * operation to render all neccesary data, and make it be written to file. The
  * function is blocking for a non blocking way of doing the same see #GeglProcessor.
  * ---
  * GeglNode      *gegl;
@@ -629,7 +629,7 @@ GeglNode    * gegl_node_get_producer     (GeglNode      *node,
  * resolved in relation to.
  *
  * The #GeglNode returned contains the graph described by the tree of stacks
- * in the XML document, the tree is connected to the "output" pad of the
+ * in the XML document. The tree is connected to the "output" pad of the
  * returned node and thus can be used directly for processing.
  *
  * Returns a GeglNode containing the parsed XML as a subgraph.
@@ -683,7 +683,7 @@ struct _GeglRectangle
  * with a NULL string to create a new blank one, gegl_colors are destroyed
  * with g_object_unref when they no longer are needed.
  *
- * The colors used by gegls are described in a format similar to CSS, the
+ * The colors used by gegls are described in a format similar to CSS. The
  * textstring "rgb(1.0,1.0,1.0)" signifies opaque white and
  * "rgba(1.0,0.0,0.0,0.75)" is a 75% opaque red. Hexadecimal forms like #RRGGBB
  * and #RRGGBBAA are also supported.
@@ -691,7 +691,7 @@ struct _GeglRectangle
 typedef struct _GeglColor     GeglColor;
 GType gegl_color_get_type (void) G_GNUC_CONST;
 #define GEGL_TYPE_COLOR (gegl_color_get_type())
-#define GEGL_COLOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR, GeglColor))
+#define GEGL_COLOR(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_COLOR, GeglColor))
 #endif
 
 /**
@@ -749,7 +749,7 @@ void          gegl_color_set_rgba        (GeglColor     *color,
  *
  * Creates a new processing node that performs the specified operation.
  *
- * Returns a newly created node, the node will be destroyed by the parent.
+ * Returns a newly created node. The node will be destroyed by the parent.
  * Calling g_object_unref on a node will cause the node to be dropped by the
  * parent. (You may also add additional references using
  * g_object_ref/g_objecr_unref, but in general relying on the parents reference

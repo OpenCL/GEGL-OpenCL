@@ -1,4 +1,6 @@
-noinst_PROGRAMS =
+if OS_WIN32
+no_undefined = -no-undefined
+endif
 
 SUBDIRS = buffer module
 
@@ -6,17 +8,6 @@ libbuffer = $(top_builddir)/gegl/buffer/libbuffer.la
 libmodule = $(top_builddir)/gegl/module/libmodule.la
 
 lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
-
-EXTRA_DIST =	\
-	gegl-cr-visitor.h		\
-	gegl-debug-rect-visitor.h	\
-	gegl-eval-mgr.h			\
-	gegl-eval-visitor.h		\
-	gegl-finish-visitor.h		\
-	gegl-have-visitor.h		\
-	gegl-instrument.h		\
-	gegl-need-visitor.h		\
-	gegl-prepare-visitor.h
 
 GEGL_sources = \
 	gegl-color.c			\
@@ -83,28 +74,39 @@ GEGL_sources = \
 GEGL_public_headers = gegl-paramspecs.h	\
 	gegl-utils.h			
 
+EXTRA_DIST =	\
+	gegl-cr-visitor.h		\
+	gegl-debug-rect-visitor.h	\
+	gegl-eval-mgr.h			\
+	gegl-eval-visitor.h		\
+	gegl-finish-visitor.h		\
+	gegl-have-visitor.h		\
+	gegl-instrument.h		\
+	gegl-need-visitor.h		\
+	gegl-prepare-visitor.h
+
 libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 
 libgegl_@GEGL_API_VERSION@_la_LIBADD = $(libbuffer) $(libmodule)
 
 libgegl_@GEGL_API_VERSION@_la_LDFLAGS = \
-	-version-info $(LT_VERSION_INFO)
+        ${no_undefined}			\
+        -version-info $(GEGL_LIBRARY_VERSION)
 
 INCLUDES = \
 	-I$(top_srcdir)	\
 	@DEP_CFLAGS@ @BABL_CFLAGS@
 
-AM_LDFLAGS =  \
-	-no-undefined \
-	@DEP_LIBS@ @BABL_LIBS@
+#AM_LDFLAGS =  \
+#	@DEP_LIBS@ @BABL_LIBS@
 
 AM_CPPFLAGS = -DPREFIX=\""$(prefix)"\"
 
-libgeglincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)
-libgeglsubincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl
+libgegl_@GEGL_API_VERSION@includedir = $(includedir)/gegl-$(GEGL_API_VERSION)
+libgegl_@GEGL_API_VERSION@subincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl
 
-libgeglinclude_HEADERS = gegl.h
-libgeglsubinclude_HEADERS = $(GEGL_public_headers) 
+libgegl_@GEGL_API_VERSION@include_HEADERS = gegl.h
+libgegl_@GEGL_API_VERSION@subinclude_HEADERS = $(GEGL_public_headers) 
 
 
 #BUILT_SOURCES = \

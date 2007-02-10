@@ -3,7 +3,7 @@
                  ------------------------------------
 
 GEGL only has released development snapshots thus far. Odd micro versions are
-from CVS whilst even micro numbers indicate released snapshots. 
+from SVN whilst even micro numbers indicate released snapshots. 
 
 Changes in GEGL 0.0.10
 ======================
@@ -30,7 +30,7 @@ Changes in GEGL 0.0.6
 
 Contributions from:
 
-Dominik Ernst, Kevin Cozens, Micael Schumacher and Øyvind Kolås.
+Dominik Ernst, Kevin Cozens, Michael Schumacher and Øyvind Kolås.
 
 Changes in GEGL 0.0.4
 =====================

@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: Gegl
 Description: Gegl Graphical Library 
-Version: @VERSION@
+Version: @GEGL_REAL_VERSION@
 Requires: @GLIB_PACKAGES@ babl
-Libs: -L${libdir} -lgegl-@GEGL_API_VERSION@
-Cflags: -I${includedir}/gegl-1.0
+Libs: -L${libdir} -l@PACKAGE_NAME@-@GEGL_API_VERSION@
+Cflags: -I${includedir}/@PACKAGE_NAME@-@GEGL_API_VERSION@

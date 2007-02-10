@@ -75,7 +75,7 @@ check_version ()
 
 echo
 echo "I am testing that you have the tools required to build the"
-echo "$PROJECT from CVS. This test is not foolproof,"
+echo "$PROJECT project from SVN. This test is not foolproof,"
 echo "so if anything goes wrong, see the file HACKING for more information..."
 echo
 
@@ -314,6 +314,10 @@ $AUTOCONF || exit $?
 
 
 cd $ORIGDIR
+
+echo
+echo "Running ./configure..."
+echo
 
 $srcdir/configure --enable-maintainer-mode $AUTOGEN_CONFIGURE_ARGS "$@"
 RC=$?

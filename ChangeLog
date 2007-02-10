@@ -1,3 +1,40 @@
+2007-02-09  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* HACKING
+	* autogen.sh: Changed CVS reference to SVN.
+
+	* NEWS: Changed CVS reference to SVN. Fixed spelling of a
+	contributor name.
+
+	* configure.in: Set GEGL_UNSTABLE to 1 for odd micro numbers
+	when major and minor are both 0 or base it on odd value of
+	minor number.
+
+	* gegl.pc.in: Changed some hard-coded values to use
+	values from run of configure. Added version number
+	to library name. Added some extra checks when building
+	on Windows machines.
+
+	* gegl/Makefile.am: Included version number in name of library.
+	Define -no-undefined when building under Windows.
+
+	* gegl/gegl.h: Fixed grammatical errors in comment blocks.
+
+	* operations/blur/Makefile.am
+	* operations/color/Makefile.am
+	* operations/core/Makefile.am
+	* operations/display/Makefile.am
+	* operations/file-io/Makefile.am
+	* operations/generated/Makefile.am
+	* operations/meta/Makefile.am
+	* operations/render/Makefile.am
+	* operations/svg/Makefile.am
+	* operations/transform/Makefile.am
+	* operations/transparency/Makefile.am
+	* operations/workshop/Makefile.am
+	* operations/workshop/generated/Makefile.am: Included version
+	number in name of directory for operations files.
+
 2007-02-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_void): Avoid leaking
