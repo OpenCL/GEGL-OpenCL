@@ -642,8 +642,8 @@ get_defined_region (GeglOperation *operation)
 
   if (query_exr (self->path, &w, &h, &ff, &format))
     {
-      result.w = w;
-      result.h = h;
+      result.width = w;
+      result.height = h;
     }
 
   return result;
