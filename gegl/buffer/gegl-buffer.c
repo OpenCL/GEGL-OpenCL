@@ -820,7 +820,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                     }
                   gegl_tile_unlock (tile);
                 }
-              else
+              else /* read */
                 {
                   gint row;
                   gint y = bufy;
