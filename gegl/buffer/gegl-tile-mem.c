@@ -298,20 +298,13 @@ static guint hashfunc (gconstpointer key)
    * work well as a hash
   */
   hash = 0;
-  for (i=0;i<10;i++)
+  for (i=9;i>=0;i--)
     {
-      if (srcA & (1<<10))
-        hash=1;
-      hash <<=1;
-      if (srcB & (1<<10))
-        hash=1;
-      hash <<=1;
-      if (srcC & (1<<10))
-        hash=1;
-      hash <<= 1;
-      srcA<<=1;
-      srcB<<=1;
-      srcC<<=1;
+#define ADD_BIT(bit)  do{hash|=(((bit)!=0)?1:0);hash <<= 1;}while(0)
+      ADD_BIT (srcA & (1<<i));
+      ADD_BIT (srcB & (1<<i));
+      ADD_BIT (srcC & (1<<i));
+#undef ADD_BIT
     }
   return hash;
 }

@@ -70,6 +70,43 @@ void save_info_destroy (SaveInfo *info)
   g_free (info);
 }
 
+
+
+static glong z_order (const GeglTileEntry *entry)
+{
+  glong value;
+
+  gint  i;
+  gint  srcA=entry->x;
+  gint  srcB=entry->y;
+  gint  srcC=entry->z;
+  /* interleave the 10 least significant bits of all coordinates,
+   * this gives us Z-order / morton order of the space and should
+   * work well as a hash
+  */
+  value = 0;
+  for (i=20;i>=0;i--)
+    {
+#define ADD_BIT(bit)  do{value|=(((bit)!=0)?1:0);value <<= 1;}while(0)
+      ADD_BIT (srcA & (1<<i));
+      ADD_BIT (srcB & (1<<i));
+      ADD_BIT (srcC & (1<<i));
+#undef ADD_BIT
+    }
+  return value;
+}
+
+static gint z_order_compare (gconstpointer a,
+                             gconstpointer b)
+{
+  const GeglTileEntry *entryA = a;
+  const GeglTileEntry *entryB = b;
+
+  glong zA = z_order (entryA);
+  glong zB = z_order (entryB);
+  return zB-zA;
+}
+
 void
 gegl_buffer_save (GeglBuffer    *buffer,
                   const gchar   *path,
@@ -169,6 +206,8 @@ gegl_buffer_save (GeglBuffer    *buffer,
 
   info->header.tile_count = g_list_length (info->tiles);
   /* FIXME: sort the index into Z-order */
+
+  info->tiles = g_list_sort (info->tiles, z_order_compare);
 
   /* set the offset in the file each tile will be stored on */
   {

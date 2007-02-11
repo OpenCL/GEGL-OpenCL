@@ -1,5 +1,12 @@
 2007-02-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-save.c: (z_order), (z_order_compare),
+	(gegl_buffer_save): store the tiles in morton order on disk.
+	* gegl/buffer/gegl-tile-disk.c: (hashfunc): improved hash function.
+	* gegl/buffer/gegl-tile-mem.c: (hashfunc): improved hash function.
+
+2007-02-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-init.c: (gegl_exit): removed debug g_warning.
 
 2007-02-10  Kevin Cozens  <kcozens@cvs.gnome.org>
