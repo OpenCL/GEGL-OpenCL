@@ -1,5 +1,10 @@
 2007-02-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-load.c: (gegl_buffer_load): pass mode
+	arguments also when opening file for reading.
+
+2007-02-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-save.c: (z_order), (z_order_compare),
 	(gegl_buffer_save): store the tiles in morton order on disk.
 	* gegl/buffer/gegl-tile-disk.c: (hashfunc): improved hash function.

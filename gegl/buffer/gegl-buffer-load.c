@@ -74,7 +74,7 @@ gegl_buffer_load (GeglBuffer    *buffer,
     }
 
   info->path = g_strdup (path);
-  info->fd = g_open (info->path, O_CREAT | O_RDONLY);
+  info->fd = g_open (info->path, O_RDONLY, S_IRWXU | S_IRWXO);
   if (info->fd == -1)
     {
       g_message ("Unable to open '%s' for loading a buffer", info->path);
