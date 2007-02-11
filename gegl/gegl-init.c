@@ -145,7 +145,6 @@ gegl_exit (void)
       guint pid = getpid ();
       gchar buf[4096];
       g_snprintf (buf, 4096, "rm %s/GEGL-%i-*.swap", swapdir, pid);
-      g_warning ("%s", buf);
       system (buf);
     }
 
