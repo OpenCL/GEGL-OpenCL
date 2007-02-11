@@ -1,5 +1,14 @@
 2007-02-11  Øyvind Kolås  <pippin@gimp.org>
 
+	Added code to load/save buffers from disk. The format currently
+	used should probably be merged with the swap code at some point.
+
+	* gegl/buffer/Makefile.am:
+	* gegl/buffer/gegl-buffer-load.[ch]: added.
+	* gegl/buffer/gegl-buffer-save.[ch]: added.
+
+2007-02-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_iterate): added comment.
 
 2007-02-10  Kevin Cozens  <kcozens@cvs.gnome.org>
