@@ -90,15 +90,13 @@ libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 libgegl_@GEGL_API_VERSION@_la_LIBADD = $(libbuffer) $(libmodule)
 
 libgegl_@GEGL_API_VERSION@_la_LDFLAGS = \
-        ${no_undefined}			\
-        -version-info $(GEGL_LIBRARY_VERSION)
+	$(no_undefined) -version-info $(GEGL_LIBRARY_VERSION)
+
+#	@DEP_LIBS@ @BABL_LIBS@
 
 INCLUDES = \
 	-I$(top_srcdir)	\
 	@DEP_CFLAGS@ @BABL_CFLAGS@
-
-#AM_LDFLAGS =  \
-#	@DEP_LIBS@ @BABL_LIBS@
 
 AM_CPPFLAGS = -DPREFIX=\""$(prefix)"\"
 
