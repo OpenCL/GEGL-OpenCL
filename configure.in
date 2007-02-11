@@ -558,6 +558,7 @@ gegl/Makefile
 gegl/buffer/Makefile
 gegl/module/Makefile
 operations/Makefile
+operations/affine/Makefile
 operations/blur/Makefile
 operations/color/Makefile
 operations/core/Makefile
@@ -567,7 +568,6 @@ operations/generated/Makefile
 operations/meta/Makefile
 operations/render/Makefile
 operations/svg/Makefile
-operations/transform/Makefile
 operations/transparency/Makefile
 operations/workshop/Makefile
 operations/workshop/generated/Makefile
