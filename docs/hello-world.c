@@ -34,7 +34,7 @@ This is the graph we're going to construct:
 */
 
     /*< The image nodes representing operations we want to perform */
-    GeglNode *display    = gegl_node_create_child (gegl, "display");
+    GeglNode *display    = gegl_node_create_child (gegl, "png-save");
     GeglNode *layer      = gegl_node_new_child (gegl,
                                  "operation", "layer",
                                  "x", 2.0,
@@ -53,13 +53,15 @@ This is the graph we're going to construct:
 
     gegl_node_link_many (mandelbrot, layer, display, NULL);
     gegl_node_connect_to (text, "output",  layer, "aux");
+    gegl_node_process (display);
+    exit(1);
    
     /* request that the save node is processed, all dependencies will
      * be processed as well
      */
     {
       gint frame;
-      gint frames = 30;
+      gint frames = 1;
 
       for (frame=0; frame<frames; frame++)
         {

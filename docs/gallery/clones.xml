@@ -1,87 +1,60 @@
-<!-- This composition is a graph
-using only simple operations to
-achieve layers and clones -->
-
+<?xml version='1.0' encoding='UTF-8'?>
 <gegl>
   <over>
-    <shift x = '10'
-           y = '280'/>
-    <scale x = '0.20'
-           y = '0.20'/>
-    <box-blur radius = '5'/>
-    <clone ref = 'bg'/>
+      <shift x='10.000000' y='280.000000'/>
+      <scale origin-x='0.000000' origin-y='0.000000' filter='linear' hard-edges='false' lanczos-width='3' x='0.200000' y='0.200000'/>
+      <box-blur radius='5.000000'/>
+      <load path='data/car-stack.jpg' cache='true' id='clone0'/>
   </over>
-
   <over>
-    <shift x = '10'
-           y = '190'/>
-    <gamma value  = '2.5'/>
-    <scale x = '0.20'
-           y = '0.20'/>
-
-    <clone ref = 'bg'/>
+      <shift x='10.000000' y='190.000000'/>
+      <gamma value='2.500000'/>
+      <scale origin-x='0.000000' origin-y='0.000000' filter='linear' hard-edges='false' lanczos-width='3' x='0.200000' y='0.200000'/>
+      <clone ref='clone0'/>
   </over>
-
   <over>
-      <shift x = '10'
-             y = '100'/>
+      <shift x='10.000000' y='100.000000'/>
       <invert/>
-      <scale x = '0.20'
-             y = '0.20'/>
-      <clone ref = 'bg'/>
+      <scale origin-x='0.000000' origin-y='0.000000' filter='linear' hard-edges='false' lanczos-width='3' x='0.200000' y='0.200000'/>
+      <clone ref='clone0'/>
   </over>
   <over>
-      <shift x = '10'
-             y = '10'/>
-      <threshold value  = '0.5'/>
-      <scale x = '0.20'
-             y = '0.20'/>
-      <clone ref    = 'bg'/>
+      <shift x='10.000000' y='10.000000'/>
+      <threshold value='0.500000'/>
+      <scale origin-x='0.000000' origin-y='0.000000' filter='linear' hard-edges='false' lanczos-width='3' x='0.200000' y='0.200000'/>
+      <clone ref='clone0'/>
   </over>
-
   <over>
-      <shift x = '335'
-             y = '210'/>
+      <shift x='335.000000' y='210.000000'/>
       <over>
-        <shift x = '-10'
-               y = '120'/>
-        <opacity value = '0.6'/>
-        <under id = 'gegl-shadowed'>
-          <opacity   value      = '2.0'/>
-          <shift x          = '0'
-                 y          = '0'/>
-          <box-blur  radius     = '4'/>
-          <brightness-contrast brightness = '-1.0'/>
-          <clone     ref        = 'text'/>
-        </under>
-        <text size   = '30'
-              string = 'warming up'
-              id     = 'text'/>
+          <shift x='-10.000000' y='120.000000'/>
+          <opacity value='0.600000'/>
+          <under>
+              <opacity value='2.000000'/>
+              <shift x='0.000000' y='0.000000'/>
+              <box-blur radius='4.000000'/>
+              <brightness-contrast contrast='1.000000' brightness='-1.000000'/>
+              <text string='warming up' font='Sans' size='30.000000' color='rgb(1.0000, 1.0000, 1.0000)' wrap='-1' alignment='0' width='177' height='36' id='clone1'/>
+          </under>
+          <clone ref='clone1'/>
       </over>
-      <scale x = '0.5'
-             y = '0.5'/>
-      <clone ref ='gegl-shadowed'/>
+      <scale origin-x='0.000000' origin-y='0.000000' filter='linear' hard-edges='false' lanczos-width='3' x='0.500000' y='0.500000'/>
+      <under id='clone2'>
+          <opacity value='0.800000'/>
+          <shift x='5.000000' y='-2.000000'/>
+          <add value='0.500000'/>
+          <gaussian-blur std-dev-x='5.000000' std-dev-y='5.000000'/>
+          <load path='data/gegl.png' cache='true' id='clone3'/>
+      </under>
+      <clone ref='clone3'/>
   </over>
-
   <over>
-    <shift x='90'
-           y='90'/>
-    <opacity  value = '-0.5'/>
-    <box-blur radius = '15'/>
-    <under id = 'gegl-shadowed'>
-      <opacity   value='0.8'/>
-      <shift x = '0'
-             y = '0'/>
-      <add value  = '0.5'/>
-      <gaussian-blur std-dev-x ='5'
-                     std-dev-y='5'/>
-      <clone ref ='gegl'/>
-    </under>
-    <load path = 'data/gegl.png'
-          id   = 'gegl'/>
+      <shift x='90.000000' y='90.000000'/>
+      <opacity value='-0.500000'/>
+      <box-blur radius='15.000000'/>
+      <clone ref='clone2'/>
   </over>
-
-  <load path = 'data/car-stack.jpg'
-        id   = 'bg'/>
-
+  <clone ref='clone0'/>
+<links>
+</links>
 </gegl>

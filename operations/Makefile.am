@@ -1,4 +1,5 @@
 SUBDIRS = \
+	affine		\
 	blur      	\
 	color		\
 	core		\
@@ -8,7 +9,6 @@ SUBDIRS = \
 	meta		\
 	render		\
 	svg		\
-	transform	\
 	transparency
 
 EXTRA_DIST=workshop	\
