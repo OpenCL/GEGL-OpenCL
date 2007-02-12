@@ -193,9 +193,18 @@ gegl_node_get_pad_proxy (GeglNode   *graph,
           gegl_pad_set_node (new_pad, nop);
           gegl_object_set_name (GEGL_OBJECT (new_pad), name);
           gegl_node_add_pad (node, new_pad);
+
+          /* hack, decoreating the pad to make it recognized in later
+           * processing
+           */
+          if (!strcmp (name, "aux"))
+            {
+              g_object_set_data (G_OBJECT (nop), "is-aux", "foo");
+            }
         }
 
         g_object_set_data (G_OBJECT (nop), "graph", graph);
+
         if (!is_graph_input)
           {
             g_signal_connect (G_OBJECT (nop), "invalidated",
