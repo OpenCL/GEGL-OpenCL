@@ -1,3 +1,11 @@
+2007-02-12  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* bin/editor.c:
+	* bin/gegl.c: remove libgen.h, use g_path_get_basename and
+	g_path_get_dirname, #define realpath for Windows platforms
+
+	* gegl/gegl-xml.c: #define realpath for Windows platforms 
+
 2007-02-12  Øyvind Kolås  <pippin@gimp.org>
 
 	Reverted some code to an earlier state to reenable "aux" inputs to

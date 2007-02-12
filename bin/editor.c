@@ -21,7 +21,6 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libgen.h>
 #include "gegl.h"
 #include "gegl-store.h"
 #include "gegl-tree-editor.h"
@@ -29,6 +28,10 @@
 #include "editor.h"
 #include "gegl-view.h"
 #include <gdk/gdkkeysyms.h>
+
+#ifdef G_OS_WIN32
+#define realpath(a,b) _fullpath(b,a,_MAX_PATH)
+#endif
 
 static gchar *blank_composition =
     "<gegl>"
@@ -502,7 +505,7 @@ cb_composition_load (GtkAction *action)
       /* FIXME: handle non XML files */
         {
           gchar *temp = g_strdup (filename);
-          gchar *path = g_strdup (dirname (temp));
+          gchar *path = g_strdup (g_path_get_dirname (temp));
           editor_set_gegl (gegl_parse_xml (xml, path));
           g_free (temp);
           g_free (path);
@@ -571,7 +574,7 @@ cb_composition_save (GtkAction *action)
           */
 
           realpath (full_filename, abs_filepath);
-          abs_path = g_strdup (dirname (abs_filepath));
+          abs_path = g_strdup (g_path_get_dirname (abs_filepath));
           xml = gegl_to_xml (editor.gegl, abs_path); /*oxide_xml (editor->oxide, abs_path);*/
 
           g_file_set_contents (full_filename, xml, -1, NULL);
@@ -653,7 +656,7 @@ static void do_load (void)
   gchar *temp1 = g_strdup (o->file);
   gchar *temp2;
   gchar *path_root;
-  temp2 = g_strdup (dirname (temp1));
+  temp2 = g_strdup (g_path_get_dirname (temp1));
   path_root = g_strdup (realpath (temp2, NULL));
   g_free (temp1);
   g_free (temp2);
@@ -674,7 +677,7 @@ static void do_load (void)
             {gchar *file_basename;
              gchar *tmp;
              tmp=g_strdup (o->file);
-             file_basename = basename (tmp);
+             file_basename = g_path_get_basename (tmp);
 
              g_string_append (acc, "<gegl><load path='");
              g_string_append (acc, file_basename);

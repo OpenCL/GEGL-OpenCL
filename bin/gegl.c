@@ -25,9 +25,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <libgen.h>
 #include "gegl-options.h"
 #include "gegl-dot.h"
+
+#ifdef G_OS_WIN32
+#define realpath(a,b) _fullpath(b,a,_MAX_PATH)
+#endif
 
 #if HAVE_GTK
 #include <gtk/gtk.h>
@@ -98,7 +101,7 @@ main (gint    argc,
         {
           gchar *temp1 = g_strdup (o->file);
           gchar *temp2;
-          temp2 = g_strdup (dirname (temp1));
+          temp2 = g_strdup (g_path_get_dirname (temp1));
           path_root = g_strdup (realpath (temp2, NULL));
           g_free (temp1);
           g_free (temp2);
@@ -141,7 +144,7 @@ main (gint    argc,
             {gchar *file_basename;
              gchar *tmp;
              tmp=g_strdup (o->file);
-             file_basename = basename (tmp);
+             file_basename = g_path_get_basename (tmp);
 
              g_string_append (acc, "<gegl><load path='");
              g_string_append (acc, file_basename);

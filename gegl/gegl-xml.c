@@ -34,6 +34,10 @@
 #include "gegl-xml.h"
 #include "gegl-paramspecs.h"
 
+#ifdef G_OS_WIN32
+#define realpath(a,b) _fullpath(b,a,_MAX_PATH)
+#endif
+
 typedef struct _ParseData ParseData;
 
 enum {
