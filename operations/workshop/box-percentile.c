@@ -15,28 +15,31 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2005 Øyvind Kolås <pippin@gimp.org>,
+ *           2007 Øyvind Kolås <oeyvindk@hig.no>
  */
 #if GEGL_CHANT_PROPERTIES
  
-gegl_chant_double (radius, 0.0, 50.0, 4.0,
+#define MAX_SAMPLES 20000 /* adapted to max level of radius */
+
+gegl_chant_double (radius, 0.0, 70.0, 4.0,
   "Radius of square pixel region, (width and height will be radius*2+1.")
+gegl_chant_double (percentile, 0.0, 100.0, 50, "The percentile to compute, defaults to 50, which is a median filter.")
 
 #else
 
-#define GEGL_CHANT_COMPOSER
-#define GEGL_CHANT_NAME            kuwahara_switch
-#define GEGL_CHANT_DESCRIPTION     "Building block to implement fast kuwahara derived filters."
-#define GEGL_CHANT_SELF            "kuwahara-switch.c"
+#define GEGL_CHANT_FILTER
+#define GEGL_CHANT_NAME            box_percentile
+#define GEGL_CHANT_DESCRIPTION     "Sets the target pixel to the color corresponding to a given percentile when colors are sorted by luminance."
+#define GEGL_CHANT_SELF            "box-percentile.c"
 #define GEGL_CHANT_CATEGORIES      "misc"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
-static void
-kuwahara_switch (GeglBuffer *src,
-                 GeglBuffer *aux,
-                 GeglBuffer *dst,
-                 gint        radius);
+static void median (GeglBuffer *src,
+                    GeglBuffer *dst,
+                    gint        radius,
+                    gdouble     rank);
 
 static GeglRectangle get_source_rect (GeglOperation *self,
                                       gpointer       context_id);
@@ -47,62 +50,52 @@ static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
 {
-  GeglOperationComposer *composer;
+  GeglOperationFilter *filter;
   GeglChantOperation  *self;
   GeglBuffer          *input;
-  GeglBuffer          *aux;
   GeglBuffer          *output;
 
-  composer = GEGL_OPERATION_COMPOSER (operation);
+  filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
+
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-  aux = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
     {
       GeglRectangle   *result = gegl_operation_result_rect (operation, context_id);
-      GeglRectangle    work   = *result;
+      GeglRectangle    need   = *result;
       GeglBuffer      *temp_in;
-      GeglBuffer      *temp_aux;
 
-      work.x-=self->radius;
-      work.y-=self->radius;
-      work.width +=self->radius*2;
-      work.height +=self->radius*2;
+      need.x-=self->radius;
+      need.y-=self->radius;
+      need.width +=self->radius*2;
+      need.height +=self->radius*2;
 
-      if (result->width ==0 ||
-          result->height==0)
+      if (result->width == 0 ||
+          result->height== 0 ||
+          self->radius < 1.0)
         {
           output = g_object_ref (input);
         }
       else
         {
-          temp_aux = g_object_new (GEGL_TYPE_BUFFER,
-                                   "source", aux,
-                                   "x",      work.x,
-                                   "y",      work.y,
-                                   "width",  work.width ,
-                                   "height", work.height ,
-                                   NULL);
-
           temp_in = g_object_new (GEGL_TYPE_BUFFER,
                                  "source", input,
-                                 "x",      work.x,
-                                 "y",      work.y,
-                                 "width",  work.width ,
-                                 "height", work.height ,
+                                 "x",      result->x,
+                                 "y",      result->y,
+                                 "width",  result->width ,
+                                 "height", result->height ,
                                  NULL);
 
           output = g_object_new (GEGL_TYPE_BUFFER,
                                  "format", babl_format ("RGBA float"),
-                                 "x",      work.x,
-                                 "y",      work.y,
-                                 "width",  work.width ,
-                                 "height", work.height ,
+                                 "x",      result->x,
+                                 "y",      result->y,
+                                 "width",  result->width ,
+                                 "height", result->height ,
                                  NULL);
 
-          kuwahara_switch (temp_in, temp_aux, output, self->radius);
+          median (temp_in, output, self->radius, self->percentile / 100.0);
           g_object_unref (temp_in);
-          g_object_unref (temp_aux);
         }
 
       {
@@ -120,116 +113,129 @@ process (GeglOperation *operation,
   return  TRUE;
 }
 
-static inline void
-compute_rectangle (gfloat *buf,
-                   gint    buf_width,
-                   gint    buf_height,
-                   gint    x0,
-                   gint    y0,
-                   gint    width,
-                   gint    height,
-                   gint    component,
-                   gfloat *pmin,
-                   gfloat *pmax,
-                   gfloat *pmean,
-                   gfloat *pvariance)
+
+typedef struct
 {
-  gint    x, y;
-  gfloat  max   = -1000000000.0;
-  gfloat  min   =  1000000000.0;
-  gfloat  mean  =  0.0;
-  gint    count =  0;
+  int       head;
+  int       next[MAX_SAMPLES];
+  float     luma[MAX_SAMPLES];
+  float    *pixel[MAX_SAMPLES];
+  int       items;
+} RankList;
 
-  gint offset = (y0 * buf_width + x0) * 4 + component;
+static void
+list_clear (RankList * p)
+{
+  p->items = 0;
+  p->next[0] = -1;
+}
 
-  for (y=y0; y<y0+height; y++)
+static inline void
+list_add (RankList *p,
+          gfloat    lumniosity,
+          gfloat   *pixel)
+{
+  gint location;
+
+  location = p->items;
+
+  p->items++;
+  p->luma[location] = lumniosity;
+  p->pixel[location] = pixel;
+  p->next[location] = -1;
+
+  if (p->items == 1)
     {
-    for (x=x0; x<x0+width; x++)
-      {
-        if (x>=0 && x<buf_width &&
-            y>=0 && y<buf_height)
-          {
-            if (buf [offset] > max)
-              max = buf[offset];
-            if (buf [offset] < min)
-              min = buf[offset];
-            mean += buf[offset];
-            count++;
-          }
-        offset+=4;
-      }
-      offset+= (buf_width * 4) - 4 * width;
+      p->head = location;
+      return;
     }
-  if (pmin)
-    *pmin = min;
-  if (pmax)
-    *pmax = max;
-  if (pmean && count)
-    *pmean = mean/count;
-  if (pvariance)
-    *pvariance = max-min;
+  if (lumniosity <= p->luma[p->head])
+    {
+      p->next[location] = p->head;
+      p->head = location;
+    }
+  else
+    {
+      gint   prev, i;
+      prev = p->head;
+      i = prev;
+      while (i >= 0 && p->luma[i] < lumniosity)
+        {
+          prev = i;
+          i = p->next[i];
+        }
+      p->next[location] = p->next[prev];
+      p->next[prev] = location;
+    }
+}
+
+static inline gfloat *
+list_median (RankList *p,
+             gdouble   rank)
+{
+  gint       i = p->head;
+  gint       pos = 0;
+  if (!p->items)
+    return NULL;
+  while (pos < p->items * rank)
+    {
+      i = p->next[i];
+      pos++;
+    }
+  return p->pixel[i];
 }
 
 static void
-kuwahara_switch (GeglBuffer *src,
-                 GeglBuffer *aux,
-                 GeglBuffer *dst,
-                 gint        radius)
+median (GeglBuffer *src,
+        GeglBuffer *dst,
+        gint        radius,
+        gdouble     rank)
 {
+  RankList list;
+
   gint x,y;
   gint offset;
-  gint width, height;
   gfloat *src_buf;
-  gfloat *aux_buf;
   gfloat *dst_buf;
 
+
   src_buf = g_malloc0 (src->width * src->height * 4 * 4);
-  aux_buf = g_malloc0 (src->width * src->height * 4 * 4);
   dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
 
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RGBA float"), src_buf);
-  gegl_buffer_get (aux, NULL, 1.0, babl_format ("RGBA float"), aux_buf);
 
   offset = 0;
-
-  width = dst->width;
-  height = dst->height;
-  
-  for (y=0; y<height; y++)
-    for (x=0; x<width; x++)
+  for (y=0; y<dst->height; y++)
+    for (x=0; x<dst->width; x++)
       {
-        gint component;
+        gint u,v;
+        gfloat *median_pix;
+        
+        list_clear (&list);
 
-        for (component=0; component<3; component++)
-          {
-            gint u,v;
-            gfloat value=0.0;
-            gfloat best_variance=1000000.0;
+        for (v=y-radius;v<=y+radius;v++)
+          for (u=x-radius;u<=x+radius;u++)
+            {
+              if (u >= 0 && u < dst->width &&
+                  v >= 0 && v < dst->height)
+                {
+                  gfloat *src_pix = src_buf + (u+(v * src->width)) * 4;
+                  gfloat luma = (src_pix[0] * 0.212671 +
+                                 src_pix[1] * 0.715160 +
+                                 src_pix[2] * 0.072169);
+                  list_add (&list, luma, src_pix);
+                }
+            }
 
-            for (u=x-radius/2; u< x+radius/2; u++)
-              for (v=y-radius/2; v< y+radius/2; v++)
-                if (u>=0 && v>=0 && u<width && v<height)
-                  {
-                    gfloat variance = aux_buf [(v * width + u) * 4 + component];
-
-                    if (variance < best_variance)
-                      {
-                        best_variance = variance;
-                        value = src_buf [(v * width + u) * 4 + component];
-                      }
-                  }
-            dst_buf [offset++] = value;
-          }
-          dst_buf [offset] = src_buf[offset];  /* keep alpha */
-          offset++;
+        median_pix = list_median (&list, rank);
+        for (u=0; u<4;u++)
+          dst_buf[offset*4+u] = median_pix[u];
+        offset++;
       }
-
   gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf);
   g_free (src_buf);
-  g_free (aux_buf);
   g_free (dst_buf);
 }
-
 
 #include <math.h>
 static GeglRectangle
@@ -287,7 +293,6 @@ calc_source_regions (GeglOperation *self,
   GeglRectangle need = get_source_rect (self, context_id);
 
   gegl_operation_set_source_region (self, context_id, "input", &need);
-  gegl_operation_set_source_region (self, context_id, "aux", &need);
 
   return TRUE;
 }

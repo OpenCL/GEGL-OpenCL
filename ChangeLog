@@ -1,3 +1,10 @@
+2007-02-12  Øyvind Kolås  <oeyvindk@hig.no>
+
+	* operations/workshop/box-percentile.c: Implemented a percentile
+	(median) filter, mostly porting code from gggl.
+	* operations/workshop/kuwahara-switch.c: (kuwahara_switch): fixed
+	error in loop calculation.
+
 2007-02-11  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* gegl/Makefile.am: Wrong version got commited last time.
