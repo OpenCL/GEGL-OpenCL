@@ -34,10 +34,6 @@
 #include <glib-object.h>
 #include <glib/gstdio.h>
 
-#ifdef G_OS_WIN32
-#include "geglwin32-io.h"
-#endif /* G_OS_WIN32 */
-
 /*
 #include "geglbasetypes.h"*/
 

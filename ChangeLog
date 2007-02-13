@@ -1,5 +1,10 @@
 2007-02-14  Michael Schumacher  <schumaml@cvs.gnome.org>
 
+	* gegl/module/gegldatafiles.c: remove conditional include of
+	geglwin32-io.h 
+
+2007-02-14  Michael Schumacher  <schumaml@cvs.gnome.org>
+
 	* operations/affine/Makefile.am: use SOsuf and change order of
 	compiler flags 
 	* operations/display/Makefile.am:
