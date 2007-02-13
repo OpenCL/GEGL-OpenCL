@@ -1,6 +1,6 @@
 include $(top_srcdir)/operations/Makefile-operations.am
 
-display.so: display.c $(GEGLHEADERS)
+display.$(SOsuf): display.c $(GEGLHEADERS)
 	@[ ! -z "$(SDL_LIBS)" ] &&\
 	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(SDL_CFLAGS) $(SDL_LIBS)) \
 	|| true
