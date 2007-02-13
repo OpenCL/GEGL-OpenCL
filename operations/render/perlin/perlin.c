@@ -6,6 +6,9 @@
 #include <math.h>
 #include "perlin.h"
 
+/* random is not portable to all platforms */
+#define random g_random_int
+
 static int p[B + B + 2];
 static double g3[B + B + 2][3];
 static double g2[B + B + 2][2];
