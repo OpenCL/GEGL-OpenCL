@@ -18,6 +18,17 @@
 	* gegl/buffer/gegl-buffer-save.c: (gegl_buffer_save): truncate
 	file and open in write only mode.
 
+2007-02-12  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/file-io/svg-load.c (query_svg): Return FALSE if handle
+	returned from rsvg_handle_new_from_file() is NULL.
+
+	* docs/Makefile.am:
+	* docs/gallery/Makefile.am: Some changes to fix make distcheck.
+
+	* operations/Makefile-operations.am: Another change towards fixing
+	build of gegl under Windows.
+
 2007-02-12  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* bin/editor.c:
