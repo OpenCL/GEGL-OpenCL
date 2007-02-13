@@ -1,0 +1,18 @@
+2007-02-13  Gabriel Burt  <gabriel.burt@gmail.com>
+
+	* AUTHORS:
+	* COPYING:
+	* Makefile.am:
+	* README:
+	* autogen.sh:
+	* configure.in:
+	* gapi/Makefile.am:
+	* gapi/custom/Global.custom:
+	* gapi/custom/Node.custom:
+	* gapi/metadata.gegl:
+	* gapi/sources.gegl:
+	* gegl-sharp-2.0.pc.in:
+	* lib/AssemblyInfo.cs.in:
+	* lib/gegl-sharp.dll.config.in:
+	* test/Makefile.am:
+	* test/test.cs: Initial import.

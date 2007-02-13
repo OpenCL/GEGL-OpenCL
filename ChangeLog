@@ -1,3 +1,7 @@
+2007-02-13  Gabriel Burt  <gabriel.burt@gmail.com>
+
+	* bindings/gegl-sharp/: initial import of C# binding for GEGL.
+
 2007-02-13  Øyvind Kolås  <oeyvindk@hig.no>
 
 	* bindings/rgegl/: initial import of ruby extension for GEGL.

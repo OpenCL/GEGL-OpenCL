@@ -1,0 +1,9 @@
+<gapi-parser-input>
+  <api filename="api.raw">
+    <library name="libgegl-1.0.dll">
+      <namespace name="Gegl">
+        <dir>../../../gegl/</dir>
+      </namespace>
+    </library>
+  </api>
+</gapi-parser-input>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<metadata>
+    <attr path="/api/namespace/enum[@name='PadType']/member[@name='Output']" name="value">256</attr>
+    <attr path="/api/namespace/enum[@name='PadType']/member[@name='Input']" name="value">512</attr>
+
+    <attr path="/api/namespace/object[@name='Pad']/method[@name='GetDependsOn']" name="name">DependsOn</attr>
+    <attr path="/api/namespace/object[@name='NodeDynamic']/method[@name='SetProperty']" name="new_flag">1</attr>
+
+    <attr path="/api/namespace/object[@name='ParamSpecEnum']" name="hidden">1</attr>
+    <attr path="/api/namespace/object[@name='ParamSpecInt16']" name="hidden">1</attr>
+    <attr path="/api/namespace/object[@name='ParamSpecInt32']" name="hidden">1</attr>
+    <attr path="/api/namespace/object[@name='ParamSpecInt8']" name="hidden">1</attr>
+    <attr path="/api/namespace/object[@name='ParamSpecMultiline']" name="hidden">1</attr>
+    <attr path="/api/namespace/object[@name='ParamSpecPath']" name="hidden">1</attr>
+    <attr path="/api/namespace/object[@name='ParamSpecString']" name="hidden">1</attr>
+
+    <attr path="/api/namespace/struct[@name='Node']/method[@name='SetProperty']" name="hidden">1</attr>
+</metadata>
