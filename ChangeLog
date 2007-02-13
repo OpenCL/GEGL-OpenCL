@@ -1,3 +1,7 @@
+2007-02-13  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* bindings/pygegl/: initial import of Python binding for GEGL.
+
 2007-02-13  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* operations/render/perlin/perlin.c: use g_random_int
