@@ -1,5 +1,9 @@
 2007-02-13  Øyvind Kolås  <oeyvindk@hig.no>
 
+	* bindings/rgegl/: initial import of ruby extension for GEGL.
+
+2007-02-13  Øyvind Kolås  <oeyvindk@hig.no>
+
 	* bindings/: added a subdir to host various language bindings.
 
 2007-02-13  Øyvind Kolås  <oeyvindk@hig.no>
