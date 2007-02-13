@@ -1746,7 +1746,11 @@ gegl_node_get_cache (GeglNode *node)
     {
       node->cache = g_object_new (GEGL_TYPE_CACHE,
                                   "node", node,
-                                  "format", babl_format ("RGBA float"),
+                                  "format", babl_format ("R'G'B' u8"),
+     /*XXX: this will probably have to be made RGBA float when more
+      * caches are added in the graph, or perhaps even keep parallell
+      * u8 / float caches 
+      *                           "format", babl_format ("RGBA float"), */
                                   NULL);
       g_signal_connect (G_OBJECT (node->cache), "computed",
                         (GCallback)computed_event,
