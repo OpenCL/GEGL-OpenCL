@@ -1,0 +1,244 @@
+-*- mode: m4 -*-
+AC_PREREQ(2.52)
+
+dnl the pygegl version number
+m4_define(pygegl_major_version, 0)
+m4_define(pygegl_minor_version, 0)
+m4_define(pygegl_micro_version, 4)
+m4_define(pygegl_version, pygegl_major_version.pygegl_minor_version.pygegl_micro_version)
+m4_define([pygegl_real_version],
+          [pygegl_major_version.pygegl_minor_version.pygegl_micro_version])
+m4_define([pygegl_version], [pygegl_real_version])
+
+m4_define([stability_version_number],
+          m4_if(m4_eval(pygegl_major_version || pygegl_minor_version), [0],
+                        [pygegl_micro_version], [pygegl_minor_version]))
+m4_define([pygegl_unstable],
+          m4_if(m4_eval(stability_version_number % 2), [1], [yes], [no]))
+m4_define([pygegl_stable],
+          m4_if(m4_eval(stability_version_number % 2), [0], [yes], [no]))
+
+m4_define([pygegl_full_name], [PyGEGL])
+
+dnl versions of packages we require ...
+m4_define([gegl_required_version], [0.0.11])
+m4_define([pygtk_required_version], [2.10.3])
+
+AC_INIT(geglmodule.c)
+
+
+dnl ==========================================================================
+dnl                              Versioning              
+dnl ==========================================================================
+
+PYGEGL_MAJOR_VERSION=gegl_major_version
+PYGEGL_MINOR_VERSION=gegl_minor_version
+PYGEGL_MICRO_VERSION=gegl_micro_version
+PYGEGL_REAL_VERSION=pygegl_real_version
+PYGEGL_VERSION=pygegl_version
+PYGEGL_UNSTABLE=pygegl_unstable
+PYGEGL_FULL_NAME="pygegl_full_name"
+AC_SUBST(PYGEGL_MAJOR_VERSION)
+AC_SUBST(PYGEGL_MINOR_VERSION)
+AC_SUBST(PYGEGL_MICRO_VERSION)
+AC_SUBST(PYGEGL_REAL_VERSION)
+AC_SUBST(PYGEGL_VERSION)
+AC_SUBST(PYGEGL_UNSTABLE)
+AC_SUBST(PYGEGL_FULL_NAME)
+
+GEGL_REQUIRED_VERSION=gegl_required_version
+GTK_REQUIRED_VERSION=gtk_required_version
+AC_SUBST(GEGL_REQUIRED_VERSION)
+AC_SUBST(GTK_REQUIRED_VERSION)
+
+
+dnl The symbol PYGEGL_UNSTABLE is defined above for substitution in
+dnl Makefiles and conditionally defined here as a preprocessor symbol
+dnl and automake conditional.
+if test "x$GEGL_UNSTABLE" = "xyes"; then
+  AC_DEFINE(GEGL_UNSTABLE, 1,
+            [Define to 1 if this is an unstable version of PyGEGL])
+fi
+AM_CONDITIONAL(GEGL_UNSTABLE, test "x$GEGL_UNSTABLE" = "xyes")
+
+
+dnl ==========================================================================
+
+AM_INIT_AUTOMAKE(pygegl, $PYGEGL_VERSION)
+AM_CONFIG_HEADER(config.h)
+
+dnl Initialize libtool
+AC_PROG_CC
+AM_DISABLE_STATIC
+AC_LIBTOOL_WIN32_DLL
+AM_PROG_LIBTOOL
+
+dnl Initialize maintainer mode
+AM_MAINTAINER_MODE
+
+
+###############
+# Generic stuff
+###############
+  
+dnl Checks for programs.
+AC_ISC_POSIX
+#AM_PROG_CC_STDC
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+
+
+AC_MSG_CHECKING([whether to turn on debugging])
+AC_ARG_ENABLE(debug,
+              [  --enable-debug          turn on debugging (default=no)],
+              if eval "test x$enable_debug = xyes"; then
+                DEBUGFLAG="-g"
+              fi)
+
+if test -n "$DEBUGFLAG"; then
+  AC_MSG_RESULT([yes])
+  CFLAGS="$DEBUGFLAG $CFLAGS"
+else
+  AC_MSG_RESULT([no])
+fi
+
+AC_MSG_CHECKING([whether to turn on profiling])
+AC_ARG_ENABLE(profile,
+              [  --enable-profile        turn on profiling (default=no)],
+              if eval "test x$enable_profile = xyes"; then
+                PROFFLAG="-pg"
+              fi)
+
+if test -n "$PROFFLAG"; then
+  AC_MSG_RESULT([yes])
+  CFLAGS="$PROFFLAG $CFLAGS"
+else
+  AC_MSG_RESULT([no])
+fi
+
+AC_ARG_ENABLE(ansi,
+              [  --enable-ansi           turn on strict ansi (default=no)],,
+              enable_ansi=no)
+
+changequote(,)dnl
+if eval "test x$GCC = xyes"; then
+  case " $CFLAGS " in
+  *[\ \	]-Wall[\ \	]*) ;;
+  *) CFLAGS="$CFLAGS -Wall" ;;
+  esac
+
+  if test "x$enable_ansi" = "xyes"; then
+    case " $CFLAGS " in
+    *[\ \	]-ansi[\ \	]*) ;;
+    *) CFLAGS="$CFLAGS -ansi" ;;
+    esac
+
+    case " $CFLAGS " in
+    *[\ \	]-pedantic[\ \	]*) ;;
+    *) CFLAGS="$CFLAGS -pedantic" ;;
+    esac
+  fi
+fi
+changequote([,])dnl
+
+
+dnl Cache $ACLOCAL_FLAGS
+AC_CACHE_CHECK([for aclocal flags], ac_cv_gegl_aclocal_flags,[
+   ac_cv_gegl_aclocal_flags="$ACLOCAL_FLAGS"
+]) 
+ACLOCAL="$ACLOCAL $ac_cv_gegl_aclocal_flags"
+
+
+###########################
+# Check target architecture
+###########################
+  
+AC_MSG_CHECKING([for target architecture])
+case x"$target" in
+  xNONE | x)
+    target_or_host="$host" ;;
+  *)
+    target_or_host="$target" ;;
+esac
+AC_MSG_RESULT([$target_or_host])
+
+#################
+# Check for Win32
+#################
+  
+AC_MSG_CHECKING([for native Win32])
+case "$target_or_host" in
+  *-*-mingw*)
+    os_win32=yes
+    ;;
+  *)
+    os_win32=no
+    ;;
+esac
+AC_MSG_RESULT([$os_win32])
+
+
+###############################
+# Checks for required libraries
+###############################
+
+PKG_CHECK_MODULES(GEGL, gegl >= $GEGL_REQUIRED_VERSION)
+AC_SUBST(GEGL_CFLAGS)
+AC_SUBST(GEGL_LIBS)
+
+
+PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED_VERSION,
+  have_gtk="yes"
+  AC_DEFINE(HAVE_GTK, 1, [Define to 1 to compile with gtk support.])
+  GTK_CFLAGS="$GTK_CFLAGS"
+  GTK_LIBS="$GTK_LIBS",
+  have_gtk="no  (gtk+ not found)")
+AM_CONDITIONAL(HAVE_GTK, test "x$have_gtk" = "xyes")
+
+AC_SUBST(HAVE_GTK)
+AC_SUBST(GTK_CFLAGS)
+AC_SUBST(GTK_LIBS)
+
+
+AM_PATH_PYTHON(2.4.0)
+
+AM_CHECK_PYTHON_HEADERS(,[AC_MSG_ERROR(could not find Python headers)])
+
+
+#Add a check for the required version of pygtk2
+
+AC_ARG_ENABLE(thread,
+  AC_HELP_STRING([--disable-thread], [Disable pygtk threading support]),,
+  enable_thread=yes)
+
+AM_CHECK_PYMOD(thread,,,enable_thread=no)
+
+AC_MSG_CHECKING(whether to enable threading in pygtk)
+if test "x$enable_thread" != xno; then
+  extra_mods=gthread
+  THREADING_CFLAGS=
+  AC_MSG_RESULT(yes)
+else
+  extra_mods=
+  THREADING_CFLAGS="-DDISABLE_THREADING"
+  AC_MSG_RESULT(no)
+fi
+AC_SUBST(THREADING_CFLAGS)
+CFLAGS="${CFLAGS} $THREADING_CFLAGS"
+
+
+#PKG_PROG_PKG_CONFIG
+
+PKG_CHECK_MODULES(PYGOBJECT, pygobject-2.0)
+AC_SUBST(PYGOBJECT_CODEGENDIR, `$PKG_CONFIG --variable=codegendir  pygtk-2.0`)
+AC_SUBST(PYGOBJECT_CFLAGS)
+AC_SUBST(PYGOBJECT_LIBS)
+
+
+AC_CONFIG_FILES([
+  Makefile
+  tests/Makefile
+  tests/images/Makefile
+])
+
+AC_OUTPUT

@@ -1,0 +1,321 @@
+* -*- Mode: C; c-basic-offset: 4 -*-
+ * pygtk- Python bindings for the GTK toolkit.
+ * Copyright (C) 1998-2003  James Henstridge
+ *
+ *   gegl.override: overrides for the gegl library
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA
+ */
+%%
+headers
+//#include <Python.h>
+//
+#define NO_IMPORT_PYGOBJECT
+#include <pygobject.h>
+#include <glib-object.h>
+//#include <gtk/gtkobject.h>
+#include <dlfcn.h>
+
+#include "gegl.h"
+#include "gegl/gegl-utils.h"
+
+static int
+pygegl_gegl_node_parse_property(GeglNode *me, const char *name,
+                                PyObject *pyObj, GValue *value)
+{
+    GParamSpec *pspec = NULL;
+    const gchar *operation;
+
+    if (!strcmp(name, "operation") && !strcmp(name, "name"))
+        pspec = gegl_node_find_property(me, name);
+    else
+    {
+        operation = gegl_node_get_operation(me);
+        if (operation != NULL)
+            pspec = gegl_node_find_property(me, name);
+    }
+
+    if (pspec == NULL)
+    {
+        gchar buf[512];
+
+        g_snprintf(buf, sizeof(buf),
+                   "operation does not support property '%s'",
+                   name);
+        PyErr_SetString(PyExc_TypeError, buf);
+
+        return 0;
+    }
+
+    g_value_init(value, G_PARAM_SPEC_VALUE_TYPE(pspec));
+
+    pyg_value_from_pyobject(value, pyObj);
+
+    return 1;
+}
+
+/// Sets up a gegl_node from a dict.
+static int pygegl_setup_gegl_node(GeglNode *node, PyObject *dict)
+{
+    int i;
+    GValue value = { 0 };
+    PyObject *keys;
+    int n;
+
+    keys = PyDict_Keys(dict);
+    if (keys == NULL)
+        return 1;
+
+    n = PyList_Size(keys);
+
+    for (i = 0; i < n; i++)
+    {
+        PyObject *k = PyList_GetItem(keys, i);
+        const char *name = PyString_AsString(k);
+
+        if (name == NULL)
+        {
+            PyErr_SetString(PyExc_TypeError,
+                            "unexpected null value");
+            return 0;
+        }
+
+        if (pygegl_gegl_node_parse_property(node, name,
+                        PyDict_GetItem(dict, k), &value) == 0)
+        {
+            return 0;
+        }
+
+        gegl_node_set_property(node, name, &value);
+
+        g_value_unset(&value);
+    }
+
+    return 1;
+}
+
+static PyObject *gslist_to_pylist(GSList *list, gchar *type)
+{
+    PyObject *ret = PyList_New(0);
+
+    while (list)
+    {
+        GSList *next = list->next;
+
+        PyList_Append(ret, Py_BuildValue(type, list->data));
+
+        list = next;
+    }
+
+    return ret;
+}
+
+%%
+modulename gegl
+%%
+import gobject.GObject as PyGObject_Type
+import gtk.Object as PyGtkObject_Type
+%%
+ignore-glob
+  *_get_type
+%%
+init
+    int argc = 1;
+    const char *argv[] = { "python" };
+
+    void *babl = dlopen("libbabl.so", RTLD_NOW | RTLD_GLOBAL);
+    void *gegl = dlopen("libgegl-1.0.so", RTLD_NOW | RTLD_GLOBAL);
+
+    gegl_init(&argc, (char ***)&argv);
+
+    if (gegl != NULL)
+        dlclose(gegl);
+
+    if (babl != NULL)
+        dlclose(babl);
+
+%%
+override gegl_color_get_rgba
+static PyObject *
+_wrap_gegl_color_get_rgba(PyGObject *self)
+{
+    gfloat r, g, b, a;
+
+    gegl_color_get_rgba(GEGL_COLOR(self->obj), &r, &g, &b, &a);
+
+    return Py_BuildValue("ffff", r, g, b, a);
+}
+
+%%
+override gegl_color_set_rgba kwargs
+static PyObject *
+_wrap_gegl_color_set_rgba(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "r", "g", "b", "a", NULL };
+    float r, g, b, a;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"ffff:GeglColor.set_rgba", kwlist, &r, &g, &b, &a))
+        return NULL;
+    
+    gegl_color_set_rgba(GEGL_COLOR(self->obj), r, g, b, a);
+    
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+%%
+override gegl_node_new_child kwargs
+static PyObject*
+_wrap_gegl_node_new_child(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    gchar *operation;
+    GeglNode *node;
+
+    if (PyTuple_Size(args) != 1)
+    {
+        PyErr_SetString(PyExc_TypeError, "no operation given");
+        return NULL;
+    }
+
+    PyArg_ParseTuple(args, "s", &operation);
+    node = gegl_node_create_child(GEGL_NODE(self->obj), operation);
+
+    if (kwargs != NULL)
+    {
+        if (pygegl_setup_gegl_node(node, kwargs) == 0)
+            return NULL;
+    }
+
+    return pygobject_new(G_OBJECT(node));
+}
+
+%%
+override gegl_node_link args
+static PyObject *
+_wrap_gegl_node_link(PyGObject *self, PyObject *args)
+{
+    GeglNode *source;
+    int len, i;
+
+    if (args == NULL || args == Py_None)
+        len = 0;
+    else if (PyTuple_Check(args))
+        len = PyTuple_Size(args);
+    else
+        len = 0;
+
+    if (len == 0)
+    {
+        PyErr_SetString(PyExc_TypeError,
+                        "must be a tuple containing a list of one or more nodes");
+        return NULL;
+    }
+
+    source = GEGL_NODE(self->obj);
+
+    for (i = 0; i < len; ++i)
+    {
+	PyGObject *item = (PyGObject *)PyTuple_GetItem(args, i);
+        GeglNode *sink = GEGL_NODE (item->obj);
+
+        gegl_node_connect_to(source, "output", sink, "input");
+
+	source = sink;
+    }
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+%%
+override gegl_node_set kwargs
+static PyObject*
+_wrap_gegl_node_set(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    GeglNode *me = GEGL_NODE(self->obj);
+
+    if  (pygegl_setup_gegl_node(me, kwargs) == 0)
+        return NULL;
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+%%
+#if 0
+Could not write method GeglNode.blit: No ArgType for GeglRectangle*
+#endif
+
+%%
+#if 0
+Could not write method GeglNode.new_processor: No ArgType for GeglRectangle*
+#endif
+
+%%
+override gegl_list_operations
+static PyObject*
+_wrap_gegl_list_operations(void)
+{
+    guint     n_operations, i;
+    gchar   **operations = gegl_list_operations(&n_operations);
+    PyObject *tuple = PyTuple_New(n_operations);
+
+    for (i = 0; i < n_operations; ++i)
+        PyTuple_SetItem(tuple, i, Py_BuildValue("s", operations[i]));
+
+    return tuple;
+}
+
+%%
+#if 0
+Could not write method GeglNode.find_property: No ArgType for GParamSpec*
+#endif
+
+
+%%
+#if 0
+Could not write method GeglNode.get: varargs functions not supported
+#endif
+
+%%
+#if 0
+Could not write method GeglNode.get_bounding_box: No ArgType for GeglRectangle
+#endif
+
+%%
+override gegl_node_get_children
+static PyObject *
+_wrap_gegl_node_get_children(PyGObject *self)
+{
+    GSList *result = gegl_node_get_children(GEGL_NODE(self->obj));
+
+    return gslist_to_pylist(result, "O");
+}
+
+%%
+#if 0
+Could not write method GeglNode.get_consumers: No ArgType for GeglNode***
+#endif
+
+%%
+#if 0
+Could not write method GeglNode.get_producer: No ArgType for gchar**
+#endif
+
+%%
+#if 0
+Could not write method GeglNode.get_properties: No ArgType for guint*
+#endif

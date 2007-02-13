@@ -1,0 +1,15 @@
+2007-02-03  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	Released version 0.0.4 of pygegl.
+
+	This version of pygegl is an update of the original pygegl binding
+	written by bogado and is designed to work with a current version of
+	GEGL as checked out from the Subversion repository. Extras sample
+	scripts have been added based on scripts in the Ruby binding, rgegl.
+	The build system has also been updated.
+
+	The original 0.0.2 version of pygegl was obtained via the authors
+	web site at http://ervilha.org/pygegl/.
+
+2006-08-25 Victor bogado da Silva Lins <victor@bogado.net>
+	* first working version, check the tests directory for an idea.

@@ -1,0 +1,12 @@
+This is a python binding for the gegl library. It is still in it's infancy,
+much like gegl it self. 
+
+Since gegl may still change it's API so this binding. Don't count on any
+funcionality that is implemented now on still being there tomorrow ;-).
+
+To compile and install this you need both GEGL(1) and BABL(2) correctly
+installed. This means checking out those packages from the SVN server,
+compiling them, and installing. Since both of those software packages
+are in development this binding can stop working at any moment. 
+
+
