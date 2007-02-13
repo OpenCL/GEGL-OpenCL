@@ -122,7 +122,7 @@ gegl_buffer_save (GeglBuffer    *buffer,
 
   strcpy (info->header.magic, "_G_E_G_L");
   info->path = g_strdup (path);
-  info->fd = g_open (info->path, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+  info->fd = g_open (info->path, O_WRONLY| O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
   if (info->fd == -1)
     {
       g_message ("Unable to open '%s' when saving a buffer", info->path);
