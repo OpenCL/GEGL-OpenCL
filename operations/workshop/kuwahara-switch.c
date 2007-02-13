@@ -120,56 +120,6 @@ process (GeglOperation *operation,
   return  TRUE;
 }
 
-static inline void
-compute_rectangle (gfloat *buf,
-                   gint    buf_width,
-                   gint    buf_height,
-                   gint    x0,
-                   gint    y0,
-                   gint    width,
-                   gint    height,
-                   gint    component,
-                   gfloat *pmin,
-                   gfloat *pmax,
-                   gfloat *pmean,
-                   gfloat *pvariance)
-{
-  gint    x, y;
-  gfloat  max   = -1000000000.0;
-  gfloat  min   =  1000000000.0;
-  gfloat  mean  =  0.0;
-  gint    count =  0;
-
-  gint offset = (y0 * buf_width + x0) * 4 + component;
-
-  for (y=y0; y<y0+height; y++)
-    {
-    for (x=x0; x<x0+width; x++)
-      {
-        if (x>=0 && x<buf_width &&
-            y>=0 && y<buf_height)
-          {
-            if (buf [offset] > max)
-              max = buf[offset];
-            if (buf [offset] < min)
-              min = buf[offset];
-            mean += buf[offset];
-            count++;
-          }
-        offset+=4;
-      }
-      offset+= (buf_width * 4) - 4 * width;
-    }
-  if (pmin)
-    *pmin = min;
-  if (pmax)
-    *pmax = max;
-  if (pmean && count)
-    *pmean = mean/count;
-  if (pvariance)
-    *pvariance = max-min;
-}
-
 static void
 kuwahara_switch (GeglBuffer *src,
                  GeglBuffer *aux,

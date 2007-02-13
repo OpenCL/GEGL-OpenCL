@@ -1,3 +1,10 @@
+2007-02-13  Øyvind Kolås  <oeyvindk@hig.no>
+
+	* operations/workshop/box-percentile.c: corrected which region is
+	computed.
+	* operations/workshop/disc-percentile.c: added.
+	* operations/workshop/kuwahara-switch.c: removed dead code.
+
 2007-02-13  Øyvind Kolås  <pippin@gimp.org>
 
 	Made the cache store 8bit data instead of floating point, temporary

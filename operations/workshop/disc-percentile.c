@@ -18,8 +18,8 @@
  * Copyright 2005 Øyvind Kolås <pippin@gimp.org>,
  *           2007 Øyvind Kolås <oeyvindk@hig.no>
  */
-
-#if GEGL_CHANT_PROPERTIES 
+#if GEGL_CHANT_PROPERTIES
+ 
 #define MAX_SAMPLES 20000 /* adapted to max level of radius */
 
 gegl_chant_double (radius, 0.0, 70.0, 4.0,
@@ -29,9 +29,9 @@ gegl_chant_double (percentile, 0.0, 100.0, 50, "The percentile to compute, defau
 #else
 
 #define GEGL_CHANT_FILTER
-#define GEGL_CHANT_NAME            box_percentile
+#define GEGL_CHANT_NAME            disc_percentile
 #define GEGL_CHANT_DESCRIPTION     "Sets the target pixel to the color corresponding to a given percentile when colors are sorted by luminance."
-#define GEGL_CHANT_SELF            "box-percentile.c"
+#define GEGL_CHANT_SELF            "disc-percentile.c"
 #define GEGL_CHANT_CATEGORIES      "misc"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
@@ -194,7 +194,7 @@ median (GeglBuffer *src,
         gint        radius,
         gdouble     rank)
 {
-  RankList list={0};
+  RankList list = {0};
 
   gint x,y;
   gint offset;
@@ -219,8 +219,15 @@ median (GeglBuffer *src,
         for (v=y-radius;v<=y+radius;v++)
           for (u=x-radius;u<=x+radius;u++)
             {
+              gint ru, rv;
+              
+              ru = (x-u)*(x-u);
+              rv = (y-v)*(y-v);
+
               if (u >= 0 && u < dst->width &&
-                  v >= 0 && v < dst->height)
+                  v >= 0 && v < dst->height &&
+                  (ru+rv) < radius* radius
+                  )
                 {
                   gfloat *src_pix = src_buf + (u+(v * src->width)) * 4;
                   gfloat luma = (src_pix[0] * 0.212671 +
