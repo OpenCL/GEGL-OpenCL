@@ -228,6 +228,8 @@ query_svg (const gchar *path,
 
   rsvg_init ();
   handle = rsvg_handle_new_from_file (path, &pError);
+  if (handle == NULL)
+      return FALSE;
 
   vals.resolution = SVG_DEFAULT_RESOLUTION;
   vals.width  = *width;

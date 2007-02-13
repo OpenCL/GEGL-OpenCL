@@ -1,10 +1,13 @@
 if OS_WIN32
 no_undefined = -no-undefined
+SOsuf=dll
+else
+SOsuf=so
 endif
 
 CFILES          = $(wildcard $(srcdir)/*.c)
-SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=.so))
-INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=.so))
+SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=.$(SOsuf)))
+INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=.$(SOsuf)))
 GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
                   $(wildcard $(top_srcdir)/gegl/buffer/*.h)
 EXTRA_DIST      = $(wildcard *.c)
@@ -17,7 +20,7 @@ LDFLAGS += -shared $(no_undefined)
 
 LDADD    = @DEP_LIBS@ @BABL_LIBS@
 
-%.so: %.c $(GEGLHEADERS)
+%.$(SOsuf): %.c $(GEGLHEADERS)
 	@echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 clean-local:

@@ -5,7 +5,7 @@ EXTRA_DIST=$(wildcard *.xml)
 index.html: Makefile.am $(wildcard *.txt)
 	@echo "<html><head><title>GEGL gallery</title><style type='text/css'>@import url(../gegl.css);</style><link rel='shortcut icon' href='../images/gegl.ico'/></head><body><div class='toc'><ul><li><a href='../index.html'>GEGL</a></li><li>&nbsp;</li><li><a href='#'>Gallery</a></li>" > index.html
 	
-	@for XML in *.xml;do echo "<li><a href='#$$XML'>&nbsp;&nbsp;"`echo $$XML|sed -e 's/.xml//' -e 's/-/ /g'`"</a></li>">>index.html;done;
+	@for XML in $(srcdir)/*.xml;do echo "<li><a href='#$$XML'>&nbsp;&nbsp;"`echo $$XML|sed -e 's/.xml//' -e 's/-/ /g'`"</a></li>">>index.html;done;
 	@echo "</ul></div><div class='paper'><div class='content'>" >> index.html
 	@echo "<p>This gallery shows samples of GEGL output it is used to both document current capabilities, and help spot regressions.</p>" >> index.html
 	@if [ ! -z "$${CRUCIBLE_ID}" ]; then\
@@ -14,8 +14,8 @@ index.html: Makefile.am $(wildcard *.txt)
 	  echo "</ul>" >> index.html;\
 	  echo "<p>These pages document a GEGL build at a <a href='http://crucible.osdl.org/'>crucible</a> test machine.</p><p><a href='http://crucible.osdl.org/runs/$${CRUCIBLE_ID}/'>$${CRUCIBLE_ID}</a> @ $${CRUCIBLE_SUT} `date`</p>" >> index.html;\
 	fi;
-	@for XML in *.xml; do\
-	    export BASE=`echo $$XML | sed s/\.xml//`;\
+	@for XML in $(srcdir)/*.xml; do\
+	    export BASE=`echo $$XML | sed s?$(srcdir)/?? | sed s/\.xml//`;\
 	    TXT=$$BASE".txt";\
 	    PNG=$$BASE".png";\
 	    GRAPH=$$BASE"-graph.png";\
@@ -46,10 +46,10 @@ all-local: pngs index.html
 	    $(top_builddir)/gegl/libgegl-@GEGL_API_VERSION@.la\
 	    $(top_builddir)/bin/gegl
 	@export GEGL_DEBUG_TIME=yes;export GEGL_PATH=$(top_builddir)/operations;\
-	$(top_builddir)/bin/gegl $< -o $@ > `echo $@|sed -e s/png/txt/`;
+	$(top_builddir)/bin/gegl $< -o `echo $@ | sed s?$(srcdir)/??` > `echo $@ | sed s?$(srcdir)/?? | sed -e s/png/txt/`;
 if HAVE_GRAPHVIZ
 	@export GEGL_PATH=$(top_builddir)/operations;\
-	$(top_builddir)/bin/gegl --dot $< | dot -Tpng -o`echo $@|sed s/.png/-graph.png/`>/dev/null
+	$(top_builddir)/bin/gegl --dot $< | dot -Tpng -o `echo $@ | sed s?$(srcdir)/?? | sed s/.png/-graph.png/` >/dev/null
 endif
 
 clean-local:
