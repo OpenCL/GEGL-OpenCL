@@ -1,5 +1,13 @@
 2007-02-13  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* config.h.in: Still one more file checked in by mistake.
+
+2007-02-13  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* install-sh: And finally, delete one last file checked in by mistake.
+
+2007-02-13  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* NEWS: Added news about the 0.0.4 release.
 
 	* autogen.sh: Added file missing from tarball.
