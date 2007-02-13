@@ -1,3 +1,12 @@
+2007-02-13  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* config.guess
+	* config.sub
+	* configure
+	* depcomp
+	* ltmain.sh
+	* missing: Deleted files checked in by mistake.
+
 2007-02-03  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	Released version 0.0.4 of pygegl.
