@@ -1,5 +1,11 @@
 2007-02-13  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* NEWS: Added news about the 0.0.4 release.
+
+	* autogen.sh: Added file missing from tarball.
+
+2007-02-13  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* config.guess
 	* config.sub
 	* configure
