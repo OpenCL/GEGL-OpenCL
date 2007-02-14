@@ -1,5 +1,4 @@
 require 'glib2'
-require 'gtk2'
 require 'gegl.so'
 
 # initialize GEGL upon require
@@ -91,7 +90,4 @@ module Gegl
   end
   class Color
   end
-
 end
-
-require 'gegl-view'

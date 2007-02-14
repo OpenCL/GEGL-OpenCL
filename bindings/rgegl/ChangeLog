@@ -1,5 +1,18 @@
 2007-02-14  Øyvind Kolås  <pippin@gimp.org>
 
+	* src/lib/gegl-view.rb: queue redraws when x,y or scale of view
+	changes.
+	* src/lib/gegl.rb: do not depend on gtk2 by default (removes the
+	warnings when initializing rgegl without gtk)
+	* samples/view-test.rb: added sample using the Gegl::View GTK+ widget.
+
+2007-02-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* src/lib/gegl-view.rb:
+	* src/lib/gegl.rb:
+
+2007-02-14  Øyvind Kolås  <pippin@gimp.org>
+
 	* src/lib/canvas.rb: removed file checked in by accident.
 
 2007-02-14  Øyvind Kolås  <pippin@gimp.org>

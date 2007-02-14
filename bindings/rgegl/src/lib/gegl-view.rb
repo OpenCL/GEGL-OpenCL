@@ -1,3 +1,5 @@
+require 'gtk2'
+
 module Gegl
   # ruby implementation of GeglView used in the test application, leaves
   # handling of mouse events to other classes.
@@ -55,6 +57,15 @@ module Gegl
           if @scale==0.0
               scale=1.0
           end
+          self.queue_draw
+      end
+      def x= new_x
+          @x=new_x
+          self.queue_draw
+      end
+      def y= new_y
+          @y=new_y
+          self.queue_draw
       end
       def processor
           if @processor==nil
