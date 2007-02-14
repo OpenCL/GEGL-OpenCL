@@ -4,7 +4,7 @@ AC_PREREQ(2.52)
 dnl the pygegl version number
 m4_define(pygegl_major_version, 0)
 m4_define(pygegl_minor_version, 0)
-m4_define(pygegl_micro_version, 4)
+m4_define(pygegl_micro_version, 5)
 m4_define(pygegl_version, pygegl_major_version.pygegl_minor_version.pygegl_micro_version)
 m4_define([pygegl_real_version],
           [pygegl_major_version.pygegl_minor_version.pygegl_micro_version])
