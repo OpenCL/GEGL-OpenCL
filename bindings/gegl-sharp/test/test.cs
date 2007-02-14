@@ -34,7 +34,7 @@ public class Test {
 
         Console.WriteLine("XML: {0}", graph.ToXml("./"));
 
-        graph.Process();
+        save.Process();
 
         //Node from_xml = Global.ParseXml("", "/");
 
