@@ -2,7 +2,7 @@
  * pygtk- Python bindings for the GTK toolkit.
  * Copyright (C) 1998-2003  James Henstridge
  *
- *   atkmodule.c: module wrapping the ATK library.
+ *   geglmodule.c: module wrapping the GEGL library.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,7 +37,19 @@ initgegl(void)
 {
     PyObject *m, *d;
 
+    /* set the default Python encoding to utf-8 */
+    PyUnicode_SetDefaultEncoding("utf-8");
+
     init_pygobject ();
+
+#if 0
+    pygimp_init_pygobject();
+
+    /* Create the module and add the functions */
+    m = Py_InitModule4("gimp", gimp_methods,
+                       gimp_module_documentation,
+                       NULL, PYTHON_API_VERSION);
+#endif
 
     m = Py_InitModule ("gegl", pygegl_functions);
     d = PyModule_GetDict (m);
@@ -45,3 +57,9 @@ initgegl(void)
     pygegl_register_classes (d);
 //    pygegl_add_constants(m, "GEGL_");
 }
+
+//quitgegl(void)
+//{
+//    quit_pygobject ();
+//}
+

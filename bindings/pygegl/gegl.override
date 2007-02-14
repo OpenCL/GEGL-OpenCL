@@ -21,12 +21,9 @@
  */
 %%
 headers
-//#include <Python.h>
-//
 #define NO_IMPORT_PYGOBJECT
 #include <pygobject.h>
 #include <glib-object.h>
-//#include <gtk/gtkobject.h>
 #include <dlfcn.h>
 
 #include "gegl.h"
@@ -136,7 +133,7 @@ init
     int argc = 1;
     const char *argv[] = { "python" };
 
-    void *babl = dlopen("libbabl.so", RTLD_NOW | RTLD_GLOBAL);
+    void *babl = dlopen("libbabl-0.0.so", RTLD_NOW | RTLD_GLOBAL);
     void *gegl = dlopen("libgegl-1.0.so", RTLD_NOW | RTLD_GLOBAL);
 
     gegl_init(&argc, (char ***)&argv);
@@ -146,6 +143,26 @@ init
 
     if (babl != NULL)
         dlclose(babl);
+
+%%
+override gegl_color_new
+static int
+_wrap_gegl_color_new(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "color", NULL };
+    char *color;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"s:GeglColor.__init__", kwlist, &color))
+        return -1;
+    self->obj = (GObject *)gegl_color_new(color);
+
+    if (!self->obj) {
+        PyErr_SetString(PyExc_RuntimeError, "could not create GeglColor object");
+        return -1;
+    }
+    pygobject_register_wrapper((PyObject *)self);
+    return 0;
+}
 
 %%
 override gegl_color_get_rgba
@@ -228,12 +245,12 @@ _wrap_gegl_node_link(PyGObject *self, PyObject *args)
 
     for (i = 0; i < len; ++i)
     {
-	PyGObject *item = (PyGObject *)PyTuple_GetItem(args, i);
+        PyGObject *item = (PyGObject *)PyTuple_GetItem(args, i);
         GeglNode *sink = GEGL_NODE (item->obj);
 
         gegl_node_connect_to(source, "output", sink, "input");
 
-	source = sink;
+        source = sink;
     }
 
     Py_INCREF(Py_None);
@@ -245,9 +262,7 @@ override gegl_node_set kwargs
 static PyObject*
 _wrap_gegl_node_set(PyGObject *self, PyObject *args, PyObject *kwargs)
 {
-    GeglNode *me = GEGL_NODE(self->obj);
-
-    if  (pygegl_setup_gegl_node(me, kwargs) == 0)
+    if  (pygegl_setup_gegl_node(GEGL_NODE(self->obj), kwargs) == 0)
         return NULL;
 
     Py_INCREF(Py_None);
@@ -260,23 +275,94 @@ Could not write method GeglNode.blit: No ArgType for GeglRectangle*
 #endif
 
 %%
-#if 0
-Could not write method GeglNode.new_processor: No ArgType for GeglRectangle*
-#endif
-
-%%
-override gegl_list_operations
+override operations
 static PyObject*
-_wrap_gegl_list_operations(void)
+_wrap_operations(void)
 {
     guint     n_operations, i;
     gchar   **operations = gegl_list_operations(&n_operations);
-    PyObject *tuple = PyTuple_New(n_operations);
+    PyObject *ret = PyTuple_New(n_operations);
 
     for (i = 0; i < n_operations; ++i)
-        PyTuple_SetItem(tuple, i, Py_BuildValue("s", operations[i]));
+        PyTuple_SetItem(ret, i, Py_BuildValue("s", operations[i]));
 
-    return tuple;
+    g_free(operations);
+
+    return ret;
+}
+
+%%
+#if 0
+override properties args
+static PyObject*
+_wrap_properties(PyGObject *self, PyObject *args)
+{
+    const gchar *operation;
+    guint        n_properties, i;
+    GParamSpec **properties;
+    PyObject    *ret;
+
+g_printerr("Hello from gegl_list_properties()\n");
+    if (PyTuple_Size(args) != 1)
+    {
+        PyErr_SetString(PyExc_TypeError, "no operation given");
+        return NULL;
+    }
+
+    PyArg_ParseTuple(args, "s", &operation);
+    properties = gegl_list_properties(operation, &n_properties);
+g_printerr("  operation %s has %d properties\n", operation, n_properties);
+
+    ret = PyTuple_New(n_properties);
+g_printerr("  created new tuple\n");
+
+    for (i = 0; i < n_properties; ++i)
+{
+if (properties[i] == NULL)
+  g_printerr("  properties[%d] is NULL\n", i);
+else
+  g_printerr("  properties[%d] is %p\n", i, properties[i]);
+        PyTuple_SetItem(ret, i, Py_BuildValue("s", properties[i]->name));
+//        PyTuple_SetItem(ret, i, Py_BuildValue("s", "hello"));
+//        PyTuple_SetItem(ret, i, Py_BuildValue("O", properties[i]));
+//        PyList_Append(ret, Py_BuildValue("O", properties[i]));
+}
+
+    g_free(properties);
+
+g_printerr("  All done...returning the tuple\n");
+//    return pygobject_new((GObject *)ret);
+    return ret;
+}
+#endif
+
+%%
+override property_names args
+static PyObject*
+_wrap_property_names(PyGObject *self, PyObject *args)
+{
+    const gchar *operation;
+    guint        n_properties, i;
+    GParamSpec **properties;
+    PyObject    *ret;
+
+    if (PyTuple_Size(args) != 1)
+    {
+        PyErr_SetString(PyExc_TypeError, "no operation given");
+        return NULL;
+    }
+
+    PyArg_ParseTuple(args, "s", &operation);
+    properties = gegl_list_properties(operation, &n_properties);
+
+    ret = PyTuple_New(n_properties);
+
+    for (i = 0; i < n_properties; ++i)
+        PyTuple_SetItem(ret, i, Py_BuildValue("s", properties[i]->name));
+
+    g_free(properties);
+
+    return ret;
 }
 
 %%
@@ -287,7 +373,21 @@ Could not write method GeglNode.find_property: No ArgType for GParamSpec*
 
 %%
 #if 0
-Could not write method GeglNode.get: varargs functions not supported
+override gegl_node_get args
+static PyObject*
+_wrap_gegl_node_get(PyGObject *self, PyObject *args)
+{
+    guint     n_operations, i;
+    gchar   **operations = gegl_list_operations(&n_operations);
+    PyObject *ret = PyTuple_New(n_operations);
+
+    for (i = 0; i < n_operations; ++i)
+        PyTuple_SetItem(ret, i, Py_BuildValue("O", operations[i]));
+
+    g_free(operations);
+
+    return ret;
+}
 #endif
 
 %%
@@ -307,15 +407,78 @@ _wrap_gegl_node_get_children(PyGObject *self)
 
 %%
 #if 0
-Could not write method GeglNode.get_consumers: No ArgType for GeglNode***
+override gegl_node_get_consumers args
+static PyObject*
+_wrap_gegl_node_get_consumers(PyGObject *self, PyObject *args)
+{
+    const gchar   *output_pad_name;
+    GeglNode    **nodes;
+    const gchar **pads;
+    int           n_consumers, i;
+    PyObject     *consumers;
+
+g_printerr("Hello from gegl_node_get_consumers()\n");
+    if (PyTuple_Size(args) != 1)
+    {
+        PyErr_SetString(PyExc_TypeError, "no output pad name given");
+        return NULL;
+    }
+
+g_printerr("  calling gegl_node_get_conumers()\n");
+    PyArg_ParseTuple(args, "s", &output_pad_name);
+    n_consumers = gegl_node_get_consumers(GEGL_NODE(self->obj),
+                                          output_pad_name,
+                                          &nodes,
+                                          &pads);
+g_printerr("  consumers found: %d\n", n_consumers);
+
+    consumers = PyTuple_New(n_consumers);
+
+    /* Process return values */
+    for (i = 0; i < n_consumers; ++i)
+    {
+        PyTuple_SetItem(consumers, i,
+                        Py_BuildValue("(Os)", nodes[i], pads[i]));
+    }
+
+    g_free(nodes);
+    g_free(pads);
+
+g_printerr("  returning with list of consumers\n");
+
+    return consumers;
+}
 #endif
 
 %%
 #if 0
-Could not write method GeglNode.get_producer: No ArgType for gchar**
+override gegl_node_get_producer args
+static PyObject*
+_wrap_gegl_node_get_producer(PyGObject *self, PyObject *args)
+{
+    const gchar *input_pad_name;
+    gchar       *output_pad_name;
+    GeglNode    *producer;
+
+g_printerr("Hello from gegl_node_get_producer()\n");
+    if (PyTuple_Size(args) != 1)
+    {
+        PyErr_SetString(PyExc_TypeError, "no input pad name given");
+        return NULL;
+    }
+
+    PyArg_ParseTuple(args, "s", &input_pad_name);
+g_printerr("  input_pad_name %s\n", input_pad_name);
+    producer = gegl_node_get_producer(GEGL_NODE(self->obj),
+                                      input_pad_name,
+                                      &output_pad_name);
+g_printerr("  output_pad_name is %s\n", output_pad_name);
+
+    /* pygobject_new handles NULL checking */
+    return pygobject_new((GObject *)producer,
+                         Py_BuildValue("s", output_pad_name));
+//    return Py_BuildValue("(Os)", producer, output_pad_name);
+//    return producer;
+}
 #endif
 
-%%
-#if 0
-Could not write method GeglNode.get_properties: No ArgType for guint*
-#endif

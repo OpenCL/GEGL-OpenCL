@@ -1,0 +1,2 @@
+export PYTHONPATH=./.libs
+python

@@ -10,19 +10,25 @@ node = gegl.Node()                    # create a new GEGL graph
 
 fractal = node.new_child("FractalExplorer")
 
-unsharp   = node.new_child()
-    in_proxy  = unsharp.input_proxy "input"
-    out_proxy = unsharp.output_proxy "output"
-    blur      = unsharp.new_child :gaussian_blur, :std_dev_x=>5.0, :std_dev_y=>5.0
-    subtract  = unsharp.new_child :subtract
-    add       = unsharp.new_child :add
+unsharp   = node.new_child("unsharp-mask")
 
-    in_proxy >> subtract
-    in_proxy >> add
-    in_proxy >> blur >> subtract[:aux] >> add[:aux] >> out_proxy
+in_proxy  = unsharp.get_input_proxy("input")
+out_proxy = unsharp.get_output_proxy("output")
+blur      = unsharp.new_child("gaussian-blur",
+                              std_dev_x = 5.0,
+                              std_dev_y = 5.0)
+subtract  = unsharp.new_child("subtract")
+add       = unsharp.new_child("add")
+
+in_proxy.link(subtract)
+in_proxy.link(add)
+in_proxy.link(blur)
+blur.connect_to("output", subtract, "aux")
+subtract.connect_to("output", add, "aux")
+add.link(out_proxy)
 
 display = node.new_child("display",
-                         window_title => "rnode subgraph test")
+                         window_title = "rnode subgraph test")
 
 fractal.link(unsharp, display)        # connect the nodes
 

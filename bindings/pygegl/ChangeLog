@@ -1,5 +1,19 @@
 2007-02-13  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* gegl.defs: Added some defines related to GeglRectangle from items
+	in gegl-utils(). Updated list of non-bound items.
+
+	* gegl.override: Added framework for get(), get_consumers()
+	and get_producer().
+
+	* geglmodule.c: Set default Python encoding to UTF-8.
+
+	* teste.sh: Added (from 0.0.2 version of pygegl)
+
+	* tests/subgraph.py: Completed conversion from rgegl.
+
+2007-02-13  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* configure.in: Updated to version 0.0.5
 
 2007-02-13  Kevin Cozens  <kcozens@cvs.gnome.org>

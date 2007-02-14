@@ -1,16 +1,15 @@
 ;; -*- scheme -*-
+; Could not write method GeglProcessor.work: No ArgType for gdouble*
 ;Warning: generating old-style constructor for:gegl_color_new
-;Could not write method GeglNode.blit: No ArgType for void*
-;Could not write method GeglNode.new_processor: No ArgType for GeglProcessor*
-;Could not write method GeglNode.find_property: No ArgType for GParamSpec*
-;Could not write method GeglNode.get: varargs functions not supported
-;Could not write method GeglNode.get_consumers: No ArgType for GeglNode***
-;Could not write method GeglNode.get_producer: No ArgType for gchar**
-;Could not write function gegl_list_properties: No ArgType for guint*
+; Could not write method GeglNode.find_property: No ArgType for GParamSpec*
+;-Could not write method GeglNode.get: varargs functions not supported
+;-Could not write method GeglNode.get_consumers: No ArgType for GeglNode***
+;xCould not write method GeglNode.get_producer: No ArgType for gchar**
+;xCould not write function properties: No ArgType for guint*
 ;Warning: Constructor for GeglColor needs to be updated to new API
 ;         See http://live.gnome.org/PyGTK_2fWhatsNew28#update-constructors
-;***INFO*** The coverage of global functions is 66.67% (2/3)
-;***INFO*** The coverage of methods is 79.31% (23/29)
+;***INFO*** The coverage of global functions is 75.00% (3/4)
+;***INFO*** The coverage of methods is 83.87% (26/31)
 ;***INFO*** There are no declared virtual proxies.
 ;***INFO*** There are no declared virtual accessors.
 ;***INFO*** There are no declared interface proxies.
@@ -37,6 +36,12 @@
   (gtype-id "GEGL_TYPE_RECTANGLE")
 )
 
+(define-boxed GeglProcessor
+  (in-module "Gegl")
+  (c-name "GeglProcessor")
+  (gtype-id "GEGL_TYPE_PROCESSOR")
+)
+
 
 ;; Enumerations and flags ...
 
@@ -54,7 +59,7 @@
 
 ;; From gegl.h
 
-;This should be directly callable by Python code
+;This is not meant to be bound as a method callable from Python.
 ;(define-function gegl_exit
 ;  (c-name "gegl_exit")
 ;  (return-type "none")
@@ -159,19 +164,20 @@
   (varargs #t)
 )
 
-(define-method blit
-  (of-object "GeglNode")
-  (c-name "gegl_node_blit")
-  (return-type "none")
-  (parameters
-    '("GeglRectangle*" "roi")
-    '("gdouble" "scale")
-    '("void*" "format")
-    '("gint" "rowstride")
-    '("gpointer*" "destination_buf")
-    '("GeglBlitFlags" "flags")
-  )
-)
+;(define-method blit
+;  (of-object "GeglNode")
+;  (c-name "gegl_node_blit")
+;  (return-type "none")
+;  (parameters
+;    '("GeglRectangle*" "roi")
+;    '("gdouble" "scale")
+;    '("void*" "format")
+;    '("gint" "rowstride")
+;    '("gpointer*" "destination_buf")
+;    '("GeglBlitFlags" "flags")
+;    '("gint" "flags")
+;  )
+;)
 
 (define-method process
   (of-object "GeglNode")
@@ -217,17 +223,26 @@
   (return-type "none")
 )
 
-(define-function gegl_list_operations
-  (c-name "gegl_list_operations")
+(define-function operations
+  (c-name "operations")
   (return-type "gchar**")
   (parameters
     '("guint*" "n_operations_p")
   )
 )
 
-(define-function gegl_list_properties
-  (c-name "gegl_list_properties")
+(define-function properties
+  (c-name "properties")
   (return-type "GParamSpec**")
+  (parameters
+    '("const-gchar*" "operation_type")
+    '("guint*" "n_properties_p")
+  )
+)
+
+(define-function property_names
+  (c-name "property_names")
+  (return-type "gchar**")
   (parameters
     '("const-gchar*" "operation_type")
     '("guint*" "n_properties_p")
@@ -347,10 +362,10 @@
   (c-name "gegl_color_new")
   (is-constructor-of "GeglColor")
   (return-type "GeglColor*")
-;  (properties
-;    '("color" (argname "color") (optional))
-  (parameters
-    '("const-gchar*" "color")
+  (properties
+    '("color" (argname "color"))
+;  (parameters
+;    '("const-gchar*" "color")
   )
 )
 
