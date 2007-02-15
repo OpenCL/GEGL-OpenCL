@@ -1,5 +1,12 @@
 2007-02-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/render/text.c: (get_defined_region), (finalize),
+	(class_init): cache the defined region of text for a given combination
+	of string/font/wrap/alignment to avoid recomputing the extent when
+	the properties have not changed.
+
+2007-02-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-processor.c: (gegl_processor_set_rectangle): avoid
 	computation rectangles outside the bounds of the composition.
 

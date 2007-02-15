@@ -42,11 +42,21 @@ gegl_chant_int    (height, 0, 1000000, 0,
 #define GEGL_CHANT_DESCRIPTION     "Display a string of text using pango and cairo."
 #define GEGL_CHANT_SELF            "text.c"
 #define GEGL_CHANT_CATEGORIES      "render"
+#define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
 #include <cairo.h>
 #include <pango/pango-attributes.h>
 #include <pango/pangocairo.h>
+
+typedef struct {
+  gchar         *string;
+  gchar         *font;
+  gdouble        size;
+  gint           wrap;
+  gint           alignment;
+  GeglRectangle  defined;
+} CachedExtent;
 
 static void text_layout_text (GeglChantOperation *self,
                               cairo_t       *cr,
@@ -199,35 +209,77 @@ process (GeglOperation *operation,
 static GeglRectangle
 get_defined_region (GeglOperation *operation)
 {
-  GeglRectangle result = {0,0,0,0};
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
+  CachedExtent *extent;
   gint status = FALSE;
 
-  { /* get extents */
-    cairo_t *cr;
-    gdouble width, height;
+  extent = (CachedExtent*)self->priv;
+  if (!self->priv)
+    {
+      self->priv = g_malloc0 (sizeof (CachedExtent));
+      extent = (CachedExtent*)self->priv;
+      extent->string = g_strdup ("");
+      extent->font = g_strdup ("");
+    }
 
-    cairo_surface_t *surface  = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
-        1, 1);
-    cr = cairo_create (surface);
-    text_layout_text (self, cr, 0, &width, &height);
-    result.width  = width;
-    result.height  = height;
+  if (strcmp (extent->string, self->string) ||
+      strcmp (extent->font, self->font) ||
+      extent->size != self->size ||
+      extent->wrap != self->wrap ||
+      extent->alignment != self->alignment)
+    { /* get extents */
+      cairo_t *cr;
+      gdouble width, height;
 
-    /* store the measured size for later use */
-    self->width = width;
-    self->height = height;
+      cairo_surface_t *surface  = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
+          1, 1);
+      cr = cairo_create (surface);
+      text_layout_text (self, cr, 0, &width, &height);
+      cairo_destroy (cr);
+      cairo_surface_destroy (surface);
 
-    cairo_destroy (cr);
-    cairo_surface_destroy (surface);
-  }
+      extent->defined.width = width;
+      extent->defined.height = height;
+      g_free (extent->string);
+      extent->string = g_strdup (self->string);
+      g_free (extent->font);
+      extent->font = g_strdup (self->font);
+      extent->size = self->size;
+      extent->wrap = self->wrap;
+      extent->alignment = self->alignment;
+
+      /* store the measured size for later use */
+      self->width = width;
+      self->height = height;
+    }
 
   if (status)
     {
       g_warning ("get defined region for text '%s' failed", self->string);
     }
 
-  return result;
+  return extent->defined;
+}
+
+static void
+finalize (GObject *object)
+{
+  GeglChantOperation *self = GEGL_CHANT_OPERATION (object);
+    
+  if (self->priv)
+    {
+      CachedExtent *extent = (CachedExtent*)self->priv;
+      g_free (extent->string);
+      g_free (extent->font);
+      g_free (extent);
+    }
+
+  G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
+}
+
+static void class_init (GeglOperationClass *klass)
+{
+  G_OBJECT_CLASS (klass)->finalize = finalize;
 }
 
 #endif
