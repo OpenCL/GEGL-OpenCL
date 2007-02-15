@@ -114,6 +114,8 @@ static void start_element (GMarkupParseContext *context,
     }
   else if (!strcmp (element_name, "link")||
            !strcmp (element_name, "links")||
+           !strcmp (element_name, "launcher")||
+           !strcmp (element_name, "launchers")||
            !strcmp (element_name, "source")||
            !strcmp (element_name, "destination"))
     {
@@ -296,6 +298,8 @@ static void end_element (GMarkupParseContext *context,
     }
   else if (!strcmp (element_name, "link")||
            !strcmp (element_name, "links")||
+           !strcmp (element_name, "launcher")||
+           !strcmp (element_name, "launchers")||
            !strcmp (element_name, "source")||
            !strcmp (element_name, "destination"))
     {
@@ -375,6 +379,8 @@ GeglNode *gegl_parse_xml (const gchar *xmldata,
 
   time = gegl_ticks () - time;
   gegl_instrument ("gegl", "gegl_parse_xml", time);
+
+  g_markup_context_free (context);
   return ret;
 }
 
