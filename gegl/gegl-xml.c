@@ -380,7 +380,7 @@ GeglNode *gegl_parse_xml (const gchar *xmldata,
   time = gegl_ticks () - time;
   gegl_instrument ("gegl", "gegl_parse_xml", time);
 
-  g_markup_context_free (context);
+  g_markup_parse_context_free (context);
   return ret;
 }
 
