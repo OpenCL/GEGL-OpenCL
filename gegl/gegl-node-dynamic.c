@@ -162,6 +162,7 @@ static void property_destroy (Property *property)
   if (property->name)
     g_free (property->name);
   g_value_unset (&property->value); /* does an unref */
+  g_free (property);
 }
 
 static gint

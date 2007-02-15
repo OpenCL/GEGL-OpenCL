@@ -1,5 +1,10 @@
 2007-02-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node-dynamic.c: (property_destroy): free the property
+	structure itself and not finalize the name and stored value.
+
+2007-02-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-xml.c: (gegl_parse_xml): fixed typo from previous commit.
 
 2007-02-16  Øyvind Kolås  <pippin@gimp.org>
