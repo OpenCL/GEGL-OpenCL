@@ -24,6 +24,7 @@
 #include "gegl-node.h"
 #include "gegl-processor.h"
 #include "gegl-operation-sink.h"
+#include "gegl-utils.h"
 #include "buffer/gegl-region.h"
 
 enum
@@ -187,8 +188,18 @@ void
 gegl_processor_set_rectangle (GeglProcessor *processor,
                               GeglRectangle *rectangle)
 {
-  processor->rectangle = *rectangle;
+  GeglRectangle bounds;
 
+  if (gegl_rectangle_equal (&processor->rectangle, rectangle))
+   {
+     return;
+   }
+ 
+  bounds = gegl_node_get_bounding_box (processor->input);
+  processor->rectangle = *rectangle;
+  gegl_rectangle_intersect (&processor->rectangle, &processor->rectangle, &bounds);
+
+  /* remove already queued dirty rectangles */
   while (processor->dirty_rectangles)
     {
       GeglRectangle *rect = processor->dirty_rectangles->data;
