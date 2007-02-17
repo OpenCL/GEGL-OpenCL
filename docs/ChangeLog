@@ -1,5 +1,10 @@
 2007-02-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* pygegl/index.html: fixed link to samples.
+	* rgegl/index.html: fixed link to samples.
+
+2007-02-17  Øyvind Kolås  <pippin@gimp.org>
+
 	Added bindings to website, currently the references to the various
 	bindings use absolute URLs since these bindings are not part of the
 	actual GEGL reelease.
