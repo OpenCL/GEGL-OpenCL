@@ -34,6 +34,7 @@
         <li><a href='gallery/index.html'>&nbsp;&nbsp;Gallery</a></li>
         <li><a href='#Dependencies'>&nbsp;&nbsp;Dependencies</a></li>
         <li><a href='#Download'>&nbsp;&nbsp;Download</a></li>
+        <li><a href='#Building'>&nbsp;&nbsp;Building</a></li>
         <li><a href='#Bugzilla'>&nbsp;&nbsp;Bugzilla</a></li>
         <li><a href='#Mailinglist'>&nbsp;&nbsp;Mailinglist</a></li>
         <li><a href='#Copyright'>&nbsp;&nbsp;Copyright</a></li>
@@ -154,7 +155,7 @@
          </ul>
 
     <a name='Download'></a>
-    <h2>Download</h2>
+    <h3>Download</h3>
 
     <p>
     The latest development snapshot, and eventually stable versions of GEGL are
@@ -165,6 +166,16 @@
 href='http://svn.gnome.org/viewcvs/gegl/trunk/'>browsed online</a> and checked
 out from GNOME Subversion using: </p> <pre>svn co
 http://svn.gnome.org/svn/gegl/trunk/ gegl</pre>
+
+    <a name='Building'></a>
+    <h3>Building</h3>
+    <p> To build GEGL type the following in the toplevel source directory:</p>
+
+    <pre><b>$</b> ./configure  <span style='color:grey'>or: ./autogen.sh if building from svn</span>
+<b>$</b> make
+<b>$</b> sudo make install</pre>
+
+    </p>
 
         <a name='Bugzilla'></a>
         <h3>Bugzilla</h3>
