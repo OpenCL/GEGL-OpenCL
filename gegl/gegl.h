@@ -36,6 +36,23 @@
  */
 
 /***
+ * Introduction:
+ *
+ * Algorithms created with GEGL are expressed as graphs of nodes. The nodes
+ * have associated image processing operations. A node has output and input
+ * pads which can be connected. By connecting these nodes in chains a set of
+ * image operation filters and combinators can be applied to the image data.
+ *
+ * To make GEGL process data you request a rectangular region of an node's
+ * output pad to be rendered into a provided linear buffer, of any (supported
+ * by babl) pixel format. GEGL is using information about the rectangular
+ * bounding-boxes for regions that are needed to compute the requested result.
+ * For many forms of processing it should thus be efficient to ask for only a
+ * subregion to be recomputed. This fits well with being able to back an api
+ * that requests rectangular regions to be repainted.
+ */
+
+/***
  * Initialization:
  *
  * Before GEGL can be used the engine should be initialized by either calling
