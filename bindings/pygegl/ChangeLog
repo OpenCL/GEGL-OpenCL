@@ -1,3 +1,12 @@
+2007-02-17  Øyvind Kolås  <pippin@gimp.org>
+
+	Removed generated files.
+
+	* Makefile.in:
+	* aclocal.m4:
+	* tests/Makefile.in:
+	* tests/images/Makefile.in:
+
 2007-02-13  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* gegl.defs: Added some defines related to GeglRectangle from items
