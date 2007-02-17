@@ -1,8 +1,7 @@
 require 'glib2'
 require 'gegl.so'
-
-# initialize GEGL upon require
-Gegl::init
+Gegl::init               # initialize GEGL upon require
+at_exit { Gegl::exit; }  # shut down GEGL engine when ruby quits
 
 module Gegl
 
@@ -69,9 +68,10 @@ module Gegl
 
       # invokes dotty on an introspection view
       def dotty
-          dotty = IO.popen("dotty -", "w+")
+          dotty = IO.popen("dot -Tps -o/tmp/dot.ps", "w+")
           dotty.puts dot
           dotty.close_write
+          #system "evince /tmp/dot.ps&"
       end
 
       def introspect

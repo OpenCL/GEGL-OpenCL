@@ -1,3 +1,7 @@
+2007-02-17  Øyvind Kolås  <pippin@gimp.org>
+
+	* src/lib/gegl.rb: call gegl_exit when ruby shuts down.
+
 2007-02-14  Øyvind Kolås  <pippin@gimp.org>
 
 	* src/lib/gegl-view.rb: queue redraws when x,y or scale of view
