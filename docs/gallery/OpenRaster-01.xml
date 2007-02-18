@@ -2,12 +2,14 @@
 layers composited on top -->
 
 <image>
-  <layer src='data/OpenRaster.png'
-         x='10'
-         y='40'
-         opacity='0.4'/>
-  <layer src='data/OpenRaster.png'
-         x='72'
-         y='8'/>
-  <layer src='data/romedalen.jpg'/>
+  <stack>
+     <layer src='data/OpenRaster.png'
+            x='10'
+            y='40'
+            opacity='0.4'/>
+     <layer src='data/OpenRaster.png'
+            x='72'
+            y='8'/>
+     <layer src='data/romedalen.jpg'/>
+  </stack>
 </image>

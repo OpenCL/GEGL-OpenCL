@@ -1,5 +1,7 @@
 <!-- Minimal OpenRaster test,
      a single JPG layer -->
 <image>
-  <layer src='data/romedalen.jpg'/>
+  <stack>
+      <layer src='data/romedalen.jpg'/>
+  </stack>
 </image>

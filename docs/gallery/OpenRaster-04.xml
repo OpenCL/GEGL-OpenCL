@@ -1,18 +1,16 @@
-<!-- OpenRaster showing non destructive
-editing, the way properties of the filters
-are expressed will change.-->
-
 <image>
-  <filter type='brightness-contrast'>
-     <params>
-          <param name='contrast'>1.4</param>
-     </params>
-  </filter>
-  <filter type='unsharp-mask'>
-      <params>
-          <param name='std-dev'>4.8</param>
-          <param name='scale'>2.0</param>
-      </params>
-  </filter>
-  <layer src='data/romedalen.jpg'/>
+  <stack>
+      <filter type='brightness-contrast'>
+         <params>
+              <param name='contrast'>1.4</param>
+         </params>
+      </filter>
+      <filter type='unsharp-mask'>
+          <params>
+              <param name='std-dev'>4.8</param>
+              <param name='scale'>2.0</param>
+          </params>
+      </filter>
+      <layer src='data/romedalen.jpg'/>
+  </stack>
 </image>

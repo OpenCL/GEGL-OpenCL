@@ -1,5 +1,14 @@
 2007-02-18  Øyvind Kolås  <pippin@gimp.org>
 
+	Added dummy <stack></stack> tags around composition, since that is
+	what OpenRaster currently specifies.
+
+	* gallery/OpenRaster-00.xml:
+	* gallery/OpenRaster-01.xml:
+	* gallery/OpenRaster-04.xml:
+
+2007-02-18  Øyvind Kolås  <pippin@gimp.org>
+
 	Modified samples to use a newer XML format.
 
 	* gallery/OpenRaster-04.xml:
