@@ -1,5 +1,10 @@
 2007-02-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* NEWS: updated with changes since 0.0.10, also replaced UTF8ified
+	the file.
+
+2007-02-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.in: require babl 0.0.14
 
 2007-02-18  Øyvind Kolås  <pippin@gimp.org>

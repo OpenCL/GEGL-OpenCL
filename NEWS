@@ -1,52 +1,65 @@
-                 ------------------------------------
+                 ⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽
                  GEGL - an image processing framework
-                 ------------------------------------
+                 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
 
 GEGL only has released development snapshots thus far. Odd micro versions are
 from SVN whilst even micro numbers indicate released snapshots. 
 
-Changes in GEGL 0.0.10
-======================
 
-- HTML documentation for public API
-- Improvements to operation reference.
-- internal caches for rendering (internal floating point projection)
-- API for iterative rendering
-- API for querying node connections.
-- improved hit detection (still only bounding boxes)
-- performance enhancements to frequently used code paths.
-- improved relative path handling in test app
-- Misc other improvements.
-
-Changes in GEGL 0.0.6
-=====================
-
-- hit detection code
-- handling of relative/absolute path names for XML.
-- merged GeglNode and GeglGraph classes.
-- build fixes for Win32 and FreeBSD
-- temporary disabled custom cairo in test application.
-- png and EXR improvements.
+Changes in GEGL 0.0.11 (which will become 0.0.12)
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • Swapping out of image pyramid.
+ • Speedups to text rendering.
+ • GEGL compiles on win32
+ • GEGL_SWAP now specifies swapdir location.
+ • Small refactorings of public API.
+ • Changed the XML parser/serializer to not use attributes for node properties.
+ • Improvements to documentation.
+ • Automagic build environment for operations simplified.
+ • Internal API for saving/loading GeglBuffers to/from disk.
+ • Ruby, C# and Python bindings added to version control system
+   (not included in distributed tarball)
 
 Contributions from:
 
-Dominik Ernst, Kevin Cozens, Michael Schumacher and Øyvind Kolås.
+Kevin Cozens, Øyvind Kolås, Sven Neumann and Michael Schumacher.
+
+
+Changes in GEGL 0.0.8
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+The GEGL 0.0.8 release tarball didn't build properly and was removed, the
+0.0.10 release replaces the 0.0.8 release.
+
+
+Changes in GEGL 0.0.6
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • hit detection code
+ • handling of relative/absolute path names for XML.
+ • merged GeglNode and GeglGraph classes.
+ • build fixes for Win32 and FreeBSD
+ • temporary disabled custom cairo in test application.
+ • png and EXR improvements.
+
+Contributions from:
+
+Dominik Ernst, Kevin Cozens, Øyvind Kolås and Michael Schumacher.
+
 
 Changes in GEGL 0.0.4
-=====================
-This is the first public release of GEGL.
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+This was the first public release of GEGL.
 
-- 8bit, 16bit integer and 32bit floating point, RGB, CIE Lab, YCbCr and naive
+ • 8bit, 16bit integer and 32bit floating point, RGB, CIE Lab, YCbCr and naive
   CMYK output.
-- Extendable through plug-ins.
-- XML, C and Python interfaces.
-- Memory efficient evaluation of subregions.
-- Tiled, sparse, pyramidial and larger than RAM buffers.
-- Rich core set of processing operations
-  - PNG, JPEG, SVG, EXR, RAW and other image sources.
-  - Arithmetic operations, porter duff compositing operations, SVG blend modes,
-    other blend modes, apply mask.
-     - Gaussian blur.
-     - Basic color correction tools.
-     - Most processing done with High Dynamic Range routines.
-     - Text layouting using pango
+ • Extendable through plug-ins.
+ • XML, C and Python interfaces.
+ • Memory efficient evaluation of subregions.
+ • Tiled, sparse, pyramidial and larger than RAM buffers.
+ • Rich core set of processing operations
+    • PNG, JPEG, SVG, EXR, RAW and other image sources.
+    • Arithmetic operations, porter duff compositing operations, SVG blend
+      modes, other blend modes, apply mask.
+      • Gaussian blur.
+      • Basic color correction tools.
+      • Most processing done with High Dynamic Range routines.
+      • Text layouting using pango
