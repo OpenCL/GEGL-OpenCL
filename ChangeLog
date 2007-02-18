@@ -1,3 +1,8 @@
+2007-02-18  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/gegl.h: Minor rewording and grammatical changes in first
+	few paragraphs.
+
 2007-02-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* tools/create-reference.rb: temporary work around to silence the API

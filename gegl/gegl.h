@@ -27,9 +27,9 @@
 /***
  * The GEGL API:
  *
- * This document is both a tutorial and the reference for the C API of GEGL.
- * The concepts covered in the tutotrial should be applicable using other
- * languages as well.
+ * This document is both a tutorial and a reference for the C API of GEGL.
+ * The concepts covered in this reference should also be applicable when
+ * using other languages.
  *
  * The core API of GEGL isn't frozen yet and feedback regarding it's use as
  * well as the clarity of this documentation is most welcome.
@@ -43,13 +43,10 @@
  * pads which can be connected. By connecting these nodes in chains a set of
  * image operation filters and combinators can be applied to the image data.
  *
- * To make GEGL process data you request a rectangular region of an node's
- * output pad to be rendered into a provided linear buffer, of any (supported
- * by babl) pixel format. GEGL is using information about the rectangular
- * bounding-boxes for regions that are needed to compute the requested result.
- * For many forms of processing it should thus be efficient to ask for only a
- * subregion to be recomputed. This fits well with being able to back an api
- * that requests rectangular regions to be repainted.
+ * To make GEGL process data you request a rectangular region of a node's
+ * output pad to be rendered into a provided linear buffer of any (supported
+ * by babl) pixel format. GEGL uses information provided by the nodes to
+ * determine the smallest buffers needed at each stage of processing.
  */
 
 /***
