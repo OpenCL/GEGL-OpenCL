@@ -1,5 +1,11 @@
 2007-02-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/gegl.c: reworked splash project, added Michael Schumacher.
+	* bin/editor.c: added more people to list of contributors for the
+	editor.
+
+2007-02-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl-node-editor.c: (property_editor_general): disabled cairo
 	based scalar property editor.
 
