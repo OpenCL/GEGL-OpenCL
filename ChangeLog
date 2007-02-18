@@ -1,5 +1,10 @@
 2007-02-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-xml.c: (start_element), (end_element): ignore "stack" tags
+	for OpenRaster parsing.
+
+2007-02-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-xml.c: Changed serialization to serialize properties of
 	nodes in <params><param name='key'>value</param>...</params> blocks
 	instead of using attributes. Also added support for the parser to

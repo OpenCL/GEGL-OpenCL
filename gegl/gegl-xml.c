@@ -233,6 +233,7 @@ static void start_element (GMarkupParseContext *context,
     }
   else if (!strcmp (element_name, "link")||
            !strcmp (element_name, "links")||
+           !strcmp (element_name, "stack")||
            !strcmp (element_name, "launcher")||
            !strcmp (element_name, "launchers")||
            !strcmp (element_name, "source")||
@@ -349,6 +350,7 @@ static void end_element (GMarkupParseContext *context,
            !strcmp (element_name, "launchers")||
            !strcmp (element_name, "source")||
            !strcmp (element_name, "destination") ||
+           !strcmp (element_name, "stack")||
            !strcmp (element_name, "params"))
     {
       /* ignore */
