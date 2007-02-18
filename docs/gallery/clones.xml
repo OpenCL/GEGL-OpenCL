@@ -1,60 +1,225 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gegl>
-  <over>
-      <shift x='10.000000' y='280.000000'/>
-      <scale origin-x='0.000000' origin-y='0.000000' filter='linear' hard-edges='false' lanczos-width='3' x='0.200000' y='0.200000'/>
-      <box-blur radius='5.000000'/>
-      <load path='data/car-stack.jpg' cache='true' id='clone0'/>
-  </over>
-  <over>
-      <shift x='10.000000' y='190.000000'/>
-      <gamma value='2.500000'/>
-      <scale origin-x='0.000000' origin-y='0.000000' filter='linear' hard-edges='false' lanczos-width='3' x='0.200000' y='0.200000'/>
+  <node operation='over'>
+      <node operation='shift'>
+          <params>
+            <param name='x'>10.000000</param>
+            <param name='y'>280.000000</param>
+          </params>
+      </node>
+      <node operation='scale'>
+          <params>
+            <param name='origin-x'>0.000000</param>
+            <param name='origin-y'>0.000000</param>
+            <param name='filter'>linear</param>
+            <param name='hard-edges'>false</param>
+            <param name='lanczos-width'>3</param>
+            <param name='x'>0.200000</param>
+            <param name='y'>0.200000</param>
+          </params>
+      </node>
+      <node operation='box-blur'>
+          <params>
+            <param name='radius'>5.000000</param>
+          </params>
+      </node>
+      <node operation='load' id='clone0'>
+          <params>
+            <param name='path'>data/car-stack.jpg</param>
+            <param name='cache'>true</param>
+          </params>
+      </node>
+  </node>
+  <node operation='over'>
+      <node operation='shift'>
+          <params>
+            <param name='x'>10.000000</param>
+            <param name='y'>190.000000</param>
+          </params>
+      </node>
+      <node operation='gamma'>
+          <params>
+            <param name='value'>2.500000</param>
+          </params>
+      </node>
+      <node operation='scale'>
+          <params>
+            <param name='origin-x'>0.000000</param>
+            <param name='origin-y'>0.000000</param>
+            <param name='filter'>linear</param>
+            <param name='hard-edges'>false</param>
+            <param name='lanczos-width'>3</param>
+            <param name='x'>0.200000</param>
+            <param name='y'>0.200000</param>
+          </params>
+      </node>
       <clone ref='clone0'/>
-  </over>
-  <over>
-      <shift x='10.000000' y='100.000000'/>
-      <invert/>
-      <scale origin-x='0.000000' origin-y='0.000000' filter='linear' hard-edges='false' lanczos-width='3' x='0.200000' y='0.200000'/>
+  </node>
+  <node operation='over'>
+      <node operation='shift'>
+          <params>
+            <param name='x'>10.000000</param>
+            <param name='y'>100.000000</param>
+          </params>
+      </node>
+      <node operation='invert'>
+      </node>
+      <node operation='scale'>
+          <params>
+            <param name='origin-x'>0.000000</param>
+            <param name='origin-y'>0.000000</param>
+            <param name='filter'>linear</param>
+            <param name='hard-edges'>false</param>
+            <param name='lanczos-width'>3</param>
+            <param name='x'>0.200000</param>
+            <param name='y'>0.200000</param>
+          </params>
+      </node>
       <clone ref='clone0'/>
-  </over>
-  <over>
-      <shift x='10.000000' y='10.000000'/>
-      <threshold value='0.500000'/>
-      <scale origin-x='0.000000' origin-y='0.000000' filter='linear' hard-edges='false' lanczos-width='3' x='0.200000' y='0.200000'/>
+  </node>
+  <node operation='over'>
+      <node operation='shift'>
+          <params>
+            <param name='x'>10.000000</param>
+            <param name='y'>10.000000</param>
+          </params>
+      </node>
+      <node operation='threshold'>
+          <params>
+            <param name='value'>0.500000</param>
+          </params>
+      </node>
+      <node operation='scale'>
+          <params>
+            <param name='origin-x'>0.000000</param>
+            <param name='origin-y'>0.000000</param>
+            <param name='filter'>linear</param>
+            <param name='hard-edges'>false</param>
+            <param name='lanczos-width'>3</param>
+            <param name='x'>0.200000</param>
+            <param name='y'>0.200000</param>
+          </params>
+      </node>
       <clone ref='clone0'/>
-  </over>
-  <over>
-      <shift x='335.000000' y='210.000000'/>
-      <over>
-          <shift x='-10.000000' y='120.000000'/>
-          <opacity value='0.600000'/>
-          <under>
-              <opacity value='2.000000'/>
-              <shift x='0.000000' y='0.000000'/>
-              <box-blur radius='4.000000'/>
-              <brightness-contrast contrast='1.000000' brightness='-1.000000'/>
-              <text string='warming up' font='Sans' size='30.000000' color='rgb(1.0000, 1.0000, 1.0000)' wrap='-1' alignment='0' width='177' height='36' id='clone1'/>
-          </under>
+  </node>
+  <node operation='over'>
+      <node operation='shift'>
+          <params>
+            <param name='x'>335.000000</param>
+            <param name='y'>210.000000</param>
+          </params>
+      </node>
+      <node operation='over'>
+          <node operation='shift'>
+              <params>
+                <param name='x'>-10.000000</param>
+                <param name='y'>120.000000</param>
+              </params>
+          </node>
+          <node operation='opacity'>
+              <params>
+                <param name='value'>0.600000</param>
+              </params>
+          </node>
+          <node operation='under'>
+              <node operation='opacity'>
+                  <params>
+                    <param name='value'>2.000000</param>
+                  </params>
+              </node>
+              <node operation='shift'>
+                  <params>
+                    <param name='x'>0.000000</param>
+                    <param name='y'>0.000000</param>
+                  </params>
+              </node>
+              <node operation='box-blur'>
+                  <params>
+                    <param name='radius'>4.000000</param>
+                  </params>
+              </node>
+              <node operation='brightness-contrast'>
+                  <params>
+                    <param name='contrast'>1.000000</param>
+                    <param name='brightness'>-1.000000</param>
+                  </params>
+              </node>
+              <node operation='text' id='clone1'>
+                  <params>
+                    <param name='string'>warming up</param>
+                    <param name='font'>Sans</param>
+                    <param name='size'>30.000000</param>
+                    <param name='color'>rgb(1.0000, 1.0000, 1.0000)</param>
+                    <param name='wrap'>-1</param>
+                    <param name='alignment'>0</param>
+                    <param name='width'>177</param>
+                    <param name='height'>36</param>
+                  </params>
+              </node>
+          </node>
           <clone ref='clone1'/>
-      </over>
-      <scale origin-x='0.000000' origin-y='0.000000' filter='linear' hard-edges='false' lanczos-width='3' x='0.500000' y='0.500000'/>
-      <under id='clone2'>
-          <opacity value='0.800000'/>
-          <shift x='5.000000' y='-2.000000'/>
-          <add value='0.500000'/>
-          <gaussian-blur std-dev-x='5.000000' std-dev-y='5.000000'/>
-          <load path='data/gegl.png' cache='true' id='clone3'/>
-      </under>
+      </node>
+      <node operation='scale'>
+          <params>
+            <param name='origin-x'>0.000000</param>
+            <param name='origin-y'>0.000000</param>
+            <param name='filter'>linear</param>
+            <param name='hard-edges'>false</param>
+            <param name='lanczos-width'>3</param>
+            <param name='x'>0.500000</param>
+            <param name='y'>0.500000</param>
+          </params>
+      </node>
+      <node operation='under' id='clone2'>
+          <node operation='opacity'>
+              <params>
+                <param name='value'>0.800000</param>
+              </params>
+          </node>
+          <node operation='shift'>
+              <params>
+                <param name='x'>5.000000</param>
+                <param name='y'>-2.000000</param>
+              </params>
+          </node>
+          <node operation='add'>
+              <params>
+                <param name='value'>0.500000</param>
+              </params>
+          </node>
+          <node operation='gaussian-blur'>
+              <params>
+                <param name='std-dev-x'>5.000000</param>
+                <param name='std-dev-y'>5.000000</param>
+              </params>
+          </node>
+          <node operation='load' id='clone3'>
+              <params>
+                <param name='path'>data/gegl.png</param>
+                <param name='cache'>true</param>
+              </params>
+          </node>
+      </node>
       <clone ref='clone3'/>
-  </over>
-  <over>
-      <shift x='90.000000' y='90.000000'/>
-      <opacity value='-0.500000'/>
-      <box-blur radius='15.000000'/>
+  </node>
+  <node operation='over'>
+      <node operation='shift'>
+          <params>
+            <param name='x'>90.000000</param>
+            <param name='y'>90.000000</param>
+          </params>
+      </node>
+      <node operation='opacity'>
+          <params>
+            <param name='value'>-0.500000</param>
+          </params>
+      </node>
+      <node operation='box-blur'>
+          <params>
+            <param name='radius'>15.000000</param>
+          </params>
+      </node>
       <clone ref='clone2'/>
-  </over>
+  </node>
   <clone ref='clone0'/>
-<links>
-</links>
 </gegl>
