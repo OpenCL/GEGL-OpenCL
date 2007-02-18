@@ -1,5 +1,9 @@
 2007-02-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.in: bumped version to 0.0.12
+
+2007-02-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/gegl.c: reworked splash project, added Michael Schumacher.
 	* bin/editor.c: added more people to list of contributors for the
 	editor.
