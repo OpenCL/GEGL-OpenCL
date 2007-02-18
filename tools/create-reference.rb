@@ -401,7 +401,7 @@ IO.foreach(ARGV[0]) {
             comma=$5
             arg_no=0
 
-            if name!=function.name
+            if name!=function.name and function.name!='GeglProcessor'
                 puts "#{line_no}:function name mismatch #{name}!=#{function.name}"
             end
             if argtype=='void'

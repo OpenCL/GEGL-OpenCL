@@ -1,5 +1,10 @@
 2007-02-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/create-reference.rb: temporary work around to silence the API
+	reference generator due to current abuse.
+
+2007-02-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* NEWS: updated with changes since 0.0.10, also replaced UTF8ified
 	the file.
 
