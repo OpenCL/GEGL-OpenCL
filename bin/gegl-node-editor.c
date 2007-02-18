@@ -531,7 +531,7 @@ type_editor_multiline (GtkSizeGroup *col1,
 }
 
 
-
+#if 0
 static void scalar_expose (GtkWidget      *widget,
                            GdkEventExpose *eev,
                            gpointer        user_data)
@@ -688,6 +688,7 @@ type_editor_scalar (GtkSizeGroup *col1,
 
   return hbox;
 }
+#endif
 
 static GtkWidget *
 type_editor_generic (GtkSizeGroup *col1,
@@ -808,10 +809,12 @@ property_editor_general (GeglNodeEditor *node_editor,
             {
               prop_editor = type_editor_color (col1, col2, node, properties[i]);
             }
+#if 0
           else if (properties[i]->value_type == G_TYPE_DOUBLE)
             {
               prop_editor = type_editor_scalar (col1, col2, node, properties[i]);
             }
+#endif
           else
             { 
               prop_editor = type_editor_generic (col1, col2, node, properties[i]);
