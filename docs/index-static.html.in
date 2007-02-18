@@ -423,7 +423,7 @@ Some examples:
 <a name='CodeOverview'></a>
 <h3>Code Overview</h3>
 
-<h4>Directories in the GEGL checkout:</h4>
+<h4>Directories in the GEGL distribution</h4>
 <pre>gegl-dist-root
  │
  │
@@ -460,7 +460,6 @@ Some examples:
  │   └──workshop      Works in progress, (not compiled by default)
  │       └──generated
  │                    
- ├──bin               gegl binary, for processing XML compositions to png files.
  │
  ├──docs              A website for GEGL
  │   │
@@ -468,11 +467,16 @@ Some examples:
  │       │
  │       └──data      Image data used by the sample compositions.
  │    
- │
+ ├──bin               gegl binary, for processing XML compositions to png files.
+ │    
+ ├──bindings          bindings for using GEGL from other programming languages
+ │                    not included in the tarball distribution but exist in
+ │                    the subversion repository.
+ │    
  └──tools             some small utilities to help the build.
 </pre>
 
-<h4>Directories of babl</h4>
+<h4>Directories in the babl distribution</h4>
 <pre>babl-dist-root
  │
  ├──babl       the babl core
