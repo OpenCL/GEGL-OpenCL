@@ -1,5 +1,12 @@
 2007-02-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.[ch]: (gegl_node_invalidated), (source_invalidated),
+	(property_changed), (gegl_node_insert_before): added
+	gegl_node_invalidated function, that triggers emitting of the
+	INVALIDATED signal.
+
+2007-02-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-xml.c: (start_element), (end_element): ignore "stack" tags
 	for OpenRaster parsing.
 

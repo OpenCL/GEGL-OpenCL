@@ -431,6 +431,14 @@ gegl_node_connect_to (GeglNode    *source,
   return gegl_node_connect_from (sink, sink_pad_name, source, source_pad_name);
 }
 
+void
+gegl_node_invalidated (GeglNode      *node,
+                      GeglRectangle *rect)
+{
+  g_signal_emit (node, gegl_node_signals[GEGL_NODE_INVALIDATED],
+                 0, rect, NULL);
+}
+
 static void
 source_invalidated (GeglNode      *source,
                     GeglRectangle *rect,
@@ -462,8 +470,7 @@ source_invalidated (GeglNode      *source,
       dirty_rect = *rect;
     }
 
-  g_signal_emit (destination, gegl_node_signals[GEGL_NODE_INVALIDATED],
-                 0, &dirty_rect, NULL);
+  gegl_node_invalidated (destination, &dirty_rect);
 
   g_free (source_name);
   g_free (destination_name);
@@ -958,7 +965,7 @@ static void property_changed (GObject    *gobject,
                                        &dirty_rect,
                                        &new_have_rect);*/
 
-          g_signal_emit (self, gegl_node_signals[GEGL_NODE_INVALIDATED], 0, &dirty_rect, NULL);
+          gegl_node_invalidated (self, &dirty_rect);
         }
       else
         {
@@ -973,7 +980,7 @@ static void property_changed (GObject    *gobject,
                                   &dirty_rect,
                                   &new_have_rect);
 
-          g_signal_emit (self, gegl_node_signals[GEGL_NODE_INVALIDATED], 0, &dirty_rect, NULL);
+          gegl_node_invalidated (self, &dirty_rect);
         }
     }
 }
@@ -1652,8 +1659,7 @@ gegl_node_insert_before (GeglNode *self,
   gegl_node_link_many (other, to_be_inserted, self, NULL);
 
   /* emit the change ourselves */
-  g_signal_emit (self, gegl_node_signals[GEGL_NODE_INVALIDATED],
-                 0, &rectangle, NULL);
+  gegl_node_invalidated (self, &rectangle);
 }
 
 gint

@@ -210,6 +210,8 @@ gint          gegl_node_get_consumers       (GeglNode      *node,
 
 GeglCache    *gegl_node_get_cache           (GeglNode      *node);
 void          gegl_node_disable_cache       (GeglNode      *node);
+void          gegl_node_invalidated         (GeglNode      *node,
+                                             GeglRectangle *rect);
 
 extern guint gegl_node_signals[];
 
