@@ -1,5 +1,12 @@
 2007-02-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/bilateral-filter.c: added an initial
+	implementation of a bilateral filter, this is an adaptive gaussian
+	blur that weights contributions based on color differences between
+	the center pixel and the neighbourhood pixel.
+
+2007-02-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/render/Makefile.am: do not compile text plug-in if
 	sufficiently new pango library has not been found.
 
