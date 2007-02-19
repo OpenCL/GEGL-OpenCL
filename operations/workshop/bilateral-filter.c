@@ -22,9 +22,9 @@
 #if GEGL_CHANT_PROPERTIES 
 #define MAX_SAMPLES 20000 /* adapted to max level of radius */
 
-gegl_chant_double (radius, 0.0, 70.0, 8.0,
+gegl_chant_double (blur_radius, 0.0, 70.0, 4.0,
   "Radius of square pixel region, (width and height will be radius*2+1.")
-gegl_chant_double (preserve, 0.0, 70.0, 3.0, "Amount of edge preservation")
+gegl_chant_double (edge_preservation, 0.0, 70.0, 8.0, "Amount of edge preservation")
 
 #else
 
@@ -38,10 +38,10 @@ gegl_chant_double (preserve, 0.0, 70.0, 3.0, "Amount of edge preservation")
 #include <math.h>
 
 static void
-bilateral_box (GeglBuffer *src,
-               GeglBuffer *dst,
-               gdouble     radius,
-               gdouble     preserve);
+bilateral_filter (GeglBuffer *src,
+                  GeglBuffer *dst,
+                  gdouble     radius,
+                  gdouble     preserve);
 
 static GeglRectangle get_source_rect (GeglOperation *self,
                                       gpointer       context_id);
@@ -67,14 +67,14 @@ process (GeglOperation *operation,
       GeglRectangle    need   = *result;
       GeglBuffer      *temp_in;
 
-      need.x-=self->radius;
-      need.y-=self->radius;
-      need.width +=self->radius*2;
-      need.height +=self->radius*2;
+      need.x-=self->blur_radius;
+      need.y-=self->blur_radius;
+      need.width +=self->blur_radius*2;
+      need.height +=self->blur_radius*2;
 
       if (result->width == 0 ||
           result->height== 0 ||
-          self->radius < 1.0)
+          self->blur_radius < 1.0)
         {
           output = g_object_ref (input);
         }
@@ -96,7 +96,7 @@ process (GeglOperation *operation,
                                  "height", need.height,
                                  NULL);
 
-          bilateral_box (temp_in, output, self->radius, self->preserve);
+          bilateral_filter (temp_in, output, self->blur_radius, self->edge_preservation);
           g_object_unref (temp_in);
         }
 
@@ -116,10 +116,10 @@ process (GeglOperation *operation,
 }
 
 static void
-bilateral_box (GeglBuffer *src,
-               GeglBuffer *dst,
-               gdouble     radius,
-               gdouble     preserve)
+bilateral_filter (GeglBuffer *src,
+                  GeglBuffer *dst,
+                  gdouble     radius,
+                  gdouble     preserve)
 {
   gfloat gauss[((int)radius*2+1)][((int)radius*2+1)];
   gint x,y;
@@ -138,7 +138,7 @@ bilateral_box (GeglBuffer *src,
   for (y=-radius;y<=radius;y++)
     for (x=-radius;x<=radius;x++)
       {
-        gauss[x+(int)radius][y+(int)radius] = exp(- sqrt(POW2(x)+POW2(y))/radius   );
+        gauss[x+(int)radius][y+(int)radius] = exp(- 0.5*(POW2(x)+POW2(y))/radius   );
       }
 
   for (y=0; y<dst->height; y++)
@@ -159,19 +159,14 @@ bilateral_box (GeglBuffer *src,
                   
                   gfloat *src_pix = src_buf + ((x+u)+((y+v) * src->width)) * 4;
 
-                  gfloat diff_map   = exp (-sqrt(POW2(center_pix[0] - src_pix[0])+
-                                            POW2(center_pix[1] - src_pix[1])+
-                                            POW2(center_pix[2] - src_pix[2])) *preserve 
+                  gfloat diff_map   = exp (- (POW2(center_pix[0] - src_pix[0])+
+                                              POW2(center_pix[1] - src_pix[1])+
+                                              POW2(center_pix[2] - src_pix[2])) * preserve 
                                           );
                   gfloat gaussian_weight;
                   gfloat weight;
                  
                   gaussian_weight = gauss[u+(int)radius][v+(int)radius];
-
-                  if (diff_map <0.0)
-                    diff_map = 0.0;
-                  if (gaussian_weight<0.0)
-                    gaussian_weight=0.0;
 
                   weight = diff_map * gaussian_weight;
 
@@ -201,7 +196,7 @@ get_defined_region (GeglOperation *operation)
                                                                      "input");
 
   GeglChantOperation *blur = GEGL_CHANT_OPERATION (operation);
-  gint       radius = ceil(blur->radius);
+  gint       radius = ceil(blur->blur_radius);
 
   if (!in_rect)
     return result;
@@ -226,7 +221,7 @@ static GeglRectangle get_source_rect (GeglOperation *self,
   GeglRectangle            rect;
   gint                radius;
  
-  radius = ceil(blur->radius);
+  radius = ceil(blur->blur_radius);
 
   rect  = *gegl_operation_get_requested_region (self, context_id);
   if (rect.width  != 0 &&
@@ -260,7 +255,7 @@ get_affected_region (GeglOperation *self,
   GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
   gint                radius;
  
-  radius = ceil(blur->radius);
+  radius = ceil(blur->blur_radius);
 
   region.x -= radius;
   region.y -= radius;
