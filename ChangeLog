@@ -1,5 +1,10 @@
 2007-02-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* NEWS: changed heading for 0.0.12 section to 0.0.12, it still
+	listed 0.0.11 from back when things were in CVS.
+
+2007-02-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/bilateral-filter.c: changed names of properties
 	default values and slightly modified their effect on the filter.
 
