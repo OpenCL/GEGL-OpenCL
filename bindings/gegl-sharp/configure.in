@@ -115,7 +115,7 @@ gapi/sources.gegl
 test/Makefile
 lib/gegl-sharp.dll.config
 lib/AssemblyInfo.cs
-gegl-sharp-2.0.pc
+gegl-sharp-1.0.pc
 ])
 
 dnl Print a summary of features enabled/disabled:
