@@ -1,4 +1,5 @@
-Gegl#, a C# binding for GEGL.
+Gegl#, a C# binding for GEGL.  Please send comments, bugs, and patches to
+the GEGL list, gegl-developer@lists.xcf.berkeley.edu.
 
 To build Gegl# type:
 
