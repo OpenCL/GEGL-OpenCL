@@ -1,3 +1,22 @@
+2007-02-19  Gabriel Burt  <gabriel.burt@gmail.com>
+
+	* README: Updated.
+
+	* gapi/custom/Node.custom:
+	* gapi/metadata.gegl:
+	* gapi/sources.gegl.in: Updated to build just from the public API.
+
+	* gapi/sources.gegl: Removed.
+
+	* configure.in:
+	* test/Makefile.am: Improved build system, can specify path to GEGL
+	headers with configure --gegl-headers=dir
+
+	* test/test.cs: Fixed to build w/ binding changes.
+
+	* test/GeglView.cs
+	* test/view-test.cs: New files, ports from rgegl, not yet complete.
+
 2007-02-13  Gabriel Burt  <gabriel.burt@gmail.com>
 
 	* test/test.cs: Fix so it actually writes sample-out.png.

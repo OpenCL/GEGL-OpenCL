@@ -1,8 +1,14 @@
 
-test: test.cs
-	gmcs -debug $(GTK_SHARP_LIBS) -r:../lib/gegl-sharp.dll test.cs -out:Test.exe
+all: gegl-sharp.dll test.exe view.exe
+
+gegl-sharp.dll:
 	cp ../lib/gegl-sharp.dll .
 	cp ../lib/gegl-sharp.dll.config .
-	mono --debug Test.exe
+	
+test.exe: test.cs
+	gmcs -debug $(GTK_SHARP_LIBS) -r:../lib/gegl-sharp.dll test.cs -out:test.exe
 
-CLEANFILES = Test.exe sample-out.png gegl-sharp.dll gegl-sharp.dll.config Makefile.in
+view.exe: view-test.cs
+	gmcs -debug $(GTK_SHARP_LIBS) -r:../lib/gegl-sharp.dll GeglView.cs view-test.cs -out:view.exe
+
+CLEANFILES = view.exe test.exe sample-out.png gegl-sharp.dll gegl-sharp.dll.config

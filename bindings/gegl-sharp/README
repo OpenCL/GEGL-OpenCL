@@ -1,3 +1,16 @@
-Requirements:
-* GEGL
-* Mono stack
+Gegl#, a C# binding for GEGL.
+
+To build Gegl# type:
+
+$ ./autogen.sh
+$ make
+
+Test contains two simple applications that demonstrate use of the binding.
+
+$ cd test
+$ make test.exe
+$ ./test.exe
+
+view-test.cs, GeglView.cs are known to not work yet:
+$ make view.exe
+$ ./view.exe

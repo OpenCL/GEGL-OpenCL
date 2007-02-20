@@ -30,9 +30,7 @@ public class Test {
         rotate.Link(brightness_contrast);
         brightness_contrast.Link(save);
 
-        Console.WriteLine("Graph has {0} children", graph.NumChildren);
-
-        Console.WriteLine("XML: {0}", graph.ToXml("./"));
+        Console.WriteLine("XML: {0}", Gegl.Global.ToXml(graph, "./"));
 
         save.Process();
 

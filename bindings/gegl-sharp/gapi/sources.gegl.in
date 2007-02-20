@@ -2,7 +2,8 @@
   <api filename="api.raw">
     <library name="libgegl-1.0.dll">
       <namespace name="Gegl">
-        <dir>../../../gegl/</dir>
+        <file>@GEGL_HEADERS@/gegl.h</file>
+        <file>@GEGL_HEADERS@/gegl-utils.h</file>
       </namespace>
     </library>
   </api>

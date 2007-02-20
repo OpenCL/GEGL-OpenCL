@@ -1,6 +1,11 @@
 
 		[DllImport("libgegl-1.0.dll")]
-		static extern void gegl_node_set_property(IntPtr raw, IntPtr property_name, ref GLib.Value value);
+		static extern IntPtr gegl_node_new_processor(IntPtr node, ref Gegl.Rectangle rectangle);
+
+		public Gegl.Processor Processor(Gegl.Rectangle rectangle)
+		{
+            return new Gegl.Processor(gegl_node_new_processor(Handle, ref rectangle));
+		}
 
 		public void SetProperty(string property_name, object value)
         {
@@ -10,15 +15,3 @@
 			value_as_native.Dispose();
 			GLib.Marshaller.Free (property_name_as_native);
 		}
-
-		[DllImport("libgegl-1.0.dll")]
-        static extern IntPtr gegl_to_xml(IntPtr node, IntPtr path_root);
-
-		public string ToXml(string path_root) {
-			IntPtr path_root_as_native = GLib.Marshaller.StringToPtrGStrdup (path_root);
-            IntPtr raw_ret = gegl_to_xml(Handle, path_root_as_native);
-			GLib.Marshaller.Free (path_root_as_native);
-
-            string ret = GLib.Marshaller.Utf8PtrToString(raw_ret);
-            return ret;
-        }

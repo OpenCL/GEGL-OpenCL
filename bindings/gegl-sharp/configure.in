@@ -44,8 +44,6 @@ BUILD_GTK_LIBS=`$PKG_CONFIG --libs gtk+-2.0`
 AC_SUBST(BUILD_GTK_CFLAGS)
 AC_SUBST(BUILD_GTK_LIBS)
 
-
-
 GTK_REQUIRED_VERSION=2.0.0
 MONO_REQUIRED_VERSION=0.95
 
@@ -85,7 +83,7 @@ PKG_CHECK_MODULES(GTK_SHARP, gtk-sharp-2.0 >= 1.9.0)
 AC_SUBST(GTK_SHARP_CFLAGS)
 AC_SUBST(GTK_SHARP_LIBS)
 
-dnl Find Gtk#
+dnl Find GAPI
 PKG_CHECK_MODULES(GAPI, gapi-2.0 >= 1.9.0)
 
 AC_PATH_PROG(GACUTIL, gacutil, no)
@@ -101,13 +99,29 @@ case "$host" in
 esac
 AM_CONDITIONAL(WINBUILD, test x$winbuild = xyes)
 
+AC_ARG_WITH([gegl-headers], [AS_HELP_STRING([--gegl-headers], [path to directory containaing gegl.h (relative to gapi directory, default is ../../../gegl/)])],
+    [GEGL_HEADERS=$withval],
+    [GEGL_HEADERS=../../../gegl])
+AC_SUBST(GEGL_HEADERS)
+
+#export GEGL_PATH=${GEGL_PATH-:../../gegl/}
+
 AC_SUBST(GACUTIL)
 
 AC_OUTPUT([
 Makefile
 gapi/Makefile
+gapi/sources.gegl
 test/Makefile
 lib/gegl-sharp.dll.config
 lib/AssemblyInfo.cs
 gegl-sharp-2.0.pc
 ])
+
+dnl Print a summary of features enabled/disabled:
+AC_MSG_RESULT([
+Building gegl-sharp with prefix=$prefix
+
+Configuration options:
+  GEGL headers:   $GEGL_HEADERS
+]);

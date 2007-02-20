@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <metadata>
+    <!--
     <attr path="/api/namespace/enum[@name='PadType']/member[@name='Output']" name="value">256</attr>
     <attr path="/api/namespace/enum[@name='PadType']/member[@name='Input']" name="value">512</attr>
 
@@ -14,5 +15,13 @@
     <attr path="/api/namespace/object[@name='ParamSpecPath']" name="hidden">1</attr>
     <attr path="/api/namespace/object[@name='ParamSpecString']" name="hidden">1</attr>
 
-    <attr path="/api/namespace/struct[@name='Node']/method[@name='SetProperty']" name="hidden">1</attr>
+    -->
+
+    <attr path="/api/namespace/class[@name='List']" name="hidden">1</attr>
+    <attr path="/api/namespace/object[@name='Node']/constructor[@cname='gegl_node_new_processor']" name="hidden">1</attr>
+    <attr path="/api/namespace/object[@name='Node']/method[@name='SetProperty']" name="new_flag">true</attr>
+
+    <attr path="/api/namespace/object[@name='Node']" name="parent">GObject</attr>
+    <attr path="/api/namespace/object[@name='Color']" name="parent">GObject</attr>
+    <attr path="/api/namespace/object[@name='Processor']" name="parent">GObject</attr>
 </metadata>
