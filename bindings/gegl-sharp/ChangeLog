@@ -1,4 +1,9 @@
 2007-02-19  Gabriel Burt  <gabriel.burt@gmail.com>
+
+	* gegl-sharp-2.0.pc.in: 
+	* gegl-sharp-1.0.pc.in: Replace bogus 2.0 pc file.
+
+2007-02-19  Gabriel Burt  <gabriel.burt@gmail.com>
 	
 	* README: be clear on where to send comments/patches etc.
 
