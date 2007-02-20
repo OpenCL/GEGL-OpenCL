@@ -20,6 +20,7 @@
     <attr path="/api/namespace/class[@name='List']" name="hidden">1</attr>
     <attr path="/api/namespace/object[@name='Node']/constructor[@cname='gegl_node_new_processor']" name="hidden">1</attr>
     <attr path="/api/namespace/object[@name='Node']/method[@name='SetProperty']" name="new_flag">true</attr>
+    <attr path="/api/namespace/object[@name='Node']/method[@name='Blit']" name="hidden">1</attr>
 
     <attr path="/api/namespace/object[@name='Node']" name="parent">GObject</attr>
     <attr path="/api/namespace/object[@name='Color']" name="parent">GObject</attr>

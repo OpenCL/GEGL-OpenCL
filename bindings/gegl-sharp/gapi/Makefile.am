@@ -38,7 +38,7 @@ generated-stamp: $(API)
 	 $(CODEGEN) --generate $(API) $(GTK_SHARP_CFLAGS) --outdir=generated --customdir=custom && touch generated-stamp
 
 $(ASSEMBLY): $(build_sources) generated-stamp
-	$(GMCS) -debug -target:library $(GTK_SHARP_LIBS) \
+	$(GMCS) -debug -unsafe -target:library $(GTK_SHARP_LIBS) \
 	$(build_sources) generated/*.cs -out:$(ASSEMBLY)
 
 install-data-local:

@@ -15,3 +15,21 @@
 			value_as_native.Dispose();
 			GLib.Marshaller.Free (property_name_as_native);
 		}
+
+		[DllImport("libbabl-0.0.dll")]
+		static extern IntPtr babl_format(IntPtr format);
+
+		[DllImport("libgegl-1.0.dll")]
+		static extern void gegl_node_blit(IntPtr raw, ref Gegl.Rectangle roi, double scale, IntPtr format, int rowstride, byte[] destination_buf, int flags);
+
+		public byte[] Render(Gegl.Rectangle roi, double scale, string format, Gegl.BlitFlags flags) {
+            byte [] buf = new byte[roi.Width * roi.Height * 3];
+
+			IntPtr format_as_native = GLib.Marshaller.StringToPtrGStrdup (format);
+            IntPtr bformat = babl_format(format_as_native);
+			gegl_node_blit(Handle, ref roi, scale, bformat, 0, buf, (int) flags);
+			GLib.Marshaller.Free (format_as_native);
+
+            return buf;
+		}
+        

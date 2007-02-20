@@ -110,12 +110,8 @@ namespace Gegl
                     Gegl.Rectangle roi = new Gegl.Rectangle();
                     roi.Set((int) (X + rect.X/Scale), (int) (Y + rect.Y/Scale), (uint) rect.Width, (uint) rect.Height);
 
-                    byte [] buf = new byte[roi.X * roi.Y * 32];
-                    Node.Blit(roi, Scale, null, 0, buf, Gegl.BlitFlags.Cache);
+                    byte [] buf = Node.Render(roi, Scale, "R'G'B' u8", Gegl.BlitFlags.Cache | Gegl.BlitFlags.Dirty);
                     
-                    //byte [] buf = Node.Render(roi, Scale, "R'G'B' u8", 3);
-                    //byte [] buf = null;
-
                     this.GdkWindow.DrawRgbImage(
                         Style.WhiteGC,
                         rect.X, rect.Y,
