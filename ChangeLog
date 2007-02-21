@@ -1,3 +1,8 @@
+2007-02-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer-load.c: (gegl_buffer_load): set mode flag to
+	0 for g_open, we're not creating a new file here.
+
 2007-02-19  Øyvind Kolås  <pippin@gimp.org>
 
 	* NEWS: changed heading for 0.0.12 section to 0.0.12, it still
