@@ -17,13 +17,13 @@ which tempfile > /dev/null && TMP_FILE=`tempfile` || TMP_FILE="/tmp/temp_file"
 
 cp $1 $TMP_FILE
 
-SPLIT=`grep -n "<\!--$2-->" $TMP_FILE|head -n 1|sed -e "s/:.*//"`;
+SPLIT=`grep -n "<\!--$2-->" $TMP_FILE|head -n 1 | sed -e "s/^[  ]*//" |sed -e "s/:.*//"`;
 head -n $SPLIT $TMP_FILE > $1
 if [ -z "$4" ]; then
   cat $3 >> $1
 else
   cat $3 | sed -e "s/\&/\&amp;/g" -e "s/</\&lt;/g" -e "s/>/\&gt;/g" >> $1
 fi
-tail -n $((`wc -l $TMP_FILE | sed -e "s/ .*//"` - $SPLIT )) $TMP_FILE >> $1
+tail -n $((`wc -l $TMP_FILE | sed -e "s/^[      ]*//" | sed -e "s/ .*//"` - $SPLIT )) $TMP_FILE >> $1
 
 rm $TMP_FILE

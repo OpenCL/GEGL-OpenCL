@@ -1,5 +1,10 @@
 2007-02-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* tools/xml_insert.sh: trim leding spaces (wc returns spaces before
+	no. lines on MSYS/MINGW). Patch from John Marshal.
+
+2007-02-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/operation_reference.c: (main): do not use html/css fragments
 	directly as format for g_print, but pass them as the data for a "%s"
 	format.
