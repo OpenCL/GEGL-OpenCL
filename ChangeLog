@@ -1,5 +1,9 @@
 2007-02-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* AUTHORS: added John Marshall.
+
+2007-02-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* tools/xml_insert.sh: trim leding spaces (wc returns spaces before
 	no. lines on MSYS/MINGW). Patch from John Marshal.
 
