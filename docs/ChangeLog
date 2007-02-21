@@ -1,3 +1,8 @@
+2007-02-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* index-static.html.in: added UTF8 magic number, patch from John
+	Marshall fixing bug #409954.
+
 2007-02-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: joined up sample svn checkout command that for
