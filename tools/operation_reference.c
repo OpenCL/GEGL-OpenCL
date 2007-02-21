@@ -211,7 +211,7 @@ main (gint    argc,
         }
     }
 
-  g_print (html_top);
+  g_print ("%s", html_top);
 
   g_print ("<div class='toc'><ul>\n");
   g_print ("<li><a href='index.html'>GEGL</a></li><li>&nbsp;</li>\n");
@@ -258,7 +258,7 @@ main (gint    argc,
   g_print ("</table>");
 
 
-  g_print (html_bottom);
+  g_print ("%s", html_bottom);
 
   g_list_free (operations);
   gegl_exit ();
