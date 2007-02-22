@@ -1,5 +1,16 @@
 2007-02-22  Øyvind Kolås  <pippin@gimp.org>
 
+	Added an FFMPEG based frame importer, it acts like a image importer
+	but in addition to the path the frame number to import is specified
+	as well. Uses an old ffmpeg API at the moment and might attain
+	efficient seeking support and cleaner code with some updates.
+
+	* operations/workshop/Makefile.am: hacked in usage of pkg-config for
+	compilation.
+	* operations/workshop/ff-load.c: code mostly imported from gggl op.
+
+2007-02-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* AUTHORS: added John Marshall.
 
 2007-02-22  Øyvind Kolås  <pippin@gimp.org>
