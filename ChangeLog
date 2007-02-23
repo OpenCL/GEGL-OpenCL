@@ -1,3 +1,9 @@
+2007-02-23  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/Makefile.am: added rule for ff-save.
+	* operations/workshop/ff-save.c: added FF-mpeg based video output
+	encoding sink.
+
 2007-02-22  Øyvind Kolås  <pippin@gimp.org>
 
 	Added an FFMPEG based frame importer, it acts like a image importer

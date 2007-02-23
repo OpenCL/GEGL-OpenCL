@@ -8,6 +8,9 @@ gst.so: gst.c $(GEGLHEADERS)
 ff-load.so: ff-load.c $(GEGLHEADERS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config libavcodec libavformat --libs --cflags`
 
+ff-save.so: ff-save.c $(GEGLHEADERS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config libavcodec libavformat --libs --cflags`
+
 gtk-display.so: gtk-display.c $(GEGLHEADERS)
 	@[ ! -z "$(GTK_LIBS)" ] &&\
 	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(GTK_CFLAGS) $(GTK_LIBS))\
