@@ -1,3 +1,12 @@
+2007-02-24  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl.defs: Changed name of boxed type GeglRectangle to Rectangle,
+	and GeglProcessor to Processor. Removed define-flags block for
+	BlitFlags. Added define-method for 'render' (convenience form of
+	blit).
+
+	* gegl.override: Added (untested) wrapper for gegl_node_render().
+
 2007-02-17  Øyvind Kolås  <pippin@gimp.org>
 
 	Removed generated files.

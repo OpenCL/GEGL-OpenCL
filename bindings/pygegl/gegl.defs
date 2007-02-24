@@ -30,13 +30,14 @@
   (gtype-id "GEGL_TYPE_NODE")
 )
 
-(define-boxed GeglRectangle
+(define-boxed Rectangle
   (in-module "Gegl")
+  (parent "GObject")
   (c-name "GeglRectangle")
   (gtype-id "GEGL_TYPE_RECTANGLE")
 )
 
-(define-boxed GeglProcessor
+(define-boxed Processor
   (in-module "Gegl")
   (c-name "GeglProcessor")
   (gtype-id "GEGL_TYPE_PROCESSOR")
@@ -44,17 +45,6 @@
 
 
 ;; Enumerations and flags ...
-
-;(define-flags BlitFlags
-;  (in-module "Gegl")
-;  (c-name "GeglBlitFlags")
-;  (gtype-id "GEGL_TYPE_BLIT_FLAGS")
-;  (values
-;    '("default" "GEGL_BLIT_DEFAULT")
-;    '("cache" "GEGL_BLIT_CACHE")
-;    '("dirty" "GEGL_BLIT_DIRTY")
-;  )
-;)
 
 
 ;; From gegl.h
@@ -178,6 +168,22 @@
 ;    '("gint" "flags")
 ;  )
 ;)
+
+;This routine is a convenience function equivalent to blit() but it takes
+;a format string for the buffer instead of taking a BablFormat pointer.
+(define-method render
+  (of-object "GeglNode")
+  (c-name "gegl_node_render")
+  (return-type "gpointer*")
+  (parameters
+    '("GeglRectangle*" "roi")
+    '("gdouble" "scale")
+    '("gchar*" "format")
+    '("gint" "rowstride")
+    '("gpointer*" "destination_buf")
+    '("GeglBlitFlags" "flags")
+  )
+)
 
 (define-method process
   (of-object "GeglNode")

@@ -275,6 +275,49 @@ Could not write method GeglNode.blit: No ArgType for GeglRectangle*
 #endif
 
 %%
+override gegl_node_render kwargs
+static PyObject *
+_wrap_gegl_node_render(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "roi", "scale", "format", "rowstride", "flags",  NULL };
+    GeglRectangle *rectangle;
+    gdouble        scale;
+    gchar         *format;
+    gint           rowstride;
+    GeglBlitFlags  flags;
+    Babl          *bablfmt;
+    gpointer       buffer;
+    gint           buflen;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "Odsii:GeglNode.render", kwlist,
+                                     &rectangle, &scale, &format, &rowstride, &buffer, &flags))
+        return NULL;
+    
+    bablfmt = babl_format(format);
+    if (bablfmt == NULL)
+    {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+
+    buflen = rectangle->width * rectangle->height *
+               ((Babl *)format)->format.bytes_per_pixel;
+
+    /* FIXME: Will this result in memory leak? */
+    buffer = g_malloc(buflen);
+    if (buffer == NULL)
+    {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+
+    gegl_node_blit(GEGL_NODE(self->obj), 
+                   rectangle, scale, bablfmt, rowstride, buffer, flags);
+
+    return Py_BuildValue("s#", buffer, buflen);
+}
+
+%%
 override operations
 static PyObject*
 _wrap_operations(void)
