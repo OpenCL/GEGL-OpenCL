@@ -279,18 +279,19 @@ override gegl_node_render kwargs
 static PyObject *
 _wrap_gegl_node_render(PyGObject *self, PyObject *args, PyObject *kwargs)
 {
-    static char *kwlist[] = { "roi", "scale", "format", "rowstride", "flags",  NULL };
-    GeglRectangle *rectangle;
+    static char *kwlist[] = { "roi", "scale", "format", "flags",  NULL };
+    PyObject      *rectangle;
     gdouble        scale;
     gchar         *format;
-    gint           rowstride;
     GeglBlitFlags  flags;
     Babl          *bablfmt;
-    gpointer       buffer;
+    PyObject      *attribute;
+    GeglRectangle  roi;
     gint           buflen;
+    gpointer       buffer;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "Odsii:GeglNode.render", kwlist,
-                                     &rectangle, &scale, &format, &rowstride, &buffer, &flags))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "Odsi:GeglNode.render", kwlist,
+                                     &rectangle, &scale, &format, &flags))
         return NULL;
     
     bablfmt = babl_format(format);
@@ -300,10 +301,26 @@ _wrap_gegl_node_render(PyGObject *self, PyObject *args, PyObject *kwargs)
         return Py_None;
     }
 
-    buflen = rectangle->width * rectangle->height *
-               ((Babl *)format)->format.bytes_per_pixel;
+    attribute = PyObject_GetAttrString(rectangle, "x");
+    roi.x = PyInt_AsLong(attribute);
+    Py_DECREF(attribute);
 
-    /* FIXME: Will this result in memory leak? */
+    attribute = PyObject_GetAttrString(rectangle, "y");
+    roi.y = PyInt_AsLong(attribute);
+    Py_DECREF(attribute);
+
+    attribute = PyObject_GetAttrString(rectangle, "width");
+    roi.width = PyInt_AsLong(attribute);
+    Py_DECREF(attribute);
+
+    attribute = PyObject_GetAttrString(rectangle, "height");
+    roi.height = PyInt_AsLong(attribute);
+    Py_DECREF(attribute);
+
+    buflen = roi.width * roi.height *
+               ((Babl *)bablfmt)->format.bytes_per_pixel;
+
+    /* FIXME: When does this memory get freed? */
     buffer = g_malloc(buflen);
     if (buffer == NULL)
     {
@@ -312,7 +329,7 @@ _wrap_gegl_node_render(PyGObject *self, PyObject *args, PyObject *kwargs)
     }
 
     gegl_node_blit(GEGL_NODE(self->obj), 
-                   rectangle, scale, bablfmt, rowstride, buffer, flags);
+                   &roi, scale, bablfmt, 0, buffer, flags);
 
     return Py_BuildValue("s#", buffer, buflen);
 }

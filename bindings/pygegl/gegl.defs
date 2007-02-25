@@ -179,8 +179,6 @@
     '("GeglRectangle*" "roi")
     '("gdouble" "scale")
     '("gchar*" "format")
-    '("gint" "rowstride")
-    '("gpointer*" "destination_buf")
     '("GeglBlitFlags" "flags")
   )
 )
