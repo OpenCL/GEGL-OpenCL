@@ -1,3 +1,7 @@
+2007-02-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* tests/render-test.py: import sys.
+
 2007-02-26  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* tests/render-test.py: Added (converted from rgegl).

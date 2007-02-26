@@ -11,6 +11,7 @@ class Rectangle:
 	self.height = height
 
 import gegl
+import sys
 
 greyscale=["█", "▓", "▒", "░", " "]
 reverse_video=False
