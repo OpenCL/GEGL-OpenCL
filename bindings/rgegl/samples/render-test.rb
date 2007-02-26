@@ -21,7 +21,7 @@ fractal >> contrast >> over >> display
 text >> over[:aux]
 
 x=0
-buffer = over.render(Gegl::Rectangle.new(0.0,0.0,width,height), 2.0, "Y u8", 0)
+buffer = over.render(Gegl::Rectangle.new(0.0,0.0,width,height), 1.0, "Y u8", 0)
 pos=0
 height.times {|y|
     width.times {|x|
