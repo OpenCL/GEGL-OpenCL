@@ -20,7 +20,7 @@
 #if GEGL_CHANT_PROPERTIES
  
 gegl_chant_string (path, "/tmp/fnord.mp4", "Target path and filename, use '-' for stdout.")
-gegl_chant_double (bitrate, 0.0, 100000000.0, 8000000.0, "target bitrate")
+gegl_chant_double (bitrate, 0.0, 100000000.0, 800000.0, "target bitrate")
 gegl_chant_double (fps, 0.0, 100.0, 25, "frames per second")
 
 #else
