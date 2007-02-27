@@ -1,5 +1,12 @@
 2007-02-27  Øyvind Kolås  <oeyvindk@hig.no>
 
+	* operations/workshop/snnq-mean.c: renamed to
+	* operations/workshop/snn-mean.c: this file.
+	* operations/workshop/snn-percentile.c: added, a symmetric nearest
+	rank neighbour percentile filter.
+
+2007-02-27  Øyvind Kolås  <oeyvindk@hig.no>
+
 	* operations/workshop/snnq-mean.c: added egde preserving blur that
 	doesn't round off corners. Apply this filter 3-4 times in a row
 	to achieve a cartooning/aquarell like artistic effect.

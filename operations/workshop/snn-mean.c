@@ -29,19 +29,19 @@ gegl_chant_int (pairs, 1, 2, 2, "Number of pairs higher number preserves more ac
 #else
 
 #define GEGL_CHANT_FILTER
-#define GEGL_CHANT_NAME            snnq_mean
-#define GEGL_CHANT_DESCRIPTION     "Noise reducing edge enhancing blur filter."
-#define GEGL_CHANT_SELF            "snnq-mean.c"
-#define GEGL_CHANT_CATEGORIES      "misc"
+#define GEGL_CHANT_NAME        snn_mean
+#define GEGL_CHANT_DESCRIPTION "Noise reducing edge enhancing blur filter based on Symmetric Nearest Neighbours"
+#define GEGL_CHANT_SELF        "snn-mean.c"
+#define GEGL_CHANT_CATEGORIES  "misc"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 #include <math.h>
 
 static void
-snnq_mean (GeglBuffer *src,
-           GeglBuffer *dst,
-           gdouble     radius,
-           gint        pairs);
+snn_mean (GeglBuffer *src,
+          GeglBuffer *dst,
+          gdouble     radius,
+          gint        pairs);
 
 static GeglRectangle get_source_rect (GeglOperation *self,
                                       gpointer       context_id);
@@ -96,7 +96,7 @@ process (GeglOperation *operation,
                                  "height", need.height,
                                  NULL);
 
-          snnq_mean (temp_in, output, self->radius, self->pairs);
+          snn_mean (temp_in, output, self->radius, self->pairs);
           g_object_unref (temp_in);
         }
 
@@ -138,10 +138,10 @@ static inline gfloat colordiff (gfloat *pixA,
 
 
 static void
-snnq_mean (GeglBuffer *src,
-           GeglBuffer *dst,
-           gdouble     radius,
-           gint        pairs)
+snn_mean (GeglBuffer *src,
+          GeglBuffer *dst,
+          gdouble     radius,
+          gint        pairs)
 {
   gint x,y;
   gint offset;
