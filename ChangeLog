@@ -1,3 +1,9 @@
+2007-02-27  Øyvind Kolås  <oeyvindk@hig.no>
+
+	* operations/workshop/snnq-mean.c: added egde preserving blur that
+	doesn't round off corners. Apply this filter 3-4 times in a row
+	to achieve a cartooning/aquarell like artistic effect.
+
 2007-02-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/ff-save.c: fixed default bitrate to be 800kbps.
@@ -183,11 +189,11 @@
 
 	* bindings/gegl-sharp/: initial import of C# binding for GEGL.
 
-2007-02-13  Øyvind Kolås  <oeyvindk@hig.no>
+2007-02-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* bindings/rgegl/: initial import of ruby extension for GEGL.
 
-2007-02-13  Øyvind Kolås  <oeyvindk@hig.no>
+2007-02-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* bindings/: added a subdir to host various language bindings.
 
