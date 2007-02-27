@@ -783,10 +783,12 @@ void          gegl_node_blit                (GeglNode      *node,
   else if (flags & GEGL_BLIT_CACHE)
     {
       GeglCache *cache = gegl_node_get_cache (node);
-      if (!flags & GEGL_BLIT_DIRTY)
+      if (!(flags & GEGL_BLIT_DIRTY))
         { /* if we're not blitting dirtily, we need to make sure
              that the data is available */
-          while (gegl_cache_render (cache, roi, NULL));
+          GeglProcessor *processor = gegl_node_new_processor (node, roi);
+          while (gegl_processor_work (processor, NULL));
+          g_object_unref (G_OBJECT (processor));
         }
       gegl_buffer_get (GEGL_BUFFER (cache), roi, scale, format, destination_buf);
     }

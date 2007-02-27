@@ -58,9 +58,6 @@ extern guint         gegl_cache_signals[GEGL_CACHE_LAST_SIGNAL];
 GType    gegl_cache_get_type    (void) G_GNUC_CONST;
 void     gegl_cache_invalidate  (GeglCache     *self,
                                  GeglRectangle *roi);
-gboolean gegl_cache_render      (GeglCache     *cache,
-                                 GeglRectangle *rectangle,
-                                 gdouble       *progress);
 
 G_END_DECLS
 
