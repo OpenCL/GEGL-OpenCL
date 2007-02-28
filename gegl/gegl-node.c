@@ -780,7 +780,8 @@ void          gegl_node_blit                (GeglNode      *node,
       /* and unrefing to ultimatly clean it off from the graph */
       g_object_unref (buffer);
     }
-  else if (flags & GEGL_BLIT_CACHE)
+  else if ((flags & GEGL_BLIT_CACHE)||
+           (flags & GEGL_BLIT_DIRTY))
     {
       GeglCache *cache = gegl_node_get_cache (node);
       if (!(flags & GEGL_BLIT_DIRTY))
@@ -790,6 +791,7 @@ void          gegl_node_blit                (GeglNode      *node,
           while (gegl_processor_work (processor, NULL));
           g_object_unref (G_OBJECT (processor));
         }
+      cache = gegl_node_get_cache (node);
       gegl_buffer_get (GEGL_BUFFER (cache), roi, scale, format, destination_buf);
     }
 }
