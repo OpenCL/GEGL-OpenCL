@@ -1,3 +1,8 @@
+2007-02-27  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* gegl/gegl-node.c (gegl_node_blit): Removed extra call to the
+	gegl_node_cahe_get() routine. Fixed spelling error in comment.
+
 2007-02-28  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-node.c: (gegl_node_blit): imply that the CACHE flag is

@@ -458,7 +458,7 @@ source_invalidated (GeglNode      *source,
      gegl_pad_get_name (destination_pad),
      source_name,
      rect->x, rect->y,
-     rect->width  , rect->height);
+     rect->width, rect->height);
 
   if (destination->operation)
     {
@@ -532,7 +532,7 @@ gegl_node_disconnect (GeglNode    *sink,
   g_return_val_if_fail (GEGL_IS_NODE (sink), FALSE);
 
   if (pads_exist (sink, sink_pad_name, NULL, NULL))
-    { 
+    {
       GeglPad   *sink_pad   = gegl_node_get_pad (sink, sink_pad_name);
       GeglConnection *connection  = find_connection (sink, sink_pad);
       GeglNode    *source;
@@ -767,7 +767,7 @@ void          gegl_node_blit                (GeglNode      *node,
                                             "source", buffer,
                                             "x",      roi->x,
                                             "y",      roi->y,
-                                            "width",  roi->width  ,
+                                            "width",  roi->width,
                                             "height", roi->height,
                                             NULL);
         gegl_buffer_get (roi_buf, NULL, 1.0, format, destination_buf);
@@ -777,7 +777,7 @@ void          gegl_node_blit                (GeglNode      *node,
             g_warning ("Scale %f!=1.0 in blit without cache", scale);
           }
       }
-      /* and unrefing to ultimatly clean it off from the graph */
+      /* and unrefing to ultimately clean it off from the graph */
       g_object_unref (buffer);
     }
   else if ((flags & GEGL_BLIT_CACHE)||
@@ -791,7 +791,6 @@ void          gegl_node_blit                (GeglNode      *node,
           while (gegl_processor_work (processor, NULL));
           g_object_unref (G_OBJECT (processor));
         }
-      cache = gegl_node_get_cache (node);
       gegl_buffer_get (GEGL_BUFFER (cache), roi, scale, format, destination_buf);
     }
 }
@@ -916,14 +915,14 @@ gegl_node_set_op_class (GeglNode      *node,
             gegl_node_set_op_class (node, "nop", NULL, var_args);
           return;
         }
-      
+
        if (node->operation &&
            type == G_OBJECT_TYPE (node->operation))
          {
            gegl_node_set_valist (node, first_property, var_args);
            return;
          }
-      
+
       operation = GEGL_OPERATION (g_object_new_valist (type, first_property,
                                                        var_args));
       gegl_node_set_operation_object (node, operation);
@@ -954,7 +953,7 @@ static void property_changed (GObject    *gobject,
     {
       if (self->operation && !arg1)
         { /* these means we were called due to a operation change
-           
+
              FIXME: The logic of this if is not quite intuitive,
              perhaps the thing being checked should be slightly different,
              or perhaps a bug lurks here?
@@ -1035,14 +1034,14 @@ gegl_node_set_operation_object (GeglNode      *self,
     /* FIXME: handle this in a more generic way, but it is needed to allow
      * the attach to work properly.
      */
-    
+
     if (gegl_node_get_pad (self, "output"))
       gegl_node_remove_pad (self, gegl_node_get_pad (self, "output"));
     if (gegl_node_get_pad (self, "input"))
       gegl_node_remove_pad (self, gegl_node_get_pad (self, "input"));
     if (gegl_node_get_pad (self, "aux"))
       gegl_node_remove_pad (self, gegl_node_get_pad (self, "aux"));
-    
+
     gegl_operation_attach (operation, self);
 
     if (input)
@@ -1196,7 +1195,7 @@ gegl_node_get_valist (GeglNode    *self,
 
   while (property_name)
     {
-      GValue value = {0 , };
+      GValue value = {0, };
       GParamSpec *pspec;
       gchar      *error;
 
@@ -1273,7 +1272,7 @@ gegl_node_set_property (GeglNode     *self,
     {
       g_warning("Setting a deprecated property \"class\", "
                 "use \"operation\" instead.");
-      
+
       g_object_set_property (G_OBJECT (self), "operation", value);
     }
 
@@ -1501,8 +1500,8 @@ gegl_node_get_bounding_box (GeglNode     *root)
 
   g_object_unref (root);
   g_free(id);
-  
-  return root->have_rect; 
+
+  return root->have_rect;
 }
 
 void
@@ -1549,7 +1548,7 @@ gegl_node_process (GeglNode *self)
     g_value_unset (&value);
   }
 
-  gegl_node_dynamic_set_result_rect (dynamic, defined.x, defined.y, defined.width  , defined.h);
+  gegl_node_dynamic_set_result_rect (dynamic, defined.x, defined.y, defined.width, defined.h);
   gegl_operation_process (self->operation, &defined, "foo");
   gegl_node_remove_dynamic (self, &defined);
   g_object_unref (buffer);
@@ -1572,7 +1571,7 @@ gegl_node_get_dynamic (GeglNode *self,
 {
   GSList *found;
   GeglNodeDynamic *dynamic = NULL;
- 
+
   found = g_slist_find_custom (self->dynamic, context_id, lookup_dynamic);
   if (found)
     dynamic = found->data;
@@ -1631,7 +1630,7 @@ gegl_node_detect (GeglNode *root,
     {
       /* make sure the have rects are computed */
       /* FIXME: do not call this all the time! */
-      gegl_node_get_bounding_box (root); 
+      gegl_node_get_bounding_box (root);
 
       if (root->operation)
         return gegl_operation_detect (root->operation, x, y);
@@ -1682,7 +1681,7 @@ gegl_node_get_consumers (GeglNode      *node,
       g_warning ("%s node==NULL", __FUNCTION__);
       return 0;
     }
-  
+
   pad = gegl_node_get_pad (node, output_pad);
 
   if (!pad)
@@ -1759,7 +1758,7 @@ gegl_node_get_cache (GeglNode *node)
                                   "format", babl_format ("R'G'B' u8"),
      /*XXX: this will probably have to be made RGBA float when more
       * caches are added in the graph, or perhaps even keep parallell
-      * u8 / float caches 
+      * u8 / float caches
       *                           "format", babl_format ("RGBA float"), */
                                   NULL);
       g_signal_connect (G_OBJECT (node->cache), "computed",
