@@ -59,6 +59,10 @@ struct _GeglProcessor {
   GeglRegion      *queued_region;
   GSList          *dirty_rectangles;
   gint             chunk_size;
+
+  GThread         *thread;
+  gboolean         thread_done;
+  gdouble          progress;
 };
 
 G_DEFINE_TYPE (GeglProcessor, gegl_processor, GEGL_TYPE_OBJECT);
@@ -81,7 +85,7 @@ static void gegl_processor_class_init (GeglProcessorClass *klass)
 
   g_object_class_install_property (gobject_class, PROP_CHUNK_SIZE,
                                    g_param_spec_int ("chunk-size", "chunk-size", "Size of chunks being rendered (larger chunks need more memory to do the processing).",
-                                                     8*8, 2048*2048, 128*128,
+                                                     8*8, 2048*2048, 512*512,
                                                      G_PARAM_READWRITE|
                                                      G_PARAM_CONSTRUCT_ONLY));
 
@@ -454,6 +458,8 @@ gegl_processor_render (GeglProcessor *processor,
       gint           n_rectangles;
       gint           i;
 
+      g_warning ("hey!");
+
       gegl_region_get_rectangles (processor->queued_region, &rectangles, &n_rectangles);
 
       for (i=0; i<n_rectangles && i<1; i++)
@@ -476,6 +482,73 @@ gegl_processor_render (GeglProcessor *processor,
   return !gegl_processor_is_rendered (processor);
 }
 
+
+/*#define ENABLE_THREADING*/
+#ifdef ENABLE_THREADING
+
+gpointer render_thread (gpointer data)
+{
+  GeglProcessor *processor = data;
+
+  while (gegl_processor_render (processor, &processor->rectangle, &processor->progress));
+  processor->thread_done = TRUE;
+  return NULL;
+}
+
+gboolean
+gegl_processor_work (GeglProcessor *processor,
+                     gdouble       *progress)
+{
+  gboolean more_work=FALSE;
+  GeglCache *cache;
+
+  if (!processor->thread)
+    {
+      processor->thread = g_thread_create (render_thread,
+                          processor,
+                          FALSE,
+                          NULL);
+      processor->thread_done = FALSE;
+      if (progress)
+        *progress=processor->progress;
+      more_work=!processor->thread_done;
+    }
+  else
+    {
+      if (progress)
+        *progress=processor->progress;
+      if (processor->thread_done)
+        {
+          processor->thread = NULL;
+        }
+      more_work=!processor->thread_done;
+    }
+
+  /*more_work = gegl_processor_render (processor, &processor->rectangle, progress);*/
+
+  if (more_work)
+    {
+      return TRUE;
+    }
+  cache = gegl_node_get_cache (processor->input);
+
+  if (processor->dynamic)
+    {
+      gegl_operation_process (processor->node->operation, cache, "foo");
+      gegl_node_remove_dynamic (processor->node, cache);
+      processor->dynamic=NULL;
+      if (progress)
+        *progress=1.0;
+      return TRUE;
+    }
+
+  if (progress)
+    *progress= 1.0;
+
+  return FALSE;
+}
+
+#else
 
 gboolean
 gegl_processor_work (GeglProcessor *processor,
@@ -505,6 +578,7 @@ gegl_processor_work (GeglProcessor *processor,
 
   return FALSE;
 }
+#endif
 
 void
 gegl_processor_destroy (GeglProcessor *processor)

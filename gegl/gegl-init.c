@@ -62,6 +62,7 @@ gegl_init (gint *argc,
 {
   if (gegl_initialized)
     return;
+  g_thread_init (NULL);
 
   /*  If any command-line actions are ever added to GEGL, then the
    *  commented out code below should be used.  Until then, we simply

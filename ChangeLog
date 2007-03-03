@@ -1,5 +1,21 @@
 2007-03-03  Øyvind Kolås  <pippin@gimp.org>
 
+	Added initial threading support, each GeglProcessor now spawns
+	it's seperate thread to do it's work. On my machine initial testing
+	seems to indicate that this works for splitting up the work between
+	the GUI updates (gtk+) and GEGL doing processing in the background.
+	No locks added thus far.
+
+	* configure.in: add GTHREAD to DEP
+	* gegl.pc.in: link with gthread.
+	* gegl/gegl-init.c: (gegl_init): call g_thread_init
+	* gegl/gegl-processor.c: (gegl_processor_class_init),
+	(gegl_processor_render), (render_thread), (gegl_processor_work): Added
+	an alternate code path which can be enabled by removing the comments
+	for the ENABLE_THREADING #define on line 486.
+
+2007-03-03  Øyvind Kolås  <pippin@gimp.org>
+
 	Added an operation that plots RGB curves along a line in the input
 	image.
 
