@@ -1,3 +1,8 @@
+2007-03-03  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* operations/workshop/Makefile.am: Use CAIRO_CFLAGS and CAIRO_LIBS
+	determined during ./configure instead of calling pkg-config.
+
 2007-03-03  Øyvind Kolås  <pippin@gimp.org>
 
 	Added initial threading support, each GeglProcessor now spawns

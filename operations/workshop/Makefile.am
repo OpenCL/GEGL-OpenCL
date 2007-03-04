@@ -3,7 +3,7 @@ SUBDIRS = generated
 include $(top_srcdir)/operations/Makefile-operations.am
 
 line-profile.so: line-profile.c $(GEGLHEADERS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config cairo --libs --cflags`
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
 
 gst.so: gst.c $(GEGLHEADERS)
 	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config gstreamer-0.10 --libs --cflags`
