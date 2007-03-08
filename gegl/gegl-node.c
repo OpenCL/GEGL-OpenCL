@@ -1400,23 +1400,6 @@ gegl_node_get_result_rect (GeglNode *node,
   return &dynamic->result_rect;
 }
 
-void
-gegl_node_set_result_rect (GeglNode *node,
-                           gpointer  context_id,
-                           gint      x,
-                           gint      y,
-                           gint      width,
-                           gint      height)
-{
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, context_id);
-  g_assert (node);
-  g_assert (dynamic);
-  dynamic->result_rect.x = x;
-  dynamic->result_rect.y = y;
-  dynamic->result_rect.width  = width;
-  dynamic->result_rect.height = height;
-}
-
 GeglRectangle *
 gegl_node_get_need_rect (GeglNode    *node,
                          gpointer     context_id)

@@ -1,5 +1,10 @@
 2007-03-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.[ch]: removed unused function
+	gegl_node_set_result_rect.
+
+2007-03-08  Øyvind Kolås  <pippin@gimp.org>
+
 	Made the description not be a copy, and removed a call from
 	gegl-operation.h.
 

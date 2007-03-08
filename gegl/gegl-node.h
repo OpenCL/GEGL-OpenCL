@@ -187,13 +187,6 @@ void          gegl_node_set_need_rect       (GeglNode      *node,
                                              gint           width,
                                              gint           height);
  
-void          gegl_node_set_result_rect     (GeglNode      *node,
-                                             gpointer       context_id,
-                                             gint           x,
-                                             gint           y,
-                                             gint           width,
-                                             gint           height);
-
 const gchar * gegl_node_get_operation       (GeglNode      *node);
 
 const gchar * gegl_node_get_debug_name      (GeglNode      *node);
