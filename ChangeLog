@@ -1,3 +1,8 @@
+2007-03-08  Øyvind Kolås  <oeyvindk@hig.no>
+
+	* operations/workshop/hstack.c: Added a composer operation whose
+	output contains its input images side by side.
+
 2007-03-03  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* operations/workshop/Makefile.am: Use CAIRO_CFLAGS and CAIRO_LIBS
