@@ -1,5 +1,10 @@
 2007-03-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.[ch]: made gegl_node_disconnect_sinks and
+	gegl_node_disconnect_sources static and internal to the class.
+
+2007-03-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.[ch]: removed functions: gegl_node_get_have_rect,
 	gegl_node_get_output_pads, gegl_node_get_num_sources,
 	gegl_node_get_num_input_pads, gegl_node_get_num_output_pads,

@@ -85,9 +85,11 @@ static void            gegl_node_set_op_class         (GeglNode      *self,
                                                        const gchar   *op_class,
                                                        const gchar   *first_property,
                                                        va_list        var_args);
-static void property_changed (GObject    *gobject,
-                              GParamSpec *arg1,
-                              gpointer    user_data);
+static void            gegl_node_disconnect_sinks     (GeglNode      *self);
+static void            gegl_node_disconnect_sources   (GeglNode      *self);
+static void            property_changed               (GObject    *gobject,
+                                                       GParamSpec *arg1,
+                                                       gpointer    user_data);
 
 G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, GEGL_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (GEGL_TYPE_VISITABLE,
@@ -556,7 +558,7 @@ gegl_node_disconnect (GeglNode    *sink,
   return FALSE;
 }
 
-void
+static void
 gegl_node_disconnect_sources (GeglNode *self)
 {
   while (TRUE)
@@ -578,7 +580,7 @@ gegl_node_disconnect_sources (GeglNode *self)
     }
 }
 
-void
+static void
 gegl_node_disconnect_sinks (GeglNode *self)
 {
   while (TRUE)
