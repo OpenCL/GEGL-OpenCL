@@ -21,7 +21,7 @@
 #include <string.h>
 #include "gegl-plugin.h"
 
-void
+static void
 gegl_add_graph (GString     *string,
                 GeglNode    *node,
                 const gchar *label)
