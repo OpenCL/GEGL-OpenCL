@@ -284,7 +284,7 @@ gegl_chant_class_init (ChantClass * klass)
   M_GEGL_CHANT_SET_NAME (GEGL_CHANT_NAME);
 
 #ifdef GEGL_CHANT_DESCRIPTION
-  gegl_operation_class_set_description (operation_class, GEGL_CHANT_DESCRIPTION);
+  operation_class->description = GEGL_CHANT_DESCRIPTION;
 #endif
 
 #define gegl_chant_int(name, min, max, def, blurb)  \

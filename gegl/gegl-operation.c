@@ -51,7 +51,7 @@ gegl_operation_class_init (GeglOperationClass * klass)
   klass->name = NULL;  /* an operation class with name == NULL is not included
                           when doing operation lookup by name */
   klass->description = NULL;
-
+  klass->categories = NULL;
   klass->attach = attach;
   klass->prepare = NULL;
   klass->get_defined_region = get_defined_region;
@@ -329,15 +329,6 @@ gegl_operation_class_set_name (GeglOperationClass *klass,
   name_copy = g_strdup (new_name);
   g_strdelimit (name_copy, "_", '-');
   klass->name = name_copy;
-}
-
-void
-gegl_operation_class_set_description (GeglOperationClass *klass,
-                               const gchar        *new_description)
-{
-  if (klass->description)
-    g_free (klass->description);
-  klass->description = g_strdup (new_description);
 }
 
 static void

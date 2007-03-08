@@ -312,7 +312,7 @@ gegl_operation_remap_class_init (GeglOperationRemapClass * klass)
   gegl_operation_class_set_name (operation_class, "remap");;
 
 
-  gegl_operation_class_set_description (operation_class, "remaps the pixel value, so that min would become 0.0 and max become 1.0, (only affecting the input pixel).");
+  operation_class->description = "remaps the pixel value, so that min would become 0.0 and max become 1.0, (only affecting the input pixel).";
 
   operation_class->categories = "programming:hidden";
 

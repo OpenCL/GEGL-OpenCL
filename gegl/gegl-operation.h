@@ -102,20 +102,23 @@ struct _GeglOperationClass
                                            const gchar   *output_pad);
 };
 
+/* returns|registers the gtype for GeglOperation */
+GType      gegl_operation_get_type                  (void) G_GNUC_CONST;
+
 /* returns the ROI passed to _this_ operation */
 GeglRectangle * gegl_operation_get_requested_region (GeglOperation *operation,
                                                      gpointer       context_id);
 
 /* retrieves the bounding box of a connected input */
 GeglRectangle * gegl_operation_source_get_defined_region (GeglOperation *operation,
-                                                     const gchar   *pad_name);
+                                                          const gchar   *pad_name);
 
 /* retrieves the node providing data to a named input pad */
-GeglNode      * gegl_operation_get_source_node (GeglOperation *operation,
-                                                const gchar   *pad_name);
+GeglNode      * gegl_operation_get_source_node      (GeglOperation *operation,
+                                                     const gchar   *pad_name);
 
 /* sets the ROI needed to be computed on one of the sources */
-void       gegl_operation_set_source_region         (GeglOperation *operation,
+void            gegl_operation_set_source_region    (GeglOperation *operation,
                                                      gpointer       context_id,
                                                      const gchar   *pad_name,
                                                      GeglRectangle *region);
@@ -125,45 +128,65 @@ GeglRectangle * gegl_operation_result_rect          (GeglOperation *operation,
                                                      gpointer       context_id);
 
 
-/* virtual method invokers */
+/* virtual method invokers that depends only on the set properties of a
+ * operation|node
+ */
 GeglRectangle   gegl_operation_get_affected_region  (GeglOperation *self,
                                                      const gchar   *input_pad,
                                                      GeglRectangle  region);
 GeglRectangle   gegl_operation_get_defined_region   (GeglOperation *self);
-gboolean   gegl_operation_calc_source_regions       (GeglOperation *self,
-                                                     gpointer       context_id);
-void       gegl_operation_attach                    (GeglOperation *self,
-                                                     GeglNode      *node);
-void       gegl_operation_prepare                   (GeglOperation *self,
-                                                     gpointer       context_id);
-
-gboolean   gegl_operation_process                   (GeglOperation *self,
-                                                     gpointer       context_id,
-                                                     const gchar   *output_pad);
-GeglNode  *gegl_operation_detect                    (GeglOperation *self,
+GeglNode       *gegl_operation_detect               (GeglOperation *self,
                                                      gint           x,
                                                      gint           y);
-GType      gegl_operation_get_type                  (void) G_GNUC_CONST;
-void       gegl_operation_class_set_name            (GeglOperationClass *self,
-                                                     const gchar        *name);
-void       gegl_operation_class_set_description     (GeglOperationClass *self,
-                                                     const gchar        *description);
-void       gegl_operation_create_pad                (GeglOperation *self,
-                                                     GParamSpec    *param_spec);
-GType      gegl_operation_gtype_from_name           (const gchar *name);
-gchar    **gegl_list_operations                     (guint *n_operations_p);
 
-GParamSpec** gegl_list_properties                   (const gchar *operation_type,
-                                                     guint       *n_properties_p);
 
-GObject  * gegl_operation_get_data                  (GeglOperation *operation,
+/* virtual method invokers that change behavior based on the roi being computed,
+ * needs a context_id being based that is used for storing dynamic data.
+ */
+gboolean        gegl_operation_calc_source_regions  (GeglOperation *self,
+                                                     gpointer       context_id);
+void            gegl_operation_attach               (GeglOperation *self,
+                                                     GeglNode      *node);
+void            gegl_operation_prepare              (GeglOperation *self,
+                                                     gpointer       context_id);
+gboolean        gegl_operation_process              (GeglOperation *self,
                                                      gpointer       context_id,
-                                                     const gchar   *property_name);
+                                                     const gchar   *output_pad);
+
+/* set a dynamic named instance for this node, this function takes over ownership
+ * of the reference (mostly used to set the "output" GeglBuffer) for operations
+ */
 void       gegl_operation_set_data                  (GeglOperation *operation,
                                                      gpointer       context_id,
                                                      const gchar   *property_name,
                                                      GObject       *data);
 
+/* retrieve a gobject previously set dynamically on an operation */
+GObject  * gegl_operation_get_data                  (GeglOperation *operation,
+                                                     gpointer       context_id,
+                                                     const gchar   *property_name);
+
+gchar    **gegl_list_operations                     (guint *n_operations_p);
+GParamSpec** gegl_list_properties                   (const gchar *operation_type,
+                                                     guint       *n_properties_p);
+
+/* set the name of an operation, transforms all occurences of "_" into "-" */
+void       gegl_operation_class_set_name            (GeglOperationClass *self,
+                                                     const gchar        *name);
+
+/* create a pad for a specified property for this operation, this method is
+ * to be called from the attach method of operations, most operations do not
+ * have to care about this since a super class will do it for them.
+ */
+void       gegl_operation_create_pad                (GeglOperation *self,
+                                                     GParamSpec    *param_spec);
+
+
+
+/* Used to look up the gtype when changing the type of operation associated
+ * a GeglNode using just a string with the registered name.
+ */
+GType      gegl_operation_gtype_from_name           (const gchar *name);
 G_END_DECLS
 
 #endif /* __GEGL_OPERATION_H__ */

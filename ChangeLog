@@ -1,5 +1,20 @@
 2007-03-08  Øyvind Kolås  <pippin@gimp.org>
 
+	Made the description not be a copy, and removed a call from
+	gegl-operation.h.
+
+	* gegl/gegl-operation.[ch]: (gegl_operation_class_init): removed
+	gegl_operation_set_description call. Slightly reorganized, reindented
+	and sprinkled headers in header.
+	* gegl/gegl-chant.h: replaced gegl_operation_set_description with an
+	assignment, do not care about copying the memory since the registered
+	types are static and their class structures will not be destroyed.
+	* operations/affine/chant.h: same change as the generic gegl-chant.h
+	* operations/color/remap.c: (gegl_operation_remap_class_init): same
+	change as above in this op that doesn't use gegl_chant.h
+
+2007-03-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/render/text.c: (process): simplified babl_format since
 	we now depend on a more modern babl.
 
