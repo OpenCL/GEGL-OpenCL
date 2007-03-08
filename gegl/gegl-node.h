@@ -140,12 +140,7 @@ GeglPad     * gegl_node_get_pad             (GeglNode      *self,
                                              const gchar   *name);
 GSList      * gegl_node_get_pads            (GeglNode      *self);
 GSList      * gegl_node_get_input_pads      (GeglNode      *self);
-GSList      * gegl_node_get_output_pads     (GeglNode      *self);
-gint          gegl_node_get_num_input_pads  (GeglNode      *self);
-gint          gegl_node_get_num_output_pads (GeglNode      *self);
 GSList      * gegl_node_get_sinks           (GeglNode      *self);
-GSList      * gegl_node_get_sources         (GeglNode      *self);
-gint          gegl_node_get_num_sources     (GeglNode      *self);
 gint          gegl_node_get_num_sinks       (GeglNode      *self);
 void          gegl_node_disconnect_sinks    (GeglNode      *self);
 void          gegl_node_disconnect_sources  (GeglNode      *self);
@@ -170,14 +165,6 @@ void          gegl_node_get_property        (GeglNode      *object,
                                              GValue        *value);
 GParamSpec *  gegl_node_find_property       (GeglNode      *self,
                                              const gchar   *property_name);
-GeglRectangle    * gegl_node_get_have_rect  (GeglNode      *node);
-void          gegl_node_set_have_rect       (GeglNode      *node,
-                                             gint           x,
-                                             gint           y,
-                                             gint           width,
-                                             gint           height);
-GeglRectangle    * gegl_node_get_need_rect  (GeglNode      *node,
-                                             gpointer       context_id);
 void          gegl_node_set_need_rect       (GeglNode      *node,
                                              gpointer       context_id,
                                              gint           x,
@@ -203,6 +190,7 @@ GeglCache    *gegl_node_get_cache           (GeglNode      *node);
 void          gegl_node_disable_cache       (GeglNode      *node);
 void          gegl_node_invalidated         (GeglNode      *node,
                                              GeglRectangle *rect);
+GeglRectangle gegl_node_get_bounding_box    (GeglNode     *root);
 
 extern guint gegl_node_signals[];
 

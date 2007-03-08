@@ -311,20 +311,6 @@ gegl_node_get_input_pads (GeglNode *self)
   return self->input_pads;
 }
 
-/**
- * gegl_node_get_output_pads:
- * @self: a #GeglNode.
- *
- * Returns: A list of #GeglPad.
- **/
-GSList *
-gegl_node_get_output_pads (GeglNode *self)
-{
-  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
-
-  return self->output_pads;
-}
-
 void
 gegl_node_add_pad (GeglNode *self,
                    GeglPad  *pad)
@@ -632,54 +618,6 @@ gegl_node_get_num_sinks (GeglNode *self)
 }
 
 /**
- * gegl_node_get_num_sources:
- * @self: a #GeglNode.
- *
- * Gets the number of source
- *
- * Returns: number of sources
- **/
-gint
-gegl_node_get_num_sources (GeglNode *self)
-{
-  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
-
-  return g_slist_length (self->sources);
-}
-
-/**
- * gegl_node_get_num_input_pads:
- * @self: a #GeglNode.
- *
- * Gets the number of inputs.
- *
- * Returns: number of inputs.
- **/
-gint
-gegl_node_get_num_input_pads (GeglNode *self)
-{
-  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
-
-  return g_slist_length (self->input_pads);
-}
-
-/**
- * gegl_node_get_num_output_pads:
- * @self: a #GeglNode.
- *
- * Gets the number of outputs.
- *
- * Returns: number of outputs.
- **/
-gint
-gegl_node_get_num_output_pads (GeglNode *self)
-{
-  g_return_val_if_fail (GEGL_IS_NODE (self), -1);
-
-  return g_slist_length (self->output_pads);
-}
-
-/**
  * gegl_node_get_sinks:
  * @self: a #GeglNode.
  *
@@ -691,20 +629,6 @@ GSList *
 gegl_node_get_sinks (GeglNode *self)
 {
   return self->sinks;
-}
-
-/**
- * gegl_node_get_sources:
- * @self: a #GeglNode.
- *
- * Gets list of source connections attached to this node.
- *
- * Returns: list of source connections.
- **/
-GSList *
-gegl_node_get_sources (GeglNode *self)
-{
-  return self->sources;
 }
 
 void          gegl_node_link                (GeglNode     *source,
@@ -1332,26 +1256,6 @@ gegl_node_get_operation (GeglNode     *node)
 }
 
 void
-gegl_node_set_have_rect (GeglNode    *node,
-                         gint         x,
-                         gint         y,
-                         gint         width,
-                         gint         height)
-{
-  g_assert (node);
-  node->have_rect.x = x;
-  node->have_rect.y = y;
-  node->have_rect.width  = width;
-  node->have_rect.height = height;
-}
-
-GeglRectangle *
-gegl_node_get_have_rect (GeglNode    *node)
-{
-  return &node->have_rect;
-}
-
-void
 gegl_node_set_need_rect (GeglNode    *node,
                          gpointer     context_id,
                          gint         x,
@@ -1373,14 +1277,6 @@ gegl_node_get_result_rect (GeglNode *node,
 {
   GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, context_id);
   return &dynamic->result_rect;
-}
-
-GeglRectangle *
-gegl_node_get_need_rect (GeglNode    *node,
-                         gpointer     context_id)
-{
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, context_id);
-  return &dynamic->need_rect;
 }
 
 const gchar *

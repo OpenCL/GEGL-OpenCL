@@ -215,7 +215,7 @@ gegl_operation_source_get_defined_region (GeglOperation *operation,
 {
   GeglNode *node = gegl_operation_get_source_node (operation, input_pad_name);
   if (node)
-    return gegl_node_get_have_rect (node);
+    return &node->have_rect;
   return NULL;
 }
 
@@ -244,8 +244,10 @@ gegl_operation_set_source_region (GeglOperation *operation,
       return;
   }
 
-  gegl_rectangle_bounding_box (&child_need,
-                          gegl_node_get_need_rect (child, context_id), region);
+  {
+    GeglNodeDynamic *dynamic = gegl_node_get_dynamic (operation->node, context_id);
+    gegl_rectangle_bounding_box (&child_need, &dynamic->need_rect, region);
+  }
 
   /* expand the need rect of the node, to include what the calling
    * operation needs as well
