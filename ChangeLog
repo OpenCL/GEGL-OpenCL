@@ -1,3 +1,8 @@
+2007-03-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/render/text.c: (process): simplified babl_format since
+	we now depend on a more modern babl.
+
 2007-03-08  Øyvind Kolås  <oeyvindk@hig.no>
 
 	* operations/workshop/hstack.c: Added a composer operation whose

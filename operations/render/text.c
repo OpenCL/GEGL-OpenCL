@@ -157,17 +157,7 @@ process (GeglOperation *operation,
   result = gegl_operation_result_rect (operation, context_id);
 
   output = g_object_new (GEGL_TYPE_BUFFER,
-                         "format", /* FIXME: when babl requirements is
-                                      bumped to 0.0.14 the name should
-                                      be enough */
-                         babl_format_new ("name", "B'aG'aR'aA u8",
-                                          babl_model ("R'aG'aB'aA"),
-                                          babl_type ("u8"),
-                                          babl_component ("B'a"),
-                                          babl_component ("G'a"),
-                                          babl_component ("R'a"),
-                                          babl_component ("A"),
-                                          NULL),
+                         "format", babl_format ("B'aG'aR'aA u8"),
                          "x",      result->x,
                          "y",      result->y,
                          "width",  result->width ,
@@ -185,17 +175,7 @@ process (GeglOperation *operation,
     cairo_translate (cr, -result->x, -result->y);
     text_layout_text (self, cr, 0, NULL, NULL);
 
-    gegl_buffer_set (output,
-                     NULL,
-                     babl_format_new ("name", "B'aG'aR'aA u8",
-                                      babl_model ("R'aG'aB'aA"),
-                                      babl_type ("u8"),
-                                      babl_component ("B'a"),
-                                      babl_component ("G'a"),
-                                      babl_component ("R'a"),
-                                      babl_component ("A"),
-                                      NULL),
-                     data);
+    gegl_buffer_set (output, NULL, babl_format ("B'aG'aR'aA u8"), data);
 
     cairo_destroy (cr);
     cairo_surface_destroy (surface);
