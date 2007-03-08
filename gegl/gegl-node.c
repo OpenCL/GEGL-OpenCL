@@ -867,31 +867,6 @@ visitable_needs_visiting (GeglVisitable *visitable)
   return TRUE;
 }
 
-/**
- * gegl_operation_create_property:
- * @self: a #GeglOperation.
- * @param_spec:
- *
- * Create a property.
- **/
-GeglPad *
-gegl_node_create_pad (GeglNode   *self,
-                      GParamSpec *param_spec)
-{
-  GeglPad *pad;
-
-  if (!GEGL_IS_NODE (self) ||
-      !param_spec)
-    return NULL;
-
-  pad = g_object_new (GEGL_TYPE_PAD, NULL);
-  gegl_pad_set_param_spec (pad, param_spec);
-  gegl_pad_set_node (pad, self);
-  gegl_node_add_pad (self, pad);
-
-  return pad;
-}
-
 static void
 gegl_node_set_op_class (GeglNode      *node,
                         const gchar   *op_class,

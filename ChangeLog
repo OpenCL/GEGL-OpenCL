@@ -1,5 +1,9 @@
 2007-03-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.[ch]: removed unused function gegl_node_create_pad.
+
+2007-03-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.[ch]: removed unused function
 	gegl_node_set_result_rect.
 

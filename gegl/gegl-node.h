@@ -134,8 +134,6 @@ GeglNodeDynamic *gegl_node_add_dynamic      (GeglNode      *self,
 
 void          gegl_node_add_pad             (GeglNode      *self,
                                              GeglPad       *pad);
-GeglPad     * gegl_node_create_pad          (GeglNode      *self,
-                                             GParamSpec    *param_spec);
 void          gegl_node_remove_pad          (GeglNode      *self,
                                              GeglPad       *pad);
 GeglPad     * gegl_node_get_pad             (GeglNode      *self,
