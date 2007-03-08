@@ -1,5 +1,10 @@
 2007-03-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* tests/: removed unused test-suite.
+	* tools/testsuite/: removed unused test suite tools.
+
+2007-03-08  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.[ch]: removed unused function gegl_node_create_pad.
 
 2007-03-08  Øyvind Kolås  <pippin@gimp.org>
