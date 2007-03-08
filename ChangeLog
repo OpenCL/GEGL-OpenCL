@@ -1,5 +1,9 @@
 2007-03-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.c: removed unused function gegl_node_get_result_rect.
+
+2007-03-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-dot.c: made internal function static.
 
 2007-03-08  Øyvind Kolås  <pippin@gimp.org>

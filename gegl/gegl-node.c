@@ -1273,14 +1273,6 @@ gegl_node_set_need_rect (GeglNode    *node,
   dynamic->need_rect.height = height;
 }
 
-GeglRectangle *
-gegl_node_get_result_rect (GeglNode *node,
-                           gpointer  context_id)
-{
-  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, context_id);
-  return &dynamic->result_rect;
-}
-
 const gchar *
 gegl_node_get_debug_name (GeglNode     *node)
 {
