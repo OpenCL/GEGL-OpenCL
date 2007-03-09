@@ -1,5 +1,12 @@
 2007-03-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-node.c: (gegl_node_get_cache): reverted performance/memory
+	tweak for FOSDEM presentation. The projection cache is again 32bit
+	floating point with alpha, making the cache take 5.333times as much
+	RAM.
+
+2007-03-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: removed unused function gegl_node_get_result_rect.
 
 2007-03-09  Øyvind Kolås  <pippin@gimp.org>
