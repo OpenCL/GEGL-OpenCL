@@ -179,7 +179,8 @@ gegl_post_parse_hook (GOptionContext *context,
       gchar *load_inhibit = g_strdup ("");
       gchar *module_path;
 
-      g_setenv ("BABL_ERROR", "0.007", 0);
+      if (g_getenv("BABL_ERROR") == NULL)
+          g_setenv ("BABL_ERROR", "0.007", 0);
 
       if (g_getenv ("GEGL_PATH"))
         {
