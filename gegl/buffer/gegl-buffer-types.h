@@ -19,7 +19,9 @@
  */
 #ifndef _GEGL_BUFFER_TYPES_H
 #define _GEGL_BUFFER_TYPES_H
- 
+
+typedef struct _GeglInterpolator         GeglInterpolator;
+
 typedef struct _GeglTile                 GeglTile;
 typedef struct _GeglTileClass            GeglTileClass;
 
