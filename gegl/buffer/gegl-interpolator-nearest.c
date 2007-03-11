@@ -26,8 +26,6 @@ enum
   PROP_LAST
 };
 
-
-
 static void     get_property (GObject      *gobject,
                               guint         prop_id,
                               GValue       *value,
@@ -103,10 +101,10 @@ finalize (GObject *gobject)
 }
 
 void
-gegl_interpolator_nearest_get   (GeglInterpolator *self,
-                                gdouble           x,
-                                gdouble           y,
-                                void             *output)
+gegl_interpolator_nearest_get (GeglInterpolator *self,
+                               gdouble           x,
+                               gdouble           y,
+                               void             *output)
 {    
   GeglBuffer *input = self->input;
   gfloat     *buffer = self->buffer;    
