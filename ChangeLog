@@ -1,5 +1,10 @@
 2007-03-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_set): only check
+	for 1x1 sized rectangle when a roi is passed.
+
+2007-03-12  Øyvind Kolås  <pippin@gimp.org>
+
 	Added fast paths for gegl_buffer_set and gegl_buffer_get when
 	called with a 1x1 roi. For further interpolation methods the
 	pixelfetcher needed to do the interpolation should belong to
