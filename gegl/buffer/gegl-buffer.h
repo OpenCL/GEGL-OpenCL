@@ -53,6 +53,8 @@ struct _GeglBuffer
   gint           abyss_y;
   gint           abyss_width;
   gint           abyss_height;
+
+  GeglTile      *hot_tile;
 };
 
 typedef enum {
@@ -97,6 +99,11 @@ void          gegl_buffer_stats      (void);
 void          gegl_buffer_save       (GeglBuffer    *buffer,
                                       const gchar   *path,
                                       GeglRectangle *roi);
+
+/* flush any unwritten data (flushes the hot-cache of a single
+ * tile used by gegl_buffer_set for 1x1 pixel sized rectangles
+ */
+void          gegl_buffer_flush      (GeglBuffer *buffer);
 
 /* the following are remnants of how horizon used the precursor of the
  * tile manager for it's purposes. For now it is not used

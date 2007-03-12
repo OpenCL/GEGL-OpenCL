@@ -202,7 +202,14 @@ gegl_buffer_dispose (GObject *object)
 #endif
     }
 
-  de_allocated_buffers++;
+  if (buffer->hot_tile)
+    {
+      g_object_unref (buffer->hot_tile);
+      buffer->hot_tile = NULL;
+    }
+
+  de_allocated_buffers++; /* XXX: is it correct to count that, shouldn't that
+                             only be counted in finalize? */
   (* G_OBJECT_CLASS (parent_class)->dispose) (object);
 }
 
@@ -537,6 +544,7 @@ gegl_buffer_init (GeglBuffer *buffer)
   buffer->abyss_width = 0;
   buffer->abyss_height = 0;
   buffer->format = NULL;
+  buffer->hot_tile = NULL;
   allocated_buffers++;
 }
 
@@ -641,6 +649,7 @@ gegl_buffer_void (GeglBuffer *buffer)
 #endif
 #define FMTPXS(fmt) (BABL(fmt)->format.bytes_per_pixel)
 
+#if 0
 static inline void
 pset (GeglBuffer *buffer,
       gint        x,
@@ -706,6 +715,90 @@ pset (GeglBuffer *buffer,
   }
   return;
 }
+#endif
+
+static inline void
+pset (GeglBuffer *buffer,
+      gint        x,
+      gint        y,
+      Babl       *format,
+      gpointer    data)
+{
+  guchar            *buf = data;
+  gint tile_width    = gegl_buffer_storage (buffer)->tile_width;
+  gint tile_height   = gegl_buffer_storage (buffer)->tile_height;
+  gint px_size       = gegl_buffer_px_size (buffer);
+  gint bpx_size      = FMTPXS (format);
+  Babl *fish         = NULL;
+
+  gint abyss_x_total = buffer->abyss_x + buffer->abyss_width;
+  gint abyss_y_total = buffer->abyss_y + buffer->abyss_height;
+  gint buffer_x = buffer->x;
+  gint buffer_y = buffer->y;
+  gint buffer_abyss_x = buffer->abyss_x;
+  gint buffer_abyss_y = buffer->abyss_y;
+
+  if (format != buffer->format)
+    {
+      fish = babl_fish (buffer->format, format);
+    }
+
+  {
+
+    if (!(buffer_y + y >= buffer_abyss_y &&
+          buffer_y + y <  abyss_y_total &&
+          buffer_x + x >= buffer_abyss_x &&
+          buffer_x + x <  abyss_x_total))
+      { /* in abyss */
+        return;
+      }
+    else
+      {
+        gint tiledy  = buffer_y + buffer->total_shift_y + y;
+        gint tiledx  = buffer_x + buffer->total_shift_x + x;
+        gint indice_x = gegl_tile_indice (tiledx, tile_width);
+        gint indice_y = gegl_tile_indice (tiledy, tile_height);
+        GeglTile *tile = NULL;
+
+        if (buffer->hot_tile &&
+            buffer->hot_tile->storage_x == indice_x &&
+            buffer->hot_tile->storage_y == indice_y)
+          {
+            tile = buffer->hot_tile;
+          }
+        else
+          {
+            if (buffer->hot_tile)
+              {
+                g_object_unref (buffer->hot_tile);
+                buffer->hot_tile = NULL;
+              }
+            tile = gegl_tile_store_get_tile ((GeglTileStore*)(buffer),
+                   indice_x, indice_y,
+                   0);
+          }
+
+        if (tile)
+          {
+            gint offsetx = gegl_tile_offset (tiledx, tile_width);
+            gint offsety = gegl_tile_offset (tiledy, tile_height);
+            guchar *tp;
+
+            gegl_tile_lock (tile); 
+
+            tp = gegl_tile_get_data (tile) +
+                           (offsety * tile_width + offsetx) * px_size;
+            if (fish)
+              babl_process (fish, buf, tp, 1);
+            else
+              memcpy (tp, buf, bpx_size);
+
+            gegl_tile_unlock (tile); 
+            buffer->hot_tile = tile;
+          }
+      } 
+  }
+}
 
 static inline void
 pget (GeglBuffer *buffer,
@@ -747,11 +840,27 @@ pget (GeglBuffer *buffer,
       {
         gint tiledy  = buffer_y + buffer->total_shift_y + y;
         gint tiledx  = buffer_x + buffer->total_shift_x + x;
+        gint indice_x = gegl_tile_indice (tiledx, tile_width);
+        gint indice_y = gegl_tile_indice (tiledy, tile_height);
+        GeglTile *tile = NULL;
 
-        GeglTile *tile = gegl_tile_store_get_tile ((GeglTileStore*)(buffer),
-                    gegl_tile_indice (tiledx, tile_width),
-                    gegl_tile_indice (tiledy, tile_height),
-                    0);
+        if (buffer->hot_tile &&
+            buffer->hot_tile->storage_x == indice_x &&
+            buffer->hot_tile->storage_y == indice_y)
+          {
+            tile = buffer->hot_tile;
+          }
+        else
+          {
+            if (buffer->hot_tile)
+              {
+                g_object_unref (buffer->hot_tile);
+                buffer->hot_tile = NULL;
+              }
+            tile = gegl_tile_store_get_tile ((GeglTileStore*)(buffer),
+                   indice_x, indice_y,
+                   0);
+          }
 
         if (tile)
           {
@@ -763,12 +872,26 @@ pget (GeglBuffer *buffer,
               babl_process (fish, tp, buf, 1);
             else
               memcpy (buf, tp, px_size);
-            g_object_unref (tile);
+
+            /*g_object_unref (tile);*/
+            buffer->hot_tile = tile;
           }
       } 
   }
 }
 
+/* flush any unwritten data (flushes the hot-cache of a single
+ * tile used by gegl_buffer_set for 1x1 pixel sized rectangles
+ */
+void
+gegl_buffer_flush (GeglBuffer *buffer)
+{
+  if (buffer->hot_tile)
+    {
+      g_object_unref (buffer->hot_tile);
+      buffer->hot_tile = NULL;
+    }
+}
 
 static void inline
 gegl_buffer_iterate (GeglBuffer *buffer,

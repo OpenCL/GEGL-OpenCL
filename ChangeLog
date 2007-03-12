@@ -1,3 +1,11 @@
+2007-03-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.h: added a hot_tile single tile cache, for
+	speeding up single pixel setter/getter. And a gegl_buffer_flush
+	function to make sure all pixel data is written.
+	* gegl/buffer/gegl-buffer.c: cache the most recently used tile in
+	pget and pset.
+
 2007-03-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_set): only check
