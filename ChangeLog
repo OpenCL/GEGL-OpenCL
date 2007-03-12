@@ -1,3 +1,14 @@
+2007-03-12  Øyvind Kolås  <pippin@gimp.org>
+
+	Added fast paths for gegl_buffer_set and gegl_buffer_get when
+	called with a 1x1 roi. For further interpolation methods the
+	pixelfetcher needed to do the interpolation should belong to
+	the buffer reducing the object management needed when using
+	the API.
+
+	* gegl/buffer/gegl-buffer.h: added gegl_buffer_sample.
+	* gegl/buffer/gegl-buffer.c: added pget, pset and gegl_buffer_sample.
+
 2007-03-11  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* gegl/gegl-init.c (gegl_post_parse_hook): Check if BABL_ERROR env

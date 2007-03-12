@@ -55,6 +55,10 @@ struct _GeglBuffer
   gint           abyss_height;
 };
 
+typedef enum {
+  GEGL_INTERPOLATION_NEAREST
+} GeglInterpolation;
+
 struct _GeglBufferClass
 {
   GeglTileTraitsClass parent_class;
@@ -72,11 +76,17 @@ void          gegl_buffer_get        (GeglBuffer    *buffer,
                                       void          *format,
                                       void          *dest);
 
-void          gegl_buffer_set        (GeglBuffer    *buffer,
-                                      GeglRectangle *rect,
-                                      void          *format,
-                                      void          *src);
-
+void          gegl_buffer_set        (GeglBuffer       *buffer,
+                                      GeglRectangle    *rect,
+                                      void             *format,
+                                      void             *src);
+void          gegl_buffer_sample     (GeglBuffer       *buffer,
+                                      gdouble           x,
+                                      gdouble           y,
+                                      gdouble           scale,
+                                      gpointer          dest,
+                                      Babl             *format,
+                                      GeglInterpolation interpolation);
 GeglStorage * gegl_buffer_storage    (GeglBuffer    *buffer);
 GeglRectangle gegl_buffer_get_abyss  (GeglBuffer    *buffer);
 
