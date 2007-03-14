@@ -1,8 +1,8 @@
 include $(top_srcdir)/operations/Makefile-operations.am
 
 CXXFILES         = $(wildcard $(srcdir)/*.cpp)
-SOBJS           += $(subst $(srcdir)/,,$(CXXFILES:.cpp=.$(SOsuf)))
-INSTALLED_ITEMS += $(subst $(srcdir),$(ext_dir),$(CXXFILES:.cpp=.$(SOsuf)))
+SOBJS           += $(subst $(srcdir)/,,$(CXXFILES:.cpp=$(SHREXT)))
+INSTALLED_ITEMS += $(subst $(srcdir),$(ext_dir),$(CXXFILES:.cpp=$(SHREXT)))
 EXTRA_DIST      += $(wildcard *.cpp)
 
 
@@ -11,19 +11,19 @@ EXTRA_DIST      += $(wildcard *.cpp)
 # extra.so: extra.c
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
-jpg-load.$(SOsuf): jpg-load.c
+jpg-load$(SHREXT): jpg-load.c
 	@if [ ! -z "$(LIBJPEG)" ]; then \
 	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(LIBJPEG);\
 	fi
 
-png-load.$(SOsuf): png-load.c $(GEGLHEADERS)
+png-load$(SHREXT): png-load.c $(GEGLHEADERS)
 	@echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(PNG_CFLAGS) $(PNG_LIBS)
 
-png-save.$(SOsuf): png-save.c $(GEGLHEADERS)
+png-save$(SHREXT): png-save.c $(GEGLHEADERS)
 	@echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(PNG_CFLAGS) $(PNG_LIBS)
 
-svg-load.$(SOsuf): svg-load.c
+svg-load$(SHREXT): svg-load.c
 	@if [ ! -z "$(RSVG_LIBS)" ]; then \
 	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
@@ -31,13 +31,13 @@ svg-load.$(SOsuf): svg-load.c
                                      $(RSVG_CFLAGS) $(RSVG_LIBS);\
 	fi
 
-pixbuf.$(SOsuf): pixbuf.c
+pixbuf$(SHREXT): pixbuf.c
 	@if [ ! -z "$(RSVG_LIBS)" ]; then \
 	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(RSVG_CFLAGS) $(RSVG_LIBS);\
 	fi
 
-exr-load.$(SOsuf): exr-load.cpp
+exr-load$(SHREXT): exr-load.cpp
 	@if [ ! -z "$(OPENEXR_LIBS)" ]; then \
 	echo $@;\
 	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(OPENEXR_CFLAGS) $(OPENEXR_LIBS);\

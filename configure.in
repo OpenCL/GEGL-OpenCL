@@ -252,6 +252,13 @@ AC_SUBST(MATH_LIB)
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
 AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
 
+#####################################
+# File extension for shared libraries
+#####################################
+
+SHREXT=$shrext
+AC_SUBST(SHREXT)
+
 #############################
 # Threads and multi processor 
 #############################

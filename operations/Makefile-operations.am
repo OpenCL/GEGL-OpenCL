@@ -1,14 +1,11 @@
 if OS_WIN32
 no_undefined = -no-undefined
-SOsuf=dll
 libgegldlla=$(top_builddir)/gegl/.libs/libgegl-$(GEGL_API_VERSION).dll.a
-else
-SOsuf=so
 endif
 
 CFILES          = $(wildcard $(srcdir)/*.c)
-SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=.$(SOsuf)))
-INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=.$(SOsuf)))
+SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=$(SHREXT)))
+INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=$(SHREXT)))
 GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
                   $(wildcard $(top_srcdir)/gegl/buffer/*.h)
 EXTRA_DIST      = $(wildcard *.c)
@@ -21,7 +18,7 @@ LDFLAGS += -shared $(no_undefined)
 
 LDADD    = @DEP_LIBS@ @BABL_LIBS@ $(libgegldlla)
 
-%.$(SOsuf): %.c $(GEGLHEADERS)
+%$(SHREXT): %.c $(GEGLHEADERS)
 	@echo $@; $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 clean-local:

@@ -1,5 +1,14 @@
 2007-03-14  Michael Schumacher  <schumaml@cvs.gnome.org>
 
+	* configure.in: AC_SUBST $shrext to SHREXT; defines shared library
+	file extension for use in Makefiles
+	* operations/Makefile-operations.am: 
+	* operations/display/Makefile.am: 
+	* operations/file-io/Makefile.am: 
+	* operations/render/Makefile.am: use SHREXT	
+
+2007-03-14  Michael Schumacher  <schumaml@cvs.gnome.org>
+
 	* operations/file-io/jpg-load.c (query_jpg)
 	(gegl_buffer_import_jpg): open JPEG files in binary mode.
 

@@ -2,7 +2,7 @@ include $(top_srcdir)/operations/Makefile-operations.am
 
 EXTRA_DIST += $(wildcard perlin/*.[ch])
 
-text.$(SOsuf): text.c $(GEGLHEADERS)
+text$(SHREXT): text.c $(GEGLHEADERS)
 	@if [ ! -z "$(PANGO_LIBS)" ]; then \
 	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
