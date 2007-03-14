@@ -128,7 +128,7 @@ query_jpg (const gchar *path,
   struct jpeg_error_mgr          jerr;
   FILE                          *infile;
 
-  if ((infile = fopen (path, "r")) == NULL)
+  if ((infile = fopen (path, "rb")) == NULL)
     {
       /*g_warning ("unable to open %s for jpeg import", path);*/
       return -1;
@@ -172,7 +172,7 @@ gegl_buffer_import_jpg (GeglBuffer  *gegl_buffer,
   JSAMPARRAY                     buffer;
   int row=0;
 
-  if ((infile = fopen (path, "r")) == NULL)
+  if ((infile = fopen (path, "rb")) == NULL)
     {
       g_warning ("unable to open %s for jpeg import", path);
       return -1;

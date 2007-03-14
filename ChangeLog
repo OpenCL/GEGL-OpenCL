@@ -1,3 +1,8 @@
+2007-03-14  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* operations/file-io/jpg-load.c (query_jpg)
+	(gegl_buffer_import_jpg): open JPEG files in binary mode.
+
 2007-03-13  Øyvind Kolås  <pippin@gimp.org>
 
 	Added gluas initial implementation of a gluas implementation to
