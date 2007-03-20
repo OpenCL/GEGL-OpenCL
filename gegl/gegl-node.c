@@ -776,7 +776,7 @@ static void
 visitable_accept (GeglVisitable *visitable,
                   GeglVisitor   *visitor)
 {
-  gegl_visitor_visit_node (visitor, GEGL_NODE (visitable));
+  gegl_visitor_visit_node (visitor, (GeglNode*)visitable);
 }
 
 GSList *
@@ -813,7 +813,16 @@ gegl_node_set_op_class (GeglNode      *node,
         {
           g_warning ("Failed to set operation type %s, using a passthrough op instead", op_class);
           if (strcmp (op_class, "nop"))
-            gegl_node_set_op_class (node, "nop", NULL, var_args);
+            {
+              gegl_node_set_op_class (node, "nop", NULL, var_args);
+            }
+          else
+            {
+              g_warning ("The failing op was 'nop' this means that GEGL was unable to locate any of it's\n"
+"plug-ins. Try making GEGL_PATH point to the directory containing the .so|.dll\n"
+"files with the image processing plug-ins, optionally you could try to make it\n"
+"point to the operations directory of a GEGL sourcetree with a build.");
+            }
           return;
         }
 
