@@ -26,7 +26,7 @@ index.html: Makefile.am $(wildcard *.txt)
 	    echo "<span style='color:red'>"`cat $$TXT |grep buffer-leaks`"</span>" >> index.html;\
 	    echo "</p>" >> index.html;\
 	    echo "<a href='$$PNG'><img src='$$PNG' style='border:0;float:right; max-width: 22em;padding-left:1em;padding-bottom: 1em;'></a>" >> index.html;\
-	    echo "<form><textarea rows='14' cols='30'>" >> index.html;\
+	    echo "<form><textarea rows='14' cols='30' readonly='readonly'>" >> index.html;\
 	    cat $$XML | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/' >> index.html;\
 	    echo "</textarea></form>" >> index.html;\
 	    echo "</div>">>index.html;\
