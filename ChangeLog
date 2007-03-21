@@ -1,6 +1,6 @@
 2007-03-21  Étienne Bersac  <bersace03@laposte.net>
 
-	* Actually set shrext in configure.in
+	* configure.in: Actually set shrext in configure.in
 
 2007-03-21  Øyvind Kolås  <pippin@gimp.org>
 
