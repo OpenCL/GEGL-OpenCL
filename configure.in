@@ -224,9 +224,11 @@ AC_MSG_CHECKING([for some Win32 platform])
 case "$target_or_host" in 
   *-*-mingw* | *-*-cygwin*)
     platform_win32=yes
+    shrext=.dll
     ;;
   *)
     platform_win32=no
+    shrext=.so
     ;;
 esac
 AC_MSG_RESULT([$platform_win32])
