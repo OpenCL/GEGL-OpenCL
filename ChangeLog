@@ -1,5 +1,10 @@
 2007-03-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/affine/Makefile.am: use SHREXT instead of SOsuf, spotted
+	by Dominik Ernst.
+
+2007-03-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-node.c: (gegl_node_set_op_class): make the error message
 	when no GEGL plug-ins have been found more clear, and suggest
 	corrective action (setting GEGL_PATH).
