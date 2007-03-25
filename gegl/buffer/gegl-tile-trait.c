@@ -25,8 +25,8 @@
 #include "gegl-tile-trait.h"
 #include "gegl-tile-traits.h"
 
-G_DEFINE_TYPE(GeglTileTrait, gegl_tile_trait, GEGL_TYPE_TILE_STORE)
-static GObjectClass *parent_class = NULL;
+G_DEFINE_TYPE (GeglTileTrait, gegl_tile_trait, GEGL_TYPE_TILE_STORE)
+static GObjectClass * parent_class = NULL;
 
 enum
 {
@@ -45,7 +45,7 @@ dispose (GObject *object)
       trait->source = NULL;
     }
 
-  (* G_OBJECT_CLASS (parent_class)->dispose) (object);
+  (*G_OBJECT_CLASS (parent_class)->dispose)(object);
 }
 
 static GeglTile *
@@ -54,8 +54,8 @@ get_tile (GeglTileStore *gegl_tile_store,
           gint           y,
           gint           z)
 {
-  GeglTileTrait *trait  = GEGL_TILE_TRAIT (gegl_tile_store);
-  GeglTile           *tile = NULL;
+  GeglTileTrait *trait = GEGL_TILE_TRAIT (gegl_tile_store);
+  GeglTile      *tile  = NULL;
 
   if (trait->source)
     tile = gegl_tile_store_get_tile (trait->source, x, y, z);
@@ -65,12 +65,12 @@ get_tile (GeglTileStore *gegl_tile_store,
 }
 
 static gboolean
-message (GeglTileStore   *gegl_tile_store,
-         GeglTileMessage  message,
-         gint             x,
-         gint             y,
-         gint             z,
-         gpointer         data)
+message (GeglTileStore  *gegl_tile_store,
+         GeglTileMessage message,
+         gint            x,
+         gint            y,
+         gint            z,
+         gpointer        data)
 {
   GeglTileTrait *trait = GEGL_TILE_TRAIT (gegl_tile_store);
 
@@ -86,11 +86,13 @@ get_property (GObject    *gobject,
               GParamSpec *pspec)
 {
   GeglTileTrait *trait = GEGL_TILE_TRAIT (gobject);
-  switch(property_id)
+
+  switch (property_id)
     {
       case PROP_SOURCE:
         g_value_set_object (value, trait->source);
         break;
+
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -104,7 +106,8 @@ set_property (GObject      *gobject,
               GParamSpec   *pspec)
 {
   GeglTileTrait *trait = GEGL_TILE_TRAIT (gobject);
-  switch(property_id)
+
+  switch (property_id)
     {
       case PROP_SOURCE:
         if (trait->source != NULL)
@@ -117,15 +120,16 @@ set_property (GObject      *gobject,
         if (GEGL_IS_TILE_TRAITS (trait))
           {
             GeglTileTraits *traits = GEGL_TILE_TRAITS (trait);
-            GSList *iter = (void*)traits->chain;
+            GSList         *iter   = (void *) traits->chain;
             while (iter && iter->next)
-              iter=iter->next;
+              iter = iter->next;
             if (iter)
               {
                 g_object_set (GEGL_TILE_TRAIT (iter->data), "source", trait->source, NULL);
               }
           }
         return;
+
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -133,25 +137,25 @@ set_property (GObject      *gobject,
 }
 
 static void
-gegl_tile_trait_class_init (GeglTileTraitClass * klass)
+gegl_tile_trait_class_init (GeglTileTraitClass *klass)
 {
-  GObjectClass       *gobject_class = G_OBJECT_CLASS (klass);
+  GObjectClass       *gobject_class    = G_OBJECT_CLASS (klass);
   GeglTileStoreClass *tile_store_class = GEGL_TILE_STORE_CLASS (klass);
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-  parent_class = g_type_class_peek_parent (klass);
-  gobject_class->dispose = dispose;
+  parent_class                = g_type_class_peek_parent (klass);
+  gobject_class->dispose      = dispose;
 
   g_object_class_install_property (gobject_class, PROP_SOURCE,
                                    g_param_spec_object ("source",
                                                         "GeglBuffer",
                                                         "The tilestore to be a facade for",
                                                         G_TYPE_OBJECT,
-                                                        G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
+                                                        G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
   tile_store_class->get_tile = get_tile;
-  tile_store_class->message = message;
+  tile_store_class->message  = message;
 }
 
 static void

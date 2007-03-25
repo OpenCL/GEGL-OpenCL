@@ -21,7 +21,7 @@
 #include <glib-object.h>
 #include "gegl-tile-store.h"
 
-G_DEFINE_TYPE(GeglTileStore, gegl_tile_store, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GeglTileStore, gegl_tile_store, G_TYPE_OBJECT)
 
 static GeglTile *
 get_tile (GeglTileStore *gegl_tile_store,
@@ -34,19 +34,19 @@ get_tile (GeglTileStore *gegl_tile_store,
 }
 
 static gboolean
-message (GeglTileStore   *gegl_tile_store,
-         GeglTileMessage  message,
-         gint             x,
-         gint             y,
-         gint             z,
-         gpointer         data)
+message (GeglTileStore  *gegl_tile_store,
+         GeglTileMessage message,
+         gint            x,
+         gint            y,
+         gint            z,
+         gpointer        data)
 {
   g_warning ("Unhandled message: %i, %i, %i, %p", message, x, y, data);
   return FALSE;
 }
 
 static void
-gegl_tile_store_class_init (GeglTileStoreClass * klass)
+gegl_tile_store_class_init (GeglTileStoreClass *klass)
 {
   /*GObjectClass *gobject_class = G_OBJECT_CLASS (klass);*/
   klass->get_tile = get_tile;
@@ -77,24 +77,24 @@ gegl_tile_store_get_tile (GeglTileStore *gegl_tile_store,
   g_return_val_if_fail (GEGL_IS_TILE_STORE (gegl_tile_store), NULL);
 
   klass = GEGL_TILE_STORE_GET_CLASS (gegl_tile_store);
-  
+
   return klass->get_tile (gegl_tile_store, x, y, z);
 }
 
 gboolean
-gegl_tile_store_message (GeglTileStore   *gegl_tile_store,
-                         GeglTileMessage  message,
-                         gint             x,
-                         gint             y,
-                         gint             z,
-                         gpointer         data)
+gegl_tile_store_message (GeglTileStore  *gegl_tile_store,
+                         GeglTileMessage message,
+                         gint            x,
+                         gint            y,
+                         gint            z,
+                         gpointer        data)
 {
   GeglTileStoreClass *klass;
 
   g_return_val_if_fail (GEGL_IS_TILE_STORE (gegl_tile_store), -1);
 
   klass = GEGL_TILE_STORE_GET_CLASS (gegl_tile_store);
-  
+
   return klass->message (gegl_tile_store, message, x, y, z, data);
 }
 

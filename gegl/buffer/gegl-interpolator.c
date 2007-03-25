@@ -26,20 +26,21 @@
 #include "gegl-interpolator.h"
 #include "gegl-utils.h"
 
-static void      gegl_interpolator_class_init (GeglInterpolatorClass    *klass);
-static void      gegl_interpolator_init       (GeglInterpolator         *self);
-static void      finalize                  (GObject       *gobject);
+static void      gegl_interpolator_class_init (GeglInterpolatorClass *klass);
+static void      gegl_interpolator_init (GeglInterpolator *self);
+static void      finalize (GObject *gobject);
 
 G_DEFINE_TYPE (GeglInterpolator, gegl_interpolator, G_TYPE_OBJECT)
 
 static void
-gegl_interpolator_class_init (GeglInterpolatorClass * klass)
+gegl_interpolator_class_init (GeglInterpolatorClass *klass)
 {
-  GObjectClass *object_class = G_OBJECT_CLASS (klass);  
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
   object_class->finalize = finalize;
 
   klass->prepare = NULL;
-  klass->get = NULL;
+  klass->get     = NULL;
 }
 
 static void
@@ -77,6 +78,6 @@ gegl_interpolator_prepare (GeglInterpolator *self)
 
 static void
 finalize (GObject *gobject)
-{  
+{
   G_OBJECT_CLASS (gegl_interpolator_parent_class)->finalize (gobject);
 }

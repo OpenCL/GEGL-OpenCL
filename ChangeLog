@@ -1,3 +1,8 @@
+2007-03-25  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/*.c: reindented through the use of uncrustify with a
+	custom parameter set.
+
 2007-03-21  Étienne Bersac  <bersace03@laposte.net>
 
 	* configure.in: Actually set shrext in configure.in

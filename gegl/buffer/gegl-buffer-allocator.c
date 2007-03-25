@@ -30,9 +30,9 @@
 #include "gegl-storage.h"
 #include "gegl-buffer-allocator.h"
 
-G_DEFINE_TYPE(GeglBufferAllocator, gegl_buffer_allocator, GEGL_TYPE_BUFFER)
+G_DEFINE_TYPE (GeglBufferAllocator, gegl_buffer_allocator, GEGL_TYPE_BUFFER)
 
-static GObjectClass *parent_class = NULL;
+static GObjectClass * parent_class = NULL;
 
 static void
 gegl_buffer_allocator_class_init (GeglBufferAllocatorClass *class)
@@ -43,8 +43,8 @@ gegl_buffer_allocator_class_init (GeglBufferAllocatorClass *class)
 static void
 gegl_buffer_allocator_init (GeglBufferAllocator *allocator)
 {
-  allocator->x_used =0 ;
-  allocator->y_used = 20000 ;
+  allocator->x_used = 0;
+  allocator->y_used = 20000;
 }
 
 
@@ -52,23 +52,23 @@ gegl_buffer_allocator_init (GeglBufferAllocator *allocator)
 
 static GeglBuffer *
 gegl_buffer_alloc (GeglBufferAllocator *allocator,
-                   gint  x,
-                   gint  y,
-                   gint  width,
-                   gint  height)
+                   gint                 x,
+                   gint                 y,
+                   gint                 width,
+                   gint                 height)
 {
-  GeglBuffer  *buffer  = GEGL_BUFFER (allocator);
-  GeglStorage *storage = gegl_buffer_storage (buffer);
-  gint tile_width  = storage->tile_width;
-  gint tile_height = storage->tile_height;
+  GeglBuffer  *buffer      = GEGL_BUFFER (allocator);
+  GeglStorage *storage     = gegl_buffer_storage (buffer);
+  gint         tile_width  = storage->tile_width;
+  gint         tile_height = storage->tile_height;
 
   /*gint needed_width = ((width-1)/tile_width+1)*tile_width;
    * FIXME: the sizes needed for allocations are set to be larger than strictly
    * needed to compensate for erronious interaction between adjecant
    * buffers.
    */
-  gint needed_width = ((width-1)/tile_width+10)*tile_width;
-  gint needed_height = ((height-1)/tile_height+10)*tile_height;
+  gint needed_width  = ((width - 1) / tile_width + 10) * tile_width;
+  gint needed_height = ((height - 1) / tile_height + 10) * tile_height;
 
   gint shift_x;
   gint shift_y;
@@ -78,14 +78,14 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
   if (needed_width > buffer->width)
     {
       g_warning ("requested a %i wide allocation, but storage is only %i wide",
-        needed_width, buffer->width);
+                 needed_width, buffer->width);
     }
 
   if (allocator->y_used + needed_height > buffer->height)
     {
-       g_warning ("requested allocation (%ix%i) does not fit parent buffer (%ix%i)",
-            width, height, buffer->width, buffer->height);
-       return NULL;
+      g_warning ("requested allocation (%ix%i) does not fit parent buffer (%ix%i)",
+                 width, height, buffer->width, buffer->height);
+      return NULL;
     }
 
   if (allocator->x_used + needed_width > buffer->width)
@@ -93,11 +93,11 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
       if (allocator->y_used + allocator->max_height + needed_height > buffer->height)
         {
           g_warning ("requested allocation (%ix%i) does not fit parent buffer (%ix%i)",
-            width, height, buffer->width, buffer->height);
+                     width, height, buffer->width, buffer->height);
           return NULL;
         }
-      allocator->y_used += allocator->max_height;
-      allocator->x_used = 0;
+      allocator->y_used    += allocator->max_height;
+      allocator->x_used     = 0;
       allocator->max_height = 0;
     }
 
@@ -108,18 +108,17 @@ gegl_buffer_alloc (GeglBufferAllocator *allocator,
   if (allocator->max_height < needed_height)
     allocator->max_height = needed_height;
 
-    {GeglBuffer *tmp = g_object_new (GEGL_TYPE_BUFFER,
-                       "source",  allocator,
-                       "x",       x,
-                       "y",       y,
-                       "width",   width,
-                       "height",  height,
-                       "shift-x", shift_x,
-                       "shift-y", shift_y,
-                       NULL);
+  { GeglBuffer *tmp = g_object_new (GEGL_TYPE_BUFFER,
+                                    "source", allocator,
+                                    "x", x,
+                                    "y", y,
+                                    "width", width,
+                                    "height", height,
+                                    "shift-x", shift_x,
+                                    "shift-y", shift_y,
+                                    NULL);
 
-     return tmp;
-    }
+    return tmp; }
 }
 
 static GHashTable *allocators = NULL;
@@ -137,39 +136,39 @@ gegl_buffer_new_from_format (void *babl_format,
     allocators = g_hash_table_new (NULL, NULL);
 
   /* aquire a GeglBufferAllocator */
-      /* iterate list of existing */
-      allocator = g_hash_table_lookup (allocators, babl_format);
-      /* if no match, create new */
-      if (allocator == NULL)
+  /* iterate list of existing */
+  allocator = g_hash_table_lookup (allocators, babl_format);
+  /* if no match, create new */
+  if (allocator == NULL)
+    {
+      if (getenv ("GEGL_SWAP") != NULL)
         {
-          if (getenv ("GEGL_SWAP")!= NULL)
-            {
-              gchar *path;
-              path = g_strdup_printf ("%s/GEGL-%i-%s.swap", getenv ("GEGL_SWAP"),
-               getpid (), babl_name (babl_format));
-              GeglStorage *storage = g_object_new (GEGL_TYPE_STORAGE,
-                                                   "format", babl_format,
-                                                   "path", path,
-                                                   NULL);
-              allocator = g_object_new (GEGL_TYPE_BUFFER_ALLOCATOR,
-                                      "source", storage,
-                                      NULL);
-              g_object_unref (storage);
-              g_hash_table_insert (allocators, babl_format, allocator);
-              g_free (path);
-            }
-          else
-            {
-              GeglStorage *storage = g_object_new (GEGL_TYPE_STORAGE,
-                                                   "format", babl_format,
-                                                   NULL);
-              allocator = g_object_new (GEGL_TYPE_BUFFER_ALLOCATOR,
-                                      "source", storage,
-                                      NULL);
-              g_object_unref (storage);
-              g_hash_table_insert (allocators, babl_format, allocator);
-            }
+          gchar *path;
+          path = g_strdup_printf ("%s/GEGL-%i-%s.swap", getenv ("GEGL_SWAP"),
+                                  getpid (), babl_name (babl_format));
+          GeglStorage *storage = g_object_new (GEGL_TYPE_STORAGE,
+                                               "format", babl_format,
+                                               "path", path,
+                                               NULL);
+          allocator = g_object_new (GEGL_TYPE_BUFFER_ALLOCATOR,
+                                    "source", storage,
+                                    NULL);
+          g_object_unref (storage);
+          g_hash_table_insert (allocators, babl_format, allocator);
+          g_free (path);
         }
+      else
+        {
+          GeglStorage *storage = g_object_new (GEGL_TYPE_STORAGE,
+                                               "format", babl_format,
+                                               NULL);
+          allocator = g_object_new (GEGL_TYPE_BUFFER_ALLOCATOR,
+                                    "source", storage,
+                                    NULL);
+          g_object_unref (storage);
+          g_hash_table_insert (allocators, babl_format, allocator);
+        }
+    }
   /* check if we already have a GeglBufferAllocator for the needed tile slice */
   return gegl_buffer_alloc (allocator, x, y, width, height);
 }
@@ -179,6 +178,7 @@ static void free_allocator (gpointer key,
                             gpointer user_data)
 {
   GObject *allocator = value;
+
   g_object_unref (allocator);
 }
 

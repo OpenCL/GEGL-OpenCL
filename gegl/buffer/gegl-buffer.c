@@ -35,11 +35,12 @@
 #include "gegl-types.h"
 #include "gegl-utils.h"
 
-G_DEFINE_TYPE(GeglBuffer, gegl_buffer, GEGL_TYPE_TILE_TRAITS)
+G_DEFINE_TYPE (GeglBuffer, gegl_buffer, GEGL_TYPE_TILE_TRAITS)
 
-static GObjectClass *parent_class = NULL;
+static GObjectClass * parent_class = NULL;
 
-enum {
+enum
+{
   PROP_0,
   PROP_X,
   PROP_Y,
@@ -58,13 +59,13 @@ enum {
 static inline gint needed_tiles (gint w,
                                  gint stride)
 {
-  return ((w-1)/stride)+1;
+  return ((w - 1) / stride) + 1;
 }
 
 static inline gint needed_width (gint w,
                                  gint stride)
 {
-  return needed_tiles (w, stride)*stride;
+  return needed_tiles (w, stride) * stride;
 }
 
 static void
@@ -74,14 +75,17 @@ get_property (GObject    *gobject,
               GParamSpec *pspec)
 {
   GeglBuffer *buffer = GEGL_BUFFER (gobject);
-  switch(property_id)
+
+  switch (property_id)
     {
       case PROP_WIDTH:
         g_value_set_int (value, buffer->width);
         break;
+
       case PROP_HEIGHT:
         g_value_set_int (value, buffer->height);
         break;
+
       case PROP_FORMAT:
         /* might already be set the first time, if it was set during
          * construction
@@ -92,18 +96,23 @@ get_property (GObject    *gobject,
 
         g_value_set_pointer (value, buffer->format);
         break;
+
       case PROP_X:
         g_value_set_int (value, buffer->x);
         break;
+
       case PROP_Y:
         g_value_set_int (value, buffer->y);
         break;
+
       case PROP_SHIFT_X:
         g_value_set_int (value, buffer->shift_x);
         break;
+
       case PROP_SHIFT_Y:
         g_value_set_int (value, buffer->shift_y);
         break;
+
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -116,18 +125,22 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglBuffer *buffer= GEGL_BUFFER (gobject);
-  switch(property_id)
+  GeglBuffer *buffer = GEGL_BUFFER (gobject);
+
+  switch (property_id)
     {
       case PROP_X:
         buffer->x = g_value_get_int (value);
         break;
+
       case PROP_Y:
         buffer->y = g_value_get_int (value);
         break;
+
       case PROP_WIDTH:
         buffer->width = g_value_get_int (value);
         break;
+
       case PROP_HEIGHT:
         buffer->height = g_value_get_int (value);
         break;
@@ -135,21 +148,27 @@ set_property (GObject      *gobject,
       case PROP_SHIFT_X:
         buffer->shift_x = g_value_get_int (value);
         break;
+
       case PROP_SHIFT_Y:
         buffer->shift_y = g_value_get_int (value);
         break;
+
       case PROP_ABYSS_X:
         buffer->abyss_x = g_value_get_int (value);
         break;
+
       case PROP_ABYSS_Y:
         buffer->abyss_y = g_value_get_int (value);
         break;
+
       case PROP_ABYSS_WIDTH:
         buffer->abyss_width = g_value_get_int (value);
         break;
+
       case PROP_ABYSS_HEIGHT:
         buffer->abyss_height = g_value_get_int (value);
         break;
+
       case PROP_FORMAT:
         /* Do not set to NULL even if asked to do so by a non-overriden
          * value, this is needed since a default value can not be specified
@@ -158,24 +177,25 @@ set_property (GObject      *gobject,
         if (g_value_get_pointer (value))
           buffer->format = g_value_get_pointer (value);
         break;
+
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
     }
 }
 
-static gint allocated_buffers = 0;
+static gint allocated_buffers    = 0;
 static gint de_allocated_buffers = 0;
 
 void gegl_buffer_stats (void)
 {
   g_warning ("Buffer statistics: allocated:%i deallocated:%i balance:%i",
-            allocated_buffers, de_allocated_buffers, allocated_buffers-de_allocated_buffers);
+             allocated_buffers, de_allocated_buffers, allocated_buffers - de_allocated_buffers);
 }
 
 gint gegl_buffer_leaks (void)
 {
-  return allocated_buffers-de_allocated_buffers;
+  return allocated_buffers - de_allocated_buffers;
 }
 
 #include "gegl-buffer-allocator.h"
@@ -187,11 +207,11 @@ static void gegl_buffer_void (GeglBuffer *buffer);
 static void
 gegl_buffer_dispose (GObject *object)
 {
-  GeglBuffer *buffer;
+  GeglBuffer    *buffer;
   GeglTileTrait *trait;
 
-  buffer = (GeglBuffer*) object;
-  trait = GEGL_TILE_TRAIT (object);
+  buffer = (GeglBuffer *) object;
+  trait  = GEGL_TILE_TRAIT (object);
 
   if (trait->source &&
       GEGL_IS_BUFFER_ALLOCATOR (trait->source))
@@ -210,38 +230,41 @@ gegl_buffer_dispose (GObject *object)
 
   de_allocated_buffers++; /* XXX: is it correct to count that, shouldn't that
                              only be counted in finalize? */
-  (* G_OBJECT_CLASS (parent_class)->dispose) (object);
+  (*G_OBJECT_CLASS (parent_class)->dispose)(object);
 }
 
 static GeglTileBackend *
 gegl_buffer_backend (GeglBuffer *buffer)
 {
-    GeglTileStore *tmp = GEGL_TILE_STORE (buffer);
+  GeglTileStore *tmp = GEGL_TILE_STORE (buffer);
 
-    if (!tmp)
-      return NULL;
+  if (!tmp)
+    return NULL;
 
-    do {
+  do
+    {
       tmp = GEGL_TILE_TRAIT (tmp)->source;
     } while (tmp &&
              /*GEGL_IS_TILE_TRAIT (tmp) &&*/
              !GEGL_IS_TILE_BACKEND (tmp));
-    if (!tmp &&
-        !GEGL_IS_TILE_BACKEND (tmp))
-      return NULL;
+  if (!tmp &&
+      !GEGL_IS_TILE_BACKEND (tmp))
+    return NULL;
 
-    return (GeglTileBackend *)tmp;
+  return (GeglTileBackend *) tmp;
 }
 
 GeglStorage *
 gegl_buffer_storage (GeglBuffer *buffer)
 {
-    GeglTileStore *tmp = GEGL_TILE_STORE (buffer);
-    do {
-      tmp = ((GeglTileTrait*)(tmp))->source;
+  GeglTileStore *tmp = GEGL_TILE_STORE (buffer);
+
+  do
+    {
+      tmp = ((GeglTileTrait *) (tmp))->source;
     } while (!GEGL_IS_STORAGE (tmp));
 
-    return (GeglStorage *)tmp;
+  return (GeglStorage *) tmp;
 }
 
 void babl_backtrack (void);
@@ -305,7 +328,7 @@ gegl_buffer_constructor (GType                  type,
 
   g_assert (backend);
 
-  tile_width = backend->tile_width;
+  tile_width  = backend->tile_width;
   tile_height = backend->tile_height;
 
   if (buffer->width == -1 &&
@@ -313,68 +336,69 @@ gegl_buffer_constructor (GType                  type,
     {
       if (GEGL_IS_BUFFER (source))
         {
-          buffer->width = GEGL_BUFFER (source)->width;
+          buffer->width  = GEGL_BUFFER (source)->width;
           buffer->height = GEGL_BUFFER (source)->height;
         }
       else if (GEGL_IS_STORAGE (source))
         {
-          buffer->width = GEGL_STORAGE (source)->width;
+          buffer->width  = GEGL_STORAGE (source)->width;
           buffer->height = GEGL_STORAGE (source)->height;
         }
     }
 
-  if (buffer->abyss_width  == 0 &&
+  if (buffer->abyss_width == 0 &&
       buffer->abyss_height == 0 &&
-      buffer->abyss_x      == 0 &&
-      buffer->abyss_y      == 0) /* 0 sized extent == inherit buffer extent
+      buffer->abyss_x == 0 &&
+      buffer->abyss_y == 0)      /* 0 sized extent == inherit buffer extent
                                   */
     {
-      buffer->abyss_x = buffer->x;
-      buffer->abyss_y = buffer->y;
-      buffer->abyss_width = buffer->width;
+      buffer->abyss_x      = buffer->x;
+      buffer->abyss_y      = buffer->y;
+      buffer->abyss_width  = buffer->width;
       buffer->abyss_height = buffer->height;
     }
   else if (buffer->abyss_width == 0 &&
            buffer->abyss_height == 0)
     {
       g_warning ("peculiar abyss dimensions: %i,%i %ix%i",
-       buffer->abyss_x,
-       buffer->abyss_y,
-       buffer->abyss_width,
-       buffer->abyss_height);
+                 buffer->abyss_x,
+                 buffer->abyss_y,
+                 buffer->abyss_width,
+                 buffer->abyss_height);
     }
   else if (buffer->abyss_width == -1 ||
            buffer->abyss_height == -1)
     {
-       buffer->abyss_x = GEGL_BUFFER (source)->abyss_x - buffer->shift_x;
-       buffer->abyss_y = GEGL_BUFFER (source)->abyss_y - buffer->shift_y;
-       buffer->abyss_width = GEGL_BUFFER (source)->abyss_width;
-       buffer->abyss_height = GEGL_BUFFER (source)->abyss_height;
+      buffer->abyss_x      = GEGL_BUFFER (source)->abyss_x - buffer->shift_x;
+      buffer->abyss_y      = GEGL_BUFFER (source)->abyss_y - buffer->shift_y;
+      buffer->abyss_width  = GEGL_BUFFER (source)->abyss_width;
+      buffer->abyss_height = GEGL_BUFFER (source)->abyss_height;
     }
 
-   /* intersect our own abyss with parent's abyss if it exists
-    */
-   if (GEGL_IS_BUFFER (source))
-     {
-       GeglRectangle parent = {
-         GEGL_BUFFER (source)->abyss_x - buffer->shift_x,
-         GEGL_BUFFER (source)->abyss_y - buffer->shift_y,
-         GEGL_BUFFER (source)->abyss_width,
-         GEGL_BUFFER (source)->abyss_height};
-       GeglRectangle request = {
-         buffer->abyss_x,
-         buffer->abyss_y,
-         buffer->abyss_width,
-         buffer->abyss_height
-       };
-       GeglRectangle self;
-       gegl_rectangle_intersect (&self, &parent, &request);
+  /* intersect our own abyss with parent's abyss if it exists
+   */
+  if (GEGL_IS_BUFFER (source))
+    {
+      GeglRectangle parent = {
+        GEGL_BUFFER (source)->abyss_x - buffer->shift_x,
+        GEGL_BUFFER (source)->abyss_y - buffer->shift_y,
+        GEGL_BUFFER (source)->abyss_width,
+        GEGL_BUFFER (source)->abyss_height
+      };
+      GeglRectangle request = {
+        buffer->abyss_x,
+        buffer->abyss_y,
+        buffer->abyss_width,
+        buffer->abyss_height
+      };
+      GeglRectangle self;
+      gegl_rectangle_intersect (&self, &parent, &request);
 
-       buffer->abyss_x = self.x;
-       buffer->abyss_y = self.y;
-       buffer->abyss_width = self.width ;
-       buffer->abyss_height = self.height;
-     }
+      buffer->abyss_x      = self.x;
+      buffer->abyss_y      = self.y;
+      buffer->abyss_width  = self.width;
+      buffer->abyss_height = self.height;
+    }
 
   /* compute our own total shift */
   if (GEGL_IS_BUFFER (source))
@@ -394,20 +418,20 @@ gegl_buffer_constructor (GType                  type,
   buffer->total_shift_x += buffer->shift_x;
   buffer->total_shift_y += buffer->shift_y;
 
-  if(0)gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_EMPTY,
-                                              "backend", backend,
-                                              NULL));
+  if (0) gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_EMPTY,
+                                                     "backend", backend,
+                                                     NULL));
 
- /* add a full width (should probably add height as well) sized cache for
-  * this gegl_buffer only if the width is < 16384. The huge buffers used
-  * by the allocator are thus not affected, but all other buffers should
-  * have a enough tiles to be scanline iteratable.
-  */
+  /* add a full width (should probably add height as well) sized cache for
+   * this gegl_buffer only if the width is < 16384. The huge buffers used
+   * by the allocator are thus not affected, but all other buffers should
+   * have a enough tiles to be scanline iteratable.
+   */
 
-  if (0 && buffer->width < 1<<14)
+  if (0 && buffer->width < 1 << 14)
     gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_CACHE,
                                                 "size",
-                                                needed_tiles (buffer->width, tile_width)+1,
+                                                needed_tiles (buffer->width, tile_width) + 1,
                                                 NULL));
 
   return object;
@@ -423,7 +447,7 @@ get_tile (GeglTileStore *tile_store,
   GeglTileStore  *source = GEGL_TILE_TRAIT (tile_store)->source;
   GeglTile       *tile   = NULL;
 
-  if (traits->chain!=NULL)
+  if (traits->chain != NULL)
     tile = gegl_tile_store_get_tile (GEGL_TILE_STORE (traits->chain->data),
                                      x, y, z);
   else if (source)
@@ -445,7 +469,7 @@ get_tile (GeglTileStore *tile_store,
        * precise shifts.
        */
       {
-        tile->storage = gegl_buffer_storage (GEGL_BUFFER (tile_store));
+        tile->storage   = gegl_buffer_storage (GEGL_BUFFER (tile_store));
         tile->storage_x = x;
         tile->storage_y = y;
         tile->storage_z = z;
@@ -462,89 +486,90 @@ gegl_buffer_class_init (GeglBufferClass *class)
 {
   GObjectClass       *gobject_class;
   GeglTileStoreClass *tile_store_class;
-  gobject_class = (GObjectClass*) class;
-  tile_store_class = (GeglTileStoreClass*) class;
 
-  parent_class = g_type_class_peek_parent (class);
-  gobject_class->dispose = gegl_buffer_dispose;
-  gobject_class->constructor = gegl_buffer_constructor;
+  gobject_class    = (GObjectClass *) class;
+  tile_store_class = (GeglTileStoreClass *) class;
+
+  parent_class                = g_type_class_peek_parent (class);
+  gobject_class->dispose      = gegl_buffer_dispose;
+  gobject_class->constructor  = gegl_buffer_constructor;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-  tile_store_class->get_tile = get_tile;
+  tile_store_class->get_tile  = get_tile;
 
   g_object_class_install_property (gobject_class, PROP_WIDTH,
                                    g_param_spec_int ("width", "width", "pixel width of buffer",
                                                      -1, G_MAXINT, -1,
-                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_HEIGHT,
                                    g_param_spec_int ("height", "height", "pixel height of buffer",
                                                      -1, G_MAXINT, -1,
-                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x", "x", "local origin's offset relative to source origin",
                                                      G_MININT, G_MAXINT, 0,
-                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_Y,
                                    g_param_spec_int ("y", "y", "local origin's offset relative to source origin",
                                                      G_MININT, G_MAXINT, 0,
-                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_ABYSS_WIDTH,
                                    g_param_spec_int ("abyss-width", "abyss-width", "pixel width of abyss",
                                                      G_MININT, G_MAXINT, 0,
-                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_ABYSS_HEIGHT,
                                    g_param_spec_int ("abyss-height", "abyss-height", "pixel height of abyss",
                                                      0, G_MAXINT, 0,
-                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_ABYSS_X,
                                    g_param_spec_int ("abyss-x", "abyss-x", "",
                                                      G_MININT, G_MAXINT, 0,
-                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_ABYSS_Y,
                                    g_param_spec_int ("abyss-y", "abyss-y", "",
                                                      G_MININT, G_MAXINT, 0,
-                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_SHIFT_X,
                                    g_param_spec_int ("shift-x", "shift-x", "",
                                                      G_MININT, G_MAXINT, 0,
-                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_SHIFT_Y,
                                    g_param_spec_int ("shift-y", "shift-y", "",
                                                      G_MININT, G_MAXINT, 0,
-                                                     G_PARAM_READWRITE|
+                                                     G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
   g_object_class_install_property (gobject_class, PROP_FORMAT,
                                    g_param_spec_pointer ("format", "format", "babl format",
-                                                     G_PARAM_READWRITE|
-                                                     G_PARAM_CONSTRUCT));
+                                                         G_PARAM_READWRITE |
+                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
 gegl_buffer_init (GeglBuffer *buffer)
 {
-  buffer->x=0;
-  buffer->y=0;
-  buffer->width = 0;
-  buffer->height = 0;
-  buffer->shift_x = 0;
-  buffer->shift_y = 0;
+  buffer->x             = 0;
+  buffer->y             = 0;
+  buffer->width         = 0;
+  buffer->height        = 0;
+  buffer->shift_x       = 0;
+  buffer->shift_y       = 0;
   buffer->total_shift_x = 0;
   buffer->total_shift_y = 0;
-  buffer->abyss_x = 0;
-  buffer->abyss_y = 0;
-  buffer->abyss_width = 0;
-  buffer->abyss_height = 0;
-  buffer->format = NULL;
-  buffer->hot_tile = NULL;
+  buffer->abyss_x       = 0;
+  buffer->abyss_y       = 0;
+  buffer->abyss_width   = 0;
+  buffer->abyss_height  = 0;
+  buffer->format        = NULL;
+  buffer->hot_tile      = NULL;
   allocated_buffers++;
 }
 
@@ -554,7 +579,8 @@ gegl_buffer_void_tile (GeglBuffer *buffer,
                        gint        x,
                        gint        y)
 {
-  gint z=0;
+  gint z = 0;
+
   return gegl_tile_store_message (GEGL_TILE_STORE (buffer),
                                   GEGL_TILE_VOID, x, y, z, NULL);
 }
@@ -570,7 +596,7 @@ gegl_buffer_idle (GeglBuffer *buffer)
 
 /***************************************************************************/
 
-void *gegl_buffer_get_format      (GeglBuffer *buffer)
+void *gegl_buffer_get_format (GeglBuffer *buffer)
 {
   g_assert (buffer);
   if (buffer->format != NULL)
@@ -600,32 +626,32 @@ gegl_buffer_void (GeglBuffer *buffer)
 
   {
     gint z;
-    gint factor=1;
-    for (z=0;z<10;z++)
+    gint factor = 1;
+    for (z = 0; z < 10; z++)
       {
-        bufy=0;
+        bufy = 0;
         while (bufy < height)
           {
             gint tiledy  = buffer->y + buffer->total_shift_y + bufy;
             gint offsety = gegl_tile_offset (tiledy, tile_height);
-            gint bufx = 0;
+            gint bufx    = 0;
 
             while (bufx < width)
               {
-                gint tiledx = buffer->x + buffer->total_shift_x + bufx;
+                gint tiledx  = buffer->x + buffer->total_shift_x + bufx;
                 gint offsetx = gegl_tile_offset (tiledx, tile_width);
 
-                gint tx=gegl_tile_indice(tiledx/factor,tile_width);
-                gint ty=gegl_tile_indice(tiledy/factor,tile_height);
+                gint tx = gegl_tile_indice (tiledx / factor, tile_width);
+                gint ty = gegl_tile_indice (tiledy / factor, tile_height);
 
                 gegl_tile_store_message (GEGL_TILE_STORE (buffer),
-                    GEGL_TILE_VOID, tx, ty, z, NULL);
+                                         GEGL_TILE_VOID, tx, ty, z, NULL);
 
-                bufx += (tile_width - offsetx)*factor;
+                bufx += (tile_width - offsetx) * factor;
               }
-            bufy += (tile_height - offsety)*factor;
+            bufy += (tile_height - offsety) * factor;
           }
-        factor*=2;
+        factor *= 2;
       }
   }
 }
@@ -642,12 +668,12 @@ gegl_buffer_void (GeglBuffer *buffer)
 #undef BABL
 #endif
 
-#define BABL(o)     ((Babl*)(o))
+#define BABL(o)     ((Babl *) (o))
 
 #ifdef FMTPXS
 #undef FMTPXS
 #endif
-#define FMTPXS(fmt) (BABL(fmt)->format.bytes_per_pixel)
+#define FMTPXS(fmt)    (BABL (fmt)->format.bytes_per_pixel)
 
 #if 0
 static inline void
@@ -657,18 +683,18 @@ pset (GeglBuffer *buffer,
       BablFormat *format,
       guchar     *buf)
 {
-  gint tile_width    = gegl_buffer_storage (buffer)->tile_width;
-  gint tile_height   = gegl_buffer_storage (buffer)->tile_height;
-  gint px_size       = gegl_buffer_px_size (buffer);
-  gint bpx_size      = FMTPXS (format);
-  Babl *fish         = NULL;
+  gint  tile_width  = gegl_buffer_storage (buffer)->tile_width;
+  gint  tile_height = gegl_buffer_storage (buffer)->tile_height;
+  gint  px_size     = gegl_buffer_px_size (buffer);
+  gint  bpx_size    = FMTPXS (format);
+  Babl *fish        = NULL;
 
-  gint abyss_x_total = buffer->abyss_x + buffer->abyss_width;
-  gint abyss_y_total = buffer->abyss_y + buffer->abyss_height;
-  gint buffer_x = buffer->x;
-  gint buffer_y = buffer->y;
-  gint buffer_abyss_x = buffer->abyss_x;
-  gint buffer_abyss_y = buffer->abyss_y;
+  gint  abyss_x_total  = buffer->abyss_x + buffer->abyss_width;
+  gint  abyss_y_total  = buffer->abyss_y + buffer->abyss_height;
+  gint  buffer_x       = buffer->x;
+  gint  buffer_y       = buffer->y;
+  gint  buffer_abyss_x = buffer->abyss_x;
+  gint  buffer_abyss_y = buffer->abyss_y;
 
   if (format != buffer->format)
     {
@@ -676,42 +702,41 @@ pset (GeglBuffer *buffer,
     }
 
   {
-
     if (!(buffer_y + y >= buffer_abyss_y &&
-          buffer_y + y <  abyss_y_total &&
+          buffer_y + y < abyss_y_total &&
           buffer_x + x >= buffer_abyss_x &&
-          buffer_x + x <  abyss_x_total))
+          buffer_x + x < abyss_x_total))
       { /* in abyss */
         return;
       }
     else
       {
-        gint tiledy  = buffer_y + buffer->total_shift_y + y;
-        gint tiledx  = buffer_x + buffer->total_shift_x + x;
+        gint      tiledy = buffer_y + buffer->total_shift_y + y;
+        gint      tiledx = buffer_x + buffer->total_shift_x + x;
 
-        GeglTile *tile = gegl_tile_store_get_tile ((GeglTileStore*)(buffer),
-                    gegl_tile_indice (tiledx, tile_width),
-                    gegl_tile_indice (tiledy, tile_height),
-                    0);
+        GeglTile *tile = gegl_tile_store_get_tile ((GeglTileStore *) (buffer),
+                                                   gegl_tile_indice (tiledx, tile_width),
+                                                   gegl_tile_indice (tiledy, tile_height),
+                                                   0);
 
         if (tile)
           {
-            gint offsetx = gegl_tile_offset (tiledx, tile_width);
-            gint offsety = gegl_tile_offset (tiledy, tile_height);
+            gint    offsetx = gegl_tile_offset (tiledx, tile_width);
+            gint    offsety = gegl_tile_offset (tiledy, tile_height);
             guchar *tp;
-          
-            gegl_tile_lock (tile); 
+
+            gegl_tile_lock (tile);
             tp = gegl_tile_get_data (tile) +
-                           (offsety * tile_width + offsetx) * px_size;
+                 (offsety * tile_width + offsetx) * px_size;
             if (fish)
               babl_process (fish, buf, tp, 1);
             else
               memcpy (tp, buf, bpx_size);
 
-            gegl_tile_unlock (tile); 
+            gegl_tile_unlock (tile);
             g_object_unref (tile);
           }
-      } 
+      }
   }
   return;
 }
@@ -724,19 +749,19 @@ pset (GeglBuffer *buffer,
       Babl       *format,
       gpointer    data)
 {
-  guchar            *buf = data;
-  gint tile_width    = gegl_buffer_storage (buffer)->tile_width;
-  gint tile_height   = gegl_buffer_storage (buffer)->tile_height;
-  gint px_size       = gegl_buffer_px_size (buffer);
-  gint bpx_size      = FMTPXS (format);
-  Babl *fish         = NULL;
+  guchar *buf         = data;
+  gint    tile_width  = gegl_buffer_storage (buffer)->tile_width;
+  gint    tile_height = gegl_buffer_storage (buffer)->tile_height;
+  gint    px_size     = gegl_buffer_px_size (buffer);
+  gint    bpx_size    = FMTPXS (format);
+  Babl   *fish        = NULL;
 
-  gint abyss_x_total = buffer->abyss_x + buffer->abyss_width;
-  gint abyss_y_total = buffer->abyss_y + buffer->abyss_height;
-  gint buffer_x = buffer->x;
-  gint buffer_y = buffer->y;
-  gint buffer_abyss_x = buffer->abyss_x;
-  gint buffer_abyss_y = buffer->abyss_y;
+  gint    abyss_x_total  = buffer->abyss_x + buffer->abyss_width;
+  gint    abyss_y_total  = buffer->abyss_y + buffer->abyss_height;
+  gint    buffer_x       = buffer->x;
+  gint    buffer_y       = buffer->y;
+  gint    buffer_abyss_x = buffer->abyss_x;
+  gint    buffer_abyss_y = buffer->abyss_y;
 
   if (format != buffer->format)
     {
@@ -744,21 +769,20 @@ pset (GeglBuffer *buffer,
     }
 
   {
-
     if (!(buffer_y + y >= buffer_abyss_y &&
-          buffer_y + y <  abyss_y_total &&
+          buffer_y + y < abyss_y_total &&
           buffer_x + x >= buffer_abyss_x &&
-          buffer_x + x <  abyss_x_total))
+          buffer_x + x < abyss_x_total))
       { /* in abyss */
         return;
       }
     else
       {
-        gint tiledy  = buffer_y + buffer->total_shift_y + y;
-        gint tiledx  = buffer_x + buffer->total_shift_x + x;
-        gint indice_x = gegl_tile_indice (tiledx, tile_width);
-        gint indice_y = gegl_tile_indice (tiledy, tile_height);
-        GeglTile *tile = NULL;
+        gint      tiledy   = buffer_y + buffer->total_shift_y + y;
+        gint      tiledx   = buffer_x + buffer->total_shift_x + x;
+        gint      indice_x = gegl_tile_indice (tiledx, tile_width);
+        gint      indice_y = gegl_tile_indice (tiledy, tile_height);
+        GeglTile *tile     = NULL;
 
         if (buffer->hot_tile &&
             buffer->hot_tile->storage_x == indice_x &&
@@ -773,30 +797,30 @@ pset (GeglBuffer *buffer,
                 g_object_unref (buffer->hot_tile);
                 buffer->hot_tile = NULL;
               }
-            tile = gegl_tile_store_get_tile ((GeglTileStore*)(buffer),
-                   indice_x, indice_y,
-                   0);
+            tile = gegl_tile_store_get_tile ((GeglTileStore *) (buffer),
+                                             indice_x, indice_y,
+                                             0);
           }
 
         if (tile)
           {
-            gint offsetx = gegl_tile_offset (tiledx, tile_width);
-            gint offsety = gegl_tile_offset (tiledy, tile_height);
+            gint    offsetx = gegl_tile_offset (tiledx, tile_width);
+            gint    offsety = gegl_tile_offset (tiledy, tile_height);
             guchar *tp;
 
-            gegl_tile_lock (tile); 
+            gegl_tile_lock (tile);
 
             tp = gegl_tile_get_data (tile) +
-                           (offsety * tile_width + offsetx) * px_size;
+                 (offsety * tile_width + offsetx) * px_size;
             if (fish)
               babl_process (fish, buf, tp, 1);
             else
               memcpy (tp, buf, bpx_size);
 
-            gegl_tile_unlock (tile); 
+            gegl_tile_unlock (tile);
             buffer->hot_tile = tile;
           }
-      } 
+      }
   }
 }
 
@@ -807,19 +831,19 @@ pget (GeglBuffer *buffer,
       Babl       *format,
       gpointer    data)
 {
-  guchar            *buf = data;
-  gint tile_width    = gegl_buffer_storage (buffer)->tile_width;
-  gint tile_height   = gegl_buffer_storage (buffer)->tile_height;
-  gint px_size       = gegl_buffer_px_size (buffer);
-  gint bpx_size      = FMTPXS (format);
-  Babl *fish         = NULL;
+  guchar *buf         = data;
+  gint    tile_width  = gegl_buffer_storage (buffer)->tile_width;
+  gint    tile_height = gegl_buffer_storage (buffer)->tile_height;
+  gint    px_size     = gegl_buffer_px_size (buffer);
+  gint    bpx_size    = FMTPXS (format);
+  Babl   *fish        = NULL;
 
-  gint abyss_x_total = buffer->abyss_x + buffer->abyss_width;
-  gint abyss_y_total = buffer->abyss_y + buffer->abyss_height;
-  gint buffer_x = buffer->x;
-  gint buffer_y = buffer->y;
-  gint buffer_abyss_x = buffer->abyss_x;
-  gint buffer_abyss_y = buffer->abyss_y;
+  gint    abyss_x_total  = buffer->abyss_x + buffer->abyss_width;
+  gint    abyss_y_total  = buffer->abyss_y + buffer->abyss_height;
+  gint    buffer_x       = buffer->x;
+  gint    buffer_y       = buffer->y;
+  gint    buffer_abyss_x = buffer->abyss_x;
+  gint    buffer_abyss_y = buffer->abyss_y;
 
   if (format != buffer->format)
     {
@@ -827,22 +851,21 @@ pget (GeglBuffer *buffer,
     }
 
   {
-
     if (!(buffer_y + y >= buffer_abyss_y &&
-          buffer_y + y <  abyss_y_total &&
+          buffer_y + y < abyss_y_total &&
           buffer_x + x >= buffer_abyss_x &&
-          buffer_x + x <  abyss_x_total))
+          buffer_x + x < abyss_x_total))
       { /* in abyss */
         memset (buf, 0x00, bpx_size);
         return;
       }
     else
       {
-        gint tiledy  = buffer_y + buffer->total_shift_y + y;
-        gint tiledx  = buffer_x + buffer->total_shift_x + x;
-        gint indice_x = gegl_tile_indice (tiledx, tile_width);
-        gint indice_y = gegl_tile_indice (tiledy, tile_height);
-        GeglTile *tile = NULL;
+        gint      tiledy   = buffer_y + buffer->total_shift_y + y;
+        gint      tiledx   = buffer_x + buffer->total_shift_x + x;
+        gint      indice_x = gegl_tile_indice (tiledx, tile_width);
+        gint      indice_y = gegl_tile_indice (tiledy, tile_height);
+        GeglTile *tile     = NULL;
 
         if (buffer->hot_tile &&
             buffer->hot_tile->storage_x == indice_x &&
@@ -857,17 +880,17 @@ pget (GeglBuffer *buffer,
                 g_object_unref (buffer->hot_tile);
                 buffer->hot_tile = NULL;
               }
-            tile = gegl_tile_store_get_tile ((GeglTileStore*)(buffer),
-                   indice_x, indice_y,
-                   0);
+            tile = gegl_tile_store_get_tile ((GeglTileStore *) (buffer),
+                                             indice_x, indice_y,
+                                             0);
           }
 
         if (tile)
           {
-            gint offsetx = gegl_tile_offset (tiledx, tile_width);
-            gint offsety = gegl_tile_offset (tiledy, tile_height);
-            guchar *tp = gegl_tile_get_data (tile) +
-                           (offsety * tile_width + offsetx) * px_size;
+            gint    offsetx = gegl_tile_offset (tiledx, tile_width);
+            gint    offsety = gegl_tile_offset (tiledy, tile_height);
+            guchar *tp      = gegl_tile_get_data (tile) +
+                              (offsety * tile_width + offsetx) * px_size;
             if (fish)
               babl_process (fish, tp, buf, 1);
             else
@@ -876,7 +899,7 @@ pget (GeglBuffer *buffer,
             /*g_object_unref (tile);*/
             buffer->hot_tile = tile;
           }
-      } 
+      }
   }
 }
 
@@ -900,45 +923,45 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                      BablFormat *format,
                      gint        level)
 {
-  gint width         = buffer->width;
-  gint height        = buffer->height;
-  gint tile_width    = gegl_buffer_storage (buffer)->tile_width;
-  gint tile_height   = gegl_buffer_storage (buffer)->tile_height;
-  gint px_size       = gegl_buffer_px_size (buffer);
-  gint bpx_size      = FMTPXS (format);
-  gint tile_stride   = px_size * tile_width;
-  gint buf_stride;
-  gint bufy          = 0;
+  gint  width       = buffer->width;
+  gint  height      = buffer->height;
+  gint  tile_width  = gegl_buffer_storage (buffer)->tile_width;
+  gint  tile_height = gegl_buffer_storage (buffer)->tile_height;
+  gint  px_size     = gegl_buffer_px_size (buffer);
+  gint  bpx_size    = FMTPXS (format);
+  gint  tile_stride = px_size * tile_width;
+  gint  buf_stride;
+  gint  bufy = 0;
   Babl *fish;
 
-  gint abyss_x_total = buffer->abyss_x + buffer->abyss_width;
-  gint abyss_y_total = buffer->abyss_y + buffer->abyss_height;
-  gint buffer_total_shift_x = buffer->total_shift_x;
-  gint buffer_total_shift_y = buffer->total_shift_y;
-  gint buffer_x = buffer->x;
-  gint buffer_y = buffer->y;
-  gint buffer_abyss_x = buffer->abyss_x;
-  gint buffer_abyss_y = buffer->abyss_y;
-  gint i;
-  gint factor=1;
+  gint  abyss_x_total        = buffer->abyss_x + buffer->abyss_width;
+  gint  abyss_y_total        = buffer->abyss_y + buffer->abyss_height;
+  gint  buffer_total_shift_x = buffer->total_shift_x;
+  gint  buffer_total_shift_y = buffer->total_shift_y;
+  gint  buffer_x             = buffer->x;
+  gint  buffer_y             = buffer->y;
+  gint  buffer_abyss_x       = buffer->abyss_x;
+  gint  buffer_abyss_y       = buffer->abyss_y;
+  gint  i;
+  gint  factor = 1;
 
-  for (i=0;i<level;i++)
+  for (i = 0; i < level; i++)
     {
-      factor*=2;
+      factor *= 2;
     }
 
-  buffer_abyss_x /=factor;
-  buffer_abyss_y /=factor;
-  abyss_x_total /=factor;
-  abyss_y_total /=factor;
-  buffer_total_shift_x /=factor;
-  buffer_total_shift_y /=factor;
-  buffer_x /=factor;
-  buffer_y /=factor;
-  width/=factor;
-  height/=factor;
+  buffer_abyss_x       /= factor;
+  buffer_abyss_y       /= factor;
+  abyss_x_total        /= factor;
+  abyss_y_total        /= factor;
+  buffer_total_shift_x /= factor;
+  buffer_total_shift_y /= factor;
+  buffer_x             /= factor;
+  buffer_y             /= factor;
+  width                /= factor;
+  height               /= factor;
 
-  buf_stride  = width * bpx_size;
+  buf_stride = width * bpx_size;
 
   if (format == buffer->format)
     {
@@ -963,12 +986,12 @@ gegl_buffer_iterate (GeglBuffer *buffer,
       gint bufx    = 0;
 
       if (!(buffer_y + bufy + (tile_height) >= buffer_abyss_y &&
-            buffer_y + bufy                  < abyss_y_total))
+            buffer_y + bufy < abyss_y_total))
         { /* entire row of tiles is in abyss */
           if (!write)
             {
-              gint row;
-              gint y = bufy;
+              gint    row;
+              gint    y  = bufy;
               guchar *bp = buf + ((bufy) * width) * bpx_size;
 
               for (row = offsety;
@@ -982,119 +1005,118 @@ gegl_buffer_iterate (GeglBuffer *buffer,
         }
       else
 
-      while (bufx < width)
-        {
-          gint    tiledx  = buffer_x + bufx + buffer_total_shift_x;
-          gint    offsetx = gegl_tile_offset (tiledx, tile_width);
-          gint    pixels;
-          guchar *bp;
+        while (bufx < width)
+          {
+            gint    tiledx  = buffer_x + bufx + buffer_total_shift_x;
+            gint    offsetx = gegl_tile_offset (tiledx, tile_width);
+            gint    pixels;
+            guchar *bp;
 
-          bp = buf + (bufy * width + bufx) * bpx_size;
+            bp = buf + (bufy * width + bufx) * bpx_size;
 
-          if (width + offsetx - bufx < tile_width)
-            pixels = (width + offsetx - bufx) - offsetx;
-          else
-            pixels = tile_width - offsetx;
+            if (width + offsetx - bufx < tile_width)
+              pixels = (width + offsetx - bufx) - offsetx;
+            else
+              pixels = tile_width - offsetx;
 
-          if (!(buffer_x + bufx + tile_width >=  buffer_abyss_x &&
-                buffer_x + bufx              <   abyss_x_total))
-            { /* entire tile is in abyss */
-              if (!write)
-                {
-                  gint row;
-                  gint y = bufy;
+            if (!(buffer_x + bufx + tile_width >= buffer_abyss_x &&
+                  buffer_x + bufx < abyss_x_total))
+              { /* entire tile is in abyss */
+                if (!write)
+                  {
+                    gint row;
+                    gint y = bufy;
 
-                  for (row = offsety;
-                       row < tile_height && y < height;
-                       row++, y++)
-                    {
-                      memset (bp, 0x00, pixels * bpx_size);
-                      bp += buf_stride;
-                    }
-                }
-            }
-          else
-            {
-              guchar   *tile_base, *tp;
-              GeglTile *tile = gegl_tile_store_get_tile ((GeglTileStore*)(buffer),
-                                  gegl_tile_indice(tiledx,tile_width),
-                                  gegl_tile_indice(tiledy,tile_height),
-                                  level);
-              if (!tile)
-                {
-                  g_warning ("didn't get tile, trying to continue");
-                  bufx += (tile_width - offsetx);
-                  continue;
-                }
+                    for (row = offsety;
+                         row < tile_height && y < height;
+                         row++, y++)
+                      {
+                        memset (bp, 0x00, pixels * bpx_size);
+                        bp += buf_stride;
+                      }
+                  }
+              }
+            else
+              {
+                guchar   *tile_base, *tp;
+                GeglTile *tile = gegl_tile_store_get_tile ((GeglTileStore *) (buffer),
+                                                           gegl_tile_indice (tiledx, tile_width),
+                                                           gegl_tile_indice (tiledy, tile_height),
+                                                           level);
+                if (!tile)
+                  {
+                    g_warning ("didn't get tile, trying to continue");
+                    bufx += (tile_width - offsetx);
+                    continue;
+                  }
 
-              if (write)
-                gegl_tile_lock (tile);
+                if (write)
+                  gegl_tile_lock (tile);
 
-              tile_base = gegl_tile_get_data (tile);
-              tp = ((guchar*)tile_base) + (offsety * tile_width + offsetx) * px_size;
+                tile_base = gegl_tile_get_data (tile);
+                tp        = ((guchar *) tile_base) + (offsety * tile_width + offsetx) * px_size;
 
-              if (write)
-                {
-                  gint row;
-                  gint y = bufy;
+                if (write)
+                  {
+                    gint row;
+                    gint y = bufy;
 
-                  if (fish)
-                    {
-                      for (row = offsety;
-                           row < tile_height &&
-                           y < height &&
-                           buffer_y + y < abyss_y_total
+                    if (fish)
+                      {
+                        for (row = offsety;
+                             row < tile_height &&
+                             y < height &&
+                             buffer_y + y < abyss_y_total
 
-                           ;
-                           row++, y++)
-                        {
-                          if (buffer_y + y >= buffer_abyss_y &&
-                              buffer_y + y <  abyss_y_total)
-                            babl_process (fish, bp, tp, pixels);
+                             ;
+                             row++, y++)
+                          {
+                            if (buffer_y + y >= buffer_abyss_y &&
+                                buffer_y + y < abyss_y_total)
+                              babl_process (fish, bp, tp, pixels);
 
-                          tp += tile_stride;
-                          bp += buf_stride;
-                        }
-                    }
-                  else
-                    {
-                      for (row = offsety;
-                           row < tile_height && y < height;
-                           row++, y++)
-                        {
-                          if (buffer_y + y >= buffer_abyss_y &&
-                              buffer_y + y <  abyss_y_total)
-                            memcpy (tp, bp, pixels * px_size);
+                            tp += tile_stride;
+                            bp += buf_stride;
+                          }
+                      }
+                    else
+                      {
+                        for (row = offsety;
+                             row < tile_height && y < height;
+                             row++, y++)
+                          {
+                            if (buffer_y + y >= buffer_abyss_y &&
+                                buffer_y + y < abyss_y_total)
+                              memcpy (tp, bp, pixels * px_size);
 
-                          tp += tile_stride;
-                          bp += buf_stride;
-                        }
-                    }
-                  gegl_tile_unlock (tile);
-                }
-              else /* read */
-                {
-                  gint row;
-                  gint y = bufy;
+                            tp += tile_stride;
+                            bp += buf_stride;
+                          }
+                      }
+                    gegl_tile_unlock (tile);
+                  }
+                else /* read */
+                  {
+                    gint row;
+                    gint y = bufy;
 
-                  for (row = offsety;
-                       row < tile_height && y < height;
-                       row++, y++)
-                    {
-
-                      if (buffer_y + y >= buffer_abyss_y &&
-                          buffer_y + y <  abyss_y_total)
-                        {
-                          if (fish)
-                            babl_process (fish, tp, bp, pixels);
-                          else
-                            memcpy (bp, tp, pixels * px_size);
-                        }
-                      else
-                        {
-                          /* entire row in abyss */
-                          memset (bp, 0x00, pixels * bpx_size);
-                        }
+                    for (row = offsety;
+                         row < tile_height && y < height;
+                         row++, y++)
+                      {
+                        if (buffer_y + y >= buffer_abyss_y &&
+                            buffer_y + y < abyss_y_total)
+                          {
+                            if (fish)
+                              babl_process (fish, tp, bp, pixels);
+                            else
+                              memcpy (bp, tp, pixels * px_size);
+                          }
+                        else
+                          {
+                            /* entire row in abyss */
+                            memset (bp, 0x00, pixels * bpx_size);
+                          }
 
                         {
                           gint zeros = (buffer_abyss_x) - (buffer_x + bufx);
@@ -1112,17 +1134,17 @@ gegl_buffer_iterate (GeglBuffer *buffer,
                           zeros = (buffer_x + bufx + pixels) - abyss_x_total;
                           if (zeros > 0 && zeros < pixels)
                             {
-                              memset (bp + (pixels-zeros)*bpx_size, 0x00, bpx_size * zeros);
+                              memset (bp + (pixels - zeros) * bpx_size, 0x00, bpx_size * zeros);
                             }
                         }
-                      tp += tile_stride;
-                      bp += buf_stride;
-                    }
-                }
-              g_object_unref (tile);
-            }
-          bufx += (tile_width - offsetx);
-        }
+                        tp += tile_stride;
+                        bp += buf_stride;
+                      }
+                  }
+                g_object_unref (tile);
+              }
+            bufx += (tile_width - offsetx);
+          }
       bufy += (tile_height - offsety);
     }
 }
@@ -1134,6 +1156,7 @@ gegl_buffer_set (GeglBuffer    *buffer,
                  void          *src)
 {
   GeglBuffer *sub_buf;
+
   if (format == NULL)
     format = buffer->format;
 
@@ -1151,7 +1174,7 @@ gegl_buffer_set (GeglBuffer    *buffer,
                           "source", buffer,
                           "x", rect->x,
                           "y", rect->y,
-                          "width", rect->width ,
+                          "width", rect->width,
                           "height", rect->height,
                           NULL);
   gegl_buffer_iterate (sub_buf, src, TRUE, format, 0);
@@ -1176,45 +1199,47 @@ static void gegl_buffer_get_scaled (GeglBuffer    *buffer,
                                       "source", buffer,
                                       "x", rect->x,
                                       "y", rect->y,
-                                      "width", rect->width ,
+                                      "width", rect->width,
                                       "height", rect->height,
                                       NULL);
+
   gegl_buffer_iterate (sub_buf, dst, FALSE, format, level);
   g_object_unref (sub_buf);
 }
 
-static void resample_nearest (void *dest_buf,
-                              void *source_buf,
-                              gint  dest_w,
-                              gint  dest_h,
-                              gint  source_w,
-                              gint  source_h,
+static void resample_nearest (void   *dest_buf,
+                              void   *source_buf,
+                              gint    dest_w,
+                              gint    dest_h,
+                              gint    source_w,
+                              gint    source_h,
                               gdouble scale,
-                              gint  bpp)
+                              gint    bpp)
 {
-  gint x,y;
-  for (y=0;y<dest_h;y++)
+  gint x, y;
+
+  for (y = 0; y < dest_h; y++)
     {
-      gint sy;
+      gint    sy;
       guchar *dst;
       guchar *src_base;
 
       sy = y / scale;
 
-      if (sy>source_h)
-        sy=source_h-1;
+      if (sy > source_h)
+        sy = source_h - 1;
 
-      dst = ((guchar*)dest_buf) + y * dest_w * bpp;
-      src_base = ((guchar*)source_buf) + sy * source_w * bpp;
+      dst      = ((guchar *) dest_buf) + y * dest_w * bpp;
+      src_base = ((guchar *) source_buf) + sy * source_w * bpp;
 
-      for (x=0;x<dest_w;x++)
+      for (x = 0; x < dest_w; x++)
         {
-          gint sx;
+          gint    sx;
           guchar *src;
           sx = x / scale;
 
-          if (sx>source_w)
-            sx=source_w-1;
+          if (sx > source_w)
+            sx = source_w - 1;
           src = src_base + sx * bpp;
 
           memcpy (dst, src, bpp);
@@ -1263,7 +1288,7 @@ bilinear_8 (gdouble x,
             gint    components)
 {
   gint i;
-  gint dx,dy;
+  gint dx, dy;
 
   x = fmod (x, 1.0);
   y = fmod (y, 1.0);
@@ -1275,26 +1300,27 @@ bilinear_8 (gdouble x,
   dx = x * 255;
   dy = y * 255;
 
-  for (i=0;i<components;i++)
+  for (i = 0; i < components; i++)
     {
       gint m0, m1;
-      m0 = ((255 - dx) * src0[i] + dx * src1[i])>>8;
-      m1 = ((255 - dx) * src2[i] + dx * src3[i])>>8;
-      dst[i] = (((255 - dy) * m0 + dy * m1))>>8;
+      m0     = ((255 - dx) * src0[i] + dx * src1[i]) >> 8;
+      m1     = ((255 - dx) * src2[i] + dx * src3[i]) >> 8;
+      dst[i] = (((255 - dy) * m0 + dy * m1)) >> 8;
     }
 }
 
-static void resample_bilinear_u8 (void *dest_buf,
-                                  void *source_buf,
-                                  gint  dest_w,
-                                  gint  dest_h,
-                                  gint  source_w,
-                                  gint  source_h,
+static void resample_bilinear_u8 (void   *dest_buf,
+                                  void   *source_buf,
+                                  gint    dest_w,
+                                  gint    dest_h,
+                                  gint    source_w,
+                                  gint    source_h,
                                   gdouble scale,
-                                  gint  components)
+                                  gint    components)
 {
-  gint x,y;
-  for (y=0;y<dest_h;y++)
+  gint x, y;
+
+  for (y = 0; y < dest_h; y++)
     {
       gdouble sy;
       guchar *dst;
@@ -1302,13 +1328,13 @@ static void resample_bilinear_u8 (void *dest_buf,
 
       sy = y / scale;
 
-      if (sy>source_h-1)
-        sy=source_h-2;
+      if (sy > source_h - 1)
+        sy = source_h - 2;
 
-      dst = ((guchar*)dest_buf) + y * dest_w * components;
-      src_base = ((guchar*)source_buf) + ((gint)sy) * source_w * components;
+      dst      = ((guchar *) dest_buf) + y * dest_w * components;
+      src_base = ((guchar *) source_buf) + ((gint) sy) * source_w * components;
 
-      for (x=0;x<dest_w;x++)
+      for (x = 0; x < dest_w; x++)
         {
           gdouble sx;
           guchar *src0;
@@ -1317,9 +1343,9 @@ static void resample_bilinear_u8 (void *dest_buf,
           guchar *src3;
           sx = x / scale;
 
-          if (sx>source_w-1)
-            sx=source_w-2;
-          src0 = src_base + ((gint)sx) * components;
+          if (sx > source_w - 1)
+            sx = source_w - 2;
+          src0 = src_base + ((gint) sx) * components;
           src1 = src0 + components;
           src2 = src0 + source_w * components;
           src3 = src1 + source_w * components;
@@ -1343,47 +1369,50 @@ bilinear_8 (gint    dx,
             gint    components)
 {
 #define DO_COMPONENT(iter) \
-    {\
-      gint m0, m1;\
-      m0 = ((255 - dx) * src0[iter] + dx * src1[iter])>>8;\
-      m1 = ((255 - dx) * src2[iter] + dx * src3[iter])>>8;\
-      dst[iter] = (((255 - dy) * m0 + dy * m1))>>8;\
-    }
- 
+  { \
+    gint m0, m1; \
+    m0        = ((255 - dx) * src0[iter] + dx * src1[iter]) >> 8; \
+    m1        = ((255 - dx) * src2[iter] + dx * src3[iter]) >> 8; \
+    dst[iter] = (((255 - dy) * m0 + dy * m1)) >> 8; \
+  }
+
   switch (components)
     {
       case 1:
-        DO_COMPONENT(0);
+        DO_COMPONENT (0);
         break;
+
       case 2:
-        DO_COMPONENT(0);
-        DO_COMPONENT(1);
+        DO_COMPONENT (0);
+        DO_COMPONENT (1);
         break;
+
       case 3:
-        DO_COMPONENT(0);
-        DO_COMPONENT(1);
-        DO_COMPONENT(2);
+        DO_COMPONENT (0);
+        DO_COMPONENT (1);
+        DO_COMPONENT (2);
         break;
+
       case 4:
-        DO_COMPONENT(0);
-        DO_COMPONENT(1);
-        DO_COMPONENT(2);
-        DO_COMPONENT(3);
+        DO_COMPONENT (0);
+        DO_COMPONENT (1);
+        DO_COMPONENT (2);
+        DO_COMPONENT (3);
         break;
-    } 
+    }
 }
 
-static void resample_bilinear_u8 (void *dest_buf,
-                                  void *source_buf,
-                                  gint  dest_w,
-                                  gint  dest_h,
-                                  gint  source_w,
-                                  gint  source_h,
+static void resample_bilinear_u8 (void   *dest_buf,
+                                  void   *source_buf,
+                                  gint    dest_w,
+                                  gint    dest_h,
+                                  gint    source_w,
+                                  gint    source_h,
                                   gdouble scale,
-                                  gint  components)
+                                  gint    components)
 {
-  gint x,y;
-  gint iscale = scale * 256;
+  gint x, y;
+  gint iscale      = scale * 256;
   gint s_rowstride = source_w * components;
   gint d_rowstride = dest_w * components;
 
@@ -1391,7 +1420,7 @@ static void resample_bilinear_u8 (void *dest_buf,
                            the normal projection and needs to be FAST
                          */
     {
-      for (y=0; y < dest_h; y++)
+      for (y = 0; y < dest_h; y++)
         {
           gint    sy;
           gint    dy;
@@ -1400,15 +1429,15 @@ static void resample_bilinear_u8 (void *dest_buf,
 
           sy = (y << 16) / iscale;
 
-          if (sy>=(source_h-1) << 8)
-            sy=(source_h-2) << 8;    /* is this the right thing to do? */
+          if (sy >= (source_h - 1) << 8)
+            sy = (source_h - 2) << 8;/* is this the right thing to do? */
 
           dy = sy & 255;
 
-          dst      = ((guchar*) dest_buf) + y * d_rowstride;
-          src_base = ((guchar*) source_buf) + (sy >> 8) * s_rowstride;
+          dst      = ((guchar *) dest_buf) + y * d_rowstride;
+          src_base = ((guchar *) source_buf) + (sy >> 8) * s_rowstride;
 
-          for (x=0; x < dest_w; x++)
+          for (x = 0; x < dest_w; x++)
             {
               gint    sx;
               gint    dx;
@@ -1419,26 +1448,26 @@ static void resample_bilinear_u8 (void *dest_buf,
 
               sx = (x << 16) / iscale;
 
-              if (sx>=(source_w-1) << 8)  /* this check to see if we're within bounds is expensive */
-                sx=(source_w-2) << 8;    /* and the action taken might not be quite right either */
+              if (sx >= (source_w - 1) << 8) /* this check to see if we're within bounds is expensive */
+                sx = (source_w - 2) << 8;/* and the action taken might not be quite right either */
 
               dx = sx & 255;
 
-              src0 = src_base + (sx>>8) * 3;
+              src0 = src_base + (sx >> 8) * 3;
               src2 = src0 + s_rowstride;
               src1 = src0 + 3;
               src3 = src2 + 3;
 
-              DO_COMPONENT(0)
-              DO_COMPONENT(1)
-              DO_COMPONENT(2)
+              DO_COMPONENT (0)
+              DO_COMPONENT (1)
+              DO_COMPONENT (2)
               dst += 3;
             }
         }
     }
   else
     {
-      for (y=0; y < dest_h; y++)
+      for (y = 0; y < dest_h; y++)
         {
           gint    sy;
           gint    dy;
@@ -1447,15 +1476,15 @@ static void resample_bilinear_u8 (void *dest_buf,
 
           sy = (y << 16) / iscale;
 
-          if (sy>(source_h-1) << 8)
-            sy=(source_h-2) << 8;    /* is this the right thing to do? */
+          if (sy > (source_h - 1) << 8)
+            sy = (source_h - 2) << 8;/* is this the right thing to do? */
 
           dy = sy & 255;
 
-          dst      = ((guchar*) dest_buf) + y * d_rowstride;
-          src_base = ((guchar*) source_buf) + (sy >> 8) * s_rowstride;
+          dst      = ((guchar *) dest_buf) + y * d_rowstride;
+          src_base = ((guchar *) source_buf) + (sy >> 8) * s_rowstride;
 
-          for (x=0; x < dest_w; x++)
+          for (x = 0; x < dest_w; x++)
             {
               gint    sx;
               gint    dx;
@@ -1466,12 +1495,12 @@ static void resample_bilinear_u8 (void *dest_buf,
 
               sx = (x << 16) / iscale;
 
-              if (sx>(source_w-1) << 8)  /* this check to see if we're within bounds is expensive */
-                sx=(source_w-2) << 8;    /* and the action taken might not be quite right either */
+              if (sx > (source_w - 1) << 8) /* this check to see if we're within bounds is expensive */
+                sx = (source_w - 2) << 8;/* and the action taken might not be quite right either */
 
               dx = sx & 255;
 
-              src0 = src_base + (sx>>8) * components;
+              src0 = src_base + (sx >> 8) * components;
               src2 = src0 + s_rowstride;
               src1 = src0 + components;
               src3 = src2 + components;
@@ -1485,11 +1514,11 @@ static void resample_bilinear_u8 (void *dest_buf,
 #undef DO_COMPONENT
 
 void
-gegl_buffer_get (GeglBuffer *buffer,
+gegl_buffer_get (GeglBuffer    *buffer,
                  GeglRectangle *rect,
-                 gdouble scale,
-                 void *format,
-                 void *dest_buf)
+                 gdouble        scale,
+                 void          *format,
+                 void          *dest_buf)
 {
   if (format == NULL)
     format = buffer->format;
@@ -1508,7 +1537,7 @@ gegl_buffer_get (GeglBuffer *buffer,
       gegl_buffer_iterate (buffer, dest_buf, FALSE, format, 0);
       return;
     }
-  if (rect->width  == 0 ||
+  if (rect->width == 0 ||
       rect->height == 0)
     return;
   if (scale == 1.0)
@@ -1518,32 +1547,32 @@ gegl_buffer_get (GeglBuffer *buffer,
     }
   else
     {
-      gint level=0;
-      gint buf_width = rect->width /scale;
-      gint buf_height = rect->height/scale;
-      gint bpp = BABL(format)->format.bytes_per_pixel;
-      GeglRectangle sample_rect = {rect->x,
-                                   rect->y,
-                                   buf_width,
-                                   buf_height};
-      void *sample_buf;
-      gint factor=1;
+      gint          level       = 0;
+      gint          buf_width   = rect->width / scale;
+      gint          buf_height  = rect->height / scale;
+      gint          bpp         = BABL (format)->format.bytes_per_pixel;
+      GeglRectangle sample_rect = { rect->x,
+                                    rect->y,
+                                    buf_width,
+                                    buf_height };
+      void         *sample_buf;
+      gint          factor = 1;
 
-      while(scale<=0.5)
+      while (scale <= 0.5)
         {
-          scale*=2;
-          factor*=2;
+          scale  *= 2;
+          factor *= 2;
           level++;
         }
 
-      buf_width/=factor;
-      buf_height/=factor;
+      buf_width  /= factor;
+      buf_height /= factor;
 
       /* ensure we always have some data to sample from */
       sample_rect.width  += factor * 2;
       sample_rect.height += factor * 2;
-      buf_width+=2;
-      buf_height+=2;
+      buf_width          += 2;
+      buf_height         += 2;
 
       sample_buf = g_malloc (buf_width * buf_height * bpp);
       gegl_buffer_get_scaled (buffer, &sample_rect, sample_buf, format, level);
@@ -1552,31 +1581,31 @@ gegl_buffer_get (GeglBuffer *buffer,
           scale < 1.0 + 0.001)
         { /* avoid resampling if the pyramidial level we've got is close */
           gint y;
-          for (y=0;y<rect->height;y++)
+          for (y = 0; y < rect->height; y++)
             {
-              gint sy;
+              gint    sy;
               guchar *dst;
               guchar *src_base;
 
               sy = y / scale;
 
-              if (sy>buf_height)
-                sy=buf_height-1;
+              if (sy > buf_height)
+                sy = buf_height - 1;
 
-              dst = ((guchar*)dest_buf) + y * rect->width  * bpp;
-              src_base = ((guchar*)sample_buf) + sy * buf_width * bpp;
+              dst      = ((guchar *) dest_buf) + y * rect->width * bpp;
+              src_base = ((guchar *) sample_buf) + sy * buf_width * bpp;
 
-              memcpy (dst, src_base, bpp * rect->width );
+              memcpy (dst, src_base, bpp * rect->width);
             }
         }
-      else if (BABL(format)->format.type[0] == (BablType*)babl_type ("u8") /*&&
-               !(level == 0 && scale > 1.0)  uncomment this to do nearest neighbour for scales > 1.0
-                */
-               )
+      else if (BABL (format)->format.type[0] == (BablType *) babl_type ("u8")/*&&
+                                                                             !(level == 0 && scale > 1.0)  uncomment this to do nearest neighbour for scales > 1.0
+                                                                           */
+      )
         { /* do bilinear resampling if we're 8bit (which projections are) */
           resample_bilinear_u8 (dest_buf,
                                 sample_buf,
-                                rect->width ,
+                                rect->width,
                                 rect->height,
                                 buf_width,
                                 buf_height,
@@ -1587,7 +1616,7 @@ gegl_buffer_get (GeglBuffer *buffer,
         {
           resample_nearest (dest_buf,
                             sample_buf,
-                            rect->width ,
+                            rect->width,
                             rect->height,
                             buf_width,
                             buf_height,
@@ -1602,9 +1631,10 @@ gegl_buffer_get (GeglBuffer *buffer,
 GeglRectangle
 gegl_buffer_get_abyss (GeglBuffer *buffer)
 {
-  GeglRectangle ret={0,0,0,0};
+  GeglRectangle ret = { 0, 0, 0, 0 };
+
   gegl_rectangle_set (&ret, buffer->abyss_x, buffer->abyss_y,
-                       buffer->abyss_width, buffer->abyss_height);
+                      buffer->abyss_width, buffer->abyss_height);
   return ret;
 }
 

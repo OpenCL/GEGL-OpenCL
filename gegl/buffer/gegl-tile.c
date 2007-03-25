@@ -25,8 +25,9 @@
 #include "gegl-buffer.h"
 #include "gegl-tile.h"
 
-G_DEFINE_TYPE(GeglTile, gegl_tile, G_TYPE_OBJECT)
-enum {
+G_DEFINE_TYPE (GeglTile, gegl_tile, G_TYPE_OBJECT)
+enum
+{
   PROP_0,
   PROP_X,
   PROP_Y,
@@ -42,21 +43,26 @@ get_property (GObject    *gobject,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglTile *tile= GEGL_TILE (gobject);
-  switch(property_id)
+  GeglTile *tile = GEGL_TILE (gobject);
+
+  switch (property_id)
     {
       case PROP_X:
         g_value_set_int (value, tile->x);
         break;
+
       case PROP_Y:
         g_value_set_int (value, tile->y);
         break;
+
       case PROP_Z:
         g_value_set_int (value, tile->z);
         break;
+
       case PROP_SIZE:
         g_value_set_int (value, tile->size);
         break;
+
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -69,18 +75,22 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglTile *tile= GEGL_TILE (gobject);
-  switch(property_id)
+  GeglTile *tile = GEGL_TILE (gobject);
+
+  switch (property_id)
     {
       case PROP_X:
         tile->x = g_value_get_int (value);
         return;
+
       case PROP_Y:
         tile->y = g_value_get_int (value);
         return;
+
       case PROP_Z:
         tile->z = g_value_get_int (value);
         return;
+
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -100,7 +110,7 @@ dispose (GObject *object)
       if (tile->next_shared == tile)
         { /* no clones */
           g_free (tile->data);
-          tile->data=NULL;
+          tile->data = NULL;
         }
       else
         {
@@ -109,7 +119,7 @@ dispose (GObject *object)
         }
     }
 
-  (* G_OBJECT_CLASS (parent_class)->dispose) (object);
+  (*G_OBJECT_CLASS (parent_class)->dispose)(object);
 }
 
 static void
@@ -119,8 +129,8 @@ gegl_tile_class_init (GeglTileClass *class)
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-  gobject_class->dispose = dispose;
-  parent_class = g_type_class_peek_parent (class);
+  gobject_class->dispose      = dispose;
+  parent_class                = g_type_class_peek_parent (class);
 
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x", "x", "Horizontal index",
@@ -144,14 +154,14 @@ gegl_tile_class_init (GeglTileClass *class)
 }
 
 static void
-gegl_tile_init (GeglTile* tile)
+gegl_tile_init (GeglTile *tile)
 {
-  tile->storage = NULL;
+  tile->storage    = NULL;
   tile->stored_rev = 0;
-  tile->rev = 0;
-  tile->lock = 0;
-  tile->data = NULL;
-  tile->flags = 0;
+  tile->rev        = 0;
+  tile->lock       = 0;
+  tile->data       = NULL;
+  tile->flags      = 0;
 
   tile->next_shared = tile;
   tile->prev_shared = tile;
@@ -179,20 +189,21 @@ gegl_tile_dup (GeglTile *src)
   tile->storage    = src->storage;
   tile->data       = src->data;
   tile->size       = src->size;
-  
-  tile->next_shared = src->next_shared;
-  src->next_shared = tile;
-  tile->prev_shared = src;
+
+  tile->next_shared              = src->next_shared;
+  src->next_shared               = tile;
+  tile->prev_shared              = src;
   tile->next_shared->prev_shared = tile;
   return tile;
 }
 
 GeglTile *
-gegl_tile_new (gint  size)
+gegl_tile_new (gint size)
 {
   GeglTile *tile;
 
-  guchar *data = g_malloc0 (size);
+  guchar   *data = g_malloc0 (size);
+
   tile = gegl_tile_new_from_data (data, size);
 
   tile->stored_rev = 1;
@@ -204,22 +215,22 @@ gegl_tile_unclone (GeglTile *tile)
 {
   if (tile->next_shared != tile)
     {
-      gint buflen = tile->size;
+      gint    buflen = tile->size;
       /* the tile data is shared with other tiles,
        * create a local copy
        */
       guchar *data = g_malloc (buflen);
       memcpy (data, tile->data, buflen);
-      tile->data = data;
+      tile->data                     = data;
       tile->prev_shared->next_shared = tile->next_shared;
       tile->next_shared->prev_shared = tile->prev_shared;
-      tile->prev_shared = tile;
-      tile->next_shared = tile;
+      tile->prev_shared              = tile;
+      tile->next_shared              = tile;
     }
 }
 
-static gint total_locks=0;
-static gint total_unlocks=0;
+static gint total_locks   = 0;
+static gint total_unlocks = 0;
 
 void
 gegl_tile_lock (GeglTile *tile)
@@ -246,25 +257,26 @@ gegl_tile_void_pyramid (GeglTile *tile)
    * similar to how it was done in horizon, this will only work with 4->1 px
    * averageing.
    */
-  gint x,y,z;
+  gint x, y, z;
+
   x = tile->storage_x;
   y = tile->storage_y;
   z = 0;/*tile->storage_z;*/
 
-  for (z=1; z<10;z++)
+  for (z = 1; z < 10; z++)
     {
 #if 0
-      gint ver = (y%2);
-      gint hor = (x%2);
+      gint ver = (y % 2);
+      gint hor = (x % 2);
 #endif
-      x/=2;
-      y/=2;
+      x /= 2;
+      y /= 2;
 
       gegl_tile_store_message (GEGL_TILE_STORE (tile->storage),
                                GEGL_TILE_VOID,
-                               x,y,z,NULL);
+                               x, y, z, NULL);
 #if 0
-  /* FIXME: reenable this code */
+      /* FIXME: reenable this code */
       if (!ver)
         {
           if (!hor)
@@ -324,7 +336,7 @@ gegl_tile_is_stored (GeglTile *tile)
 }
 
 void
-gegl_tile_void (GeglTile       *tile)
+gegl_tile_void (GeglTile *tile)
 {
   tile->stored_rev = tile->rev;
   /* FIXME: make sure the tile is evicted from any storage/buffer caches
@@ -337,13 +349,13 @@ gegl_tile_cpy (GeglTile *src,
                GeglTile *dst)
 {
   gegl_tile_lock (dst);
-  
+
   g_free (dst->data);
   dst->data = NULL;
-  
-  dst->next_shared = src->next_shared;
-  src->next_shared = dst;
-  dst->prev_shared = src;
+
+  dst->next_shared              = src->next_shared;
+  src->next_shared              = dst;
+  dst->prev_shared              = src;
   dst->next_shared->prev_shared = dst;
 
   dst->data = src->data;
@@ -356,16 +368,16 @@ gegl_tile_swp (GeglTile *a,
                GeglTile *b)
 {
   guchar *tmp;
- 
+
   gegl_tile_unclone (a);
   gegl_tile_unclone (b);
 
 /*  gegl_buffer_add_dirty (a->buffer, a->x, a->y);
-  gegl_buffer_add_dirty (b->buffer, b->x, b->y);*/
+   gegl_buffer_add_dirty (b->buffer, b->x, b->y);*/
 
   g_assert (a->size == b->size);
 
-  tmp = a->data;
+  tmp     = a->data;
   a->data = b->data;
   b->data = tmp;
 }
@@ -376,14 +388,14 @@ gegl_tile_get_data (GeglTile *tile)
   return tile->data;
 }
 
-gboolean gegl_tile_store (GeglTile   *tile)
+gboolean gegl_tile_store (GeglTile *tile)
 {
   if (tile->storage == NULL)
     return FALSE;
   return gegl_tile_store_message (GEGL_TILE_STORE (tile->storage),
-                                  GEGL_TILE_SET, tile->storage_x, 
-                                                 tile->storage_y,
-                                                 tile->storage_z, tile);
+                                  GEGL_TILE_SET, tile->storage_x,
+                                  tile->storage_y,
+                                  tile->storage_z, tile);
 }
 
 
@@ -394,17 +406,17 @@ gint
 gegl_tile_indice (gint coordinate,
                   gint stride)
 {
-  if (coordinate>=0)
-    return coordinate/stride;
-  return (((coordinate+1)/stride)-1);
+  if (coordinate >= 0)
+    return coordinate / stride;
+  return (((coordinate + 1) / stride) - 1);
 }
 
 /* computes the positive integer remainder (also for negative dividends)
  */
 #define REMAINDER(dividend, divisor)                       \
-   ((((dividend) < 0) ?                                    \
-   ((divisor) - ((-(dividend)) % (divisor))) % (divisor) : \
-   ((dividend) % (divisor))))
+  ((((dividend) < 0) ?                                    \
+    ((divisor) - ((-(dividend)) % (divisor))) % (divisor) : \
+    ((dividend) % (divisor))))
 
 /* compute the offset into the containing tile a coordinate has,
  * the stride is the width/height of tiles along the axis of coordinate
@@ -413,5 +425,5 @@ gint
 gegl_tile_offset (gint coordinate,
                   gint stride)
 {
-  return REMAINDER (coordinate,stride);
+  return REMAINDER (coordinate, stride);
 }

@@ -27,23 +27,23 @@
 #include "gegl-tile.h"
 #include "gegl-tile-cache.h"
 
-GeglTileCache * gegl_tile_cache_new                 (void);
+GeglTileCache *gegl_tile_cache_new (void);
 
 
 static
-gboolean    gegl_tile_cache_wash                (GeglTileCache *cache);
+gboolean    gegl_tile_cache_wash (GeglTileCache *cache);
 
 static
-GeglTile  * gegl_tile_cache_get_tile            (GeglTileCache *cache,
-                                                 gint       x,
-                                                 gint       y,
-                                                 gint       z);
+GeglTile *gegl_tile_cache_get_tile (GeglTileCache *cache,
+                                    gint           x,
+                                    gint           y,
+                                    gint           z);
 
 static
-gboolean    gegl_tile_cache_has_tile            (GeglTileCache *cache,
-                                                 gint       x,
-                                                 gint       y,
-                                                 gint       z);
+gboolean    gegl_tile_cache_has_tile (GeglTileCache *cache,
+                                      gint           x,
+                                      gint           y,
+                                      gint           z);
 static
 void        gegl_tile_cache_insert (GeglTileCache *cache,
                                     GeglTile      *tile,
@@ -51,16 +51,18 @@ void        gegl_tile_cache_insert (GeglTileCache *cache,
                                     gint           y,
                                     gint           z);
 
-G_DEFINE_TYPE(GeglTileCache, gegl_tile_cache, GEGL_TYPE_TILE_TRAIT)
+G_DEFINE_TYPE (GeglTileCache, gegl_tile_cache, GEGL_TYPE_TILE_TRAIT)
 
-enum {
+enum
+{
   PROP_0,
   PROP_SIZE,
   PROP_WASH_PERCENTAGE
 };
 static GObjectClass *parent_class = NULL;
 
-typedef struct CacheItem {
+typedef struct CacheItem
+{
   GeglTile *tile;
   gint      x;
   gint      y;
@@ -70,20 +72,20 @@ typedef struct CacheItem {
 static void
 finalize (GObject *object)
 {
-  (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  (*G_OBJECT_CLASS (parent_class)->finalize)(object);
 }
 static void
 dispose (GObject *object)
 {
   GeglTileCache *cache;
-  GSList *list;
-  guint count;
+  GSList        *list;
+  guint          count;
 
-  cache = (GeglTileCache*) object;
+  cache = (GeglTileCache *) object;
   count = g_slist_length (cache->list);
 
-  if(0)fprintf (stderr, "Disposing tile-cache of size %i, hits: %i misses: %i  hit percentage:%f)\n", cache->size, cache->hits, cache->misses,
-     cache->hits * 100.0 / (cache->hits+cache->misses));
+  if (0) fprintf (stderr, "Disposing tile-cache of size %i, hits: %i misses: %i  hit percentage:%f)\n", cache->size, cache->hits, cache->misses,
+                  cache->hits * 100.0 / (cache->hits + cache->misses));
 
   while ((list = cache->list))
     {
@@ -93,7 +95,7 @@ dispose (GObject *object)
       g_free (item);
     }
 
-  (* G_OBJECT_CLASS (parent_class)->dispose) (object);
+  (*G_OBJECT_CLASS (parent_class)->dispose)(object);
 }
 
 static GeglTile *
@@ -114,7 +116,7 @@ get_tile (GeglTileStore *tile_store,
       return tile;
     }
   cache->misses++;
-  
+
   if (source)
     tile = gegl_tile_store_get_tile (source, x, y, z);
 
@@ -130,12 +132,12 @@ static gboolean
 gegl_tile_cache_void (GeglTileCache *cache, gint x, gint y, gint z);
 
 static gboolean
-message (GeglTileStore   *tile_store,
-         GeglTileMessage  message,
-         gint             x,
-         gint             y,
-         gint             z,
-         gpointer         data)
+message (GeglTileStore  *tile_store,
+         GeglTileMessage message,
+         gint            x,
+         gint            y,
+         gint            z,
+         gpointer        data)
 {
   GeglTileTrait *trait = GEGL_TILE_TRAIT (tile_store);
   GeglTileCache *cache = GEGL_TILE_CACHE (trait);
@@ -161,7 +163,6 @@ message (GeglTileStore   *tile_store,
   if (message == GEGL_TILE_VOID)
     {
       gegl_tile_cache_void (cache, x, y, z);
-
     }
   if (trait->source)
     return gegl_tile_store_message (trait->source, message, x, y, z, data);
@@ -175,14 +176,17 @@ get_property (GObject    *gobject,
               GParamSpec *pspec)
 {
   GeglTileCache *cache = GEGL_TILE_CACHE (gobject);
-  switch(property_id)
+
+  switch (property_id)
     {
       case PROP_SIZE:
         g_value_set_int (value, cache->size);
         break;
+
       case PROP_WASH_PERCENTAGE:
         g_value_set_int (value, cache->wash_percentage);
         break;
+
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -196,14 +200,17 @@ set_property (GObject      *gobject,
               GParamSpec   *pspec)
 {
   GeglTileCache *cache = GEGL_TILE_CACHE (gobject);
-  switch(property_id)
+
+  switch (property_id)
     {
       case PROP_SIZE:
         cache->size = g_value_get_int (value);
         return;
+
       case PROP_WASH_PERCENTAGE:
-        cache->wash_percentage= g_value_get_int (value);
+        cache->wash_percentage = g_value_get_int (value);
         return;
+
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -213,30 +220,30 @@ set_property (GObject      *gobject,
 static void
 gegl_tile_cache_class_init (GeglTileCacheClass *class)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (class);
+  GObjectClass       *gobject_class    = G_OBJECT_CLASS (class);
   GeglTileStoreClass *tile_store_class = GEGL_TILE_STORE_CLASS (class);
 
-  parent_class = g_type_class_peek_parent (class);
+  parent_class                = g_type_class_peek_parent (class);
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
   gobject_class->finalize = finalize;
-  gobject_class->dispose = dispose;
+  gobject_class->dispose  = dispose;
 
   g_object_class_install_property (gobject_class, PROP_SIZE,
                                    g_param_spec_int ("size", "size", "Number of tiles in cache",
                                                      0, G_MAXINT, 32,
-                                                     G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
+                                                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (gobject_class, PROP_WASH_PERCENTAGE,
                                    g_param_spec_int ("wash-percentage", "wash percentage", "(integer 0..100, percentage to wash)",
                                                      0, 100, 20,
-                                                     G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
-  
+                                                     G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
-  
+
+
   tile_store_class->get_tile = get_tile;
-  tile_store_class->message = message;
+  tile_store_class->message  = message;
 }
 
 static void
@@ -262,11 +269,12 @@ gboolean
 gegl_tile_cache_wash (GeglTileCache *cache)
 {
   GeglTile *last_dirty = NULL;
-  guint count = 0;
+  guint     count      = 0;
 
-  gint wash_tiles = cache->wash_percentage * cache->size / 100;
+  gint      wash_tiles = cache->wash_percentage * cache->size / 100;
 
-  GSList *list = cache->list;
+  GSList   *list = cache->list;
+
   while (list)
     {
       CacheItem *item = list->data;
@@ -275,7 +283,7 @@ gegl_tile_cache_wash (GeglTileCache *cache)
       count++;
       if (!gegl_tile_is_stored (tile))
         {
-          if (count > cache->size-wash_tiles)
+          if (count > cache->size - wash_tiles)
             {
               last_dirty = tile;
             }
@@ -293,12 +301,13 @@ gegl_tile_cache_wash (GeglTileCache *cache)
 /* returns the requested Tile * if it is in the cache NULL
  * otherwize.
  */
-GeglTile * gegl_tile_cache_get_tile (GeglTileCache *cache,
-                                     gint           x,
-                                     gint           y,
-                                     gint           z)
+GeglTile *gegl_tile_cache_get_tile (GeglTileCache *cache,
+                                    gint           x,
+                                    gint           y,
+                                    gint           z)
 {
-  GeglTile  *tile = NULL;
+  GeglTile *tile = NULL;
+
   if (cache->size > 0)
     {
       GSList *list = cache->list;
@@ -307,8 +316,8 @@ GeglTile * gegl_tile_cache_get_tile (GeglTileCache *cache,
       while (list)
         {
           CacheItem *cur_item = list->data;
-          GeglTile *cur_tile = cur_item->tile;
-            
+          GeglTile  *cur_tile = cur_item->tile;
+
           if (cur_tile != NULL &&
               cur_item->x == x &&
               cur_item->y == y &&
@@ -324,17 +333,17 @@ GeglTile * gegl_tile_cache_get_tile (GeglTileCache *cache,
       if (tile != NULL)
         {
           g_object_ref (G_OBJECT (tile));
-          
+
           /* reorder list */
           if (prev)
             {
               if (prev->next)
                 {
-                  prev->next=list->next;
+                  prev->next = list->next;
                 }
               if (cache->list)
-                list->next=cache->list;
-              cache->list=list;
+                list->next = cache->list;
+              cache->list = list;
             }
         }
       else
@@ -347,9 +356,9 @@ GeglTile * gegl_tile_cache_get_tile (GeglTileCache *cache,
 
 gboolean
 gegl_tile_cache_has_tile (GeglTileCache *cache,
-                          gint       x,
-                          gint       y,
-                          gint       z)
+                          gint           x,
+                          gint           y,
+                          gint           z)
 {
   GeglTile *tile = gegl_tile_cache_get_tile (cache, x, y, z);
 
@@ -393,6 +402,7 @@ gegl_tile_cache_void (GeglTileCache *cache, gint x, gint y, gint z)
   CacheItem *item = NULL;
 
   GeglTile  *tile = NULL;
+
   if (cache->size > 0)
     {
       GSList *list = cache->list;
@@ -401,8 +411,8 @@ gegl_tile_cache_void (GeglTileCache *cache, gint x, gint y, gint z)
       while (list)
         {
           CacheItem *cur_item = list->data;
-          GeglTile *cur_tile = cur_item->tile;
-            
+          GeglTile  *cur_tile = cur_item->tile;
+
           if (cur_tile != NULL &&
               cur_item->x == x &&
               cur_item->y == y &&
@@ -423,11 +433,11 @@ gegl_tile_cache_void (GeglTileCache *cache, gint x, gint y, gint z)
             {
               if (prev->next)
                 {
-                  prev->next=list->next;
+                  prev->next = list->next;
                 }
               if (cache->list)
-                list->next=cache->list;
-              cache->list=list;
+                list->next = cache->list;
+              cache->list = list;
             }
 
           gegl_tile_void (tile);
@@ -449,22 +459,22 @@ gegl_tile_cache_insert (GeglTileCache *cache,
                         gint           y,
                         gint           z)
 {
-  guint count;
+  guint      count;
   CacheItem *item = g_malloc (sizeof (CacheItem));
 
   g_object_ref (G_OBJECT (tile));
   item->tile = tile;
-  item->x = x;
-  item->y = y;
-  item->z = z;
+  item->x    = x;
+  item->y    = y;
+  item->z    = z;
 
   cache->list = g_slist_prepend (cache->list, item);
-  count = g_slist_length (cache->list);
+  count       = g_slist_length (cache->list);
 
   if (count > cache->size)
     {
       gint to_remove = count - cache->size;
 
-      while (--to_remove && gegl_tile_cache_trim (cache));
+      while (--to_remove && gegl_tile_cache_trim (cache)) ;
     }
 }

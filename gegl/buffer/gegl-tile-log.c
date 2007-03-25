@@ -24,8 +24,8 @@
 #include "gegl-tile-trait.h"
 #include "gegl-tile-log.h"
 
-G_DEFINE_TYPE(GeglTileLog, gegl_tile_log, GEGL_TYPE_TILE_TRAIT)
-static GObjectClass *parent_class = NULL;
+G_DEFINE_TYPE (GeglTileLog, gegl_tile_log, GEGL_TYPE_TILE_TRAIT)
+static GObjectClass * parent_class = NULL;
 
 static GeglTile *
 get_tile (GeglTileStore *gegl_tile_store,
@@ -34,9 +34,9 @@ get_tile (GeglTileStore *gegl_tile_store,
           gint           z)
 {
   GeglTileStore *source = GEGL_TILE_TRAIT (gegl_tile_store)->source;
-  GeglTile      *tile  = NULL;
+  GeglTile      *tile   = NULL;
 
-  g_warning ("%p get_tile (%i,%i,%i)", (void*)gegl_tile_store, x, y, z);
+  g_warning ("%p get_tile (%i,%i,%i)", (void *) gegl_tile_store, x, y, z);
 
   if (source)
     tile = gegl_tile_store_get_tile (source, x, y, z);
@@ -44,35 +44,35 @@ get_tile (GeglTileStore *gegl_tile_store,
   return tile;
 }
 
-static char *messages[]=
+static char *messages[] =
 {
-  "set", "is_dirty", "is_cached", "undo_start_group", "zoom_update", "dirty",
-  "flush_dirty", "idle", "void", "last_message (or added to enum)", "eekmsg", "eekmsg"
+  "set",         "is_dirty", "is_cached", "undo_start_group",                "zoom_update", "dirty",
+  "flush_dirty", "idle",     "void",      "last_message (or added to enum)", "eekmsg",      "eekmsg"
 };
 
 static gboolean
-message (GeglTileStore   *gegl_tile_store,
-         GeglTileMessage  message,
-         gint             x,
-         gint             y,
-         gint             z,
-         gpointer         data)
+message (GeglTileStore  *gegl_tile_store,
+         GeglTileMessage message,
+         gint            x,
+         gint            y,
+         gint            z,
+         gpointer        data)
 {
   GeglTileTrait *trait = GEGL_TILE_TRAIT (gegl_tile_store);
 
-  g_warning ("%p message(%s, x=%i, y=%i, z=%i, data=%p)", (void*)gegl_tile_store, messages[message], x, y, z, data);
+  g_warning ("%p message(%s, x=%i, y=%i, z=%i, data=%p)", (void *) gegl_tile_store, messages[message], x, y, z, data);
   if (trait->source)
     return gegl_tile_store_message (trait->source, message, x, y, z, data);
   return FALSE;
 }
 
 static void
-gegl_tile_log_class_init (GeglTileLogClass * klass)
+gegl_tile_log_class_init (GeglTileLogClass *klass)
 {
   GeglTileStoreClass *gegl_tile_store_class = GEGL_TILE_STORE_CLASS (klass);
 
   gegl_tile_store_class->get_tile = get_tile;
-  gegl_tile_store_class->message = message;
+  gegl_tile_store_class->message  = message;
 
   parent_class = g_type_class_peek_parent (klass);
 }

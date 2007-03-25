@@ -17,12 +17,12 @@
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
-#define _GNU_SOURCE /* for O_DIRECT */
+#define _GNU_SOURCE    /* for O_DIRECT */
 
 #include <fcntl.h>
 
 #ifndef O_DIRECT
-#define O_DIRECT 0
+#define O_DIRECT    0
 #endif
 
 
@@ -41,7 +41,7 @@
 #include <string.h>
 #include <stdio.h>
 
-static void dbg_alloc   (int size);
+static void dbg_alloc (int size);
 static void dbg_dealloc (int size);
 
 /* These entries are kept in RAM for now, they should be written as an index to the
@@ -52,7 +52,8 @@ static void dbg_dealloc (int size);
  */
 typedef struct _DiskEntry DiskEntry;
 
-struct _DiskEntry {
+struct _DiskEntry
+{
   gint x;
   gint y;
   gint z;
@@ -64,9 +65,9 @@ disk_entry_read (GeglTileDisk *disk,
                  DiskEntry    *entry,
                  guchar       *dest)
 {
-  gint   nleft;
-  off_t  offset;
-  gint   tile_size = GEGL_TILE_BACKEND (disk)->tile_size;
+  gint  nleft;
+  off_t offset;
+  gint  tile_size = GEGL_TILE_BACKEND (disk)->tile_size;
 
   offset = lseek (disk->fd, (off_t) entry->offset * tile_size, SEEK_SET);
   if (offset == -1)
@@ -84,8 +85,7 @@ disk_entry_read (GeglTileDisk *disk,
       do
         {
           err = read (disk->fd, dest + tile_size - nleft, nleft);
-        }
-      while ((err == -1) && ((errno == EAGAIN) || (errno == EINTR)));
+        } while ((err == -1) && ((errno == EAGAIN) || (errno == EINTR)));
 
       if (err <= 0)
         {
@@ -149,7 +149,7 @@ disk_entry_new (GeglTileDisk *disk)
       if (self->offset >= disk->total)
         {
           gint grow = 32; /* grow 32 tiles of swap space at a time */
-          g_assert (0 == ftruncate (disk->fd, (off_t)(disk->total + grow) * (off_t) GEGL_TILE_BACKEND (disk)->tile_size));
+          g_assert (0 == ftruncate (disk->fd, (off_t) (disk->total + grow) * (off_t) GEGL_TILE_BACKEND (disk)->tile_size));
           disk->total = self->offset;
         }
     }
@@ -169,35 +169,35 @@ disk_entry_destroy (DiskEntry    *entry,
 }
 
 
-G_DEFINE_TYPE(GeglTileDisk, gegl_tile_disk, GEGL_TYPE_TILE_BACKEND)
-static GObjectClass *parent_class = NULL;
+G_DEFINE_TYPE (GeglTileDisk, gegl_tile_disk, GEGL_TYPE_TILE_BACKEND)
+static GObjectClass * parent_class = NULL;
 
 
-static gint allocs=0;
-static gint disk_size=0;
-static gint peak_allocs=0;
-static gint peak_disk_size=0;
+static gint allocs         = 0;
+static gint disk_size      = 0;
+static gint peak_allocs    = 0;
+static gint peak_disk_size = 0;
 
 void gegl_tile_disk_stats (void)
 {
   g_warning ("leaked: %i chunks (%f mb)  peak: %i (%i bytes %fmb))",
-     allocs, disk_size/1024/1024.0, peak_allocs, peak_disk_size, peak_disk_size/1024/1024.0);
+             allocs, disk_size / 1024 / 1024.0, peak_allocs, peak_disk_size, peak_disk_size / 1024 / 1024.0);
 }
 
 static void dbg_alloc (gint size)
 {
   allocs++;
-  disk_size+=size;
-  if (allocs>peak_allocs)
-    peak_allocs=allocs;
-  if (disk_size>peak_disk_size)
-    peak_disk_size=disk_size;
+  disk_size += size;
+  if (allocs > peak_allocs)
+    peak_allocs = allocs;
+  if (disk_size > peak_disk_size)
+    peak_disk_size = disk_size;
 }
 
-static void dbg_dealloc(gint size)
+static void dbg_dealloc (gint size)
 {
   allocs--;
-  disk_size-=size;
+  disk_size -= size;
 }
 
 static inline DiskEntry *
@@ -206,7 +206,8 @@ lookup_entry (GeglTileDisk *self,
               gint          y,
               gint          z)
 {
-  DiskEntry key = {x,y,z,0};
+  DiskEntry key = { x, y, z, 0 };
+
   return g_hash_table_lookup (self->entries, &key);
 }
 
@@ -224,16 +225,16 @@ get_tile (GeglTileStore *tile_store,
   GeglTileDisk    *tile_disk = GEGL_TILE_DISK (tile_store);
   GeglTileBackend *backend   = GEGL_TILE_BACKEND (tile_store);
   GeglTile        *tile      = NULL;
-  
+
   {
     DiskEntry *entry = lookup_entry (tile_disk, x, y, z);
 
     if (!entry)
       return NULL;
 
-    tile = gegl_tile_new (backend->tile_size);
+    tile             = gegl_tile_new (backend->tile_size);
     tile->stored_rev = 1;
-    tile->rev = 1;
+    tile->rev        = 1;
 
     disk_entry_read (tile_disk, entry, tile->data);
   }
@@ -250,14 +251,14 @@ gboolean set_tile (GeglTileStore *store,
   GeglTileBackend *backend   = GEGL_TILE_BACKEND (store);
   GeglTileDisk    *tile_disk = GEGL_TILE_DISK (backend);
 
-  DiskEntry *entry = lookup_entry (tile_disk, x, y, z);
+  DiskEntry       *entry = lookup_entry (tile_disk, x, y, z);
 
-  if (entry==NULL)
+  if (entry == NULL)
     {
-      entry = disk_entry_new (tile_disk);
-      entry->x=x;
-      entry->y=y;
-      entry->z=z;
+      entry    = disk_entry_new (tile_disk);
+      entry->x = x;
+      entry->y = y;
+      entry->z = z;
       g_hash_table_insert (tile_disk->entries, entry, entry);
     }
 
@@ -276,11 +277,11 @@ gboolean void_tile (GeglTileStore *store,
                     gint           y,
                     gint           z)
 {
-  GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
+  GeglTileBackend *backend   = GEGL_TILE_BACKEND (store);
   GeglTileDisk    *tile_disk = GEGL_TILE_DISK (backend);
-  DiskEntry *entry = lookup_entry (tile_disk, x, y, z);
-  
-  if (entry!=NULL)
+  DiskEntry       *entry     = lookup_entry (tile_disk, x, y, z);
+
+  if (entry != NULL)
     {
       disk_entry_destroy (entry, tile_disk);
     }
@@ -295,38 +296,43 @@ gboolean exist_tile (GeglTileStore *store,
                      gint           y,
                      gint           z)
 {
-  GeglTileBackend *backend  = GEGL_TILE_BACKEND (store);
+  GeglTileBackend *backend   = GEGL_TILE_BACKEND (store);
   GeglTileDisk    *tile_disk = GEGL_TILE_DISK (backend);
-  DiskEntry *entry = lookup_entry (tile_disk, x, y, z);
- 
-  return entry!=NULL; 
+  DiskEntry       *entry     = lookup_entry (tile_disk, x, y, z);
+
+  return entry != NULL;
 }
 
-enum {
+enum
+{
   PROP_0,
   PROP_PATH
 };
 
 static gboolean
-message (GeglTileStore   *tile_store,
-         GeglTileMessage  message,
-         gint             x,
-         gint             y,
-         gint             z,
-         gpointer         data)
+message (GeglTileStore  *tile_store,
+         GeglTileMessage message,
+         gint            x,
+         gint            y,
+         gint            z,
+         gpointer        data)
 {
   switch (message)
     {
       case GEGL_TILE_SET:
         return set_tile (tile_store, data, x, y, z);
+
       case GEGL_TILE_IDLE:
         return FALSE;
+
       case GEGL_TILE_VOID:
         return void_tile (tile_store, data, x, y, z);
+
       case GEGL_TILE_EXIST:
         return exist_tile (tile_store, data, x, y, z);
+
       default:
-        g_assert (message <  GEGL_TILE_LAST_MESSAGE &&
+        g_assert (message < GEGL_TILE_LAST_MESSAGE &&
                   message >= 0);
     }
   return FALSE;
@@ -340,35 +346,37 @@ static void set_property (GObject      *object,
   GeglTileDisk *self = GEGL_TILE_DISK (object);
 
   switch (property_id)
-  {
-    case PROP_PATH:
-    if (self->path)
-      g_free (self->path);
-    self->path = g_value_dup_string (value);
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-      break;
-  }
+    {
+      case PROP_PATH:
+        if (self->path)
+          g_free (self->path);
+        self->path = g_value_dup_string (value);
+        break;
+
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+        break;
+    }
 }
 
-static void get_property (GObject      *object,
-                          guint         property_id,
-                          GValue       *value,
-                          GParamSpec   *pspec)
+static void get_property (GObject    *object,
+                          guint       property_id,
+                          GValue     *value,
+                          GParamSpec *pspec)
 {
   GeglTileDisk *self = GEGL_TILE_DISK (object);
 
   switch (property_id)
-  {
-    case PROP_PATH:
-      if (self->path)
-        g_value_set_string (value, self->path);
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
-      break;
-  }
+    {
+      case PROP_PATH:
+        if (self->path)
+          g_value_set_string (value, self->path);
+        break;
+
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+        break;
+    }
 }
 
 static void
@@ -381,29 +389,31 @@ finalize (GObject *object)
   close (self->fd);
   g_unlink (self->path);
 
-  (* G_OBJECT_CLASS (parent_class)->finalize) (object);
+  (*G_OBJECT_CLASS (parent_class)->finalize)(object);
 }
 
 static guint hashfunc (gconstpointer key)
 {
   const DiskEntry *e = key;
-  guint hash;
-  gint  i;
-  gint  srcA=e->x;
-  gint  srcB=e->y;
-  gint  srcC=e->z;
+  guint            hash;
+  gint             i;
+  gint             srcA = e->x;
+  gint             srcB = e->y;
+  gint             srcC = e->z;
 
   /* interleave the 10 least significant bits of all coordinates,
    * this gives us Z-order / morton order of the space and should
    * work well as a hash
-  */
+   */
   hash = 0;
-  for (i=9;i>=0;i--)
+  for (i = 9; i >= 0; i--)
     {
-#define ADD_BIT(bit)  do{hash|=(((bit)!=0)?1:0);hash <<= 1;}while(0)
-      ADD_BIT (srcA & (1<<i));
-      ADD_BIT (srcB & (1<<i));
-      ADD_BIT (srcC & (1<<i));
+#define ADD_BIT(bit)    do { hash |= (((bit) != 0) ? 1 : 0); hash <<= 1; \
+    } \
+  while (0)
+      ADD_BIT (srcA & (1 << i));
+      ADD_BIT (srcB & (1 << i));
+      ADD_BIT (srcC & (1 << i));
 #undef ADD_BIT
     }
   return hash;
@@ -431,7 +441,7 @@ gegl_tile_disk_constructor (GType                  type,
   GeglTileDisk *disk;
 
   object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  disk = GEGL_TILE_DISK (object);
+  disk   = GEGL_TILE_DISK (object);
 
   disk->fd = g_open (disk->path, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | O_DIRECT);
   if (disk->fd == -1)
@@ -445,7 +455,7 @@ gegl_tile_disk_constructor (GType                  type,
 }
 
 static void
-gegl_tile_disk_class_init (GeglTileDiskClass * klass)
+gegl_tile_disk_class_init (GeglTileDiskClass *klass)
 {
   GObjectClass       *gobject_class         = G_OBJECT_CLASS (klass);
   GeglTileStoreClass *gegl_tile_store_class = GEGL_TILE_STORE_CLASS (klass);
@@ -456,27 +466,26 @@ gegl_tile_disk_class_init (GeglTileDiskClass * klass)
   gobject_class->set_property = set_property;
   gobject_class->constructor  = gegl_tile_disk_constructor;
   gobject_class->finalize     = finalize;
-  
+
   gegl_tile_store_class->get_tile = get_tile;
   gegl_tile_store_class->message  = message;
 
 
   g_object_class_install_property (gobject_class, PROP_PATH,
                                    g_param_spec_string ("path",
-                                      "path",
-                                      "The base path for this backing file for a buffer",
-                                      NULL,
-                                      G_PARAM_CONSTRUCT|G_PARAM_READWRITE));
-
+                                                        "path",
+                                                        "The base path for this backing file for a buffer",
+                                                        NULL,
+                                                        G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 }
 
 static void
 gegl_tile_disk_init (GeglTileDisk *self)
 {
-  self->path = NULL;
-  self->fd = 0;
-  self->entries = NULL;
-  self->free_list = NULL;
+  self->path        = NULL;
+  self->fd          = 0;
+  self->entries     = NULL;
+  self->free_list   = NULL;
   self->next_unused = 0;
-  self->total = 0;
+  self->total       = 0;
 }
