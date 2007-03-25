@@ -48,28 +48,28 @@ gegl_node_remove_children (GeglNode *self)
 
 GeglNode *
 gegl_node_add_child (GeglNode *self,
-                     GeglNode  *child)
+                     GeglNode *child)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
   self->children = g_slist_prepend (self->children, g_object_ref (child));
   self->is_graph = TRUE;
-  child->parent = self;
+  child->parent  = self;
 
   return child;
 }
 
 GeglNode *
 gegl_node_remove_child (GeglNode *self,
-                        GeglNode  *child)
+                        GeglNode *child)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (child), NULL);
 
   self->children = g_slist_remove (self->children, child);
-  
-  if (child->parent!=NULL)
+
+  if (child->parent != NULL)
     {
       /* if parent isn't set then the node is already in dispose
        */
@@ -77,7 +77,7 @@ gegl_node_remove_child (GeglNode *self,
       g_object_unref (child);
     }
 
-  
+
   if (self->children == NULL)
     self->is_graph = FALSE;
 
@@ -94,7 +94,7 @@ gegl_node_get_num_children (GeglNode *self)
 
 GeglNode *
 gegl_node_get_nth_child (GeglNode *self,
-                          gint       n)
+                         gint      n)
 {
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
 
@@ -120,7 +120,7 @@ gegl_node_new_child (GeglNode    *node,
                      const gchar *first_property_name,
                      ...)
 {
-  GeglNode   *self = node;
+  GeglNode    *self = node;
   va_list      var_args;
   const gchar *name;
 
@@ -138,8 +138,8 @@ gegl_node_new_child (GeglNode    *node,
   return node;
 }
 
-GeglNode * gegl_node_create_child      (GeglNode     *self,
-                                        const gchar  *operation)
+GeglNode *gegl_node_create_child (GeglNode    *self,
+                                  const gchar *operation)
 {
   return gegl_node_new_child (self, "operation", operation, NULL);
 }
@@ -150,18 +150,18 @@ source_invalidated (GeglNode      *source,
                     gpointer       data)
 {
   GeglRectangle dirty_rect;
-  GeglNode *destination = GEGL_NODE (data);
-  gchar *source_name;
-  gchar *destination_name;
+  GeglNode     *destination = GEGL_NODE (data);
+  gchar        *source_name;
+  gchar        *destination_name;
 
   destination_name = g_strdup (gegl_node_get_debug_name (destination));
-  source_name = g_strdup (gegl_node_get_debug_name (source));
+  source_name      = g_strdup (gegl_node_get_debug_name (source));
 
-  if(0)g_warning ("graph:%s is dirtied from %s (%i,%i %ix%i)",
-     destination_name,
-     source_name,
-     rect->x, rect->y,
-     rect->width  , rect->height);
+  if (0) g_warning ("graph:%s is dirtied from %s (%i,%i %ix%i)",
+                    destination_name,
+                    source_name,
+                    rect->x, rect->y,
+                    rect->width, rect->height);
 
   dirty_rect = *rect;
 
@@ -173,9 +173,9 @@ source_invalidated (GeglNode      *source,
 
 
 static GeglNode *
-gegl_node_get_pad_proxy (GeglNode   *graph,
-                          const gchar *name,
-                          gboolean     is_graph_input)
+gegl_node_get_pad_proxy (GeglNode    *graph,
+                         const gchar *name,
+                         gboolean     is_graph_input)
 {
   GeglNode *node = graph;
   GeglPad  *pad;
@@ -183,48 +183,48 @@ gegl_node_get_pad_proxy (GeglNode   *graph,
   pad = gegl_node_get_pad (node, name);
   if (!pad)
     {
-        GeglNode *nop = g_object_new (GEGL_TYPE_NODE, "operation", "nop", "name", is_graph_input?"proxynop-input":"proxynop-output", NULL);
-        GeglPad  *nop_pad = gegl_node_get_pad (nop, is_graph_input?"input":"output");
-        gegl_node_add_child (graph, nop);
-        
-        {
-          GeglPad *new_pad = g_object_new (GEGL_TYPE_PAD, NULL);
-          gegl_pad_set_param_spec (new_pad, nop_pad->param_spec);
-          gegl_pad_set_node (new_pad, nop);
-          gegl_object_set_name (GEGL_OBJECT (new_pad), name);
-          gegl_node_add_pad (node, new_pad);
+      GeglNode *nop     = g_object_new (GEGL_TYPE_NODE, "operation", "nop", "name", is_graph_input ? "proxynop-input" : "proxynop-output", NULL);
+      GeglPad  *nop_pad = gegl_node_get_pad (nop, is_graph_input ? "input" : "output");
+      gegl_node_add_child (graph, nop);
 
-          /* hack, decoreating the pad to make it recognized in later
-           * processing
-           */
-          if (!strcmp (name, "aux"))
-            {
-              g_object_set_data (G_OBJECT (nop), "is-aux", "foo");
-            }
-        }
+      {
+        GeglPad *new_pad = g_object_new (GEGL_TYPE_PAD, NULL);
+        gegl_pad_set_param_spec (new_pad, nop_pad->param_spec);
+        gegl_pad_set_node (new_pad, nop);
+        gegl_object_set_name (GEGL_OBJECT (new_pad), name);
+        gegl_node_add_pad (node, new_pad);
 
-        g_object_set_data (G_OBJECT (nop), "graph", graph);
-
-        if (!is_graph_input)
+        /* hack, decoreating the pad to make it recognized in later
+         * processing
+         */
+        if (!strcmp (name, "aux"))
           {
-            g_signal_connect (G_OBJECT (nop), "invalidated",
-                G_CALLBACK (source_invalidated), graph);
+            g_object_set_data (G_OBJECT (nop), "is-aux", "foo");
           }
-        return nop;
+      }
+
+      g_object_set_data (G_OBJECT (nop), "graph", graph);
+
+      if (!is_graph_input)
+        {
+          g_signal_connect (G_OBJECT (nop), "invalidated",
+                            G_CALLBACK (source_invalidated), graph);
+        }
+      return nop;
     }
   return gegl_pad_get_node (pad);
 }
 
 GeglNode *
 gegl_node_get_input_proxy (GeglNode    *node,
-                  const gchar *name)
+                           const gchar *name)
 {
   return gegl_node_get_pad_proxy (node, name, TRUE);
 }
 
 GeglNode *
 gegl_node_get_output_proxy (GeglNode    *node,
-                  const gchar *name)
+                            const gchar *name)
 {
   return gegl_node_get_pad_proxy (node, name, FALSE);
 }

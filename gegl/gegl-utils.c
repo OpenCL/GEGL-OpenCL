@@ -58,6 +58,7 @@ inline gint
 _gegl_float_epsilon_equal (float v1, float v2)
 {
   register float diff = v1 - v2;
+
   return diff > -GEGL_FLOAT_EPSILON && diff < GEGL_FLOAT_EPSILON;
 }
 
@@ -68,9 +69,9 @@ gegl_rectangle_set (GeglRectangle *r,
                     guint          w,
                     guint          h)
 {
-  r->x = x;
-  r->y = y;
-  r->width   = w;
+  r->x      = x;
+  r->y      = y;
+  r->width  = w;
   r->height = h;
 }
 
@@ -79,25 +80,25 @@ gegl_rectangle_bounding_box (GeglRectangle *dest,
                              GeglRectangle *src1,
                              GeglRectangle *src2)
 {
-  gboolean s1_has_area = src1->width   && src1->height;
-  gboolean s2_has_area = src2->width   && src2->height;
+  gboolean s1_has_area = src1->width && src1->height;
+  gboolean s2_has_area = src2->width && src2->height;
 
-  if (! s1_has_area && ! s2_has_area)
+  if (!s1_has_area && !s2_has_area)
     gegl_rectangle_set (dest, 0, 0, 0, 0);
-  else if (! s1_has_area)
+  else if (!s1_has_area)
     gegl_rectangle_copy (dest, src2);
-  else if (! s2_has_area)
+  else if (!s2_has_area)
     gegl_rectangle_copy (dest, src1);
   else
     {
       gint x1 = MIN (src1->x, src2->x);
-      gint x2 = MAX (src1->x + src1->width  , src2->x + src2->width  );
+      gint x2 = MAX (src1->x + src1->width, src2->x + src2->width);
       gint y1 = MIN (src1->y, src2->y);
       gint y2 = MAX (src1->y + src1->height, src2->y + src2->height);
 
-      dest->x = x1;
-      dest->y = y1;
-      dest->width   = x2 - x1;
+      dest->x      = x1;
+      dest->y      = y1;
+      dest->width  = x2 - x1;
       dest->height = y2 - y1;
     }
 }
@@ -109,23 +110,23 @@ gegl_rectangle_intersect (GeglRectangle *dest,
 {
   gint x1, x2, y1, y2;
 
-  x1 = MAX(src1->x, src2->x);
-  x2 = MIN(src1->x + src1->width  , src2->x + src2->width  );
+  x1 = MAX (src1->x, src2->x);
+  x2 = MIN (src1->x + src1->width, src2->x + src2->width);
 
   if (x2 <= x1)
     {
       if (dest)
-        gegl_rectangle_set (dest,0,0,0,0);
+        gegl_rectangle_set (dest, 0, 0, 0, 0);
       return FALSE;
     }
 
-  y1 = MAX(src1->y, src2->y);
-  y2 = MIN(src1->y + src1->height, src2->y + src2->height);
+  y1 = MAX (src1->y, src2->y);
+  y2 = MIN (src1->y + src1->height, src2->y + src2->height);
 
   if (y2 <= y1)
     {
       if (dest)
-        gegl_rectangle_set (dest,0,0,0,0);
+        gegl_rectangle_set (dest, 0, 0, 0, 0);
       return FALSE;
     }
 
@@ -138,9 +139,9 @@ void
 gegl_rectangle_copy (GeglRectangle *to,
                      GeglRectangle *from)
 {
-  to->x = from->x;
-  to->y = from->y;
-  to->width   = from->width  ;
+  to->x      = from->x;
+  to->y      = from->y;
+  to->width  = from->width;
   to->height = from->height;
 }
 
@@ -150,8 +151,8 @@ gegl_rectangle_contains (GeglRectangle *r,
 {
   if (s->x >= r->x &&
       s->y >= r->y &&
-      (s->x + s->width  ) <= (r->x + r->width  ) &&
-      (s->y + s->height) <= (r->y + r->height) )
+      (s->x + s->width) <= (r->x + r->width) &&
+      (s->y + s->height) <= (r->y + r->height))
     return TRUE;
   else
     return FALSE;
@@ -163,7 +164,7 @@ gegl_rectangle_equal (GeglRectangle *r,
 {
   if (r->x == s->x &&
       r->y == s->y &&
-      r->width   == s->width   &&
+      r->width == s->width &&
       r->height == s->height)
     return TRUE;
   else
@@ -179,14 +180,14 @@ gegl_rectangle_equal_coords (GeglRectangle *r,
 {
   if (r->x == x &&
       r->y == y &&
-      r->width   == w &&
+      r->width == w &&
       r->height == h)
     return TRUE;
   else
     return FALSE;
 }
 
-#define GEGL_LOG_DOMAIN "Gegl"
+#define GEGL_LOG_DOMAIN    "Gegl"
 
 void gegl_log_debug (gchar *file,
                      gint   line,
@@ -195,9 +196,10 @@ void gegl_log_debug (gchar *file,
                      ...)
 {
   va_list args;
-  va_start(args,format);
-  gegl_logv(G_LOG_LEVEL_DEBUG, file, line, function, format, args);
-  va_end(args);
+
+  va_start (args, format);
+  gegl_logv (G_LOG_LEVEL_DEBUG, file, line, function, format, args);
+  va_end (args);
 }
 
 void gegl_log_info (gchar *file,
@@ -207,9 +209,10 @@ void gegl_log_info (gchar *file,
                     ...)
 {
   va_list args;
-  va_start(args,format);
-  gegl_logv(G_LOG_LEVEL_INFO,file,line,function, format, args);
-  va_end(args);
+
+  va_start (args, format);
+  gegl_logv (G_LOG_LEVEL_INFO, file, line, function, format, args);
+  va_end (args);
 }
 
 void gegl_log_message (gchar *file,
@@ -219,80 +222,84 @@ void gegl_log_message (gchar *file,
                        ...)
 {
   va_list args;
-  va_start(args,format);
-  gegl_logv(G_LOG_LEVEL_MESSAGE,file,line,function, format, args);
-  va_end(args);
+
+  va_start (args, format);
+  gegl_logv (G_LOG_LEVEL_MESSAGE, file, line, function, format, args);
+  va_end (args);
 }
 
 void gegl_log_direct (gchar *format,
                       ...)
 {
   va_list args;
-  va_start(args,format);
-  gegl_direct_logv(G_LOG_LEVEL_DEBUG, format, args);
-  va_end(args);
+
+  va_start (args, format);
+  gegl_direct_logv (G_LOG_LEVEL_DEBUG, format, args);
+  va_end (args);
 }
 
 void
-gegl_log (GLogLevelFlags  level,
-          gchar          *file,
-          gint            line,
-          gchar          *function,
-          gchar          *format,
+gegl_log (GLogLevelFlags level,
+          gchar         *file,
+          gint           line,
+          gchar         *function,
+          gchar         *format,
           ...)
 {
-    va_list args;
-    va_start(args,format);
-    gegl_logv(level,file,line,function,format,args);
-    va_end(args);
+  va_list args;
+
+  va_start (args, format);
+  gegl_logv (level, file, line, function, format, args);
+  va_end (args);
 }
 
 void
-gegl_logv (GLogLevelFlags  level,
-           gchar          *file,
-           gint            line,
-           gchar          *function,
-           gchar          *format,
-           va_list         args)
+gegl_logv (GLogLevelFlags level,
+           gchar         *file,
+           gint           line,
+           gchar         *function,
+           gchar         *format,
+           va_list        args)
 {
-    if (g_getenv("GEGL_LOG_ON"))
-      {
-        gchar *tabbed = NULL;
+  if (g_getenv ("GEGL_LOG_ON"))
+    {
+      gchar *tabbed = NULL;
 
-        /* log the file and line */
-        g_log(GEGL_LOG_DOMAIN,level, "%s:  %s:%d:", function, file, line);
+      /* log the file and line */
+      g_log (GEGL_LOG_DOMAIN, level, "%s:  %s:%d:", function, file, line);
 
-        /* move the regular output over a bit. */
-        tabbed = g_strconcat("   ", format, NULL);
-        g_logv(GEGL_LOG_DOMAIN,level, tabbed, args);
-        g_log(GEGL_LOG_DOMAIN,level, "        ");
-        g_free(tabbed);
-      }
+      /* move the regular output over a bit. */
+      tabbed = g_strconcat ("   ", format, NULL);
+      g_logv (GEGL_LOG_DOMAIN, level, tabbed, args);
+      g_log (GEGL_LOG_DOMAIN, level, "        ");
+      g_free (tabbed);
+    }
 }
 
 void
-gegl_direct_log (GLogLevelFlags  level,
-                 gchar          *format,
+gegl_direct_log (GLogLevelFlags level,
+                 gchar         *format,
                  ...)
 {
-    va_list args;
-    va_start(args,format);
-    gegl_direct_logv(level,format,args);
-    va_end(args);
+  va_list args;
+
+  va_start (args, format);
+  gegl_direct_logv (level, format, args);
+  va_end (args);
 }
 
 void
-gegl_direct_logv (GLogLevelFlags  level,
-                  gchar          *format,
-                  va_list         args)
+gegl_direct_logv (GLogLevelFlags level,
+                  gchar         *format,
+                  va_list        args)
 {
-    if (g_getenv("GEGL_LOG_ON"))
-      {
-        gchar *tabbed = NULL;
-        tabbed = g_strconcat("   ", format, NULL);
-        g_logv(GEGL_LOG_DOMAIN, level, tabbed, args);
-        g_free(tabbed);
-      }
+  if (g_getenv ("GEGL_LOG_ON"))
+    {
+      gchar *tabbed = NULL;
+      tabbed = g_strconcat ("   ", format, NULL);
+      g_logv (GEGL_LOG_DOMAIN, level, tabbed, args);
+      g_free (tabbed);
+    }
 }
 
 
@@ -300,6 +307,7 @@ static GeglRectangle *
 gegl_rectangle_dup (const GeglRectangle *rectangle)
 {
   GeglRectangle *result = g_new (GeglRectangle, 1);
+
   *result = *rectangle;
 
   return result;
@@ -309,11 +317,11 @@ GType
 gegl_rectangle_get_type (void)
 {
   static GType our_type = 0;
-  
+
   if (our_type == 0)
     our_type = g_boxed_type_register_static (g_intern_static_string ("GeglRectangle"),
-					     (GBoxedCopyFunc)gegl_rectangle_dup,
-					     (GBoxedFreeFunc)g_free);
+                                             (GBoxedCopyFunc) gegl_rectangle_dup,
+                                             (GBoxedFreeFunc) g_free);
   return our_type;
 }
 

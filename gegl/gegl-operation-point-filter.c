@@ -27,16 +27,17 @@ G_DEFINE_TYPE (GeglOperationPointFilter, gegl_operation_point_filter, GEGL_TYPE_
 
 
 static void
-gegl_operation_point_filter_class_init (GeglOperationPointFilterClass * klass)
+gegl_operation_point_filter_class_init (GeglOperationPointFilterClass *klass)
 {
   GeglOperationFilterClass *filter_class = GEGL_OPERATION_FILTER_CLASS (klass);
+
   filter_class->process = process_inner;
 }
 
 static void
 gegl_operation_point_filter_init (GeglOperationPointFilter *self)
 {
-  self->format = babl_format ("RGBA float"); /* default to RGBA float for
+  self->format = babl_format ("RGBA float");/* default to RGBA float for
                                                 processing */
 }
 
@@ -46,9 +47,9 @@ process_inner (GeglOperation *operation,
 {
   GeglOperationPointFilter *point_filter = GEGL_OPERATION_POINT_FILTER (operation);
 
-  GeglBuffer *input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-  GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
-  GeglBuffer *output;
+  GeglBuffer               *input  = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+  GeglRectangle            *result = gegl_operation_result_rect (operation, context_id);
+  GeglBuffer               *output;
 
 
   {
@@ -58,23 +59,23 @@ process_inner (GeglOperation *operation,
 
     output = g_object_new (GEGL_TYPE_BUFFER,
                            "format", point_filter->format,
-                           "x",      result->x,
-                           "y",      result->y,
-                           "width",  result->width  ,
+                           "x", result->x,
+                           "y", result->y,
+                           "width", result->width,
                            "height", result->height,
                            NULL);
 
-    if ( (result->width  >0) && (result->height>0) )
+    if ((result->width > 0) && (result->height > 0))
       {
-        buf  = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));
+        buf = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));
 
         gegl_buffer_get (input, result, 1.0, point_filter->format, buf);
 
         GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation)->process (
-           operation,
-           buf,
-           buf,
-           gegl_buffer_pixels (output));
+          operation,
+          buf,
+          buf,
+          gegl_buffer_pixels (output));
 
         gegl_buffer_set (output, result, point_filter->format, buf);
         g_free (buf);
@@ -82,5 +83,5 @@ process_inner (GeglOperation *operation,
 
     gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
   }
-  return  TRUE;
+  return TRUE;
 }

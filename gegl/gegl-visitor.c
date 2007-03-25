@@ -100,17 +100,17 @@ gegl_visitor_class_init (GeglVisitorClass *klass)
 
   gobject_class->finalize = finalize;
 
-  klass->visit_pad  = visit_pad;
-  klass->visit_node = visit_node;
+  klass->visit_pad            = visit_pad;
+  klass->visit_node           = visit_node;
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
   g_object_class_install_property (gobject_class, PROP_ID,
                                    g_param_spec_pointer ("id",
-                                                        "evaluation-id",
-                                                        "The identifier for the evaluation context",
-                                                        G_PARAM_CONSTRUCT |
-                                                        G_PARAM_READWRITE));
+                                                         "evaluation-id",
+                                                         "The identifier for the evaluation context",
+                                                         G_PARAM_CONSTRUCT |
+                                                         G_PARAM_READWRITE));
 }
 
 
@@ -124,31 +124,33 @@ set_property (GObject      *gobject,
 
   switch (property_id)
     {
-    case PROP_ID:
-      self->context_id = g_value_get_pointer (value);
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
-      break;
+      case PROP_ID:
+        self->context_id = g_value_get_pointer (value);
+        break;
+
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+        break;
     }
 }
 
 static void
-get_property (GObject      *gobject,
-              guint         property_id,
-              GValue       *value,
-              GParamSpec   *pspec)
+get_property (GObject    *gobject,
+              guint       property_id,
+              GValue     *value,
+              GParamSpec *pspec)
 {
   GeglVisitor *self = GEGL_VISITOR (gobject);
 
   switch (property_id)
     {
-    case PROP_ID:
-      g_value_set_pointer (value, self->context_id);
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
-      break;
+      case PROP_ID:
+        g_value_set_pointer (value, self->context_id);
+        break;
+
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+        break;
     }
 }
 
@@ -187,7 +189,7 @@ insert (GeglVisitor   *self,
 {
   GeglVisitInfo *visit_info = lookup (self, visitable);
 
-  if(!visit_info)
+  if (!visit_info)
     {
       visit_info = g_new0 (GeglVisitInfo, 1);
 
@@ -326,7 +328,7 @@ init_dfs_traversal (GeglVisitor   *self,
 
   insert (self, visitable);
   depends_on_list = gegl_visitable_depends_on (visitable);
-  llink = depends_on_list;
+  llink           = depends_on_list;
 
   while (llink)
     {
@@ -334,13 +336,13 @@ init_dfs_traversal (GeglVisitor   *self,
 
       if (gegl_visitable_needs_visiting (visitable))
         {
-          GeglVisitInfo * visit_info = lookup (self, visitable);
+          GeglVisitInfo *visit_info = lookup (self, visitable);
 
           if (!visit_info)
             init_dfs_traversal (self, visitable);
         }
 
-      llink = g_slist_next(llink);
+      llink = g_slist_next (llink);
     }
 
   g_slist_free (depends_on_list);
@@ -354,19 +356,19 @@ dfs_traverse (GeglVisitor   *self,
   GSList *llink;
 
   depends_on_list = gegl_visitable_depends_on (visitable);
-  llink = depends_on_list;
+  llink           = depends_on_list;
 
-  while(llink)
+  while (llink)
     {
       GeglVisitable *visitable = llink->data;
 
       if (gegl_visitable_needs_visiting (visitable))
         {
-          if (! get_visited (self, visitable))
+          if (!get_visited (self, visitable))
             dfs_traverse (self, visitable);
         }
 
-      llink = g_slist_next(llink);
+      llink = g_slist_next (llink);
     }
 
   g_slist_free (depends_on_list);
@@ -387,21 +389,21 @@ init_bfs_traversal (GeglVisitor   *self,
   insert (self, visitable);
 
   depends_on_list = gegl_visitable_depends_on (visitable);
-  llink = depends_on_list;
+  llink           = depends_on_list;
 
-  while(llink)
+  while (llink)
     {
-      gint shared_count;
+      gint           shared_count;
       GeglVisitable *depends_on_visitable = llink->data;
-      GeglVisitInfo * visit_info = lookup(self, depends_on_visitable);
+      GeglVisitInfo *visit_info           = lookup (self, depends_on_visitable);
 
-      if (! visit_info)
-       init_bfs_traversal (self, depends_on_visitable);
+      if (!visit_info)
+        init_bfs_traversal (self, depends_on_visitable);
 
       shared_count = get_shared_count (self, depends_on_visitable);
       shared_count++;
       set_shared_count (self, depends_on_visitable, shared_count);
-      llink = g_slist_next(llink);
+      llink = g_slist_next (llink);
     }
 
   g_slist_free (depends_on_list);
@@ -420,7 +422,7 @@ gegl_visitor_bfs_traverse (GeglVisitor   *self,
 {
   GList *queue = NULL;
   GList *first;
-  gint shared_count;
+  gint   shared_count;
 
   g_return_if_fail (GEGL_IS_VISITOR (self));
 
@@ -438,7 +440,7 @@ gegl_visitor_bfs_traverse (GeglVisitor   *self,
     {
       GeglVisitable *visitable = first->data;
 
-      queue = g_list_remove_link (queue,first);
+      queue = g_list_remove_link (queue, first);
       g_list_free_1 (first);
 
       /* Put this one at the end of the queue, if its active immediate
@@ -447,7 +449,7 @@ gegl_visitor_bfs_traverse (GeglVisitor   *self,
       shared_count = get_shared_count (self, visitable);
       if (shared_count > 0)
         {
-          queue = g_list_append (queue,visitable);
+          queue = g_list_append (queue, visitable);
           continue;
         }
 
@@ -459,13 +461,13 @@ gegl_visitor_bfs_traverse (GeglVisitor   *self,
 
         while (llink)
           {
-            GeglVisitable * depends_on_visitable = llink->data;
-            shared_count = get_shared_count (self,depends_on_visitable);
+            GeglVisitable *depends_on_visitable = llink->data;
+            shared_count = get_shared_count (self, depends_on_visitable);
             shared_count--;
             set_shared_count (self, depends_on_visitable, shared_count);
 
             /* Add any undiscovered visitable to the queue at end */
-            if (! get_discovered (self, depends_on_visitable))
+            if (!get_discovered (self, depends_on_visitable))
               {
                 queue = g_list_append (queue, depends_on_visitable);
 

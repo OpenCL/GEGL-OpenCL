@@ -39,7 +39,7 @@ static void visit_node                 (GeglVisitor        *self,
                                         GeglNode           *node);
 
 
-G_DEFINE_TYPE(GeglCRVisitor, gegl_cr_visitor, GEGL_TYPE_VISITOR)
+G_DEFINE_TYPE (GeglCRVisitor, gegl_cr_visitor, GEGL_TYPE_VISITOR)
 
 
 static void
@@ -60,6 +60,7 @@ visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
   GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, self->context_id);
+
   GEGL_VISITOR_CLASS (gegl_cr_visitor_parent_class)->visit_node (self, node);
 
   gegl_rectangle_intersect (&dynamic->result_rect, &node->have_rect, &dynamic->need_rect);
@@ -67,9 +68,9 @@ visit_node (GeglVisitor *self,
   dynamic->refs = gegl_node_get_num_sinks (node);
 
   if (!strcmp (gegl_object_get_name (GEGL_OBJECT (node)), "proxynop-output"))
-  {
-    GeglNode *graph = g_object_get_data (G_OBJECT (node), "graph");
-    if (graph)
-      dynamic->refs += gegl_node_get_num_sinks (graph);
-  }
+    {
+      GeglNode *graph = g_object_get_data (G_OBJECT (node), "graph");
+      if (graph)
+        dynamic->refs += gegl_node_get_num_sinks (graph);
+    }
 }

@@ -26,30 +26,30 @@ enum
   PROP_LAST
 };
 
-static void       get_property (GObject       *gobject,
-                                guint          prop_id,
-                                GValue        *value,
-                                GParamSpec    *pspec);
-static void       set_property (GObject       *gobject,
-                                guint          prop_id,
-                                const GValue  *value,
-                                GParamSpec    *pspec);
-static void       finalize     (GObject       *self_object);
-static GeglNode * detect       (GeglOperation *operation,
-                                gint           x,
-                                gint           y);
+static void       get_property (GObject    *gobject,
+                                guint       prop_id,
+                                GValue     *value,
+                                GParamSpec *pspec);
+static void       set_property (GObject      *gobject,
+                                guint         prop_id,
+                                const GValue *value,
+                                GParamSpec   *pspec);
+static void       finalize (GObject *self_object);
+static GeglNode * detect (GeglOperation *operation,
+                          gint            x,
+                          gint            y);
 
 
 G_DEFINE_TYPE (GeglOperationMeta, gegl_operation_meta, GEGL_TYPE_OPERATION)
 
 static void
-gegl_operation_meta_class_init (GeglOperationMetaClass * klass)
+gegl_operation_meta_class_init (GeglOperationMetaClass *klass)
 {
-  GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property = set_property;
-  object_class->get_property = get_property;
-  object_class->finalize = finalize;
+  object_class->set_property           = set_property;
+  object_class->get_property           = get_property;
+  object_class->finalize               = finalize;
   GEGL_OPERATION_CLASS (klass)->detect = detect;
 }
 
@@ -61,10 +61,10 @@ gegl_operation_meta_init (GeglOperationMeta *self)
 
 
 static void
-get_property (GObject      *object,
-              guint         prop_id,
-              GValue       *value,
-              GParamSpec   *pspec)
+get_property (GObject    *object,
+              guint       prop_id,
+              GValue     *value,
+              GParamSpec *pspec)
 {
 }
 
@@ -84,7 +84,8 @@ detect (GeglOperation *operation,
   return NULL; /* hands it over request to the internal nodes */
 }
 
-typedef struct Redirect {
+typedef struct Redirect
+{
   gchar    *name;
   GeglNode *internal;
   gchar    *internal_name;
@@ -95,8 +96,9 @@ static Redirect *redirect_new (const gchar *name,
                                const gchar *internal_name)
 {
   Redirect *self = g_malloc0 (sizeof (Redirect));
-  self->name = g_strdup (name);
-  self->internal = internal;
+
+  self->name          = g_strdup (name);
+  self->internal      = internal;
   self->internal_name = g_strdup (internal_name);
   return self;
 }
@@ -121,13 +123,14 @@ gegl_node_copy_property_property (GObject     *source,
                                   GObject     *destination,
                                   const gchar *destination_property)
 {
-  GValue value = {0};
-  GParamSpec *spec = g_object_class_find_property (
-       G_OBJECT_GET_CLASS (source), source_property);
+  GValue      value = { 0 };
+  GParamSpec *spec  = g_object_class_find_property (
+    G_OBJECT_GET_CLASS (source), source_property);
+
   g_assert (spec);
   g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (spec));
-  gegl_node_get_property (GEGL_OPERATION(source)->node, source_property, &value);
-  gegl_node_set_property (GEGL_OPERATION(destination)->node, destination_property, &value);
+  gegl_node_get_property (GEGL_OPERATION (source)->node, source_property, &value);
+  gegl_node_set_property (GEGL_OPERATION (destination)->node, destination_property, &value);
   g_value_unset (&value);
 }
 
@@ -137,8 +140,8 @@ gegl_operation_meta_redirect (GeglOperation *operation,
                               GeglNode      *internal,
                               const gchar   *internal_name)
 {
-  GeglOperationMeta *self = GEGL_OPERATION_META (operation);
-  Redirect *redirect = redirect_new (name, internal, internal_name);
+  GeglOperationMeta *self     = GEGL_OPERATION_META (operation);
+  Redirect          *redirect = redirect_new (name, internal, internal_name);
 
   self->redirects = g_slist_prepend (self->redirects, redirect);
 
@@ -163,7 +166,7 @@ void gegl_operation_meta_property_changed (GeglOperationMeta *self,
                                                 G_OBJECT (redirect->internal->operation),
                                                 redirect->internal_name);
             }
-          iter=iter->next;
+          iter = iter->next;
         }
     }
 }
@@ -172,7 +175,7 @@ static void
 finalize (GObject *gobject)
 {
   GeglOperationMeta *self = GEGL_OPERATION_META (gobject);
-  GSList *iter = self->redirects;
+  GSList            *iter = self->redirects;
 
   while (iter)
     {

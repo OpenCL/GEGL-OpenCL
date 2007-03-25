@@ -32,11 +32,11 @@
 
 
 static void gegl_finish_visitor_class_init (GeglFinishVisitorClass *klass);
-static void visit_node                      (GeglVisitor             *self,
-                                             GeglNode                *node);
+static void visit_node (GeglVisitor *self,
+                        GeglNode    *node);
 
 
-G_DEFINE_TYPE(GeglFinishVisitor, gegl_finish_visitor, GEGL_TYPE_VISITOR)
+G_DEFINE_TYPE (GeglFinishVisitor, gegl_finish_visitor, GEGL_TYPE_VISITOR)
 
 
 static void

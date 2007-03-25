@@ -30,12 +30,13 @@ long gegl_ticks (void)
 
 typedef struct _Timing Timing;
 
-struct _Timing {
-  gchar   *name;
-  long     usecs;
-  Timing  *parent;
-  Timing  *children;
-  Timing  *next;
+struct _Timing
+{
+  gchar  *name;
+  long    usecs;
+  Timing *parent;
+  Timing *children;
+  Timing *next;
 };
 
 Timing *root = NULL;
@@ -44,18 +45,18 @@ static Timing *iter_next (Timing *iter)
 {
   if (iter->children)
     {
-      iter=iter->children;
+      iter = iter->children;
     }
   else if (iter->next)
     {
-      iter=iter->next;
+      iter = iter->next;
     }
   else
     {
       while (iter && !iter->next)
-        iter=iter->parent;
+        iter = iter->parent;
       if (iter && iter->next)
-        iter=iter->next;
+        iter = iter->next;
       else
         return NULL;
     }
@@ -67,11 +68,11 @@ static gint timing_depth (Timing *timing)
   Timing *iter = timing;
   gint    ret  = 0;
 
-  while (iter && 
+  while (iter &&
          iter->parent)
     {
       ret++;
-      iter=iter->parent;
+      iter = iter->parent;
     }
 
   return ret;
@@ -81,6 +82,7 @@ static Timing *timing_find (Timing      *root,
                             const gchar *name)
 {
   Timing *iter = root;
+
   if (!iter)
     return NULL;
 
@@ -88,7 +90,7 @@ static Timing *timing_find (Timing      *root,
     {
       if (!strcmp (iter->name, name))
         return iter;
-      if (timing_depth (iter_next (iter)) <= timing_depth(root))
+      if (timing_depth (iter_next (iter)) <= timing_depth (root))
         return NULL;
       iter = iter_next (iter);
     }
@@ -102,9 +104,10 @@ gegl_instrument (const gchar *parent_name,
 {
   Timing *iter;
   Timing *parent;
+
   if (root == NULL)
     {
-      root = g_malloc0 (sizeof (Timing));
+      root       = g_malloc0 (sizeof (Timing));
       root->name = g_strdup (parent_name);
     }
   parent = timing_find (root, parent_name);
@@ -117,10 +120,10 @@ gegl_instrument (const gchar *parent_name,
   iter = timing_find (parent, name);
   if (!iter)
     {
-      iter = g_malloc0 (sizeof (Timing));
-      iter->name = g_strdup (name);
-      iter->parent = parent;
-      iter->next = parent->children;
+      iter             = g_malloc0 (sizeof (Timing));
+      iter->name       = g_strdup (name);
+      iter->parent     = parent;
+      iter->next       = parent->children;
       parent->children = iter;
     }
   iter->usecs += usecs;
@@ -130,7 +133,7 @@ gegl_instrument (const gchar *parent_name,
 static glong timing_child_sum (Timing *timing)
 {
   Timing *iter = timing->children;
-  glong sum = 0;
+  glong   sum  = 0;
 
   while (iter)
     {
@@ -148,12 +151,12 @@ static glong timing_other (Timing *timing)
   return 0;
 }
 
-static float seconds(glong usecs)
+static float seconds (glong usecs)
 {
   return usecs / 1000000.0;
 }
 
-static float normalized(glong usecs)
+static float normalized (glong usecs)
 {
   return 1.0 * usecs / root->usecs;
 }
@@ -164,64 +167,65 @@ static GString *
 tab_to (GString *string, gint position)
 {
   gchar *p;
-  gint curcount = 0;
-  gint i;
- 
+  gint   curcount = 0;
+  gint   i;
+
   p = strrchr (string->str, '\n');
   if (!p)
     {
-      p=string->str;
+      p = string->str;
       curcount++;
     }
-  while (p && *p!='\0')
+  while (p && *p != '\0')
     {
       curcount++;
       p++;
     }
 
-  if (curcount > position && position!=0)
+  if (curcount > position && position != 0)
     {
       g_warning ("tab overflow %i>%i", curcount, position);
     }
   else
     {
-      for (i=0;i<=position-curcount;i++)
+      for (i = 0; i <= position - curcount; i++)
         string = g_string_append (string, " ");
     }
-  return string; 
+  return string;
 }
 
-static gchar *eight[]={
-" ",
-"▏",
-"▍",
-"▌",
-"▋",
-"▊",
-"▉",
-"█"
+static gchar *eight[] = {
+  " ",
+  "▏",
+  "▍",
+  "▌",
+  "▋",
+  "▊",
+  "▉",
+  "█"
 };
 
 static GString *
 bar (GString *string, gint width, gfloat value)
 {
   gboolean utf8 = TRUE;
-  gint i;
-  if (value<0)
+  gint     i;
+
+  if (value < 0)
     return string;
   if (utf8)
     {
       gint blocks = width * 8 * value;
 
-      for (i=0;i< blocks/8; i++)
+      for (i = 0; i < blocks / 8; i++)
         {
           string = g_string_append (string, "█");
         }
-      string = g_string_append (string, eight[blocks%8]);
+      string = g_string_append (string, eight[blocks % 8]);
     }
   else
     {
-      for (i=0;i<width;i++)
+      for (i = 0; i < width; i++)
         {
           if (width * value > i)
             string = g_string_append (string, "X");
@@ -230,23 +234,23 @@ bar (GString *string, gint width, gfloat value)
   return string;
 }
 
-#define INDENT_SPACES 2
-#define SECONDS_COL   25
-#define BAR_COL       33
-#define BAR_WIDTH     (78-BAR_COL)
+#define INDENT_SPACES    2
+#define SECONDS_COL      25
+#define BAR_COL          33
+#define BAR_WIDTH        (78 - BAR_COL)
 
 static void
 sort_children (Timing *parent)
 {
-  Timing *iter;
-  Timing *prev;
+  Timing  *iter;
+  Timing  *prev;
   gboolean changed = FALSE;
 
   do
     {
-      iter = parent->children;
+      iter    = parent->children;
       changed = FALSE;
-      prev = NULL;
+      prev    = NULL;
       while (iter && iter->next)
         {
           Timing *next = iter->next;
@@ -262,16 +266,15 @@ sort_children (Timing *parent)
                 }
               else
                 {
-                  iter->next = next->next;
-                  next->next = iter;
+                  iter->next       = next->next;
+                  next->next       = iter;
                   parent->children = next;
                 }
             }
           prev = iter;
           iter = iter->next;
         }
-    }
-  while (changed);
+    } while (changed);
 
 
   iter = parent->children;
@@ -286,8 +289,8 @@ gchar *
 gegl_instrument_utf8 (void)
 {
   GString *s = g_string_new ("");
-  gchar  *ret;
-  Timing *iter = root;
+  gchar   *ret;
+  Timing  *iter = root;
 
   sort_children (root);
 
@@ -298,30 +301,30 @@ gegl_instrument_utf8 (void)
       if (!strcmp (iter->name, root->name))
         {
           buf = g_strdup_printf ("Total time: %.3fs\n", seconds (iter->usecs));
-          s = g_string_append (s, buf);
+          s   = g_string_append (s, buf);
           g_free (buf);
         }
 
       s = tab_to (s, timing_depth (iter) * INDENT_SPACES);
       s = g_string_append (s, iter->name);
 
-      s = tab_to (s, SECONDS_COL);
-      buf = g_strdup_printf ("%5.1f%%", iter->parent?100.0 * iter->usecs / iter->parent->usecs:100.0);
-      s = g_string_append (s, buf);
+      s   = tab_to (s, SECONDS_COL);
+      buf = g_strdup_printf ("%5.1f%%", iter->parent ? 100.0 * iter->usecs / iter->parent->usecs : 100.0);
+      s   = g_string_append (s, buf);
       g_free (buf);
       s = tab_to (s, BAR_COL);
       s = bar (s, BAR_WIDTH, normalized (iter->usecs));
       s = g_string_append (s, "\n");
 
-      if (timing_depth(iter_next (iter)) < timing_depth (iter))
+      if (timing_depth (iter_next (iter)) < timing_depth (iter))
         {
           if (timing_other (iter->parent) > 0)
             {
-              s = tab_to (s, timing_depth (iter) * INDENT_SPACES);
-              s = g_string_append (s, "other");
-              s = tab_to (s, SECONDS_COL);
+              s   = tab_to (s, timing_depth (iter) * INDENT_SPACES);
+              s   = g_string_append (s, "other");
+              s   = tab_to (s, SECONDS_COL);
               buf = g_strdup_printf ("%5.1f%%", 100 * normalized (timing_other (iter->parent)));
-              s = g_string_append (s, buf);
+              s   = g_string_append (s, buf);
               g_free (buf);
               s = tab_to (s, BAR_COL);
               s = bar (s, BAR_WIDTH, normalized (timing_other (iter->parent)));
@@ -332,7 +335,7 @@ gegl_instrument_utf8 (void)
 
       iter = iter_next (iter);
     }
-  
+
   ret = g_strdup (s->str);
   g_string_free (s, TRUE);
   return ret;

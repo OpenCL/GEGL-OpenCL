@@ -85,7 +85,7 @@ gegl_connection_get_sink_pad (GeglConnection *self)
 
 void
 gegl_connection_set_sink_pad (GeglConnection *self,
-                               GeglPad        *sink_pad)
+                              GeglPad        *sink_pad)
 {
   self->sink_pad = sink_pad;
 }
@@ -98,7 +98,7 @@ gegl_connection_get_source_pad (GeglConnection *self)
 
 void
 gegl_connection_set_source_pad (GeglConnection *self,
-                                 GeglPad        *source_pad)
+                                GeglPad        *source_pad)
 {
   self->source_pad = source_pad;
 }

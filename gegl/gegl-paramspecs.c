@@ -17,7 +17,7 @@
  *
  * Copyright 2003 Calvin Williamson
  *           2006 Øyvind Kolås
- * 
+ *
  * Original contents copied from gimp/app/core/gimpparamspecs.h
  * (c) 1995-2006 Spencer Kimball, Peter Mattis and others.
  */
@@ -38,7 +38,7 @@ gegl_int32_get_type (void)
 {
   static GType type = 0;
 
-  if (! type)
+  if (!type)
     {
       const GTypeInfo info = { 0, };
 
@@ -54,21 +54,21 @@ gegl_int32_get_type (void)
  */
 
 static void   gegl_param_int32_class_init (GParamSpecClass *klass);
-static void   gegl_param_int32_init       (GParamSpec      *pspec);
+static void   gegl_param_int32_init (GParamSpec *pspec);
 
 GType
 gegl_param_int32_get_type (void)
 {
   static GType type = 0;
 
-  if (! type)
+  if (!type)
     {
       const GTypeInfo info =
       {
         sizeof (GParamSpecClass),
-        NULL, NULL,
+        NULL,                                         NULL,
         (GClassInitFunc) gegl_param_int32_class_init,
-        NULL, NULL,
+        NULL,                                         NULL,
         sizeof (GeglParamSpecInt32),
         0,
         (GInstanceInitFunc) gegl_param_int32_init
@@ -128,7 +128,7 @@ gegl_int16_get_type (void)
 {
   static GType type = 0;
 
-  if (! type)
+  if (!type)
     {
       const GTypeInfo info = { 0, };
 
@@ -144,21 +144,21 @@ gegl_int16_get_type (void)
  */
 
 static void   gegl_param_int16_class_init (GParamSpecClass *klass);
-static void   gegl_param_int16_init       (GParamSpec      *pspec);
+static void   gegl_param_int16_init (GParamSpec *pspec);
 
 GType
 gegl_param_int16_get_type (void)
 {
   static GType type = 0;
 
-  if (! type)
+  if (!type)
     {
       const GTypeInfo info =
       {
         sizeof (GParamSpecClass),
-        NULL, NULL,
+        NULL,                                         NULL,
         (GClassInitFunc) gegl_param_int16_class_init,
-        NULL, NULL,
+        NULL,                                         NULL,
         sizeof (GeglParamSpecInt16),
         0,
         (GInstanceInitFunc) gegl_param_int16_init
@@ -218,7 +218,7 @@ gegl_int8_get_type (void)
 {
   static GType type = 0;
 
-  if (! type)
+  if (!type)
     {
       const GTypeInfo info = { 0, };
 
@@ -234,21 +234,21 @@ gegl_int8_get_type (void)
  */
 
 static void   gegl_param_int8_class_init (GParamSpecClass *klass);
-static void   gegl_param_int8_init       (GParamSpec      *pspec);
+static void   gegl_param_int8_init (GParamSpec *pspec);
 
 GType
 gegl_param_int8_get_type (void)
 {
   static GType type = 0;
 
-  if (! type)
+  if (!type)
     {
       const GTypeInfo info =
       {
         sizeof (GParamSpecClass),
-        NULL, NULL,
+        NULL,                                        NULL,
         (GClassInitFunc) gegl_param_int8_class_init,
-        NULL, NULL,
+        NULL,                                        NULL,
         sizeof (GeglParamSpecInt8),
         0,
         (GInstanceInitFunc) gegl_param_int8_init
@@ -303,23 +303,23 @@ gegl_param_spec_int8 (const gchar *name,
  */
 
 static void       gegl_param_string_class_init (GParamSpecClass *klass);
-static void       gegl_param_string_init       (GParamSpec      *pspec);
-static gboolean   gegl_param_string_validate   (GParamSpec      *pspec,
-                                                GValue          *value);
+static void       gegl_param_string_init (GParamSpec *pspec);
+static gboolean   gegl_param_string_validate (GParamSpec *pspec,
+                                              GValue     *value);
 
 GType
 gegl_param_string_get_type (void)
 {
   static GType type = 0;
 
-  if (! type)
+  if (!type)
     {
       const GTypeInfo info =
       {
         sizeof (GParamSpecClass),
-        NULL, NULL,
+        NULL,                                          NULL,
         (GClassInitFunc) gegl_param_string_class_init,
-        NULL, NULL,
+        NULL,                                          NULL,
         sizeof (GeglParamSpecString),
         0,
         (GInstanceInitFunc) gegl_param_string_init
@@ -359,8 +359,8 @@ gegl_param_string_validate (GParamSpec *pspec,
     {
       gchar *s;
 
-      if (! sspec->no_validate &&
-          ! g_utf8_validate (string, -1, (const gchar **) &s))
+      if (!sspec->no_validate &&
+          !g_utf8_validate (string, -1, (const gchar **) &s))
         {
           for (; *s; s++)
             if (*s < ' ')
@@ -369,7 +369,7 @@ gegl_param_string_validate (GParamSpec *pspec,
           return TRUE;
         }
     }
-  else if (! sspec->null_ok)
+  else if (!sspec->null_ok)
     {
       value->data[0].v_pointer = g_strdup ("");
       return TRUE;
@@ -409,23 +409,23 @@ gegl_param_spec_string (const gchar *name,
  */
 
 static void       gegl_param_path_class_init (GParamSpecClass *klass);
-static void       gegl_param_path_init       (GParamSpec      *pspec);
-static gboolean   gegl_param_path_validate   (GParamSpec      *pspec,
-                                              GValue          *value);
+static void       gegl_param_path_init (GParamSpec *pspec);
+static gboolean   gegl_param_path_validate (GParamSpec *pspec,
+                                            GValue     *value);
 
 GType
 gegl_param_path_get_type (void)
 {
   static GType type = 0;
 
-  if (! type)
+  if (!type)
     {
       const GTypeInfo info =
       {
         sizeof (GParamSpecClass),
-        NULL, NULL,
+        NULL,                                        NULL,
         (GClassInitFunc) gegl_param_path_class_init,
-        NULL, NULL,
+        NULL,                                        NULL,
         sizeof (GeglParamSpecString),
         0,
         (GInstanceInitFunc) gegl_param_path_init
@@ -456,17 +456,17 @@ gegl_param_path_init (GParamSpec *pspec)
 
 static gboolean
 gegl_param_path_validate (GParamSpec *pspec,
-                            GValue     *value)
+                          GValue     *value)
 {
-  GeglParamSpecPath *sspec  = GEGL_PARAM_SPEC_PATH (pspec);
-  gchar             *path = value->data[0].v_pointer;
+  GeglParamSpecPath *sspec = GEGL_PARAM_SPEC_PATH (pspec);
+  gchar             *path  = value->data[0].v_pointer;
 
   if (path)
     {
       gchar *s;
 
-      if (! sspec->no_validate &&
-          ! g_utf8_validate (path, -1, (const gchar **) &s))
+      if (!sspec->no_validate &&
+          !g_utf8_validate (path, -1, (const gchar **) &s))
         {
           for (; *s; s++)
             if (*s < ' ')
@@ -475,7 +475,7 @@ gegl_param_path_validate (GParamSpec *pspec,
           return TRUE;
         }
     }
-  else if (! sspec->null_ok)
+  else if (!sspec->null_ok)
     {
       value->data[0].v_pointer = g_strdup ("");
       return TRUE;
@@ -516,23 +516,23 @@ gegl_param_spec_path (const gchar *name,
  */
 
 static void       gegl_param_multiline_class_init (GParamSpecClass *klass);
-static void       gegl_param_multiline_init       (GParamSpec      *pspec);
-static gboolean   gegl_param_multiline_validate   (GParamSpec      *pspec,
-                                              GValue          *value);
+static void       gegl_param_multiline_init (GParamSpec *pspec);
+static gboolean   gegl_param_multiline_validate (GParamSpec *pspec,
+                                                 GValue     *value);
 
 GType
 gegl_param_multiline_get_type (void)
 {
   static GType type = 0;
 
-  if (! type)
+  if (!type)
     {
       const GTypeInfo info =
       {
         sizeof (GParamSpecClass),
-        NULL, NULL,
+        NULL,                                             NULL,
         (GClassInitFunc) gegl_param_multiline_class_init,
-        NULL, NULL,
+        NULL,                                             NULL,
         sizeof (GeglParamSpecString),
         0,
         (GInstanceInitFunc) gegl_param_multiline_init
@@ -563,17 +563,17 @@ gegl_param_multiline_init (GParamSpec *pspec)
 
 static gboolean
 gegl_param_multiline_validate (GParamSpec *pspec,
-                            GValue     *value)
+                               GValue     *value)
 {
-  GeglParamSpecMultiline *sspec  = GEGL_PARAM_SPEC_MULTILINE (pspec);
-  gchar             *multiline = value->data[0].v_pointer;
+  GeglParamSpecMultiline *sspec     = GEGL_PARAM_SPEC_MULTILINE (pspec);
+  gchar                  *multiline = value->data[0].v_pointer;
 
   if (multiline)
     {
       gchar *s;
 
-      if (! sspec->no_validate &&
-          ! g_utf8_validate (multiline, -1, (const gchar **) &s))
+      if (!sspec->no_validate &&
+          !g_utf8_validate (multiline, -1, (const gchar **) &s))
         {
           for (; *s; s++)
             if (*s < ' ')
@@ -582,7 +582,7 @@ gegl_param_multiline_validate (GParamSpec *pspec,
           return TRUE;
         }
     }
-  else if (! sspec->null_ok)
+  else if (!sspec->null_ok)
     {
       value->data[0].v_pointer = g_strdup ("");
       return TRUE;
@@ -633,14 +633,14 @@ gegl_param_enum_get_type (void)
 {
   static GType type = 0;
 
-  if (! type)
+  if (!type)
     {
       const GTypeInfo info =
       {
         sizeof (GParamSpecClass),
-        NULL, NULL,
+        NULL,                                        NULL,
         (GClassInitFunc) gegl_param_enum_class_init,
-        NULL, NULL,
+        NULL,                                        NULL,
         sizeof (GeglParamSpecEnum),
         0,
         (GInstanceInitFunc) gegl_param_enum_init
@@ -686,7 +686,7 @@ static gboolean
 gegl_param_enum_validate (GParamSpec *pspec,
                           GValue     *value)
 {
-  GeglParamSpecEnum *espec  = GEGL_PARAM_SPEC_ENUM (pspec);
+  GeglParamSpecEnum *espec = GEGL_PARAM_SPEC_ENUM (pspec);
   GParamSpecClass   *parent_class;
   GSList            *list;
 

@@ -49,7 +49,7 @@ G_DEFINE_TYPE_WITH_CODE (GeglPad, gegl_pad, GEGL_TYPE_OBJECT,
                                                 visitable_init))
 
 static void
-gegl_pad_class_init (GeglPadClass * klass)
+gegl_pad_class_init (GeglPadClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
@@ -132,9 +132,9 @@ gegl_pad_disconnect (GeglPad        *sink,
   /*
    *  this happends with ghostpads sometimes,. maybe check for that being
    *  the case, and then do the assert, or bake it into the assert?
-   * 
-  g_assert (source == gegl_connection_get_source_pad (connection));
-  */
+   *
+     g_assert (source == gegl_connection_get_source_pad (connection));
+   */
 
   sink->connections   = g_slist_remove (sink->connections, connection);
   source->connections = g_slist_remove (source->connections, connection);
@@ -173,8 +173,8 @@ gegl_pad_get_depends_on (GeglPad *self)
   if (gegl_pad_is_input (self))
     {
       gint i;
-      for (i=0; i<g_slist_length (self->connections); i++)
-       {
+      for (i = 0; i < g_slist_length (self->connections); i++)
+        {
           GeglConnection *connection = g_slist_nth_data (self->connections, i);
           if (connection)
             {
@@ -185,7 +185,7 @@ gegl_pad_get_depends_on (GeglPad *self)
             {
               g_warning ("hmm,. or perhaps just a non connected pad");
             }
-       }
+        }
 
       /* FIXME: this add depends for all inputs of the graph, this is probably
        * too much in some cases
@@ -193,7 +193,7 @@ gegl_pad_get_depends_on (GeglPad *self)
       if (!strcmp (gegl_object_get_name (GEGL_OBJECT (self->node)), "proxynop-input"))
         {
           GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
-          GSList *llink = graph->sources;
+          GSList   *llink = graph->sources;
 
           for (llink = graph->sources; llink; llink = g_slist_next (llink))
             {
@@ -202,7 +202,6 @@ gegl_pad_get_depends_on (GeglPad *self)
                                             gegl_connection_get_source_pad (connection));
             }
         }
-
     }
   else if (gegl_pad_is_output (self))
     {
@@ -225,6 +224,7 @@ GeglPad *
 gegl_pad_get_connected_to (GeglPad *self)
 {
   GeglPad *pad = NULL;
+
   g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
 
   if (gegl_pad_is_input (self) &&
@@ -241,6 +241,7 @@ GeglPad *
 gegl_pad_get_internal_connected_to (GeglPad *self)
 {
   GeglPad *pad = gegl_pad_get_connected_to (self);
+
   g_assert (GEGL_IS_PAD (self));
 
   if (!pad && gegl_object_get_name (GEGL_OBJECT (self->node)) && !strcmp (gegl_object_get_name (GEGL_OBJECT (self->node)), "proxynop-input"))
@@ -261,7 +262,7 @@ gegl_pad_get_internal_connected_to (GeglPad *self)
           pad = gegl_node_get_pad (graph, gegl_pad_get_name (self));
         }
       if (pad)
-         pad = gegl_pad_get_connected_to (pad);
+        pad = gegl_pad_get_connected_to (pad);
     }
   return pad;
 }

@@ -96,7 +96,6 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
                                                         GEGL_TYPE_BUFFER,
                                                         G_PARAM_READWRITE |
                                                         GEGL_PAD_INPUT));
-
 }
 
 static void
@@ -107,8 +106,8 @@ gegl_operation_composer_init (GeglOperationComposer *self)
 static void
 attach (GeglOperation *self)
 {
-  GeglOperation  *operation    = GEGL_OPERATION (self);
-  GObjectClass   *object_class = G_OBJECT_GET_CLASS (self);
+  GeglOperation *operation    = GEGL_OPERATION (self);
+  GObjectClass  *object_class = G_OBJECT_GET_CLASS (self);
 
   gegl_operation_create_pad (operation,
                              g_object_class_find_property (object_class,
@@ -122,10 +121,10 @@ attach (GeglOperation *self)
 }
 
 static void
-get_property (GObject      *object,
-              guint         prop_id,
-              GValue       *value,
-              GParamSpec   *pspec)
+get_property (GObject    *object,
+              guint       prop_id,
+              GValue     *value,
+              GParamSpec *pspec)
 {
 }
 
@@ -142,11 +141,11 @@ process (GeglOperation *operation,
          gpointer       context_id,
          const gchar   *output_prop)
 {
-  GeglBuffer *input;
-  GeglBuffer *aux;
+  GeglBuffer                 *input;
+  GeglBuffer                 *aux;
 
-  GeglOperationComposerClass *klass       = GEGL_OPERATION_COMPOSER_GET_CLASS (operation);
-  gboolean success = FALSE;
+  GeglOperationComposerClass *klass   = GEGL_OPERATION_COMPOSER_GET_CLASS (operation);
+  gboolean                    success = FALSE;
 
   if (strcmp (output_prop, "output"))
     {
@@ -155,20 +154,20 @@ process (GeglOperation *operation,
     }
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-  aux = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
+  aux   = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
 
   /* A composer with a NULL aux, can still be valid, the
    * subclass has to handle it.
    */
   if (input != NULL ||
-      aux   != NULL)
+      aux != NULL)
     {
       success = klass->process (operation, context_id);
     }
   else
     {
       g_warning ("%s received NULL input and aux",
-          gegl_node_get_debug_name (operation->node));
+                 gegl_node_get_debug_name (operation->node));
     }
 
   return success;
@@ -177,9 +176,10 @@ process (GeglOperation *operation,
 static GeglRectangle
 get_defined_region (GeglOperation *self)
 {
-  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle  result   = { 0, 0, 0, 0 };
   GeglRectangle *in_rect  = gegl_operation_source_get_defined_region (self, "input");
   GeglRectangle *aux_rect = gegl_operation_source_get_defined_region (self, "aux");
+
   if (!in_rect)
     {
       if (aux_rect)
@@ -214,7 +214,7 @@ detect (GeglOperation *operation,
         gint           y)
 {
   GeglNode *input_node = gegl_operation_get_source_node (operation, "input");
-  GeglNode *aux_node = gegl_operation_get_source_node (operation, "aux");
+  GeglNode *aux_node   = gegl_operation_get_source_node (operation, "aux");
 
   if (input_node)
     input_node = gegl_node_detect (input_node, x, y);

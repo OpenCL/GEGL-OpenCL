@@ -37,6 +37,7 @@ const gchar *
 gegl_extension_handler_get (const gchar *extension)
 {
   const gchar *handler;
+
   if (!handlers)
     return NULL;
   handler = g_hash_table_lookup (handlers, extension);

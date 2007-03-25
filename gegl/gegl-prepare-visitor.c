@@ -32,11 +32,11 @@
 
 
 static void gegl_prepare_visitor_class_init (GeglPrepareVisitorClass *klass);
-static void visit_node                      (GeglVisitor             *self,
-                                             GeglNode                *node);
+static void visit_node (GeglVisitor *self,
+                        GeglNode    *node);
 
 
-G_DEFINE_TYPE(GeglPrepareVisitor, gegl_prepare_visitor, GEGL_TYPE_VISITOR)
+G_DEFINE_TYPE (GeglPrepareVisitor, gegl_prepare_visitor, GEGL_TYPE_VISITOR)
 
 
 static void
@@ -58,7 +58,8 @@ visit_node (GeglVisitor *self,
 {
   GeglOperation *operation = node->operation;
 
-  glong time = gegl_ticks ();
+  glong          time = gegl_ticks ();
+
   GEGL_VISITOR_CLASS (gegl_prepare_visitor_parent_class)->visit_node (self, node);
 
   if (self->context_id == NULL)

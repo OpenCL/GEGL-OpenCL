@@ -35,11 +35,11 @@
 
 
 static void gegl_eval_visitor_class_init (GeglEvalVisitorClass *klass);
-static void visit_pad                    (GeglVisitor          *self,
-                                          GeglPad              *pad);
+static void visit_pad (GeglVisitor *self,
+                       GeglPad     *pad);
 
 
-G_DEFINE_TYPE(GeglEvalVisitor, gegl_eval_visitor, GEGL_TYPE_VISITOR)
+G_DEFINE_TYPE (GeglEvalVisitor, gegl_eval_visitor, GEGL_TYPE_VISITOR)
 
 
 static void
@@ -61,20 +61,20 @@ static void
 visit_pad (GeglVisitor *self,
            GeglPad     *pad)
 {
-  GeglNode        *node      = gegl_pad_get_node (pad);
+  GeglNode        *node       = gegl_pad_get_node (pad);
   gpointer         context_id = self->context_id;
-  GeglNodeDynamic *dynamic   = gegl_node_get_dynamic (node, context_id);
-  GeglOperation   *operation = node->operation;
+  GeglNodeDynamic *dynamic    = gegl_node_get_dynamic (node, context_id);
+  GeglOperation   *operation  = node->operation;
 
   GEGL_VISITOR_CLASS (gegl_eval_visitor_parent_class)->visit_pad (self, pad);
 
   if (gegl_pad_is_output (pad))
     {
-      glong time = gegl_ticks ();
+      glong time      = gegl_ticks ();
       glong babl_time = babl_total_usecs;
       gegl_operation_process (operation, context_id, gegl_pad_get_name (pad));
       babl_time = babl_total_usecs - babl_time;
-      time = gegl_ticks ()-time;
+      time      = gegl_ticks () - time;
 
       gegl_instrument ("process", gegl_node_get_operation (node), time);
       gegl_instrument (gegl_node_get_operation (node), "babl", babl_time);
@@ -87,9 +87,9 @@ visit_pad (GeglVisitor *self,
 
       if (source_pad)
         {
-          GValue      value     = { 0 };
-          GParamSpec *prop_spec = gegl_pad_get_param_spec (pad);
-          GeglNode *source_node = gegl_pad_get_node (source_pad);
+          GValue           value          = { 0 };
+          GParamSpec      *prop_spec      = gegl_pad_get_param_spec (pad);
+          GeglNode        *source_node    = gegl_pad_get_node (source_pad);
           GeglNodeDynamic *source_dynamic = gegl_node_get_dynamic (source_node, context_id);
 
           g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (prop_spec));
@@ -100,16 +100,16 @@ visit_pad (GeglVisitor *self,
 
           if (!g_value_get_object (&value) &&
               !g_object_get_data (G_OBJECT (source_node), "graph"))
-             g_warning ("eval-visitor encountered a NULL buffer passed from: %s.%s-[%p]", 
-               gegl_node_get_debug_name (source_node),
-               gegl_pad_get_name (source_pad),
-               g_value_get_object (&value));
+            g_warning ("eval-visitor encountered a NULL buffer passed from: %s.%s-[%p]",
+                       gegl_node_get_debug_name (source_node),
+                       gegl_pad_get_name (source_pad),
+                       g_value_get_object (&value));
 
           gegl_node_dynamic_set_property (dynamic,
                                           gegl_pad_get_name (pad),
                                           &value);
           /* reference counting for this source dropped to zero, freeing up */
-          if (--gegl_node_get_dynamic(gegl_pad_get_node (source_pad), context_id)->refs==0 &&
+          if (-- gegl_node_get_dynamic (gegl_pad_get_node (source_pad), context_id)->refs == 0 &&
               g_value_get_object (&value))
             {
               gegl_node_dynamic_remove_property (gegl_node_get_dynamic (gegl_pad_get_node (source_pad), context_id), gegl_pad_get_name (source_pad));

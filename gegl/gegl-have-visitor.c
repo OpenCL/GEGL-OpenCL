@@ -33,11 +33,11 @@
 #include "gegl-instrument.h"
 
 static void gegl_have_visitor_class_init (GeglHaveVisitorClass *klass);
-static void visit_node                   (GeglVisitor          *self,
-                                          GeglNode             *node);
+static void visit_node (GeglVisitor *self,
+                        GeglNode    *node);
 
 
-G_DEFINE_TYPE(GeglHaveVisitor, gegl_have_visitor, GEGL_TYPE_VISITOR)
+G_DEFINE_TYPE (GeglHaveVisitor, gegl_have_visitor, GEGL_TYPE_VISITOR)
 
 
 static void
@@ -57,9 +57,9 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-  GeglRectangle rect;
+  GeglRectangle  rect;
   GeglOperation *operation;
-  glong    time = gegl_ticks ();
+  glong          time = gegl_ticks ();
 
   GEGL_VISITOR_CLASS (gegl_have_visitor_parent_class)->visit_node (self, node);
   if (!node)

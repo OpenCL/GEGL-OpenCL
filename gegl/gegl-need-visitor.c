@@ -32,11 +32,11 @@
 
 
 static void gegl_need_visitor_class_init (GeglNeedVisitorClass *klass);
-static void visit_node                   (GeglVisitor          *self,
-                                          GeglNode             *node);
+static void visit_node (GeglVisitor *self,
+                        GeglNode    *node);
 
 
-G_DEFINE_TYPE(GeglNeedVisitor, gegl_need_visitor, GEGL_TYPE_VISITOR)
+G_DEFINE_TYPE (GeglNeedVisitor, gegl_need_visitor, GEGL_TYPE_VISITOR)
 
 
 static void
@@ -56,7 +56,7 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-  GeglOperation *operation = node->operation;
+  GeglOperation *operation  = node->operation;
   gpointer       context_id = self->context_id;
 
   GEGL_VISITOR_CLASS (gegl_need_visitor_parent_class)->visit_node (self, node);

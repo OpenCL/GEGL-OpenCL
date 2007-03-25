@@ -31,7 +31,7 @@ G_DEFINE_TYPE (GeglOperationPointComposer, gegl_operation_point_composer, GEGL_T
 
 
 static void
-gegl_operation_point_composer_class_init (GeglOperationPointComposerClass * klass)
+gegl_operation_point_composer_class_init (GeglOperationPointComposerClass *klass)
 {
   /*GObjectClass       *object_class    = G_OBJECT_CLASS (klass);*/
   GeglOperationComposerClass *composer_class = GEGL_OPERATION_COMPOSER_CLASS (klass);
@@ -42,9 +42,9 @@ gegl_operation_point_composer_class_init (GeglOperationPointComposerClass * klas
 static void
 gegl_operation_point_composer_init (GeglOperationPointComposer *self)
 {
-  self->format = babl_format ("RGBA float"); /* default to RGBA float for
+  self->format     = babl_format ("RGBA float");/* default to RGBA float for
                                                 processing */
-  self->aux_format = babl_format ("RGBA float"); /* default to RGBA float for
+  self->aux_format = babl_format ("RGBA float");/* default to RGBA float for
                                                     processing */
 }
 
@@ -54,16 +54,16 @@ process_inner (GeglOperation *operation,
 {
   GeglOperationPointComposer *point_composer = GEGL_OPERATION_POINT_COMPOSER (operation);
 
-  GeglBuffer * input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-  GeglBuffer * aux = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
+  GeglBuffer                 *input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+  GeglBuffer                 *aux   = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
 
-  GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+  GeglRectangle              *result = gegl_operation_result_rect (operation, context_id);
 
   if (!input && aux)
     {
-        g_object_ref (aux);
-        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (aux));
-        return TRUE;
+      g_object_ref (aux);
+      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (aux));
+      return TRUE;
     }
 
   {
@@ -72,69 +72,69 @@ process_inner (GeglOperation *operation,
     g_assert (gegl_buffer_get_format (input));
 
 
-    if ( (result->width  >0) && (result->height>0))
+    if ((result->width > 0) && (result->height > 0))
       {
-        GeglBuffer *output;
+        GeglBuffer  *output;
 
-	const gchar *op = gegl_node_get_operation (operation->node);
-	if (!strcmp (op, "over"))
-{
+        const gchar *op = gegl_node_get_operation (operation->node);
+        if (!strcmp (op, "over"))
+          {
 #define SKIP_EMPTY_IN
 #define SKIP_EMPTY_AUX
 #ifdef SKIP_EMPTY_IN
-       {
-	GeglRectangle in_abyss;
+            {
+              GeglRectangle in_abyss;
 
-	in_abyss = gegl_buffer_get_abyss (input);
+              in_abyss = gegl_buffer_get_abyss (input);
 
-	if ((!input ||
-            !gegl_rectangle_intersect (NULL, &in_abyss, result)) &&
-            aux)
-          {
-	    GeglRectangle aux_abyss;
-	    aux_abyss = gegl_buffer_get_abyss (aux);
+              if ((!input ||
+                   !gegl_rectangle_intersect (NULL, &in_abyss, result)) &&
+                  aux)
+                {
+                  GeglRectangle aux_abyss;
+                  aux_abyss = gegl_buffer_get_abyss (aux);
 
-            if(!gegl_rectangle_intersect (NULL, &aux_abyss, result))
-              {
-                GeglBuffer *output = g_object_new (GEGL_TYPE_BUFFER,
-                                     "format", point_composer->format,
-                                     "x",      0,
-                                     "y",      0,
-                                     "width",  0,
-                                     "height", 0,
-                                     NULL);
-                gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
-                return TRUE;
-              }
-            g_object_ref (aux);
-            gegl_operation_set_data (operation, context_id, "output", G_OBJECT (aux));
-            return TRUE;
-          }
-        }
+                  if (!gegl_rectangle_intersect (NULL, &aux_abyss, result))
+                    {
+                      GeglBuffer *output = g_object_new (GEGL_TYPE_BUFFER,
+                                                         "format", point_composer->format,
+                                                         "x", 0,
+                                                         "y", 0,
+                                                         "width", 0,
+                                                         "height", 0,
+                                                         NULL);
+                      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+                      return TRUE;
+                    }
+                  g_object_ref (aux);
+                  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (aux));
+                  return TRUE;
+                }
+            }
 #endif
 
 #ifdef SKIP_EMPTY_AUX
-       {
-	GeglRectangle aux_abyss;
+            {
+              GeglRectangle aux_abyss;
 
-	if (aux)
-	  aux_abyss = gegl_buffer_get_abyss (aux);
+              if (aux)
+                aux_abyss = gegl_buffer_get_abyss (aux);
 
-	if (!aux ||
-            !gegl_rectangle_intersect (NULL, &aux_abyss, result))
-          {
-            g_object_ref (input);
-            gegl_operation_set_data (operation, context_id, "output", G_OBJECT (input));
-            return TRUE;
-          }
-        }
+              if (!aux ||
+                  !gegl_rectangle_intersect (NULL, &aux_abyss, result))
+                {
+                  g_object_ref (input);
+                  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (input));
+                  return TRUE;
+                }
+            }
 #endif
-}
+          }
         output = g_object_new (GEGL_TYPE_BUFFER,
                                "format", point_composer->format,
-                               "x",      result->x,
-                               "y",      result->y,
-                               "width",  result->width  ,
+                               "x", result->x,
+                               "y", result->y,
+                               "width", result->width,
                                "height", result->height,
                                NULL);
 
@@ -144,19 +144,19 @@ process_inner (GeglOperation *operation,
           aux_buf = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));
 
         gegl_buffer_get (input, result, 1.0, point_composer->format, buf);
-          
+
         if (aux)
           {
             gegl_buffer_get (aux, result, 1.0, point_composer->aux_format, aux_buf);
           }
-          {
-            GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
-               operation,
-               buf,
-               aux_buf,
-               buf,
-               gegl_buffer_pixels (output));
-          }
+        {
+          GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
+            operation,
+            buf,
+            aux_buf,
+            buf,
+            gegl_buffer_pixels (output));
+        }
 
         gegl_buffer_set (output, result, point_composer->format, buf);
 
@@ -164,19 +164,19 @@ process_inner (GeglOperation *operation,
         if (aux)
           g_free (aux_buf);
 
-          gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
-        }
-      else
-        {
-          GeglBuffer *output = g_object_new (GEGL_TYPE_BUFFER,
-                               "format", point_composer->format,
-                               "x",      0,
-                               "y",      0,
-                               "width",  0,
-                               "height", 0,
-                               NULL);
-          gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
-        }
+        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
       }
-  return  TRUE;
+    else
+      {
+        GeglBuffer *output = g_object_new (GEGL_TYPE_BUFFER,
+                                           "format", point_composer->format,
+                                           "x", 0,
+                                           "y", 0,
+                                           "width", 0,
+                                           "height", 0,
+                                           NULL);
+        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+      }
+  }
+  return TRUE;
 }

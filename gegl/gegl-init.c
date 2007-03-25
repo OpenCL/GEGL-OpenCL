@@ -38,7 +38,7 @@ static gboolean  gegl_post_parse_hook (GOptionContext *context,
 
 static gboolean gegl_initialized = FALSE;
 
-static glong global_time = 0;
+static glong    global_time = 0;
 
 
 /**
@@ -57,7 +57,7 @@ static glong global_time = 0;
  * by gegl_get_option_group(), you don't have to call gegl_init().
  **/
 void
-gegl_init (gint *argc,
+gegl_init (gint    *argc,
            gchar ***argv)
 {
   if (gegl_initialized)
@@ -72,14 +72,14 @@ gegl_init (gint *argc,
 
 #if 0
   GOptionContext *context;
-  GError *error = NULL;
+  GError         *error = NULL;
 
   context = g_option_context_new (NULL);
   g_option_context_set_ignore_unknown_options (context, TRUE);
   g_option_context_set_help_enabled (context, FALSE);
   g_option_context_set_main_group (context, gegl_get_option_group ());
 
-  if (! g_option_context_parse (context, argc, argv, &error))
+  if (!g_option_context_parse (context, argc, argv, &error))
     {
       g_warning ("%s", error->message);
       g_error_free (error);
@@ -118,13 +118,14 @@ void
 gegl_exit (void)
 {
   glong timing = gegl_ticks ();
+
   gegl_buffer_allocators_free ();
   babl_destroy ();
   timing = gegl_ticks () - timing;
   gegl_instrument ("gegl", "gegl_exit", timing);
 
   /* used when tracking buffer and tile leaks */
-  if(g_getenv ("GEGL_DEBUG_BUFS")!=NULL)
+  if (g_getenv ("GEGL_DEBUG_BUFS") != NULL)
     {
       gegl_buffer_stats ();
       gegl_tile_mem_stats ();
@@ -132,19 +133,19 @@ gegl_exit (void)
   global_time = gegl_ticks () - global_time;
   gegl_instrument ("gegl", "gegl", global_time);
 
-  if (g_getenv ("GEGL_DEBUG_TIME")!=NULL)
+  if (g_getenv ("GEGL_DEBUG_TIME") != NULL)
     {
       g_print ("\n%s", gegl_instrument_utf8 ());
     }
 
-  if (gegl_buffer_leaks())
+  if (gegl_buffer_leaks ())
     g_print ("  buffer-leaks: %i", gegl_buffer_leaks ());
 
   if (g_getenv ("GEGL_SWAP"))
     {
       const gchar *swapdir = g_getenv ("GEGL_SWAP");
-      guint pid = getpid ();
-      gchar buf[4096];
+      guint        pid     = getpid ();
+      gchar        buf[4096];
       g_snprintf (buf, 4096, "rm %s/GEGL-%i-*.swap", swapdir, pid);
       system (buf);
     }
@@ -159,7 +160,7 @@ gegl_post_parse_hook (GOptionContext *context,
                       GError        **error)
 {
   static GeglModuleDB *module_db = NULL;
-  glong time;
+  glong                time;
 
   if (gegl_initialized)
     return TRUE;
@@ -179,8 +180,8 @@ gegl_post_parse_hook (GOptionContext *context,
       gchar *load_inhibit = g_strdup ("");
       gchar *module_path;
 
-      if (g_getenv("BABL_ERROR") == NULL)
-          g_setenv ("BABL_ERROR", "0.007", 0);
+      if (g_getenv ("BABL_ERROR") == NULL)
+        g_setenv ("BABL_ERROR", "0.007", 0);
 
       if (g_getenv ("GEGL_PATH"))
         {
@@ -188,7 +189,7 @@ gegl_post_parse_hook (GOptionContext *context,
         }
       else
         {
-          module_path  = g_strdup (PREFIX "/lib/gegl-1.0");
+          module_path = g_strdup (PREFIX "/lib/gegl-1.0");
         }
 
       module_db = gegl_module_db_new (FALSE);

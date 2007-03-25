@@ -58,9 +58,9 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
   gobject_class->get_property = get_property;
 
   operation_class->process = process;
-  operation_class->attach = attach;
+  operation_class->attach  = attach;
 
-  operation_class->get_defined_region = get_defined_region;
+  operation_class->get_defined_region  = get_defined_region;
   operation_class->calc_source_regions = calc_source_regions;
 
   g_object_class_install_property (gobject_class, PROP_OUTPUT,
@@ -70,7 +70,6 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
                                                         GEGL_TYPE_BUFFER,
                                                         G_PARAM_READABLE |
                                                         GEGL_PAD_OUTPUT));
-
 }
 
 static void
@@ -81,8 +80,8 @@ gegl_operation_source_init (GeglOperationSource *self)
 static void
 attach (GeglOperation *self)
 {
-  GeglOperation   *operation = GEGL_OPERATION (self);
-  GObjectClass *object_class = G_OBJECT_GET_CLASS (self);
+  GeglOperation *operation    = GEGL_OPERATION (self);
+  GObjectClass  *object_class = G_OBJECT_GET_CLASS (self);
 
   gegl_operation_create_pad (operation,
                              g_object_class_find_property (object_class,
@@ -90,10 +89,10 @@ attach (GeglOperation *self)
 }
 
 static void
-get_property (GObject      *object,
-              guint         prop_id,
-              GValue       *value,
-              GParamSpec   *pspec)
+get_property (GObject    *object,
+              guint       prop_id,
+              GValue     *value,
+              GParamSpec *pspec)
 {
 }
 
@@ -111,14 +110,14 @@ process (GeglOperation *operation,
          const gchar   *output_prop)
 {
   GeglOperationSourceClass *klass = GEGL_OPERATION_SOURCE_GET_CLASS (operation);
-  gboolean success;
+  gboolean                  success;
 
   if (strcmp (output_prop, "output"))
     {
       g_warning ("requested processing of %s pad on a source operation", output_prop);
-    return FALSE;
+      return FALSE;
     }
-  
+
   g_assert (klass->process);
   success = klass->process (operation, context_id);
 
@@ -128,9 +127,10 @@ process (GeglOperation *operation,
 static GeglRectangle
 get_defined_region (GeglOperation *self)
 {
-  GeglRectangle result = {0,0,0,0};
+  GeglRectangle result = { 0, 0, 0, 0 };
+
   g_warning ("Gegl Source '%s' has no proper have_rect function",
-     G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS(self)));
+             G_OBJECT_CLASS_NAME (G_OBJECT_GET_CLASS (self)));
   return result;
 }
 

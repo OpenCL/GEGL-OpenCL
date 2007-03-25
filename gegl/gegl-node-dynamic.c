@@ -41,28 +41,29 @@ static GValue * gegl_node_dynamic_add_value    (GeglNodeDynamic *self,
 G_DEFINE_TYPE (GeglNodeDynamic, gegl_node_dynamic, G_TYPE_OBJECT);
 
 static void
-gegl_node_dynamic_class_init (GeglNodeDynamicClass * klass)
+gegl_node_dynamic_class_init (GeglNodeDynamicClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize     = finalize;
+
+  gobject_class->finalize = finalize;
 }
 
 static void
 gegl_node_dynamic_init (GeglNodeDynamic *self)
 {
-  self->refs        = 0;
+  self->refs = 0;
 }
 
 void
-gegl_node_dynamic_set_need_rect (GeglNodeDynamic    *node,
-                         gint         x,
-                         gint         y,
-                         gint         width,
-                         gint         height)
+gegl_node_dynamic_set_need_rect (GeglNodeDynamic *node,
+                                 gint             x,
+                                 gint             y,
+                                 gint             width,
+                                 gint             height)
 {
   g_assert (node);
-  node->need_rect.x = x;
-  node->need_rect.y = y;
+  node->need_rect.x      = x;
+  node->need_rect.y      = y;
   node->need_rect.width  = width;
   node->need_rect.height = height;
 }
@@ -81,14 +82,14 @@ gegl_node_dynamic_set_result_rect (GeglNodeDynamic *node,
                                    gint             height)
 {
   g_assert (node);
-  node->result_rect.x = x;
-  node->result_rect.y = y;
+  node->result_rect.x      = x;
+  node->result_rect.y      = y;
   node->result_rect.width  = width;
   node->result_rect.height = height;
 }
 
 GeglRectangle *
-gegl_node_dynamic_get_need_rect (GeglNodeDynamic    *node)
+gegl_node_dynamic_get_need_rect (GeglNodeDynamic *node)
 {
   return &node->need_rect;
 }
@@ -102,7 +103,7 @@ gegl_node_dynamic_set_property (GeglNodeDynamic *dynamic,
   GValue     *storage;
 
   pspec = gegl_node_find_property (dynamic->node, property_name);
-  
+
   if (!pspec)
     {
       g_warning ("%s: node %s has no pad|property named '%s'",
@@ -122,12 +123,11 @@ gegl_node_dynamic_get_property (GeglNodeDynamic *dynamic,
                                 const gchar     *property_name,
                                 GValue          *value)
 {
-
   GParamSpec *pspec;
   GValue     *storage;
 
   pspec = gegl_node_find_property (dynamic->node, property_name);
-  
+
   if (!pspec)
     {
       g_warning ("%s: node %s has no pad|property named '%s'",
@@ -145,14 +145,15 @@ gegl_node_dynamic_get_property (GeglNodeDynamic *dynamic,
 
 typedef struct Property
 {
-  gchar  *name;
-  GValue  value;
+  gchar *name;
+  GValue value;
 } Property;
 
 static Property *property_new (GeglNode    *node,
-                        const gchar *property_name)
+                               const gchar *property_name)
 {
-  Property *property = g_malloc0( sizeof (Property));
+  Property *property = g_malloc0 (sizeof (Property));
+
   property->name = g_strdup (property_name);
   return property;
 }
@@ -169,21 +170,23 @@ static gint
 lookup_property (gconstpointer a,
                  gconstpointer property_name)
 {
-  Property *property = (void*)a;
+  Property *property = (void *) a;
+
   return strcmp (property->name, property_name);
 }
 
 static GValue *
-gegl_node_dynamic_get_value (GeglNodeDynamic    *self,
-                             const gchar *property_name)
+gegl_node_dynamic_get_value (GeglNodeDynamic *self,
+                             const gchar     *property_name)
 {
   Property *property = NULL;
-    {
-      GSList *found;
-      found = g_slist_find_custom (self->property, property_name, lookup_property);
-      if (found)
-        property = found->data;
-    }
+
+  {
+    GSList *found;
+    found = g_slist_find_custom (self->property, property_name, lookup_property);
+    if (found)
+      property = found->data;
+  }
   if (!property)
     {
       return NULL;
@@ -192,16 +195,17 @@ gegl_node_dynamic_get_value (GeglNodeDynamic    *self,
 }
 
 void
-gegl_node_dynamic_remove_property (GeglNodeDynamic    *self,
-                                   const gchar *property_name)
+gegl_node_dynamic_remove_property (GeglNodeDynamic *self,
+                                   const gchar     *property_name)
 {
   Property *property = NULL;
-    {
-      GSList *found;
-      found = g_slist_find_custom (self->property, property_name, lookup_property);
-      if (found)
-        property = found->data;
-    }
+
+  {
+    GSList *found;
+    found = g_slist_find_custom (self->property, property_name, lookup_property);
+    if (found)
+      property = found->data;
+  }
   if (!property)
     {
       g_warning ("didn't find dynamic %p for %s", property_name, gegl_node_get_debug_name (self->node));
@@ -212,11 +216,12 @@ gegl_node_dynamic_remove_property (GeglNodeDynamic    *self,
 }
 
 static GValue *
-gegl_node_dynamic_add_value    (GeglNodeDynamic *self,
-                                const gchar     *property_name)
+gegl_node_dynamic_add_value (GeglNodeDynamic *self,
+                             const gchar     *property_name)
 {
   Property *property = NULL;
-  GSList *found = g_slist_find_custom (self->property, property_name, lookup_property);
+  GSList   *found    = g_slist_find_custom (self->property, property_name, lookup_property);
+
   if (found)
     property = found->data;
 
@@ -236,6 +241,7 @@ static void
 finalize (GObject *gobject)
 {
   GeglNodeDynamic *self = GEGL_NODE_DYNAMIC (gobject);
+
   while (self->property)
     {
       Property *property = self->property->data;

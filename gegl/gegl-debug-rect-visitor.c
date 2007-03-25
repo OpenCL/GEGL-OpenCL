@@ -36,11 +36,11 @@
 
 
 static void gegl_debug_rect_visitor_class_init (GeglDebugRectVisitorClass *klass);
-static void visit_node                   (GeglVisitor          *self,
-                                          GeglNode             *node);
+static void visit_node (GeglVisitor *self,
+                        GeglNode    *node);
 
 
-G_DEFINE_TYPE(GeglDebugRectVisitor, gegl_debug_rect_visitor, GEGL_TYPE_VISITOR)
+G_DEFINE_TYPE (GeglDebugRectVisitor, gegl_debug_rect_visitor, GEGL_TYPE_VISITOR)
 
 
 static void
@@ -61,6 +61,7 @@ visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
   GeglNodeDynamic *dynamic = gegl_node_get_dynamic (node, self->context_id);
+
   GEGL_VISITOR_CLASS (gegl_debug_rect_visitor_parent_class)->visit_node (self, node);
 
   g_warning (
@@ -69,12 +70,12 @@ visit_node (GeglVisitor *self,
     "\tneed: %ix%i %i,%i\n"
     "\tresult: %ix%i %i,%i\n"
     "\trefs: %i",
-  gegl_node_get_debug_name (node),
-  node->have_rect.width  , node->have_rect.height,
-  node->have_rect.x, node->have_rect.y,
-  dynamic->need_rect.width  , dynamic->need_rect.height,
-  dynamic->need_rect.x, dynamic->need_rect.y,
-  dynamic->result_rect.width  , dynamic->result_rect.height,
-  dynamic->result_rect.x, dynamic->result_rect.y,
-  dynamic->refs);
+    gegl_node_get_debug_name (node),
+    node->have_rect.width, node->have_rect.height,
+    node->have_rect.x, node->have_rect.y,
+    dynamic->need_rect.width, dynamic->need_rect.height,
+    dynamic->need_rect.x, dynamic->need_rect.y,
+    dynamic->result_rect.width, dynamic->result_rect.height,
+    dynamic->result_rect.x, dynamic->result_rect.y,
+    dynamic->refs);
 }

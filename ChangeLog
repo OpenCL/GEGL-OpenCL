@@ -1,5 +1,9 @@
 2007-03-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/*.c: reindented through the use of uncrustify.
+
+2007-03-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/*.c: reindented through the use of uncrustify with a
 	custom parameter set.
 

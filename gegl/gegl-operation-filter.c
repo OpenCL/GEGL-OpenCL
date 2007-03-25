@@ -63,10 +63,10 @@ gegl_operation_filter_class_init (GeglOperationFilterClass * klass)
   object_class->set_property = set_property;
   object_class->get_property = get_property;
 
-  operation_class->process = process;
-  operation_class->attach = attach;
-  operation_class->detect = detect;
-  operation_class->get_defined_region = get_defined_region;
+  operation_class->process             = process;
+  operation_class->attach              = attach;
+  operation_class->detect              = detect;
+  operation_class->get_defined_region  = get_defined_region;
   operation_class->calc_source_regions = calc_source_regions;
 
   g_object_class_install_property (object_class, PROP_OUTPUT,
@@ -84,8 +84,6 @@ gegl_operation_filter_class_init (GeglOperationFilterClass * klass)
                                                         GEGL_TYPE_BUFFER,
                                                         G_PARAM_READWRITE |
                                                         GEGL_PAD_INPUT));
-
-
 }
 
 static void
@@ -96,15 +94,15 @@ gegl_operation_filter_init (GeglOperationFilter *self)
 static void
 attach (GeglOperation *self)
 {
-  GeglOperation  *operation    = GEGL_OPERATION (self);
-  GObjectClass   *object_class = G_OBJECT_GET_CLASS (self);
+  GeglOperation *operation    = GEGL_OPERATION (self);
+  GObjectClass  *object_class = G_OBJECT_GET_CLASS (self);
 
   gegl_operation_create_pad (operation,
-                               g_object_class_find_property (object_class,
-                                                             "output"));
+                             g_object_class_find_property (object_class,
+                                                           "output"));
   gegl_operation_create_pad (operation,
-                               g_object_class_find_property (object_class,
-                                                             "input"));
+                             g_object_class_find_property (object_class,
+                                                           "input"));
 }
 
 
@@ -114,7 +112,7 @@ detect (GeglOperation *operation,
         gint           y)
 {
   GeglNode *input_node;
- 
+
   input_node = gegl_operation_get_source_node (operation, "input");
 
   if (input_node)
@@ -126,24 +124,26 @@ detect (GeglOperation *operation,
 void babl_backtrack (void);
 
 static void
-get_property (GObject      *object,
-              guint         prop_id,
-              GValue       *value,
-              GParamSpec   *pspec)
+get_property (GObject    *object,
+              guint       prop_id,
+              GValue     *value,
+              GParamSpec *pspec)
 {
   switch (prop_id)
-  {
-    case PROP_OUTPUT:
-      g_warning ("shouldn't happen");
-      babl_backtrack ();
-      break;
-    case PROP_INPUT:
-      g_warning ("shouldn't happen");
-      babl_backtrack ();
-      break;
-    default:
-      break;
-  }
+    {
+      case PROP_OUTPUT:
+        g_warning ("shouldn't happen");
+        babl_backtrack ();
+        break;
+
+      case PROP_INPUT:
+        g_warning ("shouldn't happen");
+        babl_backtrack ();
+        break;
+
+      default:
+        break;
+    }
 }
 
 static void
@@ -153,14 +153,15 @@ set_property (GObject      *object,
               GParamSpec   *pspec)
 {
   switch (prop_id)
-  {
-    case PROP_INPUT:
-      g_warning ("shouldn't happen");
-      babl_backtrack ();
-      break;
-    default:
-      break;
-  }
+    {
+      case PROP_INPUT:
+        g_warning ("shouldn't happen");
+        babl_backtrack ();
+        break;
+
+      default:
+        break;
+    }
 }
 
 
@@ -172,7 +173,7 @@ process (GeglOperation *operation,
   GeglOperationFilter      *gegl_operation_filter;
   GeglOperationFilterClass *klass;
   GeglBuffer               *input;
-  gboolean success = FALSE;
+  gboolean                  success = FALSE;
 
   gegl_operation_filter = GEGL_OPERATION_FILTER (operation);
   klass                 = GEGL_OPERATION_FILTER_GET_CLASS (operation);
@@ -205,7 +206,7 @@ process (GeglOperation *operation,
 static GeglRectangle
 get_defined_region (GeglOperation *self)
 {
-  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle  result = { 0, 0, 0, 0 };
   GeglRectangle *in_rect;
 
   in_rect = gegl_operation_source_get_defined_region (self, "input");
