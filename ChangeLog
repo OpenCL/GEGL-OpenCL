@@ -1,5 +1,9 @@
 2007-04-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-processor.c: removed a foo marker warning that had snuck in.
+
+2007-04-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-processor.c: (gegl_processor_class_init),
 	(get_property), (gegl_processor_progress), (gegl_processor_render):
 	Added a "progress" property that returns the current progress in
