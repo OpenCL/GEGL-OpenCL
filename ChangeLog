@@ -1,3 +1,10 @@
+2007-04-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-processor.c: (gegl_processor_class_init),
+	(get_property), (gegl_processor_progress), (gegl_processor_render):
+	Added a "progress" property that returns the current progress in
+	rendering of the processors work as a value between 0.0 and 1.0.
+
 2007-03-25  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/*.c: reindented through the use of uncrustify.

@@ -31,7 +31,8 @@ enum
 {
   PROP_0,
   PROP_NODE,
-  PROP_CHUNK_SIZE
+  PROP_CHUNK_SIZE,
+  PROP_PROGRESS
 };
 
 static void gegl_processor_class_init (GeglProcessorClass *klass);
@@ -48,6 +49,7 @@ static void get_property              (GObject            *gobject,
 static GObject * constructor          (GType                  type,
                                        guint                  n_params,
                                        GObjectConstructParam *params);
+static gdouble   gegl_processor_progress (GeglProcessor *processor);
 
 struct _GeglProcessor
 {
@@ -85,9 +87,13 @@ static void gegl_processor_class_init (GeglProcessorClass *klass)
                                                         G_PARAM_WRITABLE |
                                                         G_PARAM_CONSTRUCT));
 
+  g_object_class_install_property (gobject_class, PROP_PROGRESS,
+                                   g_param_spec_double ("progress", "progress", "query progress 0.0 is not started 1.0 is done.",
+                                                     0.0, 1.0, 0.0,
+                                                     G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_CHUNK_SIZE,
                                    g_param_spec_int ("chunk-size", "chunk-size", "Size of chunks being rendered (larger chunks need more memory to do the processing).",
-                                                     8 * 8, 2048 * 2048, 512 * 512,
+                                                     8 * 8, 2048 * 2048, 32*32,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
 }
@@ -189,6 +195,9 @@ get_property (GObject    *gobject,
       case PROP_CHUNK_SIZE:
         g_value_set_int (value, self->chunk_size);
         break;
+      case PROP_PROGRESS:
+        g_value_set_double (value, gegl_processor_progress (self));
+        break;
 
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -268,7 +277,7 @@ gegl_node_new_processor (GeglNode      *node,
   return processor;
 }
 
-
+/* returns TRUE if there is more work */
 static gboolean render_rectangle (GeglProcessor *processor)
 {
   GeglCache     *cache    = gegl_node_get_cache (processor->input);
@@ -387,6 +396,24 @@ gegl_processor_is_rendered (GeglProcessor *processor)
   return FALSE;
 }
 
+static gdouble
+gegl_processor_progress (GeglProcessor *processor)
+{
+  GeglCache *cache = gegl_node_get_cache (processor->input);
+  gint valid;
+  gint wanted;
+
+  wanted = rect_area (&(processor->rectangle));
+  valid  = wanted - area_left (cache, &(processor->rectangle));
+  if (wanted == 0)
+    {
+      if (gegl_processor_is_rendered (processor))
+        return 1.0;
+      return 0.999;
+    }
+  return (double) valid / wanted;
+}
+
 static gboolean
 gegl_processor_render (GeglProcessor *processor,
                        GeglRectangle *rectangle,
@@ -435,6 +462,8 @@ gegl_processor_render (GeglProcessor *processor,
       GeglRectangle *rectangles;
       gint           n_rectangles;
       gint           i;
+
+      g_warning ("foo");
 
       gegl_region_get_rectangles (region, &rectangles, &n_rectangles);
 
