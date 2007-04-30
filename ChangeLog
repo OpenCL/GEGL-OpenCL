@@ -1,3 +1,8 @@
+2007-04-30  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/mblur.c: (init), (process): added a simplistic
+	motion blur that works for some uses.
+
 2007-04-29  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-processor.c: removed a foo marker warning that had snuck in.
