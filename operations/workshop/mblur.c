@@ -28,7 +28,6 @@ gegl_chant_double (dampness, 0.0, 1.0, 0.95, "dampening, 0.0 is no dampening 1.0
 #define GEGL_CHANT_DESCRIPTION     "Accumulating motion blur"
 #define GEGL_CHANT_SELF            "mblur.c"
 #define GEGL_CHANT_CATEGORIES      "misc"
-#define GEGL_CHANT_CLASS_INIT
 #define GEGL_CHANT_INIT
 #include "gegl-chant.h"
 
