@@ -1,5 +1,12 @@
 2007-05-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/ff-load.c: (process): make video be RGBA with
+	full opacity.
+	* operations/workshop/ff-save.c: added more defines to make audio code
+	fully dormant.
+
+2007-05-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/mblur.c: removed CHANT_CLASS_INIT
 
 2007-04-30  Øyvind Kolås  <pippin@gimp.org>

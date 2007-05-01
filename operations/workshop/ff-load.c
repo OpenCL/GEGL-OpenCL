@@ -390,7 +390,7 @@ process (GeglOperation *operation,
 
               YUV82RGB8 (*ysrc, *usrc, *vsrc, R, G, B);
 
-              *(unsigned int *) dst = R + G * 256 + B * 256 * 256;
+              *(unsigned int *) dst = R + G * 256 + B * 256 * 256 + 0xff000000;
               dst += 4;
               ysrc ++;
               if (x % 2)

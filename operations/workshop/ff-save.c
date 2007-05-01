@@ -278,6 +278,7 @@ buffer_unused (Priv * p)
   return ret;
 }
 
+#ifndef DISABLE_AUDIO
 static void
 buffer_flush (Priv * p)
 {
@@ -312,6 +313,8 @@ buffer_close (GeglChantOperation *op)
   g_free (p->buffer);
   p->buffer = NULL;
 }
+
+#endif
 
 static int
 buffer_write (Priv * p, uint8_t * source, int count)
@@ -416,7 +419,7 @@ buffer_write (Priv * p, uint8_t * source, int count)
   return first_segment_size + second_segment_size;
 }
 
-
+#ifndef DISABLE_AUDIO
 /* add an audio output stream */
 static AVStream *
 add_audio_stream (GeglChantOperation *op, AVFormatContext * oc, int codec_id)
@@ -442,6 +445,7 @@ add_audio_stream (GeglChantOperation *op, AVFormatContext * oc, int codec_id)
   c->channels = 2;
   return st;
 }
+#endif
 
 static void
 open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
@@ -842,11 +846,13 @@ tfile (GeglChantOperation *self)
   return 0;
 }
 
+#if 0
 static int
 filechanged (GeglChantOperation *op, const char *att)
 {
   init (op);
   return 0;
 }
+#endif
 
 #endif
