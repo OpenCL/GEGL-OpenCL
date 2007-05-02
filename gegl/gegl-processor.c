@@ -92,8 +92,8 @@ static void gegl_processor_class_init (GeglProcessorClass *klass)
                                                      0.0, 1.0, 0.0,
                                                      G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_CHUNK_SIZE,
-                                   g_param_spec_int ("chunk-size", "chunk-size", "Size of chunks being rendered (larger chunks need more memory to do the processing).",
-                                                     8 * 8, 2048 * 2048, 32*32,
+                                   g_param_spec_int ("chunksize", "chunksize", "Size of chunks being rendered (larger chunks need more memory to do the processing).",
+                                                     8 * 8, 2048 * 2048, 256*256,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
 }
@@ -402,6 +402,7 @@ gegl_processor_progress (GeglProcessor *processor)
   GeglCache *cache = gegl_node_get_cache (processor->input);
   gint valid;
   gint wanted;
+  gdouble ret;
 
   wanted = rect_area (&(processor->rectangle));
   valid  = wanted - area_left (cache, &(processor->rectangle));
@@ -411,7 +412,14 @@ gegl_processor_progress (GeglProcessor *processor)
         return 1.0;
       return 0.999;
     }
-  return (double) valid / wanted;
+  ret = (double) valid / wanted;
+  g_warning ("%f", ret);
+  if (ret>=1.0)
+    {
+      if (!gegl_processor_is_rendered (processor))
+        return 0.9999;
+    }
+  return ret;
 }
 
 static gboolean

@@ -1,5 +1,18 @@
 2007-05-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-processor.c: (gegl_processor_class_init): default chunk
+	size set to 256*256.
+	(gegl_processor_progress): report some more granular progress.
+	* bin/editor.c: (input_stream), (play), (editor_main), (cb_fit),
+	(cb_fit_on_screen), (cb_shrinkwrap), (cb_zoom_in): improved
+	interaction when zooming to fit, and added a frame advance when
+	computed/play mode, for some video experiments.
+	* bin/gegl-options.c: (usage), (parse_args):
+	* bin/gegl-options.h: Added -p option which triggers the above
+	mentioned play mode.
+
+2007-05-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/ff-load.c: (process): make video be RGBA with
 	full opacity.
 	* operations/workshop/ff-save.c: added more defines to make audio code

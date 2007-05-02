@@ -63,6 +63,8 @@ usage (char *application_name)
 "     --output    output generated image to named file\n"
 "     -o          (file is saved in PNG format)\n"
 "\n"
+"     -p          (increment frame counters of various elements when processing is done.)\n"
+"\n"
 "     -X          output the XML that was read in\n"
 "\n"
 "     --verbose   print diagnostics while running\n"
@@ -218,6 +220,10 @@ parse_args (int    argc,
         else if (match ("--verbose") ||
                  match ("-v")) {
             o->verbose=1;
+        }
+
+        else if (match ("-p")){
+            o->play=TRUE;
         }
 
         else if (match ("--file") ||

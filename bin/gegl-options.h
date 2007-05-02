@@ -46,6 +46,7 @@ typedef struct GeglOptions
   gboolean     verbose;
 
   gfloat       delay;
+  gboolean     play;
 } GeglOptions;
 
 GeglOptions *gegl_options_parse (gint    argc,

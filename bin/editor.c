@@ -148,7 +148,6 @@ create_window (Editor *editor)
   return self;
 }
 
-
 GeglNode *editor_output = NULL;
 
 static void cb_shrinkwrap (GtkAction *action);
@@ -158,6 +157,44 @@ static void cb_recompute (GtkAction *action);
 static void cb_redraw (GtkAction *action);
 static void cb_next_file (GtkAction *action);
 static void cb_previous_file (GtkAction *action);
+
+
+static GeglNode *input_stream(GeglNode *root)
+{
+  GeglNode *iter = gegl_node_get_output_proxy (root, "output");
+  gegl_node_get_bounding_box (editor.gegl);  /* to trigger defined setting for all */
+  while (iter &&
+         gegl_node_get_producer (iter, "input", NULL)){
+    iter = gegl_node_get_producer (iter, "input", NULL);
+  }
+  return iter;
+}
+
+
+static gboolean play(gpointer data)
+{
+  Editor *editor=data;
+  GeglView *view=GEGL_VIEW (editor->view);
+  gdouble   progress;
+  g_object_get (view->processor, "progress", &progress, NULL);
+  if (progress >= 1.0)
+    {
+      /* modify source to trigger consumption of a new element */
+      GeglNode *source = input_stream (editor->gegl);
+      gint frame;
+      gegl_node_get (source, "frame", &frame, NULL);
+      g_warning ("(%f) frame: %i->%i", progress, frame, frame +1);
+      frame++;
+      gegl_node_set (source, "frame", frame, NULL);
+      gegl_gui_flush ();
+    }
+  else
+    {
+      g_warning ("(%f)", progress);
+    }
+
+  return TRUE;
+}
 
 static gboolean advance_slide (gpointer data)
 {
@@ -191,6 +228,10 @@ editor_main (GeglNode    *gegl,
   if (options->delay != 0.0)
     {
       g_timeout_add (1000 * options->delay, advance_slide, NULL);
+    }
+  if (options->play)
+    {
+      g_timeout_add (100, play, &editor);
     }
 
   /*gtk_window_fullscreen (GTK_WINDOW (editor.window));*/
@@ -812,17 +853,11 @@ static void cb_tree_visible (GtkAction *action, gpointer userdata)
 static void cb_fit (GtkAction *action)
 {
   GeglRectangle defined = gegl_node_get_bounding_box (editor.gegl);
-  gint          width;
-  gint          height;
   gint          x, y;
-  gint          i;
   gdouble       hscale;
   gdouble       vscale;
 
-
-  gtk_window_get_size (GTK_WINDOW (editor.window), &width, &height);
-  width -= editor.view->allocation.width;
-  height -= editor.view->allocation.height;
+  g_warning ("%i %i", editor.view->allocation.width, editor.view->allocation.height);
 
   hscale = (gdouble) editor.view->allocation.width / defined.width ;
   vscale = (gdouble) editor.view->allocation.height / defined.height ;
@@ -845,36 +880,27 @@ static void cb_fit (GtkAction *action)
                 "y",     defined.y - y,
                 "scale", hscale,
                 NULL);
-
-  width += defined.width  * hscale;
-  height += defined.height  * vscale;
-
-  for (i=0;i<40;i++){
-    gtk_main_iteration ();
-  }
 }
 
 
 static void cb_fit_on_screen (GtkAction *action)
 {
   GeglRectangle defined = gegl_node_get_bounding_box (editor.gegl);
-  /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.width , defined.h);*/
+  gint ow = editor.view->allocation.width;
 
   g_object_set (editor.view, "x", defined.x, "y", defined.y, NULL);
   {
     GdkScreen *screen= gtk_window_get_screen (GTK_WINDOW (editor.window));
 
     gint    screen_width, screen_height;
-    gint i;
 
     screen_width = gdk_screen_get_width (screen);
     screen_height = gdk_screen_get_height (screen);
 
     gtk_window_resize (GTK_WINDOW (editor.window), screen_width * 0.75,
                                                    screen_height * 0.75);
-      for (i=0;i<40;i++){
-        gtk_main_iteration ();
-      }
+    while (ow == editor.view->allocation.width)
+      gtk_main_iteration();
   }
   cb_fit (action);
   cb_shrinkwrap (action);
@@ -913,10 +939,10 @@ static void cb_shrinkwrap (GtkAction *action)
 
     gtk_window_resize (GTK_WINDOW (editor.window), width, height);
   }
-
+/*
   for (i=0;i<40;i++){
     gtk_main_iteration ();
-  }
+  }*/
 }
 
 void          gegl_node_disable_cache       (GeglNode      *node);
@@ -1048,13 +1074,13 @@ static void cb_zoom_in (GtkAction *action)
                 "scale", &scale,
                 NULL);
 
-  x += (width/2) / scale;
-  y += (height/2) / scale;
+  x += (width/2) * scale;
+  y += (height/2) * scale;
 
   scale *= 2.0;
 
-  x -= (width/2) / scale;
-  y -= (height/2) / scale;
+  x -= (width/2) * scale;
+  y -= (height/2) * scale;
 
   g_object_set (editor.view,
                 "x", x,
