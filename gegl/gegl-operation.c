@@ -247,7 +247,7 @@ gegl_operation_set_source_region (GeglOperation *operation,
   }
 
   {
-    GeglNodeDynamic *dynamic = gegl_node_get_dynamic (operation->node, context_id);
+    GeglNodeDynamic *dynamic = gegl_node_get_dynamic (child, context_id);
     gegl_rectangle_bounding_box (&child_need, &dynamic->need_rect, region);
   }
 
