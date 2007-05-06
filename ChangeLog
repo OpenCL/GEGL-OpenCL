@@ -1,3 +1,8 @@
+2007-05-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/stress.c: Added a STRESS, Spatio Temporal
+	Retinex Envelope with Stochastic Sampling.
+
 2007-05-04  Manish Singh  <yosh@gimp.org>
 
 	* gegl/gegl-operation.c (gegl_operation_set_source_region): use the
