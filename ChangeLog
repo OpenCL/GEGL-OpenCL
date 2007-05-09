@@ -1,6 +1,11 @@
+2007-05-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-init.c: (gegl_init): avoid initializing the gthread system
+	twice.
+
 2007-05-06  Øyvind Kolås  <pippin@gimp.org>
 
-	* operations/workshop/stress.c: Added a STRESS, Spatio Temporal
+	* operations/workshop/stress.c: Added STRESS operation, Spatio Temporal
 	Retinex Envelope with Stochastic Sampling.
 
 2007-05-04  Manish Singh  <yosh@gimp.org>
