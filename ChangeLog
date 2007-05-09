@@ -1,5 +1,10 @@
 2007-05-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl.h: document that gegl_init calls g_thread_init and that
+	when using the option group you have to do it yourself.
+
+2007-05-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-init.c: (gegl_init): avoid initializing the gthread system
 	twice.
 

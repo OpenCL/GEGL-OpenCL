@@ -76,11 +76,14 @@
  * initialize everything needed to operate GEGL and parses some
  * standard command line options.  @argc and @argv are adjusted
  * accordingly so your own code will never see those standard
- * arguments.
+ * arguments. gegl_init() will call g_thread_init(), unless you, or
+ * some other code already has initialized gthread.
  *
  * Note that there is an alternative way to initialize GEGL: if you
  * are calling g_option_context_parse() with the option group returned
- * by #gegl_get_option_group(), you don't have to call #gegl_init().
+ * by #gegl_get_option_group(), you don't have to call #gegl_init() but
+ * you have to call g_thread_init() before any glib or glib dependant code
+ * yourself.
  **/
 void           gegl_init                 (gint          *argc,
                                           gchar       ***argv);
