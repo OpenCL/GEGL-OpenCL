@@ -1,3 +1,7 @@
+2007-05-10  Øyvind Kolås  <pippin@gimp.org>
+
+	* bin/editor.c: (cb_shrinkwrap): removed unused variable.
+
 2007-05-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl.h: document that gegl_init calls g_thread_init and that

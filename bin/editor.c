@@ -910,7 +910,6 @@ static void cb_shrinkwrap (GtkAction *action)
 {
   GeglRectangle defined = gegl_node_get_bounding_box (editor.gegl);
   /*g_warning ("shrink wrap %i,%i %ix%i", defined.x, defined.y, defined.width , defined.h);*/
-  gint i;
 
   g_object_set (editor.view, "x", defined.x, "y", defined.y, NULL);
   {
