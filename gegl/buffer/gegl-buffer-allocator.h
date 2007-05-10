@@ -33,6 +33,7 @@
 #define GEGL_BUFFER_ALLOCATOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BUFFER_ALLOCATOR, GeglBufferAllocatorClass))
 
 #include "gegl-buffer.h"
+#include "gegl-buffer-private.h"
 
 struct _GeglBufferAllocator
 {

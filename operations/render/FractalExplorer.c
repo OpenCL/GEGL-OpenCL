@@ -408,7 +408,7 @@ process (GeglOperation *operation,
                            "height", result->height,
                            NULL);
 
-    buf  = g_new (guchar, gegl_buffer_pixels (output) * 3);
+    buf  = g_new (guchar, result->width * result->height * 4);
       {
         guchar *dst=buf;
         gint y;

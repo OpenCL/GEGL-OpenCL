@@ -46,11 +46,17 @@ affine_linear (GeglBuffer *dest,
   gdouble  u_start,
            v_start;
 
-  if (gegl_buffer_pixels (src) == 0 ||
-      gegl_buffer_pixels (dest) == 0)
+  gint src_pixels;
+  gint dest_pixels;
+
+  g_object_get (src, "pixels", &src_pixels, NULL);
+  g_object_get (dest, "pixels", &dest_pixels, NULL);
+
+  if (src_pixels == 0 ||
+      dest_pixels == 0)
     return;
-  src_buf  = g_new (gfloat, gegl_buffer_pixels (src) * 4);
-  dest_buf = g_new (gfloat, gegl_buffer_pixels (dest) * 4);
+  src_buf  = g_new (gfloat, src_pixels * 4);
+  dest_buf = g_new (gfloat, dest_pixels * 4);
   g_assert (src_buf && dest_buf);
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RaGaBaA float"), src_buf);
 
@@ -231,11 +237,17 @@ scale_linear (GeglBuffer *dest,
            u_float,
            v_float;
 
-  if (gegl_buffer_pixels (src) == 0 ||
-      gegl_buffer_pixels (dest) == 0)
+  gint src_pixels;
+  gint dest_pixels;
+
+  g_object_get (src, "pixels", &src_pixels, NULL);
+  g_object_get (dest, "pixels", &dest_pixels, NULL);
+
+  if (src_pixels == 0 ||
+      dest_pixels == 0)
     return;
-  src_buf  = g_new (gfloat, gegl_buffer_pixels (src) * 4);
-  dest_buf = g_new (gfloat, gegl_buffer_pixels (dest) * 4);
+  src_buf  = g_new (gfloat, src_pixels * 4);
+  dest_buf = g_new (gfloat, dest_pixels * 4);
   g_assert (src_buf && dest_buf);
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RaGaBaA float"), src_buf);
 

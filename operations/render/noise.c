@@ -59,7 +59,7 @@ process (GeglOperation *operation,
                            "width",  result->width ,
                            "height", result->height,
                            NULL);
-    buf = g_malloc (gegl_buffer_pixels (output) * gegl_buffer_px_size (output));
+    buf = g_malloc (result->width * result->height * 4);
       {
         gfloat *dst=buf;
         gint y;

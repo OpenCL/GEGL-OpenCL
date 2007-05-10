@@ -17,6 +17,7 @@
  *
  */
 #include "gegl-interpolator-cubic.h"
+#include "gegl-buffer-private.h" /* XXX */
 #include <string.h>
 #include <math.h>
 

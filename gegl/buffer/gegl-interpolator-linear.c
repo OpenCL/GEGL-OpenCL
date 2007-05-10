@@ -17,6 +17,7 @@
  *
  */
 #include "gegl-interpolator-linear.h"
+#include "gegl-buffer-private.h"
 #include <string.h>
 enum
 {

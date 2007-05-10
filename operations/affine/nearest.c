@@ -43,8 +43,14 @@ affine_nearest (GeglBuffer *dest,
            u_float,
            v_float;
 
-  src_buf  = g_new (gfloat, gegl_buffer_pixels (src) * 4);
-  dest_buf = g_new (gfloat, gegl_buffer_pixels (dest) * 4);
+  gint src_pixels;
+  gint dest_pixels;
+
+  g_object_get (src, "pixels", &src_pixels, NULL);
+  g_object_get (dest, "pixels", &dest_pixels, NULL);
+
+  src_buf  = g_new (gfloat, src_pixels * 4);
+  dest_buf = g_new (gfloat, dest_pixels * 4);
   g_assert (src_buf && dest_buf);
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RaGaBaA float"), src_buf);
 
@@ -130,9 +136,15 @@ scale_nearest (GeglBuffer *dest,
            v_start,
            u_float,
            v_float;
+  gint src_pixels;
+  gint dest_pixels;
 
-  src_buf  = g_new (gfloat, gegl_buffer_pixels (src) * 4);
-  dest_buf = g_new (gfloat, gegl_buffer_pixels (dest) * 4);
+  g_object_get (src, "pixels", &src_pixels, NULL);
+  g_object_get (dest, "pixels", &dest_pixels, NULL);
+
+
+  src_buf  = g_new (gfloat, src_pixels * 4);
+  dest_buf = g_new (gfloat, dest_pixels * 4);
   g_assert (src_buf && dest_buf);
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RaGaBaA float"), src_buf);
 

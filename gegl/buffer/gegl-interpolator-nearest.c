@@ -17,6 +17,7 @@
  *
  */
 #include "gegl-interpolator-nearest.h"
+#include "gegl-buffer-private.h"
 #include <string.h>
 enum
 {

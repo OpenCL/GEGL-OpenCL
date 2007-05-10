@@ -248,9 +248,9 @@ gegl_storage_constructor (GType                  type,
                                                      "backend", trait->source,
                                                      NULL));
 
-  if (0) gegl_tile_traits_add (traits, g_object_new (GEGL_TYPE_TILE_CACHE,
-                                                     "size", 128,
-                                                     NULL));
+  /* it doesn't really matter that empty tiles are not cached, since they
+   * are Copy on Write.
+   */
 
   storage->idle_swapper = g_timeout_add_full (G_PRIORITY_LOW,
                                               250,

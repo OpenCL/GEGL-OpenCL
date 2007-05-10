@@ -26,100 +26,33 @@
 #ifndef _GEGL_BUFFER_H
 #define _GEGL_BUFFER_H
 
-#define GEGL_TYPE_BUFFER            (gegl_buffer_get_type ())
-#define GEGL_BUFFER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER, GeglBuffer))
-#define GEGL_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_BUFFER, GeglBufferClass))
-#define GEGL_IS_BUFFER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_BUFFER))
-#define GEGL_IS_BUFFER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_BUFFER))
-#define GEGL_BUFFER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BUFFER, GeglBufferClass))
-
-#include "gegl-tile-traits.h"
-
-struct _GeglBuffer
-{
-  GeglTileTraits parent_object;
-  gpointer       format;
-  gint           x;   /* the relative position in relation to parent buffer */
-  gint           y;   /* the relative position in relation to parent buffer */
-  gint           width;
-  gint           height;
-
-  gint           shift_x;
-  gint           shift_y;
-  gint           total_shift_x;
-  gint           total_shift_y;
-
-  gint           abyss_x;
-  gint           abyss_y;
-  gint           abyss_width;
-  gint           abyss_height;
-
-  GeglTile      *hot_tile;
-};
+#define GEGL_TYPE_BUFFER (gegl_buffer_get_type ())
+#define GEGL_BUFFER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER, GeglBuffer))
 
 typedef enum {
   GEGL_INTERPOLATION_NEAREST
 } GeglInterpolation;
 
-struct _GeglBufferClass
-{
-  GeglTileTraitsClass parent_class;
-};
 
-GType         gegl_buffer_get_type   (void) G_GNUC_CONST;
+GType   gegl_buffer_get_type   (void) G_GNUC_CONST;
 
-void        * gegl_buffer_get_format (GeglBuffer    *buffer);
-gint          gegl_buffer_pixels     (GeglBuffer    *buffer);
-gint          gegl_buffer_px_size    (GeglBuffer    *buffer);
+void    gegl_buffer_get        (GeglBuffer    *buffer,
+                                GeglRectangle *rect,
+                                gdouble        scale,
+                                void          *format,
+                                void          *dest);
 
-void          gegl_buffer_get        (GeglBuffer    *buffer,
-                                      GeglRectangle *rect,
-                                      gdouble        scale,
-                                      void          *format,
-                                      void          *dest);
+void    gegl_buffer_set        (GeglBuffer       *buffer,
+                                GeglRectangle    *rect,
+                                void             *format,
+                                void             *src);
 
-void          gegl_buffer_set        (GeglBuffer       *buffer,
-                                      GeglRectangle    *rect,
-                                      void             *format,
-                                      void             *src);
-void          gegl_buffer_sample     (GeglBuffer       *buffer,
-                                      gdouble           x,
-                                      gdouble           y,
-                                      gdouble           scale,
-                                      gpointer          dest,
-                                      Babl             *format,
-                                      GeglInterpolation interpolation);
-GeglStorage * gegl_buffer_storage    (GeglBuffer    *buffer);
-GeglRectangle gegl_buffer_get_abyss  (GeglBuffer    *buffer);
-
-gint          gegl_buffer_leaks      (void);
-
-void          gegl_buffer_stats      (void);
-
-void          gegl_buffer_save       (GeglBuffer    *buffer,
-                                      const gchar   *path,
-                                      GeglRectangle *roi);
-
-/* flush any unwritten data (flushes the hot-cache of a single
- * tile used by gegl_buffer_set for 1x1 pixel sized rectangles
- */
-void          gegl_buffer_flush      (GeglBuffer *buffer);
-
-/* the following are remnants of how horizon used the precursor of the
- * tile manager for it's purposes. For now it is not used
-
-gboolean      gegl_buffer_idle       (GeglBuffer *gegl_buffer);
-
-
-void          gegl_buffer_add_dirty  (GeglBuffer *gegl_buffer,
-                                      gint        x,
-                                      gint        y);
-
-void          gegl_buffer_flush_dirty(GeglBuffer *buffer);
-
-gboolean      gegl_buffer_is_dirty   (GeglBuffer *buffer,
-                                      gint        x,
-                                      gint        y);
-*/
+void    gegl_buffer_sample     (GeglBuffer       *buffer,
+                                gdouble           x,
+                                gdouble           y,
+                                gdouble           scale,
+                                gpointer          dest,
+                                Babl             *format,
+                                GeglInterpolation interpolation);
 
 #endif

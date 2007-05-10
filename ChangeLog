@@ -1,5 +1,47 @@
 2007-05-10  Øyvind Kolås  <pippin@gimp.org>
 
+	Replaced accesor functions with properties for some buffer properties.
+
+	* gegl/buffer/Makefile.am: install gegl-buffer.h
+	* gegl/buffer/gegl-buffer-private.h: added a private header containing
+	the actual struct of GeglBuffer.
+	* gegl/buffer/gegl-buffer-allocator.h:
+	* gegl/buffer/gegl-buffer-save.c: (gegl_buffer_save):
+	* gegl/buffer/gegl-buffer.c: (get_property),
+	(gegl_buffer_class_init), (int_gegl_buffer_get_format), (pset),
+	(pget), (gegl_buffer_iterate):
+	* gegl/buffer/gegl-buffer.h:
+	* gegl/buffer/gegl-cache.h:
+	* gegl/buffer/gegl-interpolator-cubic.c:
+	* gegl/buffer/gegl-interpolator-lanczos.c:
+	* gegl/buffer/gegl-interpolator-linear.c:
+	* gegl/buffer/gegl-interpolator-nearest.c:
+	* gegl/buffer/gegl-storage.c: (gegl_storage_constructor):
+	* gegl/buffer/gegl-tile.c:
+
+	Fix for changes in buffer API.
+
+	* gegl/gegl-processor.c: (gegl_processor_class_init),
+	(render_rectangle):
+	* operations/affine/interpolate-cubic.c: (affine_cubic):
+	* operations/affine/interpolate-lanczos.c: (affine_lanczos):
+	* operations/affine/linear.c: (affine_linear), (scale_linear):
+	* operations/affine/nearest.c: (affine_nearest), (scale_nearest):
+	* operations/color/stretch-contrast.c: (buffer_get_min_max):
+	* operations/core/crop.c: (process):
+	* operations/core/save-buffer.c: (process):
+	* operations/core/shift.c: (process):
+	* operations/file-io/exr-load.cpp:
+	* operations/render/FractalExplorer.c: (process):
+	* operations/render/checkerboard.c: (process):
+	* operations/render/color.c: (process):
+	* operations/render/noise.c: (process):
+	* operations/workshop/Makefile.am:
+	* operations/workshop/ff-load.c: (process):
+	* operations/workshop/mandelbrot.c: (process):
+
+2007-05-10  Øyvind Kolås  <pippin@gimp.org>
+
 	Start of work to migrate the creation of output buffers for operations
 	from the operations themselves. For now both the old way of doing
 	things and the new way are supported, the old way will gradually be

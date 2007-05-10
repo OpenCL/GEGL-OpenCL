@@ -44,12 +44,16 @@ process (GeglOperation *operation,
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer         *output = NULL;
 
+
   need = gegl_operation_get_requested_region (operation, context_id);
   {
     GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
     gfloat        *buf;
     gfloat         color1[4];
     gfloat         color2[4];
+    gint           pxsize;
+    gint           n_pixels;
+
 
     gegl_color_get_rgba (self->color1,
                          &color1[0],
@@ -71,7 +75,11 @@ process (GeglOperation *operation,
                            "width",  result->width ,
                            "height", result->height,
                            NULL);
-    buf = g_malloc (gegl_buffer_pixels (output) * gegl_buffer_px_size (output));
+
+    g_object_get (output, "px-size", &pxsize,
+                          "pixels", &n_pixels,
+                          NULL);
+    buf = g_malloc (n_pixels * pxsize);
       {
         gfloat *dst=buf;
         gint y;

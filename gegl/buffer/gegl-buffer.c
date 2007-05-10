@@ -52,7 +52,9 @@ enum
   PROP_ABYSS_Y,
   PROP_ABYSS_WIDTH,
   PROP_ABYSS_HEIGHT,
-  PROP_FORMAT
+  PROP_FORMAT,
+  PROP_PX_SIZE,
+  PROP_PIXELS
 };
 
 
@@ -68,6 +70,7 @@ static inline gint needed_width (gint w,
   return needed_tiles (w, stride) * stride;
 }
 
+static void *int_gegl_buffer_get_format (GeglBuffer *buffer);
 static void
 get_property (GObject    *gobject,
               guint       property_id,
@@ -86,13 +89,22 @@ get_property (GObject    *gobject,
         g_value_set_int (value, buffer->height);
         break;
 
+      case PROP_PIXELS:
+        g_value_set_int (value, buffer->width * buffer->height);
+        break;
+
+      case PROP_PX_SIZE:
+        g_value_set_int (value, gegl_buffer_storage (buffer)->px_size);
+        break;
+
       case PROP_FORMAT:
         /* might already be set the first time, if it was set during
-         * construction
+         * construction, we're caching the value in the buffer itself,
+         * since it will never change.
          */
 
         if (buffer->format == NULL)
-          buffer->format = gegl_buffer_get_format (buffer);
+          buffer->format = int_gegl_buffer_get_format (buffer);
 
         g_value_set_pointer (value, buffer->format);
         break;
@@ -497,6 +509,14 @@ gegl_buffer_class_init (GeglBufferClass *class)
   gobject_class->get_property = get_property;
   tile_store_class->get_tile  = get_tile;
 
+  g_object_class_install_property (gobject_class, PROP_PX_SIZE,
+                                   g_param_spec_int ("px-size", "pixel-size", "size of a single pixel in bytes.",
+                                                     0, G_MAXINT, 0,
+                                                     G_PARAM_READABLE));
+  g_object_class_install_property (gobject_class, PROP_PIXELS,
+                                   g_param_spec_int ("pixels", "pixels", "total amount of pixels in image (width×height)",
+                                                     0, G_MAXINT, 0,
+                                                     G_PARAM_READABLE));
   g_object_class_install_property (gobject_class, PROP_WIDTH,
                                    g_param_spec_int ("width", "width", "pixel width of buffer",
                                                      -1, G_MAXINT, -1,
@@ -596,24 +616,13 @@ gegl_buffer_idle (GeglBuffer *buffer)
 
 /***************************************************************************/
 
-void *gegl_buffer_get_format (GeglBuffer *buffer)
+static void *int_gegl_buffer_get_format (GeglBuffer *buffer)
 {
   g_assert (buffer);
   if (buffer->format != NULL)
     return buffer->format;
   return gegl_buffer_backend (buffer)->format;
 }
-
-gint gegl_buffer_pixels (GeglBuffer *buffer)
-{
-  return buffer->width * buffer->height;
-}
-
-gint gegl_buffer_px_size (GeglBuffer *buffer)
-{
-  return gegl_buffer_storage (buffer)->px_size;
-}
-
 
 static void
 gegl_buffer_void (GeglBuffer *buffer)
@@ -752,7 +761,6 @@ pset (GeglBuffer *buffer,
   guchar *buf         = data;
   gint    tile_width  = gegl_buffer_storage (buffer)->tile_width;
   gint    tile_height = gegl_buffer_storage (buffer)->tile_height;
-  gint    px_size     = gegl_buffer_px_size (buffer);
   gint    bpx_size    = FMTPXS (format);
   Babl   *fish        = NULL;
 
@@ -762,6 +770,8 @@ pset (GeglBuffer *buffer,
   gint    buffer_y       = buffer->y;
   gint    buffer_abyss_x = buffer->abyss_x;
   gint    buffer_abyss_y = buffer->abyss_y;
+  gint    px_size        = FMTPXS (buffer->format);
+  
 
   if (format != buffer->format)
     {
@@ -834,7 +844,6 @@ pget (GeglBuffer *buffer,
   guchar *buf         = data;
   gint    tile_width  = gegl_buffer_storage (buffer)->tile_width;
   gint    tile_height = gegl_buffer_storage (buffer)->tile_height;
-  gint    px_size     = gegl_buffer_px_size (buffer);
   gint    bpx_size    = FMTPXS (format);
   Babl   *fish        = NULL;
 
@@ -844,6 +853,7 @@ pget (GeglBuffer *buffer,
   gint    buffer_y       = buffer->y;
   gint    buffer_abyss_x = buffer->abyss_x;
   gint    buffer_abyss_y = buffer->abyss_y;
+  gint    px_size        = FMTPXS (buffer->format);
 
   if (format != buffer->format)
     {
@@ -927,7 +937,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
   gint  height      = buffer->height;
   gint  tile_width  = gegl_buffer_storage (buffer)->tile_width;
   gint  tile_height = gegl_buffer_storage (buffer)->tile_height;
-  gint  px_size     = gegl_buffer_px_size (buffer);
+  gint  px_size     = FMTPXS (buffer->format);
   gint  bpx_size    = FMTPXS (format);
   gint  tile_stride = px_size * tile_width;
   gint  buf_stride;

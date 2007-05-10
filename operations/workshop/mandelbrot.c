@@ -74,6 +74,7 @@ process (GeglOperation *operation,
   {
     GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
     gfloat *buf;
+    gint pxsize;
 
     output = g_object_new (GEGL_TYPE_BUFFER,
                         "format",
@@ -83,8 +84,9 @@ process (GeglOperation *operation,
                         "width",  result->width ,
                         "height", result->height,
                         NULL);
+    g_object_get (output, "px-size", &pxsize, NULL);
 
-    buf = g_malloc (gegl_buffer_pixels (output) * gegl_buffer_px_size (output));
+    buf = g_malloc (result->width * result->height * pxsize);
       {
         gfloat *dst=buf;
         gint y;

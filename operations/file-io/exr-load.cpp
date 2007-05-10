@@ -230,9 +230,12 @@ fix_saturation (GeglBuffer       *buf,
   const gint nc = has_alpha ? 4 : 3;
   gfloat *row[3], *tmp;
   GeglRectangle rect;
+  gint pxsize;
+
+  g_object_get (buf, "px-size", &pxsize, NULL);
 
   for (y=0; y<3; y++)
-    row[y] = (gfloat*) g_malloc0 (gegl_buffer_px_size(buf) * buf->width);
+    row[y] = (gfloat*) g_malloc0 (pxsize * buf->width);
 
   for (y=0; y<2; y++)
     {
@@ -323,9 +326,10 @@ reconstruct_chroma (GeglBuffer *buf,
   gfloat *tmp, *pixels;
   gint i;
   GeglRectangle rect;
+  gint pxsize;
+  g_object_get (buf, "px-size", &pxsize, NULL);
 
-  pixels = (gfloat*) g_malloc0 (MAX(buf->width, buf->height)*
-                               gegl_buffer_px_size(buf) );
+  pixels = (gfloat*) g_malloc0 (MAX(buf->width, buf->height)*pxsize);
   tmp = (gfloat*) g_malloc0 (MAX(buf->width, buf->height)*2*sizeof(gfloat));
 
   for (i=0; i<buf->height; i+=2)
@@ -360,8 +364,10 @@ convert_yca_to_rgba (GeglBuffer *buf,
   gfloat r,g,b, y, ry, by, *pxl;
   gint row, i, dx = has_alpha ? 4 : 3;
   GeglRectangle rect;
+  gint pxsize;
+  g_object_get (buf, "px-size", &pxsize, NULL);
 
-  pixels = (gchar*) g_malloc0 (buf->width * gegl_buffer_px_size(buf));
+  pixels = (gchar*) g_malloc0 (buf->width * pxsize);
 
   for (row=0; row<buf->height; row++)
     {
@@ -442,9 +448,12 @@ import_exr (GeglBuffer  *gegl_buffer,
       InputFile file (path);
       FrameBuffer frameBuffer;
       Box2i dw = file.header().dataWindow();
+      gint pxsize;
 
-      char *pixels = (char*) g_malloc0 (gegl_buffer->width *
-                                        gegl_buffer_px_size (gegl_buffer));
+      g_object_get (gegl_buffer, "px-size", &pxsize, NULL);
+      
+
+      char *pixels = (char*) g_malloc0 (gegl_buffer->width * pxsize);
 
       char *base = pixels;
 
@@ -456,14 +465,14 @@ import_exr (GeglBuffer  *gegl_buffer,
        * that is needed so that OpenEXR writes all pixels to the correct
        * position in our buffer.
        */
-      base -= gegl_buffer_px_size (gegl_buffer)*dw.min.x;
+      base -= pxsize * dw.min.x;
 
       insert_channels (frameBuffer, 
                        file.header(), 
                        base, 
                        gegl_buffer->width,
                        format_flags,
-                       gegl_buffer_px_size (gegl_buffer));
+                       pxsize);
 
       file.setFrameBuffer (frameBuffer);
 

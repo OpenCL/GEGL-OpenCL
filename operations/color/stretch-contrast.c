@@ -61,7 +61,7 @@ buffer_get_min_max (GeglBuffer *buffer,
   gfloat *buf = g_malloc0 (sizeof (gfloat) * 4 * buffer->width * buffer->height);
   gint i;
   gegl_buffer_get (buffer, NULL, 1.0, babl_format ("RGBA float"), buf);
-  for (i=0;i<gegl_buffer_pixels (buffer);i++)
+  for (i=0;i<buffer->width * buffer->height;i++)
     {
       gint component;
       for (component=0; component<3; component++)

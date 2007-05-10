@@ -93,7 +93,7 @@ static void gegl_processor_class_init (GeglProcessorClass *klass)
                                                      G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_CHUNK_SIZE,
                                    g_param_spec_int ("chunksize", "chunksize", "Size of chunks being rendered (larger chunks need more memory to do the processing).",
-                                                     8 * 8, 2048 * 2048, 256*256,
+                                                     8 * 8, 2048 * 2048, 512*512,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
 }
@@ -288,6 +288,8 @@ static gboolean render_rectangle (GeglProcessor *processor)
   if (processor->dirty_rectangles)
     {
       guchar *buf;
+      gint pxsize;
+      g_object_get (cache, "px-size", &pxsize, NULL);
 
       dr = processor->dirty_rectangles->data;
 
@@ -336,7 +338,7 @@ static gboolean render_rectangle (GeglProcessor *processor)
       if (!dr->width || !dr->height)
         return TRUE;
 
-      buf = g_malloc (dr->width * dr->height * gegl_buffer_px_size (GEGL_BUFFER (cache)));
+      buf = g_malloc (dr->width * dr->height * pxsize);
       g_assert (buf);
 
       gegl_node_blit (cache->node, dr, 1.0, cache->format, 0, (gpointer *) buf, GEGL_BLIT_DEFAULT);

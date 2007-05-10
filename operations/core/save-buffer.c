@@ -58,12 +58,16 @@ process (GeglOperation *operation,
       gpointer       format;
       guchar        *temp;
       GeglRectangle  rect;
+      gint pxsize;
       input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+
       g_assert (input);
+      g_object_get (input, "px-size", &pxsize, NULL);
 
       gegl_rectangle_set (&rect, input->x, input->y, input->width, input->height);
 
-      temp = g_malloc (gegl_buffer_pixels (input) * gegl_buffer_px_size (input));
+      
+      temp = g_malloc (input->width * input->height * pxsize);
       format = input->format;
       gegl_buffer_get (input, &rect, 1.0, format, temp);
 

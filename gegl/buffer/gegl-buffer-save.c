@@ -142,7 +142,9 @@ gegl_buffer_save (GeglBuffer    *buffer,
   info->header.y           = buffer->y;
   info->header.tile_width  = gegl_buffer_storage (buffer)->tile_width;
   info->header.tile_height = gegl_buffer_storage (buffer)->tile_height;
-  info->header.bpp         = gegl_buffer_px_size (buffer);
+
+  g_object_get (buffer, "px-size", &(info->header.bpp), NULL);
+/*  = gegl_buffer_px_size (buffer);*/
 
   info->tile_size = info->header.tile_width * info->header.tile_height * info->header.bpp;
   strcpy (info->header.format, ((Babl *) (gegl_buffer_storage (buffer)->format))->instance.name);

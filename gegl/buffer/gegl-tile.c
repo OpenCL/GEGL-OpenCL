@@ -23,6 +23,7 @@
 #include "string.h" /* memcpy */
 #include "../gegl-types.h"
 #include "gegl-buffer.h"
+#include "gegl-buffer-private.h"
 #include "gegl-tile.h"
 
 G_DEFINE_TYPE (GeglTile, gegl_tile, G_TYPE_OBJECT)
@@ -413,10 +414,11 @@ gegl_tile_indice (gint coordinate,
 
 /* computes the positive integer remainder (also for negative dividends)
  */
-#define REMAINDER(dividend, divisor)                       \
-  ((((dividend) < 0) ?                                    \
-    ((divisor) - ((-(dividend)) % (divisor))) % (divisor) : \
-    ((dividend) % (divisor))))
+#define REMAINDER(dividend, divisor) \
+                   (((dividend) < 0) ? \
+                    (divisor) - 1 - ((-((dividend) + 1)) % (divisor)) : \
+                    (dividend) % (divisor))
+
 
 /* compute the offset into the containing tile a coordinate has,
  * the stride is the width/height of tiles along the axis of coordinate

@@ -56,7 +56,6 @@ process (GeglOperation *operation,
   translate->y = floor (translate->y);
 
   g_assert (input);
-  g_assert (gegl_buffer_get_format (input));
 
   output = g_object_new (GEGL_TYPE_BUFFER,
                          "source",       input,

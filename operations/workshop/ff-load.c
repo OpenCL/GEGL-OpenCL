@@ -364,8 +364,11 @@ process (GeglOperation *operation,
                            NULL);
     if (p->ic && !decode_frame (self, self->frame))
       {
-        gchar *buf = g_malloc (gegl_buffer_pixels (output) * gegl_buffer_px_size (output));
+        gint pxsize;
+        gchar *buf;
         gint x,y;
+        g_object_get (output, "px-size", &pxsize, NULL);
+        buf = g_malloc (p->width * p->height * pxsize);
         for (y=0; y < p->height; y++)
           {
             guchar *dst = (guchar*)buf + y * p->width * 4;
