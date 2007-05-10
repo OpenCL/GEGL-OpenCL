@@ -166,6 +166,10 @@ GObject  * gegl_operation_get_data                  (GeglOperation *operation,
                                                      gpointer       context_id,
                                                      const gchar   *property_name);
 
+GObject  * gegl_operation_get_target                (GeglOperation *operation,
+                                                     gpointer       context_id,
+                                                     const gchar   *property_name);
+
 gchar    **gegl_list_operations                     (guint *n_operations_p);
 GParamSpec** gegl_list_properties                   (const gchar *operation_type,
                                                      guint       *n_properties_p);

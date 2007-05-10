@@ -43,14 +43,76 @@ static void
 gegl_operation_point_composer_init (GeglOperationPointComposer *self)
 {
   self->format     = babl_format ("RGBA float");/* default to RGBA float for
-                                                processing */
+                                                   processing */
   self->aux_format = babl_format ("RGBA float");/* default to RGBA float for
-                                                    processing */
+                                                   processing */
 }
+
+static gboolean
+fast_paths (GeglOperation *operation,
+            gpointer       context_id);
 
 static gboolean
 process_inner (GeglOperation *operation,
                gpointer       context_id)
+{
+  GeglOperationPointComposer *point_composer = GEGL_OPERATION_POINT_COMPOSER (operation);
+
+  GeglBuffer                 *input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+  GeglBuffer                 *aux   = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "aux"));
+
+  GeglRectangle              *result = gegl_operation_result_rect (operation, context_id);
+  GeglBuffer                 *output;
+
+  /* XXX: when disabling fast_paths everything should work, albeit slower,
+   * disabling of fast paths can be tried when things appear strange, debugging
+   * with and without fast paths when tracking buffer leaks is probably also a
+   * good idea. Do also note that some of the OpenRaster meta ops, depends on the
+   * short-circuiting happening in fast_paths.
+   * */
+  if (fast_paths (operation, context_id))
+    return TRUE;
+
+  /* retrieve the buffer we're writing to from GEGL */
+  output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
+
+  if ((result->width > 0) && (result->height > 0))
+    {
+      gfloat *buf = NULL, *aux_buf = NULL;
+
+      buf = g_malloc (4 * sizeof (gfloat) * output->width * output->height);
+
+      if (aux)
+        aux_buf = g_malloc (4 * sizeof (gfloat) * output->width * output->height);
+
+      gegl_buffer_get (input, result, 1.0, point_composer->format, buf);
+
+      if (aux)
+        {
+          gegl_buffer_get (aux, result, 1.0, point_composer->aux_format, aux_buf);
+        }
+      {
+        GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
+          operation,
+          buf,
+          aux_buf,
+          buf,
+          output->width * output->height);
+      }
+
+      gegl_buffer_set (output, result, point_composer->format, buf);
+
+      g_free (buf);
+      if (aux)
+        g_free (aux_buf);
+    }
+  return TRUE;
+}
+
+
+static gboolean
+fast_paths (GeglOperation *operation,
+            gpointer       context_id)
 {
   GeglOperationPointComposer *point_composer = GEGL_OPERATION_POINT_COMPOSER (operation);
 
@@ -67,21 +129,14 @@ process_inner (GeglOperation *operation,
     }
 
   {
-    gfloat *buf = NULL, *aux_buf = NULL;
-
-    g_assert (gegl_buffer_get_format (input));
-
-
     if ((result->width > 0) && (result->height > 0))
       {
-        GeglBuffer  *output;
 
         const gchar *op = gegl_node_get_operation (operation->node);
-        if (!strcmp (op, "over"))
+        if (!strcmp (op, "over")) /* these optimizations probably apply to more than
+                                     over */
           {
-#define SKIP_EMPTY_IN
-#define SKIP_EMPTY_AUX
-#ifdef SKIP_EMPTY_IN
+/* SKIP_EMPTY_IN */
             {
               GeglRectangle in_abyss;
 
@@ -111,9 +166,7 @@ process_inner (GeglOperation *operation,
                   return TRUE;
                 }
             }
-#endif
-
-#ifdef SKIP_EMPTY_AUX
+/* SKIP_EMPTY_AUX */
             {
               GeglRectangle aux_abyss;
 
@@ -128,43 +181,7 @@ process_inner (GeglOperation *operation,
                   return TRUE;
                 }
             }
-#endif
           }
-        output = g_object_new (GEGL_TYPE_BUFFER,
-                               "format", point_composer->format,
-                               "x", result->x,
-                               "y", result->y,
-                               "width", result->width,
-                               "height", result->height,
-                               NULL);
-
-        buf = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));
-
-        if (aux)
-          aux_buf = g_malloc (4 * sizeof (gfloat) * gegl_buffer_pixels (output));
-
-        gegl_buffer_get (input, result, 1.0, point_composer->format, buf);
-
-        if (aux)
-          {
-            gegl_buffer_get (aux, result, 1.0, point_composer->aux_format, aux_buf);
-          }
-        {
-          GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation)->process (
-            operation,
-            buf,
-            aux_buf,
-            buf,
-            gegl_buffer_pixels (output));
-        }
-
-        gegl_buffer_set (output, result, point_composer->format, buf);
-
-        g_free (buf);
-        if (aux)
-          g_free (aux_buf);
-
-        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
       }
     else
       {
@@ -176,7 +193,8 @@ process_inner (GeglOperation *operation,
                                            "height", 0,
                                            NULL);
         gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+        return TRUE;
       }
   }
-  return TRUE;
+  return FALSE;
 }

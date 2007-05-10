@@ -1,5 +1,19 @@
 2007-05-10  Øyvind Kolås  <pippin@gimp.org>
 
+	Start of work to migrate the creation of output buffers for operations
+	from the operations themselves. For now both the old way of doing
+	things and the new way are supported, the old way will gradually be
+	deprecated.
+
+	* gegl/gegl-operation.c: (gegl_operation_get_target):
+	* gegl/gegl-operation.h: added gegl_operation_get_target.
+	* gegl/gegl-operation-point-composer.c: (process_inner),
+	(fast_paths): retrieve output buffer from GEGL.
+	* gegl/gegl-operation-point-filter.c: (process_inner):
+	retrieve output buffer from GEGL.
+
+2007-05-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/editor.c: (cb_shrinkwrap): removed unused variable.
 
 2007-05-09  Øyvind Kolås  <pippin@gimp.org>
