@@ -1,3 +1,10 @@
+2007-05-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/c2g.c: (c2g):
+	* operations/workshop/stress.c: (stress):
+	* operations/workshop/envelopes.h: moved the sample_envelopes function
+	which is common between stress and c2g out into it's own header.
+
 2007-05-15  Øyvind Kolås  <oeyvindk@hig.no>
 
 	* operations/workshop/c2g.c: color to grayscale convertor, that

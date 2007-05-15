@@ -63,7 +63,6 @@ process (GeglOperation *operation,
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-  compute_luts ();
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   {
@@ -119,171 +118,7 @@ process (GeglOperation *operation,
   return  TRUE;
 }
 
-#define ANGLE_PRIME  95273
-#define RADIUS_PRIME 29537
-#define SCALE_PRIME 85643
-
-static gfloat   lut_cos[ANGLE_PRIME];
-static gfloat   lut_sin[ANGLE_PRIME];
-static gfloat   radiuses[RADIUS_PRIME];
-static gboolean luts_computed = FALSE; 
-static gint     angle_no=0;
-static gint     radius_no=0;
-
-static void compute_luts(void)
-{
-  gint i;
-  if (luts_computed)
-    return;
-  luts_computed = TRUE;
-
-  for (i=0;i<ANGLE_PRIME;i++)
-    {
-      gfloat angle = (random() / (RAND_MAX*1.0)) * 3.141592653589793*2;
-      lut_cos[i] = cos(angle);
-      lut_sin[i] = sin(angle);
-    }
-  for (i=0;i<RADIUS_PRIME;i++)
-    {
-      radiuses[i] = (random() / (RAND_MAX*1.0));
-    }
-}
-
-static inline void
-sample (gfloat *buf,
-        gint    width,
-        gint    height,
-        gint    x,
-        gint    y,
-        gfloat *dst)
-{
-  gfloat *pixel = buf + ((width * y) + x) * 4;
-  gint c;
-
-  for (c=0;c<4;c++)
-    {
-      dst[c]=pixel[c];
-    }
-}
-
-static inline void
-sample_min_max (gfloat *buf,
-                gfloat *center_pix,
-                gint    width,
-                gint    height,
-                gint    x,
-                gint    y,
-                gint    radius,
-                gint    samples,
-                gfloat *min,
-                gfloat *max)
-{
-  gfloat best_min[3];
-  gfloat best_max[3];
-
-  gint i, c;
-
-  for (c=0;c<3;c++)
-    {
-      best_min[c]=center_pix[c];
-      best_max[c]=center_pix[c];
-    }
-
-  for (i=0; i<samples; i++)
-    {
-      gint u, v;
-      gint angle = angle_no++;
-      gfloat rmag = radiuses[radius_no++] * radius;
-
-      if (angle_no>=ANGLE_PRIME)
-        angle_no=0;
-      if (radius_no>=RADIUS_PRIME)
-        radius_no=0;
-
-      u = x + rmag * lut_cos[angle];
-      v = y + rmag * lut_sin[angle];
-
-      if (u>=width)
-        u=width-1;
-      if (u<0)
-        u=0;
-      if (v>=height)
-        v=height-1;
-      if (v<0)
-        v=0;
-
-      {
-        gfloat pixel[4];
-
-        sample (buf, width, height, u, v, pixel);
-
-        for (c=0;c<3;c++)
-          {
-            if (pixel[3]!=0.0 &&
-                pixel[c]<best_min[c])
-              best_min[c]=pixel[c];
-
-            if (pixel[3]!=0.0 &&
-                pixel[c]>best_max[c])
-              best_max[c]=pixel[c];
-          }
-      }
-    }
-  for (c=0;c<3;c++)
-    {
-      min[c]=best_min[c];
-      max[c]=best_max[c];
-    }
-}
-
-static gfloat colordiff (gfloat *a,
-                         gfloat *b)
-{
-  return sqrt(sq(a[0]-b[0])+
-              sq(a[1]-b[1])+
-              sq(a[2]-b[2]));
-}
-
-
-static void compute_envelopes (gfloat *buf,
-                               gfloat *center_pixel,
-                               gint    width,
-                               gint    height,
-                               gint    x,
-                               gint    y,
-                               gint    radius,
-                               gint    samples,
-                               gint    iterations,
-                               gfloat *min_envelope,
-                               gfloat *max_envelope)
-{
-  gint    i;
-  gint    c;
-
-  for (i=0;i<iterations;i++)
-    {
-      gfloat min[3];
-      gfloat max[3];
-      gfloat alpha = (i/(i+1.0));
-
-      sample_min_max (buf,
-                      center_pixel,
-                      width,
-                      height,
-                      x, y,
-                      radius, samples,
-                      min, max);
-
-      for (c=0;c<3;c++)
-        {
-          min_envelope[c] *= alpha;
-          min_envelope[c] += min[c] * (1.0-alpha);
-
-          max_envelope[c] *= alpha;
-          max_envelope[c] += max[c] * (1.0-alpha);
-        }
-    }
-}
+#include "envelopes.h"
 
 static void c2g (GeglBuffer *src,
                  GeglBuffer *dst,
@@ -296,6 +131,8 @@ static void c2g (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
+  compute_luts ();
+
   src_buf = g_malloc0 (src->width * src->height * 4 * 4);
   dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
 
@@ -306,8 +143,8 @@ static void c2g (GeglBuffer *src,
       for (x=radius; x<dst->width-radius; x++)
         {
           gfloat *pixel = src_buf + offset;
-          gfloat  min_envelope[3];
-          gfloat  max_envelope[3];
+          gfloat  min_envelope[4];
+          gfloat  max_envelope[4];
 
           compute_envelopes (src_buf,
                              pixel,
@@ -324,37 +161,22 @@ static void c2g (GeglBuffer *src,
             gint   c;
           
             gray = pixel[0]*0.212671 + pixel[1] * 0.715160 + pixel[2] * 0.072169;
-#if 0 
-          {
-            gfloat black_dist;
-            gfloat white_dist;
-            white_dist = colordiff (pixel, max_envelope);
-            black_dist = colordiff (pixel, min_envelope);
+            {
+              gfloat nominator = 0;
+              gfloat denominator = 0; 
+              for (c=0; c<3; c++)
+                {
+                  gfloat delta = max_envelope[c]-min_envelope[c];
+                  nominator += (pixel[c] - min_envelope[c]) * delta;
+                  denominator += delta*delta;
+                }
 
-            if (black_dist+white_dist>0.001)
-              {
-                gray *= (1.0-strength);
-                gray += strength * (black_dist / (black_dist + white_dist));
-              }
-          }
-#endif
-
-          {
-            gfloat teller = 0;
-            gfloat nevner = 0; 
-            for (c=0; c<3; c++)
-              {
-                gfloat delta = max_envelope[c]-min_envelope[c];
-                teller += (pixel[c] - min_envelope[c]) * delta;
-                nevner += delta*delta;
-              }
-
-            if (nevner>0.000) /* if we found a range, modify the result */
-              {
-                gray *= (1.0-strength);
-                gray += strength * (teller/nevner);
-              }
-          }
+              if (denominator>0.000) /* if we found a range, modify the result */
+                {
+                  gray *= (1.0-strength);
+                  gray += strength * (nominator/denominator);
+                }
+            }
 
             for (c=0; c<3;c++)
               dst_buf[offset+c] = gray;

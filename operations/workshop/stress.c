@@ -117,122 +117,7 @@ process (GeglOperation *operation,
   return  TRUE;
 }
 
-#define ANGLE_PRIME  95273
-#define RADIUS_PRIME 29537
-#define SCALE_PRIME 85643
-
-static gfloat lut_cos[ANGLE_PRIME];
-static gfloat lut_sin[ANGLE_PRIME];
-static gfloat radiuses[RADIUS_PRIME];
-static gboolean luts_computed = FALSE; 
-static gint angle_no=0;
-static gint radius_no=0;
-
-static void compute_luts(void)
-{
-  gint i;
-  if (luts_computed)
-    return;
-  luts_computed = TRUE;
-
-  for (i=0;i<ANGLE_PRIME;i++)
-    {
-      gfloat angle = (random() / (RAND_MAX*1.0)) * 3.141592653589793*2;
-      lut_cos[i] = cos(angle);
-      lut_sin[i] = sin(angle);
-    }
-  for (i=0;i<RADIUS_PRIME;i++)
-    {
-      radiuses[i] = (random() / (RAND_MAX*1.0));
-    }
-}
-
-static inline void
-sample (gfloat *buf,
-        gint    width,
-        gint    height,
-        gint    x,
-        gint    y,
-        gfloat *dst)
-{
-  gfloat *pixel = buf + ((width * y) + x) * 4;
-  gint c;
-
-  for (c=0;c<4;c++)
-    {
-      dst[c]=pixel[c];
-    }
-}
-
-static inline void
-sample_min_max (gfloat *buf,
-                gfloat *center_pix,
-                gint    width,
-                gint    height,
-                gint    x,
-                gint    y,
-                gint    radius,
-                gint    samples,
-                gfloat *min,
-                gfloat *max)
-{
-  gfloat best_min[3];
-  gfloat best_max[3];
-
-  gint i, c;
-
-  for (c=0;c<3;c++)
-    {
-      best_min[c]=center_pix[c];
-      best_max[c]=center_pix[c];
-    }
-
-  for (i=0; i<samples; i++)
-    {
-      gint u, v;
-      gint angle = angle_no++;
-      gfloat rmag = radiuses[radius_no++] * radius;
-
-      if (angle_no>=ANGLE_PRIME)
-        angle_no=0;
-      if (radius_no>=RADIUS_PRIME)
-        radius_no=0;
-
-      u = x + rmag * lut_cos[angle];
-      v = y + rmag * lut_sin[angle];
-
-      if (u>=width)
-        u=width-1;
-      if (u<0)
-        u=0;
-      if (v>=height)
-        v=height-1;
-      if (v<0)
-        v=0;
-
-      {
-        gfloat pixel[4];
-
-        sample (buf, width, height, u, v, pixel);
-
-        for (c=0;c<3;c++)
-          {
-            if (pixel[3]!=0.0 &&
-                pixel[c]<best_min[c])
-              best_min[c]=pixel[c];
-
-            if (pixel[3]!=0.0 &&
-                pixel[c]>best_max[c])
-              best_max[c]=pixel[c];
-          }
-      }
-    }
-  for (c=0;c<3;c++)
-    {
-      min[c]=best_min[c];
-      max[c]=best_max[c];
-    }
-}
+#include "envelopes.h"
               
 static void stress (GeglBuffer *src,
                     GeglBuffer *dst,
@@ -254,42 +139,31 @@ static void stress (GeglBuffer *src,
       gint offset = ((src->width*y)+radius)*4;
       for (x=radius; x<dst->width-radius; x++)
         {
-          gfloat amin[3]={0.0,0.0,0.0}, amax[3]={0.0,0.0,0.0};
-          gint i;
-          gfloat *center_pix = src_buf + offset;
+          gfloat *center_pix= src_buf + offset;
+          gfloat  min_envelope[4];
+          gfloat  max_envelope[4];
 
-          for (i=0;i<3;i++)
-            {
-              amin[i]=center_pix[i];
-              amax[i]=center_pix[i];
-            }
-          for (i=0;i<iterations;i++)
-            {
-              gint c;
-              gfloat min[3], max[3];
-              sample_min_max (src_buf, center_pix, src->width, src->height, x, y, radius, samples, min, max);
-              for (c=0;c<3;c++)
-                {
-                  #define alpha 0.01
-                  amin[c] = amin[c] * (1.0-alpha) + min[c] * alpha;
-                  amax[c] = amax[c] * (1.0-alpha) + max[c] * alpha;
-                }
-            }
+          compute_envelopes (src_buf,
+                             center_pix,
+                             src->width,
+                             src->height,
+                             x, y,
+                             radius, samples,
+                             iterations,
+                             min_envelope, max_envelope);
+
          {
           gint c;
           gfloat pixel[3];
           for (c=0;c<3;c++)
             {
               pixel[c] = center_pix[c];
-              /*amin[c] /= iterations;
-              amax[c] /= iterations;*/
-              if (amin[c]!=amax[c])
-                pixel[c] = (pixel[c]-(amin[c]))/(amax[c]-amin[c]);
+              if (min_envelope[c]!=max_envelope[c])
+                pixel[c] = (pixel[c]-(min_envelope[c]))/(max_envelope[c]-min_envelope[c]);
             }
-
-           for (i=0; i<3;i++)
-             dst_buf[offset+i] = pixel[i];
-           dst_buf[offset+i] = center_pix[i];
+          for (c=0; c<3;c++)
+            dst_buf[offset+c] = pixel[c];
+          dst_buf[offset+c] = center_pix[c];
          }
           offset+=4;
         }
