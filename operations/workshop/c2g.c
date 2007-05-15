@@ -23,13 +23,13 @@
 
 gegl_chant_int (radius,     2, 5000.0, 384, "neighbourhood taken into account")
 gegl_chant_int (samples,    0, 1000,    3,  "number of samples to do")
-gegl_chant_int (iterations, 0, 1000.0, 120, "number of iterations (length of exposure)")
-gegl_chant_double (strength,  -8, 8,   1.0, "how much the local optimum separation should be taken into account.")
+gegl_chant_int (iterations, 0, 1000.0, 23, "number of iterations (length of exposure)")
+gegl_chant_double (strength,  -8, 8,  0.5, "how much the local optimum separation should be taken into account.")
 #else
 
 #define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME         c2g
-#define GEGL_CHANT_DESCRIPTION  "STRESS color to grayscale"
+#define GEGL_CHANT_DESCRIPTION  "Color to grayscale conversion that uses, spatial color differences to perform local grayscale contrast enhancement."
 #define GEGL_CHANT_SELF         "c2g.c"
 #define GEGL_CHANT_CATEGORIES   "enhance"
 #define GEGL_CHANT_CLASS_INIT

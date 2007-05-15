@@ -1,8 +1,8 @@
 2007-05-15  Øyvind Kolås  <oeyvindk@hig.no>
 
 	* operations/workshop/c2g.c: color to grayscale convertor, that
-	uses color differences as a basis for black and white local contrast
-	enhancement.
+	uses spatial color differences as a basis for black and white local
+	contrast enhancement.
 
 2007-05-10  Øyvind Kolås  <pippin@gimp.org>
 
