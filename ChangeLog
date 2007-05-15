@@ -1,3 +1,9 @@
+2007-05-15  Øyvind Kolås  <oeyvindk@hig.no>
+
+	* operations/workshop/c2g.c: color to grayscale convertor, that
+	uses color differences as a basis for black and white local contrast
+	enhancement.
+
 2007-05-10  Øyvind Kolås  <pippin@gimp.org>
 
 	Replaced accesor functions with properties for some buffer properties.
@@ -68,7 +74,7 @@
 	* gegl/gegl-init.c: (gegl_init): avoid initializing the gthread system
 	twice.
 
-2007-05-06  Øyvind Kolås  <pippin@gimp.org>
+2007-05-06  Øyvind Kolås  <oeyvindk@hig.no>
 
 	* operations/workshop/stress.c: Added STRESS operation, Spatio Temporal
 	Retinex Envelope with Stochastic Sampling.
