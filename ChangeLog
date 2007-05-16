@@ -1,5 +1,10 @@
 2007-05-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/envelopes.h: avoid segfaulting if NULL is passed
+	for minimum or maximum destination.
+
+2007-05-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/Makefile.am: rebuild stress, c2g, min-envelope
 	and max-envelope if envelopes.h changes.
 

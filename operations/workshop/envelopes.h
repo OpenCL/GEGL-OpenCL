@@ -16,9 +16,9 @@
  * Copyright 2007 Øyvind Kolås     <pippin@gimp.org>
  */
 
-#define ANGLE_PRIME  95273
-#define RADIUS_PRIME 29537
-#define SCALE_PRIME 85643
+#define ANGLE_PRIME   304729
+#define RADIUS_PRIME  29537
+#define SCALE_PRIME   85643
 
 static gfloat   lut_cos[ANGLE_PRIME];
 static gfloat   lut_sin[ANGLE_PRIME];
@@ -164,11 +164,16 @@ static void compute_envelopes (gfloat *buf,
 
       for (c=0;c<3;c++)
         {
-          min_envelope[c] *= alpha;
-          min_envelope[c] += min[c] * (1.0-alpha);
-
-          max_envelope[c] *= alpha;
-          max_envelope[c] += max[c] * (1.0-alpha);
+          if (min_envelope)
+            {
+              min_envelope[c] *= alpha;
+              min_envelope[c] += min[c] * (1.0-alpha);
+            }
+          if (max_envelope)
+            {
+              max_envelope[c] *= alpha;
+              max_envelope[c] += max[c] * (1.0-alpha);
+            }
         }
     }
 }
