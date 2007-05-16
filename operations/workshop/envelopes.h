@@ -65,7 +65,6 @@ sample (gfloat *buf,
 
 static inline void
 sample_min_max (gfloat *buf,
-                gfloat *center_pix,
                 gint    width,
                 gint    height,
                 gint    x,
@@ -77,6 +76,7 @@ sample_min_max (gfloat *buf,
 {
   gfloat best_min[3];
   gfloat best_max[3];
+  gfloat *center_pix = (buf + (width * y + x) * 4);
 
   gint i, c;
 
@@ -134,7 +134,6 @@ sample_min_max (gfloat *buf,
 }
 
 static void compute_envelopes (gfloat *buf,
-                               gfloat *center_pixel,
                                gint    width,
                                gint    height,
                                gint    x,
@@ -148,6 +147,8 @@ static void compute_envelopes (gfloat *buf,
   gint    i;
   gint    c;
 
+  compute_luts();
+
   for (i=0;i<iterations;i++)
     {
       gfloat min[3];
@@ -155,7 +156,6 @@ static void compute_envelopes (gfloat *buf,
       gfloat alpha = (i/(i+1.0));
 
       sample_min_max (buf,
-                      center_pixel,
                       width,
                       height,
                       x, y,

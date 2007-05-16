@@ -22,7 +22,7 @@
 
 #if GEGL_CHANT_PROPERTIES 
 
-gegl_chant_int (radius,     2, 5000.0, 500, "neighbourhood taken into account")
+gegl_chant_int (radius,     2, 5000.0, 100, "neighbourhood taken into account")
 gegl_chant_int (samples,    0, 1000,   3,    "number of samples to do")
 gegl_chant_int (iterations, 0, 1000.0, 20,   "number of iterations (length of exposure)")
 #else
@@ -45,7 +45,6 @@ static void stress (GeglBuffer *src,
 static GeglRectangle get_source_rect (GeglOperation *self,
                                       gpointer       context_id);
 
-static void compute_luts(void);
 #include <stdlib.h>
 
 static gboolean
@@ -61,7 +60,6 @@ process (GeglOperation *operation,
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-  compute_luts ();
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   {
@@ -144,7 +142,6 @@ static void stress (GeglBuffer *src,
           gfloat  max_envelope[4];
 
           compute_envelopes (src_buf,
-                             center_pix,
                              src->width,
                              src->height,
                              x, y,

@@ -1,3 +1,15 @@
+2007-05-16  Øyvind Kolås  <oeyvindk@hig.no>
+
+	* operations/workshop/envelopes.h: removed unneded parameter from
+	compute envelopes.
+	* operations/workshop/c2g.c: (c2g): updated call to compute_envelopes.
+	* operations/workshop/stress.c: (stress): updated call to
+	compute_envelops.
+	* operations/workshop/max-envelope.c: added new op, that only outputs
+	the maximum envelope.
+	* operations/workshop/min-envelope.c: added new op, that only outputs
+	the minimum envelope.
+
 2007-05-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/c2g.c: (c2g):
