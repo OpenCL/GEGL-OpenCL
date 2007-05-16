@@ -34,11 +34,11 @@ gegl_chant_int (iterations, 0, 1000.0, 20,   "number of iterations (length of ex
 #include "gegl-chant.h"
 #include <math.h>
 
-static void stress (GeglBuffer *src,
-                    GeglBuffer *dst,
-                    gint        radius,
-                    gint        samples,
-                    gint        iterations);
+static void max_envelope (GeglBuffer *src,
+                          GeglBuffer *dst,
+                          gint        radius,
+                          gint        samples,
+                          gint        iterations);
 
 static GeglRectangle get_source_rect (GeglOperation *self,
                                       gpointer       context_id);
@@ -94,7 +94,7 @@ process (GeglOperation *operation,
                                "height", need.height,
                                NULL);
 
-        stress (temp_in, output, self->radius, self->samples, self->iterations);
+        max_envelope (temp_in, output, self->radius, self->samples, self->iterations);
         g_object_unref (temp_in);
       }
 
@@ -115,11 +115,11 @@ process (GeglOperation *operation,
 
 #include "envelopes.h"
               
-static void stress (GeglBuffer *src,
-                    GeglBuffer *dst,
-                    gint        radius,
-                    gint        samples,
-                    gint        iterations)
+static void max_envelope (GeglBuffer *src,
+                          GeglBuffer *dst,
+                          gint        radius,
+                          gint        samples,
+                          gint        iterations)
 {
   gint x,y;
   gfloat *src_buf;
