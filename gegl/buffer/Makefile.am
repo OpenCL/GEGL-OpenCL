@@ -28,6 +28,7 @@ BUFFER_sources = \
 BUFFER_headers = \
     gegl-buffer-allocator.h	\
     gegl-buffer.h		\
+    gegl-buffer-private.h	\
     gegl-buffer-save.h		\
     gegl-buffer-types.h		\
     gegl-cache.h		\
