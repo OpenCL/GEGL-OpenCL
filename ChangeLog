@@ -1,3 +1,8 @@
+2007-05-16  Étienne Bersac  <bersace03@laposte.net>
+
+	* gegl/buffer/Makefile.am: added gegl-buffer-private.h to
+	BUFFER_headers.
+
 2007-05-16  Øyvind Kolås  <oeyvindk@hig.no>
 
 	* operations/workshop/envelopes.h: removed unneded parameter from
