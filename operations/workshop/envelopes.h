@@ -19,6 +19,7 @@
 #define ANGLE_PRIME  95273
 #define RADIUS_PRIME 29537
 #define SCALE_PRIME 85643
+#include "vector.h"
 
 static gfloat   lut_cos[ANGLE_PRIME];
 static gfloat   lut_sin[ANGLE_PRIME];
@@ -89,8 +90,15 @@ sample_min_max (gfloat *buf,
   for (i=0; i<samples; i++)
     {
       gint u, v;
-      gint angle = angle_no++;
-      gfloat rmag = radiuses[radius_no++] * radius;
+      gint angle;
+      gfloat rmag;
+retry:                      /* if we've sampled outside the valid image
+                               area, we grab another sample instead, this
+                               should potentially work better than mirroring
+                               or extending the image
+                             */
+      angle = angle_no++;
+      rmag = radiuses[radius_no++] * radius;
 
       if (angle_no>=ANGLE_PRIME)
         angle_no=0;
@@ -100,29 +108,31 @@ sample_min_max (gfloat *buf,
       u = x + rmag * lut_cos[angle];
       v = y + rmag * lut_sin[angle];
 
-      if (u>=width)
-        u=width-1;
-      if (u<0)
-        u=0;
-      if (v>=height)
-        v=height-1;
-      if (v<0)
-        v=0;
+      if (u>=width ||
+          u<0 ||
+          v>=height ||
+          v<0)
+        goto retry;
 
       {
         gfloat pixel[4];
 
         sample (buf, width, height, u, v, pixel);
 
-        for (c=0;c<3;c++)
+        if (pixel[3]>0.0)
           {
-            if (pixel[3]!=0.0 &&
-                pixel[c]<best_min[c])
-              best_min[c]=pixel[c];
+            for (c=0;c<3;c++)
+              {
+                if (pixel[c]<best_min[c])
+                  best_min[c]=pixel[c];
 
-            if (pixel[3]!=0.0 &&
-                pixel[c]>best_max[c])
-              best_max[c]=pixel[c];
+                if (pixel[c]>best_max[c])
+                  best_max[c]=pixel[c];
+              }
+          }
+        else
+          {
+            goto retry;
           }
       }
     }
