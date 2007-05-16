@@ -1,3 +1,7 @@
+2007-05-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/color/threshold.c: also -10.0 .. 10.0 range.
+
 2007-05-16  Étienne Bersac  <bersace03@laposte.net>
 
 	* gegl/buffer/Makefile.am: added gegl-buffer-private.h to
