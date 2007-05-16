@@ -16,9 +16,9 @@
  * Copyright 2007 Øyvind Kolås     <pippin@gimp.org>
  */
 
-#define ANGLE_PRIME   304729
-#define RADIUS_PRIME  29537
-#define SCALE_PRIME   85643
+#define ANGLE_PRIME  95273
+#define RADIUS_PRIME 29537
+#define SCALE_PRIME 85643
 
 static gfloat   lut_cos[ANGLE_PRIME];
 static gfloat   lut_sin[ANGLE_PRIME];
@@ -146,14 +146,16 @@ static void compute_envelopes (gfloat *buf,
 {
   gint    i;
   gint    c;
+  gfloat  range_avg[4]  = {0,0,0,0};
+  gfloat  dark_avg[4]   = {0,0,0,0};
+  gfloat  bright_avg[4] = {0,0,0,0};
+  gfloat *pixel = buf + (width*y+x)*4;
 
   compute_luts();
 
   for (i=0;i<iterations;i++)
     {
-      gfloat min[3];
-      gfloat max[3];
-      gfloat alpha = (i/(i+1.0));
+      gfloat min[3], max[3];      /* sampled min/max */
 
       sample_min_max (buf,
                       width,
@@ -164,16 +166,39 @@ static void compute_envelopes (gfloat *buf,
 
       for (c=0;c<3;c++)
         {
-          if (min_envelope)
+          gfloat range, bright, dark;
+
+          range = max[c] - min[c];
+
+          if (range>0.0)
             {
-              min_envelope[c] *= alpha;
-              min_envelope[c] += min[c] * (1.0-alpha);
+              bright = (max[c] - pixel[c]) / range;
+              dark = (pixel[c] - min[c]) / range;
             }
-          if (max_envelope)
+          else
             {
-              max_envelope[c] *= alpha;
-              max_envelope[c] += max[c] * (1.0-alpha);
+              bright = 0.5;
+              dark = 0.5;
             }
+
+          dark_avg[c] += dark;
+          bright_avg[c] += bright;
+          range_avg[c] += range;
         }
     }
+
+    for (c=0;c<3;c++)
+      {
+        dark_avg[c]   /= iterations;
+        bright_avg[c] /= iterations;
+        range_avg[c]  /= iterations;
+      }
+
+    if (max_envelope)
+      for (c=0;c<3;c++)
+        max_envelope[c] = pixel[c] + bright_avg[c] * range_avg[c];
+
+    if (min_envelope)
+      for (c=0;c<3;c++)
+        min_envelope[c] = pixel[c] - dark_avg[c] * range_avg[c];
 }

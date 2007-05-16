@@ -1,5 +1,10 @@
 2007-05-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/envelopes.h: compute the envelopes in a through
+	the darkness/lightness /range variation of the neighbourhood.
+
+2007-05-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/envelopes.h: avoid segfaulting if NULL is passed
 	for minimum or maximum destination.
 
