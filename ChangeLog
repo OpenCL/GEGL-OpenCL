@@ -1,6 +1,11 @@
 2007-05-16  Øyvind Kolås  <pippin@gimp.org>
 
-	* operations/color/threshold.c: also -10.0 .. 10.0 range.
+	* operations/workshop/Makefile.am: rebuild stress, c2g, min-envelope
+	and max-envelope if envelopes.h changes.
+
+2007-05-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/color/threshold.c: allow -10.0 .. 10.0 range.
 
 2007-05-16  Étienne Bersac  <bersace03@laposte.net>
 

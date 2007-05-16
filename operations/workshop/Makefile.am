@@ -5,6 +5,15 @@ include $(top_srcdir)/operations/Makefile-operations.am
 line-profile.so: line-profile.c $(GEGLHEADERS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
 
+stress.so: stress.c $(GEGLHEADERS) envelopes.h
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
+c2g.so: c2g.c $(GEGLHEADERS) envelopes.h
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
+min-envelope.so: min-envelope.c $(GEGLHEADERS) envelopes.h
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
+max-envelope.so: max-envelope.c $(GEGLHEADERS) envelopes.h
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
+
 lum-profile.so: lum-profile.c $(GEGLHEADERS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(CAIRO_CFLAGS) $(CAIRO_LIBS)
 gluas.so: gluas.c $(GEGLHEADERS)
