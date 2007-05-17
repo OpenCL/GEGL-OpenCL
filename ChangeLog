@@ -1,5 +1,10 @@
 2007-05-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/mono-mixer.c: added mono mixer
+	from Mark Probst <mark.probst@gmail.com>.
+
+2007-05-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/envelopes.h: retry sampling if sampling outside
 	buffer / a transparent pixel.
 
