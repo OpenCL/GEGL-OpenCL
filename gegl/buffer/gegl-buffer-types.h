@@ -40,7 +40,9 @@ typedef struct _GeglTileTraitsClass      GeglTileTraitsClass;
 typedef struct _GeglStorage              GeglStorage;
 typedef struct _GeglStorageClass         GeglStorageClass;
 
+#ifndef _GEGL_BUFFER_H
 typedef struct _GeglBuffer               GeglBuffer;
+#endif
 typedef struct _GeglBufferClass          GeglBufferClass;
 
 typedef struct _GeglCache                GeglCache;

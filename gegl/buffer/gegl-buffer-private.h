@@ -25,6 +25,7 @@
 #include <glib-object.h>
 
 #include "gegl-buffer-types.h"
+#include "gegl-buffer.h"
 #include <babl/babl.h>
 #include "gegl-tile-traits.h"
 

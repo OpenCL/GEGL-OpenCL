@@ -1,3 +1,12 @@
+2007-05-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.h: removed inclusion of gegl-buffer-types.h,
+	and duplicate the GeglBuffer typedef in the two files, with mutual
+	exclusion.
+	* gegl/buffer/gegl-buffer-private.h: include gegl-buffer.h
+	* gegl/buffer/gegl-buffer-types.h: do not define GeglBuffer if
+	gegl-buffer.h already has been included.
+
 2007-05-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/mono-mixer.c: added mono mixer

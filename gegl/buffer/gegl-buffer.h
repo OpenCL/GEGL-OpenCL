@@ -20,7 +20,6 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include "gegl-buffer-types.h"
 #include <babl/babl.h>
 
 #ifndef _GEGL_BUFFER_H
@@ -28,6 +27,10 @@
 
 #define GEGL_TYPE_BUFFER (gegl_buffer_get_type ())
 #define GEGL_BUFFER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER, GeglBuffer))
+
+#ifndef _GEGL_BUFFER_TYPES_H
+typedef struct _GeglBuffer     GeglBuffer;
+#endif
 
 typedef enum {
   GEGL_INTERPOLATION_NEAREST
