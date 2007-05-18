@@ -22,7 +22,8 @@
 #include <glib-object.h>
 #include "gegl-object.h"
 #include "gegl-types.h"
-#include "buffer/gegl-buffer.h"
+#include "buffer/gegl-buffer-types.h"
+#include <babl/babl.h>
 
 G_BEGIN_DECLS
 

@@ -5,7 +5,7 @@
 	exclusion.
 	* gegl/buffer/gegl-buffer-private.h: include gegl-buffer.h
 	* gegl/buffer/gegl-buffer-types.h: do not define GeglBuffer if
-	gegl-buffer.h already has been included.
+	* gegl/buffer/gegl-interpolator.h: include gegl-buffer-types directly.
 
 2007-05-17  Øyvind Kolås  <pippin@gimp.org>
 
