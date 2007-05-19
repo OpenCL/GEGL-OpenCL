@@ -1,3 +1,13 @@
+2007-05-19  Øyvind Kolås  <pippin@gimp.org>
+
+	Applied patch from Mark Probst <mark.probst@gmail.com>.
+
+	* gegl/gegl-curve.[ch]: added
+	* gegl/Makefile.am: added gegl-curve.[ch], a curve object to be used
+	for curve properties for ops.
+	* operations/workshop/contrast-curve.c: added a contrast op controlled
+	by a curve.
+
 2007-05-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-buffer.h: removed inclusion of gegl-buffer-types.h,
