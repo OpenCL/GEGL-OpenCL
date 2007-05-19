@@ -1,3 +1,8 @@
+2007-05-18  Étienne Bersac  <bersace03@laposte.net>
+
+	* operations/core/save-buffer.c: do not rely on input buffer to
+	get buffer dimension.
+
 2007-05-19  Øyvind Kolås  <pippin@gimp.org>
 
 	Applied patch from Mark Probst <mark.probst@gmail.com>.

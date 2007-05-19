@@ -53,25 +53,22 @@ process (GeglOperation *operation,
   if (self->buffer)
     {
       /*FIXME: iterate the buffer in chunks/tiles/spans instead of making a large
-       * temporary linear buffer the size of the incoming buffe
+       * temporary linear buffer the size of the incoming buffer
        */
       gpointer       format;
       guchar        *temp;
-      GeglRectangle  rect;
+      GeglRectangle  *rect = gegl_operation_result_rect (operation, context_id);
       gint pxsize;
       input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
       g_assert (input);
       g_object_get (input, "px-size", &pxsize, NULL);
 
-      gegl_rectangle_set (&rect, input->x, input->y, input->width, input->height);
-
-      
-      temp = g_malloc (input->width * input->height * pxsize);
+      /* pxsize is wrong, how to deal with ??? */
+      temp = g_malloc (rect->width * rect->height * pxsize);
       format = input->format;
-      gegl_buffer_get (input, &rect, 1.0, format, temp);
-
-      gegl_buffer_set (GEGL_BUFFER (self->buffer), &rect, format, temp);
+      gegl_buffer_get (input, rect, 1.0, format, temp);
+      gegl_buffer_set (GEGL_BUFFER (self->buffer), rect, format, temp);
       g_free (temp);
     }
   return TRUE;
