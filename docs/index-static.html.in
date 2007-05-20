@@ -458,13 +458,14 @@ Some examples:
  │   ├──transparency  opacity/mask control
  │   ├──generated     Operations generated from scripts (currently
  │   │                ruby scripts.) (arithmetic, compositing, ...)
- │   └──workshop      Works in progress, (not compiled by default)
- │       └──generated
+ │   └──workshop      Works in progress, (not built/installed by default)
+ │       └──generated generated operations that are in the workshop.
  │                    
  │
  ├──docs              A website for GEGL
  │   │
- │   └──gallery       A gallery of sample GEGL compositions.
+ │   └──gallery       A gallery of sample GEGL compositions, using the
+ │       │            (not yet stabilized) XML format.
  │       │
  │       └──data      Image data used by the sample compositions.
  │    
@@ -486,8 +487,8 @@ Some examples:
  ├──extensions CIE-Lab color model as well as a naive-CMYK color model.
  │             also contains a random cribbage of old conversion optimized
  │             code from gggl. Finding more exsisting conversions in third
- │             part libraries (hermes, lcms?, liboil?) would improve the
- │             speed of babl considerably.
+ │             part libraries (hermes, lcms?, liboil?) could improve the
+ │             speed of babl.
  ├──tests      tests used to keep babl sane during development.
  └──docs       Documentation/webpage for babl.
 </pre>
