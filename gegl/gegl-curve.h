@@ -15,7 +15,7 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * Copyright 2006 Mark Probst <mark.probst@gmail.com>
+ * Copyright 2007 Mark Probst <mark.probst@gmail.com>
  */
 
 #ifndef __GEGL_CURVE_H__
@@ -29,12 +29,11 @@ G_BEGIN_DECLS
 #define GEGL_TYPE_CURVE            (gegl_curve_get_type ())
 #endif
 #define GEGL_CURVE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CURVE, GeglCurve))
-#define GEGL_CURVE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GEGL_TYPE_CURVE, GeglCurveClass))
+#define GEGL_CURVE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_CURVE, GeglCurveClass))
 #define GEGL_IS_CURVE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CURVE))
-#define GEGL_IS_CURVE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GEGL_TYPE_CURVE))
-#define GEGL_CURVE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GEGL_TYPE_CURVE, GeglCurveClass))
+#define GEGL_IS_CURVE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_CURVE))
+#define GEGL_CURVE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_CURVE, GeglCurveClass))
 
-typedef struct _GeglCurve       GeglCurve;
 typedef struct _GeglCurveClass  GeglCurveClass;
 
 struct _GeglCurve
@@ -47,45 +46,51 @@ struct _GeglCurveClass
   GObjectClass parent;
 };
 
-GeglCurve*   gegl_curve_new            (gfloat       y_min,
-                                        gfloat       y_max);
+GeglCurve*   gegl_curve_new		       (gfloat	     y_min,
+						gfloat	     y_max);
 
-GType        gegl_curve_get_type       (void) G_GNUC_CONST;
+GeglCurve*   gegl_curve_default_curve          (void) G_GNUC_CONST;
 
-guint        gegl_curve_add_point      (GeglCurve    *self,
-                                        gfloat       x,
-                                        gfloat       y);
+GType	     gegl_curve_get_type	       (void) G_GNUC_CONST;
 
-void         gegl_curve_get_point      (GeglCurve    *self,
-                                        guint        index,
-                                        gfloat       *x,
-                                        gfloat       *y);
+void         gegl_curve_get_y_bounds           (GeglCurve    *self,
+						gfloat       *min_y,
+						gfloat       *max_y);
 
-void         gegl_curve_set_point      (GeglCurve    *self,
-                                        guint        index,
-                                        gfloat       x,
-                                        gfloat       y);
+guint	     gegl_curve_add_point	       (GeglCurve    *self,
+						gfloat       x,
+						gfloat       y);
 
-guint        gegl_curve_num_points     (GeglCurve   *self);
+void	     gegl_curve_get_point	       (GeglCurve    *self,
+						guint	     index,
+						gfloat	     *x,
+						gfloat	     *y);
 
-gfloat       gegl_curve_calc_value     (GeglCurve   *self,
-                                        gfloat      x);
+void	     gegl_curve_set_point	       (GeglCurve    *self,
+						guint	     index,
+						gfloat	     x,
+						gfloat	     y);
 
-void         gegl_curve_calc_values    (GeglCurve   *self,
-                                        gfloat      x_min,
-                                        gfloat      x_max,
-                                        guint       num_samples,
-                                        gfloat      *xs,
-                                        gfloat      *ys);
+guint	     gegl_curve_num_points	       (GeglCurve   *self);
 
-GParamSpec * gegl_param_spec_curve     (const gchar *name,
-                                        const gchar *nick,
-                                        const gchar *blurb,
-                                        GeglCurve   *default_curve,
-                                        GParamFlags  flags);
+gfloat	     gegl_curve_calc_value	       (GeglCurve   *self,
+						gfloat      x);
 
-GType        gegl_param_curve_get_type (void) G_GNUC_CONST;
+void	     gegl_curve_calc_values	       (GeglCurve   *self,
+						gfloat	    x_min,
+						gfloat      x_max,
+						guint       num_samples,
+						gfloat      *xs,
+						gfloat      *ys);
+
+GParamSpec * gegl_param_spec_curve             (const gchar *name,
+                                                const gchar *nick,
+                                                const gchar *blurb,
+                                                GeglCurve   *default_curve,
+                                                GParamFlags  flags);
+
+GType        gegl_param_curve_get_type         (void) G_GNUC_CONST;
 
 G_END_DECLS
 
-#endif
+#endif /* __GEGL_CURVE_H__ */

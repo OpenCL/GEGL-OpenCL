@@ -16,6 +16,7 @@
  * Boston, MA 02110-1301, USA.
  *
  * Copyright 2006 Mark Probst <mark.probst@gmail.com>
+ * Spline Code Copyright 1997 David Mosberger
  */
 
 #include <glib.h>
@@ -25,6 +26,7 @@
 #include <stdlib.h>
 
 #include "gegl-types.h"
+
 #include "gegl-curve.h"
 
 enum
@@ -32,9 +34,9 @@ enum
   PROP_0,
 };
 
-typedef struct _GeglCurvePoint   GeglCurvePoint;
+typedef struct _GeglCurvePoint GeglCurvePoint;
 typedef struct _GeglCurvePrivate GeglCurvePrivate;
-typedef struct _CurveNameEntity  CurveNameEntity;
+typedef struct _CurveNameEntity CurveNameEntity;
 
 struct _GeglCurvePoint
 {
@@ -138,7 +140,7 @@ get_property (GObject    *gobject,
 
 GeglCurve *
 gegl_curve_new (gfloat y_min,
-               gfloat y_max)
+		gfloat y_max)
 {
   GeglCurve *self = GEGL_CURVE (g_object_new (GEGL_TYPE_CURVE, NULL));
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (self);
@@ -150,10 +152,36 @@ gegl_curve_new (gfloat y_min,
   return self;
 }
 
+GeglCurve*
+gegl_curve_default_curve (void)
+{
+    static GeglCurve *curve = NULL;
+
+    if (curve == NULL)
+    {
+	curve = gegl_curve_new(0.0, 1.0);
+	gegl_curve_add_point(curve, 0.0, 0.0);
+	gegl_curve_add_point(curve, 1.0, 1.0);
+    }
+
+    return curve;
+}
+
+void
+gegl_curve_get_y_bounds (GeglCurve    *self,
+			 gfloat       *min_y,
+			 gfloat       *max_y)
+{
+    GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (self);
+
+    *min_y = priv->y_min;
+    *max_y = priv->y_max;
+}
+
 guint
-gegl_curve_add_point (GeglCurve *self,
-                      gfloat     x,
-                      gfloat     y)
+gegl_curve_add_point (GeglCurve    *self,
+		      gfloat       x,
+		      gfloat       y)
 {
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
   GeglCurvePoint point = { x, y };
@@ -167,9 +195,9 @@ gegl_curve_add_point (GeglCurve *self,
 
 void
 gegl_curve_get_point (GeglCurve      *self,
-                     guint          index,
-                     gfloat         *x,
-                     gfloat         *y)
+		      guint	     index,
+		      gfloat	     *x,
+		      gfloat	     *y)
 {
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
   GeglCurvePoint point;
@@ -183,9 +211,9 @@ gegl_curve_get_point (GeglCurve      *self,
 
 void
 gegl_curve_set_point (GeglCurve      *self,
-                     guint          index,
-                     gfloat         x,
-                     gfloat         y)
+		      guint	     index,
+		      gfloat	     x,
+		      gfloat	     y)
 {
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
   GeglCurvePoint point = { x, y };
@@ -259,7 +287,7 @@ recalculate (GeglCurvePrivate *priv)
 
     Y2(i) = (sig - 1) / p;
     b[i] = ((Y(i+1) - Y(i))
-           / (X(i+1) - X(i)) - (Y(i) - Y(i-1)) / (X(i) - X(i-1)));
+	    / (X(i+1) - X(i)) - (Y(i) - Y(i-1)) / (X(i) - X(i-1)));
     b[i] = (6 * b[i] / (X(i+1) - X(i-1)) - sig * b[i-1]) / p;
   }
 
@@ -308,7 +336,7 @@ apply (GeglCurvePrivate *priv, gfloat u, guint i)
 
 gfloat
 gegl_curve_calc_value (GeglCurve   *self,
-                      gfloat      x)
+		       gfloat      x)
 {
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
 
@@ -327,11 +355,11 @@ gegl_curve_calc_value (GeglCurve   *self,
 
 void
 gegl_curve_calc_values (GeglCurve   *self,
-                       gfloat      x_min,
-                       gfloat      x_max,
-                       guint       num_samples,
-                       gfloat      *xs,
-                       gfloat      *ys)
+			gfloat	    x_min,
+			gfloat      x_max,
+			guint       num_samples,
+			gfloat      *xs,
+			gfloat      *ys)
 {
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
   guint len = priv->points->len;
@@ -349,7 +377,7 @@ gegl_curve_calc_values (GeglCurve   *self,
     if (len >= 2)
     {
       while (j < len - 2 && X(j+1) < u)
-       ++j;
+	++j;
 
       ys[i] = apply(priv, u, j);
     }
@@ -375,8 +403,8 @@ gegl_curve_calc_values (GeglCurve   *self,
  */
 
 #define GEGL_TYPE_PARAM_CURVE               (gegl_param_curve_get_type ())
-#define GEGL_PARAM_CURVE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PARAM_CURVE, GeglParamCurve))
-#define GEGL_IS_PARAM_CURVE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PARAM_CURVE))
+#define GEGL_PARAM_CURVE(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PARAM_CURVE, GeglParamCurve))
+#define GEGL_IS_PARAM_CURVE(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PARAM_CURVE))
 #define GEGL_IS_PARAM_CURVE_CLASS(klass)    (G_TYPE_CHECK_CLASS_TYPE ((klass), GEGL_TYPE_PARAM_CURVE))
 
 typedef struct _GeglParamCurve GeglParamCurve;
@@ -464,3 +492,4 @@ gegl_param_spec_curve (const gchar *name,
 
   return G_PARAM_SPEC (param_curve);
 }
+
