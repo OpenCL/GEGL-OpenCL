@@ -1,3 +1,17 @@
+2007-05-20  Øyvind Kolås  <pippin@gimp.org>
+	
+	Update of the curve code from Mark Probst <mark.probst@gmail.com>.
+
+	* gegl/Makefile.am:
+	* gegl/gegl-chant.h: add chanting support for curve.
+	* gegl/gegl-curve.c:
+	* gegl/gegl-xml.c: (param_set), (start_element), (text),
+	(end_element), (xml_param_start), (xml_param_text),
+	(xml_param_end), (xml_param), (xml_curve_point), (xml_curve),
+	(serialize_properties): added xml serialization/parsing support for
+	curve.
+	* gegl/gegl.h:
+
 2007-05-18  Étienne Bersac  <bersace03@laposte.net>
 
 	* operations/core/save-buffer.c: do not rely on input buffer to

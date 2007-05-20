@@ -25,7 +25,6 @@
 #include <stdlib.h>
 
 #include "gegl-types.h"
-
 #include "gegl-curve.h"
 
 enum
@@ -33,9 +32,9 @@ enum
   PROP_0,
 };
 
-typedef struct _GeglCurvePoint GeglCurvePoint;
+typedef struct _GeglCurvePoint   GeglCurvePoint;
 typedef struct _GeglCurvePrivate GeglCurvePrivate;
-typedef struct _CurveNameEntity CurveNameEntity;
+typedef struct _CurveNameEntity  CurveNameEntity;
 
 struct _GeglCurvePoint
 {
@@ -152,9 +151,9 @@ gegl_curve_new (gfloat y_min,
 }
 
 guint
-gegl_curve_add_point (GeglCurve    *self,
-                     gfloat       x,
-                     gfloat       y)
+gegl_curve_add_point (GeglCurve *self,
+                      gfloat     x,
+                      gfloat     y)
 {
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (GEGL_CURVE (self));
   GeglCurvePoint point = { x, y };

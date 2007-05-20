@@ -12,8 +12,8 @@ lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
 GEGL_sources = \
 	gegl-color.c			\
 	gegl-connection.c		\
-	gegl-curve.c			\
 	gegl-cr-visitor.c		\
+	gegl-curve.c			\
 	gegl-debug-rect-visitor.c	\
 	gegl-eval-mgr.c			\
 	gegl-eval-visitor.c		\
@@ -47,6 +47,7 @@ GEGL_sources = \
 	\
 	gegl-color.h			\
 	gegl-connection.h		\
+	gegl-curve.h			\
 	gegl-extension-handler.h	\
 	gegl-graph.h			\
 	gegl-init.h			\
@@ -66,7 +67,6 @@ GEGL_sources = \
 	gegl-types.h			\
 	gegl-visitable.h		\
 	gegl-visitor.h			\
-	gegl-curve.h			\
 	gegl-dot.h			\
 	gegl-xml.h			\
 	gegl-plugin.h			\

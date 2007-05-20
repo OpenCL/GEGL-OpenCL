@@ -752,6 +752,52 @@ void          gegl_color_set_rgba        (GeglColor     *color,
                                           gfloat         a);
 
 /***
+ * GeglCurve:
+ */
+#ifndef GEGL_INTERNAL
+typedef struct _GeglCurve       GeglCurve;
+GType	     gegl_curve_get_type	       (void) G_GNUC_CONST;
+#define GEGL_TYPE_CURVE            (gegl_curve_get_type ())
+#define GEGL_CURVE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CURVE, GeglCurve))
+#endif
+
+
+GeglCurve*   gegl_curve_new		       (gfloat	     y_min,
+						gfloat	     y_max);
+
+GeglCurve*   gegl_curve_default_curve          (void) G_GNUC_CONST;
+
+void         gegl_curve_get_y_bounds           (GeglCurve    *self,
+						gfloat       *min_y,
+						gfloat       *max_y);
+
+guint	     gegl_curve_add_point	       (GeglCurve    *self,
+						gfloat       x,
+						gfloat       y);
+
+void	     gegl_curve_get_point	       (GeglCurve    *self,
+						guint	     index,
+						gfloat	     *x,
+						gfloat	     *y);
+
+void	     gegl_curve_set_point	       (GeglCurve    *self,
+						guint	     index,
+						gfloat	     x,
+						gfloat	     y);
+
+guint	     gegl_curve_num_points	       (GeglCurve   *self);
+
+gfloat	     gegl_curve_calc_value	       (GeglCurve   *self,
+						gfloat      x);
+
+void	     gegl_curve_calc_values	       (GeglCurve   *self,
+						gfloat	    x_min,
+						gfloat      x_max,
+						guint       num_samples,
+						gfloat      *xs,
+						gfloat      *ys);
+
+/***
  * Bindings conveniences:
  *
  * The following functions are mostly included to make it easier

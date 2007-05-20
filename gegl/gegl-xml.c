@@ -30,6 +30,7 @@
 #include "gegl-operation.h"
 #include "gegl-pad.h"
 #include "gegl-color.h"
+#include "gegl-curve.h"
 #include "gegl-instrument.h"
 #include "gegl-xml.h"
 #include "gegl-paramspecs.h"
@@ -57,6 +58,7 @@ struct _ParseData
                          depending on context */
   GList       *parent;/*< a stack of parents, as we are recursing into aux
                          branches */
+  GeglCurve   *curve;/*< the curve whose points we are parsing */
 
   GHashTable *ids;
   GList      *refs;
@@ -178,6 +180,16 @@ set_clone_prop_as_well:
 
           g_object_unref (color);
         }
+      else if (paramspec->value_type == GEGL_TYPE_CURVE)
+        {
+	  if (pd->curve)
+	    {
+	      gegl_node_set (new, param_name, pd->curve, NULL);
+
+	      g_object_unref (pd->curve);
+	      pd->curve = NULL;
+	    }
+	}
       else
         {
           g_warning ("operation desired unknown parapspec type for %s",
@@ -232,6 +244,29 @@ static void start_element (GMarkupParseContext *context,
         g_warning ("eek, haven't cleared previous param");
       g_assert (name2val (a, v, "name"));
       pd->param = g_strdup (name2val (a, v, "name"));
+    }
+  else if (!strcmp (element_name, "curve"))
+    {
+      if (pd->curve != NULL)
+	g_warning ("we haven't cleared previous curve");
+      g_assert (name2val (a, v, "ymin"));
+      g_assert (name2val (a, v, "ymax"));
+      pd->curve = gegl_curve_new (atof (name2val (a, v, "ymin")),
+				  atof (name2val (a, v, "ymax")));
+    }
+  else if (!strcmp (element_name, "curve-point"))
+    {
+      if (!pd->curve)
+	g_warning ("curve not instantiated");
+      else
+        {
+	  g_assert (name2val (a, v, "x"));
+	  g_assert (name2val (a, v, "y"));
+
+	  gegl_curve_add_point (pd->curve,
+				atof (name2val (a, v, "x")),
+				atof (name2val (a, v, "y")));
+	}
     }
   else if (!strcmp (element_name, "link") ||
            !strcmp (element_name, "links") ||
@@ -298,7 +333,7 @@ static void text (GMarkupParseContext *context,
   ParseData *pd;
 
   pd = user_data;
-  if (pd->param && pd->iter)
+  if (pd->param && pd->iter && !pd->curve)
     {
       param_set (pd, pd->iter, pd->param, text);
     }
@@ -346,6 +381,11 @@ static void end_element (GMarkupParseContext *context,
       g_free (pd->param);
       pd->param = NULL;
     }
+  else if (!strcmp (element_name, "curve"))
+    {
+      g_assert (pd->param && pd->iter);
+      param_set (pd, pd->iter, pd->param, NULL);
+    }
   else if (!strcmp (element_name, "link") ||
            !strcmp (element_name, "links") ||
            !strcmp (element_name, "launcher") ||
@@ -353,7 +393,8 @@ static void end_element (GMarkupParseContext *context,
            !strcmp (element_name, "source") ||
            !strcmp (element_name, "destination") ||
            !strcmp (element_name, "stack") ||
-           !strcmp (element_name, "params"))
+           !strcmp (element_name, "params") ||
+	   !strcmp (element_name, "curve-point"))
     {
       /* ignore */
     }
@@ -784,6 +825,45 @@ static void xml_attr (GString     *buf,
     }
 }
 
+static void xml_param_start (SerializeState *ss,
+			     gint            indent,
+			     const gchar    *key)
+{
+  g_assert (key);
+  ind; g_string_append (ss->buf, "<param name='");
+  g_string_append (ss->buf, key);
+  g_string_append (ss->buf, "'>");
+}
+
+static void xml_param_text (SerializeState *ss,
+			    const gchar    *value)
+{
+  gchar *text;
+  /*gchar *p;*/
+
+  g_assert (value);
+
+  /* Why isn't this used here??? */
+  text = g_markup_escape_text (value, -1);
+
+  g_string_append (ss->buf, value);
+  /*for (p=text;*p;p++)
+    {
+    if (*p=='\n')
+    g_string_append (ss->buf, "&#10;");
+    else
+    g_string_append_c (ss->buf, *p);
+    
+    }*/
+
+  g_free (text);
+}
+
+static void xml_param_end (SerializeState *ss)
+{
+  g_string_append (ss->buf, "</param>\n");
+}
+
 static void xml_param (SerializeState *ss,
                        gint            indent,
                        const gchar    *key,
@@ -792,26 +872,48 @@ static void xml_param (SerializeState *ss,
   g_assert (key);
 
   if (value)
+  {
+    xml_param_start (ss, indent, key);
+    xml_param_text (ss, value);
+    xml_param_end (ss);
+  }
+}
+
+static void xml_curve_point (SerializeState *ss,
+			     gint            indent,
+			     gfloat          x,
+			     gfloat          y)
+{
+  gchar str[64];
+  ind; g_string_append (ss->buf, "<curve-point x='");
+  sprintf(str, "%f", x);
+  g_string_append (ss->buf, str);
+  g_string_append (ss->buf, "' y='");
+  sprintf(str, "%f", y);
+  g_string_append (ss->buf, str);
+  g_string_append (ss->buf, "'/>\n");
+}
+
+static void xml_curve (SerializeState *ss,
+		       gint            indent,
+		       GeglCurve      *curve)
+{
+  gchar *str;
+  gfloat min_y, max_y;
+  guint num_points = gegl_curve_num_points (curve);
+  guint i;
+
+  gegl_curve_get_y_bounds (curve, &min_y, &max_y);
+
+  ind; str = g_strdup_printf ("<curve ymin='%f' ymax='%f'>\n", min_y, max_y);
+  g_string_append (ss->buf, str); g_free (str);
+  for (i = 0; i < num_points; ++i)
     {
-      gchar *text = g_markup_escape_text (value, -1);
-      /*gchar *p;*/
-
-      ind; g_string_append (ss->buf, "<param name='");
-      g_string_append (ss->buf, key);
-      g_string_append (ss->buf, "'>");
-      g_string_append (ss->buf, value);
-      /*for (p=text;*p;p++)
-         {
-          if (*p=='\n')
-            g_string_append (ss->buf, "&#10;");
-          else
-            g_string_append_c (ss->buf, *p);
-
-         }*/
-      g_string_append (ss->buf, "</param>\n");
-
-      g_free (text);
+      gfloat x, y;
+      gegl_curve_get_point (curve, i, &x, &y);
+      xml_curve_point (ss, indent + 2, x, y);
     }
+  ind; g_string_append (ss->buf, "</curve>\n");
 }
 
 static void serialize_properties (SerializeState *ss,
@@ -913,9 +1015,21 @@ static void serialize_properties (SerializeState *ss,
               xml_param (ss, indent + 2, properties[i]->name, value);
               g_free (value);
             }
+	  else if (properties[i]->value_type == GEGL_TYPE_CURVE)
+	    {
+	      GeglCurve *curve;
+	      guint num_points;
+	      gegl_node_get (node, properties[i]->name, &curve, NULL);
+	      num_points = gegl_curve_num_points (curve);
+	      xml_param_start (ss, indent + 2, properties[i]->name);
+	      g_string_append (ss->buf, "\n");
+	      xml_curve (ss, indent + 4, curve);
+	      indent += 2; ind; indent -= 2; xml_param_end (ss);
+	      g_object_unref (curve);
+	    }
           else
             {
-              g_warning ("%s: serialization of %s proeprties not implemented",
+              g_warning ("%s: serialization of %s properties not implemented",
                          properties[i]->name, g_type_name (properties[i]->value_type));
             }
         }
