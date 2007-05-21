@@ -1,5 +1,12 @@
 2007-05-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/stress.c: (process), (stress): added a gamma
+	parameter, with a default value of 1.6.
+	* operations/workshop/c2g.c: (process), (c2g): same modification as
+	stress.
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/line-profile.c: (process): draw the sampled
 	line in image coordinates in white.
 

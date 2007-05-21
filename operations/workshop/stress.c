@@ -22,14 +22,16 @@
 
 #if GEGL_CHANT_PROPERTIES 
 
-gegl_chant_int (radius,     2, 5000.0, 100, "neighbourhood taken into account")
+gegl_chant_int (radius,     2, 5000.0, 800, "neighbourhood taken into account")
 gegl_chant_int (samples,    0, 1000,   3,    "number of samples to do")
 gegl_chant_int (iterations, 0, 1000.0, 20,   "number of iterations (length of exposure)")
+gegl_chant_double (strength, -10.0, 10.0, 1.0, "amoung of correction 0=none 1.0=full")
+gegl_chant_double (gamma, 0.0, 10.0, 1.6, "post correction gamma.")
 #else
 
 #define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME         stress
-#define GEGL_CHANT_DESCRIPTION  "Spatio Temporal Retinex Envelope with Stochastic Sampling."
+#define GEGL_CHANT_DESCRIPTION  "Spatio Temporal Retinex-like Envelope with Stochastic Sampling."
 #define GEGL_CHANT_SELF         "stress.c"
 #define GEGL_CHANT_CATEGORIES   "enhance"
 #define GEGL_CHANT_CLASS_INIT
@@ -40,7 +42,9 @@ static void stress (GeglBuffer *src,
                     GeglBuffer *dst,
                     gint        radius,
                     gint        samples,
-                    gint        iterations);
+                    gint        iterations,
+                    gdouble     strength,
+                    gdouble     gamma);
 
 static GeglRectangle get_source_rect (GeglOperation *self,
                                       gpointer       context_id);
@@ -60,12 +64,11 @@ process (GeglOperation *operation,
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   {
-    GeglRectangle   *result = gegl_operation_result_rect (operation, context_id);
-    GeglRectangle    need   = *result;
-    GeglBuffer      *temp_in;
+    GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+    GeglRectangle  need   = *result;
+    GeglBuffer    *temp_in;
 
     need.x-=self->radius;
     need.y-=self->radius;
@@ -96,7 +99,7 @@ process (GeglOperation *operation,
                                "height", need.height,
                                NULL);
 
-        stress (temp_in, output, self->radius, self->samples, self->iterations);
+        stress (temp_in, output, self->radius, self->samples, self->iterations, self->strength, self->gamma);
         g_object_unref (temp_in);
       }
 
@@ -121,7 +124,9 @@ static void stress (GeglBuffer *src,
                     GeglBuffer *dst,
                     gint        radius,
                     gint        samples,
-                    gint        iterations)
+                    gint        iterations,
+                    gdouble     strength,
+                    gdouble     gamma)
 {
   gint x,y;
   gfloat *src_buf;
@@ -148,7 +153,6 @@ static void stress (GeglBuffer *src,
                              radius, samples,
                              iterations,
                              min_envelope, max_envelope);
-
          {
           gint c;
           gfloat pixel[3];
@@ -156,10 +160,22 @@ static void stress (GeglBuffer *src,
             {
               pixel[c] = center_pix[c];
               if (min_envelope[c]!=max_envelope[c])
-                pixel[c] = (pixel[c]-(min_envelope[c]))/(max_envelope[c]-min_envelope[c]);
+                {
+                  gfloat scaled = (pixel[c]-(min_envelope[c]))/(max_envelope[c]-min_envelope[c]);
+                  pixel[c] *= (1.0-strength);
+                  pixel[c] = strength * scaled;
+                }
             }
+          if (gamma==1.0)
+            {
           for (c=0; c<3;c++)
             dst_buf[offset+c] = pixel[c];
+            }
+          else
+            {
+          for (c=0; c<3;c++)
+            dst_buf[offset+c] = pow(pixel[c],gamma);
+            }
           dst_buf[offset+c] = center_pix[c];
          }
           offset+=4;

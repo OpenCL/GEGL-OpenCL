@@ -25,6 +25,7 @@ gegl_chant_int (radius,     2, 5000.0, 384, "neighbourhood taken into account")
 gegl_chant_int (samples,    0, 1000,    3,  "number of samples to do")
 gegl_chant_int (iterations, 0, 1000.0, 23, "number of iterations (length of exposure)")
 gegl_chant_double (strength,  -8, 8,  0.5, "how much the local optimum separation should be taken into account.")
+gegl_chant_double (gamma, 0.0, 10.0, 1.6, "post correction gamma.")
 #else
 
 #define GEGL_CHANT_FILTER
@@ -42,7 +43,8 @@ static void c2g (GeglBuffer *src,
                  gint        radius,
                  gint        samples,
                  gint        iterations,
-                 gfloat     strength);
+                 gfloat      strength,
+                 gfloat      gamma);
 
 static GeglRectangle get_source_rect (GeglOperation *self,
                                       gpointer       context_id);
@@ -99,7 +101,7 @@ process (GeglOperation *operation,
                                "height", need.height,
                                NULL);
 
-        c2g (temp_in, output, self->radius, self->samples, self->iterations, self->strength);
+        c2g (temp_in, output, self->radius, self->samples, self->iterations, self->strength, self->gamma);
         g_object_unref (temp_in);
       }
 
@@ -125,7 +127,8 @@ static void c2g (GeglBuffer *src,
                  gint        radius,
                  gint        samples,
                  gint        iterations,
-                 gfloat     strength)
+                 gfloat      strength,
+                 gfloat      gamma)
 {
   gint x,y;
   gfloat *src_buf;
@@ -173,7 +176,16 @@ static void c2g (GeglBuffer *src,
               if (denominator>0.000) /* if we found a range, modify the result */
                 {
                   gray *= (1.0-strength);
-                  gray += strength * (nominator/denominator);
+
+                  if (gamma==1.0)
+                    {
+                     gray += strength * (nominator/denominator);
+                    }
+                  else
+                    {
+                     gray += pow (strength * (nominator/denominator), gamma);
+                    }
+
                 }
             }
 
