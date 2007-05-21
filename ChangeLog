@@ -1,5 +1,16 @@
 2007-05-21  Øyvind Kolås  <pippin@gimp.org>
 
+	Applied patch from Mark Probst <mark.probst@gmail.com> 
+	to make floating point I/O independent of the locale.
+
+	* gegl/gegl-xml.c: (param_set), (encode_node_attributes_old),
+	(serialize_properties), (serialize_layer):
+	* operations/svg/svg_huerotate.c: (process):
+	* operations/svg/svg_matrix.c: (process):
+	* operations/svg/svg_saturate.c: (process):
+
+2007-05-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-curve.[ch]: really apply the last incarnation of the curve
 	patch (the previous attempt failed).
 	* gegl/gegl-types.h: add GeglCurve.h here.

@@ -145,7 +145,7 @@ set_clone_prop_as_well:
       else if (paramspec->value_type == G_TYPE_FLOAT ||
                paramspec->value_type == G_TYPE_DOUBLE)
         {
-          gegl_node_set (new, param_name, atof (param_value), NULL);
+          gegl_node_set (new, param_name, g_ascii_strtod (param_value, NULL), NULL);
         }
       else if (paramspec->value_type == G_TYPE_STRING)
         {
@@ -579,17 +579,17 @@ static void encode_node_attributes_old (SerializeState *ss,
           else if (properties[i]->value_type == G_TYPE_FLOAT)
             {
               gfloat value;
-              gchar  str[64];
+              gchar  str[G_ASCII_DTOSTR_BUF_SIZE];
               gegl_node_get (node, properties[i]->name, &value, NULL);
-              sprintf (str, "%f", value);
+              g_ascii_dtostr (str, sizeof(str), value);
               tuple_old (ss->buf, properties[i]->name, str);
             }
           else if (properties[i]->value_type == G_TYPE_DOUBLE)
             {
               gdouble value;
-              gchar   str[64];
+              gchar   str[G_ASCII_DTOSTR_BUF_SIZE];
               gegl_node_get (node, properties[i]->name, &value, NULL);
-              sprintf (str, "%f", value);
+              g_ascii_dtostr (str, sizeof(str), value);
               tuple_old (ss->buf, properties[i]->name, str);
             }
           else if (properties[i]->value_type == G_TYPE_INT)
@@ -964,17 +964,17 @@ static void serialize_properties (SerializeState *ss,
           else if (properties[i]->value_type == G_TYPE_FLOAT)
             {
               gfloat value;
-              gchar  str[64];
+              gchar  str[G_ASCII_DTOSTR_BUF_SIZE];
               gegl_node_get (node, properties[i]->name, &value, NULL);
-              sprintf (str, "%f", value);
+              g_ascii_dtostr (str, sizeof(str), value);
               xml_param (ss, indent + 2, properties[i]->name, str);
             }
           else if (properties[i]->value_type == G_TYPE_DOUBLE)
             {
               gdouble value;
-              gchar   str[64];
+              gchar   str[G_ASCII_DTOSTR_BUF_SIZE];
               gegl_node_get (node, properties[i]->name, &value, NULL);
-              sprintf (str, "%f", value);
+              g_ascii_dtostr (str, sizeof(str), value);
               xml_param (ss, indent + 2, properties[i]->name, str);
             }
           else if (properties[i]->value_type == G_TYPE_INT)
@@ -1064,11 +1064,23 @@ static void serialize_layer (SerializeState *ss,
   if (name[0])
     g_string_append_printf (ss->buf, " name='%s'", name);
   if (x != 0.0)
-    g_string_append_printf (ss->buf, " x='%f'", x);
+    {
+      gchar str[G_ASCII_DTOSTR_BUF_SIZE];
+      g_ascii_dtostr (str, sizeof(str), x);
+      g_string_append_printf (ss->buf, " x='%s'", str);
+    }
   if (y != 0.0)
-    g_string_append_printf (ss->buf, " y='%f'", y);
+    {
+      gchar str[G_ASCII_DTOSTR_BUF_SIZE];
+      g_ascii_dtostr (str, sizeof(str), y);
+      g_string_append_printf (ss->buf, " y='%s'", str);
+    }
   if (opacity != 1.0)
-    g_string_append_printf (ss->buf, " opacity='%f'", opacity);
+    {
+      gchar str[G_ASCII_DTOSTR_BUF_SIZE];
+      g_ascii_dtostr (str, sizeof(str), opacity);
+      g_string_append_printf (ss->buf, " opacity='%s'", str);
+    }
   if (src[0])
     {
       if (ss->path_root &&

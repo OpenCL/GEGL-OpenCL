@@ -62,7 +62,7 @@ process (GeglOperation *op,
       for (i = 0 ; i < 20 ; i++)
         if ( values[i] != NULL )
           {
-            value = strtod(values[i], &endptr);
+            value = g_ascii_strtod(values[i], &endptr);
             if (endptr != values[i])
                ma[i] = value;
             else

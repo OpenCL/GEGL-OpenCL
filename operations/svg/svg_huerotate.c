@@ -56,7 +56,7 @@ process (GeglOperation *op,
       values = g_strsplit (GEGL_CHANT_OPERATION (op)->values, &delimiter, 1);
       if ( values[0] != NULL )
         {
-          value = strtod(values[0], &endptr);
+          value = g_ascii_strtod(values[0], &endptr);
           if (endptr != values[0])
             ma[0] = .213 + cos(value)*.787 - sin(value)*.213;          
         }
