@@ -327,7 +327,8 @@ typedef enum
  * width/height of the sampled region.
  * @format: the #BablFormat desired.
  * @rowstride: rowstride in bytes (currently ignored)
- * @destination_buf: a memory buffer large enough to contain the data.
+ * @destination_buf: a memory buffer large enough to contain the data, can be
+ * left as NULL when forcing a rendering of a region.
  * @flags: an or'ed combination of GEGL_BLIT_DEFAULT, GEGL_BLIT_CACHE and
  * GEGL_BLIT_DIRTY. if cache is enabled, a cache will be set up for subsequent
  * requests of image data from this node. By passing in GEGL_BLIT_DIRTY the

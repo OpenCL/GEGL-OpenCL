@@ -1,4 +1,15 @@
 2007-05-21  Øyvind Kolås  <pippin@gimp.org>
+
+	Fix imagemagick fallback loader.
+
+	* gegl/gegl.h: document that NULL can be passed in to gegl_node_blit.
+	* gegl/gegl-node.c: (gegl_node_blit): allow passing NULL as
+	desintation_buf.
+	* operations/file-io/magick-load.c: (load_cache): port image magick
+	fallback loader to newer API, also make it load page 0 of all
+	documents, enabling it's use on PDFs for thumbnailing.
+
+2007-05-21  Øyvind Kolås  <pippin@gimp.org>
 	
 	* AUTHORS: added Étienne Bersac and Mark Probst.
 

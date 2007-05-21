@@ -35,25 +35,47 @@ load_cache (GeglChantOperation *op_magick_load)
 {
   if (!op_magick_load->priv)
     {
+        GeglRectangle rect;
         GeglNode *temp_gegl;
         gchar xml[1024]="";
           {
             /* ImageMagick backed fallback FIXME: make this robust.
              * maybe use pipes in a manner similar to the raw loader */
             gchar cmd_buf[1024];
-            sprintf (cmd_buf, "convert \"%s\" /tmp/gegl-magick.png", op_magick_load->path);
+            sprintf (cmd_buf, "convert \"%s\"'[0]' /tmp/gegl-magick.png", op_magick_load->path);
             system (cmd_buf);
 
             sprintf (xml, "<gegl><node operation='png-load' path='/tmp/gegl-magick.png'></node></gegl>");
           }
 
     temp_gegl = gegl_parse_xml (xml, "/");
-    gegl_node_apply (temp_gegl, "output");
+    rect = gegl_node_get_bounding_box (temp_gegl);
+
+    gegl_node_blit (temp_gegl, &rect, 1.0, NULL, 0, NULL, GEGL_BLIT_CACHE); /* force a render
+                                                                               of the cache,
+                                                                               passing in a NULL
+                                                                               buffer indicating that
+                                                                               we do not actually desire the rendered data
+                                                                               */
+
+    {
+      GeglBuffer *cache = GEGL_BUFFER(gegl_node_get_cache (temp_gegl));
+      GeglBuffer *newbuf = g_object_new (GEGL_TYPE_BUFFER,
+                                         "source", cache,
+                                         "x", rect.x,
+                                         "y", rect.y,
+                                         "width", rect.width,
+                                         "height", rect.height,
+                                         NULL);
+      op_magick_load->priv = (gpointer)newbuf;
+      g_object_unref (cache);
+    }
+    /*g_object_ref (op_magick_load->priv);*/
 
     /*FIXME: this should be unneccesary, using the graph
      * directly as a node is more elegant.
      */
-    gegl_node_get (temp_gegl, "output", &(op_magick_load->priv), NULL);
+    /*gegl_node_get (temp_gegl, "output", &(op_magick_load->priv), NULL);*/
     g_object_unref (temp_gegl);
   }
 }

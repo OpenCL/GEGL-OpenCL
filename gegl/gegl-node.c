@@ -701,7 +701,10 @@ void          gegl_node_blit (GeglNode      *node,
                                             "width", roi->width,
                                             "height", roi->height,
                                             NULL);
-        gegl_buffer_get (roi_buf, NULL, 1.0, format, destination_buf);
+        if (destination_buf)
+          {
+            gegl_buffer_get (roi_buf, NULL, 1.0, format, destination_buf);
+          }
         g_object_unref (roi_buf);
         if (scale != 1.0)
           {
@@ -722,7 +725,10 @@ void          gegl_node_blit (GeglNode      *node,
           while (gegl_processor_work (processor, NULL)) ;
           g_object_unref (G_OBJECT (processor));
         }
-      gegl_buffer_get (GEGL_BUFFER (cache), roi, scale, format, destination_buf);
+      if (destination_buf)
+        {
+          gegl_buffer_get (GEGL_BUFFER (cache), roi, scale, format, destination_buf);
+        }
     }
 }
 
@@ -1225,7 +1231,7 @@ gegl_node_get_property (GeglNode    *self,
       if (self->is_graph &&
           !strcmp (property_name, "output"))
         {
-          g_warning ("Eeek");
+          g_warning ("Eeek!");
           g_object_get_property (G_OBJECT (gegl_node_get_output_proxy (self, "output")->operation),
                                  property_name, value);
         }
