@@ -1,4 +1,8 @@
 2007-05-21  Øyvind Kolås  <pippin@gimp.org>
+	
+	* AUTHORS: added Étienne Bersac and Mark Probst.
+
+2007-05-21  Øyvind Kolås  <pippin@gimp.org>
 
 	Applied patch from Mark Probst <mark.probst@gmail.com> 
 	to make floating point I/O independent of the locale.
