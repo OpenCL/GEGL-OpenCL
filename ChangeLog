@@ -1,3 +1,8 @@
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/line-profile.c: (process): draw the sampled
+	line in image coordinates in white.
+
 2007-05-21  Øyvind Kolås  <pippin@gimp.org>
 
 	Fix imagemagick fallback loader.

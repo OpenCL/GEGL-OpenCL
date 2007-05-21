@@ -61,6 +61,8 @@ process (GeglOperation *operation,
   GeglRectangle *result;
   GeglBuffer    *input,
                 *output;
+  gint width = MAX(MAX (self->width, self->x0), self->x1);
+  gint height = MAX(MAX (self->height, self->y0), self->y1);
 
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
@@ -77,15 +79,15 @@ process (GeglOperation *operation,
                          "format", babl_format ("B'aG'aR'aA u8"),
                          "x",      0,
                          "y",      0,
-                         "width",  self->width,
-                         "height", self->height,
+                         "width",  width,
+                         "height", height,
                          NULL);
 
   {
-    guchar  *buf = g_malloc0 (self->width * self->height * 4);
+    guchar  *buf = g_malloc0 (width * height * 4);
     cairo_t *cr;
 
-    cairo_surface_t *surface = cairo_image_surface_create_for_data (buf, CAIRO_FORMAT_ARGB32, self->width, self->height, self->width * 4);
+    cairo_surface_t *surface = cairo_image_surface_create_for_data (buf, CAIRO_FORMAT_ARGB32, width, height, width * 4);
     cr = cairo_create (surface);
   /*  cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 1.0);
     cairo_rectangle (cr, 0,0, self->width, self->height);
@@ -140,6 +142,10 @@ process (GeglOperation *operation,
         }
       cairo_stroke (cr);
     }
+   cairo_set_source_rgba (cr, 1.0, 0.0, 0.0, 0.4);
+   cairo_move_to (cr, self->x0, self->y0);
+   cairo_line_to (cr, self->x1, self->y1);
+   cairo_stroke (cr);
 
     gegl_buffer_set (output, NULL, babl_format ("B'aG'aR'aA u8"), buf);
   }
@@ -165,6 +171,9 @@ get_defined_region (GeglOperation *operation)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (operation);
   GeglRectangle defined = {0,0,self->width,self->height};
+
+  defined.width = MAX(MAX (self->width, self->x0), self->x1);
+  defined.height = MAX(MAX (self->height, self->y0), self->y1);
   return defined;
 }
 
