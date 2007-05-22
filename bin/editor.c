@@ -857,8 +857,6 @@ static void cb_fit (GtkAction *action)
   gdouble       hscale;
   gdouble       vscale;
 
-  g_warning ("%i %i", editor.view->allocation.width, editor.view->allocation.height);
-
   hscale = (gdouble) editor.view->allocation.width / defined.width ;
   vscale = (gdouble) editor.view->allocation.height / defined.height ;
 
