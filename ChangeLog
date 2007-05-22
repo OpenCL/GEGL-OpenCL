@@ -1,3 +1,8 @@
+2007-05-22  Étienne Bersac  <bersace03@laposte.net>
+
+	* operations/core/save-buffer.c: copy buffer to buffer line per
+	line instead of using large linear memory buffer.
+
 2007-05-22  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/buffer/gegl-tile.h: removed gegl_tile_new_from_data.
