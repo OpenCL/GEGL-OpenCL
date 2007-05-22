@@ -1,3 +1,7 @@
+2007-05-22  Étienne Bersac  <bersace03@laposte.net>
+
+	* operattions/file-io/png-save.c: added compression level param.
+
 2007-05-22  Øyvind Kolås  <pippin@gimp.org>
 
 	Ported plug-ins and code generators to new format specification API
@@ -39,8 +43,6 @@
 	* gegl/gegl-plugin.h: added gegl-curve.h include.
 
 2007-05-22  Étienne Bersac  <bersace03@laposte.net>
-
-	* operattions/file-io/png-save.c: added compression level param.
 	* operations/core/save-buffer.c: copy buffer to buffer line per
 	line instead of using large linear memory buffer.
 
