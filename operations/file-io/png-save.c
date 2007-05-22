@@ -21,6 +21,7 @@
 #if GEGL_CHANT_PROPERTIES
  
 gegl_chant_string (path, "/tmp/fnord.png", "Target path and filename, use '-' for stdout.")
+gegl_chant_int	  (compression, 1, 9, 1, "PNG compression level from 1 to 9")
 
 #else
 
@@ -36,6 +37,7 @@ gegl_chant_string (path, "/tmp/fnord.png", "Target path and filename, use '-' fo
 gint
 gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
                         const gchar *path,
+			gint	     compression,
                         gint         src_x,
                         gint         src_y,
                         gint         width,
@@ -52,7 +54,7 @@ process (GeglOperation *operation,
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   g_assert (input);
 
-  gegl_buffer_export_png (input, self->path,
+  gegl_buffer_export_png (input, self->path, self->compression,
                           result->x, result->y,
                           result->width, result->height);
   return  TRUE;
@@ -63,6 +65,7 @@ process (GeglOperation *operation,
 gint
 gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
                         const gchar     *path,
+			gint		 compression,
                         gint             src_x,
                         gint             src_y,
                         gint             width,
@@ -120,7 +123,7 @@ gegl_buffer_export_png (GeglBuffer      *gegl_buffer,
 
   if (setjmp (png_jmpbuf (png)))
     return -1;
-  png_set_compression_level (png, 1);
+  png_set_compression_level (png, compression);
   png_init_io (png, fp);
 
   png_set_IHDR (png, info,

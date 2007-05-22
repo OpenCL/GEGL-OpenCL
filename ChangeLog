@@ -40,6 +40,7 @@
 
 2007-05-22  Étienne Bersac  <bersace03@laposte.net>
 
+	* operattions/file-io/png-save.c: added compression level param.
 	* operations/core/save-buffer.c: copy buffer to buffer line per
 	line instead of using large linear memory buffer.
 
