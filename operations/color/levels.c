@@ -34,14 +34,8 @@
 #define GEGL_CHANT_DESCRIPTION  "Remaps the intensity range of the image"
 
 #define GEGL_CHANT_CATEGORIES   "color"
-#define GEGL_CHANT_INIT
 
 #include "gegl-chant.h"
-
-static void init (GeglChantOperation *self)
-{
-  GEGL_OPERATION_POINT_FILTER (self)->format = babl_format ("RGBA float");
-}
 
 /* GeglOperationPointFilter gives us a linear buffer to operate on
  * in our requested pixel format

@@ -34,13 +34,16 @@
 #define GEGL_CHANT_DESCRIPTION  "Allows changing the whitepoint and blackpoint of an image."
 
 #define GEGL_CHANT_CATEGORIES   "color"
-#define GEGL_CHANT_INIT
+#define GEGL_CHANT_PREPARE
 
 #include "gegl-chant.h"
 
-static void init (GeglChantOperation *self)
+static void prepare (GeglOperation *operation,
+                     gpointer       context_id)
 {
-  GEGL_OPERATION_POINT_FILTER (self)->format = babl_format ("Y'CbCrA float");
+  Babl *format = babl_format ("Y'CbCrA float");
+  gegl_operation_set_format (operation, "input", format);
+  gegl_operation_set_format (operation, "output", format);
 }
 
 /* GeglOperationPointFilter gives us a linear buffer to operate on

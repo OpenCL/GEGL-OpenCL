@@ -26,12 +26,16 @@
 #define GEGL_CHANT_DESCRIPTION   "turns the image greyscale"
 #define GEGL_CHANT_SELF          "grey.c"
 #define GEGL_CHANT_CATEGORIES    "color"
-#define GEGL_CHANT_INIT
+#define GEGL_CHANT_PREPARE
 #include "gegl-chant.h"
 
-static void init (GeglChantOperation *self)
+static void prepare (GeglOperation *operation,
+                     gpointer       context_id)
 {
-  GEGL_OPERATION_POINT_FILTER (self)->format = babl_format ("YA float");
+  Babl *format = babl_format ("YA float");
+
+  gegl_operation_set_format (operation, "input", format);
+  gegl_operation_set_format (operation, "output", format);
 }
 
 static gboolean

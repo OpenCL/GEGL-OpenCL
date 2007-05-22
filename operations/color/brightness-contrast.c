@@ -62,9 +62,9 @@ gegl_chant_double (brightness,    -3.0,  3.0, 0.0,
 #define GEGL_CHANT_CATEGORIES   "color"
 /* A colon seperated list of categories/tags for this operation. */
 
-#define GEGL_CHANT_INIT
-/* here we specify that we've got our own init function for initializing
- * the instance
+#define GEGL_CHANT_PREPARE
+/* here we specify that we've got our own preparation function, that is
+ * run during preparations for processing.
  */
 
 
@@ -73,16 +73,13 @@ gegl_chant_double (brightness,    -3.0,  3.0, 0.0,
  */
 #include "gegl-chant.h"
 
-
-
-
-
-static void init (GeglChantOperation *self)
+static void prepare (GeglOperation *operation,
+                     gpointer       context_id)
 {
   /* set the babl format this operation prefers to work on */
-  GEGL_OPERATION_POINT_FILTER (self)->format = babl_format ("RGBA float");
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
-
 
 /* GeglOperationPointFilter gives us a linear buffer to operate on
  * in our requested pixel format
@@ -113,6 +110,5 @@ process (GeglOperation *op,
     }
   return TRUE;
 }
-
 
 #endif /* closing #if GEGL_CHANT_PROPERTIES ... else ... */

@@ -44,15 +44,19 @@ gegl_chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if
 #define GEGL_CHANT_DESCRIPTION   \"Math operation #{name} (#{formula})\"
 #define GEGL_CHANT_SELF          \"#{filename}\"
 #define GEGL_CHANT_CATEGORIES    \"compositors:math\"
-#define GEGL_CHANT_INIT
+#define GEGL_CHANT_PREPARE
 #include \"gegl-chant.h\"
 
 #include <math.h>
 
-static void init (GeglChantOperation *self)
+static void prepare (GeglOperation *operation,
+                     gpointer       context_id)
 {
-  GEGL_OPERATION_POINT_COMPOSER (self)->format = babl_format (\"RGBA float\");
-  GEGL_OPERATION_POINT_COMPOSER (self)->aux_format = babl_format (\"RGB float\");
+  Babl *format = babl_format (\"RaGaBaA float\");
+
+  gegl_operation_set_format (operation, \"input\", format);
+  gegl_operation_set_format (operation, \"aux\", babl_format (\"Y float\"));
+  gegl_operation_set_format (operation, \"output\", format);
 }
 
 static gboolean

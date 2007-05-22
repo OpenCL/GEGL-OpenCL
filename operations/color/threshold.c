@@ -29,13 +29,15 @@ gegl_chant_double (value, -10.0, 10.0, 0.5,
 #define GEGL_CHANT_DESCRIPTION     "Thresholds the image to white/black based on either the global value set in the value property, or per pixel from the aux input."
 #define GEGL_CHANT_SELF            "threshold.c"
 #define GEGL_CHANT_CATEGORIES      "color"
-#define GEGL_CHANT_INIT
+#define GEGL_CHANT_PREPARE
 #include "gegl-chant.h"
 
-static void init (GeglChantOperation *self)
+static void prepare (GeglOperation *operation,
+                     gpointer       context_id)
 {
-  GEGL_OPERATION_POINT_COMPOSER (self)->format = babl_format ("YA float");
-  GEGL_OPERATION_POINT_COMPOSER (self)->aux_format = babl_format ("Y float");
+  gegl_operation_set_format (operation, "input", babl_format ("YA float"));
+  gegl_operation_set_format (operation, "aux", babl_format ("Y float"));
+  gegl_operation_set_format (operation, "output", babl_format ("YA float"));
 }
 
 static gboolean

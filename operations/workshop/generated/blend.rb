@@ -56,16 +56,21 @@ a.each do
 #define GEGL_CHANT_DESCRIPTION   \"Image blending operation '#{name}' (<tt>c = #{formula}</tt>)\"
 #define GEGL_CHANT_CATEGORIES    \"compositors:blend\"
 #define GEGL_CHANT_SELF          \"#{filename}\"
-#define GEGL_CHANT_INIT
+#define GEGL_CHANT_PREPARE
 #include \"gegl-chant.h\"
 #include \"math.h\"
 
-static void init (GeglChantOperation *self)
+static void prepare (GeglOperation *self,
+                     gpointer       context_id)
 {
-  GEGL_OPERATION_POINT_COMPOSER (self)->format = babl_format (\"RGBA float\");
-  GEGL_OPERATION_POINT_COMPOSER (self)->aux_format = babl_format (\"RGBA float\");
+  Babl *format = babl_format (\"RaGaBaA float\");
 
+  gegl_operation_set_format (self, \"input\", format);
+  gegl_operation_set_format (self, \"aux\", format);
+  gegl_operation_set_format (self, \"output\", format);
 }
+
+
 
 static gboolean
 process (GeglOperation *op,

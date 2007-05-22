@@ -26,13 +26,15 @@ gegl_chant_double (value, -10.0, 10.0, 0.5, "Global opacity value, used if no au
 #define GEGL_CHANT_DESCRIPTION     "Weights the opacity of the input with either the value of the aux input or the global value property."
 #define GEGL_CHANT_SELF            "opacity.c"
 #define GEGL_CHANT_CATEGORIES      "transparency"
-#define GEGL_CHANT_INIT
+#define GEGL_CHANT_PREPARE
 #include "gegl-chant.h"
 
-static void init (GeglChantOperation *self)
+static void prepare (GeglOperation *self,
+                     gpointer       context_id)
 {
-  GEGL_OPERATION_POINT_COMPOSER (self)->format = babl_format ("RaGaBaA float");
-  GEGL_OPERATION_POINT_COMPOSER (self)->aux_format = babl_format ("Y float");
+  gegl_operation_set_format (self, "input", babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (self, "output", babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (self, "aux", babl_format ("Y float"));
 }
 
 static gboolean

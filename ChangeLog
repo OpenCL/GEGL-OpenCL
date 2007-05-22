@@ -1,5 +1,28 @@
 2007-05-22  Øyvind Kolås  <pippin@gimp.org>
 
+	Ported plug-ins and code generators to new format specification API
+	for point filters|composers.
+
+	* operations/color/brightness-contrast.c:
+	* operations/color/invert.c:
+	* operations/color/levels.c:
+	* operations/color/threshold.c:
+	* operations/color/whitebalance.c:
+	* operations/generated/math.rb:
+	* operations/generated/porter-duff.rb:
+	* operations/generated/svg-blend.rb:
+	* operations/svg/svg_huerotate.c:
+	* operations/svg/svg_luminancetoalpha.c:
+	* operations/svg/svg_matrix.c:
+	* operations/svg/svg_saturate.c:
+	* operations/transparency/opacity.c:
+	* operations/workshop/generated/blend.rb:
+	* operations/workshop/contrast-curve.c: 
+	* operations/workshop/generated/blend.rb:
+	* operations/workshop/grey.c: 
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
 	Migrated the point filter/composer baseclass API to do processing
 	using BablFormat set on the pads.
 

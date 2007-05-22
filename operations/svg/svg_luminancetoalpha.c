@@ -14,16 +14,21 @@
 #define GEGL_CHANT_DESCRIPTION   "SVG color matrix operation svg_luminancetoalpha"
 #define GEGL_CHANT_CATEGORIES    "compositors:svgfilter"
 #define GEGL_CHANT_SELF          "svg_luminancetoalpha.c"
-#define GEGL_CHANT_INIT
+#define GEGL_CHANT_PREPARE
 #include "gegl-chant.h"
 
 #include <math.h>
 #include <stdlib.h>
 
-static void init (GeglChantOperation *self)
+static void prepare (GeglOperation *operation,
+                     gpointer       context_id)
 {
-  GEGL_OPERATION_POINT_FILTER (self)->format = babl_format ("RaGaBaA float");
+  Babl *format = babl_format ("RaGaBaA float");
+
+  gegl_operation_set_format (operation, "input", format);
+  gegl_operation_set_format (operation, "output", format);
 }
+
 
 static gboolean
 process (GeglOperation *op,
