@@ -30,13 +30,14 @@ gegl_chant_double (max, -500.0, 500,  8.0, "value at top")
  
 #else
 
-#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME            line_profile
-#define GEGL_CHANT_DESCRIPTION     "Renders luminance profiles for red green and blue components along the specified line in the input buffer, plotted in a buffer of the specified size."
-
 #define GEGL_CHANT_SELF            "line-profile.c"
-#define GEGL_CHANT_CLASS_INIT
+#define GEGL_CHANT_DESCRIPTION     "Renders luminance profiles for red green and blue components along the specified line in the input buffer, plotted in a buffer of the specified size."
 #define GEGL_CHANT_CATEGORIES      "debug"
+
+#define GEGL_CHANT_FILTER
+#define GEGL_CHANT_CLASS_INIT
+
 #include "gegl-chant.h"
 #include <cairo.h>
 
@@ -68,13 +69,6 @@ process (GeglOperation *operation,
 
   result = gegl_operation_get_requested_region (operation, context_id);
   
-  if (result->width ==0 ||
-      result->height==0)
-    {
-      output = g_object_ref (input);
-      return TRUE;
-    }
-
   output = g_object_new (GEGL_TYPE_BUFFER,
                          "format", babl_format ("B'aG'aR'aA u8"),
                          "x",      0,

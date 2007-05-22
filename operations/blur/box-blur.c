@@ -24,12 +24,14 @@ gegl_chant_double (radius, 0.0, 200.0, 4.0,
 
 #else
 
-#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME            box_blur
-#define GEGL_CHANT_DESCRIPTION     "Performs an averaging of a square box of pixels."
 #define GEGL_CHANT_SELF            "box-blur.c"
+#define GEGL_CHANT_DESCRIPTION     "Performs an averaging of a square box of pixels."
 #define GEGL_CHANT_CATEGORIES      "blur"
+
+#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
+
 #include "gegl-chant.h"
 
 static void hor_blur (GeglBuffer *src,
@@ -62,8 +64,7 @@ process (GeglOperation *operation,
       GeglBuffer *temp_in;
       GeglBuffer *temp;
 
-      if (result->width ==0 ||
-          result->height==0)
+      if (self->radius < 0.5)
         {
           output = g_object_ref (input);
         }

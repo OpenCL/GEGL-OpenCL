@@ -28,11 +28,12 @@ gegl_chant_double (edge_preservation, 0.0, 70.0, 8.0, "Amount of edge preservati
 
 #else
 
-#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME            bilateral_filter
-#define GEGL_CHANT_DESCRIPTION     "An edge preserving blur filter that can be used for noise reduction. It is a gaussian blur where the contribution of neighbourhood pixels are weighted by the color difference from the center pixel."
 #define GEGL_CHANT_SELF            "bilateral-filter.c"
+#define GEGL_CHANT_DESCRIPTION     "An edge preserving blur filter that can be used for noise reduction. It is a gaussian blur where the contribution of neighbourhood pixels are weighted by the color difference from the center pixel."
 #define GEGL_CHANT_CATEGORIES      "misc"
+
+#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 #include <math.h>
@@ -72,9 +73,7 @@ process (GeglOperation *operation,
       need.width +=self->blur_radius*2;
       need.height +=self->blur_radius*2;
 
-      if (result->width == 0 ||
-          result->height== 0 ||
-          self->blur_radius < 1.0)
+      if (self->blur_radius < 1.0)
         {
           output = g_object_ref (input);
         }

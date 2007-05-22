@@ -28,11 +28,12 @@ gegl_chant_double (percentile, 0.0, 100.0, 50, "The percentile to compute, defau
 
 #else
 
-#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME            disc_percentile
-#define GEGL_CHANT_DESCRIPTION     "Sets the target pixel to the color corresponding to a given percentile when colors are sorted by luminance."
 #define GEGL_CHANT_SELF            "disc-percentile.c"
+#define GEGL_CHANT_DESCRIPTION     "Sets the target pixel to the color corresponding to a given percentile when colors are sorted by luminance."
 #define GEGL_CHANT_CATEGORIES      "misc"
+
+#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
@@ -70,9 +71,7 @@ process (GeglOperation *operation,
       need.width +=self->radius*2;
       need.height +=self->radius*2;
 
-      if (result->width == 0 ||
-          result->height== 0 ||
-          self->radius < 1.0)
+      if (self->radius < 1.0)
         {
           output = g_object_ref (input);
         }

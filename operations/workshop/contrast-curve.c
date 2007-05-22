@@ -24,12 +24,14 @@
 
 #else
 
-#define GEGL_CHANT_POINT_FILTER
 #define GEGL_CHANT_NAME          contrast_curve
-#define GEGL_CHANT_DESCRIPTION   "Adjusts the contrast of the image according to a curve."
 #define GEGL_CHANT_SELF          "contrast-curve.c"
+#define GEGL_CHANT_DESCRIPTION   "Adjusts the contrast of the image according to a curve."
 #define GEGL_CHANT_CATEGORIES    "color"
+
+#define GEGL_CHANT_POINT_FILTER
 #define GEGL_CHANT_PREPARE
+
 #include "gegl-chant.h"
 
 static void prepare (GeglOperation *operation,

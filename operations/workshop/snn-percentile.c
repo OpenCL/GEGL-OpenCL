@@ -30,12 +30,14 @@ gegl_chant_double (percentile, 0.0, 100.0, 50.0,
 
 #else
 
-#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME        snn_percentile
-#define GEGL_CHANT_DESCRIPTION "Noise reducing edge enhancing percentile filter based on Symmetric Nearest Neighbours"
 #define GEGL_CHANT_SELF        "snn-percentile.c"
+#define GEGL_CHANT_DESCRIPTION "Noise reducing edge enhancing percentile filter based on Symmetric Nearest Neighbours"
 #define GEGL_CHANT_CATEGORIES  "misc"
+
+#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
+
 #include "gegl-chant.h"
 #include <math.h>
 

@@ -1,3 +1,41 @@
+2007-05-23  Øyvind Kolås  <pippin@gimp.org>
+
+	Removed fast path optimizations that are unneeded now that the core
+	itself avoids processing nodes whose result rectangles have zero
+	extent.
+
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c:
+	* operations/color/remap.c:
+	* operations/color/stretch-contrast.c:
+	* operations/workshop/bilateral-filter.c:
+	* operations/workshop/box-max.c:
+	* operations/workshop/box-min.c:
+	* operations/workshop/box-percentile.c:
+	* operations/workshop/c2g.c:
+	* operations/workshop/contrast-curve.c:
+	* operations/workshop/demosaic-simple.c:
+	* operations/workshop/difference-of-gaussians.c:
+	* operations/workshop/disc-percentile.c:
+	* operations/workshop/gluas.c:
+	* operations/workshop/grey.c:
+	* operations/workshop/gtk-display.c:
+	* operations/workshop/hstack.c:
+	* operations/workshop/kuwahara-max.c:
+	* operations/workshop/kuwahara-min.c:
+	* operations/workshop/kuwahara-switch.c:
+	* operations/workshop/kuwahara.c:
+	* operations/workshop/line-profile.c:
+	* operations/workshop/mandelbrot.c:
+	* operations/workshop/max-envelope.c:
+	* operations/workshop/mblur.c:
+	* operations/workshop/min-envelope.c:
+	* operations/workshop/mono-mixer.c:
+	* operations/workshop/rawbayer-load.c:
+	* operations/workshop/snn-mean.c:
+	* operations/workshop/snn-percentile.c:
+	* operations/workshop/stress.c:
+
 2007-05-22  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-operation.c: (gegl_operation_process): bail out early if

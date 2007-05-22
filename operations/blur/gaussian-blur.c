@@ -34,11 +34,12 @@ gegl_chant_string (filter, NULL,
 
 #else
 
-#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME            gaussian_blur
-#define GEGL_CHANT_DESCRIPTION     "Performs an averaging of neighbouring pixels with the normal distribution as weighting."
 #define GEGL_CHANT_SELF            "gaussian-blur.c"
+#define GEGL_CHANT_DESCRIPTION     "Performs an averaging of neighbouring pixels with the normal distribution as weighting."
 #define GEGL_CHANT_CATEGORIES      "blur"
+
+#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
@@ -100,7 +101,7 @@ process (GeglOperation *operation,
       GeglRectangle  need = get_source_rect (operation, context_id);
 
 
-      if (result->width ==0 || result->height ==0 || (!self->std_dev_x && !self->std_dev_y))
+      if (self->std_dev_x<0.00001 && self->std_dev_y<0.00001)
         {
           output = g_object_ref (input);
         }

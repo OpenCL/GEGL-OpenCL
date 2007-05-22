@@ -24,12 +24,14 @@ gegl_chant_double(radius2, 0.0, 10.0, 2.0, "Radius")
 
 #else
 
-#define GEGL_CHANT_META
 #define GEGL_CHANT_NAME            difference_of_gaussians
-#define GEGL_CHANT_DESCRIPTION     "does an edge detection based on the differnece of two gaussian blurs."
 #define GEGL_CHANT_SELF            "difference-of-gaussians.c"
+#define GEGL_CHANT_DESCRIPTION     "does an edge detection based on the differnece of two gaussian blurs."
 #define GEGL_CHANT_CATEGORIES      "meta:edge"
+
+#define GEGL_CHANT_META
 #define GEGL_CHANT_CLASS_INIT
+
 #include "gegl-chant.h"
 
 typedef struct _Priv Priv;

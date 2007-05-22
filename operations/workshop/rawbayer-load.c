@@ -22,13 +22,14 @@ gegl_chant_string (path, "/tmp/test.raw",
                    "Path of file to load.")
 #else
 
-#define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME            rawbayer_load
-#define GEGL_CHANT_DESCRIPTION     "Raw image loader, wrapping dcraw with pipes, provides the raw bayer grid as grayscale, if the fileformat is .rawbayer it will use this loader instead of the normal dcraw loader, if the fileformat is .rawbayerS it will swap the returned 16bit numbers (the pnm loader is apparently buggy)"
-
 #define GEGL_CHANT_SELF            "rawbayer-load.c"
+#define GEGL_CHANT_DESCRIPTION     "Raw image loader, wrapping dcraw with pipes, provides the raw bayer grid as grayscale, if the fileformat is .rawbayer it will use this loader instead of the normal dcraw loader, if the fileformat is .rawbayerS it will swap the returned 16bit numbers (the pnm loader is apparently buggy)"
 #define GEGL_CHANT_CATEGORIES      "hidden"
+
+#define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_CLASS_INIT
+
 #include "gegl-chant.h"
 #include <unistd.h>
 #include <string.h>

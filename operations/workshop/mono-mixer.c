@@ -26,14 +26,13 @@
 
 #else
 
-#define GEGL_CHANT_FILTER
 
 #define GEGL_CHANT_NAME         mono_mixer
 #define GEGL_CHANT_SELF         "mono-mixer.c"
-
 #define GEGL_CHANT_DESCRIPTION  "Monochrome channel mixer"
-
 #define GEGL_CHANT_CATEGORIES   "color"
+
+#define GEGL_CHANT_FILTER
 
 #include "gegl-chant.h"
 

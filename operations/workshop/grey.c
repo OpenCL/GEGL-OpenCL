@@ -21,12 +21,14 @@
    /* no properties */
 #else
 
-#define GEGL_CHANT_POINT_FILTER
 #define GEGL_CHANT_NAME          grey
-#define GEGL_CHANT_DESCRIPTION   "turns the image greyscale"
 #define GEGL_CHANT_SELF          "grey.c"
+#define GEGL_CHANT_DESCRIPTION   "turns the image greyscale"
 #define GEGL_CHANT_CATEGORIES    "color"
+
+#define GEGL_CHANT_POINT_FILTER
 #define GEGL_CHANT_PREPARE
+
 #include "gegl-chant.h"
 
 static void prepare (GeglOperation *operation,

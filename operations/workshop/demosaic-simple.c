@@ -23,12 +23,14 @@ gegl_chant_int (pattern, 0, 3, 0, "Bayer pattern used, 0 seems to work for some 
  
 #else
 
-#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME            demosaic_simple
-#define GEGL_CHANT_DESCRIPTION     "Performs a naive grayscale2color demosaicing of an image, no interpolation."
 #define GEGL_CHANT_SELF            "demosaic-simple.c"
+#define GEGL_CHANT_DESCRIPTION     "Performs a naive grayscale2color demosaicing of an image, no interpolation."
 #define GEGL_CHANT_CATEGORIES      "blur"
+
+#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
+
 #include "gegl-chant.h"
 
 static GeglRectangle get_source_rect (GeglOperation *self,
@@ -59,32 +61,26 @@ process (GeglOperation *operation,
       GeglRectangle  need   = get_source_rect (operation, context_id);
       GeglBuffer    *temp_in;
 
-      if (result->width ==0 ||
-          result->height==0)
-        {
-          output = g_object_ref (input);
-        }
-      else
-        {
-          temp_in = g_object_new (GEGL_TYPE_BUFFER,
-                                 "source", input,
-                                 "x",      need.x,
-                                 "y",      need.y,
-                                 "width",  need.width ,
-                                 "height", need.height ,
-                                 NULL);
+      
+      temp_in = g_object_new (GEGL_TYPE_BUFFER,
+                             "source", input,
+                             "x",      need.x,
+                             "y",      need.y,
+                             "width",  need.width ,
+                             "height", need.height ,
+                             NULL);
 
-          output = g_object_new (GEGL_TYPE_BUFFER,
-                                 "format", babl_format ("RGB float"),
-                                 "x",      need.x,
-                                 "y",      need.y,
-                                 "width",  need.width ,
-                                 "height", need.height ,
-                                 NULL);
+      output = g_object_new (GEGL_TYPE_BUFFER,
+                             "format", babl_format ("RGB float"),
+                             "x",      need.x,
+                             "y",      need.y,
+                             "width",  need.width ,
+                             "height", need.height ,
+                             NULL);
 
-          demosaic (self, temp_in, output);
-          g_object_unref (temp_in);
-        }
+      demosaic (self, temp_in, output);
+      g_object_unref (temp_in);
+      
 
       {
         GeglBuffer *cropped = g_object_new (GEGL_TYPE_BUFFER,

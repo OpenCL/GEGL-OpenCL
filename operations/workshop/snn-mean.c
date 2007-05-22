@@ -28,12 +28,14 @@ gegl_chant_int (pairs, 1, 2, 2, "Number of pairs higher number preserves more ac
 
 #else
 
-#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME        snn_mean
-#define GEGL_CHANT_DESCRIPTION "Noise reducing edge enhancing blur filter based on Symmetric Nearest Neighbours"
 #define GEGL_CHANT_SELF        "snn-mean.c"
+#define GEGL_CHANT_DESCRIPTION "Noise reducing edge enhancing blur filter based on Symmetric Nearest Neighbours"
 #define GEGL_CHANT_CATEGORIES  "misc"
+
+#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
+
 #include "gegl-chant.h"
 #include <math.h>
 
@@ -72,9 +74,7 @@ process (GeglOperation *operation,
       need.width +=self->radius*2;
       need.height +=self->radius*2;
 
-      if (result->width == 0 ||
-          result->height== 0 ||
-          self->radius < 1.0)
+      if (self->radius < 1.0)
         {
           output = g_object_ref (input);
         }

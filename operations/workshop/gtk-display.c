@@ -24,12 +24,14 @@ gegl_chant_string  (window_title, "",
 
 #else
 
-#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME        gtk_display
-#define GEGL_CHANT_DESCRIPTION "Displays the input buffer in an GTK window ."
 #define GEGL_CHANT_SELF        "gtk-display.c"
+#define GEGL_CHANT_DESCRIPTION "Displays the input buffer in an GTK window ."
 #define GEGL_CHANT_CATEGORIES  "output"
+
+#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
+
 #include "gegl-chant.h"
 
 #include <gtk/gtk.h>

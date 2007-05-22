@@ -154,52 +154,42 @@ process (GeglOperation *operation,
 
     {
       GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
+      gfloat *buf;
+      gfloat *min;
+      gfloat *max;
+      gint pixels = result->width  * result->height;
+      gint i;
 
-      if (result->width ==0 ||
-          result->height==0)
+      buf = g_malloc (pixels * sizeof (gfloat) * 4);
+      min = g_malloc (pixels * sizeof (gfloat) * 3);
+      max = g_malloc (pixels * sizeof (gfloat) * 3);
+
+      gegl_buffer_get (input, result, 1.0, babl_format ("RGBA float"), buf);
+      gegl_buffer_get (low,   result, 1.0, babl_format ("RGB float"), min);
+      gegl_buffer_get (high,  result, 1.0, babl_format ("RGB float"), max);
+
+      output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
+
+      for (i=0;i<pixels;i++)
         {
-          output = g_object_ref (input);
-          gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
-        }
-      else
-        {
-          gfloat *buf;
-          gfloat *min;
-          gfloat *max;
-          gint pixels = result->width  * result->height;
-          gint i;
-
-          buf = g_malloc (pixels * sizeof (gfloat) * 4);
-          min = g_malloc (pixels * sizeof (gfloat) * 3);
-          max = g_malloc (pixels * sizeof (gfloat) * 3);
-
-          gegl_buffer_get (input, result, 1.0, babl_format ("RGBA float"), buf);
-          gegl_buffer_get (low,   result, 1.0, babl_format ("RGB float"), min);
-          gegl_buffer_get (high,  result, 1.0, babl_format ("RGB float"), max);
-
-          output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
-
-          for (i=0;i<pixels;i++)
+          gint c;
+          for (c=0;c<3;c++) 
             {
-              gint c;
-              for (c=0;c<3;c++) 
+              gfloat delta = max[i*3+c]-min[i*3+c];
+              if (delta > 0.0001 || delta < -0.0001)
                 {
-                  gfloat delta = max[i*3+c]-min[i*3+c];
-                  if (delta > 0.0001 || delta < -0.0001)
-                    {
-                      buf[i*4+c] = (buf[i*4+c]-min[i*3+c]) / delta;
-                    }
-                  /*else
-                    buf[i*4+c] = buf[i*4+c];*/
-                } 
-            }
-
-          gegl_buffer_set (output, result, babl_format ("RGBA float"), buf);
-
-          g_free (buf);
-          g_free (min);
-          g_free (max);
+                  buf[i*4+c] = (buf[i*4+c]-min[i*3+c]) / delta;
+                }
+              /*else
+                buf[i*4+c] = buf[i*4+c];*/
+            } 
         }
+
+      gegl_buffer_set (output, result, babl_format ("RGBA float"), buf);
+
+      g_free (buf);
+      g_free (min);
+      g_free (max);
 
     }
   return TRUE;

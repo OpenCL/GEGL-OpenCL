@@ -29,12 +29,14 @@ gegl_chant_double (strength, -10.0, 10.0, 1.0, "amoung of correction 0=none 1.0=
 gegl_chant_double (gamma, 0.0, 10.0, 1.6, "post correction gamma.")
 #else
 
-#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME         stress
-#define GEGL_CHANT_DESCRIPTION  "Spatio Temporal Retinex-like Envelope with Stochastic Sampling."
 #define GEGL_CHANT_SELF         "stress.c"
+#define GEGL_CHANT_DESCRIPTION  "Spatio Temporal Retinex-like Envelope with Stochastic Sampling."
 #define GEGL_CHANT_CATEGORIES   "enhance"
+
+#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
+
 #include "gegl-chant.h"
 #include <math.h>
 
@@ -75,9 +77,7 @@ process (GeglOperation *operation,
     need.width +=self->radius*2;
     need.height +=self->radius*2;
 
-    if (result->width == 0 ||
-        result->height== 0 ||
-        self->radius < 1.0)
+    if (self->radius < 1.0)
       {
         output = g_object_ref (input);
       }

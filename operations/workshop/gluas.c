@@ -40,13 +40,16 @@ gegl_chant_double (user_value, -1000.0, 1000.0, 1.0, "(appears in the global var
 
 #else
 
-#define GEGL_CHANT_COMPOSER
 #define GEGL_CHANT_NAME            gluas
-#define GEGL_CHANT_DESCRIPTION     "A general purpose filter/composer implementation proxy for the lua programming language."
 #define GEGL_CHANT_SELF            "gluas.c"
+#define GEGL_CHANT_DESCRIPTION     "A general purpose filter/composer implementation proxy for the lua programming language."
 #define GEGL_CHANT_CATEGORIES      "script"
+
+#define GEGL_CHANT_COMPOSER
 #define GEGL_CHANT_INIT
 #define GEGL_CHANT_CLASS_INIT
+#define GEGL_CHANT_PREPARE
+
 #include "gegl-chant.h"
 
 #include <lua.h>
@@ -90,39 +93,24 @@ process (GeglOperation *operation,
   GeglChantOperation  *self;
   GeglBuffer          *input;
   GeglBuffer          *output;
+  GeglRectangle       *result;
+ 
+  result = gegl_operation_result_rect (operation, context_id);
+  self   = GEGL_CHANT_OPERATION (operation);
+  input  = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
-  self  = GEGL_CHANT_OPERATION (operation);
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+  output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
 
+  if (self->file && g_file_test (self->file, G_FILE_TEST_IS_REGULAR))
     {
-      GeglRectangle   *result = gegl_operation_result_rect (operation, context_id);
-
-      if (result->width ==0 ||
-          result->height==0)
-        {
-          output = g_object_ref (input);
-        }
-      else
-        {
-          output = g_object_new (GEGL_TYPE_BUFFER,
-                                 "format", babl_format ("RGBA float"),
-                                 "x",      input->x,
-                                 "y",      input->y,
-                                 "width",  input->width,
-                                 "height", input->height,
-                                 NULL);
-
-          if (self->file && g_file_test (self->file, G_FILE_TEST_IS_REGULAR))
-            {
-              drawable_lua_process (self, input, output, result, self->file, NULL, self->user_value);
-            }
-          else
-            {
-              drawable_lua_process (self, input, output, result, NULL, self->script, self->user_value);
-            }
-        }
-        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+      drawable_lua_process (self, input, output, result, self->file, NULL, self->user_value);
     }
+  else
+    {
+      drawable_lua_process (self, input, output, result, NULL, self->script, self->user_value);
+    }
+  
+  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
   return TRUE;
 }
 
@@ -1049,5 +1037,15 @@ static int l_get_hsv (lua_State * lua)
 #endif
   return 3;
 }
+
+static void
+prepare (GeglOperation *operation,
+          gpointer       context_id)
+{
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "aux", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
 
 #endif

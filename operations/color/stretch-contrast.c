@@ -94,13 +94,6 @@ process (GeglOperation *operation,
 
   result = gegl_operation_get_requested_region (operation, context_id);
   
-  if (result->width ==0 ||
-      result->height==0)
-    {
-      output = g_object_ref (input);
-      return TRUE;
-    }
-
   buffer_get_min_max (input, &min, &max);
 
   output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));

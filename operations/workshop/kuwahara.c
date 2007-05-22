@@ -24,12 +24,14 @@ gegl_chant_double (radius, 0.0, 50.0, 10.0,
 
 #else
 
-#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME            kuwahara
-#define GEGL_CHANT_DESCRIPTION     "Edge preserving blur"
 #define GEGL_CHANT_SELF            "kuwahara.c"
+#define GEGL_CHANT_DESCRIPTION     "Edge preserving blur"
 #define GEGL_CHANT_CATEGORIES      "misc"
+
+#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
+
 #include "gegl-chant.h"
 
 static void
@@ -66,32 +68,26 @@ process (GeglOperation *operation,
       work.width +=self->radius*2;
       work.height +=self->radius*2;
 
-      if (result->width ==0 ||
-          result->height==0)
-        {
-          output = g_object_ref (input);
-        }
-      else
-        {
-          temp_in = g_object_new (GEGL_TYPE_BUFFER,
-                                 "source", input,
-                                 "x",      work.x,
-                                 "y",      work.y,
-                                 "width",  work.width ,
-                                 "height", work.height ,
-                                 NULL);
+      
+      temp_in = g_object_new (GEGL_TYPE_BUFFER,
+                             "source", input,
+                             "x",      work.x,
+                             "y",      work.y,
+                             "width",  work.width ,
+                             "height", work.height ,
+                             NULL);
 
-          output = g_object_new (GEGL_TYPE_BUFFER,
-                                 "format", babl_format ("RGBA float"),
-                                 "x",      work.x,
-                                 "y",      work.y,
-                                 "width",  work.width ,
-                                 "height", work.height ,
-                                 NULL);
+      output = g_object_new (GEGL_TYPE_BUFFER,
+                             "format", babl_format ("RGBA float"),
+                             "x",      work.x,
+                             "y",      work.y,
+                             "width",  work.width ,
+                             "height", work.height ,
+                             NULL);
 
-          kuwahara (temp_in, output, self->radius);
-          g_object_unref (temp_in);
-        }
+      kuwahara (temp_in, output, self->radius);
+      g_object_unref (temp_in);
+      
 
       {
         GeglBuffer *cropped = g_object_new (GEGL_TYPE_BUFFER,

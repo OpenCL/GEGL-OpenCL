@@ -28,12 +28,14 @@ gegl_chant_double (strength,  -8, 8,  0.5, "how much the local optimum separatio
 gegl_chant_double (gamma, 0.0, 10.0, 1.6, "post correction gamma.")
 #else
 
-#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME         c2g
-#define GEGL_CHANT_DESCRIPTION  "Color to grayscale conversion that uses, spatial color differences to perform local grayscale contrast enhancement."
 #define GEGL_CHANT_SELF         "c2g.c"
+#define GEGL_CHANT_DESCRIPTION  "Color to grayscale conversion that uses, spatial color differences to perform local grayscale contrast enhancement."
 #define GEGL_CHANT_CATEGORIES   "enhance"
+
+#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
+
 #include "gegl-chant.h"
 #include <math.h>
 #define sq(a) ((a)*(a))
@@ -77,33 +79,26 @@ process (GeglOperation *operation,
     need.width +=self->radius*2;
     need.height +=self->radius*2;
 
-    if (result->width == 0 ||
-        result->height== 0 ||
-        self->radius < 1.0)
-      {
-        output = g_object_ref (input);
-      }
-    else
-      {
-        temp_in = g_object_new (GEGL_TYPE_BUFFER,
-                               "source", input,
-                               "x",      need.x,
-                               "y",      need.y,
-                               "width",  need.width,
-                               "height", need.height,
-                               NULL);
+    
+    temp_in = g_object_new (GEGL_TYPE_BUFFER,
+                           "source", input,
+                           "x",      need.x,
+                           "y",      need.y,
+                           "width",  need.width,
+                           "height", need.height,
+                           NULL);
 
-        output = g_object_new (GEGL_TYPE_BUFFER,
-                               "format", babl_format ("RGBA float"),
-                               "x",      need.x,
-                               "y",      need.y,
-                               "width",  need.width,
-                               "height", need.height,
-                               NULL);
+    output = g_object_new (GEGL_TYPE_BUFFER,
+                           "format", babl_format ("RGBA float"),
+                           "x",      need.x,
+                           "y",      need.y,
+                           "width",  need.width,
+                           "height", need.height,
+                           NULL);
 
-        c2g (temp_in, output, self->radius, self->samples, self->iterations, self->strength, self->gamma);
-        g_object_unref (temp_in);
-      }
+    c2g (temp_in, output, self->radius, self->samples, self->iterations, self->strength, self->gamma);
+    g_object_unref (temp_in);
+    
 
     {
       GeglBuffer *cropped = g_object_new (GEGL_TYPE_BUFFER,

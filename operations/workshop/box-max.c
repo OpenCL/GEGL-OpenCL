@@ -24,11 +24,12 @@ gegl_chant_double (radius, 0.0, 200.0, 4.0,
 
 #else
 
-#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_NAME            box_max
-#define GEGL_CHANT_DESCRIPTION     "Sets the target pixel to the value of the maximum value in a box surrounding the pixel."
 #define GEGL_CHANT_SELF            "box-max.c"
+#define GEGL_CHANT_DESCRIPTION     "Sets the target pixel to the value of the maximum value in a box surrounding the pixel."
 #define GEGL_CHANT_CATEGORIES      "misc"
+
+#define GEGL_CHANT_FILTER
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
@@ -70,41 +71,34 @@ process (GeglOperation *operation,
       need.width +=self->radius*2;
       need.height +=self->radius*2;
 
-      if (result->width ==0 ||
-          result->height==0)
-        {
-          output = g_object_ref (input);
-        }
-      else
-        {
-          temp_in = g_object_new (GEGL_TYPE_BUFFER,
-                                 "source", input,
-                                 "x",      need.x,
-                                 "y",      need.y,
-                                 "width",  need.width ,
-                                 "height", need.height ,
-                                 NULL);
-          temp   = g_object_new (GEGL_TYPE_BUFFER,
-                                 "format", babl_format ("RGBA float"),
-                                 "x",      need.x,
-                                 "y",      need.y,
-                                 "width",  need.width ,
-                                 "height", need.height ,
-                                 NULL);
+      temp_in = g_object_new (GEGL_TYPE_BUFFER,
+                             "source", input,
+                             "x",      need.x,
+                             "y",      need.y,
+                             "width",  need.width ,
+                             "height", need.height ,
+                             NULL);
+      temp   = g_object_new (GEGL_TYPE_BUFFER,
+                             "format", babl_format ("RGBA float"),
+                             "x",      need.x,
+                             "y",      need.y,
+                             "width",  need.width ,
+                             "height", need.height ,
+                             NULL);
 
-          output = g_object_new (GEGL_TYPE_BUFFER,
-                                 "format", babl_format ("RGBA float"),
-                                 "x",      need.x,
-                                 "y",      need.y,
-                                 "width",  need.width ,
-                                 "height", need.height ,
-                                 NULL);
+      output = g_object_new (GEGL_TYPE_BUFFER,
+                             "format", babl_format ("RGBA float"),
+                             "x",      need.x,
+                             "y",      need.y,
+                             "width",  need.width ,
+                             "height", need.height ,
+                             NULL);
 
-          hor_max (temp_in, temp,  self->radius);
-          ver_max (temp, output, self->radius);
-          g_object_unref (temp);
-          g_object_unref (temp_in);
-        }
+      hor_max (temp_in, temp,  self->radius);
+      ver_max (temp, output, self->radius);
+      g_object_unref (temp);
+      g_object_unref (temp_in);
+      
 
       {
         GeglBuffer *cropped = g_object_new (GEGL_TYPE_BUFFER,

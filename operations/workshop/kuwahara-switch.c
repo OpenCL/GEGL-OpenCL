@@ -24,12 +24,14 @@ gegl_chant_double (radius, 0.0, 50.0, 4.0,
 
 #else
 
-#define GEGL_CHANT_COMPOSER
 #define GEGL_CHANT_NAME            kuwahara_switch
-#define GEGL_CHANT_DESCRIPTION     "Building block to implement fast kuwahara derived filters."
 #define GEGL_CHANT_SELF            "kuwahara-switch.c"
+#define GEGL_CHANT_DESCRIPTION     "Building block to implement fast kuwahara derived filters."
 #define GEGL_CHANT_CATEGORIES      "misc"
+
+#define GEGL_CHANT_COMPOSER
 #define GEGL_CHANT_CLASS_INIT
+
 #include "gegl-chant.h"
 
 static void
@@ -69,41 +71,34 @@ process (GeglOperation *operation,
       work.width +=self->radius*2;
       work.height +=self->radius*2;
 
-      if (result->width ==0 ||
-          result->height==0)
-        {
-          output = g_object_ref (input);
-        }
-      else
-        {
-          temp_aux = g_object_new (GEGL_TYPE_BUFFER,
-                                   "source", aux,
-                                   "x",      work.x,
-                                   "y",      work.y,
-                                   "width",  work.width ,
-                                   "height", work.height ,
-                                   NULL);
+      temp_aux = g_object_new (GEGL_TYPE_BUFFER,
+                               "source", aux,
+                               "x",      work.x,
+                               "y",      work.y,
+                               "width",  work.width ,
+                               "height", work.height ,
+                               NULL);
 
-          temp_in = g_object_new (GEGL_TYPE_BUFFER,
-                                 "source", input,
-                                 "x",      work.x,
-                                 "y",      work.y,
-                                 "width",  work.width ,
-                                 "height", work.height ,
-                                 NULL);
+      temp_in = g_object_new (GEGL_TYPE_BUFFER,
+                             "source", input,
+                             "x",      work.x,
+                             "y",      work.y,
+                             "width",  work.width ,
+                             "height", work.height ,
+                             NULL);
 
-          output = g_object_new (GEGL_TYPE_BUFFER,
-                                 "format", babl_format ("RGBA float"),
-                                 "x",      work.x,
-                                 "y",      work.y,
-                                 "width",  work.width ,
-                                 "height", work.height ,
-                                 NULL);
+      output = g_object_new (GEGL_TYPE_BUFFER,
+                             "format", babl_format ("RGBA float"),
+                             "x",      work.x,
+                             "y",      work.y,
+                             "width",  work.width ,
+                             "height", work.height ,
+                             NULL);
 
-          kuwahara_switch (temp_in, temp_aux, output, self->radius);
-          g_object_unref (temp_in);
-          g_object_unref (temp_aux);
-        }
+      kuwahara_switch (temp_in, temp_aux, output, self->radius);
+      g_object_unref (temp_in);
+      g_object_unref (temp_aux);
+      
 
       {
         GeglBuffer *cropped = g_object_new (GEGL_TYPE_BUFFER,

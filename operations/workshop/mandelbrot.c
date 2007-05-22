@@ -26,12 +26,13 @@ gegl_chant_int (maxiter, 0, 512, 128, "maximum number of iterations")
 
 #else
 
-#define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME           mandelbrot
-#define GEGL_CHANT_DESCRIPTION    "Mandelbrot renderer."
-
 #define GEGL_CHANT_SELF           "mandelbrot.c"
+#define GEGL_CHANT_DESCRIPTION    "Mandelbrot renderer."
 #define GEGL_CHANT_CATEGORIES     "render"
+
+#define GEGL_CHANT_SOURCE
+
 #include "gegl-chant.h"
 
 static gfloat mandel_calc(GeglChantOperation *self, gfloat x, gfloat y)
