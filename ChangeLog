@@ -1,5 +1,20 @@
 2007-05-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-tile.h: removed gegl_tile_new_from_data.
+	* gegl/buffer/gegl-tile.c: allocate tiles' linear buffers using
+	GSlice, made gegl_tile_new_from_data() local to this file.
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* gegl/gegl-pad.c: (gegl_pad_init), (gegl_pad_set_format),
+	(gegl_pad_get_format):
+	* gegl/gegl-pad.h:
+	* operations/workshop/contrast-curve.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/stress.c: (process), (stress): added a gamma
 	parameter, with a default value of 1.6.
 	* operations/workshop/c2g.c: (process), (c2g): same modification as

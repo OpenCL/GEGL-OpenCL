@@ -77,8 +77,6 @@ struct _GeglTileClass
 GType  gegl_tile_get_type (void) G_GNUC_CONST;
 
 GeglTile   * gegl_tile_new             (gint         size);
-GeglTile   * gegl_tile_new_from_data   (guchar      *data,
-                                        gint         size);
 guchar     * gegl_tile_get_data        (GeglTile    *tile);
 void       * gegl_tile_get_format      (GeglTile    *tile);
 void         gegl_tile_lock            (GeglTile    *tile);

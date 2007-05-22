@@ -110,7 +110,7 @@ dispose (GObject *object)
     {
       if (tile->next_shared == tile)
         { /* no clones */
-          g_free (tile->data);
+          g_slice_free1 (tile->size, tile->data);
           tile->data = NULL;
         }
       else
@@ -168,8 +168,7 @@ gegl_tile_init (GeglTile *tile)
   tile->prev_shared = tile;
 }
 
-
-GeglTile *
+static inline GeglTile *
 gegl_tile_new_from_data (guchar *data,
                          gint    size)
 {
@@ -203,7 +202,7 @@ gegl_tile_new (gint size)
 {
   GeglTile *tile;
 
-  guchar   *data = g_malloc0 (size);
+  guchar   *data = g_slice_alloc (size);
 
   tile = gegl_tile_new_from_data (data, size);
 
@@ -220,7 +219,7 @@ gegl_tile_unclone (GeglTile *tile)
       /* the tile data is shared with other tiles,
        * create a local copy
        */
-      guchar *data = g_malloc (buflen);
+      guchar *data = g_slice_alloc (buflen);
       memcpy (data, tile->data, buflen);
       tile->data                     = data;
       tile->prev_shared->next_shared = tile->next_shared;
@@ -351,7 +350,7 @@ gegl_tile_cpy (GeglTile *src,
 {
   gegl_tile_lock (dst);
 
-  g_free (dst->data);
+  g_slice_free1 (dst->size, dst->data);
   dst->data = NULL;
 
   dst->next_shared              = src->next_shared;
