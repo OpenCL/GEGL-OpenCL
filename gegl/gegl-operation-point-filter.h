@@ -40,10 +40,7 @@ typedef struct _GeglOperationPointFilter  GeglOperationPointFilter;
 struct _GeglOperationPointFilter
 {
     GeglOperationFilter  operation;
-    Babl                *format; /* the format that this instance is
-                                    going to do it's processing in */
     gint                 samples;
-    /*< private >*/
 };
 
 typedef struct _GeglOperationPointFilterClass GeglOperationPointFilterClass;

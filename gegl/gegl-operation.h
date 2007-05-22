@@ -166,6 +166,10 @@ GObject  * gegl_operation_get_data                  (GeglOperation *operation,
                                                      gpointer       context_id,
                                                      const gchar   *property_name);
 
+/* retrieve the buffer that we are going to write into, it will be of the
+ * dimensions retrieved through the rectangle computation, and of the format
+ * currently specified on the associated nodes, "property_name" pad.
+ */
 GObject  * gegl_operation_get_target                (GeglOperation *operation,
                                                      gpointer       context_id,
                                                      const gchar   *property_name);
@@ -185,7 +189,12 @@ void       gegl_operation_class_set_name            (GeglOperationClass *self,
 void       gegl_operation_create_pad                (GeglOperation *self,
                                                      GParamSpec    *param_spec);
 
-
+/* specify the bablformat for a pad on this operation (XXX: document when
+ * this is legal, at the moment, only used internally in some ops,. but might
+ * turn into a global mechanism) */
+void       gegl_operation_set_format                (GeglOperation *self,
+                                                     const gchar   *pad_name,
+                                                     Babl          *format);
 
 /* Used to look up the gtype when changing the type of operation associated
  * a GeglNode using just a string with the registered name.

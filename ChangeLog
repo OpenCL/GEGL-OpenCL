@@ -1,5 +1,18 @@
 2007-05-22  Øyvind Kolås  <pippin@gimp.org>
 
+	Migrated the point filter/composer baseclass API to do processing
+	using BablFormat set on the pads.
+
+	* gegl/gegl-chant.h: added GEGL_CHANT_PREPARE, which hooks in the
+	virtual method prepare.
+	* gegl/gegl-operation.[ch]: made gegl_operation_get_target use
+	the format from the pad, and added gegl_operation_set_format function.
+	* gegl/gegl-operation-point-composer.[ch]: use new API
+	* gegl/gegl-operation-point-filter.[ch]: use new API
+	* gegl/gegl-pad.[ch]: added format field.
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-plugin.h: added gegl-curve.h include.
 
 2007-05-22  Étienne Bersac  <bersace03@laposte.net>

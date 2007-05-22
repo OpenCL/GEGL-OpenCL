@@ -40,12 +40,6 @@ typedef struct _GeglOperationPointComposer  GeglOperationPointComposer;
 struct _GeglOperationPointComposer
 {
     GeglOperationComposer  operation;
-    Babl                  *format; /* the format that this instance is
-                                      going to do it's processing in (
-                                      the pixelformat aquired from the in-pad
-                                      and used for computation) */
-    Babl                  *aux_format; /* the format that the aux buffer
-                                          will be in */
     gint                 samples;
     /*< private >*/
 };

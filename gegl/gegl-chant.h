@@ -413,6 +413,11 @@ gegl_chant_init (GeglChantOperation *self)
 static void init (GeglChantOperation *self);
 #endif
 
+#ifdef GEGL_CHANT_PREPARE
+static void prepare (GeglOperation *self,
+                     gpointer       context_id);
+#endif
+
 static void gegl_chant_destroy_notify (gpointer data)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (data);
@@ -510,8 +515,11 @@ gegl_chant_class_init (ChantClass * klass)
   GEGL_CHANT_PARENT_TypeNameClass *parent_class = GEGL_CHANT_PARENT_CLASS (klass);
   parent_class->process = process;
 #endif
-
   operation_class = GEGL_OPERATION_CLASS (klass);
+
+#ifdef GEGL_CHANT_PREPARE
+  operation_class->prepare = prepare;
+#endif
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;

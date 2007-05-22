@@ -521,26 +521,42 @@ gegl_operation_set_data (GeglOperation *operation,
   g_object_unref (data);  /* stealing the initial reference? */
 }
 
-GObject  * gegl_operation_get_target                (GeglOperation *operation,
-                                                     gpointer       context_id,
-                                                     const gchar   *property_name)
+GObject  * gegl_operation_get_target (GeglOperation *operation,
+                                      gpointer       context_id,
+                                      const gchar   *property_name)
 {
-  GeglBuffer *output;
+  GeglBuffer    *output;
+  GeglPad       *pad;
   GeglRectangle *result;
+  Babl          *format;
+
+  pad = gegl_node_get_pad (operation->node, property_name);
+  format = pad->format;
+  g_assert (format != NULL);
 
   /* XXX: make the GeglOperation base class keep track of the desired bablformat? (it will probably be the format of the cache as well,.)
    */
-
   g_assert (!strcmp (property_name, "output")); 
 
   result = gegl_operation_result_rect (operation, context_id);
   output = g_object_new (GEGL_TYPE_BUFFER,
-                         "format", babl_format ("RGBA float"),
-                         "x", result->x,
-                         "y", result->y,
-                         "width", result->width,
+                         "format", format,
+                         "x",      result->x,
+                         "y",      result->y,
+                         "width",  result->width,
                          "height", result->height,
                          NULL);
   gegl_operation_set_data (operation, context_id, property_name, G_OBJECT (output));
   return G_OBJECT (output);
+}
+
+void
+gegl_operation_set_format (GeglOperation *self,
+                           const gchar   *pad_name,
+                           Babl          *format)
+{
+  GeglPad       *pad;
+
+  pad = gegl_node_get_pad (self->node, pad_name);
+  pad->format = format;
 }

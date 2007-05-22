@@ -62,6 +62,7 @@ gegl_pad_init (GeglPad *self)
   self->param_spec  = NULL;
   self->node        = NULL;
   self->connections = NULL;
+  self->format      = NULL;
 }
 
 static void
@@ -308,4 +309,16 @@ static gboolean
 visitable_needs_visiting (GeglVisitable *visitable)
 {
   return TRUE;
+}
+
+void
+gegl_pad_set_format (GeglPad  *self,
+                     gpointer  format)
+{
+  self->format=format;
+}
+
+gpointer gegl_pad_get_format (GeglPad *self)
+{
+  return self->format;
 }

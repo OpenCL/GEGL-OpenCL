@@ -51,6 +51,10 @@ struct _GeglPad
   GParamSpec    *param_spec;
   GeglNode      *node;
   GSList        *connections;
+  gpointer       format;      /* pixel format this pad produces/consumes,
+                                 (initially only what it produces, and used
+                                  for gegl_operation_get_target.)
+                               */
 };
 
 struct _GeglPadClass
@@ -81,6 +85,9 @@ GParamSpec     * gegl_pad_get_param_spec            (GeglPad        *self);
 void             gegl_pad_set_param_spec            (GeglPad        *self,
                                                      GParamSpec     *param_spec);
 
+void             gegl_pad_set_format                (GeglPad        *self,
+                                                     gpointer        format);
+gpointer         gegl_pad_get_format                (GeglPad        *self);
 
 G_END_DECLS
 
