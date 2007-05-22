@@ -32,8 +32,10 @@ G_DEFINE_TYPE (GeglOperationPointComposer, gegl_operation_point_composer, GEGL_T
 static void prepare (GeglOperation *operation,
                      gpointer       context_id)
 {
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  Babl *format = babl_format ("RGBA float");
+  gegl_operation_set_format (operation, "input", format);
+  gegl_operation_set_format (operation, "aux", format);
+  gegl_operation_set_format (operation, "output", format);
 }
 
 static void

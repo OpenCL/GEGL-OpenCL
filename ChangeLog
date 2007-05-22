@@ -1,5 +1,10 @@
 2007-05-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation-point-composer.c: (prepare): request RGBA for
+	input, _aux_ and output.
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/generated/math.rb: request RGBA for input/output and RGB
 	for aux.
 
