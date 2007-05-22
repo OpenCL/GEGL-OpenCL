@@ -1,3 +1,8 @@
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/generated/math.rb: request RGBA for input/output and RGB
+	for aux.
+
 2007-05-22  Étienne Bersac  <bersace03@laposte.net>
 
 	* operattions/file-io/png-save.c: added compression level param.

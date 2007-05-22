@@ -52,10 +52,10 @@ gegl_chant_double (value, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, \"global value used if
 static void prepare (GeglOperation *operation,
                      gpointer       context_id)
 {
-  Babl *format = babl_format (\"RaGaBaA float\");
+  Babl *format = babl_format (\"RGBA float\");
 
   gegl_operation_set_format (operation, \"input\", format);
-  gegl_operation_set_format (operation, \"aux\", babl_format (\"Y float\"));
+  gegl_operation_set_format (operation, \"aux\", babl_format (\"RGB float\"));
   gegl_operation_set_format (operation, \"output\", format);
 }
 
