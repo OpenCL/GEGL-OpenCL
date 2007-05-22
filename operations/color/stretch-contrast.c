@@ -103,14 +103,7 @@ process (GeglOperation *operation,
 
   buffer_get_min_max (input, &min, &max);
 
-  output = g_object_new (GEGL_TYPE_BUFFER,
-                         "format", babl_format ("RGBA float"),
-                         "x",      result->x,
-                         "y",      result->y,
-                         "width",  result->width ,
-                         "height", result->height,
-                         NULL);
-
+  output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
   {
     gint row;
     guchar *buf;
@@ -134,8 +127,6 @@ process (GeglOperation *operation,
       }
     g_free (buf);
   }
-
-  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
 
   return TRUE;
 }

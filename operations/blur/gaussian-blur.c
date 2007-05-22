@@ -184,6 +184,9 @@ process (GeglOperation *operation,
         }
 
       { 
+        /* XXX: make the ver blur write directly to a core allocated buffer
+         * retrieved with gegl_operation_get_target
+         */
         GeglBuffer *cropped = g_object_new (GEGL_TYPE_BUFFER,
                                             "source", output,
                                             "x",      result->x,

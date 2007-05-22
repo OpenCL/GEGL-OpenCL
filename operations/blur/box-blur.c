@@ -99,6 +99,10 @@ process (GeglOperation *operation,
         }
 
       {
+        /* FIXME: make ver_blur write directly into output, and scale
+         * it's output accordingly, also sue gegl_operation_get_target
+         * instead of creating our own buf
+         */ 
         GeglBuffer *cropped = g_object_new (GEGL_TYPE_BUFFER,
                                               "source", output,
                                               "x",      result->x,

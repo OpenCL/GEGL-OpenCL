@@ -119,6 +119,17 @@ op_affine_get_type (void)
 /* ************************* */
 
 static void
+prepare (GeglOperation *operation,
+         gpointer       context_id)
+{
+  Babl *format = babl_format ("RaGaBaA float");
+
+  /*gegl_operation_set_format (operation, "input", format);
+  gegl_operation_set_format (operation, "aux", format); XXX(not used yet) */
+  gegl_operation_set_format (operation, "output", format);
+}
+
+static void
 op_affine_class_init (OpAffineClass *klass)
 {
   GObjectClass             *gobject_class = G_OBJECT_CLASS (klass);
@@ -133,6 +144,7 @@ op_affine_class_init (OpAffineClass *klass)
   op_class->calc_source_regions = calc_source_regions;
   op_class->detect = detect;
   op_class->categories = "transform";
+  op_class->prepare = prepare;
 
   filter_class->process = process;
 
@@ -570,15 +582,16 @@ get_affected_region (GeglOperation *op,
 
 
 static gboolean
-process (GeglOperation *op,
+process (GeglOperation *operation,
          gpointer       context_id)
 {
-  OpAffine      *affine = (OpAffine *) op;
+  OpAffine      *affine = (OpAffine *) operation;
   GeglBuffer    *filter_input;
   GeglBuffer    *output;
-  GeglRectangle *result = gegl_operation_result_rect (op, context_id);
-
-  filter_input = GEGL_BUFFER (gegl_operation_get_data (op, context_id, "input"));
+  GeglRectangle *result;
+ 
+  result = gegl_operation_result_rect (operation, context_id);
+  filter_input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (affine->matrix))
@@ -593,25 +606,24 @@ process (GeglOperation *op,
            (! strcasecmp (affine->filter, "nearest") ||
             (affine->matrix [0][2] == (gint) affine->matrix [0][2] &&
              affine->matrix [1][2] == (gint) affine->matrix [1][2])))
-    output = g_object_new (GEGL_TYPE_BUFFER,
-                           "source",      filter_input,
-                           "x",           result->x,
-                           "y",           result->y,
-                           "width",       result->width ,
-                           "height",      result->height,
-                           "shift-x",     (gint) - affine->matrix [0][2],
-                           "shift-y",     (gint) - affine->matrix [1][2],
-                           "abyss-width", -1, /* use source's abyss */
-                           NULL);
-  else
     {
       output = g_object_new (GEGL_TYPE_BUFFER,
-          "format", babl_format ("RaGaBaA float"),
-          "x",      result->x,
-          "y",      result->y,
-          "width",  result->width ,
-          "height", result->height,
-          NULL);
+                             "source",      filter_input,
+                             "x",           result->x,
+                             "y",           result->y,
+                             "width",       result->width ,
+                             "height",      result->height,
+                             "shift-x",     (gint) - affine->matrix [0][2],
+                             "shift-y",     (gint) - affine->matrix [1][2],
+                             "abyss-width", -1, /* use source's abyss */
+                             NULL);
+      /* fast path for affine translate with integer coordinates */
+      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+      return TRUE;
+    }
+  else
+    {
+      output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
 
       if (! strcasecmp (affine->filter, "linear"))
         {
@@ -657,6 +669,5 @@ process (GeglOperation *op,
           else
             affine_nearest (output, filter_input, affine->matrix);
     }
-  gegl_operation_set_data (op, context_id, "output", G_OBJECT (output));
   return TRUE;
 }

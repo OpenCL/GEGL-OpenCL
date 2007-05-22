@@ -2,7 +2,7 @@
 #include "gegl-module.h"
 #include "gegl-operation-filter.h"
 
-typedef struct Generated GeglOperationRemap;
+typedef struct Generated      GeglOperationRemap;
 typedef struct GeneratedClass GeglOperationRemapClass;
 
 struct Generated
@@ -92,18 +92,11 @@ set_property (GObject *gobject,
 static gboolean process (GeglOperation *operation,
                          gpointer context_id);
 
-
-
-
 static void
 gegl_operation_remap_init (GeglOperationRemap *self)
 {
   self->priv = ((void *)0);
 }
-
-
-
-
 
 static void gegl_operation_remap_destroy_notify (gpointer data)
 {
@@ -166,6 +159,7 @@ process (GeglOperation *operation,
           result->height==0)
         {
           output = g_object_ref (input);
+          gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
         }
       else
         {
@@ -183,13 +177,7 @@ process (GeglOperation *operation,
           gegl_buffer_get (low,   result, 1.0, babl_format ("RGB float"), min);
           gegl_buffer_get (high,  result, 1.0, babl_format ("RGB float"), max);
 
-          output = g_object_new (GEGL_TYPE_BUFFER,
-                                 "format", babl_format ("RGBA float"),
-                                 "x", result->x,
-                                 "y", result->y,
-                                 "width", result->width ,
-                                 "height", result->height,
-                                 NULL);
+          output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
 
           for (i=0;i<pixels;i++)
             {
@@ -213,7 +201,6 @@ process (GeglOperation *operation,
           g_free (max);
         }
 
-      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
     }
   return TRUE;
 }
@@ -283,6 +270,7 @@ attach (GeglOperation *self)
   gegl_operation_create_pad (operation,
                                g_object_class_find_property (object_class,
                                                              "high"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA"));
 }
 
 

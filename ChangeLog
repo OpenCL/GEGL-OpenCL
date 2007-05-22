@@ -1,5 +1,16 @@
 2007-05-22  Øyvind Kolås  <pippin@gimp.org>
 
+	Ported operations to use gegl_operation_get_target() to aquire the
+	destination buffer instead of creating it in the plug-in code.
+
+	* operations/affine/affine.c:
+	* operations/blur/box-blur.c:
+	* operations/blur/gaussian-blur.c:
+	* operations/color/remap.c:
+	* operations/color/stretch-contrast.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-operation-point-composer.c: (prepare): request RGBA for
 	input, _aux_ and output.
 
