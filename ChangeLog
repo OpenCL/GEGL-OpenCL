@@ -1,5 +1,18 @@
 2007-05-22  Øyvind Kolås  <pippin@gimp.org>
 
+	Ported rendering operations to use gegl_operation_get_target() to
+	aquire the destination buffer instead of creating it in the plug-in
+	code.
+
+	* operations/render/FractalExplorer.c:
+	* operations/render/checkerboard.c:
+	* operations/render/color.c:
+	* operations/render/introspect.c:
+	* operations/render/noise.c:
+	* operations/render/text.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
 	Ported operations to use gegl_operation_get_target() to aquire the
 	destination buffer instead of creating it in the plug-in code.
 

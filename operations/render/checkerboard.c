@@ -34,7 +34,16 @@ gegl_chant_color (color2,    "white",                "The other cell color (defa
 
 #define GEGL_CHANT_SELF           "checkerboard.c"
 #define GEGL_CHANT_CATEGORIES     "render"
+
+#define GEGL_CHANT_PREPARE
 #include "gegl-chant.h"
+
+static void
+prepare (GeglOperation *operation,
+         gpointer       context_id)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
 
 static gboolean
 process (GeglOperation *operation,
@@ -75,6 +84,7 @@ process (GeglOperation *operation,
                            "width",  result->width ,
                            "height", result->height,
                            NULL);
+    output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
 
     g_object_get (output, "px-size", &pxsize,
                           "pixels", &n_pixels,
@@ -104,7 +114,6 @@ process (GeglOperation *operation,
     gegl_buffer_set (output, NULL, NULL, buf);
     g_free (buf);
   }
-  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
   return  TRUE;
 }
 

@@ -24,12 +24,12 @@ gegl_chant_pointer(buf, "Buffer")
 
 #else
 
-#define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME           introspect
-#define GEGL_CHANT_DESCRIPTION    "GEGL graph vizualizer."
-
 #define GEGL_CHANT_SELF           "introspect.c"
+#define GEGL_CHANT_DESCRIPTION    "GEGL graph vizualizer."
 #define GEGL_CHANT_CATEGORIES     "render"
+
+#define GEGL_CHANT_SOURCE
 #include "gegl-chant.h"
 
 
@@ -67,6 +67,8 @@ process (GeglOperation *operation,
       system ("dot -o/tmp/gegl-temp.png -Tpng /tmp/gegl-temp.dot");
       g_free (dot);
     }
+
+    /* FIXME: copy behavior from magick-load to fix this op */
 
 
     {

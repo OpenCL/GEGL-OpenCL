@@ -54,12 +54,14 @@ gegl_chant_boolean (useloglog,  FALSE, "Use loglog smoothing")
 
 #else
 
-#define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME           FractalExplorer
-#define GEGL_CHANT_DESCRIPTION    "Fractal Explorer"
-
 #define GEGL_CHANT_SELF           "FractalExplorer.c"
+#define GEGL_CHANT_DESCRIPTION    "Fractal Explorer"
 #define GEGL_CHANT_CATEGORIES     "render"
+
+#define GEGL_CHANT_SOURCE
+
+#define GEGL_CHANT_PREPARE
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -400,13 +402,7 @@ process (GeglOperation *operation,
 
     make_color_map (self, colormap);
 
-    output = g_object_new (GEGL_TYPE_BUFFER,
-                           "format", babl_format ("R'G'B' u8"),
-                           "x",      result->x,
-                           "y",      result->y,
-                           "width",  result->width ,
-                           "height", result->height,
-                           NULL);
+    output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
 
     buf  = g_new (guchar, result->width * result->height * 4);
       {
@@ -426,8 +422,14 @@ process (GeglOperation *operation,
     gegl_buffer_set (output, NULL, babl_format ("R'G'B' u8"), buf);
     g_free (buf);
   }
-  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
   return TRUE;
+}
+
+static void
+prepare (GeglOperation *operation,
+         gpointer       context_id)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
 }
 
 static GeglRectangle

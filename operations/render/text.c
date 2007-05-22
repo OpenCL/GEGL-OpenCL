@@ -37,12 +37,16 @@ gegl_chant_int    (height, 0, 1000000, 0,
 
 #else
 
+#define GEGL_CHANT_NAME        text
+#define GEGL_CHANT_DESCRIPTION "Display a string of text using pango and cairo."
+#define GEGL_CHANT_SELF        "text.c"
+#define GEGL_CHANT_CATEGORIES  "render"
+
 #define GEGL_CHANT_SOURCE
-#define GEGL_CHANT_NAME            text
-#define GEGL_CHANT_DESCRIPTION     "Display a string of text using pango and cairo."
-#define GEGL_CHANT_SELF            "text.c"
-#define GEGL_CHANT_CATEGORIES      "render"
+
+#define GEGL_CHANT_PREPARE
 #define GEGL_CHANT_CLASS_INIT
+
 #include "gegl-chant.h"
 
 #include <cairo.h>
@@ -156,14 +160,7 @@ process (GeglOperation *operation,
 
   result = gegl_operation_result_rect (operation, context_id);
 
-  output = g_object_new (GEGL_TYPE_BUFFER,
-                         "format", babl_format ("B'aG'aR'aA u8"),
-                         "x",      result->x,
-                         "y",      result->y,
-                         "width",  result->width ,
-                         "height", result->height,
-                         NULL);
-
+   output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
   {
     guchar *data = g_malloc0 (result->width * result->height * 4);
     cairo_t *cr;
@@ -181,7 +178,6 @@ process (GeglOperation *operation,
     cairo_surface_destroy (surface);
     g_free (data);
   }
-  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
 
   return  TRUE;
 }
@@ -255,6 +251,13 @@ finalize (GObject *object)
     }
 
   G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
+}
+
+static void
+prepare (GeglOperation *operation,
+         gpointer       context_id)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("B'aG'aR'aA u8"));
 }
 
 static void class_init (GeglOperationClass *klass)

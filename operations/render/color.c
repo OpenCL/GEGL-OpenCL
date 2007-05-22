@@ -28,8 +28,18 @@ gegl_chant_color (value, "black", "One of the cell colors (defaults to 'black')"
 
 #define GEGL_CHANT_SELF           "color.c"
 #define GEGL_CHANT_CATEGORIES     "render"
+
 #define GEGL_CHANT_CLASS_INIT
+#define GEGL_CHANT_PREPARE
+
 #include "gegl-chant.h"
+
+static void
+prepare (GeglOperation *operation,
+         gpointer       context_id)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
 
 static gboolean
 process (GeglOperation *operation,
@@ -51,14 +61,7 @@ process (GeglOperation *operation,
                          &color[2],
                          &color[3]);
 
-    output = g_object_new (GEGL_TYPE_BUFFER,
-                           "format",
-                           babl_format ("RGBA float"),
-                           "x",      result->x,
-                           "y",      result->y,
-                           "width",  result->width ,
-                           "height", result->height,
-                           NULL);
+    output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
     buf = g_malloc (result->width * result->height * 4 * sizeof (gfloat));
       {
         gfloat *dst=buf;
@@ -72,7 +75,6 @@ process (GeglOperation *operation,
     gegl_buffer_set (output, NULL, NULL, buf);
     g_free (buf);
   }
-  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
   return  TRUE;
 }
 

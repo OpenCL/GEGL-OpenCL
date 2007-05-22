@@ -27,12 +27,15 @@ gegl_chant_double (n,     0, 20.0, 3.0, "")
 
 #else
 
-#define GEGL_CHANT_SOURCE
 #define GEGL_CHANT_NAME           perlin_noise
-#define GEGL_CHANT_DESCRIPTION    "Perlin noise generator."
-
 #define GEGL_CHANT_SELF           "noise.c"
+#define GEGL_CHANT_DESCRIPTION    "Perlin noise generator."
 #define GEGL_CHANT_CATEGORIES      "render"
+
+#define GEGL_CHANT_SOURCE
+
+#define GEGL_CHANT_PREPARE
+
 #include "gegl-chant.h"
 #include "perlin/perlin.c"
 #include "perlin/perlin.h"
@@ -51,14 +54,7 @@ process (GeglOperation *operation,
     GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
     gfloat *buf;
 
-    output = g_object_new (GEGL_TYPE_BUFFER,
-                           "format", 
-                           babl_format ("Y float"),
-                           "x",      result->x,
-                           "y",      result->y,
-                           "width",  result->width ,
-                           "height", result->height,
-                           NULL);
+    output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
     buf = g_malloc (result->width * result->height * 4);
       {
         gfloat *dst=buf;
@@ -82,10 +78,15 @@ process (GeglOperation *operation,
     gegl_buffer_set (output, NULL, babl_format ("Y float"), buf);
     g_free (buf);
   }
-  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
   return  TRUE;
 }
 
+static void
+prepare (GeglOperation *operation,
+         gpointer       context_id)
+{
+  gegl_operation_set_format (operation, "output", babl_format ("Y float"));
+}
 
 static GeglRectangle 
 get_defined_region (GeglOperation *operation)
