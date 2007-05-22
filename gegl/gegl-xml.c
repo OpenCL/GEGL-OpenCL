@@ -251,8 +251,8 @@ static void start_element (GMarkupParseContext *context,
 	g_warning ("we haven't cleared previous curve");
       g_assert (name2val (a, v, "ymin"));
       g_assert (name2val (a, v, "ymax"));
-      pd->curve = gegl_curve_new (atof (name2val (a, v, "ymin")),
-				  atof (name2val (a, v, "ymax")));
+      pd->curve = gegl_curve_new (g_ascii_strtod (name2val (a, v, "ymin"), NULL),
+				  g_ascii_strtod (name2val (a, v, "ymax"), NULL));
     }
   else if (!strcmp (element_name, "curve-point"))
     {
@@ -264,8 +264,8 @@ static void start_element (GMarkupParseContext *context,
 	  g_assert (name2val (a, v, "y"));
 
 	  gegl_curve_add_point (pd->curve,
-				atof (name2val (a, v, "x")),
-				atof (name2val (a, v, "y")));
+				g_ascii_strtod (name2val (a, v, "x"), NULL),
+				g_ascii_strtod (name2val (a, v, "y"), NULL));
 	}
     }
   else if (!strcmp (element_name, "link") ||
@@ -886,10 +886,10 @@ static void xml_curve_point (SerializeState *ss,
 {
   gchar str[64];
   ind; g_string_append (ss->buf, "<curve-point x='");
-  sprintf(str, "%f", x);
+  g_ascii_dtostr (str, sizeof(str), x);
   g_string_append (ss->buf, str);
   g_string_append (ss->buf, "' y='");
-  sprintf(str, "%f", y);
+  g_ascii_dtostr (str, sizeof(str), y);
   g_string_append (ss->buf, str);
   g_string_append (ss->buf, "'/>\n");
 }
@@ -898,15 +898,18 @@ static void xml_curve (SerializeState *ss,
 		       gint            indent,
 		       GeglCurve      *curve)
 {
-  gchar *str;
+  gchar str[G_ASCII_DTOSTR_BUF_SIZE];
   gfloat min_y, max_y;
   guint num_points = gegl_curve_num_points (curve);
   guint i;
 
   gegl_curve_get_y_bounds (curve, &min_y, &max_y);
 
-  ind; str = g_strdup_printf ("<curve ymin='%f' ymax='%f'>\n", min_y, max_y);
-  g_string_append (ss->buf, str); g_free (str);
+  ind; g_string_append (ss->buf, "<curve ymin='");
+  g_ascii_dtostr (str, sizeof(str), min_y);
+  g_string_append (ss->buf, "' ymax='");
+  g_ascii_dtostr (str, sizeof(str), max_y);
+  g_string_append (ss->buf, "'>\n");
   for (i = 0; i < num_points; ++i)
     {
       gfloat x, y;

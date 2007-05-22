@@ -26,6 +26,7 @@
 #include <gegl/gegl-types.h>
 #include <gegl/gegl-color.h>
 #include <gegl/gegl-connection.h>
+#include <gegl/gegl-curve.h>
 #include <gegl/gegl-graph.h>
 #include <gegl/gegl-init.h>
 #include <gegl/gegl-node.h>

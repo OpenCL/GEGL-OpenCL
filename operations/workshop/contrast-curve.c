@@ -20,7 +20,7 @@
 #if GEGL_CHANT_PROPERTIES
 
   gegl_chant_int (sampling_points, 0, 65536, 0, "Number of curve sampling points.  0 for exact calculation.")
-  gegl_chant_object (curve, "The contrast curve.")
+  gegl_chant_curve (curve, "The contrast curve.")
 
 #else
 
@@ -54,20 +54,18 @@ process (GeglOperation *op,
   gfloat *in  = in_buf;
   gfloat *out = out_buf;
   gint num_sampling_points;
-  GeglCurve *curve;
   gfloat *xs, *ys;
 
   self = GEGL_CHANT_OPERATION (op);
 
   num_sampling_points = self->sampling_points;
-  curve = GEGL_CURVE (self->curve);
 
   if (num_sampling_points > 0)
   {
     xs = (gfloat*)g_malloc(sizeof(gfloat) * num_sampling_points);
     ys = (gfloat*)g_malloc(sizeof(gfloat) * num_sampling_points);
 
-    gegl_curve_calc_values(curve, 0.0, 1.0, num_sampling_points, xs, ys);
+    gegl_curve_calc_values(self->curve, 0.0, 1.0, num_sampling_points, xs, ys);
 
     g_free(xs);
 
@@ -97,7 +95,7 @@ process (GeglOperation *op,
     {
       gfloat u = in[0];
 
-      out[0] = gegl_curve_calc_value(curve, u);
+      out[0] = gegl_curve_calc_value(self->curve, u);
       out[1]=in[1];
 
       in += 2;

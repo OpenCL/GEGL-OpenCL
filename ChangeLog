@@ -1,5 +1,16 @@
 2007-05-23  Øyvind Kolås  <pippin@gimp.org>
 
+	Applied patch from Mark Probst <mark.probst@gmail.com> that corrects
+	the floating point I/O problem for the curve and makes the
+	contrast-curve operation use the curve instead of the object param
+	type.
+
+	* gegl/gegl-plugin.h:
+	* gegl/gegl-xml.c: (start_element), (xml_curve_point), (xml_curve):
+	* operations/workshop/contrast-curve.c: (process):
+
+2007-05-23  Øyvind Kolås  <pippin@gimp.org>
+
 	Removed fast path optimizations that are unneeded now that the core
 	itself avoids processing nodes whose result rectangles have zero
 	extent.
