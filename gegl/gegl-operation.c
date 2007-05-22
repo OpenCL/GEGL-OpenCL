@@ -95,17 +95,32 @@ gegl_operation_create_pad (GeglOperation *self,
 }
 
 gboolean
-gegl_operation_process (GeglOperation *self,
+gegl_operation_process (GeglOperation *operation,
                         gpointer       context_id,
                         const gchar   *output_pad)
 {
   GeglOperationClass *klass;
+  GeglRectangle      *result = gegl_operation_result_rect (operation, context_id);
 
-  g_return_val_if_fail (GEGL_IS_OPERATION (self), FALSE);
+  g_return_val_if_fail (GEGL_IS_OPERATION (operation), FALSE);
 
-  klass = GEGL_OPERATION_GET_CLASS (self);
+  klass = GEGL_OPERATION_GET_CLASS (operation);
 
-  return klass->process (self, context_id, output_pad);
+  if (!strcmp (output_pad, "output") &&
+      (result->width == 0 || result->height == 0))
+    {
+      GeglBuffer *output = g_object_new (GEGL_TYPE_BUFFER,
+                                         "format", babl_format ("Y u8"),
+                                         "x", 0,
+                                         "y", 0,
+                                         "width", 0,
+                                         "height", 0,
+                                         NULL);
+      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+      return TRUE;
+    }
+
+  return klass->process (operation, context_id, output_pad);
 }
 
 GeglRectangle
