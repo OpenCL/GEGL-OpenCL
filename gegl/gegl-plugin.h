@@ -36,6 +36,7 @@
 #include <gegl/gegl-visitable.h>
 #include <gegl/gegl-visitor.h>
 #include <gegl/buffer/gegl-buffer.h>
+#include <gegl/gegl-curve.h>
 #include <gegl/gegl-xml.h>
 
 #define GEGL_INTERNAL /* to avoid conflicts, when we include gegl.h just

@@ -1,3 +1,7 @@
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-plugin.h: added gegl-curve.h include.
+
 2007-05-22  Étienne Bersac  <bersace03@laposte.net>
 
 	* operations/core/save-buffer.c: copy buffer to buffer line per
