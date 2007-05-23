@@ -42,6 +42,7 @@ static GeglRectangle get_affected_region       (GeglOperation *self,
                                                 GeglRectangle  region);
 static gboolean calc_source_regions            (GeglOperation *self,
                                                 gpointer       context_id);
+static void gegl_operation_tickle              (GeglOperation *self);
 
 G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
 
@@ -54,6 +55,7 @@ gegl_operation_class_init (GeglOperationClass *klass)
   klass->categories          = NULL;
   klass->attach              = attach;
   klass->prepare             = NULL;
+  klass->tickle              = NULL;
   klass->get_defined_region  = get_defined_region;
   klass->get_affected_region = get_affected_region;
   klass->calc_source_regions = calc_source_regions;
@@ -130,6 +132,9 @@ gegl_operation_get_defined_region (GeglOperation *self)
   GeglOperationClass *klass;
 
   klass = GEGL_OPERATION_GET_CLASS (self);
+
+  gegl_operation_tickle (self);
+
   if (klass->get_defined_region)
     return klass->get_defined_region (self);
   return rect;
@@ -143,9 +148,13 @@ gegl_operation_get_affected_region (GeglOperation *self,
   GeglOperationClass *klass;
 
   klass = GEGL_OPERATION_GET_CLASS (self);
+
   if (region.width == 0 ||
       region.height == 0)
     return region;
+
+  gegl_operation_tickle (self);
+
   if (klass->get_affected_region)
     return klass->get_affected_region (self, input_pad, region);
   return region;
@@ -159,6 +168,8 @@ gegl_operation_calc_source_regions (GeglOperation *self,
   GeglOperationClass *klass;
 
   klass = GEGL_OPERATION_GET_CLASS (self);
+
+  gegl_operation_tickle (self);
 
   if (klass->calc_source_regions)
     return klass->calc_source_regions (self, context_id);
@@ -201,6 +212,19 @@ gegl_operation_prepare (GeglOperation *self,
 
   if (klass->prepare)
     klass->prepare (self, context_id);
+}
+
+void
+gegl_operation_tickle (GeglOperation *self)
+{
+  GeglOperationClass *klass;
+
+  g_return_if_fail (GEGL_IS_OPERATION (self));
+
+  klass = GEGL_OPERATION_GET_CLASS (self);
+
+  if (klass->tickle)
+    klass->tickle (self);
 }
 
 GeglNode *gegl_operation_get_source_node (GeglOperation *operation,

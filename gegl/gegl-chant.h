@@ -40,6 +40,13 @@
   #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_POINT_FILTER
   #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_POINT_FILTER_CLASS
 #endif
+#ifdef GEGL_CHANT_AREA_FILTER
+  #include <gegl/gegl-operation-area-filter.h>
+  #define GEGL_CHANT_PARENT_TypeName      GeglOperationAreaFilter
+  #define GEGL_CHANT_PARENT_TypeNameClass GeglOperationAreaFilterClass
+  #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_AREA_FILTER
+  #define GEGL_CHANT_PARENT_CLASS         GEGL_OPERATION_AREA_FILTER_CLASS
+#endif
 #ifdef GEGL_CHANT_COMPOSER
   #include <gegl/gegl-operation-composer.h>
   #define GEGL_CHANT_PARENT_TypeName      GeglOperationComposer
@@ -418,6 +425,10 @@ static void prepare (GeglOperation *self,
                      gpointer       context_id);
 #endif
 
+#ifdef GEGL_CHANT_AREA_FILTER
+static void tickle (GeglOperation *self);
+#endif
+
 static void gegl_chant_destroy_notify (gpointer data)
 {
   GeglChantOperation *self = GEGL_CHANT_OPERATION (data);
@@ -512,13 +523,23 @@ gegl_chant_class_init (ChantClass * klass)
   GeglOperationClass         *operation_class;
 
 #ifndef GEGL_CHANT_META
+#ifndef GEGL_CHANT_AREA_FILTER
   GEGL_CHANT_PARENT_TypeNameClass *parent_class = GEGL_CHANT_PARENT_CLASS (klass);
+#endif
+#ifdef GEGL_CHANT_AREA_FILTER
+  /* not really the parent class, but what we're after */
+  GeglOperationFilterClass *parent_class = GEGL_OPERATION_FILTER_CLASS (klass);
+#endif
   parent_class->process = process;
 #endif
   operation_class = GEGL_OPERATION_CLASS (klass);
 
 #ifdef GEGL_CHANT_PREPARE
   operation_class->prepare = prepare;
+#endif
+
+#ifdef GEGL_CHANT_AREA_FILTER
+  operation_class->tickle = tickle;
 #endif
 
   object_class->set_property = set_property;

@@ -29,6 +29,7 @@ GEGL_sources = \
 	gegl-node-dynamic.c		\
 	gegl-object.c			\
 	gegl-operation.c        	\
+	gegl-operation-area-filter.c    \
 	gegl-operation-composer.c     	\
 	gegl-operation-filter.c       	\
 	gegl-operation-meta.c       	\
@@ -45,6 +46,7 @@ GEGL_sources = \
 	gegl-visitor.c			\
 	gegl-xml.c			\
 	\
+	gegl-area-filter.h              \
 	gegl-color.h			\
 	gegl-connection.h		\
 	gegl-curve.h			\

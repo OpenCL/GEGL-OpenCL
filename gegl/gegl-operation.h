@@ -64,6 +64,11 @@ struct _GeglOperationClass
    */
   void            (*attach)               (GeglOperation *self);
 
+  /* called as a refresh before any of the region needs getters, used in
+   * the area base class for instance.
+   */
+  void            (*tickle)               (GeglOperation *self);
+
   /* prepare the node for processing (all properties will be set) override this
    * if you are creating a meta operation (using the node as a GeglGraph).
    */
@@ -100,6 +105,7 @@ struct _GeglOperationClass
   gboolean        (*process)              (GeglOperation *self,
                                            gpointer       context_id,
                                            const gchar   *output_pad);
+
 };
 
 /* returns|registers the gtype for GeglOperation */

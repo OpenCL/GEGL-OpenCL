@@ -1,5 +1,39 @@
 2007-05-23  Øyvind Kolås  <pippin@gimp.org>
 
+	Added a new base class for operations that includes computations for
+	the defined, needed and affected neighbourhood based on extents in
+	four dimensions. The implementing operation has to implement the
+	virutal method tickle, which updates the extents from the properties
+	in an operation specific manner before the computations are made.
+
+	* gegl/gegl-operation.[ch]: added new virtual method tickle().
+	(gegl_operation_get_defined_region): tickle first
+	(gegl_operation_get_affected_region): tickle first
+	(gegl_operation_calc_source_regions): tickle first
+	* gegl/gegl-operation-area-filter.[ch]:
+	* gegl/Makefile.am: added new files.
+	* gegl/gegl-chant.h: added support for GeglOperationAreaFilter
+	baseclass, static void tickle(GeglOperation *operation) is expected
+	to be defined in operations using this base.
+
+2007-05-23  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* NEWS:
+	* gegl/Makefile.am:
+	* gegl/gegl-chant.h:
+	* gegl/gegl-operation.c: (gegl_operation_class_init),
+	(gegl_operation_get_defined_region),
+	(gegl_operation_get_affected_region),
+	(gegl_operation_calc_source_regions), (gegl_operation_tickle):
+	* gegl/gegl-operation.h:
+	* operations/file-io/jpg-load.c: (process):
+	* operations/workshop/bilateral-filter.c: (tickle):
+	* operations/workshop/min-envelope.c: (get_defined_region):
+
+2007-05-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer-private.h: reordered fields in struct a bit.
 	* gegl/buffer/gegl-buffer.[ch]: added gegl_buffer_new,
 	gegl_buffer_destroy and gegl_buffer_extents functions.
