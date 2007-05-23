@@ -1,5 +1,11 @@
 2007-05-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/blur/box-blur.c: use GeglOperationAreaFilter as base.
+	* operations/blur/gaussian-blur.c: use GeglOperationAreaFilter as
+	base.
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-operation.[ch]: (gegl_operation_need_rect): added new
 	accessor to retrieve the rectangle computed to be needed for
 	processing a node.
@@ -21,22 +27,6 @@
 	* gegl/gegl-chant.h: added support for GeglOperationAreaFilter
 	baseclass, static void tickle(GeglOperation *operation) is expected
 	to be defined in operations using this base.
-
-2007-05-23  Øyvind Kolås  <pippin@gimp.org>
-
-	reviewed by: <delete if not using a buddy>
-
-	* NEWS:
-	* gegl/Makefile.am:
-	* gegl/gegl-chant.h:
-	* gegl/gegl-operation.c: (gegl_operation_class_init),
-	(gegl_operation_get_defined_region),
-	(gegl_operation_get_affected_region),
-	(gegl_operation_calc_source_regions), (gegl_operation_tickle):
-	* gegl/gegl-operation.h:
-	* operations/file-io/jpg-load.c: (process):
-	* operations/workshop/bilateral-filter.c: (tickle):
-	* operations/workshop/min-envelope.c: (get_defined_region):
 
 2007-05-23  Øyvind Kolås  <pippin@gimp.org>
 
@@ -5501,8 +5491,6 @@
 
 2006-09-14  Øyvind Kolås  <pippin@gimp.org>
 
-	reviewed by: <delete if not using a buddy>
-
 	* operations/render/text.c: (process):
 
 2006-09-14  Øyvind Kolås  <pippin@gimp.org>
@@ -6013,8 +6001,6 @@
 
 2006-09-05  Øyvind Kolås  <pippin@gimp.org>
 
-	reviewed by: <delete if not using a buddy>
-
 	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
 	* gegl/gegl-node.c: (gegl_node_connect):
 	* operations/color/brightness-contrast.c:
@@ -6053,8 +6039,6 @@
 	* operations/render/text.c: (process), (get_defined_region):
 
 2006-09-04  Øyvind Kolås  <pippin@gimp.org>
-
-	reviewed by: <delete if not using a buddy>
 
 	* gegl/gegl-eval-mgr.c: (gegl_eval_mgr_apply):
 	* operations/color/brightness-contrast.c:

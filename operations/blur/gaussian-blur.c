@@ -39,8 +39,7 @@ gegl_chant_string (filter, NULL,
 #define GEGL_CHANT_DESCRIPTION     "Performs an averaging of neighbouring pixels with the normal distribution as weighting."
 #define GEGL_CHANT_CATEGORIES      "blur"
 
-#define GEGL_CHANT_FILTER
-#define GEGL_CHANT_CLASS_INIT
+#define GEGL_CHANT_AREA_FILTER
 #include "gegl-chant.h"
 
 #include <math.h>
@@ -98,7 +97,7 @@ process (GeglOperation *operation,
       GeglRectangle *result     = gegl_operation_result_rect (operation, context_id);
       GeglBuffer    *temp_in;
       GeglBuffer    *temp = NULL;
-      GeglRectangle  need = get_source_rect (operation, context_id);
+      GeglRectangle *need = gegl_operation_need_rect (operation, context_id);
 
 
       if (self->std_dev_x<0.00001 && self->std_dev_y<0.00001)
@@ -109,27 +108,27 @@ process (GeglOperation *operation,
         {
           temp_in = g_object_new (GEGL_TYPE_BUFFER,
                                  "source", input,
-                                 "x",      need.x,
-                                 "y",      need.y,
-                                 "width",  need.width ,
-                                 "height", need.height ,
+                                 "x",      need->x,
+                                 "y",      need->y,
+                                 "width",  need->width ,
+                                 "height", need->height ,
                                  NULL);
 
           output = g_object_new (GEGL_TYPE_BUFFER,
                                  "format", babl_format ("RaGaBaA float"),
-                                 "x",      need.x,
-                                 "y",      need.y,
-                                 "width",  need.width ,
-                                 "height", need.height ,
+                                 "x",      need->x,
+                                 "y",      need->y,
+                                 "width",  need->width ,
+                                 "height", need->height ,
                                  NULL);
 
           if (self->std_dev_x && self->std_dev_y)
             temp   = g_object_new (GEGL_TYPE_BUFFER,
                                    "format", babl_format ("RaGaBaA float"),
-                                   "x",      need.x,
-                                   "y",      need.y,
-                                   "width",  need.width ,
-                                   "height", need.height ,
+                                   "x",      need->x,
+                                   "y",      need->y,
+                                   "width",  need->width ,
+                                   "height", need->height ,
                                    NULL);
           else if (!self->std_dev_x)
             temp = temp_in;
@@ -512,98 +511,14 @@ fir_ver_blur (GeglBuffer *src,
   g_free (dst_buf);
 }
 
-
-
-
 #include <math.h>
-static GeglRectangle
-get_defined_region (GeglOperation *operation)
+
+static void tickle (GeglOperation *operation)
 {
-  GeglRectangle  result = {0,0,0,0};
-  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation,
-                                                                "input");
-  GeglChantOperation *blur = GEGL_CHANT_OPERATION (operation);
-  gint std_dev_x       = ceil(blur->std_dev_x);
-  gint std_dev_y       = ceil(blur->std_dev_y);
-  if (!in_rect)
-    return result;
-
-  result = *in_rect;
-
-  if (result.width  &&
-      result.height )
-    {
-      result.x-=std_dev_x*4;
-      result.y-=std_dev_y*4;
-      result.width +=std_dev_x*8;
-      result.height +=std_dev_y*8;
-    }
-
-  return result;
-}
-
-static GeglRectangle get_source_rect (GeglOperation *self,
-                                 gpointer       context_id)
-{
-  GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
-  GeglRectangle       rect;
-  GeglRectangle       defined;
-  gint                std_dev_x;
-  gint                std_dev_y;
- 
-  std_dev_x = ceil(blur->std_dev_x);
-  std_dev_y = ceil(blur->std_dev_y);
-
-  rect  = *gegl_operation_get_requested_region (self, context_id);
-  defined = get_defined_region (self);
-  gegl_rectangle_intersect (&rect, &rect, &defined);
-  if (rect.width  != 0 &&
-      rect.height  != 0)
-    {
-      rect.x -= std_dev_x*4;
-      rect.y -= std_dev_y*4;
-      rect.width  += std_dev_x*8;
-      rect.height  += std_dev_y*8;
-    }
-
-  return rect;
-}
-
-static GeglRectangle
-get_affected_region (GeglOperation *self,
-                     const gchar   *input_pad,
-                     GeglRectangle  region)
-{
-  GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
-  gint                std_dev_x;
-  gint                std_dev_y;
- 
-  std_dev_x = ceil(blur->std_dev_x);
-  std_dev_y = ceil(blur->std_dev_y);
-
-  region.x -= std_dev_x*4;
-  region.y -= std_dev_y*4;
-  region.width  += std_dev_x*8;
-  region.height  += std_dev_y*8;
-  return region;
-}
-
-static gboolean
-calc_source_regions (GeglOperation *self,
-                     gpointer       context_id)
-{
-  GeglRectangle need = get_source_rect (self, context_id);
-  
-  gegl_operation_set_source_region (self, context_id, "input", &need);
-
-  return TRUE;
-}
-
-static void class_init (GeglOperationClass *operation_class)
-{
-  operation_class->get_affected_region = get_affected_region;
-  operation_class->get_defined_region = get_defined_region;
-  operation_class->calc_source_regions = calc_source_regions;
+  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantOperation      *blur = GEGL_CHANT_OPERATION (operation);
+  area->left = area->right = ceil (blur->std_dev_x*4);
+  area->top = area->bottom = ceil (blur->std_dev_y*4);
 }
 
 #endif
