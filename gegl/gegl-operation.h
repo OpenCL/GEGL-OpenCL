@@ -133,6 +133,9 @@ void            gegl_operation_set_source_region    (GeglOperation *operation,
 GeglRectangle * gegl_operation_result_rect          (GeglOperation *operation,
                                                      gpointer       context_id);
 
+/* returns the bounding box of the buffer needed for computation */
+GeglRectangle * gegl_operation_need_rect            (GeglOperation *operation,
+                                                     gpointer       context_id);
 
 /* virtual method invokers that depends only on the set properties of a
  * operation|node

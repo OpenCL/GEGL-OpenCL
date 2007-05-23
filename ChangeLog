@@ -1,3 +1,9 @@
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-operation.[ch]: (gegl_operation_need_rect): added new
+	accessor to retrieve the rectangle computed to be needed for
+	processing a node.
+
 2007-05-23  Øyvind Kolås  <pippin@gimp.org>
 
 	Added a new base class for operations that includes computations for

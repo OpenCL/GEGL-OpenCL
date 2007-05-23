@@ -366,6 +366,17 @@ gegl_operation_result_rect (GeglOperation *operation,
   return &dynamic->result_rect;
 }
 
+/* returns the bounding box of the buffer needed for computation */
+GeglRectangle * gegl_operation_need_rect            (GeglOperation *operation,
+                                                     gpointer       context_id)
+{
+  GeglNodeDynamic *dynamic = gegl_node_get_dynamic (operation->node, context_id);
+
+  g_assert (operation);
+  g_assert (operation->node);
+  return &dynamic->need_rect;
+}
+
 void
 gegl_operation_class_set_name (GeglOperationClass *klass,
                                const gchar        *new_name)
