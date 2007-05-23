@@ -1,5 +1,11 @@
 2007-05-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer-private.h: reordered fields in struct a bit.
+	* gegl/buffer/gegl-buffer.[ch]: added gegl_buffer_new,
+	gegl_buffer_destroy and gegl_buffer_extents functions.
+
+2007-05-23  Øyvind Kolås  <pippin@gimp.org>
+
 	Applied patch from Mark Probst <mark.probst@gmail.com> that corrects
 	the floating point I/O problem for the curve and makes the
 	contrast-curve operation use the curve instead of the object param
@@ -145,8 +151,6 @@
 	GSlice, made gegl_tile_new_from_data() local to this file.
 
 2007-05-22  Øyvind Kolås  <pippin@gimp.org>
-
-	reviewed by: <delete if not using a buddy>
 
 	* gegl/gegl-pad.c: (gegl_pad_init), (gegl_pad_set_format),
 	(gegl_pad_get_format):

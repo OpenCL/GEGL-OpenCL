@@ -37,25 +37,32 @@ typedef enum {
 } GeglInterpolation;
 
 
-GType   gegl_buffer_get_type   (void) G_GNUC_CONST;
+GType           gegl_buffer_get_type   (void) G_GNUC_CONST;
 
-void    gegl_buffer_get        (GeglBuffer    *buffer,
-                                GeglRectangle *rect,
-                                gdouble        scale,
-                                void          *format,
-                                void          *dest);
+GeglBuffer*     gegl_buffer_new        (GeglRectangle    *extent,
+                                        void             *format);
 
-void    gegl_buffer_set        (GeglBuffer       *buffer,
-                                GeglRectangle    *rect,
-                                void             *format,
-                                void             *src);
+void            gegl_buffer_destroy    (GeglBuffer       *buffer);
 
-void    gegl_buffer_sample     (GeglBuffer       *buffer,
-                                gdouble           x,
-                                gdouble           y,
-                                gdouble           scale,
-                                gpointer          dest,
-                                Babl             *format,
-                                GeglInterpolation interpolation);
+GeglRectangle * gegl_buffer_extent     (GeglBuffer       *buffer);
+
+void            gegl_buffer_get        (GeglBuffer       *buffer,
+                                        GeglRectangle    *rect,
+                                        gdouble           scale,
+                                        void             *format,
+                                        void             *dest);
+
+void            gegl_buffer_set        (GeglBuffer       *buffer,
+                                        GeglRectangle    *rect,
+                                        void             *format,
+                                        void             *src);
+
+void            gegl_buffer_sample     (GeglBuffer       *buffer,
+                                        gdouble           x,
+                                        gdouble           y,
+                                        gdouble           scale,
+                                        gpointer          dest,
+                                        Babl             *format,
+                                        GeglInterpolation interpolation);
 
 #endif

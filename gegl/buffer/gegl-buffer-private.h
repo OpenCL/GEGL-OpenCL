@@ -37,11 +37,14 @@
 struct _GeglBuffer
 {
   GeglTileTraits parent_object;
+
+
+  gint           x;      /* exported through gegl_buffer_extents()    */
+  gint           y;      /*  -"-  */
+  gint           width;  /*  -"-  */
+  gint           height; /*  -"-  */
+
   gpointer       format;
-  gint           x;   /* the relative position in relation to parent buffer */
-  gint           y;   /* the relative position in relation to parent buffer */
-  gint           width;
-  gint           height;
 
   gint           shift_x;
   gint           shift_y;
@@ -61,16 +64,17 @@ struct _GeglBufferClass
   GeglTileTraitsClass parent_class;
 };
 
-GeglStorage * gegl_buffer_storage    (GeglBuffer    *buffer);
-GeglRectangle gegl_buffer_get_abyss  (GeglBuffer    *buffer);
+GeglStorage  * gegl_buffer_storage    (GeglBuffer    *buffer);
 
-gint          gegl_buffer_leaks      (void);
+GeglRectangle  gegl_buffer_get_abyss  (GeglBuffer    *buffer);
 
-void          gegl_buffer_stats      (void);
+gint           gegl_buffer_leaks      (void);
 
-void          gegl_buffer_save       (GeglBuffer    *buffer,
-                                      const gchar   *path,
-                                      GeglRectangle *roi);
+void           gegl_buffer_stats      (void);
+
+void           gegl_buffer_save       (GeglBuffer    *buffer,
+                                       const gchar   *path,
+                                       GeglRectangle *roi);
 
 /* flush any unwritten data (flushes the hot-cache of a single
  * tile used by gegl_buffer_set for 1x1 pixel sized rectangles

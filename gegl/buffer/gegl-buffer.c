@@ -1667,3 +1667,28 @@ gegl_buffer_sample (GeglBuffer       *buffer,
 
   pget (buffer, x, y, format, dest);
 }
+
+GeglRectangle *
+gegl_buffer_extent (GeglBuffer *buffer)
+{
+  return (GeglRectangle*)&(buffer->x);
+}
+
+GeglBuffer *
+gegl_buffer_new (GeglRectangle *extent,
+                 void          *format)
+{
+  return g_object_new (GEGL_TYPE_BUFFER,
+                       "x", extent->x,
+                       "y", extent->y,
+                       "width", extent->width,
+                       "height", extent->height,
+                       "format", format,
+                       NULL);
+}
+
+void
+gegl_buffer_destroy (GeglBuffer *buffer)
+{
+  g_object_unref (buffer);
+}
