@@ -1,5 +1,9 @@
 2007-05-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/kuwahara-switch.c: removed.
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
 	Reordered the chanting to be consistent with hand written ops.
 
 	* operations/workshop/generated/blend.rb:
