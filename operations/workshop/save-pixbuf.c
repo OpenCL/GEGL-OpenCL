@@ -20,7 +20,7 @@
 #if GEGL_CHANT_PROPERTIES
 
 gegl_chant_pointer (pixbuf, "The location where to store the output GdkPixuf.")
-gegl_chant_double  (scale, 0.001, 1., 1., "Scale factor")
+
 #else
 
 #define GEGL_CHANT_SINK
@@ -40,33 +40,36 @@ process (GeglOperation *operation,
 
   if (self->pixbuf)
     {
-      Babl          *format;
+      GdkPixbuf **pixbuf = self->pixbuf;
+      Babl          *babl;
+      BablFormat    *format;
       guchar        *temp;
       GeglRectangle  *rect = gegl_operation_result_rect (operation, context_id);
       gchar *name;
       gboolean has_alpha;
       gint bps;
-      GdkPixbuf **pixbuf = self->pixbuf;
-      g_debug ("%s: %ix%i+%i+%i at %f.", G_STRLOC, rect->width, rect->height, rect->x, rect->y, self->scale);
+      guint i;
 
       input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
       g_assert (input);
 
+      babl = input->format;
       format = input->format;
-      has_alpha = g_strrstr (format->instance.name, "A") == NULL;
-      g_object_get (input, "px-size", &bps, NULL);
-      bps*= 8;
+
+      has_alpha = FALSE;
+      for (i = 0; i < format->components; i++) {
+	has_alpha = has_alpha || format->component[i]->alpha != 0;
+      }
+
       /* pixbuf from data only support 8bit bps */
       bps = 8;
       name = g_strdup_printf ("RGB%s u%i",
 			      has_alpha ? "A" : "",
 			      bps);
-      format = babl_format (name);
+      babl = babl_format (name);
 
       temp = g_malloc (rect->width * rect->height * bps);
-      gegl_buffer_get (input, rect, self->scale, format, temp);
-      rect->width = (gint) ((gdouble) rect->width * self->scale);
-      rect->height = (gint) ((gdouble) rect->height * self->scale);
+      gegl_buffer_get (input, rect, 1., babl, temp);
       
       *pixbuf = gdk_pixbuf_new_from_data (temp,
 					 GDK_COLORSPACE_RGB,
