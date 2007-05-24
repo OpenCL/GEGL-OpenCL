@@ -19,7 +19,6 @@
 #define ANGLE_PRIME  95273
 #define RADIUS_PRIME 29537
 #define SCALE_PRIME 85643
-#include "vector.h"
 
 static gfloat   lut_cos[ANGLE_PRIME];
 static gfloat   lut_sin[ANGLE_PRIME];

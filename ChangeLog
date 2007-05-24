@@ -1,5 +1,6 @@
 2007-05-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/envelopes.h: removed #include "vector.h"
 	* operations/workshop/c2g.c: removed #include "vector.h"
 
 2007-05-24  Øyvind Kolås  <pippin@gimp.org>
