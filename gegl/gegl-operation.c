@@ -43,7 +43,6 @@ static GeglRectangle compute_affected_region   (GeglOperation *self,
 static GeglRectangle compute_input_request (GeglOperation *self,
                                             const gchar   *input_pad,
                                             GeglRectangle *region);
-static void gegl_operation_tickle          (GeglOperation *self);
 
 G_DEFINE_TYPE (GeglOperation, gegl_operation, G_TYPE_OBJECT)
 
@@ -134,8 +133,6 @@ gegl_operation_get_defined_region (GeglOperation *self)
 
   klass = GEGL_OPERATION_GET_CLASS (self);
 
-  gegl_operation_tickle (self);
-
   if (klass->get_defined_region)
     return klass->get_defined_region (self);
   return rect;
@@ -153,8 +150,6 @@ gegl_operation_compute_affected_region (GeglOperation *self,
   if (region.width == 0 ||
       region.height == 0)
     return region;
-
-  gegl_operation_tickle (self);
 
   if (klass->compute_affected_region)
     return klass->compute_affected_region (self, input_pad, region);
@@ -189,8 +184,6 @@ gegl_operation_compute_input_request (GeglOperation *operation,
       roi->height == 0)
     return *roi;
 
-  gegl_operation_tickle (operation);
-
   g_assert (klass->compute_input_request);
   
   return klass->compute_input_request (operation, input_pad, roi);
@@ -208,8 +201,6 @@ gegl_operation_calc_source_regions (GeglOperation *operation,
   klass = GEGL_OPERATION_GET_CLASS (operation);
   dynamic  = gegl_node_get_dynamic (operation->node, context_id);
   request = *gegl_operation_need_rect (operation, context_id);
-
-  gegl_operation_tickle (operation);
 
   /* for each input, compute_input_request use gegl_operation_set_source_region() */
   for (input_pads = operation->node->input_pads;input_pads;input_pads=input_pads->next)
@@ -259,17 +250,6 @@ gegl_operation_prepare (GeglOperation *self,
 
   if (klass->prepare)
     klass->prepare (self, context_id);
-}
-
-void
-gegl_operation_tickle (GeglOperation *self)
-{
-  GeglOperationClass *klass;
-
-  g_return_if_fail (GEGL_IS_OPERATION (self));
-
-  klass = GEGL_OPERATION_GET_CLASS (self);
-
   if (klass->tickle)
     klass->tickle (self);
 }

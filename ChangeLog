@@ -1,5 +1,9 @@
 2007-05-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation.c: simplified tickling logic.
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/kuwahara-switch.c: removed.
 
 2007-05-24  Øyvind Kolås  <pippin@gimp.org>
