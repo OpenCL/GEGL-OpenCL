@@ -121,11 +121,6 @@ GeglRectangle * gegl_operation_get_requested_region (GeglOperation *operation,
 GeglRectangle * gegl_operation_source_get_defined_region (GeglOperation *operation,
                                                           const gchar   *pad_name);
 
-/* compute the rectangles that needs to be computed at the buffers */
-gboolean
-gegl_operation_calc_source_regions (GeglOperation *self,
-                                    gpointer       context_id);
-
 /* retrieves the node providing data to a named input pad */
 GeglNode      * gegl_operation_get_source_node      (GeglOperation *operation,
                                                      const gchar   *pad_name);
