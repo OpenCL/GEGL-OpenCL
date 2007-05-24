@@ -1,0 +1,84 @@
+/* This file is an image processing operation for GEGL
+ *
+ * GEGL is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * GEGL is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with GEGL; if not, write to the
+ * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ *
+ * Copyright 2007 Étienne Bersac <bersace03@laposte.net>
+ */
+#if GEGL_CHANT_PROPERTIES
+
+gegl_chant_pointer (pixbuf, "The location where to store the output GdkPixuf.")
+gegl_chant_double  (scale, 0.001, 1., 1., "Scale factor")
+#else
+
+#define GEGL_CHANT_SINK
+#define GEGL_CHANT_NAME            save_pixbuf
+#define GEGL_CHANT_DESCRIPTION     "Save output into a GdkPixbuf."
+#define GEGL_CHANT_SELF            "save-pixbuf.c"
+#define GEGL_CHANT_CATEGORIES      "programming:output"
+#include "gegl-chant.h"
+#include <gdk-pixbuf/gdk-pixbuf.h>
+
+static gboolean
+process (GeglOperation *operation,
+         gpointer       context_id)
+{
+  GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
+  GeglBuffer          *input;
+
+  if (self->pixbuf)
+    {
+      Babl          *format;
+      guchar        *temp;
+      GeglRectangle  *rect = gegl_operation_result_rect (operation, context_id);
+      gchar *name;
+      gboolean has_alpha;
+      gint bps;
+      GdkPixbuf **pixbuf = self->pixbuf;
+      g_debug ("%s: %ix%i+%i+%i at %f.", G_STRLOC, rect->width, rect->height, rect->x, rect->y, self->scale);
+
+      input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+      g_assert (input);
+
+      format = input->format;
+      has_alpha = g_strrstr (format->instance.name, "A") == NULL;
+      g_object_get (input, "px-size", &bps, NULL);
+      bps*= 8;
+      /* pixbuf from data only support 8bit bps */
+      bps = 8;
+      name = g_strdup_printf ("RGB%s u%i",
+			      has_alpha ? "A" : "",
+			      bps);
+      format = babl_format (name);
+
+      temp = g_malloc (rect->width * rect->height * bps);
+      gegl_buffer_get (input, rect, self->scale, format, temp);
+      rect->width = (gint) ((gdouble) rect->width * self->scale);
+      rect->height = (gint) ((gdouble) rect->height * self->scale);
+      
+      *pixbuf = gdk_pixbuf_new_from_data (temp,
+					 GDK_COLORSPACE_RGB,
+					 has_alpha,
+					 bps,
+					 rect->width, rect->height,
+					 rect->width * (has_alpha ? 4 : 3) * bps/8,
+					 (GdkPixbufDestroyNotify) g_free, NULL);
+
+      g_free (name);
+    }
+  return TRUE;
+}
+
+#endif

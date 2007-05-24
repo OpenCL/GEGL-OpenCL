@@ -1,3 +1,7 @@
+2007-05-24  Étienne Bersac  <bersace03@laposte.net>
+
+	* operations/workshop/save-pixbuf.c: Added save-pixbuf sink op.
+
 2007-05-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/workshop/envelopes.h: removed #include "vector.h"
