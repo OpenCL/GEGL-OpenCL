@@ -1,5 +1,14 @@
 2007-05-24  Øyvind Kolås  <pippin@gimp.org>
 
+	Reordered the chanting to be consistent with hand written ops.
+
+	* operations/workshop/generated/blend.rb:
+	* operations/generated/math.rb: 
+	* operations/generated/porter-duff.rb:
+	* operations/generated/svg-blend.rb:
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-operation.[ch]: replaced calc_source_regions with
 	compute_input_request, renamed get_affected compute_affected. As well
 	as the needed refactoring to make processing work with this new, less

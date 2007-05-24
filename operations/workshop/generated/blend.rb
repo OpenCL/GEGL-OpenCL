@@ -51,12 +51,14 @@ a.each do
 /* no properties */
 #else
 
-#define GEGL_CHANT_POINT_COMPOSER
 #define GEGL_CHANT_NAME          #{name}
-#define GEGL_CHANT_DESCRIPTION   \"Image blending operation '#{name}' (<tt>c = #{formula}</tt>)\"
-#define GEGL_CHANT_CATEGORIES    \"compositors:blend\"
 #define GEGL_CHANT_SELF          \"#{filename}\"
+#define GEGL_CHANT_CATEGORIES    \"compositors:blend\"
+#define GEGL_CHANT_DESCRIPTION   \"Image blending operation '#{name}' (<tt>c = #{formula}</tt>)\"
+
+#define GEGL_CHANT_POINT_COMPOSER
 #define GEGL_CHANT_PREPARE
+
 #include \"gegl-chant.h\"
 #include \"math.h\"
 

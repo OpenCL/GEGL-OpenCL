@@ -37,12 +37,14 @@ a.each do
 /* no properties */
 #else
 
-#define GEGL_CHANT_POINT_COMPOSER
 #define GEGL_CHANT_NAME          #{name}
-#define GEGL_CHANT_DESCRIPTION   \"SVG blend operation #{name} (c = #{formula})\"
-#define GEGL_CHANT_CATEGORIES    \"compositors:svgfilter\"
 #define GEGL_CHANT_SELF          \"#{filename}\"
+#define GEGL_CHANT_CATEGORIES    \"compositors:svgfilter\"
+#define GEGL_CHANT_DESCRIPTION   \"SVG blend operation #{name} (c = #{formula})\"
+
+#define GEGL_CHANT_POINT_COMPOSER
 #define GEGL_CHANT_PREPARE
+
 #include \"gegl-chant.h\"
 
 static void prepare (GeglOperation *operation,

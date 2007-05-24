@@ -47,12 +47,14 @@ defined_union.each do
 /* no properties */
 #else
 
-#define GEGL_CHANT_POINT_COMPOSER
 #define GEGL_CHANT_NAME          #{name}
-#define GEGL_CHANT_DESCRIPTION   \"Porter Duff operation #{name} (c = #{formula})\"
 #define GEGL_CHANT_CATEGORIES    \"compositors:porter duff\"
+#define GEGL_CHANT_DESCRIPTION   \"Porter Duff operation #{name} (c = #{formula})\"
 #define GEGL_CHANT_SELF          \"#{filename}\"
+
+#define GEGL_CHANT_POINT_COMPOSER
 #define GEGL_CHANT_PREPARE
+
 #include \"gegl-chant.h\"
 
 #include <math.h>
@@ -130,13 +132,16 @@ defined_input.each do
 /* no properties */
 #else
 
-#define GEGL_CHANT_POINT_COMPOSER
 #define GEGL_CHANT_NAME          #{name}
+#define GEGL_CHANT_SELF          \"#{filename}\"
 #define GEGL_CHANT_DESCRIPTION   \"Porter Duff operation #{name} (c = #{formula})\"
 #define GEGL_CHANT_CATEGORIES    \"compositors:porter duff\"
-#define GEGL_CHANT_SELF          \"#{filename}\"
+
+
+#define GEGL_CHANT_POINT_COMPOSER
 #define GEGL_CHANT_PREPARE
 #define GEGL_CHANT_CLASS_INIT
+
 #include \"gegl-chant.h\"
 
 static void prepare (GeglOperation *operation,
@@ -197,7 +202,7 @@ get_defined_region (GeglOperation *self)
 }
 
 static GeglRectangle
-get_affected_region (GeglOperation *self,
+compute_affected_region (GeglOperation *self,
                      const gchar   *pad_name,
                      GeglRectangle       region)
 {
@@ -210,7 +215,7 @@ get_affected_region (GeglOperation *self,
 static void class_init (GeglOperationClass *operation_class)
 {
   operation_class->get_defined_region = get_defined_region;
-  operation_class->get_affected_region = get_affected_region;
+  operation_class->compute_affected_region = compute_affected_region;
 }
 
 #endif
