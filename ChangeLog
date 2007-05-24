@@ -1,5 +1,30 @@
 2007-05-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/workshop/c2g.c: removed #include "vector.h"
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/bilateral-filter.c:
+	* operations/workshop/box-max.c:
+	* operations/workshop/box-min.c:
+	* operations/workshop/box-percentile.c:
+	* operations/workshop/c2g.c:
+	* operations/workshop/demosaic-simple.c:
+	* operations/workshop/disc-percentile.c:
+	* operations/workshop/hstack.c:
+	* operations/workshop/kuwahara-max.c:
+	* operations/workshop/kuwahara-min.c:
+	* operations/workshop/kuwahara-switch.c:
+	* operations/workshop/kuwahara.c: 
+	* operations/workshop/max-envelope.c:
+	* operations/workshop/mblur.c:
+	* operations/workshop/min-envelope.c:
+	* operations/workshop/snn-mean.c: 
+	* operations/workshop/snn-percentile.c:
+	* operations/workshop/stress.c: 
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/blur/box-blur.c: use GeglOperationAreaFilter as base.
 	* operations/blur/gaussian-blur.c: use GeglOperationAreaFilter as
 	base.
