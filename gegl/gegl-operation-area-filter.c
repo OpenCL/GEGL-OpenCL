@@ -30,9 +30,10 @@ static void prepare (GeglOperation *operation,
 }
 
 static GeglRectangle get_defined_region  (GeglOperation *operation);
-static gboolean      calc_source_regions (GeglOperation *operation,
-                                          gpointer       context_id);
-static GeglRectangle get_affected_region (GeglOperation *operation,
+static GeglRectangle compute_input_request(GeglOperation *operation,
+                                           const gchar   *input_pad,
+                                           GeglRectangle *region);
+static GeglRectangle compute_affected_region (GeglOperation *operation,
                                           const gchar   *input_pad,
                                           GeglRectangle  region);
 static void
@@ -42,8 +43,8 @@ gegl_operation_area_filter_class_init (GeglOperationAreaFilterClass *klass)
 
   operation_class->prepare = prepare;
   operation_class->get_defined_region  = get_defined_region;
-  operation_class->get_affected_region = get_affected_region;
-  operation_class->calc_source_regions = calc_source_regions;
+  operation_class->compute_affected_region = compute_affected_region;
+  operation_class->compute_input_request = compute_input_request;
 }
 
 static void
@@ -80,31 +81,32 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
+#include "gegl-utils.h"
 
-static gboolean
-calc_source_regions (GeglOperation *operation,
-                     gpointer       context_id)
+static GeglRectangle compute_input_request(GeglOperation *operation,
+                                           const gchar   *input_pad,
+                                           GeglRectangle *region)
 {
-  GeglRectangle            rect;
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
- 
-  rect  = *gegl_operation_get_requested_region (operation, context_id);
+  GeglRectangle       rect;
+  GeglRectangle       defined;
+  defined = get_defined_region (operation);
+  gegl_rectangle_intersect (&rect, region, &defined);
+
   if (rect.width  != 0 &&
       rect.height  != 0)
     {
-      rect.x-= area->left;
-      rect.y-= area->top;
-      rect.width += area->left + area->right;
-      rect.height += area->top + area->bottom;
+      rect.x -= area->left;
+      rect.y -= area->top;
+      rect.width  += area->left + area->right;
+      rect.height  += area->top + area->bottom;
     }
 
-  gegl_operation_set_source_region (operation, context_id, "input", &rect);
-
-  return TRUE;
+  return rect;
 }
 
 static GeglRectangle
-get_affected_region (GeglOperation *operation,
+compute_affected_region (GeglOperation *operation,
                      const gchar   *input_pad,
                      GeglRectangle  region)
 {

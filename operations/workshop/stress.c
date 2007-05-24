@@ -34,8 +34,7 @@ gegl_chant_double (gamma, 0.0, 10.0, 1.6, "post correction gamma.")
 #define GEGL_CHANT_DESCRIPTION  "Spatio Temporal Retinex-like Envelope with Stochastic Sampling."
 #define GEGL_CHANT_CATEGORIES   "enhance"
 
-#define GEGL_CHANT_FILTER
-#define GEGL_CHANT_CLASS_INIT
+#define GEGL_CHANT_AREA_FILTER
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -47,9 +46,6 @@ static void stress (GeglBuffer *src,
                     gint        iterations,
                     gdouble     strength,
                     gdouble     gamma);
-
-static GeglRectangle get_source_rect (GeglOperation *self,
-                                      gpointer       context_id);
 
 #include <stdlib.h>
 
@@ -69,13 +65,8 @@ process (GeglOperation *operation,
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   {
     GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
-    GeglRectangle  need   = *result;
     GeglBuffer    *temp_in;
-
-    need.x-=self->radius;
-    need.y-=self->radius;
-    need.width +=self->radius*2;
-    need.height +=self->radius*2;
+    GeglRectangle  compute  = gegl_operation_compute_input_request (operation, "inputt", gegl_operation_need_rect (operation, context_id));
 
     if (self->radius < 1.0)
       {
@@ -85,18 +76,18 @@ process (GeglOperation *operation,
       {
         temp_in = g_object_new (GEGL_TYPE_BUFFER,
                                "source", input,
-                               "x",      need.x,
-                               "y",      need.y,
-                               "width",  need.width,
-                               "height", need.height,
+                               "x",      compute.x,
+                               "y",      compute.y,
+                               "width",  compute.width,
+                               "height", compute.height,
                                NULL);
 
         output = g_object_new (GEGL_TYPE_BUFFER,
                                "format", babl_format ("RGBA float"),
-                               "x",      need.x,
-                               "y",      need.y,
-                               "width",  need.width,
-                               "height", need.height,
+                               "x",      compute.x,
+                               "y",      compute.y,
+                               "width",  compute.width,
+                               "height", compute.height,
                                NULL);
 
         stress (temp_in, output, self->radius, self->samples, self->iterations, self->strength, self->gamma);
@@ -186,88 +177,12 @@ static void stress (GeglBuffer *src,
   g_free (dst_buf);
 }
 
-#include <math.h>
-static GeglRectangle
-get_defined_region (GeglOperation *operation)
+static void tickle (GeglOperation *operation)
 {
-  GeglRectangle  result = {0,0,0,0};
-  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation,
-                                                                     "input");
-
-  GeglChantOperation *blur = GEGL_CHANT_OPERATION (operation);
-  gint       radius = ceil(blur->radius);
-
-  if (!in_rect)
-    return result;
-
-  result = *in_rect;
-  if(0)if (result.width  != 0 &&
-      result.height  != 0)
-    {
-      result.x-=radius;
-      result.y-=radius;
-      result.width +=radius*2;
-      result.height +=radius*2;
-    }
-  
-  return result;
-}
-
-static GeglRectangle get_source_rect (GeglOperation *self,
-                                      gpointer       context_id)
-{
-  GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
-  GeglRectangle            rect;
-  gint                radius;
- 
-  radius = ceil(blur->radius);
-
-  rect  = *gegl_operation_get_requested_region (self, context_id);
-  if (rect.width  != 0 &&
-      rect.height  != 0)
-    {
-      rect.x -= radius;
-      rect.y -= radius;
-      rect.width  += radius*2;
-      rect.height  += radius*2;
-    }
-
-  return rect;
-}
-
-static gboolean
-calc_source_regions (GeglOperation *self,
-                     gpointer       context_id)
-{
-  GeglRectangle need = get_source_rect (self, context_id);
-
-  gegl_operation_set_source_region (self, context_id, "input", &need);
-
-  return TRUE;
-}
-
-static GeglRectangle
-get_affected_region (GeglOperation *self,
-                     const gchar   *input_pad,
-                     GeglRectangle  region)
-{
-  GeglChantOperation *blur   = GEGL_CHANT_OPERATION (self);
-  gint                radius;
- 
-  radius = ceil(blur->radius);
-
-  region.x -= radius;
-  region.y -= radius;
-  region.width  += radius*2;
-  region.height  += radius*2;
-  return region;
-}
-
-static void class_init (GeglOperationClass *operation_class)
-{
-  operation_class->get_defined_region  = get_defined_region;
-  operation_class->get_affected_region = get_affected_region;
-  operation_class->calc_source_regions = calc_source_regions;
+  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantOperation      *filter = GEGL_CHANT_OPERATION (operation);
+  area->left = area->right = area->top = area->bottom =
+  ceil (filter->radius);
 }
 
 #endif

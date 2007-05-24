@@ -67,23 +67,23 @@ process (GeglOperation *operation,
   input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   {
     GeglRectangle   *result = gegl_operation_result_rect (operation, context_id);
-    GeglRectangle   *need   = gegl_operation_need_rect (operation, context_id);
     GeglBuffer      *temp_in;
+    GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "inputt", gegl_operation_need_rect (operation, context_id));
 
     temp_in = g_object_new (GEGL_TYPE_BUFFER,
                            "source", input,
-                           "x",      need->x,
-                           "y",      need->y,
-                           "width",  need->width,
-                           "height", need->height,
+                           "x",      compute.x,
+                           "y",      compute.y,
+                           "width",  compute.width,
+                           "height", compute.height,
                            NULL);
 
     output = g_object_new (GEGL_TYPE_BUFFER,
                            "format", babl_format ("RGBA float"),
-                           "x",      need->x,
-                           "y",      need->y,
-                           "width",  need->width,
-                           "height", need->height,
+                           "x",      compute.x,
+                           "y",      compute.y,
+                           "width",  compute.width,
+                           "height", compute.height,
                            NULL);
 
     c2g (temp_in, output, self->radius, self->samples, self->iterations, self->strength, self->gamma);

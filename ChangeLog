@@ -1,3 +1,26 @@
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-operation.[ch]: replaced calc_source_regions with
+	compute_input_request, renamed get_affected compute_affected. As well
+	as the needed refactoring to make processing work with this new, less
+	coupled version of the roi geometry computation.
+	* gegl/gegl-node.c: (source_invalidated): get_affected->compute_affected.
+
+	* gegl/gegl-operation-area-filter.c: Adapted to new API.
+	* gegl/gegl-operation-composer.c: ...
+	* gegl/gegl-operation-filter.c:
+	* gegl/gegl-operation-sink.c:
+	* gegl/gegl-operation-source.c:
+
+	* operations/affine/affine.c: Adapted to new API.
+	* operations/blur/box-blur.c: ...
+	* operations/blur/gaussian-blur.c:
+	* operations/color/remap.c:
+	* operations/color/stretch-contrast.c:
+	* operations/core/crop.c:
+	* operations/core/shift.c:
+	* operations/workshop/*.c:
+
 2007-05-24  Étienne Bersac  <bersace03@laposte.net>
 
 	* operations/workshop/save-pixbuf.c: Added save-pixbuf sink op.

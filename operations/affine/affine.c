@@ -63,11 +63,13 @@ static gboolean      is_composite_node    (OpAffine      *affine);
 static void          get_source_matrix    (OpAffine      *affine,
                                            Matrix3        output);
 static GeglRectangle get_defined_region   (GeglOperation *op);
-static gboolean      calc_source_regions  (GeglOperation *op,
-                                           gpointer       context_id);
-static GeglRectangle get_affected_region  (GeglOperation *operation,
+static GeglRectangle compute_affected_region  (GeglOperation *operation,
                                            const gchar   *input_pad,
                                            GeglRectangle  region);
+static GeglRectangle compute_input_request (GeglOperation *self,
+                                           const gchar   *input_pad,
+                                           GeglRectangle *region);
+
 static gboolean      process              (GeglOperation *op,
                                            gpointer       context_id);
 static GeglNode    * detect               (GeglOperation *operation,
@@ -139,9 +141,9 @@ op_affine_class_init (OpAffineClass *klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  op_class->get_affected_region = get_affected_region;
+  op_class->compute_affected_region = compute_affected_region;
   op_class->get_defined_region  = get_defined_region;
-  op_class->calc_source_regions = calc_source_regions;
+  op_class->compute_input_request = compute_input_request;
   op_class->detect = detect;
   op_class->categories = "transform";
   op_class->prepare = prepare;
@@ -447,9 +449,9 @@ detect (GeglOperation *operation,
   return gegl_operation_detect (source_node->operation, need_points[0], need_points[1]);
 }
 
-static gboolean
-calc_source_regions (GeglOperation *op,
-                     gpointer       context_id)
+static GeglRectangle compute_input_request (GeglOperation *op,
+                                            const gchar   *input_pad,
+                                            GeglRectangle *region)
 {
   OpAffine      *affine = (OpAffine *) op;
   Matrix3        inverse;
@@ -458,7 +460,7 @@ calc_source_regions (GeglOperation *op,
   gdouble        need_points [8];
   gint           i;
 
-  requested_rect = *(gegl_operation_get_requested_region (op, context_id));
+  requested_rect = *region;
 
   matrix3_copy (inverse, affine->matrix);
   matrix3_invert (inverse);
@@ -466,8 +468,7 @@ calc_source_regions (GeglOperation *op,
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (inverse))
     {
-      gegl_operation_set_source_region (op, context_id, "input", &requested_rect);
-      return TRUE;
+      return requested_rect;
     }
 
   need_points [0] = requested_rect.x;
@@ -506,12 +507,11 @@ calc_source_regions (GeglOperation *op,
         }
     }
 
-  gegl_operation_set_source_region (op, context_id, "input", &need_rect);
-  return TRUE;
+  return need_rect;
 }
 
 static GeglRectangle
-get_affected_region (GeglOperation *op,
+compute_affected_region (GeglOperation *op,
                      const gchar   *input_pad,
                      GeglRectangle  region)
 {

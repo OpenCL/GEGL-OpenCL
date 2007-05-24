@@ -85,7 +85,7 @@ get_defined_region (GeglOperation *operation)
 }
 
 static GeglRectangle
-get_affected_region (GeglOperation *operation,
+compute_affected_region (GeglOperation *operation,
                      const gchar   *input_pad,
                      GeglRectangle  region)
 {
@@ -96,18 +96,16 @@ get_affected_region (GeglOperation *operation,
   return region;
 }
 
-static gboolean
-calc_source_regions (GeglOperation *self,
-                     gpointer       context_id)
+static GeglRectangle
+compute_input_request (GeglOperation *operation,
+                       const gchar   *input_pad,
+                       GeglRectangle *roi)
 {
-  GeglChantOperation *op_shift = (GeglChantOperation*)(self);
-  GeglRectangle       rect = *gegl_operation_get_requested_region (self, context_id);
-
-  rect.x -= floor(op_shift->x);
-  rect.y -= floor(op_shift->y);
-
-  gegl_operation_set_source_region (self, context_id, "input", &rect);
-  return TRUE;
+  GeglChantOperation *op_shift = (GeglChantOperation*)(operation);
+  GeglRectangle result = *roi;
+  result.x -= floor(op_shift->x);
+  result.y -= floor(op_shift->y);
+  return result;
 }
 
 static GeglNode *
@@ -124,9 +122,9 @@ detect (GeglOperation *operation,
 
 static void class_init (GeglOperationClass *operation_class)
 {
-  operation_class->get_affected_region = get_affected_region;
+  operation_class->compute_affected_region = compute_affected_region;
   operation_class->get_defined_region = get_defined_region;
-  operation_class->calc_source_regions = calc_source_regions;
+  operation_class->compute_input_request = compute_input_request;
   operation_class->detect = detect;
 }
 

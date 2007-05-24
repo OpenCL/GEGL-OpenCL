@@ -79,9 +79,6 @@ fir_ver_blur (GeglBuffer *src,
               gdouble    *cmatrix,
               gint        matrix_length);
 
-static GeglRectangle get_source_rect (GeglOperation *operation,
-                                 gpointer       context_id);
-
 static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
@@ -95,10 +92,12 @@ process (GeglOperation *operation,
 
     {
       GeglRectangle *result     = gegl_operation_result_rect (operation, context_id);
+      GeglRectangle *need = gegl_operation_need_rect (operation, context_id);
+      GeglRectangle  compute;
       GeglBuffer    *temp_in;
       GeglBuffer    *temp = NULL;
-      GeglRectangle *need = gegl_operation_need_rect (operation, context_id);
 
+      compute = gegl_operation_compute_input_request (operation, "input", need);
 
       if (self->std_dev_x<0.00001 && self->std_dev_y<0.00001)
         {
@@ -108,27 +107,27 @@ process (GeglOperation *operation,
         {
           temp_in = g_object_new (GEGL_TYPE_BUFFER,
                                  "source", input,
-                                 "x",      need->x,
-                                 "y",      need->y,
-                                 "width",  need->width ,
-                                 "height", need->height ,
+                                 "x",      compute.x,
+                                 "y",      compute.y,
+                                 "width",  compute.width ,
+                                 "height", compute.height ,
                                  NULL);
 
           output = g_object_new (GEGL_TYPE_BUFFER,
                                  "format", babl_format ("RaGaBaA float"),
-                                 "x",      need->x,
-                                 "y",      need->y,
-                                 "width",  need->width ,
-                                 "height", need->height ,
+                                 "x",      compute.x,
+                                 "y",      compute.y,
+                                 "width",  compute.width ,
+                                 "height", compute.height ,
                                  NULL);
 
           if (self->std_dev_x && self->std_dev_y)
             temp   = g_object_new (GEGL_TYPE_BUFFER,
                                    "format", babl_format ("RaGaBaA float"),
-                                   "x",      need->x,
-                                   "y",      need->y,
-                                   "width",  need->width ,
-                                   "height", need->height ,
+                                   "x",      compute.x,
+                                   "y",      compute.y,
+                                   "width",  compute.width ,
+                                   "height", compute.height ,
                                    NULL);
           else if (!self->std_dev_x)
             temp = temp_in;

@@ -124,15 +124,13 @@ process (GeglOperation *operation,
   return TRUE;
 }
 
-static gboolean
-calc_source_regions (GeglOperation *self,
-                     gpointer       context_id)
+static GeglRectangle
+compute_input_request (GeglOperation *operation,
+                       const gchar   *input_pad,
+                       GeglRectangle *roi)
 {
-  /*gegl_operation_set_source_region (self, context_id, "input",
-                                    gegl_operation_get_requested_region (self, context_id));*/
-  gegl_operation_set_source_region (self, context_id, "input",
-                                    gegl_operation_source_get_defined_region (self, "input"));
-  return TRUE;
+  GeglRectangle result = *gegl_operation_source_get_defined_region (operation, "input");
+  return result;
 }
 
 /* This is called at the end of the gobject class_init function, the
@@ -143,7 +141,7 @@ calc_source_regions (GeglOperation *self,
  */
 static void class_init (GeglOperationClass *operation_class)
 {
-  operation_class->calc_source_regions = calc_source_regions;
+  operation_class->compute_input_request = compute_input_request;
 }
 
 #endif

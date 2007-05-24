@@ -33,8 +33,6 @@
 #include "gegl-chant.h"
 #include <math.h>
 
-#include <stdio.h>
-
 static gboolean
 process (GeglOperation *operation,
          gpointer       context_id)
@@ -137,47 +135,32 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
-static GeglRectangle get_source_rect_in (GeglOperation *self,
-                                         gpointer       context_id)
+static GeglRectangle
+compute_input_request (GeglOperation *self,
+                       const gchar   *input_pad,
+                       GeglRectangle *roi)
 {
-  GeglRectangle rect;
-  rect  = *gegl_operation_get_requested_region (self, context_id);
-  return rect;
-}
+  GeglRectangle request = *roi;
 
-static GeglRectangle get_source_rect_aux (GeglOperation *self,
-                                          gpointer       context_id)
-{
-  GeglRectangle  rect;
-  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (self,
-                                                                     "input");
-  GeglRectangle *aux_rect = gegl_operation_source_get_defined_region (self,
-                                                                     "aux");
-
-  rect  = *gegl_operation_get_requested_region (self, context_id);
-  if (rect.width  != 0 &&
-      rect.height  != 0)
+  if (!strcmp (input_pad, "aux"))
     {
-      rect.x -= in_rect->width + aux_rect->x;
+      GeglRectangle *in_rect = gegl_operation_source_get_defined_region (self,
+                                                                         "input");
+      GeglRectangle *aux_rect = gegl_operation_source_get_defined_region (self,
+                                                                         "aux");
+
+      if (request.width != 0 &&
+          request.height != 0)
+        {
+          request.x -= in_rect->width + aux_rect->x;
+        }
     }
-  return rect;
-}
 
-static gboolean
-calc_source_regions (GeglOperation *self,
-                     gpointer       context_id)
-{
-  GeglRectangle need_in = get_source_rect_in (self, context_id);
-  GeglRectangle need_aux = get_source_rect_aux (self, context_id);
-
-  gegl_operation_set_source_region (self, context_id, "input", &need_in);
-  gegl_operation_set_source_region (self, context_id, "aux", &need_aux);
-
-  return TRUE;
+  return request;
 }
 
 static GeglRectangle
-get_affected_region (GeglOperation *self,
+compute_affected_region (GeglOperation *self,
                      const gchar   *input_pad,
                      GeglRectangle  region)
 {
@@ -194,9 +177,9 @@ get_affected_region (GeglOperation *self,
 
 static void class_init (GeglOperationClass *operation_class)
 {
-  operation_class->get_defined_region  = get_defined_region;
-  operation_class->get_affected_region = get_affected_region;
-  operation_class->calc_source_regions = calc_source_regions;
+  operation_class->get_defined_region      = get_defined_region;
+  operation_class->compute_affected_region = compute_affected_region;
+  operation_class->compute_input_request   = compute_input_request;
 }
 
 #endif

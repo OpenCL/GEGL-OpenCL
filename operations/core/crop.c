@@ -92,17 +92,8 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
-static gboolean
-calc_source_regions (GeglOperation *self,
-                     gpointer       context_id)
-{
-  gegl_operation_set_source_region (self, context_id, "input",
-                                    gegl_operation_get_requested_region (self, context_id));
-  return TRUE;
-}
-
 static GeglRectangle
-get_affected_region (GeglOperation *operation,
+compute_affected_region (GeglOperation *operation,
                      const gchar   *input_pad,
                      GeglRectangle  region)
 {
@@ -117,9 +108,8 @@ get_affected_region (GeglOperation *operation,
 
 static void class_init (GeglOperationClass *operation_class)
 {
-  operation_class->get_affected_region = get_affected_region;
+  operation_class->compute_affected_region = compute_affected_region;
   operation_class->get_defined_region = get_defined_region;
-  operation_class->calc_source_regions = calc_source_regions;
 }
 
 #endif

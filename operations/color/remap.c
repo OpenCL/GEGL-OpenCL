@@ -125,14 +125,6 @@ gegl_operation_remap_constructor (GType type,
   return obj;
 }
 
-
-
-
-
-static GeglRectangle get_source_rect (GeglOperation *self,
-                                      gpointer context_id);
-
-
 static gboolean
 process (GeglOperation *operation,
          gpointer context_id)
@@ -209,31 +201,16 @@ get_defined_region (GeglOperation *operation)
   return result;
 }
 
-static GeglRectangle get_source_rect (GeglOperation *self,
-                                      gpointer context_id)
+static GeglRectangle
+compute_input_request (GeglOperation *operation,
+                        const gchar   *input_pad,
+                                               GeglRectangle *roi)
 {
-  GeglRectangle rect;
-
-  rect = *gegl_operation_get_requested_region (self, context_id);
-
-  return rect;
-}
-
-static gboolean
-calc_source_regions (GeglOperation *self,
-                     gpointer context_id)
-{
-  GeglRectangle need = get_source_rect (self, context_id);
-
-  gegl_operation_set_source_region (self, context_id, "input", &need);
-  gegl_operation_set_source_region (self, context_id, "low", &need);
-  gegl_operation_set_source_region (self, context_id, "high", &need);
-
-  return TRUE;
+    return *roi;
 }
 
 static GeglRectangle
-get_affected_region (GeglOperation *self,
+compute_affected_region (GeglOperation *self,
                      const gchar *input_pad,
                      GeglRectangle region)
 {
@@ -263,7 +240,10 @@ attach (GeglOperation *self)
   gegl_operation_set_format (operation, "output", babl_format ("RGBA"));
 }
 
-
+static GeglRectangle
+compute_input_request (GeglOperation *operation,
+                        const gchar   *input_pad,
+                        GeglRectangle *roi);
 
 static void
 gegl_operation_remap_class_init (GeglOperationRemapClass * klass)
@@ -283,8 +263,8 @@ gegl_operation_remap_class_init (GeglOperationRemapClass * klass)
   object_class->constructor = gegl_operation_remap_constructor;
 
   operation_class->get_defined_region = get_defined_region;
-  operation_class->get_affected_region = get_affected_region;
-  operation_class->calc_source_regions = calc_source_regions;
+  operation_class->compute_affected_region = compute_affected_region;
+  operation_class->compute_input_request = compute_input_request;
   operation_class->attach = attach;
 
   gegl_operation_class_set_name (operation_class, "remap");;

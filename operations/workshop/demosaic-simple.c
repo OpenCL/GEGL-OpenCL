@@ -28,15 +28,10 @@ gegl_chant_int (pattern, 0, 3, 0, "Bayer pattern used, 0 seems to work for some 
 #define GEGL_CHANT_DESCRIPTION     "Performs a naive grayscale2color demosaicing of an image, no interpolation."
 #define GEGL_CHANT_CATEGORIES      "blur"
 
-#define GEGL_CHANT_FILTER
-#define GEGL_CHANT_CLASS_INIT
+#define GEGL_CHANT_AREA_FILTER
 
 #include "gegl-chant.h"
 
-static GeglRectangle get_source_rect (GeglOperation *self,
-                                      gpointer       context_id);
-
-#include <stdio.h>
 static void
 demosaic (GeglChantOperation *op,
           GeglBuffer *src,
@@ -58,24 +53,24 @@ process (GeglOperation *operation,
 
     {
       GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
-      GeglRectangle  need   = get_source_rect (operation, context_id);
       GeglBuffer    *temp_in;
+      GeglRectangle    compute  = gegl_operation_compute_input_request (operation, "inputt", gegl_operation_need_rect (operation, context_id));
 
       
       temp_in = g_object_new (GEGL_TYPE_BUFFER,
                              "source", input,
-                             "x",      need.x,
-                             "y",      need.y,
-                             "width",  need.width ,
-                             "height", need.height ,
+                             "x",      compute.x,
+                             "y",      compute.y,
+                             "width",  compute.width ,
+                             "height", compute.height ,
                              NULL);
 
       output = g_object_new (GEGL_TYPE_BUFFER,
                              "format", babl_format ("RGB float"),
-                             "x",      need.x,
-                             "y",      need.y,
-                             "width",  need.width ,
-                             "height", need.height ,
+                             "x",      compute.x,
+                             "y",      compute.y,
+                             "width",  compute.width ,
+                             "height", compute.height ,
                              NULL);
 
       demosaic (self, temp_in, output);
@@ -169,73 +164,10 @@ demosaic (GeglChantOperation *op,
   g_free (dst_buf);
 }
 
-#include <math.h>
-static GeglRectangle 
-get_defined_region (GeglOperation *operation)
+static void tickle (GeglOperation *operation)
 {
-  GeglRectangle  result = {0,0,0,0};
-  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation,
-                                                                "input");
-  if (!in_rect)
-    return result;
-
-  result = *in_rect;
-  if (result.width  != 0 &&
-      result.height  != 0)
-    {
-      result.width +=1;
-      result.height +=1;
-    }
-  
-  return result;
-}
-
-static GeglRectangle get_source_rect (GeglOperation *self,
-                                      gpointer       context_id)
-{
-  GeglRectangle            rect;
-
-  rect  = *gegl_operation_get_requested_region (self, context_id);
-  if (rect.width  != 0 &&
-      rect.height  != 0)
-    {
-      rect.width  += 1;
-      rect.height  += 1;
-    }
-
-  return rect;
-}
-
-static gboolean
-calc_source_regions (GeglOperation *self,
-                     gpointer       context_id)
-{
-  GeglRectangle need = get_source_rect (self, context_id);
-
-  gegl_operation_set_source_region (self, context_id, "input", &need);
-
-  return TRUE;
-}
-
-static GeglRectangle
-get_affected_region (GeglOperation *self,
-                     const gchar   *input_pad,
-                     GeglRectangle  region)
-{
-  gint                radius;
- 
-  radius = ceil(1);
-
-  region.width  += 1;
-  region.height  += 1;
-  return region;
-}
-
-static void class_init (GeglOperationClass *operation_class)
-{
-  operation_class->get_defined_region  = get_defined_region;
-  operation_class->get_affected_region = get_affected_region;
-  operation_class->calc_source_regions = calc_source_regions;
+  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
+  area->right = area->bottom = 1;
 }
 
 #endif

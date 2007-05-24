@@ -44,9 +44,10 @@ static gboolean process              (GeglOperation *operation,
 static void     attach               (GeglOperation *operation);
 
 static GeglRectangle get_defined_region   (GeglOperation *self);
-static gboolean calc_source_regions  (GeglOperation *self,
-                                      gpointer       context_id);
 
+static GeglRectangle compute_input_request (GeglOperation *operation,
+                                          const gchar   *input_pad,
+                                          GeglRectangle *roi);
 G_DEFINE_TYPE (GeglOperationSink, gegl_operation_sink, GEGL_TYPE_OPERATION)
 
 
@@ -62,7 +63,7 @@ gegl_operation_sink_class_init (GeglOperationSinkClass * klass)
   operation_class->process             = process;
   operation_class->attach              = attach;
   operation_class->get_defined_region  = get_defined_region;
-  operation_class->calc_source_regions = calc_source_regions;
+  operation_class->compute_input_request = compute_input_request;
 
   g_object_class_install_property (object_class, PROP_INPUT,
                                    g_param_spec_object ("input",
@@ -143,12 +144,11 @@ get_defined_region (GeglOperation *self)
   return result;
 }
 
-static gboolean
-calc_source_regions (GeglOperation *self,
-                     gpointer       context_id)
+static GeglRectangle compute_input_request (GeglOperation *operation,
+                                          const gchar   *input_pad,
+                                          GeglRectangle *roi)
 {
-  GeglRectangle *need_rect = gegl_operation_get_requested_region (self, context_id);
-
-  gegl_operation_set_source_region (self, context_id, "input", need_rect);
-  return TRUE;
+  GeglRectangle rect=*roi;
+  g_warning ("I'm a sink, why do you call me?, I have no input and that includes the '%s' you asked for.", input_pad);
+  return rect;
 }
