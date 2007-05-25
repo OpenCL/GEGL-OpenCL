@@ -46,7 +46,6 @@ GEGL_sources = \
 	gegl-visitor.c			\
 	gegl-xml.c			\
 	\
-	gegl-area-filter.h              \
 	gegl-color.h			\
 	gegl-connection.h		\
 	gegl-curve.h			\
@@ -58,6 +57,7 @@ GEGL_sources = \
 	gegl-object.h			\
 	gegl-operation.h        	\
 	gegl-operation-composer.h     	\
+	gegl-operation-area-filter.h    \
 	gegl-operation-filter.h       	\
 	gegl-operation-meta.h       	\
 	gegl-operation-point-composer.h \
