@@ -1,3 +1,8 @@
+2007-05-26  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/color/remap.c: (attach): corrected input BablFormat to
+	be "RGBA float" instead of just "RGBA".
+
 2007-05-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-operation.h: removed unused gegl_calc_source_regions.

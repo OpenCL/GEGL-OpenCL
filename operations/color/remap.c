@@ -237,7 +237,7 @@ attach (GeglOperation *self)
   gegl_operation_create_pad (operation,
                                g_object_class_find_property (object_class,
                                                              "high"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static GeglRectangle
