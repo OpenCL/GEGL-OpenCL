@@ -19,6 +19,7 @@
  */
 #include <glib.h>
 #include <glib-object.h>
+#include <babl/babl.h>
 
 #include "gegl-buffer-types.h"
 
@@ -37,7 +38,7 @@
 struct _GeglStorage
 {
   GeglTileTraits parent_object;
-  gpointer      *format;
+  Babl          *format;
   gint           tile_width;
   gint           tile_height;
   gint           tile_size;

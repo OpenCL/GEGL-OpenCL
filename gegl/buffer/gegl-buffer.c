@@ -689,7 +689,7 @@ static inline void
 pset (GeglBuffer *buffer,
       gint        x,
       gint        y,
-      BablFormat *format,
+      Babl       *format,
       guchar     *buf)
 {
   gint  tile_width  = gegl_buffer_storage (buffer)->tile_width;
@@ -930,7 +930,7 @@ static void inline
 gegl_buffer_iterate (GeglBuffer *buffer,
                      guchar     *buf,
                      gboolean    write,
-                     BablFormat *format,
+                     Babl       *format,
                      gint        level)
 {
   gint  width       = buffer->width;
@@ -1162,7 +1162,7 @@ gegl_buffer_iterate (GeglBuffer *buffer,
 void
 gegl_buffer_set (GeglBuffer    *buffer,
                  GeglRectangle *rect,
-                 void          *format,
+                 Babl          *format,
                  void          *src)
 {
   GeglBuffer *sub_buf;
@@ -1527,7 +1527,7 @@ void
 gegl_buffer_get (GeglBuffer    *buffer,
                  GeglRectangle *rect,
                  gdouble        scale,
-                 void          *format,
+                 Babl          *format,
                  void          *dest_buf)
 {
   if (format == NULL)
@@ -1676,7 +1676,7 @@ gegl_buffer_extent (GeglBuffer *buffer)
 
 GeglBuffer *
 gegl_buffer_new (GeglRectangle *extent,
-                 void          *format)
+                 Babl          *format)
 {
   return g_object_new (GEGL_TYPE_BUFFER,
                        "x", extent->x,
@@ -1684,6 +1684,19 @@ gegl_buffer_new (GeglRectangle *extent,
                        "width", extent->width,
                        "height", extent->height,
                        "format", format,
+                       NULL);
+}
+
+GeglBuffer* 
+gegl_buffer_new_from_buf (GeglBuffer    *buffer,
+                          GeglRectangle *extent)
+{
+  return g_object_new (GEGL_TYPE_BUFFER,
+                       "source", buffer,
+                       "x", extent->x,
+                       "y", extent->y,
+                       "width", extent->width,
+                       "height", extent->height,
                        NULL);
 }
 

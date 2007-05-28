@@ -44,7 +44,7 @@ struct _GeglBuffer
   gint           width;  /*  -"-  */
   gint           height; /*  -"-  */
 
-  gpointer       format;
+  Babl          *format;
 
   gint           shift_x;
   gint           shift_y;

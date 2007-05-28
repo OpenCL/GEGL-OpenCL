@@ -1,3 +1,16 @@
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+
+	Documentation and cleanup of GeglBuffer, added a new construction
+	convenience, gegl_buffer_new_from_buf, which probably needs a new
+	name.
+
+	* gegl/buffer/gegl-buffer-private.h:
+	* gegl/buffer/gegl-buffer.c: (pset), (gegl_buffer_iterate),
+	(gegl_buffer_set), (gegl_buffer_get), (gegl_buffer_new),
+	(gegl_buffer_new_from_buf):
+	* gegl/buffer/gegl-buffer.h:
+	* gegl/buffer/gegl-storage.h:
+
 2007-05-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/color/remap.c: (attach): corrected input BablFormat to
