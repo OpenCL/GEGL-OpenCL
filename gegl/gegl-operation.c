@@ -56,6 +56,7 @@ gegl_operation_class_init (GeglOperationClass *klass)
   klass->attach              = attach;
   klass->prepare             = NULL;
   klass->tickle              = NULL;
+  klass->no_cache            = FALSE;
   klass->get_defined_region  = get_defined_region;
   klass->compute_affected_region = compute_affected_region;
   klass->compute_input_request = compute_input_request;
@@ -598,9 +599,10 @@ gegl_operation_set_data (GeglOperation *operation,
   g_object_unref (data);  /* stealing the initial reference? */
 }
 
-GObject  * gegl_operation_get_target (GeglOperation *operation,
-                                      gpointer       context_id,
-                                      const gchar   *property_name)
+GeglBuffer * 
+gegl_operation_get_target (GeglOperation *operation,
+                           gpointer       context_id,
+                           const gchar   *property_name)
 {
   GeglBuffer    *output;
   GeglPad       *pad;
@@ -624,7 +626,7 @@ GObject  * gegl_operation_get_target (GeglOperation *operation,
                          "height", result->height,
                          NULL);
   gegl_operation_set_data (operation, context_id, property_name, G_OBJECT (output));
-  return G_OBJECT (output);
+  return output;
 }
 
 void
@@ -637,3 +639,27 @@ gegl_operation_set_format (GeglOperation *self,
   pad = gegl_node_get_pad (self->node, pad_name);
   pad->format = format;
 }
+
+GeglBuffer *
+gegl_operation_get_source (GeglOperation *operation,
+                           gpointer       context_id,
+                           const gchar   *pad_name)
+{
+  GeglBuffer    *real_input;
+  GeglBuffer    *input;
+
+  GeglRectangle input_request;
+ 
+  input_request  = gegl_operation_compute_input_request (operation,
+       "input", gegl_operation_need_rect (operation, context_id));
+
+  real_input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
+
+  input = gegl_buffer_create_sub_buffer (real_input, &input_request);
+
+  /* fix up reference counting in such a way that the life (refcount) of
+   * the buffer object isn't the responsiblity of the calling plug-in?
+   */
+  return input;
+}
+

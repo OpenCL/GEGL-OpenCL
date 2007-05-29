@@ -1,5 +1,12 @@
 2007-05-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation.[ch]:
+	  (gegl_operation_class_init): added no_cache field.
+	  (gegl_operation_get_target), (gegl_operation_get_source): adjusted
+	to provide more convenient target/source buffers.
+
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.[ch]: (gegl_buffer_copy), (gegl_buffer_dup):
 	added stubs for desired functionality. (contents of function not
 	implemented, not even the non-COW variations, added only to sketch out

@@ -59,6 +59,9 @@ struct _GeglOperationClass
   gchar            *description; /* textual description of the operation */
   char             *categories;  /* a colon seperated list of categories */
 
+
+  gboolean          no_cache;    /* do not create a cache for this operation */
+
   /* attach this operation with a GeglNode, override this if you are creating a
    * GeglGraph, it is already defined for Filters/Sources/Composers.
    */
@@ -83,11 +86,12 @@ struct _GeglOperationClass
 
   /* Computes the region in output (same affected rect assumed for all outputs)
    * when a given region has changed on an input. Used to aggregate dirt in the
-   * graph.
+   * graph. A default implementation of this, if not provided should probably
+   * be to report that the entire defined region is dirtied.
    */
   GeglRectangle   (*compute_affected_region)  (GeglOperation *operation,
-                                           const gchar   *input_pad,
-                                           GeglRectangle  region);
+                                               const gchar   *input_pad,
+                                               GeglRectangle  region);
 
   /* computes the rectangle needed to be correctly computed in a buffer
    * on the named input_pad, for a given result rectangle
@@ -168,29 +172,22 @@ gboolean        gegl_operation_process              (GeglOperation *operation,
                                                      gpointer       context_id,
                                                      const gchar   *output_pad);
 
-/* set a dynamic named instance for this node, this function takes over ownership
- * of the reference (mostly used to set the "output" GeglBuffer) for operations
- */
-void       gegl_operation_set_data                  (GeglOperation *operation,
-                                                     gpointer       context_id,
-                                                     const gchar   *property_name,
-                                                     GObject       *data);
-
-/* retrieve a gobject previously set dynamically on an operation */
-GObject  * gegl_operation_get_data                  (GeglOperation *operation,
-                                                     gpointer       context_id,
-                                                     const gchar   *property_name);
 
 /* retrieve the buffer that we are going to write into, it will be of the
  * dimensions retrieved through the rectangle computation, and of the format
  * currently specified on the associated nodes, "property_name" pad.
  */
-GObject  * gegl_operation_get_target                (GeglOperation *operation,
+GeglBuffer    * gegl_operation_get_target           (GeglOperation *operation,
                                                      gpointer       context_id,
                                                      const gchar   *property_name);
 
-gchar    **gegl_list_operations                     (guint *n_operations_p);
-GParamSpec** gegl_list_properties                   (const gchar *operation_type,
+
+GeglBuffer    * gegl_operation_get_source            (GeglOperation *operation,
+                                                      gpointer       context_id,
+                                                      const gchar   *property_name);
+
+gchar        ** gegl_list_operations                (guint *n_operations_p);
+GParamSpec   ** gegl_list_properties                (const gchar *operation_type,
                                                      guint       *n_properties_p);
 
 /* set the name of an operation, transforms all occurences of "_" into "-" */
@@ -215,6 +212,40 @@ void       gegl_operation_set_format                (GeglOperation *operation,
  * a GeglNode using just a string with the registered name.
  */
 GType      gegl_operation_gtype_from_name           (const gchar *name);
+
+
+
+
+
+/* set a dynamic named instance for this node, this function takes over ownership
+ * of the reference (mostly used to set the "output" GeglBuffer) for operations
+ */
+void            gegl_operation_set_data             (GeglOperation *operation,
+                                                     gpointer       context_id,
+                                                     const gchar   *property_name,
+                                                     GObject       *data);
+
+
+/*************************
+ *  The following is internal GEGL functions, declared in the header for now, should.
+ *  be removed when the operation API is made public.
+ */
+
+
+/* retrieve a gobject previously set dynamically on an operation */
+GObject       * gegl_operation_get_data             (GeglOperation *operation,
+                                                     gpointer       context_id,
+                                                     const gchar   *property_name);
+
+
+GeglBuffer    * gegl_operation_get_source           (GeglOperation *operation,
+                                                     gpointer       context_id,
+                                                     const gchar   *pad_name);
+
+gboolean
+gegl_operation_calc_source_regions (GeglOperation *operation,
+                                    gpointer       context_id);
+
 G_END_DECLS
 
 #endif /* __GEGL_OPERATION_H__ */
