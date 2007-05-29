@@ -22,11 +22,11 @@ gegl_chant_object (buffer, "GeglBuffer to use")
 #else
 
 #define GEGL_CHANT_SOURCE
-#define GEGL_CHANT_NAME            buffer
-#define GEGL_CHANT_DESCRIPTION     "A source that uses an in-memory GeglBuffer, for use internally by GEGL."
+#define GEGL_CHANT_NAME         buffer
+#define GEGL_CHANT_DESCRIPTION  "A source that uses an in-memory GeglBuffer, for use internally by GEGL."
 
-#define GEGL_CHANT_SELF            "buffer.c"
-#define GEGL_CHANT_CATEGORIES      "programming:input"
+#define GEGL_CHANT_SELF         "buffer.c"
+#define GEGL_CHANT_CATEGORIES   "programming:input"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
 
@@ -71,14 +71,15 @@ get_defined_region (GeglOperation *operation)
     }
   result.x = GEGL_BUFFER (self->buffer)->x;
   result.y = GEGL_BUFFER (self->buffer)->y;
-  result.width  = GEGL_BUFFER (self->buffer)->width;
-  result.height  = GEGL_BUFFER (self->buffer)->height;
+  result.width = GEGL_BUFFER (self->buffer)->width;
+  result.height = GEGL_BUFFER (self->buffer)->height;
   return result;
 }
 
-static void class_init (GeglOperationClass *klass)
+static void class_init (GeglOperationClass *operation_class)
 {
-  G_OBJECT_CLASS (klass)->dispose = dispose;
+  G_OBJECT_CLASS (operation_class)->dispose = dispose;
+  operation_class->no_cache = TRUE;
 }
 
 #endif

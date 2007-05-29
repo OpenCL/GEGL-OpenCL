@@ -1,5 +1,15 @@
 2007-05-29  Øyvind Kolås  <pippin@gimp.org>
 
+	Make the core ops non-caching.
+
+	* operations/core/buffer.c: (class_init):
+	* operations/core/clone.c: (class_init):
+	* operations/core/crop.c: (class_init):
+	* operations/core/nop.c: (class_init):
+	* operations/core/shift.c: (class_init):
+
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-operation.[ch]:
 	  (gegl_operation_class_init): added no_cache field.
 	  (gegl_operation_get_target), (gegl_operation_get_source): adjusted

@@ -70,9 +70,7 @@ detect (GeglOperation *operation,
 static void class_init (GeglOperationClass *operation_class)
 {
   operation_class->detect = detect;
+  operation_class->no_cache = TRUE;
 }
-
-
-
 
 #endif

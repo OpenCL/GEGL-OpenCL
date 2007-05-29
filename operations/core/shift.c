@@ -126,6 +126,7 @@ static void class_init (GeglOperationClass *operation_class)
   operation_class->get_defined_region = get_defined_region;
   operation_class->compute_input_request = compute_input_request;
   operation_class->detect = detect;
+  operation_class->no_cache = TRUE;
 }
 
 #endif

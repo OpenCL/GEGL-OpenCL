@@ -110,6 +110,7 @@ static void class_init (GeglOperationClass *operation_class)
 {
   operation_class->compute_affected_region = compute_affected_region;
   operation_class->get_defined_region = get_defined_region;
+  operation_class->no_cache = TRUE;
 }
 
 #endif
