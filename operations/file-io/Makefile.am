@@ -11,7 +11,7 @@ EXTRA_DIST      += $(wildcard *.cpp)
 # extra.so: extra.c
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
-jpg-load$(SHREXT): jpg-load.c
+jpg-load$(SHREXT): jpg-load.c $(GEGLHEADERS)
 	@if [ ! -z "$(LIBJPEG)" ]; then \
 	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(LIBJPEG);\
@@ -23,7 +23,7 @@ png-load$(SHREXT): png-load.c $(GEGLHEADERS)
 png-save$(SHREXT): png-save.c $(GEGLHEADERS)
 	@echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(PNG_CFLAGS) $(PNG_LIBS)
 
-svg-load$(SHREXT): svg-load.c
+svg-load$(SHREXT): svg-load.c $(GEGLHEADERS)
 	@if [ ! -z "$(RSVG_LIBS)" ]; then \
 	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
@@ -31,13 +31,13 @@ svg-load$(SHREXT): svg-load.c
                                      $(RSVG_CFLAGS) $(RSVG_LIBS);\
 	fi
 
-pixbuf$(SHREXT): pixbuf.c
+pixbuf$(SHREXT): pixbuf.c $(GEGLHEADERS)
 	@if [ ! -z "$(RSVG_LIBS)" ]; then \
 	echo $@;\
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(RSVG_CFLAGS) $(RSVG_LIBS);\
 	fi
 
-exr-load$(SHREXT): exr-load.cpp
+exr-load$(SHREXT): exr-load.cpp $(GEGLHEADERS)
 	@if [ ! -z "$(OPENEXR_LIBS)" ]; then \
 	echo $@;\
 	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(OPENEXR_CFLAGS) $(OPENEXR_LIBS);\

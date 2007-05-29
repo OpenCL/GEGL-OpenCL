@@ -1,5 +1,10 @@
 2007-05-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/file-io/Makefile.am: add dependency on GEGL_HEADERS to
+	entries not having it.
+
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/workshop/stress.c: updated to make use of newer APIs
 	cutting down on amount of code in op.
 
