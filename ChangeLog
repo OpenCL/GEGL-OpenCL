@@ -1,5 +1,13 @@
 2007-05-29  Øyvind Kolås  <pippin@gimp.org>
 
+	Ported some ops to newer APIs yielding more concise plug-in code.
+
+	* gegl/gegl-operation-point-filter.c:
+	* operations/blur/box-blur.c: 
+	* operations/file-io/jpg-load.c:
+
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+
 	Make the core ops non-caching.
 
 	* operations/core/buffer.c: (class_init):

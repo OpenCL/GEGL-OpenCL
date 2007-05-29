@@ -50,47 +50,35 @@ process (GeglOperation *operation,
 {
   GeglChantOperation  *self = GEGL_CHANT_OPERATION (operation);
   GeglBuffer          *output;
-  gint           width;
-  gint           height;
+  GeglRectangle        rect={0,0};
   gint           result;
 
 
+  
+  result = query_jpg (self->path, &rect.width, &rect.height);
+
+  if (result)
     {
-      result = query_jpg (self->path, &width, &height);
-      if (result)
-        {
-          g_warning ("%s failed to open file %s for reading.",
-            G_OBJECT_TYPE_NAME (operation), self->path);
-          output = g_object_new (GEGL_TYPE_BUFFER,
-                                            "format", babl_format ("R'G'B' u8"),
-                                            "x",      0,
-                                            "y",      0,
-                                            "width",  10,
-                                            "height", 10,
-                                            NULL);
-          gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
-          return TRUE;
-        }
-
-      output = g_object_new (GEGL_TYPE_BUFFER,
-                                        "format", babl_format ("R'G'B' u8"),
-                                        "x",      0,
-                                        "y",      0,
-                                        "width",  width,
-                                        "height", height,
-                                        NULL);
-
+      GeglRectangle foo={0,0,10,10};
+      output = gegl_buffer_new (&foo, babl_format ("R'G'B' u8"));
       gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
-      result = gegl_buffer_import_jpg (output, self->path, 0, 0);
-
-      if (result)
-        {
-          g_warning ("%s failed to open file %s for reading.",
-            G_OBJECT_TYPE_NAME (operation), self->path);
-          
-          return FALSE;
-        }
+      g_warning ("%s failed to open file %s for reading.",
+        G_OBJECT_TYPE_NAME (operation), self->path);
+      return TRUE;
     }
+
+  output = gegl_buffer_new (&rect, babl_format ("R'G'B' u8"));
+  gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+  result = gegl_buffer_import_jpg (output, self->path, 0, 0);
+
+  if (result)
+    {
+      g_warning ("%s failed to open file %s for reading.",
+        G_OBJECT_TYPE_NAME (operation), self->path);
+      
+      return FALSE;
+    }
+  
   return  TRUE;
 }
 

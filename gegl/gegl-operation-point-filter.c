@@ -51,12 +51,15 @@ static gboolean
 process_inner (GeglOperation *operation,
                gpointer       context_id)
 {
-  GeglBuffer     *input  = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
   GeglRectangle  *result = gegl_operation_result_rect (operation, context_id);
+  GeglBuffer     *input;
+/*  = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));*/
   GeglBuffer     *output;
   GeglPad        *pad;
   Babl           *in_format;
   Babl           *out_format;
+
+  input = gegl_operation_get_source (operation, context_id, "input");
 
   pad       = gegl_node_get_pad (operation->node, "input");
   in_format = pad->format;
@@ -74,10 +77,19 @@ process_inner (GeglOperation *operation,
     }
   g_assert (out_format);
 
-  output = GEGL_BUFFER(gegl_operation_get_target (operation, context_id, "output"));
+  output = gegl_operation_get_target (operation, context_id, "output");
 
   if ((result->width > 0) && (result->height > 0))
     {
+    /* eek: this fails,..
+      if (!(input->width == output->width &&
+          input->height == output->height))
+        {
+          g_warning ("%ix%i -> %ix%i", input->width, input->height, output->width, output->height);
+        }
+      g_assert (input->width == output->width &&
+                input->height == output->height);
+     */
       if (in_format == out_format)
         {
           gfloat *buf;
@@ -100,7 +112,7 @@ process_inner (GeglOperation *operation,
           gfloat *in_buf;
           gfloat *out_buf;
           in_buf = g_malloc (in_format->format.bytes_per_pixel *
-                             output->width * output->height);
+                             input->width * input->height);
           out_buf = g_malloc (out_format->format.bytes_per_pixel *
                              output->width * output->height);
 
@@ -117,5 +129,6 @@ process_inner (GeglOperation *operation,
           g_free (out_buf);
         }
     }
+  gegl_buffer_destroy (input);
   return TRUE;
 }

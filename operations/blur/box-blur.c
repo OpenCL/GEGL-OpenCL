@@ -48,72 +48,23 @@ process (GeglOperation *operation,
          gpointer       context_id)
 {
   GeglChantOperation  *self;
-  GeglBuffer          *input;
-  GeglBuffer          *output;
+
+  GeglBuffer *input;
+  GeglBuffer *temp;
+  GeglBuffer *output;
 
   self  = GEGL_CHANT_OPERATION (operation);
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
 
-    {
-      GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
-      GeglRectangle *need   = gegl_operation_need_rect (operation, context_id);
-      GeglRectangle  compute;
-      GeglBuffer    *temp_in;
-      GeglBuffer    *temp;
+  input = gegl_operation_get_source (operation, context_id, "input");
+  output = gegl_operation_get_target (operation, context_id, "output");
+  temp  = gegl_buffer_new (gegl_buffer_extent (input),
+                           babl_format ("RaGaBaA float"));
 
-      compute = gegl_operation_compute_input_request (operation, "input", need);
+  hor_blur (input, temp,  self->radius);
+  ver_blur (temp, output, self->radius);
 
-      if (self->radius < 0.5)
-        {
-          output = g_object_ref (input);
-        }
-      else
-        {
-          temp_in = g_object_new (GEGL_TYPE_BUFFER,
-                                 "source", input,
-                                 "x",      compute.x,
-                                 "y",      compute.y,
-                                 "width",  compute.width ,
-                                 "height", compute.height ,
-                                 NULL);
-          temp   = g_object_new (GEGL_TYPE_BUFFER,
-                                 "format", babl_format ("RaGaBaA float"),
-                                 "x",      compute.x,
-                                 "y",      compute.y,
-                                 "width",  compute.width ,
-                                 "height", compute.height ,
-                                 NULL);
-
-          output = g_object_new (GEGL_TYPE_BUFFER,
-                                 "format", babl_format ("RaGaBaA float"),
-                                 "x",      compute.x,
-                                 "y",      compute.y,
-                                 "width",  compute.width ,
-                                 "height", compute.height ,
-                                 NULL);
-
-          hor_blur (temp_in, temp,  self->radius);
-          ver_blur (temp, output, self->radius);
-          g_object_unref (temp);
-          g_object_unref (temp_in);
-        }
-
-      {
-        /* FIXME: make ver_blur write directly into output, and scale
-         * it's output accordingly, also sue gegl_operation_get_target
-         * instead of creating our own buf
-         */ 
-        GeglBuffer *cropped = g_object_new (GEGL_TYPE_BUFFER,
-                                              "source", output,
-                                              "x",      result->x,
-                                              "y",      result->y,
-                                              "width",  result->width ,
-                                              "height", result->height,
-                                              NULL);
-        gegl_operation_set_data (operation, context_id, "output", G_OBJECT (cropped));
-        g_object_unref (output);
-      }
-    }
+  gegl_buffer_destroy (input);
+  gegl_buffer_destroy (temp);
   return  TRUE;
 }
 
@@ -201,6 +152,7 @@ get_mean_components (gfloat *buf,
     }
 }
 
+/* expects src and dst buf to have the same extent */
 static void
 hor_blur (GeglBuffer *src,
           GeglBuffer *dst,
@@ -211,6 +163,7 @@ hor_blur (GeglBuffer *src,
   gfloat *src_buf;
   gfloat *dst_buf;
 
+  /* src == dst for hor blur */
   src_buf = g_malloc0 (src->width * src->height * 4 * 4);
   dst_buf = g_malloc0 (dst->width * dst->height * 4 * 4);
 
@@ -242,6 +195,7 @@ hor_blur (GeglBuffer *src,
 }
 
 
+/* expects dst buf to be radius smaller than src buf */
 static void
 ver_blur (GeglBuffer *src,
           GeglBuffer *dst,
@@ -267,8 +221,8 @@ ver_blur (GeglBuffer *src,
         get_mean_components (src_buf,
                              src->width,
                              src->height,
-                             u,
-                             v - radius,
+                             u + radius,  /* 1x radius is the offset between the bufs */
+                             v - radius + radius, /* 1x radius is the offset between the bufs */
                              1,
                              1 + radius * 2,
                              components);
