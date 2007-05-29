@@ -114,6 +114,25 @@ void            gegl_buffer_set               (GeglBuffer       *buffer,
                                                Babl             *format,
                                                void             *src);
 
+/* copies a region from source buffer to destination buffer, for now the
+ * width and height of dst_rect is ignored, keep it 0 for future compatibility.
+ *
+ * If the babl_formats of the buffers are the same, and the tile boundaries
+ * align, this should optimally lead to shared tiles that are copy on write,
+ * this functionality is not implemented yet.
+ */
+void            gegl_buffer_copy              (GeglBuffer       *src,
+                                               GeglRectangle    *src_rect,
+                                               GeglBuffer       *dst,
+                                               GeglRectangle    *dst_rect);
+
+
+/* duplicate a buffer (internally uses gegl_buffer_copy), this should ideally
+ * lead to a buffer that shares the raster data with the original on a tile
+ * by tile COW basis. This is not yet implemented
+ */
+GeglBuffer    * gegl_buffer_dup               (GeglBuffer       *buffer);
+
 typedef enum {
   GEGL_INTERPOLATION_NEAREST
 } GeglInterpolation;
@@ -141,5 +160,6 @@ void            gegl_buffer_sample            (GeglBuffer       *buffer,
                                                gpointer          dest,
                                                Babl             *format,
                                                GeglInterpolation interpolation);
+
 
 #endif

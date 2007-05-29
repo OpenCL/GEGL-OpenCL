@@ -1701,7 +1701,27 @@ gegl_buffer_create_sub_buffer (GeglBuffer    *buffer,
 }
 
 void
+gegl_buffer_copy (GeglBuffer    *src,
+                  GeglRectangle *src_rect,
+                  GeglBuffer    *dst,
+                  GeglRectangle *dst_rect)
+{
+  /* NYI */
+}
+
+
+GeglBuffer *
+gegl_buffer_dup (GeglBuffer *buffer)
+{
+  /* NYI */
+  return NULL;
+}
+
+
+void
 gegl_buffer_destroy (GeglBuffer *buffer)
 {
   g_object_unref (buffer);
 }
+
+

@@ -1,5 +1,12 @@
 2007-05-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/buffer/gegl-buffer.[ch]: (gegl_buffer_copy), (gegl_buffer_dup):
+	added stubs for desired functionality. (contents of function not
+	implemented, not even the non-COW variations, added only to sketch out
+	the new API.)
+
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-operation-point-composer.c: (process_inner): minor
 	correction.
 	* gegl/gegl-operation-source.c: removed unused calc_source_regions
