@@ -64,7 +64,7 @@ process (GeglOperation *operation,
      
       GeglBuffer      *temp_in;
 
-      GeglRectangle compute  = gegl_operation_compute_input_request (operation, "inputt", gegl_operation_need_rect (operation, context_id));
+      GeglRectangle compute  = gegl_operation_compute_input_request (operation, "input", gegl_operation_need_rect (operation, context_id));
 
       if (self->blur_radius < 1.0)
         {

@@ -102,14 +102,14 @@ process_inner (GeglOperation *operation,
   /* XXX: when disabling fast_paths everything should work, albeit slower,
    * disabling of fast paths can be tried when things appear strange, debugging
    * with and without fast paths when tracking buffer leaks is probably also a
-   * good idea. Do also note that some of the OpenRaster meta ops, depends on the
+   * good idea. NB! some of the OpenRaster meta ops, depends on the
    * short-circuiting happening in fast_paths.
    * */
   if (fast_paths (operation, context_id, in_format, aux_format, out_format))
     return TRUE;
 
   /* retrieve the buffer we're writing to from GEGL */
-  output = GEGL_BUFFER (gegl_operation_get_target (operation, context_id, "output"));
+  output = gegl_operation_get_target (operation, context_id, "output");
 
   if ((result->width > 0) && (result->height > 0))
     {
@@ -124,7 +124,7 @@ process_inner (GeglOperation *operation,
       else
         {
           out_buf = g_malloc (out_format->format.bytes_per_pixel *
-                             output->width * output->height);
+                              output->width * output->height);
         }
 
       gegl_buffer_get (input, result, 1.0, in_format, in_buf);
@@ -144,7 +144,7 @@ process_inner (GeglOperation *operation,
           output->width * output->height);
       }
 
-      gegl_buffer_set (output, result, out_format, out_buf);
+      gegl_buffer_set (output, NULL, out_format, out_buf);
 
       g_free (in_buf);
       if (in_format != out_format)

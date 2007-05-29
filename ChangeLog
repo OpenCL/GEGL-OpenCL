@@ -1,5 +1,15 @@
 2007-05-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-operation-point-composer.c: (process_inner): minor
+	correction.
+	* gegl/gegl-operation-source.c: removed unused calc_source_regions
+	definition.
+	* operations/workshop/bilateral-filter.c: (process): fixed typo.
+	* operations/file-io/png-save.c: (gegl_buffer_export_png): fixed
+	BablFormat -> Babl.
+
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/file-io/Makefile.am: add dependency on GEGL_HEADERS to
 	entries not having it.
 

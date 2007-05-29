@@ -45,8 +45,6 @@ static void     attach       (GeglOperation *operation);
 G_DEFINE_TYPE (GeglOperationSource, gegl_operation_source, GEGL_TYPE_OPERATION)
 
 static GeglRectangle get_defined_region (GeglOperation *self);
-static gboolean calc_source_regions (GeglOperation *self,
-                                     gpointer       context_id);
 static GeglRectangle compute_input_request (GeglOperation *operation,
                                             const gchar   *input_pad,
                                             GeglRectangle *roi);
