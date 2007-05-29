@@ -22,9 +22,9 @@
 
 #if GEGL_CHANT_PROPERTIES 
 
-gegl_chant_int (radius,     2, 5000.0, 800, "neighbourhood taken into account")
+gegl_chant_int (radius,     2, 5000.0, 40, "neighbourhood taken into account")
 gegl_chant_int (samples,    0, 1000,   3,    "number of samples to do")
-gegl_chant_int (iterations, 0, 1000.0, 20,   "number of iterations (length of exposure)")
+gegl_chant_int (iterations, 0, 1000.0, 34,   "number of iterations (length of exposure)")
 gegl_chant_double (strength, -10.0, 10.0, 1.0, "amoung of correction 0=none 1.0=full")
 gegl_chant_double (gamma, 0.0, 10.0, 1.6, "post correction gamma.")
 #else
@@ -35,6 +35,8 @@ gegl_chant_double (gamma, 0.0, 10.0, 1.6, "post correction gamma.")
 #define GEGL_CHANT_CATEGORIES   "enhance"
 
 #define GEGL_CHANT_AREA_FILTER
+
+#define GEGL_CHANT_CLASS_INIT
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -58,54 +60,20 @@ process (GeglOperation *operation,
   GeglBuffer          *input;
   GeglBuffer          *output;
 
-
   filter = GEGL_OPERATION_FILTER (operation);
   self   = GEGL_CHANT_OPERATION (operation);
 
-  input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-  {
-    GeglRectangle *result = gegl_operation_result_rect (operation, context_id);
-    GeglBuffer    *temp_in;
-    GeglRectangle  compute  = gegl_operation_compute_input_request (operation, "inputt", gegl_operation_need_rect (operation, context_id));
+  input = gegl_operation_get_source (operation, context_id, "input");
+  output = gegl_operation_get_target (operation, context_id, "output");
 
-    if (self->radius < 1.0)
-      {
-        output = g_object_ref (input);
-      }
-    else
-      {
-        temp_in = g_object_new (GEGL_TYPE_BUFFER,
-                               "source", input,
-                               "x",      compute.x,
-                               "y",      compute.y,
-                               "width",  compute.width,
-                               "height", compute.height,
-                               NULL);
+  stress (input, output,
+          self->radius,
+          self->samples,
+          self->iterations,
+          self->strength,
+          self->gamma);
 
-        output = g_object_new (GEGL_TYPE_BUFFER,
-                               "format", babl_format ("RGBA float"),
-                               "x",      compute.x,
-                               "y",      compute.y,
-                               "width",  compute.width,
-                               "height", compute.height,
-                               NULL);
-
-        stress (temp_in, output, self->radius, self->samples, self->iterations, self->strength, self->gamma);
-        g_object_unref (temp_in);
-      }
-
-    {
-      GeglBuffer *cropped = g_object_new (GEGL_TYPE_BUFFER,
-                                          "source", output,
-                                          "x",      result->x,
-                                          "y",      result->y,
-                                          "width",  result->width ,
-                                          "height", result->height,
-                                          NULL);
-      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (cropped));
-      g_object_unref (output);
-    }
-  }
+  gegl_buffer_destroy (input);
   return  TRUE;
 }
 
@@ -120,6 +88,7 @@ static void stress (GeglBuffer *src,
                     gdouble     gamma)
 {
   gint x,y;
+  gint    dst_offset=0;
   gfloat *src_buf;
   gfloat *dst_buf;
 
@@ -128,12 +97,12 @@ static void stress (GeglBuffer *src,
 
   gegl_buffer_get (src, NULL, 1.0, babl_format ("RGBA float"), src_buf);
 
-  for (y=radius; y<dst->height-radius; y++)
+  for (y=radius; y<dst->height+radius; y++)
     {
-      gint offset = ((src->width*y)+radius)*4;
-      for (x=radius; x<dst->width-radius; x++)
+      gint src_offset = ((src->width*y)+radius)*4;
+      for (x=radius; x<dst->width+radius; x++)
         {
-          gfloat *center_pix= src_buf + offset;
+          gfloat *center_pix= src_buf + src_offset;
           gfloat  min_envelope[4];
           gfloat  max_envelope[4];
 
@@ -152,24 +121,25 @@ static void stress (GeglBuffer *src,
               pixel[c] = center_pix[c];
               if (min_envelope[c]!=max_envelope[c])
                 {
-                  gfloat scaled = (pixel[c]-(min_envelope[c]))/(max_envelope[c]-min_envelope[c]);
+                  gfloat scaled = (pixel[c]-min_envelope[c])/(max_envelope[c]-min_envelope[c]);
                   pixel[c] *= (1.0-strength);
                   pixel[c] = strength * scaled;
                 }
             }
           if (gamma==1.0)
             {
-          for (c=0; c<3;c++)
-            dst_buf[offset+c] = pixel[c];
+              for (c=0; c<3;c++)
+                dst_buf[dst_offset+c] = pixel[c];
             }
           else
             {
-          for (c=0; c<3;c++)
-            dst_buf[offset+c] = pow(pixel[c],gamma);
+              for (c=0; c<3;c++)
+                dst_buf[dst_offset+c] = pow(pixel[c],gamma);
             }
-          dst_buf[offset+c] = center_pix[c];
+          dst_buf[dst_offset+c] = center_pix[c];
          }
-          offset+=4;
+          src_offset+=4;
+          dst_offset+=4;
         }
     }
   gegl_buffer_set (dst, NULL, babl_format ("RGBA float"), dst_buf);
@@ -183,6 +153,27 @@ static void tickle (GeglOperation *operation)
   GeglChantOperation      *filter = GEGL_CHANT_OPERATION (operation);
   area->left = area->right = area->top = area->bottom =
   ceil (filter->radius);
+}
+
+static GeglRectangle
+get_defined_region (GeglOperation *operation)
+{
+  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle *in_rect = gegl_operation_source_get_defined_region (operation,
+                                                                     "input");
+  if (!in_rect)
+    return result;
+  return *in_rect;
+}
+
+static void class_init (GeglOperationClass *operation_class)
+{
+  /* we override defined region to avoid growing the size of what is defined
+   * by the filter, this also allows the tricks used to treat alpha==0 pixels
+   * in the image as source data not to be skipped by the stochastic sampling
+   * yielding correct edge behavior.
+   */
+  operation_class->get_defined_region  = get_defined_region;
 }
 
 #endif
