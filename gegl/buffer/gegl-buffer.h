@@ -42,18 +42,18 @@ GType           gegl_buffer_get_type     (void) G_GNUC_CONST;
  *
  * Create a new GeglBuffer of a given format with a given extent.
  */
-GeglBuffer*     gegl_buffer_new          (GeglRectangle    *extent,
-                                          Babl             *format);
+GeglBuffer*     gegl_buffer_new               (GeglRectangle    *extent,
+                                               Babl             *format);
 
 /** 
- * gegl_buffer_new_from_buf:
+ * gegl_buffer_create_sub_buffer:
  * @buffer: parent buffer.
  * @extent: coordinates of new buffer.
  *
  * Create a new sub GeglBuffer, that is a view on a larger buffer.
  */
-GeglBuffer*     gegl_buffer_new_from_buf (GeglBuffer       *buffer,
-                                          GeglRectangle    *extent);
+GeglBuffer*     gegl_buffer_create_sub_buffer (GeglBuffer       *buffer,
+                                               GeglRectangle    *extent);
 
 /**
  * gegl_buffer_destroy:
@@ -63,7 +63,7 @@ GeglBuffer*     gegl_buffer_new_from_buf (GeglBuffer       *buffer,
  * this is done with reference counting and gobject, and gegl_buffer_destroy
  * is a thing wrapper around g_object_unref.
  **/
-void            gegl_buffer_destroy      (GeglBuffer       *buffer);
+void            gegl_buffer_destroy           (GeglBuffer       *buffer);
 
 /**
  * gegl_buffer_extent:
@@ -73,7 +73,7 @@ void            gegl_buffer_destroy      (GeglBuffer       *buffer);
  * specific GeglBuffer, this is also the default width/height of buffers passed
  * in to gegl_buffer_set and gegl_buffer_get (with a scale of 1.0 at least).
  */
-GeglRectangle * gegl_buffer_extent       (GeglBuffer       *buffer);
+GeglRectangle * gegl_buffer_extent            (GeglBuffer       *buffer);
 
 /**
  * gegl_buffer_get:
@@ -90,11 +90,11 @@ GeglRectangle * gegl_buffer_extent       (GeglBuffer       *buffer);
  * same this amounts to s series of memcpy's aligned to demux the tile structure into
  * a linear buffer.
  */
-void            gegl_buffer_get          (GeglBuffer       *buffer,
-                                          GeglRectangle    *rect,
-                                          gdouble           scale,
-                                          Babl             *format,
-                                          void             *dest);
+void            gegl_buffer_get               (GeglBuffer       *buffer,
+                                               GeglRectangle    *rect,
+                                               gdouble           scale,
+                                               Babl             *format,
+                                               void             *dest);
 
 /**
  * gegl_buffer_set:
@@ -109,10 +109,10 @@ void            gegl_buffer_get          (GeglBuffer       *buffer,
  * 
  * 
  */
-void            gegl_buffer_set          (GeglBuffer       *buffer,
-                                          GeglRectangle    *rect,
-                                          Babl             *format,
-                                          void             *src);
+void            gegl_buffer_set               (GeglBuffer       *buffer,
+                                               GeglRectangle    *rect,
+                                               Babl             *format,
+                                               void             *src);
 
 typedef enum {
   GEGL_INTERPOLATION_NEAREST
@@ -134,12 +134,12 @@ typedef enum {
  * operations this might be sufficient, but it might be considered prototyping convenience
  * that needs to be optimized away from algorithms using it later.
  */
-void            gegl_buffer_sample       (GeglBuffer       *buffer,
-                                          gdouble           x,
-                                          gdouble           y,
-                                          gdouble           scale,
-                                          gpointer          dest,
-                                          Babl             *format,
-                                          GeglInterpolation interpolation);
+void            gegl_buffer_sample            (GeglBuffer       *buffer,
+                                               gdouble           x,
+                                               gdouble           y,
+                                               gdouble           scale,
+                                               gpointer          dest,
+                                               Babl             *format,
+                                               GeglInterpolation interpolation);
 
 #endif

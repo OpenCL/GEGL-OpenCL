@@ -1,4 +1,9 @@
 2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+	
+	* gegl/buffer/gegl-buffer.[ch]: Renamed gegl_buffer_new_from_buf to
+	gegl_buffer_create_sub_buffer.
+
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
 
 	Documentation and cleanup of GeglBuffer, added a new construction
 	convenience, gegl_buffer_new_from_buf, which probably needs a new

@@ -1688,7 +1688,7 @@ gegl_buffer_new (GeglRectangle *extent,
 }
 
 GeglBuffer* 
-gegl_buffer_new_from_buf (GeglBuffer    *buffer,
+gegl_buffer_create_sub_buffer (GeglBuffer    *buffer,
                           GeglRectangle *extent)
 {
   return g_object_new (GEGL_TYPE_BUFFER,
