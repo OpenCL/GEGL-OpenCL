@@ -1,3 +1,8 @@
+2007-05-30  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/workshop/Makefile.am: made the ops with dependencies
+	gracefully fail to compile, when that is called for.
+
 2007-05-29  Øyvind Kolås  <pippin@gimp.org>
 
 	Ported some ops to newer APIs yielding more concise plug-in code.
