@@ -595,13 +595,18 @@ process (GeglOperation *operation,
 
   if (is_intermediate_node (affine) ||
       matrix3_is_identity (affine->matrix))
-    output = g_object_new (GEGL_TYPE_BUFFER,
-        "source", filter_input,
-        "x",      result->x,
-        "y",      result->y,
-        "width",  result->width ,
-        "height", result->height,
-        NULL);
+    {
+      output = g_object_new (GEGL_TYPE_BUFFER,
+          "source", filter_input,
+          "x",      result->x,
+          "y",      result->y,
+          "width",  result->width ,
+          "height", result->height,
+          NULL);
+      /* XXX: use get_target for this as well */
+      gegl_operation_set_data (operation, context_id, "output", G_OBJECT (output));
+      return TRUE;
+    }
   else if (matrix3_is_translate (affine->matrix) &&
            (! strcasecmp (affine->filter, "nearest") ||
             (affine->matrix [0][2] == (gint) affine->matrix [0][2] &&

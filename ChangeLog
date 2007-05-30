@@ -1,5 +1,10 @@
 2007-05-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/affine/affine.c: (process): patch-up to mend some
+	damaged incurred by recent refactoring.
+
+2007-05-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* operations/blur/gaussian-blur.c: migrate to newer APIs making
 	code more concise.
 
