@@ -63,6 +63,7 @@
         <li><a href='http://svn.gnome.org/viewcvs/gegl/trunk/ChangeLog?view=markup'>changes</a></li>
         <li><a href='http://bugzilla.gnome.org/buglist.cgi?product=GEGL&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED'>bugzilla</a></li>
         <li><a href='http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes'>mailarchive</a></li>
+        <li><a href='http://svn.gnome.org/viewcvs/gegl/trunk/'>viewcvs</a></li>
       </ul>
     </div>
 
