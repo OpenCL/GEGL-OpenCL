@@ -1,6 +1,10 @@
 2007-06-02  Øyvind Kolås  <pippin@gimp.org>
 
-	* operations/core/buffer.c: renamed to load-buffer.c
+	* operations/io/*-buffer: moved from operations/io/core.
+
+2007-06-02  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/core/load-buffer.c: renamed from buffer.c
 
 2007-06-02  Øyvind Kolås  <pippin@gimp.org>
 
