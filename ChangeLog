@@ -1,3 +1,10 @@
+2007-06-02  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/buffer/gegl-buffer.c: (gegl_buffer_copy), (gegl_buffer_dup):
+	added code, gegl_buffer_copy still doesn't do COW for tiles though.
+	* operations/core/save-buffer.c: (process): use gegl_buffer_copy
+	instead of own implementation.
+
 2007-05-30  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/affine/affine.c: (process): patch-up to mend some

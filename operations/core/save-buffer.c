@@ -52,30 +52,9 @@ process (GeglOperation *operation,
 
   if (self->buffer)
     {
-      gpointer       format;
-      guchar        *temp;
-      guint i;
       GeglRectangle  *rect = gegl_operation_result_rect (operation, context_id);
-      GeglRectangle  *tile;
-      gint pxsize;
       input = GEGL_BUFFER (gegl_operation_get_data (operation, context_id, "input"));
-
-      g_assert (input);
-      g_object_get (input, "px-size", &pxsize, NULL);
-      format = input->format;
-      tile = g_memdup (rect, sizeof (GeglRectangle));
-      tile->height = 1;
-      temp = g_malloc (tile->width * pxsize);
-
-      /* copy line per line */
-      for (i = 0; i < rect->height; i++) {
-	tile->y++;
-	gegl_buffer_get (input, tile, 1.0, format, temp);
-	gegl_buffer_set (GEGL_BUFFER (self->buffer), tile, format, temp);
-      }
-
-      g_free (temp);
-      g_free (tile);
+      gegl_buffer_copy (input, rect, GEGL_BUFFER (self->buffer), rect);
     }
   return TRUE;
 }

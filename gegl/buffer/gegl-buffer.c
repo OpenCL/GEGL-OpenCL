@@ -1706,15 +1706,60 @@ gegl_buffer_copy (GeglBuffer    *src,
                   GeglBuffer    *dst,
                   GeglRectangle *dst_rect)
 {
-  /* NYI */
-}
+  /* FIXME: make gegl_buffer_copy work with COW shared tiles when possible */
 
+  GeglRectangle src_line;
+  GeglRectangle dst_line;
+  gpointer      format;
+  guchar       *temp;
+  guint         i;
+  gint          pxsize;
+
+  g_assert (src);
+  g_assert (dst);
+  if (!src_rect)
+    {
+      src_rect = gegl_buffer_extent (src);
+    }
+
+  if (!dst_rect)
+    {
+      dst_rect = src_rect;
+    }
+
+  pxsize = gegl_buffer_storage (src)->px_size;
+  format = src->format;
+
+  src_line = *src_rect;
+  src_line.height = 1;
+
+  dst_line = *dst_rect;
+  dst_line.width = src_line.width;
+  dst_line.height = src_line.height;
+
+  temp = g_malloc (src_line.width * pxsize);
+
+  for (i=0;i<src->height;i++)
+    {
+      gegl_buffer_get (src, &src_line, 1.0, format, temp);
+      gegl_buffer_set (dst, &dst_line, format, temp);
+      src_line.y++;
+      dst_line.y++;
+    }
+  g_free (temp);
+}
 
 GeglBuffer *
 gegl_buffer_dup (GeglBuffer *buffer)
 {
-  /* NYI */
-  return NULL;
+  GeglBuffer *new;
+
+  g_assert (buffer);
+
+  new = gegl_buffer_new (gegl_buffer_extent (buffer), buffer->format);
+  gegl_buffer_copy (buffer, gegl_buffer_extent (buffer),
+                    new, gegl_buffer_extent (buffer));
+  return new;
 }
 
 
