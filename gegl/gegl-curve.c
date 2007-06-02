@@ -195,7 +195,7 @@ gegl_curve_add_point (GeglCurve    *self,
 
 void
 gegl_curve_get_point (GeglCurve      *self,
-		      guint	     index,
+		      guint	      index,
 		      gfloat	     *x,
 		      gfloat	     *y)
 {

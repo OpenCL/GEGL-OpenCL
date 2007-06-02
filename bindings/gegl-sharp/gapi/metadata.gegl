@@ -24,5 +24,6 @@
 
     <attr path="/api/namespace/object[@name='Node']" name="parent">GObject</attr>
     <attr path="/api/namespace/object[@name='Color']" name="parent">GObject</attr>
+    <attr path="/api/namespace/object[@name='Curve']" name="parent">GObject</attr>
     <attr path="/api/namespace/object[@name='Processor']" name="parent">GObject</attr>
 </metadata>

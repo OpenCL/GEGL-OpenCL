@@ -585,8 +585,8 @@ operations/blur/Makefile
 operations/color/Makefile
 operations/core/Makefile
 operations/display/Makefile
-operations/file-io/Makefile
 operations/generated/Makefile
+operations/io/Makefile
 operations/meta/Makefile
 operations/render/Makefile
 operations/svg/Makefile

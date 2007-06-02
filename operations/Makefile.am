@@ -4,7 +4,7 @@ SUBDIRS = \
 	color		\
 	core		\
 	display		\
-	file-io		\
+	io		\
 	generated	\
 	meta		\
 	render		\

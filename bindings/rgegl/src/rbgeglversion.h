@@ -12,7 +12,7 @@
 
 #define GEGL_MAJOR_VERSION (0)
 #define GEGL_MINOR_VERSION (0)
-#define GEGL_MICRO_VERSION (11)
+#define GEGL_MICRO_VERSION (13)
 
 #define GEGL_CHECK_VERSION(major,minor,micro)    \
     (GEGL_MAJOR_VERSION > (major) || \

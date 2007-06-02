@@ -1,5 +1,9 @@
 2007-06-02  Øyvind Kolås  <pippin@gimp.org>
 
+	Renamed operations/file-io directory to be operations/io.
+
+2007-06-02  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/buffer/gegl-buffer.c: (gegl_buffer_copy), (gegl_buffer_dup):
 	added code, gegl_buffer_copy still doesn't do COW for tiles though.
 	* operations/core/save-buffer.c: (process): use gegl_buffer_copy

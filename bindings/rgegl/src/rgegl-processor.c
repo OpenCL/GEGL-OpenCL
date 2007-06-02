@@ -29,4 +29,5 @@ Init_gegl_processor(mGegl)
     VALUE geglGeglProcessor = G_DEF_CLASS(GEGL_TYPE_PROCESSOR, "Processor", mGegl);
     rb_define_method(geglGeglProcessor, "work", cprocessor_work, 0);
     rb_define_method(geglGeglProcessor, "rectangle=", cprocessor_set_rectangle, 1);
+    G_DEF_SETTERS (geglGeglProcessor);
 }

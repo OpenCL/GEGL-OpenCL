@@ -1,3 +1,523 @@
+2007-06-02  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-06-02  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-30  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-30  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-30  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-29  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-26  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-25  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-25  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-24  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-23  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-23  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-23  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-23  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-23  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-22  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-21  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-21  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-21  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-20  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-19  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-18  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-17  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-17  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-17  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-16  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-16  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-16  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-15  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-15  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-10  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-09  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-02  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-01  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-01  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
+2007-05-01  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/lib/gegl-view.rb:
+	* src/rbgeglversion.h:
+	* src/rgegl-processor.c:
+
 2007-02-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* samples/render-test.rb: added a greyscale UTF8 text rendering

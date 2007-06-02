@@ -7,7 +7,13 @@ module Gegl
   class View < Gtk::DrawingArea
       attr_accessor :x, :y, :scale
       attr_reader :processor, :node, :scale
-      
+     
+      def chunksize= newval
+          if @node==nil
+              puts "tried to set chunksize before a node was set"
+          end
+          @processor.chunksize= newval
+      end 
       def initialize
           super()
           @x, @y, @scale = 0, 0, 1.0
