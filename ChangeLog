@@ -1,5 +1,9 @@
 2007-06-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* operations/core/buffer.c: renamed to load-buffer.c
+
+2007-06-02  Øyvind Kolås  <pippin@gimp.org>
+
 	Renamed operations/file-io directory to be operations/io.
 
 2007-06-02  Øyvind Kolås  <pippin@gimp.org>

@@ -22,10 +22,10 @@ gegl_chant_object (buffer, "GeglBuffer to use")
 #else
 
 #define GEGL_CHANT_SOURCE
-#define GEGL_CHANT_NAME         buffer
+#define GEGL_CHANT_NAME         load-buffer
 #define GEGL_CHANT_DESCRIPTION  "A source that uses an in-memory GeglBuffer, for use internally by GEGL."
 
-#define GEGL_CHANT_SELF         "buffer.c"
+#define GEGL_CHANT_SELF         "load-buffer.c"
 #define GEGL_CHANT_CATEGORIES   "programming:input"
 #define GEGL_CHANT_CLASS_INIT
 #include "gegl-chant.h"
