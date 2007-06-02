@@ -33,10 +33,5 @@ gtk-display.so: gtk-display.c $(GEGLHEADERS)
 	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(GTK_CFLAGS) $(GTK_LIBS))\
 	||true
 
-save-pixbuf.so: save-pixbuf.c $(GEGLHEADERS)
-	@[ ! -z "$(GTK_LIBS)" ] &&\
-	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config gdk-pixbuf-2.0 --libs --cflags`)\
-	||true
-
 distcheck:
 	@:

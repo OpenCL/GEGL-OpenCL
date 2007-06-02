@@ -42,3 +42,9 @@ exr-load$(SHREXT): exr-load.cpp $(GEGLHEADERS)
 	echo $@;\
 	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(OPENEXR_CFLAGS) $(OPENEXR_LIBS);\
 	fi
+
+save-pixbuf$(SHREXT): save-pixbuf.c $(GEGLHEADERS)
+	@[ ! -z "$(GTK_LIBS)" ] &&\
+	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config gdk-pixbuf-2.0 --libs --cflags`)\
+	||true
+

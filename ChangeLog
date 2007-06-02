@@ -1,3 +1,8 @@
+2007-06-02  Étienne Bersac  <bersace03@laposte.net>
+
+	* operations/io/save-pixbuf.c: Moved from
+	operations/workshop. Fixed a warning.
+
 2007-06-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/io/*-buffer: moved from operations/io/core.

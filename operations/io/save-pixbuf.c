@@ -54,7 +54,7 @@ process (GeglOperation *operation,
       g_assert (input);
 
       babl = input->format;
-      format = input->format;
+      format = (BablFormat*) babl;
 
       has_alpha = FALSE;
       for (i = 0; i < format->components; i++) {
