@@ -1,7 +1,7 @@
 #ifndef __OP_AFFINE_H__
 #define __OP_AFFINE_H__
 
-#include <gegl/gegl-operation-filter.h>
+#include <gegl/operation/gegl-operation-filter.h>
 
 #include "matrix.h"
 

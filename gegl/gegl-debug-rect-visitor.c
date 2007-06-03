@@ -28,7 +28,7 @@
 #include "gegl-types.h"
 
 #include "gegl-debug-rect-visitor.h"
-#include "gegl-operation.h"
+#include "operation/gegl-operation.h"
 #include "gegl-node.h"
 #include "gegl-node-dynamic.h"
 #include "gegl-pad.h"

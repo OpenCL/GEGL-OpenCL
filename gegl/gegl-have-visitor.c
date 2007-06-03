@@ -26,11 +26,11 @@
 #include "gegl-types.h"
 
 #include "gegl-have-visitor.h"
-#include "gegl-operation.h"
 #include "gegl-node.h"
 #include "gegl-pad.h"
 #include "gegl-visitable.h"
 #include "gegl-instrument.h"
+#include "operation/gegl-operation.h"
 
 static void gegl_have_visitor_class_init (GeglHaveVisitorClass *klass);
 static void visit_node (GeglVisitor *self,

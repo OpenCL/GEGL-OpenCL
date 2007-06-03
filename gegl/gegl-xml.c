@@ -27,13 +27,13 @@
 #include "gegl-types.h"
 #include "gegl-graph.h"
 #include "gegl-node.h"
-#include "gegl-operation.h"
 #include "gegl-pad.h"
 #include "gegl-color.h"
 #include "gegl-curve.h"
 #include "gegl-instrument.h"
 #include "gegl-xml.h"
 #include "gegl-paramspecs.h"
+#include "operation/gegl-operation.h"
 
 #ifdef G_OS_WIN32
 #define realpath(a, b)    _fullpath (b, a, _MAX_PATH)

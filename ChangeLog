@@ -1,3 +1,34 @@
+2007-06-03  Øyvind Kolås  <pippin@gimp.org>
+
+	Moved the operation base classes to it's own directory.
+
+	* configure.in: added gegl/operation/Makefile to the list of files to
+	create.
+	* gegl/Makefile.am: added subdir.
+	* gegl/operation/Makefile.am: new makefile.
+	* gegl/gegl-operation*.[ch]: moved to a operation subdir.
+
+	The rest of these files just had the path of some #includes modified.
+
+	* gegl/buffer/gegl-cache.c:
+	* gegl/gegl-chant.h:
+	* gegl/gegl-cr-visitor.c:
+	* gegl/gegl-debug-rect-visitor.c:
+	* gegl/gegl-eval-mgr.c:
+	* gegl/gegl-eval-visitor.c:
+	* gegl/gegl-finish-visitor.c:
+	* gegl/gegl-have-visitor.c:
+	* gegl/gegl-module.h:
+	* gegl/gegl-need-visitor.c:
+	* gegl/gegl-node.c:
+	* gegl/gegl-plugin.h:
+	* gegl/gegl-prepare-visitor.c:
+	* gegl/gegl-processor.c:
+	* gegl/gegl-xml.c:
+	* operations/affine/affine.h:
+	* operations/color/remap.c:
+	* tools/operation_reference.c:
+
 2007-06-03  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.in: Added tests for libavcodec and libavformat.

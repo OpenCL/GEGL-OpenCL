@@ -2,10 +2,11 @@ if OS_WIN32
 no_undefined = -no-undefined
 endif
 
-SUBDIRS = buffer module
+SUBDIRS = buffer module operation
 
 libbuffer = $(top_builddir)/gegl/buffer/libbuffer.la
 libmodule = $(top_builddir)/gegl/module/libmodule.la
+liboperation = $(top_builddir)/gegl/operation/liboperation.la
 
 lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
 
@@ -28,15 +29,6 @@ GEGL_sources = \
 	gegl-dot.c			\
 	gegl-node-dynamic.c		\
 	gegl-object.c			\
-	gegl-operation.c        	\
-	gegl-operation-area-filter.c    \
-	gegl-operation-composer.c     	\
-	gegl-operation-filter.c       	\
-	gegl-operation-meta.c       	\
-	gegl-operation-point-composer.c \
-	gegl-operation-point-filter.c   \
-	gegl-operation-sink.c       	\
-	gegl-operation-source.c       	\
 	gegl-pad.c			\
 	gegl-paramspecs.c		\
 	gegl-prepare-visitor.c		\
@@ -55,15 +47,6 @@ GEGL_sources = \
 	gegl-node.h			\
 	gegl-node-dynamic.h		\
 	gegl-object.h			\
-	gegl-operation.h        	\
-	gegl-operation-composer.h     	\
-	gegl-operation-area-filter.h    \
-	gegl-operation-filter.h       	\
-	gegl-operation-meta.h       	\
-	gegl-operation-point-composer.h \
-	gegl-operation-point-filter.h   \
-	gegl-operation-sink.h       	\
-	gegl-operation-source.h       	\
 	gegl-pad.h			\
 	gegl-processor.h		\
 	gegl-types.h			\
@@ -91,7 +74,7 @@ EXTRA_DIST =	\
 
 libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 
-libgegl_@GEGL_API_VERSION@_la_LIBADD = $(libbuffer) $(libmodule)
+libgegl_@GEGL_API_VERSION@_la_LIBADD = $(libbuffer) $(libmodule) $(liboperation)
 
 libgegl_@GEGL_API_VERSION@_la_LDFLAGS = \
 	@DEP_LIBS@ @BABL_LIBS@	\

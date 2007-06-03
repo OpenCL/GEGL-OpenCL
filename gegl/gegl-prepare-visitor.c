@@ -24,11 +24,11 @@
 
 #include "gegl-types.h"
 #include "gegl-prepare-visitor.h"
-#include "gegl-operation.h"
 #include "gegl-node.h"
 #include "gegl-pad.h"
 #include "gegl-visitable.h"
 #include "gegl-instrument.h"
+#include "operation/gegl-operation.h"
 
 
 static void gegl_prepare_visitor_class_init (GeglPrepareVisitorClass *klass);

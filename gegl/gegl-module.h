@@ -25,9 +25,9 @@
 
 #include <gegl/gegl-types.h>
 
-#include <gegl/gegl-operation.h>
 #include <gegl/buffer/gegl-buffer.h>
 #include <gegl/module/geglmoduletypes.h>
 #include <gegl/module/geglmodule.h>
+#include <gegl/operation/gegl-operation.h>
 
 #endif  /* __GEGL_H__ */

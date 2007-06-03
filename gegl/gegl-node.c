@@ -30,7 +30,6 @@
 
 #include "gegl-node.h"
 #include "gegl-node-dynamic.h"
-#include "gegl-operation.h"
 #include "gegl-visitor.h"
 #include "gegl-visitable.h"
 #include "gegl-pad.h"
@@ -44,6 +43,8 @@
 #include "gegl-utils.h"
 #include "buffer/gegl-cache.h"
 #include "gegl-processor.h"
+#include "operation/gegl-operation.h"
+#include "operation/gegl-operation-meta.h"
 
 
 enum
@@ -852,7 +853,6 @@ gegl_node_set_op_class (GeglNode    *node,
     }
 }
 
-#include "gegl-operation-meta.h"
 
 static void property_changed (GObject    *gobject,
                               GParamSpec *arg1,

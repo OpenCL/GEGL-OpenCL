@@ -31,7 +31,6 @@
 #include <gegl/gegl-init.h>
 #include <gegl/gegl-node.h>
 #include <gegl/gegl-object.h>
-#include <gegl/gegl-operation.h>
 #include <gegl/gegl-pad.h>
 #include <gegl/gegl-utils.h>
 #include <gegl/gegl-visitable.h>
@@ -39,6 +38,7 @@
 #include <gegl/buffer/gegl-buffer.h>
 #include <gegl/gegl-curve.h>
 #include <gegl/gegl-xml.h>
+#include <gegl/operation/gegl-operation.h>
 
 #define GEGL_INTERNAL /* to avoid conflicts, when we include gegl.h just
                          to get warnings about conflicts in the prototypes

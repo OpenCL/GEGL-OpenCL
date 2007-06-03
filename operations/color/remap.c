@@ -1,6 +1,6 @@
 #include "gegl-plugin.h"
 #include "gegl-module.h"
-#include "gegl-operation-filter.h"
+#include "operation/gegl-operation-filter.h"
 
 typedef struct Generated      GeglOperationRemap;
 typedef struct GeneratedClass GeglOperationRemapClass;

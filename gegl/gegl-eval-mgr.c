@@ -33,11 +33,11 @@
 #include "gegl-need-visitor.h"
 #include "gegl-instrument.h"
 #include "gegl-node.h"
-#include "gegl-operation.h"
 #include "gegl-prepare-visitor.h"
 #include "gegl-finish-visitor.h"
 #include "gegl-pad.h"
 #include "gegl-visitable.h"
+#include "operation/gegl-operation.h"
 #include <stdlib.h>
 
 

@@ -23,9 +23,9 @@
 #include "gegl-types.h"
 #include "gegl-node.h"
 #include "gegl-processor.h"
-#include "gegl-operation-sink.h"
 #include "gegl-utils.h"
 #include "buffer/gegl-region.h"
+#include "operation/gegl-operation-sink.h"
 
 enum
 {

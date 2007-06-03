@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include "gegl-operation-filter.h"
-#include "gegl-operation-source.h"
-#include "gegl-operation-composer.h"
+#include "operation/gegl-operation-filter.h"
+#include "operation/gegl-operation-source.h"
+#include "operation/gegl-operation-composer.h"
 
 static GList *
 gegl_operations_build (GList *list, GType type)
