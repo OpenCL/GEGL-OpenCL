@@ -45,7 +45,7 @@ static void gegl_eval_mgr_class_init (GeglEvalMgrClass *klass);
 static void gegl_eval_mgr_init (GeglEvalMgr *self);
 
 
-G_DEFINE_TYPE (GeglEvalMgr, gegl_eval_mgr, GEGL_TYPE_OBJECT)
+G_DEFINE_TYPE (GeglEvalMgr, gegl_eval_mgr, G_TYPE_OBJECT)
 
 
 static void

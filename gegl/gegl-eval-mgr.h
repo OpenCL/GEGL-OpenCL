@@ -21,7 +21,6 @@
 #ifndef __GEGL_EVAL_MGR_H__
 #define __GEGL_EVAL_MGR_H__
 
-#include "gegl-object.h"
 #include "gegl-types.h"
 #include "buffer/gegl-buffer-types.h"
 
@@ -40,13 +39,13 @@ typedef struct _GeglEvalMgrClass GeglEvalMgrClass;
 
 struct _GeglEvalMgr
 {
-  GeglObject    parent_instance;
+  GObject    parent_instance;
   GeglRectangle roi;
 };
 
 struct _GeglEvalMgrClass
 {
-  GeglObjectClass  parent_class;
+  GObjectClass  parent_class;
 };
 
 
