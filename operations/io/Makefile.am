@@ -6,10 +6,6 @@ INSTALLED_ITEMS += $(subst $(srcdir),$(ext_dir),$(CXXFILES:.cpp=$(SHREXT)))
 EXTRA_DIST      += $(wildcard *.cpp)
 
 
-# If extensions needing external libraries are to be compiled with this make
-# file, each of them can be added according to this pattern:
-# extra.so: extra.c
-#	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
 ff-load.so: ff-load.c $(GEGLHEADERS)
 	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
@@ -53,3 +49,7 @@ save-pixbuf$(SHREXT): save-pixbuf.c $(GEGLHEADERS)
 	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config gdk-pixbuf-2.0 --libs --cflags`)\
 	||true
 
+display$(SHREXT): display.c $(GEGLHEADERS)
+	@[ ! -z "$(SDL_LIBS)" ] &&\
+	(echo $@;$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(SDL_CFLAGS) $(SDL_LIBS)) \
+	|| true

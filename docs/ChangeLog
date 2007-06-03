@@ -1,3 +1,9 @@
+2007-06-03  Øyvind Kolås  <pippin@gimp.org>
+
+	reviewed by: <delete if not using a buddy>
+
+	* index-static.html.in:
+
 2007-06-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* index-static.html.in: added direct link to viewcvs from toc on the

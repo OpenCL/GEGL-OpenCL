@@ -3,7 +3,6 @@ SUBDIRS = \
 	blur      	\
 	color		\
 	core		\
-	display		\
 	io		\
 	generated	\
 	meta		\

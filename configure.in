@@ -601,12 +601,12 @@ bin/node-editors/Makefile
 gegl/Makefile
 gegl/buffer/Makefile
 gegl/module/Makefile
+gegl/operation/Makefile
 operations/Makefile
 operations/affine/Makefile
 operations/blur/Makefile
 operations/color/Makefile
 operations/core/Makefile
-operations/display/Makefile
 operations/generated/Makefile
 operations/io/Makefile
 operations/meta/Makefile

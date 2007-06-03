@@ -1,5 +1,16 @@
 2007-06-03  Øyvind Kolås  <pippin@gimp.org>
 
+	Moved the SDL display op from it's own directory to the directory
+	with the io operations.
+
+	* configure.in:
+	* operations/Makefile.am:
+	* operations/display/Makefile.am:
+	* operations/display/display.c:
+	* operations/io/Makefile.am:
+
+2007-06-03  Øyvind Kolås  <pippin@gimp.org>
+
 	Moved the operation base classes to it's own directory.
 
 	* configure.in: added gegl/operation/Makefile to the list of files to

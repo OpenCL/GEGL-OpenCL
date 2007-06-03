@@ -430,10 +430,9 @@ Some examples:
  │
  │
  ├──gegl             core source of GEGL, graph handling, library init/deinit,
- │   │               evaluation management. Also contains common abstract base
- │   │               classes for plug-in operations.
+ │   │               evaluation management.
  │   │ 
- │   ├──buffer       contains the implementation of Bab
+ │   ├──buffer       contains the implementation of GeglBuffer
  │   │                - sparse (tiled)
  │   │                - recursivly subbuffer extendable
  │   │                - clipping rectangle (defaults to bounds when making
@@ -441,6 +440,10 @@ Some examples:
  │   │                - storage in any babl supported pixel format
  │   │                - read/write rectangular region as linear buffer for
  │   │                  any babl supported pixel format.
+ │   │
+ │   ├──operation     The GeglOperation base class, and subclasses that act
+ │   │                as baseclasses for implementeting different types of
+ │   │                operation plug-ins.
  │   │
  │   └──module        The code to load plug-ins located in a colon seperated
  │                    list of paths from the environment variable GEGL_PATH
@@ -451,9 +454,8 @@ Some examples:
  │   │
  │   ├──blur          Blurring operations.
  │   ├──color         Color adjustments.
- │   ├──display       Operations that show image data as a side effect.
+ │   ├──io            sources and sinks (file loaders/savers etc.)
  │   ├──meta          Operations that are made by gegl graphs.
- │   ├──file-io       File loaders.
  │   ├──render        Operations providing patters, graidents, fills, ...
  │   ├──transform     transforming/resampling operations
  │   ├──transparency  opacity/mask control
