@@ -53,7 +53,7 @@ static gdouble   gegl_processor_progress (GeglProcessor *processor);
 
 struct _GeglProcessor
 {
-  GeglObject       parent;
+  GObject          parent;
   GeglNode        *node;
   GeglRectangle    rectangle;
   GeglNode        *input;
@@ -68,7 +68,7 @@ struct _GeglProcessor
   gdouble  progress;
 };
 
-G_DEFINE_TYPE (GeglProcessor, gegl_processor, GEGL_TYPE_OBJECT);
+G_DEFINE_TYPE (GeglProcessor, gegl_processor, G_TYPE_OBJECT);
 
 static void gegl_processor_class_init (GeglProcessorClass *klass)
 {

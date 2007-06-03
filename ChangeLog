@@ -1,5 +1,11 @@
 2007-06-03  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-processor.[ch]: reparented from GeglObject to GObject
+	* gegl/gegl-visitor.[ch]: reparented from GeglObject to GObject
+	* gegl/gegl-eval-mgr.[ch]: reparented from GeglObject to GObject
+
+2007-06-03  Øyvind Kolås  <pippin@gimp.org>
+
 	* bin/export.c: (gegl_buffer_export_png): silence some warnings
 	by using Babl* instead of BablFormat*.
 

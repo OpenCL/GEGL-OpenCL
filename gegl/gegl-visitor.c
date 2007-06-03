@@ -90,7 +90,7 @@ static void           get_property             (GObject          *gobject,
 
 
 
-G_DEFINE_TYPE (GeglVisitor, gegl_visitor, GEGL_TYPE_OBJECT)
+G_DEFINE_TYPE (GeglVisitor, gegl_visitor, G_TYPE_OBJECT)
 
 
 static void

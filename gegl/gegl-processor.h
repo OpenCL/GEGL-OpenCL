@@ -36,7 +36,7 @@ typedef struct _GeglProcessorClass GeglProcessorClass;
 
 struct _GeglProcessorClass
 {
-  GeglObjectClass  parent_class;
+  GObjectClass  parent_class;
 };
 
 

@@ -21,8 +21,6 @@
 #ifndef __GEGL_VISITOR_H__
 #define __GEGL_VISITOR_H__
 
-#include "gegl-object.h"
-
 G_BEGIN_DECLS
 
 
@@ -38,7 +36,7 @@ typedef struct _GeglVisitorClass GeglVisitorClass;
 
 struct _GeglVisitor
 {
-  GeglObject  parent_instance;
+  GObject     parent_instance;
   gpointer    context_id;
 
   GSList     *visits_list;
@@ -47,7 +45,7 @@ struct _GeglVisitor
 
 struct _GeglVisitorClass
 {
-  GeglObjectClass  parent_class;
+  GObjectClass        parent_class;
 
   void (* visit_pad)  (GeglVisitor  *self,
                        GeglPad      *pad);
