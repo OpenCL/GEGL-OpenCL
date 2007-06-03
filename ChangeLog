@@ -1,3 +1,16 @@
+2007-06-03  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.in: Added tests for libavcodec and libavformat.
+
+	* operations/io/Makefile.am: Added lines to build ff-load operation.
+
+	* operations/workshop/Makefile.am: Use variables set during run of
+	./configure instead of calling pkg-config directly for the ff-save
+	operation.
+
+	* operations/workshop/ff-load.c: Moved file from here...
+	* operations/io/ff-load.c: to here.
+
 2007-06-03  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/io/load.c: (prepare): "buffer" op has been renamed

@@ -11,6 +11,11 @@ EXTRA_DIST      += $(wildcard *.cpp)
 # extra.so: extra.c
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
+ff-load.so: ff-load.c $(GEGLHEADERS)
+	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
+		$(AVCODEC_CFLAGS) $(AVCODEC_LIBS) \
+		$(AVFORMAT_CFLAGS) $(AVFORMAT_LIBS) 
+
 jpg-load$(SHREXT): jpg-load.c $(GEGLHEADERS)
 	@if [ ! -z "$(LIBJPEG)" ]; then \
 	echo $@;\

@@ -22,11 +22,10 @@ gluas.so: gluas.c $(GEGLHEADERS)
 gst.so: gst.c $(GEGLHEADERS)
 	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config gstreamer-0.10 --libs --cflags`
 
-ff-load.so: ff-load.c $(GEGLHEADERS)
-	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config libavcodec libavformat --libs --cflags`
-
 ff-save.so: ff-save.c $(GEGLHEADERS)
-	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config libavcodec libavformat --libs --cflags`
+	-$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) \
+		$(AVCODEC_CFLAGS) $(AVCODEC_LIBS) \
+		$(AVFORMAT_CFLAGS) $(AVFORMAT_LIBS) 
 
 gtk-display.so: gtk-display.c $(GEGLHEADERS)
 	@[ ! -z "$(GTK_LIBS)" ] &&\
