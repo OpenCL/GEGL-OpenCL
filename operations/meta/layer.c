@@ -141,7 +141,7 @@ static void attach (GeglOperation *operation)
   priv->opacity = gegl_node_new_child (gegl, "operation", "opacity", NULL);
   
   priv->load = gegl_node_new_child (gegl,
-                                    "operation", "buffer",
+                                    "operation", "load-buffer",
                                     NULL);
 
   gegl_node_link_many (priv->load, priv->opacity, priv->shift, NULL);

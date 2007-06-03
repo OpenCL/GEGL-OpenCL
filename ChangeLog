@@ -1,3 +1,10 @@
+2007-06-03  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/io/load.c: (prepare): "buffer" op has been renamed
+	"load-buffer"
+	* operations/meta/layer.c: (attach): "buffer" op has been renamed
+	"load-buffer"
+
 2007-06-02  Étienne Bersac  <bersace03@laposte.net>
 
 	* operations/io/save-pixbuf.c: Moved from
