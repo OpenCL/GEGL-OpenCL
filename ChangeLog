@@ -1,5 +1,10 @@
 2007-06-03  Øyvind Kolås  <pippin@gimp.org>
 
+	* bin/export.c: (gegl_buffer_export_png): silence some warnings
+	by using Babl* instead of BablFormat*.
+
+2007-06-03  Øyvind Kolås  <pippin@gimp.org>
+
 	Moved the SDL display op from it's own directory to the directory
 	with the io operations.
 

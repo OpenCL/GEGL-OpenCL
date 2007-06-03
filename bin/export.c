@@ -278,10 +278,10 @@ gegl_buffer_export_png (GeglBuffer    *gegl_buffer,
   strcpy (format_string, "R'G'B'A ");
 
   {
-    BablFormat  *format = gegl_buffer->format;
-    BablType   **type   = format->type;
+    Babl        *babl   = gegl_buffer->format;
+    BablType   **type   = babl->format.type;
 
-    for (i=0; i<format->components; i++)
+    for (i=0; i<babl->format.components; i++)
       if ((*type)->bits > 8)
         bit_depth = 16;
   }
