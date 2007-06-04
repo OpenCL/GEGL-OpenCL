@@ -45,7 +45,7 @@ typedef struct _GeglPadClass GeglPadClass;
 
 struct _GeglPad
 {
-  GeglObject     parent_instance;
+  GObject        parent_instance;
 
   /*< private >*/
   GParamSpec    *param_spec;
@@ -55,17 +55,21 @@ struct _GeglPad
                                  (initially only what it produces, and used
                                   for gegl_operation_get_target.)
                                */
+  gchar         *name;
 };
 
 struct _GeglPadClass
 {
-  GeglObjectClass  parent_class;
+  GObjectClass   parent_class;
 };
 
 
 GType            gegl_pad_get_type                  (void) G_GNUC_CONST;
  
 const gchar    * gegl_pad_get_name                  (GeglPad        *self);
+void             gegl_pad_set_name                  (GeglPad        *self,
+                                                     const gchar    *name);
+
 GSList         * gegl_pad_get_depends_on            (GeglPad        *self);
 GeglNode       * gegl_pad_get_node                  (GeglPad        *self);
 void             gegl_pad_set_node                  (GeglPad        *self,

@@ -44,7 +44,7 @@ static GSList   * visitable_depends_on     (GeglVisitable *visitable);
 static gboolean   visitable_needs_visiting (GeglVisitable *visitable);
 
 
-G_DEFINE_TYPE_WITH_CODE (GeglPad, gegl_pad, GEGL_TYPE_OBJECT,
+G_DEFINE_TYPE_WITH_CODE (GeglPad, gegl_pad, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (GEGL_TYPE_VISITABLE,
                                                 visitable_init))
 
@@ -63,6 +63,7 @@ gegl_pad_init (GeglPad *self)
   self->node        = NULL;
   self->connections = NULL;
   self->format      = NULL;
+  self->name        = NULL;
 }
 
 static void
@@ -83,6 +84,9 @@ finalize (GObject *gobject)
 
   g_assert (self->connections == NULL);
 
+  if (self->name)
+    g_free (self->name);
+
   G_OBJECT_CLASS (gegl_pad_parent_class)->finalize (gobject);
 }
 
@@ -101,7 +105,7 @@ gegl_pad_set_param_spec (GeglPad    *self,
   g_return_if_fail (GEGL_IS_PAD (self));
 
   self->param_spec = param_spec;
-  gegl_object_set_name (GEGL_OBJECT (self), g_param_spec_get_name (param_spec));
+  gegl_pad_set_name (self, g_param_spec_get_name (param_spec));
 }
 
 GeglConnection *
@@ -217,8 +221,15 @@ gegl_pad_get_depends_on (GeglPad *self)
 const gchar *
 gegl_pad_get_name (GeglPad *self)
 {
-  g_return_val_if_fail (GEGL_IS_PAD (self), NULL);
-  return gegl_object_get_name (GEGL_OBJECT (self));
+  return self->name;
+}
+
+void gegl_pad_set_name (GeglPad     *self,
+                        const gchar *name)
+{
+  if (self->name)
+    g_free (self->name);
+  self->name = g_strdup (name);
 }
 
 GeglPad *

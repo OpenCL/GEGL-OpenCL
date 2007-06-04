@@ -1,3 +1,11 @@
+2007-06-04  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-pad.[ch]: reparented from GeglObject to GObject.
+	* gegl/gegl-visitable.c: (gegl_visitable_get_type): make the
+	prerequisite be GObject and not GeglObject.
+	* gegl/gegl-graph.c: (gegl_node_get_pad_proxy): set the pad name
+	directly on the pad.
+
 2007-06-03  Øyvind Kolås  <pippin@gimp.org>
 
 	* gegl/gegl-processor.[ch]: reparented from GeglObject to GObject

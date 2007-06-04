@@ -191,7 +191,7 @@ gegl_node_get_pad_proxy (GeglNode    *graph,
         GeglPad *new_pad = g_object_new (GEGL_TYPE_PAD, NULL);
         gegl_pad_set_param_spec (new_pad, nop_pad->param_spec);
         gegl_pad_set_node (new_pad, nop);
-        gegl_object_set_name (GEGL_OBJECT (new_pad), name);
+        gegl_pad_set_name (new_pad, name);
         gegl_node_add_pad (node, new_pad);
 
         /* hack, decoreating the pad to make it recognized in later
