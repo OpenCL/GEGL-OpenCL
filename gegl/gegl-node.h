@@ -41,7 +41,7 @@ typedef struct _GeglNodeClass GeglNodeClass;
 
 struct _GeglNode
 {
-  GeglObject      parent_instance;
+  GObject         parent_instance;
   GeglOperation  *operation;
   GeglRectangle   have_rect;
   GSList         *pads;
@@ -61,6 +61,7 @@ struct _GeglNode
   GSList         *children;  /*  used for children */
   GeglNode       *parent;
   GeglCache      *cache;
+  gchar          *name;
 };
 
 typedef enum
@@ -79,7 +80,7 @@ enum
 
 struct _GeglNodeClass
 {
-  GeglObjectClass  parent_class;
+  GObjectClass parent_class;
 };
 
 /* renders the desired region of interest to a buffer of the specified
@@ -188,7 +189,11 @@ GeglCache    *gegl_node_get_cache           (GeglNode      *node);
 void          gegl_node_disable_cache       (GeglNode      *node);
 void          gegl_node_invalidated         (GeglNode      *node,
                                              GeglRectangle *rect);
-GeglRectangle gegl_node_get_bounding_box    (GeglNode     *root);
+GeglRectangle gegl_node_get_bounding_box    (GeglNode      *root);
+
+const gchar  *gegl_node_get_name            (GeglNode      *self);
+void          gegl_node_set_name            (GeglNode      *self,
+                                             const gchar   *name);
 
 extern guint gegl_node_signals[];
 

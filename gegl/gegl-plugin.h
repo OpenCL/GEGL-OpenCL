@@ -30,7 +30,6 @@
 #include <gegl/gegl-graph.h>
 #include <gegl/gegl-init.h>
 #include <gegl/gegl-node.h>
-#include <gegl/gegl-object.h>
 #include <gegl/gegl-pad.h>
 #include <gegl/gegl-utils.h>
 #include <gegl/gegl-visitable.h>

@@ -70,7 +70,7 @@ visit_node (GeglVisitor *self,
    * should be set now).
    */
   {
-    const gchar *name = gegl_object_get_name (GEGL_OBJECT (node));
+    const gchar *name = gegl_node_get_name (node);
     if (name && !strcmp (name, "proxynop-output"))
       {
         GeglGraph *graph = g_object_get_data (G_OBJECT (node), "graph");

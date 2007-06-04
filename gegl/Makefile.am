@@ -28,7 +28,6 @@ GEGL_sources = \
 	gegl-node.c			\
 	gegl-dot.c			\
 	gegl-node-dynamic.c		\
-	gegl-object.c			\
 	gegl-pad.c			\
 	gegl-paramspecs.c		\
 	gegl-prepare-visitor.c		\
@@ -46,7 +45,6 @@ GEGL_sources = \
 	gegl-init.h			\
 	gegl-node.h			\
 	gegl-node-dynamic.h		\
-	gegl-object.h			\
 	gegl-pad.h			\
 	gegl-processor.h		\
 	gegl-types.h			\

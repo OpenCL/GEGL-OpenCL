@@ -50,7 +50,7 @@ detect (GeglOperation *operation,
 {
   GeglNode *input_node;
 
-  const gchar *name = gegl_object_get_name (GEGL_OBJECT (operation->node));
+  const gchar *name = gegl_node_get_name (operation->node);
   if (name && !strcmp (name, "proxynop-output"))
     {
       GeglNode *graph;

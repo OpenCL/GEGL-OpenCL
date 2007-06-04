@@ -67,7 +67,7 @@ visit_node (GeglVisitor *self,
 
   dynamic->refs = gegl_node_get_num_sinks (node);
 
-  if (!strcmp (gegl_object_get_name (GEGL_OBJECT (node)), "proxynop-output"))
+  if (!strcmp (gegl_node_get_name (node), "proxynop-output"))
     {
       GeglNode *graph = g_object_get_data (G_OBJECT (node), "graph");
       if (graph)

@@ -195,7 +195,7 @@ gegl_pad_get_depends_on (GeglPad *self)
       /* FIXME: this add depends for all inputs of the graph, this is probably
        * too much in some cases
        */
-      if (!strcmp (gegl_object_get_name (GEGL_OBJECT (self->node)), "proxynop-input"))
+      if (!strcmp (gegl_node_get_name (self->node), "proxynop-input"))
         {
           GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
           GSList   *llink = graph->sources;
@@ -256,7 +256,8 @@ gegl_pad_get_internal_connected_to (GeglPad *self)
 
   g_assert (GEGL_IS_PAD (self));
 
-  if (!pad && gegl_object_get_name (GEGL_OBJECT (self->node)) && !strcmp (gegl_object_get_name (GEGL_OBJECT (self->node)), "proxynop-input"))
+  if (!pad && gegl_node_get_name (self->node) &&
+      !strcmp (gegl_node_get_name (self->node), "proxynop-input"))
     {
       GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (self->node), "graph"));
       g_assert (graph);

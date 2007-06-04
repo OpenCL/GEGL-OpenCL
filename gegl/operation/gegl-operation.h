@@ -22,7 +22,6 @@
 #ifndef __GEGL_OPERATION_H__
 #define __GEGL_OPERATION_H__
 
-#include "gegl-object.h"
 #include "gegl-node.h"
 
 G_BEGIN_DECLS

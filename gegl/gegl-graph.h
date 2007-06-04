@@ -21,8 +21,6 @@
 #ifndef __GEGL_GRAPH_H__
 #define __GEGL_GRAPH_H__
 
-#include "gegl-object.h"
-
 /* graph related methods of gegl_node class */
 
 G_BEGIN_DECLS

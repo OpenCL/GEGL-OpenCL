@@ -1,5 +1,27 @@
 2007-06-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/Makefile.am: removed gegl-object.
+	* gegl/gegl-object.[ch]: removed.
+	* gegl/gegl-node.[ch]: integrated name directly, instead of relying on
+	the deprecated one from GeglObject.
+
+	For the following files, replaced references to
+	gegl_object_{set|get}_name with the gegl_node_equivalents.
+
+	* gegl/buffer/gegl-interpolator.h:
+	* gegl/gegl-cr-visitor.c:
+	* gegl/gegl-finish-visitor.c:
+	* gegl/gegl-graph.h:
+	* gegl/gegl-pad.c:
+	* gegl/gegl-pad.h:
+	* gegl/gegl-plugin.h:
+	* gegl/gegl-prepare-visitor.c:
+	* gegl/gegl-visitable.c:
+	* gegl/operation/gegl-operation.h:
+	* operations/core/nop.c:
+
+2007-06-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-pad.[ch]: reparented from GeglObject to GObject.
 	* gegl/gegl-visitable.c: (gegl_visitable_get_type): make the
 	prerequisite be GObject and not GeglObject.

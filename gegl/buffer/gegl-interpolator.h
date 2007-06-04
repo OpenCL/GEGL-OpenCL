@@ -20,7 +20,6 @@
 #define _GEGL_INTERPOLATOR_H__
 
 #include <glib-object.h>
-#include "gegl-object.h"
 #include "gegl-types.h"
 #include "buffer/gegl-buffer-types.h"
 #include <babl/babl.h>

@@ -21,7 +21,7 @@
 #ifndef __GEGL_PAD_H__
 #define __GEGL_PAD_H__
 
-#include "gegl-object.h"
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 

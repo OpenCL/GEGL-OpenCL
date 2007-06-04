@@ -26,7 +26,6 @@
 
 #include "gegl-types.h"
 
-#include "gegl-object.h"
 #include "gegl-visitable.h"
 
 

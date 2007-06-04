@@ -51,7 +51,8 @@ enum
 {
   PROP_0,
   PROP_OP_CLASS,
-  PROP_OPERATION
+  PROP_OPERATION,
+  PROP_NAME
 };
 
 guint gegl_node_signals[GEGL_NODE_LAST_SIGNAL] = {0};
@@ -92,7 +93,7 @@ static void            property_changed               (GObject    *gobject,
                                                        GParamSpec *arg1,
                                                        gpointer    user_data);
 
-G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, GEGL_TYPE_OBJECT,
+G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (GEGL_TYPE_VISITABLE,
                                                 visitable_init))
 
@@ -118,6 +119,14 @@ gegl_node_class_init (GeglNodeClass *klass)
                                    g_param_spec_string ("operation",
                                                         "Operation Type",
                                                         "The type of associated GeglOperation",
+                                                        "",
+                                                        G_PARAM_CONSTRUCT |
+                                                        G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class, PROP_NAME,
+                                   g_param_spec_string ("name",
+                                                        "Name",
+                                                        "The name of the node",
                                                         "",
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE));
@@ -158,6 +167,7 @@ gegl_node_init (GeglNode *self)
   self->is_graph    = FALSE;
   self->children    = NULL;
   self->cache       = NULL;
+  self->name        = NULL;
 }
 
 static void
@@ -213,6 +223,11 @@ finalize (GObject *gobject)
       self->operation = NULL;
     }
 
+  if (self->name)
+    {
+      g_free (self->name);
+    }
+
   G_OBJECT_CLASS (gegl_node_parent_class)->finalize (gobject);
 }
 
@@ -222,15 +237,20 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
+  GeglNode *node = GEGL_NODE (gobject);
   switch (property_id)
     {
+      case PROP_NAME:
+        gegl_node_set_name (node, g_value_get_string (value));
+        break;
+
       case PROP_OP_CLASS:
-        gegl_node_set_op_class (GEGL_NODE (gobject), g_value_get_string (value),
+        gegl_node_set_op_class (node, g_value_get_string (value),
                                 NULL, NULL);
         break;
 
       case PROP_OPERATION:
-        gegl_node_set_operation_object (GEGL_NODE (gobject), g_value_get_object (value));
+        gegl_node_set_operation_object (node, g_value_get_object (value));
         break;
 
       default:
@@ -252,6 +272,10 @@ get_property (GObject    *gobject,
       case PROP_OP_CLASS:
         if (node->operation)
           g_value_set_string (value, GEGL_OPERATION_GET_CLASS (node->operation)->name);
+        break;
+
+      case PROP_NAME:
+        g_value_set_string (value, gegl_node_get_name (node));
         break;
 
       default:
@@ -772,8 +796,8 @@ gegl_node_get_depends_on (GeglNode *self)
         }
     }
 
-  if (gegl_object_get_name (GEGL_OBJECT (self)) &&
-      !strcmp (gegl_object_get_name (GEGL_OBJECT (self)), "proxynop-input"))
+  if (gegl_node_get_name (self) &&
+      !strcmp (gegl_node_get_name (self), "proxynop-input"))
     {
       GeglGraph *graph = g_object_get_data (G_OBJECT (self), "graph");
       if (graph)
@@ -1300,10 +1324,10 @@ gegl_node_get_debug_name (GeglNode *node)
 {
   static gchar ret_buf[512];
 
-  if (gegl_object_get_name (GEGL_OBJECT (node)) != NULL &&
-      gegl_object_get_name (GEGL_OBJECT (node))[0] != '\0')
+  if (gegl_node_get_name (node) != NULL &&
+      gegl_node_get_name (node)[0] != '\0')
     sprintf (ret_buf, "%s named %s", gegl_node_get_operation (node),
-             gegl_object_get_name (GEGL_OBJECT (node)));
+             gegl_node_get_name (node));
   else
     sprintf (ret_buf, "%s", gegl_node_get_operation (node));
   return ret_buf;
@@ -1649,4 +1673,18 @@ gegl_node_disable_cache (GeglNode *node)
       g_object_unref (node->cache);
       node->cache = NULL;
     }
+}
+
+const gchar *
+gegl_node_get_name (GeglNode *self)
+{
+  return self->name;
+}
+
+void gegl_node_set_name (GeglNode     *self,
+                         const gchar *name)
+{
+  if (self->name)
+    g_free (self->name);
+  self->name = g_strdup (name);
 }
