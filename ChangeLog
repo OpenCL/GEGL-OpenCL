@@ -1,5 +1,9 @@
 2007-06-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac: renamed from configure.in
+
+2007-06-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/property-types/: created a new dir for housing paramspecs and
 	specialised GEGL datatypes for use when specifying the behavior of
 	GEGL operations.

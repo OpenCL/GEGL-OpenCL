@@ -1,0 +1,648 @@
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.54)
+
+dnl Making releases on the stable branch:
+dnl   GEGL_MICRO_VERSION += 1;
+dnl   GEGL_INTERFACE_AGE += 1;
+dnl   GEGL_BINARY_AGE += 1;
+dnl if any functions have been added,
+dnl    set GEGL_INTERFACE_AGE to 0.
+dnl if backwards compatibility has been broken,
+dnl    set GEGL_BINARY_AGE _and_ GEGL_INTERFACE_AGE to 0.
+
+
+m4_define([gegl_major_version], [0])
+m4_define([gegl_minor_version], [0])
+m4_define([gegl_micro_version], [13])
+m4_define([gegl_real_version],
+          [gegl_major_version.gegl_minor_version.gegl_micro_version])
+m4_define([gegl_version], [gegl_real_version])
+
+dnl Number of releases since we've added interfaces
+m4_define([gegl_interface_age], [0])
+m4_define([gegl_binary_age],
+          [m4_eval(100 * gegl_minor_version + gegl_micro_version)])
+
+dnl The X.Y in -lgegl-X.Y line. This is expected to stay 1.0 until Gegl 2.
+m4_define([gegl_api_version], [1.0])
+
+m4_define([stability_version_number],
+          m4_if(m4_eval(gegl_major_version || gegl_minor_version), [0], 
+                        [gegl_micro_version], [gegl_minor_version]))
+m4_define([gegl_unstable],
+          m4_if(m4_eval(stability_version_number % 2), [1], [yes], [no]))
+m4_define([gegl_stable],
+          m4_if(m4_eval(stability_version_number % 2), [0], [yes], [no]))
+
+m4_define([gimp_full_name], [Generic Graphical Library])
+
+# required versions of external libraries
+m4_define([babl_required_version], [0.0.14])
+m4_define([glib_required_version], [2.6.4])
+m4_define([gtk_required_version], [2.8.6])
+m4_define([cairo_required_version], [0.0.0])
+m4_define([pango_required_version], [0.0.0])
+m4_define([pangocairo_required_version], [0.0.0])
+m4_define([png_required_version], [0.0.0])
+m4_define([librsvg_required_version], [2.14.0])
+m4_define([openexr_required_version], [0.0.0])
+m4_define([sdl_required_version], [0.0.0])
+m4_define([graphviz_required_version], [0.0.0])
+
+AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
+AC_CONFIG_SRCDIR([gegl/gegl.h])
+
+dnl ==========================================================================
+dnl                              Versioning              
+dnl ==========================================================================
+
+dnl The triplet 
+GEGL_MAJOR_VERSION=gegl_major_version
+GEGL_MINOR_VERSION=gegl_minor_version
+GEGL_MICRO_VERSION=gegl_micro_version
+GEGL_INTERFACE_AGE=gegl_interface_age
+GEGL_BINARY_AGE=gegl_binary_age
+GEGL_VERSION=gegl_version
+GEGL_REAL_VERSION=gegl_real_version
+GEGL_VERSION=gegl_version
+GEGL_API_VERSION=gegl_api_version
+AC_SUBST(GEGL_MAJOR_VERSION)
+AC_SUBST(GEGL_MINOR_VERSION)
+AC_SUBST(GEGL_MICRO_VERSION)
+AC_SUBST(GEGL_INTERFACE_AGE)
+AC_SUBST(GEGL_BINARY_AGE)
+AC_SUBST(GEGL_VERSION)
+AC_SUBST(GEGL_REAL_VERSION)
+AC_SUBST(GEGL_API_VERSION)
+
+GEGL_RELEASE=gegl_api_version
+AC_SUBST(GEGL_RELEASE)
+
+
+dnl The symbol GEGL_UNSTABLE is defined above for substitution in
+dnl Makefiles and conditionally defined here as a preprocessor symbol
+dnl and automake conditional.
+GEGL_UNSTABLE=gegl_unstable
+if test "x$GEGL_UNSTABLE" = "xyes"; then
+  AC_DEFINE(GEGL_UNSTABLE, 1,
+            [Define to 1 if this is an unstable version of GEGL])
+fi
+AM_CONDITIONAL(GEGL_UNSTABLE, test "x$GEGL_UNSTABLE" = "xyes")
+AC_SUBST(GEGL_UNSTABLE)
+
+
+dnl libtool versioning
+m4_define([lt_current], [m4_eval(100 * gegl_minor_version + gegl_micro_version - gegl_interface_age)])
+m4_define([lt_revision], [gegl_interface_age])
+m4_define([lt_age], [m4_eval(gegl_binary_age - gegl_interface_age)])
+GEGL_LIBRARY_VERSION="lt_current:lt_revision:lt_age"
+GEGL_CURRENT_MINUS_AGE=m4_eval(lt_current - lt_age)
+AC_SUBST(GEGL_LIBRARY_VERSION)
+AC_SUBST(GEGL_CURRENT_MINUS_AGE)
+
+gegltargetlib=libgegl-$GEGL_API_VERSION.la
+AC_SUBST(gegltargetlib)
+
+GLIB_REQUIRED_VERSION=glib_required_version
+GTK_REQUIRED_VERSION=gtk_required_version
+AC_SUBST(GLIB_REQUIRED_VERSION)
+AC_SUBST(GTK_REQUIRED_VERSION)
+
+PACKAGE_NAME=gegl
+AC_SUBST(PACKAGE_NAME)
+
+
+dnl ==========================================================================
+
+AM_INIT_AUTOMAKE(no-define)
+AM_CONFIG_HEADER(config.h)
+
+dnl Initialize libtool
+AC_PROG_CC
+#AM_DISABLE_STATIC
+AC_LIBTOOL_WIN32_DLL
+AM_PROG_LIBTOOL
+
+dnl Initialize maintainer mode
+AM_MAINTAINER_MODE
+
+
+###############
+# Generic stuff
+###############
+
+dnl Checks for programs.
+AC_ISC_POSIX
+#AM_PROG_CC_STDC
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+
+dnl Large file support.
+AC_SYS_LARGEFILE
+
+
+AC_MSG_CHECKING([whether to turn on debugging])
+AC_ARG_ENABLE(debug,
+              [  --enable-debug          turn on debugging (default=no)],
+              if eval "test x$enable_debug = xyes"; then
+                DEBUGFLAG="-g"
+              fi)
+
+if test -n "$DEBUGFLAG"; then
+  AC_MSG_RESULT([yes])
+  CFLAGS="$DEBUGFLAG $CFLAGS"
+else
+  AC_MSG_RESULT([no])
+fi
+
+AC_MSG_CHECKING([whether to turn on profiling])
+AC_ARG_ENABLE(profile,
+              [  --enable-profile        turn on profiling (default=no)],
+              if eval "test x$enable_profile = xyes"; then
+                PROFFLAG="-pg"
+              fi)
+
+if test -n "$PROFFLAG"; then
+  AC_MSG_RESULT([yes])
+  CFLAGS="$PROFFLAG $CFLAGS"
+else
+  AC_MSG_RESULT([no])
+fi
+
+AC_ARG_ENABLE(ansi,
+              [  --enable-ansi           turn on strict ansi (default=no)],,
+              enable_ansi=no)
+
+changequote(,)dnl
+if eval "test x$GCC = xyes"; then
+  case " $CFLAGS " in
+  *[\ \	]-Wall[\ \	]*) ;;
+  *) CFLAGS="$CFLAGS -Wall" ;;
+  esac
+
+  if test "x$enable_ansi" = "xyes"; then
+    case " $CFLAGS " in
+    *[\ \	]-ansi[\ \	]*) ;;
+    *) CFLAGS="$CFLAGS -ansi" ;;
+    esac
+
+    case " $CFLAGS " in
+    *[\ \	]-pedantic[\ \	]*) ;;
+    *) CFLAGS="$CFLAGS -pedantic" ;;
+    esac
+  fi
+fi
+changequote([,])dnl
+
+
+dnl Cache $ACLOCAL_FLAGS
+AC_CACHE_CHECK([for aclocal flags], ac_cv_gegl_aclocal_flags,[
+   ac_cv_gegl_aclocal_flags="$ACLOCAL_FLAGS"
+])
+ACLOCAL="$ACLOCAL $ac_cv_gegl_aclocal_flags"
+
+
+###########################
+# Check target architecture
+###########################
+
+AC_MSG_CHECKING([for target architecture])
+case x"$target" in
+  xNONE | x)
+    target_or_host="$host" ;;
+  *)
+    target_or_host="$target" ;;
+esac
+AC_MSG_RESULT([$target_or_host])
+
+#################
+# Check for Win32
+#################
+
+AC_MSG_CHECKING([for some Win32 platform])
+case "$target_or_host" in 
+  *-*-mingw* | *-*-cygwin*)
+    platform_win32=yes
+    shrext=.dll
+    ;;
+  *)
+    platform_win32=no
+    shrext=.so
+    ;;
+esac
+AC_MSG_RESULT([$platform_win32])
+AM_CONDITIONAL(PLATFORM_WIN32, test "$platform_win32" = "yes")
+
+MATH_LIB=-lm
+AC_MSG_CHECKING([for native Win32])
+case "$target_or_host" in
+  *-*-mingw*)
+    os_win32=yes
+    PATHSEP=';'
+    MATH_LIB=
+    ;;
+  *)
+    os_win32=no
+    PATHSEP=':'
+    ;;
+esac
+AC_MSG_RESULT([$os_win32])
+AC_SUBST(PATH_SEP)
+AC_SUBST(MATH_LIB)
+
+AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
+AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
+
+#####################################
+# File extension for shared libraries
+#####################################
+
+SHREXT=$shrext
+AC_SUBST(SHREXT)
+
+#############################
+# Threads and multi processor 
+#############################
+
+AC_ARG_ENABLE(mp, [  --disable-mp            disable support for multiple proces
+sors])
+if test "x$enable_mp" != "xno"; then
+  PKG_CHECK_MODULES(GTHREAD, gthread-2.0,
+    [AC_DEFINE(ENABLE_MP, 1,
+               [Define to 1 to enable support for multiple processors.])]
+  )
+fi
+
+dnl Checks for programs.
+#AC_PROG_YACC
+#AM_PROG_LEX
+
+
+###############################
+# Checks for required libraries
+###############################
+
+PKG_CHECK_MODULES(BABL, babl >= babl_required_version)
+
+GLIB_PACKAGES="gobject-2.0 gmodule-2.0"
+AC_SUBST(GLIB_PACKAGES)
+
+dnl This PATH_GLIB is somewhat redundant, but does a sanity compile and 
+dnl importantly defines the GLIB_GENMARSHAL variable for subst into the
+dnl Makefile
+AM_PATH_GLIB_2_0($GLIB_REQUIRED_VERSION, :,
+  AC_MSG_ERROR([
+*** GLIB $GLIB_REQUIRED_VERSION or better is required. The latest version of 
+*** GLIB is always available from ftp://ftp.gtk.org/.]),
+  gobject gmodule)
+
+PKG_CHECK_MODULES(DEP,
+	          glib-2.0 >= $GLIB_REQUIRED_VERSION $GLIB_PACKAGES, ,
+                  AC_MSG_ERROR([
+        *** GLib not found. You can find it on ftp://ftp.gtk.org
+        *** Errors follow:
+            $DEP_PKG_ERRORS]))
+
+# Rerun PKG_CONFIG to add gthread-2.0 cflags and libs
+DEP_CFLAGS=`$PKG_CONFIG --cflags $GLIB_PACKAGES gthread-2.0`
+DEP_LIBS=`$PKG_CONFIG --libs $GLIB_PACKAGES gthread-2.0`
+
+PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED_VERSION,
+  have_gtk="yes"
+  AC_DEFINE(HAVE_GTK, 1, [Define to 1 to compile with gtk support.])
+  GTK_CFLAGS="$GTK_CFLAGS"
+  GTK_LIBS="$GTK_LIBS",
+  have_gtk="no  (gtk+ not found)")
+AM_CONDITIONAL(HAVE_GTK, test "x$have_gtk" = "xyes")
+
+AC_SUBST(HAVE_GTK)
+AC_SUBST(GTK_CFLAGS)
+AC_SUBST(GTK_LIBS)
+
+
+#########################
+# Disable deprecated APIs
+#########################
+
+AC_MSG_CHECKING([if GLib is version 2.11.0 or newer])
+if $PKG_CONFIG --atleast-version=2.11.0 glib-2.0; then
+  have_glib_2_11=yes
+else
+  have_glib_2_11=no
+fi
+AC_MSG_RESULT($have_glib_2_11)
+
+if test "x$have_glib_2_11" != "xyes"; then
+  CPPFLAGS="${CPPFLAGS} -DG_DISABLE_DEPRECATED"
+fi
+
+
+######################################
+# Checks for gtk-doc and docbook-tools
+######################################
+
+GTK_DOC_CHECK([1.0])
+
+dnl NOTE: We need to use a separate automake conditional for this
+dnl   	  to make this work with the tarballs.
+AM_CONDITIONAL(ENABLE_GTK_DOC, test "x$enable_gtk_doc" = "xyes")
+
+AC_CHECK_PROGS(PERL, perl5 perl)
+
+
+#######################################
+# Checks for Ruby used to make API docs
+#######################################
+
+AC_CHECK_PROG(RUBY, ruby, yes, no)
+if test "$RUBY" = "no"; then
+  AC_MSG_WARN([
+*** Could not find Ruby interpreter. The HTML API reference
+will not be updated.
+])
+  have_ruby=no
+else
+  RUBY_BIN="$RUBY"
+  have_ruby=yes
+fi
+AM_CONDITIONAL(HAVE_RUBY, test "x$have_ruby" = "xyes")
+
+AC_SUBST(HAVE_RUBY)
+AC_SUBST(RUBY_BIN)
+
+
+#################
+# Check for Cairo
+#################
+
+PKG_CHECK_MODULES(CAIRO, cairo,
+  have_cairo="yes",
+  have_cairo="no  (usable cairo not found)")
+AM_CONDITIONAL(HAVE_CAIRO, test "x$have_cairo" = "xyes")
+
+AC_SUBST(HAVE_CAIRO) 
+AC_SUBST(CAIRO_CFLAGS) 
+AC_SUBST(CAIRO_LIBS) 
+
+
+########################
+# Checks for Pango stuff
+########################
+
+PKG_CHECK_MODULES(PANGO, pango,
+  have_pango="yes",
+  have_pango="no  (usable pango not found)")
+AM_CONDITIONAL(HAVE_PANGO, test "x$have_pango" = "xyes")
+
+PKG_CHECK_MODULES(PANGOCAIRO, pangocairo,
+  have_pangocairo="yes",
+  have_pangocairo="no  (usable pangocairo not found)")
+AM_CONDITIONAL(HAVE_PANGOCAIRO, test "x$have_pangocairo" = "xyes")
+
+AC_SUBST(HAVE_PANGO) 
+AC_SUBST(HAVE_PANGOCAIRO) 
+AC_SUBST(PANGO_CFLAGS) 
+AC_SUBST(PANGO_LIBS) 
+AC_SUBST(PANGOCAIRO_CFLAGS) 
+AC_SUBST(PANGOCAIRO_LIBS) 
+
+
+###################
+# Check for libjpeg
+###################
+
+AC_ARG_WITH(libjpeg, [  --without-libjpeg       build without JPEG support])
+  if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
+    AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
+      jpeg_ok=yes,
+      [jpeg_ok="no  (usable JPEG library not found)"])
+    if test "$jpeg_ok" = yes; then
+      AC_MSG_CHECKING([for jpeglib.h])
+      AC_TRY_CPP([
+#include <stdio.h>
+#undef HAVE_STDDEF_H
+#undef HAVE_STDLIB_H
+#undef PACKAGE
+#undef VERSION
+#include <jpeglib.h>],
+        jpeg_ok="yes",
+        jpeg_ok="no  (Can't include jpeglib.h)")
+      AC_MSG_RESULT($jpeg_ok)
+      if test "$jpeg_ok" = yes; then
+        AC_CHECK_LIB(jpeg, jpeg_save_markers,
+        LIBJPEG='-ljpeg',
+        jpeg_ok="no  (JPEG library is too old)")
+      else
+        jpeg_ok="no  (JPEG header file not found)"
+      fi
+    fi
+  fi
+
+  if test x$with_libjpeg != xno && test -z "$LIBJPEG"; then
+     AC_MSG_RESULT([*** Checks for JPEG library failed.])
+  fi
+AM_CONDITIONAL(HAVE_JPEG, test "x$jpeg_ok" = "xyes")
+
+AC_SUBST(HAVE_JPEG)
+AC_SUBST(LIBJPEG)
+
+
+##################
+# Check for libpng
+##################
+
+PKG_CHECK_MODULES(PNG, libpng,
+  have_libpng="yes",
+  have_libpng="no  (usable libpng not found)")
+AM_CONDITIONAL(HAVE_PNG, test "x$have_libpng" = "xyes")
+
+AC_SUBST(HAVE_PNG) 
+AC_SUBST(PNG_CFLAGS) 
+AC_SUBST(PNG_LIBS) 
+
+
+###################
+# Check for librsvg
+###################
+
+PKG_CHECK_MODULES(RSVG, librsvg-2.0 >= librsvg_required_version,
+  have_librsvg="yes",
+  have_librsvg="no  (usable librsvg not found)")
+AM_CONDITIONAL(HAVE_RSVG, test "x$have_librsvg" = "xyes")
+
+AC_SUBST(HAVE_RSVG) 
+AC_SUBST(RSVG_CFLAGS) 
+AC_SUBST(RSVG_LIBS) 
+
+###################
+# Check for OpenEXR
+###################
+
+PKG_CHECK_MODULES(OPENEXR, OpenEXR,
+  have_openexr="yes",
+  have_openexr="no  (usable OpenEXR not found)")
+AM_CONDITIONAL(HAVE_OPENEXR, test "x$have_openexr" = "xyes")
+
+AC_SUBST(HAVE_OPENEXR) 
+AC_SUBST(OPENEXR_CFLAGS) 
+AC_SUBST(OPENEXR_LIBS) 
+
+
+###############
+# Check for SDL
+###############
+
+dnl check for SDL
+AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
+if test "$SDL_CONFIG" = "no"; then
+  have_sdl="no  (usable libsdl not found)"
+  AC_MSG_RESULT([*** Check for SDL library failed.])
+else
+  have_sdl="yes"
+  SDL_CFLAGS=`$SDL_CONFIG --cflags`
+  SDL_LIBS=`$SDL_CONFIG --libs`
+fi
+AM_CONDITIONAL(HAVE_SDL, test "x$SDL_CONFIG" = "xyes")
+
+AC_SUBST(HAVE_SDL) 
+AC_SUBST(SDL_CFLAGS)
+AC_SUBST(SDL_LIBS)
+
+
+####################
+# Check for graphviz
+####################
+ 
+AC_PATH_PROG(HAVE_GRAPHVIZ, dot, no)
+if test "$HAVE_GRAPHVIZ" = "no"; then
+  have_graphviz="no  (graphviz not found)"
+  AC_MSG_RESULT([*** Check for dot command from graphviz failed.])
+else
+  have_graphviz="yes"
+fi
+AM_CONDITIONAL(HAVE_GRAPHVIZ, test "x$have_graphviz" = "xyes")
+
+AC_SUBST(HAVE_GRAPHVIZ)
+
+
+####################
+# Check for enscript
+####################
+ 
+AC_PATH_PROG(HAVE_ENSCRIPT, enscript, no)
+if test "$HAVE_ENSCRIPT" = "no"; then
+  have_enscript="no  (enscript not found)"
+  AC_MSG_RESULT([*** Check for enscript command failed.])
+else
+  have_enscript="yes"
+fi
+AM_CONDITIONAL(HAVE_ENSCRIPT, test "x$have_enscript" = "xyes")
+
+AC_SUBST(HAVE_ENSCRIPT)
+
+
+##########################################
+# Check for avcodec and avformat libraries
+##########################################
+
+PKG_CHECK_MODULES(AVCODEC, libavcodec,
+  have_libavcodec="yes",
+  have_libavcodec="no  (usable libavcodec not found)")
+AM_CONDITIONAL(HAVE_AVCODEC, test "x$have_libavcodec" = "xyes")
+ 
+PKG_CHECK_MODULES(AVFORMAT, libavformat,
+  have_libavformat="yes",
+  have_libavformat="no  (usable libavformat not found)")
+AM_CONDITIONAL(HAVE_AVFORMAT, test "x$have_libavformat" = "xyes")
+
+AC_SUBST(HAVE_AVCODEC)
+AC_SUBST(HAVE_AVFORMAT)
+AC_SUBST(AVCODEC_CFLAGS) 
+AC_SUBST(AVCODEC_LIBS) 
+AC_SUBST(AVFORMAT_CFLAGS) 
+AC_SUBST(AVFORMAT_LIBS) 
+
+
+################
+# Check for lcms
+################
+ 
+#have_lcms=no
+#AC_CHECK_LIB(lcms, cmsCreateProofingTransform, [
+#  AC_CHECK_HEADER(lcms.h,
+#    have_lcms=yes
+#    LCMS_LIBS="-llcms", [
+#    AC_CHECK_HEADER(lcms/lcms.h,
+#      have_lcms=yes
+#      AC_DEFINE(HAVE_LCMS_LCMS_H, 1,
+#        [Define to 1 if the lcms header must be included as lcms/lcms.h])
+#      LCMS_LIBS="-llcms")])
+#])
+# 
+#AM_CONDITIONAL(HAVE_LCMS, test "x$have_lcms" = "xyes")
+#AC_SUBST(LCMS_LIBS)
+
+
+#######################
+# Check for other items
+#######################
+
+
+# w3m is used to autogenerate README
+AC_PATH_PROG(W3M, w3m, no)
+AM_CONDITIONAL(HAVE_W3M, test "x$W3M" != "xno")
+
+
+AC_OUTPUT([
+Makefile
+bin/Makefile
+bin/node-editors/Makefile
+gegl/Makefile
+gegl/buffer/Makefile
+gegl/graph/Makefile
+gegl/module/Makefile
+gegl/operation/Makefile
+gegl/process/Makefile
+gegl/property-types/Makefile
+operations/Makefile
+operations/affine/Makefile
+operations/blur/Makefile
+operations/color/Makefile
+operations/core/Makefile
+operations/generated/Makefile
+operations/io/Makefile
+operations/meta/Makefile
+operations/render/Makefile
+operations/svg/Makefile
+operations/transparency/Makefile
+operations/workshop/Makefile
+operations/workshop/generated/Makefile
+tools/Makefile
+docs/Makefile
+docs/index-static.html
+docs/gallery/Makefile
+docs/gallery/data/Makefile
+gegl.pc
+gegl-uninstalled.pc
+])
+
+dnl Print a summary of features enabled/disabled:
+AC_MSG_RESULT([
+Building GEGL with prefix=$prefix
+
+Optional dependencies:
+  Ruby:           $have_ruby
+  GTK+:           $have_gtk
+  Cairo:          $have_cairo
+  Pango:          $have_pango
+  pangocairo:     $have_pangocairo
+  JPEG:           $jpeg_ok
+  PNG:            $have_libpng
+  OpenEXR:        $have_openexr
+  rsvg:           $have_librsvg
+  SDL:            $have_sdl
+  graphviz:       $have_graphviz
+  avcodec:        $have_libavcodec
+  avformat:       $have_libavformat
+]);
