@@ -13,9 +13,9 @@ PROPERTYTYPES_headers = \
 
 
 libpropertytypes_la_SOURCES = $(PROPERTYTYPES_sources) $(PROPERTYTYPES_headers)
-libpropertytypesinclude_HEADERS = $(PROPERTYTYPES_headers)
+libpropertytypesinclude_HEADERS = gegl-paramspecs.h #$(PROPERTYTYPES_headers)
 
-libpropertytypesincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/propertytypes
+libpropertytypesincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/property-types
 
 INCLUDES = \
 	   -I$(top_srcdir)	\

@@ -25,9 +25,8 @@ OPERATION_headers = \
 
 
 liboperation_la_SOURCES = $(OPERATION_sources) $(OPERATION_headers)
-liboperationinclude_HEADERS = gegl-operation.h
-
-liboperationincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/operation
+#liboperationinclude_HEADERS = #
+#liboperationincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/operation
 
 INCLUDES = \
 	   -I$(top_srcdir)	\

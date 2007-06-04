@@ -26,9 +26,8 @@ PROCESS_headers = 			\
 
 
 libprocess_la_SOURCES = $(PROCESS_sources) $(PROCESS_headers)
-libprocessinclude_HEADERS = gegl-processor.h
-
-libprocessincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/process
+#libprocessinclude_HEADERS = #
+#libprocessincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/process
 
 INCLUDES = \
 	   -I$(top_srcdir)	\

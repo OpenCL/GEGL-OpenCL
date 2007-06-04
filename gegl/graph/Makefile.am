@@ -21,9 +21,8 @@ GRAPH_headers = \
 
 
 libgraph_la_SOURCES = $(GRAPH_sources) $(GRAPH_headers)
-libgraphinclude_HEADERS = gegl-graph.h
-
-libgraphincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/graph
+#libgraphinclude_HEADERS = #
+#libgraphincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/graph
 
 INCLUDES = \
 	   -I$(top_srcdir)	\

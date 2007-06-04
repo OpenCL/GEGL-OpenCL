@@ -1,5 +1,15 @@
 2007-06-04  Øyvind Kolås  <pippin@gimp.org>
 
+	Trim down the amount of header directories and headers installed.
+
+	* gegl/graph/Makefile.am:
+	* gegl/module/Makefile.am:
+	* gegl/operation/Makefile.am:
+	* gegl/process/Makefile.am:
+	* gegl/property-types/Makefile.am:
+
+2007-06-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac: renamed from configure.in
 
 2007-06-04  Øyvind Kolås  <pippin@gimp.org>

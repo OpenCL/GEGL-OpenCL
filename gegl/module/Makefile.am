@@ -12,9 +12,8 @@ MODULE_headers = 	\
     geglmoduletypes.h
 
 libmodule_la_SOURCES = $(MODULE_sources) $(MODULE_headers)
-libmoduleinclude_HEADERS = #$(MODULE_headers)
-
-libmoduleincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/module
+#libmoduleinclude_HEADERS = #$(MODULE_headers)
+#libmoduleincludedir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/module
 
 INCLUDES = \
 	   -I$(top_srcdir)	\
