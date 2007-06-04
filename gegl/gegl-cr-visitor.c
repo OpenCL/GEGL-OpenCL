@@ -27,10 +27,10 @@
 
 #include "gegl-cr-visitor.h"
 #include "operation/gegl-operation.h"
-#include "gegl-node.h"
-#include "gegl-node-dynamic.h"
-#include "gegl-pad.h"
-#include "gegl-visitable.h"
+#include "graph/gegl-node.h"
+#include "graph/gegl-node-dynamic.h"
+#include "graph/gegl-pad.h"
+#include "graph/gegl-visitable.h"
 #include "gegl-utils.h"
 
 

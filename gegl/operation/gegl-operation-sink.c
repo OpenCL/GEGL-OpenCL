@@ -18,7 +18,9 @@
  * Copyright 2006 Øyvind Kolås
  */
 #include "gegl-operation-sink.h"
+#include "graph/gegl-pad.h"
 #include <string.h>
+
 
 enum
 {

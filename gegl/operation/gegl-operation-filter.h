@@ -24,7 +24,6 @@
 #include "gegl-types.h"
 #include "buffer/gegl-buffer.h"
 #include "gegl-operation.h"
-#include "gegl-pad.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -21,7 +21,7 @@
 #include "config.h"
 #include <glib-object.h>
 #include "gegl-types.h"
-#include "gegl-node.h"
+#include "graph/gegl-node.h"
 #include "gegl-processor.h"
 #include "gegl-utils.h"
 #include "buffer/gegl-region.h"

@@ -24,16 +24,16 @@
 #include <glib-object.h>
 
 #include <gegl/gegl-types.h>
+#include <gegl/graph/gegl-connection.h>
+#include <gegl/graph/gegl-node.h>
+#include <gegl/graph/gegl-pad.h>
+#include <gegl/graph/gegl-graph.h>
+#include <gegl/graph/gegl-visitable.h>
+#include <gegl/graph/gegl-visitor.h>
 #include <gegl/gegl-color.h>
-#include <gegl/gegl-connection.h>
 #include <gegl/gegl-curve.h>
-#include <gegl/gegl-graph.h>
 #include <gegl/gegl-init.h>
-#include <gegl/gegl-node.h>
-#include <gegl/gegl-pad.h>
 #include <gegl/gegl-utils.h>
-#include <gegl/gegl-visitable.h>
-#include <gegl/gegl-visitor.h>
 #include <gegl/buffer/gegl-buffer.h>
 #include <gegl/gegl-curve.h>
 #include <gegl/gegl-xml.h>

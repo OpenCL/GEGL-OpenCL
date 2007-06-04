@@ -25,7 +25,7 @@
 
 #include "gegl-types.h"
 #include <babl/babl.h>
-#include "gegl-node.h"
+#include "graph/gegl-node.h"
 #include "gegl-cache.h"
 #include "gegl-region.h"
 #include "../gegl-utils.h"

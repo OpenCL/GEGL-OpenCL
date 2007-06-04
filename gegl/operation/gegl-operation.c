@@ -26,11 +26,11 @@
 
 #include "gegl-types.h"
 #include "gegl-operation.h"
-#include "gegl-node.h"
-#include "gegl-connection.h"
-#include "gegl-pad.h"
 #include "gegl-utils.h"
-#include "gegl-graph.h"
+#include "graph/gegl-node.h"
+#include "graph/gegl-connection.h"
+#include "graph/gegl-graph.h"
+#include "graph/gegl-pad.h"
 
 static void          gegl_operation_class_init (GeglOperationClass    *klass);
 static void          gegl_operation_init       (GeglOperation         *self);

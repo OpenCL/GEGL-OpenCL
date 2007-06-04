@@ -24,9 +24,9 @@
 
 #include "gegl-types.h"
 #include "gegl-finish-visitor.h"
-#include "gegl-node.h"
-#include "gegl-pad.h"
-#include "gegl-visitable.h"
+#include "graph/gegl-node.h"
+#include "graph/gegl-pad.h"
+#include "graph/gegl-visitable.h"
 #include "gegl-instrument.h"
 #include "operation/gegl-operation.h"
 

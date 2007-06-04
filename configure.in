@@ -600,6 +600,7 @@ bin/Makefile
 bin/node-editors/Makefile
 gegl/Makefile
 gegl/buffer/Makefile
+gegl/graph/Makefile
 gegl/module/Makefile
 gegl/operation/Makefile
 operations/Makefile

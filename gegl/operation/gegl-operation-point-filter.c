@@ -18,6 +18,7 @@
  * Copyright 2006 Øyvind Kolås
  */
 #include "gegl-operation-point-filter.h"
+#include "graph/gegl-pad.h"
 #include <string.h>
 
 static gboolean process_inner (GeglOperation *operation,

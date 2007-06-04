@@ -25,9 +25,9 @@
 #include <string.h>
 #include <limits.h>
 #include "gegl-types.h"
-#include "gegl-graph.h"
-#include "gegl-node.h"
-#include "gegl-pad.h"
+#include "graph/gegl-graph.h"
+#include "graph/gegl-node.h"
+#include "graph/gegl-pad.h"
 #include "gegl-color.h"
 #include "gegl-curve.h"
 #include "gegl-instrument.h"

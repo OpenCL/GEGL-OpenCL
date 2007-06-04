@@ -1,5 +1,10 @@
 2007-06-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/graph: created new subdir and moved the files making up the
+	GEGL graph infrastructure here.
+
+2007-06-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/Makefile.am: removed gegl-object.
 	* gegl/gegl-object.[ch]: removed.
 	* gegl/gegl-node.[ch]: integrated name directly, instead of relying on

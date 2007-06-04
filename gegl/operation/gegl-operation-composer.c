@@ -20,6 +20,7 @@
 
 #include "gegl-operation-composer.h"
 #include "gegl-utils.h"
+#include "graph/gegl-pad.h"
 #include <string.h>
 
 enum

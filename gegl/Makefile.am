@@ -2,17 +2,17 @@ if OS_WIN32
 no_undefined = -no-undefined
 endif
 
-SUBDIRS = buffer module operation
+SUBDIRS = buffer module operation graph
 
 libbuffer = $(top_builddir)/gegl/buffer/libbuffer.la
 libmodule = $(top_builddir)/gegl/module/libmodule.la
 liboperation = $(top_builddir)/gegl/operation/liboperation.la
+libgraph = $(top_builddir)/gegl/graph/libgraph.la
 
 lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
 
 GEGL_sources = \
 	gegl-color.c			\
-	gegl-connection.c		\
 	gegl-cr-visitor.c		\
 	gegl-curve.c			\
 	gegl-debug-rect-visitor.c	\
@@ -20,36 +20,23 @@ GEGL_sources = \
 	gegl-eval-visitor.c		\
 	gegl-extension-handler.c	\
 	gegl-finish-visitor.c		\
-	gegl-graph.c			\
 	gegl-have-visitor.c		\
 	gegl-init.c			\
 	gegl-instrument.c		\
 	gegl-need-visitor.c		\
-	gegl-node.c			\
 	gegl-dot.c			\
-	gegl-node-dynamic.c		\
-	gegl-pad.c			\
 	gegl-paramspecs.c		\
 	gegl-prepare-visitor.c		\
 	gegl-processor.c		\
 	gegl-utils.c			\
-	gegl-visitable.c		\
-	gegl-visitor.c			\
 	gegl-xml.c			\
 	\
 	gegl-color.h			\
-	gegl-connection.h		\
 	gegl-curve.h			\
 	gegl-extension-handler.h	\
-	gegl-graph.h			\
 	gegl-init.h			\
-	gegl-node.h			\
-	gegl-node-dynamic.h		\
-	gegl-pad.h			\
 	gegl-processor.h		\
 	gegl-types.h			\
-	gegl-visitable.h		\
-	gegl-visitor.h			\
 	gegl-dot.h			\
 	gegl-xml.h			\
 	gegl-plugin.h			\
@@ -72,7 +59,7 @@ EXTRA_DIST =	\
 
 libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 
-libgegl_@GEGL_API_VERSION@_la_LIBADD = $(libbuffer) $(libmodule) $(liboperation)
+libgegl_@GEGL_API_VERSION@_la_LIBADD = $(libbuffer) $(libmodule) $(liboperation) $(libgraph)
 
 libgegl_@GEGL_API_VERSION@_la_LDFLAGS = \
 	@DEP_LIBS@ @BABL_LIBS@	\

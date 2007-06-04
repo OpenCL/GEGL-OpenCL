@@ -21,7 +21,7 @@
 #ifndef __GEGL_FINISH_VISITOR_H__
 #define __GEGL_FINISH_VISITOR_H__
 
-#include "gegl-visitor.h"
+#include "graph/gegl-visitor.h"
 
 G_BEGIN_DECLS
 
