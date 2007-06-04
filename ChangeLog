@@ -1,6 +1,11 @@
 2007-06-04  Øyvind Kolås  <pippin@gimp.org>
 
-	* gegl/graph: created new subdir and moved the files making up the
+	* gegl/process/: created new subdir and moved the code controlling
+	the processing of image data to it.
+
+2007-06-04  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/graph/: created new subdir and moved the files making up the
 	GEGL graph infrastructure here.
 
 2007-06-04  Øyvind Kolås  <pippin@gimp.org>

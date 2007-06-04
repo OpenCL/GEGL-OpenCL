@@ -603,6 +603,7 @@ gegl/buffer/Makefile
 gegl/graph/Makefile
 gegl/module/Makefile
 gegl/operation/Makefile
+gegl/process/Makefile
 operations/Makefile
 operations/affine/Makefile
 operations/blur/Makefile
