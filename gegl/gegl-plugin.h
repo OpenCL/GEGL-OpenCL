@@ -30,12 +30,11 @@
 #include <gegl/graph/gegl-graph.h>
 #include <gegl/graph/gegl-visitable.h>
 #include <gegl/graph/gegl-visitor.h>
-#include <gegl/gegl-color.h>
-#include <gegl/gegl-curve.h>
+#include <gegl/property-types/gegl-color.h>
+#include <gegl/property-types/gegl-curve.h>
 #include <gegl/gegl-init.h>
 #include <gegl/gegl-utils.h>
 #include <gegl/buffer/gegl-buffer.h>
-#include <gegl/gegl-curve.h>
 #include <gegl/gegl-xml.h>
 #include <gegl/operation/gegl-operation.h>
 
@@ -43,5 +42,5 @@
                          to get warnings about conflicts in the prototypes
                          of functions. */
 #include <gegl.h>
-#include <gegl-paramspecs.h>
+#include <gegl/property-types/gegl-paramspecs.h>
 #endif  /* __GEGL_H__ */

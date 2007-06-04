@@ -853,7 +853,7 @@ void          gegl_node_set_property     (GeglNode      *node,
 
 /*** this is just here to trick the parser.
  */
-#include "gegl/gegl-paramspecs.h"
+#include "gegl/property-types/gegl-paramspecs.h"
 #include <babl/babl.h>
 
 #endif  /* __GEGL_H__ */

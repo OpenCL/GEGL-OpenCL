@@ -28,11 +28,11 @@
 #include "graph/gegl-graph.h"
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
-#include "gegl-color.h"
-#include "gegl-curve.h"
+#include "property-types/gegl-color.h"
+#include "property-types/gegl-curve.h"
 #include "gegl-instrument.h"
 #include "gegl-xml.h"
-#include "gegl-paramspecs.h"
+#include "property-types/gegl-paramspecs.h"
 #include "operation/gegl-operation.h"
 
 #ifdef G_OS_WIN32

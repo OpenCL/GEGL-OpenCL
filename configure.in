@@ -604,6 +604,7 @@ gegl/graph/Makefile
 gegl/module/Makefile
 gegl/operation/Makefile
 gegl/process/Makefile
+gegl/property-types/Makefile
 operations/Makefile
 operations/affine/Makefile
 operations/blur/Makefile
