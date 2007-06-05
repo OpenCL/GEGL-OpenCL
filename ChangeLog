@@ -1,3 +1,12 @@
+2007-06-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* operations/Makefile-operations.am: do not remove *~ backups on
+	clean-local.
+	* operations/Makefile.am: remove */*.so and */*/*.so upon clean local
+	to make sure operations that no longer have a .c file in the dir also
+	get cleaned out (happens when files are moved from workshop to a
+	proper op dir.)
+
 2007-06-04  Øyvind Kolås  <pippin@gimp.org>
 
 	Trim down the amount of header directories and headers installed.
