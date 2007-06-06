@@ -1,5 +1,11 @@
 2007-06-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* gegl/gegl-chant.h: modified include path for
+	gegl-extension-handler.h
+	* operations/io/load.c:
+
+2007-06-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* gegl/gegl-extension-handler.[ch]: moved ...
 	* gegl/operation/gegl-extension-handler.[ch]: ... here
 	* gegl/Makefile.am: updated ...

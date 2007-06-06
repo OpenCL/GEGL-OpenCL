@@ -13,7 +13,7 @@
 
 #ifdef GEGL_CHANT_SOURCE
   #include <gegl/operation/gegl-operation-source.h>
-  #include <gegl/gegl-extension-handler.h>
+  #include <gegl/operation/gegl-extension-handler.h>
   #define GEGL_CHANT_PARENT_TypeName      GeglOperationSource
   #define GEGL_CHANT_PARENT_TypeNameClass GeglOperationSourceClass
   #define GEGL_CHANT_PARENT_TYPE          GEGL_TYPE_OPERATION_SOURCE
