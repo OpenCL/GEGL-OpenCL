@@ -1,6 +1,7 @@
 noinst_LTLIBRARIES = liboperation.la
 
 OPERATION_sources = \
+	gegl-extension-handler.c	\
     	gegl-operation.c        	\
 	gegl-operation-area-filter.c    \
 	gegl-operation-composer.c     	\
@@ -13,6 +14,7 @@ OPERATION_sources = \
 
 
 OPERATION_headers = \
+	gegl-extension-handler.h	\
     	gegl-operation.h        	\
 	gegl-operation-composer.h     	\
 	gegl-operation-area-filter.h    \

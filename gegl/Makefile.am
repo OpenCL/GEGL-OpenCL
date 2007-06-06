@@ -14,14 +14,12 @@ libpropertytypes = $(top_builddir)/gegl/property-types/libpropertytypes.la
 lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
 
 GEGL_sources = \
-	gegl-extension-handler.c	\
 	gegl-init.c			\
 	gegl-instrument.c		\
 	gegl-dot.c			\
 	gegl-utils.c			\
 	gegl-xml.c			\
 	\
-	gegl-extension-handler.h	\
 	gegl-init.h			\
 	gegl-types.h			\
 	gegl-dot.h			\
@@ -31,7 +29,7 @@ GEGL_sources = \
 	gegl-instrument.h		\
 	gegl-module.h
 
-GEGL_public_headers = gegl-utils.h			
+GEGL_public_headers = gegl-utils.h
 
 libgegl_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_sources) $(GEGL_public_headers)
 

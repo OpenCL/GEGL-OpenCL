@@ -1,3 +1,10 @@
+2007-06-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* gegl/gegl-extension-handler.[ch]: moved ...
+	* gegl/operation/gegl-extension-handler.[ch]: ... here
+	* gegl/Makefile.am: updated ...
+	* gegl/operation/Makefile.am: ... accordingly
+
 2007-06-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* operations/Makefile-operations.am: do not remove *~ backups on
