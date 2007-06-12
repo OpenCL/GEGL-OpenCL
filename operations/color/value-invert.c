@@ -85,20 +85,20 @@ process (GeglOperation *op,
           if (r == value)
             {
               r = 1.0 - r;
-              b = r * b;
-              g = r * g;
+              b = r * b / value;
+              g = r * g / value;
             }
           else if (g == value)
             {
               g = 1.0 - g;
-              r = g * r;
-              b = g * b;
+              r = g * r / value;
+              b = g * b / value;
             }
           else
             {
               b = 1.0 - b;
-              g = b * g;
-              r = b * r;
+              g = b * g / value;
+              r = b * r / value;
             }
         }
 

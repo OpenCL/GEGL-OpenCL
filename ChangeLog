@@ -1,5 +1,9 @@
 2007-06-12  Mukund Sivaraman  <muks@mukund.org>
 
+	* operations/color/value-invert.c: Added missing divide by value.
+
+2007-06-12  Mukund Sivaraman  <muks@mukund.org>
+
 	* operations/color/value-invert.c: Renamed vinvert operation
 	to value-invert.
 
